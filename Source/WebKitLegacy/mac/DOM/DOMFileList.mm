@@ -75,8 +75,8 @@ DOMFileList *kit(WebCore::FileList* value)
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
-    if (DOMFileList *wrapper = getDOMWrapper(value))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(value))
+        return wrapper.autorelease();
     auto wrapper = adoptNS([[DOMFileList alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();

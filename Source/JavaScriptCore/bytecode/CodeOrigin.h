@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/JSExportMacros.h>
 
 #include <limits.h>
 #include <wtf/HashMap.h>
@@ -174,7 +175,7 @@ public:
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;
     
-    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream&, bool inIonGraph = false) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
     BytecodeIndex bytecodeIndex() const

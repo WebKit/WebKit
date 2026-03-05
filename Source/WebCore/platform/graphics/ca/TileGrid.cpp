@@ -65,7 +65,7 @@ static TextStream& operator<<(TextStream& ts, TileGrid::ValidationPolicyFlag fla
 TileGrid::TileGrid(TileController& controller)
     : m_identifier(TileGridIdentifier::generate())
     , m_controller(controller)
-    , m_containerLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_containerLayer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
     , m_tileSize(kDefaultTileSize, kDefaultTileSize)
 {
@@ -190,7 +190,7 @@ void TileGrid::dropTilesInRect(const IntRect& rect)
 
 void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& tileInfo, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords)
 {
-    PlatformCALayer* tileLayer = tileInfo.layer.get();
+    RefPtr tileLayer = tileInfo.layer.get();
 
     IntRect tileRect = rectForTileIndex(tileIndex);
     FloatRect tileRepaintRect = tileRect;
@@ -207,7 +207,7 @@ void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& t
         tileLayer->setNeedsDisplayInRect(tileLocalRepaintRect);
         m_controller->willRepaintTile(*this, tileIndex, tileRect, tileRepaintRect);
 
-        if (m_controller->rootLayer().owner()->platformCALayerShowRepaintCounter(0)) {
+        if (m_controller->rootLayer()->owner()->platformCALayerShowRepaintCounter(0)) {
             FloatRect indicatorRect(0, 0, 52, 27);
             tileLayer->setNeedsDisplayInRect(indicatorRect);
         }
@@ -410,7 +410,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
         TileInfo& tileInfo = entry.value;
         TileIndex tileIndex = entry.key;
 
-        PlatformCALayer* tileLayer = tileInfo.layer.get();
+        RefPtr tileLayer = tileInfo.layer.get();
         IntRect tileRect = rectForTileIndex(tileIndex);
 
         if (tileRect.intersects(coverageRectInTileCoords)) {
@@ -707,7 +707,7 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
     CGContextScaleCTM(context, contextScale, contextScale);
     
     for (auto& tileInfo : m_tiles.values()) {
-        PlatformCALayer* tileLayer = tileInfo.layer.get();
+        RefPtr tileLayer = tileInfo.layer.get();
 
         CGFloat red = 1;
         CGFloat green = 1;
@@ -781,11 +781,11 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         context.scale(m_scale);
 
         PlatformCALayer::RepaintRectList dirtyRects = PlatformCALayer::collectRectsToPaint(context, platformCALayer);
-        PlatformCALayer::drawLayerContents(context, &m_controller->rootLayer(), dirtyRects, layerPaintBehavior);
+        PlatformCALayer::drawLayerContents(context, m_controller->rootLayer().ptr(), dirtyRects, layerPaintBehavior);
     }
 
     int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
-    if (m_controller->rootLayer().owner()->platformCALayerShowRepaintCounter(0))
+    if (m_controller->rootLayer()->owner()->platformCALayerShowRepaintCounter(0))
         PlatformCALayer::drawRepaintIndicator(context, platformCALayer, repaintCount, m_controller->tileDebugBorderColor());
 
     if (m_controller->scrollingPerformanceTestingEnabled()) {
@@ -799,42 +799,42 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
 
 float TileGrid::platformCALayerDeviceScaleFactor() const
 {
-    if (auto* layerOwner = m_controller->rootLayer().owner())
+    if (auto* layerOwner = m_controller->rootLayer()->owner())
         return layerOwner->platformCALayerDeviceScaleFactor();
     return 1.0f;
 }
 
 bool TileGrid::platformCALayerShowDebugBorders() const
 {
-    if (auto* layerOwner = m_controller->rootLayer().owner())
+    if (auto* layerOwner = m_controller->rootLayer()->owner())
         return layerOwner->platformCALayerShowDebugBorders();
     return false;
 }
 
 bool TileGrid::platformCALayerShowRepaintCounter(PlatformCALayer*) const
 {
-    if (auto* layerOwner = m_controller->rootLayer().owner())
+    if (auto* layerOwner = m_controller->rootLayer()->owner())
         return layerOwner->platformCALayerShowRepaintCounter(nullptr);
     return false;
 }
 
 bool TileGrid::isUsingDisplayListDrawing(PlatformCALayer*) const
 {
-    if (auto* layerOwner = m_controller->rootLayer().owner())
+    if (auto* layerOwner = m_controller->rootLayer()->owner())
         return layerOwner->isUsingDisplayListDrawing(nullptr);
     return false;
 }
 
 bool TileGrid::platformCALayerNeedsPlatformContext(const PlatformCALayer* layer) const
 {
-    if (auto* layerOwner = m_controller->rootLayer().owner())
+    if (auto* layerOwner = m_controller->rootLayer()->owner())
         return layerOwner->platformCALayerNeedsPlatformContext(layer);
     return false;
 }
 
 OptionSet<ContentsFormat> TileGrid::screenContentsFormats() const
 {
-    if (auto* layerOwner = m_controller->rootLayer().owner())
+    if (auto* layerOwner = m_controller->rootLayer()->owner())
         return layerOwner->screenContentsFormats();
     return { };
 }

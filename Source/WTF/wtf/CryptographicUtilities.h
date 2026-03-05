@@ -27,6 +27,8 @@
 
 #include <span>
 #include <string>
+#include <wtf/Assertions.h>
+#include <wtf/Platform.h>
 
 namespace WTF {
 

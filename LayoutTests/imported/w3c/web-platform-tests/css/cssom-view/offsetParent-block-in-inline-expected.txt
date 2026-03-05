@@ -1,5 +1,3 @@
 
-FAIL offsetParent-block-in-inline assert_equals: expected Element node <span id="parent" style="position:relative;">
-    <div id... but got Element node <body><span id="parent" style="position:relative;">
-    <...
+PASS offsetParent-block-in-inline
 

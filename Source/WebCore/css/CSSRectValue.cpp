@@ -30,13 +30,13 @@ namespace WebCore {
 
 CSSRectValue::CSSRectValue(Rect rect)
     : CSSValue(ClassType::Rect)
-    , m_rect(WTFMove(rect))
+    , m_rect(WTF::move(rect))
 {
 }
 
 Ref<CSSRectValue> CSSRectValue::create(Rect rect)
 {
-    return adoptRef(*new CSSRectValue(WTFMove(rect)));
+    return adoptRef(*new CSSRectValue(WTF::move(rect)));
 }
 
 String CSSRectValue::customCSSText(const CSS::SerializationContext& context) const

@@ -87,7 +87,7 @@ public:
                 parentStackTrace = debuggerAgent->currentParentStackTrace();
         }
 
-        return ScriptCallStack::create(WTFMove(m_frames), m_truncated, parentStackTrace);
+        return ScriptCallStack::create(WTF::move(m_frames), m_truncated, parentStackTrace);
     }
 
 private:
@@ -144,7 +144,7 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::JSGlobalObject* global
 static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObject, JSObject* exceptionObject, LineColumn* lineColumn, String* sourceURL)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
     JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "line"_s));
@@ -207,7 +207,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* glo
         if (auto* debuggerAgent = dynamicDowncast<InspectorDebuggerAgent>(debugger->client()))
             parentStackTrace = debuggerAgent->currentParentStackTrace();
     }
-    return ScriptCallStack::create(WTFMove(frames), stackTrace.size() > maxStackSize, parentStackTrace);
+    return ScriptCallStack::create(WTF::move(frames), stackTrace.size() > maxStackSize, parentStackTrace);
 }
 
 Ref<ScriptArguments> createScriptArguments(JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame, unsigned skipArgumentCount)
@@ -217,7 +217,7 @@ Ref<ScriptArguments> createScriptArguments(JSC::JSGlobalObject* globalObject, JS
     size_t argumentCount = callFrame->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
         arguments.append({ vm, callFrame->uncheckedArgument(i) });
-    return ScriptArguments::create(globalObject, WTFMove(arguments));
+    return ScriptArguments::create(globalObject, WTF::move(arguments));
 }
 
 } // namespace Inspector

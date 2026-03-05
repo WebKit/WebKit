@@ -45,11 +45,11 @@ void TestWithoutUsingIPCConnection::didReceiveMessageWithReplyHandler(IPC::Decod
         return;
     }
     if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::name()) {
-        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndEmptyReply);
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndEmptyReply);
         return;
     }
     if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::name()) {
-        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndReplyWithArgument);
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndReplyWithArgument);
         return;
     }
     if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgument::name()) {
@@ -57,11 +57,11 @@ void TestWithoutUsingIPCConnection::didReceiveMessageWithReplyHandler(IPC::Decod
         return;
     }
     if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::name()) {
-        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndEmptyReply);
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndEmptyReply);
         return;
     }
     if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::name()) {
-        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndReplyWithArgument);
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndReplyWithArgument);
         return;
     }
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());

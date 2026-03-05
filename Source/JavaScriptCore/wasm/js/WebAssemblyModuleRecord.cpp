@@ -129,7 +129,7 @@ static const WebAssemblyBuiltinSet* findEnabledBuiltinSet(const String& qualifie
 static void defineImportedStringConstant(VM& vm, WriteBarrier<JSWebAssemblyInstance>& instance, const Wasm::Import& import)
 {
     String text = makeString(import.field);
-    JSValue string = jsString(vm, WTFMove(text));
+    JSValue string = jsString(vm, WTF::move(text));
     instance->setGlobal(import.kindIndex, string);
 }
 
@@ -480,12 +480,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (!memory)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "is not an instance of WebAssembly.Memory"_s)));
 
-            PageCount declaredInitial = moduleInformation.memory.initial();
+            PageCount declaredInitial = moduleInformation.memory(import.kindIndex).initial();
             size_t importedSize = memory->memory().size();
             if (importedSize < declaredInitial.bytes())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "provided a 'size' that is smaller than the module's declared 'initial' import memory size"_s)));
 
-            if (PageCount declaredMaximum = moduleInformation.memory.maximum()) {
+            if (PageCount declaredMaximum = moduleInformation.memory(import.kindIndex).maximum()) {
                 PageCount importedMaximum = memory->memory().maximum();
                 if (!importedMaximum)
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "did not have a 'maximum' but the module requires that it does"_s)));
@@ -494,12 +494,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "provided a 'maximum' that is larger than the module's declared 'maximum' import memory size"_s)));
             }
 
-            if ((memory->memory().sharingMode() == MemorySharingMode::Shared) != moduleInformation.memory.isShared())
+            if ((memory->memory().sharingMode() == MemorySharingMode::Shared) != moduleInformation.memory(import.kindIndex).isShared())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "provided a 'shared' that is different from the module's declared 'shared' import memory attribute"_s)));
 
             // ii. Append v to memories.
             // iii. Append v.[[Memory]] to imports.
-            m_instance->setMemory(vm, memory);
+            m_instance->setMemory(vm, import.kindIndex, memory);
             RETURN_IF_EXCEPTION(scope, void());
             break;
         }
@@ -521,6 +521,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         throwException(globalObject, scope, error);
     };
 
+    // FIXME(wasm-multimemory): will need to change this to make BBQ/OMG work with multiple memories
+    // FIXME(wasm-multimemory): should we get rid of hasMemoryImport()?
     if (moduleInformation.hasMemoryImport()) {
         // Usually at this point the module's code block in any memory mode should be
         // runnable due to the IPInt tier code being shared among all modes. However,
@@ -661,7 +663,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 case Wasm::GlobalInformation::BindingMode::Portable: {
                     ASSERT(global.mutability == Wasm::Mutable);
                     Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::Mutability::Mutable, initialVector);
-                    JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::create(vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                    JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::create(vm, globalObject->webAssemblyGlobalStructure(), WTF::move(globalRef));
                     m_instance->linkGlobal(vm, globalIndex, globalValue);
                     break;
                 }
@@ -698,7 +700,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 ASSERT(global.mutability == Wasm::Mutable);
                 // For reference types, set to 0 and set the real value via the instance afterwards.
                 Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::Mutability::Mutable, Wasm::isRefType(global.type) ? 0 : initialBits);
-                JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::create(vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::create(vm, globalObject->webAssemblyGlobalStructure(), WTF::move(globalRef));
                 m_instance->linkGlobal(vm, globalIndex, globalValue);
                 if (Wasm::isRefType(global.type))
                     m_instance->setGlobal(globalIndex, JSValue::decode(initialBits));
@@ -730,9 +732,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             break;
         }
         case Wasm::ExternalKind::Memory: {
-            ASSERT(exp.kindIndex == 0);
-
-            exportedValue = m_instance->memory();
+            exportedValue = m_instance->memory(exp.kindIndex);
             break;
         }
         case Wasm::ExternalKind::Global: {

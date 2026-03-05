@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class OverconstrainedErrorEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OverconstrainedErrorEvent);
+    WTF_MAKE_TZONE_ALLOCATED(OverconstrainedErrorEvent);
 public:
     virtual ~OverconstrainedErrorEvent() = default;
 
@@ -69,7 +69,7 @@ private:
     {
     }
 
-    RefPtr<OverconstrainedError> m_error;
+    const RefPtr<OverconstrainedError> m_error;
 };
 
 } // namespace WebCore

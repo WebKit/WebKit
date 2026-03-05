@@ -124,7 +124,7 @@ void ManetteGamepadProvider::deviceConnected(ManetteDevice* device)
         m_gamepadVector.grow(index + 1);
 
     m_gamepadVector[index] = gamepad.get();
-    m_gamepadMap.set(device, WTFMove(gamepad));
+    m_gamepadMap.set(device, WTF::move(gamepad));
 
     auto eventVisibility = m_initialGamepadsConnected ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No;
     for (auto& client : m_clients)

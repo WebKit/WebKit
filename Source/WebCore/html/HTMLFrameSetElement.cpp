@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFrameSetElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFrameSetElement);
 
 using namespace HTMLNames;
 
@@ -87,7 +87,7 @@ void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const Qualified
 void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name); !eventName.isNull())
-        protectedDocument()->setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorldSingleton());
+        protect(document())->setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorldSingleton());
     else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -148,10 +148,10 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
 
 RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (style.hasContent())
-        return RenderElement::createFor(*this, WTFMove(style));
+    if (style.content().isData())
+        return RenderElement::createFor(*this, WTF::move(style));
     
-    return createRenderer<RenderFrameSet>(*this, WTFMove(style));
+    return createRenderer<RenderFrameSet>(*this, WTF::move(style));
 }
 
 RefPtr<HTMLFrameSetElement> HTMLFrameSetElement::findContaining(Element* descendant)

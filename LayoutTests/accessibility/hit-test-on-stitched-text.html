@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+* { font-size: 68px; }
+</style>
+</head>
+<body>
+
+<div>
+    <span>Hello</span> <span>world!</span>
+    <i>How</i> 
+    <b>are</b>
+    <span id="target-span">you doing</span> on<b> this fine day</b>?
+</div>
+
+<script>
+var output = "This test ensures that when we hit test onto text stitched into other text, that we return the sitch-group owner object.\n\n";
+
+if (window.accessibilityController) {
+    var targetRect = document.getElementById("target-span").getBoundingClientRect();
+    var hitTestResult = accessibilityController.elementAtPoint(targetRect.x + targetRect.width / 2, targetRect.y + targetRect.height / 2);
+    output += expect("platformStaticTextValue(hitTestResult)", "'AXValue: Hello world! How are you doing on this fine day?'");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

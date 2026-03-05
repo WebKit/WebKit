@@ -188,7 +188,7 @@ void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtens
     if (!parseScriptInjectionOptions(script, parameters, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebKit::WebExtensionScriptInjectionResultParameters>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebKit::WebExtensionScriptInjectionResultParameters>, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());
         else
@@ -204,7 +204,7 @@ void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtension
     if (!parseCSSInjectionOptions(cssInfo, parameters, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());
         else
@@ -220,7 +220,7 @@ void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtension
     if (!parseCSSInjectionOptions(cssInfo, parameters, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());
         else
@@ -236,7 +236,7 @@ void WebExtensionAPIScripting::registerContentScripts(NSArray *scripts, Ref<WebE
     if (!parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parameters, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterContentScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterContentScripts(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());
         else
@@ -253,7 +253,7 @@ void WebExtensionAPIScripting::getRegisteredContentScripts(NSDictionary *filter,
 
     auto scriptIDs = makeVector<String>(filter[idsKey]);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingGetRegisteredScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingGetRegisteredScripts(WTF::move(scriptIDs)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());
         else
@@ -269,7 +269,7 @@ void WebExtensionAPIScripting::updateContentScripts(NSArray *scripts, Ref<WebExt
     if (!parseRegisteredContentScripts(scripts, FirstTimeRegistration::No, parameters, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());
         else
@@ -286,7 +286,7 @@ void WebExtensionAPIScripting::unregisterContentScripts(NSDictionary *filter, Re
 
     auto scriptIDs = makeVector<String>(filter[idsKey]);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterContentScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterContentScripts(WTF::move(scriptIDs)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());
         else
@@ -386,10 +386,10 @@ bool WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
                 return false;
             }
 
-            parsedDocumentIdentifiers.append(WTFMove(parsedUUID.value()));
+            parsedDocumentIdentifiers.append(WTF::move(parsedUUID.value()));
         }
 
-        parameters.documentIdentifiers = WTFMove(parsedDocumentIdentifiers);
+        parameters.documentIdentifiers = WTF::move(parsedDocumentIdentifiers);
     }
 
     if (NSArray *frameIDs = targetInfo[frameIDsKey]) {
@@ -404,7 +404,7 @@ bool WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
             frames.append(frameIdentifier.value());
         }
 
-        parameters.frameIdentifiers = WTFMove(frames);
+        parameters.frameIdentifiers = WTF::move(frames);
     } else if (!allFrames && !parameters.documentIdentifiers)
         parameters.frameIdentifiers = { WebExtensionFrameConstants::MainFrameIdentifier };
 

@@ -33,6 +33,7 @@
 
 #include <WebCore/CharacterRange.h>
 #include <WebCore/TextCheckingRequestIdentifier.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
@@ -67,6 +68,14 @@ struct GrammarDetail {
     CharacterRange range;
     Vector<String> guesses;
     String userDescription;
+
+    GrammarDetail isolatedCopy() && {
+        return {
+            range,
+            crossThreadCopy(WTF::move(guesses)),
+            WTF::move(userDescription).isolatedCopy()
+        };
+    }
 };
 
 struct TextCheckingResult {
@@ -74,6 +83,15 @@ struct TextCheckingResult {
     CharacterRange range;
     Vector<GrammarDetail> details;
     String replacement;
+
+    TextCheckingResult isolatedCopy() && {
+        return {
+            type,
+            range,
+            crossThreadCopy(WTF::move(details)),
+            WTF::move(replacement).isolatedCopy()
+        };
+    }
 };
 
 struct TextCheckingGuesses {
@@ -96,7 +114,7 @@ public:
     }
 
     std::optional<TextCheckingRequestIdentifier> identifier() const { return m_identifier; }
-    const String& text() const { return m_text; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
     OptionSet<TextCheckingType> checkingTypes() const { return m_checkingTypes; }
     TextCheckingProcessType processType() const { return m_processType; }
 

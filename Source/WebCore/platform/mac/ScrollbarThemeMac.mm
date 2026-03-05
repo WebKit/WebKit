@@ -145,7 +145,7 @@ void ScrollbarThemeMac::didCreateScrollerImp(Scrollbar& scrollbar)
 #if PLATFORM(MAC)
     RetainPtr scrollerImp = scrollerImpForScrollbar(scrollbar);
     ASSERT(scrollerImp);
-    scrollerImp.get().userInterfaceLayoutDirection = scrollbar.checkedScrollableArea()->shouldPlaceVerticalScrollbarOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
+    scrollerImp.get().userInterfaceLayoutDirection = protect(scrollbar.scrollableArea())->shouldPlaceVerticalScrollbarOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -171,18 +171,13 @@ NSScrollerImp *ScrollbarThemeMac::scrollerImpForScrollbar(Scrollbar& scrollbar)
     return nil;
 }
 
-RetainPtr<NSScrollerImp> ScrollbarThemeMac::protectedScrollerImpForScrollbar(Scrollbar& scrollbar)
-{
-    return scrollerImpForScrollbar(scrollbar);
-}
-
 bool ScrollbarThemeMac::isLayoutDirectionRTL(Scrollbar& scrollbar)
 {
 #if PLATFORM(MAC)
     RetainPtr scrollerImp = scrollerImpForScrollbar(scrollbar);
     if (!scrollerImp) {
         if (!scrollbar.shouldRegisterScrollbar())
-            return scrollbar.checkedScrollableArea()->shouldPlaceVerticalScrollbarOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
+            return protect(scrollbar.scrollableArea())->shouldPlaceVerticalScrollbarOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
         return false;
     }
     return scrollerImp.get().userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft;
@@ -433,7 +428,7 @@ int ScrollbarThemeMac::minimumThumbLength(Scrollbar& scrollbar)
 {
     if (scrollbar.shouldRegisterScrollbar()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        return [protectedScrollerImpForScrollbar(scrollbar) knobMinLength];
+        return [protect(scrollerImpForScrollbar(scrollbar)) knobMinLength];
         END_BLOCK_OBJC_EXCEPTIONS
     } else
         return scrollbar.minimumThumbLength();
@@ -494,7 +489,7 @@ int ScrollbarThemeMac::scrollbarPartToHIPressedState(ScrollbarPart part)
 void ScrollbarThemeMac::updateEnabledState(Scrollbar& scrollbar)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [protectedScrollerImpForScrollbar(scrollbar) setEnabled:scrollbar.enabled()];
+    [protect(scrollerImpForScrollbar(scrollbar)) setEnabled:scrollbar.enabled()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -511,7 +506,7 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar
     [painter setEnabled:scrollbar.enabled()];
     [painter setBoundsSize:scrollbar.frameRect().size()];
     [painter setDoubleValue:value];
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
     [painter setPresentationValue:value];
 #endif
     [painter setKnobProportion:proportion];

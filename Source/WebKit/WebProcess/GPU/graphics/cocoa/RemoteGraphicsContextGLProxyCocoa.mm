@@ -48,7 +48,7 @@ class DisplayBufferFence final : public WebCore::PlatformCALayerDelegatedContent
 public:
     static Ref<DisplayBufferFence> create(IPC::Semaphore&& finishedFenceSemaphore)
     {
-        return adoptRef(*new DisplayBufferFence(WTFMove(finishedFenceSemaphore)));
+        return adoptRef(*new DisplayBufferFence(WTF::move(finishedFenceSemaphore)));
     }
 
     bool waitFor(Seconds timeout) final
@@ -71,7 +71,7 @@ public:
 
 private:
     DisplayBufferFence(IPC::Semaphore&& finishedFenceSemaphore)
-        : m_semaphore(WTFMove(finishedFenceSemaphore))
+        : m_semaphore(WTF::move(finishedFenceSemaphore))
     {
     }
 
@@ -115,8 +115,8 @@ public:
         }
         if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
             return;
-        m_finishedFence = WTFMove(finishedFence);
-        m_displayBuffer = WTFMove(displayBuffer);
+        m_finishedFence = WTF::move(finishedFence);
+        m_displayBuffer = WTF::move(displayBuffer);
     }
 
 private:
@@ -169,9 +169,9 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
     if (!displayBufferSendRight)
         return;
     m_hasPreparedForDisplay = true;
-    auto finishedFence = DisplayBufferFence::create(WTFMove(finishedSignaller));
+    auto finishedFence = DisplayBufferFence::create(WTF::move(finishedSignaller));
     addNewFence(finishedFence);
-    m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(displayBufferSendRight), WTF::move(finishedFence));
 }
 
 void RemoteGraphicsContextGLProxyCocoa::forceContextLost()
@@ -187,7 +187,7 @@ void RemoteGraphicsContextGLProxyCocoa::addNewFence(Ref<DisplayBufferFence> newF
 {
     // Record the pending fences so that they can be force signaled when context is lost.
     size_t oldestFenceIndex = m_oldestFenceIndex++ % maxPendingFences;
-    std::exchange(m_frameCompletionFences[oldestFenceIndex], WTFMove(newFence));
+    std::exchange(m_frameCompletionFences[oldestFenceIndex], WTF::move(newFence));
     // Due to the fence being IPC::Semaphore, we do not have very good way of waiting the fence in two places, compositor and here.
     // Thus we just record maxPendingFences and trust that compositor does not advance too far with multiple frames.
 }

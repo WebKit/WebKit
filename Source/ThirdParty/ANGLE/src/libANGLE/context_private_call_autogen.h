@@ -188,6 +188,9 @@ void ContextPrivateViewport(PrivateState *privateState,
                             GLint y,
                             GLsizei width,
                             GLsizei height);
+GLboolean ContextPrivateIsVertexArray(PrivateState *privateState,
+                                      PrivateStateCache *privateStateCache,
+                                      VertexArrayID arrayPacked);
 void ContextPrivateVertexAttribDivisor(PrivateState *privateState,
                                        PrivateStateCache *privateStateCache,
                                        GLuint index,

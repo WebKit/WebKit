@@ -40,11 +40,6 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
-static Ref<API::DataTask> protectedDataTask(_WKDataTask *task)
-{
-    return *task->_dataTask;
-}
-
 class WKDataTaskClient final : public API::DataTaskClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WKDataTaskClient);
 public:
@@ -64,7 +59,7 @@ private:
         if (!delegate || !m_respondsToDidReceiveAuthenticationChallenge)
             return completionHandler(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, { });
         auto checker = WebKit::CompletionHandlerCallChecker::create(delegate.get(), @selector(dataTask:didReceiveAuthenticationChallenge:completionHandler:));
-        [delegate dataTask:protectedWrapper(task).get() didReceiveAuthenticationChallenge:protectedMac(challenge).get() completionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) mutable {
+        [delegate dataTask:protect(wrapper(task)).get() didReceiveAuthenticationChallenge:protect(mac(challenge)).get() completionHandler:makeBlockPtr([checker = WTF::move(checker), completionHandler = WTF::move(completionHandler)](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -78,7 +73,7 @@ private:
         if (!delegate || !m_respondsToWillPerformHTTPRedirection)
             return completionHandler(true);
         auto checker = WebKit::CompletionHandlerCallChecker::create(delegate.get(), @selector(dataTask:willPerformHTTPRedirection:newRequest:decisionHandler:));
-        [delegate dataTask:protectedWrapper(task).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:request.protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody).get() decisionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)] (_WKDataTaskRedirectPolicy policy) mutable {
+        [delegate dataTask:protect(wrapper(task)).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:protect(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).get() decisionHandler:makeBlockPtr([checker = WTF::move(checker), completionHandler = WTF::move(completionHandler)] (_WKDataTaskRedirectPolicy policy) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -92,7 +87,7 @@ private:
         if (!delegate || !m_respondsToDidReceiveResponse)
             return completionHandler(true);
         auto checker = WebKit::CompletionHandlerCallChecker::create(delegate.get(), @selector(dataTask:didReceiveResponse:decisionHandler:));
-        [delegate dataTask:protectedWrapper(task).get() didReceiveResponse:response.protectedNSURLResponse().get() decisionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)] (_WKDataTaskResponsePolicy policy) mutable {
+        [delegate dataTask:protect(wrapper(task)).get() didReceiveResponse:protect(response.nsURLResponse()).get() decisionHandler:makeBlockPtr([checker = WTF::move(checker), completionHandler = WTF::move(completionHandler)] (_WKDataTaskResponsePolicy policy) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -105,7 +100,7 @@ private:
         RetainPtr delegate = m_delegate.get();
         if (!delegate || !m_respondsToDidReceiveData)
             return;
-        [delegate dataTask:protectedWrapper(task).get() didReceiveData:toNSData(data).get()];
+        [delegate dataTask:protect(wrapper(task)).get() didReceiveData:toNSData(data).get()];
     }
 
     void didCompleteWithError(API::DataTask& task, WebCore::ResourceError&& error) const final
@@ -113,7 +108,7 @@ private:
         RetainPtr delegate = m_delegate.get();
         if (!delegate || !m_respondsToDidCompleteWithError)
             return;
-        [delegate dataTask:protectedWrapper(task).get() didCompleteWithError:error.protectedNSError().get()];
+        [delegate dataTask:protect(wrapper(task)).get() didCompleteWithError:protect(error.nsError()).get()];
         wrapper(task)->_delegate = nil;
     }
 
@@ -130,7 +125,7 @@ private:
 
 - (void)cancel
 {
-    protectedDataTask(self)->cancel();
+    protect(*_dataTask)->cancel();
     _delegate = nil;
 }
 
@@ -139,7 +134,7 @@ private:
     RefPtr page = _dataTask->page();
     if (!page)
         return nil;
-    return page->cocoaView().unsafeGet();
+    return page->cocoaView().autorelease();
 }
 
 - (id <_WKDataTaskDelegate>)delegate
@@ -150,7 +145,7 @@ private:
 - (void)setDelegate:(id <_WKDataTaskDelegate>)delegate
 {
     _delegate = delegate;
-    protectedDataTask(self)->setClient(WKDataTaskClient::create(delegate));
+    protect(*_dataTask)->setClient(WKDataTaskClient::create(delegate));
 }
 
 - (void)dealloc

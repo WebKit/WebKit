@@ -147,7 +147,7 @@ bool ByteBufferReader::ReadStringView(absl::string_view* val, size_t len) {
 }
 
 bool ByteBufferReader::ReadBytes(ArrayView<uint8_t> val) {
-  if (val.size() == 0) {
+  if (val.empty()) {
     return true;
   }
   return ReadBytes(val.data(), val.size());

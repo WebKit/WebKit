@@ -47,6 +47,7 @@ namespace TestWebKitAPI {
 TEST(ModelProcess, CleanUpOnReload)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("ModelElementEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("ModelProcessEnabled"));
 
@@ -73,6 +74,7 @@ TEST(ModelProcess, CleanUpOnReload)
 TEST(ModelProcess, CleanUpOnNavigate)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("ModelElementEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("ModelProcessEnabled"));
 
@@ -96,6 +98,7 @@ TEST(ModelProcess, CleanUpOnNavigate)
 TEST(ModelProcess, CleanUpOnHide)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setAllowTestOnlyIPC:YES];
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)configuration.preferences, true, WKStringCreateWithUTF8CString("ModelElementEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)configuration.preferences, true, WKStringCreateWithUTF8CString("ModelProcessEnabled"));
 

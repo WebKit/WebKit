@@ -43,10 +43,10 @@ struct MIMETypeRegistryThreadGlobalData {
     WTF_MAKE_NONCOPYABLE(MIMETypeRegistryThreadGlobalData);
 public:
     MIMETypeRegistryThreadGlobalData(HashSet<String, ASCIICaseInsensitiveHash>&& supportedImageMIMETypesForEncoding)
-        : m_supportedImageMIMETypesForEncoding(WTFMove(supportedImageMIMETypesForEncoding))
+        : m_supportedImageMIMETypesForEncoding(WTF::move(supportedImageMIMETypesForEncoding))
     { }
 
-    const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypesForEncoding() const { return m_supportedImageMIMETypesForEncoding; }
+    const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypesForEncoding() const LIFETIME_BOUND { return m_supportedImageMIMETypesForEncoding; }
 
 private:
     HashSet<String, ASCIICaseInsensitiveHash> m_supportedImageMIMETypesForEncoding;
@@ -107,6 +107,8 @@ public:
 
     WEBCORE_EXPORT static bool isUSDMIMEType(const String& mimeType);
 
+    WEBCORE_EXPORT static bool isGLTFMIMEType(const String& mimeType);
+
     WEBCORE_EXPORT static bool isSupportedModelMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being shown inside a page.
@@ -135,6 +137,7 @@ public:
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> pdfMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> unsupportedTextMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> usdMIMETypes();
+    WEBCORE_EXPORT static FixedVector<ASCIILiteral> gltfMIMETypes();
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
 

@@ -30,6 +30,7 @@
 #include <WebCore/AudioSourceProvider.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SystemFree.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
@@ -95,7 +96,7 @@ private:
     RetainPtr<AVMutableAudioMix> m_avAudioMix;
     RetainPtr<MTAudioProcessingTapRef> m_tap;
     RetainPtr<AudioConverterRef> m_converter;
-    std::unique_ptr<AudioBufferList> m_list;
+    std::unique_ptr<AudioBufferList, WTF::SystemFree<AudioBufferList>> m_list;
     std::unique_ptr<AudioStreamBasicDescription> m_tapDescription;
     std::unique_ptr<AudioStreamBasicDescription> m_outputDescription;
     std::unique_ptr<CARingBuffer> m_ringBuffer;

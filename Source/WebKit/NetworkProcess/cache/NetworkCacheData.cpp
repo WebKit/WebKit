@@ -28,6 +28,8 @@
 
 #include <fcntl.h>
 #include <wtf/FileSystem.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/StdLibExtras.h>
 
 #if !OS(WINDOWS)
@@ -41,7 +43,7 @@ namespace NetworkCache {
 
 #if !USE(GLIB) && USE(CURL)
 Data::Data(Vector<uint8_t>&& data)
-    : Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData> { WTFMove(data) })
+    : Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData> { WTF::move(data) })
 {
 }
 #elif !PLATFORM(COCOA)
@@ -57,10 +59,10 @@ Data Data::mapToFile(const String& path) const
     auto applyData = [&](NOESCAPE const Function<bool(std::span<const uint8_t>)>& applier) {
         apply(applier);
     };
-    auto mappedFile = FileSystem::mapToFile(path, size(), WTFMove(applyData), &handle);
+    auto mappedFile = FileSystem::mapToFile(path, size(), WTF::move(applyData), &handle);
     if (!mappedFile)
         return { };
-    return Data::adoptMap(WTFMove(mappedFile), WTFMove(handle));
+    return Data::adoptMap(WTF::move(mappedFile), WTF::move(handle));
 }
 
 Data mapFile(const String& path)
@@ -80,7 +82,7 @@ Data mapFile(const String& path)
     if (!mappedFile)
         return { };
 
-    return Data::adoptMap(WTFMove(*mappedFile), WTFMove(handle));
+    return Data::adoptMap(WTF::move(*mappedFile), WTF::move(handle));
 }
 
 SHA1::Digest computeSHA1(const Data& data, const Salt& salt)

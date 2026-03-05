@@ -24,11 +24,14 @@
 #include <WebCore/FontCascadeDescription.h>
 #include <WebCore/FontRanges.h>
 #include <WebCore/FontSelector.h>
+#include <WebCore/GlyphBuffer.h>
 #include <WebCore/GlyphPage.h>
-#include <WebCore/WidthCache.h>
+#include <WebCore/TextMeasurementCache.h>
+#include <WebCore/TextRun.h>
 #include <wtf/EnumeratedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
 #include <wtf/Platform.h>
@@ -44,11 +47,56 @@ class TextStream;
 
 namespace WebCore {
 
+enum class ForTextEmphasis : bool;
+
 class FontPlatformData;
 class FontSelector;
 class GraphicsContext;
 class IntRect;
 class MixedFontGlyphPage;
+
+struct TextShapingResult;
+
+struct GlyphOverflow {
+    // FIXME: May need clearer&safer storage and names. See webkit.org/b/307002
+    LayoutUnit left;
+    LayoutUnit right;
+    LayoutUnit top;
+    LayoutUnit bottom;
+    bool computeBounds { false };
+};
+
+namespace ShapedTextCacheDefaults {
+// This is tuned for Canvas text operations (fillText, strokeText)
+static constexpr int initialInterval = -3; // Cache immediately, no countdown
+static constexpr int minInterval = -3; // After a hit, cache the next 3 attempts
+static constexpr int maxInterval = -3; // Never ramp up sampling, stay aggressive
+static constexpr unsigned maxSize = 3000; // Shaped text entries are large due to GlyphBuffer
+static constexpr unsigned maxTextLength = 128; // Larger than default to cache longer canvas text
+}
+
+using CachedTextShapingResult = std::unique_ptr<TextShapingResult>;
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::GlyphOverflow> {
+    static constexpr bool isEmptyValue(const WebCore::GlyphOverflow& value)
+    {
+        return MarkableTraits<WebCore::LayoutUnit>::isEmptyValue(value.left);
+    }
+
+    static constexpr WebCore::GlyphOverflow emptyValue()
+    {
+        return { .left = MarkableTraits<WebCore::LayoutUnit>::emptyValue(), .right = { }, .top = { }, .bottom = { }, .computeBounds = { } };
+    }
+};
+
+} // namespace WTF
+
+namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
@@ -73,8 +121,26 @@ public:
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
     unsigned generation() const { return m_generation; }
 
-    WidthCache& widthCache() { return m_widthCache; }
-    const WidthCache& widthCache() const { return m_widthCache; }
+    struct GlyphGeometryCacheEntry {
+        Markable<float> width;
+        Markable<GlyphOverflow> glyphOverflow;
+    };
+    using GlyphGeometryCache = TextMeasurementCache<GlyphGeometryCacheEntry>;
+    GlyphGeometryCache& glyphGeometryCache() { return m_glyphGeometryCache; }
+    const GlyphGeometryCache& glyphGeometryCache() const { return m_glyphGeometryCache; }
+
+    using ShapedTextCache = TextMeasurementCache<
+        CachedTextShapingResult,
+        ShapedTextCacheDefaults::initialInterval,
+        ShapedTextCacheDefaults::minInterval,
+        ShapedTextCacheDefaults::maxInterval,
+        ShapedTextCacheDefaults::maxSize,
+        ShapedTextCacheDefaults::maxTextLength
+    >;
+    ShapedTextCache& shapedTextCache() { return m_shapedTextCache; }
+    const ShapedTextCache& shapedTextCache() const { return m_shapedTextCache; }
+
+    const TextShapingResult* getOrCreateCachedShapedText(const TextRun&, const FontCascade&, unsigned from, std::optional<unsigned> to, ForTextEmphasis);
 
     const Font& primaryFont(const FontCascadeDescription&, FontSelector*);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, FontSelector*, unsigned fallbackIndex);
@@ -106,7 +172,7 @@ private:
 
         bool isNull() const { return !m_singleFont && !m_mixedFont; }
         bool isMixedFont() const { return !!m_mixedFont; }
-    
+
     private:
         // Only one of these is non-null.
         RefPtr<GlyphPage> m_singleFont;
@@ -115,11 +181,12 @@ private:
 
     EnumeratedArray<ResolvedEmojiPolicy, HashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>, ResolvedEmojiPolicy::RequireEmoji> m_cachedPages;
 
-    HashSet<RefPtr<Font>> m_systemFallbackFontSet;
+    HashSet<Ref<Font>> m_systemFallbackFontSet;
 
     SingleThreadWeakPtr<const Font> m_cachedPrimaryFont;
 
-    WidthCache m_widthCache;
+    GlyphGeometryCache m_glyphGeometryCache;
+    ShapedTextCache m_shapedTextCache;
 
     unsigned short m_generation { 0 };
     Pitch m_pitch { UnknownPitch };
@@ -159,7 +226,7 @@ inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& d
                     break;
                 WeakPtr font = localRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Forbid).font.get();
                 if (font && !font->isInterstitial()) {
-                    m_cachedPrimaryFont = WTFMove(font);
+                    m_cachedPrimaryFont = WTF::move(font);
                     break;
                 }
             }

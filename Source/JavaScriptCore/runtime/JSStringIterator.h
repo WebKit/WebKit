@@ -66,6 +66,8 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
+    static JSStringIterator* createWithInitialValues(VM&, Structure*);
+
     static JSStringIterator* create(VM& vm, Structure* structure, JSString* iteratedString)
     {
         JSStringIterator* instance = new (NotNull, allocateCell<JSStringIterator>(vm)) JSStringIterator(vm, structure);
@@ -85,6 +87,7 @@ private:
     {
     }
 
+    void finishCreation(VM&);
     void finishCreation(VM&, JSString* iteratedString);
 };
 

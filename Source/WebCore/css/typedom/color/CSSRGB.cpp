@@ -33,29 +33,32 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSRGB);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSRGB);
 
 static CSSColorRGBComp toCSSColorRGBComp(const RectifiedCSSColorRGBComp& component)
 {
-    return switchOn(component, [](const RefPtr<CSSKeywordValue>& keywordValue) -> CSSColorRGBComp {
-        return keywordValue;
-    }, [](const RefPtr<CSSNumericValue>& numericValue) -> CSSColorRGBComp {
-        return numericValue;
-    });
+    return switchOn(component,
+        [](const Ref<CSSKeywordValue>& keywordValue) -> CSSColorRGBComp {
+            return keywordValue;
+        },
+        [](const Ref<CSSNumericValue>& numericValue) -> CSSColorRGBComp {
+            return numericValue;
+        }
+    );
 }
 
 ExceptionOr<Ref<CSSRGB>> CSSRGB::create(CSSColorRGBComp&& red, CSSColorRGBComp&& green, CSSColorRGBComp&& blue, CSSColorPercent&& alpha)
 {
-    auto rectifiedRed = rectifyCSSColorRGBComp(WTFMove(red));
+    auto rectifiedRed = rectifyCSSColorRGBComp(WTF::move(red));
     if (rectifiedRed.hasException())
         return rectifiedRed.releaseException();
-    auto rectifiedGreen = rectifyCSSColorRGBComp(WTFMove(green));
+    auto rectifiedGreen = rectifyCSSColorRGBComp(WTF::move(green));
     if (rectifiedGreen.hasException())
         return rectifiedGreen.releaseException();
-    auto rectifiedBlue = rectifyCSSColorRGBComp(WTFMove(blue));
+    auto rectifiedBlue = rectifyCSSColorRGBComp(WTF::move(blue));
     if (rectifiedBlue.hasException())
         return rectifiedBlue.releaseException();
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
 
@@ -63,10 +66,10 @@ ExceptionOr<Ref<CSSRGB>> CSSRGB::create(CSSColorRGBComp&& red, CSSColorRGBComp&&
 }
 
 CSSRGB::CSSRGB(RectifiedCSSColorRGBComp&& red, RectifiedCSSColorRGBComp&& green, RectifiedCSSColorRGBComp&& blue, RectifiedCSSColorPercent&& alpha)
-    : m_red(WTFMove(red))
-    , m_green(WTFMove(green))
-    , m_blue(WTFMove(blue))
-    , m_alpha(WTFMove(alpha))
+    : m_red(WTF::move(red))
+    , m_green(WTF::move(green))
+    , m_blue(WTF::move(blue))
+    , m_alpha(WTF::move(alpha))
 {
 }
 
@@ -77,7 +80,7 @@ CSSColorRGBComp CSSRGB::r() const
 
 ExceptionOr<void> CSSRGB::setR(CSSColorRGBComp&& red)
 {
-    auto rectifiedRed = rectifyCSSColorRGBComp(WTFMove(red));
+    auto rectifiedRed = rectifyCSSColorRGBComp(WTF::move(red));
     if (rectifiedRed.hasException())
         return rectifiedRed.releaseException();
     m_red = rectifiedRed.releaseReturnValue();
@@ -91,7 +94,7 @@ CSSColorRGBComp CSSRGB::g() const
 
 ExceptionOr<void> CSSRGB::setG(CSSColorRGBComp&& green)
 {
-    auto rectifiedGreen = rectifyCSSColorRGBComp(WTFMove(green));
+    auto rectifiedGreen = rectifyCSSColorRGBComp(WTF::move(green));
     if (rectifiedGreen.hasException())
         return rectifiedGreen.releaseException();
     m_green = rectifiedGreen.releaseReturnValue();
@@ -105,7 +108,7 @@ CSSColorRGBComp CSSRGB::b() const
 
 ExceptionOr<void> CSSRGB::setB(CSSColorRGBComp&& blue)
 {
-    auto rectifiedBlue = rectifyCSSColorRGBComp(WTFMove(blue));
+    auto rectifiedBlue = rectifyCSSColorRGBComp(WTF::move(blue));
     if (rectifiedBlue.hasException())
         return rectifiedBlue.releaseException();
     m_blue = rectifiedBlue.releaseReturnValue();
@@ -119,7 +122,7 @@ CSSColorPercent CSSRGB::alpha() const
 
 ExceptionOr<void> CSSRGB::setAlpha(CSSColorPercent&& alpha)
 {
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
     m_alpha = rectifiedAlpha.releaseReturnValue();
@@ -129,19 +132,24 @@ ExceptionOr<void> CSSRGB::setAlpha(CSSColorPercent&& alpha)
 // https://drafts.css-houdini.org/css-typed-om-1/#rectify-a-csscolorrgbcomp
 ExceptionOr<RectifiedCSSColorRGBComp> CSSRGB::rectifyCSSColorRGBComp(CSSColorRGBComp&& component)
 {
-    return switchOn(WTFMove(component), [](double value) -> ExceptionOr<RectifiedCSSColorRGBComp> {
-        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::CSS_PERCENTAGE) } };
-    }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
-        if (numericValue->type().matchesNumber() || numericValue->type().matches<CSSNumericBaseType::Percent>())
-            return { WTFMove(numericValue) };
-        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_s };
-    }, [](String&& string) -> ExceptionOr<RectifiedCSSColorRGBComp> {
-        return { RefPtr<CSSKeywordValue> { CSSKeywordValue::rectifyKeywordish(WTFMove(string)) } };
-    }, [](RefPtr<CSSKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
-        if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
-            return { WTFMove(keywordValue) };
-        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_s };
-    });
+    return switchOn(WTF::move(component),
+        [](double value) -> ExceptionOr<RectifiedCSSColorRGBComp> {
+            return { Ref<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::CSS_PERCENTAGE) } };
+        },
+        [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
+            if (numericValue->type().matchesNumber() || numericValue->type().matches<CSSNumericBaseType::Percent>())
+                return { WTF::move(numericValue) };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_s };
+        },
+        [](String&& string) -> ExceptionOr<RectifiedCSSColorRGBComp> {
+            return { CSSKeywordValue::rectifyKeywordish(WTF::move(string)) };
+        },
+        [](Ref<CSSKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
+            if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
+                return { WTF::move(keywordValue) };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorRGBComp"_s };
+        }
+    );
 }
 
 } // namespace WebCore

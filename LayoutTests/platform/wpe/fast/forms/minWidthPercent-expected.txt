@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 0x0
 layer at (14,14) size 110x18 scrollWidth 138
   RenderBlock {DIV} at (3,3) size 110x18
-    RenderText {#text} at (0,0) size 137x17
+    RenderText {#text} at (0,0) size 137x18
       text run at (0,0) width 137: "Should fit in blue box"

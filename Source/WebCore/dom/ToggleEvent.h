@@ -30,12 +30,15 @@
 
 namespace WebCore {
 
+class Element;
+
 class ToggleEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ToggleEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ToggleEvent);
 public:
     struct Init : EventInit {
         String oldState;
         String newState;
+        RefPtr<Element> source;
     };
 
     static Ref<ToggleEvent> create(const AtomString& type, const Init&, Event::IsCancelable);
@@ -44,16 +47,16 @@ public:
 
     String oldState() const { return m_oldState; }
     String newState() const { return m_newState; }
+    RefPtr<Element> source() const;
 
 private:
     ToggleEvent();
     ToggleEvent(const AtomString&, const Init&, Event::IsCancelable);
     ToggleEvent(const AtomString&, const Init&);
 
-    bool isToggleEvent() const final { return true; }
-
     String m_oldState;
     String m_newState;
+    const RefPtr<Element> m_source;
 };
 
 } // namespace WebCore

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: HierarchyRequestError: The operation would yield an incorrect node tree.
+This tests inserting a new node to be removed during unload of an iframe. WebKit should not hit a crash.
+
+PASS

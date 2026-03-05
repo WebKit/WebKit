@@ -89,7 +89,7 @@ if (is_android) {
     testonly = true
     apk_name = "AppRTCMobile"
     android_manifest = "androidapp/AndroidManifest.xml"
-    min_sdk_version = 21
+    min_sdk_version = 23
     target_sdk_version = 31
 
     deps = [
@@ -200,7 +200,7 @@ if (is_android) {
   rtc_instrumentation_test_apk("AppRTCMobile_test_apk") {
     apk_name = "AppRTCMobileTest"
     android_manifest = "androidtests/AndroidManifest.xml"
-    min_sdk_version = 21
+    min_sdk_version = 23
     target_sdk_version = 31
 
     sources = [
@@ -341,7 +341,6 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:helpers_objc",
         "../sdk:mediaconstraints_objc",
         "../sdk:metal_objc",
-        "../sdk:peerconnectionfactory_base_objc",
         "../sdk:peerconnectionfactory_base_objc",
         "../sdk:videocapture_objc",
         "../sdk:videocodec_objc",
@@ -542,7 +541,6 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:mediaconstraints_objc",
         "../sdk:metal_objc",
         "../sdk:peerconnectionfactory_base_objc",
-        "../sdk:peerconnectionfactory_base_objc",
         "../sdk:videocapture_objc",
         "../sdk:videocodec_objc",
       ]
@@ -685,6 +683,7 @@ if (is_linux || is_chromeos || is_win) {
       "../api:create_modular_peer_connection_factory",
       "../api:enable_media",
       "../api:field_trials",
+      "../api:jsep",
       "../api:libjingle_peerconnection_api",
       "../api:make_ref_counted",
       "../api:media_stream_interface",
@@ -814,6 +813,8 @@ if (is_linux || is_chromeos || is_win) {
     sources = [ "turnserver/turnserver_main.cc" ]
     deps = [
       ":read_auth_file",
+      "../api/environment",
+      "../api/environment:environment_factory",
       "../p2p:basic_packet_socket_factory",
       "../p2p:p2p_server_utils",
       "../p2p:port_interface",
@@ -823,6 +824,7 @@ if (is_linux || is_chromeos || is_win) {
       "../rtc_base:socket_address",
       "../rtc_base:socket_server",
       "../rtc_base:threading",
+      "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings",
     ]
   }
@@ -830,6 +832,7 @@ if (is_linux || is_chromeos || is_win) {
     testonly = true
     sources = [ "stunserver/stunserver_main.cc" ]
     deps = [
+      "../api/environment:environment_factory",
       "../p2p:p2p_server_utils",
       "../pc:rtc_pc",
       "../rtc_base:async_udp_socket",

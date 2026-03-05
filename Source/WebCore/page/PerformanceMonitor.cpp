@@ -59,7 +59,7 @@ static constexpr const double postPageLoadCPUUsageDomainReportingThreshold { 20.
 static constexpr const uint64_t postPageLoadMemoryUsageDomainReportingThreshold { 2048 * MB };
 #endif
 
-static inline ActivityStateForCPUSampling activityStateForCPUSampling(OptionSet<ActivityState> state)
+static inline ActivityStateForCPUSampling NODELETE activityStateForCPUSampling(OptionSet<ActivityState> state)
 {
     if (!(state & ActivityState::IsVisible))
         return ActivityStateForCPUSampling::NonVisible;
@@ -302,7 +302,7 @@ void PerformanceMonitor::measureCPUUsageInActivityState(ActivityStateForCPUSampl
 #endif
     page->chrome().client().reportProcessCPUTime((cpuTime.value().systemTime + cpuTime.value().userTime) - (m_perActivityStateCPUTime.value().systemTime + m_perActivityStateCPUTime.value().userTime), activityState);
 
-    m_perActivityStateCPUTime = WTFMove(cpuTime);
+    m_perActivityStateCPUTime = WTF::move(cpuTime);
 }
 
 void PerformanceMonitor::processMayBecomeInactiveTimerFired()

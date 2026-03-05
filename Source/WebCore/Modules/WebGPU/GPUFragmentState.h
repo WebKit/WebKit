@@ -36,7 +36,6 @@ namespace WebCore {
 struct GPUFragmentState : public GPUProgrammableStage {
     WebGPU::FragmentState convertToBacking() const
     {
-        ASSERT(module);
         return {
             {
                 module->backing(),

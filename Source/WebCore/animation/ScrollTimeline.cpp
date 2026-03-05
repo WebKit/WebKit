@@ -39,8 +39,13 @@
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StylableInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleSingleAnimationRange.h"
 #include "WebAnimation.h"
+
+#if ENABLE(THREADED_ANIMATIONS)
+#include "AcceleratedEffectStackUpdater.h"
+#endif
 
 #ifndef NDEBUG
 #include "Settings.h"
@@ -70,7 +75,7 @@ Ref<ScrollTimeline> ScrollTimeline::create(Document& document, ScrollTimelineOpt
     timeline->setAxis(options.axis);
 
     if (auto source = timeline->m_source.element()) {
-        source->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        protect(source->document())->updateLayoutIgnorePendingStylesheets();
         timeline->cacheCurrentTime();
     }
 
@@ -109,6 +114,7 @@ ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)
 {
     m_axis = axis;
     m_name = name;
+    m_isStyleOriginated = true;
 }
 
 ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
@@ -116,14 +122,15 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
 {
     m_axis = axis;
     m_scroller = scroller;
+    m_isStyleOriginated = true;
 }
 
-Element* ScrollTimeline::bindingsSource() const
+RefPtr<Element> ScrollTimeline::bindingsSource() const
 {
     return source();
 }
 
-Element* ScrollTimeline::source() const
+RefPtr<Element> ScrollTimeline::source() const
 {
     auto source = m_source.styleable();
     if (!source)
@@ -137,19 +144,19 @@ Element* ScrollTimeline::source() const
                     Ref document = nearestSource->document();
                     RefPtr documentElement = document->documentElement();
                     if (nearestSource != documentElement)
-                        return nearestSource.unsafeGet();
+                        return nearestSource;
                     // RenderObject::enclosingScrollableContainer() will return the document element even in
                     // quirks mode, but the scrolling element in that case is the <body> element, so we must
                     // make sure to return Document::scrollingElement() in case the document element is
                     // returned by enclosingScrollableContainer() but it was not explicitly set as the source.
-                    return &source->element == documentElement ? nearestSource.unsafeGet() : document->scrollingElement();
+                    return &source->element == documentElement ? nearestSource : document->scrollingElement();
                 }
             }
         }
         return nullptr;
     }
     case Scroller::Root:
-        return source->element.protectedDocument()->scrollingElement();
+        return protect(source->element.document())->scrollingElement();
     case Scroller::Self:
         return &source->element;
     }
@@ -181,13 +188,13 @@ void ScrollTimeline::setSource(const Styleable& styleable)
 
     removeTimelineFromDocument(previousSource.get());
 
-    styleable.element.protectedDocument()->ensureTimelinesController().addTimeline(*this);
+    protect(styleable.element.document())->ensureTimelinesController().addTimeline(*this);
 }
 
 void ScrollTimeline::removeTimelineFromDocument(Element* element)
 {
     if (element) {
-        if (CheckedPtr timelinesController = element->protectedDocument()->timelinesController())
+        if (CheckedPtr timelinesController = protect(element->document())->timelinesController())
             timelinesController->removeTimeline(*this);
     }
 }
@@ -207,7 +214,7 @@ ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection(
                 return renderer->style().writingMode();
         }
 
-        return { RenderStyle::initialWritingMode(), RenderStyle::initialDirection(), RenderStyle::initialTextOrientation() };
+        return { Style::ComputedStyle::initialWritingMode(), Style::ComputedStyle::initialDirection(), Style::ComputedStyle::initialTextOrientation() };
     }();
 
     auto isVertical = [&] {
@@ -244,31 +251,40 @@ ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection(
     return { isVertical, isReversed };
 }
 
+auto ScrollTimeline::computeCurrentTimeData() const -> CurrentTimeData
+{
+    RefPtr source = this->source();
+    if (!source)
+        return { };
+    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
+    if (!sourceScrollableArea)
+        return { };
+    auto scrollDirection = resolvedScrollDirection();
+    float scrollOffset = scrollDirection.isVertical ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
+    float maxScrollOffset = scrollDirection.isVertical ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
+    // Chrome appears to clip the current time of a scroll timeline in the [0-100] range.
+    // We match this behavior for compatibility reasons, see https://github.com/w3c/csswg-drafts/issues/11033.
+    if (maxScrollOffset > 0)
+        scrollOffset = std::clamp(scrollOffset, 0.f, maxScrollOffset);
+    return { scrollOffset, maxScrollOffset };
+}
+
 void ScrollTimeline::cacheCurrentTime()
 {
     auto previousMaxScrollOffset = m_cachedCurrentTimeData.maxScrollOffset;
+    m_cachedCurrentTimeData = computeCurrentTimeData();
+    if (previousMaxScrollOffset != m_cachedCurrentTimeData.maxScrollOffset)
+        sourceMetricsDidChange();
+}
 
-    m_cachedCurrentTimeData = [&] -> CurrentTimeData {
-        RefPtr source = this->source();
-        if (!source)
-            return { };
-        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
-        if (!sourceScrollableArea)
-            return { };
-        auto scrollDirection = resolvedScrollDirection();
-        float scrollOffset = scrollDirection.isVertical ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
-        float maxScrollOffset = scrollDirection.isVertical ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
-        // Chrome appears to clip the current time of a scroll timeline in the [0-100] range.
-        // We match this behavior for compatibility reasons, see https://github.com/w3c/csswg-drafts/issues/11033.
-        if (maxScrollOffset > 0)
-            scrollOffset = std::clamp(scrollOffset, 0.f, maxScrollOffset);
-        return { scrollOffset, maxScrollOffset };
-    }();
-
-    if (previousMaxScrollOffset != m_cachedCurrentTimeData.maxScrollOffset) {
-        for (auto& animation : m_animations)
-            animation->progressBasedTimelineSourceDidChangeMetrics();
-    }
+void ScrollTimeline::sourceMetricsDidChange()
+{
+    for (auto& animation : m_animations)
+        animation->progressBasedTimelineSourceDidChangeMetrics();
+#if ENABLE(THREADED_ANIMATIONS)
+    if (m_acceleratedRepresentation)
+        scheduleAcceleratedRepresentationUpdate();
+#endif
 }
 
 AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ScrollTimeline::documentWillUpdateAnimationsAndSendEvents()
@@ -306,7 +322,7 @@ void ScrollTimeline::updateCurrentTimeIfStale()
     }
 
     if (needsStyleUpdate)
-        source->element.protectedDocument()->updateStyleIfNeeded();
+        protect(source->element.document())->updateStyleIfNeeded();
 }
 
 void ScrollTimeline::setTimelineScopeElement(const Element& element)
@@ -331,14 +347,15 @@ Style::SingleAnimationRange ScrollTimeline::defaultRange() const
     return Style::SingleAnimationRange::defaultForScrollTimeline();
 }
 
-ScrollTimeline::Data ScrollTimeline::computeTimelineData() const
+ScrollTimeline::Data ScrollTimeline::computeTimelineData(UseCachedCurrentTime useCachedCurrentTime) const
 {
-    if (!m_cachedCurrentTimeData.scrollOffset && !m_cachedCurrentTimeData.maxScrollOffset)
+    auto currentTimeData = useCachedCurrentTime == UseCachedCurrentTime::Yes ? m_cachedCurrentTimeData : computeCurrentTimeData();
+    if (!currentTimeData.scrollOffset && !currentTimeData.maxScrollOffset)
         return { };
     return {
-        m_cachedCurrentTimeData.scrollOffset,
+        currentTimeData.scrollOffset,
         0.f,
-        m_cachedCurrentTimeData.maxScrollOffset
+        currentTimeData.maxScrollOffset
     };
 }
 
@@ -362,12 +379,12 @@ std::pair<WebAnimationTime, WebAnimationTime> ScrollTimeline::intervalForAttachm
     };
 }
 
-std::optional<WebAnimationTime> ScrollTimeline::currentTime(UseCachedCurrentTime)
+std::optional<WebAnimationTime> ScrollTimeline::currentTime(UseCachedCurrentTime useCachedCurrentTime)
 {
     // https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-progress
     // Progress (the current time) for a scroll progress timeline is calculated as:
     // scroll offset ÷ (scrollable overflow size − scroll container size)
-    auto data = computeTimelineData();
+    auto data = computeTimelineData(useCachedCurrentTime);
     auto range = data.rangeEnd - data.rangeStart;
     if (!range)
         return { };
@@ -386,12 +403,17 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
     if (!source || !animation.pending() || animation.isEffectInvalidationSuspended())
         return;
 
-    if (RefPtr page = source->element.protectedDocument()->page())
+    if (RefPtr page = protect(source->element.document())->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
 }
 
+bool ScrollTimeline::matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction& scrollFunction, const Styleable& source) const
+{
+    return m_isStyleOriginated && m_name.isEmpty() && m_scroller == scrollFunction->scroller && m_axis == scrollFunction->axis && m_source.styleable() == source;
+}
+
 #if ENABLE(THREADED_ANIMATIONS)
-bool ScrollTimeline::computeCanBeAccelerated() const
+bool ScrollTimeline::canBeAccelerated() const
 {
     RefPtr source = this->source();
     if (!source)
@@ -403,7 +425,17 @@ bool ScrollTimeline::computeCanBeAccelerated() const
     return sourceScrollableArea && !!sourceScrollableArea->scrollingNodeID();
 }
 
-Ref<AcceleratedTimeline> ScrollTimeline::createAcceleratedRepresentation() const
+void ScrollTimeline::scheduleAcceleratedRepresentationUpdate()
+{
+    if (RefPtr source = this->source()) {
+        if (RefPtr page = protect(source->document())->page()) {
+            if (auto* acceleratedTimelinesUpdater = page->acceleratedTimelinesUpdater())
+                acceleratedTimelinesUpdater->scrollTimelineDidChange(*this);
+        }
+    }
+}
+
+ProgressResolutionData ScrollTimeline::computeProgressResolutionData() const
 {
     ASSERT(this->source());
     ASSERT(this->source()->document().settings().threadedScrollDrivenAnimationsEnabled());
@@ -416,15 +448,37 @@ Ref<AcceleratedTimeline> ScrollTimeline::createAcceleratedRepresentation() const
     auto direction = resolvedScrollDirection();
     auto data = computeTimelineData();
 
-    return AcceleratedTimeline::create(m_acceleratedTimelineIdentifier, {
-        *sourceScrollableArea->scrollingNodeID(),
-        *duration(),
-        direction.isVertical,
-        direction.isReversed,
-        data.scrollOffset,
-        data.rangeStart,
-        data.rangeEnd
-    });
+    return {
+        .source = *sourceScrollableArea->scrollingNodeID(),
+        .duration = *duration(),
+        .isVertical = direction.isVertical,
+        .isReversed = direction.isReversed,
+        .scrollOffset = data.scrollOffset,
+        .rangeStart = data.rangeStart,
+        .rangeEnd = data.rangeEnd
+    };
+}
+
+void ScrollTimeline::updateAcceleratedRepresentation()
+{
+    if (m_acceleratedRepresentation)
+        m_acceleratedRepresentation->setProgressResolutionData(computeProgressResolutionData());
+}
+
+Ref<AcceleratedTimeline> ScrollTimeline::createAcceleratedRepresentation() const
+{
+    return AcceleratedTimeline::create(m_acceleratedTimelineIdentifier, computeProgressResolutionData());
+}
+
+std::optional<ScrollingNodeID> ScrollTimeline::scrollingNodeIDForTesting() const
+{
+    if (!m_acceleratedRepresentation)
+        return std::nullopt;
+    if (RefPtr source = this->source()) {
+        if (CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document()))
+            return sourceScrollableArea->scrollingNodeID();
+    }
+    return std::nullopt;
 }
 #endif
 

@@ -67,7 +67,7 @@ public:
 
     // disable and enable termination of the process. when disableTermination is called, the
     // process won't terminate unless a corresponding enableTermination call is made.
-    void disableTermination();
+    void NODELETE disableTermination();
     void enableTermination();
 
     void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&);
@@ -100,9 +100,8 @@ public:
     static void applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix);
 
     IPC::Connection* parentProcessConnection() const { return m_connection.get(); }
-    RefPtr<IPC::Connection> protectedParentProcessConnection() const { return parentProcessConnection(); }
 
-    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
+    IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
 
 #if PLATFORM(COCOA)
     static bool isSystemWebKit();
@@ -137,11 +136,7 @@ protected:
     virtual RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const { return { }; }
 #endif // USE(OS_STATE)
 
-#if USE(APPKIT)
-    static void stopNSAppRunLoop();
-#endif
-    
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
+#if PLATFORM(MAC)
     static void stopNSRunLoop();
 #endif
 
@@ -207,7 +202,7 @@ private:
 
     bool m_isInShutDown { false };
 
-    RefPtr<IPC::Connection> m_connection;
+    const RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
 
     UserActivity m_processSuppressionDisabled;

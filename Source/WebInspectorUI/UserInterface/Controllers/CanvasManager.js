@@ -146,7 +146,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     {
         let canvas = WI.Canvas.fromPayload(target, canvasPayload);
 
-        let canvasForIdentifierMap = this._canvasForIdentifierForTargetMap.getOrInitialize(target, () => new Map);
+        let canvasForIdentifierMap = this._canvasForIdentifierForTargetMap.getOrInsert(target, new Map);
         console.assert(!canvasForIdentifierMap.has(canvas.identifier), `Canvas already exists with id ${canvas.identifier}.`);
         canvasForIdentifierMap.set(canvas.identifier, canvas);
 
@@ -260,7 +260,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
         let program = new WI.ShaderProgram(target, shaderProgramPayload.programId, programType, canvas, options);
 
-        let shaderProgramForIdentifierMap = this._shaderProgramForIdentifierForTargetMap.getOrInitialize(target, () => new Map);
+        let shaderProgramForIdentifierMap = this._shaderProgramForIdentifierForTargetMap.getOrInsert(target, new Map);
         console.assert(!shaderProgramForIdentifierMap.has(program.identifier), `ShaderProgram already exists with id ${program.identifier}.`);
         shaderProgramForIdentifierMap.set(program.identifier, program);
 

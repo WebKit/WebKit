@@ -30,9 +30,11 @@
 
 #import "AXIsolatedObject.h"
 #import "AXLiveRegionManager.h"
+#import "AXLoggerBase.h"
 #import "AXNotifications.h"
 #import "AXObjectCacheInlines.h"
 #import "AXSearchManager.h"
+#import "AXUtilities.h"
 #import "AccessibilityObject.h"
 #import "CocoaAccessibilityConstants.h"
 #import "DeprecatedGlobalSettings.h"
@@ -51,10 +53,8 @@
 #import <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
-#endif
 
 // Very large strings can negatively impact the performance of notifications, so this length is chosen to try to fit an average paragraph or line of text, but not allow strings to be large enough to hurt performance.
 static const NSUInteger AXValueChangeTruncationLength = 1000;
@@ -109,84 +109,84 @@ typedef CF_ENUM(UInt32, AXTextSelectionGranularity)
 
 #endif // AXTextStateChangeDefined
 
-static AXTextStateChangeType platformChangeTypeForWebCoreChangeType(WebCore::AXTextStateChangeType changeType)
+static AXTextStateChangeType NODELETE platformChangeTypeForWebCoreChangeType(WebCore::AXTextStateChangeType changeType)
 {
     switch (changeType) {
-    case WebCore::AXTextStateChangeTypeUnknown:
+    case WebCore::AXTextStateChangeType::Unknown:
         return kAXTextStateChangeTypeUnknown;
-    case WebCore::AXTextStateChangeTypeEdit:
+    case WebCore::AXTextStateChangeType::Edit:
         return kAXTextStateChangeTypeEdit;
-    case WebCore::AXTextStateChangeTypeSelectionMove:
+    case WebCore::AXTextStateChangeType::SelectionMove:
         return kAXTextStateChangeTypeSelectionMove;
-    case WebCore::AXTextStateChangeTypeSelectionExtend:
+    case WebCore::AXTextStateChangeType::SelectionExtend:
         return kAXTextStateChangeTypeSelectionExtend;
-    case WebCore::AXTextStateChangeTypeSelectionBoundary:
+    case WebCore::AXTextStateChangeType::SelectionBoundary:
         return kAXTextStateChangeTypeSelectionBoundary;
     }
 }
 
-static AXTextEditType platformEditTypeForWebCoreEditType(WebCore::AXTextEditType changeType)
+static AXTextEditType NODELETE platformEditTypeForWebCoreEditType(WebCore::AXTextEditType changeType)
 {
     switch (changeType) {
-    case WebCore::AXTextEditTypeUnknown:
+    case WebCore::AXTextEditType::Unknown:
         return kAXTextEditTypeUnknown;
-    case WebCore::AXTextEditTypeDelete:
+    case WebCore::AXTextEditType::Delete:
         return kAXTextEditTypeDelete;
-    case WebCore::AXTextEditTypeInsert:
+    case WebCore::AXTextEditType::Insert:
         return kAXTextEditTypeInsert;
-    case WebCore::AXTextEditTypeTyping:
+    case WebCore::AXTextEditType::Typing:
         return kAXTextEditTypeTyping;
-    case WebCore::AXTextEditTypeDictation:
+    case WebCore::AXTextEditType::Dictation:
         return kAXTextEditTypeDictation;
-    case WebCore::AXTextEditTypeCut:
+    case WebCore::AXTextEditType::Cut:
         return kAXTextEditTypeCut;
-    case WebCore::AXTextEditTypePaste:
+    case WebCore::AXTextEditType::Paste:
         return kAXTextEditTypePaste;
-    case WebCore::AXTextEditTypeReplace:
+    case WebCore::AXTextEditType::Replace:
         return kAXTextEditTypeUnknown; // Does not exist in platform enum.
-    case WebCore::AXTextEditTypeAttributesChange:
+    case WebCore::AXTextEditType::AttributesChange:
         return kAXTextEditTypeAttributesChange;
     }
 }
 
-static AXTextSelectionDirection platformDirectionForWebCoreDirection(WebCore::AXTextSelectionDirection direction)
+static AXTextSelectionDirection NODELETE platformDirectionForWebCoreDirection(WebCore::AXTextSelectionDirection direction)
 {
     switch (direction) {
-    case WebCore::AXTextSelectionDirectionUnknown:
+    case WebCore::AXTextSelectionDirection::Unknown:
         return kAXTextSelectionDirectionUnknown;
-    case WebCore::AXTextSelectionDirectionBeginning:
+    case WebCore::AXTextSelectionDirection::Beginning:
         return kAXTextSelectionDirectionBeginning;
-    case WebCore::AXTextSelectionDirectionEnd:
+    case WebCore::AXTextSelectionDirection::End:
         return kAXTextSelectionDirectionEnd;
-    case WebCore::AXTextSelectionDirectionPrevious:
+    case WebCore::AXTextSelectionDirection::Previous:
         return kAXTextSelectionDirectionPrevious;
-    case WebCore::AXTextSelectionDirectionNext:
+    case WebCore::AXTextSelectionDirection::Next:
         return kAXTextSelectionDirectionNext;
-    case WebCore::AXTextSelectionDirectionDiscontiguous:
+    case WebCore::AXTextSelectionDirection::Discontiguous:
         return kAXTextSelectionDirectionDiscontiguous;
     }
 }
 
-static AXTextSelectionGranularity platformGranularityForWebCoreGranularity(WebCore::AXTextSelectionGranularity granularity)
+static AXTextSelectionGranularity NODELETE platformGranularityForWebCoreGranularity(WebCore::AXTextSelectionGranularity granularity)
 {
     switch (granularity) {
-    case WebCore::AXTextSelectionGranularityUnknown:
+    case WebCore::AXTextSelectionGranularity::Unknown:
         return kAXTextSelectionGranularityUnknown;
-    case WebCore::AXTextSelectionGranularityCharacter:
+    case WebCore::AXTextSelectionGranularity::Character:
         return kAXTextSelectionGranularityCharacter;
-    case WebCore::AXTextSelectionGranularityWord:
+    case WebCore::AXTextSelectionGranularity::Word:
         return kAXTextSelectionGranularityWord;
-    case WebCore::AXTextSelectionGranularityLine:
+    case WebCore::AXTextSelectionGranularity::Line:
         return kAXTextSelectionGranularityLine;
-    case WebCore::AXTextSelectionGranularitySentence:
+    case WebCore::AXTextSelectionGranularity::Sentence:
         return kAXTextSelectionGranularitySentence;
-    case WebCore::AXTextSelectionGranularityParagraph:
+    case WebCore::AXTextSelectionGranularity::Paragraph:
         return kAXTextSelectionGranularityParagraph;
-    case WebCore::AXTextSelectionGranularityPage:
+    case WebCore::AXTextSelectionGranularity::Page:
         return kAXTextSelectionGranularityPage;
-    case WebCore::AXTextSelectionGranularityDocument:
+    case WebCore::AXTextSelectionGranularity::Document:
         return kAXTextSelectionGranularityDocument;
-    case WebCore::AXTextSelectionGranularityAll:
+    case WebCore::AXTextSelectionGranularity::All:
         return kAXTextSelectionGranularityAll;
     }
 }
@@ -243,9 +243,7 @@ static void exerciseIsIgnored(AccessibilityObject& object)
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     bool skipSystemNotification = false;
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
@@ -376,11 +374,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
 
 void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     NSDictionary *userInfo = @{ NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
         NSAccessibilityAnnouncementKey: message.createNSString().get(),
@@ -389,58 +385,55 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 
     // To simplify monitoring of notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back.
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->view()))
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
     }
 }
 
-void AXObjectCache::postPlatformARIANotifyNotification(const String& announcement, NotifyPriority priority, InterruptBehavior interruptBehavior, const String& language)
+void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject& object, const AriaNotifyData& notificationData)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     NSDictionary *userInfo = @{
-        NSAccessibilityARIAAnnouncementPriority: notifyPriorityToAXValueString(priority).get(),
-        NSAccessibilityARIAAnnouncementInterrupt: interruptBehaviorToAXValueString(interruptBehavior).get(),
-        NSAccessibilityAnnouncementKey: announcement.createNSString().get(),
-        NSAccessibilityAnnouncementLanguageKey: language.createNSString().get()
+        NSAccessibilityARIAAnnouncementPriority: notifyPriorityToAXValueString(notificationData.priority).get(),
+        NSAccessibilityARIAAnnouncementInterrupt: interruptBehaviorToAXValueString(notificationData.interrupt).get(),
+        NSAccessibilityAnnouncementKey: notificationData.message.createNSString().get(),
+        NSAccessibilityAnnouncementLanguageKey: notificationData.language.createNSString().get()
     };
-    NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, userInfo);
+
+    NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo);
 
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->view()))
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
     }
 }
 
-void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject& object, LiveRegionStatus status, const String& announcement)
+void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject& object, const LiveRegionAnnouncementData& liveRegionData)
 {
-    RetainPtr userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:announcement.createNSString().get(), NSAccessibilityAnnouncementKey, @(status == LiveRegionStatus::Assertive ? NSAccessibilityPriorityHigh : NSAccessibilityPriorityLow), NSAccessibilityPriorityKey, @(YES), NSAccessibilityAnnouncementIsLiveRegionKey, nil]);
+    RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:liveRegionData.message.nsAttributedString().get(), NSAccessibilityAnnouncementKey, @(liveRegionData.status == LiveRegionStatus::Assertive ? NSAccessibilityPriorityHigh : NSAccessibilityPriorityLow), NSAccessibilityPriorityKey, @(YES), NSAccessibilityAnnouncementIsLiveRegionKey, nil]);
+
     NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo.get());
 
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->view()))
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo.get()];
     }
 }
 
 void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)
 {
-    RefPtr object = getOrCreate(document.renderView());
-    if (!object || !object->isWebArea())
-        return;
-    queueUnsortedObject(object.releaseNonNull(), PreSortedObjectType::WebArea);
+    m_deferredDocumentsWithNewRenderTrees.append(document);
+
+    if (!m_performCacheUpdateTimer.isActive() && !m_performingDeferredCacheUpdate)
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::deferSortForNewLiveRegion(Ref<AccessibilityObject>&& object)
 {
-    if (m_liveRegionManager)
-        return;
-
-    queueUnsortedObject(WTFMove(object), PreSortedObjectType::LiveRegion);
+    queueUnsortedObject(WTF::move(object), PreSortedObjectType::LiveRegion);
 }
 
 void AXObjectCache::queueUnsortedObject(Ref<AccessibilityObject>&& object, PreSortedObjectType type)
@@ -452,15 +445,17 @@ void AXObjectCache::queueUnsortedObject(Ref<AccessibilityObject>&& object, PreSo
     auto unsortedObjectListIterator = m_deferredUnsortedObjects.ensure(type, [&] {
         return Vector<Ref<AccessibilityObject>>();
     }).iterator;
-    unsortedObjectListIterator->value.appendIfNotContains(WTFMove(object));
+    unsortedObjectListIterator->value.appendIfNotContains(WTF::move(object));
 
     if (!m_performCacheUpdateTimer.isActive() && !m_performingDeferredCacheUpdate)
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
 {
+    if (!isIsolatedTreeEnabled())
+        return;
+
     // The wrapper associated with a published notification may not have an isolated object yet.
     // This should only happen when the live object is ignored, meaning we will never create an isolated object for it.
     // This is generally correct, but not in this case, since AX clients will try to query this wrapper but the wrapper
@@ -474,14 +469,13 @@ void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
     if (object.isIgnored())
         deferAddUnconnectedNode(object);
 }
-#endif
 
 AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObject& object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
 {
     if (!object.isTextControl() && !object.editableAncestor())
         return originalIntent;
 
-    if (originalIntent.selection.direction != AXTextSelectionDirectionDiscontiguous || object.objectID() != m_lastTextFieldAXID || m_lastSelection == selection) {
+    if (originalIntent.selection.direction != AXTextSelectionDirection::Discontiguous || object.objectID() != m_lastTextFieldAXID || m_lastSelection == selection) {
         m_lastTextFieldAXID = object.objectID();
         m_lastSelection = selection;
         return originalIntent;
@@ -491,24 +485,24 @@ AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObj
     if (m_lastSelection.isCaret() && selection.isCaret()) {
         // Cursor movement
         if (selection.visibleStart() == m_lastSelection.visibleStart().next(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionMove;
-            intent.selection.direction = AXTextSelectionDirectionNext;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionMove;
+            intent.selection.direction = AXTextSelectionDirection::Next;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         } else if (selection.visibleStart() == m_lastSelection.visibleStart().previous(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionMove;
-            intent.selection.direction = AXTextSelectionDirectionPrevious;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionMove;
+            intent.selection.direction = AXTextSelectionDirection::Previous;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         }
     } else if (selection.visibleBase() == m_lastSelection.visibleBase()) {
         // Selection
         if (selection.visibleExtent() == m_lastSelection.visibleExtent().next(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionExtend;
-            intent.selection.direction = AXTextSelectionDirectionNext;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionExtend;
+            intent.selection.direction = AXTextSelectionDirection::Next;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         } else if (selection.visibleExtent() == m_lastSelection.visibleExtent().previous(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionExtend;
-            intent.selection.direction = AXTextSelectionDirectionPrevious;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionExtend;
+            intent.selection.direction = AXTextSelectionDirection::Previous;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         }
     }
 
@@ -527,39 +521,37 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
     if (!axObject)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     auto intent = inferDirectionFromIntent(*axObject, originalIntent, selection);
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
         [userInfo setObject:@YES forKey:NSAccessibilityTextStateSyncKey];
-    if (intent.type != AXTextStateChangeTypeUnknown) {
+    if (intent.type != AXTextStateChangeType::Unknown) {
         [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(intent.type)) forKey:NSAccessibilityTextStateChangeTypeKey];
         switch (intent.type) {
-        case AXTextStateChangeTypeSelectionMove:
-        case AXTextStateChangeTypeSelectionExtend:
-        case AXTextStateChangeTypeSelectionBoundary:
+        case AXTextStateChangeType::SelectionMove:
+        case AXTextStateChangeType::SelectionExtend:
+        case AXTextStateChangeType::SelectionBoundary:
             [userInfo setObject:@(platformDirectionForWebCoreDirection(intent.selection.direction)) forKey:NSAccessibilityTextSelectionDirection];
             switch (intent.selection.direction) {
-            case AXTextSelectionDirectionUnknown:
+            case AXTextSelectionDirection::Unknown:
                 break;
-            case AXTextSelectionDirectionBeginning:
-            case AXTextSelectionDirectionEnd:
-            case AXTextSelectionDirectionPrevious:
-            case AXTextSelectionDirectionNext:
+            case AXTextSelectionDirection::Beginning:
+            case AXTextSelectionDirection::End:
+            case AXTextSelectionDirection::Previous:
+            case AXTextSelectionDirection::Next:
                 [userInfo setObject:@(platformGranularityForWebCoreGranularity(intent.selection.granularity)) forKey:NSAccessibilityTextSelectionGranularity];
                 break;
-            case AXTextSelectionDirectionDiscontiguous:
+            case AXTextSelectionDirection::Discontiguous:
                 break;
             }
             if (intent.selection.focusChange)
                 [userInfo setObject:@(intent.selection.focusChange) forKey:NSAccessibilityTextSelectionChangedFocus];
             break;
-        case AXTextStateChangeTypeUnknown:
-        case AXTextStateChangeTypeEdit:
+        case AXTextStateChangeType::Unknown:
+        case AXTextStateChangeType::Edit:
             break;
         }
     }
@@ -570,9 +562,7 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
 
     if (id wrapper = axObject->wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         createIsolatedObjectIfNeeded(*axObject);
-#endif
     }
 
     if (RefPtr root = rootWebArea()) {
@@ -584,7 +574,7 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
 
 static void addTextMarkerForVisiblePosition(NSMutableDictionary *change, AXObjectCache& cache, const VisiblePosition& position)
 {
-    ASSERT(!position.isNull());
+    AX_ASSERT(!position.isNull());
 
     if (RetainPtr marker = textMarkerForVisiblePosition(&cache, position))
         [change setObject:(__bridge id)marker.get() forKey:NSAccessibilityTextChangeValueStartMarker];
@@ -624,22 +614,20 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     if (!text.length())
         return;
 
-    postTextReplacementPlatformNotification(object, AXTextEditTypeUnknown, emptyString(), type, text, position);
+    postTextReplacementPlatformNotification(object, AXTextEditType::Unknown, emptyString(), type, text, position);
 }
 
 void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, AccessibilityObject& object, RetainPtr<NSMutableArray> changes)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
-    [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeTypeEdit)) forKey:NSAccessibilityTextStateChangeTypeKey];
+    [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeType::Edit)) forKey:NSAccessibilityTextStateChangeTypeKey];
     auto changesArray = changes.autorelease();
     if (changesArray.count)
         [userInfo setObject:changesArray forKey:NSAccessibilityTextChangeValues];
 
     if (id wrapper = object.wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         createIsolatedObjectIfNeeded(object);
-#endif
     }
 
     AXPostNotificationWithUserInfo(rootWebArea.wrapper(), NSAccessibilityValueChangedNotification, userInfo.get());
@@ -656,9 +644,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
     if (!axObject)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, deletionType, deletedText, position))
@@ -679,14 +665,12 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
     if (!axObject)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditTypeDelete, deletedText, { }))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditType::Delete, deletedText, { }))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditTypeInsert, insertedText, { }))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditType::Insert, insertedText, { }))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
@@ -710,7 +694,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(RenderView* renderView
     }
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element*)
+void AXObjectCache::platformHandleFocusedUIElementChanged(AccessibilityObject*, AccessibilityObject*)
 {
     NSAccessibilityHandleFocusChanged();
     // AXFocusChanged is a test specific notification name and not something a real AT will be listening for
@@ -721,7 +705,12 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element*)
     if (!rootWebArea)
         return;
 
-    [rootWebArea->wrapper() accessibilityPostedNotification:NSAccessibilityFocusChangedNotification userInfo:nil];
+    callOnMainThread([webArea = rootWebArea] {
+        // Do not post focus-changed notifications to layout tests synchronously. Otherwise JS event
+        // handlers could dirty style / layout in the middle of contexts where we expect clean style
+        // and layout, e.g. AXObjectCache::performDeferredCacheUpdate.
+        [webArea->wrapper() accessibilityPostedNotification:NSAccessibilityFocusChangedNotification userInfo:nil];
+    });
 }
 
 void AXObjectCache::handleScrolledToAnchor(const Node&)
@@ -730,16 +719,24 @@ void AXObjectCache::handleScrolledToAnchor(const Node&)
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
+    for (const auto& document : m_deferredDocumentsWithNewRenderTrees) {
+        if (RefPtr object = getOrCreate(document ? document->renderView() : nullptr); object && object->isWebArea())
+            queueUnsortedObject(object.releaseNonNull(), PreSortedObjectType::WebArea);
+    }
+    m_deferredDocumentsWithNewRenderTrees.clear();
+
     for (auto& unsortedObjectsEntry : m_deferredUnsortedObjects)
-        addSortedObjects(WTFMove(unsortedObjectsEntry.value), unsortedObjectsEntry.key);
+        addSortedObjects(WTF::move(unsortedObjectsEntry.value), unsortedObjectsEntry.key);
     m_deferredUnsortedObjects.clear();
 }
 
-static bool isTestAXClientType(AXClientType client)
+static bool NODELETE isTestAXClientType(AXClientType client)
 {
     return client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest;
 }
 
+// FIXME: We should inline this function, otherwise we probably aren't
+// benefiting much from the unlikely annotation.
 bool AXObjectCache::clientIsInTestMode()
 {
     if (isTestAXClientType(_AXGetClientForCurrentRequestUntrusted())) [[unlikely]]
@@ -747,7 +744,6 @@ bool AXObjectCache::clientIsInTestMode()
     return false;
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
     auto client = _AXGetClientForCurrentRequestUntrusted();
@@ -765,7 +761,7 @@ bool AXObjectCache::isIsolatedTreeEnabled()
         return true;
 
     if (!isMainThread()) {
-        ASSERT(_AXUIElementRequestServicedBySecondaryAXThread());
+        AX_ASSERT(clientIsInTestMode() || _AXUIElementRequestServicedBySecondaryAXThread());
         enabled = true;
     } else {
         enabled = DeprecatedGlobalSettings::isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
@@ -776,7 +772,6 @@ bool AXObjectCache::isIsolatedTreeEnabled()
 
     return enabled;
 }
-
 
 static bool axThreadInitialized = false;
 
@@ -800,7 +795,6 @@ bool AXObjectCache::isAXThreadInitialized()
 {
     return axThreadInitialized;
 }
-#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 bool AXObjectCache::shouldSpellCheck()
 {
@@ -815,21 +809,14 @@ bool AXObjectCache::shouldSpellCheck()
     // The only AT that we know can handle deferred spellchecking is VoiceOver.
     if (client == kAXClientTypeVoiceOver)
         return false;
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (isTestAXClientType(client)) [[unlikely]]
         return true;
     // ITM is currently only ever enabled for VoiceOver, so if it's enabled we can defer spell-checking.
     return !isIsolatedTreeEnabled();
-#else
-    return true;
-#endif
 }
 
 AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedLiveRegions()
 {
-    if (m_liveRegionManager)
-        return { };
-
     if (!m_sortedIDListsInitialized)
         initializeSortedIDLists();
     return objectsForIDs(m_sortedLiveRegionIDs);
@@ -844,7 +831,7 @@ AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedNonRootWebAreas()
 
 void AXObjectCache::addSortedObjects(Vector<Ref<AccessibilityObject>>&& objectsToSort, PreSortedObjectType type)
 {
-    ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
+    AX_ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
 
     if (!m_sortedIDListsInitialized) {
         // Once the sorted ID lists have been initialized for the first time, we rely
@@ -900,7 +887,7 @@ void AXObjectCache::addSortedObjects(Vector<Ref<AccessibilityObject>>&& objectsT
         if (shouldAppend) {
             // There's no reason to ever add the same object twice, as that means we walked over it twice
             // in our pre-order tree traversal.
-            ASSERT(!sortedList.contains(current->objectID()));
+            AX_ASSERT(!sortedList.contains(current->objectID()));
             sortedList.appendIfNotContains(current->objectID());
 
             if (sortedList.size() >= totalExpectedObjectCount)
@@ -911,7 +898,7 @@ void AXObjectCache::addSortedObjects(Vector<Ref<AccessibilityObject>>&& objectsT
 
 #if ASSERT_ENABLED
     for (const auto& object : objectsToSort)
-        ASSERT(sortedList.contains(object->objectID()));
+        AX_ASSERT(sortedList.contains(object->objectID()));
 #endif
 }
 
@@ -919,6 +906,11 @@ void AXObjectCache::removeLiveRegion(AccessibilityObject& object)
 {
     if (!m_sortedIDListsInitialized)
         return;
+
+#if PLATFORM(COCOA)
+    if (m_liveRegionManager)
+        m_liveRegionManager->unregisterLiveRegion(object.objectID());
+#endif
 
     if (m_sortedLiveRegionIDs.removeAll(object.objectID())) {
         if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
@@ -932,17 +924,15 @@ void AXObjectCache::initializeSortedIDLists()
         return;
     m_sortedIDListsInitialized = true;
 
-    bool includeLiveRegions = !m_liveRegionManager;
-
     RefPtr current = rootWebArea();
     while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
-        if (includeLiveRegions && current->supportsLiveRegion()) {
+        if (current->supportsLiveRegion()) {
             // There's no reason to ever add the same object twice, as that means we walked over it twice
             // in our pre-order tree traversal.
-            ASSERT(!m_sortedLiveRegionIDs.contains(current->objectID()));
+            AX_ASSERT(!m_sortedLiveRegionIDs.contains(current->objectID()));
             m_sortedLiveRegionIDs.appendIfNotContains(current->objectID());
         } else if (current->isWebArea()) {
-            ASSERT(!m_sortedNonRootWebAreaIDs.contains(current->objectID()));
+            AX_ASSERT(!m_sortedNonRootWebAreaIDs.contains(current->objectID()));
             m_sortedNonRootWebAreaIDs.appendIfNotContains(current->objectID());
         }
     }
@@ -955,12 +945,10 @@ void AXObjectCache::initializeSortedIDLists()
     }
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 Seconds AXObjectCache::platformSelectedTextRangeDebounceInterval() const
 {
     return 100_ms;
 }
-#endif
 
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
@@ -970,22 +958,22 @@ RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef start
     if (!startMarker || !endMarker)
         return nil;
 
-    ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
-    ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
     return adoptCF(AXTextMarkerRangeCreate(kCFAllocatorDefault, startMarker, endMarker));
 }
 
 static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeStart(AXTextMarkerRangeRef textMarkerRange)
 {
-    ASSERT(textMarkerRange);
-    ASSERT(CFGetTypeID((__bridge CFTypeRef)textMarkerRange) == AXTextMarkerRangeGetTypeID());
+    AX_ASSERT(textMarkerRange);
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)textMarkerRange) == AXTextMarkerRangeGetTypeID());
     return adoptCF(AXTextMarkerRangeCopyStartMarker(textMarkerRange));
 }
 
 static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeEnd(AXTextMarkerRangeRef textMarkerRange)
 {
-    ASSERT(textMarkerRange);
-    ASSERT(CFGetTypeID((__bridge CFTypeRef)textMarkerRange) == AXTextMarkerRangeGetTypeID());
+    AX_ASSERT(textMarkerRange);
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)textMarkerRange) == AXTextMarkerRangeGetTypeID());
     return adoptCF(AXTextMarkerRangeCopyEndMarker(textMarkerRange));
 }
 
@@ -994,12 +982,12 @@ static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
     if (!textMarker)
         return { };
 
-    ASSERT(CFGetTypeID(textMarker) == AXTextMarkerGetTypeID());
+    AX_ASSERT(CFGetTypeID(textMarker) == AXTextMarkerGetTypeID());
     if (CFGetTypeID(textMarker) != AXTextMarkerGetTypeID())
         return { };
 
     TextMarkerData textMarkerData;
-    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(textMarkerData));
+    AX_ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(textMarkerData));
     if (AXTextMarkerGetLength(textMarker) != sizeof(textMarkerData))
         return { };
 
@@ -1009,7 +997,7 @@ static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
 
 AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache || !textMarker)
         return nullptr;
 
@@ -1021,7 +1009,7 @@ AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTe
 
 AXTextMarkerRef textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache)
         return nil;
 
@@ -1033,7 +1021,7 @@ AXTextMarkerRef textMarkerForVisiblePosition(AXObjectCache* cache, const Visible
 
 VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache || !textMarker)
         return { };
 
@@ -1045,7 +1033,7 @@ VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerR
 
 AXTextMarkerRangeRef textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache)
         return nil;
 
@@ -1056,7 +1044,7 @@ AXTextMarkerRangeRef textMarkerRangeFromVisiblePositions(AXObjectCache* cache, c
 
 VisiblePositionRange visiblePositionRangeForTextMarkerRange(AXObjectCache* cache, AXTextMarkerRangeRef textMarkerRange)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     return {
         visiblePositionForTextMarker(cache, AXTextMarkerRangeStart(textMarkerRange).get()),
@@ -1068,7 +1056,7 @@ VisiblePositionRange visiblePositionRangeForTextMarkerRange(AXObjectCache* cache
 
 AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const CharacterOffset& characterOffset, TextMarkerOrigin origin)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     if (!cache)
         return nil;
@@ -1081,7 +1069,7 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const Charact
 
 CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache || !textMarker)
         return { };
 
@@ -1093,7 +1081,7 @@ CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerR
 
 AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::optional<SimpleRange>& range, bool isStart)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache || !range)
         return nil;
 
@@ -1105,7 +1093,7 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::op
 
 AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::optional<SimpleRange>& range)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache)
         return nil;
 
@@ -1116,7 +1104,7 @@ AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::o
 
 std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextMarkerRangeRef textMarkerRange)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!cache || !textMarkerRange)
         return std::nullopt;
 

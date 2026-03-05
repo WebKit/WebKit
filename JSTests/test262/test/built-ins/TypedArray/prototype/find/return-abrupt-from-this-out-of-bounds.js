@@ -56,4 +56,4 @@ testWithTypedArrayConstructors(TA => {
     array.find(() => {});
     throw new Test262Error('find completed successfully');
   });
-});
+}, null, ["passthrough"]);

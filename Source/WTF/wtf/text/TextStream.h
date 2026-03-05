@@ -27,8 +27,9 @@
 
 #include <span>
 #include <wtf/Forward.h>
-#include <wtf/HexNumber.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/Markable.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -36,6 +37,13 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
+
+class Seconds;
+class MediaTime;
+class UUID;
+class URL;
+
+struct HexNumberBuffer;
 
 class TextStream {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextStream);
@@ -309,6 +317,15 @@ TextStream& operator<<(TextStream& ts, const WeakPtr<T, Counter>& item)
 }
 
 template<typename T>
+TextStream& operator<<(TextStream& ts, const InlineWeakPtr<T>& item)
+{
+    if (item)
+        return ts << *item;
+
+    return ts << "null"_s;
+}
+
+template<typename T>
 TextStream& operator<<(TextStream& ts, const RefPtr<T>& item)
 {
     if (item)
@@ -371,6 +388,20 @@ TextStream& operator<<(TextStream& ts, const std::pair<T, U>& pair)
 {
     return ts << '[' << pair.first << ", "_s << pair.second << ']';
 }
+
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, Seconds);
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const MediaTime&);
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<uint64_t>&);
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<UUID>&);
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const URL&);
+
+#if PLATFORM(COCOA)
+
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, CGRect);
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, CGSize);
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, CGPoint);
+
+#endif // PLATFORM(COCOA)
 
 template<typename, typename = void, typename = void, typename = void, typename = void, size_t = 0>
 struct supports_text_stream_insertion : std::false_type { };

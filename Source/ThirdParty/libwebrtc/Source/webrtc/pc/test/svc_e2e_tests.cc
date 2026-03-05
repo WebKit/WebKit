@@ -104,8 +104,10 @@ struct SvcTestParameters {
     int num_temporal_layers =
         ScalabilityModeToNumTemporalLayers(*scalability_mode);
 
-    return SvcTestParameters{codec_name, scalability_mode_str,
-                             num_spatial_layers, num_temporal_layers};
+    return SvcTestParameters{.codec_name = codec_name,
+                             .scalability_mode = scalability_mode_str,
+                             .expected_spatial_layers = num_spatial_layers,
+                             .expected_temporal_layers = num_temporal_layers};
   }
 
   std::string codec_name;

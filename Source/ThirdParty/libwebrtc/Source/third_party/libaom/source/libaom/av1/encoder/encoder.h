@@ -34,6 +34,7 @@
 #include "av1/common/timing.h"
 
 #include "av1/encoder/aq_cyclicrefresh.h"
+#include "av1/encoder/av1_ext_ratectrl.h"
 #include "av1/encoder/av1_quantize.h"
 #include "av1/encoder/block.h"
 #include "av1/encoder/context_tree.h"
@@ -2379,12 +2380,21 @@ typedef struct WeberStats {
   double max_scale;
 } WeberStats;
 
+/*!
+ * \brief This structure stores different types of frame indices.
+ */
+typedef struct {
+  int show_frame_count;
+} FRAME_INDEX_SET;
+
 typedef struct {
   struct loopfilter lf;
   CdefInfo cdef_info;
   YV12_BUFFER_CONFIG copy_buffer;
   RATE_CONTROL rc;
   MV_STATS mv_stats;
+  unsigned int frame_number;
+  FRAME_INDEX_SET frame_index_set;
 } CODING_CONTEXT;
 
 typedef struct {
@@ -2399,13 +2409,6 @@ typedef struct {
   int subsampling_x;
   int subsampling_y;
 } FRAME_INFO;
-
-/*!
- * \brief This structure stores different types of frame indices.
- */
-typedef struct {
-  int show_frame_count;
-} FRAME_INDEX_SET;
 
 /*!\endcond */
 
@@ -2888,6 +2891,13 @@ typedef struct AV1_PRIMARY {
    * when --deltaq-mode=3.
    */
   AV1EncRowMultiThreadSync intra_row_mt_sync;
+
+  /*!
+   * If set to 1, the encoder should not update any internal state after
+   * completing the encode. E.g. no updates to reference buffers, CDF
+   * tables or RC state.
+   */
+  int b_freeze_internal_state;
 } AV1_PRIMARY;
 
 /*!
@@ -3697,6 +3707,11 @@ typedef struct AV1_COMP {
    * ROI map.
    */
   aom_roi_map_t roi;
+
+  /*!
+   * External rate control.
+   */
+  AOM_EXT_RATECTRL ext_ratectrl;
 } AV1_COMP;
 
 /*!
@@ -3767,9 +3782,9 @@ typedef struct EncodeFrameParams {
 
 void av1_initialize_enc(unsigned int usage, enum aom_rc_mode end_usage);
 
-struct AV1_COMP *av1_create_compressor(AV1_PRIMARY *ppi,
+struct AV1_COMP *av1_create_compressor(struct AV1_PRIMARY *ppi,
                                        const AV1EncoderConfig *oxcf,
-                                       BufferPool *const pool,
+                                       struct BufferPool *const pool,
                                        COMPRESSOR_STAGE stage,
                                        int lap_lag_in_frames);
 

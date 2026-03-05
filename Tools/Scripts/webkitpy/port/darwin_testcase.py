@@ -37,10 +37,6 @@ from webkitcorepy import OutputCapture
 
 class DarwinTest(port_testcase.PortTestCase):
 
-    def assert_skipped_file_search_paths(self, port_name, expected_paths, use_webkit2=False):
-        port = self.make_port(port_name=port_name, options=MockOptions(webkit_test_runner=use_webkit2))
-        self.assertEqual(port._skipped_file_search_paths(), expected_paths)
-
     def test_sharding_groups(self):
         port = self.make_port()
         self.assertEqual(sorted(port.sharding_groups().keys()), ['media'])
@@ -110,6 +106,20 @@ class DarwinTest(port_testcase.PortTestCase):
         host = MockSystemHost(filesystem=MockFileSystem(files={'/Users/mock/Library/Logs/DiagnosticReports/crashlog.crash': None}))
         port = self.make_port(host)
         self.assertEqual(port.path_to_crash_logs(), '/Users/mock/Library/Logs/DiagnosticReports')
+
+    def test_crash_log_directories(self):
+        port = self.make_port()
+        self.assertEqual(port.crash_log_directories(), ['/Users/mock/Library/Logs/CrashReporter'])
+
+        host = MockSystemHost(filesystem=MockFileSystem(files={
+            '/Users/mock/Library/Logs/DiagnosticReports/crashlog.crash': None,
+            '/Library/Logs/CrashboardArchive/somefile.ips': None,
+        }))
+        port = self.make_port(host)
+        self.assertEqual(port.crash_log_directories(), [
+            '/Users/mock/Library/Logs/DiagnosticReports',
+            '/Library/Logs/CrashboardArchive',
+        ])
 
     def test_tailspin(self):
 

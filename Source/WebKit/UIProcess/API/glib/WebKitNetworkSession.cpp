@@ -138,8 +138,8 @@ static void webkitNetworkSessionConstructed(GObject* object)
     WebKitNetworkSessionPrivate* priv = WEBKIT_NETWORK_SESSION(object)->priv;
     if (!priv->websiteDataManager) {
         priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(
-            !priv->dataDirectory.isNull() ? WTFMove(priv->dataDirectory) : WebsiteDataStore::defaultBaseDataDirectory().utf8(),
-            !priv->cacheDirectory.isNull() ? WTFMove(priv->cacheDirectory) : WebsiteDataStore::defaultBaseCacheDirectory().utf8())
+            !priv->dataDirectory.isNull() ? WTF::move(priv->dataDirectory) : WebsiteDataStore::defaultBaseDataDirectory().utf8(),
+            !priv->cacheDirectory.isNull() ? WTF::move(priv->cacheDirectory) : WebsiteDataStore::defaultBaseCacheDirectory().utf8())
         );
     }
 
@@ -522,7 +522,7 @@ void webkit_network_session_set_proxy_settings(WebKitNetworkSession* session, We
             g_warning("Invalid attempt to set custom network proxy settings with an empty WebKitNetworkProxySettings. Use "
                 "WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to not use any proxy or WEBKIT_NETWORK_PROXY_MODE_DEFAULT to use the default system settings");
         } else
-            websiteDataStore->setNetworkProxySettings(WTFMove(settings));
+            websiteDataStore->setNetworkProxySettings(WTF::move(settings));
         break;
     }
 }
@@ -575,7 +575,7 @@ void webkit_network_session_get_itp_summary(WebKitNetworkSession* session, GCanc
 
     Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
     GRefPtr<GTask> task = adoptGRef(g_task_new(session, cancellable, callback, userData));
-    websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
+    websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTF::move(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
         GList* result = nullptr;
         while (!thirdPartyList.isEmpty())
             result = g_list_prepend(result, webkitITPThirdPartyCreate(thirdPartyList.takeLast()));

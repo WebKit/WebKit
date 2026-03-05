@@ -24,7 +24,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |    Parameter Type = 49152     |  Parameter Length = 4         |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ForwardTsnSupportedParameter::kType;
 
 std::optional<ForwardTsnSupportedParameter> ForwardTsnSupportedParameter::Parse(
     webrtc::ArrayView<const uint8_t> data) {

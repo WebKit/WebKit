@@ -76,6 +76,19 @@ CString currentExecutablePath()
 {
     return { };
 }
+#elif OS(QNX)
+#include <fcntl.h>
+
+CString currentExecutablePath()
+{
+    static char readBuffer[PATH_MAX];
+    int selfFd = open("/proc/self/exefile", O_RDONLY);
+    ssize_t result = read(selfFd, readBuffer, sizeof(readBuffer));
+    close(selfFd);
+    if (result == -1)
+        return { };
+    return CString(unsafeMakeSpan(readBuffer, static_cast<size_t>(result)));
+}
 #elif OS(UNIX)
 CString currentExecutablePath()
 {

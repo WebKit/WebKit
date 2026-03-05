@@ -37,7 +37,7 @@ namespace WebKit {
 
 class JavaScriptEvaluationResult::GLibExtractor {
 public:
-    Map takeMap() { return WTFMove(m_map); }
+    Map takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(GVariant*);
 private:
     Value toValue(GVariant*);
@@ -76,7 +76,7 @@ auto JavaScriptEvaluationResult::GLibExtractor::toValue(GVariant* variant) -> Va
             m_map.add(valueID, toValue(value));
             objectMap.add(keyID, valueID);
         }
-        return { WTFMove(objectMap) };
+        return { WTF::move(objectMap) };
     }
 
     if (g_variant_is_of_type(variant, G_VARIANT_TYPE_UINT32))

@@ -30,8 +30,10 @@
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "ContainerNodeInlines.h"
+#include "CSSAnimationEvent.h"
 #include "CSSSerializationContext.h"
 #include "CSSStyleProperties.h"
+#include "CSSTransitionEvent.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
 #include "CSSValuePool.h"
@@ -66,11 +68,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebAnimation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAnimation);
 
-HashSet<CheckedPtr<WebAnimation>>& WebAnimation::instances()
+HashSet<CheckedRef<WebAnimation>>& WebAnimation::instances()
 {
-    static NeverDestroyed<HashSet<CheckedPtr<WebAnimation>>> instances;
+    static NeverDestroyed<HashSet<CheckedRef<WebAnimation>>> instances;
     return instances;
 }
 
@@ -113,15 +115,15 @@ WebAnimation::WebAnimation(Document& document)
     , m_finishedPromise(makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve))
     , m_timelineRange({ Style::SingleAnimationRangeStart { CSS::Keyword::Normal { } }, Style::SingleAnimationRangeEnd { CSS::Keyword::Normal { } } })
 {
-    instances().add(this);
+    instances().add(*this);
 }
 
 WebAnimation::~WebAnimation()
 {
     InspectorInstrumentation::willDestroyWebAnimation(*this);
 
-    ASSERT(instances().contains(this));
-    instances().remove(this);
+    ASSERT(instances().contains(*this));
+    instances().remove(*this);
 }
 
 ScriptExecutionContext* WebAnimation::scriptExecutionContext() const
@@ -169,14 +171,14 @@ void WebAnimation::effectTimingDidChange()
 
 void WebAnimation::setId(String&& id)
 {
-    m_id = WTFMove(id);
+    m_id = WTF::move(id);
 
     InspectorInstrumentation::didChangeWebAnimationName(*this);
 }
 
 void WebAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
 {
-    setEffect(WTFMove(newEffect));
+    setEffect(WTF::move(newEffect));
 }
 
 void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
@@ -213,7 +215,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
 
     // This object could be deleted after clearing the effect relationship.
     Ref protectedThis { *this };
-    setEffectInternal(WTFMove(newEffect), isStyleOriginatedAnimation());
+    setEffectInternal(WTF::move(newEffect), isStyleOriginatedAnimation());
 
     // 7. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
@@ -227,7 +229,7 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
     if (m_effect == newEffect)
         return;
 
-    RefPtr oldEffect = std::exchange(m_effect, WTFMove(newEffect));
+    RefPtr oldEffect = std::exchange(m_effect, WTF::move(newEffect));
 
     RefPtr oldKeyframeEffect = dynamicDowncast<KeyframeEffect>(oldEffect);
     std::optional<const Styleable> previousTarget = oldKeyframeEffect ? oldKeyframeEffect->targetStyleable() : std::nullopt;
@@ -257,7 +259,7 @@ KeyframeEffect* WebAnimation::keyframeEffect() const
 
 void WebAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
 {
-    setTimeline(WTFMove(timeline));
+    setTimeline(WTF::move(timeline));
 }
 
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
@@ -311,9 +313,9 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 
     // This object could be deleted after clearing the timeline relationship.
     Ref protectedThis { *this };
-    setTimelineInternal(WTFMove(timeline));
+    setTimelineInternal(WTF::move(timeline));
 
-    RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get());
+    RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline);
     setSuspended(documentTimeline && documentTimeline->animationsAreSuspended());
 
     // 9. Perform the steps corresponding to the first matching condition from the following, if any:
@@ -378,10 +380,10 @@ void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
     if (m_timeline)
         m_timeline->removeAnimation(*this);
 
-    m_timeline = WTFMove(timeline);
+    m_timeline = WTF::move(timeline);
 
     if (m_effect)
-        m_effect->animationTimelineDidChange(m_timeline.get());
+        m_effect->animationTimelineDidChange();
 
     m_pendingStartTime = std::nullopt;
 }
@@ -509,7 +511,19 @@ std::optional<WebAnimationTime> WebAnimation::currentTime(RespectHoldTime respec
         return std::nullopt;
 
     // Otherwise, current time = (timeline time - start time) * playback rate
-    return (*m_timeline->currentTime(useCachedCurrentTime) - *m_startTime) * m_playbackRate;
+    auto result = (*m_timeline->currentTime(useCachedCurrentTime) - *m_startTime) * m_playbackRate;
+
+    if (RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(m_timeline)) {
+        auto epsilon = viewTimeline->epsilon();
+        auto zeroPercent = WebAnimationTime::fromPercentage(0);
+        if (result < zeroPercent && result + epsilon >= zeroPercent)
+            return zeroPercent;
+        auto hundredPercent = WebAnimationTime::fromPercentage(100);
+        if (result > hundredPercent && result - epsilon <= hundredPercent)
+            return hundredPercent;
+    }
+
+    return result;
 }
 
 ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<WebAnimationTime> seekTime)
@@ -721,7 +735,7 @@ void WebAnimation::applyPendingPlaybackRate()
 
 void WebAnimation::setBindingsFrameRate(Variant<FramesPerSecond, AnimationFrameRatePreset>&& frameRate)
 {
-    m_bindingsFrameRate = WTFMove(frameRate);
+    m_bindingsFrameRate = WTF::move(frameRate);
 
     if (std::holds_alternative<FramesPerSecond>(m_bindingsFrameRate)) {
         setEffectiveFrameRate(std::get<FramesPerSecond>(m_bindingsFrameRate));
@@ -750,7 +764,7 @@ void WebAnimation::setEffectiveFrameRate(std::optional<FramesPerSecond> effectiv
         return;
 
     std::optional<FramesPerSecond> maximumFrameRate = std::nullopt;
-    if (RefPtr timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get()))
+    if (RefPtr timeline = dynamicDowncast<DocumentTimeline>(m_timeline))
         maximumFrameRate = timeline->maximumFrameRate();
 
     std::optional<FramesPerSecond> adjustedEffectiveFrameRate;
@@ -835,7 +849,7 @@ void WebAnimation::cancel(Silently silently)
         // 2. Reject the current finished promise with a DOMException named "AbortError".
         // 3. Set the [[PromiseIsHandled]] internal slot of the current finished promise to true.
         if (RefPtr context = scriptExecutionContext(); context && !m_finishedPromise->isFulfilled()) {
-            context->eventLoop().queueMicrotask([finishedPromise = WTFMove(m_finishedPromise)]() mutable {
+            context->eventLoop().queueMicrotask(context->vm(), [finishedPromise = WTF::move(m_finishedPromise)]() mutable {
                 finishedPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
             });
         }
@@ -855,7 +869,7 @@ void WebAnimation::cancel(Silently silently)
         //    scheduled event time is an unresolved time value.
         // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
         auto scheduledTime = [&]() -> std::optional<WebAnimationTime> {
-            if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+            if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline)) {
                 if (auto currentTime = documentTimeline->currentTime())
                     return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
             }
@@ -889,7 +903,7 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::op
     auto timelineTime = m_timeline ? m_timeline->currentTime() : std::nullopt;
     auto event = AnimationPlaybackEvent::create(type, this, scheduledTime, timelineTime, currentTime);
     event->setTarget(Ref { *this });
-    enqueueAnimationEvent(WTFMove(event));
+    enqueueAnimationEvent(WTF::move(event));
 }
 
 void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
@@ -897,13 +911,13 @@ void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
     auto documentTimeline = [&]() -> DocumentTimeline* {
         if (auto* timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get()))
             return timeline;
-        if (RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(m_timeline.get())) {
+        if (RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(m_timeline)) {
             if (RefPtr source = scrollTimeline->source())
                 return Ref { source->document() }->existingTimeline();
         }
         if (RefPtr keyframeEffect = this->keyframeEffect()) {
             if (RefPtr target = keyframeEffect->target())
-                return target->protectedDocument()->existingTimeline();
+                return protect(target->document())->existingTimeline();
         }
         return nullptr;
     };
@@ -914,16 +928,16 @@ void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
         // to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
         // scheduled event time is an unresolved time value.
         m_hasScheduledEventsDuringTick = true;
-        timeline->enqueueAnimationEvent(WTFMove(event));
+        timeline->enqueueAnimationEvent(WTF::move(event));
     } else {
         // Otherwise, queue a task to dispatch event at animation. The task source for this task is the DOM manipulation task source.
-        if (event->isCSSAnimationEvent() || event->isCSSTransitionEvent()) {
+        if (is<CSSAnimationEvent>(event) || is<CSSTransitionEvent>(event)) {
             if (RefPtr element = dynamicDowncast<Element>(event->target())) {
-                element->queueTaskToDispatchEvent(TaskSource::DOMManipulation, WTFMove(event));
+                element->queueTaskToDispatchEvent(TaskSource::DOMManipulation, WTF::move(event));
                 return;
             }
         }
-        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, WTFMove(event));
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, WTF::move(event));
     }
 }
 
@@ -956,7 +970,7 @@ void WebAnimation::resetPendingTasks()
     // 5. Reject animation's current ready promise with a DOMException named "AbortError".
     // 6. Set the [[PromiseIsHandled]] internal slot of animation’s current ready promise to true.
     if (RefPtr context = scriptExecutionContext()) {
-        context->eventLoop().queueMicrotask([readyPromise = WTFMove(m_readyPromise)]() mutable {
+        context->eventLoop().queueMicrotask(context->vm(), [readyPromise = WTF::move(m_readyPromise)]() mutable {
             if (!readyPromise->isFulfilled())
                 readyPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
         });
@@ -1105,7 +1119,7 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
             // is already a microtask queued to run those steps for animation.
             m_finishNotificationStepsMicrotaskPending = true;
             if (RefPtr context = scriptExecutionContext()) {
-                context->eventLoop().queueMicrotask([this, protectedThis = Ref { *this }] {
+                context->eventLoop().queueMicrotask(context->vm(), [this, protectedThis = Ref { *this }] {
                     if (m_finishNotificationStepsMicrotaskPending) {
                         m_finishNotificationStepsMicrotaskPending = false;
                         finishNotificationSteps();
@@ -1146,7 +1160,7 @@ void WebAnimation::finishNotificationSteps()
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
     auto scheduledTime = [&]() -> std::optional<WebAnimationTime> {
-        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline)) {
             if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
                 return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
         }
@@ -1523,12 +1537,13 @@ void WebAnimation::autoAlignStartTime()
     auto endOffset = interval.second;
 
     // 7. Set start time to start offset if effective playback rate ≥ 0, and end offset otherwise.
-    m_startTime = effectivePlaybackRate() >= 0 ? startOffset : endOffset;
+    auto previousStartTime = std::exchange(m_startTime, effectivePlaybackRate() >= 0 ? startOffset : endOffset);
 
     // 8. Clear hold time.
     m_holdTime = std::nullopt;
 
-    progressBasedTimelineSourceDidChangeMetrics();
+    if (previousStartTime != m_startTime)
+        progressBasedTimelineSourceDidChangeMetrics();
 }
 
 bool WebAnimation::needsTick() const
@@ -1785,8 +1800,8 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return Exception { ExceptionCode::NoModificationAllowedError };
 
     // 2.2 If, after applying any pending style changes, target is not being rendered, throw an "InvalidStateError" DOMException and abort these steps.
-    styledElement->protectedDocument()->updateStyleIfNeeded();
-    auto* renderer = styledElement->renderer();
+    protect(styledElement->document())->updateStyleIfNeeded();
+    CheckedPtr renderer = styledElement->renderer();
     if (!renderer)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -1795,7 +1810,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     auto unanimatedStyle = [&]() {
         if (auto styleable = Styleable::fromRenderer(*renderer)) {
-            if (auto* lastStyleChangeEventStyle = styleable->lastStyleChangeEventStyle())
+            if (CheckedPtr lastStyleChangeEventStyle = styleable->lastStyleChangeEventStyle())
                 return RenderStyle::clone(*lastStyleChangeEventStyle);
         }
         // If we don't have a style for the last style change event, then the
@@ -1861,12 +1876,12 @@ ExceptionOr<void> WebAnimation::commitStyles()
                 if (string.isEmpty())
                     return false;
                 auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(propertyId, animatedStyle->writingMode());
-                return inlineStyle->setProperty(resolvedCSSProperty, WTFMove(string), { styledElement->document() });
+                return inlineStyle->setProperty(resolvedCSSProperty, WTF::move(string), { styledElement->document() });
             },
             [&](const AtomString& customProperty) {
                 auto string = computedStyleExtractor.customPropertyValueSerializationInStyle(*animatedStyle, customProperty, CSS::defaultSerializationContext());
                 if (!string.isEmpty())
-                    return inlineStyle->setCustomProperty(customProperty, WTFMove(string), { styledElement->document() });
+                    return inlineStyle->setCustomProperty(customProperty, WTF::move(string), { styledElement->document() });
                 return false;
             }
         );
@@ -1974,11 +1989,11 @@ void WebAnimation::setBindingsRangeStart(TimelineRangeValue&& rangeStartValue)
     if (!keyframeEffect)
         return;
 
-    auto rangeStart = convertToCSSValue(WTFMove(rangeStartValue), keyframeEffect->target(), Style::SingleAnimationRangeType::Start);
+    auto rangeStart = convertToCSSValue(WTF::move(rangeStartValue), keyframeEffect->target(), Style::SingleAnimationRangeType::Start);
     if (m_specifiedRangeStart == rangeStart)
         return;
 
-    m_specifiedRangeStart = WTFMove(rangeStart);
+    m_specifiedRangeStart = WTF::move(rangeStart);
     if (RefPtr effect = this->effect())
         effect->animationRangeDidChange();
 }
@@ -1989,11 +2004,11 @@ void WebAnimation::setBindingsRangeEnd(TimelineRangeValue&& rangeEndValue)
     if (!keyframeEffect)
         return;
 
-    auto rangeEnd = convertToCSSValue(WTFMove(rangeEndValue), keyframeEffect->target(), Style::SingleAnimationRangeType::End);
+    auto rangeEnd = convertToCSSValue(WTF::move(rangeEndValue), keyframeEffect->target(), Style::SingleAnimationRangeType::End);
     if (m_specifiedRangeEnd == rangeEnd)
         return;
 
-    m_specifiedRangeEnd = WTFMove(rangeEnd);
+    m_specifiedRangeEnd = WTF::move(rangeEnd);
     if (RefPtr effect = this->effect())
         effect->animationRangeDidChange();
 }
@@ -2003,7 +2018,7 @@ void WebAnimation::setRangeStart(Style::SingleAnimationRangeStart&& rangeStart)
     if (m_timelineRange.start == rangeStart)
         return;
 
-    m_timelineRange.start = WTFMove(rangeStart);
+    m_timelineRange.start = WTF::move(rangeStart);
     if (RefPtr effect = this->effect())
         effect->animationRangeDidChange();
 }
@@ -2013,7 +2028,7 @@ void WebAnimation::setRangeEnd(Style::SingleAnimationRangeEnd&& rangeEnd)
     if (m_timelineRange.end == rangeEnd)
         return;
 
-    m_timelineRange.end = WTFMove(rangeEnd);
+    m_timelineRange.end = WTF::move(rangeEnd);
     if (RefPtr effect = this->effect())
         effect->animationRangeDidChange();
 }

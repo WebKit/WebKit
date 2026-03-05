@@ -14,6 +14,7 @@
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
+#include <deque>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -31,12 +32,14 @@
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/timestamp.h"
+#include "api/video/corruption_detection/frame_instrumentation_generator.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_adaptation_counters.h"
 #include "api/video/video_adaptation_reason.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
 #include "api/video/video_frame_type.h"
 #include "api/video/video_source_interface.h"
 #include "api/video/video_stream_encoder_settings.h"
@@ -50,12 +53,13 @@
 #include "call/adaptation/video_stream_input_state_provider.h"
 #include "modules/video_coding/utility/frame_dropper.h"
 #include "modules/video_coding/utility/qp_parser.h"
+#include "rtc_base/experiments/encoder_speed_experiment.h"
 #include "rtc_base/experiments/rate_control_settings.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "video/adaptation/overuse_frame_detector.h"
 #include "video/adaptation/video_stream_encoder_resource_manager.h"
 #include "video/config/video_encoder_config.h"
-#include "video/corruption_detection/frame_instrumentation_generator.h"
 #include "video/encoder_bitrate_adjuster.h"
 #include "video/frame_cadence_adapter.h"
 #include "video/frame_encode_metadata_writer.h"
@@ -139,6 +143,8 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   DataRate UpdateTargetBitrate(DataRate target_bitrate,
                                double cwnd_reduce_ratio);
 
+  void OnFramePrepared(size_t frame_identifier);
+
  protected:
   friend class VideoStreamEncoderFrameCadenceRestrictionTest;
 
@@ -214,6 +220,20 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
     DataRate encoder_target;
   };
 
+  class PreparedFramesProcessor
+      : public VideoFrameBuffer::PreparedFrameHandler {
+   public:
+    explicit PreparedFramesProcessor(VideoStreamEncoder* parent);
+
+    void StopCallbacks();
+
+    void OnFramePrepared(size_t frame_identifier) override;
+
+   private:
+    VideoStreamEncoder* parent_ RTC_GUARDED_BY(lock_);
+    Mutex lock_;
+  };
+
   class DegradationPreferenceManager;
 
   void ReconfigureEncoder() RTC_RUN_ON(encoder_queue_);
@@ -224,11 +244,15 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   void OnDiscardedFrame();
   void RequestRefreshFrame();
 
+  void MaybePrepareVideoFrame(const VideoFrame& frame,
+                              int64_t time_when_posted_in_ms);
+
   void MaybeEncodeVideoFrame(const VideoFrame& frame,
                              int64_t time_when_posted_in_ms);
 
   void EncodeVideoFrame(const VideoFrame& frame,
                         int64_t time_when_posted_in_ms);
+
   // Indicates whether frame should be dropped because the pixel count is too
   // large for the current bitrate configuration.
   bool DropDueToSize(uint32_t pixel_count) const RTC_RUN_ON(encoder_queue_);
@@ -382,7 +406,7 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   // turn this into a simple bool `pending_keyframe_request_`.
   std::vector<VideoFrameType> next_frame_types_ RTC_GUARDED_BY(encoder_queue_);
 
-  FrameEncodeMetadataWriter frame_encode_metadata_writer_{this};
+  FrameEncodeMetadataWriter frame_encode_metadata_writer_{env_, this};
 
   // Provides video stream input states: current resolution and frame rate.
   VideoStreamInputStateProvider input_state_provider_;
@@ -437,6 +461,7 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
 
   const std::optional<int> vp9_low_tier_core_threshold_;
   const std::optional<int> experimental_encoder_thread_limit_;
+  const EncoderSpeedExperiment speed_experiment_;
 
   // This is a copy of restrictions (glorified max_pixel_count) set by
   // OnVideoSourceRestrictionsUpdated. It is used to scale down encoding
@@ -459,6 +484,19 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   //  Required for automatic corruption detection.
   std::unique_ptr<FrameInstrumentationGenerator>
       frame_instrumentation_generator_;
+
+  scoped_refptr<PreparedFramesProcessor> prepared_frames_processor_;
+
+  size_t frame_counter_ = 0;
+
+  struct PreparingFrame {
+    const VideoFrame frame;
+    bool can_send;
+    size_t frame_id;
+    int64_t time_when_posted_us;
+  };
+
+  std::deque<PreparingFrame> pending_mapped_frames_;
 };
 
 }  // namespace webrtc

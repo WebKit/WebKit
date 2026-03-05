@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ CSSInternalAutoBaseParsingEnabled=true ] -->
+<style>
+    input:is([type=checkbox]:not([switch]), [type=radio]) {
+        font: 11px system-ui;
+        height: -internal-auto-base(unset, 2em);
+        width: -internal-auto-base(unset, 2em);
+        border: -internal-auto-base(unset, 0.3em solid currentColor);
+        background-color: -internal-auto-base(unset, transparent);
+    }
+
+    input:is([type=checkbox]:not([switch])) {
+        border-radius: -internal-auto-base(unset, 0.5em);
+    }
+
+    input[type=radio] {
+        border-radius: -internal-auto-base(unset, 100%);
+    }
+
+    input:is([type=checkbox]:not([switch]), [type=radio]):disabled {
+        border-color: -internal-auto-base(unset, color-mix(in srgb, currentColor 30%, transparent));
+        background-color: -internal-auto-base(unset, color-mix(in srgb, currentColor 10%, transparent));
+    }
+
+    .enabled input:is([type=checkbox]:not([switch]), [type=radio]) {
+        color: darkblue;
+    }
+
+    .disabled input:is([type=checkbox]:not([switch]), [type=radio]) {
+        color: darkgreen;
+    }
+
+    input:is([type=checkbox]:not([switch]), [type=radio]) {
+        appearance: base;
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<body>
+    <div class="enabled">
+        <input type="checkbox">
+        <input type="radio">
+    </div>
+    <div class="disabled">
+        <input type="checkbox" disabled>
+        <input type="radio" disabled>
+    </div>
+</body>

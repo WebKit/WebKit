@@ -43,7 +43,7 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextDetector);
 
 RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, RemoteRenderingBackend& renderingBackend, ShapeDetectionIdentifier identifier)
-    : m_backing(WTFMove(textDetector))
+    : m_backing(WTF::move(textDetector))
     , m_renderingBackend(renderingBackend)
     , m_identifier(identifier)
 {
@@ -60,7 +60,7 @@ void RemoteTextDetector::detect(WebCore::RenderingResourceIdentifier renderingRe
 {
     RefPtr sourceImage = m_renderingBackend.get().remoteResourceCache().cachedNativeImage(renderingResourceIdentifier);
     MESSAGE_CHECK(sourceImage);
-    m_backing->detect(*sourceImage, WTFMove(completionHandler));
+    m_backing->detect(*sourceImage, WTF::move(completionHandler));
 }
 
 } // namespace WebKit

@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (2,2) size 289x74
                     RenderTableRow {TR} at (0,2) size 289x44
                       RenderTableCell {TD} at (2,2) size 83x44 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 57x39
+                        RenderText {#text} at (2,2) size 57x40
                           text run at (2,2) width 55: "Member"
                           text run at (2,22) width 57: "Number:"
                       RenderTableCell {TD} at (86,12) size 195x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (0,0) size 0x0
                     RenderTableRow {TR} at (0,48) size 289x24
                       RenderTableCell {TD} at (2,48) size 83x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 31x19
+                        RenderText {#text} at (2,2) size 31x20
                           text run at (2,2) width 31: "PIN:"
                       RenderTableCell {TD} at (86,48) size 195x24 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                         RenderTextControl {INPUT} at (2,2) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]

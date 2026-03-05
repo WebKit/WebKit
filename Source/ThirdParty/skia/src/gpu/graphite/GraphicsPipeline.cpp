@@ -25,6 +25,7 @@ GraphicsPipeline::GraphicsPipeline(const SharedContext* sharedContext,
                    Ownership::kOwned,
                    /*gpuMemorySize=*/0)
         , fPipelineInfo(pipelineInfo) {
+    // TODO(b/387505250): Remove this once Resource is modified to accept a label upon construction.
     this->setLabel(label);
 }
 
@@ -46,8 +47,7 @@ GraphicsPipeline::PipelineInfo::PipelineInfo(
             uint32_t compilationID)
         : fDstReadStrategy(shaderInfo.dstReadStrategy())
         , fNumFragTexturesAndSamplers(shaderInfo.numFragmentTexturesAndSamplers())
-        , fHasPaintUniforms(shaderInfo.hasPaintUniforms())
-        , fHasStepUniforms(shaderInfo.hasStepUniforms())
+        , fHasCombinedUniforms(shaderInfo.hasCombinedUniforms())
         , fHasGradientBuffer(shaderInfo.hasGradientBuffer())
         , fUniqueKeyHash(uniqueKeyHash)
         , fCompilationID(compilationID)

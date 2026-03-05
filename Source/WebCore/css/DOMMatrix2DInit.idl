@@ -24,7 +24,6 @@
  */
 
 // https://drafts.fxtf.org/geometry/#dictdef-dommatrix2dinit
-
 dictionary DOMMatrix2DInit {
     unrestricted double a;
     unrestricted double b;

@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<!-- This test is symlinked and run from a different location to test site isolated behaviors. Attempt to find the test driver from two possible places. -->
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../../../../inspector/resources/inspector-test.js"></script>
+
 <script>
 let worker;
 
@@ -37,8 +41,12 @@ function test()
         name: "TargetManager.MainTarget",
         description: "We should always have the main target.",
         async test() {
+            if (WI.isSiteIsolationEnabled())
+                InspectorTest.expectEqual(WI.targets.length, 2, "With site isolation, targets list should always start out with the main page target and the main frame target.");
+            else
+                InspectorTest.expectEqual(WI.targets.length, 1, "Without site isolation, targets list should always start out with the main page target only.");
+
             InspectorTest.assert(WI.targets === WI.targetManager.targets);
-            InspectorTest.expectEqual(WI.targets.length, 2, "Targets list should always start out with the main page target and the main frame target.");
             InspectorTest.expectThat(WI.targets.includes(WI.mainTarget), "Target list should always contain the main page target.");
             InspectorTest.expectNotNull(WI.mainTarget.executionContext, "Main target should have an ExecutionContext.");
             InspectorTest.expectEqual(WI.mainTarget.RuntimeAgent, WI.pageTarget.RuntimeAgent, "Main target should have the page target's RuntimeAgent.");
@@ -77,13 +85,15 @@ function test()
 
     suite.addTestCase({
         name: "TargetManager.FrameTarget.Create",
-        description: "Appending an iframe should create a new Frame Target.",
+        description: "Appending an iframe should create a new Frame Target under site isolation.",
         async test() {
             InspectorTest.evaluateInPage("appendIframe()");
-            let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
-            let target = event.data.target;
-            InspectorTest.assert(target instanceof WI.FrameTarget);
-            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added Target should have Frame type.");
+            if (WI.isSiteIsolationEnabled()) {
+                let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+                let target = event.data.target;
+                InspectorTest.assert(target instanceof WI.FrameTarget);
+                InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added Target should have Frame type.");
+            }
             // FIXME: <https://webkit.org/b/298977> Consider giving meaningful names to frame targets so we can distinguish them.
             dumpTargets();
         }
@@ -91,13 +101,15 @@ function test()
 
     suite.addTestCase({
         name: "TargetManager.FrameTarget.Remove",
-        description: "Removing an iframe should remove the Frame Target.",
+        description: "Removing an iframe should remove the Frame Target under site isolation.",
         async test() {
             InspectorTest.evaluateInPage("removeIframe()");
-            let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
-            let target = event.data.target;
-            InspectorTest.assert(target instanceof WI.FrameTarget);
-            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Removed Target should have Frame type.");
+            if (WI.isSiteIsolationEnabled()) {
+                let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+                let target = event.data.target;
+                InspectorTest.assert(target instanceof WI.FrameTarget);
+                InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Removed Target should have Frame type.");
+            }
             dumpTargets();
         }
     });

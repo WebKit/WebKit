@@ -36,8 +36,8 @@
 namespace WebCore {
 
 FontCustomPlatformData::FontCustomPlatformData(sk_sp<SkTypeface>&& typeface, FontPlatformData::CreationData&& data)
-    : m_typeface(WTFMove(typeface))
-    , creationData(WTFMove(data))
+    : m_typeface(WTF::move(typeface))
+    , creationData(WTF::move(data))
     , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
 {
 }
@@ -88,13 +88,13 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
             SkFontArguments fontArgs;
             fontArgs.setVariationDesignPosition({ variationsToBeApplied.span().data(), static_cast<int>(variationsToBeApplied.size()) });
             if (auto variationTypeface = typeface->makeClone(fontArgs))
-                typeface = WTFMove(variationTypeface);
+                typeface = WTF::move(variationTypeface);
         }
     }
 
     auto size = description.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto features = FontCache::computeFeatures(description, fontCreationContext);
-    FontPlatformData platformData(WTFMove(typeface), size, bold, italic, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTFMove(features), this);
+    FontPlatformData platformData(WTF::move(typeface), size, bold, italic, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTF::move(features), this);
     platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.computedSize());
     return platformData;
 }
@@ -105,7 +105,8 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
     SkString familyName;
 
     const auto bufferData = buffer.createSkData();
-    if (itemInCollection.isNull())
+    bool isCollection = spanHasPrefix(buffer.span(), "ttcf"_span);
+    if (itemInCollection.isNull() || !isCollection)
         typeface = FontCache::forCurrentThread()->fontManager().makeFromData(bufferData);
     else {
         size_t index = 0;
@@ -123,7 +124,7 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
         return nullptr;
 
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
-    return adoptRef(new FontCustomPlatformData(WTFMove(typeface), WTFMove(creationData)));
+    return adoptRef(new FontCustomPlatformData(WTF::move(typeface), WTF::move(creationData)));
 }
 
 RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
@@ -159,7 +160,7 @@ bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
 
 std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data, bool)
 {
-    RefPtr fontCustomPlatformData = FontCustomPlatformData::create(WTFMove(data.fontFaceData), data.itemInCollection);
+    RefPtr fontCustomPlatformData = FontCustomPlatformData::create(WTF::move(data.fontFaceData), data.itemInCollection);
     if (!fontCustomPlatformData)
         return std::nullopt;
     fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;

@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "api/rtc_event_log_output.h"
+#include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -29,6 +30,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/memory_usage.h"
 #include "rtc_base/thread.h"
+#include "system_wrappers/include/clock.h"
 #include "test/logging/log_writer.h"
 #include "test/scenario/performance_stats.h"
 
@@ -52,26 +54,33 @@ void VideoQualityAnalyzer::PrintHeaders() {
       "render_height psnr\n");
 }
 
-std::function<void(const VideoFramePair&)> VideoQualityAnalyzer::Handler() {
-  return [this](VideoFramePair pair) { HandleFramePair(pair); };
+std::function<void(const VideoFramePair&)> VideoQualityAnalyzer::Handler(
+    Clock* clock) {
+  return [this, clock](VideoFramePair pair) {
+    HandleFramePair(pair, clock->CurrentTime());
+  };
 }
 
-void VideoQualityAnalyzer::HandleFramePair(VideoFramePair sample, double psnr) {
-  layer_analyzers_[sample.layer_id].HandleFramePair(sample, psnr,
-                                                    writer_.get());
+void VideoQualityAnalyzer::HandleFramePair(VideoFramePair sample,
+                                           double psnr,
+                                           Timestamp at_time) {
+  layer_analyzers_[sample.layer_id].HandleFramePair(sample, psnr, writer_.get(),
+                                                    at_time);
   cached_.reset();
 }
 
-void VideoQualityAnalyzer::HandleFramePair(VideoFramePair sample) {
+void VideoQualityAnalyzer::HandleFramePair(VideoFramePair sample,
+                                           Timestamp at_time) {
   double psnr = NAN;
   if (sample.decoded)
     psnr = I420PSNR(*sample.captured->ToI420(), *sample.decoded->ToI420());
 
   if (config_.thread) {
-    config_.thread->PostTask(
-        [this, sample, psnr] { HandleFramePair(std::move(sample), psnr); });
+    config_.thread->PostTask([this, sample, psnr, at_time] {
+      HandleFramePair(std::move(sample), psnr, at_time);
+    });
   } else {
-    HandleFramePair(std::move(sample), psnr);
+    HandleFramePair(std::move(sample), psnr, at_time);
   }
 }
 
@@ -93,7 +102,8 @@ VideoQualityStats& VideoQualityAnalyzer::stats() {
 
 void VideoLayerAnalyzer::HandleFramePair(VideoFramePair sample,
                                          double psnr,
-                                         RtcEventLogOutput* writer) {
+                                         RtcEventLogOutput* writer,
+                                         Timestamp at_time) {
   RTC_CHECK(sample.captured);
   HandleCapturedFrame(sample);
   if (!sample.decoded) {
@@ -102,12 +112,12 @@ void VideoLayerAnalyzer::HandleFramePair(VideoFramePair sample,
     ++stats_.lost_count;
     ++skip_count_;
   } else {
-    stats_.psnr_with_freeze.AddSample(psnr);
+    stats_.psnr_with_freeze.AddSample({.value = psnr, .time = at_time});
     if (sample.repeated) {
       ++stats_.freeze_count;
       ++skip_count_;
     } else {
-      stats_.psnr.AddSample(psnr);
+      stats_.psnr.AddSample({.value = psnr, .time = at_time});
       HandleRenderedFrame(sample);
     }
   }
@@ -128,11 +138,13 @@ void VideoLayerAnalyzer::HandleCapturedFrame(const VideoFramePair& sample) {
 }
 
 void VideoLayerAnalyzer::HandleRenderedFrame(const VideoFramePair& sample) {
-  stats_.capture_to_decoded_delay.AddSample(sample.decoded_time -
-                                            sample.capture_time);
-  stats_.end_to_end_delay.AddSample(sample.render_time - sample.capture_time);
+  stats_.capture_to_decoded_delay.AddSample(
+      sample.decoded_time - sample.capture_time, sample.capture_time);
+  stats_.end_to_end_delay.AddSample(sample.render_time - sample.capture_time,
+                                    sample.capture_time);
   stats_.render.AddFrameInfo(*sample.decoded, sample.render_time);
-  stats_.skipped_between_rendered.AddSample(skip_count_);
+  stats_.skipped_between_rendered.AddSample(
+      {.value = static_cast<double>(skip_count_), .time = sample.render_time});
   skip_count_ = 0;
 
   if (last_render_time_.IsFinite()) {
@@ -141,30 +153,37 @@ void VideoLayerAnalyzer::HandleRenderedFrame(const VideoFramePair& sample) {
     TimeDelta mean_interval = stats_.render.frames.interval().Mean();
     if (render_interval > TimeDelta::Millis(150) + mean_interval ||
         render_interval > 3 * mean_interval) {
-      stats_.freeze_duration.AddSample(render_interval);
-      stats_.time_between_freezes.AddSample(last_render_time_ -
-                                            last_freeze_time_);
+      stats_.freeze_duration.AddSample(render_interval, sample.capture_time);
+      stats_.time_between_freezes.AddSample(
+          last_render_time_ - last_freeze_time_, sample.capture_time);
       last_freeze_time_ = sample.render_time;
     }
   }
   last_render_time_ = sample.render_time;
 }
 
-void CallStatsCollector::AddStats(Call::Stats sample) {
+void CallStatsCollector::AddStats(Call::Stats sample, Timestamp at_time) {
   if (sample.send_bandwidth_bps > 0)
-    stats_.target_rate.AddSampleBps(sample.send_bandwidth_bps);
+    stats_.target_rate.AddSample(
+        DataRate::BitsPerSec(sample.send_bandwidth_bps), at_time);
   if (sample.pacer_delay_ms > 0)
-    stats_.pacer_delay.AddSample(TimeDelta::Millis(sample.pacer_delay_ms));
+    stats_.pacer_delay.AddSample(TimeDelta::Millis(sample.pacer_delay_ms),
+                                 at_time);
   if (sample.rtt_ms > 0)
-    stats_.round_trip_time.AddSample(TimeDelta::Millis(sample.rtt_ms));
-  stats_.memory_usage.AddSample(GetProcessResidentSizeBytes());
+    stats_.round_trip_time.AddSample(TimeDelta::Millis(sample.rtt_ms), at_time);
+  stats_.memory_usage.AddSample(
+      {.value = static_cast<double>(GetProcessResidentSizeBytes()),
+       .time = at_time});
 }
 
 void AudioReceiveStatsCollector::AddStats(
-    AudioReceiveStreamInterface::Stats sample) {
-  stats_.expand_rate.AddSample(sample.expand_rate);
-  stats_.accelerate_rate.AddSample(sample.accelerate_rate);
-  stats_.jitter_buffer.AddSampleMs(sample.jitter_buffer_ms);
+    AudioReceiveStreamInterface::Stats sample,
+    Timestamp at_time) {
+  stats_.expand_rate.AddSample({.value = sample.expand_rate, .time = at_time});
+  stats_.accelerate_rate.AddSample(
+      {.value = sample.accelerate_rate, .time = at_time});
+  stats_.jitter_buffer.AddSample(TimeDelta::Millis(sample.jitter_buffer_ms),
+                                 at_time);
 }
 
 void VideoSendStatsCollector::AddStats(VideoSendStream::Stats sample,
@@ -174,10 +193,15 @@ void VideoSendStatsCollector::AddStats(VideoSendStream::Stats sample,
   if (sample.encode_frame_rate <= 0)
     return;
 
-  stats_.encode_frame_rate.AddSample(sample.encode_frame_rate);
-  stats_.encode_time.AddSampleMs(sample.avg_encode_time_ms);
-  stats_.encode_usage.AddSample(sample.encode_usage_percent / 100.0);
-  stats_.media_bitrate.AddSampleBps(sample.media_bitrate_bps);
+  stats_.encode_frame_rate.AddSample(
+      {.value = static_cast<double>(sample.encode_frame_rate),
+       .time = at_time});
+  stats_.encode_time.AddSample(TimeDelta::Millis(sample.avg_encode_time_ms),
+                               at_time);
+  stats_.encode_usage.AddSample(
+      {.value = sample.encode_usage_percent / 100.0, .time = at_time});
+  stats_.media_bitrate.AddSample(DataRate::BitsPerSec(sample.media_bitrate_bps),
+                                 at_time);
 
   size_t fec_bytes = 0;
   for (const auto& kv : sample.substreams) {
@@ -187,21 +211,26 @@ void VideoSendStatsCollector::AddStats(VideoSendStream::Stats sample,
   if (last_update_.IsFinite()) {
     auto fec_delta = DataSize::Bytes(fec_bytes - last_fec_bytes_);
     auto time_delta = at_time - last_update_;
-    stats_.fec_bitrate.AddSample(fec_delta / time_delta);
+    stats_.fec_bitrate.AddSample(fec_delta / time_delta, at_time);
   }
   last_fec_bytes_ = fec_bytes;
   last_update_ = at_time;
 }
 
 void VideoReceiveStatsCollector::AddStats(
-    VideoReceiveStreamInterface::Stats sample) {
+    VideoReceiveStreamInterface::Stats sample,
+    Timestamp at_time) {
   if (sample.decode_ms > 0)
-    stats_.decode_time.AddSampleMs(sample.decode_ms);
+    stats_.decode_time.AddSample(TimeDelta::Millis(sample.decode_ms), at_time);
   if (sample.max_decode_ms > 0)
-    stats_.decode_time_max.AddSampleMs(sample.max_decode_ms);
+    stats_.decode_time_max.AddSample(TimeDelta::Millis(sample.max_decode_ms),
+                                     at_time);
   if (sample.width > 0 && sample.height > 0) {
-    stats_.decode_pixels.AddSample(sample.width * sample.height);
-    stats_.resolution.AddSample(sample.height);
+    stats_.decode_pixels.AddSample(
+        {.value = static_cast<double>(sample.width * sample.height),
+         .time = at_time});
+    stats_.resolution.AddSample(
+        {.value = static_cast<double>(sample.height), .time = at_time});
   }
 }
 }  // namespace test

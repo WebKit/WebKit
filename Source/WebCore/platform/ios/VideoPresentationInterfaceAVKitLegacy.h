@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT bool pictureInPictureWasStartedWhenEnteringBackground() const final;
     WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) final;
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
-    bool isPlayingVideoInEnhancedFullscreen() const;
+    bool isPlayingVideoInPictureInPicture() const;
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
     void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
     void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;

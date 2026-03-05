@@ -89,14 +89,14 @@ public:
 
 private:
     Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, Expression::Ptr type, Expression::Ptr initializer)
-        : Variable(span, flavor, WTFMove(name), { }, type, initializer, { })
+        : Variable(span, flavor, WTF::move(name), { }, type, initializer, { })
     { }
 
     Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr qualifier, Expression::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes, VariableRole role = VariableRole::UserDefined)
         : Declaration(span)
-        , m_name(WTFMove(name))
+        , m_name(WTF::move(name))
         , m_originalName(m_name)
-        , m_attributes(WTFMove(attributes))
+        , m_attributes(WTF::move(attributes))
         , m_qualifier(qualifier)
         , m_type(type)
         , m_initializer(initializer)

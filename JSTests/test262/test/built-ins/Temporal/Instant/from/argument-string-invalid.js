@@ -56,6 +56,9 @@ const invalidStrings = [
   // valid, but outside the supported range:
   "-999999-01-01T00:00Z",
   "+999999-01-01T00:00Z",
+  // "00:0000" is invalid (the hour/minute and minute/second separator
+  // or lack thereof needs to match).
+  "2025-01-01T00:00:00+00:0000",
 ];
 for (const arg of invalidStrings) {
   assert.throws(

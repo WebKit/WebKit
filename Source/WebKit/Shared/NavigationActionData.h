@@ -30,6 +30,7 @@
 #include "WebMouseEvent.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -65,7 +66,7 @@ struct NavigationActionData {
     bool hasOpenedFrames { false };
     bool openedByDOMWithOpener { false };
     bool hasOpener { false };
-    bool isPerformingHTTPFallback { false };
+    WebCore::NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior { WebCore::NavigationUpgradeToHTTPSBehavior::BasedOnPolicy };
     bool isInitialFrameSrcLoad { false };
     bool isContentRuleListRedirect { false };
     String openedMainFrameName;

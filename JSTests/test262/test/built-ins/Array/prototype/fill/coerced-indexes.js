@@ -5,16 +5,15 @@ esid: sec-array.prototype.fill
 description: >
   Fills elements from coerced to Integer `start` and `end` values
 info: |
-  22.1.3.6 Array.prototype.fill (value [ , start [ , end ] ] )
+  Array.prototype.fill ( _value_ [ , _start_ [ , _end_ ] ] )
 
-  ...
-  7. Let relativeStart be ToInteger(start).
-  8. ReturnIfAbrupt(relativeStart).
-  9. If relativeStart < 0, let k be max((len + relativeStart),0); else let k be
-  min(relativeStart, len).
-  10. If end is undefined, let relativeEnd be len; else let relativeEnd be
-  ToInteger(end).
-  ...
+  3. Let _relativeStart_ be ? ToIntegerOrInfinity(_start_).
+  4. If _relativeStart_ = -∞, let _k_ be 0.
+  5. Else if _relativeStart_ &lt; 0, let _k_ be max(_len_ + _relativeStart_, 0).
+  
+  7. If _end_ is *undefined*, let _relativeEnd_ be _len_; else let _relativeEnd_ be ? ToIntegerOrInfinity(_end_).
+  8. If _relativeEnd_ = -∞, let _final_ be 0.
+
 includes: [compareArray.js]
 ---*/
 
@@ -72,4 +71,12 @@ assert.compareArray([0, 0].fill(1, 1.5), [0, 1],
 
 assert.compareArray([0, 0].fill(1, 0, 1.5), [1, 0],
   '[0, 0].fill(1, 0, 1.5) must return [1, 0]'
+);
+
+assert.compareArray([0, 0].fill(1, Number.NEGATIVE_INFINITY, 1), [1, 0],
+  '[0, 0].fill(1, Number.NEGATIVE_INFINITY, 1) must return [1, 0]'
+);
+
+assert.compareArray([0, 0].fill(1, 0, Number.NEGATIVE_INFINITY), [0, 0],
+  '[0, 0].fill(1, 0, Number.NEGATIVE_INFINITY) must return [0, 0]'
 );

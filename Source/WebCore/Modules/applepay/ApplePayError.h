@@ -55,7 +55,7 @@ public:
     void setContactField(std::optional<ApplePayErrorContactField> contactField) { m_contactField = contactField; }
 
     String message() const { return m_message; }
-    void setMessage(String&& message) { m_message = WTFMove(message); }
+    void setMessage(String&& message) { m_message = WTF::move(message); }
 
     std::optional<Domain> domain() const { return m_domain; }
     void setDomain(std::optional<Domain> domain) { m_domain = domain; }

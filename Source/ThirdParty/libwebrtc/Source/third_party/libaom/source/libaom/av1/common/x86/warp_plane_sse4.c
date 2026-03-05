@@ -137,6 +137,8 @@ DECLARE_ALIGNED(8, const int8_t,
 };
 /* clang-format on */
 
+#if !CONFIG_HIGHWAY
+
 // Shuffle masks: we want to convert a sequence of bytes 0, 1, 2, ..., 15
 // in an SSE register into two sequences:
 // 0, 2, 2, 4, ..., 12, 12, 14, <don't care>
@@ -906,3 +908,5 @@ void av1_warp_affine_sse4_1(const int32_t *mat, const uint8_t *ref, int width,
     }
   }
 }
+
+#endif  // !CONFIG_HIGHWAY

@@ -89,7 +89,7 @@ public:
 
     size_t size() const { return m_size; }
 
-    const T* firstBlockData() const
+    const T* firstBlockData() const LIFETIME_BOUND
     {
         if (!m_size)
             return 0;

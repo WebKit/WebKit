@@ -70,6 +70,8 @@ void PaintRect(DesktopFrame* frame, DesktopRect rect, RgbaColor rgba_color) {
                 "kBytesPerPixel should be 4.");
   RTC_DCHECK_GE(frame->size().width(), rect.right());
   RTC_DCHECK_GE(frame->size().height(), rect.bottom());
+  // TODO(bugs.webrtc.org/436974448): Support other pixel formats.
+  RTC_CHECK_EQ(FOURCC_ARGB, frame->pixel_format());
   uint32_t color = rgba_color.ToUInt32();
   uint8_t* row = frame->GetFrameDataAtPos(rect.top_left());
   for (int i = 0; i < rect.height(); i++) {
@@ -116,8 +118,9 @@ std::unique_ptr<DesktopFrame> PainterDesktopFrameGenerator::GetNextFrame(
   }
 
   std::unique_ptr<DesktopFrame> frame = std::unique_ptr<DesktopFrame>(
-      factory ? SharedMemoryDesktopFrame::Create(size_, factory).release()
-              : new BasicDesktopFrame(size_));
+      factory ? SharedMemoryDesktopFrame::Create(size_, FOURCC_ARGB, factory)
+                    .release()
+              : new BasicDesktopFrame(size_, FOURCC_ARGB));
   if (painter_) {
     DesktopRegion updated_region;
     if (!painter_->Paint(frame.get(), &updated_region)) {

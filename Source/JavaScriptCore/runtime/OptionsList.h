@@ -87,7 +87,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useJIT, jitEnabledByDefault(), Normal, "allows the executable pages to be allocated for JIT and thunks if true"_s) \
     v(Bool, useBaselineJIT, true, Normal, "allows the baseline JIT to be used if true"_s) \
     v(Bool, useDFGJIT, true, Normal, "allows the DFG JIT to be used if true"_s) \
-    v(Bool, useRegExpJIT, jitEnabledByDefault(), Normal, "allows the RegExp JIT to be used if true"_s) \
+    v(Bool, useRegExpJIT, jitEnabledByDefault() && is64Bit(), Normal, "allows the RegExp JIT to be used if true"_s) \
     v(Bool, useDOMJIT, is64Bit(), Normal, "allows the DOMJIT to be used if true"_s) \
     \
     v(Bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
@@ -98,6 +98,7 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, crashOnDisallowedVMEntry, ASSERT_ENABLED, Normal, "Forces a crash if we attempt to enter the VM when disallowed"_s) \
     v(Bool, crashIfCantAllocateJITMemory, false, Normal, nullptr) \
+    v(Unsigned, structureHeapSizeInKB, 0, Normal, "Override for Structure Heap size (in KBs) if non-zero"_s) \
     v(Unsigned, jitMemoryReservationSize, 0, Normal, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)"_s) \
     v(Size, jitMemoryReservationAddress, 0, Restricted, "If non-zero, we will attempt to allocate JIT memory at the address provided and crash if we cannot.") \
     \
@@ -138,6 +139,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, dumpDFGDisassembly, false, Normal, "dumps disassembly of DFG function upon compilation"_s) \
     v(Bool, dumpFTLDisassembly, false, Normal, "dumps disassembly of FTL function upon compilation"_s) \
     v(Bool, dumpRegExpDisassembly, false, Normal, "dumps disassembly of RegExp upon compilation"_s) \
+    v(Bool, traceRegExpJITExecution, false, Normal, "traces RegExp JIT execution at reentry points"_s) \
     v(Bool, dumpWasmDisassembly, false, Normal, "dumps disassembly of all wasm code upon compilation"_s) \
     v(OptionString, dumpWasmSourceFileName, nullptr, Normal, "log every wasm module validation, and dump source bytes to <filename>.0.wasm, <filename>.1.wasm, etc..."_s) \
     v(OptionString, wasmOMGFunctionsToDump, nullptr, Normal, "file with newline separated list of function indices to dump IR/disassembly for, if no such file exists, the function index itself"_s) \
@@ -157,6 +159,7 @@ bool hasCapacityToUseLargeGigacage();
     v(OptionString, bbqAllowlist, nullptr, Normal, "file with newline separated list of function indices to allow BBQ compilation on or, if no such file exists, the function index to allow"_s) \
     v(OptionString, omgAllowlist, nullptr, Normal, "file with newline separated list of function indices to allow OMG compilation on or, if no such file exists, the function index to allow"_s) \
     v(OptionString, loopUnrollingAllowlist, nullptr, Normal, "file with newline separated list of function signatures to allow loop unrolling on or, if no such file exists, the function signature to allow"_s) \
+    v(OptionString, dumpGraphAllowlist, nullptr, Normal, "file with newline separated list of function signatures to filter graph dumps without restricting JIT compilation, or if no such file exists, the function signature to allow (affects dumpGraphAtEachPhase, dumpDFGGraphAtEachPhase, and dumpDFGFTLGraphAtEachPhase)"_s) \
     v(Bool, dumpSourceAtDFGTime, false, Normal, "dumps source code of JS function being DFG compiled"_s) \
     v(Bool, dumpBytecodeAtDFGTime, false, Normal, "dumps bytecode of JS function being DFG compiled"_s) \
     v(Bool, dumpGraphAfterParsing, false, Normal, nullptr) \
@@ -190,6 +193,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, reportTotalPhaseTimes, false, Normal, "This prints phase times at the end of running script inside jsc.cpp"_s) \
     v(Bool, reportParseTimes, false, Normal, "dumps JS function signature and the time it took to parse"_s) \
     v(Bool, reportBytecodeCompileTimes, false, Normal, "dumps JS function signature and the time it took to bytecode compile"_s) \
+    v(Bool, reportBytecodeCacheDecodeTimes, false, Normal, "dumps the time it took to decode bytecode from the disk cache"_s) \
     v(Bool, countParseTimes, false, Normal, "counts parse times"_s) \
     v(Bool, verboseExitProfile, false, Normal, nullptr) \
     v(Bool, verboseCFA, false, Normal, nullptr) \
@@ -377,6 +381,10 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, desiredProfileLivenessRate, 0.75, Normal, nullptr) \
     v(Double, desiredProfileFullnessRate, 0.35, Normal, nullptr) \
     \
+    v(Double, quickDFGTierUpThresholdFactor, defaultQuickDFGTierUpThresholdFactor(), Normal, "Threshold factor for quick DFG tier-up"_s) \
+    v(Double, relaxedProfileCoverageFactorForQuickDFGTierUp, defaultRelaxedProfileCoverageFactorForQuickDFGTierUp(), Normal, "Profile coverage scaling factor for quick DFG tier-up"_s) \
+    v(Double, quickFTLTierUpThresholdFactor, defaultQuickFTLTierUpThresholdFactor(), Normal, "Threshold factor for quick FTL tier-up"_s) \
+    \
     v(Double, doubleVoteRatioForDoubleFormat, 2, Normal, nullptr) \
     v(Double, structureCheckVoteRatioForHoisting, 1, Normal, nullptr) \
     v(Double, checkArrayVoteRatioForHoisting, 1, Normal, nullptr) \
@@ -474,6 +482,10 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, fireOSRExitFuzzAtOrAfter, 0, Normal, nullptr) \
     v(Bool, verboseOSRExitFuzz, true, Normal, nullptr) \
     \
+    /* LOL options */ \
+    v(Bool, useLOLJIT, false, Normal, "Use LOL instead of Baseline"_s) \
+    v(Bool, verboseLOLAllocation, false, Normal, "Log info about LOL's register allocation state"_s) \
+    \
     v(Unsigned, seedOfVMRandomForFuzzer, 0, Normal, "0 means not fuzzing this; use a cryptographically random seed"_s) \
     v(Bool, useRandomizingFuzzerAgent, false, Normal, nullptr) \
     v(Unsigned, seedOfRandomizingFuzzerAgent, 1, Normal, nullptr) \
@@ -488,15 +500,13 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, logPhaseTimes, false, Normal, nullptr) \
     v(Double, rareBlockPenalty, 0.001, Normal, nullptr) \
-    v(Unsigned, maximumTmpsForGraphColoring, 60000, Normal, "The maximum number of tmps an Air program can have before always register allocating with Linear Scan"_s) \
-    v(Bool, airLinearScanVerbose, false, Normal, nullptr) \
-    v(Bool, airLinearScanSpillsEverything, false, Normal, nullptr) \
     v(Bool, airForceBriggsAllocator, false, Normal, nullptr) \
     v(Bool, airForceIRCAllocator, false, Normal, nullptr) \
     v(Bool, airGreedyRegAllocVerbose, false, Normal, nullptr) \
     v(Bool, airUseGreedyRegAlloc, true, Normal, nullptr) \
     v(Double, airGreedyRegAllocSplitMultiplier, 2.0, Normal, nullptr) \
-    v(Bool, airDumpRegAllocStats, false, Normal, nullptr) \
+    v(Bool, airGreedyRegAllocSpillsEverything, false, Normal, nullptr) \
+    v(Bool, airDumpPhaseStats, false, Normal, nullptr) \
     v(Bool, airValidateGreedRegAlloc, ASSERT_ENABLED, Normal, nullptr) \
     v(Bool, airRandomizeRegs, false, Normal, nullptr) \
     v(Unsigned, airRandomizeRegsSeed, 0, Normal, nullptr) \
@@ -628,36 +638,40 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useWasmIPIntLoopOSR, true, Normal, "Allow IPInt to tier up during loop iterations"_s) \
     v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues"_s) \
     v(Bool, useWasmIPIntSIMD, true, Normal, "Allow IPInt to interpret SIMD code"_s) \
+    v(Bool, traceWasmIPIntExecution, false, Normal, nullptr) \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing."_s) \
     v(Bool, useOMGInlining, true, Normal, "Use OMG inlining"_s) \
     v(Bool, freeRetiredWasmCode, true, Normal, "free BBQ/OMG-OSR wasm code once it's no longer reachable."_s) \
     v(Bool, useArrayAllocationSinking, true, Normal, nullptr) \
     v(Bool, dumpFTLCodeSize, false, Normal, nullptr) \
     v(Bool, dumpOptimizationTracing, false, Normal, nullptr) \
+    v(Bool, dumpIonGraph, false, Normal, nullptr) \
+    v(OptionString, ionGraphDirectory, nullptr, Normal, "Directory to place IonGraph"_s) \
     v(Unsigned, markedBlockDumpInfoCount, 0, Normal, nullptr) /* FIXME: rdar://139998916 */ \
     \
     /* Feature Flags */\
     \
     /* Restricted so some app doesn't set this environment variable and start using it. */ \
-    v(Bool, useAsyncStackTrace, false, Normal, "Enable async stack traces") \
+    v(Bool, useAsyncStackTrace, true, Normal, "Enable async stack traces") \
     v(Bool, disallowMixedWasmExceptions, true, Restricted, "Disallow using both legacy and modern (try_table) wasm exception specs in the same module."_s) \
     v(Bool, useExplicitResourceManagement, false, Normal, "Enable explicit resource management builtins and syntax."_s) \
     v(Bool, useImportDefer, false, Normal, "Enable deferred module import."_s) \
     v(Bool, useIteratorChunking, false, Normal, "Expose the Iterator.prototype.chunks and Iterator.prototype.windows methods."_s) \
-    v(Bool, useIteratorSequencing, false, Normal, "Expose the Iterator.concat method."_s) \
+    v(Bool, useIteratorSequencing, true, Normal, "Expose the Iterator.concat method."_s) \
     v(Bool, useJSONSourceTextAccess, true, Normal, "Expose JSON source text access feature."_s) \
-    v(Bool, useMapGetOrInsert, true, Normal, "Expose the Map.prototype.getOrInsert family of methods."_s) \
-    v(Bool, useMathSumPreciseMethod, true, Normal, "Expose the Math.sumPrecise() method."_s) \
+    v(Bool, useJSPI, true, Normal, "Enable the implementation of JavaScript Promise Integration."_s) \
     v(Bool, useMoreCurrencyDisplayChoices, false, Normal, "Enable more currencyDisplay choices for Intl.NumberFormat"_s) \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object."_s) \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object."_s) \
     v(Bool, useTrustedTypes, true, Normal, "Enable trusted types eval protection feature."_s) \
     v(Bool, useWasmJSStringBuiltins, true, Normal, "Enable the implementation of the JS String Builtins proposal."_s) \
+    v(Bool, useWasmMemory64, false, Normal, "Allow the Memory64 proposal for WebAssembly. This feature is currently only supported in the IPInt tier."_s) \
     v(Bool, useWasmMemoryToBufferAPIs, true, Normal, "Enable the toFixedLengthBuffer() and toResizableBuffer() Wasm Memory.prototype functions."_s) \
-    v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
     v(Bool, useWasmRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."_s) \
+    v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
     v(Bool, useWasmTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
+    v(Bool, useWasmMultiMemory, false, Normal, "Allow wasm code to access multiple memories") \
 
 
 

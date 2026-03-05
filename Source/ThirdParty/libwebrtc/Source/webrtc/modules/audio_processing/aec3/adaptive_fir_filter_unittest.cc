@@ -467,10 +467,22 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
   EchoCanceller3Config config;
 
   if (num_render_channels == 33) {
-    config.filter.refined = {13, 0.00005f, 0.0005f, 0.0001f, 2.f, 20075344.f};
-    config.filter.coarse = {13, 0.1f, 20075344.f};
-    config.filter.refined_initial = {12, 0.005f, 0.5f, 0.001f, 2.f, 20075344.f};
-    config.filter.coarse_initial = {12, 0.7f, 20075344.f};
+    config.filter.refined = {.length_blocks = 13,
+                             .leakage_converged = 0.00005f,
+                             .leakage_diverged = 0.0005f,
+                             .error_floor = 0.0001f,
+                             .error_ceil = 2.f,
+                             .noise_gate = 20075344.f};
+    config.filter.coarse = {
+        .length_blocks = 13, .rate = 0.1f, .noise_gate = 20075344.f};
+    config.filter.refined_initial = {.length_blocks = 12,
+                                     .leakage_converged = 0.005f,
+                                     .leakage_diverged = 0.5f,
+                                     .error_floor = 0.001f,
+                                     .error_ceil = 2.f,
+                                     .noise_gate = 20075344.f};
+    config.filter.coarse_initial = {
+        .length_blocks = 12, .rate = 0.7f, .noise_gate = 20075344.f};
   }
 
   AdaptiveFirFilter filter(
@@ -512,7 +524,7 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
   // [B,A] = butter(2,100/8000,'high')
   constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 1>
       kHighPassFilterCoefficients = {{
-          {{0.97261f, -1.94523f, 0.97261f}, {-1.94448f, 0.94598f}},
+          {.b = {0.97261f, -1.94523f, 0.97261f}, .a = {-1.94448f, 0.94598f}},
       }};
   for (auto& Y2_ch : Y2) {
     Y2_ch.fill(0.f);

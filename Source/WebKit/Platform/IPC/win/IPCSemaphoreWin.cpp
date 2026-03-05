@@ -38,7 +38,7 @@ Semaphore::Semaphore()
 }
 
 Semaphore::Semaphore(Win32Handle&& handle)
-    : m_semaphoreHandle(WTFMove(handle))
+    : m_semaphoreHandle(WTF::move(handle))
 {
 }
 
@@ -53,7 +53,7 @@ Semaphore& Semaphore::operator=(Semaphore&& other)
 {
     if (this != &other) {
         destroy();
-        m_semaphoreHandle = WTFMove(other.m_semaphoreHandle);
+        m_semaphoreHandle = WTF::move(other.m_semaphoreHandle);
     }
 
     return *this;

@@ -80,8 +80,7 @@ public:
 
     bool canSetSelectedAttribute() const override;
 
-    Node* node() const final { return m_node.get(); }
-    CheckedPtr<Node> checkedNode() const { return node(); }
+    Node* NODELETE node() const final { return m_node.get(); }
     Document* document() const override;
     LocalFrameView* documentFrameView() const override;
 
@@ -146,8 +145,8 @@ public:
     String axColumnIndexText() const final;
     unsigned colSpan() const;
     unsigned rowSpan() const;
-    void incrementEffectiveRowSpan();
-    void resetEffectiveRowSpan();
+    void NODELETE incrementEffectiveRowSpan();
+    void NODELETE resetEffectiveRowSpan();
     void setAXColIndexFromRow(int);
     void setColumnIndex(unsigned);
 #if USE(ATSPI)
@@ -190,8 +189,8 @@ public:
     String stringValue() const override;
 
     bool isBlockFlow() const final;
-    StitchState stitchState(IncludeStitchGroup = IncludeStitchGroup::Yes) const final;
-    Vector<Vector<AXID>> stitchGroups() const final;
+    std::optional<AXStitchGroup> stitchGroup(IncludeGroupMembers = IncludeGroupMembers::Yes) const final;
+    Vector<AXStitchGroup> stitchGroups() const final;
 
     WallTime dateTimeValue() const final;
     SRGBA<uint8_t> colorValue() const final;
@@ -239,9 +238,13 @@ public:
     bool isLabelContainingOnlyStaticText() const;
     bool isNativeLabel() const override;
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     TextEmissionBehavior textEmissionBehavior() const final;
 #endif
+
+    bool usesAltForTextComputation() const;
+    bool hasTextAlternative() const;
+    String ariaAccessibilityDescription() const;
 
 protected:
     explicit AccessibilityNodeObject(AXID, Node*, AXObjectCache&);
@@ -306,7 +309,6 @@ protected:
     String textForLabelElements(Vector<Ref<HTMLElement>>&&) const;
     HTMLLabelElement* labelElementContainer() const;
 
-    String ariaAccessibilityDescription() const;
     Vector<Ref<Element>> ariaLabeledByElements() const;
     String descriptionForElements(const Vector<Ref<Element>>&) const;
     LayoutRect boundingBoxRect() const override;
@@ -333,12 +335,10 @@ private:
     void visibleText(Vector<AccessibilityText>&) const;
     String alternativeTextForWebArea() const;
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
-    bool usesAltForTextComputation() const;
     bool roleIgnoresTitle() const;
     bool postKeyboardKeysForValueChange(StepAction);
     void setNodeValue(StepAction, float);
     bool performDismissAction() final;
-    bool hasTextAlternative() const;
     LayoutRect checkboxOrRadioRect() const;
 
     void setNeedsToUpdateChildren() override { m_childrenDirty = true; }

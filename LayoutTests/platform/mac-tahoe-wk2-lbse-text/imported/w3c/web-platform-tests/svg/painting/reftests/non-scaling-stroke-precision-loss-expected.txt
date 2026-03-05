@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x364
+  RenderBlock {HTML} at (0,0) size 800x364
+    RenderBody {BODY} at (8,8) size 784x348
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 618x344
+  RenderSVGRoot {svg} at (0,0) size 618x344
+layer at (8,8) size 618x344
+  RenderSVGViewportContainer at (0,0) size 618x344

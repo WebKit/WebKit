@@ -36,7 +36,7 @@
 namespace WebCore {
 
 Icon::Icon(GRefPtr<GIcon>&& icon)
-    : m_icon(WTFMove(icon))
+    : m_icon(WTF::move(icon))
 {
 }
 
@@ -49,7 +49,7 @@ RefPtr<Icon> Icon::create(GRefPtr<GIcon>&& icon)
     if (!icon)
         return nullptr;
 
-    return adoptRef(new Icon(WTFMove(icon)));
+    return adoptRef(new Icon(WTF::move(icon)));
 }
 
 void Icon::paint(GraphicsContext&, const FloatRect&)

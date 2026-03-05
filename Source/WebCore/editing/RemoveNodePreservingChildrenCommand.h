@@ -33,7 +33,7 @@ class RemoveNodePreservingChildrenCommand : public CompositeEditCommand {
 public:
     static Ref<RemoveNodePreservingChildrenCommand> create(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     {
-        return adoptRef(*new RemoveNodePreservingChildrenCommand(WTFMove(node), shouldAssumeContentIsAlwaysEditable, editingAction));
+        return adoptRef(*new RemoveNodePreservingChildrenCommand(WTF::move(node), shouldAssumeContentIsAlwaysEditable, editingAction));
     }
 
 private:

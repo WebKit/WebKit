@@ -337,7 +337,7 @@ std::optional<WallTime> parseHTTPDate(const String& value)
 // that arises from quoted-string, nor does this function properly unquote
 // attribute values. Further this function appears to process parameter names
 // in a case-sensitive manner. (There are likely other bugs as well.)
-StringView filenameFromHTTPContentDisposition(StringView value)
+StringView filenameFromHTTPContentDisposition(StringView value LIFETIME_BOUND)
 {
     for (auto keyValuePair : value.split(';')) {
         size_t valueStartPos = keyValuePair.find('=');
@@ -399,7 +399,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
     return mediaType.substring(typeStart, typeEnd - typeStart);
 }
 
-StringView extractCharsetFromMediaType(StringView mediaType)
+StringView extractCharsetFromMediaType(StringView mediaType LIFETIME_BOUND)
 {
     unsigned charsetPos = 0, charsetLen = 0;
     size_t pos = 0;
@@ -565,7 +565,7 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
         return result;
 
     for (auto currentHeader : header.splitAllowingEmptyEntries(',')) {
-        currentHeader = currentHeader.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
+        currentHeader = currentHeader.trim(isTabOrSpace<char16_t>);
         XFrameOptionsDisposition currentValue = XFrameOptionsDisposition::None;
         if (equalLettersIgnoringASCIICase(currentHeader, "deny"_s))
             currentValue = XFrameOptionsDisposition::Deny;
@@ -605,8 +605,10 @@ OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& r
             result.add(ClearSiteDataValue::ExecutionContexts);
         else if (trimmedValue == "\"storage\""_s)
             result.add(ClearSiteDataValue::Storage);
+        else if (trimmedValue == "\"prefetchCache\""_s)
+            result.add(ClearSiteDataValue::PrefetchCache);
         else if (trimmedValue == "\"*\""_s)
-            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::ExecutionContexts, ClearSiteDataValue::Storage });
+            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::ExecutionContexts, ClearSiteDataValue::Storage, ClearSiteDataValue::PrefetchCache });
     }
     return result;
 }
@@ -972,7 +974,7 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
 // Implements <https://fetch.spec.whatwg.org/#concept-method-normalize>.
 String normalizeHTTPMethod(const String& method)
 {
-    const ASCIILiteral methods[] = { "DELETE"_s, "GET"_s, "HEAD"_s, "OPTIONS"_s, "POST"_s, "PUT"_s };
+    constexpr std::array methods { "DELETE"_s, "GET"_s, "HEAD"_s, "OPTIONS"_s, "POST"_s, "PUT"_s };
     for (auto value : methods) {
         if (equalIgnoringASCIICase(method, value)) {
             // Don't bother allocating a new string if it's already all uppercase.
@@ -987,7 +989,7 @@ String normalizeHTTPMethod(const String& method)
 // Defined by https://tools.ietf.org/html/rfc7231#section-4.2.1
 bool isSafeMethod(const String& method)
 {
-    const ASCIILiteral safeMethods[] = { "GET"_s, "HEAD"_s, "OPTIONS"_s, "TRACE"_s };
+    constexpr std::array safeMethods { "GET"_s, "HEAD"_s, "OPTIONS"_s, "TRACE"_s };
     for (auto value : safeMethods) {
         if (equalIgnoringASCIICase(method, value))
             return true;

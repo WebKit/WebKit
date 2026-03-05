@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CtapHidDriverWorker);
 
 CtapHidDriverWorker::CtapHidDriverWorker(CtapHidDriver& driver, Ref<HidConnection>&& connection)
     : m_driver(driver)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
 {
     m_connection->initialize();
 }
@@ -59,9 +59,9 @@ void CtapHidDriverWorker::transact(fido::FidoHidMessage&& requestMessage, Messag
 {
     ASSERT(m_state == State::Idle);
     m_state = State::Write;
-    m_requestMessage = WTFMove(requestMessage);
+    m_requestMessage = WTF::move(requestMessage);
     m_responseMessage.reset();
-    m_callback = WTFMove(callback);
+    m_callback = WTF::move(callback);
 
     // HidConnection could hold data from other applications, and thereofore invalidate it before each transaction.
     m_connection->invalidateCache();
@@ -138,10 +138,10 @@ void CtapHidDriverWorker::read(const Vector<uint8_t>& data)
 void CtapHidDriverWorker::returnMessage()
 {
     // Reset state before calling the response callback to avoid being deleted.
-    auto callback = WTFMove(m_callback);
-    auto message = WTFMove(m_responseMessage);
+    auto callback = WTF::move(m_callback);
+    auto message = WTF::move(m_responseMessage);
     reset();
-    callback(WTFMove(message));
+    callback(WTF::move(message));
 }
 
 void CtapHidDriverWorker::reset()
@@ -165,12 +165,12 @@ void CtapHidDriverWorker::cancel(fido::FidoHidMessage&& requestMessage)
 
 Ref<CtapHidDriver> CtapHidDriver::create(Ref<HidConnection>&& connection)
 {
-    return adoptRef(*new CtapHidDriver(WTFMove(connection)));
+    return adoptRef(*new CtapHidDriver(WTF::move(connection)));
 }
 
 CtapHidDriver::CtapHidDriver(Ref<HidConnection>&& connection)
     : CtapDriver(WebCore::AuthenticatorTransport::Usb)
-    , m_worker(makeUniqueRefWithoutRefCountedCheck<CtapHidDriverWorker>(*this, WTFMove(connection)))
+    , m_worker(makeUniqueRefWithoutRefCountedCheck<CtapHidDriverWorker>(*this, WTF::move(connection)))
     , m_nonce(kHidInitNonceLength)
 {
 }
@@ -182,8 +182,8 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
     ASSERT(m_state == State::Idle);
     m_state = State::AllocateChannel;
     m_channelId = kHidBroadcastChannel;
-    m_requestData = WTFMove(data);
-    m_responseCallback = WTFMove(callback);
+    m_requestData = WTF::move(data);
+    m_responseCallback = WTF::move(callback);
 
     // Allocate a channel.
     // Use a pseudo random nonce instead of a cryptographically strong one as the nonce
@@ -197,11 +197,11 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
 
     auto initCommand = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kInit, m_nonce);
     ASSERT(initCommand);
-    m_worker->transact(WTFMove(*initCommand), [weakThis = WeakPtr { *this }](std::optional<FidoHidMessage>&& response) mutable {
+    m_worker->transact(WTF::move(*initCommand), [weakThis = WeakPtr { *this }](std::optional<FidoHidMessage>&& response) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
-        weakThis->continueAfterChannelAllocated(WTFMove(response));
+        weakThis->continueAfterChannelAllocated(WTF::move(response));
     });
 }
 
@@ -220,10 +220,10 @@ void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&
     // Restart the transaction in the next run loop when nonce mismatches.
     if (!spanHasPrefix(payload.span(), m_nonce.span())) {
         m_state = State::Idle;
-        RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, data = WTFMove(m_requestData), callback = WTFMove(m_responseCallback)]() mutable {
+        RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, data = WTF::move(m_requestData), callback = WTF::move(m_responseCallback)]() mutable {
             if (!weakThis)
                 return;
-            weakThis->transact(WTFMove(data), WTFMove(callback));
+            weakThis->transact(WTF::move(data), WTF::move(callback));
         });
         return;
     }
@@ -237,11 +237,11 @@ void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&
     // FIXME(191534): Check the rest of the payload.
     auto cmd = FidoHidMessage::create(m_channelId, isCtap2Protocol() ?  FidoHidDeviceCommand::kCbor : FidoHidDeviceCommand::kMsg, m_requestData);
     ASSERT(cmd);
-    m_worker->transact(WTFMove(*cmd), [weakThis = WeakPtr { *this }](std::optional<FidoHidMessage>&& response) mutable {
+    m_worker->transact(WTF::move(*cmd), [weakThis = WeakPtr { *this }](std::optional<FidoHidMessage>&& response) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
-        weakThis->continueAfterResponseReceived(WTFMove(response));
+        weakThis->continueAfterResponseReceived(WTF::move(response));
     });
 }
 
@@ -256,9 +256,9 @@ void CtapHidDriver::continueAfterResponseReceived(std::optional<fido::FidoHidMes
 void CtapHidDriver::returnResponse(Vector<uint8_t>&& response)
 {
     // Reset state before calling the response callback to avoid being deleted.
-    auto responseCallback = WTFMove(m_responseCallback);
+    auto responseCallback = WTF::move(m_responseCallback);
     reset();
-    responseCallback(WTFMove(response));
+    responseCallback(WTF::move(response));
 }
 
 void CtapHidDriver::reset()
@@ -275,7 +275,7 @@ void CtapHidDriver::cancel()
     // Cancel any outstanding requests.
     if (m_state == State::Ready) {
         auto cancelCommand = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kCancel, { });
-        m_worker->cancel(WTFMove(*cancelCommand));
+        m_worker->cancel(WTF::move(*cancelCommand));
     }
     reset();
 }

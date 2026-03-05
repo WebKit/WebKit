@@ -347,7 +347,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 
 - (void)positionChanged:(WebCore::GeolocationPositionData&&)position
 {
-    RetainPtr<WebGeolocationPosition> webPosition = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:WTFMove(position)]);
+    RetainPtr<WebGeolocationPosition> webPosition = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:WTF::move(position)]);
     WebThreadRun(^{
         [_provider positionChanged:webPosition.get()];
     });

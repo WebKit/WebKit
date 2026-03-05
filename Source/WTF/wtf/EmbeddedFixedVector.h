@@ -80,7 +80,7 @@ public:
     template<size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename VectorMalloc>
     static UniqueRef<EmbeddedFixedVector> createFromVector(Vector<T, inlineCapacity, OverflowHandler, minCapacity, VectorMalloc>&& other)
     {
-        auto container = WTFMove(other);
+        auto container = WTF::move(other);
         unsigned size = Checked<uint32_t> { container.size() }.value();
         return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::move_iterator { container.begin() }, std::move_iterator { container.end() }) };
     }

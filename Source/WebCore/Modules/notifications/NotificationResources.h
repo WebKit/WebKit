@@ -39,15 +39,15 @@ public:
     
     static Ref<NotificationResources> create(RefPtr<Image>&& image)
     {
-        return adoptRef(*new NotificationResources(WTFMove(image)));
+        return adoptRef(*new NotificationResources(WTF::move(image)));
     }
 
-    void setIcon(RefPtr<Image>&& icon) { m_icon = WTFMove(icon); }
+    void setIcon(RefPtr<Image>&& icon) { m_icon = WTF::move(icon); }
     const RefPtr<Image>& icon() const { return m_icon; }
 
 private:
     NotificationResources(RefPtr<Image>&& image)
-        : m_icon(WTFMove(image))
+        : m_icon(WTF::move(image))
     {
     }
 

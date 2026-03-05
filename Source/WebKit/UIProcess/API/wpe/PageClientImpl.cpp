@@ -48,7 +48,6 @@
 #include <WebCore/PasteboardCustomData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SystemSettings.h>
-#include <wpe/wpe.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(ATK)
@@ -57,6 +56,10 @@
 
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
+#endif
+
+#if USE(LIBWPE)
+#include <wpe/wpe.h>
 #endif
 
 namespace WebKit {
@@ -70,10 +73,12 @@ PageClientImpl::PageClientImpl(WKWPE::View& view)
 
 PageClientImpl::~PageClientImpl() = default;
 
+#if USE(LIBWPE)
 struct wpe_view_backend* PageClientImpl::viewBackend()
 {
     return m_view.backend();
 }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 WPEView* PageClientImpl::wpeView() const
@@ -82,12 +87,14 @@ WPEView* PageClientImpl::wpeView() const
 }
 #endif
 
+#if USE(WPE_RENDERER)
 UnixFileDescriptor PageClientImpl::hostFileDescriptor()
 {
     if (!m_view.backend())
         return { };
     return UnixFileDescriptor { wpe_view_backend_get_renderer_host_fd(m_view.backend()), UnixFileDescriptor::Adopt };
 }
+#endif
 
 Ref<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
@@ -98,7 +105,7 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)
 {
 }
 
-void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated)
+void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated, WebCore::InterruptScrollAnimation)
 {
 }
 
@@ -173,7 +180,7 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
-    m_undoController.registerEditCommand(WTFMove(command), undoOrRedo);
+    m_undoController.registerEditCommand(WTF::move(command), undoOrRedo);
 }
 
 void PageClientImpl::clearAllEditCommands()
@@ -246,10 +253,14 @@ void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wa
     }
 
 #if ENABLE(WPE_PLATFORM)
-    if (m_view.wpeView())
+    if (m_view.wpeView()) {
+        if (touchEvent.isNativeWebTouchEvent())
+            static_cast<WKWPE::ViewPlatform&>(m_view).handleGesture(static_cast<const NativeWebTouchEvent&>(touchEvent).nativeEvent());
         return;
+    }
 #endif
 
+#if USE(LIBWPE)
     const struct wpe_input_touch_event_raw* touchPoint = touchEvent.isNativeWebTouchEvent() ? static_cast<const NativeWebTouchEvent&>(touchEvent).nativeFallbackTouchPoint() : nullptr;
     if (!touchPoint || touchPoint->type == wpe_input_touch_event_type_null)
         return;
@@ -285,6 +296,7 @@ void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wa
             // FIXME: Generate contextmenuevent without accidentally generating mouseup/mousedown events
         },
         [](TouchGestureController::AxisEvent&) { });
+#endif
 }
 #endif
 
@@ -300,9 +312,9 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
 }
 
 #if ENABLE(CONTEXT_MENUS)
-Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, FrameInfoData&&, ContextMenuContextData&& context, const UserData& userData)
+Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
 {
-    return WebContextMenuProxyWPE::create(page, WTFMove(context), userData);
+    return WebContextMenuProxyWPE::create(page, WTF::move(frameInfo), WTF::move(context), userData);
 }
 #endif
 
@@ -433,7 +445,7 @@ WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
 
 void PageClientImpl::setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&& client)
 {
-    m_fullscreenClientForTesting = WTFMove(client);
+    m_fullscreenClientForTesting = WTF::move(client);
 }
 
 void PageClientImpl::closeFullScreenManager()
@@ -451,7 +463,7 @@ void PageClientImpl::enterFullScreen(WebCore::FloatSize, CompletionHandler<void(
     if (isFullScreen())
         return completionHandler(false);
 
-    m_view.willEnterFullScreen(WTFMove(completionHandler));
+    m_view.willEnterFullScreen(WTF::move(completionHandler));
 #if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
         static_cast<WKWPE::ViewPlatform&>(m_view).enterFullScreen();
@@ -459,11 +471,13 @@ void PageClientImpl::enterFullScreen(WebCore::FloatSize, CompletionHandler<void(
     }
 #endif
 
+#if USE(LIBWPE)
     WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
     if (fullScreenManagerProxy) {
         if (!static_cast<WKWPE::ViewLegacy&>(m_view).setFullScreen(true))
             fullScreenManagerProxy->requestExitFullScreen();
     }
+#endif
 }
 
 void PageClientImpl::exitFullScreen(CompletionHandler<void()>&& completionHandler)
@@ -471,7 +485,7 @@ void PageClientImpl::exitFullScreen(CompletionHandler<void()>&& completionHandle
     if (!isFullScreen())
         return completionHandler();
 
-    m_view.willExitFullScreen(WTFMove(completionHandler));
+    m_view.willExitFullScreen(WTF::move(completionHandler));
 #if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
         static_cast<WKWPE::ViewPlatform&>(m_view).exitFullScreen();
@@ -479,10 +493,12 @@ void PageClientImpl::exitFullScreen(CompletionHandler<void()>&& completionHandle
     }
 #endif
 
+#if USE(LIBWPE)
     if (m_view.page().fullScreenManager()) {
         bool success = static_cast<WKWPE::ViewLegacy&>(m_view).setFullScreen(false);
         ASSERT_UNUSED(success, success);
     }
+#endif
 }
 
 void PageClientImpl::beganEnterFullScreen(const WebCore::IntRect& /* initialFrame */, const WebCore::IntRect& /* finalFrame */, CompletionHandler<void(bool)>&& completionHandler)
@@ -526,7 +542,11 @@ AtkObject* PageClientImpl::accessible()
         return nullptr;
 #endif
 
+#if USE(LIBWPE)
     return ATK_OBJECT(static_cast<WKWPE::ViewLegacy&>(m_view).accessible());
+#endif
+
+    return nullptr;
 }
 #endif
 
@@ -542,12 +562,12 @@ void PageClientImpl::didChangeWebPageID() const
 
 void PageClientImpl::sendMessageToWebView(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
-    m_view.didReceiveUserMessage(WTFMove(message), WTFMove(completionHandler));
+    m_view.didReceiveUserMessage(WTF::move(message), WTF::move(completionHandler));
 }
 
 void PageClientImpl::setInputMethodState(std::optional<InputMethodState>&& state)
 {
-    m_view.setInputMethodState(WTFMove(state));
+    m_view.setInputMethodState(WTF::move(state));
 }
 
 void PageClientImpl::selectionDidChange()
@@ -562,24 +582,22 @@ WebKitWebResourceLoadManager* PageClientImpl::webResourceLoadManager()
 
 void PageClientImpl::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
 {
-    m_view.callAfterNextPresentationUpdate(WTFMove(callback));
+    m_view.callAfterNextPresentationUpdate(WTF::move(callback));
 }
 
-#if USE(SKIA)
 RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect)
 {
 #if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
-        auto snapshot = static_cast<WKWPE::ViewPlatform&>(m_view).takeViewSnapshot(WTFMove(clipRect));
+        auto snapshot = static_cast<WKWPE::ViewPlatform&>(m_view).takeViewSnapshot(WTF::move(clipRect));
         // FIXME Forward the Expected in https://webkit.org/b/300271
         if (snapshot)
-            return WTFMove(snapshot.value());
+            return WTF::move(snapshot.value());
     }
 #else
     UNUSED_PARAM(clipRect);
 #endif
     return nullptr;
 }
-#endif
 
 } // namespace WebKit

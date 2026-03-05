@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/CollectionScope.h>
 #include <JavaScriptCore/IndexingType.h>
 #include <JavaScriptCore/WeakGCMap.h>
 #include <wtf/HashFunctions.h>

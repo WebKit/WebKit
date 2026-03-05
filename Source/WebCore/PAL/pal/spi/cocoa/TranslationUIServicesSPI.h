@@ -25,6 +25,12 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(MAC)
@@ -35,7 +41,8 @@ DECLARE_SYSTEM_HEADER
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://165508009) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #import <TranslationUIServices/LTUISourceMeta.h>
 #import <TranslationUIServices/LTUITranslationViewController.h>
 #else
@@ -62,3 +69,5 @@ typedef NS_ENUM(NSUInteger, LTUISourceMetaOrigin) {
 #endif
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
+
+#endif // !__has_feature(modules)

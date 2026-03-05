@@ -57,16 +57,16 @@ public:
 
     enum IsolatedCopyTag { IsolatedCopy };
     IDBRequestData(const IDBRequestData&, IsolatedCopyTag);
-    WEBCORE_EXPORT IDBRequestData isolatedCopy() const;
+    WEBCORE_EXPORT IDBRequestData NODELETE isolatedCopy() const;
 
-    IDBConnectionIdentifier serverConnectionIdentifier() const;
-    WEBCORE_EXPORT IDBResourceIdentifier requestIdentifier() const;
-    WEBCORE_EXPORT IDBResourceIdentifier transactionIdentifier() const;
-    IDBObjectStoreIdentifier objectStoreIdentifier() const;
-    std::optional<IDBIndexIdentifier> indexIdentifier() const;
-    IndexedDB::IndexRecordType indexRecordType() const;
-    IDBResourceIdentifier cursorIdentifier() const;
-    uint64_t requestedVersion() const;
+    IDBConnectionIdentifier NODELETE serverConnectionIdentifier() const;
+    WEBCORE_EXPORT IDBResourceIdentifier NODELETE requestIdentifier() const;
+    WEBCORE_EXPORT IDBResourceIdentifier NODELETE transactionIdentifier() const;
+    IDBObjectStoreIdentifier NODELETE objectStoreIdentifier() const;
+    std::optional<IDBIndexIdentifier> NODELETE indexIdentifier() const;
+    IndexedDB::IndexRecordType NODELETE indexRecordType() const;
+    IDBResourceIdentifier NODELETE cursorIdentifier() const;
+    uint64_t NODELETE requestedVersion() const;
     IDBRequestData isolatedCopy();
 
 private:

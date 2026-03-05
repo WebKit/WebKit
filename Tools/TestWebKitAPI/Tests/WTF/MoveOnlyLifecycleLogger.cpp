@@ -71,10 +71,10 @@ TEST(MoveOnlyLifecycleLogger, Basic)
     { MoveOnlyLifecycleLogger l("a"); }
     ASSERT_STREQ("construct(a) destruct(a) ", takeLogStr().c_str());
 
-    { MoveOnlyLifecycleLogger l("d"); MoveOnlyLifecycleLogger l2(WTFMove(l)); }
+    { MoveOnlyLifecycleLogger l("d"); MoveOnlyLifecycleLogger l2(WTF::move(l)); }
     ASSERT_STREQ("construct(d) move-construct(d) destruct(d) destruct(<default>) ", takeLogStr().c_str());
 
-    { MoveOnlyLifecycleLogger l("e"); MoveOnlyLifecycleLogger l2; l2 = WTFMove(l); }
+    { MoveOnlyLifecycleLogger l("e"); MoveOnlyLifecycleLogger l2; l2 = WTF::move(l); }
     ASSERT_STREQ("construct(e) construct(<default>) move-assign(e) destruct(e) destruct(<default>) ", takeLogStr().c_str());
 
     { MoveOnlyLifecycleLogger l("f"); l.setName("x"); }

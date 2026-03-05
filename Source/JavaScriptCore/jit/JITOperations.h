@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(JIT)
 
 #include <JavaScriptCore/JITMathICForwards.h>
@@ -34,7 +36,6 @@
 #include <JavaScriptCore/ParserModes.h>
 #include <JavaScriptCore/PrivateFieldPutKind.h>
 #include <JavaScriptCore/UGPRPair.h>
-#include <wtf/Platform.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {

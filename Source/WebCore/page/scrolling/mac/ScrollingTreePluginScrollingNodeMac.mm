@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreePluginScrollingNodeMac.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "Logging.h"
 #import "ScrollingStatePluginScrollingNode.h"
@@ -76,10 +76,8 @@ bool ScrollingTreePluginScrollingNodeMac::commitStateBeforeChildren(const Scroll
 
 WheelEventHandlingResult ScrollingTreePluginScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
-#if ENABLE(SCROLLING_THREAD)
     if (hasNonRepaintSynchronousScrollingReasons() && eventTargeting != EventTargeting::NodeOnly)
         return { { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch }, false };
-#endif
 
     if (!canHandleWheelEvent(wheelEvent, eventTargeting))
         return WheelEventHandlingResult::unhandled();
@@ -112,4 +110,4 @@ void ScrollingTreePluginScrollingNodeMac::repositionRelatedLayers()
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

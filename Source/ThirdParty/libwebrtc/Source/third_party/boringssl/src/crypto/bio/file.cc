@@ -56,7 +56,7 @@
 #else
 static FILE *fopen_if_available(const char *path, const char *mode) {
   errno = ENOENT;
-  return NULL;
+  return nullptr;
 }
 #endif
 
@@ -65,7 +65,7 @@ BIO *BIO_new_file(const char *filename, const char *mode) {
   FILE *file;
 
   file = fopen_if_available(filename, mode);
-  if (file == NULL) {
+  if (file == nullptr) {
     OPENSSL_PUT_SYSTEM_ERROR();
 
     ERR_add_error_data(5, "fopen('", filename, "','", mode, "')");
@@ -74,13 +74,13 @@ BIO *BIO_new_file(const char *filename, const char *mode) {
     } else {
       OPENSSL_PUT_ERROR(BIO, BIO_R_SYS_LIB);
     }
-    return NULL;
+    return nullptr;
   }
 
   ret = BIO_new_fp(file, BIO_CLOSE);
-  if (ret == NULL) {
+  if (ret == nullptr) {
     fclose(file);
-    return NULL;
+    return nullptr;
   }
 
   return ret;
@@ -88,8 +88,8 @@ BIO *BIO_new_file(const char *filename, const char *mode) {
 
 BIO *BIO_new_fp(FILE *stream, int flags) {
   BIO *ret = BIO_new(BIO_s_file());
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   BIO_set_fp(ret, stream, flags);
@@ -101,9 +101,9 @@ static int file_free(BIO *bio) {
     return 1;
   }
 
-  if (bio->init && bio->ptr != NULL) {
+  if (bio->init && bio->ptr != nullptr) {
     fclose(reinterpret_cast<FILE *>(bio->ptr));
-    bio->ptr = NULL;
+    bio->ptr = nullptr;
   }
   bio->init = 0;
 
@@ -270,8 +270,8 @@ int BIO_rw_filename(BIO *bio, const char *filename) {
                        (char *)filename);
 }
 
-long BIO_tell(BIO *bio) { return BIO_ctrl(bio, BIO_C_FILE_TELL, 0, NULL); }
+long BIO_tell(BIO *bio) { return BIO_ctrl(bio, BIO_C_FILE_TELL, 0, nullptr); }
 
 long BIO_seek(BIO *bio, long offset) {
-  return BIO_ctrl(bio, BIO_C_FILE_SEEK, offset, NULL);
+  return BIO_ctrl(bio, BIO_C_FILE_SEEK, offset, nullptr);
 }

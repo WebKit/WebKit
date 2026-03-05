@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
 
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>

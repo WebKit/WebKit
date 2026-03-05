@@ -26,12 +26,14 @@
 #pragma once
 
 #include "APIObject.h"
+#include "EnhancedSecurity.h"
 #include "SessionState.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteDataStore.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainReleaseSwift.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -62,45 +64,46 @@ public:
     Ref<FrameState> navigatedFrameState() const;
     Ref<FrameState> mainFrameState() const;
 
-    const String& originalURL() const;
-    const String& url() const;
-    const String& title() const;
+    const String& NODELETE originalURL() const LIFETIME_BOUND;
+    const String& NODELETE url() const LIFETIME_BOUND;
+    const String& NODELETE title() const LIFETIME_BOUND;
     bool wasCreatedByJSWithoutUserInteraction() const;
 
-    const URL& resourceDirectoryURL() const { return m_resourceDirectoryURL; }
-    void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTFMove(url); }
+    const URL& resourceDirectoryURL() const LIFETIME_BOUND { return m_resourceDirectoryURL; }
+    void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTF::move(url); }
     RefPtr<WebsiteDataStore> dataStoreForWebArchive() const { return m_dataStoreForWebArchive; }
     void setDataStoreForWebArchive(WebsiteDataStore* dataStore) { m_dataStoreForWebArchive = dataStore; }
 
     bool itemIsInSameDocument(const WebBackForwardListItem&) const;
     bool itemIsClone(const WebBackForwardListItem&);
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && USE(SKIA))
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     ViewSnapshot* snapshot() const { return m_snapshot.get(); }
-    void setSnapshot(RefPtr<ViewSnapshot>&& snapshot) { m_snapshot = WTFMove(snapshot); }
+    void setSnapshot(RefPtr<ViewSnapshot>&& snapshot) { m_snapshot = WTF::move(snapshot); }
 #endif
 
     void wasRemovedFromBackForwardList();
 
     WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
-    RefPtr<WebBackForwardCacheEntry> protectedBackForwardCacheEntry() const;
 
-    SuspendedPageProxy* suspendedPage() const;
+    SuspendedPageProxy* NODELETE suspendedPage() const;
 
     std::optional<WebCore::FrameIdentifier> navigatedFrameID() const { return m_navigatedFrameID; }
 
     WebBackForwardListFrameItem& navigatedFrameItem() const;
-    Ref<WebBackForwardListFrameItem> protectedNavigatedFrameItem() const;
 
-    WebBackForwardListFrameItem& mainFrameItem() const;
-    Ref<WebBackForwardListFrameItem> protectedMainFrameItem() const;
-
-    void setIsRemoteFrameNavigation(bool isRemoteFrameNavigation) { m_isRemoteFrameNavigation = isRemoteFrameNavigation; }
-    bool isRemoteFrameNavigation() const { return m_isRemoteFrameNavigation; }
+    // rdar://168057355
+    WebBackForwardListFrameItem* WTF_NONNULL mainFrameItemPtrForSwift() const SWIFT_NAME(mainFrameItem()) { return &mainFrameItem(); }
+    WebBackForwardListFrameItem& NODELETE mainFrameItem() const SWIFT_NAME(__mainFrameItemUnsafe());
 
     void setWasRestoredFromSession();
 
     String loggingString();
+
+    void setEnhancedSecurity(EnhancedSecurity state) { m_enhancedSecurity = state; }
+    EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
+
+    void updateFrameID(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
 
 private:
     WebBackForwardListItem(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, BrowsingContextGroup*);
@@ -114,19 +117,27 @@ private:
 
     const WebCore::BackForwardItemIdentifier m_identifier;
     const Ref<WebBackForwardListFrameItem> m_mainFrameItem;
-    const Markable<WebCore::FrameIdentifier> m_navigatedFrameID;
+    Markable<WebCore::FrameIdentifier> m_navigatedFrameID;
     URL m_resourceDirectoryURL;
     const WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
     RefPtr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
     const RefPtr<BrowsingContextGroup> m_browsingContextGroup;
-#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && USE(SKIA))
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     RefPtr<ViewSnapshot> m_snapshot;
 #endif
-    bool m_isRemoteFrameNavigation { false };
+    EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };
 } SWIFT_SHARED_REFERENCE(refBackForwardListItem, derefBackForwardListItem);
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;
+
+using RefWebBackForwardListItem = Ref<WebKit::WebBackForwardListItem>;
+using RefPtrWebBackForwardListItem = RefPtr<WebKit::WebBackForwardListItem>;
+
+// Workaround for rdar://85881664
+inline API::Object* WTF_NONNULL toAPIObject(WebBackForwardListItem* WTF_NONNULL item) SWIFT_RETURNS_UNRETAINED {
+    return item;
+}
 
 } // namespace WebKit
 

@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include <WebCore/AnimationUtilities.h>
-#include <WebCore/WebAnimationTypes.h>
+#include "AnimationUtilities.h"
+#include "WebAnimationTypes.h"
 
 namespace WebCore::Style::Interpolation {
 
@@ -41,8 +41,8 @@ struct Context : BlendingContext {
     const Client& client;
     AnimatableCSSProperty property;
 
-    Context(const AnimatableCSSProperty& property, double progress, bool isDiscrete, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, WebCore::Color fromColor,  WebCore::Color toColor, const Client& client)
-        : BlendingContext(progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration, fromColor, toColor)
+    Context(const AnimatableCSSProperty& property, double progress, bool isDiscrete, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
+        : BlendingContext(progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration)
         , client(client)
         , property(property)
     {

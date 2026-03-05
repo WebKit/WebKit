@@ -205,22 +205,22 @@ void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy& page, 
     WebCore::IntPoint locationOnScreen = page.syncRootViewToScreen(IntRect(locationInViewport, IntSize())).location();
     LOG_WITH_STREAM(AutomationInteractions, stream << "platformSimulateTouchInteraction: interaction=" << interaction << ", locationInViewport=" << locationInViewport << ", locationOnScreen=" << locationOnScreen << ", duration=" << duration.value_or(0_s).seconds());
 
-    auto interactionFinished = makeBlockPtr([completionHandler = WTFMove(completionHandler)] () mutable {
+    auto interactionFinished = makeBlockPtr([completionHandler = WTF::move(completionHandler)] () mutable {
         completionHandler(std::nullopt);
     });
 
     _WKTouchEventGenerator *generator = [_WKTouchEventGenerator sharedTouchEventGenerator];
-    UIWindow *window = [page.cocoaView() window];
+    RetainPtr window = [page.cocoaView() window];
 
     switch (interaction) {
     case TouchInteraction::TouchDown:
-        [generator touchDown:locationOnScreen window:window completionBlock:interactionFinished.get()];
+        [generator touchDown:locationOnScreen window:window.get() completionBlock:interactionFinished.get()];
         break;
     case TouchInteraction::LiftUp:
-        [generator liftUp:locationOnScreen window:window completionBlock:interactionFinished.get()];
+        [generator liftUp:locationOnScreen window:window.get() completionBlock:interactionFinished.get()];
         break;
     case TouchInteraction::MoveTo:
-        [generator moveToPoint:locationOnScreen duration:duration.value_or(0_s).seconds() window:window completionBlock:interactionFinished.get()];
+        [generator moveToPoint:locationOnScreen duration:duration.value_or(0_s).seconds() window:window.get() completionBlock:interactionFinished.get()];
         break;
     }
 }

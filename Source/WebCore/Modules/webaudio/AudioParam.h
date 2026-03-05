@@ -70,7 +70,7 @@ public:
     float value();
     void setValue(float);
 
-    float valueForBindings() const;
+    float NODELETE valueForBindings() const;
     ExceptionOr<void> setValueForBindings(float);
 
     AutomationRate automationRate() const { return m_automationRate; }
@@ -80,7 +80,7 @@ public:
     // Must be called in the audio thread.
     float finalValue();
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
     float minValue() const { return m_minValue; }
     float maxValue() const { return m_maxValue; }
@@ -90,7 +90,7 @@ public:
 
     // When a new value is set with setValue(), in our internal use of the parameter we don't immediately jump to it.
     // Instead we smoothly approach this value to avoid glitching.
-    float smoothedValue();
+    float smoothedValue() const { return m_smoothedValue; }
 
     // Smoothly exponentially approaches to (de-zippers) the desired value.
     // Returns true if smoothed value has already snapped exactly to value.
@@ -129,7 +129,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "AudioParam"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
     
     String m_name;

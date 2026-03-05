@@ -55,7 +55,7 @@ class WebRTCMonitor {
 public:
     explicit WebRTCMonitor(LibWebRTCNetwork&);
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     void addObserver(WebRTCMonitorObserver& observer) { m_observers.add(observer); }
@@ -67,9 +67,9 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     bool didReceiveNetworkList() const { return m_didReceiveNetworkList; }
-    const Vector<RTCNetwork>& networkList() const { return m_networkList; }
-    const RTCNetwork::IPAddress& ipv4() const { return m_ipv4; }
-    const RTCNetwork::IPAddress& ipv6() const { return m_ipv6; }
+    const Vector<RTCNetwork>& networkList() const LIFETIME_BOUND { return m_networkList; }
+    const RTCNetwork::IPAddress& ipv4() const LIFETIME_BOUND { return m_ipv4; }
+    const RTCNetwork::IPAddress& ipv6() const LIFETIME_BOUND { return m_ipv6; }
 
 private:
     void networksChanged(Vector<RTCNetwork>&&, RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&);

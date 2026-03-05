@@ -64,7 +64,8 @@ PAS_API void bmalloc_heap_config_activate(void);
     .use_small_bitfit = true, \
     .small_bitfit_min_align_shift = BMALLOC_MINALIGN_SHIFT, \
     .small_bitfit_page_size = PAS_SMALL_BITFIT_PAGE_DEFAULT_SIZE, \
-    .medium_page_size = PAS_MEDIUM_PAGE_DEFAULT_SIZE, \
+    .medium_segregated_page_size = PAS_MEDIUM_PAGE_DEFAULT_SIZE, \
+    .medium_bitfit_page_size = PAS_MEDIUM_BITFIT_PAGE_DEFAULT_SIZE, \
     .granule_size = PAS_GRANULE_DEFAULT_SIZE, \
     .use_medium_segregated = true, \
     .medium_segregated_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
@@ -78,7 +79,8 @@ PAS_API void bmalloc_heap_config_activate(void);
     .use_marge_bitfit = true, \
     .marge_bitfit_min_align_shift = PAS_MIN_MARGE_ALIGN_SHIFT, \
     .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
-    .pgm_enabled = true)
+    .pgm_enabled = true, \
+    .delegate_large_user_allocations = true)
 
 PAS_API extern const pas_heap_config bmalloc_heap_config;
 

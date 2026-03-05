@@ -351,8 +351,8 @@ Vector<BasicBlock*> blocksInOptimizedOrder(Code& code)
                 if (!done.contains(successor.block()))
                     appendSuccessor(successor);
             }
-            sortedSuccessors.process(chainWorklist);
         }
+        sortedSuccessors.process(chainWorklist);
 
         // Detect if we added a successor. If not decide for a good candidate.
         if (size == chainWorklist.size())
@@ -416,6 +416,7 @@ void optimizeBlockOrder(Code& code)
         // certainly won't cause any correctness issues.
         
         switch (branch.kind.opcode) {
+        case BranchOnFlags:
         case Branch8:
         case Branch32:
         case Branch64:
@@ -441,7 +442,7 @@ void optimizeBlockOrder(Code& code)
                 branch.args[0] = branch.args[0].inverted();
             }
             break;
-            
+
         default:
             break;
         }

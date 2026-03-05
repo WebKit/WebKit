@@ -23,8 +23,8 @@ var desc = {
 
 Object.defineProperty(TypedArray.prototype, "length", desc);
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(4);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(4));
   var calls = 0;
 
   Object.defineProperty(TA.prototype, "length", desc);
@@ -36,4 +36,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(getCalls, 0, "ignores length properties");
   assert.sameValue(calls, 4, "interactions are not affected by custom length");
-});
+}, null, ["passthrough"]);

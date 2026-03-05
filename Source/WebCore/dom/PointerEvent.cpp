@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PointerEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerEvent);
 
 AtomString PointerEvent::typeFromMouseEventType(const AtomString& mouseEventType)
 {
@@ -175,7 +175,7 @@ static Vector<Ref<PointerEvent>> createCoalescedPointerEvents(const AtomString& 
     Vector<Ref<PointerEvent>> result;
     for (Ref coalescedMouseEvent : mouseEvent.coalescedEvents()) {
         Ref pointerEvent = PointerEvent::create(type, button, coalescedMouseEvent.get(), pointerId, pointerType, Event::CanBubble::No, Event::IsCancelable::No);
-        result.append(WTFMove(pointerEvent));
+        result.append(WTF::move(pointerEvent));
     }
 
     return result;
@@ -191,16 +191,47 @@ static Vector<Ref<PointerEvent>> createPredictedPointerEvents(const AtomString& 
     Vector<Ref<PointerEvent>> result;
     for (Ref predictedMouseEvent : mouseEvent.predictedEvents()) {
         Ref pointerEvent = PointerEvent::create(type, button, predictedMouseEvent.get(), pointerId, pointerType, Event::CanBubble::No, Event::IsCancelable::No);
-        result.append(WTFMove(pointerEvent));
+        result.append(WTF::move(pointerEvent));
     }
 
     return result;
 }
 
-PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed)
-    : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, isComposed, mouseEvent.timeStamp(), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(),
-        mouseEvent.windowLocation(), mouseEvent.movementX(), mouseEvent.movementY(), mouseEvent.modifierKeys(), button, mouseEvent.buttons(),
-        mouseEvent.relatedTarget(), 0, mouseEvent.syntheticClickType(), { }, { }, mouseEvent.isSimulated() ? IsSimulated::Yes : IsSimulated::No, mouseEvent.isTrusted() ? IsTrusted::Yes : IsTrusted::No)
+PointerEvent::PointerEvent(
+    const AtomString& type,
+    MouseButton button,
+    const MouseEvent& mouseEvent,
+    PointerID pointerId,
+    const String& pointerType,
+    CanBubble canBubble,
+    IsCancelable isCancelable,
+    IsComposed isComposed
+)
+    : MouseEvent(
+        EventInterfaceType::PointerEvent,
+        type,
+        canBubble,
+        isCancelable,
+        isComposed,
+        mouseEvent.timeStamp(),
+        mouseEvent.view(),
+        mouseEvent.detail(),
+        mouseEvent.screenLocation(),
+        mouseEvent.windowLocation(),
+        mouseEvent.movementX(),
+        mouseEvent.movementY(),
+        mouseEvent.modifierKeys(),
+        button,
+        mouseEvent.buttons(),
+        mouseEvent.relatedTarget(),
+        0,
+        mouseEvent.syntheticClickType(),
+        { },
+        { },
+        mouseEvent.inputSource(),
+        mouseEvent.isSimulated() ? IsSimulated::Yes : IsSimulated::No,
+        mouseEvent.isTrusted() ? IsTrusted::Yes : IsTrusted::No
+    )
     , m_pointerId(pointerId)
     // MouseEvent is a misnomer in this context, and can represent events from a pressure sensitive input device if the pointer type is "Pen" or "Touch".
     // If it does represent a pressure sensitive input device, we consult MouseEvent::force() for the event pressure, else we fall back to spec defaults.
@@ -214,7 +245,25 @@ PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const Mou
 }
 
 PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
-    : MouseEvent(EventInterfaceType::PointerEvent, type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), MonotonicTime::now(), nullptr, 0, { }, { }, 0, 0, { }, buttonForType(type), buttonsForType(type), SyntheticClickType::NoTap, nullptr)
+    : MouseEvent(
+        EventInterfaceType::PointerEvent,
+        type,
+        typeCanBubble(type),
+        typeIsCancelable(type),
+        typeIsComposed(type),
+        MonotonicTime::now(),
+        nullptr,
+        0,
+        { },
+        { },
+        0,
+        0,
+        { },
+        buttonForType(type),
+        buttonsForType(type),
+        SyntheticClickType::NoTap,
+        nullptr
+    )
     , m_pointerId(pointerId)
     // FIXME: This may be wrong because we can create an event from a pressure sensitive device.
     // We don't have a backing MouseEvent to consult pressure/force information from, though, so let's do the next best thing.

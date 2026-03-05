@@ -50,7 +50,7 @@ CookieStoreManager::~CookieStoreManager() = default;
 void CookieStoreManager::subscribe(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr registration = m_serviceWorkerRegistration.get()) {
-        registration->addCookieChangeSubscriptions(WTFMove(subscriptions), WTFMove(promise));
+        registration->addCookieChangeSubscriptions(WTF::move(subscriptions), WTF::move(promise));
         return;
     }
 
@@ -60,7 +60,7 @@ void CookieStoreManager::subscribe(Vector<CookieStoreGetOptions>&& subscriptions
 void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr registration = m_serviceWorkerRegistration.get()) {
-        registration->removeCookieChangeSubscriptions(WTFMove(subscriptions), WTFMove(promise));
+        registration->removeCookieChangeSubscriptions(WTF::move(subscriptions), WTF::move(promise));
         return;
     }
 
@@ -70,7 +70,7 @@ void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&& subscriptio
 void CookieStoreManager::getSubscriptions(Ref<DeferredPromise>&& promise)
 {
     if (RefPtr registration = m_serviceWorkerRegistration.get()) {
-        registration->cookieChangeSubscriptions(WTFMove(promise));
+        registration->cookieChangeSubscriptions(WTF::move(promise));
         return;
     }
 

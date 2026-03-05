@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class LoadableTextTrack final : public TextTrack, private TextTrackLoaderClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LoadableTextTrack);
+    WTF_MAKE_TZONE_ALLOCATED(LoadableTextTrack);
 public:
     static Ref<LoadableTextTrack> create(HTMLTrackElement&, const AtomString& kind, const AtomString& label, const AtomString& language);
 
@@ -65,7 +65,7 @@ private:
 #endif
 
     WeakPtr<HTMLTrackElement, WeakPtrImplWithEventTargetData> m_trackElement;
-    std::unique_ptr<TextTrackLoader> m_loader;
+    RefPtr<TextTrackLoader> m_loader;
     URL m_url;
     bool m_loadPending { false };
 };

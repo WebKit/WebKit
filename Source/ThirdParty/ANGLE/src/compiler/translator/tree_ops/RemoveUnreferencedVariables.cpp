@@ -176,7 +176,8 @@ void RemoveUnreferencedVariablesTraverser::decrementStructTypeRefCount(const TTy
 void RemoveUnreferencedVariablesTraverser::removeVariableDeclaration(TIntermDeclaration *node,
                                                                      TIntermTyped *declarator)
 {
-    if (declarator->getType().isStructSpecifier() && !declarator->getType().isNamelessStruct())
+    if (declarator->getType().isStructSpecifier() &&
+        declarator->getType().getStruct()->symbolType() != SymbolType::Empty)
     {
         unsigned int structId = declarator->getType().getStruct()->uniqueId().get();
         unsigned int structRefCountInThisDeclarator = 1u;

@@ -35,27 +35,28 @@ struct BorderImageOutsetValue {
     using Length = Style::Length<CSS::Nonnegative, float>;
     using Number = Style::Number<CSS::Nonnegative, float>;
 
-    BorderImageOutsetValue(Length length)
-        : m_value { length }
-    {
-    }
+    constexpr BorderImageOutsetValue(Length length) : m_value { length } { }
+    constexpr BorderImageOutsetValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : m_value { Length { literal } } { }
 
-    BorderImageOutsetValue(Number number)
-        : m_value { number }
-    {
-    }
+    constexpr BorderImageOutsetValue(Number number) : m_value { number } { }
+    constexpr BorderImageOutsetValue(CSS::ValueLiteral<CSS::NumberUnit::Number> literal) : m_value { Number { literal } } { }
 
-    bool isLength() const { return WTF::holdsAlternative<Length>(m_value); }
-    bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
+    constexpr bool isLength() const { return WTF::holdsAlternative<Length>(m_value); }
+    constexpr bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
 
-    bool operator==(const BorderImageOutsetValue&) const = default;
+    constexpr bool isZero() const
+    {
+        return switchOn([&](auto& value) { return value == 0; });
+    }
 
-    bool hasSameType(const BorderImageOutsetValue& other) const { return m_value.index() == other.m_value.index(); }
+    constexpr bool operator==(const BorderImageOutsetValue&) const = default;
+
+    constexpr bool hasSameType(const BorderImageOutsetValue& other) const { return m_value.index() == other.m_value.index(); }
 
 private:
     friend struct Blending<BorderImageOutsetValue>;
@@ -66,13 +67,43 @@ private:
 // <'border-image-outset'> = [ <length [0,∞]> | <number [0,∞]> ]{1,4}
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-image-outset
 struct BorderImageOutset {
-    MinimallySerializingSpaceSeparatedRectEdges<BorderImageOutsetValue> values { BorderImageOutsetValue { BorderImageOutsetValue::Number { 0 } } };
+    using Value = BorderImageOutsetValue;
+    using Edges = MinimallySerializingSpaceSeparatedRectEdges<Value>;
+
+    Edges values { Value { Value::Number { 0 } } };
+
+    BorderImageOutset(Edges values)
+        : values { WTF::move(values) }
+    {
+    }
+    BorderImageOutset(Value top, Value right, Value bottom, Value left)
+        : values { top, right, bottom, left }
+    {
+    }
+    BorderImageOutset(Value value)
+        : values { WTF::move(value) }
+    {
+    }
+    BorderImageOutset(Value::Length length)
+        : values { length }
+    {
+    }
+    BorderImageOutset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : values { Value::Length { literal } }
+    {
+    }
+    BorderImageOutset(Value::Number number)
+        : values { number }
+    {
+    }
+    BorderImageOutset(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : values { Value::Number { literal } }
+    {
+    }
 
     bool isZero() const
     {
-        return values.allOf([](auto& edge) {
-            return WTF::switchOn(edge, [&](auto& value) { return value == 0; });
-        });
+        return values.allOf([](auto& edge) { return edge.isZero(); });
     }
 
     bool operator==(const BorderImageOutset&) const = default;

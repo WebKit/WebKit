@@ -47,6 +47,9 @@ function unexpectedSuccessCallback()
 
 function unexpectedErrorCallback(event)
 {
+    if (wasFinishJSTestCalled)
+        return;
+
     testFailed("Error function called unexpectedly: (" + event.target.error.name + ") " + event.target.error.message);
     finishJSTest();
 }
@@ -65,6 +68,9 @@ function unexpectedCompleteCallback()
 
 function unexpectedBlockedCallback(e)
 {
+    if (wasFinishJSTestCalled)
+        return;
+
     testFailed("onblocked called unexpectedly. oldVersion = " + e.oldVersion + ", newVersion = " + e.newVersion);
     finishJSTest();
 }

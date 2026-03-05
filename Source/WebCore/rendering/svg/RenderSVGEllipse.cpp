@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGEllipse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGEllipse);
 
 RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGShape(Type::SVGEllipse, element, WTFMove(style))
+    : RenderSVGShape(Type::SVGEllipse, element, WTF::move(style))
 {
 }
 
@@ -60,8 +60,11 @@ void RenderSVGEllipse::updateShapeFromElement()
     calculateRadiiAndCenter();
 
     // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
-    if (m_radii.isEmpty())
+    if (m_radii.isEmpty()) {
+        // We set this for getBBox().
+        m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
         return;
+    }
 
     if (m_radii.width() == m_radii.height())
         m_shapeType = ShapeType::Circle;
@@ -76,7 +79,7 @@ void RenderSVGEllipse::updateShapeFromElement()
 
     m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
     m_strokeBoundingBox = m_fillBoundingBox;
-    if (style().hasStroke())
+    if (!style().stroke().isNone())
         m_strokeBoundingBox->inflate(strokeWidth() / 2);
 }
 
@@ -117,7 +120,7 @@ void RenderSVGEllipse::fillShape(GraphicsContext& context) const
 
 void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
 {
-    if (!style().hasStroke() || !style().strokeWidth().isPossiblyPositive())
+    if (style().stroke().isNone() || !style().strokeWidth().isPossiblyPositive())
         return;
     if (hasPath()) {
         RenderSVGShape::strokeShape(context);

@@ -140,7 +140,7 @@ TEST(CtapPinTest, TestSetPinRequest)
     crypto->addBytes(sharedKeyResult->span());
     auto sharedKeyHash = crypto->computeHash();
 
-    auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageDecrypt);
+    auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTF::move(sharedKeyHash), true, CryptoKeyUsageDecrypt);
     EXPECT_TRUE(aesKey);
 
     const auto& it6 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kNewPinEnc)));
@@ -328,7 +328,7 @@ TEST(CtapPinTest, TestTokenRequest)
     crypto->addBytes(sharedKeyResult->span());
     auto sharedKeyHash = crypto->computeHash();
 
-    auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageDecrypt);
+    auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTF::move(sharedKeyHash), true, CryptoKeyUsageDecrypt);
     EXPECT_TRUE(aesKey);
 
     const auto& it6 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kPinHashEnc)));

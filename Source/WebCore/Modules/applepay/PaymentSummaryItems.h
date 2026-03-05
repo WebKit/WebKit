@@ -65,7 +65,6 @@ WEBCORE_EXPORT RetainPtr<NSArray> platformDisbursementSummaryItems(const Vector<
 WEBCORE_EXPORT RetainPtr<NSArray> platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>&);
 
 WEBCORE_EXPORT NSDecimalNumber *toDecimalNumber(const String& amount);
-WEBCORE_EXPORT RetainPtr<NSDecimalNumber> toProtectedDecimalNumber(const String& amount);
 
 } // namespace WebCore
 

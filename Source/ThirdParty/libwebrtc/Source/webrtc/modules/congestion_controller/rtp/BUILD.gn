@@ -61,6 +61,10 @@ rtc_library("transport_feedback") {
   ]
 }
 
+rtc_source_set("congestion_controller_feedback_stats") {
+  sources = [ "congestion_controller_feedback_stats.h" ]
+}
+
 if (rtc_include_tests) {
   rtc_library("congestion_controller_unittests") {
     testonly = true

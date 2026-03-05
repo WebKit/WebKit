@@ -43,18 +43,19 @@ class Adapter : public RefCountedAndCanMakeWeakPtr<Adapter> {
 public:
     virtual ~Adapter() = default;
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     SupportedFeatures& features() const { return m_features; }
     SupportedLimits& limits() const { return m_limits; }
     bool isFallbackAdapter() const { return m_isFallbackAdapter; }
     virtual bool xrCompatible() = 0;
     virtual bool isRemoteAdapterProxy() const { return false; }
+    virtual bool isAdapterImpl() const { return false; }
 
     virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) = 0;
 
 protected:
     Adapter(String&& name, SupportedFeatures& features, SupportedLimits& limits, bool isFallbackAdapter)
-        : m_name(WTFMove(name))
+        : m_name(WTF::move(name))
         , m_features(features)
         , m_limits(limits)
         , m_isFallbackAdapter(isFallbackAdapter)

@@ -22,11 +22,11 @@ info: |
   If O.[[ContentType]] is BigInt, let numValue be ? ToBigInt(value).
   Otherwise, let numValue be ? ToNumber(value).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
-testWithBigIntTypedArrayConstructors(function(TA) {
-  let sample = new TA([42n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  let sample = new TA(makeCtorArg([42n]));
 
   let obj = {
     valueOf() {

@@ -112,7 +112,7 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
     RefPtr<ImminentlyScheduledWorkScope> workScope;
     if (RefPtr page = this->page())
         workScope = page->opportunisticTaskScheduler().makeScheduledWorkScope();
-    m_callbackDataList.append({ WTFMove(callback), UserGestureIndicator::currentUserGesture(), WTFMove(workScope) });
+    m_callbackDataList.append({ WTF::move(callback), UserGestureIndicator::currentUserGesture(), WTF::move(workScope) });
 
     if (RefPtr document = m_document.get())
         InspectorInstrumentation::didRequestAnimationFrame(*document, callbackId);
@@ -132,7 +132,7 @@ void ScriptedAnimationController::cancelCallback(CallbackId callbackId)
     });
 
     if (cancelled && m_document)
-        InspectorInstrumentation::didCancelAnimationFrame(*protectedDocument(), callbackId);
+        InspectorInstrumentation::didCancelAnimationFrame(*protect(m_document), callbackId);
 }
 
 void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedResolutionSeconds timestamp)
@@ -193,9 +193,5 @@ void ScriptedAnimationController::scheduleAnimation()
         page->scheduleRenderingUpdate(RenderingUpdateStep::AnimationFrameCallbacks);
 }
 
-RefPtr<Document> ScriptedAnimationController::protectedDocument()
-{
-    return m_document.get();
-}
 
 }

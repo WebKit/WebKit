@@ -135,7 +135,7 @@ TEST(WTF_CompactVariant, SmartPointers)
         RefLogger testRefLogger("testRefLogger");
         Ref<RefLogger> ref(testRefLogger);
 
-        CompactVariant<Ref<RefLogger>, std::unique_ptr<double>> variant { WTF::InPlaceType<Ref<RefLogger>>, WTFMove(ref) };
+        CompactVariant<Ref<RefLogger>, std::unique_ptr<double>> variant { WTF::InPlaceType<Ref<RefLogger>>, WTF::move(ref) };
 
         EXPECT_TRUE(WTF::holdsAlternative<Ref<RefLogger>>(variant));
         EXPECT_FALSE(WTF::holdsAlternative<std::unique_ptr<double>>(variant));
@@ -265,7 +265,7 @@ TEST(WTF_CompactVariant, TooBigStruct)
     );
 
     variant = TooBigStruct { 5.0 };
-    CompactVariant<int*, float*, TooBigStruct> movedToVariant = WTFMove(variant);
+    CompactVariant<int*, float*, TooBigStruct> movedToVariant = WTF::move(variant);
 
     EXPECT_TRUE(variant.valueless_by_move());
 
@@ -344,7 +344,7 @@ TEST(WTF_CompactVariant, ValuelessByMove)
     CompactVariant<int*, float*> variant = &testInt;
     EXPECT_FALSE(variant.valueless_by_move());
 
-    CompactVariant<int*, float*> other = WTFMove(variant);
+    CompactVariant<int*, float*> other = WTF::move(variant);
     EXPECT_FALSE(other.valueless_by_move());
     EXPECT_TRUE(variant.valueless_by_move());
 
@@ -354,7 +354,7 @@ TEST(WTF_CompactVariant, ValuelessByMove)
     EXPECT_TRUE(copy.valueless_by_move());
 
     // Test re-moving the "valueless_by_move" variant.
-    CompactVariant<int*, float*> moved = WTFMove(variant);
+    CompactVariant<int*, float*> moved = WTF::move(variant);
     EXPECT_TRUE(variant.valueless_by_move());
     EXPECT_TRUE(moved.valueless_by_move());
 }
@@ -404,7 +404,7 @@ TEST(WTF_CompactVariant, ArgumentMoveConstruct)
 {
     {
         LifecycleLogger lifecycleLogger("compact");
-        CompactVariant<float, LifecycleLogger> variant { WTFMove(lifecycleLogger) };
+        CompactVariant<float, LifecycleLogger> variant { WTF::move(lifecycleLogger) };
 
         ASSERT_STREQ("construct(compact) move-construct(compact) ", takeLogStr().c_str());
     }
@@ -426,7 +426,7 @@ TEST(WTF_CompactVariant, ArgumentMoveAssignment)
 {
     {
         LifecycleLogger lifecycleLogger("compact");
-        CompactVariant<float, LifecycleLogger> variant = WTFMove(lifecycleLogger);
+        CompactVariant<float, LifecycleLogger> variant = WTF::move(lifecycleLogger);
 
         ASSERT_STREQ("construct(compact) move-construct(compact) ", takeLogStr().c_str());
     }
@@ -473,7 +473,7 @@ TEST(WTF_CompactVariant, MoveConstruct)
     {
         CompactVariant<float, LifecycleLogger> variant { WTF::InPlaceType<LifecycleLogger>, "compact" };
 
-        CompactVariant<float, LifecycleLogger> other { WTFMove(variant) };
+        CompactVariant<float, LifecycleLogger> other { WTF::move(variant) };
 
         ASSERT_STREQ("construct(compact) move-construct(compact) ", takeLogStr().c_str());
     }
@@ -485,7 +485,7 @@ TEST(WTF_CompactVariant, MoveAssignment)
     {
         CompactVariant<float, LifecycleLogger> variant { WTF::InPlaceType<LifecycleLogger>, "compact" };
 
-        CompactVariant<float, LifecycleLogger> other = WTFMove(variant);
+        CompactVariant<float, LifecycleLogger> other = WTF::move(variant);
 
         ASSERT_STREQ("construct(compact) move-construct(compact) ", takeLogStr().c_str());
     }
@@ -535,7 +535,7 @@ TEST(WTF_CompactVariant, ArgumentMoveReassignment)
         CompactVariant<float, LifecycleLogger> variant { 1.0f };
 
         LifecycleLogger lifecycleLogger { "compact" };
-        variant = WTFMove(lifecycleLogger);
+        variant = WTF::move(lifecycleLogger);
 
         ASSERT_STREQ("construct(compact) move-construct(compact) ", takeLogStr().c_str());
     }

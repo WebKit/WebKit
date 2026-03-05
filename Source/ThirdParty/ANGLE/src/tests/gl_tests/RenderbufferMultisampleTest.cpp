@@ -140,33 +140,27 @@ TEST_P(RenderbufferMultisampleTest, OddSampleCount)
 TEST_P(RenderbufferMultisampleTestES31, ColorBurnBlend)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
-    // Create shader programs
-    std::stringstream vs;
-    vs << "#version 310 es\n"
-          "in highp vec4 a_position;\n"
-          "in mediump vec4 a_color;\n"
-          "out mediump vec4 v_color;\n"
-          "void main()\n"
-          "{\n"
-          "gl_Position = a_position;\n"
-          "v_color = a_color;\n"
-          "}\n";
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 a_position;
+in mediump vec4 a_color;
+out mediump vec4 v_color;
+void main()
+{
+gl_Position = a_position;
+v_color = a_color;
+})";
 
-    std::stringstream fs;
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_KHR_blend_equation_advanced : require
+in mediump vec4 v_color;
+layout (blend_support_colorburn) out;
+layout (location = 0) out mediump vec4 o_color;
+void main()
+{
+o_color = v_color;
+})";
 
-    fs << "#version 310 es\n"
-          "#extension GL_KHR_blend_equation_advanced : require\n"
-          "in mediump vec4 v_color;\n"
-          "layout (blend_support_colorburn) out;\n"
-          "layout (location = 0) out mediump vec4 o_color;\n"
-          "void main()\n"
-          "{\n"
-          "o_color = v_color;\n"
-          "}\n";
-
-    GLuint program;
-
-    program = CompileProgram(vs.str().c_str(), fs.str().c_str());
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
 
     // Create vertex data and buffers
     // Create vertex position data
@@ -203,23 +197,19 @@ TEST_P(RenderbufferMultisampleTestES31, ColorBurnBlend)
     glVertexAttribPointer(colorLoc, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Create a multisampled render buffer and attach it to frame buffer color attachment
-    GLuint rbo;
-    glGenRenderbuffers(1, &rbo);
+    GLRenderbuffer rbo;
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, getWindowWidth(),
                                      getWindowHeight());
-    GLuint fbo = 0;
-    glGenFramebuffers(1, &fbo);
+    GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
 
     // Create a singlesampled render buffer and attach it to frame buffer color attachment
-    GLuint resolvedRbo;
-    glGenRenderbuffers(1, &resolvedRbo);
+    GLRenderbuffer resolvedRbo;
     glBindRenderbuffer(GL_RENDERBUFFER, resolvedRbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, getWindowWidth(), getWindowHeight());
-    GLuint resolvedFbo = 0;
-    glGenFramebuffers(1, &resolvedFbo);
+    GLFramebuffer resolvedFbo;
     glBindFramebuffer(GL_FRAMEBUFFER, resolvedFbo);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolvedRbo);
 
@@ -243,13 +233,6 @@ TEST_P(RenderbufferMultisampleTestES31, ColorBurnBlend)
     glBindFramebuffer(GL_READ_FRAMEBUFFER, resolvedFbo);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4,
                           GLColor::red);  // Validation error
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glDeleteProgram(program);
-    glDeleteFramebuffers(1, &fbo);
-    glDeleteRenderbuffers(1, &rbo);
-    glDeleteFramebuffers(1, &resolvedFbo);
-    glDeleteRenderbuffers(1, &resolvedRbo);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RenderbufferMultisampleTest);

@@ -68,7 +68,7 @@ class PendingInterceptRequest {
 public:
     PendingInterceptRequest(RefPtr<WebCore::ResourceLoader> loader, Function<void(const WebCore::ResourceRequest&)>&& callback)
         : m_loader(loader)
-        , m_completionCallback(WTFMove(callback))
+        , m_completionCallback(WTF::move(callback))
     { }
 
     void continueWithOriginalRequest()
@@ -93,7 +93,7 @@ class PendingInterceptResponse {
 public:
     PendingInterceptResponse(const WebCore::ResourceResponse& originalResponse, CompletionHandler<void(const WebCore::ResourceResponse&, RefPtr<WebCore::FragmentedSharedBuffer>)>&& completionHandler)
         : m_originalResponse(originalResponse)
-        , m_completionHandler(WTFMove(completionHandler))
+        , m_completionHandler(WTF::move(completionHandler))
     { }
 
     ~PendingInterceptResponse()

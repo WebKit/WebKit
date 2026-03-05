@@ -218,7 +218,7 @@ template<CompactVariantAlternative... Ts> struct CompactVariantOperations {
         }
 
         payloadForData(from, [&]<typename T>(T& value) {
-            to = encodedPayload<T>(WTFMove(value)) | encodedIndex(alternativeIndexV<T, StdVariant>);
+            to = encodedPayload<T>(WTF::move(value)) | encodedIndex(alternativeIndexV<T, StdVariant>);
         });
     }
 

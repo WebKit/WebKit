@@ -1,0 +1,8 @@
+
+Option A
+Option B
+Option C
+
+PASS Select opens when options are mutated during mousedown
+FAIL Select options work correctly after mousedown mutation assert_false: select should be closed initially expected false got true
+

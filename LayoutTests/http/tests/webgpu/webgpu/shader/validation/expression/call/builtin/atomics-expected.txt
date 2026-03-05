@@ -21,6 +21,8 @@ PASS :stage:stage="vertex";atomicOp="load"
 PASS :stage:stage="vertex";atomicOp="store"
 PASS :stage:stage="vertex";atomicOp="exchange"
 FAIL :stage:stage="vertex";atomicOp="compareexchangeweak" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -32,10 +34,11 @@ FAIL :stage:stage="vertex";atomicOp="compareexchangeweak" assert_unreached:
       atomicCompareExchangeWeak(&a,1,1);
       return vec4<f32>();
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :stage:stage="compute";atomicOp="add"
 PASS :stage:stage="compute";atomicOp="sub"

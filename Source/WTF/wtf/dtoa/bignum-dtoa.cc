@@ -37,7 +37,7 @@
 namespace WTF {
 namespace double_conversion {
 
-static int NormalizedExponent(uint64_t significand, int exponent) {
+static int NODELETE NormalizedExponent(uint64_t significand, int exponent) {
   ASSERT(significand != 0);
   while ((significand & Double::kHiddenBit) == 0) {
     significand = significand << 1;

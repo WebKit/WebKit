@@ -14,6 +14,7 @@ ShadowRealmGlobalScopeConstructors.idl:
 JSSharedWorkerGlobalScope.h: SharedWorkerGlobalScopeConstructors.idl
 SharedWorkerGlobalScopeConstructors.idl:
 JSTestAsyncIterable.h: 
+JSTestAsyncIterableWithoutFlags.h: 
 JSTestAsyncKeyValueIterable.h: 
 JSTestCEReactions.h: 
 JSTestCEReactionsStringifier.h: 
@@ -41,6 +42,7 @@ JSTestDelegateToSharedSyntheticAttribute.h:
 JSTestDerivedDictionary.h: 
 JSTestDerivedDictionary2.h: 
 JSTestDictionary.h: 
+JSTestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability.h: 
 JSTestDictionaryNoToNative.h: 
 JSTestDictionaryWithOnlyConditionalMembers.h: 
 JSTestDomainSecurity.h: 

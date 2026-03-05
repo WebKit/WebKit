@@ -11,10 +11,9 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_FACTORY_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_FACTORY_H_
 
-#include <memory>
-
 #include "api/audio/audio_device.h"
-#include "api/task_queue/task_queue_factory.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 
@@ -28,7 +27,7 @@ namespace webrtc {
 //
 //  public:
 //   scoped_refptr<AudioDeviceModule> CreateAudioDevice() {
-//     task_queue_factory_ = CreateDefaultTaskQueueFactory();
+//     Environment env = CreateEnvironment();
 //     // Tell COM that this thread shall live in the MTA.
 //     com_initializer_ = std::make_unique<ScopedCOMInitializer>(
 //         ScopedCOMInitializer::kMTA);
@@ -37,8 +36,7 @@ namespace webrtc {
 //     }
 //     // Create the ADM with support for automatic restart if devices are
 //     // unplugged.
-//     return CreateWindowsCoreAudioAudioDeviceModule(
-//         task_queue_factory_.get());
+//     return CreateWindowsCoreAudioAudioDeviceModule(env);
 //   }
 //
 //   private:
@@ -46,13 +44,12 @@ namespace webrtc {
 //    std::unique_ptr<TaskQueueFactory> task_queue_factory_;
 //
 webrtc::scoped_refptr<AudioDeviceModule>
-CreateWindowsCoreAudioAudioDeviceModule(TaskQueueFactory* task_queue_factory,
+CreateWindowsCoreAudioAudioDeviceModule(const Environment& env,
                                         bool automatic_restart = true);
 
 webrtc::scoped_refptr<AudioDeviceModuleForTest>
-CreateWindowsCoreAudioAudioDeviceModuleForTest(
-    TaskQueueFactory* task_queue_factory,
-    bool automatic_restart = true);
+CreateWindowsCoreAudioAudioDeviceModuleForTest(const Environment& env,
+                                               bool automatic_restart = true);
 
 }  // namespace webrtc
 

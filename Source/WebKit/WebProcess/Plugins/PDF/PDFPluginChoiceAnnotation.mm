@@ -54,12 +54,12 @@ void PDFPluginChoiceAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     Ref styledElement = downcast<StyledElement>(*element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, protectedAnnotation().get().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, protect(annotation()).get().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
 }
 
 void PDFPluginChoiceAnnotation::commit()
 {
-    protectedAnnotation().get().widgetStringValue = downcast<HTMLSelectElement>(protectedElement())->value().createNSString().get();
+    protect(annotation()).get().widgetStringValue = downcast<HTMLSelectElement>(protect(element()))->value().createNSString().get();
 
     PDFPluginAnnotation::commit();
 }

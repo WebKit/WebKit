@@ -48,7 +48,7 @@ enum class TrustedType : int8_t;
 enum class IfMissing : bool { Throw, ReturnNull };
 
 class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrustedTypePolicy);
+    WTF_MAKE_TZONE_ALLOCATED(TrustedTypePolicy);
 public:
     static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);
     ~TrustedTypePolicy();
@@ -74,6 +74,6 @@ private:
     mutable Lock m_lock;
 };
 
-WebCoreOpaqueRoot root(TrustedTypePolicy*);
+WebCoreOpaqueRoot NODELETE root(TrustedTypePolicy*);
 
 } // namespace WebCore

@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CompositingRunLoop);
 CompositingRunLoop::CompositingRunLoop(Function<void ()>&& updateFunction)
     : m_runLoop(RunLoop::create("org.webkit.ThreadedCompositor"_s, ThreadType::Graphics))
     , m_updateTimer(m_runLoop.get(), "CompositingRunLoop::UpdateTimer"_s, this, &CompositingRunLoop::updateTimerFired)
-    , m_updateFunction(WTFMove(updateFunction))
+    , m_updateFunction(WTF::move(updateFunction))
 {
 }
 
@@ -71,14 +71,14 @@ bool CompositingRunLoop::isActive()
 void CompositingRunLoop::performTask(Function<void ()>&& function)
 {
     ASSERT(RunLoop::isMain());
-    m_runLoop->dispatch(WTFMove(function));
+    m_runLoop->dispatch(WTF::move(function));
 }
 
 void CompositingRunLoop::performTaskSync(Function<void ()>&& function)
 {
     ASSERT(RunLoop::isMain());
     Locker locker { m_dispatchSyncConditionLock };
-    m_runLoop->dispatch([this, function = WTFMove(function)] {
+    m_runLoop->dispatch([this, function = WTF::move(function)] {
         function();
         Locker locker { m_dispatchSyncConditionLock };
         m_dispatchSyncCondition.notifyOne();

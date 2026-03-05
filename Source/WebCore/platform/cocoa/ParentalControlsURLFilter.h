@@ -27,6 +27,7 @@
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
+#include <WebCore/ParentalControlsURLFilterParameters.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 OBJC_CLASS WCRBrowserEngineClient;
@@ -37,15 +38,14 @@ class WorkQueue;
 
 namespace WebCore {
 
-struct ParentalControlsURLFilterParameters;
 class ParentalControlsContentFilter;
 
 class ParentalControlsURLFilter : public ThreadSafeRefCounted<ParentalControlsURLFilter, WTF::DestructionThread::Main> {
 public:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    static ParentalControlsURLFilter& filterWithConfigurationPath(const String&);
+    WEBCORE_EXPORT static ParentalControlsURLFilter& filterWithConfigurationPath(const String&);
 #else
-    static ParentalControlsURLFilter& singleton();
+    WEBCORE_EXPORT static ParentalControlsURLFilter& singleton();
     WEBCORE_EXPORT static void setGlobalFilter(Ref<ParentalControlsURLFilter>&&);
 #endif
     WEBCORE_EXPORT static void allowURL(const ParentalControlsURLFilterParameters&, CompletionHandler<void(bool)>&&);
@@ -55,14 +55,20 @@ public:
 
     WEBCORE_EXPORT virtual ~ParentalControlsURLFilter();
     virtual bool isEnabledImpl() const;
-    virtual void isURLAllowed(const URL&, ParentalControlsContentFilter&);
+    void isURLAllowed(const URL& mainDocumentURL, const URL&, ParentalControlsContentFilter&);
+    WEBCORE_EXPORT void isURLAllowed(const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&);
     virtual void allowURL(const URL&, CompletionHandler<void(bool)>&&);
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+    virtual void requestPermissionForURL(const URL&, const URL& referrerURL, CompletionHandler<void(bool)>&&);
+#endif
 
 protected:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     ParentalControlsURLFilter(const String& configurationPath);
 #endif
     WEBCORE_EXPORT ParentalControlsURLFilter();
+
+    virtual void isURLAllowedImpl(const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&);
 
 private:
     WCRBrowserEngineClient* effectiveWCRBrowserEngineClient();

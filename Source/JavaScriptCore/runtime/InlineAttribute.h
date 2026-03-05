@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 enum class InlineAttribute : uint8_t {

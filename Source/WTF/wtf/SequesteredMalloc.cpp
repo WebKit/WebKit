@@ -25,7 +25,7 @@
 #include "config.h"
 #include <wtf/SequesteredMalloc.h>
 
-#include "SequesteredAllocator.h"
+#include <wtf/SequesteredAllocator.h>
 
 #if USE(PROTECTED_JIT)
 

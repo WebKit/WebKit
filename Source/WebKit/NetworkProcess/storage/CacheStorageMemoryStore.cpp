@@ -56,7 +56,7 @@ void CacheStorageMemoryStore::readRecords(const Vector<CacheStorageRecordInforma
             return std::nullopt;
         return copyCacheStorageRecord(*iterator->value);
     });
-    return callback(WTFMove(result));
+    return callback(WTF::move(result));
 }
 
 void CacheStorageMemoryStore::deleteRecords(const Vector<CacheStorageRecordInformation>& recordInfos, WriteRecordsCallback&& callback)
@@ -70,7 +70,7 @@ void CacheStorageMemoryStore::deleteRecords(const Vector<CacheStorageRecordInfor
 void CacheStorageMemoryStore::writeRecords(Vector<CacheStorageRecord>&& records, WriteRecordsCallback&& callback)
 {
     for (auto&& record : records)
-        m_records.set(record.info.identifier(), makeUnique<CacheStorageRecord>(WTFMove(record)));
+        m_records.set(record.info.identifier(), makeUnique<CacheStorageRecord>(WTF::move(record)));
 
     callback(true);
 }

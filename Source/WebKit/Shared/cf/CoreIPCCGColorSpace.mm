@@ -38,7 +38,7 @@ CGColorSpaceSerialization CoreIPCCGColorSpace::serializableColorSpace(CGColorSpa
         return *colorSpace;
 
     if (RetainPtr<CFStringRef> name = CGColorSpaceGetName(cgColorSpace))
-        return WTFMove(name);
+        return WTF::move(name);
 
     if (auto propertyList = adoptCF(CGColorSpaceCopyPropertyList(cgColorSpace))) {
         if (auto data = dynamic_cf_cast<CFDataRef>(propertyList.get()))

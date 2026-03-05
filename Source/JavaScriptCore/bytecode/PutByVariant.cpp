@@ -61,7 +61,7 @@ PutByVariant& PutByVariant::operator=(const PutByVariant& other)
 
 PutByVariant PutByVariant::replace(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset, bool viaGlobalProxy)
 {
-    PutByVariant result(WTFMove(identifier));
+    PutByVariant result(WTF::move(identifier));
     result.m_kind = Replace;
     result.m_oldStructure = structure;
     result.m_offset = offset;
@@ -71,7 +71,7 @@ PutByVariant PutByVariant::replace(CacheableIdentifier identifier, const Structu
 
 PutByVariant PutByVariant::transition(CacheableIdentifier identifier, const StructureSet& oldStructure, Structure* newStructure, const ObjectPropertyConditionSet& conditionSet, PropertyOffset offset)
 {
-    PutByVariant result(WTFMove(identifier));
+    PutByVariant result(WTF::move(identifier));
     result.m_kind = Transition;
     result.m_oldStructure = oldStructure;
     result.m_newStructure = newStructure;
@@ -82,35 +82,35 @@ PutByVariant PutByVariant::transition(CacheableIdentifier identifier, const Stru
 
 PutByVariant PutByVariant::setter(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset, bool viaGlobalProxy, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus)
 {
-    PutByVariant result(WTFMove(identifier));
+    PutByVariant result(WTF::move(identifier));
     result.m_kind = Setter;
     result.m_oldStructure = structure;
     result.m_conditionSet = conditionSet;
     result.m_offset = offset;
     result.m_viaGlobalProxy = viaGlobalProxy;
-    result.m_callLinkStatus = WTFMove(callLinkStatus);
+    result.m_callLinkStatus = WTF::move(callLinkStatus);
     return result;
 }
 
 PutByVariant PutByVariant::customSetter(CacheableIdentifier identifier, const StructureSet& structure, bool viaGlobalProxy, const ObjectPropertyConditionSet& conditionSet, CodePtr<CustomAccessorPtrTag> customAccessorSetter, std::unique_ptr<DOMAttributeAnnotation>&& domAttribute)
 {
-    PutByVariant result(WTFMove(identifier));
+    PutByVariant result(WTF::move(identifier));
     result.m_kind = CustomAccessorSetter;
     result.m_oldStructure = structure;
     result.m_conditionSet = conditionSet;
     result.m_offset = invalidOffset;
     result.m_viaGlobalProxy = viaGlobalProxy;
     result.m_customAccessorSetter = customAccessorSetter;
-    result.m_domAttribute = WTFMove(domAttribute);
+    result.m_domAttribute = WTF::move(domAttribute);
     return result;
 }
 
 PutByVariant PutByVariant::proxy(CacheableIdentifier identifier, const StructureSet& structure, std::unique_ptr<CallLinkStatus> callLinkStatus)
 {
-    PutByVariant result(WTFMove(identifier));
+    PutByVariant result(WTF::move(identifier));
     result.m_kind = Proxy;
     result.m_oldStructure = structure;
-    result.m_callLinkStatus = WTFMove(callLinkStatus);
+    result.m_callLinkStatus = WTF::move(callLinkStatus);
     return result;
 }
 

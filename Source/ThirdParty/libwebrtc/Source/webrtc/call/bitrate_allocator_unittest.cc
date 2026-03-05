@@ -135,10 +135,14 @@ class BitrateAllocatorTest : public ::testing::Test {
       bool enforce_min_bitrate,
       double bitrate_priority,
       std::optional<TrackRateElasticity> rate_elasticity = std::nullopt) {
-    allocator_->AddObserver(
-        observer, {min_bitrate_bps, max_bitrate_bps, pad_up_bitrate_bps,
-                   /* priority_bitrate */ 0, enforce_min_bitrate,
-                   bitrate_priority, rate_elasticity});
+    allocator_->AddObserver(observer,
+                            {.min_bitrate_bps = min_bitrate_bps,
+                             .max_bitrate_bps = max_bitrate_bps,
+                             .pad_up_bitrate_bps = pad_up_bitrate_bps,
+                             .priority_bitrate_bps = 0,
+                             .enforce_min_bitrate = enforce_min_bitrate,
+                             .bitrate_priority = bitrate_priority,
+                             .rate_elasticity = rate_elasticity});
   }
   MediaStreamAllocationConfig DefaultConfig() const {
     MediaStreamAllocationConfig default_config;
@@ -334,9 +338,13 @@ class BitrateAllocatorTestNoEnforceMin : public ::testing::Test {
                    bool enforce_min_bitrate,
                    absl::string_view /* track_id */,
                    double bitrate_priority) {
-    allocator_->AddObserver(
-        observer, {min_bitrate_bps, max_bitrate_bps, pad_up_bitrate_bps, 0,
-                   enforce_min_bitrate, bitrate_priority});
+    allocator_->AddObserver(observer,
+                            {.min_bitrate_bps = min_bitrate_bps,
+                             .max_bitrate_bps = max_bitrate_bps,
+                             .pad_up_bitrate_bps = pad_up_bitrate_bps,
+                             .priority_bitrate_bps = 0,
+                             .enforce_min_bitrate = enforce_min_bitrate,
+                             .bitrate_priority = bitrate_priority});
   }
   NiceMock<MockLimitObserver> limit_observer_;
   std::unique_ptr<BitrateAllocator> allocator_;

@@ -33,7 +33,7 @@
 namespace JSC {
 
 GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType accessType, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaGlobalProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
-    : Base(vm, owner, accessType, identifier, offset, structure, conditionSet, viaGlobalProxy, additionalSet, WTFMove(prototypeAccessChain))
+    : Base(vm, owner, accessType, identifier, offset, structure, conditionSet, viaGlobalProxy, additionalSet, WTF::move(prototypeAccessChain))
 {
     m_customSlotBase.setMayBeNull(vm, owner, customSlotBase);
 }
@@ -44,7 +44,7 @@ Ref<AccessCase> GetterSetterAccessCase::create(
     std::optional<DOMAttributeAnnotation> domAttribute, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
 {
     ASSERT(type == Getter || type == CustomValueGetter || type == CustomAccessorGetter);
-    auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaGlobalProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
+    auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaGlobalProxy, additionalSet, customSlotBase, WTF::move(prototypeAccessChain)));
     result->m_domAttribute = domAttribute;
     if (customGetter)
         result->m_customAccessor = customGetter;
@@ -56,7 +56,7 @@ Ref<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType
     CodePtr<CustomAccessorPtrTag> customSetter, JSObject* customSlotBase)
 {
     ASSERT(type == Setter || type == CustomValueSetter || type == CustomAccessorSetter);
-    auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaGlobalProxy, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
+    auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaGlobalProxy, nullptr, customSlotBase, WTF::move(prototypeAccessChain)));
     if (customSetter)
         result->m_customAccessor = customSetter;
     return result;

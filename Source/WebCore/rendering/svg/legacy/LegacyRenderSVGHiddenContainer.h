@@ -28,7 +28,7 @@ class SVGElement;
 // This class is for containers which are never drawn, but do need to support style
 // <defs>, <linearGradient>, <radialGradient> are all good examples
 class LegacyRenderSVGHiddenContainer : public LegacyRenderSVGContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGHiddenContainer);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGHiddenContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGHiddenContainer);
 public:
     LegacyRenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
@@ -39,10 +39,10 @@ protected:
 private:
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
-    void paint(PaintInfo&, const LayoutPoint&) final;
+    void NODELETE paint(PaintInfo&, const LayoutPoint&) final;
 
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final;
-    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
+    LayoutRect NODELETE clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final;
+    void NODELETE absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) final;
 };

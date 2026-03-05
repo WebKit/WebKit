@@ -99,13 +99,12 @@ enum class NavigationHistoryBehavior : uint8_t;
 using IntDegrees = int32_t;
 
 class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMWindow);
+    WTF_MAKE_TZONE_ALLOCATED(DOMWindow);
 public:
     virtual ~DOMWindow();
 
-    const GlobalWindowIdentifier& identifier() const { return m_identifier; }
-    virtual Frame* frame() const = 0;
-    RefPtr<Frame> protectedFrame() const;
+    const GlobalWindowIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
+    virtual Frame* NODELETE frame() const = 0;
 
     enum class DOMWindowType : bool { Local, Remote };
     bool isLocalDOMWindow() const { return m_type == DOMWindowType::Local; }
@@ -123,11 +122,9 @@ public:
     virtual void closePage() = 0;
 
     FrameConsoleClient* console() const;
-    CheckedPtr<FrameConsoleClient> checkedConsole() const;
 
     WindowProxy* opener() const;
-    WEBCORE_EXPORT Document* documentIfLocal();
-    RefPtr<Document> protectedDocumentIfLocal();
+    WEBCORE_EXPORT Document* NODELETE documentIfLocal();
 
     WindowProxy* top() const;
     WindowProxy* parent() const;
@@ -232,9 +229,9 @@ public:
     bool isCurrentlyDisplayedInFrame() const;
     void printErrorMessage(const String&) const;
     String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
+    bool isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const String& urlString);
 
 protected:
-    bool isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const String& urlString);
     bool passesSetLocationSecurityChecks(const LocalDOMWindow& activeWindow, const URL& completedURL, CanNavigateState& navigationState);
     explicit DOMWindow(GlobalWindowIdentifier&&, DOMWindowType);
 
@@ -250,6 +247,8 @@ private:
     const DOMWindowType m_type;
 };
 
-WebCoreOpaqueRoot root(DOMWindow*);
+WebCoreOpaqueRoot NODELETE root(DOMWindow*);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(DOMWindow)

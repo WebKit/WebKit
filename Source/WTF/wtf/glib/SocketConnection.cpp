@@ -28,13 +28,14 @@
 #include <wtf/Logging.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GSpanExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 
 static const unsigned defaultBufferSize = 4096;
 
 SocketConnection::SocketConnection(GRefPtr<GSocketConnection>&& connection, const MessageHandlers& messageHandlers, gpointer userData)
-    : m_connection(WTFMove(connection))
+    : m_connection(WTF::move(connection))
     , m_messageHandlers(messageHandlers)
     , m_userData(userData)
 {
@@ -63,7 +64,7 @@ SocketConnection::~SocketConnection() = default;
 
 bool SocketConnection::didReceiveInvalidMessage(const CString& message)
 {
-    RELEASE_LOG_FAULT(Process, "Received invalid message (%s), closing SocketConnection", message.data());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(Process, makeString("Received invalid message ("_s, message.span(), "), closing SocketConnection"_s).utf8().data());
     close();
     m_readBuffer.shrink(0);
     return false;

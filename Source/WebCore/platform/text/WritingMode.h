@@ -117,6 +117,9 @@ public:
     constexpr LogicalBoxAxis horizontalAxis() const;
     constexpr LogicalBoxAxis verticalAxis() const;
 
+    // FIXME: Callers need to be audited to determine which of the "is it LTR?" WritingMode methods is the right one for that instance.
+    constexpr bool deprecatedIsLeftToRightDirection() const { return isBidiLTR(); }
+
     // Computed values. May differ from used values above.
     constexpr StyleWritingMode computedWritingMode() const;
     constexpr TextDirection computedTextDirection() const;

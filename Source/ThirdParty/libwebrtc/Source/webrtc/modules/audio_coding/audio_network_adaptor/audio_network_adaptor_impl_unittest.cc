@@ -25,6 +25,7 @@
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_controller_manager.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_debug_dump_writer.h"
 #include "rtc_base/fake_clock.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -54,7 +55,13 @@ MATCHER_P(IsRtcEventAnaConfigEqualTo, config, "") {
     return false;
   }
   auto ana_event = static_cast<RtcEventAudioNetworkAdaptation*>(arg);
-  return ana_event->config() == config;
+  return ana_event->bitrate_bps() == config.bitrate_bps &&
+         ana_event->frame_length_ms() == config.frame_length_ms &&
+         ana_event->uplink_packet_loss_fraction() ==
+             config.uplink_packet_loss_fraction &&
+         ana_event->enable_fec() == config.enable_fec &&
+         ana_event->enable_dtx() == config.enable_dtx &&
+         ana_event->num_channels() == config.num_channels;
 }
 
 MATCHER_P(EncoderRuntimeConfigIs, config, "") {
@@ -94,18 +101,17 @@ AudioNetworkAdaptorStates CreateAudioNetworkAdaptor() {
   EXPECT_CALL(*controller_manager, GetSortedControllers(_))
       .WillRepeatedly(Return(controllers));
 
-  states.event_log.reset(new NiceMock<MockRtcEventLog>());
+  states.event_log = std::make_unique<NiceMock<MockRtcEventLog>>();
 
   auto debug_dump_writer =
       std::unique_ptr<MockDebugDumpWriter>(new NiceMock<MockDebugDumpWriter>());
   EXPECT_CALL(*debug_dump_writer, Die());
   states.mock_debug_dump_writer = debug_dump_writer.get();
 
-  AudioNetworkAdaptorImpl::Config config;
-  config.event_log = states.event_log.get();
   // AudioNetworkAdaptorImpl governs the lifetime of controller manager.
-  states.audio_network_adaptor.reset(new AudioNetworkAdaptorImpl(
-      config, std::move(controller_manager), std::move(debug_dump_writer)));
+  states.audio_network_adaptor = std::make_unique<AudioNetworkAdaptorImpl>(
+      CreateTestEnvironment({.event_log = states.event_log.get()}),
+      std::move(controller_manager), std::move(debug_dump_writer));
 
   return states;
 }

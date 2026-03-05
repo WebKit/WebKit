@@ -81,9 +81,9 @@ public:
 private:
     Structure(SourceSpan span, Identifier&& name, StructureMember::List&& members, Attribute::List&& attributes, StructureRole role, Structure* original = nullptr)
         : Declaration(span)
-        , m_name(WTFMove(name))
-        , m_attributes(WTFMove(attributes))
-        , m_members(WTFMove(members))
+        , m_name(WTF::move(name))
+        , m_attributes(WTF::move(attributes))
+        , m_members(WTF::move(members))
         , m_role(role)
         , m_original(original)
     {

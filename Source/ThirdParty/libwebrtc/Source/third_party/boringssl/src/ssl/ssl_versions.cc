@@ -90,7 +90,7 @@ bool ssl_method_supports_version(const SSL_PROTOCOL_METHOD *method,
 // The following functions map between API versions and wire versions. The
 // public API works on wire versions.
 
-static const char *kUnknownVersion = "unknown";
+static const char *const kUnknownVersion = "unknown";
 
 struct VersionInfo {
   uint16_t version;
@@ -211,7 +211,7 @@ bool ssl_get_version_range(const SSL_HANDSHAKE *hs, uint16_t *out_min_version,
   // To account for both of these, OpenSSL interprets the client-side bitmask
   // as a min/max range by picking the lowest contiguous non-empty range of
   // enabled protocols. Note that this means it is impossible to set a maximum
-  // version of the higest supported TLS version in a future-proof way.
+  // version of the highest supported TLS version in a future-proof way.
   bool any_enabled = false;
   for (size_t i = 0; i < std::size(kProtocolVersions); i++) {
     // Only look at the versions already enabled.

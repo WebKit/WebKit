@@ -41,8 +41,8 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFitToViewBox>;
 
-    const FloatRect& viewBox() const { return m_viewBox->currentValue(); }
-    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio->currentValue(); }
+    const FloatRect& viewBox() const LIFETIME_BOUND { return m_viewBox->currentValue(); }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const LIFETIME_BOUND { return m_preserveAspectRatio->currentValue(); }
 
     SVGAnimatedRect& viewBoxAnimated() { return m_viewBox; }
     SVGAnimatedPreserveAspectRatio& preserveAspectRatioAnimated() { return m_preserveAspectRatio; }
@@ -56,8 +56,8 @@ public:
     String viewBoxString() const { return SVGPropertyTraits<FloatRect>::toString(viewBox()); }
     String preserveAspectRatioString() const { return preserveAspectRatio().valueAsString(); }
 
-    bool hasValidViewBox() const { return m_isViewBoxValid; }
-    bool hasEmptyViewBox() const { return m_isViewBoxValid && viewBox().isEmpty(); }
+    bool hasValidViewBox() const { return m_isViewBoxValid && viewBox().width() >= 0 && viewBox().height() >= 0; }
+    bool hasEmptyViewBox() const { return hasValidViewBox() && viewBox().isEmpty(); }
 
 protected:
     SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess = SVGPropertyAccess::ReadWrite);
@@ -73,8 +73,8 @@ protected:
 private:
     template<typename CharacterType> std::optional<FloatRect> parseViewBoxGeneric(StringParsingBuffer<CharacterType>&, bool validate = true);
 
-    Ref<SVGAnimatedRect> m_viewBox;
-    Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio;
+    const Ref<SVGAnimatedRect> m_viewBox;
+    const Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio;
     bool m_isViewBoxValid { false };
 };
 

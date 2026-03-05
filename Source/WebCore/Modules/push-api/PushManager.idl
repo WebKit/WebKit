@@ -32,7 +32,7 @@
 ] interface PushManager {
     [SameObject] static readonly attribute FrozenArray<DOMString> supportedContentEncodings;
 
-    [CallWith=CurrentScriptExecutionContext] Promise<PushSubscription> subscribe(optional PushSubscriptionOptionsInit options);
+    [CallWith=CurrentScriptExecutionContext] Promise<PushSubscription> subscribe(optional PushSubscriptionOptionsInit options = {});
     [CallWith=CurrentScriptExecutionContext] Promise<PushSubscription?> getSubscription();
-    [CallWith=CurrentScriptExecutionContext] Promise<PushPermissionState> permissionState(optional PushSubscriptionOptionsInit options);
+    [CallWith=CurrentScriptExecutionContext] Promise<PushPermissionState> permissionState(optional PushSubscriptionOptionsInit options = {});
 };

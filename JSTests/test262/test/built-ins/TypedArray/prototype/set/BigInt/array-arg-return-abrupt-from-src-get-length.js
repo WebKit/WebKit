@@ -13,7 +13,7 @@ info: |
   ...
   16. Let srcLength be ? ToLength(? Get(src, "length")).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -24,10 +24,10 @@ Object.defineProperty(obj, "length", {
   }
 });
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([1n, 2n, 3n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([1n, 2n, 3n]));
 
   assert.throws(Test262Error, function() {
     sample.set(obj);
   });
-});
+}, null, ["passthrough"]);

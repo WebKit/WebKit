@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-struct VideoInfo;
+class VideoInfo;
 
 WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAVCC(std::span<const uint8_t>);
 

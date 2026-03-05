@@ -278,10 +278,8 @@ void StunDictionaryWriter::Delete(int key) {
   }
 
   // remove any pending updates.
-  pending_.erase(
-      std::remove_if(pending_.begin(), pending_.end(),
-                     [key](const auto& p) { return p.second->type() == key; }),
-      pending_.end());
+  std::erase_if(pending_,
+                [key](const auto& p) { return p.second->type() == key; });
 
   // Create tombstone.
   auto tombstone = std::make_unique<StunByteStringAttribute>(key);
@@ -304,10 +302,8 @@ void StunDictionaryWriter::Set(std::unique_ptr<StunAttribute> attr) {
   }
   int key = attr->type();
   // remove any pending updates.
-  pending_.erase(
-      std::remove_if(pending_.begin(), pending_.end(),
-                     [key](const auto& p) { return p.second->type() == key; }),
-      pending_.end());
+  std::erase_if(pending_,
+                [key](const auto& p) { return p.second->type() == key; });
 
   // remove any existing key.
   tombstones_.erase(key);

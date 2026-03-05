@@ -76,7 +76,7 @@ TEST(WTF_CompactRefPtr, Basic)
 
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
-        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<AlignedRefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -84,7 +84,7 @@ TEST(WTF_CompactRefPtr, Basic)
 
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
-        CompactRefPtr<AlignedRefLogger> p2(WTFMove(p1));
+        CompactRefPtr<AlignedRefLogger> p2(WTF::move(p1));
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -100,7 +100,7 @@ TEST(WTF_CompactRefPtr, Basic)
 
     {
         CompactRefPtr<DerivedAlignedRefLogger> p1 = &a;
-        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<AlignedRefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -134,7 +134,7 @@ TEST(WTF_CompactRefPtr, AssignPassRefToCompactRefPtr)
     DerivedAlignedRefLogger a("a");
     {
         Ref<AlignedRefLogger> passRef(a);
-        CompactRefPtr<AlignedRefLogger> ptr = WTFMove(passRef);
+        CompactRefPtr<AlignedRefLogger> ptr = WTF::move(passRef);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -215,7 +215,7 @@ TEST(WTF_CompactRefPtr, Assignment)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&b, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -261,7 +261,7 @@ TEST(WTF_CompactRefPtr, Assignment)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&c, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -291,7 +291,7 @@ TEST(WTF_CompactRefPtr, Assignment)
         CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         IGNORE_WARNINGS_BEGIN("self-move")
-        ptr = WTFMove(ptr);
+        ptr = WTF::move(ptr);
         IGNORE_WARNINGS_END
         EXPECT_EQ(&a, ptr.get());
     }
@@ -350,7 +350,7 @@ TEST(WTF_CompactRefPtr, Release)
 
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
-        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<AlignedRefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -358,7 +358,7 @@ TEST(WTF_CompactRefPtr, Release)
 
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
-        CompactRefPtr<AlignedRefLogger> p2(WTFMove(p1));
+        CompactRefPtr<AlignedRefLogger> p2(WTF::move(p1));
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -366,7 +366,7 @@ TEST(WTF_CompactRefPtr, Release)
 
     {
         CompactRefPtr<DerivedAlignedRefLogger> p1 = &a;
-        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<AlignedRefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -378,7 +378,7 @@ TEST(WTF_CompactRefPtr, Release)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&b, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -391,7 +391,7 @@ TEST(WTF_CompactRefPtr, Release)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&c, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -440,7 +440,7 @@ TEST(WTF_CompactRefPtr, Const)
 {
     // This test passes if it compiles without an error.
     auto a = ConstRefCounted::create();
-    Ref<const ConstRefCounted> b = WTFMove(a);
+    Ref<const ConstRefCounted> b = WTF::move(a);
     CompactRefPtr<const ConstRefCounted> c = b.ptr();
     Ref<const ConstRefCounted> d = returnConstRefCountedRef();
     CompactRefPtr<const ConstRefCounted> e = &returnConstRefCountedRef();
@@ -535,7 +535,7 @@ TEST(WTF_CompactRefPtr, AssignBeforeDeref)
         log() << "| ";
         a.slotToCheck = &p1;
         b.slotToCheck = &p1;
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         a.slotToCheck = nullptr;
         b.slotToCheck = nullptr;
         EXPECT_EQ(&b, p1.get());

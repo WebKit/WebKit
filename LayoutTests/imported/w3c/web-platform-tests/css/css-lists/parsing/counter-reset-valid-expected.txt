@@ -12,4 +12,6 @@ FAIL e.style['counter-reset'] = "reversed(first) -1 reversed(second) third 99" s
 PASS e.style['counter-reset'] = "section calc(1)" should set the property value
 PASS e.style['counter-reset'] = "section calc(-2.5)" should set the property value
 PASS e.style['counter-reset'] = "section calc(10 + (5 * sign(2cqw - 10px)))" should set the property value
+PASS e.style['counter-reset'] = "a 1 b 2 c 3 d 4 e 5" should set the property value
+PASS e.style['counter-reset'] = "a 1 b 2 c 3 a 4 b 5" should set the property value
 

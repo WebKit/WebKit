@@ -41,16 +41,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Storage);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Storage);
 
 Ref<Storage> Storage::create(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
 {
-    return adoptRef(*new Storage(window, WTFMove(storageArea)));
+    return adoptRef(*new Storage(window, WTF::move(storageArea)));
 }
 
 Storage::Storage(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
     : LocalDOMWindowProperty(&window)
-    , m_storageArea(WTFMove(storageArea))
+    , m_storageArea(WTF::move(storageArea))
 {
     ASSERT(frame());
 
@@ -143,14 +143,9 @@ Vector<AtomString> Storage::supportedPropertyNames() const
     });
 }
 
-Ref<StorageArea> Storage::protectedArea() const
-{
-    return m_storageArea;
-}
-
 bool Storage::requiresScriptTrackingPrivacyProtection() const
 {
-    RefPtr document = window() ? protectedWindow()->document() : nullptr;
+    RefPtr document = window() ? protect(window())->document() : nullptr;
     return document && document->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::LocalStorage);
 }
 

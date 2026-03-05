@@ -1,0 +1,60 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<a id="link" href="#url">Pre-iframe focusable element</a>
+
+<iframe src="http://localhost:8000/site-isolation/resources/iframe-with-text-input.html" onload="runTest();"></iframe>
+
+<script>
+var output = "Ensures that accessibility returns a remote element from the focused-ui-element API when focus moves into a remote frame.\n";
+
+window.jsTestIsAsync = true;
+
+var addedNotification, focusedObject;
+var focusChangeCount = 0;
+function notificationCallback(element, notificationName) {
+    if (notificationName === "AXFocusChanged") {
+        focusChangeCount++;
+        if (focusChangeCount === 1) {
+            focusedObject = accessibilityController.focusedElement;
+            output += expect("focusedObject.role.toLowerCase().includes('link')", "true");
+            output += expect("focusedObject.isRemotePlatformElement", "false");
+            setTimeout(() => {
+                // Use the tab key to move focus into the iframe. Do this asynchronously, as otherwise we would dirty
+                // style in the middle of AXObjectCache::performDeferredCacheUpdate, violating its invariant that layout
+                // and style remain clean, causing crashes. Note this is a layout-test only problem, as actual ATs can't
+                // synchronously trigger JS in response to notifications like our testing infrastructure allows for tests.
+                eventSender.keyDown("\t");
+                // Avoid leaving lingering dirty style and layout by forcing it to be clean.
+                document.body.offsetHeight;
+            }, 50);
+        }
+
+        // We should get a total of 2 focus changes.
+        if (focusChangeCount === 2) {
+            focusedObject = accessibilityController.focusedElement;
+            output += expect("focusedObject.isRemotePlatformElement", "true");
+
+            accessibilityController.removeNotificationListener();
+            finishJSTest();
+            debug(output);
+        }
+    }
+}
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+    touchAccessibilityTree(accessibilityController.rootElement)
+
+    addedNotification = accessibilityController.addNotificationListener(notificationCallback);
+    output += expect("addedNotification", "true");
+    document.getElementById("link").focus();
+}
+</script>
+</body>
+</html>

@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=PAYMENT_REQUEST
+    Conditional=PAYMENT_REQUEST,
 ] dictionary PaymentShippingOption {
     required DOMString id;
     required DOMString label;

@@ -37,10 +37,10 @@ class GPUTextureView : public RefCountedAndCanMakeWeakPtr<GPUTextureView> {
 public:
     static Ref<GPUTextureView> create(Ref<WebGPU::TextureView>&& backing)
     {
-        return adoptRef(*new GPUTextureView(WTFMove(backing)));
+        return adoptRef(*new GPUTextureView(WTF::move(backing)));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     WebGPU::TextureView& backing() { return m_backing; }
@@ -48,7 +48,7 @@ public:
 
 private:
     GPUTextureView(Ref<WebGPU::TextureView>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

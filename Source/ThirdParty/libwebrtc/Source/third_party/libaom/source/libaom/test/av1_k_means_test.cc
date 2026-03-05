@@ -28,20 +28,20 @@
 #include "test/util.h"
 
 namespace AV1Kmeans {
-typedef void (*av1_calc_indices_dim1_func)(const int16_t *data,
-                                           const int16_t *centroids,
-                                           uint8_t *indices,
-                                           int64_t *total_dist, int n, int k);
-typedef void (*av1_calc_indices_dim2_func)(const int16_t *data,
-                                           const int16_t *centroids,
-                                           uint8_t *indices,
-                                           int64_t *total_dist, int n, int k);
+using av1_calc_indices_dim1_func = void (*)(const int16_t *data,
+                                            const int16_t *centroids,
+                                            uint8_t *indices,
+                                            int64_t *total_dist, int n, int k);
+using av1_calc_indices_dim2_func = void (*)(const int16_t *data,
+                                            const int16_t *centroids,
+                                            uint8_t *indices,
+                                            int64_t *total_dist, int n, int k);
 
-typedef std::tuple<av1_calc_indices_dim1_func, BLOCK_SIZE>
-    av1_calc_indices_dim1Param;
+using av1_calc_indices_dim1Param =
+    std::tuple<av1_calc_indices_dim1_func, BLOCK_SIZE>;
 
-typedef std::tuple<av1_calc_indices_dim2_func, BLOCK_SIZE>
-    av1_calc_indices_dim2Param;
+using av1_calc_indices_dim2Param =
+    std::tuple<av1_calc_indices_dim2_func, BLOCK_SIZE>;
 
 class AV1KmeansTest1
     : public ::testing::TestWithParam<av1_calc_indices_dim1Param> {

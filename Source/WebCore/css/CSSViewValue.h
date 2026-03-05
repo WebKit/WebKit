@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include <WebCore/CSSPrimitiveValue.h>
-#include <WebCore/RenderStyleConstants.h>
+#include "CSSPrimitiveValue.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
@@ -44,14 +44,14 @@ public:
 
     static Ref<CSSViewValue> create(RefPtr<CSSValue>&& axis, RefPtr<CSSValue>&& startInset, RefPtr<CSSValue>&& endInset)
     {
-        return adoptRef(*new CSSViewValue(WTFMove(axis), WTFMove(startInset), WTFMove(endInset)));
+        return adoptRef(*new CSSViewValue(WTF::move(axis), WTF::move(startInset), WTF::move(endInset)));
     }
 
     String customCSSText(const CSS::SerializationContext&) const;
 
-    const RefPtr<CSSValue>& axis() const { return m_axis; }
-    const RefPtr<CSSValue>& startInset() const { return m_startInset; }
-    const RefPtr<CSSValue>& endInset() const { return m_endInset; }
+    CSSValue* axis() const { return m_axis; }
+    CSSValue* startInset() const { return m_startInset; }
+    CSSValue* endInset() const { return m_endInset; }
 
     bool equals(const CSSViewValue&) const;
 
@@ -76,15 +76,15 @@ public:
 private:
     CSSViewValue(RefPtr<CSSValue>&& axis, RefPtr<CSSValue>&& startInset, RefPtr<CSSValue>&& endInset)
         : CSSValue(ClassType::View)
-        , m_axis(WTFMove(axis))
-        , m_startInset(WTFMove(startInset))
-        , m_endInset(WTFMove(endInset))
+        , m_axis(WTF::move(axis))
+        , m_startInset(WTF::move(startInset))
+        , m_endInset(WTF::move(endInset))
     {
     }
 
-    RefPtr<CSSValue> m_axis;
-    RefPtr<CSSValue> m_startInset;
-    RefPtr<CSSValue> m_endInset;
+    const RefPtr<CSSValue> m_axis;
+    const RefPtr<CSSValue> m_startInset;
+    const RefPtr<CSSValue> m_endInset;
 };
 
 } // namespace WebCore

@@ -70,7 +70,7 @@ TEST(WebSocket, LongMessageNoDeflate)
                 for (size_t i = 0; i < twoMegabytes; i++)
                     bytesToSend.append('x');
 
-                connection.send(WTFMove(bytesToSend));
+                connection.send(WTF::move(bytesToSend));
             }, expectedReceiveSize);
         });
     });

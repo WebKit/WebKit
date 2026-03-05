@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/LayoutIterator.h>
+#include "LayoutIterator.h"
 
 namespace WebCore {
 namespace Layout {

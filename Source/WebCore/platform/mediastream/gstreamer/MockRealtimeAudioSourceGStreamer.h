@@ -67,6 +67,7 @@ private:
 
     std::optional<GStreamerAudioStreamDescription> m_streamFormat;
     GRefPtr<GstCaps> m_caps;
+    GstAudioInfo m_info;
     Vector<float> m_bipBopBuffer;
     uint32_t m_maximiumFrameCount;
     uint64_t m_samplesEmitted { 0 };

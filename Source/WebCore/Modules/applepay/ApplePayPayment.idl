@@ -25,7 +25,7 @@
 
 [
     Conditional=APPLE_PAY,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
 ] dictionary ApplePayPayment {
     required ApplePayPaymentToken token;
     ApplePayPaymentContact billingContact;
@@ -35,7 +35,7 @@
 
 [
     Conditional=APPLE_PAY,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
 ] dictionary ApplePayPaymentToken {
     required ApplePayPaymentMethod paymentMethod;
     DOMString transactionIdentifier;

@@ -87,6 +87,9 @@ struct FontSizeAdjust;
 #if USE(SKIA)
 class SkiaHarfBuzzFont;
 #endif
+#if USE(CORE_TEXT)
+struct FontPlatformSerializedAttributes;
+#endif
 
 struct FontPlatformDataAttributes {
     FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique)
@@ -111,6 +114,10 @@ struct FontPlatformDataAttributes {
         , m_url(url)
         , m_psName(psName)
         { }
+
+    WEBCORE_EXPORT FontPlatformDataAttributes(float size, FontOrientation, FontWidthVariant, TextRenderingMode, bool syntheticBold, bool syntheticOblique, std::optional<FontPlatformSerializedAttributes>, CTFontDescriptorOptions, RetainPtr<CFStringRef> url, RetainPtr<CFStringRef> psName);
+
+    WEBCORE_EXPORT std::optional<FontPlatformSerializedAttributes> serializableAttributes() const;
 #endif
 
 #if PLATFORM(WIN) && USE(CAIRO)
@@ -135,7 +142,7 @@ struct FontPlatformDataAttributes {
         , m_syntheticOblique(syntheticOblique)
         , m_familyName(familyName)
         , m_style(style)
-        , m_features(WTFMove(features))
+        , m_features(WTF::move(features))
         { }
 #endif
 
@@ -143,7 +150,7 @@ struct FontPlatformDataAttributes {
 
     FontOrientation m_orientation { FontOrientation::Horizontal };
     FontWidthVariant m_widthVariant { FontWidthVariant::RegularWidth };
-    TextRenderingMode m_textRenderingMode { TextRenderingMode::AutoTextRendering };
+    TextRenderingMode m_textRenderingMode { TextRenderingMode::Auto };
 
     bool m_syntheticBold { false };
     bool m_syntheticOblique { false };
@@ -164,18 +171,18 @@ struct FontPlatformDataAttributes {
 
 #if USE(CORE_TEXT)
 
-// FIXME: Some of these structures have std::optional<RetainPtr<>> which seems weird,
-// but generated encode/decode of RetainPtrs doesn't currently handle null values very well.
-// Once it does, remove the std::optional redirect.
+using SystemUIFontType = uint32_t;
+#define SystemUIFontTypeNone UINT32_MAX
+
 struct FontPlatformSerializedTraits {
     static std::optional<FontPlatformSerializedTraits> fromCF(CFDictionaryRef);
     RetainPtr<CFDictionaryRef> toCFDictionary() const;
 
     String uiFontDesign;
-    std::optional<RetainPtr<CFNumberRef>> weight;
-    std::optional<RetainPtr<CFNumberRef>> width;
-    std::optional<RetainPtr<CFNumberRef>> symbolic;
-    std::optional<RetainPtr<CFNumberRef>> grade;
+    RetainPtr<CFNumberRef> weight;
+    RetainPtr<CFNumberRef> width;
+    RetainPtr<CFNumberRef> symbolic;
+    RetainPtr<CFNumberRef> grade;
 };
 
 struct FontPlatformOpticalSize {
@@ -185,10 +192,10 @@ struct FontPlatformOpticalSize {
 };
 
 struct FontPlatformFeatureSetting {
-    std::optional<RetainPtr<CFNumberRef>> type;
-    std::optional<RetainPtr<CFNumberRef>> selector;
-    std::optional<RetainPtr<CFStringRef>> tag;
-    std::optional<RetainPtr<CFNumberRef>> value;
+    RetainPtr<CFNumberRef> type;
+    RetainPtr<CFNumberRef> selector;
+    RetainPtr<CFStringRef> tag;
+    RetainPtr<CFNumberRef> value;
 };
 
 struct FontPlatformSerializedAttributes {
@@ -199,19 +206,19 @@ struct FontPlatformSerializedAttributes {
     String descriptorLanguage;
     String descriptorTextStyle;
 
-    std::optional<RetainPtr<CFDataRef>> matrix;
+    RetainPtr<CFDataRef> matrix;
 
-    std::optional<RetainPtr<CFBooleanRef>> ignoreLegibilityWeight;
+    RetainPtr<CFBooleanRef> ignoreLegibilityWeight;
 
-    std::optional<RetainPtr<CFNumberRef>> baselineAdjust;
-    std::optional<RetainPtr<CFNumberRef>> fallbackOption;
-    std::optional<RetainPtr<CFNumberRef>> fixedAdvance;
-    std::optional<RetainPtr<CFNumberRef>> orientation;
-    std::optional<RetainPtr<CFNumberRef>> palette;
-    std::optional<RetainPtr<CFNumberRef>> size;
-    std::optional<RetainPtr<CFNumberRef>> sizeCategory;
-    std::optional<RetainPtr<CFNumberRef>> track;
-    std::optional<RetainPtr<CFNumberRef>> unscaledTracking;
+    RetainPtr<CFNumberRef> baselineAdjust;
+    RetainPtr<CFNumberRef> fallbackOption;
+    RetainPtr<CFNumberRef> fixedAdvance;
+    RetainPtr<CFNumberRef> orientation;
+    RetainPtr<CFNumberRef> palette;
+    RetainPtr<CFNumberRef> size;
+    RetainPtr<CFNumberRef> sizeCategory;
+    RetainPtr<CFNumberRef> track;
+    RetainPtr<CFNumberRef> unscaledTracking;
 
     std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CGColorRef>>>> paletteColors;
     std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CFNumberRef>>>> variations;
@@ -222,7 +229,7 @@ struct FontPlatformSerializedAttributes {
     std::optional<Vector<FontPlatformFeatureSetting>> featureSettings;
 
 #if HAVE(ADDITIONAL_FONT_PLATFORM_SERIALIZED_ATTRIBUTES)
-    std::optional<RetainPtr<CFNumberRef>> additionalNumber;
+    RetainPtr<CFNumberRef> additionalNumber;
     static CFStringRef additionalFontPlatformSerializedAttributesNumberDictionaryKey();
 #endif
 };
@@ -238,12 +245,18 @@ struct FontMetadata {
     double pointSize = { 0.0 };
     WebCore::FontOrientation orientation = FontOrientation::Horizontal;
     WebCore::FontWidthVariant widthVariant = FontWidthVariant::RegularWidth;
-    WebCore::TextRenderingMode textRenderingMode = TextRenderingMode::AutoTextRendering;
+    WebCore::TextRenderingMode textRenderingMode = TextRenderingMode::Auto;
     bool syntheticBold = false;
     bool syntheticOblique = false;
 };
 
 struct InstalledFont {
+    struct SystemUIFont {
+        SystemUIFontType systemUIFontType { SystemUIFontTypeNone };
+        String language;
+        RetainPtr<CTFontRef> toCTFont(double pointSize) const;
+    };
+
     struct PostScriptFont {
         String postScriptName;
         CTFontDescriptorOptions fontDescriptorOptions;
@@ -251,7 +264,7 @@ struct InstalledFont {
         RetainPtr<CTFontRef> toCTFont(double pointSize) const;
     };
 
-    Variant<PostScriptFont> font;
+    Variant<SystemUIFont, PostScriptFont> font;
     FontMetadata metadata;
     WEBCORE_EXPORT RetainPtr<CTFontRef> toCTFont() const;
     Ref<Font> toFont() const;
@@ -301,8 +314,8 @@ public:
         {
         }
 
-        const String& name() const { return m_name; }
-        const String& tag() const { return m_tag; }
+        const String& name() const LIFETIME_BOUND { return m_name; }
+        const String& tag() const LIFETIME_BOUND { return m_tag; }
         float defaultValue() const { return m_defaultValue; }
         float minimumValue() const { return m_minimumValue; }
         float maximumValue() const { return m_maximumValue; }
@@ -318,10 +331,10 @@ public:
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
 
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering, const FontCustomPlatformData* = nullptr);
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontCustomPlatformData* = nullptr);
 
 #if USE(CORE_TEXT)
-    WEBCORE_EXPORT FontPlatformData(RetainPtr<CTFontRef>&&, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering, const FontCustomPlatformData* = nullptr);
+    WEBCORE_EXPORT FontPlatformData(RetainPtr<CTFontRef>&&, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontCustomPlatformData* = nullptr);
 #endif
 
 #if PLATFORM(WIN) && USE(CAIRO)
@@ -370,7 +383,6 @@ public:
     bool hasCustomTracking() const { return isSystemFont(); }
 
     CTFontRef ctFont() const { return m_font.get(); }
-    RetainPtr<CTFontRef> protectedCTFont() const { return ctFont(); }
 #endif
 
 #if PLATFORM(COCOA)
@@ -395,10 +407,10 @@ public:
 #if USE(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }
 #elif USE(SKIA)
-    const SkFont& skFont() const { return m_font; }
+    const SkFont& skFont() const LIFETIME_BOUND { return m_font; }
     SkiaHarfBuzzFont* skiaHarfBuzzFont() const { return m_hbFont.get(); }
     hb_font_t* hbFont() const;
-    const Vector<hb_feature_t>& features() const { return m_features; }
+    const Vector<hb_feature_t>& features() const LIFETIME_BOUND { return m_features; }
     static bool skiaTypefaceHasAnySupportedColorTable(const SkTypeface&);
 #endif
 
@@ -460,7 +472,6 @@ public:
     {
         return m_customPlatformData.get();
     }
-    inline RefPtr<const FontCustomPlatformData> protectedCustomPlatformData() const; // Defined in FontCustomPlatformData.h
 
     WEBCORE_EXPORT Attributes attributes() const;
 
@@ -507,7 +518,7 @@ private:
 
     FontOrientation m_orientation { FontOrientation::Horizontal };
     FontWidthVariant m_widthVariant { FontWidthVariant::RegularWidth };
-    TextRenderingMode m_textRenderingMode { TextRenderingMode::AutoTextRendering };
+    TextRenderingMode m_textRenderingMode { TextRenderingMode::Auto };
 
     // This is conceptually const, but we can't make it actually const,
     // because FontPlatformData is used as a key in a HashMap.

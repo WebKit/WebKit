@@ -7,6 +7,7 @@ list(APPEND WTF_SOURCES
     glib/Application.cpp
     glib/ChassisType.cpp
     glib/FileSystemGlib.cpp
+    glib/GMallocString.cpp
     glib/GRefPtr.cpp
     glib/GSocketMonitor.cpp
     glib/GSpanExtras.cpp
@@ -33,6 +34,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/ActivityObserver.h
     glib/Application.h
     glib/ChassisType.h
+    glib/GMallocString.h
     glib/GMutexLocker.h
     glib/GRefPtr.h
     glib/GSocketMonitor.h
@@ -64,7 +66,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 
         unix/MemoryPressureHandlerUnix.cpp
     )
-elseif (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+elseif (CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR CMAKE_SYSTEM_NAME MATCHES "QNX")
     list(APPEND WTF_SOURCES
         generic/MemoryFootprintGeneric.cpp
 

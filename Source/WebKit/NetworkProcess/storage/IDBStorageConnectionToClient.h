@@ -41,7 +41,7 @@ public:
 
     std::optional<WebCore::IDBConnectionIdentifier> identifier() const final { return m_identifier; }
     IPC::Connection::UniqueID ipcConnection() const { return m_connection; }
-    WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
+    WebCore::IDBServer::IDBConnectionToClient& NODELETE connectionToClient();
 
 private:
     // IDBConnectionToClientDelegate

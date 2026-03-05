@@ -140,7 +140,7 @@ class VulkanHelper
     // Writes pixels into an image. Currently only VK_FORMAT_R8G8B8A8_UNORM
     // and VK_FORMAT_B8G8R8A8_UNORM formats are supported.
     void writePixels(VkImage dstImage,
-                     VkImageLayout imageLayout,
+                     VkImageLayout srcImageLayout,
                      VkFormat imageFormat,
                      VkOffset3D imageOffset,
                      VkExtent3D imageExtent,
@@ -156,6 +156,8 @@ class VulkanHelper
                     VkExtent3D imageExtent,
                     void *pixels,
                     size_t pixelsSize);
+
+    bool useUnifiedImageLayouts() const { return mHasUnifiedImageLayouts; }
 
   private:
     bool mInitializedFromANGLE       = false;
@@ -174,6 +176,7 @@ class VulkanHelper
     bool mHasExternalMemoryFuchsia    = false;
     bool mHasExternalSemaphoreFd      = false;
     bool mHasExternalSemaphoreFuchsia = false;
+    bool mHasUnifiedImageLayouts      = false;
     PFN_vkGetPhysicalDeviceImageFormatProperties2 vkGetPhysicalDeviceImageFormatProperties2 =
         nullptr;
     PFN_vkGetMemoryFdKHR vkGetMemoryFdKHR       = nullptr;

@@ -79,7 +79,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     if (!m_textIndicator)
         return;
 
-    Image* indicatorImage = m_textIndicator->contentImage();
+    RefPtr indicatorImage = m_textIndicator->contentImage();
     if (!indicatorImage)
         return;
 
@@ -95,12 +95,12 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
 
 bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnimate)
 {
-    RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
+    RefPtr selectedFrame = frameWithSelection(protect(protect(*m_webPage)->corePage()));
     if (!selectedFrame)
         return false;
 
     if (m_findIndicatorOverlay) {
-        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
+        protect(*m_webPage)->corePage()->pageOverlayController().uninstallPageOverlay(*protect(m_findIndicatorOverlay), PageOverlay::FadeMode::DoNotFade);
         m_findIndicatorOverlay = nullptr;
         m_isShowingFindIndicator = false;
     }
@@ -112,15 +112,16 @@ bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnima
     m_findIndicatorOverlayClient = makeUnique<FindIndicatorOverlayClientIOS>(*selectedFrame, textIndicator.get());
     m_findIndicatorRect = enclosingIntRect(textIndicator->selectionRectInRootViewCoordinates());
     m_findIndicatorOverlay = PageOverlay::create(*m_findIndicatorOverlayClient, PageOverlay::OverlayType::Document);
-    m_webPage->corePage()->pageOverlayController().installPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
+    Ref findIndicatorOverlay = *m_findIndicatorOverlay;
+    protect(*m_webPage)->corePage()->pageOverlayController().installPageOverlay(findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
 
-    m_findIndicatorOverlay->setFrame(enclosingIntRect(textIndicator->textBoundingRectInRootViewCoordinates()));
-    m_findIndicatorOverlay->setNeedsDisplay();
+    findIndicatorOverlay->setFrame(enclosingIntRect(textIndicator->textBoundingRectInRootViewCoordinates()));
+    findIndicatorOverlay->setNeedsDisplay();
 
     if (shouldAnimate) {
         bool isReplaced;
-        const VisibleSelection& visibleSelection = selectedFrame->selection().selection();
-        FloatRect renderRect = visibleSelection.start().containerNode()->absoluteBoundingRect(&isReplaced);
+        const VisibleSelection& visibleSelection = protect(selectedFrame)->selection().selection();
+        FloatRect renderRect = protect(visibleSelection.start().containerNode())->absoluteBoundingRect(&isReplaced);
         IntRect startRect = visibleSelection.visibleStart().absoluteCaretBounds();
 
         m_webPage->send(Messages::SmartMagnificationController::ScrollToRect(startRect.center(), renderRect));
@@ -136,7 +137,7 @@ void FindController::hideFindIndicator()
     if (!m_isShowingFindIndicator)
         return;
 
-    m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
+    protect(*m_webPage)->corePage()->pageOverlayController().uninstallPageOverlay(*protect(m_findIndicatorOverlay), PageOverlay::FadeMode::DoNotFade);
     m_findIndicatorOverlay = nullptr;
     m_isShowingFindIndicator = false;
     didHideFindIndicator();
@@ -149,17 +150,17 @@ void FindController::resetMatchIndex()
 
 static void setSelectionChangeUpdatesEnabledInAllFrames(WebPage& page, bool enabled)
 {
-    for (auto* coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(coreFrame);
+    for (RefPtr coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(coreFrame.get());
         if (!localFrame)
             continue;
-        localFrame->editor().setIgnoreSelectionChanges(enabled);
+        protect(protect(localFrame)->editor())->setIgnoreSelectionChanges(enabled);
     }
 }
 
 void FindController::willFindString()
 {
-    setSelectionChangeUpdatesEnabledInAllFrames(*m_webPage, true);
+    setSelectionChangeUpdatesEnabledInAllFrames(protect(*m_webPage), true);
 }
 
 void FindController::didFindString()
@@ -169,30 +170,33 @@ void FindController::didFindString()
     // updateAppearance, so the selection won't have been pushed to the render tree.
     // Therefore, we need to force an update no matter what.
 
-    RefPtr frame = m_webPage->corePage()->focusController().focusedOrMainFrame();
+    RefPtr frame = protect(*m_webPage)->corePage()->focusController().focusedOrMainFrame();
     if (!frame)
         return;
-    frame->selection().setUpdateAppearanceEnabled(true);
-    frame->selection().updateAppearance();
-    frame->selection().setUpdateAppearanceEnabled(false);
+
+    CheckedRef selection = frame->selection();
+    selection->setUpdateAppearanceEnabled(true);
+    selection->updateAppearance();
+    selection->setUpdateAppearanceEnabled(false);
 
     // Scrolling the main frame is handled by the SmartMagnificationController class but we still
     // need to consider overflow nodes and subframes here.
     // Many sites have overlay headers or footers that may overlap with the highlighted
     // text, so we reveal the text at the center of the viewport.
     // FIXME: Find a better way to estimate the obscured area (https://webkit.org/b/183889).
-    frame->selection().revealSelection({ SelectionRevealMode::RevealUpToMainFrame, ScrollAlignment::alignCenterAlways, WebCore::RevealExtentOption::DoNotRevealExtent });
-    revealClosedDetailsAndHiddenUntilFoundAncestors(*frame->selection().selection().start().anchorNode());
+    selection->revealSelection({ SelectionRevealMode::RevealUpToMainFrame, ScrollAlignment::alignCenterAlways, WebCore::RevealExtentOption::DoNotRevealExtent });
+    if (RefPtr anchorNode = selection->selection().start().anchorNode())
+        revealClosedDetailsAndHiddenUntilFoundAncestors(*anchorNode);
 }
 
 void FindController::didFailToFindString()
 {
-    setSelectionChangeUpdatesEnabledInAllFrames(*m_webPage, false);
+    setSelectionChangeUpdatesEnabledInAllFrames(protect(*m_webPage), false);
 }
 
 void FindController::didHideFindIndicator()
 {
-    setSelectionChangeUpdatesEnabledInAllFrames(*m_webPage, false);
+    setSelectionChangeUpdatesEnabledInAllFrames(protect(*m_webPage), false);
 }
     
 unsigned FindController::findIndicatorRadius() const

@@ -38,10 +38,8 @@ BSSL_NAMESPACE_BEGIN
 namespace {
 
 const decltype(&EVP_hpke_x25519_hkdf_sha256) kAllKEMs[] = {
-    &EVP_hpke_p256_hkdf_sha256,
-    &EVP_hpke_x25519_hkdf_sha256,
-    &EVP_hpke_xwing
-};
+    &EVP_hpke_p256_hkdf_sha256, &EVP_hpke_x25519_hkdf_sha256, &EVP_hpke_xwing,
+    &EVP_hpke_mlkem768, &EVP_hpke_mlkem1024};
 
 const decltype(&EVP_hpke_aes_128_gcm) kAllAEADs[] = {
     &EVP_hpke_aes_128_gcm,
@@ -445,8 +443,9 @@ TEST(HPKETest, RoundTrip) {
 
             // Test the auth mode.
             // We skip X-Wing here since it does not support auth mode.
-            if (EVP_HPKE_KEM_id(kem()) != EVP_HPKE_XWING)
-            {
+            if (EVP_HPKE_KEM_id(kem()) != EVP_HPKE_XWING &&
+                EVP_HPKE_KEM_id(kem()) != EVP_HPKE_MLKEM768 &&
+                EVP_HPKE_KEM_id(kem()) != EVP_HPKE_MLKEM1024) {
               ScopedEVP_HPKE_CTX sender_ctx;
               uint8_t enc[EVP_HPKE_MAX_PUBLIC_KEY_LENGTH];
               size_t enc_len;

@@ -77,26 +77,6 @@ bool Display::initializeGLDisplayX11() const
     return false;
 }
 
-String Display::accessibilityBusAddressX11() const
-{
-    auto* xDisplay = GDK_DISPLAY_XDISPLAY(m_gdkDisplay.get());
-    Atom atspiBusAtom = XInternAtom(xDisplay, "AT_SPI_BUS", False);
-    Atom type;
-    int format;
-    unsigned long itemCount, bytesAfter;
-    unsigned char* data = nullptr;
-    XErrorTrapper trapper(xDisplay, XErrorTrapper::Policy::Ignore);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port.
-    XGetWindowProperty(xDisplay, RootWindowOfScreen(DefaultScreenOfDisplay(xDisplay)), atspiBusAtom, 0L, 8192, False, XA_STRING, &type, &format, &itemCount, &bytesAfter, &data);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
-    auto atspiBusAddress = String::fromUTF8(reinterpret_cast<char*>(data));
-    if (data)
-        XFree(data);
-
-    return atspiBusAddress;
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(X11)

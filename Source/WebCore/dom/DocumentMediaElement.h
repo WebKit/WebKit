@@ -44,7 +44,7 @@ class JSDOMGlobalObject;
 class ScriptController;
 
 class DocumentMediaElement final : public Supplement<Document> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentMediaElement);
+    WTF_MAKE_TZONE_ALLOCATED(DocumentMediaElement);
 public:
     static DocumentMediaElement& from(Document&);
 
@@ -57,7 +57,7 @@ private:
     bool isDocumentMediaElement() const final { return true; }
     static ASCIILiteral supplementName();
 
-    Document& document() const;
+    Document& NODELETE document() const;
 
     DOMWrapperWorld& ensureIsolatedWorld();
     bool ensureMediaControlsScript();

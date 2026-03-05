@@ -23,6 +23,7 @@
 #include "APIFeature.h"
 #include "WebKitFeaturePrivate.h"
 #include <wtf/RefPtr.h>
+#include <wtf/text/CStringView.h>
 
 static inline WebKitFeatureStatus toFeatureStatus(API::FeatureStatus status)
 {
@@ -117,7 +118,7 @@ static inline const char* toFeatureCategory(API::FeatureCategory category)
  */
 struct _WebKitFeature {
     _WebKitFeature(RefPtr<API::Feature>&& feature)
-        : feature(WTFMove(feature))
+        : feature(WTF::move(feature))
     {
     }
 
@@ -429,4 +430,31 @@ WebKitFeature* webkit_feature_list_get(WebKitFeatureList* featureList, gsize ind
     g_return_val_if_fail(featureList, nullptr);
     g_return_val_if_fail(index < featureList->items.size(), nullptr);
     return featureList->items[index];
+}
+
+/**
+ * webkit_feature_list_find:
+ * @feature_list: a #WebKitFeatureList
+ * @identifier: a #WebKitFeature identifier
+ *
+ * Finds a feature given its identifier.
+ *
+ * Returns: (transfer none) (nullable): The feature with the given
+ *     @identifier, or @NULL if it cannot be found.
+ *
+ * Since: 2.54
+ */
+WebKitFeature* webkit_feature_list_find(WebKitFeatureList* featureList, const char* identifier)
+{
+    g_return_val_if_fail(featureList, nullptr);
+    g_return_val_if_fail(identifier, nullptr);
+
+    const auto identifierView = CStringView::unsafeFromUTF8(identifier);
+    const auto identifierSpan = spanReinterpretCast<const char>(identifierView.span());
+
+    auto it = std::ranges::find_if(featureList->items, [&identifierSpan](WebKitFeature* feature) -> bool {
+        return equalSpans(feature->identifier.span(), identifierSpan);
+    });
+
+    return (it != featureList->items.end()) ? *it : nullptr;
 }

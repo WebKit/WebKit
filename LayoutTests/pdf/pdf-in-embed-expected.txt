@@ -14,7 +14,7 @@
             (GraphicsLayer
               (anchor 0.00 0.00)
               (bounds 300.00 300.00)
-              (backgroundColor #808080)
+              (backgroundColor #FFFFFF)
               (children 2
                 (GraphicsLayer
                   (anchor 0.00 0.00)

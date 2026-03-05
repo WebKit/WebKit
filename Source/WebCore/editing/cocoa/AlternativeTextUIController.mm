@@ -73,13 +73,13 @@ void AlternativeTextUIController::showAlternatives(NSView *view, const FloatRect
 
     m_view = view;
 
-    PlatformTextAlternatives *alternatives = m_contextController.alternativesForContext(context);
+    RetainPtr alternatives = m_contextController.alternativesForContext(context);
     if (!alternatives)
         return;
 
-    [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:NSCorrectionIndicatorTypeGuesses primaryString:retainPtr(alternatives.primaryString).get() alternativeStrings:retainPtr(alternatives.alternativeStrings).get() forStringInRect:boundingBoxOfPrimaryString view:m_view.get() completionHandler:^(NSString *acceptedString) {
+    [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:NSCorrectionIndicatorTypeGuesses primaryString:retainPtr(alternatives.get().primaryString).get() alternativeStrings:retainPtr(alternatives.get().alternativeStrings).get() forStringInRect:boundingBoxOfPrimaryString view:m_view.get() completionHandler:^(NSString *acceptedString) {
         if (acceptedString) {
-            handleAcceptedAlternative(acceptedString, context, alternatives);
+            handleAcceptedAlternative(acceptedString, context, alternatives.get());
             acceptanceHandler(acceptedString);
         }
     }];

@@ -204,7 +204,17 @@ private:
         bool result = true;
 
         UncheckedKeyHashMap<AbstractHeap, Node*> potentialStackEscapes;
-        
+        auto escape = [&](Node* node) {
+            if (mode == PhaseMode::Global) {
+                m_interpreter->phiChildren()->forAllTransitiveIncomingValues(
+                    node,
+                    [&](Node* incoming) {
+                        incoming->setEpoch(Epoch());
+                    });
+            } else
+                node->setEpoch(Epoch());
+        };
+
         for (m_nodeIndex = 0; m_nodeIndex < block->size(); ++m_nodeIndex) {
             m_node = block->at(m_nodeIndex);
             
@@ -377,8 +387,6 @@ private:
             
             switch (m_node->op()) {
             case NewObject:
-            case NewGenerator:
-            case NewAsyncGenerator:
             case NewArray:
             case NewArrayWithSize:
             case NewArrayWithButterfly:
@@ -460,7 +468,7 @@ private:
                         return;
                     potentialStackEscapes.removeIf([&] (const auto& entry) {
                         if (entry.key.overlaps(heap)) {
-                            entry.value->setEpoch(Epoch());
+                            escape(entry.value);
                             return true;
                         }
                         return false;
@@ -480,10 +488,6 @@ private:
                 clobberize(m_graph, m_node, readFunc, writeFunc, NoOpClobberize());
 
                 if (wroteHeapOrStack) {
-                    auto escape = [&] (Node* node) {
-                        node->setEpoch(Epoch());
-                    };
-
                     auto escapeToTheStack = [&] (Node* node) {
                         if (node->epoch() == m_currentEpoch) {
                             RELEASE_ASSERT(!!preciseStackWrite);
@@ -549,7 +553,7 @@ private:
 
         {
             for (auto* node : potentialStackEscapes.values())
-                node->setEpoch(Epoch());
+                escape(node);
             potentialStackEscapes.clear();
         }
         

@@ -50,8 +50,7 @@ public:
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
     WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
-    WEBCORE_EXPORT RetainPtr<NSURLProtectionSpace> protectedNSSpace() const;
-    
+
     WEBCORE_EXPORT std::optional<PlatformData> getPlatformDataToSerialize() const;
 
 private:

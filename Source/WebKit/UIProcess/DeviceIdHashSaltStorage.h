@@ -52,14 +52,14 @@ private:
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HashSaltForOrigin);
 
         HashSaltForOrigin(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, String&& deviceIdHashSalt, WallTime lastTimeUsed = WallTime::now())
-            : documentOrigin(WTFMove(documentOrigin))
-            , parentOrigin(WTFMove(parentOrigin))
-            , deviceIdHashSalt(WTFMove(deviceIdHashSalt))
+            : documentOrigin(WTF::move(documentOrigin))
+            , parentOrigin(WTF::move(parentOrigin))
+            , deviceIdHashSalt(WTF::move(deviceIdHashSalt))
             , lastTimeUsed(lastTimeUsed)
         { }
 
         HashSaltForOrigin isolatedCopy() const & { return { documentOrigin.isolatedCopy(), parentOrigin.isolatedCopy(), deviceIdHashSalt.isolatedCopy(), lastTimeUsed }; }
-        HashSaltForOrigin isolatedCopy() && { return { WTFMove(documentOrigin).isolatedCopy(), WTFMove(parentOrigin).isolatedCopy(), WTFMove(deviceIdHashSalt).isolatedCopy(), lastTimeUsed }; }
+        HashSaltForOrigin isolatedCopy() && { return { WTF::move(documentOrigin).isolatedCopy(), WTF::move(parentOrigin).isolatedCopy(), WTF::move(deviceIdHashSalt).isolatedCopy(), lastTimeUsed }; }
 
         WebCore::SecurityOriginData documentOrigin;
         WebCore::SecurityOriginData parentOrigin;

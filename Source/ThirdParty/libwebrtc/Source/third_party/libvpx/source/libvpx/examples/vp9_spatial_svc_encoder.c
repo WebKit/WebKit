@@ -14,6 +14,8 @@
  * that benefit from a scalable bitstream.
  */
 
+#include <assert.h>
+#include <limits.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -25,12 +27,13 @@
 #include "../tools_common.h"
 #include "../video_writer.h"
 
+#include "../vpx_ports/bitops.h"
 #include "../vpx_ports/vpx_timer.h"
 #include "./svc_context.h"
 #include "vpx/vp8cx.h"
+#include "vpx/vpx_decoder.h"
 #include "vpx/vpx_encoder.h"
 #include "../vpxstats.h"
-#include "vp9/encoder/vp9_encoder.h"
 #include "./y4minput.h"
 
 #define OUTPUT_FRAME_STATS 0
@@ -783,8 +786,8 @@ static void svc_output_rc_stats(
   int count = 0;
   double sum_bitrate = 0.0;
   double sum_bitrate2 = 0.0;
-  vp9_zero(sizes);
-  vp9_zero(sizes_parsed);
+  memset(sizes, 0, sizeof(sizes));
+  memset(sizes_parsed, 0, sizeof(sizes_parsed));
   vpx_codec_control(codec, VP9E_GET_SVC_LAYER_ID, layer_id);
   parse_superframe_index(cx_pkt->data.frame.buf, cx_pkt->data.frame.sz,
                          sizes_parsed, &count);

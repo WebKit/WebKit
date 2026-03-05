@@ -132,7 +132,7 @@
 #endif
 #include <@API_INCLUDE_PREFIX@/WebKitWebResource.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebView.h>
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && USE(LIBWPE)
 #include <wpe/WebKitWebViewBackend.h>
 #endif
 #if PLATFORM(GTK)

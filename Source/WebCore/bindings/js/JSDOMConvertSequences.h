@@ -67,7 +67,7 @@ struct GenericSequenceInnerConverter<IDLInterface<T>> {
         if (convertedValue.hasException(scope)) [[unlikely]]
             return;
 
-        result.append(Ref { *convertedValue.releaseReturnValue() });
+        result.append(Ref { convertedValue.releaseReturnValue() });
     }
 };
 
@@ -94,7 +94,7 @@ struct GenericSequenceConverter {
         });
         RETURN_IF_EXCEPTION(scope, Result::exception());
 
-        return Result { WTFMove(sequence) };
+        return Result { WTF::move(sequence) };
     }
 
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject* object, JSC::JSValue method)
@@ -113,7 +113,7 @@ struct GenericSequenceConverter {
         });
         RETURN_IF_EXCEPTION(scope, Result::exception());
 
-        return Result { WTFMove(sequence) };
+        return Result { WTF::move(sequence) };
     }
 };
 
@@ -141,7 +141,7 @@ struct NumericSequenceConverterImpl {
                 else
                     sequence.append(indexValue.asInt32());
             }
-            return Result { WTFMove(sequence) };
+            return Result { WTF::move(sequence) };
         }
 
         ASSERT(indexingType == JSC::DoubleShape);
@@ -158,7 +158,7 @@ struct NumericSequenceConverterImpl {
                 sequence.append(convertedValue.releaseReturnValue());
             }
         }
-        return Result { WTFMove(sequence) };
+        return Result { WTF::move(sequence) };
     }
 
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
@@ -195,9 +195,9 @@ struct NumericSequenceConverterImpl {
         
         JSC::IndexingType indexingType = array->indexingType() & JSC::IndexingShapeMask;
         if (indexingType != JSC::Int32Shape && indexingType != JSC::DoubleShape)
-            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, WTFMove(sequence)));
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, WTF::move(sequence)));
 
-        return convertArray(lexicalGlobalObject, scope, array, length, indexingType, WTFMove(sequence));
+        return convertArray(lexicalGlobalObject, scope, array, length, indexingType, WTF::move(sequence));
     }
 
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject* object, JSC::JSValue method)
@@ -228,9 +228,9 @@ struct NumericSequenceConverterImpl {
         
         JSC::IndexingType indexingType = array->indexingType() & JSC::IndexingShapeMask;
         if (indexingType != JSC::Int32Shape && indexingType != JSC::DoubleShape)
-            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, method, WTFMove(sequence)));
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, method, WTF::move(sequence)));
 
-        return convertArray(lexicalGlobalObject, scope, array, length, indexingType, WTFMove(sequence));
+        return convertArray(lexicalGlobalObject, scope, array, length, indexingType, WTF::move(sequence));
     }
 };
 
@@ -267,7 +267,7 @@ struct SequenceConverterImpl {
                 InnerConverter::convert(scope, lexicalGlobalObject, indexValue, sequence);
                 RETURN_IF_EXCEPTION(scope, Result::exception());
             }
-            return Result { WTFMove(sequence) };
+            return Result { WTF::move(sequence) };
         }
 
         for (unsigned i = 0; i < length; i++) {
@@ -280,7 +280,7 @@ struct SequenceConverterImpl {
             InnerConverter::convert(scope, lexicalGlobalObject, indexValue, sequence);
             RETURN_IF_EXCEPTION(scope, Result::exception());
         }
-        return Result { WTFMove(sequence) };
+        return Result { WTF::move(sequence) };
     }
 
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)

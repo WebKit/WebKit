@@ -14,6 +14,7 @@
 #include "api/scoped_refptr.h"
 #include "modules/video_capture/video_capture_impl.h"
 #include "modules/video_capture/windows/device_info_ds.h"
+#include "system_wrappers/include/clock.h"
 
 #define CAPTURE_FILTER_NAME L"VideoCaptureFilter"
 #define SINK_FILTER_NAME L"SinkFilter"
@@ -25,7 +26,7 @@ class CaptureSinkFilter;
 
 class VideoCaptureDS : public VideoCaptureImpl {
  public:
-  VideoCaptureDS();
+  explicit VideoCaptureDS(Clock* clock);
 
   virtual int32_t Init(const char* deviceUniqueIdUTF8);
 

@@ -57,30 +57,30 @@ info: |
       2. If n is NaN, throw a SyntaxError exception.
       3. Return n.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(['', '1']);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(['', '1']));
 
   assert.sameValue(typedArray[0], 0n);
   assert.sameValue(typedArray[1], 1n);
 
   assert.throws(SyntaxError, function() {
-    new TA(["1n"]);
+    new TA(makeCtorArg(["1n"]));
   }, "A StringNumericLiteral may not include a BigIntLiteralSuffix.");
 
   assert.throws(SyntaxError, function() {
-    new TA(["Infinity"]);
+    new TA(makeCtorArg(["Infinity"]));
   }, "Replace the StrUnsignedDecimalLiteral production with DecimalDigits to not allow Infinity..");
 
   assert.throws(SyntaxError, function() {
-    new TA(["1.1"]);
+    new TA(makeCtorArg(["1.1"]));
   }, "Replace the StrUnsignedDecimalLiteral production with DecimalDigits to not allow... decimal points...");
 
   assert.throws(SyntaxError, function() {
-    new TA(["1e7"]);
+    new TA(makeCtorArg(["1e7"]));
   }, "Replace the StrUnsignedDecimalLiteral production with DecimalDigits to not allow... exponents...");
 
 });

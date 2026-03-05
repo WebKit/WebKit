@@ -22,6 +22,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/GetPtr.h>
 #include <wtf/HashSet.h>
 
 #if CHECK_HASHTABLE_ITERATORS
@@ -30,18 +31,32 @@
 
 namespace WTF {
 template<typename Value, typename HashFunctions> class ListHashSet;
-template<typename ValueArg> struct ListHashSetNode;
+struct ListHashSetLink;
 template<typename ValueArg, typename HashArg> class ListHashSetConstIterator;
 }
 
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<typename Value, typename HashFunctions> struct IsDeprecatedWeakRefSmartPointerException<WTF::ListHashSet<Value, HashFunctions>> : std::true_type { };
-template<typename ValueArg> struct IsDeprecatedWeakRefSmartPointerException<WTF::ListHashSetNode<ValueArg>> : std::true_type { };
+template<> struct IsDeprecatedWeakRefSmartPointerException<WTF::ListHashSetLink> : std::true_type { };
 template<typename ValueArg, typename HashArg> struct IsDeprecatedWeakRefSmartPointerException<WTF::ListHashSetConstIterator<ValueArg, HashArg>> : std::true_type { };
 }
 
 namespace WTF {
+
+struct ListHashSetLink
+#if CHECK_HASHTABLE_ITERATORS
+    : CanMakeWeakPtr<ListHashSetLink, WeakPtrFactoryInitialization::Eager>
+#endif
+{
+    ~ListHashSetLink();
+    void unlink();
+    void insertAfter(ListHashSetLink*);
+    void insertBefore(ListHashSetLink*);
+
+    ListHashSetLink* m_prev { this };
+    ListHashSetLink* m_next { this };
+};
 
 // ListHashSet: Just like HashSet, this class provides a Set
 // interface - a collection of unique objects with O(1) insertion,
@@ -70,9 +85,16 @@ template<typename ValueArg, typename HashArg> class ListHashSet final
 {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ListHashSet);
 private:
+    using ValueTraits = HashTraits<ValueArg>;
+
+    typedef ListHashSetLink Link;
     typedef ListHashSetNode<ValueArg> Node;
 
-    typedef HashTraits<Node*> NodeTraits;
+    struct NodeTraits : public HashTraits<std::unique_ptr<Node>> {
+        static constexpr bool hasIsWeakNullValueFunction = ValueTraits::hasIsWeakNullValueFunction;
+        static bool isWeakNullValue(const std::unique_ptr<Node>& node) { return isHashTraitsWeakNullValue<ValueTraits>(node->m_value); }
+    };
+
     typedef ListHashSetNodeHashFunctions<HashArg> NodeHash;
     typedef ListHashSetTranslator<HashArg> BaseTranslator;
 
@@ -96,7 +118,7 @@ public:
     ListHashSet(ListHashSet&&);
     ListHashSet& operator=(const ListHashSet&);
     ListHashSet& operator=(ListHashSet&&);
-    ~ListHashSet();
+    ~ListHashSet() = default;
 
     void swap(ListHashSet&);
 
@@ -104,10 +126,10 @@ public:
     unsigned capacity() const;
     bool isEmpty() const;
 
-    iterator begin() LIFETIME_BOUND { return makeIterator(m_head); }
-    iterator end() LIFETIME_BOUND { return makeIterator(nullptr); }
-    const_iterator begin() const LIFETIME_BOUND { return makeConstIterator(m_head); }
-    const_iterator end() const LIFETIME_BOUND { return makeConstIterator(nullptr); }
+    iterator begin() LIFETIME_BOUND { return makeIterator(head()); }
+    iterator end() LIFETIME_BOUND { return makeIterator(&m_sentinel); }
+    const_iterator begin() const LIFETIME_BOUND { return makeConstIterator(head()); }
+    const_iterator end() const LIFETIME_BOUND { return makeConstIterator(&m_sentinel); }
 
     iterator random() LIFETIME_BOUND { return makeIterator(m_impl.random()); }
     const_iterator random() const LIFETIME_BOUND { return makeIterator(m_impl.random()); }
@@ -127,79 +149,87 @@ public:
     void removeLast();
     ValueType takeLast();
 
-    iterator find(const ValueType&);
-    const_iterator find(const ValueType&) const;
+    iterator find(const ValueType&) LIFETIME_BOUND;
+    const_iterator find(const ValueType&) const LIFETIME_BOUND;
     bool contains(const ValueType&) const;
 
     // An alternate version of find() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion.
     // The HashTranslator interface is defined in HashSet.
-    template<typename HashTranslator, typename T> iterator find(const T&);
-    template<typename HashTranslator, typename T> const_iterator find(const T&) const;
+    template<typename HashTranslator, typename T> iterator find(const T&) LIFETIME_BOUND;
+    template<typename HashTranslator, typename T> const_iterator find(const T&) const LIFETIME_BOUND;
     template<typename HashTranslator, typename T> bool contains(const T&) const;
 
     // The return value of add is a pair of an iterator to the new value's location, 
     // and a bool that is true if an new entry was added.
-    AddResult add(const ValueType&);
-    AddResult add(ValueType&&);
+    AddResult add(const ValueType&) LIFETIME_BOUND;
+    AddResult add(ValueType&&) LIFETIME_BOUND;
 
     // Add the value to the end of the collection. If the value was already in
     // the list, it is moved to the end.
-    AddResult appendOrMoveToLast(const ValueType&);
-    AddResult appendOrMoveToLast(ValueType&&);
+    AddResult appendOrMoveToLast(const ValueType&) LIFETIME_BOUND;
+    AddResult appendOrMoveToLast(ValueType&&) LIFETIME_BOUND;
     bool moveToLastIfPresent(const ValueType&);
 
     // Add the value to the beginning of the collection. If the value was already in
     // the list, it is moved to the beginning.
-    AddResult prependOrMoveToFirst(const ValueType&);
-    AddResult prependOrMoveToFirst(ValueType&&);
+    AddResult prependOrMoveToFirst(const ValueType&) LIFETIME_BOUND;
+    AddResult prependOrMoveToFirst(ValueType&&) LIFETIME_BOUND;
 
-    AddResult insertBefore(const ValueType& beforeValue, const ValueType& newValue);
-    AddResult insertBefore(const ValueType& beforeValue, ValueType&& newValue);
-    AddResult insertBefore(iterator, const ValueType&);
-    AddResult insertBefore(iterator, ValueType&&);
+    AddResult insertBefore(const ValueType& beforeValue, const ValueType& newValue) LIFETIME_BOUND;
+    AddResult insertBefore(const ValueType& beforeValue, ValueType&& newValue) LIFETIME_BOUND;
+    AddResult insertBefore(iterator, const ValueType&) LIFETIME_BOUND;
+    AddResult insertBefore(iterator, ValueType&&) LIFETIME_BOUND;
 
     bool remove(const ValueType&);
     bool remove(iterator);
+    bool removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto&);
     void clear();
 
+    // Useful when the key type is WeakPtr
+    size_t computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    bool isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    void removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction);
+
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
-    template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
-    template<SmartPtr V = ValueType> const_iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
+    template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) LIFETIME_BOUND;
+    template<SmartPtr V = ValueType> const_iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const LIFETIME_BOUND;
     template<SmartPtr V = ValueType> bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
-    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*, const ValueType&);
-    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*, ValueType&&);
+    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*, const ValueType&) LIFETIME_BOUND;
+    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*, ValueType&&) LIFETIME_BOUND;
     template<SmartPtr V = ValueType> bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
 
-    // Overloads for non-nullable smart pointer values that take the raw reference type as the parameter.
-    template<NonNullableSmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
-    template<NonNullableSmartPtr V = ValueType> const_iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
-    template<NonNullableSmartPtr V = ValueType> bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
-    template<NonNullableSmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&, const ValueType&);
-    template<NonNullableSmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&, ValueType&&);
-    template<NonNullableSmartPtr V = ValueType> bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
+    // Overloads for smart pointer values that take the raw reference type as the parameter.
+    template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) LIFETIME_BOUND { return find(&ref); }
+    template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) const LIFETIME_BOUND { return find(&ref); }
+    template<SmartPtr V = ValueType> bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) const { return contains(&ref); }
+    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref, const ValueType& v) LIFETIME_BOUND { return insertBefore(&ref, v); }
+    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref, ValueType&& v) LIFETIME_BOUND { return insertBefore(&ref, v); }
+    template<SmartPtr V = ValueType> bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) { return remove(&ref); }
 
 private:
+    Link* head() { return m_sentinel.m_next; }
+    Link* tail() { return m_sentinel.m_prev; }
+
+    const Link* head() const { return m_sentinel.m_next; }
+    const Link* tail() const { return m_sentinel.m_prev; }
+
     void unlink(Node*);
-    void unlinkAndDelete(Node*);
     void appendNode(Node*);
     void prependNode(Node*);
-    void insertNodeBefore(Node* beforeNode, Node* newNode);
-    void deleteAllNodes();
+    void insertNodeBefore(Link* beforeNode, Node* newNode);
     
-    iterator makeIterator(Node*);
-    const_iterator makeConstIterator(Node*) const;
+    iterator makeIterator(Link*);
+    const_iterator makeConstIterator(const Link*) const;
 
-    HashTable<Node*, Node*, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> m_impl;
-    Node* m_head { nullptr };
-    Node* m_tail { nullptr };
+    HashTable<std::unique_ptr<Node>, std::unique_ptr<Node>, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> m_impl;
+
+    // This sentinel holds the list and acts as its end() iterator. The list is circular.
+    // Empty: [ Sentinel ] => [ Sentinel ]. One item: [ Sentinel ] => [ Item ] => [ Sentinel ].
+    Link m_sentinel;
 };
 
-template<typename ValueArg> struct ListHashSetNode
-#if CHECK_HASHTABLE_ITERATORS
-    : CanMakeWeakPtr<ListHashSetNode<ValueArg>, WeakPtrFactoryInitialization::Eager>
-#endif
-{
+template<typename ValueArg> struct ListHashSetNode : public ListHashSetLink {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ListHashSetNode);
 
     template<typename T> ListHashSetNode(T&& value)
@@ -208,8 +238,6 @@ template<typename ValueArg> struct ListHashSetNode
     }
 
     ValueArg m_value;
-    ListHashSetNode* m_prev { nullptr };
-    ListHashSetNode* m_next { nullptr };
 };
 
 template<typename HashArg> struct ListHashSetNodeHashFunctions {
@@ -218,18 +246,60 @@ template<typename HashArg> struct ListHashSetNodeHashFunctions {
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
+inline ListHashSetLink::~ListHashSetLink()
+{
+    unlink();
+}
+
+inline void ListHashSetLink::unlink()
+{
+    m_prev->m_next = m_next;
+    m_next->m_prev = m_prev;
+
+    m_prev = this;
+    m_next = this;
+}
+
+inline void ListHashSetLink::insertAfter(ListHashSetLink* prev)
+{
+    ASSERT(m_prev = this);
+    ASSERT(m_next = this);
+
+    m_prev = prev;
+    m_next = prev->m_next;
+
+    m_prev->m_next = this;
+    m_next->m_prev = this;
+}
+
+inline void ListHashSetLink::insertBefore(ListHashSetLink* next)
+{
+    ASSERT(m_prev = this);
+    ASSERT(m_next = this);
+
+    m_prev = next->m_prev;
+    m_next = next;
+
+    m_prev->m_next = this;
+    m_next->m_prev = this;
+}
+
 template<typename ValueArg, typename HashArg> class ListHashSetIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ListHashSetIterator);
 private:
     typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
     typedef ListHashSetIterator<ValueArg, HashArg> iterator;
     typedef ListHashSetConstIterator<ValueArg, HashArg> const_iterator;
+    typedef ListHashSetLink Link;
     typedef ListHashSetNode<ValueArg> Node;
     typedef ValueArg ValueType;
 
     friend class ListHashSet<ValueArg, HashArg>;
 
-    ListHashSetIterator(const ListHashSetType* set, Node* position) : m_iterator(set, position) { }
+    ListHashSetIterator(const ListHashSetType* set, Link* position, Link* sentinel)
+        : m_iterator(set, position, sentinel)
+    {
+    }
 
 public:
     typedef ptrdiff_t difference_type;
@@ -268,7 +338,8 @@ public:
     operator const_iterator() const { return m_iterator; }
 
 private:
-    Node* node() { return m_iterator.node(); }
+    Node* node() { return const_cast<Node*>(m_iterator.node()); }
+    Link* link() { return const_cast<Link*>(m_iterator.link()); }
 
     const_iterator m_iterator;
 };
@@ -279,20 +350,24 @@ private:
     typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
     typedef ListHashSetIterator<ValueArg, HashArg> iterator;
     typedef ListHashSetConstIterator<ValueArg, HashArg> const_iterator;
+    typedef ListHashSetLink Link;
     typedef ListHashSetNode<ValueArg> Node;
     typedef ValueArg ValueType;
+    using ValueTraits = HashTraits<ValueType>;
 
     friend class ListHashSet<ValueArg, HashArg>;
     friend class ListHashSetIterator<ValueArg, HashArg>;
 
-    ListHashSetConstIterator(const ListHashSetType* set, Node* position)
-        : m_set(set)
-        , m_position(position)
+    ListHashSetConstIterator(const ListHashSetType* set, const Link* position, const Link* sentinel)
+        : m_position(position)
+        , m_sentinel(sentinel)
 #if CHECK_HASHTABLE_ITERATORS
-        , m_weakSet(set)
-        , m_weakPosition(position)
+        , m_weakSet(set, EnableWeakPtrThreadingAssertions::No)
+        , m_weakPosition(position, EnableWeakPtrThreadingAssertions::No)
 #endif
     {
+        UNUSED_PARAM(set);
+        skipEmptyBuckets();
     }
 
 public:
@@ -311,7 +386,7 @@ public:
 #if CHECK_HASHTABLE_ITERATORS
         ASSERT(m_weakPosition);
 #endif
-        return std::addressof(m_position->m_value);
+        return std::addressof(node()->m_value);
     }
 
     const ValueType& operator*() const { return *get(); }
@@ -320,13 +395,14 @@ public:
     const_iterator& operator++()
     {
 #if CHECK_HASHTABLE_ITERATORS
+        ASSERT(m_weakSet);
         ASSERT(m_weakPosition);
 #endif
-        ASSERT(m_position);
         m_position = m_position->m_next;
 #if CHECK_HASHTABLE_ITERATORS
         m_weakPosition = m_position;
 #endif
+        skipEmptyBuckets();
         return *this;
     }
 
@@ -341,16 +417,13 @@ public:
     {
 #if CHECK_HASHTABLE_ITERATORS
         ASSERT(m_weakSet);
-        m_weakPosition.get();
+        ASSERT(m_weakPosition);
 #endif
-        ASSERT(m_position != m_set->m_head);
-        if (!m_position)
-            m_position = m_set->m_tail;
-        else
-            m_position = m_position->m_prev;
+        m_position = m_position->m_prev;
 #if CHECK_HASHTABLE_ITERATORS
         m_weakPosition = m_position;
 #endif
+        skipEmptyBucketsBackwards();
         return *this;
     }
 
@@ -368,13 +441,50 @@ public:
     }
 
 private:
-    Node* node() { return m_position; }
+    void skipEmptyBuckets()
+    {
+        while (m_position != m_sentinel && isHashTraitsWeakNullValue<ValueTraits>(node()->m_value)) {
+            m_position = m_position->m_next;
+#if CHECK_HASHTABLE_ITERATORS
+            m_weakPosition = m_position;
+#endif
+        }
+    }
 
-    const ListHashSetType* m_set { nullptr };
-    Node* m_position { nullptr };
+    void skipEmptyBucketsBackwards()
+    {
+        while (m_position != m_sentinel && isHashTraitsWeakNullValue<ValueTraits>(node()->m_value)) {
+            m_position = m_position->m_prev;
+#if CHECK_HASHTABLE_ITERATORS
+            m_weakPosition = m_position;
+#endif
+        }
+    }
+
+    const Node* node() const
+    {
+#if CHECK_HASHTABLE_ITERATORS
+        ASSERT(m_weakSet);
+        ASSERT(m_weakPosition);
+        ASSERT(m_position != m_sentinel);
+#endif
+        return static_cast<const Node*>(m_position);
+    }
+
+    const Link* link() const
+    {
+#if CHECK_HASHTABLE_ITERATORS
+        ASSERT(m_weakSet);
+        ASSERT(m_weakPosition);
+#endif
+        return m_position;
+    }
+
+    const Link* m_position { nullptr };
+    const Link* m_sentinel { nullptr };
 #if CHECK_HASHTABLE_ITERATORS
     WeakPtr<const ListHashSetType> m_weakSet;
-    WeakPtr<Node> m_weakPosition;
+    WeakPtr<Link> m_weakPosition;
 #endif
 };
 
@@ -382,12 +492,11 @@ template<typename HashFunctions>
 struct ListHashSetTranslator {
     template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
     template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a->m_value, b); }
-    template<typename T, typename U, typename V> static void translate(T*& location, U&& key, V&&)
+    template<typename T, typename U, typename V> static void translate(std::unique_ptr<T>& location, U&& key, V&&)
     {
-        location = new T(std::forward<U>(key));
+        location = makeUnique<T>(std::forward<U>(key));
     }
 };
-
 
 template<typename T, typename U>
 inline ListHashSet<T, U>::ListHashSet(std::initializer_list<T> initializerList)
@@ -417,16 +526,19 @@ inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(const ListHashSet& other)
 
 template<typename T, typename U>
 inline ListHashSet<T, U>::ListHashSet(ListHashSet&& other)
-    : m_impl(WTFMove(other.m_impl))
-    , m_head(std::exchange(other.m_head, nullptr))
-    , m_tail(std::exchange(other.m_tail, nullptr))
+    : m_impl(WTF::move(other.m_impl))
 {
+    Link* otherHead = other.head();
+    other.m_sentinel.unlink();
+
+    if (otherHead != &other.m_sentinel)
+        m_sentinel.insertBefore(otherHead);
 }
 
 template<typename T, typename U>
 inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(ListHashSet&& other)
 {
-    ListHashSet movedSet(WTFMove(other));
+    ListHashSet movedSet(WTF::move(other));
     swap(movedSet);
     return *this;
 }
@@ -435,14 +547,18 @@ template<typename T, typename U>
 inline void ListHashSet<T, U>::swap(ListHashSet& other)
 {
     m_impl.swap(other.m_impl);
-    std::swap(m_head, other.m_head);
-    std::swap(m_tail, other.m_tail);
-}
 
-template<typename T, typename U>
-inline ListHashSet<T, U>::~ListHashSet()
-{
-    deleteAllNodes();
+    Link* head = this->head();
+    m_sentinel.unlink();
+
+    Link* otherHead = other.head();
+    other.m_sentinel.unlink();
+
+    if (head != &m_sentinel)
+        other.m_sentinel.insertBefore(head);
+
+    if (otherHead != &other.m_sentinel)
+        m_sentinel.insertBefore(otherHead);
 }
 
 template<typename T, typename U>
@@ -464,10 +580,15 @@ inline bool ListHashSet<T, U>::isEmpty() const
 }
 
 template<typename T, typename U>
-inline T& ListHashSet<T, U>::first()
+inline T& ListHashSet<T, U>::first() LIFETIME_BOUND
 {
-    ASSERT(!isEmpty());
-    return m_head->m_value;
+    return *begin();
+}
+
+template<typename T, typename U>
+inline const T& ListHashSet<T, U>::first() const LIFETIME_BOUND
+{
+    return *begin();
 }
 
 template<typename T, typename U>
@@ -479,35 +600,26 @@ inline void ListHashSet<T, U>::removeFirst()
 template<typename T, typename U>
 inline T ListHashSet<T, U>::takeFirst()
 {
-    ASSERT(!isEmpty());
-    auto it = m_impl.template find<ShouldValidateKey::Yes>(m_head);
+    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(first());
 
-    T result = WTFMove((*it)->m_value);
+    T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
-    unlinkAndDelete(m_head);
 
     return result;
 }
 
 template<typename T, typename U>
-inline const T& ListHashSet<T, U>::first() const
+inline T& ListHashSet<T, U>::last() LIFETIME_BOUND
 {
-    ASSERT(!isEmpty());
-    return m_head->m_value;
+    auto last = --end();
+    return *last;
 }
 
 template<typename T, typename U>
-inline T& ListHashSet<T, U>::last()
+inline const T& ListHashSet<T, U>::last() const LIFETIME_BOUND
 {
-    ASSERT(!isEmpty());
-    return m_tail->m_value;
-}
-
-template<typename T, typename U>
-inline const T& ListHashSet<T, U>::last() const
-{
-    ASSERT(!isEmpty());
-    return m_tail->m_value;
+    auto last = --end();
+    return *last;
 }
 
 template<typename T, typename U>
@@ -520,31 +632,30 @@ template<typename T, typename U>
 inline T ListHashSet<T, U>::takeLast()
 {
     ASSERT(!isEmpty());
-    auto it = m_impl.template find<ShouldValidateKey::Yes>(m_tail);
+    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(last());
 
-    T result = WTFMove((*it)->m_value);
+    T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
-    unlinkAndDelete(m_tail);
 
     return result;
 }
 
 template<typename T, typename U>
-inline auto ListHashSet<T, U>::find(const ValueType& value) -> iterator
+inline auto ListHashSet<T, U>::find(const ValueType& value) LIFETIME_BOUND -> iterator
 {
     auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
     if (it == m_impl.end())
         return end();
-    return makeIterator(*it); 
+    return makeIterator(it->get());
 }
 
 template<typename T, typename U>
-inline auto ListHashSet<T, U>::find(const ValueType& value) const -> const_iterator
+inline auto ListHashSet<T, U>::find(const ValueType& value) const LIFETIME_BOUND -> const_iterator
 {
     auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
     if (it == m_impl.end())
         return end();
-    return makeConstIterator(*it);
+    return makeConstIterator(it->get());
 }
 
 template<typename Translator>
@@ -555,22 +666,22 @@ struct ListHashSetTranslatorAdapter {
 
 template<typename ValueType, typename U>
 template<typename HashTranslator, typename T>
-inline auto ListHashSet<ValueType, U>::find(const T& value) -> iterator
+inline auto ListHashSet<ValueType, U>::find(const T& value) LIFETIME_BOUND -> iterator
 {
     auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>, ShouldValidateKey::Yes>(value);
     if (it == m_impl.end())
         return end();
-    return makeIterator(*it);
+    return makeIterator(it->get());
 }
 
 template<typename ValueType, typename U>
 template<typename HashTranslator, typename T>
-inline auto ListHashSet<ValueType, U>::find(const T& value) const -> const_iterator
+inline auto ListHashSet<ValueType, U>::find(const T& value) const LIFETIME_BOUND -> const_iterator
 {
     auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>, ShouldValidateKey::Yes>(value);
     if (it == m_impl.end())
         return end();
-    return makeConstIterator(*it);
+    return makeConstIterator(it->get());
 }
 
 template<typename ValueType, typename U>
@@ -587,45 +698,45 @@ inline bool ListHashSet<T, U>::contains(const ValueType& value) const
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::add(const ValueType& value) -> AddResult
+auto ListHashSet<T, U>::add(const ValueType& value) LIFETIME_BOUND -> AddResult
 {
     auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(value, [] { return nullptr; });
     if (result.isNewEntry)
-        appendNode(*result.iterator);
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+        appendNode(result.iterator->get());
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::add(ValueType&& value) -> AddResult
+auto ListHashSet<T, U>::add(ValueType&& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(value), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
     if (result.isNewEntry)
-        appendNode(*result.iterator);
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+        appendNode(result.iterator->get());
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::appendOrMoveToLast(const ValueType& value) -> AddResult
+auto ListHashSet<T, U>::appendOrMoveToLast(const ValueType& value) LIFETIME_BOUND -> AddResult
 {
     auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(value, [] { return nullptr; });
-    Node* node = *result.iterator;
+    Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
     appendNode(node);
 
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::appendOrMoveToLast(ValueType&& value) -> AddResult
+auto ListHashSet<T, U>::appendOrMoveToLast(ValueType&& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(value), [] { return nullptr; });
-    Node* node = *result.iterator;
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
+    Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
     appendNode(node);
 
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
@@ -634,64 +745,64 @@ bool ListHashSet<T, U>::moveToLastIfPresent(const ValueType& value)
     auto iterator = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
     if (iterator == m_impl.end())
         return false;
-    Node* node = *iterator;
+    Node* node = iterator->get();
     unlink(node);
     appendNode(node);
     return true;
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::prependOrMoveToFirst(const ValueType& value) -> AddResult
+auto ListHashSet<T, U>::prependOrMoveToFirst(const ValueType& value) LIFETIME_BOUND -> AddResult
 {
     auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(value, [] { return nullptr; });
-    Node* node = *result.iterator;
+    Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
     prependNode(node);
 
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::prependOrMoveToFirst(ValueType&& value) -> AddResult
+auto ListHashSet<T, U>::prependOrMoveToFirst(ValueType&& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(value), [] { return nullptr; });
-    Node* node = *result.iterator;
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
+    Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
     prependNode(node);
 
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue) -> AddResult
+auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue) LIFETIME_BOUND -> AddResult
 {
     return insertBefore(find(beforeValue), newValue);
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, ValueType&& newValue) -> AddResult
+auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, ValueType&& newValue) LIFETIME_BOUND -> AddResult
 {
-    return insertBefore(find(beforeValue), WTFMove(newValue));
+    return insertBefore(find(beforeValue), WTF::move(newValue));
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue) -> AddResult
+auto ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue) LIFETIME_BOUND -> AddResult
 {
     auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(newValue, [] { return nullptr; });
     if (result.isNewEntry)
-        insertNodeBefore(it.node(), *result.iterator);
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+        insertNodeBefore(it.link(), result.iterator->get());
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
-auto ListHashSet<T, U>::insertBefore(iterator it, ValueType&& newValue) -> AddResult
+auto ListHashSet<T, U>::insertBefore(iterator it, ValueType&& newValue) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(newValue), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(newValue), [] { return nullptr; });
     if (result.isNewEntry)
-        insertNodeBefore(it.node(), *result.iterator);
-    return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+        insertNodeBefore(it.link(), result.iterator->get());
+    return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
 }
 
 template<typename T, typename U>
@@ -699,44 +810,70 @@ inline bool ListHashSet<T, U>::remove(iterator it)
 {
     if (it == end())
         return false;
-    m_impl.template remove<ShouldValidateKey::Yes>(it.node());
-    unlinkAndDelete(it.node());
+    remove(it->get());
     return true;
+}
+
+template<typename T, typename U>
+inline bool ListHashSet<T, U>::removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto& functor)
+{
+    return m_impl.removeIf([&](std::unique_ptr<Node>& node) {
+        return functor(node->m_value);
+    });
 }
 
 template<typename T, typename U>
 inline bool ListHashSet<T, U>::remove(const ValueType& value)
 {
-    return remove(find(value));
+    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    if (it == m_impl.end())
+        return false;
+    m_impl.remove(it);
+    return true;
+}
+
+template<typename T, typename U>
+inline size_t ListHashSet<T, U>::computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.computeSize();
+}
+
+template<typename T, typename U>
+inline bool ListHashSet<T, U>::isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.isEmptyIgnoringNullReferences();
+}
+
+template<typename T, typename U>
+inline void ListHashSet<T, U>::removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction)
+{
+    m_impl.removeWeakNullEntries();
 }
 
 template<typename T, typename U>
 inline void ListHashSet<T, U>::clear()
 {
-    deleteAllNodes();
     m_impl.clear(); 
-    m_head = nullptr;
-    m_tail = nullptr;
 }
 
 template<typename T, typename U>
 template<SmartPtr V>
-inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> iterator
+inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) LIFETIME_BOUND -> iterator
 {
     auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
     if (it == m_impl.end())
         return end();
-    return makeIterator(*it);
+    return makeIterator(it->get());
 }
 
 template<typename T, typename U>
 template<SmartPtr V>
-inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> const_iterator
+inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const LIFETIME_BOUND -> const_iterator
 {
     auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
     if (it == m_impl.end())
         return end();
-    return makeConstIterator(*it);
+    return makeConstIterator(it->get());
 }
 
 template<typename T, typename U>
@@ -748,161 +885,67 @@ inline auto ListHashSet<T, U>::contains(std::add_const_t<typename GetPtrHelper<V
 
 template<typename T, typename U>
 template<SmartPtr V>
-inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* beforeValue, const ValueType& newValue) -> AddResult
+inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* beforeValue, const ValueType& newValue) LIFETIME_BOUND -> AddResult
 {
     return insertBefore(find(beforeValue), newValue);
 }
 
 template<typename T, typename U>
 template<SmartPtr V>
-inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* beforeValue, ValueType&& newValue) -> AddResult
+inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* beforeValue, ValueType&& newValue) LIFETIME_BOUND -> AddResult
 {
-    return insertBefore(find(beforeValue), WTFMove(newValue));
+    return insertBefore(find(beforeValue), WTF::move(newValue));
 }
 
 template<typename T, typename U>
 template<SmartPtr V>
 inline auto ListHashSet<T, U>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> bool
 {
-    return remove(find(value));
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> iterator
-{
-    return find(&value);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> const_iterator
-{
-    return find(&value);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> bool
-{
-    return contains(&value);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& beforeValue, const ValueType& newValue) -> AddResult
-{
-    return insertBefore(&beforeValue, newValue);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& beforeValue, ValueType&& newValue) -> AddResult
-{
-    return insertBefore(&beforeValue, WTFMove(newValue));
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> bool
-{
-    return remove(&value);
+    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    if (it == m_impl.end())
+        return false;
+    m_impl.remove(it);
+    return true;
 }
 
 template<typename T, typename U>
 void ListHashSet<T, U>::unlink(Node* node)
 {
-    if (!node->m_prev) {
-        ASSERT(node == m_head);
-        m_head = node->m_next;
-    } else {
-        ASSERT(node != m_head);
-        node->m_prev->m_next = node->m_next;
-    }
-
-    if (!node->m_next) {
-        ASSERT(node == m_tail);
-        m_tail = node->m_prev;
-    } else {
-        ASSERT(node != m_tail);
-        node->m_next->m_prev = node->m_prev;
-    }
-}
-
-template<typename T, typename U>
-void ListHashSet<T, U>::unlinkAndDelete(Node* node)
-{
-    unlink(node);
-    delete node;
+    ASSERT(node != &m_sentinel);
+    node->unlink();
 }
 
 template<typename T, typename U>
 void ListHashSet<T, U>::appendNode(Node* node)
 {
-    node->m_prev = m_tail;
-    node->m_next = nullptr;
-
-    if (m_tail) {
-        ASSERT(m_head);
-        m_tail->m_next = node;
-    } else {
-        ASSERT(!m_head);
-        m_head = node;
-    }
-
-    m_tail = node;
+    ASSERT(node != &m_sentinel);
+    node->insertBefore(&m_sentinel);
 }
 
 template<typename T, typename U>
 void ListHashSet<T, U>::prependNode(Node* node)
 {
-    node->m_prev = nullptr;
-    node->m_next = m_head;
-
-    if (m_head)
-        m_head->m_prev = node;
-    else
-        m_tail = node;
-
-    m_head = node;
+    ASSERT(node != &m_sentinel);
+    node->insertAfter(&m_sentinel);
 }
 
 template<typename T, typename U>
-void ListHashSet<T, U>::insertNodeBefore(Node* beforeNode, Node* newNode)
+void ListHashSet<T, U>::insertNodeBefore(Link* beforeNode, Node* newNode)
 {
-    if (!beforeNode)
-        return appendNode(newNode);
-    
-    newNode->m_next = beforeNode;
-    newNode->m_prev = beforeNode->m_prev;
-    if (beforeNode->m_prev)
-        beforeNode->m_prev->m_next = newNode;
-    beforeNode->m_prev = newNode;
-
-    if (!newNode->m_prev)
-        m_head = newNode;
+    ASSERT(newNode != &m_sentinel);
+    newNode->insertBefore(beforeNode);
 }
 
 template<typename T, typename U>
-void ListHashSet<T, U>::deleteAllNodes()
+inline auto ListHashSet<T, U>::makeIterator(Link* position) -> iterator
 {
-    if (!m_head)
-        return;
-
-    for (Node* node = m_head, *next = m_head->m_next; node; node = next, next = node ? node->m_next : nullptr)
-        delete node;
+    return iterator(this, position, &m_sentinel);
 }
 
 template<typename T, typename U>
-inline auto ListHashSet<T, U>::makeIterator(Node* position) -> iterator
-{
-    return iterator(this, position);
-}
-
-template<typename T, typename U>
-inline auto ListHashSet<T, U>::makeConstIterator(Node* position) const -> const_iterator
+inline auto ListHashSet<T, U>::makeConstIterator(const Link* position) const -> const_iterator
 { 
-    return const_iterator(this, position);
+    return const_iterator(this, position, &m_sentinel);
 }
 
 } // namespace WTF

@@ -31,8 +31,8 @@ namespace webrtc {
 class MockIceTransport : public IceTransportInternal {
  public:
   MockIceTransport() {
-    SignalReadyToSend(this);
-    SignalWritableState(this);
+    NotifyReadyToSend(this);
+    NotifyWritableState(this);
   }
 
   MOCK_METHOD(int,

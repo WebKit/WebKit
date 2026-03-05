@@ -4,7 +4,7 @@ layer at (0,0) size 800x355
   RenderBlock {HTML} at (0,0) size 800x355
     RenderBody {BODY} at (8,16) size 784x36
       RenderBlock {P} at (0,0) size 784x36 [color=#000080]
-        RenderText {#text} at (0,0) size 778x35
+        RenderText {#text} at (0,0) size 778x36
           text run at (0,0) width 422: "The blue boxes below should be in numeric order and form a \"B\". "
           text run at (422,0) width 356: "(Boxes labelled \"A\" should be in the first column; boxes"
           text run at (0,18) width 53: "labelled "

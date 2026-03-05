@@ -99,7 +99,8 @@ using namespace WebCore;
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
         GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
-        [_webNodeHighlight inspectorController]->drawHighlight(context);
+        if (CheckedPtr controller = [_webNodeHighlight inspectorController].get())
+            controller->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }
 }

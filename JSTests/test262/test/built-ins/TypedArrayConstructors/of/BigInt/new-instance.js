@@ -30,7 +30,7 @@ info: |
     Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue, true, Unordered).
   Return NormalCompletion(undefined).
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -42,4 +42,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(result[2], 0n);
   assert.sameValue(result.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(result), TA.prototype);
-});
+}, null, ["passthrough"]);

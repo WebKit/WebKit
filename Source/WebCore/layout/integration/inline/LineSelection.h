@@ -58,8 +58,8 @@ public:
 
     static RenderObject::HighlightState selectionState(const InlineIterator::LineBox& lineBox)
     {
-        auto& root = lineBox.formattingContextRoot();
-        if (root.selectionState() == RenderObject::HighlightState::None)
+        CheckedRef root = lineBox.formattingContextRoot();
+        if (root->selectionState() == RenderObject::HighlightState::None)
             return RenderObject::HighlightState::None;
 
         auto lineState = RenderObject::HighlightState::None;

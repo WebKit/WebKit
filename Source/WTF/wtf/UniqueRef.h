@@ -28,27 +28,29 @@
 #include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/GetPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/TypeTraits.h>
 
 namespace WTF {
 
 template<typename T> class UniqueRef;
 
 template<typename T, class... Args>
-UniqueRef<T> makeUniqueRefWithoutFastMallocCheck(Args&&... args)
+[[nodiscard]] UniqueRef<T> makeUniqueRefWithoutFastMallocCheck(Args&&... args)
 {
     return UniqueRef<T>(*new T(std::forward<Args>(args)...));
 }
 
 template<class T, class... Args>
-UniqueRef<T> makeUniqueRefWithoutRefCountedCheck(Args&&... args)
+[[nodiscard]] UniqueRef<T> makeUniqueRefWithoutRefCountedCheck(Args&&... args)
 {
     static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_DEPRECATED_MAKE_FAST_ALLOCATED)");
     return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
 }
 
 template<typename T, class... Args>
-UniqueRef<T> makeUniqueRef(Args&&... args)
+[[nodiscard]] UniqueRef<T> makeUniqueRef(Args&&... args)
 {
     static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_DEPRECATED_MAKE_FAST_ALLOCATED)");
     static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
@@ -58,7 +60,7 @@ UniqueRef<T> makeUniqueRef(Args&&... args)
 template<typename T>
 UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T>&& ptr)
 {
-    return UniqueRef<T>(WTFMove(ptr));
+    return UniqueRef<T>(WTF::move(ptr));
 }
 
 template<typename T>
@@ -77,15 +79,15 @@ public:
         ASSERT(m_ref);
     }
 
-    T* ptr() const RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
-    T& get() const { ASSERT(m_ref); return *m_ref; }
+    T* ptr() const LIFETIME_BOUND RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
+    T& get() const LIFETIME_BOUND { ASSERT(m_ref); return *m_ref; }
 
-    T* operator&() const { ASSERT(m_ref); return m_ref.get(); }
-    T* operator->() const { ASSERT(m_ref); return m_ref.get(); }
+    T* operator&() const LIFETIME_BOUND { ASSERT(m_ref); return m_ref.get(); }
+    T* operator->() const LIFETIME_BOUND { ASSERT(m_ref); return m_ref.get(); }
 
-    operator T&() const { ASSERT(m_ref); return *m_ref; }
+    operator T&() const LIFETIME_BOUND { ASSERT(m_ref); return *m_ref; }
 
-    std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }
+    std::unique_ptr<T> moveToUniquePtr() { return WTF::move(m_ref); }
 
     explicit UniqueRef(HashTableEmptyValueType) { }
     bool isHashTableEmptyValue() const { return !m_ref; }
@@ -96,7 +98,7 @@ private:
     template<class U> friend class UniqueRef;
 
     explicit UniqueRef(std::unique_ptr<T>&& ptr)
-        : m_ref(WTFMove(ptr))
+        : m_ref(WTF::move(ptr))
     {
         ASSERT(m_ref);
     }
@@ -108,7 +110,7 @@ template<typename T>
 struct GetPtrHelper<UniqueRef<T>> {
     using PtrType = T*;
     using UnderlyingType = T;
-    static T* getPtr(const UniqueRef<T>& p) { return const_cast<T*>(p.ptr()); }
+    static T* getPtr(const UniqueRef<T>& p LIFETIME_BOUND) { return const_cast<T*>(p.ptr()); }
 };
 
 template<typename T>

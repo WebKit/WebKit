@@ -48,16 +48,18 @@ String CSSFunctionRule::name() const
 
 auto CSSFunctionRule::getParameters() const -> Vector<FunctionParameter>
 {
-    Vector<FunctionParameter> result;
-    for (auto& parameter : styleRuleFunction().parameters()) {
+    return WTF::map(styleRuleFunction().parameters(), [](const auto& parameter) {
         RefPtr defaultValue = parameter.defaultValue;
-        result.append({
+        return FunctionParameter {
             .name = parameter.name,
             .type = "*"_s, // FIXME: Implement.
-            .defaultValue = defaultValue ? defaultValue->serialize() : nullString()
-        });
-    }
-    return result;
+            // FIXME: The spec says:
+            //   "The default value of the function parameter, or `null` if the argument does not have a default".
+            // But WPT tests currently expect the value to missing/undefined, not `null`, so we are using
+            // `std::nullopt` instead of `nullString()`. See https://github.com/w3c/csswg-drafts/issues/13394.
+            .defaultValue = defaultValue ? std::make_optional(defaultValue->serialize()) : std::nullopt
+        };
+    });
 }
 
 String CSSFunctionRule::returnType() const
@@ -76,7 +78,7 @@ String CSSFunctionRule::cssText() const
     for (auto& parameter : styleRuleFunction().parameters()) {
         builder.append(separator);
         serializeIdentifier(parameter.name, builder);
-        // FIMXE: Serialize the type.
+        // FIXME: Serialize the type.
 
         if (RefPtr defaultValue = parameter.defaultValue)
             builder.append(": "_s, defaultValue->serialize());

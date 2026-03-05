@@ -64,7 +64,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<Node*> iterateNext();
     WEBCORE_EXPORT ExceptionOr<Node*> snapshotItem(unsigned index);
 
-    const XPath::Value& value() const { return m_value; }
+    const XPath::Value& value() const LIFETIME_BOUND { return m_value; }
 
 private:
     XPathResult(Document&, const XPath::Value&);

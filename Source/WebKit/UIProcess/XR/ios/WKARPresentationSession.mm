@@ -34,9 +34,9 @@
 #import <Metal/Metal.h>
 #import <WebCore/PlatformXR.h>
 #import <WebCore/PlatformXRPose.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchOSObject.h>
 
 #import "ARKitSoftLink.h"
 

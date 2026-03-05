@@ -4,12 +4,12 @@
 esid: sec-%typedarray%.prototype.filter
 description: >
   The callbackfn return does not change the instance
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample1 = new TA(3);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample1 = new TA(makeCtorArg(3));
 
   sample1[1] = 1n;
 

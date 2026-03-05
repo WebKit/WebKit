@@ -57,7 +57,7 @@ RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, CSS::PropertyParserSt
                 return nullptr;
             hotSpot = CSSValuePair::createNoncoalescing(x.releaseNonNull(), y.releaseNonNull());
         }
-        list.append(CSSCursorImageValue::create(image.releaseNonNull(), WTFMove(hotSpot)));
+        list.append(CSSCursorImageValue::create(image.releaseNonNull(), WTF::move(hotSpot)));
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     }
@@ -77,7 +77,7 @@ RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, CSS::PropertyParserSt
     if (list.isEmpty())
         return cursorType;
     list.append(cursorType.releaseNonNull());
-    return CSSValueList::createCommaSeparated(WTFMove(list));
+    return CSSValueList::createCommaSeparated(WTF::move(list));
 }
 
 } // namespace CSSPropertyParserHelpers

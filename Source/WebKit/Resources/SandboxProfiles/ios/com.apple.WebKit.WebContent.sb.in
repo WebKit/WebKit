@@ -44,7 +44,6 @@
 
 (deny file-write-mount file-write-unmount)
 
-; FIXME: remove this check once this is supported in all SDKs.
 (when (defined? 'process-iopolicy-get)
     (deny process-iopolicy-get (with telemetry))
     (deny process-iopolicy-set (with telemetry)))
@@ -59,6 +58,11 @@
 
 (with-filter (system-attribute apple-internal)
     (internal-debugging-support))
+
+#if USE(EXTENSIONKIT)
+(allow file-read* file-write*
+    (container-subpath "tmp"))
+#endif
 
 (allow file-read*
     required-etc-files

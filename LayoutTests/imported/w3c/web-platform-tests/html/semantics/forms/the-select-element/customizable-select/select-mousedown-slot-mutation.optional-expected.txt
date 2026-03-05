@@ -1,0 +1,5 @@
+
+
+PASS Select opens when options are mutated during mousedown
+PASS Select options work correctly after mousedown mutation
+

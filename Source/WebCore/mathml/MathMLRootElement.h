@@ -34,7 +34,7 @@ namespace WebCore {
 enum class RootType;
 
 class MathMLRootElement final : public MathMLRowElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLRootElement);
+    WTF_MAKE_TZONE_ALLOCATED(MathMLRootElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLRootElement);
 public:
     static Ref<MathMLRootElement> create(const QualifiedName& tagName, Document&);
@@ -43,6 +43,8 @@ public:
 private:
     MathMLRootElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+
+    void childrenChanged(const ChildChange&) override;
 
     const RootType m_rootType;
 };

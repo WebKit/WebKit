@@ -48,7 +48,7 @@ public:
 
     PageGroupIdentifier pageGroupID() const { return m_data.pageGroupID; }
 
-    const WebPageGroupData& data() const { return m_data; }
+    const WebPageGroupData& data() const LIFETIME_BOUND { return m_data; }
 
     WebPreferences& preferences() const { return m_preferences; }
 

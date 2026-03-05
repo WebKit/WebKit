@@ -67,7 +67,7 @@ class Manager(object):
                 striped_line = striped_line.lstrip()
                 if ' ' in striped_line:
                     continue
-                val = '{}{}.{}'.format(prefix, current_test_suite, striped_line)
+                val = f'{prefix}{current_test_suite}.{striped_line}'
                 if val not in result:
                     result.append(val)
         return result
@@ -77,7 +77,7 @@ class Manager(object):
         result = []
         for arg in arg_filter:
             # Might match <binary>.<suite>.<test> or just <suite>.<test>
-            arg_re = re.compile('^{}$'.format(arg.replace('*', '.*')))
+            arg_re = re.compile(f'^{arg.replace("*", ".*")}$')
             for test in superset:
                 if arg_re.match(test):
                     result.append(test)
@@ -116,9 +116,9 @@ class Manager(object):
                 output = self.host.executive.run_command(
                     Runner.command_for_port(self._port, [to_be_listed, '--gtest_list_tests']),
                     env=self._port.environment_for_api_tests())
-                available_tests += Manager._test_list_from_output(output, '{}.'.format(canonicalized_binary))
+                available_tests += Manager._test_list_from_output(output, f'{canonicalized_binary}.')
             except ScriptError:
-                _log.error('Failed to list {} tests'.format(canonicalized_binary))
+                _log.error(f'Failed to list {canonicalized_binary} tests')
                 raise
             finally:
                 if not self._port.host.platform.is_win():
@@ -130,10 +130,10 @@ class Manager(object):
 
     @staticmethod
     def _print_test_result(stream, test_name, output):
-        stream.writeln('    {}'.format(test_name))
+        stream.writeln(f'    {test_name}')
         has_output = False
         for line in output.splitlines():
-            stream.writeln('        {}'.format(line))
+            stream.writeln(f'        {line}')
             has_output = True
         if has_output:
             stream.writeln('')
@@ -189,7 +189,7 @@ class Manager(object):
                 device_type = self._port.supported_device_types()[0]
             self._port.setup_test_run(device_type=device_type)
         elif 'device' in self._port.port_name:
-            raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
+            raise RuntimeError(f'Running api tests on {self._port.port_name} is not supported')
 
         return True
 
@@ -202,7 +202,7 @@ class Manager(object):
         if json_output:
             json_output = self.host.filesystem.abspath(json_output)
             if not self.host.filesystem.isdir(self.host.filesystem.dirname(json_output)) or self.host.filesystem.isdir(json_output):
-                raise RuntimeError('Cannot write to {}'.format(json_output))
+                raise RuntimeError(f'Cannot write to {json_output}')
 
         start_time = time.time()
 
@@ -222,7 +222,7 @@ class Manager(object):
         except ScriptError:
             self._stream.writeln('Failed to collect tests')
             return Manager.FAILED_COLLECT_TESTS
-        self._stream.write_update('Found {} tests'.format(len(test_names)))
+        self._stream.write_update(f'Found {len(test_names)} tests')
         if len(test_names) == 0:
             self._stream.writeln('No tests found')
             return Manager.FAILED_COLLECT_TESTS
@@ -234,14 +234,14 @@ class Manager(object):
 
         test_names = [test for test in test_names for _ in range(self._options.repeat_each)]
         if self._options.repeat_each != 1:
-            _log.debug('Repeating each test {} times'.format(self._options.iterations))
+            _log.debug(f'Repeating each test {self._options.iterations} times')
 
         runner = None
         try:
             _log.info('Running tests')
             runner = Runner(self._port, self._stream)
             for i in range(self._options.iterations):
-                _log.debug('\nIteration {}'.format(i + 1))
+                _log.debug(f'\nIteration {i + 1}')
                 runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else None)
         except KeyboardInterrupt:
             # If we receive a KeyboardInterrupt, print results.
@@ -256,7 +256,12 @@ class Manager(object):
 
         successful = runner.result_map_by_status(runner.STATUS_PASSED)
         disabled = len(runner.result_map_by_status(runner.STATUS_DISABLED))
-        _log.info('Ran {} tests of {} with {} successful'.format(len(runner.results) - disabled, len(set(test_names)), len(successful)))
+
+        # Check if running in test-parallel-safety mode
+        test_parallel_safety_tests = self._port.get_option('test_parallel_safety') or []
+        is_parallel_safety_mode = bool(test_parallel_safety_tests)
+
+        _log.info(f'Ran {len(runner.results) - disabled} tests of {len(set(test_names))} with {len(successful)} successful')
 
         result_dictionary = {
             'Skipped': [],
@@ -267,12 +272,33 @@ class Manager(object):
 
         self._stream.writeln('-' * 30)
         result = Manager.SUCCESS
-        if len(successful) + disabled == len(set(test_names)):
+
+        # Count actual failures (not skipped)
+        failed_tests = runner.result_map_by_status(runner.STATUS_FAILED)
+        crashed_tests = runner.result_map_by_status(runner.STATUS_CRASHED)
+        timedout_tests = runner.result_map_by_status(runner.STATUS_TIMEOUT)
+        has_real_failures = bool(failed_tests or crashed_tests or timedout_tests)
+
+        if is_parallel_safety_mode:
+            # In parallel-safety mode, skipped tests are expected
+            # Only fail if there are actual failures, crashes, or timeouts
+            if has_real_failures:
+                self._stream.writeln('Test suite failed')
+                result = Manager.FAILED_TESTS
+            else:
+                self._stream.writeln('All parallel-safety tests passed!')
+                if json_output:
+                    self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
+        elif len(successful) + disabled == len(set(test_names)):
             self._stream.writeln('All tests successfully passed!')
             if json_output:
                 self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
         else:
             self._stream.writeln('Test suite failed')
+            result = Manager.FAILED_TESTS
+
+        # Always collect skipped/failed info for reporting
+        if result != Manager.SUCCESS or is_parallel_safety_mode:
             self._stream.writeln('')
 
             skipped = []
@@ -281,30 +307,28 @@ class Manager(object):
                     skipped.append(test)
                     result_dictionary['Skipped'].append({'name': test, 'output': None})
             if skipped:
-                self._stream.writeln('Skipped {} tests'.format(len(skipped)))
+                self._stream.writeln(f'Skipped {len(skipped)} tests')
                 self._stream.writeln('')
                 if self._options.verbose:
                     for test in skipped:
-                        self._stream.writeln('    {}'.format(test))
+                        self._stream.writeln(f'    {test}')
 
             self._print_tests_result_with_status(runner.STATUS_FAILED, runner)
             self._print_tests_result_with_status(runner.STATUS_CRASHED, runner)
             self._print_tests_result_with_status(runner.STATUS_TIMEOUT, runner)
 
-            for test, result in iteritems(runner.results):
+            for test, test_result in iteritems(runner.results):
                 status_to_string = {
                     runner.STATUS_FAILED: 'Failed',
                     runner.STATUS_CRASHED: 'Crashed',
                     runner.STATUS_TIMEOUT: 'Timedout',
-                }.get(result[0])
+                }.get(test_result[0])
                 if not status_to_string:
                     continue
-                result_dictionary[status_to_string].append({'name': test, 'output': result[1]})
+                result_dictionary[status_to_string].append({'name': test, 'output': test_result[1]})
 
             if json_output:
                 self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
-
-            result = Manager.FAILED_TESTS
 
         if self._options.report_urls:
             self._stream.writeln('\n')
@@ -333,7 +357,7 @@ class Manager(object):
                 },
             )
             for url in self._options.report_urls:
-                self._stream.write_update('Uploading to {} ...'.format(url))
+                self._stream.write_update(f'Uploading to {url} ...')
                 if not upload.upload(url, log_line_func=self._stream.writeln):
                     result = Manager.FAILED_UPLOAD
             self._stream.writeln('Uploads completed!')

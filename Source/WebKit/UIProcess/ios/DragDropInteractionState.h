@@ -95,8 +95,8 @@ public:
     bool isPerformingDrop() const { return m_isPerformingDrop; }
     id<UIDragSession> dragSession() const { return m_dragSession.get(); }
     id<UIDropSession> dropSession() const { return m_dropSession.get(); }
-    BlockPtr<void()> takeDragStartCompletionBlock() { return WTFMove(m_dragStartCompletionBlock); }
-    BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTFMove(m_addDragItemCompletionBlock); }
+    BlockPtr<void()> takeDragStartCompletionBlock() { return WTF::move(m_dragStartCompletionBlock); }
+    BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTF::move(m_addDragItemCompletionBlock); }
     Vector<RetainPtr<UIView>> takePreviewViewsForDragCancel() { return std::exchange(m_previewViewsForDragCancel, { }); }
     std::optional<WebCore::NodeIdentifier> nodeIdentifier() const { return m_nodeIdentifier; }
 

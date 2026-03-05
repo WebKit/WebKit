@@ -1,7 +1,9 @@
 This tests that when an alert (implicit live region) is initialized, it is announced.
 
 Received announcement request:
-AnnouncementKey: Important announcement
+AnnouncementKey: Important announcement{
+    AXLanguage = en;
+}
 AXPriorityKey: 90
 AXAnnouncementIsLiveRegionKey: true
 

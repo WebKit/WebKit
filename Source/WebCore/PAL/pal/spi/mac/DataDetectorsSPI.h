@@ -25,6 +25,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <wtf/Platform.h>
@@ -32,7 +36,6 @@ DECLARE_SYSTEM_HEADER
 #if ENABLE(DATA_DETECTION)
 
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
-#import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)
 
@@ -118,6 +121,9 @@ WTF_EXTERN_C_END
 typedef struct CF_BRIDGED_TYPE(id) __DDHighlight *DDHighlightRef;
 typedef NSUInteger DDHighlightStyle;
 
+#include <wtf/cf/CFTypeTraits.h>
+WTF_DECLARE_CF_TYPE_TRAIT_WITHOUT_TYPE_ID(DDHighlight);
+
 #if !HAVE(DATA_DETECTORS_MAC_ACTION)
 
 @interface DDAction : NSObject
@@ -136,3 +142,4 @@ using WKDDActionContext = DDActionContext;
 
 #endif // ENABLE(DATA_DETECTION)
 
+#endif // __cplusplus

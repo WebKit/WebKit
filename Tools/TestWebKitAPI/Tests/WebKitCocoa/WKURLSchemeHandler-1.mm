@@ -419,7 +419,7 @@ enum class Command {
     if (!self)
         return nil;
     
-    self->commands = WTFMove(commandVector);
+    self->commands = WTF::move(commandVector);
     self->expectedException = expected;
     
     return self;
@@ -471,7 +471,7 @@ static void checkCallSequence(Vector<Command>&& commands, ShouldRaiseException s
 {
     done = false;
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto handler = adoptNS([[TaskSchemeHandler alloc] initWithCommands:WTFMove(commands) expectedException:shouldRaiseException == ShouldRaiseException::Yes]);
+    auto handler = adoptNS([[TaskSchemeHandler alloc] initWithCommands:WTF::move(commands) expectedException:shouldRaiseException == ShouldRaiseException::Yes]);
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///initial"]]];

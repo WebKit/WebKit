@@ -32,15 +32,15 @@
 namespace WebCore {
 
 class MathMLFractionElement final : public MathMLRowElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLFractionElement);
+    WTF_MAKE_TZONE_ALLOCATED(MathMLFractionElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLFractionElement);
 public:
     static Ref<MathMLFractionElement> create(const QualifiedName& tagName, Document&);
     const Length& lineThickness();
-    enum FractionAlignment {
-        FractionAlignmentCenter,
-        FractionAlignmentLeft,
-        FractionAlignmentRight
+    enum class FractionAlignment : uint8_t {
+        Center,
+        Left,
+        Right
     };
     FractionAlignment numeratorAlignment();
     FractionAlignment denominatorAlignment();

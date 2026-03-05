@@ -185,7 +185,7 @@ static void testDisplayStringParsingWithLocalization(Test*, gconstpointer)
         { "_locales/en_US/messages.json"_s, createGBytes(regionalMessages) }
     };
 
-    GRefPtr<WebKitWebExtension> extension = adoptGRef(webkitWebExtensionCreate(WTFMove(resources), &error.outPtr()));
+    GRefPtr<WebKitWebExtension> extension = adoptGRef(webkitWebExtensionCreate(WTF::move(resources), &error.outPtr()));
 
     g_assert_cmpstr(webkit_web_extension_get_display_name(extension.get()), ==, "Default String");
     g_assert_cmpstr(webkit_web_extension_get_display_short_name(extension.get()), ==,  "Regional String");
@@ -209,7 +209,7 @@ static void testDisplayStringParsingWithLocalization(Test*, gconstpointer)
         { "_locales/en_US/messages.json"_s, createGBytes(regionalMessages) }
     };
 
-    extension = adoptGRef(webkitWebExtensionCreate(WTFMove(resources), &error.outPtr()));
+    extension = adoptGRef(webkitWebExtensionCreate(WTF::move(resources), &error.outPtr()));
 
     g_assert_cmpstr(webkit_web_extension_get_display_short_name(extension.get()), ==,  "Default String");
     g_assert_no_error(error.get());

@@ -46,13 +46,13 @@ String CSSSubgridValue::customCSSText(const CSS::SerializationContext& context) 
 }
 
 CSSSubgridValue::CSSSubgridValue(CSSValueListBuilder builder)
-    : CSSValueContainingVector(ClassType::Subgrid, SpaceSeparator, WTFMove(builder))
+    : CSSValueContainingVector(ClassType::Subgrid, SpaceSeparator, WTF::move(builder))
 {
 }
 
 Ref<CSSSubgridValue> CSSSubgridValue::create(CSSValueListBuilder builder)
 {
-    return adoptRef(*new CSSSubgridValue(WTFMove(builder)));
+    return adoptRef(*new CSSSubgridValue(WTF::move(builder)));
 }
 
 }

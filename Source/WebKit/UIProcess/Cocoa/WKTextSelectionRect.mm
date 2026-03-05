@@ -87,7 +87,7 @@
 {
     WebCore::SelectionGeometry selectionGeometry;
     selectionGeometry.setRect(WebCore::enclosingIntRect(rect));
-    return [self initWithSelectionGeometry:WTFMove(selectionGeometry) delegate:nil];
+    return [self initWithSelectionGeometry:WTF::move(selectionGeometry) delegate:nil];
 }
 
 - (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionGeometry delegate:(id<WKTextSelectionRectDelegate>)delegate
@@ -107,7 +107,7 @@
     if (_selectionGeometry.behavior() == WebCore::SelectionRenderingBehavior::CoalesceBoundingRects)
         return nil;
 
-    CGFloat scaleFactor = _delegate ? [_delegate scaleFactorForSelectionRect:self] : 1.f;
+    CGFloat scaleFactor = _delegate ? [protect(_delegate) scaleFactorForSelectionRect:self] : 1.f;
     auto selectionBounds = _selectionGeometry.rect();
     auto quad = _selectionGeometry.quad();
     quad.scale(scaleFactor);
@@ -145,7 +145,7 @@
     if (!_delegate)
         return quad;
 
-    return [_delegate selectionRect:self convertQuadToSelectionContainer:quad];
+    return [protect(_delegate) selectionRect:self convertQuadToSelectionContainer:quad];
 }
 
 - (WKTextSelectionRectCustomHandleInfo *)_customHandleInfo

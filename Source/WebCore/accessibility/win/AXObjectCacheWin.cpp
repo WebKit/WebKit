@@ -153,12 +153,12 @@ void AXObjectCache::frameLoadingEventPlatformNotification(RenderView* renderView
     }
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element* newFocus)
+void AXObjectCache::platformHandleFocusedUIElementChanged(AccessibilityObject*, AccessibilityObject* newFocus)
 {
     if (!newFocus)
         return;
 
-    Page* page = newFocus->document().page();
+    Page* page = newFocus->page();
     if (!page || !page->chrome().platformPageClient())
         return;
 

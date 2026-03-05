@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Site.h"
 
+#include "BlobURL.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -42,16 +43,23 @@ static String nonEmptyProtocol(String&& protocol)
 {
     if (protocol.isEmpty())
         return invalidProtocol();
-    return String(WTFMove(protocol));
+    return String(WTF::move(protocol));
+}
+
+static String protocolForURL(const URL& url)
+{
+    if (url.protocolIsBlob())
+        return BlobURL::getOriginURL(url).protocol().toString();
+    return url.protocol().toString();
 }
 
 Site::Site(const URL& url)
-    : m_protocol(nonEmptyProtocol(url.protocol().toString()))
+    : m_protocol(nonEmptyProtocol(protocolForURL(url)))
     , m_domain(url) { }
 
 Site::Site(String&& protocol, RegistrableDomain&& domain)
-    : m_protocol(nonEmptyProtocol(WTFMove(protocol)))
-    , m_domain(WTFMove(domain)) { }
+    : m_protocol(nonEmptyProtocol(WTF::move(protocol)))
+    , m_domain(WTF::move(domain)) { }
 
 Site::Site(const SecurityOriginData& data)
     : m_protocol(nonEmptyProtocol(String(data.protocol())))
@@ -71,7 +79,7 @@ unsigned Site::hash() const
 
 bool Site::matches(const URL& url) const
 {
-    return url.protocol() == m_protocol && m_domain.matches(url);
+    return protocolForURL(url) == m_protocol && m_domain.matches(url);
 }
 
 String Site::toString() const

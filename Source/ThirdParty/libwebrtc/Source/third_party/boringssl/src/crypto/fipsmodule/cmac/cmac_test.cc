@@ -39,7 +39,7 @@ static void test(const char *name, const uint8_t *key, size_t key_len,
 
   bssl::UniquePtr<CMAC_CTX> ctx(CMAC_CTX_new());
   ASSERT_TRUE(ctx);
-  ASSERT_TRUE(CMAC_Init(ctx.get(), key, key_len, EVP_aes_128_cbc(), NULL));
+  ASSERT_TRUE(CMAC_Init(ctx.get(), key, key_len, EVP_aes_128_cbc(), nullptr));
 
   for (unsigned chunk_size = 1; chunk_size <= msg_len; chunk_size++) {
     SCOPED_TRACE(chunk_size);
@@ -114,7 +114,7 @@ TEST(CMACTest, RFC4493TestVectors) {
       0xfc, 0x49, 0x74, 0x17, 0x79, 0x36, 0x3c, 0xfe,
   };
 
-  test("RFC 4493 #1", kKey, sizeof(kKey), NULL, 0, kOut1);
+  test("RFC 4493 #1", kKey, sizeof(kKey), nullptr, 0, kOut1);
   test("RFC 4493 #2", kKey, sizeof(kKey), kMsg2, sizeof(kMsg2), kOut2);
   test("RFC 4493 #3", kKey, sizeof(kKey), kMsg3, sizeof(kMsg3), kOut3);
   test("RFC 4493 #4", kKey, sizeof(kKey), kMsg4, sizeof(kMsg4), kOut4);
@@ -157,7 +157,7 @@ TEST(CMACTest, Wycheproof) {
     uint8_t out[16];
     bssl::UniquePtr<CMAC_CTX> ctx(CMAC_CTX_new());
     ASSERT_TRUE(ctx);
-    ASSERT_TRUE(CMAC_Init(ctx.get(), key.data(), key.size(), cipher, NULL));
+    ASSERT_TRUE(CMAC_Init(ctx.get(), key.data(), key.size(), cipher, nullptr));
     ASSERT_TRUE(CMAC_Update(ctx.get(), msg.data(), msg.size()));
     size_t out_len;
     ASSERT_TRUE(CMAC_Final(ctx.get(), out, &out_len));
@@ -219,7 +219,7 @@ static void RunCAVPTest(const char *path, const EVP_CIPHER *cipher,
     uint8_t out[16];
     bssl::UniquePtr<CMAC_CTX> ctx(CMAC_CTX_new());
     ASSERT_TRUE(ctx);
-    ASSERT_TRUE(CMAC_Init(ctx.get(), key.data(), key.size(), cipher, NULL));
+    ASSERT_TRUE(CMAC_Init(ctx.get(), key.data(), key.size(), cipher, nullptr));
     ASSERT_TRUE(CMAC_Update(ctx.get(), msg.data(), msg.size()));
     size_t out_len;
     ASSERT_TRUE(CMAC_Final(ctx.get(), out, &out_len));

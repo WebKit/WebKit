@@ -70,7 +70,7 @@ public:
     
     unsigned hash() const
     {
-        return WTF::pairIntHash(WTF::PtrHash<JSCell*>::hash(m_codeBlock), static_cast<std::underlying_type<JITCompilationMode>::type>(m_mode));
+        return WTF::pairIntHash(WTF::PtrHash<JSCell*>::hash(m_codeBlock), static_cast<std::underlying_type_t<JITCompilationMode>>(m_mode));
     }
     
     void dump(PrintStream&) const;

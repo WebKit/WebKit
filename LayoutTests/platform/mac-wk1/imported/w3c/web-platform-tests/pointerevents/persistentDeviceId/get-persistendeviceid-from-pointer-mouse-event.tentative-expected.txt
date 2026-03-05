@@ -1,5 +1,0 @@
-
-Harness Error (FAIL), message = Error: assert_equals: pointermove deviceId is 1 expected (number) 1 but got (undefined) undefined
-
-PASS PointerEvent.persistentDeviceId
-

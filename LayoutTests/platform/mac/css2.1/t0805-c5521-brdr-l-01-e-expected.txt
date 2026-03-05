@@ -4,32 +4,32 @@ layer at (0,0) size 800x290
   RenderBlock {HTML} at (0,0) size 800x290
     RenderBody {BODY} at (8,16) size 784x258 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x48
-        RenderText {#text} at (0,22) size 489x18
+        RenderText {#text} at (0,22) size 489x19
           text run at (0,22) width 489: "There should be a solid blue line to the left of every occurance of the word \""
-        RenderInline {SPAN} at (488,7) size 138x37 [border: none (2px solid #0000FF)]
-          RenderText {#text} at (490,7) size 136x37
+        RenderInline {SPAN} at (488,7) size 138x38 [border: none (2px solid #0000FF)]
+          RenderText {#text} at (490,7) size 136x38
             text run at (490,7) width 136: "\x{21E6}THERE"
-        RenderText {#text} at (625,22) size 11x18
+        RenderText {#text} at (625,22) size 11x19
           text run at (625,22) width 11: "\"."
       RenderTable {TABLE} at (0,64) size 293x160
         RenderTableSection {TBODY} at (0,0) size 293x160
           RenderTableRow {TR} at (0,2) size 293x50
             RenderTableCell {TD} at (2,2) size 289x50 [border: none (2px solid #0000FF)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (3,8) size 136x37
+              RenderText {#text} at (3,8) size 136x38
                 text run at (3,8) width 136: "\x{21E6}THERE"
           RenderTableRow {TR} at (0,54) size 293x104
             RenderTableCell {TD} at (2,81) size 140x50 [border: none (2px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,35) size 136x37
+              RenderText {#text} at (3,35) size 136x38
                 text run at (3,8) width 136: "\x{21E6}THERE"
             RenderTableCell {TD} at (143,54) size 148x104 [border: none (2px solid #0000FF)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (3,1) size 144x48
-                RenderText {#text} at (0,7) size 136x37
+                RenderText {#text} at (0,7) size 136x38
                   text run at (0,7) width 136: "\x{21E6}THERE"
               RenderTable {TABLE} at (3,49) size 144x54
                 RenderTableSection {TBODY} at (0,0) size 144x54
                   RenderTableRow {TR} at (0,2) size 144x50
                     RenderTableCell {TD} at (2,2) size 140x50 [border: none (2px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (3,8) size 136x37
+                      RenderText {#text} at (3,8) size 136x38
                         text run at (3,8) width 136: "\x{21E6}THERE"
       RenderBlock {P} at (0,240) size 784x18
         RenderText {#text} at (0,0) size 344x18

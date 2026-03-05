@@ -41,6 +41,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -62,10 +63,10 @@ public:
     // FIXME: This is a hack so we can easily delete databases from the UI process in WebKit2.
     WEBCORE_EXPORT static std::unique_ptr<DatabaseTracker> trackerWithDatabasePath(const String& databasePath);
 
-    static void initializeTracker(const String& databasePath);
+    static void NODELETE initializeTracker(const String& databasePath);
 
-    WEBCORE_EXPORT static DatabaseTracker& singleton();
-    WEBCORE_EXPORT static bool isInitialized();
+    WEBCORE_EXPORT static DatabaseTracker& NODELETE singleton();
+    WEBCORE_EXPORT static bool NODELETE isInitialized();
     // This singleton will potentially be used from multiple worker threads and the page's context thread simultaneously.  To keep this safe, it's
     // currently using 4 locks.  In order to avoid deadlock when taking multiple locks, you must take them in the correct order:
     // m_databaseGuard before quotaManager if both locks are needed.
@@ -179,7 +180,7 @@ private:
 
     String m_databaseDirectoryPath;
 
-    DatabaseManagerClient* m_client { nullptr };
+    WeakPtr<DatabaseManagerClient> m_client;
 
     HashMap<SecurityOriginData, HashCountedSet<String>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
     HashMap<SecurityOriginData, MemoryCompactRobinHoodHashSet<String>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);

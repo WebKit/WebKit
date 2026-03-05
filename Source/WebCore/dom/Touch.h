@@ -26,7 +26,11 @@
 #pragma once
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/TouchIOS.h>
+#pragma clang diagnostic pop
 #elif ENABLE(TOUCH_EVENTS)
 
 #include <WebCore/DoublePoint.h>

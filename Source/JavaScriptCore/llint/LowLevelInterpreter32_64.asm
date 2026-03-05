@@ -711,7 +711,7 @@ macro functionArityCheck(opcodeName, doneLabel)
     addi 1, t2, t3
     andi ~1, t3
     lshiftp 3, t3
-    subp cfr, t3, t5
+    subp sp, t3, t5
     loadp CodeBlock::m_vm[t1], t0
     if C_LOOP
         bpbeq VMCLoopStackLimitOffset[t0], t5, .stackHeightOK
@@ -1329,35 +1329,6 @@ llintOpWithReturn(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
     return (Int32Tag, t3)
  .opBitNotSlow:
     callSlowPath(_slow_path_bitnot)
-    dispatch()
-end)
-
-llintOp(op_overrides_has_instance, OpOverridesHasInstance, macro (size, get, dispatch)
-    get(m_dst, t3)
-    storei BooleanTag, TagOffset[cfr, t3, 8]
-
-    # First check if hasInstanceValue is the one on Function.prototype[Symbol.hasInstance]
-    get(m_hasInstanceValue, t0)
-    loadConstantOrVariablePayload(size, t0, CellTag, t2, .opOverrideshasInstanceValueNotCell)
-    loadConstantOrVariable(size, t0, t1, t2)
-    bineq t1, CellTag, .opOverrideshasInstanceValueNotCell
-
-    # We don't need hasInstanceValue's tag register anymore.
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_globalObject[t1], t1
-    loadp JSGlobalObject::m_functionProtoHasInstanceSymbolFunction[t1], t1
-    bineq t1, t2, .opOverrideshasInstanceValueNotDefault
-
-    # We know the constructor is a cell.
-    get(m_constructor, t0)
-    loadConstantOrVariablePayloadUnchecked(size, t0, t1)
-    tbz JSCell::m_flags[t1], ImplementsDefaultHasInstance, t0
-    storei t0, PayloadOffset[cfr, t3, 8]
-    dispatch()
-
-.opOverrideshasInstanceValueNotCell:
-.opOverrideshasInstanceValueNotDefault:
-    storei 1, PayloadOffset[cfr, t3, 8]
     dispatch()
 end)
 
@@ -2562,16 +2533,6 @@ commonOp(llint_op_catch, macro() end, macro (size)
     dispatchOp(size, op_catch)
 end)
 
-llintOp(op_end, OpEnd, macro (size, get, dispatch)
-    checkSwitchToJITForEpilogue()
-    get(m_value, t0)
-    assertNotConstant(size, t0)
-    loadi TagOffset[cfr, t0, 8], t1
-    loadi PayloadOffset[cfr, t0, 8], t0
-    doReturn()
-end)
-
-
 op(llint_throw_from_slow_path_trampoline, macro()
     getVMFromCallFrame(t1, t2)
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(t1, t2)
@@ -3092,20 +3053,6 @@ llintOpWithMetadata(op_profile_control_flow, OpProfileControlFlow, macro (size, 
     storei t1, BasicBlockLocation::m_executionCount[t0]
 .done:
     dispatch()
-end)
-
-
-llintOpWithReturn(op_get_rest_length, OpGetRestLength, macro (size, get, dispatch, return)
-    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
-    subi 1, t0
-    getu(size, OpGetRestLength, m_numParametersToSkip, t1)
-    bilteq t0, t1, .storeZero
-    subi t1, t0
-    jmp .finish
-.storeZero:
-    move 0, t0
-.finish:
-    return(Int32Tag, t0)
 end)
 
 llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch, metadata, return)

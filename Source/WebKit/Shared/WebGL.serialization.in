@@ -165,12 +165,13 @@ header: <WebCore/GraphicsContextGLActiveInfo.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::GCGLUniformActiveInfo {
     CString name;
     GCGLenum type;
-    Vector<int> locations;
+    int size;
     int blockIndex;
     int offset;
     int arrayStride;
     int matrixStride;
     int isRowMajor;
+    Vector<int> locations;
 };
 header: <WebCore/GraphicsContextGLActiveInfo.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::GCGLAttribActiveInfo {

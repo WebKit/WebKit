@@ -32,11 +32,11 @@ namespace WebCore {
 
 Ref<SecurityOriginPolicy> SecurityOriginPolicy::create(Ref<SecurityOrigin>&& securityOrigin)
 {
-    return adoptRef(*new SecurityOriginPolicy(WTFMove(securityOrigin)));
+    return adoptRef(*new SecurityOriginPolicy(WTF::move(securityOrigin)));
 }
 
 SecurityOriginPolicy::SecurityOriginPolicy(Ref<SecurityOrigin>&& securityOrigin)
-    : m_securityOrigin(WTFMove(securityOrigin))
+    : m_securityOrigin(WTF::move(securityOrigin))
 {
 }
 

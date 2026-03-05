@@ -22,7 +22,13 @@
 #if USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
+#include <wtf/DataMutex.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/RunLoop.h>
+#include <wtf/Seconds.h>
+#include <wtf/text/CStringView.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -32,17 +38,31 @@ public:
     static bool isAvailable();
     static GStreamerAudioMixer& singleton();
 
-    void ensureState(GstStateChange);
-    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate);
+    void ensureState(GstStateChange, const String& deviceId = { });
+    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate, const String& deviceId = { }, const GRefPtr<GstDevice>& = nullptr);
     void unregisterProducer(const GRefPtr<GstPad>&);
 
-    void configureSourcePeriodTime(StringView sourceName, uint64_t periodTime);
+    void configureSourcePeriodTime(CStringView sourceName, uint64_t periodTime);
 
 private:
     GStreamerAudioMixer();
 
-    GRefPtr<GstElement> m_pipeline;
-    GRefPtr<GstElement> m_mixer;
+    struct MixerPipeline {
+        GRefPtr<GstElement> pipeline;
+        GRefPtr<GstElement> mixer;
+        RunLoop::Timer teardownTimer;
+    };
+
+    struct StreamingMembers {
+        HashMap<String, std::unique_ptr<MixerPipeline>> m_pipelines;
+        HashMap<GstPad*, String> m_padToDeviceId; // Reverse lookup: pad → deviceId.
+    };
+
+    MixerPipeline& ensureMixerPipeline(DataMutexLocker<StreamingMembers>&, const String& deviceId, const GRefPtr<GstDevice>&);
+    void teardownPipeline(const String& deviceId);
+
+    static constexpr Seconds s_teardownTimeout = 60_s;
+    DataMutex<StreamingMembers> m_streamingMembers;
 };
 
 } // namespace WebCore

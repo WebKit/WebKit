@@ -15,4 +15,5 @@ PASS Animation with ranges [exit-crossing 20px, exit-crossing 80px]
 PASS Animation with ranges [contain 20px, contain calc(100px - 10%)]
 PASS Animation with ranges [exit 2em, exit 8em]
 PASS Animation with ranges [exit 2em, exit 8em] (scoped)
+PASS Animation with ranges [scroll 100px, scroll 800px]
 

@@ -34,13 +34,13 @@ namespace WebCore {
 
 CSSFontStyleWithAngleValue::CSSFontStyleWithAngleValue(ObliqueAngle&& obliqueAngle)
     : CSSValue(ClassType::FontStyleWithAngle)
-    , m_obliqueAngle(WTFMove(obliqueAngle))
+    , m_obliqueAngle(WTF::move(obliqueAngle))
 {
 }
 
 Ref<CSSFontStyleWithAngleValue> CSSFontStyleWithAngleValue::create(ObliqueAngle&& obliqueAngle)
 {
-    return adoptRef(*new CSSFontStyleWithAngleValue(WTFMove(obliqueAngle)));
+    return adoptRef(*new CSSFontStyleWithAngleValue(WTF::move(obliqueAngle)));
 }
 
 String CSSFontStyleWithAngleValue::customCSSText(const CSS::SerializationContext& context) const

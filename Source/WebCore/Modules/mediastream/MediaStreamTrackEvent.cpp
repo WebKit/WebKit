@@ -32,35 +32,35 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrackEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackEvent);
 
-Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
+Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<MediaStreamTrack>&& track)
 {
-    return adoptRef(*new MediaStreamTrackEvent(type, canBubble, cancelable, WTFMove(track)));
+    return adoptRef(*new MediaStreamTrackEvent(type, canBubble, cancelable, WTF::move(track)));
 }
 
-Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new MediaStreamTrackEvent(type, initializer, isTrusted));
+    return adoptRef(*new MediaStreamTrackEvent(type, WTF::move(initializer), isTrusted));
 }
 
-MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<MediaStreamTrack>&& track)
     : Event(EventInterfaceType::MediaStreamTrackEvent, type, canBubble, cancelable)
-    , m_track(WTFMove(track))
+    , m_track(WTF::move(track))
 {
 }
 
-MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MediaStreamTrackEvent, type, initializer, isTrusted)
-    , m_track(initializer.track)
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::MediaStreamTrackEvent, type, WTF::move(initializer), isTrusted)
+    , m_track(WTF::move(initializer.track))
 {
 }
 
 MediaStreamTrackEvent::~MediaStreamTrackEvent() = default;
 
-MediaStreamTrack* MediaStreamTrackEvent::track() const
+MediaStreamTrack& MediaStreamTrackEvent::track() const
 {
-    return m_track.get();
+    return m_track;
 }
 
 } // namespace WebCore

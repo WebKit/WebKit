@@ -33,14 +33,13 @@
 #include "NetworkRTCUtilitiesCocoa.h"
 #include "RTCSocketCreationFlags.h"
 #include <WebCore/STUNMessageParsing.h>
-#include <dispatch/dispatch.h>
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/cocoa/VectorCocoa.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/packet_socket_factory.h>
@@ -62,19 +61,19 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkRTCTCPSocketCocoa);
 std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const webrtc::SocketAddress& remoteAddress, int tcpOptions, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
 {
     // FIXME: We should support ssltcp candidates, maybe support OPT_TLS_INSECURE as well.
-    return makeUnique<NetworkRTCTCPSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, attributedBundleIdentifier, flags, domain, WTFMove(connection));
+    return makeUnique<NetworkRTCTCPSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, attributedBundleIdentifier, flags, domain, WTF::move(connection));
 }
 
 static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection, Function<Vector<uint8_t>(Vector<uint8_t>&&)>&& processData, Vector<uint8_t>&& buffer = { })
 {
     auto nwConnectionReference = nwConnection.get();
-    nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), buffer = WTFMove(buffer)](dispatch_data_t content, nw_content_context_t context, bool isComplete, nw_error_t error) mutable {
+    nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTF::move(nwConnection), processData = WTF::move(processData), buffer = WTF::move(buffer)](dispatch_data_t content, nw_content_context_t context, bool isComplete, nw_error_t error) mutable {
         if (content) {
             dispatch_data_apply_span(content, [&](std::span<const uint8_t> data) {
                 buffer.append(data);
                 return true;
             });
-            buffer = processData(WTFMove(buffer));
+            buffer = processData(WTF::move(buffer));
         }
         if (isComplete && context && nw_content_context_get_is_final(context))
             return;
@@ -82,7 +81,7 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
             RELEASE_LOG_ERROR(WebRTC, "NetworkRTCTCPSocketCocoa processIncomingData failed with error %d", nw_error_get_error_code(error));
             return;
         }
-        processIncomingData(WTFMove(nwConnection), WTFMove(processData), WTFMove(buffer));
+        processIncomingData(WTF::move(nwConnection), WTF::move(processData), WTF::move(buffer));
     }).get());
 }
 
@@ -108,7 +107,7 @@ static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProv
 NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const webrtc::SocketAddress& remoteAddress, int options, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)
     , m_rtcProvider(rtcProvider)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
     , m_isSTUN(options & webrtc::PacketSocketFactory::OPT_STUN)
     , m_enableServiceClass(flags.enableServiceClass)
 {
@@ -133,7 +132,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
                 RetainPtr path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
                 RetainPtr interface = adoptNS(nw_path_copy_interface(path.get()));
                 if (auto name = String::fromUTF8(nw_interface_get_name(interface.get())); !name.isNull())
-                    connection->send(Messages::LibWebRTCNetwork::SignalUsedInterface(identifier, WTFMove(name)), 0);
+                    connection->send(Messages::LibWebRTCNetwork::SignalUsedInterface(identifier, WTF::move(name)), 0);
             });
             connection->send(Messages::LibWebRTCNetwork::SignalConnect(identifier), 0);
             return;
@@ -149,7 +148,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     }).get());
 
     processIncomingData(m_nwConnection.get(), [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port(), isSTUN = m_isSTUN](Vector<uint8_t>&& buffer) mutable {
-        return WebRTC::extractMessages(WTFMove(buffer), isSTUN ? WebRTC::MessageType::STUN : WebRTC::MessageType::Data, [&](auto data) {
+        return WebRTC::extractMessages(WTF::move(buffer), isSTUN ? WebRTC::MessageType::STUN : WebRTC::MessageType::Data, [&](auto data) {
             connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, data, RTCNetwork::IPAddress(ip), port, webrtc::TimeMicros(), WebRTCNetwork::EcnMarking::kNotEct }, 0);
         });
     });
@@ -223,7 +222,7 @@ void NetworkRTCTCPSocketCocoa::sendTo(std::span<const uint8_t> data, const webrt
     if (buffer.isEmpty())
         return;
 
-    nw_connection_send(m_nwConnection.get(), makeDispatchData(WTFMove(buffer)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, connection = m_connection.copyRef(), options](_Nullable nw_error_t) {
+    nw_connection_send(m_nwConnection.get(), makeDispatchData(WTF::move(buffer)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, connection = m_connection.copyRef(), options](_Nullable nw_error_t) {
         connection->send(Messages::LibWebRTCNetwork::SignalSentPacket { identifier, options.packet_id, webrtc::TimeMillis() }, 0);
     }).get());
 }
@@ -240,9 +239,9 @@ auto NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
     Ref promise = promiseProducer.promise();
 
     nw_connection_set_queue(nwConnection.get(), tcpSocketQueueSingleton());
-    nw_connection_set_state_changed_handler(nwConnection.get(), makeBlockPtr([promiseProducer = WTFMove(promiseProducer), nwConnection](nw_connection_state_t state, _Nullable nw_error_t error) mutable {
+    nw_connection_set_state_changed_handler(nwConnection.get(), makeBlockPtr([promiseProducer = WTF::move(promiseProducer), nwConnection](nw_connection_state_t state, _Nullable nw_error_t error) mutable {
         auto checkInterface = [&] {
-            if (!nwConnection)
+            if (promiseProducer.isSettled())
                 return;
 
             auto path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
@@ -268,10 +267,8 @@ auto NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
             nw_connection_cancel(std::exchange(nwConnection, { }).get());
             return;
         case nw_connection_state_cancelled:
-            if (!nwConnection)
-                return;
-
-            promiseProducer.reject();
+            if (!promiseProducer.isSettled())
+                promiseProducer.reject();
             nwConnection = { };
             return;
         }

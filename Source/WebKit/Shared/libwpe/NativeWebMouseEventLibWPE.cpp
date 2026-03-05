@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NativeWebMouseEvent.h"
 
+#if USE(LIBWPE)
 #include "WebEventFactory.h"
 
 namespace WebKit {
@@ -36,3 +37,5 @@ NativeWebMouseEvent::NativeWebMouseEvent(struct wpe_input_pointer_event* event, 
 }
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE)

@@ -34,7 +34,7 @@ namespace CSS {
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-polygon
 // FIXME: Add support the "round" clause.
 struct Polygon {
-    using Vertex = SpaceSeparatedPoint<LengthPercentage<>>;
+    using Vertex = SpaceSeparatedPoint<LengthPercentage<AllUnzoomed>>;
     using Vertices = CommaSeparatedVector<Vertex>;
 
     std::optional<FillRule> fillRule;

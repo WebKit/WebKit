@@ -33,14 +33,14 @@ Object.defineProperty(TypedArray.prototype, "length", {
   }
 });
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   Object.defineProperty(TA.prototype, "length", {
     get: function() {
       throw new Test262Error();
     }
   });
 
-  var sample = new TA(1);
+  var sample = new TA(makeCtorArg(1));
   Object.defineProperty(sample, "length", {
     get: function() {
       throw new Test262Error();
@@ -48,4 +48,4 @@ testWithTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(sample.fill(1, 0), sample);
-});
+}, null, ["passthrough"]);

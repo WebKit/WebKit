@@ -36,7 +36,7 @@ namespace WebKit {
 class CoreIPCSkColorSpace {
 public:
     explicit CoreIPCSkColorSpace(sk_sp<SkColorSpace> skColorSpace)
-        : m_skColorSpace(WTFMove(skColorSpace))
+        : m_skColorSpace(WTF::move(skColorSpace))
     {
     }
 

@@ -138,7 +138,7 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
         return;
     }
 
-    std::unique_ptr<UIGamepad> disconnectedGamepad = WTFMove(m_gamepads[gamepad.index()]);
+    std::unique_ptr<UIGamepad> disconnectedGamepad = WTF::move(m_gamepads[gamepad.index()]);
 
     scheduleGamepadStateSync();
 
@@ -152,10 +152,11 @@ void UIGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible e
 
     auto end = std::min(m_gamepads.size(), platformGamepads.size());
     for (size_t i = 0; i < end; ++i) {
-        if (!m_gamepads[i] || !platformGamepads[i])
+        CheckedPtr platformGamepad = platformGamepads[i].get();
+        if (!m_gamepads[i] || !platformGamepad)
             continue;
 
-        m_gamepads[i]->updateFromPlatformGamepad(*platformGamepads[i]);
+        m_gamepads[i]->updateFromPlatformGamepad(*platformGamepad);
     }
 
     if (eventVisibility == EventMakesGamepadsVisible::Yes)

@@ -52,6 +52,10 @@ PACKAGES+=(
     weston
     xorg-server-xvfb
 
+    # Icon themes needed by the MiniBrowser (generate-bundle needs this as well)
+    adwaita-icon-theme
+    hicolor-icon-theme
+
     # These are dependencies necessary for building the jhbuild.
     # Note: Could not find libegl-mesa.
     bigreqsproto

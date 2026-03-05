@@ -63,7 +63,7 @@ static void createAndBindCompositorBuffer(GL& gl, WebXRExternalRenderbuffer& buf
         buffer.renderBufferObject.adopt(gl, object);
     }
     gl.bindRenderbuffer(GL::RENDERBUFFER, buffer.renderBufferObject);
-    auto image = gl.createExternalImage(WTFMove(source), internalFormat, layer);
+    auto image = gl.createExternalImage(WTF::move(source), internalFormat, layer);
     if (!image)
         return;
     gl.bindExternalImage(GL::RENDERBUFFER, image);
@@ -88,9 +88,9 @@ static GL::ExternalImageSource makeExternalImageSource(PlatformXR::FrameData::Ex
     };
 #else
     return GraphicsContextGLExternalImageSource {
-        .fds = WTFMove(imageSource.fds),
-        .strides = WTFMove(imageSource.strides),
-        .offsets = WTFMove(imageSource.offsets),
+        .fds = WTF::move(imageSource.fds),
+        .strides = WTF::move(imageSource.strides),
+        .offsets = WTF::move(imageSource.offsets),
         .fourcc = imageSource.fourcc,
         .modifier = imageSource.modifier,
         .size = size
@@ -121,14 +121,14 @@ std::unique_ptr<WebXROpaqueFramebuffer> WebXROpaqueFramebuffer::create(PlatformX
     auto framebuffer = WebGLFramebuffer::createOpaque(context);
     if (!framebuffer)
         return nullptr;
-    return std::unique_ptr<WebXROpaqueFramebuffer>(new WebXROpaqueFramebuffer(handle, framebuffer.releaseNonNull(), context, WTFMove(attributes), framebufferSize));
+    return std::unique_ptr<WebXROpaqueFramebuffer>(new WebXROpaqueFramebuffer(handle, framebuffer.releaseNonNull(), context, WTF::move(attributes), framebufferSize));
 }
 
 WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, Ref<WebGLFramebuffer>&& framebuffer, WebGLRenderingContextBase& context, Attributes&& attributes, IntSize framebufferSize)
     : m_handle(handle)
-    , m_drawFramebuffer(WTFMove(framebuffer))
+    , m_drawFramebuffer(WTF::move(framebuffer))
     , m_context(context)
-    , m_attributes(WTFMove(attributes))
+    , m_attributes(WTF::move(attributes))
     , m_framebufferSize(framebufferSize)
 {
 }
@@ -539,14 +539,14 @@ void WebXROpaqueFramebuffer::bindCompositorTexturesForDisplay(GraphicsContextGL&
 #else
         constexpr auto kColorFormat = GL::RGBA8;
 #endif
-        createAndBindCompositorBuffer(gl, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].colorBuffer, kColorFormat, WTFMove(colorTextureSource), layer);
+        createAndBindCompositorBuffer(gl, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].colorBuffer, kColorFormat, WTF::move(colorTextureSource), layer);
         ASSERT(m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].colorBuffer.image);
         if (!m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].colorBuffer.image)
             return;
 
         if (layerData.textureData->depthStencilBuffer) {
             auto depthStencilBufferSource = makeExternalImageSource(layerData.textureData->depthStencilBuffer, framebufferSize);
-            createAndBindCompositorBuffer(gl, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, WTFMove(depthStencilBufferSource), layer);
+            createAndBindCompositorBuffer(gl, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, WTF::move(depthStencilBufferSource), layer);
         }
     }
 }

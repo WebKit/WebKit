@@ -91,6 +91,7 @@ public:
     static void learnWord(SpellDocumentTag, const String& word);
     static void ignoreWord(SpellDocumentTag, const String& word);
     static void requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
+    static void requestExtendedCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
 };
 
 } // namespace WebKit

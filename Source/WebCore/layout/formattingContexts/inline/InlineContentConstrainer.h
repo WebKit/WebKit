@@ -96,7 +96,7 @@ private:
 
 struct SlidingWidth {
     SlidingWidth(const InlineContentConstrainer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
-    InlineLayoutUnit width();
+    InlineLayoutUnit NODELETE width();
     void advanceStart();
     void advanceStartTo(size_t newStart);
     void advanceEnd();

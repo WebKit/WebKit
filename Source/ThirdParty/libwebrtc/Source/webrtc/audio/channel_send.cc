@@ -187,7 +187,7 @@ class ChannelSend : public ChannelSendInterface,
   void ResetSenderCongestionControlObjects() override;
   void SetRTCP_CNAME(absl::string_view c_name) override;
   std::vector<ReportBlockData> GetRemoteRTCPReportBlocks() const override;
-  CallSendStatistics GetRTCPStatistics() const override;
+  ChannelSendStatistics GetRTCPStatistics() const override;
 
   // ProcessAndEncodeAudio() posts a task on the shared encoder task queue,
   // which in turn calls (on the queue) ProcessAndEncodeAudioOnTaskQueue() where
@@ -548,9 +548,18 @@ ChannelSend::ChannelSend(
 ChannelSend::~ChannelSend() {
   RTC_DCHECK(construction_thread_.IsCurrent());
 
-  // Resets the delegate's callback to ChannelSend::SendRtpAudio.
-  if (frame_transformer_delegate_)
-    frame_transformer_delegate_->Reset();
+  // Reset and clear the frame_transformer_delegate_ on the encoder queue
+  // to avoid race conditions.
+  Event delegate_reset_event;
+  encoder_queue_->PostTask([this, &delegate_reset_event] {
+    RTC_DCHECK_RUN_ON(&encoder_queue_checker_);
+    if (frame_transformer_delegate_) {
+      frame_transformer_delegate_->Reset();
+      frame_transformer_delegate_ = nullptr;
+    }
+    delegate_reset_event.Set();
+  });
+  delegate_reset_event.Wait(Event::kForever);
 
   StopSend();
   int error = audio_coding_->RegisterTransportCallback(nullptr);
@@ -791,10 +800,10 @@ std::vector<ReportBlockData> ChannelSend::GetRemoteRTCPReportBlocks() const {
   return rtp_rtcp_->GetLatestReportBlockData();
 }
 
-CallSendStatistics ChannelSend::GetRTCPStatistics() const {
+ChannelSendStatistics ChannelSend::GetRTCPStatistics() const {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  CallSendStatistics stats = {0};
-  stats.rttMs = rtp_rtcp_->LastRtt().value_or(TimeDelta::Zero()).ms();
+  ChannelSendStatistics stats = {
+      .round_trip_time = rtp_rtcp_->LastRtt().value_or(TimeDelta::Zero())};
 
   StreamDataCounters rtp_stats;
   StreamDataCounters rtx_stats;
@@ -808,8 +817,10 @@ CallSendStatistics ChannelSend::GetRTCPStatistics() const {
   // TODO(https://crbug.com/webrtc/10555): RTX retransmissions should show up in
   // separate outbound-rtp stream objects.
   stats.retransmitted_bytes_sent = rtp_stats.retransmitted.payload_bytes;
-  stats.packetsSent =
+  stats.packets_sent =
       rtp_stats.transmitted.packets + rtx_stats.transmitted.packets;
+  stats.packets_sent_with_ect1 = rtp_stats.transmitted.packets_with_ect1 +
+                                 rtx_stats.transmitted.packets_with_ect1;
   stats.total_packet_send_delay = rtp_stats.transmitted.total_packet_delay;
   stats.retransmitted_packets_sent = rtp_stats.retransmitted.packets;
   stats.report_block_datas = rtp_rtcp_->GetLatestReportBlockData();
@@ -868,9 +879,9 @@ void ChannelSend::ProcessAndEncodeAudio(
 
   // Profile time between when the audio frame is added to the task queue and
   // when the task is actually executed.
-  audio_frame->UpdateProfileTimeStamp();
+  Timestamp post_task_time = env_.clock().CurrentTime();
   encoder_queue_->PostTask(
-      [this, audio_frame = std::move(audio_frame)]() mutable {
+      [this, post_task_time, audio_frame = std::move(audio_frame)]() mutable {
         RTC_DCHECK_RUN_ON(&encoder_queue_checker_);
         if (!encoder_queue_is_active_.load()) {
           return;
@@ -878,8 +889,9 @@ void ChannelSend::ProcessAndEncodeAudio(
         // Measure time between when the audio frame is added to the task queue
         // and when the task is actually executed. Goal is to keep track of
         // unwanted extra latency added by the task queue.
+        TimeDelta latency = post_task_time - env_.clock().CurrentTime();
         RTC_HISTOGRAM_COUNTS_10000("WebRTC.Audio.EncodingTaskQueueLatencyMs",
-                                   audio_frame->ElapsedProfileTimeMs());
+                                   latency.ms());
 
         bool is_muted = InputMute();
         AudioFrameOperations::Mute(audio_frame.get(), previous_frame_muted_,

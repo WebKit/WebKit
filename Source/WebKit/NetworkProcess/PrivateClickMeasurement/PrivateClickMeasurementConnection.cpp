@@ -32,11 +32,11 @@ namespace WebKit::PCM {
 
 Ref<Connection> Connection::create(CString&& machServiceName, NetworkSession& networkSession)
 {
-    return adoptRef(*new Connection(WTFMove(machServiceName), networkSession));
+    return adoptRef(*new Connection(WTF::move(machServiceName), networkSession));
 }
 
 Connection::Connection(CString&& machServiceName, NetworkSession& networkSession)
-    : Daemon::ConnectionToMachService<ConnectionTraits>(WTFMove(machServiceName))
+    : Daemon::ConnectionToMachService<ConnectionTraits>(WTF::move(machServiceName))
     , m_networkSession(networkSession)
 {
 }

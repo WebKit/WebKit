@@ -19,6 +19,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904421.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904428.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1906768.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-dynamic-change-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-dynamic-change-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-dynamic-change-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-dynamic-change-4.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-dynamic-change-5.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-dynamic-change-6.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-rewind-parallel-flow-1-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-rewind-parallel-flow-2-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-rewind-parallel-flow-3-crash.html

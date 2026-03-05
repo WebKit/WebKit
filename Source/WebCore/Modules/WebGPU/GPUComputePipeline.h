@@ -38,10 +38,10 @@ class GPUComputePipeline : public RefCounted<GPUComputePipeline> {
 public:
     static Ref<GPUComputePipeline> create(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId)
     {
-        return adoptRef(*new GPUComputePipeline(WTFMove(backing), uniqueId));
+        return adoptRef(*new GPUComputePipeline(WTF::move(backing), uniqueId));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
@@ -51,7 +51,7 @@ public:
 
 private:
     GPUComputePipeline(Ref<WebGPU::ComputePipeline>&& backing, uint64_t uniqueId)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
         , m_uniqueId(uniqueId)
     {
     }

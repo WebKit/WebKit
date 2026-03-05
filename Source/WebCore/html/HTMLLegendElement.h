@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class HTMLLegendElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLLegendElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLLegendElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLegendElement);
 public:
     static Ref<HTMLLegendElement> create(const QualifiedName&, Document&);
@@ -39,6 +39,9 @@ public:
 
 private:
     HTMLLegendElement(const QualifiedName&, Document&);
+
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
 };
 
 } // namespace WebCore

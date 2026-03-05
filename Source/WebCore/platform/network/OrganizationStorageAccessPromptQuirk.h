@@ -40,9 +40,9 @@ struct OrganizationStorageAccessPromptQuirk {
     bool isHashTableDeletedValue() const { return organizationName.isHashTableDeletedValue(); }
 
     OrganizationStorageAccessPromptQuirk(String&& organizationName, HashMap<RegistrableDomain, Vector<RegistrableDomain>>&& quirkDomains, Vector<URL>&& triggerPages)
-        : organizationName { WTFMove(organizationName) }
-        , quirkDomains { WTFMove(quirkDomains) }
-        , triggerPages { WTFMove(triggerPages) }
+        : organizationName { WTF::move(organizationName) }
+        , quirkDomains { WTF::move(quirkDomains) }
+        , triggerPages { WTF::move(triggerPages) }
         { }
 
     OrganizationStorageAccessPromptQuirk(WTF::HashTableDeletedValueType)
@@ -62,9 +62,9 @@ struct OrganizationStorageAccessPromptQuirk {
     OrganizationStorageAccessPromptQuirk isolatedCopy() &&
     {
         return {
-            crossThreadCopy(WTFMove(organizationName)),
-            crossThreadCopy(WTFMove(quirkDomains)),
-            crossThreadCopy(WTFMove(triggerPages))
+            crossThreadCopy(WTF::move(organizationName)),
+            crossThreadCopy(WTF::move(quirkDomains)),
+            crossThreadCopy(WTF::move(triggerPages))
         };
     }
 };

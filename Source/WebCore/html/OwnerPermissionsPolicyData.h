@@ -34,9 +34,9 @@ struct OwnerPermissionsPolicyData {
 
     using PolicyDirective = PermissionsPolicy::PolicyDirective;
     OwnerPermissionsPolicyData(SecurityOriginData&& documentOrigin, PermissionsPolicy&& documentPolicy, PolicyDirective&& containerPolicy)
-        : documentOrigin(WTFMove(documentOrigin))
-        , documentPolicy(WTFMove(documentPolicy))
-        , containerPolicy(WTFMove(containerPolicy))
+        : documentOrigin(WTF::move(documentOrigin))
+        , documentPolicy(WTF::move(documentPolicy))
+        , containerPolicy(WTF::move(containerPolicy))
     {
     }
 

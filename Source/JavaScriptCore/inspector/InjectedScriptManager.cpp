@@ -32,11 +32,11 @@
 #include "InjectedScriptManager.h"
 
 #include "BuiltinNames.h"
-#include "CatchScope.h"
 #include "InjectedScriptHost.h"
 #include "JSLock.h"
 #include "JSObjectInlines.h"
 #include "SourceCode.h"
+#include "TopExceptionScope.h"
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -47,8 +47,8 @@ using namespace JSC;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedScriptManager);
 
 InjectedScriptManager::InjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& injectedScriptHost)
-    : m_environment(environment)
-    , m_injectedScriptHost(WTFMove(injectedScriptHost))
+    : m_environment(&environment)
+    , m_injectedScriptHost(WTF::move(injectedScriptHost))
     , m_nextInjectedScriptId(1)
 {
 }
@@ -140,7 +140,7 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSValue globalThisValue = globalObject->globalThis();
 
@@ -173,7 +173,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
             return it1->value;
     }
 
-    if (!m_environment.canAccessInspectedScriptState(globalObject))
+    if (!protect(inspectorEnvironment())->canAccessInspectedScriptState(globalObject))
         return InjectedScript();
 
     int id = injectedScriptIdFor(globalObject);
@@ -197,7 +197,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    InjectedScript result(globalObject, createResult.value(), &m_environment);
+    InjectedScript result(globalObject, createResult.value(), m_environment.get());
     m_idToInjectedScript.set(id, result);
     didCreateInjectedScript(result);
     return result;

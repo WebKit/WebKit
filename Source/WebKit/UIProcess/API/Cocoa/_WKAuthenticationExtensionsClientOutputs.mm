@@ -65,4 +65,9 @@
     return _prfSecond.get();
 }
 
+- (void)dealloc
+{
+    [super dealloc];
+}
+
 @end

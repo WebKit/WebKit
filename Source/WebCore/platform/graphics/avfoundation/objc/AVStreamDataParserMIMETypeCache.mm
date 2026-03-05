@@ -30,6 +30,8 @@
 
 #import "AVAssetMIMETypeCache.h"
 #import "ContentType.h"
+#import <WebCore/MediaStrategy.h>
+#import <WebCore/PlatformStrategies.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/HashSet.h>
 
@@ -91,8 +93,11 @@ bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& t
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     ASSERT(isAvailable());
 
-    if ([PAL::getAVStreamDataParserClassSingleton() respondsToSelector:@selector(canParseExtendedMIMEType:)])
-        return [PAL::getAVStreamDataParserClassSingleton() canParseExtendedMIMEType:type.raw().createNSString().get()];
+    if ([PAL::getAVStreamDataParserClassSingleton() respondsToSelector:@selector(canParseExtendedMIMEType:)]) {
+        if ([PAL::getAVStreamDataParserClassSingleton() canParseExtendedMIMEType:type.raw().createNSString().get()])
+            return true;
+        return hasPlatformStrategies() && platformStrategies()->mediaStrategy()->canDecodeExtendedType(PlatformMediaDecodingType::MediaSource, type);
+    }
 
     // FIXME(rdar://50502771) AVStreamDataParser does not have an -canParseExtendedMIMEType: method on this system,
     //  so just replace the container type with a valid one from AVAssetMIMETypeCache and ask that cache if it

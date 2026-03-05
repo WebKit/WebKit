@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/WasmFormat.h>
@@ -107,7 +109,7 @@ private:
     Expected<uint32_t, State> consumeVarUInt32(std::span<const uint8_t> bytes, size_t&, IsEndOfStream);
 
     void moveToStateIfNotFailed(State);
-    template <typename ...Args> NEVER_INLINE State WARN_UNUSED_RETURN fail(Args...);
+    template <typename ...Args> [[nodiscard]] NEVER_INLINE State fail(Args...);
 
     State failOnState(State);
 

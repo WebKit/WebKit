@@ -38,7 +38,7 @@ class GPUSupportedFeatures : public RefCounted<GPUSupportedFeatures> {
 public:
     static Ref<GPUSupportedFeatures> create(Ref<WebGPU::SupportedFeatures>&& backing)
     {
-        return adoptRef(*new GPUSupportedFeatures(WTFMove(backing)));
+        return adoptRef(*new GPUSupportedFeatures(WTF::move(backing)));
     }
 
     void initializeSetLike(DOMSetAdapter&) const;
@@ -48,7 +48,7 @@ public:
 
 private:
     GPUSupportedFeatures(Ref<WebGPU::SupportedFeatures>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

@@ -69,7 +69,8 @@ public:
 
     InlineDisplay::Content& displayContent() { return m_displayContent; }
     const InlineDisplay::Content& displayContent() const { return m_displayContent; }
-    bool hasInflowContent() const;
+    bool NODELETE hasContentfulInFlowBox() const;
+    bool NODELETE hasContentfulInlineLevelBox() const;
 
     FloatRect scrollableOverflow() const { return m_scrollableOverflow; }
     FloatRect inkOverflow() const { return m_inkOverflow; }
@@ -80,23 +81,24 @@ public:
     float clearBeforeAfterGaps() const { return m_clearGapBeforeFirstLine + m_clearGapAfterLastLine; }
     float clearGapBeforeFirstLine() const { return m_clearGapBeforeFirstLine; }
     bool hasBlockLevelBoxes() const { return m_hasBlockLevelBoxes; }
+    bool hasPaintedInlineLevelBoxes() const { return m_hasPaintedInlineLevelBoxes; }
 
     IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
 
     const InlineDisplay::Line& lineForBox(const InlineDisplay::Box& box) const { return displayContent().lines[box.lineIndex()]; }
-    size_t indexForBox(const InlineDisplay::Box&) const;
+    size_t NODELETE indexForBox(const InlineDisplay::Box&) const;
     const InlineDisplay::Box* firstBoxForLayoutBox(const Layout::Box&) const;
     std::optional<size_t> firstBoxIndexForLayoutBox(const Layout::Box&) const;
 
     // Returns a block level box if the line is for block-in-inline.
-    const InlineDisplay::Box* blockLevelBoxForLine(const InlineDisplay::Line&) const;
-    bool isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&) const;
+    const InlineDisplay::Box* NODELETE blockLevelBoxForLine(const InlineDisplay::Line&) const;
+    bool NODELETE isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&) const;
 
     template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, Function&&);
 
-    const RenderBlockFlow& formattingContextRoot() const;
+    const RenderBlockFlow& NODELETE formattingContextRoot() const;
 
-    const Vector<SVGTextFragment>& svgTextFragments(size_t boxIndex) const;
+    const Vector<SVGTextFragment>& NODELETE svgTextFragments(size_t boxIndex) const;
     Vector<Vector<SVGTextFragment>>& svgTextFragmentsForBoxes() { return m_svgTextFragmentsForBoxes; }
 
     void shrinkToFit();
@@ -113,6 +115,7 @@ private:
     void setClearGapAfterLastLine(float clearGapAfterLastLine) { m_clearGapAfterLastLine = clearGapAfterLastLine; }
     void setFirstLinePaginationOffset(float firstLinePaginationOffset) { m_firstLinePaginationOffset = firstLinePaginationOffset; }
     void setHasBlockLevelBoxes() { m_hasBlockLevelBoxes = true; }
+    void setHasPaintedInlineLevelBoxes() { m_hasPaintedInlineLevelBoxes = true; }
 
     const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const;
 
@@ -132,6 +135,7 @@ private:
 
     bool m_hasMultilinePaintOverlap { false };
     bool m_hasBlockLevelBoxes { false };
+    bool m_hasPaintedInlineLevelBoxes { false };
 
     Vector<Vector<SVGTextFragment>> m_svgTextFragmentsForBoxes;
 };

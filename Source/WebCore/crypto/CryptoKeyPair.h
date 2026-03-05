@@ -32,8 +32,8 @@ namespace WebCore {
 class CryptoKey;
 
 struct CryptoKeyPair {
-    RefPtr<CryptoKey> publicKey;
-    RefPtr<CryptoKey> privateKey;
+    const RefPtr<CryptoKey> publicKey;
+    const RefPtr<CryptoKey> privateKey;
 };
 
 } // namespace WebCore

@@ -60,6 +60,7 @@ static const CFStringRef sessionHistoryEntryTitleKey = CFSTR("SessionHistoryEntr
 static const CFStringRef sessionHistoryEntryOriginalURLKey = CFSTR("SessionHistoryEntryOriginalURL");
 static const CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData");
 static const CFStringRef sessionHistoryEntryShouldOpenExternalURLsPolicyKey = CFSTR("SessionHistoryEntryShouldOpenExternalURLsPolicyKey");
+static const CFStringRef sessionHistoryEntryNavigatedFrameIDKey = CFSTR("SessionHistoryEntryNavigatedFrameID");
 
 // Session history entry data.
 const uint32_t sessionHistoryEntryDataVersion = 2;
@@ -199,10 +200,10 @@ public:
         return *this << static_cast<uint32_t>(value);
     }
 
-    MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> finishEncoding(size_t& size)
+    MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> NODELETE finishEncoding(size_t& size)
     {
         size = m_bufferSize;
-        return WTFMove(m_buffer);
+        return WTF::move(m_buffer);
     }
 
 private:
@@ -254,10 +255,10 @@ private:
         m_buffer.realloc(newCapacity.value());
     }
 
-    size_t capacity() const { return m_buffer.span().size(); }
+    size_t NODELETE capacity() const { return m_buffer.span().size(); }
 
-    std::span<uint8_t> mutableBuffer() { return m_buffer.mutableSpan(); }
-    std::span<const uint8_t> buffer() const { return m_buffer.span(); }
+    std::span<uint8_t> NODELETE mutableBuffer() { return m_buffer.mutableSpan(); }
+    std::span<const uint8_t> NODELETE buffer() const { return m_buffer.span(); }
 
     size_t m_bufferSize { 0 };
     MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> m_buffer;
@@ -432,38 +433,32 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
     size_t totalDataSize = 0;
 
     for (auto& item : backForwardListState.items) {
-        auto url = item->urlString.createCFString();
-        auto title = item->title.createCFString();
-        auto originalURL = item->originalURLString.createCFString();
+        auto& frameState = item.frameState;
+        auto url = frameState->urlString.createCFString();
+        auto title = frameState->title.createCFString();
+        auto originalURL = frameState->originalURLString.createCFString();
 
-        // We allow the first item to be unlimited in size. We refrain from serializing the data for subsequent items if they would cause us to trip over the maximumSessionStateDataSize limit.
-        auto data = totalDataSize <= maximumSessionStateDataSize ? encodeSessionHistoryEntryData(item) : nullptr;
-        if (data) {
-            totalDataSize += CFDataGetLength(data.get());
-            if (totalDataSize > maximumSessionStateDataSize && CFArrayGetCount(entries.get()) > 0)
-                data = nullptr;
-        }
-
-        auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item->shouldOpenExternalURLsPolicy);
+        auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(frameState->shouldOpenExternalURLsPolicy);
         auto shouldOpenExternalURLsPolicy = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &shouldOpenExternalURLsPolicyValue));
 
-        RetainPtr<CFDictionaryRef> entryDictionary;
+        RetainPtr<CFMutableDictionaryRef> entryDictionary = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, createDictionary({
+            { sessionHistoryEntryURLKey, url.get() },
+            { sessionHistoryEntryTitleKey, title.get() },
+            { sessionHistoryEntryOriginalURLKey, originalURL.get() },
+            { sessionHistoryEntryShouldOpenExternalURLsPolicyKey, shouldOpenExternalURLsPolicy.get() },
+        }).get()));
 
-        if (data) {
-            entryDictionary = createDictionary({
-                { sessionHistoryEntryURLKey, url.get() },
-                { sessionHistoryEntryTitleKey, title.get() },
-                { sessionHistoryEntryOriginalURLKey, originalURL.get() },
-                { sessionHistoryEntryDataKey, data.get() },
-                { sessionHistoryEntryShouldOpenExternalURLsPolicyKey, shouldOpenExternalURLsPolicy.get() },
-            });
-        } else {
-            entryDictionary = createDictionary({
-                { sessionHistoryEntryURLKey, url.get() },
-                { sessionHistoryEntryTitleKey, title.get() },
-                { sessionHistoryEntryOriginalURLKey, originalURL.get() },
-                { sessionHistoryEntryShouldOpenExternalURLsPolicyKey, shouldOpenExternalURLsPolicy.get() },
-            });
+        // We allow the first item to be unlimited in size. We refrain from serializing the data for subsequent items if they would cause us to trip over the maximumSessionStateDataSize limit.
+        if (auto data = totalDataSize <= maximumSessionStateDataSize ? encodeSessionHistoryEntryData(frameState) : nullptr) {
+            totalDataSize += CFDataGetLength(data.get());
+            if (totalDataSize <= maximumSessionStateDataSize || !CFArrayGetCount(entries.get()))
+                CFDictionarySetValue(entryDictionary.get(), sessionHistoryEntryDataKey, data.get());
+        }
+
+        if (item.navigatedFrameID) {
+            auto navigatedFrameIDValue = static_cast<uint64_t>(item.navigatedFrameID->toUInt64());
+            auto navigatedFrameIDNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &navigatedFrameIDValue));
+            CFDictionarySetValue(entryDictionary.get(), sessionHistoryEntryNavigatedFrameIDKey, navigatedFrameIDNumber.get());
         }
 
         CFArrayAppendValue(entries.get(), entryDictionary.get());
@@ -527,7 +522,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     // Copy in the actual session state data
     CFDataGetBytes(data.get(), CFRangeMake(0, length), buffer.subspan(sizeof(uint32_t)).data());
 
-    return API::Data::createWithoutCopying(buffer, [mallocBuffer = WTFMove(mallocBuffer)] { });
+    return API::Data::createWithoutCopying(buffer, [mallocBuffer = WTF::move(mallocBuffer)] { });
 }
 
 class HistoryEntryDataDecoder {
@@ -730,14 +725,14 @@ public:
         return *this;
     }
 
-    bool isValid() const { return m_isValid; }
-    void markInvalid()
+    bool NODELETE isValid() const { return m_isValid; }
+    void NODELETE markInvalid()
     {
         m_buffer = { };
         m_isValid = false;
     }
 
-    bool finishDecoding() { return m_isValid && m_buffer.empty(); }
+    bool NODELETE finishDecoding() { return m_isValid && m_buffer.empty(); }
 
 private:
     template<typename Type>
@@ -758,7 +753,7 @@ private:
         memcpySpan(data, consumeSpan(m_buffer, data.size()));
     }
 
-    bool alignBufferPosition(unsigned alignment, size_t size)
+    bool NODELETE alignBufferPosition(unsigned alignment, size_t size)
     {
         const uint8_t* alignedPosition = alignedBuffer(alignment);
         if (!alignedBufferIsLargeEnoughToContain(alignedPosition, size)) {
@@ -771,7 +766,7 @@ private:
         return true;
     }
 
-    const uint8_t* alignedBuffer(unsigned alignment) const
+    const uint8_t* NODELETE alignedBuffer(unsigned alignment) const
     {
         ASSERT(alignment && !(alignment & (alignment - 1)));
 
@@ -780,7 +775,7 @@ private:
     }
 
     template<typename T>
-    bool bufferIsLargeEnoughToContain(size_t numElements) const
+    bool NODELETE bufferIsLargeEnoughToContain(size_t numElements) const
     {
         static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
 
@@ -790,12 +785,12 @@ private:
         return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
-    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
+    bool NODELETE bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
     {
         return alignedBufferIsLargeEnoughToContain(alignedBuffer(alignment), size);
     }
 
-    inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
+    inline bool NODELETE alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
     {
         auto* bufferEnd = std::to_address(m_buffer.end());
         return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
@@ -816,7 +811,7 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
     case WTF::alternativeIndexV<Vector<uint8_t>, HTTPBody::Element::Data>: {
         Vector<uint8_t> data;
         decoder >> data;
-        formDataElement.data = WTFMove(data);
+        formDataElement.data = WTF::move(data);
         break;
     }
 
@@ -850,14 +845,14 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
         if (!std::isnan(expectedFileModificationTime))
             fileData.expectedFileModificationTime = WallTime::fromRawSeconds(expectedFileModificationTime);
 
-        formDataElement.data = WTFMove(fileData);
+        formDataElement.data = WTF::move(fileData);
         break;
     }
 
     case WTF::alternativeIndexV<String, HTTPBody::Element::Data>: {
         String blobURLString;
         decoder >> blobURLString;
-        formDataElement.data = WTFMove(blobURLString);
+        formDataElement.data = WTF::move(blobURLString);
         break;
     }
     }
@@ -881,7 +876,7 @@ static void decodeFormData(HistoryEntryDataDecoder& decoder, HTTPBody& formData)
         if (!decoder.isValid())
             return;
 
-        formData.elements.append(WTFMove(formDataElement));
+        formData.elements.append(WTF::move(formDataElement));
     }
 
     bool hasGeneratedFiles;
@@ -906,7 +901,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         if (!decoder.isValid())
             return;
 
-        frameState.children.append(WTFMove(childFrameState));
+        frameState.children.append(WTF::move(childFrameState));
     }
 
     decoder >> frameState.documentSequenceNumber;
@@ -922,7 +917,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         if (!decoder.isValid())
             return;
 
-        documentState.append(WTFMove(state));
+        documentState.append(WTF::move(state));
     }
     frameState.setDocumentState(documentState, FrameState::ShouldValidate::Yes);
 
@@ -934,11 +929,11 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 
     if (hasFormData) {
         HTTPBody httpBody;
-        httpBody.contentType = WTFMove(formContentType);
+        httpBody.contentType = WTF::move(formContentType);
 
         decodeFormData(decoder, httpBody);
 
-        frameState.httpBody = WTFMove(httpBody);
+        frameState.httpBody = WTF::move(httpBody);
     }
 
     decoder >> frameState.itemSequenceNumber;
@@ -962,7 +957,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         Vector<uint8_t> stateObjectData;
         decoder >> stateObjectData;
 
-        frameState.stateObjectData = WTFMove(stateObjectData);
+        frameState.stateObjectData = WTF::move(stateObjectData);
     }
 
     decoder >> frameState.target;
@@ -977,7 +972,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 #endif
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(std::span<const uint8_t> buffer, FrameState& mainFrameState)
+[[nodiscard]] static bool decodeSessionHistoryEntryData(std::span<const uint8_t> buffer, FrameState& mainFrameState)
 {
     HistoryEntryDataDecoder decoder { buffer };
 
@@ -992,12 +987,12 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(std::span<const uin
     return decoder.finishDecoding();
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
+[[nodiscard]] static bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
 {
     return decodeSessionHistoryEntryData(span(historyEntryData), mainFrameState);
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, FrameState& backForwardListItemState)
+[[nodiscard]] static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, FrameState& backForwardListItemState)
 {
     RetainPtr title = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryTitleKey));
     if (!title)
@@ -1032,24 +1027,32 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDi
     return true;
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<Ref<FrameState>>& entries)
+[[nodiscard]] static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForwardListItemState>& entries)
 {
     for (CFIndex i = 0, size = CFArrayGetCount(entriesArray); i < size; ++i) {
         RetainPtr entryDictionary = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(entriesArray, i));
         if (!entryDictionary)
             return false;
 
-        Ref entry = FrameState::create();
-        if (!decodeSessionHistoryEntry(entryDictionary.get(), entry))
+        Ref frameState = FrameState::create();
+        if (!decodeSessionHistoryEntry(entryDictionary.get(), frameState))
             return false;
 
-        entries.append(WTFMove(entry));
+        std::optional<WebCore::FrameIdentifier> navigatedFrameID;
+        RetainPtr navigatedFrameIDNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(entryDictionary.get(), sessionHistoryEntryNavigatedFrameIDKey));
+        if (navigatedFrameIDNumber) {
+            uint64_t value;
+            CFNumberGetValue(navigatedFrameIDNumber.get(), kCFNumberSInt64Type, &value);
+            navigatedFrameID = WebCore::FrameIdentifier(value);
+        }
+
+        entries.append({ WTF::move(frameState), navigatedFrameID });
     }
 
     return true;
 }
 
-static WARN_UNUSED_RETURN bool decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
+[[nodiscard]] static bool decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
 {
     RetainPtr currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
     if (!currentIndexNumber)
@@ -1085,7 +1088,7 @@ static WARN_UNUSED_RETURN bool decodeV0SessionHistory(CFDictionaryRef sessionHis
     return true;
 }
 
-static WARN_UNUSED_RETURN bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
+[[nodiscard]] static bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
 {
     RetainPtr currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
     if (!currentIndexNumber) {
@@ -1116,7 +1119,7 @@ static WARN_UNUSED_RETURN bool decodeV1SessionHistory(CFDictionaryRef sessionHis
     return true;
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistory(CFDictionaryRef backForwardListDictionary, BackForwardListState& backForwardListState)
+[[nodiscard]] static bool decodeSessionHistory(CFDictionaryRef backForwardListDictionary, BackForwardListState& backForwardListState)
 {
     RetainPtr sessionHistoryVersionNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(backForwardListDictionary, sessionHistoryVersionKey));
     if (!sessionHistoryVersionNumber) {

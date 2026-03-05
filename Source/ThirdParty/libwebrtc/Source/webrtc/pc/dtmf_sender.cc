@@ -191,7 +191,10 @@ void DtmfSender::DoInsertDtmf() {
     // Fire a “OnToneChange” event with an empty string and stop.
     if (observer_) {
       observer_->OnToneChange(std::string(), tones_);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
       observer_->OnToneChange(std::string());
+#pragma clang diagnostic pop
     }
     return;
   } else {
@@ -229,7 +232,10 @@ void DtmfSender::DoInsertDtmf() {
   if (observer_) {
     observer_->OnToneChange(tones_.substr(first_tone_pos, 1),
                             tones_.substr(first_tone_pos + 1));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     observer_->OnToneChange(tones_.substr(first_tone_pos, 1));
+#pragma clang diagnostic pop
   }
 
   // Erase the unrecognized characters plus the tone that's just processed.

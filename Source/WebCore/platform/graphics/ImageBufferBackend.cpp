@@ -28,6 +28,7 @@
 
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "Logging.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
 #include "PixelBufferConversion.h"
@@ -72,7 +73,14 @@ RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
     return createNativeImageReference();
 }
 
-void ImageBufferBackend::convertToLuminanceMask()
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+void ImageBufferBackend::convertToLuminanceMaskFloat16()
+{
+    LOG(Images, "convertToLuminanceMask() is not implemented for Float16 ImageBuffers.");
+}
+#endif
+
+void ImageBufferBackend::convertToLuminanceMaskUint8()
 {
     IntRect sourceRect { { }, size() };
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace() };
@@ -95,6 +103,16 @@ void ImageBufferBackend::convertToLuminanceMask()
     }
 
     putPixelBuffer(*pixelBuffer, sourceRect, IntPoint::zero(), AlphaPremultiplication::Premultiplied);
+}
+
+void ImageBufferBackend::convertToLuminanceMask()
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (pixelFormat() == PixelFormat::RGBA16F)
+        convertToLuminanceMaskFloat16();
+    else
+#endif
+        convertToLuminanceMaskUint8();
 }
 
 void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, std::span<const uint8_t> sourceData, PixelBuffer& destinationPixelBuffer)

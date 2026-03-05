@@ -33,8 +33,8 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
 SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, SourceTaintedOrigin taintedness, const TextPosition& startPosition, SourceProviderSourceType sourceType)
     : m_sourceType(sourceType)
     , m_sourceOrigin(sourceOrigin)
-    , m_sourceURL(WTFMove(sourceURL))
-    , m_preRedirectURL(WTFMove(preRedirectURL))
+    , m_sourceURL(WTF::move(sourceURL))
+    , m_preRedirectURL(WTF::move(preRedirectURL))
     , m_startPosition(startPosition)
     , m_taintedness(taintedness)
 {
@@ -85,7 +85,7 @@ const String& SourceProvider::sourceURLStripped()
 
 #if ENABLE(WEBASSEMBLY)
 BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL)
-    : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::WebAssembly)
+    : SourceProvider(sourceOrigin, WTF::move(sourceURL), String(), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::WebAssembly)
 {
 }
 #endif

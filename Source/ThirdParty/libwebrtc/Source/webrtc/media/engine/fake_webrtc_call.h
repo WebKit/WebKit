@@ -37,7 +37,6 @@
 #include "api/audio_codecs/audio_format.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/environment/environment.h"
-#include "api/field_trials_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/media_types.h"
 #include "api/rtp_headers.h"
@@ -432,10 +431,10 @@ class FakeCall final : public Call, public PacketReceiver {
 
   void SetClientBitratePreferences(
       const BitrateSettings& /* preferences */) override {}
-  const FieldTrialsView& trials() const override { return env_.field_trials(); }
-  void EnableSendCongestionControlFeedbackAccordingToRfc8888() override {}
-  int FeedbackAccordingToRfc8888Count() { return 0; }
-  int FeedbackAccordingToTransportCcCount() { return 0; }
+  void SetPreferredRtcpCcAckType(
+      RtcpFeedbackType preferred_rtcp_cc_ack_type) override {}
+  std::optional<int> FeedbackAccordingToRfc8888Count() { return 0; }
+  std::optional<int> FeedbackAccordingToTransportCcCount() { return 0; }
 
  private:
   AudioSendStream* CreateAudioSendStream(

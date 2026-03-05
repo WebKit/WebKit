@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <stddef.h>
+#include <wtf/Platform.h>
+
 namespace JSC {
 
 namespace Wasm {

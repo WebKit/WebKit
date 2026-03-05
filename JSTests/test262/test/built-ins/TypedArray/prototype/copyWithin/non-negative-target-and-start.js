@@ -19,31 +19,31 @@ includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([1, 2, 3, 4, 5, 6]).copyWithin(0, 0),
+      new TA(makeCtorArg([1, 2, 3, 4, 5, 6])).copyWithin(0, 0),
       [1, 2, 3, 4, 5, 6]
     )
   );
 
   assert(
     compareArray(
-      new TA([1, 2, 3, 4, 5, 6]).copyWithin(0, 2),
+      new TA(makeCtorArg([1, 2, 3, 4, 5, 6])).copyWithin(0, 2),
       [3, 4, 5, 6, 5, 6]
     )
   );
 
   assert(
     compareArray(
-      new TA([1, 2, 3, 4, 5, 6]).copyWithin(3, 0),
+      new TA(makeCtorArg([1, 2, 3, 4, 5, 6])).copyWithin(3, 0),
       [1, 2, 3, 1, 2, 3]
     )
   );
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3, 4, 5]).copyWithin(1, 4),
+      new TA(makeCtorArg([0, 1, 2, 3, 4, 5])).copyWithin(1, 4),
       [0, 4, 5, 3, 4, 5]
     )
   );

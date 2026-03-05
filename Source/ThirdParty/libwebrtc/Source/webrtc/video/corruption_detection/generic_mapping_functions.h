@@ -11,7 +11,7 @@
 #ifndef VIDEO_CORRUPTION_DETECTION_GENERIC_MAPPING_FUNCTIONS_H_
 #define VIDEO_CORRUPTION_DETECTION_GENERIC_MAPPING_FUNCTIONS_H_
 
-#include "api/video/corruption_detection_filter_settings.h"
+#include "api/video/corruption_detection/corruption_detection_filter_settings.h"
 #include "api/video/video_codec_type.h"
 
 namespace webrtc {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <iterator>
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 
@@ -47,8 +48,8 @@ public:
     using reverse_iterator = std::reverse_iterator<Iterator>;
 
     IteratorRange(Iterator begin, Iterator end)
-        : m_begin(WTFMove(begin))
-        , m_end(WTFMove(end))
+        : m_begin(WTF::move(begin))
+        , m_end(WTF::move(end))
     {
     }
 
@@ -68,8 +69,8 @@ class SizedIteratorRange {
 public:
     SizedIteratorRange(const Container& container, Iterator begin, Iterator end)
         : m_container(container)
-        , m_begin(WTFMove(begin))
-        , m_end(WTFMove(end))
+        , m_begin(WTF::move(begin))
+        , m_end(WTF::move(end))
     {
     }
 

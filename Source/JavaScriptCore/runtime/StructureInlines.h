@@ -525,6 +525,8 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     }
     if (propertyName == vm.propertyNames->underscoreProto)
         setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
+    else if (propertyName == vm.propertyNames->then)
+        setHasSpecialProperties(true);
 
     auto rep = propertyName.uid();
 
@@ -683,13 +685,15 @@ ALWAYS_INLINE auto Structure::addOrReplacePropertyWithoutTransition(VM& vm, Prop
     }
     if (propertyName == vm.propertyNames->underscoreProto)
         setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
+    else if (propertyName == vm.propertyNames->then)
+        setHasSpecialProperties(true);
 
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
 
     m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
     m_seenProperties.add(CompactPtr<UniquedStringImpl>::encode(rep));
 
-    auto [offset, attributes, result] = table->addAfterFind(vm, PropertyTableEntry(rep, newOffset, newAttributes), WTFMove(findResult));
+    auto [offset, attributes, result] = table->addAfterFind(vm, PropertyTableEntry(rep, newOffset, newAttributes), WTF::move(findResult));
     ASSERT_UNUSED(result, result);
     ASSERT_UNUSED(offset, offset == newOffset);
     UNUSED_VARIABLE(attributes);

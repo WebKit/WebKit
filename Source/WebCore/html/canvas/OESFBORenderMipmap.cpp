@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OESFBORenderMipmap);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OESFBORenderMipmap);
 
 OESFBORenderMipmap::OESFBORenderMipmap(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::OESFBORenderMipmap)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::OES_fbo_render_mipmap);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::OES_fbo_render_mipmap);
 }
 
 OESFBORenderMipmap::~OESFBORenderMipmap() = default;

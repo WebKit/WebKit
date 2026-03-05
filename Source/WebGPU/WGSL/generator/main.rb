@@ -302,6 +302,7 @@ module DSL
         properties = {
             must_use: false,
             const: false,
+            validate: false,
             stage: [:fragment, :compute, :vertex],
         }
         map.each do |key, value|
@@ -348,14 +349,19 @@ module DSL
         @aliases[name] = type
     end
 
-    def self.to_cpp
+    def self.declarations_to_cpp
         out = []
 
         @aliases.each do |name, type|
             out << "CHECK(introduceType(AST::Identifier::make(\"#{name}\"_s), #{type.concrete_type}));"
         end
 
-        out << ""
+        out << "" # xcode compilation fails if there's not newline at the end of the file
+        out.join "\n"
+    end
+
+    def self.overloads_to_cpp
+        out = []
 
         @entries.each do |name, entry|
             constant_function = case entry[:const]
@@ -363,6 +369,15 @@ module DSL
                 "nullptr"
             when true
                 "constant#{name[0].upcase}#{name[1..]}"
+            else
+                entry[:const]
+            end
+
+            validation_function = case entry[:validate]
+            when false
+                "nullptr"
+            when true
+                "validate#{name[0].upcase}#{name[1..]}"
             else
                 entry[:const]
             end
@@ -375,6 +390,7 @@ module DSL
             out << "    .kind = OverloadedDeclaration::#{entry[:kind].to_s.capitalize},"
             out << "    .mustUse = #{entry[:must_use]},"
             out << "    .constantFunction = #{constant_function},"
+            out << "    .validationFunction = #{validation_function},"
             out << "    .visibility = { #{visibility} },"
             out << "    .overloads = { }"
             out << "});"
@@ -385,6 +401,7 @@ module DSL
             out << "}"
             out << ""
         end
+
         out << "" # xcode compilation fails if there's not newline at the end of the file
         out.join "\n"
     end
@@ -545,15 +562,17 @@ module DSL
         @context.eval(File.open(file).read, file)
     end
 
-    def self.write_to(output)
-        File.open(output, 'w') { |file| file.write(to_cpp) }
+    def self.write_to(output_declarations, output_overloads)
+        File.open(output_declarations, 'w') { |file| file.write(declarations_to_cpp) }
+        File.open(output_overloads, 'w') { |file| file.write(overloads_to_cpp) }
     end
 end
 
-raise "usage: #{__FILE__} <declaration-file> <output-file>" if ARGV.length != 2
+raise "usage: #{__FILE__} <declaration-file> <output-type-declarations> <output-type-overloads>" if ARGV.length != 3
 input = ARGV[0]
-output = ARGV[1]
+output_declarations = ARGV[1]
+output_overloads = ARGV[2]
 
 DSL::prologue()
 DSL::run(input)
-DSL::write_to(output)
+DSL::write_to(output_declarations, output_overloads)

@@ -52,6 +52,7 @@ namespace WebKit {
 class AcceleratedSurface;
 class CoordinatedSceneState;
 class LayerTreeHost;
+class WebPage;
 struct RenderProcessInfo;
 
 class ThreadedCompositor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ThreadedCompositor>, public CanMakeThreadSafeCheckedPtr<ThreadedCompositor> {
@@ -59,14 +60,14 @@ class ThreadedCompositor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPt
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadedCompositor);
 public:
-    static Ref<ThreadedCompositor> create(LayerTreeHost&);
+    static Ref<ThreadedCompositor> create(WebPage&, LayerTreeHost&, CoordinatedSceneState&);
     virtual ~ThreadedCompositor();
 
     uint64_t surfaceID() const;
     int maxTextureSize() const { return m_maxTextureSize; }
 
     void backgroundColorDidChange();
-#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
     void preferredBufferFormatsDidChange();
 #endif
     void pendingTilesDidChange();
@@ -96,12 +97,16 @@ public:
     void fillGLInformation(RenderProcessInfo&&, CompletionHandler<void(RenderProcessInfo&&)>&&);
 
 private:
-    explicit ThreadedCompositor(LayerTreeHost&);
+    ThreadedCompositor(WebPage&, LayerTreeHost&, CoordinatedSceneState&);
+
+    void startRenderTimer();
+    void stopRenderTimer();
+    bool isOnlyRenderingUpdatePendingAndWaitingForTiles() const;
 
     void scheduleUpdateLocked();
     void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void renderLayerTree();
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&);
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
     void frameComplete();
 
     void didCompositeRunLoopObserverFired();
@@ -125,15 +130,17 @@ private:
         Idle,
         Scheduled,
         InProgress,
-        ScheduledWhileInProgress,
-        WaitingForTiles
+        ScheduledWhileInProgress
     };
+    static ASCIILiteral stateToString(State);
 
     struct {
         mutable Lock lock;
         State state WTF_GUARDED_BY_LOCK(lock) { State::Idle };
+        bool isRenderTimerActive WTF_GUARDED_BY_LOCK(lock) { false };
+        bool isWaitingForTiles WTF_GUARDED_BY_LOCK(lock) { false };
         OptionSet<WebCore::CompositionReason> reasons WTF_GUARDED_BY_LOCK(lock);
-        Function<void()> didCompositeRenderinUpdateFunction WTF_GUARDED_BY_LOCK(lock);
+        Function<void()> didCompositeRenderingUpdateFunction WTF_GUARDED_BY_LOCK(lock);
     } m_state;
 
     struct {

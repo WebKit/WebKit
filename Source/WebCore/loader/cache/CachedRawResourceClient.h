@@ -26,15 +26,6 @@
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
-class CachedRawResourceClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedRawResourceClient> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CachedResource;
 class ResourceRequest;
@@ -56,7 +47,7 @@ public:
 
     virtual bool shouldCacheResponse(CachedResource&, const ResourceResponse&) { return true; }
     virtual void dataReceived(CachedResource&, const SharedBuffer&) { }
-    virtual void redirectReceived(CachedResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
+    virtual void redirectReceived(CachedResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) { completionHandler(WTF::move(request)); }
     virtual void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) { }
 
 #if USE(QUICK_LOOK)

@@ -52,7 +52,7 @@ public:
     ExceptionOr<RefPtr<Uint8Array>> flush();
 
 private:
-    bool didDeflateFinish(int) const;
+    bool NODELETE didDeflateFinish(int) const;
 
     ExceptionOr<Ref<JSC::ArrayBuffer>> compress(std::span<const uint8_t>);
     ExceptionOr<Ref<JSC::ArrayBuffer>> compressZlib(std::span<const uint8_t>);

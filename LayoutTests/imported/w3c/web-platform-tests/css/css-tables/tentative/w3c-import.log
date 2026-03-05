@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/baseline-table.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/baseline-td.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/border-collapse-spanning-cells-001-expected.html

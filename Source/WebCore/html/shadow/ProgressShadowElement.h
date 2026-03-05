@@ -39,10 +39,10 @@ namespace WebCore {
 class HTMLProgressElement;
 
 class ProgressShadowElement : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressShadowElement);
+    WTF_MAKE_TZONE_ALLOCATED(ProgressShadowElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressShadowElement);
 public:
-    HTMLProgressElement* progressElement() const;
+    HTMLProgressElement* NODELETE progressElement() const;
 
 protected:
     explicit ProgressShadowElement(Document&);
@@ -55,39 +55,39 @@ private:
 // fields to the class.
 
 class ProgressInnerElement final : public ProgressShadowElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressInnerElement);
+    WTF_MAKE_TZONE_ALLOCATED(ProgressInnerElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressInnerElement);
 public:
     static Ref<ProgressInnerElement> create(Document&);
 
 private:
-    ProgressInnerElement(Document&);
+    explicit ProgressInnerElement(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool rendererIsNeeded(const RenderStyle&) final;
 };
 static_assert(sizeof(ProgressInnerElement) == sizeof(ProgressShadowElement));
 
 class ProgressBarElement final : public ProgressShadowElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressBarElement);
+    WTF_MAKE_TZONE_ALLOCATED(ProgressBarElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressBarElement);
 public:
     static Ref<ProgressBarElement> create(Document&);
 
 private:
-    ProgressBarElement(Document&);
+    explicit ProgressBarElement(Document&);
 };
 static_assert(sizeof(ProgressBarElement) == sizeof(ProgressShadowElement));
 
 class ProgressValueElement final : public ProgressShadowElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressValueElement);
+    WTF_MAKE_TZONE_ALLOCATED(ProgressValueElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressValueElement);
 public:
     static Ref<ProgressValueElement> create(Document&);
     void setInlineSizePercentage(double);
 
 private:
-    ProgressValueElement(Document&);
+    explicit ProgressValueElement(Document&);
 };
 static_assert(sizeof(ProgressValueElement) == sizeof(ProgressShadowElement));
 

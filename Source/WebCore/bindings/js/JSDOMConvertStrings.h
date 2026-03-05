@@ -74,7 +74,7 @@ template<> struct Converter<IDLDOMString> : DefaultConverter<IDLDOMString> {
 
         RETURN_IF_EXCEPTION(scope, Result::exception());
 
-        return Result { WTFMove(string) };
+        return Result { WTF::move(string) };
     }
 };
 

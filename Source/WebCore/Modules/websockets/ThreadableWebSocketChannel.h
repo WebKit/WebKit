@@ -31,6 +31,7 @@
 #pragma once
 
 #include <WebCore/WebSocketIdentifier.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
 #include <wtf/Noncopyable.h>
@@ -55,15 +56,12 @@ class WebSocketChannelClient;
 
 using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
-class ThreadableWebSocketChannel : public Identified<WebSocketIdentifier> {
+class ThreadableWebSocketChannel : public AbstractRefCounted, public Identified<WebSocketIdentifier> {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
 public:
     static RefPtr<ThreadableWebSocketChannel> create(Document&, WebSocketChannelClient&, SocketProvider&);
     static RefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&, SocketProvider&);
     WEBCORE_EXPORT ThreadableWebSocketChannel();
-
-    void ref() { refThreadableWebSocketChannel(); }
-    void deref() { derefThreadableWebSocketChannel(); }
 
     enum class ConnectStatus { KO, OK };
     virtual ConnectStatus connect(const URL&, const String& protocol) = 0;
@@ -111,8 +109,6 @@ public:
     
 protected:
     virtual ~ThreadableWebSocketChannel() = default;
-    virtual void refThreadableWebSocketChannel() = 0;
-    virtual void derefThreadableWebSocketChannel() = 0;
 
     struct ValidatedURL {
         URL url;

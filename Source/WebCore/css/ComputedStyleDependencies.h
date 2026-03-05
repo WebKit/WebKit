@@ -39,7 +39,7 @@ struct ComputedStyleDependencies {
     bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions && !anchors; }
 
     // Checks to see if the provided conversion data is sufficient to resolve the provided dependencies.
-    bool canResolveDependenciesWithConversionData(const CSSToLengthConversionData&) const;
+    bool NODELETE canResolveDependenciesWithConversionData(const CSSToLengthConversionData&) const;
 };
 
 } // namespace WebCore

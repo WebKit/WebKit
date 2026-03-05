@@ -85,10 +85,10 @@ template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Ve
 template<YarrSyntaxCheckable Delegate, typename CharType>
 class Parser {
 public:
-    Parser(Delegate& delegate, StringView pattern, CompileMode compileMode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)
+    Parser(Delegate& delegate, std::span<const CharType> pattern, CompileMode compileMode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)
         : m_delegate(delegate)
-        , m_data(pattern.span<CharType>().data())
-        , m_size(pattern.length())
+        , m_data(pattern.data())
+        , m_size(pattern.size())
         , m_compileMode(compileMode)
         , m_backReferenceLimit(backReferenceLimit)
         , m_isNamedForwardReferenceAllowed(isNamedForwardReferenceAllowed)
@@ -184,10 +184,10 @@ private:
         {
             ASSERT(m_nestedCaptureGroupNames.size() > 1);
             ASSERT(m_activeCaptureGroupNames.size() > 1);
-            m_nestedCaptureGroupNames.last().addAll(WTFMove(m_activeCaptureGroupNames.last()));
+            m_nestedCaptureGroupNames.last().addAll(WTF::move(m_activeCaptureGroupNames.last()));
 
             // Add all the names seen in this parenthesis to the containing alternative.
-            m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2].addAll(WTFMove(m_nestedCaptureGroupNames.last()));
+            m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2].addAll(WTF::move(m_nestedCaptureGroupNames.last()));
 
             m_nestedCaptureGroupNames.removeLast();
             m_activeCaptureGroupNames.removeLast();
@@ -2268,8 +2268,8 @@ template<YarrSyntaxCheckable Delegate>
 ErrorCode parse(Delegate& delegate, const StringView pattern, CompileMode compileMode, unsigned backReferenceLimit = quantifyInfinite, bool isNamedForwardReferenceAllowed = true)
 {
     if (pattern.is8Bit())
-        return Parser<Delegate, Latin1Character>(delegate, pattern, compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
-    return Parser<Delegate, char16_t>(delegate, pattern, compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
+        return Parser<Delegate, Latin1Character>(delegate, pattern.span8(), compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
+    return Parser<Delegate, char16_t>(delegate, pattern.span16(), compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
 }
 
 } } // namespace JSC::Yarr

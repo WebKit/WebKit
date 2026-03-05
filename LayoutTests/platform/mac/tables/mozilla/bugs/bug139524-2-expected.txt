@@ -14,15 +14,15 @@ layer at (0,0) size 800x357
         RenderText {#text} at (0,0) size 354x18
           text run at (0,0) width 354: "The following TABLE has a COLGROUP structure of:"
       RenderBlock {PRE} at (15,126) size 769x61 [color=#000066]
-        RenderText {#text} at (0,0) size 212x60
+        RenderText {#text} at (0,-1) size 212x62
           text run at (0,0) width 79: "<colgroup>"
           text run at (78,0) width 1: " "
-          text run at (0,15) width 212: " <col width=\"100\" span=\"2\">"
-          text run at (211,15) width 1: " "
-          text run at (0,30) width 141: " <col width=\"200\">"
-          text run at (140,30) width 1: " "
-          text run at (0,45) width 87: "</colgroup>"
-          text run at (86,45) width 1: " "
+          text run at (0,14) width 212: " <col width=\"100\" span=\"2\">"
+          text run at (211,14) width 1: " "
+          text run at (0,29) width 141: " <col width=\"200\">"
+          text run at (140,29) width 1: " "
+          text run at (0,44) width 87: "</colgroup>"
+          text run at (86,44) width 1: " "
       RenderBlock {P} at (0,202) size 784x19
         RenderText {#text} at (0,0) size 563x18
           text run at (0,0) width 563: "So the first two colums should both be 100px wide, and the third should be 200px wide."

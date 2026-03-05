@@ -49,8 +49,10 @@
 #include "WebExtensionMatchedRuleParameters.h"
 #include "WebExtensionMenuItem.h"
 #include "WebExtensionMessagePort.h"
+#include "WebExtensionMessageSenderParameters.h"
 #include "WebExtensionPortChannelIdentifier.h"
 #include "WebExtensionRegisteredScriptsSQLiteStore.h"
+#include "WebExtensionStorageAccessLevel.h"
 #include "WebExtensionStorageSQLiteStore.h"
 #include "WebExtensionTab.h"
 #include "WebExtensionTabIdentifier.h"
@@ -337,7 +339,7 @@ public:
     Vector<Ref<API::Error>> errors();
 
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
-    const String& storageDirectory() const { return m_storageDirectory; }
+    const String& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
 
     void invalidateStorage();
 
@@ -350,18 +352,16 @@ public:
     bool isLoaded() const { return !!m_extensionController; }
 
     WebExtension& extension() const { return *m_extension; }
-    Ref<WebExtension> protectedExtension() const { return extension(); }
     WebExtensionController* extensionController() const { return m_extensionController.get(); }
-    RefPtr<WebExtensionController> protectedExtensionController() const { return m_extensionController.get(); }
 
-    const URL& baseURL() const { return m_baseURL; }
+    const URL& baseURL() const LIFETIME_BOUND { return m_baseURL; }
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&) const;
 
     bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
-    const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
+    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
     void setUniqueIdentifier(String&&);
 
     RefPtr<WebExtensionLocalization> localization();
@@ -380,21 +380,21 @@ public:
     bool hasInjectedContent();
     bool safeToInjectContent() const { return isLoaded() && m_safeToInjectContent; }
 
-    bool hasContentModificationRules();
+    bool NODELETE hasContentModificationRules();
 
     URL optionsPageURL() const;
     URL overrideNewTabPageURL() const;
 
-    const PermissionsMap& grantedPermissions();
+    const PermissionsMap& grantedPermissions() LIFETIME_BOUND;
     void setGrantedPermissions(PermissionsMap&&);
 
-    const PermissionsMap& deniedPermissions();
+    const PermissionsMap& deniedPermissions() LIFETIME_BOUND;
     void setDeniedPermissions(PermissionsMap&&);
 
-    const PermissionMatchPatternsMap& grantedPermissionMatchPatterns();
+    const PermissionMatchPatternsMap& grantedPermissionMatchPatterns() LIFETIME_BOUND;
     void setGrantedPermissionMatchPatterns(PermissionMatchPatternsMap&&, EqualityOnly = EqualityOnly::Yes);
 
-    const PermissionMatchPatternsMap& deniedPermissionMatchPatterns();
+    const PermissionMatchPatternsMap& deniedPermissionMatchPatterns() LIFETIME_BOUND;
     void setDeniedPermissionMatchPatterns(PermissionMatchPatternsMap&&, EqualityOnly = EqualityOnly::Yes);
 
     bool requestedOptionalAccessToAllHosts() const { return m_requestedOptionalAccessToAllHosts; }
@@ -506,7 +506,6 @@ public:
 #endif
 
     WebExtensionAction& defaultAction();
-    Ref<WebExtensionAction> protectedDefaultAction() { return defaultAction(); }
     Ref<WebExtensionAction> getAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getAction(WebExtensionTab*);
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionWindow*);
@@ -542,7 +541,7 @@ public:
 
     NSArray *platformMenuItems(const WebExtensionTab&) const;
 
-    const MenuItemVector& mainMenuItems() const { return m_mainMenuItems; }
+    const MenuItemVector& mainMenuItems() const LIFETIME_BOUND { return m_mainMenuItems; }
     WebExtensionMenuItem* menuItem(const String& identifier) const;
     void performMenuItem(WebExtensionMenuItem&, const WebExtensionMenuItemContextParameters&, UserTriggered = UserTriggered::No);
 
@@ -556,7 +555,7 @@ public:
     bool hasActiveUserGesture(WebExtensionTab&) const;
     void clearUserGesture(WebExtensionTab&);
 
-    bool inTestingMode() const;
+    bool NODELETE inTestingMode() const;
 
 #if PLATFORM(COCOA)
     void sendTestMessage(const String& message, id argument);
@@ -603,7 +602,7 @@ public:
     // Returns whether or not there are any matched rules after the purge.
     bool purgeMatchedRulesFromBefore(const WallTime&);
 
-    UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() { return m_dynamicallyInjectedUserStyleSheets; };
+    UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() LIFETIME_BOUND { return m_dynamicallyInjectedUserStyleSheets; };
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier() const;
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -640,12 +639,12 @@ public:
 
     HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&& typeSet, WebExtensionContentWorldType contentWorldType) const
     {
-        return processes(WTFMove(typeSet), ContentWorldTypeSet { contentWorldType });
+        return processes(WTF::move(typeSet), ContentWorldTypeSet { contentWorldType });
     }
 
     HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&, Function<bool(WebProcessProxy&, WebPageProxy&, WebFrameProxy&)>&& predicate = nullptr) const;
 
-    const UserContentControllerProxySet& userContentControllers() const;
+    const UserContentControllerProxySet& NODELETE userContentControllers() const LIFETIME_BOUND;
 
     template<typename T>
     void sendToProcesses(const WebProcessProxySet&, const T& message) const;
@@ -669,7 +668,7 @@ private:
 
     explicit WebExtensionContext();
 
-    int toAPIError(WebExtensionContext::Error);
+    int NODELETE toAPIError(WebExtensionContext::Error);
 
     String stateFilePath() const;
     NSDictionary *currentState() const;
@@ -950,7 +949,7 @@ private:
 
     // Storage APIs
     bool isStorageMessageAllowed(IPC::Decoder&);
-    void storageGet(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&&);
+    void storageGet(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&&);
     void storageGetKeys(WebPageProxyIdentifier, WebExtensionDataType, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&&);
     void storageGetBytesInUse(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(Expected<uint64_t, WebExtensionError>&&)>&&);
     void storageSet(WebPageProxyIdentifier, WebExtensionDataType, const String& dataJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
@@ -1014,7 +1013,7 @@ private:
 
     bool isLoaded(IPC::Decoder&) const { return isLoaded(); }
     bool isLoadedAndPrivilegedMessage(IPC::Decoder& message) const { return isLoaded() && isPrivilegedMessage(message); }
-    bool isPrivilegedMessage(IPC::Decoder&) const;
+    bool NODELETE isPrivilegedMessage(IPC::Decoder&) const;
 
     mutable Markable<WebExtensionContextIdentifier> m_privilegedIdentifier;
 
@@ -1186,7 +1185,7 @@ void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType 
 template<typename T>
 void WebExtensionContext::sendToProcessesForEvents(EventListenerTypeSet&& typeSet, const T& message) const
 {
-    sendToProcesses(processes(WTFMove(typeSet), WebExtensionContentWorldType::Main), message);
+    sendToProcesses(processes(WTF::move(typeSet), WebExtensionContentWorldType::Main), message);
 }
 
 template<typename T>

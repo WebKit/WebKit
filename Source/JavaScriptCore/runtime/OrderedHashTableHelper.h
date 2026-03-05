@@ -153,6 +153,9 @@ public:
     ALWAYS_INLINE static constexpr TableIndex capacityIndex() { return deletedEntryCountIndex() + 1; }
     ALWAYS_INLINE static constexpr TableIndex iterationEntryIndex() { return capacityIndex() + 1; }
 
+    ALWAYS_INLINE static constexpr size_t offsetInStorageForIndex(TableIndex index) { return JSCellButterfly::offsetOfData() + index * sizeof(uint64_t); }
+    ALWAYS_INLINE static constexpr size_t offsetOfAliveEntryCount() { return offsetInStorageForIndex(aliveEntryCountIndex()); }
+
     ALWAYS_INLINE static constexpr TableSize aliveEntryCount(Storage& storage) { return asNumber(storage, aliveEntryCountIndex()); }
     ALWAYS_INLINE static constexpr TableSize deletedEntryCount(Storage& storage) { return asNumber(storage, deletedEntryCountIndex()); }
     ALWAYS_INLINE static constexpr TableSize usedCapacity(Storage& storage) { return aliveEntryCount(storage) + deletedEntryCount(storage); }
@@ -418,6 +421,9 @@ public:
     ALWAYS_INLINE static void addImpl(JSGlobalObject* globalObject, HashTable* owner, Storage& base, JSValue key, JSValue value, FindResult& result)
     {
         VM& vm = getVM(globalObject);
+        // We're transitioning between states here, if a termination comes in we could leave the storage
+        // in an inconsistent state. It's much easier to pause termination until the storage is updated.
+        DeferTerminationForAWhile noTermination(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
         ASSERT(!isObsolete(base));
         ASSERT(!isValidTableIndex(result.entryKeyIndex));
@@ -472,6 +478,9 @@ public:
     ALWAYS_INLINE static void shrinkIfNeeded(JSGlobalObject* globalObject, HashTable* owner, Storage& base)
     {
         VM& vm = globalObject->vm();
+        // We're transitioning between states here, if a termination comes in we could leave the storage
+        // in an inconsistent state. It's much easier to pause termination until the storage is updated.
+        DeferTerminationForAWhile noTermination(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
         ASSERT(!isObsolete(base));
         TableSize capacity = Helper::capacity(base);
@@ -569,6 +578,8 @@ public:
         ASSERT(!isObsolete(candidate));
         TableSize capacity = Helper::capacity(candidate);
         TableIndex entryKeyIndex = entryDataStartIndex(dataTableStartIndex(capacity), from);
+        if (from >= capacity) [[unlikely]]
+            return { };
         for (Entry entry = from;; ++entry, entryKeyIndex += EntrySize) {
             JSValue key = get(candidate, entryKeyIndex);
             if (!key)

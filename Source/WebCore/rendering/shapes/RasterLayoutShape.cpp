@@ -61,7 +61,7 @@ MarginIntervalGenerator::MarginIntervalGenerator(unsigned radius)
         m_xIntercepts[y] = sqrt(static_cast<double>(radiusSquared - y * y));
 }
 
-void MarginIntervalGenerator::set(int y, const IntShapeInterval& interval)
+void NODELETE MarginIntervalGenerator::set(int y, const IntShapeInterval& interval)
 {
     ASSERT(y >= 0 && interval.x1() >= 0);
     m_y = y;
@@ -147,7 +147,7 @@ const RasterShapeIntervals& RasterLayoutShape::marginIntervals() const
     int shapeMarginInt = clampToPositiveInteger(ceil(shapeMargin()));
     int maxShapeMarginInt = std::max(m_marginRectSize.width(), m_marginRectSize.height()) * sqrt(2);
     if (!m_marginIntervals)
-        m_marginIntervals = m_intervals->computeShapeMarginIntervals(std::min(shapeMarginInt, maxShapeMarginInt));
+        lazyInitialize(m_marginIntervals, m_intervals->computeShapeMarginIntervals(std::min(shapeMarginInt, maxShapeMarginInt)));
 
     return *m_marginIntervals;
 }

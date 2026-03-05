@@ -40,12 +40,12 @@ using namespace fido;
 
 Ref<CtapNfcDriver> CtapNfcDriver::create(Ref<NfcConnection>&& connection)
 {
-    return adoptRef(*new CtapNfcDriver(WTFMove(connection)));
+    return adoptRef(*new CtapNfcDriver(WTF::move(connection)));
 }
 
 CtapNfcDriver::CtapNfcDriver(Ref<NfcConnection>&& connection)
     : CtapDriver(WebCore::AuthenticatorTransport::Nfc)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
 {
 }
 
@@ -60,40 +60,40 @@ void CtapNfcDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
         ApduCommand command;
         command.setCla(kCtapNfcApduCla);
         command.setIns(kCtapNfcApduIns);
-        command.setData(WTFMove(data));
+        command.setData(WTF::move(data));
         command.setResponseLength(ApduCommand::kApduMaxResponseLength);
 
         auto apduResponse = ApduResponse::createFromMessage(m_connection->transact(command.getEncodedCommand()));
         if (!apduResponse) {
-            respondAsync(WTFMove(callback), { });
+            respondAsync(WTF::move(callback), { });
             return;
         }
         if (apduResponse->status() == ApduResponse::Status::SW_INS_NOT_SUPPORTED) {
             // Return kCtap1ErrInvalidCommand instead of an empty response to signal FidoService to create a U2F authenticator
             // for the getInfo stage.
-            respondAsync(WTFMove(callback), { static_cast<uint8_t>(CtapDeviceResponseCode::kCtap1ErrInvalidCommand) });
+            respondAsync(WTF::move(callback), { static_cast<uint8_t>(CtapDeviceResponseCode::kCtap1ErrInvalidCommand) });
             return;
         }
         if (apduResponse->status() != ApduResponse::Status::SW_NO_ERROR) {
-            respondAsync(WTFMove(callback), { });
+            respondAsync(WTF::move(callback), { });
             return;
         }
 
-        respondAsync(WTFMove(callback), WTFMove(apduResponse->data()));
+        respondAsync(WTF::move(callback), WTF::move(apduResponse->data()));
         return;
     }
 
 
     // For U2F, U2fAuthenticator would handle the APDU encoding.
     // https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-nfc-protocol-v1.2-ps-20170411.html#framing
-    callback(m_connection->transact(WTFMove(data)));
+    callback(m_connection->transact(WTF::move(data)));
 }
 
 // Return the response async to match the HID behaviour, such that nfc could fit into the current infra.
 void CtapNfcDriver::respondAsync(ResponseCallback&& callback, Vector<uint8_t>&& response) const
 {
-    RunLoop::mainSingleton().dispatch([callback = WTFMove(callback), response = WTFMove(response)] () mutable {
-        callback(WTFMove(response));
+    RunLoop::mainSingleton().dispatch([callback = WTF::move(callback), response = WTF::move(response)] () mutable {
+        callback(WTF::move(response));
     });
 }
 

@@ -37,12 +37,16 @@ class CachedSVGDocument;
 class CachedResourceLoader;
 struct ResourceLoaderOptions;
 
-class CachedSVGDocumentReference final : public CachedSVGDocumentClient {
+class CachedSVGDocumentReference final : public CachedSVGDocumentClient, public RefCounted<CachedSVGDocumentReference> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedSVGDocumentReference, Loader);
 public:
-    CachedSVGDocumentReference(const Style::URL&);
+    static Ref<CachedSVGDocumentReference> create(const Style::URL&);
 
     virtual ~CachedSVGDocumentReference();
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void load(CachedResourceLoader&, const ResourceLoaderOptions&);
     bool loadRequested() const { return m_loadRequested; }
@@ -50,6 +54,8 @@ public:
     CachedSVGDocument* document() { return m_document.get(); }
 
 private:
+    explicit CachedSVGDocumentReference(const Style::URL&);
+
     Style::URL m_location;
     CachedResourceHandle<CachedSVGDocument> m_document;
     bool m_loadRequested { false };

@@ -34,7 +34,7 @@ public:
     static Ref<InsertNodeBeforeCommand> create(Ref<Node>&& childToInsert, Node& childToInsertBefore,
         ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction = EditAction::Insert)
     {
-        return adoptRef(*new InsertNodeBeforeCommand(WTFMove(childToInsert), childToInsertBefore, shouldAssumeContentIsAlwaysEditable, editingAction));
+        return adoptRef(*new InsertNodeBeforeCommand(WTF::move(childToInsert), childToInsertBefore, shouldAssumeContentIsAlwaysEditable, editingAction));
     }
 
 protected:

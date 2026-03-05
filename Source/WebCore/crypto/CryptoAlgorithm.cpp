@@ -46,7 +46,7 @@ void CryptoAlgorithm::sign(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, V
     exceptionCallback(ExceptionCode::NotSupportedError);
 }
 
-void CryptoAlgorithm::verify(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, Vector<uint8_t>&&, BoolCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithm::doVerify(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, Vector<uint8_t>&&, BoolCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
 {
     exceptionCallback(ExceptionCode::NotSupportedError);
 }
@@ -95,9 +95,9 @@ template<typename ResultCallbackType, typename OperationType>
 static void dispatchAlgorithmOperation(WorkQueue& workQueue, ScriptExecutionContext& context, ResultCallbackType&& callback, CryptoAlgorithm::ExceptionCallback&& exceptionCallback, OperationType&& operation)
 {
     workQueue.dispatch(
-        [operation = std::forward<OperationType>(operation), callback = std::forward<ResultCallbackType>(callback), exceptionCallback = WTFMove(exceptionCallback), contextIdentifier = context.identifier()]() mutable {
+        [operation = std::forward<OperationType>(operation), callback = std::forward<ResultCallbackType>(callback), exceptionCallback = WTF::move(exceptionCallback), contextIdentifier = context.identifier()]() mutable {
             auto result = operation();
-            ScriptExecutionContext::postTaskTo(contextIdentifier, [result = crossThreadCopy(WTFMove(result)), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](auto&) mutable {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [result = crossThreadCopy(WTF::move(result)), callback = WTF::move(callback), exceptionCallback = WTF::move(exceptionCallback)](auto&) mutable {
                 if (result.hasException()) {
                     exceptionCallback(result.releaseException().code());
                     return;
@@ -109,17 +109,17 @@ static void dispatchAlgorithmOperation(WorkQueue& workQueue, ScriptExecutionCont
 
 void CryptoAlgorithm::dispatchOperationInWorkQueue(WorkQueue& workQueue, ScriptExecutionContext& context, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, Function<ExceptionOr<Vector<uint8_t>>()>&& operation)
 {
-    dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
+    dispatchAlgorithmOperation(workQueue, context, WTF::move(callback), WTF::move(exceptionCallback), WTF::move(operation));
 }
 
 void CryptoAlgorithm::dispatchOperationInWorkQueue(WorkQueue& workQueue, ScriptExecutionContext& context, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, Function<ExceptionOr<bool>()>&& operation)
 {
-    dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
+    dispatchAlgorithmOperation(workQueue, context, WTF::move(callback), WTF::move(exceptionCallback), WTF::move(operation));
 }
 
 void CryptoAlgorithm::dispatchDigest(WorkQueue& workQueue, ScriptExecutionContext& context, VectorCallback&& callback, ExceptionCallback&&exceptionCallback, Vector<uint8_t>&& message, PAL::CryptoDigest::Algorithm algo)
 {
-    workQueue.dispatch([message = WTFMove(message), callback = WTFMove(callback), contextIdentifier = context.identifier(), exceptionCallback = WTFMove(exceptionCallback), algo]() mutable {
+    workQueue.dispatch([message = WTF::move(message), callback = WTF::move(callback), contextIdentifier = context.identifier(), exceptionCallback = WTF::move(exceptionCallback), algo]() mutable {
         auto digest = PAL::CryptoDigest::create(algo);
         if (!digest) {
             exceptionCallback(ExceptionCode::OperationError);
@@ -128,8 +128,8 @@ void CryptoAlgorithm::dispatchDigest(WorkQueue& workQueue, ScriptExecutionContex
         digest->addBytes(message.span());
         auto result = digest->computeHash();
 
-        ScriptExecutionContext::postTaskTo(contextIdentifier, [callback = WTFMove(callback), result = WTFMove(result), exceptionCallback = WTFMove(exceptionCallback)](auto&) mutable {
-            callback(WTFMove(result));
+        ScriptExecutionContext::postTaskTo(contextIdentifier, [callback = WTF::move(callback), result = WTF::move(result), exceptionCallback = WTF::move(exceptionCallback)](auto&) mutable {
+            callback(WTF::move(result));
         });
     });
 }

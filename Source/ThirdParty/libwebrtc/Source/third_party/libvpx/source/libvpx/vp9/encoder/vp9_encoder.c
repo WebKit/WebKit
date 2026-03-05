@@ -1420,7 +1420,14 @@ static void set_tile_limits(VP9_COMP *cpi) {
 
   cm->log2_tile_cols =
       clamp(cpi->oxcf.tile_columns, min_log2_tile_cols, max_log2_tile_cols);
-  cm->log2_tile_rows = cpi->oxcf.tile_rows;
+
+  // Max allowed number of tile_rows is 4 (so log2_tile_rows = 2), and each
+  // tile_row contains a multiple of superblocks.
+  const int sb64_rows = mi_cols_aligned_to_sb(cm->mi_rows) >> 3;
+  const int max_log2_tile_rows = (sb64_rows >= 4)   ? 2
+                                 : (sb64_rows >= 2) ? 1
+                                                    : 0;
+  cm->log2_tile_rows = VPXMIN(cpi->oxcf.tile_rows, max_log2_tile_rows);
 
   if (cpi->oxcf.target_level == LEVEL_AUTO) {
     const int level_tile_cols =
@@ -2924,9 +2931,11 @@ int vp9_get_psnr(const VP9_COMP *cpi, PSNR_STATS *psnr) {
   if (is_psnr_calc_enabled(cpi)) {
 #if CONFIG_VP9_HIGHBITDEPTH
     vpx_calc_highbd_psnr(cpi->raw_source_frame, cpi->common.frame_to_show, psnr,
-                         cpi->td.mb.e_mbd.bd, cpi->oxcf.input_bit_depth);
+                         cpi->td.mb.e_mbd.bd, cpi->oxcf.input_bit_depth,
+                         cpi->svc.spatial_layer_id);
 #else
-    vpx_calc_psnr(cpi->raw_source_frame, cpi->common.frame_to_show, psnr);
+    vpx_calc_psnr(cpi->raw_source_frame, cpi->common.frame_to_show, psnr,
+                  cpi->svc.spatial_layer_id);
 #endif
     return 1;
   } else {
@@ -5239,15 +5248,16 @@ static void set_mb_wiener_variance(VP9_COMP *cpi) {
 static PSNR_STATS compute_psnr_stats(const YV12_BUFFER_CONFIG *source_frame,
                                      const YV12_BUFFER_CONFIG *coded_frame,
                                      uint32_t bit_depth,
-                                     uint32_t input_bit_depth) {
+                                     uint32_t input_bit_depth,
+                                     int spatial_layer_id) {
   PSNR_STATS psnr;
 #if CONFIG_VP9_HIGHBITDEPTH
   vpx_calc_highbd_psnr(source_frame, coded_frame, &psnr, bit_depth,
-                       input_bit_depth);
+                       input_bit_depth, spatial_layer_id);
 #else   // CONFIG_VP9_HIGHBITDEPTH
   (void)bit_depth;
   (void)input_bit_depth;
-  vpx_calc_psnr(source_frame, coded_frame, &psnr);
+  vpx_calc_psnr(source_frame, coded_frame, &psnr, spatial_layer_id);
 #endif  // CONFIG_VP9_HIGHBITDEPTH
   return psnr;
 }
@@ -5500,9 +5510,9 @@ static void encode_frame_to_data_rate(
     update_encode_frame_result_basic(update_type, coded_frame_buf->frame_index,
                                      quantize_index, encode_frame_result);
     if (cpi->ext_ratectrl.ready && cpi->ext_ratectrl.log_file) {
-      PSNR_STATS psnr =
-          compute_psnr_stats(cpi->Source, &coded_frame_buf->buf, cm->bit_depth,
-                             cpi->oxcf.input_bit_depth);
+      PSNR_STATS psnr = compute_psnr_stats(
+          cpi->Source, &coded_frame_buf->buf, cm->bit_depth,
+          cpi->oxcf.input_bit_depth, cpi->svc.spatial_layer_id);
       fprintf(cpi->ext_ratectrl.log_file,
               "ENCODE_FRAME_RESULT gop_index %d psnr %f bits %zu\n",
               cpi->twopass.gf_group.index, psnr.psnr[0], (*size) << 3);
@@ -5684,6 +5694,31 @@ int vp9_receive_raw_frame(VP9_COMP *cpi, vpx_enc_frame_flags_t frame_flags,
   const int use_highbitdepth = 0;
 #endif
 
+  if ((cm->profile == PROFILE_0 || cm->profile == PROFILE_2) &&
+      (subsampling_x != 1 || subsampling_y != 1)) {
+    vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
+                       "Non-4:2:0 color format requires profile 1 or 3");
+    return -1;
+  }
+  if ((cm->profile == PROFILE_1 || cm->profile == PROFILE_3) &&
+      (subsampling_x == 1 && subsampling_y == 1)) {
+    vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
+                       "4:2:0 color format requires profile 0 or 2");
+    return -1;
+  }
+  if (cm->color_space == VPX_CS_SRGB) {
+    if (cm->profile == PROFILE_0 || cm->profile == PROFILE_2) {
+      vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
+                         "SRGB color space requires profile 1 or 3");
+      return -1;
+    }
+    if (subsampling_x != 0 || subsampling_y != 0) {
+      vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
+                         "SRGB color space requires 4:4:4");
+      return -1;
+    }
+  }
+
   update_initial_width(cpi, use_highbitdepth, subsampling_x, subsampling_y);
 #if CONFIG_VP9_TEMPORAL_DENOISING
   setup_denoiser_buffer(cpi);
@@ -5703,30 +5738,6 @@ int vp9_receive_raw_frame(VP9_COMP *cpi, vpx_enc_frame_flags_t frame_flags,
   cpi->time_receive_data += vpx_usec_timer_elapsed(&timer);
 #endif
 
-  if ((cm->profile == PROFILE_0 || cm->profile == PROFILE_2) &&
-      (subsampling_x != 1 || subsampling_y != 1)) {
-    vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
-                       "Non-4:2:0 color format requires profile 1 or 3");
-    res = -1;
-  }
-  if ((cm->profile == PROFILE_1 || cm->profile == PROFILE_3) &&
-      (subsampling_x == 1 && subsampling_y == 1)) {
-    vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
-                       "4:2:0 color format requires profile 0 or 2");
-    res = -1;
-  }
-  if (cm->color_space == VPX_CS_SRGB) {
-    if (cm->profile == PROFILE_0 || cm->profile == PROFILE_2) {
-      vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
-                         "SRGB color space requires profile 1 or 3");
-      res = -1;
-    }
-    if (subsampling_x != 0 || subsampling_y != 0) {
-      vpx_internal_error(&cm->error, VPX_CODEC_INVALID_PARAM,
-                         "SRGB color space requires 4:4:4");
-      res = -1;
-    }
-  }
   return res;
 }
 
@@ -6518,9 +6529,9 @@ int vp9_get_compressed_data(VP9_COMP *cpi, unsigned int *frame_flags,
         PSNR_STATS psnr;
 #if CONFIG_VP9_HIGHBITDEPTH
         vpx_calc_highbd_psnr(orig, recon, &psnr, cpi->td.mb.e_mbd.bd,
-                             in_bit_depth);
+                             in_bit_depth, cpi->svc.spatial_layer_id);
 #else
-        vpx_calc_psnr(orig, recon, &psnr);
+        vpx_calc_psnr(orig, recon, &psnr, cpi->svc.spatial_layer_id);
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
         adjust_image_stat(psnr.psnr[1], psnr.psnr[2], psnr.psnr[3],
@@ -6556,9 +6567,10 @@ int vp9_get_compressed_data(VP9_COMP *cpi, unsigned int *frame_flags,
 
 #if CONFIG_VP9_HIGHBITDEPTH
           vpx_calc_highbd_psnr(orig, pp, &psnr2, cpi->td.mb.e_mbd.bd,
-                               cpi->oxcf.input_bit_depth);
+                               cpi->oxcf.input_bit_depth,
+                               cpi->svc.spatial_layer_id);
 #else
-          vpx_calc_psnr(orig, pp, &psnr2);
+          vpx_calc_psnr(orig, pp, &psnr2, cpi->svc.spatial_layer_id);
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
           cpi->totalp_sq_error += psnr2.sse[0];

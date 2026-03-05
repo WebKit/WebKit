@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(C_LOOP)
 
 #include <JavaScriptCore/Register.h>

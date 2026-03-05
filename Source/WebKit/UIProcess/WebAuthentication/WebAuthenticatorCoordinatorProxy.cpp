@@ -58,7 +58,7 @@ Ref<WebAuthenticatorCoordinatorProxy> WebAuthenticatorCoordinatorProxy::create(W
 WebAuthenticatorCoordinatorProxy::WebAuthenticatorCoordinatorProxy(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
 {
-    webPageProxy.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy.webPageIDInMainFrameProcess(), *this);
+    protect(webPageProxy.legacyMainFrameProcess())->addMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy.webPageIDInMainFrameProcess(), *this);
 }
 
 WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
@@ -67,13 +67,13 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
     cancel([]() { });
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
     if (RefPtr webPageProxy = m_webPageProxy.get())
-        webPageProxy->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy->webPageIDInMainFrameProcess());
+        protect(webPageProxy->legacyMainFrameProcess())->removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy->webPageIDInMainFrameProcess());
 }
 
 std::optional<SharedPreferencesForWebProcess> WebAuthenticatorCoordinatorProxy::sharedPreferencesForWebProcess() const
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    return webPageProxy ? webPageProxy->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess() : std::nullopt;
+    return webPageProxy ? protect(webPageProxy->legacyMainFrameProcess())->sharedPreferencesForWebProcess() : std::nullopt;
 }
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
@@ -83,7 +83,7 @@ void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, F
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
         RELEASE_LOG_ERROR(WebAuthn, "WebPageProxy had been released");
     }
-    handleRequest({ { }, WTFMove(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTFMove(frameInfo), String(), nullptr, mediation, std::nullopt }, WTFMove(handler));
+    handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, std::nullopt }, WTF::move(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, RequestCompletionHandler&& handler)
@@ -93,7 +93,7 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, Fra
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
         RELEASE_LOG_ERROR(WebAuthn, "WebPageProxy had been released");
     }
-    handleRequest({ { }, WTFMove(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTFMove(frameInfo), String(), nullptr, mediation, parentOrigin }, WTFMove(handler));
+    handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, parentOrigin }, WTF::move(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
@@ -109,7 +109,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
     if (shouldRequestConditionalRegistration)
         username = std::get<PublicKeyCredentialCreationOptions>(data.options).user.name;
 
-    CompletionHandler<void(bool)> afterConsent = [weakThis = WeakPtr { *this }, data = WTFMove(data), handler = WTFMove(handler)] (bool result) mutable {
+    CompletionHandler<void(bool)> afterConsent = [weakThis = WeakPtr { *this }, data = WTF::move(data), handler = WTF::move(handler)] (bool result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::InvalidStateError });
@@ -125,7 +125,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
                 }
                 // performRequest calls out to ASCAgent which will then call [_WKWebAuthenticationPanel makeCredential/getAssertionWithChallenge]
                 // which calls authenticatorManager->handleRequest(..)
-                protectedThis->performRequest(WTFMove(data), WTFMove(handler));
+                protectedThis->performRequest(WTF::move(data), WTF::move(handler));
                 return;
             }
 #else
@@ -147,11 +147,11 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             });
             data.hash = buildClientDataJsonHash(*clientDataJSON);
 
-            authenticatorManager->handleRequest(WTFMove(data), [handler = WTFMove(handler), clientDataJSON = WTFMove(clientDataJSON)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
+            authenticatorManager->handleRequest(WTF::move(data), [handler = WTF::move(handler), clientDataJSON = WTF::move(clientDataJSON)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
                 ASSERT(RunLoop::isMain());
                 WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
                     auto responseData = response->data();
-                    responseData.clientDataJSON = WTFMove(clientDataJSON);
+                    responseData.clientDataJSON = WTF::move(clientDataJSON);
                     handler(responseData, response->attachment(), { });
                 }, [&](const ExceptionData& exception) {
                     handler({ }, (AuthenticatorAttachment)0, exception);
@@ -165,14 +165,14 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 
     Ref authenticatorManager = m_webPageProxy->websiteDataStore().authenticatorManager();
     if (shouldRequestConditionalRegistration && !authenticatorManager->isMock() && !authenticatorManager->isVirtual()) {
-        m_webPageProxy->uiClient().requestWebAuthenticationConditonalMediationRegistration(username, [weakThis = WeakPtr { *this }, username, afterConsent = WTFMove(afterConsent), origin = origin->securityOrigin()] (std::optional<bool> consented) mutable {
+        m_webPageProxy->uiClient().requestWebAuthenticationConditonalMediationRegistration(username, [weakThis = WeakPtr { *this }, username, afterConsent = WTF::move(afterConsent), origin = origin->securityOrigin()] (std::optional<bool> consented) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return afterConsent(false);
 #if HAVE(WEB_AUTHN_AS_MODERN)
             afterConsent(consented ? *consented : protectedThis->removeMatchingAutofillEventForUsername(username, origin));
 #else
-            afterConsent(consented ? *consented : false);
+            afterConsent(consented && *consented);
 #endif
         });
         return;

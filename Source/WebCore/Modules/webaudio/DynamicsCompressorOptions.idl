@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
 ] dictionary DynamicsCompressorOptions : AudioNodeOptions {
     float attack = 0.003;
     float knee = 30;

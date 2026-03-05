@@ -34,8 +34,9 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutShape.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RubyFormattingContext.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleWebKitLineBoxContain.h"
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
@@ -62,7 +63,7 @@ struct LineContent {
 
 static bool isContentfulOrHasDecoration(const InlineItem& inlineItem, const InlineFormattingContext& formattingContext)
 {
-    if (inlineItem.isFloat() || inlineItem.isOpaque())
+    if (inlineItem.isFloat() || inlineItem.isOutOfFlow())
         return false;
     if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
         auto wouldProduceEmptyRun = inlineTextItem->isFullyTrimmable() || inlineTextItem->isEmpty() || inlineTextItem->isWordSeparator() || inlineTextItem->isZeroWidthSpaceSeparator() || inlineTextItem->isQuirkNonBreakingSpace();
@@ -84,7 +85,7 @@ static inline StringBuilder toString(const Line::RunList& runs)
         if (!run.isText())
             continue;
         auto& textContent = run.textContent();
-        lineContentBuilder.append(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(textContent->start, textContent->length));
+        lineContentBuilder.append(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(textContent.start, textContent.length));
     }
     return lineContentBuilder;
 }
@@ -137,7 +138,7 @@ static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns,
     return visualOrderList;
 }
 
-static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size_t layoutRangeEnd, std::span<const InlineItem> inlineItemList)
+static bool NODELETE hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size_t layoutRangeEnd, std::span<const InlineItem> inlineItemList)
 {
     if (!softWrapOpportunityIndex || softWrapOpportunityIndex == layoutRangeEnd) {
         // This candidate inline content ends because the entire content ends and not because there's a soft wrap opportunity.
@@ -162,7 +163,7 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         // the actual soft wrap position is after the inline box start (<span>) but in terms of line breaking continuity the inline box start (<span>) and the whitespace run belong together.
         RELEASE_ASSERT(layoutRangeEnd <= inlineItemList.size());
         for (auto index = softWrapOpportunityIndex; index < layoutRangeEnd; ++index) {
-            if (inlineItemList[index].isInlineBoxStart() || inlineItemList[index].isInlineBoxEnd() || inlineItemList[index].isOpaque())
+            if (inlineItemList[index].isInlineBoxStart() || inlineItemList[index].isInlineBoxEnd() || inlineItemList[index].isOutOfFlow())
                 continue;
             // FIXME: Check if [non-whitespace][inline-box][no-whitespace] content has rules about it.
             // For now let's say the soft wrap position belongs to the next set of runs when [non-whitespace][inline-box][whitespace], [non-whitespace][inline-box][box] etc.
@@ -175,14 +176,17 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         // This is a special case when the inline box's first child is a float box.
         return false;
     }
-    if (trailingInlineItem.isOpaque()) {
+    if (trailingInlineItem.isOutOfFlow()) {
         for (auto index = softWrapOpportunityIndex; index--;) {
-            if (!inlineItemList[index].isOpaque())
+            if (!inlineItemList[index].isOutOfFlow())
                 return hasTrailingSoftWrapOpportunity(index + 1, layoutRangeEnd, inlineItemList);
         }
-        ASSERT(inlineItemList[softWrapOpportunityIndex].isFloat());
+        ASSERT(inlineItemList[softWrapOpportunityIndex].isFloat() || inlineItemList[softWrapOpportunityIndex].isBlock());
         return false;
     }
+    if (trailingInlineItem.isBlock())
+        return true;
+
     ASSERT_NOT_REACHED();
     return true;
 };
@@ -205,31 +209,31 @@ struct LineCandidate {
     void reset();
 
     struct InlineContent {
-        const InlineContentBreaker::ContinuousContent& continuousContent() const { return m_continuousContent; }
-        InlineContentBreaker::ContinuousContent& continuousContent() { return m_continuousContent; }
-        const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
-        const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
+        const InlineContentBreaker::ContinuousContent& NODELETE continuousContent() const { return m_continuousContent; }
+        InlineContentBreaker::ContinuousContent& NODELETE continuousContent() { return m_continuousContent; }
+        const InlineItem* NODELETE trailingLineBreak() const { return m_trailingLineBreak; }
+        const InlineItem* NODELETE trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
         void appendInlineItem(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0);
         void reset();
-        bool isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
+        bool NODELETE isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
 
-        void setHasTrailingSoftWrapOpportunity(bool hasTrailingSoftWrapOpportunity) { m_hasTrailingSoftWrapOpportunity = hasTrailingSoftWrapOpportunity; }
-        bool hasTrailingSoftWrapOpportunity() const { return m_hasTrailingSoftWrapOpportunity; }
+        void NODELETE setHasTrailingSoftWrapOpportunity(bool hasTrailingSoftWrapOpportunity) { m_hasTrailingSoftWrapOpportunity = hasTrailingSoftWrapOpportunity; }
+        bool NODELETE hasTrailingSoftWrapOpportunity() const { return m_hasTrailingSoftWrapOpportunity; }
 
         void setTrailingSoftHyphenWidth(InlineLayoutUnit hyphenWidth) { m_continuousContent.setTrailingSoftHyphenWidth(hyphenWidth); }
 
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_continuousContent.setHangingContentWidth(logicalWidth); }
 
-        void setHasTrailingClonedDecoration(bool hasClonedDecoration) { m_hasTrailingClonedDecoration = hasClonedDecoration; }
-        bool hasTrailingClonedDecoration() const { return m_hasTrailingClonedDecoration; }
+        void NODELETE setHasTrailingClonedDecoration(bool hasClonedDecoration) { m_hasTrailingClonedDecoration = hasClonedDecoration; }
+        bool NODELETE hasTrailingClonedDecoration() const { return m_hasTrailingClonedDecoration; }
 
         void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_continuousContent.setMinimumRequiredWidth(minimumRequiredWidth); }
 
-        std::optional<size_t> firstTextRunIndex() const { return m_firstTextRunIndex; }
-        std::optional<size_t> lastTextRunIndex() const { return m_lastTextRunIndex; }
+        std::optional<size_t> NODELETE firstTextRunIndex() const { return m_firstTextRunIndex; }
+        std::optional<size_t> NODELETE lastTextRunIndex() const { return m_lastTextRunIndex; }
 
-        bool isShapingCandidateByContent() const { return m_hasTextContentSpanningBoxes; }
+        bool NODELETE isShapingCandidateByContent() const { return m_hasTextContentSpanningBoxes; }
 
     private:
         InlineContentBreaker::ContinuousContent m_continuousContent;
@@ -251,7 +255,7 @@ struct LineCandidate {
 
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
 {
-    if (inlineItem.isAtomicInlineBox() || inlineItem.isOpaque())
+    if (inlineItem.isAtomicInlineBox() || inlineItem.isOutOfFlow())
         return m_continuousContent.append(inlineItem, style, logicalWidth, textSpacingAdjustment);
 
     if (inlineItem.isInlineBoxStartOrEnd()) {
@@ -306,7 +310,7 @@ inline void LineCandidate::reset()
 LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, TextSpacingContext textSpacingContext)
     : AbstractLineBuilder(inlineFormattingContext, inlineFormattingContext.root(), rootHorizontalConstraints, inlineItemList)
     , m_floatingContext(inlineFormattingContext.floatingContext())
-    , m_textSpacingContext(WTFMove(textSpacingContext))
+    , m_textSpacingContext(WTF::move(textSpacingContext))
 {
 }
 
@@ -319,10 +323,10 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
 
     if (isInIntrinsicWidthMode()) {
         return { lineContent->range
-            , WTFMove(result.runs)
-            , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), { } }
+            , WTF::move(result.runs)
+            , { WTF::move(m_placedFloats), WTF::move(m_suspendedFloats), { } }
             , { { }, result.contentLogicalWidth, { }, lineContent->overflowLogicalWidth }
-            , { m_lineLogicalRect.topLeft() }
+            , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.topLeft() }
             , { }
             , { }
             , { isFirstFormattedLineCandidate && inlineContentEnding.has_value() ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, { } }
@@ -349,14 +353,14 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         computedVisualOrder(result.runs, visualOrderList);
 
     return { lineContent->range
-        , WTFMove(result.runs)
-        , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), m_lineIsConstrainedByFloat }
+        , WTF::move(result.runs)
+        , { WTF::move(m_placedFloats), WTF::move(m_suspendedFloats), m_lineIsConstrainedByFloat }
         , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, lineContent->overflowLogicalWidth }
-        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left(), m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
+        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.topLeft(), m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth, result.hangablePunctuationStartWidth }
-        , { WTFMove(visualOrderList), inlineBaseDirection }
+        , { WTF::move(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLineCandidate && inlineContentEnding.has_value() ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, isLastInlineContent }
-        , { WTFMove(lineContent->rubyBaseAlignmentOffsetList), lineContent->rubyAnnotationOffset }
+        , { WTF::move(lineContent->rubyBaseAlignmentOffsetList), lineContent->rubyAnnotationOffset }
         , inlineContentEnding
         , result.nonSpanningInlineLevelBoxCount
         , { }
@@ -379,6 +383,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
     m_candidateContentMaximumHeight = { };
+    m_hasAdjustedLineRectWithBlockMargin = false;
     inlineContentBreaker().setHyphenationDisabled(layoutState().isHyphenationDisabled());
 
     auto createLineSpanningInlineBoxes = [&] {
@@ -506,8 +511,8 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
             // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
             // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
             // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-            auto canidateStartEndIndex = std::pair<size_t, size_t> { currentItemIndex, formattingContext().formattingUtils().nextWrapOpportunity(currentItemIndex, needsLayoutRange, m_inlineItemList) };
-            candidateContentForLine(lineCandidate, canidateStartEndIndex, needsLayoutRange, m_line.contentLogicalRight());
+            auto candidateStartEndIndex = std::pair<size_t, size_t> { currentItemIndex, formattingContext().formattingUtils().nextWrapOpportunity(currentItemIndex, needsLayoutRange, m_inlineItemList) };
+            candidateContentForLine(lineCandidate, candidateStartEndIndex, needsLayoutRange, m_line.contentLogicalRight());
             // Now check if we can put this content on the current line.
             if (auto* floatItem = lineCandidate->floatItem) {
                 ASSERT(lineCandidate->inlineContent.isEmpty());
@@ -551,6 +556,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                             // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
                             auto& trailingLineBreak = *inlineContent.trailingLineBreak();
                             m_line.appendLineBreak(trailingLineBreak, trailingLineBreak.style());
+                            applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::Yes);
                             if (trailingLineBreak.bidiLevel() != UBIDI_DEFAULT_LTR)
                                 m_line.setContentNeedsBidiReordering();
                             ++placedInlineItemCount;
@@ -604,7 +610,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
         auto handleTrailingContent = [&] {
             auto& quirks = formattingContext().quirks();
             auto lineHasOverflow = [&] {
-                return horizontalAvailableSpace < m_line.contentLogicalWidth() && m_line.hasContentOrListMarker();
+                return horizontalAvailableSpace < m_line.contentLogicalWidth() && m_line.hasContent(Line::IncludeInsideListMarker::Yes);
             };
             auto isLineBreakAfterWhitespace = [&] {
                 return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastInlineContent || lineHasOverflow());
@@ -647,7 +653,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                     return;
 
                 auto spaceToDistribute = horizontalAvailableSpace - m_line.contentLogicalWidth() + (m_line.isHangingTrailingContentWhitespace() ? m_line.hangingTrailingContentWidth() : 0.f);
-                if (root().isRubyAnnotationBox() && rootStyle.textAlign() == RenderStyle::initialTextAlign()) {
+                if (root().isRubyAnnotationBox() && rootStyle.textAlign() == Style::ComputedStyle::initialTextAlign()) {
                     lineContent->rubyAnnotationOffset = RubyFormattingContext::applyRubyAlignOnAnnotationBox(m_line, spaceToDistribute, formattingContext());
                     m_line.inflateContentLogicalWidth(spaceToDistribute);
                     m_line.adjustContentRightWithRubyAlign(2 * lineContent->rubyAnnotationOffset);
@@ -791,7 +797,7 @@ Vector<std::pair<size_t, size_t>> LineBuilder::collectShapeRanges(const LineCand
         case InlineItem::Type::SoftLineBreak:
         case InlineItem::Type::WordBreakOpportunity:
         case InlineItem::Type::Float:
-        case InlineItem::Type::Opaque:
+        case InlineItem::Type::OutOfFlow:
         case InlineItem::Type::Block:
             break;
         default:
@@ -1020,7 +1026,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
                 textSpacingAdjustment = inlineBoxBoundaryTextSpacing->value;
         }
 
-        auto needsLayout = inlineItem.isFloat() || inlineItem.isAtomicInlineBox() || (inlineItem.isOpaque() && inlineItem.layoutBox().isRubyAnnotationBox());
+        auto needsLayout = inlineItem.isFloat() || inlineItem.isAtomicInlineBox() || (inlineItem.isOutOfFlow() && inlineItem.layoutBox().isRubyAnnotationBox());
         if (needsLayout) {
             // FIXME: Intrinsic width mode should call into the intrinsic width codepath. Currently we only get here when box has fixed width (meaning no need to run intrinsic width on the box).
             if (!isInIntrinsicWidthMode())
@@ -1078,12 +1084,12 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
             // Since both <br> and <wbr> are explicit word break opportunities they have to be trailing items in this candidate run list unless they are embedded in inline boxes.
             // e.g. <span><wbr></span>
             for (auto i = index + 1; i < startEndIndex.second; ++i)
-                ASSERT(m_inlineItemList[i].isInlineBoxEnd() || m_inlineItemList[i].isOpaque());
+                ASSERT(m_inlineItemList[i].isInlineBoxEnd() || m_inlineItemList[i].isOutOfFlow());
 #endif
             lineCandidate.inlineContent.appendInlineItem(inlineItem, style, { });
             continue;
         }
-        if (inlineItem.isOpaque()) {
+        if (inlineItem.isOutOfFlow()) {
             lineCandidate.inlineContent.appendInlineItem(inlineItem, style, { });
             continue;
         }
@@ -1201,6 +1207,34 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
     return floatAvoidingRect({ m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), candidateContentHeight }, m_lineMarginStart);
 }
 
+bool LineBuilder::applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues shouldResetMarginValues)
+{
+    // We don't know if margin coming from previous content should be applied or not
+    // until after we managed to put some inline content on the line.
+    // e.g.
+    // <span>text<div style="margin-bottom: 100px;"></div>more text</span> v.s
+    // <span>text<div style="margin-bottom: 100px;"></div> <div></div></span>
+    // where in the first example, the 100px gap is between the block container's edge and "more text"
+    // while in the second case, it is somewhere after the second block container (can't tell).
+    auto& marginState = blockLayoutState().marginState();
+    auto lineOffsetInBlockDirection = marginState.margin();
+    if (shouldResetMarginValues == ShouldResetMarginValues::Yes)
+        marginState.resetMarginValues();
+
+    if (marginState.atBeforeSideOfBlock) {
+        if (shouldResetMarginValues == ShouldResetMarginValues::Yes)
+            marginState.resetBeforeSideOfBlock();
+        return false;
+    }
+
+    if (!lineOffsetInBlockDirection || m_hasAdjustedLineRectWithBlockMargin)
+        return false;
+
+    m_hasAdjustedLineRectWithBlockMargin = true;
+    m_lineLogicalRect = { m_lineLogicalRect.top() + lineOffsetInBlockDirection, m_lineInitialLogicalRect.left(), m_lineInitialLogicalRect.width(), m_lineInitialLogicalRect.height() };
+    return true;
+}
+
 std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForInitialLetterIfApplicable(const Box& floatBox)
 {
     auto drop = floatBox.style().initialLetter().drop();
@@ -1294,6 +1328,9 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (isFloatLayoutSuspended())
         return false;
 
+    auto didApplyMargin = applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::No);
+    ASSERT_UNUSED(didApplyMargin, !didApplyMargin || !m_line.hasContent(Line::IncludeInsideListMarker::Yes));
+
     auto& floatingContext = this->floatingContext();
     auto& boxGeometry = formattingContext().geometryForBox(floatBox);
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
@@ -1368,16 +1405,63 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
 {
     ASSERT(blockItem.isBlock());
     // Blocks are always the only content on the line.
-    ASSERT(!m_line.hasContentOrListMarker());
-    if (!isInIntrinsicWidthMode())
-        formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(downcast<ElementBox>(blockItem.layoutBox()), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
-    auto marginBoxLogicalWidth = formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false);
-    m_line.appendBlock(blockItem, marginBoxLogicalWidth);
+    ASSERT(!m_line.hasContent(Line::IncludeInsideListMarker::Yes));
+    if (isInIntrinsicWidthMode())
+        return m_line.appendBlock(blockItem, formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false));
+
     if (rootStyle().writingMode().isBidiRTL())
         m_line.setContentNeedsBidiReordering();
+
+    formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(downcast<ElementBox>(blockItem.layoutBox()), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
+    auto contentWidth = InlineLayoutUnit { };
+    if (formattingContext().geometryForBox(blockItem.layoutBox()).borderBoxHeight())
+        contentWidth = formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false);
+    m_line.appendBlock(blockItem, contentWidth);
 }
 
 LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layoutRange, LineCandidate& lineCandidate)
+{
+    auto result = tryPlacingCandidateInlineContentOnLine(layoutRange, lineCandidate);
+    if (!m_line.hasContentOrDecoration(Line::IncludeInsideListMarker::Yes)) {
+        applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::No);
+        return result;
+    }
+
+    if (!applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::Yes) || floatingContext().isEmpty())
+        return result;
+
+    auto relayoutCandidateContent = [&] {
+        // This is similar to what we do in block layout when the estimated top position turns out to be incorrect
+        // and now we have to relayout the content with the adjusted vertical position to make sure we avoid floats properly.
+        m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
+
+        auto commitPrecedingNonContentfulContent = [&] {
+            LineCandidate precedingNonContentfulContent;
+            auto& firstCandidateInlineItem = lineCandidate.inlineContent.continuousContent().runs().first().inlineItem;
+            // We should not find any inline content here, only non-contentful items like <span> or </span> or trimmed whitespace or out-of-flow content.
+            for (size_t index = layoutRange.startIndex(); index < layoutRange.endIndex(); ++index) {
+                auto& inlineItem = m_inlineItemList[index];
+                if (&inlineItem == &firstCandidateInlineItem)
+                    break;
+
+                if (!inlineItem.isFloat()) {
+                    auto& styleToUse = isFirstFormattedLineCandidate() ? inlineItem.firstLineStyle() : inlineItem.style();
+                    precedingNonContentfulContent.inlineContent.appendInlineItem(inlineItem, styleToUse, { });
+                }
+            }
+            if (!precedingNonContentfulContent.inlineContent.isEmpty()) {
+                commitCandidateContent(precedingNonContentfulContent, { });
+                // At this point we can't yet have contentful runs on the line.
+                ASSERT(!m_line.hasContentOrDecoration(Line::IncludeInsideListMarker::Yes));
+            }
+        };
+        commitPrecedingNonContentfulContent();
+        return tryPlacingCandidateInlineContentOnLine(layoutRange, lineCandidate);
+    };
+    return relayoutCandidateContent();
+}
+
+LineBuilder::Result LineBuilder::tryPlacingCandidateInlineContentOnLine(const InlineItemRange& layoutRange, LineCandidate& lineCandidate)
 {
     auto result = LineBuilder::Result { };
     auto& inlineContent = lineCandidate.inlineContent;
@@ -1399,7 +1483,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         return availableWidth(m_line, availableTotalWidthForContent, intrinsicWidthMode());
     }();
 
-    auto lineHasContent = m_line.hasContentOrListMarker();
+    auto lineHasContent = m_line.hasContent(Line::IncludeInsideListMarker::Yes);
     auto verticalPositionHasFloatOrInlineContent = lineHasContent || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty();
     auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
 
@@ -1594,7 +1678,7 @@ void LineBuilder::commitCandidateContent(LineCandidate& lineCandidate, std::opti
                 }
 
                 if (shapingBoundaryStart)
-                    return { Line::ShapingBoundary::Middle };
+                    return { Line::ShapingBoundary::Inside };
 
                 return { };
             };
@@ -1627,9 +1711,9 @@ void LineBuilder::commitCandidateContent(LineCandidate& lineCandidate, std::opti
             return;
         }
 
-        if (inlineItem.isOpaque()) {
+        if (inlineItem.isOutOfFlow()) {
             ASSERT(!run.contentWidth());
-            m_line.appendOpaqueBox(inlineItem, run.style);
+            m_line.appendOutOfFlow(inlineItem, run.style);
             return;
         }
 
@@ -1682,7 +1766,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
         // We are keeping this content on the line but we need to check if we could have wrapped here
         // in order to be able to revert back to this position if needed.
         // Let's just ignore cases like collapsed leading whitespace for now.
-        if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContentOrListMarker()) {
+        if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContent(Line::IncludeInsideListMarker::Yes)) {
             auto& trailingRun = candidateRuns.last();
             auto& trailingInlineItem = trailingRun.inlineItem;
 
@@ -1763,6 +1847,13 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     ASSERT(!m_wrapOpportunityList.isEmpty());
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
 
+    if (m_partialLeadingTextItem && &*m_partialLeadingTextItem == &lastInlineItemToAdd) {
+        LineCandidate lineCandidate;
+        lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), formattingContext().formattingUtils().inlineItemWidth(*m_partialLeadingTextItem, { }, false));
+        commitCandidateContent(lineCandidate, { });
+        return 1;
+    }
+
     size_t numberOfFloatsInRange = 0;
     auto endOfCandidateContent = layoutRange.startIndex();
     for (; endOfCandidateContent < layoutRange.endIndex(); ++endOfCandidateContent) {
@@ -1776,10 +1867,10 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     ASSERT(endOfCandidateContent < layoutRange.endIndex());
 
     LineCandidate lineCandidate;
-    auto canidateStartEndIndex = std::pair<size_t, size_t> { layoutRange.startIndex(), endOfCandidateContent };
+    auto candidateStartEndIndex = std::pair<size_t, size_t> { layoutRange.startIndex(), endOfCandidateContent };
     // We might already have added floats. They shrink the available horizontal space for the line.
     // Let's just reuse what the line has at this point.
-    candidateContentForLine(lineCandidate, canidateStartEndIndex, layoutRange, m_line.contentLogicalRight(), SkipFloats::Yes);
+    candidateContentForLine(lineCandidate, candidateStartEndIndex, layoutRange, m_line.contentLogicalRight(), SkipFloats::Yes);
     auto result = processLineBreakingResult(lineCandidate, layoutRange, { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::Yes, { }, { } });
 
     // Remove floats that are outside of this "rebuild" range to ensure we don't add them twice.

@@ -334,10 +334,7 @@ template<> struct ArgumentCoder<CFFooRef> {
     static void encode(Encoder&, CFFooRef);
 };
 template<> struct ArgumentCoder<RetainPtr<CFFooRef>> {
-    static void encode(Encoder& encoder, const RetainPtr<CFFooRef>& retainPtr)
-    {
-        ArgumentCoder<CFFooRef>::encode(encoder, retainPtr.get());
-    }
+    static void encode(Encoder&, const RetainPtr<CFFooRef>&);
     static std::optional<RetainPtr<CFFooRef>> decode(Decoder&);
 };
 
@@ -347,14 +344,8 @@ template<> struct ArgumentCoder<CFBarRef> {
     static void encode(StreamConnectionEncoder&, CFBarRef);
 };
 template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
-    static void encode(Encoder& encoder, const RetainPtr<CFBarRef>& retainPtr)
-    {
-        ArgumentCoder<CFBarRef>::encode(encoder, retainPtr.get());
-    }
-    static void encode(StreamConnectionEncoder& encoder, const RetainPtr<CFBarRef>& retainPtr)
-    {
-        ArgumentCoder<CFBarRef>::encode(encoder, retainPtr.get());
-    }
+    static void encode(Encoder&, const RetainPtr<CFBarRef>&);
+    static void encode(StreamConnectionEncoder&, const RetainPtr<CFBarRef>&);
     static std::optional<RetainPtr<CFBarRef>> decode(Decoder&);
 };
 #endif
@@ -365,14 +356,8 @@ template<> struct ArgumentCoder<CFStringRef> {
     static void encode(StreamConnectionEncoder&, CFStringRef);
 };
 template<> struct ArgumentCoder<RetainPtr<CFStringRef>> {
-    static void encode(Encoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
-    {
-        ArgumentCoder<CFStringRef>::encode(encoder, retainPtr.get());
-    }
-    static void encode(StreamConnectionEncoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
-    {
-        ArgumentCoder<CFStringRef>::encode(encoder, retainPtr.get());
-    }
+    static void encode(Encoder&, const RetainPtr<CFStringRef>&);
+    static void encode(StreamConnectionEncoder&, const RetainPtr<CFStringRef>&);
     static std::optional<RetainPtr<CFStringRef>> decode(Decoder&);
 };
 #endif

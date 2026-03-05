@@ -65,6 +65,9 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(JSScriptFetcherType)
     CASE(JSScriptFetchParametersType)
     CASE(JSPromiseReactionType)
+    CASE(JSPromiseCombinatorsContextType)
+    CASE(JSPromiseCombinatorsGlobalContextType)
+    CASE(JSMicrotaskDispatcherType)
     CASE(ObjectType)
     CASE(FinalObjectType)
     CASE(JSCalleeType)
@@ -130,8 +133,6 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(JSAsyncFromSyncIteratorType)
     CASE(DisposableStackType)
     CASE(AsyncDisposableStackType)
-    CASE(JSPromiseAllContextType)
-    CASE(JSPromiseAllGlobalContextType)
     }
 }
 

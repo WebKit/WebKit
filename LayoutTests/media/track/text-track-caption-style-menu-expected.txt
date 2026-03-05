@@ -15,5 +15,18 @@ Pretend to hide the subtitle style menu:
 RUN(internals.hideCaptionDisplaySettingsPreviewForMediaElement(video))
 EXPECTED (allCueElements().length == '1') OK
 EXPECTED (firstCueElement().textContent == 'Lorem') OK
+
+Disable the text track:
+RUN(video.textTracks[0].mode = "disabled")
+EXPECTED (allCueElements().length == '0') OK
+
+Pretend to show the subtitle style menu:
+RUN(internals.showCaptionDisplaySettingsPreviewForMediaElement(video))
+EXPECTED (allCueElements().length == '1') OK
+EXPECTED (firstCueElement().textContent == 'This is a preview') OK
+
+Pretend to hide the subtitle style menu:
+RUN(internals.hideCaptionDisplaySettingsPreviewForMediaElement(video))
+EXPECTED (allCueElements().length == '0') OK
 END OF TEST
 

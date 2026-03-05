@@ -31,11 +31,11 @@
 #import "AVAssetTrackUtilities.h"
 #import "FormatDescriptionUtilities.h"
 #import "FourCC.h"
+#import "ImmersiveVideoMetadata.h"
 #import "MediaSelectionGroupAVFObjC.h"
 #import "PlatformAudioTrackConfiguration.h"
 #import "PlatformVideoTrackConfiguration.h"
 #import "SharedBuffer.h"
-#import "VideoProjectionMetadata.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVMetadataItem.h>
@@ -102,7 +102,7 @@ void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
         return;
 
     [m_assetTrack loadValuesAsynchronouslyForKeys:assetTrackConfigurationKeyNames() completionHandler:[weakThis = ThreadSafeWeakPtr { *this }]() mutable {
-        callOnMainThread([weakThis = WTFMove(weakThis)] {
+        callOnMainThread([weakThis = WTF::move(weakThis)] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->initializationCompleted();
         });
@@ -142,9 +142,17 @@ void AVTrackPrivateAVFObjCImpl::setEnabled(bool enabled)
 AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
 {
     if (m_assetTrack) {
+        // Check if accessibility characteristics are missing from AVAssetTrack but might be preserved in MediaSelectionOption
+        bool hasDescribes = [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility];
+        if (!hasDescribes && m_mediaSelectionOption) {
+            RetainPtr option = m_mediaSelectionOption->avMediaSelectionOption();
+            if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+                return AudioTrackPrivate::Kind::Description;
+        }
+
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return AudioTrackPrivate::Kind::Alternative;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+        if (hasDescribes)
             return AudioTrackPrivate::Kind::Description;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return AudioTrackPrivate::Kind::Main;
@@ -362,8 +370,7 @@ PlatformVideoTrackConfiguration AVTrackPrivateAVFObjCImpl::videoTrackConfigurati
         colorSpace(),
         framerate(),
         bitrate(),
-        spatialVideoMetadata(),
-        videoProjectionMetadata(),
+        immersiveVideoMetadata(),
         isProtected(),
     };
 }
@@ -395,11 +402,11 @@ void AVTrackPrivateAVFObjCImpl::setAudioTrackConfigurationObserver(AudioTrackCon
 
 static RetainPtr<CMFormatDescriptionRef> formatDescriptionFor(const AVTrackPrivateAVFObjCImpl& impl)
 {
-    auto assetTrack = assetTrackFor(impl);
-    if (!assetTrack || [assetTrack statusOfValueForKey:@"formatDescriptions" error:nil] != AVKeyValueStatusLoaded)
+    RetainPtr assetTrack = assetTrackFor(impl);
+    if (!assetTrack || [assetTrack.get() statusOfValueForKey:@"formatDescriptions" error:nil] != AVKeyValueStatusLoaded)
         return nullptr;
 
-    return static_cast<CMFormatDescriptionRef>(assetTrack.formatDescriptions.firstObject);
+    return static_cast<CMFormatDescriptionRef>(assetTrack.get().formatDescriptions.firstObject);
 }
 
 String AVTrackPrivateAVFObjCImpl::codec() const
@@ -409,16 +416,16 @@ String AVTrackPrivateAVFObjCImpl::codec() const
 
 uint32_t AVTrackPrivateAVFObjCImpl::width() const
 {
-    if (auto assetTrack = assetTrackFor(*this))
-        return assetTrack.naturalSize.width;
+    if (RetainPtr assetTrack = assetTrackFor(*this))
+        return assetTrack.get().naturalSize.width;
     ASSERT_NOT_REACHED();
     return 0;
 }
 
 uint32_t AVTrackPrivateAVFObjCImpl::height() const
 {
-    if (auto assetTrack = assetTrackFor(*this))
-        return assetTrack.naturalSize.height;
+    if (RetainPtr assetTrack = assetTrackFor(*this))
+        return assetTrack.get().naturalSize.height;
     ASSERT_NOT_REACHED();
     return 0;
 }
@@ -432,12 +439,12 @@ PlatformVideoColorSpace AVTrackPrivateAVFObjCImpl::colorSpace() const
 
 double AVTrackPrivateAVFObjCImpl::framerate() const
 {
-    auto assetTrack = assetTrackFor(*this);
+    RetainPtr assetTrack = assetTrackFor(*this);
     if (!assetTrack)
         return 0;
-    if ([assetTrack statusOfValueForKey:@"nominalFrameRate" error:nil] != AVKeyValueStatusLoaded)
+    if ([assetTrack.get() statusOfValueForKey:@"nominalFrameRate" error:nil] != AVKeyValueStatusLoaded)
         return 0;
-    return assetTrack.nominalFrameRate;
+    return assetTrack.get().nominalFrameRate;
 }
 
 uint32_t AVTrackPrivateAVFObjCImpl::sampleRate() const
@@ -468,14 +475,14 @@ uint32_t AVTrackPrivateAVFObjCImpl::numberOfChannels() const
 
 uint64_t AVTrackPrivateAVFObjCImpl::bitrate() const
 {
-    auto assetTrack = assetTrackFor(*this);
+    RetainPtr assetTrack = assetTrackFor(*this);
     if (!assetTrack)
         return 0;
-    if ([assetTrack statusOfValueForKey:@"estimatedDataRate" error:nil] != AVKeyValueStatusLoaded)
+    if ([assetTrack.get() statusOfValueForKey:@"estimatedDataRate" error:nil] != AVKeyValueStatusLoaded)
         return 0;
-    if (!std::isfinite(assetTrack.estimatedDataRate))
+    if (!std::isfinite(assetTrack.get().estimatedDataRate))
         return 0;
-    return assetTrack.estimatedDataRate;
+    return assetTrack.get().estimatedDataRate;
 }
 
 bool AVTrackPrivateAVFObjCImpl::isProtected() const
@@ -483,14 +490,9 @@ bool AVTrackPrivateAVFObjCImpl::isProtected() const
     return formatDescriptionIsProtected(formatDescriptionFor(*this).get());
 }
 
-std::optional<SpatialVideoMetadata> AVTrackPrivateAVFObjCImpl::spatialVideoMetadata() const
+std::optional<ImmersiveVideoMetadata> AVTrackPrivateAVFObjCImpl::immersiveVideoMetadata() const
 {
-    return spatialVideoMetadataFromFormatDescription(formatDescriptionFor(*this).get());
-}
-
-std::optional<VideoProjectionMetadata> AVTrackPrivateAVFObjCImpl::videoProjectionMetadata() const
-{
-    return videoProjectionMetadataFromFormatDescription(formatDescriptionFor(*this).get());
+    return immersiveVideoMetadataFromFormatDescription(formatDescriptionFor(*this).get());
 }
 
 }

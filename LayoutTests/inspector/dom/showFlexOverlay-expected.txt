@@ -34,11 +34,10 @@ PASS: Should have 0 flex overlays displayed.
 Requesting to hide all flex overlays again, expecting none to be cleared. Hiding all flex overlays is idempotent and should not throw an error.
 PASS: Should have 0 flex overlays displayed.
 
--- Running test case: DOM.showFlexOverlay.HideBeforeShowShouldError
+-- Running test case: DOM.showFlexOverlay.HideBeforeShowShouldSucceed
 PASS: Should have 0 flex overlays displayed.
-Requesting to hide flex overlay for .flex-container
-PASS: Should produce an exception.
-Error: No flex overlay exists for the node, so cannot clear.
+Requesting to hide flex overlay for .flex-container (should silently succeed)
+PASS: Should have 0 flex overlays displayed.
 Requesting to hide all flex overlays. Hiding all flex overlays is idempotent and should not throw an error.
 PASS: Should have 0 flex overlays displayed.
 

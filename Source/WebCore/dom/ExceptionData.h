@@ -35,10 +35,10 @@ struct ExceptionData {
     String message;
 
     ExceptionData isolatedCopy() const & { return { code, message.isolatedCopy() }; }
-    ExceptionData isolatedCopy() && { return { code, WTFMove(message).isolatedCopy() }; }
+    ExceptionData isolatedCopy() && { return { code, WTF::move(message).isolatedCopy() }; }
 
     Exception toException() const & { return Exception { code, String { message } }; }
-    Exception toException() && { return Exception { code, WTFMove(message) }; }
+    Exception toException() && { return Exception { code, WTF::move(message) }; }
 };
 
 } // namespace WebCore

@@ -249,7 +249,7 @@ void LayerTreeHost::updateRootLayer()
             children.append(downcast<GraphicsLayerCoordinated>(m_overlayCompositingLayer)->coordinatedPlatformLayer());
     }
 
-    m_sceneState->setRootLayerChildren(WTFMove(children));
+    m_sceneState->setRootLayerChildren(WTF::move(children));
 }
 
 void LayerTreeHost::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -319,11 +319,11 @@ void LayerTreeHost::updateRenderingWithForcedRepaintAsync(CompletionHandler<void
     // We want a clean repaint, meaning that if we're currently waiting for the renderer
     // to finish an update, we'll have to schedule another flush when it's done.
     ASSERT(!m_forceRepaintAsync.callback);
-    m_forceRepaintAsync.callback = WTFMove(callback);
+    m_forceRepaintAsync.callback = WTF::move(callback);
     m_forceRepaintAsync.needsFreshFlush = m_scheduledWhileWaitingForRenderer;
 #else
     ASSERT(!m_forceRepaintAsync.callback);
-    m_forceRepaintAsync.callback = WTFMove(callback);
+    m_forceRepaintAsync.callback = WTF::move(callback);
     updateRenderingWithForcedRepaint();
     if (m_pendingForceRepaint)
         m_forceRepaintAsync.compositionRequestID = std::nullopt;
@@ -438,7 +438,7 @@ Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeIma
 {
     auto nativeImageID = nativeImage->uniqueID();
     auto addResult = m_imageBackingStores.ensure(nativeImageID, [&] {
-        return CoordinatedImageBackingStore::create(WTFMove(nativeImage));
+        return CoordinatedImageBackingStore::create(WTF::move(nativeImage));
     });
     return addResult.iterator->value;
 }
@@ -565,7 +565,7 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
 void LayerTreeHost::notifyFrameDamageForTesting(Region&& damageRegion)
 {
     Locker locker { m_frameDamageHistoryForTestingLock };
-    m_frameDamageHistoryForTesting.append(WTFMove(damageRegion));
+    m_frameDamageHistoryForTesting.append(WTF::move(damageRegion));
 }
 
 void LayerTreeHost::resetDamageHistoryForTesting()

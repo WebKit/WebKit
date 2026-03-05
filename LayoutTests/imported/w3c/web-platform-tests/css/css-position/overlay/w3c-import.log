@@ -14,7 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/author-overlay-top-layer-removal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/author-overlay-top-layer-removal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/author-overlay-top-layer-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/green-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-button-appearance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-button-appearance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-button-appearance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/overlay/overlay-popover-backdrop-crash.html

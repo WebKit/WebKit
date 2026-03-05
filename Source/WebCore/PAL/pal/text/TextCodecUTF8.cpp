@@ -294,6 +294,7 @@ void TextCodecUTF8::handlePartialSequence(std::span<char16_t>& destination, std:
         }
 
         m_partialSequenceSize -= count;
+        memmoveSpan(std::span { m_partialSequence }, std::span { m_partialSequence }.subspan(count, m_partialSequenceSize));
         if (std::exchange(m_shouldStripByteOrderMark, false) && character == byteOrderMark)
             continue;
         destination = appendCharacter(destination, character);
@@ -389,7 +390,7 @@ String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool st
         sawError = true;
         return { };
     }
-    return String::adopt(WTFMove(buffer));
+    return String::adopt(WTF::move(buffer));
 
 upConvertTo16Bit:
     StringBuffer<char16_t> buffer16(bufferSize);
@@ -474,7 +475,7 @@ upConvertTo16Bit:
         sawError = true;
         return { };
     }
-    return String::adopt(WTFMove(buffer16));
+    return String::adopt(WTF::move(buffer16));
 }
 
 Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string)

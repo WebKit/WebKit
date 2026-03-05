@@ -1,7 +1,7 @@
 
-FAIL "::checkmark" should be a valid selector '::checkmark' is not a valid selector.
-FAIL "*::checkmark" should be a valid selector '*::checkmark' is not a valid selector.
-FAIL "foo.bar[baz]::checkmark" should be a valid selector 'foo.bar[baz]::checkmark' is not a valid selector.
+PASS "::checkmark" should be a valid selector
+PASS "*::checkmark" should be a valid selector
+PASS "foo.bar[baz]::checkmark" should be a valid selector
 PASS "::checkmark *" should be an invalid selector
 PASS "::checkmark::checkmark" should be an invalid selector
 PASS "::before::checkmark" should be an invalid selector
@@ -14,5 +14,5 @@ PASS "::checkmark::marker" should be an invalid selector
 PASS "::checkmark::placeholder" should be an invalid selector
 PASS "::slotted(*)::checkmark::slotted(*)" should be an invalid selector
 FAIL "::slotted(*)::checkmark" should be a valid selector '::slotted(*)::checkmark' is not a valid selector.
-FAIL "::part(foo)::checkmark" should be a valid selector '::part(foo)::checkmark' is not a valid selector.
+PASS "::part(foo)::checkmark" should be a valid selector
 

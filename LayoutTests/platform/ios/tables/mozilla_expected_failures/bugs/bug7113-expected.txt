@@ -10,23 +10,23 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (123,2) size 19x15
               RenderImage {IMG} at (92,2) size 29x15
               RenderImage {IMG} at (71,2) size 19x15
-              RenderInline {B} at (2,2) size 67x19
-                RenderInline {B} at (2,2) size 67x19
-                  RenderText {#text} at (2,2) size 67x19
+              RenderInline {B} at (2,2) size 67x20
+                RenderInline {B} at (2,2) size 67x20
+                  RenderText {#text} at (2,2) size 67x20
                     text run at (2,2) width 67: "Portfolios"
               RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,30) size 784x20
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x20
       RenderTable {TABLE} at (0,50) size 784x32 [bgcolor=#EEEEEE] [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x30
           RenderTableRow {TR} at (0,0) size 782x30 [bgcolor=#CCCCFF]
             RenderTableCell {TD} at (0,0) size 782x30 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (5,5) size 0x19 [color=#0000EE]
+              RenderInline {A} at (5,5) size 0x20 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (759,5) size 18x15
               RenderText {#text} at (0,0) size 0x0
-              RenderInline {A} at (5,5) size 0x19 [color=#0000EE]
+              RenderInline {A} at (5,5) size 0x20 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (728,5) size 28x15
-              RenderText {#text} at (5,5) size 65x19
+              RenderText {#text} at (5,5) size 65x20
                 text run at (5,5) width 65: "Some text"

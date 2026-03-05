@@ -44,31 +44,29 @@ public:
     static WebBackForwardListFrameItem* itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
 
     FrameState& frameState() const { return m_frameState; }
-    Ref<FrameState> protectedFrameState() const { return m_frameState; }
     void setFrameState(Ref<FrameState>&&);
 
     Ref<FrameState> copyFrameStateWithChildren();
 
-    std::optional<WebCore::FrameIdentifier> frameID() const;
+    std::optional<WebCore::FrameIdentifier> NODELETE frameID() const;
     WebCore::BackForwardFrameItemIdentifier identifier() const { return m_identifier; }
-    const String& url() const;
+    const String& NODELETE url() const LIFETIME_BOUND;
 
-    WebBackForwardListFrameItem* parent() const { return m_parent.get(); }
-    RefPtr<WebBackForwardListFrameItem> protectedParent() const { return m_parent.get(); }
+    WebBackForwardListFrameItem* parent() const { return m_parent; }
     void setParent(WebBackForwardListFrameItem* parent) { m_parent = parent; }
     bool sharesAncestor(WebBackForwardListFrameItem&) const;
 
-    WebBackForwardListFrameItem& rootFrame();
-    WebBackForwardListFrameItem& mainFrame();
-    Ref<WebBackForwardListFrameItem> protectedMainFrame();
-    WebBackForwardListFrameItem* childItemForFrameID(WebCore::FrameIdentifier);
-    RefPtr<WebBackForwardListFrameItem> protectedChildItemForFrameID(WebCore::FrameIdentifier);
+    Ref<WebBackForwardListFrameItem> rootFrame();
+    Ref<WebBackForwardListFrameItem> mainFrame();
+    WebBackForwardListFrameItem* NODELETE childItemForFrameID(WebCore::FrameIdentifier);
+    WebBackForwardListFrameItem* NODELETE childItemAtIndex(uint64_t);
 
     WebBackForwardListItem* backForwardListItem() const;
-    RefPtr<WebBackForwardListItem> protectedBackForwardListItem() const;
 
     void setChild(Ref<FrameState>&&);
     void clearChildren() { m_children.clear(); }
+
+    void updateFrameID(WebCore::FrameIdentifier);
 
     void setWasRestoredFromSession();
 
@@ -79,7 +77,7 @@ private:
 
     String loggingStringAtIndent(size_t);
 
-    static HashMap<std::pair<WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& allItems();
+    static HashMap<std::pair<WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& NODELETE allItems();
 
     WeakPtr<WebBackForwardListItem> m_backForwardListItem;
     const WebCore::BackForwardFrameItemIdentifier m_identifier;

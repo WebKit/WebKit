@@ -38,7 +38,7 @@
 #include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -138,7 +138,7 @@ void RenderLineBoxList::dirtyLineFromChangedChild(RenderBoxModelObject& containe
     }
     // For an empty inline, propagate the check up to our parent.
     if (inlineContainer && inlineContainer->everHadLayout()) {
-        auto* parent = inlineContainer->parent();
+        CheckedPtr parent = inlineContainer->parent();
         parent->dirtyLineFromChangedChild();
         parent->setNeedsLayout();
     }

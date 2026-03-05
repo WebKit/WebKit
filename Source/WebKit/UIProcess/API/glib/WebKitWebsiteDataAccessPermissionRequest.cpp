@@ -97,7 +97,7 @@ WebKitWebsiteDataAccessPermissionRequest* webkitWebsiteDataAccessPermissionReque
     auto* websiteDataPermissionRequest = WEBKIT_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST, nullptr));
     websiteDataPermissionRequest->priv->requestingDomain = requestingDomain.string().utf8();
     websiteDataPermissionRequest->priv->currentDomain = currentDomain.string().utf8();
-    websiteDataPermissionRequest->priv->completionHandler = WTFMove(completionHandler);
+    websiteDataPermissionRequest->priv->completionHandler = WTF::move(completionHandler);
     return websiteDataPermissionRequest;
 }
 

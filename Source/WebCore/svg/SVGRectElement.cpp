@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGRectElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGRectElement);
 
 inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -60,7 +60,7 @@ Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGRectElement(tagName, document));
 }
 
-SVGAnimatedProperty* SVGRectElement::propertyForAttribute(const QualifiedName& name) const
+SVGAnimatedPropertyBase* SVGRectElement::propertyForAttribute(const QualifiedName& name) const
 {
     if (name == SVGNames::xAttr)
         return m_x.ptr();
@@ -122,8 +122,8 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGRect>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGRect>(*this, WTFMove(style));
+        return createRenderer<RenderSVGRect>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGRect>(*this, WTF::move(style));
 }
 
 }

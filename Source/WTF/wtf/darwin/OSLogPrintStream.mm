@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "OSLogPrintStream.h"
+#include <wtf/darwin/OSLogPrintStream.h>
 
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ParsingUtilities.h>

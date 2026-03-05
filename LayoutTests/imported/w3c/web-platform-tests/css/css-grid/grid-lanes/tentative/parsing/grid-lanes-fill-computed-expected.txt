@@ -1,4 +1,0 @@
-
-FAIL Property masonry-fill value 'normal' assert_true: masonry-fill doesn't seem to be supported in the computed style expected true got false
-FAIL Property masonry-fill value 'reverse' assert_true: masonry-fill doesn't seem to be supported in the computed style expected true got false
-

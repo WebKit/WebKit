@@ -1184,9 +1184,23 @@ TEST_P(DataChannelIntegrationTest,
               IsRtcOk());
 
   auto caller_report = caller()->NewGetStats();
+  ASSERT_THAT(caller_report, NotNull());
   EXPECT_EQ(1u, caller_report->GetStatsOfType<RTCTransportStats>().size());
   auto callee_report = callee()->NewGetStats();
+  ASSERT_THAT(callee_report, NotNull());
   EXPECT_EQ(1u, callee_report->GetStatsOfType<RTCTransportStats>().size());
+}
+
+TEST_P(DataChannelIntegrationTest, CreateDataChannelInvalidatesStatsCache) {
+  ASSERT_TRUE(CreatePeerConnectionWrappers());
+  auto first_report = caller()->NewGetStats();
+  ASSERT_THAT(first_report, NotNull());
+  caller()->CreateDataChannel();
+  auto second_report = caller()->NewGetStats();
+  ASSERT_THAT(second_report, NotNull());
+
+  EXPECT_EQ(0u, first_report->GetStatsOfType<RTCDataChannelStats>().size());
+  EXPECT_EQ(1u, second_report->GetStatsOfType<RTCDataChannelStats>().size());
 }
 
 TEST_P(DataChannelIntegrationTest, QueuedPacketsGetDeliveredInReliableMode) {

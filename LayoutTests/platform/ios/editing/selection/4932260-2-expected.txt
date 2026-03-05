@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 415x19
+        RenderText {#text} at (0,0) size 415x20
           text run at (0,0) width 415: "This tests for a bug where images would act as word boundaries."
       RenderBlock {DIV} at (0,36) size 784x108
         RenderText {#text} at (0,88) size 25x19

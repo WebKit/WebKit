@@ -25,14 +25,13 @@
 
 #pragma once
 
-#include <WebCore/CSSValueList.h>
+#include "CSSValueList.h"
 
 namespace WebCore {
 
-class StyleImage;
-
 namespace Style {
 class BuilderState;
+class Image;
 }
 
 class CSSImageSetValue final : public CSSValueContainingVector {
@@ -42,7 +41,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSImageSetValue& other) const { return itemsEqual(other); }
 
-    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
+    RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 
 private:
     explicit CSSImageSetValue(CSSValueListBuilder);

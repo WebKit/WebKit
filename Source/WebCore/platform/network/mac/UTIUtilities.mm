@@ -82,7 +82,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     for (UTType *parentType : parentTypes.get()) {
         if (auto&& type = mimeTypeFromUTITree(parentType))
-            return WTFMove(type);
+            return WTF::move(type);
     }
 
     return nullptr;
@@ -103,13 +103,12 @@ RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
 
 static NSString *UTIFromPotentiallyUnknownMIMEType(StringView mimeType)
 {
-    static constexpr std::pair<ComparableLettersLiteral, NSString *> typesArray[] = {
+    static constexpr SortedArrayMap typesMap { std::to_array<std::pair<ComparableLettersLiteral, NSString *>>({
         { "model/usd"_s, @"com.pixar.universal-scene-description-mobile" },
         { "model/vnd.pixar.usd"_s, @"com.pixar.universal-scene-description-mobile" },
         { "model/vnd.reality"_s, @"com.apple.reality" },
         { "model/vnd.usdz+zip"_s, @"com.pixar.universal-scene-description-mobile" },
-    };
-    static constexpr SortedArrayMap typesMap { typesArray };
+    }) };
     return typesMap.get(mimeType, nil);
 }
 

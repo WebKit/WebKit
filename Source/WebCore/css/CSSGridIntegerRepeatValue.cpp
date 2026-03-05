@@ -36,14 +36,14 @@
 namespace WebCore {
 
 CSSGridIntegerRepeatValue::CSSGridIntegerRepeatValue(Ref<CSSPrimitiveValue>&& repetitions, CSSValueListBuilder builder)
-    : CSSValueContainingVector(ClassType::GridIntegerRepeat, SpaceSeparator, WTFMove(builder))
-    , m_repetitions(WTFMove(repetitions))
+    : CSSValueContainingVector(ClassType::GridIntegerRepeat, SpaceSeparator, WTF::move(builder))
+    , m_repetitions(WTF::move(repetitions))
 {
 }
 
 Ref<CSSGridIntegerRepeatValue> CSSGridIntegerRepeatValue::create(Ref<CSSPrimitiveValue>&& repetitions, CSSValueListBuilder builder)
 {
-    return adoptRef(*new CSSGridIntegerRepeatValue(WTFMove(repetitions), WTFMove(builder)));
+    return adoptRef(*new CSSGridIntegerRepeatValue(WTF::move(repetitions), WTF::move(builder)));
 }
 
 String CSSGridIntegerRepeatValue::customCSSText(const CSS::SerializationContext& context) const

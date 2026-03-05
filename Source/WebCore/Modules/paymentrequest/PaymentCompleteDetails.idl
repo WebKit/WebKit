@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=PAYMENT_REQUEST
+    Conditional=PAYMENT_REQUEST,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PaymentCompleteDetails {
     object? data;
 };

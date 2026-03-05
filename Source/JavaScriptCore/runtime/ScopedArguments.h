@@ -155,6 +155,8 @@ public:
 
     void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
 
+    static JSArray* fastSlice(JSGlobalObject*, ScopedArguments*, uint64_t startIndex, uint64_t count);
+
     JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
 
     DECLARE_INFO;

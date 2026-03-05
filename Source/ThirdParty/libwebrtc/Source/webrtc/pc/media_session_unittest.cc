@@ -25,6 +25,8 @@
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/candidate.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/field_trials_view.h"
 #include "api/media_types.h"
@@ -62,6 +64,7 @@
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/pc/sctp/fake_sctp_transport.h"
 
 namespace webrtc {
 namespace {
@@ -530,14 +533,27 @@ MediaSessionOptions CreateAudioMediaSession() {
 // these tests may be obsolete as a result, and should be refactored or removed.
 class MediaSessionDescriptionFactoryTest : public testing::Test {
  public:
-  MediaSessionDescriptionFactoryTest()
-      : field_trials_(CreateTestFieldTrials()),
-        tdf1_(field_trials_),
-        tdf2_(field_trials_),
-        codec_lookup_helper_1_(field_trials_),
-        codec_lookup_helper_2_(field_trials_),
-        f1_(nullptr, false, &ssrc_generator1, &tdf1_, &codec_lookup_helper_1_),
-        f2_(nullptr, false, &ssrc_generator2, &tdf2_, &codec_lookup_helper_2_) {
+  MediaSessionDescriptionFactoryTest(absl::string_view field_trials_string = "")
+      : env_(CreateEnvironment(std::make_unique<FieldTrials>(
+            CreateTestFieldTrials(field_trials_string)))),
+        tdf1_(env_.field_trials()),
+        tdf2_(env_.field_trials()),
+        codec_lookup_helper_1_(env_.field_trials()),
+        codec_lookup_helper_2_(env_.field_trials()),
+        f1_(env_,
+            nullptr,
+            false,
+            &ssrc_generator1,
+            &tdf1_,
+            &sctp_factory_1_,
+            &codec_lookup_helper_1_),
+        f2_(env_,
+            nullptr,
+            false,
+            &ssrc_generator2,
+            &tdf2_,
+            &sctp_factory_2_,
+            &codec_lookup_helper_2_) {
     codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(
         MAKE_VECTOR(kAudioCodecs1), MAKE_VECTOR(kAudioCodecs1));
     codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(
@@ -782,13 +798,15 @@ class MediaSessionDescriptionFactoryTest : public testing::Test {
   }
 
  protected:
-  FieldTrials field_trials_;
+  Environment env_;
   UniqueRandomIdGenerator ssrc_generator1;
   UniqueRandomIdGenerator ssrc_generator2;
   TransportDescriptionFactory tdf1_;
   TransportDescriptionFactory tdf2_;
   CodecLookupHelperForTesting codec_lookup_helper_1_;
   CodecLookupHelperForTesting codec_lookup_helper_2_;
+  FakeSctpTransportFactory sctp_factory_1_;
+  FakeSctpTransportFactory sctp_factory_2_;
   MediaSessionDescriptionFactory f1_;
   MediaSessionDescriptionFactory f2_;
 };
@@ -1680,6 +1698,82 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   EXPECT_FALSE(dc_answer->rejected);
   EXPECT_EQ(webrtc::kSctpSendBufferSize, dcd_answer->max_message_size());
 }
+
+class MediaSessionDescriptionFactorySnapTest
+    : public MediaSessionDescriptionFactoryTest {
+ public:
+  MediaSessionDescriptionFactorySnapTest()
+      : MediaSessionDescriptionFactoryTest("WebRTC-Sctp-Snap/Enabled/") {}
+};
+
+TEST_F(MediaSessionDescriptionFactorySnapTest,
+       TestCreateDataAnswerToOfferWithSctpInit) {
+  MediaSessionOptions opts;
+  opts.use_sctp_snap = true;
+  AddDataSection(RtpTransceiverDirection::kSendRecv, &opts);
+  std::unique_ptr<SessionDescription> offer =
+      f1_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_THAT(offer, NotNull());
+  ContentInfo* dc_offer = offer->GetContentByName("2");
+  ASSERT_THAT(dc_offer, NotNull());
+  SctpDataContentDescription* dcd_offer =
+      dc_offer->media_description()->as_sctp();
+  ASSERT_THAT(dcd_offer, NotNull());
+  EXPECT_NE(dcd_offer->sctp_init(), std::nullopt);
+  dcd_offer->set_sctp_init(std::nullopt);
+  std::unique_ptr<SessionDescription> answer =
+      f2_.CreateAnswerOrError(offer.get(), opts, nullptr).MoveValue();
+  const ContentInfo* dc_answer = answer->GetContentByName("2");
+  ASSERT_THAT(dc_answer, NotNull());
+  const SctpDataContentDescription* dcd_answer =
+      dc_answer->media_description()->as_sctp();
+  ASSERT_THAT(dcd_answer, NotNull());
+  EXPECT_FALSE(dc_answer->rejected);
+  EXPECT_EQ(dcd_answer->sctp_init(), std::nullopt);
+}
+
+TEST_F(MediaSessionDescriptionFactorySnapTest,
+       TestCreateOfferAfterAnswerWithoutSctpInit) {
+  MediaSessionOptions opts;
+  opts.use_sctp_snap = true;
+  AddDataSection(RtpTransceiverDirection::kSendRecv, &opts);
+  std::unique_ptr<SessionDescription> offer =
+      f1_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_THAT(offer, NotNull());
+  ContentInfo* dc_offer = offer->GetContentByName("2");
+  ASSERT_THAT(dc_offer, NotNull());
+  SctpDataContentDescription* dcd_offer =
+      dc_offer->media_description()->as_sctp();
+  ASSERT_THAT(dcd_offer, NotNull());
+  EXPECT_NE(dcd_offer->sctp_init(), std::nullopt);
+  dcd_offer->set_sctp_init(std::nullopt);
+  std::unique_ptr<SessionDescription> answer =
+      f2_.CreateAnswerOrError(offer.get(), opts, nullptr).MoveValue();
+  const ContentInfo* dc_answer = answer->GetContentByName("2");
+  ASSERT_THAT(dc_answer, NotNull());
+  const SctpDataContentDescription* dcd_answer =
+      dc_answer->media_description()->as_sctp();
+  ASSERT_THAT(dcd_answer, NotNull());
+  EXPECT_FALSE(dc_answer->rejected);
+  EXPECT_EQ(dcd_answer->sctp_init(), std::nullopt);
+
+  std::unique_ptr<SessionDescription> reoffer =
+      f2_.CreateOfferOrError(opts, nullptr).MoveValue();
+  ASSERT_THAT(reoffer, NotNull());
+  ContentInfo* dc_reoffer = reoffer->GetContentByName("2");
+  ASSERT_THAT(dc_reoffer, NotNull());
+  SctpDataContentDescription* dcd_reoffer =
+      dc_reoffer->media_description()->as_sctp();
+  ASSERT_THAT(dcd_reoffer, NotNull());
+  EXPECT_FALSE(dc_reoffer->rejected);
+  EXPECT_NE(dcd_reoffer->sctp_init(), std::nullopt);
+}
+
+// TODO: bugs.webrtc.org/426480601 - add more SNAP tests here:
+// - two calls to createOffer without SLD get different cookie
+// - subsequent createOffer after SLD retains old cookie
+// - subsequent createOffer after offer without cookie has new cookie
+//   (or stale cookie?)
 
 // Verifies that the order of the media contents in the offer is preserved in
 // the answer.
@@ -3657,10 +3751,16 @@ TEST_F(MediaSessionDescriptionFactoryTest, SimSsrcsGenerateMultipleRtxSsrcs) {
   EXPECT_EQ(3u, fid_ssrcs.size());
 }
 
+class MediaSessionDescriptionFactoryFecTest
+    : public MediaSessionDescriptionFactoryTest {
+ public:
+  MediaSessionDescriptionFactoryFecTest()
+      : MediaSessionDescriptionFactoryTest("WebRTC-FlexFEC-03/Enabled/") {}
+};
+
 // Test that, when the FlexFEC codec is added, a FlexFEC ssrc is created
 // together with a FEC-FR grouping. Guarded by WebRTC-FlexFEC-03 trial.
-TEST_F(MediaSessionDescriptionFactoryTest, GenerateFlexfecSsrc) {
-  field_trials_.Set("WebRTC-FlexFEC-03", "Enabled");
+TEST_F(MediaSessionDescriptionFactoryFecTest, GenerateFlexfecSsrc) {
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, kVideoMid,
                              RtpTransceiverDirection::kSendRecv, kActive,
@@ -3702,8 +3802,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, GenerateFlexfecSsrc) {
 // Test that FlexFEC is disabled for simulcast.
 // TODO(brandtr): Remove this test when we support simulcast, either through
 // multiple FlexfecSenders, or through multistream protection.
-TEST_F(MediaSessionDescriptionFactoryTest, SimSsrcsGenerateNoFlexfecSsrcs) {
-  field_trials_.Set("WebRTC-FlexFEC-03", "Enabled");
+TEST_F(MediaSessionDescriptionFactoryFecTest, SimSsrcsGenerateNoFlexfecSsrcs) {
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(webrtc::MediaType::VIDEO, kVideoMid,
                              RtpTransceiverDirection::kSendRecv, kActive,
@@ -4722,12 +4821,25 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 class MediaProtocolTest : public testing::TestWithParam<const char*> {
  public:
   MediaProtocolTest()
-      : tdf1_(field_trials_),
-        tdf2_(field_trials_),
-        codec_lookup_helper_1_(field_trials_),
-        codec_lookup_helper_2_(field_trials_),
-        f1_(nullptr, false, &ssrc_generator1, &tdf1_, &codec_lookup_helper_1_),
-        f2_(nullptr, false, &ssrc_generator2, &tdf2_, &codec_lookup_helper_2_) {
+      : env_(CreateEnvironment()),
+        tdf1_(env_.field_trials()),
+        tdf2_(env_.field_trials()),
+        codec_lookup_helper_1_(env_.field_trials()),
+        codec_lookup_helper_2_(env_.field_trials()),
+        f1_(env_,
+            nullptr,
+            false,
+            &ssrc_generator1,
+            &tdf1_,
+            &sctp_factory_1_,
+            &codec_lookup_helper_1_),
+        f2_(env_,
+            nullptr,
+            false,
+            &ssrc_generator2,
+            &tdf2_,
+            &sctp_factory_2_,
+            &codec_lookup_helper_2_) {
     codec_lookup_helper_1_.GetCodecVendor()->set_audio_codecs(
         MAKE_VECTOR(kAudioCodecs1), MAKE_VECTOR(kAudioCodecs1));
     codec_lookup_helper_1_.GetCodecVendor()->set_video_codecs(
@@ -4743,11 +4855,13 @@ class MediaProtocolTest : public testing::TestWithParam<const char*> {
   }
 
  protected:
-  FieldTrials field_trials_ = CreateTestFieldTrials();
+  Environment env_;
   TransportDescriptionFactory tdf1_;
   TransportDescriptionFactory tdf2_;
   CodecLookupHelperForTesting codec_lookup_helper_1_;
   CodecLookupHelperForTesting codec_lookup_helper_2_;
+  FakeSctpTransportFactory sctp_factory_1_;
+  FakeSctpTransportFactory sctp_factory_2_;
   MediaSessionDescriptionFactory f1_;
   MediaSessionDescriptionFactory f2_;
   UniqueRandomIdGenerator ssrc_generator1;
@@ -4801,15 +4915,16 @@ bool CodecsMatch(const std::vector<Codec>& codecs1,
 }
 
 void TestAudioCodecsOffer(RtpTransceiverDirection direction) {
-  FieldTrials field_trials = CreateTestFieldTrials();
-  TransportDescriptionFactory tdf(field_trials);
+  Environment env(CreateEnvironment());
+  TransportDescriptionFactory tdf(env.field_trials());
   tdf.set_certificate(RTCCertificate::Create(
       std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("id"))));
 
   UniqueRandomIdGenerator ssrc_generator;
-  CodecLookupHelperForTesting codec_lookup_helper(field_trials);
-  MediaSessionDescriptionFactory sf(nullptr, false, &ssrc_generator, &tdf,
-                                    &codec_lookup_helper);
+  CodecLookupHelperForTesting codec_lookup_helper(env.field_trials());
+  FakeSctpTransportFactory sctpf;
+  MediaSessionDescriptionFactory sf(env, nullptr, false, &ssrc_generator, &tdf,
+                                    &sctpf, &codec_lookup_helper);
   const std::vector<Codec> send_codecs = MAKE_VECTOR(kAudioCodecs1);
   const std::vector<Codec> recv_codecs = MAKE_VECTOR(kAudioCodecs2);
   const std::vector<Codec> sendrecv_codecs = MAKE_VECTOR(kAudioCodecsAnswer);
@@ -4907,21 +5022,24 @@ std::vector<T> VectorFromIndices(const T* array, const int (&indices)[IDXS]) {
 void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
                            RtpTransceiverDirection answer_direction,
                            bool add_legacy_stream) {
-  FieldTrials field_trials = CreateTestFieldTrials();
-  TransportDescriptionFactory offer_tdf(field_trials);
-  TransportDescriptionFactory answer_tdf(field_trials);
+  Environment env(CreateEnvironment());
+  TransportDescriptionFactory offer_tdf(env.field_trials());
+  TransportDescriptionFactory answer_tdf(env.field_trials());
+  FakeSctpTransportFactory offer_sctpf;
+  FakeSctpTransportFactory answer_sctpf;
   offer_tdf.set_certificate(RTCCertificate::Create(
       std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("offer_id"))));
   answer_tdf.set_certificate(RTCCertificate::Create(
       std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("answer_id"))));
   UniqueRandomIdGenerator ssrc_generator1, ssrc_generator2;
-  CodecLookupHelperForTesting offer_codec_lookup_helper(field_trials);
+  CodecLookupHelperForTesting offer_codec_lookup_helper(env.field_trials());
   MediaSessionDescriptionFactory offer_factory(
-      nullptr, false, &ssrc_generator1, &offer_tdf, &offer_codec_lookup_helper);
-  CodecLookupHelperForTesting answer_codec_lookup_helper(field_trials);
-  MediaSessionDescriptionFactory answer_factory(nullptr, false,
-                                                &ssrc_generator2, &answer_tdf,
-                                                &answer_codec_lookup_helper);
+      env, nullptr, false, &ssrc_generator1, &offer_tdf, &offer_sctpf,
+      &offer_codec_lookup_helper);
+  CodecLookupHelperForTesting answer_codec_lookup_helper(env.field_trials());
+  MediaSessionDescriptionFactory answer_factory(
+      env, nullptr, false, &ssrc_generator2, &answer_tdf, &answer_sctpf,
+      &answer_codec_lookup_helper);
 
   offer_codec_lookup_helper.GetCodecVendor()->set_audio_codecs(
       VectorFromIndices(kOfferAnswerCodecs, kOfferSendCodecs),
@@ -5063,20 +5181,25 @@ INSTANTIATE_TEST_SUITE_P(MediaSessionDescriptionFactoryTest,
 class VideoCodecsOfferH265LevelIdTest : public testing::Test {
  public:
   VideoCodecsOfferH265LevelIdTest()
-      : tdf_offerer_(field_trials_),
-        tdf_answerer_(field_trials_),
-        sf_offerer_(nullptr,
+      : env_(CreateEnvironment()),
+        tdf_offerer_(env_.field_trials()),
+        tdf_answerer_(env_.field_trials()),
+        sf_offerer_(env_,
+                    nullptr,
                     false,
                     &ssrc_generator_offerer_,
                     &tdf_offerer_,
+                    &sctpf_offerer_,
                     &codec_lookup_helper_offerer_),
-        sf_answerer_(nullptr,
+        sf_answerer_(env_,
+                     nullptr,
                      false,
                      &ssrc_generator_answerer_,
                      &tdf_answerer_,
+                     &sctpf_answerer_,
                      &codec_lookup_helper_answerer_),
-        codec_lookup_helper_offerer_(field_trials_),
-        codec_lookup_helper_answerer_(field_trials_) {
+        codec_lookup_helper_offerer_(env_.field_trials()),
+        codec_lookup_helper_answerer_(env_.field_trials()) {
     tdf_offerer_.set_certificate(RTCCertificate::Create(
         std::unique_ptr<SSLIdentity>(new FakeSSLIdentity("offer_id"))));
     tdf_answerer_.set_certificate(RTCCertificate::Create(
@@ -5095,11 +5218,13 @@ class VideoCodecsOfferH265LevelIdTest : public testing::Test {
   }
 
  protected:
-  FieldTrials field_trials_ = CreateTestFieldTrials();
+  Environment env_;
   TransportDescriptionFactory tdf_offerer_;
   TransportDescriptionFactory tdf_answerer_;
   UniqueRandomIdGenerator ssrc_generator_offerer_;
   UniqueRandomIdGenerator ssrc_generator_answerer_;
+  FakeSctpTransportFactory sctpf_offerer_;
+  FakeSctpTransportFactory sctpf_answerer_;
   MediaSessionDescriptionFactory sf_offerer_;
   MediaSessionDescriptionFactory sf_answerer_;
   CodecLookupHelperForTesting codec_lookup_helper_offerer_;

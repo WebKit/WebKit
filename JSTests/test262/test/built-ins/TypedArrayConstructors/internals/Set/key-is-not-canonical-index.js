@@ -24,9 +24,9 @@ var keys = [
   "0.0000001"
 ];
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   keys.forEach(function(key) {
-    var sample = new TA([42]);
+    var sample = new TA(makeCtorArg([42]));
 
     assert.sameValue(
       Reflect.set(sample, key, "ecma262"),
@@ -55,4 +55,4 @@ testWithTypedArrayConstructors(function(TA) {
       sample[key], undefined, 'The value of sample[key] is expected to equal `undefined`'
     );
   });
-});
+}, null, ["passthrough"]);

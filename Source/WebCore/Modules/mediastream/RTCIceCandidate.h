@@ -41,16 +41,16 @@ struct RTCIceCandidateInit;
 template<typename> class ExceptionOr;
 
 class RTCIceCandidate final : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCIceCandidate);
+    WTF_MAKE_TZONE_ALLOCATED(RTCIceCandidate);
 public:
     using Fields = RTCIceCandidateFields;
 
     static ExceptionOr<Ref<RTCIceCandidate>> create(const RTCIceCandidateInit&);
     static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
-    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Fields&& fields) { return adoptRef(*new RTCIceCandidate(candidate, sdpMid, { }, WTFMove(fields))); }
+    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Fields&& fields) { return adoptRef(*new RTCIceCandidate(candidate, sdpMid, { }, WTF::move(fields))); }
 
-    const String& candidate() const { return m_candidate; }
-    const String& sdpMid() const { return m_sdpMid; }
+    const String& candidate() const LIFETIME_BOUND { return m_candidate; }
+    const String& sdpMid() const LIFETIME_BOUND { return m_sdpMid; }
     std::optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
 
     String foundation() const { return m_fields.foundation; }

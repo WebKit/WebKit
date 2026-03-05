@@ -28,10 +28,7 @@ PASS :workgroup_size:attr="override_no_default_pipe_fail"
 PASS :workgroup_size:attr="trailing_comma_x"
 PASS :workgroup_size:attr="trailing_comma_y"
 PASS :workgroup_size:attr="trailing_comma_z"
-FAIL :workgroup_size:attr="override_expr" assert_unreached:
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size:attr="override_expr"
 PASS :workgroup_size:attr="mixed_abstract_signed"
 PASS :workgroup_size:attr="mixed_abstract_unsigned"
 PASS :workgroup_size:attr="mixed_signed_unsigned"

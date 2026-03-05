@@ -58,7 +58,7 @@ public:
 
     static std::unique_ptr<CurlStream> create(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url, ServerTrustEvaluation serverTrustEvaluation, LocalhostAlias localhostAlias)
     {
-        return makeUnique<CurlStream>(scheduler, streamID, WTFMove(url), serverTrustEvaluation, localhostAlias);
+        return makeUnique<CurlStream>(scheduler, streamID, WTF::move(url), serverTrustEvaluation, localhostAlias);
     }
 
     CurlStream(CurlStreamScheduler&, CurlStreamID, URL&&, ServerTrustEvaluation, LocalhostAlias);

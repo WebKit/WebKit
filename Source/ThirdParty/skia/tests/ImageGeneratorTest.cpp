@@ -35,7 +35,7 @@
 static bool gMyFactoryWasCalled;
 
 // NOLINTNEXTLINE(performance-unnecessary-value-param)
-static std::unique_ptr<SkImageGenerator> my_factory(sk_sp<SkData>) {
+static std::unique_ptr<SkImageGenerator> my_factory(sk_sp<const SkData>) {
     gMyFactoryWasCalled = true;
     return nullptr;
 }

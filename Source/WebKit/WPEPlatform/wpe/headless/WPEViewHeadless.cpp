@@ -89,7 +89,7 @@ static void wpeViewHeadlessConstructed(GObject* object)
         auto* priv = WPE_VIEW_HEADLESS(view)->priv;
         if (priv->committedBuffer)
             wpe_view_buffer_released(view, priv->committedBuffer.get());
-        priv->committedBuffer = WTFMove(priv->pendingBuffer);
+        priv->committedBuffer = WTF::move(priv->pendingBuffer);
         wpe_view_buffer_rendered(view, priv->committedBuffer.get());
 
         if (g_source_is_destroyed(priv->frameSource.get()))

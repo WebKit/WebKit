@@ -35,7 +35,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     [CallWith=CurrentGlobalObject] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
     [CallWith=CurrentGlobalObject] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
     [CallWith=CurrentGlobalObject] Promise<any> sign(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
-    [CallWith=CurrentGlobalObject] Promise<any> verify(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource signature, BufferSource data);
+    [CallWith=CurrentGlobalObject, ImplementedAs=doVerify] Promise<any> verify(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource signature, BufferSource data);
     [CallWith=CurrentGlobalObject] Promise<any> digest(AlgorithmIdentifier algorithm, BufferSource data);
     [CallWith=CurrentGlobalObject] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
     [CallWith=CurrentGlobalObject] Promise<any> deriveKey(AlgorithmIdentifier algorithm, CryptoKey baseKey, AlgorithmIdentifier derivedKeyType, boolean extractable, sequence<CryptoKeyUsage> keyUsages);

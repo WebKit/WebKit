@@ -144,9 +144,11 @@ rtc_source_set("resolution") {
   deps = [ "../../rtc_base/system:rtc_export" ]
 }
 
+# TODO: bugs.webrtc.org/358039777 - Remove when safe.
 rtc_source_set("corruption_detection_filter_settings") {
   visibility = [ "*" ]
   sources = [ "corruption_detection_filter_settings.h" ]
+  deps = [ "corruption_detection:filter_settings" ]
 }
 
 rtc_library("encoded_image") {
@@ -156,7 +158,6 @@ rtc_library("encoded_image") {
     "encoded_image.h",
   ]
   deps = [
-    ":corruption_detection_filter_settings",
     ":video_codec_constants",
     ":video_frame",
     ":video_frame_type",
@@ -171,6 +172,7 @@ rtc_library("encoded_image") {
     "../../rtc_base:refcount",
     "../../rtc_base/system:rtc_export",
     "../units:timestamp",
+    "corruption_detection:filter_settings",
   ]
 }
 
@@ -184,11 +186,11 @@ rtc_library("encoded_frame") {
   deps = [
     ":encoded_image",
     ":video_frame",
-    "../../common_video:frame_instrumentation_data",
     "../../modules/rtp_rtcp:rtp_video_header",
     "../../modules/video_coding:codec_globals_headers",
     "../../modules/video_coding:video_codec_interface",
     "../units:timestamp",
+    "corruption_detection:frame_instrumentation_data",
   ]
 }
 

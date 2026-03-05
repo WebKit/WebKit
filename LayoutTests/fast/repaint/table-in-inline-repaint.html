@@ -1,0 +1,20 @@
+<!doctype html>
+<div>
+<span>
+    <div><div id=t style="margin-bottom:32px">initial</div></div>
+    <table style="width:100%"><td style="height:500px; background: blue"></td></table>
+</span>
+</div>
+<pre id=log></pre>
+<script>
+window.testRunner?.dumpAsText();
+window.internals?.startTrackingRepaints();
+
+t.offsetLeft;
+t.textContent = "foo";
+
+const rects = window.internals?.repaintRectsAsText();
+window.internals?.stopTrackingRepaints();
+
+log.textContent = rects;
+</script>

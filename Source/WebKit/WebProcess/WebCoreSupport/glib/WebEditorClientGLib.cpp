@@ -28,6 +28,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/Node.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/NodeInlines.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebPage.h>

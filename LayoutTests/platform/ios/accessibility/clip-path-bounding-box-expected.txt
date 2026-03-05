@@ -4,7 +4,7 @@ PASS: current.role.toLowerCase().includes("statictext") === true
 x: 8
 y: 150
 width: 25
-height: 19
+height: 20
 
 x is valid: true
 y is valid: true
@@ -15,7 +15,7 @@ PASS: current.role.toLowerCase().includes("statictext") === true
 x: 8
 y: 190
 width: 109
-height: 19
+height: 20
 
 PASS: current.role.toLowerCase().includes("group") === true
 x: 8
@@ -27,7 +27,7 @@ PASS: current.role.toLowerCase().includes("statictext") === true
 x: 8
 y: 210
 width: 288
-height: 59
+height: 60
 
 
 PASS successfullyParsed is true

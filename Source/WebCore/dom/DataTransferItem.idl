@@ -29,15 +29,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/dnd.html#datatransferitem
 [
     EnabledBySetting=DataTransferItemsEnabled,
     Exposed=Window
 ] interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
-
     [CallWith=CurrentDocument] undefined getAsString(StringCallback? callback);
-    File getAsFile();
+    File? getAsFile();
 
     // https://wicg.github.io/entries-api/#html-data
     [CallWith=CurrentScriptExecutionContext, ImplementedAs=getAsEntry] FileSystemEntry? webkitGetAsEntry();

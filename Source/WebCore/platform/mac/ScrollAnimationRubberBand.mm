@@ -62,12 +62,23 @@ ScrollAnimationRubberBand::ScrollAnimationRubberBand(ScrollAnimationClient& clie
 
 ScrollAnimationRubberBand::~ScrollAnimationRubberBand() = default;
 
-bool ScrollAnimationRubberBand::startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
+bool ScrollAnimationRubberBand::startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll, const FloatSize& targetOverscroll)
 {
     m_initialVelocity = initialVelocity;
     m_initialOverscroll = initialOverscroll;
+    m_targetOverscroll = targetOverscroll;
 
     didStart(MonotonicTime::now());
+    return true;
+}
+
+bool ScrollAnimationRubberBand::startRubberBandAnimationWithElapsedTime(const FloatSize& initialVelocity, const FloatSize& initialOverscroll, Seconds alreadyElapsed, const FloatSize& targetOverscroll)
+{
+    m_initialVelocity = initialVelocity;
+    m_initialOverscroll = initialOverscroll;
+    m_targetOverscroll = targetOverscroll;
+
+    didStart(MonotonicTime::now() - alreadyElapsed);
     return true;
 }
 
@@ -88,14 +99,18 @@ void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
     // This is very similar to ScrollingMomentumCalculator logic, but I wasn't able to get to ScrollingMomentumCalculator to
     // give the correct behavior when starting a rubberband with initial velocity (i.e. bouncing).
 
-    auto rubberBandOffset = FloatSize {
-        roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_initialOverscroll.width(), -m_initialVelocity.width(), elapsedTime)),
-        roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_initialOverscroll.height(), -m_initialVelocity.height(), elapsedTime))
+    auto relativeInitialOverscroll = m_initialOverscroll - m_targetOverscroll;
+
+    auto relativeRubberBandOffset = FloatSize {
+        roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(relativeInitialOverscroll.width(), -m_initialVelocity.width(), elapsedTime)),
+        roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(relativeInitialOverscroll.height(), -m_initialVelocity.height(), elapsedTime))
     };
 
+    auto rubberBandOffset = relativeRubberBandOffset + m_targetOverscroll;
+
     // We might be rubberbanding away from an edge and back, so wait a frame or two before checking for completion.
-    bool animationComplete = rubberBandOffset.isZero() && elapsedTime > 24_ms;
-    
+    bool animationComplete = relativeRubberBandOffset.isZero() && elapsedTime > 24_ms;
+
     auto scrollDelta = rubberBandOffset - m_client.overscrollAmount(*this);
     m_currentOffset = m_client.scrollOffset(*this) + scrollDelta;
 
@@ -108,7 +123,7 @@ void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
 String ScrollAnimationRubberBand::debugDescription() const
 {
     TextStream textStream;
-    textStream << "ScrollAnimationRubberBand " << this << " active " << isActive() << " initial velocity " << m_initialVelocity << " initial overscroll " << m_initialOverscroll;
+    textStream << "ScrollAnimationRubberBand " << this << " active " << isActive() << " initial velocity " << m_initialVelocity << " initial overscroll " << m_initialOverscroll << " target overscroll " << m_targetOverscroll;
     return textStream.release();
 }
 

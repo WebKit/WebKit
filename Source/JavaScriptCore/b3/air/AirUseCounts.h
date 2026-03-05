@@ -66,31 +66,78 @@ public:
         m_fpNumWarmUsesAndDefs = FixedVector<float>(fpArraySize, 0);
         m_fpConstDefs.ensureSize(fpArraySize);
         BitVector fpNonConstDefs = m_fpConstDefs;
+        m_fpConstants = FixedVector<v128_t>(fpArraySize, v128_t { });
+        m_fpConstantWidths = FixedVector<Width>(fpArraySize, Width8);
+
+        auto extractGPConstant = [&](Air::Opcode opcode, const Air::Arg& arg) -> int64_t {
+            return opcode == Move32 ? static_cast<int64_t>(static_cast<uint64_t>(static_cast<uint32_t>(static_cast<uint64_t>(arg.value())))) : arg.value();
+        };
+
+        auto extractFPConstant = [&](Air::Opcode, Air::Arg arg) -> v128_t {
+            if (arg.isFPImm128())
+                return arg.asV128();
+
+            v128_t v { };
+            v.u64x2[0] = static_cast<uint64_t>(arg.value());
+            return v;
+        };
 
         for (BasicBlock* block : code) {
             double frequency = block->frequency();
             if (!fastWorklist.saw(block))
                 frequency *= Options::rareBlockPenalty();
             for (Inst& inst : *block) {
-                if ((inst.kind.opcode == Move || inst.kind.opcode == Move32) && inst.args[0].isSomeImm() && inst.args[1].is<Tmp>()) {
-                    Tmp tmp = inst.args[1].as<Tmp>();
-                    if (tmp.bank() == GP) {
-                        auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
-                        if (!m_gpConstDefs.quickGet(index)) {
-                            m_gpConstDefs.quickSet(index);
-                            m_gpConstants[index] = inst.kind.opcode == Move32 ? static_cast<int64_t>(static_cast<uint64_t>(static_cast<uint32_t>(static_cast<uint64_t>(inst.args[0].value())))) : inst.args[0].value();
-                        } else
-                            gpNonConstDefs.quickSet(index);
-                        m_gpNumWarmUsesAndDefs[index] += frequency;
-                    } else {
-                        auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
-                        if (!m_fpConstDefs.quickGet(index))
-                            m_fpConstDefs.quickSet(index);
-                        else
-                            fpNonConstDefs.quickSet(index);
-                        m_fpNumWarmUsesAndDefs[index] += frequency;
+                switch (inst.kind.opcode) {
+                case Move:
+                case Move32: {
+                    if (inst.args[0].isSomeImm() && inst.args[1].is<Tmp>()) {
+                        Tmp tmp = inst.args[1].as<Tmp>();
+                        if (tmp.bank() == GP) {
+                            auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
+                            if (!m_gpConstDefs.quickGet(index)) {
+                                m_gpConstDefs.quickSet(index);
+                                m_gpConstants[index] = extractGPConstant(inst.kind.opcode, inst.args[0]);
+                            } else
+                                gpNonConstDefs.quickSet(index);
+                            m_gpNumWarmUsesAndDefs[index] += frequency;
+                            continue;
+                        }
                     }
-                    continue;
+                    break;
+                }
+                case MoveFloat:
+                case MoveDouble:
+                case MoveVector: {
+                    if (inst.args[0].isSomeImm() && inst.args[1].is<Tmp>()) {
+                        Tmp tmp = inst.args[1].as<Tmp>();
+                        if (tmp.bank() == FP) {
+                            auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
+                            if (!m_fpConstDefs.quickGet(index)) {
+                                m_fpConstDefs.quickSet(index);
+                                m_fpConstants[index] = extractFPConstant(inst.kind.opcode, inst.args[0]);
+                                switch (inst.kind.opcode) {
+                                case MoveFloat:
+                                    m_fpConstantWidths[index] = Width32;
+                                    break;
+                                case MoveDouble:
+                                    m_fpConstantWidths[index] = Width64;
+                                    break;
+                                case MoveVector:
+                                    m_fpConstantWidths[index] = Width128;
+                                    break;
+                                default:
+                                    RELEASE_ASSERT_NOT_REACHED();
+                                }
+                            } else
+                                fpNonConstDefs.quickSet(index);
+                            m_fpNumWarmUsesAndDefs[index] += frequency;
+                            continue;
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
                 }
 
                 inst.forEach<Tmp>(
@@ -120,9 +167,9 @@ public:
     bool isConstDef(unsigned absoluteIndex) const
     {
         if constexpr (bank == GP)
-            return m_gpConstDefs.quickGet(absoluteIndex);
+            return m_gpConstDefs.get(absoluteIndex);
         else
-            return m_fpConstDefs.quickGet(absoluteIndex);
+            return m_fpConstDefs.get(absoluteIndex);
     }
 
     template<Bank bank>
@@ -130,10 +177,8 @@ public:
     {
         if constexpr (bank == GP)
             return m_gpConstants[absoluteIndex];
-        else {
-            RELEASE_ASSERT_NOT_REACHED();
-            return 0.0;
-        }
+        else
+            return m_fpConstants[absoluteIndex];
     }
 
     template<Bank bank>
@@ -143,6 +188,13 @@ public:
             return m_gpNumWarmUsesAndDefs[absoluteIndex];
         else
             return m_fpNumWarmUsesAndDefs[absoluteIndex];
+    }
+
+    template<Bank bank>
+    Width constantWidth(unsigned absoluteIndex) const
+    {
+        static_assert(bank == FP, "constantWidth only valid for FP bank");
+        return m_fpConstantWidths[absoluteIndex];
     }
 
     void dump(PrintStream& out) const
@@ -160,6 +212,8 @@ private:
     BitVector m_gpConstDefs;
     BitVector m_fpConstDefs;
     FixedVector<int64_t> m_gpConstants;
+    FixedVector<v128_t> m_fpConstants;
+    FixedVector<Width> m_fpConstantWidths;
 };
 
 } } } // namespace JSC::B3::Air

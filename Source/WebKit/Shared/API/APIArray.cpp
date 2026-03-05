@@ -37,7 +37,7 @@ Ref<Array> Array::create()
 
 Ref<Array> Array::create(Vector<RefPtr<Object>>&& elements)
 {
-    return adoptRef(*new Array(WTFMove(elements)));
+    return adoptRef(*new Array(WTF::move(elements)));
 }
 
 Ref<Array> Array::createWithCapacity(size_t capacity)
@@ -52,7 +52,7 @@ Ref<Array> Array::createStringArray(const Vector<WTF::String>& strings)
     auto elements = strings.map([](auto& string) -> RefPtr<Object> {
         return API::String::create(string);
     });
-    return create(WTFMove(elements));
+    return create(WTF::move(elements));
 }
 
 Ref<Array> Array::createStringArray(const std::span<const WTF::String> strings)
@@ -83,7 +83,7 @@ Ref<API::Array> Array::copy()
         return Array::create();
 
     Vector<RefPtr<Object>> elements = this->elements();
-    return Array::create(WTFMove(elements));
+    return Array::create(WTF::move(elements));
 }
 
 } // namespace API

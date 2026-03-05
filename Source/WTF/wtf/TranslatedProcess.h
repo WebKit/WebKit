@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
+#include <wtf/Platform.h>
+
 namespace WTF {
 
 #if HAVE(CPU_TRANSLATION_CAPABILITY)

@@ -130,7 +130,7 @@ HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const
         }
 
         SecurityOriginData origin { protocol, protectionSpace.host(), static_cast<uint16_t>(protectionSpace.port())};
-        origins.add(WTFMove(origin));
+        origins.add(WTF::move(origin));
     }
     return origins;
 }

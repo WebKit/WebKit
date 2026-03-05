@@ -106,8 +106,10 @@ rtc_library("builtin_audio_processing_builder") {
     "builtin_audio_processing_builder.h",
   ]
   deps = [
+    ":aec3_config",
     ":audio_processing",
     ":echo_control",
+    ":neural_residual_echo_estimator_api",
     "..:make_ref_counted",
     "..:scoped_refptr",
     "../../modules/audio_processing",
@@ -151,6 +153,7 @@ rtc_library("aec3_factory") {
   deps = [
     ":aec3_config",
     ":echo_control",
+    ":neural_residual_echo_estimator_api",
     "../../modules/audio_processing/aec3",
     "../../rtc_base/system:rtc_export",
     "../environment",
@@ -162,10 +165,45 @@ rtc_source_set("echo_control") {
   visibility = [ "*" ]
   sources = [ "echo_control.h" ]
   deps = [
+    ":neural_residual_echo_estimator_api",
     "../../rtc_base:checks",
     "../environment",
     "//third_party/abseil-cpp/absl/base:nullability",
   ]
+}
+
+rtc_source_set("neural_residual_echo_estimator_api") {
+  visibility = [ "*" ]
+  sources = [ "neural_residual_echo_estimator.h" ]
+  deps = [
+    ":aec3_config",
+    "..:array_view",
+  ]
+}
+
+if (rtc_enable_protobuf) {
+  rtc_library("neural_residual_echo_estimator_creator") {
+    visibility = [ "*" ]
+    allow_poison = [ "default_neural_residual_echo_estimator" ]
+    configs += [ "../../modules/audio_processing:apm_debug_dump" ]
+    sources = [
+      "neural_residual_echo_estimator_creator.cc",
+      "neural_residual_echo_estimator_creator.h",
+    ]
+    deps = [
+      ":neural_residual_echo_estimator_api",
+      "../../modules/audio_processing/aec3/neural_residual_echo_estimator:neural_residual_echo_estimator_impl",
+      "../../rtc_base:checks",
+      "../../rtc_base/system:rtc_export",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+    if (build_with_chromium) {
+      deps += [ "//third_party/tflite" ]
+    } else {
+      deps += [ "//third_party/tflite:tflite_standalone" ]
+    }
+  }
 }
 
 rtc_library("echo_detector_creator") {

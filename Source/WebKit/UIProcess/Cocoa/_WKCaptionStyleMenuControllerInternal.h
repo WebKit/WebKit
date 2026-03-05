@@ -31,7 +31,7 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+#if PLATFORM(IOS_FAMILY)
 @class UIContextMenuInteraction;
 @class UIAction;
 #endif
@@ -41,15 +41,20 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WKCaptionStyleMenuController ()
 {
     WTF::RetainPtr<PlatformMenu> _menu;
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
     WTF::RetainPtr<UIContextMenuInteraction> _interaction;
 #endif
 }
 
+- (void)setPreviewProfileID:(nullable NSString *)profileID;
+
 @property (nonatomic, copy, nullable) NSString *savedActiveProfileID;
-@property (nonatomic, strong) PlatformMenu *menu;
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
-@property (nonatomic, strong) UIContextMenuInteraction *interaction;
+@property (nonatomic, strong, nullable) PlatformMenu *menu;
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
+@property (nonatomic, strong, nullable) UIContextMenuInteraction *interaction;
+#endif
+#if PLATFORM(IOS_FAMILY)
+- (void)notifyMenuWillOpen;
 #endif
 
 @end

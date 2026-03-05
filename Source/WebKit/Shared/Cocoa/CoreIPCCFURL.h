@@ -41,7 +41,7 @@ public:
     }
 
     CoreIPCCFURL(RetainPtr<CFURLRef> url)
-        : m_cfURL(WTFMove(url))
+        : m_cfURL(WTF::move(url))
     {
         RELEASE_ASSERT(m_cfURL);
     }

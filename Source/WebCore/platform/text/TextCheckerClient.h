@@ -52,6 +52,7 @@ public:
     // identification. Noramlly it's the text surrounding the "word" for which we are getting correction suggestions.
     virtual void getGuessesForWord(const String& word, const String& context, const VisibleSelection& currentSelection, Vector<String>& guesses) = 0;
     virtual void requestCheckingOfString(TextCheckingRequest&, const VisibleSelection& currentSelection) = 0;
+    virtual void requestExtendedCheckingOfString(TextCheckingRequest&, const VisibleSelection& currentSelection) = 0;
 };
 
 }

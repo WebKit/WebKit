@@ -11,4 +11,5 @@ PASS @scope with sibling style sharing, first sibling enters scope with :has
 PASS @scope with sibling style sharing, second sibling enters scope with :has
 PASS @scope with sibling style sharing, first sibling enters scope with ID selector
 PASS @scope with sibling style sharing, second sibling enters scope with ID selector
+PASS @scope with sibling style sharing, with child relative implicit scope selector
 

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
-    : CachedResource(WTFMove(request), Type::ApplicationManifest, sessionID, cookieJar)
+    : CachedResource(WTF::move(request), Type::ApplicationManifest, sessionID, cookieJar)
     , m_decoder(TextResourceDecoder::create("application/manifest+json"_s, PAL::UTF8Encoding()))
 {
 }
@@ -45,8 +45,8 @@ void CachedApplicationManifest::finishLoading(const FragmentedSharedBuffer* data
     if (data) {
         Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
-        m_text = protectedDecoder()->decodeAndFlush(contiguousData->span());
-        m_data = WTFMove(contiguousData);
+        m_text = protect(m_decoder)->decodeAndFlush(contiguousData->span());
+        m_data = WTF::move(contiguousData);
     } else {
         m_data = nullptr;
         setEncodedSize(0);
@@ -56,12 +56,12 @@ void CachedApplicationManifest::finishLoading(const FragmentedSharedBuffer* data
 
 void CachedApplicationManifest::setEncoding(const String& chs)
 {
-    protectedDecoder()->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 ASCIILiteral CachedApplicationManifest::encoding() const
 {
-    return protectedDecoder()->encoding().name();
+    return protect(m_decoder)->encoding().name();
 }
 
 std::optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, Document* document)
@@ -71,11 +71,6 @@ std::optional<ApplicationManifest> CachedApplicationManifest::process(const URL&
     if (document)
         return ApplicationManifestParser::parse(*document, *m_text, manifestURL, documentURL);
     return ApplicationManifestParser::parse(*m_text, manifestURL, documentURL);
-}
-
-Ref<TextResourceDecoder> CachedApplicationManifest::protectedDecoder() const
-{
-    return m_decoder;
 }
 
 } // namespace WebCore

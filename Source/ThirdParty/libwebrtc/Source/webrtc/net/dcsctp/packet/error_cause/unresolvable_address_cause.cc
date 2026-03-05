@@ -28,7 +28,6 @@ namespace dcsctp {
 //  /                  Unresolvable Address                         /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int UnresolvableAddressCause::kType;
 
 std::optional<UnresolvableAddressCause> UnresolvableAddressCause::Parse(
     webrtc::ArrayView<const uint8_t> data) {

@@ -1,4 +1,4 @@
 
 PASS With em
-FAIL With em and percentage The operation is not supported.
+FAIL With em and percentage assert_equals: r1.height expected 120 but got 120.00000762939453
 

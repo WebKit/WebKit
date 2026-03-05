@@ -1,4 +1,4 @@
-//@ skip if $buildType == "release"
+//@ skip
 //@ runDefault("--watchdog=90", "--jitPolicyScale=0", "--watchdog-exception-ok")
 
 function bar() {

@@ -126,7 +126,7 @@ WebCore::FloatPoint PointerTouchCompatibilitySimulator::locationInScreen() const
 
 RetainPtr<UIWindow> PointerTouchCompatibilitySimulator::window() const
 {
-    return [m_view window];
+    return [protect(m_view) window];
 }
 
 void PointerTouchCompatibilitySimulator::setEnabled(bool enabled)

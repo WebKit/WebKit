@@ -53,7 +53,7 @@ template<typename CallableType, typename Out, typename... In>
 class CallableWrapper : public CallableWrapperBase<Out, In...> {
 public:
     explicit CallableWrapper(CallableType&& callable)
-        : m_callable(WTFMove(callable)) { }
+        : m_callable(WTF::move(callable)) { }
     CallableWrapper(const CallableWrapper&) = delete;
     CallableWrapper& operator=(const CallableWrapper&) = delete;
     Out call(In... in) final { return m_callable(std::forward<In>(in)...); }
@@ -127,7 +127,7 @@ public:
         return *this;
     }
 
-    Impl* leak()
+    [[nodiscard]] Impl* leak()
     {
         return m_callableWrapper.release();
     }

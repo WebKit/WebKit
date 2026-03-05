@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`video.currentTime = 3`);
+                run(`video.playbackRate = 0.25`);
+                await video.play();
+
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+                await urlPromise;
+
+                run(`route.timeRange = { start: 0, duration: 6 }`);
+                run(`route.ready = true`);
+                await waitFor(video, 'playing');
+
+                testExpected('route.currentPlaybackPosition', 3, '>=');
+                testExpected('route.playbackRate', 0.25);
+                testExpected('route.playing', true);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that the wireless playback media engine is configured with a video's current time, playback rate, and playing state when a MediaDeviceRoute activates.</p> 
+    </body>
+</html>

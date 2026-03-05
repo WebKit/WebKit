@@ -38,7 +38,7 @@
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,DedicatedWorker,ServiceWorker)
 ] interface Notification : EventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor(DOMString title, optional NotificationOptions options);
+    [CallWith=CurrentScriptExecutionContext] constructor(DOMString title, optional NotificationOptions options = {});
 
     [CallWith=CurrentScriptExecutionContext] static readonly attribute NotificationPermission permission;
     [Exposed=Window, CallWith=CurrentDocument] static Promise<NotificationPermission> requestPermission(optional NotificationPermissionCallback? deprecatedCallback);

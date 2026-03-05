@@ -41,13 +41,13 @@ public:
         RefPtr<CSSVariableData> defaultValue;
     };
 
-    static Ref<StyleRuleFunction> create(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
+    static Ref<StyleRuleFunction> NODELETE create(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
 
     Ref<StyleRuleFunction> copy() const { return adoptRef(*new StyleRuleFunction(*this)); }
 
     AtomString name() const { return m_name; }
-    const Vector<Parameter>& parameters() const { return m_parameters; }
-    const CSSCustomPropertySyntax& returnType() const { return m_returnType; }
+    const Vector<Parameter>& parameters() const LIFETIME_BOUND { return m_parameters; }
+    const CSSCustomPropertySyntax& returnType() const LIFETIME_BOUND { return m_returnType; }
 
 private:
     StyleRuleFunction(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
@@ -62,7 +62,7 @@ class StyleRuleFunctionDeclarations : public StyleRuleBase {
 public:
     static Ref<StyleRuleFunctionDeclarations> create(Ref<StyleProperties>&& properties)
     {
-        return adoptRef(*new StyleRuleFunctionDeclarations(WTFMove(properties)));
+        return adoptRef(*new StyleRuleFunctionDeclarations(WTF::move(properties)));
     }
 
     Ref<StyleRuleFunctionDeclarations> copy() const { return adoptRef(*new StyleRuleFunctionDeclarations(*this)); }

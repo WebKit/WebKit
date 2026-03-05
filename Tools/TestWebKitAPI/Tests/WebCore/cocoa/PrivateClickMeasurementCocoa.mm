@@ -50,7 +50,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
         WallTime::now(),
         WebCore::PCM::AttributionEphemeral::No
     );
-    pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
+    pcm.setEphemeralSourceNonce(WTF::move(ephemeralNonce));
 
     // Generate the server key pair.
     size_t modulusNBits = 4096;
@@ -73,7 +73,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     Vector<uint8_t> rawKeyBytes(exportSize);
     ccder_encode_rsa_pub(rsaPublicKey, rawKeyBytes.begin(), rawKeyBytes.end());
 
-    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
+    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTF::move(rawKeyBytes));
 
     // Continue the test.
     auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(wrappedKeyBytes));

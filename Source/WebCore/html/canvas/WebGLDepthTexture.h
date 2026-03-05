@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLDepthTexture final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLDepthTexture);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLDepthTexture);
 public:
     explicit WebGLDepthTexture(WebGLRenderingContextBase&);
     ~WebGLDepthTexture();
@@ -42,3 +42,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLDepthTexture)

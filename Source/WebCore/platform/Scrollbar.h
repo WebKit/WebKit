@@ -60,7 +60,6 @@ public:
     static float pageStepDelta(int widthOrHeight) { return std::max(std::max(static_cast<float>(widthOrHeight) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(widthOrHeight) - Scrollbar::maxOverlapBetweenPages()), 1.0f); }
 
     inline ScrollableArea& scrollableArea() const; // Defined in ScrollbarInlines.h.
-    inline CheckedRef<ScrollableArea> checkedScrollableArea() const; // Defined in ScrollbarInlines.h.
 
     bool isCustomScrollbar() const { return m_isCustomScrollbar; }
     WEBCORE_EXPORT bool isMockScrollbar() const;

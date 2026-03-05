@@ -33,8 +33,8 @@ includes: [testTypedArray.js]
 features: [Symbol.species, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(4);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(4));
   var ctor = {};
 
   sample.buffer.constructor = ctor;

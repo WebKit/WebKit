@@ -2,6 +2,7 @@ Name: Proguard
 URL: http://proguard.sourceforge.net/
 Version: 6.0.3
 Date: 2016-06-22
+Update Mechanism: Manual
 License: GPL-2.0
 License File: LICENSE
 Security Critical: no

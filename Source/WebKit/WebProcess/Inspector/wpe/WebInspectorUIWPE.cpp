@@ -39,8 +39,17 @@ void WebInspectorUI::didEstablishConnection()
     WTF::registerInspectorResourceIfNeeded();
 }
 
-bool WebInspectorUI::canSave(InspectorFrontendClient::SaveMode)
+bool WebInspectorUI::canSave(InspectorFrontendClient::SaveMode saveMode)
 {
+    switch (saveMode) {
+    case InspectorFrontendClient::SaveMode::SingleFile:
+        return true;
+
+    case InspectorFrontendClient::SaveMode::FileVariants:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 

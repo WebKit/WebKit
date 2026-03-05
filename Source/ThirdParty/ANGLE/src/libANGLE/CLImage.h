@@ -37,7 +37,7 @@ class Image final : public Memory
     const cl_image_format &getFormat() const;
     const ImageDescriptor &getDescriptor() const;
 
-    bool isRegionValid(const cl::MemOffsets &origin, const cl::Coordinate &region) const;
+    bool isRegionValid(const cl::Offset &origin, const cl::Extents &region) const;
 
     size_t getElementSize() const;
     size_t getRowSize() const;

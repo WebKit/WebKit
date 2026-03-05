@@ -34,7 +34,7 @@
 namespace WebCore {
 
 NativeXPathNSResolver::NativeXPathNSResolver(Ref<Node>&& node)
-    : m_node(WTFMove(node))
+    : m_node(WTF::move(node))
 {
 }
 

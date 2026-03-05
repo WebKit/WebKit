@@ -15,7 +15,7 @@ info: |
     If numericIndex is not undefined, then
       If IsDetachedBuffer(O.[[ViewedArrayBuffer]]) is true, return true.
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
@@ -28,4 +28,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(delete sample["-1"], true, 'The value of `delete sample["-1"]` is true');
   assert.sameValue(delete sample["1"], true, 'The value of `delete sample["1"]` is true');
   assert.sameValue(delete sample["2"], true, 'The value of `delete sample["2"]` is true');
-});
+}, null, ["passthrough"]);

@@ -84,16 +84,14 @@ protected:
 private:
 
     WebCore::MediaPlaybackTargetPicker& targetPicker();
-    CheckedRef<WebCore::MediaPlaybackTargetPicker> checkedTargetPicker();
     WebCore::MediaPlaybackTargetPickerMock& mockPicker();
-    CheckedRef<WebCore::MediaPlaybackTargetPickerMock> checkedMockPicker();
 
     // MediaPlaybackTargetPicker::Client
     void setPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) final;
     void externalOutputDeviceAvailableDidChange(bool) final;
     void playbackTargetPickerWasDismissed() final;
 
-    size_t find(WebMediaSessionManagerClient*, PlaybackTargetClientContextIdentifier);
+    size_t NODELETE find(WebMediaSessionManagerClient*, PlaybackTargetClientContextIdentifier);
 
     void configurePlaybackTargetClients();
     void configureNewClients();

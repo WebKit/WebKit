@@ -32,9 +32,11 @@ namespace WebCore {
 class DestinationColorSpace;
 
 enum class PredefinedColorSpace : uint8_t {
-    SRGB
+    SRGB,
+    SRGBLinear,
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
-    , DisplayP3
+    DisplayP3,
+    DisplayP3Linear,
 #endif
 };
 

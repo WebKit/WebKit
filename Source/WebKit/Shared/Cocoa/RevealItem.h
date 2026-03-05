@@ -55,12 +55,11 @@ public:
     RevealItem() = default;
     RevealItem(const String& text, RevealItemRange selectedRange);
 
-    const String& text() const { return m_text; }
-    const RevealItemRange& selectedRange() const { return m_selectedRange; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
+    const RevealItemRange& selectedRange() const LIFETIME_BOUND { return m_selectedRange; }
     NSRange highlightRange() const;
 
     RVItem *item() const;
-    RetainPtr<RVItem> protectedItem() const;
 
 private:
     String m_text;

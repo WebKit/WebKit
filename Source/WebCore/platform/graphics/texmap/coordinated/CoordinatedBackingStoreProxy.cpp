@@ -71,19 +71,19 @@ void CoordinatedBackingStoreProxy::Update::appendUpdate(Vector<uint32_t>&& tiles
     }
 
     if (m_tilesToCreate.isEmpty())
-        m_tilesToCreate = WTFMove(tilesToCreate);
+        m_tilesToCreate = WTF::move(tilesToCreate);
     else
-        m_tilesToCreate.appendVector(WTFMove(tilesToCreate));
+        m_tilesToCreate.appendVector(WTF::move(tilesToCreate));
 
     if (m_tilesToUpdate.isEmpty())
-        m_tilesToUpdate = WTFMove(tilesToUpdate);
+        m_tilesToUpdate = WTF::move(tilesToUpdate);
     else
-        m_tilesToUpdate.appendVector(WTFMove(tilesToUpdate));
+        m_tilesToUpdate.appendVector(WTF::move(tilesToUpdate));
 
     if (m_tilesToRemove.isEmpty())
-        m_tilesToRemove = WTFMove(tilesToRemove);
+        m_tilesToRemove = WTF::move(tilesToRemove);
     else
-        m_tilesToRemove.appendVector(WTFMove(tilesToRemove));
+        m_tilesToRemove.appendVector(WTF::move(tilesToRemove));
 }
 
 void CoordinatedBackingStoreProxy::Update::waitUntilPaintingComplete()
@@ -97,12 +97,12 @@ Ref<CoordinatedBackingStoreProxy> CoordinatedBackingStoreProxy::create()
     return adoptRef(*new CoordinatedBackingStoreProxy());
 }
 
-OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, CoordinatedPlatformLayer& layer)
+OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, float contentsScale, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
 {
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
-        createOrDestroyTiles(unscaledVisibleRect, unscaledContentsRect, enclosingIntRect(layer.visibleRect()).size(), contentsScale, layer.maxTextureSize(), tilesToCreate, tilesToRemove);
+        createOrDestroyTiles(unscaledVisibleRect, unscaledContentsRect, enclosingIntRect(layer.visibleRect()).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
 
     if (!m_tiles.isEmpty())
         invalidateRegion(dirtyRegion);
@@ -149,7 +149,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
 
             IntRect updateRect(tile.dirtyRect);
             updateRect.move(-tile.rect.x(), -tile.rect.y());
-            tilesToUpdate.append({ tile.id, tile.rect, WTFMove(updateRect), WTFMove(buffer) });
+            tilesToUpdate.append({ tile.id, tile.rect, WTF::move(updateRect), WTF::move(buffer) });
             tile.markClean();
             result.add(UpdateResult::BuffersChanged);
 
@@ -173,7 +173,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
     result.add(UpdateResult::TilesChanged);
     {
         Locker locker { m_update.lock };
-        m_update.pending.appendUpdate(WTFMove(tilesToCreate), WTFMove(tilesToUpdate), WTFMove(tilesToRemove));
+        m_update.pending.appendUpdate(WTF::move(tilesToCreate), WTF::move(tilesToUpdate), WTF::move(tilesToRemove));
     }
     return result;
 }
@@ -201,7 +201,7 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
     }
 }
 
-void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
+void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage& damage, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
 {
     float coverAreaMultiplier = MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 1.0f : 2.0f;
     bool contentsScaleChanged = m_contentsScale != contentsScale;
@@ -223,7 +223,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledV
         if (!m_contentsRect.isEmpty()) {
             auto tileSize = computeTileSize(unscaledViewportSize.scaled(m_contentsScale), maxTextureSize);
             tileSizeChanged = m_tileSize != tileSize;
-            m_tileSize = WTFMove(tileSize);
+            m_tileSize = WTF::move(tileSize);
         }
 
         if (tileSizeChanged || contentsScaleChanged || m_contentsRect.isEmpty()) {
@@ -262,8 +262,8 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledV
      */
 
     auto [coverRect, keepRect] = computeCoverAndKeepRect();
-    m_coverRect = WTFMove(coverRect);
-    m_keepRect = WTFMove(keepRect);
+    m_coverRect = WTF::move(coverRect);
+    m_keepRect = WTF::move(keepRect);
 
     // Drop tiles outside the new keepRect.
     m_tiles.removeIf([&](auto& iter) {
@@ -332,8 +332,15 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledV
 
         for (const auto& position : tilePositionsToCreate) {
             auto tile = Tile(generateTileID(), position, tileRectForPosition(position));
+#if ENABLE(DAMAGE_TRACKING)
+            IntRect unscaledDirtyRect = tile.dirtyRect;
+            unscaledDirtyRect.scale(1 / contentsScale);
+            damage.add(unscaledDirtyRect);
+#else
+            UNUSED_PARAM(damage);
+#endif
             tilesToCreate.append(tile.id);
-            m_tiles.add(position, WTFMove(tile));
+            m_tiles.add(position, WTF::move(tile));
         }
     }
 
@@ -477,13 +484,13 @@ std::pair<IntRect, IntRect> CoordinatedBackingStoreProxy::computeCoverAndKeepRec
     keepRect.intersect(m_contentsRect);
 
     ASSERT(coverRect.isEmpty() || keepRect.contains(coverRect));
-    return { WTFMove(coverRect), WTFMove(keepRect) };
+    return { WTF::move(coverRect), WTF::move(keepRect) };
 }
 
 CoordinatedBackingStoreProxy::Update CoordinatedBackingStoreProxy::takePendingUpdate()
 {
     Locker locker { m_update.lock };
-    return WTFMove(m_update.pending);
+    return WTF::move(m_update.pending);
 }
 
 IntRect CoordinatedBackingStoreProxy::mapToContents(const IntRect& rect) const

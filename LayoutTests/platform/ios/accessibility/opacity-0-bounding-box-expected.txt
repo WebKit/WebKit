@@ -4,7 +4,7 @@ PASS: current.role.toLowerCase().includes("statictext") === true
 x: 8
 y: 150
 width: 25
-height: 19
+height: 20
 
 PASS: current.role.toLowerCase().includes("radiobutton") === true
 x: 10
@@ -16,7 +16,7 @@ PASS: current.role.toLowerCase().includes("statictext") === true
 x: 8
 y: 476
 width: 96
-height: 19
+height: 20
 
 PASS: current.role.toLowerCase().includes("image") === true
 x: 8

@@ -1,8 +1,49 @@
+CONSOLE MESSAGE: Hello from leaf-iframe http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+CONSOLE MESSAGE: Hello from leaf-iframe http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+CONSOLE MESSAGE: Hello from leaf-iframe http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+CONSOLE MESSAGE: Hello from leaf-iframe http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+CONSOLE MESSAGE: Hello from leaf-iframe http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html
 
 == Running test suite: SiteIsolation.Target
--- Running test case: SiteIsolation.Target.FrameTargetLifecycleEvents
-{"eventType":"target-manager-target-added","targetType":"frame"}
-{"eventType":"target-manager-target-added","targetType":"frame"}
-{"eventType":"target-manager-target-removed","targetType":"frame"}
-{"eventType":"target-manager-target-removed","targetType":"frame"}
+-- Running test case: SiteIsolation.Target.SameOriginIframe
+{"event":"target-manager-target-added","target":0,"type":"frame","isProvisional":false}
+{"event":"console-manager-message-added","target":0,"message":"Hello from leaf-iframe http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html"}
+
+-- Running test case: SiteIsolation.Target.CrossOriginIframe
+{"event":"target-manager-target-added","target":1,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":2,"type":"frame","isProvisional":true}
+{"event":"target-manager-target-removed","target":1,"type":"frame","isProvisional":false}
+{"event":"target-manager-provisional-target-committed","target":2,"type":"frame","isProvisional":false}
+{"event":"console-manager-message-added","target":2,"message":"Hello from leaf-iframe http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html"}
+
+-- Running test case: SiteIsolation.Target.GrandChildCrossOriginIframeInSameOrigin
+{"event":"target-manager-target-added","target":3,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":4,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":5,"type":"frame","isProvisional":true}
+{"event":"target-manager-target-removed","target":4,"type":"frame","isProvisional":false}
+{"event":"target-manager-provisional-target-committed","target":5,"type":"frame","isProvisional":false}
+{"event":"console-manager-message-added","target":5,"message":"Hello from leaf-iframe http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html"}
+
+-- Running test case: SiteIsolation.Target.GrandChildSameOriginIframeInCrossOrigin
+{"event":"target-manager-target-added","target":6,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":7,"type":"frame","isProvisional":true}
+{"event":"target-manager-target-removed","target":6,"type":"frame","isProvisional":false}
+{"event":"target-manager-provisional-target-committed","target":7,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":8,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":9,"type":"frame","isProvisional":true}
+{"event":"target-manager-target-removed","target":8,"type":"frame","isProvisional":false}
+{"event":"target-manager-provisional-target-committed","target":9,"type":"frame","isProvisional":false}
+{"event":"console-manager-message-added","target":9,"message":"Hello from leaf-iframe http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html"}
+
+-- Running test case: SiteIsolation.Target.ProvisionalFrameCancelledByRemoval
+{"event":"target-manager-target-added","target":10,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":11,"type":"frame","isProvisional":true}
+{"event":"target-manager-target-removed","target":10,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-removed","target":11,"type":"frame","isProvisional":true}
+
+-- Running test case: SiteIsolation.Target.ProvisionalFrameCancelledByNavigation
+{"event":"target-manager-target-added","target":12,"type":"frame","isProvisional":false}
+{"event":"target-manager-target-added","target":13,"type":"frame","isProvisional":true}
+{"event":"target-manager-target-removed","target":13,"type":"frame","isProvisional":true}
+{"event":"console-manager-message-added","target":12,"message":"Hello from leaf-iframe http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html"}
 

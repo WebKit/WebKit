@@ -40,8 +40,8 @@ PluginInfoProvider::~PluginInfoProvider()
 
 void PluginInfoProvider::clearPagesPluginData()
 {
-    for (auto& page : m_pages)
-        page.clearPluginData();
+    for (Ref page : m_pages)
+        page->clearPluginData();
 }
 
 void PluginInfoProvider::refresh(bool reloadPages)
@@ -50,18 +50,18 @@ void PluginInfoProvider::refresh(bool reloadPages)
 
     Vector<Ref<LocalFrame>> framesNeedingReload;
 
-    for (auto& page : m_pages) {
-        page.clearPluginData();
+    for (Ref page : m_pages) {
+        page->clearPluginData();
 
         if (!reloadPages)
             continue;
 
-        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        for (RefPtr frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
             if (localFrame->loader().subframeLoader().containsPlugins()) {
-                if (RefPtr localMainFrame = page.localMainFrame())
+                if (RefPtr localMainFrame = page->localMainFrame())
                     framesNeedingReload.append(*localMainFrame);
             }
         }

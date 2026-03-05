@@ -106,7 +106,7 @@ public:
     BitVector& bitVector(size_t i) { return m_bitVectors[i]; }
     unsigned addBitVector(BitVector&& bitVector)
     {
-        m_bitVectors.append(WTFMove(bitVector));
+        m_bitVectors.append(WTF::move(bitVector));
         return m_bitVectors.size() - 1;
     }
 
@@ -116,7 +116,7 @@ public:
     {
         ASSERT(m_vm.heap.isDeferred());
         unsigned result = m_constantIdentifierSets.size();
-        m_constantIdentifierSets.append(WTFMove(set));
+        m_constantIdentifierSets.append(WTF::move(set));
         return result;
     }
 

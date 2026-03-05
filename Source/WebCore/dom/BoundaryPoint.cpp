@@ -50,7 +50,7 @@ std::optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
     return BoundaryPoint { parent.releaseNonNull(), node.computeNodeIndex() + 1 };
 }
 
-static bool isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node& child)
+static bool NODELETE isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node& child)
 {
     if (!offset)
         return true;
@@ -74,14 +74,14 @@ template<TreeType treeType> std::partial_ordering treeOrderInternal(const Bounda
         RefPtr nextAncestor = parent<treeType>(*ancestor);
         if (nextAncestor == a.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? std::strong_ordering::less : std::strong_ordering::greater;
-        ancestor = WTFMove(nextAncestor);
+        ancestor = WTF::move(nextAncestor);
     }
 
     for (RefPtr ancestor = a.container.copyRef(); ancestor; ) {
         RefPtr nextAncestor = parent<treeType>(*ancestor);
         if (nextAncestor == b.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? std::strong_ordering::greater : std::strong_ordering::less;
-        ancestor = WTFMove(nextAncestor);
+        ancestor = WTF::move(nextAncestor);
     }
 
     return treeOrder<treeType>(a.container, b.container);

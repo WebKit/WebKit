@@ -11,7 +11,6 @@
 #ifndef PC_TRANSCEIVER_LIST_H_
 #define PC_TRANSCEIVER_LIST_H_
 
-#include <algorithm>
 #include <cstddef>
 #include <map>
 #include <optional>
@@ -115,9 +114,7 @@ class TransceiverList {
   }
   void Remove(RtpTransceiverProxyRefPtr transceiver) {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
-    transceivers_.erase(
-        std::remove(transceivers_.begin(), transceivers_.end(), transceiver),
-        transceivers_.end());
+    std::erase(transceivers_, transceiver);
   }
   RtpTransceiverProxyRefPtr FindBySender(
       scoped_refptr<RtpSenderInterface> sender) const;

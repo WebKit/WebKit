@@ -48,7 +48,7 @@ public:
     explicit CoreIPCAVOutputContext(AVOutputContext *);
 
     explicit CoreIPCAVOutputContext(CoreIPCAVOutputContextData&& data)
-        : m_data(WTFMove(data))
+        : m_data(WTF::move(data))
     {
     }
 

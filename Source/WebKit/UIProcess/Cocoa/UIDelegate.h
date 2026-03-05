@@ -117,17 +117,17 @@ private:
         bool takeFocus(WebPageProxy*, WKFocusDirection) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
-        void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
         bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
         bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEventModifier>);
 #endif
 
-#if PLATFORM(MAC)
-        void showPage(WebPageProxy*) final;
         void focus(WebPageProxy*) final;
         void unfocus(WebPageProxy*) final;
+
+#if PLATFORM(MAC)
+        void showPage(WebPageProxy*) final;
 
         bool canRunModal() const final;
         void runModal(WebPageProxy&) final;
@@ -152,7 +152,7 @@ private:
 #if ENABLE(DEVICE_ORIENTATION)
         void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
 #endif
-        bool needsFontAttributes() const final { return m_uiDelegate ? m_uiDelegate->m_delegateMethods.webViewDidChangeFontAttributes : false; }
+        bool needsFontAttributes() const final { return m_uiDelegate && m_uiDelegate->m_delegateMethods.webViewDidChangeFontAttributes; }
         void didChangeFontAttributes(const WebCore::FontAttributes&) final;
         void decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
         void decidePolicyForScreenCaptureUnmuting(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, API::SecurityOrigin&, API::SecurityOrigin&, CompletionHandler<void(bool isAllowed)>&&) final;
@@ -215,8 +215,11 @@ private:
         void didExitStandby(WebPageProxy&) final;
 #endif
 
+#if PLATFORM(VISION)
+        void willPresentModalUI(WebPageProxy&) final;
+#endif
+
         id<WKUIDelegatePrivate> uiDelegatePrivate();
-        RetainPtr<id<WKUIDelegatePrivate>> protectedUIDelegatePrivate();
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };
@@ -234,6 +237,7 @@ private:
         bool webViewRequestStorageAccessPanelForDomainUnderCurrentDomainForQuirkDomainsCompletionHandler : 1;
         bool webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestGeolocationPermissionForFrameDecisionHandler : 1;
+        bool webViewRequestGeolocationPermissionForOriginDecisionHandlerSPI : 1;
         bool webViewRequestGeolocationPermissionForOriginDecisionHandler : 1;
         bool webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo : 1;
         bool webViewTakeFocus : 1;
@@ -243,10 +247,10 @@ private:
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         bool webViewMouseDidMoveOverElementWithFlagsUserInfo : 1;
 #endif
-#if PLATFORM(MAC)
-        bool showWebView : 1;
         bool focusWebView : 1;
         bool unfocusWebView : 1;
+#if PLATFORM(MAC)
+        bool showWebView : 1;
         bool webViewRunModal : 1;
         bool webViewDidScroll : 1;
         bool webViewHeaderHeight : 1;
@@ -321,7 +325,6 @@ private:
         bool webViewSupportedXRSessionFeatures : 1;
 #endif
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
-        bool webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler : 1;
         bool webViewUpdatedAppBadge : 1;
         bool webViewDidAdjustVisibilityWithSelectors : 1;
 
@@ -333,6 +336,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
         bool webViewDidEnterStandby : 1;
         bool webViewDidExitStandby : 1;
+#endif
+
+#if PLATFORM(VISION)
+        bool webViewWillPresentModalUI : 1;
 #endif
     } m_delegateMethods;
 };

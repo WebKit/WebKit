@@ -29,6 +29,7 @@ header: "ContentWorldData.h"
     DisableLegacyBuiltinOverrides,
     AllowJSHandleCreation,
     AllowNodeSerialization,
+    Inspectable,
 };
 
 [DebugDecodingFailure] struct WebKit::ContentWorldData {

@@ -40,11 +40,11 @@ namespace WebCore {
 class GPUTexture;
 
 class XRProjectionLayer : public XRCompositionLayer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRProjectionLayer);
+    WTF_MAKE_TZONE_ALLOCATED(XRProjectionLayer);
 public:
     static Ref<XRProjectionLayer> create(ScriptExecutionContext& scriptExecutionContext, Ref<XRLayerBacking>&& backing)
     {
-        return adoptRef(*new XRProjectionLayer(scriptExecutionContext, WTFMove(backing)));
+        return adoptRef(*new XRProjectionLayer(scriptExecutionContext, WTF::move(backing)));
     }
     virtual ~XRProjectionLayer();
 
@@ -55,7 +55,7 @@ public:
     bool ignoreDepthValues() const;
     std::optional<float> fixedFoveation() const;
     void setFixedFoveation(std::optional<float>);
-    WebXRRigidTransform* deltaPose() const;
+    WebXRRigidTransform* NODELETE deltaPose() const;
     void setDeltaPose(WebXRRigidTransform*);
 
     // WebXRLayer

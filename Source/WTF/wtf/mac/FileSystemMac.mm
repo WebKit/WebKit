@@ -44,7 +44,7 @@ void FileSystem::setMetadataURL(const String& path, const String& metadataURLStr
         urlString = metadataURLString;
 
     // Call Metadata API on a background queue because it can take some time.
-    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [path = path.isolatedCopy(), urlString = WTFMove(urlString).isolatedCopy(), referrer = referrer.isolatedCopy()] {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [path = path.isolatedCopy(), urlString = WTF::move(urlString).isolatedCopy(), referrer = referrer.isolatedCopy()] {
         auto item = adoptCF(MDItemCreate(kCFAllocatorDefault, path.createCFString().get()));
         if (!item)
             return;

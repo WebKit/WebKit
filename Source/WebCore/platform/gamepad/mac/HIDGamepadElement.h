@@ -93,7 +93,7 @@ class HIDGamepadHatswitch : public HIDGamepadElement {
 public:
     HIDGamepadHatswitch(const HIDElement& element, Vector<SharedGamepadValue>&& buttonValues)
         : HIDGamepadElement(element)
-        , m_buttonValues(WTFMove(buttonValues))
+        , m_buttonValues(WTF::move(buttonValues))
     {
     }
 

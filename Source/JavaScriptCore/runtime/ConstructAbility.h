@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 enum class ConstructAbility : uint8_t {

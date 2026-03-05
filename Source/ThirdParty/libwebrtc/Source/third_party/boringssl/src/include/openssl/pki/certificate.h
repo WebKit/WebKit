@@ -38,14 +38,14 @@ class OPENSSL_EXPORT Certificate {
   // FromDER returns a certificate from an DER-encoded X.509 object in |der|.
   // In the event of a failure, it will return no value, and |out_diagnostic|
   // may be set to a string of human readable debugging information if
-  // information abou the failure is available.
+  // information about the failure is available.
   static std::unique_ptr<Certificate> FromDER(
       bssl::Span<const uint8_t> der, std::string *out_diagnostic);
 
   // FromPEM returns a certificate from the first CERTIFICATE PEM block in
   // |pem|. In the event of a failure, it will return no value, and
   // |out_diagnostic| may be set to a string of human readable debugging
-  // informtion if informaiton about the failuew is available.
+  // information if information about the failure is available.
   static std::unique_ptr<Certificate> FromPEM(
       std::string_view pem, std::string *out_diagnostic);
 
@@ -57,7 +57,7 @@ class OPENSSL_EXPORT Certificate {
   // may or may not be this, and may check other properties of the certificate.
   bool IsSelfIssued() const;
 
-  // Validity specifies the temporal validity of a cerificate, expressed in
+  // Validity specifies the temporal validity of a certificate, expressed in
   // POSIX time values of seconds since the POSIX epoch. The certificate is
   // valid at POSIX time t in second granularity, where not_before <= t <=
   // not_after.

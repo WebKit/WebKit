@@ -32,20 +32,19 @@
 namespace WebCore {
 
 class RenderMedia : public RenderImage {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMedia);
+    WTF_MAKE_TZONE_ALLOCATED(RenderMedia);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMedia);
 public:
     RenderMedia(Type, HTMLMediaElement&, RenderStyle&&);
     virtual ~RenderMedia();
 
     inline HTMLMediaElement& mediaElement() const; // Defined in RenderMediaInlines.h
-    inline Ref<HTMLMediaElement> protectedMediaElement() const; // Defined in RenderMediaInlines.h
 
     bool shouldDisplayBrokenImageIcon() const final { return false; }
 
 protected:
     void layout() override;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void visibleInViewportStateChanged() override { }
 

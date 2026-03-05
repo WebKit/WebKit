@@ -68,7 +68,7 @@ private:
 class RenderRangeIterator {
 public:
     RenderRangeIterator(RenderObject* start);
-    RenderObject* current() const;
+    RenderObject* NODELETE current() const;
     RenderObject* next();
 
 private:
@@ -86,7 +86,7 @@ public:
         : m_isSelection(true)
     { }
 
-    void setRenderRange(const RenderRange&);
+    void NODELETE setRenderRange(const RenderRange&);
     bool setRenderRange(const HighlightRange&); // Returns true if successful.
     const RenderRange& get() const { return m_renderRange; }
 

@@ -310,7 +310,8 @@ MAC_ARM64_HOST = {
 
 MAC_X86_64_HOST = {
     "dimensions": {
-        "os": "Mac-10.15|Mac-11",
+        # macOS 12 or later is needed as of Go 1.25.
+        "os": "Mac-12|Mac-13",
         "cpu": "x86-64",
     },
     "caches": [swarming.cache("osx_sdk")],
@@ -444,7 +445,7 @@ both_builders(
         "android": True,
         "cmake_args": {
             "ANDROID_ABI": "armeabi-v7a",
-            "ANDROID_PLATFORM": "android-18",
+            "ANDROID_PLATFORM": "android-21",
         },
     },
 )
@@ -459,7 +460,7 @@ both_builders(
         "android": True,
         "cmake_args": {
             "ANDROID_ABI": "armeabi-v7a",
-            "ANDROID_PLATFORM": "android-18",
+            "ANDROID_PLATFORM": "android-21",
             "CMAKE_BUILD_TYPE": "Release",
             # Although Android now requires NEON support, on one builder, we
             # ignore the |__ARM_NEON| preprocessor option, to keep testing
@@ -499,7 +500,7 @@ both_builders(
         "cmake_args": {
             "ANDROID_ABI": "armeabi-v7a",
             "ANDROID_ARM_MODE": "arm",
-            "ANDROID_PLATFORM": "android-18",
+            "ANDROID_PLATFORM": "android-21",
             "CMAKE_BUILD_TYPE": "Release",
         },
     },
@@ -515,11 +516,6 @@ both_builders(
             "ANDROID_ABI": "riscv64",
             "ANDROID_PLATFORM": "android-35",
             "CMAKE_BUILD_TYPE": "Release",
-        },
-        # The default Android NDK cannot be updated until https://crbug.com/boringssl/454 is fixed.
-        # Meanwhile, RISC-V support requires a newer NDK, thus we override for this builder.
-        "gclient_vars": {
-            "android_ndk_revision": "wC8sJjVPRDPTbaZFlki_qXTC1lWJNbJi8glUO0woJ1MC",
         },
         "run_unit_tests": False,
         "run_ssl_tests": False,

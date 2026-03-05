@@ -75,7 +75,7 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
     builder.reserveCapacity(characters.size());
 
     // 4. Repeat
-    auto* end = characters.data() + characters.size();
+    auto* end = std::to_address(characters.end());
     for (auto* cursor = characters.data(); cursor != end; ++cursor) {
         auto character = *cursor;
 
@@ -819,7 +819,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncImportModule, (JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
     scope.release();
-    promise->resolve(globalObject, internalPromise);
+    promise->resolve(globalObject, vm, internalPromise);
     return JSValue::encode(promise);
 }
 

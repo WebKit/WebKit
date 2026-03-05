@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/GridAreaLines.h>
+#include "GridAreaLines.h"
 
 namespace WebCore {
 

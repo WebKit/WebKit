@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <span>
+
 namespace WTF {
 
 // Why would you want to use bubble sort? When you know that your input is already mostly

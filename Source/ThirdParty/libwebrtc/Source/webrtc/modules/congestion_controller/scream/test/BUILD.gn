@@ -1,0 +1,52 @@
+# Copyright(c) 2025 The WebRTC project authors.All Rights Reserved.
+#
+# Use of this source code is governed by a BSD - style license
+# that can be found in the LICENSE file in the root of the source
+# tree.An additional intellectual property rights grant can be found
+# in the file PATENTS.All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_library("cc_feedback_generator") {
+    testonly = true
+    sources = [
+      "cc_feedback_generator.cc",
+      "cc_feedback_generator.h",
+    ]
+    deps = [
+      "../../../../api:simulated_network_api",
+      "../../../../api/test/network_emulation:network_queue",
+      "../../../../api/transport:ecn_marking",
+      "../../../../api/transport:network_control",
+      "../../../../api/units:data_rate",
+      "../../../../api/units:data_size",
+      "../../../../api/units:time_delta",
+      "../../../../api/units:timestamp",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:logging",
+      "../../../../system_wrappers",
+      "../../../../test:test_support",
+      "../../../../test/network:simulated_network",
+    ]
+  }
+
+  rtc_library("cc_feedback_generator_unittests") {
+    testonly = true
+    sources = [ "cc_feedback_generator_unittest.cc" ]
+    deps = [
+      ":cc_feedback_generator",
+      "../../../../api/transport:ecn_marking",
+      "../../../../api/transport:network_control",
+      "../../../../api/units:data_rate",
+      "../../../../api/units:data_size",
+      "../../../../api/units:time_delta",
+      "../../../../api/units:timestamp",
+      "../../../../system_wrappers",
+      "../../../../test:test_support",
+      "../../../../test/network:simulated_network",
+      "//testing/gtest",
+    ]
+  }
+}

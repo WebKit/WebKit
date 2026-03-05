@@ -32,6 +32,7 @@
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "common_audio/smoothing_filter.h"
 #include "modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
 #include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
@@ -46,7 +47,6 @@
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_to_number.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -325,8 +325,8 @@ std::optional<int> AudioEncoderOpusImpl::GetNewBandwidth(
 
 class AudioEncoderOpusImpl::PacketLossFractionSmoother {
  public:
-  explicit PacketLossFractionSmoother()
-      : last_sample_time_ms_(TimeMillis()),
+  explicit PacketLossFractionSmoother(Timestamp now)
+      : last_sample_time_(now),
         smoother_(kAlphaForPacketLossFractionSmoother) {}
 
   // Gets the smoothed packet loss fraction.
@@ -336,15 +336,14 @@ class AudioEncoderOpusImpl::PacketLossFractionSmoother {
   }
 
   // Add new observation to the packet loss fraction smoother.
-  void AddSample(float packet_loss_fraction) {
-    int64_t now_ms = TimeMillis();
-    smoother_.Apply(static_cast<float>(now_ms - last_sample_time_ms_),
+  void AddSample(float packet_loss_fraction, Timestamp now) {
+    smoother_.Apply((now - last_sample_time_).ms<float>(),
                     packet_loss_fraction);
-    last_sample_time_ms_ = now_ms;
+    last_sample_time_ = now;
   }
 
  private:
-  int64_t last_sample_time_ms_;
+  Timestamp last_sample_time_;
 
   // An exponential filter is used to smooth the packet loss fraction.
   ExpFilter smoother_;
@@ -369,8 +368,8 @@ AudioEncoderOpusImpl::AudioEncoderOpusImpl(const Environment& env,
           env,
           config,
           payload_type,
-          [this](absl::string_view config_string, RtcEventLog* event_log) {
-            return DefaultAudioNetworkAdaptorCreator(config_string, event_log);
+          [this](absl::string_view config) {
+            return DefaultAudioNetworkAdaptorCreator(config);
           },
           // We choose 5sec as initial time constant due to empirical data.
           std::make_unique<SmoothingFilterImpl>(5'000)) {}
@@ -381,14 +380,17 @@ AudioEncoderOpusImpl::AudioEncoderOpusImpl(
     int payload_type,
     const AudioNetworkAdaptorCreator& audio_network_adaptor_creator,
     std::unique_ptr<SmoothingFilter> bitrate_smoother)
-    : payload_type_(payload_type),
+    : env_(env),
+      payload_type_(payload_type),
       adjust_bandwidth_(
-          env.field_trials().IsEnabled("WebRTC-AdjustOpusBandwidth")),
+          env_.field_trials().IsEnabled("WebRTC-AdjustOpusBandwidth")),
       bitrate_changed_(true),
-      bitrate_multipliers_(GetBitrateMultipliers(env.field_trials())),
+      bitrate_multipliers_(GetBitrateMultipliers(env_.field_trials())),
       packet_loss_rate_(0.0),
       inst_(nullptr),
-      packet_loss_fraction_smoother_(new PacketLossFractionSmoother()),
+      packet_loss_fraction_smoother_(
+          std::make_unique<PacketLossFractionSmoother>(
+              env_.clock().CurrentTime())),
       audio_network_adaptor_creator_(audio_network_adaptor_creator),
       bitrate_smoother_(std::move(bitrate_smoother)) {
   RTC_DCHECK(0 <= payload_type && payload_type <= 127);
@@ -477,11 +479,8 @@ void AudioEncoderOpusImpl::SetMaxPlaybackRate(int frequency_hz) {
   RTC_CHECK(RecreateEncoderInstance(conf));
 }
 
-bool AudioEncoderOpusImpl::EnableAudioNetworkAdaptor(
-    const std::string& config_string,
-    RtcEventLog* event_log) {
-  audio_network_adaptor_ =
-      audio_network_adaptor_creator_(config_string, event_log);
+bool AudioEncoderOpusImpl::EnableAudioNetworkAdaptor(absl::string_view config) {
+  audio_network_adaptor_ = audio_network_adaptor_creator_(config);
   return audio_network_adaptor_ != nullptr;
 }
 
@@ -496,7 +495,8 @@ void AudioEncoderOpusImpl::OnReceivedUplinkPacketLossFraction(
         uplink_packet_loss_fraction);
     ApplyAudioNetworkAdaptor();
   }
-  packet_loss_fraction_smoother_->AddSample(uplink_packet_loss_fraction);
+  packet_loss_fraction_smoother_->AddSample(uplink_packet_loss_fraction,
+                                            env_.clock().CurrentTime());
   float average_fraction_loss = packet_loss_fraction_smoother_->GetAverage();
   SetProjectedPacketLossRate(average_fraction_loss);
 }
@@ -524,7 +524,8 @@ void AudioEncoderOpusImpl::OnReceivedUplinkBandwidthImpl(
     // Then 4 * bwe_period_ms is a good choice.
     if (bwe_period_ms)
       bitrate_smoother_->SetTimeConstantMs(*bwe_period_ms * 4);
-    bitrate_smoother_->AddSample(target_audio_bitrate_bps);
+    bitrate_smoother_->AddSample(target_audio_bitrate_bps,
+                                 env_.clock().CurrentTime());
 
     ApplyAudioNetworkAdaptor();
   } else {
@@ -772,28 +773,27 @@ void AudioEncoderOpusImpl::ApplyAudioNetworkAdaptor() {
 
 std::unique_ptr<AudioNetworkAdaptor>
 AudioEncoderOpusImpl::DefaultAudioNetworkAdaptorCreator(
-    absl::string_view config_string,
-    RtcEventLog* event_log) const {
-  AudioNetworkAdaptorImpl::Config config;
-  config.event_log = event_log;
-  return std::unique_ptr<AudioNetworkAdaptor>(new AudioNetworkAdaptorImpl(
-      config, ControllerManagerImpl::Create(
-                  config_string, NumChannels(), supported_frame_lengths_ms(),
-                  AudioEncoderOpusConfig::kMinBitrateBps,
-                  num_channels_to_encode_, next_frame_length_ms_,
-                  GetTargetBitrate(), config_.fec_enabled, GetDtx())));
+    absl::string_view config_string) const {
+  return std::make_unique<AudioNetworkAdaptorImpl>(
+      env_,
+      ControllerManagerImpl::Create(
+          env_, config_string, NumChannels(), supported_frame_lengths_ms(),
+          AudioEncoderOpusConfig::kMinBitrateBps, num_channels_to_encode_,
+          next_frame_length_ms_, GetTargetBitrate(), config_.fec_enabled,
+          GetDtx()));
 }
 
 void AudioEncoderOpusImpl::MaybeUpdateUplinkBandwidth() {
   if (audio_network_adaptor_) {
-    int64_t now_ms = TimeMillis();
+    Timestamp now = env_.clock().CurrentTime();
     if (!bitrate_smoother_last_update_time_ ||
-        now_ms - *bitrate_smoother_last_update_time_ >=
+        now.ms() - *bitrate_smoother_last_update_time_ >=
             config_.uplink_bandwidth_update_interval_ms) {
-      std::optional<float> smoothed_bitrate = bitrate_smoother_->GetAverage();
+      std::optional<float> smoothed_bitrate =
+          bitrate_smoother_->GetAverage(now);
       if (smoothed_bitrate)
         audio_network_adaptor_->SetUplinkBandwidth(*smoothed_bitrate);
-      bitrate_smoother_last_update_time_ = now_ms;
+      bitrate_smoother_last_update_time_ = now.ms();
     }
   }
 }

@@ -40,11 +40,11 @@ private:
 
     static Ref<InsertNestedListCommand> create(Ref<Document>&& document, Type type)
     {
-        return adoptRef(*new InsertNestedListCommand(WTFMove(document), type));
+        return adoptRef(*new InsertNestedListCommand(WTF::move(document), type));
     }
 
     InsertNestedListCommand(Ref<Document>&& document, Type type)
-        : CompositeEditCommand(WTFMove(document))
+        : CompositeEditCommand(WTF::move(document))
         , m_type(type)
     {
     }

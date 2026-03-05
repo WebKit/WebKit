@@ -165,6 +165,8 @@ static NSEventType eventTypeForButton(WKEventMouseButton button)
     case kWKEventMouseButtonRightButton:
         return NSEventTypeRightMouseDown;
     case kWKEventMouseButtonMiddleButton:
+    case kWKEventMouseButtonBackButton:
+    case kWKEventMouseButtonForwardButton:
         return NSEventTypeOtherMouseDown;
     case kWKEventMouseButtonNoButton:
         return NSEventTypeLeftMouseDown;
@@ -198,7 +200,7 @@ void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers
 
 void PlatformWebView::simulateButtonClick(WKEventMouseButton button, unsigned x, unsigned y, WKEventModifiers modifiers)
 {
-    NSEvent *event = [NSEvent mouseEventWithType:eventTypeForButton(button)
+    RetainPtr event = [NSEvent mouseEventWithType:eventTypeForButton(button)
                                         location:NSMakePoint(x, y)
                                    modifierFlags:modifierFlagsForWKModifiers(modifiers)
                                        timestamp:GetCurrentEventTime()
@@ -208,7 +210,28 @@ void PlatformWebView::simulateButtonClick(WKEventMouseButton button, unsigned x,
                                       clickCount:0
                                         pressure:0];
 
-    [m_view mouseDown:event];
+    auto cgEventField = [&] {
+        switch (button) {
+        case kWKEventMouseButtonMiddleButton:
+            return 2;
+        case kWKEventMouseButtonBackButton:
+            return 3;
+        case kWKEventMouseButtonForwardButton:
+            return 4;
+        default:
+            return 0;
+        }
+    };
+
+    if (button == kWKEventMouseButtonMiddleButton
+        || button == kWKEventMouseButtonBackButton
+        || button == kWKEventMouseButtonForwardButton) {
+        CGEventRef cgEvent = [event CGEvent];
+        CGEventSetIntegerValueField(cgEvent, kCGMouseEventButtonNumber, cgEventField());
+        event = [NSEvent eventWithCGEvent:cgEvent];
+    }
+
+    [m_view mouseDown:event.get()];
 }
 
 } // namespace TestWebKitAPI

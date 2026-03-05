@@ -40,18 +40,18 @@ namespace WebKit {
 #endif
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, bool isAutoRepeat, Vector<String>&& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, false, std::nullopt, std::nullopt, WTFMove(commands)))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, false, std::nullopt, std::nullopt, WTF::move(commands)))
     , m_nativeEvent(constructNativeEvent(event))
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
-    : WebKeyboardEvent(WebEvent(WebEventType::KeyDown, { }, MonotonicTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 229, GDK_KEY_VoidSymbol, true, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), { }, false, false)
+    : WebKeyboardEvent(WebEvent(WebEventType::KeyDown, { }, MonotonicTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 229, GDK_KEY_VoidSymbol, true, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange), { }, false, false)
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebEventType type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier> modifiers)
-    : WebKeyboardEvent(WebEvent(type, modifiers, MonotonicTime::now()), text, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, false, std::nullopt, std::nullopt, WTFMove(commands), isAutoRepeat, isKeypad)
+    : WebKeyboardEvent(WebEvent(type, modifiers, MonotonicTime::now()), text, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, false, std::nullopt, std::nullopt, WTF::move(commands), isAutoRepeat, isKeypad)
 {
 }
 

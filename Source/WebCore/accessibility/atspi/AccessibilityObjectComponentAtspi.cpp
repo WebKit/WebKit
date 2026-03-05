@@ -30,7 +30,7 @@
 #include "LocalFrameView.h"
 #include "RenderLayer.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -115,7 +115,7 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::hitTest(const IntPoint& poin
 
     if (auto* axObject = dynamicDowncast<AccessibilityObject>(m_coreObject.get()))
         axObject->updateChildrenIfNecessary();
-    if (auto* coreObject = m_coreObject->accessibilityHitTest(convertedPoint))
+    if (RefPtr coreObject = m_coreObject->accessibilityHitTest(convertedPoint))
         return coreObject->wrapper();
 
     return nullptr;
@@ -212,7 +212,7 @@ void AccessibilityObjectAtspi::scrollToPoint(const IntPoint& point, Atspi::Coord
         if (auto* frameView = m_coreObject->documentFrameView())
             convertedPoint = frameView->contentsToWindow(frameView->screenToContents(point));
     }
-    m_coreObject->scrollToGlobalPoint(WTFMove(convertedPoint));
+    m_coreObject->scrollToGlobalPoint(WTF::move(convertedPoint));
 }
 
 } // namespace WebCore

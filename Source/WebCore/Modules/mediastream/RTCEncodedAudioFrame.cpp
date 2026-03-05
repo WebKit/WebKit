@@ -37,11 +37,11 @@ Ref<RTCEncodedAudioFrame> RTCEncodedAudioFrame::create(RTCEncodedAudioFrame& fra
     auto rtcFrame = frame.serialize();
     if (options.metadata)
         rtcFrame->setOptions(*options.metadata);
-    return create(WTFMove(rtcFrame));
+    return create(WTF::move(rtcFrame));
 }
 
 RTCEncodedAudioFrame::RTCEncodedAudioFrame(Ref<RTCRtpTransformableFrame>&& frame)
-    : RTCEncodedFrame(WTFMove(frame))
+    : RTCEncodedFrame(WTF::move(frame))
 {
 }
 

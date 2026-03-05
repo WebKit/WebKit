@@ -17,7 +17,7 @@ info: |
   4. Let sep be ? ToString(separator).
   5. If len is zero, return the empty String.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
@@ -29,4 +29,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.join(s);
   });
-});
+}, null, ["passthrough"]);

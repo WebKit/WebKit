@@ -14,8 +14,6 @@ mac/Storage/WebStorageManager.mm
 mac/WebView/WebDeviceOrientationProviderMock.mm
 mac/WebView/WebFormDelegate.m
 [ Mac ] mac/WebView/WebHTMLView.mm
-[ Mac ] mac/WebView/WebPDFView.mm
-mac/WebView/WebScriptWorld.mm
 [ Mac ] mac/WebView/WebVideoFullscreenController.mm
 mac/WebView/WebView.mm
 [ iOS ] ios/DefaultDelegates/WebDefaultFormDelegate.m

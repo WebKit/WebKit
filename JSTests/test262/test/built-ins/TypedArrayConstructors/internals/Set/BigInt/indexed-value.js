@@ -15,7 +15,7 @@ info: |
       ii. Return true.
   ...
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
 
@@ -29,10 +29,10 @@ let throwDesc = {
 Object.defineProperty(proto, '0', throwDesc);
 Object.defineProperty(proto, '1', throwDesc);
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  let sample = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  let sample = new TA(makeCtorArg(2));
   assert.sameValue(Reflect.set(sample, '0', 1n), true, 'Reflect.set(sample, "0", 1n) must return true');
   assert.sameValue(sample[0], 1n, 'The value of sample[0] is 1n');
   assert.sameValue(Reflect.set(sample, '1', 42n), true, 'Reflect.set(sample, "1", 42n) must return true');
   assert.sameValue(sample[1], 42n, 'The value of sample[1] is 42n');
-});
+}, null, ["passthrough"]);

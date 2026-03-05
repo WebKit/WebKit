@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<!-- Strip zero-width characters -->
+<p>Zero&#x200D;Width&#x200D;Joiner</p>
+<p>Zero&#x200B;Width&#x200B;Space</p>
+<p>Zero&#x200C;Width&#x200C;Non&#x200C;Joiner</p>
+<p>Word&#x2060;Joiner&#x2060;Test</p>
+<p>BOM&#xFEFF;Test</p>
+
+<!-- Remove empty markdown list items -->
+<ul id="list-with-empty">
+    <li>First item</li>
+    <li></li>
+    <li>Second item</li>
+    <li>   </li>
+    <li>Third item</li>
+</ul>
+
+<!-- De-duplicate consecutive lines -->
+<div id="duplicates">
+    <p>Repeated text</p>
+    <p>Repeated text</p>
+    <p>Repeated text</p>
+    <p>Different text</p>
+    <p>Different text</p>
+</div>
+
+<script>
+function createResultDiv(text) {
+    let div = document.createElement("div");
+    div.textContent = text;
+    div.style.whiteSpace = "pre";
+    return div;
+}
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const resultDivs = [];
+    for (let outputFormat of ["markdown", "text-tree", "html"]) {
+        resultDivs.push(createResultDiv(`--- ${outputFormat}`))
+        resultDivs.push(createResultDiv("\n"))
+        resultDivs.push(createResultDiv(await UIHelper.requestDebugText({
+            outputFormat,
+            includeRects: false,
+            includeURLs: false,
+        })));
+        resultDivs.push(createResultDiv("\n"))
+    }
+
+    document.body.replaceChildren(...resultDivs);
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

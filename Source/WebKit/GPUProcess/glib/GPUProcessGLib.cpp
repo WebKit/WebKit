@@ -42,7 +42,7 @@ namespace WebKit {
 void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& parameters)
 {
 #if USE(GBM)
-    WebCore::DRMDeviceManager::singleton().initializeMainDevice(WTFMove(parameters.drmDevice));
+    WebCore::DRMDeviceManager::singleton().initializeMainDevice(WTF::move(parameters.drmDevice));
 
     if (auto device = WebCore::DRMDeviceManager::singleton().mainGBMDevice(WebCore::DRMDeviceManager::NodeType::Render)) {
         WebCore::PlatformDisplay::setSharedDisplay(WebCore::PlatformDisplayGBM::create(device->device()));

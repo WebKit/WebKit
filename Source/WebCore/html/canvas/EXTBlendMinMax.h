@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class EXTBlendMinMax final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTBlendMinMax);
+    WTF_MAKE_TZONE_ALLOCATED(EXTBlendMinMax);
     WTF_MAKE_NONCOPYABLE(EXTBlendMinMax);
 public:
     explicit EXTBlendMinMax(WebGLRenderingContextBase&);
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTBlendMinMax)

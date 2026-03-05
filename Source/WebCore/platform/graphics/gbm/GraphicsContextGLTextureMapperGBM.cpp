@@ -58,16 +58,16 @@ bool GraphicsContextGLTextureMapperGBM::checkRequirements()
 
 RefPtr<GraphicsContextGLTextureMapperGBM> GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
 {
-    auto context = adoptRef(new GraphicsContextGLTextureMapperGBM(WTFMove(attributes), WTFMove(delegate)));
+    auto context = adoptRef(new GraphicsContextGLTextureMapperGBM(WTF::move(attributes), WTF::move(delegate)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
 GraphicsContextGLTextureMapperGBM::GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
-    : GraphicsContextGLTextureMapperANGLE(WTFMove(attributes))
+    : GraphicsContextGLTextureMapperANGLE(WTF::move(attributes))
 {
-    m_layerContentsDisplayDelegate = WTFMove(delegate);
+    m_layerContentsDisplayDelegate = WTF::move(delegate);
 }
 
 GraphicsContextGLTextureMapperGBM::~GraphicsContextGLTextureMapperGBM()
@@ -182,7 +182,7 @@ GraphicsContextGLTextureMapperGBM::DrawingBuffer GraphicsContextGLTextureMapperG
     if (!image)
         return { };
 
-    return { DMABufBuffer::create(size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier), image };
+    return { DMABufBuffer::create(size, format, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier), image };
 }
 
 void GraphicsContextGLTextureMapperGBM::freeDrawingBuffers()
@@ -208,7 +208,7 @@ bool GraphicsContextGLTextureMapperGBM::bindNextDrawingBuffer()
         if (!buffer.dmabuf)
             return false;
 
-        m_drawingBuffer = WTFMove(buffer);
+        m_drawingBuffer = WTF::move(buffer);
     }
 
     auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
@@ -261,10 +261,10 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
         flags.add(TextureMapperFlags::ShouldBlend);
     std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
     if (fenceFD)
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer.dmabuf }, flags, WTFMove(fenceFD));
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer.dmabuf }, flags, WTF::move(fenceFD));
     else
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer.dmabuf }, flags, WTFMove(fence));
-    m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(buffer));
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer.dmabuf }, flags, WTF::move(fence));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 }
 
 void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Function<void()>&& finishedSignalCreator)
@@ -287,7 +287,7 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Func
 #if ENABLE(WEBXR)
 GCGLExternalImage GraphicsContextGLTextureMapperGBM::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
 {
-    GraphicsContextGLExternalImageSource imageSource = WTFMove(source);
+    GraphicsContextGLExternalImageSource imageSource = WTF::move(source);
     Vector<EGLint> attributes = {
         EGL_WIDTH, imageSource.size.width(),
         EGL_HEIGHT, imageSource.size.height(),
@@ -365,10 +365,7 @@ bool GraphicsContextGLTextureMapperGBM::enableRequiredWebXRExtensions()
 
     return enableExtensionsImpl({
         "GL_OES_EGL_image"_s,
-        "GL_OES_EGL_image_external"_s,
-        "EGL_KHR_image_base"_s,
-        "EGL_EXT_image_dma_buf_import"_s,
-        "EGL_KHR_surfaceless_context"_s
+        "GL_OES_EGL_image_external"_s
     });
 }
 #endif // ENABLE(WEBXR)

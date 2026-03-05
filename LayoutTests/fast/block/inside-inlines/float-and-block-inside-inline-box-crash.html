@@ -1,0 +1,20 @@
+<style>
+.sibling_block::before {
+  display: table;
+  content: "";
+  margin-bottom: 8px;
+}
+.floatBox {
+  float: left;
+}
+</style>
+<span>
+  <div class=sibling_block></div>
+  <span>
+    <div class=floatBox></div>
+  </span>
+  <span> PASS if no crash or assert</span>
+</span>
+<script>
+window.testRunner?.dumpAsText();
+</script>

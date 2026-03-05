@@ -55,7 +55,7 @@ enum class LogicalHeightType : uint8_t  {
 };
 LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox&, LogicalHeightType);
 
-void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLogicalTopLeft, Layout::InlineLayoutState&, Layout::LayoutState&);
+void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState&, Layout::LayoutState&);
 
 }
 }

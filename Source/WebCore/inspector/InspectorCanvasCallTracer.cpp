@@ -39,7 +39,7 @@ static InspectorCanvasAgent* enabledCanvasAgent(CanvasRenderingContext& canvasRe
 {
     ASSERT(InspectorInstrumentationPublic::hasFrontends());
 
-    auto* agents = InspectorInstrumentation::instrumentingAgents(canvasRenderingContext.canvasBase().protectedScriptExecutionContext().get());
+    RefPtr agents = InspectorInstrumentation::instrumentingAgents(protect(canvasRenderingContext.canvasBase().scriptExecutionContext()).get());
     ASSERT(agents);
     if (!agents)
         return nullptr;
@@ -50,7 +50,7 @@ static InspectorCanvasAgent* enabledCanvasAgent(CanvasRenderingContext& canvasRe
 
 RefPtr<InspectorCanvas> InspectorCanvasCallTracer::enabledInspectorCanvas(CanvasRenderingContext& canvasRenderingContext)
 {
-    auto* canvasAgent = enabledCanvasAgent(canvasRenderingContext);
+    CheckedPtr canvasAgent = enabledCanvasAgent(canvasRenderingContext);
     if (!canvasAgent)
         return nullptr;
     return canvasAgent->findInspectorCanvas(canvasRenderingContext);
@@ -58,14 +58,14 @@ RefPtr<InspectorCanvas> InspectorCanvasCallTracer::enabledInspectorCanvas(Canvas
 
 void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
-    if (auto* canvasAgent = enabledCanvasAgent(canvasRenderingContext))
-        canvasAgent->recordAction(canvasRenderingContext, WTFMove(name), WTFMove(arguments));
+    if (CheckedPtr canvasAgent = enabledCanvasAgent(canvasRenderingContext))
+        canvasAgent->recordAction(canvasRenderingContext, WTF::move(name), WTF::move(arguments));
 }
 
 void InspectorCanvasCallTracer::recordAction(const CanvasBase& canvasBase, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(canvasBase.renderingContext());
-    recordAction(*canvasBase.renderingContext(), WTFMove(name), WTFMove(arguments));
+    recordAction(*canvasBase.renderingContext(), WTF::move(name), WTF::move(arguments));
 }
 
 } // namespace WebCore

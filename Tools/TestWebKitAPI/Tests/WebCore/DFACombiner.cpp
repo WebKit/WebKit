@@ -48,7 +48,7 @@ Vector<DFA> combine(Vector<DFA> dfas, unsigned minimumSize)
 {
     DFACombiner combiner;
     for (DFA& dfa : dfas)
-        combiner.addDFA(WTFMove(dfa));
+        combiner.addDFA(WTF::move(dfa));
 
     Vector<DFA> output;
     combiner.combineDFAs(minimumSize, [&output](DFA&& dfa) {

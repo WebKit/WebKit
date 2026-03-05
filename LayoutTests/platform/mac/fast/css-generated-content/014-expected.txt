@@ -15,42 +15,42 @@ layer at (0,0) size 785x887
       RenderBlock {P} at (0,147) size 769x37
         RenderText {#text} at (0,0) size 124x18
           text run at (0,0) width 124: "Assume we have a "
-        RenderInline {CODE} at (123,2) size 24x15
-          RenderText {#text} at (123,2) size 24x15
-            text run at (123,2) width 24: "div"
+        RenderInline {CODE} at (123,1) size 24x17
+          RenderText {#text} at (123,1) size 24x17
+            text run at (123,1) width 24: "div"
         RenderText {#text} at (146,0) size 150x18
           text run at (146,0) width 150: " with two class names: "
-        RenderInline {CODE} at (295,2) size 25x15
-          RenderText {#text} at (295,2) size 25x15
-            text run at (295,2) width 25: "box"
+        RenderInline {CODE} at (295,1) size 25x17
+          RenderText {#text} at (295,1) size 25x17
+            text run at (295,1) width 25: "box"
         RenderText {#text} at (319,0) size 32x18
           text run at (319,0) width 32: " and "
-        RenderInline {CODE} at (350,2) size 24x15
-          RenderText {#text} at (350,2) size 24x15
-            text run at (350,2) width 24: "one"
+        RenderInline {CODE} at (350,1) size 24x17
+          RenderText {#text} at (350,1) size 24x17
+            text run at (350,1) width 24: "one"
         RenderText {#text} at (373,0) size 85x18
           text run at (373,0) width 85: ". Within that "
-        RenderInline {CODE} at (457,2) size 25x15
-          RenderText {#text} at (457,2) size 25x15
-            text run at (457,2) width 25: "div"
+        RenderInline {CODE} at (457,1) size 25x17
+          RenderText {#text} at (457,1) size 25x17
+            text run at (457,1) width 25: "div"
         RenderText {#text} at (481,0) size 77x18
           text run at (481,0) width 77: ", we have a "
-        RenderInline {CODE} at (557,2) size 8x15
-          RenderText {#text} at (557,2) size 8x15
-            text run at (557,2) width 8: "p"
+        RenderInline {CODE} at (557,1) size 8x17
+          RenderText {#text} at (557,1) size 8x17
+            text run at (557,1) width 8: "p"
         RenderText {#text} at (0,0) size 748x36
           text run at (564,0) width 184: " (paragraph) tag, after which"
           text run at (0,18) width 509: "we'd like to insert generated content. One way to do so would be the following:"
       RenderBlock {PRE} at (20,199) size 749x16 [color=#FF0000]
-        RenderInline {CODE} at (0,0) size 447x15
-          RenderText {#text} at (0,0) size 447x15
+        RenderInline {CODE} at (0,-1) size 447x17
+          RenderText {#text} at (0,-1) size 447x17
             text run at (0,0) width 447: "div.box.one p:after{ content:'generated content here!'; }"
       RenderBlock {P} at (0,230) size 769x19
         RenderText {#text} at (0,0) size 741x18
           text run at (0,0) width 741: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as expected:"
       RenderBlock {PRE} at (20,264) size 749x16 [color=#008000]
-        RenderInline {CODE} at (0,0) size 415x15
-          RenderText {#text} at (0,0) size 415x15
+        RenderInline {CODE} at (0,-1) size 415x17
+          RenderText {#text} at (0,-1) size 415x17
             text run at (0,0) width 415: "div.box p:after{ content:'generated content here!'; }"
       RenderBlock {P} at (0,295) size 769x37
         RenderText {#text} at (0,0) size 294x18
@@ -67,8 +67,8 @@ layer at (0,0) size 785x887
         RenderText {#text} at (84,18) size 77x18
           text run at (84,18) width 77: " works fine:"
       RenderBlock {PRE} at (20,347) size 749x16 [color=#008000]
-        RenderInline {CODE} at (0,0) size 431x15
-          RenderText {#text} at (0,0) size 431x15
+        RenderInline {CODE} at (0,-1) size 431x17
+          RenderText {#text} at (0,-1) size 431x17
             text run at (0,0) width 431: "div.box.one:after{ content:'generated content here!'; }"
       RenderBlock {H2} at (0,397) size 769x29
         RenderText {#text} at (0,0) size 477x28

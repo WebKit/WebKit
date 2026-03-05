@@ -21,49 +21,6 @@ rtc_library("corruption_classifier") {
   ]
 }
 
-rtc_library("frame_instrumentation_evaluation") {
-  sources = [
-    "frame_instrumentation_evaluation.cc",
-    "frame_instrumentation_evaluation.h",
-  ]
-  deps = [
-    ":corruption_classifier",
-    ":halton_frame_sampler",
-    "../../api:array_view",
-    "../../api:scoped_refptr",
-    "../../api/video:video_frame",
-    "../../api/video:video_rtp_headers",
-    "../../common_video:frame_instrumentation_data",
-    "../../rtc_base:checks",
-    "../../rtc_base:logging",
-  ]
-}
-
-rtc_library("frame_instrumentation_generator") {
-  sources = [
-    "frame_instrumentation_generator.cc",
-    "frame_instrumentation_generator.h",
-  ]
-  deps = [
-    ":generic_mapping_functions",
-    ":halton_frame_sampler",
-    "../../api:scoped_refptr",
-    "../../api/video:corruption_detection_filter_settings",
-    "../../api/video:encoded_image",
-    "../../api/video:video_frame",
-    "../../api/video:video_frame_type",
-    "../../api/video_codecs:video_codecs_api",
-    "../../common_video:frame_instrumentation_data",
-    "../../modules:module_api_public",
-    "../../modules/video_coding:video_coding_utility",
-    "../../rtc_base:checks",
-    "../../rtc_base:logging",
-    "../../rtc_base:macromagic",
-    "../../rtc_base/synchronization:mutex",
-    "//third_party/abseil-cpp/absl/algorithm:container",
-  ]
-}
-
 rtc_library("frame_pair_corruption_score") {
   sources = [
     "frame_pair_corruption_score.cc",
@@ -75,8 +32,8 @@ rtc_library("frame_pair_corruption_score") {
     ":halton_frame_sampler",
     ":utils",
     "../../api:scoped_refptr",
-    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:video_frame",
+    "../../api/video/corruption_detection:filter_settings",
     "../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -88,10 +45,11 @@ rtc_library("generic_mapping_functions") {
     "generic_mapping_functions.h",
   ]
   deps = [
-    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:video_frame",
+    "../../api/video/corruption_detection:filter_settings",
     "../../api/video_codecs:video_codecs_api",
     "../../rtc_base:checks",
+    "../../rtc_base:logging",
   ]
 }
 
@@ -138,6 +96,7 @@ rtc_library("utils") {
   ]
   deps = [
     "../../api:scoped_refptr",
+    "../../api/video:encoded_image",
     "../../api/video:video_frame",
     "../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/strings",
@@ -155,37 +114,6 @@ if (rtc_include_tests) {
       "../../test:test_support",
     ]
   }
-
-  rtc_library("frame_instrumentation_evaluation_unittest") {
-    testonly = true
-    sources = [ "frame_instrumentation_evaluation_unittest.cc" ]
-    deps = [
-      ":frame_instrumentation_evaluation",
-      "../../api:scoped_refptr",
-      "../../api/video:video_frame",
-      "../../api/video:video_rtp_headers",
-      "../../common_video:frame_instrumentation_data",
-      "../../test:test_support",
-    ]
-  }
-
-  rtc_library("frame_instrumentation_generator_unittest") {
-    testonly = true
-    sources = [ "frame_instrumentation_generator_unittest.cc" ]
-    deps = [
-      ":frame_instrumentation_generator",
-      "../../api:make_ref_counted",
-      "../../api:scoped_refptr",
-      "../../api/video:corruption_detection_filter_settings",
-      "../../api/video:encoded_image",
-      "../../api/video:video_frame",
-      "../../api/video:video_frame_type",
-      "../../common_video:frame_instrumentation_data",
-      "../../rtc_base:refcount",
-      "../../test:test_support",
-    ]
-  }
-
   rtc_library("frame_pair_corruption_score_unittest") {
     testonly = true
     sources = [ "frame_pair_corruption_score_unittest.cc" ]
@@ -249,6 +177,7 @@ if (rtc_include_tests) {
     sources = [ "utils_unittest.cc" ]
     deps = [
       ":utils",
+      "../../api/video:encoded_image",
       "../../api/video:video_frame",
       "../../test:test_support",
     ]
@@ -259,8 +188,6 @@ if (rtc_include_tests) {
     sources = []
     deps = [
       ":corruption_classifier_unittest",
-      ":frame_instrumentation_evaluation_unittest",
-      ":frame_instrumentation_generator_unittest",
       ":frame_pair_corruption_score_unittest",
       ":generic_mapping_functions_unittest",
       ":halton_frame_sampler_unittest",

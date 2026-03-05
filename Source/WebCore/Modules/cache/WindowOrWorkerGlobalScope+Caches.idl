@@ -28,5 +28,6 @@
     EnabledBySetting=CacheAPIEnabled,
     ImplementedBy=WindowOrWorkerGlobalScopeCaches
 ] partial interface mixin WindowOrWorkerGlobalScope {
-    [CallWith=CurrentScriptExecutionContext, SecureContext, SameObject] readonly attribute DOMCacheStorage caches;
+    // FIXME: `caches` should not be nullable.
+    [CallWith=CurrentScriptExecutionContext, SecureContext, SameObject] readonly attribute DOMCacheStorage? caches;
 };

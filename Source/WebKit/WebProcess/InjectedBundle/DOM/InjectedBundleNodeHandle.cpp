@@ -124,17 +124,12 @@ Node* InjectedBundleNodeHandle::coreNode()
     return m_node.get();
 }
 
-RefPtr<Node> InjectedBundleNodeHandle::protectedCoreNode()
-{
-    return m_node.get();
-}
-
 RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::document()
 {
     if (!m_node)
         return nullptr;
 
-    return getOrCreate(m_node->protectedDocument());
+    return getOrCreate(protect(m_node->document()));
 }
 
 // Additional DOM Operations
@@ -154,7 +149,7 @@ IntRect InjectedBundleNodeHandle::absoluteBoundingRect(bool* isReplaced)
     if (!m_node)
         return { };
 
-    return protectedCoreNode()->pixelSnappedAbsoluteBoundingRect(isReplaced);
+    return protect(coreNode())->pixelSnappedAbsoluteBoundingRect(isReplaced);
 }
 
 static RefPtr<WebImage> imageForRect(LocalFrameView* frameView, const IntRect& paintingRect, const std::optional<float>& bitmapWidth, SnapshotOptions options)
@@ -220,7 +215,7 @@ RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options
     if (!frameView)
         return nullptr;
 
-    m_node->protectedDocument()->updateLayout();
+    protect(m_node->document())->updateLayout();
 
     CheckedPtr renderer = m_node->renderer();
     if (!renderer)
@@ -424,7 +419,7 @@ bool InjectedBundleNodeHandle::isSelectElement() const
 bool InjectedBundleNodeHandle::isSelectableTextNode() const
 {
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(m_node->renderer()))
-        return renderText->checkedStyle()->usedUserSelect() != UserSelect::None;
+        return protect(renderText->style())->usedUserSelect() != UserSelect::None;
     return false;
 }
 
@@ -434,7 +429,7 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementC
     if (!tableCell)
         return nullptr;
 
-    return getOrCreate(tableCell->protectedCellAbove().get());
+    return getOrCreate(protect(tableCell->cellAbove()).get());
 }
 
 RefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()

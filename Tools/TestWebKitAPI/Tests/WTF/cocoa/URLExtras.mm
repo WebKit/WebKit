@@ -174,6 +174,7 @@ TEST(URLExtras, URLExtras_Spoof)
         "xn--ikg"_s, // U+1E9C
         "xn--jkg"_s, // U+1E9D
         "xn--cng"_s, // U+1EFE or U+1EFF
+        "xn--jfa"_s, // U+0138
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://"_s, host, '/').utf8();

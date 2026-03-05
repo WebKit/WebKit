@@ -49,7 +49,7 @@ enum class PaymentComplete;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class PaymentResponse final : public ActiveDOMObject, public EventTarget, public RefCounted<PaymentResponse> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaymentResponse);
+    WTF_MAKE_TZONE_ALLOCATED(PaymentResponse);
 public:
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::JSGlobalObject&)>;
 
@@ -67,30 +67,30 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const String& requestId() const { return m_requestId; }
+    const String& requestId() const LIFETIME_BOUND { return m_requestId; }
     void setRequestId(const String& requestId) { m_requestId = requestId; }
 
-    const String& methodName() const { return m_methodName; }
+    const String& methodName() const LIFETIME_BOUND { return m_methodName; }
     void setMethodName(const String& methodName) { m_methodName = methodName; }
 
-    const DetailsFunction& detailsFunction() const { return m_detailsFunction; }
+    const DetailsFunction& detailsFunction() const LIFETIME_BOUND { return m_detailsFunction; }
     void setDetailsFunction(DetailsFunction&&);
 
-    JSValueInWrappedObject& cachedDetails() { return m_cachedDetails; }
+    JSValueInWrappedObject& cachedDetails() LIFETIME_BOUND { return m_cachedDetails; }
 
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
     void setShippingAddress(PaymentAddress* shippingAddress) { m_shippingAddress = shippingAddress; }
 
-    const String& shippingOption() const { return m_shippingOption; }
+    const String& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
     void setShippingOption(const String& shippingOption) { m_shippingOption = shippingOption; }
 
-    const String& payerName() const { return m_payerName; }
+    const String& payerName() const LIFETIME_BOUND { return m_payerName; }
     void setPayerName(const String& payerName) { m_payerName = payerName; }
 
-    const String& payerEmail() const { return m_payerEmail; }
+    const String& payerEmail() const LIFETIME_BOUND { return m_payerEmail; }
     void setPayerEmail(const String& payerEmail) { m_payerEmail = payerEmail; }
 
-    const String& payerPhone() const { return m_payerPhone; }
+    const String& payerPhone() const LIFETIME_BOUND { return m_payerPhone; }
     void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
 
     void complete(Document&, std::optional<PaymentComplete>&&, std::optional<PaymentCompleteDetails>&&, DOMPromiseDeferred<void>&&);
@@ -109,7 +109,7 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::PaymentResponse; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -135,5 +135,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(PaymentResponse)
 
 #endif // ENABLE(PAYMENT_REQUEST)

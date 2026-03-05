@@ -61,7 +61,7 @@ public:
     void append(const SharedBuffer&);
 
     bool hasData() const { return !!m_buffer; }
-    const FragmentedSharedBuffer* data() const LIFETIME_BOUND { return m_buffer.get().unsafeGet(); }
+    const FragmentedSharedBuffer* data() const LIFETIME_BOUND { return m_buffer.buffer(); }
     RefPtr<JSC::ArrayBuffer> asArrayBuffer();
     void setData(Ref<FragmentedSharedBuffer>&&);
 
@@ -69,7 +69,7 @@ public:
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
     String takeAsText();
 
-    bool hasPendingActivity() const;
+    bool NODELETE hasPendingActivity() const;
 
     void setType(Type type) { m_type = type; }
 
@@ -94,9 +94,6 @@ public:
 private:
     Ref<Blob> takeAsBlob(ScriptExecutionContext*, const String& contentType);
     void resetConsumePromise();
-
-    RefPtr<ReadableStreamToSharedBufferSink> protectedSink() { return m_sink; }
-    RefPtr<FormDataConsumer> protectedFormDataConsumer() { return m_formDataConsumer; }
 
     Type m_type;
     SharedBufferBuilder m_buffer;

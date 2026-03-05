@@ -52,14 +52,14 @@ using namespace CSS::Literals;
 
 template<CSSValueID Name, typename T> CSS::BasicShape toBasicShape(T&& parameters)
 {
-    return CSS::BasicShape { FunctionNotation<Name, T> { WTFMove(parameters) } };
+    return CSS::BasicShape { FunctionNotation<Name, T> { WTF::move(parameters) } };
 }
 
 template<CSSValueID Name, typename T> std::optional<CSS::BasicShape> toBasicShape(std::optional<T>&& parameters)
 {
     if (!parameters)
         return { };
-    return toBasicShape<Name>(WTFMove(*parameters));
+    return toBasicShape<Name>(WTF::move(*parameters));
 }
 
 static std::optional<CSS::FillRule> peekFillRule(CSSParserTokenRange& range)
@@ -67,11 +67,10 @@ static std::optional<CSS::FillRule> peekFillRule(CSSParserTokenRange& range)
     // <'fill-rule'> = nonzero | evenodd
     // https://svgwg.org/svg2-draft/painting.html#FillRuleProperty
 
-    static constexpr std::pair<CSSValueID, CSS::FillRule> fillRuleMappings[] {
+    static constexpr SortedArrayMap fillRuleMap { std::to_array<std::pair<CSSValueID, CSS::FillRule>>({
         { CSSValueNonzero, CSS::FillRule { CSS::Keyword::Nonzero { } } },
         { CSSValueEvenodd, CSS::FillRule { CSS::Keyword::Evenodd { } } },
-    };
-    static constexpr SortedArrayMap fillRuleMap { fillRuleMappings };
+    }) };
 
     return peekIdentUsingMapping(range, fillRuleMap);
 }
@@ -96,7 +95,7 @@ template<typename Container> static std::optional<Container> consumePair(CSSPars
         return { };
 
     range = rangeCopy;
-    return Container { WTFMove(*p1), WTFMove(*p2) };
+    return Container { WTF::move(*p1), WTF::move(*p2) };
 }
 
 static std::optional<CSS::CoordinatePair> consumeCoordinatePair(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -114,12 +113,11 @@ static std::optional<CSS::RelativeControlPoint> consumeRelativeControlPoint(CSSP
 
     using Anchor = CSS::RelativeControlPoint::Anchor;
 
-    static constexpr std::pair<CSSValueID, Anchor> anchorMappings[] {
+    static constexpr SortedArrayMap anchorMap { std::to_array<std::pair<CSSValueID, Anchor>>({
         { CSSValueStart, Anchor { CSS::Keyword::Start { } } },
         { CSSValueEnd, Anchor { CSS::Keyword::End { } } },
         { CSSValueOrigin, Anchor { CSS::Keyword::Origin { } } },
-    };
-    static constexpr SortedArrayMap anchorMap { anchorMappings };
+    }) };
 
     auto rangeCopy = range;
 
@@ -137,8 +135,8 @@ static std::optional<CSS::RelativeControlPoint> consumeRelativeControlPoint(CSSP
     range = rangeCopy;
 
     return CSS::RelativeControlPoint {
-        .offset = WTFMove(*offset),
-        .anchor = WTFMove(anchor)
+        .offset = WTF::move(*offset),
+        .anchor = WTF::move(anchor)
     };
 }
 
@@ -163,7 +161,7 @@ static std::optional<CSS::AbsoluteControlPoint> consumeAbsoluteControlPoint(CSSP
     }
     if (auto position = consumePositionUnresolved(range, state)) {
         return CSS::AbsoluteControlPoint {
-            .offset = WTFMove(*position),
+            .offset = WTF::move(*position),
             .anchor = std::nullopt
         };
     }
@@ -183,13 +181,12 @@ static CSS::Circle::RadialSize consumeCircleRadialSize(CSSParserTokenRange& rang
     // <radial-extent>  = closest-corner | closest-side | farthest-corner | farthest-side
     // Default to `closest-side` if no radial-size is provided.
 
-    static constexpr std::pair<CSSValueID, CSS::Circle::Extent> extentMappings[] {
+    static constexpr SortedArrayMap extentMap { std::to_array<std::pair<CSSValueID, CSS::Circle::Extent>>({
         { CSSValueClosestSide, CSS::Circle::Extent { CSS::Keyword::ClosestSide { } } },
         { CSSValueClosestCorner, CSS::Circle::Extent { CSS::Keyword::ClosestCorner { } } },
         { CSSValueFarthestSide, CSS::Circle::Extent { CSS::Keyword::FarthestSide { } } },
         { CSSValueFarthestCorner, CSS::Circle::Extent { CSS::Keyword::FarthestCorner { } } },
-    };
-    static constexpr SortedArrayMap extentMap { extentMappings };
+    }) };
 
     // Default to `closest-side` if no radial-size is provided.
     // FIXME: The spec says that `farthest-corner` should be the default, but this does not match the tests.
@@ -203,7 +200,7 @@ static CSS::Circle::RadialSize consumeCircleRadialSize(CSSParserTokenRange& rang
         return defaultValue();
     }
 
-    auto length = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
+    auto length = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
     if (!length)
         return defaultValue();
 
@@ -225,8 +222,8 @@ static std::optional<CSS::Circle> consumeBasicShapeCircleFunctionParameters(CSSP
     }
 
     return CSS::Circle {
-        .radius = WTFMove(radius),
-        .position = WTFMove(position)
+        .radius = WTF::move(radius),
+        .position = WTF::move(position)
     };
 }
 
@@ -242,13 +239,12 @@ static std::optional<CSS::Ellipse::RadialSize> consumeEllipseRadialSize(CSSParse
     // <radial-extent>  = closest-corner | closest-side | farthest-corner | farthest-side
     // Default to `closest-side` if no radial-size is provided.
 
-    static constexpr std::pair<CSSValueID, CSS::Ellipse::Extent> extentMappings[] {
+    static constexpr SortedArrayMap extentMap { std::to_array<std::pair<CSSValueID, CSS::Ellipse::Extent>>({
         { CSSValueClosestSide, CSS::Ellipse::Extent { CSS::Keyword::ClosestSide { } } },
         { CSSValueClosestCorner, CSS::Ellipse::Extent { CSS::Keyword::ClosestCorner { } } },
         { CSSValueFarthestSide, CSS::Ellipse::Extent { CSS::Keyword::FarthestSide { } } },
         { CSSValueFarthestCorner, CSS::Ellipse::Extent { CSS::Keyword::FarthestCorner { } } },
-    };
-    static constexpr SortedArrayMap extentMap { extentMappings };
+    }) };
 
     if (range.peek().type() == IdentToken) {
         if (auto extent = consumeIdentUsingMapping(range, extentMap))
@@ -256,7 +252,7 @@ static std::optional<CSS::Ellipse::RadialSize> consumeEllipseRadialSize(CSSParse
         return std::nullopt;
     }
 
-    auto length = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
+    auto length = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
     if (!length)
         return std::nullopt;
 
@@ -282,7 +278,7 @@ static std::optional<CSS::Ellipse> consumeBasicShapeEllipseFunctionParameters(CS
             auto radiusY = consumeEllipseRadialSize(args, state);
             if (!radiusY)
                 return std::nullopt;
-            return SpaceSeparatedPair<CSS::Ellipse::RadialSize> { WTFMove(*radiusX), WTFMove(*radiusY) };
+            return SpaceSeparatedPair<CSS::Ellipse::RadialSize> { WTF::move(*radiusX), WTF::move(*radiusY) };
         }
 
         return SpaceSeparatedPair<CSS::Ellipse::RadialSize> {
@@ -302,8 +298,8 @@ static std::optional<CSS::Ellipse> consumeBasicShapeEllipseFunctionParameters(CS
     }
 
     return CSS::Ellipse {
-        .radii = WTFMove(*radii),
-        .position = WTFMove(position)
+        .radii = WTF::move(*radii),
+        .position = WTF::move(position)
     };
 }
 
@@ -328,26 +324,26 @@ static std::optional<CSS::Polygon> consumeBasicShapePolygonFunctionParameters(CS
         auto vertex = consumePair<CSS::Polygon::Vertex>(args, state);
         if (!vertex)
             return { };
-        vertices.append(WTFMove(*vertex));
+        vertices.append(WTF::move(*vertex));
     } while (consumeCommaIncludingWhitespace(args));
 
     return CSS::Polygon {
-        .fillRule = WTFMove(fillRule),
-        .vertices = { WTFMove(vertices) }
+        .fillRule = WTF::move(fillRule),
+        .vertices = { WTF::move(vertices) }
     };
 }
 
-static std::optional<CSS::Path> consumeBasicShapePathFunctionParameters(CSSParserTokenRange& args, CSS::PropertyParserState&, OptionSet<PathParsingOption> options)
+static std::optional<CSS::Path> consumeBasicShapePathFunctionParameters(CSSParserTokenRange& args, CSS::PropertyParserState&, OptionSet<BasicShapeParsingOptions> options)
 {
     // <path()> = path( <'fill-rule'>? , <string> )
     // https://drafts.csswg.org/css-shapes/#funcdef-basic-shape-path
 
-    if (options.contains(PathParsingOption::RejectPath))
+    if (options.contains(BasicShapeParsingOptions::RejectPathFunction))
         return { };
 
     auto fillRule = peekFillRule(args);
     if (fillRule) {
-        if (options.contains(PathParsingOption::RejectPathFillRule))
+        if (options.contains(BasicShapeParsingOptions::RejectPathFunctionFillRule))
             return { };
 
         args.consumeIncludingWhitespace();
@@ -363,8 +359,8 @@ static std::optional<CSS::Path> consumeBasicShapePathFunctionParameters(CSSParse
         return { };
 
     return CSS::Path {
-        .fillRule = WTFMove(fillRule),
-        .data = { .byteStream = WTFMove(byteStream) }
+        .fillRule = WTF::move(fillRule),
+        .data = { .byteStream = WTF::move(byteStream) }
     };
 }
 
@@ -373,11 +369,10 @@ static std::optional<CSS::CommandAffinity> consumeShapeCommandAffinity(CSSParser
     // <by-to> = by | to
     // https://drafts.csswg.org/css-shapes-2/#typedef-shape-by-to
 
-    static constexpr std::pair<CSSValueID, CSS::CommandAffinity> affinityMappings[] {
+    static constexpr SortedArrayMap affinityMap { std::to_array<std::pair<CSSValueID, CSS::CommandAffinity>>({
         { CSSValueTo, CSS::CommandAffinity { CSS::Keyword::To { } } },
         { CSSValueBy, CSS::CommandAffinity { CSS::Keyword::By { } } },
-    };
-    static constexpr SortedArrayMap affinityMap { affinityMappings };
+    }) };
 
     return consumeIdentUsingMapping(range, affinityMap);
 }
@@ -398,7 +393,7 @@ static std::optional<CSS::MoveCommand> consumeShapeMoveCommand(CSSParserTokenRan
             if (!position)
                 return std::nullopt;
             return CSS::MoveCommand {
-                .toBy = CSS::MoveCommand::To { .offset = WTFMove(*position) }
+                .toBy = CSS::MoveCommand::To { .offset = WTF::move(*position) }
             };
         },
         [&](CSS::Keyword::By) -> std::optional<CSS::MoveCommand> {
@@ -406,7 +401,7 @@ static std::optional<CSS::MoveCommand> consumeShapeMoveCommand(CSSParserTokenRan
             if (!coordinatePair)
                 return std::nullopt;
             return CSS::MoveCommand {
-                .toBy = CSS::MoveCommand::By { .offset = WTFMove(*coordinatePair) }
+                .toBy = CSS::MoveCommand::By { .offset = WTF::move(*coordinatePair) }
             };
         }
     );
@@ -428,7 +423,7 @@ static std::optional<CSS::LineCommand> consumeShapeLineCommand(CSSParserTokenRan
             if (!position)
                 return { };
             return CSS::LineCommand {
-                .toBy = CSS::LineCommand::To { .offset = WTFMove(*position) }
+                .toBy = CSS::LineCommand::To { .offset = WTF::move(*position) }
             };
         },
         [&](CSS::Keyword::By) -> std::optional<CSS::LineCommand> {
@@ -436,7 +431,7 @@ static std::optional<CSS::LineCommand> consumeShapeLineCommand(CSSParserTokenRan
             if (!coordinatePair)
                 return { };
             return CSS::LineCommand {
-                .toBy = CSS::LineCommand::By { .offset = WTFMove(*coordinatePair) }
+                .toBy = CSS::LineCommand::By { .offset = WTF::move(*coordinatePair) }
             };
         }
     );
@@ -457,15 +452,15 @@ static std::optional<CSS::HLineCommand> consumeShapeHLineCommand(CSSParserTokenR
             if (!offset)
                 return { };
             return CSS::HLineCommand {
-                .toBy = CSS::HLineCommand::To { .offset = WTFMove(*offset) }
+                .toBy = CSS::HLineCommand::To { .offset = WTF::move(*offset) }
             };
         },
         [&](CSS::Keyword::By) -> std::optional<CSS::HLineCommand> {
-            auto offset = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+            auto offset = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
             if (!offset)
                 return { };
             return CSS::HLineCommand {
-                .toBy = CSS::HLineCommand::By { .offset = WTFMove(*offset) }
+                .toBy = CSS::HLineCommand::By { .offset = WTF::move(*offset) }
             };
         }
     );
@@ -486,15 +481,15 @@ static std::optional<CSS::VLineCommand> consumeShapeVLineCommand(CSSParserTokenR
             if (!offset)
                 return { };
             return CSS::VLineCommand {
-                .toBy = CSS::VLineCommand::To { .offset = WTFMove(*offset) }
+                .toBy = CSS::VLineCommand::To { .offset = WTF::move(*offset) }
             };
         },
         [&](CSS::Keyword::By) -> std::optional<CSS::VLineCommand> {
-            auto offset = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+            auto offset = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
             if (!offset)
                 return { };
             return CSS::VLineCommand {
-                .toBy = CSS::VLineCommand::By { .offset = WTFMove(*offset) }
+                .toBy = CSS::VLineCommand::By { .offset = WTF::move(*offset) }
             };
         }
     );
@@ -531,16 +526,16 @@ static std::optional<CSS::CurveCommand> consumeShapeCurveCommand(CSSParserTokenR
 
                 return CSS::CurveCommand {
                     .toBy = CSS::CurveCommand::To {
-                        .offset = WTFMove(*position),
-                        .controlPoint1 = WTFMove(*controlPoint1),
-                        .controlPoint2 = WTFMove(*controlPoint2)
+                        .offset = WTF::move(*position),
+                        .controlPoint1 = WTF::move(*controlPoint1),
+                        .controlPoint2 = WTF::move(*controlPoint2)
                     }
                 };
             } else {
                 return CSS::CurveCommand {
                     .toBy = CSS::CurveCommand::To {
-                        .offset = WTFMove(*position),
-                        .controlPoint1 = WTFMove(*controlPoint1),
+                        .offset = WTF::move(*position),
+                        .controlPoint1 = WTF::move(*controlPoint1),
                         .controlPoint2 = std::nullopt
                     }
                 };
@@ -565,16 +560,16 @@ static std::optional<CSS::CurveCommand> consumeShapeCurveCommand(CSSParserTokenR
 
                 return CSS::CurveCommand {
                     .toBy = CSS::CurveCommand::By {
-                        .offset = WTFMove(*coordinatePair),
-                        .controlPoint1 = WTFMove(*controlPoint1),
-                        .controlPoint2 = WTFMove(*controlPoint2)
+                        .offset = WTF::move(*coordinatePair),
+                        .controlPoint1 = WTF::move(*controlPoint1),
+                        .controlPoint2 = WTF::move(*controlPoint2)
                     }
                 };
             } else {
                 return CSS::CurveCommand {
                     .toBy = CSS::CurveCommand::By {
-                        .offset = WTFMove(*coordinatePair),
-                        .controlPoint1 = WTFMove(*controlPoint1),
+                        .offset = WTF::move(*coordinatePair),
+                        .controlPoint1 = WTF::move(*controlPoint1),
                         .controlPoint2 = std::nullopt
                     }
                 };
@@ -607,14 +602,14 @@ static std::optional<CSS::SmoothCommand> consumeShapeSmoothCommand(CSSParserToke
 
                 return CSS::SmoothCommand {
                     .toBy = CSS::SmoothCommand::To {
-                        .offset = WTFMove(*position),
-                        .controlPoint = WTFMove(*controlPoint),
+                        .offset = WTF::move(*position),
+                        .controlPoint = WTF::move(*controlPoint),
                     }
                 };
             } else {
                 return CSS::SmoothCommand {
                     .toBy = CSS::SmoothCommand::To {
-                        .offset = WTFMove(*position),
+                        .offset = WTF::move(*position),
                         .controlPoint = std::nullopt
                     }
                 };
@@ -632,14 +627,14 @@ static std::optional<CSS::SmoothCommand> consumeShapeSmoothCommand(CSSParserToke
 
                 return CSS::SmoothCommand {
                     .toBy = CSS::SmoothCommand::By {
-                        .offset = WTFMove(*coordinatePair),
-                        .controlPoint = WTFMove(*controlPoint),
+                        .offset = WTF::move(*coordinatePair),
+                        .controlPoint = WTF::move(*controlPoint),
                     }
                 };
             } else {
                 return CSS::SmoothCommand {
                     .toBy = CSS::SmoothCommand::By {
-                        .offset = WTFMove(*coordinatePair),
+                        .offset = WTF::move(*coordinatePair),
                         .controlPoint = std::nullopt
                     }
                 };
@@ -664,13 +659,13 @@ static std::optional<CSS::ArcCommand> consumeShapeArcCommand(CSSParserTokenRange
             auto position = consumePositionUnresolved(range, state);
             if (!position)
                 return { };
-            return ToBy { CSS::ArcCommand::To { WTFMove(*position) } };
+            return ToBy { CSS::ArcCommand::To { WTF::move(*position) } };
         },
         [&](CSS::Keyword::By) -> std::optional<ToBy> {
             auto coordinatePair = consumeCoordinatePair(range, state);
             if (!coordinatePair)
                 return { };
-            return ToBy { CSS::ArcCommand::By { WTFMove(*coordinatePair) } };
+            return ToBy { CSS::ArcCommand::By { WTF::move(*coordinatePair) } };
         }
     );
     if (!toBy)
@@ -679,10 +674,10 @@ static std::optional<CSS::ArcCommand> consumeShapeArcCommand(CSSParserTokenRange
     if (!consumeIdent<CSSValueOf>(range))
         return { };
 
-    auto length1 = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+    auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
     if (!length1)
         return { };
-    auto length2 = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+    auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
     if (!length2)
         length2 = length1; // Copy `length1` to `length2` if there is only one length consumed.
 
@@ -738,8 +733,8 @@ static std::optional<CSS::ArcCommand> consumeShapeArcCommand(CSSParserTokenRange
     }
 
     return CSS::ArcCommand {
-        .toBy = WTFMove(*toBy),
-        .size = { WTFMove(*length1), WTFMove(*length2) },
+        .toBy = WTF::move(*toBy),
+        .size = { WTF::move(*length1), WTF::move(*length2) },
         .arcSweep = arcSweep.value_or(CSS::ArcSweep { CSS::Keyword::Ccw { } }),
         .arcSize = arcSize.value_or(CSS::ArcSize { CSS::Keyword::Small { } }),
         .rotation = angle.value_or(0_css_deg)
@@ -755,37 +750,37 @@ static std::optional<CSS::ShapeCommand> consumeShapeCommand(CSSParserTokenRange&
     switch (id) {
     case CSSValueMove:
         if (auto command = consumeShapeMoveCommand(range, state))
-            return CSS::ShapeCommand { WTFMove(*command) };
+            return CSS::ShapeCommand { WTF::move(*command) };
         break;
 
     case CSSValueLine:
         if (auto command = consumeShapeLineCommand(range, state))
-            return CSS::ShapeCommand { WTFMove(*command) };
+            return CSS::ShapeCommand { WTF::move(*command) };
         break;
 
     case CSSValueHline:
         if (auto command = consumeShapeHLineCommand(range, state))
-            return CSS::ShapeCommand { WTFMove(*command) };
+            return CSS::ShapeCommand { WTF::move(*command) };
         break;
 
     case CSSValueVline:
         if (auto command = consumeShapeVLineCommand(range, state))
-            return CSS::ShapeCommand { WTFMove(*command) };
+            return CSS::ShapeCommand { WTF::move(*command) };
         break;
 
     case CSSValueCurve:
         if (auto command = consumeShapeCurveCommand(range, state))
-            return CSS::ShapeCommand { WTFMove(*command) };
+            return CSS::ShapeCommand { WTF::move(*command) };
         break;
 
     case CSSValueSmooth:
         if (auto command = consumeShapeSmoothCommand(range, state))
-            return CSS::ShapeCommand { WTFMove(*command) };
+            return CSS::ShapeCommand { WTF::move(*command) };
         break;
 
     case CSSValueArc:
         if (auto command = consumeShapeArcCommand(range, state))
-            return CSS::ShapeCommand { WTFMove(*command) };
+            return CSS::ShapeCommand { WTF::move(*command) };
         break;
 
     case CSSValueClose:
@@ -798,12 +793,12 @@ static std::optional<CSS::ShapeCommand> consumeShapeCommand(CSSParserTokenRange&
     return { };
 }
 
-static std::optional<CSS::Shape> consumeBasicShapeShapeFunctionParameters(CSSParserTokenRange& args, CSS::PropertyParserState& state)
+static std::optional<CSS::Shape> consumeBasicShapeShapeFunctionParameters(CSSParserTokenRange& args, CSS::PropertyParserState& state, OptionSet<BasicShapeParsingOptions> options)
 {
     // shape() = shape( <'fill-rule'>? from <coordinate-pair>, <shape-command># )
     // https://drafts.csswg.org/css-shapes-2/#shape-function
 
-    if (!state.context.cssShapeFunctionEnabled)
+    if (options.contains(BasicShapeParsingOptions::RejectShapeFunction))
         return { };
 
     auto fillRule = consumeFillRule(args);
@@ -825,13 +820,13 @@ static std::optional<CSS::Shape> consumeBasicShapeShapeFunctionParameters(CSSPar
         if (!command)
             return { };
 
-        commands.append(WTFMove(*command));
+        commands.append(WTF::move(*command));
     } while (consumeCommaIncludingWhitespace(args));
 
     return CSS::Shape {
-        .fillRule = WTFMove(fillRule),
-        .startingPoint = WTFMove(*startingPoint),
-        .commands = { WTFMove(commands) }
+        .fillRule = WTF::move(fillRule),
+        .startingPoint = WTF::move(*startingPoint),
+        .commands = { WTF::move(commands) }
     };
 }
 
@@ -849,8 +844,8 @@ static std::optional<CSS::Rect::Edge> consumeBasicShapeRectEdge(CSSParserTokenRa
         return { };
     }
 
-    if (auto edge = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state))
-        return { WTFMove(*edge) };
+    if (auto edge = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state))
+        return { WTF::move(*edge) };
 
     return { };
 }
@@ -871,7 +866,7 @@ static std::optional<SpaceSeparatedRectEdges<CSS::Rect::Edge>> consumeBasicShape
     auto left = consumeBasicShapeRectEdge(args, state);
     if (!left)
         return { };
-    return SpaceSeparatedRectEdges<CSS::Rect::Edge> { WTFMove(*top), WTFMove(*right), WTFMove(*bottom), WTFMove(*left) };
+    return SpaceSeparatedRectEdges<CSS::Rect::Edge> { WTF::move(*top), WTF::move(*right), WTF::move(*bottom), WTF::move(*left) };
 }
 
 static std::optional<CSS::Rect> consumeBasicShapeRectFunctionParameters(CSSParserTokenRange& args, CSS::PropertyParserState& state)
@@ -891,7 +886,7 @@ static std::optional<CSS::Rect> consumeBasicShapeRectFunctionParameters(CSSParse
     }
 
     return CSS::Rect {
-        .edges = WTFMove(*edges),
+        .edges = WTF::move(*edges),
         .radii = radii.value_or(CSS::BorderRadius::defaultValue())
     };
 }
@@ -918,8 +913,8 @@ static std::optional<CSS::Xywh> consumeBasicShapeXywhFunctionParameters(CSSParse
     }
 
     return CSS::Xywh {
-        .location = WTFMove(*location),
-        .size = WTFMove(*size),
+        .location = WTF::move(*location),
+        .size = WTF::move(*size),
         .radii = radii.value_or(CSS::BorderRadius::defaultValue())
     };
 }
@@ -930,23 +925,23 @@ static std::optional<CSS::Inset::Insets> consumeBasicShapeInsetInsets(CSSParserT
 {
     // <insets> = <length-percentage>{1,4}
 
-    auto inset1 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset1 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset1)
         return { };
 
-    auto inset2 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset2 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset2)
-        return completeQuad<CSS::Inset::Insets>(WTFMove(*inset1));
+        return completeQuad<CSS::Inset::Insets>(WTF::move(*inset1));
 
-    auto inset3 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset3 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset3)
-        return completeQuad<CSS::Inset::Insets>(WTFMove(*inset1), WTFMove(*inset2));
+        return completeQuad<CSS::Inset::Insets>(WTF::move(*inset1), WTF::move(*inset2));
 
-    auto inset4 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset4 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset4)
-        return completeQuad<CSS::Inset::Insets>(WTFMove(*inset1), WTFMove(*inset2), WTFMove(*inset3));
+        return completeQuad<CSS::Inset::Insets>(WTF::move(*inset1), WTF::move(*inset2), WTF::move(*inset3));
 
-    return CSS::Inset::Insets { WTFMove(*inset1), WTFMove(*inset2), WTFMove(*inset3), WTFMove(*inset4) };
+    return CSS::Inset::Insets { WTF::move(*inset1), WTF::move(*inset2), WTF::move(*inset3), WTF::move(*inset4) };
 }
 
 static std::optional<CSS::Inset> consumeBasicShapeInsetFunctionParameters(CSSParserTokenRange& args, CSS::PropertyParserState& state)
@@ -966,14 +961,14 @@ static std::optional<CSS::Inset> consumeBasicShapeInsetFunctionParameters(CSSPar
     }
 
     return CSS::Inset {
-        .insets = WTFMove(*insets),
+        .insets = WTF::move(*insets),
         .radii = radii.value_or(CSS::BorderRadius::defaultValue())
     };
 }
 
 // MARK: - <basic-shape>
 
-RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<PathParsingOption> options)
+RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<BasicShapeParsingOptions> options)
 {
     // <basic-shape> = <circle()> | <ellipse() | <inset()> | <path()> | <polygon()> | <rect()> | <shape()> | <xywh()>
     // https://drafts.csswg.org/css-shapes/#typedef-basic-shape
@@ -1002,13 +997,13 @@ RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, CSS::PropertyPars
     else if (id == CSSValuePath)
         result = toBasicShape<CSSValuePath>(consumeBasicShapePathFunctionParameters(args, state, options));
     else if (id == CSSValueShape)
-        result = toBasicShape<CSSValueShape>(consumeBasicShapeShapeFunctionParameters(args, state));
+        result = toBasicShape<CSSValueShape>(consumeBasicShapeShapeFunctionParameters(args, state, options));
 
     if (!result || !args.atEnd())
         return { };
 
     range = rangeCopy;
-    return CSSBasicShapeValue::create(WTFMove(*result));
+    return CSSBasicShapeValue::create(WTF::move(*result));
 }
 
 RefPtr<CSSValue> consumePath(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -1028,7 +1023,7 @@ RefPtr<CSSValue> consumePath(CSSParserTokenRange& range, CSS::PropertyParserStat
 
     return CSSPathValue::create(
         CSS::PathFunction {
-            .parameters = WTFMove(*result)
+            .parameters = WTF::move(*result)
         }
     );
 }
@@ -1038,6 +1033,12 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, CSS::PropertyPa
     // <'shape-outside'> = none | [ <basic-shape> || <shape-box> ] | <image>
     // https://drafts.csswg.org/css-shapes-1/#propdef-shape-outside
 
+    // FIXME: Add support for `path()` and `shape()` functions in `shape-outside`.
+    constexpr auto options = OptionSet<BasicShapeParsingOptions> {
+        BasicShapeParsingOptions::RejectPathFunction,
+        BasicShapeParsingOptions::RejectShapeFunction
+    };
+
     if (auto imageOrNoneValue = consumeImageOrNone(range, state))
         return imageOrNoneValue;
 
@@ -1045,8 +1046,7 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, CSS::PropertyPa
     auto boxValue = CSSPropertyParsing::consumeShapeBox(range);
     bool hasShapeValue = false;
 
-    // FIXME: The spec says we should allows `path()` functions.
-    if (RefPtr basicShape = consumeBasicShape(range, state, PathParsingOption::RejectPath)) {
+    if (RefPtr basicShape = consumeBasicShape(range, state, options)) {
         list.append(basicShape.releaseNonNull());
         hasShapeValue = true;
     }
@@ -1060,7 +1060,7 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, CSS::PropertyPa
     if (list.isEmpty())
         return nullptr;
 
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 } // namespace CSSPropertyParserHelpers

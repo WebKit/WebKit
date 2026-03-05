@@ -269,7 +269,7 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
                     RETURN_IF_EXCEPTION(scope, false);
                     auto propertyName = propertyNameString->toIdentifier(globalObject);
                     RETURN_IF_EXCEPTION(scope, false);
-                    m_arrayReplacerPropertyNames.add(WTFMove(propertyName));
+                    m_arrayReplacerPropertyNames.add(WTF::move(propertyName));
                     return true;
                 });
                 RETURN_IF_EXCEPTION(scope, );
@@ -383,7 +383,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         if (object->inherits<JSRawJSONObject>()) {
             String string = jsCast<JSRawJSONObject*>(object)->rawJSON(vm)->value(m_globalObject);
             RETURN_IF_EXCEPTION(scope, StringifyFailed);
-            builder.append(WTFMove(string));
+            builder.append(WTF::move(string));
             return StringifySucceeded;
 
         }
@@ -790,7 +790,7 @@ void FastStringifier<CharType, bufferMode>::logOutcome(ASCIILiteral outcome)
 template<typename CharType, BufferMode bufferMode>
 void FastStringifier<CharType, bufferMode>::logOutcome(String&& outcome)
 {
-    logOutcomeImpl(WTFMove(outcome));
+    logOutcomeImpl(WTF::move(outcome));
 }
 
 #endif
@@ -924,7 +924,7 @@ inline String FastStringifier<CharType, bufferMode>::result()
 #endif
     if constexpr (bufferMode == BufferMode::DynamicBuffer) {
         m_dynamicBuffer.shrink(m_length);
-        return StringImpl::adopt(WTFMove(m_dynamicBuffer));
+        return StringImpl::adopt(WTF::move(m_dynamicBuffer));
     }
     return std::span { static_cast<const FastStringifier*>(this)->buffer(), m_length };
 }
@@ -1233,13 +1233,13 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             return;
         }
         if constexpr (sizeof(CharType) == 1) {
-            const char* cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, reinterpret_cast<char*>(buffer() + m_length));
-            m_length = cursor - reinterpret_cast<char*>(buffer());
+            auto cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, byteCast<char>(bufferSpan().subspan(m_length)));
+            m_length = cursor.data() - reinterpret_cast<char*>(buffer());
         } else {
             std::array<char, WTF::dragonbox::max_string_length<WTF::dragonbox::ieee754_binary64>()> temporary;
-            const char* cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, temporary.data());
-            size_t length = cursor - temporary.data();
-            WTF::copyElements(spanReinterpretCast<uint16_t>(bufferSpan().subspan(m_length)), spanReinterpretCast<const uint8_t>(std::span { temporary }).first(length));
+            auto cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, std::span { temporary });
+            size_t length = cursor.data() - temporary.data();
+            WTF::copyElements(spanReinterpretCast<uint16_t>(bufferSpan().subspan(m_length)), byteCast<uint8_t>(std::span { temporary }).first(length));
             m_length += length;
         }
         return;
@@ -1866,7 +1866,7 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, Call
         JSValue function = callFrame->uncheckedArgument(1);
         CallData callData = JSC::getCallData(function);
         if (callData.type != CallData::Type::None)
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsonParseSlow(globalObject, string, view, WTFMove(callData), asObject(function))));
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsonParseSlow(globalObject, string, view, WTF::move(callData), asObject(function))));
     }
 
     if (view->is8Bit()) {
@@ -1894,7 +1894,7 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, Call
 JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncStringify, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     String result = stringify(*globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2));
-    return result.isNull() ? encodedJSUndefined() : JSValue::encode(jsString(globalObject->vm(), WTFMove(result)));
+    return result.isNull() ? encodedJSUndefined() : JSValue::encode(jsString(globalObject->vm(), WTF::move(result)));
 }
 
 JSValue JSONParse(JSGlobalObject* globalObject, StringView json)

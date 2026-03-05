@@ -701,7 +701,7 @@ uint8_t *RIPEMD160(const uint8_t *data, size_t len,
   RIPEMD160_CTX ctx;
 
   if (!RIPEMD160_Init(&ctx)) {
-    return NULL;
+    return nullptr;
   }
 
   RIPEMD160_Update(&ctx, data, len);

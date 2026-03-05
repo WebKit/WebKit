@@ -60,8 +60,8 @@ Region::Region(const Region& other)
 }
 
 Region::Region(Region&& other)
-    : m_bounds(WTFMove(other.m_bounds))
-    , m_shape(WTFMove(other.m_shape))
+    : m_bounds(WTF::move(other.m_bounds))
+    , m_shape(WTF::move(other.m_shape))
 {
 }
 
@@ -78,8 +78,8 @@ Region& Region::operator=(const Region& other)
 
 Region& Region::operator=(Region&& other)
 {
-    m_bounds = WTFMove(other.m_bounds);
-    m_shape = WTFMove(other.m_shape);
+    m_bounds = WTF::move(other.m_bounds);
+    m_shape = WTF::move(other.m_shape);
     return *this;
 }
 
@@ -276,8 +276,8 @@ Region::Shape::Shape(const IntRect& rect)
 }
 
 Region::Shape::Shape(Vector<int, 32>&& segments, Vector<Span, 16>&& spans)
-    : m_segments(WTFMove(segments))
-    , m_spans(WTFMove(spans))
+    : m_segments(WTF::move(segments))
+    , m_spans(WTF::move(spans))
 {
     ASSERT(isValidShape(m_segments.span(), m_spans.span()));
 }
@@ -310,7 +310,7 @@ void Region::Shape::appendSpans(const Shape& shape, std::span<const Span> spans)
         appendSpan(spans[0].y, shape.segments(spans));
 }
 
-std::span<const int> Region::Shape::segments(std::span<const Span> span) const
+std::span<const int> Region::Shape::segments(std::span<const Span> span) const LIFETIME_BOUND
 {
     ASSERT(span.data() >= std::to_address(m_spans.begin()));
     ASSERT(span.data() < std::to_address(m_spans.end()));
@@ -607,9 +607,9 @@ void Region::setShape(Shape&& shape)
     }
 
     if (!m_shape)
-        m_shape = makeUnique<Shape>(WTFMove(shape));
+        m_shape = makeUnique<Shape>(WTF::move(shape));
     else
-        *m_shape = WTFMove(shape);
+        *m_shape = WTF::move(shape);
 }
 
 static std::span<const int> segmentsForSpanSegmentIndices(std::span<const int> segments, size_t start, size_t end)

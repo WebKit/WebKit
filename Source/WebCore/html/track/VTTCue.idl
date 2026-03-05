@@ -51,5 +51,6 @@ enum AlignSetting { "start", "center", "end", "left", "right" };
     attribute double size;
     attribute AlignSetting align;
     attribute DOMString text;
-    DocumentFragment getCueAsHTML();
+    // FIXME: getCueAsHTML() is defined as non-nullable.
+    DocumentFragment? getCueAsHTML();
 };

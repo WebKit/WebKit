@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Date input should not resize on hover when using web fonts Test timed out
+PASS Date input should not resize on hover when using web fonts
 

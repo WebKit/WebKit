@@ -34,7 +34,7 @@
 namespace WebKit {
 
 FidoAuthenticator::FidoAuthenticator(Ref<CtapDriver>&& driver)
-    : m_driver(WTFMove(driver))
+    : m_driver(WTF::move(driver))
 {
     ASSERT(m_driver);
 }
@@ -49,11 +49,6 @@ CtapDriver& FidoAuthenticator::driver() const
 {
     ASSERT(m_driver);
     return *m_driver;
-}
-
-Ref<CtapDriver> FidoAuthenticator::protectedDriver() const
-{
-    return driver();
 }
 
 Ref<CtapDriver> FidoAuthenticator::releaseDriver()

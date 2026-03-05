@@ -42,7 +42,6 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
         &supportsRichSourceInfo,
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
-        &queueMicrotaskToEventLoop,
         &shouldInterruptScriptBeforeTimeout,
         nullptr, // moduleLoaderImportModule
         nullptr, // moduleLoaderResolve

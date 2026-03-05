@@ -20,9 +20,11 @@
 #pragma once
 
 #include <WebCore/DocumentView.h>
+#include <WebCore/RenderBlock.h>
 #include <WebCore/RenderBox.h>
 #include <WebCore/RenderBoxModelObjectInlines.h>
 #include <WebCore/RenderElementInlines.h>
+#include <WebCore/StyleContainmentCheckerInlines.h>
 
 namespace WebCore {
 
@@ -46,6 +48,7 @@ inline LayoutUnit RenderBox::contentBoxWidth() const { return std::max(0_lu, pad
 inline std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerLogicalHeight() const { return writingMode().isHorizontal() ? explicitIntrinsicInnerHeight() : explicitIntrinsicInnerWidth(); }
 inline std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerLogicalWidth() const { return writingMode().isHorizontal() ? explicitIntrinsicInnerWidth() : explicitIntrinsicInnerHeight(); }
 inline bool RenderBox::hasHorizontalOverflow() const { return scrollWidth() != roundToInt(paddingBoxWidth()); }
+inline bool RenderBox::hasScrollableOverflow() const { return hasScrollableOverflowX() || hasScrollableOverflowY(); }
 inline bool RenderBox::hasScrollableOverflowX() const { return scrollsOverflowX() && hasHorizontalOverflow(); }
 inline bool RenderBox::hasScrollableOverflowY() const { return scrollsOverflowY() && hasVerticalOverflow(); }
 inline bool RenderBox::hasVerticalOverflow() const { return scrollHeight() != roundToInt(paddingBoxHeight()); }
@@ -70,6 +73,31 @@ inline void RenderBox::setLogicalSize(LayoutSize size) { setSize(writingMode().i
 inline bool RenderBox::shouldTrimChildMargin(Style::MarginTrimSide type, const RenderBox& child) const { return style().marginTrim().contains(type) && isChildEligibleForMarginTrim(type, child); }
 inline bool RenderBox::stretchesToViewport() const { return document().inQuirksMode() && style().logicalHeight().isAuto() && !isFloatingOrOutOfFlowPositioned() && (isDocumentElementRenderer() || isBody()) && !shouldComputeLogicalHeightFromAspectRatio() && !isInline(); }
 inline bool RenderBox::isColumnSpanner() const { return style().columnSpan() == ColumnSpan::All; }
+
+inline bool RenderBox::scrollsOverflow() const
+{
+    return scrollsOverflowX() || scrollsOverflowY();
+}
+
+inline bool RenderBox::scrollsOverflowX() const
+{
+    return hasNonVisibleOverflow() && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto);
+}
+
+inline bool RenderBox::scrollsOverflowY() const
+{
+    return hasNonVisibleOverflow() && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto);
+}
+
+inline bool RenderBox::isScrollContainerX() const
+{
+    return style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Hidden || style().overflowX() == Overflow::Auto;
+}
+
+inline bool RenderBox::isScrollContainerY() const
+{
+    return style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Hidden || style().overflowY() == Overflow::Auto;
+}
 
 inline LayoutPoint RenderBox::topLeftLocation() const
 {
@@ -128,6 +156,19 @@ inline LayoutRect RenderBox::contentBoxRect() const
     return { location, size };
 }
 
+inline LayoutRect RenderBox::flippedContentBoxRect() const
+{
+    auto rect = flippedClientBoxRect();
+    auto padding = this->padding();
+    if (!padding.isZero()) {
+        if (writingMode().isBlockFlipped())
+            padding = padding.blockFlippedCopy(writingMode());
+        rect.contract(padding);
+        rect.floorSize();
+    }
+    return rect;
+}
+
 inline LayoutRect RenderBox::marginBoxRect() const
 {
     auto zoomFactor = style().usedZoomForLength();
@@ -136,6 +177,27 @@ inline LayoutRect RenderBox::marginBoxRect() const
     auto top = resolveLengthPercentageUsingContainerLogicalWidth(style().marginTop(), zoomFactor);
     auto bottom = resolveLengthPercentageUsingContainerLogicalWidth(style().marginBottom(), zoomFactor);
     return { -left, -top, size().width() + left + right, size().height() + top + bottom };
+}
+
+
+inline const LayoutRect RenderBox::scrollableContentAreaOverflowRect() const
+{
+    if (!m_overflow)
+        return flippedClientBoxRect();
+
+    return m_overflow->contentArea();
+}
+
+inline const LayoutRect RenderBox::scrollablePaddingAreaOverflowRect() const
+{
+    if (!m_overflow)
+        return flippedClientBoxRect();
+
+    auto overflowRect = m_overflow->contentArea();
+    flipForWritingMode(overflowRect);
+    overflowRect.expand(padding());
+    flipForWritingMode(overflowRect);
+    return overflowRect;
 }
 
 inline void RenderBox::setLogicalHeight(LayoutUnit size)
@@ -170,6 +232,31 @@ inline void RenderBox::setLogicalWidth(LayoutUnit size)
         setHeight(size);
 }
 
+inline bool RenderBox::hasStretchedLogicalHeight(StretchingMode mode) const
+{
+    CheckedPtr containingBlock = this->containingBlock();
+    if (!containingBlock)
+        return false;
+
+    auto containingAxis = writingMode().isOrthogonal(containingBlock->writingMode())
+        ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block;
+
+    return containingBlock->willStretchItem(*this, containingAxis, mode);
+}
+
+inline bool RenderBox::hasStretchedLogicalWidth(StretchingMode mode) const
+{
+    CheckedPtr containingBlock = this->containingBlock();
+    if (!containingBlock)
+        return false;
+
+    auto containingAxis = writingMode().isOrthogonal(containingBlock->writingMode())
+        ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
+
+    return containingBlock->willStretchItem(*this, containingAxis, mode);
+}
+
+
 inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit logicalWidth, double aspectRatio, BoxSizing boxSizing)
 {
     if (boxSizing == BoxSizing::BorderBox)
@@ -179,7 +266,11 @@ inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth,
 
 inline bool isSkippedContentRoot(const RenderBox& renderBox)
 {
-    return renderBox.element() && WebCore::isSkippedContentRoot(renderBox.style(), *renderBox.protectedElement());
+    RefPtr element = renderBox.element();
+    if (!element)
+        return false;
+
+    return Style::ContainmentChecker { renderBox.style(), *element }.isSkippedContentRoot();
 }
 
 inline bool RenderBox::backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset)

@@ -62,7 +62,7 @@ ServiceWorkerRegistrationPushAPI* ServiceWorkerRegistrationPushAPI::from(Service
     if (!supplement) {
         auto newSupplement = makeUnique<ServiceWorkerRegistrationPushAPI>(serviceWorkerRegistration);
         supplement = newSupplement.get();
-        provideTo(&serviceWorkerRegistration, supplementName(), WTFMove(newSupplement));
+        provideTo(&serviceWorkerRegistration, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

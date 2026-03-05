@@ -1,0 +1,24 @@
+<html>
+<head>
+<style>
+ #quote {
+  zoom: 52%;
+}
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+function insertSearchInput() {
+  var documentSelection = document.getSelection();
+  documentSelection.setPosition(quote);
+  var inputElementOuterHTML = inputElement.outerHTML;
+  document.execCommand("insertHTML", false, inputElementOuterHTML);
+}
+</script>
+</head>
+<body onload="insertSearchInput()">
+  <p>This test passes if it does not crash in debug.</p>
+  <input id="inputElement" type="search" >
+  <blockquote id="quote" contenteditable="plaintext-only" ></blockquote>
+</body>

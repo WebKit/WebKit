@@ -60,7 +60,7 @@ class RemoteXRBinding final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteXRBinding> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRBinding(gpuConnectionToWebProcess, xrBinding, objectHeap, gpu, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteXRBinding(gpuConnectionToWebProcess, xrBinding, objectHeap, gpu, WTF::move(streamConnection), identifier));
     }
 
     virtual ~RemoteXRBinding();
@@ -78,21 +78,16 @@ private:
     RemoteXRBinding& operator=(const RemoteXRBinding&) = delete;
     RemoteXRBinding& operator=(RemoteXRBinding&&) = delete;
 
-    Ref<IPC::StreamServerConnection> protectedStreamConnection();
-
     WebCore::WebGPU::XRBinding& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::XRBinding> protectedBacking();
-
-    Ref<RemoteGPU> protectedGPU();
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
     void createProjectionLayer(WebCore::WebGPU::TextureFormat, std::optional<WebCore::WebGPU::TextureFormat>, WebCore::WebGPU::TextureUsageFlags, double, WebGPUIdentifier);
     void getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebGPUIdentifier);
 
-    Ref<WebCore::WebGPU::XRBinding> m_backing;
+    const Ref<WebCore::WebGPU::XRBinding> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WebGPUIdentifier m_identifier;
     WeakRef<RemoteGPU> m_gpu;

@@ -33,26 +33,21 @@
 namespace WebCore {
 
 class XRSessionEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRSessionEvent);
+    WTF_MAKE_TZONE_ALLOCATED(XRSessionEvent);
 public:
     struct Init : EventInit {
-        Init() = default;
-        Init(RefPtr<WebXRSession>&& session)
-            : EventInit()
-            , session(WTFMove(session))
-        { }
-        RefPtr<WebXRSession> session;
+        Ref<WebXRSession> session;
     };
 
-    static Ref<XRSessionEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<XRSessionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRSessionEvent();
 
     const WebXRSession& session() const;
 
 private:
-    XRSessionEvent(const AtomString&, const Init&, IsTrusted);
+    XRSessionEvent(const AtomString&, Init&&, IsTrusted);
 
-    RefPtr<WebXRSession> m_session;
+    const Ref<WebXRSession> m_session;
 };
 
 } // namespace WebCore

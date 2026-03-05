@@ -13,8 +13,8 @@ includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  let sample = new TA([42, 44, 46, 43, 45]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  let sample = new TA(makeCtorArg([42, 44, 46, 43, 45]));
   let explicit = sample.sort(undefined);
   let implicit = sample.sort();
 

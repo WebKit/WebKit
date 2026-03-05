@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/AXCoreObject.h>
+#include <WebCore/AXLoggerBase.h>
 #include <WebCore/ActivityState.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -52,7 +53,7 @@ using AXTreeWeakPtr = Variant<WeakPtr<AXObjectCache>
 #endif
 >;
 
-AXTreePtr axTreeForID(AXID);
+AXTreePtr axTreeForID(std::optional<AXTreeID>);
 WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
 
 template<typename T>
@@ -63,41 +64,41 @@ class AXTreeStore {
     WTF_MAKE_NONCOPYABLE(AXTreeStore);
     friend WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
 public:
-    AXID treeID() const { return m_id; }
-    inline static WeakPtr<AXObjectCache> axObjectCacheForID(std::optional<AXID>);
+    AXTreeID treeID() const { return m_id; }
+    inline static WeakPtr<AXObjectCache> axObjectCacheForID(std::optional<AXTreeID>);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    static RefPtr<AXIsolatedTree> isolatedTreeForID(std::optional<AXID>);
+    static RefPtr<AXIsolatedTree> isolatedTreeForID(std::optional<AXTreeID>);
     static void applyPendingChangesForAllIsolatedTrees();
 #endif
 
 protected:
-    AXTreeStore(AXID axID = generateNewID())
-        : m_id(axID)
+    AXTreeStore(AXTreeID treeID = generateNewID())
+        : m_id(treeID)
     { }
 
-    inline static void set(AXID, const AXTreeWeakPtr&);
-    inline static void add(AXID, const AXTreeWeakPtr&);
-    inline static void remove(AXID);
-    inline static bool contains(AXID);
+    inline static void set(AXTreeID, const AXTreeWeakPtr&);
+    inline static void add(AXTreeID, const AXTreeWeakPtr&);
+    inline static void remove(AXTreeID);
+    inline static bool contains(AXTreeID);
 
-    inline static AXID generateNewID();
-    const AXID m_id;
+    inline static AXTreeID generateNewID();
+    const AXTreeID m_id;
     static Lock s_storeLock;
 private:
-    inline static HashMap<AXID, WeakPtr<AXObjectCache>>& liveTreeMap();
+    inline static HashMap<AXTreeID, WeakPtr<AXObjectCache>>& liveTreeMap();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    inline static HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& isolatedTreeMap() WTF_REQUIRES_LOCK(s_storeLock);
+    inline static HashMap<AXTreeID, ThreadSafeWeakPtr<AXIsolatedTree>>& isolatedTreeMap() WTF_REQUIRES_LOCK(s_storeLock);
 #endif
 };
 
 template<typename T>
-inline AXID AXTreeStore<T>::generateNewID()
+inline AXTreeID AXTreeStore<T>::generateNewID()
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
-    std::optional<AXID> axID;
+    std::optional<AXTreeID> axID;
     do {
-        axID = AXID::generate();
+        axID = AXTreeID::generate();
     } while (liveTreeMap().contains(*axID));
     return *axID;
 }

@@ -35,17 +35,17 @@ const X509V3_EXT_METHOD v3_bcons = {
     NID_basic_constraints,
     0,
     ASN1_ITEM_ref(BASIC_CONSTRAINTS),
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
     i2v_BASIC_CONSTRAINTS,
     v2i_BASIC_CONSTRAINTS,
-    NULL,
-    NULL,
-    NULL,
+    nullptr,
+    nullptr,
+    nullptr,
 };
 
 ASN1_SEQUENCE(BASIC_CONSTRAINTS) = {
@@ -67,9 +67,9 @@ static STACK_OF(CONF_VALUE) *i2v_BASIC_CONSTRAINTS(
 static void *v2i_BASIC_CONSTRAINTS(const X509V3_EXT_METHOD *method,
                                    const X509V3_CTX *ctx,
                                    const STACK_OF(CONF_VALUE) *values) {
-  BASIC_CONSTRAINTS *bcons = NULL;
+  BASIC_CONSTRAINTS *bcons = nullptr;
   if (!(bcons = BASIC_CONSTRAINTS_new())) {
-    return NULL;
+    return nullptr;
   }
   for (size_t i = 0; i < sk_CONF_VALUE_num(values); i++) {
     const CONF_VALUE *val = sk_CONF_VALUE_value(values, i);
@@ -90,5 +90,5 @@ static void *v2i_BASIC_CONSTRAINTS(const X509V3_EXT_METHOD *method,
   return bcons;
 err:
   BASIC_CONSTRAINTS_free(bcons);
-  return NULL;
+  return nullptr;
 }

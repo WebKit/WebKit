@@ -32,7 +32,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmapHandle, WTF_INT
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmapHandle);
 
 ShareableBitmapHandle::ShareableBitmapHandle(SharedMemory::Handle&& handle, const ShareableBitmapConfiguration& config)
-    : m_handle(WTFMove(handle))
+    : m_handle(WTF::move(handle))
     , m_configuration(config)
 {
 }

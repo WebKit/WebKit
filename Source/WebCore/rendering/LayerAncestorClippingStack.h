@@ -28,6 +28,7 @@
 #include <WebCore/LayoutRect.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -50,7 +51,7 @@ struct CompositedClipData {
 
     friend bool operator==(const CompositedClipData&, const CompositedClipData&) = default;
     
-    SingleThreadWeakPtr<RenderLayer> clippingLayer; // For scroller entries, the scrolling layer. For other entries, the most-descendant layer that has a clip.
+    InlineWeakPtr<RenderLayer> clippingLayer; // For scroller entries, the scrolling layer. For other entries, the most-descendant layer that has a clip.
     LayoutRoundedRect clipRect; // In the coordinate system of the RenderLayer that owns the stack.
     bool isOverflowScroll { false };
 };
@@ -64,7 +65,7 @@ public:
     LayerAncestorClippingStack(Vector<CompositedClipData>&&);
     ~LayerAncestorClippingStack() = default;
 
-    bool hasAnyScrollingLayers() const;
+    bool NODELETE hasAnyScrollingLayers() const;
     
     bool equalToClipData(const Vector<CompositedClipData>&) const;
     bool updateWithClipData(ScrollingCoordinator*, Vector<CompositedClipData>&&);
@@ -76,8 +77,8 @@ public:
 
     void updateScrollingNodeLayers(ScrollingCoordinator&);
 
-    GraphicsLayer* firstLayer() const;
-    GraphicsLayer* lastLayer() const;
+    GraphicsLayer* NODELETE firstLayer() const;
+    GraphicsLayer* NODELETE lastLayer() const;
     std::optional<ScrollingNodeID> lastOverflowScrollProxyNodeID() const;
 
     struct ClippingStackEntry {

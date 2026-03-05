@@ -491,11 +491,10 @@ bool VMTraps::handleTraps(VMTraps::BitField mask)
             ASSERT(vm.watchdog());
             if (!vm.watchdog()->isActive() || !vm.watchdog()->shouldTerminate(vm.entryScope->globalObject())) [[likely]]
                 continue;
-            vm.setHasTerminationRequest();
             [[fallthrough]];
 
         case NeedTermination:
-            ASSERT(vm.hasTerminationRequest());
+            vm.setHasTerminationRequest();
             scope.release();
             if (!isDeferringTermination())
                 vm.throwTerminationException();
@@ -527,7 +526,7 @@ void VMTraps::deferTerminationSlow(DeferAction)
 
     VM& vm = this->vm();
     if (vm.hasPendingTerminationException()) [[unlikely]] {
-        RELEASE_ASSERT(vm.hasTerminationRequest());
+        ASSERT(vm.hasTerminationRequest());
         // While we clear the TerminationExeption here, hasTerminationRequest() remains true and
         // is how we remember that we still need a TerminationException when we stop deferring.
         // hasTerminationRequest() will eventually trigger a re-throw of TerminationExeption

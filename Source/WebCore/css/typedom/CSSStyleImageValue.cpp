@@ -37,10 +37,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleImageValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleImageValue);
 
 CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document& document)
-    : m_cssValue(WTFMove(cssValue))
+    : m_cssValue(WTF::move(cssValue))
     , m_document(&document)
 {
 }

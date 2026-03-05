@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <WebCore/Color.h>
 #include <WebCore/CompositeOperation.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IterationCompositeOperation.h>
@@ -39,17 +38,13 @@ struct BlendingContext {
     CompositeOperation compositeOperation { CompositeOperation::Replace };
     IterationCompositeOperation iterationCompositeOperation { IterationCompositeOperation::Replace };
     double currentIteration { 0 };
-    Color fromCurrentColor { };
-    Color toCurrentColor { };
 
-    BlendingContext(double progress = 0, bool isDiscrete = false, CompositeOperation compositeOperation = CompositeOperation::Replace, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0, Color fromCurrentColor = { }, Color toCurrentColor = { })
+    BlendingContext(double progress = 0, bool isDiscrete = false, CompositeOperation compositeOperation = CompositeOperation::Replace, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
         : progress(progress)
         , isDiscrete(isDiscrete)
         , compositeOperation(compositeOperation)
         , iterationCompositeOperation(iterationCompositeOperation)
         , currentIteration(currentIteration)
-        , fromCurrentColor(fromCurrentColor)
-        , toCurrentColor(toCurrentColor)
     {
     }
 

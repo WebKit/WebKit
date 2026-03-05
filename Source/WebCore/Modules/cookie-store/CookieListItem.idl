@@ -24,10 +24,9 @@
  */
 
 // https://cookiestore.spec.whatwg.org/#dictdef-cookielistitem
-
 [
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary CookieListItem {
     USVString name;
     USVString value;

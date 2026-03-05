@@ -38,7 +38,7 @@ class WritableStream;
 template<typename> class ExceptionOr;
 
 class VideoTrackGenerator : public RefCounted<VideoTrackGenerator> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(VideoTrackGenerator);
+    WTF_MAKE_TZONE_ALLOCATED(VideoTrackGenerator);
 public:
     static ExceptionOr<Ref<VideoTrackGenerator>> create(ScriptExecutionContext&);
     ~VideoTrackGenerator();
@@ -81,7 +81,7 @@ private:
 
     class Sink final : public WritableStreamSink {
     public:
-        static Ref<Sink> create(Ref<Source>&& source) { return adoptRef(*new Sink(WTFMove(source))); }
+        static Ref<Sink> create(Ref<Source>&& source) { return adoptRef(*new Sink(WTF::move(source))); }
 
         void setMuted(bool muted) { m_muted = muted; }
 
@@ -89,8 +89,8 @@ private:
         explicit Sink(Ref<Source>&&);
 
         void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-        void close() final;
-        void error(String&&) final;
+        void close(JSDOMGlobalObject&) final;
+        void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
 
         bool m_muted { false };
         const Ref<Source> m_source;

@@ -34,14 +34,14 @@ namespace WebKit {
 
 Ref<IPCConnectionTester> IPCConnectionTester::create(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& handle)
 {
-    auto tester = adoptRef(*new IPCConnectionTester(connection, identifier, WTFMove(handle)));
+    auto tester = adoptRef(*new IPCConnectionTester(connection, identifier, WTF::move(handle)));
     tester->initialize();
     return tester;
 }
 
 IPCConnectionTester::IPCConnectionTester(Ref<IPC::Connection>&& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& handle)
-    : m_connection(WTFMove(connection))
-    , m_testedConnection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle) }))
+    : m_connection(WTF::move(connection))
+    , m_testedConnection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(handle) }))
     , m_identifier(identifier)
 {
 }

@@ -1,4 +1,4 @@
 
 PASS <a>
-FAIL <a target="blank"> assert_in_array: value undefined not in array ["prefetch", "prefetch;anonymous-client-ip"]
+PASS <a target="blank">
 

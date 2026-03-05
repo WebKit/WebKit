@@ -53,7 +53,7 @@ void ScrollingTreeNode::appendChild(Ref<ScrollingTreeNode>&& childNode)
 
     childNode->setParent(this);
 
-    m_children.append(WTFMove(childNode));
+    m_children.append(WTF::move(childNode));
 }
 
 void ScrollingTreeNode::removeChild(ScrollingTreeNode& node)

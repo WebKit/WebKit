@@ -1,18 +1,13 @@
 
 PASS HTML parser should create a builtin element with null registry if customelementregistry is set
-PASS document.createElement should create a builtin element with null registry if customElement is set to null
-PASS attchShadow on a builtin element with null customElementRegistry should create a ShadowRoot with null registry
 PASS Setting customelementregistry content attribute after a builtin element had finishsed parsing should not set null registry
 PASS Cloning a builtin element with null regsitry should create an element with null registry
 PASS HTML parser should create a custom element candidate with null registry if customelementregistry is set
-PASS document.createElement should create a custom element candidate with null registry if customElement is set to null
-PASS attchShadow on a custom element candidate with null customElementRegistry should create a ShadowRoot with null registry
 PASS Setting customelementregistry content attribute after a custom element candidate had finishsed parsing should not set null registry
 PASS Cloning a custom element candidate with null regsitry should create an element with null registry
 PASS HTML parser should create a custom element with null registry if customelementregistry is set
-PASS document.createElement should create a custom element with null registry if customElement is set to null
-PASS attchShadow on a custom element with null customElementRegistry should create a ShadowRoot with null registry
 PASS Setting customelementregistry content attribute after a custom element had finishsed parsing should not set null registry
 PASS Cloning a custom element with null regsitry should create an element with null registry
+FAIL Descendants of an element with customelementregistry should use null registry assert_equals: expected null but got object "[object CustomElementRegistry]"
 PASS Setting customelementregistry content attribute during constructor should not make it use null registry
 

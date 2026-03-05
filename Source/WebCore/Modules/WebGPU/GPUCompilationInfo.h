@@ -36,7 +36,7 @@ class GPUCompilationInfo : public RefCounted<GPUCompilationInfo> {
 public:
     static Ref<GPUCompilationInfo> create(Ref<WebGPU::CompilationInfo>&& backing)
     {
-        return adoptRef(*new GPUCompilationInfo(WTFMove(backing)));
+        return adoptRef(*new GPUCompilationInfo(WTF::move(backing)));
     }
 
     Vector<Ref<GPUCompilationMessage>> messages() const;
@@ -46,7 +46,7 @@ public:
 
 private:
     GPUCompilationInfo(Ref<WebGPU::CompilationInfo>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

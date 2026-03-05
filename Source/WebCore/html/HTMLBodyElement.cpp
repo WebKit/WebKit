@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLBodyElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLBodyElement);
 
 using namespace HTMLNames;
 
@@ -71,8 +71,10 @@ bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& na
     case AttributeNames::backgroundAttr:
     case AttributeNames::marginwidthAttr:
     case AttributeNames::leftmarginAttr:
+    case AttributeNames::rightmarginAttr:
     case AttributeNames::marginheightAttr:
     case AttributeNames::topmarginAttr:
+    case AttributeNames::bottommarginAttr:
     case AttributeNames::bgcolorAttr:
     case AttributeNames::textAttr:
         return true;
@@ -88,18 +90,24 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
     case AttributeNames::backgroundAttr: {
         auto url = value.string().trim(isASCIIWhitespace);
         if (!url.isEmpty())
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protectedDocument()->completeURL(url), localName())));
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protect(document())->completeURL(url), localName())));
         break;
     }
     case AttributeNames::marginwidthAttr:
     case AttributeNames::leftmarginAttr:
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginRight, value);
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginLeft, value);
+        break;
+    case AttributeNames::rightmarginAttr:
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginRight, value);
         break;
     case AttributeNames::marginheightAttr:
     case AttributeNames::topmarginAttr:
-        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
-        addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginBottom, value);
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginTop, value);
+        break;
+    case AttributeNames::bottommarginAttr:
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginBottom, value);
         break;
     case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
@@ -172,7 +180,7 @@ Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(Insertion
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
-    if (!is<HTMLFrameElementBase>(protectedDocument()->ownerElement()))
+    if (!is<HTMLFrameElementBase>(protect(document())->ownerElement()))
         return InsertedIntoAncestorResult::Done;
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
@@ -214,7 +222,7 @@ void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(attributeWithoutSynchronization(backgroundAttr)));
+    addSubresourceURL(urls, protect(document())->completeURL(attributeWithoutSynchronization(backgroundAttr)));
 }
 
 } // namespace WebCore

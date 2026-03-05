@@ -397,7 +397,7 @@ int main(int argc, char* argv[]) {
       output_files_base_name, output_audio_filename, "");
 
   // Check if an SSRC value was provided.
-  if (absl::GetFlag(FLAGS_ssrc).size() > 0) {
+  if (!absl::GetFlag(FLAGS_ssrc).empty()) {
     uint32_t ssrc;
     RTC_CHECK(ParseSsrc(absl::GetFlag(FLAGS_ssrc), &ssrc))
         << "Flag verification has failed.";

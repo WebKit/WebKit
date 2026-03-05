@@ -32,12 +32,12 @@ namespace {
 
 const int kNumPixels = 128 * 128;
 
-typedef int (*Av1DenoiserFilterFunc)(const uint8_t *sig, int sig_stride,
-                                     const uint8_t *mc_avg, int mc_avg_stride,
-                                     uint8_t *avg, int avg_stride,
-                                     int increase_denoising, BLOCK_SIZE bs,
-                                     int motion_magnitude);
-typedef std::tuple<Av1DenoiserFilterFunc, BLOCK_SIZE> AV1DenoiserTestParam;
+using Av1DenoiserFilterFunc = int (*)(const uint8_t *sig, int sig_stride,
+                                      const uint8_t *mc_avg, int mc_avg_stride,
+                                      uint8_t *avg, int avg_stride,
+                                      int increase_denoising, BLOCK_SIZE bs,
+                                      int motion_magnitude);
+using AV1DenoiserTestParam = std::tuple<Av1DenoiserFilterFunc, BLOCK_SIZE>;
 
 class AV1DenoiserTest
     : public ::testing::Test,

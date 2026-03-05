@@ -85,7 +85,7 @@ void WebMediaPlaybackTargetPicker::setPlaybackTarget(WebCore::PlaybackTargetClie
     if (!m_page)
         return;
 
-    m_page->setPlaybackTarget(contextId, WTFMove(target));
+    m_page->setPlaybackTarget(contextId, WTF::move(target));
 }
 
 void WebMediaPlaybackTargetPicker::externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, bool available)

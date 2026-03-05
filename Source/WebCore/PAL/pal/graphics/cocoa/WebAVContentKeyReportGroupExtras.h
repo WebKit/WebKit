@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 #if HAVE(AVCONTENTKEYREPORTGROUP)
 
 #import <pal/graphics/cocoa/WebAVContentKeyGrouping.h>
@@ -36,3 +39,5 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // HAVE(AVCONTENTKEYREPORTGROUP)
+
+#endif // !__has_feature(modules)

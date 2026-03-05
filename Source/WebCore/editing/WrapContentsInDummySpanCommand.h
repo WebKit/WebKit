@@ -46,8 +46,6 @@ private:
     void doReapply() override;
     void executeApply();
 
-    RefPtr<HTMLElement> protectedDummySpan() const { return m_dummySpan; }
-
 #ifndef NDEBUG
     void getNodesInCommand(NodeSet&) override;
 #endif

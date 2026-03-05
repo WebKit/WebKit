@@ -13,6 +13,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/scoped_refptr.h"
+#include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_buffer.h"
@@ -23,6 +24,10 @@ VideoCodecType GetVideoCodecType(absl::string_view codec_name);
 
 scoped_refptr<I420Buffer> GetAsI420Buffer(
     scoped_refptr<I420BufferInterface> i420_buffer_interface);
+
+// Returns effective spatial layer id. Since spatial layers can be implemented
+// either using simulcast or using SVC, this helper picks the one in use.
+int GetSpatialLayerId(const EncodedImage& encoded_image);
 
 }  // namespace webrtc
 

@@ -40,7 +40,7 @@ std::optional<RenderPassLayout> ConvertToBackingContext::convertToBacking(const 
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), renderPassLayout.colorFormats, renderPassLayout.depthStencilFormat, renderPassLayout.sampleCount } };
+    return { { WTF::move(*base), renderPassLayout.colorFormats, renderPassLayout.depthStencilFormat, renderPassLayout.sampleCount } };
 }
 
 std::optional<WebCore::WebGPU::RenderPassLayout> ConvertFromBackingContext::convertFromBacking(const RenderPassLayout& renderPassLayout)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::RenderPassLayout> ConvertFromBackingContext::conv
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), renderPassLayout.colorFormats, renderPassLayout.depthStencilFormat, renderPassLayout.sampleCount } };
+    return { { WTF::move(*base), renderPassLayout.colorFormats, renderPassLayout.depthStencilFormat, renderPassLayout.sampleCount } };
 }
 
 } // namespace WebKit

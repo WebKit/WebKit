@@ -70,11 +70,11 @@ info: |
       i. Let result be ? Call(method, O).
       ii. If Type(result) is not Object, return result.
   6. Throw a TypeError exception.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample = new Int8Array(1);
   var valueOf = 0;
 
@@ -84,7 +84,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   };
 
   assert.throws(Test262Error, function() {
-    new TA([8n, sample]);
+    new TA(makeCtorArg([8n, sample]));
   }, "abrupt completion from ToBigInt(sample)");
 
   assert.sameValue(valueOf, 1, "valueOf called once");

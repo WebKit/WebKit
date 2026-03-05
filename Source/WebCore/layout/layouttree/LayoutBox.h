@@ -46,7 +46,7 @@ class LayoutState;
 class TreeBuilder;
 
 class Box : public CanMakeCheckedPtr<Box> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Box);
+    WTF_MAKE_TZONE_ALLOCATED(Box);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Box);
 public:
     enum class NodeType : uint8_t {
@@ -73,31 +73,31 @@ public:
     };
 
     enum BaseTypeFlag : uint8_t {
-        InlineTextBoxFlag          = 1 << 0,
-        ElementBoxFlag             = 1 << 1,
-        InitialContainingBlockFlag = 1 << 2,
+        InlineTextBoxFlag,
+        ElementBoxFlag,
+        InitialContainingBlockFlag,
     };
 
     virtual ~Box();
 
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;
-    bool establishesInlineFormattingContext() const;
-    bool establishesTableFormattingContext() const;
-    bool establishesFlexFormattingContext() const;
-    bool establishesGridFormattingContext() const;
+    bool NODELETE establishesInlineFormattingContext() const;
+    bool NODELETE establishesTableFormattingContext() const;
+    bool NODELETE establishesFlexFormattingContext() const;
+    bool NODELETE establishesGridFormattingContext() const;
     bool establishesIndependentFormattingContext() const;
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
     bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
     bool isInFlowPositioned() const { return isRelativelyPositioned() || isStickyPositioned(); }
     bool isOutOfFlowPositioned() const { return isAbsolutelyPositioned(); }
-    bool isRelativelyPositioned() const;
-    bool isStickyPositioned() const;
-    bool isAbsolutelyPositioned() const;
-    bool isFixedPositioned() const;
-    bool isFloatingPositioned() const;
-    bool hasFloatClear() const;
+    bool NODELETE isRelativelyPositioned() const;
+    bool NODELETE isStickyPositioned() const;
+    bool NODELETE isAbsolutelyPositioned() const;
+    bool NODELETE isFixedPositioned() const;
+    bool NODELETE isFloatingPositioned() const;
+    bool NODELETE hasFloatClear() const;
     bool isFloatAvoider() const;
 
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
@@ -109,66 +109,66 @@ public:
     bool isAnonymous() const { return m_isAnonymous; }
 
     // Block level elements generate block level boxes.
-    bool isBlockLevelBox() const;
+    bool NODELETE isBlockLevelBox() const;
     // A block-level box that is also a block container.
-    bool isBlockBox() const;
+    bool NODELETE isBlockBox() const;
     // A block-level box is also a block container box unless it is a table box or the principal box of a replaced element.
-    bool isBlockContainer() const;
-    bool isInlineLevelBox() const;
-    bool isInlineBox() const;
-    bool isAtomicInlineBox() const;
-    bool isInlineBlockBox() const;
-    bool isInlineTableBox() const;
+    bool NODELETE isBlockContainer() const;
+    bool NODELETE isInlineLevelBox() const;
+    bool NODELETE isInlineBox() const;
+    bool NODELETE isAtomicInlineBox() const;
+    bool NODELETE isInlineBlockBox() const;
+    bool NODELETE isInlineTableBox() const;
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
     bool isLayoutContainmentBox() const;
     bool isSizeContainmentBox() const;
-    bool isInternalRubyBox() const;
-    bool isRubyAnnotationBox() const;
-    bool isInterlinearRubyAnnotationBox() const;
+    bool NODELETE isInternalRubyBox() const;
+    bool NODELETE isRubyAnnotationBox() const;
+    bool NODELETE isInterlinearRubyAnnotationBox() const;
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
-    bool isBodyBox() const { return m_nodeType == NodeType::Body; }
-    bool isRuby() const { return style().display() == DisplayType::Ruby; }
-    bool isRubyBase() const { return style().display() == DisplayType::RubyBase; }
-    bool isRubyInlineBox() const { return isRuby() || isRubyBase(); }
     bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
     bool isTableBox() const { return m_nodeType == NodeType::TableBox; }
-    bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
-    bool isTableHeader() const { return style().display() == DisplayType::TableHeaderGroup; }
-    bool isTableBody() const { return style().display() == DisplayType::TableRowGroup; }
-    bool isTableFooter() const { return style().display() == DisplayType::TableFooterGroup; }
-    bool isTableRow() const { return style().display() == DisplayType::TableRow; }
-    bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
-    bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
-    bool isTableCell() const { return style().display() == DisplayType::TableCell; }
-    bool isInternalTableBox() const;
-    bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex || m_nodeType == NodeType::ImplicitFlexBox; }
-    bool isFlexItem() const;
-    bool isGridFormattingContext() const { return isGridBox() || isGridLanesBox(); }
-    bool isGridBox() const { return style().display() == DisplayType::Grid || style().display() == DisplayType::InlineGrid; }
-    bool isGridLanesBox() const { return style().display() == DisplayType::GridLanes || style().display() == DisplayType::InlineGridLanes; }
-    bool isGridItem() const;
+    bool isBodyBox() const { return m_nodeType == NodeType::Body; }
+    bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
-    bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
-    bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
-    bool isListItem() const { return style().display() == DisplayType::ListItem; }
     bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
     bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
+    bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
+    bool NODELETE isInternalTableBox() const;
+    inline bool isRuby() const;
+    inline bool isRubyBase() const;
+    inline bool isRubyInlineBox() const;
+    inline bool isTableCaption() const;
+    inline bool isTableHeader() const;
+    inline bool isTableBody() const;
+    inline bool isTableFooter() const;
+    inline bool isTableRow() const;
+    inline bool isTableColumnGroup() const;
+    inline bool isTableColumn() const;
+    inline bool isTableCell() const;
+    inline bool isFlexBox() const;
+    bool NODELETE isFlexItem() const;
+    inline bool isGridFormattingContext() const;
+    inline bool isGridBox() const;
+    inline bool isGridLanesBox() const;
+    bool NODELETE isGridItem() const;
+    inline bool isListItem() const;
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
     bool isAnonymousTextIndentCandidateForIntegration() const { return m_isAnonymousTextIndentCandidateForIntegration; }
 
     const ElementBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling.get(); }
-    const Box* nextInFlowSibling() const;
-    const Box* nextInFlowOrFloatingSibling() const;
-    const Box* nextOutOfFlowSibling() const;
+    const Box* NODELETE nextInFlowSibling() const;
+    const Box* NODELETE nextInFlowOrFloatingSibling() const;
+    const Box* NODELETE nextOutOfFlowSibling() const;
     const Box* previousSibling() const { return m_previousSibling.get(); }
-    const Box* previousInFlowSibling() const;
-    const Box* previousInFlowOrFloatingSibling() const;
-    const Box* previousOutOfFlowSibling() const;
-    bool isDescendantOf(const Box&) const;
+    const Box* NODELETE previousInFlowSibling() const;
+    const Box* NODELETE previousInFlowOrFloatingSibling() const;
+    const Box* NODELETE previousOutOfFlowSibling() const;
+    bool NODELETE isDescendantOf(const Box&) const;
     bool isDescendantOfWithinFormattingContext(const Box&) const;
     bool isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const;
 
@@ -178,8 +178,8 @@ public:
     bool isElementBox() const { return baseTypeFlags().contains(ElementBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
 
-    bool isPaddingApplicable() const;
-    bool isOverflowVisible() const;
+    bool NODELETE isPaddingApplicable() const;
+    bool NODELETE isOverflowVisible() const;
 
     void updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle);
     const RenderStyle& style() const { return m_style; }
@@ -210,7 +210,7 @@ public:
     UniqueRef<Box> removeFromParent();
 
 protected:
-    Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
+    Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, EnumSet<BaseTypeFlag>);
 
 private:
     friend class ElementBox;
@@ -234,16 +234,16 @@ private:
     BoxRareData& ensureRareData();
     void removeRareData();
     
-    OptionSet<BaseTypeFlag> baseTypeFlags() const { return OptionSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
+    EnumSet<BaseTypeFlag> baseTypeFlags() const { return EnumSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
 
     typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
 
-    static RareDataMap& rareDataMap();
+    static RareDataMap& NODELETE rareDataMap();
 
     NodeType m_nodeType : 4;
     bool m_isAnonymous : 1;
 
-    unsigned m_baseTypeFlags : 4; // OptionSet<BaseTypeFlag>
+    unsigned m_baseTypeFlags : 4; // EnumSet<BaseTypeFlag>
     bool m_hasRareData : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };
     bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).

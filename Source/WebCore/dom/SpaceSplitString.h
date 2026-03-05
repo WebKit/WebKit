@@ -71,7 +71,7 @@ public:
         m_refCount = tempRefCount;
     }
 
-    const AtomString& keyString() const { return m_keyString; }
+    const AtomString& keyString() const LIFETIME_BOUND { return m_keyString; }
 
     static constexpr ptrdiff_t tokensMemoryOffset() { return sizeof(SpaceSplitStringData); }
 
@@ -105,7 +105,7 @@ public:
     enum class ShouldFoldCase : bool { No, Yes };
     SpaceSplitString(const AtomString&, ShouldFoldCase);
 
-    const AtomString& keyString() const
+    const AtomString& keyString() const LIFETIME_BOUND
     {
         if (m_data)
             return m_data->keyString();
@@ -121,16 +121,16 @@ public:
 
     unsigned size() const { return m_data ? m_data->size() : 0; }
     bool isEmpty() const { return !m_data; }
-    const AtomString& operator[](unsigned i) const
+    const AtomString& operator[](unsigned i) const LIFETIME_BOUND
     {
         ASSERT_WITH_SECURITY_IMPLICATION(m_data);
         return (*m_data)[i];
     }
 
-    auto begin() const { return m_data ? m_data->begin() : nullptr; }
-    auto end() const { return m_data ? m_data->end() : nullptr; }
-    auto begin() { return m_data ? m_data->begin() : nullptr; }
-    auto end() { return m_data ? m_data->end() : nullptr; }
+    auto begin() const LIFETIME_BOUND { return m_data ? m_data->begin() : nullptr; }
+    auto end() const LIFETIME_BOUND { return m_data ? m_data->end() : nullptr; }
+    auto begin() LIFETIME_BOUND { return m_data ? m_data->begin() : nullptr; }
+    auto end() LIFETIME_BOUND { return m_data ? m_data->end() : nullptr; }
 
     static bool spaceSplitStringContainsValue(StringView spaceSplitString, StringView value, ShouldFoldCase);
 

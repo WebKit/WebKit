@@ -56,7 +56,9 @@ WebKitDOMUIEvent* wrapUIEvent(WebCore::UIEvent* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMUIEvent, webkit_dom_ui_event, WEBKIT_DOM_TYPE_EVENT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_UI_EVENT_PROP_0,

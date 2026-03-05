@@ -32,7 +32,7 @@ CallLinkStatus* RecordedStatuses::addCallLinkStatus(const CodeOrigin& codeOrigin
 {
     auto statusPtr = makeUnique<CallLinkStatus>(status);
     CallLinkStatus* result = statusPtr.get();
-    calls.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    calls.append(std::make_pair(codeOrigin, WTF::move(statusPtr)));
     return result;
 }
 
@@ -40,7 +40,7 @@ GetByStatus* RecordedStatuses::addGetByStatus(const CodeOrigin& codeOrigin, cons
 {
     auto statusPtr = makeUnique<GetByStatus>(status);
     GetByStatus* result = statusPtr.get();
-    gets.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    gets.append(std::make_pair(codeOrigin, WTF::move(statusPtr)));
     return result;
 }
     
@@ -48,7 +48,7 @@ PutByStatus* RecordedStatuses::addPutByStatus(const CodeOrigin& codeOrigin, cons
 {
     auto statusPtr = makeUnique<PutByStatus>(status);
     PutByStatus* result = statusPtr.get();
-    puts.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    puts.append(std::make_pair(codeOrigin, WTF::move(statusPtr)));
     return result;
 }
 
@@ -56,7 +56,7 @@ InByStatus* RecordedStatuses::addInByStatus(const CodeOrigin& codeOrigin, const 
 {
     auto statusPtr = makeUnique<InByStatus>(status);
     InByStatus* result = statusPtr.get();
-    ins.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    ins.append(std::make_pair(codeOrigin, WTF::move(statusPtr)));
     return result;
 }
 
@@ -64,7 +64,7 @@ DeleteByStatus* RecordedStatuses::addDeleteByStatus(const CodeOrigin& codeOrigin
 {
     auto statusPtr = makeUnique<DeleteByStatus>(status);
     DeleteByStatus* result = statusPtr.get();
-    deletes.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    deletes.append(std::make_pair(codeOrigin, WTF::move(statusPtr)));
     return result;
 }
 
@@ -72,7 +72,7 @@ CheckPrivateBrandStatus* RecordedStatuses::addCheckPrivateBrandStatus(const Code
 {
     auto statusPtr = makeUnique<CheckPrivateBrandStatus>(status);
     CheckPrivateBrandStatus* result = statusPtr.get();
-    checkPrivateBrands.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    checkPrivateBrands.append(std::make_pair(codeOrigin, WTF::move(statusPtr)));
     return result;
 }
 
@@ -80,7 +80,7 @@ SetPrivateBrandStatus* RecordedStatuses::addSetPrivateBrandStatus(const CodeOrig
 {
     auto statusPtr = makeUnique<SetPrivateBrandStatus>(status);
     SetPrivateBrandStatus* result = statusPtr.get();
-    setPrivateBrands.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    setPrivateBrands.append(std::make_pair(codeOrigin, WTF::move(statusPtr)));
     return result;
 }
 

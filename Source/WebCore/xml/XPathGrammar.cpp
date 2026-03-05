@@ -1722,9 +1722,9 @@ yyreduce:
         std::unique_ptr<WebCore::XPath::Step::NodeTest> nodeTest((yyvsp[(1) - (2)].nodeTest));
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
         if (predicateList)
-            (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WTFMove(*nodeTest), WTFMove(*predicateList));
+            (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WTF::move(*nodeTest), WTF::move(*predicateList));
         else
-            (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WTFMove(*nodeTest));
+            (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WTF::move(*nodeTest));
     ;}
     break;
 
@@ -1742,7 +1742,7 @@ yyreduce:
         }
 
         if (predicateList)
-            (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI), WTFMove(*predicateList));
+            (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI), WTF::move(*predicateList));
         else
             (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI));
     ;}
@@ -1755,9 +1755,9 @@ yyreduce:
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(3) - (3)].expressionVector));
 
         if (predicateList)
-            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WTFMove(*nodeTest), WTFMove(*predicateList));
+            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WTF::move(*nodeTest), WTF::move(*predicateList));
         else
-            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WTFMove(*nodeTest));
+            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WTF::move(*nodeTest));
     ;}
     break;
 
@@ -1775,7 +1775,7 @@ yyreduce:
         }
 
         if (predicateList)
-            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI), WTFMove(*predicateList));
+            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI), WTF::move(*predicateList));
         else
             (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI));
     ;}
@@ -1896,7 +1896,7 @@ yyreduce:
 #line 334 "XPathGrammar.y"
     {
         String literal = adoptRef((yyvsp[(1) - (1)].string));
-        (yyval.expression) = new WebCore::XPath::StringExpression(WTFMove(literal));
+        (yyval.expression) = new WebCore::XPath::StringExpression(WTF::move(literal));
     ;}
     break;
 
@@ -1923,7 +1923,7 @@ yyreduce:
     {
         String name = adoptRef((yyvsp[(1) - (4)].string));
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> argumentList((yyvsp[(3) - (4)].expressionVector));
-        (yyval.expression) = WebCore::XPath::Function::create(name, WTFMove(*argumentList)).release();
+        (yyval.expression) = WebCore::XPath::Function::create(name, WTF::move(*argumentList)).release();
         if (!(yyval.expression))
             YYABORT;
     ;}
@@ -1980,7 +1980,7 @@ yyreduce:
 #line 420 "XPathGrammar.y"
     {
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
-        (yyval.expression) = new WebCore::XPath::Filter(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (2)].expression)), WTFMove(*predicateList));
+        (yyval.expression) = new WebCore::XPath::Filter(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (2)].expression)), WTF::move(*predicateList));
     ;}
     break;
 

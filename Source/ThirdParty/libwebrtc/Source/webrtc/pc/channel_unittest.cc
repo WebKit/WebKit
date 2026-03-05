@@ -57,7 +57,6 @@
 #include "rtc_base/socket.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/task_queue_for_test.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/unique_id_generator.h"
 #include "test/create_test_field_trials.h"
@@ -77,6 +76,7 @@ using ::webrtc::FakeVoiceMediaSendChannel;
 using ::webrtc::FieldTrials;
 using ::webrtc::RidDescription;
 using ::webrtc::RidDirection;
+using ::webrtc::RtpExtension;
 using ::webrtc::RtpTransceiverDirection;
 using ::webrtc::SdpType;
 using ::webrtc::StreamParams;
@@ -137,7 +137,7 @@ class VideoTraits : public Traits<webrtc::VideoChannel,
 
 // Base class for Voice/Video tests
 template <class T>
-class ChannelTest : public ::testing::Test, public sigslot::has_slots<> {
+class ChannelTest : public ::testing::Test {
  public:
   enum Flags {
     RTCP_MUX = 0x1,
@@ -646,6 +646,65 @@ class ChannelTest : public ::testing::Test, public sigslot::has_slots<> {
               media_send_channel1_impl()->send_codecs()[0]);
   }
 
+  void TestRemovesExtensionNotPresentInRemoteAnswer() {
+    typename T::Content local;
+    typename T::Content remote;
+    CreateContent(/*flags=*/0, kPcmuCodec, kH264Codec, &local);
+    CreateContent(/*flags=*/0, kPcmuCodec, kH264Codec, &remote);
+    local.set_rtp_header_extensions({
+        RtpExtension(RtpExtension::kTransportSequenceNumberUri, 0),
+        RtpExtension(RtpExtension::kVideoRotationUri, 1),
+    });
+    remote.set_rtp_header_extensions({
+        RtpExtension(RtpExtension::kVideoRotationUri, 1),
+    });
+
+    CreateChannels(0, 0);
+    std::string err;
+    ASSERT_TRUE(channel1_->SetLocalContent(&local, SdpType::kOffer, err))
+        << err;
+    ASSERT_TRUE(channel1_->SetRemoteContent(&remote, SdpType::kAnswer, err))
+        << err;
+
+    EXPECT_THAT(media_receive_channel1_impl()->recv_extensions(),
+                ElementsAre(AllOf(Field("id", &RtpExtension::id, 1),
+                                  Field("uri", &RtpExtension::uri,
+                                        RtpExtension::kVideoRotationUri))));
+    EXPECT_THAT(media_send_channel1_impl()->send_extensions(),
+                ElementsAre(AllOf(Field("id", &RtpExtension::id, 1),
+                                  Field("uri", &RtpExtension::uri,
+                                        RtpExtension::kVideoRotationUri))));
+  }
+  void TestRemovesExtensionNotPresentInLocalAnswer() {
+    typename T::Content local;
+    typename T::Content remote;
+    CreateContent(/*flags=*/0, kPcmuCodec, kH264Codec, &local);
+    CreateContent(/*flags=*/0, kPcmuCodec, kH264Codec, &remote);
+    local.set_rtp_header_extensions({
+        RtpExtension(RtpExtension::kVideoRotationUri, 1),
+    });
+    remote.set_rtp_header_extensions({
+        RtpExtension(RtpExtension::kTransportSequenceNumberUri, 0),
+        RtpExtension(RtpExtension::kVideoRotationUri, 1),
+    });
+
+    CreateChannels(0, 0);
+    std::string err;
+    ASSERT_TRUE(channel1_->SetRemoteContent(&remote, SdpType::kOffer, err))
+        << err;
+    ASSERT_TRUE(channel1_->SetLocalContent(&local, SdpType::kAnswer, err))
+        << err;
+
+    EXPECT_THAT(media_receive_channel1_impl()->recv_extensions(),
+                ElementsAre(AllOf(Field("id", &RtpExtension::id, 1),
+                                  Field("uri", &RtpExtension::uri,
+                                        RtpExtension::kVideoRotationUri))));
+    EXPECT_THAT(media_send_channel1_impl()->send_extensions(),
+                ElementsAre(AllOf(Field("id", &RtpExtension::id, 1),
+                                  Field("uri", &RtpExtension::uri,
+                                        RtpExtension::kVideoRotationUri))));
+  }
+
   // Test that SetLocalContent and SetRemoteContent properly configure
   // extmap-allow-mixed.
   void TestSetContentsExtmapAllowMixedCaller(bool offer, bool answer) {
@@ -987,7 +1046,7 @@ class ChannelTest : public ::testing::Test, public sigslot::has_slots<> {
     SendTask(network_thread_, [this] {
       webrtc::NetworkRoute network_route;
       // The transport channel becomes disconnected.
-      fake_rtp_dtls_transport1_->ice_transport()->SignalNetworkRouteChanged(
+      fake_rtp_dtls_transport1_->ice_transport()->NotifyNetworkRouteChanged(
           std::optional<webrtc::NetworkRoute>(network_route));
     });
     WaitForThreads();
@@ -1005,7 +1064,7 @@ class ChannelTest : public ::testing::Test, public sigslot::has_slots<> {
       network_route.last_sent_packet_id = kLastPacketId;
       network_route.packet_overhead = kTransportOverheadPerPacket;
       // The transport channel becomes connected.
-      fake_rtp_dtls_transport1_->ice_transport()->SignalNetworkRouteChanged(
+      fake_rtp_dtls_transport1_->ice_transport()->NotifyNetworkRouteChanged(
 
           std::optional<webrtc::NetworkRoute>(network_route));
     });
@@ -1878,6 +1937,14 @@ TEST_F(VoiceChannelSingleThreadTest, SocketOptionsMergedOnSetTransport) {
   Base::SocketOptionsMergedOnSetTransport();
 }
 
+TEST_F(VoiceChannelSingleThreadTest, RemovesExtensionNotPresentInRemoteAnswer) {
+  Base::TestRemovesExtensionNotPresentInRemoteAnswer();
+}
+
+TEST_F(VoiceChannelSingleThreadTest, RemovesExtensionNotPresentInLocalAnswer) {
+  Base::TestRemovesExtensionNotPresentInLocalAnswer();
+}
+
 // VoiceChannelDoubleThreadTest
 TEST_F(VoiceChannelDoubleThreadTest, TestInit) {
   Base::TestInit();
@@ -2156,6 +2223,14 @@ TEST_F(VideoChannelSingleThreadTest, SocketOptionsMergedOnSetTransport) {
 
 TEST_F(VideoChannelSingleThreadTest, UpdateLocalStreamsWithSimulcast) {
   Base::TestUpdateLocalStreamsWithSimulcast();
+}
+
+TEST_F(VideoChannelSingleThreadTest, RemovesExtensionNotPresentInRemoteAnswer) {
+  Base::TestRemovesExtensionNotPresentInRemoteAnswer();
+}
+
+TEST_F(VideoChannelSingleThreadTest, RemovesExtensionNotPresentInLocalAnswer) {
+  Base::TestRemovesExtensionNotPresentInLocalAnswer();
 }
 
 TEST_F(VideoChannelSingleThreadTest, TestSetLocalOfferWithPacketization) {

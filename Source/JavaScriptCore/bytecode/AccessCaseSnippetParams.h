@@ -40,7 +40,7 @@ class AccessCaseSnippetParams final : public SnippetParams {
 public:
     friend class InlineCacheCompiler;
     AccessCaseSnippetParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : SnippetParams(vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+        : SnippetParams(vm, WTF::move(regs), WTF::move(gpScratch), WTF::move(fpScratch))
     {
     }
 
@@ -48,10 +48,10 @@ public:
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SlowPathCallGenerator);
     public:
         virtual ~SlowPathCallGenerator() { }
-        virtual CCallHelpers::JumpList generate(InlineCacheCompiler&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&) = 0;
+        virtual CCallHelpers::JumpList generate(InlineCacheCompiler&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&) = 0;
     };
 
-    CCallHelpers::JumpList emitSlowPathCalls(InlineCacheCompiler&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&);
+    CCallHelpers::JumpList emitSlowPathCalls(InlineCacheCompiler&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&);
 
 private:
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) final;

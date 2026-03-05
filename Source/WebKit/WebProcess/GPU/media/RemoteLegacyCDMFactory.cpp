@@ -118,9 +118,9 @@ std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::
     std::optional<MediaPlayerIdentifier> playerId;
     Ref gpuProcessConnection = this->gpuProcessConnection();
     if (auto player = cdm.mediaPlayer())
-        playerId = gpuProcessConnection->protectedMediaPlayerManager()->findRemotePlayerId(player->protectedPlayerPrivate().get());
+        playerId = protect(gpuProcessConnection->mediaPlayerManager())->findRemotePlayerId(protect(player->playerPrivate()));
 
-    auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm.keySystem(), WTFMove(playerId)), { });
+    auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm.keySystem(), WTF::move(playerId)), { });
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
@@ -140,8 +140,8 @@ void RemoteLegacyCDMFactory::addSession(RemoteLegacyCDMSessionIdentifier identif
 void RemoteLegacyCDMFactory::removeSession(RemoteLegacyCDMSessionIdentifier identifier)
 {
     ASSERT(m_sessions.contains(identifier));
-    RefPtr session = m_sessions.get(identifier).get();
-    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTFMove(session)] {
+    RefPtr session = m_sessions.get(identifier);
+    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTF::move(session)] {
         ASSERT(protectedThis->m_sessions.contains(identifier));
         protectedThis->m_sessions.remove(identifier);
         protectedThis->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64());

@@ -189,7 +189,7 @@ WPEScreenSyncObserver* wpeScreenSyncObserverDRMCreate(UnixFileDescriptor&& fd, i
         return nullptr;
 
     auto* observer = WPE_SCREEN_SYNC_OBSERVER_DRM(g_object_new(WPE_TYPE_SCREEN_SYNC_OBSERVER_DRM, nullptr));
-    observer->priv->fd = WTFMove(fd);
+    observer->priv->fd = WTF::move(fd);
     observer->priv->crtcBitmask = crtcBitmask;
     return WPE_SCREEN_SYNC_OBSERVER(observer);
 }

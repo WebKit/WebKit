@@ -317,6 +317,10 @@ void TestController::platformCreateWebView(WKPageConfigurationRef configuration,
     [cocoaConfiguration _setLongPressActionsEnabled:options.longPressActionsEnabled()];
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    [cocoaConfiguration _setAllowsImmersiveEnvironments:YES];
+#endif
+
     if (options.enableAttachmentElement())
         [cocoaConfiguration _setAttachmentElementEnabled:YES];
     if (options.enableAttachmentWideLayout())
@@ -358,9 +362,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef configuration,
     if (options.punchOutWhiteBackgroundsInDarkMode())
         m_mainWebView->setDrawsBackground(false);
 
-    if (options.editable())
-        m_mainWebView->setEditable(true);
-
     m_mainWebView->platformView().allowsLinkPreview = options.allowsLinkPreview();
     [m_mainWebView->platformView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES];
 }
@@ -387,12 +388,12 @@ void TestController::finishCreatingPlatformWebView(PlatformWebView* view, const 
 void TestController::initializeDNS()
 {
     auto agentUUID = adoptNS([[NSUUID alloc] init]);
-    uuid_t agentUUIDBytes;
-    [agentUUID.get() getUUIDBytes:agentUUIDBytes];
-    NSLog(@"useLocalDNSResolver: agent UUID: %@.", agentUUID.get());
 
     m_resolverConfig = adoptOSObject(nw_resolver_config_create());
     if (auto resolverConfig = m_resolverConfig) {
+        uuid_t agentUUIDBytes;
+        [agentUUID.get() getUUIDBytes:agentUUIDBytes];
+
         nw_resolver_config_set_protocol(resolverConfig.get(), nw_resolver_protocol_dns53);
         nw_resolver_config_set_class(resolverConfig.get(), nw_resolver_class_designated_direct);
         nw_resolver_config_add_name_server(resolverConfig.get(), "127.0.0.1:8053");
@@ -403,7 +404,12 @@ void TestController::initializeDNS()
         if (!published) {
             NSLog(@"Failed to register DNS resolver agent UUID: %@. Using local DNS resolver failed.", agentUUID.get());
             RELEASE_ASSERT_NOT_REACHED();
+            return;
         }
+    } else {
+        NSLog(@"Failed to create DNS resolver config for agent UUID: %@. Using local DNS resolver failed.", agentUUID.get());
+        RELEASE_ASSERT_NOT_REACHED();
+        return;
     }
 
     // The following NetworkExtension policy is needed so we can run tests while a VPN is connected
@@ -565,7 +571,7 @@ unsigned TestController::imageCountInGeneralPasteboard() const
 void TestController::removeAllSessionCredentials(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
     auto types = adoptNS([[NSSet alloc] initWithObjects:_WKWebsiteDataTypeCredentials, nil]);
-    [(__bridge WKWebsiteDataStore *)m_websiteDataStore.get() removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] () mutable {
+    [(__bridge WKWebsiteDataStore *)m_websiteDataStore.get() removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] () mutable {
         completionHandler(nullptr);
     }).get()];
 }
@@ -869,7 +875,7 @@ WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef identi
 
 void TestController::updatePresentation(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    [m_mainWebView->platformView() _doAfterNextPresentationUpdate:makeBlockPtr([completionHandler = WTFMove(completionHandler)] mutable {
+    [m_mainWebView->platformView() _doAfterNextPresentationUpdate:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
         completionHandler(nullptr);
     }).get()];
 }

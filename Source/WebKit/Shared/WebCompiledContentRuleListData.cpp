@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-static size_t ruleListDataSize(size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize)
+static size_t NODELETE ruleListDataSize(size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize)
 {
     return topURLFiltersBytecodeOffset + topURLFiltersBytecodeSize;
 }
@@ -43,8 +43,8 @@ std::optional<WebCore::SharedMemoryHandle> WebCompiledContentRuleListData::creat
 }
 
 WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& dataHandle, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize)
-    : identifier(WTFMove(identifier))
-    , data(dataHandle ? WebCore::SharedMemory::map(WTFMove(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr)
+    : identifier(WTF::move(identifier))
+    , data(dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr)
     , actionsOffset(actionsOffset)
     , actionsSize(actionsSize)
     , urlFiltersBytecodeOffset(urlFiltersBytecodeOffset)

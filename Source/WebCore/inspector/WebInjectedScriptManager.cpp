@@ -38,9 +38,40 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInjectedScriptManager);
 
-WebInjectedScriptManager::WebInjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& host)
-    : InjectedScriptManager(environment, WTFMove(host))
+Ref<WebInjectedScriptManager> WebInjectedScriptManager::create(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& host)
 {
+    return adoptRef(*new WebInjectedScriptManager(environment, WTF::move(host)));
+}
+
+WebInjectedScriptManager::WebInjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& host)
+    : InjectedScriptManager(environment, WTF::move(host))
+{
+}
+
+WebInjectedScriptManager::~WebInjectedScriptManager()
+{
+    ASSERT(!m_clientCount);
+    if (m_clientCount > 0) {
+        m_clientCount = 0;
+        disconnect();
+    }
+}
+
+void WebInjectedScriptManager::addClient()
+{
+    ++m_clientCount;
+    if (m_clientCount == 1)
+        connect();
+}
+
+void WebInjectedScriptManager::removeClient()
+{
+    ASSERT(m_clientCount > 0);
+    --m_clientCount;
+    if (!m_clientCount) {
+        // FIXME <https://webkit.org/b/305415>: Figure out why the commandLineAPIHost may still be used after the last client disconnects, and call disconnect here instead.
+        discardInjectedScripts();
+    }
 }
 
 void WebInjectedScriptManager::connect()
@@ -54,10 +85,7 @@ void WebInjectedScriptManager::disconnect()
 {
     InjectedScriptManager::disconnect();
 
-    if (m_commandLineAPIHost) {
-        m_commandLineAPIHost->disconnect();
-        m_commandLineAPIHost = nullptr;
-    }
+    m_commandLineAPIHost = nullptr;
 }
 
 void WebInjectedScriptManager::discardInjectedScripts()

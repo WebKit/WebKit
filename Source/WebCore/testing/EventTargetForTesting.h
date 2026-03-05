@@ -40,7 +40,7 @@ class EventTargetForTesting final
     , public EventTarget
     , public RefCounted<EventTargetForTesting>
     , private MessageClientForTesting {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventTargetForTesting);
+    WTF_MAKE_TZONE_ALLOCATED(EventTargetForTesting);
 public:
     static Ref<EventTargetForTesting> create(ScriptExecutionContext&, MessageTargetForTesting&);
     virtual ~EventTargetForTesting();

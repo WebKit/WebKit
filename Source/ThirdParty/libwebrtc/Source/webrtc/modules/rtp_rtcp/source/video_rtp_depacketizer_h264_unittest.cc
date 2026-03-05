@@ -30,10 +30,7 @@
 namespace webrtc {
 namespace {
 
-using ::testing::Each;
-using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
-using ::testing::Eq;
 using ::testing::IsEmpty;
 using ::testing::SizeIs;
 
@@ -99,7 +96,9 @@ TEST(VideoRtpDepacketizerH264Test, SingleNaluSpsWithResolution) {
 
 TEST(VideoRtpDepacketizerH264Test, StapAKey) {
   const NaluInfo kExpectedNalus[] = {
-      {H264::kSps, 0, -1}, {H264::kPps, 1, 2}, {H264::kIdr, -1, 0}};
+      {.type = H264::kSps, .sps_id = 0, .pps_id = -1},
+      {.type = H264::kPps, .sps_id = 1, .pps_id = 2},
+      {.type = H264::kIdr, .sps_id = -1, .pps_id = 0}};
   // clang-format off: split example data on NAL unit boundaries.
   const uint8_t kPayload[] = {
       H264::kStapA,  // F=0, NRI=0, Type=24.

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC><!-- quirks mode -->
+<style>
+  .float { float: left; }
+  #div2 { min-height: 51%;  }
+  #canvas { max-width: 1em; }
+  #header { padding-bottom: 35%; }
+</style>
+<div class="float">
+  <span>
+    <div id="div1"></div>
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    <h1 id="header"><div id="div2" class="float"></div></h1>
+    <canvas id="canvas"></canvas>
+    <details id="details" open>
+      <span class="float"></span>
+    </details>
+  </span>
+</div>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  details.addEventListener("toggle", _ => {
+    details.open = false;
+    canvas.width = 1;
+    document.body.scrollLeft;
+    div1.setAttribute("hidden", "hidden");
+    document.body.innerHTML = "PASS if no crash.";
+    window.testRunner?.notifyDone();
+  }, {once: true});
+</script>

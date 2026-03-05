@@ -72,7 +72,7 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
         }
 
         httpServer.m_requestHandler.handleRequest({ String::fromUTF8(soup_server_message_get_method(message)), String::fromUTF8(path), requestBody->data, static_cast<size_t>(requestBody->length) },
-            [server, message = WTFMove(protectedMessage)](HTTPRequestHandler::Response&& response) {
+            [server, message = WTF::move(protectedMessage)](HTTPRequestHandler::Response&& response) {
                 soup_server_message_set_status(message.get(), response.statusCode, nullptr);
                 if (!response.data.isNull()) {
                     // §6.3 Processing Model.

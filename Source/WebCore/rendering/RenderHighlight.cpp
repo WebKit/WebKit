@@ -86,7 +86,7 @@ void RenderRangeIterator::checkForSpanner()
 static CheckedPtr<RenderObject> rendererAfterOffset(const RenderObject& renderer, unsigned offset)
 {
     CheckedPtr child = renderer.childAt(offset);
-    return child ? child : renderer.nextInPreOrderAfterChildren();
+    return child ? child : CheckedPtr { renderer.nextInPreOrderAfterChildren() };
 }
 
 void RenderHighlight::setRenderRange(const RenderRange& renderRange)

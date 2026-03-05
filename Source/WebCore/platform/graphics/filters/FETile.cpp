@@ -26,6 +26,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FETileCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FETile> FETile::create(DestinationColorSpace colorSpace)
@@ -46,6 +50,24 @@ FloatRect FETile::calculateImageRect(const Filter& filter, std::span<const Float
 bool FETile::resultIsAlphaImage(std::span<const Ref<FilterImage>> inputs) const
 {
     return inputs[0]->isAlphaImage();
+}
+
+OptionSet<FilterRenderingMode> FETile::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FETile::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FETileCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FETile::createSoftwareApplier() const

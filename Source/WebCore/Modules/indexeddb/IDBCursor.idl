@@ -23,6 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/IndexedDB/#idbcursor
 [
     EnabledBySetting=IndexedDBAPIEnabled,
     JSCustomMarkFunction,
@@ -33,7 +34,8 @@
     readonly attribute IDBCursorDirection direction;
     [CustomGetter] readonly attribute any key;
     [CustomGetter] readonly attribute any primaryKey;
-    [SameObject] readonly attribute IDBRequest request;
+    // FIXME: `request` should not be nullable.
+    [SameObject] readonly attribute IDBRequest? request;
 
     undefined advance([EnforceRange] unsigned long count);
     [CallWith=CurrentGlobalObject, ImplementedAs=continueFunction] undefined continue(optional any key);

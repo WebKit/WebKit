@@ -1,0 +1,39 @@
+
+FAIL "::scroll-button(up)" should be a valid selector '::scroll-button(up)' is not a valid selector.
+FAIL "::scroll-button(down)" should be a valid selector '::scroll-button(down)' is not a valid selector.
+FAIL "::scroll-button(left)" should be a valid selector '::scroll-button(left)' is not a valid selector.
+FAIL "::scroll-button(right)" should be a valid selector '::scroll-button(right)' is not a valid selector.
+FAIL "::scroll-button(block-start)" should be a valid selector '::scroll-button(block-start)' is not a valid selector.
+FAIL "::scroll-button(inline-start)" should be a valid selector '::scroll-button(inline-start)' is not a valid selector.
+FAIL "::scroll-button(inline-end)" should be a valid selector '::scroll-button(inline-end)' is not a valid selector.
+FAIL "::scroll-button(block-end)" should be a valid selector '::scroll-button(block-end)' is not a valid selector.
+FAIL "::scroll-button(*)" should be a valid selector '::scroll-button(*)' is not a valid selector.
+FAIL "::scroll-button( up)" should be a valid selector '::scroll-button( up)' is not a valid selector.
+FAIL "::scroll-button(up )" should be a valid selector '::scroll-button(up )' is not a valid selector.
+FAIL "::scroll-button( *)" should be a valid selector '::scroll-button( *)' is not a valid selector.
+FAIL "::scroll-button(* )" should be a valid selector '::scroll-button(* )' is not a valid selector.
+FAIL "::scroll-button(up):focus" should be a valid selector '::scroll-button(up):focus' is not a valid selector.
+FAIL "::scroll-button(down):focus" should be a valid selector '::scroll-button(down):focus' is not a valid selector.
+FAIL "::scroll-button(left):focus" should be a valid selector '::scroll-button(left):focus' is not a valid selector.
+FAIL "::scroll-button(right):focus" should be a valid selector '::scroll-button(right):focus' is not a valid selector.
+FAIL "::scroll-button(block-start):focus" should be a valid selector '::scroll-button(block-start):focus' is not a valid selector.
+FAIL "::scroll-button(inline-start):focus" should be a valid selector '::scroll-button(inline-start):focus' is not a valid selector.
+FAIL "::scroll-button(inline-end):focus" should be a valid selector '::scroll-button(inline-end):focus' is not a valid selector.
+FAIL "::scroll-button(block-end):focus" should be a valid selector '::scroll-button(block-end):focus' is not a valid selector.
+FAIL "::scroll-button(up):disabled" should be a valid selector '::scroll-button(up):disabled' is not a valid selector.
+FAIL "::scroll-button(down):disabled" should be a valid selector '::scroll-button(down):disabled' is not a valid selector.
+FAIL "::scroll-button(left):disabled" should be a valid selector '::scroll-button(left):disabled' is not a valid selector.
+FAIL "::scroll-button(right):disabled" should be a valid selector '::scroll-button(right):disabled' is not a valid selector.
+FAIL "::scroll-button(block-start):disabled" should be a valid selector '::scroll-button(block-start):disabled' is not a valid selector.
+FAIL "::scroll-button(inline-start):disabled" should be a valid selector '::scroll-button(inline-start):disabled' is not a valid selector.
+FAIL "::scroll-button(inline-end):disabled" should be a valid selector '::scroll-button(inline-end):disabled' is not a valid selector.
+FAIL "::scroll-button(block-end):disabled" should be a valid selector '::scroll-button(block-end):disabled' is not a valid selector.
+FAIL "::scroll-button(up):enabled" should be a valid selector '::scroll-button(up):enabled' is not a valid selector.
+FAIL "::scroll-button(down):enabled" should be a valid selector '::scroll-button(down):enabled' is not a valid selector.
+FAIL "::scroll-button(left):enabled" should be a valid selector '::scroll-button(left):enabled' is not a valid selector.
+FAIL "::scroll-button(right):enabled" should be a valid selector '::scroll-button(right):enabled' is not a valid selector.
+FAIL "::scroll-button(block-start):enabled" should be a valid selector '::scroll-button(block-start):enabled' is not a valid selector.
+FAIL "::scroll-button(inline-start):enabled" should be a valid selector '::scroll-button(inline-start):enabled' is not a valid selector.
+FAIL "::scroll-button(inline-end):enabled" should be a valid selector '::scroll-button(inline-end):enabled' is not a valid selector.
+FAIL "::scroll-button(block-end):enabled" should be a valid selector '::scroll-button(block-end):enabled' is not a valid selector.
+

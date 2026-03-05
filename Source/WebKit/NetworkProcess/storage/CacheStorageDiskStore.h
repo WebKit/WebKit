@@ -49,6 +49,15 @@ public:
 private:
     CacheStorageDiskStore(const String& cacheName, const String& path, Ref<WorkQueue>&&);
 
+    struct SafeFileData {
+        Variant<std::monostate, FileSystem::MappedFileData, Vector<uint8_t>> data;
+
+        std::span<const uint8_t> span() const;
+        RefPtr<WebCore::SharedBuffer> convertToSharedBuffer() &&;
+        explicit operator bool() const;
+        static SafeFileData read(const String& filePath);
+    };
+
     // CacheStorageStore
     void readAllRecordInfos(ReadAllRecordInfosCallback&&) final;
     void readRecords(const Vector<CacheStorageRecordInformation>&, ReadRecordsCallback&&) final;
@@ -62,7 +71,7 @@ private:
     String recordBlobFilePath(const String&) const;
     String blobsDirectoryPath() const;
     String blobFilePath(const String&) const;
-    std::optional<CacheStorageRecord> readRecordFromFileData(std::span<const uint8_t>, FileSystem::MappedFileData&&);
+    std::optional<CacheStorageRecord> readRecordFromFileData(std::span<const uint8_t>, SafeFileData&&);
     void readAllRecordInfosInternal(ReadAllRecordInfosCallback&&);
     void readRecordsInternal(const Vector<CacheStorageRecordInformation>&, ReadRecordsCallback&&);
 

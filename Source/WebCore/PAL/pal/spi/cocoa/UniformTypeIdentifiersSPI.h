@@ -25,11 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <UniformTypeIdentifiers/UTTypePriv.h>
 #else
+
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 @interface UTType ()
 

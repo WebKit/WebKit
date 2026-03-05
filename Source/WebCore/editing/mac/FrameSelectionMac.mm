@@ -62,10 +62,10 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     if (!m_selection.isCaret())
         return;
 
-    auto* renderView = m_document->renderView();
+    CheckedPtr renderView = m_document->renderView();
     if (!renderView)
         return;
-    auto* frameView = m_document->view();
+    RefPtr frameView = m_document->view();
     if (!frameView)
         return;
 

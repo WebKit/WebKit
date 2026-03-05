@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/simulcast/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simulcast/av1.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html

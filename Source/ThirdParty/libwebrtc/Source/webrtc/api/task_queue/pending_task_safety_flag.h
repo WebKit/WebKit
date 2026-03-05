@@ -172,6 +172,17 @@ inline absl::AnyInvocable<void() &&> SafeTask(
   };
 }
 
+// Safely execute an Invocable that can be used multiple times.
+inline absl::AnyInvocable<void()> SafeInvocable(
+    scoped_refptr<PendingTaskSafetyFlag> flag,
+    absl::AnyInvocable<void()> task) {
+  return [flag = std::move(flag), task = std::move(task)]() mutable {
+    if (flag->alive()) {
+      task();
+    }
+  };
+}
+
 }  // namespace webrtc
 
 #endif  // API_TASK_QUEUE_PENDING_TASK_SAFETY_FLAG_H_

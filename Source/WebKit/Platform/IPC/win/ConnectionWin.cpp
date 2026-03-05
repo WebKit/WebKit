@@ -146,7 +146,7 @@ void Connection::readEventHandler()
             ASSERT(decoder);
             if (!decoder)
                 return;
-            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
+            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(decoder)));
         }
 
         // Find out the size of the next message in the pipe (if there is one) so that we can read
@@ -317,7 +317,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
 void Connection::EventListener::open(Function<void()>&& handler)
 {
-    m_handler = WTFMove(handler);
+    m_handler = WTF::move(handler);
 
     memset(&m_state, 0, sizeof(m_state));
     m_state.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);

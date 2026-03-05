@@ -1,3 +1,0 @@
-
-FAIL Service worker test setup undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-

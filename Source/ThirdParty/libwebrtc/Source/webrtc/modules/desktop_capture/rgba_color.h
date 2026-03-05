@@ -19,8 +19,7 @@ namespace webrtc {
 
 // A four-byte structure to store a color in BGRA format. This structure also
 // provides functions to be created from uint8_t array, say,
-// DesktopFrame::data(). It always uses BGRA order for internal storage to match
-// DesktopFrame::data().
+// DesktopFrame::data(). It always uses BGRA order for internal storage.
 struct RgbaColor final {
   // Creates a color with BGRA channels.
   RgbaColor(uint8_t blue, uint8_t green, uint8_t red, uint8_t alpha);

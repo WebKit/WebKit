@@ -28,6 +28,8 @@
 #include <openssl/crypto.h>
 #include <openssl/dh.h>
 #include <openssl/digest.h>
+#include <openssl/ec.h>
+#include <openssl/ec_key.h>
 #include <openssl/err.h>
 #include <openssl/pkcs8.h>
 #include <openssl/rsa.h>
@@ -380,13 +382,13 @@ TEST(EVPExtraTest, DigestSignInit) {
   bssl::UniquePtr<EVP_PKEY> pkey = LoadExampleRSAKey();
   ASSERT_TRUE(pkey);
   bssl::ScopedEVP_MD_CTX md_ctx;
-  ASSERT_TRUE(
-      EVP_DigestSignInit(md_ctx.get(), NULL, EVP_sha256(), NULL, pkey.get()));
+  ASSERT_TRUE(EVP_DigestSignInit(md_ctx.get(), nullptr, EVP_sha256(), nullptr,
+                                 pkey.get()));
   ASSERT_TRUE(EVP_DigestSignUpdate(md_ctx.get(), kMsg, sizeof(kMsg)));
 
   // Determine the size of the signature.
   size_t sig_len = 0;
-  ASSERT_TRUE(EVP_DigestSignFinal(md_ctx.get(), NULL, &sig_len));
+  ASSERT_TRUE(EVP_DigestSignFinal(md_ctx.get(), nullptr, &sig_len));
 
   // Sanity check for testing.
   EXPECT_EQ(static_cast<size_t>(EVP_PKEY_size(pkey.get())), sig_len);
@@ -398,8 +400,8 @@ TEST(EVPExtraTest, DigestSignInit) {
 
   // Ensure that the signature round-trips.
   md_ctx.Reset();
-  ASSERT_TRUE(
-      EVP_DigestVerifyInit(md_ctx.get(), NULL, EVP_sha256(), NULL, pkey.get()));
+  ASSERT_TRUE(EVP_DigestVerifyInit(md_ctx.get(), nullptr, EVP_sha256(), nullptr,
+                                   pkey.get()));
   ASSERT_TRUE(EVP_DigestVerifyUpdate(md_ctx.get(), kMsg, sizeof(kMsg)));
   ASSERT_TRUE(EVP_DigestVerifyFinal(md_ctx.get(), sig.data(), sig_len));
 }
@@ -408,8 +410,8 @@ TEST(EVPExtraTest, DigestVerifyInit) {
   bssl::UniquePtr<EVP_PKEY> pkey = LoadExampleRSAKey();
   bssl::ScopedEVP_MD_CTX md_ctx;
   ASSERT_TRUE(pkey);
-  ASSERT_TRUE(
-      EVP_DigestVerifyInit(md_ctx.get(), NULL, EVP_sha256(), NULL, pkey.get()));
+  ASSERT_TRUE(EVP_DigestVerifyInit(md_ctx.get(), nullptr, EVP_sha256(), nullptr,
+                                   pkey.get()));
   ASSERT_TRUE(EVP_DigestVerifyUpdate(md_ctx.get(), kMsg, sizeof(kMsg)));
   ASSERT_TRUE(
       EVP_DigestVerifyFinal(md_ctx.get(), kSignature, sizeof(kSignature)));
@@ -455,7 +457,7 @@ TEST(EVPExtraTest, VerifyRecover) {
 static void TestValidPrivateKey(const uint8_t *input, size_t input_len,
                                 int expected_id) {
   const uint8_t *p = input;
-  bssl::UniquePtr<EVP_PKEY> pkey(d2i_AutoPrivateKey(NULL, &p, input_len));
+  bssl::UniquePtr<EVP_PKEY> pkey(d2i_AutoPrivateKey(nullptr, &p, input_len));
   ASSERT_TRUE(pkey);
   EXPECT_EQ(input + input_len, p);
   EXPECT_EQ(expected_id, EVP_PKEY_id(pkey.get()));
@@ -476,7 +478,7 @@ TEST(EVPExtraTest, d2i_AutoPrivateKey) {
 
   const uint8_t *p = kInvalidPrivateKey;
   bssl::UniquePtr<EVP_PKEY> pkey(
-      d2i_AutoPrivateKey(NULL, &p, sizeof(kInvalidPrivateKey)));
+      d2i_AutoPrivateKey(nullptr, &p, sizeof(kInvalidPrivateKey)));
   EXPECT_FALSE(pkey) << "Parsed invalid private key";
   ERR_clear_error();
 }
@@ -628,7 +630,7 @@ TEST(EVPExtraTest, Print) {
 TEST(EVPExtraTest, BadECKey) {
   const uint8_t *derp = kExampleBadECKeyDER;
   bssl::UniquePtr<PKCS8_PRIV_KEY_INFO> p8inf(
-      d2i_PKCS8_PRIV_KEY_INFO(NULL, &derp, sizeof(kExampleBadECKeyDER)));
+      d2i_PKCS8_PRIV_KEY_INFO(nullptr, &derp, sizeof(kExampleBadECKeyDER)));
   ASSERT_TRUE(p8inf);
   EXPECT_EQ(kExampleBadECKeyDER + sizeof(kExampleBadECKeyDER), derp);
 

@@ -464,14 +464,35 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     if (!URL)
         return;
 
-    auto event = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
-        MonotonicTime::now(), nullptr, 1, { }, { }, 0, 0, { }, MouseButton::Left, 0, nullptr, 0, SyntheticClickType::NoTap, { }, { }, MouseEvent::IsSimulated::Yes);
+    auto event = MouseEvent::create(
+        eventNames().clickEvent,
+        Event::CanBubble::Yes,
+        Event::IsCancelable::Yes,
+        Event::IsComposed::Yes,
+        MonotonicTime::now(),
+        nullptr,
+        1,
+        { },
+        { },
+        0,
+        0,
+        { },
+        MouseButton::Left,
+        0,
+        nullptr,
+        0,
+        SyntheticClickType::NoTap,
+        { },
+        { },
+        std::nullopt,
+        MouseEvent::IsSimulated::Yes
+    );
 
     // Call to the frame loader because this is where our security checks are made.
     auto* frame = core([_dataSource webFrame]);
     FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, InitiatedByMainFrame::Unknown };
     frameLoadRequest.setReferrerPolicy(ReferrerPolicy::NoReferrer);
-    frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.ptr(), nullptr);
+    frame->loader().loadFrameRequest(WTF::move(frameLoadRequest), event.ptr(), nullptr);
 }
 
 @end

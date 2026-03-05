@@ -51,6 +51,8 @@
 - (void)didCreateBrowserWindowController:(BrowserWindowController *)controller;
 - (void)browserWindowWillClose:(NSWindow *)window;
 
+- (IBAction)newTab:(id)sender;
+
 - (void)didChangeSettings;
 
 + (NSNumber *)currentBadge;

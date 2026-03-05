@@ -179,7 +179,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(const GCSafeConcurrentJS
             }
 
             InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
-            return compiler.compileHandler(locker, WTFMove(list), codeBlock, accessCase.get());
+            return compiler.compileHandler(locker, WTF::move(list), codeBlock, accessCase.get());
         }
 
         ASSERT(!useHandlerIC());
@@ -210,7 +210,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(const GCSafeConcurrentJS
             }
 
             setCacheType(locker, CacheType::Stub);
-            m_stub = WTFMove(access);
+            m_stub = WTF::move(access);
         }
 
         ASSERT(m_cacheType == CacheType::Stub);
@@ -832,7 +832,7 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, CodeBloc
     if (unlinkedStubInfo.canBeMegamorphic)
         bufferingCountdown = 1;
 
-    usedRegisters = RegisterSetBuilder::stubUnavailableRegisters().buildScalarRegisterSet();
+    usedRegisters = RegisterSet::stubUnavailableRegisters().toScalarRegisterSet();
 
     m_slowOperation = slowOperationFromUnlinkedStructureStubInfo(unlinkedStubInfo);
     initializePredefinedRegisters();
@@ -876,7 +876,7 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(CodeBlock* co
     if (unlinkedStubInfo.canBeMegamorphic)
         bufferingCountdown = 1;
 
-    usedRegisters = RegisterSetBuilder::stubUnavailableRegisters().buildScalarRegisterSet();
+    usedRegisters = RegisterSet::stubUnavailableRegisters().toScalarRegisterSet();
 
     m_slowOperation = slowOperationFromUnlinkedStructureStubInfo(unlinkedStubInfo);
     initializePredefinedRegisters();
@@ -887,7 +887,7 @@ void StructureStubInfo::setInlinedHandler(CodeBlock* codeBlock, Ref<InlineCacheH
 {
     ASSERT(!m_inlinedHandler);
     VM& vm = codeBlock->vm();
-    m_inlinedHandler = WTFMove(handler);
+    m_inlinedHandler = WTF::move(handler);
     m_inlinedHandler->addOwner(codeBlock);
     switch (m_inlinedHandler->cacheType()) {
     case CacheType::GetByIdSelf: {
@@ -936,11 +936,11 @@ void StructureStubInfo::initializeWithUnitHandler(CodeBlock* codeBlock, Ref<Inli
         ASSERT(!m_inlinedHandler);
         if (m_handler)
             m_handler->removeOwner(codeBlock);
-        m_handler = WTFMove(handler);
+        m_handler = WTF::move(handler);
         m_handler->addOwner(codeBlock);
     } else {
         ASSERT(!m_inlinedHandler);
-        m_handler = WTFMove(handler);
+        m_handler = WTF::move(handler);
     }
 }
 
@@ -948,26 +948,26 @@ void StructureStubInfo::prependHandler(CodeBlock* codeBlock, Ref<InlineCacheHand
 {
     ASSERT(useHandlerIC());
     if (isMegamorphic) {
-        initializeWithUnitHandler(codeBlock, WTFMove(handler));
+        initializeWithUnitHandler(codeBlock, WTF::move(handler));
         return;
     }
 
     if (!m_inlinedHandler) {
         if (preconfiguredCacheType != CacheType::Unset && preconfiguredCacheType == handler->cacheType()) {
-            setInlinedHandler(codeBlock, WTFMove(handler));
+            setInlinedHandler(codeBlock, WTF::move(handler));
             return;
         }
     }
 
-    handler->setNext(WTFMove(m_handler));
-    m_handler = WTFMove(handler);
+    handler->setNext(WTF::move(m_handler));
+    m_handler = WTF::move(handler);
     m_handler->addOwner(codeBlock);
 }
 
 void StructureStubInfo::rewireStubAsJumpInAccess(CodeBlock* codeBlock, Ref<InlineCacheHandler>&& handler)
 {
     CodeLocationLabel label { handler->callTarget() };
-    initializeWithUnitHandler(codeBlock, WTFMove(handler));
+    initializeWithUnitHandler(codeBlock, WTF::move(handler));
     if (!useDataIC)
         CCallHelpers::replaceWithJump(startLocation.retagged<JSInternalPtrTag>(), label);
 }

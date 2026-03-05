@@ -3,8 +3,10 @@
     <link rel="stylesheet" type="text/css" media="screen and (min-device-width: 768px) and (max-device-width: 1024px)" href="resources/stylesheet.css" />
     <link rel="stylesheet" type="text/css" media="screen and (max-device-width: 480px)" href="resources/stylesheet.css" />
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.dumpFrameLoadCallbacks();
+        }
     </script>
 </head>
 <body id="article">

@@ -63,7 +63,7 @@ auto CSSValueCreation<Transform>::operator()(CSSValuePool& pool, const RenderSty
     if (list.isEmpty())
         return createCSSValue(pool, style, CSS::Keyword::None { });
 
-    return CSSTransformListValue::create(WTFMove(list));
+    return CSSTransformListValue::create(WTF::move(list));
 }
 
 // MARK: - Blending
@@ -80,7 +80,7 @@ auto Blending<Transform>::blend(const Transform& from, const Transform& to, cons
     if (blendedTransformList.isEmpty())
         return CSS::Keyword::None { };
 
-    return Transform { WTFMove(blendedTransformList) };
+    return Transform { WTF::move(blendedTransformList) };
 }
 
 // MARK: - Platform

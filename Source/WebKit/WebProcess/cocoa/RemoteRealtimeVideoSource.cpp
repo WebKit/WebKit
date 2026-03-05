@@ -37,31 +37,30 @@ using namespace WebCore;
 
 Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)
 {
-    auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
+    auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTF::move(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
-    manager.protectedRemoteCaptureSampleManager()->addSource(source.copyRef());
+    protect(manager.remoteCaptureSampleManager())->addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
 RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)
-    : RemoteRealtimeMediaSource(identifier, device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier)
+    : RemoteRealtimeMediaSource(identifier, device, constraints, WTF::move(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier)
 {
     ASSERT(this->pageIdentifier());
 }
 
 RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&& proxy, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, std::optional<PageIdentifier> pageIdentifier)
-    : RemoteRealtimeMediaSource(WTFMove(proxy), WTFMove(hashSalts), manager, pageIdentifier)
+    : RemoteRealtimeMediaSource(WTF::move(proxy), WTF::move(hashSalts), manager, pageIdentifier)
 {
     ASSERT(this->pageIdentifier());
 }
 
 RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource() = default;
 
-bool RemoteRealtimeVideoSource::setShouldApplyRotation()
+void RemoteRealtimeVideoSource::setShouldApplyRotation()
 {
     Ref { connection() }->send(Messages::UserMediaCaptureManagerProxy::SetShouldApplyRotation { identifier() }, 0);
-    return true;
 }
 
 Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
@@ -81,7 +80,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
         clone->setMuted(muted());
 
         manager().addSource(*clone);
-        manager().protectedRemoteCaptureSampleManager()->addSource(*clone);
+        protect(manager().remoteCaptureSampleManager())->addSource(*clone);
         proxy().createRemoteCloneSource(clone->identifier(), *pageIdentifier());
 
         bool isNewClonedSource = true;

@@ -28,7 +28,7 @@
 
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGTextFragment.h"
 #include "TextPainter.h"
 
@@ -40,11 +40,20 @@ InlineContent::InlineContent(const RenderBlockFlow& formattingContextRoot)
 {
 }
 
-bool InlineContent::hasInflowContent() const
+bool InlineContent::hasContentfulInFlowBox() const
 {
     ASSERT(m_displayContent.boxes.isEmpty() || m_displayContent.boxes[0].isRootInlineBox());
     for (auto& line : m_displayContent.lines) {
-        if (line.hasInflowContent())
+        if (line.hasContentfulInFlowBox())
+            return true;
+    }
+    return false;
+}
+
+bool InlineContent::hasContentfulInlineLevelBox() const
+{
+    for (auto& line : m_displayContent.lines) {
+        if (line.hasContentfulInlineLevelBox())
             return true;
     }
     return false;
@@ -148,7 +157,7 @@ std::optional<size_t> InlineContent::firstBoxIndexForLayoutBox(const Layout::Box
 // Returns a block level box if the line is for block-in-inline.
 const InlineDisplay::Box* InlineContent::blockLevelBoxForLine(const InlineDisplay::Line& line) const
 {
-    if (!line.hasBlockLevelContent())
+    if (!line.hasBlockLevelBox())
         return nullptr;
     auto& lastBox = displayContent().boxes[line.lastBoxIndex()];
     ASSERT(lastBox.isBlockLevelBox());
@@ -159,7 +168,7 @@ bool InlineContent::isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&
 {
     if (!box.isInlineBox() || !m_hasBlockLevelBoxes)
         return false;
-    return lineForBox(box).hasBlockLevelContent();
+    return lineForBox(box).hasBlockLevelBox();
 }
 
 const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const Layout::Box& layoutBox) const

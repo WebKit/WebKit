@@ -281,6 +281,13 @@ bool BitmapImageDescriptor::shouldUseQuickLookForFullscreen() const
         return decoder->shouldUseQuickLookForFullscreen();
     return false;
 }
+
+bool BitmapImageDescriptor::isPanorama() const
+{
+    if (auto decoder = m_source->decoderIfExists())
+        return decoder->isPanorama();
+    return false;
+}
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)

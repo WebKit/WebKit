@@ -1,0 +1,11 @@
+This test ensures aria-labelledby correctly references display:contents elements with shadow roots.
+
+PASS: testButton.role.toLowerCase().includes('button') === true
+PASS: platformValueForW3CName(testButton) === 'Shadow Label Text'
+PASS: platformValueForW3CName(testButton).includes('should NOT appear') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button Content
+

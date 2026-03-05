@@ -37,28 +37,27 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OfflineAudioCompletionEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OfflineAudioCompletionEvent);
 
 Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(Ref<AudioBuffer>&& renderedBuffer)
 {
-    return adoptRef(*new OfflineAudioCompletionEvent(WTFMove(renderedBuffer)));
+    return adoptRef(*new OfflineAudioCompletionEvent(WTF::move(renderedBuffer)));
 }
 
 Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(const AtomString& eventType, OfflineAudioCompletionEventInit&& init)
 {
-    RELEASE_ASSERT(init.renderedBuffer);
-    return adoptRef(*new OfflineAudioCompletionEvent(eventType, WTFMove(init)));
+    return adoptRef(*new OfflineAudioCompletionEvent(eventType, WTF::move(init)));
 }
 
 OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(Ref<AudioBuffer>&& renderedBuffer)
     : Event(EventInterfaceType::OfflineAudioCompletionEvent, eventNames().completeEvent, CanBubble::Yes, IsCancelable::No)
-    , m_renderedBuffer(WTFMove(renderedBuffer))
+    , m_renderedBuffer(WTF::move(renderedBuffer))
 {
 }
 
 OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(const AtomString& eventType, OfflineAudioCompletionEventInit&& init)
     : Event(EventInterfaceType::OfflineAudioCompletionEvent, eventType, init, IsTrusted::No)
-    , m_renderedBuffer(init.renderedBuffer.releaseNonNull())
+    , m_renderedBuffer(WTF::move(init.renderedBuffer))
 {
 }
 

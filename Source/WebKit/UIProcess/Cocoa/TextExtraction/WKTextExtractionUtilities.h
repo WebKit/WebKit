@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(TEXT_EXTRACTION)
+#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
@@ -38,6 +38,7 @@ namespace WebCore {
 class FloatRect;
 
 namespace TextExtraction {
+struct FilterRuleData;
 struct Item;
 }
 }
@@ -49,6 +50,8 @@ RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&,
 
 std::optional<double> computeSimilarity(NSString *a, NSString *b, unsigned minimumLength = 1);
 
+void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<WebCore::TextExtraction::FilterRuleData>&&)>&&);
+
 } // namespace WebKit
 
-#endif // ENABLE(TEXT_EXTRACTION)
+#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))

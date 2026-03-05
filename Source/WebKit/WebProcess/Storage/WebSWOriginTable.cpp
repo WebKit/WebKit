@@ -42,7 +42,7 @@ bool WebSWOriginTable::contains(const SecurityOriginData& origin) const
 
 void WebSWOriginTable::setSharedMemory(SharedMemory::Handle&& handle)
 {
-    auto sharedMemory = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(WTF::move(handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return;
 

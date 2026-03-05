@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -366,9 +366,10 @@ class GitHub(bmocks.GitHub):
             for candidate in self.pull_requests:
                 chead = candidate.get('head', {}).get('ref', '').split(':')[-1]
                 cbase = candidate.get('base', {}).get('ref', '').split(':')[-1]
-                if head and chead != head:
+                # GitHub's search apparently uses substring matching for head and base.
+                if head and head not in chead:
                     continue
-                if base and cbase != base:
+                if base and base not in cbase:
                     continue
                 if state and candidate.get('state', 'closed') != state:
                     continue

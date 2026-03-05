@@ -44,8 +44,12 @@ void GraphicsContextState::repurpose(Purpose purpose)
 
 #if USE(CG)
     // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Keep the clone's alpha in sync.
-    if (purpose == Purpose::TransparencyLayer)
+    if (purpose == Purpose::TransparencyLayer) {
         m_alpha = 1;
+        m_style = std::nullopt;
+        m_dropShadow = std::nullopt;
+        m_compositeMode = { CompositeOperator::SourceOver, BlendMode::Normal };
+    }
 #endif
 
     m_purpose = purpose;

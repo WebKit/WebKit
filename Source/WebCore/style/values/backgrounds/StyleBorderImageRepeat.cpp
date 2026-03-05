@@ -38,21 +38,13 @@ auto CSSValueConversion<BorderImageRepeat>::operator()(BuilderState& state, cons
 {
     if (RefPtr pairValue = dynamicDowncast<CSSValuePair>(value)) {
         return BorderImageRepeat {
-            .values {
-                toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->first()),
-                toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->second()),
-            }
+            toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->first()),
+            toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->second()),
         };
     }
 
     // Values coming from CSS Typed OM may not have been converted to a CSSValuePair.
-    auto repeatValue = toStyleFromCSSValue<NinePieceImageRule>(state, value);
-    return BorderImageRepeat {
-        .values {
-            repeatValue,
-            repeatValue,
-        }
-    };
+    return toStyleFromCSSValue<NinePieceImageRule>(state, value);
 }
 
 } // namespace Style

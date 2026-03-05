@@ -59,7 +59,7 @@ Ref<const DisplayList> RecorderImpl::takeDisplayList()
 {
     appendStateChangeItemIfNecessary();
     m_items.shrinkToFit();
-    return DisplayList::create(WTFMove(m_items));
+    return DisplayList::create(WTF::move(m_items));
 }
 
 Ref<const DisplayList> RecorderImpl::copyDisplayList()
@@ -228,7 +228,7 @@ void RecorderImpl::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& de
     m_items.append(DrawImageBuffer(imageBuffer, destRect, srcRect, options));
 }
 
-void RecorderImpl::drawNativeImage(NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RecorderImpl::drawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
     m_items.append(DrawNativeImage(image, destRect, srcRect, options));
@@ -240,7 +240,7 @@ void RecorderImpl::drawSystemImage(SystemImage& systemImage, const FloatRect& de
     m_items.append(DrawSystemImage(systemImage, destinationRect));
 }
 
-void RecorderImpl::drawPattern(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void RecorderImpl::drawPattern(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
     m_items.append(DrawPatternNativeImage(image, destRect, tileRect, patternTransform, phase, spacing, options));
@@ -498,7 +498,7 @@ void RecorderImpl::appendStateChangeItemIfNecessary()
 
 void RecorderImpl::drawPlaceholder(Function<void(GraphicsContext&)>&& function)
 {
-    m_items.append(DrawPlaceholder(WTFMove(function)));
+    m_items.append(DrawPlaceholder(WTF::move(function)));
 }
 
 } // namespace DisplayList

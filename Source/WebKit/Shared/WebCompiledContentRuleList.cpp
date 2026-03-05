@@ -34,11 +34,11 @@ RefPtr<WebCompiledContentRuleList> WebCompiledContentRuleList::create(WebCompile
 {
     if (!data.data)
         return nullptr;
-    return adoptRef(*new WebCompiledContentRuleList(WTFMove(data)));
+    return adoptRef(*new WebCompiledContentRuleList(WTF::move(data)));
 }
 
 WebCompiledContentRuleList::WebCompiledContentRuleList(WebCompiledContentRuleListData&& data)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
 {
 }
 

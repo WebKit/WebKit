@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+#container {
+  text-transform: full-width;
+  text-wrap: pretty;
+  width: 785px;
+  font: 16px/1 "PingFang SC";
+}
+</style>
+<div id="container">AB<span>AAAAAAAA</span><br/><span style="padding-right: 580px">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</span><span style="padding-right: 80px">AAAAAAA</span>ABAB</div>
+<script>
+window.testRunner?.dumpAsText();
+document.execCommand("selectAll",false,null);
+document.body.innerHTML = "PASS if no crash.";
+</script>

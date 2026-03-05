@@ -39,7 +39,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 namespace WebRTC {
 
-static inline bool isStunMessage(uint16_t messageType)
+static inline bool NODELETE isStunMessage(uint16_t messageType)
 {
     // https://tools.ietf.org/html/rfc5389#section-6 for STUN messages.
     // TURN messages start by the channel number which is constrained by https://tools.ietf.org/html/rfc5766#section-11.
@@ -79,7 +79,7 @@ static inline Vector<uint8_t> extractSTUNOrTURNMessages(Vector<uint8_t>&& buffer
 
             memcpySpan(buffered.mutableSpan(), data);
             buffered.shrink(data.size());
-            return WTFMove(buffered);
+            return WTF::move(buffered);
         }
 
         processMessage(data.first(lengths->messageLength));
@@ -103,7 +103,7 @@ static inline Vector<uint8_t> extractDataMessages(Vector<uint8_t>&& buffered, NO
 
             memcpySpan(buffered.mutableSpan(), data);
             buffered.shrink(data.size());
-            return WTFMove(buffered);
+            return WTF::move(buffered);
         }
 
         skip(data, lengthFieldSize);
@@ -114,7 +114,7 @@ static inline Vector<uint8_t> extractDataMessages(Vector<uint8_t>&& buffered, NO
 
 Vector<uint8_t> extractMessages(Vector<uint8_t>&& buffer, MessageType type, NOESCAPE const Function<void(std::span<const uint8_t> data)>& processMessage)
 {
-    return type == MessageType::STUN ? extractSTUNOrTURNMessages(WTFMove(buffer), processMessage) : extractDataMessages(WTFMove(buffer), processMessage);
+    return type == MessageType::STUN ? extractSTUNOrTURNMessages(WTF::move(buffer), processMessage) : extractDataMessages(WTF::move(buffer), processMessage);
 }
 
 } // namespace WebRTC

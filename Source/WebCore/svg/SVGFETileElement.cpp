@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFETileElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFETileElement);
 
 inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

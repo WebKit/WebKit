@@ -23,7 +23,8 @@ namespace webrtc {
 
 AsyncProxyServerSocket::AsyncProxyServerSocket(Socket* socket,
                                                size_t buffer_size)
-    : BufferedReadAdapter(socket, buffer_size) {}
+    : BufferedReadAdapter(socket, buffer_size),
+      connect_request_trampoline_(this) {}
 
 AsyncProxyServerSocket::~AsyncProxyServerSocket() = default;
 
@@ -42,7 +43,7 @@ void AsyncSSLServerSocket::ProcessInput(char* data, size_t* len) {
 
   if (memcmp(client_hello.data(), data, client_hello.size()) != 0) {
     Close();
-    SignalCloseEvent(this, 0);
+    NotifyCloseEvent(this, 0);
     return;
   }
 

@@ -46,7 +46,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <EGL/eglext.h>
 #include <skia/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.h>
 #endif
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -217,7 +217,7 @@ static unsigned initializeMSAASampleCount(GrDirectContext* grContext)
         // knows there are bugs. The only way to know whether our sample count will work is trying to create a
         // surface with that value and check whether it works.
         auto imageInfo = SkImageInfo::Make(512, 512, kRGBA_8888_SkColorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
-        SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+        SkSurfaceProps properties = FontRenderOptions::singleton().createSurfaceProps();
         auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, sampleCount, kTopLeft_GrSurfaceOrigin, &properties);
 
         // If the creation of the surface failed, disable MSAA.
@@ -235,7 +235,14 @@ public:
         return adoptRef(*new SkiaGLContext(display));
     }
 
-    ~SkiaGLContext() = default;
+    ~SkiaGLContext()
+    {
+        if (m_skiaGLContext) {
+            m_skiaGLContext->makeContextCurrent();
+            m_skiaGrContext = nullptr;
+            m_skiaGLContext = nullptr;
+        }
+    }
 
     GLContext* skiaGLContext() const
     {
@@ -265,8 +272,8 @@ private:
         GrContextOptions options;
         options.fAllowMSAAOnNewIntel = shouldAllowMSAAOnNewIntel();
         if (auto grContext = GrDirectContexts::MakeGL(skiaGLInterface(), options)) {
-            m_skiaGLContext = WTFMove(glContext);
-            m_skiaGrContext = WTFMove(grContext);
+            m_skiaGLContext = WTF::move(glContext);
+            m_skiaGrContext = WTF::move(grContext);
             m_sampleCount = initializeMSAASampleCount(m_skiaGrContext.get());
         }
     }

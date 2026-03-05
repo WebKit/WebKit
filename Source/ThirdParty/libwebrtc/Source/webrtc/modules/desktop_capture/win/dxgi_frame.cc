@@ -43,7 +43,7 @@ bool DxgiFrame::Prepare(DesktopSize size, DesktopCapturer::SourceId source_id) {
   if (!frame_) {
     std::unique_ptr<DesktopFrame> frame;
     if (factory_) {
-      frame = SharedMemoryDesktopFrame::Create(size, factory_);
+      frame = SharedMemoryDesktopFrame::Create(size, FOURCC_ARGB, factory_);
 
       if (!frame) {
         RTC_LOG(LS_WARNING) << "DxgiFrame cannot create a new DesktopFrame.";
@@ -58,7 +58,7 @@ bool DxgiFrame::Prepare(DesktopSize size, DesktopCapturer::SourceId source_id) {
                     frame->size().width() * DesktopFrame::kBytesPerPixel);
       memset(frame->data(), 0, frame->stride() * frame->size().height());
     } else {
-      frame.reset(new BasicDesktopFrame(size));
+      frame.reset(new BasicDesktopFrame(size, FOURCC_ARGB));
     }
     frame_ = SharedDesktopFrame::Wrap(std::move(frame));
   }

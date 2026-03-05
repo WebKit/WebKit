@@ -25,7 +25,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PaintInfo.h>
 #include <WebCore/PopupMenuStyle.h>
-#include <WebCore/RenderStyleInlines.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/StyleColor.h>
 #include <WebCore/StyleMinimumSize.h>
@@ -39,7 +39,7 @@ namespace WebCore {
 enum class DocumentMarkerLineStyleMode : uint8_t;
 
 struct AttachmentLayout;
-class BorderData;
+struct BorderData;
 class Element;
 class FileList;
 class HTMLInputElement;
@@ -53,6 +53,16 @@ class RenderElement;
 class RenderProgress;
 class RenderStyle;
 class Settings;
+
+#if PLATFORM(MAC)
+class RenderThemeMac;
+#elif PLATFORM(IOS_FAMILY)
+class RenderThemeIOS;
+#elif USE(THEME_ADWAITA)
+class RenderThemeAdwaita;
+#elif PLATFORM(PLAYSTATION)
+class RenderThemePlayStation;
+#endif
 
 template<typename> struct MinimallySerializingSpaceSeparatedRectEdges;
 
@@ -71,7 +81,17 @@ protected:
 public:
     // This function is to be implemented in platform-specific theme implementations to hand back the
     // appropriate platform theme.
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT static RenderThemeMac& singleton();
+#elif PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT static RenderThemeIOS& singleton();
+#elif USE(THEME_ADWAITA)
+    WEBCORE_EXPORT static RenderThemeAdwaita& singleton();
+#elif PLATFORM(PLAYSTATION)
+    WEBCORE_EXPORT static RenderThemePlayStation& singleton();
+#else
     WEBCORE_EXPORT static RenderTheme& singleton();
+#endif
 
     virtual void purgeCaches();
 
@@ -122,7 +142,7 @@ public:
 
     // A method for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).
-    bool isControlContainer(StyleAppearance) const;
+    bool NODELETE isControlContainer(StyleAppearance) const;
 
     // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderElement&) const { return false; }
@@ -139,7 +159,7 @@ public:
     virtual void adjustRepaintRect(const RenderBox&, FloatRect&) { }
 
     // A method asking if the theme is able to draw the focus ring.
-    virtual bool supportsFocusRing(const RenderElement&, const RenderStyle&) const;
+    virtual bool NODELETE supportsFocusRing(const RenderElement&, const RenderStyle&) const;
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover() const { return false; }
@@ -182,7 +202,7 @@ public:
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
     static float platformFocusRingWidth() { return 3; }
     static float platformFocusRingOffset(float outlineWidth) { return std::max<float>(outlineWidth - platformFocusRingWidth(), 0); }
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
     static Color tapHighlightColor();
     virtual Color platformTapHighlightColor() const;
 #endif
@@ -225,7 +245,6 @@ public:
     virtual void setColorWellSwatchBackground(HTMLElement&, Color);
 
     // Functions for <select> elements.
-    virtual bool delegatesMenuListRendering() const { return false; }
     virtual bool popsMenuByArrowKeys() const { return false; }
     virtual bool popsMenuBySpaceOrReturn() const { return false; }
 
@@ -385,7 +404,7 @@ protected:
     virtual void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const { }
     virtual bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const FloatRect&) { return true; }
 
-    void adjustSwitchStyleDisplay(RenderStyle&) const;
+    void NODELETE adjustSwitchStyleDisplay(RenderStyle&) const;
     virtual void adjustSwitchStyle(RenderStyle&, const Element*) const;
     void adjustSwitchThumbOrSwitchTrackStyle(RenderStyle&) const;
     virtual bool paintSwitchThumb(const RenderElement&, const PaintInfo&, const FloatRect&) { return true; }
@@ -420,7 +439,7 @@ private:
     void adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle&, const Element*) const;
 
 public:
-    bool isWindowActive(const RenderElement&) const;
+    bool NODELETE isWindowActive(const RenderElement&) const;
     bool isChecked(const RenderElement&) const;
     bool isIndeterminate(const RenderElement&) const;
     bool isEnabled(const RenderElement&) const;
@@ -431,7 +450,7 @@ public:
     bool isSpinUpButtonPartHovered(const RenderElement&) const;
     bool isPresenting(const RenderElement&) const;
     bool isReadOnlyControl(const RenderElement&) const;
-    bool isDefault(const RenderElement&) const;
+    bool NODELETE isDefault(const RenderElement&) const;
     bool hasListButton(const RenderElement&) const;
     bool hasListButtonPressed(const RenderElement&) const;
 
@@ -488,3 +507,13 @@ private:
 };
 
 } // namespace WebCore
+
+#if PLATFORM(MAC)
+#include <WebCore/RenderThemeMac.h>
+#elif PLATFORM(IOS_FAMILY)
+#include <WebCore/RenderThemeIOS.h>
+#elif USE(THEME_ADWAITA)
+#include <WebCore/RenderThemeAdwaita.h>
+#elif PLATFORM(PLAYSTATION)
+#include <WebCore/RenderThemePlayStation.h>
+#endif

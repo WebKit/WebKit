@@ -29,5 +29,5 @@ typedef (FetchRequest or USVString) RequestInfo;
 [
     ImplementedBy=WindowOrWorkerGlobalScopeFetch
 ] partial interface mixin WindowOrWorkerGlobalScope {
-    [NewObject] Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init);
+    [NewObject] Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init = {});
 };

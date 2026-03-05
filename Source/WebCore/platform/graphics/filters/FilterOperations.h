@@ -72,14 +72,8 @@ public:
     bool hasOutsets() const { return !outsets().isZero(); }
     IntOutsets outsets() const;
 
-    bool hasFilterThatAffectsOpacity() const;
-    bool hasFilterThatMovesPixels() const;
-    bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
-
     template<FilterOperation::Type Type>
     bool hasFilterOfType() const;
-
-    bool hasReferenceFilter() const;
 
     WEBCORE_EXPORT bool canInterpolate(const FilterOperations&, CompositeOperation) const;
     WEBCORE_EXPORT FilterOperations blend(const FilterOperations&, const BlendingContext&) const;

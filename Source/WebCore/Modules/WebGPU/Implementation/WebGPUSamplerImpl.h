@@ -41,7 +41,7 @@ class SamplerImpl final : public Sampler {
 public:
     static Ref<SamplerImpl> create(WebGPUPtr<WGPUSampler>&& sampler, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new SamplerImpl(WTFMove(sampler), convertToBackingContext));
+        return adoptRef(*new SamplerImpl(WTF::move(sampler), convertToBackingContext));
     }
 
     virtual ~SamplerImpl();
@@ -57,6 +57,7 @@ private:
     SamplerImpl& operator=(SamplerImpl&&) = delete;
 
     WGPUSampler backing() const { return m_backing.get(); }
+    bool isSamplerImpl() const final { return true; }
 
     void setLabelInternal(const String&) final;
 
@@ -65,5 +66,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::SamplerImpl)
+    static bool isType(const WebCore::WebGPU::Sampler& sampler) { return sampler.isSamplerImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

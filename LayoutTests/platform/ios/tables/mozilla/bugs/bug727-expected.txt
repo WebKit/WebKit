@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 348x74
           RenderTableRow {TR} at (0,2) size 348x24
             RenderTableCell {TD} at (2,2) size 344x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 207x19
+              RenderText {#text} at (2,2) size 207x20
                 text run at (2,2) width 207: "MozillaZine.org Is Now Active!"
           RenderTableRow {TR} at (0,28) size 348x44
             RenderTableCell {TD} at (2,38) size 194x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,12) size 4x19
+              RenderText {#text} at (2,12) size 4x20
                 text run at (2,2) width 4: " "
             RenderTableCell {TD} at (198,28) size 148x44 [bgcolor=#FF9900] [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 133x39
+              RenderText {#text} at (2,2) size 133x40
                 text run at (2,2) width 133: "Thursday September"
                 text run at (2,22) width 78: "17th, 1998>"
 layer at (304,8) size 192x2 clip at (0,0) size 0x0

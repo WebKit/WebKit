@@ -155,23 +155,6 @@ static void ScaleUVDown2(int src_width,
   }
 #endif
 
-#if defined(HAS_SCALEUVROWDOWN2_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleUVRowDown2 =
-        filtering == kFilterNone
-            ? ScaleUVRowDown2_Any_MSA
-            : (filtering == kFilterLinear ? ScaleUVRowDown2Linear_Any_MSA
-                                          : ScaleUVRowDown2Box_Any_MSA);
-    if (IS_ALIGNED(dst_width, 2)) {
-      ScaleUVRowDown2 =
-          filtering == kFilterNone
-              ? ScaleUVRowDown2_MSA
-              : (filtering == kFilterLinear ? ScaleUVRowDown2Linear_MSA
-                                            : ScaleUVRowDown2Box_MSA);
-    }
-  }
-#endif
-
   if (filtering == kFilterLinear) {
     src_stride = 0;
   }
@@ -321,16 +304,6 @@ static void ScaleUVDownEven(int src_width,
     }
   }
 #endif
-#if defined(HAS_SCALEUVROWDOWNEVEN_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleUVRowDownEven =
-        filtering ? ScaleUVRowDownEvenBox_Any_MSA : ScaleUVRowDownEven_Any_MSA;
-    if (IS_ALIGNED(dst_width, 4)) {
-      ScaleUVRowDownEven =
-          filtering ? ScaleUVRowDownEvenBox_MSA : ScaleUVRowDownEven_MSA;
-    }
-  }
-#endif
 #if defined(HAS_SCALEUVROWDOWNEVEN_RVV) || defined(HAS_SCALEUVROWDOWN4_RVV)
   if (TestCpuFlag(kCpuHasRVV) && !filtering) {
 #if defined(HAS_SCALEUVROWDOWNEVEN_RVV)
@@ -419,14 +392,6 @@ static int ScaleUVBilinearDown(int src_width,
     InterpolateRow = InterpolateRow_SME;
   }
 #endif
-#if defined(HAS_INTERPOLATEROW_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    InterpolateRow = InterpolateRow_Any_MSA;
-    if (IS_ALIGNED(clip_src_width, 32)) {
-      InterpolateRow = InterpolateRow_MSA;
-    }
-  }
-#endif
 #if defined(HAS_INTERPOLATEROW_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     InterpolateRow = InterpolateRow_Any_LSX;
@@ -450,14 +415,6 @@ static int ScaleUVBilinearDown(int src_width,
     ScaleUVFilterCols = ScaleUVFilterCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 4)) {
       ScaleUVFilterCols = ScaleUVFilterCols_NEON;
-    }
-  }
-#endif
-#if defined(HAS_SCALEUVFILTERCOLS_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleUVFilterCols = ScaleUVFilterCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 8)) {
-      ScaleUVFilterCols = ScaleUVFilterCols_MSA;
     }
   }
 #endif
@@ -545,14 +502,6 @@ static int ScaleUVBilinearUp(int src_width,
     InterpolateRow = InterpolateRow_SME;
   }
 #endif
-#if defined(HAS_INTERPOLATEROW_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    InterpolateRow = InterpolateRow_Any_MSA;
-    if (IS_ALIGNED(dst_width, 16)) {
-      InterpolateRow = InterpolateRow_MSA;
-    }
-  }
-#endif
 #if defined(HAS_INTERPOLATEROW_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     InterpolateRow = InterpolateRow_Any_LSX;
@@ -582,14 +531,6 @@ static int ScaleUVBilinearUp(int src_width,
     }
   }
 #endif
-#if defined(HAS_SCALEUVFILTERCOLS_MSA)
-  if (filtering && TestCpuFlag(kCpuHasMSA)) {
-    ScaleUVFilterCols = ScaleUVFilterCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 16)) {
-      ScaleUVFilterCols = ScaleUVFilterCols_MSA;
-    }
-  }
-#endif
 #if defined(HAS_SCALEUVCOLS_SSSE3)
   if (!filtering && TestCpuFlag(kCpuHasSSSE3) && src_width < 32768) {
     ScaleUVFilterCols = ScaleUVCols_SSSE3;
@@ -600,14 +541,6 @@ static int ScaleUVBilinearUp(int src_width,
     ScaleUVFilterCols = ScaleUVCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 16)) {
       ScaleUVFilterCols = ScaleUVCols_NEON;
-    }
-  }
-#endif
-#if defined(HAS_SCALEUVCOLS_MSA)
-  if (!filtering && TestCpuFlag(kCpuHasMSA)) {
-    ScaleUVFilterCols = ScaleUVCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 8)) {
-      ScaleUVFilterCols = ScaleUVCols_MSA;
     }
   }
 #endif
@@ -942,14 +875,6 @@ static void ScaleUVSimple(int src_width,
     ScaleUVCols = ScaleUVCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 8)) {
       ScaleUVCols = ScaleUVCols_NEON;
-    }
-  }
-#endif
-#if defined(HAS_SCALEUVCOLS_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleUVCols = ScaleUVCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 4)) {
-      ScaleUVCols = ScaleUVCols_MSA;
     }
   }
 #endif

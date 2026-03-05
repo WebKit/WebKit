@@ -32,14 +32,14 @@ namespace CSS {
 // MARK: Two Component Types
 
 struct TwoComponentPositionHorizontal {
-    Variant<Keyword::Left, Keyword::Right, Keyword::Center, Keyword::XStart, Keyword::XEnd, LengthPercentage<>> offset;
+    Variant<Keyword::Left, Keyword::Right, Keyword::Center, Keyword::XStart, Keyword::XEnd, LengthPercentage<AllUnzoomed>> offset;
 
     bool operator==(const TwoComponentPositionHorizontal&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionHorizontal, offset);
 
 struct TwoComponentPositionVertical {
-    Variant<Keyword::Top, Keyword::Bottom, Keyword::Center, Keyword::YStart, Keyword::YEnd, LengthPercentage<>> offset;
+    Variant<Keyword::Top, Keyword::Bottom, Keyword::Center, Keyword::YStart, Keyword::YEnd, LengthPercentage<AllUnzoomed>> offset;
 
     bool operator==(const TwoComponentPositionVertical&) const = default;
 };
@@ -63,14 +63,14 @@ DEFINE_TYPE_WRAPPER_GET(ThreeComponentPositionVertical, offset);
 
 // MARK: Four Component Types
 struct FourComponentPositionHorizontal {
-    SpaceSeparatedTuple<Variant<Keyword::Left, Keyword::Right, Keyword::XStart, Keyword::XEnd>, LengthPercentage<>> offset;
+    SpaceSeparatedTuple<Variant<Keyword::Left, Keyword::Right, Keyword::XStart, Keyword::XEnd>, LengthPercentage<AllUnzoomed>> offset;
 
     bool operator==(const FourComponentPositionHorizontal&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(FourComponentPositionHorizontal, offset);
 
 struct FourComponentPositionVertical {
-    SpaceSeparatedTuple<Variant<Keyword::Top, Keyword::Bottom, Keyword::YStart, Keyword::YEnd>, LengthPercentage<>> offset;
+    SpaceSeparatedTuple<Variant<Keyword::Top, Keyword::Bottom, Keyword::YStart, Keyword::YEnd>, LengthPercentage<AllUnzoomed>> offset;
 
     bool operator==(const FourComponentPositionVertical&) const = default;
 };

@@ -54,7 +54,7 @@ static uint8_t conv_bin2ascii(uint8_t a) {
   return ret;
 }
 
-static_assert(sizeof(((EVP_ENCODE_CTX *)(NULL))->data) % 3 == 0,
+static_assert(sizeof(((EVP_ENCODE_CTX *)nullptr)->data) % 3 == 0,
               "data length must be a multiple of base64 chunk size");
 
 int EVP_EncodedLength(size_t *out_len, size_t len) {

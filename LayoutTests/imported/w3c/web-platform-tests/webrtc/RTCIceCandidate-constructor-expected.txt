@@ -13,8 +13,11 @@ PASS new RTCIceCandidate({ candidate: '', sdpMid: 'audio' }
 PASS new RTCIceCandidate({ candidate: null, sdpMLineIndex: 0 }
 PASS new RTCIceCandidate({ ... }) with valid candidate string and sdpMid
 PASS new RTCIceCandidate({ ... }) with invalid candidate string and sdpMid
-PASS new RTCIceCandidate({ ... }) with nondefault values for all fields
-PASS new RTCIceCandidate({ ... }) with nondefault values for all fields, tcp candidate
+PASS new RTCIceCandidate({ ... }) with nondefault values for most fields
+PASS new RTCIceCandidate({ ... }) with nondefault values for most fields, tcp candidate
+FAIL new RTCIceCandidate({ ... }) with nondefault values for all fields assert_equals: relayProtocol expected (string) "udp" but got (undefined) undefined
+FAIL new RTCIceCandidate({ ... }) with nondefault values for all fields, tcp candidate assert_equals: url expected (string) "turn:turn.example.net" but got (undefined) undefined
+FAIL new RTCIceCandidate({ relayProtocol, url }) cloned vs signaled assert_equals: relayProtocol cloned expected (string) "tls" but got (undefined) undefined
 PASS new RTCIceCandidate({ ... }) with invalid sdpMid
 PASS new RTCIceCandidate({ ... }) with invalid sdpMLineIndex
 

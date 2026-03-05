@@ -1,28 +1,19 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  testInputs: vec4<f32>,
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  testInputs: vec4<f16>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
-    const expected: vec4<f32> = vec4<f32>(0.0);
-    let _skTemp0 = dpdx(_globalUniforms.testInputs.x);
-    let _skTemp1 = dpdx(_globalUniforms.testInputs.xy);
-    let _skTemp2 = dpdx(_globalUniforms.testInputs.xyz);
-    let _skTemp3 = dpdx(_globalUniforms.testInputs);
-    let _skTemp4 = dpdx(coords.xx);
-    let _skTemp5 = sign(_skTemp4);
-    let _skTemp6 = dpdx(coords.yy);
-    let _skTemp7 = sign(_skTemp6);
-    let _skTemp8 = dpdx(coords);
-    let _skTemp9 = sign(_skTemp8);
-    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>(((((((_skTemp0 == expected.x) && all(_skTemp1 == expected.xy)) && all(_skTemp2 == expected.xyz)) && all(_skTemp3 == expected)) && all(_skTemp5 == vec2<f32>(1.0))) && all(_skTemp7 == vec2<f32>(0.0))) && all(_skTemp9 == vec2<f32>(1.0, 0.0))));
+    const expected: vec4<f16> = vec4<f16>(0.0h);
+    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>(((((((f16(dpdx(f32(_globalUniforms.testInputs.x))) == expected.x) && all(vec2<f16>(dpdx(vec2<f32>(_globalUniforms.testInputs.xy))) == expected.xy)) && all(vec3<f16>(dpdx(vec3<f32>(_globalUniforms.testInputs.xyz))) == expected.xyz)) && all(vec4<f16>(dpdx(vec4<f32>(_globalUniforms.testInputs))) == expected)) && all(sign(dpdx(coords.xx)) == vec2<f32>(1.0))) && all(sign(dpdx(coords.yy)) == vec2<f32>(0.0))) && all(sign(dpdx(coords)) == vec2<f32>(1.0, 0.0))));
   }
 }
 @fragment fn main() -> FSOut {

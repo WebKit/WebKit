@@ -79,7 +79,7 @@ Connection::Connection(PreferTestService preferTestService, String bundleIdentif
 void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptXPCObject(xpc_connection_create_mach_service(m_serviceName, mainDispatchQueueSingleton(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptOSObject(xpc_connection_create_mach_service(m_serviceName, mainDispatchQueueSingleton(), 0));
 
     xpc_connection_set_event_handler(m_connection.get(), [](xpc_object_t event) {
         if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_CONNECTION_INTERRUPTED) {
@@ -111,21 +111,21 @@ void Connection::sendPushMessage(PushMessageForTesting&& message, CompletionHand
 {
     printf("Injecting push message\n");
 
-    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(WTFMove(message)), WTFMove(completionHandler));
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(WTF::move(message)), WTF::move(completionHandler));
 }
 
 void Connection::getPushPermissionState(const String& scope, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
 {
     printf("Getting push permission state\n");
 
-    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WebCore::SecurityOriginData::fromURL(URL { scope })), WTFMove(completionHandler));
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WebCore::SecurityOriginData::fromURL(URL { scope })), WTF::move(completionHandler));
 }
 
 void Connection::requestPushPermission(const String& scope, CompletionHandler<void(bool)>&& completionHandler)
 {
     SAFE_PRINTF("Request push permission state for %s\n", scope.utf8());
 
-    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(WebCore::SecurityOriginData::fromURL(URL { scope })), WTFMove(completionHandler));
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(WebCore::SecurityOriginData::fromURL(URL { scope })), WTF::move(completionHandler));
 }
 
 void Connection::sendAuditToken()
@@ -145,16 +145,16 @@ void Connection::sendAuditToken()
     Vector<uint8_t> tokenVector;
     tokenVector.resize(32);
     memcpySpan(tokenVector.mutableSpan(), asByteSpan(token));
-    configuration.hostAppAuditTokenData = WTFMove(tokenVector);
+    configuration.hostAppAuditTokenData = WTF::move(tokenVector);
 
-    sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(WTFMove(configuration)));
+    sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(WTF::move(configuration)));
 }
 
-static XPCObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
+static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
 {
-    auto xpcData = WebKit::encoderToXPCData(WTFMove(encoder));
+    auto xpcData = WebKit::encoderToXPCData(WTF::move(encoder));
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
     xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, xpcData.get());
 
@@ -163,7 +163,7 @@ static XPCObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::En
 
 bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder) const
 {
-    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    auto dictionary = messageDictionaryFromEncoder(WTF::move(encoder));
     xpc_connection_send_message(m_connection.get(), dictionary.get());
 
     return true;
@@ -171,8 +171,8 @@ bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& 
 
 bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
-    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
-    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    auto dictionary = messageDictionaryFromEncoder(WTF::move(encoder));
+    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([completionHandler = WTF::move(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
             ASSERT_NOT_REACHED();
             return completionHandler(nullptr);

@@ -13,9 +13,9 @@ const options = { overflow: "reject" };
 
 const bce1 = Temporal.PlainDate.from({ era: "bce", eraYear: 1, monthCode: "M06", day: 1, calendar }, options);
 const ce1 = Temporal.PlainDate.from({ era: "ce", eraYear: 1, monthCode: "M06", day: 1, calendar }, options);
-const ce1868 = Temporal.PlainDate.from({ era: "ce", eraYear: 1868, monthCode: "M10", day: 22, calendar }, options);
-const meiji1 = Temporal.PlainDate.from({ era: "meiji", eraYear: 1, monthCode: "M10", day: 23, calendar}, options);
-const meiji5 = Temporal.PlainDate.from({ era: "meiji", eraYear: 5, monthCode: "M01", day: 15, calendar }, options);
+const ce1872 = Temporal.PlainDate.from({ era: "ce", eraYear: 1872, monthCode: "M12", day: 31, calendar }, options);
+const meiji6 = Temporal.PlainDate.from({ era: "meiji", eraYear: 6, monthCode: "M01", day: 1, calendar}, options);
+const meiji7 = Temporal.PlainDate.from({ era: "meiji", eraYear: 7, monthCode: "M01", day: 15, calendar }, options);
 const meiji45 = Temporal.PlainDate.from({ era: "meiji", eraYear: 45, monthCode: "M05", day: 19, calendar }, options);
 const taisho1 = Temporal.PlainDate.from({ era: "taisho", eraYear: 1, monthCode: "M08", day: 9, calendar }, options);
 const taisho6 = Temporal.PlainDate.from({ era: "taisho", eraYear: 6, monthCode: "M03", day: 15, calendar }, options);
@@ -40,7 +40,6 @@ const tests = [
     reiwa2, heisei30,
     [-2, 0, 0, 0, "-2y backwards from Heisei 30 March to Reiwa 2 March"],
     [0, -24, 0, 0, "-24mo backwards from Heisei 30 March to Reiwa 2 March"],
-  
   ],
   // Within same year but different eras
   [
@@ -97,18 +96,16 @@ const tests = [
     [0, -7, 0, -10, "-7mo -10d backwards from Taisho 15 July 20 to Showa 1 December 30"],
     [0, -7, 0, -10, "-7mo -10d backwards from Taisho 15 July 20 to Showa 1 December 30"],
   ],
-  // From Meiji 5 (1872) to Taisho 6 (1917) - crossing era boundary
-  // Note that contemporarily January 15 1872 would have been Meiji 4 in the
-  // pre-1873 lunisolar calendar, but the spec-mandated behaviour is proleptic
+  // From Meiji 7 (1874) to Taisho 6 (1917) - crossing era boundary
   [
-    meiji5, taisho6,
-    [45, 2, 0, 0, "45y 2mo from Meiji 5 January to Taisho 6 March"],
-    [0, 542, 0, 0, "542mo from Meiji 5 January to Taisho 6 March"],
+    meiji7, taisho6,
+    [43, 2, 0, 0, "43y 2mo from Meiji 7 January to Taisho 6 March"],
+    [0, 518, 0, 0, "518mo from Meiji 7 January to Taisho 6 March"],
   ],
   [
-    taisho6, meiji5,
-    [-45, -2, 0, 0, "-45y -2mo backwards from Meiji 5 January to Taisho 6 March"],
-    [0, -542, 0, 0, "-542mo backwards from Meiji 5 January to Taisho 6 March"],
+    taisho6, meiji7,
+    [-43, -2, 0, 0, "-43y -2mo backwards from Meiji 7 January to Taisho 6 March"],
+    [0, -518, 0, 0, "-518mo backwards from Meiji 7 January to Taisho 6 March"],
   ],
   // Within same year but different eras
   [
@@ -121,16 +118,16 @@ const tests = [
     [0, -2, 0, -21, "-2mo -21d backwards from Meiji 45 May 19 to Taisho 1 August 9"],
     [0, -2, 0, -21, "-2mo -21d backwards from Meiji 45 May 19 to Taisho 1 August 9"],
   ],
-  // Last pre-Meiji day to first day of Meiji era
+  // Last pre-solar-calendar CE day to first solar-calendar day of Meiji era
   [
-    ce1868, meiji1,
-    [0, 0, 0, 1, "from day before Meiji era to first day"],
-    [0, 0, 0, 1, "from day before Meiji era to first day"],
+    ce1872, meiji6,
+    [0, 0, 0, 1, "from day before solar Meiji era to first day"],
+    [0, 0, 0, 1, "from day before solar Meiji era to first day"],
   ],
   [
-    meiji1, ce1868,
-    [0, 0, 0, -1, "backwards from day before Meiji era to first day"],
-    [0, 0, 0, -1, "backwards from day before Meiji era to first day"],
+    meiji6, ce1872,
+    [0, 0, 0, -1, "backwards from day before solar Meiji era to first day"],
+    [0, 0, 0, -1, "backwards from day before solar Meiji era to first day"],
   ],
   // CE-BCE boundary
   [

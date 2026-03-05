@@ -30,10 +30,13 @@
 
 #include "GamepadData.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 using WebCore::SharedGamepadValue;
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGamepad);
 
 WebGamepad::WebGamepad(const GamepadData& gamepadData)
     : PlatformGamepad(gamepadData.index())

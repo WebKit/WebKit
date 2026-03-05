@@ -61,7 +61,7 @@ PageNetworkAgent::~PageNetworkAgent() = default;
 Inspector::Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
     if (loader) {
-        if (auto* pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent())
+        if (CheckedPtr pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent())
             return pageAgent->loaderId(loader);
     }
     return { };
@@ -70,7 +70,7 @@ Inspector::Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(Docume
 Inspector::Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
 {
     if (loader) {
-        if (auto* pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent())
+        if (CheckedPtr pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent())
             return pageAgent->frameId(loader->frame());
     }
     return { };
@@ -111,14 +111,14 @@ void PageNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
 
 bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& bytesPerSecondLimit)
 {
-    return m_client && m_client->setEmulatedConditions(WTFMove(bytesPerSecondLimit));
+    return m_client && m_client->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
-    auto* pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent();
+    CheckedPtr pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent();
     if (!pageAgent) {
         errorString = "Page domain must be enabled"_s;
         return nullptr;
@@ -128,7 +128,7 @@ ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Prot
     if (!frame)
         return nullptr;
 
-    auto* document = frame->document();
+    SUPPRESS_UNCOUNTED_LOCAL auto* document = frame->document();
     if (!document) {
         errorString = "Missing frame of docuemnt for given frameId"_s;
         return nullptr;
@@ -142,7 +142,7 @@ void PageNetworkAgent::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessa
     RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return;
-    localMainFrame->console().addMessage(WTFMove(message));
+    localMainFrame->console().addMessage(WTF::move(message));
 }
 
 } // namespace WebCore

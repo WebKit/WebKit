@@ -23,7 +23,7 @@ info: |
   ...
   3. Let relativeStart be ? ToInteger(start).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -38,4 +38,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     sample.fill(1n, start);
   });
-});
+}, null, ["passthrough"]);

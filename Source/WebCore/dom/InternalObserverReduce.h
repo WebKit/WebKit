@@ -39,6 +39,6 @@ class ReducerCallback;
 class ScriptExecutionContext;
 struct SubscribeOptions;
 
-void createInternalObserverOperatorReduce(ScriptExecutionContext&, Observable&, Ref<ReducerCallback>&&, JSC::JSValue, const SubscribeOptions&, Ref<DeferredPromise>&&);
+void createInternalObserverOperatorReduce(ScriptExecutionContext&, Observable&, Ref<ReducerCallback>&&, JSC::JSValue, SubscribeOptions&&, Ref<DeferredPromise>&&);
 
 } // namespace WebCore

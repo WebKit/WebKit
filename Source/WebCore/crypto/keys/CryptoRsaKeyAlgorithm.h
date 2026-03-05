@@ -34,7 +34,7 @@ struct CryptoRsaKeyAlgorithm : CryptoKeyAlgorithm {
     // The length, in bits, of the RSA modulus
     unsigned modulusLength;
     // The RSA public exponent
-    RefPtr<Uint8Array> publicExponent;
+    Ref<Uint8Array> publicExponent;
 };
 
 }

@@ -68,7 +68,7 @@ class ActivityObserver;
 #if USE(COCOA_EVENT_LOOP)
 class SchedulePair;
 struct SchedulePairHash;
-using SchedulePairHashSet = HashSet<RefPtr<SchedulePair>, SchedulePairHash>;
+using SchedulePairHashSet = HashSet<Ref<SchedulePair>, SchedulePairHash>;
 #endif
 
 #if USE(CF)
@@ -94,7 +94,7 @@ public:
 #endif
 
     WTF_EXPORT_PRIVATE static RunLoop& currentSingleton();
-    WTF_EXPORT_PRIVATE static RunLoop& mainSingleton();
+    WTF_EXPORT_PRIVATE static RunLoop& NODELETE mainSingleton();
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static RunLoop& webSingleton();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
@@ -168,7 +168,7 @@ public:
         WTF_EXPORT_PRIVATE void setPriority(int);
 #endif
 
-        const ASCIILiteral& description() const { return m_description; }
+        ASCIILiteral description() const { return m_description; }
 
     private:
         WTF_EXPORT_PRIVATE void start(Seconds interval, bool repeat);
@@ -205,7 +205,7 @@ public:
         template <typename TimerFiredClass>
         requires (WTF::HasThreadSafeWeakPtrFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, ASCIILiteral description, TimerFiredClass* object, void (TimerFiredClass::*function)())
-            : Timer(WTFMove(runLoop), description, [weakObject = ThreadSafeWeakPtr { *object }, function] {
+            : Timer(WTF::move(runLoop), description, [weakObject = ThreadSafeWeakPtr { *object }, function] {
                 if (RefPtr object = weakObject.get())
                     (object.get()->*function)();
             })
@@ -215,7 +215,7 @@ public:
         template <typename TimerFiredClass>
         requires (!WTF::HasThreadSafeWeakPtrFunctions<TimerFiredClass>::value && WTF::HasWeakPtrFunctions<TimerFiredClass>::value && WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, ASCIILiteral description, TimerFiredClass* object, void (TimerFiredClass::*function)())
-            : Timer(WTFMove(runLoop), description, [weakObject = WeakPtr { *object }, function] {
+            : Timer(WTF::move(runLoop), description, [weakObject = WeakPtr { *object }, function] {
                 if (RefPtr object = weakObject.get())
                     (object.get()->*function)();
             })
@@ -225,7 +225,7 @@ public:
         template <typename TimerFiredClass>
         requires (!WTF::HasThreadSafeWeakPtrFunctions<TimerFiredClass>::value && WTF::HasWeakPtrFunctions<TimerFiredClass>::value && !WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, ASCIILiteral description, TimerFiredClass* object, void (TimerFiredClass::*function)())
-            : Timer(WTFMove(runLoop), description, [weakObject = WeakPtr { *object }, function] {
+            : Timer(WTF::move(runLoop), description, [weakObject = WeakPtr { *object }, function] {
                 if (CheckedPtr object = weakObject.get())
                     (object.get()->*function)();
             })
@@ -235,15 +235,15 @@ public:
         template <typename TimerFiredClass>
         requires (!WTF::HasThreadSafeWeakPtrFunctions<TimerFiredClass>::value && !WTF::HasWeakPtrFunctions<TimerFiredClass>::value && WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, ASCIILiteral description, TimerFiredClass* object, void (TimerFiredClass::*function)())
-            : Timer(WTFMove(runLoop), description, [object = CheckedRef { *object }, function] {
+            : Timer(WTF::move(runLoop), description, [object = CheckedRef { *object }, function] {
                 (object.ptr()->*function)();
             })
         {
         }
 
         Timer(Ref<RunLoop>&& runLoop, ASCIILiteral description, Function<void ()>&& function)
-            : TimerBase(WTFMove(runLoop), description)
-            , m_function(WTFMove(function))
+            : TimerBase(WTF::move(runLoop), description)
+            , m_function(WTF::move(function))
         {
         }
 
@@ -252,7 +252,7 @@ public:
         template <typename TimerFiredClass>
         requires (!WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, ASCIILiteral description, TimerFiredClass* object, void (TimerFiredClass::*function)())
-            : Timer(WTFMove(runLoop), description, std::bind(function, object))
+            : Timer(WTF::move(runLoop), description, std::bind(function, object))
         {
             static_assert(IsDeprecatedTimerSmartPointerException<TimerFiredClass>::value, "Classes using RunLoop::Timer should either be RefCounted or CanMakeCheckedPtr");
         }
@@ -274,7 +274,7 @@ public:
 
         void setFunction(Function<void()>&& function)
         {
-            m_function = WTFMove(function);
+            m_function = WTF::move(function);
         }
     private:
         void fired() final { m_function(); }
@@ -297,12 +297,20 @@ private:
     void registerTimer(TimerBase&);
     void unregisterTimer(TimerBase&);
 
+#if ENABLE(UNFAIR_LOCK)
+    mutable UnfairLock m_registeredTimerLock;
+#else
     mutable Lock m_registeredTimerLock;
+#endif
     HashSet<TimerBase *> m_registeredTimers;
 
     Deque<Function<void()>> m_currentIteration;
 
+#if ENABLE(UNFAIR_LOCK)
+    UnfairLock m_nextIterationLock;
+#else
     Lock m_nextIterationLock;
+#endif
     Deque<Function<void()>> m_nextIteration WTF_GUARDED_BY_LOCK(m_nextIterationLock);
 
     bool m_isFunctionDispatchSuspended { false };

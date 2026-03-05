@@ -98,7 +98,7 @@ static RetainPtr<CFTypeRef> keyToCFType(const CoreIPCCFDictionary::KeyType& keyT
 }
 
 CoreIPCCFDictionary::CoreIPCCFDictionary(std::unique_ptr<KeyValueVector>&& vector)
-    : m_vector(WTFMove(vector)) { }
+    : m_vector(WTF::move(vector)) { }
 
 CoreIPCCFDictionary::CoreIPCCFDictionary(CoreIPCCFDictionary&&) = default;
 
@@ -116,7 +116,7 @@ CoreIPCCFDictionary::CoreIPCCFDictionary(CFDictionaryRef dictionary)
             return;
         if (IPC::typeFromCFTypeRef(value) == IPC::CFType::Unknown)
             return;
-        m_vector->append({ WTFMove(*keyType), CoreIPCCFType(value) });
+        m_vector->append({ WTF::move(*keyType), CoreIPCCFType(value) });
     }];
 }
 

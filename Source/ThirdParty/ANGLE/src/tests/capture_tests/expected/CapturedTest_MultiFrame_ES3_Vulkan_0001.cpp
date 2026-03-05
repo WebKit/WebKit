@@ -40,8 +40,9 @@ const char *const glShaderSource_string_3[] = {
 void SetupReplayContext1(void)
 {
     eglMakeCurrent(gEGLDisplay, gSurfaceMap2[0], gSurfaceMap2[0], gContextMap2[1]);
+    UpdateCurrentContext(1);
     glUseProgram(gShaderProgramMap[0]);
-    UpdateCurrentProgram(0);
+    UpdateCurrentProgramPerContext(0);
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, gTransformFeedbackMap[0]);
     glViewport(0, 0, 128, 128);
     glScissor(0, 0, 128, 128);
@@ -56,12 +57,12 @@ void ReplayFrame1(void)
     glGetError();
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(gShaderProgramMap[8]);
-    UpdateCurrentProgram(8);
+    UpdateCurrentProgramPerContext(8);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 20, gClientArrays[0]);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, gClientArrays[1]);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-    glUniform1i(gUniformLocations[gCurrentProgram][0], 0);
+    glUniform1i(gUniformLocations[gCurrentProgramPerContext[gCurrentContext]][0], 0);
     UpdateClientArrayPointer(0, (const GLubyte *)GetBinaryData(0), 72);
     UpdateClientArrayPointer(1, (const GLubyte *)GetBinaryData(80), 68);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLubyte *)GetBinaryData(160));
@@ -100,12 +101,12 @@ void ReplayFrame2(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9728);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(gShaderProgramMap[11]);
-    UpdateCurrentProgram(11);
+    UpdateCurrentProgramPerContext(11);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 20, gClientArrays[0]);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, gClientArrays[1]);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-    glUniform1i(gUniformLocations[gCurrentProgram][0], 0);
+    glUniform1i(gUniformLocations[gCurrentProgramPerContext[gCurrentContext]][0], 0);
     UpdateClientArrayPointer(0, (const GLubyte *)GetBinaryData(224), 72);
     UpdateClientArrayPointer(1, (const GLubyte *)GetBinaryData(304), 68);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLubyte *)GetBinaryData(384));
@@ -150,7 +151,7 @@ void ReplayFrame3(void)
     glGetError();
     glGetProgramiv(gShaderProgramMap[14], GL_LINK_STATUS, (GLint *)gReadBuffer);
     glUseProgram(gShaderProgramMap[14]);
-    UpdateCurrentProgram(14);
+    UpdateCurrentProgramPerContext(14);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, 1, 0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -191,12 +192,12 @@ void ReplayFrame4(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9728);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(gShaderProgramMap[5]);
-    UpdateCurrentProgram(5);
+    UpdateCurrentProgramPerContext(5);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 20, gClientArrays[0]);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, gClientArrays[1]);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-    glUniform1i(gUniformLocations[gCurrentProgram][0], 0);
+    glUniform1i(gUniformLocations[gCurrentProgramPerContext[gCurrentContext]][0], 0);
     UpdateClientArrayPointer(0, (const GLubyte *)GetBinaryData(448), 72);
     UpdateClientArrayPointer(1, (const GLubyte *)GetBinaryData(528), 68);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLubyte *)GetBinaryData(608));
@@ -233,7 +234,7 @@ void ResetReplay(void)
 
     // Reset main context state
     glUseProgram(gShaderProgramMap[0]);
-    UpdateCurrentProgram(0);
+    UpdateCurrentProgramPerContext(0);
     glBindBuffer(GL_ARRAY_BUFFER, gBufferMap[0]);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, gBufferMap[0]);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);

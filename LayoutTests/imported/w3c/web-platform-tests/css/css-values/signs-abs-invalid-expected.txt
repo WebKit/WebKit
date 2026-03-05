@@ -51,4 +51,5 @@ PASS e.style['tab-size'] = "1px * sign(10%)" should not set the property value
 PASS e.style['tab-size'] = "1px * sign(1em + 10%)" should not set the property value
 PASS e.style['margin-left'] = "1px * sign(10px + 5rad)" should not set the property value
 PASS e.style['tab-size'] = "1px * sign(10px + 5rad)" should not set the property value
+PASS e.style['tab-size'] = "calc(100% + abs(1vmin * 10%))" should not set the property value
 

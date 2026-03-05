@@ -26,6 +26,7 @@
 #pragma once
 
 #include <array>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashFunctions.h>

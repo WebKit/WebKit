@@ -88,7 +88,7 @@ private:
 
 inline CancellableTask::CancellableTask(TaskCancellationGroup& cancellationGroup, Function<void()>&& task)
     : m_cancellationGroup(cancellationGroup.createHandle())
-    , m_task(WTFMove(task))
+    , m_task(WTF::move(task))
 { }
 
 inline void CancellableTask::operator()()

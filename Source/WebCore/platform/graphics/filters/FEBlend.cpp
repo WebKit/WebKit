@@ -31,6 +31,10 @@
 #include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEBlendCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEBlend> FEBlend::create(BlendMode mode, DestinationColorSpace colorSpace)
@@ -55,6 +59,24 @@ bool FEBlend::setBlendMode(BlendMode mode)
         return false;
     m_mode = mode;
     return true;
+}
+
+OptionSet<FilterRenderingMode> FEBlend::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEBlend::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEBlendCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FEBlend::createSoftwareApplier() const

@@ -41,7 +41,7 @@ Animation::Animation()
 Animation::Animation(SingleAnimationName&& name)
     : Animation { }
 {
-    setName(WTFMove(name));
+    setName(WTF::move(name));
 }
 
 Animation::Data::Data()

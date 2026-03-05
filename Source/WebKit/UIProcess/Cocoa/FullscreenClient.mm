@@ -146,7 +146,7 @@ void FullscreenClient::requestPresentingViewController(CompletionHandler<void(UI
     if (!m_delegateMethods.webViewRequestPresentingViewController)
         return completionHandler(nil, nil);
 
-    [m_delegate _webView:m_webView.get().get() requestPresentingViewControllerWithCompletionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    [m_delegate.get() _webView:m_webView.get().get() requestPresentingViewControllerWithCompletionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
 }
 #endif
 

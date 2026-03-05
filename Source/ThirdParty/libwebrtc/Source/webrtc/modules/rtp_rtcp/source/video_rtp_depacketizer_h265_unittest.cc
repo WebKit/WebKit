@@ -26,12 +26,7 @@
 namespace webrtc {
 namespace {
 
-using ::testing::Each;
-using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
-using ::testing::Eq;
-using ::testing::IsEmpty;
-using ::testing::SizeIs;
 
 TEST(VideoRtpDepacketizerH265Test, SingleNalu) {
   uint8_t packet[3] = {0x26, 0x02,

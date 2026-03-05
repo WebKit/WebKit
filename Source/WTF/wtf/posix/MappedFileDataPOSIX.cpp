@@ -30,7 +30,7 @@ namespace WTF::FileSystemImpl {
 
 #if HAVE(MMAP)
 MappedFileData::MappedFileData(MmapSpan<uint8_t>&& fileData)
-    : m_fileData(WTFMove(fileData))
+    : m_fileData(WTF::move(fileData))
 { }
 
 MappedFileData::~MappedFileData() = default;

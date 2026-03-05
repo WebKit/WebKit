@@ -24,4 +24,8 @@ PASS U+00A0 NBSP  should not be parsed between directive name and value - meta t
 PASS U+00A0 NBSP  should not be parsed between directive name and value - HTTP header
 PASS U+00A0 NBSP  should not be parsed inside directive value - meta tag
 PASS U+00A0 NBSP  should not be parsed inside directive value - HTTP header
+PASS U+000B VT    should not be parsed between directive name and value - meta tag
+PASS U+000B VT    should not be parsed between directive name and value - HTTP header
+PASS U+000B VT    should not be parsed inside directive value - meta tag
+PASS U+000B VT    should not be parsed inside directive value - HTTP header
 

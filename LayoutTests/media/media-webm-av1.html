@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ SWVPDecodersAlwaysEnabled=true ] -->
+<html>
+<head>
+<title>webm with Av1 track</title>
+<script src=video-test.js></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const video = document.getElementsByTagName('video')[0];
+        video.src = 'content/test-av1-709-fullrange.webm';
+        await waitFor(video, 'loadedmetadata');
+
+        video.play();
+        await waitFor(video, 'playing');
+        await waitFor(video, 'ended');
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

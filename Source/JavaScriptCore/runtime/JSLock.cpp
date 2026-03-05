@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Library General Public License
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USA 
+ * Boston, MA 02110-1301, USA
  *
  */
 
@@ -114,7 +114,7 @@ void JSLock::lock(intptr_t lockCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 }
 
 void JSLock::didAcquireLock()
-{  
+{
     // FIXME: What should happen to the per-thread identifier table if we don't have a VM?
     if (!m_vm)
         return;
@@ -162,11 +162,123 @@ void JSLock::unlock()
     unlock(1);
 }
 
+#if PLATFORM(COCOA) && CPU(ADDRESS64) && CPU(ARM64)
+// FIXME: rdar://168614004
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSLock::dumpInfoAndCrashForLockNotOwned() // __attribute__((optnone))
+{
+    size_t pageSize = WTF::pageSize();
+    RELEASE_ASSERT(isPowerOfTwo(pageSize));
+    uintptr_t pageMask = ~(static_cast<uintptr_t>(pageSize) - 1);
+
+    uintptr_t* thisAsIntPtr = std::bit_cast<uintptr_t*>(this);
+    uintptr_t thisAsInt = std::bit_cast<uintptr_t>(this);
+    uintptr_t thisEndAsInt = thisAsInt + sizeof(JSLock);
+    uintptr_t blockStartAsInt = thisAsInt & pageMask;
+    uintptr_t blockEndAsInt = blockStartAsInt + pageSize;
+    char* blockStart = std::bit_cast<char*>(blockStartAsInt);
+
+    register uint64_t dumpState __asm__("x28");
+
+#define updateDumpState(newState, used1, used2, used3) do { \
+        WTF::compilerFence(); \
+        __asm__ volatile ("mov %0, #" #newState : "=r"(dumpState) : "r"(used1), "r"(used2), "r"(used3)); \
+        WTF::compilerFence(); \
+    } while (false)
+
+    updateDumpState(0x1111, dumpState, dumpState, dumpState);
+
+    register void* currentThread __asm__("x27") = &Thread::currentSingleton();
+    updateDumpState(0x2222, currentThread, dumpState, dumpState);
+
+    // Checks if the this pointer is corrupted. Being out of the page bounds is 1 example of corruption.
+    bool lockIsWithinPageBoundary = (blockStartAsInt <= thisAsInt) && (thisEndAsInt <= blockEndAsInt);
+    register uintptr_t miscState __asm__("x26") = lockIsWithinPageBoundary;
+    updateDumpState(0x3333, miscState, dumpState, dumpState);
+
+    register uintptr_t lockWord0 __asm__("x25") = thisAsIntPtr[0];
+    updateDumpState(0x4444, lockWord0, dumpState, dumpState);
+
+    register void* ownerThread __asm__("x24") = m_ownerThread.get();
+    updateDumpState(0x5555, ownerThread, dumpState, dumpState);
+
+    register uintptr_t lockWord2 __asm__("x23") = thisAsIntPtr[2];
+    register uintptr_t lockWord3 __asm__("x22") = thisAsIntPtr[3];
+    updateDumpState(0x6666, lockWord2, lockWord3, dumpState);
+
+    miscState |= (!!m_vm) << 8; // Check if VM is null.
+    updateDumpState(0x7777, miscState, dumpState, dumpState);
+
+    // Check if the page is zero.
+    register uintptr_t numZeroBytesBeforeAfter __asm__("x21") = 0;
+
+    uintptr_t totalZeroBytesInPage = 0;
+    uintptr_t currentZeroBytes = 0;
+
+    // Count zero bytes before JSLock.
+    uintptr_t bytesBeforeLock = thisAsInt - blockStartAsInt;
+    for (auto mem = blockStart; mem < blockStart + bytesBeforeLock; mem++) {
+        bool byteIsZero = !*mem;
+        if (byteIsZero)
+            currentZeroBytes++;
+    }
+    numZeroBytesBeforeAfter = currentZeroBytes;
+    numZeroBytesBeforeAfter |= bytesBeforeLock << 16;
+    updateDumpState(0x8888, numZeroBytesBeforeAfter, bytesBeforeLock, currentZeroBytes);
+
+    totalZeroBytesInPage += currentZeroBytes;
+
+    // Count zero bytes after JSLock.
+    currentZeroBytes = 0;
+    uintptr_t bytesAfterBlock = pageSize - (thisAsInt + sizeof(JSLock));
+    for (auto mem = blockStart + bytesBeforeLock + sizeof(JSLock); mem < blockStart + pageSize; mem++) {
+        bool byteIsZero = !*mem;
+        if (byteIsZero)
+            currentZeroBytes++;
+    }
+    numZeroBytesBeforeAfter |= currentZeroBytes << 32;
+    numZeroBytesBeforeAfter |= bytesAfterBlock << 48;
+    updateDumpState(0x9999, numZeroBytesBeforeAfter, bytesAfterBlock, currentZeroBytes);
+
+    totalZeroBytesInPage += currentZeroBytes;
+
+    register uintptr_t numZeroBytesInLock __asm__("x20") = 0;
+    currentZeroBytes = 0;
+    for (auto mem = blockStart + bytesBeforeLock; mem < blockStart + bytesBeforeLock + sizeof(JSLock); mem++) {
+        bool byteIsZero = !*mem;
+        if (byteIsZero)
+            currentZeroBytes++;
+    }
+    numZeroBytesInLock = currentZeroBytes;
+    numZeroBytesInLock |= sizeof(JSLock) << 16;
+    updateDumpState(0xAAAA, numZeroBytesInLock, currentZeroBytes, dumpState);
+
+    totalZeroBytesInPage += currentZeroBytes;
+    numZeroBytesInLock |= totalZeroBytesInPage << 32;
+    updateDumpState(0xBBBB, numZeroBytesInLock, totalZeroBytesInPage, currentZeroBytes);
+
+    register VM* vmPtr __asm__("r19") = m_vm;
+    register AtomStringTable* atomStringTable __asm__("x15") = m_entryAtomStringTable;
+    register JSLock* thisPtr __asm__("x14") = this;
+    updateDumpState(0xCCCC, vmPtr, atomStringTable, thisPtr);
+
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(dumpState), "r"(miscState), "r"(lockWord0), "r"(currentThread), "r"(ownerThread), "r"(lockWord2), "r"(lockWord3), "r"(numZeroBytesBeforeAfter), "r"(numZeroBytesInLock), "r"(vmPtr), "r"(atomStringTable), "r"(thisPtr));
+    __builtin_unreachable();
+
+#undef updateDumpState
+}
+#endif
+
 // Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function conditionally unlocks m_lock, which
 // is not supported by analysis.
 void JSLock::unlock(intptr_t unlockCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
+#if PLATFORM(COCOA) && CPU(ADDRESS64) && CPU(ARM64)
+    if (!currentThreadIsHoldingLock()) [[unlikely]]
+        dumpInfoAndCrashForLockNotOwned();
+#else
     RELEASE_ASSERT(currentThreadIsHoldingLock());
+#endif
+
     ASSERT(m_lockCount >= unlockCount);
 
     // Maintain m_lockCount while calling willReleaseLock() so that its callees know that
@@ -270,7 +382,7 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
 JSLock::DropAllLocks::DropAllLocks(VM* vm)
     : m_droppedLockCount(0)
     // If the VM is in the middle of being destroyed then we don't want to resurrect it
-    // by allowing DropAllLocks to ref it. By this point the JSLock has already been 
+    // by allowing DropAllLocks to ref it. By this point the JSLock has already been
     // released anyways, so it doesn't matter that DropAllLocks is a no-op.
     , m_vm(vm->heap.isShuttingDown() ? nullptr : vm)
 {

@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGCommon.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGNaturalLoops.h"
@@ -38,17 +39,6 @@
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace DFG {
-
-static FunctionAllowlist& ensureGlobalFTLAllowlist()
-{
-    static LazyNeverDestroyed<FunctionAllowlist> ftlAllowlist;
-    static std::once_flag initializeAllowlistFlag;
-    std::call_once(initializeAllowlistFlag, [] {
-        const char* functionAllowlistFile = Options::ftlAllowlist();
-        ftlAllowlist.construct(functionAllowlistFile);
-    });
-    return ftlAllowlist;
-}
 
 using NaturalLoop = CPSNaturalLoop;
 
@@ -72,10 +62,10 @@ public:
         if (!Options::bytecodeRangeToFTLCompile().isInRange(m_graph.m_profiledBlock->instructionsSize()))
             return false;
 
+#if ENABLE(FTL_JIT)
         if (!ensureGlobalFTLAllowlist().contains(m_graph.m_profiledBlock))
             return false;
-        
-#if ENABLE(FTL_JIT)
+
         FTL::CapabilityLevel level = FTL::canCompile(m_graph);
         if (level == FTL::CannotCompile)
             return false;
@@ -122,7 +112,7 @@ public:
                         if (it != naturalLoopToLoopHint.end())
                             descriptor.osrEntryCandidates.append(it->value);
                     }
-                    tierUpHierarchy.add(bytecodeIndex, WTFMove(descriptor));
+                    tierUpHierarchy.add(bytecodeIndex, WTF::move(descriptor));
                 }
                 break;
             }
@@ -147,7 +137,7 @@ public:
             }
 
             if (!tierUpCandidates.isEmpty())
-                m_graph.m_plan.tierUpInLoopHierarchy().ensure(entry.key, [&] { return FixedVector<BytecodeIndex>(WTFMove(tierUpCandidates)); });
+                m_graph.m_plan.tierUpInLoopHierarchy().ensure(entry.key, [&] { return FixedVector<BytecodeIndex>(WTF::move(tierUpCandidates)); });
         }
         m_graph.m_plan.setWillTryToTierUp(true);
         return true;

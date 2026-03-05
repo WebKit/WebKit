@@ -299,7 +299,7 @@ bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>& buffer)
 
     Vector<uint8_t> convertedFont;
     if (convertWOFFToSfnt(*buffer, convertedFont))
-        buffer = SharedBuffer::create(WTFMove(convertedFont));
+        buffer = SharedBuffer::create(WTF::move(convertedFont));
     else
         buffer = nullptr;
 

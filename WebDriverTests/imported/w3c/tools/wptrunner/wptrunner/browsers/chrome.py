@@ -86,6 +86,15 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         # fail to create a session if they don't recognize this capability.
         chrome_options["quitGracefully"] = True
 
+    if trace_categories := kwargs.get("trace_categories"):
+        executor_kwargs["enable_tracing"] = True
+        capabilities["goog:loggingPrefs"] = {
+            "performance": "INFO",
+        }
+        chrome_options["perfLoggingPrefs"] = {
+            "traceCategories": trace_categories,
+        }
+
     # Here we set a few Chrome flags that are always passed.
     # ChromeDriver's "acceptInsecureCerts" capability only controls the current
     # browsing context, whereas the CLI flag works for workers, too.
@@ -140,13 +149,14 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     # require local CDP access.
     chrome_options["args"].append("--remote-debugging-pipe")
 
-    # Classify `http-private`, `http-public` and https variants in the
+    # Classify `http-local`, `http-public` and https variants in the
     # appropriate IP address spaces.
     # For more details, see: https://github.com/web-platform-tests/rfcs/blob/master/rfcs/address_space_overrides.md
+    # and https://github.com/explainers-by-googlers/local-network-access
     address_space_overrides_ports = [
-        ("http-private", "private"),
+        ("http-local", "local"),
         ("http-public", "public"),
-        ("https-private", "private"),
+        ("https-local", "local"),
         ("https-public", "public"),
     ]
     address_space_overrides_arg = ",".join(
@@ -163,7 +173,7 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
 
     # Always enable ViewTransitions long callback timeout to avoid erroneous
     # failures due to implicit timeout within the API.
-    blink_features = ['ViewTransitionLongCallbackTimeoutForTesting']
+    blink_features = ['ViewTransitionLongCallbackTimeoutForTesting', 'NoFontAntialiasing']
 
     if kwargs["enable_mojojs"]:
         blink_features.extend(['MojoJS', 'MojoJSTest'])
@@ -174,16 +184,26 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         # https://chromium.googlesource.com/chromium/src/+/HEAD/docs/gpu/swiftshader.md
         chrome_options["args"].extend(["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
 
-    if kwargs["enable_experimental"]:
-        chrome_options["args"].extend(["--enable-experimental-web-platform-features"])
-
     # Copy over any other flags that were passed in via `--binary-arg` or the
     # subsuite config.
     binary_args = kwargs.get("binary_args", []) + subsuite.config.get("binary_args", [])
     for arg in binary_args:
+        if arg == "--stable-release-mode":
+            continue
         if arg not in chrome_options["args"]:
             chrome_options["args"].append(arg)
 
+    # Enable experimental features based on stable release mode setting. It is
+    # unfortunately that we need to do this based on a content shell specific
+    # setting, we choose to do this because we can not dynamically set
+    # enable-experimental in run_wpt_tests.py.
+    if kwargs["enable_experimental"] is None and "--stable-release-mode" not in binary_args:
+        chrome_options["args"].extend(["--enable-experimental-web-platform-features",
+                                       "--enable-blink-test-features"])
+
+    # Upstream CI should always explicitly enable/disable experimental features.
+    if kwargs["enable_experimental"]:
+        chrome_options["args"].extend(["--enable-experimental-web-platform-features"])
 
     # Pass the --headless=new flag to Chrome if WPT's own --headless flag was
     # set. '--headless' should always mean the new headless mode, as the old
@@ -283,7 +303,12 @@ class ChromeBrowser(WebDriverBrowser):
     def settings(self, test: Test) -> BrowserSettings:
         """ Required to store `require_webdriver_bidi` in browser settings."""
         settings = super().settings(test)
-        self._require_webdriver_bidi = test.testdriver_features is not None and 'bidi' in test.testdriver_features
+        self._require_webdriver_bidi = (
+            test.testdriver_features is not None and (
+                'bidi' in test.testdriver_features or
+                'extensions' in test.testdriver_features
+            )
+        )
 
         return {
             **settings,

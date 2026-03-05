@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/WeakGCSet.h>
 #include <WebCore/DOMTimer.h>
 #include <WebCore/EventLoop.h>
 #include <WebCore/ScriptExecutionContext.h>
@@ -36,7 +37,7 @@ namespace WebCore {
 
 inline bool ScriptExecutionContext::addTimeout(int timeoutId, DOMTimer& timer)
 {
-    return m_timeouts.add(timeoutId, &timer).isNewEntry;
+    return m_timeouts.add(timeoutId, timer).isNewEntry;
 }
 
 inline RefPtr<DOMTimer> ScriptExecutionContext::takeTimeout(int timeoutId)
@@ -47,11 +48,6 @@ inline RefPtr<DOMTimer> ScriptExecutionContext::takeTimeout(int timeoutId)
 inline DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
 {
     return m_timeouts.get(timeoutId);
-}
-
-inline CheckedRef<EventLoopTaskGroup> ScriptExecutionContext::checkedEventLoop()
-{
-    return eventLoop();
 }
 
 template<typename... Arguments>
@@ -67,13 +63,13 @@ void ScriptExecutionContext::enqueueTaskWhenSettled(Ref<Promise>&& promise, Task
 {
     auto request = NativePromiseRequest::create();
     WeakPtr weakRequest { request.get() };
-    auto command = promise->whenSettled(nativePromiseDispatcher(), [weakThis = WeakPtr { *this }, taskSource, task = WTFMove(task), request = WTFMove(request)] (auto&& result) mutable {
+    auto command = promise->whenSettled(protect(nativePromiseDispatcher()), [weakThis = WeakPtr { *this }, taskSource, task = WTF::move(task), request = WTF::move(request)] (auto&& result) mutable {
         request->complete();
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->eventLoop().queueTask(taskSource, [task = WTFMove(task), result = WTFMove(result)] () mutable {
-            task(WTFMove(result));
+        protectedThis->eventLoop().queueTask(taskSource, [task = WTF::move(task), result = WTF::move(result)] () mutable {
+            task(WTF::move(result));
         });
     });
     if (weakRequest) {
@@ -85,12 +81,12 @@ void ScriptExecutionContext::enqueueTaskWhenSettled(Ref<Promise>&& promise, Task
 template<typename Promise, typename TaskType, typename Finalizer>
 void ScriptExecutionContext::enqueueTaskWhenSettled(Ref<Promise>&& promise, TaskSource taskSource, TaskType&& task, Finalizer&& finalizer)
 {
-    enqueueTaskWhenSettled(WTFMove(promise), taskSource, CompletionHandlerWithFinalizer<void(typename Promise::Result&&)>(WTFMove(task), WTFMove(finalizer)));
+    enqueueTaskWhenSettled(WTF::move(promise), taskSource, CompletionHandlerWithFinalizer<void(typename Promise::Result&&)>(WTF::move(task), WTF::move(finalizer)));
 }
 
 inline ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
     : Task([&consoleMessage](ScriptExecutionContext& context) {
-        context.addConsoleMessage(WTFMove(consoleMessage));
+        context.addConsoleMessage(WTF::move(consoleMessage));
     })
 {
 }
@@ -100,6 +96,17 @@ inline ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask(Mess
         context.addConsoleMessage(source, level, message);
     })
 {
+}
+
+template<typename Functor>
+void ScriptExecutionContext::forEachMicrotaskGlobalObject(const Functor& functor)
+{
+    if (!m_microtaskGlobalObjects)
+        return;
+    for (auto& weak : *m_microtaskGlobalObjects) {
+        if (SUPPRESS_FORWARD_DECL_ARG auto* globalObject = weak.get())
+            functor(*globalObject);
+    }
 }
 
 } // namespace WebCore

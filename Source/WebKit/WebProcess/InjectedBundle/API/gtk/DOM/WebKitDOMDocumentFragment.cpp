@@ -97,7 +97,9 @@ static void webkit_dom_document_fragment_dom_event_target_init(WebKitDOMEventTar
     iface->remove_event_listener = webkit_dom_document_fragment_remove_event_listener;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocumentFragment, webkit_dom_document_fragment, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_document_fragment_dom_event_target_init))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_DOCUMENT_FRAGMENT_PROP_0,

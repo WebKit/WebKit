@@ -456,7 +456,7 @@ else()
     if(NOT WIN32)
       set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,--noexecstack")
     endif()
-    # Clang's integerated assembler does not support debug symbols.
+    # Clang's integrated assembler does not support debug symbols.
     if(NOT CMAKE_ASM_COMPILER_ID MATCHES "Clang")
       set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,-g")
     endif()

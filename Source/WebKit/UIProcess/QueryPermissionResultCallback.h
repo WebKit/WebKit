@@ -35,7 +35,7 @@ class QueryPermissionResultCallback : public API::ObjectImpl<API::Object::Type::
 public:
     static Ref<QueryPermissionResultCallback> create(CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
     {
-        return adoptRef(*new QueryPermissionResultCallback(WTFMove(completionHandler)));
+        return adoptRef(*new QueryPermissionResultCallback(WTF::move(completionHandler)));
     }
     ~QueryPermissionResultCallback()
     {
@@ -46,7 +46,7 @@ public:
 
 private:
     explicit QueryPermissionResultCallback(CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
     { }
 
     CompletionHandler<void(std::optional<WebCore::PermissionState>)> m_completionHandler;

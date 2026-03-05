@@ -72,7 +72,7 @@ static WorkQueue& vpxDecoderQueueSingleton()
 
 class LibWebRTCVPXInternalVideoDecoder : public ThreadSafeRefCounted<LibWebRTCVPXInternalVideoDecoder> , public webrtc::DecodedImageCallback {
 public:
-    static Ref<LibWebRTCVPXInternalVideoDecoder> create(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoDecoder(type, config, WTFMove(outputCallback))); }
+    static Ref<LibWebRTCVPXInternalVideoDecoder> create(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoDecoder(type, config, WTF::move(outputCallback))); }
     ~LibWebRTCVPXInternalVideoDecoder() = default;
 
     Ref<VideoDecoder::DecodePromise> decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
@@ -104,12 +104,12 @@ private:
 
 void LibWebRTCVPXVideoDecoder::create(Type type, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
-    Ref<VideoDecoder> decoder = adoptRef(*new LibWebRTCVPXVideoDecoder(type, config, WTFMove(outputCallback)));
-    callback(WTFMove(decoder));
+    Ref<VideoDecoder> decoder = adoptRef(*new LibWebRTCVPXVideoDecoder(type, config, WTF::move(outputCallback)));
+    callback(WTF::move(decoder));
 }
 
 LibWebRTCVPXVideoDecoder::LibWebRTCVPXVideoDecoder(Type type, const Config& config, OutputCallback&& outputCallback)
-    : m_internalDecoder(LibWebRTCVPXInternalVideoDecoder::create(type, config, WTFMove(outputCallback)))
+    : m_internalDecoder(LibWebRTCVPXInternalVideoDecoder::create(type, config, WTF::move(outputCallback)))
 {
 }
 
@@ -180,7 +180,7 @@ static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDe
 
 LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback)
     : m_type(type)
-    , m_outputCallback(WTFMove(outputCallback))
+    , m_outputCallback(WTF::move(outputCallback))
     , m_configuration(isVPx() ? createVPCodecConfigurationRecordFromVPCC(config.description) : std::nullopt)
     , m_internalDecoder(createInternalDecoder(type))
     , m_useIOSurface(config.pixelBuffer == VideoDecoder::HardwareBuffer::Yes)
@@ -203,7 +203,7 @@ CVPixelBufferPoolRef LibWebRTCVPXInternalVideoDecoder::pixelBufferPool(size_t wi
             return nullptr;
         }
 
-        m_pixelBufferPool = WTFMove(*result);
+        m_pixelBufferPool = WTF::move(*result);
         m_pixelBufferPoolWidth = width;
         m_pixelBufferPoolHeight = height;
         m_pixelBufferPoolType = type;
@@ -235,8 +235,8 @@ CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t widt
 
     {
         Locker locker(m_pixelBufferPoolLock);
-        if (auto bufferPool = pixelBufferPool(width, height, pixelBufferType))
-            status = CVPixelBufferPoolCreatePixelBuffer(nullptr, bufferPool, &pixelBuffer);
+        if (RetainPtr bufferPool = pixelBufferPool(width, height, pixelBufferType))
+            status = CVPixelBufferPoolCreatePixelBuffer(nullptr, bufferPool.get(), &pixelBuffer);
     }
 
     if (status || !pixelBuffer) {

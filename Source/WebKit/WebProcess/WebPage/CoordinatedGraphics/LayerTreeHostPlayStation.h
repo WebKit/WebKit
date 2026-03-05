@@ -37,6 +37,7 @@
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
@@ -92,7 +93,7 @@ public:
     WebPage& webPage() const { return m_webPage; }
     CoordinatedSceneState& sceneState() const { return m_sceneState.get(); }
 
-    const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
+    const LayerTreeContext& layerTreeContext() const LIFETIME_BOUND { return m_layerTreeContext; }
     void setLayerTreeStateIsFrozen(bool);
 
     void scheduleRenderingUpdate();
@@ -140,7 +141,7 @@ private:
 
     // CoordinatedPlatformLayer::Client
 #if USE(CAIRO)
-    WebCore::Cairo::PaintingEngine& paintingEngine() override;
+    WebCore::Cairo::PaintingEngine& NODELETE paintingEngine() override;
 #elif USE(SKIA)
     WebCore::SkiaPaintingEngine& paintingEngine() const override { return *m_skiaPaintingEngine.get(); }
 #endif

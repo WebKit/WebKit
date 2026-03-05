@@ -33,7 +33,8 @@ extern "C" {
 // |EVP_PKEY_derive_init|.
 
 // EVP_PKEY_HKDEF_MODE_* define "modes" for use with |EVP_PKEY_CTX_hkdf_mode|.
-// The mispelling of "HKDF" as "HKDEF" is intentional for OpenSSL compatibility.
+// The misspelling of "HKDF" as "HKDEF" is intentional for OpenSSL
+// compatibility.
 #define EVP_PKEY_HKDEF_MODE_EXTRACT_AND_EXPAND 0
 #define EVP_PKEY_HKDEF_MODE_EXTRACT_ONLY 1
 #define EVP_PKEY_HKDEF_MODE_EXPAND_ONLY 2

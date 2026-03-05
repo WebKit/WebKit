@@ -32,12 +32,12 @@ namespace JSC {
 
 CachePayload CachePayload::makeMappedPayload(FileSystem::MappedFileData&& data)
 {
-    return CachePayload(WTFMove(data));
+    return CachePayload(WTF::move(data));
 }
 
 CachePayload CachePayload::makeMallocPayload(MallocSpan<uint8_t, VMMalloc>&& data)
 {
-    return CachePayload(WTFMove(data));
+    return CachePayload(WTF::move(data));
 }
 
 CachePayload CachePayload::makeEmptyPayload()
@@ -48,13 +48,13 @@ CachePayload CachePayload::makeEmptyPayload()
 CachePayload::CachePayload(CachePayload&&) = default;
 
 CachePayload::CachePayload(DataType&& data)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
 {
 }
 
 CachePayload::~CachePayload() = default;
 
-std::span<const uint8_t> CachePayload::span() const
+std::span<const uint8_t> CachePayload::span() const LIFETIME_BOUND
 {
     return WTF::switchOn(m_data, [](const auto& data) {
         return data.span();

@@ -81,7 +81,7 @@ public:
     static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
 
     enum class HourCycle : uint8_t { None, H11, H12, H23, H24 };
-    static HourCycle hourCycleFromPattern(const Vector<char16_t, 32>&);
+    static HourCycle NODELETE hourCycleFromPattern(const Vector<char16_t, 32>&);
 
 private:
     IntlDateTimeFormat(VM&, Structure*);
@@ -103,7 +103,7 @@ private:
     enum class TimeZoneName : uint8_t { None, Short, Long, ShortOffset, LongOffset, ShortGeneric, LongGeneric };
     enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
 
-    void setFormatsFromPattern(StringView);
+    void NODELETE setFormatsFromPattern(StringView);
     static ASCIILiteral hourCycleString(HourCycle);
     static ASCIILiteral weekdayString(Weekday);
     static ASCIILiteral eraString(Era);
@@ -117,10 +117,10 @@ private:
     static ASCIILiteral timeZoneNameString(TimeZoneName);
     static ASCIILiteral formatStyleString(DateTimeStyle);
 
-    static HourCycle hourCycleFromSymbol(char16_t);
+    static HourCycle NODELETE hourCycleFromSymbol(char16_t);
     static HourCycle parseHourCycle(const String&);
-    static void replaceHourCycleInSkeleton(Vector<char16_t, 32>&, bool hour12);
-    static void replaceHourCycleInPattern(Vector<char16_t, 32>&, HourCycle);
+    static void NODELETE replaceHourCycleInSkeleton(Vector<char16_t, 32>&, bool hour12);
+    static void NODELETE replaceHourCycleInPattern(Vector<char16_t, 32>&, HourCycle);
     static String buildSkeleton(Weekday, Era, Year, Month, Day, TriState, HourCycle, Hour, DayPeriod, Minute, Second, unsigned, TimeZoneName);
 
     using UDateFormatDeleter = ICUDeleter<udat_close>;

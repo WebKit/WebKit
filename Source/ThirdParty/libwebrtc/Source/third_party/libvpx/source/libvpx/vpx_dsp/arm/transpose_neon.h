@@ -1549,4 +1549,158 @@ static INLINE void load_and_transpose_s32_8x8(
 
   transpose_s32_8x8(a0, a1, a2, a3, a4, a5, a6, a7);
 }
+
+static INLINE void transpose_concat_s16_4x4(const int16x4_t a0,
+                                            const int16x4_t a1,
+                                            const int16x4_t a2,
+                                            const int16x4_t a3, int16x8_t *b0,
+                                            int16x8_t *b1) {
+  // Transpose 16-bit elements:
+  // a0: 00, 01, 02, 03
+  // a1: 10, 11, 12, 13
+  // a2: 20, 21, 22, 23
+  // a3: 30, 31, 32, 33
+  //
+  // b0: 00 10 20 30 01 11 21 31
+  // b1: 02 12 22 32 03 13 23 33
+
+  int16x8_t a0q = vcombine_s16(a0, vdup_n_s16(0));
+  int16x8_t a1q = vcombine_s16(a1, vdup_n_s16(0));
+  int16x8_t a2q = vcombine_s16(a2, vdup_n_s16(0));
+  int16x8_t a3q = vcombine_s16(a3, vdup_n_s16(0));
+
+  int16x8_t a02 = vzipq_s16(a0q, a2q).val[0];
+  int16x8_t a13 = vzipq_s16(a1q, a3q).val[0];
+
+  int16x8x2_t a0123 = vzipq_s16(a02, a13);
+
+  *b0 = a0123.val[0];
+  *b1 = a0123.val[1];
+}
+
+static INLINE void transpose_concat_s16_8x4(const int16x8_t a0,
+                                            const int16x8_t a1,
+                                            const int16x8_t a2,
+                                            const int16x8_t a3, int16x8_t *b0,
+                                            int16x8_t *b1, int16x8_t *b2,
+                                            int16x8_t *b3) {
+  // Transpose 16-bit elements:
+  // a0: 00, 01, 02, 03, 04, 05, 06, 07
+  // a1: 10, 11, 12, 13, 14, 15, 16, 17
+  // a2: 20, 21, 22, 23, 24, 25, 26, 27
+  // a3: 30, 31, 32, 33, 34, 35, 36, 37
+  //
+  // b0: 00 10 20 30 01 11 21 31
+  // b1: 02 12 22 32 03 13 23 33
+  // b2: 04 14 24 34 05 15 25 35
+  // b3: 06 16 26 36 07 17 27 37
+
+  int16x8x2_t a02 = vzipq_s16(a0, a2);
+  int16x8x2_t a13 = vzipq_s16(a1, a3);
+
+  int16x8x2_t a0123_lo = vzipq_s16(a02.val[0], a13.val[0]);
+  int16x8x2_t a0123_hi = vzipq_s16(a02.val[1], a13.val[1]);
+
+  *b0 = a0123_lo.val[0];
+  *b1 = a0123_lo.val[1];
+  *b2 = a0123_hi.val[0];
+  *b3 = a0123_hi.val[1];
+}
+
+static INLINE void transpose_concat_s8_8x4(int8x8_t a0, int8x8_t a1,
+                                           int8x8_t a2, int8x8_t a3,
+                                           int8x16_t *b0, int8x16_t *b1) {
+  // Transpose 8-bit elements and concatenate result rows as follows:
+  // a0: 00, 01, 02, 03, 04, 05, 06, 07
+  // a1: 10, 11, 12, 13, 14, 15, 16, 17
+  // a2: 20, 21, 22, 23, 24, 25, 26, 27
+  // a3: 30, 31, 32, 33, 34, 35, 36, 37
+  //
+  // b0: 00, 10, 20, 30, 01, 11, 21, 31, 02, 12, 22, 32, 03, 13, 23, 33
+  // b1: 04, 14, 24, 34, 05, 15, 25, 35, 06, 16, 26, 36, 07, 17, 27, 37
+
+  int8x16_t a0q = vcombine_s8(a0, vdup_n_s8(0));
+  int8x16_t a1q = vcombine_s8(a1, vdup_n_s8(0));
+  int8x16_t a2q = vcombine_s8(a2, vdup_n_s8(0));
+  int8x16_t a3q = vcombine_s8(a3, vdup_n_s8(0));
+
+  int8x16_t a02 = vzipq_s8(a0q, a2q).val[0];
+  int8x16_t a13 = vzipq_s8(a1q, a3q).val[0];
+
+  int8x16x2_t a0123 = vzipq_s8(a02, a13);
+
+  *b0 = a0123.val[0];
+  *b1 = a0123.val[1];
+}
+
+static INLINE void transpose_concat_u8_8x4(uint8x8_t a0, uint8x8_t a1,
+                                           uint8x8_t a2, uint8x8_t a3,
+                                           uint8x16_t *b0, uint8x16_t *b1) {
+  // Transpose 8-bit elements and concatenate result rows as follows:
+  // a0: 00, 01, 02, 03, 04, 05, 06, 07
+  // a1: 10, 11, 12, 13, 14, 15, 16, 17
+  // a2: 20, 21, 22, 23, 24, 25, 26, 27
+  // a3: 30, 31, 32, 33, 34, 35, 36, 37
+  //
+  // b0: 00, 10, 20, 30, 01, 11, 21, 31, 02, 12, 22, 32, 03, 13, 23, 33
+  // b1: 04, 14, 24, 34, 05, 15, 25, 35, 06, 16, 26, 36, 07, 17, 27, 37
+
+  uint8x16_t a0q = vcombine_u8(a0, vdup_n_u8(0));
+  uint8x16_t a1q = vcombine_u8(a1, vdup_n_u8(0));
+  uint8x16_t a2q = vcombine_u8(a2, vdup_n_u8(0));
+  uint8x16_t a3q = vcombine_u8(a3, vdup_n_u8(0));
+
+  uint8x16_t a02 = vzipq_u8(a0q, a2q).val[0];
+  uint8x16_t a13 = vzipq_u8(a1q, a3q).val[0];
+
+  uint8x16x2_t a0123 = vzipq_u8(a02, a13);
+
+  *b0 = a0123.val[0];
+  *b1 = a0123.val[1];
+}
+
+static INLINE void transpose_concat_s8_4x4(int8x8_t a0, int8x8_t a1,
+                                           int8x8_t a2, int8x8_t a3,
+                                           int8x16_t *b) {
+  // Transpose 8-bit elements and concatenate result rows as follows:
+  // a0: 00, 01, 02, 03, XX, XX, XX, XX
+  // a1: 10, 11, 12, 13, XX, XX, XX, XX
+  // a2: 20, 21, 22, 23, XX, XX, XX, XX
+  // a3: 30, 31, 32, 33, XX, XX, XX, XX
+  //
+  // b: 00, 10, 20, 30, 01, 11, 21, 31, 02, 12, 22, 32, 03, 13, 23, 33
+
+  int8x16_t a0q = vcombine_s8(a0, vdup_n_s8(0));
+  int8x16_t a1q = vcombine_s8(a1, vdup_n_s8(0));
+  int8x16_t a2q = vcombine_s8(a2, vdup_n_s8(0));
+  int8x16_t a3q = vcombine_s8(a3, vdup_n_s8(0));
+
+  int8x16_t a02 = vzipq_s8(a0q, a2q).val[0];
+  int8x16_t a13 = vzipq_s8(a1q, a3q).val[0];
+
+  *b = vzipq_s8(a02, a13).val[0];
+}
+
+static INLINE void transpose_concat_u8_4x4(uint8x8_t a0, uint8x8_t a1,
+                                           uint8x8_t a2, uint8x8_t a3,
+                                           uint8x16_t *b) {
+  // Transpose 8-bit elements and concatenate result rows as follows:
+  // a0: 00, 01, 02, 03, XX, XX, XX, XX
+  // a1: 10, 11, 12, 13, XX, XX, XX, XX
+  // a2: 20, 21, 22, 23, XX, XX, XX, XX
+  // a3: 30, 31, 32, 33, XX, XX, XX, XX
+  //
+  // b: 00, 10, 20, 30, 01, 11, 21, 31, 02, 12, 22, 32, 03, 13, 23, 33
+
+  uint8x16_t a0q = vcombine_u8(a0, vdup_n_u8(0));
+  uint8x16_t a1q = vcombine_u8(a1, vdup_n_u8(0));
+  uint8x16_t a2q = vcombine_u8(a2, vdup_n_u8(0));
+  uint8x16_t a3q = vcombine_u8(a3, vdup_n_u8(0));
+
+  uint8x16_t a02 = vzipq_u8(a0q, a2q).val[0];
+  uint8x16_t a13 = vzipq_u8(a1q, a3q).val[0];
+
+  *b = vzipq_u8(a02, a13).val[0];
+}
+
 #endif  // VPX_VPX_DSP_ARM_TRANSPOSE_NEON_H_

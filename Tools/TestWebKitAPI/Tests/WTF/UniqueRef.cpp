@@ -51,7 +51,7 @@ class C {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(C);
 public:
     C(UniqueRef<A>&& a)
-        : a(WTFMove(a))
+        : a(WTF::move(a))
     { }
     UniqueRef<A> a;
 };
@@ -69,7 +69,7 @@ TEST(WTF, UniqueRef)
     const B& d = b.get();
     B* e = &b;
     const B* f = &b;
-    UniqueRef<A> j = WTFMove(a);
+    UniqueRef<A> j = WTF::move(a);
     
     Vector<UniqueRef<B>> v;
     v.append(makeUniqueRef<B>(4, 5, 6));

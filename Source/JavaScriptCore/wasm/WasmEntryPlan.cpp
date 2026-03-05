@@ -45,7 +45,7 @@ static constexpr bool verbose = false;
 }
 
 EntryPlan::EntryPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerMode, CompletionTask&& task)
-    : Base(vm, WTFMove(info), WTFMove(task))
+    : Base(vm, WTF::move(info), WTF::move(task))
     , m_streamingParser(m_moduleInformation.get(), *this)
     , m_state(State::Validated)
     , m_compilerMode(compilerMode)
@@ -53,8 +53,8 @@ EntryPlan::EntryPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerM
 }
 
 EntryPlan::EntryPlan(VM& vm, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
-    : Base(vm, WTFMove(task))
-    , m_source(WTFMove(source))
+    : Base(vm, WTF::move(task))
+    , m_source(WTF::move(source))
     , m_streamingParser(m_moduleInformation.get(), *this)
     , m_state(State::Initial)
     , m_compilerMode(compilerMode)

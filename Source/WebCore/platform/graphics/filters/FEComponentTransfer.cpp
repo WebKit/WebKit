@@ -46,7 +46,7 @@ Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunc
 
 Ref<FEComponentTransfer> FEComponentTransfer::create(ComponentTransferFunctions&& functions)
 {
-    return adoptRef(*new FEComponentTransfer(WTFMove(functions)));
+    return adoptRef(*new FEComponentTransfer(WTF::move(functions)));
 }
 
 FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, DestinationColorSpace colorSpace)
@@ -57,7 +57,7 @@ FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFun
 
 FEComponentTransfer::FEComponentTransfer(ComponentTransferFunctions&& functions)
     : FilterEffect(FilterEffect::Type::FEComponentTransfer)
-    , m_functions(WTFMove(functions))
+    , m_functions(WTF::move(functions))
 {
 }
 
@@ -73,8 +73,7 @@ OptionSet<FilterRenderingMode> FEComponentTransfer::supportedFilterRenderingMode
     modes.add(FilterRenderingMode::Accelerated);
 #endif
 #if USE(CORE_IMAGE)
-    if (FEComponentTransferCoreImageApplier::supportsCoreImageRendering(*this))
-        modes.add(FilterRenderingMode::Accelerated);
+    modes.add(FilterRenderingMode::Accelerated);
 #endif
     return modes & preferredFilterRenderingModes;
 }
@@ -158,7 +157,7 @@ bool FEComponentTransfer::setTableValues(ComponentTransferChannel channel, Vecto
     if (m_functions[channel].tableValues == values)
         return false;
 
-    m_functions[channel].tableValues = WTFMove(values);
+    m_functions[channel].tableValues = WTF::move(values);
     return true;
 }
 

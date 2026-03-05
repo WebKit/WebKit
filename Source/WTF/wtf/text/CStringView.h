@@ -53,6 +53,14 @@ public:
         return CStringView(unsafeMakeSpan(byteCast<char8_t>(string), std::char_traits<char>::length(string) + 1));
     }
 
+    static CStringView fromUTF8(std::span<const char8_t> spanWithNullTerminator LIFETIME_BOUND)
+    {
+        if (spanWithNullTerminator.size() < 1)
+            return CStringView();
+        RELEASE_ASSERT(spanWithNullTerminator[spanWithNullTerminator.size() - 1] == '\0');
+        return CStringView(spanWithNullTerminator);
+    }
+
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
     CStringView() = default;

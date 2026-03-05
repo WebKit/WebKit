@@ -7,8 +7,7 @@ PACKAGES+=(
     # These are dependencies necessary for building WebKitWPE.
     libicu-devel
     libxml2-devel
-    qt5-qtbase-devel
-    qt5-qtdeclarative-devel
+    qt6-qtdeclarative-devel
     zlib-devel
 
     # These are dependencies necessary for running tests.

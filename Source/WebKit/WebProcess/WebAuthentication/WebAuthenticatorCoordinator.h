@@ -53,8 +53,6 @@ private:
     void signalCurrentUserDetails(const WebCore::SecurityOrigin&, WebCore::CurrentUserDetailsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&) final;
     void cancel(CompletionHandler<void()>&&) final;
 
-    Ref<WebPage> protectedPage() const;
-
     WeakRef<WebPage> m_webPage;
 };
 

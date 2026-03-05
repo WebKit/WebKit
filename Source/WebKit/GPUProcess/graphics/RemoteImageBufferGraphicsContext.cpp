@@ -28,7 +28,10 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Logging.h"
 #include "RemoteGraphicsContextMessages.h"
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_renderingBackend->streamConnection());
 
 namespace WebKit {
 using namespace WebCore;
@@ -59,6 +62,23 @@ void RemoteImageBufferGraphicsContext::stopListeningForIPC()
     m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
+void RemoteImageBufferGraphicsContext::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    RefPtr sourceImage = imageBuffer(imageBufferIdentifier);
+    MESSAGE_CHECK(sourceImage);
+    bool selfCopy = false;
+    if (sourceImage == m_imageBuffer.ptr() && sourceImage->renderingMode() == RenderingMode::Accelerated) {
+        sourceImage = sourceImage->clone();
+        sourceImage->flushDrawingContext();
+        selfCopy = true;
+    }
+    context().drawImageBuffer(*sourceImage, destinationRect, srcRect, options);
+    if (selfCopy)
+        m_imageBuffer->flushDrawingContext();
+}
+
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS)

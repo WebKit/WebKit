@@ -28,14 +28,8 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-
-#if defined(OPENSSL_LINUX)
-#if defined(BORINGSSL_FIPS)
-#include <linux/random.h>
-#include <sys/ioctl.h>
-#endif
 #include <sys/syscall.h>
+#include <unistd.h>
 
 #if defined(OPENSSL_ANDROID)
 #include <sys/system_properties.h>
@@ -57,7 +51,6 @@
 #if defined(OPENSSL_HAS_GETAUXVAL)
 #include <sys/auxv.h>
 #endif
-#endif  // OPENSSL_LINUX
 
 #include <openssl/mem.h>
 
@@ -165,12 +158,6 @@ static void init_once(void) {
 #endif  // USE_NR_getrandom
 
   // FIPS builds must support getrandom.
-  //
-  // Historically, only Android FIPS builds required getrandom, while Linux FIPS
-  // builds had a /dev/urandom fallback which used RNDGETENTCNT as a poor
-  // approximation for getrandom's blocking behavior. This is now removed, but
-  // avoid making assumptions on this removal until March 2023, in case it needs
-  // to be restored. This comment can be deleted after March 2023.
 #if defined(BORINGSSL_FIPS)
   perror("getrandom not found");
   abort();
@@ -238,33 +225,26 @@ static void wait_for_entropy(void) {
 }
 
 // fill_with_entropy writes |len| bytes of entropy into |out|. It returns one
-// on success and zero on error. If |block| is one, this function will block
-// until the entropy pool is initialized. Otherwise, this function may fail,
-// setting |errno| to |EAGAIN| if the entropy pool has not yet been initialized.
-// If |seed| is one, this function will OR in the value of
+// on success and zero on error. This function will block until the entropy pool
+// is initialized. If |seed| is one, this function will OR in the value of
 // |*extra_getrandom_flags_for_seed()| when using |getrandom|.
-static int fill_with_entropy(uint8_t *out, size_t len, int block, int seed) {
+static int fill_with_entropy(uint8_t *out, size_t len, int seed) {
   if (len == 0) {
     return 1;
   }
 
-#if defined(USE_NR_getrandom) || defined(FREEBSD_GETRANDOM)
-  int getrandom_flags = 0;
-  if (!block) {
-    getrandom_flags |= GRND_NONBLOCK;
-  }
-#endif
-
 #if defined(USE_NR_getrandom)
+  int getrandom_flags = 0;
   if (seed) {
     getrandom_flags |= extra_getrandom_flags_for_seed;
   }
 #endif
 
   CRYPTO_init_sysrand();
-  if (block) {
-    CRYPTO_once(&wait_for_entropy_once, wait_for_entropy);
-  }
+  // TODO(crbug.com/446280903): After the change to uniformly use OS entropy has
+  // stuck, remove this |wait_for_entropy| hook. The |getrandom| calls below
+  // already wait for entropy. |wait_for_entropy| just added more useful errors.
+  CRYPTO_once(&wait_for_entropy_once, wait_for_entropy);
 
   // Clear |errno| so it has defined value if |read| or |getrandom|
   // "successfully" returns zero.
@@ -299,27 +279,15 @@ void CRYPTO_init_sysrand(void) { CRYPTO_once(&rand_once, init_once); }
 
 // CRYPTO_sysrand puts |requested| random bytes into |out|.
 void CRYPTO_sysrand(uint8_t *out, size_t requested) {
-  if (!fill_with_entropy(out, requested, /*block=*/1, /*seed=*/0)) {
+  if (!fill_with_entropy(out, requested, /*seed=*/0)) {
     perror("entropy fill failed");
     abort();
   }
 }
 
 void CRYPTO_sysrand_for_seed(uint8_t *out, size_t requested) {
-  if (!fill_with_entropy(out, requested, /*block=*/1, /*seed=*/1)) {
+  if (!fill_with_entropy(out, requested, /*seed=*/1)) {
     perror("entropy fill failed");
-    abort();
-  }
-}
-
-int CRYPTO_sysrand_if_available(uint8_t *out, size_t requested) {
-  if (fill_with_entropy(out, requested, /*block=*/0, /*seed=*/0)) {
-    return 1;
-  } else if (errno == EAGAIN) {
-    OPENSSL_memset(out, 0, requested);
-    return 0;
-  } else {
-    perror("opportunistic entropy fill failed");
     abort();
   }
 }

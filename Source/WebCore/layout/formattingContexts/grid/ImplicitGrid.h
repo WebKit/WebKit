@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/GridTypeAliases.h>
+#include "GridTypeAliases.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -42,19 +42,42 @@ public:
     ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount);
 
     size_t rowsCount() const { return m_gridMatrix.size(); }
-    size_t columnsCount() const { return rowsCount() ? m_gridMatrix[0].size() : 0; }
+    size_t columnsCount() const { return rowsCount() ? m_gridMatrix[0].size() : m_initialColumnsCount; }
 
     void insertUnplacedGridItem(const UnplacedGridItem&);
-    void insertDefiniteRowItem(const UnplacedGridItem&, GridAutoFlowOptions, HashMap<size_t, size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>*);
+    void insertDefiniteRowItem(const UnplacedGridItem&, GridAutoFlowOptions);
+    void determineImplicitGridColumns(const Vector<UnplacedGridItem>&);
+    void insertAutoPositionedItems(const Vector<UnplacedGridItem>&, GridAutoFlowOptions);
 
     GridAreas gridAreas() const;
 
 private:
-    std::optional<size_t> findFirstAvailableColumnPosition(size_t rowStart, size_t rowEnd, size_t columnSpan, size_t startSearchColumn) const;
-    bool isCellRangeEmpty(size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd) const;
+    using RowCursors = HashMap<size_t, size_t, WTF::DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
+    std::optional<size_t> NODELETE findFirstAvailableColumnPosition(size_t rowStart, size_t rowEnd, size_t columnSpan, size_t startSearchColumn) const;
+    std::optional<size_t> findColumnPositionForDefiniteRowItem(size_t normalizedRowStart, size_t normalizedRowEnd, size_t columnSpan, GridAutoFlowOptions) const;
+    void growGridColumnsToFit(size_t columnSpan, size_t normalizedRowStart, size_t normalizedRowEnd);
+    bool NODELETE isCellRangeEmpty(size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd) const;
     void insertItemInArea(const UnplacedGridItem&, size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd);
 
+    // Helper functions for auto-positioned items
+    void growColumnsToFit(size_t requiredCount);
+    void growRowsToFit(size_t requiredRowIndex);
+    void placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridItem&, GridAutoFlowOptions);
+    void placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGridItem&, GridAutoFlowOptions);
+
     GridMatrix m_gridMatrix;
+
+    // Track column count. This is needed when the initial grid has 0 rows and the column
+    // count would otherwise be lost.
+    size_t m_initialColumnsCount { 0 };
+
+    // Per-row cursors for sparse packing in Step 2 (definite row items only).
+    RowCursors m_rowCursors;
+
+    // Global cursor for Step 4 (auto-positioned items with both axes automatic).
+    // Tracks the current insertion point as (row, column) to ensure monotonic placement.
+    size_t m_autoPlacementCursorRow { 0 };
+    size_t m_autoPlacementCursorColumn { 0 };
 };
 
 } // namespace Layout

@@ -59,6 +59,10 @@ public:
 
     virtual ~RemoteVideoTrackProxy();
 
+    // WebCore::VideoTrackPrivateClient.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     WebCore::TrackID id() const { return m_trackPrivate->id(); };
     void setSelected(bool selected)
     {

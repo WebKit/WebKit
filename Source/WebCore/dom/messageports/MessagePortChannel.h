@@ -45,11 +45,11 @@ public:
 
     WEBCORE_EXPORT ~MessagePortChannel();
 
-    const MessagePortIdentifier& port1() const { return m_ports[0]; }
-    const MessagePortIdentifier& port2() const { return m_ports[1]; }
+    const MessagePortIdentifier& port1() const LIFETIME_BOUND { return m_ports[0]; }
+    const MessagePortIdentifier& port2() const LIFETIME_BOUND { return m_ports[1]; }
 
-    WEBCORE_EXPORT std::optional<ProcessIdentifier> processForPort(const MessagePortIdentifier&);
-    bool includesPort(const MessagePortIdentifier&);
+    WEBCORE_EXPORT std::optional<ProcessIdentifier> NODELETE processForPort(const MessagePortIdentifier&);
+    bool NODELETE includesPort(const MessagePortIdentifier&);
     void entanglePortWithProcess(const MessagePortIdentifier&, ProcessIdentifier);
     void disentanglePort(const MessagePortIdentifier&);
     void closePort(const MessagePortIdentifier&);
@@ -57,7 +57,7 @@ public:
 
     void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&);
 
-    WEBCORE_EXPORT bool hasAnyMessagesPendingOrInFlight() const;
+    WEBCORE_EXPORT bool NODELETE hasAnyMessagesPendingOrInFlight() const;
 
     uint64_t beingTransferredCount();
 
@@ -68,14 +68,12 @@ public:
 private:
     MessagePortChannel(MessagePortChannelRegistry&, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
 
-    CheckedRef<MessagePortChannelRegistry> checkedRegistry() const;
-
     std::array<MessagePortIdentifier, 2> m_ports;
     std::array<bool, 2> m_isClosed { false, false };
     std::array<std::optional<ProcessIdentifier>, 2> m_processes;
     std::array<RefPtr<MessagePortChannel>, 2> m_entangledToProcessProtectors;
     std::array<Vector<MessageWithMessagePorts>, 2> m_pendingMessages;
-    std::array<HashSet<RefPtr<MessagePortChannel>>, 2> m_pendingMessagePortTransfers;
+    std::array<HashSet<Ref<MessagePortChannel>>, 2> m_pendingMessagePortTransfers;
     std::array<RefPtr<MessagePortChannel>, 2> m_pendingMessageProtectors;
     uint64_t m_messageBatchesInFlight { 0 };
 

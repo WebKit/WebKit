@@ -928,7 +928,7 @@ namespace mpark {
 
   class bad_variant_access : public std::exception {
     public:
-    virtual const char *what() const noexcept override { return "bad_variant_access"; }
+    [[nodiscard]] virtual const char *what() const noexcept override { return "bad_variant_access"; }
   };
 
   [[noreturn]] inline void throw_bad_variant_access() {
@@ -2443,11 +2443,11 @@ namespace mpark {
       return impl_.template emplace<I>(il, lib::forward<Args>(args)...);
     }
 
-    inline constexpr bool valueless_by_exception() const noexcept {
+    [[nodiscard]] inline constexpr bool valueless_by_exception() const noexcept {
       return impl_.valueless_by_exception();
     }
 
-    inline constexpr std::size_t index() const noexcept {
+    [[nodiscard]] inline constexpr std::size_t index() const noexcept {
       return impl_.index();
     }
 
@@ -2473,12 +2473,12 @@ namespace mpark {
   };
 
   template <std::size_t I, typename... Ts>
-  inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {
+  [[nodiscard]] inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {
     return v.index() == I;
   }
 
   template <typename T, typename... Ts>
-  inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {
+  [[nodiscard]] inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {
     return holds_alternative<detail::find_index_checked<T, Ts...>::value>(v);
   }
 
@@ -2500,46 +2500,46 @@ namespace mpark {
   }  // namespace detail
 
   template <std::size_t I, typename... Ts>
-  inline constexpr variant_alternative_t<I, variant<Ts...>> &get(
+  [[nodiscard]] inline constexpr variant_alternative_t<I, variant<Ts...>> &get(
       variant<Ts...> &v) {
     return detail::generic_get<I>(v);
   }
 
   template <std::size_t I, typename... Ts>
-  inline constexpr variant_alternative_t<I, variant<Ts...>> &&get(
+  [[nodiscard]] inline constexpr variant_alternative_t<I, variant<Ts...>> &&get(
       variant<Ts...> &&v) {
     return detail::generic_get<I>(lib::move(v));
   }
 
   template <std::size_t I, typename... Ts>
-  inline constexpr const variant_alternative_t<I, variant<Ts...>> &get(
+  [[nodiscard]] inline constexpr const variant_alternative_t<I, variant<Ts...>> &get(
       const variant<Ts...> &v) {
     return detail::generic_get<I>(v);
   }
 
   template <std::size_t I, typename... Ts>
-  inline constexpr const variant_alternative_t<I, variant<Ts...>> &&get(
+  [[nodiscard]] inline constexpr const variant_alternative_t<I, variant<Ts...>> &&get(
       const variant<Ts...> &&v) {
     return detail::generic_get<I>(lib::move(v));
   }
 
   template <typename T, typename... Ts>
-  inline constexpr T &get(variant<Ts...> &v) {
+  [[nodiscard]] inline constexpr T &get(variant<Ts...> &v) {
     return mpark::get<detail::find_index_checked<T, Ts...>::value>(v);
   }
 
   template <typename T, typename... Ts>
-  inline constexpr T &&get(variant<Ts...> &&v) {
+  [[nodiscard]] inline constexpr T &&get(variant<Ts...> &&v) {
     return mpark::get<detail::find_index_checked<T, Ts...>::value>(lib::move(v));
   }
 
   template <typename T, typename... Ts>
-  inline constexpr const T &get(const variant<Ts...> &v) {
+  [[nodiscard]] inline constexpr const T &get(const variant<Ts...> &v) {
     return mpark::get<detail::find_index_checked<T, Ts...>::value>(v);
   }
 
   template <typename T, typename... Ts>
-  inline constexpr const T &&get(const variant<Ts...> &&v) {
+  [[nodiscard]] inline constexpr const T &&get(const variant<Ts...> &&v) {
     return mpark::get<detail::find_index_checked<T, Ts...>::value>(lib::move(v));
   }
 
@@ -2554,26 +2554,26 @@ namespace mpark {
   }  // namespace detail
 
   template <std::size_t I, typename... Ts>
-  inline constexpr lib::add_pointer_t<variant_alternative_t<I, variant<Ts...>>>
+  [[nodiscard]] inline constexpr lib::add_pointer_t<variant_alternative_t<I, variant<Ts...>>>
   get_if(variant<Ts...> *v) noexcept {
     return detail::generic_get_if<I>(v);
   }
 
   template <std::size_t I, typename... Ts>
-  inline constexpr lib::add_pointer_t<
+  [[nodiscard]] inline constexpr lib::add_pointer_t<
       const variant_alternative_t<I, variant<Ts...>>>
   get_if(const variant<Ts...> *v) noexcept {
     return detail::generic_get_if<I>(v);
   }
 
   template <typename T, typename... Ts>
-  inline constexpr lib::add_pointer_t<T>
+  [[nodiscard]] inline constexpr lib::add_pointer_t<T>
   get_if(variant<Ts...> *v) noexcept {
     return mpark::get_if<detail::find_index_checked<T, Ts...>::value>(v);
   }
 
   template <typename T, typename... Ts>
-  inline constexpr lib::add_pointer_t<const T>
+  [[nodiscard]] inline constexpr lib::add_pointer_t<const T>
   get_if(const variant<Ts...> *v) noexcept {
     return mpark::get_if<detail::find_index_checked<T, Ts...>::value>(v);
   }
@@ -2834,7 +2834,7 @@ namespace std {
     using argument_type = mpark::variant<Ts...>;
     using result_type = std::size_t;
 
-    inline result_type operator()(const argument_type &v) const {
+    [[nodiscard]] inline result_type operator()(const argument_type &v) const {
       using mpark::detail::visitation::variant;
       std::size_t result =
           v.valueless_by_exception()
@@ -2878,7 +2878,7 @@ namespace std {
     using argument_type = mpark::monostate;
     using result_type = std::size_t;
 
-    inline result_type operator()(const argument_type &) const noexcept {
+    [[nodiscard]] inline result_type operator()(const argument_type &) const noexcept {
       return 66740831;  // return a fundamentally attractive random value.
     }
   };
@@ -2889,21 +2889,21 @@ namespace std {
 
 namespace std {
 
-template<class T, class... Types> constexpr bool holds_alternative(const mpark::variant<Types...>& v) noexcept { return mpark::holds_alternative<T>(v); }
+template<class T, class... Types> [[nodiscard]] constexpr bool holds_alternative(const mpark::variant<Types...>& v) noexcept { return mpark::holds_alternative<T>(v); }
 
-template<size_t I, class... Types> constexpr mpark::variant_alternative_t<I, mpark::variant<Types...>>& get(mpark::variant<Types...>& v) { return mpark::get<I>(v); }
-template<size_t I, class... Types> constexpr mpark::variant_alternative_t<I, mpark::variant<Types...>>&& get(mpark::variant<Types...>&& v) { return mpark::get<I>(std::forward<mpark::variant<Types...>>(v)); }
-template<size_t I, class... Types> constexpr const mpark::variant_alternative_t<I, mpark::variant<Types...>>& get( const mpark::variant<Types...>& v ) { return mpark::get<I>(v); }
-template<size_t I, class... Types> constexpr const mpark::variant_alternative_t<I, mpark::variant<Types...>>&& get( const mpark::variant<Types...>&& v ) { return mpark::get<I>(std::forward<mpark::variant<Types...>>(v)); }
-template<class T, class... Types> constexpr T& get(mpark::variant<Types...>& v) { return mpark::get<T>(v); }
-template<class T, class... Types> constexpr T&& get(mpark::variant<Types...>&& v)  { return mpark::get<T>(std::forward<mpark::variant<Types...>>(v)); }
-template<class T, class... Types> constexpr const T& get(const mpark::variant<Types...>& v) { return mpark::get<T>(v); }
-template<class T, class... Types> constexpr const T&& get(const mpark::variant<Types...>&& v) { return mpark::get<T>(std::forward<mpark::variant<Types...>>(v)); }
+template<size_t I, class... Types> [[nodiscard]] constexpr mpark::variant_alternative_t<I, mpark::variant<Types...>>& get(mpark::variant<Types...>& v) { return mpark::get<I>(v); }
+template<size_t I, class... Types> [[nodiscard]] constexpr mpark::variant_alternative_t<I, mpark::variant<Types...>>&& get(mpark::variant<Types...>&& v) { return mpark::get<I>(std::forward<mpark::variant<Types...>>(v)); }
+template<size_t I, class... Types> [[nodiscard]] constexpr const mpark::variant_alternative_t<I, mpark::variant<Types...>>& get( const mpark::variant<Types...>& v ) { return mpark::get<I>(v); }
+template<size_t I, class... Types> [[nodiscard]] constexpr const mpark::variant_alternative_t<I, mpark::variant<Types...>>&& get( const mpark::variant<Types...>&& v ) { return mpark::get<I>(std::forward<mpark::variant<Types...>>(v)); }
+template<class T, class... Types> [[nodiscard]] constexpr T& get(mpark::variant<Types...>& v) { return mpark::get<T>(v); }
+template<class T, class... Types> [[nodiscard]] constexpr T&& get(mpark::variant<Types...>&& v)  { return mpark::get<T>(std::forward<mpark::variant<Types...>>(v)); }
+template<class T, class... Types> [[nodiscard]] constexpr const T& get(const mpark::variant<Types...>& v) { return mpark::get<T>(v); }
+template<class T, class... Types> [[nodiscard]] constexpr const T&& get(const mpark::variant<Types...>&& v) { return mpark::get<T>(std::forward<mpark::variant<Types...>>(v)); }
 
-template<size_t I, class... Types> constexpr add_pointer_t<mpark::variant_alternative_t<I, mpark::variant<Types...>>> get_if( mpark::variant<Types...>* v ) noexcept { return mpark::get_if<I>(v); }
-template<size_t I, class... Types> constexpr add_pointer_t<const mpark::variant_alternative_t<I, mpark::variant<Types...>>> get_if(const mpark::variant<Types...>* v ) noexcept { return mpark::get_if<I>(v); }
-template<class T, class... Types> constexpr add_pointer_t<T> get_if(mpark::variant<Types...>* v ) noexcept { return mpark::get_if<T>(v); }
-template<class T, class... Types> constexpr add_pointer_t<const T> get_if(const mpark::variant<Types...>* v) noexcept { return mpark::get_if<T>(v); }
+template<size_t I, class... Types> [[nodiscard]] constexpr add_pointer_t<mpark::variant_alternative_t<I, mpark::variant<Types...>>> get_if( mpark::variant<Types...>* v ) noexcept { return mpark::get_if<I>(v); }
+template<size_t I, class... Types> [[nodiscard]] constexpr add_pointer_t<const mpark::variant_alternative_t<I, mpark::variant<Types...>>> get_if(const mpark::variant<Types...>* v ) noexcept { return mpark::get_if<I>(v); }
+template<class T, class... Types> [[nodiscard]] constexpr add_pointer_t<T> get_if(mpark::variant<Types...>* v ) noexcept { return mpark::get_if<T>(v); }
+template<class T, class... Types> [[nodiscard]] constexpr add_pointer_t<const T> get_if(const mpark::variant<Types...>* v) noexcept { return mpark::get_if<T>(v); }
 
 }
 

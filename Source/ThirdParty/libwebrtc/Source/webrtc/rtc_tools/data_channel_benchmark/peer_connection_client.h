@@ -88,6 +88,7 @@ class PeerConnectionClient : public PeerConnectionObserver {
   void OnIceConnectionReceivingChange(bool receiving) override {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " receiving? " << receiving;
   }
+  void OnIceCandidateRemoved(const IceCandidate* candidate) override {}
 
   scoped_refptr<PeerConnectionInterface> peer_connection_;
   std::function<void(scoped_refptr<DataChannelInterface>)>

@@ -42,13 +42,13 @@ using ConstantResult = Expected<ConstantValue, String>;
 using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<ConstantValue>&);
 
 #define CONSTANT_FUNCTION(name) \
-    static Expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+    [[maybe_unused]] static Expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 
 #define CALL_(__tmp, __variable, __fnName, ...) \
     auto __tmp = constant##__fnName(__VA_ARGS__); \
     if (!__tmp) \
         return makeUnexpected(__tmp.error()); \
-    auto __variable = WTFMove(*__tmp)
+    auto __variable = WTF::move(*__tmp)
 
 #define CALL(__variable, __fnName, ...) \
     CALL_(WTF_LAZY_JOIN(tmp, __COUNTER__), __variable, __fnName, __VA_ARGS__)
@@ -58,14 +58,14 @@ using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<Consta
         auto __tmp = constant##__fnName(__VA_ARGS__); \
         if (!__tmp) \
             return makeUnexpected(__tmp.error()); \
-        __target = WTFMove(*__tmp); \
+        __target = WTF::move(*__tmp); \
     } while (0)
 
 #define CALL_MOVE(__target, __fnName, ...) \
     CALL_MOVE_(tmp ## __COUNTER__, __target, __fnName, __VA_ARGS__)
 
 
-static ConstantValue zeroValue(const Type* type)
+[[maybe_unused]] static ConstantValue zeroValue(const Type* type)
 {
     return WTF::switchOn(*type,
         [&](const Types::Primitive& primitive) -> ConstantValue {
@@ -114,7 +114,7 @@ static ConstantValue zeroValue(const Type* type)
             HashMap<String, ConstantValue> constantFields;
             for (auto& [key, type] : structType.fields)
                 constantFields.set(key, zeroValue(type));
-            return ConstantStruct { WTFMove(constantFields) };
+            return ConstantStruct { WTF::move(constantFields) };
         },
         [&](const Types::PrimitiveStruct&) -> ConstantValue {
             // Primitive structs can't be zero initialized
@@ -156,7 +156,7 @@ static ConstantValue zeroValue(const Type* type)
 // Helpers
 
 template<Constraint constraint, typename Functor>
-static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+[[maybe_unused]] static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 1);
     return scalarOrVector([&](auto& arg) -> ConstantResult {
@@ -193,7 +193,7 @@ static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& a
 }
 
 template<Constraint constraint, typename Functor>
-static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+[[maybe_unused]] static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 2);
     return scalarOrVector([&](auto& left, auto& right) -> ConstantResult {
@@ -230,7 +230,7 @@ static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& 
 }
 
 template<Constraint constraint, typename Functor>
-static ConstantResult constantTernaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+[[maybe_unused]] static ConstantResult constantTernaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 3);
     return scalarOrVector([&](auto& first, auto& second, auto& third) -> ConstantResult {
@@ -279,7 +279,7 @@ struct BitwiseCast {
 };
 
 template<typename DestinationType, template <typename U> typename Cast = StaticCast>
-static ConstantValue convertValue(ConstantValue value)
+[[maybe_unused]] static ConstantValue convertValue(ConstantValue value)
 {
     if constexpr (std::is_same_v<Cast<DestinationType>, StaticCast<DestinationType>> || sizeof(DestinationType) == 4) {
         if (auto* i32 = std::get_if<int32_t>(&value))
@@ -307,7 +307,7 @@ static ConstantValue convertValue(ConstantValue value)
 }
 
 template<template <typename U> typename Cast = StaticCast>
-static ConstantValue convertValue(const Type* targetType, ConstantValue value)
+[[maybe_unused]] static ConstantValue convertValue(const Type* targetType, ConstantValue value)
 {
     ASSERT(std::holds_alternative<Types::Primitive>(*targetType));
     auto& primitive = std::get<Types::Primitive>(*targetType);
@@ -332,7 +332,7 @@ static ConstantValue convertValue(const Type* targetType, ConstantValue value)
 }
 
 template<typename DestinationType>
-static ConstantValue constantConstructor(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+[[maybe_unused]] static ConstantValue constantConstructor(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
     if (arguments.isEmpty())
         return zeroValue(resultType);
@@ -343,7 +343,7 @@ static ConstantValue constantConstructor(const Type* resultType, const FixedVect
 
 
 template<typename Functor, typename... Arguments>
-static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
+[[maybe_unused]] static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
 {
     unsigned vectorSize = 0;
     std::initializer_list<ConstantValue> arguments { unpackedArguments... };
@@ -370,12 +370,12 @@ static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpa
         ConstantResult tmp = std::apply(functor, scalars);
         if (!tmp)
             return makeUnexpected(tmp.error());
-        result.elements[i] = WTFMove(*tmp);
+        result.elements[i] = WTF::move(*tmp);
     }
     return { { result } };
 }
 
-static ConstantValue constantVector(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned size)
+[[maybe_unused]] static ConstantValue constantVector(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned size)
 {
     ConstantVector result(size);
     auto argumentCount = arguments.size();
@@ -414,7 +414,7 @@ static ConstantValue constantVector(const Type* resultType, const FixedVector<Co
     return { result };
 }
 
-static ConstantValue constantMatrix(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned columns, unsigned rows)
+[[maybe_unused]] static ConstantValue constantMatrix(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned columns, unsigned rows)
 {
     if (arguments.isEmpty())
         return zeroValue(resultType);
@@ -900,7 +900,12 @@ UNARY_OPERATION(Abs, Number, [&]<typename T>(T n) -> T {
 
 BINARY_OPERATION(Atan2, Float, WRAP_STD(atan2))
 UNARY_OPERATION(Ceil, Float, WRAP_STD(ceil))
-TERNARY_OPERATION(Clamp, Number, [&](auto e, auto low, auto high) { return std::min(std::max(e, low), high); })
+
+TERNARY_OPERATION(Clamp, Number, [&]<typename T>(T e, T low, T high) -> ConstantResult {
+    if (low > high)
+        return makeUnexpected(makeString("clamp called with low ("_s, String::number(low), ") greater than high ("_s, String::number(high), ")"_s));
+    return { { std::min(std::max(e, low), high) } };
+})
 
 UNARY_OPERATION(CountLeadingZeros, ConcreteInteger, [&]<typename T>(T arg) -> T {
     return std::countl_zero(static_cast<unsigned>(arg));
@@ -1328,7 +1333,12 @@ CONSTANT_FUNCTION(Normalize)
     return constantDivide(resultType, { arg, length });
 }
 
-BINARY_OPERATION(Pow, Float, WRAP_STD(pow))
+BINARY_OPERATION(Pow, Float, [&]<typename T>(T base, T exp) -> ConstantResult {
+    if (base < 0)
+        return makeUnexpected(makeString("pow called with negative base ("_s, String::number(base), ")"_s));
+    auto result = std::pow(base, exp);
+    return { { T(result) } };
+});
 
 UNARY_OPERATION(QuantizeToF16, F32, [&](float arg) -> ConstantResult {
     UNUSED_PARAM(resultType);
@@ -1430,10 +1440,12 @@ UNARY_OPERATION(Sign, Number, [&]<typename T>(T e) -> T {
     return result;
 })
 
-TERNARY_OPERATION(Smoothstep, Float, [&](auto low, auto high, auto x) {
+TERNARY_OPERATION(Smoothstep, Float, [&]<typename T>(T low, T high, T x) -> ConstantResult {
+    if (low == high)
+        return makeUnexpected(makeString("smoothstep called with low ("_s, String::number(low), ") equal high ("_s, String::number(high), ")"_s));
     auto e = (x - low) / (high - low);
     auto t = std::min(std::max(e, static_cast<decltype(e)>(0)), static_cast<decltype(e)>(1));
-    return t * t * (3.0 - 2.0 * t);
+    return { { t * t * (3.0 - 2.0 * t) } };
 })
 
 UNARY_OPERATION(Sqrt, Float, WRAP_STD(sqrt))
@@ -1754,7 +1766,7 @@ CONSTANT_FUNCTION(Bitcast)
 
 // Type checker helpers
 
-static bool containsZero(ConstantValue value, const Type* valueType)
+[[maybe_unused]] static bool containsZero(ConstantValue value, const Type* valueType)
 {
     auto wrapped = [&]() -> Expected<bool, String> {
         auto zero = zeroValue(valueType);
@@ -1773,5 +1785,45 @@ static bool containsZero(ConstantValue value, const Type* valueType)
 #undef CALL_MOVE_
 #undef CALL_MOVE
 #undef CONSTANT_FUNCTION
+
+#define VALIDATION_FUNCTION(name) \
+    [[maybe_unused]] static std::optional<String>(validate ## name)(const FixedVector<std::optional<ConstantValue>>& arguments)
+
+#define CALL_(__tmp, __variable, __fnName, ...) \
+    auto __tmp = constant##__fnName(__VA_ARGS__); \
+    if (!__tmp) \
+        return { __tmp.error() }; \
+    auto __variable = WTF::move(*__tmp)
+
+#define CALL(__variable, __fnName, ...) \
+    CALL_(WTF_LAZY_JOIN(tmp, __COUNTER__), __variable, __fnName, __VA_ARGS__)
+
+VALIDATION_FUNCTION(Clamp)
+{
+    if (arguments[1] && arguments[2]) {
+        CALL(gt, Gt, nullptr, { *arguments[1], *arguments[2] });
+        CALL(any, Any, nullptr, { gt });
+        if (any.toBool())
+            return { makeString("clamp called with low ("_s, *arguments[1], ") greater than high ("_s, *arguments[2], ")"_s) };
+    }
+
+    return std::nullopt;
+}
+
+VALIDATION_FUNCTION(Smoothstep)
+{
+    if (arguments[0] && arguments[1]) {
+        CALL(equal, Equal, nullptr, { *arguments[0], *arguments[1] });
+        CALL(any, Any, nullptr, { equal });
+        if (any.toBool())
+            return { makeString("smoothstep called with low ("_s, *arguments[0], ") equal high ("_s, *arguments[1], ")"_s) };
+    }
+
+    return std::nullopt;
+}
+
+#undef VALIDATION_FUNCTION
+#undef CALL_
+#undef CALL
 
 } // namespace WGSL

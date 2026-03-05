@@ -25,9 +25,15 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #import <Foundation/Foundation.h>
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS_FAMILY)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -60,3 +66,7 @@ enum {
 - (NSUInteger)getParameter:(EAGLContextParameter)pname to:(int32_t *)params;
 @end
 #endif
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#endif // !__has_feature(modules)

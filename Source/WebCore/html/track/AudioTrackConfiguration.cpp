@@ -35,6 +35,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackConfiguration);
 
+auto AudioTrackConfiguration::updateState(const AudioTrackConfigurationInit& state) -> StateChanged
+{
+    if (state == m_state)
+        return StateChanged::No;
+    m_state = state;
+    return StateChanged::Yes;
+}
+
 Ref<JSON::Object> AudioTrackConfiguration::toJSON() const
 {
     Ref json = JSON::Object::create();

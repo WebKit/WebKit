@@ -40,7 +40,7 @@ ArrayBufferView::ArrayBufferView(TypedArrayType type, RefPtr<ArrayBuffer>&& buff
     , m_isAutoLength(buffer->isResizableOrGrowableShared() && !byteLength)
     , m_byteOffset(byteOffset)
     , m_byteLength(byteLength.value_or(0))
-    , m_buffer(WTFMove(buffer))
+    , m_buffer(WTF::move(buffer))
 {
     if (byteLength) {
         // If it is resizable, then it can be possible that length exceeds byteLength, and this is fine since it just becomes OOB array.

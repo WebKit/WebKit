@@ -87,8 +87,6 @@ public:
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer(std::optional<WebCore::MediaPlayerIdentifier>);
 
-    std::optional<WebCore::ShareableBitmap::Handle> bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier);
-
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<RemoteMediaSourceProxy> pendingMediaSource(RemoteMediaSourceIdentifier);
     void registerMediaSource(RemoteMediaSourceIdentifier, RemoteMediaSourceProxy&);
@@ -113,7 +111,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const { return "RemoteMediaPlayerManagerProxy"; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
     uint64_t logIdentifier() const { return m_logIdentifier; }
 #endif
 

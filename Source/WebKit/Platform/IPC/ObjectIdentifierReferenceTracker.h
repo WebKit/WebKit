@@ -31,6 +31,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/text/TextStream.h>
 
 namespace IPC {
 

@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-20,-20) size 80x80 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {pattern} at (-20,-20) size 80x80
+layer at (-20,-20) size 80x80 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 80x80 [stroke={[type=SOLID] [color=#640000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00000000]}] [cx=20.00] [cy=20.00] [r=40.00]
+layer at (50,50) size 350x400
+  RenderSVGRect {rect} at (50,50) size 350x400 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [x=50.00] [y=50.00] [width=350.00] [height=400.00]
+layer at (1,1) size 448x498
+  RenderSVGRect {rect} at (1,1) size 448x498 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=448.00] [height=498.00]
+layer at (132.17,10.83) size 186x28
+  RenderSVGTransformableContainer {g} at (132.17,10.83) size 185.66x26.67
+layer at (132.17,10.83) size 186x12
+  RenderSVGText {text} at (0,0) size 186x12 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 186x12
+      chunk 1 (middle anchor) text run 1 at (132.18,20.00) startOffset 0 endOffset 47 width 185.64: "stroked circle shouldn't be clipped in any way."
+layer at (161.25,25.83) size 128x12
+  RenderSVGText {text} at (29,15) size 128x12 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 128x12
+      chunk 1 (middle anchor) text run 1 at (161.26,35.00) startOffset 0 endOffset 32 width 127.48: "(stroke-width should be visible!"

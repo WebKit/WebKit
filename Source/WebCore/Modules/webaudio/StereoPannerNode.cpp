@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StereoPannerNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StereoPannerNode);
 
 ExceptionOr<Ref<StereoPannerNode>> StereoPannerNode::create(BaseAudioContext& context, const StereoPannerOptions& options)
 {

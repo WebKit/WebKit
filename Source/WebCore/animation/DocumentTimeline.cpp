@@ -70,7 +70,7 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     , m_document(document)
     , m_originTime(originTime)
 {
-    document.ensureCheckedTimelinesController()->addTimeline(*this);
+    protect(document.ensureTimelinesController())->addTimeline(*this);
 }
 
 DocumentTimeline::~DocumentTimeline() = default;
@@ -128,7 +128,7 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
 
 std::optional<WebAnimationTime> DocumentTimeline::currentTime(UseCachedCurrentTime useCachedCurrentTime)
 {
-    if (auto* controller = this->controller()) {
+    if (CheckedPtr controller = this->controller()) {
         if (auto currentTime = controller->currentTime(useCachedCurrentTime))
             return *currentTime - m_originTime;
         return std::nullopt;
@@ -242,11 +242,11 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return false;
 
     auto target = keyframeEffect->targetStyleable();
-    if (!target || !target->protectedElement()->isDescendantOf(Ref { *m_document }))
+    if (!target || !protect(target->element)->isDescendantOf(Ref { *m_document }))
         return false;
 
 IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
-    auto& style = [&]() -> const RenderStyle& {
+    CheckedRef style = [&]() -> const RenderStyle& {
         if (auto* renderer = target->renderer())
             return renderer->style();
         return RenderStyle::defaultStyleSingleton();
@@ -255,7 +255,7 @@ IGNORE_GCC_WARNINGS_END
 
     auto resolvedProperty = [&] (AnimatableCSSProperty property) -> AnimatableCSSProperty {
         if (std::holds_alternative<CSSPropertyID>(property))
-            return CSSProperty::resolveDirectionAwareProperty(std::get<CSSPropertyID>(property), style.writingMode());
+            return CSSProperty::resolveDirectionAwareProperty(std::get<CSSPropertyID>(property), style->writingMode());
         return property;
     };
 
@@ -341,7 +341,7 @@ void DocumentTimeline::transitionDidComplete(Ref<CSSTransition>&& transition)
         if (auto styleable = keyframeEffect->targetStyleable()) {
             auto property = transition->property();
             if (styleable->hasRunningTransitionForProperty(property))
-                styleable->ensureCompletedTransitionsByProperty().set(property, WTFMove(transition));
+                styleable->ensureCompletedTransitionsByProperty().set(property, WTF::move(transition));
         }
     }
 }
@@ -362,7 +362,7 @@ void DocumentTimeline::scheduleNextTick()
 
     auto timeUntilNextTickForAnimationsWithFrameRate = [&](std::optional<FramesPerSecond> frameRate) -> std::optional<Seconds> {
         if (frameRate) {
-            if (auto* controller = this->controller())
+            if (CheckedPtr controller = this->controller())
                 return controller->timeUntilNextTickForAnimationsWithFrameRate(*frameRate);
         }
         return std::nullopt;
@@ -419,7 +419,7 @@ void DocumentTimeline::scheduleAcceleratedEffectStackUpdate()
 
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
 {
-    m_acceleratedAnimationsPendingRunningStateChange.add(&animation);
+    m_acceleratedAnimationsPendingRunningStateChange.add(animation);
 
     if (shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         scheduleAnimationResolution();
@@ -484,7 +484,7 @@ unsigned DocumentTimeline::numberOfAnimationTimelineInvalidationsForTesting() co
     return m_numberOfAnimationTimelineInvalidationsForTesting;
 }
 
-ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallback>&& callback, std::optional<Variant<double, CustomAnimationOptions>>&& options)
+ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallback>&& callback, Variant<double, CustomAnimationOptions>&& options)
 {
     RefPtr document = m_document.get();
     if (!document)
@@ -492,28 +492,25 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
 
     String id = emptyString();
     Variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
-    std::optional<Variant<double, EffectTiming>> customEffectOptions;
 
-    if (options) {
-        Variant<double, EffectTiming> customEffectOptionsVariant;
-        if (std::holds_alternative<double>(*options))
-            customEffectOptionsVariant = std::get<double>(*options);
-        else {
-            auto customEffectOptions = std::get<CustomAnimationOptions>(*options);
-            id = customEffectOptions.id;
-            frameRate = customEffectOptions.frameRate;
-            customEffectOptionsVariant = WTFMove(customEffectOptions);
+    auto customEffectOptions = WTF::switchOn(options,
+        [](double value) -> Variant<double, EffectTiming> {
+            return value;
+        },
+        [&](const CustomAnimationOptions& options) -> Variant<double, EffectTiming> {
+            id = options.id;
+            frameRate = options.frameRate;
+            return options;
         }
-        customEffectOptions = customEffectOptionsVariant;
-    }
+    );
 
-    auto customEffectResult = CustomEffect::create(*document, WTFMove(callback), WTFMove(customEffectOptions));
+    auto customEffectResult = CustomEffect::create(*document, WTF::move(callback), WTF::move(customEffectOptions));
     if (customEffectResult.hasException())
         return customEffectResult.releaseException();
 
     auto animation = WebAnimation::create(*document, &customEffectResult.returnValue().get());
-    animation->setId(WTFMove(id));
-    animation->setBindingsFrameRate(WTFMove(frameRate));
+    animation->setId(WTF::move(id));
+    animation->setBindingsFrameRate(WTF::move(frameRate));
 
     auto animationPlayResult = animation->play();
     if (animationPlayResult.hasException())

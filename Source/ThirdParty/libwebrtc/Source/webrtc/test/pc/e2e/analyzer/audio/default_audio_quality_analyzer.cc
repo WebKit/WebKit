@@ -93,24 +93,28 @@ void DefaultAudioQualityAnalyzer::OnStatsReports(
     AudioStreamStats& audio_stream_stats =
         streams_stats_[stream_info.stream_label];
     audio_stream_stats.expand_rate.AddSample(
-        (sample.concealed_samples - prev_sample.concealed_samples) /
-        total_samples_diff);
+        {.value = (sample.concealed_samples - prev_sample.concealed_samples) /
+                  total_samples_diff,
+         .time = report->timestamp()});
     audio_stream_stats.accelerate_rate.AddSample(
-        (sample.removed_samples_for_acceleration -
-         prev_sample.removed_samples_for_acceleration) /
-        total_samples_diff);
+        {.value = (sample.removed_samples_for_acceleration -
+                   prev_sample.removed_samples_for_acceleration) /
+                  total_samples_diff,
+         .time = report->timestamp()});
     audio_stream_stats.preemptive_rate.AddSample(
-        (sample.inserted_samples_for_deceleration -
-         prev_sample.inserted_samples_for_deceleration) /
-        total_samples_diff);
+        {.value = (sample.inserted_samples_for_deceleration -
+                   prev_sample.inserted_samples_for_deceleration) /
+                  total_samples_diff,
+         .time = report->timestamp()});
 
     int64_t speech_concealed_samples =
         sample.concealed_samples - sample.silent_concealed_samples;
     int64_t prev_speech_concealed_samples =
         prev_sample.concealed_samples - prev_sample.silent_concealed_samples;
     audio_stream_stats.speech_expand_rate.AddSample(
-        (speech_concealed_samples - prev_speech_concealed_samples) /
-        total_samples_diff);
+        {.value = (speech_concealed_samples - prev_speech_concealed_samples) /
+                  total_samples_diff,
+         .time = report->timestamp()});
 
     int64_t jitter_buffer_emitted_count_diff =
         sample.jitter_buffer_emitted_count -
@@ -122,15 +126,20 @@ void DefaultAudioQualityAnalyzer::OnStatsReports(
           sample.jitter_buffer_target_delay -
           prev_sample.jitter_buffer_target_delay;
       audio_stream_stats.average_jitter_buffer_delay_ms.AddSample(
-          jitter_buffer_delay_diff.ms<double>() /
-          jitter_buffer_emitted_count_diff);
+          {.value = jitter_buffer_delay_diff.ms<double>() /
+                    jitter_buffer_emitted_count_diff,
+           .time = report->timestamp()});
       audio_stream_stats.preferred_buffer_size_ms.AddSample(
-          jitter_buffer_target_delay_diff.ms<double>() /
-          jitter_buffer_emitted_count_diff);
+          {.value = jitter_buffer_target_delay_diff.ms<double>() /
+                    jitter_buffer_emitted_count_diff,
+           .time = report->timestamp()});
     }
-    audio_stream_stats.energy.AddSample(sqrt(
-        (sample.total_audio_energy - prev_sample.total_audio_energy) /
-        (sample.total_samples_duration - prev_sample.total_samples_duration)));
+    audio_stream_stats.energy.AddSample(
+        {.value =
+             sqrt((sample.total_audio_energy - prev_sample.total_audio_energy) /
+                  (sample.total_samples_duration -
+                   prev_sample.total_samples_duration)),
+         .time = report->timestamp()});
 
     last_stats_sample_[stream_info.stream_label] = sample;
   }

@@ -46,10 +46,12 @@ NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connecti
     m_cancellable = adoptGRef(g_cancellable_new());
     g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.Avahi", "/", "org.freedesktop.Avahi.Server", m_cancellable.get(), [](GObject*, GAsyncResult* result, gpointer userData) {
         GUniqueOutPtr<GError> error;
-        auto self = reinterpret_cast<NetworkMDNSRegister*>(userData);
-        self->m_dbusProxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
-        if (!error)
+        auto proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
+        if (!error) {
+            auto self = static_cast<NetworkMDNSRegister*>(userData);
+            self->m_dbusProxy = WTF::move(proxy);
             return;
+        }
 
 #if PLATFORM(GTK)
         // Check if the connection to the system bus was refused, don't log an error when that
@@ -87,7 +89,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
     }).iterator->value.append(name);
 
     Ref connection = m_connection.get();
-    auto request = makeUnique<PendingRegistrationRequest>(connection.get(), WTFMove(name), ipAddress, sessionID(), WTFMove(completionHandler));
+    auto request = makeUnique<PendingRegistrationRequest>(connection.get(), WTF::move(name), ipAddress, sessionID(), WTF::move(completionHandler));
 
     request->cancellable = m_cancellable;
 
@@ -110,7 +112,8 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
         GUniqueOutPtr<char> objectPath;
         g_variant_get(variant.get(), "(o)", &objectPath.outPtr());
 
-        g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.Avahi", objectPath.get(), "org.freedesktop.Avahi.EntryGroup", request->cancellable.get(), [](GObject*, GAsyncResult* result, gpointer userData) {
+        auto* cancellable = request->cancellable.get();
+        g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.Avahi", objectPath.get(), "org.freedesktop.Avahi.EntryGroup", cancellable, [](GObject*, GAsyncResult* result, gpointer userData) {
             std::unique_ptr<PendingRegistrationRequest> request;
             request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
 
@@ -128,7 +131,10 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
             int protocol = -1;
             uint32_t flags = 16; // AVAHI_PUBLISH_NO_REVERSE
 
-            g_dbus_proxy_call(dbusProxy.get(), "AddAddress", g_variant_new("(iiuss)", interface, protocol, flags, request->name.ascii().data(), request->address.ascii().data()), G_DBUS_CALL_FLAGS_NONE, -1, request->cancellable.get(), [](GObject* object, GAsyncResult* result, gpointer userData) {
+            auto* cancellable = request->cancellable.get();
+            auto requestName = request->name.ascii();
+            auto requestAddress = request->address.ascii();
+            g_dbus_proxy_call(dbusProxy.get(), "AddAddress", g_variant_new("(iiuss)", interface, protocol, flags, requestName.data(), requestAddress.data()), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
                 std::unique_ptr<PendingRegistrationRequest> request;
                 request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
 
@@ -142,7 +148,8 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
                     return;
                 }
 
-                g_dbus_proxy_call(proxy, "Commit", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, request->cancellable.get(), [](GObject* object, GAsyncResult* result, gpointer userData) {
+                auto* cancellable = request->cancellable.get();
+                g_dbus_proxy_call(proxy, "Commit", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
                     std::unique_ptr<PendingRegistrationRequest> request;
                     request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
 

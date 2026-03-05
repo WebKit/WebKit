@@ -109,6 +109,7 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 
 @property (nullable, nonatomic, weak) id <_WKWebsiteDataStoreDelegate> _delegate WK_API_AVAILABLE(macos(10.15), ios(13.0));
 @property (nonatomic, readonly, copy) _WKWebsiteDataStoreConfiguration *_configuration;
+@property (readonly) NSString *_thirdPartyCookieBlockingModeForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 + (WKNotificationManagerRef)_sharedServiceWorkerNotificationManager WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
@@ -157,8 +158,8 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 - (void)_runningOrTerminatingServiceWorkerCountForTesting:(void(^)(NSUInteger))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4));
 
 // Supported data types are: WKWebsiteDataTypeLocalStorage.
-- (void)_fetchDataOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(WK_SWIFT_UI_ACTOR void(^)(NSData *))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
-- (void)_restoreData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
+- (void)_fetchDataOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(WK_SWIFT_UI_ACTOR void(^)(NSData *))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-fetchDataOfTypes:completionHandler:", macos(15.4, WK_MAC_TBA), ios(18.4, WK_IOS_TBA), visionos(2.4, WK_XROS_TBA));
+- (void)_restoreData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-restoreData:completionHandler:", macos(15.4, WK_MAC_TBA), ios(18.4, WK_IOS_TBA), visionos(2.4, WK_XROS_TBA));
 
 - (void)_isStorageSuspendedForTesting:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 

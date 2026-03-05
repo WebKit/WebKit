@@ -56,6 +56,7 @@ CroppedDesktopFrame::CroppedDesktopFrame(std::unique_ptr<DesktopFrame> frame,
                                          const DesktopRect& rect)
     : DesktopFrame(rect.size(),
                    frame->stride(),
+                   frame->pixel_format(),
                    frame->GetFrameDataAtPos(rect.top_left()),
                    frame->shared_memory()),
       frame_(std::move(frame)) {

@@ -46,7 +46,7 @@ private:
     LaunchLogHook() = default;
 
     UnfairLock m_lock;
-    XPCObjectPtr<xpc_connection_t> m_connection WTF_GUARDED_BY_LOCK(m_lock);
+    OSObjectPtr<xpc_connection_t> m_connection WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebKit

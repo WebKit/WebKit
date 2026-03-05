@@ -27,7 +27,6 @@
 #include "FilterOperations.h"
 
 #include "AnimationUtilities.h"
-#include "DropShadowFilterOperationWithStyleColor.h"
 #include "FEGaussianBlur.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
@@ -40,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterOperations);
 
 FilterOperations::FilterOperations(Vector<Ref<FilterOperation>>&& operations)
-    : m_operations(WTFMove(operations))
+    : m_operations(WTF::move(operations))
 {
 }
 
@@ -58,42 +57,33 @@ bool FilterOperations::operationsMatch(const FilterOperations& other) const
     return std::ranges::equal(m_operations, other.m_operations, [](auto& a, auto& b) { return a->isSameType(b.get()); });
 }
 
-bool FilterOperations::hasReferenceFilter() const
-{
-    return hasFilterOfType<FilterOperation::Type::Reference>();
-}
-
 IntOutsets FilterOperations::outsets() const
 {
     IntOutsets totalOutsets;
     for (auto& operation : m_operations) {
         switch (operation->type()) {
         case FilterOperation::Type::Blur: {
-            auto& blurOperation = downcast<BlurFilterOperation>(operation.get());
-            float stdDeviation = blurOperation.stdDeviation();
+            Ref blurOperation = downcast<BlurFilterOperation>(operation.get());
+            float stdDeviation = blurOperation->stdDeviation();
             IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
             IntOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
             totalOutsets += outsets;
             break;
         }
-        case FilterOperation::Type::DropShadow:
-        case FilterOperation::Type::DropShadowWithStyleColor: {
-            auto& dropShadowOperation = downcast<DropShadowFilterOperationBase>(operation.get());
-            float stdDeviation = dropShadowOperation.stdDeviation();
+        case FilterOperation::Type::DropShadow: {
+            Ref dropShadowOperation = downcast<DropShadowFilterOperation>(operation.get());
+            float stdDeviation = dropShadowOperation->stdDeviation();
             IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
-            
-            int top = std::max(0, outsetSize.height() - dropShadowOperation.y());
-            int right = std::max(0, outsetSize.width() + dropShadowOperation.x());
-            int bottom = std::max(0, outsetSize.height() + dropShadowOperation.y());
-            int left = std::max(0, outsetSize.width() - dropShadowOperation.x());
-            
+
+            int top = std::max(0, outsetSize.height() - dropShadowOperation->y());
+            int right = std::max(0, outsetSize.width() + dropShadowOperation->x());
+            int bottom = std::max(0, outsetSize.height() + dropShadowOperation->y());
+            int left = std::max(0, outsetSize.width() - dropShadowOperation->x());
+
             auto outsets = IntOutsets { top, right, bottom, left };
             totalOutsets += outsets;
             break;
         }
-        case FilterOperation::Type::Reference:
-            ASSERT_NOT_REACHED();
-            break;
         default:
             break;
         }
@@ -101,28 +91,9 @@ IntOutsets FilterOperations::outsets() const
     return totalOutsets;
 }
 
-bool FilterOperations::hasFilterThatAffectsOpacity() const
-{
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->affectsOpacity(); });
-}
-
-bool FilterOperations::hasFilterThatMovesPixels() const
-{
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->movesPixels(); });
-}
-
-bool FilterOperations::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
-{
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->shouldBeRestrictedBySecurityOrigin(); });
-}
-
 bool FilterOperations::canInterpolate(const FilterOperations& to, CompositeOperation compositeOperation) const
 {
     // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
-
-    // We can't interpolate between lists if a reference filter is involved.
-    if (hasReferenceFilter() || to.hasReferenceFilter())
-        return false;
 
     // Additive and accumulative composition will always yield interpolation.
     if (compositeOperation != CompositeOperation::Replace)
@@ -154,7 +125,7 @@ FilterOperations FilterOperations::blend(const FilterOperations& to, const Blend
         operations.appendVector(m_operations);
         operations.appendVector(to.m_operations);
 
-        return FilterOperations { WTFMove(operations) };
+        return FilterOperations { WTF::move(operations) };
     }
 
     if (context.isDiscrete) {
@@ -187,17 +158,17 @@ FilterOperations FilterOperations::blend(const FilterOperations& to, const Blend
                 if (toOp)
                     operations.append(toOp.releaseNonNull());
                 else
-                    operations.append(WTFMove(identityOp));
+                    operations.append(WTF::move(identityOp));
             } else {
                 if (fromOp)
                     operations.append(fromOp.releaseNonNull());
                 else
-                    operations.append(WTFMove(identityOp));
+                    operations.append(WTF::move(identityOp));
             }
         }
     }
 
-    return FilterOperations { WTFMove(operations) };
+    return FilterOperations { WTF::move(operations) };
 }
 
 TextStream& operator<<(TextStream& ts, const FilterOperations& filters)

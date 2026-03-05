@@ -32,7 +32,7 @@
 #include "GraphicsContextCG.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
-#include "ImageBufferUtilitiesCG.h"
+#include "ImageUtilities.h"
 #include "PixelBuffer.h"
 
 #if HAVE(ARM_NEON_INTRINSICS)

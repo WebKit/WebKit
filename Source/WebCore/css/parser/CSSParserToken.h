@@ -108,7 +108,7 @@ public:
 
     CSSParserToken(HashTokenType, StringView);
 
-    static CSSUnitType stringToUnitType(StringView);
+    static CSSUnitType NODELETE stringToUnitType(StringView);
 
     bool operator==(const CSSParserToken& other) const;
 
@@ -116,24 +116,24 @@ public:
     void convertToDimensionWithUnit(StringView);
 
     // Converts NumberToken to PercentageToken.
-    void convertToPercentage();
+    void NODELETE convertToPercentage();
 
     CSSParserTokenType type() const { return static_cast<CSSParserTokenType>(m_type); }
     StringView value() const { return { m_valueDataCharRaw, m_valueLength, m_valueIs8Bit }; }
 
-    char16_t delimiter() const;
-    NumericSign numericSign() const;
-    NumericValueType numericValueType() const;
-    double numericValue() const;
-    StringView originalText() const;
+    char16_t NODELETE delimiter() const;
+    NumericSign NODELETE numericSign() const;
+    NumericValueType NODELETE numericValueType() const;
+    double NODELETE numericValue() const;
+    StringView NODELETE originalText() const;
     HashTokenType getHashTokenType() const { ASSERT(m_type == HashToken); return m_hashTokenType; }
     BlockType getBlockType() const { return static_cast<BlockType>(m_blockType); }
     CSSUnitType unitType() const { return static_cast<CSSUnitType>(m_unit); }
-    StringView unitString() const;
+    StringView NODELETE unitString() const;
     CSSValueID id() const;
     CSSValueID functionId() const;
 
-    bool hasStringBacking() const;
+    bool NODELETE hasStringBacking() const;
     bool tryUseStringLiteralBacking();
     bool isBackedByStringLiteral() const { return m_isBackedByStringLiteral; }
 

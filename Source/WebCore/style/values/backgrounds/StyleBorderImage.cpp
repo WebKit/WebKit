@@ -29,6 +29,7 @@
 #include "CSSBorderImage.h"
 #include "CSSValueList.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveKeyword+Serialization.h"
@@ -38,64 +39,22 @@
 namespace WebCore {
 namespace Style {
 
-DataRef<BorderImage::Data>& BorderImage::defaultData()
-{
-    static NeverDestroyed<DataRef<Data>> data { Data::create() };
-    return data.get();
-}
-
 BorderImage::BorderImage()
-    : m_data(defaultData())
+    : borderImageSource { Style::ComputedStyle::initialBorderImageSource() }
+    , borderImageSlice { Style::ComputedStyle::initialBorderImageSlice() }
+    , borderImageWidth { Style::ComputedStyle::initialBorderImageWidth() }
+    , borderImageOutset { Style::ComputedStyle::initialBorderImageOutset() }
+    , borderImageRepeat { Style::ComputedStyle::initialBorderImageRepeat() }
 {
 }
 
 BorderImage::BorderImage(BorderImageSource&& source, BorderImageSlice&& slice, BorderImageWidth&& width, BorderImageOutset&& outset, BorderImageRepeat&& repeat)
-    : m_data(Data::create(WTFMove(source), WTFMove(slice), WTFMove(width), WTFMove(outset), WTFMove(repeat)))
+    : borderImageSource { WTF::move(source) }
+    , borderImageSlice { WTF::move(slice) }
+    , borderImageWidth { WTF::move(width) }
+    , borderImageOutset { WTF::move(outset) }
+    , borderImageRepeat { WTF::move(repeat) }
 {
-}
-
-BorderImage::Data::Data() = default;
-BorderImage::Data::Data(BorderImageSource&& source, BorderImageSlice&& slice, BorderImageWidth&& width, BorderImageOutset&& outset, BorderImageRepeat&& repeat)
-    : source { WTFMove(source) }
-    , slice { WTFMove(slice) }
-    , width { WTFMove(width) }
-    , outset { WTFMove(outset) }
-    , repeat { WTFMove(repeat) }
-{
-}
-
-BorderImage::Data::Data(const Data& other)
-    : RefCounted<Data>()
-    , source { other.source }
-    , slice { other.slice }
-    , width { other.width }
-    , outset { other.outset }
-    , repeat { other.repeat }
-{
-}
-
-Ref<BorderImage::Data> BorderImage::Data::create()
-{
-    return adoptRef(*new Data);
-}
-
-Ref<BorderImage::Data> BorderImage::Data::create(BorderImageSource&& source, BorderImageSlice&& slice, BorderImageWidth&& width, BorderImageOutset&& outset, BorderImageRepeat&& repeat)
-{
-    return adoptRef(*new Data(WTFMove(source), WTFMove(slice), WTFMove(width), WTFMove(outset), WTFMove(repeat)));
-}
-
-Ref<BorderImage::Data> BorderImage::Data::copy() const
-{
-    return adoptRef(*new Data(*this));
-}
-
-bool BorderImage::Data::operator==(const Data& other) const
-{
-    return source == other.source
-        && slice == other.slice
-        && width == other.width
-        && outset == other.outset
-        && repeat == other.repeat;
 }
 
 // MARK: - Conversion
@@ -103,11 +62,11 @@ bool BorderImage::Data::operator==(const Data& other) const
 auto CSSValueCreation<BorderImage>::operator()(CSSValuePool& pool, const RenderStyle& style, const BorderImage& value) -> Ref<CSSValue>
 {
     return createBorderImageValue({
-        .source = createCSSValue(pool, style, value.source()),
-        .slice  = createCSSValue(pool, style, value.slice()),
-        .width  = createCSSValue(pool, style, value.width()),
-        .outset = createCSSValue(pool, style, value.outset()),
-        .repeat = createCSSValue(pool, style, value.repeat()),
+        .source = createCSSValue(pool, style, value.borderImageSource),
+        .slice  = createCSSValue(pool, style, value.borderImageSlice),
+        .width  = createCSSValue(pool, style, value.borderImageWidth),
+        .outset = createCSSValue(pool, style, value.borderImageOutset),
+        .repeat = createCSSValue(pool, style, value.borderImageRepeat),
     });
 }
 
@@ -115,29 +74,29 @@ auto CSSValueCreation<BorderImage>::operator()(CSSValuePool& pool, const RenderS
 
 void Serialize<BorderImage>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const BorderImage& value)
 {
-    if (value.source().isNone()) {
+    if (value.borderImageSource.isNone()) {
         serializationForCSS(builder, context, style, value.source());
         return;
     }
 
     // FIXME: Omit values that have their initial value.
 
-    serializationForCSS(builder, context, style, value.source());
+    serializationForCSS(builder, context, style, value.borderImageSource);
     builder.append(' ');
-    serializationForCSS(builder, context, style, value.slice());
+    serializationForCSS(builder, context, style, value.borderImageSlice);
     builder.append(" / "_s);
-    serializationForCSS(builder, context, style, value.width());
+    serializationForCSS(builder, context, style, value.borderImageWidth);
     builder.append(" / "_s);
-    serializationForCSS(builder, context, style, value.outset());
+    serializationForCSS(builder, context, style, value.borderImageOutset);
     builder.append(' ');
-    serializationForCSS(builder, context, style, value.repeat());
+    serializationForCSS(builder, context, style, value.borderImageRepeat);
 }
 
 // MARK: - Logging
 
-TextStream& operator<<(TextStream& ts, const BorderImage& image)
+TextStream& operator<<(TextStream& ts, const BorderImage& value)
 {
-    return ts << "style-image "_s << image.source() << " slices "_s << image.slice();
+    return ts << "style-image "_s << value.borderImageSource << " slices "_s << value.borderImageSlice;
 }
 
 } // namespace Style

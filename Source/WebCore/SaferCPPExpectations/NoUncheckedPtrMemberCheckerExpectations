@@ -1,21 +1,17 @@
-Modules/websockets/WorkerThreadableWebSocketChannel.h
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.h
 bindings/js/JSLazyEventListener.cpp
 css/CSSToLengthConversionData.h
 css/SelectorChecker.h
 css/SelectorFilter.h
-css/query/MediaQueryEvaluator.h
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
-editing/TextCheckingHelper.h
 inspector/InstrumentingAgents.h
 inspector/agents/WebHeapAgent.cpp
 layout/formattingContexts/inline/AbstractLineBuilder.h
 layout/formattingContexts/inline/InlineContentBreaker.h
 layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineFormattingUtils.cpp
-layout/formattingContexts/inline/InlineItem.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
 layout/formattingContexts/inline/InlineLine.h
 layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp
@@ -26,12 +22,8 @@ layout/layouttree/LayoutChildIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
 layout/layouttree/LayoutDescendantIterator.h
 layout/layouttree/LayoutIterator.h
-loader/DocumentThreadableLoader.h
-loader/WorkerThreadableLoader.h
-page/FrameSnapshotting.cpp
-[ iOS ] page/ios/ContentChangeObserver.h
+[ iOS ] page/cocoa/ContentChangeObserver.h
 platform/graphics/TextRunIterator.h
-platform/graphics/ca/TileCoverageMap.h
 [ iOS ] platform/ios/DeviceMotionClientIOS.h
 [ iOS ] platform/ios/DeviceOrientationClientIOS.h
 rendering/BackgroundPainter.h
@@ -64,7 +56,7 @@ rendering/RenderSelectionGeometry.h
 rendering/RenderTableSection.h
 rendering/RenderText.cpp
 rendering/TextDecorationPainter.h
-[ iOS ] rendering/ios/RenderThemeIOS.mm
+[ iOS ] rendering/cocoa/RenderThemeCocoa.mm
 rendering/line/BreakingContext.h
 rendering/mathml/RenderMathMLScripts.h
 rendering/shapes/ShapeOutsideInfo.h
@@ -87,5 +79,4 @@ style/StyleScope.h
 style/StyleTreeResolver.h
 style/Styleable.h
 style/calc/StyleCalculationTree+Conversion.h
-style/values/color/StyleColorResolutionState.h
 svg/properties/SVGPropertyOwnerRegistry.h

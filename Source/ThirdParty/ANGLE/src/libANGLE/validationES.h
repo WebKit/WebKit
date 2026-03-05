@@ -38,8 +38,9 @@ class Shader;
 
 #define ANGLE_VALIDATION_ERROR(errorCode, message) \
     context->getMutableErrorSetForValidation()->validationError(entryPoint, errorCode, message)
-#define ANGLE_VALIDATION_ERRORF(errorCode, ...) \
-    context->getMutableErrorSetForValidation()->validationErrorF(entryPoint, errorCode, __VA_ARGS__)
+#define ANGLE_VALIDATION_ERRORF(errorCode, ...)                                     \
+    ANGLE_UNSAFE_TODO(context->getMutableErrorSetForValidation()->validationErrorF( \
+        entryPoint, errorCode, __VA_ARGS__))
 
 void SetRobustLengthParam(const GLsizei *length, GLsizei value);
 bool ValidTextureTarget(const Context *context, TextureType type);
@@ -477,10 +478,7 @@ bool ValidateFlushMappedBufferRangeBase(const Context *context,
                                         GLintptr offset,
                                         GLsizeiptr length);
 
-bool ValidateGenOrDelete(const Context *context,
-                         angle::EntryPoint entryPoint,
-                         GLint n,
-                         const void *ids);
+bool ValidateGenOrDelete(ErrorSet *errors, angle::EntryPoint entryPoint, GLint n, const void *ids);
 
 bool ValidateRobustEntryPoint(const Context *context,
                               angle::EntryPoint entryPoint,
@@ -680,7 +678,7 @@ bool ValidateGetInternalFormativBase(const Context *context,
                                      GLenum target,
                                      GLenum internalformat,
                                      GLenum pname,
-                                     GLsizei bufSize,
+                                     GLsizei count,
                                      GLsizei *numParams);
 
 bool ValidateFramebufferNotMultisampled(const Context *context,
@@ -1143,7 +1141,7 @@ ANGLE_INLINE bool ValidateBindVertexArrayBase(const Context *context,
                                               angle::EntryPoint entryPoint,
                                               VertexArrayID array)
 {
-    if (ANGLE_UNLIKELY(!context->isVertexArrayGenerated(array)))
+    if (ANGLE_UNLIKELY(!context->getPrivateState().isVertexArrayGenerated(array)))
     {
         // The default VAO should always exist
         ASSERT(array.value != 0);

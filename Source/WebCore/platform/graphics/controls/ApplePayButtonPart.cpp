@@ -52,7 +52,7 @@ ApplePayButtonPart::ApplePayButtonPart(ApplePayButtonType buttonType, ApplePayBu
 
 std::unique_ptr<PlatformControl> ApplePayButtonPart::createPlatformControl()
 {
-    return protectedControlFactory()->createPlatformApplePayButton(*this);
+    return protect(controlFactory())->createPlatformApplePayButton(*this);
 }
 
 } // namespace WebCore

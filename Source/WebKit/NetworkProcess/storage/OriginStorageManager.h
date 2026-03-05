@@ -68,23 +68,20 @@ public:
 
     void connectionClosed(IPC::Connection::UniqueID);
     WebCore::StorageEstimate estimate();
-    const String& path() const { return m_path; }
-    OriginQuotaManager& quotaManager();
-    Ref<OriginQuotaManager> protectedQuotaManager();
+    const String& path() const LIFETIME_BOUND { return m_path; }
+    OriginQuotaManager& NODELETE quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
     FileSystemStorageManager* existingFileSystemStorageManager();
-    LocalStorageManager& localStorageManager(StorageAreaRegistry&);
-    LocalStorageManager* existingLocalStorageManager();
-    SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
-    SessionStorageManager* existingSessionStorageManager();
-    IDBStorageManager& idbStorageManager(IDBStorageRegistry&);
-    CheckedRef<IDBStorageManager> checkedIDBStorageManager(IDBStorageRegistry&);
+    LocalStorageManager& localStorageManager(StorageAreaRegistry&) LIFETIME_BOUND;
+    LocalStorageManager* existingLocalStorageManager() LIFETIME_BOUND;
+    SessionStorageManager& sessionStorageManager(StorageAreaRegistry&) LIFETIME_BOUND;
+    SessionStorageManager* existingSessionStorageManager() LIFETIME_BOUND;
+    IDBStorageManager& idbStorageManager(IDBStorageRegistry&, bool useSQLiteMemoryBackingStore);
     IDBStorageManager* existingIDBStorageManager();
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
-    Ref<CacheStorageManager> protectedCacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager();
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WTF::WorkQueue>&&);
-    ServiceWorkerStorageManager& serviceWorkerStorageManager();
+    ServiceWorkerStorageManager& serviceWorkerStorageManager() LIFETIME_BOUND;
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
     String resolvedPath(WebsiteDataType);
@@ -107,7 +104,7 @@ private:
     Ref<OriginQuotaManager> createQuotaManager(OriginQuotaManager::Parameters&&);
     enum class StorageBucketMode : bool;
     class StorageBucket;
-    StorageBucket& defaultBucket();
+    StorageBucket& defaultBucket() LIFETIME_BOUND;
 
     std::unique_ptr<StorageBucket> m_defaultBucket;
     String m_path;

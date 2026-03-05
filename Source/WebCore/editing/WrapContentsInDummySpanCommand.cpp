@@ -88,7 +88,7 @@ void WrapContentsInDummySpanCommand::doReapply()
 void WrapContentsInDummySpanCommand::getNodesInCommand(NodeSet& nodes)
 {
     addNodeAndDescendants(m_element.ptr(), nodes);
-    addNodeAndDescendants(protectedDummySpan().get(), nodes);
+    addNodeAndDescendants(protect(m_dummySpan).get(), nodes);
 }
 #endif
 

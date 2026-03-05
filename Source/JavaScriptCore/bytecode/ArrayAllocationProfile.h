@@ -135,7 +135,7 @@ private:
         IndexingType indexingType() const { return m_bits >> indexingTypeShift; }
         unsigned vectorLength() const { return m_bits & vectorLengthMask; }
 
-        IndexingTypeAndVectorLength withIndexingType(IndexingType indexingType) WARN_UNUSED_RETURN
+        [[nodiscard]] IndexingTypeAndVectorLength withIndexingType(IndexingType indexingType)
         {
             return IndexingTypeAndVectorLength(indexingType, vectorLength());
         }

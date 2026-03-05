@@ -10,12 +10,12 @@ info: |
   ...
   3. Let len be the value of O's [[ArrayLength]] internal slot.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample1 = new TA(42);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample1 = new TA(makeCtorArg(42));
   var loop = 0;
 
   Object.defineProperty(sample1, "length", {value: 1});
@@ -27,7 +27,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(loop, 42, "data descriptor");
 
   loop = 0;
-  var sample2 = new TA(4);
+  var sample2 = new TA(makeCtorArg(4));
   Object.defineProperty(sample2, "length", {
     get: function() {
       throw new Test262Error(
@@ -41,5 +41,5 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     return 0n;
   });
   assert.sameValue(loop, 4, "accessor descriptor");
-});
+}, null, ["passthrough"]);
 

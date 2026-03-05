@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 #include <pal/spi/cocoa/QuartzCoreSPI.h>
 #include <wtf/SoftLinking.h>
 
@@ -35,3 +38,5 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, QuartzCore, CAIOSurfaceCreate, CAIOS
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, QuartzCore, CAIOSurfaceReloadColorAttributes, void, (CAIOSurfaceRef surface), (surface))
 #define CAIOSurfaceReloadColorAttributes PAL::softLink_QuartzCore_CAIOSurfaceReloadColorAttributes
+
+#endif // !__has_feature(modules)

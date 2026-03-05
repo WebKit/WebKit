@@ -3,10 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderInline {NOBR} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x352
+      RenderInline {NOBR} at (0,0) size 784x352
+        RenderText {#text} at (0,0) size 0x0
         RenderTable {TABLE} at (0,0) size 70x352 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 68x350
             RenderTableRow {TR} at (0,2) size 68x346
@@ -31,6 +29,4 @@ layer at (0,0) size 800x600
                   text run at (2,290) width 44: "is only"
                   text run at (2,308) width 59: "50 pixels"
                   text run at (2,326) width 36: "wide."
-      RenderBlock (anonymous) at (0,352) size 784x0
-        RenderInline {NOBR} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

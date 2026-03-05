@@ -14,7 +14,7 @@
 #include <cmath>
 #include <variant>
 
-#include "api/video/corruption_detection_filter_settings.h"
+#include "api/video/corruption_detection/corruption_detection_filter_settings.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

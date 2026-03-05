@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2016, 2025 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,12 @@
 
 #pragma once
 
-namespace WTF {
+#include <wtf/ProcessMemoryStatus.h>
 
-struct ProcessMemoryStatus {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ProcessMemoryStatus);
-    size_t size { 0 };
-    size_t resident { 0 };
-    size_t shared { 0 };
-    size_t text { 0 };
-    size_t lib { 0 };
-    size_t data { 0 };
-    size_t dt { 0 };
-};
+namespace WTF {
 
 WTF_EXPORT_PRIVATE void currentProcessMemoryStatus(ProcessMemoryStatus&);
 
 } // namespace WTF
 
-using WTF::ProcessMemoryStatus;
 using WTF::currentProcessMemoryStatus;

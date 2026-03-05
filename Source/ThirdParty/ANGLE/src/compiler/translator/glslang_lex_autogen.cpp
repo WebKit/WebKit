@@ -4427,11 +4427,7 @@ int glslang_scan(size_t count,
         return 1;
     }
 
-    if (context->getFragmentPrecisionHigh())
-    {
-        preprocessor->predefineMacro("GL_FRAGMENT_PRECISION_HIGH", 1);
-    }
-
+    preprocessor->predefineMacro("GL_FRAGMENT_PRECISION_HIGH", 1);
     preprocessor->setMaxTokenSize(sh::GetGlobalMaxTokenSize(context->getShaderSpec()));
 
     return 0;

@@ -42,7 +42,7 @@ class ScriptExecutionContext;
 class WebCoreOpaqueRoot;
 
 class AbortSignal final : public RefCounted<AbortSignal>, public EventTarget, private ContextDestructionObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
 public:
     static Ref<AbortSignal> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~AbortSignal();
@@ -63,13 +63,10 @@ public:
     void signalFollow(AbortSignal&);
 
     bool aborted() const { return m_aborted; }
-    const JSValueInWrappedObject& reason() const { return m_reason; }
+    const JSValueInWrappedObject& reason() const LIFETIME_BOUND { return m_reason; }
 
     bool hasActiveTimeoutTimer() const { return m_hasActiveTimeoutTimer; }
     bool hasAbortEventListener() const { return m_hasAbortEventListener; }
-
-    using RefCounted::ref;
-    using RefCounted::deref;
 
     using Algorithm = Function<void(JSC::JSValue reason)>;
     uint32_t addAlgorithm(Algorithm&&);
@@ -80,14 +77,14 @@ public:
     void throwIfAborted(JSC::JSGlobalObject&);
 
     using AbortSignalSet = WeakListHashSet<AbortSignal, WeakPtrImplWithEventTargetData>;
-    const AbortSignalSet& sourceSignals() const { return m_sourceSignals; }
-    AbortSignalSet& sourceSignals() { return m_sourceSignals; }
+    const AbortSignalSet& sourceSignals() const LIFETIME_BOUND { return m_sourceSignals; }
+    AbortSignalSet& sourceSignals() LIFETIME_BOUND { return m_sourceSignals; }
 
     bool isDependent() const { return m_isDependent; }
 
 private:
     enum class Aborted : bool { No, Yes };
-    explicit AbortSignal(ScriptExecutionContext*, Aborted = Aborted::No, JSC::JSValue reason = JSC::jsUndefined());
+    AbortSignal(ScriptExecutionContext*, Aborted = Aborted::No, JSC::JSValue reason = JSC::jsUndefined());
 
     void setHasActiveTimeoutTimer(bool hasActiveTimeoutTimer) { m_hasActiveTimeoutTimer = hasActiveTimeoutTimer; }
 
@@ -101,7 +98,6 @@ private:
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::AbortSignal; }
     ScriptExecutionContext* scriptExecutionContext() const final;
-    using ContextDestructionObserver::protectedScriptExecutionContext;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
@@ -118,6 +114,8 @@ private:
     bool m_isDependent { false };
 };
 
-WebCoreOpaqueRoot root(AbortSignal*);
+WebCoreOpaqueRoot NODELETE root(AbortSignal*);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(AbortSignal)

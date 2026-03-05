@@ -30,7 +30,7 @@ EC_KEY *EC_KEY_derive_from_secret(const EC_GROUP *group, const uint8_t *secret,
                                   size_t secret_len) {
 #define EC_KEY_DERIVE_MAX_NAME_LEN 16
   const char *name = EC_curve_nid2nist(EC_GROUP_get_curve_name(group));
-  if (name == NULL || strlen(name) > EC_KEY_DERIVE_MAX_NAME_LEN) {
+  if (name == nullptr || strlen(name) > EC_KEY_DERIVE_MAX_NAME_LEN) {
     OPENSSL_PUT_ERROR(EC, EC_R_UNKNOWN_GROUP);
     return nullptr;
   }

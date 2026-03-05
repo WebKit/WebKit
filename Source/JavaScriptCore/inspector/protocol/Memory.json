@@ -2,7 +2,7 @@
     "domain": "Memory",
     "description": "Memory domain exposes page memory tracking.",
     "condition": "defined(ENABLE_RESOURCE_USAGE) && ENABLE_RESOURCE_USAGE",
-    "debuggableTypes": ["page", "web-page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page"],
     "types": [
         {

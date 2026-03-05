@@ -35,8 +35,8 @@
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TransactionOperation);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TransactionOperationImpl);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TransactionOperation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TransactionOperationImpl);
 
 TransactionOperation::TransactionOperation(IDBTransaction& transaction)
     : m_transaction(transaction)
@@ -68,7 +68,7 @@ void TransactionOperation::transitionToComplete(const IDBResultData& data, RefPt
         transitionToCompleteOnThisThread(data);
     else {
         m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::transitionToCompleteOnThisThread, data);
-        m_transaction->callFunctionOnOriginThread([lastRef = WTFMove(lastRef)]() {
+        m_transaction->callFunctionOnOriginThread([lastRef = WTF::move(lastRef)]() {
         });
     }
 }

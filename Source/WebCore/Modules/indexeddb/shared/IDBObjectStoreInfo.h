@@ -39,8 +39,8 @@ public:
     WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& = { });
 
     IDBObjectStoreIdentifier identifier() const { return m_identifier; }
-    const String& name() const { return m_name; }
-    const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const std::optional<IDBKeyPath>& keyPath() const LIFETIME_BOUND { return m_keyPath; }
     bool autoIncrement() const { return m_autoIncrement; }
 
     void rename(const String& newName) { m_name = newName; }
@@ -56,7 +56,7 @@ public:
     IDBIndexInfo* infoForExistingIndex(IDBIndexIdentifier);
 
     Vector<String> indexNames() const;
-    const HashMap<IDBIndexIdentifier, IDBIndexInfo>& indexMap() const { return m_indexMap; }
+    const HashMap<IDBIndexIdentifier, IDBIndexInfo>& indexMap() const LIFETIME_BOUND { return m_indexMap; }
 
     void deleteIndex(const String& indexName);
     void deleteIndex(IDBIndexIdentifier);

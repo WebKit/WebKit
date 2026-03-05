@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,7 @@ public:
     void writeTo(std::span<char16_t> destination) const
     {
         if (U_IS_BMP(m_character)) {
-            destination[0] = m_character;
+            destination[0] = static_cast<char16_t>(m_character);
             return;
         }
         destination[0] = U16_LEAD(m_character);
@@ -443,7 +443,7 @@ template<typename C, typename E, typename B> class Interleave {
 public:
     Interleave(const C& container, E each, const B& between)
         : container { container }
-        , each { WTFMove(each) }
+        , each { WTF::move(each) }
         , between { between }
     {
     }
@@ -454,35 +454,31 @@ public:
     Interleave(Interleave&&) = default;
     Interleave& operator=(Interleave&&) = default;
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     template<typename Accumulator> void writeUsing(Accumulator& accumulator) const
     {
-        auto begin = std::begin(container);
-        auto end = std::end(container);
-        if (begin == end)
-            return;
-
         constexpr bool eachTakesAccumulator = requires {
-            { std::invoke(each, accumulator, *begin) } -> std::same_as<void>;
+            { std::invoke(each, accumulator, *std::begin(container)) } -> std::same_as<void>;
         };
 
+        bool isFirst = true;
         if constexpr (eachTakesAccumulator) {
-            std::invoke(each, accumulator, *begin);
-
-            ++begin;
-            for (; begin != end; ++begin) {
-                accumulator.append(between);
-                std::invoke(each, accumulator, *begin);
+            for (auto& item : container) {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    accumulator.append(between);
+                std::invoke(each, accumulator, item);
             }
         } else {
-            accumulator.append(std::invoke(each, *begin));
-
-            ++begin;
-            for (; begin != end; ++begin)
-                accumulator.append(between, std::invoke(each, *begin));
+            for (auto& item : container) {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    accumulator.append(between);
+                accumulator.append(std::invoke(each, item));
+            }
         }
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 private:
     const C& container;
@@ -545,22 +541,22 @@ template<typename C> using EachTakingAccumulatorAndValueFunction = void(&)(Strin
 
 template<typename C, std::invocable<decltype(*std::begin(std::declval<C>()))> E, StringTypeAdaptable B>
     requires EachTakingValue<C, E>
-decltype(auto) interleave(const C& container, E each, const B& between)
+decltype(auto) interleave(const C& container, NOESCAPE E&& each, const B& between)
 {
     return Interleave {
         container,
-        WTFMove(each),
+        std::forward<E>(each),
         between
     };
 }
 
 template<typename C, std::invocable<decltype(std::declval<StringBuilder&>()), decltype(*std::begin(std::declval<C>()))> E, StringTypeAdaptable B>
     requires EachTakingAccumulatorAndValue<C, E>
-decltype(auto) interleave(const C& container, E each, const B& between)
+decltype(auto) interleave(const C& container, NOESCAPE E&& each, const B& between)
 {
     return Interleave {
         container,
-        WTFMove(each),
+        std::forward<E>(each),
         between
     };
 }

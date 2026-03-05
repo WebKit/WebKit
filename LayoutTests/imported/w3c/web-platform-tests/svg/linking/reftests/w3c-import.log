@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/href-a-element-attr-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/href-a-element-attr-change.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/href-a-element-ref.html
@@ -38,6 +39,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/href-use-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/href-use-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/href-use-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-override-multiple-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-override-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-001.sub-expected.svg

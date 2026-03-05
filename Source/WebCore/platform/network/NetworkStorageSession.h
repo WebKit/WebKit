@@ -172,7 +172,6 @@ public:
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     CookieStorageObserver& cookieStorageObserver() const;
-    CheckedRef<CookieStorageObserver> checkedCookieStorageObserver() const;
 #elif USE(SOUP)
     WEBCORE_EXPORT explicit NetworkStorageSession(PAL::SessionID, IsInMemoryCookieStore = IsInMemoryCookieStore::No);
     ~NetworkStorageSession();

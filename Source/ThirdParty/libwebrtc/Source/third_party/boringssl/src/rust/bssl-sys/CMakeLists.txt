@@ -3,8 +3,10 @@
 # the depfile using the same syntax as the command-line argument, and ninja
 # requires a path relative to the top-level build directory.
 set(wrapper_rs wrapper_${RUST_BINDINGS}.rs)
-binary_dir_relative_path(${wrapper_rs} wrapper_rs_relative)
-binary_dir_relative_path(${wrapper_rs}.d depfile_relative)
+set(wrapper_rs_relative "${CMAKE_CURRENT_BINARY_DIR}/${wrapper_rs}")
+set(depfile_relative "${CMAKE_CURRENT_BINARY_DIR}/${wrapper_rs}.d")
+cmake_path(RELATIVE_PATH wrapper_rs_relative BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
+cmake_path(RELATIVE_PATH depfile_relative BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 add_custom_command(
   OUTPUT ${wrapper_rs} wrapper.c

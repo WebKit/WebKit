@@ -27,27 +27,27 @@
 
 #if ENABLE(WEBGL)
 
-#include <JavaScriptCore/Forward.h>
-
-namespace JSC {
-class CallFrame;
-class JSValue;
-}
+#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Int32Array.h>
+#include <JavaScriptCore/Uint32Array.h>
+#include <JavaScriptCore/Uint8Array.h>
+#include <WebCore/WebGLBuffer.h>
+#include <WebCore/WebGLFramebuffer.h>
+#include <WebCore/WebGLObject.h>
+#include <WebCore/WebGLProgram.h>
+#include <WebCore/WebGLQuery.h>
+#include <WebCore/WebGLRenderbuffer.h>
+#include <WebCore/WebGLSampler.h>
+#include <WebCore/WebGLTexture.h>
+#include <WebCore/WebGLTimerQueryEXT.h>
+#include <WebCore/WebGLTransformFeedback.h>
+#include <WebCore/WebGLVertexArrayObject.h>
+#include <WebCore/WebGLVertexArrayObjectOES.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class JSDOMGlobalObject;
-class WebGLBuffer;
-class WebGLFramebuffer;
-class WebGLProgram;
-class WebGLQuery;
-class WebGLRenderbuffer;
-class WebGLSampler;
-class WebGLTexture;
-class WebGLTimerQueryEXT;
-class WebGLTransformFeedback;
-class WebGLVertexArrayObject;
-class WebGLVertexArrayObjectOES;
 
 using WebGLAny = Variant<
     std::nullptr_t,
@@ -61,22 +61,39 @@ using WebGLAny = Variant<
     Vector<bool>,
     Vector<int>,
     Vector<unsigned>,
-    RefPtr<Float32Array>,
-    RefPtr<Int32Array>,
-    RefPtr<Uint32Array>,
-    RefPtr<Uint8Array>,
-    RefPtr<WebGLBuffer>,
-    RefPtr<WebGLFramebuffer>,
-    RefPtr<WebGLProgram>,
-    RefPtr<WebGLQuery>,
-    RefPtr<WebGLRenderbuffer>,
-    RefPtr<WebGLSampler>,
-    RefPtr<WebGLTexture>,
-    RefPtr<WebGLTimerQueryEXT>,
-    RefPtr<WebGLTransformFeedback>,
-    RefPtr<WebGLVertexArrayObject>,
-    RefPtr<WebGLVertexArrayObjectOES>
+    Ref<Float32Array>,
+    Ref<Int32Array>,
+    Ref<Uint32Array>,
+    Ref<Uint8Array>,
+    Ref<WebGLBuffer>,
+    Ref<WebGLFramebuffer>,
+    Ref<WebGLProgram>,
+    Ref<WebGLQuery>,
+    Ref<WebGLRenderbuffer>,
+    Ref<WebGLSampler>,
+    Ref<WebGLTexture>,
+    Ref<WebGLTimerQueryEXT>,
+    Ref<WebGLTransformFeedback>,
+    Ref<WebGLVertexArrayObject>,
+    Ref<WebGLVertexArrayObjectOES>
 >;
+
+template<typename T> WebGLAny toWebGLAny(RefPtr<T> nullableValue)
+{
+    if (nullableValue)
+        return nullableValue.releaseNonNull();
+    return nullptr;
+}
+
+template<typename T> WebGLAny toWebGLAny(T* nullableValue)
+{
+    return toWebGLAny(RefPtr<T> { nullableValue });
+}
+
+template<typename T, unsigned target> WebGLAny toWebGLAny(const WebGLBindingPoint<T, target>& nullableValue)
+{
+    return toWebGLAny(static_cast<RefPtr<T>>(nullableValue));
+}
 
 } // namespace WebCore
 

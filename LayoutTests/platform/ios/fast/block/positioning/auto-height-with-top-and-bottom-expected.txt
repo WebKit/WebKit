@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 647x19
+        RenderText {#text} at (0,0) size 647x20
           text run at (0,0) width 647: "The red box should be entirely inside the black box with the text content spilling out of both of them."
 layer at (8,44) size 404x104
   RenderBlock (relative positioned) {DIV} at (0,36) size 404x104 [border: (2px solid #000000)]
 layer at (10,66) size 400x60
   RenderBlock (positioned) {DIV} at (2,22) size 400x60 [border: (2px solid #FF0000)]
-    RenderText {#text} at (2,2) size 395x159
+    RenderText {#text} at (2,2) size 395x160
       text run at (2,2) width 387: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed"
       text run at (2,22) width 360: "do eiusmod tempor incididunt ut labore et dolore magna"
       text run at (2,42) width 382: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation"

@@ -40,7 +40,7 @@
 namespace WebCore {
 
 WebXRTest::WebXRTest(WeakPtr<WebXRSystem, WeakPtrImplWithEventTargetData>&& system)
-    : m_context(WTFMove(system))
+    : m_context(WTF::move(system))
 {
 }
 
@@ -62,7 +62,7 @@ static PlatformXR::Device::FeatureList parseFeatures(const Vector<JSC::JSValue>&
 void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const FakeXRDeviceInit& init, WebFakeXRDevicePromise&& promise)
 {
     // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulatedeviceconnection
-    context.postTask([this, protectedThis = Ref { *this }, init, promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
+    context.postTask([this, protectedThis = Ref { *this }, init, promise = WTF::move(promise)] (ScriptExecutionContext& context) mutable {
         auto device = WebFakeXRDevice::create();
         auto& simulatedDevice = device->simulatedXRDevice();
 
@@ -89,6 +89,11 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
         if (init.floorOrigin)
             device->setFloorOrigin(init.floorOrigin.value());
 
+#if ENABLE(WEBXR_HIT_TEST)
+        if (init.world)
+            device->setWorld(init.world.value());
+#endif
+
         Vector<XRSessionMode> supportedModes;
         if (init.supportedModes) {
             supportedModes = init.supportedModes.value();
@@ -108,7 +113,7 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
         m_context->registerSimulatedXRDeviceForTesting(simulatedDevice);
 
         promise.resolve(device.get());
-        m_devices.append(WTFMove(device));
+        m_devices.append(WTF::move(device));
     });
 }
 

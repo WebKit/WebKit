@@ -33,7 +33,6 @@
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
 #include "api/numerics/samples_stats_counter.h"
@@ -84,7 +83,7 @@
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/time_utils.h"
+#include "system_wrappers/include/clock.h"
 #include "test/testsupport/frame_reader.h"
 #include "test/testsupport/video_frame_writer.h"
 #include "third_party/libyuv/include/libyuv/compare.h"
@@ -137,11 +136,11 @@ scoped_refptr<VideoFrameBuffer> ScaleFrame(
 // AV1 or H264) files.
 class VideoSource {
  public:
-  explicit VideoSource(VideoSourceSettings source_settings)
+  VideoSource(const Environment& env, VideoSourceSettings source_settings)
       : source_settings_(source_settings) {
     if (absl::EndsWith(source_settings.file_path, "ivf")) {
-      ivf_reader_ = CreateFromIvfFileFrameGenerator(CreateEnvironment(),
-                                                    source_settings.file_path);
+      ivf_reader_ =
+          CreateFromIvfFileFrameGenerator(env, source_settings.file_path);
     } else if (absl::EndsWith(source_settings.file_path, "y4m")) {
       yuv_reader_ =
           CreateY4mFrameReader(source_settings_.file_path,
@@ -208,11 +207,11 @@ class VideoSource {
 // class is not thread safe.
 class Pacer {
  public:
-  explicit Pacer(PacingSettings settings)
-      : settings_(settings), delay_(TimeDelta::Zero()) {}
+  Pacer(Clock* clock, PacingSettings settings)
+      : clock_(clock), settings_(settings), delay_(TimeDelta::Zero()) {}
 
   Timestamp Schedule(Timestamp timestamp) {
-    Timestamp now = Timestamp::Micros(TimeMicros());
+    Timestamp now = clock_->CurrentTime();
     if (settings_.mode == PacingMode::kNoPacing) {
       return now;
     }
@@ -239,6 +238,7 @@ class Pacer {
     return 1 / settings_.constant_rate;
   }
 
+  Clock* const clock_;
   PacingSettings settings_;
   std::optional<Timestamp> prev_timestamp_;
   std::optional<Timestamp> prev_scheduled_;
@@ -256,7 +256,7 @@ class LimitedTaskQueue {
   // until the queue size is reduced by executing previous tasks.
   static constexpr int kMaxTaskQueueSize = 3;
 
-  LimitedTaskQueue() : queue_size_(0) {}
+  explicit LimitedTaskQueue(Clock* clock) : clock_(clock), queue_size_(0) {}
 
   void PostScheduledTask(absl::AnyInvocable<void() &&> task,
                          Timestamp scheduled) {
@@ -271,7 +271,7 @@ class LimitedTaskQueue {
 
     ++queue_size_;
     task_queue_.PostTask([this, task = std::move(task), scheduled]() mutable {
-      Timestamp now = Timestamp::Millis(TimeMillis());
+      Timestamp now = clock_->CurrentTime();
       int64_t wait_ms = (scheduled - now).ms();
       if (wait_ms > 0) {
         RTC_CHECK_LT(wait_ms, 10000) << "Too high wait_ms " << wait_ms;
@@ -284,7 +284,7 @@ class LimitedTaskQueue {
   }
 
   void PostTask(absl::AnyInvocable<void() &&> task) {
-    Timestamp now = Timestamp::Millis(TimeMillis());
+    Timestamp now = clock_->CurrentTime();
     PostScheduledTask(std::move(task), now);
   }
 
@@ -298,6 +298,7 @@ class LimitedTaskQueue {
   }
 
  private:
+  Clock* const clock_;
   TaskQueueForTest task_queue_;
   std::atomic_int queue_size_;
   Event task_executed_;
@@ -411,18 +412,21 @@ class LeakyBucket {
 
 class VideoCodecAnalyzer : public VideoCodecTester::VideoCodecStats {
  public:
+  explicit VideoCodecAnalyzer(Clock* clock)
+      : clock_(clock), task_queue_(clock) {}
+
   void StartEncode(const VideoFrame& video_frame,
                    const EncodingSettings& encoding_settings) {
-    int64_t encode_start_us = TimeMicros();
+    Timestamp encode_start = clock_->CurrentTime();
     task_queue_.PostTask([this, timestamp_rtp = video_frame.rtp_timestamp(),
-                          encoding_settings, encode_start_us]() {
+                          encoding_settings, encode_start]() {
       RTC_CHECK(frames_.find(timestamp_rtp) == frames_.end())
           << "Duplicate frame. Frame with timestamp " << timestamp_rtp
           << " was seen before";
 
       Frame frame;
       frame.timestamp_rtp = timestamp_rtp;
-      frame.encode_start = Timestamp::Micros(encode_start_us),
+      frame.encode_start = encode_start,
       frames_.emplace(timestamp_rtp,
                       std::map<int, Frame>{{/*spatial_idx=*/0, frame}});
       encoding_settings_.emplace(timestamp_rtp, encoding_settings);
@@ -430,7 +434,7 @@ class VideoCodecAnalyzer : public VideoCodecTester::VideoCodecStats {
   }
 
   void FinishEncode(const EncodedImage& encoded_frame) {
-    int64_t encode_finished_us = TimeMicros();
+    Timestamp encode_finished = clock_->CurrentTime();
     task_queue_.PostTask(
         [this, timestamp_rtp = encoded_frame.RtpTimestamp(),
          spatial_idx = encoded_frame.SpatialIndex().value_or(
@@ -440,7 +444,7 @@ class VideoCodecAnalyzer : public VideoCodecTester::VideoCodecStats {
          height = encoded_frame._encodedHeight,
          frame_type = encoded_frame._frameType,
          frame_size_bytes = encoded_frame.size(), qp = encoded_frame.qp_,
-         encode_finished_us]() {
+         encode_finished]() {
           if (spatial_idx > 0) {
             RTC_CHECK(frames_.find(timestamp_rtp) != frames_.end())
                 << "Spatial layer 0 frame with timestamp " << timestamp_rtp
@@ -458,14 +462,13 @@ class VideoCodecAnalyzer : public VideoCodecTester::VideoCodecStats {
           frame.frame_size = DataSize::Bytes(frame_size_bytes);
           frame.qp = qp;
           frame.keyframe = frame_type == VideoFrameType::kVideoFrameKey;
-          frame.encode_time =
-              Timestamp::Micros(encode_finished_us) - frame.encode_start;
+          frame.encode_time = encode_finished - frame.encode_start;
           frame.encoded = true;
         });
   }
 
   void StartDecode(const EncodedImage& encoded_frame) {
-    int64_t decode_start_us = TimeMicros();
+    Timestamp decode_start = clock_->CurrentTime();
     task_queue_.PostTask(
         [this, timestamp_rtp = encoded_frame.RtpTimestamp(),
          spatial_idx = encoded_frame.SpatialIndex().value_or(
@@ -474,7 +477,7 @@ class VideoCodecAnalyzer : public VideoCodecTester::VideoCodecStats {
          width = encoded_frame._encodedWidth,
          height = encoded_frame._encodedHeight,
          frame_type = encoded_frame._frameType, qp = encoded_frame.qp_,
-         frame_size_bytes = encoded_frame.size(), decode_start_us]() {
+         frame_size_bytes = encoded_frame.size(), decode_start]() {
           bool decode_only = frames_.find(timestamp_rtp) == frames_.end();
           if (decode_only || frames_.at(timestamp_rtp).find(spatial_idx) ==
                                  frames_.at(timestamp_rtp).end()) {
@@ -495,21 +498,19 @@ class VideoCodecAnalyzer : public VideoCodecTester::VideoCodecStats {
           }
 
           Frame& frame = frames_.at(timestamp_rtp).at(spatial_idx);
-          frame.decode_start = Timestamp::Micros(decode_start_us);
+          frame.decode_start = decode_start;
         });
   }
 
   void FinishDecode(const VideoFrame& decoded_frame,
                     int spatial_idx,
                     std::optional<VideoFrame> ref_frame = std::nullopt) {
-    int64_t decode_finished_us = TimeMicros();
+    Timestamp decode_finished = clock_->CurrentTime();
     task_queue_.PostTask([this, timestamp_rtp = decoded_frame.rtp_timestamp(),
                           spatial_idx, width = decoded_frame.width(),
-                          height = decoded_frame.height(),
-                          decode_finished_us]() {
+                          height = decoded_frame.height(), decode_finished]() {
       Frame& frame = frames_.at(timestamp_rtp).at(spatial_idx);
-      frame.decode_time =
-          Timestamp::Micros(decode_finished_us) - frame.decode_start;
+      frame.decode_time = decode_finished - frame.decode_start;
       if (!frame.encoded) {
         frame.width = width;
         frame.height = height;
@@ -849,9 +850,10 @@ class VideoCodecAnalyzer : public VideoCodecTester::VideoCodecStats {
 
   SamplesStatsCounter::StatsSample StatsSample(double value,
                                                Timestamp time) const {
-    return SamplesStatsCounter::StatsSample{value, time};
+    return SamplesStatsCounter::StatsSample{.value = value, .time = time};
   }
 
+  Clock* const clock_;
   LimitedTaskQueue task_queue_;
   // RTP timestamp -> spatial layer -> Frame
   std::map<uint32_t, std::map<int, Frame>> frames_;
@@ -867,7 +869,8 @@ class Decoder : public DecodedImageCallback {
       : env_(env),
         decoder_factory_(decoder_factory),
         analyzer_(analyzer),
-        pacer_(decoder_settings.pacing_settings) {
+        pacer_(&env.clock(), decoder_settings.pacing_settings),
+        task_queue_(&env.clock()) {
     RTC_CHECK(analyzer_) << "Analyzer must be provided";
 
     if (decoder_settings.decoder_input_base_path) {
@@ -949,7 +952,7 @@ class Decoder : public DecodedImageCallback {
       MutexLock lock(&mutex_);
       spatial_idx = *spatial_idx_;
 
-      if (ref_frames_.size() > 0) {
+      if (!ref_frames_.empty()) {
         auto it = ref_frames_.find(decoded_frame.rtp_timestamp());
         RTC_CHECK(it != ref_frames_.end());
         ref_frame = it->second;
@@ -992,7 +995,8 @@ class Encoder : public EncodedImageCallback {
       : env_(env),
         encoder_factory_(encoder_factory),
         analyzer_(analyzer),
-        pacer_(encoder_settings.pacing_settings) {
+        pacer_(&env.clock(), encoder_settings.pacing_settings),
+        task_queue_(&env.clock()) {
     RTC_CHECK(analyzer_) << "Analyzer must be provided";
 
     if (encoder_settings.encoder_input_base_path) {
@@ -1672,7 +1676,7 @@ VideoCodecTester::RunDecodeTest(const Environment& env,
                                 const DecoderSettings& decoder_settings,
                                 const SdpVideoFormat& sdp_video_format) {
   std::unique_ptr<VideoCodecAnalyzer> analyzer =
-      std::make_unique<VideoCodecAnalyzer>();
+      std::make_unique<VideoCodecAnalyzer>(&env.clock());
   Decoder decoder(env, decoder_factory, decoder_settings, analyzer.get());
   decoder.Initialize(sdp_video_format);
 
@@ -1692,9 +1696,9 @@ VideoCodecTester::RunEncodeTest(
     VideoEncoderFactory* encoder_factory,
     const EncoderSettings& encoder_settings,
     const std::map<uint32_t, EncodingSettings>& encoding_settings) {
-  VideoSource video_source(source_settings);
+  VideoSource video_source(env, source_settings);
   std::unique_ptr<VideoCodecAnalyzer> analyzer =
-      std::make_unique<VideoCodecAnalyzer>();
+      std::make_unique<VideoCodecAnalyzer>(&env.clock());
   Encoder encoder(env, encoder_factory, encoder_settings, analyzer.get());
   encoder.Initialize(encoding_settings.begin()->second);
 
@@ -1721,9 +1725,9 @@ VideoCodecTester::RunEncodeDecodeTest(
     const EncoderSettings& encoder_settings,
     const DecoderSettings& decoder_settings,
     const std::map<uint32_t, EncodingSettings>& encoding_settings) {
-  VideoSource video_source(source_settings);
+  VideoSource video_source(env, source_settings);
   std::unique_ptr<VideoCodecAnalyzer> analyzer =
-      std::make_unique<VideoCodecAnalyzer>();
+      std::make_unique<VideoCodecAnalyzer>(&env.clock());
   const EncodingSettings& first_frame_settings =
       encoding_settings.begin()->second;
   Encoder encoder(env, encoder_factory, encoder_settings, analyzer.get());

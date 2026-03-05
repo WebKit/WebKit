@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SpeculationRules.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,7 +38,7 @@ enum class ReferrerPolicy : uint8_t;
 struct PrefetchRule {
     Vector<String> tags;
     std::optional<ReferrerPolicy> referrerPolicy;
-    bool conservative;
+    SpeculationRules::Eagerness eagerness;
 };
 
 class SpeculationRulesMatcher {

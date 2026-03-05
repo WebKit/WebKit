@@ -54,7 +54,7 @@ auto Blending<MaskBorderSource>::canBlend(const MaskBorderSource& a, const MaskB
     return !a.isNone() && !b.isNone();
 }
 
-auto Blending<MaskBorderSource>::blend(const MaskBorderSource& a, const MaskBorderSource& b, const BlendingContext& context) -> MaskBorderSource
+auto Blending<MaskBorderSource>::blend(const MaskBorderSource& a, const MaskBorderSource& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> MaskBorderSource
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);
@@ -62,7 +62,7 @@ auto Blending<MaskBorderSource>::blend(const MaskBorderSource& a, const MaskBord
     }
 
     ASSERT(canBlend(a, b));
-    return Style::blend(*a.tryImage(), *b.tryImage(), context);
+    return Style::blend(*a.tryImage(), *b.tryImage(), aStyle, bStyle, context);
 }
 
 } // namespace Style

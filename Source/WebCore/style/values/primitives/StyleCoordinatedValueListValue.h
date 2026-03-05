@@ -68,8 +68,8 @@ template<CSSPropertyID> struct CoordinatedValueListPropertyConstAccessor;
         ownerType& value; \
         \
         const type& get() const { return value.lowercaseName(); } \
-        void set(type&& lowercaseName) { value.set##uppercaseName(WTFMove(lowercaseName)); } \
-        void fill(type&& lowercaseName) { value.fill##uppercaseName(WTFMove(lowercaseName)); } \
+        void set(type&& lowercaseName) { value.set##uppercaseName(WTF::move(lowercaseName)); } \
+        void fill(type&& lowercaseName) { value.fill##uppercaseName(WTF::move(lowercaseName)); } \
         void clear() { value.clear##uppercaseName(); } \
         \
         INTERNAL_DECLARE_COORDINATED_VALUE_LIST_PROPERTY_ACCESSOR_COMMON(ownerType, property, type, lowercaseName, uppercaseName) \
@@ -142,8 +142,8 @@ template<CSSPropertyID> struct CoordinatedValueListPropertyConstAccessor;
         ownerType& value; \
         \
         type get() const { return value.lowercaseName(); } \
-        void set(type&& lowercaseName) { value.set##uppercaseName(WTFMove(lowercaseName)); } \
-        void fill(type&& lowercaseName) { value.fill##uppercaseName(WTFMove(lowercaseName)); } \
+        void set(type&& lowercaseName) { value.set##uppercaseName(WTF::move(lowercaseName)); } \
+        void fill(type&& lowercaseName) { value.fill##uppercaseName(WTF::move(lowercaseName)); } \
         void clear() { value.clear##uppercaseName(); } \
         \
         static type initial() { return ownerType::initial##uppercaseName(); } \
@@ -197,12 +197,12 @@ template<CSSPropertyID> struct CoordinatedValueListPropertyConstAccessor;
     } \
     void set##uppercaseName(type&& lowercaseName) \
     { \
-        data().m_##lowercaseName = WTFMove(lowercaseName); \
+        data().m_##lowercaseName = WTF::move(lowercaseName); \
         data().m_##lowercaseName##State = static_cast<unsigned>(CoordinatedValueListPropertyState::Set); \
     } \
     void fill##uppercaseName(type&& lowercaseName) \
     { \
-        data().m_##lowercaseName = WTFMove(lowercaseName); \
+        data().m_##lowercaseName = WTF::move(lowercaseName); \
         data().m_##lowercaseName##State = static_cast<unsigned>(CoordinatedValueListPropertyState::Filled); \
     } \
     INTERNAL_DECLARE_COORDINATED_VALUE_LIST_GETTER_AND_SETTERS_COMMON(ownerType, property, type, lowercaseName, uppercaseName) \
@@ -289,6 +289,15 @@ bool allPropertiesAreUnsetOrFilled(const T& value)
     return allOfCoordinatedValueListProperties<T>([&value]<CSSPropertyID propertyID>() {
         using PropertyAccessor = CoordinatedValueListPropertyConstAccessor<propertyID>;
         return !PropertyAccessor { value }.isSet();
+    });
+}
+
+template<CoordinatedValueListValue T>
+bool allPropertiesAreSet(const T& value)
+{
+    return allOfCoordinatedValueListProperties<T>([&value]<CSSPropertyID propertyID>() {
+        using PropertyAccessor = CoordinatedValueListPropertyConstAccessor<propertyID>;
+        return PropertyAccessor { value }.isSet();
     });
 }
 

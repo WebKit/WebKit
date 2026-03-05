@@ -66,9 +66,9 @@ template<typename ListType, typename ValueType> struct TypedRequiredList {
     }
 
     unsigned size() const { return list->size(); }
-    const ValueType& item(unsigned index) const { return downcast<ValueType>(*list->item(index)); }
-    TypedRequiredListIterator<ValueType> begin() const { return list->begin(); }
-    TypedRequiredListIterator<ValueType> end() const { return list->end(); }
+    const ValueType& item(unsigned index) const LIFETIME_BOUND { return downcast<ValueType>(*list->item(index)); }
+    TypedRequiredListIterator<ValueType> begin() const LIFETIME_BOUND { return list->begin(); }
+    TypedRequiredListIterator<ValueType> end() const LIFETIME_BOUND { return list->end(); }
 
     Ref<const ListType> list;
 };

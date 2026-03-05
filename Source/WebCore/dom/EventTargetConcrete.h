@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class EventTargetConcrete final : public RefCounted<EventTargetConcrete>, public EventTarget, private ContextDestructionObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventTargetConcrete);
+    WTF_MAKE_TZONE_ALLOCATED(EventTargetConcrete);
 public:
     static Ref<EventTargetConcrete> create(ScriptExecutionContext&);
 

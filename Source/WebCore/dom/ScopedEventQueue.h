@@ -46,7 +46,7 @@ class ScopedEventQueue {
     WTF_MAKE_TZONE_ALLOCATED(ScopedEventQueue);
     WTF_MAKE_NONCOPYABLE(ScopedEventQueue);
 public:
-    static ScopedEventQueue& singleton();
+    static ScopedEventQueue& NODELETE singleton();
 
     struct ScopedEvent {
         Ref<Event> event;

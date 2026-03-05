@@ -3,9 +3,10 @@
 <script>
 function runTests()
 {
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
-    
+        testRunner.dumpFrameLoadCallbacks();
+    }
     window.location.hash = "";
     window.location.hash = "#";
 }

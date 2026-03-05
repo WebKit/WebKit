@@ -56,11 +56,11 @@ public:
             if (cacheBuffer[i].first == key) {
                 if (i < m_size - 1) {
                     // Move entry to the end of the cache if necessary.
-                    auto entry = WTFMove(cacheBuffer[i]);
+                    auto entry = WTF::move(cacheBuffer[i]);
                     do {
-                        cacheBuffer[i] = WTFMove(cacheBuffer[i + 1]);
+                        cacheBuffer[i] = WTF::move(cacheBuffer[i + 1]);
                     } while (++i < m_size - 1);
-                    cacheBuffer[m_size - 1] = WTFMove(entry);
+                    cacheBuffer[m_size - 1] = WTF::move(entry);
                 }
                 return cacheBuffer[m_size - 1].second;
             }
@@ -69,7 +69,7 @@ public:
         // cacheBuffer[0] is the LRU entry, so remove it.
         if (m_size == capacity) {
             for (size_t i = 0; i < m_size - 1; ++i)
-                cacheBuffer[i] = WTFMove(cacheBuffer[i + 1]);
+                cacheBuffer[i] = WTF::move(cacheBuffer[i + 1]);
         } else
             ++m_size;
 

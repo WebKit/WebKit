@@ -49,9 +49,9 @@ public:
 private:
     LoopStatement(SourceSpan span, Attribute::List&& attributes, Statement::List&& body, std::optional<Continuing>&& continuing)
         : Statement(span)
-        , m_attributes(WTFMove(attributes))
-        , m_body(WTFMove(body))
-        , m_continuing(WTFMove(continuing))
+        , m_attributes(WTF::move(attributes))
+        , m_body(WTF::move(body))
+        , m_continuing(WTF::move(continuing))
     { }
 
     Attribute::List m_attributes;

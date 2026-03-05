@@ -40,7 +40,7 @@ inline HandleBlock* HandleBlock::create(HandleSet* handleSet)
 inline void HandleBlock::destroy(HandleBlock* block)
 {
     block->~HandleBlock();
-    fastAlignedFree(block);
+    fastFree(block);
 }
 
 inline HandleBlock::HandleBlock(HandleSet* handleSet)

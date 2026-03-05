@@ -54,7 +54,9 @@ WebKitDOMFile* wrapFile(WebCore::File* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMFile, webkit_dom_file, WEBKIT_DOM_TYPE_BLOB)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_FILE_PROP_0,

@@ -25,7 +25,12 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
+
+#if USE(APPKIT)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -59,3 +64,5 @@ typedef NS_ENUM(NSInteger, NSViewSemanticContext);
 @property (setter=_setFallbackBezelPresentationState:) NSPresentationState _fallbackBezelPresentationState;
 @property (setter=_setFallbackSemanticContext:) NSViewSemanticContext _fallbackSemanticContext;
 @end
+
+#endif // USE(APPKIT)

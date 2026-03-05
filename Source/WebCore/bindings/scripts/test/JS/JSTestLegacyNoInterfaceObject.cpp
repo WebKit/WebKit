@@ -129,7 +129,7 @@ void JSTestLegacyNoInterfaceObjectPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestLegacyNoInterfaceObject::s_info = { "TestLegacyNoInterfaceObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyNoInterfaceObject) };
 
 JSTestLegacyNoInterfaceObject::JSTestLegacyNoInterfaceObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
-    : JSDOMWrapper<TestLegacyNoInterfaceObject>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestLegacyNoInterfaceObject>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -246,7 +246,7 @@ static inline bool setJSTestLegacyNoInterfaceObject_nodeAttributeSetter(JSGlobal
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setNodeAttribute(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setNodeAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -361,7 +361,7 @@ void JSTestLegacyNoInterfaceObjectOwner::finalize(JSC::Handle<JSC::Unknown> hand
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyNoInterfaceObject = static_cast<JSTestLegacyNoInterfaceObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestLegacyNoInterfaceObject->protectedWrapped().ptr(), jsTestLegacyNoInterfaceObject);
+    uncacheWrapper(world, protect(jsTestLegacyNoInterfaceObject->wrapped()).ptr(), jsTestLegacyNoInterfaceObject);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -399,7 +399,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestLegacyNoInterfaceObject>(impl.ptr());
 #endif
-    return createWrapper<TestLegacyNoInterfaceObject>(globalObject, WTFMove(impl));
+    return createWrapper<TestLegacyNoInterfaceObject>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestLegacyNoInterfaceObject& impl)

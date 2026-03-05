@@ -41,16 +41,12 @@ template("skia_wasm_lib") {
 }
 
 wasm_defines = [
-  "SKNX_NO_SIMD",
+  "SKVX_DISABLE_SIMD",
   "SK_FORCE_8_BYTE_ALIGNMENT",
 ]
 
 if (!is_debug && !skia_canvaskit_force_tracing) {
   wasm_defines += [ "SK_DISABLE_TRACING" ]
-}
-
-if (skia_enable_ganesh) {
-  wasm_defines += [ "SK_DISABLE_LEGACY_SHADERCONTEXT" ]
 }
 
 if (!skia_canvaskit_enable_effects_deserialization ||

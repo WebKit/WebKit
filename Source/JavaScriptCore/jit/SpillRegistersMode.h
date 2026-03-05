@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 enum SpillRegistersMode : uint8_t { NeedToSpill, DontSpill };

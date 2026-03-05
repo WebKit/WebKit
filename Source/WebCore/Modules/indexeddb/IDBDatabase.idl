@@ -34,10 +34,10 @@
     readonly attribute unsigned long long version;
     readonly attribute DOMStringList objectStoreNames;
 
-    [NewObject] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly", optional IDBTransactionOptions options);
+    [NewObject] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly", optional IDBTransactionOptions options = {});
     undefined close();
 
-    [NewObject] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters);
+    [NewObject] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters = {});
     undefined deleteObjectStore(DOMString name);
 
     // Event handlers:

@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame

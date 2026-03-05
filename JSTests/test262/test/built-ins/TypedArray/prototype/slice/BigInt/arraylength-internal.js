@@ -9,7 +9,7 @@ info: |
   ...
   3. Let len be the value of O's [[ArrayLength]] internal slot.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -23,8 +23,8 @@ var desc = {
 
 Object.defineProperty(TypedArray.prototype, "length", desc);
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n]));
 
   Object.defineProperty(TA.prototype, "length", desc);
   Object.defineProperty(sample, "length", desc);
@@ -35,4 +35,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(result[0], 42n);
   assert.sameValue(result[1], 43n);
   assert.sameValue(result.hasOwnProperty(2), false);
-});
+}, null, ["passthrough"]);

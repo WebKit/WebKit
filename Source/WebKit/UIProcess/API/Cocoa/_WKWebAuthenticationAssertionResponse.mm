@@ -31,10 +31,6 @@
 
 #if ENABLE(WEB_AUTHN)
 
-static Ref<API::WebAuthenticationAssertionResponse> protectedResponse(_WKWebAuthenticationAssertionResponse *response)
-{
-    return *response->_response;
-}
 
 #endif // ENABLE(WEB_AUTHN)
 
@@ -64,7 +60,7 @@ static Ref<API::WebAuthenticationAssertionResponse> protectedResponse(_WKWebAuth
 
 - (NSData *)userHandle
 {
-    return wrapper(protectedResponse(self)->userHandle()).autorelease();
+    return wrapper(protect(*_response)->userHandle()).autorelease();
 }
 
 - (BOOL)synchronizable
@@ -79,7 +75,7 @@ static Ref<API::WebAuthenticationAssertionResponse> protectedResponse(_WKWebAuth
 
 - (NSData *)credentialID
 {
-    return wrapper(protectedResponse(self)->credentialID()).autorelease();
+    return wrapper(protect(*_response)->credentialID()).autorelease();
 }
 
 - (NSString *)accessGroup
@@ -92,7 +88,7 @@ static Ref<API::WebAuthenticationAssertionResponse> protectedResponse(_WKWebAuth
 - (void)setLAContext:(LAContext *)context
 {
 #if ENABLE(WEB_AUTHN)
-    protectedResponse(self)->setLAContext(context);
+    protect(*_response)->setLAContext(context);
 #endif
 }
 

@@ -49,7 +49,7 @@ static inline RTCSctpTransportState toRTCSctpTransportState(GstWebRTCSCTPTranspo
 }
 
 GStreamerSctpTransportBackend::GStreamerSctpTransportBackend(GRefPtr<GstWebRTCSCTPTransport>&& transport)
-    : m_backend(WTFMove(transport))
+    : m_backend(WTF::move(transport))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -67,7 +67,7 @@ UniqueRef<RTCDtlsTransportBackend> GStreamerSctpTransportBackend::dtlsTransportB
 {
     GRefPtr<GstWebRTCDTLSTransport> transport;
     g_object_get(m_backend.get(), "transport", &transport.outPtr(), nullptr);
-    return makeUniqueRef<GStreamerDtlsTransportBackend>(WTFMove(transport));
+    return makeUniqueRef<GStreamerDtlsTransportBackend>(WTF::move(transport));
 }
 
 void GStreamerSctpTransportBackend::registerClient(RTCSctpTransportBackendClient& client)

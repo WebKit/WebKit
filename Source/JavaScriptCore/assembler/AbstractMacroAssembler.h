@@ -38,6 +38,7 @@
 #include <JavaScriptCore/MacroAssemblerHelpers.h>
 #include <JavaScriptCore/Options.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/StringPrintStream.h>
@@ -304,7 +305,7 @@ public:
         {
         }
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && CPU(X86_64)
         template<typename ReturnType, typename... Arguments>
         explicit TrustedImmPtr(ReturnType(SYSV_ABI *value)(Arguments...))
             : m_value(reinterpret_cast<void*>(value))
@@ -1170,7 +1171,7 @@ protected:
 
         ALWAYS_INLINE RegisterID registerIDNoInvalidate() { return m_registerID; }
 
-        WARN_UNUSED_RETURN bool value(intptr_t& value)
+        [[nodiscard]] bool value(intptr_t& value)
         {
             value = m_value;
             return m_masm->isTempRegisterValid(m_validBit);
@@ -1211,7 +1212,7 @@ protected:
         m_tempRegistersValidBits |= registerMask;
     }
 
-    void commentImpl(String&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTFMove(str) }); }
+    void commentImpl(String&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTF::move(str) }); }
 
     friend class AllowMacroScratchRegisterUsage;
     friend class AllowMacroScratchRegisterUsageIf;
@@ -1221,8 +1222,8 @@ protected:
 
     Vector<std::pair<Label, String>> m_comments;
 
-    Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
-    Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
+    Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
+    Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
 
     friend class LinkBuffer;
 }; // class AbstractMacroAssembler

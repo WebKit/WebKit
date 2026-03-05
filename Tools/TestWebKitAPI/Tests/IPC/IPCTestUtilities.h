@@ -194,19 +194,19 @@ public:
     // Handler returns false if the message should be just recorded.
     void setAsyncMessageHandler(Function<bool(IPC::Connection&, IPC::Decoder&)>&& handler)
     {
-        m_asyncMessageHandler = WTFMove(handler);
+        m_asyncMessageHandler = WTF::move(handler);
     }
 
     // Handler contract as IPC::MessageReceiver::didReceiveSyncMessage: false on invalid message, may adopt encoder,
     // decoder used only during the call, if encoder not adopted it will be submitted.
     void setSyncMessageHandler(Function<bool(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)>&& handler)
     {
-        m_syncMessageHandler = WTFMove(handler);
+        m_syncMessageHandler = WTF::move(handler);
     }
 
     void setInvalidMessageHandler(Function<bool(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&)>&& handler)
     {
-        m_invalidMessageHandler = WTFMove(handler);
+        m_invalidMessageHandler = WTF::move(handler);
     }
 
 private:

@@ -34,7 +34,7 @@ struct IDBDatabaseNameAndVersion {
     uint64_t version { 0 };
 
     IDBDatabaseNameAndVersion isolatedCopy() const & { return { name.isolatedCopy(), version }; }
-    IDBDatabaseNameAndVersion isolatedCopy() && { return { WTFMove(name).isolatedCopy(), version }; }
+    IDBDatabaseNameAndVersion isolatedCopy() && { return { WTF::move(name).isolatedCopy(), version }; }
 };
 
 } // namespace WebCore

@@ -173,16 +173,16 @@ public:
 
     // FIXME(183535): Considering adding && getter for better performance.
     // These will all fatally assert if the type doesn't match.
-    SimpleValue getSimpleValue() const;
-    bool getBool() const;
-    const int64_t& getInteger() const;
-    const int64_t& getUnsigned() const;
-    const int64_t& getNegative() const;
-    const BinaryValue& getByteString() const;
+    SimpleValue NODELETE getSimpleValue() const;
+    bool NODELETE getBool() const;
+    const int64_t& NODELETE getInteger() const;
+    const int64_t& NODELETE getUnsigned() const;
+    const int64_t& NODELETE getNegative() const;
+    const BinaryValue& NODELETE getByteString() const;
     // Returned string may contain NUL characters.
-    const String& getString() const;
-    const ArrayValue& getArray() const;
-    const MapValue& getMap() const;
+    const String& NODELETE getString() const;
+    const ArrayValue& NODELETE getArray() const;
+    const MapValue& NODELETE getMap() const;
 
 private:
     Type m_type;
@@ -197,7 +197,7 @@ private:
     };
 
     void internalMoveConstructFrom(CBORValue&&);
-    void internalCleanup();
+    void NODELETE internalCleanup();
 };
 
 } // namespace cbor

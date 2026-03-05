@@ -42,7 +42,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |         Stream-N              |       Stream Sequence-N       |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ForwardTsnChunk::kType;
 
 std::optional<ForwardTsnChunk> ForwardTsnChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

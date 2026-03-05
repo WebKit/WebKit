@@ -46,18 +46,19 @@ class RemoteAudioSession final
     : public WebCore::AudioSession
     , public WebCore::AudioSessionInterruptionObserver
     , public GPUProcessConnection::Client
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>
     , IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSession);
 public:
     static Ref<RemoteAudioSession> create(WebProcess&);
     ~RemoteAudioSession();
 
+    // WebCore::AudioSession, GPUProcessConnection::Client.
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
 private:
     RemoteAudioSession(WebProcess&);
     IPC::Connection& ensureConnection();
-    Ref<IPC::Connection> ensureProtectedConnection();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

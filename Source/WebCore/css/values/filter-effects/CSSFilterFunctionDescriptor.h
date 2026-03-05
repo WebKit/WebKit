@@ -40,8 +40,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueBlur> {
     static constexpr bool isColorFilterFunction = false;
 
     static constexpr bool allowsValuesGreaterThanOne = false;
-    static constexpr auto defaultValue = CSS::LengthRaw<> { CSS::LengthUnit::Px, 0 };
-    static constexpr auto initialLengthValueForInterpolation = CSS::LengthRaw<> { CSS::LengthUnit::Px, 0 };
+    static constexpr auto defaultValue = CSS::Literals::px(0);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::px(0);
 
     static constexpr auto operationType = FilterOperation::Type::Blur;
 };
@@ -52,8 +52,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueBrightness> {
     static constexpr bool isColorFilterFunction = true;
 
     static constexpr bool allowsValuesGreaterThanOne = true;
-    static constexpr auto defaultValue = CSS::NumberRaw<> { 1 };
-    static constexpr auto initialValueForInterpolation = CSS::NumberRaw<> { 1 };
+    static constexpr auto defaultValue = CSS::Literals::number(1);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::number(1);
 
     static constexpr auto operationType = FilterOperation::Type::Brightness;
 };
@@ -64,8 +64,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueContrast> {
     static constexpr bool isColorFilterFunction = true;
 
     static constexpr bool allowsValuesGreaterThanOne = true;
-    static constexpr auto defaultValue = CSS::NumberRaw<> { 1 };
-    static constexpr auto initialValueForInterpolation = CSS::NumberRaw<> { 1 };
+    static constexpr auto defaultValue = CSS::Literals::number(1);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::number(1);
 
     static constexpr auto operationType = FilterOperation::Type::Contrast;
 };
@@ -75,13 +75,13 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueDropShadow> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = false;
 
-    static constexpr auto defaultColorValue = Style::CurrentColor { };
-    static constexpr auto defaultStdDeviationValue = CSS::LengthRaw<> { CSS::LengthUnit::Px, 0 };
+    static constexpr auto defaultColorValue = CSS::Keyword::Currentcolor { };
+    static constexpr auto defaultStdDeviationValue = CSS::Literals::px(0);
 
     static constexpr auto initialColorValueForInterpolation = Color::transparentBlack;
-    static constexpr auto initialLengthValueForInterpolation = CSS::LengthRaw<> { CSS::LengthUnit::Px, 0 };
+    static constexpr auto initialLengthValueForInterpolation = CSS::Literals::px(0);
 
-    static constexpr auto operationType = FilterOperation::Type::DropShadowWithStyleColor;
+    static constexpr auto operationType = FilterOperation::Type::DropShadow;
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-grayscale
@@ -90,8 +90,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueGrayscale> {
     static constexpr bool isColorFilterFunction = true;
 
     static constexpr bool allowsValuesGreaterThanOne = false;
-    static constexpr auto defaultValue = CSS::NumberRaw<> { 1 };
-    static constexpr auto initialValueForInterpolation = CSS::NumberRaw<> { 0 };
+    static constexpr auto defaultValue = CSS::Literals::number(1);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::number(0);
 
     static constexpr auto operationType = FilterOperation::Type::Grayscale;
 };
@@ -101,8 +101,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueHueRotate> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
-    static constexpr auto defaultValue = CSS::AngleRaw<> { CSS::AngleUnit::Deg, 0 };
-    static constexpr auto initialValueForInterpolation = CSS::AngleRaw<> { CSS::AngleUnit::Deg, 0 };
+    static constexpr auto defaultValue = CSS::Literals::deg(0);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::deg(0);
 
     static constexpr auto operationType = FilterOperation::Type::HueRotate;
 };
@@ -113,8 +113,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueInvert> {
     static constexpr bool isColorFilterFunction = true;
 
     static constexpr bool allowsValuesGreaterThanOne = false;
-    static constexpr auto defaultValue = CSS::NumberRaw<> { 1 };
-    static constexpr auto initialValueForInterpolation = CSS::NumberRaw<> { 0 };
+    static constexpr auto defaultValue = CSS::Literals::number(1);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::number(0);
 
     static constexpr auto operationType = FilterOperation::Type::Invert;
 };
@@ -125,8 +125,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueOpacity> {
     static constexpr bool isColorFilterFunction = true;
 
     static constexpr bool allowsValuesGreaterThanOne = false;
-    static constexpr auto defaultValue = CSS::NumberRaw<> { 1 };
-    static constexpr auto initialValueForInterpolation = CSS::NumberRaw<> { 1 };
+    static constexpr auto defaultValue = CSS::Literals::number(1);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::number(1);
 
     static constexpr auto operationType = FilterOperation::Type::Opacity;
 };
@@ -137,8 +137,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueSaturate> {
     static constexpr bool isColorFilterFunction = true;
 
     static constexpr bool allowsValuesGreaterThanOne = true;
-    static constexpr auto defaultValue = CSS::NumberRaw<> { 1 };
-    static constexpr auto initialValueForInterpolation = CSS::NumberRaw<> { 1 };
+    static constexpr auto defaultValue = CSS::Literals::number(1);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::number(1);
 
     static constexpr auto operationType = FilterOperation::Type::Saturate;
 };
@@ -149,8 +149,8 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueSepia> {
     static constexpr bool isColorFilterFunction = true;
 
     static constexpr bool allowsValuesGreaterThanOne = false;
-    static constexpr auto defaultValue = CSS::NumberRaw<> { 1 };
-    static constexpr auto initialValueForInterpolation = CSS::NumberRaw<> { 0 };
+    static constexpr auto defaultValue = CSS::Literals::number(1);
+    static constexpr auto initialValueForInterpolation = CSS::Literals::number(0);
 
     static constexpr auto operationType = FilterOperation::Type::Sepia;
 };
@@ -159,8 +159,6 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueSepia> {
 template<> struct CSSFilterFunctionDescriptor<CSSValueAppleInvertLightness> {
     static constexpr bool isPixelFilterFunction = false;
     static constexpr bool isColorFilterFunction = true;
-
-    static constexpr auto operationType = FilterOperation::Type::AppleInvertLightness;
 };
 
 template<auto filterFunction> static constexpr bool isPixelFilterFunction()

@@ -44,7 +44,7 @@ struct SVGPathData {
     }
 
     SVGPathData(PathFunction&& path)
-        : m_path { WTFMove(path) }
+        : m_path { WTF::move(path) }
     {
     }
 

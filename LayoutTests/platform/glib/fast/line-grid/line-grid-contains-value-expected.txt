@@ -35,11 +35,11 @@ layer at (10,10) size 620x309
         text run at (0,15) width 594: "This header should be centered"
         text run at (0,99) width 310: "in the grid lines."
     RenderBlock {DIV} at (10,163) size 600x136
-      RenderText {#text} at (0,36) size 101x14
+      RenderText {#text} at (0,36) size 101x15
         text run at (0,36) width 101: "This text should snap"
-      RenderBR {BR} at (101,36) size 0x14
-      RenderText {#text} at (0,78) size 113x14
+      RenderBR {BR} at (101,36) size 0x15
+      RenderText {#text} at (0,78) size 113x15
         text run at (0,78) width 113: "to a 36px font-size grid."
-      RenderBR {BR} at (113,78) size 0x14
-      RenderText {#text} at (0,120) size 245x14
+      RenderBR {BR} at (113,78) size 0x15
+      RenderText {#text} at (0,120) size 245x15
         text run at (0,120) width 245: "There should be lots of spacing between these lines."

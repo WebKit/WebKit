@@ -20,10 +20,10 @@
 
 #pragma once
 
-#include <WebCore/FocusDirection.h>
-#include <WebCore/HTMLFrameOwnerElement.h>
-#include <WebCore/LayoutRect.h>
-#include <WebCore/NodeDocument.h>
+#include "FocusDirection.h"
+#include "HTMLFrameOwnerElement.h"
+#include "LayoutRect.h"
+#include "NodeDocument.h"
 #include <limits>
 
 namespace WebCore {
@@ -126,8 +126,8 @@ void distanceDataForNode(FocusDirection, const FocusCandidate& current, FocusCan
 ContainerNode* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection, ContainerNode&);
 LayoutRect nodeRectInAbsoluteCoordinates(const ContainerNode&, bool ignoreBorder = false);
 LayoutRect frameRectInAbsoluteCoordinates(LocalFrame*);
-LayoutRect virtualRectForDirection(FocusDirection, const LayoutRect& startingRect, LayoutUnit width = 0_lu);
+LayoutRect NODELETE virtualRectForDirection(FocusDirection, const LayoutRect& startingRect, LayoutUnit width = 0_lu);
 LayoutRect virtualRectForAreaElementAndDirection(HTMLAreaElement*, FocusDirection);
-HTMLFrameOwnerElement* frameOwnerElement(FocusCandidate&);
+HTMLFrameOwnerElement* NODELETE frameOwnerElement(FocusCandidate&);
 
 } // namespace WebCore

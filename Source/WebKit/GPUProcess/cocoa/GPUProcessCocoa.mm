@@ -109,7 +109,7 @@ void GPUProcess::ensureAVCaptureServerConnection()
 void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& parameters)
 {
 #if PLATFORM(MAC)
-    auto launchServicesExtension = SandboxExtension::create(WTFMove(parameters.launchServicesExtensionHandle));
+    auto launchServicesExtension = SandboxExtension::create(WTF::move(parameters.launchServicesExtensionHandle));
     if (launchServicesExtension) {
         bool ok = launchServicesExtension->consume();
         ASSERT_UNUSED(ok, ok);
@@ -176,7 +176,7 @@ void GPUProcess::resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> b
 void GPUProcess::requestSharedSimulationConnection(CoreIPCAuditToken&& modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
 {
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
-    sharedSimulationConnectionHelper->requestSharedSimulationConnectionForAuditToken(modelProcessAuditToken.auditToken(), [sharedSimulationConnectionHelper, completionHandler = WTFMove(completionHandler)] (RetainPtr<NSFileHandle> sharedSimulationConnection, RetainPtr<id> appService) mutable {
+    sharedSimulationConnectionHelper->requestSharedSimulationConnectionForAuditToken(modelProcessAuditToken.auditToken(), [sharedSimulationConnectionHelper, completionHandler = WTF::move(completionHandler)] (RetainPtr<NSFileHandle> sharedSimulationConnection, RetainPtr<id> appService) mutable {
         if (!sharedSimulationConnection) {
             RELEASE_LOG_ERROR(ModelElement, "GPUProcess: Shared simulation join request failed");
             completionHandler(std::nullopt);
@@ -192,7 +192,7 @@ void GPUProcess::requestSharedSimulationConnection(CoreIPCAuditToken&& modelProc
 void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<String>&)>&& completionHandler)
 {
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
-    sharedSimulationConnectionHelper->createMemoryAttributionIDForTask(processIdentity.taskIdToken(), [sharedSimulationConnectionHelper, completionHandler = WTFMove(completionHandler)] (RetainPtr<NSString> attributionTaskID, RetainPtr<id> appService) mutable {
+    sharedSimulationConnectionHelper->createMemoryAttributionIDForTask(processIdentity.taskIdToken(), [sharedSimulationConnectionHelper, completionHandler = WTF::move(completionHandler)] (RetainPtr<NSString> attributionTaskID, RetainPtr<id> appService) mutable {
         if (!attributionTaskID) {
             RELEASE_LOG_ERROR(ModelElement, "GPUProcess: Memory attribution ID request failed");
             completionHandler(std::nullopt);
@@ -207,7 +207,7 @@ void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity proce
 void GPUProcess::unregisterMemoryAttributionID(const String& attributionID, CompletionHandler<void()>&& completionHandler)
 {
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
-    sharedSimulationConnectionHelper->unregisterMemoryAttributionID(attributionID.createNSString().get(), [sharedSimulationConnectionHelper, completionHandler = WTFMove(completionHandler)] (RetainPtr<id> appService) mutable {
+    sharedSimulationConnectionHelper->unregisterMemoryAttributionID(attributionID.createNSString().get(), [sharedSimulationConnectionHelper, completionHandler = WTF::move(completionHandler)] (RetainPtr<id> appService) mutable {
         if (appService)
             RELEASE_LOG(ModelElement, "GPUProcess: Memory attribution ID unregistration succeeded");
         else

@@ -33,18 +33,18 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 class CSSFunctionValue;
-using CSSPerspectiveValue = Variant<RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
+using CSSPerspectiveValue = Variant<Ref<CSSNumericValue>, String, Ref<CSSKeywordValue>>;
 class Document;
 
 class CSSPerspective : public CSSTransformComponent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSPerspective);
+    WTF_MAKE_TZONE_ALLOCATED(CSSPerspective);
 public:
     static ExceptionOr<Ref<CSSPerspective>> create(CSSPerspectiveValue);
     static ExceptionOr<Ref<CSSPerspective>> create(Ref<const CSSFunctionValue>, Document&);
 
     virtual ~CSSPerspective();
 
-    const CSSPerspectiveValue& length() const { return m_length; }
+    const CSSPerspectiveValue& length() const LIFETIME_BOUND { return m_length; }
     ExceptionOr<void> setLength(CSSPerspectiveValue);
 
     void serialize(StringBuilder&) const final;
@@ -55,9 +55,9 @@ public:
     RefPtr<CSSValue> toCSSValue() const final;
 
 private:
-    CSSPerspective(CSSPerspectiveValue);
+    explicit CSSPerspective(CSSPerspectiveValue);
 
-    void setIs2D(bool);
+    void NODELETE setIs2D(bool);
 
     CSSPerspectiveValue m_length;
 };

@@ -49,6 +49,8 @@ private:
     void chooseDateTimePickerValue() override;
     bool isShowingDataListSuggestions() const override;
     void activateDataListSuggestion(unsigned index, JSValueRef callback) override;
+    void setSelectedColorForColorPicker(double, double, double) override;
+    bool isShowingColorPicker() const override;
     void beginBackSwipe(JSValueRef) override;
     void completeBackSwipe(JSValueRef) override;
     void playBackEventStream(JSStringRef, JSValueRef) override;

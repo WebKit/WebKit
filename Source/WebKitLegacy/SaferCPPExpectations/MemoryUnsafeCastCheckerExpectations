@@ -71,7 +71,6 @@ mac/DOM/DOMHTMLTextAreaElement.mm
 mac/DOM/DOMHTMLTitleElement.mm
 mac/DOM/DOMHTMLUListElement.mm
 mac/DOM/DOMHTMLVideoElement.mm
-mac/DOM/DOMInternal.mm
 mac/DOM/DOMKeyboardEvent.mm
 mac/DOM/DOMMouseEvent.mm
 mac/DOM/DOMMutationEvent.mm
@@ -88,7 +87,7 @@ mac/DOM/DOMWheelEvent.mm
 mac/DOM/ObjCEventListener.h
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebNSViewExtras.m
-mac/WebCoreSupport/WebChromeClient.mm
+[ Mac ] mac/WebCoreSupport/WebChromeClient.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 [ Mac ] mac/WebCoreSupport/WebDragClient.mm
 mac/WebCoreSupport/WebEditorClient.mm

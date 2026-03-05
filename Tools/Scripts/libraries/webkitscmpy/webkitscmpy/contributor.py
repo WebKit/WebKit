@@ -33,6 +33,7 @@ class Contributor(object):
     AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
     UNKNOWN_AUTHOR = re.compile(r'Author: (?P<author>.*) <None>')
     EMPTY_AUTHOR = re.compile(r'Author: (?P<author>.*) <>')
+    USERNAME_ONLY_AUTHOR_RE = re.compile(r'Author:\s+(?P<author>.*) <(?P<username>[^@<>\s]+)>')
     MULTIPLE_EMAIL_RE = re.compile(r'Author: (?P<author>.*) <(?P<emails>([^@ ,]+@[^@ , ]+[, ]\s?)+[^@ ,]+@[^@ , ]+)>')
     SVN_AUTHOR_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_AUTHOR_Q_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
@@ -181,7 +182,6 @@ class Contributor(object):
                 yielded.add(contributor.name)
                 yield contributor
 
-
     @classmethod
     def from_scm_log(cls, line, contributors=None):
         emails = []
@@ -196,6 +196,7 @@ class Contributor(object):
             cls.EMPTY_AUTHOR,
             cls.SVN_AUTHOR_Q_RE,
             cls.MULTIPLE_EMAIL_RE,
+            cls.USERNAME_ONLY_AUTHOR_RE,
         ]:
             match = expression.match(line)
             if match:
@@ -211,6 +212,10 @@ class Contributor(object):
                     for candidate in candidates:
                         if '(no author)' not in candidate:
                             emails.append(candidate)
+                if 'username' in expression.groupindex:
+                    username = match.group('username')
+                    if username and '(no author)' not in username and not emails:
+                        emails.append(username)
                 break
         else:
             raise ValueError("'{}' does not match a known SCM log".format(line))

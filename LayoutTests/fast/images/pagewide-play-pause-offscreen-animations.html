@@ -50,7 +50,6 @@ window.jsTestIsAsync = true;
 window.onload = function() {
   if (!window.internals)
     return;
-  internals.settings.setImageAnimationControlEnabled(true);
 
   setTimeout(async () => {
     testOutput += "Verifying animations are initially playing.\n\n";
@@ -65,7 +64,6 @@ window.onload = function() {
     // Wait for the page to update.
     await new Promise(resolve => setTimeout(resolve, 10));
     internals.setImageAnimationEnabled(true);
-    internals.settings.setImageAnimationControlEnabled(false);
     await verifyAnimationsArePaused(true);
 
     testOutput += "Scrolling to make animations visible again. They should resume automatically because page-wide animation is enabled.\n\n";

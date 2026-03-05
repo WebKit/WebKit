@@ -34,16 +34,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRTransientInputHitTestResult);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRTransientInputHitTestResult);
 
 Ref<WebXRTransientInputHitTestResult> WebXRTransientInputHitTestResult::create(Ref<WebXRInputSource>&& inputSource, Vector<Ref<WebXRHitTestResult>>&& results)
 {
-    return adoptRef(*new WebXRTransientInputHitTestResult(WTFMove(inputSource), WTFMove(results)));
+    return adoptRef(*new WebXRTransientInputHitTestResult(WTF::move(inputSource), WTF::move(results)));
 }
 
 WebXRTransientInputHitTestResult::WebXRTransientInputHitTestResult(Ref<WebXRInputSource>&& inputSource, Vector<Ref<WebXRHitTestResult>>&& results)
-    : m_inputSource(WTFMove(inputSource))
-    , m_results(WTFMove(results))
+    : m_inputSource(WTF::move(inputSource))
+    , m_results(WTF::move(results))
 {
 }
 

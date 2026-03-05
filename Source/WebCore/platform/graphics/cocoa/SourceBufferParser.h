@@ -45,7 +45,7 @@ class ContentType;
 class MediaSampleAVFObjC;
 class SharedBuffer;
 struct MediaSourceConfiguration;
-struct TrackInfo;
+class TrackInfo;
 
 class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SourceBufferParser, WTF::DestructionThread::Main> {
 public:
@@ -83,37 +83,37 @@ public:
     using DidParseInitializationDataCallback = Function<void(InitializationSegment&&)>;
     void setDidParseInitializationDataCallback(DidParseInitializationDataCallback&& callback)
     {
-        m_didParseInitializationDataCallback = WTFMove(callback);
+        m_didParseInitializationDataCallback = WTF::move(callback);
     }
 
     using DidProvideMediaDataCallback = Function<void(Ref<MediaSampleAVFObjC>&&, uint64_t trackID, const String& mediaType)>;
     void setDidProvideMediaDataCallback(DidProvideMediaDataCallback&& callback)
     {
-        m_didProvideMediaDataCallback = WTFMove(callback);
+        m_didProvideMediaDataCallback = WTF::move(callback);
     }
 
     using WillProvideContentKeyRequestInitializationDataForTrackIDCallback = Function<void(uint64_t trackID)>;
     void setWillProvideContentKeyRequestInitializationDataForTrackIDCallback(WillProvideContentKeyRequestInitializationDataForTrackIDCallback&& callback)
     {
-        m_willProvideContentKeyRequestInitializationDataForTrackIDCallback = WTFMove(callback);
+        m_willProvideContentKeyRequestInitializationDataForTrackIDCallback = WTF::move(callback);
     }
 
     using DidProvideContentKeyRequestInitializationDataForTrackIDCallback = Function<void(Ref<SharedBuffer>&&, uint64_t trackID)>;
     void setDidProvideContentKeyRequestInitializationDataForTrackIDCallback(DidProvideContentKeyRequestInitializationDataForTrackIDCallback&& callback)
     {
-        m_didProvideContentKeyRequestInitializationDataForTrackIDCallback = WTFMove(callback);
+        m_didProvideContentKeyRequestInitializationDataForTrackIDCallback = WTF::move(callback);
     }
 
     using DidProvideContentKeyRequestIdentifierForTrackIDCallback = Function<void(Ref<SharedBuffer>&&, uint64_t trackID)>;
     void setDidProvideContentKeyRequestIdentifierForTrackIDCallback(DidProvideContentKeyRequestIdentifierForTrackIDCallback&& callback)
     {
-        m_didProvideContentKeyRequestIdentifierForTrackIDCallback = WTFMove(callback);
+        m_didProvideContentKeyRequestIdentifierForTrackIDCallback = WTF::move(callback);
     }
 
     using DidUpdateFormatDescriptionForTrackIDCallback = Function<void(Ref<TrackInfo>&&, uint64_t trackID)>;
     void setDidUpdateFormatDescriptionForTrackIDCallback(DidUpdateFormatDescriptionForTrackIDCallback&& callback)
     {
-        m_didUpdateFormatDescriptionForTrackIDCallback = WTFMove(callback);
+        m_didUpdateFormatDescriptionForTrackIDCallback = WTF::move(callback);
     }
 
 protected:

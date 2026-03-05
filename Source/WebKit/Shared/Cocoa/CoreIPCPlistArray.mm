@@ -55,7 +55,7 @@ CoreIPCPlistArray::CoreIPCPlistArray(CoreIPCPlistArray&&) = default;
 CoreIPCPlistArray::~CoreIPCPlistArray() = default;
 
 CoreIPCPlistArray::CoreIPCPlistArray(Vector<CoreIPCPlistObject>&& array)
-    : m_array(WTFMove(array)) { }
+    : m_array(WTF::move(array)) { }
 
 RetainPtr<id> CoreIPCPlistArray::toID() const
 {

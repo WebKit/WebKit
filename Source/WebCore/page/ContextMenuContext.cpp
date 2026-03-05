@@ -41,7 +41,7 @@ ContextMenuContext& ContextMenuContext::operator=(const ContextMenuContext&) = d
 ContextMenuContext::ContextMenuContext(Type type, const HitTestResult& hitTestResult, RefPtr<Event>&& event)
     : m_type(type)
     , m_hitTestResult(hitTestResult)
-    , m_event(WTFMove(event))
+    , m_event(WTF::move(event))
     , m_hasEntireImage(hitTestResult.hasEntireImage())
     , m_allowsFollowingLink(hitTestResult.allowsFollowingLink())
     , m_allowsFollowingImageURL(hitTestResult.allowsFollowingImageURL())

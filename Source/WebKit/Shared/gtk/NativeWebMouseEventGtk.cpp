@@ -55,7 +55,7 @@ NativeWebMouseEvent::NativeWebMouseEvent(const WebCore::DoublePoint& position)
 }
 
 NativeWebMouseEvent::NativeWebMouseEvent(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent)
-    : WebMouseEvent(WebEvent(type, modifiers, MonotonicTime::now()), button, buttons, position, globalPosition, delta.value_or(WebCore::FloatSize()).width(), delta.value_or(WebCore::FloatSize()).height(), 0, clickCount, 0, WebMouseEventSyntheticClickType::NoTap, isTouchEvent, pointerId, pointerType)
+    : WebMouseEvent(WebEvent(type, modifiers, MonotonicTime::now()), button, buttons, position, globalPosition, delta.value_or(WebCore::FloatSize()).width(), delta.value_or(WebCore::FloatSize()).height(), 0, clickCount, 0, WebMouseEventInputSource::UserDriven, WebMouseEventSyntheticClickType::NoTap, isTouchEvent, pointerId, pointerType)
 {
 }
 

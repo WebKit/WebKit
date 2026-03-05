@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI && compiler(>=6.0)
+#if ENABLE_SWIFTUI
 
 import Foundation
 import Observation
@@ -434,7 +434,7 @@ final public class WebPage {
             }
         }
 
-        return toNavigationSequence { $0.load(URLRequest(url: url)) }
+        return toNavigationSequence { $0.load(url) }
     }
 
     /// Loads the web content that the specified URL request object references and navigates to that content.

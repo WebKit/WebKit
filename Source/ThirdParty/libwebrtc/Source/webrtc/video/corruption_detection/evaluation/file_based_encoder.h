@@ -13,6 +13,7 @@
 
 #include <string>
 
+#include "api/rtc_error.h"
 #include "api/units/data_rate.h"
 #include "api/video/video_codec_type.h"
 #include "video/corruption_detection/evaluation/test_clip.h"
@@ -31,7 +32,8 @@ class FileBasedEncoder {
   // Encodes the raw video clip specified by `clip` given in a Y4M or YUV file.
   // Creates an encoded file where the encoded frames are stored. The encoded
   // path is returned if successful.
-  virtual std::string Encode(const TestClip& clip, DataRate bitrate) = 0;
+  virtual RTCErrorOr<std::string> Encode(const TestClip& clip,
+                                         DataRate bitrate) = 0;
 
   // Returns the used codec for encoding.
   virtual VideoCodecType GetCodec() const = 0;

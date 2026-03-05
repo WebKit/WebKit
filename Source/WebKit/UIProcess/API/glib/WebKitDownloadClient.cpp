@@ -35,7 +35,7 @@ using namespace WebKit;
 class DownloadClient final : public API::DownloadClient {
 public:
     explicit DownloadClient(GRefPtr<WebKitDownload>&& download)
-        : m_download(WTFMove(download))
+        : m_download(WTF::move(download))
     {
     }
 
@@ -48,7 +48,7 @@ private:
             request.setHTTPUserAgent(webView ? webkitWebViewGetPage(webView).userAgentForURL(request.url()) : WebPageProxy::standardUserAgent());
         }
 
-        completionHandler(WTFMove(request));
+        completionHandler(WTF::move(request));
     }
 
     void didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge) override
@@ -82,7 +82,7 @@ private:
     {
         ASSERT(m_download);
         didReceiveResponse(downloadProxy, resourceResponse);
-        webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), filename.utf8(), WTFMove(completionHandler));
+        webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), filename.utf8(), WTF::move(completionHandler));
     }
 
     void didCreateDestination(DownloadProxy& downloadProxy, const String& path) override
@@ -128,5 +128,5 @@ private:
 
 void attachDownloadClientToDownload(GRefPtr<WebKitDownload>&& download, DownloadProxy& downloadProxy)
 {
-    downloadProxy.setClient(adoptRef(*new DownloadClient(WTFMove(download))));
+    downloadProxy.setClient(adoptRef(*new DownloadClient(WTF::move(download))));
 }

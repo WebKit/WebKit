@@ -62,7 +62,7 @@ IntSize WebGLDefaultFramebuffer::size() const
 
 void WebGLDefaultFramebuffer::reshape(IntSize size)
 {
-    m_context->graphicsContextGL()->reshape(size.width(), size.height());
+    protect(m_context->graphicsContextGL())->reshape(size.width(), size.height());
 }
 
 void WebGLDefaultFramebuffer::markBuffersClear(GCGLbitfield clearBuffers)

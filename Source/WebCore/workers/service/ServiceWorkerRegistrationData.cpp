@@ -47,14 +47,14 @@ ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() cons
 ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() &&
 {
     return {
-        WTFMove(key).isolatedCopy(),
+        WTF::move(key).isolatedCopy(),
         identifier,
-        WTFMove(scopeURL).isolatedCopy(),
+        WTF::move(scopeURL).isolatedCopy(),
         updateViaCache,
         lastUpdateTime,
-        crossThreadCopy(WTFMove(installingWorker)),
-        crossThreadCopy(WTFMove(waitingWorker)),
-        crossThreadCopy(WTFMove(activeWorker)),
+        crossThreadCopy(WTF::move(installingWorker)),
+        crossThreadCopy(WTF::move(waitingWorker)),
+        crossThreadCopy(WTF::move(activeWorker)),
     };
 }
 

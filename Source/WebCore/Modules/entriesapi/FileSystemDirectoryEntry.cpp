@@ -60,12 +60,12 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
     if (!successCallback && !errorCallback)
         return;
 
-    filesystem().getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTFMove(matches), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
+    filesystem().getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTF::move(matches), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](auto&& result) mutable {
         RefPtr document = pendingActivity->object().document();
         if (result.hasException()) {
             if (errorCallback && document) {
-                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), exception = result.releaseException(), pendingActivity = WTFMove(pendingActivity)]() mutable {
-                    errorCallback->invoke(DOMException::create(WTFMove(exception)));
+                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), exception = result.releaseException(), pendingActivity = WTF::move(pendingActivity)]() mutable {
+                    errorCallback->invoke(DOMException::create(WTF::move(exception)));
                 });
             }
             return;
@@ -73,15 +73,15 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         auto entry = result.releaseReturnValue();
         if (!matches(entry)) {
             if (errorCallback && document) {
-                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), pendingActivity = WTF::move(pendingActivity)]() mutable {
                     errorCallback->invoke(DOMException::create(Exception { ExceptionCode::TypeMismatchError, "Entry at given path does not match expected type"_s }));
                 });
             }
             return;
         }
         if (successCallback && document) {
-            document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), entry = WTFMove(entry), pendingActivity = WTFMove(pendingActivity)]() mutable {
-                successCallback->invoke(WTFMove(entry));
+            document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTF::move(successCallback), entry = WTF::move(entry), pendingActivity = WTF::move(pendingActivity)]() mutable {
+                successCallback->invoke(WTF::move(entry));
             });
         }
     });
@@ -89,12 +89,12 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
 
 void FileSystemDirectoryEntry::getFile(ScriptExecutionContext& context, const String& path, const Flags& flags, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    getEntry(context, path, flags, [](auto& entry) { return entry.isFile(); }, WTFMove(successCallback), WTFMove(errorCallback));
+    getEntry(context, path, flags, [](auto& entry) { return entry.isFile(); }, WTF::move(successCallback), WTF::move(errorCallback));
 }
 
 void FileSystemDirectoryEntry::getDirectory(ScriptExecutionContext& context, const String& path, const Flags& flags, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    getEntry(context, path, flags, [](auto& entry) { return entry.isDirectory(); }, WTFMove(successCallback), WTFMove(errorCallback));
+    getEntry(context, path, flags, [](auto& entry) { return entry.isDirectory(); }, WTF::move(successCallback), WTF::move(errorCallback));
 }
 
 } // namespace WebCore

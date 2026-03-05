@@ -133,6 +133,18 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
+#if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
+    // In iOS 17, the default value of `-[UIScrollView allowsKeyboardScrolling]` is `NO`.
+    // To maintain existing behavior of WKBaseScrollView, this property must be initially set to `YES`.
+    self.allowsKeyboardScrolling = YES;
+#endif
+
+#if PLATFORM(VISION)
+    static BOOL alternateRenderingAvailable = [UIScrollView instancesRespondToSelector:@selector(_setUseVisionAlternateScrollIndicatorRendering:)];
+    if (alternateRenderingAvailable)
+        [self _setUseVisionAlternateScrollIndicatorRendering:YES];
+#endif
+
     _axesToPreventMomentumScrolling = UIAxisNeither;
     [self.panGestureRecognizer addTarget:self action:@selector(_updatePanGestureToPreventScrolling)];
     return self;
@@ -256,14 +268,67 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
+- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::PlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host
+{
+    auto diff = _overlayRegionAssociatedLayers.symmetricDifferenceWith(relatedLayers);
+    if (diff.isEmpty())
+        return;
+
+    _overlayRegionAssociatedLayers = relatedLayers;
+    if (![self respondsToSelector:@selector(_lookToScrollGroupName)])
+        return;
+
+    NSString *groupName = [self _lookToScrollGroupName];
+    for (auto layerID : relatedLayers) {
+        if (auto* layer = host.layerForID(layerID)) {
+            CARemoteEffectGroup *group = [CARemoteEffectGroup groupWithEffects:@[]];
+            group.groupName = groupName;
+            group.matched = YES;
+            [layer setRemoteEffects:@[ group ]];
+        }
+    }
+}
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKBaseScrollViewAdditions.mm>)
 #import <WebKitAdditions/WKBaseScrollViewAdditions.mm>
 #else
-- (BOOL)_hasEnoughContentForOverlayRegions { return false; }
-- (void)_updateOverlayRegionsBehavior:(BOOL)selected { }
-- (void)_updateOverlayRegionRects:(const HashSet<WebCore::IntRect>&)overlayRegions whileStable:(BOOL)stable { }
-- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::PlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host { }
-- (void)_updateOverlayRegions:(NSArray<NSData *> *)overlayRegions { }
+constexpr float overlayRegionContentFactor = 1.1;
+
+- (BOOL)_hasEnoughContentForOverlayRegions
+{
+    return ((self._wk_contentHeightIncludingInsets > self.bounds.size.height * overlayRegionContentFactor)
+        || (self._wk_contentWidthIncludingInsets > self.bounds.size.width * overlayRegionContentFactor));
+}
+- (void)_updateOverlayRegionsBehavior:(BOOL)selected
+{
+    UIAxis scrollableAxes = UIAxisNeither;
+
+    if (selected) {
+        if (self._wk_contentHeightIncludingInsets > self.bounds.size.height * overlayRegionContentFactor)
+            scrollableAxes |= UIAxisVertical;
+        if (self._wk_contentWidthIncludingInsets > self.bounds.size.width * overlayRegionContentFactor)
+            scrollableAxes |= UIAxisHorizontal;
+    } else if (_overlayRegionRects.size())
+        [self _updateOverlayRegionRects: { } whileStable:YES];
+
+    if (self._scrollingBehavior == scrollableAxes)
+        return;
+
+    self._scrollingBehavior = scrollableAxes;
+}
+
+- (void)_updateOverlayRegionRects:(const HashSet<WebCore::IntRect>&)overlayRegions whileStable:(BOOL)stable
+{
+    auto diff = _overlayRegionRects.symmetricDifferenceWith(overlayRegions);
+    if (!diff.size())
+        return;
+
+    if (!stable && overlayRegions.size() == _overlayRegionRects.size())
+        return;
+
+    _overlayRegionRects = overlayRegions;
+}
+
 #endif
 
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

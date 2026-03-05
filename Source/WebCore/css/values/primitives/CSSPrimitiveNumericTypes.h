@@ -39,26 +39,26 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
 
     NumberOrPercentage(Variant<Number, Percentage>&& value)
     {
-        WTF::switchOn(WTFMove(value), [this](auto&& alternative) { this->value = WTFMove(alternative); });
+        WTF::switchOn(WTF::move(value), [this](auto&& alternative) { this->value = WTF::move(alternative); });
     }
 
     NumberOrPercentage(typename Number::Raw value)
-        : value { Number { WTFMove(value) } }
+        : value { Number { WTF::move(value) } }
     {
     }
 
     NumberOrPercentage(Number value)
-        : value { WTFMove(value) }
+        : value { WTF::move(value) }
     {
     }
 
     NumberOrPercentage(typename Percentage::Raw value)
-        : value { Percentage { WTFMove(value) } }
+        : value { Percentage { WTF::move(value) } }
     {
     }
 
     NumberOrPercentage(Percentage value)
-        : value { WTFMove(value) }
+        : value { WTF::move(value) }
     {
     }
 
@@ -86,7 +86,7 @@ private:
     friend struct MarkableTraits<NumberOrPercentage>;
 
     NumberOrPercentage(PrimitiveDataEmptyToken token)
-        : value { WTFMove(token) }
+        : value { WTF::move(token) }
     {
     }
 
@@ -101,26 +101,26 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
 
     NumberOrPercentageResolvedToNumber(Variant<Number, Percentage>&& value)
     {
-        WTF::switchOn(WTFMove(value), [this](auto&& alternative) { this->value = WTFMove(alternative); });
+        WTF::switchOn(WTF::move(value), [this](auto&& alternative) { this->value = WTF::move(alternative); });
     }
 
     NumberOrPercentageResolvedToNumber(typename Number::Raw value)
-        : value { Number { WTFMove(value) } }
+        : value { Number { WTF::move(value) } }
     {
     }
 
     NumberOrPercentageResolvedToNumber(Number value)
-        : value { WTFMove(value) }
+        : value { WTF::move(value) }
     {
     }
 
     NumberOrPercentageResolvedToNumber(typename Percentage::Raw value)
-        : value { Percentage { WTFMove(value) } }
+        : value { Percentage { WTF::move(value) } }
     {
     }
 
     NumberOrPercentageResolvedToNumber(Percentage value)
-        : value { WTFMove(value) }
+        : value { WTF::move(value) }
     {
     }
 
@@ -145,8 +145,10 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
     }
 
 private:
+    friend struct MarkableTraits<NumberOrPercentageResolvedToNumber>;
+
     NumberOrPercentageResolvedToNumber(PrimitiveDataEmptyToken token)
-        : value { WTFMove(token) }
+        : value { WTF::move(token) }
     {
     }
 

@@ -49,11 +49,6 @@ LoadableModuleScript::LoadableModuleScript(IsInline isInline, const AtomString& 
 
 LoadableModuleScript::~LoadableModuleScript() = default;
 
-bool LoadableModuleScript::isLoaded() const
-{
-    return m_isLoaded;
-}
-
 bool LoadableModuleScript::hasError() const
 {
     return !!m_error;
@@ -62,11 +57,6 @@ bool LoadableModuleScript::hasError() const
 std::optional<LoadableScript::Error> LoadableModuleScript::takeError()
 {
     return std::exchange(m_error, std::nullopt);
-}
-
-bool LoadableModuleScript::wasCanceled() const
-{
-    return m_wasCanceled;
 }
 
 void LoadableModuleScript::notifyLoadCompleted(UniquedStringImpl& moduleKey)
@@ -78,7 +68,7 @@ void LoadableModuleScript::notifyLoadCompleted(UniquedStringImpl& moduleKey)
 
 void LoadableModuleScript::notifyLoadFailed(LoadableScript::Error&& error)
 {
-    m_error = WTFMove(error);
+    m_error = WTF::move(error);
     m_isLoaded = true;
     notifyClientFinished();
 }

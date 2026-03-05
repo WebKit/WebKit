@@ -9,6 +9,8 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <string.h>
+
 #include "av1/common/common.h"
 #include "av1/encoder/external_partition.h"
 #include "config/aom_config.h"
@@ -40,7 +42,7 @@ static aom_codec_err_t ext_part_init(ExtPartController *ext_part_controller) {
   if (ext_part_controller == NULL) {
     return AOM_CODEC_INVALID_PARAM;
   }
-  av1_zero(ext_part_controller);
+  memset(ext_part_controller, 0, sizeof(*ext_part_controller));
   return AOM_CODEC_OK;
 }
 

@@ -38,7 +38,7 @@ class WebXRInputSource;
 class WebXRHitTestResult;
 
 class WebXRTransientInputHitTestResult : public RefCounted<WebXRTransientInputHitTestResult> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRTransientInputHitTestResult);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRTransientInputHitTestResult);
 public:
     static Ref<WebXRTransientInputHitTestResult> create(Ref<WebXRInputSource>&&, Vector<Ref<WebXRHitTestResult>>&&);
     ~WebXRTransientInputHitTestResult();

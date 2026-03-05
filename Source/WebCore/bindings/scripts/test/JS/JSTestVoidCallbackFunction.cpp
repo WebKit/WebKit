@@ -142,10 +142,10 @@ void JSTestVoidCallbackFunction::visitJSFunction(JSC::SlotVisitor& visitor)
 
 JSC::JSValue toJS(TestVoidCallbackFunction& impl)
 {
-    if (!static_cast<JSTestVoidCallbackFunction&>(impl).callbackData())
-        return jsNull();
+    if (auto* callbackData = downcast<JSTestVoidCallbackFunction>(impl).callbackData())
+        return callbackData->callback();
+    return jsNull();
 
-    return static_cast<JSTestVoidCallbackFunction&>(impl).callbackData()->callback();
 }
 
 ScriptExecutionContext* JSTestVoidCallbackFunction::scriptExecutionContext() const

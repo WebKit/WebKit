@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmMemoryHandler.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -131,7 +131,7 @@ bool MemoryHandler::readMemoryData(VirtualAddress address, size_t length, String
     }
 
     void* memoryBase = jsInstance->cachedMemory();
-    size_t size = jsInstance->memory()->memory().size();
+    size_t size = jsInstance->cachedMemorySize();
     if (!memoryBase || offset + length > size) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - memory access out of bounds. Instance ID: ", instanceId, " offset: ", offset, " size: ", length, " memory size: ", size);
         return false;
@@ -188,7 +188,7 @@ void MemoryHandler::handleWasmMemoryRegionInfo(VirtualAddress address, uint32_t 
 {
     JSWebAssemblyInstance* instance = m_debugServer.m_moduleManager->jsInstance(instanceId);
     if (instance) {
-        size_t memorySize = instance->memory()->memory().size();
+        size_t memorySize = instance->cachedMemorySize();
         if (offset < memorySize) {
             // Address is within WASM memory - return the memory region
             uint32_t moduleId = instance->moduleInformation().debugInfo->id;
@@ -288,4 +288,4 @@ NO_RETURN_DUE_TO_CRASH void MemoryHandler::write(StringView)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

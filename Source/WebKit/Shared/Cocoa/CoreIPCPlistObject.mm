@@ -78,7 +78,7 @@ CoreIPCPlistObject::CoreIPCPlistObject(id object)
 }
 
 CoreIPCPlistObject::CoreIPCPlistObject(UniqueRef<PlistValue>&& value)
-    : m_value(WTFMove(value))
+    : m_value(WTF::move(value))
 {
 }
 
@@ -103,7 +103,7 @@ std::optional<UniqueRef<WebKit::PlistValue>> ArgumentCoder<UniqueRef<WebKit::Pli
     auto object = decoder.decode<WebKit::PlistValue>();
     if (!object)
         return std::nullopt;
-    return makeUniqueRefWithoutFastMallocCheck<WebKit::PlistValue>(WTFMove(*object));
+    return makeUniqueRefWithoutFastMallocCheck<WebKit::PlistValue>(WTF::move(*object));
 }
 
 } // namespace IPC

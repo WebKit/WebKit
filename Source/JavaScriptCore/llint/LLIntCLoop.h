@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(C_LOOP)
 
 #include <JavaScriptCore/JSCJSValue.h>

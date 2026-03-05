@@ -411,11 +411,11 @@ RefPtr<OpenTypeVerticalData> OpenTypeVerticalData::create(const FontPlatformData
     if (!loadHmtxTable(platformData, advanceWidths))
         return nullptr;
 
-    return adoptRef(new OpenTypeVerticalData(platformData, WTFMove(advanceWidths)));
+    return adoptRef(new OpenTypeVerticalData(platformData, WTF::move(advanceWidths)));
 }
 
 OpenTypeVerticalData::OpenTypeVerticalData(const FontPlatformData& platformData, Vector<uint16_t>&& advanceWidths)
-    : m_advanceWidths(WTFMove(advanceWidths))
+    : m_advanceWidths(WTF::move(advanceWidths))
 {
     loadMetrics(platformData);
     loadVerticalGlyphSubstitutions(platformData);

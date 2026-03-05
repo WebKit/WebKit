@@ -1,0 +1,93 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=false dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/navigation-utils.js"></script>
+<script>
+
+description("Cross-site iframe history is preserved when the main frame navigates (back/forward cache is disabled).");
+jsTestIsAsync = true;
+
+const page = "opener";
+var popup = null;
+
+window.onload = function() {
+    popup = window.open("resources/cross-site-iframe-nav-popup.html");
+}
+
+var sameSiteShowCount = 0;
+var crossSiteShowCount = 0;
+
+window.onmessage = (event) => dispatchMessage(event.data, {
+    popup: {
+        load: () => debug("Popup loaded"),
+        pageshow: ({arg}) => {
+            if (arg !== "not-persisted") {
+                testFailed("Popup should not be loaded from back/forward cache.");
+                finishJSTest();
+                return;
+            }
+            debug("Popup pageshow: " + arg);
+        },
+    },
+    samesite: {
+        load: () => debug("Same-site iframe loaded"),
+        pageshow: ({arg}) => {
+            if (arg !== "not-persisted") {
+                testFailed("Same-site iframe should not be loaded from back/forward cache.");
+                finishJSTest();
+                return;
+            }
+
+            sameSiteShowCount++;
+            if (sameSiteShowCount == 1) {
+                debug("Same-site iframe displayed first time.");
+                sendMessageToPopup("navigate-to-cross-site");
+            } else if (sameSiteShowCount == 2) {
+                testPassed("Same-site iframe displayed twice.");
+                finishJSTest();
+            }
+        }
+    },
+    crosssite: {
+        load: () => debug("Cross-site iframe loaded"),
+        pageshow: ({arg}) => {
+            if (arg !== "not-persisted") {
+                testFailed("Cross-site iframe should not be loaded from back/forward cache.");
+                finishJSTest();
+                return;
+            }
+
+            crossSiteShowCount++;
+            if (crossSiteShowCount == 1) {
+                debug("Cross-site iframe displayed first time.");
+                sendMessageToPopup("navigate-to-other");
+            } else if (crossSiteShowCount == 2) {
+                testPassed("Cross-site iframe displayed twice.");
+                sendMessageToPopup("back2");
+            }
+        }
+    },
+    other: {
+        load: () => debug("Other page loaded"),
+        pageshow: () => {
+            debug("Other page displayed.");
+            sendMessageToPopup("back1");
+        }
+    },
+});
+
+</script>
+</head>
+<body>
+<ul>
+    <li>Open a new window with cross-site-iframe-nav-popup.html. It has an same-site iframe initially.</li>
+    <li>Navigate iframe to cross-site.</li>
+    <li>Navigate main frame to other.</li>
+    <li>Go back. (cross-site-iframe-nav-popup.html with cross-site iframe)</li>
+    <li>Go back again. (cross-site-iframe-nav-popup.html with same-site iframe)</li>
+</ul>
+<p>... and ensures the cross-site iframe history is preserved in the BackForwardList.</p>
+</body>
+</html>

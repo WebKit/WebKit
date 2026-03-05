@@ -122,7 +122,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:file];
     if (![interactionController.icons count])
         return nil;
-    return thumbnailSizedImageForImage(interactionController.icons[0].CGImage);
+    return thumbnailSizedImageForImage(RetainPtr<CGImageRef> { [protect(interactionController.icons[0]) CGImage] });
 #endif
 }
 

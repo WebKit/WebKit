@@ -77,19 +77,19 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
         point.y = CGCeiling(point.y);
 
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
-        CGContextRef cgContext = [nsContext CGContext];
-        GraphicsContextCG graphicsContext { cgContext };
+        RetainPtr cgContext = [nsContext CGContext];
+        GraphicsContextCG graphicsContext { cgContext.get() };
 
         // WebCore requires a flipped graphics context.
         bool flipped = [nsContext isFlipped];
         if (!flipped)
-            CGContextScaleCTM(cgContext, 1, -1);
+            CGContextScaleCTM(cgContext.get(), 1, -1);
 
         graphicsContext.setFillColor(colorFromCocoaColor(textColor));
         webCoreFont.drawText(graphicsContext, run, FloatPoint(point.x, flipped ? point.y : -point.y));
 
         if (!flipped)
-            CGContextScaleCTM(cgContext, 1, -1);
+            CGContextScaleCTM(cgContext.get(), 1, -1);
     } else {
         // The given point is on the baseline.
         if ([[NSView focusView] isFlipped])

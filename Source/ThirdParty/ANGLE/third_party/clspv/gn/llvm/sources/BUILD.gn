@@ -168,7 +168,13 @@ clspv_llvm_static_lib("clspv_llvm_lib_frontend_hlsl") {
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_support",
   ]
-  sources = [ "//$clspv_llvm_dir/llvm/lib/Frontend/HLSL/HLSLResource.cpp" ]
+  sources = [
+    "//$clspv_llvm_dir/llvm/lib/Frontend/HLSL/HLSLBinding.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Frontend/HLSL/HLSLResource.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Frontend/HLSL/HLSLRootSignature.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Frontend/HLSL/RootSignatureMetadata.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Frontend/HLSL/RootSignatureValidations.cpp",
+  ]
 }
 
 clspv_llvm_static_lib("clspv_llvm_lib_frontend_offloading") {
@@ -192,10 +198,16 @@ clspv_llvm_static_lib("clspv_llvm_lib_frontend_atomic") {
   sources = [ "//$clspv_llvm_dir/llvm/lib/Frontend/Atomic/Atomic.cpp" ]
 }
 
+clspv_llvm_static_lib("clspv_llvm_lib_frontend_directive") {
+  deps = [ ":clspv_llvm_lib_support" ]
+  sources = [ "//$clspv_llvm_dir/llvm/lib/Frontend/Directive/Spelling.cpp" ]
+}
+
 clspv_llvm_static_lib("clspv_llvm_lib_frontend_openmp") {
   deps = [
     ":clspv_llvm_lib_analysis",
     ":clspv_llvm_lib_frontend_atomic",
+    ":clspv_llvm_lib_frontend_directive",
     ":clspv_llvm_lib_frontend_offloading",
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_mc",
@@ -206,6 +218,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_frontend_openmp") {
     "$clspv_gn_dir/llvm/tablegen:public_tablegen",
   ]
   sources = [
+    "//$clspv_llvm_dir/llvm/lib/Frontend/OpenMP/DirectiveNameParser.cpp",
     "//$clspv_llvm_dir/llvm/lib/Frontend/OpenMP/OMP.cpp",
     "//$clspv_llvm_dir/llvm/lib/Frontend/OpenMP/OMPContext.cpp",
     "//$clspv_llvm_dir/llvm/lib/Frontend/OpenMP/OMPIRBuilder.cpp",
@@ -280,6 +293,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_vectorize") {
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/SandboxVectorizer/Interval.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/SandboxVectorizer/Legality.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/SandboxVectorizer/Passes/BottomUpVec.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/SandboxVectorizer/Passes/PackReuse.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/SandboxVectorizer/Passes/RegionsFromBBs.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/SandboxVectorizer/Passes/RegionsFromMetadata.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/SandboxVectorizer/Passes/SeedCollection.cpp",
@@ -293,7 +307,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_vectorize") {
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlan.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlanAnalysis.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlanConstruction.cpp",
-    "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlanHCFGBuilder.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlanPredicator.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlanRecipes.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlanSLP.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/VPlanTransforms.cpp",
@@ -336,6 +350,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_utils") {
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/CtorUtils.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/DXILUpgrade.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/Debugify.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/DeclareRuntimeLibcalls.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/DemoteRegToStack.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/EntryExitInstrumenter.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/EscapeEnumerator.cpp",
@@ -382,6 +397,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_utils") {
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/MoveAutoInit.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/NameAnonGlobals.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/PredicateInfo.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/ProfileVerify.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/PromoteMemoryToRegister.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/RelLookupTableConverter.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/SCCPSolver.cpp",
@@ -429,6 +445,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_scalar") {
     "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/DFAJumpThreading.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/DeadStoreElimination.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/DivRemPairs.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/DropUnnecessaryAssumes.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/EarlyCSE.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/FlattenCFGPass.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Scalar/Float2Int.cpp",
@@ -509,7 +526,6 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_objcarc") {
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Transforms/ObjCARC/DependencyAnalysis.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/ObjCARC/ObjCARC.cpp",
-    "//$clspv_llvm_dir/llvm/lib/Transforms/ObjCARC/ObjCARCAPElim.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/ObjCARC/ObjCARCContract.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/ObjCARC/ObjCARCExpand.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/ObjCARC/ObjCARCOpts.cpp",
@@ -533,6 +549,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_instrumentation") {
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/AddressSanitizer.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/AllocToken.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/BlockCoverageInference.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/BoundsChecking.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/CGProfile.cpp",
@@ -544,7 +561,8 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_instrumentation") {
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/KCFI.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/LowerAllowCheckPass.cpp",
-    "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/MemProfiler.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/MemProfInstrumentation.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/MemProfUse.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/MemorySanitizer.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/NumericalStabilitySanitizer.cpp",
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/PGOCtxProfFlattening.cpp",
@@ -723,6 +741,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_hipstdpar") {
 clspv_llvm_static_lib("clspv_llvm_lib_analysis") {
   deps = [
     ":clspv_llvm_lib_binaryformat",
+    ":clspv_llvm_lib_frontend_hlsl",
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_profiledata",
     ":clspv_llvm_lib_support",
@@ -772,10 +791,13 @@ clspv_llvm_static_lib("clspv_llvm_lib_analysis") {
     "//$clspv_llvm_dir/llvm/lib/Analysis/DomTreeUpdater.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/DominanceFrontier.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/EphemeralValuesCache.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Analysis/FloatingPointPredicateUtils.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/FunctionPropertiesAnalysis.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/GlobalsModRef.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/GuardUtils.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Analysis/HashRecognize.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/HeatUtils.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Analysis/IR2Vec.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/IRSimilarityIdentifier.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/IVDescriptors.cpp",
     "//$clspv_llvm_dir/llvm/lib/Analysis/IVUsers.cpp",
@@ -875,6 +897,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_targetparser") {
   deps = [ ":clspv_llvm_lib_support" ]
   public_deps = [
     "$clspv_gn_dir/llvm/tablegen:AArch64TargetParserDef",
+    "$clspv_gn_dir/llvm/tablegen:PPCGenTargetFeatures",
     "$clspv_gn_dir/llvm/tablegen:RISCVTargetParserDef",
   ]
   include_dirs = [
@@ -1042,6 +1065,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen") {
     "//$clspv_llvm_dir/llvm/lib/CodeGen/LowLevelTypeUtils.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/LowerEmuTLS.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/MBFIWrapper.cpp",
+    "//$clspv_llvm_dir/llvm/lib/CodeGen/MIR2Vec.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/MIRCanonicalizerPass.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/MIRFSDiscriminator.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/MIRNamerPass.cpp",
@@ -1186,6 +1210,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen") {
     "//$clspv_llvm_dir/llvm/lib/CodeGen/WasmEHPrepare.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/WinEHPrepare.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/WindowScheduler.cpp",
+    "//$clspv_llvm_dir/llvm/lib/CodeGen/WindowsSecureHotPatching.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/XRayInstrumentation.cpp",
   ]
 }
@@ -1197,6 +1222,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen_asmprinter") {
     ":clspv_llvm_lib_codegen",
     ":clspv_llvm_lib_debuginfo_codeview",
     ":clspv_llvm_lib_debuginfo_dwarf",
+    ":clspv_llvm_lib_debuginfo_gsym",
     ":clspv_llvm_lib_debuginfo_msf",
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_mc",
@@ -1241,6 +1267,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen_globalisel") {
   deps = [
     ":clspv_llvm_lib_analysis",
     ":clspv_llvm_lib_codegen",
+    ":clspv_llvm_lib_codegen_selectiondag",
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_mc",
     ":clspv_llvm_lib_support",
@@ -1251,10 +1278,6 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen_globalisel") {
     "../config:llvm-config",
   ]
   sources = [
-    "//$clspv_llvm_dir/llvm/lib/CodeGen/AsmPrinter/AIXException.cpp",
-    "//$clspv_llvm_dir/llvm/lib/CodeGen/AsmPrinter/ARMException.cpp",
-    "//$clspv_llvm_dir/llvm/lib/CodeGen/AsmPrinter/AccelTable.cpp",
-    "//$clspv_llvm_dir/llvm/lib/CodeGen/AsmPrinter/AddressPool.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/CSEInfo.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/CSEMIRBuilder.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/CallLowering.cpp",
@@ -1277,6 +1300,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen_globalisel") {
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/LoadStoreOpt.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/Localizer.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/LostDebugLocObserver.cpp",
+    "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/MachineFloatingPointPredicateUtils.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/MachineIRBuilder.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/RegBankSelect.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/GlobalISel/Utils.cpp",
@@ -1327,6 +1351,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen_selectiondag") {
     "//$clspv_llvm_dir/llvm/lib/CodeGen/SelectionDAG/LegalizeVectorOps.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/SelectionDAG/LegalizeVectorTypes.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/SelectionDAG/ResourcePriorityQueue.cpp",
+    "//$clspv_llvm_dir/llvm/lib/CodeGen/SelectionDAG/SDNodeInfo.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/SelectionDAG/ScheduleDAGFast.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/SelectionDAG/ScheduleDAGRRList.cpp",
     "//$clspv_llvm_dir/llvm/lib/CodeGen/SelectionDAG/ScheduleDAGSDNodes.cpp",
@@ -1429,9 +1454,9 @@ clspv_llvm_static_lib("clspv_llvm_lib_debuginfo_dwarf") {
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFAbbreviationDeclaration.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFAcceleratorTable.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFAddressRange.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFCFIPrinter.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFCompileUnit.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFContext.cpp",
-    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFDataExtractor.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFDebugAbbrev.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFDebugAddr.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFDebugArangeSet.cpp",
@@ -1445,7 +1470,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_debuginfo_dwarf") {
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFDebugRangeList.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFDebugRnglists.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFDie.cpp",
-    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFExpression.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFExpressionPrinter.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFFormValue.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFGdbIndex.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFListTable.cpp",
@@ -1453,7 +1478,35 @@ clspv_llvm_static_lib("clspv_llvm_lib_debuginfo_dwarf") {
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFTypeUnit.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFUnit.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFUnitIndex.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFUnwindTablePrinter.cpp",
     "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/DWARFVerifier.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/LowLevel/DWARFCFIProgram.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/LowLevel/DWARFExpression.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/DWARF/LowLevel/DWARFUnwindTable.cpp",
+  ]
+}
+
+clspv_llvm_static_lib("clspv_llvm_lib_debuginfo_gsym") {
+  deps = [
+    ":clspv_llvm_lib_mc",
+    ":clspv_llvm_lib_support",
+    ":clspv_llvm_lib_targetparser",
+  ]
+  sources = [
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/CallSiteInfo.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/DwarfTransformer.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/ExtractRanges.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/FileWriter.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/FunctionInfo.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/GsymContext.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/GsymCreator.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/GsymReader.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/Header.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/InlineInfo.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/LineTable.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/LookupResult.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/MergedFunctionsInfo.cpp",
+    "//$clspv_llvm_dir/llvm/lib/DebugInfo/GSYM/ObjectFileTransformer.cpp",
   ]
 }
 
@@ -1616,6 +1669,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_debuginfo_symbolize") {
   deps = [
     ":clspv_llvm_lib_debuginfo_btf",
     ":clspv_llvm_lib_debuginfo_dwarf",
+    ":clspv_llvm_lib_debuginfo_gsym",
     ":clspv_llvm_lib_debuginfo_pdb",
     ":clspv_llvm_lib_demangle",
     ":clspv_llvm_lib_object",
@@ -1668,6 +1722,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_ir") {
     "//$clspv_llvm_dir/llvm/lib/IR/BasicBlock.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/BuiltinGCs.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/Comdat.cpp",
+    "//$clspv_llvm_dir/llvm/lib/IR/ConstantFPRange.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/ConstantFold.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/ConstantRange.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/ConstantRangeList.cpp",
@@ -1736,7 +1791,6 @@ clspv_llvm_static_lib("clspv_llvm_lib_ir") {
     "//$clspv_llvm_dir/llvm/lib/IR/VFABIDemangler.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/Value.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/ValueSymbolTable.cpp",
-    "//$clspv_llvm_dir/llvm/lib/IR/VectorBuilder.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/VectorTypeUtils.cpp",
     "//$clspv_llvm_dir/llvm/lib/IR/Verifier.cpp",
   ]
@@ -1856,15 +1910,11 @@ clspv_llvm_static_lib("clspv_llvm_lib_mc") {
     "//$clspv_llvm_dir/llvm/lib/MC/MCObjectWriter.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCPseudoProbe.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCRegisterInfo.cpp",
+    "//$clspv_llvm_dir/llvm/lib/MC/MCSFrame.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCSPIRVStreamer.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCSchedule.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCSection.cpp",
-    "//$clspv_llvm_dir/llvm/lib/MC/MCSectionCOFF.cpp",
-    "//$clspv_llvm_dir/llvm/lib/MC/MCSectionDXContainer.cpp",
-    "//$clspv_llvm_dir/llvm/lib/MC/MCSectionELF.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCSectionMachO.cpp",
-    "//$clspv_llvm_dir/llvm/lib/MC/MCSectionWasm.cpp",
-    "//$clspv_llvm_dir/llvm/lib/MC/MCSectionXCOFF.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCStreamer.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCSubtargetInfo.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCSymbol.cpp",
@@ -1905,7 +1955,6 @@ clspv_llvm_static_lib("clspv_llvm_lib_mc_mcparser") {
     "//$clspv_llvm_dir/llvm/lib/MC/MCParser/DarwinAsmParser.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCParser/ELFAsmParser.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCParser/GOFFAsmParser.cpp",
-    "//$clspv_llvm_dir/llvm/lib/MC/MCParser/MCAsmLexer.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCParser/MCAsmParser.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCParser/MCAsmParserExtension.cpp",
     "//$clspv_llvm_dir/llvm/lib/MC/MCParser/MCTargetAsmParser.cpp",
@@ -1985,6 +2034,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_option") {
 clspv_llvm_static_lib("clspv_llvm_lib_profiledata") {
   deps = [
     ":clspv_llvm_lib_debuginfo_dwarf",
+    ":clspv_llvm_lib_debuginfo_gsym",
     ":clspv_llvm_lib_debuginfo_symbolize",
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_object",
@@ -1992,14 +2042,20 @@ clspv_llvm_static_lib("clspv_llvm_lib_profiledata") {
     ":clspv_llvm_lib_targetparser",
   ]
   sources = [
+    "//$clspv_llvm_dir/llvm/lib/ProfileData/DataAccessProf.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/GCOV.cpp",
+    "//$clspv_llvm_dir/llvm/lib/ProfileData/IndexedMemProfData.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/InstrProf.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/InstrProfCorrelator.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/InstrProfReader.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/InstrProfWriter.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/ItaniumManglingCanonicalizer.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/MemProf.cpp",
+    "//$clspv_llvm_dir/llvm/lib/ProfileData/MemProfCommon.cpp",
+    "//$clspv_llvm_dir/llvm/lib/ProfileData/MemProfRadixTree.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/MemProfReader.cpp",
+    "//$clspv_llvm_dir/llvm/lib/ProfileData/MemProfSummary.cpp",
+    "//$clspv_llvm_dir/llvm/lib/ProfileData/MemProfSummaryBuilder.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/PGOCtxProfReader.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/PGOCtxProfWriter.cpp",
     "//$clspv_llvm_dir/llvm/lib/ProfileData/ProfileSummaryBuilder.cpp",
@@ -2029,6 +2085,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_passes") {
   deps = [
     ":clspv_llvm_lib_analysis",
     ":clspv_llvm_lib_codegen",
+    ":clspv_llvm_lib_codegen_globalisel",
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_irprinter",
     ":clspv_llvm_lib_support",
@@ -2092,6 +2149,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_tblgen") {
     "//$clspv_llvm_dir/llvm/lib/TableGen/Record.cpp",
     "//$clspv_llvm_dir/llvm/lib/TableGen/SetTheory.cpp",
     "//$clspv_llvm_dir/llvm/lib/TableGen/StringMatcher.cpp",
+    "//$clspv_llvm_dir/llvm/lib/TableGen/StringToOffsetTable.cpp",
     "//$clspv_llvm_dir/llvm/lib/TableGen/TGLexer.cpp",
     "//$clspv_llvm_dir/llvm/lib/TableGen/TGParser.cpp",
     "//$clspv_llvm_dir/llvm/lib/TableGen/TGTimer.cpp",
@@ -2106,6 +2164,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "$clspv_gn_dir/llvm/config:write_extension_def",
     "$clspv_gn_dir/llvm/config:write_target_def_files",
   ]
+  include_dirs = [ "//$clspv_llvm_dir/third-party/siphash/include" ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Support/ABIBreak.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/AMDGPUMetadata.cpp",
@@ -2143,6 +2202,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "//$clspv_llvm_dir/llvm/lib/Support/CrashRecoveryContext.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/DAGDeltaAlgorithm.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/DJB.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/DXILABI.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/DataExtractor.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Debug.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/DebugCounter.cpp",
@@ -2193,6 +2253,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "//$clspv_llvm_dir/llvm/lib/Support/Parallel.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/PluginLoader.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/PrettyStackTrace.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/ProgramStack.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/RISCVAttributeParser.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/RISCVAttributes.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/RISCVISAUtils.cpp",
@@ -2224,7 +2285,6 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "//$clspv_llvm_dir/llvm/lib/Support/Timer.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/ToolOutputFile.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Twine.cpp",
-    "//$clspv_llvm_dir/llvm/lib/Support/TypeSize.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Unicode.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/UnicodeCaseFold.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/UnicodeNameToCodepoint.cpp",
@@ -2237,6 +2297,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "//$clspv_llvm_dir/llvm/lib/Support/circular_raw_ostream.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/raw_os_ostream.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/raw_ostream.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/raw_ostream_proxy.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/raw_socket_stream.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/regcomp.c",
     "//$clspv_llvm_dir/llvm/lib/Support/regerror.c",
@@ -2249,6 +2310,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "//$clspv_llvm_dir/llvm/lib/Support/Atomic.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/DynamicLibrary.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Errno.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/Jobserver.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Memory.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Path.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Process.cpp",
@@ -2257,6 +2319,11 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
     "//$clspv_llvm_dir/llvm/lib/Support/Threading.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Valgrind.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/VirtualFileSystem.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/VirtualOutputBackend.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/VirtualOutputBackends.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/VirtualOutputConfig.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/VirtualOutputError.cpp",
+    "//$clspv_llvm_dir/llvm/lib/Support/VirtualOutputFile.cpp",
     "//$clspv_llvm_dir/llvm/lib/Support/Watchdog.cpp",
   ]
   libs = []
@@ -2327,8 +2394,10 @@ clspv_llvm_source_set("clspv_llvm_tool_min_tblgen_sources") {
     "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/DirectiveEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/IntrinsicEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/RISCVTargetDefEmitter.cpp",
+    "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/RuntimeLibcallsEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/SDNodeProperties.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/TableGen.cpp",
+    "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/TargetFeaturesEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Basic/VTEmitter.cpp",
   ]
 }
@@ -2364,6 +2433,7 @@ clspv_llvm_source_set("clspv_llvm_tool_tblgen_sources") {
     "//$clspv_llvm_dir/llvm/utils/TableGen/Common/GlobalISel/PatternParser.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Common/GlobalISel/Patterns.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Common/InfoByHwMode.cpp",
+    "//$clspv_llvm_dir/llvm/utils/TableGen/Common/InstructionEncoding.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Common/OptEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Common/PredicateExpander.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/Common/SubtargetFeatureInfo.cpp",
@@ -2379,6 +2449,8 @@ clspv_llvm_source_set("clspv_llvm_tool_tblgen_sources") {
     "//$clspv_llvm_dir/llvm/utils/TableGen/DFAPacketizerEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/DXILEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/DecoderEmitter.cpp",
+    "//$clspv_llvm_dir/llvm/utils/TableGen/DecoderTableEmitter.cpp",
+    "//$clspv_llvm_dir/llvm/utils/TableGen/DecoderTree.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/DisassemblerEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/ExegesisEmitter.cpp",
     "//$clspv_llvm_dir/llvm/utils/TableGen/FastISelEmitter.cpp",
@@ -2463,8 +2535,18 @@ clspv_clang_static_lib("clspv_clang_lib_analysis") {
     "//$clspv_llvm_dir/clang/lib/Analysis/Consumed.cpp",
     "//$clspv_llvm_dir/clang/lib/Analysis/Dominators.cpp",
     "//$clspv_llvm_dir/clang/lib/Analysis/ExprMutationAnalyzer.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/FixitUtil.cpp",
     "//$clspv_llvm_dir/clang/lib/Analysis/IntervalPartition.cpp",
     "//$clspv_llvm_dir/clang/lib/Analysis/IssueHash.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/Checker.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/Facts.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/FactsGenerator.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/LifetimeAnnotations.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/LifetimeSafety.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/LiveOrigins.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/LoanPropagation.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/Loans.cpp",
+    "//$clspv_llvm_dir/clang/lib/Analysis/LifetimeSafety/Origins.cpp",
     "//$clspv_llvm_dir/clang/lib/Analysis/LiveVariables.cpp",
     "//$clspv_llvm_dir/clang/lib/Analysis/MacroExpansionContext.cpp",
     "//$clspv_llvm_dir/clang/lib/Analysis/ObjCNoReturn.cpp",
@@ -2558,7 +2640,6 @@ clspv_clang_static_lib("clspv_clang_lib_ast") {
     "//$clspv_llvm_dir/clang/lib/AST/ByteCode/EvalEmitter.cpp",
     "//$clspv_llvm_dir/clang/lib/AST/ByteCode/EvaluationResult.cpp",
     "//$clspv_llvm_dir/clang/lib/AST/ByteCode/Floating.cpp",
-    "//$clspv_llvm_dir/clang/lib/AST/ByteCode/Frame.cpp",
     "//$clspv_llvm_dir/clang/lib/AST/ByteCode/Function.cpp",
     "//$clspv_llvm_dir/clang/lib/AST/ByteCode/FunctionPointer.cpp",
     "//$clspv_llvm_dir/clang/lib/AST/ByteCode/Interp.cpp",
@@ -2648,6 +2729,7 @@ clspv_clang_static_lib("clspv_clang_lib_ast") {
     "//$clspv_llvm_dir/clang/lib/AST/TypePrinter.cpp",
     "//$clspv_llvm_dir/clang/lib/AST/VTTBuilder.cpp",
     "//$clspv_llvm_dir/clang/lib/AST/VTableBuilder.cpp",
+    "//$clspv_llvm_dir/clang/lib/ASTMatchers/LowLevelHelpers.cpp",
   ]
 }
 
@@ -2660,7 +2742,6 @@ clspv_clang_static_lib("clspv_clang_lib_astmatchers") {
   sources = [
     "//$clspv_llvm_dir/clang/lib/ASTMatchers/ASTMatchFinder.cpp",
     "//$clspv_llvm_dir/clang/lib/ASTMatchers/ASTMatchersInternal.cpp",
-    "//$clspv_llvm_dir/clang/lib/ASTMatchers/GtestMatchers.cpp",
   ]
 }
 
@@ -2673,10 +2754,14 @@ clspv_clang_static_lib("clspv_clang_lib_basic") {
     "$clspv_gn_dir/llvm/tablegen:AttrSubMatchRulesList",
     "$clspv_gn_dir/llvm/tablegen:Builtins",
     "$clspv_gn_dir/llvm/tablegen:BuiltinsBPF",
+    "$clspv_gn_dir/llvm/tablegen:BuiltinsDirectX",
     "$clspv_gn_dir/llvm/tablegen:BuiltinsHexagon",
     "$clspv_gn_dir/llvm/tablegen:BuiltinsNVPTX",
     "$clspv_gn_dir/llvm/tablegen:BuiltinsRISCV",
     "$clspv_gn_dir/llvm/tablegen:BuiltinsSPIRV",
+    "$clspv_gn_dir/llvm/tablegen:BuiltinsSPIRVCL",
+    "$clspv_gn_dir/llvm/tablegen:BuiltinsSPIRVCommon",
+    "$clspv_gn_dir/llvm/tablegen:BuiltinsSPIRVVK",
     "$clspv_gn_dir/llvm/tablegen:BuiltinsX86",
     "$clspv_gn_dir/llvm/tablegen:BuiltinsX86_64",
     "$clspv_gn_dir/llvm/tablegen:DiagnosticAllCompatIDs",
@@ -2711,8 +2796,12 @@ clspv_clang_static_lib("clspv_clang_lib_basic") {
     "$clspv_gn_dir/llvm/tablegen:AttrHasAttributeImpl",
     "$clspv_gn_dir/llvm/tablegen:AttrParsedAttrKinds",
     "$clspv_gn_dir/llvm/tablegen:AttrSpellingListIndex",
+    "$clspv_gn_dir/llvm/tablegen:AttributeSpellingList",
     "$clspv_gn_dir/llvm/tablegen:arm_fp16",
     "$clspv_gn_dir/llvm/tablegen:arm_neon",
+    "$clspv_gn_dir/llvm/tablegen:riscv_andes_vector_builtin_cg",
+    "$clspv_gn_dir/llvm/tablegen:riscv_andes_vector_builtin_sema",
+    "$clspv_gn_dir/llvm/tablegen:riscv_andes_vector_builtins",
   ]
   include_dirs = [
     "$root_gen_dir/third_party/llvm/src/clang/include",
@@ -2741,6 +2830,7 @@ clspv_clang_static_lib("clspv_clang_lib_basic") {
     "//$clspv_llvm_dir/clang/lib/Basic/Module.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/NoSanitizeList.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/ObjCRuntime.cpp",
+    "//$clspv_llvm_dir/clang/lib/Basic/OffloadArch.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/OpenCLOptions.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/OpenMPKinds.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/OperatorPrecedence.cpp",
@@ -2749,6 +2839,7 @@ clspv_clang_static_lib("clspv_clang_lib_basic") {
     "//$clspv_llvm_dir/clang/lib/Basic/SanitizerSpecialCaseList.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/Sanitizers.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/Sarif.cpp",
+    "//$clspv_llvm_dir/clang/lib/Basic/SimpleTypoCorrection.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/SourceLocation.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/SourceManager.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/SourceMgrAdapter.cpp",
@@ -2773,7 +2864,6 @@ clspv_clang_static_lib("clspv_clang_lib_basic") {
     "//$clspv_llvm_dir/clang/lib/Basic/Targets/Mips.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/Targets/NVPTX.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/Targets/OSTargets.cpp",
-    "//$clspv_llvm_dir/clang/lib/Basic/Targets/PNaCl.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/Targets/PPC.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/Targets/RISCV.cpp",
     "//$clspv_llvm_dir/clang/lib/Basic/Targets/SPIR.cpp",
@@ -2803,6 +2893,7 @@ clspv_llvm_source_set("clspv_clang_lib_codegen_target_builtins") {
     "$clspv_gn_dir/llvm/tablegen:public_tablegen",
     "$clspv_gn_dir/llvm/tablegen:riscv_sifive_vector_builtin_cg",
     "$clspv_gn_dir/llvm/tablegen:riscv_vector_builtin_cg",
+    "//third_party/clspv/gn/llvm/tablegen:AArch64TargetParserDef",
     "//third_party/clspv/gn/llvm/tablegen:IntrinsicsAArch64",
     "//third_party/clspv/gn/llvm/tablegen:IntrinsicsAMDGPU",
     "//third_party/clspv/gn/llvm/tablegen:IntrinsicsARM",
@@ -2828,6 +2919,7 @@ clspv_llvm_source_set("clspv_clang_lib_codegen_target_builtins") {
   sources = [
     "//$clspv_llvm_dir/clang/lib/CodeGen/TargetBuiltins/AMDGPU.cpp",
     "//$clspv_llvm_dir/clang/lib/CodeGen/TargetBuiltins/ARM.cpp",
+    "//$clspv_llvm_dir/clang/lib/CodeGen/TargetBuiltins/DirectX.cpp",
     "//$clspv_llvm_dir/clang/lib/CodeGen/TargetBuiltins/Hexagon.cpp",
     "//$clspv_llvm_dir/clang/lib/CodeGen/TargetBuiltins/NVPTX.cpp",
     "//$clspv_llvm_dir/clang/lib/CodeGen/TargetBuiltins/PPC.cpp",
@@ -2875,6 +2967,7 @@ if (true) {
       ":clspv_llvm_lib_transforms_objcarc",
       ":clspv_llvm_lib_transforms_scalar",
       ":clspv_llvm_lib_transforms_utils",
+      "$clspv_gn_dir/llvm/config:llvm-config",
       "$clspv_gn_dir/llvm/config:write_extension_def",
       "$clspv_gn_dir/llvm/tablegen:arm_cde_builtin_cg",
       "$clspv_gn_dir/llvm/tablegen:arm_mve_builtin_cg",
@@ -2935,6 +3028,7 @@ if (true) {
       "//$clspv_llvm_dir/clang/lib/CodeGen/CodeGenFunction.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/CodeGenModule.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/CodeGenPGO.cpp",
+      "//$clspv_llvm_dir/clang/lib/CodeGen/CodeGenSYCL.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/CodeGenTBAA.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/CodeGenTypes.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/ConstantInitBuilder.cpp",
@@ -2965,7 +3059,6 @@ if (true) {
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/MSP430.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/Mips.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/NVPTX.cpp",
-      "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/PNaCl.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/PPC.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/RISCV.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/SPIR.cpp",
@@ -2976,6 +3069,7 @@ if (true) {
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/WebAssembly.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/X86.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/Targets/XCore.cpp",
+      "//$clspv_llvm_dir/clang/lib/CodeGen/TrapReasonBuilder.cpp",
       "//$clspv_llvm_dir/clang/lib/CodeGen/VarBypassDetector.cpp",
     ]
   }
@@ -3052,6 +3146,7 @@ clspv_clang_static_lib("clspv_clang_lib_driver") {
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/CommonArgs.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/CrossWindows.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/Cuda.cpp",
+    "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/Cygwin.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/Darwin.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/DragonFly.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/Flang.cpp",
@@ -3069,16 +3164,15 @@ clspv_clang_static_lib("clspv_clang_lib_driver") {
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/Linux.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/MSP430.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/MSVC.cpp",
+    "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/Managarm.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/MinGW.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/MipsLinux.cpp",
-    "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/NaCl.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/NetBSD.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/OHOS.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/OpenBSD.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/PPCFreeBSD.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/PPCLinux.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/PS4CPU.cpp",
-    "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/RISCVToolchain.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/SPIRV.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/SPIRVOpenMP.cpp",
     "//$clspv_llvm_dir/clang/lib/Driver/ToolChains/SYCL.cpp",
@@ -3177,6 +3271,7 @@ clspv_clang_static_lib("clspv_clang_lib_lex") {
     "//$clspv_llvm_dir/clang/lib/Lex/HeaderMap.cpp",
     "//$clspv_llvm_dir/clang/lib/Lex/HeaderSearch.cpp",
     "//$clspv_llvm_dir/clang/lib/Lex/InitHeaderSearch.cpp",
+    "//$clspv_llvm_dir/clang/lib/Lex/LexHLSLRootSignature.cpp",
     "//$clspv_llvm_dir/clang/lib/Lex/Lexer.cpp",
     "//$clspv_llvm_dir/clang/lib/Lex/LiteralSupport.cpp",
     "//$clspv_llvm_dir/clang/lib/Lex/MacroArgs.cpp",
@@ -3224,6 +3319,7 @@ clspv_clang_static_lib("clspv_clang_lib_parse") {
     "//$clspv_llvm_dir/clang/lib/Parse/ParseExpr.cpp",
     "//$clspv_llvm_dir/clang/lib/Parse/ParseExprCXX.cpp",
     "//$clspv_llvm_dir/clang/lib/Parse/ParseHLSL.cpp",
+    "//$clspv_llvm_dir/clang/lib/Parse/ParseHLSLRootSignature.cpp",
     "//$clspv_llvm_dir/clang/lib/Parse/ParseInit.cpp",
     "//$clspv_llvm_dir/clang/lib/Parse/ParseObjc.cpp",
     "//$clspv_llvm_dir/clang/lib/Parse/ParseOpenACC.cpp",
@@ -3311,6 +3407,7 @@ clspv_clang_static_lib("clspv_clang_lib_sema") {
     "//$clspv_llvm_dir/clang/lib/Sema/SemaDeclAttr.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaDeclCXX.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaDeclObjC.cpp",
+    "//$clspv_llvm_dir/clang/lib/Sema/SemaDirectX.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaExceptionSpec.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaExpr.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaExprCXX.cpp",
@@ -3334,6 +3431,7 @@ clspv_clang_static_lib("clspv_clang_lib_sema") {
     "//$clspv_llvm_dir/clang/lib/Sema/SemaOpenACC.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaOpenACCAtomic.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaOpenACCClause.cpp",
+    "//$clspv_llvm_dir/clang/lib/Sema/SemaOpenACCClauseAppertainment.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaOpenCL.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaOpenMP.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaOverload.cpp",
@@ -3354,6 +3452,7 @@ clspv_clang_static_lib("clspv_clang_lib_sema") {
     "//$clspv_llvm_dir/clang/lib/Sema/SemaTemplateInstantiateDecl.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaTemplateVariadic.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaType.cpp",
+    "//$clspv_llvm_dir/clang/lib/Sema/SemaTypeTraits.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaWasm.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/SemaX86.cpp",
     "//$clspv_llvm_dir/clang/lib/Sema/TypeLocBuilder.cpp",

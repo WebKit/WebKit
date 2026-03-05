@@ -110,7 +110,7 @@ static void webkit_media_key_system_permission_request_class_init(WebKitMediaKey
 WebKitMediaKeySystemPermissionRequest* webkitMediaKeySystemPermissionRequestCreate(Ref<MediaKeySystemPermissionRequest>&& request)
 {
     WebKitMediaKeySystemPermissionRequest* permissionRequest = WEBKIT_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST, NULL));
-    permissionRequest->priv->request = WTFMove(request);
+    permissionRequest->priv->request = WTF::move(request);
     return permissionRequest;
 }
 

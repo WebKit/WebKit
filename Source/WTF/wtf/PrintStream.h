@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FixedWidthDouble.h>
+#include <wtf/MemoryDump.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RawHex.h>
 #include <wtf/RawPointer.h>
@@ -140,6 +141,7 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, float);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, double);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawHex);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawPointer);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, MemoryDump);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, FixedWidthDouble);
 
 template<typename... Values>

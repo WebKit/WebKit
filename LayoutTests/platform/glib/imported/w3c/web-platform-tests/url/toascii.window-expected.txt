@@ -720,24 +720,24 @@ PASS ড়.com (using <a>.hostname)
 PASS ড়.com (using <area>)
 PASS ড়.com (using <area>.host)
 PASS ড়.com (using <area>.hostname)
-FAIL ẞ.com (using URL) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using URL.host) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using URL.hostname) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using <a>) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using <a>.host) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using <a>.hostname) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using <area>) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using <area>.host) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.com (using <area>.hostname) assert_equals: expected "xn--zca.com" but got "ss.com"
-FAIL ẞ.foo.com (using URL) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using URL.host) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using URL.hostname) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using <a>) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using <a>.host) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using <a>.hostname) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using <area>) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using <area>.host) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
-FAIL ẞ.foo.com (using <area>.hostname) assert_equals: expected "xn--zca.foo.com" but got "ss.foo.com"
+PASS ẞ.com (using URL)
+PASS ẞ.com (using URL.host)
+PASS ẞ.com (using URL.hostname)
+PASS ẞ.com (using <a>)
+PASS ẞ.com (using <a>.host)
+PASS ẞ.com (using <a>.hostname)
+PASS ẞ.com (using <area>)
+PASS ẞ.com (using <area>.host)
+PASS ẞ.com (using <area>.hostname)
+PASS ẞ.foo.com (using URL)
+PASS ẞ.foo.com (using URL.host)
+PASS ẞ.foo.com (using URL.hostname)
+PASS ẞ.foo.com (using <a>)
+PASS ẞ.foo.com (using <a>.host)
+PASS ẞ.foo.com (using <a>.hostname)
+PASS ẞ.foo.com (using <area>)
+PASS ẞ.foo.com (using <area>.host)
+PASS ẞ.foo.com (using <area>.hostname)
 PASS -foo.bar.com (using URL)
 PASS -foo.bar.com (using URL.host)
 PASS -foo.bar.com (using URL.hostname)

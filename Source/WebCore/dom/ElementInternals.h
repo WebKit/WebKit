@@ -40,7 +40,7 @@ class FormAssociatedCustomElement;
 class HTMLFormElement;
 
 class ElementInternals final : public ScriptWrappable, public RefCounted<ElementInternals> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ElementInternals);
+    WTF_MAKE_TZONE_ALLOCATED(ElementInternals);
 
 public:
     static Ref<ElementInternals> create(HTMLElement& element)
@@ -57,7 +57,7 @@ public:
 
     ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
     ExceptionOr<bool> willValidate() const;
-    ExceptionOr<RefPtr<ValidityState>> validity();
+    ExceptionOr<ValidityState&> validity();
     ExceptionOr<String> validationMessage() const;
     ExceptionOr<bool> reportValidity();
     ExceptionOr<bool> checkValidity();

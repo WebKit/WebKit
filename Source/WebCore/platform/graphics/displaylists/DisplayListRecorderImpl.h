@@ -72,7 +72,7 @@ public:
     void endTransparencyLayer() final;
     void drawFilteredImageBuffer(ImageBuffer*, const FloatRect&, Filter&, FilterResults&) final;
     void drawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
-    void drawNativeImage(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
+    void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void drawSystemImage(SystemImage&, const FloatRect&) final;
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint& point1, const FloatPoint& point2) final;
@@ -82,7 +82,7 @@ public:
     void drawPath(const Path&) final;
     void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
     void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
-    void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
+    void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
     void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
     void fillEllipse(const FloatRect&) final;
     void fillPath(const Path&) final;

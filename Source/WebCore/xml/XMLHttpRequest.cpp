@@ -49,6 +49,7 @@
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptExecutionContextInlines.h"
+#include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
@@ -73,7 +74,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XMLHttpRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLHttpRequest);
 
 // Histogram enum to see when we can deprecate xhr.send(ArrayBuffer).
 enum XMLHttpRequestSendArrayBufferOrView {
@@ -197,7 +198,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
             if (!isHTML && !responseDocument->wellFormed())
                 m_responseDocument = nullptr;
             else
-                m_responseDocument = WTFMove(responseDocument);
+                m_responseDocument = WTF::move(responseDocument);
         }
         m_createdDocument = true;
     }
@@ -213,8 +214,8 @@ Ref<Blob> XMLHttpRequest::createResponseBlob()
     // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
     Vector<uint8_t> data;
     if (m_binaryResponseBuilder)
-        data = m_binaryResponseBuilder.take()->extractData();
-    return Blob::create(protectedScriptExecutionContext().get(), WTFMove(data), responseMIMEType(FinalMIMEType::Yes)); // responseMIMEType defaults to text/xml which may be incorrect.
+        data = m_binaryResponseBuilder.takeBuffer()->extractData();
+    return Blob::create(protect(scriptExecutionContext()).get(), WTF::move(data), responseMIMEType(FinalMIMEType::Yes)); // responseMIMEType defaults to text/xml which may be incorrect.
 }
 
 RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()
@@ -222,7 +223,7 @@ RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()
     ASSERT(responseType() == ResponseType::Arraybuffer);
     ASSERT(doneWithoutErrors());
 
-    return m_binaryResponseBuilder.takeAsArrayBuffer();
+    return m_binaryResponseBuilder.takeBufferAsArrayBuffer();
 }
 
 ExceptionOr<void> XMLHttpRequest::setTimeout(unsigned timeout)
@@ -335,7 +336,7 @@ ExceptionOr<void> XMLHttpRequest::setWithCredentials(bool value)
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url)
 {
     // If the async argument is omitted, set async to true.
-    return open(method, protectedScriptExecutionContext()->completeURL(url), true);
+    return open(method, protect(scriptExecutionContext())->completeURL(url), true);
 }
 
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, bool async)
@@ -385,8 +386,8 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     clearRequest();
 
     auto newURL = url;
-    context->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newURL, ContentSecurityPolicy::InsecureRequestType::Load);
-    m_url = { WTFMove(newURL), context->topOrigin().data() };
+    protect(context->contentSecurityPolicy())->upgradeInsecureRequestIfNeeded(newURL, ContentSecurityPolicy::InsecureRequestType::Load);
+    m_url = { WTF::move(newURL), context->topOrigin().data() };
 
     m_async = async;
 
@@ -399,7 +400,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
 
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url, bool async, const String& user, const String& password)
 {
-    auto urlWithCredentials = protectedScriptExecutionContext()->completeURL(url);
+    auto urlWithCredentials = protect(scriptExecutionContext())->completeURL(url);
     if (!user.isNull())
         urlWithCredentials.setUser(user);
     if (!password.isNull())
@@ -427,7 +428,8 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     ASSERT(!m_loadingActivity);
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    if (!context->shouldBypassMainWorldContentSecurityPolicy() && !context->checkedContentSecurityPolicy()->allowConnectToSource(m_url)) {
+    if (context->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::NetworkRequests)
+        || (!context->shouldBypassMainWorldContentSecurityPolicy() && !protect(context->contentSecurityPolicy())->allowConnectToSource(m_url))) {
         if (!m_async)
             return ExceptionOr<void> { Exception { ExceptionCode::NetworkError } };
         m_timeoutTimer.stop();
@@ -443,35 +445,25 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 
 ExceptionOr<void> XMLHttpRequest::send(std::optional<SendTypes>&& sendType)
 {
-    InspectorInstrumentation::willSendXMLHttpRequest(protectedScriptExecutionContext().get(), url().string());
+    InspectorInstrumentation::willSendXMLHttpRequest(protect(scriptExecutionContext()).get(), url().string());
     m_userGestureToken = UserGestureIndicator::currentUserGesture();
 
-    ExceptionOr<void> result;
     if (!sendType)
-        result = send();
-    else {
-        result = WTF::switchOn(sendType.value(),
-            [this] (const RefPtr<Document>& document) -> ExceptionOr<void> { return send(*document); },
-            [this] (const RefPtr<Blob>& blob) -> ExceptionOr<void> { return send(*blob); },
-            [this] (const RefPtr<JSC::ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> { return send(*arrayBufferView); },
-            [this] (const RefPtr<JSC::ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> { return send(*arrayBuffer); },
-            [this] (const RefPtr<DOMFormData>& formData) -> ExceptionOr<void> { return send(*formData); },
-            [this] (const RefPtr<URLSearchParams>& searchParams) -> ExceptionOr<void> { return send(*searchParams); },
-            [this] (const String& string) -> ExceptionOr<void> { return send(string); }
-        );
-    }
+        return send();
 
-    return result;
+    return WTF::switchOn(WTF::move(*sendType),
+        [this](auto&& sendType) -> ExceptionOr<void> { return send(WTF::move(sendType)); }
+    );
 }
 
-ExceptionOr<void> XMLHttpRequest::send(Document& document)
+ExceptionOr<void> XMLHttpRequest::send(Ref<Document>&& document)
 {
     if (auto result = prepareToSend())
-        return WTFMove(result.value());
+        return WTF::move(result.value());
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
-            m_requestHeaders.set(HTTPHeaderName::ContentType, document.isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
+            m_requestHeaders.set(HTTPHeaderName::ContentType, document->isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
         else {
             String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
             replaceCharsetInMediaTypeIfNeeded(contentType);
@@ -483,9 +475,9 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
 
         // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send Step 4.2.
         auto serialized = serializeFragment(document, SerializedNodes::SubtreeIncludingNode);
-        auto converted = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(serialized));
-        auto encoded = PAL::TextCodecUTF8::encodeUTF8(WTFMove(converted));
-        m_requestEntityBody = FormData::create(WTFMove(encoded));
+        auto converted = replaceUnpairedSurrogatesWithReplacementCharacter(WTF::move(serialized));
+        auto encoded = PAL::TextCodecUTF8::encodeUTF8(WTF::move(converted));
+        m_requestEntityBody = FormData::create(WTF::move(encoded));
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }
@@ -493,10 +485,10 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
     return createRequest();
 }
 
-ExceptionOr<void> XMLHttpRequest::send(const String& body)
+ExceptionOr<void> XMLHttpRequest::send(String&& body)
 {
     if (auto result = prepareToSend())
-        return WTFMove(result.value());
+        return WTF::move(result.value());
 
     if (!body.isNull() && m_method != "GET"_s && m_method != "HEAD"_s) {
         String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
@@ -515,10 +507,10 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
     return createRequest();
 }
 
-ExceptionOr<void> XMLHttpRequest::send(Blob& body)
+ExceptionOr<void> XMLHttpRequest::send(Ref<Blob>&& body)
 {
     if (auto result = prepareToSend())
-        return WTFMove(result.value());
+        return WTF::move(result.value());
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
         if (!m_url.url().protocolIsInHTTPFamily()) {
@@ -526,35 +518,35 @@ ExceptionOr<void> XMLHttpRequest::send(Blob& body)
             // but because of the architecture of blob-handling that will require a fair amount of work.
 
             ASCIILiteral consoleMessage { "POST of a Blob to non-HTTP protocols in XMLHttpRequest.send() is currently unsupported."_s };
-            protectedScriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
 
             return createRequest();
         }
 
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
-            const String& blobType = body.type();
+            const String& blobType = body->type();
             if (!blobType.isEmpty() && isValidContentType(blobType))
                 m_requestHeaders.set(HTTPHeaderName::ContentType, blobType);
         }
 
         m_requestEntityBody = FormData::create();
-        Ref { *m_requestEntityBody }->appendBlob(body.url());
+        Ref { *m_requestEntityBody }->appendBlob(body->url());
     }
 
     return createRequest();
 }
 
-ExceptionOr<void> XMLHttpRequest::send(const URLSearchParams& params)
+ExceptionOr<void> XMLHttpRequest::send(Ref<URLSearchParams>&& params)
 {
     if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
         m_requestHeaders.set(HTTPHeaderName::ContentType, "application/x-www-form-urlencoded;charset=UTF-8"_s);
-    return send(params.toString());
+    return send(params->toString());
 }
 
-ExceptionOr<void> XMLHttpRequest::send(DOMFormData& body)
+ExceptionOr<void> XMLHttpRequest::send(Ref<DOMFormData>&& body)
 {
     if (auto result = prepareToSend())
-        return WTFMove(result.value());
+        return WTF::move(result.value());
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
         m_requestEntityBody = FormData::createMultiPart(body);
@@ -565,22 +557,22 @@ ExceptionOr<void> XMLHttpRequest::send(DOMFormData& body)
     return createRequest();
 }
 
-ExceptionOr<void> XMLHttpRequest::send(ArrayBuffer& body)
+ExceptionOr<void> XMLHttpRequest::send(Ref<ArrayBuffer>&& body)
 {
     ASCIILiteral consoleMessage { "ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead."_s };
-    protectedScriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
-    return sendBytesData(body.span());
+    protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+    return sendBytesData(body->span());
 }
 
-ExceptionOr<void> XMLHttpRequest::send(ArrayBufferView& body)
+ExceptionOr<void> XMLHttpRequest::send(Ref<ArrayBufferView>&& body)
 {
-    return sendBytesData(body.span());
+    return sendBytesData(body->span());
 }
 
 ExceptionOr<void> XMLHttpRequest::sendBytesData(std::span<const uint8_t> data)
 {
     if (auto result = prepareToSend())
-        return WTFMove(result.value());
+        return WTF::move(result.value());
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
         m_requestEntityBody = FormData::create(data);
@@ -611,7 +603,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET"_s);
         ASSERT(m_method != "HEAD"_s);
-        request.setHTTPBody(WTFMove(m_requestEntityBody));
+        request.setHTTPBody(WTF::move(m_requestEntityBody));
     }
 
     if (!m_requestHeaders.isEmpty())
@@ -656,7 +648,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         // ThreadableLoader::create can return null here, for example if we're no longer attached to a page or if a content blocker blocks the load.
         // This is true while running onunload handlers.
         // FIXME: Maybe we need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
-        auto loader = ThreadableLoader::create(context, *this, WTFMove(request), options);
+        auto loader = ThreadableLoader::create(context, *this, WTF::move(request), options);
         if (loader)
             m_loadingActivity = LoadingActivity { Ref { *this }, loader.releaseNonNull() };
 
@@ -670,7 +662,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
 
         request.setDomainForCachePartition(context->domainForCachePartition());
         InspectorInstrumentation::willLoadXHRSynchronously(context.ptr());
-        ThreadableLoader::loadResourceSynchronously(context, WTFMove(request), *this, options);
+        ThreadableLoader::loadResourceSynchronously(context, WTF::move(request), *this, options);
         InspectorInstrumentation::didLoadXHRSynchronously(context.ptr());
     }
 
@@ -719,7 +711,7 @@ bool XMLHttpRequest::internalAbort()
     // This would create internalAbort reentrant call.
     // m_loadingActivity is set to std::nullopt before being cancelled to exit early in any reentrant internalAbort() call.
     auto loadingActivity = std::exchange(m_loadingActivity, std::nullopt);
-    loadingActivity->protectedLoader()->cancel();
+    protect(loadingActivity->loader)->cancel();
 
     // If window.onload callback calls open() and send() on the same xhr, m_loadingActivity is now set to a new value.
     // The function calling internalAbort() should abort to let the open() and send() calls continue properly.
@@ -805,7 +797,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
         return Exception { ExceptionCode::SyntaxError };
 
     if (isForbiddenHeader(name, normalizedValue)) {
-        logConsoleError(protectedScriptExecutionContext().get(), makeString("Refused to set unsafe header \""_s, name, '"'));
+        logConsoleError(protect(scriptExecutionContext()).get(), makeString("Refused to set unsafe header \""_s, name, '"'));
         return { };
     }
 
@@ -1132,7 +1124,7 @@ void XMLHttpRequest::timeoutTimerFired()
 {
     if (!m_loadingActivity)
         return;
-    m_loadingActivity->protectedLoader()->computeIsDone();
+    protect(m_loadingActivity->loader)->computeIsDone();
 }
 
 void XMLHttpRequest::notifyIsDone(bool isDone)
@@ -1227,11 +1219,6 @@ bool XMLHttpRequest::virtualHasPendingActivity() const
 void XMLHttpRequest::dispatchThrottledProgressEventIfNeeded()
 {
     m_progressEventThrottle->dispatchThrottledProgressEventIfNeeded();
-}
-
-Ref<ThreadableLoader> XMLHttpRequest::LoadingActivity::protectedLoader() const
-{
-    return loader;
 }
 
 } // namespace WebCore

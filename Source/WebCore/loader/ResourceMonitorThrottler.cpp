@@ -49,12 +49,12 @@ ResourceMonitorThrottler::ResourceMonitorThrottler(String&& directoryPath, size_
     RESOURCEMONITOR_RELEASE_LOG("Opening persistence for throttler.");
     auto persistence = makeUnique<ResourceMonitorPersistence>();
 
-    if (!persistence->openDatabase(WTFMove(directoryPath))) {
+    if (!persistence->openDatabase(WTF::move(directoryPath))) {
         RESOURCEMONITOR_RELEASE_LOG("Failed to setup persistence for throttler.");
         return;
     }
 
-    m_persistence = WTFMove(persistence);
+    m_persistence = WTF::move(persistence);
     RESOURCEMONITOR_RELEASE_LOG("Success to setup persistence for throttler.");
 
     auto now = ContinuousApproximateTime::now();

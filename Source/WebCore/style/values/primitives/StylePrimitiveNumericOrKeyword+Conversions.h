@@ -50,7 +50,7 @@ template<auto R, typename V, CSS::PrimitiveKeyword... Ks> struct ToCSS<Primitive
                 return CSS::LengthPercentageRaw<R, V> { percentage.unit, percentage.value };
             },
             [&](const typename LengthPercentage<R, V>::Calc& calculation) -> Result {
-                return CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<R, V>> { makeCalc(calculation.protectedCalculation(), style) };
+                return CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<R, V>> { makeCalc(protect(calculation.calculation()), style) };
             },
             [&]<CSSValueID Id>(const Constant<Id>& identifier) -> Result {
                 return toCSS(identifier, style);

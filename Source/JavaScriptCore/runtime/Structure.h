@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,9 +205,6 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     static constexpr uint8_t numberOfLowerTierPreciseCells = 0;
 
-#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-    static constexpr size_t atomSize = 32;
-#endif
     static_assert(JSCell::atomSize >= MarkedBlock::atomSize);
 
     static constexpr int s_maxTransitionLength = 64;
@@ -396,7 +393,7 @@ public:
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
-    const ClassInfo* classInfoForCells() const { return m_classInfo.get(); }
+    const ClassInfo* classInfoForCells() const { return m_classInfo; }
     CellState typeInfoDefaultCellState() const { return m_blob.defaultCellState(); }
 protected:
     // You probably want typeInfo().type()
@@ -896,6 +893,7 @@ public:
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
     DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 6);
+    DEFINE_BITFIELD(bool, hasSpecialProperties, HasSpecialProperties, 1, 7);
     DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
     DEFINE_BITFIELD(bool, isWatchingReplacement, IsWatchingReplacement, 1, 18); // This flag can be fliped on the main thread at any timing.
     DEFINE_BITFIELD(bool, mayBePrototype, MayBePrototype, 1, 19);
@@ -928,6 +926,7 @@ public:
             s_didPreventExtensionsBits
             | s_isQuickPropertyAccessAllowedForEnumerationBits
             | s_hasNonEnumerablePropertiesBits
+            | s_hasSpecialPropertiesBits
             | s_hasAnyKindOfGetterSetterPropertiesBits
             | s_hasReadOnlyOrGetterSetterPropertiesExcludingProtoBits
             | s_hasUnderscoreProtoPropertyExcludingOriginalProtoBits
@@ -1090,7 +1089,7 @@ private:
 
     CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
 
-    CompactPtr<const ClassInfo> m_classInfo;
+    const ClassInfo* m_classInfo;
 
     StructureTransitionTable m_transitionTable;
 

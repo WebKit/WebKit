@@ -88,7 +88,7 @@ inline std::optional<StreamClientConnectionBuffer> StreamClientConnectionBuffer:
 }
 
 inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebCore::SharedMemory> memory)
-    : StreamConnectionBuffer(WTFMove(memory))
+    : StreamConnectionBuffer(WTF::move(memory))
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
 
@@ -211,7 +211,7 @@ inline size_t StreamClientConnectionBuffer::toLimit(ClientLimit clientLimit) con
 
 inline void StreamClientConnectionBuffer::setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
 {
-    m_semaphores = { WTFMove(wakeUp), WTFMove(clientWait) };
+    m_semaphores = { WTF::move(wakeUp), WTF::move(clientWait) };
     m_semaphores->wakeUp.signal();
 }
 

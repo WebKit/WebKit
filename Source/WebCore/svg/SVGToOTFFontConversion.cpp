@@ -65,10 +65,10 @@ public:
 
     Vector<uint8_t> releaseResult()
     {
-        return WTFMove(m_result);
+        return WTF::move(m_result);
     }
 
-    bool error() const
+    bool NODELETE error() const
     {
         return m_error;
     }
@@ -112,7 +112,7 @@ private:
         {
         }
 
-        void populate()
+        void NODELETE populate()
         {
             ASSERT(m_active);
             size_t delta = m_converter->m_result.size() - m_baseOfOffset;
@@ -178,7 +178,7 @@ private:
         m_result.grow(m_result.size() + delta);
     }
 
-    void overwrite32(unsigned location, uint32_t value)
+    void NODELETE overwrite32(unsigned location, uint32_t value)
     {
         ASSERT(m_result.size() >= location + 4);
         m_result[location] = value >> 24;
@@ -187,7 +187,7 @@ private:
         m_result[location + 3] = value;
     }
 
-    void overwrite16(unsigned location, uint16_t value)
+    void NODELETE overwrite16(unsigned location, uint16_t value)
     {
         ASSERT(m_result.size() >= location + 2);
         m_result[location] = value >> 8;
@@ -197,7 +197,7 @@ private:
     static const size_t headerSize = 12;
     static const size_t directoryEntrySize = 16;
 
-    uint32_t calculateChecksum(size_t startingOffset, size_t endingOffset) const;
+    uint32_t NODELETE calculateChecksum(size_t startingOffset, size_t endingOffset) const;
 
     void processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGGlyphElement*, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, std::optional<FloatRect>& boundingBox);
 
@@ -238,14 +238,12 @@ private:
     void appendArabicReplacementSubtable(size_t subtableRecordLocation, ASCIILiteral arabicForm);
     void appendScriptSubtable(unsigned featureCount);
     Vector<Glyph, 1> glyphsForCodepoint(char32_t) const;
-    Glyph firstGlyph(const Vector<Glyph, 1>&, char32_t) const;
+    Glyph NODELETE firstGlyph(const Vector<Glyph, 1>&, char32_t) const;
 
-    template<typename T> T scaleUnitsPerEm(T value) const
+    template<typename T> T NODELETE scaleUnitsPerEm(T value) const
     {
         return value * s_outputUnitsPerEm / m_inputUnitsPerEm;
     }
-
-    Ref<const SVGFontElement> protectedFontElement() const { return m_fontElement.get(); }
 
     Vector<GlyphData> m_glyphs;
     HashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
@@ -274,7 +272,7 @@ private:
     bool m_error { false };
 };
 
-static uint16_t roundDownToPowerOfTwo(uint16_t x)
+static uint16_t NODELETE roundDownToPowerOfTwo(uint16_t x)
 {
     x |= x >> 1;
     x |= x >> 2;
@@ -283,7 +281,7 @@ static uint16_t roundDownToPowerOfTwo(uint16_t x)
     return (x >> 1) + 1;
 }
 
-static uint16_t integralLog2(uint16_t x)
+static uint16_t NODELETE integralLog2(uint16_t x)
 {
     uint16_t result = 0;
     while (x >>= 1)
@@ -1061,11 +1059,11 @@ void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, SVGKerning
 template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage)
 {
     Vector<KerningData> kerningData;
-    for (auto& element : childrenOfType<T>(protectedFontElement())) {
-        if (auto kerningPair = (element.*buildKerningPair)())
-            addKerningPair(kerningData, WTFMove(*kerningPair));
+    for (Ref element : childrenOfType<T>(protect(m_fontElement))) {
+        if (auto kerningPair = (element.get().*buildKerningPair)())
+            addKerningPair(kerningData, WTF::move(*kerningPair));
     }
-    return finishAppendingKERNSubtable(WTFMove(kerningData), coverage);
+    return finishAppendingKERNSubtable(WTF::move(kerningData), coverage);
 }
 
 size_t SVGToOTFFontConverter::finishAppendingKERNSubtable(Vector<KerningData> kerningData, uint16_t coverage)
@@ -1141,7 +1139,7 @@ public:
         m_cffData.append(rMoveTo);
     }
 
-    std::optional<FloatRect> boundingBox() const
+    std::optional<FloatRect> NODELETE boundingBox() const
     {
         return m_boundingBox;
     }
@@ -1297,7 +1295,7 @@ void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissing
     if (glyphBoundingBox)
         m_minRightSideBearing = std::min(m_minRightSideBearing, horizontalAdvance - glyphBoundingBox.value().maxX());
 
-    m_glyphs.append(GlyphData(WTFMove(path), glyphElement, horizontalAdvance, verticalAdvance, valueOrDefault(glyphBoundingBox), codepoints));
+    m_glyphs.append(GlyphData(WTF::move(path), glyphElement, horizontalAdvance, verticalAdvance, valueOrDefault(glyphBoundingBox), codepoints));
 }
 
 void SVGToOTFFontConverter::appendLigatureGlyphs()
@@ -1414,10 +1412,10 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         boundingBox = FloatRect(0, 0, s_outputUnitsPerEm, s_outputUnitsPerEm);
     }
 
-    for (auto& glyphElement : childrenOfType<SVGGlyphElement>(protectedFontElement())) {
-        auto& unicodeAttribute = glyphElement.attributeWithoutSynchronization(SVGNames::unicodeAttr);
+    for (Ref glyphElement : childrenOfType<SVGGlyphElement>(protect(m_fontElement))) {
+        auto& unicodeAttribute = glyphElement->attributeWithoutSynchronization(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
-            processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);
+            processGlyphElement(glyphElement.get(), glyphElement.ptr(), defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);
     }
 
     m_boundingBox = valueOrDefault(boundingBox);
@@ -1472,7 +1470,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         m_fontFamily = m_fontFaceElement->fontFamily();
 }
 
-static inline bool isFourByteAligned(size_t x)
+static inline bool NODELETE isFourByteAligned(size_t x)
 {
     return !(x & 3);
 }

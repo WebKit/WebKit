@@ -80,6 +80,10 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     WebCore::FloatBoxExtent obscuredContentInsets;
 
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    bool hasBannerViewOverlay;
+#endif
+
     float mediaVolume;
     WebCore::MediaProducerMutedStateFlags muted;
     bool openedByDOM;
@@ -107,6 +111,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     bool useDarkAppearance;
     bool useElevatedUserInterfaceLevel;
     bool allowPostingLegacySynchronousMessages;
+    bool backgroundTextExtractionEnabled;
 
 #if PLATFORM(MAC)
     std::optional<WebCore::DestinationColorSpace> colorSpace;
@@ -240,6 +245,9 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
 #if PLATFORM(MAC)
     double overflowHeightForTopScrollEdgeEffect;
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
+#endif
 #endif
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
@@ -252,9 +260,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebCore::SandboxFlags initialSandboxFlags;
     WebCore::ReferrerPolicy initialReferrerPolicy;
     std::optional<WebCore::WindowFeatures> windowFeatures;
-    bool statusBarIsVisible;
-    bool menuBarIsVisible;
-    bool toolbarsAreVisible;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;
@@ -266,13 +271,17 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-#if USE(GBM)
+#if USE(GBM) || OS(ANDROID)
     Vector<WebKit::RendererBufferFormat> preferredBufferFormats;
 #endif
 #endif
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)
     WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent;
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    bool allowsImmersiveEnvironments;
 #endif
 
 #if HAVE(AUDIT_TOKEN)
@@ -290,6 +299,11 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
 
     std::optional<WebKit::TextManipulationParameters> textManipulationParameters;
+
+    bool isPopup;
+
+    bool accessibilityEnabled;
+    bool shouldForceSiteIsolationAlwaysOnForTesting;
 }
 
 [Nested] struct WebKit::RemotePageParameters {

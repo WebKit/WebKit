@@ -44,6 +44,7 @@ struct SourceProviderCacheItemCreationParameters {
     unsigned parameterCount { 0 };
     LexicallyScopedFeatures lexicallyScopedFeatures { 0 };
     InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures { 0 };
+    ImplementationVisibility implementationVisibility { ImplementationVisibility::Public };
     Vector<UniquedStringImpl*, 8> usedVariables;
     JSTokenType tokenType { CLOSEBRACE };
     ConstructorKind constructorKind;
@@ -103,6 +104,7 @@ public:
     unsigned tokenType : 24; // JSTokenType
     unsigned innerArrowFunctionFeatures : 6; // InnerArrowFunctionCodeFeatures
     unsigned constructorKind : 2; // ConstructorKind
+    unsigned implementationVisibility : 2; // ImplementationVisibility
     bool usesImportMeta : 1 { false };
 
     PackedPtr<UniquedStringImpl>* usedVariables() const { return const_cast<PackedPtr<UniquedStringImpl>*>(m_variables); }
@@ -145,11 +147,13 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , tokenType(static_cast<unsigned>(parameters.tokenType))
     , innerArrowFunctionFeatures(static_cast<unsigned>(parameters.innerArrowFunctionFeatures))
     , constructorKind(static_cast<unsigned>(parameters.constructorKind))
+    , implementationVisibility(static_cast<unsigned>(parameters.implementationVisibility))
     , usesImportMeta(parameters.usesImportMeta)
 {
     ASSERT(tokenType == static_cast<unsigned>(parameters.tokenType));
     ASSERT(innerArrowFunctionFeatures == static_cast<unsigned>(parameters.innerArrowFunctionFeatures));
     ASSERT(constructorKind == static_cast<unsigned>(parameters.constructorKind));
+    ASSERT(implementationVisibility == static_cast<unsigned>(parameters.implementationVisibility));
     ASSERT(expectedSuperBinding == static_cast<unsigned>(parameters.expectedSuperBinding));
     for (unsigned i = 0; i < usedVariablesCount; ++i) {
         auto* pointer = parameters.usedVariables[i];

@@ -41,7 +41,7 @@ SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferenc
 #if <%= @pref.condition %>
 <%- end -%>
 <%- if @pref.opts["disableInLockdownMode"] -%>
-    sharedPreferences.<%= @pref.nameLower %> = isLockdownModeEnabled ? false : preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
+    sharedPreferences.<%= @pref.nameLower %> = !isLockdownModeEnabled && preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
 <%- else -%>
     sharedPreferences.<%= @pref.nameLower %> = preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
 <%- end -%>

@@ -114,6 +114,7 @@ public:
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();
+    bool isInvalidated() const { return m_isInvalidated; }
     virtual bool shouldLogCookieInformation() const { return false; }
     virtual Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const { return { }; }
     virtual void deleteAlternativeServicesForHostNames(const Vector<String>&) { }
@@ -133,7 +134,6 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkProcess& networkProcess() { return m_networkProcess; }
     WebCore::NetworkStorageSession* networkStorageSession() const;
-    CheckedPtr<WebCore::NetworkStorageSession> checkedNetworkStorageSession() const;
 
     void registerNetworkDataTask(NetworkDataTask&);
     void unregisterNetworkDataTask(NetworkDataTask&);
@@ -142,17 +142,19 @@ public:
 
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void setTrackingPreventionEnabled(bool);
-    bool isTrackingPreventionEnabled() const;
+    bool NODELETE isTrackingPreventionEnabled() const;
     static WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&);
     static WebCore::IsKnownCrossSiteTracker isResourceFromKnownCrossSiteTracker(const URL& firstParty, const URL& resource);
+    static bool isRequestBlockable(const WebCore::ResourceRequest&);
+    bool shouldBlockRequestForTrackingPolicyAndUpdatePolicy(const WebCore::ResourceRequest&, WebPageProxyIdentifier, bool mayBlockScriptLoad);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
     bool enableResourceLoadStatisticsLogTestingEvent() const { return m_enableResourceLoadStatisticsLogTestingEvent; }
     void setResourceLoadStatisticsLogTestingEvent(bool log) { m_enableResourceLoadStatisticsLogTestingEvent = log; }
     virtual bool hasIsolatedSession(const WebCore::RegistrableDomain&) const { return false; }
     virtual void clearIsolatedSessions() { }
-    void setShouldDowngradeReferrerForTesting(bool);
-    bool shouldDowngradeReferrer() const;
+    void NODELETE setShouldDowngradeReferrerForTesting(bool);
+    bool NODELETE shouldDowngradeReferrer() const;
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; }
     void setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled);
@@ -160,7 +162,7 @@ public:
     std::optional<WebCore::RegistrableDomain> firstPartyHostCNAMEDomain(const String& firstPartyHost);
     void setFirstPartyHostIPAddress(const String& firstPartyHost, const String& addressString);
     std::optional<WebCore::IPAddress> firstPartyHostIPAddress(const String& firstPartyHost);
-    void setThirdPartyCNAMEDomainForTesting(WebCore::RegistrableDomain&& domain) { m_thirdPartyCNAMEDomainForTesting = WTFMove(domain); };
+    void setThirdPartyCNAMEDomainForTesting(WebCore::RegistrableDomain&& domain) { m_thirdPartyCNAMEDomainForTesting = WTF::move(domain); };
     std::optional<WebCore::RegistrableDomain> thirdPartyCNAMEDomainForTesting() const { return m_thirdPartyCNAMEDomainForTesting; }
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
@@ -184,7 +186,7 @@ public:
     void setPrivateClickMeasurementTokenSignatureURLForTesting(URL&&);
     void setPrivateClickMeasurementAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
-    void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool);
+    void NODELETE setPrivateClickMeasurementEphemeralMeasurementForTesting(bool);
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
     void firePrivateClickMeasurementTimerImmediatelyForTesting();
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
@@ -199,14 +201,14 @@ public:
 
     NetworkCache::Cache* cache() { return m_cache.get(); }
 
-    CheckedRef<PrefetchCache> checkedPrefetchCache();
+    PrefetchCache& NODELETE prefetchCache();
     void clearPrefetchCache() { m_prefetchCache->clear(); }
 
     virtual RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy);
     virtual void removeWebSocketTask(SessionSet&, WebSocketTask&) { }
     virtual void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) { }
 
-    WebCore::BlobRegistryImpl& blobRegistry() { return m_blobRegistry; }
+    WebCore::BlobRegistryImpl& blobRegistry() LIFETIME_BOUND { return m_blobRegistry; }
     NetworkBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
@@ -224,11 +226,10 @@ public:
 
     WebCore::SWServer* swServer() { return m_swServer.get(); }
     WebCore::SWServer& ensureSWServer();
-    Ref<WebCore::SWServer> ensureProtectedSWServer();
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
 
-    bool hasServiceWorkerDatabasePath() const;
+    bool NODELETE hasServiceWorkerDatabasePath() const;
 
     void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&&);
     void getBackgroundFetchState(const String&, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&&);
@@ -244,20 +245,19 @@ public:
     void clearCacheEngine();
 
     NetworkLoadScheduler& networkLoadScheduler();
-    Ref<NetworkLoadScheduler> protectedNetworkLoadScheduler();
 
     PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
     void setPrivateClickMeasurementDebugMode(bool);
     bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
 
-    void setShouldSendPrivateTokenIPCForTesting(bool);
+    void NODELETE setShouldSendPrivateTokenIPCForTesting(bool);
     bool shouldSendPrivateTokenIPCForTesting() const { return m_shouldSendPrivateTokenIPCForTesting; }
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     void setOptInCookiePartitioningEnabled(bool);
 #endif
 
 #if PLATFORM(COCOA)
-    AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
+    AppPrivacyReportTestingData& appPrivacyReportTestingData() LIFETIME_BOUND { return m_appPrivacyReportTestingData; }
 #endif
 
     virtual void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
@@ -302,7 +302,6 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::ResourceMonitorThrottlerHolder& resourceMonitorThrottler();
-    Ref<WebCore::ResourceMonitorThrottlerHolder> protectedResourceMonitorThrottler();
 
     void clearResourceMonitorThrottlerData(CompletionHandler<void()>&&);
 #endif
@@ -317,7 +316,7 @@ protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
     void forwardResourceLoadStatisticsSettings();
-    WebSWOriginStore* swOriginStore() const;
+    WebSWOriginStore* NODELETE swOriginStore() const LIFETIME_BOUND;
 
     // SWServerDelegate
     void softUpdate(WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&&) final;
@@ -330,7 +329,6 @@ protected:
     Ref<WebCore::BackgroundFetchStore> createBackgroundFetchStore() final;
 
     BackgroundFetchStoreImpl& ensureBackgroundFetchStore();
-    Ref<BackgroundFetchStoreImpl> ensureProtectedBackgroundFetchStore();
 
     PAL::SessionID m_sessionID;
     const Ref<NetworkProcess> m_networkProcess;
@@ -375,9 +373,7 @@ protected:
 
     const UniqueRef<PrefetchCache> m_prefetchCache;
 
-#if ASSERT_ENABLED
     bool m_isInvalidated { false };
-#endif
     RefPtr<NetworkCache::Cache> m_cache;
     const RefPtr<NetworkLoadScheduler> m_networkLoadScheduler;
     WebCore::BlobRegistryImpl m_blobRegistry;
@@ -414,6 +410,7 @@ protected:
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
+    HashMap<WebPageProxyIdentifier, HashSet<WebCore::RegistrableDomain>> m_trackerBlockingPolicyByPageIdentifier;
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     const Ref<NetworkNotificationManager> m_notificationManager;

@@ -26,13 +26,15 @@
 #include "config.h"
 #include "SkiaRecordingResult.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#if USE(SKIA)
 
 namespace WebCore {
 
-SkiaRecordingResult::SkiaRecordingResult(sk_sp<SkPicture>&& picture, SkiaImageToFenceMap&& imageToFenceMap, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale)
-    : m_picture(WTFMove(picture))
-    , m_imageToFenceMap(WTFMove(imageToFenceMap))
+SkiaRecordingResult::SkiaRecordingResult(sk_sp<SkPicture>&& picture, SkiaRecordingData&& recordingData, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale)
+    : m_picture(WTF::move(picture))
+    , m_imageToFenceMap(WTF::move(recordingData.imageToFenceMap))
+    , m_atlasLayouts(WTF::move(recordingData.atlasLayouts))
+    , m_imageSetFingerprint(recordingData.imageSetFingerprint)
     , m_recordRect(recordRect)
     , m_renderingMode(renderingMode)
     , m_contentsOpaque(contentsOpaque)
@@ -42,9 +44,9 @@ SkiaRecordingResult::SkiaRecordingResult(sk_sp<SkPicture>&& picture, SkiaImageTo
 
 SkiaRecordingResult::~SkiaRecordingResult() = default;
 
-Ref<SkiaRecordingResult> SkiaRecordingResult::create(sk_sp<SkPicture>&& picture, SkiaImageToFenceMap&& imageToFenceMap, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale)
+Ref<SkiaRecordingResult> SkiaRecordingResult::create(sk_sp<SkPicture>&& picture, SkiaRecordingData&& recordingData, const IntRect& recordRect, RenderingMode renderingMode, bool contentsOpaque, float contentsScale)
 {
-    return adoptRef(*new SkiaRecordingResult(WTFMove(picture), WTFMove(imageToFenceMap), recordRect, renderingMode, contentsOpaque, contentsScale));
+    return adoptRef(*new SkiaRecordingResult(WTF::move(picture), WTF::move(recordingData), recordRect, renderingMode, contentsOpaque, contentsScale));
 }
 
 bool SkiaRecordingResult::hasFences()
@@ -60,6 +62,19 @@ void SkiaRecordingResult::waitForFenceIfNeeded(const SkImage& image)
         fence->serverWait();
 }
 
+void SkiaRecordingResult::waitForUploadFence()
+{
+    if (m_uploadFence)
+        m_uploadFence->serverWait();
+}
+
+
+void SkiaRecordingResult::waitForUploadCondition()
+{
+    if (m_uploadCondition)
+        m_uploadCondition->wait();
+}
+
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#endif // USE(SKIA)

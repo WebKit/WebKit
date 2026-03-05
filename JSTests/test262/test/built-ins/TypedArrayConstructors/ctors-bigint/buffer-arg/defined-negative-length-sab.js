@@ -12,7 +12,7 @@ info: |
   least one argument and the Type of the first argument is Object and that
   object has an [[ArrayBufferData]] internal slot.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, SharedArrayBuffer, TypedArray]
 ---*/
 
@@ -26,4 +26,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(RangeError, function() {
     new TA(buffer, 0, -Infinity);
   });
-});
+}, null, ["passthrough"]);

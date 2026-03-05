@@ -124,7 +124,7 @@ void JSTestGenerateAddOpaqueRootPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestGenerateAddOpaqueRoot::s_info = { "TestGenerateAddOpaqueRoot"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateAddOpaqueRoot) };
 
 JSTestGenerateAddOpaqueRoot::JSTestGenerateAddOpaqueRoot(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl)
-    : JSDOMWrapper<TestGenerateAddOpaqueRoot>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestGenerateAddOpaqueRoot>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -218,7 +218,7 @@ void JSTestGenerateAddOpaqueRootOwner::finalize(JSC::Handle<JSC::Unknown> handle
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestGenerateAddOpaqueRoot = static_cast<JSTestGenerateAddOpaqueRoot*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestGenerateAddOpaqueRoot->protectedWrapped().ptr(), jsTestGenerateAddOpaqueRoot);
+    uncacheWrapper(world, protect(jsTestGenerateAddOpaqueRoot->wrapped()).ptr(), jsTestGenerateAddOpaqueRoot);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -256,7 +256,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestGenerateAddOpaqueRoot>(impl.ptr());
 #endif
-    return createWrapper<TestGenerateAddOpaqueRoot>(globalObject, WTFMove(impl));
+    return createWrapper<TestGenerateAddOpaqueRoot>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestGenerateAddOpaqueRoot& impl)

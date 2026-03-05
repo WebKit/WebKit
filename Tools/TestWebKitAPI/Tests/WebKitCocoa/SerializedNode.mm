@@ -29,6 +29,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKContentWorldPrivate.h>
+#import <WebKit/WKJSSerializedNode.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKSerializedNode.h>
 
@@ -40,13 +41,13 @@ TEST(SerializedNode, Basic)
     [webView loadHTMLString:@"<div id='testid'><div>test</div></div><template id='outerTemplate'><template id='innerTemplate'><span>Contents</span></template></template>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
     [webView _test_waitForDidFinishNavigation];
 
-    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
-    worldConfiguration.get().allowNodeSerialization = YES;
-    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+    RetainPtr worldConfiguration = adoptNS([WKContentWorldConfiguration new]);
+    worldConfiguration.get().nodeSerializationEnabled = YES;
+    RetainPtr world = [WKContentWorld worldWithConfiguration:worldConfiguration.get()];
 
     auto verifyNodeSerialization = [world, webView] (const char* constructor, const char* accessor, const char* expected, const char* className, const char* init = "deep:true") {
         RetainPtr serializedNode = [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.webkit.serializeNode(%s, { %s })", constructor, init] inFrame:nil inContentWorld:world.get()];
-        EXPECT_TRUE([serializedNode isKindOfClass:_WKSerializedNode.class]);
+        EXPECT_TRUE([serializedNode isKindOfClass:WKJSSerializedNode.class]);
         RetainPtr other = adoptNS([TestWKWebView new]);
 
         id instanceof = [other objectByCallingAsyncFunction:@"return Object.getPrototypeOf(n).toString()" withArguments:@{ @"n" : serializedNode.get() }];

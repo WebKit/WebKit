@@ -4,7 +4,7 @@ layer at (0,0) size 800x462
   RenderBlock {html} at (0,0) size 800x462
     RenderBody {body} at (8,16) size 784x438
       RenderBlock {p} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 405x17
+        RenderText {#text} at (0,0) size 405x18
           text run at (0,0) width 405: "There should be a blue circle with the word \"TEST\" in it below."
       RenderBlock (anonymous) at (0,34) size 784x404
         RenderSVGRoot {svg} at (8,50) size 400x400

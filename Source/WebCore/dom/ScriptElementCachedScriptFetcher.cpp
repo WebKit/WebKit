@@ -39,7 +39,7 @@ CachedResourceHandle<CachedScript> ScriptElementCachedScriptFetcher::requestModu
     // If the fetcher is not module script, credential mode is always "same-origin" ("anonymous").
     // This code is for dynamic module import (`import` operator).
 
-    return requestScriptWithCache(document, sourceURL, destination, isClassicScript() ? defaultCrossOriginModeForModule : m_crossOriginMode, WTFMove(integrity), { }, serviceWorkersMode);
+    return requestScriptWithCache(document, sourceURL, destination, isClassicScript() ? defaultCrossOriginModeForModule : m_crossOriginMode, WTF::move(integrity), { }, serviceWorkersMode);
 }
 
 }

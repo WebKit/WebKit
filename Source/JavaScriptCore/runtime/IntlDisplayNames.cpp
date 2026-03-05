@@ -178,7 +178,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             // Let code be the result of mapping code to lower case as described in 6.1.
             String lowered = code.convertToASCIILowercase();
             if (auto mapped = mapBCP47ToICUCalendarKeyword(lowered))
-                lowered = WTFMove(mapped.value());
+                lowered = WTF::move(mapped.value());
             return lowered.ascii();
         }
         case Type::DateTimeField: {
@@ -198,7 +198,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             throwRangeError(globalObject, scope, "argument is not a language id"_s);
             return { };
         }
-        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTF::move(code));
         // Do not use uldn_languageDisplayName since it is not expected one for this "language" type. It returns "en-US" for "en-US" code, instead of "American English".
         status = callBufferProducingFunction(uldn_localeDisplayName, m_displayNames.get(), canonicalCode.data(), buffer);
         break;
@@ -208,7 +208,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             throwRangeError(globalObject, scope, "argument is not a region subtag"_s);
             return { };
         }
-        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTF::move(code));
         status = callBufferProducingFunction(uldn_regionDisplayName, m_displayNames.get(), canonicalCode.data(), buffer);
         break;
     }
@@ -217,7 +217,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             throwRangeError(globalObject, scope, "argument is not a script subtag"_s);
             return { };
         }
-        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTF::move(code));
         status = callBufferProducingFunction(uldn_scriptDisplayName, m_displayNames.get(), canonicalCode.data(), buffer);
         break;
     }
@@ -276,7 +276,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             throwRangeError(globalObject, scope, "argument is not a calendar code"_s);
             return { };
         }
-        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTF::move(code));
         status = callBufferProducingFunction(uldn_keyValueDisplayName, m_displayNames.get(), "calendar", canonicalCode.data(), buffer);
         break;
     }
@@ -334,8 +334,8 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
 
         buffer = vm.intlCache().getFieldDisplayName(m_localeCString, field.value(), style, status);
         if (U_FAILURE(status))
-            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, WTFMove(code));
-        return jsString(vm, String(WTFMove(buffer)));
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, WTF::move(code));
+        return jsString(vm, String(WTF::move(buffer)));
     }
     }
     if (U_FAILURE(status)) {
@@ -345,7 +345,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(canonicalCode.span()));
         return throwTypeError(globalObject, scope, "Failed to query a display name."_s);
     }
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String(WTF::move(buffer)));
 }
 
 // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.prototype.resolvedOptions

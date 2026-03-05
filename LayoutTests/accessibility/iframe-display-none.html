@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<iframe id="iframe1" onload="runTest()" srcdoc="<body>
+    <button id='frame-button-1'>Click me</button>
+    <iframe id='iframe2' src='resources/iframe-button.html'></iframe>
+</body>"></iframe>
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test ensures that iframe content is ignored when the iframe is display:none.\n\n";
+var iframeButton1, iframeButton2, root;
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    root = accessibilityController.rootElement.childAtIndex(0);
+    iframeButton1 = accessibilityController.accessibleElementById("frame-button-1");
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            iframeButton2 = accessibilityController.accessibleElementById("frame-button-2");
+            return !!iframeButton2;
+        });
+
+        output += expect("root.childAtIndex(0).isIgnored", "false");
+        output += expect("iframeButton1.isIgnored", "false");
+        output += expect("iframeButton2.isIgnored", "false");
+
+        output += `\n${evalAndReturn("document.getElementById('iframe1').style.display = 'none';")}`;
+
+        await waitFor(() => {
+            iframeButton1 = accessibilityController.accessibleElementById("frame-button-1");
+            iframeButton2 = accessibilityController.accessibleElementById("frame-button-2");
+            return !iframeButton1 && !iframeButton2;
+        });
+        output += await expectAsync("!root.childAtIndex(0)", "true");
+        output += await expectAsync("!iframeButton1", "true");
+        output += await expectAsync("!iframeButton2", "true");
+
+        output += `\n${evalAndReturn("document.getElementById('iframe1').style.display = '';")}`;
+
+        await waitFor(() => {
+            iframeButton1 = accessibilityController.accessibleElementById("frame-button-1");
+            iframeButton2 = accessibilityController.accessibleElementById("frame-button-2");
+            return iframeButton1 && iframeButton2;
+        });
+
+        output += await expectAsync("root.childAtIndex(0).isIgnored", "false");
+        output += await expectAsync("iframeButton1.isIgnored", "false");
+        output += await expectAsync("iframeButton2.isIgnored", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

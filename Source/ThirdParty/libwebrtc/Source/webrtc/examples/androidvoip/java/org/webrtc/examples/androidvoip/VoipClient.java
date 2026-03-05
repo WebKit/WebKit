@@ -19,7 +19,7 @@ import org.webrtc.CalledByNative;
 
 public class VoipClient {
   private long nativeClient;
-  private OnVoipClientTaskCompleted listener;
+  private final OnVoipClientTaskCompleted listener;
 
   public VoipClient(Context applicationContext, OnVoipClientTaskCompleted listener) {
     this.listener = listener;

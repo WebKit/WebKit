@@ -62,7 +62,7 @@ WebExtensionSQLiteStatement::~WebExtensionSQLiteStatement()
     if (!handle)
         return;
 
-    database()->queue().dispatch([database = Ref { database() }, handle = WTFMove(handle)]() mutable {
+    database()->queue().dispatch([database = Ref { database() }, handle = WTF::move(handle)]() mutable {
         // The database might have closed already;
         if (!database->sqlite3Handle())
             return;

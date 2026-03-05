@@ -59,7 +59,7 @@ bool TrackPrivateBase::operator==(const TrackPrivateBase& track) const
 
 void TrackPrivateBase::notifyClients(Task&& task)
 {
-    Ref sharedTask = createSharedTask<void(TrackPrivateBaseClient&)>(WTFMove(task));
+    Ref sharedTask = createSharedTask<void(TrackPrivateBaseClient&)>(WTF::move(task));
     // We ensure not to hold the lock for too long by making a copy (which are cheap)
     // as we could potentially get a re-entrant call which would cause a deadlock.
     Vector<ClientRecord> clients;
@@ -70,9 +70,9 @@ void TrackPrivateBase::notifyClients(Task&& task)
     for (auto& tuple : clients) {
         auto& [dispatcher, weakClient, mainThread] = tuple;
         if (dispatcher) {
-            dispatcher->get()([weakClient = WTFMove(weakClient), sharedTask] {
-                if (weakClient)
-                    sharedTask->run(*weakClient);
+            dispatcher->get()([weakClient = WTF::move(weakClient), sharedTask] {
+                if (RefPtr client = weakClient.get())
+                    sharedTask->run(*client);
             });
         }
     }
@@ -90,9 +90,9 @@ void TrackPrivateBase::notifyMainThreadClient(Task&& task)
     for (auto& tuple : clients) {
         auto& [dispatcher, weakClient, isMainThread] = tuple;
         if (dispatcher && isMainThread) {
-            dispatcher->get()([weakClient = WTFMove(weakClient), task = WTFMove(task)] {
-                if (weakClient)
-                    task(*weakClient);
+            dispatcher->get()([weakClient = WTF::move(weakClient), task = WTF::move(task)] {
+                if (RefPtr client = weakClient.get())
+                    task(*client);
             });
             break;
         }
@@ -103,7 +103,7 @@ size_t TrackPrivateBase::addClient(TrackPrivateBaseClient::Dispatcher&& dispatch
 {
     Locker locker { m_lock };
     size_t index = m_clients.size();
-    m_clients.append(std::make_tuple(SharedDispatcher::create(WTFMove(dispatcher)), WeakPtr { client }, isMainThread()));
+    m_clients.append(std::make_tuple(SharedDispatcher::create(WTF::move(dispatcher)), WeakPtr { client }, isMainThread()));
     return index;
 }
 

@@ -48,7 +48,7 @@
     if (!range)
         return self;
 
-    _textIterator = makeUnique<WebCore::TextIterator>(makeSimpleRange(*WebKit::toProtectedWebCoreRange(range)));
+    _textIterator = makeUnique<WebCore::TextIterator>(makeSimpleRange(*protect(WebKit::toWebCoreRange(range))));
     return self;
 }
 
@@ -79,7 +79,7 @@
     if (!length)
         return nullptr;
     if (!text.is8Bit())
-        return reinterpret_cast<const unichar*>(text.span16().data());
+        return reinterpret_cast<const unichar*>(text.unsafeSpan16().data());
     if (_upconvertedText.isEmpty()) {
         auto characters = text.span8();
         _upconvertedText.appendRange(characters.begin(), characters.end());

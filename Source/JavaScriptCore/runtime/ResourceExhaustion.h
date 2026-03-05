@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
+#include <wtf/Assertions.h>
+
 namespace JSC {
 
 enum ResourceExhaustionCode {

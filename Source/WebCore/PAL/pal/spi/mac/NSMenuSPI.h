@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <wtf/Platform.h>
@@ -76,7 +78,7 @@ enum {
 - (BOOL)_containsItemMatchingEvent:(NSEvent *)event includingDisabledItems:(BOOL)includingDisabledItems;
 @end
 
-typedef NSUInteger NSPopUpMenuFlags;
+#define NSPopUpMenuFlags NSUInteger
 
 WTF_EXTERN_C_BEGIN
 

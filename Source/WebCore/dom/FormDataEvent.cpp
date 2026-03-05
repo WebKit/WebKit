@@ -31,27 +31,27 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FormDataEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormDataEvent);
 
 Ref<FormDataEvent> FormDataEvent::create(const AtomString& eventType, Init&& init)
 {
-    return adoptRef(*new FormDataEvent(eventType, WTFMove(init)));
+    return adoptRef(*new FormDataEvent(eventType, WTF::move(init)));
 }
 
 Ref<FormDataEvent> FormDataEvent::create(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, Ref<DOMFormData>&& formData)
 {
-    return adoptRef(*new FormDataEvent(eventType, canBubble, isCancelable, isComposed, WTFMove(formData)));
+    return adoptRef(*new FormDataEvent(eventType, canBubble, isCancelable, isComposed, WTF::move(formData)));
 }
 
 FormDataEvent::FormDataEvent(const AtomString& eventType, Init&& init)
-    : Event(EventInterfaceType::FormDataEvent, eventType, init, IsTrusted::No)
-    , m_formData(init.formData.releaseNonNull())
+    : Event(EventInterfaceType::FormDataEvent, eventType, WTF::move(init), IsTrusted::No)
+    , m_formData(WTF::move(init.formData))
 {
 }
 
 FormDataEvent::FormDataEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, Ref<DOMFormData>&& formData)
     : Event(EventInterfaceType::FormDataEvent, eventType, canBubble, isCancelable, isComposed)
-    , m_formData(WTFMove(formData))
+    , m_formData(WTF::move(formData))
 {
 }
 

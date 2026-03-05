@@ -47,7 +47,7 @@ static void deserializeJSValue(std::array<uint8_t, T> bytes)
     JSC::initialize();
     WebCore::Process::identifier();
     Vector<uint8_t> vector { std::span<uint8_t>(bytes) };
-    const WebCore::ThreadSafeDataBuffer value = WebCore::ThreadSafeDataBuffer::create(WTFMove(vector));
+    const WebCore::ThreadSafeDataBuffer value = WebCore::ThreadSafeDataBuffer::create(WTF::move(vector));
     WebCore::callOnIDBSerializationThreadAndWait([&](auto& globalObject) {
         auto jsValue = WebCore::deserializeIDBValueToJSValue(globalObject, value);
         UNUSED_PARAM(jsValue);

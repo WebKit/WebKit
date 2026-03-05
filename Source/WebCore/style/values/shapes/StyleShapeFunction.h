@@ -37,7 +37,7 @@ namespace Style {
 struct Path;
 
 // <coordinate-pair> = <length-percentage>{2}
-using CoordinatePair  = SpaceSeparatedPoint<LengthPercentage<>>;
+using CoordinatePair  = SpaceSeparatedPoint<LengthPercentage<CSS::AllUnzoomed>>;
 
 using CommandAffinity = CSS::CommandAffinity;
 using ArcSweep        = CSS::ArcSweep;
@@ -159,15 +159,17 @@ struct HLineCommand {
     static constexpr auto name = CSSValueHline;
     struct To {
         static constexpr CommandAffinity affinity = CSS::Keyword::To { };
+        using Offset = TwoComponentPositionHorizontal;
 
-        TwoComponentPositionHorizontal offset;
+        Offset offset;
 
         bool operator==(const To&) const = default;
     };
     struct By {
         static constexpr CommandAffinity affinity = CSS::Keyword::By { };
+        using Offset = LengthPercentage<CSS::AllUnzoomed>;
 
-        LengthPercentage<> offset;
+        Offset offset;
 
         bool operator==(const By&) const = default;
     };
@@ -191,15 +193,17 @@ struct VLineCommand {
     static constexpr auto name = CSSValueVline;
     struct To {
         static constexpr CommandAffinity affinity = CSS::Keyword::To { };
+        using Offset = TwoComponentPositionVertical;
 
-        TwoComponentPositionVertical offset;
+        Offset offset;
 
         bool operator==(const To&) const = default;
     };
     struct By {
         static constexpr CommandAffinity affinity = CSS::Keyword::By { };
+        using Offset = LengthPercentage<CSS::AllUnzoomed>;
 
-        LengthPercentage<> offset;
+        Offset offset;
 
         bool operator==(const By&) const = default;
     };
@@ -327,7 +331,7 @@ struct ArcCommand {
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
 
-    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<>>;
+    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::AllUnzoomed>>;
     SizeOfEllipse size;
 
     ArcSweep arcSweep;
@@ -397,8 +401,8 @@ template<size_t I> const auto& get(const Shape& value)
 
 DEFINE_TYPE_MAPPING(CSS::Shape, Shape)
 
-template<> struct PathComputation<Shape> { WebCore::Path operator()(const Shape&, const FloatRect&); };
-template<> struct WindRuleComputation<Shape> { WebCore::WindRule operator()(const Shape&); };
+template<> struct PathComputation<Shape> { WebCore::Path operator()(const Shape&, const FloatRect&, ZoomFactor); };
+template<> struct WindRuleComputation<Shape> { WebCore::WindRule NODELETE operator()(const Shape&); };
 
 template<> struct Blending<Shape> {
     auto canBlend(const Shape&, const Shape&) -> bool;

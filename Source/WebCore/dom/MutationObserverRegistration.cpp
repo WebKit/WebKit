@@ -43,6 +43,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MutationObserverRegistration);
 
+Ref<MutationObserverRegistration> MutationObserverRegistration::create(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
+{
+    return adoptRef(*new MutationObserverRegistration(observer, node, options, attributeFilter));
+}
+
 MutationObserverRegistration::MutationObserverRegistration(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
     : m_observer(observer)
     , m_node(node)
@@ -71,7 +76,7 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node& node)
         return;
 
     node.registerTransientMutationObserver(*this);
-    m_observer->setHasTransientRegistration(node.protectedDocument());
+    m_observer->setHasTransientRegistration(protect(node.document()));
 
     if (m_transientRegistrationNodes.isEmpty()) {
         ASSERT(!m_nodeKeptAlive);

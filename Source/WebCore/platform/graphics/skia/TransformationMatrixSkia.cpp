@@ -35,32 +35,21 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 
 TransformationMatrix::TransformationMatrix(const SkM44& t)
-    : TransformationMatrix(SkScalarToDouble(t.rc(0, 0)), SkScalarToDouble(t.rc(0, 1)), SkScalarToDouble(t.rc(0, 2)), SkScalarToDouble(t.rc(0, 3)),
-        SkScalarToDouble(t.rc(1, 0)), SkScalarToDouble(t.rc(1, 1)), SkScalarToDouble(t.rc(1, 2)), SkScalarToDouble(t.rc(1, 3)),
-        SkScalarToDouble(t.rc(2, 0)), SkScalarToDouble(t.rc(2, 1)), SkScalarToDouble(t.rc(2, 2)), SkScalarToDouble(t.rc(2, 3)),
-        SkScalarToDouble(t.rc(3, 0)), SkScalarToDouble(t.rc(3, 1)), SkScalarToDouble(t.rc(3, 2)), SkScalarToDouble(t.rc(3, 3)))
+    : TransformationMatrix(
+        SkScalarToDouble(t.rc(0, 0)), SkScalarToDouble(t.rc(1, 0)), SkScalarToDouble(t.rc(2, 0)), SkScalarToDouble(t.rc(3, 0)),
+        SkScalarToDouble(t.rc(0, 1)), SkScalarToDouble(t.rc(1, 1)), SkScalarToDouble(t.rc(2, 1)), SkScalarToDouble(t.rc(3, 1)),
+        SkScalarToDouble(t.rc(0, 2)), SkScalarToDouble(t.rc(1, 2)), SkScalarToDouble(t.rc(2, 2)), SkScalarToDouble(t.rc(3, 2)),
+        SkScalarToDouble(t.rc(0, 3)), SkScalarToDouble(t.rc(1, 3)), SkScalarToDouble(t.rc(2, 3)), SkScalarToDouble(t.rc(3, 3)))
 {
 }
 
 TransformationMatrix::operator SkM44() const
 {
     return SkM44 {
-        SkDoubleToScalar(m11()),
-        SkDoubleToScalar(m12()),
-        SkDoubleToScalar(m13()),
-        SkDoubleToScalar(m14()),
-        SkDoubleToScalar(m21()),
-        SkDoubleToScalar(m22()),
-        SkDoubleToScalar(m23()),
-        SkDoubleToScalar(m24()),
-        SkDoubleToScalar(m31()),
-        SkDoubleToScalar(m32()),
-        SkDoubleToScalar(m33()),
-        SkDoubleToScalar(m34()),
-        SkDoubleToScalar(m41()),
-        SkDoubleToScalar(m42()),
-        SkDoubleToScalar(m43()),
-        SkDoubleToScalar(m44())
+        SkDoubleToScalar(m11()), SkDoubleToScalar(m21()), SkDoubleToScalar(m31()), SkDoubleToScalar(m41()),
+        SkDoubleToScalar(m12()), SkDoubleToScalar(m22()), SkDoubleToScalar(m32()), SkDoubleToScalar(m42()),
+        SkDoubleToScalar(m13()), SkDoubleToScalar(m23()), SkDoubleToScalar(m33()), SkDoubleToScalar(m43()),
+        SkDoubleToScalar(m14()), SkDoubleToScalar(m24()), SkDoubleToScalar(m34()), SkDoubleToScalar(m44())
     };
 }
 

@@ -35,7 +35,7 @@ namespace IPC {
 void ArgumentCoder<WTF::MachSendRightAnnotated>::encode(Encoder& encoder, const WTF::MachSendRightAnnotated& instance)
 {
     MachSendRight sendRight = MachSendRight::create(instance.sendRight.sendRight());
-    encoder << WTFMove(sendRight);
+    encoder << WTF::move(sendRight);
     encoder << instance.data;
 }
 

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "BasicCredential.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "AuthenticatorCoordinator.h"
 #include "DocumentPage.h"
 #include "JSDOMPromiseDeferred.h"
@@ -57,14 +59,12 @@ String BasicCredential::type() const
 
 void BasicCredential::isConditionalMediationAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    if (RefPtr page = document.page()) {
-#if ENABLE(WEB_AUTHN)
-        page->authenticatorCoordinator().isConditionalMediationAvailable(document, WTFMove(promise));
-#else
-        promise.resolve(false);
-#endif
-    } else
+    if (RefPtr page = document.page())
+        page->authenticatorCoordinator().isConditionalMediationAvailable(document, WTF::move(promise));
+    else
         promise.reject(Exception { ExceptionCode::InvalidStateError });
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

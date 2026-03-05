@@ -1,3 +1,3 @@
 
-NOTRUN Testing BFCache support for page with open WebSocket connection and "Cache-Control: no-store" header. BFCache not supported.
+FAIL Testing BFCache support for page with open WebSocket connection and "Cache-Control: no-store" header. assert_equals: document unexpectedly BFCached expected (undefined) undefined but got (boolean) true
 

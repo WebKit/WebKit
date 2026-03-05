@@ -13,7 +13,7 @@ info: |
     b. If numericIndex is not undefined, then
       i. Return ? IntegerIndexedElementGet(O, numericIndex).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -26,9 +26,9 @@ var throwDesc = {
 Object.defineProperty(proto, "0", throwDesc);
 Object.defineProperty(proto, "1", throwDesc);
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 1n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 1n]));
 
   assert.sameValue(sample["0"], 42n);
   assert.sameValue(sample["1"], 1n);
-});
+}, null, ["passthrough"]);

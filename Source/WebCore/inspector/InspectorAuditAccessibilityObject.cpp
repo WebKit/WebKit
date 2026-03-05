@@ -57,7 +57,7 @@ static AccessibilityObject* accessibilityObjectForNode(Node& node)
     if (!AXObjectCache::accessibilityEnabled())
         AXObjectCache::enableAccessibility();
 
-    if (AXObjectCache* axObjectCache = node.document().axObjectCache())
+    if (CheckedPtr axObjectCache = node.document().axObjectCache())
         return axObjectCache->getOrCreate(node);
 
     return nullptr;
@@ -70,7 +70,7 @@ ExceptionOr<Vector<Ref<Node>>> InspectorAuditAccessibilityObject::getElementsByC
     Vector<Ref<Node>> nodes;
 
     auto* containerNode = dynamicDowncast<ContainerNode>(container);
-    for (Element& element : descendantsOfType<Element>(containerNode ? *containerNode : document)) {
+    for (Ref element : descendantsOfType<Element>(containerNode ? *containerNode : document)) {
         if (auto* axObject = accessibilityObjectForNode(element)) {
             if (axObject->computedRoleString() == role)
                 nodes.append(element);
@@ -111,7 +111,7 @@ ExceptionOr<std::optional<Vector<Ref<Node>>>> InspectorAuditAccessibilityObject:
     if (auto* axObject = accessibilityObjectForNode(node)) {
         Vector<Ref<Node>> childNodes;
         addChildren(*axObject, childNodes);
-        result = WTFMove(childNodes);
+        result = WTF::move(childNodes);
     }
 
     return result;
@@ -249,8 +249,8 @@ ExceptionOr<std::optional<Vector<Ref<Node>>>> InspectorAuditAccessibilityObject:
 
     if (auto* axObject = accessibilityObjectForNode(node)) {
         auto controlledElements = axObject->elementsFromAttribute(HTMLNames::aria_controlsAttr);
-        result = WTF::map(WTFMove(controlledElements), [](auto&& element) -> Ref<Node> {
-            return WTFMove(element);
+        result = WTF::map(WTF::move(controlledElements), [](auto&& element) -> Ref<Node> {
+            return WTF::move(element);
         });
     }
 
@@ -265,8 +265,8 @@ ExceptionOr<std::optional<Vector<Ref<Node>>>> InspectorAuditAccessibilityObject:
 
     if (auto* axObject = accessibilityObjectForNode(node)) {
         auto flowedElements = axObject->elementsFromAttribute(HTMLNames::aria_flowtoAttr);
-        result = WTF::map(WTFMove(flowedElements), [](auto&& element) -> Ref<Node> {
-            return WTFMove(element);
+        result = WTF::map(WTF::move(flowedElements), [](auto&& element) -> Ref<Node> {
+            return WTF::move(element);
         });
     }
 
@@ -294,8 +294,8 @@ ExceptionOr<std::optional<Vector<Ref<Node>>>> InspectorAuditAccessibilityObject:
     if (auto* axObject = accessibilityObjectForNode(node)) {
         if (axObject->supportsARIAOwns()) {
             auto ownedElements = axObject->elementsFromAttribute(HTMLNames::aria_ownsAttr);
-            result = WTF::map(WTFMove(ownedElements), [](auto&& element) -> Ref<Node> {
-                return WTFMove(element);
+            result = WTF::map(WTF::move(ownedElements), [](auto&& element) -> Ref<Node> {
+                return WTF::move(element);
             });
         }
     }
@@ -330,7 +330,7 @@ ExceptionOr<std::optional<Vector<Ref<Node>>>> InspectorAuditAccessibilityObject:
                 selectedChildNodes.append(selectedChildNode.releaseNonNull());
         }
 
-        result = WTFMove(selectedChildNodes);
+        result = WTF::move(selectedChildNodes);
     }
 
     return result;

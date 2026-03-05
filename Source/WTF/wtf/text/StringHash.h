@@ -38,7 +38,7 @@ namespace WTF {
     {
         // See unique_ptr's customDeleteBucket() for an explanation.
         ASSERT(!isDeletedValue(value));
-        String valueToBeDestroyed = WTFMove(value);
+        String valueToBeDestroyed = WTF::move(value);
         constructDeletedValue(value);
     }
 

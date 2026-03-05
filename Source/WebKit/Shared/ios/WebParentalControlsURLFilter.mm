@@ -36,6 +36,14 @@
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/WorkQueue.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/BEKAdditions.h>
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST)
+#import <WebCore/DeprecatedGlobalSettings.h>
+#endif
+
 namespace WebKit {
 
 Ref<WebParentalControlsURLFilter> WebParentalControlsURLFilter::create()
@@ -61,40 +69,77 @@ bool WebParentalControlsURLFilter::isEnabledImpl() const
     return [BEWebContentFilter shouldEvaluateURLs];
 }
 
-void WebParentalControlsURLFilter::isURLAllowed(const URL& url, WebCore::ParentalControlsContentFilter& filter)
+void WebParentalControlsURLFilter::isURLAllowedImpl(const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
-    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), weakFilter = ThreadSafeWeakPtr { filter }]() mutable {
-        RefPtr filter = weakFilter.get();
-        if (!currentIsEnabled && filter) {
-            filter->didReceiveAllowDecisionOnQueue(true, nullptr);
+    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), mainDocumentURL = crossThreadCopy(mainDocumentURL), url = crossThreadCopy(url), completionHandler = WTF::move(completionHandler)]() mutable {
+        if (!currentIsEnabled) {
+            completionHandler(true, nullptr);
             return;
         }
 
-        [ensureWebContentFilter() evaluateURL:url.createNSURL().get() completionHandler:makeBlockPtr([weakFilter = WTFMove(weakFilter)](BOOL shouldBlock, NSData *replacementData) mutable {
-            if (RefPtr filter = weakFilter.get())
-                filter->didReceiveAllowDecisionOnQueue(!shouldBlock, replacementData);
+        RetainPtr filter = ensureWebContentFilter();
+#if HAVE(WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST)
+#if __has_include(<WebKitAdditions/BEKAdditions.h>)
+    if (WebCore::DeprecatedGlobalSettings::webContentRestrictionsTransitiveTrustEnabled()) {
+        MAYBE_EVALUATE_URL_WITH_TRANSITIVE_TRUST
+    }
+#endif
+#endif
+        [filter evaluateURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+            completionHandler(!shouldBlock, replacementData);
         }).get()];
     });
 }
 
 void WebParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(bool)>&& completionHandler)
 {
-    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), completionHandler = WTFMove(completionHandler)]() mutable {
+    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), completionHandler = WTF::move(completionHandler)]() mutable {
         if (!currentIsEnabled) {
-            callOnMainRunLoop([completionHandler = WTFMove(completionHandler)] mutable {
+            callOnMainRunLoop([completionHandler = WTF::move(completionHandler)] mutable {
                 completionHandler(true);
             });
             return;
         }
 
-        [ensureWebContentFilter() allowURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL didAllow, NSError *) mutable {
+        [protect(ensureWebContentFilter()) allowURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
             RELEASE_LOG(Loading, "WebParentalControlsURLFilter::allowURL result %d.\n", didAllow);
-            callOnMainRunLoop([didAllow, completionHandler = WTFMove(completionHandler)] mutable {
+            callOnMainRunLoop([didAllow, completionHandler = WTF::move(completionHandler)] mutable {
                 completionHandler(didAllow);
             });
         }).get()];
     });
 }
+
+void WebParentalControlsURLFilter::setSharedParentalControlsURLFilterIfNecessary()
+{
+#if !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    ASSERT(isMainRunLoop());
+    static bool initialized = false;
+    if (!initialized) {
+        WebCore::ParentalControlsURLFilter::setGlobalFilter(WebParentalControlsURLFilter::create());
+        initialized = true;
+    }
+#endif
+}
+
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+void WebParentalControlsURLFilter::requestPermissionForURL(const URL& url, const URL& referrerURL, CompletionHandler<void(bool)>&& completionHandler)
+{
+    workQueueSingleton().dispatchSync([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), referrerURL = crossThreadCopy(referrerURL), completionHandler = WTF::move(completionHandler)]() mutable {
+        if (!currentIsEnabled) {
+            callOnMainRunLoop([completionHandler = WTF::move(completionHandler)] mutable {
+                completionHandler(true);
+            });
+            return;
+        }
+        auto filter = ensureWebContentFilter();
+#if __has_include(<WebKitAdditions/BEKAdditions.h>)
+        RELEASE_LOG(Loading, "WebParentalControlsURLFilter::requestPermissionForURL starts execution");
+        MAYBE_REQUEST_PERMISSION_ASK_TO
+#endif
+    });
+}
+#endif
 
 } // namespace WebKit
 

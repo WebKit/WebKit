@@ -39,7 +39,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferShareableMappedIOSurfaceBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferShareableMappedIOSurfaceBackend);
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
@@ -59,7 +59,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), 0, creationContext.surfacePool.get() } };
+    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), 0, creationContext.surfacePool.get() } };
 }
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
@@ -69,7 +69,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
         return nullptr;
     }
 
-    auto surface = IOSurface::createFromSendRight(WTFMove(std::get<MachSendRight>(handle)));
+    auto surface = IOSurface::createFromSendRight(WTF::move(std::get<MachSendRight>(handle)));
     if (!surface)
         return nullptr;
     auto cgContext = surface->createPlatformContext();
@@ -77,7 +77,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
         return nullptr;
 
     ASSERT(surface->colorSpace() == parameters.colorSpace);
-    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), 0, nullptr } };
+    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), 0, nullptr } };
 }
 
 std::optional<ImageBufferBackendHandle> ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const

@@ -28,14 +28,13 @@ namespace WebCore {
 class SVGRadialGradientElement;
 
 class LegacyRenderSVGResourceRadialGradient final : public LegacyRenderSVGResourceGradient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceRadialGradient);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceRadialGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceRadialGradient);
 public:
     LegacyRenderSVGResourceRadialGradient(SVGRadialGradientElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGResourceRadialGradient();
 
     inline SVGRadialGradientElement& radialGradientElement() const;
-    inline Ref<SVGRadialGradientElement> protectedRadialGradientElement() const;
 
     FloatPoint centerPoint(const RadialGradientAttributes&) const;
     FloatPoint focalPoint(const RadialGradientAttributes&) const;
@@ -59,4 +58,7 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(LegacyRenderSVGResourceRadialGradient, RadialGradientResourceType)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceRadialGradient)
+    static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::RadialGradientResourceType; }
+    static bool isType(const WebCore::LegacyRenderSVGResourceContainer& resource) { return resource.resourceType() == WebCore::RadialGradientResourceType; }
+SPECIALIZE_TYPE_TRAITS_END()

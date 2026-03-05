@@ -65,7 +65,7 @@ CoreIPCDDScannerResult::CoreIPCDDScannerResult(DDScannerResult *d)
             if ([item isKindOfClass:PAL::getDDScannerResultClassSingleton()])
                 result.append((DDScannerResult *)item);
         }
-        m_data.SR = WTFMove(result);
+        m_data.SR = WTF::move(result);
     }
 
     if (auto *V = dynamic_objc_cast<NSString>([dictionary objectForKey:@"V"]))
@@ -101,7 +101,7 @@ CoreIPCDDScannerResult::CoreIPCDDScannerResult(DDScannerResult *d)
 }
 
 CoreIPCDDScannerResult::CoreIPCDDScannerResult(CoreIPCDDScannerResultData&& data)
-    : m_data(WTFMove(data)) { }
+    : m_data(WTF::move(data)) { }
 
 RetainPtr<id> CoreIPCDDScannerResult::toID() const
 {
@@ -125,24 +125,24 @@ RetainPtr<id> CoreIPCDDScannerResult::toID() const
     }
 
     if (m_data.V)
-        propertyList.get()[@"V"] = m_data.V->get();
+        propertyList.get()[@"V"] = m_data.V.get();
     if (m_data.CF)
-        propertyList.get()[@"CF"] = m_data.CF->get();
+        propertyList.get()[@"CF"] = m_data.CF.get();
 
     if (m_data.AddressBookUID || m_data.Domain || m_data.UUID
         || m_data.UrlificationBegin || m_data.UrlificationLength) {
         auto contextualData = [NSMutableDictionary dictionary];
 
         if (m_data.AddressBookUID)
-            contextualData[@"C"] = m_data.AddressBookUID->get();
+            contextualData[@"C"] = m_data.AddressBookUID.get();
         if (m_data.Domain)
-            contextualData[@"D"] = m_data.Domain->get();
+            contextualData[@"D"] = m_data.Domain.get();
         if (m_data.UUID)
-            contextualData[@"U"] = m_data.UUID->get();
+            contextualData[@"U"] = m_data.UUID.get();
         if (m_data.UrlificationBegin)
-            contextualData[@"urlificationBegin"] = m_data.UrlificationBegin->get();
+            contextualData[@"urlificationBegin"] = m_data.UrlificationBegin.get();
         if (m_data.UrlificationLength)
-            contextualData[@"urlificationLength"] = m_data.UrlificationLength->get();
+            contextualData[@"urlificationLength"] = m_data.UrlificationLength.get();
 
         propertyList.get()[@"C"] = contextualData;
     }

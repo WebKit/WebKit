@@ -111,11 +111,11 @@ static gboolean webkitInputMethodContextMockFilterKeyEvent(WebKitInputMethodCont
     bool isControl = state & GDK_CONTROL_MASK;
     bool isShift = state & GDK_SHIFT_MASK;
 #elif PLATFORM(WPE)
-    uint32_t keyval;
-    bool isKeyPress;
-    gunichar character;
-    bool isControl;
-    bool isShift;
+    uint32_t keyval = 0;
+    bool isKeyPress = false;
+    gunichar character = 0;
+    bool isControl = false;
+    bool isShift = false;
 #if ENABLE(WPE_PLATFORM)
     if (mock->usingWPEPlatformAPI) {
         auto* wpeKeyEvent = static_cast<WPEEvent*>(keyEvent);
@@ -128,12 +128,14 @@ static gboolean webkitInputMethodContextMockFilterKeyEvent(WebKitInputMethodCont
     } else
 #endif
     {
+#if USE(LIBWPE)
         struct wpe_input_keyboard_event* wpeKeyEvent = static_cast<struct wpe_input_keyboard_event*>(keyEvent);
         keyval = wpeKeyEvent->key_code;
         isKeyPress = wpeKeyEvent->pressed;
         character = wpe_key_code_to_unicode(keyval);
         isControl = wpeKeyEvent->modifiers & wpe_input_keyboard_modifier_control;
         isShift = wpeKeyEvent->modifiers & wpe_input_keyboard_modifier_shift;
+#endif
     }
 #endif
     bool isComposeEnd = (keyval == KEY(space) || keyval == KEY(Return) || keyval == KEY(ISO_Enter));
@@ -356,13 +358,13 @@ public:
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "isComposing"));
             g_assert_true(jsc_value_is_boolean(value.get()));
             event.isComposing = jsc_value_to_boolean(value.get());
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "keyPress")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::KeyPress);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "keyCode"));
             g_assert_true(jsc_value_is_number(value.get()));
             event.keyCode = jsc_value_to_int32(value.get());
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "keyUp")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::KeyUp);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "keyCode"));
@@ -375,28 +377,28 @@ public:
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "isComposing"));
             g_assert_true(jsc_value_is_boolean(value.get()));
             event.isComposing = jsc_value_to_boolean(value.get());
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionstart")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionStart);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
             event.data = strValue.get();
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionupdate")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionUpdate);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
             event.data = strValue.get();
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionend")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionEnd);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
             event.data = strValue.get();
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         }
 
         if (m_events.size() == m_eventsExpected)

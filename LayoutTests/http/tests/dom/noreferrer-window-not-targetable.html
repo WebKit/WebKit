@@ -16,11 +16,8 @@ onload = function() {
         shouldBeEqualToString("w.location.href", "about:blank");
         w.onload = function() {
             if (window.testRunner) {
-                if (testRunner.isWebKit2) {
-                    shouldBe("testRunner.windowCount()", "2");
-                } else {
-                    shouldBe("testRunner.windowCount()", "3");
-                }
+                // Same-site noopener popups now share a process, so all 3 windows are counted.
+                shouldBe("testRunner.windowCount()", "3");
             }
             finishJSTest();
         }

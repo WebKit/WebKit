@@ -24,11 +24,14 @@
  */
 
 #pragma once
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
 struct NavigatorUABrandVersion {
     String brand;
     String version;
 };
+
 }

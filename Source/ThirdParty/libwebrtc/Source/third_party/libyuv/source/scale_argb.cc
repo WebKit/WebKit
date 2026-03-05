@@ -107,22 +107,6 @@ static void ScaleARGBDown2(int src_width,
                             : ScaleARGBRowDown2Box_SME;
   }
 #endif
-#if defined(HAS_SCALEARGBROWDOWN2_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBRowDown2 =
-        filtering == kFilterNone
-            ? ScaleARGBRowDown2_Any_MSA
-            : (filtering == kFilterLinear ? ScaleARGBRowDown2Linear_Any_MSA
-                                          : ScaleARGBRowDown2Box_Any_MSA);
-    if (IS_ALIGNED(dst_width, 4)) {
-      ScaleARGBRowDown2 =
-          filtering == kFilterNone
-              ? ScaleARGBRowDown2_MSA
-              : (filtering == kFilterLinear ? ScaleARGBRowDown2Linear_MSA
-                                            : ScaleARGBRowDown2Box_MSA);
-    }
-  }
-#endif
 #if defined(HAS_SCALEARGBROWDOWN2_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     ScaleARGBRowDown2 =
@@ -282,16 +266,6 @@ static void ScaleARGBDownEven(int src_width,
     }
   }
 #endif
-#if defined(HAS_SCALEARGBROWDOWNEVEN_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBRowDownEven = filtering ? ScaleARGBRowDownEvenBox_Any_MSA
-                                     : ScaleARGBRowDownEven_Any_MSA;
-    if (IS_ALIGNED(dst_width, 4)) {
-      ScaleARGBRowDownEven =
-          filtering ? ScaleARGBRowDownEvenBox_MSA : ScaleARGBRowDownEven_MSA;
-    }
-  }
-#endif
 #if defined(HAS_SCALEARGBROWDOWNEVEN_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     ScaleARGBRowDownEven = filtering ? ScaleARGBRowDownEvenBox_Any_LSX
@@ -386,14 +360,6 @@ static int ScaleARGBBilinearDown(int src_width,
     InterpolateRow = InterpolateRow_SME;
   }
 #endif
-#if defined(HAS_INTERPOLATEROW_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    InterpolateRow = InterpolateRow_Any_MSA;
-    if (IS_ALIGNED(clip_src_width, 32)) {
-      InterpolateRow = InterpolateRow_MSA;
-    }
-  }
-#endif
 #if defined(HAS_INTERPOLATEROW_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     InterpolateRow = InterpolateRow_Any_LSX;
@@ -417,14 +383,6 @@ static int ScaleARGBBilinearDown(int src_width,
     ScaleARGBFilterCols = ScaleARGBFilterCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 4)) {
       ScaleARGBFilterCols = ScaleARGBFilterCols_NEON;
-    }
-  }
-#endif
-#if defined(HAS_SCALEARGBFILTERCOLS_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBFilterCols = ScaleARGBFilterCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 8)) {
-      ScaleARGBFilterCols = ScaleARGBFilterCols_MSA;
     }
   }
 #endif
@@ -525,14 +483,6 @@ static int ScaleARGBBilinearUp(int src_width,
     InterpolateRow = InterpolateRow_SME;
   }
 #endif
-#if defined(HAS_INTERPOLATEROW_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    InterpolateRow = InterpolateRow_Any_MSA;
-    if (IS_ALIGNED(dst_width, 8)) {
-      InterpolateRow = InterpolateRow_MSA;
-    }
-  }
-#endif
 #if defined(HAS_INTERPOLATEROW_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     InterpolateRow = InterpolateRow_Any_LSX;
@@ -563,14 +513,6 @@ static int ScaleARGBBilinearUp(int src_width,
     }
   }
 #endif
-#if defined(HAS_SCALEARGBFILTERCOLS_MSA)
-  if (filtering && TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBFilterCols = ScaleARGBFilterCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 8)) {
-      ScaleARGBFilterCols = ScaleARGBFilterCols_MSA;
-    }
-  }
-#endif
 #if defined(HAS_SCALEARGBFILTERCOLS_LSX)
   if (filtering && TestCpuFlag(kCpuHasLSX)) {
     ScaleARGBFilterCols = ScaleARGBFilterCols_Any_LSX;
@@ -594,14 +536,6 @@ static int ScaleARGBBilinearUp(int src_width,
     ScaleARGBFilterCols = ScaleARGBCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 8)) {
       ScaleARGBFilterCols = ScaleARGBCols_NEON;
-    }
-  }
-#endif
-#if defined(HAS_SCALEARGBCOLS_MSA)
-  if (!filtering && TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBFilterCols = ScaleARGBCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 4)) {
-      ScaleARGBFilterCols = ScaleARGBCols_MSA;
     }
   }
 #endif
@@ -747,14 +681,6 @@ static int ScaleYUVToARGBBilinearUp(int src_width,
     I422ToARGBRow = I422ToARGBRow_SME;
   }
 #endif
-#if defined(HAS_I422TOARGBROW_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    I422ToARGBRow = I422ToARGBRow_Any_MSA;
-    if (IS_ALIGNED(src_width, 8)) {
-      I422ToARGBRow = I422ToARGBRow_MSA;
-    }
-  }
-#endif
 #if defined(HAS_I422TOARGBROW_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     I422ToARGBRow = I422ToARGBRow_Any_LSX;
@@ -809,14 +735,6 @@ static int ScaleYUVToARGBBilinearUp(int src_width,
     InterpolateRow = InterpolateRow_SME;
   }
 #endif
-#if defined(HAS_INTERPOLATEROW_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    InterpolateRow = InterpolateRow_Any_MSA;
-    if (IS_ALIGNED(dst_width, 8)) {
-      InterpolateRow = InterpolateRow_MSA;
-    }
-  }
-#endif
 #if defined(HAS_INTERPOLATEROW_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     InterpolateRow = InterpolateRow_Any_LSX;
@@ -851,14 +769,6 @@ static int ScaleYUVToARGBBilinearUp(int src_width,
     }
   }
 #endif
-#if defined(HAS_SCALEARGBFILTERCOLS_MSA)
-  if (filtering && TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBFilterCols = ScaleARGBFilterCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 8)) {
-      ScaleARGBFilterCols = ScaleARGBFilterCols_MSA;
-    }
-  }
-#endif
 #if defined(HAS_SCALEARGBFILTERCOLS_LSX)
   if (filtering && TestCpuFlag(kCpuHasLSX)) {
     ScaleARGBFilterCols = ScaleARGBFilterCols_Any_LSX;
@@ -882,14 +792,6 @@ static int ScaleYUVToARGBBilinearUp(int src_width,
     ScaleARGBFilterCols = ScaleARGBCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 8)) {
       ScaleARGBFilterCols = ScaleARGBCols_NEON;
-    }
-  }
-#endif
-#if defined(HAS_SCALEARGBCOLS_MSA)
-  if (!filtering && TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBFilterCols = ScaleARGBCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 4)) {
-      ScaleARGBFilterCols = ScaleARGBCols_MSA;
     }
   }
 #endif
@@ -1022,14 +924,6 @@ static void ScaleARGBSimple(int src_width,
     ScaleARGBCols = ScaleARGBCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 8)) {
       ScaleARGBCols = ScaleARGBCols_NEON;
-    }
-  }
-#endif
-#if defined(HAS_SCALEARGBCOLS_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    ScaleARGBCols = ScaleARGBCols_Any_MSA;
-    if (IS_ALIGNED(dst_width, 4)) {
-      ScaleARGBCols = ScaleARGBCols_MSA;
     }
   }
 #endif

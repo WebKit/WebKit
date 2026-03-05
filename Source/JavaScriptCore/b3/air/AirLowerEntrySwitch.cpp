@@ -49,7 +49,7 @@ void lowerEntrySwitch(Code& code)
     // It's possible that we don't have any EntrySwitches. That's fine.
     if (worklist.seen().isEmpty()) {
         Vector<FrequentedBlock> entrypoints(code.proc().numEntrypoints(), FrequentedBlock(code[0]));
-        code.setEntrypoints(WTFMove(entrypoints));
+        code.setEntrypoints(WTF::move(entrypoints));
         return;
     }
     
@@ -102,7 +102,7 @@ void lowerEntrySwitch(Code& code)
     for (BasicBlock* block : worklist.seen().values(code))
         fixEntrySwitch(block, 0);
     
-    code.setEntrypoints(WTFMove(entrypoints));
+    code.setEntrypoints(WTF::move(entrypoints));
     code.resetReachability();
 }
 

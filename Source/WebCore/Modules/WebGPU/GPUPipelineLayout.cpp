@@ -35,7 +35,7 @@ String GPUPipelineLayout::label() const
 
 void GPUPipelineLayout::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    m_backing->setLabel(WTF::move(label));
 }
 
 }

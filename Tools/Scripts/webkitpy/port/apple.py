@@ -49,8 +49,8 @@ class ApplePort(Port):
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         options = options or {}
+        driver = (getattr(options, 'driver_names', []) or cls.DRIVER_NAMES)[0]
         if port_name in (cls.port_name, cls.port_name + '-wk2'):
-
             # Since IOS simulator run on mac, they need a special check
             if host.platform.os_name == 'mac' and 'ios-simulator' in port_name:
                 return port_name
@@ -62,11 +62,11 @@ class ApplePort(Port):
             # That convention means that we're supposed to use the version currently
             # being run, so this won't work if you're not on mac or win (respectively).
             # If you're not on the o/s in question, you must specify a full version (cf. above).
-            if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False):
+            if port_name == cls.port_name and cls.is_webkitlegacy_driver(driver):
                 port_name = cls.port_name + version_name_addition
             else:
                 port_name = cls.port_name + version_name_addition + '-wk2'
-        elif getattr(options, 'webkit_test_runner', False) and  '-wk2' not in port_name:
+        elif not cls.is_webkitlegacy_driver(driver) and '-wk2' not in port_name:
             port_name += '-wk2'
 
         return port_name
@@ -86,7 +86,13 @@ class ApplePort(Port):
         self.supports_localhost_aliases = True
 
     def setup_test_run(self, device_type=None):
-        self._crash_logs_to_skip_for_host[self.host] = self.host.filesystem.files_under(self.path_to_crash_logs())
+        files_to_skip = []
+        for directory in self.crash_log_directories():
+            files_to_skip.extend(self.host.filesystem.files_under(directory))
+        self._crash_logs_to_skip_for_host[self.host] = files_to_skip
+
+    def crash_log_directories(self):
+        return [self.path_to_crash_logs()]
 
     def default_timeout_ms(self):
         if self.get_option('guard_malloc'):

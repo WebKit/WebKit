@@ -61,7 +61,6 @@ private:
 
     void setIsPlaying(bool);
 
-    Ref<SharedAudioDestinationAdapter> protectedOutputAdapter() const;
 
     Lock m_dispatchToRenderThreadLock;
     Function<void(Function<void()>&&)> m_dispatchToRenderThread WTF_GUARDED_BY_LOCK(m_dispatchToRenderThreadLock);

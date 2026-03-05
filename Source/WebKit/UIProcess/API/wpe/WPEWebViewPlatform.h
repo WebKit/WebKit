@@ -63,12 +63,12 @@ public:
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
 
-#if USE(SKIA)
     Expected<Ref<WebKit::ViewSnapshot>, String> takeViewSnapshot(std::optional<WebCore::IntRect>&&);
-#endif
 
     void updateAcceleratedSurface(uint64_t);
     WebKit::RendererBufferDescription renderBufferDescription() const;
+
+    void handleGesture(WPEEvent*);
 
 private:
     ViewPlatform(WPEDisplay*, const API::PageConfiguration&);
@@ -94,7 +94,6 @@ private:
     void dispatchPendingNextPresentationUpdateCallbacks();
 
     gboolean handleEvent(WPEEvent*);
-    void handleGesture(WPEEvent*);
 
     GRefPtr<WPEView> m_wpeView;
     RefPtr<WebKit::AcceleratedBackingStore> m_backingStore;

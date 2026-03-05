@@ -9,12 +9,12 @@ layer at (0,0) size 800x94
   RenderBlock {HTML} at (0,0) size 800x94
     RenderBody {BODY} at (8,16) size 784x70
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 735x35
+        RenderText {#text} at (0,0) size 735x36
           text run at (0,0) width 735: "This tests to make sure that the caret is visible in the black background by getting the caret color from the color of the"
           text run at (0,18) width 660: "element(span) containing the text, not the root editable element(div) that has the contentEditable attribute."
       RenderBlock {DIV} at (0,52) size 784x18 [bgcolor=#000000]
-        RenderInline {SPAN} at (0,0) size 121x17 [color=#FFFFFF]
-          RenderText {#text} at (0,0) size 121x17
+        RenderInline {SPAN} at (0,0) size 121x18 [color=#FFFFFF]
+          RenderText {#text} at (0,0) size 121x18
             text run at (0,0) width 121: "Where is my caret?"
         RenderText {#text} at (0,0) size 0x0
 caret: position 17 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of body

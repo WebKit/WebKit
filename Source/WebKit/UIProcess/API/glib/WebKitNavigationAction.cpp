@@ -37,7 +37,7 @@ G_DEFINE_BOXED_TYPE(WebKitNavigationAction, webkit_navigation_action, webkit_nav
 WebKitNavigationAction* webkitNavigationActionCreate(Ref<API::NavigationAction>&& action)
 {
     WebKitNavigationAction* navigation = static_cast<WebKitNavigationAction*>(fastZeroedMalloc(sizeof(WebKitNavigationAction)));
-    new (navigation) WebKitNavigationAction(WTFMove(action));
+    new (navigation) WebKitNavigationAction(WTF::move(action));
     return navigation;
 }
 

@@ -33,7 +33,7 @@ class InsertLineBreakCommand : public CompositeEditCommand {
 public:
     static Ref<InsertLineBreakCommand> create(Ref<Document>&& document)
     {
-        return adoptRef(*new InsertLineBreakCommand(WTFMove(document)));
+        return adoptRef(*new InsertLineBreakCommand(WTF::move(document)));
     }
 
 private:

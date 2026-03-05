@@ -31,7 +31,7 @@
 
 struct CallbackData {
     CallbackData* next;
-    JSContext *context;
+    RetainPtr<JSContext> context;
     RetainPtr<JSValue> preservedException;
     JSValueRef calleeValue;
     JSValueRef thisValue;

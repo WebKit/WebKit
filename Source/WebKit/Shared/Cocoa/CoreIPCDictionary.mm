@@ -61,7 +61,7 @@ CoreIPCDictionary::CoreIPCDictionary(CoreIPCDictionary&&) = default;
 CoreIPCDictionary::~CoreIPCDictionary() = default;
 
 CoreIPCDictionary::CoreIPCDictionary(ValueType&& keyValuePairs)
-    : m_keyValuePairs(WTFMove(keyValuePairs)) { }
+    : m_keyValuePairs(WTF::move(keyValuePairs)) { }
 
 RetainPtr<id> CoreIPCDictionary::toID() const
 {

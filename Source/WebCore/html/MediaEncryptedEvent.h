@@ -30,8 +30,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include <WebCore/Event.h>
-#include <WebCore/MediaEncryptedEventInit.h>
+#include "Event.h"
+#include "MediaEncryptedEventInit.h"
 
 namespace JSC {
 class ArrayBuffer;
@@ -40,7 +40,7 @@ class ArrayBuffer;
 namespace WebCore {
 
 class MediaEncryptedEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaEncryptedEvent);
+    WTF_MAKE_TZONE_ALLOCATED(MediaEncryptedEvent);
 public:
     using Init = MediaEncryptedEventInit;
 
@@ -58,7 +58,7 @@ private:
     MediaEncryptedEvent(const AtomString&, const MediaEncryptedEventInit&, IsTrusted);
 
     String m_initDataType;
-    RefPtr<JSC::ArrayBuffer> m_initData;
+    const RefPtr<JSC::ArrayBuffer> m_initData;
 };
 
 } // namespace WebCore

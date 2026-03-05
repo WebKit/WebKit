@@ -1,0 +1,9 @@
+Test passes if there is a filled green rectangle.
+
+
+FAIL ::scroll-marker-group empty assert_equals: ::scroll-marker-group width should be auto but was  expected "" but got "auto"
+FAIL ::scroll-marker-group with red background assert_equals: ::scroll-marker-group width should be 100px but was  expected "" but got "100px"
+FAIL ::scroll-marker-group empty again assert_equals: ::scroll-marker-group width should be auto but was  expected "" but got "auto"
+FAIL ::scroll-marker-group with red background again assert_equals: ::scroll-marker-group width should be 100px but was  expected "" but got "100px"
+FAIL ::scroll-marker-group with green background assert_equals: ::scroll-marker-group width should be 100px but was  expected "" but got "100px"
+

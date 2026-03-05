@@ -42,7 +42,6 @@ static unsigned keyValueCountForFilter(const FilterOperation& filterOperation)
 {
     switch (filterOperation.type()) {
     case FilterOperation::Type::Default:
-    case FilterOperation::Type::Reference:
     case FilterOperation::Type::None:
         ASSERT_NOT_REACHED();
         return 0;
@@ -58,12 +57,6 @@ static unsigned keyValueCountForFilter(const FilterOperation& filterOperation)
     case FilterOperation::Type::Grayscale:
     case FilterOperation::Type::Blur:
         return 1;
-    case FilterOperation::Type::AppleInvertLightness:
-        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-        break;
-    case FilterOperation::Type::DropShadowWithStyleColor:
-        ASSERT_NOT_REACHED(); // Replaced by DropShadow.
-        break;
     case FilterOperation::Type::Passthrough:
         return 0;
     }
@@ -83,7 +76,7 @@ static const FilterOperation& passthroughFilter(const FilterOperation::Type type
 {
     switch (typeToMatch) {
     case FilterOperation::Type::DropShadow:
-        static NeverDestroyed<Ref<DropShadowFilterOperation>> passthroughDropShadowFilter = DropShadowFilterOperation::create({ }, 0, { });
+        static NeverDestroyed<Ref<DropShadowFilterOperation>> passthroughDropShadowFilter = DropShadowFilterOperation::create({ }, { }, 0);
         return passthroughDropShadowFilter.get();
     case FilterOperation::Type::Grayscale:
         static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughGrayscaleFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
@@ -140,9 +133,7 @@ void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFil
         auto type = initialFilterOperation->type();
         switch (type) {
         case FilterOperation::Type::Default:
-        case FilterOperation::Type::Reference:
         case FilterOperation::Type::None:
-        case FilterOperation::Type::DropShadowWithStyleColor:
             ASSERT_NOT_REACHED();
             break;
         case FilterOperation::Type::DropShadow: {
@@ -166,9 +157,6 @@ void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFil
             presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:keyValueName.createNSString().get() initialValue:filterValueForOperation(initialFilterOperation).get() additive:NO group:group.get()]) });
             continue;
         }
-        case FilterOperation::Type::AppleInvertLightness:
-            ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-            break;
         case FilterOperation::Type::Passthrough:
             continue;
         }
@@ -190,9 +178,7 @@ void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filt
         ++filterIndex;
         switch (filterOperation->type()) {
         case FilterOperation::Type::Default:
-        case FilterOperation::Type::Reference:
         case FilterOperation::Type::None:
-        case FilterOperation::Type::DropShadowWithStyleColor:
             ASSERT_NOT_REACHED();
             return;
         case FilterOperation::Type::DropShadow: {
@@ -216,9 +202,6 @@ void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filt
             [presentationModifiers[i].second.get() setValue:filterValueForOperation(filterOperation).get()];
             continue;
         }
-        case FilterOperation::Type::AppleInvertLightness:
-            ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-            return;
         case FilterOperation::Type::Passthrough:
             continue;
         }
@@ -254,9 +237,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
         auto& filterOperation = operation.get();
         switch (filterOperation.type()) {
         case FilterOperation::Type::Default:
-        case FilterOperation::Type::Reference:
         case FilterOperation::Type::None:
-        case FilterOperation::Type::DropShadowWithStyleColor:
             ASSERT_NOT_REACHED();
             return nil;
         case FilterOperation::Type::DropShadow: {
@@ -304,9 +285,6 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             [filter setName:filterName.createNSString().get()];
             return filter;
         }
-        case FilterOperation::Type::AppleInvertLightness:
-            ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-            break;
         case FilterOperation::Type::Opacity: {
             RetainPtr<NSValue> colorMatrixValue = PlatformCAFilters::colorMatrixValueForFilter(filterOperation.type(), &filterOperation);
             CAFilter *filter = [CAFilter filterWithType:kCAFilterColorMatrix];
@@ -417,9 +395,6 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         value = PlatformCAFilters::colorMatrixValueForFilter(type, operation);
         break;
     }
-    case FilterOperation::Type::AppleInvertLightness:
-        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-        break;
     case FilterOperation::Type::Opacity: {
         // Opacity CAFilter: inputColorMatrix
         value = PlatformCAFilters::colorMatrixValueForFilter(type, operation);
@@ -486,9 +461,6 @@ RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(FilterOperation:
         auto invertMatrix = invertColorMatrix(amount);
         return [NSValue valueWithCAColorMatrix:caColorMatrixFromColorMatrix(invertMatrix)];
     }
-    case FilterOperation::Type::AppleInvertLightness:
-        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-        return nullptr;
     case FilterOperation::Type::Opacity: {
         float amount = filterOperation ? downcast<BasicComponentTransferFilterOperation>(filterOperation)->amount() : 1;
         auto opacityMatrix = opacityColorMatrix(amount);

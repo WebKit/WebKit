@@ -191,13 +191,12 @@ void CroppingWindowCapturerWin::CaptureFrame() {
               return false;
 
             // Filter out windows not visible on current desktop
-            auto it = std::remove_if(
-                result.begin(), result.end(), [this](const auto& source) {
+            std::erase_if(
+                result, [this](const auto& source) {
                   HWND hwnd = reinterpret_cast<HWND>(source.id);
                   return !window_capture_helper_
                               .IsWindowVisibleOnCurrentDesktop(hwnd);
                 });
-            result.erase(it, result.end());
 
             sources->swap(result);
             return true;

@@ -40,10 +40,10 @@
 namespace WebCore {
 
 struct PeerMediaDescription {
-    void addPayload(MediaPayload&& payload) { payloads.append(WTFMove(payload)); }
+    void addPayload(MediaPayload&& payload) { payloads.append(WTF::move(payload)); }
     void addSsrc(unsigned ssrc) { ssrcs.append(ssrc); }
     void clearSsrcs() { ssrcs.clear(); }
-    void addIceCandidate(IceCandidate&& candidate) { iceCandidates.append(WTFMove(candidate)); }
+    void addIceCandidate(IceCandidate&& candidate) { iceCandidates.append(WTF::move(candidate)); }
 
     String type;
     unsigned short port { 9 };

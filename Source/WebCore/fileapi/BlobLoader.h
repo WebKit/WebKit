@@ -25,14 +25,14 @@
 
 #pragma once
 
+#include "Blob.h"
+#include "Document.h"
+#include "ExceptionCode.h"
+#include "FileReaderLoader.h"
+#include "FileReaderLoaderClient.h"
+#include "Logging.h"
+#include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
-#include <WebCore/Blob.h>
-#include <WebCore/Document.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/FileReaderLoader.h>
-#include <WebCore/FileReaderLoaderClient.h>
-#include <WebCore/Logging.h>
-#include <WebCore/SharedBuffer.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ public:
     // CompleteCallback is always called except if BlobLoader is cancelled/deallocated.
     using CompleteCallback = Function<void(BlobLoader&)>;
 
-    static Ref<BlobLoader> create(CompleteCallback&& callback) { return adoptRef(*new BlobLoader(WTFMove(callback))); }
+    static Ref<BlobLoader> create(CompleteCallback&& callback) { return adoptRef(*new BlobLoader(WTF::move(callback))); }
     ~BlobLoader();
 
     // FileReaderLoaderClient.
@@ -74,7 +74,7 @@ private:
 };
 
 inline BlobLoader::BlobLoader(CompleteCallback&& completeCallback)
-    : m_completeCallback(WTFMove(completeCallback))
+    : m_completeCallback(WTF::move(completeCallback))
 {
 }
 

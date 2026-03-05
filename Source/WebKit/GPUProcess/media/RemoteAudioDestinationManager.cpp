@@ -61,7 +61,7 @@ class RemoteAudioDestination final
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteAudioDestination);
 public:
     RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
-        : m_renderSemaphore(WTFMove(renderSemaphore))
+        : m_renderSemaphore(WTF::move(renderSemaphore))
 #if !RELEASE_LOG_DISABLED
         , m_logger(connection.logger())
         , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
@@ -90,7 +90,7 @@ public:
 #if PLATFORM(COCOA)
     void setSharedMemory(WebCore::SharedMemory::Handle&& handle)
     {
-        m_frameCount = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadWrite);
+        m_frameCount = WebCore::SharedMemory::map(WTF::move(handle), WebCore::SharedMemory::Protection::ReadWrite);
     }
 
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle)
@@ -102,7 +102,7 @@ public:
             if (m_isPlaying)
                 return;
         }
-        m_ringBuffer = ConsumerSharedCARingBuffer::map(sizeof(Float32), m_numOutputChannels, WTFMove(handle));
+        m_ringBuffer = ConsumerSharedCARingBuffer::map(sizeof(Float32), m_numOutputChannels, WTF::move(handle));
         if (!m_ringBuffer)
             return;
         if (wasPlaying) {
@@ -161,7 +161,7 @@ public:
 #endif
     }
 
-    bool isPlaying() const { return m_isPlaying; }
+    bool NODELETE isPlaying() const { return m_isPlaying; }
 
     size_t audioUnitLatency() const
     {
@@ -174,7 +174,7 @@ public:
 
 private:
 #if PLATFORM(COCOA)
-    void incrementTotalFrameCount(UInt32 numberOfFrames)
+    void NODELETE incrementTotalFrameCount(UInt32 numberOfFrames)
     {
         static_assert(std::atomic<UInt32>::is_always_lock_free, "Shared memory atomic usage assumes lock free primitives are used");
         if (m_frameCount)
@@ -206,9 +206,9 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
-    WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
-    uint64_t logIdentifier() const { return m_logIdentifier; }
-    Logger& logger() const { return m_logger; }
+    WTFLogChannel& NODELETE logChannel() const { return WebKit2LogMedia; }
+    uint64_t NODELETE logIdentifier() const { return m_logIdentifier; }
+    Logger& NODELETE logger() const { return m_logger; }
 
     Ref<Logger> m_logger;
     const uint64_t m_logIdentifier;
@@ -259,9 +259,9 @@ void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinatio
     }
     MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
 
-    auto destination = makeUniqueRef<RemoteAudioDestination>(*connection, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
+    auto destination = makeUniqueRef<RemoteAudioDestination>(*connection, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTF::move(renderSemaphore));
 #if PLATFORM(COCOA)
-    destination->setSharedMemory(WTFMove(handle));
+    destination->setSharedMemory(WTF::move(handle));
 #else
     UNUSED_PARAM(handle);
 #endif
@@ -272,7 +272,7 @@ void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinatio
 #endif
 
     size_t latency = destination->audioUnitLatency();
-    m_audioDestinations.add(identifier, WTFMove(destination));
+    m_audioDestinations.add(identifier, WTF::move(destination));
     completionHandler(latency);
 }
 
@@ -325,7 +325,7 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
 void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle)
 {
     if (auto* item = m_audioDestinations.get(identifier))
-        item->audioSamplesStorageChanged(WTFMove(handle));
+        item->audioSamplesStorageChanged(WTF::move(handle));
 }
 #endif
 

@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if USE(GCRYPT)
+
 #include <gcrypt.h>
 #include <optional>
 #include <wtf/Assertions.h>
@@ -69,3 +73,5 @@ static inline std::optional<int> aesAlgorithmForKeySize(size_t keySize)
 
 } // namespace GCrypt
 } // namespace PAL
+
+#endif

@@ -41,7 +41,7 @@ struct Token {
     std::optional<size_t> index;
     StringView value;
 
-    bool isNull() const;
+    bool NODELETE isNull() const;
 };
 
 class Tokenizer {
@@ -59,8 +59,8 @@ private:
     char32_t m_codepoint;
     bool m_tokenAppendFailure { false };
 
-    void getNextCodePoint();
-    void seekNextCodePoint(size_t index);
+    void NODELETE getNextCodePoint();
+    void NODELETE seekNextCodePoint(size_t index);
 
     void addToken(TokenType currentType, size_t nextPosition, size_t valuePosition, size_t valueLength);
     void addToken(TokenType currentType, size_t nextPosition, size_t valuePosition);

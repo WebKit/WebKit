@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
 ] dictionary WaveShaperOptions : AudioNodeOptions {
     sequence<float> curve;
     OverSampleType oversample = "none";

@@ -155,7 +155,7 @@ void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscre
         }
     }
 
-    [CATransaction setCompletionBlock:makeBlockPtr([completionHandler = WTFMove(completionHandler)] {
+    [CATransaction setCompletionBlock:makeBlockPtr([completionHandler = WTF::move(completionHandler)] {
         completionHandler();
     }).get()];
 

@@ -72,7 +72,7 @@ TEST(TypeCastsCocoa, bridge_cast)
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
 
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
-        objectCF = bridge_cast(WTFMove(objectNS));
+        objectCF = bridge_cast(WTF::move(objectNS));
         objectCFPtr = reinterpret_cast<uintptr_t>(objectCF.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, objectNS.get());
         EXPECT_EQ(objectNSPtr, objectCFPtr);
@@ -80,7 +80,7 @@ TEST(TypeCastsCocoa, bridge_cast)
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCFPtr));
 
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
-        objectNS = bridge_cast(WTFMove(objectCF));
+        objectNS = bridge_cast(WTF::move(objectCF));
         objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(objectCFPtr, objectNSPtr);
@@ -94,7 +94,7 @@ TEST(TypeCastsCocoa, bridge_cast)
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCFPtr));
 
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
-        objectNS = bridge_cast(WTFMove(objectCF));
+        objectNS = bridge_cast(WTF::move(objectCF));
         objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(objectCFPtr, objectNSPtr);
@@ -102,7 +102,7 @@ TEST(TypeCastsCocoa, bridge_cast)
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
 
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
-        objectCF = bridge_cast(WTFMove(objectNS));
+        objectCF = bridge_cast(WTF::move(objectNS));
         objectCFPtr = reinterpret_cast<uintptr_t>(objectCF.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, objectNS.get());
         EXPECT_EQ(objectNSPtr, objectCFPtr);
@@ -114,7 +114,7 @@ TEST(TypeCastsCocoa, bridge_id_cast)
 {
     @autoreleasepool {
         RetainPtr<CFTypeRef> objectCF;
-        auto objectID = bridge_id_cast(WTFMove(objectCF));
+        auto objectID = bridge_id_cast(WTF::move(objectCF));
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(nil, objectID.get());
     }
@@ -124,7 +124,7 @@ TEST(TypeCastsCocoa, bridge_id_cast)
         auto objectCFPtr = reinterpret_cast<uintptr_t>(objectCF.get());
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCFPtr));
 
-        auto objectID = bridge_id_cast(WTFMove(objectCF));
+        auto objectID = bridge_id_cast(WTF::move(objectCF));
         uintptr_t objectIDPtr;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
             objectIDPtr = reinterpret_cast<uintptr_t>(objectID.get());
@@ -240,7 +240,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
 {
     @autoreleasepool {
         RetainPtr<NSObject> object;
-        auto objectCast = dynamic_objc_cast<NSString>(WTFMove(object));
+        auto objectCast = dynamic_objc_cast<NSString>(WTF::move(object));
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
         EXPECT_EQ(nil, objectCast.get());
     }
@@ -256,7 +256,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
         RetainPtr<NSString> objectCast;
         uintptr_t objectCastPtr;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
-            objectCast = dynamic_objc_cast<NSString>(WTFMove(object));
+            objectCast = dynamic_objc_cast<NSString>(WTF::move(object));
             objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
         }
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
@@ -272,7 +272,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
         RetainPtr<NSObject> objectCast2;
         uintptr_t objectCastPtr2;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
-            objectCast2 = dynamic_objc_cast<NSObject>(WTFMove(object));
+            objectCast2 = dynamic_objc_cast<NSObject>(WTF::move(object));
             objectCastPtr2 = reinterpret_cast<uintptr_t>(objectCast2.get());
         }
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
@@ -288,7 +288,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
         RetainPtr<NSArray> objectCastBad;
         uintptr_t objectPtr2;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
-            objectCastBad = dynamic_objc_cast<NSArray>(WTFMove(object));
+            objectCastBad = dynamic_objc_cast<NSArray>(WTF::move(object));
             objectPtr2 = reinterpret_cast<uintptr_t>(object.get());
         }
         EXPECT_EQ(objectPtr, objectPtr2);
@@ -304,7 +304,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
         }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
-        RetainPtr<NSObject> objectCast = WTFMove(object);
+        RetainPtr<NSObject> objectCast = WTF::move(object);
         uintptr_t objectCastPtr;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
             objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
@@ -326,7 +326,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
         RetainPtr<NSObject> objectCast;
         uintptr_t objectCastPtr;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
-            objectCast = dynamic_objc_cast<NSObject>(WTFMove(object));
+            objectCast = dynamic_objc_cast<NSObject>(WTF::move(object));
             objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
         }
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
@@ -341,7 +341,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
 
         RetainPtr<MyObjectSubtype> objectCastBad;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
-            objectCastBad = dynamic_objc_cast<MyObjectSubtype>(WTFMove(object));
+            objectCastBad = dynamic_objc_cast<MyObjectSubtype>(WTF::move(object));
         }
         EXPECT_EQ(nil, objectCastBad.get());
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));

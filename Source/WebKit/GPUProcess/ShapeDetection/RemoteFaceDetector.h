@@ -59,7 +59,7 @@ public:
 public:
     static Ref<RemoteFaceDetector> create(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, RemoteRenderingBackend& renderingBackend, ShapeDetectionIdentifier identifier)
     {
-        return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), renderingBackend, identifier));
+        return adoptRef(*new RemoteFaceDetector(WTF::move(faceDetector), renderingBackend, identifier));
     }
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;

@@ -27,7 +27,13 @@
 #if PLATFORM(GTK)
 #include "GtkVersioning.h"
 #elif PLATFORM(WPE)
+#include "WPEUtilities.h"
+#if USE(LIBWPE)
 #include <wpe/wpe.h>
+#endif
+#if ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
+#endif
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -55,6 +61,23 @@ unsigned toPlatformModifiers(OptionSet<WebKit::WebEventModifier> wkModifiers)
 unsigned toPlatformModifiers(OptionSet<WebKit::WebEventModifier> wkModifiers)
 {
     unsigned modifiers = 0;
+#if ENABLE(WPE_PLATFORM)
+    if (WKWPE::isUsingWPEPlatformAPI()) {
+        if (wkModifiers.contains(WebKit::WebEventModifier::ShiftKey))
+            modifiers |= WPE_MODIFIER_KEYBOARD_SHIFT;
+        if (wkModifiers.contains(WebKit::WebEventModifier::ControlKey))
+            modifiers |= WPE_MODIFIER_KEYBOARD_CONTROL;
+        if (wkModifiers.contains(WebKit::WebEventModifier::AltKey))
+            modifiers |= WPE_MODIFIER_KEYBOARD_ALT;
+        if (wkModifiers.contains(WebKit::WebEventModifier::MetaKey))
+            modifiers |= WPE_MODIFIER_KEYBOARD_META;
+        if (wkModifiers.contains(WebKit::WebEventModifier::CapsLockKey))
+            modifiers |= WPE_MODIFIER_KEYBOARD_CAPS_LOCK;
+        return modifiers;
+    }
+#endif
+
+#if USE(LIBWPE)
     if (wkModifiers.contains(WebKit::WebEventModifier::ShiftKey))
         modifiers |= wpe_input_keyboard_modifier_shift;
     if (wkModifiers.contains(WebKit::WebEventModifier::ControlKey))
@@ -63,6 +86,7 @@ unsigned toPlatformModifiers(OptionSet<WebKit::WebEventModifier> wkModifiers)
         modifiers |= wpe_input_keyboard_modifier_alt;
     if (wkModifiers.contains(WebKit::WebEventModifier::MetaKey))
         modifiers |= wpe_input_keyboard_modifier_meta;
+#endif
     return modifiers;
 }
 #endif
@@ -99,6 +123,10 @@ unsigned toWebKitMouseButton(WebKit::WebMouseEventButton button)
         return 2;
     case WebKit::WebMouseEventButton::Right:
         return 3;
+    case WebKit::WebMouseEventButton::Back:
+        return 4;
+    case WebKit::WebMouseEventButton::Forward:
+        return 5;
     }
     ASSERT_NOT_REACHED();
     return 0;

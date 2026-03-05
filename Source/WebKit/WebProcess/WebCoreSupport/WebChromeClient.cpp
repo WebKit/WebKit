@@ -75,14 +75,17 @@
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
 #include "WebWorkerClient.h"
-#include <WebCore/AppHighlight.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/AXSearchManager.h>
+#include <WebCore/AppHighlight.h>
 #include <WebCore/BarcodeDetectorInterface.h>
 #include <WebCore/ColorChooser.h>
 #include <WebCore/ColorChooserClient.h>
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+#include <WebCore/ContentChangeObserver.h>
+#endif
 #include <WebCore/ContentRuleListMatchedRule.h>
 #include <WebCore/ContentRuleListResults.h>
-#include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/DataListSuggestionPicker.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/DocumentFullscreen.h>
@@ -99,8 +102,10 @@
 #include <WebCore/FocusOptions.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/HTMLPlugInElement.h>
@@ -112,6 +117,7 @@
 #include <WebCore/PointerLockController.h>
 #include <WebCore/PopupMenuClient.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/RemoteFrame.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -171,13 +177,24 @@
 #include "TiledCoreAnimationScrollingCoordinator.h"
 #endif
 
+#if USE(COORDINATED_GRAPHICS)
+#include "ScrollingCoordinatorCoordinated.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "WebIconUtilities.h"
 #endif
 
 #if PLATFORM(MAC)
 #include "RemoteScrollbarsController.h"
+#endif
+
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
 #include <WebCore/ScrollbarsControllerMock.h>
+#endif
+
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+#include "ScrollbarsControllerCoordinated.h"
 #endif
 
 #if ENABLE(DAMAGE_TRACKING)
@@ -242,7 +259,7 @@ FloatRect WebChromeClient::windowRect() const
         return page->windowFrameInUnflippedScreenCoordinates();
 #endif
 
-    auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebPageProxy::GetWindowFrame(), page->identifier());
+    auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPageProxy::GetWindowFrame(), page->identifier());
     auto [newWindowFrame] = sendResult.takeReplyOr(FloatRect { });
     return newWindowFrame;
 #endif
@@ -328,11 +345,11 @@ void WebChromeClient::takeFocus(FocusDirection direction)
 
 void WebChromeClient::focusedElementChanged(Element* element, LocalFrame* frame, FocusOptions options, BroadcastFocusedElement broadcast)
 {
-    RefPtr coreFrame =  element ? element->document().protectedFrame() : frame;
+    RefPtr coreFrame =  element ? element->document().frame() : frame;
     RefPtr webFrame = coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
     RefPtr page = m_page.get();
     if (page && broadcast == BroadcastFocusedElement::Yes)
-        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::FocusedElementChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt, options), page->identifier());
+        protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::FocusedElementChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt, options), page->identifier());
 
     RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element);
     if (!inputElement || !inputElement->isText())
@@ -349,14 +366,14 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
         return;
 
     RefPtr webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page->identifier());
 }
 
 RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr document = frame.document())
-        document->protectedFullscreen()->fullyExitFullscreen();
+        protect(document->fullscreen())->fullyExitFullscreen();
 #endif
 
     auto& webProcess = WebProcess::singleton();
@@ -387,7 +404,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */
         navigationAction.newFrameOpenerPolicy() == NewFrameOpenerPolicy::Allow, /* hasOpener */
-        frame.loader().isHTTPFallbackInProgress(),
+        frame.loader().navigationUpgradeToHTTPSBehavior(),
         navigationAction.isInitialFrameSrcLoad(),
         navigationAction.isContentRuleListRedirect(),
         openedMainFrameName,
@@ -415,7 +432,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         navigationAction.requester(), /* requester */
     };
 
-    auto sendResult = webProcess.protectedParentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, navigationActionData), page->identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
+    auto sendResult = protect(webProcess.parentProcessConnection())->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, navigationActionData), page->identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
     if (!sendResult.succeeded())
         return nullptr;
 
@@ -425,8 +442,9 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
     ASSERT(parameters);
 
     parameters->oldPageID = page->identifier();
+    parameters->isPopup = windowFeatures.wantsPopup();
 
-    webProcess.createWebPage(*newPageID, WTFMove(*parameters));
+    webProcess.createWebPage(*newPageID, WTF::move(*parameters));
     return webProcess.webPage(*newPageID)->corePage();
 }
 
@@ -465,34 +483,12 @@ void WebChromeClient::reportProcessCPUTime(Seconds cpuTime, ActivityStateForCPUS
     WebProcess::singleton().send(Messages::WebProcessPool::ReportWebContentCPUTime(cpuTime, static_cast<uint64_t>(activityState)), 0);
 }
 
-bool WebChromeClient::toolbarsVisible() const
+bool WebChromeClient::isPopup() const
 {
     RefPtr page = m_page.get();
     if (!page)
         return false;
-    return page->toolbarsAreVisible();
-}
-
-bool WebChromeClient::statusbarVisible() const
-{
-    RefPtr page = m_page.get();
-    if (!page)
-        return false;
-    return page->statusBarIsVisible();
-}
-
-bool WebChromeClient::scrollbarsVisible() const
-{
-    notImplemented();
-    return true;
-}
-
-bool WebChromeClient::menubarVisible() const
-{
-    RefPtr page = m_page.get();
-    if (!page)
-        return false;
-    return page->menuBarIsVisible();
+    return page->isPopup();
 }
 
 void WebChromeClient::setResizable(bool resizable)
@@ -524,7 +520,7 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 
 bool WebChromeClient::runBeforeUnloadConfirmPanel(String&& message, LocalFrame& frame)
 {
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
 
     HangDetectionDisabler hangDetectionDisabler;
 
@@ -534,7 +530,7 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(String&& message, LocalFrame& 
 
     auto relay = AXRelayProcessSuspendedNotification(*page);
 
-    auto sendResult = page->sendSyncWithDelayedReply(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(webFrame->frameID(), webFrame->info(), WTFMove(message)));
+    auto sendResult = page->sendSyncWithDelayedReply(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(webFrame->frameID(), webFrame->info(), WTF::move(message)));
     auto [shouldClose] = sendResult.takeReplyOr(false);
     return shouldClose;
 }
@@ -552,7 +548,7 @@ void WebChromeClient::closeWindow()
     if (!page)
         return;
 
-    page->protectedCorePage()->setGroupName(String());
+    protect(page->corePage())->setGroupName(String());
 
     Ref frame = page->mainWebFrame();
     if (RefPtr coreFrame = frame->coreLocalFrame())
@@ -592,7 +588,7 @@ void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& alertT
     if (shouldSuppressJavaScriptDialogs(frame))
         return;
 
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
@@ -615,7 +611,7 @@ bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& mess
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
 
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
@@ -640,7 +636,7 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
 
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
@@ -711,7 +707,7 @@ void WebChromeClient::requestPointerLock(CompletionHandler<void(WebCore::Pointer
         return;
     }
 
-    page->sendWithAsyncReply(Messages::WebPageProxy::RequestPointerLock(), [completionHandler = WTFMove(completionHandler)](bool result) mutable {
+    page->sendWithAsyncReply(Messages::WebPageProxy::RequestPointerLock(), [completionHandler = WTF::move(completionHandler)](bool result) mutable {
         if (result)
             completionHandler(WebCore::PointerLockRequestResult::Success);
         else
@@ -722,7 +718,7 @@ void WebChromeClient::requestPointerLock(CompletionHandler<void(WebCore::Pointer
 void WebChromeClient::requestPointerUnlock(CompletionHandler<void(bool)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->sendWithAsyncReply(Messages::WebPageProxy::RequestPointerUnlock(), WTFMove(completionHandler));
+        page->sendWithAsyncReply(Messages::WebPageProxy::RequestPointerUnlock(), WTF::move(completionHandler));
     else
         completionHandler(false);
 }
@@ -749,7 +745,7 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
             return;
     }
 
-    page->protectedDrawingArea()->setNeedsDisplayInRect(rect);
+    protect(page->drawingArea())->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
@@ -768,7 +764,7 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
     }
 
     page->pageDidScroll();
-    page->protectedDrawingArea()->setNeedsDisplayInRect(rect);
+    protect(page->drawingArea())->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRect, const IntRect& clipRect)
@@ -778,7 +774,7 @@ void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRe
         return;
 
     page->pageDidScroll();
-    page->protectedDrawingArea()->scroll(intersection(scrollRect, clipRect), scrollDelta);
+    protect(page->drawingArea())->scroll(intersection(scrollRect, clipRect), scrollDelta);
 }
 
 IntPoint WebChromeClient::screenToRootView(const IntPoint& point) const
@@ -798,7 +794,30 @@ IntRect WebChromeClient::rootViewToScreen(const IntRect& rect) const
     RefPtr page = m_page.get();
     return page ? page->rootViewToScreen(rect) : IntRect();
 }
-    
+
+std::optional<IntPoint> WebChromeClient::screenToRootViewUsingCachedPosition(const IntPoint& screenPoint, const IntSize& viewSize) const
+{
+#if PLATFORM(MAC)
+    RefPtr page = m_page.get();
+    if (!page || !page->hasCachedWindowFrame())
+        return std::nullopt;
+
+    auto accessibilityPosition = page->accessibilityPosition();
+
+    // macOS accessibility coordinates use bottom-left origin (Y increases upward).
+    // Root view coordinates use top-left origin (Y increases downward).
+    // Convert: rootViewY = viewHeight - screenY + accessibilityPosition.y
+    int rootViewX = screenPoint.x() - static_cast<int>(accessibilityPosition.x());
+    int rootViewY = viewSize.height() - screenPoint.y() + static_cast<int>(accessibilityPosition.y());
+
+    return IntPoint(rootViewX, rootViewY);
+#else
+    UNUSED_PARAM(screenPoint);
+    UNUSED_PARAM(viewSize);
+    return std::nullopt;
+#endif
+}
+
 IntPoint WebChromeClient::accessibilityScreenToRootView(const IntPoint& point) const
 {
     RefPtr page = m_page.get();
@@ -810,6 +829,14 @@ IntRect WebChromeClient::rootViewToAccessibilityScreen(const IntRect& rect) cons
     RefPtr page = m_page.get();
     return page ? page->rootViewToAccessibilityScreen(rect) : IntRect();
 }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+void WebChromeClient::requestFrameScreenPosition(FrameIdentifier frameID) const
+{
+    if (RefPtr page = m_page.get())
+        page->requestFrameScreenPosition(frameID);
+}
+#endif
 
 void WebChromeClient::mainFrameDidChange()
 {
@@ -856,7 +883,7 @@ void WebChromeClient::contentsSizeChanged(LocalFrame& frame, const IntSize& size
 
     page->send(Messages::WebPageProxy::DidChangeContentSize(size));
 
-    page->protectedDrawingArea()->mainFrameContentSizeChanged(frame.frameID(), size);
+    protect(page->drawingArea())->mainFrameContentSizeChanged(frame.frameID(), size);
 
     if (frameView && !frameView->delegatesScrollingToNativeView())  {
         bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
@@ -880,6 +907,15 @@ void WebChromeClient::scrollMainFrameToRevealRect(const IntRect& rect) const
 void WebChromeClient::scrollContainingScrollViewsToRevealRect(const IntRect&) const
 {
     notImplemented();
+}
+
+CornerRadii WebChromeClient::scrollbarAvoidanceCornerRadii() const
+{
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    if (RefPtr page = m_page.get())
+        return page->scrollbarAvoidanceCornerRadii();
+#endif
+    return { };
 }
 
 bool WebChromeClient::shouldUnavailablePluginMessageBeButton(PluginUnavailabilityReason pluginUnavailabilityReason) const
@@ -927,7 +963,7 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
 {
     static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
 
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     WebCore::FloatSize pdfFirstPageSize;
@@ -988,7 +1024,7 @@ void WebChromeClient::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
 
     page->setActiveOpenPanelResultListener(WebOpenPanelResultListener::create(*page, fileChooser));
 
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     page->send(Messages::WebPageProxy::RunOpenPanel(webFrame->frameID(), webFrame->info(), fileChooser.settings()));
 }
@@ -996,26 +1032,26 @@ void WebChromeClient::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
 void WebChromeClient::showShareSheet(ShareDataWithParsedURL&& shareData, CompletionHandler<void(bool)>&& callback)
 {
     if (RefPtr page = m_page.get())
-        page->showShareSheet(WTFMove(shareData), WTFMove(callback));
+        page->showShareSheet(WTF::move(shareData), WTF::move(callback));
 }
 
 void WebChromeClient::showContactPicker(WebCore::ContactsRequestData&& requestData, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&& callback)
 {
     if (RefPtr page = m_page.get())
-        page->showContactPicker(WTFMove(requestData), WTFMove(callback));
+        page->showContactPicker(WTF::move(requestData), WTF::move(callback));
 }
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#if ENABLE(WEB_AUTHN)
 void WebChromeClient::showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData& requestData, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& callback)
 {
     if (RefPtr page = m_page.get())
-        page->showDigitalCredentialsPicker(requestData, WTFMove(callback));
+        page->showDigitalCredentialsPicker(requestData, WTF::move(callback));
 }
 
 void WebChromeClient::dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->dismissDigitalCredentialsPicker(WTFMove(completionHandler));
+        page->dismissDigitalCredentialsPicker(WTF::move(completionHandler));
 }
 #endif
 
@@ -1047,7 +1083,7 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
 
 void WebChromeClient::didAssociateFormControls(const Vector<Ref<Element>>& elements, WebCore::LocalFrame& frame)
 {
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     if (RefPtr page = m_page.get())
         page->injectedBundleFormClient().didAssociateFormControls(page.get(), elements, webFrame.get());
@@ -1057,16 +1093,6 @@ bool WebChromeClient::shouldNotifyOnFormChanges()
 {
     RefPtr page = m_page.get();
     return page && page->injectedBundleFormClient().shouldNotifyOnFormChanges(page.get());
-}
-
-bool WebChromeClient::selectItemWritingDirectionIsNatural()
-{
-    return false;
-}
-
-bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
-{
-    return true;
 }
 
 RefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient& client) const
@@ -1103,7 +1129,7 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
         RefPtr page = m_page.get();
         if (!page)
             return nullptr;
-        return page->ensureProtectedRemoteRenderingBackendProxy()->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
+        return protect(page->ensureRemoteRenderingBackendProxy())->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
     }
 
     if (purpose == RenderingPurpose::ShareableSnapshot || purpose == RenderingPurpose::ShareableLocalSnapshot)
@@ -1115,14 +1141,14 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
 RefPtr<ImageBuffer> WebChromeClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
     if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))
-        return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+        return SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(imageBuffer));
 
     RefPtr page = m_page.get();
     if (!page)
         return nullptr;
 
     auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
-    return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTFMove(remote), page->ensureProtectedRemoteRenderingBackendProxy());
+    return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTF::move(remote), protect(page->ensureRemoteRenderingBackendProxy()));
 }
 #endif
 
@@ -1131,7 +1157,7 @@ std::unique_ptr<WebCore::WorkerClient> WebChromeClient::createWorkerClient(Seria
     RefPtr page = m_page.get();
     if (!page)
         return nullptr;
-    return WebWorkerClient::create(*page->protectedCorePage(), dispatcher).moveToUniquePtr();
+    return WebWorkerClient::create(*protect(page->corePage()), dispatcher).moveToUniquePtr();
 }
 
 #if ENABLE(WEBGL)
@@ -1159,10 +1185,10 @@ RefPtr<WebCore::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
     RefPtr page = m_page.get();
     if (!page)
         return nullptr;
-    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), DDModel::DowncastConvertToBackingContext::create(), page.releaseNonNull());
+    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), ModelDowncastConvertToBackingContext::create(), page.releaseNonNull());
 #else
     return WebCore::WebGPU::create([](WebCore::WebGPU::WorkItem&& workItem) {
-        callOnMainRunLoop(WTFMove(workItem));
+        callOnMainRunLoop(WTF::move(workItem));
     }, nullptr);
 #endif
 }
@@ -1192,9 +1218,9 @@ void WebChromeClient::getBarcodeDetectorSupportedFormats(CompletionHandler<void(
         return;
     }
     Ref renderingBackend = page->ensureRemoteRenderingBackendProxy();
-    renderingBackend->supportedBarcodeDetectorBarcodeFormats(WTFMove(completionHandler));
+    renderingBackend->supportedBarcodeDetectorBarcodeFormats(WTF::move(completionHandler));
 #elif HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
-    WebCore::ShapeDetection::BarcodeDetectorImpl::getSupportedFormats(WTFMove(completionHandler));
+    WebCore::ShapeDetection::BarcodeDetectorImpl::getSupportedFormats(WTF::move(completionHandler));
 #else
     completionHandler({ });
 #endif
@@ -1306,7 +1332,7 @@ unsigned WebChromeClient::remoteImagesCountForTesting() const
 
 void WebChromeClient::registerBlobPathForTesting(const String& path, CompletionHandler<void()>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RegisterBlobPathForTesting(path), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RegisterBlobPathForTesting(path), WTF::move(completionHandler));
 }
 
 
@@ -1348,7 +1374,7 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
 
     ASSERT_UNUSED(corePage, page->corePage() == &corePage);
 #if ENABLE(TILED_CA_DRAWING_AREA)
-    switch (page->protectedDrawingArea()->type()) {
+    switch (protect(page->drawingArea())->type()) {
     case DrawingAreaType::TiledCoreAnimation:
         return TiledCoreAnimationScrollingCoordinator::create(page.get());
     case DrawingAreaType::RemoteLayerTree:
@@ -1356,6 +1382,8 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
     }
 #elif PLATFORM(COCOA)
     return RemoteScrollingCoordinator::create(page.get());
+#elif USE(COORDINATED_GRAPHICS)
+    return ScrollingCoordinatorCoordinated::create(page.get());
 #else
     return nullptr;
 #endif
@@ -1363,7 +1391,7 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
 
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
 void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea& area, bool update) const
 {
     RefPtr page = m_page.get();
@@ -1378,8 +1406,9 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
         return;
     }
 
+#if PLATFORM(MAC)
 #if ENABLE(TILED_CA_DRAWING_AREA)
-    switch (page->protectedDrawingArea()->type()) {
+    switch (protect(page->drawingArea())->type()) {
     case DrawingAreaType::RemoteLayerTree: {
         if (!area.usesCompositedScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
             area.setScrollbarsController(ScrollbarsController::create(area));
@@ -1398,6 +1427,15 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
     else if (area.usesCompositedScrolling() && (!currentScrollbarsController || !is<RemoteScrollbarsController>(currentScrollbarsController)))
         area.setScrollbarsController(makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator()));
 #endif
+#elif USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    if (area.usesCompositedScrolling()) {
+        if (!currentScrollbarsController || !is<ScrollbarsControllerCoordinated>(currentScrollbarsController))
+            area.setScrollbarsController(makeUnique<ScrollbarsControllerCoordinated>(area, corePage.scrollingCoordinator()));
+    } else {
+        if (!currentScrollbarsController || is<ScrollbarsControllerCoordinated>(currentScrollbarsController))
+            area.setScrollbarsController(ScrollbarsController::create(area));
+    }
+#endif
 }
 
 #endif
@@ -1414,19 +1452,19 @@ void WebChromeClient::prepareForVideoFullscreen()
 bool WebChromeClient::canEnterVideoFullscreen(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode) const
 {
     RefPtr page = m_page.get();
-    return page && page->protectedVideoPresentationManager()->canEnterVideoFullscreen(videoElement, mode);
+    return page && protect(page->videoPresentationManager())->canEnterVideoFullscreen(videoElement, mode);
 }
 
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     RefPtr page = m_page.get();
-    return page && page->protectedVideoPresentationManager()->supportsVideoFullscreen(mode);
+    return page && protect(page->videoPresentationManager())->supportsVideoFullscreen(mode);
 }
 
 bool WebChromeClient::supportsVideoFullscreenStandby()
 {
     RefPtr page = m_page.get();
-    return page && page->protectedVideoPresentationManager()->supportsVideoFullscreenStandby();
+    return page && protect(page->videoPresentationManager())->supportsVideoFullscreenStandby();
 }
 
 void WebChromeClient::setMockVideoPresentationModeEnabled(bool enabled)
@@ -1443,37 +1481,37 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 #endif
     if (RefPtr page = m_page.get())
-        page->protectedVideoPresentationManager()->enterVideoFullscreenForVideoElement(videoElement, mode, standby);
+        protect(page->videoPresentationManager())->enterVideoFullscreenForVideoElement(videoElement, mode, standby);
 }
 
 void WebChromeClient::setPlayerIdentifierForVideoElement(HTMLVideoElement& videoElement)
 {
     if (RefPtr page = m_page.get())
-        page->protectedVideoPresentationManager()->setPlayerIdentifierForVideoElement(videoElement);
+        protect(page->videoPresentationManager())->setPlayerIdentifierForVideoElement(videoElement);
 }
 
 void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->protectedVideoPresentationManager()->exitVideoFullscreenForVideoElement(videoElement, WTFMove(completionHandler));
+        protect(page->videoPresentationManager())->exitVideoFullscreenForVideoElement(videoElement, WTF::move(completionHandler));
 }
 
 void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& mediaElement)
 {
     if (RefPtr page = m_page.get())
-        page->protectedPlaybackSessionManager()->setUpPlaybackControlsManager(mediaElement);
+        protect(page->playbackSessionManager())->setUpPlaybackControlsManager(mediaElement);
 }
 
 void WebChromeClient::clearPlaybackControlsManager()
 {
     if (RefPtr page = m_page.get())
-        page->protectedPlaybackSessionManager()->clearPlaybackControlsManager();
+        protect(page->playbackSessionManager())->clearPlaybackControlsManager();
 }
 
 void WebChromeClient::mediaEngineChanged(WebCore::HTMLMediaElement& mediaElement)
 {
     if (RefPtr page = m_page.get())
-        page->protectedPlaybackSessionManager()->mediaEngineChanged(mediaElement);
+        protect(page->playbackSessionManager())->mediaEngineChanged(mediaElement);
 }
 
 #endif
@@ -1503,19 +1541,19 @@ void WebChromeClient::removeMediaUsageManagerSession(MediaSessionIdentifier iden
 void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
     if (RefPtr page = m_page.get())
-        page->protectedVideoPresentationManager()->exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
+        protect(page->videoPresentationManager())->exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
 }
 
 void WebChromeClient::setVideoFullscreenMode(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (RefPtr page = m_page.get())
-        page->protectedVideoPresentationManager()->setVideoFullscreenMode(videoElement, mode);
+        protect(page->videoPresentationManager())->setVideoFullscreenMode(videoElement, mode);
 }
 
 void WebChromeClient::clearVideoFullscreenMode(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (RefPtr page = m_page.get())
-        page->protectedVideoPresentationManager()->clearVideoFullscreenMode(videoElement, mode);
+        protect(page->videoPresentationManager())->clearVideoFullscreenMode(videoElement, mode);
 }
 
 #endif
@@ -1525,14 +1563,14 @@ void WebChromeClient::clearVideoFullscreenMode(HTMLVideoElement& videoElement, H
 bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool withKeyboard)
 {
     RefPtr page = m_page.get();
-    return page && page->protectedFullscreenManager()->supportsFullScreenForElement(element, withKeyboard);
+    return page && protect(page->fullScreenManager())->supportsFullScreenForElement(element, withKeyboard);
 }
 
 void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode, CompletionHandler<void(ExceptionOr<void>)>&& willEnterFullscreen, CompletionHandler<bool(bool)>&& didEnterFullscreen)
 {
     RefPtr page = m_page.get();
     ASSERT(page);
-    page->protectedFullscreenManager()->enterFullScreenForElement(element, mode, WTFMove(willEnterFullscreen), WTFMove(didEnterFullscreen));
+    protect(page->fullScreenManager())->enterFullScreenForElement(element, mode, WTF::move(willEnterFullscreen), WTF::move(didEnterFullscreen));
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(element); videoElement && mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow)
         setVideoFullscreenMode(*videoElement, mode);
@@ -1557,7 +1595,7 @@ void WebChromeClient::exitFullScreenForElement(Element* element, CompletionHandl
     }
 #endif
     if (RefPtr page = m_page.get())
-        page->protectedFullscreenManager()->exitFullScreenForElement(element, WTFMove(completionHandler));
+        protect(page->fullScreenManager())->exitFullScreenForElement(element, WTF::move(completionHandler));
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (exitingInWindowFullscreen)
         clearVideoFullscreenMode(*dynamicDowncast<HTMLVideoElement>(*element), HTMLMediaElementEnums::VideoFullscreenModeInWindow);
@@ -1662,6 +1700,38 @@ void WebChromeClient::spatialBackdropSourceChanged() const
 }
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+void WebChromeClient::allowImmersiveElement(CompletionHandler<void(bool)>&& completion) const
+{
+    if (RefPtr page = m_page.get())
+        page->allowImmersiveElement(WTF::move(completion));
+    else
+        completion(false);
+}
+
+void WebChromeClient::presentImmersiveElement(const LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion) const
+{
+    if (RefPtr page = m_page.get())
+        page->presentImmersiveElement(contextID, WTF::move(completion));
+    else
+        completion(false);
+}
+
+void WebChromeClient::dismissImmersiveElement(CompletionHandler<void()>&& completion) const
+{
+    if (RefPtr page = m_page.get())
+        page->dismissImmersiveElement(WTF::move(completion));
+    else
+        completion();
+}
+
+bool WebChromeClient::supportsImmersiveElement() const
+{
+    RefPtr page = m_page.get();
+    return page && page->allowsImmersiveEnvironments();
+}
+#endif
+
 #if ENABLE(APP_HIGHLIGHTS)
 WebCore::HighlightVisibility WebChromeClient::appHighlightsVisiblility() const
 {
@@ -1721,7 +1791,7 @@ void WebChromeClient::didAddFooterLayer(GraphicsLayer& footerParent)
 bool WebChromeClient::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
     RefPtr page = m_page.get();
-    return page && page->protectedDrawingArea()->shouldUseTiledBackingForFrameView(frameView);
+    return page && protect(page->drawingArea())->shouldUseTiledBackingForFrameView(frameView);
 }
 
 void WebChromeClient::frameViewLayoutOrVisualViewportChanged(const LocalFrameView& frameView)
@@ -1744,10 +1814,28 @@ void WebChromeClient::isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanP
 void WebChromeClient::resolveAccessibilityHitTestForTesting(FrameIdentifier frameID, const IntPoint& point, CompletionHandler<void(String)>&& callback)
 {
     if (RefPtr page = m_page.get())
-        page->sendWithAsyncReply(Messages::WebPageProxy::ResolveAccessibilityHitTestForTesting(frameID, point), WTFMove(callback));
+        page->sendWithAsyncReply(Messages::WebPageProxy::ResolveAccessibilityHitTestForTesting(frameID, point), WTF::move(callback));
     else
         callback({ });
 }
+
+#if PLATFORM(MAC)
+void WebChromeClient::performAccessibilitySearchInRemoteFrame(FrameIdentifier frameID, const AccessibilitySearchCriteriaIPC& criteria, CompletionHandler<void(Vector<AccessibilityRemoteToken>&&)>&& callback)
+{
+    if (RefPtr page = m_page.get())
+        page->sendWithAsyncReply(Messages::WebPageProxy::PerformAccessibilitySearchInRemoteFrame(frameID, criteria), WTF::move(callback));
+    else
+        callback({ });
+}
+
+void WebChromeClient::continueAccessibilitySearchFromChildFrame(FrameIdentifier childFrameID, const AccessibilitySearchCriteriaIPC& criteria, CompletionHandler<void(Vector<AccessibilityRemoteToken>&&)>&& callback)
+{
+    if (RefPtr page = m_page.get())
+        page->sendWithAsyncReply(Messages::WebPageProxy::ContinueAccessibilitySearchFromChildFrame(childFrameID, criteria), WTF::move(callback));
+    else
+        callback({ });
+}
+#endif
 
 void WebChromeClient::isPlayingMediaDidChange(MediaProducerMediaStateFlags state)
 {
@@ -1764,13 +1852,13 @@ void WebChromeClient::handleAutoplayEvent(AutoplayEvent event, OptionSet<Autopla
 void WebChromeClient::setTextIndicator(RefPtr<WebCore::TextIndicator>&& textIndicator) const
 {
     if (RefPtr page = m_page.get())
-        page->setTextIndicator(WTFMove(textIndicator));
+        page->setTextIndicator(WTF::move(textIndicator));
 }
 
 void WebChromeClient::updateTextIndicator(RefPtr<WebCore::TextIndicator>&& textIndicator) const
 {
     if (RefPtr page = m_page.get())
-        page->updateTextIndicator(WTFMove(textIndicator));
+        page->updateTextIndicator(WTF::move(textIndicator));
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
@@ -1841,16 +1929,18 @@ RefPtr<API::Object> userDataFromJSONData(JSON::Value& value)
         return API::String::create(value.asString());
     case JSON::Value::Type::Object: {
         auto result = API::Dictionary::create();
-        for (auto [key, value] : *value.asObject().unsafeGet())
+        RefPtr jsonObject = value.asObject();
+        for (auto [key, value] : *jsonObject)
             result->add(key, userDataFromJSONData(value));
         return result;
     }
     case JSON::Value::Type::Array: {
         auto array = value.asArray();
         Vector<RefPtr<API::Object>> result;
-        for (auto& item : *value.asArray().unsafeGet())
+        RefPtr jsonArray = value.asArray();
+        for (auto& item : *jsonArray)
             result.append(userDataFromJSONData(item));
-        return API::Array::create(WTFMove(result));
+        return API::Array::create(WTF::move(result));
     }
     }
     ASSERT_NOT_REACHED();
@@ -1962,20 +2052,20 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
 
 void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     if (RefPtr page = m_page.get())
-        page->hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, WTFMove(completionHandler));
+        page->hasStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), *webFrame, WTF::move(completionHandler));
     else
         completionHandler(false);
 }
 
 void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, StorageAccessScope scope, HasOrShouldIgnoreUserGesture hasOrShouldIgnoreUserGesture, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     if (RefPtr page = m_page.get())
-        page->requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, scope, hasOrShouldIgnoreUserGesture, WTFMove(completionHandler));
+        page->requestStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), *webFrame, scope, hasOrShouldIgnoreUserGesture, WTF::move(completionHandler));
     else
         completionHandler({ });
 }
@@ -1983,7 +2073,7 @@ void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, R
 void WebChromeClient::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->setLoginStatus(WTFMove(domain), loggedInStatus, WTFMove(completionHandler));
+        page->setLoginStatus(WTF::move(domain), loggedInStatus, WTF::move(completionHandler));
     else
         completionHandler();
 }
@@ -1991,7 +2081,7 @@ void WebChromeClient::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn logg
 void WebChromeClient::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->isLoggedIn(WTFMove(domain), WTFMove(completionHandler));
+        page->isLoggedIn(WTF::move(domain), WTF::move(completionHandler));
     else
         completionHandler(false);
 }
@@ -2005,10 +2095,10 @@ bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain
 #if ENABLE(DEVICE_ORIENTATION)
 void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(LocalFrame& frame, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback)
 {
-    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     if (RefPtr page = m_page.get())
-        page->shouldAllowDeviceOrientationAndMotionAccess(webFrame->frameID(), webFrame->info(), mayPrompt, WTFMove(callback));
+        page->shouldAllowDeviceOrientationAndMotionAccess(webFrame->frameID(), webFrame->info(), mayPrompt, WTF::move(callback));
     else
         callback(DeviceOrientationOrMotionPermissionState::Denied);
 }
@@ -2084,7 +2174,7 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOptions&& options, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
 {
     if (RefPtr page = m_page.get())
-        page->requestTextRecognition(element, WTFMove(options), WTFMove(completion));
+        page->requestTextRecognition(element, WTF::move(options), WTF::move(completion));
     else
         completion(nullptr);
 }
@@ -2144,7 +2234,7 @@ double WebChromeClient::baseViewportLayoutSizeScaleFactor() const
 void WebChromeClient::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, HTMLMediaElement& element, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->showMediaControlsContextMenu(WTFMove(targetFrame), WTFMove(items), element.identifier(), WTFMove(completionHandler));
+        page->showMediaControlsContextMenu(WTF::move(targetFrame), WTF::move(items), element.identifier(), WTF::move(completionHandler));
     else
         completionHandler({ });
 }
@@ -2155,7 +2245,7 @@ void WebChromeClient::showMediaControlsContextMenu(FloatRect&& targetFrame, Vect
 void WebChromeClient::enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::DeviceList&)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->xrSystemProxy().enumerateImmersiveXRDevices(WTFMove(completionHandler));
+        page->xrSystemProxy().enumerateImmersiveXRDevices(WTF::move(completionHandler));
     else
         completionHandler({ });
 }
@@ -2163,7 +2253,7 @@ void WebChromeClient::enumerateImmersiveXRDevices(CompletionHandler<void(const P
 void WebChromeClient::requestPermissionOnXRSessionFeatures(const SecurityOriginData& origin, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, const PlatformXR::Device::FeatureList& requiredFeaturesRequested, const PlatformXR::Device::FeatureList& optionalFeaturesRequested,  CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->xrSystemProxy().requestPermissionOnSessionFeatures(origin, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested, WTFMove(completionHandler));
+        page->xrSystemProxy().requestPermissionOnSessionFeatures(origin, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested, WTF::move(completionHandler));
     else
         completionHandler(std::nullopt);
 }
@@ -2174,7 +2264,7 @@ void WebChromeClient::requestPermissionOnXRSessionFeatures(const SecurityOriginD
 void WebChromeClient::startApplePayAMSUISession(const URL& originatingURL, const ApplePayAMSUIRequest& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->sendWithAsyncReply(Messages::WebPageProxy::StartApplePayAMSUISession(originatingURL, request), WTFMove(completionHandler));
+        page->sendWithAsyncReply(Messages::WebPageProxy::StartApplePayAMSUISession(originatingURL, request), WTF::move(completionHandler));
     else
         completionHandler(false);
 }
@@ -2191,25 +2281,17 @@ void WebChromeClient::abortApplePayAMSUISession()
 void WebChromeClient::beginSystemPreview(const URL& url, const SecurityOriginData& topOrigin, const SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->sendWithAsyncReply(Messages::WebPageProxy::BeginSystemPreview(url, topOrigin, systemPreviewInfo), WTFMove(completionHandler));
+        page->sendWithAsyncReply(Messages::WebPageProxy::BeginSystemPreview(url, topOrigin, systemPreviewInfo), WTF::move(completionHandler));
     else
         completionHandler();
 }
 #endif
 
-void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
-{
-    if (RefPtr page = m_page.get())
-        page->sendWithAsyncReply(Messages::WebPageProxy::RequestCookieConsent(), WTFMove(completion));
-    else
-        completion(CookieConsentDecisionResult::NotSupported);
-}
-
 bool WebChromeClient::isUsingUISideCompositing() const
 {
 #if ENABLE(TILED_CA_DRAWING_AREA)
     RefPtr page = m_page.get();
-    return page && page->protectedDrawingArea()->type() == DrawingAreaType::RemoteLayerTree;
+    return page && protect(page->drawingArea())->type() == DrawingAreaType::RemoteLayerTree;
 #elif PLATFORM(COCOA)
     return true;
 #else
@@ -2231,7 +2313,7 @@ bool WebChromeClient::isInStableState() const
 void WebChromeClient::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
 {
     if (RefPtr page = m_page.get())
-        page->didAdjustVisibilityWithSelectors(WTFMove(selectors));
+        page->didAdjustVisibilityWithSelectors(WTF::move(selectors));
 }
 
 #if ENABLE(GAMEPAD)
@@ -2277,7 +2359,7 @@ void WebChromeClient::addInitialTextAnimationForActiveWritingToolsSession()
 void WebChromeClient::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, string, WTFMove(completionHandler));
+        page->addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, string, WTF::move(completionHandler));
 }
 
 void WebChromeClient::addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<CharacterRange>& range, const String& string)
@@ -2316,7 +2398,7 @@ void WebChromeClient::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlaying
 void WebChromeClient::getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const
 {
     if (RefPtr page = m_page.get())
-        page->ensureProtectedRemoteRenderingBackendProxy()->getImageBufferResourceLimitsForTesting(WTFMove(callback));
+        protect(page->ensureRemoteRenderingBackendProxy())->getImageBufferResourceLimitsForTesting(WTF::move(callback));
     else
         callback(std::nullopt);
 }
@@ -2327,15 +2409,37 @@ bool WebChromeClient::requiresScriptTrackingPrivacyProtections(const URL& url, c
     return WebProcess::singleton().requiresScriptTrackingPrivacyProtections(url, topOrigin);
 }
 
+HTMLFrameOwnerElement* WebChromeClient::frameOwnerElementForFrameID(FrameIdentifier frameID) const
+{
+    RefPtr webFrame = WebFrame::webFrame(frameID);
+    if (!webFrame)
+        return nullptr;
+
+    RefPtr remoteFrame = webFrame->coreRemoteFrame();
+    if (remoteFrame)
+        return remoteFrame->ownerElement();
+
+    RefPtr localFrame = webFrame->coreLocalFrame();
+    if (localFrame)
+        return localFrame->ownerElement();
+
+    return nullptr;
+}
+
 bool WebChromeClient::shouldAllowScriptAccess(const URL& url, const SecurityOrigin& topOrigin, ScriptTrackingPrivacyCategory category) const
 {
     return WebProcess::singleton().shouldAllowScriptAccess(url, topOrigin, category);
 }
 
+bool WebChromeClient::requiresConsistentPrivacyQuirkForDomain(const URL& url) const
+{
+    return WebProcess::singleton().requiresConsistentPrivacyQuirkForDomain(url);
+}
+
 void WebChromeClient::callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion)
 {
     if (RefPtr page = m_page.get())
-        page->callAfterPendingSyntheticClick(WTFMove(completion));
+        page->callAfterPendingSyntheticClick(WTF::move(completion));
     else
         completion(SyntheticClickResult::Failed);
 }
@@ -2368,7 +2472,7 @@ void WebChromeClient::foreachRegionInDamageHistoryForTesting(Function<void(const
         return;
 
     if (const RefPtr drawingArea = m_page->drawingArea())
-        drawingArea->foreachRegionInDamageHistoryForTesting(WTFMove(callback));
+        drawingArea->foreachRegionInDamageHistoryForTesting(WTF::move(callback));
 }
 #endif
 
@@ -2395,7 +2499,7 @@ void WebChromeClient::showCaptionDisplaySettings(HTMLMediaElement& element, cons
         return;
     }
 
-    page->sendWithAsyncReply(Messages::WebPageProxy::ShowCaptionDisplaySettings(element.identifier(), options), [completionHandler = WTFMove(completionHandler)] (auto&& expected) mutable {
+    page->sendWithAsyncReply(Messages::WebPageProxy::ShowCaptionDisplaySettings(element.identifier(), options), [completionHandler = WTF::move(completionHandler)] (auto&& expected) mutable {
         if (expected)
             completionHandler({ });
         else
@@ -2403,5 +2507,19 @@ void WebChromeClient::showCaptionDisplaySettings(HTMLMediaElement& element, cons
     });
 }
 #endif
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame& frame, WebCore::ContentChange observedContentChange)
+{
+    if (RefPtr page = m_page.get())
+        page->didFinishContentChangeObserving(frame.frameID(), observedContentChange);
+}
+#endif
+
+void WebChromeClient::updateRemoteIntersectionObserversInOtherWebProcesses()
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::UpdateRemoteIntersectionObserversInOtherWebProcesses());
+}
 
 } // namespace WebKit

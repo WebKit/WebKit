@@ -1,13 +1,14 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
 fn switch_with_continue_in_loop_bi(x: i32) -> bool {
   {
     var val: i32 = 0;
@@ -62,7 +63,7 @@ fn loop_with_break_in_switch_bi(x: i32) -> bool {
     return val == 20;
   }
 }
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
     let x: i32 = i32(_globalUniforms.colorGreen.y);
     var _0_val: i32 = 0;
@@ -87,18 +88,16 @@ fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
         _0_val = _0_val + i32(1);
       }
     }
-    var _skTemp2: vec4<f32>;
+    var _skTemp2: vec4<f16>;
     var _skTemp3: bool;
     var _skTemp4: bool;
     if _0_val == 2 {
-      let _skTemp5 = switch_with_continue_in_loop_bi(x);
-      _skTemp4 = _skTemp5;
+      _skTemp4 = switch_with_continue_in_loop_bi(x);
     } else {
       _skTemp4 = false;
     }
     if _skTemp4 {
-      let _skTemp6 = loop_with_break_in_switch_bi(x);
-      _skTemp3 = _skTemp6;
+      _skTemp3 = loop_with_break_in_switch_bi(x);
     } else {
       _skTemp3 = false;
     }

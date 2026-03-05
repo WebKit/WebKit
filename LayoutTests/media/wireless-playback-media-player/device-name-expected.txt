@@ -1,0 +1,13 @@
+
+Test that the AirPlay placard is populated with the MediaDeviceRoute's deviceName.
+
+EXPECTED (video.remote.state == 'disconnected') OK
+RUN(video.src = findMediaFile('video', '../content/test'))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EVENT(connect)
+EXPECTED (placardDescription.innerText == 'This video is playing on “test”.') OK
+END OF TEST
+

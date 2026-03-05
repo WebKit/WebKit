@@ -54,66 +54,58 @@ std::vector<uint8_t> Marshal(int (*marshal_func)(CBB *, const T *),
 // take care of casting the key types from the public keys to the BCM types.
 // That saves casting noise in the template functions.
 
-int wrapper_768_marshal_private_key(
-    CBB *out, const struct MLKEM768_private_key *private_key) {
-  return bcm_success(BCM_mlkem768_marshal_private_key(
-      out, reinterpret_cast<const BCM_mlkem768_private_key *>(private_key)));
+int wrapper_768_marshal_private_key(CBB *out,
+                                    const MLKEM768_private_key *private_key) {
+  return bcm_success(BCM_mlkem768_marshal_private_key(out, private_key));
 }
 
-int wrapper_1024_marshal_private_key(
-    CBB *out, const struct MLKEM1024_private_key *private_key) {
-  return bcm_success(BCM_mlkem1024_marshal_private_key(
-      out, reinterpret_cast<const BCM_mlkem1024_private_key *>(private_key)));
+int wrapper_1024_marshal_private_key(CBB *out,
+                                     const MLKEM1024_private_key *private_key) {
+  return bcm_success(BCM_mlkem1024_marshal_private_key(out, private_key));
 }
 
 void wrapper_768_generate_key_external_seed(
     uint8_t out_encoded_public_key[MLKEM768_PUBLIC_KEY_BYTES],
     struct MLKEM768_private_key *out_private_key,
     const uint8_t seed[MLKEM_SEED_BYTES]) {
-  BCM_mlkem768_generate_key_external_seed(
-      out_encoded_public_key,
-      reinterpret_cast<BCM_mlkem768_private_key *>(out_private_key), seed);
+  BCM_mlkem768_generate_key_external_seed(out_encoded_public_key,
+                                          out_private_key, seed);
 }
 
 void wrapper_1024_generate_key_external_seed(
     uint8_t out_encoded_public_key[MLKEM1024_PUBLIC_KEY_BYTES],
     struct MLKEM1024_private_key *out_private_key,
     const uint8_t seed[MLKEM_SEED_BYTES]) {
-  BCM_mlkem1024_generate_key_external_seed(
-      out_encoded_public_key,
-      reinterpret_cast<BCM_mlkem1024_private_key *>(out_private_key), seed);
+  BCM_mlkem1024_generate_key_external_seed(out_encoded_public_key,
+                                           out_private_key, seed);
 }
 
 void wrapper_768_encap_external_entropy(
     uint8_t out_ciphertext[MLKEM768_CIPHERTEXT_BYTES],
     uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
-    const struct MLKEM768_public_key *public_key,
+    const MLKEM768_public_key *public_key,
     const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY]) {
-  BCM_mlkem768_encap_external_entropy(
-      out_ciphertext, out_shared_secret,
-      reinterpret_cast<const BCM_mlkem768_public_key *>(public_key), entropy);
+  BCM_mlkem768_encap_external_entropy(out_ciphertext, out_shared_secret,
+                                      public_key, entropy);
 }
 
 void wrapper_1024_encap_external_entropy(
     uint8_t out_ciphertext[MLKEM1024_CIPHERTEXT_BYTES],
     uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
-    const struct MLKEM1024_public_key *public_key,
+    const MLKEM1024_public_key *public_key,
     const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY]) {
-  BCM_mlkem1024_encap_external_entropy(
-      out_ciphertext, out_shared_secret,
-      reinterpret_cast<const BCM_mlkem1024_public_key *>(public_key), entropy);
+  BCM_mlkem1024_encap_external_entropy(out_ciphertext, out_shared_secret,
+                                       public_key, entropy);
 }
 
 int wrapper_768_parse_private_key(struct MLKEM768_private_key *out_private_key,
                                   CBS *in) {
-  return bcm_success(BCM_mlkem768_parse_private_key(
-      reinterpret_cast<BCM_mlkem768_private_key *>(out_private_key), in));
+  return bcm_success(BCM_mlkem768_parse_private_key(out_private_key, in));
 }
 
 int wrapper_1024_parse_private_key(
     struct MLKEM1024_private_key *out_private_key, CBS *in) {
-  return bcm_success(BCM_mlkem1024_parse_private_key(
-      reinterpret_cast<BCM_mlkem1024_private_key *>(out_private_key), in));
+  return bcm_success(BCM_mlkem1024_parse_private_key(out_private_key, in));
 }
 
 template <typename PUBLIC_KEY, size_t PUBLIC_KEY_BYTES, typename PRIVATE_KEY,
@@ -531,14 +523,14 @@ TEST(MLKEMTest, Iterate1024) {
 TEST(MLKEMTest, Self) { ASSERT_TRUE(boringssl_self_test_mlkem()); }
 
 TEST(MLKEMTest, PWCT) {
-  auto pub768 = std::make_unique<uint8_t[]>(BCM_MLKEM768_PUBLIC_KEY_BYTES);
-  auto priv768 = std::make_unique<BCM_mlkem768_private_key>();
+  auto pub768 = std::make_unique<uint8_t[]>(MLKEM768_PUBLIC_KEY_BYTES);
+  auto priv768 = std::make_unique<MLKEM768_private_key>();
   ASSERT_EQ(
       BCM_mlkem768_generate_key_fips(pub768.get(), nullptr, priv768.get()),
       bcm_status::approved);
 
-  auto pub1024 = std::make_unique<uint8_t[]>(BCM_MLKEM1024_PUBLIC_KEY_BYTES);
-  auto priv1024 = std::make_unique<BCM_mlkem1024_private_key>();
+  auto pub1024 = std::make_unique<uint8_t[]>(MLKEM1024_PUBLIC_KEY_BYTES);
+  auto priv1024 = std::make_unique<MLKEM1024_private_key>();
   ASSERT_EQ(
       BCM_mlkem1024_generate_key_fips(pub1024.get(), nullptr, priv1024.get()),
       bcm_status::approved);

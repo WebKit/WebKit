@@ -32,7 +32,7 @@
 #include "PathTraversalState.h"
 #include "RenderBlock.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "TransformOperationData.h"
 #include "TransformationMatrix.h"
 
@@ -51,7 +51,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
             auto referenceBox = offsetPath.referenceBox();
             auto referenceRect = container.referenceBoxRect(referenceBox);
             auto borderShape = BorderShape::shapeForBorderRect(container.style(), LayoutRect(referenceRect));
-            return borderShape.deprecatedPixelSnappedRoundedRect(container.document().deviceScaleFactor());
+            return borderShape.deprecatedPixelSnappedRoundedRect(protect(container.document())->deviceScaleFactor());
         },
         [&](const auto& offsetPath) -> FloatRoundedRect {
             auto referenceBox = offsetPath.referenceBox();
@@ -91,7 +91,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
     if (!canBuildMotionPathData)
         return std::nullopt;
 
-    auto startingPositionForOffsetPosition = [&](const Style::OffsetPosition& offsetPosition, const FloatRect& referenceRect, RenderBlock& container) -> FloatPoint {
+    auto startingPositionForOffsetPosition = [&](const Style::OffsetPosition& offsetPosition, const FloatRect& referenceRect, RenderBlock& container, Style::ZoomFactor zoom) -> FloatPoint {
         return WTF::switchOn(offsetPosition,
             [&](const CSS::Keyword::Normal&) {
                 // If offset-position is normal, the element does not have an offset starting position.
@@ -102,12 +102,12 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
                 return offsetFromContainer(renderer, container, referenceRect);
             },
             [&](const Style::Position& position) {
-                return Style::evaluate<FloatPoint>(position, referenceRect.size(), Style::ZoomNeeded { });
+                return Style::evaluate<FloatPoint>(position, referenceRect.size(), zoom);
             }
         );
     };
 
-    auto* container = renderer.containingBlock();
+    CheckedPtr container = renderer.containingBlock();
     if (!container)
         return std::nullopt;
 
@@ -115,17 +115,18 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
     data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, offsetPath);
     data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
+    auto zoom = renderer.style().usedZoomForLength();
     auto& offsetPosition = renderer.style().offsetPosition();
 
     WTF::switchOn(offsetPath,
         [&](const Style::BasicShapePath&) {
-            data.usedStartingPosition = startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container);
+            data.usedStartingPosition = startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container, zoom);
         },
         [&](const Style::RayPath& offsetPath) {
             auto startingPosition = offsetPath.ray()->position;
             data.usedStartingPosition = startingPosition
-                ? Style::evaluate<FloatPoint>(*startingPosition, data.containingBlockBoundingRect.rect().size(), Style::ZoomNeeded { })
-                : startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container);
+                ? Style::evaluate<FloatPoint>(*startingPosition, data.containingBlockBoundingRect.rect().size(), zoom)
+                : startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container, zoom);
         },
         [&](const auto&) { }
     );
@@ -180,42 +181,6 @@ void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const Tr
     matrix.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
 }
 
-void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const TransformOperationData& transformData, const RenderStyle& style)
-{
-    auto offsetPath = Style::tryPath(style.offsetPath(), transformData);
-    if (!offsetPath)
-        return;
-
-    auto boundingBox = transformData.boundingBox;
-
-    auto transformOrigin = style.computeTransformOrigin(boundingBox).xy();
-    auto transformBox = style.transformBox();
-
-    auto offsetDistance = Style::evaluate<float>(style.offsetDistance(), offsetPath->length(), Style::ZoomNeeded { });
-    auto offsetAnchor = WTF::switchOn(style.offsetAnchor(),
-        [&](const Style::Position& position) -> std::optional<FloatPoint> {
-            return Style::evaluate<FloatPoint>(position, boundingBox.size(), Style::ZoomNeeded { });
-        },
-        [&](const CSS::Keyword::Auto&) -> std::optional<FloatPoint> {
-            return { };
-        }
-    );
-    auto offsetRotate = style.offsetRotate().angle().value;
-    auto offsetRotateHasAuto = style.offsetRotate().hasAuto();
-
-    applyMotionPathTransform(
-        matrix,
-        transformData,
-        transformOrigin,
-        transformBox,
-        *offsetPath,
-        offsetAnchor,
-        offsetDistance,
-        offsetRotate,
-        offsetRotateHasAuto
-    );
-}
-
 bool MotionPath::needsUpdateAfterContainingBlockLayout(const Style::OffsetPath& offsetPath)
 {
     return WTF::holdsAlternative<Style::RayPath>(offsetPath)
@@ -257,7 +222,7 @@ static FloatPoint currentOffsetForData(const MotionPathData& data)
     return FloatPoint(data.usedStartingPosition - data.offsetFromContainingBlock);
 }
 
-std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPathOperation, const TransformOperationData& transformData)
+std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPathOperation, const TransformOperationData& transformData, Style::ZoomFactor)
 {
     auto motionPathData = transformData.motionPathData;
     if (!motionPathData || motionPathData->containingBlockBoundingRect.rect().isZero())
@@ -286,7 +251,7 @@ static FloatRoundedRect offsetRectForData(const MotionPathData& data)
     return rect;
 }
 
-std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const TransformOperationData& transformData)
+std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const TransformOperationData& transformData, Style::ZoomFactor)
 {
     if (auto motionPathData = transformData.motionPathData) {
         Path path;
@@ -296,22 +261,22 @@ std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const
     return std::nullopt;
 }
 
-std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pathOperation, const TransformOperationData& transformData)
+std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pathOperation, const TransformOperationData& transformData, Style::ZoomFactor zoom)
 {
     if (auto motionPathData = transformData.motionPathData) {
         auto containingBlockRect = offsetRectForData(*motionPathData).rect();
         return WTF::switchOn(pathOperation.shape(),
             [&]<Style::ShapeWithCenterCoordinate T>(const T& shape) -> std::optional<Path> {
                 if (!shape->position)
-                    return Style::pathForCenterCoordinate(*shape, containingBlockRect, motionPathData->usedStartingPosition);
-                return Style::path(shape, containingBlockRect);
+                    return Style::pathForCenterCoordinate(*shape, containingBlockRect, motionPathData->usedStartingPosition, zoom);
+                return Style::path(shape, containingBlockRect, zoom);
             },
             [&](const auto& shape) -> std::optional<Path> {
-                return Style::path(shape, containingBlockRect);
+                return Style::path(shape, containingBlockRect, zoom);
             }
         );
     }
-    return pathOperation.pathForReferenceRect(transformData.boundingBox);
+    return pathOperation.pathForReferenceRect(transformData.boundingBox, zoom);
 }
 
 } // namespace WebCore

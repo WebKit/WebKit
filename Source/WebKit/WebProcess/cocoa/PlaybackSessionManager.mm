@@ -33,6 +33,7 @@
 #import "MessageSenderInlines.h"
 #import "PlaybackSessionManagerMessages.h"
 #import "PlaybackSessionManagerProxyMessages.h"
+#import "TextRecognitionRequest.h"
 #import "VideoPresentationManager.h"
 #import "WebPage.h"
 #import "WebProcess.h"
@@ -172,16 +173,10 @@ void PlaybackSessionInterfaceContext::isInWindowFullscreenActiveChanged(bool isI
         manager->isInWindowFullscreenActiveChanged(m_contextId, isInWindow);
 }
 
-void PlaybackSessionInterfaceContext::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+void PlaybackSessionInterfaceContext::immersiveVideoMetadataChanged(const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
 {
     if (RefPtr manager = m_manager.get())
-        manager->spatialVideoMetadataChanged(m_contextId, metadata);
-}
-
-void PlaybackSessionInterfaceContext::videoProjectionMetadataChanged(const std::optional<VideoProjectionMetadata>& value)
-{
-    if (RefPtr manager = m_manager.get())
-        manager->videoProjectionMetadataChanged(m_contextId, value);
+        manager->immersiveVideoMetadataChanged(m_contextId, metadata);
 }
 
 #pragma mark - PlaybackSessionManager
@@ -196,6 +191,9 @@ PlaybackSessionManager::PlaybackSessionManager(WebPage& page)
 #if !RELEASE_LOG_DISABLED
     , m_logger(page.logger())
     , m_logIdentifier(page.logIdentifier())
+#endif
+#if ENABLE(IMAGE_ANALYSIS)
+    , m_textRecognitionRequest(makeUniqueRef<TextRecognitionRequest>(page, *this))
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -234,7 +232,7 @@ PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelA
     auto interface = PlaybackSessionInterfaceContext::create(*this, contextId);
     model->addClient(interface.get());
 
-    return std::make_tuple(WTFMove(model), WTFMove(interface));
+    return std::make_tuple(WTF::move(model), WTF::move(interface));
 }
 
 const PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(WebCore::HTMLMediaElementIdentifier contextId)
@@ -303,11 +301,11 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
 
     Ref page = *m_page;
     if (auto previousContextId = std::exchange(m_controlsManagerContextId, contextId)) {
-        if (mediaElement.protectedDocument()->quirks().needsNowPlayingFullscreenSwapQuirk()) {
+        if (protect(mediaElement.document())->quirks().needsNowPlayingFullscreenSwapQuirk()) {
             RefPtr previousElement = dynamicDowncast<HTMLVideoElement>(mediaElementWithContextId(*previousContextId));
             if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(mediaElement); videoElement && previousElement
                 && previousElement->fullscreenMode() != HTMLMediaElement::VideoFullscreenModeNone) {
-                page->protectedVideoPresentationManager()->swapFullscreenModes(*videoElement, *previousElement);
+                protect(page->videoPresentationManager())->swapFullscreenModes(*videoElement, *previousElement);
 
                 page->send(Messages::PlaybackSessionManagerProxy::SwapFullscreenModes(processQualify(contextId), processQualify(*previousContextId)));
 
@@ -399,6 +397,9 @@ void PlaybackSessionManager::durationChanged(WebCore::HTMLMediaElementIdentifier
 void PlaybackSessionManager::currentTimeChanged(WebCore::HTMLMediaElementIdentifier contextId, double currentTime, double anchorTime)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::CurrentTimeChanged(processQualify(contextId), currentTime, anchorTime));
+#if ENABLE(IMAGE_ANALYSIS)
+    m_textRecognitionRequest->requestTextRecognitionFor(contextId);
+#endif
 }
 
 void PlaybackSessionManager::bufferedTimeChanged(WebCore::HTMLMediaElementIdentifier contextId, double bufferedTime)
@@ -414,6 +415,9 @@ void PlaybackSessionManager::playbackStartedTimeChanged(WebCore::HTMLMediaElemen
 void PlaybackSessionManager::rateChanged(WebCore::HTMLMediaElementIdentifier contextId, OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(processQualify(contextId), playbackState, playbackRate, defaultPlaybackRate));
+#if ENABLE(IMAGE_ANALYSIS)
+    m_textRecognitionRequest->requestTextRecognitionFor(contextId);
+#endif
 }
 
 void PlaybackSessionManager::seekableRangesChanged(WebCore::HTMLMediaElementIdentifier contextId, const WebCore::PlatformTimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -476,14 +480,9 @@ void PlaybackSessionManager::isInWindowFullscreenActiveChanged(WebCore::HTMLMedi
     m_page->send(Messages::PlaybackSessionManagerProxy::IsInWindowFullscreenActiveChanged(processQualify(contextId), inWindow));
 }
 
-void PlaybackSessionManager::spatialVideoMetadataChanged(WebCore::HTMLMediaElementIdentifier contextId, const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+void PlaybackSessionManager::immersiveVideoMetadataChanged(WebCore::HTMLMediaElementIdentifier contextId, const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::SpatialVideoMetadataChanged(processQualify(contextId), metadata));
-}
-
-void PlaybackSessionManager::videoProjectionMetadataChanged(WebCore::HTMLMediaElementIdentifier contextId, const std::optional<VideoProjectionMetadata>& value)
-{
-    m_page->send(Messages::PlaybackSessionManagerProxy::VideoProjectionMetadataChanged(processQualify(contextId), value));
+    m_page->send(Messages::PlaybackSessionManagerProxy::ImmersiveVideoMetadataChanged(processQualify(contextId), metadata));
 }
 
 #pragma mark Messages from PlaybackSessionManagerProxy:
@@ -597,7 +596,7 @@ void PlaybackSessionManager::setMediaSessionAndRegisterAsObserver()
         return;
     }
 
-    auto mediaSession = NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator().get());
+    auto mediaSession = NavigatorMediaSession::mediaSessionIfExists(protect(window->navigator()).get());
     if (!mediaSession) {
         m_mediaSession = nullptr;
         return;

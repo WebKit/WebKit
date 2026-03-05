@@ -86,11 +86,11 @@ public:
     WEBCORE_EXPORT static bool shouldBeMadeSecure(const URL&);
 
     ContentExtensionsBackend() = default;
-    ContentExtensionsBackend isolatedCopy() && { return ContentExtensionsBackend { crossThreadCopy(WTFMove(m_contentExtensions)) }; }
+    ContentExtensionsBackend isolatedCopy() && { return ContentExtensionsBackend { crossThreadCopy(WTF::move(m_contentExtensions)) }; }
 
 private:
     explicit ContentExtensionsBackend(HashMap<String, Ref<ContentExtension>>&& contentExtensions)
-        : m_contentExtensions(WTFMove(contentExtensions))
+        : m_contentExtensions(WTF::move(contentExtensions))
     {
     }
 

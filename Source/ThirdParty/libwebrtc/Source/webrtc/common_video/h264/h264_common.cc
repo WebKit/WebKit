@@ -40,7 +40,9 @@ std::vector<NaluIndex> FindNaluIndices(ArrayView<const uint8_t> buffer) {
     } else if (buffer[i + 2] == 1) {
       if (buffer[i + 1] == 0 && buffer[i] == 0) {
         // We found a start sequence, now check if it was a 3 of 4 byte one.
-        NaluIndex index = {i, i + 3, 0};
+        NaluIndex index = {.start_offset = i,
+                           .payload_start_offset = i + 3,
+                           .payload_size = 0};
         if (index.start_offset > 0 && buffer[index.start_offset - 1] == 0)
           --index.start_offset;
 

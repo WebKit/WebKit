@@ -403,7 +403,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
             }
         }
         ASSERT(token == Token::ArrayEnd);
-        result = WTFMove(array);
+        result = WTF::move(array);
         break;
     }
     case Token::ObjectBegin: {
@@ -445,7 +445,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
             }
         }
         ASSERT(token == Token::ObjectEnd);
-        result = WTFMove(object);
+        result = WTF::move(object);
         break;
     }
 

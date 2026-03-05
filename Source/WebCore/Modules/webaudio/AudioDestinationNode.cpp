@@ -44,7 +44,7 @@
 
 namespace WebCore {
     
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioDestinationNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioDestinationNode);
 
 AudioDestinationNode::AudioDestinationNode(BaseAudioContext& context, float sampleRate)
     : AudioNode(context, NodeTypeDestination)
@@ -96,7 +96,7 @@ void AudioDestinationNode::renderQuantum(AudioBus& destinationBus, size_t number
 
     // This will cause the node(s) connected to us to process, which in turn will pull on their input(s),
     // all the way backwards through the rendering graph.
-    AudioBus& renderedBus = checkedInput(0)->pull(&destinationBus, numberOfFrames);
+    AudioBus& renderedBus = protect(input(0))->pull(&destinationBus, numberOfFrames);
 
     if (&renderedBus != &destinationBus) {
         // in-place processing was not possible - so copy

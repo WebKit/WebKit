@@ -148,7 +148,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSArray *)accessibilityChildren
 {
-    RetainPtr wrapper = [self accessibilityRootObjectWrapper:[self protectedFocusedLocalFrame].get()];
+    RetainPtr wrapper = [self accessibilityRootObjectWrapper:protect([self focusedLocalFrame]).get()];
     return wrapper ? @[wrapper.get()] : @[];
 }
 
@@ -203,16 +203,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
-        return [self accessibilityAttributeParentValue].unsafeGet();
+        return [self accessibilityAttributeParentValue].autorelease();
 
     if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
         return @(screenHeight.load());
 
     if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
-        return [self accessibilityAttributeWindowValue].unsafeGet();
+        return [self accessibilityAttributeWindowValue].autorelease();
 
     if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
-        return [self accessibilityAttributeTopLevelUIElementValue].unsafeGet();
+        return [self accessibilityAttributeTopLevelUIElementValue].autorelease();
 
     return nil;
 }
@@ -332,31 +332,38 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    return ax::retrieveAutoreleasedValueFromMainThread<id>([&point, PROTECTED_SELF] () -> id {
-        WebCore::IntPoint convertedPoint;
+    RetainPtr protectedSelf = self;
+    WebCore::IntPoint convertedPoint;
 
-        bool shouldFallbackToWebContentAXObject = !protectedSelf->m_hasMainFramePlugin || [protectedSelf shouldFallbackToWebContentAXObjectForMainFramePlugin];
-        if (!shouldFallbackToWebContentAXObject) {
-            // PDF plug-in handles the scroll view offset natively as part of the layer conversions, so don't
-            // do a coordinate conversion for those hit tests.
-            convertedPoint = WebCore::IntPoint { point };
-        } else {
-            RefPtr webPage = protectedSelf->m_page.get();
-            convertedPoint = webPage->screenToRootView(WebCore::IntPoint(point));
-            if (CheckedPtr localFrameView = webPage->localMainFrameView())
-                convertedPoint.moveBy(localFrameView->scrollPosition());
-            else if (RefPtr focusedLocalFrame = [protectedSelf focusedLocalFrame]) {
-                if (CheckedPtr frameView = focusedLocalFrame->view())
-                    convertedPoint.moveBy(frameView->scrollPosition());
+    if (isMainRunLoop() || !WebCore::AXObjectCache::isAXThreadHitTestingEnabled()) {
+        return ax::retrieveAutoreleasedValueFromMainThread<id>([&point, &protectedSelf, &convertedPoint] () -> id {
+            bool shouldFallbackToWebContentAXObject = !protectedSelf->m_hasMainFramePlugin || [protectedSelf shouldFallbackToWebContentAXObjectForMainFramePlugin];
+            if (!shouldFallbackToWebContentAXObject) {
+                // PDF plug-in handles the scroll view offset natively as part of the layer conversions, so don't
+                // do a coordinate conversion for those hit tests.
+                convertedPoint = WebCore::IntPoint { point };
+            } else {
+                RefPtr webPage = protectedSelf->m_page.get();
+                convertedPoint = webPage->screenToRootView(WebCore::IntPoint(point));
+                if (CheckedPtr localFrameView = webPage->localMainFrameView())
+                    convertedPoint.moveBy(localFrameView->scrollPosition());
+                else if (RefPtr focusedLocalFrame = [protectedSelf focusedLocalFrame]) {
+                    if (CheckedPtr frameView = focusedLocalFrame->view())
+                        convertedPoint.moveBy(frameView->scrollPosition());
+                }
+                if (RefPtr page = webPage->corePage()) {
+                    auto obscuredContentInsets = page->obscuredContentInsets();
+                    convertedPoint.move(-obscuredContentInsets.left(), -obscuredContentInsets.top());
+                }
             }
-            if (RefPtr page = webPage->corePage()) {
-                auto obscuredContentInsets = page->obscuredContentInsets();
-                convertedPoint.move(-obscuredContentInsets.left(), -obscuredContentInsets.top());
-            }
-        }
 
-        return [retainPtr([protectedSelf accessibilityRootObjectWrapper:[protectedSelf protectedFocusedLocalFrame].get()]) accessibilityHitTest:convertedPoint];
-    });
+            return [retainPtr([protectedSelf accessibilityRootObjectWrapper:protect([protectedSelf focusedLocalFrame]).get()]) accessibilityHitTest:convertedPoint];
+        });
+    }
+
+    // If we're here, we are doing a hit-test off the main-thread. Accessibility thread hit tests
+    // can handle the screen-relative point given to us by ATs, so pass it along with any conversion.
+    return [retainPtr([protectedSelf accessibilityRootObjectWrapper:protect([protectedSelf focusedLocalFrame]).get()]) accessibilityHitTest:WebCore::IntPoint(point)];
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

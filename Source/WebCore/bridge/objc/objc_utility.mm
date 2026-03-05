@@ -103,7 +103,7 @@ ObjcValue convertValueToObjcValue(JSGlobalObject* lexicalGlobalObject, JSValue v
             JSLockHolder lock(vm);
             
             JSGlobalObject *originGlobalObject = vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject);
-            RootObject* originRootObject = findRootObject(originGlobalObject);
+            RefPtr originRootObject = findRootObject(originGlobalObject);
 
             JSGlobalObject* globalObject = 0;
             if (value.isObject() && asObject(value)->isGlobalObject())
@@ -112,9 +112,9 @@ ObjcValue convertValueToObjcValue(JSGlobalObject* lexicalGlobalObject, JSValue v
             if (!globalObject)
                 globalObject = originGlobalObject;
                 
-            RootObject* rootObject = findRootObject(globalObject);
+            RefPtr rootObject = findRootObject(globalObject);
             result.objectValue = rootObject
-                ? (__bridge CFTypeRef)[webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject]
+                ? (__bridge CFTypeRef)[webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject.get() rootObject:rootObject.get()]
                 : nil;
         }
         break;

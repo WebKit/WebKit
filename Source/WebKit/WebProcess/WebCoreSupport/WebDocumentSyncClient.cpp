@@ -44,27 +44,22 @@ WebDocumentSyncClient::WebDocumentSyncClient(WebPage& webPage)
 {
 }
 
-Ref<WebPage> WebDocumentSyncClient::protectedPage() const
-{
-    return m_page.get();
-}
-
 bool WebDocumentSyncClient::siteIsolationEnabled()
 {
-    RefPtr corePage = protectedPage()->corePage();
-    return corePage ? corePage->settings().siteIsolationEnabled() : false;
+    RefPtr corePage = protect(m_page)->corePage();
+    return corePage && corePage->settings().siteIsolationEnabled();
 }
 
 void WebDocumentSyncClient::broadcastDocumentSyncDataToOtherProcesses(const WebCore::DocumentSyncSerializationData& data)
 {
     ASSERT(siteIsolationEnabled());
-    protectedPage()->send(Messages::WebPageProxy::BroadcastDocumentSyncData(data));
+    protect(m_page)->send(Messages::WebPageProxy::BroadcastDocumentSyncData(data));
 }
 
 void WebDocumentSyncClient::broadcastAllDocumentSyncDataToOtherProcesses(WebCore::DocumentSyncData& data)
 {
     ASSERT(siteIsolationEnabled());
-    protectedPage()->send(Messages::WebPageProxy::BroadcastAllDocumentSyncData(data));
+    protect(m_page)->send(Messages::WebPageProxy::BroadcastAllDocumentSyncData(data));
 }
 
 } // namespace WebKit

@@ -44,7 +44,7 @@ RefPtr<CSSValue> CSSMathValue::toCSSValue() const
         return nullptr;
 
     return CSSPrimitiveValue::create(CSSCalc::Value::create(*category, CSS::All, CSSCalc::Tree {
-        .root = WTFMove(*node),
+        .root = WTF::move(*node),
         .type = type,
         .stage = CSSCalc::Stage::Specified,
     }));

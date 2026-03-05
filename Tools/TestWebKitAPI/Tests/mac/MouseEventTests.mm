@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ClassMethodSwizzler.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -34,10 +35,27 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/MakeString.h>
+
+@interface OverrideMouseLocation : NSObject
++ (NSPoint)overrideMouseLocation;
++ (void)setOverrideMouseLocation:(NSPoint)location;
+@end
+
+@implementation OverrideMouseLocation
+static NSPoint overrideMouseLocation = { 0, 0 };
++ (NSPoint)overrideMouseLocation {
+    return overrideMouseLocation;
+}
+
++ (void)setOverrideMouseLocation:(NSPoint)location {
+    overrideMouseLocation = location;
+}
+@end
 
 namespace TestWebKitAPI {
 
@@ -337,6 +355,96 @@ TEST(MouseEventTests, AltModifierIsKeptWhenJSInterceptsClick)
 TEST(MouseEventTests, CmdShiftModifierIsKeptWhenJSInterceptsClick)
 {
     runModifierIsKeptWhenJSInterceptsClickTest(NSEventModifierFlagCommand | NSEventModifierFlagShift);
+}
+
+static void runDispatchMouseLeaveEventOnWindowMoveTest(NSPoint initialMouseLocationInWindow, NSRect initialFrame, NSRect finalFrame, int expectedNumberOfMouseLeaveEvents)
+{
+    ClassMethodSwizzler swizzler([NSEvent class], @selector(mouseLocation), [OverrideMouseLocation methodForSelector:@selector(overrideMouseLocation)]);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:initialFrame]);
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "    #target {width: 100px; height: 100px; background-color: red; position: absolute; bottom: 0; right: 0;}"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='target'></div>"
+        "<script>"
+        "    let mouseLeaveCount = 0;"
+        "    let target = document.getElementById('target');"
+        "    target.addEventListener('mouseleave', function() { mouseLeaveCount++ });"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    [webView mouseMoveToPoint:initialMouseLocationInWindow withFlags:0];
+    [OverrideMouseLocation setOverrideMouseLocation:initialMouseLocationInWindow];
+
+    [[webView window] setFrame:finalFrame display:YES];
+
+    [webView waitForPendingMouseEvents];
+
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"mouseLeaveCount"] intValue], expectedNumberOfMouseLeaveEvents);
+}
+
+TEST(MouseEventTests, WindowChangeShouldCauseMouseLeaveEvent)
+{
+    runDispatchMouseLeaveEventOnWindowMoveTest(NSMakePoint(350, 50), NSMakeRect(0, 0, 400, 400), NSMakeRect(100, 0, 400, 400), 1);
+}
+TEST(MouseEventTests, WindowChangeShouldNotCauseMouseLeaveEvent)
+{
+    runDispatchMouseLeaveEventOnWindowMoveTest(NSMakePoint(250, 50), NSMakeRect(0, 0, 400, 400), NSMakeRect(100, 0, 400, 400), 0);
+}
+
+TEST(MouseEventTests, AutoscrollOnMouseDragBelowWindow)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "    .tall { height: 5000px; line-height: 1.5; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div class='tall'>Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "Line of text. Line of text. Line of text. Line of text. Line of text. "
+        "</div>"
+        "</body>"
+        "</html>"];
+
+    EXPECT_EQ([[webView stringByEvaluatingJavaScript:@"window.scrollY"] intValue], 0);
+
+    ClassMethodSwizzler swizzler([NSEvent class], @selector(pressedMouseButtons), imp_implementationWithBlock(^NSUInteger(id) {
+        return 1 << 0; // Left button
+    }));
+
+    [webView mouseEnterAtPoint:NSMakePoint(200, 380)];
+    [webView mouseDownAtPoint:NSMakePoint(200, 380) simulatePressure:NO];
+    [webView waitForPendingMouseEvents];
+
+    RetainPtr exitEvent = [NSEvent enterExitEventWithType:NSEventTypeMouseExited location:NSMakePoint(200, -50) modifierFlags:0 timestamp:[webView eventTimestamp] windowNumber:[[webView window] windowNumber] context:nil eventNumber:0 trackingNumber:1 userData:nil];
+    [webView _simulateMouseExit:exitEvent.get()];
+
+    Util::runFor(100_ms);
+
+    int scrollY = [[webView stringByEvaluatingJavaScript:@"window.scrollY"] intValue];
+    EXPECT_GT(scrollY, 0);
 }
 
 } // namespace TestWebKitAPI

@@ -39,6 +39,10 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+#if ENABLE(MEDIA_SOURCE)
+#include "SourceBuffer.h"
+#endif
+
 #if ENABLE(VIDEO)
 
 namespace WebCore {
@@ -85,8 +89,20 @@ TrackBase::~TrackBase() = default;
 
 void TrackBase::didMoveToNewDocument(Document& newDocument)
 {
-    observeContext(newDocument.protectedContextDocument().ptr());
+    observeContext(protect(newDocument.contextDocument()).ptr());
 }
+
+#if ENABLE(MEDIA_SOURCE)
+SourceBuffer* TrackBase::sourceBuffer() const
+{
+    return m_sourceBuffer.get();
+}
+
+void TrackBase::setSourceBuffer(SourceBuffer* buffer)
+{
+    m_sourceBuffer = buffer;
+}
+#endif
 
 void TrackBase::setTrackList(TrackListBase& trackList)
 {
@@ -112,7 +128,7 @@ WebCoreOpaqueRoot TrackBase::opaqueRoot()
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1
-static bool isValidBCP47LanguageTag(const String& languageTag)
+static bool NODELETE isValidBCP47LanguageTag(const String& languageTag)
 {
     auto const length = languageTag.length();
 
@@ -202,7 +218,7 @@ void TrackBase::addClientToTrackPrivateBase(TrackPrivateBaseClient& client, Trac
 {
     if (RefPtr context = scriptExecutionContext()) {
         m_clientRegistrationId = track.addClient([contextIdentifier = context->identifier()](auto&& task) {
-            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, WTFMove(task));
+            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, WTF::move(task));
         }, client);
     }
 }

@@ -25,6 +25,11 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#include <wtf/Platform.h>
+
 #if USE(MEDIATOOLBOX)
 
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
@@ -55,3 +60,5 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapCr
 #define MTAudioProcessingTapCreate softLink_MediaToolbox_MTAudioProcessingTapCreate
 
 #endif // USE(MEDIATOOLBOX)
+
+#endif // !__has_feature(modules)

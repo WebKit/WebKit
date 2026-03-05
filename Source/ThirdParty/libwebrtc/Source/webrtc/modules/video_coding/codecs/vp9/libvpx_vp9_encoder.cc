@@ -65,6 +65,7 @@
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/experiments/field_trial_list.h"
 #include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/experiments/psnr_experiment.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -290,7 +291,9 @@ LibvpxVp9Encoder::LibvpxVp9Encoder(const Environment& env,
       performance_flags_(ParsePerformanceFlagsFromTrials(env.field_trials())),
       num_steady_state_frames_(0),
       config_changed_(true),
-      encoder_info_override_(env.field_trials()) {
+      encoder_info_override_(env.field_trials()),
+      psnr_experiment_(env.field_trials()),
+      psnr_frame_sampler_(psnr_experiment_.SamplingInterval()) {
   codec_ = {};
   memset(&svc_params_, 0, sizeof(vpx_svc_extra_cfg_t));
 }
@@ -667,7 +670,7 @@ int LibvpxVp9Encoder::InitEncode(const VideoCodec* inst,
   config_->g_error_resilient = is_svc_ ? VPX_ERROR_RESILIENT_DEFAULT : 0;
   // Setting the time base of the codec.
   config_->g_timebase.num = 1;
-  config_->g_timebase.den = 90000;
+  config_->g_timebase.den = kVideoPayloadTypeFrequency;
   config_->g_lag_in_frames = 0;  // 0- no frame lagging
   config_->g_threads = 1;
   // Rate control settings.
@@ -841,9 +844,11 @@ int LibvpxVp9Encoder::InitAndSetControlSettings() {
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
 
-  const vpx_codec_err_t rv = libvpx_->codec_enc_init(
-      encoder_, vpx_codec_vp9_cx(), config_,
-      config_->g_bit_depth == VPX_BITS_8 ? 0 : VPX_CODEC_USE_HIGHBITDEPTH);
+  vpx_codec_flags_t flags =
+      config_->g_bit_depth == VPX_BITS_8 ? 0 : VPX_CODEC_USE_HIGHBITDEPTH;
+
+  const vpx_codec_err_t rv =
+      libvpx_->codec_enc_init(encoder_, vpx_codec_vp9_cx(), config_, flags);
   if (rv != VPX_CODEC_OK) {
     RTC_LOG(LS_ERROR) << "Init error: " << libvpx_->codec_err_to_string(rv);
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
@@ -1233,6 +1238,12 @@ int LibvpxVp9Encoder::Encode(const VideoFrame& input_image,
   if (force_key_frame_) {
     flags = VPX_EFLAG_FORCE_KF;
   }
+#if defined(WEBRTC_ENCODER_PSNR_STATS) && defined(VPX_EFLAG_CALCULATE_PSNR)
+  if (psnr_experiment_.IsEnabled() &&
+      psnr_frame_sampler_.ShouldBeSampled(input_image)) {
+    flags |= VPX_EFLAG_CALCULATE_PSNR;
+  }
+#endif
 
   if (svc_controller_) {
     vpx_svc_ref_frame_config_t ref_config = Vp9References(layer_frames_);
@@ -1245,8 +1256,9 @@ int LibvpxVp9Encoder::Encode(const VideoFrame& input_image,
     if (VideoCodecMode::kScreensharing == codec_.mode) {
       for (uint8_t sl_idx = 0; sl_idx < num_active_spatial_layers_; ++sl_idx) {
         ref_config.duration[sl_idx] = static_cast<int64_t>(
-            90000 / (std::min(static_cast<float>(codec_.maxFramerate),
-                              framerate_controller_[sl_idx].GetTargetRate())));
+            kVideoPayloadTypeFrequency /
+            (std::min(static_cast<float>(codec_.maxFramerate),
+                      framerate_controller_[sl_idx].GetTargetRate())));
       }
     }
 
@@ -1270,7 +1282,8 @@ int LibvpxVp9Encoder::Encode(const VideoFrame& input_image,
                      framerate_controller_[num_active_spatial_layers_ - 1]
                          .GetTargetRate())
           : codec_.maxFramerate;
-  uint32_t duration = static_cast<uint32_t>(90000 / target_framerate_fps);
+  uint32_t duration =
+      static_cast<uint32_t>(kVideoPayloadTypeFrequency / target_framerate_fps);
   const vpx_codec_err_t rv = libvpx_->codec_encode(
       encoder_, raw_, timestamp_, duration, flags, VPX_DL_REALTIME);
   if (rv != VPX_CODEC_OK) {
@@ -1772,6 +1785,22 @@ void LibvpxVp9Encoder::GetEncodedLayerFrame(const vpx_codec_cx_pkt* pkt) {
   int qp = -1;
   libvpx_->codec_control(encoder_, VP8E_GET_LAST_QUANTIZER, &qp);
   encoded_image_.qp_ = qp;
+  // Pull PSNR which is not pushed for VP9.
+  // TODO: bugs.webrtc.org/388070060 - check SVC behavior.
+  // TODO: bugs.webrtc.org/388070060 - this is broken for simulcast which seems
+  // to be using kSVC.
+  vpx_codec_iter_t iter = nullptr;
+  const vpx_codec_cx_pkt_t* cx_data = nullptr;
+  encoded_image_.set_psnr(std::nullopt);
+  while ((cx_data = vpx_codec_get_cx_data(encoder_, &iter)) != nullptr) {
+    if (cx_data->kind == VPX_CODEC_PSNR_PKT) {
+      // PSNR index: 0: total, 1: Y, 2: U, 3: V
+      encoded_image_.set_psnr(
+          EncodedImage::Psnr({.y = cx_data->data.psnr.psnr[1],
+                              .u = cx_data->data.psnr.psnr[2],
+                              .v = cx_data->data.psnr.psnr[3]}));
+    }
+  }
 
   const bool end_of_picture = encoded_image_.SpatialIndex().value_or(0) + 1 ==
                               num_active_spatial_layers_;
@@ -1853,6 +1882,10 @@ VideoEncoder::EncoderInfo LibvpxVp9Encoder::GetEncoderInfo() const {
           codec_.spatialLayers[si].maxFramerate > max_fps) {
         max_fps = codec_.spatialLayers[si].maxFramerate;
       }
+    }
+    if (num_active_spatial_layers_ > 0) {
+      info.mapped_resolution =
+          VideoEncoder::Resolution(config_->g_w, config_->g_h);
     }
 
     for (size_t si = 0; si < num_spatial_layers_; ++si) {

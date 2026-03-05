@@ -49,7 +49,7 @@ public:
     }
 
     template<typename T>
-    WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContain(size_t numElements) const
+    [[nodiscard]] bool bufferIsLargeEnoughToContain(size_t numElements) const
     {
         static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
 
@@ -59,11 +59,11 @@ public:
         return bufferIsLargeEnoughToContainBytes(numElements * sizeof(T));
     }
 
-    WARN_UNUSED_RETURN bool decodeFixedLengthData(std::span<uint8_t> data);
-    std::span<const uint8_t> decodeFixedLengthReference(size_t);
+    [[nodiscard]] bool decodeFixedLengthData(std::span<uint8_t> data);
+    std::span<const uint8_t> NODELETE decodeFixedLengthReference(size_t);
 
 private:
-    WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContainBytes(size_t) const;
+    [[nodiscard]] bool NODELETE bufferIsLargeEnoughToContainBytes(size_t) const;
 
     std::span<const uint8_t> m_buffer;
     size_t m_bufferPosition { 0 };

@@ -96,8 +96,8 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
         // We can just move these pointers to CommonData, and that's enough.
         static_assert(sizeof(m_finalizedStructures) == sizeof(void*));
         static_assert(sizeof(m_finalizedCells) == sizeof(void*));
-        common->m_weakStructureReferences = WTFMove(m_finalizedStructures);
-        common->m_weakReferences = WTFMove(m_finalizedCells);
+        common->m_weakStructureReferences = WTF::move(m_finalizedStructures);
+        common->m_weakReferences = WTF::move(m_finalizedCells);
     }
 }
 

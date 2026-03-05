@@ -13,7 +13,7 @@ features: [SharedArrayBuffer, TypedArray]
 
 var int_views = [Int8Array, Uint8Array, Int16Array, Uint16Array, Int32Array, Uint32Array];
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var other = Int32Array;
   var sab = new SharedArrayBuffer(2 * other.BYTES_PER_ELEMENT);
   var src = new other(sab);
@@ -21,17 +21,17 @@ testWithTypedArrayConstructors(function(TA) {
   src[1] = 43;
   var sample, result;
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(src, 0);
   assert(compareArray(sample, [42, 43, 3, 4]), "src is SAB-backed, offset: 0, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(src, 1);
   assert(compareArray(sample, [1, 42, 43, 4]), "src is SAB-backed, offset: 1, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(src, 2);
   assert(compareArray(sample, [1, 2, 42, 43]), "src is SAB-backed, offset: 2, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");

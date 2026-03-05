@@ -32,7 +32,7 @@ auto SideDataRepository::add(void* owner, void* key, std::unique_ptr<SideData> s
 {
     auto result = m_ownerStore.add(owner, KeyValueStore());
     KeyValueStore& storage = result.iterator->value;
-    return storage.add(key, WTFMove(sideData));
+    return storage.add(key, WTF::move(sideData));
 }
 
 void SideDataRepository::deleteAll(void* owner)

@@ -56,7 +56,7 @@ ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isola
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isolatedCopy() &&
 {
     ContentSecurityPolicyResponseHeaders isolatedCopy;
-    isolatedCopy.m_headers = crossThreadCopy(WTFMove(m_headers));
+    isolatedCopy.m_headers = crossThreadCopy(WTF::move(m_headers));
     isolatedCopy.m_httpStatusCode = m_httpStatusCode;
     return isolatedCopy;
 }

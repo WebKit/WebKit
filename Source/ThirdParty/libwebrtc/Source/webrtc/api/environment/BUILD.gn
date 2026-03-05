@@ -23,6 +23,22 @@ rtc_source_set("environment") {
   ]
 }
 
+rtc_library("deprecated_global_field_trials") {
+  visibility = [
+    ":environment_factory",
+    "../../system_wrappers:field_trial",
+  ]
+  allow_poison = [ "environment_construction" ]
+  sources = [
+    "deprecated_global_field_trials.cc",
+    "deprecated_global_field_trials.h",
+  ]
+  deps = [
+    "../:field_trials_registry",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
 rtc_library("environment_factory") {
   visibility = [ "*" ]
   poisonous = [ "environment_construction" ]
@@ -31,6 +47,7 @@ rtc_library("environment_factory") {
     "environment_factory.h",
   ]
   deps = [
+    ":deprecated_global_field_trials",
     ":environment",
     "..:field_trials_view",
     "..:make_ref_counted",
@@ -42,7 +59,6 @@ rtc_library("environment_factory") {
     "../rtc_event_log",
     "../task_queue",
     "../task_queue:default_task_queue_factory",
-    "../transport:field_trial_based_config",
     "//third_party/abseil-cpp/absl/base:nullability",
   ]
 }

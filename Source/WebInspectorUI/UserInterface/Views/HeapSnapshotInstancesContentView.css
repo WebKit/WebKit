@@ -139,6 +139,7 @@
 .heap-snapshot > .data-grid td .object-preview {
     text-indent: 0; /* Do not inherit the DataGrid's indent. */
     line-height: initial;
+    white-space: normal; /* Do not inherit the DataGrid's `white-space: nowrap`. */
 }
 
 .heap-snapshot-instance-popover-content > .title {

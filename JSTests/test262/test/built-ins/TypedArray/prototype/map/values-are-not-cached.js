@@ -11,8 +11,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43, 44]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43, 44]));
 
   sample.map(function(v, i) {
     if (i < sample.length - 1) {

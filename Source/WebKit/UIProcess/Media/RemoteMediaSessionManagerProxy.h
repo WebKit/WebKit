@@ -75,15 +75,20 @@ public:
 
     virtual ~RemoteMediaSessionManagerProxy();
 
+    // IPC::MessageReceiver, WebCore::AudioSession.
+    void ref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::ref(); }
+    void deref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::deref(); }
+
 #if USE(AUDIO_SESSION)
-    void ref() const final { AudioSession::ref(); }
-    void deref() const final { AudioSession::deref(); }
-#else
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    // WebCore::AudioSession.
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::controlBlock(); }
+    uint32_t weakRefCount() const final { return REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::weakRefCount(); }
 #endif
 
     const Ref<WebProcessProxy> process() const { return m_process; }
+
+    void addRemoteMediaSessionManager(WebCore::PageIdentifier);
+    void removeRemoteMediaSessionManager(WebCore::PageIdentifier);
 
 private:
     RemoteMediaSessionManagerProxy(WebCore::PageIdentifier, WebProcessProxy&);
@@ -93,6 +98,14 @@ private:
     void removeMediaSession(RemoteMediaSessionState&&);
     void setCurrentMediaSession(RemoteMediaSessionState&&);
     void updateMediaSessionState();
+    void mediaSessionStateChanged(WebKit::RemoteMediaSessionState&&);
+    void mediaSessionWillBeginPlayback(RemoteMediaSessionState&&, CompletionHandler<void(bool)>&&);
+
+    void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
+
+    void addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions);
+    void removeMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions);
+    void resetMediaSessionRestrictions();
 
 #if PLATFORM(COCOA)
     void remoteAudioHardwareDidBecomeActive();
@@ -125,7 +138,8 @@ private:
     CategoryType categoryOverride() const final  { return m_audioConfiguration.categoryOverride; }
 #endif
 
-    RefPtr<WebCore::PlatformMediaSessionInterface> findSession(RemoteMediaSessionState&);
+    void forEachRemoteSessionManager(NOESCAPE const Function<void(WebCore::PageIdentifier)>&);
+    RefPtr<WebCore::PlatformMediaSessionInterface> findAndUpdateSession(RemoteMediaSessionState&);
     Ref<RemoteMediaSessionManagerAudioHardwareListener> ensureAudioHardwareListenerProxy(WebCore::AudioHardwareListener::Client&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -134,15 +148,16 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final;
 #endif
 
     const Ref<WebProcessProxy> m_process;
-    WebCore::PageIdentifier m_topPageID;
+    WebCore::PageIdentifier m_localPageID;
     HashMap<WebCore::MediaSessionIdentifier, Ref<RemoteMediaSessionProxy>> m_sessionProxies;
+    HashSet<WebCore::PageIdentifier> m_remoteSessionManagerPages;
 
 #if PLATFORM(COCOA)
     RefPtr<RemoteMediaSessionManagerAudioHardwareListener> m_audioHardwareListenerProxy;
@@ -156,6 +171,7 @@ private:
 #endif
 
     bool m_isInterruptedForTesting { false };
+    bool m_isInSetCurrentSession { false };
 };
 
 #if !RELEASE_LOG_DISABLED

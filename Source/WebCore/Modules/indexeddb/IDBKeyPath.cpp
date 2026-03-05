@@ -50,7 +50,7 @@ public:
     {
     }
 
-    TokenType currentTokenType() const { return m_currentTokenType; }
+    TokenType NODELETE currentTokenType() const { return m_currentTokenType; }
 
     TokenType nextTokenType()
     {
@@ -58,7 +58,7 @@ public:
         return m_currentTokenType;
     }
 
-    const String& currentElement() { return m_currentElement; }
+    const String& NODELETE currentElement() { return m_currentElement; }
 
 private:
     TokenType lex(String&);

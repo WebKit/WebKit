@@ -50,6 +50,9 @@ class WebEvent : public CanMakeThreadSafeCheckedPtr<WebEvent, WTF::DefaultedOper
     WTF_MAKE_TZONE_ALLOCATED(WebEvent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEvent);
 public:
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp, WTF::UUID authorizationToken, uintptr_t signpostIdentifier);
+#endif
     WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp, WTF::UUID authorizationToken);
     WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp);
 
@@ -67,14 +70,21 @@ public:
 
     MonotonicTime timestamp() const { return m_timestamp; }
 
-    bool isActivationTriggeringEvent() const;
+    bool NODELETE isActivationTriggeringEvent() const;
     WTF::UUID authorizationToken() const { return m_authorizationToken; }
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    uintptr_t signpostIdentifier() const { return m_signpostIdentifier; }
+#endif
 
 private:
     WebEventType m_type;
     OptionSet<WebEventModifier> m_modifiers;
     MonotonicTime m_timestamp;
     WTF::UUID m_authorizationToken;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    uintptr_t m_signpostIdentifier;
+#endif
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, WebEventType);

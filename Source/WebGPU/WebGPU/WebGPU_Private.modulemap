@@ -1,0 +1,9 @@
+framework module WebGPU_Private [system] {
+    umbrella "PrivateHeaders"
+
+    explicit module * {
+        export *
+    }
+
+    export *
+}

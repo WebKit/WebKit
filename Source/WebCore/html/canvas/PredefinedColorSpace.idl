@@ -25,8 +25,10 @@
 
 // https://html.spec.whatwg.org/multipage/canvas.html#predefinedcolorspace
 enum PredefinedColorSpace {
-    "srgb"
+      "srgb"
+    , "srgb-linear"
 #if defined(ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3) && ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3
     , "display-p3"
+    , "display-p3-linear"
 #endif
 };

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(KeyboardEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyboardEvent);
 
 static inline const AtomString& eventTypeForKeyboardEventType(PlatformEvent::Type type)
 {
@@ -57,7 +57,7 @@ static inline const AtomString& eventTypeForKeyboardEventType(PlatformEvent::Typ
     return eventNames().keydownEvent;
 }
 
-static inline int windowsVirtualKeyCodeWithoutLocation(int keycode)
+static inline int NODELETE windowsVirtualKeyCodeWithoutLocation(int keycode)
 {
     switch (keycode) {
     case VK_LCONTROL:
@@ -74,7 +74,7 @@ static inline int windowsVirtualKeyCodeWithoutLocation(int keycode)
     }
 }
 
-static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeyboardEvent& key)
+static inline KeyboardEvent::KeyLocationCode NODELETE keyLocationCode(const PlatformKeyboardEvent& key)
 {
     if (key.isKeypad())
         return KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
@@ -110,8 +110,11 @@ static bool viewIsCompositing(WindowProxy* view)
 {
     if (!view)
         return false;
-    auto* window = dynamicDowncast<LocalDOMWindow>(view->window());
-    return window && window->localFrame() && window->localFrame()->editor().hasComposition();
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(view->window());
+    if (!window)
+        return false;
+    RefPtr localFrame = window->frame();
+    return localFrame && localFrame->editor().hasComposition();
 }
 
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
@@ -151,7 +154,7 @@ KeyboardEvent::~KeyboardEvent() = default;
 
 Ref<KeyboardEvent> KeyboardEvent::create(const PlatformKeyboardEvent& platformEvent, RefPtr<WindowProxy>&& view)
 {
-    return adoptRef(*new KeyboardEvent(platformEvent, WTFMove(view)));
+    return adoptRef(*new KeyboardEvent(platformEvent, WTF::move(view)));
 }
 
 Ref<KeyboardEvent> KeyboardEvent::createForBindings()
@@ -170,7 +173,7 @@ void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bo
     if (isBeingDispatched())
         return;
 
-    initUIEvent(type, canBubble, cancelable, WTFMove(view), 0);
+    initUIEvent(type, canBubble, cancelable, WTF::move(view), 0);
 
     m_keyIdentifier = keyIdentifier;
     m_location = location;
@@ -229,18 +232,14 @@ int KeyboardEvent::charCode() const
     // Firefox: 0 for keydown/keyup events, character code for keypress
     // We match Firefox, unless in backward compatibility mode, where we always return the character code.
     bool backwardCompatibilityMode = false;
-    RefPtr window = dynamicDowncast<LocalDOMWindow>(view() ? view()->window() : nullptr);
-    if (RefPtr frame = window ? window->localFrame() : nullptr)
+    RefPtr view = this->view();
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(view ? view->window() : nullptr);
+    if (RefPtr frame = window ? window->frame() : nullptr)
         backwardCompatibilityMode = frame->eventHandler().needsKeyboardEventDisambiguationQuirks();
 
     if (!m_underlyingPlatformEvent || (type() != eventNames().keypressEvent && !backwardCompatibilityMode))
         return 0;
     return m_underlyingPlatformEvent->text().characterStartingAt(0);
-}
-
-bool KeyboardEvent::isKeyboardEvent() const
-{
-    return true;
 }
 
 unsigned KeyboardEvent::which() const

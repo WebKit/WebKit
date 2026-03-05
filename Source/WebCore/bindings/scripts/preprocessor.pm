@@ -59,6 +59,10 @@ sub applyPreprocessor
     }
 
     if ($Config::Config{"osname"} eq "darwin") {
+        (my $arch, @_) = split(" ", $ENV{ARCHS});
+        my $vendor = $ENV{LLVM_TARGET_TRIPLE_VENDOR};
+        my $os = $ENV{LLVM_TARGET_TRIPLE_OS_VERSION} . ($ENV{LLVM_TARGET_TRIPLE_SUFFIX} // "");
+        push(@args, "-target", "$arch-$vendor-$os");
         push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
         push(@args, "-isysroot", $ENV{SDKROOT}) if $ENV{SDKROOT};
     }

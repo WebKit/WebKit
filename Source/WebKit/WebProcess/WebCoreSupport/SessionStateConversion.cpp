@@ -52,13 +52,13 @@ static HTTPBody toHTTPBody(const FormData& formData)
                 if (fileData.fileLength != BlobDataItem::toEndOfFile)
                     data.fileLength = fileData.fileLength;
                 data.expectedFileModificationTime = fileData.expectedFileModificationTime;
-                element.data = WTFMove(data);
+                element.data = WTF::move(data);
             }, [&] (const FormDataElement::EncodedBlobData& blobData) {
                 element.data = blobData.url.string();
             }
         );
 
-        httpBody.elements.append(WTFMove(element));
+        httpBody.elements.append(WTF::move(element));
     }
 
     return httpBody;
@@ -89,7 +89,7 @@ Ref<FrameState> toFrameState(const HistoryItem& historyItem)
         HTTPBody httpBody = toHTTPBody(formData.releaseNonNull());
         httpBody.contentType = historyItem.formContentType();
 
-        frameState->httpBody = WTFMove(httpBody);
+        frameState->httpBody = WTF::move(httpBody);
     }
 
     frameState->itemID = historyItem.itemID();
@@ -148,7 +148,7 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
 
     if (frameState.stateObjectData) {
         Vector<uint8_t> stateObjectData = frameState.stateObjectData.value();
-        historyItem.setStateObject(SerializedScriptValue::createFromWireBytes(WTFMove(stateObjectData)));
+        historyItem.setStateObject(SerializedScriptValue::createFromWireBytes(WTF::move(stateObjectData)));
     }
 
     historyItem.setDocumentSequenceNumber(frameState.documentSequenceNumber);
@@ -185,7 +185,7 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
         Ref childHistoryItem = HistoryItem::create(client, childFrameState->urlString, { }, { }, childFrameState->itemID, childFrameState->frameItemID);
         applyFrameState(client, childHistoryItem, childFrameState);
 
-        historyItem.addChildItem(WTFMove(childHistoryItem));
+        historyItem.addChildItem(WTF::move(childHistoryItem));
     }
 }
 

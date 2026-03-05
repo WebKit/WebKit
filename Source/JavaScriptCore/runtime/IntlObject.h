@@ -27,8 +27,8 @@
 
 #pragma once
 
-#include "JSCJSValueInlines.h"
-#include "JSObject.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSObject.h>
 #include <wtf/RobinHoodHashSet.h>
 
 struct UFieldPositionIterator;
@@ -154,8 +154,9 @@ bool isUnicodeScriptSubtag(StringView);
 bool isUnicodeRegionSubtag(StringView);
 bool isUnicodeVariantSubtag(StringView);
 bool isUnicodeLanguageId(StringView);
-bool isStructurallyValidLanguageTag(StringView);
+JS_EXPORT_PRIVATE bool isStructurallyValidLanguageTag(StringView);
 String canonicalizeUnicodeLocaleID(const CString& languageTag);
+JS_EXPORT_PRIVATE String canonicalizeUnicodeLocaleID(const StringView);
 
 bool isWellFormedCurrencyCode(StringView);
 

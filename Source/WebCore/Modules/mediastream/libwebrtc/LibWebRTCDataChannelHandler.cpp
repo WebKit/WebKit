@@ -64,7 +64,7 @@ webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(cons
 }
 
 LibWebRTCDataChannelHandler::LibWebRTCDataChannelHandler(webrtc::scoped_refptr<webrtc::DataChannelInterface>&& channel)
-    : m_channel(toRef(WTFMove(channel)))
+    : m_channel(toRef(WTF::move(channel)))
 {
     checkState();
     m_channel->RegisterObserver(this);
@@ -172,10 +172,10 @@ void LibWebRTCDataChannelHandler::checkState()
 
     Locker locker { m_clientLock };
     if (!m_hasClient) {
-        m_bufferedMessages.append(StateChange { state, WTFMove(error) });
+        m_bufferedMessages.append(StateChange { state, WTF::move(error) });
         return;
     }
-    postTask([weakClient = m_client, state, error = WTFMove(error)] {
+    postTask([weakClient = m_client, state, error = WTF::move(error)] {
         RefPtr client = weakClient.get();
         if (!client)
             return;
@@ -202,7 +202,7 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
     }
 
     std::unique_ptr<webrtc::DataBuffer> protectedBuffer(new webrtc::DataBuffer(buffer));
-    postTask([weakClient = m_client, buffer = WTFMove(protectedBuffer)] {
+    postTask([weakClient = m_client, buffer = WTF::move(protectedBuffer)] {
         RefPtr client = weakClient.get();
         if (!client)
             return;
@@ -232,10 +232,10 @@ void LibWebRTCDataChannelHandler::postTask(Function<void()>&& function)
     ASSERT(m_clientLock.isHeld());
 
     if (!m_contextIdentifier) {
-        callOnMainThread(WTFMove(function));
+        callOnMainThread(WTF::move(function));
         return;
     }
-    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTFMove(function));
+    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTF::move(function));
 }
 
 } // namespace WebCore

@@ -69,7 +69,7 @@ public:
     explicit DocumentStorageAccess(Document&);
     ~DocumentStorageAccess();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     static void hasStorageAccess(Document&, Ref<DeferredPromise>&&);
@@ -99,7 +99,6 @@ private:
     void enableTemporaryTimeUserGesture();
     void consumeTemporaryTimeUserGesture();
 
-    Ref<Document> protectedDocument() const;
 
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
     

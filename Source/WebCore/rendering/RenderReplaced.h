@@ -26,7 +26,7 @@
 namespace WebCore {
 
 class RenderReplaced : public RenderBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderReplaced);
+    WTF_MAKE_TZONE_ALLOCATED(RenderReplaced);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderReplaced);
 public:
     virtual ~RenderReplaced();
@@ -74,7 +74,7 @@ protected:
 
     bool isSelected() const;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     virtual FloatSize computeIntrinsicSize() const;
     virtual FloatSize preferredAspectRatio() const;

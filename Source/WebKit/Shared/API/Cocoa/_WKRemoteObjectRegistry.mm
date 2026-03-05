@@ -132,7 +132,7 @@ struct PendingReply {
     _remoteObjectRegistry = nullptr;
 }
 
-static uint64_t generateReplyIdentifier()
+static uint64_t NODELETE generateReplyIdentifier()
 {
     static uint64_t identifier;
 
@@ -183,7 +183,7 @@ static uint64_t generateReplyIdentifier()
     if (!remoteObjectRegistry)
         return;
 
-    remoteObjectRegistry->sendInvocation(WebKit::RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTFMove(replyInfo)));
+    remoteObjectRegistry->sendInvocation(WebKit::RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTF::move(replyInfo)));
 }
 
 - (WebKit::RemoteObjectRegistry&)remoteObjectRegistry
@@ -283,7 +283,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
                 remoteObjectRegistry->sendUnusedReply(m_replyID);
             }
 
-            void didCallReplyBlock() { m_didCallReplyBlock = true; }
+            void NODELETE didCallReplyBlock() { m_didCallReplyBlock = true; }
 
         private:
             ReplyBlockCallChecker(_WKRemoteObjectRegistry *registry, uint64_t replyID)

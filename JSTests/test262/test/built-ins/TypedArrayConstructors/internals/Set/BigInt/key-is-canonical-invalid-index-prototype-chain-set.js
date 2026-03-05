@@ -15,7 +15,7 @@ info: |
       i. If ! SameValue(O, Receiver) is true
         [...]
       ii. 1. Else if ! IsValidIntegerIndex(_O_, _numericIndex_) is *false*, return *true*.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray, Proxy]
 ---*/
 
@@ -27,7 +27,7 @@ var value = {
   },
 };
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var target, receiver;
 
   [1, 1.5, -1].forEach(function(key) {
@@ -38,7 +38,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     });
 
 
-    target = new TA([0n]);
+    target = new TA(makeCtorArg([0n]));
     receiver = Object.create(target);
     receiver[key] = value;
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: empty object)");
@@ -46,7 +46,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
 
     var proxyTrapCalls = 0;
-    target = new TA([0n]);
+    target = new TA(makeCtorArg([0n]));
     receiver = new Proxy(Object.create(target), {
       defineProperty(_target, key, desc) {
         ++proxyTrapCalls;
@@ -60,7 +60,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     assert.sameValue(proxyTrapCalls, 0, "Proxy's [[DefineOwnProperty]] exotic method should not be called (key: " + key + ")");
 
 
-    target = new TA([0n]);
+    target = new TA(makeCtorArg([0n]));
     receiver = Object.preventExtensions(Object.create(target));
     receiver[key] = value;
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: non-extensible empty object)");
@@ -71,7 +71,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
 
-  target = new TA([0n]);
+  target = new TA(makeCtorArg([0n]));
   receiver = Object.setPrototypeOf([], target);
   receiver[1] = value;
   assert(!target.hasOwnProperty(1), "target[1] should not be created (receiver: regular array)");
@@ -79,11 +79,11 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(receiver.length, 0, "Array's [[DefineOwnProperty]] exotic method should not be called");
 
 
-  target = new TA([0n]);
+  target = new TA(makeCtorArg([0n]));
   receiver = Object.setPrototypeOf(new String(""), target);
   receiver[1] = value;
   assert(!target.hasOwnProperty(1), "target[1] should not be created (receiver: empty String object)");
   assert(!receiver.hasOwnProperty(1), "receiver[1] should remain unchanged (receiver: empty String object)");
-});
+}, null, ["passthrough"]);
 
 assert.sameValue(valueOfCalls, 0, "value should not be coerced");

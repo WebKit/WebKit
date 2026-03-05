@@ -77,13 +77,13 @@
     auto document = adoptNS([[[[self class] PDFDocumentClass] alloc] initWithData:[dataSource data]]);
     [view setPDFDocument:document.get()];
 
-    NSArray *scripts = allScriptsInPDFDocument(document.get());
-    if (![scripts count])
+    RetainPtr scripts = allScriptsInPDFDocument(document.get());
+    if (![scripts.get() count])
         return;
 
     JSGlobalContextRef ctx = JSGlobalContextCreate(0);
     JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, dataSource);
-    for (NSString *script in scripts)
+    for (NSString *script in scripts.get())
         JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script).get(), jsPDFDoc, nullptr, 0, nullptr);
     JSGlobalContextRelease(ctx);
 }

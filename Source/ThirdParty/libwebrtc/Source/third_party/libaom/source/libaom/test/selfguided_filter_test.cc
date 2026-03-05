@@ -31,13 +31,13 @@ using libaom_test::ACMRandom;
 using std::make_tuple;
 using std::tuple;
 
-typedef int (*SgrFunc)(const uint8_t *dat8, int width, int height, int stride,
-                       int eps, const int *xqd, uint8_t *dst8, int dst_stride,
-                       int32_t *tmpbuf, int bit_depth, int highbd);
+using SgrFunc = int (*)(const uint8_t *dat8, int width, int height, int stride,
+                        int eps, const int *xqd, uint8_t *dst8, int dst_stride,
+                        int32_t *tmpbuf, int bit_depth, int highbd);
 
 // Test parameter list:
 //  <tst_fun_>
-typedef tuple<SgrFunc> FilterTestParam;
+using FilterTestParam = tuple<SgrFunc>;
 
 class AV1SelfguidedFilterTest
     : public ::testing::TestWithParam<FilterTestParam> {
@@ -232,7 +232,7 @@ INSTANTIATE_TEST_SUITE_P(
 #if CONFIG_AV1_HIGHBITDEPTH
 // Test parameter list:
 //  <tst_fun_, bit_depth>
-typedef tuple<SgrFunc, int> HighbdFilterTestParam;
+using HighbdFilterTestParam = tuple<SgrFunc, int>;
 
 class AV1HighbdSelfguidedFilterTest
     : public ::testing::TestWithParam<HighbdFilterTestParam> {

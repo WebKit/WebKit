@@ -46,7 +46,7 @@ void InternalsMapLike::initializeMapLike(DOMMapAdapter& map)
 
 void InternalsMapLike::setFromMapLike(String&& key, unsigned value)
 {
-    m_values.set(WTFMove(key), value);
+    m_values.set(WTF::move(key), value);
 }
 
 void InternalsMapLike::clear()

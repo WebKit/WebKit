@@ -126,6 +126,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_multisampled_render_to_texture2"] = enableableExtension(&Extensions::multisampledRenderToTexture2EXT);
         map["GL_OVR_multiview"] = enableableExtension(&Extensions::multiviewOVR);
         map["GL_OVR_multiview2"] = enableableExtension(&Extensions::multiview2OVR);
+        map["GL_OVR_multiview_multisampled_render_to_texture"] = enableableExtension(&Extensions::multiviewMultisampledRenderToTextureOVR);
         map["GL_KHR_no_error"] = esOnlyExtension(&Extensions::noErrorKHR);
         map["GL_EXT_occlusion_query_boolean"] = enableableExtension(&Extensions::occlusionQueryBooleanEXT);
         map["GL_OES_packed_depth_stencil"] = esOnlyExtension(&Extensions::packedDepthStencilOES);
@@ -170,6 +171,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_shader_non_constant_global_initializers"] = enableableExtension(&Extensions::shaderNonConstantGlobalInitializersEXT);
         map["GL_NV_shader_noperspective_interpolation"] = enableableExtension(&Extensions::shaderNoperspectiveInterpolationNV);
         map["GL_EXT_shader_texture_lod"] = enableableExtension(&Extensions::shaderTextureLodEXT);
+        map["GL_EXT_shader_texture_samples"] = enableableExtension(&Extensions::shaderTextureSamplesEXT);
         map["GL_QCOM_shading_rate"] = enableableExtension(&Extensions::shadingRateQCOM);
         map["GL_EXT_shadow_samplers"] = enableableExtension(&Extensions::shadowSamplersEXT);
         map["GL_EXT_sRGB"] = enableableExtension(&Extensions::sRGBEXT);

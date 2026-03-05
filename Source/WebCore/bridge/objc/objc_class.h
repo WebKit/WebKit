@@ -23,19 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KJS_BINDINGS_OBJC_CLASS_H
-#define KJS_BINDINGS_OBJC_CLASS_H
+#pragma once
 
 #include "objc_runtime.h"
 #include <wtf/text/WTFString.h>
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 class ObjcClass : public Class
 {
 protected:
-    ObjcClass (ClassStructPtr aClass); // Use classForIsA to create an ObjcClass.
+    explicit ObjcClass(ClassStructPtr aClass); // Use classForIsA to create an ObjcClass.
     
 public:
     // Return the cached ObjC of the specified name.
@@ -47,14 +45,17 @@ public:
     virtual JSValue fallbackObject(JSGlobalObject*, Instance*, PropertyName);
     
     ClassStructPtr isa() { return _isa; }
-    
+
+    bool isObjcClass() const final { return true; }
+
 private:
     ClassStructPtr _isa;
     mutable HashMap<String, std::unique_ptr<Method>> m_methodCache;
     mutable HashMap<String, std::unique_ptr<Field>> m_fieldCache;
 };
 
-} // namespace Bindings
-} // namespace JSC
+} // namespace JSC::Bindings
 
-#endif
+SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Bindings::ObjcClass)
+    static bool isType(const JSC::Bindings::Class& object) { return object.isObjcClass(); }
+SPECIALIZE_TYPE_TRAITS_END()

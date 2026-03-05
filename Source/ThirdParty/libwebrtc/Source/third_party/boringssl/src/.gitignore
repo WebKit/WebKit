@@ -35,3 +35,8 @@
 /util/bot/sde-win32.tar.xz
 /util/bot/tools
 /util/bot/windows_sdk
+
+# Local data for developer tooling
+/.vscode/
+/.cache/
+/dist/

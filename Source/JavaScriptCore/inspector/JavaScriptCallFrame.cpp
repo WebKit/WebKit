@@ -31,7 +31,7 @@ namespace Inspector {
 using namespace JSC;
 
 JavaScriptCallFrame::JavaScriptCallFrame(Ref<DebuggerCallFrame>&& debuggerCallFrame)
-    : m_debuggerCallFrame(WTFMove(debuggerCallFrame))
+    : m_debuggerCallFrame(WTF::move(debuggerCallFrame))
 {
 }
 

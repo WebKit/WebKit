@@ -35,7 +35,7 @@ namespace WebCore {
 
 Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::FileHandle&& file, uint64_t capacity)
 {
-    auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, WTFMove(file), capacity));
+    auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, WTF::move(file), capacity));
     handle->suspendIfNeeded();
     return handle;
 }
@@ -44,7 +44,7 @@ FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& c
     : ActiveDOMObject(&context)
     , m_source(source)
     , m_identifier(identifier)
-    , m_file(WTFMove(file))
+    , m_file(WTF::move(file))
     , m_capacity(capacity)
 {
     ASSERT(m_file);
@@ -159,7 +159,7 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
         options.at = *result;
     }
 
-    if (!requestSpaceForWrite(*options.at, buffer.length()))
+    if (!requestSpaceForWrite(*options.at, buffer.byteLength()))
         return Exception { ExceptionCode::QuotaExceededError };
 
     auto result = m_file.write(buffer.span());

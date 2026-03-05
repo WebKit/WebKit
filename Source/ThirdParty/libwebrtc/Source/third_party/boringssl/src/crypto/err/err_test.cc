@@ -112,7 +112,7 @@ TEST(ErrTest, Print) {
 
 TEST(ErrTest, Release) {
   ERR_put_error(1, 0 /* unused */, 2, "test", 4);
-  ERR_remove_thread_state(NULL);
+  ERR_remove_thread_state(nullptr);
 
   // The error queue should be cleared.
   EXPECT_EQ(0u, ERR_get_error());

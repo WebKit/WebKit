@@ -58,7 +58,7 @@ class BindGroup : public RefCountedAndCanMakeWeakPtr<BindGroup>, public WGPUBind
 public:
     template <typename T>
     using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
-    using SamplersContainer = HashMap<RefPtr<Sampler>, ShaderStageArray<std::optional<uint32_t>>>;
+    using SamplersContainer = HashMap<Ref<Sampler>, ShaderStageArray<std::optional<uint32_t>>>;
     struct BufferAndType {
         WGPUBufferBindingType type;
         uint64_t bindingSize;
@@ -71,7 +71,7 @@ public:
     static constexpr MTLRenderStages MTLRenderStageUndefined = static_cast<MTLRenderStages>(MTLRenderStageFragment + 1);
     static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, uint32_t uniqueIdentifier, Device& device)
     {
-        return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplers), WTFMove(externalTextureIndices), uniqueIdentifier, device));
+        return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTF::move(resources), bindGroupLayout, WTF::move(dynamicBuffers), WTF::move(samplers), WTF::move(externalTextureIndices), uniqueIdentifier, device));
     }
     static Ref<BindGroup> createInvalid(Device& device)
     {
@@ -91,13 +91,11 @@ public:
     const Vector<BindableResources>& resources() const { return m_resources; }
 
     Device& device() const { return m_device; }
-    Ref<Device> protectedDevice() const { return m_device; }
     static bool allowedUsage(const OptionSet<BindGroupEntryUsage>&);
     static NSString* usageName(const OptionSet<BindGroupEntryUsage>&);
     static uint64_t makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect);
 
     const BindGroupLayout* bindGroupLayout() const { return m_bindGroupLayout.get(); }
-    RefPtr<const BindGroupLayout> protectedBindGroupLayout() const { return m_bindGroupLayout; }
 
     const BufferAndType* dynamicBuffer(uint32_t) const;
     uint32_t dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;

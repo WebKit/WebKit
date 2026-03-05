@@ -56,7 +56,7 @@ void CompositorIntegrationImpl::prepareForDisplay(uint32_t frameIndex, Completio
     if (RefPtr presentationContext = m_presentationContext)
         presentationContext->present(frameIndex);
 
-    m_onSubmittedWorkScheduledCallback(WTFMove(completionHandler));
+    m_onSubmittedWorkScheduledCallback(WTF::move(completionHandler));
 }
 
 void CompositorIntegrationImpl::updateContentsHeadroom(float headroom)
@@ -101,7 +101,7 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
 
     for (unsigned bufferIndex = 0; bufferIndex < std::min<unsigned>(3u, bufferCount); ++bufferIndex) {
         if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::WebGPU, colorFormat))
-            m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
+            m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTF::move(buffer)));
     }
 
     {

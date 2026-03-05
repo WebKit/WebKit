@@ -42,6 +42,11 @@ public:
     XrActionSet actionSet() const { return m_actionSet; }
     XrResult updateInteractionProfile();
 
+    const Vector<String>& profiles() const { return m_profiles; }
+    XrSpace aimSpace() const { return m_aimSpace; }
+    XrSpace gripSpace() const { return m_gripSpace; }
+    PlatformXR::InputSourceHandle handle() const { return m_handle; }
+
 private:
     OpenXRInputSource(XrInstance, XrSession, PlatformXR::XRHandedness, PlatformXR::InputSourceHandle);
 
@@ -76,8 +81,8 @@ private:
     XrActionSet m_actionSet { XR_NULL_HANDLE };
     XrAction m_gripAction { XR_NULL_HANDLE };
     XrSpace m_gripSpace { XR_NULL_HANDLE };
-    XrAction m_pointerAction { XR_NULL_HANDLE };
-    XrSpace m_pointerSpace { XR_NULL_HANDLE };
+    XrAction m_aimAction { XR_NULL_HANDLE };
+    XrSpace m_aimSpace { XR_NULL_HANDLE };
     XrAction m_pinchPoseAction { XR_NULL_HANDLE };
     XrSpace m_pinchSpace { XR_NULL_HANDLE };
     XrAction m_pokePoseAction { XR_NULL_HANDLE };

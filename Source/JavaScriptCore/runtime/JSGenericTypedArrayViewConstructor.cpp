@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
 }
 
 template<typename CharacterType>
-inline static WARN_UNUSED_RETURN size_t decodeHexImpl(std::span<CharacterType> span, std::span<uint8_t> result)
+[[nodiscard]] inline static size_t decodeHexImpl(std::span<CharacterType> span, std::span<uint8_t> result)
 {
     ASSERT(span.size() == result.size() * 2);
 
@@ -143,11 +143,11 @@ inline static WARN_UNUSED_RETURN size_t decodeHexImpl(std::span<CharacterType> s
     };
 
     const auto* begin = span.data();
-    const auto* end = span.data() + span.size();
+    const auto* end = std::to_address(span.end());
     const auto* cursor = begin;
 
     auto* output = result.data();
-    auto* outputEnd = result.data() + result.size();
+    auto* outputEnd = std::to_address(result.end());
 
     constexpr size_t stride = 16;
     constexpr size_t halfStride = stride / 2;
@@ -200,12 +200,12 @@ inline static WARN_UNUSED_RETURN size_t decodeHexImpl(std::span<CharacterType> s
     return WTF::notFound;
 }
 
-WARN_UNUSED_RETURN size_t decodeHex(std::span<const Latin1Character> span, std::span<uint8_t> result)
+[[nodiscard]] size_t decodeHex(std::span<const Latin1Character> span, std::span<uint8_t> result)
 {
     return decodeHexImpl(span, result);
 }
 
-WARN_UNUSED_RETURN size_t decodeHex(std::span<const char16_t> span, std::span<uint8_t> result)
+[[nodiscard]] size_t decodeHex(std::span<const char16_t> span, std::span<uint8_t> result)
 {
     return decodeHexImpl(span, result);
 }

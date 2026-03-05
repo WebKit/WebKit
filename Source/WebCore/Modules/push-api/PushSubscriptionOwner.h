@@ -27,7 +27,7 @@
 
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
-#include <wtf/AbstractRefCounted.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ class PushSubscription;
 
 enum class PushPermissionState : uint8_t;
 
-class PushSubscriptionOwner : public AbstractRefCounted {
+class PushSubscriptionOwner : public AbstractRefCountedAndCanMakeWeakPtr<PushSubscriptionOwner> {
 public:
     virtual ~PushSubscriptionOwner() = default;
 

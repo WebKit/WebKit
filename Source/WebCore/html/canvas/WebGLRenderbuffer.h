@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGL.h"
-#include "WebGLObject.h"
+#include <WebCore/GraphicsContextGL.h>
+#include <WebCore/WebGLObject.h>
 
 namespace WebCore {
 
@@ -36,7 +36,8 @@ class WebGLRenderbuffer final : public WebGLObject {
 public:
     virtual ~WebGLRenderbuffer();
 
-    static RefPtr<WebGLRenderbuffer> create(WebGLRenderingContextBase&);
+    static Ref<WebGLRenderbuffer> createLost();
+    static Ref<WebGLRenderbuffer> create(WebGLRenderingContextBase&);
 
     void setInternalFormat(GCGLenum internalformat)
     {
@@ -63,6 +64,7 @@ public:
 
 private:
     WebGLRenderbuffer(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLRenderbuffer();
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 

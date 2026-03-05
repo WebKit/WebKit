@@ -41,7 +41,7 @@ struct QuirksData {
     bool isGoogleDocs : 1 { false };
     bool isGoogleProperty : 1 { false };
     bool isGoogleMaps : 1 { false };
-    bool isGoogleAccounts : 1 { false };
+    bool isNBA : 1 { false };
     bool isNetflix : 1 { false };
     bool isOutlook : 1 { false };
     bool isSoundCloud : 1 { false };
@@ -60,6 +60,7 @@ struct QuirksData {
         BlocksEnteringStandardFullscreenFromPictureInPictureQuirk,
         BlocksReturnToFullscreenFromPictureInPictureQuirk,
 #endif
+        EnsureCaptionVisibilityInFullscreenAndPictureInPicture,
         HasBrokenEncryptedMediaAPISupportQuirk,
         ImplicitMuteWhenVolumeSetToZero,
         InputMethodUsesCorrectKeyEventOrder,
@@ -68,7 +69,7 @@ struct QuirksData {
         IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk,
 #endif
         MaybeBypassBackForwardCache,
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(TWO_PHASE_CLICKS)
         MayNeedToIgnoreContentObservation,
 #endif
         NeedsBodyScrollbarWidthNoneDisabledQuirk,
@@ -92,6 +93,7 @@ struct QuirksData {
         NeedsGoogleMapsScrollingQuirk,
         NeedsGoogleTranslateScrollingQuirk,
 #endif
+        NeedsGeforcenowWarningDisplayNoneQuirk,
         NeedsHotelsAnimationQuirk,
         NeedsMediaRewriteRangeRequestQuirk,
         NeedsMozillaFileTypeForDataTransferQuirk,
@@ -115,18 +117,15 @@ struct QuirksData {
         NeedsVP9FullRangeFlagQuirk,
         NeedsVideoShouldMaintainAspectRatioQuirk,
         NeedsWebKitMediaTextTrackDisplayQuirk,
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(TWO_PHASE_CLICKS)
         NeedsYouTubeMouseOutQuirk,
+#endif
+#if PLATFORM(IOS_FAMILY)
         NeedsYouTubeOverflowScrollQuirk,
 #endif
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
         NeedsZeroMaxTouchPointsQuirk,
-#endif
 #if PLATFORM(MAC)
         NeedsZomatoEmailLoginLabelQuirk,
-#endif
-#if PLATFORM(IOS_FAMILY)
-        RequirePageVisibilityToPlayAudioQuirk,
 #endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         RequiresUserGestureToLoadInPictureInPictureQuirk,
@@ -141,6 +140,7 @@ struct QuirksData {
         ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk,
         ShouldBlockFetchWithNewlineAndLessThan,
         ShouldBypassAsyncScriptDeferring,
+        ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions,
         ShouldDelayReloadWhenRegisteringServiceWorker,
 #if HAVE(PIP_SKIP_PREROLL)
         ShouldDisableAdSkippingInPip,
@@ -165,7 +165,7 @@ struct QuirksData {
         ShouldDisableWritingSuggestionsByDefaultQuirk,
         ShouldDispatchPlayPauseEventsOnResume,
 #if ENABLE(TOUCH_EVENTS)
-        ShouldDispatchPointerOutAfterHandlingSyntheticClick,
+        ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick,
 #endif
         ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk,
         ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
@@ -194,6 +194,7 @@ struct QuirksData {
         ShouldHideCoarsePointerCharacteristicsQuirk,
         ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk,
         ShouldIgnoreAriaForFastPathContentObservationCheckQuirk,
+        ShouldIgnoreInputModeNone,
 #endif
         ShouldIgnorePlaysInlineRequirementQuirk,
 #if ENABLE(TEXT_AUTOSIZING)
@@ -211,8 +212,12 @@ struct QuirksData {
         ShouldPreventDispatchOfTouchEventQuirk,
 #endif
         ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk,
+#if ENABLE(PICTURE_IN_PICTURE_API)
+        ShouldReportDocumentAsVisibleIfActivePIPQuirk,
+#endif
         ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk,
 #if PLATFORM(IOS_FAMILY)
+        ShouldUseLayoutViewportForClientRectsQuirk,
         ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting,
 #endif
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -227,10 +232,17 @@ struct QuirksData {
 #endif
 #if PLATFORM(IOS_FAMILY)
         ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk,
+#endif
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
         ShouldTreatAddingMouseOutEventListenerAsContentChange,
 #endif
         ShouldUnloadHeavyFrames,
         ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor,
+        ShouldAllowNotificationPermissionWithoutUserGesture,
+        NeedsInstagramResizingReelsQuirk,
+#if PLATFORM(IOS_FAMILY)
+        NeedsChromeOSNavigatorUserAgentQuirk,
+#endif
 
         NumberOfQuirks
     };

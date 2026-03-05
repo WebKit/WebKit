@@ -46,9 +46,9 @@ public:
     virtual ~ScrollingStateStickyNode();
 
     WEBCORE_EXPORT void updateConstraints(const StickyPositionViewportConstraints&);
-    const StickyPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
+    const StickyPositionViewportConstraints& viewportConstraints() const LIFETIME_BOUND { return m_constraints; }
 
-    const LayerRepresentation& viewportAnchorLayer() const { return m_viewportAnchorLayer; }
+    const LayerRepresentation& viewportAnchorLayer() const LIFETIME_BOUND { return m_viewportAnchorLayer; }
     WEBCORE_EXPORT void setViewportAnchorLayer(const LayerRepresentation&);
 
 private:

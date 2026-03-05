@@ -19,8 +19,15 @@ const date19600330 = Temporal.ZonedDateTime.from({ year: 1960, monthCode: "M03",
 const date19690724 = Temporal.ZonedDateTime.from({ year: 1969, monthCode: "M07", day: 24, hour: 12, minute: 34, timeZone: "UTC", calendar });
 const date19970616 = Temporal.ZonedDateTime.from({ year: 1997, monthCode: "M06", day: 16, hour: 12, minute: 34, timeZone: "UTC", calendar });
 const date19970716 = Temporal.ZonedDateTime.from({ year: 1997, monthCode: "M07", day: 16, hour: 12, minute: 34, timeZone: "UTC", calendar });
+const date19971201 = Temporal.ZonedDateTime.from({ year: 1997, monthCode: "M12", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar });
 const date19971216 = Temporal.ZonedDateTime.from({ year: 1997, monthCode: "M12", day: 16, hour: 12, minute: 34, timeZone: "UTC", calendar });
 const date19971230 = Temporal.ZonedDateTime.from({ year: 1997, monthCode: "M12", day: 30, hour: 12, minute: 34, timeZone: "UTC", calendar });
+const date20000101 = Temporal.ZonedDateTime.from({ year: 2000, monthCode: "M01", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar });
+const date20000618 = Temporal.ZonedDateTime.from({ year: 2000, monthCode: "M06", day: 18, hour: 12, minute: 34, timeZone: "UTC", calendar });
+const date20001007 = Temporal.ZonedDateTime.from({ year: 2000, monthCode: "M10", day: 7, hour: 12, minute: 34, timeZone: "UTC", calendar });
+const date20001201 = Temporal.ZonedDateTime.from({ year: 2000, monthCode: "M12", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar });
+const date20010601 = Temporal.ZonedDateTime.from({ year: 2001, monthCode: "M06", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar });
+const date20010618 = Temporal.ZonedDateTime.from({ year: 2001, monthCode: "M06", day: 18, hour: 12, minute: 34, timeZone: "UTC", calendar });
 const date20190101 = Temporal.ZonedDateTime.from({ year: 2019, monthCode: "M01", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar });
 const date20190201 = Temporal.ZonedDateTime.from({ year: 2019, monthCode: "M02", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar });
 const date20190724 = Temporal.ZonedDateTime.from({ year: 2019, monthCode: "M07", day: 24, hour: 12, minute: 34, timeZone: "UTC", calendar });
@@ -180,6 +187,10 @@ const tests = [
     ["years", 1, 3, 0, 16],
   ],
   [
+    date19971201, date20010618, "3 years, 6 months and 17 days",
+    ["years", 3, 6, 0, 17],
+  ],
+  [
     date19600330, date20210716, "61 years, 3 months and 16 days",
     ["years", 61, 3, 0, 16],
   ],
@@ -190,6 +201,15 @@ const tests = [
   [
     date20201230, date20210716, "6 months and 16 days",
     ["years", 0, 6, 0, 16],
+  ],
+  [
+    date20001201, date20010601, "6 months",
+    ["months", 0, 6, 0, 0],
+  ],
+  [
+    date20000101, date20001007, "40 weeks",
+    ["weeks", 0, 0, 40, 0],
+    ["days", 0, 0, 0, 280],
   ],
   [
     date19971230, date20210716, "23 years, 6 months and 16 days",

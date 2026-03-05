@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
+#include <WebCore/ImmersiveVideoMetadata.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/PlatformPlaybackSessionInterface.h>
 #include <WebCore/PlaybackSessionModel.h>
@@ -42,8 +43,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
-#include <WebCore/SpatialVideoMetadata.h>
-#include <WebCore/VideoProjectionMetadata.h>
 
 namespace WebKit {
 
@@ -103,11 +102,10 @@ public:
     void supportsLinearMediaPlayerChanged(bool);
 #endif
 
-    void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&);
-    void videoProjectionMetadataChanged(const std::optional<WebCore::VideoProjectionMetadata>&);
+    void immersiveVideoMetadataChanged(const std::optional<WebCore::ImmersiveVideoMetadata>&);
 
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
-    const WebCore::VideoReceiverEndpoint& videoReceiverEndpoint() { return m_videoReceiverEndpoint; }
+    const WebCore::VideoReceiverEndpoint& videoReceiverEndpoint() LIFETIME_BOUND { return m_videoReceiverEndpoint; }
 
     void invalidate();
 
@@ -147,8 +145,8 @@ private:
     void setVolume(double) final;
     void setPlayingOnSecondScreen(bool) final;
     void sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
-    void setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint&) final;
-    const WebCore::VideoReceiverEndpoint& videoReceiverEndpoint() const { return m_videoReceiverEndpoint; }
+    void NODELETE setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint&) final;
+    const WebCore::VideoReceiverEndpoint& videoReceiverEndpoint() const LIFETIME_BOUND { return m_videoReceiverEndpoint; }
     const std::optional<WebCore::VideoReceiverEndpointIdentifier>& videoReceiverEndpointIdentifier() const { return m_videoReceiverEndpointIdentifier; }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -193,7 +191,7 @@ private:
     bool prefersAutoDimming() const final { return m_prefersAutoDimming; }
     void setPrefersAutoDimming(bool) final;
 
-    void swapVideoReceiverEndpointsWith(PlaybackSessionModelContext&);
+    void NODELETE swapVideoReceiverEndpointsWith(PlaybackSessionModelContext&);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t identifier) { m_logIdentifier = identifier; }
@@ -201,7 +199,7 @@ private:
     const Logger* loggerPtr() const;
 
     ASCIILiteral logClassName() const { return "PlaybackSessionModelContext"_s; };
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     WeakPtr<PlaybackSessionManagerProxy> m_manager;
@@ -239,8 +237,7 @@ private:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool m_supportsLinearMediaPlayer { false };
 #endif
-    std::optional<WebCore::SpatialVideoMetadata> m_spatialVideoMetadata;
-    std::optional<WebCore::VideoProjectionMetadata> m_videoProjectionMetadata;
+    std::optional<WebCore::ImmersiveVideoMetadata> m_immersiveVideoMetadata;
 
     bool m_prefersAutoDimming { true };
 #if !RELEASE_LOG_DISABLED
@@ -264,7 +261,7 @@ public:
     void invalidate();
 
     bool canEnterVideoFullscreen() const { return !!m_controlsManagerContextId && m_controlsManagerContextIsVideo; }
-    RefPtr<WebCore::PlatformPlaybackSessionInterface> controlsManagerInterface();
+    WebCore::PlatformPlaybackSessionInterface* controlsManagerInterface();
     void requestControlledElementID();
 
     bool isPaused(PlaybackSessionContextIdentifier) const;
@@ -287,7 +284,7 @@ private:
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
     const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
     Ref<PlaybackSessionModelContext> ensureModel(PlaybackSessionContextIdentifier);
-    Ref<WebCore::PlatformPlaybackSessionInterface> ensureInterface(PlaybackSessionContextIdentifier);
+    WebCore::PlatformPlaybackSessionInterface& ensureInterface(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
 
@@ -321,8 +318,7 @@ private:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(PlaybackSessionContextIdentifier, bool);
 #endif
-    void spatialVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
-    void videoProjectionMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::VideoProjectionMetadata>&);
+    void immersiveVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::ImmersiveVideoMetadata>&);
 
     // Messages to PlaybackSessionManager
 #if HAVE(PIP_SKIP_PREROLL)
@@ -354,7 +350,7 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
     void setVideoReceiverEndpoint(PlaybackSessionContextIdentifier, const WebCore::VideoReceiverEndpoint&, WebCore::VideoReceiverEndpointIdentifier);
-    void swapVideoReceiverEndpoints(PlaybackSessionContextIdentifier, PlaybackSessionContextIdentifier);
+    void NODELETE swapVideoReceiverEndpoints(PlaybackSessionContextIdentifier, PlaybackSessionContextIdentifier);
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
 #endif

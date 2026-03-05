@@ -439,13 +439,13 @@ String DateCache::timeZoneDisplayName(bool isDST)
             Vector<char16_t, 32> standardDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language.data(), standardDisplayNameBuffer);
             if (U_SUCCESS(status))
-                m_timeZoneStandardDisplayNameCache = String::adopt(WTFMove(standardDisplayNameBuffer));
+                m_timeZoneStandardDisplayNameCache = String::adopt(WTF::move(standardDisplayNameBuffer));
         }
         {
             Vector<char16_t, 32> dstDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_DST, language.data(), dstDisplayNameBuffer);
             if (U_SUCCESS(status))
-                m_timeZoneDSTDisplayNameCache = String::adopt(WTFMove(dstDisplayNameBuffer));
+                m_timeZoneDSTDisplayNameCache = String::adopt(WTF::move(dstDisplayNameBuffer));
         }
     }
     if (isDST)
@@ -504,7 +504,7 @@ static std::tuple<String, Vector<char16_t, 32>> retrieveTimeZoneInformation()
         if (canonical.isNull() || isUTCEquivalent(canonical))
             canonical = "UTC"_s;
 
-        globalCache.get() = std::tuple { canonical.isolatedCopy(), WTFMove(timeZoneID), currentID };
+        globalCache.get() = std::tuple { canonical.isolatedCopy(), WTF::move(timeZoneID), currentID };
     }
     return std::tuple { std::get<0>(globalCache.get()).isolatedCopy(), std::get<1>(globalCache.get()) };
 }
@@ -521,7 +521,7 @@ void DateCache::timeZoneCacheSlow()
     ASSERT(!m_timeZoneCache);
     auto [canonical, timeZoneID] = retrieveTimeZoneInformation();
     auto* cache = new OpaqueICUTimeZone;
-    cache->m_canonicalTimeZoneID = WTFMove(canonical);
+    cache->m_canonicalTimeZoneID = WTF::move(canonical);
     UErrorCode status = U_ZERO_ERROR;
     cache->m_calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_open(timeZoneID.span().data(), timeZoneID.size(), "", UCAL_DEFAULT, &status));
     ASSERT_UNUSED(status, U_SUCCESS(status));

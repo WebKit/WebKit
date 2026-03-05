@@ -4,7 +4,7 @@ layer at (0,0) size 785x2327
   RenderBlock {HTML} at (0,0) size 785x2327
     RenderBody {BODY} at (8,8) size 769x2311 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 355x17
+        RenderText {#text} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x270
         RenderText {#text} at (0,0) size 536x270
@@ -52,7 +52,7 @@ layer at (0,0) size 785x2327
         RenderText {#text} at (496,225) size 28x15
           text run at (496,225) width 28: " and "
         RenderImage {IMG} at (524,225) size 200x200
-        RenderText {#text} at (0,225) size 757x237
+        RenderText {#text} at (0,225) size 757x238
           text run at (724,225) width 8: ". "
           text run at (732,225) width 25: "This"
           text run at (0,427) width 744: "is additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top"
@@ -76,7 +76,7 @@ layer at (0,0) size 785x2327
           text run at (0,387) width 759: "the bottom border of the image should begin 15px above the bottom of the text, and for the second image the top border should begin"
           text run at (0,426) width 175: "15px below the top of the text "
         RenderImage {IMG} at (165,395) size 80x80 [border: (10px solid #000000)]
-        RenderText {#text} at (0,426) size 755x56
+        RenderText {#text} at (0,426) size 755x57
           text run at (235,426) width 8: ". "
           text run at (243,426) width 512: "The last image in this paragraph has -10px margins set on it, so that should pull the text in"
           text run at (0,467) width 443: "toward the image in the vertical direction, and also in the horizontal direction."
@@ -84,12 +84,12 @@ layer at (0,0) size 785x2327
         RenderTableSection {TBODY} at (1,1) size 767x998
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x17
-                RenderText {#text} at (4,4) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x18
+                RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x972
             RenderTableCell {TD} at (0,499) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,477) size 4x17
+              RenderText {#text} at (4,477) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x972 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x465
@@ -103,7 +103,7 @@ layer at (0,0) size 785x2327
                 RenderText {#text} at (572,225) size 24x15
                   text run at (572,225) width 24: " and"
                 RenderImage {IMG} at (0,245) size 200x200
-                RenderText {#text} at (0,245) size 741x217
+                RenderText {#text} at (0,245) size 741x218
                   text run at (200,245) width 8: ". "
                   text run at (208,245) width 533: "This is additional text to make sure that there is enough room left below the image so that this"
                   text run at (0,447) width 285: "line does not hit the image that is text-top aligned."
@@ -126,7 +126,7 @@ layer at (0,0) size 785x2327
                   text run at (0,387) width 730: "this paragraph, so for the first image the bottom border of the image should begin 15px above the bottom of the text, and for the"
                   text run at (0,426) width 415: "second image the top border should begin 15px below the top of the text "
                 RenderImage {IMG} at (405,395) size 80x80 [border: (10px solid #000000)]
-                RenderText {#text} at (0,426) size 724x56
+                RenderText {#text} at (0,426) size 724x57
                   text run at (475,426) width 8: ". "
                   text run at (483,426) width 241: "The last image in this paragraph has -10px"
                   text run at (0,467) width 714: "margins set on it, so that should pull the text in toward the image in the vertical direction, and also in the horizontal direction."

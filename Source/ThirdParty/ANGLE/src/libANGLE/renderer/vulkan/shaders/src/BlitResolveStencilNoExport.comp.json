@@ -7,7 +7,6 @@
         "BlitResolveStencilNoExport.frag.comp: Build parameters for BlitResolveStencilNoExport.comp."
     ],
     "Flags": [
-        "SrcIsArray",
         "IsResolve"
     ]
 }

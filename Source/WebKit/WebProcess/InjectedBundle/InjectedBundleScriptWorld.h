@@ -54,20 +54,18 @@ public:
 
     virtual ~InjectedBundleScriptWorld();
 
-    const WebCore::DOMWrapperWorld& coreWorld() const;
+    const WebCore::DOMWrapperWorld& NODELETE coreWorld() const;
     WebCore::DOMWrapperWorld& coreWorld();
-    Ref<const WebCore::DOMWrapperWorld> protectedCoreWorld() const;
-    Ref<WebCore::DOMWrapperWorld> protectedCoreWorld();
 
     void clearWrappers();
-    void setAllowAutofill();
-    void setAllowElementUserInfo();
-    void makeAllShadowRootsOpen();
-    void exposeClosedShadowRootsForExtensions();
-    void disableOverrideBuiltinsBehavior();
-    void setAllowJSHandleCreation();
-    void setAllowNodeSerialization();
-    void setAllowPostingLegacySynchronousMessages();
+    void NODELETE setAllowAutofill();
+    void NODELETE setAllowElementUserInfo();
+    void NODELETE makeAllShadowRootsOpen();
+    void NODELETE exposeClosedShadowRootsForExtensions();
+    void NODELETE disableOverrideBuiltinsBehavior();
+    void NODELETE setAllowJSHandleCreation();
+    void NODELETE setAllowNodeSerialization();
+    void NODELETE setAllowPostingLegacySynchronousMessages();
 
     ContentWorldIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }

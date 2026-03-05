@@ -24,7 +24,7 @@
  */
 
 [
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary UnderlyingSource {
     UnderlyingSourceStartCallback start;
     UnderlyingSourcePullCallback pull;

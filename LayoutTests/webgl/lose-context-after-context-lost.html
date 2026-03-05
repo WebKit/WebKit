@@ -51,8 +51,9 @@ async function runTest(subcase)
     } else if (subcase.loseMethod == "manyContexts") {
         // This causes the older contexts to be lost, including the first one we created
         // for testing.
+        let contexts = [];
         for (let i = 0; i < 50; ++i)
-            document.createElement("canvas").getContext("webgl");
+            contexts.push(document.createElement("canvas").getContext("webgl"));
     }
 
     try {

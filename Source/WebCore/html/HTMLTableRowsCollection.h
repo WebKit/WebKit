@@ -28,6 +28,19 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class HTMLTableRowsCollection;
+
+template<>
+struct CollectionClassTraits<HTMLTableRowsCollection> {
+    static constexpr CollectionType collectionType = CollectionType::TableRows;
+};
+
+} // namespace WebCore
+
 #include "CachedHTMLCollection.h"
 #include "HTMLTableElement.h"
 
@@ -35,15 +48,15 @@ namespace WebCore {
 
 class HTMLTableRowElement;
 
-class HTMLTableRowsCollection final : public CachedHTMLCollection<HTMLTableRowsCollection, CollectionTypeTraits<CollectionType::TableRows>::traversalType> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTableRowsCollection);
+class HTMLTableRowsCollection final : public CachedHTMLCollection<HTMLTableRowsCollection> {
+    WTF_MAKE_TZONE_ALLOCATED(HTMLTableRowsCollection);
 public:
     static Ref<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
 
-    Ref<HTMLTableElement> protectedTableElement() const { return downcast<HTMLTableElement>(ownerNode()); }
+    HTMLTableElement& tableElement() const { return downcast<HTMLTableElement>(ownerNode()); }
 
     static HTMLTableRowElement* rowAfter(HTMLTableElement&, HTMLTableRowElement*);
-    static HTMLTableRowElement* lastRow(HTMLTableElement&);
+    static HTMLTableRowElement* NODELETE lastRow(HTMLTableElement&);
 
     // For CachedHTMLCollection.
     Element* customElementAfter(Element*) const;
@@ -54,4 +67,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTableRowsCollection, CollectionType::TableRows)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTableRowsCollection)

@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGLinearGradientElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGLinearGradientElement);
 
 inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document& document)
     : SVGGradientElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -106,8 +106,8 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 RenderPtr<RenderElement> SVGLinearGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGResourceLinearGradient>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGResourceLinearGradient>(*this, WTFMove(style));
+        return createRenderer<RenderSVGResourceLinearGradient>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGResourceLinearGradient>(*this, WTF::move(style));
 }
 
 static void setGradientAttributes(SVGGradientElement& element, LinearGradientAttributes& attributes, bool isLinear = true)
@@ -155,7 +155,7 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
     while (true) {
         // Respect xlink:href, take attributes from referenced element
         auto target = SVGURIReference::targetElementFromIRIString(current->href(), treeScopeForSVGReferences());
-        if (auto* gradientElement = dynamicDowncast<SVGGradientElement>(target.element.get())) {
+        if (RefPtr gradientElement = dynamicDowncast<SVGGradientElement>(target.element.get())) {
             current = *gradientElement;
 
             // Cycle detection

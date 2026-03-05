@@ -28,9 +28,9 @@ namespace {
 static const int kIterations = 1000;
 static const int kMaskMax = 64;
 
-typedef unsigned int (*ObmcSadF)(const uint8_t *pre, int pre_stride,
-                                 const int32_t *wsrc, const int32_t *mask);
-typedef libaom_test::FuncParam<ObmcSadF> TestFuncs;
+using ObmcSadF = unsigned int (*)(const uint8_t *pre, int pre_stride,
+                                  const int32_t *wsrc, const int32_t *mask);
+using TestFuncs = libaom_test::FuncParam<ObmcSadF>;
 
 ////////////////////////////////////////////////////////////////////////////////
 // 8 bit

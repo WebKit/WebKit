@@ -29,25 +29,26 @@
 #include "RenderObjectDocument.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
+#include "SVGViewSpec.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGViewportContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(RenderSVGRoot& parent, RenderStyle&& style)
-    : RenderSVGContainer(Type::SVGViewportContainer, parent.document(), WTFMove(style))
+    : RenderSVGContainer(Type::SVGViewportContainer, parent.document(), WTF::move(style))
     , m_owningSVGRoot(parent)
 {
     ASSERT(isRenderSVGViewportContainer());
 }
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
-    : RenderSVGContainer(Type::SVGViewportContainer, element, WTFMove(style))
+    : RenderSVGContainer(Type::SVGViewportContainer, element, WTF::move(style))
 {
     ASSERT(isRenderSVGViewportContainer());
 }
@@ -61,11 +62,6 @@ SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
         return m_owningSVGRoot->svgSVGElement();
     }
     return downcast<SVGSVGElement>(RenderSVGContainer::element());
-}
-
-Ref<SVGSVGElement> RenderSVGViewportContainer::protectedSVGSVGElement() const
-{
-    return svgSVGElement();
 }
 
 FloatPoint RenderSVGViewportContainer::computeViewportLocation() const
@@ -101,8 +97,11 @@ bool RenderSVGViewportContainer::needsHasSVGTransformFlags() const
     if (useSVGSVGElement->hasTransformRelatedAttributes())
         return true;
 
-    if (isOutermostSVGViewportContainer())
+    if (isOutermostSVGViewportContainer()) {
+        if (useSVGSVGElement->useCurrentView())
+            return true;
         return !useSVGSVGElement->currentTranslateValue().isZero() || useSVGSVGElement->renderer()->style().usedZoom() != 1;
+    }
 
     return false;
 }
@@ -143,15 +142,20 @@ void RenderSVGViewportContainer::updateLayerTransform()
     } else if (!m_viewport.location().isZero())
         m_supplementalLayerTransform.translate(m_viewport.location());
 
-    if (useSVGSVGElement->hasAttribute(SVGNames::viewBoxAttr)) {
+    bool hasCurrentViewEmptyViewBox = true;
+    if (useSVGSVGElement->useCurrentView())
+        hasCurrentViewEmptyViewBox = useSVGSVGElement->currentView().hasEmptyViewBox();
+    if (useSVGSVGElement->hasAttribute(SVGNames::viewBoxAttr) || !hasCurrentViewEmptyViewBox) {
         // An empty viewBox disables the rendering -- dirty the visible descendant status!
-        if (useSVGSVGElement->hasEmptyViewBox())
+        if (useSVGSVGElement->hasEmptyViewBox() && hasCurrentViewEmptyViewBox)
             layer()->dirtyVisibleContentStatus();
-        else if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
-            if (m_supplementalLayerTransform.isIdentity())
-                m_supplementalLayerTransform = viewBoxTransform;
-            else
-                m_supplementalLayerTransform.multiply(viewBoxTransform);
+        else if (!useSVGSVGElement->viewBox().isEmpty() || !hasCurrentViewEmptyViewBox) {
+            if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
+                if (m_supplementalLayerTransform.isIdentity())
+                    m_supplementalLayerTransform = viewBoxTransform;
+                else
+                    m_supplementalLayerTransform.multiply(viewBoxTransform);
+            }
         }
     }
 
@@ -159,9 +163,9 @@ void RenderSVGViewportContainer::updateLayerTransform()
     RenderSVGContainer::updateLayerTransform();
 }
 
-void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
-    applySVGTransform(transform, protectedSVGSVGElement(), style, boundingBox, m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform), std::nullopt, options);
+    applySVGTransform(transform, protect(svgSVGElement()), style, boundingBox, m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform), std::nullopt, options);
 }
 
 LayoutRect RenderSVGViewportContainer::overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy, PaintPhase) const
@@ -175,8 +179,10 @@ LayoutRect RenderSVGViewportContainer::overflowClipRect(const LayoutPoint& locat
         if (useSVGSVGElement->hasEmptyViewBox())
             return { };
 
-        if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize()); !viewBoxTransform.isIdentity())
-            clipRect = enclosingLayoutRect(viewBoxTransform.inverse().value_or(AffineTransform { }).mapRect(viewport()));
+        if (!useSVGSVGElement->viewBox().isEmpty()) {
+            if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize()); !viewBoxTransform.isIdentity())
+                clipRect = enclosingLayoutRect(viewBoxTransform.inverse().value_or(AffineTransform { }).mapRect(viewport()));
+        }
     }
 
     clipRect.moveBy(location);

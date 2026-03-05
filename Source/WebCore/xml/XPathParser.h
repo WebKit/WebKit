@@ -50,7 +50,7 @@ public:
 
     int lex(YYSTYPE&);
     bool expandQualifiedName(const String& qualifiedName, AtomString& localName, AtomString& namespaceURI);
-    void setParseResult(std::unique_ptr<Expression>&& expression) { m_result = WTFMove(expression); }
+    void setParseResult(std::unique_ptr<Expression>&& expression) { m_result = WTF::move(expression); }
 
 private:
     Parser(const String&, RefPtr<XPathNSResolver>&&);

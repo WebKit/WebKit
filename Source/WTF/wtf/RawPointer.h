@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 namespace WTF {
 
 class RawPointer {

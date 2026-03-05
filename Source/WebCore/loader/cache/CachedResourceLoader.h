@@ -145,17 +145,15 @@ public:
     CachePolicy cachePolicy(CachedResource::Type, const URL&) const;
     
     LocalFrame* frame() const; // Can be null
-    RefPtr<LocalFrame> protectedFrame() const;
     Document* document() const { return m_document.get(); } // Can be null
-    RefPtr<Document> protectedDocument() const { return document(); }
     void setDocument(Document* document) { m_document = document; }
     void clearDocumentLoader(); 
     void loadDone(LoadCompletionType, bool shouldPerformPostLoadActions = true);
 
     WEBCORE_EXPORT void garbageCollectDocumentResources();
 
-    void incrementRequestCount(const CachedResource&);
-    void decrementRequestCount(const CachedResource&);
+    void NODELETE incrementRequestCount(const CachedResource&);
+    void NODELETE decrementRequestCount(const CachedResource&);
     int requestCount() const { return m_requestCount; }
 
     WEBCORE_EXPORT bool isPreloaded(const String& urlString) const;
@@ -166,7 +164,7 @@ public:
     void warnUnusedPreloads();
     void stopUnusedPreloadsTimer();
 
-    bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&, FetchMetadataSite, const URL& preRedirectURL);
+    bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&, FetchMetadataSite, const URL& preRedirectURL, const URL& lastRedirectURL);
     bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ContentSecurityPolicy::RedirectResponseReceived, const URL& preRedirectURL = URL(), bool shouldReportViolationAsConsoleMessage = true) const;
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
@@ -175,7 +173,7 @@ public:
 
     ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
 
-    KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
+    KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker.get(); }
 
     Vector<CachedResourceHandle<CachedResource>> visibleResourcesToPrioritize();
 
@@ -209,13 +207,11 @@ private:
 
     void performPostLoadActions();
 
-    ImageLoading clientDefersImage(const URL&) const;
+    ImageLoading NODELETE clientDefersImage(const URL&) const;
     void reloadImagesIfNotDeferred();
 
     bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&, const URL& preRedirectURL) const;
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
-
-    RefPtr<DocumentLoader> protectedDocumentLoader() const;
 
     MemoryCompactRobinHoodHashSet<URL> m_validatedURLs;
     MemoryCompactRobinHoodHashSet<URL> m_cachedSVGImagesURLs;
@@ -231,7 +227,7 @@ private:
     Timer m_garbageCollectDocumentResourcesTimer;
 
     ResourceTimingInformation m_resourceTimingInfo;
-    KeepaliveRequestTracker m_keepaliveRequestTracker;
+    const Ref<KeepaliveRequestTracker> m_keepaliveRequestTracker;
 
     bool m_autoLoadImages { true };
     bool m_imagesEnabled { true };

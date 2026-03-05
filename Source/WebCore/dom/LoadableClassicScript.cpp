@@ -170,7 +170,7 @@ LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const Atom
 void LoadableClassicScript::execute(ScriptElement& scriptElement)
 {
     ASSERT(!m_error);
-    scriptElement.executeClassicScript(ScriptSourceCode(protectedCachedScript().get(), JSC::SourceProviderSourceType::Program, *this));
+    scriptElement.executeClassicScript(ScriptSourceCode(protect(cachedScript()).get(), JSC::SourceProviderSourceType::Program, *this));
 }
 
 }

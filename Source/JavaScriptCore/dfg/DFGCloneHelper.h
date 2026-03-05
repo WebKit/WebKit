@@ -247,7 +247,6 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(GetPropertyEnumerator, Common) \
     CLONE_STATUS(GetPrototypeOf, Common) \
     CLONE_STATUS(GetRegExpObjectLastIndex, Common) \
-    CLONE_STATUS(GetRestLength, Common) \
     CLONE_STATUS(GetScope, Common) \
     CLONE_STATUS(GetEvalScope, Common) \
     CLONE_STATUS(GetUndetachedTypeArrayLength, Common) \
@@ -339,6 +338,8 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(StringCodePointAt, Common) \
     CLONE_STATUS(StringFromCharCode, Common) \
     CLONE_STATUS(StringIndexOf, Common) \
+    CLONE_STATUS(StringStartsWith, Common) \
+    CLONE_STATUS(StringEndsWith, Common) \
     CLONE_STATUS(StringLocaleCompare, Common) \
     CLONE_STATUS(StringReplace, Common) \
     CLONE_STATUS(StringReplaceString, Common) \

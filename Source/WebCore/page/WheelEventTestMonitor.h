@@ -76,7 +76,7 @@ private:
     void scheduleCallbackCheck();
 
     Function<void()> m_completionCallback;
-    Page& m_page;
+    WeakRef<Page> m_page;
 
     Lock m_lock;
     ScrollableAreaReasonMap m_deferCompletionReasons WTF_GUARDED_BY_LOCK(m_lock);
@@ -101,7 +101,7 @@ public:
     }
     
     WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitorCompletionDeferrer&& other)
-        : m_monitor(WTFMove(other.m_monitor))
+        : m_monitor(WTF::move(other.m_monitor))
         , m_identifier(other.m_identifier)
         , m_reason(other.m_reason)
     {

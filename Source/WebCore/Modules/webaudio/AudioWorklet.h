@@ -40,12 +40,12 @@ class BaseAudioContext;
 class AudioWorkletMessagingProxy;
 
 class AudioWorklet final : public Worklet {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioWorklet);
+    WTF_MAKE_TZONE_ALLOCATED(AudioWorklet);
 public:
     static Ref<AudioWorklet> create(BaseAudioContext&);
 
-    AudioWorkletMessagingProxy* proxy() const;
-    BaseAudioContext* audioContext() const;
+    AudioWorkletMessagingProxy* NODELETE proxy() const;
+    BaseAudioContext* NODELETE audioContext() const;
 
     void createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&&, AudioWorkletNode&);
 

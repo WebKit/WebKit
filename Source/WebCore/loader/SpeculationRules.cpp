@@ -26,7 +26,9 @@
 #include "config.h"
 #include "SpeculationRules.h"
 
+#include "Node.h"
 #include "ReferrerPolicy.h"
+#include <algorithm>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/URL.h>
@@ -42,13 +44,8 @@ Ref<SpeculationRules> SpeculationRules::create()
     return adoptRef(*new SpeculationRules);
 }
 
-const Vector<SpeculationRules::Rule>& SpeculationRules::prefetchRules() const
-{
-    return m_prefetchRules;
-}
-
 SpeculationRules::DocumentPredicate::DocumentPredicate(PredicateVariant&& value)
-    : m_value(WTFMove(value))
+    : m_value(WTF::move(value))
 {
 }
 
@@ -90,7 +87,7 @@ static std::optional<Vector<String>> parseStringOrStringList(JSON::Object& objec
 
 static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate(JSON::Object&);
 
-// https://wicg.github.io/nav-speculation/speculation-rules.html#parsing-a-document-rule-predicate-from-a-map
+// https://html.spec.whatwg.org/C#document-rule-predicate
 static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate(JSON::Object& object)
 {
     auto andValue = object.getValue("and"_s);
@@ -104,9 +101,9 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
                 auto predicate = parseDocumentPredicate(*clauseObject);
                 if (!predicate)
                     return std::nullopt;
-                conjunction.clauses.append(WTFMove(*predicate));
+                conjunction.clauses.append(WTF::move(*predicate));
             }
-            return { { Box<SpeculationRules::Conjunction>::create(WTFMove(conjunction)) } };
+            return { { Box<SpeculationRules::Conjunction>::create(WTF::move(conjunction)) } };
         }
     }
 
@@ -121,9 +118,9 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
                 auto predicate = parseDocumentPredicate(*clauseObject);
                 if (!predicate)
                     return std::nullopt;
-                disjunction.clauses.append(WTFMove(*predicate));
+                disjunction.clauses.append(WTF::move(*predicate));
             }
-            return { { Box<SpeculationRules::Disjunction>::create(WTFMove(disjunction)) } };
+            return { { Box<SpeculationRules::Disjunction>::create(WTF::move(disjunction)) } };
         }
     }
 
@@ -133,8 +130,8 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
             auto predicate = parseDocumentPredicate(*clauseObject);
             if (!predicate)
                 return std::nullopt;
-            SpeculationRules::Negation negation { Box<SpeculationRules::DocumentPredicate>::create(WTFMove(*predicate)) };
-            return { { Box<SpeculationRules::Negation>::create(WTFMove(negation)) } };
+            SpeculationRules::Negation negation { Box<SpeculationRules::DocumentPredicate>::create(WTF::move(*predicate)) };
+            return { { Box<SpeculationRules::Negation>::create(WTF::move(negation)) } };
         }
     }
 
@@ -156,21 +153,21 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
 
     if (hasURLPredicate && hasSelectorPredicate) {
         SpeculationRules::Conjunction conjunction;
-        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTFMove(urlPredicate) });
-        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTFMove(selectorPredicate) });
-        return { { Box<SpeculationRules::Conjunction>::create(WTFMove(conjunction)) } };
+        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTF::move(urlPredicate) });
+        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTF::move(selectorPredicate) });
+        return { { Box<SpeculationRules::Conjunction>::create(WTF::move(conjunction)) } };
     }
 
     if (hasURLPredicate)
-        return { { WTFMove(urlPredicate) } };
+        return { { WTF::move(urlPredicate) } };
 
     if (hasSelectorPredicate)
-        return { { WTFMove(selectorPredicate) } };
+        return { { WTF::move(selectorPredicate) } };
 
     return std::nullopt;
 }
 
-// https://html.spec.whatwg.org/multipage/speculative-loading.html#parse-a-speculation-rule
+// https://html.spec.whatwg.org/C#parse-a-speculation-rule
 static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object& input, const String& rulesetLevelTag, const URL& rulesetBaseURL, const URL& documentBaseURL)
 {
     const HashSet<String> allowedKeys = {
@@ -242,7 +239,7 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
                 auto predicate = parseDocumentPredicate(*whereObject);
                 if (!predicate)
                     return std::nullopt;
-                rule.predicate = WTFMove(*predicate);
+                rule.predicate = WTF::move(*predicate);
             }
         } else {
             // No "where" means match all links, which is an empty conjunction.
@@ -301,27 +298,33 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
 
     // 18. If input["tag"] exists:
     auto tagValue = input.getValue("tag"_s);
-    if (tagValue && tagValue->type() == JSON::Value::Type::String) {
-        String ruleTag = tagValue->asString();
+    if (tagValue) {
         // 18.1. If input["tag"] is not a speculation rule tag... return null.
+        if (tagValue->type() != JSON::Value::Type::String)
+            return std::nullopt;
+        String ruleTag = tagValue->asString();
         if (!ruleTag.containsOnlyASCII() || !ruleTag.containsOnly<isASCIIPrintable>())
             return std::nullopt;
         StringBuilder ruleTagBuilder;
         ruleTagBuilder.appendQuotedJSONString(ruleTag);
-        // 18.2 Append input["tag"] to tags.
-        rule.tags.append(ruleTagBuilder.toString());
+        String processedRuleTag = ruleTagBuilder.toString();
+        // 18.2 Append input["tag"] to tags if it's different from ruleset tag.
+        if (processedRuleTag != rulesetLevelTag)
+            rule.tags.append(processedRuleTag);
     }
 
     // 19. If tags is empty, then append null to tags.
     if (rule.tags.isEmpty())
-        rule.tags.append("null"_s);
+        rule.tags.append(nullAtom());
 
     return rule;
 }
 
+// https://html.spec.whatwg.org/C#parse-a-speculation-rule-set-string step 8
 static std::optional<Vector<SpeculationRules::Rule>> parseRules(const JSON::Object& object, const String& key, const String& rulesetLevelTag, const URL& rulesetBaseURL, const URL& documentBaseURL)
 {
     auto value = object.getValue(key);
+    // 8.1 If parsed[type] exists:
     if (!value || value->type() != JSON::Value::Type::Array)
         return Vector<SpeculationRules::Rule> { };
     auto array = value->asArray();
@@ -330,43 +333,70 @@ static std::optional<Vector<SpeculationRules::Rule>> parseRules(const JSON::Obje
 
     Vector<SpeculationRules::Rule> rules;
     for (auto& item : *array) {
+        // 8.1.1 If parsed[type] is a list, then for each rule of parsed[type]:
         auto ruleObject = item->asObject();
         if (!ruleObject)
             return std::nullopt;
+        // 8.1.1.1 Let rule be the result of parsing a speculation rule given rule, tag, document, and baseURL.
         if (auto rule = parseSingleRule(*ruleObject, rulesetLevelTag, rulesetBaseURL, documentBaseURL))
-            rules.append(WTFMove(*rule));
-        else
-            return std::nullopt; // Invalid rule in the list.
+            rules.append(WTF::move(*rule));
+        // 8.1.1.2. If rule is null, then continue.
     }
     return rules;
 }
 
-// https://html.spec.whatwg.org/multipage/speculative-loading.html#parse-a-speculation-rule-set-string
-bool SpeculationRules::parseSpeculationRules(const StringView& text, const URL& rulesetBaseURL, const URL& documentBaseURL)
+// https://html.spec.whatwg.org/C#parse-a-speculation-rule-set-string
+bool SpeculationRules::parseSpeculationRules(Node& sourceNode, const StringView& text, const URL& rulesetBaseURL, const URL& documentBaseURL)
 {
+    // 1. Let parsed be the result of parsing a JSON string to an Infra value given input.
     auto jsonValue = JSON::Value::parseJSON(text);
     if (!jsonValue)
         return false;
 
+    // 2. If parsed is not a map, then throw a TypeError indicating that the top-level value needs to be a JSON object.
     auto jsonObject = jsonValue->asObject();
     if (!jsonObject)
         return false;
 
     String rulesetLevelTag;
     auto tagValue = jsonObject->getValue("tag"_s);
-    if (tagValue && tagValue->type() == JSON::Value::Type::String) {
+    // 5. If parsed["tag"] exists:
+    if (tagValue) {
+        // 5.1. If parsed["tag"] is not a speculation rule tag, then throw a TypeError indicating that the speculation rule tag is invalid.
+        if (tagValue->type() != JSON::Value::Type::String)
+            return false;
         String candidateTag = tagValue->asString();
         if (!candidateTag.containsOnlyASCII() || !candidateTag.containsOnly<isASCIIPrintable>())
             return false;
         StringBuilder ruleTagBuilder;
         ruleTagBuilder.appendQuotedJSONString(candidateTag);
+        // 5.2. Set tag to parsed["tag"].
         rulesetLevelTag = ruleTagBuilder.toString();
     }
 
     auto prefetch = parseRules(*jsonObject, "prefetch"_s, rulesetLevelTag, rulesetBaseURL, documentBaseURL);
-    if (prefetch)
-        m_prefetchRules.appendVector(WTFMove(*prefetch));
+    if (prefetch) {
+        auto& nodeRules = m_prefetchRulesByNode.ensure(sourceNode, [] {
+            return Vector<Rule>();
+        }).iterator->value;
+        nodeRules.appendVector(WTF::move(*prefetch));
+    }
     return true;
+}
+
+// https://html.spec.whatwg.org/C#unregister-speculation-rules
+Vector<URL> SpeculationRules::unregisterSpeculationRules(Node& sourceNode)
+{
+    Vector<URL> removedURLs;
+    auto it = m_prefetchRulesByNode.find(sourceNode);
+    if (it != m_prefetchRulesByNode.end()) {
+        for (const auto& rule : it->value) {
+            for (const auto& url : rule.urls)
+                removedURLs.append(url);
+        }
+        m_prefetchRulesByNode.remove(it);
+    }
+    return removedURLs;
 }
 
 } // namespace WebCore

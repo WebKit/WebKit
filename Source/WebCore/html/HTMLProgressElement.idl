@@ -23,5 +23,6 @@
     [CEReactions=NotNeeded, ReflectSetter] attribute double value;
     [CEReactions=NotNeeded] attribute double max;
     readonly attribute double position;
-    readonly attribute NodeList labels;
+    // FIXME: `labels` should not be nullable.
+    readonly attribute NodeList? labels;
 };

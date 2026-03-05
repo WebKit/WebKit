@@ -27,17 +27,18 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
+#include "FrameInfoData.h"
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/CocoaView.h>
 #include <WebCore/HostingContext.h>
+#include <WebCore/ImmersiveVideoMetadata.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformVideoPresentationInterface.h>
 #include <WebCore/ShareableBitmap.h>
-#include <WebCore/SpatialVideoMetadata.h>
 #include <WebCore/VideoPresentationModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -124,13 +125,18 @@ private:
     void setRequiresTextTrackRepresentation(bool) final;
     void setTextTrackRepresentationBounds(const WebCore::IntRect&) final;
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void requestShowCaptionDisplaySettingsPreview(const String&) final;
+    void requestHideCaptionDisplaySettingsPreview() final;
+#endif
+
 #if !RELEASE_LOG_DISABLED
     uint64_t logIdentifier() const final;
     uint64_t nextChildIdentifier() const final;
     const Logger* loggerPtr() const final;
 
     ASCIILiteral logClassName() const { return "VideoPresentationModelContext"_s; };
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     WeakPtr<VideoPresentationManagerProxy> m_manager;
@@ -172,15 +178,13 @@ public:
 
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
 
-    bool isPlayingVideoInEnhancedFullscreen() const;
+    bool isPlayingVideoInPictureInPicture() const;
 
     RefPtr<WebCore::PlatformVideoPresentationInterface> controlsManagerInterface();
     using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
     void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoPresentationInterface&)>&&);
-
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     RefPtr<WebCore::PlatformVideoPresentationInterface> returningToStandbyInterface() const;
@@ -256,6 +260,12 @@ private:
     void setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier, bool);
     void setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier, const WebCore::IntRect&);
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier, const String&);
+    void requestHideCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier);
+    void performCaptionDisplaySettingsAction(PlaybackSessionContextIdentifier, Function<void(WebPageProxy&, const FrameInfoData&, WebCore::HTMLMediaElementIdentifier)>&& action);
+#endif
+
     // Messages to VideoPresentationManager
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
     void requestUpdateInlineRect(PlaybackSessionContextIdentifier);
@@ -284,7 +294,7 @@ private:
     void videosInElementFullscreenChanged();
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const;
+    const Logger& NODELETE logger() const;
     uint64_t logIdentifier() const;
     ASCIILiteral logClassName() const;
     WTFLogChannel& logChannel() const;

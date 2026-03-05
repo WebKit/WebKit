@@ -36,7 +36,7 @@
 #include "GridArea.h"
 #include "RenderBox.h"
 #include "RenderGrid.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleGridData.h"
 #include "StyleGridPositionSide.h"
 #include "StyleGridTrackSizingDirection.h"
@@ -54,8 +54,8 @@ class NamedLineCollectionBase {
 public:
     NamedLineCollectionBase(const RenderGrid&, const String& name, GridPositionSide, bool nameIsAreaName);
 
-    bool hasNamedLines() const;
-    bool hasExplicitNamedLines() const;
+    bool NODELETE hasNamedLines() const;
+    bool NODELETE hasExplicitNamedLines() const;
     bool contains(unsigned line) const;
 protected:
 
@@ -82,20 +82,20 @@ public:
 
     int firstPosition() const;
 
-    unsigned lastLine() const;
+    unsigned NODELETE lastLine() const;
 
 private:
-    int firstExplicitPosition() const;
+    int NODELETE firstExplicitPosition() const;
 };
 
 } // namespace (anonymous)
 
-static inline bool isStartSide(GridPositionSide side)
+static inline bool NODELETE isStartSide(GridPositionSide side)
 {
     return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::RowStartSide;
 }
 
-static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
+static inline GridTrackSizingDirection NODELETE directionFromSide(GridPositionSide side)
 {
     return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::Columns : GridTrackSizingDirection::Rows;
 }
@@ -110,7 +110,7 @@ static unsigned explicitGridSizeForSide(const RenderGrid& gridContainer, GridPos
     return GridPositionsResolver::explicitGridCount(gridContainer, directionFromSide(side));
 }
 
-static inline GridPositionSide transposedSide(GridPositionSide side)
+static inline GridPositionSide NODELETE transposedSide(GridPositionSide side)
 {
     switch (side) {
     case GridPositionSide::ColumnStartSide: return GridPositionSide::RowStartSide;
@@ -392,7 +392,7 @@ int NamedLineCollection::firstPosition() const
 }
 
 // https://drafts.csswg.org/css-grid-2/#indefinite-grid-span
-static bool isIndefiniteSpan(const GridPosition& initialPosition, const GridPosition& finalPosition)
+static bool NODELETE isIndefiniteSpan(const GridPosition& initialPosition, const GridPosition& finalPosition)
 {
     if (initialPosition.isAuto())
         return !finalPosition.isSpan();
@@ -433,7 +433,7 @@ static std::pair<GridPosition, GridPosition> adjustGridPositionsFromStyle(const 
         }
     }
 
-    return { WTFMove(initialPosition), WTFMove(finalPosition) };
+    return { WTF::move(initialPosition), WTF::move(finalPosition) };
 }
 
 unsigned GridPositionsResolver::explicitGridCount(const RenderGrid& gridContainer, GridTrackSizingDirection direction)

@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,114) size 0x0 [r=0 c=0 rs=1 cs=1]
                     RenderTableCell {TD} at (0,66) size 498x97 [r=0 c=1 rs=1 cs=1]
                       RenderBlock {H1} at (0,66) size 498x75
-                        RenderText {#text} at (0,0) size 479x73
+                        RenderText {#text} at (0,0) size 479x74
                           text run at (0,0) width 479: "Detonator Comparison In 3DMark"
                           text run at (0,37) width 64: "2001"
                     RenderTableCell {TD} at (498,114) size 0x0 [r=0 c=2 rs=1 cs=1]

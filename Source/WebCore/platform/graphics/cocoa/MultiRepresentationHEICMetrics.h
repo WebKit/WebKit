@@ -27,7 +27,7 @@
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-#include <WebCore/FloatSize.h>
+#include "FloatSize.h"
 
 namespace WebCore {
 

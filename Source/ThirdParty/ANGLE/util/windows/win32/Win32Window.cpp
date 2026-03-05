@@ -821,8 +821,7 @@ void Win32Window::setVisible(bool isVisible)
 
     if (isVisible)
     {
-        mSetVisibleTimer.stop();
-        mSetVisibleTimer.start();
+        mSetVisibleTimer.restart();
     }
 }
 

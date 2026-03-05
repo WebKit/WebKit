@@ -15,6 +15,7 @@
 #include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+#include "libANGLE/renderer/wgpu/UtilsWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_command_buffer.h"
 #include "libANGLE/renderer/wgpu/wgpu_format_utils.h"
 #include "libANGLE/renderer/wgpu/wgpu_helpers.h"
@@ -330,7 +331,8 @@ class ContextWgpu : public ContextImpl
     void invalidateDriverUniforms();
 
     void ensureCommandEncoderCreated();
-    webgpu::CommandEncoderHandle &getCurrentCommandEncoder();
+    angle::Result getCurrentCommandEncoder(webgpu::RenderPassClosureReason closureReason,
+                                           webgpu::CommandEncoderHandle *outHandle);
 
     // Driver uniforms are managed by ContextWgpu.
     webgpu::BindGroupLayoutHandle getDriverUniformBindGroupLayout()
@@ -338,6 +340,9 @@ class ContextWgpu : public ContextImpl
         ASSERT(mDriverUniformsBindGroupLayout);
         return mDriverUniformsBindGroupLayout;
     }
+
+    webgpu::UtilsWgpu *getUtils() { return &mUtils; }
+    webgpu::CommandBuffer &getCommandBuffer() { return mCommandBuffer; }
 
   private:
     // Dirty bits.
@@ -433,6 +438,8 @@ class ContextWgpu : public ContextImpl
     // Holds the most recent driver uniforms BindGroup. Note there may be others in the
     // command buffer.
     webgpu::BindGroupHandle mDriverUniformsBindGroup;
+
+    webgpu::UtilsWgpu mUtils;
 };
 
 }  // namespace rx

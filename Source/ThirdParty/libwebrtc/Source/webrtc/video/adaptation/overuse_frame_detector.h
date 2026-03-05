@@ -16,7 +16,6 @@
 #include <optional>
 
 #include "api/environment/environment.h"
-#include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
@@ -144,10 +143,6 @@ class OveruseFrameDetector {
   bool FrameSizeChanged(int num_pixels) const;
 
   void ResetAll(int num_pixels);
-
-  static std::unique_ptr<ProcessingUsage> CreateProcessingUsage(
-      const FieldTrialsView& field_trials,
-      const CpuOveruseOptions& options);
 
   const Environment env_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker task_checker_;

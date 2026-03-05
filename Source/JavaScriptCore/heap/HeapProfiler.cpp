@@ -50,7 +50,7 @@ HeapSnapshot* HeapProfiler::mostRecentSnapshot()
 
 void HeapProfiler::appendSnapshot(std::unique_ptr<HeapSnapshot> snapshot)
 {
-    m_snapshots.append(WTFMove(snapshot));
+    m_snapshots.append(WTF::move(snapshot));
 }
 
 void HeapProfiler::clearSnapshots()

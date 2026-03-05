@@ -6,14 +6,15 @@
 <style>
 .grid-lanes {
     display: grid-lanes;
-    item-tolerance: 0;
-    masonry-direction: row;
+    flow-tolerance: 0;
+    grid-lanes-direction: row;
     grid-template-rows: repeat(4, 50px);
     grid-auto-flow: dense;
+    grid-lanes-pack: dense;
 }
 </style>
 <body>
-  <p>Ensure that dense-packing in masonry only places items with specified tracks into track openings in those same specified tracks.</p>
+  <p>Ensure that dense-packing in grid-lanes only places items with specified tracks into track openings in those same specified tracks.</p>
   <div class="grid-lanes">
     <div style="background: brown; width: 20px; grid-row: span 2;"></div>
     <div style="background: darkgoldenrod; width: 20px; grid-row: span 4;"></div>

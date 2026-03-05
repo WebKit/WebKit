@@ -64,7 +64,7 @@ class RemoteCommandEncoder final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteCommandEncoder> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandEncoder(gpuConnectionToWebProcess, gpu, commandEncoder, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteCommandEncoder(gpuConnectionToWebProcess, gpu, commandEncoder, objectHeap, WTF::move(streamConnection), identifier));
     }
 
     virtual ~RemoteCommandEncoder();
@@ -84,10 +84,6 @@ private:
     RemoteCommandEncoder& operator=(RemoteCommandEncoder&&) = delete;
 
     WebCore::WebGPU::CommandEncoder& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::CommandEncoder> protectedBacking();
-
-    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap.get(); }
-    Ref<RemoteGPU> protectedGPU() const { return m_gpu.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -139,7 +135,7 @@ private:
     void setLabel(String&&);
     void destruct();
 
-    Ref<WebCore::WebGPU::CommandEncoder> m_backing;
+    const Ref<WebCore::WebGPU::CommandEncoder> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

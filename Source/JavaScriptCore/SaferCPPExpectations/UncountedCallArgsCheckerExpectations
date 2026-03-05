@@ -3,6 +3,7 @@ API/JSCallbackConstructor.cpp
 API/JSCallbackObject.h
 API/JSCallbackObjectFunctions.h
 API/JSClassRef.cpp
+API/JSContextRef.cpp
 API/JSObjectRef.cpp
 API/JSRetainPtr.h
 API/JSScript.mm
@@ -10,7 +11,7 @@ API/JSTypedArray.cpp
 API/JSWrapperMap.mm
 API/tests/CompareAndSwapTest.cpp
 API/tests/testapi.cpp
-[ Mac ] assembler/LinkBuffer.cpp
+assembler/LinkBuffer.cpp
 b3/B3PatchpointSpecial.cpp
 b3/B3Procedure.cpp
 b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
@@ -20,7 +21,6 @@ bytecode/AccessCase.cpp
 bytecode/BytecodeDumper.cpp
 bytecode/CallLinkInfo.cpp
 bytecode/CodeBlock.cpp
-bytecode/CodeBlock.h
 bytecode/CodeBlockHash.cpp
 bytecode/CodeBlockInlines.h
 bytecode/DirectEvalCodeCache.h
@@ -51,7 +51,7 @@ dfg/DFGJITCompiler.h
 dfg/DFGJITFinalizer.cpp
 dfg/DFGLazyJSValue.cpp
 dfg/DFGLoopUnrollingPhase.cpp
-dfg/DFGNode.cpp
+[ iOS ] dfg/DFGNode.cpp
 dfg/DFGOperations.cpp
 dfg/DFGPlan.cpp
 dfg/DFGSpeculativeJIT.cpp
@@ -62,6 +62,7 @@ ftl/FTLCompile.cpp
 ftl/FTLFail.cpp
 ftl/FTLJITFinalizer.cpp
 ftl/FTLLazySlowPath.cpp
+ftl/FTLLink.cpp
 ftl/FTLLowerDFGToB3.cpp
 ftl/FTLSlowPathCall.cpp
 ftl/FTLState.cpp
@@ -82,12 +83,12 @@ inspector/agents/InspectorAuditAgent.cpp
 inspector/agents/InspectorConsoleAgent.cpp
 inspector/agents/InspectorDebuggerAgent.cpp
 inspector/agents/InspectorHeapAgent.cpp
+inspector/agents/InspectorRuntimeAgent.cpp
 inspector/agents/InspectorScriptProfilerAgent.cpp
 inspector/agents/JSGlobalObjectRuntimeAgent.cpp
 jit/BaselineJITPlan.cpp
 jit/ExecutableAllocator.cpp
 jit/GCAwareJITStubRoutine.cpp
-[ iOS ] jit/GdbJIT.cpp
 jit/ICStats.cpp
 jit/ICStats.h
 jit/JIT.cpp
@@ -117,7 +118,6 @@ runtime/CodeCache.h
 runtime/DirectEvalExecutable.cpp
 runtime/ErrorInstance.cpp
 runtime/FunctionExecutable.cpp
-runtime/ImportMap.cpp
 runtime/IndirectEvalExecutable.cpp
 runtime/InferredValue.h
 runtime/IntlObject.cpp
@@ -179,7 +179,6 @@ wasm/WasmTypeDefinition.cpp
 wasm/WasmTypeDefinition.h
 wasm/WasmTypeDefinitionInlines.h
 wasm/WasmWorklist.cpp
-[ iOS ] wasm/debugger/WasmModuleDebugInfo.cpp
 wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyHelpers.h
 wasm/js/JSWebAssemblyInstance.cpp

@@ -132,7 +132,8 @@ namespace WGSL {
     value(Packed4x8IntegerDotProduct, packed_4x8_integer_dot_product, 1 << 0) \
     value(PointerCompositeAccess, pointer_composite_access, 1 << 1) \
     value(ReadonlyAndReadwriteStorageTextures, readonly_and_readwrite_storage_textures, 1 << 2) \
-    value(UnrestrictedPointerParameters, unrestricted_pointer_parameters, 1 << 3) \
+    value(TextureFormatsTier1, texture_formats_tier1, 1 << 3) \
+    value(UnrestrictedPointerParameters, unrestricted_pointer_parameters, 1 << 4) \
 
 #define ENUM_DECLARE_VALUE(__value, _, ...) \
     __value __VA_OPT__(=) __VA_ARGS__,

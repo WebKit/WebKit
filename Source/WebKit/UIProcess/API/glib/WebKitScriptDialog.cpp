@@ -33,7 +33,7 @@ G_DEFINE_BOXED_TYPE(WebKitScriptDialog, webkit_script_dialog, webkit_script_dial
 WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const CString& message, const CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
 {
     auto* dialog = static_cast<WebKitScriptDialog*>(fastMalloc(sizeof(WebKitScriptDialog)));
-    new (dialog) WebKitScriptDialog(type, message, defaultText, WTFMove(completionHandler));
+    new (dialog) WebKitScriptDialog(type, message, defaultText, WTF::move(completionHandler));
     return dialog;
 }
 

@@ -73,7 +73,7 @@ void ARKitInlinePreviewModelPlayer::getCamera(CompletionHandler<void(std::option
         return;
     }
 
-    CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result) mutable {
+    CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result) mutable {
         if (!result) {
             completionHandler(std::nullopt);
             return;
@@ -82,7 +82,7 @@ void ARKitInlinePreviewModelPlayer::getCamera(CompletionHandler<void(std::option
         completionHandler(*result);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementGetCamera(*modelIdentifier), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementGetCamera(*modelIdentifier), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::setCamera(WebCore::HTMLModelElementCamera camera, CompletionHandler<void(bool success)>&& completionHandler)
@@ -99,11 +99,11 @@ void ARKitInlinePreviewModelPlayer::setCamera(WebCore::HTMLModelElementCamera ca
         return;
     }
 
-    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (bool success) mutable {
         completionHandler(success);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetCamera(*modelIdentifier, camera), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetCamera(*modelIdentifier, camera), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
@@ -120,7 +120,7 @@ void ARKitInlinePreviewModelPlayer::isPlayingAnimation(CompletionHandler<void(st
         return;
     }
 
-    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
+    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
         if (!result) {
             completionHandler(std::nullopt);
             return;
@@ -129,7 +129,7 @@ void ARKitInlinePreviewModelPlayer::isPlayingAnimation(CompletionHandler<void(st
         completionHandler(*result);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsPlayingAnimation(*modelIdentifier), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsPlayingAnimation(*modelIdentifier), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::setAnimationIsPlaying(bool isPlaying, CompletionHandler<void(bool success)>&& completionHandler)
@@ -146,11 +146,11 @@ void ARKitInlinePreviewModelPlayer::setAnimationIsPlaying(bool isPlaying, Comple
         return;
     }
 
-    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (bool success) mutable {
         completionHandler(success);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationIsPlaying(*modelIdentifier, isPlaying), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationIsPlaying(*modelIdentifier, isPlaying), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
@@ -167,7 +167,7 @@ void ARKitInlinePreviewModelPlayer::isLoopingAnimation(CompletionHandler<void(st
         return;
     }
 
-    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
+    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
         if (!result) {
             completionHandler(std::nullopt);
             return;
@@ -176,7 +176,7 @@ void ARKitInlinePreviewModelPlayer::isLoopingAnimation(CompletionHandler<void(st
         completionHandler(*result);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsLoopingAnimation(*modelIdentifier), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsLoopingAnimation(*modelIdentifier), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::setIsLoopingAnimation(bool isLooping, CompletionHandler<void(bool success)>&& completionHandler)
@@ -193,11 +193,11 @@ void ARKitInlinePreviewModelPlayer::setIsLoopingAnimation(bool isLooping, Comple
         return;
     }
 
-    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (bool success) mutable {
         completionHandler(success);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsLoopingAnimation(*modelIdentifier, isLooping), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsLoopingAnimation(*modelIdentifier, isLooping), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&& completionHandler)
@@ -214,7 +214,7 @@ void ARKitInlinePreviewModelPlayer::animationDuration(CompletionHandler<void(std
         return;
     }
 
-    CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<Seconds, WebCore::ResourceError> result) mutable {
+    CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (Expected<Seconds, WebCore::ResourceError> result) mutable {
         if (!result) {
             completionHandler(std::nullopt);
             return;
@@ -223,7 +223,7 @@ void ARKitInlinePreviewModelPlayer::animationDuration(CompletionHandler<void(std
         completionHandler(*result);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementAnimationDuration(*modelIdentifier), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementAnimationDuration(*modelIdentifier), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&& completionHandler)
@@ -240,7 +240,7 @@ void ARKitInlinePreviewModelPlayer::animationCurrentTime(CompletionHandler<void(
         return;
     }
 
-    CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<Seconds, WebCore::ResourceError> result) mutable {
+    CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (Expected<Seconds, WebCore::ResourceError> result) mutable {
         if (!result) {
             completionHandler(std::nullopt);
             return;
@@ -249,7 +249,7 @@ void ARKitInlinePreviewModelPlayer::animationCurrentTime(CompletionHandler<void(
         completionHandler(*result);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementAnimationCurrentTime(*modelIdentifier), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementAnimationCurrentTime(*modelIdentifier), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::setAnimationCurrentTime(Seconds currentTime, CompletionHandler<void(bool success)>&& completionHandler)
@@ -266,11 +266,11 @@ void ARKitInlinePreviewModelPlayer::setAnimationCurrentTime(Seconds currentTime,
         return;
     }
 
-    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (bool success) mutable {
         completionHandler(success);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationCurrentTime(*modelIdentifier, currentTime), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationCurrentTime(*modelIdentifier, currentTime), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
@@ -287,7 +287,7 @@ void ARKitInlinePreviewModelPlayer::hasAudio(CompletionHandler<void(std::optiona
         return;
     }
 
-    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
+    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
         if (!result) {
             completionHandler(std::nullopt);
             return;
@@ -296,7 +296,7 @@ void ARKitInlinePreviewModelPlayer::hasAudio(CompletionHandler<void(std::optiona
         completionHandler(*result);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementHasAudio(*modelIdentifier), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementHasAudio(*modelIdentifier), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
@@ -313,7 +313,7 @@ void ARKitInlinePreviewModelPlayer::isMuted(CompletionHandler<void(std::optional
         return;
     }
 
-    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
+    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
         if (!result) {
             completionHandler(std::nullopt);
             return;
@@ -322,7 +322,7 @@ void ARKitInlinePreviewModelPlayer::isMuted(CompletionHandler<void(std::optional
         completionHandler(*result);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsMuted(*modelIdentifier), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsMuted(*modelIdentifier), WTF::move(remoteCompletionHandler));
 }
 
 void ARKitInlinePreviewModelPlayer::setIsMuted(bool isMuted, CompletionHandler<void(bool success)>&& completionHandler)
@@ -339,11 +339,11 @@ void ARKitInlinePreviewModelPlayer::setIsMuted(bool isMuted, CompletionHandler<v
         return;
     }
 
-    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTF::move(completionHandler)] (bool success) mutable {
         completionHandler(success);
     };
 
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsMuted(*modelIdentifier, isMuted), WTFMove(remoteCompletionHandler));
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsMuted(*modelIdentifier, isMuted), WTF::move(remoteCompletionHandler));
 }
 
 WebCore::ModelPlayerAccessibilityChildren ARKitInlinePreviewModelPlayer::accessibilityChildren()

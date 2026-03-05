@@ -28,9 +28,8 @@
 // https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPURenderPassDescriptor : GPUObjectDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPURenderPassDescriptor : GPUObjectDescriptorBase {
     required sequence<GPURenderPassColorAttachment?> colorAttachments;
     GPURenderPassDepthStencilAttachment depthStencilAttachment;
     GPUQuerySet occlusionQuerySet;

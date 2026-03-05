@@ -11,11 +11,11 @@ info: |
   4. Let name be the value of O's [[TypedArrayName]] internal slot.
   5. Assert: name is a String value.
   6. Return name.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.toStringTag, TypedArray]
 ---*/
 
 testWithBigIntTypedArrayConstructors(function(TA) {
   var ta = new TA();
   assert.sameValue(ta[Symbol.toStringTag], TA.name, "property value");
-});
+}, null, ["passthrough"]);

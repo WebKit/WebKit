@@ -58,7 +58,7 @@ void InspectorWorkerAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     Ref { m_instrumentingAgents.get() }->setPersistentWorkerAgent(nullptr);
 
-    disable();
+    std::ignore = disable();
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::enable()
@@ -87,7 +87,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& workerId)
 {
-    RefPtr proxy = m_connectedProxies.get(workerId).get();
+    RefPtr proxy = m_connectedProxies.get(workerId);
     if (!proxy)
         return makeUnexpected("Missing worker for given workerId"_s);
 
@@ -101,18 +101,13 @@ Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWork
     if (!m_enabled)
         return makeUnexpected("Worker domain must be enabled"_s);
 
-    RefPtr proxy = m_connectedProxies.get(workerId).get();
+    RefPtr proxy = m_connectedProxies.get(workerId);
     if (!proxy)
         return makeUnexpected("Missing worker for given workerId"_s);
 
     proxy->sendMessageToWorkerInspectorController(message);
 
     return { };
-}
-
-bool InspectorWorkerAgent::shouldWaitForDebuggerOnStart() const
-{
-    return m_enabled;
 }
 
 void InspectorWorkerAgent::workerStarted(WorkerInspectorProxy& proxy)
@@ -184,7 +179,7 @@ void InspectorWorkerAgent::PageChannel::sendMessageFromWorkerToFrontend(WorkerIn
     Locker locker { m_parentAgentLock };
 
     if (CheckedPtr parentAgent = m_parentAgent)
-        parentAgent->frontendDispatcher().dispatchMessageFromWorker(proxy.identifier(), WTFMove(message));
+        parentAgent->frontendDispatcher().dispatchMessageFromWorker(proxy.identifier(), WTF::move(message));
 }
 
 } // namespace Inspector

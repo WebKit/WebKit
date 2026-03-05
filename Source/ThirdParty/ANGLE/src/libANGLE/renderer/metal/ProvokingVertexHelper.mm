@@ -114,12 +114,11 @@ void ProvokingVertexHelper::releaseInFlightBuffers(ContextMtl *contextMtl)
     mIndexBuffers.releaseInFlightBuffers(contextMtl);
 }
 
-static uint buildIndexBufferKey(const mtl::ProvokingVertexComputePipelineDesc &pipelineDesc)
+static uint buildIndexBufferKey(gl::DrawElementsType elementType,
+                                bool doPrimPrestart,
+                                gl::PrimitiveMode primMode)
 {
     uint indexBufferKey              = 0;
-    gl::DrawElementsType elementType = (gl::DrawElementsType)pipelineDesc.elementType;
-    bool doPrimPrestart              = pipelineDesc.primitiveRestartEnabled;
-    gl::PrimitiveMode primMode       = pipelineDesc.primitiveMode;
     switch (elementType)
     {
         case gl::DrawElementsType::UnsignedShort:
@@ -141,50 +140,37 @@ static uint buildIndexBufferKey(const mtl::ProvokingVertexComputePipelineDesc &p
     return indexBufferKey;
 }
 
-angle::Result ProvokingVertexHelper::getComputePipleineState(
+angle::Result ProvokingVertexHelper::prepareCommandEncoderForFunction(
     ContextMtl *context,
-    const mtl::ProvokingVertexComputePipelineDesc &desc,
-    angle::ObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
+    mtl::ComputeCommandEncoder *encoder,
+    uint32_t indexBufferKey,
+    bool isForGenerateIndices)
 {
-    auto iter = mComputeFunctions.find(desc);
-    if (iter != mComputeFunctions.end())
-    {
-        return context->getPipelineCache().getComputePipeline(context, iter->second,
-                                                              outComputePipeline);
-    }
-
-    id<MTLLibrary> provokingVertexLibrary = context->getDisplay()->getDefaultShadersLib();
-    uint indexBufferKey                   = buildIndexBufferKey(desc);
-    auto fcValues = angle::adoptObjCPtr([[MTLFunctionConstantValues alloc] init]);
-    [fcValues setConstantValue:&indexBufferKey type:MTLDataTypeUInt withName:@"fixIndexBufferKey"];
+    auto &functionMap = isForGenerateIndices ? mGenIndexBufferFunctions : mFixIndexBufferFunctions;
+    NSString *functionName = isForGenerateIndices ? @"genIndexBuffer" : @"fixIndexBuffer";
 
     angle::ObjCPtr<id<MTLFunction>> computeShader;
-    if (desc.generateIndices)
+    auto iter = functionMap.find(indexBufferKey);
+    if (iter != functionMap.end())
     {
-        ANGLE_TRY(CreateMslShader(context, provokingVertexLibrary, @"genIndexBuffer",
-                                  fcValues.get(), &computeShader));
+        computeShader = iter->second;
     }
     else
     {
-        ANGLE_TRY(CreateMslShader(context, provokingVertexLibrary, @"fixIndexBuffer",
-                                  fcValues.get(), &computeShader));
+        id<MTLLibrary> provokingVertexLibrary = context->getDisplay()->getDefaultShadersLib();
+        auto fcValues = angle::adoptObjCPtr([[MTLFunctionConstantValues alloc] init]);
+        [fcValues setConstantValue:&indexBufferKey
+                              type:MTLDataTypeUInt
+                          withName:@"fixIndexBufferKey"];
+
+        ANGLE_TRY(CreateMslShader(context, provokingVertexLibrary, functionName, fcValues.get(),
+                                  &computeShader));
+        functionMap[indexBufferKey] = computeShader;
     }
-    mComputeFunctions[desc] = computeShader;
-
-    return context->getPipelineCache().getComputePipeline(context, computeShader,
-                                                          outComputePipeline);
-}
-
-angle::Result ProvokingVertexHelper::prepareCommandEncoderForDescriptor(
-    ContextMtl *context,
-    mtl::ComputeCommandEncoder *encoder,
-    mtl::ProvokingVertexComputePipelineDesc desc)
-{
     angle::ObjCPtr<id<MTLComputePipelineState>> pipelineState;
-    ANGLE_TRY(getComputePipleineState(context, desc, &pipelineState));
-
+    ANGLE_TRY(
+        context->getPipelineCache().getComputePipeline(context, computeShader, &pipelineState));
     encoder->setComputePipelineState(pipelineState);
-
     return angle::Result::Continue;
 }
 
@@ -203,13 +189,8 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
     // Get specialized program
     // Upload index buffer
     // dispatch per-primitive?
-    mtl::ProvokingVertexComputePipelineDesc pipelineDesc;
-    pipelineDesc.elementType             = (uint8_t)elementsType;
-    pipelineDesc.primitiveMode           = primitiveMode;
-    pipelineDesc.primitiveRestartEnabled = primitiveRestartEnabled;
-    pipelineDesc.generateIndices         = false;
-    uint indexBufferKey                  = buildIndexBufferKey(pipelineDesc);
-    uint primCount     = primCountForIndexCount(indexBufferKey, (uint32_t)indexCount);
+    uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
+    uint primCount      = primCountForIndexCount(indexBufferKey, (uint32_t)indexCount);
     uint newIndexCount = indexCountForPrimCount(indexBufferKey, primCount);
     size_t indexSize   = gl::GetDrawElementsTypeSize(elementsType);
     size_t newOffset   = 0;
@@ -220,7 +201,9 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
 
     mtl::ComputeCommandEncoder *encoder =
         context->getComputeCommandEncoderWithoutEndingRenderEncoder();
-    ANGLE_TRY(prepareCommandEncoderForDescriptor(context, encoder, pipelineDesc));
+    const bool isForGenerateIndices = false;
+    ANGLE_TRY(
+        prepareCommandEncoderForFunction(context, encoder, indexBufferKey, isForGenerateIndices));
     encoder->setBuffer(indexBuffer, static_cast<uint32_t>(indexOffset), 0);
     encoder->setBufferForWrite(
         newBuffer, static_cast<uint32_t>(indexOffset) + static_cast<uint32_t>(newOffset), 1);
@@ -250,13 +233,9 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
     // Get specialized program
     // Upload index buffer
     // dispatch per-primitive?
-    mtl::ProvokingVertexComputePipelineDesc pipelineDesc;
-    pipelineDesc.elementType             = (uint8_t)elementsType;
-    pipelineDesc.primitiveMode           = primitiveMode;
-    pipelineDesc.primitiveRestartEnabled = false;
-    pipelineDesc.generateIndices         = true;
-    uint indexBufferKey                  = buildIndexBufferKey(pipelineDesc);
-    uint primCount        = primCountForIndexCount(indexBufferKey, (uint32_t)indexCount);
+    const bool primitiveRestartEnabled = false;
+    uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
+    uint primCount      = primCountForIndexCount(indexBufferKey, (uint32_t)indexCount);
     uint newIndexCount    = indexCountForPrimCount(indexBufferKey, primCount);
     size_t indexSize      = gl::GetDrawElementsTypeSize(elementsType);
     size_t newIndexOffset = 0;
@@ -267,7 +246,9 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
 
     mtl::ComputeCommandEncoder *encoder =
         context->getComputeCommandEncoderWithoutEndingRenderEncoder();
-    ANGLE_TRY(prepareCommandEncoderForDescriptor(context, encoder, pipelineDesc));
+    const bool isForGenerateIndices = true;
+    ANGLE_TRY(
+        prepareCommandEncoderForFunction(context, encoder, indexBufferKey, isForGenerateIndices));
     encoder->setBufferForWrite(newBuffer, static_cast<uint>(newIndexOffset), 1);
     encoder->setData(static_cast<uint>(indexCount), 2);
     encoder->setData(primCount, 3);

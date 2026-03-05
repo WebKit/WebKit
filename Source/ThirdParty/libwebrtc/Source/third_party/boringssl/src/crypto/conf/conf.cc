@@ -59,20 +59,20 @@ static int conf_value_cmp(const CONF_VALUE *a, const CONF_VALUE *b) {
 }
 
 CONF *NCONF_new(void *method) {
-  if (method != NULL) {
-    return NULL;
+  if (method != nullptr) {
+    return nullptr;
   }
 
   CONF *conf = reinterpret_cast<CONF *>(OPENSSL_malloc(sizeof(CONF)));
-  if (conf == NULL) {
-    return NULL;
+  if (conf == nullptr) {
+    return nullptr;
   }
 
   conf->sections = lh_CONF_SECTION_new(conf_section_hash, conf_section_cmp);
   conf->values = lh_CONF_VALUE_new(conf_value_hash, conf_value_cmp);
-  if (conf->sections == NULL || conf->values == NULL) {
+  if (conf->sections == nullptr || conf->values == nullptr) {
     NCONF_free(conf);
-    return NULL;
+    return nullptr;
   }
 
   return conf;
@@ -83,7 +83,7 @@ CONF_VALUE *CONF_VALUE_new(void) {
 }
 
 static void value_free(CONF_VALUE *value) {
-  if (value == NULL) {
+  if (value == nullptr) {
     return;
   }
   OPENSSL_free(value->section);
@@ -93,7 +93,7 @@ static void value_free(CONF_VALUE *value) {
 }
 
 static void section_free(CONF_SECTION *section) {
-  if (section == NULL) {
+  if (section == nullptr) {
     return;
   }
   OPENSSL_free(section->name);
@@ -108,13 +108,13 @@ static void section_free_arg(CONF_SECTION *section, void *arg) {
 }
 
 void NCONF_free(CONF *conf) {
-  if (conf == NULL) {
+  if (conf == nullptr) {
     return;
   }
 
-  lh_CONF_SECTION_doall_arg(conf->sections, section_free_arg, NULL);
+  lh_CONF_SECTION_doall_arg(conf->sections, section_free_arg, nullptr);
   lh_CONF_SECTION_free(conf->sections);
-  lh_CONF_VALUE_doall_arg(conf->values, value_free_arg, NULL);
+  lh_CONF_VALUE_doall_arg(conf->values, value_free_arg, nullptr);
   lh_CONF_VALUE_free(conf->values);
   OPENSSL_free(conf);
 }
@@ -123,11 +123,11 @@ static CONF_SECTION *NCONF_new_section(const CONF *conf, const char *section) {
   CONF_SECTION *s =
       reinterpret_cast<CONF_SECTION *>(OPENSSL_malloc(sizeof(CONF_SECTION)));
   if (!s) {
-    return NULL;
+    return nullptr;
   }
   s->name = OPENSSL_strdup(section);
   s->values = sk_CONF_VALUE_new_null();
-  if (s->name == NULL || s->values == NULL) {
+  if (s->name == nullptr || s->values == nullptr) {
     goto err;
   }
 
@@ -140,7 +140,7 @@ static CONF_SECTION *NCONF_new_section(const CONF *conf, const char *section) {
 
 err:
   section_free(s);
-  return NULL;
+  return nullptr;
 }
 
 static int is_comment(char c) { return c == '#'; }
@@ -169,7 +169,7 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
   BUF_MEM *buf;
 
   buf = BUF_MEM_new();
-  if (buf == NULL) {
+  if (buf == nullptr) {
     return 0;
   }
 
@@ -244,8 +244,8 @@ static CONF_SECTION *get_section(const CONF *conf, const char *section) {
 const STACK_OF(CONF_VALUE) *NCONF_get_section(const CONF *conf,
                                               const char *section) {
   const CONF_SECTION *section_obj = get_section(conf, section);
-  if (section_obj == NULL) {
-    return NULL;
+  if (section_obj == nullptr) {
+    return nullptr;
   }
   return section_obj->values;
 }
@@ -254,7 +254,7 @@ const char *NCONF_get_string(const CONF *conf, const char *section,
                              const char *name) {
   CONF_VALUE templ, *value;
 
-  if (section == NULL) {
+  if (section == nullptr) {
     section = kDefaultSectionName;
   }
 
@@ -262,8 +262,8 @@ const char *NCONF_get_string(const CONF *conf, const char *section,
   templ.section = (char *)section;
   templ.name = (char *)name;
   value = lh_CONF_VALUE_retrieve(conf->values, &templ);
-  if (value == NULL) {
-    return NULL;
+  if (value == nullptr) {
+    return nullptr;
   }
   return value->value;
 }
@@ -271,7 +271,7 @@ const char *NCONF_get_string(const CONF *conf, const char *section,
 static int add_string(const CONF *conf, CONF_SECTION *section,
                       CONF_VALUE *value) {
   value->section = OPENSSL_strdup(section->name);
-  if (value->section == NULL) {
+  if (value->section == nullptr) {
     return 0;
   }
 
@@ -286,7 +286,7 @@ static int add_string(const CONF *conf, CONF_SECTION *section,
     sk_CONF_VALUE_pop(section->values);
     return 0;
   }
-  if (old_value != NULL) {
+  if (old_value != nullptr) {
     (void)sk_CONF_VALUE_delete_ptr(section->values, old_value);
     value_free(old_value);
   }
@@ -370,27 +370,27 @@ static void clear_comments(char *p) {
 int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
   static const size_t CONFBUFSIZE = 512;
   int bufnum = 0, i, ii;
-  BUF_MEM *buff = NULL;
+  BUF_MEM *buff = nullptr;
   char *s, *p, *end;
   int again;
   long eline = 0;
-  CONF_VALUE *v = NULL;
-  CONF_SECTION *sv = NULL;
-  char *section = NULL, *buf;
+  CONF_VALUE *v = nullptr;
+  CONF_SECTION *sv = nullptr;
+  char *section = nullptr, *buf;
   char *start, *psection, *pname;
 
-  if ((buff = BUF_MEM_new()) == NULL) {
+  if ((buff = BUF_MEM_new()) == nullptr) {
     OPENSSL_PUT_ERROR(CONF, ERR_R_BUF_LIB);
     goto err;
   }
 
   section = OPENSSL_strdup(kDefaultSectionName);
-  if (section == NULL) {
+  if (section == nullptr) {
     goto err;
   }
 
   sv = NCONF_new_section(conf, section);
-  if (sv == NULL) {
+  if (sv == nullptr) {
     OPENSSL_PUT_ERROR(CONF, CONF_R_UNABLE_TO_CREATE_NEW_SECTION);
     goto err;
   }
@@ -432,7 +432,7 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
     // i is the number of bytes
     bufnum += i;
 
-    v = NULL;
+    v = nullptr;
     // check for line continuation
     if (bufnum >= 1) {
       // If we have bytes and the last char '\\' and
@@ -472,20 +472,20 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
         goto err;
       }
       *end = '\0';
-      if (!str_copy(conf, NULL, &section, start)) {
+      if (!str_copy(conf, nullptr, &section, start)) {
         goto err;
       }
-      if ((sv = get_section(conf, section)) == NULL) {
+      if ((sv = get_section(conf, section)) == nullptr) {
         sv = NCONF_new_section(conf, section);
       }
-      if (sv == NULL) {
+      if (sv == nullptr) {
         OPENSSL_PUT_ERROR(CONF, CONF_R_UNABLE_TO_CREATE_NEW_SECTION);
         goto err;
       }
       continue;
     } else {
       pname = s;
-      psection = NULL;
+      psection = nullptr;
       end = eat_name(s);
       if ((end[0] == ':') && (end[1] == ':')) {
         *end = '\0';
@@ -515,11 +515,11 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
       if (!(v = CONF_VALUE_new())) {
         goto err;
       }
-      if (psection == NULL) {
+      if (psection == nullptr) {
         psection = section;
       }
       v->name = OPENSSL_strdup(pname);
-      if (v->name == NULL) {
+      if (v->name == nullptr) {
         goto err;
       }
       if (!str_copy(conf, psection, &(v->value), start)) {
@@ -528,10 +528,10 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
 
       CONF_SECTION *tv;
       if (strcmp(psection, section) != 0) {
-        if ((tv = get_section(conf, psection)) == NULL) {
+        if ((tv = get_section(conf, psection)) == nullptr) {
           tv = NCONF_new_section(conf, psection);
         }
-        if (tv == NULL) {
+        if (tv == nullptr) {
           OPENSSL_PUT_ERROR(CONF, CONF_R_UNABLE_TO_CREATE_NEW_SECTION);
           goto err;
         }
@@ -541,7 +541,7 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
       if (add_string(conf, tv, v) == 0) {
         goto err;
       }
-      v = NULL;
+      v = nullptr;
     }
   }
   BUF_MEM_free(buff);
@@ -551,7 +551,7 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
 err:
   BUF_MEM_free(buff);
   OPENSSL_free(section);
-  if (out_error_line != NULL) {
+  if (out_error_line != nullptr) {
     *out_error_line = eline;
   }
   ERR_add_error_dataf("line %ld", eline);
@@ -563,7 +563,7 @@ int NCONF_load(CONF *conf, const char *filename, long *out_error_line) {
   BIO *in = BIO_new_file(filename, "rb");
   int ret;
 
-  if (in == NULL) {
+  if (in == nullptr) {
     OPENSSL_PUT_ERROR(CONF, ERR_R_SYS_LIB);
     return 0;
   }
@@ -580,7 +580,7 @@ int CONF_parse_list(const char *list, char sep, int remove_whitespace,
   int ret;
   const char *lstart, *tmpend, *p;
 
-  if (list == NULL) {
+  if (list == nullptr) {
     OPENSSL_PUT_ERROR(CONF, CONF_R_LIST_CANNOT_BE_NULL);
     return 0;
   }
@@ -594,7 +594,7 @@ int CONF_parse_list(const char *list, char sep, int remove_whitespace,
     }
     p = strchr(lstart, sep);
     if (p == lstart || !*lstart) {
-      ret = list_cb(NULL, 0, arg);
+      ret = list_cb(nullptr, 0, arg);
     } else {
       if (p) {
         tmpend = p - 1;
@@ -611,7 +611,7 @@ int CONF_parse_list(const char *list, char sep, int remove_whitespace,
     if (ret <= 0) {
       return ret;
     }
-    if (p == NULL) {
+    if (p == nullptr) {
       return 1;
     }
     lstart = p + 1;

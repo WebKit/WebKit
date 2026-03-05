@@ -32,7 +32,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRInput);
 std::unique_ptr<OpenXRInput> OpenXRInput::create(XrInstance instance, XrSession session, OpenXRSystemProperties&& systemProperties)
 {
     auto input = std::unique_ptr<OpenXRInput>(new OpenXRInput(instance, session));
-    if (XR_FAILED(input->initialize(WTFMove(systemProperties))))
+    if (XR_FAILED(input->initialize(WTF::move(systemProperties))))
         return nullptr;
     return input;
 }
@@ -49,8 +49,8 @@ XrResult OpenXRInput::initialize(OpenXRSystemProperties&& systemProperties)
 {
     for (auto handedness : { PlatformXR::XRHandedness::Left, PlatformXR::XRHandedness::Right }) {
         m_handleIndex++;
-        if (auto inputSource = OpenXRInputSource::create(m_instance, m_session, handedness, m_handleIndex, WTFMove(systemProperties)))
-            m_inputSources.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(inputSource)));
+        if (auto inputSource = OpenXRInputSource::create(m_instance, m_session, handedness, m_handleIndex, WTF::move(systemProperties)))
+            m_inputSources.append(makeUniqueRefFromNonNullUniquePtr(WTF::move(inputSource)));
     }
 
     OpenXRInputSource::SuggestedBindings bindings;

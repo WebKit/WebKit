@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (100,8) size 700x190
   RenderBlock (positioned) {DIV} at (100,8) size 700x190 [border: (2px solid #FF0000)]
-    RenderText {#text} at (14,14) size 672x161
+    RenderText {#text} at (14,14) size 672x162
       text run at (14,14) width 43: "This"
       text run at (57,14) width 6: " "
       text run at (63,14) width 31: "div"

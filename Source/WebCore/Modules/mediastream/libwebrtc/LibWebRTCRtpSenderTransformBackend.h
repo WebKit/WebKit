@@ -36,7 +36,7 @@ class LibWebRTCSenderTransformer;
 class LibWebRTCRtpSenderTransformBackend final : public LibWebRTCRtpTransformBackend {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpSenderTransformBackend);
 public:
-    static Ref<LibWebRTCRtpSenderTransformBackend> create(Ref<webrtc::RtpSenderInterface>&& sender) { return adoptRef(*new LibWebRTCRtpSenderTransformBackend(WTFMove(sender))); }
+    static Ref<LibWebRTCRtpSenderTransformBackend> create(Ref<webrtc::RtpSenderInterface>&& sender) { return adoptRef(*new LibWebRTCRtpSenderTransformBackend(WTF::move(sender))); }
     ~LibWebRTCRtpSenderTransformBackend();
 
 private:

@@ -440,7 +440,7 @@ void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* downlo
         return;
     }
 
-    download->priv->decideDestinationCallback = WTFMove(completionHandler);
+    download->priv->decideDestinationCallback = WTF::move(completionHandler);
     gboolean applicationWillDecideDestination = FALSE;
     g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.data(), &applicationWillDecideDestination);
     if (!applicationWillDecideDestination)
@@ -531,10 +531,12 @@ void webkit_download_set_destination(WebKitDownload* download, const gchar* dest
 #if ENABLE(2022_GLIB_API)
     g_return_if_fail(g_path_is_absolute(destination));
 #else
-    g_return_if_fail(g_str_has_prefix(destination, "file://") || g_path_is_absolute(destination));
+    auto view = StringView::fromLatin1(destination);
+    auto isFileURI = view.startsWith("file://"_s);
+    g_return_if_fail(isFileURI || g_path_is_absolute(destination));
 
     GUniquePtr<char> destinationPath;
-    if (g_str_has_prefix(destination, "file://")) {
+    if (isFileURI) {
         download->priv->destinationURI.reset(g_strdup(destination));
         destinationPath.reset(g_filename_from_uri(destination, nullptr, nullptr));
         destination = destinationPath.get();
@@ -546,7 +548,7 @@ void webkit_download_set_destination(WebKitDownload* download, const gchar* dest
         download->priv->destination.reset(g_strdup(destination));
 #else
         if (destinationPath)
-            download->priv->destination = WTFMove(destinationPath);
+            download->priv->destination = WTF::move(destinationPath);
         else
             download->priv->destination.reset(g_strdup(destination));
 #endif

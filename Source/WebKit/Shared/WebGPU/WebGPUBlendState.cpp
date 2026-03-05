@@ -44,7 +44,7 @@ std::optional<BlendState> ConvertToBackingContext::convertToBacking(const WebCor
     if (!alpha)
         return std::nullopt;
 
-    return { { WTFMove(*color), WTFMove(*alpha) } };
+    return { { WTF::move(*color), WTF::move(*alpha) } };
 }
 
 std::optional<WebCore::WebGPU::BlendState> ConvertFromBackingContext::convertFromBacking(const BlendState& blendState)
@@ -57,7 +57,7 @@ std::optional<WebCore::WebGPU::BlendState> ConvertFromBackingContext::convertFro
     if (!alpha)
         return std::nullopt;
 
-    return { { WTFMove(*color), WTFMove(*alpha) } };
+    return { { WTF::move(*color), WTF::move(*alpha) } };
 }
 
 } // namespace WebKit

@@ -213,19 +213,19 @@ static RetainPtr<CFStringRef> toUTI(NSString *type)
     if (!_types.contains(uti))
         return NO;
 
-    _data.set(WTFMove(uti), (__bridge CFDataRef)(data ?: [NSData data]));
+    _data.set(WTF::move(uti), (__bridge CFDataRef)(data ?: [NSData data]));
     return YES;
 }
 
 - (NSData *)dataForType:(NSString *)dataType
 {
-    if (NSData *data = (__bridge NSData *)_data.get(toUTI(dataType).get()).unsafeGet())
+    if (NSData *data = (__bridge NSData *)_data.get(toUTI(dataType).get()))
         return data;
 
     if (_owner && [_owner respondsToSelector:@selector(pasteboard:provideDataForType:)])
         [_owner pasteboard:self provideDataForType:dataType];
 
-    return (__bridge NSData *)_data.get(toUTI(dataType).get()).unsafeGet();
+    return (__bridge NSData *)_data.get(toUTI(dataType).get());
 }
 
 - (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType

@@ -15,6 +15,14 @@ template("ocl_cts_source_set") {
       "-Wno-c++11-narrowing",
     ]
     defines = [ "CL_TARGET_OPENCL_VERSION=300" ]
+    defines += [ "CL_USE_DEPRECATED_OPENCL_2_2_APIS=1" ]
+    defines += [ "CL_USE_DEPRECATED_OPENCL_2_1_APIS=1" ]
+    defines += [ "CL_USE_DEPRECATED_OPENCL_2_0_APIS=1" ]
+    defines += [ "CL_USE_DEPRECATED_OPENCL_1_2_APIS=1" ]
+    defines += [ "CL_USE_DEPRECATED_OPENCL_1_1_APIS=1" ]
+    defines += [ "CL_USE_DEPRECATED_OPENCL_1_0_APIS=1" ]
+    defines += [ "CL_NO_EXTENSION_PROTOTYPES" ]
+    defines += [ "CL_ENABLE_BETA_EXTENSIONS" ]
 
     # Rename main() to avoid conflict with the gtest-based main()
     defines += [ "main=ANGLE_oclcts_main" ]

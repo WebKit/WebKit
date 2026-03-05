@@ -30,4 +30,4 @@ testWithTypedArrayConstructors(function(TA) {
   $DETACHBUFFER(sample.buffer);
 
   assert.sameValue(delete sample[0], true, 'The value of `delete sample[0]` is true');
-});
+}, null, ["passthrough"]);

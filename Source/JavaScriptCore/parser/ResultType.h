@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <cstdint>
+#include <wtf/PrintStream.h>
+
 namespace JSC {
 
     // FIXME: Consider whether this is actually necessary. Is LLInt and Baseline's profiling information enough?

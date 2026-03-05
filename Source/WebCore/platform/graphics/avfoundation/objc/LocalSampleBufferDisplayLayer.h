@@ -67,7 +67,6 @@ public:
 
     // SampleBufferDisplayLayer.
     PlatformLayer* rootLayer() final;
-    RetainPtr<PlatformLayer> protectedRootLayer();
     void initialize(bool hideRootLayer, IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool didSucceed)>&&) final;
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t) final;

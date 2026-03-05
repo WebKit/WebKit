@@ -93,11 +93,6 @@ void OutputGLenumString(std::ostream &out, GLESEnum enumGroup, unsigned int valu
     return OutputGLenumStringImpl(out, enumGroup, value);
 }
 
-void OutputGLenumString(std::ostream &out, BigGLEnum enumGroup, unsigned int value)
-{
-    return OutputGLenumStringImpl(out, enumGroup, value);
-}
-
 void OutputGLbitfieldString(std::ostream &out, GLESEnum enumGroup, unsigned int value)
 {
     out << GLbitfieldToString(enumGroup, value);
@@ -109,11 +104,6 @@ const char *GLbooleanToString(unsigned int value)
 }
 
 std::string GLbitfieldToString(GLESEnum enumGroup, unsigned int value)
-{
-    return GLbitfieldToStringImpl(enumGroup, value);
-}
-
-std::string GLbitfieldToString(BigGLEnum enumGroup, unsigned int value)
 {
     return GLbitfieldToStringImpl(enumGroup, value);
 }

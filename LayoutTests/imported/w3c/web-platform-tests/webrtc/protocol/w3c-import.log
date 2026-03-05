@@ -16,18 +16,22 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/README.txt
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/RTCPeerConnection-payloadTypes.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/additional-codecs.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/av1-profile-asymmetry.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/codecs-filtered-by-direction.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/codecs-subsequent-offer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/direction.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-certificates.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-fingerprint-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-setup.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/h264-unidirectional-codec-offer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/h265-level-id.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/h265-loopback.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/handover-datachannel.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/handover.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html

@@ -21,8 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 enum class WebCore::FontSmoothingMode : uint8_t {
-    AutoSmoothing,
-    NoSmoothing,
+    Auto,
+    None,
     Antialiased,
     SubpixelAntialiased
 };

@@ -322,11 +322,10 @@ public:
             unsigned p = pos - negativePositionOffest;
             ASSERT(p < length);
             auto result = input[p];
-            if (U16_IS_LEAD(result) && decodeSurrogatePairs && p + 1 < length && U16_IS_TRAIL(input[p + 1])) {
-                if (atEnd())
-                    return errorCodePoint;
+            if (U16_IS_LEAD(result) && decodeSurrogatePairs && p + 1 < length && U16_IS_TRAIL(input[p + 1]))
                 return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
-            }
+            if (U16_IS_TRAIL(result) && decodeSurrogatePairs && p > 0 && U16_IS_LEAD(input[p - 1]))
+                return errorCodePoint;
             return result;
         }
 
@@ -547,6 +546,9 @@ public:
         if (characterClass->m_anyCharacter)
             return true;
 
+        if (characterClass->m_table && ch < CharacterClass::tableSize)
+            return static_cast<bool>(characterClass->m_table[ch]);
+
         const size_t thresholdForBinarySearch = 6;
 
         if (!isASCII(ch)) {
@@ -656,7 +658,7 @@ public:
                 ch = input.readSurrogatePairChecked(negativeInputOffset);
                 ++i;
             } else
-                ch = term.matchDirection() == Forward ? input.readChecked(negativeInputOffset) : input.tryReadBackward(negativeInputOffset);
+                ch = term.matchDirection() == Forward ? input.readCheckedDontAdvance(negativeInputOffset) : input.tryReadBackward(negativeInputOffset);
 
             if (oldCh == errorCodePoint || ch == errorCodePoint)
                 return false;
@@ -706,10 +708,10 @@ public:
 
         auto boundaryCharacterClass = term.ignoreCase() ? pattern->ignoreCaseWordcharCharacterClass : pattern->wordcharCharacterClass;
 
-        bool prevIsWordchar = !input.atStart(inputOffset) && testCharacterClass(boundaryCharacterClass, input.readChecked(inputOffset + 1));
+        bool prevIsWordchar = !input.atStart(inputOffset) && testCharacterClass(boundaryCharacterClass, input.readCheckedDontAdvance(inputOffset + 1));
         bool readIsWordchar;
         if (inputOffset)
-            readIsWordchar = !input.atEnd(inputOffset) && testCharacterClass(boundaryCharacterClass, input.readChecked(inputOffset));
+            readIsWordchar = !input.atEnd(inputOffset) && testCharacterClass(boundaryCharacterClass, input.readCheckedDontAdvance(inputOffset));
         else
             readIsWordchar = !input.atEnd() && testCharacterClass(boundaryCharacterClass, input.read());
 
@@ -1079,7 +1081,7 @@ public:
         unsigned matchBegin = output[(subpatternId << 1)];
         unsigned matchEnd = output[(subpatternId << 1) + 1];
 
-        if (matchBegin == offsetNoMatch)
+        if (matchBegin == offsetNoMatch || matchEnd == offsetNoMatch)
             return false;
 
         ASSERT(matchBegin <= matchEnd);
@@ -1353,8 +1355,10 @@ public:
         // We've reached the end of the parens; if they are inverted, this is failure.
         if (term.invert()) {
             if (term.containsAnyCaptures()) {
-                for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++)
+                for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++) {
                     output[subpattern << 1] = offsetNoMatch;
+                    output[(subpattern << 1) + 1] = offsetNoMatch;
+                }
             }
             context->term -= term.atom.parenthesesWidth;
             return false;
@@ -1392,8 +1396,10 @@ public:
         input.setPos(backTrack->begin);
 
         if (term.containsAnyCaptures()) {
-            for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++)
+            for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++) {
                 output[subpattern << 1] = offsetNoMatch;
+                output[(subpattern << 1) + 1] = offsetNoMatch;
+            }
         }
 
         context->term -= term.atom.parenthesesWidth;
@@ -2296,7 +2302,7 @@ public:
             ByteTermDumper(&m_pattern).dumpDisjunction(m_bodyDisjunction.get());
 #endif
 
-        return makeUnique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock, m_pattern.offsetVectorBaseForNamedCaptures(), m_pattern.offsetsSize());
+        return makeUnique<BytecodePattern>(WTF::move(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock, m_pattern.offsetVectorBaseForNamedCaptures(), m_pattern.offsetsSize());
     }
 
     void checkInput(unsigned count)
@@ -2547,7 +2553,7 @@ public:
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::Type::ParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, inputPosition, m_currentFlags));
         m_bodyDisjunction->terms.last().m_matchDirection = parenthesesMatchDirection;
-        m_allParenthesesInfo.append(WTFMove(parenthesesDisjunction));
+        m_allParenthesesInfo.append(WTF::move(parenthesesDisjunction));
 
         if (m_pattern.hasDuplicateNamedCaptureGroups() && capture) {
             auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId];
@@ -2665,7 +2671,7 @@ public:
         m_currentAlternativeIndex = newAlternativeIndex;
     }
 
-    std::optional<ErrorCode> WARN_UNUSED_RETURN emitDisjunction(PatternDisjunction* disjunction, CheckedUint32 inputCountAlreadyChecked, unsigned parenthesesInputCountAlreadyChecked, MatchDirection matchDirection = Forward)
+    [[nodiscard]] std::optional<ErrorCode> emitDisjunction(PatternDisjunction* disjunction, CheckedUint32 inputCountAlreadyChecked, unsigned parenthesesInputCountAlreadyChecked, MatchDirection matchDirection = Forward)
     {
         if (!isSafeToRecurse()) [[unlikely]]
             return ErrorCode::TooManyDisjunctions;

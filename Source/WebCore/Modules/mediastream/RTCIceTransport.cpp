@@ -37,18 +37,18 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCIceTransport);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCIceTransport);
 
 Ref<RTCIceTransport> RTCIceTransport::create(ScriptExecutionContext& context, UniqueRef<RTCIceTransportBackend>&& backend, RTCPeerConnection& connection)
 {
-    auto result = adoptRef(*new RTCIceTransport(context, WTFMove(backend), connection));
+    auto result = adoptRef(*new RTCIceTransport(context, WTF::move(backend), connection));
     result->suspendIfNeeded();
     return result;
 }
 
 RTCIceTransport::RTCIceTransport(ScriptExecutionContext& context, UniqueRef<RTCIceTransportBackend>&& backend, RTCPeerConnection& connection)
     : ActiveDOMObject(&context)
-    , m_backend(WTFMove(backend))
+    , m_backend(WTF::move(backend))
     , m_connection(connection)
 {
     m_backend->registerClient(*this);
@@ -109,11 +109,11 @@ void RTCIceTransport::onGatheringStateChanged(RTCIceGatheringState state)
 
 void RTCIceTransport::onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&& local, RefPtr<RTCIceCandidate>&& remote)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [local = WTFMove(local), remote = WTFMove(remote)](auto& transport) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [local = WTF::move(local), remote = WTF::move(remote)](auto& transport) mutable {
         if (transport.m_isStopped)
             return;
 
-        transport.m_selectedCandidatePair = CandidatePair { WTFMove(local), WTFMove(remote) };
+        transport.m_selectedCandidatePair = CandidatePair { WTF::move(local), WTF::move(remote) };
         transport.dispatchEvent(Event::create(eventNames().selectedcandidatepairchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
     });
 }

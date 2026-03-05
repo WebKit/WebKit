@@ -61,8 +61,8 @@ public:
     static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
     ~RTCRtpScriptTransformer();
 
-    ReadableStream& readable();
-    WritableStream& writable();
+    ReadableStream& NODELETE readable();
+    WritableStream& NODELETE writable();
     JSC::JSValue options(JSC::JSGlobalObject&);
 
     void generateKeyFrame(const String&, Ref<DeferredPromise>&&);
@@ -80,7 +80,7 @@ private:
     // ActiveDOMObject.
     void stop() final { stopPendingActivity(); }
 
-    void stopPendingActivity() { auto pendingActivity = WTFMove(m_pendingActivity); }
+    void stopPendingActivity() { auto pendingActivity = WTF::move(m_pendingActivity); }
 
     void enqueueFrame(ScriptExecutionContext&, Ref<RTCRtpTransformableFrame>&&);
 

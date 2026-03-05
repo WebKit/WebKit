@@ -35,10 +35,10 @@ class InsertIntoTextNodeCommand : public SimpleEditCommand {
 public:
     static Ref<InsertIntoTextNodeCommand> create(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho = AllowPasswordEcho::Yes, EditAction editingAction = EditAction::Insert)
     {
-        return adoptRef(*new InsertIntoTextNodeCommand(WTFMove(node), offset, text, allowPasswordEcho, editingAction));
+        return adoptRef(*new InsertIntoTextNodeCommand(WTF::move(node), offset, text, allowPasswordEcho, editingAction));
     }
 
-    const String& insertedText();
+    const String& insertedText() LIFETIME_BOUND;
 
 protected:
     InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho, EditAction editingAction);

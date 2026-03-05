@@ -39,11 +39,37 @@ namespace WebCore {
 
 // Base structure for callback user data
 struct SVGTextQuery::Data {
+    enum class Type : uint8_t {
+        Base,
+        TextLength,
+        SubStringLength,
+        StartPositionOfCharacter,
+        EndPositionOfCharacter,
+        RotationOfCharacter,
+        ExtentOfCharacter,
+        CharacterNumberAtPosition,
+    };
+
+    explicit Data(Type type)
+        : type(type)
+    {
+    }
+
+    Type type;
     bool isVerticalText { false };
     unsigned processedCharacters { 0 };
     CheckedPtr<const RenderSVGInlineText> textRenderer;
     InlineIterator::SVGTextBoxIterator textBox;
 };
+
+} // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(ToClassName, DataTypeValue) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::SVGTextQuery::Data& data) { return data.type == WebCore::SVGTextQuery::Data::Type::DataTypeValue; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+namespace WebCore {
 
 static inline InlineIterator::InlineBoxIterator inlineBoxForRenderer(RenderObject* renderer)
 {
@@ -190,7 +216,7 @@ bool SVGTextQuery::numberOfCharactersCallback(Data*, const SVGTextFragment&) con
 
 unsigned SVGTextQuery::numberOfCharacters() const
 {
-    Data data;
+    Data data { Data::Type::Base };
     executeQuery(&data, &SVGTextQuery::numberOfCharactersCallback);
     return data.processedCharacters;
 }
@@ -198,16 +224,22 @@ unsigned SVGTextQuery::numberOfCharacters() const
 // textLength() implementation
 struct TextLengthData : SVGTextQuery::Data {
     TextLengthData()
-        : textLength(0)
+        : Data(Type::TextLength)
     {
     }
 
-    float textLength;
+    float textLength { 0 };
 };
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(TextLengthData, TextLength)
+
+namespace WebCore {
 
 bool SVGTextQuery::textLengthCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    TextLengthData* data = static_cast<TextLengthData*>(queryData);
+    auto* data = downcast<TextLengthData>(queryData);
     data->textLength += queryData->isVerticalText ? fragment.height : fragment.width;
     return false;
 }
@@ -225,21 +257,27 @@ float SVGTextQuery::textLength() const
 // subStringLength() implementation
 struct SubStringLengthData : SVGTextQuery::Data {
     SubStringLengthData(unsigned queryStartPosition, unsigned queryLength)
-        : startPosition(queryStartPosition)
+        : Data(Type::SubStringLength)
+        , startPosition(queryStartPosition)
         , length(queryLength)
-        , subStringLength(0)
     {
     }
 
     unsigned startPosition;
     unsigned length;
 
-    float subStringLength;
+    float subStringLength { 0 };
 };
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(SubStringLengthData, SubStringLength)
+
+namespace WebCore {
 
 bool SVGTextQuery::subStringLengthCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    SubStringLengthData* data = static_cast<SubStringLengthData*>(queryData);
+    auto* data = downcast<SubStringLengthData>(queryData);
 
     unsigned startPosition = data->startPosition;
     unsigned endPosition = startPosition + data->length;
@@ -261,7 +299,8 @@ float SVGTextQuery::subStringLength(unsigned startPosition, unsigned length) con
 // startPositionOfCharacter() implementation
 struct StartPositionOfCharacterData : SVGTextQuery::Data {
     StartPositionOfCharacterData(unsigned queryPosition)
-        : position(queryPosition)
+        : Data(Type::StartPositionOfCharacter)
+        , position(queryPosition)
     {
     }
 
@@ -269,9 +308,15 @@ struct StartPositionOfCharacterData : SVGTextQuery::Data {
     FloatPoint startPosition;
 };
 
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(StartPositionOfCharacterData, StartPositionOfCharacter)
+
+namespace WebCore {
+
 bool SVGTextQuery::startPositionOfCharacterCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    StartPositionOfCharacterData* data = static_cast<StartPositionOfCharacterData*>(queryData);
+    auto* data = downcast<StartPositionOfCharacterData>(queryData);
 
     unsigned startPosition = data->position;
     unsigned endPosition = startPosition + 1;
@@ -307,7 +352,8 @@ FloatPoint SVGTextQuery::startPositionOfCharacter(unsigned position) const
 // endPositionOfCharacter() implementation
 struct EndPositionOfCharacterData : SVGTextQuery::Data {
     EndPositionOfCharacterData(unsigned queryPosition)
-        : position(queryPosition)
+        : Data(Type::EndPositionOfCharacter)
+        , position(queryPosition)
     {
     }
 
@@ -315,9 +361,15 @@ struct EndPositionOfCharacterData : SVGTextQuery::Data {
     FloatPoint endPosition;
 };
 
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(EndPositionOfCharacterData, EndPositionOfCharacter)
+
+namespace WebCore {
+
 bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    EndPositionOfCharacterData* data = static_cast<EndPositionOfCharacterData*>(queryData);
+    auto* data = downcast<EndPositionOfCharacterData>(queryData);
 
     unsigned startPosition = data->position;
     unsigned endPosition = startPosition + 1;
@@ -351,18 +403,24 @@ FloatPoint SVGTextQuery::endPositionOfCharacter(unsigned position) const
 // rotationOfCharacter() implementation
 struct RotationOfCharacterData : SVGTextQuery::Data {
     RotationOfCharacterData(unsigned queryPosition)
-        : position(queryPosition)
-        , rotation(0)
+        : Data(Type::RotationOfCharacter)
+        , position(queryPosition)
     {
     }
 
     unsigned position;
-    float rotation;
+    float rotation { 0 };
 };
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(RotationOfCharacterData, RotationOfCharacter)
+
+namespace WebCore {
 
 bool SVGTextQuery::rotationOfCharacterCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    RotationOfCharacterData* data = static_cast<RotationOfCharacterData*>(queryData);
+    auto* data = downcast<RotationOfCharacterData>(queryData);
 
     unsigned startPosition = data->position;
     unsigned endPosition = startPosition + 1;
@@ -391,13 +449,20 @@ float SVGTextQuery::rotationOfCharacter(unsigned position) const
 // extentOfCharacter() implementation
 struct ExtentOfCharacterData : SVGTextQuery::Data {
     ExtentOfCharacterData(unsigned queryPosition)
-        : position(queryPosition)
+        : Data(Type::ExtentOfCharacter)
+        , position(queryPosition)
     {
     }
 
     unsigned position;
     FloatRect extent;
 };
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(ExtentOfCharacterData, ExtentOfCharacter)
+
+namespace WebCore {
 
 static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const SVGTextFragment& fragment, unsigned startPosition, FloatRect& extent)
 {
@@ -440,7 +505,7 @@ static inline FloatRect calculateFragmentBoundaries(const RenderSVGInlineText& t
 
 bool SVGTextQuery::extentOfCharacterCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    ExtentOfCharacterData* data = static_cast<ExtentOfCharacterData*>(queryData);
+    auto* data = downcast<ExtentOfCharacterData>(queryData);
 
     unsigned startPosition = data->position;
     unsigned endPosition = startPosition + 1;
@@ -461,16 +526,23 @@ FloatRect SVGTextQuery::extentOfCharacter(unsigned position) const
 // characterNumberAtPosition() implementation
 struct CharacterNumberAtPositionData : SVGTextQuery::Data {
     CharacterNumberAtPositionData(const FloatPoint& queryPosition)
-        : position(queryPosition)
+        : Data(Type::CharacterNumberAtPosition)
+        , position(queryPosition)
     {
     }
 
     FloatPoint position;
 };
 
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(CharacterNumberAtPositionData, CharacterNumberAtPosition)
+
+namespace WebCore {
+
 bool SVGTextQuery::characterNumberAtPositionCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    auto* data = static_cast<CharacterNumberAtPositionData*>(queryData);
+    auto* data = downcast<CharacterNumberAtPositionData>(queryData);
 
     // Test the query point against the bounds of the entire fragment first.
     FloatRect fragmentExtents = calculateFragmentBoundaries(*queryData->textRenderer, fragment);

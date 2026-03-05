@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 #import <pal/spi/cocoa/WebPrivacySPI.h>

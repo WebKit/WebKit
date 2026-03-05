@@ -40,8 +40,8 @@ struct DetachedRTCDataChannel {
 public:
     DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
         : identifier(identifier)
-        , label(WTFMove(label).isolatedCopy())
-        , options(WTFMove(options).isolatedCopy())
+        , label(WTF::move(label).isolatedCopy())
+        , options(WTF::move(options).isolatedCopy())
         , state(state)
     {
     }

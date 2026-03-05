@@ -20,7 +20,7 @@
 #pragma once
 
 #include "LegacyInlineIterator.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -59,10 +59,10 @@ template<> inline void InlineBidiResolver::appendRunInternal()
         // FIXME: Could this initialize from this->inIsolate() instead of walking up the render tree?
         IsolateTracker isolateTracker(numberOfIsolateAncestors(m_sor));
         int start = m_sor.offset();
-        RenderObject* obj = m_sor.renderer();
+        CheckedPtr obj = m_sor.renderer();
         while (obj && obj != m_eor.renderer() && obj != endOfLine.renderer()) {
             size_t objectLength = 1;
-            if (auto* renderText = dynamicDowncast<RenderText>(obj))
+            if (auto* renderText = dynamicDowncast<RenderText>(obj.get()))
                 objectLength = renderText->length();
 
             if (isolateTracker.inIsolate())
@@ -81,7 +81,7 @@ template<> inline void InlineBidiResolver::appendRunInternal()
                 pos = endOfLine.offset();
             }
             size_t objectLength = 1;
-            if (auto* renderText = dynamicDowncast<RenderText>(obj))
+            if (auto* renderText = dynamicDowncast<RenderText>(obj.get()))
                 objectLength = renderText->length();
 
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be

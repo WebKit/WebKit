@@ -53,6 +53,9 @@
 #include "ViewGestureGeometryCollectorMessages.h"
 #endif
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
+#include "WebKit-Swift.h"
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -67,7 +70,7 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 #endif
 
-static HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>& viewGestureControllersForAllPages()
+static HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>& NODELETE viewGestureControllersForAllPages()
 {
     // The key in this map is the associated page ID.
     static NeverDestroyed<HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>> viewGestureControllers;
@@ -131,7 +134,7 @@ void ViewGestureController::connectToProcess()
 
     m_webPageIDInMainFrameProcess = page->webPageIDInMainFrameProcess();
     m_mainFrameProcess = page->legacyMainFrameProcess();
-    Ref { *m_mainFrameProcess }->addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), *m_webPageIDInMainFrameProcess, *this);
+    protect(*m_mainFrameProcess)->addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), *m_webPageIDInMainFrameProcess, *this);
     m_isConnectedToProcess = true;
 }
 
@@ -149,7 +152,11 @@ ViewGestureController* ViewGestureController::controllerForGesture(WebPageProxyI
 
 RefPtr<WebBackForwardListItem> ViewGestureController::itemForSwipeDirection(SwipeDirection direction) const
 {
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    std::optional<WebBackForwardList> backForwardList = backForwardListForNavigation();
+#else
     RefPtr backForwardList = backForwardListForNavigation();
+#endif
     if (!backForwardList)
         return { };
 
@@ -213,10 +220,17 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction, DeferT
         return false;
 
     RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    WebBackForwardList backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : page->backForwardList();
+    if (direction == SwipeDirection::Back)
+        return !!backForwardList.backItem();
+    return !!backForwardList.forwardItem();
+#else
     Ref<WebBackForwardList> backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : page->backForwardList();
     if (direction == SwipeDirection::Back)
         return !!backForwardList->backItem();
     return !!backForwardList->forwardItem();
+#endif
 }
 
 void ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame()
@@ -304,7 +318,7 @@ void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNa
 void ViewGestureController::checkForActiveLoads()
 {
     RefPtr page = m_webPageProxy.get();
-    if (page && page->protectedPageLoadState()->isLoading()) {
+    if (page && protect(page->pageLoadState())->isLoading()) {
         if (!m_swipeActiveLoadMonitoringTimer.isActive())
             m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
         return;
@@ -363,7 +377,7 @@ void ViewGestureController::SnapshotRemovalTracker::resume()
 void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, WTF::Function<void()>&& removalCallback)
 {
     m_outstandingEvents = desiredEvents;
-    m_removalCallback = WTFMove(removalCallback);
+    m_removalCallback = WTF::move(removalCallback);
     m_startTime = MonotonicTime::now();
 
     log("start"_s);
@@ -433,7 +447,7 @@ void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediate
 {
     m_watchdogTimer.stop();
 
-    auto removalCallback = WTFMove(m_removalCallback);
+    auto removalCallback = WTF::move(m_removalCallback);
     if (removalCallback) {
         log("removing snapshot"_s);
         reset();
@@ -475,11 +489,6 @@ ViewGestureController::PendingSwipeTracker::PendingSwipeTracker(WebPageProxy& we
 {
 }
 
-Ref<ViewGestureController> ViewGestureController::PendingSwipeTracker::protectedViewGestureController() const
-{
-    return m_viewGestureController.get();
-}
-
 bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(PlatformScrollEvent event, ViewGestureController::SwipeDirection& potentialSwipeDirection)
 {
     if (!scrollEventCanStartSwipe(event) || !scrollEventCanInfluenceSwipe(event))
@@ -503,7 +512,7 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(Platf
         return false;
 
     potentialSwipeDirection = tryingToSwipeBack ? SwipeDirection::Back : SwipeDirection::Forward;
-    return protectedViewGestureController()->canSwipeInDirection(potentialSwipeDirection, DeferToConflictingGestures::No);
+    return protect(m_viewGestureController)->canSwipeInDirection(potentialSwipeDirection, DeferToConflictingGestures::No);
 }
 
 bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent event)
@@ -570,7 +579,7 @@ bool ViewGestureController::PendingSwipeTracker::tryToStartSwipe(PlatformScrollE
     }
 
     if (std::abs(m_cumulativeDelta.width()) >= minimumHorizontalSwipeDistance)
-        protectedViewGestureController()->startSwipeGesture(event, m_direction);
+        protect(m_viewGestureController)->startSwipeGesture(event, m_direction);
     else
         m_state = State::InsufficientMagnitude;
 
@@ -598,10 +607,17 @@ void ViewGestureController::startSwipeGesture(PlatformScrollEvent event, SwipeDi
 
     page->recordAutomaticNavigationSnapshot();
 
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    WebBackForwardList backForwardList = page->backForwardList();
+    RefPtr targetItem = (direction == SwipeDirection::Back)
+        ? backForwardList.goBackItemSkippingItemsWithoutUserGesture()
+        : backForwardList.goForwardItemSkippingItemsWithoutUserGesture();
+#else
     Ref backForwardList = page->backForwardList();
     RefPtr targetItem = (direction == SwipeDirection::Back)
         ? backForwardList->goBackItemSkippingItemsWithoutUserGesture()
         : backForwardList->goForwardItemSkippingItemsWithoutUserGesture();
+#endif
     if (!targetItem)
         return;
 
@@ -675,7 +691,11 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
     m_didStartProvisionalLoad = false;
     m_pendingNavigation = page->goToBackForwardItem(targetItem);
 
-    RefPtr currentItem = Ref { page->backForwardList() }->currentItem();
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    RefPtr currentItem = page->backForwardList().currentItem();
+#else
+    RefPtr currentItem = protect(page->backForwardList())->currentItem();
+#endif
     // The main frame will not be navigated so hide the snapshot right away.
     if (currentItem && currentItem->itemIsClone(targetItem)) {
         removeSwipeSnapshot();
@@ -746,7 +766,7 @@ void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
     if (page->provisionalPageProxy())
         page->provisionalPageProxy()->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold));
     else
-        page->protectedLegacyMainFrameProcess()->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), page->webPageIDInMainFrameProcess());
 }
 
 FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, double scale)
@@ -779,7 +799,7 @@ void ViewGestureController::prepareMagnificationGesture(FloatPoint origin)
         return;
 
     m_magnification = page->pageScaleFactor();
-    page->protectedLegacyMainFrameProcess()->send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), page->webPageIDInMainFrameProcess());
+    protect(page->legacyMainFrameProcess())->send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), page->webPageIDInMainFrameProcess());
 
     m_initialMagnification = m_magnification;
     m_initialMagnificationOrigin = FloatPoint(origin);

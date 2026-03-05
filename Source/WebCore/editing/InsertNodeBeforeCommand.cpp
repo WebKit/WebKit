@@ -38,7 +38,7 @@ namespace WebCore {
 
 InsertNodeBeforeCommand::InsertNodeBeforeCommand(Ref<Node>&& insertChild, Node& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     : SimpleEditCommand(refChild.document(), editingAction)
-    , m_insertChild(WTFMove(insertChild))
+    , m_insertChild(WTF::move(insertChild))
     , m_refChild(refChild)
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {

@@ -269,7 +269,7 @@ void ScreenCapturerX11::CaptureFrame() {
   // may still be reading from them.
   if (!queue_.current_frame()) {
     std::unique_ptr<DesktopFrame> frame(
-        new BasicDesktopFrame(selected_monitor_rect_.size()));
+        new BasicDesktopFrame(selected_monitor_rect_.size(), FOURCC_ARGB));
 
     // We set the top-left of the frame so the mouse cursor will be composited
     // properly, and our frame buffer will not be overrun while blitting.
@@ -292,7 +292,7 @@ void ScreenCapturerX11::CaptureFrame() {
 }
 
 bool ScreenCapturerX11::GetSourceList(SourceList* sources) {
-  RTC_DCHECK(sources->size() == 0);
+  RTC_DCHECK(sources->empty());
   if (!use_randr_) {
     sources->push_back({});
     return true;
@@ -511,8 +511,14 @@ std::unique_ptr<DesktopCapturer> ScreenCapturerX11::CreateRawScreenCapturer(
   if (!options.x_display())
     return nullptr;
 
+  RTC_LOG(LS_INFO)
+      << "video capture: ScreenCapturerX11::CreateRawScreenCapturer creates "
+         "DesktopCapturer of type ScreenCapturerX11";
   std::unique_ptr<ScreenCapturerX11> capturer(new ScreenCapturerX11());
   if (!capturer->Init(options)) {
+    RTC_LOG(LS_INFO)
+        << "video capture: ScreenCapturerX11::CreateRawScreenCapturer "
+           "DesktopCapturer is null because it can not be initiated";
     return nullptr;
   }
 

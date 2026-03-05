@@ -244,13 +244,13 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
         worker_thread_(Thread::Current()),
         signaling_thread_(Thread::Current()),
         // TODO(hta): remove separate thread variables and use context.
+        env_(CreateEnvironment()),
         dependencies_(MakeDependencies()),
-        context_(
-            ConnectionContext::Create(CreateEnvironment(), &dependencies_)),
+        context_(ConnectionContext::Create(env_, &dependencies_)),
         local_streams_(StreamCollection::Create()),
         remote_streams_(StreamCollection::Create()),
         data_channel_controller_(network_thread_),
-        codec_lookup_helper_(context_.get()) {}
+        codec_lookup_helper_(context_.get(), env_.field_trials()) {}
 
   ~FakePeerConnectionForStats() {
     for (auto transceiver : transceivers_) {
@@ -533,7 +533,7 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
   }
 
   scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>
-  GetOrCreateFirstTransceiverOfType(webrtc::MediaType media_type) {
+  GetOrCreateFirstTransceiverOfType(MediaType media_type) {
     for (auto transceiver : transceivers_) {
       if (transceiver->internal()->media_type() == media_type) {
         return transceiver;
@@ -543,11 +543,13 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
   }
 
   scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>
-  CreateTransceiverOfType(webrtc::MediaType media_type) {
+  CreateTransceiverOfType(MediaType media_type) {
     auto transceiver = RtpTransceiverProxyWithInternal<RtpTransceiver>::Create(
         signaling_thread_,
-        make_ref_counted<RtpTransceiver>(media_type, context_.get(),
+        make_ref_counted<RtpTransceiver>(env_, media_type, context_.get(),
                                          &codec_lookup_helper_));
+    transceiver->internal()->set_current_direction(
+        RtpTransceiverDirection::kSendRecv);
     transceivers_.push_back(transceiver);
     return transceiver;
   }
@@ -556,6 +558,7 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
   Thread* const worker_thread_;
   Thread* const signaling_thread_;
 
+  Environment env_;
   PeerConnectionFactoryDependencies dependencies_;
   scoped_refptr<ConnectionContext> context_;
 

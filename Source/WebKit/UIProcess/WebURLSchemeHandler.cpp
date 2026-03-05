@@ -43,7 +43,7 @@ WebURLSchemeHandler::~WebURLSchemeHandler()
 void WebURLSchemeHandler::startTask(WebPageProxy& page, WebProcessProxy& process, PageIdentifier webPageID, URLSchemeTaskParameters&& parameters, SyncLoadCompletionHandler&& completionHandler)
 {
     auto taskIdentifier = parameters.taskIdentifier;
-    auto result = m_tasks.add({ taskIdentifier, page.identifier() }, WebURLSchemeTask::create(*this, page, process, webPageID, WTFMove(parameters), WTFMove(completionHandler)));
+    auto result = m_tasks.add({ taskIdentifier, page.identifier() }, WebURLSchemeTask::create(*this, page, process, webPageID, WTF::move(parameters), WTF::move(completionHandler)));
     ASSERT(result.isNewEntry);
 
     auto pageEntry = m_tasksByPageIdentifier.add(page.identifier(), HashSet<WebCore::ResourceLoaderIdentifier>());

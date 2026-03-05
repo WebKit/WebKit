@@ -43,7 +43,7 @@ class RealtimeOutgoingAudioSourceCocoa final : public RealtimeOutgoingAudioSourc
     WTF_MAKE_TZONE_ALLOCATED(RealtimeOutgoingAudioSourceCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RealtimeOutgoingAudioSourceCocoa);
 public:
-    static Ref<RealtimeOutgoingAudioSourceCocoa> create(Ref<MediaStreamTrackPrivate>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSourceCocoa(WTFMove(audioSource))); }
+    static Ref<RealtimeOutgoingAudioSourceCocoa> create(Ref<MediaStreamTrackPrivate>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSourceCocoa(WTF::move(audioSource))); }
 
 private:
     explicit RealtimeOutgoingAudioSourceCocoa(Ref<MediaStreamTrackPrivate>&&);

@@ -26,13 +26,13 @@
 
 case $variants in
     all|testing)
-        DYLD_LIBRARY_PATH=build-$sdk-testing/$configdir build-$sdk-testing/$configdir/test_pas
+        DYLD_LIBRARY_PATH=build-$sdk-testing/$configdir build-$sdk-testing/$configdir/test_pas $testArgs
         ;;
 esac
 
 case $variants in
     all|default)
-        DYLD_LIBRARY_PATH=build-$sdk-default/$configdir build-$sdk-default/$configdir/test_pas
+        DYLD_LIBRARY_PATH=build-$sdk-default/$configdir build-$sdk-default/$configdir/test_pas $testArgs
         ;;
 esac
 

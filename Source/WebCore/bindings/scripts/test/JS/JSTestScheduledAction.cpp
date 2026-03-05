@@ -129,7 +129,7 @@ void JSTestScheduledActionPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestScheduledAction::s_info = { "TestScheduledActionReal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestScheduledAction) };
 
 JSTestScheduledAction::JSTestScheduledAction(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestScheduledAction>&& impl)
-    : JSDOMWrapper<TestScheduledAction>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestScheduledAction>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -220,7 +220,7 @@ void JSTestScheduledActionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestScheduledAction = static_cast<JSTestScheduledAction*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestScheduledAction->protectedWrapped().ptr(), jsTestScheduledAction);
+    uncacheWrapper(world, protect(jsTestScheduledAction->wrapped()).ptr(), jsTestScheduledAction);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -258,7 +258,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestScheduledAction>(impl.ptr());
 #endif
-    return createWrapper<TestScheduledAction>(globalObject, WTFMove(impl));
+    return createWrapper<TestScheduledAction>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestScheduledAction& impl)

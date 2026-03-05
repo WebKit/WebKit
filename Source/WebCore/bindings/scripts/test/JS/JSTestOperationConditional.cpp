@@ -147,7 +147,7 @@ void JSTestOperationConditionalPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestOperationConditional::s_info = { "TestOperationConditional"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditional) };
 
 JSTestOperationConditional::JSTestOperationConditional(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOperationConditional>&& impl)
-    : JSDOMWrapper<TestOperationConditional>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestOperationConditional>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -253,7 +253,7 @@ void JSTestOperationConditionalOwner::finalize(JSC::Handle<JSC::Unknown> handle,
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestOperationConditional = static_cast<JSTestOperationConditional*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestOperationConditional->protectedWrapped().ptr(), jsTestOperationConditional);
+    uncacheWrapper(world, protect(jsTestOperationConditional->wrapped()).ptr(), jsTestOperationConditional);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -291,7 +291,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestOperationConditional>(impl.ptr());
 #endif
-    return createWrapper<TestOperationConditional>(globalObject, WTFMove(impl));
+    return createWrapper<TestOperationConditional>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestOperationConditional& impl)

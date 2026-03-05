@@ -198,7 +198,7 @@ StorageAreaBase& LocalStorageManager::ensureLocalStorageArea(const WebCore::Clie
     if (!m_localStorageArea) {
         RefPtr<StorageAreaBase> storage;
         if (!m_path.isEmpty())
-            storage = SQLiteStorageArea::create(localStorageQuotaInBytes, origin, m_path, WTFMove(workQueue));
+            storage = SQLiteStorageArea::create(localStorageQuotaInBytes, origin, m_path, WTF::move(workQueue));
         else
             storage = MemoryStorageArea::create(origin, StorageAreaBase::StorageType::Local);
 
@@ -211,7 +211,7 @@ StorageAreaBase& LocalStorageManager::ensureLocalStorageArea(const WebCore::Clie
 
 StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& workQueue)
 {
-    Ref localStorageArea = ensureLocalStorageArea(origin, WTFMove(workQueue));
+    Ref localStorageArea = ensureLocalStorageArea(origin, WTF::move(workQueue));
     ASSERT(m_path.isEmpty() || is<SQLiteStorageArea>(localStorageArea));
     localStorageArea->addListener(connection, sourceIdentifier);
     return localStorageArea->identifier();
@@ -274,15 +274,15 @@ bool LocalStorageManager::setStorageMap(WebCore::ClientOrigin clientOrigin, Hash
     bool succeeded = true;
 
     if (clientOrigin.topOrigin == clientOrigin.clientOrigin) {
-        Ref localStorageArea = ensureLocalStorageArea(clientOrigin, WTFMove(workQueue));
+        Ref localStorageArea = ensureLocalStorageArea(clientOrigin, WTF::move(workQueue));
         for (auto& [key, value] : storageMap) {
-            if (!localStorageArea->setItem({ }, { }, WTFMove(key), WTFMove(value), { }))
+            if (!localStorageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), { }))
                 succeeded = false;
         }
     } else {
         Ref transientStorageArea = ensureTransientLocalStorageArea(clientOrigin);
         for (auto& [key, value] : storageMap) {
-            if (!transientStorageArea->setItem({ }, { }, WTFMove(key), WTFMove(value), { }))
+            if (!transientStorageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), { }))
                 succeeded = false;
         }
     }

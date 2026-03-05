@@ -139,8 +139,8 @@ public:
             unsigned m_index;
         };
 
-        iterator begin() const { return { *this, m_begin }; }
-        iterator end() const { return { *this, m_end }; }
+        iterator begin() const LIFETIME_BOUND { return { *this, m_begin }; }
+        iterator end() const LIFETIME_BOUND { return { *this, m_end }; }
 
         const BitVector& m_bitVector;
         unsigned m_startingIndex;

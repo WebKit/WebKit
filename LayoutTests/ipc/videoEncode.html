@@ -22,7 +22,7 @@ if (window.IPC) {
             id, width, height, startBitrate:62, maxBitrate:91, minBitrate:5, maxFramerate:720916
         });
         CoreIPC.GPU.LibWebRTCCodecsProxy.EncodeFrame(0, {
-            id, buffer:{ time: { timeValue:43, timeScale:79, timeFlags:145 }, mirrored:false, rotation:0, buffer:{ alias: { variantType:'WebCore::IntSize', variant : { width, height } } } }, timeStamp:61, duration:{}, shouldEncodeAsKeyFrame:true
+            id, buffer:{ time: { timeValue:43, timeScale:79, timeFlags:145 }, mirrored:false, rotation:0, colorSpace: {primaries: {optionalValue: 0}, transfer: {optionalValue: 0}, matrix:{optionalValue: 1}, fullRange: {optionalValue: false}}, buffer:{ alias: { variantType:'WebCore::IntSize', variant : { width, height } } }}, timeStamp:61, duration:{}, shouldEncodeAsKeyFrame:true
         });
         CoreIPC.GPU.LibWebRTCCodecsProxy.ReleaseEncoder(0, {
             id

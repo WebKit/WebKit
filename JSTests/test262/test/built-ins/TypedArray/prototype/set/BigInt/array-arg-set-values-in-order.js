@@ -18,12 +18,12 @@ info: |
     d. Perform SetValueInBuffer(targetBuffer, targetByteIndex, targetType,
     kNumber).
   ...
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(5);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(5));
   var calls = [];
   var obj = {
     length: 3
@@ -69,4 +69,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     compareArray(calls, [0, "0,0,0,0,0", 1, "0,42,0,0,0", 2, "0,42,43,0,0"]),
     "values are set in order"
   );
-});
+}, null, ["passthrough"]);

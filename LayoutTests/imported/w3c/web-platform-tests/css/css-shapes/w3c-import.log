@@ -15,9 +15,11 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/basic-shape-circle-ellipse-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/basic-shape-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside-infinite-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside-invalid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside-invalid-circle-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside-invalid-circle-001.html

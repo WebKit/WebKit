@@ -25,22 +25,22 @@ TEST(RefCountTest, Basic) {
   CRYPTO_refcount_t count = 0;
 
   CRYPTO_refcount_inc(&count);
-  EXPECT_EQ(1u, count);
+  EXPECT_EQ(1u, count.load());
 
   EXPECT_TRUE(CRYPTO_refcount_dec_and_test_zero(&count));
-  EXPECT_EQ(0u, count);
+  EXPECT_EQ(0u, count.load());
 
   count = CRYPTO_REFCOUNT_MAX;
   CRYPTO_refcount_inc(&count);
-  EXPECT_EQ(CRYPTO_REFCOUNT_MAX, count)
+  EXPECT_EQ(CRYPTO_REFCOUNT_MAX, count.load())
       << "Count did not saturate correctly when incrementing.";
   EXPECT_FALSE(CRYPTO_refcount_dec_and_test_zero(&count));
-  EXPECT_EQ(CRYPTO_REFCOUNT_MAX, count)
+  EXPECT_EQ(CRYPTO_REFCOUNT_MAX, count.load())
       << "Count did not saturate correctly when decrementing.";
 
   count = 2;
   EXPECT_FALSE(CRYPTO_refcount_dec_and_test_zero(&count));
-  EXPECT_EQ(1u, count);
+  EXPECT_EQ(1u, count.load());
 }
 
 #if defined(OPENSSL_THREADS)
@@ -53,7 +53,7 @@ TEST(RefCountTest, Threads) {
     std::thread thread([&] { CRYPTO_refcount_inc(&count); });
     CRYPTO_refcount_inc(&count);
     thread.join();
-    EXPECT_EQ(2u, count);
+    EXPECT_EQ(2u, count.load());
   }
 
   // Race an increment with a decrement.
@@ -61,7 +61,7 @@ TEST(RefCountTest, Threads) {
     std::thread thread([&] { CRYPTO_refcount_inc(&count); });
     EXPECT_FALSE(CRYPTO_refcount_dec_and_test_zero(&count));
     thread.join();
-    EXPECT_EQ(2u, count);
+    EXPECT_EQ(2u, count.load());
   }
 
   // Race two decrements.
@@ -71,7 +71,7 @@ TEST(RefCountTest, Threads) {
         [&] { thread_saw_zero = CRYPTO_refcount_dec_and_test_zero(&count); });
     bool saw_zero = CRYPTO_refcount_dec_and_test_zero(&count);
     thread.join();
-    EXPECT_EQ(0u, count);
+    EXPECT_EQ(0u, count.load());
     // Exactly one thread should see zero.
     EXPECT_NE(saw_zero, thread_saw_zero);
   }

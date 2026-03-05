@@ -48,8 +48,8 @@
 #include "RenderFlexibleBox.h"
 #include "RenderObjectInlines.h"
 #include "RenderSlider.h"
-#include "RenderStyleInlines.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
 #include "ScriptDisallowedScope.h"
@@ -69,8 +69,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SliderThumbElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SliderContainerElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderThumbElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderContainerElement);
 
 inline static Decimal sliderPosition(HTMLInputElement& element)
 {
@@ -79,7 +79,7 @@ inline static Decimal sliderPosition(HTMLInputElement& element)
     return stepRange.proportionFromValue(stepRange.clampValue(oldValue));
 }
 
-inline static bool hasVerticalAppearance(HTMLInputElement& input)
+inline static bool NODELETE hasVerticalAppearance(HTMLInputElement& input)
 {
     ASSERT(input.renderer());
     return !input.renderer()->isHorizontalWritingMode() || input.renderer()->style().usedAppearance() == StyleAppearance::SliderVertical;
@@ -90,11 +90,11 @@ inline static bool hasVerticalAppearance(HTMLInputElement& input)
 // FIXME: Find a way to cascade appearance and adjust heights, and get rid of this class.
 // http://webkit.org/b/62535
 class RenderSliderContainer final : public RenderFlexibleBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSliderContainer);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSliderContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSliderContainer);
 public:
     RenderSliderContainer(SliderContainerElement& element, RenderStyle&& style)
-        : RenderFlexibleBox(Type::SliderContainer, element, WTFMove(style))
+        : RenderFlexibleBox(Type::SliderContainer, element, WTF::move(style))
     {
     }
 
@@ -103,15 +103,15 @@ public:
 
 private:
     void layout() override;
-    bool isFlexibleBoxImpl() const override { return true; }
+    bool NODELETE isFlexibleBoxImpl() const override { return true; }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSliderContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSliderContainer);
 
 RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     ASSERT(element()->shadowHost());
-    Ref input = downcast<HTMLInputElement>(*protectedElement()->shadowHost());
+    Ref input = downcast<HTMLInputElement>(*protect(element())->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
 
     if (input->renderer()->isRenderSlider() && !isVertical && input->hasDataList()) {
@@ -137,7 +137,7 @@ RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeig
 void RenderSliderContainer::layout()
 {
     ASSERT(element()->shadowHost());
-    Ref input = downcast<HTMLInputElement>(*protectedElement()->shadowHost());
+    Ref input = downcast<HTMLInputElement>(*protect(element())->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
     CheckedRef mutableStyle = this->mutableStyle();
     mutableStyle->setFlexDirection(isVertical && writingMode().isHorizontal() ? FlexDirection::Column : FlexDirection::Row);
@@ -149,8 +149,8 @@ void RenderSliderContainer::layout()
         mutableStyle->setDirection(TextDirection::LTR);
     }
 
-    CheckedPtr thumb = input->sliderThumbElement() ? input->protectedSliderThumbElement()->renderBox() : nullptr;
-    CheckedPtr track = input->sliderTrackElement() ? input->protectedSliderTrackElement()->renderBox() : nullptr;
+    CheckedPtr thumb = input->sliderThumbElement() ? protect(input->sliderThumbElement())->renderBox() : nullptr;
+    CheckedPtr track = input->sliderTrackElement() ? protect(input->sliderTrackElement())->renderBox() : nullptr;
     // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
     // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
     if (track)
@@ -200,7 +200,7 @@ Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 }
 
 SliderThumbElement::SliderThumbElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
+    : HTMLDivElement(document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 
@@ -247,7 +247,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
         return;
 
     ASSERT(input->sliderTrackElement());
-    CheckedPtr trackRenderer = input->protectedSliderTrackElement()->renderBox();
+    CheckedPtr trackRenderer = protect(input->sliderTrackElement())->renderBox();
     if (!trackRenderer)
         return;
 
@@ -280,7 +280,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     auto stepRange = input->createStepRange(AnyStepHandling::Reject);
     auto value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
-    const LayoutUnit snappingThreshold = checkedRenderer()->theme().sliderTickSnappingThreshold();
+    const LayoutUnit snappingThreshold = protect(renderer())->theme().sliderTickSnappingThreshold();
     if (snappingThreshold > 0) {
         if (std::optional<Decimal> closest = input->findClosestTickMarkValue(value)) {
             double closestFraction = stepRange.proportionFromValue(*closest).toDouble();
@@ -580,10 +580,10 @@ std::optional<Style::UnadjustedStyle> SliderThumbElement::resolveCustomStyle(con
     auto elementStyle = resolveStyle(resolutionContext);
     switch (hostStyle->usedAppearance()) {
     case StyleAppearance::SliderVertical:
-        elementStyle.style->setUsedAppearance(StyleAppearance::SliderThumbVertical);
+        protect(elementStyle.style)->setUsedAppearance(StyleAppearance::SliderThumbVertical);
         break;
     case StyleAppearance::SliderHorizontal:
-        elementStyle.style->setUsedAppearance(StyleAppearance::SliderThumbHorizontal);
+        protect(elementStyle.style)->setUsedAppearance(StyleAppearance::SliderThumbHorizontal);
         break;
     default:
         break;
@@ -600,7 +600,7 @@ Ref<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren(Docume
 // --------------------------------
 
 inline SliderContainerElement::SliderContainerElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
+    : HTMLDivElement(document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 
@@ -614,7 +614,7 @@ Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
 
 RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
+    return createRenderer<RenderSliderContainer>(*this, WTF::move(style));
 }
 
 }

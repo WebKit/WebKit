@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
   <meta charset="utf-8">
-  <title>Newspaper demo</title>
+  <title>CSS Grid Lanes — Newspaper demo</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../universal.css">
@@ -14,14 +14,14 @@
 <body>
 
 <aside class="interface">
-  <nav>Demos: <a href="../photos/">Photos</a> | <a href="../megamenu/">Mega menu</a> | <a href="../museum/">Museum</a></nav>
+  <nav>Demos: <a href="../">Home</a> | <a href="../photos/">Photos</a> | <a href="../megamenu/">Mega menu</a> | <a href="../museum/">Museum</a></nav>
   <section class="layout-switcher">
     <label for="layout-select">Switch layouts:</label>
     <select name="layouts" id="layout-select">
       <option value="one">Multicolumn layout</option>
       <option value="two">CSS Grid Level 1</option>
-      <option value="three">Classic masonry / waterfall layout</option>
-      <option selected value="four">Various sizes of content</option>
+      <option value="three">Grid Lanes — classic "waterfall" layout</option>
+      <option selected value="four">Grid Lanes — various sizes</option>
     </select>
   </section>
   <section class="number-toggle">
@@ -45,22 +45,19 @@ article:nth-child(1) {
   grid-column: 1 / -2;
 }</code></pre>
 <pre class="three"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(30ch, 1fr));
-  grid-template-rows: off;
   column-gap: 2lh;
 }</code></pre>
 <pre class="four"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr));
-  grid-template-rows: off;
   column-gap: 2lh;
 }</code></pre>
 <pre class="four code"><code>/* Lots of additional CSS to style and span items, changing at different breakpoints */</code></pre>
   </section>
 </aside>
-<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
-<a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer> 
+<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, or another browser that supports Grid Level 3.</p></footer> 
 <main>
   <article>
       <h3><a href="https://webkit.org/blog/15249/optimizing-webkit-safari-for-speedometer-3-0/">Optimizing WebKit & Safari for Speedometer 3.0</a></h3>

@@ -145,7 +145,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncToLocaleString, (JSGlobalObject* globalO
     if (auto number = value.tryGetDouble())
         RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, number.value())));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, WTFMove(value))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, WTF::move(value))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncValueOf, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -39,8 +39,8 @@ LinkPreloadResourceClient::LinkPreloadResourceClient(LinkLoader& loader, CachedR
 
 void LinkPreloadResourceClient::triggerEvents(const CachedResource& resource)
 {
-    if (m_loader)
-        m_loader->triggerEvents(resource);
+    if (RefPtr loader = m_loader.get())
+        loader->triggerEvents(resource);
 }
 
 }

@@ -84,6 +84,10 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
     , m_vm(&vm)
     , m_jsModule(module, WriteBarrierEarlyInit)
     , m_moduleRecord(moduleRecord, WriteBarrierEarlyInit)
+    , m_memories(
+        // there must be space for a dummy memory, so if count is 0 make a FixedVector(1)
+        module->module().moduleInformation().memoryCount() ? module->module().moduleInformation().memoryCount() : 1
+    )
     , m_tables(module->module().moduleInformation().tableCount())
     , m_module(module->module())
     , m_moduleInformation(module->moduleInformation())
@@ -149,18 +153,15 @@ void JSWebAssemblyInstance::finishCreation(VM& vm)
     for (unsigned i = 0; i < m_moduleInformation->typeCount(); ++i) {
         Ref rtt = m_moduleInformation->rtts[i];
         if (rtt->kind() == RTTKind::Array)
-            gcObjectStructureID(i).set(vm, this, JSWebAssemblyArray::createStructure(vm, globalObject, m_moduleInformation->typeSignatures[i]->expand(), WTFMove(rtt)));
+            gcObjectStructureID(i).set(vm, this, JSWebAssemblyArray::createStructure(vm, globalObject, m_moduleInformation->typeSignatures[i], WTF::move(rtt)));
         else if (rtt->kind() == RTTKind::Struct)
-            gcObjectStructureID(i).set(vm, this, JSWebAssemblyStruct::createStructure(vm, globalObject, m_moduleInformation->typeSignatures[i]->expand(), WTFMove(rtt)));
+            gcObjectStructureID(i).set(vm, this, JSWebAssemblyStruct::createStructure(vm, globalObject, m_moduleInformation->typeSignatures[i], WTF::move(rtt)));
     }
 
     m_vm->traps().registerMirror(m_stackMirror);
 
     // Now, JSWebAssemblyInstance is fully initialized. Expose it to the concurrent compiler.
     m_anchor = m_module->registerAnchor(this);
-
-    if (Options::enableWasmDebugger()) [[unlikely]]
-        Wasm::DebugServer::singleton().trackInstance(this);
 }
 
 JSWebAssemblyInstance::~JSWebAssemblyInstance()
@@ -197,7 +198,8 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_jsModule);
     visitor.append(thisObject->m_moduleRecord);
-    visitor.append(thisObject->m_memory);
+    for (auto& memory : thisObject->m_memories)
+        visitor.append(memory);
     for (auto& table : thisObject->m_tables)
         visitor.append(table);
     for (unsigned i = 0; i < thisObject->numImportFunctions(); ++i)
@@ -266,7 +268,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
             auto callLinkInfo = makeUnique<DataOnlyCallLinkInfo>();
             callLinkInfo->initialize(vm, nullptr, CallLinkInfo::CallType::Call, CodeOrigin { });
             WTF::storeStoreFence(); // CallLinkInfo is visited by concurrent GC already, thus, when we add it, we must ensure that it is fully initialized.
-            info->callLinkInfo = WTFMove(callLinkInfo);
+            info->callLinkInfo = WTF::move(callLinkInfo);
             vm.writeBarrier(this); // Materialized CallLinkInfo and we need rescan of JSWebAssemblyInstance.
         } else {
             // the import is a Wasm function or a builtin
@@ -328,7 +330,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
         return nullptr;
     }
 
-    auto* jsInstance = new (NotNull, cell) JSWebAssemblyInstance(vm, instanceStructure, jsModule, moduleRecord, WTFMove(provider));
+    auto* jsInstance = new (NotNull, cell) JSWebAssemblyInstance(vm, instanceStructure, jsModule, moduleRecord, WTF::move(provider));
     jsInstance->finishCreation(vm);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
@@ -357,31 +359,45 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
         ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());
     }
 
-    bool hasMemoryImport = moduleInformation.memory.isImport();
-    if (moduleInformation.memory && !hasMemoryImport) {
-        // We create a memory when it's a memory definition.
-        auto* jsMemory = JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
+    for (unsigned i = 0; i < moduleInformation.memoryCount(); i++) {
+        const auto& mem = moduleInformation.memory(i);
+        if (!mem.isImport()) {
+            // We create a memory when it's a memory definition.
+            auto* jsMemory = JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
 
-        RefPtr<Memory> memory = Memory::tryCreate(vm, moduleInformation.memory.initial(), moduleInformation.memory.maximum(), moduleInformation.memory.isShared() ? MemorySharingMode::Shared: MemorySharingMode::Default, std::nullopt,
-            [&vm, jsMemory](Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); }
-        );
-        if (!memory)
-            return exception(createOutOfMemoryError(globalObject));
+            RefPtr<Memory> memory = Memory::tryCreate(vm, mem.initial(), mem.maximum(), mem.isShared() ? MemorySharingMode::Shared : MemorySharingMode::Default, mem.addressType(), std::nullopt,
+                [&vm, jsMemory](Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) {
+                    jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount);
+                }
+            );
+            if (!memory)
+                return exception(createOutOfMemoryError(globalObject));
 
-        jsMemory->adopt(memory.releaseNonNull());
-        jsInstance->setMemory(vm, jsMemory);
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
+            jsMemory->adopt(memory.releaseNonNull());
+            jsInstance->setMemory(vm, i, jsMemory);
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
+        }
     }
 
-    if (!jsInstance->memory()) {
+    // If there are no memories, there must be a dummy memory.
+    // If there is at least 1 memory but there are imports, it will crash if there is no dummy memory.
+    // Trying to access memory 0 will crash if memoryCount is 0.
+    if (!moduleInformation.memoryCount() || !jsInstance->memory(0)) {
         // Make sure we have a dummy memory, so that wasm -> wasm thunks avoid checking for a nullptr Memory when trying to set pinned registers.
         // When there is a memory import, this will be replaced later in the module record import initialization.
         auto* jsMemory = JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
-        jsMemory->adopt(Memory::create(vm));
-        jsInstance->setMemory(vm, jsMemory);
+        jsMemory->adopt(Memory::create());
+        jsInstance->setDummyMemory(vm, jsMemory);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
-    
+
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    // Register with debugger after memory and anchor are fully initialized.
+    if (Options::enableWasmDebugger()) [[unlikely]]
+        Wasm::DebugServer::singleton().trackInstance(jsInstance);
+#endif
+
     return jsInstance;
 }
 
@@ -474,7 +490,7 @@ void JSWebAssemblyInstance::elemDrop(uint32_t elementIndex)
     m_passiveElements.quickClear(elementIndex);
 }
 
-bool JSWebAssemblyInstance::memoryInit(uint32_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex)
+bool JSWebAssemblyInstance::memoryInit(uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex)
 {
     RELEASE_ASSERT(dataSegmentIndex < module().moduleInformation().dataSegmentsCount());
 
@@ -720,7 +736,7 @@ void JSWebAssemblyInstance::setTable(unsigned i, Ref<Table>&& table)
             update = true;
         }
     }
-    tables()[i] = WTFMove(table);
+    tables()[i] = WTF::move(table);
     if (update)
         updateCachedTable0();
 }
@@ -738,12 +754,12 @@ void JSWebAssemblyInstance::updateCachedTable0()
 void JSWebAssemblyInstance::linkGlobal(unsigned i, Ref<Global>&& global)
 {
     m_globals[i].m_pointer = global->valuePointer();
-    m_linkedGlobals.set(i, WTFMove(global));
+    m_linkedGlobals.set(i, WTF::move(global));
 }
 
 void JSWebAssemblyInstance::setTag(unsigned index, Ref<const Tag>&& tag)
 {
-    m_tags[index] = WTFMove(tag);
+    m_tags[index] = WTF::move(tag);
 }
 
 Wasm::BaselineData& JSWebAssemblyInstance::ensureBaselineData(Wasm::FunctionCodeIndex index)
@@ -752,7 +768,7 @@ Wasm::BaselineData& JSWebAssemblyInstance::ensureBaselineData(Wasm::FunctionCode
     if (!slot) [[unlikely]] {
         auto result = Wasm::BaselineData::create(m_module->ipintCallees().at(index.rawIndex()));
         WTF::storeStoreFence(); // Fully initialize BaselineData before exposing it to the concurrent compiler.
-        slot = WTFMove(result);
+        slot = WTF::move(result);
     }
     return *slot;
 }

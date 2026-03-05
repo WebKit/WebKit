@@ -99,7 +99,7 @@ static LRESULT CALLBACK PasteboardOwnerWndProc(HWND hWnd, UINT message, WPARAM w
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    auto pasteboard = makeUnique<Pasteboard>(WTFMove(context));
+    auto pasteboard = makeUnique<Pasteboard>(WTF::move(context));
     COMPtr<IDataObject> clipboardData;
     if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
         clipboardData = 0;
@@ -112,7 +112,7 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<Pas
 {
     COMPtr<WCDataObject> dataObject;
     WCDataObject::createInstance(&dataObject);
-    return makeUnique<Pasteboard>(WTFMove(context), dataObject.get());
+    return makeUnique<Pasteboard>(WTF::move(context), dataObject.get());
 }
 
 // static
@@ -144,7 +144,7 @@ void Pasteboard::finishCreatingPasteboard()
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_dataObject(0)
     , m_writableDataObject(0)
 {
@@ -152,7 +152,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, IDataObject* dataObject)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_dataObject(dataObject)
     , m_writableDataObject(0)
 {
@@ -160,7 +160,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, IDataObject
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, WCDataObject* dataObject)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_dataObject(dataObject)
     , m_writableDataObject(dataObject)
 {
@@ -168,7 +168,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, WCDataObjec
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const DragDataMap& dataMap)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_dataObject(0)
     , m_writableDataObject(0)
     , m_dragDataMap(dataMap)

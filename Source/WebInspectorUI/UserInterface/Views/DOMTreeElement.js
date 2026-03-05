@@ -814,38 +814,39 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         let isNonShadowEditable = isEditableNode && (!this.representedObject.isInUserAgentShadowTree() || WI.DOMManager.supportsEditingUserAgentShadowTrees());
         let alreadyEditingHTML = this._htmlEditElement && WI.isBeingEdited(this._htmlEditElement);
         let openTagTreeElement = this.isElementCloseTag ? this.treeOutline.findTreeElement(this.representedObject) : this;
+        let selectedTreeElements = this.treeOutline.selectedTreeElements;
 
         if (isEditableNode) {
             if (!DOMTreeElement.ForbiddenClosingTagElements.has(this.representedObject.nodeNameInCorrectCase())) {
-                subMenus.add.appendItem(WI.UIString("Child", "A submenu item of 'Add' to append DOM nodes to the selected DOM node"), () => {
+                subMenus.add?.appendItem(WI.UIString("Child", "A submenu item of 'Add' to append DOM nodes to the selected DOM node"), () => {
                     openTagTreeElement._addHTML();
                 }, alreadyEditingHTML);
             }
 
-            subMenus.add.appendItem(WI.UIString("Previous Sibling", "A submenu item of 'Add' to add DOM nodes before the selected DOM node"), () => {
+            subMenus.add?.appendItem(WI.UIString("Previous Sibling", "A submenu item of 'Add' to add DOM nodes before the selected DOM node"), () => {
                 openTagTreeElement._addPreviousSibling();
             }, alreadyEditingHTML);
 
-            subMenus.add.appendItem(WI.UIString("Next Sibling", "A submenu item of 'Add' to add DOM nodes after the selected DOM node"), () => {
+            subMenus.add?.appendItem(WI.UIString("Next Sibling", "A submenu item of 'Add' to add DOM nodes after the selected DOM node"), () => {
                 openTagTreeElement._addNextSibling();
             }, alreadyEditingHTML);
         }
 
         if (isNonShadowEditable) {
-            subMenus.add.appendItem(WI.UIString("Attribute"), () => {
+            subMenus.add?.appendItem(WI.UIString("Attribute"), () => {
                 openTagTreeElement._addNewAttribute();
             });
         }
 
         if (this.editable) {
-            subMenus.edit.appendItem(WI.UIString("HTML"), () => {
+            subMenus.edit?.appendItem(WI.UIString("HTML"), () => {
                 this._editAsHTML();
             }, alreadyEditingHTML);
         }
 
         if (isNonShadowEditable) {
             if (attributeName) {
-                subMenus.edit.appendItem(WI.UIString("Attribute"), () => {
+                subMenus.edit?.appendItem(WI.UIString("Attribute"), () => {
                     this._startEditingAttribute(attributeNode, event.target);
                 }, WI.isBeingEdited(attributeNode));
             }
@@ -853,61 +854,64 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             if (InspectorBackend.hasCommand("DOM.setNodeName") && !DOMTreeElement.UneditableTagNames.has(this.representedObject.nodeNameInCorrectCase())) {
                 let tagNameNode = event.target.closest(".html-tag-name");
 
-                subMenus.edit.appendItem(WI.UIString("Tag", "A submenu item of 'Edit' to change DOM element's tag name"), () => {
+                subMenus.edit?.appendItem(WI.UIString("Tag", "A submenu item of 'Edit' to change DOM element's tag name"), () => {
                     this._startEditingTagName(tagNameNode);
                 }, WI.isBeingEdited(tagNameNode));
             }
         }
 
         if (textNode && this.editable) {
-            subMenus.edit.appendItem(WI.UIString("Text"), () => {
+            subMenus.edit?.appendItem(WI.UIString("Text"), () => {
                 this._startEditingTextNode(textNode);
             }, WI.isBeingEdited(textNode));
         }
 
         if (!this.representedObject.destroyed && !this.representedObject.isPseudoElement()) {
             subMenus.copy.appendItem(WI.UIString("HTML"), () => {
-                this.representedObject.getOuterHTML()
-                .then((outerHTML) => {
-                    InspectorFrontendHost.copyText(outerHTML);
+                this._copyHTMLOfSelectedDOMNodes();
+            });
+
+            subMenus.copy.appendItem(WI.UIString("HTML (Formatted)"), () => {
+                this._copyHTMLOfSelectedDOMNodes({formatted: true});
+            });
+        }
+
+        if (selectedTreeElements.length === 1) {
+            if (attributeName) {
+                subMenus.copy.appendItem(WI.UIString("Attribute"), () => {
+                    let text = attributeName;
+                    let attributeValue = this.representedObject.getAttribute(attributeName);
+                    if (attributeValue)
+                        text += "=\"" + attributeValue.replace(/"/g, "\\\"") + "\"";
+                    InspectorFrontendHost.copyText(text);
                 });
-            });
-        }
+            }
 
-        if (attributeName) {
-            subMenus.copy.appendItem(WI.UIString("Attribute"), () => {
-                let text = attributeName;
-                let attributeValue = this.representedObject.getAttribute(attributeName);
-                if (attributeValue)
-                    text += "=\"" + attributeValue.replace(/"/g, "\\\"") + "\"";
-                InspectorFrontendHost.copyText(text);
-            });
-        }
+            if (textNode?.textContent.length) {
+                subMenus.copy.appendItem(WI.UIString("Text"), () => {
+                    InspectorFrontendHost.copyText(textNode.textContent);
+                });
+            }
 
-        if (textNode && textNode.textContent.length) {
-            subMenus.copy.appendItem(WI.UIString("Text"), () => {
-                InspectorFrontendHost.copyText(textNode.textContent);
-            });
-        }
+            if (this.editable) {
+                subMenus.delete.appendItem(WI.UIString("Node"), () => {
+                    this.remove();
+                });
+            }
 
-        if (this.editable && (!this.selected || this.treeOutline.selectedTreeElements.length === 1)) {
-            subMenus.delete.appendItem(WI.UIString("Node"), () => {
-                this.remove();
-            });
-        }
-
-        if (attributeName && isNonShadowEditable) {
-            subMenus.delete.appendItem(WI.UIString("Attribute"), () => {
-                this.representedObject.removeAttribute(attributeName);
-            });
+            if (attributeName && isNonShadowEditable) {
+                subMenus.delete.appendItem(WI.UIString("Attribute"), () => {
+                    this.representedObject.removeAttribute(attributeName);
+                });
+            }
         }
 
         for (let subMenu of Object.values(subMenus))
             contextMenu.pushItem(subMenu);
 
         if (this.treeOutline.editable) {
-            if (this.selected && this.treeOutline && this.treeOutline.selectedTreeElements.length > 1) {
-                let forceHidden = !this.treeOutline.selectedTreeElements.every((treeElement) => treeElement.isNodeHidden);
+            if (this.selected && selectedTreeElements.length > 1) {
+                let forceHidden = !selectedTreeElements.every((treeElement) => treeElement.isNodeHidden);
                 let label = forceHidden ? WI.UIString("Hide Elements") : WI.UIString("Show Elements");
                 contextMenu.appendItem(label, () => {
                     this.treeOutline.toggleSelectedElementsVisibility(forceHidden);
@@ -918,6 +922,27 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 });
             }
         }
+    }
+
+    _copyHTMLOfSelectedDOMNodes({formatted} = {})
+    {
+        Promise.all(this.treeOutline.selectedTreeElements.map(async function(treeElement) {
+            let outerHTML = await treeElement.representedObject.getOuterHTML();
+            if (formatted) {
+                let workerProxy = WI.FormatterWorkerProxy.singleton();
+                const includeSourceMapData = false;
+                let {formattedText} = await workerProxy.formatHTML(outerHTML, WI.indentString(), includeSourceMapData);
+                outerHTML = formattedText || "";
+            }
+
+            return outerHTML;
+        }))
+        .then(function(outerHTMLs) {
+            InspectorFrontendHost.copyText(outerHTMLs.join("\n"));
+        })
+        .catch(function(error) {
+            WI.reportInternalError(error);
+        });
     }
 
     _startEditing()

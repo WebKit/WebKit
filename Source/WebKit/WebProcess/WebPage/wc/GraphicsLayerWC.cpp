@@ -54,7 +54,7 @@ public:
             tileUpdate.index = entry.key;
             tileUpdate.willRemove = tile.willRemove();
             if (tileUpdate.willRemove) {
-                update.background.tileUpdates.append(WTFMove(tileUpdate));
+                update.background.tileUpdates.append(WTF::move(tileUpdate));
                 continue;
             }
             if (!tile.hasDirtyRect())
@@ -70,8 +70,8 @@ public:
             context.translate(-dirtyRect.x(), -dirtyRect.y());
             m_owner.paintGraphicsLayerContents(context, dirtyRect);
             image->flushDrawingContextAsync();
-            tileUpdate.backingStore.setImageBuffer(WTFMove(image));
-            update.background.tileUpdates.append(WTFMove(tileUpdate));
+            tileUpdate.backingStore.setImageBuffer(WTF::move(image));
+            update.background.tileUpdates.append(WTF::move(tileUpdate));
         }
         m_tileGrid.clearDirtyRects();
         return repainted;
@@ -198,7 +198,7 @@ void GraphicsLayerWC::setContentsNeedsDisplay()
 
 bool GraphicsLayerWC::setChildren(Vector<Ref<GraphicsLayer>>&& children)
 {
-    bool childrenChanged = GraphicsLayer::setChildren(WTFMove(children));
+    bool childrenChanged = GraphicsLayer::setChildren(WTF::move(children));
     if (childrenChanged)
         noteLayerPropertyChanged(WCLayerChange::Children);
     return childrenChanged;
@@ -206,31 +206,31 @@ bool GraphicsLayerWC::setChildren(Vector<Ref<GraphicsLayer>>&& children)
 
 void GraphicsLayerWC::addChild(Ref<GraphicsLayer>&& childLayer)
 {
-    GraphicsLayer::addChild(WTFMove(childLayer));
+    GraphicsLayer::addChild(WTF::move(childLayer));
     noteLayerPropertyChanged(WCLayerChange::Children);
 }
 
 void GraphicsLayerWC::addChildAtIndex(Ref<GraphicsLayer>&& childLayer, int index)
 {
-    GraphicsLayer::addChildAtIndex(WTFMove(childLayer), index);
+    GraphicsLayer::addChildAtIndex(WTF::move(childLayer), index);
     noteLayerPropertyChanged(WCLayerChange::Children);
 }
 
 void GraphicsLayerWC::addChildBelow(Ref<GraphicsLayer>&& childLayer, GraphicsLayer* sibling)
 {
-    GraphicsLayer::addChildBelow(WTFMove(childLayer), sibling);
+    GraphicsLayer::addChildBelow(WTF::move(childLayer), sibling);
     noteLayerPropertyChanged(WCLayerChange::Children);
 }
 
 void GraphicsLayerWC::addChildAbove(Ref<GraphicsLayer>&& childLayer, GraphicsLayer* sibling)
 {
-    GraphicsLayer::addChildAbove(WTFMove(childLayer), sibling);
+    GraphicsLayer::addChildAbove(WTF::move(childLayer), sibling);
     noteLayerPropertyChanged(WCLayerChange::Children);
 }
 
 bool GraphicsLayerWC::replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild)
 {
-    if (GraphicsLayer::replaceChild(oldChild, WTFMove(newChild))) {
+    if (GraphicsLayer::replaceChild(oldChild, WTF::move(newChild))) {
         noteLayerPropertyChanged(WCLayerChange::Children);
         return true;
     }
@@ -246,7 +246,7 @@ void GraphicsLayerWC::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
 {
     if (layer == m_maskLayer)
         return;
-    GraphicsLayer::setMaskLayer(WTFMove(layer));
+    GraphicsLayer::setMaskLayer(WTF::move(layer));
     noteLayerPropertyChanged(WCLayerChange::MaskLayer);
 }
 
@@ -262,7 +262,7 @@ void GraphicsLayerWC::setReplicatedByLayer(RefPtr<GraphicsLayer>&& layer)
 {
     if (layer == m_replicaLayer)
         return;
-    GraphicsLayer::setReplicatedByLayer(WTFMove(layer));
+    GraphicsLayer::setReplicatedByLayer(WTF::move(layer));
     noteLayerPropertyChanged(WCLayerChange::ReplicaLayer);
 }
 
@@ -477,13 +477,7 @@ void GraphicsLayerWC::setShowRepaintCounter(bool show)
 
 static bool filtersCanBeComposited(const FilterOperations& filters)
 {
-    if (!filters.size())
-        return false;
-    for (const auto& filterOperation : filters) {
-        if (filterOperation->type() == FilterOperation::Type::Reference)
-            return false;
-    }
-    return true;
+    return !filters.isEmpty();
 }
 
 bool GraphicsLayerWC::setFilters(const FilterOperations& filters)
@@ -637,7 +631,7 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
     }
     if (update.changes & WCLayerChange::RemoteFrame)
         update.hostIdentifier = m_hostIdentifier;
-    m_observer->commitLayerUpdateInfo(WTFMove(update));
+    m_observer->commitLayerUpdateInfo(WTF::move(update));
 }
 
 TiledBacking* GraphicsLayerWC::tiledBacking() const

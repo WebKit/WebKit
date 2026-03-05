@@ -1,3 +1,0 @@
-
-PASS Element#requestFullscreen() followed by moving the element into an iframe
-

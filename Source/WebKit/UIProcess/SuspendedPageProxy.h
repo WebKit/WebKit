@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "EnhancedSecurity.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
@@ -33,6 +34,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -65,21 +67,19 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, const API::PageConfiguration&);
+    static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
 
-    WebPageProxy* page() const;
+    WebPageProxy* NODELETE page() const;
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() const { return m_process.get(); }
-    Ref<WebProcessProxy> protectedProcess() const { return process(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
-    BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    const BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
 
-    WebBackForwardCache& backForwardCache() const;
-    Ref<WebBackForwardCache> protectedBackForwardCache() const;
+    WebBackForwardCache& NODELETE backForwardCache() const;
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
 
-    bool pageIsClosedOrClosing() const;
+    bool NODELETE pageIsClosedOrClosing() const;
 
     void waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&&);
     void unsuspend();
@@ -137,6 +137,16 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
-};
+} SWIFT_SHARED_REFERENCE(refSuspendedPageProxy, derefSuspendedPageProxy);
 
 } // namespace WebKit
+
+inline void refSuspendedPageProxy(WebKit::SuspendedPageProxy* WTF_NONNULL obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefSuspendedPageProxy(WebKit::SuspendedPageProxy* WTF_NONNULL obj)
+{
+    WTF::deref(obj);
+}

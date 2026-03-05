@@ -422,7 +422,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     updateCallingContextTrees(target, stackTraces, sampleDurations)
     {
-        let exportDataSamples = this._exportDataSamplesForTarget.getOrInitialize(target, () => {
+        let exportDataSamples = this._exportDataSamplesForTarget.getOrInsertComputed(target, () => {
             return {
                 target: target.exportData(),
                 stackTraces: [],

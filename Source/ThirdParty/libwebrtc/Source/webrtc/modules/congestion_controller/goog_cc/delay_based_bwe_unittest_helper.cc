@@ -211,7 +211,7 @@ void DelayBasedBweTest::IncomingFeedback(Timestamp receive_time,
     probe_bitrate_estimator_->HandleProbeAndEstimateBitrate(packet);
 
   TransportPacketsFeedback msg;
-  msg.feedback_time = Timestamp::Millis(clock_.TimeInMilliseconds());
+  msg.feedback_time = clock_.CurrentTime();
   msg.packet_feedbacks.push_back(packet);
   acknowledged_bitrate_estimator_->IncomingPacketFeedbackVector(
       msg.SortedByReceiveTime());
@@ -257,7 +257,7 @@ bool DelayBasedBweTest::GenerateAndProcessFrame(uint32_t /* ssrc */,
   acknowledged_bitrate_estimator_->IncomingPacketFeedbackVector(packets);
   TransportPacketsFeedback msg;
   msg.packet_feedbacks = packets;
-  msg.feedback_time = Timestamp::Millis(clock_.TimeInMilliseconds());
+  msg.feedback_time = clock_.CurrentTime();
 
   DelayBasedBwe::Result result =
       bitrate_estimator_->IncomingPacketFeedbackVector(

@@ -10,7 +10,6 @@
 
 #include "pc/typed_codec_vendor.h"
 
-#include <cstddef>
 #include <functional>
 #include <map>
 #include <vector>
@@ -94,7 +93,7 @@ std::vector<Codec> CollectAudioCodecs(
 
 }  // namespace
 
-TypedCodecVendor::TypedCodecVendor(MediaEngineInterface* media_engine,
+TypedCodecVendor::TypedCodecVendor(const MediaEngineInterface* media_engine,
                                    MediaType type,
                                    bool is_sender,
                                    bool rtx_enabled,

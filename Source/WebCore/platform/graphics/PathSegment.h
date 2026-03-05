@@ -56,12 +56,12 @@ public:
         PathCloseSubpath
     >;
 
-    PathSegment(Data&&);
+    WEBCORE_EXPORT PathSegment(Data&&);
 
     bool operator==(const PathSegment&) const = default;
 
     const Data& data() const & { return m_data; }
-    Data&& data() && { return WTFMove(m_data); }
+    Data&& data() && { return WTF::move(m_data); }
     bool closesSubpath() const { return std::holds_alternative<PathCloseSubpath>(m_data) || std::holds_alternative<PathClosedArc>(m_data); }
 
     FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
@@ -87,7 +87,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathSegment&)
 
 
 inline PathSegment::PathSegment(Data&& data)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
 {
 }
 } // namespace WebCore

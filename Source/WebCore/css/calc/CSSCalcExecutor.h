@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSCalcOperator.h"
+#include "CSSValueKeywords.h"
 #include <numbers>
 #include <numeric>
 #include <ranges>

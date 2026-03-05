@@ -36,8 +36,12 @@ enum class MemoryRestriction {
 };
 
 #if USE(APPLE_INTERNAL_SDK)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/FastJITPermissionsAdditions.h>
 #include <WebKitAdditions/JSGlobalObjectAdditions.h>
+#pragma clang diagnostic pop
 #endif
 
 #if defined(OS_THREAD_SELF_RESTRICT) != defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)

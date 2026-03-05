@@ -56,7 +56,7 @@ std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> hstsWebViewAn
         EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
         completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     };
-    return { WTFMove(webView), WTFMove(delegate) };
+    return { WTF::move(webView), WTF::move(delegate) };
 }
 
 static HTTPServer hstsServer()

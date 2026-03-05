@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKBackForwardListItem;
 @class WKDownload;
+@class WKFormInfo;
+@class WKFrameInfo;
 @class WKNavigation;
 @class WKNavigationAction;
 @class WKNavigationResponse;
@@ -205,6 +207,13 @@ WK_SWIFT_UI_ACTOR
 */
 - (void)webView:(WKWebView *)webView shouldGoToBackForwardListItem:(WKBackForwardListItem *)backForwardListItem willUseInstantBack:(BOOL)willUseInstantBack completionHandler:(void (^)(BOOL shouldGoToItem))completionHandler WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 
+/*
+ @abstract Called after the policy delegate has allowed a navigation to start and that navigation intends to submit a form.
+ @param webView The web view that will submit the form.
+ @param formInfo Information about the form submission that will take place.
+ @param submissionHandler A block to call once the application has done any asynchronous work it needs to for this form submission, indicating that the form submission can continue.
+*/
+- (void)webView:(WKWebView *)webView willSubmitForm:(WKFormInfo *)formInfo submissionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))submissionHandler WK_SWIFT_ASYNC(3) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 @end
 
 NS_ASSUME_NONNULL_END

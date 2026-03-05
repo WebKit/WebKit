@@ -52,6 +52,10 @@
 @property (nonatomic, copy) void (^insertInputSuggestion)(WKWebView *, UIInputSuggestion *);
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+@property (nonatomic, copy) void (^requestDeviceOrientationAndMotionPermissionForOrigin)(WKSecurityOrigin *, WKFrameInfo *, void(^)(WKPermissionDecision));
+#endif
+
 - (NSString *)waitForAlert;
 - (NSString *)waitForConfirm;
 - (NSString *)waitForPromptWithReply:(NSString *)reply;

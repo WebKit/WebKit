@@ -19,6 +19,7 @@
 
 #include "absl/memory/memory.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/buffer.h"
@@ -29,9 +30,13 @@
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "test/create_test_environment.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
+
+using ::testing::NotNull;
 
 static unsigned char kStunMessageWithZeroLength[] = {
     0x00, 0x01, 0x00, 0x00,  // length of 0 (last 2 bytes)
@@ -67,10 +72,11 @@ static const SocketAddress kServerAddr("22.22.22.22", 0);
 
 class AsyncStunServerTCPSocket : public AsyncTcpListenSocket {
  public:
-  explicit AsyncStunServerTCPSocket(std::unique_ptr<Socket> socket)
-      : AsyncTcpListenSocket(std::move(socket)) {}
-  void HandleIncomingConnection(Socket* socket) override {
-    SignalNewConnection(this, new AsyncStunTCPSocket(socket));
+  AsyncStunServerTCPSocket(const Environment& env,
+                           std::unique_ptr<Socket> socket)
+      : AsyncTcpListenSocket(env, std::move(socket)) {}
+  void HandleIncomingConnection(std::unique_ptr<Socket> socket) override {
+    SignalNewConnection(this, new AsyncStunTCPSocket(env(), std::move(socket)));
   }
 };
 
@@ -83,20 +89,23 @@ class AsyncStunTCPSocketTest : public ::testing::Test,
   void SetUp() override { CreateSockets(); }
 
   void CreateSockets() {
+    const Environment env = CreateTestEnvironment();
     std::unique_ptr<Socket> server =
-        absl::WrapUnique(vss_->CreateSocket(kServerAddr.family(), SOCK_STREAM));
+        vss_->Create(kServerAddr.family(), SOCK_STREAM);
     server->Bind(kServerAddr);
     listen_socket_ =
-        std::make_unique<AsyncStunServerTCPSocket>(std::move(server));
+        std::make_unique<AsyncStunServerTCPSocket>(env, std::move(server));
     listen_socket_->SignalNewConnection.connect(
         this, &AsyncStunTCPSocketTest::OnNewConnection);
 
-    Socket* client = vss_->CreateSocket(kClientAddr.family(), SOCK_STREAM);
-    send_socket_.reset(AsyncStunTCPSocket::Create(
-        client, kClientAddr, listen_socket_->GetLocalAddress()));
+    std::unique_ptr<Socket> client =
+        vss_->Create(kClientAddr.family(), SOCK_STREAM);
+    ASSERT_THAT(client, NotNull());
+    ASSERT_EQ(client->Bind(kClientAddr), 0);
+    ASSERT_EQ(client->Connect(listen_socket_->GetLocalAddress()), 0);
+    send_socket_ = std::make_unique<AsyncStunTCPSocket>(env, std::move(client));
     send_socket_->SignalSentPacket.connect(
         this, &AsyncStunTCPSocketTest::OnSentPacket);
-    ASSERT_TRUE(send_socket_.get() != nullptr);
     vss_->ProcessMessagesUntilIdle();
   }
 
@@ -131,7 +140,7 @@ class AsyncStunTCPSocketTest : public ::testing::Test,
 
   bool CheckData(const void* data, int len) {
     bool ret = false;
-    if (recv_packets_.size()) {
+    if (!recv_packets_.empty()) {
       std::string packet = recv_packets_.front();
       recv_packets_.pop_front();
       ret = (memcmp(data, packet.c_str(), len) == 0);

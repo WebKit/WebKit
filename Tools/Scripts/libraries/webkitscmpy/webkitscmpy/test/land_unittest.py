@@ -48,7 +48,7 @@ def repository(path, has_oops=True, remote=None, remotes=None, git_svn=False, is
             author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
             message='To Be Committed\n{}\nReviewed by {}.\n{}'.format(
                 '{}\n'.format(issue_url) if issue_url else '',
-                'NOBODY (OOPS!)' if has_oops else 'Ricky Reviewer',
+                {True: 'NOBODY (OOPS!)', False: 'Ricky Reviewer'}.get(has_oops, has_oops),
                 '\ngit-svn-id: https://svn.{}/repository/{}/trunk@10 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
                     result.remote.split('@')[-1].split(':')[0],
                     os.path.basename(result.path),
@@ -113,6 +113,33 @@ class TestLand(testing.PathTestCase):
             "Found '(OOPS!)' message in commit messages, please resolve before committing\n",
         )
         self.assertEqual(captured.stdout.getvalue(), '')
+
+    def test_with_removed_oops(self):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops='- NOBODY (OOPS!)') as repo, mocks.local.Svn(), MockTerminal.input('n'):
+            self.assertEqual(0, program.main(
+                args=('land', '-v'),
+                path=self.path,
+            ))
+            self.assertEqual(str(local.Git(self.path).commit()), '6@main')
+
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                'Using committed changes...',
+                "Rebasing 'eng/example' from 'main' to 'main'...",
+                "Rebased 'eng/example' from 'main' to 'main'!",
+                ' Local branch is tracking the remote branch.',
+            ],
+        )
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "Failed to find pull-request associated with 'eng/example'\n",
+        )
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Landed a5fe8afe9bf7!\n'
+            "Delete branch 'eng/example'? ([Yes]/No): \n",
+        )
 
     def test_default(self):
         with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):

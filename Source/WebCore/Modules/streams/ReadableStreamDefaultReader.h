@@ -44,13 +44,13 @@ class ReadableStream;
 class ReadableStreamReadRequest;
 
 class ReadableStreamDefaultReader : public ScriptWrappable, public RefCountedAndCanMakeWeakPtr<ReadableStreamDefaultReader> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ReadableStreamDefaultReader);
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStreamDefaultReader);
 public:
     static ExceptionOr<Ref<ReadableStreamDefaultReader>> create(JSDOMGlobalObject&, ReadableStream&);
 
     ~ReadableStreamDefaultReader();
 
-    DOMPromise& closedPromise() const;
+    DOMPromise& NODELETE closedPromise() const;
     void readForBindings(JSDOMGlobalObject&, Ref<DeferredPromise>&&);
     void read(JSDOMGlobalObject&, Ref<ReadableStreamReadRequest>&&);
 
@@ -72,8 +72,10 @@ public:
     void onClosedPromiseRejection(ClosedRejectionCallback&&);
     void onClosedPromiseResolution(Function<void()>&&);
 
-    bool isReachableFromOpaqueRoots() const;
+    bool NODELETE isReachableFromOpaqueRoots() const;
     template<typename Visitor> void visitAdditionalChildren(Visitor&);
+
+    ReadableStream* stream() { return m_stream.get(); }
 
 private:
     ReadableStreamDefaultReader(Ref<ReadableStream>&&, RefPtr<InternalReadableStreamDefaultReader>&&, Ref<DOMPromise>&&, Ref<DeferredPromise>&&);
@@ -92,6 +94,6 @@ private:
     Function<void()> m_closedResolutionCallback;
 };
 
-WebCoreOpaqueRoot root(ReadableStreamDefaultReader*);
+WebCoreOpaqueRoot NODELETE root(ReadableStreamDefaultReader*);
 
 } // namespace WebCore

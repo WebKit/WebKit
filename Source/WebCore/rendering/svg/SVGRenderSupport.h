@@ -51,10 +51,20 @@ public:
     static void layoutChildren(RenderElement&, bool selfNeedsLayout);
 
     // Helper function determining wheter overflow is hidden
-    static bool isOverflowHidden(const RenderElement&);
+    static bool NODELETE isOverflowHidden(const RenderElement&);
+
+    // Applies filter/clipper/masker resource effects to a geometric bounding rect.
+    // This is the preferred API for resource code (masks, gradients, clippers) that needs
+    // to compute bounds for rendering. Unlike intersectRepaintRectWithResources(), this
+    // function is semantically about geometric calculations, not repaint/invalidation.
+    static void applyResourceEffectsToRect(const RenderElement&, FloatRect&);
 
     // Calculates the repaintRect in combination with filter, clipper and masker in local coordinates.
+    // FIXME: After migrating all RepaintRectCalculation::Accurate callers to use applyResourceEffectsToRect
+    // function, we can simplify this to only handle Fast mode.
     static void intersectRepaintRectWithResources(const RenderElement&, FloatRect&, RepaintRectCalculation = RepaintRectCalculation::Fast);
+
+    static FloatRect computeContainerDecoratedBoundingBox(const RenderElement& container);
 
     // Determines whether a container needs to be laid out because it's filtered and a child is being laid out.
     static bool filtersForceContainerLayout(const RenderElement&);
@@ -82,6 +92,11 @@ public:
 
     static FloatRect calculateApproximateStrokeBoundingBox(const RenderElement&);
 
+    static void NODELETE updateAncestorNonScalingStrokeCounts(RenderElement&, int delta);
+
+    static void NODELETE elementInsertedIntoTree(RenderElement&);
+    static void NODELETE elementWillBeRemovedFromTree(RenderElement&);
+
     // Shared between SVG renderers and resources.
     static void applyStrokeStyleToContext(GraphicsContext&, const RenderStyle&, const RenderElement&);
 
@@ -95,7 +110,7 @@ public:
     static bool isolatesBlending(const RenderStyle&);
     static void updateMaskedAncestorShouldIsolateBlending(const RenderElement&);
 
-    static LegacyRenderSVGRoot* findTreeRootObject(RenderElement&);
+    static LegacyRenderSVGRoot* NODELETE findTreeRootObject(RenderElement&);
     static const LegacyRenderSVGRoot* findTreeRootObject(const RenderElement&);
 
 private:

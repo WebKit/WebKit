@@ -47,7 +47,7 @@ std::optional<Origin2D> ConvertToBackingContext::convertToBacking(const WebCore:
         auto origin2D = convertToBacking(origin2DDict);
         if (!origin2D)
             return std::nullopt;
-        return { { WTFMove(*origin2D) } };
+        return { { WTF::move(*origin2D) } };
     });
 }
 
@@ -64,7 +64,7 @@ std::optional<WebCore::WebGPU::Origin2D> ConvertFromBackingContext::convertFromB
         auto origin2D = convertFromBacking(origin2DDict);
         if (!origin2D)
             return std::nullopt;
-        return { { WTFMove(*origin2D) } };
+        return { { WTF::move(*origin2D) } };
     });
 }
 

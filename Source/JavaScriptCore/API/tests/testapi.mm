@@ -2223,6 +2223,33 @@ static void testProgramBytecodeCache()
     }
 }
 
+static void testBytecodeCachedFunctionsDontJITImmediately()
+{
+    @autoreleasepool {
+        NSString *fooSource = @"function foo() { return $vm.llintTrue(); }; foo();";
+        NSURL *fooCachePath = cacheFileInDataVault(@"foo.js.cache");
+        JSC::Options::useDollarVM() = true;
+        JSContext *context = [[JSContext alloc] init];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:fooSource andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script);
+        if (![script cacheBytecodeWithError:nil])
+            CRASH();
+
+        JSC::Options::forceDiskCache() = true;
+        JSC::Options::useConcurrentJIT() = false;
+        JSValue *result = [context evaluateJSScript:script];
+        RELEASE_ASSERT(result);
+        RELEASE_ASSERT([result isBoolean]);
+        checkResult(@"result whether a function will immediately be jitted", [result toBool] == YES);
+        JSC::Options::forceDiskCache() = false;
+        JSC::Options::useConcurrentJIT() = true;
+
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        BOOL removedAll = [fileManager removeItemAtURL:fooCachePath error:nil];
+        checkResult(@"Removed all temp files created", removedAll);
+    }
+}
+
 static void testBytecodeCacheWithSyntaxError(JSScriptType type)
 {
     @autoreleasepool {
@@ -2988,6 +3015,7 @@ void testObjectiveCAPI(const char* filter)
     if (!skipBytecodeCacheTests) {
         RUN(testModuleBytecodeCache());
         RUN(testProgramBytecodeCache());
+        RUN(testBytecodeCachedFunctionsDontJITImmediately());
         RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeProgram));
         RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeModule));
         RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(false));

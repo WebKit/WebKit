@@ -69,6 +69,11 @@ const size_t credentialIdLengthLength = 2;
 // Per Section 2.3.5 of http://www.secg.org/sec1-v2.pdf
 const size_t ES256FieldElementLength = 32;
 
+// HMAC-Secret extension output sizes:
+// https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html#sctn-hmac-secret-extension
+const size_t hmacSecretOutputLength = 32;
+const size_t hmacSecretDualOutputLength = 64;
+
 // https://www.w3.org/TR/webauthn/#none-attestation
 const char noneAttestationValue[] = "none";
 

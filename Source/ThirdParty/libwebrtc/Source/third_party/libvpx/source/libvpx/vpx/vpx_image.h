@@ -130,7 +130,7 @@ typedef struct vpx_image_rect {
 /*!\brief Open a descriptor, allocating storage for the underlying image
  *
  * Returns a descriptor for storing an image of the given format. The
- * storage for the descriptor is allocated on the heap.
+ * storage for the image is allocated on the heap.
  *
  * \param[in]    img       Pointer to storage for descriptor. If this parameter
  *                         is NULL, the storage for the descriptor will be
@@ -155,7 +155,7 @@ vpx_image_t *vpx_img_alloc(vpx_image_t *img, vpx_img_fmt_t fmt,
 /*!\brief Open a descriptor, using existing storage for the underlying image
  *
  * Returns a descriptor for storing an image of the given format. The
- * storage for descriptor has been allocated elsewhere, and a descriptor is
+ * storage for the image has been allocated elsewhere, and a descriptor is
  * desired to "wrap" that storage.
  *
  * \param[in]    img           Pointer to storage for descriptor. If this
@@ -175,6 +175,35 @@ vpx_image_t *vpx_img_alloc(vpx_image_t *img, vpx_img_fmt_t fmt,
  * \return Returns a pointer to the initialized image descriptor. If the img
  *         parameter is non-null, the value of the img parameter will be
  *         returned.
+ *
+ * \note \a img_data is required to have a minimum allocation size that
+ *       satisfies the requirements of the \a fmt, \a d_w, \a d_h and \a
+ *       stride_align parameters. This size can be calculated as follows (see
+ *       \c img_alloc_helper in the vpx_image.c file in the libvpx source tree
+ *       for more detail):
+ * \code
+ * align = (1 << x_chroma_shift) - 1;
+ * w = (d_w + align) & ~align;
+ * align = (1 << y_chroma_shift) - 1;
+ * h = (d_h + align) & ~align;
+ *
+ * s = (fmt & VPX_IMG_FMT_PLANAR) ? w : (uint64_t)bps * w / 8;
+ * s = (fmt & VPX_IMG_FMT_HIGHBITDEPTH) ? s * 2 : s;
+ * s = (s + stride_align - 1) & ~((uint64_t)stride_align - 1);
+ * s = (fmt & VPX_IMG_FMT_HIGHBITDEPTH) ? s / 2 : s;
+ * alloc_size = (fmt & VPX_IMG_FMT_PLANAR) ? (uint64_t)h * s * bps / 8
+ *                                         : (uint64_t)h * s;
+ * \endcode
+ * \a x_chroma_shift, \a y_chroma_shift and \a bps can be obtained by calling
+ * \ref vpx_img_wrap with a non-\c NULL \a img_data parameter. The \c
+ * vpx_image_t pointer should \em not be used in other API calls until \em after
+ * a successful call to \ref vpx_img_wrap with a valid image buffer. For
+ * example:
+ * \code
+ * vpx_img_wrap(img, fmt, d_w, d_h, stride_align, (unsigned char *)1);
+ * ... calculate buffer size and allocate buffer as described earlier
+ * vpx_img_wrap(img, fmt, d_w, d_h, stride_align, img_data);
+ * \endcode
  */
 vpx_image_t *vpx_img_wrap(vpx_image_t *img, vpx_img_fmt_t fmt, unsigned int d_w,
                           unsigned int d_h, unsigned int stride_align,

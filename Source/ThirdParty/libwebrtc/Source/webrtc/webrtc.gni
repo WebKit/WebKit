@@ -69,19 +69,6 @@ declare_args() {
   # annotated symbols.
   rtc_enable_objc_symbol_export = rtc_enable_symbol_export
 
-  # Setting this to true will define WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT which
-  # will tell the pre-processor to remove the default definition of symbols
-  # needed to use field_trial. In that case a new implementation needs to be
-  # provided.
-  if (build_with_chromium) {
-    # When WebRTC is built as part of Chromium it should exclude the default
-    # implementation of field_trial unless it is building for NACL or
-    # Chromecast.
-    rtc_exclude_field_trial_default = !is_nacl && !is_castos && !is_cast_android
-  } else {
-    rtc_exclude_field_trial_default = false
-  }
-
   # Setting this to true will define WEBRTC_EXCLUDE_METRICS_DEFAULT which
   # will tell the pre-processor to remove the default definition of symbols
   # needed to use metrics. In that case a new implementation needs to be
@@ -332,6 +319,9 @@ declare_args() {
 
   # Enables an experimental rust version of base64 for building and testing.
   rtc_rusty_base64 = false
+
+  # Enables PSNR calculation for video getStats.
+  rtc_video_psnr = true
 }
 
 declare_args() {
@@ -484,6 +474,9 @@ all_poison_types = [
 
   # Software video codecs (VP8 and VP9 through libvpx).
   "software_video_codecs",
+
+  # Residual echo estimator based that runs inferences using the tflite library.
+  "default_neural_residual_echo_estimator",
 ]
 
 absl_include_config = "//third_party/abseil-cpp:absl_include_config"
@@ -532,7 +525,7 @@ template("rtc_test") {
       use_default_launcher = false
       android_manifest = webrtc_root + "test/android/AndroidManifest.xml"
       use_raw_android_executable = false
-      min_sdk_version = 21
+      min_sdk_version = 23
       target_sdk_version = 24
       deps += [
         "//build/android/gtest_apk:native_test_instrumentation_test_runner_java",
@@ -1060,24 +1053,40 @@ if (is_mac || is_ios) {
     forward_variables_from(invoker, [ "output_name" ])
     this_target_name = target_name
     umbrella_header_path =
-        "$target_gen_dir/$output_name.framework/WebRTC/$output_name.h"
+        "$target_gen_dir/$output_name.framework/Headers/$output_name.h"
     modulemap_path = "$target_gen_dir/Modules/module.modulemap"
-    privacy_manifest_path = "$target_gen_dir/$target_name/PrivacyInfo.xcprivacy"
+    privacy_manifest_path =
+        "$target_gen_dir/$this_target_name/PrivacyInfo.xcprivacy"
 
-    action_foreach("create_bracket_include_headers_$target_name") {
-      script = "//tools_webrtc/apple/copy_framework_header.py"
+    action("umbrella_header_$this_target_name") {
+      script = "//tools_webrtc/ios/generate_umbrella_header.py"
       sources = invoker.sources
-      output_name = invoker.output_name
-      outputs = [
-        "$target_gen_dir/$output_name.framework/WebRTC/{{source_file_part}}",
-      ]
+      outputs = [ umbrella_header_path ]
       args = [
-        "--input",
-        "{{source}}",
+               "--out",
+               rebase_path(umbrella_header_path, root_build_dir),
+               "--sources",
+             ] + rebase_path(sources, root_build_dir)
+    }
+
+    action("create_privacy_manifest_$this_target_name") {
+      script = "//tools_webrtc/apple/generate_privacy_manifest.py"
+      args = [
         "--output",
-        rebase_path(target_gen_dir, root_build_dir) +
-            "/$output_name.framework/WebRTC/{{source_file_part}}",
+        rebase_path(privacy_manifest_path),
       ]
+      outputs = [ privacy_manifest_path ]
+    }
+
+    bundle_data("privacy_manifest_bundle_data_$this_target_name") {
+      deps = [ ":create_privacy_manifest_$this_target_name" ]
+      sources = get_target_outputs(":create_privacy_manifest_$this_target_name")
+      if (is_mac || target_environment == "catalyst") {
+        privacy_manifest_out_path = "Versions/A/Resources/PrivacyInfo.xcprivacy"
+      } else {
+        privacy_manifest_out_path = "PrivacyInfo.xcprivacy"
+      }
+      outputs = [ "{{bundle_contents_dir}}/$privacy_manifest_out_path" ]
     }
 
     if (is_mac) {
@@ -1086,71 +1095,91 @@ if (is_mac || is_ios) {
         if (defined(invoker.configs)) {
           configs += invoker.configs
         }
-
         framework_version = "A"
         framework_contents = [
           "Headers",
           "Modules",
           "Resources",
         ]
-
         ldflags = [
           "-all_load",
           "-install_name",
           "@rpath/$output_name.framework/$output_name",
         ]
 
+        # This is the fix. The mac framework now has a direct dependency on
+        # the creation of the privacy manifest, just like the iOS version.
         deps += [
-          ":copy_framework_headers_$this_target_name",
           ":copy_modulemap_$this_target_name",
-          ":copy_privacy_manifest_$this_target_name",
           ":copy_umbrella_header_$this_target_name",
-          ":create_bracket_include_headers_$this_target_name",
+          ":create_privacy_manifest_$this_target_name",
           ":modulemap_$this_target_name",
-          ":umbrella_header_$this_target_name",
+          ":privacy_manifest_bundle_data_$this_target_name",
         ]
       }
     }
     if (is_ios) {
       ios_framework_bundle(target_name) {
-        forward_variables_from(invoker,
-                               "*",
-                               [
-                                 "configs",
-                                 "public_headers",
-                               ])
+        if (defined(invoker.testonly)) {
+          testonly = invoker.testonly
+        }
+        if (defined(invoker.visibility)) {
+          visibility = invoker.visibility
+        }
+        if (defined(invoker.sources)) {
+          sources = invoker.sources
+        }
+        if (defined(invoker.deps)) {
+          deps = invoker.deps
+        }
+        if (defined(invoker.defines)) {
+          defines = invoker.defines
+        }
+        if (defined(invoker.include_dirs)) {
+          include_dirs = invoker.include_dirs
+        }
+        if (defined(invoker.public_configs)) {
+          public_configs = invoker.public_configs
+        }
+        if (defined(invoker.all_dependent_configs)) {
+          all_dependent_configs = invoker.all_dependent_configs
+        }
+        if (defined(invoker.ldflags)) {
+          ldflags = invoker.ldflags
+        }
+        if (defined(invoker.libs)) {
+          libs = invoker.libs
+        }
+        if (defined(invoker.frameworks)) {
+          frameworks = invoker.frameworks
+        }
+        if (defined(invoker.info_plist)) {
+          info_plist = invoker.info_plist
+        }
         if (defined(invoker.configs)) {
           configs += invoker.configs
         }
-        public_headers = get_target_outputs(
-                ":create_bracket_include_headers_$this_target_name")
+
+        if (defined(invoker.public_headers)) {
+          public_headers = invoker.public_headers
+        } else {
+          public_headers = []
+        }
+        public_headers +=
+            get_target_outputs(":umbrella_header_$this_target_name")
 
         deps += [
-          ":copy_privacy_manifest_$this_target_name",
-          ":copy_umbrella_header_$this_target_name",
-          ":create_bracket_include_headers_$this_target_name",
+          ":create_privacy_manifest_$this_target_name",
+          ":umbrella_header_$this_target_name",
         ]
+
+        if (defined(invoker.bundle_deps)) {
+          bundle_deps = invoker.bundle_deps
+        } else {
+          bundle_deps = []
+        }
+        bundle_deps += [ ":privacy_manifest_bundle_data_$this_target_name" ]
       }
-    }
-
-    if (is_mac || target_environment == "catalyst") {
-      # Catalyst frameworks use the same layout as regular Mac frameworks.
-      headers_dir = "Versions/A/Headers"
-
-      # The path to the privacy manifest file differs between Mac and iOS.
-      # https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/adding_a_privacy_manifest_to_your_app_or_third-party_sdk
-      privacy_manifest_out_path = "Versions/A/Resources/PrivacyInfo.xcprivacy"
-    } else {
-      headers_dir = "Headers"
-      privacy_manifest_out_path = "PrivacyInfo.xcprivacy"
-    }
-
-    bundle_data("copy_framework_headers_$this_target_name") {
-      sources = get_target_outputs(
-              ":create_bracket_include_headers_$this_target_name")
-
-      outputs = [ "{{bundle_contents_dir}}/Headers/{{source_file_part}}" ]
-      deps = [ ":create_bracket_include_headers_$this_target_name" ]
     }
 
     action("modulemap_$this_target_name") {
@@ -1170,46 +1199,15 @@ if (is_mac || is_ios) {
       deps = [ ":modulemap_$this_target_name" ]
     }
 
-    action("umbrella_header_$this_target_name") {
-      sources = get_target_outputs(
-              ":create_bracket_include_headers_$this_target_name")
-
-      script = "//tools_webrtc/ios/generate_umbrella_header.py"
-
-      outputs = [ umbrella_header_path ]
-      args = [
-               "--out",
-               rebase_path(umbrella_header_path, root_build_dir),
-               "--sources",
-             ] + sources
-      deps = [ ":create_bracket_include_headers_$this_target_name" ]
-    }
-
-    copy("copy_umbrella_header_$target_name") {
-      sources = [ umbrella_header_path ]
-      outputs =
-          [ "$root_out_dir/$output_name.framework/$headers_dir/$output_name.h" ]
-
-      deps = [ ":umbrella_header_$target_name" ]
-    }
-
-    action("create_privacy_manifest_$target_name") {
-      script = "//tools_webrtc/apple/generate_privacy_manifest.py"
-
-      args = [
-        "--output",
-        rebase_path(privacy_manifest_path),
-      ]
-
-      outputs = [ privacy_manifest_path ]
-    }
-
-    copy("copy_privacy_manifest_$target_name") {
-      sources = [ privacy_manifest_path ]
-      outputs =
-          [ "$root_out_dir/$output_name.framework/$privacy_manifest_out_path" ]
-
-      deps = [ ":create_privacy_manifest_$target_name" ]
+    if (is_mac) {
+      headers_dir = "Versions/A/Headers"
+      copy("copy_umbrella_header_$this_target_name") {
+        sources = [ umbrella_header_path ]
+        outputs = [
+          "$root_out_dir/$output_name.framework/$headers_dir/$output_name.h",
+        ]
+        deps = [ ":umbrella_header_$this_target_name" ]
+      }
     }
   }
 }

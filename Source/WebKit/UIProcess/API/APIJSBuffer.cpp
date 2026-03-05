@@ -31,7 +31,7 @@
 namespace API {
 
 JSBuffer::JSBuffer(Ref<WebCore::SharedMemory>&& sharedMemory)
-    : m_sharedMemory(WTFMove(sharedMemory)) { }
+    : m_sharedMemory(WTF::move(sharedMemory)) { }
 
 Ref<WebCore::SharedMemory> JSBuffer::sharedMemory()
 {

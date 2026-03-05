@@ -44,14 +44,14 @@ class PerformanceObserver : public RefCounted<PerformanceObserver> {
 public:
     struct Init {
         std::optional<Vector<String>> entryTypes;
-        std::optional<String> type;
+        String type;
         bool buffered;
         std::optional<DOMHighResTimeStamp> durationThreshold;
     };
 
     static Ref<PerformanceObserver> create(ScriptExecutionContext& context, Ref<PerformanceObserverCallback>&& callback)
     {
-        return adoptRef(*new PerformanceObserver(context, WTFMove(callback)));
+        return adoptRef(*new PerformanceObserver(context, WTF::move(callback)));
     }
 
     static Vector<String> supportedEntryTypes(ScriptExecutionContext&);
@@ -76,8 +76,6 @@ public:
 
 private:
     PerformanceObserver(ScriptExecutionContext&, Ref<PerformanceObserverCallback>&&);
-
-    RefPtr<Performance> protectedPerformance() const;
 
     RefPtr<Performance> m_performance;
     Vector<Ref<PerformanceEntry>> m_entriesToDeliver;

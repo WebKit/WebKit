@@ -45,19 +45,22 @@ bool GStreamerQuirkBroadcom::isPlatformSupported() const
 
 void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
-    auto view = StringView::fromLatin1(GST_ELEMENT_NAME(element));
-    if (!g_strcmp0(G_OBJECT_TYPE_NAME(element), "Gstbrcmaudiosink"))
+    auto objectType = CStringView::unsafeFromUTF8(G_OBJECT_TYPE_NAME(element));
+    if (objectType == "Gstbrcmaudiosink"_s)
         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
-    else if (view.startsWith("brcmaudiodecoder"_s)) {
-        // Limit BCM audio decoder buffering to 1sec so live progressive playback can start faster.
-        if (characteristics.contains(ElementRuntimeCharacteristics::IsLiveStream))
-            g_object_set(G_OBJECT(element), "limit_buffering_ms", 1000, nullptr);
+    else {
+        auto elementName = CStringView::unsafeFromUTF8(GST_ELEMENT_NAME(element));
+        if (startsWith(elementName.span(), "brcmaudiodecoder"_s)) {
+            // Limit BCM audio decoder buffering to 1sec so live progressive playback can start faster.
+            if (characteristics.contains(ElementRuntimeCharacteristics::IsLiveStream))
+                g_object_set(G_OBJECT(element), "limit_buffering_ms", 1000, nullptr);
+        }
     }
 
     if (!characteristics.contains(ElementRuntimeCharacteristics::IsMediaStream))
         return;
 
-    if (!g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstBrcmPCMSink") && gstObjectHasProperty(element, "low_latency"_s)) {
+    if (objectType == "GstBrcmPCMSink"_s && gstObjectHasProperty(element, "low_latency"_s)) {
         GST_DEBUG("Set 'low_latency' in brcmpcmsink");
         g_object_set(element, "low_latency", TRUE, "low_latency_max_queued_ms", 60, nullptr);
     }

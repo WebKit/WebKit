@@ -65,8 +65,8 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     auto& lexicalGlobalObject = globalObject;
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
-    for (auto&& argumentsItem : WTFMove(arguments)) {
-        args.append(toJS<IDLAny>(WTFMove(argumentsItem)));
+    for (auto&& argumentsItem : WTF::move(arguments)) {
+        args.append(toJS<IDLAny>(WTF::move(argumentsItem)));
     }
     ASSERT(!args.hasOverflowed());
 
@@ -99,8 +99,8 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     auto& lexicalGlobalObject = globalObject;
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
-    for (auto&& argumentsItem : WTFMove(arguments)) {
-        args.append(toJS<IDLAny>(WTFMove(argumentsItem)));
+    for (auto&& argumentsItem : WTF::move(arguments)) {
+        args.append(toJS<IDLAny>(WTF::move(argumentsItem)));
     }
     ASSERT(!args.hasOverflowed());
 
@@ -131,10 +131,10 @@ void JSTestCallbackFunctionWithVariadic::visitJSFunction(JSC::SlotVisitor& visit
 
 JSC::JSValue toJS(TestCallbackFunctionWithVariadic& impl)
 {
-    if (!static_cast<JSTestCallbackFunctionWithVariadic&>(impl).callbackData())
-        return jsNull();
+    if (auto* callbackData = downcast<JSTestCallbackFunctionWithVariadic>(impl).callbackData())
+        return callbackData->callback();
+    return jsNull();
 
-    return static_cast<JSTestCallbackFunctionWithVariadic&>(impl).callbackData()->callback();
 }
 
 ScriptExecutionContext* JSTestCallbackFunctionWithVariadic::scriptExecutionContext() const

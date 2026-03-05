@@ -31,7 +31,11 @@
 #include "config.h"
 #include "InspectorTarget.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTarget);
 
 void InspectorTarget::pause()
 {
@@ -53,7 +57,7 @@ void InspectorTarget::resume()
 void InspectorTarget::setResumeCallback(WTF::Function<void()>&& callback)
 {
     ASSERT(!m_resumeCallback);
-    m_resumeCallback = WTFMove(callback);
+    m_resumeCallback = WTF::move(callback);
 }
 
 } // namespace Inspector

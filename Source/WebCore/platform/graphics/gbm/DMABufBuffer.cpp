@@ -40,13 +40,13 @@ static uint64_t generateID()
 
 DMABufBuffer::DMABufBuffer(const IntSize& size, uint32_t fourcc, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
     : m_id(generateID())
-    , m_attributes({ size, fourcc, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier })
+    , m_attributes({ size, fourcc, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier })
 {
 }
 
 DMABufBuffer::DMABufBuffer(uint64_t id, Attributes&& attributes)
     : m_id(id)
-    , m_attributes(WTFMove(attributes))
+    , m_attributes(WTF::move(attributes))
 {
 }
 
@@ -54,7 +54,7 @@ DMABufBuffer::~DMABufBuffer() = default;
 
 void DMABufBuffer::setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
 {
-    m_buffer = WTFMove(buffer);
+    m_buffer = WTF::move(buffer);
 }
 
 std::optional<DMABufBuffer::Attributes> DMABufBuffer::takeAttributes()
@@ -62,7 +62,7 @@ std::optional<DMABufBuffer::Attributes> DMABufBuffer::takeAttributes()
     if (m_attributes.fds.isEmpty())
         return std::nullopt;
 
-    return DMABufBuffer::Attributes { WTFMove(m_attributes.size), std::exchange(m_attributes.fourcc, 0), WTFMove(m_attributes.fds), WTFMove(m_attributes.offsets), WTFMove(m_attributes.strides), std::exchange(m_attributes.modifier, 0) };
+    return DMABufBuffer::Attributes { WTF::move(m_attributes.size), std::exchange(m_attributes.fourcc, 0), WTF::move(m_attributes.fds), WTF::move(m_attributes.offsets), WTF::move(m_attributes.strides), std::exchange(m_attributes.modifier, 0) };
 }
 
 } // namespace WebCore

@@ -71,6 +71,15 @@ public:
         return m_fp[tmp];
     }
 
+    template<Bank bank>
+    const Value& get(Tmp tmp) const
+    {
+        ASSERT(bank == tmp.bank());
+        if constexpr (bank == GP)
+            return m_gp[tmp];
+        return m_fp[tmp];
+    }
+
     Value& operator[](Tmp tmp)
     {
         if (tmp.isGP())
@@ -78,6 +87,15 @@ public:
         return m_fp[tmp];
     }
     
+    template<Bank bank>
+    Value& get(Tmp tmp)
+    {
+        ASSERT(bank == tmp.bank());
+        if constexpr (bank == GP)
+            return m_gp[tmp];
+        return m_fp[tmp];
+    }
+
     template<typename PassedValue>
     void append(Tmp tmp, PassedValue&& value)
     {

@@ -70,7 +70,7 @@ void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession& sess
         [m_delegate.get() _automationSessionDidDisconnectFromRemote:RetainPtr { wrapper(session) }.get()];
 }
 
-static inline _WKAutomationSessionBrowsingContextOptions toAPI(API::AutomationSessionBrowsingContextOptions options)
+static inline _WKAutomationSessionBrowsingContextOptions NODELETE toAPI(API::AutomationSessionBrowsingContextOptions options)
 {
     uint16_t wkOptions = 0;
 
@@ -81,7 +81,7 @@ static inline _WKAutomationSessionBrowsingContextOptions toAPI(API::AutomationSe
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
-static inline _WKAutomationSessionWebExtensionResourceOptions toAPI(API::AutomationSessionWebExtensionResourceOptions options)
+static inline _WKAutomationSessionWebExtensionResourceOptions NODELETE toAPI(API::AutomationSessionWebExtensionResourceOptions options)
 {
     uint16_t wkOptions = 0;
 
@@ -99,7 +99,7 @@ static inline _WKAutomationSessionWebExtensionResourceOptions toAPI(API::Automat
 void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
 {
     if (m_delegateMethods.requestNewWebViewWithOptions) {
-        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestNewWebViewWithOptions:toAPI(options) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](WKWebView *webView) mutable {
+        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestNewWebViewWithOptions:toAPI(options) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WKWebView *webView) mutable {
             completionHandler(webView->_page.get());
         }).get()];
     } else
@@ -109,7 +109,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& se
 void AutomationSessionClient::requestSwitchToPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestSwitchToWebView)
-        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestSwitchToWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestSwitchToWebView:webView.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
     else
         completionHandler();
 }
@@ -117,7 +117,7 @@ void AutomationSessionClient::requestSwitchToPage(WebAutomationSession& session,
 void AutomationSessionClient::requestHideWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestHideWindowOfWebView)
-        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestHideWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestHideWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
     else
         completionHandler();
 }
@@ -125,7 +125,7 @@ void AutomationSessionClient::requestHideWindowOfPage(WebAutomationSession& sess
 void AutomationSessionClient::requestRestoreWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestRestoreWindowOfWebView)
-        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestRestoreWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestRestoreWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
     else
         completionHandler();
 }
@@ -133,7 +133,7 @@ void AutomationSessionClient::requestRestoreWindowOfPage(WebAutomationSession& s
 void AutomationSessionClient::requestMaximizeWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
     if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestMaximizeWindowOfWebView)
-        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestMaximizeWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+        [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestMaximizeWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
     else
         completionHandler();
 }
@@ -146,7 +146,7 @@ void AutomationSessionClient::loadWebExtensionWithOptions(WebKit::WebAutomationS
         return;
     }
 
-    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() loadWebExtensionWithOptions:toAPI(options) resource:resource.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSString *extensionId) mutable {
+    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() loadWebExtensionWithOptions:toAPI(options) resource:resource.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSString *extensionId) mutable {
         completionHandler(extensionId);
     }).get()];
 }
@@ -158,7 +158,7 @@ void AutomationSessionClient::unloadWebExtension(WebKit::WebAutomationSession& s
         return;
     }
 
-    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() unloadWebExtensionWithIdentifier:identifier.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL success) mutable {
+    [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() unloadWebExtensionWithIdentifier:identifier.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL success) mutable {
         completionHandler(success);
     }).get()];
 }
@@ -214,7 +214,7 @@ void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAu
         [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() setUserInput:value.createNSString().get() forCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
-static std::optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAutomationSessionJavaScriptDialogType type)
+static std::optional<API::AutomationSessionClient::JavaScriptDialogType> NODELETE toImpl(_WKAutomationSessionJavaScriptDialogType type)
 {
     switch (type) {
     case _WKAutomationSessionJavaScriptDialogTypeNone:
@@ -228,7 +228,7 @@ static std::optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(
     }
 }
 
-static API::AutomationSessionClient::BrowsingContextPresentation toImpl(_WKAutomationSessionBrowsingContextPresentation presentation)
+static API::AutomationSessionClient::BrowsingContextPresentation NODELETE toImpl(_WKAutomationSessionBrowsingContextPresentation presentation)
 {
     switch (presentation) {
     case _WKAutomationSessionBrowsingContextPresentationTab:

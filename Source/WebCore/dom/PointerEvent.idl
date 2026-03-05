@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-dictionary PointerEventInit : MouseEventInit {
+[
+    LegacyNativeDictionaryRequiredInterfaceNullability,
+] dictionary PointerEventInit : MouseEventInit {
     long pointerId = 0;
     double width = 1;
     double height = 1;
@@ -36,8 +38,8 @@ dictionary PointerEventInit : MouseEventInit {
     [EnabledBySetting=AzimuthAngleEnabled] double azimuthAngle;
     DOMString pointerType = "";
     boolean isPrimary = false;
-    [EnabledBySetting=GetCoalescedEventsEnabled] sequence<PointerEvent> coalescedEvents = [];
-    [EnabledBySetting=GetPredictedEventsEnabled] sequence<PointerEvent> predictedEvents = [];
+    sequence<PointerEvent> coalescedEvents = [];
+    sequence<PointerEvent> predictedEvents = [];
 };
 
 [
@@ -46,7 +48,7 @@ dictionary PointerEventInit : MouseEventInit {
     JSGenerateToNativeObject,
     ExportToWrappedFunction
 ] interface PointerEvent : MouseEvent {
-    constructor([AtomString] DOMString type, optional PointerEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional PointerEventInit eventInitDict = {});
 
     readonly attribute long pointerId;
     readonly attribute double width;
@@ -61,7 +63,7 @@ dictionary PointerEventInit : MouseEventInit {
     readonly attribute DOMString pointerType;
     readonly attribute boolean isPrimary;
 
-    [SecureContext, EnabledBySetting=GetCoalescedEventsEnabled] sequence<PointerEvent> getCoalescedEvents();
-    [EnabledBySetting=GetPredictedEventsEnabled] sequence<PointerEvent> getPredictedEvents();
+    [SecureContext] sequence<PointerEvent> getCoalescedEvents();
+    sequence<PointerEvent> getPredictedEvents();
 };
 

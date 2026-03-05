@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ServiceWorkerRegistration);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerRegistration);
 
 Ref<ServiceWorkerRegistration> ServiceWorkerRegistration::getOrCreate(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& data)
 {
@@ -68,24 +68,24 @@ Ref<ServiceWorkerRegistration> ServiceWorkerRegistration::getOrCreate(ScriptExec
         return registration.releaseNonNull();
     }
 
-    Ref registration = adoptRef(*new ServiceWorkerRegistration(context, WTFMove(container), WTFMove(data)));
+    Ref registration = adoptRef(*new ServiceWorkerRegistration(context, WTF::move(container), WTF::move(data)));
     registration->suspendIfNeeded();
     return registration;
 }
 
 ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& registrationData)
     : ActiveDOMObject(&context)
-    , m_registrationData(WTFMove(registrationData))
-    , m_container(WTFMove(container))
+    , m_registrationData(WTF::move(registrationData))
+    , m_container(WTF::move(container))
 {
     LOG(ServiceWorker, "Creating registration %p for registration key %s", this, m_registrationData.key.loggingString().utf8().data());
 
     if (m_registrationData.installingWorker)
-        m_installingWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.installingWorker));
+        m_installingWorker = ServiceWorker::getOrCreate(context, WTF::move(*m_registrationData.installingWorker));
     if (m_registrationData.waitingWorker)
-        m_waitingWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.waitingWorker));
+        m_waitingWorker = ServiceWorker::getOrCreate(context, WTF::move(*m_registrationData.waitingWorker));
     if (m_registrationData.activeWorker)
-        m_activeWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.activeWorker));
+        m_activeWorker = ServiceWorker::getOrCreate(context, WTF::move(*m_registrationData.activeWorker));
 
     REGISTRATION_RELEASE_LOG("ServiceWorkerRegistration: ID %" PRIu64 ", installing=%" PRIu64 ", waiting=%" PRIu64 ", active=%" PRIu64, identifier().toUInt64(), m_installingWorker ? m_installingWorker->identifier().toUInt64() : 0, m_waitingWorker ? m_waitingWorker->identifier().toUInt64() : 0, m_activeWorker ? m_activeWorker->identifier().toUInt64() : 0);
 
@@ -169,7 +169,7 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), newestWorker->workerType(), WTFMove(promise));
+    m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), newestWorker->workerType(), WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
@@ -179,7 +179,7 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    m_container->unregisterRegistration(identifier(), WTFMove(promise));
+    m_container->unregisterRegistration(identifier(), WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
@@ -189,7 +189,7 @@ void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& ap
         return;
     }
 
-    m_container->subscribeToPushService(*this, applicationServerKey, WTFMove(promise));
+    m_container->subscribeToPushService(*this, applicationServerKey, WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::unsubscribeFromPushService(std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
@@ -199,7 +199,7 @@ void ServiceWorkerRegistration::unsubscribeFromPushService(std::optional<PushSub
         return;
     }
 
-    m_container->unsubscribeFromPushService(identifier(), *subscriptionIdentifier, WTFMove(promise));
+    m_container->unsubscribeFromPushService(identifier(), *subscriptionIdentifier, WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
@@ -209,7 +209,7 @@ void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullab
         return;
     }
 
-    m_container->getPushSubscription(*this, WTFMove(promise));
+    m_container->getPushSubscription(*this, WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
@@ -219,7 +219,7 @@ void ServiceWorkerRegistration::getPushPermissionState(DOMPromiseDeferred<IDLEnu
         return;
     }
 
-    m_container->getPushPermissionState(identifier(), WTFMove(promise));
+    m_container->getPushPermissionState(identifier(), WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, RefPtr<ServiceWorker>&& serviceWorker)
@@ -227,15 +227,15 @@ void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationS
     switch (state) {
     case ServiceWorkerRegistrationState::Installing:
         REGISTRATION_RELEASE_LOG("updateStateFromServer: Setting registration %" PRIu64 " installing worker to %" PRIu64, identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
-        m_installingWorker = WTFMove(serviceWorker);
+        m_installingWorker = WTF::move(serviceWorker);
         break;
     case ServiceWorkerRegistrationState::Waiting:
         REGISTRATION_RELEASE_LOG("updateStateFromServer: Setting registration %" PRIu64 " waiting worker to %" PRIu64, identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
-        m_waitingWorker = WTFMove(serviceWorker);
+        m_waitingWorker = WTF::move(serviceWorker);
         break;
     case ServiceWorkerRegistrationState::Active:
         REGISTRATION_RELEASE_LOG("updateStateFromServer: Setting registration %" PRIu64 " active worker to %" PRIu64, identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
-        m_activeWorker = WTFMove(serviceWorker);
+        m_activeWorker = WTF::move(serviceWorker);
         break;
     }
 }
@@ -304,7 +304,7 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
         return;
     }
 
-    auto notificationResult = Notification::createForServiceWorker(context, WTFMove(title), WTFMove(options), m_registrationData.scopeURL);
+    auto notificationResult = Notification::createForServiceWorker(context, WTF::move(title), WTF::move(options), m_registrationData.scopeURL);
     if (notificationResult.hasException()) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Creating Notification had an exception");
         promise->reject(notificationResult.releaseException());
@@ -343,14 +343,14 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
     }
 
     auto notification = notificationResult.releaseReturnValue();
-    notification->show([promise = WTFMove(promise)]() mutable {
+    notification->show([promise = WTF::move(promise)]() mutable {
         promise->resolve();
     });
 }
 
 void ServiceWorkerRegistration::getNotifications(const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>> promise)
 {
-    m_container->getNotifications(m_registrationData.scopeURL, filter.tag, WTFMove(promise));
+    m_container->getNotifications(m_registrationData.scopeURL, filter.tag, WTF::move(promise));
 }
 
 #endif // ENABLE(NOTIFICATION_EVENT)
@@ -377,17 +377,17 @@ void ServiceWorkerRegistration::addCookieChangeSubscriptions(Vector<CookieStoreG
         if (subscription.url.isNull())
             url = scope();
         else {
-            url = protectedScriptExecutionContext()->completeURL(subscription.url).string();
+            url = protect(scriptExecutionContext())->completeURL(subscription.url).string();
             if (!url.startsWith(scope())) {
                 promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot subcribe to cookie changes for URLs outside of its scope"_s });
                 return;
             }
         }
 
-        cookieChangeSubscriptions.append({ WTFMove(subscription.name), WTFMove(url) });
+        cookieChangeSubscriptions.append({ WTF::move(subscription.name), WTF::move(url) });
     }
 
-    m_container->addCookieChangeSubscriptions(identifier(), WTFMove(cookieChangeSubscriptions), WTFMove(promise));
+    m_container->addCookieChangeSubscriptions(identifier(), WTF::move(cookieChangeSubscriptions), WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
@@ -405,17 +405,17 @@ void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieSto
         if (subscription.url.isNull())
             url = scope();
         else {
-            url = protectedScriptExecutionContext()->completeURL(subscription.url).string();
+            url = protect(scriptExecutionContext())->completeURL(subscription.url).string();
             if (!url.startsWith(scope())) {
                 promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot unsubcribe from cookie changes for URLs outside of its scope"_s });
                 return;
             }
         }
 
-        cookieChangeSubscriptions.append({ WTFMove(subscription.name), WTFMove(url) });
+        cookieChangeSubscriptions.append({ WTF::move(subscription.name), WTF::move(url) });
     }
 
-    m_container->removeCookieChangeSubscriptions(identifier(), WTFMove(cookieChangeSubscriptions), WTFMove(promise));
+    m_container->removeCookieChangeSubscriptions(identifier(), WTF::move(cookieChangeSubscriptions), WTF::move(promise));
 }
 
 void ServiceWorkerRegistration::cookieChangeSubscriptions(Ref<DeferredPromise>&& promise)
@@ -425,7 +425,7 @@ void ServiceWorkerRegistration::cookieChangeSubscriptions(Ref<DeferredPromise>&&
         return;
     }
 
-    m_container->cookieChangeSubscriptions(identifier(), WTFMove(promise));
+    m_container->cookieChangeSubscriptions(identifier(), WTF::move(promise));
 }
 
 } // namespace WebCore

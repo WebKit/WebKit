@@ -85,7 +85,7 @@ bool WebExtensionMatchPattern::patternsMatchPattern(const MatchPatternSet& match
     return false;
 }
 
-static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
+static HashMap<String, RefPtr<WebExtensionMatchPattern>>& NODELETE patternCache()
 {
     static MainRunLoopNeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
     return cache;
@@ -229,7 +229,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, 
         return;
     }
 
-    m_pattern = WTFMove(pattern);
+    m_pattern = WTF::move(pattern);
     m_valid = true;
     m_hash = patternString.hash();
 }
@@ -277,7 +277,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
         return;
     }
 
-    m_pattern = WTFMove(pattern);
+    m_pattern = WTF::move(pattern);
     m_valid = true;
     m_hash = string().hash();
 }

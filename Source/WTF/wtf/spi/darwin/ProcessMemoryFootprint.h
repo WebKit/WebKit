@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if OS(DARWIN)
+
+#include <unistd.h>
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && __has_include(<libproc.h>)
 #    include <libproc.h>

@@ -17,8 +17,8 @@ features: [TypedArray, change-array-by-copy]
 includes: [testTypedArray.js, compareArray.js]
 ---*/
 
-testWithTypedArrayConstructors(TA => {
-  var ta = new TA(1);
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
+  var ta = new TA(makeCtorArg(1));
 
   var logs = [];
 

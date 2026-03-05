@@ -14,12 +14,12 @@ info: |
       ii. Let intIndex be numericIndex.
       iv. If intIndex < 0, return false.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Reflect, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n]));
 
   assert.sameValue(
     Reflect.defineProperty(sample, "-1", {
@@ -31,4 +31,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     false,
     "-1"
   );
-});
+}, null, ["passthrough"]);

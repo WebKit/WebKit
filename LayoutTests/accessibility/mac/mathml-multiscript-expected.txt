@@ -93,11 +93,13 @@ Prescripts:
 
 Check multiscript with 'none' tags.
 Postscripts:
+	0. AXMathSuperscript = AXEmptyGroup
 	0. AXMathSubscript = AXMathNumber
 	1. AXMathSubscript = AXMathNumber
 
 Prescripts:
 	0. AXMathSuperscript = AXMathIdentifier
+	0. AXMathSubscript = AXEmptyGroup
 	1. AXMathSubscript = AXMathNumber
 
 PASS successfullyParsed is true

@@ -57,25 +57,15 @@ auto CSSValueConversion<BorderImageOutset>::operator()(BuilderState& state, cons
     if (RefPtr quadValue = dynamicDowncast<CSSQuadValue>(value)) {
         auto& quad = quadValue->quad();
         return BorderImageOutset {
-            .values = {
-                convertBorderImageOutsetValue(state, quad.top()),
-                convertBorderImageOutsetValue(state, quad.right()),
-                convertBorderImageOutsetValue(state, quad.bottom()),
-                convertBorderImageOutsetValue(state, quad.left()),
-            }
+            convertBorderImageOutsetValue(state, quad.top()),
+            convertBorderImageOutsetValue(state, quad.right()),
+            convertBorderImageOutsetValue(state, quad.bottom()),
+            convertBorderImageOutsetValue(state, quad.left()),
         };
     }
 
     // Values coming from CSS Typed OM may not have been converted to a Quad.
-    auto outsetValue = convertBorderImageOutsetValue(state, value);
-    return BorderImageOutset {
-        .values = {
-            outsetValue,
-            outsetValue,
-            outsetValue,
-            outsetValue,
-        }
-    };
+    return convertBorderImageOutsetValue(state, value);
 }
 
 auto CSSValueCreation<BorderImageOutset>::operator()(CSSValuePool& pool, const RenderStyle& style, const BorderImageOutset& value) -> Ref<CSSValue>
@@ -144,12 +134,10 @@ auto Blending<BorderImageOutset>::blend(const BorderImageOutset& a, const Border
     }
 
     return BorderImageOutset {
-        .values = {
-            Style::blend(a.values.top(),     b.values.top(), context),
-            Style::blend(a.values.right(),   b.values.right(), context),
-            Style::blend(a.values.bottom(),  b.values.bottom(), context),
-            Style::blend(a.values.left(),    b.values.left(), context),
-        }
+        Style::blend(a.values.top(),     b.values.top(), context),
+        Style::blend(a.values.right(),   b.values.right(), context),
+        Style::blend(a.values.bottom(),  b.values.bottom(), context),
+        Style::blend(a.values.left(),    b.values.left(), context),
     };
 }
 

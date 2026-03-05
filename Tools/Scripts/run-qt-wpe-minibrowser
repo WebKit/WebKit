@@ -30,6 +30,7 @@ setConfiguration();
 if (!inFlatpakSandbox()) {
     push @ARGV, "--wpe";
 }
+maybeUseContainerSDKRootDir();
 
 my $launcherName;
 my $libPathQt5;
@@ -40,9 +41,6 @@ my $configuration = passedConfiguration();
 my $productDir = productDir();
 
 if ($configuration) {
-    $libPathQt5 = File::Spec->catfile(sourceDir(), "WebKitBuild", "$configuration", "lib", "qt5", "qml");
-    $ENV{"QML2_IMPORT_PATH"} = "$libPathQt5" if (-d "$libPathQt5");
-
     $libPathQt6 = File::Spec->catfile(sourceDir(), "WebKitBuild", "$configuration", "lib", "qt6", "qml");
     $ENV{"QML_IMPORT_PATH"} = "$libPathQt6" if (-d "$libPathQt6");
 }
@@ -51,13 +49,9 @@ if ($configuration) {
 checkBuild();
 
 if ($productDir) {
-    my $qt5qmlsubdir = "lib/qt5/qml";
-    $libPathQt5 = "$productDir/$qt5qmlsubdir" if (-d "$productDir/$qt5qmlsubdir");
-
     my $qt6qmlsubdir = "lib/qt6/qml";
     $libPathQt6 = "$productDir/$qt6qmlsubdir" if (-d "$productDir/$qt6qmlsubdir");
 }
-$ENV{"QML2_IMPORT_PATH"} = "$libPathQt5" if $libPathQt5;
 $ENV{"QML_IMPORT_PATH"} = "$libPathQt6" if $libPathQt6;
 
 $launcherPath = catdir($productDir, "bin", "qt-wpe-mini-browser");

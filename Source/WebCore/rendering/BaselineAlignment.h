@@ -68,15 +68,15 @@ private:
 
     // Determines whether a baseline-sharing group is compatible with an alignment subject,
     // based on its 'block-flow' and 'baseline-preference'
-    bool isCompatible(FlowDirection, ItemPosition) const;
+    bool NODELETE isCompatible(FlowDirection, ItemPosition) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is opposite (LR vs RL) to particular
     // alignment subject's writing-mode.
-    bool isOppositeBlockFlow(FlowDirection) const;
+    bool NODELETE isOppositeBlockFlow(FlowDirection) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is orthogonal (vertical vs horizontal)
     // to particular alignment subject's writing-mode.
-    bool isOrthogonalBlockFlow(FlowDirection) const;
+    bool NODELETE isOrthogonalBlockFlow(FlowDirection) const;
 
     FlowDirection m_blockFlow;
     ItemPosition m_preference;
@@ -106,9 +106,9 @@ public:
     const BaselineGroup& sharedGroup(const RenderBox& alignmentSubject, ItemPosition preference) const;
 
     void updateSharedGroup(const RenderBox& alignmentSubject, ItemPosition preference, LayoutUnit ascent);
-    Vector<BaselineGroup>& sharedGroups();
+    Vector<BaselineGroup>& NODELETE sharedGroups();
 
-    static FontBaseline dominantBaseline(WritingMode);
+    static FontBaseline NODELETE dominantBaseline(WritingMode);
     static WritingMode usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode, WritingMode alignmentSubjectWritingMode);
     static LayoutUnit synthesizedBaseline(const RenderBox&, FontBaseline baselineType, WritingMode writingModeForSynthesis, LineDirection, BaselineSynthesisEdge);
 

@@ -188,19 +188,19 @@ struct MetaConsumer {
 
         switch (range.peek().type()) {
         case FunctionToken:
-            return Unroller::template consume<FunctionToken, ResultType>(range, state, WTFMove(symbolsAllowed), options, visitor);
+            return Unroller::template consume<FunctionToken, ResultType>(range, state, WTF::move(symbolsAllowed), options, visitor);
 
         case NumberToken:
-            return Unroller::template consume<NumberToken, ResultType>(range, state, WTFMove(symbolsAllowed), options, visitor);
+            return Unroller::template consume<NumberToken, ResultType>(range, state, WTF::move(symbolsAllowed), options, visitor);
 
         case PercentageToken:
-            return Unroller::template consume<PercentageToken, ResultType>(range, state, WTFMove(symbolsAllowed), options, visitor);
+            return Unroller::template consume<PercentageToken, ResultType>(range, state, WTF::move(symbolsAllowed), options, visitor);
 
         case DimensionToken:
-            return Unroller::template consume<DimensionToken, ResultType>(range, state, WTFMove(symbolsAllowed), options, visitor);
+            return Unroller::template consume<DimensionToken, ResultType>(range, state, WTF::move(symbolsAllowed), options, visitor);
 
         case IdentToken:
-            return Unroller::template consume<IdentToken, ResultType>(range, state, WTFMove(symbolsAllowed), options, visitor);
+            return Unroller::template consume<IdentToken, ResultType>(range, state, WTF::move(symbolsAllowed), options, visitor);
 
         default:
             return std::optional<ResultType> { };
@@ -211,7 +211,7 @@ struct MetaConsumer {
     template<typename... F>
     static decltype(auto) consume(CSSParserTokenRange& range, CSS::PropertyParserState& state, CSSCalcSymbolsAllowed symbolsAllowed, F&&... f)
     {
-        return consume(range, state, WTFMove(symbolsAllowed), { }, std::forward<F>(f)...);
+        return consume(range, state, WTF::move(symbolsAllowed), { }, std::forward<F>(f)...);
     }
 
     // Overloaded with the `CSSCalcSymbolsAllowed` parameter removed so it can be defaulted when using the continuation functor parameters.
@@ -233,9 +233,9 @@ struct MetaConsumer {
     {
         using ResultType = typename MetaConsumeResult<T, Ts...>::type;
 
-        return consume(range, state, WTFMove(symbolsAllowed), options,
+        return consume(range, state, WTF::move(symbolsAllowed), options,
             [](auto&& value) {
-                return ResultType { WTFMove(value) };
+                return ResultType { WTF::move(value) };
             }
         );
     }

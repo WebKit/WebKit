@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PropertyCascade);
 
 PropertyCascade::PropertyCascade(const MatchResult& matchResult, IncludedProperties&& includedProperties, const HashSet<AnimatableCSSProperty>* animatedProperties, const StyleProperties* positionTryFallbackProperties)
     : m_matchResult(matchResult)
-    , m_includedProperties(WTFMove(includedProperties))
+    , m_includedProperties(WTF::move(includedProperties))
     , m_maximumOrigin(positionTryFallbackProperties ? PropertyCascade::Origin::PositionFallback : PropertyCascade::Origin::Author)
     , m_animationLayer(animatedProperties ? std::optional { AnimationLayer { *animatedProperties } } : std::nullopt)
 {
@@ -91,14 +91,14 @@ void PropertyCascade::buildCascade()
             break;
         bool hasImportant = addNormalMatches(origin);
         if (hasImportant)
-            originsWithImportant[enumToUnderlyingType(origin)] = true;
+            originsWithImportant[std::to_underlying(origin)] = true;
     }
 
     if (m_positionTryFallbackProperties)
         addPositionTryFallbackProperties();
 
     for (auto origin : { Origin::Author, Origin::User, Origin::UserAgent }) {
-        if (!originsWithImportant[enumToUnderlyingType(origin)])
+        if (!originsWithImportant[std::to_underlying(origin)])
             continue;
         addImportantMatches(origin);
     }
@@ -226,10 +226,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origi
     if (m_maximumCascadeLayerPriorityForRollback && !includePropertiesForRollback())
         return false;
 
-    if ((matchedProperties.usedRuleTypes & UsedRuleType::StartingStyle) && !m_includedProperties.types.contains(PropertyType::StartingStyle))
-        return false;
-
-    if ((matchedProperties.usedRuleTypes & UsedRuleType::BaseAppearance) && !m_includedProperties.types.contains(PropertyType::BaseAppearanceStyle))
+    if (matchedProperties.isStartingStyle == IsStartingStyle::Yes && !m_includedProperties.types.contains(PropertyType::StartingStyle))
         return false;
 
     auto propertyAllowlist = matchedProperties.allowlistType;
@@ -304,7 +301,7 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
     ASSERT(m_animationLayer);
 
     auto id = property.id();
-    auto* customProperty = dynamicDowncast<CSSCustomPropertyValue>(*property.value());
+    RefPtr customProperty = dynamicDowncast<CSSCustomPropertyValue>(*property.value());
 
     auto isAnimatedProperty = [&] {
         if (customProperty)
@@ -352,7 +349,7 @@ void PropertyCascade::addPositionTryFallbackProperties()
     addMatch(*m_positionTryFallbackProperties, Origin::PositionFallback, IsImportant::No);
 }
 
-static auto& declarationsForOrigin(const MatchResult& matchResult, PropertyCascade::Origin origin)
+static auto& NODELETE declarationsForOrigin(const MatchResult& matchResult, PropertyCascade::Origin origin)
 {
     switch (origin) {
     case PropertyCascade::Origin::UserAgent: return matchResult.userAgentDeclarations;

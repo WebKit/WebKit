@@ -75,15 +75,15 @@ static int closesocket(int sock) { return close(sock); }
 // successful, |*out_port| may be NULL on return if no port was specified.
 static int split_host_and_port(char **out_host, char **out_port,
                                const char *name) {
-  const char *host, *port = NULL;
+  const char *host, *port = nullptr;
   size_t host_len = 0;
 
-  *out_host = NULL;
-  *out_port = NULL;
+  *out_host = nullptr;
+  *out_port = nullptr;
 
   if (name[0] == '[') {  // bracketed IPv6 address
     const char *close = strchr(name, ']');
-    if (close == NULL) {
+    if (close == nullptr) {
       return 0;
     }
     host = name + 1;
@@ -95,7 +95,8 @@ static int split_host_and_port(char **out_host, char **out_port,
     }
   } else {
     const char *colon = strchr(name, ':');
-    if (colon == NULL || strchr(colon + 1, ':') != NULL) {  // IPv6 address
+    if (colon == nullptr ||
+        strchr(colon + 1, ':') != nullptr) {  // IPv6 address
       host = name;
       host_len = strlen(name);
     } else {  // host:port
@@ -106,17 +107,17 @@ static int split_host_and_port(char **out_host, char **out_port,
   }
 
   *out_host = OPENSSL_strndup(host, host_len);
-  if (*out_host == NULL) {
+  if (*out_host == nullptr) {
     return 0;
   }
-  if (port == NULL) {
-    *out_port = NULL;
+  if (port == nullptr) {
+    *out_port = nullptr;
     return 1;
   }
   *out_port = OPENSSL_strdup(port);
-  if (*out_port == NULL) {
+  if (*out_port == nullptr) {
     OPENSSL_free(*out_host);
-    *out_host = NULL;
+    *out_host = nullptr;
     return 0;
   }
   return 1;
@@ -124,9 +125,9 @@ static int split_host_and_port(char **out_host, char **out_port,
 
 static int conn_state(BIO *bio, BIO_CONNECT *c) {
   int ret = -1, i;
-  int (*cb)(BIO *, int, int) = NULL;
+  int (*cb)(BIO *, int, int) = nullptr;
 
-  if (c->info_callback != NULL) {
+  if (c->info_callback != nullptr) {
     cb = c->info_callback;
   }
 
@@ -137,15 +138,15 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
         // exactly what they say. If there is only a hostname, try
         // (just once) to split it into a hostname and port.
 
-        if (c->param_hostname == NULL) {
+        if (c->param_hostname == nullptr) {
           OPENSSL_PUT_ERROR(BIO, BIO_R_NO_HOSTNAME_SPECIFIED);
           goto exit_loop;
         }
 
-        if (c->param_port == NULL) {
+        if (c->param_port == nullptr) {
           char *host, *port;
           if (!split_host_and_port(&host, &port, c->param_hostname) ||
-              port == NULL) {
+              port == nullptr) {
             OPENSSL_free(host);
             OPENSSL_free(port);
             OPENSSL_PUT_ERROR(BIO, BIO_R_NO_PORT_SPECIFIED);
@@ -235,7 +236,7 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
         goto exit_loop;
     }
 
-    if (cb != NULL) {
+    if (cb != nullptr) {
       ret = cb((BIO *)bio, c->state, ret);
       if (ret == 0) {
         goto end;
@@ -244,7 +245,7 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
   }
 
 exit_loop:
-  if (cb != NULL) {
+  if (cb != nullptr) {
     ret = cb((BIO *)bio, c->state, ret);
   }
 
@@ -255,8 +256,8 @@ end:
 static BIO_CONNECT *BIO_CONNECT_new(void) {
   BIO_CONNECT *ret =
       reinterpret_cast<BIO_CONNECT *>(OPENSSL_zalloc(sizeof(BIO_CONNECT)));
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
   ret->state = BIO_CONN_S_BEFORE;
   return ret;
@@ -276,7 +277,7 @@ static int conn_new(BIO *bio) {
   bio->num = -1;
   bio->flags = 0;
   bio->ptr = BIO_CONNECT_new();
-  return bio->ptr != NULL;
+  return bio->ptr != nullptr;
 }
 
 static void conn_close_socket(BIO *bio) {
@@ -434,12 +435,12 @@ BIO *BIO_new_connect(const char *hostname) {
   BIO *ret;
 
   ret = BIO_new(BIO_s_connect());
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
   if (!BIO_set_conn_hostname(ret, hostname)) {
     BIO_free(ret);
-    return NULL;
+    return nullptr;
   }
   return ret;
 }
@@ -467,11 +468,11 @@ int BIO_set_conn_int_port(BIO *bio, const int *port) {
 }
 
 int BIO_set_nbio(BIO *bio, int on) {
-  return (int)BIO_ctrl(bio, BIO_C_SET_NBIO, on, NULL);
+  return (int)BIO_ctrl(bio, BIO_C_SET_NBIO, on, nullptr);
 }
 
 int BIO_do_connect(BIO *bio) {
-  return (int)BIO_ctrl(bio, BIO_C_DO_STATE_MACHINE, 0, NULL);
+  return (int)BIO_ctrl(bio, BIO_C_DO_STATE_MACHINE, 0, nullptr);
 }
 
 #endif  // OPENSSL_NO_SOCK

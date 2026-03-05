@@ -51,14 +51,14 @@ public:
     WEBCORE_EXPORT static Ref<MediaKeySystemRequest> create(Document&, const String& keySystem, RefPtr<DeferredPromise>&&);
     virtual ~MediaKeySystemRequest();
 
-    void setAllowCallback(CompletionHandler<void(String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&)>&& callback) { m_allowCompletionHandler = WTFMove(callback); }
+    void setAllowCallback(CompletionHandler<void(String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&)>&& callback) { m_allowCompletionHandler = WTF::move(callback); }
     WEBCORE_EXPORT void start();
 
     WEBCORE_EXPORT void allow(String&& mediaKeysHashSalt);
     WEBCORE_EXPORT void deny(const String& errorMessage = emptyString());
 
     WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
-    WEBCORE_EXPORT Document* document() const;
+    WEBCORE_EXPORT Document* NODELETE document() const;
 
     const String keySystem() const { return m_keySystem; }
 

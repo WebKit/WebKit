@@ -463,13 +463,13 @@ uint64_t c_v256_ssd_s16(c_v256 a, c_v256 b) {
   return c_v256_ssd_s16_sum(::c_v256_ssd_s16(c_v256_ssd_s16_init(), a, b));
 }
 
-typedef void (*fptr)();
+using fptr = void (*)();
 
-typedef struct {
+struct mapping {
   const char *name;
   fptr ref;
   fptr simd;
-} mapping;
+};
 
 #define MAP(name) \
   { #name, reinterpret_cast < fptr>(c_##name), reinterpret_cast < fptr>(name) }

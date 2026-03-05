@@ -82,7 +82,7 @@ public:
 
     MacroAssemblerCodeRef(Ref<ExecutableMemoryHandle>&& executableMemory)
         : m_codePtr(executableMemory->start().retaggedPtr<tag>())
-        , m_executableMemory(WTFMove(executableMemory))
+        , m_executableMemory(WTF::move(executableMemory))
     {
         ASSERT(m_executableMemory->start());
         ASSERT(m_codePtr);

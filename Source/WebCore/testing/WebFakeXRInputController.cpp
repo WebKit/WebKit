@@ -208,7 +208,7 @@ void WebFakeXRInputController::updateHandJoints(const Vector<FakeXRJointStateIni
         
         updatedJoints.append(InputSourceHandJoint { InputSourcePose { transform.releaseReturnValue(), false }, handJoint.radius });
     }
-    m_handJoints = WTFMove(updatedJoints);
+    m_handJoints = WTF::move(updatedJoints);
 }
 #endif // ENABLE(WEBXR_HANDS)
 

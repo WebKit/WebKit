@@ -43,7 +43,7 @@ struct Quotes {
     }
 
     Quotes(Data&& data)
-        : m_value { WTFMove(data) }
+        : m_value { WTF::move(data) }
     {
     }
 

@@ -122,8 +122,8 @@ CoreIPCAVOutputContext::CoreIPCAVOutputContext(
     RetainPtr<NSString>&& AVOutputContextSerializationKeyContextID,
     RetainPtr<NSString>&& AVOutputContextSerializationKeyContextType
 )
-    : m_AVOutputContextSerializationKeyContextID(WTFMove(AVOutputContextSerializationKeyContextID))
-    , m_AVOutputContextSerializationKeyContextType(WTFMove(AVOutputContextSerializationKeyContextType))
+    : m_AVOutputContextSerializationKeyContextID(WTF::move(AVOutputContextSerializationKeyContextID))
+    , m_AVOutputContextSerializationKeyContextType(WTF::move(AVOutputContextSerializationKeyContextType))
 {
 }
 
@@ -164,13 +164,13 @@ CoreIPCNSSomeFoundationType::CoreIPCNSSomeFoundationType(
     RetainPtr<NSDictionary>&& DictionaryKey,
     RetainPtr<NSDictionary>&& OptionalDictionaryKey
 )
-    : m_StringKey(WTFMove(StringKey))
-    , m_NumberKey(WTFMove(NumberKey))
-    , m_OptionalNumberKey(WTFMove(OptionalNumberKey))
-    , m_ArrayKey(WTFMove(ArrayKey))
-    , m_OptionalArrayKey(WTFMove(OptionalArrayKey))
-    , m_DictionaryKey(WTFMove(DictionaryKey))
-    , m_OptionalDictionaryKey(WTFMove(OptionalDictionaryKey))
+    : m_StringKey(WTF::move(StringKey))
+    , m_NumberKey(WTF::move(NumberKey))
+    , m_OptionalNumberKey(WTF::move(OptionalNumberKey))
+    , m_ArrayKey(WTF::move(ArrayKey))
+    , m_OptionalArrayKey(WTF::move(OptionalArrayKey))
+    , m_DictionaryKey(WTF::move(DictionaryKey))
+    , m_OptionalDictionaryKey(WTF::move(OptionalDictionaryKey))
 {
 }
 
@@ -235,7 +235,7 @@ RetainPtr<id> CoreIPCNSSomeFoundationType::toID() const
 CoreIPCclass NSSomeOtherFoundationType::CoreIPCclass NSSomeOtherFoundationType(
     RetainPtr<NSDictionary>&& DictionaryKey
 )
-    : m_DictionaryKey(WTFMove(DictionaryKey))
+    : m_DictionaryKey(WTF::move(DictionaryKey))
 {
 }
 
@@ -270,15 +270,15 @@ CoreIPCDDScannerResult::CoreIPCDDScannerResult(
     Vector<RetainPtr<NSData>>&& DataArrayKey,
     Vector<RetainPtr<SecTrustRef>>&& SecTrustArrayKey
 )
-    : m_StringKey(WTFMove(StringKey))
-    , m_NumberKey(WTFMove(NumberKey))
-    , m_OptionalNumberKey(WTFMove(OptionalNumberKey))
-    , m_ArrayKey(WTFMove(ArrayKey))
-    , m_OptionalArrayKey(WTFMove(OptionalArrayKey))
-    , m_DictionaryKey(WTFMove(DictionaryKey))
-    , m_OptionalDictionaryKey(WTFMove(OptionalDictionaryKey))
-    , m_DataArrayKey(WTFMove(DataArrayKey))
-    , m_SecTrustArrayKey(WTFMove(SecTrustArrayKey))
+    : m_StringKey(WTF::move(StringKey))
+    , m_NumberKey(WTF::move(NumberKey))
+    , m_OptionalNumberKey(WTF::move(OptionalNumberKey))
+    , m_ArrayKey(WTF::move(ArrayKey))
+    , m_OptionalArrayKey(WTF::move(OptionalArrayKey))
+    , m_DictionaryKey(WTF::move(DictionaryKey))
+    , m_OptionalDictionaryKey(WTF::move(OptionalDictionaryKey))
+    , m_DataArrayKey(WTF::move(DataArrayKey))
+    , m_SecTrustArrayKey(WTF::move(SecTrustArrayKey))
 {
 }
 

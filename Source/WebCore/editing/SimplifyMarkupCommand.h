@@ -33,7 +33,7 @@ class SimplifyMarkupCommand : public CompositeEditCommand {
 public:
     static Ref<SimplifyMarkupCommand> create(Ref<Document>&& document, Node* firstNode, Node* nodeAfterLast)
     {
-        return adoptRef(*new SimplifyMarkupCommand(WTFMove(document), firstNode, nodeAfterLast));
+        return adoptRef(*new SimplifyMarkupCommand(WTF::move(document), firstNode, nodeAfterLast));
     }
 
 private:

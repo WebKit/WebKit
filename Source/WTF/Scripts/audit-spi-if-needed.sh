@@ -29,10 +29,14 @@ if [[ "${WK_AUDIT_SPI}" == YES && -f "${program}" ]]; then
         fi
     done
 
+    # Use a different cache file for different SDKs (either different
+    # platforms, or reusing the same build directory between different Xcodes).
+    sdk_name_unique="${SDK_NAME}_$(printf %s ${SDKROOT} | shasum | cut -wf1)"
+
     for arch in ${ARCHS}; do
         (set -x && "${program}" \
          --sdkdb-dir "${versioned_sdkdb_dir}" \
-         --sdkdb-cache "${OBJROOT}/WebKitSDKDBs/${SDK_NAME}.sqlite3" \
+         --sdkdb-cache "${OBJROOT}/WebKitSDKDBs/${sdk_name_unique}.sqlite3" \
          --sdk-dir "${SDKROOT}" --arch-name "${arch}" \
          --depfile "${depfile}" \
          -F "${BUILT_PRODUCTS_DIR}" \

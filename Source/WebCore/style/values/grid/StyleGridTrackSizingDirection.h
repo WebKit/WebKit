@@ -23,6 +23,7 @@
  */
 
 #pragma once
+#include <WebCore/BoxSides.h>
 
 namespace WebCore {
 namespace Style {
@@ -34,6 +35,20 @@ constexpr GridTrackSizingDirection orthogonalDirection(GridTrackSizingDirection 
     return direction == GridTrackSizingDirection::Columns
         ? GridTrackSizingDirection::Rows
         : GridTrackSizingDirection::Columns;
+}
+
+constexpr LogicalBoxAxis logicalAxis(GridTrackSizingDirection direction)
+{
+    return direction == GridTrackSizingDirection::Columns
+        ? LogicalBoxAxis::Inline
+        : LogicalBoxAxis::Block;
+}
+
+constexpr GridTrackSizingDirection gridTrackSizingDirection(LogicalBoxAxis axis)
+{
+    return axis == LogicalBoxAxis::Inline
+        ? GridTrackSizingDirection::Columns
+        : GridTrackSizingDirection::Rows;
 }
 
 } // namespace Style

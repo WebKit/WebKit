@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/bottom-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/bottom-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/left-composition.html

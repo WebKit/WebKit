@@ -140,7 +140,7 @@ struct WindowStateEvent {
 
     WindowStateEvent(Type type, CompletionHandler<void()>&& completionHandler)
         : type(type)
-        , completionHandler(WTFMove(completionHandler))
+        , completionHandler(WTF::move(completionHandler))
         , completeTimer(RunLoop::mainSingleton(), "WindowStateEvent::CompleteTimer"_s, this, &WindowStateEvent::complete)
     {
         // Complete the event if not done after one second.
@@ -233,7 +233,7 @@ static gboolean windowStateEventCallback(GtkWidget* window, GdkEventWindowState*
 static void
 webkitWebViewMonitorWindowState(WebKitWebView* view, GtkWindow* window, WindowStateEvent::Type type, CompletionHandler<void()>&& completionHandler)
 {
-    g_object_set_data_full(G_OBJECT(view), gWindowStateEventID, new WindowStateEvent(type, WTFMove(completionHandler)), [](gpointer userData) {
+    g_object_set_data_full(G_OBJECT(view), gWindowStateEventID, new WindowStateEvent(type, WTF::move(completionHandler)), [](gpointer userData) {
         delete static_cast<WindowStateEvent*>(userData);
     });
 
@@ -258,7 +258,7 @@ void webkitWebViewMaximizeWindow(WebKitWebView* view, CompletionHandler<void()>&
         return;
     }
 
-    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Maximize, WTFMove(completionHandler));
+    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Maximize, WTF::move(completionHandler));
     gtk_window_maximize(window);
 
 #if ENABLE(DEVELOPER_MODE)
@@ -284,7 +284,7 @@ void webkitWebViewMinimizeWindow(WebKitWebView* view, CompletionHandler<void()>&
     }
 
     auto* window = GTK_WINDOW(topLevel);
-    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Minimize, WTFMove(completionHandler));
+    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Minimize, WTF::move(completionHandler));
     gtk_window_minimize(window);
     gtk_widget_hide(topLevel);
 }
@@ -303,7 +303,7 @@ void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&&
         return;
     }
 
-    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Restore, WTFMove(completionHandler));
+    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Restore, WTF::move(completionHandler));
     if (gtk_window_is_maximized(window))
         gtk_window_unmaximize(window);
     if (!gtk_widget_get_mapped(topLevel))

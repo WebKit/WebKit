@@ -53,7 +53,7 @@ struct SingleLatchTest {
 
                         std::scoped_lock<std::mutex> locker(lock);
                         awake.add(Thread::currentSingleton());
-                        lastAwoken = &Thread::currentSingleton();
+                        lastAwoken = ParkingLot::currentThreadID();
                         condition.notify_one();
                     }));
         }
@@ -61,16 +61,16 @@ struct SingleLatchTest {
 
     void unparkOne(unsigned singleUnparkIndex)
     {
-        EXPECT_TRUE(nullptr == lastAwoken);
+        EXPECT_EQ(0UL, lastAwoken);
         
         unsigned numWaitingOnAddress = 0;
-        Vector<RefPtr<Thread>, 8> queue;
+        Vector<uintptr_t, 8> queue;
         ParkingLot::forEach(
-            [&] (Thread& thread, const void* address) {
+            [&] (uintptr_t threadID, const void* address) {
                 if (address != &semaphore)
                     return;
 
-                queue.append(&thread);
+                queue.append(threadID);
 
                 numWaitingOnAddress++;
             });
@@ -83,12 +83,12 @@ struct SingleLatchTest {
             std::unique_lock<std::mutex> locker(lock);
             while (awake.size() < singleUnparkIndex + 1)
                 condition.wait(locker);
-            EXPECT_TRUE(nullptr != lastAwoken);
+            EXPECT_NE(0UL, lastAwoken);
             if (!queue.isEmpty() && queue[0] != lastAwoken) {
                 dataLog("Woke up wrong thread: queue = ", listDump(queue), ", last awoken = ", lastAwoken, "\n");
                 EXPECT_EQ(queue[0], lastAwoken);
             }
-            lastAwoken = nullptr;
+            lastAwoken = 0;
         }
     }
 
@@ -96,7 +96,7 @@ struct SingleLatchTest {
     {
         unsigned numWaitingOnAddress = 0;
         ParkingLot::forEach(
-            [&] (Thread&, const void* address) {
+            [&] (uintptr_t, const void* address) {
                 if (address != &semaphore)
                     return;
                 
@@ -110,7 +110,7 @@ struct SingleLatchTest {
 
         numWaitingOnAddress = 0;
         ParkingLot::forEach(
-            [&] (Thread&, const void* address) {
+            [&] (uintptr_t, const void* address) {
                 if (address != &semaphore)
                     return;
             
@@ -177,7 +177,7 @@ struct SingleLatchTest {
     std::condition_variable condition;
     HashSet<Ref<Thread>> awake;
     Vector<Ref<Thread>> threads;
-    RefPtr<Thread> lastAwoken;
+    uintptr_t lastAwoken { 0 };
 };
 
 void runParkingTest(unsigned numLatches, unsigned delay, unsigned numThreads, unsigned numSingleUnparks)

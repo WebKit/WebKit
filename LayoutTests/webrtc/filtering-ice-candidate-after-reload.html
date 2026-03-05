@@ -46,7 +46,10 @@ function test() {
                 endTest("FAIL, initial ice candidate filtering is off");
                 return;
             }
-            navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(() => { return isFilteringEnabled(); }).then((filtering) => {
+            navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream => {
+                stream.getTracks().forEach(t => t.stop());
+                return isFilteringEnabled();
+            }).then((filtering) => {
                 if (filtering) {
                     endTest("FAIL, initial ice candidate filtering after getUserMedia is on");
                     return;

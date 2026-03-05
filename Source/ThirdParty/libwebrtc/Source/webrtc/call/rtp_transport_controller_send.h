@@ -145,14 +145,8 @@ class RtpTransportControllerSend final
   // Called once it's known that the remote end supports RFC 8888.
   void EnableCongestionControlFeedbackAccordingToRfc8888() override;
 
-  int ReceivedCongestionControlFeedbackCount() const override {
-    RTC_DCHECK_RUN_ON(&sequence_checker_);
-    return feedback_count_;
-  }
-  int ReceivedTransportCcFeedbackCount() const override {
-    RTC_DCHECK_RUN_ON(&sequence_checker_);
-    return transport_cc_feedback_count_;
-  }
+  std::optional<int> ReceivedCongestionControlFeedbackCount() const override;
+  std::optional<int> ReceivedTransportCcFeedbackCount() const override;
 
  private:
   void MaybeCreateControllers() RTC_RUN_ON(sequence_checker_);
@@ -206,8 +200,6 @@ class RtpTransportControllerSend final
 
   NetworkControllerFactoryInterface* const controller_factory_override_
       RTC_PT_GUARDED_BY(sequence_checker_);
-  const std::unique_ptr<NetworkControllerFactoryInterface>
-      controller_factory_fallback_ RTC_PT_GUARDED_BY(sequence_checker_);
 
   std::unique_ptr<CongestionControlHandler> control_handler_
       RTC_GUARDED_BY(sequence_checker_) RTC_PT_GUARDED_BY(sequence_checker_);
@@ -231,6 +223,7 @@ class RtpTransportControllerSend final
   const bool reset_feedback_on_route_change_;
   const bool add_pacing_to_cwin_;
   const bool reset_bwe_on_adapter_id_change_;
+  const bool prefer_bwe_using_scream_;
 
   FieldTrialParameter<DataRate> relay_bandwidth_cap_;
 
@@ -242,8 +235,7 @@ class RtpTransportControllerSend final
 
   DataSize congestion_window_size_ RTC_GUARDED_BY(sequence_checker_);
   bool is_congested_ RTC_GUARDED_BY(sequence_checker_);
-  bool transport_maybe_support_ecn_ =
-      false;  // True if RFC8888 has been negotiated.
+  bool rfc_8888_feedback_negotiated_ = false;
   bool sending_packets_as_ect1_ = false;
   // Count of feedback messages received.
   int feedback_count_ RTC_GUARDED_BY(sequence_checker_) = 0;

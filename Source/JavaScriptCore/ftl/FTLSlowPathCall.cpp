@@ -44,11 +44,11 @@ SlowPathCallContext::SlowPathCallContext(
     , m_numArgs(numArgs)
     , m_returnRegister(returnRegister)
 {
-    RegisterSetBuilder usedRegisters = originalUsedRegisters.toRegisterSet();
+    RegisterSet usedRegisters = originalUsedRegisters.toRegisterSet();
     // We don't care that you're using callee-save, stack, or hardware registers.
-    usedRegisters.exclude(RegisterSetBuilder::stackRegisters());
-    usedRegisters.exclude(RegisterSetBuilder::reservedHardwareRegisters());
-    usedRegisters.exclude(RegisterSetBuilder::calleeSaveRegisters().includeWholeRegisterWidth());
+    usedRegisters.exclude(RegisterSet::stackRegisters());
+    usedRegisters.exclude(RegisterSet::reservedHardwareRegisters());
+    usedRegisters.exclude(RegisterSet::calleeSaveRegisters().includeWholeRegisterWidth());
         
     // The return register doesn't need to be saved.
     if (m_returnRegister != InvalidGPRReg)
@@ -59,7 +59,7 @@ SlowPathCallContext::SlowPathCallContext(
     m_offsetToSavingArea =
         (std::max(m_numArgs, NUMBER_OF_ARGUMENT_REGISTERS) - NUMBER_OF_ARGUMENT_REGISTERS) * wordSize;
     
-    RegisterSetBuilder callingConventionRegisters = m_callingConventionRegisters.toRegisterSet();
+    RegisterSet callingConventionRegisters = m_callingConventionRegisters.toRegisterSet();
     for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, numArgs); i--;)
         callingConventionRegisters.add(GPRInfo::toArgumentRegister(i), IgnoreVectors);
     callingConventionRegisters.merge(m_argumentRegisters.toRegisterSet());
@@ -68,7 +68,7 @@ SlowPathCallContext::SlowPathCallContext(
     if (indirectCallTargetRegister != InvalidGPRReg)
         callingConventionRegisters.add(indirectCallTargetRegister, IgnoreVectors);
     callingConventionRegisters.filter(usedRegisters);
-    m_callingConventionRegisters = callingConventionRegisters.buildScalarRegisterSet();
+    m_callingConventionRegisters = callingConventionRegisters.toScalarRegisterSet();
         
     unsigned numberOfCallingConventionRegisters =
         m_callingConventionRegisters.numberOfSetRegisters();
@@ -96,7 +96,7 @@ SlowPathCallContext::SlowPathCallContext(
         usedRegisters.remove(reg);
     }
     
-    m_thunkSaveSet = usedRegisters.buildScalarRegisterSet();
+    m_thunkSaveSet = usedRegisters.toScalarRegisterSet();
     m_offset = offsetToThunkSavingArea;
 }
     

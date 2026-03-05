@@ -338,8 +338,9 @@ TEST(GoogCcNetworkControllerTest, OnNetworkRouteChanged) {
   const DataRate kDefaultMinBitrate = DataRate::KilobitsPerSec(5);
   update = controller->OnNetworkRouteChange(CreateRouteChange(current_time));
   EXPECT_EQ(update.target_rate->target_rate, kDefaultMinBitrate);
-  EXPECT_NEAR(update.pacer_config->data_rate().bps<double>(),
-              kDefaultMinBitrate.bps<double>() * kDefaultPacingRate, 10);
+  EXPECT_EQ(update.pacer_config->data_window,
+            kDefaultMinBitrate * kDefaultPacingRate *
+                PacerConfig::kDefaultTimeInterval);
   EXPECT_EQ(update.probe_cluster_configs.size(), 2u);
 }
 

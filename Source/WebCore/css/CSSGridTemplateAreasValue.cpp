@@ -41,7 +41,7 @@ namespace WebCore {
 
 CSSGridTemplateAreasValue::CSSGridTemplateAreasValue(CSS::GridTemplateAreas&& areas)
     : CSSValue(ClassType::GridTemplateAreas)
-    , m_areas(WTFMove(areas))
+    , m_areas(WTF::move(areas))
 {
     ASSERT(m_areas.map.rowCount);
     ASSERT(m_areas.map.columnCount);
@@ -54,7 +54,7 @@ CSSGridTemplateAreasValue::CSSGridTemplateAreasValue(const CSS::GridTemplateArea
 
 Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(CSS::GridTemplateAreas&& areas)
 {
-    return adoptRef(*new CSSGridTemplateAreasValue(WTFMove(areas)));
+    return adoptRef(*new CSSGridTemplateAreasValue(WTF::move(areas)));
 }
 
 Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(const CSS::GridTemplateAreas& areas)

@@ -39,7 +39,7 @@ WK_EXTERN NSString * const WKWebsiteDataTypeDiskCache WK_API_AVAILABLE(macos(10.
 WK_EXTERN NSString * const WKWebsiteDataTypeMemoryCache WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 /*! @constant WKWebsiteDataTypeOfflineWebApplicationCache HTML offline web application caches. */
-WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_API_DEPRECATED("WebApplicationCache is no longer supported", macos(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
+WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_API_DEPRECATED("WebApplicationCache is no longer supported", macos(10.11, 26.2), ios(9.0, 26.2));
 
 /*! @constant WKWebsiteDataTypeCookies Cookies. */
 WK_EXTERN NSString * const WKWebsiteDataTypeCookies WK_API_AVAILABLE(macos(10.11), ios(9.0));

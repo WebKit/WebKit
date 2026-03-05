@@ -12,7 +12,7 @@
 // "name" parameter is necessary for bypassing the module map in descendant import.
 
 import { referrer as insecureImport } from "./resources/import-referrer-checker-insecure.sub.js?name=insecure_import";
-import { referrer as secureImport } from "https://{{hosts[alt][]}}:{{ports[https][0]}}/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker-insecure.sub.js?name=secure_import";
+import { referrer as secureImport } from "https://{{domains[www]}}:{{ports[https][0]}}/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker-insecure.sub.js?name=secure_import";
 
 const origin = (new URL(location.href)).origin + "/";
 

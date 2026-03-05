@@ -54,9 +54,4 @@ void ServiceWorkerProvider::setSharedProvider(ServiceWorkerProvider& newProvider
     sharedProvider = &newProvider;
 }
 
-Ref<SWClientConnection> ServiceWorkerProvider::protectedServiceWorkerConnection()
-{
-    return serviceWorkerConnection();
-}
-
 } // namespace WebCore

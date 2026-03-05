@@ -80,7 +80,7 @@ public:
     RefPtr<WebExtensionContextProxy> extensionContext(WebFrame&, WebCore::DOMWrapperWorld&) const;
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
-    const WebExtensionContextProxySet& extensionContexts() const { return m_extensionContexts; }
+    const WebExtensionContextProxySet& extensionContexts() const LIFETIME_BOUND { return m_extensionContexts; }
 
 private:
     explicit WebExtensionControllerProxy(const WebExtensionControllerParameters&);

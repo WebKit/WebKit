@@ -44,7 +44,6 @@ bool shouldRun(const TestConfig* config, const char* testName)
     if (!filter && isARM64()) {
         for (auto& failingTest : {
             "testNegFloatWithUselessDoubleConversion",
-            "testPinRegisters",
         }) {
             if (WTF::findIgnoringASCIICaseWithoutLength(testName, failingTest) != WTF::notFound) {
                 dataLogLn("*** Warning: Skipping known-bad test: ", testName);
@@ -52,22 +51,7 @@ bool shouldRun(const TestConfig* config, const char* testName)
             }
         }
     }
-    // FIXME: rdar://145150735. But note this test is already skipped on ARM64, see above.
-    if (!filter && Options::airUseGreedyRegAlloc()) {
-        if (WTF::findIgnoringASCIICaseWithoutLength(testName, "testPinRegisters") != WTF::notFound) {
-            dataLogLn("*** Warning: Skipping known-bad test: ", testName);
-            return false;
-        }
-    }
 
-    if (!filter && isARM_THUMB2()) {
-        for (auto& failingTest : {
-#include "testb3_failingArmV7Tests.inc"
-        }) {
-            if (WTF::findIgnoringASCIICaseWithoutLength(testName, failingTest) != WTF::notFound)
-                return false;
-        }
-    }
     return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
 }
 
@@ -366,6 +350,7 @@ void run(const TestConfig* config)
     RUN(testIToDReducedToIToF32Arg());
     RUN_UNARY(testInt52RoundTripUnary, int32Operands());
     RUN(testInt52RoundTripBinary());
+    RUN(testTruncSShrAddUnalignedConstant());
 
 #if !CPU(ARM)
     RUN_UNARY(testCheckAddRemoveCheckWithSExt8, int8Operands());
@@ -597,7 +582,7 @@ void run(const TestConfig* config)
 
     addCallTests(config, tasks);
 
-    RUN(testLinearScanWithCalleeOnStack());
+    RUN(testForcedSpillCalleeOnStack());
 
     RUN(testChillDiv(4, 2, 2));
     RUN(testChillDiv(1, 0, 0));
@@ -820,6 +805,20 @@ void run(const TestConfig* config)
     RUN(testReduceStrengthReassociation(false));
     RUN_BINARY(testReduceStrengthTruncInt64Constant, int64Operands(), int32Operands());
     RUN_BINARY(testReduceStrengthTruncDoubleConstant, floatingPointOperands<double>(), floatingPointOperands<float>());
+    RUN(testReduceStrengthMulDoubleByTwo());
+    RUN(testReduceStrengthMulFloatByTwo());
+    RUN(testReduceStrengthMulDoubleByNegOne());
+    RUN(testReduceStrengthMulFloatByNegOne());
+    RUN(testReduceStrengthMulDoubleByNegTwo());
+    RUN(testReduceStrengthMulFloatByNegTwo());
+    RUN(testReduceStrengthDivDoubleByNegOne());
+    RUN(testReduceStrengthDivFloatByNegOne());
+    RUN(testReduceStrengthDivDoubleByTwo());
+    RUN(testReduceStrengthDivFloatByTwo());
+    RUN(testReduceStrengthDivDoubleByFour());
+    RUN(testReduceStrengthDivFloatByFour());
+    RUN(testReduceStrengthDivDoubleByNegTwo());
+    RUN(testReduceStrengthDivFloatByNegTwo());
     RUN(testAddShl32());
     RUN(testAddShl64());
     RUN(testAddShl65());
@@ -894,7 +893,206 @@ void run(const TestConfig* config)
     RUN(testConstDoubleMove());
     RUN(testConstFloatMove());
 
+    RUN(testConstDoubleZero());
+    RUN(testConstDoubleNegativeZero());
+    RUN(testConstFloatZero());
+    RUN(testConstFloatNegativeZero());
+    RUN(testConstDoubleAddZero());
+    RUN(testConstFloatAddZero());
+    RUN(testConstDoubleCompareZero());
+    RUN(testConstFloatCompareZero());
+    RUN(testConstDoubleSelectZero());
+    RUN(testConstFloatSelectZero());
+    RUN(testConstDoubleMultipleZeroUses());
+    RUN(testConstFloatMultipleZeroUses());
+
     RUN(testLoadImmutable());
+
+    // ARM64 conditional compare (ccmp) tests
+    RUN(testCCmpAnd32(1, 1, 2, 2));  // both true
+    RUN(testCCmpAnd32(1, 2, 2, 2));  // first false
+    RUN(testCCmpAnd32(1, 1, 2, 3));  // second false
+    RUN(testCCmpAnd32(1, 2, 2, 3));  // both false
+
+    RUN(testCCmpAnd64(1, 1, 2, 2));  // both true
+    RUN(testCCmpAnd64(1, 2, 2, 2));  // first false
+    RUN(testCCmpAnd64(1, 1, 2, 3));  // second false
+    RUN(testCCmpAnd64(1, 2, 2, 3));  // both false
+
+    RUN(testCCmpOr32(1, 1, 2, 2));   // both true
+    RUN(testCCmpOr32(1, 1, 2, 3));   // first true
+    RUN(testCCmpOr32(1, 2, 2, 2));   // second true
+    RUN(testCCmpOr32(1, 2, 2, 3));   // both false
+
+    RUN(testCCmpOr64(1, 1, 2, 2));   // both true
+    RUN(testCCmpOr64(1, 1, 2, 3));   // first true
+    RUN(testCCmpOr64(1, 2, 2, 2));   // second true
+    RUN(testCCmpOr64(1, 2, 2, 3));   // both false
+
+    // 3-comparison chain tests
+    RUN(testCCmpAndAnd32(1, 1, 2, 2, 3, 3));  // all true
+    RUN(testCCmpAndAnd32(1, 1, 2, 2, 3, 4));  // first two true, last false
+    RUN(testCCmpAndAnd32(1, 1, 2, 3, 3, 3));  // first true, second false
+    RUN(testCCmpAndAnd32(1, 2, 2, 2, 3, 3));  // first false
+    RUN(testCCmpAndAnd32(1, 2, 2, 3, 3, 4));  // all false
+
+    RUN(testCCmpOrOr32(1, 1, 2, 2, 3, 3));   // all true
+    RUN(testCCmpOrOr32(1, 1, 2, 3, 3, 4));   // first true
+    RUN(testCCmpOrOr32(1, 2, 2, 2, 3, 4));   // second true
+    RUN(testCCmpOrOr32(1, 2, 2, 3, 3, 3));   // third true
+    RUN(testCCmpOrOr32(1, 2, 2, 3, 3, 4));   // all false
+
+    RUN(testCCmpAndOr32(1, 1, 2, 2, 3, 4));  // (true && true) || false = true
+    RUN(testCCmpAndOr32(1, 1, 2, 3, 3, 3));  // (true && false) || true = true
+    RUN(testCCmpAndOr32(1, 2, 2, 2, 3, 3));  // (false && true) || true = true
+    RUN(testCCmpAndOr32(1, 2, 2, 3, 3, 4));  // (false && false) || false = false
+    RUN(testCCmpAndOr32(1, 1, 2, 2, 3, 3));  // (true && true) || true = true
+
+    // Tests for ccmn (negative immediates) and large immediates
+    RUN(testCCmnAnd32WithNegativeImm(15, -5));  // both true
+    RUN(testCCmnAnd32WithNegativeImm(5, -5));   // first false
+    RUN(testCCmnAnd32WithNegativeImm(15, 0));   // second false
+    RUN(testCCmnAnd32WithNegativeImm(5, 0));    // both false
+
+    RUN(testCCmnAnd64WithNegativeImm(15, -31)); // both true
+    RUN(testCCmnAnd64WithNegativeImm(5, -31));  // first false
+    RUN(testCCmnAnd64WithNegativeImm(15, 0));   // second false
+    RUN(testCCmnAnd64WithNegativeImm(5, 0));    // both false
+
+    RUN(testCCmpWithLargePositiveImm(15, 100)); // both true
+    RUN(testCCmpWithLargePositiveImm(5, 100));  // first false
+    RUN(testCCmpWithLargePositiveImm(15, 0));   // second false
+    RUN(testCCmpWithLargePositiveImm(5, 0));    // both false
+
+    RUN(testCCmpWithLargeNegativeImm(15, -100)); // both true
+    RUN(testCCmpWithLargeNegativeImm(5, -100));  // first false
+    RUN(testCCmpWithLargeNegativeImm(15, 0));    // second false
+    RUN(testCCmpWithLargeNegativeImm(5, 0));     // both false
+
+    // Tests for ccmp optimizations
+    RUN(testCCmpSmartOperandOrdering32(5, 1000));    // both true
+    RUN(testCCmpSmartOperandOrdering32(5, 999));     // first true, second false
+    RUN(testCCmpSmartOperandOrdering32(4, 1000));    // first false, second true
+    RUN(testCCmpSmartOperandOrdering32(4, 999));     // both false
+
+    RUN(testCCmpSmartOperandOrdering64(10, 5000));   // both true
+    RUN(testCCmpSmartOperandOrdering64(10, 4999));   // first true, second false
+    RUN(testCCmpSmartOperandOrdering64(9, 5000));    // first false, second true
+    RUN(testCCmpSmartOperandOrdering64(9, 4999));    // both false
+
+    RUN(testCCmpOperandCommutation32(15, 101));      // both true
+    RUN(testCCmpOperandCommutation32(15, 100));      // first true, second false
+    RUN(testCCmpOperandCommutation32(14, 101));      // first false, second true
+    RUN(testCCmpOperandCommutation32(14, 100));      // both false
+
+    RUN(testCCmpOperandCommutation64(49, 20));       // both true
+    RUN(testCCmpOperandCommutation64(49, 21));       // first true, second false
+    RUN(testCCmpOperandCommutation64(50, 20));       // first false, second true
+    RUN(testCCmpOperandCommutation64(50, 21));       // both false
+
+    RUN(testCCmpCombinedOptimizations(10, 2000));    // both true
+    RUN(testCCmpCombinedOptimizations(10, 1999));    // first true, second false
+    RUN(testCCmpCombinedOptimizations(9, 2000));     // first false, second true
+    RUN(testCCmpCombinedOptimizations(9, 1999));     // both false
+
+    RUN(testCCmpZeroRegisterOptimization32(0, 6));   // both true
+    RUN(testCCmpZeroRegisterOptimization32(0, 5));   // first true, second false
+    RUN(testCCmpZeroRegisterOptimization32(1, 6));   // first false, second true
+    RUN(testCCmpZeroRegisterOptimization32(1, 5));   // both false
+
+    RUN(testCCmpZeroRegisterOptimization64(0, 99));  // both true
+    RUN(testCCmpZeroRegisterOptimization64(0, 100)); // first true, second false
+    RUN(testCCmpZeroRegisterOptimization64(1, 99));  // first false, second true
+    RUN(testCCmpZeroRegisterOptimization64(1, 100)); // both false
+
+    // Mixed AND/OR tests - now supported with tree canonicalization
+    RUN(testCCmpMixedAndOr32(5, 5, 5));              // AND true, OR false -> true
+    RUN(testCCmpMixedAndOr32(101, 5, 5));            // AND false, OR true -> true
+    RUN(testCCmpMixedAndOr32(5, 6, 5));              // AND false, OR false -> false
+    RUN(testCCmpMixedAndOr32(50, 50, 50));           // AND true, OR false -> true
+
+    RUN(testCCmpMixedOrAnd32(-1, 10, 10));           // OR true, AND false -> true
+    RUN(testCCmpMixedOrAnd32(0, 60, 60));            // OR false, AND true -> true
+    RUN(testCCmpMixedOrAnd32(0, 10, 20));            // OR false, AND false -> false
+    RUN(testCCmpMixedOrAnd32(-5, 40, 40));           // OR true, AND false -> true
+
+    // Negation tests - V8's (chain) == 0 optimization
+    RUN(testCCmpNegatedAnd32(15, 20));               // !(true && true) = false
+    RUN(testCCmpNegatedAnd32(15, 10));               // !(true && false) = true
+    RUN(testCCmpNegatedAnd32(5, 20));                // !(false && true) = true
+    RUN(testCCmpNegatedAnd32(5, 10));                // !(false && false) = true
+
+    RUN(testCCmpNegatedOr32(3, 50));                 // !(true || false) = false
+    RUN(testCCmpNegatedOr32(3, 100));                // !(true || true) = false
+    RUN(testCCmpNegatedOr32(10, 100));               // !(false || true) = false
+    RUN(testCCmpNegatedOr32(10, 50));                // !(false || false) = true
+
+    // Mixed-width compare chain tests (per-ccmp width handling)
+    RUN(testCCmpMixedWidth32And64(5, 1000, 10));    // all match
+    RUN(testCCmpMixedWidth32And64(5, 1000, 9));     // last doesn't match
+    RUN(testCCmpMixedWidth32And64(5, 999, 10));     // middle doesn't match
+    RUN(testCCmpMixedWidth32And64(4, 1000, 10));    // first doesn't match
+    RUN(testCCmpMixedWidth64And32(5000, 10));       // both match
+    RUN(testCCmpMixedWidth64And32(5000, 9));        // second doesn't match
+    RUN(testCCmpMixedWidth64And32(4999, 10));       // first doesn't match
+
+    // ARM64 fccmp tests (floating-point conditional compare)
+    RUN(testFCCmpAndDouble(1.0, 1.0, 2.0, 2.0));    // both true
+    RUN(testFCCmpAndDouble(1.0, 2.0, 2.0, 2.0));    // first false
+    RUN(testFCCmpAndDouble(1.0, 1.0, 2.0, 3.0));    // second false
+    RUN(testFCCmpAndDouble(1.0, 2.0, 2.0, 3.0));    // both false
+
+    RUN(testFCCmpOrDouble(1.0, 1.0, 2.0, 2.0));     // both true
+    RUN(testFCCmpOrDouble(1.0, 1.0, 2.0, 3.0));     // first true
+    RUN(testFCCmpOrDouble(1.0, 2.0, 2.0, 2.0));     // second true
+    RUN(testFCCmpOrDouble(1.0, 2.0, 2.0, 3.0));     // both false
+
+    RUN(testFCCmpAndFloat(1.0f, 1.0f, 2.0f, 2.0f)); // both true
+    RUN(testFCCmpAndFloat(1.0f, 2.0f, 2.0f, 2.0f)); // first false
+    RUN(testFCCmpAndFloat(1.0f, 1.0f, 2.0f, 3.0f)); // second false
+    RUN(testFCCmpAndFloat(1.0f, 2.0f, 2.0f, 3.0f)); // both false
+
+    RUN(testFCCmpOrFloat(1.0f, 1.0f, 2.0f, 2.0f));  // both true
+    RUN(testFCCmpOrFloat(1.0f, 1.0f, 2.0f, 3.0f));  // first true
+    RUN(testFCCmpOrFloat(1.0f, 2.0f, 2.0f, 2.0f));  // second true
+    RUN(testFCCmpOrFloat(1.0f, 2.0f, 2.0f, 3.0f));  // both false
+
+    RUN(testFCCmpAndAndDouble(1.0, 1.0, 2.0, 2.0, 3.0, 3.0));  // all true
+    RUN(testFCCmpAndAndDouble(1.0, 1.0, 2.0, 2.0, 3.0, 4.0));  // first two true, last false
+    RUN(testFCCmpAndAndDouble(1.0, 1.0, 2.0, 3.0, 3.0, 3.0));  // first true, second false
+    RUN(testFCCmpAndAndDouble(1.0, 2.0, 2.0, 2.0, 3.0, 3.0));  // first false
+    RUN(testFCCmpAndAndDouble(1.0, 2.0, 2.0, 3.0, 3.0, 4.0));  // all false
+
+    RUN(testFCCmpMixedIntDouble(5, 5, 1.0, 2.0));   // int true, double true
+    RUN(testFCCmpMixedIntDouble(5, 6, 1.0, 2.0));   // int false, double true
+    RUN(testFCCmpMixedIntDouble(5, 5, 2.0, 1.0));   // int true, double false
+    RUN(testFCCmpMixedIntDouble(5, 6, 2.0, 1.0));   // int false, double false
+
+    RUN(testFCCmpMixedDoubleInt(1.0, 2.0, 5, 5));   // double true, int true
+    RUN(testFCCmpMixedDoubleInt(2.0, 1.0, 5, 5));   // double false, int true
+    RUN(testFCCmpMixedDoubleInt(1.0, 2.0, 5, 6));   // double true, int false
+    RUN(testFCCmpMixedDoubleInt(2.0, 1.0, 5, 6));   // double false, int false
+
+    RUN(testFCCmpLessThanAndDouble(1.0, 2.0, 3.0, 4.0));  // both true
+    RUN(testFCCmpLessThanAndDouble(2.0, 1.0, 3.0, 4.0));  // first false
+    RUN(testFCCmpLessThanAndDouble(1.0, 2.0, 4.0, 3.0));  // second false
+    RUN(testFCCmpLessThanAndDouble(2.0, 1.0, 4.0, 3.0));  // both false
+
+    RUN(testFCCmpGreaterEqualOrDouble(2.0, 1.0, 4.0, 3.0));  // both true
+    RUN(testFCCmpGreaterEqualOrDouble(2.0, 1.0, 3.0, 4.0));  // first true
+    RUN(testFCCmpGreaterEqualOrDouble(1.0, 2.0, 4.0, 3.0));  // second true
+    RUN(testFCCmpGreaterEqualOrDouble(1.0, 2.0, 3.0, 4.0));  // both false
+
+    // NaN tests
+    RUN(testFCCmpNaN(1.0, 1.0, std::numeric_limits<double>::quiet_NaN(), 1.0));  // second has NaN
+    RUN(testFCCmpNaN(std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0, 1.0));  // first has NaN
+    RUN(testFCCmpNaN(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0));  // NaN == NaN is false
+
+    // Negated fccmp
+    RUN(testFCCmpNegatedAndDouble(1.0, 2.0, 3.0, 4.0));  // !(true && true) = false
+    RUN(testFCCmpNegatedAndDouble(2.0, 1.0, 3.0, 4.0));  // !(false && true) = true
+    RUN(testFCCmpNegatedAndDouble(1.0, 2.0, 4.0, 3.0));  // !(true && false) = true
+    RUN(testFCCmpNegatedAndDouble(2.0, 1.0, 4.0, 3.0));  // !(false && false) = true
 
     RUN_UNARY(testSShrCompare32, int32OperandsMore());
     RUN_UNARY(testSShrCompare64, int64OperandsMore());

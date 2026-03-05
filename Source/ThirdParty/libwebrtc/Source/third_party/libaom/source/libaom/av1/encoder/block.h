@@ -1352,9 +1352,9 @@ typedef struct macroblock {
   //! Flag to indicate to test the superblock MV for the coding block in the
   // nonrd_pickmode.
   int sb_me_block;
-  //! Flag to indicate superblock selected column scroll.
+  //! Counter for superblock selected column scroll.
   int sb_col_scroll;
-  //! Flag to indicate superblock selected row scroll.
+  //! Counter for superblock selected row scroll.
   int sb_row_scroll;
   //! Motion vector from superblock MV derived from int_pro_motion() in
   // the variance_partitioning.

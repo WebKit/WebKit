@@ -549,3 +549,43 @@ PASS: Should convert rgb(10 20 30 / 40%) to {"r":10,"g":20,"b":30,"a":0.4}.
 PASS: Should convert #a0Aa0A to {"r":160,"g":170,"b":10,"a":1}.
 PASS: Should convert rgb(10% 20% 30% / 40%) to {"r":25.5,"g":51,"b":76.5,"a":0.4}.
 
+-- Running test case: WI.Color.prototype.relativeLuminance
+PASS: Black should have luminance of 0.
+PASS: White should have luminance of ~1.
+PASS: Red should have luminance of ~0.2126.
+PASS: Mid-gray should have luminance between 0.2 and 0.25.
+PASS: Steel blue should have luminance between 0.15 and 0.25.
+
+-- Running test case: WI.Color.prototype.contrastRatio
+PASS: Black vs white should have contrast ratio of ~21.
+PASS: White vs black should also be ~21 (order independent).
+PASS: Same color should have contrast ratio of 1.
+PASS: Gray vs white should have moderate contrast ratio.
+PASS: Dark blue vs yellow should have high contrast ratio.
+
+-- Running test case: WI.Color.contrastComplianceForRatio
+PASS: Ratio 21 should be AAA for normal text.
+PASS: Ratio 7 should be AAA for normal text.
+PASS: Ratio 5 should be AA for normal text.
+PASS: Ratio 4.5 should be AA for normal text.
+PASS: Ratio 3 should be Fail for normal text.
+PASS: Ratio 1 should be Fail for normal text.
+PASS: Ratio 7 should be AAA for large text.
+PASS: Ratio 4.5 should be AAA for large text.
+PASS: Ratio 4 should be AA for large text.
+PASS: Ratio 3 should be AA for large text.
+PASS: Ratio 2 should be Fail for large text.
+
+-- Running test case: WI.Color.prototype.contrastCompliance
+PASS: Black vs white should be AAA.
+PASS: White vs white should be Fail.
+PASS: rgb(0,130,0) vs white should be AA.
+
+-- Running test case: WI.Color.prototype.blendOverBackground
+PASS: Opaque red over white should remain red.
+PASS: Blended opaque color should have alpha of 1.
+PASS: 50% black over white should be mid-gray.
+PASS: Transparent red over white should be white.
+PASS: 70% rgb(100,150,200) over rgb(50,100,80) should blend correctly.
+PASS: 40% orange over navy should blend correctly.
+

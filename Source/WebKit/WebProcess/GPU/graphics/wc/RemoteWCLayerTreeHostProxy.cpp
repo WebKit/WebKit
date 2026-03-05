@@ -58,16 +58,16 @@ IPC::Connection* RemoteWCLayerTreeHostProxy::messageSenderConnection() const
 
 GPUProcessConnection& RemoteWCLayerTreeHostProxy::ensureGPUProcessConnection()
 {
-    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!gpuProcessConnection) {
-        gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
-        m_gpuProcessConnection = gpuProcessConnection;
+    if (!m_gpuProcessConnection.get()) {
+        Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection = gpuProcessConnection.get();
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->connection().send(
             Messages::GPUConnectionToWebProcess::CreateWCLayerTreeHost(wcLayerTreeHostIdentifier(), m_page->nativeWindowHandle(), m_usesOffscreenRendering),
             0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
-    return *gpuProcessConnection.unsafeGet();
+    ASSERT(m_gpuProcessConnection.get() == &WebProcess::singleton().ensureGPUProcessConnection());
+    return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
 void RemoteWCLayerTreeHostProxy::disconnectGpuProcessIfNeeded()
@@ -89,7 +89,7 @@ uint64_t RemoteWCLayerTreeHostProxy::messageSenderDestinationID() const
 
 void RemoteWCLayerTreeHostProxy::update(WCUpdateInfo&& updateInfo, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::RemoteWCLayerTreeHost::Update(updateInfo), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::RemoteWCLayerTreeHost::Update(updateInfo), WTF::move(completionHandler));
 }
 
 } // namespace WebKit

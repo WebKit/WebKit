@@ -42,7 +42,7 @@ namespace WebCore {
 template<typename T> class SQLCallbackWrapper {
 public:
     SQLCallbackWrapper(RefPtr<T>&& callback, ScriptExecutionContext* scriptExecutionContext)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
         , m_scriptExecutionContext(m_callback ? scriptExecutionContext : 0)
     {
         ASSERT(!m_callback || (m_scriptExecutionContext.get() && m_scriptExecutionContext->isContextThread()));
@@ -74,7 +74,7 @@ public:
         CheckedPtr context = scriptExecutionContextToRelease.get();
         context->postTask({
             ScriptExecutionContext::Task::CleanupTask,
-            [callbackToRelease = WTFMove(callbackToRelease), scriptExecutionContextToRelease = WTFMove(scriptExecutionContextToRelease)](ScriptExecutionContext& context) {
+            [callbackToRelease = WTF::move(callbackToRelease), scriptExecutionContextToRelease = WTF::move(scriptExecutionContextToRelease)](ScriptExecutionContext& context) {
                 ASSERT_UNUSED(context, &context == scriptExecutionContextToRelease.get() && context.isContextThread());
             }
         });
@@ -85,7 +85,7 @@ public:
         Locker locker { m_lock };
         ASSERT(!m_callback || m_scriptExecutionContext->isContextThread());
         m_scriptExecutionContext = nullptr;
-        return WTFMove(m_callback);
+        return WTF::move(m_callback);
     }
 
     // Useful for optimizations only, please test the return value of unwrap to be sure.

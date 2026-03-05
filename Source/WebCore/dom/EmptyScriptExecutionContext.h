@@ -119,18 +119,18 @@ private:
             return adoptRef(*new EmptyEventLoop(vm));
         }
 
-        MicrotaskQueue& microtaskQueue() final { return m_queue; }
+        MicrotaskQueue& microtaskQueue() final { return m_queue.get(); }
 
     private:
         explicit EmptyEventLoop(JSC::VM& vm)
-            : m_queue(MicrotaskQueue(vm, *this))
+            : m_queue(MicrotaskQueue::create(vm, *this))
         {
         }
 
         void scheduleToRun() final { ASSERT_NOT_REACHED(); }
         bool isContextThread() const final { return true; }
 
-        MicrotaskQueue m_queue;
+        Ref<MicrotaskQueue> m_queue;
     };
 
     const Ref<JSC::VM> m_vm;

@@ -45,7 +45,7 @@ VideoTrackPrivateRemote::VideoTrackPrivateRemote(GPUProcessConnection& gpuProces
     , m_id(configuration.trackId)
     , m_playerIdentifier(playerIdentifier)
 {
-    updateConfiguration(WTFMove(configuration));
+    updateConfiguration(WTF::move(configuration));
 }
 
 void VideoTrackPrivateRemote::setSelected(bool selected)
@@ -92,7 +92,7 @@ void VideoTrackPrivateRemote::updateConfiguration(VideoTrackPrivateRemoteConfigu
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
     m_kind = configuration.kind;
-    setConfiguration(WTFMove(configuration.trackConfiguration));
+    setConfiguration(WTF::move(configuration.trackConfiguration));
     VideoTrackPrivate::setSelected(configuration.selected);
 }
 

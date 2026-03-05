@@ -2,5 +2,8 @@
 FAIL getScreenCTM with padding-left and rotation assert_equals: expected 50 but got -50
 FAIL getScreenCTM with padding-top and rotation assert_equals: expected 50 but got -50
 FAIL getScreenCTM with padding-right and rotation assert_equals: expected 62 but got -62
+FAIL getScreenCTM with padding and rotation assert_approx_equals: expected 74 +/- 0.1 but got -74
 FAIL getScreenCTM with padding-left, rotation and content-box assert_equals: expected 62 but got -62
+FAIL getScreenCTM with padding-left, scale assert_equals: expected 47 but got 82
+FAIL getScreenCTM with border-width and rotation assert_equals: expected 50 but got -50
 

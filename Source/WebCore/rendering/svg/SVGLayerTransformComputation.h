@@ -105,13 +105,13 @@ public:
     float calculateScreenFontSizeScalingFactor() const
     {
         // Walk up the render tree, accumulating transforms
-        auto* layer = m_renderer->enclosingLayer();
+        CheckedPtr layer = m_renderer->enclosingLayer();
 
         RenderLayer* stopAtLayer = nullptr;
         while (layer) {
             // We can stop at compositing layers, to match the backing resolution.
             if (layer->isComposited()) {
-                stopAtLayer = layer;
+                stopAtLayer = layer.get();
                 break;
             }
 
@@ -119,7 +119,7 @@ public:
         }
 
         auto ctm = computeAccumulatedTransform(stopAtLayer ? &stopAtLayer->renderer() : nullptr, TransformState::TrackSVGScreenCTMMatrix);
-        ctm.scale(m_renderer->document().deviceScaleFactor());
+        ctm.scale(protect(m_renderer->document())->deviceScaleFactor());
         if (!m_renderer->document().isSVGDocument())
             ctm.scale(m_renderer->style().usedZoom());
         return narrowPrecisionToFloat(std::hypot(ctm.xScale(), ctm.yScale()) / std::numbers::sqrt2);

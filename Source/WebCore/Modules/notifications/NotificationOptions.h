@@ -24,15 +24,28 @@
  */
 #pragma once
 
-#include <WebCore/Notification.h>
-
 #if ENABLE(NOTIFICATIONS)
+
+#include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/NotificationDirection.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-using NotificationOptions = Notification::Options;
+struct NotificationOptions {
+    NotificationDirection dir;
+    String lang;
+    String body;
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    String navigate;
+#endif
+    String tag;
+    String icon;
+    std::optional<bool> silent;
+    JSC::JSValue data;
+};
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(NOTIFICATIONS)
 

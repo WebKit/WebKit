@@ -81,7 +81,7 @@ public:
     ~JavaScriptEvaluationResult();
 
     JSObjectID root() const { return m_root; }
-    const Map& map() const { return m_map; }
+    const Map& map() const LIFETIME_BOUND { return m_map; }
 
     String toString() const;
 

@@ -123,7 +123,7 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
             result.append(newCondition);
     }
 
-    return ObjectPropertyConditionSet::create(WTFMove(result));
+    return ObjectPropertyConditionSet::create(WTF::move(result));
 }
 
 bool ObjectPropertyConditionSet::structuresEnsureValidity() const
@@ -352,7 +352,7 @@ ObjectPropertyConditionSet generateConditions(JSGlobalObject* globalObject, Stru
 
     if (ObjectPropertyConditionSetInternal::verbose)
         dataLog("Returning conditions: ", listDump(conditions), "\n");
-    return ObjectPropertyConditionSet::create(WTFMove(conditions));
+    return ObjectPropertyConditionSet::create(WTF::move(conditions));
 }
 
 } // anonymous namespace

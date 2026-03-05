@@ -22,7 +22,7 @@ info: |
 
   Return NormalCompletion(undefined).
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
@@ -32,4 +32,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     TA.from([s]);
   });
-});
+}, null, ["passthrough"]);

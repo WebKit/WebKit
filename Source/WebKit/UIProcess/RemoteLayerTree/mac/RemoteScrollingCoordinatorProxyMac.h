@@ -33,9 +33,7 @@
 
 namespace WebKit {
 
-#if ENABLE(SCROLLING_THREAD)
 class RemoteLayerTreeEventDispatcher;
-#endif
 
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
     WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyMac);
@@ -50,7 +48,7 @@ private:
     void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges) override;
     void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled) override;
 
-    bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
+    WebCore::RequestsScrollHandling scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
     bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;
     void hasNodeWithAnimatedScrollChanged(bool) override;
     void setRubberBandingInProgressForNode(WebCore::ScrollingNodeID, bool isRubberBanding) override;
@@ -77,17 +75,16 @@ private:
 
     void animationsWereAddedToNode(RemoteLayerTreeNode&) override;
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
-    void updateTimelineRegistration(WebCore::ProcessIdentifier, const HashSet<Ref<WebCore::AcceleratedTimeline>>&, MonotonicTime) override;
+    void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime) override;
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const override;
     RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const override;
+    HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const override;
 #else
     void willCommitLayerAndScrollingTrees() override;
     void didCommitLayerAndScrollingTrees() override;
 #endif
 
-#if ENABLE(SCROLLING_THREAD)
     const Ref<RemoteLayerTreeEventDispatcher> m_eventDispatcher;
-#endif
 };
 
 } // namespace WebKit

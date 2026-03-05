@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
-#include "MediaTimeAVFoundation.h"
+#include <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #if USE(AVFOUNDATION)
 
-#include "CoreMediaSoftLink.h"
+#include <CoreMedia/CoreMedia.h>
+#include <pal/cf/CoreMediaSoftLink.h>
+#include <wtf/MediaTime.h>
 
 namespace PAL {
 

@@ -80,7 +80,7 @@ RemoteWCLayerTreeHost::~RemoteWCLayerTreeHost()
     m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteWCLayerTreeHost::messageReceiverName(), m_identifier.toUInt64());
     auto sceneContextHolder = m_connectionToWebProcess->gpuProcess().sharedSceneContext().removeHolder(m_sharedSceneContextHolder.releaseNonNull());
 
-    remoteGraphicsStreamWorkQueue().dispatch([sceneContextHolder = WTFMove(sceneContextHolder), scene = WTFMove(m_scene)]() mutable {
+    remoteGraphicsStreamWorkQueue().dispatch([sceneContextHolder = WTF::move(sceneContextHolder), scene = WTF::move(m_scene)]() mutable {
         // Destroy scene on the StreamWorkQueue thread.
         scene = nullptr;
         // sceneContextHolder can be destroyed on the StreamWorkQueue thread because it hasOneRef.
@@ -99,10 +99,10 @@ uint64_t RemoteWCLayerTreeHost::messageSenderDestinationID() const
 
 void RemoteWCLayerTreeHost::update(WCUpdateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
-    remoteGraphicsStreamWorkQueue().dispatch([scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto updateInfo = scene->update(WTFMove(update));
-        RunLoop::mainSingleton().dispatch([updateInfo = WTFMove(updateInfo), completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(WTFMove(updateInfo));
+    remoteGraphicsStreamWorkQueue().dispatch([scene = m_scene.get(), update = WTF::move(update), completionHandler = WTF::move(completionHandler)]() mutable {
+        auto updateInfo = scene->update(WTF::move(update));
+        RunLoop::mainSingleton().dispatch([updateInfo = WTF::move(updateInfo), completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(WTF::move(updateInfo));
         });
     });
 }

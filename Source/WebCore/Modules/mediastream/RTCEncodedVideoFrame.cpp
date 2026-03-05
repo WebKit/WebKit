@@ -37,11 +37,11 @@ Ref<RTCEncodedVideoFrame> RTCEncodedVideoFrame::create(RTCEncodedVideoFrame& fra
     auto rtcFrame = frame.serialize();
     if (options.metadata)
         rtcFrame->setOptions(*options.metadata);
-    return create(WTFMove(rtcFrame));
+    return create(WTF::move(rtcFrame));
 }
 
 RTCEncodedVideoFrame::RTCEncodedVideoFrame(Ref<RTCRtpTransformableFrame>&& frame)
-    : RTCEncodedFrame(WTFMove(frame))
+    : RTCEncodedFrame(WTF::move(frame))
     , m_type(m_frame->isKeyFrame() ? Type::Key : Type::Delta)
 {
 }

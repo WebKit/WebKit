@@ -40,8 +40,8 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 
 #include <webrtc/api/rtp_parameters.h>
 #include <webrtc/api/rtp_transceiver_interface.h>
+#include <webrtc/api/webrtc_sdp.h>
 #include <webrtc/p2p/base/p2p_constants.h>
-#include <webrtc/pc/webrtc_sdp.h>
 
 IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -91,7 +91,7 @@ RTCPriorityType toRTCPriorityType(webrtc::Priority priority)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline double toWebRTCBitRatePriority(RTCPriorityType priority)
+static inline double NODELETE toWebRTCBitRatePriority(RTCPriorityType priority)
 {
     switch (priority) {
     case RTCPriorityType::VeryLow:
@@ -227,7 +227,7 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
 
 RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcParameters)
 {
-    RTCRtpSendParameters parameters { toRTCRtpParameters(rtcParameters) };
+    RTCRtpSendParameters parameters { toRTCRtpParameters(rtcParameters), nullString(), { }, { } };
     parameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
 
     parameters.transactionId = fromStdString(rtcParameters.transaction_id);
@@ -380,7 +380,7 @@ Exception toException(const webrtc::RTCError& error)
     return Exception { toExceptionCode(error.type()), String::fromLatin1(error.message()) };
 }
 
-static inline RTCIceComponent toRTCIceComponent(int component)
+static inline RTCIceComponent NODELETE toRTCIceComponent(int component)
 {
     return component == webrtc::ICE_CANDIDATE_COMPONENT_RTP ? RTCIceComponent::Rtp : RTCIceComponent::Rtcp;
 }

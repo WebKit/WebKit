@@ -136,7 +136,7 @@ void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
             m_list.removeAt(i);
         break;
     }
-    m_list.insert(i, WTFMove(feature));
+    m_list.insert(i, WTF::move(feature));
 }
 
 using FontFeature = FontTaggedSetting<int>;

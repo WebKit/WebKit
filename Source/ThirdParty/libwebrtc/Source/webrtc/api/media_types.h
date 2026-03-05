@@ -23,12 +23,6 @@ enum class MediaType {
   DATA,
   UNSUPPORTED,
   ANY,
-  // Backwards compatibility values for MediaType users
-  // TODO: https://issues.webrtc.org/42222911 - remove
-  MEDIA_TYPE_AUDIO [[deprecated("Use AUDIO")]] = AUDIO,
-  MEDIA_TYPE_VIDEO [[deprecated("Use VIDEO")]] = VIDEO,
-  MEDIA_TYPE_DATA [[deprecated("Use DATA")]] = DATA,
-  MEDIA_TYPE_UNSUPPORTED [[deprecated("Use UNSUPPORTED")]] = UNSUPPORTED,
 };
 
 RTC_EXPORT std::string MediaTypeToString(MediaType type);
@@ -43,10 +37,5 @@ extern const char kMediaTypeVideo[];
 extern const char kMediaTypeData[];
 
 }  // namespace webrtc
-
-// The cricket and webrtc have separate definitions for what a media type is.
-// They used to be incompatible, but now cricket is defined in terms of the
-// webrtc definition.
-
 
 #endif  // API_MEDIA_TYPES_H_

@@ -45,17 +45,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketTask);
 
 Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, WeakPtr<SessionSet>&& sessionSet, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
-    return adoptRef(*new WebSocketTask(channel, webProxyPageID, frameID, pageID, WTFMove(sessionSet), request, clientOrigin, WTFMove(task), storedCredentialsPolicy));
+    return adoptRef(*new WebSocketTask(channel, webProxyPageID, frameID, pageID, WTF::move(sessionSet), request, clientOrigin, WTF::move(task), storedCredentialsPolicy));
 }
 
 WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WeakPtr<SessionSet>&& sessionSet, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
     : NetworkTaskCocoa(*channel.session())
     , m_channel(channel)
-    , m_task(WTFMove(task))
+    , m_task(WTF::move(task))
     , m_webProxyPageID(webProxyPageID)
     , m_frameID(frameID)
     , m_pageID(pageID)
-    , m_sessionSet(WTFMove(sessionSet))
+    , m_sessionSet(WTF::move(sessionSet))
     , m_partition(request.cachePartition())
     , m_storedCredentialsPolicy(storedCredentialsPolicy)
 {
@@ -73,7 +73,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
         blockCookies();
 
     readNextMessage();
-    protectedChannel()->didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
+    protect(m_channel)->didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
     updateTaskWithStoragePartitionIdentifier(request);
@@ -81,11 +81,6 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
 }
 
 WebSocketTask::~WebSocketTask() = default;
-
-RefPtr<NetworkSocketChannel> WebSocketTask::protectedChannel() const
-{
-    return m_channel.get();
-}
 
 void WebSocketTask::readNextMessage()
 {
@@ -103,7 +98,7 @@ void WebSocketTask::readNextMessage()
             if (!protectedThis->m_receivedDidConnect) {
                 ResourceResponse response { [protectedThis->m_task response] };
                 if (!response.isNull())
-                    channel->didReceiveHandshakeResponse(WTFMove(response));
+                    channel->didReceiveHandshakeResponse(WTF::move(response));
             }
 
             channel->didReceiveMessageError([error localizedDescription]);
@@ -148,7 +143,7 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
         return;
 
     m_receivedDidClose = true;
-    protectedChannel()->didClose(code, reason);
+    protect(m_channel)->didClose(code, reason);
 }
 
 void WebSocketTask::sendString(std::span<const uint8_t> utf8String, CompletionHandler<void()>&& callback)
@@ -159,7 +154,7 @@ void WebSocketTask::sendString(std::span<const uint8_t> utf8String, CompletionHa
         return;
     }
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithString:text.get()]);
-    [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTFMove(callback)](NSError * _Nullable) mutable {
+    [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTF::move(callback)](NSError * _Nullable) mutable {
         callback();
     }).get()];
 }
@@ -168,7 +163,7 @@ void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<vo
 {
     RetainPtr nsData = toNSData(data);
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithData:nsData.get()]);
-    [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTFMove(callback)](NSError * _Nullable) mutable {
+    [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTF::move(callback)](NSError * _Nullable) mutable {
         callback();
     }).get()];
 }
@@ -193,7 +188,7 @@ WebSocketTask::TaskIdentifier WebSocketTask::identifier() const
 
 NetworkSessionCocoa* WebSocketTask::networkSession()
 {
-    return downcast<NetworkSessionCocoa>(protectedChannel()->session());
+    return downcast<NetworkSessionCocoa>(protect(m_channel)->session());
 }
 
 NSURLSessionTask* WebSocketTask::task() const

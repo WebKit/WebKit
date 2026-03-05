@@ -58,7 +58,6 @@ enum class StyleRuleType : uint8_t {
     PositionTry,
     Function,
     FunctionDeclarations,
-    InternalBaseAppearance, // For UA stylesheets only.
 };
 
 static constexpr auto firstUnexposedStyleRuleType = StyleRuleType::ViewTransition;

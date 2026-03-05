@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OfflineAudioContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OfflineAudioContext);
 
 OfflineAudioContext::OfflineAudioContext(Document& document, const OfflineAudioContextOptions& options)
     : BaseAudioContext(document)
@@ -97,7 +97,7 @@ void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
     if (!target)
         return;
 
-    Vector<AudioConnectionRefPtr<AudioNode>, 1> remainingNodes;
+    Vector<AudioConnectionRef<AudioNode>, 1> remainingNodes;
     for (auto& node : referencedSourceNodes())
         remainingNodes.append(node.copyRef());
 
@@ -110,7 +110,7 @@ void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
                 continue;
 
             output->forEachInputNode([&](auto& inputNode) {
-                remainingNodes.append(&inputNode);
+                remainingNodes.append(inputNode);
             });
         }
     }
@@ -146,13 +146,13 @@ void OfflineAudioContext::startRendering(Ref<DeferredPromise>&& promise)
 
     lazyInitialize();
 
-    protectedDestination()->startRendering([promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) mutable {
+    protect(destination())->startRendering([promise = WTF::move(promise), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) mutable {
         if (exception) {
-            promise->reject(WTFMove(*exception));
+            promise->reject(WTF::move(*exception));
             return;
         }
 
-        pendingActivity->object().m_pendingRenderingPromise = WTFMove(promise);
+        pendingActivity->object().m_pendingRenderingPromise = WTF::move(promise);
         pendingActivity->object().m_didStartRendering = true;
         pendingActivity->object().setState(State::Running);
     });
@@ -184,7 +184,7 @@ void OfflineAudioContext::suspendRendering(double suspendTime, Ref<DeferredPromi
     }
 
     Locker locker { graphLock() };
-    auto addResult = m_suspendRequests.add(frame, promise.ptr());
+    auto addResult = m_suspendRequests.add(frame, promise);
     if (!addResult.isNewEntry) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "There is already a pending suspend request at this frame"_s });
         return;
@@ -207,9 +207,9 @@ void OfflineAudioContext::resumeRendering(Ref<DeferredPromise>&& promise)
     }
     ASSERT(state() == AudioContextState::Suspended);
 
-    protectedDestination()->startRendering([promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) mutable {
+    protect(destination())->startRendering([promise = WTF::move(promise), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) mutable {
         if (exception) {
-            promise->reject(WTFMove(*exception));
+            promise->reject(WTF::move(*exception));
             return;
         }
 

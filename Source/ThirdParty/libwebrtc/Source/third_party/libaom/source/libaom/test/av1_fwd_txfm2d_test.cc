@@ -35,7 +35,7 @@ using std::vector;
 
 namespace {
 // tx_type_, tx_size_, max_error_, max_avg_error_
-typedef std::tuple<TX_TYPE, TX_SIZE, double, double> AV1FwdTxfm2dParam;
+using AV1FwdTxfm2dParam = std::tuple<TX_TYPE, TX_SIZE, double, double>;
 
 class AV1FwdTxfm2d : public ::testing::TestWithParam<AV1FwdTxfm2dParam> {
  public:
@@ -238,8 +238,8 @@ TEST(AV1FwdTxfm2d, CfgTest) {
   }
 }
 
-typedef void (*lowbd_fwd_txfm_func)(const int16_t *src_diff, tran_low_t *coeff,
-                                    int diff_stride, TxfmParam *txfm_param);
+using lowbd_fwd_txfm_func = void (*)(const int16_t *src_diff, tran_low_t *coeff,
+                                     int diff_stride, TxfmParam *txfm_param);
 
 void AV1FwdTxfm2dMatchTest(TX_SIZE tx_size, lowbd_fwd_txfm_func target_func) {
   const int bd = 8;
@@ -356,7 +356,7 @@ void AV1FwdTxfm2dSpeedTest(TX_SIZE tx_size, lowbd_fwd_txfm_func target_func) {
   }
 }
 
-typedef std::tuple<TX_SIZE, lowbd_fwd_txfm_func> LbdFwdTxfm2dParam;
+using LbdFwdTxfm2dParam = std::tuple<TX_SIZE, lowbd_fwd_txfm_func>;
 
 class AV1FwdTxfm2dTest : public ::testing::TestWithParam<LbdFwdTxfm2dParam> {};
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1FwdTxfm2dTest);
@@ -521,8 +521,9 @@ INSTANTIATE_TEST_SUITE_P(NEON, AV1FwdTxfm2dTest,
 
 #endif  // HAVE_NEON
 
-typedef void (*Highbd_fwd_txfm_func)(const int16_t *src_diff, tran_low_t *coeff,
-                                     int diff_stride, TxfmParam *txfm_param);
+using Highbd_fwd_txfm_func = void (*)(const int16_t *src_diff,
+                                      tran_low_t *coeff, int diff_stride,
+                                      TxfmParam *txfm_param);
 
 void AV1HighbdFwdTxfm2dMatchTest(TX_SIZE tx_size,
                                  Highbd_fwd_txfm_func target_func) {
@@ -648,7 +649,7 @@ void AV1HighbdFwdTxfm2dSpeedTest(TX_SIZE tx_size,
   }
 }
 
-typedef std::tuple<TX_SIZE, Highbd_fwd_txfm_func> HighbdFwdTxfm2dParam;
+using HighbdFwdTxfm2dParam = std::tuple<TX_SIZE, Highbd_fwd_txfm_func>;
 
 class AV1HighbdFwdTxfm2dTest
     : public ::testing::TestWithParam<HighbdFwdTxfm2dParam> {};

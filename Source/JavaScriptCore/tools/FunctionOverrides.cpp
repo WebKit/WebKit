@@ -152,7 +152,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     info.functionEnd = newProviderString.length() - 1;
 
     info.sourceCode =
-        SourceCode(WTFMove(newProvider), info.parametersStartOffset, info.functionEnd + 1, 1, 1);
+        SourceCode(WTF::move(newProvider), info.parametersStartOffset, info.functionEnd + 1, 1, 1);
 }
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)
@@ -170,7 +170,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     String newBody;
     {
         Locker locker { overrides.m_lock };
-        auto it = overrides.m_entries.find(WTFMove(sourceBodyString).isolatedCopy());
+        auto it = overrides.m_entries.find(WTF::move(sourceBodyString).isolatedCopy());
         if (it == overrides.m_entries.end())
             return false;
         newBody = it->value.isolatedCopy();

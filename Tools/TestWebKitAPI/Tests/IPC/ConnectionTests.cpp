@@ -42,14 +42,14 @@ struct MockTestMessageWithConnection {
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessage; }
     MockTestMessageWithConnection(IPC::Connection::Handle&& handle)
-        : m_handle(WTFMove(handle))
+        : m_handle(WTF::move(handle))
     {
     }
 
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << WTFMove(m_handle);
+        encoder << WTF::move(m_handle);
     }
 
 private:
@@ -99,7 +99,7 @@ TEST_F(SimpleConnectionTest, CreateServerConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
+    Ref<IPC::Connection> connection = IPC::Connection::createServerConnection(WTF::move(identifiers->server));
     connection->invalidate();
 }
 
@@ -107,7 +107,7 @@ TEST_F(SimpleConnectionTest, CreateClientConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
+    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(identifiers->client) });
     connection->invalidate();
 }
 
@@ -115,8 +115,8 @@ TEST_F(SimpleConnectionTest, ConnectLocalConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
+    Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTF::move(identifiers->server));
+    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(identifiers->client) });
     serverConnection->open(m_mockServerClient);
     clientConnection->open(m_mockClientClient);
     serverConnection->invalidate();
@@ -129,7 +129,7 @@ TEST_F(SimpleConnectionTest, ClearOutgoingMessages)
     // handle pending.
     auto firstIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(firstIdentifiers, std::nullopt);
-    Ref<IPC::Connection> firstServerConnection = IPC::Connection::createServerConnection(WTFMove(firstIdentifiers->server));
+    Ref<IPC::Connection> firstServerConnection = IPC::Connection::createServerConnection(WTF::move(firstIdentifiers->server));
     firstServerConnection->open(m_mockServerClient);
 
     // Create a second connection, and send the client
@@ -137,11 +137,11 @@ TEST_F(SimpleConnectionTest, ClearOutgoingMessages)
     // that it will be stored as a pending message).
     auto secondIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(secondIdentifiers, std::nullopt);
-    Ref<IPC::Connection> secondServerConnection = IPC::Connection::createServerConnection(WTFMove(secondIdentifiers->server));
+    Ref<IPC::Connection> secondServerConnection = IPC::Connection::createServerConnection(WTF::move(secondIdentifiers->server));
     Ref mockSecondServerClient = MockConnectionClient::create();
     secondServerConnection->open(mockSecondServerClient);
 
-    firstServerConnection->send(MockTestMessageWithConnection { WTFMove(secondIdentifiers->client) }, 0);
+    firstServerConnection->send(MockTestMessageWithConnection { WTF::move(secondIdentifiers->client) }, 0);
 
     // Invalidate the first connection's client handle,
     // which should clear pending messages and also invalidate
@@ -274,7 +274,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingWorks)
         EXPECT_EQ(otherRunLoopTasksRun, i + 1u);
         auto messages1 = aClient().takeMessages();
         EXPECT_EQ(messageCounts[i], messages1.size());
-        messages.appendVector(WTFMove(messages1));
+        messages.appendVector(WTF::move(messages1));
     }
     EXPECT_EQ(testedCount, messages.size());
     for (uint64_t i = 0u; i < messages.size(); ++i) {
@@ -331,7 +331,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
         EXPECT_EQ(otherRunLoopTasksRun, i + 1u);
         auto messages1 = aClient().takeMessages();
         EXPECT_EQ(messageCounts[i], messages1.size());
-        messages.appendVector(WTFMove(messages1));
+        messages.appendVector(WTF::move(messages1));
     }
     EXPECT_EQ(testedCount - 4, messages.size());
     for (uint64_t i = 0u, j = 0u; i < messages.size(); ++i, ++j) {
@@ -360,9 +360,9 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         auto handle = decoder.decode<IPC::Connection::Handle>();
         if (!handle)
             return false;
-        Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(*handle) });
+        Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(*handle) });
         clientConnection->open(connections[i].mockClientClient);
-        connections[i].clientConnection = WTFMove(clientConnection);
+        connections[i].clientConnection = WTF::move(clientConnection);
         // The connection starts as not closed in order for the system to deliver didClose().
         EXPECT_FALSE(connections[i].mockClientClient->gotDidClose()) << i;
         done.add(i);
@@ -371,10 +371,10 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
     for (uint64_t i = 1; i < iterations; ++i) {
         auto identifiers = IPC::Connection::createConnectionIdentifierPair();
         ASSERT_NE(identifiers, std::nullopt);
-        Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
+        Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTF::move(identifiers->server));
         Ref mockServerClient = MockConnectionClient::create();
         serverConnection->open(mockServerClient);
-        a()->send(MockTestMessageWithConnection { WTFMove(identifiers->client) }, i);
+        a()->send(MockTestMessageWithConnection { WTF::move(identifiers->client) }, i);
         serverConnection->invalidate();
     }
     while (done.size() < iterations - 1)
@@ -555,7 +555,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
         auto listenerID = decoder.decode<uint64_t>();
         auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
         encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        a()->sendSyncReply(WTF::move(encoder));
         return true;
     });
     HashSet<uint64_t> replies;
@@ -594,7 +594,7 @@ TEST_P(ConnectionRunLoopTest, SendSyncMaintainOrderingWithAsyncMessagesOrder)
         // Sync message handler only to respond with "message was handled".
         bClient().setSyncMessageHandler([&](IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
             bClient().addMessage(decoder);
-            connection.sendSyncReply(WTFMove(encoder));
+            connection.sendSyncReply(WTF::move(encoder));
             return true;
         });
         ASSERT_TRUE(openB());
@@ -634,7 +634,7 @@ TEST_P(ConnectionRunLoopTest, SendSyncMaintainOrderingWithAsyncMessagesOrderMult
         // Sync message handler only to respond with "message was handled".
         bClient().setSyncMessageHandler([&](IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
             bClient().addMessage(decoder);
-            connection.sendSyncReply(WTFMove(encoder));
+            connection.sendSyncReply(WTF::move(encoder));
             sleep(0.1_s);
             return true;
         });
@@ -704,7 +704,7 @@ TEST_P(ConnectionRunLoopTest, SendSyncMaintainOrderingWithAsyncMessagesWaitForOr
         // Sync message handler only to respond with "message was handled".
         bClient().setSyncMessageHandler([&](IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
             bClient().addMessage(decoder);
-            connection.sendSyncReply(WTFMove(encoder));
+            connection.sendSyncReply(WTF::move(encoder));
             sleep(0.1_s);
             return true;
         });
@@ -776,7 +776,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsyncOnTarget)
             auto listenerID = decoder.decode<uint64_t>();
             auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
             encoder.get() << decoder.destinationID();
-            a()->sendSyncReply(WTFMove(encoder));
+            a()->sendSyncReply(WTF::move(encoder));
             return true;
         });
 
@@ -810,7 +810,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
         auto listenerID = decoder.decode<uint64_t>();
         auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
         encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        a()->sendSyncReply(WTF::move(encoder));
         return true;
     });
     HashSet<uint64_t> replies;
@@ -855,7 +855,7 @@ TEST_P(ConnectionRunLoopTest, SendWithConvertedPromisedReply)
         auto listenerID = decoder.decode<uint64_t>();
         auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
         encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        a()->sendSyncReply(WTF::move(encoder));
         return true;
     });
     std::atomic<bool> isFinished = false;
@@ -889,7 +889,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnMixAndMatchDispatche
             auto listenerID = decoder.decode<uint64_t>();
             auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
             encoder.get() << decoder.destinationID();
-            a()->sendSyncReply(WTFMove(encoder));
+            a()->sendSyncReply(WTF::move(encoder));
             return true;
         });
 
@@ -937,7 +937,7 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidateOnDispatcher)
                 auto listenerID = decoder.decode<uint64_t>();
                 auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
                 encoder.get() << decoder.destinationID();
-                b()->sendSyncReply(WTFMove(encoder));
+                b()->sendSyncReply(WTF::move(encoder));
                 messages.add(decoder.destinationID());
                 return true;
             });
@@ -1027,7 +1027,7 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidate)
             auto listenerID = decoder.decode<uint64_t>();
             auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
             encoder.get() << decoder.destinationID();
-            b()->sendSyncReply(WTFMove(encoder));
+            b()->sendSyncReply(WTF::move(encoder));
             messages.add(decoder.destinationID());
             return true;
         });
@@ -1069,7 +1069,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
         auto listenerID = decoder.decode<uint64_t>();
         auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
         encoder.get() << replyID++;
-        a()->sendSyncReply(WTFMove(encoder));
+        a()->sendSyncReply(WTF::move(encoder));
         return true;
     });
     Vector<uint64_t> replies;
@@ -1117,7 +1117,7 @@ TEST_P(ConnectionRunLoopTest, DISABLED_RunLoopSendAsyncOnAnotherRunLoopDispatche
         auto listenerID = decoder.decode<uint64_t>();
         auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
         encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        a()->sendSyncReply(WTF::move(encoder));
         return true;
     });
     HashSet<uint64_t> replies;
@@ -1245,7 +1245,7 @@ TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
             for (size_t i = 0; i < dataSize; ++i)
                 data[i] = static_cast<uint8_t>(i);
             encoder.get() << data;
-            b()->sendSyncReply(WTFMove(encoder));
+            b()->sendSyncReply(WTF::move(encoder));
             return true;
         });
         ASSERT_TRUE(openB());
@@ -1281,7 +1281,7 @@ TEST_P(ConnectionRunLoopTest, SyncMessageNotHandledIsCancelled)
             if (decoder.destinationID() == 77)
                 return true; // Message destination was unknown, unhandled message.
             if (decoder.destinationID() == 99) {
-                b()->sendSyncReply(WTFMove(encoder));
+                b()->sendSyncReply(WTF::move(encoder));
                 return true;
             }
             EXPECT_TRUE(false);
@@ -1329,7 +1329,7 @@ TEST_P(ConnectionRunLoopTest, SyncMessageDecodeFailureIsCancelled)
                 return true; // Message was handled, but decode failed.
             }
             if (decoder.destinationID() == 99) {
-                b()->sendSyncReply(WTFMove(encoder));
+                b()->sendSyncReply(WTF::move(encoder));
                 return true;
             }
             EXPECT_TRUE(false);

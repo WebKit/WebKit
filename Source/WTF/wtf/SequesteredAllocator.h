@@ -46,7 +46,7 @@
 
 namespace WTF {
 
-constexpr size_t minArenaGranuleSize { 16 * 16 * KB };
+constexpr size_t minArenaGranuleSize { 512 * KB };
 constexpr size_t sequesteredArenaAllocatorAlignment { 128 };
 
 class alignas(sequesteredArenaAllocatorAlignment) SequesteredArenaAllocator {
@@ -131,10 +131,10 @@ private:
         GranuleList reset(TopGranulePolicy retain)
         {
             dataLogLnIf(verbose,
-                "Allocator ", parent().id(), ": Arena ", parent.debugIndexOfArena(*this),
+                "Allocator ", parent().id(), ": Arena ", parent().debugIndexOfArena(*this),
                 ": ending lifetime: granule is (", currentGranule(),
                 "), allocHead (", reinterpret_cast<void*>(m_allocHead),
-                "), allocBound (", reinterpret_cast<void*>(m_allocBound)")");
+                "), allocBound (", reinterpret_cast<void*>(m_allocBound), ")");
 
             GranuleHeader* head { m_granules.head() };
             if (!head || retain == TopGranulePolicy::DoNotRetain) [[unlikely]] {
@@ -144,7 +144,7 @@ private:
                 }
                 m_allocHead = 0;
                 m_allocBound = 0;
-                return WTFMove(m_granules);
+                return WTF::move(m_granules);
             }
 
             GranuleList tail { m_granules.splitAt(1) };
@@ -210,7 +210,11 @@ private:
         template<AllocationFailureMode mode>
         NEVER_INLINE void* allocateImplSlowPath(size_t bytes)
         {
-            addGranule<mode>(bytes);
+            auto* granule = addGranule<mode>(bytes);
+            if constexpr (mode == AllocationFailureMode::ReturnNull) {
+                if (!granule)
+                    return nullptr;
+            }
 
             uintptr_t allocation = m_allocHead;
             m_allocHead = headIncrementedBy(bytes);
@@ -222,7 +226,11 @@ private:
         template<AllocationFailureMode mode>
         NEVER_INLINE void* alignedAllocateImplSlowPath(size_t alignment, size_t bytes)
         {
-            addGranule<mode>(bytes);
+            auto* granule = addGranule<mode>(bytes);
+            if constexpr (mode == AllocationFailureMode::ReturnNull) {
+                if (!granule)
+                    return nullptr;
+            }
 
             uintptr_t allocation = headAlignedUpTo(alignment);
             m_allocHead = headIncrementedBy((allocation - m_allocHead) + bytes);
@@ -359,11 +367,6 @@ public:
         return m_genericSmallArena.deallocate(p);
     }
 
-    void alignedFree(void* p)
-    {
-        return free(p);
-    }
-
     void* realloc(void* p, size_t newSize)
     {
         ASSERT(m_alive);
@@ -382,6 +385,7 @@ public:
         void* newP = m_genericSmallArena.tryAllocate(newSize);
         if (!newP)
             return newP;
+        registerSuccessfulAllocation(newP, newSize);
 
         auto oldDebugKey = reinterpret_cast<uintptr_t>(p);
         auto newDebugKey = reinterpret_cast<uintptr_t>(newP);

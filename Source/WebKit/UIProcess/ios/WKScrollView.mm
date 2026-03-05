@@ -36,10 +36,12 @@
 #import "WKDeferringGestureRecognizer.h"
 #import "WKUIScrollEdgeEffect.h"
 #import "WKWebViewIOS.h"
+#import "WKWebViewInternal.h"
 #import "WebPage.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if HAVE(PEPPER_UI_CORE)
@@ -53,7 +55,7 @@
 @end
 
 @implementation WKScrollViewDelegateForwarder {
-    WKWebView *_internalDelegate;
+    WeakObjCPtr<WKWebView> _internalDelegate;
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
 }
 
@@ -69,18 +71,19 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    auto externalDelegate = _externalDelegate.get();
     NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
     if (!signature)
-        signature = [(NSObject *)_internalDelegate methodSignatureForSelector:aSelector];
+        signature = [static_cast<NSObject *>(_internalDelegate.get().get()) methodSignatureForSelector:aSelector];
+
     if (!signature)
-        signature = [(NSObject *)externalDelegate.get() methodSignatureForSelector:aSelector];
+        signature = [static_cast<NSObject *>(_externalDelegate.get().get()) methodSignatureForSelector:aSelector];
+
     return signature;
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
-    return [super respondsToSelector:aSelector] || [_internalDelegate respondsToSelector:aSelector] || [_externalDelegate.get() respondsToSelector:aSelector];
+    return [super respondsToSelector:aSelector] || [_internalDelegate.get() respondsToSelector:aSelector] || [_externalDelegate.get() respondsToSelector:aSelector];
 }
 
 static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector)
@@ -96,21 +99,22 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
-    auto externalDelegate = _externalDelegate.get();
+    RetainPtr internalDelegate = _internalDelegate.get();
+    RetainPtr externalDelegate = _externalDelegate.get();
     SEL aSelector = [anInvocation selector];
-    BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
+    BOOL internalDelegateWillRespond = [internalDelegate respondsToSelector:aSelector];
     BOOL externalDelegateWillRespond = shouldForwardScrollViewDelegateMethodToExternalDelegate(aSelector) && [externalDelegate respondsToSelector:aSelector];
 
     if (internalDelegateWillRespond && externalDelegateWillRespond)
-        [_internalDelegate _willInvokeUIScrollViewDelegateCallback];
+        [internalDelegate _willInvokeUIScrollViewDelegateCallback];
 
     if (internalDelegateWillRespond)
-        [anInvocation invokeWithTarget:_internalDelegate];
+        [anInvocation invokeWithTarget:internalDelegate.get()];
     if (externalDelegateWillRespond)
         [anInvocation invokeWithTarget:externalDelegate.get()];
 
     if (internalDelegateWillRespond && externalDelegateWillRespond)
-        [_internalDelegate _didInvokeUIScrollViewDelegateCallback];
+        [internalDelegate _didInvokeUIScrollViewDelegateCallback];
 
     if (!internalDelegateWillRespond && !externalDelegateWillRespond)
         [super forwardInvocation:anInvocation];
@@ -118,19 +122,22 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
-    BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
-    BOOL externalDelegateWillRespond = shouldForwardScrollViewDelegateMethodToExternalDelegate(aSelector) && [_externalDelegate.get() respondsToSelector:aSelector];
+    RetainPtr internalDelegate = _internalDelegate.get();
+    RetainPtr externalDelegate = _externalDelegate.get();
+    BOOL internalDelegateWillRespond = [internalDelegate respondsToSelector:aSelector];
+    BOOL externalDelegateWillRespond = shouldForwardScrollViewDelegateMethodToExternalDelegate(aSelector) && [externalDelegate respondsToSelector:aSelector];
 
     if (internalDelegateWillRespond && !externalDelegateWillRespond)
-        return _internalDelegate;
+        return _internalDelegate.getAutoreleased();
     if (externalDelegateWillRespond && !internalDelegateWillRespond)
-        return _externalDelegate.getAutoreleased();
+        return externalDelegate.getAutoreleased();
     return nil;
 }
 
 @end
 
 @implementation WKScrollView {
+    WeakObjCPtr<WKWebView> _internalDelegate;
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
     RetainPtr<WKScrollViewDelegateForwarder> _delegateForwarder;
 
@@ -200,9 +207,20 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     return self;
 }
 
+- (WKWebView<WKBEScrollViewDelegate> *)internalDelegate
+{
+    return _internalDelegate.getAutoreleased();
+}
+
+- (void)_invalidateInternalDelegate
+{
+    _internalDelegate = nil;
+    [self _updateDelegate];
+}
+
 - (void)setInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate
 {
-    if (internalDelegate == _internalDelegate)
+    if (internalDelegate == _internalDelegate.get())
         return;
     _internalDelegate = internalDelegate;
     [self _updateDelegate];
@@ -223,16 +241,16 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
-        return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
+    if (RetainPtr otherDeferringGestureRecognizer = dynamic_objc_cast<WKDeferringGestureRecognizer>(otherGestureRecognizer))
+        return [otherDeferringGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
     return NO;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
-        return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
+    if (RetainPtr deferringGestureRecognizer = dynamic_objc_cast<WKDeferringGestureRecognizer>(gestureRecognizer))
+        return [deferringGestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
 
     return NO;
 }
@@ -240,13 +258,14 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 - (void)_updateDelegate
 {
     auto oldForwarder = std::exchange(_delegateForwarder, nil);
-    auto externalDelegate = _externalDelegate.get();
+    RetainPtr internalDelegate = _internalDelegate.get();
+    RetainPtr externalDelegate = _externalDelegate.get();
     if (!externalDelegate)
-        [super setDelegate:_internalDelegate];
-    else if (!_internalDelegate)
+        [super setDelegate:internalDelegate.get()];
+    else if (!internalDelegate)
         [super setDelegate:(id<WKBEScrollViewDelegate>)externalDelegate.get()];
     else {
-        _delegateForwarder = adoptNS([[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:externalDelegate.get()]);
+        _delegateForwarder = adoptNS([[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:internalDelegate.get() externalDelegate:externalDelegate.get()]);
         [super setDelegate:_delegateForwarder.get()];
     }
 }
@@ -258,8 +277,9 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     super.backgroundColor = backgroundColor;
 
     if (!_backgroundColorSetByClient) {
-        [_internalDelegate _resetCachedScrollViewBackgroundColor];
-        [_internalDelegate _updateScrollViewBackground];
+        RetainPtr internalDelegate = _internalDelegate.get();
+        [internalDelegate _resetCachedScrollViewBackgroundColor];
+        [internalDelegate _updateScrollViewBackground];
     }
 }
 
@@ -270,7 +290,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
     super.backgroundColor = backgroundColor;
 
-    [_internalDelegate _resetCachedScrollViewBackgroundColor];
+    [_internalDelegate.get() _resetCachedScrollViewBackgroundColor];
 }
 
 - (void)setIndicatorStyle:(UIScrollViewIndicatorStyle)indicatorStyle
@@ -280,7 +300,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     super.indicatorStyle = indicatorStyle;
 
     if (!_indicatorStyleSetByClient)
-        [_internalDelegate _updateScrollViewIndicatorStyle];
+        [_internalDelegate.get() _updateScrollViewIndicatorStyle];
 }
 
 - (void)_setIndicatorStyleInternal:(UIScrollViewIndicatorStyle)indicatorStyle
@@ -322,7 +342,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     }
 #endif // PLATFORM(WATCHOS)
 
-    [_internalDelegate _scheduleVisibleContentRectUpdate];
+    [_internalDelegate.get() _scheduleVisibleContentRectUpdate];
 }
 
 - (BOOL)_contentInsetWasExternallyOverridden
@@ -333,7 +353,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 - (void)_resetContentInset
 {
     super.contentInset = UIEdgeInsetsZero;
-    [_internalDelegate _scheduleVisibleContentRectUpdate];
+    [_internalDelegate.get() _scheduleVisibleContentRectUpdate];
 }
 
 // FIXME: Likely we can remove this special case for watchOS.
@@ -352,7 +372,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         return;
 
     [super setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
-    [_internalDelegate _scheduleVisibleContentRectUpdate];
+    [_internalDelegate.get() _scheduleVisibleContentRectUpdate];
 }
 
 - (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior
@@ -433,7 +453,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
     // Internal clients who use setObscuredInsets include the keyboard height in their
     // manually overridden insets, so we don't need to re-add it here.
-    if (_internalDelegate._haveSetObscuredInsets)
+    if ([_internalDelegate.get() _haveSetObscuredInsets])
         return systemContentInset;
 
     // Match the inverse of the condition that UIScrollView uses to decide whether
@@ -455,12 +475,18 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
 - (void)setScrollEnabled:(BOOL)value
 {
+    if (value == _scrollEnabledByClient)
+        return;
+
     _scrollEnabledByClient = value;
     [self _updateScrollability];
 }
 
 - (void)_setScrollEnabledInternal:(BOOL)value
 {
+    if (value == _scrollEnabledInternal)
+        return;
+
     _scrollEnabledInternal = value;
     [self _updateScrollability];
 }
@@ -558,7 +584,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    auto scope = [_internalDelegate->_contentView makeTextSelectionViewsNonInteractiveForScope];
+    auto scope = [_internalDelegate.get()->_contentView makeTextSelectionViewsNonInteractiveForScope];
 
     return [super hitTest:point withEvent:event];
 }
@@ -588,22 +614,22 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
 - (UIScrollEdgeEffect *)topEdgeEffect
 {
-    return static_cast<UIScrollEdgeEffect *>(self._wk_topEdgeEffect);
+    return checked_objc_cast<UIScrollEdgeEffect>(self._wk_topEdgeEffect);
 }
 
 - (UIScrollEdgeEffect *)leftEdgeEffect
 {
-    return static_cast<UIScrollEdgeEffect *>(self._wk_leftEdgeEffect);
+    return checked_objc_cast<UIScrollEdgeEffect>(self._wk_leftEdgeEffect);
 }
 
 - (UIScrollEdgeEffect *)bottomEdgeEffect
 {
-    return static_cast<UIScrollEdgeEffect *>(self._wk_bottomEdgeEffect);
+    return checked_objc_cast<UIScrollEdgeEffect>(self._wk_bottomEdgeEffect);
 }
 
 - (UIScrollEdgeEffect *)rightEdgeEffect
 {
-    return static_cast<UIScrollEdgeEffect *>(self._wk_rightEdgeEffect);
+    return checked_objc_cast<UIScrollEdgeEffect>(self._wk_rightEdgeEffect);
 }
 
 - (WKUIScrollEdgeEffect *)_wk_topEdgeEffect
@@ -617,7 +643,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Top]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Top, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (WKUIScrollEdgeEffect *)_wk_leftEdgeEffect
@@ -631,7 +657,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Left]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Left, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (WKUIScrollEdgeEffect *)_wk_rightEdgeEffect
@@ -645,7 +671,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Right]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Right, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (WKUIScrollEdgeEffect *)_wk_bottomEdgeEffect
@@ -659,7 +685,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Bottom]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Bottom, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (void)_setInternalTopPocketColor:(UIColor *)color
@@ -703,7 +729,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_didChangeTopScrollEdgeEffectStyle
 {
-    RetainPtr webView = _internalDelegate;
+    RetainPtr webView = _internalDelegate.get();
     if (!webView)
         return;
 

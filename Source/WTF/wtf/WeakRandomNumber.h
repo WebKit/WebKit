@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
+
 namespace WTF {
 
 template<typename IntegerType> IntegerType weakRandomNumber() = delete;

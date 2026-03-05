@@ -66,14 +66,13 @@ public:
     void currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType)>&&);
     void lock(WebCore::ScreenOrientationLockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void unlock();
-    void setShouldSendChangeNotification(bool);
+    void NODELETE setShouldSendChangeNotification(bool);
 
 private:
     WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);
 
     std::optional<WebCore::Exception> platformShouldRejectLockRequest() const;
 
-    Ref<WebPageProxy> protectedPage() const;
 
     WeakRef<WebPageProxy> m_page;
     WebCore::ScreenOrientationType m_currentOrientation;

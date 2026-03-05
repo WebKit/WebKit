@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,171 +27,105 @@
 
 #include "CSSFilterValue.h"
 #include "Document.h"
-#include "DropShadowFilterOperationWithStyleColor.h"
-#include "FEGaussianBlur.h"
 #include "FilterOperations.h"
-#include "ReferenceFilterOperation.h"
-#include "StyleBlurFunction.h"
-#include "StyleBrightnessFunction.h"
 #include "StyleBuilderChecking.h"
-#include "StyleContrastFunction.h"
-#include "StyleDropShadowFunction.h"
 #include "StyleFilterInterpolation.h"
-#include "StyleFilterReference.h"
-#include "StyleGrayscaleFunction.h"
-#include "StyleHueRotateFunction.h"
-#include "StyleInvertFunction.h"
-#include "StyleOpacityFunction.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
-#include "StyleSaturateFunction.h"
-#include "StyleSepiaFunction.h"
 
 namespace WebCore {
 namespace Style {
 
 bool Filter::hasReferenceFilter() const
 {
-    return hasFilterOfType<FilterOperation::Type::Reference>();
+    return hasFilterOfType<FilterReference>();
 }
 
 bool Filter::isReferenceFilter() const
 {
-    return size() == 1 && first()->type() == FilterOperation::Type::Reference;
+    return size() == 1 && WTF::holdsAlternative<FilterReference>(first());
 }
 
 bool Filter::hasFilterThatRequiresRepaintForCurrentColorChange() const
 {
-    return std::ranges::any_of(*this, [](auto& op) { return op->requiresRepaintForCurrentColorChange(); });
+    return std::ranges::any_of(*this, [](auto& filterValue) {
+        return WTF::switchOn(filterValue,
+            [](auto& op) {
+                return op->requiresRepaintForCurrentColorChange();
+            }
+        );
+    });
 }
 
 bool Filter::hasFilterThatAffectsOpacity() const
 {
-    return std::ranges::any_of(*this, [](auto& op) { return op->affectsOpacity(); });
+    return std::ranges::any_of(*this, [](auto& filterValue) {
+        return WTF::switchOn(filterValue,
+            [](auto& op) {
+                return op->affectsOpacity();
+            }
+        );
+    });
 }
 
 bool Filter::hasFilterThatMovesPixels() const
 {
-    return std::ranges::any_of(*this, [](auto& op) { return op->movesPixels(); });
+    return std::ranges::any_of(*this, [](auto& filterValue) {
+        return WTF::switchOn(filterValue,
+            [](auto& op) {
+                return op->movesPixels();
+            }
+        );
+    });
 }
 
 bool Filter::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
 {
-    return std::ranges::any_of(*this, [](auto& op) { return op->shouldBeRestrictedBySecurityOrigin(); });
+    return std::ranges::any_of(*this, [](auto& filterValue) {
+        return WTF::switchOn(filterValue,
+            [](auto& op) {
+                return op->shouldBeRestrictedBySecurityOrigin();
+            }
+        );
+    });
 }
 
-IntOutsets Filter::outsets() const
+IntOutsets Filter::calculateOutsets(ZoomFactor zoom) const
 {
     IntOutsets totalOutsets;
-    for (auto& value : *this) {
-        Ref operation = value.value;
-        switch (operation->type()) {
-        case FilterOperation::Type::Blur: {
-            auto& blurOperation = downcast<BlurFilterOperation>(operation.get());
-            float stdDeviation = blurOperation.stdDeviation();
-            IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
-            IntOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
-            totalOutsets += outsets;
-            break;
-        }
-        case FilterOperation::Type::DropShadow:
-        case FilterOperation::Type::DropShadowWithStyleColor: {
-            auto& dropShadowOperation = downcast<DropShadowFilterOperationBase>(operation.get());
-            float stdDeviation = dropShadowOperation.stdDeviation();
-            IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
-
-            int top = std::max(0, outsetSize.height() - dropShadowOperation.y());
-            int right = std::max(0, outsetSize.width() + dropShadowOperation.x());
-            int bottom = std::max(0, outsetSize.height() + dropShadowOperation.y());
-            int left = std::max(0, outsetSize.width() - dropShadowOperation.x());
-
-            auto outsets = IntOutsets { top, right, bottom, left };
-            totalOutsets += outsets;
-            break;
-        }
-        case FilterOperation::Type::Reference:
-            ASSERT_NOT_REACHED();
-            break;
-        default:
-            break;
-        }
+    for (auto& filterValue : *this) {
+        WTF::switchOn(filterValue,
+            [&](const BlurFunction& blurFunction) {
+                totalOutsets += blurFunction->calculateOutsets(zoom);
+            },
+            [&](const DropShadowFunction& dropShadowFunction) {
+                totalOutsets += dropShadowFunction->calculateOutsets(zoom);
+            },
+            [](const FilterReference&) {
+                ASSERT_NOT_REACHED();
+            },
+            [](const auto&) { }
+        );
     }
     return totalOutsets;
 }
 
 // MARK: - Conversions
 
-// MARK: (FilterValue)
+// MARK: (FilterValueList)
 
-auto ToCSS<FilterValue>::operator()(const FilterValue& value, const RenderStyle& style) -> CSS::FilterValue
+auto ToCSS<FilterValueList>::operator()(const FilterValueList& value, const RenderStyle& style) -> CSS::FilterValueList
 {
-    Ref op = value.value;
-    switch (op->type()) {
-    case FilterOperation::Type::Reference:
-        return CSS::FilterValue { CSS::FilterReference { toCSSFilterReference(downcast<ReferenceFilterOperation>(op), style) } };
-    case FilterOperation::Type::Grayscale:
-        return CSS::FilterValue { CSS::GrayscaleFunction { toCSSGrayscale(downcast<BasicColorMatrixFilterOperation>(op), style) } };
-    case FilterOperation::Type::Sepia:
-        return CSS::FilterValue { CSS::SepiaFunction { toCSSSepia(downcast<BasicColorMatrixFilterOperation>(op), style) } };
-    case FilterOperation::Type::Saturate:
-        return CSS::FilterValue { CSS::SaturateFunction { toCSSSaturate(downcast<BasicColorMatrixFilterOperation>(op), style) } };
-    case FilterOperation::Type::HueRotate:
-        return CSS::FilterValue { CSS::HueRotateFunction { toCSSHueRotate(downcast<BasicColorMatrixFilterOperation>(op), style) } };
-    case FilterOperation::Type::Invert:
-        return CSS::FilterValue { CSS::InvertFunction { toCSSInvert(downcast<BasicComponentTransferFilterOperation>(op), style) } };
-    case FilterOperation::Type::Opacity:
-        return CSS::FilterValue { CSS::OpacityFunction { toCSSOpacity(downcast<BasicComponentTransferFilterOperation>(op), style) } };
-    case FilterOperation::Type::Brightness:
-        return CSS::FilterValue { CSS::BrightnessFunction { toCSSBrightness(downcast<BasicComponentTransferFilterOperation>(op), style) } };
-    case FilterOperation::Type::Contrast:
-        return CSS::FilterValue { CSS::ContrastFunction { toCSSContrast(downcast<BasicComponentTransferFilterOperation>(op), style) } };
-    case FilterOperation::Type::Blur:
-        return CSS::FilterValue { CSS::BlurFunction { toCSSBlur(downcast<BlurFilterOperation>(op), style) } };
-    case FilterOperation::Type::DropShadowWithStyleColor:
-        return CSS::FilterValue { CSS::DropShadowFunction { toCSSDropShadow(downcast<DropShadowFilterOperationWithStyleColor>(op), style) } };
-    default:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    return CSS::FilterValueList::map(value, [&](const auto& x) -> CSS::FilterValue { return toCSS(x, style); });
 }
 
-auto ToStyle<CSS::FilterValue>::operator()(const CSS::FilterValue& value, const BuilderState& state) -> FilterValue
+auto ToStyle<CSS::FilterValueList>::operator()(const CSS::FilterValueList& value, const BuilderState& state) -> FilterValueList
 {
-    return WTF::switchOn(value,
-        [&](const auto& function) -> FilterValue {
-            return FilterValue { createFilterOperation(function, state) };
-        }
-    );
+    return FilterValueList::map(value, [&](const auto& x) -> FilterValue { return toStyle(x, state); });
 }
 
 // MARK: (Filter)
-
-auto ToCSS<Filter>::operator()(const Filter& value, const RenderStyle& style) -> CSS::Filter
-{
-    return WTF::switchOn(value,
-        [&](CSS::Keyword::None keyword) -> CSS::Filter {
-            return keyword;
-        },
-        [&](const FilterValueList& list) -> CSS::Filter {
-            return CSS::FilterValueList::map(list, [&](const FilterValue& value) {
-                return toCSS(value, style);
-            });
-        }
-    );
-}
-
-auto ToStyle<CSS::Filter>::operator()(const CSS::Filter& value, const BuilderState& state) -> Filter
-{
-    return WTF::switchOn(value,
-        [&](CSS::Keyword::None keyword) -> Filter {
-            return keyword;
-        },
-        [&](const CSS::FilterValueList& list) -> Filter {
-            return FilterValueList::map(list, [&](const CSS::FilterValue& value) {
-                return toStyle(value, state);
-            });
-        }
-    );
-}
 
 auto CSSValueConversion<Filter>::operator()(BuilderState& state, const CSSValue& value) -> Filter
 {
@@ -210,50 +144,52 @@ Ref<CSSValue> CSSValueCreation<Filter>::operator()(CSSValuePool&, const RenderSt
     return CSSFilterValue::create(toCSS(value, style));
 }
 
-// MARK: - Serialization
-
-void Serialize<Filter>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const Filter& value)
-{
-    CSS::serializationForCSS(builder, context, toCSS(value, style));
-}
-
 // MARK: - Blending
 
 auto Blending<Filter>::canBlend(const Filter& from, const Filter& to, CompositeOperation compositeOperation) -> bool
 {
+    // We can't interpolate between lists if a reference filter is involved.
+    if (from.hasReferenceFilter() || to.hasReferenceFilter())
+        return false;
+
     return canBlendFilterLists(from.m_value, to.m_value, compositeOperation);
 }
 
-auto Blending<Filter>::blend(const Filter& from, const Filter& to, const BlendingContext& context) -> Filter
+auto Blending<Filter>::blend(const Filter& from, const Filter& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> Filter
 {
-    auto blendedFilterList = blendFilterLists(from.m_value, to.m_value, context);
+    auto blendedFilterList = blendFilterLists(from.m_value, to.m_value, fromStyle, toStyle, context);
 
     if (blendedFilterList.isEmpty())
         return CSS::Keyword::None { };
 
-    return Filter { WTFMove(blendedFilterList) };
+    return Filter { WTF::move(blendedFilterList) };
 }
 
 // MARK: - Platform
 
-auto ToPlatform<FilterValue>::operator()(const FilterValue& value) -> Ref<FilterOperation>
+auto ToPlatform<FilterValue>::operator()(const FilterValue& value, const RenderStyle& style) -> Ref<FilterOperation>
 {
-    return value.value;
+    return WTF::switchOn(value,
+        [&](const BlurFunction& blurFunction) -> Ref<FilterOperation> {
+            return toPlatform(blurFunction, style);
+        },
+        [&](const DropShadowFunction& dropShadowFunction) -> Ref<FilterOperation> {
+            return toPlatform(dropShadowFunction, style);
+        },
+        [](const FilterReference&) -> Ref<FilterOperation> {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [](const auto& function) -> Ref<FilterOperation> {
+            return toPlatform(function);
+        }
+    );
 }
 
-auto ToPlatform<Filter>::operator()(const Filter& value) -> FilterOperations
+auto ToPlatform<Filter>::operator()(const Filter& value, const RenderStyle& style) -> FilterOperations
 {
-    return FilterOperations { WTF::map(value, [](auto& filterValue) {
-        return toPlatform(filterValue);
+    return FilterOperations { WTF::map(value, [&](auto& filterValue) -> Ref<FilterOperation> {
+        return toPlatform(filterValue, style);
     }) };
-}
-
-// MARK: - Logging
-
-TextStream& operator<<(TextStream& ts, const FilterValue& value)
-{
-    Ref platform = value.value;
-    return ts << platform;
 }
 
 } // namespace Style

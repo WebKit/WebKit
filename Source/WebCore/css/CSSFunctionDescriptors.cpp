@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSFunctionDescriptors);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFunctionDescriptors);
 
 CSSFunctionDescriptors::CSSFunctionDescriptors(MutableStyleProperties& propertySet, CSSFunctionDeclarations& parentRule)
     : PropertySetCSSDescriptors(propertySet, parentRule)

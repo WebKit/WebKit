@@ -35,7 +35,7 @@ using namespace WTR;
 
 @implementation WebKitTestRunnerDraggingInfo
 
-- (id)initWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source
+- (id)initWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source sequenceNumber:(int)sequenceNumber
 {
     self = [super init];
     if (!self)
@@ -45,7 +45,8 @@ using namespace WTR;
     _draggingPasteboard = pasteboard;
     _draggingSource = source;
     _offset = offset;
-    
+    _draggingSequenceNumber = sequenceNumber;
+
     return self;
 }
 
@@ -94,8 +95,7 @@ using namespace WTR;
 
 - (int)draggingSequenceNumber
 {
-    NSLog(@"WebKitTestRunner doesn't support draggingSequenceNumber");
-    return 0;
+    return _draggingSequenceNumber;
 }
 
 - (void)slideDraggedImageTo:(NSPoint)screenPoint

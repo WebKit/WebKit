@@ -34,7 +34,7 @@ class NotificationPermissionRequest : public API::ObjectImpl<API::Object::Type::
 public:
     static Ref<NotificationPermissionRequest> create(CompletionHandler<void(bool)>&& completionHandler)
     {
-        return adoptRef(*new NotificationPermissionRequest(WTFMove(completionHandler)));
+        return adoptRef(*new NotificationPermissionRequest(WTF::move(completionHandler)));
     }
 
     ~NotificationPermissionRequest()
@@ -50,7 +50,7 @@ public:
 
 private:
     explicit NotificationPermissionRequest(CompletionHandler<void(bool)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
     {
     }
     

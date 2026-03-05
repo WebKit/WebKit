@@ -29,6 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/LoggingHashID.h>
 #include <wtf/LoggingHashTraits.h>
+#include <wtf/StringPrintStream.h>
 
 namespace WTF {
 
@@ -70,7 +71,7 @@ public:
     LoggingHashSet(LoggingHashSet&& other)
         : m_set(other.m_set)
     {
-        dataLog("auto* ", m_id, " = new HashSet<", typeArguments, ">(WTFMove(*", other.m_id, "));\n");
+        dataLog("auto* ", m_id, " = new HashSet<", typeArguments, ">(WTF::move(*", other.m_id, "));\n");
     }
     
     LoggingHashSet& operator=(const LoggingHashSet& other)
@@ -82,8 +83,8 @@ public:
     
     LoggingHashSet& operator=(LoggingHashSet&& other)
     {
-        dataLog("*", m_id, " = WTFMove(*", other.m_id, ");\n");
-        m_set = WTFMove(other.m_set);
+        dataLog("*", m_id, " = WTF::move(*", other.m_id, ");\n");
+        m_set = WTF::move(other.m_set);
         return *this;
     }
     
@@ -97,13 +98,13 @@ public:
     unsigned capacity() const { return m_set.capacity(); }
     bool isEmpty() const { return m_set.isEmpty(); }
     
-    iterator begin() const { return m_set.begin(); }
-    iterator end() const { return m_set.end(); }
+    iterator begin() const LIFETIME_BOUND { return m_set.begin(); }
+    iterator end() const LIFETIME_BOUND { return m_set.end(); }
     
-    iterator random() { return m_set.random(); }
-    const_iterator random() const { return m_set.random(); }
+    iterator random() LIFETIME_BOUND { return m_set.random(); }
+    const_iterator random() const LIFETIME_BOUND { return m_set.random(); }
 
-    iterator find(const ValueType& value) const
+    iterator find(const ValueType& value) const LIFETIME_BOUND
     {
         StringPrintStream string;
         string.print("{\n");
@@ -127,7 +128,7 @@ public:
     
     // FIXME: Implement the translator versions of find() and friends.
     
-    AddResult add(const ValueType& value)
+    AddResult add(const ValueType& value) LIFETIME_BOUND
     {
         StringPrintStream string;
         string.print(m_id, "->add(");
@@ -137,14 +138,14 @@ public:
         return m_set.add(value);
     }
 
-    AddResult add(ValueType&& value)
+    AddResult add(ValueType&& value) LIFETIME_BOUND
     {
         StringPrintStream string;
         string.print(m_id, "->add(");
         LoggingTraits::print(string, value);
         string.print(");\n");
         dataLog(string.toCString());
-        return m_set.add(WTFMove(value));
+        return m_set.add(WTF::move(value));
     }
     
     void addVoid(const ValueType& value)
@@ -164,7 +165,7 @@ public:
         LoggingTraits::print(string, value);
         string.print(");\n");
         dataLog(string.toCString());
-        m_set.addVoid(WTFMove(value));
+        m_set.addVoid(WTF::move(value));
     }
     
     template<typename IteratorType>

@@ -33,10 +33,6 @@
 #import <BrowserEngineKit/BrowserEngineKit.h>
 #import <wtf/CrossThreadCopier.h>
 
-#if __has_include(<WebKitAdditions/BEKAdditions.h>)
-#import <WebKitAdditions/BEKAdditions.h>
-#endif
-
 namespace WebKit {
 
 ExtensionProcess::ExtensionProcess(BEWebContentProcess *process)
@@ -55,7 +51,7 @@ ExtensionProcess::ExtensionProcess(BERenderingProcess *process)
 }
 
 ExtensionProcess::ExtensionProcess(ExtensionProcessVariant&& process)
-    : m_process(WTFMove(process))
+    : m_process(WTF::move(process))
 {
 }
 
@@ -66,10 +62,10 @@ void ExtensionProcess::invalidate() const
     });
 }
 
-XPCObjectPtr<xpc_connection_t> ExtensionProcess::makeLibXPCConnection() const
+OSObjectPtr<xpc_connection_t> ExtensionProcess::makeLibXPCConnection() const
 {
     NSError *error = nil;
-    XPCObjectPtr<xpc_connection_t> xpcConnection;
+    OSObjectPtr<xpc_connection_t> xpcConnection;
     WTF::switchOn(m_process, [&] (auto& process) {
         xpcConnection = [process makeLibXPCConnectionError:&error];
     });
@@ -81,11 +77,7 @@ PlatformGrant ExtensionProcess::grantCapability(const PlatformCapability& capabi
     NSError *error = nil;
     PlatformGrant grant;
     WTF::switchOn(m_process, [&] (auto& process) {
-#if __has_include(<WebKitAdditions/BEKAdditions.h>)
-        GRANT_ADDITIONS
-#else
-        grant = [process grantCapability:capability.get() error:&error];
-#endif
+        grant = [process grantCapability:capability.get() error:&error invalidationHandler:makeBlockPtr(WTF::move(invalidationHandler)).get()];
     });
     return grant;
 }
@@ -104,7 +96,7 @@ RetainPtr<UIInteraction> ExtensionProcess::createVisibilityPropagationInteractio
 
 ExtensionProcess ExtensionProcess::isolatedCopy() &&
 {
-    return ExtensionProcess { crossThreadCopy(WTFMove(m_process)) };
+    return ExtensionProcess { crossThreadCopy(WTF::move(m_process)) };
 }
 
 } // namespace WebKit

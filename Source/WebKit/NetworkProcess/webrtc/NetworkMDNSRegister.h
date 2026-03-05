@@ -77,7 +77,7 @@ public:
     NetworkMDNSRegister(NetworkConnectionToWebProcess&);
     ~NetworkMDNSRegister();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -111,7 +111,7 @@ private:
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
     void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
 
-    PAL::SessionID sessionID() const;
+    PAL::SessionID NODELETE sessionID() const;
 
     WeakRef<NetworkConnectionToWebProcess> m_connection;
     HashSet<String> m_registeredNames;

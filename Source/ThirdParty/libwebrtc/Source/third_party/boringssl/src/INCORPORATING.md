@@ -108,7 +108,7 @@ module system.
 If you are using multiple versions in a single binary, in different shared
 objects, ensure you build BoringSSL with `-fvisibility=hidden` and do not
 export any of BoringSSL's symbols. This will prevent any collisions with other
-verisons that may be included in other shared objects. Note that this requires
+versions that may be included in other shared objects. Note that this requires
 that all callers of BoringSSL APIs live in the same shared object as BoringSSL.
 
 If you require that BoringSSL APIs be used across shared object boundaries,

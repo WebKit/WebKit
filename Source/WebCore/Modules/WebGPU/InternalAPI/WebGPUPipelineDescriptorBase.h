@@ -33,8 +33,6 @@ namespace WebCore::WebGPU {
 
 struct PipelineDescriptorBase : public ObjectDescriptorBase {
     WeakPtr<PipelineLayout> layout;
-
-    RefPtr<PipelineLayout> protectedLayout() const { return layout.get(); }
 };
 
 } // namespace WebCore::WebGPU

@@ -35,10 +35,10 @@ namespace Layout {
 class LineBoxVerticalAligner {
 public:
     LineBoxVerticalAligner(const InlineFormattingContext&);
-    InlineLayoutUnit computeLogicalHeightAndAlign(LineBox&) const;
+    InlineLayoutUnit computeLogicalHeightAndAlign(LineBox&, bool hasContentfulInlineContent) const;
 
 private:
-    InlineLayoutUnit simplifiedVerticalAlignment(LineBox&) const;
+    InlineLayoutUnit simplifiedVerticalAlignment(LineBox&, bool hasContentfulInlineContent) const;
 
     struct LineBoxAlignmentContent {
         InlineLayoutUnit height() const { return std::max(nonLineBoxRelativeAlignedMaximumHeight, std::max(topAndBottomAlignedMaximumHeight.top.value_or(0.f), topAndBottomAlignedMaximumHeight.bottom.value_or(0.f))); }

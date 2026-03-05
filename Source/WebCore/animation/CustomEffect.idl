@@ -28,5 +28,5 @@
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface CustomEffect : AnimationEffect {
-    [CallWith=CurrentDocument] constructor(CustomEffectCallback callback, optional (unrestricted double or EffectTiming) options);
+    [CallWith=CurrentDocument] constructor(CustomEffectCallback callback, optional (unrestricted double or EffectTiming) options = {});
 };

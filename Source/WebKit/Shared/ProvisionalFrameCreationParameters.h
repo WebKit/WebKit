@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/FrameIdentifier.h>
-#include <WebCore/IntSize.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/ReferrerPolicy.h>
 
@@ -50,7 +50,7 @@ struct ProvisionalFrameCreationParameters {
     WebCore::SandboxFlags effectiveSandboxFlags;
     WebCore::ReferrerPolicy effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode scrollingMode;
-    std::optional<WebCore::IntSize> initialSize;
+    std::optional<WebCore::IntRect> initialRect;
     CommitTiming commitTiming { CommitTiming::WaitForLoad };
 };
 

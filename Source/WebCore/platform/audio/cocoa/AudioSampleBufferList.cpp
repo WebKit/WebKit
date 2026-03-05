@@ -28,10 +28,10 @@
 
 #include "Logging.h"
 #include "NotImplemented.h"
-#include "SpanCoreAudio.h"
 #include "VectorMath.h"
 #include <Accelerate/Accelerate.h>
 #include <AudioToolbox/AudioConverter.h>
+#include <pal/cf/CoreAudioExtras.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ZippedRange.h>

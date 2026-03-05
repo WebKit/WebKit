@@ -35,6 +35,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/PlatformEvent.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/glib/GSpanExtras.h>
 
 #if USE(ATK)
 #include <atk/atk.h>
@@ -44,11 +45,11 @@
 #include <wpe/wpe-platform.h>
 #endif
 
-#if USE(GBM)
+#if USE(GBM) || OS(ANDROID)
 #include "RendererBufferFormat.h"
 #endif
 
-#if USE(GBM) && ENABLE(WPE_PLATFORM)
+#if ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
 #include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
 #endif
@@ -59,11 +60,13 @@ void WebPageProxy::platformInitialize()
 {
 }
 
+#if USE(LIBWPE)
 struct wpe_view_backend* WebPageProxy::viewBackend()
 {
     RefPtr pageClient = this->pageClient();
     return pageClient ? static_cast<PageClientImpl&>(*pageClient).viewBackend() : nullptr;
 }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 WPEView* WebPageProxy::wpeView() const
@@ -109,21 +112,21 @@ void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, Completi
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
         return completionHandler({ });
-    static_cast<PageClientImpl&>(*pageClient).sendMessageToWebView(WTFMove(message), WTFMove(completionHandler));
+    static_cast<PageClientImpl&>(*pageClient).sendMessageToWebView(WTF::move(message), WTF::move(completionHandler));
 }
 
 void WebPageProxy::sendMessageToWebView(UserMessage&& message)
 {
-    sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
+    sendMessageToWebViewWithReply(WTF::move(message), [](UserMessage&&) { });
 }
 
 void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
 {
     if (RefPtr pageClient = this->pageClient())
-        static_cast<PageClientImpl&>(*pageClient).setInputMethodState(WTFMove(state));
+        static_cast<PageClientImpl&>(*pageClient).setInputMethodState(WTF::move(state));
 }
 
-#if USE(GBM)
+#if USE(GBM) || OS(ANDROID)
 Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
 {
 #if ENABLE(WPE_PLATFORM)
@@ -131,49 +134,48 @@ Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
     if (!view)
         return { };
 
-    auto* formats = wpe_view_get_preferred_dma_buf_formats(view);
+    auto* formats = wpe_view_get_preferred_buffer_formats(view);
     if (!formats)
         return { };
 
+#if USE(GBM)
+    WPEDRMDevice* mainDevice = wpe_buffer_formats_get_device(formats);
+#endif
+
     Vector<RendererBufferFormat> bufferFormats;
-    WPEDRMDevice* mainDevice = wpe_buffer_dma_buf_formats_get_device(formats);
-    auto groupCount = wpe_buffer_dma_buf_formats_get_n_groups(formats);
+    auto groupCount = wpe_buffer_formats_get_n_groups(formats);
     for (unsigned i = 0; i < groupCount; ++i) {
         RendererBufferFormat bufferFormat;
-        switch (wpe_buffer_dma_buf_formats_get_group_usage(formats, i)) {
-        case WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING:
+        switch (wpe_buffer_formats_get_group_usage(formats, i)) {
+        case WPE_BUFFER_FORMAT_USAGE_RENDERING:
             bufferFormat.usage = RendererBufferFormat::Usage::Rendering;
             break;
-        case WPE_BUFFER_DMA_BUF_FORMAT_USAGE_MAPPING:
+        case WPE_BUFFER_FORMAT_USAGE_MAPPING:
             bufferFormat.usage = RendererBufferFormat::Usage::Mapping;
             break;
-        case WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT:
+        case WPE_BUFFER_FORMAT_USAGE_SCANOUT:
             bufferFormat.usage = RendererBufferFormat::Usage::Scanout;
             break;
         }
 
-        WPEDRMDevice* targetDevice = wpe_buffer_dma_buf_formats_get_group_device(formats, i);
+#if USE(GBM)
+        WPEDRMDevice* targetDevice = wpe_buffer_formats_get_group_device(formats, i);
         if (!targetDevice)
             targetDevice = mainDevice;
         if (targetDevice)
             bufferFormat.drmDevice = { CString(wpe_drm_device_get_primary_node(targetDevice)), CString(wpe_drm_device_get_render_node(targetDevice)) };
+#endif
 
-        auto formatsCount = wpe_buffer_dma_buf_formats_get_group_n_formats(formats, i);
+        auto formatsCount = wpe_buffer_formats_get_group_n_formats(formats, i);
         bufferFormat.formats.reserveInitialCapacity(formatsCount);
         for (unsigned j = 0; j < formatsCount; ++j) {
-            RendererBufferFormat::Format format;
-            format.fourcc = wpe_buffer_dma_buf_formats_get_format_fourcc(formats, i, j);
-            auto* modifiers = wpe_buffer_dma_buf_formats_get_format_modifiers(formats, i, j);
-            format.modifiers.reserveInitialCapacity(modifiers->len);
-            for (unsigned k = 0; k < modifiers->len; ++k) {
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
-                auto* modifier = &g_array_index(modifiers, guint64, k);
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-                format.modifiers.append(*modifier);
-            }
-            bufferFormat.formats.append(WTFMove(format));
+            auto* modifiers = wpe_buffer_formats_get_format_modifiers(formats, i, j);
+            bufferFormat.formats.append({
+                .fourcc = wpe_buffer_formats_get_format_fourcc(formats, i, j),
+                .modifiers = unsafeMakeSpan(reinterpret_cast<uint64_t*>(modifiers->data), modifiers->len),
+            });
         }
-        bufferFormats.append(WTFMove(bufferFormat));
+        bufferFormats.append(WTF::move(bufferFormat));
     }
 
     return bufferFormats;
@@ -182,7 +184,7 @@ Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
 #endif
 }
 
-#if USE(GBM) && ENABLE(WPE_PLATFORM)
+#if ENABLE(WPE_PLATFORM)
 void WebPageProxy::preferredBufferFormatsDidChange()
 {
     auto* view = wpeView();
@@ -192,7 +194,7 @@ void WebPageProxy::preferredBufferFormatsDidChange()
     legacyMainFrameProcess().send(Messages::WebPage::PreferredBufferFormatsDidChange(preferredBufferFormats()), webPageIDInMainFrameProcess());
 }
 #endif
-#endif
+#endif // USE(GBM) || OS(ANDROID)
 
 OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifierKeys()
 {
@@ -228,13 +230,13 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     }
 
 #if USE(COORDINATED_GRAPHICS)
-    Ref aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
+    Ref aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTF::move(callback)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return callback();
 
         if (RefPtr pageClient = protectedThis->pageClient())
-            static_cast<PageClientImpl&>(*pageClient).callAfterNextPresentationUpdate(WTFMove(callback));
+            static_cast<PageClientImpl&>(*pageClient).callAfterNextPresentationUpdate(WTF::move(callback));
     });
     auto drawingAreaIdentifier = m_drawingArea->identifier();
     forEachWebContentProcess([&] (auto& process, auto) {

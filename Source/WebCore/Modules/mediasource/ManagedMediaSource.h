@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class ManagedMediaSource final : public MediaSource {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ManagedMediaSource);
+    WTF_MAKE_TZONE_ALLOCATED(ManagedMediaSource);
 public:
     static Ref<ManagedMediaSource> create(ScriptExecutionContext&, MediaSourceInit&&);
     ~ManagedMediaSource();
@@ -44,13 +44,16 @@ public:
 
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
 
-    bool streaming() const override { return m_streaming; }
+    bool streaming() const final { return m_streaming; }
     bool streamingAllowed() const { return m_streamingAllowed; }
 
     bool isManaged() const final { return true; }
 
 private:
     ManagedMediaSource(ScriptExecutionContext&, MediaSourceInit&&);
+
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::ManagedMediaSource; }
+
     void monitorSourceBuffers() final;
     void elementDetached() final;
     void setStreaming(bool);
@@ -66,8 +69,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ManagedMediaSource)
-    static bool isType(const WebCore::MediaSource& mediaSource) { return mediaSource.isManaged(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(ManagedMediaSource)
 
 #endif // ENABLE(MEDIA_SOURCE)

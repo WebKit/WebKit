@@ -63,7 +63,7 @@ public:
     void suspend();
     void resume();
 
-    Lock& stateLock() { return m_state.lock; }
+    Lock& stateLock() LIFETIME_BOUND { return m_state.lock; }
 
     void scheduleUpdate();
     void stopUpdates();

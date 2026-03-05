@@ -25,22 +25,22 @@
 
 #pragma once
 
-#include <WebCore/AXObjectCache.h>
-#include <WebCore/AXObjectRareData.h>
-#include <WebCore/AXTextMarker.h>
-#include <WebCore/AXUtilities.h>
-#include <WebCore/AccessibilityObject.h>
-#include <WebCore/Color.h>
-#include <WebCore/Document.h>
-#include <WebCore/Element.h>
-#include <WebCore/FrameDestructionObserverInlines.h>
-#include <WebCore/HTMLParserIdioms.h>
-#include <WebCore/LocalFrame.h>
-#include <WebCore/NodeDocument.h>
-#include <WebCore/RenderInline.h>
-#include <WebCore/RenderLayer.h>
-#include <WebCore/SimpleRange.h>
-#include <WebCore/TextIterator.h>
+#include "AXObjectCache.h"
+#include "AXObjectRareData.h"
+#include "AXTextMarker.h"
+#include "AXUtilities.h"
+#include "AccessibilityObject.h"
+#include "Color.h"
+#include "Document.h"
+#include "Element.h"
+#include "FrameDestructionObserverInlines.h"
+#include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
+#include "NodeDocument.h"
+#include "RenderInline.h"
+#include "RenderLayer.h"
+#include "SimpleRange.h"
+#include "TextIterator.h"
 
 namespace WebCore {
 
@@ -99,11 +99,6 @@ inline bool AccessibilityObject::hasRowGroupTag() const
 inline bool AccessibilityObject::hasElementName(ElementName name) const
 {
     return elementName() == name;
-}
-
-inline RefPtr<Document> AccessibilityObject::protectedDocument() const
-{
-    return document();
 }
 
 inline SRGBA<uint8_t> AccessibilityObject::colorValue() const
@@ -298,7 +293,7 @@ inline void AccessibilityObject::initializeAncestorFlags(const OptionSet<AXAnces
     m_ancestorFlags.add(flags);
 }
 
-inline std::optional<AXID> AccessibilityObject::treeID() const
+inline std::optional<AXTreeID> AccessibilityObject::treeID() const
 {
     auto* cache = axObjectCache();
     return cache ? std::optional { cache->treeID() } : std::nullopt;

@@ -45,7 +45,7 @@ WebGLObject::WebGLObject(WebGLRenderingContextBase& context, PlatformGLObject ob
 
 WebGLObject::~WebGLObject() = default;
 
-RefPtr<WebGLRenderingContextBase> WebGLObject::context() const
+WebGLRenderingContextBase* WebGLObject::context() const
 {
     return m_context.get();
 }
@@ -57,7 +57,7 @@ Lock& WebGLObject::objectGraphLockForContext()
     return context()->objectGraphLock();
 }
 
-RefPtr<GraphicsContextGL> WebGLObject::graphicsContextGL() const
+GraphicsContextGL* WebGLObject::graphicsContextGL() const
 {
     return m_context ? m_context->graphicsContextGL() : nullptr;
 }

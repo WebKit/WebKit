@@ -35,7 +35,7 @@ class GeolocationCoordinates : public RefCounted<GeolocationCoordinates> {
 public:
     static Ref<GeolocationCoordinates> create(GeolocationPositionData&& position)
     {
-        return adoptRef(*new GeolocationCoordinates(WTFMove(position)));
+        return adoptRef(*new GeolocationCoordinates(WTF::move(position)));
     }
 
     Ref<GeolocationCoordinates> isolatedCopy() const

@@ -51,7 +51,7 @@ public:
     using BackendCallback = CompletionHandler<void(WebCore::ContentExtensions::ContentExtensionsBackend&)>;
     void contentExtensionsBackend(UserContentControllerIdentifier, BackendCallback&&);
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
 private:
@@ -59,8 +59,6 @@ private:
     void removeContentRuleList(UserContentControllerIdentifier, const String& name);
     void removeAllContentRuleLists(UserContentControllerIdentifier);
     void remove(UserContentControllerIdentifier);
-
-    Ref<NetworkProcess> protectedNetworkProcess() const;
 
     HashMap<UserContentControllerIdentifier, std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend>> m_contentExtensionBackends;
     HashMap<UserContentControllerIdentifier, Vector<BackendCallback>> m_pendingCallbacks;

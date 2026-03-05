@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 template<typename T>
 void testSmallSetOfUnsigned(unsigned n)
 {
-    SmallSet<T, IntHash<T>> set;
+    SmallSet<T, IntHash<T>, WTF::UnsignedWithZeroKeyHashTraits<T>> set;
 
     EXPECT_TRUE(set.isEmpty());
     EXPECT_EQ(set.size(), 0u);
@@ -107,7 +107,7 @@ void testSmallSetOfPointers()
 template<typename T>
 void testVectorsOfSmallSetsOfUnsigned()
 {
-    Vector<SmallSet<T, IntHash<T>>, 2> vector;
+    Vector<SmallSet<T, IntHash<T>, WTF::UnsignedWithZeroKeyHashTraits<T>>, 2> vector;
     vector.append({ });
     vector.append({ });
 

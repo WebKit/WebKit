@@ -110,7 +110,7 @@ function convert_to_inline_elements($element) {
     // Prettify list items
     if (isset($parent->tagName) && in_array($parent->tagName, ["ol", "ul"]) && $element->tagName == "li") {
         $span->setAttribute("class", "inline-list-item");
-        $prefix_string = $Node->tagName == "ol" ? " " . ($list_number++) . ". " : " • ";
+        $prefix_string = $parent->tagName == "ol" ? " " . ($list_number++) . ". " : " • ";
         $symbol = $Document->createTextNode($prefix_string);
         $span->insertBefore($symbol, $span->firstChild);
     }
@@ -121,6 +121,7 @@ function convert_to_inline_elements($element) {
 
 function get_child_text_node($Node, $child) {
     $target = $Node->$child;
+    if (!isset($target) || !is_object($target)) return $Node;
     while ($target->nodeType !== XML_TEXT_NODE) {
         if (method_exists($target, 'hasChildNodes') && $target->hasChildNodes()) {
             $target = $target->$child;

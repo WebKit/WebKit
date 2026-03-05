@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderListBox {SELECT} at (0,0) size 127x162 [bgcolor=#FFFFFF] [border: (12px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,162) size 781x66
-        RenderText {#text} at (0,0) size 62x22
+        RenderText {#text} at (0,-1) size 62x24
           text run at (0,0) width 62: "Results:"
-        RenderBR {BR} at (61,0) size 1x22
-        RenderText {#text} at (0,22) size 104x22
-          text run at (0,22) width 104: "Test 1 Passed"
-        RenderBR {BR} at (103,22) size 1x22
-        RenderText {#text} at (0,44) size 104x22
-          text run at (0,44) width 104: "Test 2 Passed"
+        RenderBR {BR} at (61,-1) size 1x24
+        RenderText {#text} at (0,21) size 104x24
+          text run at (0,21) width 104: "Test 1 Passed"
+        RenderBR {BR} at (103,21) size 1x24
+        RenderText {#text} at (0,43) size 104x24
+          text run at (0,43) width 104: "Test 2 Passed"

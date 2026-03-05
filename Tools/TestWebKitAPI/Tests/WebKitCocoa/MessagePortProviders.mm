@@ -65,6 +65,56 @@ TEST(MessagePort, Providers)
     [webView synchronouslyLoadHTMLString:@"<script>new MessageChannel;</script>"];
 }
 
+static constexpr auto portMessageMemoryBomb = R"PORTRESOURCE(
+<script>
+
+const { port1, port2 } = new MessageChannel();
+port2.close();
+
+var iterations = 0;
+
+setInterval(() => {
+    const bufferBomb = new ArrayBuffer(1e8);
+    const bomb = new Uint8Array(bufferBomb);
+    port1.postMessage(bomb, [bomb.buffer]);
+    ++iterations;
+}, 0);
+
+</script>
+)PORTRESOURCE"_s;
+
+TEST(MessagePort, MessageToClosedPort)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:portMessageMemoryBomb]];
+
+    RetainPtr networkProcessInfo = [WKProcessPool _networkingProcessInfo];
+    auto startingFootprint = [networkProcessInfo.get()[0] physicalFootprint];
+    auto startingPID = [networkProcessInfo.get()[0] pid];
+
+    bool done = false;
+    Util::waitFor([&] {
+        [webView evaluateJavaScript:@"iterations" completionHandler:^(id value, NSError *error) {
+            if (((NSNumber *)value).intValue > 100)
+                done = true;
+        }];
+        return done;
+    });
+
+    networkProcessInfo = [WKProcessPool _networkingProcessInfo];
+    auto endingFootprint = [networkProcessInfo.get()[0] physicalFootprint];
+    auto endingPID = [networkProcessInfo.get()[0] pid];
+
+    EXPECT_EQ(startingPID, endingPID);
+
+    // Each buffer bomb has a 100mb payload.
+    // Without the fix it gets memory pressure warnings and ends up gigabytes larger than starting.
+    // In experimentation with the fix, the networking process footprint ends up just under 200mb larger than when it started.
+    // Lets give it 300mb to be safe.
+    if (endingFootprint > startingFootprint)
+        EXPECT_LT(endingFootprint - startingFootprint, 300000000u);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)

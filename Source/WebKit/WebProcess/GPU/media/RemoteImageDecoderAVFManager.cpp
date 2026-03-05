@@ -89,14 +89,14 @@ void RemoteImageDecoderAVFManager::gpuProcessConnectionDidClose(GPUProcessConnec
 
 GPUProcessConnection& RemoteImageDecoderAVFManager::ensureGPUProcessConnection()
 {
-    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!gpuProcessConnection) {
-        gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
-        m_gpuProcessConnection = gpuProcessConnection;
+    if (!m_gpuProcessConnection.get()) {
+        Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection = gpuProcessConnection.get();
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteImageDecoderAVFManager::messageReceiverName(), *this);
     }
-    return *gpuProcessConnection.unsafeGet();
+    ASSERT(m_gpuProcessConnection.get() == &WebProcess::singleton().ensureGPUProcessConnection());
+    return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
 void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)
@@ -122,7 +122,7 @@ void RemoteImageDecoderAVFManager::encodedDataStatusChanged(const ImageDecoderId
     if (!m_remoteImageDecoders.contains(identifier))
         return;
 
-    auto remoteImageDecoder = m_remoteImageDecoders.get(identifier);
+    RefPtr remoteImageDecoder = m_remoteImageDecoders.get(identifier);
     if (!remoteImageDecoder)
         return;
 

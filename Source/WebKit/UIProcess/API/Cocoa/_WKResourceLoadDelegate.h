@@ -30,6 +30,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// FIXME: this delegate should be removed or replaced with something simpler: rdar://167643536
 WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 @protocol _WKResourceLoadDelegate <NSObject>
 
@@ -38,6 +39,8 @@ WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 - (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didPerformHTTPRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request;
 - (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge;
 - (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveResponse:(NSURLResponse *)response;
+
+// In some cases, this method can be called without a corresponding `didSendRequest:` (e.g. when the resource is fulfilled from the local disk cache).
 - (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didCompleteWithError:(nullable NSError *)error response:(nullable NSURLResponse *)response;
 
 @end

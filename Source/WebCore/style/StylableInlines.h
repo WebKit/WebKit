@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/ElementInlines.h>
-#include <WebCore/Styleable.h>
+#include "ElementInlines.h"
+#include "Styleable.h"
 
 namespace WebCore {
 

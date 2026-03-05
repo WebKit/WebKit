@@ -31,16 +31,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BackgroundFetchUpdateUIEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchUpdateUIEvent);
 
 Ref<BackgroundFetchUpdateUIEvent> BackgroundFetchUpdateUIEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto registration = init.registration;
-    return adoptRef(*new BackgroundFetchUpdateUIEvent(type, WTFMove(init), WTFMove(registration), isTrusted));
+    Ref registration = WTF::move(init.registration);
+    return adoptRef(*new BackgroundFetchUpdateUIEvent(type, WTF::move(init), WTF::move(registration), isTrusted));
 }
 
-BackgroundFetchUpdateUIEvent::BackgroundFetchUpdateUIEvent(const AtomString& type, ExtendableEventInit&& eventInit, RefPtr<BackgroundFetchRegistration>&& registration, IsTrusted isTrusted)
-    : BackgroundFetchEvent(EventInterfaceType::BackgroundFetchUpdateUIEvent, type, WTFMove(eventInit), WTFMove(registration), isTrusted)
+BackgroundFetchUpdateUIEvent::BackgroundFetchUpdateUIEvent(const AtomString& type, ExtendableEventInit&& eventInit, Ref<BackgroundFetchRegistration>&& registration, IsTrusted isTrusted)
+    : BackgroundFetchEvent(EventInterfaceType::BackgroundFetchUpdateUIEvent, type, WTF::move(eventInit), WTF::move(registration), isTrusted)
 {
 }
 

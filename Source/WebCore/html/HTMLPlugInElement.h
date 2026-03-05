@@ -45,7 +45,7 @@ class VoidCallback;
 enum class CreatePlugins : bool { No, Yes };
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLPlugInElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLPlugInElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLPlugInElement);
 public:
     virtual ~HTMLPlugInElement();
@@ -74,14 +74,14 @@ public:
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
     WEBCORE_EXPORT void pluginDestroyedWithPendingPDFTestCallback(RefPtr<VoidCallback>&&);
-    WEBCORE_EXPORT RefPtr<VoidCallback> takePendingPDFTestCallback();
+    WEBCORE_EXPORT RefPtr<VoidCallback> NODELETE takePendingPDFTestCallback();
 
-    RenderEmbeddedObject* renderEmbeddedObject() const;
+    RenderEmbeddedObject* NODELETE renderEmbeddedObject() const;
 
     virtual void updateWidget(CreatePlugins) = 0;
 
-    const String& serviceType() const { return m_serviceType; }
-    const String& url() const { return m_url; }
+    const String& serviceType() const LIFETIME_BOUND { return m_serviceType; }
+    const String& url() const LIFETIME_BOUND { return m_url; }
 
     bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }

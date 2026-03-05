@@ -50,7 +50,7 @@ CoreIPCArray::CoreIPCArray(CoreIPCArray&&) = default;
 CoreIPCArray::~CoreIPCArray() = default;
 
 CoreIPCArray::CoreIPCArray(Vector<CoreIPCNSCFObject>&& array)
-    : m_array(WTFMove(array)) { }
+    : m_array(WTF::move(array)) { }
 
 RetainPtr<id> CoreIPCArray::toID() const
 {

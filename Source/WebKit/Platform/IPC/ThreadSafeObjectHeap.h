@@ -89,7 +89,7 @@ private:
 
         ReferenceState() = default;
         explicit ReferenceState(HeldType&& object)
-            : object(WTFMove(object))
+            : object(WTF::move(object))
         {
         }
         explicit ReferenceState(uint64_t finalRead)
@@ -105,7 +105,7 @@ bool ThreadSafeObjectHeap<Identifier, HeldType>::add(const Reference& ref, HeldT
 {
     Locker locker { m_objectsLock };
     auto addResult = m_objects.ensure(ref, [&] {
-        return ReferenceState { WTFMove(object) };
+        return ReferenceState { WTF::move(object) };
     });
     if (!addResult.isNewEntry) {
         auto& state = addResult.iterator->value;
@@ -116,7 +116,7 @@ bool ThreadSafeObjectHeap<Identifier, HeldType>::add(const Reference& ref, HeldT
         }
         if (state.object)
             return false;
-        state.object = WTFMove(object);
+        state.object = WTF::move(object);
     }
     m_objectsCondition.notifyAll();
     return true;
@@ -176,7 +176,7 @@ auto ThreadSafeObjectHeap<Identifier, HeldType>::take(WriteReference&& write, Ti
                 return MappedTraits::take(MappedTraits::emptyValue());
 
             if (state.retiredReads == finalRead) {
-                auto result = MappedTraits::take(WTFMove(*state.object));
+                auto result = MappedTraits::take(WTF::move(*state.object));
                 m_objects.remove(it);
                 // Not notifying, as nothing can be waiting on a remove.
                 return result;
@@ -204,7 +204,7 @@ bool ThreadSafeObjectHeap<Identifier, HeldType>::remove(WriteReference&& write)
     if (state.finalRead || state.retiredReads > finalRead)
         return false;
     if (state.retiredReads == finalRead) {
-        object = WTFMove(*state.object); // Destroy the object later without the lock held.
+        object = WTF::move(*state.object); // Destroy the object later without the lock held.
         m_objects.remove(addResult.iterator);
     } else
         state.finalRead = finalRead;

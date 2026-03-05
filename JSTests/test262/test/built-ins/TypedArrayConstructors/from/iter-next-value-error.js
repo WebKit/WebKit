@@ -37,4 +37,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     TA.from(iter);
   });
-});
+}, null, ["passthrough"]);

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 756x39
+        RenderText {#text} at (0,0) size 756x40
           text run at (0,0) width 139: "This test verifies that "
           text run at (138,0) width 618: "accessing a frame's document while it is still loading does not prevent the load, but can access at"
           text run at (0,20) width 226: "least a temporary empty document."
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           layer at (0,0) size 300x40
             RenderBlock {HTML} at (0,0) size 300x40
               RenderBody {BODY} at (8,8) size 284x24
-                RenderText {#text} at (0,0) size 70x19
+                RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "SUCCESS"
         RenderBR {BR} at (300,25) size 0x19
         RenderIFrame {IFRAME} at (0,40) size 300x40
@@ -24,14 +24,14 @@ layer at (0,0) size 800x600
           layer at (0,0) size 300x40
             RenderBlock {HTML} at (0,0) size 300x40
               RenderBody {BODY} at (8,8) size 284x24
-                RenderText {#text} at (0,0) size 70x19
+                RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "SUCCESS"
         RenderBR {BR} at (300,65) size 0x19
-        RenderText {#text} at (0,80) size 166x19
+        RenderText {#text} at (0,80) size 166x20
           text run at (0,80) width 166: "[object HTMLDocument]"
-        RenderBR {BR} at (165,80) size 1x19
-        RenderText {#text} at (0,100) size 166x19
+        RenderBR {BR} at (165,80) size 1x20
+        RenderText {#text} at (0,100) size 166x20
           text run at (0,100) width 166: "[object HTMLDocument]"
       RenderBlock {P} at (0,192) size 784x20
-        RenderText {#text} at (0,0) size 622x19
+        RenderText {#text} at (0,0) size 622x20
           text run at (0,0) width 622: "If this test passes, you should see SUCCESS twice, followed by [object HTMLDocument] twice."

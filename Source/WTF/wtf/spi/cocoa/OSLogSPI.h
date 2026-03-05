@@ -25,9 +25,12 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
 #include <os/log.h>
+#include <wtf/Platform.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

@@ -222,7 +222,7 @@ void JSTestDefaultToJSONPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestDefaultToJSON::s_info = { "TestDefaultToJSON"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSON) };
 
 JSTestDefaultToJSON::JSTestDefaultToJSON(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSON>&& impl)
-    : JSDOMWrapper<TestDefaultToJSON>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestDefaultToJSON>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -306,7 +306,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_enabledByConditionalAttribute, (JSG
 static inline JSValue jsTestDefaultToJSON_eventHandlerAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return eventHandlerAttribute(thisObject.protectedWrapped(), eventNames().entHandlerAttributeEvent, protectedWorldForDOMObject(thisObject));
+    return eventHandlerAttribute(protect(thisObject.wrapped()), eventNames().entHandlerAttributeEvent, protect(worldForDOMObject(thisObject)));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_eventHandlerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -318,7 +318,7 @@ static inline bool setJSTestDefaultToJSON_eventHandlerAttributeSetter(JSGlobalOb
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
-    setEventHandlerAttribute<JSEventListener>(thisObject.protectedWrapped(), eventNames().entHandlerAttributeEvent, value, thisObject);
+    setEventHandlerAttribute<JSEventListener>(protect(thisObject.wrapped()), eventNames().entHandlerAttributeEvent, value, thisObject);
     vm.writeBarrier(&thisObject, value);
     ensureStillAliveHere(value);
 
@@ -419,7 +419,7 @@ static inline bool setJSTestDefaultToJSON_thirdUnJSONableAttributeSetter(JSGloba
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setThirdUnJSONableAttribute(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setThirdUnJSONableAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -551,7 +551,7 @@ static inline bool setJSTestDefaultToJSON_seventhDirectlyToJSONableAttributeSett
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setSeventhDirectlyToJSONableAttribute(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setSeventhDirectlyToJSONableAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -584,7 +584,7 @@ static inline bool setJSTestDefaultToJSON_eighthIndirectlyAttributeSetter(JSGlob
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEighthIndirectlyAttribute(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setEighthIndirectlyAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -857,7 +857,7 @@ void JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSON = static_cast<JSTestDefaultToJSON*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestDefaultToJSON->protectedWrapped().ptr(), jsTestDefaultToJSON);
+    uncacheWrapper(world, protect(jsTestDefaultToJSON->wrapped()).ptr(), jsTestDefaultToJSON);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -893,8 +893,8 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 {
     UNUSED_PARAM(lexicalGlobalObject);
     if (is<TestDefaultToJSONInherit>(impl))
-        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONInherit>(WTFMove(impl)));
-    return createWrapper<TestDefaultToJSON>(globalObject, WTFMove(impl));
+        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONInherit>(WTF::move(impl)));
+    return createWrapper<TestDefaultToJSON>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSON& impl)

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
+
 namespace WTF {
 
 WTF_EXPORT_PRIVATE void setCrashLogMessage(const char*);

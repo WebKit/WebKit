@@ -67,6 +67,9 @@ extern "C" {
 #define CL_KHR_DX9_MEDIA_SHARING_EXTENSION_NAME \
     "cl_khr_dx9_media_sharing"
 
+
+#define CL_KHR_DX9_MEDIA_SHARING_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
 typedef cl_uint             cl_dx9_media_adapter_type_khr;
 typedef cl_uint             cl_dx9_media_adapter_set_khr;
 
@@ -209,6 +212,9 @@ clEnqueueReleaseDX9MediaSurfacesKHR(
 #define CL_INTEL_DX9_MEDIA_SHARING_EXTENSION_NAME \
     "cl_intel_dx9_media_sharing"
 
+
+#define CL_INTEL_DX9_MEDIA_SHARING_EXTENSION_VERSION CL_MAKE_VERSION(0, 0, 0)
+
 typedef cl_uint             cl_dx9_device_source_intel;
 typedef cl_uint             cl_dx9_device_set_intel;
 
@@ -340,6 +346,9 @@ clEnqueueReleaseDX9ObjectsINTEL(
 #define cl_intel_sharing_format_query_dx9 1
 #define CL_INTEL_SHARING_FORMAT_QUERY_DX9_EXTENSION_NAME \
     "cl_intel_sharing_format_query_dx9"
+
+
+#define CL_INTEL_SHARING_FORMAT_QUERY_DX9_EXTENSION_VERSION CL_MAKE_VERSION(0, 0, 0)
 
 /* when cl_khr_dx9_media_sharing or cl_intel_dx9_media_sharing is supported */
 

@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 784x22
             RenderTableCell {TD} at (2,2) size 629x22 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (632,2) size 151x22 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 23x19
+              RenderText {#text} at (1,1) size 23x20
                 text run at (1,1) width 23: "test"
 layer at (274,11) size 100x20
   RenderBlock {DIV} at (264,1) size 101x20
-    RenderText {#text} at (0,0) size 56x19
+    RenderText {#text} at (0,0) size 56x20
       text run at (0,0) width 56: "ddddddd"

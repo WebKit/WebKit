@@ -48,12 +48,12 @@ public:
 
     static Ref<CachedBytecode> create(FileSystem::MappedFileData&& data, LeafExecutableMap&& leafExecutables = { })
     {
-        return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(WTFMove(data)), WTFMove(leafExecutables)));
+        return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(WTF::move(data)), WTF::move(leafExecutables)));
     }
 
     static Ref<CachedBytecode> create(MallocSpan<uint8_t, VMMalloc>&& data, LeafExecutableMap&& leafExecutables)
     {
-        return adoptRef(*new CachedBytecode(CachePayload::makeMallocPayload(WTFMove(data)), WTFMove(leafExecutables)));
+        return adoptRef(*new CachedBytecode(CachePayload::makeMallocPayload(WTF::move(data)), WTF::move(leafExecutables)));
     }
 
     LeafExecutableMap& leafExecutables() { return m_leafExecutables; }
@@ -72,8 +72,8 @@ public:
 private:
     CachedBytecode(CachePayload&& payload, LeafExecutableMap&& leafExecutables = { })
         : m_size(payload.size())
-        , m_payload(WTFMove(payload))
-        , m_leafExecutables(WTFMove(leafExecutables))
+        , m_payload(WTF::move(payload))
+        , m_leafExecutables(WTF::move(leafExecutables))
     {
     }
 

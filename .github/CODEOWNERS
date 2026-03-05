@@ -111,11 +111,15 @@ AllowedSPI*.toml @emw-apple
 /Source/WebCore/Modules/contact-picker @marcoscaceres
 /Source/WebCore/Modules/entriesapi @cdumez
 /Source/WebCore/Modules/geolocation @cdumez @marcoscaceres
-/Source/WebCore/Modules/model-element @marcoscaceres
+/Source/WebCore/Modules/model-element @mwyrzykowski @etiennesegonzac
 /Source/WebCore/Modules/notifications @cdumez
 /Source/WebCore/Modules/paymentrequest @aprotyas @marcoscaceres
 /Source/WebCore/Modules/permissions @marcoscaceres
+/Source/WebCore/Modules/credentialmanagement @marcoscaceres
+/Source/WebCore/Modules/gamepad @marcoscaceres
+/Source/WebCore/Modules/identity @marcoscaceres
 /Source/WebCore/Modules/screen-wake-lock @marcoscaceres
+/Source/WebCore/Modules/speech @marcoscaceres
 /Source/WebCore/Modules/web-locks @cdumez
 /Source/WebCore/Modules/webaudio @cdumez
 /Source/WebCore/bindings @cdumez
@@ -133,13 +137,21 @@ AllowedSPI*.toml @emw-apple
 /Source/WebCore/animation @graouts
 
 /LayoutTests/http/tests/paymentrequest @aprotyas @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/badging @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/contenteditable @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/gamepad @marcoscaceres
 /LayoutTests/http/tests/ssl/applepay @aprotyas
 /LayoutTests/http/tests/ssl/applepay-ams-ui @aprotyas
 /LayoutTests/imported/w3c/web-platform-tests/geolocation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/merchant-validation @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/payment-request @aprotyas @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/resources @gsnedders
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/speech-api @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/tools @gsnedders
 /LayoutTests/imported/w3c/web-platform-tests/web-share @marcoscaceres
 
@@ -162,11 +174,15 @@ AllowedSPI*.toml @emw-apple
 /Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
 /Source/WebKit/WebKitSwift @rr-codes
+/Source/WebKit/UIProcess/DigitalCredentials @marcoscaceres
 /Source/WebKit/WebProcess @cdumez
+/Source/WebKit/WebProcess/DigitalCredentials @marcoscaceres
+/Source/WebKit/WebKitSwift/IdentityDocumentServices @marcoscaceres
 /Source/WebKit/WebProcess/ApplePay @aprotyas
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
 /Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
+/Source/WebKit/Scripts/webkit/opaque_ipc_types.* @sheeparegreat
 
 # ================================================================================
 # WebDriver
@@ -177,7 +193,6 @@ AllowedSPI*.toml @emw-apple
 # CMake
 
 /Source/cmake/WebKitCompilerFlags.cmake @mcatanzaro
-/Source/cmake/WebKitFeatures.cmake @mcatanzaro
 
 # ================================================================================
 # Xcode

@@ -71,7 +71,7 @@ public:
 
     enum class Type : bool { Repeating, OneShot };
     RunLoopObserver(WellKnownOrder order, RunLoopObserverCallback&& callback, Type type = Type::Repeating)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
         , m_type(type)
 #if USE(CF) || USE(GLIB)
         , m_order(order)

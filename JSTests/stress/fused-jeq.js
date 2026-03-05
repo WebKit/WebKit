@@ -59,7 +59,7 @@ function testJEQF(a, b)
 }
 noInline(testJEQF);
 
-for (var i = 0; i < 1e4; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(testJNEQ(0, 42), 30);
     shouldBe(testJEQ(0, 42), 42);
     shouldBe(testJNEQB(0, 0), 1);

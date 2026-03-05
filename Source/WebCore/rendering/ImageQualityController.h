@@ -46,7 +46,7 @@ class ImageQualityController {
 public:
     explicit ImageQualityController(const RenderView&);
 
-    static std::optional<InterpolationQuality> interpolationQualityFromStyle(const RenderStyle&);
+    static std::optional<InterpolationQuality> NODELETE interpolationQualityFromStyle(const RenderStyle&);
     static InterpolationQuality chooseInterpolationQualityForSVG(GraphicsContext&, const RenderElement&, Image&);
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
 

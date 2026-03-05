@@ -59,10 +59,10 @@ RefPtr<CSSValue> convertToCSSValue(TimelineRangeValue&& value, RefPtr<Element> e
                 return offset->toCSSValue();
             return nullptr;
         },
-        [&](RefPtr<CSSKeywordValue> rangeKeyword) {
+        [&](Ref<CSSKeywordValue> rangeKeyword) {
             return rangeKeyword->toCSSValue();
         },
-        [&](RefPtr<CSSNumericValue> rangeValue) {
+        [&](Ref<CSSNumericValue> rangeValue) {
             return rangeValue->toCSSValue();
         }
     );

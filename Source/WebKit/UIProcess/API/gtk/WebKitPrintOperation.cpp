@@ -281,9 +281,7 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
     gtk_print_unix_dialog_set_manual_capabilities(printDialog, static_cast<GtkPrintCapabilities>(GTK_PRINT_CAPABILITY_NUMBER_UP
         | GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT | GTK_PRINT_CAPABILITY_PAGE_SET | GTK_PRINT_CAPABILITY_REVERSE
         | GTK_PRINT_CAPABILITY_COPIES | GTK_PRINT_CAPABILITY_COLLATE | GTK_PRINT_CAPABILITY_SCALE
-#if USE(SKIA)
         | GTK_PRINT_CAPABILITY_GENERATE_PDF
-#endif
         ));
 
     WebKitPrintOperationPrivate* priv = printOperation->priv;
@@ -396,7 +394,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
 
         if (!data || !error.isNull()) {
             if (!error.isNull())
-                webkitPrintOperationFailed(printOperation.get(), WTFMove(error));
+                webkitPrintOperationFailed(printOperation.get(), WTF::move(error));
             else
                 webkitPrintOperationFinished(printOperation.get());
             return;
@@ -471,14 +469,14 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
     GUniqueOutPtr<GError> error;
     auto fd = UnixFileDescriptor { g_file_open_tmp("webkitgtkprintXXXXXX", &filename.outPtr(), &error.outPtr()), UnixFileDescriptor::Adopt };
     if (error) {
-        webkitPrintOperationFailed(printOperation, WTFMove(error));
+        webkitPrintOperationFailed(printOperation, WTF::move(error));
         return;
     }
     RELEASE_ASSERT(fd);
 
     GUniquePtr<char> uri(g_filename_to_uri(filename.get(), nullptr, &error.outPtr()));
     if (error) {
-        webkitPrintOperationFailed(printOperation, WTFMove(error));
+        webkitPrintOperationFailed(printOperation, WTF::move(error));
         return;
     }
 
@@ -497,7 +495,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
 
         if (!data || !error.isNull()) {
             if (!error.isNull())
-                webkitPrintOperationFailed(printOperation.get(), WTFMove(error));
+                webkitPrintOperationFailed(printOperation.get(), WTF::move(error));
             else
                 webkitPrintOperationFinished(printOperation.get());
             return;
@@ -512,7 +510,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
         }
 
         PrintPortalJobData* callbackData = createPrintPortalJobData();
-        callbackData->printOperation = WTFMove(printOperation);
+        callbackData->printOperation = WTF::move(printOperation);
         callbackData->token = token;
 
         // "Print" the memory buffer into a temporary file, since the Print portal may take an
@@ -533,7 +531,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
             GUniqueOutPtr<GError> localError;
             GUniquePtr<char> filename(g_filename_from_uri(gtk_print_settings_get(printSettings, GTK_PRINT_SETTINGS_OUTPUT_URI), nullptr, &localError.outPtr()));
             if (localError) {
-                webkitPrintOperationFailed(printOperation.get(), WTFMove(localError));
+                webkitPrintOperationFailed(printOperation.get(), WTF::move(localError));
                 return;
             }
 
@@ -546,7 +544,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
             GRefPtr<GUnixFDList> fdList(g_unix_fd_list_new());
             int fdIndex = g_unix_fd_list_append(fdList.get(), fd.value(), &localError.outPtr());
             if (localError) {
-                webkitPrintOperationFailed(printOperation.get(), WTFMove(localError));
+                webkitPrintOperationFailed(printOperation.get(), WTF::move(localError));
                 return;
             }
 
@@ -563,7 +561,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
                     GUniqueOutPtr<GError> error;
                     GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
                     if (error)
-                        webkitPrintOperationFailed(printOperation.get(), WTFMove(error));
+                        webkitPrintOperationFailed(printOperation.get(), WTF::move(error));
                     else
                         webkitPrintOperationFinished(printOperation.get());
                 }, printOperation.leakRef());
@@ -620,18 +618,14 @@ static void webkitPrintOperationPreparePrint(WebKitPrintOperation* printOperatio
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
 
-#if USE(SKIA)
     GRefPtr<GVariant> portalVersion = adoptGRef(g_dbus_proxy_get_cached_property(priv->portalProxy.get(), "version"));
     if (portalVersion && g_variant_get_uint32(portalVersion.get()) >= 3)
         g_variant_builder_add(&options, "{sv}", "supported_output_file_formats", g_variant_new_strv((const char* const[]) { "pdf" }, 1));
-#endif
 
     const char* title = _("Print Web Page");
     GRefPtr<GtkPageSetup> pageSetup = priv->pageSetup ? priv->pageSetup : adoptGRef(gtk_page_setup_new());
     GRefPtr<GtkPrintSettings> printSettings = adoptGRef(priv->printSettings ? gtk_print_settings_copy(priv->printSettings.get()) : gtk_print_settings_new());
-#if USE(SKIA)
     gtk_print_settings_set(printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_FILE_FORMAT, "pdf");
-#endif
 
     GRefPtr<GVariant> arguments(g_variant_new("(ss@a{sv}@a{sv}a{sv})", "", title, gtk_print_settings_to_gvariant(printSettings.get()), gtk_page_setup_to_gvariant(pageSetup.get()), &options));
 

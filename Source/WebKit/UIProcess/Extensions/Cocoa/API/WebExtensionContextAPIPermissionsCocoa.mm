@@ -68,7 +68,7 @@ void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String
     }
 
     if (hasGrantedAccessToAllURLsOrHosts) {
-        auto combinedPermissionMatchPatterns = protectedExtension()->combinedPermissionMatchPatterns();
+        auto combinedPermissionMatchPatterns = protect(extension())->combinedPermissionMatchPatterns();
         bool appendedMatchAllURLsOrHostsPattern = false;
 
         for (auto& matchPattern : combinedPermissionMatchPatterns) {
@@ -83,7 +83,7 @@ void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String
             origins.append(WebExtensionMatchPattern::allHostsAndSchemesMatchPattern()->string());
     }
 
-    completionHandler(WTFMove(permissions), WTFMove(origins));
+    completionHandler(WTF::move(permissions), WTF::move(origins));
 }
 
 void WebExtensionContext::permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
@@ -130,14 +130,14 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
     };
 
     Ref resultHolder = ResultHolder::create();
-    Ref callbackAggregator = CallbackAggregator::create([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), resultHolder, permissions, matchPatterns]() mutable {
+    Ref callbackAggregator = CallbackAggregator::create([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), resultHolder, permissions, matchPatterns]() mutable {
         if (!resultHolder->matchPatternsAreGranted || !resultHolder->permissionsAreGranted) {
             completionHandler(false);
             return;
         }
 
-        grantPermissionMatchPatterns(WTFMove(resultHolder->neededMatchPatterns), resultHolder->matchPatternExpirationDate);
-        grantPermissions(WTFMove(resultHolder->neededPermissions), resultHolder->permissionExpirationDate);
+        grantPermissionMatchPatterns(WTF::move(resultHolder->neededMatchPatterns), resultHolder->matchPatternExpirationDate);
+        grantPermissions(WTF::move(resultHolder->neededPermissions), resultHolder->permissionExpirationDate);
 
         completionHandler(true);
     });
@@ -145,14 +145,14 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
     requestPermissionMatchPatterns(matchPatterns, nullptr, [callbackAggregator, resultHolder](MatchPatternSet&& neededMatchPatterns, MatchPatternSet&& allowedMatchPatterns, WallTime expirationDate) {
         // The permissions.request() API only allows granting all or none.
         resultHolder->matchPatternsAreGranted = neededMatchPatterns.size() == allowedMatchPatterns.size();
-        resultHolder->neededMatchPatterns = WTFMove(neededMatchPatterns);
+        resultHolder->neededMatchPatterns = WTF::move(neededMatchPatterns);
         resultHolder->permissionExpirationDate = expirationDate;
     }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
 
     requestPermissions(permissions, nullptr, [callbackAggregator, resultHolder](PermissionsSet&& neededPermissions, PermissionsSet&& allowedPermissions, WallTime expirationDate) {
         // The permissions.request() API only allows granting all or none.
         resultHolder->permissionsAreGranted = neededPermissions.size() == allowedPermissions.size();
-        resultHolder->neededPermissions = WTFMove(neededPermissions);
+        resultHolder->neededPermissions = WTF::move(neededPermissions);
         resultHolder->matchPatternExpirationDate = expirationDate;
     }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
 }

@@ -1327,6 +1327,10 @@ class LabelReference < Node
         $labelMapping[name].is_a? Label and $labelMapping[name].extern?
     end
 
+    def externOrGlobal?
+        extern? or label.global?
+    end
+
     def used
         if !$referencedExternLabels.include?(@label) and extern?
             $referencedExternLabels.push(@label)

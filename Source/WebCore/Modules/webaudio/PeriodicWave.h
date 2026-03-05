@@ -66,7 +66,7 @@ public:
     // Returns the scalar multiplier to the oscillator frequency to calculate wave table phase increment.
     float rateScale() const { return m_rateScale; }
 
-    unsigned periodicWaveSize() const;
+    unsigned NODELETE periodicWaveSize() const;
     float sampleRate() const { return m_sampleRate; }
 
 private:
@@ -94,7 +94,7 @@ private:
     unsigned numberOfRanges() const { return m_numberOfRanges; }
 
     // Maximum possible number of partials (before culling).
-    unsigned maxNumberOfPartials() const;
+    unsigned NODELETE maxNumberOfPartials() const;
 
     unsigned numberOfPartialsForRange(unsigned rangeIndex) const;
 

@@ -49,8 +49,6 @@
 
 #if PLATFORM(PLAYSTATION)
 #include "LayerTreeHostPlayStation.h"
-#else
-#include "LayerTreeHost.h"
 #endif
 
 #if USE(GLIB_EVENT_LOOP)
@@ -70,9 +68,6 @@ DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage,
     , m_exitCompositingTimer(RunLoop::mainSingleton(), "DrawingAreaCoordinatedGraphics::ExitCompositingTimer"_s, this, &DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode)
     , m_displayTimer(RunLoop::mainSingleton(), "DrawingAreaCoordinatedGraphics::DisplayTimer"_s, this, &DrawingAreaCoordinatedGraphics::displayTimerFired)
 {
-#if USE(GLIB_EVENT_LOOP) && !PLATFORM(WPE)
-    m_displayTimer.setPriority(RunLoopSourcePriority::NonAcceleratedDrawingTimer);
-#endif
 }
 
 DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics() = default;
@@ -182,7 +177,7 @@ void DrawingAreaCoordinatedGraphics::updateRenderingWithForcedRepaintAsync(WebPa
     if (m_layerTreeStateIsFrozen)
         return completionHandler();
 
-    m_layerTreeHost->updateRenderingWithForcedRepaintAsync(WTFMove(completionHandler));
+    m_layerTreeHost->updateRenderingWithForcedRepaintAsync(WTF::move(completionHandler));
 }
 
 void DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen(bool isFrozen)
@@ -206,10 +201,6 @@ void DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen(bool isFrozen)
 void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore& store)
 {
     Settings& settings = m_webPage->corePage()->settings();
-#if PLATFORM(GTK)
-    if (settings.acceleratedCompositingEnabled())
-        WebProcess::singleton().initializePlatformDisplayIfNeeded();
-#endif
     settings.setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
     // Fixed position elements need to be composited and create stacking contexts
     // in order to be scrolled by the ScrollingCoordinator.
@@ -378,7 +369,7 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
         } else
             display(updateInfo);
         if (!m_layerTreeHost)
-            send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
+            send(Messages::DrawingAreaProxy::Update(0, WTF::move(updateInfo)));
     }
 
     completionHandler();
@@ -400,80 +391,6 @@ void DrawingAreaCoordinatedGraphics::displayDidRefresh(MonotonicTime)
     // Display if needed. We call displayTimerFired here since it will throttle updates to 60fps.
     displayTimerFired();
 }
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-void DrawingAreaCoordinatedGraphics::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID callbackID)
-{
-    m_pendingAfterDrawCallbackIDs.append(callbackID);
-    if (m_layerTreeHost) {
-        if (!m_layerTreeStateIsFrozen) {
-            m_layerTreeHost->ensureDrawing();
-            return;
-        }
-    } else {
-        if (!m_isPaintingSuspended) {
-            scheduleDisplay();
-            return;
-        }
-    }
-
-    // We can't ensure drawing, so process pending callbacks.
-    dispatchPendingCallbacksAfterEnsuringDrawing();
-}
-
-void DrawingAreaCoordinatedGraphics::dispatchPendingCallbacksAfterEnsuringDrawing()
-{
-    if (m_pendingAfterDrawCallbackIDs.isEmpty())
-        return;
-
-    send(Messages::DrawingAreaProxy::DispatchPresentationCallbacksAfterFlushingLayers(m_pendingAfterDrawCallbackIDs));
-    m_pendingAfterDrawCallbackIDs.clear();
-}
-#endif
-
-#if PLATFORM(GTK)
-void DrawingAreaCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
-{
-    if (!m_transientZoom) {
-        RefPtr frameView = m_webPage->localMainFrameView();
-        if (!frameView)
-            return;
-
-        FloatRect unobscuredContentRect = frameView->unobscuredContentRectIncludingScrollbars();
-
-        m_transientZoom = true;
-        m_transientZoomInitialOrigin = unobscuredContentRect.location();
-    }
-
-    if (m_layerTreeHost) {
-        m_layerTreeHost->adjustTransientZoom(scale, origin);
-        return;
-    }
-
-    // We can't do transient zoom for non-AC mode, so just zoom in place instead.
-
-    FloatPoint unscrolledOrigin(origin);
-    unscrolledOrigin.moveBy(-m_transientZoomInitialOrigin);
-
-    Ref webPage = m_webPage.get();
-    webPage->scalePage(scale / webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
-}
-
-void DrawingAreaCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin, CompletionHandler<void()>&& completionHandler)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->commitTransientZoom(scale, origin);
-
-    FloatPoint unscrolledOrigin(origin);
-    unscrolledOrigin.moveBy(-m_transientZoomInitialOrigin);
-
-    Ref webPage = m_webPage.get();
-    webPage->scalePage(scale / webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
-
-    m_transientZoom = false;
-    completionHandler();
-}
-#endif
 
 void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingModeSoon()
 {
@@ -523,13 +440,6 @@ void DrawingAreaCoordinatedGraphics::resumePainting()
 
 void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
-#if PLATFORM(GTK)
-    if (!m_alwaysUseCompositing) {
-        m_webPage->corePage()->settings().setForceCompositingMode(true);
-        m_alwaysUseCompositing = true;
-    }
-#endif
-
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
@@ -614,12 +524,12 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode()
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
     if (m_compositingAccordingToProxyMessages) {
-        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, WTFMove(updateInfo)));
+        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, WTF::move(updateInfo)));
         m_compositingAccordingToProxyMessages = false;
     } else {
         // If we left accelerated compositing mode before we sent an EnterAcceleratedCompositingMode message to the
         // UI process, we still need to let it know about the new contents, so send an Update message.
-        send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
+        send(Messages::DrawingAreaProxy::Update(0, WTF::move(updateInfo)));
     }
 }
 
@@ -670,15 +580,11 @@ void DrawingAreaCoordinatedGraphics::display()
         return;
     }
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    dispatchPendingCallbacksAfterEnsuringDrawing();
-#endif
-
     if (m_compositingAccordingToProxyMessages) {
-        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, WTFMove(updateInfo)));
+        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, WTF::move(updateInfo)));
         m_compositingAccordingToProxyMessages = false;
     } else
-        send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
+        send(Messages::DrawingAreaProxy::Update(0, WTF::move(updateInfo)));
     m_isWaitingForDidUpdate = true;
     m_scheduledWhileWaitingForDidUpdate = false;
 }
@@ -736,7 +642,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
         return;
 
     if (auto handle = bitmap->createHandle())
-        updateInfo.bitmapHandle = WTFMove(*handle);
+        updateInfo.bitmapHandle = WTF::move(*handle);
     else
         return;
 
@@ -789,14 +695,6 @@ void DrawingAreaCoordinatedGraphics::didDiscardBackingStore()
     m_dirtyRegion = m_webPage->bounds();
 }
 
-#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
-void DrawingAreaCoordinatedGraphics::preferredBufferFormatsDidChange()
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->preferredBufferFormatsDidChange();
-}
-#endif
-
 #if ENABLE(DAMAGE_TRACKING)
 void DrawingAreaCoordinatedGraphics::resetDamageHistoryForTesting()
 {
@@ -807,17 +705,7 @@ void DrawingAreaCoordinatedGraphics::resetDamageHistoryForTesting()
 void DrawingAreaCoordinatedGraphics::foreachRegionInDamageHistoryForTesting(Function<void(const Region&)>&& callback) const
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->foreachRegionInDamageHistoryForTesting(WTFMove(callback));
-}
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-void DrawingAreaCoordinatedGraphics::fillGLInformation(RenderProcessInfo&& info, CompletionHandler<void(RenderProcessInfo&&)>&& completionHandler)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->fillGLInformation(WTFMove(info), WTFMove(completionHandler));
-    else
-        completionHandler(WTFMove(info));
+        m_layerTreeHost->foreachRegionInDamageHistoryForTesting(WTF::move(callback));
 }
 #endif
 

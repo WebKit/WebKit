@@ -14,12 +14,12 @@ info: |
   6. Let targetOffset be ? ToInteger(offset).
   7. If targetOffset < 0, throw a RangeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(4);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(4));
 
   assert.throws(RangeError, function() {
     sample.set([1n], -1);

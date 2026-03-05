@@ -10,7 +10,7 @@ info: |
   ...
   6. Let offset be the value of O's [[ByteOffset]] internal slot.
   7. Return size.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -28,4 +28,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   var sample = new TA(buffer2, offset);
   var ta3 = new TA(sample);
   assert.sameValue(ta3.byteOffset, 0, "TA(typedArray)");
-});
+}, null, ["passthrough"]);

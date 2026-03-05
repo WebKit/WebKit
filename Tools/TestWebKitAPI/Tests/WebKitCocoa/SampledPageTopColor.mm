@@ -27,6 +27,7 @@
 
 #import "TestCocoa.h"
 #import "TestWKWebView.h"
+#import "UserInterfaceSwizzler.h"
 #import "Utilities.h"
 #import <WebCore/Color.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -37,6 +38,10 @@
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>
+
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
+#import "IOSMouseEventTestHarness.h"
+#endif
 
 #define EXPECT_IN_RANGE(actual, min, max) \
     EXPECT_GE(actual, min); \
@@ -61,7 +66,7 @@
 
     _observable = observable;
     _keyPath = keyPath;
-    _callback = WTFMove(callback);
+    _callback = WTF::move(callback);
 
     [_observable addObserver:self forKeyPath:_keyPath.get() options:0 context:nil];
 
@@ -81,6 +86,8 @@
 }
 
 @end
+
+namespace TestWebKitAPI {
 
 static RetainPtr<TestWKWebView> createWebViewWithSampledPageTopColorMaxDifference(double sampledPageTopColorMaxDifference, double sampledPageTopColorMinHeight = 0)
 {
@@ -106,7 +113,7 @@ static void waitForSampledPageTopColorToChange(TestWKWebView *webView, Function<
 
 static void waitForSampledPageTopColorToChangeForHTML(TestWKWebView *webView, String&& html)
 {
-    waitForSampledPageTopColorToChange(webView, [webView, html = WTFMove(html)] () mutable {
+    waitForSampledPageTopColorToChange(webView, [webView, html = WTF::move(html)] () mutable {
         [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:html.createNSString().get()];
     });
 }
@@ -117,10 +124,10 @@ static String createHTMLGradientWithColorStops(String&& direction, Vector<String
 
     StringBuilder gradientBuilder;
     gradientBuilder.append("<body style=\"background-image: linear-gradient(to "_s);
-    gradientBuilder.append(WTFMove(direction));
-    for (auto&& colorStop : WTFMove(colorStops)) {
+    gradientBuilder.append(WTF::move(direction));
+    for (auto&& colorStop : WTF::move(colorStops)) {
         gradientBuilder.append(", "_s);
-        gradientBuilder.append(WTFMove(colorStop));
+        gradientBuilder.append(WTF::move(colorStop));
     }
     gradientBuilder.append(")\">Test"_s);
     return gradientBuilder.toString();
@@ -512,3 +519,86 @@ TEST(SampledPageTopColor, TopColorExtensionWhenRubberBanding)
 }
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL) && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION))
+
+TEST(SampledPageTopColor, ForcedUserGestureFromJSInjectionDoesNotPreventTopEdgeSampling)
+{
+#if PLATFORM(IOS_FAMILY)
+    IPadUserInterfaceSwizzler iPadUserInterface;
+#endif
+    RetainPtr webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+
+#if PLATFORM(IOS_FAMILY)
+    auto insets = UIEdgeInsetsMake(75, 0, 0, 0);
+    auto insetSize = UIEdgeInsetsInsetRect([webView bounds], insets).size;
+    [webView _setObscuredInsets:insets];
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    [scrollView setContentInset:insets];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:insetSize minimumUnobscuredSizeOverride:insetSize maximumUnobscuredSizeOverride:insetSize];
+#else
+    [webView _setTopContentInset:75];
+#endif
+
+    [webView synchronouslyLoadTestPageNamed:@"top-fixed-element"];
+    [webView waitForNextPresentationUpdate];
+
+    {
+        auto components = CGColorGetComponents([webView _sampledTopFixedPositionContentColor].CGColor);
+        EXPECT_IN_RANGE(components[0], 0.99, 1.01);
+        EXPECT_IN_RANGE(components[1], 0.38, 0.39);
+        EXPECT_IN_RANGE(components[2], 0.27, 0.28);
+        EXPECT_EQ(components[3], 1);
+    }
+
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"'injected'"];
+
+    bool done = false;
+    RetainPtr topColorObserver = adoptNS([[TestKVOWrapper alloc] initWithObservable:webView.get() keyPath:@"_sampledTopFixedPositionContentColor" callback:[&] {
+        done = true;
+    }]);
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'blue'"];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE([webView _fixedContainerEdges] & _WKRectEdgeTop);
+
+    {
+        auto components = CGColorGetComponents([webView _sampledTopFixedPositionContentColor].CGColor);
+        EXPECT_IN_RANGE(components[0], -0.01, 0.01);
+        EXPECT_IN_RANGE(components[1], -0.01, 0.01);
+        EXPECT_IN_RANGE(components[2], 0.99, 1.01);
+        EXPECT_EQ(components[3], 1);
+    }
+
+    // Now make sure actual user interaction *does* prevent top edge sampling still.
+    [webView objectByEvaluatingJavaScript:@"var btn = document.createElement('button'); btn.id = 'changeColor'; btn.textContent = 'Change'; btn.style.cssText = 'position: absolute; top: 200px; left: 50px'; btn.onclick = function() { document.querySelector('header').style.backgroundColor = 'yellow'; }; document.body.appendChild(btn); void(0)"];
+    [webView waitForNextPresentationUpdate];
+
+    id buttonRect = [webView objectByEvaluatingJavaScript:@"var r = document.getElementById('changeColor').getBoundingClientRect(); ({left: r.left, top: r.top, width: r.width, height: r.height})"];
+    CGFloat buttonX = [buttonRect[@"left"] floatValue] + [buttonRect[@"width"] floatValue] / 2;
+    CGFloat buttonY = [buttonRect[@"top"] floatValue] + [buttonRect[@"height"] floatValue] / 2;
+#if PLATFORM(IOS_FAMILY)
+    {
+        TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+        testHarness.mouseMove(buttonX, buttonY);
+        testHarness.mouseDown();
+        testHarness.mouseUp();
+    }
+#else
+    [webView sendClickAtPoint:NSMakePoint(buttonX, [webView frame].size.height - buttonY)];
+#endif
+    [webView waitForNextPresentationUpdate];
+
+    {
+        auto components = CGColorGetComponents([webView _sampledTopFixedPositionContentColor].CGColor);
+        EXPECT_IN_RANGE(components[0], -0.01, 0.01);
+        EXPECT_IN_RANGE(components[1], -0.01, 0.01);
+        EXPECT_IN_RANGE(components[2], 0.99, 1.01);
+        EXPECT_EQ(components[3], 1);
+    }
+}
+
+#endif
+
+}

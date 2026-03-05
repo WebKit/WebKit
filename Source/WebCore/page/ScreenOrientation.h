@@ -39,7 +39,7 @@ namespace WebCore {
 class DeferredPromise;
 
 class ScreenOrientation final : public ActiveDOMObject, public EventTarget, public ScreenOrientationManagerObserver, public VisibilityChangeClient, public RefCounted<ScreenOrientation> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ScreenOrientation);
+    WTF_MAKE_TZONE_ALLOCATED(ScreenOrientation);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -60,7 +60,7 @@ public:
 private:
     ScreenOrientation(Document*);
 
-    Document* document() const;
+    Document* NODELETE document() const;
     ScreenOrientationManager* manager() const;
 
     bool shouldListenForChangeNotification() const;
@@ -73,13 +73,13 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::ScreenOrientation; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
     void eventListenersDidChange() final;
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;
@@ -88,3 +88,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(ScreenOrientation)

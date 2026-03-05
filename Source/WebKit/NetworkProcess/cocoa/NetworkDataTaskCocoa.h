@@ -78,7 +78,7 @@ public:
     void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
     String suggestedFilename() const override;
 
-    WebCore::NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
+    WebCore::NetworkLoadMetrics& networkLoadMetrics() LIFETIME_BOUND { return m_networkLoadMetrics; }
 
     std::optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }

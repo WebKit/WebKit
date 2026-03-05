@@ -61,10 +61,10 @@ public:
     virtual ~MutationRecord();
 
     virtual const AtomString& type() = 0;
-    virtual Node* target() = 0;
+    virtual Node& NODELETE target() = 0;
 
-    virtual NodeList* addedNodes() = 0;
-    virtual NodeList* removedNodes() = 0;
+    virtual NodeList& addedNodes() = 0;
+    virtual NodeList& removedNodes() = 0;
     virtual Node* previousSibling() { return 0; }
     virtual Node* nextSibling() { return 0; }
 

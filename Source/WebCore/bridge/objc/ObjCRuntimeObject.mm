@@ -48,7 +48,7 @@ void ObjCRuntimeObject::finishCreation(VM& vm)
 
 ObjcInstance* ObjCRuntimeObject::getInternalObjCInstance() const
 {
-    return static_cast<ObjcInstance*>(getInternalInstance());
+    return downcast<ObjcInstance>(getInternalInstance());
 }
 
 

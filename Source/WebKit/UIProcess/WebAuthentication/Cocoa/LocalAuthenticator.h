@@ -58,7 +58,7 @@ public:
 
     static Ref<LocalAuthenticator> create(Ref<LocalConnection>&& connection)
     {
-        return adoptRef(*new LocalAuthenticator(WTFMove(connection)));
+        return adoptRef(*new LocalAuthenticator(WTF::move(connection)));
     }
 
     static void clearAllCredentials();

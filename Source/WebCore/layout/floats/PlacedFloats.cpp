@@ -29,13 +29,13 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutShape.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PlacedFloats);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlacedFloats);
 
 PlacedFloats::Item::Item(const Box& layoutBox, Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line)
     : m_layoutBox(layoutBox)
@@ -51,7 +51,7 @@ PlacedFloats::Item::Item(Position position, const BoxGeometry& absoluteBoxGeomet
     : m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
     , m_localTopLeft(localTopLeft)
-    , m_shape(WTFMove(shape))
+    , m_shape(WTF::move(shape))
 {
 }
 
@@ -115,8 +115,8 @@ bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingCon
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     ASSERT(!is<InitialContainingBlock>(m_layoutBox));
-    for (auto& containingBlock : containingBlockChain(*m_layoutBox)) {
-        if (&containingBlock == &formattingContextRoot)
+    for (CheckedRef containingBlock : containingBlockChain(*m_layoutBox)) {
+        if (containingBlock.ptr() == &formattingContextRoot)
             return true;
     }
     ASSERT_NOT_REACHED();

@@ -39,7 +39,7 @@ public:
 
 class WEBCORE_EXPORT OriginAccessPatternsForWebProcess final : public OriginAccessPatterns {
 public:
-    static OriginAccessPatternsForWebProcess& singleton();
+    static OriginAccessPatternsForWebProcess& NODELETE singleton();
     void allowAccessTo(const UserContentURLPattern&);
 private:
     bool anyPatternMatches(const URL&) const final;

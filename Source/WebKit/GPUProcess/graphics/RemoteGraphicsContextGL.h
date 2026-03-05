@@ -170,7 +170,6 @@ protected:
 private:
     bool webXREnabled() const;
     bool webXRPromptAccepted() const;
-    RefPtr<GCGLContext> protectedContext();
 
 protected:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

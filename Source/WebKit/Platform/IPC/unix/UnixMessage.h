@@ -111,8 +111,8 @@ public:
     }
 
     UnixMessage(UnixMessage&& other)
-        : m_attachments(WTFMove(other.m_attachments))
-        , m_messageInfo(WTFMove(other.m_messageInfo))
+        : m_attachments(WTF::move(other.m_attachments))
+        , m_messageInfo(WTF::move(other.m_messageInfo))
     {
         if (other.m_bodyOwned) {
             std::swap(m_body, other.m_body);
@@ -134,15 +134,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             fastFree(m_body.data());
     }
 
-    const Vector<Attachment>& attachments() const { return m_attachments; }
-    MessageInfo& messageInfo() { return m_messageInfo; }
+    const Vector<Attachment>& attachments() const LIFETIME_BOUND { return m_attachments; }
+    MessageInfo& messageInfo() LIFETIME_BOUND { return m_messageInfo; }
 
     std::span<uint8_t> body() const { return m_body; }
     size_t bodySize() const  { return m_messageInfo.bodySize(); }
 
     void appendAttachment(Attachment&& attachment)
     {
-        m_attachments.append(WTFMove(attachment));
+        m_attachments.append(WTF::move(attachment));
     }
 
     bool setBodyOutOfLine()

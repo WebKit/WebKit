@@ -83,7 +83,7 @@ class RtcEventProbeClusterCreated final : public RtcEvent {
   }
 
  private:
-  RtcEventProbeClusterCreated(const RtcEventProbeClusterCreated& other);
+  RtcEventProbeClusterCreated(const RtcEventProbeClusterCreated&) = default;
 
   const int32_t id_;
   const int32_t bitrate_bps_;

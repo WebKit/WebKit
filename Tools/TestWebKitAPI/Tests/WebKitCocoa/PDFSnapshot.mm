@@ -212,13 +212,18 @@ TEST(PDFSnapshot, InlineLinks)
         RetainPtr page = [document pageAtIndex:0];
         EXPECT_NE(page.get(), nil);
 
-        // FIXME <rdar://problem/55086988>: There should be a link here, but due to the way we gather links for
-        // annotation using the RenderInline tree it is missed.
+        RetainPtr annotations = [page annotations];
+        EXPECT_EQ([annotations count], 1u);
+        if ([annotations count]) {
+            EXPECT_TRUE([[annotations objectAtIndex:0] isLink]);
+            EXPECT_TRUE([[[annotations objectAtIndex:0] linkURL] isEqual:[NSURL URLWithString:@"https://webkit.org/"]]);
 
-//        auto annotations = page->annotations();
-//        EXPECT_EQ(annotations.size(), 1u);
-//        EXPECT_TRUE(annotations[0].isLink());
-//        EXPECT_TRUE([annotations[0].linkURL() isEqual:[NSURL URLWithString:@"https://webkit.org/"]]);
+            auto cRect = [page rectForCharacterAtIndex:1];
+            auto cMidpoint = CGPointMake(CGRectGetMidX(cRect), CGRectGetMidY(cRect));
+            auto annotationBounds = [[annotations objectAtIndex:0] bounds];
+
+            EXPECT_TRUE(CGRectContainsPoint(annotationBounds, cMidpoint));
+        }
 
         didTakeSnapshot = true;
     }];

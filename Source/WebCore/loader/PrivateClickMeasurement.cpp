@@ -77,7 +77,7 @@ PCM::UnlinkableToken PCM::UnlinkableToken::isolatedCopy()&&
 #if PLATFORM(COCOA)
         blinder, waitingToken, readyToken,
 #endif
-        WTFMove(valueBase64URL).isolatedCopy()
+        WTF::move(valueBase64URL).isolatedCopy()
     };
 }
 
@@ -103,17 +103,17 @@ PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() &&
 {
     PrivateClickMeasurement copy {
         m_sourceID,
-        WTFMove(m_sourceSite).isolatedCopy(),
-        WTFMove(m_destinationSite).isolatedCopy(),
-        WTFMove(m_sourceApplicationBundleID).isolatedCopy(),
-        WTFMove(m_timeOfAdClick).isolatedCopy(),
+        WTF::move(m_sourceSite).isolatedCopy(),
+        WTF::move(m_destinationSite).isolatedCopy(),
+        WTF::move(m_sourceApplicationBundleID).isolatedCopy(),
+        WTF::move(m_timeOfAdClick).isolatedCopy(),
         m_isEphemeral,
     };
-    copy.m_attributionTriggerData = WTFMove(m_attributionTriggerData);
-    copy.m_timesToSend = WTFMove(m_timesToSend);
-    copy.m_ephemeralSourceNonce = crossThreadCopy(WTFMove(m_ephemeralSourceNonce));
-    copy.m_sourceUnlinkableToken = WTFMove(m_sourceUnlinkableToken).isolatedCopy();
-    copy.m_sourceSecretToken = crossThreadCopy(WTFMove(m_sourceSecretToken));
+    copy.m_attributionTriggerData = WTF::move(m_attributionTriggerData);
+    copy.m_timesToSend = WTF::move(m_timesToSend);
+    copy.m_ephemeralSourceNonce = crossThreadCopy(WTF::move(m_ephemeralSourceNonce));
+    copy.m_sourceUnlinkableToken = WTF::move(m_sourceUnlinkableToken).isolatedCopy();
+    copy.m_sourceSecretToken = crossThreadCopy(WTF::move(m_sourceSecretToken));
     return copy;
 }
 
@@ -167,12 +167,12 @@ Expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttr
 
     PCM::AttributionTriggerData attributionTriggerData;
     if (!sourceDomain.isEmpty())
-        attributionTriggerData.sourceRegistrableDomain = WTFMove(sourceDomain);
+        attributionTriggerData.sourceRegistrableDomain = WTF::move(sourceDomain);
 
     if (!destinationNonce.nonce.isEmpty())
-        attributionTriggerData.ephemeralDestinationNonce = WTFMove(destinationNonce);
+        attributionTriggerData.ephemeralDestinationNonce = WTF::move(destinationNonce);
 
-    return { WTFMove(attributionTriggerData) };
+    return { WTF::move(attributionTriggerData) };
 }
 
 Expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
@@ -240,7 +240,7 @@ PCM::AttributionSecondsUntilSendData PrivateClickMeasurement::attributeAndGetEar
     if (!attributionTriggerData.isValid() || (m_attributionTriggerData && m_attributionTriggerData->priority >= attributionTriggerData.priority))
         return { };
 
-    m_attributionTriggerData = WTFMove(attributionTriggerData);
+    m_attributionTriggerData = WTF::move(attributionTriggerData);
     // 24-48 hour delay before sending. This helps privacy since the conversion and the attribution
     // requests are detached and the time of the attribution does not reveal the time of the conversion.
     auto sourceSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours(isRunningTest);
@@ -334,7 +334,7 @@ void PrivateClickMeasurement::setEphemeralSourceNonce(PCM::EphemeralNonce&& nonc
 {
     if (!nonce.isValid())
         return;
-    m_ephemeralSourceNonce = WTFMove(nonce);
+    m_ephemeralSourceNonce = WTF::move(nonce);
 }
 
 const std::optional<const URL> PrivateClickMeasurement::tokenPublicKeyURL(const RegistrableDomain& registrableDomain)
@@ -407,14 +407,14 @@ void PrivateClickMeasurement::setSourceSecretToken(PCM::SourceSecretToken&& toke
 {
     if (!token.isValid())
         return;
-    m_sourceSecretToken = WTFMove(token);
+    m_sourceSecretToken = WTF::move(token);
 }
 
 void PrivateClickMeasurement::setDestinationSecretToken(PCM::DestinationSecretToken&& token)
 {
     if (!token.isValid() || !m_attributionTriggerData)
         return;
-    m_attributionTriggerData->destinationSecretToken = WTFMove(token);
+    m_attributionTriggerData->destinationSecretToken = WTF::move(token);
 }
 
 std::optional<uint64_t> PrivateClickMeasurement::appStoreURLAdamID(const URL& url)

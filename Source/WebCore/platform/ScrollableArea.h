@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/KeyboardScroll.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/ScrollAlignment.h>
-#include <WebCore/ScrollAnchoringController.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/Scrollbar.h>
@@ -54,6 +54,7 @@ class PlatformWheelEvent;
 class ScrollAnimator;
 class ScrollbarsController;
 class GraphicsLayer;
+class ScrollAnchoringController;
 class TiledBacking;
 class Element;
 
@@ -150,6 +151,9 @@ public:
     
     virtual OverscrollBehavior horizontalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
     virtual OverscrollBehavior verticalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
+
+    void setScrollbarRevealBehavior(ScrollbarRevealBehavior behavior) { m_scrollbarRevealBehavior = behavior; }
+    ScrollbarRevealBehavior scrollbarRevealBehavior() const { return m_scrollbarRevealBehavior; }
 
     WEBCORE_EXPORT virtual Color scrollbarThumbColorStyle() const;
     WEBCORE_EXPORT virtual Color scrollbarTrackColorStyle() const;
@@ -249,9 +253,7 @@ public:
     WEBCORE_EXPORT IntSize scrollbarIntrusion() const;
 
     virtual Scrollbar* horizontalScrollbar() const { return nullptr; }
-    RefPtr<Scrollbar> protectedHorizontalScrollbar() const { return horizontalScrollbar(); }
     virtual Scrollbar* verticalScrollbar() const { return nullptr; }
-    RefPtr<Scrollbar> protectedVerticalScrollbar() const { return verticalScrollbar(); }
     virtual void scrollbarFrameRectChanged(const Scrollbar&) const { };
 
     Scrollbar* scrollbarForDirection(ScrollDirection direction) const
@@ -273,6 +275,11 @@ public:
     virtual ScrollPosition scrollPosition() const = 0;
     WEBCORE_EXPORT virtual ScrollPosition minimumScrollPosition() const;
     WEBCORE_EXPORT virtual ScrollPosition maximumScrollPosition() const;
+
+    virtual ScrollPosition adjustScrollPositionWithinRange(const ScrollPosition& position) const
+    {
+        return constrainedScrollPosition(position);
+    }
 
     ScrollPosition constrainedScrollPosition(const ScrollPosition& position) const
     {
@@ -340,6 +347,9 @@ public:
     virtual IntPoint lastKnownMousePositionInView() const { return IntPoint(); }
     virtual bool isHandlingWheelEvent() const { return false; }
 
+    void willDispatchScrollEvent();
+    void didDispatchScrollEvent();
+
     virtual int headerHeight() const { return 0; }
     virtual int footerHeight() const { return 0; }
 
@@ -369,6 +379,10 @@ public:
     virtual bool scrollAnimatorEnabled() const { return false; }
 
     virtual bool isInStableState() const { return true; }
+
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    float scrollbarOpacity() const;
+#endif
 
     // NOTE: Only called from Internals for testing.
     WEBCORE_EXPORT void setScrollOffsetFromInternals(const ScrollOffset&);
@@ -423,12 +437,28 @@ public:
     bool overscrollBehaviorAllowsRubberBand() const { return horizontalOverscrollBehavior() != OverscrollBehavior::None || verticalOverscrollBehavior() != OverscrollBehavior::None; }
     bool shouldBlockScrollPropagation(const FloatSize&) const;
     FloatSize deltaForPropagation(const FloatSize&) const;
+
     WEBCORE_EXPORT virtual float adjustVerticalPageScrollStepForFixedContent(float step);
+
     virtual bool needsAnimatedScroll() const { return false; }
-    virtual void updateScrollAnchoringElement() { }
-    virtual void updateScrollPositionForScrollAnchoringController() { }
-    virtual void invalidateScrollAnchoringElement() { }
+
+    // Anchor positioning
     virtual void updateAnchorPositionedAfterScroll() { }
+
+    // Scroll anchoring
+    enum class ComputeNewScrollAnchor : bool {
+        No,
+        Yes
+    };
+
+    enum class IncludeAncestors : bool {
+        No,
+        Yes
+    };
+    void clearScrollAnchor(IncludeAncestors = IncludeAncestors::No);
+    void adjustScrollAnchoringPosition();
+    virtual ScrollAnchoringController* scrollAnchoringController() const { return nullptr; }
+
     virtual std::optional<FrameIdentifier> rootFrameID() const { return std::nullopt; }
 
     WEBCORE_EXPORT void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
@@ -508,8 +538,40 @@ private:
     bool m_scrollOriginChanged { false };
     bool m_scrollShouldClearLatchedState { false };
     bool m_isAwaitingScrollend { false };
+    ScrollbarRevealBehavior m_scrollbarRevealBehavior { ScrollbarRevealBehavior::Default };
 
     Markable<ScrollingNodeID> m_scrollingNodeIDForTesting;
+};
+
+class ScrollbarRevealBehaviorScope {
+public:
+    ScrollbarRevealBehaviorScope(ScrollableArea&, ScrollbarRevealBehavior);
+    ~ScrollbarRevealBehaviorScope();
+
+private:
+    WeakRef<ScrollableArea> m_scrollableArea;
+    ScrollbarRevealBehavior m_oldBehavior;
+};
+
+class ScrollAnchoringSuppressionScope {
+public:
+    ScrollAnchoringSuppressionScope(ScrollableArea&);
+    ~ScrollAnchoringSuppressionScope();
+
+private:
+    WeakPtr<ScrollableArea> m_scrollableArea;
+};
+
+class ScrollTypeScope {
+public:
+    WEBCORE_EXPORT ScrollTypeScope(ScrollableArea&, ScrollType);
+    WEBCORE_EXPORT ~ScrollTypeScope();
+
+    void restore();
+
+private:
+    WeakRef<ScrollableArea> m_scrollableArea;
+    std::optional<ScrollType> m_oldScrollType;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);

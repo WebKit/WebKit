@@ -33,7 +33,7 @@ class CallFrame;
 namespace WebCore {
 
 class HTMLFrameElementBase : public HTMLFrameOwnerElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLFrameElementBase);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLFrameElementBase);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFrameElementBase);
 public:
     void setLocation(JSC::JSGlobalObject&, const String&);
@@ -67,8 +67,8 @@ private:
     bool supportsFocus() const final;
     void setFocus(bool, FocusVisibility = FocusVisibility::Invisible) final;
     
-    bool isURLAttribute(const Attribute&) const final;
-    bool isHTMLContentAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
+    bool NODELETE isHTMLContentAttribute(const Attribute&) const final;
 
     AtomString m_frameURL;
     bool m_openingURLAfterInserting { false };

@@ -33,7 +33,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CPUMonitor);
 
 CPUMonitor::CPUMonitor(Seconds checkInterval, ExceededCPULimitHandler&& exceededCPULimitHandler)
     : m_checkInterval(checkInterval)
-    , m_exceededCPULimitHandler(WTFMove(exceededCPULimitHandler))
+    , m_exceededCPULimitHandler(WTF::move(exceededCPULimitHandler))
     , m_timer(*this, &CPUMonitor::timerFired)
 {
 }

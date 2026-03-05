@@ -30,9 +30,11 @@ namespace WebCore {
 class HTMLFormElement;
 
 class HTMLObjectElement final : public HTMLPlugInElement, public FormListedElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLObjectElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLObjectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLObjectElement);
 public:
+    USING_CAN_MAKE_WEAKPTR(HTMLPlugInElement);
+
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     bool isExposed() const { return m_isExposed; }
@@ -69,7 +71,7 @@ private:
 
     void childrenChanged(const ChildChange&) final;
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     const AtomString& imageSourceURL() const final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
@@ -83,18 +85,18 @@ private:
     void refFormAssociatedElement() const final { ref(); }
     void derefFormAssociatedElement() const final { deref(); }
 
-    FormAssociatedElement* asFormAssociatedElement() final { return this; }
-    FormListedElement* asFormListedElement() final { return this; }
-    ValidatedFormListedElement* asValidatedFormListedElement() final { return nullptr; }
+    FormAssociatedElement* NODELETE asFormAssociatedElement() final { return this; }
+    FormListedElement* NODELETE asFormListedElement() final { return this; }
+    ValidatedFormListedElement* NODELETE asValidatedFormListedElement() final { return nullptr; }
 
     // These functions can be called concurrently for ValidityState.
     HTMLObjectElement& asHTMLElement() final { return *this; }
     const HTMLObjectElement& asHTMLElement() const final { return *this; }
 
-    bool isFormListedElement() const final { return true; }
-    bool isValidatedFormListedElement() const final { return false; }
+    bool NODELETE isFormListedElement() const final { return true; }
+    bool NODELETE isValidatedFormListedElement() const final { return false; }
 
-    bool isEnumeratable() const final { return true; }
+    bool NODELETE isEnumeratable() const final { return true; }
 
     bool canContainRangeEndPoint() const final;
 

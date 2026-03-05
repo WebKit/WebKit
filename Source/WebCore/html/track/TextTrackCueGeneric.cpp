@@ -46,10 +46,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackCueGeneric);
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextTrackCueGenericBoxElement);
+    WTF_MAKE_TZONE_ALLOCATED(TextTrackCueGenericBoxElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGenericBoxElement);
 public:
     static Ref<TextTrackCueGenericBoxElement> create(Document&, TextTrackCueGeneric&);
@@ -60,11 +60,11 @@ private:
     TextTrackCueGenericBoxElement(Document&, VTTCue&);
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGenericBoxElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackCueGenericBoxElement);
 
 Ref<TextTrackCueGenericBoxElement> TextTrackCueGenericBoxElement::create(Document& document, TextTrackCueGeneric& cue)
 {
-    auto box = adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
+    Ref box = adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
     box->initialize();
     return box;
 }
@@ -78,11 +78,11 @@ void TextTrackCueGenericBoxElement::applyCSSProperties()
 {
     VTTCueBox::applyCSSProperties();
 
-    RefPtr<TextTrackCueGeneric> cue = static_cast<TextTrackCueGeneric*>(getCue());
+    RefPtr cue = downcast<TextTrackCueGeneric>(getCue());
     if (!cue)
         return;
 
-    Ref<HTMLSpanElement> cueElement = cue->element();
+    Ref cueElement = cue->element();
     if (cue->foregroundColor().isValid())
         cueElement->setInlineStyleProperty(CSSPropertyColor, serializationForHTML(cue->foregroundColor()));
     if (cue->highlightColor().isValid())
@@ -93,7 +93,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties()
 
 Ref<TextTrackCueGeneric> TextTrackCueGeneric::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
 {
-    auto cue = adoptRef(*new TextTrackCueGeneric(downcast<Document>(context), start, end, content));
+    Ref cue = adoptRef(*new TextTrackCueGeneric(downcast<Document>(context), start, end, content));
     cue->suspendIfNeeded();
     return cue;
 }

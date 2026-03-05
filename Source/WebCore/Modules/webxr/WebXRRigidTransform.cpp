@@ -49,7 +49,7 @@ static bool normalizeQuaternion(DOMPointInit& q)
     return true;
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRRigidTransform);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRRigidTransform);
 
 Ref<WebXRRigidTransform> WebXRRigidTransform::create()
 {

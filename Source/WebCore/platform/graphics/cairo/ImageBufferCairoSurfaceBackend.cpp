@@ -35,7 +35,6 @@
 #include "CairoUtilities.h"
 #include "Color.h"
 #include "GraphicsContext.h"
-#include "ImageBufferUtilitiesCairo.h"
 #include "PixelBuffer.h"
 #include <cairo.h>
 
@@ -45,7 +44,7 @@ namespace WebCore {
 
 ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend(const Parameters& parameters, RefPtr<cairo_surface_t>&& surface)
     : ImageBufferCairoBackend(parameters)
-    , m_surface(WTFMove(surface))
+    , m_surface(WTF::move(surface))
     , m_context(m_surface.get())
 {
     ASSERT(cairo_surface_status(m_surface.get()) == CAIRO_STATUS_SUCCESS);
@@ -73,7 +72,7 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::copyNativeImage()
     cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
     cairo_paint(cr.get());
 
-    return NativeImage::create(WTFMove(copy));
+    return NativeImage::create(WTF::move(copy));
 }
 
 RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::createNativeImageReference()

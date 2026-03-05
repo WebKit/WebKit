@@ -22,7 +22,12 @@
 
 namespace webrtc {
 
-PacketTransportInternal::PacketTransportInternal() = default;
+PacketTransportInternal::PacketTransportInternal()
+    : writable_state_trampoline_(this),
+      ready_to_send_trampoline_(this),
+      receiving_state_trampoline_(this),
+      sent_packet_trampoline_(this),
+      network_route_changed_trampoline_(this) {}
 
 PacketTransportInternal::~PacketTransportInternal() = default;
 
@@ -67,6 +72,65 @@ void PacketTransportInternal::NotifyOnClose() {
     std::move(on_close_)();
     on_close_ = nullptr;
   }
+}
+
+void PacketTransportInternal::SubscribeWritableState(
+    void* tag,
+    absl::AnyInvocable<void(PacketTransportInternal*)> callback) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  writable_state_trampoline_.Subscribe(tag, std::move(callback));
+}
+void PacketTransportInternal::UnsubscribeWritableState(void* tag) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  writable_state_trampoline_.Unsubscribe(tag);
+}
+void PacketTransportInternal::NotifyWritableState(
+    PacketTransportInternal* packet_transport) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  SignalWritableState(packet_transport);
+}
+
+void PacketTransportInternal::SubscribeReadyToSend(
+    void* tag,
+    absl::AnyInvocable<void(PacketTransportInternal*)> callback) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  ready_to_send_trampoline_.Subscribe(tag, std::move(callback));
+}
+void PacketTransportInternal::UnsubscribeReadyToSend(void* tag) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  ready_to_send_trampoline_.Unsubscribe(tag);
+}
+void PacketTransportInternal::NotifyReadyToSend(
+    PacketTransportInternal* packet_transport) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  SignalReadyToSend(packet_transport);
+}
+
+void PacketTransportInternal::SubscribeReceivingState(
+    absl::AnyInvocable<void(PacketTransportInternal*)> callback) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  receiving_state_trampoline_.Subscribe(std::move(callback));
+}
+void PacketTransportInternal::NotifyReceivingState(
+    PacketTransportInternal* packet_transport) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  SignalReceivingState(packet_transport);
+}
+
+void PacketTransportInternal::SubscribeNetworkRouteChanged(
+    void* tag,
+    absl::AnyInvocable<void(std::optional<NetworkRoute>)> callback) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  network_route_changed_trampoline_.Subscribe(tag, std::move(callback));
+}
+void PacketTransportInternal::UnsubscribeNetworkRouteChanged(void* tag) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  network_route_changed_trampoline_.Unsubscribe(tag);
+}
+void PacketTransportInternal::NotifyNetworkRouteChanged(
+    std::optional<webrtc::NetworkRoute> network_route) {
+  RTC_DCHECK_RUN_ON(&network_checker_);
+  SignalNetworkRouteChanged(network_route);
 }
 
 }  // namespace webrtc

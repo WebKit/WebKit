@@ -43,7 +43,7 @@ std::optional<ImageCopyExternalImage> ConvertToBackingContext::convertToBacking(
             return std::nullopt;
     }
 
-    return { { WTFMove(origin), imageCopyExternalImage.flipY } };
+    return { { WTF::move(origin), imageCopyExternalImage.flipY } };
 }
 
 std::optional<WebCore::WebGPU::ImageCopyExternalImage> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImage& imageCopyExternalImage)
@@ -55,7 +55,7 @@ std::optional<WebCore::WebGPU::ImageCopyExternalImage> ConvertFromBackingContext
             return std::nullopt;
     }
 
-    return { { WTFMove(origin), imageCopyExternalImage.flipY } };
+    return { { WTF::move(origin), imageCopyExternalImage.flipY } };
 }
 
 } // namespace WebKit

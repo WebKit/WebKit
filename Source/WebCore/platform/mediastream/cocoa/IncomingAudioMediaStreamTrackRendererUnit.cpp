@@ -73,7 +73,7 @@ std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrac
 
     ASSERT(!mixer.sources.contains(source.get()));
     bool shouldStart = mixer.sources.isEmpty();
-    mixer.sources.add(WTFMove(source));
+    mixer.sources.add(WTF::move(source));
     return std::make_pair(shouldStart, copyToVector(mixer.sources));
 }
 
@@ -97,14 +97,14 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
         return;
     auto outputDescription = *source->outputDescription();
 
-    auto result = addSourceToMixer(deviceID, WTFMove(source));
+    auto result = addSourceToMixer(deviceID, WTF::move(source));
     bool shouldStart = result.first;
-    auto newSources = WTFMove(result.second);
+    auto newSources = WTF::move(result.second);
 
-    postTask([this, newSources = WTFMove(newSources), shouldStart, deviceID = deviceID.isolatedCopy(), outputDescription]() mutable {
+    postTask([this, newSources = WTF::move(newSources), shouldStart, deviceID = deviceID.isolatedCopy(), outputDescription]() mutable {
         assertIsCurrent(m_queue.get());
 
-        m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTFMove(newSources);
+        m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTF::move(newSources);
 
         if (!shouldStart)
             return;
@@ -122,12 +122,12 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
 
         m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.mixedSource = mixedSource.ptr();
 
-        callOnMainThread([protectedThis = Ref { *this }, source = WTFMove(mixedSource), deviceID = deviceID.isolatedCopy()]() mutable {
+        callOnMainThread([protectedThis = Ref { *this }, source = WTF::move(mixedSource), deviceID = deviceID.isolatedCopy()]() mutable {
             assertIsMainThread();
 
             auto& mixer = protectedThis->m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
-            mixer.registeredMixedSource = WTFMove(source);
-            mixer.deviceID = WTFMove(deviceID);
+            mixer.registeredMixedSource = WTF::move(source);
+            mixer.deviceID = WTF::move(deviceID);
             protectedThis->start(mixer);
         });
     });
@@ -141,7 +141,7 @@ std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrac
 
     ASSERT(mixer.sources.contains(source));
     bool shouldStop = !mixer.sources.isEmpty();
-    mixer.sources.remove(WTFMove(source));
+    mixer.sources.remove(WTF::move(source));
     shouldStop &= mixer.sources.isEmpty();
     return std::make_pair(shouldStop, copyToVector(mixer.sources));
 }
@@ -157,12 +157,12 @@ void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& ident
 
     auto result = removeSourceFromMixer(deviceID, source);
     bool shouldStop = result.first;
-    auto newSources = WTFMove(result.second);
+    auto newSources = WTF::move(result.second);
 
-    postTask([this, newSources = WTFMove(newSources), shouldStop, deviceID = deviceID.isolatedCopy()]() mutable {
+    postTask([this, newSources = WTF::move(newSources), shouldStop, deviceID = deviceID.isolatedCopy()]() mutable {
         assertIsCurrent(m_queue.get());
 
-        m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTFMove(newSources);
+        m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTF::move(newSources);
         if (!shouldStop)
             return;
 
@@ -170,7 +170,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& ident
             assertIsMainThread();
 
             auto& mixer = protectedThis->m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
-            mixer.deviceID = WTFMove(deviceID);
+            mixer.deviceID = WTF::move(deviceID);
             protectedThis->stop(mixer);
         });
     });
@@ -197,7 +197,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::stop(Mixer& mixer)
 
 void IncomingAudioMediaStreamTrackRendererUnit::postTask(Function<void()>&& callback)
 {
-    m_queue->dispatch([protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+    m_queue->dispatch([protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
         callback();
     });
 }

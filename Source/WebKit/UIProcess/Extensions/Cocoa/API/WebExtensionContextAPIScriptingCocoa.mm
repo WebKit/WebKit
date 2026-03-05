@@ -139,7 +139,7 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
@@ -154,8 +154,8 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
         auto scriptPairs = getSourcePairsForParameters(parameters, *this);
         Ref executionWorld = toContentWorld(parameters.world);
 
-        executeScript(scriptPairs, webView, executionWorld, *tab, parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
-            completionHandler(WTFMove(injectionResults));
+        executeScript(scriptPairs, webView, executionWorld, *tab, parameters, *this, [completionHandler = WTF::move(completionHandler)](InjectionResults&& injectionResults) mutable {
+            completionHandler(WTF::move(injectionResults));
         });
     });
 }
@@ -170,7 +170,7 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
@@ -237,7 +237,7 @@ void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtens
     }
 
     auto serializedScripts = toJSONSerialization(scripts);
-    registeredContentScriptsStore()->addScripts(serializedScripts, [this, protectedThis = Ref { *this }, scripts, injectedContentsMap = WTFMove(injectedContentsMap), completionHandler = WTFMove(completionHandler)](const String& errorMessage) mutable {
+    registeredContentScriptsStore()->addScripts(serializedScripts, [this, protectedThis = Ref { *this }, scripts, injectedContentsMap = WTF::move(injectedContentsMap), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         if (!errorMessage.isEmpty()) {
             completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
             return;
@@ -247,7 +247,7 @@ void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtens
         for (auto& parameters : scripts) {
             auto injectedContent = injectedContentsMap.get(parameters.identifier);
             m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
-            injectedContents.append(WTFMove(injectedContent));
+            injectedContents.append(WTF::move(injectedContent));
         }
 
         addInjectedContent(injectedContents);
@@ -282,7 +282,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
     }
 
     auto updatedScripts = toJSONSerialization(updatedParameters);
-    registeredContentScriptsStore()->updateScripts(updatedScripts, [this, protectedThis = Ref { *this }, scripts = WTFMove(updatedParameters), injectedContentsMap = WTFMove(injectedContentsMap), completionHandler = WTFMove(completionHandler)](const String& errorMessage) mutable {
+    registeredContentScriptsStore()->updateScripts(updatedScripts, [this, protectedThis = Ref { *this }, scripts = WTF::move(updatedParameters), injectedContentsMap = WTF::move(injectedContentsMap), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         if (!errorMessage.isEmpty()) {
             completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
             return;
@@ -302,7 +302,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
 
             auto injectedContent = injectedContentsMap.get(scriptID);
             registeredScript->updateInjectedContent(injectedContent);
-            injectedContents.append(WTFMove(injectedContent));
+            injectedContents.append(WTF::move(injectedContent));
         }
 
         addInjectedContent(injectedContents);
@@ -329,7 +329,7 @@ void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& sc
         }
     }
 
-    completionHandler(WTFMove(scripts));
+    completionHandler(WTF::move(scripts));
 }
 
 void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -346,7 +346,7 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
         }
     }
 
-    registeredContentScriptsStore()->deleteScriptsWithIDs(ids, [this, protectedThis = Ref { *this }, ids, completionHandler = WTFMove(completionHandler)](const String& errorMessage) mutable {
+    registeredContentScriptsStore()->deleteScriptsWithIDs(ids, [this, protectedThis = Ref { *this }, ids, completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         if (!errorMessage.isEmpty()) {
             completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
             return;
@@ -390,7 +390,7 @@ void WebExtensionContext::loadRegisteredContentScripts()
         for (auto& parameters : parametersVector) {
             auto injectedContent = injectedContentsMap.get(parameters.identifier);
             m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
-            injectedContents.append(WTFMove(injectedContent));
+            injectedContents.append(WTF::move(injectedContent));
         }
 
         addInjectedContent(injectedContents);
@@ -489,8 +489,8 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
 
         InjectedContentData injectedContentData;
         injectedContentData.identifier = parameters.identifier;
-        injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
-        injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
+        injectedContentData.includeMatchPatterns = WTF::move(includeMatchPatterns);
+        injectedContentData.excludeMatchPatterns = WTF::move(excludeMatchPatterns);
         injectedContentData.injectionTime = parameters.injectionTime.value_or(WebExtension::InjectionTime::DocumentIdle);
         injectedContentData.injectsIntoAllFrames = parameters.allFrames.value_or(false);
         injectedContentData.matchParentFrame = parameters.matchParentFrame.value_or(WebCore::UserContentMatchParentFrame::Never);
@@ -499,7 +499,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.scriptPaths = makeVector<String>(scriptPaths);
         injectedContentData.styleSheetPaths = makeVector<String>(styleSheetPaths);
 
-        injectedContentsMap.add(scriptID, WTFMove(injectedContentData));
+        injectedContentsMap.add(scriptID, WTF::move(injectedContentData));
     }
 
     return true;

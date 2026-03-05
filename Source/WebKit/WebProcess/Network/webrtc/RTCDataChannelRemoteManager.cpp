@@ -74,7 +74,7 @@ bool RTCDataChannelRemoteManager::connectToRemoteSource(WebCore::RTCDataChannelI
     if (!handler)
         return false;
 
-    auto iterator = m_sources.add(remoteIdentifier.object(), WebCore::RTCDataChannelRemoteSource::create(remoteIdentifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(handler)), remoteSourceConnection()));
+    auto iterator = m_sources.add(remoteIdentifier.object(), WebCore::RTCDataChannelRemoteSource::create(localIdentifier, remoteIdentifier, makeUniqueRefFromNonNullUniquePtr(WTF::move(handler)), remoteSourceConnection()));
     return iterator.isNewEntry;
 }
 
@@ -103,7 +103,7 @@ void RTCDataChannelRemoteManager::postTaskToHandler(WebCore::RTCDataChannelIdent
         return;
     auto& remoteHandler = iterator->value;
 
-    WebCore::ScriptExecutionContext::postTaskTo(*remoteHandler.contextIdentifier, [handler = remoteHandler.handler, function = WTFMove(function)](auto&) mutable {
+    WebCore::ScriptExecutionContext::postTaskTo(*remoteHandler.contextIdentifier, [handler = remoteHandler.handler, function = WTF::move(function)](auto&) mutable {
         if (handler)
             function(*handler);
     });
@@ -150,18 +150,18 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
     else
         text = String::fromUTF8(data);
 
-    postTaskToHandler(handlerIdentifier, [isRaw, text = WTFMove(text).isolatedCopy(), buffer = WTFMove(buffer)](auto& handler) mutable {
+    postTaskToHandler(handlerIdentifier, [isRaw, text = WTF::move(text).isolatedCopy(), buffer = WTF::move(buffer)](auto& handler) mutable {
         if (isRaw)
             handler.didReceiveRawData(buffer.span());
         else
-            handler.didReceiveStringData(WTFMove(text));
+            handler.didReceiveStringData(WTF::move(text));
     });
 }
 
 void RTCDataChannelRemoteManager::detectError(WebCore::RTCDataChannelIdentifier handlerIdentifier, WebCore::RTCErrorDetailType detail, String&& message)
 {
-    postTaskToHandler(handlerIdentifier, [detail, message = WTFMove(message)](auto& handler) mutable {
-        handler.didDetectError(WebCore::RTCError::create(detail, WTFMove(message)));
+    postTaskToHandler(handlerIdentifier, [detail, message = WTF::move(message)](auto& handler) mutable {
+        handler.didDetectError(WebCore::RTCError::create(detail, WTF::move(message)));
     });
 }
 
@@ -174,19 +174,19 @@ void RTCDataChannelRemoteManager::bufferedAmountIsDecreasing(WebCore::RTCDataCha
 
 Ref<RTCDataChannelRemoteManager::RemoteHandlerConnection> RTCDataChannelRemoteManager::RemoteHandlerConnection::create(Ref<WorkQueue>&& queue)
 {
-    return adoptRef(*new RemoteHandlerConnection(WTFMove(queue)));
+    return adoptRef(*new RemoteHandlerConnection(WTF::move(queue)));
 }
 
 RTCDataChannelRemoteManager::RemoteHandlerConnection::RemoteHandlerConnection(Ref<WorkQueue>&& queue)
     : m_connection(WebProcess::singleton().ensureNetworkProcessConnection().connection())
-    , m_queue(WTFMove(queue))
+    , m_queue(WTF::move(queue))
 {
 }
 
 void RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource(WebCore::RTCDataChannelRemoteHandler& handler, std::optional<WebCore::ScriptExecutionContextIdentifier> contextIdentifier, WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
 {
     m_queue->dispatch([handler = WeakPtr { handler }, contextIdentifier, localIdentifier]() mutable {
-        RTCDataChannelRemoteManager::singleton().m_handlers.add(localIdentifier.object(), RemoteHandler { WTFMove(handler), *contextIdentifier });
+        RTCDataChannelRemoteManager::singleton().m_handlers.add(localIdentifier.object(), RemoteHandler { WTF::move(handler), *contextIdentifier });
     });
     m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ConnectToRTCDataChannelRemoteSource { localIdentifier, remoteIdentifier }, [localIdentifier](auto&& result) {
         RTCDataChannelRemoteManager::singleton().postTaskToHandler(localIdentifier, [result](auto& handler) {

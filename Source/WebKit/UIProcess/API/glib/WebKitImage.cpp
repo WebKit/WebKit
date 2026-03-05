@@ -29,25 +29,19 @@
 #if ENABLE(2022_GLIB_API)
 
 #include "WebKitImagePrivate.h"
-
-#if USE(SKIA)
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/core/SkData.h>
-#include <skia/core/SkImage.h>
-#include <skia/core/SkImageInfo.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
-#include <skia/encode/SkPngEncoder.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#else
-#include <WebCore/NotImplemented.h>
-#endif
 #include <wtf/Assertions.h>
 #include <wtf/Hasher.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkData.h>
+#include <skia/core/SkImage.h>
+#include <skia/core/SkImageInfo.h>
+#include <skia/encode/SkPngEncoder.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 static void webkit_image_gicon_interface_init(GIconIface*);
 static void webkit_image_gloadable_icon_interface_init(GLoadableIconIface*);
@@ -67,7 +61,7 @@ struct _WebKitImagePrivate {
  *
  * Image objects are always created by WebKit, and considered immutable:
  * a copy of the image data needs to be made before modifying the image.
- * Pixel data can be obtained with [id@webkit_image_as_rgba_bytes].
+ * Pixel data can be obtained with [id@webkit_image_as_bytes].
  *
  * Since: 2.52
  */
@@ -87,7 +81,8 @@ enum {
     N_PROPERTIES
 };
 
-static constexpr uint8_t RGBA8BytesPerPixel = 4;
+static constexpr SkColorType WebKitImageColorType = kBGRA_8888_SkColorType;
+static constexpr uint8_t BGRA8BytesPerPixel = 4;
 
 static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
@@ -177,7 +172,7 @@ static void webkit_image_class_init(WebKitImageClass* imageClass)
     g_param_spec_uint(
         "stride",
         nullptr, nullptr,
-        RGBA8BytesPerPixel, G_MAXUINT, 4,
+        BGRA8BytesPerPixel, G_MAXUINT, 4,
         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
@@ -186,14 +181,14 @@ static void webkit_image_class_init(WebKitImageClass* imageClass)
 WebKitImage* webkitImageNew(int width, int height, guint stride, GRefPtr<GBytes>&& bytes)
 {
     RELEASE_ASSERT(bytes);
-    RELEASE_ASSERT(static_cast<gsize>(width) * RGBA8BytesPerPixel <= stride);
+    RELEASE_ASSERT(static_cast<gsize>(width) * BGRA8BytesPerPixel <= stride);
 
     auto* image = WEBKIT_IMAGE(g_object_new(WEBKIT_TYPE_IMAGE,
         "width", width,
         "height", height,
         "stride", stride,
         nullptr));
-    image->priv->bytes = WTFMove(bytes);
+    image->priv->bytes = WTF::move(bytes);
 
     return image;
 }
@@ -247,21 +242,20 @@ guint webkit_image_get_stride(WebKitImage* image)
 }
 
 /**
- * webkit_image_as_rgba_bytes:
+ * webkit_image_as_bytes:
  * @image: a #WebKitImage
  *
  * Get the @image pixel data as an array of bytes.
  *
  * The pixel format for the returned byte buffer is 32-bit per pixel
  * with 8-bit premultiplied alpha, in the preferred byte order for
- * the architecture (typically ABGR8888 on little-endian hosts, and
- * RGBA8888 on big-endian ones).
+ * the architecture.
  *
  * Returns: (transfer none): a #GBytes
  *
  * Since: 2.52
  */
-GBytes* webkit_image_as_rgba_bytes(WebKitImage* image)
+GBytes* webkit_image_as_bytes(WebKitImage* image)
 {
     g_return_val_if_fail(WEBKIT_IS_IMAGE(image), nullptr);
 
@@ -276,10 +270,10 @@ static guint webkitImageHash(GIcon* icon)
 
     Hasher hasher;
 
-    auto* bytes = webkit_image_as_rgba_bytes(image);
+    auto* bytes = webkit_image_as_bytes(image);
     auto dataSpan = span(bytes);
 
-    gsize rowBytes = image->priv->width * RGBA8BytesPerPixel;
+    gsize rowBytes = image->priv->width * BGRA8BytesPerPixel;
 
     ASSERT(dataSpan.size() >= image->priv->stride * (image->priv->height - 1) + rowBytes);
 
@@ -306,13 +300,13 @@ static gboolean webkitImageEqual(GIcon* icon1, GIcon* icon2)
         || image1->priv->height != image2->priv->height)
         return false;
 
-    auto* bytes1 = webkit_image_as_rgba_bytes(image1);
-    auto* bytes2 = webkit_image_as_rgba_bytes(image2);
+    auto* bytes1 = webkit_image_as_bytes(image1);
+    auto* bytes2 = webkit_image_as_bytes(image2);
 
     auto dataSpan1 = span(bytes1);
     auto dataSpan2 = span(bytes2);
 
-    gsize rowBytes = image1->priv->width * RGBA8BytesPerPixel;
+    gsize rowBytes = image1->priv->width * BGRA8BytesPerPixel;
 
     ASSERT(dataSpan1.size() >= image1->priv->stride * (image1->priv->height - 1) + rowBytes);
     ASSERT(dataSpan2.size() >= image2->priv->stride * (image1->priv->height - 1) + rowBytes);
@@ -333,23 +327,24 @@ static GInputStream* webkitImageLoad(GLoadableIcon* icon, int size, char** type,
     g_return_val_if_fail(WEBKIT_IS_IMAGE(icon), nullptr);
 
     auto* image = WEBKIT_IMAGE(icon);
-    auto* bytes = webkit_image_as_rgba_bytes(image);
+    auto* bytes = webkit_image_as_bytes(image);
     if (!bytes) {
         LOG_ERROR("Failed to retrieve image RGBA bytes");
         g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to encode image as PNG");
         return nullptr;
     }
 
-#if USE(SKIA)
     gsize dataSize = 0;
     auto* data = g_bytes_get_data(bytes,  &dataSize);
     sk_sp<SkData> skData = SkData::MakeWithoutCopy(data, dataSize);
     SkImageInfo info = SkImageInfo::Make(
         image->priv->width,
         image->priv->height,
-        kRGBA_8888_SkColorType,
+        WebKitImageColorType,
         kUnpremul_SkAlphaType
     );
+
+    static_assert(WebKitImageColorType == kBGRA_8888_SkColorType, "WebKitImage assumes PixelFormat::BGRA8 from WebImage");
 
     sk_sp<SkImage> skImage = SkImages::RasterFromData(info, skData, image->priv->stride);
 
@@ -382,11 +377,6 @@ static GInputStream* webkitImageLoad(GLoadableIcon* icon, int size, char** type,
         *type = g_strdup("image/png"_s);
 
     return stream;
-#else
-    notImplemented();
-    g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Operation unimplemented");
-    return nullptr;
-#endif
 }
 
 struct LoadTaskData {

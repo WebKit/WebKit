@@ -50,7 +50,7 @@ WK_EXTERN NSString * const _WKMenuItemIdentifierRevealImage WK_API_AVAILABLE(mac
 WK_EXTERN NSString * const _WKMenuItemIdentifierSearchWeb WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierShowHideMediaControls WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierShowHideMediaStats WK_API_AVAILABLE(macos(13.3), ios(16.4));
-WK_EXTERN NSString * const _WKMenuItemIdentifierToggleEnhancedFullScreen WK_API_AVAILABLE(macos(10.14), ios(12.0));
+WK_EXTERN NSString * const _WKMenuItemIdentifierTogglePictureInPicture WK_API_AVAILABLE(macos(10.14), ios(12.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierToggleVideoViewer WK_API_AVAILABLE(macos(15.0), ios(18.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierToggleFullScreen WK_API_AVAILABLE(macos(10.12), ios(10.0));
 

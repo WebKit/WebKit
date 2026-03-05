@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatFuncFormat, (JSGlobalObject* globalObje
     if (auto number = value.tryGetDouble())
         RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, number.value())));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, WTFMove(value))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, WTF::move(value))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -161,7 +161,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRange, (JSGlobalObje
             RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRange(globalObject, startNumber.value(), endNumber.value())));
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRange(globalObject, WTFMove(start), WTFMove(end))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRange(globalObject, WTF::move(start), WTF::move(end))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -183,7 +183,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts, (JSGlobalOb
     if (auto number = value.tryGetDouble())
         RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, number.value())));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, WTFMove(value))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, WTF::move(value))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRangeToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -213,7 +213,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRangeToParts, (JSGlo
             RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRangeToParts(globalObject, startNumber.value(), endNumber.value())));
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRangeToParts(globalObject, WTFMove(start), WTFMove(end))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRangeToParts(globalObject, WTF::move(start), WTF::move(end))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))

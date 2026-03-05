@@ -29,6 +29,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ public:
     GRefPtr<GVariant> getProperty(ASCIILiteral name);
 
     using ResponseCallback = CompletionHandler<void(GVariant*)>;
-    void waitResponseSignal(ASCIILiteral objectPath, ResponseCallback&& = [](auto*) { });
+    void waitResponseSignal(CStringView objectPath, ResponseCallback&& = [](auto*) { });
 
     void notifyResponse(GVariant* parameters) { m_currentResponseCallback(parameters); }
 
@@ -73,7 +74,7 @@ public:
     class ScreencastSession {
     public:
         ScreencastSession(String&& path, const GRefPtr<GDBusProxy>& proxy)
-            : m_path(WTFMove(path))
+            : m_path(WTF::move(path))
             , m_proxy(proxy)
         {
         }

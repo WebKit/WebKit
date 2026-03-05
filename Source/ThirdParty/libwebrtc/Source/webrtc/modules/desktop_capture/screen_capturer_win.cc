@@ -19,6 +19,7 @@
 #include "modules/desktop_capture/win/dxgi_duplicator_controller.h"
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 #include "modules/desktop_capture/win/screen_capturer_win_gdi.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -26,6 +27,9 @@ namespace {
 
 std::unique_ptr<DesktopCapturer> CreateScreenCapturerWinDirectx(
     const DesktopCaptureOptions& options) {
+  RTC_LOG(LS_INFO)
+      << "video capture: DesktopCapturer::CreateRawScreenCapturer creates "
+         "DesktopCapturer of type ScreenCapturerWinDirectx";
   std::unique_ptr<DesktopCapturer> capturer(
       new ScreenCapturerWinDirectx(options));
   capturer.reset(new BlankDetectorDesktopCapturerWrapper(
@@ -39,6 +43,8 @@ std::unique_ptr<DesktopCapturer> CreateScreenCapturerWinDirectx(
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     const DesktopCaptureOptions& options) {
   // Default capturer if no options are enabled is GDI.
+  RTC_LOG(LS_INFO) << "video capture: DesktopCapturer::CreateRawScreenCapturer "
+                      "creates DesktopCapturer of type ScreenCapturerWinGdi";
   std::unique_ptr<DesktopCapturer> capturer(new ScreenCapturerWinGdi(options));
 
   // If DirectX is enabled use it as main capturer with GDI as fallback.

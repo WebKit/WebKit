@@ -61,7 +61,7 @@ static void webkitPolicyDecisionDispose(GObject* object)
 
 void webkitPolicyDecisionSetListener(WebKitPolicyDecision* decision, Ref<WebFramePolicyListenerProxy>&& listener)
 {
-    decision->priv->listener = WTFMove(listener);
+    decision->priv->listener = WTF::move(listener);
 }
 
 static void webkit_policy_decision_class_init(WebKitPolicyDecisionClass* decisionClass)

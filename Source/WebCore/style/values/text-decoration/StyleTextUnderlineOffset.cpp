@@ -26,7 +26,7 @@
 #include "StyleTextUnderlineOffset.h"
 
 #include "AnimationUtilities.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderState.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 

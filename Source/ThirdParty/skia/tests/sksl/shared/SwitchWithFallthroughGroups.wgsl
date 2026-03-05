@@ -1,13 +1,14 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
 fn switch_fallthrough_groups_bi(value: i32) -> bool {
   {
     var ok: bool = false;
@@ -49,12 +50,11 @@ fn switch_fallthrough_groups_bi(value: i32) -> bool {
     return ok;
   }
 }
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
     let x: i32 = i32(_globalUniforms.colorGreen.y);
-    var _skTemp3: vec4<f32>;
-    let _skTemp4 = switch_fallthrough_groups_bi(x);
-    if _skTemp4 {
+    var _skTemp3: vec4<f16>;
+    if switch_fallthrough_groups_bi(x) {
       _skTemp3 = _globalUniforms.colorGreen;
     } else {
       _skTemp3 = _globalUniforms.colorRed;

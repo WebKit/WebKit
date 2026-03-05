@@ -63,7 +63,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     *this = delegateProvidedRequest;
 
     setPriority(oldPriority);
-    setHTTPBody(WTFMove(oldHTTPBody));
+    setHTTPBody(WTF::move(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);
     setInitiatorIdentifier(oldInitiatorIdentifier);

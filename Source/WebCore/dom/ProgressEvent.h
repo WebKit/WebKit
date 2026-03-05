@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class ProgressEvent : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ProgressEvent);
 public:
     static Ref<ProgressEvent> create(const AtomString& type, bool lengthComputable, double loaded, double total)
     {

@@ -57,14 +57,14 @@ public:
 #if ASSERT_ENABLED
     bool isStarted() const { return m_isStarted; }
 #endif
-    NetworkRTCProvider& rtcProvider();
+    NetworkRTCProvider& NODELETE rtcProvider();
 
     void onNetworksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&);
 
-    const RTCNetwork::IPAddress& ipv4() const;
-    const RTCNetwork::IPAddress& ipv6()  const;
+    const RTCNetwork::IPAddress& ipv4() const LIFETIME_BOUND;
+    const RTCNetwork::IPAddress& ipv6()  const LIFETIME_BOUND;
 
-    void ref();
+    void NODELETE ref();
     void deref();
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
@@ -88,20 +88,20 @@ private:
 class IPAddressCallbackAggregator final : public ThreadSafeRefCounted<IPAddressCallbackAggregator, WTF::DestructionThread::MainRunLoop> {
 public:
     using Callback = CompletionHandler<void(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<String, RTCNetwork>&&)>;
-    static Ref<IPAddressCallbackAggregator> create(Callback&& callback) { return adoptRef(*new IPAddressCallbackAggregator(WTFMove(callback))); }
+    static Ref<IPAddressCallbackAggregator> create(Callback&& callback) { return adoptRef(*new IPAddressCallbackAggregator(WTF::move(callback))); }
 
     ~IPAddressCallbackAggregator()
     {
-        m_callback(WTFMove(m_ipv4), WTFMove(m_ipv6), WTFMove(m_networkMap));
+        m_callback(WTF::move(m_ipv4), WTF::move(m_ipv6), WTF::move(m_networkMap));
     }
 
-    void setIPv4(RTCNetwork::IPAddress&& ipv4) { m_ipv4 = WTFMove(ipv4); }
-    void setIPv6(RTCNetwork::IPAddress&& ipv6) { m_ipv6 = WTFMove(ipv6); }
-    void setNetworkMap(HashMap<String, RTCNetwork>&& networkMap) { m_networkMap = crossThreadCopy(WTFMove(networkMap)); }
+    void setIPv4(RTCNetwork::IPAddress&& ipv4) { m_ipv4 = WTF::move(ipv4); }
+    void setIPv6(RTCNetwork::IPAddress&& ipv6) { m_ipv6 = WTF::move(ipv6); }
+    void setNetworkMap(HashMap<String, RTCNetwork>&& networkMap) { m_networkMap = crossThreadCopy(WTF::move(networkMap)); }
 
 private:
     explicit IPAddressCallbackAggregator(Callback&& callback)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
     {
     }
 

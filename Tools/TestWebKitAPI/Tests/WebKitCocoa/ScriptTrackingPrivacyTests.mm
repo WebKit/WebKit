@@ -27,6 +27,7 @@
 
 #if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
 
+#import "HTTPServer.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestUIDelegate.h"
@@ -35,9 +36,11 @@
 #import "UserInterfaceSwizzler.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Seconds.h>
@@ -111,8 +114,8 @@ namespace TestWebKitAPI {
 
 static IMP makeFingerprintingScriptsRequestHandler(NSArray<NSString *> *hostNames, Vector<WPScriptAccessCategories>&& allowedCategories)
 {
-    return imp_implementationWithBlock([hostNames = RetainPtr { hostNames }, allowedCategories = WTFMove(allowedCategories)](WPResources *, WPResourceRequestOptions *, void(^completion)(NSArray<WPFingerprintingScript *> *, NSError *)) mutable {
-        RunLoop::mainSingleton().dispatch([hostNames = WTFMove(hostNames), allowedCategories = WTFMove(allowedCategories), completion = makeBlockPtr(completion)] mutable {
+    return imp_implementationWithBlock([hostNames = RetainPtr { hostNames }, allowedCategories = WTF::move(allowedCategories)](WPResources *, WPResourceRequestOptions *, void(^completion)(NSArray<WPFingerprintingScript *> *, NSError *)) mutable {
+        RunLoop::mainSingleton().dispatch([hostNames = WTF::move(hostNames), allowedCategories = WTF::move(allowedCategories), completion = makeBlockPtr(completion)] mutable {
             RetainPtr scripts = [NSMutableArray arrayWithCapacity:[hostNames count]];
             size_t index = 0;
             for (NSString *host in hostNames.get()) {
@@ -138,7 +141,7 @@ public:
         m_swizzler = makeUnique<InstanceMethodSwizzler>(
             PAL::getWPResourcesClassSingleton(),
             @selector(requestFingerprintingScripts:completionHandler:),
-            makeFingerprintingScriptsRequestHandler(hosts, WTFMove(allowedCategories))
+            makeFingerprintingScriptsRequestHandler(hosts, WTF::move(allowedCategories))
         );
     }
 
@@ -153,15 +156,18 @@ static bool supportsFingerprintingScriptRequests()
 }
 
 static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pageURLString, id<WKUIDelegate> uiDelegate, NSDictionary<NSString *, NSString *> *responseData,
-    NSString *referrer = @"https://webkit.org", _WKWebsiteNetworkConnectionIntegrityPolicy policies = _WKWebsiteNetworkConnectionIntegrityPolicyNone)
+    NSString *referrer = @"https://webkit.org", _WKWebsiteNetworkConnectionIntegrityPolicy policies = _WKWebsiteNetworkConnectionIntegrityPolicyNone, WKWebsiteDataStore *datastore = nil)
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     for (_WKFeature *feature in WKPreferences._features) {
-        if ([feature.key isEqualToString:@"ScriptTrackingPrivacyProtectionsEnabled"])
+        if ([feature.key isEqualToString:@"ScriptTrackingPrivacyProtectionsEnabled"]
+            || [feature.key isEqualToString:@"ScriptTrackingPrivacyNetworkRequestBlockingEnabled"]
+            || [feature.key isEqualToString:@"ScriptTrackingPrivacyNetworkRequestBlockingLatchEnabled"]
+            || [feature.key isEqualToString:@"ConsistentQueryParameterFilteringQuirkEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
-    RetainPtr dataStore = [WKWebsiteDataStore defaultDataStore];
+    RetainPtr dataStore = datastore ?: [WKWebsiteDataStore defaultDataStore];
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [configuration setWebsiteDataStore:dataStore.get()];
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
@@ -182,9 +188,14 @@ static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pag
             type = @"text/javascript";
         else if ([pathExtension isEqualToString:@"html"])
             type = @"text/html";
+        else if ([pathExtension isEqualToString:@"jpg"])
+            type = @"image/jpg";
         RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:requestedURL MIMEType:type expectedContentLength:[result length] textEncodingName:nil]);
         [task didReceiveResponse:response.get()];
-        [task didReceiveData:[result dataUsingEncoding:NSUTF8StringEncoding]];
+        if ([pathExtension isEqualToString:@"jpg"])
+            [task didReceiveData:adoptNS([[NSData alloc] initWithBase64EncodedString:result options:0]).get()];
+        else
+            [task didReceiveData:[result dataUsingEncoding:NSUTF8StringEncoding]];
         [task didFinish];
     }];
 
@@ -213,10 +224,21 @@ static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pag
     return setUpWebViewForFingerprintingTests(pageURLString, nil, responseData, referrer, policies);
 }
 
+static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pageURLString, WKWebsiteDataStore *datastore)
+{
+    return setUpWebViewForFingerprintingTests(pageURLString, nil, @{ }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyNone, datastore);
+}
+
 static NSString *getBundleResourceAsText(NSString *filename, NSString *extension)
 {
     NSURL *url = [NSBundle.test_resourcesBundle URLForResource:filename withExtension:extension];
     return [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
+}
+
+static NSString *getBundleResourceAsEncodedString(NSString *filename, NSString *extension)
+{
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:filename withExtension:extension];
+    return [[NSData dataWithContentsOfURL:url] base64EncodedStringWithOptions:0];
 }
 
 static constexpr auto simpleIndexHTML = R"markup(
@@ -226,7 +248,7 @@ static constexpr auto simpleIndexHTML = R"markup(
             <script src="test://top-domain.org/script.js"></script>
         </head>
         <body>
-            <script src="test://tainted.net/script.js"></script>
+            <script src="test://tainted.example/script.js"></script>
             <script src="test://pure.com/script.js"></script>
         </body>
     </html>
@@ -257,7 +279,7 @@ static constexpr auto formFieldIndexHTML = R"markup(
             <select name="selectField" id="selectField">
                 <option value="Primary"></option>
             </select>
-            <script src="test://tainted.net/script.js"></script>
+            <script src="test://tainted.example/script.js"></script>
             <script src="test://pure.com/script.js"></script>
         </body>
     </html>
@@ -268,12 +290,12 @@ TEST(ScriptTrackingPrivacyTests, Referrer)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
         @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
         @"test://pure.com/script.js" : @"window.referrerForPureScript = document.referrer;",
-        @"test://tainted.net/script.js" : @"window.referrerForTaintedScript = document.referrer;"
+        @"test://tainted.example/script.js" : @"window.referrerForTaintedScript = document.referrer;"
     });
 
     EXPECT_WK_STREQ("https://webkit.org/", [webView stringByEvaluatingJavaScript:@"window.referrerForPureScript"]);
@@ -285,16 +307,33 @@ TEST(ScriptTrackingPrivacyTests, QueryParameters)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html?uid=Hv9U23Hfco08", @{
         @"test://top-domain.org/index.html?uid=Hv9U23Hfco08" : simpleIndexHTML.createNSString().autorelease(),
         @"test://pure.com/script.js" : @"window.urlForPureScript = document.URL;",
-        @"test://tainted.net/script.js" : @"window.urlForTaintedScript = document.URL;"
+        @"test://tainted.example/script.js" : @"window.urlForTaintedScript = document.URL;"
     });
 
     EXPECT_WK_STREQ("test://top-domain.org/index.html?uid=Hv9U23Hfco08", [webView stringByEvaluatingJavaScript:@"window.urlForPureScript"]);
     EXPECT_WK_STREQ("test://top-domain.org/index.html", [webView stringByEvaluatingJavaScript:@"window.urlForTaintedScript"]);
+}
+
+TEST(ScriptTrackingPrivacyTests, ConsistentQueryParameters)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    auto simpleConsistentIndexHTML = makeStringByReplacingAll(simpleIndexHTML, "tainted.example"_s, "consistentQueryParameterFiltering.internal"_s);
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html?uid=Hv9U23Hfco08", @{
+        @"test://top-domain.org/index.html?uid=Hv9U23Hfco08" : simpleConsistentIndexHTML.createNSString().autorelease(),
+        @"test://pure.com/script.js" : @"window.urlForPureScript = document.URL;",
+        @"test://consistentQueryParameterFiltering.internal/script.js" : @"window.urlFor3PScript = document.URL;"
+    });
+
+    EXPECT_WK_STREQ("test://top-domain.org/index.html?uid=Hv9U23Hfco08", [webView stringByEvaluatingJavaScript:@"window.urlForPureScript"]);
+    EXPECT_WK_STREQ("test://top-domain.org/index.html", [webView stringByEvaluatingJavaScript:@"window.urlFor3PScript"]);
 }
 
 TEST(ScriptTrackingPrivacyTests, Canvas2D)
@@ -302,7 +341,7 @@ TEST(ScriptTrackingPrivacyTests, Canvas2D)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     NSString *addHashScriptSource = @"fullCanvasHash().then(hash => {"
         "    if (window.hashes)"
@@ -315,7 +354,7 @@ TEST(ScriptTrackingPrivacyTests, Canvas2D)
         @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
         @"test://top-domain.org/script.js" : getBundleResourceAsText(@"canvas-fingerprinting", @"js"),
         @"test://pure.com/script.js" : addHashScriptSource,
-        @"test://tainted.net/script.js" : addHashScriptSource,
+        @"test://tainted.example/script.js" : addHashScriptSource,
     });
 
     RetainPtr<NSArray> hashes;
@@ -335,7 +374,7 @@ TEST(ScriptTrackingPrivacyTests, AudioSamples)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     NSString *addHashScriptSource = @"testOscillatorCompressorAnalyzer().then(hash => {"
         "    if (window.hashes)"
@@ -348,7 +387,7 @@ TEST(ScriptTrackingPrivacyTests, AudioSamples)
         @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
         @"test://top-domain.org/script.js" : getBundleResourceAsText(@"audio-fingerprinting", @"js"),
         @"test://pure.com/script.js" : addHashScriptSource,
-        @"test://tainted.net/script.js" : addHashScriptSource,
+        @"test://tainted.example/script.js" : addHashScriptSource,
     });
 
     RetainPtr<NSArray> hashes;
@@ -368,7 +407,7 @@ TEST(ScriptTrackingPrivacyTests, ScreenMetrics)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 #if PLATFORM(IOS_FAMILY)
     IPadUserInterfaceSwizzler userInterfaceSwizzler;
 #endif
@@ -387,7 +426,7 @@ TEST(ScriptTrackingPrivacyTests, ScreenMetrics)
     RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", uiDelegate.get(), @{
         @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
         @"test://pure.com/script.js" : @"window.pureInfo = { screenX, screenY, 'screen.width': screen.width, 'screen.height': screen.height, outerWidth, outerHeight }",
-        @"test://tainted.net/script.js" : @"window.taintedInfo = { screenX, screenY, 'screen.width': screen.width, 'screen.height': screen.height, outerWidth, outerHeight }"
+        @"test://tainted.example/script.js" : @"window.taintedInfo = { screenX, screenY, 'screen.width': screen.width, 'screen.height': screen.height, outerWidth, outerHeight }"
     });
 
     NSDictionary<NSString *, NSNumber *> *pureInfo = [webView objectByEvaluatingJavaScript:@"window.pureInfo"];
@@ -413,7 +452,7 @@ TEST(ScriptTrackingPrivacyTests, ScriptWrittenCookies)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     auto makeScriptSource = ^(NSString *pureOrTainted) {
         return [NSString stringWithFormat:@"(function () {"
@@ -425,7 +464,7 @@ TEST(ScriptTrackingPrivacyTests, ScriptWrittenCookies)
 
     RetainPtr webView = setUpWebViewForFingerprintingTests(nil, @{
         @"test://pure.com/script.js" : makeScriptSource(@"pure"),
-        @"test://tainted.net/script.js" : makeScriptSource(@"tainted"),
+        @"test://tainted.example/script.js" : makeScriptSource(@"tainted"),
     }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
 
     RetainPtr dataStore = [[webView configuration] websiteDataStore];
@@ -467,7 +506,7 @@ TEST(ScriptTrackingPrivacyTests, LocalStorage)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     auto makeScriptSource = ^(NSString *pureOrTainted) {
         return [NSString stringWithFormat:@"localStorage.setItem('%@', 'foo'); window.%@Item = localStorage.getItem('%@')", pureOrTainted, pureOrTainted, pureOrTainted];
@@ -475,7 +514,7 @@ TEST(ScriptTrackingPrivacyTests, LocalStorage)
 
     RetainPtr webView = setUpWebViewForFingerprintingTests(nil, @{
         @"test://pure.com/script.js" : makeScriptSource(@"pure"),
-        @"test://tainted.net/script.js" : makeScriptSource(@"tainted"),
+        @"test://tainted.example/script.js" : makeScriptSource(@"tainted"),
     }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
 
     RetainPtr dataStore = [[webView configuration] websiteDataStore];
@@ -494,13 +533,13 @@ TEST(ScriptTrackingPrivacyTests, HardwareConcurrency)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     auto computeHardwareConcurrency = [] {
         RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
             @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
             @"test://pure.com/script.js" : @"window.pureValue = navigator.hardwareConcurrency",
-            @"test://tainted.net/script.js" : @"window.taintedValue = navigator.hardwareConcurrency",
+            @"test://tainted.example/script.js" : @"window.taintedValue = navigator.hardwareConcurrency",
         });
 
         return std::pair {
@@ -524,13 +563,13 @@ TEST(ScriptTrackingPrivacyTests, SpeechSynthesisGetVoices)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
         @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
         @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
         @"test://pure.com/script.js" : @"window.pureNumberOfVoices = speechSynthesis.getVoices().length",
-        @"test://tainted.net/script.js" : @"window.taintedNumberOfVoices = speechSynthesis.getVoices().length",
+        @"test://tainted.example/script.js" : @"window.taintedNumberOfVoices = speechSynthesis.getVoices().length",
     });
 
     auto pureNumberOfVoices = [[webView objectByEvaluatingJavaScript:@"window.pureNumberOfVoices"] unsignedIntValue];
@@ -545,7 +584,7 @@ TEST(ScriptTrackingPrivacyTests, DirectFormFieldAccess)
     if (!supportsFingerprintingScriptRequests())
         return;
 
-    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.net" ] };
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
     const auto expectedPureValue = [](const auto& field) {
         if (field == "dateField"_s)
@@ -589,7 +628,7 @@ TEST(ScriptTrackingPrivacyTests, DirectFormFieldAccess)
     RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
         @"test://top-domain.org/index.html" : formFieldIndexHTML.createNSString().autorelease(),
         @"test://pure.com/script.js" : makeScriptSource(@"pure"),
-        @"test://tainted.net/script.js" : makeScriptSource(@"tainted"),
+        @"test://tainted.example/script.js" : makeScriptSource(@"tainted"),
     }, @"https://webkit.org", _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
 
     Vector formFields { {
@@ -675,7 +714,7 @@ TEST(ScriptTrackingPrivacyTests, ScriptAccessCategories)
         return;
 
     FingerprintingScriptsRequestSwizzler swizzler {
-        @[ @"tainted.net" ],
+        @[ @"tainted.example" ],
         { WPScriptAccessCategoryFormControls | WPScriptAccessCategoryQueryParameters }
     };
 
@@ -690,8 +729,8 @@ TEST(ScriptTrackingPrivacyTests, ScriptAccessCategories)
         @"test://top-domain.org/index.html" : formFieldIndexHTML.createNSString().autorelease(),
         @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
         @"test://pure.com/script.js" : makeTestScript(@"pure"),
-        @"test://tainted.net/script.js" : makeTestScript(@"tainted"),
-    });
+        @"test://tainted.example/script.js" : makeTestScript(@"tainted"),
+    }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
 
     RetainPtr pureTextFieldValue = [webView stringByEvaluatingJavaScript:@"window.pureTextFieldValue"];
     EXPECT_WK_STREQ(pureTextFieldValue.get(), @"textFieldValue");
@@ -704,6 +743,494 @@ TEST(ScriptTrackingPrivacyTests, ScriptAccessCategories)
 
     auto taintedNumberOfVoices = [[webView objectByEvaluatingJavaScript:@"window.taintedNumberOfVoices"] intValue];
     EXPECT_EQ(taintedNumberOfVoices, 0);
+}
+
+TEST(ScriptTrackingPrivacyTests, ScriptAccessCategoriesAppendTaintedInlineScript)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler {
+        @[ @"tainted.example" ],
+        { WPScriptAccessCategoryFormControls | WPScriptAccessCategoryQueryParameters }
+    };
+
+    static constexpr auto testHTML = R"markup(
+        <!DOCTYPE html>
+        <html>
+            <head><script src="test://top-domain.org/script.js"></script></head>
+            <body>
+                <input type="text" id="textField" value="textFieldValue">
+                <script src="test://tainted.example/script.js"></script>
+            </body>
+        </html>
+    )markup"_s;
+
+    auto taintedAppendScript = @"(function() {"
+        "  var script = document.createElement('script');"
+        "  script.textContent = 'window.appendedNumberOfVoices = speechSynthesis.getVoices().length; window.appendedTextFieldValue = document.getElementById(\"textField\").value;';"
+        "  document.body.appendChild(script);"
+        "})()";
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : testHTML.createNSString().autorelease(),
+        @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
+        @"test://tainted.example/script.js" : taintedAppendScript,
+    }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
+
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.appendedNumberOfVoices"] intValue], 0);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.appendedTextFieldValue"], @"textFieldValue");
+}
+
+TEST(ScriptTrackingPrivacyTests, ScriptAccessCategoriesWithTimeout)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler {
+        @[ @"tainted.example" ],
+        { WPScriptAccessCategoryFormControls | WPScriptAccessCategoryQueryParameters }
+    };
+
+    static constexpr auto testHTML = R"markup(
+        <!DOCTYPE html>
+        <html>
+            <head><script src="test://top-domain.org/script.js"></script></head>
+            <body>
+                <input type="text" id="textField" value="textFieldValue">
+                <script src="test://tainted.example/script.js"></script>
+            </body>
+        </html>
+    )markup"_s;
+
+    auto taintedTimeoutScript = @"(function() {"
+        "  setTimeout(function() {"
+        "    window.taintedNumberOfVoices = speechSynthesis.getVoices().length;"
+        "    window.taintedTextFieldValue = document.getElementById('textField').value;"
+        "  }, 0);"
+        "})()";
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : testHTML.createNSString().autorelease(),
+        @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
+        @"test://tainted.example/script.js" : taintedTimeoutScript,
+    }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return ![[webView objectByEvaluatingJavaScript:@"window.taintedNumberOfVoices"] isEqual:[NSNull null]];
+    }, 5, @"Timed out waiting for setTimeout callback.");
+
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.taintedNumberOfVoices"] intValue], 0);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.taintedTextFieldValue"], @"textFieldValue");
+}
+
+TEST(ScriptTrackingPrivacyTests, FetchBlocked)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto makeFetchScript = ^(NSString *pureOrTainted) {
+        return [NSString stringWithFormat:@"(async function() {"
+            "  try {"
+            "    const response = await fetch('test://top-domain.org/data.json');"
+            "    const data = await response.text();"
+            "    window.%@FetchResult = 'success: ' + data;"
+            "  } catch (e) {"
+            "    window.%@FetchResult = 'error: ' + e.message;"
+            "  }"
+            "})()", pureOrTainted, pureOrTainted];
+    };
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
+        @"test://top-domain.org/data.json" : @"{\"value\": 42}",
+        @"test://pure.com/script.js" : makeFetchScript(@"pure"),
+        @"test://tainted.example/script.js" : makeFetchScript(@"tainted"),
+    });
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"window.pureFetchResult || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedFetchResult || ''"] length] > 0;
+    }, 10, @"Timed out waiting for fetch results.");
+
+    RetainPtr pureFetchResult = [webView stringByEvaluatingJavaScript:@"window.pureFetchResult"];
+    EXPECT_TRUE([pureFetchResult hasPrefix:@"success:"]);
+
+    RetainPtr taintedFetchResult = [webView stringByEvaluatingJavaScript:@"window.taintedFetchResult"];
+    EXPECT_TRUE([taintedFetchResult hasPrefix:@"error:"]);
+}
+
+TEST(ScriptTrackingPrivacyTests, XHRBlocked)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto makeXHRScript = ^(NSString *pureOrTainted) {
+        return [NSString stringWithFormat:@"(function() {"
+            "  var xhr = new XMLHttpRequest();"
+            "  xhr.open('GET', 'test://top-domain.org/data.json', true);"
+            "  xhr.onload = function() {"
+            "    window.%@XHRResult = 'success: ' + xhr.responseText;"
+            "  };"
+            "  xhr.onerror = function() {"
+            "    window.%@XHRResult = 'error';"
+            "  };"
+            "  try {"
+            "    xhr.send();"
+            "  } catch (e) {"
+            "    window.%@XHRResult = 'exception: ' + e.message;"
+            "  }"
+            "})()", pureOrTainted, pureOrTainted, pureOrTainted];
+    };
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
+        @"test://top-domain.org/data.json" : @"{\"value\": 42}",
+        @"test://pure.com/script.js" : makeXHRScript(@"pure"),
+        @"test://tainted.example/script.js" : makeXHRScript(@"tainted"),
+    });
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"window.pureXHRResult || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedXHRResult || ''"] length] > 0;
+    }, 10, @"Timed out waiting for XHR results.");
+
+    RetainPtr pureXHRResult = [webView stringByEvaluatingJavaScript:@"window.pureXHRResult"];
+    EXPECT_TRUE([pureXHRResult hasPrefix:@"success:"]);
+
+    RetainPtr taintedXHRResult = [webView stringByEvaluatingJavaScript:@"window.taintedXHRResult"];
+    EXPECT_TRUE([taintedXHRResult isEqualToString:@"error"]);
+}
+
+TEST(ScriptTrackingPrivacyTests, SyncXHRBlocked)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto makeSyncXHRScript = ^(NSString *pureOrTainted) {
+        return [NSString stringWithFormat:@"(function() {"
+            "  var xhr = new XMLHttpRequest();"
+            "  xhr.open('GET', 'test://top-domain.org/data.json', false);"
+            "  try {"
+            "    xhr.send();"
+            "    window.%@SyncXHRResult = 'success: ' + xhr.responseText;"
+            "  } catch (e) {"
+            "    window.%@SyncXHRResult = 'exception: ' + e.name;"
+            "  }"
+            "})()", pureOrTainted, pureOrTainted];
+    };
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
+        @"test://top-domain.org/data.json" : @"{\"value\": 42}",
+        @"test://pure.com/script.js" : makeSyncXHRScript(@"pure"),
+        @"test://tainted.example/script.js" : makeSyncXHRScript(@"tainted"),
+    });
+
+    RetainPtr pureSyncXHRResult = [webView stringByEvaluatingJavaScript:@"window.pureSyncXHRResult"];
+    EXPECT_TRUE([pureSyncXHRResult hasPrefix:@"success:"]);
+
+    RetainPtr taintedSyncXHRResult = [webView stringByEvaluatingJavaScript:@"window.taintedSyncXHRResult"];
+    EXPECT_WK_STREQ(taintedSyncXHRResult.get(), @"exception: NetworkError");
+}
+
+TEST(ScriptTrackingPrivacyTests, ImgElementLoadBlocked)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto makeImgElement = ^(NSString *pureOrTainted) {
+        return [NSString stringWithFormat:@"(function() {"
+            "  var img = document.createElement(\"img\");"
+            "  img.onload = () => { window.%@ImgLoadResult = 'success'; };"
+            "  img.onerror = () => { window.%@ImgLoadResult = 'error'; };"
+            "  img.src = 'test://top-domain.org/test.jpg';"
+            "})()", pureOrTainted, pureOrTainted];
+    };
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
+        @"test://top-domain.org/test.jpg" : getBundleResourceAsEncodedString(@"test", @"jpg"),
+        @"test://pure.com/script.js" : makeImgElement(@"pure"),
+        @"test://tainted.example/script.js" : makeImgElement(@"tainted"),
+    });
+
+    TestWebKitAPI::Util::spinRunLoop(100);
+
+    RetainPtr pureImgLoadResult = [webView stringByEvaluatingJavaScript:@"window.pureImgLoadResult"];
+    EXPECT_WK_STREQ(pureImgLoadResult.get(), @"success");
+
+    RetainPtr taintedImgLoadResult = [webView stringByEvaluatingJavaScript:@"window.taintedImgLoadResult"];
+    EXPECT_WK_STREQ(taintedImgLoadResult.get(), @"error");
+}
+
+TEST(ScriptTrackingPrivacyTests, BlockSubsequentFetch)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            String pureOrTainted = path.contains("pure.com"_s) ? "pure"_s : "tainted"_s;
+            if (path.endsWith("/script.js"_s)) {
+                String script = makeStringByReplacingAll(
+                    "async function doFetch() {"
+                    "  try {"
+                    "    const response = await fetch('http://tainted.example/data.json', { 'mode': 'no-cors' });"
+                    "    const data = await response.text();"
+                    "    window.%@FetchResult = 'success: ' + data;"
+                    "  } catch (e) {"
+                    "    window.%@FetchResult = 'error: ' + e.message;"
+                    "  }"
+                    "}"
+                    "(function() {"
+                    "    if (\"%@\" === \"pure\") {"
+                    "        setTimeout(() => {"
+                    "            doFetch();"
+                    "        }, 100);"
+                    "    } else"
+                    "        doFetch();"
+                    "})()"_s, "%@"_s, pureOrTainted);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } }, script).serialize());
+                continue;
+            }
+            if (path.endsWith("/index.html"_s)) {
+                String document = makeStringByReplacingAll(String { simpleIndexHTML }, "test://"_s, "http://"_s);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, document).serialize());
+                continue;
+            }
+            if (path.endsWith("/data.json"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/plain"_s } }, "{\"value\": 42}"_s).serialize());
+                continue;
+            }
+
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::Http);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port())
+    }];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"http://top-domain.org/index.html", dataStore.get());
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"window.pureFetchResult || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedFetchResult || ''"] length] > 0;
+    }, 10, @"Timed out waiting for fetch results.");
+
+    RetainPtr pureFetchResult = [webView stringByEvaluatingJavaScript:@"window.pureFetchResult"];
+    EXPECT_TRUE([pureFetchResult hasPrefix:@"error:"]);
+
+    RetainPtr taintedFetchResult = [webView stringByEvaluatingJavaScript:@"window.taintedFetchResult"];
+    EXPECT_TRUE([taintedFetchResult hasPrefix:@"error:"]);
+}
+
+TEST(ScriptTrackingPrivacyTests, ScriptElementLoadBlocked)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto makeScriptElement = ^(NSString *pureOrTainted) {
+        return [NSString stringWithFormat:@"(function() {"
+            "  var script = document.createElement(\"script\");"
+            "  script.onload = () => { window.%@ScriptLoadResult = 'success'; };"
+            "  script.onerror = () => { window.%@ScriptLoadResult = 'error'; };"
+            "  script.src = 'test://top-domain.org/script2.js';"
+            "  document.body.appendChild(script);"
+            "})()", pureOrTainted, pureOrTainted];
+    };
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
+        @"test://top-domain.org/script2.js" : @"",
+        @"test://pure.com/script.js" : makeScriptElement(@"pure"),
+        @"test://tainted.example/script.js" : makeScriptElement(@"tainted"),
+    });
+
+    TestWebKitAPI::Util::spinRunLoop(100);
+
+    RetainPtr pureScriptLoadResult = [webView stringByEvaluatingJavaScript:@"window.pureScriptLoadResult"];
+    EXPECT_WK_STREQ(pureScriptLoadResult.get(), @"success");
+
+    RetainPtr taintedScriptLoadResult = [webView stringByEvaluatingJavaScript:@"window.taintedScriptLoadResult"];
+    EXPECT_WK_STREQ(taintedScriptLoadResult.get(), @"error");
+}
+
+TEST(ScriptTrackingPrivacyTests, BlockSubsequentElement)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            size_t period = path.find(".");
+            const String httpPrefix = "http://"_s;
+            EXPECT_NE(period, notFound);
+            String domain = makeStringByReplacingAll(path.substring(httpPrefix.length(), period - httpPrefix.length()), "-"_s, "_"_s);
+            if (path.endsWith("/script.js"_s)) {
+                String script = makeStringByReplacingAll(
+                    "function doElementLoad() {"
+                    "  let script = document.createElement(\"script\");"
+                    "  script.onload = () => { window.%%LoadResult = 'success'; };"
+                    "  script.onerror = () => { window.%%LoadResult = 'error'; };"
+                    "  script.src = \"http://tainted.example/script2.js\";"
+                    "  document.body.appendChild(script);"
+                    "}"
+                    "(function() {"
+                    "    if (\"%%\" === \"pure\") {"
+                    "        setTimeout(() => {"
+                    "            doElementLoad();"
+                    "        }, 100);"
+                    "    } else if (\"%%\" === \"tainted\")"
+                    "        doElementLoad()"
+                    "})()"_s, "%%"_s, domain);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } }, script).serialize());
+                continue;
+            }
+            if (path.endsWith("/script2.js"_s)) {
+                String script = makeStringByReplacingAll("console.log(\"Executing script from %%\");"_s, "%%"_s, domain);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } }, script).serialize());
+                continue;
+            }
+            if (path.endsWith("/index.html"_s)) {
+                String document = makeStringByReplacingAll(String { simpleIndexHTML }, "test://"_s, "http://"_s);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, document).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::Http);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port())
+    }];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"http://top-domain.org/index.html", dataStore.get());
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"window.pureLoadResult || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedLoadResult || ''"] length] > 0;
+    }, 11, @"Timed out waiting for element load.");
+
+    RetainPtr pureLoadResult = [webView stringByEvaluatingJavaScript:@"window.pureLoadResult"];
+    EXPECT_TRUE([pureLoadResult hasPrefix:@"error"]);
+
+    RetainPtr taintedLoadResult = [webView stringByEvaluatingJavaScript:@"window.taintedLoadResult"];
+    EXPECT_TRUE([taintedLoadResult hasPrefix:@"error"]);
+}
+
+TEST(ScriptTrackingPrivacyTests, BlockSubsequent2Element)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
+
+    auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            size_t period = path.find(".");
+            const String httpPrefix = "http://"_s;
+            EXPECT_NE(period, notFound);
+            String domain = makeStringByReplacingAll(path.substring(httpPrefix.length(), period - httpPrefix.length()), "-"_s, "_"_s);
+            if (path.endsWith("/script.js"_s)) {
+                String script = makeStringByReplacingAll(
+                    "function doElementLoad() {"
+                    "  let script1 = document.createElement(\"script\");"
+                    "  script1.onload = () => { window.%%LoadResult1 = 'success'; };"
+                    "  script1.onerror = () => { window.%%LoadResult1 = 'error'; };"
+                    "  script1.src = \"http://tainted.example/script2.js\";"
+                    "  document.body.appendChild(script1);"
+                    "  let script2 = document.createElement(\"script\");"
+                    "  script2.onload = () => { window.%%LoadResult2 = 'success'; };"
+                    "  script2.onerror = () => { window.%%LoadResult2 = 'error'; };"
+                    "  script2.src = \"http://pure.net/script2.js\";"
+                    "  document.body.appendChild(script2);"
+                    "}"
+                    "(function() {"
+                    "    if (\"%%\" === \"pure\") {"
+                    "        setTimeout(() => {"
+                    "            doElementLoad();"
+                    "        }, 100);"
+                    "    } else if (\"%%\" === \"tainted\")"
+                    "        doElementLoad()"
+                    "})()"_s, "%%"_s, domain);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } }, script).serialize());
+                continue;
+            }
+            if (path.endsWith("/script2.js"_s)) {
+                String script = makeStringByReplacingAll("console.log(\"Executing script from %%\");"_s, "%%"_s, domain);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/javascript"_s } }, script).serialize());
+                continue;
+            }
+            if (path.endsWith("/index.html"_s)) {
+                String document = makeStringByReplacingAll(String { simpleIndexHTML }, "test://"_s, "http://"_s);
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, document).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::Http);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port())
+    }];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"http://top-domain.org/index.html", dataStore.get());
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"window.pureLoadResult1 || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedLoadResult1 || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.pureLoadResult2 || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedLoadResult2 || ''"] length] > 0;
+    }, 11, @"Timed out waiting for element load.");
+
+    RetainPtr pureLoadResult1 = [webView stringByEvaluatingJavaScript:@"window.pureLoadResult1"];
+    EXPECT_TRUE([pureLoadResult1 hasPrefix:@"error"]);
+
+    RetainPtr taintedLoadResult1 = [webView stringByEvaluatingJavaScript:@"window.taintedLoadResult1"];
+    EXPECT_TRUE([taintedLoadResult1 hasPrefix:@"error"]);
+
+    RetainPtr pureLoadResult2 = [webView stringByEvaluatingJavaScript:@"window.pureLoadResult2"];
+    EXPECT_TRUE([pureLoadResult2 hasPrefix:@"success"]);
+
+    RetainPtr taintedLoadResult2 = [webView stringByEvaluatingJavaScript:@"window.taintedLoadResult2"];
+    EXPECT_TRUE([taintedLoadResult2 hasPrefix:@"error"]);
 }
 
 } // namespace TestWebKitAPI

@@ -54,6 +54,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-036.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-037.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-038.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-039.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-040.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-041.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/non-render-blocking-scripts.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-blocking-script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-async-inline-module-with-import.html

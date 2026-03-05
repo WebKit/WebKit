@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <cstddef>
+#include <span>
+#include <wtf/ExportMacros.h>
 #include <wtf/text/Latin1Character.h>
 
 namespace WTF {

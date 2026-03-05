@@ -7,7 +7,7 @@ Pass: Cross frame access from a data: URL on a different domain was denied.
 
 
 --------
-Frame: '<!--frame1-->'
+Frame: 'aFrame'
 --------
 Inner iframe on a foreign domain.
 

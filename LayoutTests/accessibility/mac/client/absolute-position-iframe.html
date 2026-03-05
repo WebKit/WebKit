@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#frame {
+    position: absolute;
+    left: 100px;
+    top: 50px;
+    width: 400px;
+    height: 300px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="frame" src="resources/frame-content.html"></iframe>
+
+<script>
+var output = "Validates the absolute (screen) position of text inside an iframe.\n\n";
+
+var text, webArea, textX, textY;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            return webArea;
+        });
+
+        // Web area -> iframe -> paragraph -> static text.
+        var text = webArea.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+
+        var pageOrigin = { x: webArea.x, y: webArea.y };
+
+        // The text in the iframe is offset by (20, 30).
+        await waitFor(() => {
+            textX = text.x - pageOrigin.x;
+            textY = text.y - pageOrigin.y;
+            return textX == 120 && textY == 80;
+        });
+
+        output += expect("textX", "120");
+        output += expect("textY", "80");
+
+        debug(output);
+        document.getElementById("frame").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

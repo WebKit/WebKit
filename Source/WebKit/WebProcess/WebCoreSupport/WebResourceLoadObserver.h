@@ -54,7 +54,7 @@ public:
     void logSubresourceLoadingForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification);
 
 #if !RELEASE_LOG_DISABLED
-    static void setShouldLogUserInteraction(bool);
+    static void NODELETE setShouldLogUserInteraction(bool);
 #endif
 
     String statisticsForURL(const URL&) final;
@@ -63,7 +63,7 @@ public:
     
     bool hasStatistics() const final { return !m_resourceStatisticsMap.isEmpty(); }
 
-    void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains) final { m_domainsWithUserInteraction = WTFMove(domains); }
+    void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains) final { m_domainsWithUserInteraction = WTF::move(domains); }
     void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubFrameDomain>>&&, CompletionHandler<void()>&&) final;
     bool hasHadUserInteraction(const WebCore::RegistrableDomain&) const final;
     bool hasCrossPageStorageAccess(const SubFrameDomain&, const TopFrameDomain&) const final;

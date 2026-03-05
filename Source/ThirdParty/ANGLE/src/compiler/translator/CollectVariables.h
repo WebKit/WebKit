@@ -33,7 +33,8 @@ void CollectVariables(TIntermBlock *root,
                       GLenum shaderType,
                       const TExtensionBehavior &extensionBehavior,
                       const ShBuiltInResources &resources,
-                      int tessControlShaderOutputVertices);
+                      int tessControlShaderOutputVertices,
+                      bool transformFloatUniformToFP16);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_COLLECTVARIABLES_H_

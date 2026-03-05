@@ -17,6 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://dom.spec.whatwg.org/#xpathresult
 [
     ExportToWrappedFunction,
     JSCustomMarkFunction,
@@ -37,11 +38,10 @@
     readonly attribute unrestricted double numberValue;
     readonly attribute DOMString stringValue;
     readonly attribute boolean booleanValue;
-    readonly attribute Node singleNodeValue;
-
+    readonly attribute Node? singleNodeValue;
     readonly attribute boolean invalidIteratorState;
     readonly attribute unsigned long snapshotLength;
 
-    Node iterateNext();
-    Node snapshotItem(unsigned long index);
+    Node? iterateNext();
+    Node? snapshotItem(unsigned long index);
 };

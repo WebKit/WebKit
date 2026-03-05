@@ -49,6 +49,10 @@ struct NetworkControllerConfig {
   // Initial stream specific configuration, these are changed at any later time
   // by calls to OnStreamsConfig.
   StreamsConfig stream_based_config;
+  // Default time window used for calculating how send packets are paced.
+  // Note that a network controller can choose to request the pacer to pace
+  // packets stricter.
+  TimeDelta default_pacing_time_window = PacerConfig::kDefaultTimeInterval;
 };
 
 // NetworkControllerInterface is implemented by network controllers. A network
@@ -97,6 +101,9 @@ class NetworkControllerInterface {
   // Called with network state estimate updates.
   ABSL_MUST_USE_RESULT virtual NetworkControlUpdate OnNetworkStateEstimate(
       NetworkStateEstimate) = 0;
+  // Returns true if the network controller supports adaptation to ECN.
+  // https://www.rfc-editor.org/rfc/rfc9331.html
+  virtual bool SupportsEcnAdaptation() const { return false; }
 };
 
 // NetworkControllerFactoryInterface is an interface for creating a network

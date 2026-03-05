@@ -46,10 +46,26 @@ div#attachment-container {
     background-color: canvas;
     border-radius: 8px;
     font: caption;
+    direction: inherit;
+    text-align: start;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
     display: flex;
+}
+
+div#attachment-container.attachment-has-selection {
+    background-color: -apple-system-selected-text-background;
+}
+
+div#attachment-container.attachment-selection-continues-left {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+div#attachment-container.attachment-selection-continues-right {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 
 /* This div is needed to blend the transparent background color *over* the opaque container above. */
@@ -60,7 +76,7 @@ div#attachment-background {
     background-color: -apple-system-tertiary-fill;
 #endif
     width: 100%;
-    border-radius: inherit;
+    border-radius: 8px;
     display: flex;
 }
 

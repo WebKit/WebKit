@@ -1,0 +1,8 @@
+
+PASS The offsetParent of the root element is null
+PASS The offsetParent of a <html> element which is not the root is computed normally
+PASS The offsetParent of 'the body element' is null
+PASS The offsetParent of a <body> element which has a previous <body> sibling is also null
+PASS The offsetParent of a <body> element which is a child of a non-root <html> is also null
+PASS The offsetParent of a <body> element which is a child of a non-<html> is also null
+

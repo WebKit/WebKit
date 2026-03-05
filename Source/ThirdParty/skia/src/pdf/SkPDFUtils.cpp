@@ -129,12 +129,15 @@ void SkPDFUtils::AppendRectangle(const SkRect& rect, SkWStream* content) {
     content->writeText(" re\n");
 }
 
-void SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
-                          bool doConsumeDegerates, SkWStream* content,
-                          SkScalar tolerance) {
-    if (path.isEmpty() && SkPaint::kFill_Style == paintStyle) {
-        SkPDFUtils::AppendRectangle({0, 0, 0, 0}, content);
-        return;
+bool SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
+                          EmptyPath emptyPath, EmptyVerb emptyVerb,
+                          SkWStream* content, SkScalar tolerance) {
+    if (path.isEmpty()) {
+        if (emptyPath == EmptyPath::Preserve) {
+            SkPDFUtils::AppendRectangle({0, 0, 0, 0}, content);
+            return true;
+        }
+        return false;
     }
     // Filling a path with no area results in a drawing in PDF renderers but
     // Chrome expects to be able to draw some such entities with no visible
@@ -150,7 +153,7 @@ void SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
          SkPathFillType::kEvenOdd == path.getFillType()))
     {
         SkPDFUtils::AppendRectangle(rect, content);
-        return;
+        return true;
     }
 
     enum SkipFillState {
@@ -164,6 +167,8 @@ void SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
     //}
     SkPoint lastMovePt = SkPoint::Make(0,0);
     SkDynamicMemoryWStream currentSegment;
+    const bool preserveEmptyVerbs = emptyVerb == EmptyVerb::Preserve;
+    bool wroteContent = false;
 
     SkPath::Iter iter(path, false);
     while (auto rec = iter.next()) {
@@ -176,7 +181,7 @@ void SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
                 fillState = kEmpty_SkipFillState;
                 break;
             case SkPathVerb::kLine:
-                if (!doConsumeDegerates || !SkPathPriv::AllPointsEq(args)) {
+                if (preserveEmptyVerbs || !SkPathPriv::AllPointsEq(args)) {
                     AppendLine(args[1].fX, args[1].fY, &currentSegment);
                     if ((fillState == kEmpty_SkipFillState) && (args[0] != lastMovePt)) {
                         fillState = kSingleLine_SkipFillState;
@@ -186,13 +191,13 @@ void SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
                 }
                 break;
             case SkPathVerb::kQuad:
-                if (!doConsumeDegerates || !SkPathPriv::AllPointsEq(args)) {
+                if (preserveEmptyVerbs || !SkPathPriv::AllPointsEq(args)) {
                     append_quad(args, &currentSegment);
                     fillState = kNonSingleLine_SkipFillState;
                 }
                 break;
             case SkPathVerb::kConic:
-                if (!doConsumeDegerates || !SkPathPriv::AllPointsEq(args)) {
+                if (preserveEmptyVerbs || !SkPathPriv::AllPointsEq(args)) {
                     SkAutoConicToQuads converter;
                     const SkPoint* quads = converter.computeQuads(args, rec->conicWeight(), tolerance);
                     for (int i = 0; i < converter.countQuads(); ++i) {
@@ -202,7 +207,7 @@ void SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
                 }
                 break;
             case SkPathVerb::kCubic:
-                if (!doConsumeDegerates || !SkPathPriv::AllPointsEq(args)) {
+                if (preserveEmptyVerbs || !SkPathPriv::AllPointsEq(args)) {
                     append_cubic(args[1].fX, args[1].fY, args[2].fX, args[2].fY,
                                  args[3].fX, args[3].fY, &currentSegment);
                     fillState = kNonSingleLine_SkipFillState;
@@ -211,13 +216,16 @@ void SkPDFUtils::EmitPath(const SkPath& path, SkPaint::Style paintStyle,
             case SkPathVerb::kClose:
                 ClosePath(&currentSegment);
                 currentSegment.writeToStream(content);
+                wroteContent = true;
                 currentSegment.reset();
                 break;
         }
     }
     if (currentSegment.bytesWritten() > 0) {
         currentSegment.writeToStream(content);
+        wroteContent = true;
     }
+    return wroteContent;
 }
 
 void SkPDFUtils::ClosePath(SkWStream* content) {
@@ -321,6 +329,7 @@ bool SkPDFUtils::InverseTransformBBox(const SkMatrix& matrix, SkRect* bbox) {
 
 void SkPDFUtils::PopulateTilingPatternDict(SkPDFDict* pattern,
                                            SkRect& bbox,
+                                           bool tileX, bool tileY,
                                            std::unique_ptr<SkPDFDict> resources,
                                            const SkMatrix& matrix) {
     const int kTiling_PatternType = 1;
@@ -332,8 +341,10 @@ void SkPDFUtils::PopulateTilingPatternDict(SkPDFDict* pattern,
     pattern->insertInt("PaintType", kColoredTilingPattern_PaintType);
     pattern->insertInt("TilingType", kConstantSpacing_TilingType);
     pattern->insertObject("BBox", SkPDFUtils::RectToArray(bbox));
-    pattern->insertScalar("XStep", bbox.width());
-    pattern->insertScalar("YStep", bbox.height());
+    // PDF tiling is a raster operation which may involve pixel snapping XStep and YStep values.
+    // Add space between "tiles" if not tiling in the given direction. https://crbug.com/41496385
+    pattern->insertScalar("XStep", bbox.width() + (tileX ? 0 : 2));
+    pattern->insertScalar("YStep", bbox.height() + (tileY ? 0 : 2));
     pattern->insertObject("Resources", std::move(resources));
     if (!matrix.isIdentity()) {
         pattern->insertObject("Matrix", SkPDFUtils::MatrixToArray(matrix));

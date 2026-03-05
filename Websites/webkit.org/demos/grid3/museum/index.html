@@ -2,23 +2,24 @@
 <html lang="en-US">
 <head>
   <meta charset="utf-8">
-  <title>Museum demo</title>
+  <title>CSS Grid Lanes — Museum demo</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../universal.css">
   <link rel="stylesheet" href="styles.css">
   <meta name="theme-color" content="color(display-p3 0.106 0.361 0.575)" />
-
 </head>
 <body>
   <aside class="interface">
-    <nav>Demos: <a href="../photos/">Photos</a> | <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a></nav>
+    <nav>Demos: <a href="../">Home</a> | <a href="../photos/">Photos</a> | <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a></nav>
     <section class="layout-switcher">
       <label for="layout-select">Switch layouts:</label>
       <select name="layouts" id="layout-select">
         <option value="one">CSS Grid Level 1</option>
-        <option value="two">Symmetrical columnar layout</option>
-        <option selected value="three">With subgrid and item placement</option>
-        <option value="four">Wide content is wider</option>
+        <option value="two">Grid Lanes — classic "waterfall" layout</option>
+        <option selected value="twoandahalf">Grid Lanes — with item placement</option>
+        <!-- <option value="three">Grid Lanes — with subgrid</option>
+        <option value="four">Grid Lanes — wide content is wider</option> -->
       </select>
     </section>
     <section class="number-toggle">
@@ -32,12 +33,19 @@
   grid-template-rows: auto; 
 }</code></pre>    
 <pre class="two"><code>main { 
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-  grid-template-rows: masonry; 
 }</code></pre>
-<pre class="three"><code>main { 
+<pre class="twoandahalf"><code>main {
+  display: grid-lanes;
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+  header { 
+    grid-column: -2 / -1; 
+  }
+}</code></pre>
+<pre class="three"><code>main {
+  display: grid-lanes; 
   grid-template-columns: repeat(auto-fill, minmax(18ch, 1fr) 9ch);
-  grid-template-rows: masonry;
   article, footer {
      display: grid;
      grid-template-columns: subgrid;
@@ -45,8 +53,8 @@
   header, article { grid-column: span 2; }
 }</code></pre>
 <pre class="four"><code>main { 
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(16ch, 1fr) 8ch);
-  grid-template-rows: masonry;
   article, footer {
      display: grid;
      grid-template-columns: subgrid;
@@ -56,8 +64,7 @@
 }</code></pre>
     </section>
   </aside>
-<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
-  <a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer>
+<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, or another browser that supports Grid Level 3.</p></footer> 
 <main>
     <header>
         <h1><a href="https://www.nga.gov"><span>National</span> Gallery of Art</a></h1>
@@ -93,7 +100,7 @@
           <div class="location">Not on View</div>
         </footer>
     </article>
-    <article>
+    <article class="wide">
         <a class="image" href="https://www.nga.gov/collection/art-object-page.1225.html">
           <img src="images/keelmen_heaving_in_coals_by_moonlight_1942.9.86.jpg" width="800" height="594">
         </a>

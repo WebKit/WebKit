@@ -41,7 +41,7 @@ bool Module::load()
     if (!CFBundleLoadExecutable(bundle.get()))
         return false;
 
-    m_bundle = WTFMove(bundle);
+    m_bundle = WTF::move(bundle);
     return true;
 }
 

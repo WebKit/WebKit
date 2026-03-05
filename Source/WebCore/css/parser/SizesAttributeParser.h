@@ -1,5 +1,6 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
 // Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -29,48 +30,41 @@
 
 #pragma once
 
-#include "CSSParserTokenRange.h"
-#include "CSSPrimitiveValue.h"
 #include "MediaQuery.h"
+#include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSValue;
+class CSSParserTokenRange;
+class CSSToLengthConversionData;
 class Document;
-
 struct CSSParserContext;
-
-namespace CSS {
-enum class LengthUnit : uint8_t;
-}
 
 class SizesAttributeParser {
 public:
     SizesAttributeParser(const String&, const Document&);
 
-    float length();
+    float effectiveSize();
 
-    static float defaultLength(const Document&);
-    static float computeLength(double value, CSS::LengthUnit, const Document&);
-
-    auto& dynamicMediaQueryResults() const { return m_dynamicMediaQueryResults; }
+    const Vector<MQ::MediaQueryResult>& dynamicMediaQueryResults() const LIFETIME_BOUND { return m_dynamicMediaQueryResults; }
 
 private:
-    bool parse(CSSParserTokenRange, const CSSParserContext&);
-    float effectiveSize();
-    std::optional<float> calculateLengthInPixels(CSSParserTokenRange);
-    bool mediaConditionMatches(const MQ::MediaQuery&);
-    unsigned effectiveSizeDefaultValue();
+    std::optional<float> parse(CSSParserTokenRange, const CSSParserContext&);
+    std::optional<float> parseLength(CSSParserTokenRange, const CSSParserContext&);
+    std::optional<float> parseDimension(CSSParserTokenRange, const CSSParserContext&);
+    std::optional<float> parseFunction(CSSParserTokenRange, const CSSParserContext&);
 
-    Ref<const Document> protectedDocument() const;
+    bool mediaConditionMatches(const MQ::MediaQuery&);
+
+    const Document& document() const { return m_document.get(); }
+    std::optional<CSSToLengthConversionData> conversionData() const;
+    float effectiveSizeDefaultValue();
 
     WeakRef<const Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
-    float m_length { 0 };
-    bool m_lengthWasSet { false };
-    bool m_isValid { false };
+    std::optional<float> m_result;
 };
 
 } // namespace WebCore

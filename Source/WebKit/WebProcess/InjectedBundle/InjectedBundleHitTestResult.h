@@ -43,7 +43,7 @@ class InjectedBundleHitTestResult : public API::ObjectImpl<API::Object::Type::Bu
 public:
     static Ref<InjectedBundleHitTestResult> create(const WebCore::HitTestResult&);
 
-    const WebCore::HitTestResult& coreHitTestResult() const { return m_hitTestResult; }
+    const WebCore::HitTestResult& coreHitTestResult() const LIFETIME_BOUND { return m_hitTestResult; }
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle() const;
     RefPtr<InjectedBundleNodeHandle> urlElementHandle() const;

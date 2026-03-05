@@ -59,7 +59,7 @@ struct CoreIPCDDSecureActionContextData {
     RetainPtr<NSString> groupTranscript;
     RetainPtr<NSString> selectionString;
 
-    std::optional<RetainPtr<DDScannerResult>> mainResult;
+    RetainPtr<DDScannerResult> mainResult;
 
     bool immediate;
     bool isRightClick;

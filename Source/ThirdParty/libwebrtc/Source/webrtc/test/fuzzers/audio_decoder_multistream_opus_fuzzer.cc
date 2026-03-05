@@ -13,12 +13,16 @@
 #include <memory>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus.h"
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus_config.h"
 #include "rtc_base/checks.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
+
+using test::FuzzDataHelper;
 
 AudioDecoderMultiChannelOpusConfig MakeDecoderConfig(
     int num_channels,
@@ -34,7 +38,7 @@ AudioDecoderMultiChannelOpusConfig MakeDecoderConfig(
 }
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  const std::vector<AudioDecoderMultiChannelOpusConfig> surround_configs = {
+  const AudioDecoderMultiChannelOpusConfig kSurroundConfigs[] = {
       MakeDecoderConfig(1, 1, 0, {0}),  // Mono
 
       MakeDecoderConfig(2, 2, 0, {0, 0}),  // Copy the first (of
@@ -50,7 +54,9 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       MakeDecoderConfig(8, 5, 3, {0, 6, 1, 2, 3, 4, 5, 7})  // 7.1
   };
 
-  const auto config = surround_configs[data[0] % surround_configs.size()];
+  FuzzDataHelper helper(MakeArrayView(data, size));
+
+  const auto config = helper.SelectOneOf(kSurroundConfigs);
   RTC_CHECK(config.IsOk());
   std::unique_ptr<AudioDecoder> dec =
       AudioDecoderMultiChannelOpus::MakeAudioDecoder(config);

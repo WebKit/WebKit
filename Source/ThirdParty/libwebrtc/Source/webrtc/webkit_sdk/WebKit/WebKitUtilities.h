@@ -70,7 +70,7 @@ struct I420ABufferLayout : I420BufferLayout {
     size_t strideA { 0 };
 };
 
-CVPixelBufferRef createPixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout) CF_RETURNS_RETAINED;
+CVPixelBufferRef createPixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout, bool isFullRange) CF_RETURNS_RETAINED;
 CVPixelBufferRef createPixelBufferFromI420ABuffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420ABufferLayout) CF_RETURNS_RETAINED;
 
 }

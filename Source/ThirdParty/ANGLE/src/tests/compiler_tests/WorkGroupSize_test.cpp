@@ -39,7 +39,7 @@ class WorkGroupSizeTest : public testing::Test
         compileOptions.intermediateTree = true;
 
         const char *shaderStrings[] = {shaderString.c_str()};
-        bool status                 = mTranslator->compile(shaderStrings, 1, compileOptions);
+        bool status                 = mTranslator->compile(shaderStrings, compileOptions);
         TInfoSink &infoSink         = mTranslator->getInfoSink();
         mInfoLog                    = infoSink.info.c_str();
         return status;

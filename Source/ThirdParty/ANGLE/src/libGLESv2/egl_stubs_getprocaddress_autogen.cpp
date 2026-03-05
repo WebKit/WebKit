@@ -405,6 +405,7 @@ const ProcEntry g_procTable[] = {
     {"glFramebufferTexture3DOES", P(GL_FramebufferTexture3DOES)},
     {"glFramebufferTextureEXT", P(GL_FramebufferTextureEXT)},
     {"glFramebufferTextureLayer", P(GL_FramebufferTextureLayer)},
+    {"glFramebufferTextureMultisampleMultiviewOVR", P(GL_FramebufferTextureMultisampleMultiviewOVR)},
     {"glFramebufferTextureMultiviewOVR", P(GL_FramebufferTextureMultiviewOVR)},
     {"glFramebufferTextureOES", P(GL_FramebufferTextureOES)},
     {"glFramebufferTexturePixelLocalStorageANGLE", P(GL_FramebufferTexturePixelLocalStorageANGLE)},

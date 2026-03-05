@@ -4,7 +4,7 @@ layer at (0,0) size 800x482
   RenderBlock {html} at (0,0) size 800x482
     RenderBody {body} at (8,16) size 784x458
       RenderBlock {p} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 738x39
+        RenderText {#text} at (0,0) size 738x40
           text run at (0,0) width 738: "The svg area contained in the div element (red box), should fill out the whole area (two blue rectangles, first: (0,0)-"
           text run at (0,20) width 686: "(50%,50%), second: (50%,50%)-(100%,100%)), especially after resizing the content box to a different size"
       RenderBlock {div} at (0,56) size 402x402 [border: (1px solid #FF0000)]

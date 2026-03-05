@@ -32,7 +32,7 @@ namespace Style {
 
 // <'offset-distance'> = <length-percentage>
 // https://drafts.fxtf.org/motion/#propdef-offset-distance
-struct OffsetDistance : LengthWrapperBase<LengthPercentage<>> {
+struct OffsetDistance : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -45,9 +45,9 @@ struct OffsetDistance : LengthWrapperBase<LengthPercentage<>> {
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<OffsetDistance, AcceleratedEffectOffsetDistance> {
-    auto operator()(const OffsetDistance& value, float pathLength, ZoomNeeded token) -> AcceleratedEffectOffsetDistance
+    auto operator()(const OffsetDistance& value, float pathLength, ZoomFactor zoom) -> AcceleratedEffectOffsetDistance
     {
-        return { .value = evaluate<float>(value, pathLength, token) };
+        return { .value = evaluate<float>(value, pathLength, zoom) };
     }
 };
 

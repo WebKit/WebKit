@@ -46,10 +46,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTextContentElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTextContentElement);
  
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGGraphicsElement(tagName, document, WTFMove(propertyRegistry))
+    : SVGGraphicsElement(tagName, document, WTF::move(propertyRegistry))
 {
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
@@ -61,14 +61,14 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
 
 unsigned SVGTextContentElement::getNumberOfChars()
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
-    return SVGTextQuery(checkedRenderer().get()).numberOfCharacters();
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    return SVGTextQuery(protect(renderer()).get()).numberOfCharacters();
 }
 
 float SVGTextContentElement::getComputedTextLength()
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
-    return SVGTextQuery(checkedRenderer().get()).textLength();
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    return SVGTextQuery(protect(renderer()).get()).textLength();
 }
 
 ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchars)
@@ -78,7 +78,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
         return Exception { ExceptionCode::IndexSizeError };
 
     nchars = std::min(nchars, numberOfChars - charnum);
-    return SVGTextQuery(checkedRenderer().get()).subStringLength(charnum, nchars);
+    return SVGTextQuery(protect(renderer()).get()).subStringLength(charnum, nchars);
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
@@ -86,7 +86,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigne
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGPoint::create(SVGTextQuery(checkedRenderer().get()).startPositionOfCharacter(charnum));
+    return SVGPoint::create(SVGTextQuery(protect(renderer()).get()).startPositionOfCharacter(charnum));
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
@@ -94,7 +94,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned 
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGPoint::create(SVGTextQuery(checkedRenderer().get()).endPositionOfCharacter(charnum));
+    return SVGPoint::create(SVGTextQuery(protect(renderer()).get()).endPositionOfCharacter(charnum));
 }
 
 ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnum)
@@ -102,7 +102,7 @@ ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnu
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGRect::create(SVGTextQuery(checkedRenderer().get()).extentOfCharacter(charnum));
+    return SVGRect::create(SVGTextQuery(protect(renderer()).get()).extentOfCharacter(charnum));
 }
 
 ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
@@ -110,14 +110,14 @@ ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGTextQuery(checkedRenderer().get()).rotationOfCharacter(charnum);
+    return SVGTextQuery(protect(renderer()).get()).rotationOfCharacter(charnum);
 }
 
 int SVGTextContentElement::getCharNumAtPosition(DOMPointInit&& pointInit)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
     FloatPoint transformPoint {static_cast<float>(pointInit.x), static_cast<float>(pointInit.y)};
-    return SVGTextQuery(checkedRenderer().get()).characterNumberAtPosition(transformPoint);
+    return SVGTextQuery(protect(renderer()).get()).characterNumberAtPosition(transformPoint);
 }
 
 ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars)

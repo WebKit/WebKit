@@ -174,7 +174,7 @@ TEST(WKHTTPCookieStore, CookiePolicyAllowIsOnlyFromMainDocumentDomain)
                     "Connection: close\r\n"
                     "\r\n"_s;
             }
-            connection.send(WTFMove(reply));
+            connection.send(WTF::move(reply));
         });
     });
 

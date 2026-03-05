@@ -50,7 +50,7 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
     JSGlobalObject* lexicalGlobalObject = &globalObject;
     VM& vm = lexicalGlobalObject->vm();
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue function;
     CallData callData;
@@ -69,7 +69,7 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
         function = callback->get(lexicalGlobalObject, functionName);
         if (scope.exception()) [[unlikely]] {
             returnedException = scope.exception();
-            scope.clearException();
+            TRY_CLEAR_EXCEPTION(scope, JSValue());
             return JSValue();
         }
 

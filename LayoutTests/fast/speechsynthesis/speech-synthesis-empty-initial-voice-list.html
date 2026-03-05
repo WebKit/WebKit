@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("This tests that the voice list can initially be empty and populated after voiceschanged event.");
+
+    window.jsTestIsAsync = true;
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    if (window.internals) {
+        internals.enableMockSpeechSynthesizer();
+        internals.setInitialVoiceListToEmpty();
+
+        initialVoices = speechSynthesis.getVoices();
+        shouldBe("initialVoices.length", "0");
+
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+            shouldBeTrue("voices.length > 0");
+            finishJSTest();
+        };
+
+        setTimeout(() => {
+            internals.simulateSpeechSynthesizerVoiceListChange();
+        }, 0);
+    } else {
+        debug("Test requires window.internals to run.");
+        finishJSTest();
+    }
+</script>
+</body>
+</html>

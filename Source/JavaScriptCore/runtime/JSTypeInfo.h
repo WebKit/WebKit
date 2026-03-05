@@ -30,6 +30,8 @@
 // in the STL on systems without case-sensitive file systems. 
 
 #include <JavaScriptCore/JSType.h>
+#include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 

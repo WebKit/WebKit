@@ -50,7 +50,7 @@ public:
     static String localStorageFilePath(const String& directory);
 
     LocalStorageManager(const String& path, StorageAreaRegistry&);
-    bool isActive() const;
+    bool NODELETE isActive() const;
     bool hasDataInMemory() const;
     void clearDataInMemory();
     void clearDataOnDisk();
@@ -72,7 +72,7 @@ private:
     void connectionClosedForLocalStorageArea(IPC::Connection::UniqueID);
     void connectionClosedForTransientStorageArea(IPC::Connection::UniqueID);
 
-    StorageAreaBase& ensureLocalStorageArea(const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
+    StorageAreaBase& ensureLocalStorageArea(const WebCore::ClientOrigin&, Ref<WorkQueue>&&) LIFETIME_BOUND;
     MemoryStorageArea& ensureTransientLocalStorageArea(const WebCore::ClientOrigin&);
 
     String m_path;

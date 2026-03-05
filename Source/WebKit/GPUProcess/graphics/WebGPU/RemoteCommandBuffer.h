@@ -54,7 +54,7 @@ class RemoteCommandBuffer final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteCommandBuffer> create(WebCore::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteCommandBuffer();
@@ -74,16 +74,15 @@ private:
     RemoteCommandBuffer& operator=(RemoteCommandBuffer&&) = delete;
 
     WebCore::WebGPU::CommandBuffer& backing() { return m_backing; }
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<WebCore::WebGPU::CommandBuffer> m_backing;
+    const Ref<WebCore::WebGPU::CommandBuffer> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

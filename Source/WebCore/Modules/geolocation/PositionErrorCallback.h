@@ -41,6 +41,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSPositionErrorCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(GeolocationPositionError&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(GeolocationPositionError&) = 0;
 

@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <cstdlib>
+#include <wtf/Assertions.h>
+#include <wtf/Platform.h>
+
 // Require that HAVE(TYPE_AWARE_MALLOC) from PlatformHave.h is enabled when
 // _MALLOC_TYPE_ENABLED is true.
 #if defined __has_include && __has_include(<malloc/malloc.h>)
@@ -63,23 +67,17 @@ struct SystemMallocBase {
 
     static T* zeroedMalloc(size_t size)
     {
-        T* result = static_cast<T*>(::malloc(size));
-        if (!result)
+        T* result = static_cast<T*>(::calloc(1, size));
+        if (!result) [[unlikely]]
             CRASH();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        memset(result, 0, size);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return result;
     }
 
     static T* tryZeroedMalloc(size_t size)
     {
-        T* result = static_cast<T*>(::malloc(size));
-        if (!result)
+        T* result = static_cast<T*>(::calloc(1, size));
+        if (!result) [[unlikely]]
             return nullptr;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        memset(result, 0, size);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return result;
     }
 

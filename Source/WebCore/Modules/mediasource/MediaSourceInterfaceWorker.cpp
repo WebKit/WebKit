@@ -39,7 +39,7 @@
 namespace WebCore {
 
 MediaSourceInterfaceWorker::MediaSourceInterfaceWorker(Ref<MediaSourceHandle>&& handle)
-    : m_handle(WTFMove(handle))
+    : m_handle(WTF::move(handle))
     , m_client(m_handle->mediaSourcePrivateClient())
 {
 }
@@ -97,8 +97,8 @@ bool MediaSourceInterfaceWorker::attachToElement(WeakPtr<HTMLMediaElement>&& ele
         return false;
     m_handle->setHasEverBeenAssignedAsSrcObject();
     bool forceRun = true;
-    m_handle->ensureOnDispatcher([element = WTFMove(element)](MediaSource& mediaSource) mutable {
-        mediaSource.attachToElement(WTFMove(element));
+    m_handle->ensureOnDispatcher([element = WTF::move(element)](MediaSource& mediaSource) mutable {
+        mediaSource.attachToElement(WTF::move(element));
     }, forceRun);
     return true;
 }

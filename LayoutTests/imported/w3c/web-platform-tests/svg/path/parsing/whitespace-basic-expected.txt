@@ -1,0 +1,16 @@
+
+PASS Whitespace: Space (0x20) as separator
+PASS Whitespace: Tab (0x09) as separator
+PASS Whitespace: Line Feed (0x0A) as separator
+PASS Whitespace: Carriage Return (0x0D) as separator
+PASS Whitespace: Form Feed (0x0C) as separator
+PASS Whitespace: Mixed whitespace characters
+PASS Whitespace: Leading whitespace in path data
+PASS Whitespace: Trailing whitespace in path data
+PASS Whitespace: No whitespace (where optional)
+PASS Whitespace: Multiple consecutive spaces
+PASS Whitespace: Comma with surrounding spaces
+PASS Whitespace: Comma without spaces
+PASS Whitespace: Spaces before comma
+PASS Whitespace: Spaces after comma
+

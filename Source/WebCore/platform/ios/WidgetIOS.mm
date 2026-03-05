@@ -116,7 +116,7 @@ void Widget::setFrameRect(const IntRect &rect)
     m_frame = rect;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    NSView *v = outerView();
+    RetainPtr v = outerView();
     NSRect f = rect;
     if (!NSEqualRects(f, [v frame])) {
         [v setFrame:f];
@@ -125,9 +125,9 @@ void Widget::setFrameRect(const IntRect &rect)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-NSView* Widget::outerView() const
+RetainPtr<NSView> Widget::outerView() const
 {
-    NSView* view = platformWidget();
+    RetainPtr view = platformWidget();
 
     // If this widget's view is a WebCoreFrameScrollView then we
     // resize its containing view, a WebFrameView.
@@ -144,7 +144,7 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     if (p.paintingDisabled())
         return;
     
-    NSView *view = outerView();
+    RetainPtr view = outerView();
 
     CGContextRef cgContext = p.platformContext();
     CGContextSaveGState(cgContext);
@@ -169,15 +169,15 @@ void Widget::addToSuperview(NSView *view)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     ASSERT(view);
-    NSView *subview = outerView();
+    RetainPtr subview = outerView();
 
     if (!subview)
         return;
 
-    ASSERT(![view isDescendantOf:subview]);
+    ASSERT(![view isDescendantOf:subview.get()]);
     
     if ([subview superview] != view)
-        [view addSubview:subview];
+        [view addSubview:subview.get()];
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -185,7 +185,7 @@ void Widget::addToSuperview(NSView *view)
 void Widget::removeFromSuperview()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    safeRemoveFromSuperview(outerView());
+    safeRemoveFromSuperview(outerView().get());
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -347,11 +347,6 @@ FloatRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, co
 NSView *Widget::platformWidget() const
 {
     return m_widget.get();
-}
-
-RetainPtr<NSView> Widget::protectedPlatformWidget() const
-{
-    return platformWidget();
 }
 
 void Widget::setPlatformWidget(NSView *widget)

@@ -39,13 +39,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCaptionPreferencesDelegate);
 
 void WebCaptionPreferencesDelegate::setDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode displayMode)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::SetCaptionDisplayMode(displayMode), 0);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::SetCaptionDisplayMode(displayMode), 0);
     WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(displayMode);
 }
 
 void WebCaptionPreferencesDelegate::setPreferredLanguage(const String& language)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::SetCaptionLanguage(language), 0);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::SetCaptionLanguage(language), 0);
 }
 
 } // namespace WebKit

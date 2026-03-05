@@ -78,10 +78,10 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::invalidTime() == MediaTime::invalidTime(), true);
     EXPECT_EQ(MediaTime::invalidTime() != MediaTime::invalidTime(), false);
     EXPECT_EQ(MediaTime::invalidTime() != MediaTime::zeroTime(), true);
-    EXPECT_EQ(MediaTime::invalidTime() > MediaTime::negativeInfiniteTime(), true);
-    EXPECT_EQ(MediaTime::invalidTime() > MediaTime::positiveInfiniteTime(), true);
-    EXPECT_EQ(MediaTime::negativeInfiniteTime() < MediaTime::invalidTime(), true);
-    EXPECT_EQ(MediaTime::positiveInfiniteTime() < MediaTime::invalidTime(), true);
+    EXPECT_EQ(MediaTime::invalidTime() > MediaTime::negativeInfiniteTime(), false);
+    EXPECT_EQ(MediaTime::invalidTime() > MediaTime::positiveInfiniteTime(), false);
+    EXPECT_EQ(MediaTime::negativeInfiniteTime() < MediaTime::invalidTime(), false);
+    EXPECT_EQ(MediaTime::positiveInfiniteTime() < MediaTime::invalidTime(), false);
     EXPECT_EQ(MediaTime::indefiniteTime() == MediaTime::indefiniteTime(), true);
     EXPECT_EQ(MediaTime::indefiniteTime() != MediaTime::indefiniteTime(), false);
     EXPECT_EQ(MediaTime::indefiniteTime() != MediaTime::zeroTime(), true);
@@ -360,7 +360,7 @@ TEST(WTF, MediaTimeInExpected)
     using Test = Expected<MediaTime, int>;
     Test test1;
     Test test2;
-    test1 = WTFMove(test2);
+    test1 = WTF::move(test2);
     UNUSED_VARIABLE(test1);
 }
 

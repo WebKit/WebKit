@@ -48,7 +48,6 @@
 };
 
 // https://w3c.github.io/webappsec-csp/#dictdef-securitypolicyviolationeventinit
-
 dictionary SecurityPolicyViolationEventInit : EventInit {
     USVString documentURI = "";
     USVString referrer = "";

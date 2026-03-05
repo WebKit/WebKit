@@ -32,9 +32,10 @@
 #import "WebsiteDataStore.h"
 
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-#import <WebKitAdditions/DownloadProgressAdditions.h>
+#import <BrowserEngineKit/BrowserEngineKit.h>
 #endif
 
 namespace WebKit {
@@ -55,23 +56,23 @@ void DownloadProxy::publishProgress(const URL& url)
     if (!handle)
         return;
 
-    protectedDataStore()->protectedNetworkProcess()->send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
+    protect(protect(m_dataStore)->networkProcess())->send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTF::move(*handle)), 0);
 #endif
 }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
 void DownloadProxy::didReceivePlaceholderURL(const URL& placeholderURL, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&& handle, CompletionHandler<void()>&& completionHandler)
 {
-    if (auto placeholderFileExtension = SandboxExtension::create(WTFMove(handle))) {
+    if (auto placeholderFileExtension = SandboxExtension::create(WTF::move(handle))) {
         bool ok = placeholderFileExtension->consume();
         ASSERT_UNUSED(ok, ok);
     }
-    m_client->didReceivePlaceholderURL(*this, placeholderURL, bookmarkData, WTFMove(completionHandler));
+    m_client->didReceivePlaceholderURL(*this, placeholderURL, bookmarkData, WTF::move(completionHandler));
 }
 
 void DownloadProxy::didReceiveFinalURL(const URL& finalURL, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&& handle)
 {
-    if (auto completedFileExtension = SandboxExtension::create(WTFMove(handle))) {
+    if (auto completedFileExtension = SandboxExtension::create(WTF::move(handle))) {
         bool ok = completedFileExtension->consume();
         ASSERT_UNUSED(ok, ok);
     }
@@ -93,7 +94,7 @@ Vector<uint8_t> DownloadProxy::bookmarkDataForURL(const URL& url)
 
 Vector<uint8_t> DownloadProxy::activityAccessToken()
 {
-    return ::activityAccessToken();
+    return makeVector([BEDownloadMonitor createAccessToken]);
 }
 
 #endif

@@ -126,7 +126,9 @@ InjectedScriptBase::~InjectedScriptBase() = default;
 
 bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {
-    return m_environment && m_environment->canAccessInspectedScriptState(m_globalObject);
+    if (CheckedPtr environment = m_environment.get())
+        return environment->canAccessInspectedScriptState(m_globalObject);
+    return false;
 }
 
 JSC::JSObject* InjectedScriptBase::injectedScriptObject() const
@@ -185,7 +187,7 @@ void InjectedScriptBase::makeAsyncCall(ScriptFunctionCall& function, AsyncCallCa
     {
         JSC::JSLockHolder locker(vm);
 
-        jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, callback = WTFMove(callback)] (JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) {
+        jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, callback = WTF::move(callback)] (JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) {
             if (!callFrame)
                 checkAsyncCallResult(JSON::Value::create(makeString("Exception while making a call."_s)), callback);
             else if (auto resultJSONValue = toInspectorValue(globalObject, callFrame->argument(0)))
@@ -251,7 +253,7 @@ void InjectedScriptBase::checkAsyncCallResult(RefPtr<JSON::Value> result, const 
 
     checkCallResult(errorString, result, resultObject, wasThrown, savedResultIndex);
 
-    callback(errorString, WTFMove(resultObject), WTFMove(wasThrown), WTFMove(savedResultIndex));
+    callback(errorString, WTF::move(resultObject), WTF::move(wasThrown), WTF::move(savedResultIndex));
 }
 
 } // namespace Inspector

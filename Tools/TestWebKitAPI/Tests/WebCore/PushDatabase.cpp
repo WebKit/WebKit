@@ -112,7 +112,7 @@ static RefPtr<PushDatabase> createDatabaseSync(const String& path)
     bool done = false;
 
     PushDatabase::create(path, [&done, &result](RefPtr<PushDatabase>&& database) {
-        result = WTFMove(database);
+        result = WTF::move(database);
         done = true;
     });
     Util::run(&done);
@@ -126,7 +126,7 @@ static Vector<uint8_t> getPublicTokenSync(PushDatabase& database)
     Vector<uint8_t> getResult;
 
     database.getPublicToken([&done, &getResult](auto&& result) {
-        getResult = WTFMove(result);
+        getResult = WTF::move(result);
         done = true;
     });
     Util::run(&done);
@@ -140,7 +140,7 @@ static PushDatabase::PublicTokenChanged updatePublicTokenSync(PushDatabase& data
     auto updateResult = PushDatabase::PublicTokenChanged::No;
 
     database.updatePublicToken(token, [&done, &updateResult](auto&& result) {
-        updateResult = WTFMove(result);
+        updateResult = WTF::move(result);
         done = true;
     });
     Util::run(&done);
@@ -154,7 +154,7 @@ static std::optional<PushRecord> getRecordBySubscriptionSetAndScopeSync(PushData
     std::optional<PushRecord> getResult;
 
     database.getRecordBySubscriptionSetAndScope(subscriptionSetIdentifier, scope, [&done, &getResult](std::optional<PushRecord>&& result) {
-        getResult = WTFMove(result);
+        getResult = WTF::move(result);
         done = true;
     });
     Util::run(&done);
@@ -183,7 +183,7 @@ static Vector<PushSubscriptionSetRecord> getPushSubscriptionSetsSync(PushDatabas
     Vector<PushSubscriptionSetRecord> result;
 
     database.getPushSubscriptionSetRecords([&done, &result](auto&& records) {
-        result = WTFMove(records);
+        result = WTF::move(records);
         done = true;
     });
     Util::run(&done);
@@ -197,7 +197,7 @@ static PushTopics getTopicsSync(PushDatabase& database)
     PushTopics topics;
 
     database.getTopics([&done, &topics](auto&& result) {
-        topics = WTFMove(result);
+        topics = WTF::move(result);
         done = true;
     });
     Util::run(&done);
@@ -348,7 +348,7 @@ public:
         std::optional<PushRecord> insertResult;
 
         db->insertRecord(record, [&done, &insertResult](std::optional<PushRecord>&& result) {
-            insertResult = WTFMove(result);
+            insertResult = WTF::move(result);
             done = true;
         });
         Util::run(&done);
@@ -376,7 +376,7 @@ public:
         std::optional<PushRecord> getResult;
 
         db->getRecordByTopic(topic, [&done, &getResult](std::optional<PushRecord>&& result) {
-            getResult = WTFMove(result);
+            getResult = WTF::move(result);
             done = true;
         });
         Util::run(&done);
@@ -410,7 +410,7 @@ public:
         Vector<RemovedPushRecord> removedRecords;
 
         db->removeRecordsBySubscriptionSet(subscriptionSetIdentifier, [&done, &removedRecords](Vector<RemovedPushRecord>&& result) {
-            removedRecords = WTFMove(result);
+            removedRecords = WTF::move(result);
             done = true;
         });
         Util::run(&done);
@@ -424,7 +424,7 @@ public:
         Vector<RemovedPushRecord> removedRecords;
 
         db->removeRecordsBySubscriptionSetAndSecurityOrigin(subscriptionSetIdentifier, securityOrigin, [&done, &removedRecords](auto&& result) {
-            removedRecords = WTFMove(result);
+            removedRecords = WTF::move(result);
             done = true;
         });
         Util::run(&done);
@@ -438,7 +438,7 @@ public:
         Vector<RemovedPushRecord> removedRecords;
 
         db->removeRecordsByBundleIdentifierAndDataStore(bundleIdentifier, dataStoreIdentifier, [&done, &removedRecords](auto&& result) {
-            removedRecords = WTFMove(result);
+            removedRecords = WTF::move(result);
             done = true;
         });
         Util::run(&done);
@@ -569,19 +569,19 @@ TEST_F(PushDatabaseTest, InsertRecord)
     // Inserting a record with the same (subscriptionSetIdentifier, scope) as record 1 should fail.
     PushRecord record8 = record1;
     record8.topic = "topic8"_s;
-    EXPECT_FALSE(insertRecord(WTFMove(record8)));
+    EXPECT_FALSE(insertRecord(WTF::move(record8)));
     
     // Inserting a record that has a different dataStoreIdentifier should succeed.
     PushRecord record9 = record1;
     record9.subscriptionSetIdentifier.dataStoreIdentifier = WTF::UUID::createVersion4Weak();
     record9.topic = "topic9"_s;
-    EXPECT_TRUE(insertRecord(WTFMove(record9)));
+    EXPECT_TRUE(insertRecord(WTF::move(record9)));
 
     // Inserting a record that has a different pushPartition should succeed.
     PushRecord record10 = record1;
     record10.subscriptionSetIdentifier.pushPartition = "foobar"_s;
     record10.topic = "topic10"_s;
-    EXPECT_TRUE(insertRecord(WTFMove(record10)));
+    EXPECT_TRUE(insertRecord(WTF::move(record10)));
 
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
 
@@ -626,7 +626,7 @@ TEST_F(PushDatabaseTest, RemoveRecordsBySubscriptionSet)
 
     // Inserting a new record should produce a new identifier.
     PushRecord record8 = record3;
-    auto insertResult = insertRecord(WTFMove(record8));
+    auto insertResult = insertRecord(WTF::move(record8));
     EXPECT_TRUE(insertResult);
     EXPECT_EQ(insertResult->identifier, ObjectIdentifier<PushSubscriptionIdentifierType>(8));
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 8 }));
@@ -663,7 +663,7 @@ TEST_F(PushDatabaseTest, RemoveRecordsBySubscriptionSetAndSecurityOrigin)
 
     // Inserting a new record should produce a new identifier.
     PushRecord record8 = record3;
-    auto insertResult = insertRecord(WTFMove(record8));
+    auto insertResult = insertRecord(WTF::move(record8));
     EXPECT_TRUE(insertResult);
     EXPECT_EQ(insertResult->identifier, ObjectIdentifier<PushSubscriptionIdentifierType>(8));
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 5, 8 }));
@@ -688,7 +688,7 @@ TEST_F(PushDatabaseTest, RemoveRecordsByBundleIdentifierAndDataStore)
 
     // Inserting a new record should produce a new identifier.
     PushRecord record8 = record5;
-    auto insertResult = insertRecord(WTFMove(record8));
+    auto insertResult = insertRecord(WTF::move(record8));
     EXPECT_TRUE(insertResult);
     EXPECT_EQ(insertResult->identifier, ObjectIdentifier<PushSubscriptionIdentifierType>(8));
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4, 8 }));

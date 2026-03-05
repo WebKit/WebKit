@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,17 +146,48 @@ body[dir=rtl] .network-table > .table .cell.dom-node.name .disclosure {
     content: url(../Images/DisclosureTriangles.svg#open-selected);
 }
 
-.network-table > .table.grouped .data-container .cell.name {
-    --item-padding-start: 19px;
-    --item-disclosure-width: 11px;
+/* Styling for redirect rows */
+
+.network-table > .table .cell.name .disclosure {
+    width: 13px;
+    height: 13px;
+    vertical-align: -2px;
+    content: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+    margin-inline-end: 4px;
 }
 
-.network-table > .table.grouped .data-container .cell:not(.parent).name {
-    padding-inline-start: var(--item-padding-start);
+body[dir=rtl] .network-table > .table .cell.name .disclosure {
+    transform: scaleX(-1);
 }
 
-.network-table > .table.grouped .data-container .cell.child.name {
-    padding-inline-start: calc(var(--item-padding-start) + var(--item-disclosure-width));
+.network-table:focus > .table li.selected .cell.name .disclosure {
+    content: url(../Images/DisclosureTriangles.svg#closed-selected);
+}
+
+.network-table > .table .cell.name .disclosure.expanded {
+    content: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+.network-table:focus > .table li.selected .cell.name .disclosure.expanded {
+    content: url(../Images/DisclosureTriangles.svg#open-selected);
+}
+
+.network-table > .table .cell.name.child {
+    padding-inline-start: 37px;
+}
+
+.table.network-table .data-container .data-list > li.redirect .cell:not(.name) {
+    --table-cell-padding-inline-start: 6px;
+}
+
+.table.network-table.grouped .data-container .cell.name.parent {
+    --table-cell-padding-inline-start: 6px;
+}
+
+.table.network-table.grouped .data-container .cell.name:not(.parent):not(.child) {
+    --table-cell-padding-inline-start: 23px;
 }
 
 .network-table > .table .data-container .cell.name .range {
@@ -169,6 +200,29 @@ body[dir=rtl] .network-table > .table .cell.dom-node.name .disclosure {
 
 .network-table:focus > .table .data-container li.selected .cell.name .range {
     color: hsla(0, 0%, 100%, 0.9);
+}
+
+.network-table > .table .data-container .cell.name .redirect-count {
+    display: inline-block;
+    margin-inline-start: 6px;
+    padding: 0.5px 4px;
+    background-color: var(--background-color-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 9px;
+    line-height: 1;
+    color: var(--text-color-secondary);
+    vertical-align: 1px;
+}
+
+.network-table:focus > .table li.selected .cell.name .redirect-count {
+    color: white;
+    border-color: hsla(0, 0%, 100%, 0.3);
+    background-color: hsla(0, 0%, 100%, 0.1);
+}
+
+.network-table > .table li.selected .cell.name .redirect-count {
+    color: var(--selected-foreground-color);
 }
 
 .network-table > .table li:not(.selected) .cell:is(.cache-type, .multiple) {
@@ -436,6 +490,12 @@ body[dir=rtl] .waterfall.network .block {
     }
 
     .network-table > .table .data-container .cell.name .range {
+        color: var(--text-color-secondary);
+    }
+
+    .network-table > .table .data-container .cell.name .redirect-count {
+        background-color: hsla(0, 0%, 100%, 0.05);
+        border-color: var(--border-color);
         color: var(--text-color-secondary);
     }
 

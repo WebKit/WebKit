@@ -30,12 +30,12 @@ info: |
   1. Let newTypedArray be ? Construct(constructor, argumentList).
   2. Perform ? ValidateTypedArray(newTypedArray).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.species, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
   var ctor = function() {};
 
   sample.constructor = {};

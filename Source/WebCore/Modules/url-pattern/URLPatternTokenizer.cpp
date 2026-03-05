@@ -271,7 +271,7 @@ ExceptionOr<Vector<Token>> Tokenizer::tokenize()
         return Exception { ExceptionCode::TypeError, "URLPattern constructor: Failed to create URLPattern (from input string)"_s };
 
     addToken(TokenType::End, m_index, m_index);
-    return WTFMove(m_tokenList);
+    return WTF::move(m_tokenList);
 }
 
 } // namespace URLPatternUtilities

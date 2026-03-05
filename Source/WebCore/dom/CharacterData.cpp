@@ -36,14 +36,13 @@
 #include "MutationRecord.h"
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
-#include "StyleInheritedData.h"
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CharacterData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CharacterData);
 
 CharacterData::~CharacterData()
 {
@@ -66,7 +65,7 @@ void CharacterData::setData(const String& data)
         Ref document = this->document();
         document->textRemoved(*this, 0, oldLength);
         if (RefPtr frame = document->frame())
-            frame->checkedSelection()->textWasReplaced(*this, 0, oldLength, oldLength);
+            protect(frame->selection())->textWasReplaced(*this, 0, oldLength, oldLength);
         return;
     }
 
@@ -82,13 +81,13 @@ ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count
     return m_data.substring(offset, count);
 }
 
-static ContainerNode::ChildChange makeChildChange(CharacterData& characterData, ContainerNode::ChildChange::Source source)
+static ContainerNode::ChildChange NODELETE makeChildChange(CharacterData& characterData, ContainerNode::ChildChange::Source source)
 {
     return {
         ContainerNode::ChildChange::Type::TextChanged,
         nullptr,
-        RefPtr { ElementTraversal::previousSibling(characterData) }.unsafeGet(),
-        RefPtr { ElementTraversal::nextSibling(characterData) }.unsafeGet(),
+        ElementTraversal::previousSibling(characterData),
+        ElementTraversal::nextSibling(characterData),
         source,
         ContainerNode::ChildChange::AffectsElements::No
     };
@@ -128,7 +127,7 @@ ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
         return Exception { ExceptionCode::IndexSizeError };
 
     auto newData = makeStringByInserting(m_data, data, offset);
-    setDataAndUpdate(WTFMove(newData), offset, 0, data.length());
+    setDataAndUpdate(WTF::move(newData), offset, 0, data.length());
 
     return { };
 }
@@ -141,7 +140,7 @@ ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
     count = std::min(count, length() - offset);
 
     auto newData = makeStringByRemoving(m_data, offset, count);
-    setDataAndUpdate(WTFMove(newData), offset, count, 0);
+    setDataAndUpdate(WTF::move(newData), offset, count, 0);
 
     return { };
 }
@@ -155,7 +154,7 @@ ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, co
 
     StringView oldDataView { m_data };
     auto newData = makeString(oldDataView.left(offset), data, oldDataView.substring(offset + count));
-    setDataAndUpdate(WTFMove(newData), offset, count, data.length());
+    setDataAndUpdate(WTF::move(newData), offset, count, data.length());
 
     return { };
 }
@@ -182,7 +181,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 {
     auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::API);
 
-    String oldData = WTFMove(m_data);
+    String oldData = WTF::move(m_data);
     {
         std::optional<Style::ChildChangeInvalidation> styleInvalidation;
         if (RefPtr parent = parentNode())
@@ -206,7 +205,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
         processingIntruction->checkStyleSheet();
 
     if (RefPtr frame = document->frame())
-        frame->checkedSelection()->textWasReplaced(*this, offsetOfReplacedData, oldLength, newLength);
+        protect(frame->selection())->textWasReplaced(*this, offsetOfReplacedData, oldLength, newLength);
 
     notifyParentAfterChange(childChange);
 
@@ -235,7 +234,7 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
         dispatchSubtreeModifiedEvent();
     }
 
-    InspectorInstrumentation::characterDataModified(protectedDocument(), *this);
+    InspectorInstrumentation::characterDataModified(protect(document()), *this);
 }
 
 bool CharacterData::containsOnlyASCIIWhitespace() const

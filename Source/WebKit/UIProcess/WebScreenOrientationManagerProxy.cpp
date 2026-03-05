@@ -49,7 +49,7 @@ WebScreenOrientationManagerProxy::WebScreenOrientationManagerProxy(WebPageProxy&
     : m_page(page)
     , m_currentOrientation(orientation)
 {
-    page.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
+    protect(page.legacyMainFrameProcess())->addMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
 }
 
 WebScreenOrientationManagerProxy::~WebScreenOrientationManagerProxy()
@@ -57,7 +57,7 @@ WebScreenOrientationManagerProxy::~WebScreenOrientationManagerProxy()
     unlockIfNecessary();
 
     Ref page = m_page.get();
-    page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
+    protect(page->legacyMainFrameProcess())->removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
 }
 
 std::optional<SharedPreferencesForWebProcess> WebScreenOrientationManagerProxy::sharedPreferencesForWebProcess(IPC::Connection& connection) const
@@ -131,7 +131,7 @@ void WebScreenOrientationManagerProxy::lock(WebCore::ScreenOrientationLockType l
         return;
     }
 
-    m_currentLockRequest = WTFMove(completionHandler);
+    m_currentLockRequest = WTF::move(completionHandler);
     auto resolvedLockedOrientation = resolveScreenOrientationLockType(m_currentOrientation, lockType);
     bool shouldOrientationChange = m_currentOrientation != resolvedLockedOrientation;
 
@@ -198,10 +198,5 @@ std::optional<WebCore::Exception> WebScreenOrientationManagerProxy::platformShou
     return std::nullopt;
 }
 #endif
-
-Ref<WebPageProxy> WebScreenOrientationManagerProxy::protectedPage() const
-{
-    return m_page.get();
-}
 
 } // namespace WebKit

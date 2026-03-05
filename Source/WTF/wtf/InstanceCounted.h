@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <atomic>
+#include <cstddef>
+#include <wtf/Assertions.h>
+
 // This class implements "instance count" management for regression test coverage.
 // Since it adds runtime overhead to manage the count variable, the actual
 // functionality of the class is limited to debug builds.

@@ -50,13 +50,13 @@ unsigned WebFoundTextRange::hash() const
 
 bool WebFoundTextRange::operator==(const WebFoundTextRange& other) const
 {
-    if (frameIdentifier.isHashTableDeletedValue())
-        return other.frameIdentifier.isHashTableDeletedValue();
-    if (other.frameIdentifier.isHashTableDeletedValue())
+    if (pathToFrame.isHashTableDeletedValue())
+        return other.pathToFrame.isHashTableDeletedValue();
+    if (other.pathToFrame.isHashTableDeletedValue())
         return false;
 
     return data == other.data
-        && frameIdentifier == other.frameIdentifier
+        && pathToFrame == other.pathToFrame
         && order == other.order;
 }
 
@@ -73,7 +73,7 @@ TextStream& operator<<(TextStream& ts, const WebFoundTextRange& range)
         }
     );
     ts.dumpProperty("order"_s, range.order);
-    ts.dumpProperty("frameIdentifier"_s, range.frameIdentifier);
+    ts.dumpProperty("pathToFrame"_s, range.pathToFrame);
     return ts;
 }
 

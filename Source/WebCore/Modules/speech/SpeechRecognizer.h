@@ -28,6 +28,7 @@
 #include <WebCore/SpeechRecognitionCaptureSource.h>
 #include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 #include <WebCore/SpeechRecognitionError.h>
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -48,7 +49,7 @@ class SpeechRecognizer final : public CanMakeWeakPtr<SpeechRecognizer>, public C
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SpeechRecognizer);
 public:
     using DelegateCallback = Function<void(const SpeechRecognitionUpdate&)>;
-    WEBCORE_EXPORT explicit SpeechRecognizer(DelegateCallback&&, UniqueRef<SpeechRecognitionRequest>&&);
+    WEBCORE_EXPORT explicit SpeechRecognizer(DelegateCallback&&, Ref<SpeechRecognitionRequest>&&);
     WEBCORE_EXPORT ~SpeechRecognizer();
 
 #if ENABLE(MEDIA_STREAM)
@@ -58,7 +59,7 @@ public:
     WEBCORE_EXPORT void stop();
     WEBCORE_EXPORT void prepareForDestruction();
 
-    WEBCORE_EXPORT SpeechRecognitionConnectionClientIdentifier clientIdentifier() const;
+    WEBCORE_EXPORT SpeechRecognitionConnectionClientIdentifier NODELETE clientIdentifier() const;
     SpeechRecognitionCaptureSource* source() { return m_source.get(); }
 
     void setInactive() { m_state = State::Inactive; }
@@ -81,7 +82,7 @@ private:
     void stopRecognition();
 
     DelegateCallback m_delegateCallback;
-    const UniqueRef<SpeechRecognitionRequest> m_request;
+    const Ref<SpeechRecognitionRequest> m_request;
     std::unique_ptr<SpeechRecognitionCaptureSource> m_source;
     State m_state { State::Inactive };
 

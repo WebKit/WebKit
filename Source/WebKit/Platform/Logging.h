@@ -101,6 +101,7 @@ extern "C" {
     M(DiskPersistency) \
     M(DragAndDrop) \
     M(EME) \
+    M(EnhancedSecurity) \
     M(Extensions) \
     M(FrameTree) \
     M(Fullscreen) \

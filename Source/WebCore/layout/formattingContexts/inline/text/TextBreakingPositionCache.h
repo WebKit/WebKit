@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <WebCore/Document.h>
-#include <WebCore/SecurityOriginData.h>
-#include <WebCore/TextBreakingPositionContext.h>
-#include <WebCore/Timer.h>
+#include "Document.h"
+#include "SecurityOriginData.h"
+#include "TextBreakingPositionContext.h"
+#include "Timer.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 

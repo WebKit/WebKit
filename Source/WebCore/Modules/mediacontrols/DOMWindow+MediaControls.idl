@@ -28,5 +28,5 @@
     ImplementedBy=LocalDOMWindowMediaControls,
     EnabledForWorld=isMediaControls,
 ] partial interface DOMWindow {
-    [CallWith=CurrentDocument] readonly attribute MediaControlsUtils utils;
+    [CallWith=CurrentDocument] readonly attribute MediaControlsUtils? utils;
 };

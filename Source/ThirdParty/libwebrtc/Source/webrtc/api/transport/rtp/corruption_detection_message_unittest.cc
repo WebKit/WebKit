@@ -13,7 +13,12 @@
 #include <optional>
 #include <vector>
 
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
+
+using ::testing::ElementsAre;
+using ::testing::IsEmpty;
 
 namespace webrtc {
 namespace {
@@ -118,6 +123,121 @@ TEST(CorruptionDetectionMessageTest, CreatesWhenValidParametersAreSpecified) {
                 .WithSampleValues(kSampleValues)
                 .Build(),
             std::nullopt);
+}
+
+TEST(CorruptionDetectionMessageFromFrameInstrumentationDataTest,
+     ConvertsValidData) {
+  FrameInstrumentationData data;
+  EXPECT_TRUE(data.SetSequenceIndex(1));
+  EXPECT_TRUE(data.SetStdDev(1));
+  EXPECT_TRUE(data.SetLumaErrorThreshold(5));
+  EXPECT_TRUE(data.SetChromaErrorThreshold(5));
+  EXPECT_TRUE(data.SetSampleValues({1.0, 2.0, 3.0, 4.0, 5.0}));
+
+  CorruptionDetectionMessage message =
+      CorruptionDetectionMessage::FromFrameInstrumentationData(data);
+  EXPECT_EQ(message.sequence_index(), 1);
+  EXPECT_FALSE(message.interpret_sequence_index_as_most_significant_bits());
+  EXPECT_EQ(message.std_dev(), 1.0);
+  EXPECT_EQ(message.luma_error_threshold(), 5);
+  EXPECT_EQ(message.chroma_error_threshold(), 5);
+  EXPECT_THAT(message.sample_values(), ElementsAre(1.0, 2.0, 3.0, 4.0, 5.0));
+}
+
+TEST(CorruptionDetectionMessageFromFrameInstrumentationDataTest,
+     ConvertsSequenceIndexWhenSetToUseUpperBits) {
+  FrameInstrumentationData data;
+  EXPECT_TRUE(data.SetSequenceIndex(117 << 7));
+  EXPECT_TRUE(data.SetStdDev(1));
+  EXPECT_TRUE(data.SetLumaErrorThreshold(5));
+  EXPECT_TRUE(data.SetChromaErrorThreshold(5));
+  EXPECT_TRUE(data.SetSampleValues({1.0, 2.0, 3.0, 4.0, 5.0}));
+
+  CorruptionDetectionMessage message =
+      CorruptionDetectionMessage::FromFrameInstrumentationData(data);
+  EXPECT_EQ(message.sequence_index(), 117);
+  EXPECT_TRUE(message.interpret_sequence_index_as_most_significant_bits());
+  EXPECT_EQ(message.std_dev(), 1.0);
+  EXPECT_EQ(message.luma_error_threshold(), 5);
+  EXPECT_EQ(message.chroma_error_threshold(), 5);
+  EXPECT_THAT(message.sample_values(), ElementsAre(1.0, 2.0, 3.0, 4.0, 5.0));
+}
+
+TEST(FrameInstrumentationDataToCorruptionDetectionMessageTest,
+     ConvertsSequenceIndexWhenSetToUseLowerBits) {
+  FrameInstrumentationData data;
+  EXPECT_TRUE(data.SetSequenceIndex((117 << 7) + 118));
+  EXPECT_TRUE(data.SetStdDev(1));
+  EXPECT_TRUE(data.SetLumaErrorThreshold(5));
+  EXPECT_TRUE(data.SetChromaErrorThreshold(5));
+  EXPECT_TRUE(data.SetSampleValues({1.0, 2.0, 3.0, 4.0, 5.0}));
+
+  CorruptionDetectionMessage message =
+      CorruptionDetectionMessage::FromFrameInstrumentationData(data);
+  EXPECT_EQ(message.sequence_index(), 118);
+  EXPECT_FALSE(message.interpret_sequence_index_as_most_significant_bits());
+  EXPECT_EQ(message.std_dev(), 1.0);
+  EXPECT_EQ(message.luma_error_threshold(), 5);
+  EXPECT_EQ(message.chroma_error_threshold(), 5);
+  EXPECT_THAT(message.sample_values(), ElementsAre(1.0, 2.0, 3.0, 4.0, 5.0));
+}
+
+TEST(CorruptionDetectionMessageFromFrameInstrumentationDataTest,
+     SendsLowerSequenceIndexWhenDroppable) {
+  FrameInstrumentationData data;
+  EXPECT_TRUE(data.SetSequenceIndex(117 << 7));
+  data.set_droppable(true);
+  EXPECT_TRUE(data.SetStdDev(1));
+  EXPECT_TRUE(data.SetLumaErrorThreshold(5));
+  EXPECT_TRUE(data.SetChromaErrorThreshold(5));
+  EXPECT_TRUE(data.SetSampleValues({1.0, 2.0, 3.0, 4.0, 5.0}));
+
+  CorruptionDetectionMessage message =
+      CorruptionDetectionMessage::FromFrameInstrumentationData(data);
+  EXPECT_EQ(message.sequence_index(), 0);
+  EXPECT_FALSE(message.interpret_sequence_index_as_most_significant_bits());
+  EXPECT_EQ(message.std_dev(), 1.0);
+  EXPECT_EQ(message.luma_error_threshold(), 5);
+  EXPECT_EQ(message.chroma_error_threshold(), 5);
+  EXPECT_THAT(message.sample_values(), ElementsAre(1.0, 2.0, 3.0, 4.0, 5.0));
+}
+
+TEST(CorruptionDetectionMessageFromFrameInstrumentationDataTest,
+     CanCreateLsbSyncMessage) {
+  FrameInstrumentationData data;
+  EXPECT_TRUE(data.SetSequenceIndex((117 << 7) + 118));
+  EXPECT_TRUE(data.SetStdDev(1));
+  EXPECT_TRUE(data.SetLumaErrorThreshold(5));
+  EXPECT_TRUE(data.SetChromaErrorThreshold(5));
+  EXPECT_TRUE(data.is_sync_only());
+
+  CorruptionDetectionMessage message =
+      CorruptionDetectionMessage::FromFrameInstrumentationData(data);
+  EXPECT_EQ(message.sequence_index(), 118);
+  EXPECT_FALSE(message.interpret_sequence_index_as_most_significant_bits());
+  EXPECT_EQ(message.std_dev(), 0.0);
+  EXPECT_EQ(message.luma_error_threshold(), 0);
+  EXPECT_EQ(message.chroma_error_threshold(), 0);
+  EXPECT_THAT(message.sample_values(), IsEmpty());
+}
+
+TEST(CorruptionDetectionMessageFromFrameInstrumentationDataTest,
+     CanCreateMsbSyncMessage) {
+  FrameInstrumentationData data;
+  EXPECT_TRUE(data.SetSequenceIndex(117 << 7));
+  EXPECT_TRUE(data.SetStdDev(1));
+  EXPECT_TRUE(data.SetLumaErrorThreshold(5));
+  EXPECT_TRUE(data.SetChromaErrorThreshold(5));
+  EXPECT_TRUE(data.is_sync_only());
+
+  CorruptionDetectionMessage message =
+      CorruptionDetectionMessage::FromFrameInstrumentationData(data);
+  EXPECT_EQ(message.sequence_index(), 117);
+  EXPECT_TRUE(message.interpret_sequence_index_as_most_significant_bits());
+  EXPECT_EQ(message.std_dev(), 0.0);
+  EXPECT_EQ(message.luma_error_threshold(), 0);
+  EXPECT_EQ(message.chroma_error_threshold(), 0);
+  EXPECT_THAT(message.sample_values(), IsEmpty());
 }
 
 }  // namespace

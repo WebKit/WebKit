@@ -34,7 +34,7 @@ struct NavigationPreloadState {
     static NavigationPreloadState defaultValue() { return { false, "true"_s }; }
 
     NavigationPreloadState isolatedCopy() const & { return { enabled, headerValue.isolatedCopy() }; }
-    NavigationPreloadState isolatedCopy() && { return { enabled, WTFMove(headerValue).isolatedCopy() }; }
+    NavigationPreloadState isolatedCopy() && { return { enabled, WTF::move(headerValue).isolatedCopy() }; }
 
     bool enabled { false };
     String headerValue;

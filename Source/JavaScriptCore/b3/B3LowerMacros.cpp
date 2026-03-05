@@ -34,6 +34,7 @@
 #include "B3BlockInsertionSet.h"
 #include "B3CCallValue.h"
 #include "B3CaseCollectionInlines.h"
+#include "B3CheckValue.h"
 #include "B3ConstPtrValue.h"
 #include "B3FenceValue.h"
 #include "B3InsertionSetInlines.h"
@@ -45,8 +46,25 @@
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueInlines.h"
+#include "B3WasmRefTypeCheckValue.h"
+#include "B3WasmStructGetValue.h"
+#include "B3WasmStructNewValue.h"
+#include "B3WasmStructSetValue.h"
 #include "CCallHelpers.h"
+#include "GPRInfo.h"
+#include "JSCJSValueInlines.h"
+#include "JSCell.h"
+#include "JSObject.h"
+#include "JSWebAssemblyStruct.h"
 #include "LinkBuffer.h"
+#include "MarkedSpace.h"
+#include "WasmExceptionType.h"
+#include "WasmFaultSignalHandler.h"
+#include "WasmOperations.h"
+#include "WasmThunks.h"
+#include "WasmTypeDefinition.h"
+#include "WebAssemblyFunctionBase.h"
+#include "WebAssemblyGCStructure.h"
 #include <cmath>
 #include <numeric>
 #include <wtf/BitVector.h>
@@ -556,6 +574,232 @@ private:
                 m_changed = true;
                 break;
             }
+
+            case WasmStructGet: {
+                WasmStructGetValue* structGet = m_value->as<WasmStructGetValue>();
+                Value* structPtr = structGet->child(0);
+                SUPPRESS_UNCOUNTED_LOCAL const Wasm::StructType* structType = structGet->structType();
+                Wasm::StructFieldCount fieldIndex = structGet->fieldIndex();
+                auto fieldType = structType->field(fieldIndex).type;
+                bool canTrap = structGet->kind().traps();
+                HeapRange range = structGet->range();
+                Mutability mutability = structGet->mutability();
+
+                int32_t fieldOffset = JSWebAssemblyStruct::offsetOfData() + structType->offsetOfFieldInPayload(fieldIndex);
+
+                auto wrapTrapping = [&](auto input) -> B3::Kind {
+                    if (canTrap)
+                        return trapping(input);
+                    return input;
+                };
+
+                Value* result;
+                if (fieldType.is<Wasm::PackedType>()) {
+                    switch (fieldType.as<Wasm::PackedType>()) {
+                    case Wasm::PackedType::I8:
+                        result = m_insertionSet.insert<MemoryValue>(m_index, wrapTrapping(Load8Z), Int32, m_origin, structPtr, fieldOffset, range);
+                        break;
+                    case Wasm::PackedType::I16:
+                        result = m_insertionSet.insert<MemoryValue>(m_index, wrapTrapping(Load16Z), Int32, m_origin, structPtr, fieldOffset, range);
+                        break;
+                    }
+                } else {
+                    ASSERT(fieldType.is<Wasm::Type>());
+                    auto unpacked = fieldType.unpacked();
+                    Type b3Type;
+                    switch (unpacked.kind) {
+                    case Wasm::TypeKind::I32:
+                        b3Type = Int32;
+                        break;
+                    case Wasm::TypeKind::I64:
+                        b3Type = Int64;
+                        break;
+                    case Wasm::TypeKind::F32:
+                        b3Type = Float;
+                        break;
+                    case Wasm::TypeKind::F64:
+                        b3Type = Double;
+                        break;
+                    case Wasm::TypeKind::V128:
+                        b3Type = V128;
+                        break;
+                    default:
+                        // Reference types are stored as Int64 (pointer-sized)
+                        b3Type = Int64;
+                        break;
+                    }
+                    result = m_insertionSet.insert<MemoryValue>(m_index, wrapTrapping(Load), b3Type, m_origin, structPtr, fieldOffset, range);
+                }
+
+                result->as<MemoryValue>()->setReadsMutability(mutability);
+                m_value->replaceWithIdentity(result);
+                m_changed = true;
+                break;
+            }
+
+            case WasmStructSet: {
+                WasmStructSetValue* structSet = m_value->as<WasmStructSetValue>();
+                Value* structPtr = structSet->child(0);
+                Value* value = structSet->child(1);
+                SUPPRESS_UNCOUNTED_LOCAL const Wasm::StructType* structType = structSet->structType();
+                Wasm::StructFieldCount fieldIndex = structSet->fieldIndex();
+                auto fieldType = structType->field(fieldIndex).type;
+                bool canTrap = structSet->kind().traps();
+                HeapRange range = structSet->range();
+
+                int32_t fieldOffset = JSWebAssemblyStruct::offsetOfData() + structType->offsetOfFieldInPayload(fieldIndex);
+
+                auto wrapTrapping = [&](auto input) -> B3::Kind {
+                    if (canTrap)
+                        return trapping(input);
+                    return input;
+                };
+
+                if (fieldType.is<Wasm::PackedType>()) {
+                    switch (fieldType.as<Wasm::PackedType>()) {
+                    case Wasm::PackedType::I8:
+                        m_insertionSet.insert<MemoryValue>(m_index, wrapTrapping(Store8), m_origin, value, structPtr, fieldOffset, range);
+                        break;
+                    case Wasm::PackedType::I16:
+                        m_insertionSet.insert<MemoryValue>(m_index, wrapTrapping(Store16), m_origin, value, structPtr, fieldOffset, range);
+                        break;
+                    }
+                } else
+                    m_insertionSet.insert<MemoryValue>(m_index, wrapTrapping(Store), m_origin, value, structPtr, fieldOffset, range);
+
+                m_value->replaceWithNop();
+                m_changed = true;
+                break;
+            }
+
+            case WasmStructNew: {
+                WasmStructNewValue* structNew = m_value->as<WasmStructNewValue>();
+                Value* instance = structNew->instance();
+                Value* structureID = structNew->structureID();
+                SUPPRESS_UNCOUNTED_LOCAL const Wasm::StructType* structType = structNew->structType();
+                uint32_t typeIndex = structNew->typeIndex();
+                auto rtt = structNew->rtt();
+                int32_t allocatorsBaseOffset = structNew->allocatorsBaseOffset();
+
+                size_t allocationSize = JSWebAssemblyStruct::allocationSize(structType->instancePayloadSize());
+
+                static_assert(!(MarkedSpace::sizeStep & (MarkedSpace::sizeStep - 1)), "MarkedSpace::sizeStep must be a power of two.");
+                unsigned stepShift = getLSBSet(MarkedSpace::sizeStep);
+                size_t sizeClass = (allocationSize + MarkedSpace::sizeStep - 1) >> stepShift;
+                bool useFastPath = (sizeClass <= (MarkedSpace::largeCutoff >> stepShift));
+
+                BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+                BasicBlock* slowPath = m_blockInsertionSet.insertBefore(m_block);
+
+                UpsilonValue* fastUpsilon = nullptr;
+                if (useFastPath) {
+                    BasicBlock* fastPathContinuation = m_blockInsertionSet.insertBefore(m_block);
+
+                    // Replace the Jump added by splitForward with Nop so we can add our own control flow
+                    before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
+
+                    // The Instance constructor initializes all the allocators on creation, thus it is never nullptr.
+                    int32_t allocatorOffset = allocatorsBaseOffset + static_cast<int32_t>(sizeClass * sizeof(Allocator));
+                    Value* allocator = before->appendNew<MemoryValue>(m_proc, Load, pointerType(), m_origin, instance, allocatorOffset);
+
+                    PatchpointValue* patchpoint = before->appendNew<PatchpointValue>(m_proc, pointerType(), m_origin);
+                    if (isARM64()) {
+                        // emitAllocateWithNonNullAllocator uses the scratch registers on ARM.
+                        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+                    }
+                    patchpoint->effects.terminal = true;
+                    patchpoint->appendSomeRegisterWithClobber(allocator);
+                    patchpoint->numGPScratchRegisters++;
+                    patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
+
+                    patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                        CCallHelpers::JumpList jumpToSlowPath;
+
+                        GPRReg allocatorGPR = params[1].gpr();
+
+                        // We use a patchpoint to emit the allocation path because whenever we mess with
+                        // allocation paths, we already reason about them at the machine code level. We know
+                        // exactly what instruction sequence we want. We're confident that no compiler
+                        // optimization could make this code better. So, it's best to have the code in
+                        // AssemblyHelpers::emitAllocate(). That way, the same optimized path is shared by
+                        // all of the compiler tiers.
+                        jit.emitAllocateWithNonNullAllocator(
+                            params[0].gpr(), JITAllocator::variableNonNull(), allocatorGPR, params.gpScratch(0),
+                            jumpToSlowPath, CCallHelpers::SlowAllocationResult::UndefinedBehavior);
+
+                        CCallHelpers::Jump jumpToSuccess;
+                        if (!params.fallsThroughToSuccessor(0))
+                            jumpToSuccess = jit.jump();
+
+                        Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
+
+                        params.addLatePath([=](CCallHelpers& jit) {
+                            jumpToSlowPath.linkTo(*labels[1], &jit);
+                            if (jumpToSuccess.isSet())
+                                jumpToSuccess.linkTo(*labels[0], &jit);
+                        });
+                    });
+
+                    before->setSuccessors({ fastPathContinuation, FrequencyClass::Normal }, { slowPath, FrequencyClass::Rare });
+
+                    // Header initialization happens in fastPathContinuation, not in fastPath
+                    Value* cell = patchpoint;
+                    Value* typeInfo = fastPathContinuation->appendNew<Const32Value>(m_proc, m_origin, JSWebAssemblyStruct::typeInfoBlob().blob());
+                    fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, structureID, cell, static_cast<int32_t>(JSCell::structureIDOffset()));
+                    fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, typeInfo, cell, static_cast<int32_t>(JSCell::indexingTypeAndMiscOffset()));
+                    fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, fastPathContinuation->appendIntConstant(m_proc, m_origin, pointerType(), 0), cell, static_cast<int32_t>(JSObject::butterflyOffset()));
+                    fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, fastPathContinuation->appendIntConstant(m_proc, m_origin, pointerType(), std::bit_cast<uintptr_t>(rtt.ptr())), cell, static_cast<int32_t>(WebAssemblyGCObjectBase::offsetOfRTT()));
+
+                    fastUpsilon = fastPathContinuation->appendNew<UpsilonValue>(m_proc, m_origin, cell);
+                    fastPathContinuation->appendNew<Value>(m_proc, Jump, m_origin);
+                    fastPathContinuation->setSuccessors(m_block);
+                } else {
+                    // Just redirect the Jump added by splitForward to slowPath
+                    before->setSuccessors(slowPath);
+                }
+
+                Value* slowFunctionAddress = slowPath->appendNew<ConstPtrValue>(m_proc, m_origin, tagCFunction<OperationPtrTag>(Wasm::operationWasmStructNewEmpty));
+                Value* typeIndexValue = slowPath->appendNew<Const32Value>(m_proc, m_origin, typeIndex);
+                Value* slowResult = slowPath->appendNew<CCallValue>(m_proc, Int64, m_origin, Effects::forCall(), slowFunctionAddress, instance, typeIndexValue);
+
+                // Null check for slow path result
+                Value* isNull = slowPath->appendNew<Value>(m_proc, Equal, m_origin, slowResult, slowPath->appendNew<Const64Value>(m_proc, m_origin, JSValue::encode(jsNull())));
+                CheckValue* check = slowPath->appendNew<CheckValue>(m_proc, Check, m_origin, isNull);
+                check->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams&) {
+                    jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(Wasm::ExceptionType::BadStructNew)), GPRInfo::argumentGPR1);
+                    jit.nearCallThunk(CodeLocationLabel<JITThunkPtrTag>(Wasm::Thunks::singleton().stub(Wasm::throwExceptionFromOMGThunkGenerator).code()));
+                });
+
+                UpsilonValue* slowUpsilon = slowPath->appendNew<UpsilonValue>(m_proc, m_origin, slowResult);
+                slowPath->appendNew<Value>(m_proc, Jump, m_origin);
+                slowPath->setSuccessors(m_block);
+
+                Value* phi = m_insertionSet.insert<Value>(m_index, Phi, pointerType(), m_origin);
+                if (fastUpsilon)
+                    fastUpsilon->setPhi(phi);
+                slowUpsilon->setPhi(phi);
+
+                m_value->replaceWithIdentity(phi);
+                before->updatePredecessorsAfter();
+                m_changed = true;
+                break;
+            }
+
+#if USE(JSVALUE64)
+            case WasmRefCast:
+            case WasmRefTest: {
+                WasmRefTypeCheckValue* typeCheck = m_value->as<WasmRefTypeCheckValue>();
+                // FIXME: In most of cases, we do not need to have split. We could split only when necessary.
+                BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+                BasicBlock* continuation = m_block;
+                m_value->replaceWithIdentity(emitRefTestOrCast(typeCheck, before, continuation));
+                before->updatePredecessorsAfter();
+                m_changed = true;
+                break;
+            }
+#endif
+
             default:
                 break;
             }
@@ -726,84 +970,58 @@ private:
             int64_t firstValue = cases[start].caseValue();
             int64_t lastValue = cases[end - 1].caseValue();
             if ((lastValue - firstValue + 1) / (end - start) < densityLimit) {
-                BasicBlock* switchBlock = m_blockInsertionSet.insertAfter(m_block);
-                Value* index = before->appendNew<Value>(
-                    m_proc, Sub, m_origin, child,
-                    before->appendIntConstant(m_proc, m_origin, type, firstValue));
-                before->appendNew<Value>(
-                    m_proc, Branch, m_origin,
-                    before->appendNew<Value>(
-                        m_proc, Above, m_origin, index,
-                        before->appendIntConstant(m_proc, m_origin, type, lastValue - firstValue)));
-                before->setSuccessors(fallThrough, FrequentedBlock(switchBlock));
-                
-                size_t tableSize = lastValue - firstValue + 1;
-                
-                if (index->type() != pointerType() && index->type() == Int32)
-                    index = switchBlock->appendNew<Value>(m_proc, ZExt32, m_origin, index);
-                
-                PatchpointValue* patchpoint =
-                    switchBlock->appendNew<PatchpointValue>(m_proc, Void, m_origin);
+                size_t tableSize = lastValue - firstValue + 1 + 1; // + 1 for fallthrough
+                Value* index = before->appendNew<Value>(m_proc, Sub, m_origin, child, before->appendIntConstant(m_proc, m_origin, type, firstValue));
+                Value* fallthroughIndex = before->appendIntConstant(m_proc, m_origin, type, tableSize - 1);
+                index = before->appendNew<B3::Value>(m_proc, Select, m_origin, before->appendNew<Value>(m_proc, AboveEqual, m_origin, index, fallthroughIndex), fallthroughIndex, index);
 
-                // Even though this loads from the jump table, the jump table is immutable. For the
-                // purpose of alias analysis, reading something immutable is like reading nothing.
+                if (index->type() != pointerType() && index->type() == Int32)
+                    index = before->appendNew<Value>(m_proc, ZExt32, m_origin, index);
+
+                using JumpTableCodePtr = CodePtr<JSSwitchPtrTag>;
+                JumpTableCodePtr* jumpTable = static_cast<JumpTableCodePtr*>(m_proc.addDataSection(sizeof(JumpTableCodePtr) * tableSize));
+                auto* tableValue = before->appendIntConstant(m_proc, m_origin, pointerType(), std::bit_cast<uintptr_t>(jumpTable));
+                auto* shifted = before->appendNew<Value>(m_proc, Shl, m_origin, index, before->appendIntConstant(m_proc, m_origin, Int32, getLSBSet(sizeof(JumpTableCodePtr))));
+                auto* address = before->appendNew<Value>(m_proc, Add, pointerType(), m_origin, shifted, tableValue);
+                auto* load = before->appendNew<MemoryValue>(m_proc, Load, pointerType(), m_origin, address);
+                load->setControlDependent(false);
+                load->setReadsMutability(B3::Mutability::Immutable);
+                PatchpointValue* patchpoint = before->appendNew<PatchpointValue>(m_proc, Void, m_origin, cloningForbidden(Patchpoint));
+
                 patchpoint->effects = Effects();
                 patchpoint->effects.terminal = true;
-                
-                patchpoint->appendSomeRegister(index);
-                patchpoint->numGPScratchRegisters = 2;
-                // Technically, we don't have to clobber macro registers on X86_64. This is probably
-                // OK though.
-                patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
-                
+                patchpoint->appendSomeRegister(load);
+                // Technically, we don't have to clobber macro registers on X86_64. This is probably OK though.
+                patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+
+                before->clearSuccessors();
                 BitVector handledIndices;
                 for (unsigned i = start; i < end; ++i) {
                     FrequentedBlock block = cases[i].target();
                     int64_t value = cases[i].caseValue();
-                    switchBlock->appendSuccessor(block);
+                    before->appendSuccessor(block);
                     size_t index = value - firstValue;
                     ASSERT(!handledIndices.get(index));
                     handledIndices.set(index);
                 }
-                
-                bool hasUnhandledIndex = false;
-                for (unsigned i = 0; i < tableSize; ++i) {
-                    if (!handledIndices.get(i)) {
-                        hasUnhandledIndex = true;
-                        break;
-                    }
-                }
-                
-                if (hasUnhandledIndex)
-                    switchBlock->appendSuccessor(fallThrough);
+                before->appendSuccessor(fallThrough);
 
                 patchpoint->setGenerator(
-                    [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    [=](CCallHelpers& jit, const StackmapGenerationParams& params) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                        using JumpTableCodePtr = CodePtr<JSSwitchPtrTag>;
-                        JumpTableCodePtr* jumpTable = static_cast<JumpTableCodePtr*>(
-                            params.proc().addDataSection(sizeof(JumpTableCodePtr) * tableSize));
-
-                        GPRReg index = params[0].gpr();
-                        GPRReg scratch = params.gpScratch(0);
-
-                        jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
-                        jit.loadPtr(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::ScalePtr), scratch);
-                        jit.farJump(scratch, JSSwitchPtrTag);
+                        GPRReg target = params[0].gpr();
+                        jit.farJump(target, JSSwitchPtrTag);
 
                         // These labels are guaranteed to be populated before either late paths or
                         // link tasks run.
                         Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
-                        
+
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
-                                if (hasUnhandledIndex) {
-                                    JumpTableCodePtr fallThrough = linkBuffer.locationOf<JSSwitchPtrTag>(*labels.last());
-                                    for (unsigned i = tableSize; i--;)
-                                        jumpTable[i] = fallThrough;
-                                }
-                                
+                                JumpTableCodePtr fallThrough = linkBuffer.locationOf<JSSwitchPtrTag>(*labels.last());
+                                for (unsigned i = 0; i < tableSize; ++i)
+                                    jumpTable[i] = fallThrough;
                                 unsigned labelIndex = 0;
                                 for (unsigned tableIndex : handledIndices)
                                     jumpTable[tableIndex] = linkBuffer.locationOf<JSSwitchPtrTag>(*labels[labelIndex++]);
@@ -876,7 +1094,301 @@ private:
         recursivelyBuildSwitch(cases, fallThrough, start, hardStart, medianIndex, left);
         recursivelyBuildSwitch(cases, fallThrough, medianIndex, true, end, right);
     }
-    
+
+#if USE(JSVALUE64)
+    Value* emitRefTestOrCast(WasmRefTypeCheckValue* typeCheck, BasicBlock* before, BasicBlock* continuation)
+    {
+        enum class CastKind { Cast, Test };
+
+        // CastKind::Test, reference, allowNull, heapType, shouldNegate, result
+        Value* value = typeCheck->child(0);
+        int32_t toHeapType = typeCheck->targetHeapType();
+        bool allowNull = typeCheck->allowNull();
+        bool referenceIsNullable = typeCheck->referenceIsNullable();
+        bool definitelyIsCellOrNull = typeCheck->definitelyIsCellOrNull();
+        bool definitelyIsWasmGCObjectOrNull = typeCheck->definitelyIsWasmGCObjectOrNull();
+        SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = typeCheck->targetRTT();
+        bool isCast = typeCheck->kind().opcode() == WasmRefCast;
+        CastKind castKind = isCast ? CastKind::Cast : CastKind::Test;
+        bool shouldNegate = typeCheck->shouldNegate();
+        Value* result = nullptr;
+
+        if (isCast)
+            result = value;
+
+        BasicBlock* trueBlock = nullptr;
+        BasicBlock* falseBlock = nullptr;
+        if (!isCast) {
+            trueBlock = m_proc.addBlock();
+            falseBlock = m_proc.addBlock();
+        }
+
+        auto castFailure = [=](CCallHelpers& jit, const StackmapGenerationParams&) {
+            jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(Wasm::ExceptionType::CastFailure)), GPRInfo::argumentGPR1);
+            jit.nearCallThunk(CodeLocationLabel<JITThunkPtrTag>(Wasm::Thunks::singleton().stub(Wasm::throwExceptionFromOMGThunkGenerator).code()));
+        };
+
+        auto castAccessOffset = [&] -> std::optional<ptrdiff_t> {
+            if (!isCast)
+                return std::nullopt;
+
+            if (allowNull)
+                return std::nullopt;
+
+            if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType)))
+                return std::nullopt;
+
+            if (targetRTT->kind() == Wasm::RTTKind::Function)
+                return WebAssemblyFunctionBase::offsetOfRTT();
+
+            if (!definitelyIsCellOrNull)
+                return std::nullopt;
+            if (!definitelyIsWasmGCObjectOrNull)
+                return JSCell::typeInfoTypeOffset();
+            return JSCell::structureIDOffset();
+        };
+
+        bool canTrap = false;
+        auto wrapTrapping = [&](auto input) -> B3::Kind {
+            if (canTrap) {
+                canTrap = false;
+                return trapping(input);
+            }
+            return input;
+        };
+
+        // Ensure reference nullness agrees with heap type.
+        before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
+        before->clearSuccessors();
+        auto* currentBlock = before;
+
+        auto constant = [&](TypeKind type, uint64_t bits) -> Value* {
+            switch (type) {
+            case Int32:
+                return currentBlock->appendNew<Const32Value>(m_proc, m_origin, bits);
+            case Int64:
+                return currentBlock->appendNew<Const64Value>(m_proc, m_origin, bits);
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                return nullptr;
+            }
+        };
+
+        auto emitCheckOrBranchForCast = [&](CastKind kind, Value* condition, const auto& generator, BasicBlock* falseBlock) {
+            if (kind == CastKind::Cast) {
+                CheckValue* check = currentBlock->appendNew<CheckValue>(m_proc, Check, m_origin, condition);
+                check->setGenerator(generator);
+            } else {
+                ASSERT(falseBlock);
+                BasicBlock* success = m_proc.addBlock();
+                currentBlock->appendNewControlValue(m_proc, B3::Branch, m_origin, condition, FrequentedBlock(falseBlock), FrequentedBlock(success));
+                falseBlock->addPredecessor(currentBlock);
+                success->addPredecessor(currentBlock);
+                currentBlock = success;
+            }
+        };
+
+        {
+            BasicBlock* nullCase = m_proc.addBlock();
+            BasicBlock* nonNullCase = m_proc.addBlock();
+
+            Value* isNull = nullptr;
+            if (referenceIsNullable) {
+                if (auto offset = castAccessOffset(); offset && offset.value() <= Wasm::maxAcceptableOffsetForNullReference()) {
+                    isNull = constant(Int32, 0);
+                    canTrap = true;
+                } else
+                    isNull = currentBlock->appendNew<Value>(m_proc, Equal, m_origin, value, constant(Int64, JSValue::encode(jsNull())));
+            } else
+                isNull = constant(Int32, 0);
+
+            currentBlock->appendNewControlValue(m_proc, B3::Branch, m_origin, isNull, FrequentedBlock(nullCase), FrequentedBlock(nonNullCase));
+            nullCase->addPredecessor(currentBlock);
+            nonNullCase->addPredecessor(currentBlock);
+
+            currentBlock = nullCase;
+            if (isCast) {
+                if (!allowNull) {
+                    B3::PatchpointValue* throwException = currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, m_origin);
+                    throwException->setGenerator(castFailure);
+                }
+                currentBlock->appendNewControlValue(m_proc, Jump, m_origin, continuation);
+                continuation->addPredecessor(currentBlock);
+            } else {
+                BasicBlock* nextBlock;
+                if (!allowNull)
+                    nextBlock = falseBlock;
+                else
+                    nextBlock = trueBlock;
+                currentBlock->appendNewControlValue(m_proc, Jump, m_origin, nextBlock);
+                nextBlock->addPredecessor(currentBlock);
+            }
+
+            currentBlock = nonNullCase;
+        }
+
+        if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
+            switch (static_cast<Wasm::TypeKind>(toHeapType)) {
+            case Wasm::TypeKind::Funcref:
+            case Wasm::TypeKind::Externref:
+            case Wasm::TypeKind::Anyref:
+            case Wasm::TypeKind::Exnref:
+                // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+                break;
+            case Wasm::TypeKind::Noneref:
+            case Wasm::TypeKind::Nofuncref:
+            case Wasm::TypeKind::Noexternref:
+            case Wasm::TypeKind::Noexnref:
+                // Casts to any bottom type should always fail.
+                if (isCast) {
+                    B3::PatchpointValue* throwException = currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, m_origin);
+                    throwException->setGenerator(castFailure);
+                } else {
+                    currentBlock->appendNewControlValue(m_proc, Jump, m_origin, falseBlock);
+                    falseBlock->addPredecessor(currentBlock);
+                    currentBlock = m_proc.addBlock();
+                }
+                break;
+            case Wasm::TypeKind::Eqref: {
+                auto nop = [] (CCallHelpers&, const B3::StackmapGenerationParams&) { };
+                BasicBlock* endBlock = isCast ? continuation : trueBlock;
+                BasicBlock* checkObject = m_proc.addBlock();
+
+                // The eqref case chains together checks for i31, array, and struct with disjunctions so the control flow is more complicated, and requires some extra basic blocks to be created.
+                emitCheckOrBranchForCast(CastKind::Test, currentBlock->appendNew<Value>(m_proc, Below, m_origin, value, constant(Int64, JSValue::NumberTag)), nop, checkObject);
+                Value* untagged = currentBlock->appendNew<Value>(m_proc, Trunc, m_origin, value);
+                emitCheckOrBranchForCast(CastKind::Test, currentBlock->appendNew<Value>(m_proc, GreaterThan, m_origin, untagged, constant(Int32, Wasm::maxI31ref)), nop, checkObject);
+                emitCheckOrBranchForCast(CastKind::Test, currentBlock->appendNew<Value>(m_proc, LessThan, m_origin, untagged, constant(Int32, Wasm::minI31ref)), nop, checkObject);
+                currentBlock->appendNewControlValue(m_proc, Jump, m_origin, endBlock);
+                checkObject->addPredecessor(currentBlock);
+                endBlock->addPredecessor(currentBlock);
+
+                currentBlock = checkObject;
+                if (!definitelyIsCellOrNull)
+                    emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, BitAnd, m_origin, value, constant(Int64, JSValue::NotCellMask)), castFailure, falseBlock);
+                if (!definitelyIsWasmGCObjectOrNull) {
+                    auto* jsType = currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, m_origin, value, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
+
+                    emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
+                }
+                break;
+            }
+            case Wasm::TypeKind::I31ref: {
+                emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, Below, m_origin, value, constant(Int64, JSValue::NumberTag)), castFailure, falseBlock);
+                Value* untagged = currentBlock->appendNew<Value>(m_proc, Trunc, m_origin, value);
+                emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, GreaterThan, m_origin, untagged, constant(Int32, Wasm::maxI31ref)), castFailure, falseBlock);
+                emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, LessThan, m_origin, untagged, constant(Int32, Wasm::minI31ref)), castFailure, falseBlock);
+                break;
+            }
+            case Wasm::TypeKind::Arrayref:
+            case Wasm::TypeKind::Structref: {
+                if (!definitelyIsCellOrNull)
+                    emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, BitAnd, m_origin, value, constant(Int64, JSValue::NotCellMask)), castFailure, falseBlock);
+                if (!definitelyIsWasmGCObjectOrNull) {
+                    auto* jsType = currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, m_origin, value, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
+
+                    emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
+                }
+                Value* rtt = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), m_origin, value, safeCast<int32_t>(WebAssemblyGCObjectBase::offsetOfRTT()));
+                auto* kind = currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, m_origin, rtt, safeCast<int32_t>(Wasm::RTT::offsetOfKind()));
+                kind->setControlDependent(false);
+
+                emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, kind, constant(Int32, static_cast<uint8_t>(static_cast<Wasm::TypeKind>(toHeapType) == Wasm::TypeKind::Arrayref ? Wasm::RTTKind::Array : Wasm::RTTKind::Struct))), castFailure, falseBlock);
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        } else {
+            ([&] {
+                MemoryValue* rtt;
+                auto* targetRTTPointer = constant(Int64, std::bit_cast<uintptr_t>(targetRTT));
+                if (targetRTT->kind() == Wasm::RTTKind::Function)
+                    rtt = currentBlock->appendNew<MemoryValue>(m_proc, wrapTrapping(B3::Load), Int64, m_origin, value, safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfRTT()));
+                else {
+                    // The cell check is only needed for non-functions, as the typechecker does not allow non-Cell values for funcref casts.
+                    if (!definitelyIsCellOrNull)
+                        emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, BitAnd, m_origin, value, constant(Int64, JSValue::NotCellMask)), castFailure, falseBlock);
+
+                    if (!definitelyIsWasmGCObjectOrNull) {
+                        auto* jsType = currentBlock->appendNew<MemoryValue>(m_proc, wrapTrapping(Load8Z), Int32, m_origin, value, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
+                        emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
+                    }
+
+                    rtt = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), m_origin, value, safeCast<int32_t>(WebAssemblyGCObjectBase::offsetOfRTT()));
+                    if (targetRTT->isFinalType()) {
+                        // If signature is final type and pointer equality failed, this value must not be a subtype.
+                        emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, rtt, targetRTTPointer), castFailure, falseBlock);
+                        return;
+                    }
+
+                    if (targetRTT->displaySizeExcludingThis() < Wasm::RTT::inlinedDisplaySize) {
+                        auto* pointer = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int64, m_origin, rtt, safeCast<int32_t>(Wasm::RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(RefPtr<const Wasm::RTT>)));
+                        pointer->setReadsMutability(B3::Mutability::Immutable);
+                        pointer->setControlDependent(false);
+
+                        emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, pointer, targetRTTPointer), castFailure, falseBlock);
+                        return;
+                    }
+                }
+
+                BasicBlock* equalBlock;
+                if (isCast)
+                    equalBlock = continuation;
+                else
+                    equalBlock = trueBlock;
+                BasicBlock* slowPath = m_proc.addBlock();
+                currentBlock->appendNewControlValue(m_proc, B3::Branch, m_origin, currentBlock->appendNew<Value>(m_proc, Equal, m_origin, rtt, targetRTTPointer), FrequentedBlock(equalBlock), FrequentedBlock(slowPath));
+                equalBlock->addPredecessor(currentBlock);
+                slowPath->addPredecessor(currentBlock);
+
+                currentBlock = slowPath;
+                if (targetRTT->isFinalType()) {
+                    // If signature is final type and pointer equality failed, this value must not be a subtype.
+                    emitCheckOrBranchForCast(castKind, constant(Int32, 1), castFailure, falseBlock);
+                } else {
+                    auto* displaySizeExcludingThis = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int32, m_origin, rtt, safeCast<int32_t>(Wasm::RTT::offsetOfDisplaySizeExcludingThis()));
+                    displaySizeExcludingThis->setControlDependent(false);
+
+                    emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, BelowEqual, m_origin, displaySizeExcludingThis, constant(Int32, targetRTT->displaySizeExcludingThis())), castFailure, falseBlock);
+
+                    auto* pointer = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int64, m_origin, rtt, safeCast<int32_t>(Wasm::RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(RefPtr<const Wasm::RTT>)));
+                    pointer->setReadsMutability(B3::Mutability::Immutable);
+                    pointer->setControlDependent(false);
+
+                    emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, pointer, targetRTTPointer), castFailure, falseBlock);
+                }
+            }());
+        }
+
+        if (isCast) {
+            currentBlock->appendNewControlValue(m_proc, Jump, m_origin, continuation);
+            continuation->addPredecessor(currentBlock);
+            currentBlock = continuation;
+        } else {
+            currentBlock->appendNewControlValue(m_proc, Jump, m_origin, trueBlock);
+            trueBlock->addPredecessor(currentBlock);
+            currentBlock = trueBlock;
+            UpsilonValue* trueUpsilon = currentBlock->appendNew<UpsilonValue>(m_proc, m_origin, constant(B3::Int32, shouldNegate ? 0 : 1));
+            currentBlock->appendNewControlValue(m_proc, Jump, m_origin, continuation);
+            continuation->addPredecessor(currentBlock);
+
+            currentBlock = falseBlock;
+            UpsilonValue* falseUpsilon = currentBlock->appendNew<UpsilonValue>(m_proc, m_origin, constant(B3::Int32, shouldNegate ? 1 : 0));
+            currentBlock->appendNewControlValue(m_proc, Jump, m_origin, continuation);
+            continuation->addPredecessor(currentBlock);
+
+            currentBlock = continuation;
+            Value* phi = m_insertionSet.insert<Value>(m_index, Phi, m_value->type(), m_origin);
+            trueUpsilon->setPhi(phi);
+            falseUpsilon->setPhi(phi);
+            result = phi;
+        }
+
+        return result;
+    }
+#endif
+
     Procedure& m_proc;
     BlockInsertionSet m_blockInsertionSet;
     InsertionSet m_insertionSet;

@@ -80,7 +80,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         blockCookies();
     restrictRequestReferrerToOriginIfNeeded(request);
 
-    m_curlRequest = createCurlRequest(WTFMove(request));
+    m_curlRequest = createCurlRequest(WTF::move(request));
     if (!m_initialCredential.isEmpty()) {
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
@@ -165,7 +165,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, CurlRespo
     m_response = ResourceResponse(receivedResponse);
 
     updateNetworkLoadMetrics(receivedResponse.networkLoadMetrics);
-    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(WTFMove(receivedResponse.networkLoadMetrics)));
+    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(WTF::move(receivedResponse.networkLoadMetrics)));
 
     handleCookieHeaders(request.resourceRequest(), receivedResponse);
 
@@ -229,7 +229,7 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
 
     updateNetworkLoadMetrics(networkLoadMetrics);
 
-    m_client->didCompleteWithError({ }, WTFMove(networkLoadMetrics));
+    m_client->didCompleteWithError({ }, WTF::move(networkLoadMetrics));
 }
 
 void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceError&& resourceError, CertificateInfo&& certificateInfo)
@@ -349,7 +349,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     ResourceRequest request = m_firstRequest;
     if (!redirectedURL.hasFragmentIdentifier() && request.url().hasFragmentIdentifier())
         redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
-    request.setURL(WTFMove(redirectedURL));
+    request.setURL(WTF::move(redirectedURL));
 
     m_hasCrossOriginRedirect = m_hasCrossOriginRedirect || !SecurityOrigin::create(m_response.url())->canRequest(request.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
@@ -396,7 +396,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     if (!m_blockingCookies && shouldBlockCookies(request))
         blockCookies();
     auto response = ResourceResponse(m_response);
-    m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = Ref { *this }, didChangeCredential](const ResourceRequest& newRequest) {
+    m_client->willPerformHTTPRedirection(WTF::move(response), WTF::move(request), [this, protectedThis = Ref { *this }, didChangeCredential](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
             return;
 
@@ -405,7 +405,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
 
         auto requestCopy = newRequest;
         restrictRequestReferrerToOriginIfNeeded(requestCopy);
-        m_curlRequest = createCurlRequest(WTFMove(requestCopy));
+        m_curlRequest = createCurlRequest(WTF::move(requestCopy));
         if (didChangeCredential && !m_initialCredential.isEmpty()) {
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
             m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
@@ -527,7 +527,7 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
     auto shouldDisableServerTrustEvaluation = protectionSpace.authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested || m_curlRequest->isServerTrustEvaluationDisabled();
     m_curlRequest->cancel();
 
-    m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
+    m_curlRequest = createCurlRequest(WTF::move(previousRequest), RequestStatus::ReusedRequest);
     m_curlRequest->setAuthenticationScheme(protectionSpace.authenticationScheme());
     m_curlRequest->setUserPass(credential.user(), credential.password());
     if (shouldDisableServerTrustEvaluation)
@@ -578,7 +578,7 @@ bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& req
     bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
 
     if (!shouldBlockCookies && m_session->networkStorageSession())
-        shouldBlockCookies = m_session->checkedNetworkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID, m_session->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(m_webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
+        shouldBlockCookies = protect(m_session->networkStorageSession())->shouldBlockCookies(request, m_frameID, m_pageID, m_session->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(m_webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
 
     if (shouldBlockCookies)
         return true;
@@ -608,7 +608,7 @@ void NetworkDataTaskCurl::setTimingAllowFailedFlag()
 
 void NetworkDataTaskCurl::setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
-    NetworkDataTask::setPendingDownloadLocation(filename, WTFMove(sandboxExtensionHandle), allowOverwrite);
+    NetworkDataTask::setPendingDownloadLocation(filename, WTF::move(sandboxExtensionHandle), allowOverwrite);
     m_allowOverwriteDownload = allowOverwrite;
 }
 

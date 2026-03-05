@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitDOMCharacterData.h"
 
-#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
@@ -96,7 +95,9 @@ static void webkit_dom_character_data_dom_event_target_init(WebKitDOMEventTarget
     iface->remove_event_listener = webkit_dom_character_data_remove_event_listener;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMCharacterData, webkit_dom_character_data, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_character_data_dom_event_target_init))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_CHARACTER_DATA_PROP_0,

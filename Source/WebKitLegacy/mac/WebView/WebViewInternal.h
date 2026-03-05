@@ -94,6 +94,7 @@ struct DragItem;
 
 class WebMediaPlaybackTargetPicker;
 class WebSelectionServiceController;
+class LegacyWebPageInspectorController;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 #import <WebCore/MediaProducer.h>
@@ -190,6 +191,8 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)_windowVisibilityChanged:(NSNotification *)notification;
 
 - (void)_closeWindow;
+
+- (LegacyWebPageInspectorController*)inspectorController;
 
 @end
 

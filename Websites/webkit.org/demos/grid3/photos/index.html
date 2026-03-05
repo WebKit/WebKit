@@ -2,9 +2,9 @@
 <html lang="en-US">
 <head>
   <meta charset="utf-8">
-  <title>Photo demo</title>
+  <title>CSS Grid Lanes — Photo demo</title>
   <meta name="description" content="">
-  <meta name="viewport" content=" width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../universal.css">
   <link rel="stylesheet" href="styles.css">
   <meta name="color-scheme" content="dark light">
@@ -13,21 +13,21 @@
 </head>
 <body>
 <aside class="interface">
-  <nav>Demos: <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a> | <a href="../museum/">Museum</a></nav>
+  <nav>Demos: <a href="../">Home</a> | <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a> | <a href="../museum/">Museum</a></nav>
   <section class="layout-switcher">
     <label for="layout-select">Switch layouts:</label>
     <select name="layouts" id="layout-select">
       <option value="one">Multicolumn layout</option>
-      <option value="two">CSS Grid Level 1</option>
-      <option value="three">Classic masonry / waterfall layout</option>
-      <option value="four">First & last columns fixed size</option>
-      <option selected value="five">Alternating narrow & wide columns</option>
-      <option value="six">Every 5th item is wider</option>
-      <option value="seven">Wide images are wider</option>
-      <option value="eight">Combined with View Transitions</option>
-      <option value="ten">Fibonacci sequence</option>
-      <option value="nine">Horizontal Masonry</option>
-      <option value="eleven">Horizontal Flexbox</option>
+      <option value="two">CSS Grid level 1</option>
+      <option selected value="three">Grid Lanes — classic "waterfall" layout</option>
+      <option value="four">Grid Lanes — first & last columns fixed size</option>
+      <option value="five">Grid Lanes — alternating narrow & wide</option>
+      <option value="six">Grid Lanes — every 5th item is wider</option>
+      <option value="seven">Grid Lanes — wide images are wider</option>
+      <option value="eight">Grid Lanes — with View Transitions</option>
+      <option value="ten">Grid Lanes — Fibonacci sequence</option>
+      <option value="nine">Grid Lanes — horizontal / "brick" layout</option>
+      <option value="eleven">Flexbox — horizontal</option>
     </select>
   </section>
   <section class="number-toggle">
@@ -48,52 +48,44 @@
   gap: 1rem;
 }</code></pre>
 <pre class="three"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-  grid-template-rows: masonry;
   gap: 1rem;
 }</code></pre>
 <pre class="four"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: 14ch repeat(auto-fill, minmax(28ch, 1fr)) 14ch;
-  grid-template-rows: masonry; 
   gap: 1rem;
 }</code></pre>
 <pre class="five"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr) minmax(14rem, 2fr)) minmax(8rem, 1fr);
-  grid-template-rows: masonry; 
   gap: 1rem;
 }</code></pre>
 <pre class="six"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(16ch, 1fr));
-  grid-template-rows: masonry; 
   gap: 1rem;
 }
 .card:nth-child(5n) { grid-column: span 2; }</code></pre>
 <pre class="seven"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(18ch, 1fr));
-  grid-template-rows: masonry;
 }
 figure:has(.wide) { grid-column: span 2; }</code></pre>
 <pre class="eight"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  grid-template-rows: masonry;
 }
 .expanded {  grid-column: span 4; }</code></pre>
-<pre class="eight code"><code>/* plus code for View Transitions, requires Safari Technology Preview 192+ */</code></pre>
+<pre class="eight code"><code>/* plus code for view-transition-name: match-element, which requires Safari 18.4 or later. */</code></pre>
 <pre class="ten"><code>main { 
-  display: grid;
+  display: grid-lanes;
   grid-template-columns: 1fr 1fr 2fr 3fr 5fr 8fr;
-  grid-template-rows: masonry; 
   gap: 1rem;
 }</code></pre>
 <pre class="nine"><code>main { 
-  display: grid;
-  grid-template-columns: masonry;
+  display: grid-lanes;
   grid-template-rows: repeat(7, 150px); 
   gap: 1rem;
   overflow: scroll;
@@ -108,8 +100,7 @@ img { height: 200px; width: auto; min-width: 100%; object-fit: cover; }
 </code></pre>
   </section>
 </aside>
-<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
-<a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer>
+<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, or another browser that supports Grid Level 3.</p></footer> 
 <main class="grid">
   <figure class="card"><img src="photos/jubeo-hernandez-2FxiqXZyB7s-unsplash.jpg" width="640" height="735" class=""></figure>
   <figure class="card"><img src="photos/micheile-henderson-KUbt9qYUmxw-unsplash.jpg" width="640" height="640" class="square"></figure>

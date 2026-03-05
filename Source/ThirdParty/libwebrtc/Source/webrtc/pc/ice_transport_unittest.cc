@@ -13,7 +13,7 @@
 #include <memory>
 #include <utility>
 
-#include "api/environment/environment_factory.h"
+#include "api/environment/environment.h"
 #include "api/ice_transport_factory.h"
 #include "api/ice_transport_interface.h"
 #include "api/make_ref_counted.h"
@@ -23,6 +23,7 @@
 #include "rtc_base/internal/default_socket_server.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -51,8 +52,9 @@ TEST_F(IceTransportTest, CreateNonSelfDeletingTransport) {
 }
 
 TEST_F(IceTransportTest, CreateSelfDeletingTransport) {
-  FakePortAllocator port_allocator(CreateEnvironment(), socket_server());
-  IceTransportInit init;
+  Environment env = CreateTestEnvironment();
+  FakePortAllocator port_allocator(env, socket_server());
+  IceTransportInit init(env);
   init.set_port_allocator(&port_allocator);
   auto ice_transport = CreateIceTransport(std::move(init));
   EXPECT_NE(nullptr, ice_transport->internal());

@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include <WebCore/GridLayoutConstraints.h>
 #include <WebCore/GridTypeAliases.h>
 #include <WebCore/LayoutIntegrationUtils.h>
 #include <WebCore/LayoutState.h>
-#include <WebCore/LayoutUnit.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -41,19 +41,46 @@ class UnplacedGridItem;
 
 struct GridAreaLines;
 struct UnplacedGridItems;
+struct UsedTrackSizes;
+
+enum class PackingStrategy : bool {
+    Sparse,
+    Dense
+};
+
+enum class GridAutoFlowDirection : bool {
+    Row,
+    Column
+};
+
+struct GridAutoFlowOptions {
+    PackingStrategy strategy;
+    GridAutoFlowDirection direction;
+};
+
+// https://drafts.csswg.org/css-grid-1/#grid-definition
+struct GridDefinition {
+    Style::GridTemplateList gridTemplateColumns;
+    Style::GridTemplateList gridTemplateRows;
+    Style::GridTrackSizes gridAutoColumns;
+    Style::GridTrackSizes gridAutoRows;
+    GridAutoFlowOptions autoFlowOptions;
+};
 
 class GridFormattingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GridFormattingContext);
+    WTF_MAKE_TZONE_ALLOCATED(GridFormattingContext);
 public:
-
-    struct GridLayoutConstraints {
-        std::optional<LayoutUnit> inlineAxisAvailableSpace;
-        std::optional<LayoutUnit> blockAxisAvailableSpace;
-    };
 
     GridFormattingContext(const ElementBox& gridBox, LayoutState&);
 
-    void layout(GridLayoutConstraints);
+    UsedTrackSizes layout(GridLayoutConstraints);
+
+    struct IntrinsicWidths {
+        LayoutUnit minimum;
+        LayoutUnit maximum;
+    };
+
+    IntrinsicWidths computeIntrinsicWidths();
 
     PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
 
@@ -63,12 +90,34 @@ public:
 
     const BoxGeometry& geometryForGridItem(const ElementBox&) const;
 
+    const Style::ZoomFactor zoomFactor() const { return m_gridBox->style().usedZoomForLength(); }
+
+    const WritingMode writingMode() const { return m_gridBox->style().writingMode(); }
+
+    // FIXME: This is only here because the integration code needs to know the
+    // row gap to update RenderGrid. We should figure out a way to do that and remove
+    // this from the public API.
+    static LayoutUnit usedGapValue(const Style::GapGutter& gap)
+    {
+        if (gap.isNormal())
+            return { };
+
+        // Only handle fixed length gaps for now
+        if (auto fixedGap = gap.tryFixed())
+            return Style::evaluate<LayoutUnit>(*fixedGap, 0_lu, Style::ZoomNeeded { });
+
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
 private:
     UnplacedGridItems constructUnplacedGridItems() const;
 
     const LayoutState& layoutState() const { return m_globalLayoutState; }
     BoxGeometry& geometryForGridItem(const ElementBox&);
     void setGridItemGeometries(const GridItemRects&);
+
+    const RenderStyle& gridContainerStyle() const { return m_gridBox->style(); }
 
     const CheckedRef<const ElementBox> m_gridBox;
     const CheckedRef<LayoutState> m_globalLayoutState;

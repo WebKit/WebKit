@@ -51,8 +51,8 @@ int main(int argc, char** argv)
     WebDriver::logChannels().initializeLogChannelsIfNecessary(WebDriver::logLevelString());
 #endif
 
-    WebDriver::WebDriverService service;
-    return service.run(argc, argv);
+    auto service = makeUnique<WebDriver::WebDriverService>();
+    return service->run(argc, argv);
 }
 #if OS(ANDROID)
 }

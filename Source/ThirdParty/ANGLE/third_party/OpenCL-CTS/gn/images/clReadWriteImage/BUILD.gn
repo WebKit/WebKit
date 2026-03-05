@@ -15,6 +15,7 @@ ocl_cts_source_set("cl_read_write_images") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clReadWriteImage/test_loops.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clReadWriteImage/test_read_1D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clReadWriteImage/test_read_1D_array.cpp",
+    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clReadWriteImage/test_read_1D_buffer.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clReadWriteImage/test_read_2D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clReadWriteImage/test_read_2D_array.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clReadWriteImage/test_read_3D.cpp",

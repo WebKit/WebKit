@@ -104,6 +104,17 @@ void WrapMainAndAppend(TIntermBlock *root,
     TIntermFunctionDefinition *newMainDefinition =
         new TIntermFunctionDefinition(newMainProto, newMainBody);
     root->appendStatement(newMainDefinition);
+
+    // If a function prototype of main() also exists, it will need to be replaced. Otherwise it will
+    // continue to internally reference the TFunction of the replaced 'main' function definition.
+    TIntermFunctionPrototype *oldMainProto = FindMainPrototype(root);
+    if (oldMainProto)
+    {
+        // Replace the prototype node but initialize it with the newMain TFunction; now this newly
+        // created main() prototype will reference the new TFunction of newMain.
+        newMainProto = new TIntermFunctionPrototype(newMain);
+        replaced     = root->replaceChildNode(oldMainProto, newMainProto);
+    }
 }
 
 }  // anonymous namespace

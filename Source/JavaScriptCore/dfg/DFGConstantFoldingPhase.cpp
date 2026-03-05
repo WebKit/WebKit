@@ -965,7 +965,7 @@ private:
                                         ASSERT(isInlineOffset(knownPolyProtoOffset));
                                         m_insertionSet.insertNode(
                                             indexInBlock + 1, SpecNone, PutByOffset, origin, OpInfo(data),
-                                            Edge(node, KnownCellUse), Edge(node, KnownCellUse), Edge(prototypeNode, UntypedUse));
+                                            Edge(node, KnownStorageUse), Edge(node, KnownCellUse), Edge(prototypeNode, UntypedUse));
                                     }
                                     changed = true;
                                     break;
@@ -1007,7 +1007,7 @@ private:
 
             case CreateGenerator:
             case CreateAsyncGenerator: {
-                auto foldConstant = [&] (NodeType newOp, const ClassInfo* classInfo) {
+                auto foldConstant = [&] (const ClassInfo* classInfo) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     if (JSValue base = m_state.forNode(node->child1()).m_value) {
                         if (auto* function = jsDynamicCast<JSFunction*>(base)) {
@@ -1019,7 +1019,7 @@ private:
                                         && structure->globalObject() == globalObject) {
                                         m_graph.freeze(rareData);
                                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                                        node->convertToNewInternalFieldObjectWithInlineFields(newOp, m_graph.registerStructure(structure));
+                                        node->convertToNewInternalFieldObject(m_graph.registerStructure(structure));
                                         changed = true;
                                         return;
                                     }
@@ -1031,10 +1031,10 @@ private:
 
                 switch (node->op()) {
                 case CreateGenerator:
-                    foldConstant(NewGenerator, JSGenerator::info());
+                    foldConstant(JSGenerator::info());
                     break;
                 case CreateAsyncGenerator:
-                    foldConstant(NewAsyncGenerator, JSAsyncGenerator::info());
+                    foldConstant(JSAsyncGenerator::info());
                     break;
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
@@ -1748,6 +1748,40 @@ private:
                 break;
             }
 
+            case PromiseThen: {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                auto& promise = m_state.forNode(node->child1());
+                if (promise.isType(SpecPromiseObject)) {
+                    auto& structureSet = promise.m_structure;
+                    if (structureSet.isFinite()) {
+                        if (auto structure = structureSet.onlyStructure()) {
+                            if (structure.get() == globalObject->promiseStructure()) {
+                                if (m_graph.isWatchingPromiseSpeciesWatchpoint(node)) {
+                                    m_interpreter.execute(indexInBlock);
+                                    alreadyHandled = true;
+
+                                    auto* resultPromise = m_insertionSet.insertNode(indexInBlock, SpecPromiseObject, NewInternalFieldObject, node->origin, OpInfo(m_graph.registerStructure(globalObject->promiseStructure())));
+                                    m_insertionSet.insertNode(indexInBlock, SpecNone, ExitOK, node->origin);
+
+                                    unsigned firstChild = m_graph.m_varArgChildren.size();
+                                    m_graph.m_varArgChildren.append(Edge(node->child1().node(), KnownCellUse));
+                                    m_graph.m_varArgChildren.append(node->child2());
+                                    m_graph.m_varArgChildren.append(node->child3());
+                                    m_graph.m_varArgChildren.append(Edge(resultPromise, KnownCellUse));
+                                    m_insertionSet.insertNode(indexInBlock, SpecNone, PerformPromiseThen, node->origin, AdjacencyList(AdjacencyList::Variable, firstChild, 4));
+                                    m_insertionSet.insertNode(indexInBlock, SpecNone, ExitOK, node->origin);
+
+                                    node->convertToIdentityOn(resultPromise);
+                                    changed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+
             case DoubleRep: {
                 switch (node->child1().useKind()) {
                 case NotCellNorBigIntUse:
@@ -1908,6 +1942,7 @@ private:
             propertyStorage = Edge(m_insertionSet.insertNode(
                 indexInBlock, SpecNone, GetButterfly, node->origin, childEdge));
         }
+        propertyStorage.setUseKind(KnownStorageUse);
         
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = offset;
@@ -1960,15 +1995,15 @@ private:
             ASSERT(variant.oldStructureForTransition()->outOfLineCapacity());
             ASSERT(variant.newStructure()->outOfLineCapacity() > variant.oldStructureForTransition()->outOfLineCapacity());
             ASSERT(!isInlineOffset(variant.offset()));
-
+            Node* butterfly = m_insertionSet.insertNode(indexInBlock, SpecNone, GetButterfly, origin, childEdge);
             Node* reallocatePropertyStorage = m_insertionSet.insertNode(
                 indexInBlock, SpecNone, ReallocatePropertyStorage, origin,
                 OpInfo(transition), childEdge,
-                Edge(m_insertionSet.insertNode(
-                    indexInBlock, SpecNone, GetButterfly, origin, childEdge)));
+                Edge(butterfly, KnownStorageUse));
             propertyStorage = Edge(reallocatePropertyStorage);
             didAllocateStorage = true;
         }
+        propertyStorage.setUseKind(KnownStorageUse);
 
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = variant.offset();
@@ -2016,6 +2051,7 @@ private:
         else
             propertyStorage = Edge(m_insertionSet.insertNode(
                 indexInBlock, SpecNone, GetButterfly, origin, node->child1()));
+        propertyStorage.setUseKind(KnownStorageUse);
 
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = variant.offset();

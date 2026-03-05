@@ -162,6 +162,11 @@ class WasmModuleBuilder {
     return this;
   }
 
+  addMemory64(min, max, exp) {
+    this.memory = {min: min, max: max, exp: exp, is_memory64: true};
+    return this;
+  }
+
   addExplicitSection(bytes) {
     this.explicit.push(bytes);
     return this;
@@ -367,7 +372,9 @@ class WasmModuleBuilder {
       binary.emit_section(kMemorySectionCode, section => {
         section.emit_u8(1);  // one memory entry
         const has_max = wasm.memory.max !== undefined;
-        section.emit_u32v(has_max ? kResizableMaximumFlag : 0);
+        const is_memory64 = !!wasm.memory.is_memory64;
+        const flags = (is_memory64 ? 4 : 0) | (has_max ? kResizableMaximumFlag : 0);
+        section.emit_u32v(flags);
         section.emit_u32v(wasm.memory.min);
         if (has_max) section.emit_u32v(wasm.memory.max);
       });

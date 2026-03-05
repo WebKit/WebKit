@@ -8,12 +8,12 @@ info: |
 
   ...
   3. Return CreateArrayIterator(O, "value").
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA([0n, 42n, 64n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg([0n, 42n, 64n]));
   var itor = typedArray.values();
 
   var next = itor.next();

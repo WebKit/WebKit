@@ -39,25 +39,33 @@ namespace WebCore {
 
 class FontCreationContext;
 
-class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient {
+class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient, public RefCounted<CachedFontLoadRequest> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedFontLoadRequest, Loader);
 public:
+    static Ref<CachedFontLoadRequest> create(CachedFont& font, ScriptExecutionContext& context)
+    {
+        return adoptRef(*new CachedFontLoadRequest(font, context));
+    }
+
+    ~CachedFontLoadRequest()
+    {
+        if (m_fontLoadRequestClient)
+            protect(m_font)->removeClient(*this);
+    }
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    CachedFont& cachedFont() const { return *m_font; }
+
+private:
     CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)
         : m_font(&font)
         , m_context(context)
     {
     }
 
-    ~CachedFontLoadRequest()
-    {
-        if (m_fontLoadRequestClient)
-            protectedCachedFont()->removeClient(*this);
-    }
-
-    CachedFont& cachedFont() const { return *m_font; }
-    CachedResourceHandle<CachedFont> protectedCachedFont() const { return m_font; }
-
-private:
     const URL& url() const final { return m_font->url(); }
     bool isPending() const final { return m_font->status() == CachedResource::Status::Pending; }
     bool isLoading() const final { return m_font->isLoading(); }
@@ -77,16 +85,16 @@ private:
 
     RefPtr<Font> createFont(const FontDescription& description, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext) final
     {
-        return protectedCachedFont()->createFont(description, syntheticBold, syntheticItalic, fontCreationContext);
+        return protect(m_font)->createFont(description, syntheticBold, syntheticItalic, fontCreationContext);
     }
 
     void setClient(FontLoadRequestClient* client) final
     {
         WeakPtr oldClient = std::exchange(m_fontLoadRequestClient, client);
         if (!client && oldClient)
-            protectedCachedFont()->removeClient(*this);
+            protect(m_font)->removeClient(*this);
         else if (client && !oldClient)
-            protectedCachedFont()->addClient(*this);
+            protect(m_font)->addClient(*this);
     }
 
     bool isCachedFontLoadRequest() const final { return true; }
@@ -98,7 +106,7 @@ private:
 
         m_fontLoadedProcessed = true;
         ASSERT_UNUSED(font, &font == m_font.get());
-        if (CheckedPtr client = m_fontLoadRequestClient.get())
+        if (RefPtr client = m_fontLoadRequestClient.get())
             client->fontLoaded(*this); // fontLoaded() might destroy this object. Don't deref its members after it.
     }
 

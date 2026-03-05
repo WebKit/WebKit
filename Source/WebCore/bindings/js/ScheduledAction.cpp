@@ -52,17 +52,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledAction);
 
 std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, Strong<JSObject>&& function)
 {
-    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTFMove(function)));
+    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTF::move(function)));
 }
 
 std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, String&& code)
 {
-    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTFMove(code)));
+    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTF::move(code)));
 }
 
 ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, Strong<JSObject>&& function)
     : m_isolatedWorld(isolatedWorld)
-    , m_function(WTFMove(function))
+    , m_function(WTF::move(function))
     , m_sourceTaintedOrigin(JSC::SourceTaintedOrigin::Untainted)
 {
 }
@@ -70,7 +70,7 @@ ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, Strong<JSObject
 ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, String&& code)
     : m_isolatedWorld(isolatedWorld)
     , m_function(isolatedWorld.vm())
-    , m_code(WTFMove(code))
+    , m_code(WTF::move(code))
     , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(isolatedWorld.vm(), isolatedWorld.vm().topCallFrame))
 {
 }
@@ -79,7 +79,7 @@ ScheduledAction::~ScheduledAction() = default;
 
 void ScheduledAction::addArguments(FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    m_arguments = WTFMove(arguments);
+    m_arguments = WTF::move(arguments);
 }
 
 auto ScheduledAction::type() const -> Type
@@ -100,7 +100,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     ASSERT(m_function);
     VM& vm = context.vm();
     JSLockHolder lock(vm);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsFunction = m_function.get();
     auto callData = JSC::getCallData(jsFunction);
@@ -153,7 +153,7 @@ void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
     // In a Worker, the execution should always happen on a worker thread.
     ASSERT(workerGlobalScope.thread()->thread() == &Thread::currentSingleton());
 
-    auto* scriptController = workerGlobalScope.script();
+    CheckedPtr scriptController = workerGlobalScope.script();
 
     if (m_function) {
         auto* contextWrapper = scriptController->globalScopeWrapper();

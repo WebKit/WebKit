@@ -35,9 +35,4 @@ inline ScriptExecutionContext* ContextDestructionObserver::scriptExecutionContex
     return m_scriptExecutionContext.get();
 }
 
-inline RefPtr<ScriptExecutionContext> ContextDestructionObserver::protectedScriptExecutionContext() const
-{
-    return m_scriptExecutionContext.get();
-}
-
 } // namespace WebCore

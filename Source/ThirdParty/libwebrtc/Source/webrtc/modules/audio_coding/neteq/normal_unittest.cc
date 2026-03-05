@@ -29,7 +29,6 @@
 #include "test/gtest.h"
 
 using ::testing::_;
-using ::testing::Invoke;
 
 namespace webrtc {
 
@@ -136,7 +135,7 @@ TEST(Normal, LastModeExpand120msPacket) {
   AudioMultiVector output(kChannels);
 
   EXPECT_CALL(expand, SetParametersForNormalAfterExpand());
-  EXPECT_CALL(expand, Process(_)).WillOnce(Invoke(ExpandProcess120ms));
+  EXPECT_CALL(expand, Process(_)).WillOnce(ExpandProcess120ms);
   EXPECT_CALL(expand, Reset());
   EXPECT_EQ(
       static_cast<int>(kPacketsizeBytes),

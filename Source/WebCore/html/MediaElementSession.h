@@ -78,7 +78,7 @@ public:
     void unregisterWithDocument(Document&);
 
     void clientWillBeginAutoplaying() final;
-    bool clientWillBeginPlayback() final;
+    void clientWillBeginPlayback(CompletionHandler<void(bool)>&&) final;
     bool clientWillPausePlayback() final;
     void clientCharacteristicsChanged(bool) final;
 
@@ -106,6 +106,8 @@ public:
     bool isPlayingToWirelessPlaybackTarget() const override;
 
     void mediaStateDidChange(MediaProducerMediaStateFlags);
+
+    MediaPlaybackTargetType playbackTargetType() const;
 #endif
 
     bool requiresFullscreenForVideoPlayback() const;
@@ -154,8 +156,7 @@ public:
     WEBCORE_EXPORT void removeBehaviorRestriction(BehaviorRestrictions);
     bool hasBehaviorRestriction(BehaviorRestrictions restriction) const { return restriction & m_restrictions; }
 
-    WeakPtr<HTMLMediaElement> element() const { return m_element; }
-    RefPtr<HTMLMediaElement> protectedElement() const;
+    inline HTMLMediaElement* element() const; // Defined in HTMLMediaElement.h.
 
     bool wantsToObserveViewportVisibilityForMediaControls() const;
     bool wantsToObserveViewportVisibilityForAutoplay() const;
@@ -164,7 +165,7 @@ public:
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
     bool isLongEnoughForMainContent() const final;
     bool isMainContentForPurposesOfAutoplayEvents() const;
-    Markable<MonotonicTime> mostRecentUserInteractionTime() const;
+    Markable<MonotonicTime> NODELETE mostRecentUserInteractionTime() const;
 
     bool allowsPlaybackControlsForAutoplayingAudio() const;
 
@@ -192,7 +193,7 @@ public:
 #endif
     void metadataChanged(const RefPtr<MediaMetadata>&);
     void positionStateChanged(const std::optional<MediaPositionState>&);
-    void playbackStateChanged(MediaSessionPlaybackState);
+    void NODELETE playbackStateChanged(MediaSessionPlaybackState);
     void actionHandlersChanged();
 
     MediaSession* mediaSession() const;

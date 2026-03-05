@@ -68,14 +68,15 @@ void JSObservableArray::finishCreation(VM& vm, Ref<ObservableArray>&& array)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    m_array = WTFMove(array);
+    m_array = WTF::move(array);
 }
 
 JSObservableArray::~JSObservableArray() = default;
 
 void JSObservableArray::destroy(JSCell* cell)
 {
-    static_cast<JSObservableArray*>(cell)->JSObservableArray::~JSObservableArray();
+    // We cannot rely on jsCast() during JSObject destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<JSObservableArray*>(cell)->JSObservableArray::~JSObservableArray();
 }
 
 JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
@@ -114,7 +115,7 @@ bool JSObservableArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
 
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->length()) {
-        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray().valueAt(lexicalGlobalObject, index.value()));
         return true;
     }
@@ -126,7 +127,7 @@ bool JSObservableArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
 {
     JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
     if (index < thisObject->length()) {
-        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray().valueAt(lexicalGlobalObject, index));
         return true;
     }

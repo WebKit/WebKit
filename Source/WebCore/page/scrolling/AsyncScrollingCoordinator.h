@@ -60,7 +60,7 @@ public:
 
     void applyPendingScrollUpdates();
 
-    WEBCORE_EXPORT void applyScrollUpdate(ScrollUpdate&&, ScrollType = ScrollType::User) override;
+    WEBCORE_EXPORT void applyScrollUpdate(ScrollUpdate&&, ScrollType = ScrollType::User, ViewportRectStability = ViewportRectStability::Stable) override;
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) final;
@@ -83,10 +83,12 @@ public:
     WEBCORE_EXPORT void setMouseIsOverContentArea(ScrollableArea&, bool) override;
     WEBCORE_EXPORT void setMouseMovedInContentArea(ScrollableArea&) override;
     WEBCORE_EXPORT void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) override;
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void setScrollbarOpacity(ScrollableArea&) override;
+#endif
     LocalFrameView* frameViewForScrollingNode(LocalFrame& localMainFrame, std::optional<ScrollingNodeID>) const;
 
     WEBCORE_EXPORT ScrollingStateTree& ensureScrollingStateTreeForRootFrameID(FrameIdentifier);
-    WEBCORE_EXPORT CheckedRef<ScrollingStateTree> ensureCheckedScrollingStateTreeForRootFrameID(FrameIdentifier);
     const ScrollingStateTree* existingScrollingStateTreeForRootFrameID(std::optional<FrameIdentifier>) const;
     ScrollingStateTree* stateTreeForNodeID(std::optional<ScrollingNodeID>) const;
     std::unique_ptr<ScrollingStateTree> commitTreeStateForRootFrameID(FrameIdentifier, LayerRepresentation::Type);
@@ -96,10 +98,10 @@ public:
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 
-    void setScrollingTree(Ref<ScrollingTree>&& scrollingTree) { m_scrollingTree = WTFMove(scrollingTree); }
-    const SmallMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& scrollingStateTrees() const { return m_scrollingStateTrees; }
+    void setScrollingTree(Ref<ScrollingTree>&& scrollingTree) { m_scrollingTree = WTF::move(scrollingTree); }
+    const SmallMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& scrollingStateTrees() const LIFETIME_BOUND { return m_scrollingStateTrees; }
 
-    RefPtr<ScrollingTree> releaseScrollingTree() { return WTFMove(m_scrollingTree); }
+    RefPtr<ScrollingTree> releaseScrollingTree() { return WTF::move(m_scrollingTree); }
 
     WEBCORE_EXPORT String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
     WEBCORE_EXPORT String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
@@ -113,6 +115,8 @@ protected:
     WEBCORE_EXPORT LocalFrameView* frameViewForScrollingNode(std::optional<ScrollingNodeID>) const;
     RefPtr<ScrollingStateNode> stateNodeForNodeID(std::optional<ScrollingNodeID>) const;
     RefPtr<ScrollingStateNode> stateNodeForScrollableArea(const ScrollableArea&) const;
+
+    virtual void willSendScrollPositionRequest(ScrollingNodeID, RequestedScrollData&) { }
 
 private:
     bool isAsyncScrollingCoordinator() const override { return true; }
@@ -154,7 +158,8 @@ private:
     WEBCORE_EXPORT void setPositionedNodeConstraints(ScrollingNodeID, const AbsolutePositionConstraints&) override;
     WEBCORE_EXPORT void setRelatedOverflowScrollingNodes(ScrollingNodeID, Vector<ScrollingNodeID>&&) override;
 
-    WEBCORE_EXPORT void reconcileScrollingState(LocalFrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) override;
+    using LayoutViewportOriginOrOverrideRect = Variant<std::optional<FloatPoint>, std::optional<FloatRect>>;
+    WEBCORE_EXPORT void reconcileScrollingState(LocalFrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction);
     void reconcileScrollPosition(LocalFrameView&, ScrollingLayerPositionAction);
 
     WEBCORE_EXPORT void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) final;
@@ -181,15 +186,19 @@ private:
 
     void updateEventTrackingRegions(FrameIdentifier rootFrameID);
     
-    void applyScrollPositionUpdate(ScrollUpdate&&, ScrollType);
-    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, std::optional<FloatPoint> layoutViewportOrigin, ScrollingLayerPositionAction, ScrollType);
+    void applyScrollPositionUpdate(ScrollUpdate&&, ScrollType, ViewportRectStability);
+    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, FloatPoint, std::optional<FloatPoint> layoutViewportOrigin, ScrollingLayerPositionAction, ScrollType, ViewportRectStability);
     void animatedScrollWillStartForNode(ScrollingNodeID);
     void animatedScrollDidEndForNode(ScrollingNodeID);
     void wheelEventScrollWillStartForNode(ScrollingNodeID);
     void wheelEventScrollDidEndForNode(ScrollingNodeID);
     void notifyScrollableAreasForScrollEnd(ScrollingNodeID);
     
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void setHoveredAndPressedScrollbarParts(ScrollableArea&) override;
+#else
     WEBCORE_EXPORT void setMouseIsOverScrollbar(Scrollbar*, bool isOverScrollbar) override;
+#endif
     WEBCORE_EXPORT void setScrollbarEnabled(Scrollbar&) override;
     WEBCORE_EXPORT void setScrollbarWidth(ScrollableArea&, ScrollbarWidth) override;
 

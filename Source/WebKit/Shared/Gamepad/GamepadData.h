@@ -43,11 +43,11 @@ public:
 
     MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     unsigned index() const { return m_index; }
-    const String& id() const { return m_id; }
-    const String& mapping() const { return m_mapping; }
-    const Vector<double>& axisValues() const { return m_axisValues; }
-    const Vector<double>& buttonValues() const { return m_buttonValues; }
-    const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes() const { return m_supportedEffectTypes; }
+    const String& id() const LIFETIME_BOUND { return m_id; }
+    const String& mapping() const LIFETIME_BOUND { return m_mapping; }
+    const Vector<double>& axisValues() const LIFETIME_BOUND { return m_axisValues; }
+    const Vector<double>& buttonValues() const LIFETIME_BOUND { return m_buttonValues; }
+    const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes() const LIFETIME_BOUND { return m_supportedEffectTypes; }
 
 private:
     unsigned m_index;

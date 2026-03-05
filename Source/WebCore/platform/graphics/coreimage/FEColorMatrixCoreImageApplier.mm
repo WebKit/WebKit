@@ -28,11 +28,12 @@
 
 #if USE(CORE_IMAGE)
 
+#import "ColorMatrix.h"
 #import "FEColorMatrix.h"
+#import "Filter.h"
 #import "FilterImage.h"
-#import <CoreImage/CIContext.h>
-#import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -42,23 +43,19 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FEColorMatrixCoreImageApplier);
 FEColorMatrixCoreImageApplier::FEColorMatrixCoreImageApplier(const FEColorMatrix& effect)
     : Base(effect)
 {
-    // FIXME: Implement the rest of FEColorMatrix types
-    ASSERT(supportsCoreImageRendering(effect));
 }
 
 bool FEColorMatrixCoreImageApplier::supportsCoreImageRendering(const FEColorMatrix& effect)
 {
-    return effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE
-        || effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE
-        || effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX;
+    return effect.type() != ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN;
 }
 
-bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
+bool FEColorMatrixCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(inputs.size() == 1);
-    auto& input = inputs[0].get();
 
-    auto inputImage = input.ciImage();
+    RetainPtr inputImage = Ref { inputs[0] }->ciImage();
     if (!inputImage)
         return false;
 
@@ -75,14 +72,15 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<Fil
         break;
 
     case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
         break;
 
     case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
-    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA: // FIXME: Add Luminance to Alpha Implementation
+        ASSERT_NOT_REACHED();
         return false;
     }
 
-    auto *colorMatrixFilter = [CIFilter filterWithName:@"CIColorMatrix"];
+    RetainPtr colorMatrixFilter = [CIFilter filterWithName:@"CIColorMatrix"];
     [colorMatrixFilter setValue:inputImage.get() forKey:kCIInputImageKey];
 
     switch (m_effect->type()) {
@@ -103,13 +101,33 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<Fil
         [colorMatrixFilter setValue:[CIVector vectorWithX:values[4]  Y:values[9]  Z:values[14] W:values[19]] forKey:@"inputBiasVector"];
         break;
 
-    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA: {
+        auto matrix = luminanceToAlphaColorMatrix();
+        [colorMatrixFilter setValue:[CIVector vectorWithX:matrix.at(0, 0) Y:matrix.at(0, 1) Z:matrix.at(0, 2) W:matrix.at(0, 3)] forKey:@"inputRVector"];
+        [colorMatrixFilter setValue:[CIVector vectorWithX:matrix.at(1, 0) Y:matrix.at(1, 1) Z:matrix.at(1, 2) W:matrix.at(1, 3)] forKey:@"inputGVector"];
+        [colorMatrixFilter setValue:[CIVector vectorWithX:matrix.at(2, 0) Y:matrix.at(2, 1) Z:matrix.at(2, 2) W:matrix.at(2, 3)] forKey:@"inputBVector"];
+        [colorMatrixFilter setValue:[CIVector vectorWithX:matrix.at(3, 0) Y:matrix.at(3, 1) Z:matrix.at(3, 2) W:matrix.at(3, 3)] forKey:@"inputAVector"];
+        [colorMatrixFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
+        break;
+    }
+
     case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
+        ASSERT_NOT_REACHED();
         return false;
     }
 
-    result.setCIImage(colorMatrixFilter.outputImage);
+    RetainPtr clampFilter = [CIFilter filterWithName:@"CIColorClamp"];
+    [clampFilter setValue:[colorMatrixFilter outputImage] forKey:kCIInputImageKey];
+    [clampFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputMinComponents"];
+    [clampFilter setValue:[CIVector vectorWithX:1 Y:1 Z:1 W:1] forKey:@"inputMaxComponents"];
+
+    auto extent = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(result.absoluteImageRect());
+    RetainPtr outputImage = [[clampFilter outputImage] imageByCroppingToRect:extent];
+    result.setCIImage(WTF::move(outputImage));
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore

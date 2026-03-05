@@ -41,6 +41,7 @@
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/crypto/frame_encryptor_interface.h"
 #include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/media_types.h"
 #include "api/rtc_error.h"
@@ -611,8 +612,6 @@ class FakeVoiceMediaSendChannel
   void SetReceiveNackEnabled(bool /* enabled */) {}
   void SetReceiveNonSenderRttEnabled(bool /* enabled */) {}
   bool SendCodecHasNack() const override { return false; }
-  void SetSendCodecChangedCallback(
-      absl::AnyInvocable<void()> /* callback */) override {}
   std::optional<Codec> GetSendCodec() const override;
 
   bool GetStats(VoiceMediaSendInfo* stats) override;
@@ -700,11 +699,6 @@ class FakeVideoMediaReceiveChannel
       std::function<void(const RecordableEncodedFrame&)> callback) override;
   void ClearRecordableEncodedFrameCallback(uint32_t ssrc) override;
   void RequestRecvKeyFrame(uint32_t ssrc) override;
-  void SetReceiverFeedbackParameters(
-      bool /* lntf_enabled */,
-      bool /* nack_enabled */,
-      RtcpMode /* rtcp_mode */,
-      std::optional<int> /* rtx_time */) override {}
   bool GetStats(VideoMediaReceiveInfo* info) override;
 
   bool AddDefaultRecvStreamForTesting(const StreamParams& /* sp */) override {
@@ -761,8 +755,6 @@ class FakeVideoMediaSendChannel
   void GenerateSendKeyFrame(uint32_t ssrc,
                             const std::vector<std::string>& rids) override;
   RtcpMode SendCodecRtcpMode() const override { return RtcpMode::kCompound; }
-  void SetSendCodecChangedCallback(
-      absl::AnyInvocable<void()> /* callback */) override {}
   void SetSsrcListChangedCallback(
       absl::AnyInvocable<void(const std::set<uint32_t>&)> /* callback */)
       override {}
@@ -787,15 +779,18 @@ class FakeVoiceEngine : public VoiceEngineInterface {
  public:
   FakeVoiceEngine();
   void Init() override;
+  void Terminate() override;
   scoped_refptr<AudioState> GetAudioState() const override;
 
   std::unique_ptr<VoiceMediaSendChannelInterface> CreateSendChannel(
+      const Environment& env,
       Call* call,
       const MediaConfig& config,
       const AudioOptions& options,
       const CryptoOptions& crypto_options,
       AudioCodecPairId codec_pair_id) override;
   std::unique_ptr<VoiceMediaReceiveChannelInterface> CreateReceiveChannel(
+      const Environment& env,
       Call* call,
       const MediaConfig& config,
       const AudioOptions& options,
@@ -820,8 +815,8 @@ class FakeVoiceEngine : public VoiceEngineInterface {
   bool StartAecDump(FileWrapper file, int64_t max_size_bytes) override;
   void StopAecDump() override;
   std::optional<AudioDeviceModule::Stats> GetAudioDeviceStats() override;
-  std::vector<RtpHeaderExtensionCapability> GetRtpHeaderExtensions()
-      const override;
+  std::vector<RtpHeaderExtensionCapability> GetRtpHeaderExtensions(
+      const FieldTrialsView* field_trials) const override;
   void SetRtpHeaderExtensions(
       std::vector<RtpHeaderExtensionCapability> header_extensions);
 
@@ -896,12 +891,14 @@ class FakeVideoEngine : public VideoEngineInterface {
   FakeVideoEngine();
   bool SetOptions(const VideoOptions& options);
   std::unique_ptr<VideoMediaSendChannelInterface> CreateSendChannel(
+      const Environment& env,
       Call* call,
       const MediaConfig& config,
       const VideoOptions& options,
       const CryptoOptions& crypto_options,
       VideoBitrateAllocatorFactory* video_bitrate_allocator_factory) override;
   std::unique_ptr<VideoMediaReceiveChannelInterface> CreateReceiveChannel(
+      const Environment& env,
       Call* call,
       const MediaConfig& config,
       const VideoOptions& options,
@@ -920,8 +917,8 @@ class FakeVideoEngine : public VideoEngineInterface {
   void SetSendCodecs(const std::vector<Codec>& codecs);
   void SetRecvCodecs(const std::vector<Codec>& codecs);
   bool SetCapture(bool capture);
-  std::vector<RtpHeaderExtensionCapability> GetRtpHeaderExtensions()
-      const override;
+  std::vector<RtpHeaderExtensionCapability> GetRtpHeaderExtensions(
+      const FieldTrialsView* field_trials) const override;
   void SetRtpHeaderExtensions(
       std::vector<RtpHeaderExtensionCapability> header_extensions);
 

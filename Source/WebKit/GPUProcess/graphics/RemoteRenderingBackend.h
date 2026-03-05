@@ -39,6 +39,7 @@
 #include "RemoteDisplayListRecorderIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
+#include "RemotePathImplIdentifier.h"
 #include "RemoteRenderingBackendIdentifier.h"
 #include "RemoteResourceCache.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
@@ -110,9 +111,9 @@ public:
     virtual ~RemoteRenderingBackend();
     void stopListeningForIPC();
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
-    RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
+    RemoteResourceCache& remoteResourceCache() LIFETIME_BOUND { return m_remoteResourceCache; }
     RemoteSharedResourceCache& sharedResourceCache() { return m_sharedResourceCache; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
@@ -124,7 +125,7 @@ public:
 
     GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
-    void setSharedMemoryForGetPixelBuffer(RefPtr<WebCore::SharedMemory> memory) { m_getPixelBufferSharedMemory = WTFMove(memory); }
+    void setSharedMemoryForGetPixelBuffer(RefPtr<WebCore::SharedMemory> memory) { m_getPixelBufferSharedMemory = WTF::move(memory); }
     RefPtr<WebCore::SharedMemory> sharedMemoryForGetPixelBuffer() const { return m_getPixelBufferSharedMemory; }
 
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
@@ -162,6 +163,8 @@ private:
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheNativeImageFromSharedNativeImage(WebCore::RenderingResourceIdentifier);
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
+    void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
+    void releasePathImpl(RemotePathImplIdentifier);
     void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
     void releaseGradient(RemoteGradientIdentifier);
     void cacheFilter(Ref<WebCore::Filter>&&);
@@ -196,7 +199,7 @@ private:
     void createTextDetector(ShapeDetectionIdentifier);
     void releaseTextDetector(ShapeDetectionIdentifier);
 
-    bool shouldUseLockdownFontParser() const;
+    bool NODELETE shouldUseLockdownFontParser() const;
 
     void getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&&);
 

@@ -1,0 +1,92 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
+
+if (rtc_enable_protobuf) {
+  proto_library("neural_residual_echo_estimator_proto") {
+    sources = [ "neural_residual_echo_estimator.proto" ]
+    proto_out_dir =
+        "modules/audio_processing/aec3/neural_residual_echo_estimator"
+  }
+
+  rtc_library("neural_residual_echo_estimator_impl") {
+    visibility = [ "*" ]
+    poisonous = [ "default_neural_residual_echo_estimator" ]
+    configs += [ "../..:apm_debug_dump" ]
+    public_configs = [ "//third_party/tflite:tflite_config_no_undef" ]
+    sources = [
+      "neural_feature_extractor.cc",
+      "neural_feature_extractor.h",
+      "neural_residual_echo_estimator_impl.cc",
+      "neural_residual_echo_estimator_impl.h",
+    ]
+    deps = [
+      ":neural_residual_echo_estimator_proto",
+      "..:aec3_common",
+      "../..:apm_logging",
+      "../../../../api:array_view",
+      "../../../../api/audio:aec3_config",
+      "../../../../api/audio:neural_residual_echo_estimator_api",
+      "../../../../common_audio",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:logging",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+      "//third_party/flatbuffers",
+      "//third_party/pffft",
+    ]
+    if (build_with_chromium) {
+      deps += [ "//third_party/tflite" ]
+    } else {
+      deps += [ "//third_party/tflite:tflite_standalone" ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
+  if (rtc_enable_protobuf) {
+    rtc_library("neural_residual_echo_estimator_unittest") {
+      testonly = true
+      configs += [
+        "../..:apm_debug_dump",
+        "//third_party/tflite:tflite_config_no_undef",
+      ]
+      sources = [
+        "neural_feature_extractor_unittest.cc",
+        "neural_residual_echo_estimator_impl_unittest.cc",
+      ]
+      deps = [
+        ":neural_residual_echo_estimator_impl",
+        ":neural_residual_echo_estimator_proto",
+        "..:aec3_common",
+        "../../../../api:array_view",
+        "../../../../rtc_base:checks",
+        "../../../../rtc_base:random",
+        "../../../../test:fileutils",
+        "../../../../test:test_support",
+        "//third_party/flatbuffers",
+      ]
+      if (build_with_chromium) {
+        deps += [
+          "//third_party/tflite",
+          "//third_party/tflite:tflite_builtin_op_resolver",
+        ]
+      } else {
+        deps += [
+          "../..:audio_processing_unittests",
+          "//third_party/tflite:tflite_builtin_op_resolver_standalone",
+          "//third_party/tflite:tflite_standalone",
+        ]
+      }
+    }
+  }
+}

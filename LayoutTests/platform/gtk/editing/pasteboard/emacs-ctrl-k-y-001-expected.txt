@@ -11,35 +11,35 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x54
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 347x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 347x27
             text run at (0,27) width 347: "Multiple ctrl-k presses then a ctrl-y."
         RenderBlock {DIV} at (14,84) size 756x108
           RenderBlock (anonymous) at (0,0) size 756x27
-            RenderText {#text} at (0,0) size 183x26
+            RenderText {#text} at (0,0) size 183x27
               text run at (0,0) width 183: "Expected Results:"
-            RenderBR {BR} at (183,0) size 0x26
+            RenderBR {BR} at (183,0) size 0x27
           RenderBlock {DIV} at (0,27) size 756x81
             RenderBlock (anonymous) at (0,0) size 756x27
-              RenderText {#text} at (0,0) size 132x26
+              RenderText {#text} at (0,0) size 132x27
                 text run at (0,0) width 132: "one two three"
             RenderBlock {DIV} at (0,27) size 756x27
-              RenderText {#text} at (0,0) size 118x26
+              RenderText {#text} at (0,0) size 118x27
                 text run at (0,0) width 118: "four five six"
             RenderBlock {DIV} at (0,54) size 756x27
-              RenderText {#text} at (0,0) size 158x26
+              RenderText {#text} at (0,0) size 158x27
                 text run at (0,0) width 158: "seven eight nine"
       RenderBlock {DIV} at (0,230) size 784x85
         RenderBlock {DIV} at (0,0) size 784x85 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (2,2) size 780x27
-            RenderText {#text} at (0,0) size 132x26
+            RenderText {#text} at (0,0) size 132x27
               text run at (0,0) width 132: "one two three"
           RenderBlock {DIV} at (2,29) size 780x27
-            RenderText {#text} at (0,0) size 118x26
+            RenderText {#text} at (0,0) size 118x27
               text run at (0,0) width 118: "four five six"
           RenderBlock {DIV} at (2,56) size 780x27
-            RenderText {#text} at (0,0) size 158x26
+            RenderText {#text} at (0,0) size 158x27
               text run at (0,0) width 158: "seven eight nine"
 caret: position 8 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

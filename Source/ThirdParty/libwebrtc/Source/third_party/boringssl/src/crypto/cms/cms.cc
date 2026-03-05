@@ -66,7 +66,7 @@ CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
   // |CMS_sign| and OpenSSL interprets it as an alias for |CMS_PARTIAL| in this
   // context.
   if ((flags & (CMS_PARTIAL | CMS_STREAM)) == 0 &&
-      !CMS_final(cms.get(), data, NULL, flags)) {
+      !CMS_final(cms.get(), data, nullptr, flags)) {
     return nullptr;
   }
 

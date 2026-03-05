@@ -29,4 +29,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     TA.from(source, mapfn);
   });
-});
+}, null, ["passthrough"]);

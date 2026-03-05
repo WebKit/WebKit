@@ -25,6 +25,9 @@
 
 typedef (BufferSource or USVString) PushMessageDataInit;
 
+// https://w3c.github.io/push-api/#dom-pusheventinit
 dictionary PushEventInit : ExtendableEventInit {
-    PushMessageDataInit data;
+    PushMessageDataInit? data = null;
+    // FIXME: Add support for `notification`.
+    // Notification? notification = null;
 };

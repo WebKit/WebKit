@@ -54,8 +54,6 @@ private:
     void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const URL&, const String&, WebCore::LocalFrame*) override;
 #endif
 
-    RefPtr<WebPage> protectedPage();
-
     WeakPtr<WebPage> m_page;
 };
 

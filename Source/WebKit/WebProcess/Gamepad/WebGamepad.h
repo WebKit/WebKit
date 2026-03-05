@@ -28,12 +28,15 @@
 #if ENABLE(GAMEPAD)
 
 #include <WebCore/PlatformGamepad.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class GamepadData;
 
-class WebGamepad : public WebCore::PlatformGamepad {
+class WebGamepad final : public WebCore::PlatformGamepad {
+    WTF_MAKE_TZONE_ALLOCATED(WebGamepad);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebGamepad);
 public:
     WebGamepad(const GamepadData&);
 

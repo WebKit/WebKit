@@ -47,22 +47,22 @@ WI.FormatterWorkerProxy = class FormatterWorkerProxy
 
     formatJavaScript(sourceText, isModule, indentString, includeSourceMapData)
     {
-        this.performAction("formatJavaScript", ...arguments);
+        return this.performAction("formatJavaScript", ...arguments);
     }
 
     formatCSS(sourceText, indentString, includeSourceMapData)
     {
-        this.performAction("formatCSS", ...arguments);
+        return this.performAction("formatCSS", ...arguments);
     }
 
     formatHTML(sourceText, indentString, includeSourceMapData)
     {
-        this.performAction("formatHTML", ...arguments);
+        return this.performAction("formatHTML", ...arguments);
     }
 
     formatXML(sourceText, indentString, includeSourceMapData)
     {
-        this.performAction("formatXML", ...arguments);
+        return this.performAction("formatXML", ...arguments);
     }
 
     // Public
@@ -75,6 +75,30 @@ WI.FormatterWorkerProxy = class FormatterWorkerProxy
 
         console.assert(typeof actionName === "string", "performAction should always have an actionName");
         console.assert(typeof callback === "function", "performAction should always have a callback");
+
+        this._callbacks.set(callId, callback);
+        this._postMessage({callId, actionName, actionArguments});
+    }
+
+     performAction(actionName)
+     {
+        console.assert(typeof actionName === "string", "performAction should always have an actionName");
+
+        let callId = this._nextCallId++;
+
+        let callback = arguments[arguments.length - 1];
+        if (typeof callback !== "function") {
+            return new Promise((resolve, reject) => {
+                this._callbacks.set(callId, resolve);
+                this._postMessage({
+                    callId,
+                    actionName,
+                    actionArguments: Array.prototype.slice.call(arguments, 1),
+                });
+            });
+        }
+
+        let actionArguments = Array.prototype.slice.call(arguments, 1, arguments.length - 1);
 
         this._callbacks.set(callId, callback);
         this._postMessage({callId, actionName, actionArguments});

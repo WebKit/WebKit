@@ -40,7 +40,8 @@ NS_SWIFT_UI_ACTOR
 @interface WKPreviewWindowController : NSObject
 @property (nonatomic, weak, nullable) id <WKPreviewWindowControllerDelegate> delegate;
 
-- (instancetype)initWithURL:(NSURL *)url sceneID:(NSString *)sceneID NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url sceneID:(NSString *)sceneID launchInImmersive:(BOOL)launchInImmersive NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url sceneID:(NSString *)sceneID;
 - (void)presentWindowWithCompletionHandler:(NS_SWIFT_UI_ACTOR void(^)(void))completionHandler;
 - (void)updateImage:(NSURL *)url completionHandler:(NS_SWIFT_UI_ACTOR void(^)(void))completionHandler;
 - (void)dismissWindowWithCompletionHandler:(NS_SWIFT_UI_ACTOR void(^)(void))completionHandler;

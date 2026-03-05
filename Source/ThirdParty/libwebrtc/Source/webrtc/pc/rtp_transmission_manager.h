@@ -245,7 +245,7 @@ class RtpTransmissionManager : public RtpSenderBase::SetStreamsObserver {
       absl::AnyInvocable<void(webrtc::PeerConnectionObserver*) &&>);
   void OnNegotiationNeeded();
 
-  MediaEngineInterface* media_engine() const;
+  const MediaEngineInterface* media_engine() const;
 
   UniqueRandomIdGenerator* ssrc_generator() const {
     return context_->ssrc_generator();

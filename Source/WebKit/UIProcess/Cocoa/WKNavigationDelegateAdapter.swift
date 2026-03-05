@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI && compiler(>=6.0)
+#if ENABLE_SWIFTUI
 
 import Foundation
 internal import WebKit_Private
@@ -124,6 +124,15 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
         respondTo challenge: URLAuthenticationChallenge
     ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         await navigationDecider.decideAuthenticationChallengeDisposition(for: challenge)
+    }
+
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    func webView(
+        _ webView: WKWebView,
+        willSubmitForm formInfo: WKFormInfo
+    ) async {
+        let convertedFormInfo = WebPage.FormInfo(formInfo)
+        await navigationDecider.willSubmit(formInfo: convertedFormInfo)
     }
 }
 

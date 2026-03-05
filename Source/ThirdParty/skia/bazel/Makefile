@@ -1,10 +1,9 @@
 EXPORTER_TOOL=bazel-bin/bazel/exporter_tool/exporter_tool_/exporter_tool
-EXPORTER_RULES=-rule='//src/...' -rule='//modules/...' -rule='//include/...' -rule='//resources/...' -rule='//rust/...'
+EXPORTER_RULES=-rule='//src/...' -rule='//modules/...' -rule='//include/...' -rule='//resources/...' -rule='//rust/...' -rule='//experimental/...'
 
 generate_go:
 	cd .. && bazelisk run //infra:gazelle -- update infra/bots/task_drivers modules/canvaskit/go \
-       bazel/device_specific_configs bazel/exporter bazel/deps_parser tools/ganesh/gl/interface \
-			 tools/testrunners/common/make_tarball tools/testrunners/common/android/adb_test_runner
+       bazel/device_specific_configs bazel/exporter bazel/deps_parser tools/ganesh/gl/interface
 
 .PHONY: gazelle
 gazelle: generate_go

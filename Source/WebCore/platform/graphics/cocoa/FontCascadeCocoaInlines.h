@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include <WebCore/FontCascade.h>
+#include "FontCascade.h"
 
 namespace WebCore {
 

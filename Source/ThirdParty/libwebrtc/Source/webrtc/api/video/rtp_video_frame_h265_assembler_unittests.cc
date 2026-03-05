@@ -11,20 +11,17 @@
 #include <cstdint>
 #include <iterator>
 #include <memory>
-#include <optional>
 #include <utility>
 #include <vector>
 
 #include "api/array_view.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/rtp_video_frame_assembler.h"
-#include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
-#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -40,8 +37,7 @@ using PayloadFormat = RtpVideoFrameAssembler::PayloadFormat;
 
 class PacketBuilder {
  public:
-  explicit PacketBuilder(PayloadFormat format)
-      : format_(format), packet_to_send_(&extension_manager_) {}
+  PacketBuilder() : packet_to_send_(&extension_manager_) {}
 
   PacketBuilder& WithSeqNum(uint16_t seq_num) {
     seq_num_ = seq_num;
@@ -67,8 +63,8 @@ class PacketBuilder {
   }
 
   RtpPacketReceived Build() {
-    auto packetizer =
-        RtpPacketizer::Create(GetVideoCodecType(), payload_, {}, video_header_);
+    auto packetizer = RtpPacketizer::Create(
+        RtpPacketizer::PacketizationFormat::kH265, payload_, {}, video_header_);
     packetizer->NextPacket(&packet_to_send_);
     packet_to_send_.SetSequenceNumber(seq_num_);
 
@@ -78,18 +74,6 @@ class PacketBuilder {
   }
 
  private:
-  std::optional<VideoCodecType> GetVideoCodecType() {
-    switch (format_) {
-      case PayloadFormat::kH265: {
-        return kVideoCodecH265;
-      }
-      default:
-        RTC_DCHECK_NOTREACHED();
-        return std::nullopt;
-    }
-  }
-
-  const RtpVideoFrameAssembler::PayloadFormat format_;
   uint16_t seq_num_ = 0;
   std::vector<uint8_t> payload_;
   RTPVideoHeader video_header_;
@@ -107,8 +91,8 @@ ArrayView<int64_t> References(const std::unique_ptr<EncodedFrame>& frame) {
   return MakeArrayView(frame->references, frame->num_references);
 }
 
-ArrayView<uint8_t> Payload(const std::unique_ptr<EncodedFrame>& frame) {
-  return ArrayView<uint8_t>(*frame->GetEncodedData());
+ArrayView<const uint8_t> Payload(const std::unique_ptr<EncodedFrame>& frame) {
+  return *frame->GetEncodedData();
 }
 
 TEST(RtpVideoFrameH265Assembler, H265Packetization) {
@@ -128,18 +112,15 @@ TEST(RtpVideoFrameH265Assembler, H265Packetization) {
   RTPVideoHeader video_header;
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   RtpVideoFrameAssembler::FrameVector idr_frames =
-      assembler.InsertPacket(PacketBuilder(PayloadFormat::kH265)
+      assembler.InsertPacket(PacketBuilder()
                                  .WithPayload(kIdrPayload)
                                  .WithVideoHeader(video_header)
                                  .WithSeqNum(10)
                                  .Build());
   AppendFrames(std::move(idr_frames), frames);
 
-  RtpVideoFrameAssembler::FrameVector delta_frames =
-      assembler.InsertPacket(PacketBuilder(PayloadFormat::kH265)
-                                 .WithPayload(kDeltaPayload)
-                                 .WithSeqNum(11)
-                                 .Build());
+  RtpVideoFrameAssembler::FrameVector delta_frames = assembler.InsertPacket(
+      PacketBuilder().WithPayload(kDeltaPayload).WithSeqNum(11).Build());
   AppendFrames(std::move(delta_frames), frames);
   ASSERT_THAT(frames, SizeIs(2));
 

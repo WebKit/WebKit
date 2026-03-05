@@ -46,7 +46,7 @@
         CoreIPC.UI.RemoteObjectRegistry.CallReplyBlock(uiProcessWebPageID, {
             replyID: firstReplyID,
             blockInvocation: {
-                protectedObject:
+                objectForSerialization:
                 new API_Dictionary([
                     {
                         key: "$objectStream",
@@ -68,7 +68,7 @@
         CoreIPC.UI.RemoteObjectRegistry.CallReplyBlock(uiProcessWebPageID, {
             replyID: secondReplyID,
             blockInvocation: {
-                protectedObject:
+                objectForSerialization:
                     new API_Dictionary([
                     {
                         key: "$objectStream",

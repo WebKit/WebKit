@@ -51,40 +51,41 @@ public:
 
     ~MutableCSSSelector();
 
-    std::unique_ptr<CSSSelector> releaseSelector() { return WTFMove(m_selector); }
-    const CSSSelector* selector() const { return m_selector.get(); };
-    CSSSelector* selector() { return m_selector.get(); }
+    CSSSelector releaseSelector() { return WTF::move(m_selector); }
+    const CSSSelector& selector() const LIFETIME_BOUND { return m_selector; };
+    CSSSelector& selector() LIFETIME_BOUND { return m_selector; }
 
-    void setValue(const AtomString& value, bool matchLowerCase = false) { m_selector->setValue(value, matchLowerCase); }
-    const AtomString& value() const { return m_selector->value(); }
+    void setValue(const AtomString& value, bool matchLowerCase = false) { m_selector.setValue(value, matchLowerCase); }
+    const AtomString& value() const LIFETIME_BOUND { return m_selector.value(); }
 
-    void setAttribute(const QualifiedName& value, CSSSelector::AttributeMatchType type) { m_selector->setAttribute(value, type); }
+    void setAttribute(const QualifiedName& value, CSSSelector::AttributeMatchType type) { m_selector.setAttribute(value, type); }
 
-    void setArgument(const AtomString& value) { m_selector->setArgument(value); }
-    void setNth(int a, int b) { m_selector->setNth(a, b); }
-    void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
-    void setRelation(CSSSelector::Relation value) { m_selector->setRelation(value); }
-    void setForPage() { m_selector->setForPage(); }
+    void setArgument(const AtomString& value) { m_selector.setArgument(value); }
+    void setNth(int a, int b) { m_selector.setNth(a, b); }
+    void setMatch(CSSSelector::Match value) { m_selector.setMatch(value); }
+    void setRelation(CSSSelector::Relation value) { m_selector.setRelation(value); }
+    void setForPage() { m_selector.setForPage(); }
 
-    CSSSelector::Match match() const { return m_selector->match(); }
-    CSSSelector::PseudoElement pseudoElement() const { return m_selector->pseudoElement(); }
-    const CSSSelectorList* selectorList() const { return m_selector->selectorList(); }
+    CSSSelector::Match match() const { return m_selector.match(); }
+    CSSSelector::PseudoElement pseudoElement() const { return m_selector.pseudoElement(); }
+    const CSSSelectorList* selectorList() const { return m_selector.selectorList(); }
 
-    void setPseudoElement(CSSSelector::PseudoElement type) { m_selector->setPseudoElement(type); }
-    void setPseudoClass(CSSSelector::PseudoClass type) { m_selector->setPseudoClass(type); }
+    void setPseudoElement(CSSSelector::PseudoElement type) { m_selector.setPseudoElement(type); }
+    void setPseudoClass(CSSSelector::PseudoClass type) { m_selector.setPseudoClass(type); }
 
     void adoptSelectorVector(MutableCSSSelectorList&&);
-    void setArgumentList(FixedVector<AtomString>);
+    void setIntegerList(FixedVector<int>);
+    void setStringList(FixedVector<AtomString>);
     void setLangList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
-    void setImplicit() { m_selector->setImplicit(); }
+    void setImplicit() { m_selector.setImplicit(); }
 
-    CSSSelector::PseudoClass pseudoClass() const { return m_selector->pseudoClass(); }
+    CSSSelector::PseudoClass pseudoClass() const { return m_selector.pseudoClass(); }
 
     bool matchesPseudoElement() const;
 
-    bool isHostPseudoClass() const { return m_selector->isHostPseudoClass(); }
+    bool isHostPseudoClass() const { return m_selector.isHostPseudoClass(); }
 
     bool hasExplicitNestingParent() const;
     bool hasExplicitPseudoClassScope() const;
@@ -96,17 +97,17 @@ public:
     bool needsImplicitShadowCombinatorForMatching() const;
 
     MutableCSSSelector* precedingInComplexSelector() const { return m_precedingInComplexSelector.get(); }
-    MutableCSSSelector* leftmostSimpleSelector();
-    const MutableCSSSelector* leftmostSimpleSelector() const;
-    bool startsWithExplicitCombinator() const;
-    void setPrecedingInComplexSelector(std::unique_ptr<MutableCSSSelector> selector) { m_precedingInComplexSelector = WTFMove(selector); }
+    MutableCSSSelector* NODELETE leftmostSimpleSelector();
+    const MutableCSSSelector* NODELETE leftmostSimpleSelector() const;
+    bool NODELETE startsWithExplicitCombinator() const;
+    void setPrecedingInComplexSelector(std::unique_ptr<MutableCSSSelector> selector) { m_precedingInComplexSelector = WTF::move(selector); }
     void prependInComplexSelector(CSSSelector::Relation, std::unique_ptr<MutableCSSSelector>);
     void prependInComplexSelectorAsRelative(std::unique_ptr<MutableCSSSelector>);
     void appendTagInComplexSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
     std::unique_ptr<MutableCSSSelector> releaseFromComplexSelector();
 
 private:
-    std::unique_ptr<CSSSelector> m_selector;
+    CSSSelector m_selector;
     std::unique_ptr<MutableCSSSelector> m_precedingInComplexSelector;
 };
 
@@ -120,6 +121,7 @@ inline bool MutableCSSSelector::needsImplicitShadowCombinatorForMatching() const
             || pseudoElement() == CSSSelector::PseudoElement::Cue
 #endif
             || pseudoElement() == CSSSelector::PseudoElement::Part
+            || pseudoElement() == CSSSelector::PseudoElement::Picker
             || pseudoElement() == CSSSelector::PseudoElement::Slotted
             || pseudoElement() == CSSSelector::PseudoElement::UserAgentPartLegacyAlias
             || pseudoElement() == CSSSelector::PseudoElement::WebKitUnknown);

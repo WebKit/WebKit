@@ -33,12 +33,12 @@
 #include "CoreAudioCaptureInternalUnit.h"
 #include "CoreAudioCaptureSource.h"
 #include "Logging.h"
-#include "SpanCoreAudio.h"
 #include <AudioToolbox/AudioConverter.h>
 #include <AudioUnit/AudioUnit.h>
 #include <CoreMedia/CMSync.h>
 #include <mach/mach_time.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <pal/cf/CoreAudioExtras.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
 #include <sys/time.h>
 #include <wtf/Lock.h>
@@ -117,7 +117,7 @@ Expected<UniqueRef<CoreAudioCaptureUnit::InternalUnit>, OSStatus> CoreAudioCaptu
     if (shouldUseVPIO) {
         if (auto ioUnit = CoreAudioCaptureUnit::defaultSingleton().takeStoredVPIOUnit()) {
             RELEASE_LOG(WebRTC, "Creating a CoreAudioCaptureInternalUnit with a stored VPIO unit");
-            UniqueRef<CoreAudioCaptureUnit::InternalUnit> result = makeUniqueRef<CoreAudioCaptureInternalUnit>(WTFMove(ioUnit), shouldUseVPIO);
+            UniqueRef<CoreAudioCaptureUnit::InternalUnit> result = makeUniqueRef<CoreAudioCaptureInternalUnit>(WTF::move(ioUnit), shouldUseVPIO);
             return result;
         }
     }
@@ -128,12 +128,12 @@ Expected<UniqueRef<CoreAudioCaptureUnit::InternalUnit>, OSStatus> CoreAudioCaptu
         return makeUnexpected(audioUnitOrError.error());
 
     RELEASE_LOG(WebRTC, "Successfully created a CoreAudioCaptureInternalUnit");
-    UniqueRef<CoreAudioCaptureUnit::InternalUnit> result = makeUniqueRef<CoreAudioCaptureInternalUnit>(WTFMove(audioUnitOrError.value()), shouldUseVPIO);
+    UniqueRef<CoreAudioCaptureUnit::InternalUnit> result = makeUniqueRef<CoreAudioCaptureInternalUnit>(WTF::move(audioUnitOrError.value()), shouldUseVPIO);
     return result;
 }
 
 CoreAudioCaptureInternalUnit::CoreAudioCaptureInternalUnit(CoreAudioCaptureUnit::StoredAudioUnit&& audioUnit, bool shouldUseVPIO)
-    : m_audioUnit(WTFMove(audioUnit))
+    : m_audioUnit(WTF::move(audioUnit))
     , m_shouldUseVPIO(shouldUseVPIO)
 {
 }
@@ -246,7 +246,7 @@ bool CoreAudioCaptureUnit::isAnyUnitCapturing()
 
 void CoreAudioCaptureUnit::forEach(NOESCAPE Function<void(CoreAudioCaptureUnit&)>&& callback)
 {
-    allCoreAudioCaptureUnits().forEach(WTFMove(callback));
+    allCoreAudioCaptureUnits().forEach(WTF::move(callback));
 }
 
 static Function<void(CoreAudioCaptureUnit&)>& coreAudioCaptureNewUnitCallback()
@@ -259,7 +259,7 @@ static Function<void(CoreAudioCaptureUnit&)>& coreAudioCaptureNewUnitCallback()
 
 void CoreAudioCaptureUnit::forNewUnit(Function<void(CoreAudioCaptureUnit&)>&& callback)
 {
-    coreAudioCaptureNewUnitCallback() = WTFMove(callback);
+    coreAudioCaptureNewUnitCallback() = WTF::move(callback);
 }
 
 CoreAudioCaptureUnit::CoreAudioCaptureUnit(CanEnableEchoCancellation canEnableEchoCancellation)
@@ -288,7 +288,7 @@ void CoreAudioCaptureUnit::setStoredVPIOUnit(StoredAudioUnit&& unit)
     RELEASE_LOG(WebRTC, "CoreAudioCaptureUnit::setStoredVPIOUnit(%p)", this);
 
     static constexpr Seconds delayBeforeStoredVPIOUnitDeallocation = 3_s;
-    m_storedVPIOUnit = WTFMove(unit);
+    m_storedVPIOUnit = WTF::move(unit);
     m_storedVPIOUnitDeallocationTimer.startOneShot(delayBeforeStoredVPIOUnitDeallocation);
 }
 
@@ -338,7 +338,7 @@ OSStatus CoreAudioCaptureUnit::setupAudioUnit()
     if (!result.has_value())
         return result.error();
 
-    m_ioUnit = WTFMove(result.value()).moveToUniquePtr();
+    m_ioUnit = WTF::move(result.value()).moveToUniquePtr();
 
     bool canRenderAudio = m_ioUnit->canRenderAudio();
     if (m_canRenderAudio != canRenderAudio) {
@@ -809,15 +809,15 @@ bool CoreAudioCaptureUnit::migrateToNewDefaultDevice(const CaptureDevice& captur
         return false;
 
     // We were capturing with the default device which disappeared, let's move capture to the new default device.
-    setCaptureDevice(WTFMove(newDefaultDevicePersistentId), device->deviceID(), true);
-    handleNewCurrentMicrophoneDevice(WTFMove(*device));
+    setCaptureDevice(WTF::move(newDefaultDevicePersistentId), device->deviceID(), true);
+    handleNewCurrentMicrophoneDevice(WTF::move(*device));
     return true;
 }
 
 void CoreAudioCaptureUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& callback)
 {
     if (RefPtr audioUnitCreationWarmupPromise = m_audioUnitCreationWarmupPromise) {
-        audioUnitCreationWarmupPromise->whenSettled(RunLoop::mainSingleton(), WTFMove(callback));
+        audioUnitCreationWarmupPromise->whenSettled(RunLoop::mainSingleton(), WTF::move(callback));
         return;
     }
 
@@ -828,9 +828,9 @@ void CoreAudioCaptureUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& 
 
     m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioCaptureUnit AudioUnit creation"_s, WorkQueue::QOS::UserInitiated).get(), [] {
         return createAudioUnit(true);
-    })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& vpioUnitOrError) mutable {
+    })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, callback = WTF::move(callback)] (auto&& vpioUnitOrError) mutable {
         if (weakThis && vpioUnitOrError.has_value())
-            weakThis->setStoredVPIOUnit(WTFMove(vpioUnitOrError.value()));
+            weakThis->setStoredVPIOUnit(WTF::move(vpioUnitOrError.value()));
         callback();
         return GenericNonExclusivePromise::createAndResolve();
     });
@@ -950,7 +950,7 @@ void CoreAudioCaptureUnit::updateVoiceActivityDetection(bool shouldDisableVoiceA
 
 void CoreAudioCaptureUnit::enableMutedSpeechActivityEventListener(Function<void()>&& callback)
 {
-    setVoiceActivityListenerCallback(WTFMove(callback));
+    setVoiceActivityListenerCallback(WTF::move(callback));
     updateVoiceActivityDetection();
 }
 
@@ -1008,7 +1008,7 @@ void CoreAudioCaptureUnit::setIsInBackground(bool isInBackground)
     m_statusBarManager = MediaCaptureStatusBarManager::create([weakThis = WeakPtr { *this }](CompletionHandler<void()>&& completionHandler) {
         RefPtr protectedThis = weakThis.get();
         if (protectedThis && protectedThis->m_statusBarWasTappedCallback)
-            protectedThis->m_statusBarWasTappedCallback(WTFMove(completionHandler));
+            protectedThis->m_statusBarWasTappedCallback(WTF::move(completionHandler));
     }, [weakThis = WeakPtr { *this }] {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioCaptureUnit status bar failed");
         RefPtr protectedThis = weakThis.get();

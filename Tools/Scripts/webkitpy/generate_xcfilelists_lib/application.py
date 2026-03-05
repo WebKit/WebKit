@@ -380,6 +380,25 @@ specified on the command-line:
         for line in message:
             self._log_results(line)
 
+        self._log_results("")
+        self._log_results("Changes made to .xcfilelist files:")
+        for generator in generators:
+            if not generator.has_action():
+                continue
+            self._log_results("  {}/{}/{}:".format(*generator.triple))
+
+            # Show added lines for each type of xcfilelist
+            for lines, name in ((generator.added_lines_input_derived, 'DerivedSources-input.xcfilelist'),
+                                (generator.added_lines_output_derived, 'DerivedSources-output.xcfilelist'),
+                                (generator.added_lines_input_unified, 'UnifiedSources-input.xcfilelist'),
+                                (generator.added_lines_output_unified, 'UnifiedSources-output.xcfilelist')):
+                if not lines:
+                    continue
+                self._log_results("    {} - Added {} lines:".format(name, len(lines)))
+                for line in sorted(lines):
+                    self._log_results("      + {}".format(line))
+
+
     @util.LogEntryExit
     def _report_remediation_steps(self, generators):
         message = textwrap.wrap("One or more \".xcfilelist\" files are out of date. Regenerate them by running the following commands:", 90)

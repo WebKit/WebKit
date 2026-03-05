@@ -90,7 +90,7 @@ class RTCPeerConnection final
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(RTCPeerConnection, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RTCPeerConnection, WEBCORE_EXPORT);
 public:
     static ExceptionOr<Ref<RTCPeerConnection>> create(Document&, RTCConfiguration&&);
     WEBCORE_EXPORT virtual ~RTCPeerConnection();
@@ -128,7 +128,7 @@ public:
     RTCSessionDescription* currentRemoteDescription() const { return m_currentRemoteDescription.get(); }
     RTCSessionDescription* pendingRemoteDescription() const { return m_pendingRemoteDescription.get(); }
 
-    using Candidate = std::optional<Variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>>;
+    using Candidate = Variant<RTCIceCandidateInit, Ref<RTCIceCandidate>>;
     void addIceCandidate(Candidate&&, Ref<DeferredPromise>&&);
 
     RTCSignalingState signalingState() const { return m_signalingState; }
@@ -137,8 +137,8 @@ public:
     RTCPeerConnectionState connectionState() const { return m_connectionState; }
     std::optional<bool> canTrickleIceCandidates() const;
 
-    void restartIce() { protectedBackend()->restartIce(); }
-    const RTCConfiguration& getConfiguration() const { return m_configuration; }
+    void restartIce() { protect(*m_backend)->restartIce(); }
+    const RTCConfiguration& getConfiguration() const LIFETIME_BOUND { return m_configuration; }
     ExceptionOr<void> setConfiguration(RTCConfiguration&&);
     void close();
 
@@ -150,14 +150,14 @@ public:
     // 5.1 RTCPeerConnection extensions
     Vector<std::reference_wrapper<RTCRtpSender>> getSenders() const;
     Vector<std::reference_wrapper<RTCRtpReceiver>> getReceivers() const;
-    const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const;
+    const Vector<Ref<RTCRtpTransceiver>>& getTransceivers() const;
 
-    const Vector<RefPtr<RTCRtpTransceiver>>& currentTransceivers() const { return m_transceiverSet.list(); }
+    const Vector<Ref<RTCRtpTransceiver>>& currentTransceivers() const LIFETIME_BOUND { return m_transceiverSet.list(); }
 
     ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const FixedVector<std::reference_wrapper<MediaStream>>&);
     ExceptionOr<void> removeTrack(RTCRtpSender&);
 
-    using AddTransceiverTrackOrKind = Variant<RefPtr<MediaStreamTrack>, String>;
+    using AddTransceiverTrackOrKind = Variant<Ref<MediaStreamTrack>, String>;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(AddTransceiverTrackOrKind&&, RTCRtpTransceiverInit&&);
 
     // 6.1 Peer-to-peer data API
@@ -170,11 +170,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCPeerConnection; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
-
-    // Used for testing with a mock
-    WEBCORE_EXPORT void emulatePlatformEvent(const String& action);
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     // API used by PeerConnectionBackend and relatives
     void updateIceGatheringState(RTCIceGatheringState);
@@ -185,8 +181,8 @@ public:
 
     void scheduleEvent(Ref<Event>&&);
 
-    void disableICECandidateFiltering() { protectedBackend()->disableICECandidateFiltering(); }
-    void enableICECandidateFiltering() { protectedBackend()->enableICECandidateFiltering(); }
+    void disableICECandidateFiltering() { protect(*m_backend)->disableICECandidateFiltering(); }
+    void enableICECandidateFiltering() { protect(*m_backend)->enableICECandidateFiltering(); }
 
     void clearController() { m_controller = nullptr; }
 
@@ -220,7 +216,7 @@ public:
     void clearTransports();
 
 private:
-    RTCPeerConnection(Document&);
+    explicit RTCPeerConnection(Document&);
 
     ExceptionOr<void> initializeWithConfiguration(RTCConfiguration&&);
 
@@ -230,7 +226,7 @@ private:
     void unregisterFromController();
 
     friend class Internals;
-    void applyRotationForOutgoingVideoSources() { protectedBackend()->applyRotationForOutgoingVideoSources(); }
+    void applyRotationForOutgoingVideoSources() { protect(*m_backend)->applyRotationForOutgoingVideoSources(); }
 
     // EventTarget implementation.
     void refEventTarget() final { ref(); }
@@ -240,7 +236,7 @@ private:
     WEBCORE_EXPORT void stop() final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     bool updateIceConnectionStateFromIceTransports();
     RTCIceConnectionState computeIceConnectionStateFromIceTransports();
@@ -249,7 +245,7 @@ private:
     bool doClose();
     void doStop();
 
-    void getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise) { protectedBackend()->getStats(sender, WTFMove(promise)); }
+    void getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise) { protect(*m_backend)->getStats(sender, WTF::move(promise)); }
 
     ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration&);
     void chainOperation(Ref<DeferredPromise>&&, Function<void(Ref<DeferredPromise>&&)>&&);
@@ -263,7 +259,7 @@ private:
 
     void setSignalingState(RTCSignalingState);
 
-    WEBCORE_EXPORT RefPtr<PeerConnectionBackend> protectedBackend() const;
+    PeerConnectionBackend* backend() const { return m_backend.get(); }
 
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };
@@ -281,8 +277,8 @@ private:
     const std::unique_ptr<PeerConnectionBackend> m_backend;
 
     RTCConfiguration m_configuration;
-    RTCController* m_controller { nullptr };
-    Vector<RefPtr<RTCCertificate>> m_certificates;
+    WeakPtr<RTCController> m_controller;
+    Vector<RTCDataChannelIdentifier> m_channels;
     bool m_shouldDelayTasks { false };
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
     bool m_hasPendingOperation { false };
@@ -301,5 +297,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(RTCPeerConnection)
 
 #endif // ENABLE(WEB_RTC)

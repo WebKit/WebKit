@@ -22,14 +22,14 @@ info: |
       i. Let accumulator be ? Call(callbackfn, undefined, « accumulator, kValue,
       k, O »).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
 var expected = (function() { return this; })();
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(3);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(3));
 
   var results = [];
 

@@ -11,11 +11,11 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 294x68
                   RenderTableRow {TR} at (0,2) size 294x64
                     RenderTableCell {TD} at (2,2) size 290x64 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 276x59
+                      RenderText {#text} at (2,2) size 276x60
                         text run at (2,2) width 276: "yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy"
                         text run at (2,22) width 276: "yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy"
                         text run at (2,42) width 24: "yyy"
             RenderTableCell {TD} at (303,17) size 478x44 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,17) size 472x39
+              RenderText {#text} at (2,17) size 472x40
                 text run at (2,2) width 472: "text text text text text text text text text text text text text text text text text"
                 text run at (2,22) width 472: "text text text text text text text text text text text text text text text text text"

@@ -24,39 +24,29 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,118) size 784x18
         RenderText {#text} at (0,0) size 138x18
           text run at (0,0) width 138: "Ahem synthetic bold:"
-      RenderBlock (anonymous) at (0,152) size 784x0
-        RenderInline {STRONG} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,152) size 784x16
-        RenderBlock {P} at (0,0) size 784x16
-          RenderText {#text} at (0,0) size 313x16
-            text run at (0,0) width 313: "Ahem synthetic bold"
-      RenderBlock (anonymous) at (0,184) size 784x0
-        RenderInline {STRONG} at (0,0) size 0x0
+        RenderInline {STRONG} at (0,0) size 784x16
+          RenderBlock {P} at (0,0) size 784x16
+            RenderText {#text} at (0,0) size 313x16
+              text run at (0,0) width 313: "Ahem synthetic bold"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,184) size 784x18
         RenderText {#text} at (0,0) size 142x18
           text run at (0,0) width 142: "Ahem synthetic italic:"
-      RenderBlock (anonymous) at (0,218) size 784x0
-        RenderInline {I} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,218) size 784x16
-        RenderBlock {P} at (0,0) size 784x16
-          RenderText {#text} at (0,0) size 336x16
-            text run at (0,0) width 336: "Ahem synthetic italic"
-      RenderBlock (anonymous) at (0,250) size 784x0
-        RenderInline {I} at (0,0) size 0x0
+        RenderInline {I} at (0,0) size 784x16
+          RenderBlock {P} at (0,0) size 784x16
+            RenderText {#text} at (0,0) size 336x16
+              text run at (0,0) width 336: "Ahem synthetic italic"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,250) size 784x18
         RenderText {#text} at (0,0) size 174x18
           text run at (0,0) width 174: "Ahem synthetic bold italic:"
-      RenderBlock (anonymous) at (0,284) size 784x0
-        RenderInline {STRONG} at (0,0) size 0x0
-          RenderInline {I} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,284) size 784x16
-        RenderBlock {P} at (0,0) size 784x16
-          RenderText {#text} at (0,0) size 428x16
-            text run at (0,0) width 428: "Ahem synthetic bold italic"
-      RenderBlock (anonymous) at (0,316) size 784x0
-        RenderInline {STRONG} at (0,0) size 0x0
-          RenderInline {I} at (0,0) size 0x0
+        RenderInline {STRONG} at (0,0) size 784x16
+          RenderInline {I} at (0,0) size 784x16
+            RenderBlock {P} at (0,0) size 784x16
+              RenderText {#text} at (0,0) size 428x16
+                text run at (0,0) width 428: "Ahem synthetic bold italic"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

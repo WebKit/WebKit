@@ -1,0 +1,8 @@
+
+
+PASS scrollIntoView() defaults to scrolling ancestors
+PASS scrollIntoView({container: 'all'}) scrolls ancestors
+FAIL scrollIntoView({container: 'nearest'}) only scrolls nearest scroll container assert_equals: #outer scrollTop expected 0 but got 400
+PASS scrollIntoView({container: 'nearest'}) doesn't stop at itself
+FAIL scrollIntoView({container: 'nearest'}) doesn't propagate to outer frames assert_equals: #inner scrollTop expected 0 but got 602
+

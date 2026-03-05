@@ -103,6 +103,12 @@ angle::Result ContextImpl::releaseTextures(const gl::Context *context,
     return angle::Result::Stop;
 }
 
+const angle::PerfMonitorCounterGroupsInfo &ContextImpl::getPerfMonitorCountersInfo() const
+{
+    static angle::base::NoDestructor<angle::PerfMonitorCounterGroupsInfo> sCountersInfo;
+    return *sCountersInfo;
+}
+
 const angle::PerfMonitorCounterGroups &ContextImpl::getPerfMonitorCounters()
 {
     static angle::base::NoDestructor<angle::PerfMonitorCounterGroups> sCounters;

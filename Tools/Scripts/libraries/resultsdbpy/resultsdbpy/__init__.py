@@ -49,7 +49,7 @@ except ImportError:
         "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
-version = Version(3, 1, 9)
+version = Version(3, 1, 10)
 
 import webkitflaskpy
 

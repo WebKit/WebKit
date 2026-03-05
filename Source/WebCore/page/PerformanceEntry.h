@@ -42,7 +42,7 @@ class PerformanceEntry : public RefCounted<PerformanceEntry> {
 public:
     virtual ~PerformanceEntry();
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     virtual double startTime() const { return m_startTime; }
     virtual double duration() const { return m_duration; }
 

@@ -44,7 +44,9 @@ os_log_t WTFSignpostLogHandle()
 
 #define WTF_SIGNPOST_EVENT_EMIT_FUNC_CASE_LABEL(emitFunc, name, timeFormat) \
     case WTFOSSignpostName ## name : \
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
         emitFunc(log, signpostIdentifier, #name, "pid: %d | %{public}s" timeFormat, pid, logString, timestamp); \
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
         break;
 
 static void beginSignpostInterval(os_log_t log, WTFOSSignpostName signpostName, uint64_t signpostIdentifier, uint64_t timestamp, pid_t pid, const char* logString)

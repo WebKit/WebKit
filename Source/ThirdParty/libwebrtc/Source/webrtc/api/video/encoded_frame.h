@@ -15,12 +15,11 @@
 #include <stdint.h>
 
 #include <optional>
-#include <variant>
 
 #include "api/units/timestamp.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_codec_type.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 
@@ -77,9 +76,7 @@ class EncodedFrame : public EncodedImage {
     _codecSpecificInfo = *codec_specific;
   }
   void SetFrameInstrumentationData(
-      const std::optional<
-          std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
-          frame_instrumentation) {
+      const std::optional<FrameInstrumentationData> frame_instrumentation) {
     _codecSpecificInfo.frame_instrumentation_data = frame_instrumentation;
   }
 

@@ -141,7 +141,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (!apiGlobalObject)
         return [JSValue valueWithNewPromiseRejectedWithReason:[JSValue valueWithNewErrorFromMessage:@"Context does not support module loading" inContext:self] inContext:self];
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSValue result = apiGlobalObject->loadAndEvaluateJSScriptModule(locker, script);
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(apiGlobalObject, scope.exception()->value());
@@ -164,7 +164,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return [JSValue valueWithUndefinedInContext:self];
     }
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, JSC::jsString(vm, String([[script sourceURL] absoluteString])));
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(globalObject, scope.exception()->value());
@@ -210,7 +210,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 {
     auto& thread = Thread::currentSingleton();
     CallbackData *entry = (CallbackData *)thread.m_apiData;
-    return entry ? entry->context : nil;
+    return entry ? entry->context.get() : nil;
 }
 
 + (JSValue *)currentThis
@@ -246,7 +246,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         auto arguments = adoptNS([[NSMutableArray alloc] initWithCapacity:count]);
         for (size_t i = 0; i < count; ++i)
             [arguments setObject:[JSValue valueWithJSValueRef:entry->arguments[i] inContext:context] atIndexedSubscript:i];
-        entry->currentArguments = WTFMove(arguments);
+        entry->currentArguments = WTF::move(arguments);
     }
 
     return entry->currentArguments.get();

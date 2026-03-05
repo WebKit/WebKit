@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <utility>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
@@ -23,6 +24,7 @@
 #include "rtc_base/dscp.h"
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/network/sent_packet.h"
+#include "rtc_base/sigslot_trampoline.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/system/no_unique_address.h"
@@ -56,10 +58,10 @@ struct RTC_EXPORT AsyncSocketPacketOptions {
 
   DiffServCodePoint dscp = DSCP_NO_CHANGE;
 
-  // Packet will be sent with ECN(1), RFC-3168, Section 5.
+  // Packet will be sent with ECT(1), RFC-3168, Section 5.
   // Intended to be used with L4S
   // https://www.rfc-editor.org/rfc/rfc9331.html
-  bool ecn_1 = false;
+  bool ect_1 = false;
 
   // When used with RTP packets (for example, PacketOptions), the value
   // should be 16 bits. A value of -1 represents "not set".
@@ -87,7 +89,7 @@ class RTC_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
     STATE_CONNECTED
   };
 
-  AsyncPacketSocket() = default;
+  AsyncPacketSocket() : connect_trampoline_(this) {}
   ~AsyncPacketSocket() override;
 
   AsyncPacketSocket(const AsyncPacketSocket&) = delete;
@@ -149,6 +151,15 @@ class RTC_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
   // Emitted for client TCP sockets when state is changed from
   // CONNECTING to CONNECTED.
   sigslot::signal1<AsyncPacketSocket*> SignalConnect;
+  void NotifyConnect(AsyncPacketSocket* socket) { SignalConnect(socket); }
+  void SubscribeConnect(absl::AnyInvocable<void(AsyncPacketSocket*)> callback) {
+    connect_trampoline_.Subscribe(std::move(callback));
+  }
+  void SubscribeConnect(void* tag,
+                        absl::AnyInvocable<void(AsyncPacketSocket*)> callback) {
+    connect_trampoline_.Subscribe(tag, std::move(callback));
+  }
+  void UnsubscribeConnect(void* tag) { connect_trampoline_.Unsubscribe(tag); }
 
   void NotifyClosedForTest(int err) { NotifyClosed(err); }
 
@@ -174,6 +185,8 @@ class RTC_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
       RTC_GUARDED_BY(&network_checker_);
   absl::AnyInvocable<void(AsyncPacketSocket*, const ReceivedIpPacket&)>
       received_packet_callback_ RTC_GUARDED_BY(&network_checker_);
+  SignalTrampoline<AsyncPacketSocket, &AsyncPacketSocket::SignalConnect>
+      connect_trampoline_;
 };
 
 // Listen socket, producing an AsyncPacketSocket when a peer connects.

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/CachedResourceClient.h>
-#include <WebCore/CachedResourceHandle.h>
+#include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -40,6 +40,7 @@ class CachedRawResource;
 class DocumentLoader;
 class FrameLoader;
 class ResourceRequest;
+class SecurityOrigin;
 
 enum class ReferrerPolicy : uint8_t;
 
@@ -51,12 +52,18 @@ public:
         Box<NetworkLoadMetrics> metrics;
     };
     static Ref<DocumentPrefetcher> create(FrameLoader& frameLoader) { return adoptRef(*new DocumentPrefetcher(frameLoader)); }
-    explicit DocumentPrefetcher(FrameLoader&);
     ~DocumentPrefetcher();
 
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void prefetch(const URL&, const Vector<String>& tags, std::optional<ReferrerPolicy>, bool lowPriority = false);
+    void removePrefetch(const URL&);
     bool wasPrefetched(const URL&) const;
-    Box<NetworkLoadMetrics> takePrefetchedNetworkLoadMetrics(const URL&);
+    Box<NetworkLoadMetrics> takePrefetchedResourceMetrics(const URL&);
+    void clearPrefetchedResourcesExcept(const URL&);
+    void clearPrefetchedResourcesForOrigin(const SecurityOrigin&);
 
     // CachedRawResourceClient
     void responseReceived(const CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
@@ -65,6 +72,8 @@ public:
 
 
 private:
+    explicit DocumentPrefetcher(FrameLoader&);
+
     WeakRef<FrameLoader> m_frameLoader;
     HashMap<URL, PrefetchedResourceData> m_prefetchedData;
 };

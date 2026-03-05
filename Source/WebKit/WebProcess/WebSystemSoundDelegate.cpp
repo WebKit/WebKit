@@ -36,7 +36,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSystemSoundDelegate);
 
 void WebSystemSoundDelegate::systemBeep()
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::SystemBeep(), 0);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::SystemBeep(), 0);
 }
 
 } // namespace WebKit

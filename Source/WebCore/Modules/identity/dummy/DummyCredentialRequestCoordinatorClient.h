@@ -27,6 +27,7 @@
 #include <WebCore/CredentialRequestCoordinatorClient.h>
 
 #if ENABLE(WEB_AUTHN)
+#include <WebCore/DigitalCredentialsRequestData.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMalloc.h>
@@ -44,7 +45,7 @@ public:
     static Ref<DummyCredentialRequestCoordinatorClient> create();
 
 private:
-    void showDigitalCredentialsPicker(Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&, const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&&);
+    void showDigitalCredentialsPicker(DigitalCredentialsRawRequests&&, const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&&);
     void dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&&) final;
     ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&) final;
 };

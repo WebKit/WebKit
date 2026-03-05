@@ -27,7 +27,7 @@
 
 [
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary URLPatternInit {
     USVString protocol;
     USVString username;

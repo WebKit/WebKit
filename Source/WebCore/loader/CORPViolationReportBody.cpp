@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CORPViolationReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CORPViolationReportBody);
 
 Ref<CORPViolationReportBody> CORPViolationReportBody::create(COEPDisposition disposition, const URL& blockedURL, FetchOptions::Destination destination)
 {

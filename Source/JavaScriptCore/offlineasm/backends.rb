@@ -151,10 +151,13 @@ end
 
 class LabelReference
     def asmLabel
-        if extern?
-            Assembler.externLabelReference(name[1..-1])
+        # For historical reasons a LabelReference may reference a label which is neither
+        # extern nor global, in which case it should act as a LocalLabelReference.
+        # See https://bugs.webkit.org/show_bug.cgi?id=131205.
+        if externOrGlobal?
+            Assembler.externOrGlobalLabelReference(name[1..-1])
         else
-            Assembler.labelReference(name[1..-1])
+            Assembler.localLabelReference(name[1..-1])
         end
     end
 

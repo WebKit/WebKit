@@ -1,6 +1,12 @@
-<iframe src="about:blank"></iframe><br>
-<iframe src=""></iframe>
 <script>
-if (window.opener)
-  window.opener.postMessage('done', '*');
+var iframe1DidLoad = false;
+var iframe2DidLoad = false;
+
+// rdar://161348735: onload doesn't fire with Site Isolation when resource is blocked by mixed content. so use setTimeout for now
+setTimeout(function() {
+    if (window.opener)
+        window.opener.postMessage((iframe1DidLoad && iframe2DidLoad) ? 'Not blocked' : 'blocked', '*');
+}, 2000);
 </script>
+<iframe onload="window.iframe1DidLoad = true" src="about:blank"></iframe><br>
+<iframe onload="window.iframe2DidLoad = true" src=""></iframe>

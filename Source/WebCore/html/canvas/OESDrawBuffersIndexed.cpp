@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OESDrawBuffersIndexed);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OESDrawBuffersIndexed);
 
 OESDrawBuffersIndexed::OESDrawBuffersIndexed(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::OESDrawBuffersIndexed)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::OES_draw_buffers_indexed);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::OES_draw_buffers_indexed);
 }
 
 OESDrawBuffersIndexed::~OESDrawBuffersIndexed() = default;
@@ -51,42 +51,42 @@ void OESDrawBuffersIndexed::enableiOES(GCGLenum target, GCGLuint index)
 {
     if (isContextLost())
         return;
-    context()->graphicsContextGL()->enableiOES(target, index);
+    protect(context()->graphicsContextGL())->enableiOES(target, index);
 }
 
 void OESDrawBuffersIndexed::disableiOES(GCGLenum target, GCGLuint index)
 {
     if (isContextLost())
         return;
-    context()->graphicsContextGL()->disableiOES(target, index);
+    protect(context()->graphicsContextGL())->disableiOES(target, index);
 }
 
 void OESDrawBuffersIndexed::blendEquationiOES(GCGLuint buf, GCGLenum mode)
 {
     if (isContextLost())
         return;
-    context()->graphicsContextGL()->blendEquationiOES(buf, mode);
+    protect(context()->graphicsContextGL())->blendEquationiOES(buf, mode);
 }
 
 void OESDrawBuffersIndexed::blendEquationSeparateiOES(GCGLuint buf, GCGLenum modeRGB, GCGLenum modeAlpha)
 {
     if (isContextLost())
         return;
-    context()->graphicsContextGL()->blendEquationSeparateiOES(buf, modeRGB, modeAlpha);
+    protect(context()->graphicsContextGL())->blendEquationSeparateiOES(buf, modeRGB, modeAlpha);
 }
 
 void OESDrawBuffersIndexed::blendFunciOES(GCGLuint buf, GCGLenum src, GCGLenum dst)
 {
     if (isContextLost())
         return;
-    context()->graphicsContextGL()->blendFunciOES(buf, src, dst);
+    protect(context()->graphicsContextGL())->blendFunciOES(buf, src, dst);
 }
 
 void OESDrawBuffersIndexed::blendFuncSeparateiOES(GCGLuint buf, GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha)
 {
     if (isContextLost())
         return;
-    context()->graphicsContextGL()->blendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+    protect(context()->graphicsContextGL())->blendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
 void OESDrawBuffersIndexed::colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha)
@@ -101,7 +101,7 @@ void OESDrawBuffersIndexed::colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboo
         context->m_colorMask[2] = blue;
         context->m_colorMask[3] = alpha;
     }
-    context->graphicsContextGL()->colorMaskiOES(buf, red, green, blue, alpha);
+    protect(context->graphicsContextGL())->colorMaskiOES(buf, red, green, blue, alpha);
 }
 
 } // namespace WebCore

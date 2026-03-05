@@ -68,7 +68,7 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     materializePointerIntoMetadata(bytecode, OpGetByVal::Metadata::offsetOfArrayProfile(), profileGPR);
 
     JITGetByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, profileGPR, stubInfoGPR);
     if (isOperandConstantInt(property))
         stubInfo->propertyIsInt32 = true;
@@ -125,7 +125,7 @@ void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
 
     JITGetByValGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetPrivateName,
-        RegisterSetBuilder::stubUnavailableRegisters(), baseJSR, propertyJSR, resultJSR, InvalidGPRReg, stubInfoGPR);
+        RegisterSet::stubUnavailableRegisters(), baseJSR, propertyJSR, resultJSR, InvalidGPRReg, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
     addSlowCase();
@@ -163,7 +163,7 @@ void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     JITPrivateBrandAccessGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::SetPrivateBrand, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::SetPrivateBrand, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -206,7 +206,7 @@ void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITPrivateBrandAccessGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::CheckPrivateBrand, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::CheckPrivateBrand, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -254,7 +254,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     JITPutByValGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy),
-        RegisterSetBuilder::stubUnavailableRegisters(),
+        RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR);
     if (isOperandConstantInt(property))
         stubInfo->propertyIsInt32 = true;
@@ -325,7 +325,7 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITPutByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -383,7 +383,7 @@ void JIT::emit_op_put_getter_by_val(const JSInstruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpPutGetterByVal>();
 
     using SlowOperation = decltype(operationPutGetterByVal);
-    constexpr GPRReg globalObjectGRP = preferredArgumentGPR<SlowOperation, 0>();
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
     constexpr GPRReg baseGPR = preferredArgumentGPR<SlowOperation, 1>();
     constexpr JSValueRegs propertyJSR = preferredArgumentJSR<SlowOperation, 2>();
     // Attributes in argument 3
@@ -393,8 +393,8 @@ void JIT::emit_op_put_getter_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_property, propertyJSR);
     int32_t attributes = bytecode.m_attributes;
     emitGetVirtualRegisterPayload(bytecode.m_accessor, setterGPR);
-    loadGlobalObject(globalObjectGRP);
-    callOperation(operationPutGetterByVal, globalObjectGRP, baseGPR, propertyJSR, attributes, setterGPR);
+    loadGlobalObject(globalObjectGPR);
+    callOperation(operationPutGetterByVal, globalObjectGPR, baseGPR, propertyJSR, attributes, setterGPR);
 }
 
 void JIT::emit_op_put_setter_by_val(const JSInstruction* currentInstruction)
@@ -402,7 +402,7 @@ void JIT::emit_op_put_setter_by_val(const JSInstruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpPutSetterByVal>();
 
     using SlowOperation = decltype(operationPutSetterByVal);
-    constexpr GPRReg globalObjectGRP = preferredArgumentGPR<SlowOperation, 0>();
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
     constexpr GPRReg baseGPR = preferredArgumentGPR<SlowOperation, 1>();
     constexpr JSValueRegs propertyJSR = preferredArgumentJSR<SlowOperation, 2>();
     // Attributes in argument 3
@@ -412,8 +412,8 @@ void JIT::emit_op_put_setter_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_property, propertyJSR);
     int32_t attributes = bytecode.m_attributes;
     emitGetVirtualRegisterPayload(bytecode.m_accessor, setterGPR);
-    loadGlobalObject(globalObjectGRP);
-    callOperation(operationPutSetterByVal, globalObjectGRP, baseGPR, propertyJSR, attributes, setterGPR);
+    loadGlobalObject(globalObjectGPR);
+    callOperation(operationPutSetterByVal, globalObjectGPR, baseGPR, propertyJSR, attributes, setterGPR);
 }
 
 void JIT::emit_op_del_by_id(const JSInstruction* currentInstruction)
@@ -436,7 +436,7 @@ void JIT::emit_op_del_by_id(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITDelByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::DeleteByIdStrict : AccessType::DeleteByIdSloppy, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::DeleteByIdStrict : AccessType::DeleteByIdSloppy, RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
         baseJSR, resultJSR, stubInfoGPR);
 
@@ -487,7 +487,7 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
     JITDelByValGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         bytecode.m_ecmaMode.isStrict() ? AccessType::DeleteByValStrict : AccessType::DeleteByValSloppy,
-        RegisterSetBuilder::stubUnavailableRegisters(),
+        RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -533,7 +533,7 @@ void JIT::emit_op_try_get_by_id(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITGetByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::TryGetById, CacheType::GetByIdPrototype);
 
     gen.generateDataICFastPath(*this);
@@ -573,7 +573,7 @@ void JIT::emit_op_get_by_id_direct(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITGetByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::GetByIdDirect, CacheType::GetByIdSelf);
 
     gen.generateDataICFastPath(*this);
@@ -618,7 +618,7 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITGetByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById, cacheType);
 
     gen.generateDataICFastPath(*this);
@@ -654,7 +654,7 @@ void JIT::emit_op_get_length(const JSInstruction* currentInstruction)
         emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratch1GPR);
 
     JITGetByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById, CacheType::ArrayLength);
 
     gen.generateDataICFastPath(*this);
@@ -708,7 +708,7 @@ void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(thisJSR, thisVReg);
 
     JITGetByIdWithThisGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), resultJSR, baseJSR, thisJSR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -757,7 +757,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITPutByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
         baseJSR, valueJSR, stubInfoGPR, scratch1GPR, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
 
@@ -800,7 +800,7 @@ void JIT::emit_op_in_by_id(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITInByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -846,7 +846,7 @@ void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
     emitArrayProfilingSiteWithCellAndProfile(baseJSR.payloadGPR(), profileGPR, scratch1GPR);
 
     JITInByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, profileGPR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -883,7 +883,7 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITInByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), type, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), type, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, InvalidGPRReg, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -973,6 +973,8 @@ void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
         auto resolveTypeAddress = metadataAddress.withOffset(Metadata::offsetOfResolveType());
         auto globalLexicalBindingEpochAddress = metadataAddress.withOffset(Metadata::offsetOfGlobalLexicalBindingEpoch());
 
+        // FIXME: This code is weird when caching fails because it goes to a slow path that will check the exact same condition before falling into the C++ slow path.
+        // It's unclear if that makes a meaningful difference for perf but we should consider doing something smarter.
         switch (profiledResolveType) {
         case GlobalProperty: {
             addSlowCase(branch32(NotEqual, resolveTypeAddress, TrustedImm32(profiledResolveType)));
@@ -1044,6 +1046,7 @@ void JIT::emitSlow_op_resolve_scope(const JSInstruction* currentInstruction, Vec
         addPtr(TrustedImm32(m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode)), GPRInfo::metadataTableRegister, metadataGPR);
 
     MacroAssemblerCodeRef<JITThunkPtrTag> code;
+    // FIXME: Why do we generate the cases for the thunks we already emitted in the fast path. It seems like those should just go straight to the generic slow path thunk.
     if (profiledResolveType == ClosureVarWithVarInjectionChecks)
         code = vm().getCTIStub(generateOpResolveScopeThunk<ClosureVarWithVarInjectionChecks>);
     else if (profiledResolveType == GlobalVar)
@@ -1852,7 +1855,7 @@ void JIT::emit_op_get_by_val_with_this(const JSInstruction* currentInstruction)
     materializePointerIntoMetadata(bytecode, OpGetByValWithThis::Metadata::offsetOfArrayProfile(), profileGPR);
 
     JITGetByValWithThisGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByValWithThis, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByValWithThis, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, thisJSR, resultJSR, profileGPR, stubInfoGPR);
     if (isOperandConstantInt(property))
         stubInfo->propertyIsInt32 = true;
@@ -2097,7 +2100,7 @@ void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
     emitArrayProfilingSiteWithCellAndProfile(baseGPR, profileGPR, scratch1GPR);
 
     JITGetByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), profileGPR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);
@@ -2195,7 +2198,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
 
     ECMAMode ecmaMode = bytecode.m_ecmaMode;
     JITPutByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy, RegisterSetBuilder::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy, RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR);
 
     gen.generateDataICFastPath(*this);

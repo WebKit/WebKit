@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFontFaceUriElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFontFaceUriElement);
     
 using namespace SVGNames;
     
@@ -61,7 +61,7 @@ Ref<CSSFontFaceSrcResourceValue> SVGFontFaceUriElement::createSrcValue() const
 {
     auto location = CSS::completeURL(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), document()).value_or(CSS::URL::none());
     auto& format = attributeWithoutSynchronization(formatAttr);
-    return CSSFontFaceSrcResourceValue::create(WTFMove(location), format.isEmpty() ? "svg"_s : format.string(), { FontTechnology::ColorSvg });
+    return CSSFontFaceSrcResourceValue::create(WTF::move(location), format.isEmpty() ? "svg"_s : format.string(), { FontTechnology::ColorSvg });
 }
 
 void SVGFontFaceUriElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -108,7 +108,7 @@ void SVGFontFaceUriElement::loadFont()
         Ref cachedResourceLoader = document().cachedResourceLoader();
         CachedResourceRequest request(ResourceRequest(document().completeURL(href)), options);
         request.setInitiator(*this);
-        m_cachedFont = cachedResourceLoader->requestFont(WTFMove(request), isSVGFontTarget(*this)).value_or(nullptr);
+        m_cachedFont = cachedResourceLoader->requestFont(WTF::move(request), isSVGFontTarget(*this)).value_or(nullptr);
         if (CachedResourceHandle cachedFont = m_cachedFont) {
             cachedFont->addClient(*this);
             cachedFont->beginLoadIfNeeded(cachedResourceLoader);

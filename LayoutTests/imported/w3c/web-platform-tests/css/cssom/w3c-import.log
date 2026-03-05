@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+user-select
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -64,6 +64,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList2.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MutationObserver-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/StyleSheetList-constructable-with-style-recalc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/StyleSheetList-constructable.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/StyleSheetList.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-link.tentative-expected.html
@@ -77,8 +79,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/at-namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/base-uri.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/border-shorthand-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-audioVideo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-with-transformation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretRangeFromPoint-replace-document.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretRangeFromPoint-textarea-transform.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretRangeFromPoint.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/change-rule-with-layers-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-002.html
@@ -218,7 +224,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-update-across-documents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-dom-mutation-event-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic.html

@@ -30,8 +30,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43, 42, 41]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43, 42, 41]));
   assert.sameValue(sample.lastIndexOf(42), 2, "lastIndexOf(42)");
   assert.sameValue(sample.lastIndexOf(43), 1, "lastIndexOf(43)");
   assert.sameValue(sample.lastIndexOf(41), 3, "lastIndexOf(41)");

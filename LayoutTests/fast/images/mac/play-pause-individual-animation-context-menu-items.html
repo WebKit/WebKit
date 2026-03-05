@@ -24,7 +24,6 @@ window.addEventListener("load", () => {
   window.jsTestIsAsync = true;
   if (!window.internals)
     return;
-  internals.settings.setImageAnimationControlEnabled(true);
   internals.settings.setAllowAnimationControlsOverride(true);
 
   // Verify initial animation play-state.
@@ -46,7 +45,6 @@ window.addEventListener("load", () => {
     await shouldBecomeEqual("internals.isImageAnimating(png)", "true");
 
     internals.settings.setAllowAnimationControlsOverride(false);
-    internals.settings.setImageAnimationControlEnabled(false);
     internals.clearMemoryCache();
     finishJSTest();
   });

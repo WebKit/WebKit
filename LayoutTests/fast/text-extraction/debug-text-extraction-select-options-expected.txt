@@ -1,0 +1,99 @@
+-- texttree (includeSelectOptions: true)
+
+root
+    'Hello world'
+    select
+        option,value='one','Number 1'
+        option,value='two','Number 2'
+        option,selected,value='three','Number 3'
+    select,multiple
+        option,selected,value='banana'
+        option,selected,value='pear'
+        option,value='apple'
+
+-- json (includeSelectOptions: true)
+
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "text",
+      "content": "Hello world"
+    },
+    {
+      "type": "select",
+      "nodeName": "select",
+      "options": [
+        {
+          "value": "one",
+          "label": "Number 1",
+          "selected": false
+        },
+        {
+          "value": "two",
+          "label": "Number 2",
+          "selected": false
+        },
+        {
+          "value": "three",
+          "label": "Number 3",
+          "selected": true
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "nodeName": "select",
+      "options": [
+        {
+          "value": "banana",
+          "label": "Banana",
+          "selected": true
+        },
+        {
+          "value": "pear",
+          "label": "Pear",
+          "selected": true
+        },
+        {
+          "value": "apple",
+          "label": "Apple",
+          "selected": false
+        }
+      ],
+      "multiple": true
+    }
+  ],
+  "version": 2
+}
+
+-- texttree (includeSelectOptions: false)
+
+root
+    'Hello world'
+    select
+    select,multiple
+
+-- json (includeSelectOptions: false)
+
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "text",
+      "content": "Hello world"
+    },
+    {
+      "type": "select",
+      "nodeName": "select"
+    },
+    {
+      "type": "select",
+      "nodeName": "select",
+      "multiple": true
+    }
+  ],
+  "version": 2
+}
+
+

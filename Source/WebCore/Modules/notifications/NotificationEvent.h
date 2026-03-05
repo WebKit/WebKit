@@ -35,36 +35,32 @@
 namespace WebCore {
 
 struct NotificationEventInit : ExtendableEventInit {
-    RefPtr<Notification> notification;
+    Ref<Notification> notification;
     String action;
 };
 
 class NotificationEvent final : public ExtendableEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NotificationEvent);
+    WTF_MAKE_TZONE_ALLOCATED(NotificationEvent);
 public:
     ~NotificationEvent();
 
     using Init = NotificationEventInit;
 
     static Ref<NotificationEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<NotificationEvent> create(const AtomString&, Notification*, const String& action, IsTrusted = IsTrusted::No);
+    static Ref<NotificationEvent> create(const AtomString&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
 
-    Notification* notification() { return m_notification.get(); }
-    const String& action() { return m_action; }
+    Notification& notification() { return m_notification; }
+    const String& action() const LIFETIME_BOUND { return m_action; }
 
 private:
-    NotificationEvent(const AtomString&, NotificationEventInit&&, Notification*, const String& action, IsTrusted = IsTrusted::No);
+    NotificationEvent(const AtomString&, NotificationEventInit&&, IsTrusted = IsTrusted::No);
 
-    bool isNotificationEvent() const final { return true; }
-
-    RefPtr<Notification> m_notification;
+    const Ref<Notification> m_notification;
     String m_action;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NotificationEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isNotificationEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(NotificationEvent)
 
 #endif // ENABLE(NOTIFICATION_EVENT)

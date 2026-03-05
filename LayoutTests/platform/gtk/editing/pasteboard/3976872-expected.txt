@@ -19,20 +19,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 381x17
+        RenderText {#text} at (0,0) size 381x18
           text run at (0,0) width 381: "This tests paste and match style on an empty (but styled) line"
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 751x35
+        RenderText {#text} at (0,0) size 751x36
           text run at (0,0) width 751: "The first line is copied (unstyled), then it's bolded, then a paragraph separator is inserted and the original unstyled line is"
           text run at (0,18) width 181: "pasted (with style matching)."
       RenderBlock {DIV} at (0,96) size 784x40
         RenderBlock {DIV} at (0,0) size 784x20 [border: (1px solid #FF0000)]
-          RenderInline {B} at (1,1) size 187x17
-            RenderText {#text} at (1,1) size 187x17
+          RenderInline {B} at (1,1) size 187x18
+            RenderText {#text} at (1,1) size 187x18
               text run at (1,1) width 187: "this text should end up bold"
         RenderBlock {DIV} at (0,20) size 784x20 [border: (1px solid #FF0000)]
-          RenderInline {B} at (1,1) size 187x17
-            RenderText {#text} at (1,1) size 187x17
+          RenderInline {B} at (1,1) size 187x18
+            RenderText {#text} at (1,1) size 187x18
               text run at (1,1) width 187: "this text should end up bold"
 layer at (8,94) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,86) size 784x2 [color=#808080] [border: (1px inset #808080)]

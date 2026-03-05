@@ -10,9 +10,11 @@
 **/*.pb
 **/*.pcap
 **/*.pcm
+**/*.rtceventlog
 **/*.rtp
 **/*.rtpdump
 **/*.rx
+**/*.tflite
 **/*.txt
 **/*.wav
 **/*.y4m

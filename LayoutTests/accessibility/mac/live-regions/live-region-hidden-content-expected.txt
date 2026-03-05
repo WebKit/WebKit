@@ -1,7 +1,9 @@
 This tests that changes to aria-hidden regions don't result in live region changes.
 
 Received announcement request:
-AnnouncementKey: More exposed content.
+AnnouncementKey: More exposed content.{
+    AXLanguage = en;
+}
 AXPriorityKey: 10
 AXAnnouncementIsLiveRegionKey: true
 

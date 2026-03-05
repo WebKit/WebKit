@@ -41,7 +41,7 @@
 #include "MemoryCache.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
@@ -66,7 +66,7 @@
 namespace WebCore {
 
 CachedImage::CachedImage(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
-    : CachedResource(WTFMove(request), Type::ImageResource, sessionID, cookieJar)
+    : CachedResource(WTF::move(request), Type::ImageResource, sessionID, cookieJar)
     , m_updateImageDataCount(0)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
@@ -140,7 +140,7 @@ void CachedImage::didAddClient(CachedResourceClient& client)
 {
     if (m_data && !m_image && !errorOccurred()) {
         createImage();
-        protectedImage()->setData(m_data.copyRef(), true);
+        protect(m_image)->setData(m_data.copyRef(), true);
     }
 
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
@@ -186,7 +186,7 @@ void CachedImage::addClientWaitingForAsyncDecoding(CachedImageClient& client)
         // to cancel the repaint optimization we do in CachedImage::imageFrameAvailable() by adding
         // all the m_clients to m_clientsWaitingForAsyncDecoding.
         CachedResourceClientWalker<CachedImageClient> walker(*this);
-        while (auto* client = walker.next())
+        while (RefPtr client = walker.next())
             m_clientsWaitingForAsyncDecoding.add(*client);
     } else
         m_clientsWaitingForAsyncDecoding.add(client);
@@ -202,8 +202,8 @@ void CachedImage::removeAllClientsWaitingForAsyncDecoding()
         return;
     bitmapImage->stopDecodingWorkQueue();
 
-    for (auto& client : m_clientsWaitingForAsyncDecoding)
-        client.imageChanged(this);
+    for (Ref client : m_clientsWaitingForAsyncDecoding)
+        client->imageChanged(this);
     m_clientsWaitingForAsyncDecoding.clear();
 }
 
@@ -270,11 +270,6 @@ Image* CachedImage::image() const
     return &Image::nullImage();
 }
 
-RefPtr<Image> CachedImage::protectedImage() const
-{
-    return image();
-}
-
 Image* CachedImage::imageForRenderer(const RenderObject* renderer)
 {
     if (errorOccurred() && m_shouldPaintBrokenImage) {
@@ -288,11 +283,10 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
         return &Image::nullImage();
 
     if (m_image->drawsSVGImage()) {
-        RefPtr image = m_svgImageCache->imageForRenderer(renderer);
-        if (image != &Image::nullImage())
-            return image.unsafeGet();
+        SUPPRESS_UNCOUNTED_LOCAL if (auto* image = m_svgImageCache->imageForRenderer(renderer); image != &Image::nullImage())
+            return image;
     }
-    return m_image.unsafeGet();
+    return m_image.get();
 }
 
 void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
@@ -321,10 +315,8 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
         return { };
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isMultiRepresentationHEIC()) {
-        auto metrics = renderImage->style().fontCascade().primaryFont()->metricsForMultiRepresentationHEIC();
-        return metrics.size();
-    }
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isMultiRepresentationHEIC())
+        return renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().size();
 #endif
 
     if (image->drawsSVGImage() && sizeType == UsedSize)
@@ -374,8 +366,8 @@ bool CachedImage::hasHDRContent() const
 void CachedImage::notifyObservers(const IntRect* changeRect)
 {
     CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (CachedImageClient* c = walker.next())
-        c->imageChanged(this, changeRect);
+    while (RefPtr client = walker.next())
+        client->imageChanged(this, changeRect);
 }
 
 void CachedImage::checkShouldPaintBrokenImage()
@@ -501,7 +493,7 @@ inline void CachedImage::clearImage()
 
         if (imageObserver->cachedImages().isEmptyIgnoringNullReferences()) {
             ASSERT(imageObserver->hasOneRef());
-            protectedImage()->setImageObserver(nullptr);
+            protect(m_image)->setImageObserver(nullptr);
         }
     }
 
@@ -623,7 +615,12 @@ void CachedImage::didReplaceSharedBufferContents()
     if (RefPtr image = m_image) {
         // Let the Image know that the FragmentedSharedBuffer has been rejigged, so it can let go of any references to the heap-allocated resource buffer.
         // FIXME(rdar://problem/24275617): It would be better if we could somehow tell the Image's decoder to swap in the new contents without destroying anything.
-        image->destroyDecodedData(true);
+        RefPtr data = m_data;
+        if (!image->tryReplaceData(data.releaseNonNull())) {
+            // If the image doesn't support replacing encoded data and re-decoding, then just
+            // destroy decoded data.
+            image->destroyDecodedData(true);
+        }
     }
     CachedResource::didReplaceSharedBufferContents();
 }
@@ -640,7 +637,7 @@ void CachedImage::responseReceived(ResourceResponse&& newResponse)
 {
     if (!response().isNull())
         clear();
-    CachedResource::responseReceived(WTFMove(newResponse));
+    CachedResource::responseReceived(WTF::move(newResponse));
 }
 
 void CachedImage::destroyDecodedData()
@@ -688,7 +685,7 @@ bool CachedImage::canDestroyDecodedData(const Image& image) const
         return false;
 
     CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (CachedImageClient* client = walker.next()) {
+    while (RefPtr client = walker.next()) {
         if (!client->canDestroyDecodedData())
             return false;
     }
@@ -704,7 +701,7 @@ void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState an
     CachedResourceClientWalker<CachedImageClient> walker(*this);
     VisibleInViewportState visibleState = VisibleInViewportState::No;
 
-    while (CachedImageClient* client = walker.next()) {
+    while (RefPtr client = walker.next()) {
         // All the clients of animated images have to be notified. The new frame has to be drawn in all of them.
         if (animatingState == ImageAnimatingState::No && !m_clientsWaitingForAsyncDecoding.contains(*client))
             continue;
@@ -713,7 +710,7 @@ void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState an
     }
 
     if (visibleState == VisibleInViewportState::No && animatingState == ImageAnimatingState::Yes)
-        protectedImage()->stopAnimation();
+        protect(m_image)->stopAnimation();
 
     if (decodingStatus != DecodingStatus::Partial)
         m_clientsWaitingForAsyncDecoding.clear();
@@ -732,7 +729,7 @@ void CachedImage::imageContentChanged(const Image& image)
         return;
 
     CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (auto* client = walker.next())
+    while (RefPtr client = walker.next())
         client->imageContentChanged(*this);
 }
 
@@ -742,8 +739,16 @@ void CachedImage::scheduleRenderingUpdate(const Image& image)
         return;
 
     CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (auto* client = walker.next())
+    while (RefPtr client = walker.next())
         client->scheduleRenderingUpdateForImage(*this);
+}
+
+bool CachedImage::useSystemDarkAppearance() const
+{
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
+    if (RefPtr client = walker.next())
+        return client->useSystemDarkAppearance();
+    return false;
 }
 
 bool CachedImage::allowsAnimation(const Image& image) const
@@ -755,7 +760,7 @@ bool CachedImage::allowsAnimation(const Image& image) const
         return true;
 
     CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (auto* client = walker.next()) {
+    while (RefPtr client = walker.next()) {
         if (!client->allowsAnimation())
             return false;
     }
@@ -808,7 +813,7 @@ bool CachedImage::canSkipRevalidation(const CachedResourceLoader& loader, const 
 bool CachedImage::isVisibleInViewport(const Document& document) const
 {
     CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (auto* client = walker.next()) {
+    while (RefPtr client = walker.next()) {
         if (client->imageVisibleInViewport(document) == VisibleInViewportState::Yes)
             return true;
     }

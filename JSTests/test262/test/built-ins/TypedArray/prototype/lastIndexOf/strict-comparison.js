@@ -26,8 +26,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, undefined, NaN, 0, 1]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, undefined, NaN, 0, 1]));
   assert.sameValue(sample.lastIndexOf("42"), -1, "'42'");
   assert.sameValue(sample.lastIndexOf([42]), -1, "[42]");
   assert.sameValue(sample.lastIndexOf(42.0), 0, "42.0");

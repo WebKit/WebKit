@@ -57,6 +57,7 @@ TouchGestureController::EventVariant TouchGestureController::handleEvent(const s
     {
         switch (m_gesturedEvent) {
         case GesturedEvent::None:
+        case GesturedEvent::ContextMenu:
             break;
         case GesturedEvent::Click:
         {
@@ -77,8 +78,6 @@ TouchGestureController::EventVariant TouchGestureController::handleEvent(const s
             m_gesturedEvent = GesturedEvent::Axis;
             [[fallthrough]];
         }
-        case GesturedEvent::ContextMenu:
-            break;
         case GesturedEvent::Axis:
         {
             AxisEvent generatedEvent;

@@ -22,7 +22,7 @@ info: |
   5. Let S be ? Get(C, @@species).
   6. If S is either undefined or null, return defaultConstructor.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.species, TypedArray]
 ---*/
 
@@ -41,4 +41,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     ArrayBuffer.prototype,
     "buffer ctor is not called when species is null"
   );
-});
+}, null, ["passthrough"]);

@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/cookie-store/#dictdef-cookiestoregetoptions
-
+// https://cookiestore.spec.whatwg.org/#dictdef-cookiestoregetoptions
 [
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary CookieStoreGetOptions {
     USVString name;
     USVString url;

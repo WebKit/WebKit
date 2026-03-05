@@ -67,7 +67,7 @@ class InternalAudioDecoderCocoa : public ThreadSafeRefCountedAndCanMakeThreadSaf
 public:
     static Ref<InternalAudioDecoderCocoa> create(AudioDecoder::OutputCallback&& outputCallback)
     {
-        return adoptRef(*new InternalAudioDecoderCocoa(WTFMove(outputCallback)));
+        return adoptRef(*new InternalAudioDecoderCocoa(WTF::move(outputCallback)));
     }
     virtual ~InternalAudioDecoderCocoa() = default;
 
@@ -109,18 +109,18 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalAudioDecoderCocoa);
 
 Ref<AudioDecoder::CreatePromise> AudioDecoderCocoa::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)
 {
-    Ref decoder = adoptRef(*new AudioDecoderCocoa(WTFMove(outputCallback)));
-    return invokeAsync(queueSingleton(), [decoder = WTFMove(decoder), codecName = codecName.isolatedCopy(), config]() mutable {
+    Ref decoder = adoptRef(*new AudioDecoderCocoa(WTF::move(outputCallback)));
+    return invokeAsync(queueSingleton(), [decoder = WTF::move(decoder), codecName = codecName.isolatedCopy(), config]() mutable {
         assertIsCurrent(queueSingleton());
         Ref internalDecoder = decoder->m_internalDecoder;
         if (auto error = internalDecoder->initialize(codecName, config); !error.isEmpty())
             return CreatePromise::createAndReject(makeString("Internal audio decoder failed to configure for codec "_s, codecName, " with error "_s, error));
-        return CreatePromise::createAndResolve(WTFMove(decoder));
+        return CreatePromise::createAndResolve(WTF::move(decoder));
     });
 }
 
 AudioDecoderCocoa::AudioDecoderCocoa(OutputCallback&& outputCallback)
-    : m_internalDecoder(InternalAudioDecoderCocoa::create(WTFMove(outputCallback)))
+    : m_internalDecoder(InternalAudioDecoderCocoa::create(WTF::move(outputCallback)))
 {
 }
 
@@ -192,7 +192,7 @@ Expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat
 Ref<AudioDecoder::DecodePromise> AudioDecoderCocoa::decode(EncodedData&& data)
 {
     return invokeAsync(queueSingleton(), [data = SharedBuffer::create(data.data), isKeyFrame = data.isKeyFrame, timestamp = data.timestamp, duration = data.duration, decoder = m_internalDecoder]() mutable {
-        return decoder->decode(WTFMove(data), isKeyFrame, timestamp, duration);
+        return decoder->decode(WTF::move(data), isKeyFrame, timestamp, duration);
     });
 }
 
@@ -236,12 +236,12 @@ void InternalAudioDecoderCocoa::processedDecodedOutputs()
         return;
     while (RetainPtr sample = converter()->takeOutputSampleBuffer()) {
         Ref audioData = PlatformRawAudioData::create(MediaSampleAVFObjC::create(sample.get(), 0));
-        m_outputCallback(AudioDecoder::DecodedData { WTFMove(audioData) });
+        m_outputCallback(AudioDecoder::DecodedData { WTF::move(audioData) });
     }
 }
 
 InternalAudioDecoderCocoa::InternalAudioDecoderCocoa(AudioDecoder::OutputCallback&& outputCallback)
-    : m_outputCallback(WTFMove(outputCallback))
+    : m_outputCallback(WTF::move(outputCallback))
 {
 }
 
@@ -354,7 +354,7 @@ Ref<AudioDecoder::DecodePromise> InternalAudioDecoderCocoa::decode(Ref<SharedBuf
 
     DecodePromise::Producer producer;
     Ref promise = producer.promise();
-    converter()->addSampleBuffer(rawSampleBuffer)->whenSettled(queueSingleton(), [producer = WTFMove(producer)](auto result) mutable {
+    converter()->addSampleBuffer(rawSampleBuffer)->whenSettled(queueSingleton(), [producer = WTF::move(producer)](auto result) mutable {
         if (result)
             producer.resolve();
         else

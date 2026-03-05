@@ -28,6 +28,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/KeyboardScroll.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -102,19 +103,28 @@ enum class ViewportRectStability {
 
 enum class ScrollRequestType : uint8_t {
     PositionUpdate,
+    AnimatedPositionUpdate,
     DeltaUpdate,
+    AnimatedDeltaUpdate,
+    ImplicitDeltaUpdate, // Allows animated scrolls to continue
     CancelAnimatedScroll
 };
 
+constexpr inline bool isAnimatedUpdate(ScrollRequestType type)
+{
+    return type == ScrollRequestType::AnimatedPositionUpdate || type == ScrollRequestType::AnimatedDeltaUpdate;
+}
+
+struct ScrollRequestIdentifierType;
+using ScrollRequestIdentifier = ObjectIdentifier<ScrollRequestIdentifierType>;
+
 struct RequestedScrollData {
     ScrollRequestType requestType { ScrollRequestType::PositionUpdate };
-    Variant<FloatPoint, FloatSize> scrollPositionOrDelta;
+    Variant<FloatPoint, FloatSize> scrollPositionOrDelta { };
+    Markable<ScrollRequestIdentifier> identifier { };
     ScrollType scrollType { ScrollType::User };
     ScrollClamping clamping { ScrollClamping::Clamped };
-    ScrollIsAnimated animated { ScrollIsAnimated::No };
-    std::optional<std::tuple<ScrollRequestType, Variant<FloatPoint, FloatSize>, ScrollType, ScrollClamping>> requestedDataBeforeAnimatedScroll { };
-
-    void merge(RequestedScrollData&&);
+    ScrollbarRevealBehavior scrollbarRevealBehavior { ScrollbarRevealBehavior::Default };
 
     WEBCORE_EXPORT FloatPoint destinationPosition(FloatPoint currentScrollPosition) const;
     WEBCORE_EXPORT static FloatPoint computeDestinationPosition(FloatPoint currentScrollPosition, ScrollRequestType, const Variant<FloatPoint, FloatSize>& scrollPositionOrDelta);
@@ -123,21 +133,23 @@ struct RequestedScrollData {
     {
         if (requestType == ScrollRequestType::PositionUpdate)
             return std::get<FloatPoint>(scrollPositionOrDelta) == std::get<FloatPoint>(other.scrollPositionOrDelta);
-        if (requestType == ScrollRequestType::DeltaUpdate)
+        if (requestType == ScrollRequestType::DeltaUpdate || requestType == ScrollRequestType::ImplicitDeltaUpdate)
             return std::get<FloatSize>(scrollPositionOrDelta) == std::get<FloatSize>(other.scrollPositionOrDelta);
         return true;
     }
 
     bool operator==(const RequestedScrollData& other) const
     {
+        // The identifier is not checked.
         return requestType == other.requestType
             && comparePositionOrDelta(other)
             && scrollType == other.scrollType
             && clamping == other.clamping
-            && animated == other.animated
-            && requestedDataBeforeAnimatedScroll == other.requestedDataBeforeAnimatedScroll;
+            && scrollbarRevealBehavior == other.scrollbarRevealBehavior;
     }
 };
+
+using ScrollRequestData = Vector<RequestedScrollData, 2>;
 
 enum class KeyboardScrollAction : uint8_t {
     StartAnimation,
@@ -158,26 +170,29 @@ enum class ScrollUpdateType : uint8_t {
     AnimatedScrollDidEnd,
     WheelEventScrollWillStart,
     WheelEventScrollDidEnd,
-    ProgrammaticScrollDidEnd,
+};
+
+enum class ShouldFireScrollEnd : bool { No, Yes };
+
+struct ScrollUpdateData {
+    ScrollUpdateType updateType { ScrollUpdateType::PositionUpdate };
+    ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
+    std::optional<FloatPoint> layoutViewportOrigin { };
+};
+
+struct ScrollRequestResponseData {
+    ScrollRequestType requestType { ScrollRequestType::PositionUpdate };
+    Markable<ScrollRequestIdentifier> responseIdentifier { };
 };
 
 struct ScrollUpdate {
     ScrollingNodeID nodeID;
     FloatPoint scrollPosition;
-    std::optional<FloatPoint> layoutViewportOrigin;
-    ScrollUpdateType updateType { ScrollUpdateType::PositionUpdate };
-    ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
-    
-    bool canMerge(const ScrollUpdate& other) const
-    {
-        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction && updateType == other.updateType && updateType == ScrollUpdateType::PositionUpdate;
-    }
-    
-    void merge(ScrollUpdate&& other)
-    {
-        scrollPosition = other.scrollPosition;
-        layoutViewportOrigin = other.layoutViewportOrigin;
-    }
+    ShouldFireScrollEnd shouldFireScrollEnd { ShouldFireScrollEnd::No };
+    Variant<ScrollUpdateData, ScrollRequestResponseData> data;
+
+    bool canMerge(const ScrollUpdate&) const;
+    void merge(ScrollUpdate&&);
 };
 
 enum class WheelEventProcessingSteps : uint8_t {

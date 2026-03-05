@@ -44,6 +44,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSVideoFrameRequestCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(double, const VideoFrameMetadata&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(double, const VideoFrameMetadata&) = 0;
 

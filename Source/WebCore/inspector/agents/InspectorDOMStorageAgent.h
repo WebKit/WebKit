@@ -50,7 +50,7 @@ class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspect
     WTF_MAKE_NONCOPYABLE(InspectorDOMStorageAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorDOMStorageAgent);
 public:
-    InspectorDOMStorageAgent(PageAgentContext&);
+    explicit InspectorDOMStorageAgent(PageAgentContext&);
     ~InspectorDOMStorageAgent();
 
     // InspectorAgentBase

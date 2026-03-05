@@ -65,7 +65,7 @@ private:
     void sendMessage(WebCore::CDMMessageType, RefPtr<WebCore::SharedBuffer>&&);
     void sessionIdChanged(const String&);
 
-    void setClient(WeakPtr<WebCore::CDMInstanceSessionClient>&& client) final { m_client = WTFMove(client); }
+    void setClient(WeakPtr<WebCore::CDMInstanceSessionClient>&& client) final { m_client = WTF::move(client); }
     void clearClient() final { m_client = nullptr; }
     void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<WebCore::SharedBuffer>&& initData, LicenseCallback&&) final;
     void updateLicense(const String& sessionId, LicenseType, Ref<WebCore::SharedBuffer>&& response, LicenseUpdateCallback&&) final;
@@ -73,8 +73,6 @@ private:
     void closeSession(const String& sessionId, CloseSessionCallback&&) final;
     void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&) final;
     void storeRecordOfKeyUsage(const String& sessionId) final;
-
-    RefPtr<RemoteCDMFactory> protectedFactory() const;
 
     WeakPtr<RemoteCDMFactory> m_factory;
     RemoteCDMInstanceSessionIdentifier m_identifier;

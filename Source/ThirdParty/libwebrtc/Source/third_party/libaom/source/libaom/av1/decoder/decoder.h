@@ -229,6 +229,28 @@ typedef struct AV1DecTileMTData {
   int alloc_tile_cols;
 } AV1DecTileMT;
 
+#if CONFIG_COLLECT_COMPONENT_TIMING
+#include "aom_ports/aom_timer.h"
+// Adjust the following to add new components.
+enum {
+  av1_decode_tg_tiles_and_wrapup_time,
+  aom_decode_frame_from_obus_time,
+  kTimingComponents,
+} UENUM1BYTE(TIMING_COMPONENT);
+
+static inline char const *get_component_name(int index) {
+  switch (index) {
+    case av1_decode_tg_tiles_and_wrapup_time:
+      return "av1_decode_tg_tiles_and_wrapup_time";
+    case aom_decode_frame_from_obus_time:
+      return "aom_decode_frame_from_obus_time";
+
+    default: assert(0);
+  }
+  return "error";
+}
+#endif
+
 typedef struct AV1Decoder {
   DecoderCodingBlock dcb;
 
@@ -369,6 +391,18 @@ typedef struct AV1Decoder {
    * Number of spatial layers: may be > 1 for SVC (scalable vector coding).
    */
   unsigned int number_spatial_layers;
+
+#if CONFIG_COLLECT_COMPONENT_TIMING
+  /*!
+   * component_time[] are initialized to zero while decoder starts.
+   */
+  uint64_t component_time[kTimingComponents];
+  struct aom_usec_timer component_timer[kTimingComponents];
+  /*!
+   * frame_component_time[] are initialized to zero at beginning of each frame.
+   */
+  uint64_t frame_component_time[kTimingComponents];
+#endif
 } AV1Decoder;
 
 // Returns 0 on success. Sets pbi->common.error.error_code to a nonzero error
@@ -444,6 +478,28 @@ typedef void (*block_visitor_fn_t)(AV1Decoder *const pbi, ThreadData *const td,
                                    PARTITION_TYPE partition, BLOCK_SIZE bsize);
 
 /*!\endcond */
+
+#if CONFIG_COLLECT_COMPONENT_TIMING
+static inline void start_timing(AV1Decoder *pbi, int component) {
+  aom_usec_timer_start(&pbi->component_timer[component]);
+}
+static inline void end_timing(AV1Decoder *pbi, int component) {
+  aom_usec_timer_mark(&pbi->component_timer[component]);
+  pbi->frame_component_time[component] +=
+      aom_usec_timer_elapsed(&pbi->component_timer[component]);
+}
+
+static inline char const *get_frame_type_enum(int type) {
+  switch (type) {
+    case 0: return "KEY_FRAME";
+    case 1: return "INTER_FRAME";
+    case 2: return "INTRA_ONLY_FRAME";
+    case 3: return "S_FRAME";
+    default: assert(0);
+  }
+  return "error";
+}
+#endif
 
 #ifdef __cplusplus
 }  // extern "C"

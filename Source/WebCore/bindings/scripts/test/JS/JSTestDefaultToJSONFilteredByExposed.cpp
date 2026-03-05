@@ -154,7 +154,7 @@ void JSTestDefaultToJSONFilteredByExposedPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestDefaultToJSONFilteredByExposed::s_info = { "TestDefaultToJSONFilteredByExposed"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposed) };
 
 JSTestDefaultToJSONFilteredByExposed::JSTestDefaultToJSONFilteredByExposed(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl)
-    : JSDOMWrapper<TestDefaultToJSONFilteredByExposed>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestDefaultToJSONFilteredByExposed>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -291,7 +291,7 @@ void JSTestDefaultToJSONFilteredByExposedOwner::finalize(JSC::Handle<JSC::Unknow
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSONFilteredByExposed = static_cast<JSTestDefaultToJSONFilteredByExposed*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestDefaultToJSONFilteredByExposed->protectedWrapped().ptr(), jsTestDefaultToJSONFilteredByExposed);
+    uncacheWrapper(world, protect(jsTestDefaultToJSONFilteredByExposed->wrapped()).ptr(), jsTestDefaultToJSONFilteredByExposed);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -329,7 +329,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestDefaultToJSONFilteredByExposed>(impl.ptr());
 #endif
-    return createWrapper<TestDefaultToJSONFilteredByExposed>(globalObject, WTFMove(impl));
+    return createWrapper<TestDefaultToJSONFilteredByExposed>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONFilteredByExposed& impl)

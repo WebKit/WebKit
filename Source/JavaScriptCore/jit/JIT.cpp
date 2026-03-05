@@ -282,7 +282,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_call_direct_eval)
         DEFINE_OP(op_call_varargs)
         DEFINE_OP(op_tail_call_varargs)
-        DEFINE_OP(op_tail_call_forward_arguments)
         DEFINE_OP(op_construct_varargs)
         DEFINE_OP(op_super_construct_varargs)
         DEFINE_OP(op_catch)
@@ -292,14 +291,12 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_to_this)
         DEFINE_OP(op_get_argument)
         DEFINE_OP(op_argument_count)
-        DEFINE_OP(op_get_rest_length)
         DEFINE_OP(op_check_tdz)
         DEFINE_OP(op_identity_with_profile)
         DEFINE_OP(op_debug)
         DEFINE_OP(op_del_by_id)
         DEFINE_OP(op_del_by_val)
         DEFINE_OP(op_div)
-        DEFINE_OP(op_end)
         DEFINE_OP(op_enter)
         DEFINE_OP(op_get_scope)
         DEFINE_OP(op_eq)
@@ -327,7 +324,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_set_private_brand)
         DEFINE_OP(op_check_private_brand)
         DEFINE_OP(op_get_prototype_of)
-        DEFINE_OP(op_overrides_has_instance)
         DEFINE_OP(op_instanceof)
         DEFINE_OP(op_is_empty)
         DEFINE_OP(op_typeof_is_undefined)
@@ -451,7 +447,7 @@ void JIT::privateCompileMainPass()
         }
 
         if (sizeMarker) [[unlikely]]
-            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_plan);
+            m_vm->jitSizeStatistics->markEnd(WTF::move(*sizeMarker), *this, m_plan);
 
         if (JITInternal::verbose)
             dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
@@ -614,15 +610,15 @@ void JIT::privateCompileSlowCases()
         if (JITInternal::verbose)
             dataLog("At ", firstTo, " slow: ", iter - m_slowCases.begin(), "\n");
 
-        RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen.");
-        RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen.");
+        RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen while handling %s.", toCString(currentInstruction->opcodeID()).data());
+        RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen while handling %s.", toCString(currentInstruction->opcodeID()).data());
 
         jump().linkTo(fastPathResumePoint(), this);
         ++bytecodeCountHavingSlowCase;
 
         if (sizeMarker) [[unlikely]] {
             m_bytecodeIndex = BytecodeIndex(m_bytecodeIndex.offset() + currentInstruction->size());
-            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_plan);
+            m_vm->jitSizeStatistics->markEnd(WTF::move(*sizeMarker), *this, m_plan);
         }
     }
 
@@ -809,7 +805,7 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
     RELEASE_ASSERT(!JITCode::isJIT(m_profiledCodeBlock->jitType()));
 
     if (sizeMarker) [[unlikely]]
-        m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_plan);
+        m_vm->jitSizeStatistics->markEnd(WTF::move(*sizeMarker), *this, m_plan);
 
     privateCompileMainPass();
     privateCompileLinkPass();
@@ -972,7 +968,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
 
     std::unique_ptr<PCToCodeOriginMap> pcToCodeOriginMap;
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer);
+        pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTF::move(m_pcToCodeOriginMapBuilder), patchBuffer);
     
     // FIXME: Make a version of CodeBlockWithJITType that knows about UnlinkedCodeBlock.
     CodeRef<JSEntryPtrTag> result = FINALIZE_BASELINE_CODE(
@@ -994,13 +990,13 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     jitCode->m_unlinkedStubInfos = FixedVector<BaselineUnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
     if (jitCode->m_unlinkedStubInfos.size())
         std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), jitCode->m_unlinkedStubInfos.begin());
-    jitCode->m_switchJumpTables = WTFMove(m_switchJumpTables);
-    jitCode->m_stringSwitchJumpTables = WTFMove(m_stringSwitchJumpTables);
+    jitCode->m_switchJumpTables = WTF::move(m_switchJumpTables);
+    jitCode->m_stringSwitchJumpTables = WTF::move(m_stringSwitchJumpTables);
     jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();
     jitCode->adoptMathICs(m_mathICs);
-    jitCode->m_constantPool = WTFMove(m_constantPool);
+    jitCode->m_constantPool = WTF::move(m_constantPool);
     jitCode->m_isShareable = m_isShareable;
-    jitCode->m_pcToCodeOriginMap = WTFMove(pcToCodeOriginMap);
+    jitCode->m_pcToCodeOriginMap = WTF::move(pcToCodeOriginMap);
 
     if (JITInternal::verbose)
         dataLogF("JIT generated code for %p at [%p, %p).\n", m_unlinkedCodeBlock, result.executableMemory()->start().untaggedPtr(), result.executableMemory()->end().untaggedPtr());

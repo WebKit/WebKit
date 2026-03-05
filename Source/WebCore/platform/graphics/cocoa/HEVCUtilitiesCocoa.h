@@ -26,16 +26,17 @@
 #pragma once
 
 #include <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
 
 #include <WebCore/HEVCUtilities.h>
 
 namespace WebCore {
 
-struct MediaCapabilitiesInfo;
+struct PlatformMediaCapabilitiesInfo;
 
-WEBCORE_EXPORT std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters&, bool hasAlphaChannel, bool hdrSupport);
-std::optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters&, bool hasAlphaChannel, bool hdrSupport);
+WEBCORE_EXPORT std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters&, bool hasAlphaChannel, bool hdrSupport);
+std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViParameters&, bool hasAlphaChannel, bool hdrSupport);
 
 }
 

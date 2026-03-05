@@ -187,8 +187,8 @@ DOMEvent *kit(WebCore::Event* value)
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
-    if (DOMEvent *wrapper = getDOMWrapper(value))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(value))
+        return wrapper.autorelease();
     RetainPtr<DOMEvent> wrapper = adoptNS([[kitClass(value) alloc] _init]);
     if (!wrapper)
         return nil;

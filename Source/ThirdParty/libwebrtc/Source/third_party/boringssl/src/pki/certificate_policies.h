@@ -95,7 +95,7 @@ OPENSSL_EXPORT bool ParseCertificatePoliciesExtension(
 //
 // If a policy qualifier other than User Notice/CPS is present, parsing
 // will fail if |fail_parsing_unknown_qualifier_oids| was set to true,
-// otherwise the unrecognized qualifiers wil be skipped and not parsed
+// otherwise the unrecognized qualifiers will be skipped and not parsed
 // any further.
 //
 // Returns true on success. On failure returns false and may add errors to

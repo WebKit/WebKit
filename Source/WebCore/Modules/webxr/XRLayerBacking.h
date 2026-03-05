@@ -38,7 +38,7 @@ struct RateMapDescription;
 namespace WebCore {
 
 class XRLayerBacking : public RefCountedAndCanMakeWeakPtr<XRLayerBacking> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRLayerBacking);
+    WTF_MAKE_TZONE_ALLOCATED(XRLayerBacking);
 public:
     virtual uint32_t textureWidth() const = 0;
     virtual uint32_t textureHeight() const = 0;

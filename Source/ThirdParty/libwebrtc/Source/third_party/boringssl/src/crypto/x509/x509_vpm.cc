@@ -34,7 +34,7 @@ static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
                                     const char *name, size_t namelen) {
   char *copy;
 
-  if (name == NULL || namelen == 0) {
+  if (name == nullptr || namelen == 0) {
     // Unlike OpenSSL, we reject trying to set or add an empty name.
     return 0;
   }
@@ -47,16 +47,16 @@ static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
 
   if (mode == SET_HOST && param->hosts) {
     sk_OPENSSL_STRING_pop_free(param->hosts, str_free);
-    param->hosts = NULL;
+    param->hosts = nullptr;
   }
 
   copy = OPENSSL_strndup(name, namelen);
-  if (copy == NULL) {
+  if (copy == nullptr) {
     return 0;
   }
 
-  if (param->hosts == NULL &&
-      (param->hosts = sk_OPENSSL_STRING_new_null()) == NULL) {
+  if (param->hosts == nullptr &&
+      (param->hosts = sk_OPENSSL_STRING_new_null()) == nullptr) {
     OPENSSL_free(copy);
     return 0;
   }
@@ -65,7 +65,7 @@ static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
     OPENSSL_free(copy);
     if (sk_OPENSSL_STRING_num(param->hosts) == 0) {
       sk_OPENSSL_STRING_free(param->hosts);
-      param->hosts = NULL;
+      param->hosts = nullptr;
     }
     return 0;
   }
@@ -77,14 +77,14 @@ X509_VERIFY_PARAM *X509_VERIFY_PARAM_new(void) {
   X509_VERIFY_PARAM *param = reinterpret_cast<X509_VERIFY_PARAM *>(
       OPENSSL_zalloc(sizeof(X509_VERIFY_PARAM)));
   if (!param) {
-    return NULL;
+    return nullptr;
   }
   param->depth = -1;
   return param;
 }
 
 void X509_VERIFY_PARAM_free(X509_VERIFY_PARAM *param) {
-  if (param == NULL) {
+  if (param == nullptr) {
     return;
   }
   sk_ASN1_OBJECT_pop_free(param->policies, ASN1_OBJECT_free);
@@ -117,7 +117,7 @@ static void copy_int_param(int *dest, const int *src, int default_val,
 static int x509_verify_param_copy(X509_VERIFY_PARAM *dest,
                                   const X509_VERIFY_PARAM *src,
                                   int prefer_src) {
-  if (src == NULL) {
+  if (src == nullptr) {
     return 1;
   }
 
@@ -135,19 +135,20 @@ static int x509_verify_param_copy(X509_VERIFY_PARAM *dest,
 
   dest->flags |= src->flags;
 
-  if (should_copy(dest->policies != NULL, src->policies != NULL, prefer_src)) {
+  if (should_copy(dest->policies != nullptr, src->policies != nullptr,
+                  prefer_src)) {
     if (!X509_VERIFY_PARAM_set1_policies(dest, src->policies)) {
       return 0;
     }
   }
 
-  if (should_copy(dest->hosts != NULL, src->hosts != NULL, prefer_src)) {
+  if (should_copy(dest->hosts != nullptr, src->hosts != nullptr, prefer_src)) {
     sk_OPENSSL_STRING_pop_free(dest->hosts, str_free);
-    dest->hosts = NULL;
+    dest->hosts = nullptr;
     if (src->hosts) {
       dest->hosts =
           sk_OPENSSL_STRING_deep_copy(src->hosts, OPENSSL_strdup, str_free);
-      if (dest->hosts == NULL) {
+      if (dest->hosts == nullptr) {
         return 0;
       }
       // Copy the host flags if and only if we're copying the host list. Note
@@ -158,13 +159,13 @@ static int x509_verify_param_copy(X509_VERIFY_PARAM *dest,
     }
   }
 
-  if (should_copy(dest->email != NULL, src->email != NULL, prefer_src)) {
+  if (should_copy(dest->email != nullptr, src->email != nullptr, prefer_src)) {
     if (!X509_VERIFY_PARAM_set1_email(dest, src->email, src->emaillen)) {
       return 0;
     }
   }
 
-  if (should_copy(dest->ip != NULL, src->ip != NULL, prefer_src)) {
+  if (should_copy(dest->ip != nullptr, src->ip != nullptr, prefer_src)) {
     if (!X509_VERIFY_PARAM_set1_ip(dest, src->ip, src->iplen)) {
       return 0;
     }
@@ -191,7 +192,7 @@ int X509_VERIFY_PARAM_set1(X509_VERIFY_PARAM *to,
 static int int_x509_param_set1(char **pdest, size_t *pdestlen, const char *src,
                                size_t srclen) {
   void *tmp;
-  if (src == NULL || srclen == 0) {
+  if (src == nullptr || srclen == 0) {
     // Unlike OpenSSL, we do not allow an empty string to disable previously
     // configured checks.
     return 0;
@@ -228,7 +229,7 @@ unsigned long X509_VERIFY_PARAM_get_flags(const X509_VERIFY_PARAM *param) {
 }
 
 int X509_VERIFY_PARAM_set_purpose(X509_VERIFY_PARAM *param, int purpose) {
-  if (X509_PURPOSE_get0(purpose) == NULL) {
+  if (X509_PURPOSE_get0(purpose) == nullptr) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_PURPOSE);
     return 0;
   }
@@ -281,7 +282,7 @@ int X509_VERIFY_PARAM_set1_policies(X509_VERIFY_PARAM *param,
 
   sk_ASN1_OBJECT_pop_free(param->policies, ASN1_OBJECT_free);
   if (!policies) {
-    param->policies = NULL;
+    param->policies = nullptr;
     return 1;
   }
 
@@ -319,7 +320,7 @@ void X509_VERIFY_PARAM_set_hostflags(X509_VERIFY_PARAM *param,
 
 int X509_VERIFY_PARAM_set1_email(X509_VERIFY_PARAM *param, const char *email,
                                  size_t emaillen) {
-  if (OPENSSL_memchr(email, '\0', emaillen) != NULL ||
+  if (OPENSSL_memchr(email, '\0', emaillen) != nullptr ||
       !int_x509_param_set1(&param->email, &param->emaillen, email, emaillen)) {
     param->poison = 1;
     return 0;
@@ -436,5 +437,5 @@ const X509_VERIFY_PARAM *X509_VERIFY_PARAM_lookup(const char *name) {
   if (strcmp(name, "ssl_server") == 0) {
     return &kSSLServerParam;
   }
-  return NULL;
+  return nullptr;
 }

@@ -39,7 +39,7 @@ using namespace WebCore;
 void RemoteGraphicsContextGL::activeTexture(uint32_t texture)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->activeTexture(texture);
+    protect(m_context)->activeTexture(texture);
 }
 
 void RemoteGraphicsContextGL::attachShader(uint32_t program, uint32_t shader)
@@ -51,7 +51,7 @@ void RemoteGraphicsContextGL::attachShader(uint32_t program, uint32_t shader)
     MESSAGE_CHECK(m_objectNames.isValidKey(shader));
     if (shader)
         shader = m_objectNames.get(shader);
-    protectedContext()->attachShader(program, shader);
+    protect(m_context)->attachShader(program, shader);
 }
 
 void RemoteGraphicsContextGL::bindAttribLocation(uint32_t arg0, uint32_t index, CString&& name)
@@ -60,7 +60,7 @@ void RemoteGraphicsContextGL::bindAttribLocation(uint32_t arg0, uint32_t index, 
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->bindAttribLocation(arg0, index, name);
+    protect(m_context)->bindAttribLocation(arg0, index, name);
 }
 
 void RemoteGraphicsContextGL::bindBuffer(uint32_t target, uint32_t arg1)
@@ -69,7 +69,7 @@ void RemoteGraphicsContextGL::bindBuffer(uint32_t target, uint32_t arg1)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
-    protectedContext()->bindBuffer(target, arg1);
+    protect(m_context)->bindBuffer(target, arg1);
 }
 
 void RemoteGraphicsContextGL::bindFramebuffer(uint32_t target, uint32_t arg1)
@@ -78,7 +78,7 @@ void RemoteGraphicsContextGL::bindFramebuffer(uint32_t target, uint32_t arg1)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
-    protectedContext()->bindFramebuffer(target, arg1);
+    protect(m_context)->bindFramebuffer(target, arg1);
 }
 
 void RemoteGraphicsContextGL::bindRenderbuffer(uint32_t target, uint32_t arg1)
@@ -87,7 +87,7 @@ void RemoteGraphicsContextGL::bindRenderbuffer(uint32_t target, uint32_t arg1)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
-    protectedContext()->bindRenderbuffer(target, arg1);
+    protect(m_context)->bindRenderbuffer(target, arg1);
 }
 
 void RemoteGraphicsContextGL::bindTexture(uint32_t target, uint32_t arg1)
@@ -96,75 +96,75 @@ void RemoteGraphicsContextGL::bindTexture(uint32_t target, uint32_t arg1)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
-    protectedContext()->bindTexture(target, arg1);
+    protect(m_context)->bindTexture(target, arg1);
 }
 
 void RemoteGraphicsContextGL::blendColor(float red, float green, float blue, float alpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendColor(red, green, blue, alpha);
+    protect(m_context)->blendColor(red, green, blue, alpha);
 }
 
 void RemoteGraphicsContextGL::blendEquation(uint32_t mode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendEquation(mode);
+    protect(m_context)->blendEquation(mode);
 }
 
 void RemoteGraphicsContextGL::blendEquationSeparate(uint32_t modeRGB, uint32_t modeAlpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendEquationSeparate(modeRGB, modeAlpha);
+    protect(m_context)->blendEquationSeparate(modeRGB, modeAlpha);
 }
 
 void RemoteGraphicsContextGL::blendFunc(uint32_t sfactor, uint32_t dfactor)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendFunc(sfactor, dfactor);
+    protect(m_context)->blendFunc(sfactor, dfactor);
 }
 
 void RemoteGraphicsContextGL::blendFuncSeparate(uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+    protect(m_context)->blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
 void RemoteGraphicsContextGL::checkFramebufferStatus(uint32_t target, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     GCGLenum returnValue = { };
-    returnValue = protectedContext()->checkFramebufferStatus(target);
+    returnValue = protect(m_context)->checkFramebufferStatus(target);
     completionHandler(returnValue);
 }
 
 void RemoteGraphicsContextGL::clear(uint32_t mask)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clear(mask);
+    protect(m_context)->clear(mask);
 }
 
 void RemoteGraphicsContextGL::clearColor(float red, float green, float blue, float alpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clearColor(red, green, blue, alpha);
+    protect(m_context)->clearColor(red, green, blue, alpha);
 }
 
 void RemoteGraphicsContextGL::clearDepth(float depth)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clearDepth(depth);
+    protect(m_context)->clearDepth(depth);
 }
 
 void RemoteGraphicsContextGL::clearStencil(int32_t s)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clearStencil(s);
+    protect(m_context)->clearStencil(s);
 }
 
 void RemoteGraphicsContextGL::colorMask(bool red, bool green, bool blue, bool alpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->colorMask(static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
+    protect(m_context)->colorMask(static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
 }
 
 void RemoteGraphicsContextGL::compileShader(uint32_t arg0)
@@ -173,26 +173,26 @@ void RemoteGraphicsContextGL::compileShader(uint32_t arg0)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->compileShader(arg0);
+    protect(m_context)->compileShader(arg0);
 }
 
 void RemoteGraphicsContextGL::copyTexImage2D(uint32_t target, int32_t level, uint32_t internalformat, int32_t x, int32_t y, int32_t width, int32_t height, int32_t border)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    protect(m_context)->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
 }
 
 void RemoteGraphicsContextGL::copyTexSubImage2D(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t x, int32_t y, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    protect(m_context)->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 }
 
 void RemoteGraphicsContextGL::createBuffer(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createBuffer();
+    auto result = protect(m_context)->createBuffer();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -201,7 +201,7 @@ void RemoteGraphicsContextGL::createFramebuffer(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createFramebuffer();
+    auto result = protect(m_context)->createFramebuffer();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -210,7 +210,7 @@ void RemoteGraphicsContextGL::createProgram(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createProgram();
+    auto result = protect(m_context)->createProgram();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -219,7 +219,7 @@ void RemoteGraphicsContextGL::createRenderbuffer(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createRenderbuffer();
+    auto result = protect(m_context)->createRenderbuffer();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -228,7 +228,7 @@ void RemoteGraphicsContextGL::createShader(uint32_t name, uint32_t arg0)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createShader(arg0);
+    auto result = protect(m_context)->createShader(arg0);
     if (result)
         m_objectNames.add(name, result);
 }
@@ -237,7 +237,7 @@ void RemoteGraphicsContextGL::createTexture(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createTexture();
+    auto result = protect(m_context)->createTexture();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -245,7 +245,7 @@ void RemoteGraphicsContextGL::createTexture(uint32_t name)
 void RemoteGraphicsContextGL::cullFace(uint32_t mode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->cullFace(mode);
+    protect(m_context)->cullFace(mode);
 }
 
 void RemoteGraphicsContextGL::deleteBuffer(uint32_t arg0)
@@ -255,7 +255,7 @@ void RemoteGraphicsContextGL::deleteBuffer(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteBuffer(arg0);
+    protect(m_context)->deleteBuffer(arg0);
 }
 
 void RemoteGraphicsContextGL::deleteFramebuffer(uint32_t arg0)
@@ -265,7 +265,7 @@ void RemoteGraphicsContextGL::deleteFramebuffer(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteFramebuffer(arg0);
+    protect(m_context)->deleteFramebuffer(arg0);
 }
 
 void RemoteGraphicsContextGL::deleteProgram(uint32_t arg0)
@@ -275,7 +275,7 @@ void RemoteGraphicsContextGL::deleteProgram(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteProgram(arg0);
+    protect(m_context)->deleteProgram(arg0);
 }
 
 void RemoteGraphicsContextGL::deleteRenderbuffer(uint32_t arg0)
@@ -285,7 +285,7 @@ void RemoteGraphicsContextGL::deleteRenderbuffer(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteRenderbuffer(arg0);
+    protect(m_context)->deleteRenderbuffer(arg0);
 }
 
 void RemoteGraphicsContextGL::deleteShader(uint32_t arg0)
@@ -295,7 +295,7 @@ void RemoteGraphicsContextGL::deleteShader(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteShader(arg0);
+    protect(m_context)->deleteShader(arg0);
 }
 
 void RemoteGraphicsContextGL::deleteTexture(uint32_t arg0)
@@ -305,25 +305,25 @@ void RemoteGraphicsContextGL::deleteTexture(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteTexture(arg0);
+    protect(m_context)->deleteTexture(arg0);
 }
 
 void RemoteGraphicsContextGL::depthFunc(uint32_t func)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->depthFunc(func);
+    protect(m_context)->depthFunc(func);
 }
 
 void RemoteGraphicsContextGL::depthMask(bool flag)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->depthMask(static_cast<GCGLboolean>(flag));
+    protect(m_context)->depthMask(static_cast<GCGLboolean>(flag));
 }
 
 void RemoteGraphicsContextGL::depthRange(float zNear, float zFar)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->depthRange(zNear, zFar);
+    protect(m_context)->depthRange(zNear, zFar);
 }
 
 void RemoteGraphicsContextGL::detachShader(uint32_t arg0, uint32_t arg1)
@@ -335,55 +335,55 @@ void RemoteGraphicsContextGL::detachShader(uint32_t arg0, uint32_t arg1)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
-    protectedContext()->detachShader(arg0, arg1);
+    protect(m_context)->detachShader(arg0, arg1);
 }
 
 void RemoteGraphicsContextGL::disable(uint32_t cap)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->disable(cap);
+    protect(m_context)->disable(cap);
 }
 
 void RemoteGraphicsContextGL::disableVertexAttribArray(uint32_t index)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->disableVertexAttribArray(index);
+    protect(m_context)->disableVertexAttribArray(index);
 }
 
 void RemoteGraphicsContextGL::drawArrays(uint32_t mode, int32_t first, int32_t count)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->drawArrays(mode, first, count);
+    protect(m_context)->drawArrays(mode, first, count);
 }
 
 void RemoteGraphicsContextGL::drawElements(uint32_t mode, int32_t count, uint32_t type, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->drawElements(mode, count, type, static_cast<GCGLintptr>(offset));
+    protect(m_context)->drawElements(mode, count, type, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::enable(uint32_t cap)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->enable(cap);
+    protect(m_context)->enable(cap);
 }
 
 void RemoteGraphicsContextGL::enableVertexAttribArray(uint32_t index)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->enableVertexAttribArray(index);
+    protect(m_context)->enableVertexAttribArray(index);
 }
 
 void RemoteGraphicsContextGL::finish()
 {
     assertIsCurrent(workQueue());
-    protectedContext()->finish();
+    protect(m_context)->finish();
 }
 
 void RemoteGraphicsContextGL::flush()
 {
     assertIsCurrent(workQueue());
-    protectedContext()->flush();
+    protect(m_context)->flush();
 }
 
 void RemoteGraphicsContextGL::framebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
@@ -392,7 +392,7 @@ void RemoteGraphicsContextGL::framebufferRenderbuffer(uint32_t target, uint32_t 
     MESSAGE_CHECK(m_objectNames.isValidKey(arg3));
     if (arg3)
         arg3 = m_objectNames.get(arg3);
-    protectedContext()->framebufferRenderbuffer(target, attachment, renderbuffertarget, arg3);
+    protect(m_context)->framebufferRenderbuffer(target, attachment, renderbuffertarget, arg3);
 }
 
 void RemoteGraphicsContextGL::framebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
@@ -401,19 +401,19 @@ void RemoteGraphicsContextGL::framebufferTexture2D(uint32_t target, uint32_t att
     MESSAGE_CHECK(m_objectNames.isValidKey(arg3));
     if (arg3)
         arg3 = m_objectNames.get(arg3);
-    protectedContext()->framebufferTexture2D(target, attachment, textarget, arg3, level);
+    protect(m_context)->framebufferTexture2D(target, attachment, textarget, arg3, level);
 }
 
 void RemoteGraphicsContextGL::frontFace(uint32_t mode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->frontFace(mode);
+    protect(m_context)->frontFace(mode);
 }
 
 void RemoteGraphicsContextGL::generateMipmap(uint32_t target)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->generateMipmap(target);
+    protect(m_context)->generateMipmap(target);
 }
 
 void RemoteGraphicsContextGL::activeAttribs(uint32_t program, CompletionHandler<void(Vector<WebCore::GCGLAttribActiveInfo>&&)>&& completionHandler)
@@ -423,8 +423,8 @@ void RemoteGraphicsContextGL::activeAttribs(uint32_t program, CompletionHandler<
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->activeAttribs(program);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->activeAttribs(program);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::activeUniforms(uint32_t program, CompletionHandler<void(Vector<WebCore::GCGLUniformActiveInfo>&&)>&& completionHandler)
@@ -434,15 +434,15 @@ void RemoteGraphicsContextGL::activeUniforms(uint32_t program, CompletionHandler
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->activeUniforms(program);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->activeUniforms(program);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::getBufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    returnValue = protectedContext()->getBufferParameteri(target, pname);
+    returnValue = protect(m_context)->getBufferParameteri(target, pname);
     completionHandler(returnValue);
 }
 
@@ -450,8 +450,8 @@ void RemoteGraphicsContextGL::getString(uint32_t name, CompletionHandler<void(CS
 {
     assertIsCurrent(workQueue());
     CString returnValue = { };
-    returnValue = protectedContext()->getString(name);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->getString(name);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::getFloatv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
@@ -460,7 +460,7 @@ void RemoteGraphicsContextGL::getFloatv(uint32_t pname, uint64_t valueSize, Comp
     if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
         valueSize = 16;
     Vector<GCGLfloat, 16> value(valueSize, 0);
-    protectedContext()->getFloatv(pname, value);
+    protect(m_context)->getFloatv(pname, value);
     completionHandler(spanReinterpretCast<const float>(value.span()));
 }
 
@@ -470,7 +470,7 @@ void RemoteGraphicsContextGL::getIntegerv(uint32_t pname, uint64_t valueSize, Co
     if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
         valueSize = 4;
     Vector<GCGLint, 4> value(valueSize, 0);
-    protectedContext()->getIntegerv(pname, value);
+    protect(m_context)->getIntegerv(pname, value);
     completionHandler(spanReinterpretCast<const int32_t>(value.span()));
 }
 
@@ -478,7 +478,7 @@ void RemoteGraphicsContextGL::getIntegeri_v(uint32_t pname, uint32_t index, Comp
 {
     assertIsCurrent(workQueue());
     std::array<GCGLint, 4> value { };
-    protectedContext()->getIntegeri_v(pname, index, value);
+    protect(m_context)->getIntegeri_v(pname, index, value);
     completionHandler(spanReinterpretCast<const int32_t, 4>(std::span<const GCGLint, 4>(value)));
 }
 
@@ -486,7 +486,7 @@ void RemoteGraphicsContextGL::getInteger64(uint32_t pname, CompletionHandler<voi
 {
     assertIsCurrent(workQueue());
     GCGLint64 returnValue = { };
-    returnValue = protectedContext()->getInteger64(pname);
+    returnValue = protect(m_context)->getInteger64(pname);
     completionHandler(static_cast<int64_t>(returnValue));
 }
 
@@ -494,7 +494,7 @@ void RemoteGraphicsContextGL::getInteger64i(uint32_t pname, uint32_t index, Comp
 {
     assertIsCurrent(workQueue());
     GCGLint64 returnValue = { };
-    returnValue = protectedContext()->getInteger64i(pname, index);
+    returnValue = protect(m_context)->getInteger64i(pname, index);
     completionHandler(static_cast<int64_t>(returnValue));
 }
 
@@ -505,7 +505,7 @@ void RemoteGraphicsContextGL::getProgrami(uint32_t program, uint32_t pname, Comp
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->getProgrami(program, pname);
+    returnValue = protect(m_context)->getProgrami(program, pname);
     completionHandler(returnValue);
 }
 
@@ -515,7 +515,7 @@ void RemoteGraphicsContextGL::getBooleanv(uint32_t pname, uint64_t valueSize, Co
     if (!WTF::isValidCapacityForVector<GCGLboolean>(valueSize))
         valueSize = 4;
     Vector<GCGLboolean, 4> value(valueSize, 0);
-    protectedContext()->getBooleanv(pname, value);
+    protect(m_context)->getBooleanv(pname, value);
     completionHandler(spanReinterpretCast<const bool>(value.span()));
 }
 
@@ -523,7 +523,7 @@ void RemoteGraphicsContextGL::getFramebufferAttachmentParameteri(uint32_t target
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    returnValue = protectedContext()->getFramebufferAttachmentParameteri(target, attachment, pname);
+    returnValue = protect(m_context)->getFramebufferAttachmentParameteri(target, attachment, pname);
     completionHandler(returnValue);
 }
 
@@ -534,15 +534,15 @@ void RemoteGraphicsContextGL::getProgramInfoLog(uint32_t arg0, CompletionHandler
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->getProgramInfoLog(arg0);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->getProgramInfoLog(arg0);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::getRenderbufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    returnValue = protectedContext()->getRenderbufferParameteri(target, pname);
+    returnValue = protect(m_context)->getRenderbufferParameteri(target, pname);
     completionHandler(returnValue);
 }
 
@@ -553,7 +553,7 @@ void RemoteGraphicsContextGL::getShaderi(uint32_t arg0, uint32_t pname, Completi
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->getShaderi(arg0, pname);
+    returnValue = protect(m_context)->getShaderi(arg0, pname);
     completionHandler(returnValue);
 }
 
@@ -564,8 +564,8 @@ void RemoteGraphicsContextGL::getShaderInfoLog(uint32_t arg0, CompletionHandler<
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->getShaderInfoLog(arg0);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->getShaderInfoLog(arg0);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::getShaderPrecisionFormat(uint32_t shaderType, uint32_t precisionType, CompletionHandler<void(std::span<const int32_t, 2>, int32_t)>&& completionHandler)
@@ -573,7 +573,7 @@ void RemoteGraphicsContextGL::getShaderPrecisionFormat(uint32_t shaderType, uint
     assertIsCurrent(workQueue());
     std::array<GCGLint, 2> range { };
     GCGLint precision = { };
-    protectedContext()->getShaderPrecisionFormat(shaderType, precisionType, range, &precision);
+    protect(m_context)->getShaderPrecisionFormat(shaderType, precisionType, range, &precision);
     completionHandler(spanReinterpretCast<const int32_t, 2>(std::span<const GCGLint, 2>(range)), precision);
 }
 
@@ -581,7 +581,7 @@ void RemoteGraphicsContextGL::getTexParameterf(uint32_t target, uint32_t pname, 
 {
     assertIsCurrent(workQueue());
     GCGLfloat returnValue = { };
-    returnValue = protectedContext()->getTexParameterf(target, pname);
+    returnValue = protect(m_context)->getTexParameterf(target, pname);
     completionHandler(returnValue);
 }
 
@@ -589,7 +589,7 @@ void RemoteGraphicsContextGL::getTexParameteri(uint32_t target, uint32_t pname, 
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    returnValue = protectedContext()->getTexParameteri(target, pname);
+    returnValue = protect(m_context)->getTexParameteri(target, pname);
     completionHandler(returnValue);
 }
 
@@ -602,7 +602,7 @@ void RemoteGraphicsContextGL::getUniformfv(uint32_t program, int32_t location, u
     if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
         valueSize = 16;
     Vector<GCGLfloat, 16> value(valueSize, 0);
-    protectedContext()->getUniformfv(program, location, value);
+    protect(m_context)->getUniformfv(program, location, value);
     completionHandler(spanReinterpretCast<const float>(value.span()));
 }
 
@@ -615,7 +615,7 @@ void RemoteGraphicsContextGL::getUniformiv(uint32_t program, int32_t location, u
     if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
         valueSize = 4;
     Vector<GCGLint, 4> value(valueSize, 0);
-    protectedContext()->getUniformiv(program, location, value);
+    protect(m_context)->getUniformiv(program, location, value);
     completionHandler(spanReinterpretCast<const int32_t>(value.span()));
 }
 
@@ -628,7 +628,7 @@ void RemoteGraphicsContextGL::getUniformuiv(uint32_t program, int32_t location, 
     if (!WTF::isValidCapacityForVector<GCGLuint>(valueSize))
         valueSize = 4;
     Vector<GCGLuint, 4> value(valueSize, 0);
-    protectedContext()->getUniformuiv(program, location, value);
+    protect(m_context)->getUniformuiv(program, location, value);
     completionHandler(spanReinterpretCast<const uint32_t>(value.span()));
 }
 
@@ -636,14 +636,14 @@ void RemoteGraphicsContextGL::getVertexAttribOffset(uint32_t index, uint32_t pna
 {
     assertIsCurrent(workQueue());
     GCGLsizeiptr returnValue = { };
-    returnValue = protectedContext()->getVertexAttribOffset(index, pname);
+    returnValue = protect(m_context)->getVertexAttribOffset(index, pname);
     completionHandler(static_cast<uint64_t>(returnValue));
 }
 
 void RemoteGraphicsContextGL::hint(uint32_t target, uint32_t mode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->hint(target, mode);
+    protect(m_context)->hint(target, mode);
 }
 
 void RemoteGraphicsContextGL::isBuffer(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
@@ -653,7 +653,7 @@ void RemoteGraphicsContextGL::isBuffer(uint32_t arg0, CompletionHandler<void(boo
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->isBuffer(arg0);
+    returnValue = protect(m_context)->isBuffer(arg0);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -661,7 +661,7 @@ void RemoteGraphicsContextGL::isEnabled(uint32_t cap, CompletionHandler<void(boo
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    returnValue = protectedContext()->isEnabled(cap);
+    returnValue = protect(m_context)->isEnabled(cap);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -672,7 +672,7 @@ void RemoteGraphicsContextGL::isFramebuffer(uint32_t arg0, CompletionHandler<voi
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->isFramebuffer(arg0);
+    returnValue = protect(m_context)->isFramebuffer(arg0);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -683,7 +683,7 @@ void RemoteGraphicsContextGL::isProgram(uint32_t arg0, CompletionHandler<void(bo
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->isProgram(arg0);
+    returnValue = protect(m_context)->isProgram(arg0);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -694,7 +694,7 @@ void RemoteGraphicsContextGL::isRenderbuffer(uint32_t arg0, CompletionHandler<vo
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->isRenderbuffer(arg0);
+    returnValue = protect(m_context)->isRenderbuffer(arg0);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -705,7 +705,7 @@ void RemoteGraphicsContextGL::isShader(uint32_t arg0, CompletionHandler<void(boo
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->isShader(arg0);
+    returnValue = protect(m_context)->isShader(arg0);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -716,14 +716,14 @@ void RemoteGraphicsContextGL::isTexture(uint32_t arg0, CompletionHandler<void(bo
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->isTexture(arg0);
+    returnValue = protect(m_context)->isTexture(arg0);
     completionHandler(static_cast<bool>(returnValue));
 }
 
 void RemoteGraphicsContextGL::lineWidth(float arg0)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->lineWidth(arg0);
+    protect(m_context)->lineWidth(arg0);
 }
 
 void RemoteGraphicsContextGL::linkProgram(uint32_t arg0)
@@ -732,37 +732,37 @@ void RemoteGraphicsContextGL::linkProgram(uint32_t arg0)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->linkProgram(arg0);
+    protect(m_context)->linkProgram(arg0);
 }
 
 void RemoteGraphicsContextGL::pixelStorei(uint32_t pname, int32_t param)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->pixelStorei(pname, param);
+    protect(m_context)->pixelStorei(pname, param);
 }
 
 void RemoteGraphicsContextGL::polygonOffset(float factor, float units)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->polygonOffset(factor, units);
+    protect(m_context)->polygonOffset(factor, units);
 }
 
 void RemoteGraphicsContextGL::renderbufferStorage(uint32_t target, uint32_t internalformat, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->renderbufferStorage(target, internalformat, width, height);
+    protect(m_context)->renderbufferStorage(target, internalformat, width, height);
 }
 
 void RemoteGraphicsContextGL::sampleCoverage(float value, bool invert)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->sampleCoverage(value, static_cast<GCGLboolean>(invert));
+    protect(m_context)->sampleCoverage(value, static_cast<GCGLboolean>(invert));
 }
 
 void RemoteGraphicsContextGL::scissor(int32_t x, int32_t y, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->scissor(x, y, width, height);
+    protect(m_context)->scissor(x, y, width, height);
 }
 
 void RemoteGraphicsContextGL::shaderSource(uint32_t arg0, CString&& arg1)
@@ -771,169 +771,169 @@ void RemoteGraphicsContextGL::shaderSource(uint32_t arg0, CString&& arg1)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->shaderSource(arg0, arg1);
+    protect(m_context)->shaderSource(arg0, arg1);
 }
 
 void RemoteGraphicsContextGL::stencilFunc(uint32_t func, int32_t ref, uint32_t mask)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->stencilFunc(func, ref, mask);
+    protect(m_context)->stencilFunc(func, ref, mask);
 }
 
 void RemoteGraphicsContextGL::stencilFuncSeparate(uint32_t face, uint32_t func, int32_t ref, uint32_t mask)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->stencilFuncSeparate(face, func, ref, mask);
+    protect(m_context)->stencilFuncSeparate(face, func, ref, mask);
 }
 
 void RemoteGraphicsContextGL::stencilMask(uint32_t mask)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->stencilMask(mask);
+    protect(m_context)->stencilMask(mask);
 }
 
 void RemoteGraphicsContextGL::stencilMaskSeparate(uint32_t face, uint32_t mask)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->stencilMaskSeparate(face, mask);
+    protect(m_context)->stencilMaskSeparate(face, mask);
 }
 
 void RemoteGraphicsContextGL::stencilOp(uint32_t fail, uint32_t zfail, uint32_t zpass)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->stencilOp(fail, zfail, zpass);
+    protect(m_context)->stencilOp(fail, zfail, zpass);
 }
 
 void RemoteGraphicsContextGL::stencilOpSeparate(uint32_t face, uint32_t fail, uint32_t zfail, uint32_t zpass)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->stencilOpSeparate(face, fail, zfail, zpass);
+    protect(m_context)->stencilOpSeparate(face, fail, zfail, zpass);
 }
 
 void RemoteGraphicsContextGL::texParameterf(uint32_t target, uint32_t pname, float param)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texParameterf(target, pname, param);
+    protect(m_context)->texParameterf(target, pname, param);
 }
 
 void RemoteGraphicsContextGL::texParameteri(uint32_t target, uint32_t pname, int32_t param)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texParameteri(target, pname, param);
+    protect(m_context)->texParameteri(target, pname, param);
 }
 
 void RemoteGraphicsContextGL::uniform1f(int32_t location, float x)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform1f(location, x);
+    protect(m_context)->uniform1f(location, x);
 }
 
 void RemoteGraphicsContextGL::uniform1fv(int32_t location, std::span<const float>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform1fv(location, v);
+    protect(m_context)->uniform1fv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniform1i(int32_t location, int32_t x)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform1i(location, x);
+    protect(m_context)->uniform1i(location, x);
 }
 
 void RemoteGraphicsContextGL::uniform1iv(int32_t location, std::span<const int32_t>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform1iv(location, v);
+    protect(m_context)->uniform1iv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniform2f(int32_t location, float x, float y)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform2f(location, x, y);
+    protect(m_context)->uniform2f(location, x, y);
 }
 
 void RemoteGraphicsContextGL::uniform2fv(int32_t location, std::span<const float>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform2fv(location, v);
+    protect(m_context)->uniform2fv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniform2i(int32_t location, int32_t x, int32_t y)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform2i(location, x, y);
+    protect(m_context)->uniform2i(location, x, y);
 }
 
 void RemoteGraphicsContextGL::uniform2iv(int32_t location, std::span<const int32_t>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform2iv(location, v);
+    protect(m_context)->uniform2iv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniform3f(int32_t location, float x, float y, float z)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform3f(location, x, y, z);
+    protect(m_context)->uniform3f(location, x, y, z);
 }
 
 void RemoteGraphicsContextGL::uniform3fv(int32_t location, std::span<const float>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform3fv(location, v);
+    protect(m_context)->uniform3fv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniform3i(int32_t location, int32_t x, int32_t y, int32_t z)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform3i(location, x, y, z);
+    protect(m_context)->uniform3i(location, x, y, z);
 }
 
 void RemoteGraphicsContextGL::uniform3iv(int32_t location, std::span<const int32_t>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform3iv(location, v);
+    protect(m_context)->uniform3iv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniform4f(int32_t location, float x, float y, float z, float w)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform4f(location, x, y, z, w);
+    protect(m_context)->uniform4f(location, x, y, z, w);
 }
 
 void RemoteGraphicsContextGL::uniform4fv(int32_t location, std::span<const float>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform4fv(location, v);
+    protect(m_context)->uniform4fv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniform4i(int32_t location, int32_t x, int32_t y, int32_t z, int32_t w)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform4i(location, x, y, z, w);
+    protect(m_context)->uniform4i(location, x, y, z, w);
 }
 
 void RemoteGraphicsContextGL::uniform4iv(int32_t location, std::span<const int32_t>&& v)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform4iv(location, v);
+    protect(m_context)->uniform4iv(location, v);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix2fv(int32_t location, bool transpose, std::span<const float>&& value)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix2fv(location, static_cast<GCGLboolean>(transpose), value);
+    protect(m_context)->uniformMatrix2fv(location, static_cast<GCGLboolean>(transpose), value);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix3fv(int32_t location, bool transpose, std::span<const float>&& value)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix3fv(location, static_cast<GCGLboolean>(transpose), value);
+    protect(m_context)->uniformMatrix3fv(location, static_cast<GCGLboolean>(transpose), value);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix4fv(int32_t location, bool transpose, std::span<const float>&& value)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix4fv(location, static_cast<GCGLboolean>(transpose), value);
+    protect(m_context)->uniformMatrix4fv(location, static_cast<GCGLboolean>(transpose), value);
 }
 
 void RemoteGraphicsContextGL::useProgram(uint32_t arg0)
@@ -942,7 +942,7 @@ void RemoteGraphicsContextGL::useProgram(uint32_t arg0)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->useProgram(arg0);
+    protect(m_context)->useProgram(arg0);
 }
 
 void RemoteGraphicsContextGL::validateProgram(uint32_t arg0)
@@ -951,164 +951,164 @@ void RemoteGraphicsContextGL::validateProgram(uint32_t arg0)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->validateProgram(arg0);
+    protect(m_context)->validateProgram(arg0);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib1f(uint32_t index, float x)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib1f(index, x);
+    protect(m_context)->vertexAttrib1f(index, x);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib1fv(uint32_t index, std::span<const float, 1>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib1fv(index, values);
+    protect(m_context)->vertexAttrib1fv(index, values);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib2f(uint32_t index, float x, float y)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib2f(index, x, y);
+    protect(m_context)->vertexAttrib2f(index, x, y);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib2fv(uint32_t index, std::span<const float, 2>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib2fv(index, values);
+    protect(m_context)->vertexAttrib2fv(index, values);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib3f(uint32_t index, float x, float y, float z)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib3f(index, x, y, z);
+    protect(m_context)->vertexAttrib3f(index, x, y, z);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib3fv(uint32_t index, std::span<const float, 3>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib3fv(index, values);
+    protect(m_context)->vertexAttrib3fv(index, values);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib4f(uint32_t index, float x, float y, float z, float w)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib4f(index, x, y, z, w);
+    protect(m_context)->vertexAttrib4f(index, x, y, z, w);
 }
 
 void RemoteGraphicsContextGL::vertexAttrib4fv(uint32_t index, std::span<const float, 4>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttrib4fv(index, values);
+    protect(m_context)->vertexAttrib4fv(index, values);
 }
 
 void RemoteGraphicsContextGL::vertexAttribPointer(uint32_t index, int32_t size, uint32_t type, bool normalized, int32_t stride, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttribPointer(index, size, type, static_cast<GCGLboolean>(normalized), stride, static_cast<GCGLintptr>(offset));
+    protect(m_context)->vertexAttribPointer(index, size, type, static_cast<GCGLboolean>(normalized), stride, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::viewport(int32_t x, int32_t y, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->viewport(x, y, width, height);
+    protect(m_context)->viewport(x, y, width, height);
 }
 
 void RemoteGraphicsContextGL::bufferData0(uint32_t target, uint64_t arg1, uint32_t usage)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->bufferData(target, static_cast<GCGLsizeiptr>(arg1), usage);
+    protect(m_context)->bufferData(target, static_cast<GCGLsizeiptr>(arg1), usage);
 }
 
 void RemoteGraphicsContextGL::bufferData1(uint32_t target, std::span<const uint8_t>&& data, uint32_t usage)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->bufferData(target, data, usage);
+    protect(m_context)->bufferData(target, data, usage);
 }
 
 void RemoteGraphicsContextGL::bufferSubData(uint32_t target, uint64_t offset, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->bufferSubData(target, static_cast<GCGLintptr>(offset), data);
+    protect(m_context)->bufferSubData(target, static_cast<GCGLintptr>(offset), data);
 }
 
 void RemoteGraphicsContextGL::readPixelsBufferObject(WebCore::IntRect&& arg0, uint32_t format, uint32_t type, uint64_t offset, int32_t alignment, int32_t rowLength)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset), alignment, rowLength);
+    protect(m_context)->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset), alignment, rowLength);
 }
 
 void RemoteGraphicsContextGL::texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+    protect(m_context)->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 }
 
 void RemoteGraphicsContextGL::texImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texImage2D(target, level, internalformat, width, height, border, format, type, static_cast<GCGLintptr>(offset));
+    protect(m_context)->texImage2D(target, level, internalformat, width, height, border, format, type, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::texSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+    protect(m_context)->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
 void RemoteGraphicsContextGL::texSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, static_cast<GCGLintptr>(offset));
+    protect(m_context)->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::compressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+    protect(m_context)->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, static_cast<GCGLintptr>(offset));
+    protect(m_context)->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::compressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+    protect(m_context)->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, static_cast<GCGLintptr>(offset));
+    protect(m_context)->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::drawArraysInstanced(uint32_t mode, int32_t first, int32_t count, int32_t primcount)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->drawArraysInstanced(mode, first, count, primcount);
+    protect(m_context)->drawArraysInstanced(mode, first, count, primcount);
 }
 
 void RemoteGraphicsContextGL::drawElementsInstanced(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
+    protect(m_context)->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
 }
 
 void RemoteGraphicsContextGL::vertexAttribDivisor(uint32_t index, uint32_t divisor)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttribDivisor(index, divisor);
+    protect(m_context)->vertexAttribDivisor(index, divisor);
 }
 
 void RemoteGraphicsContextGL::createVertexArray(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createVertexArray();
+    auto result = protect(m_context)->createVertexArray();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -1120,7 +1120,7 @@ void RemoteGraphicsContextGL::deleteVertexArray(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteVertexArray(arg0);
+    protect(m_context)->deleteVertexArray(arg0);
 }
 
 void RemoteGraphicsContextGL::isVertexArray(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
@@ -1130,7 +1130,7 @@ void RemoteGraphicsContextGL::isVertexArray(uint32_t arg0, CompletionHandler<voi
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->isVertexArray(arg0);
+    returnValue = protect(m_context)->isVertexArray(arg0);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -1140,19 +1140,19 @@ void RemoteGraphicsContextGL::bindVertexArray(uint32_t arg0)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->bindVertexArray(arg0);
+    protect(m_context)->bindVertexArray(arg0);
 }
 
 void RemoteGraphicsContextGL::copyBufferSubData(uint32_t readTarget, uint32_t writeTarget, uint64_t readOffset, uint64_t writeOffset, uint64_t arg4)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->copyBufferSubData(readTarget, writeTarget, static_cast<GCGLintptr>(readOffset), static_cast<GCGLintptr>(writeOffset), static_cast<GCGLsizeiptr>(arg4));
+    protect(m_context)->copyBufferSubData(readTarget, writeTarget, static_cast<GCGLintptr>(readOffset), static_cast<GCGLintptr>(writeOffset), static_cast<GCGLsizeiptr>(arg4));
 }
 
 void RemoteGraphicsContextGL::blitFramebuffer(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    protect(m_context)->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void RemoteGraphicsContextGL::framebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer)
@@ -1161,85 +1161,85 @@ void RemoteGraphicsContextGL::framebufferTextureLayer(uint32_t target, uint32_t 
     MESSAGE_CHECK(m_objectNames.isValidKey(texture));
     if (texture)
         texture = m_objectNames.get(texture);
-    protectedContext()->framebufferTextureLayer(target, attachment, texture, level, layer);
+    protect(m_context)->framebufferTextureLayer(target, attachment, texture, level, layer);
 }
 
 void RemoteGraphicsContextGL::readBuffer(uint32_t src)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->readBuffer(src);
+    protect(m_context)->readBuffer(src);
 }
 
 void RemoteGraphicsContextGL::renderbufferStorageMultisample(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->renderbufferStorageMultisample(target, samples, internalformat, width, height);
+    protect(m_context)->renderbufferStorageMultisample(target, samples, internalformat, width, height);
 }
 
 void RemoteGraphicsContextGL::texStorage2D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texStorage2D(target, levels, internalformat, width, height);
+    protect(m_context)->texStorage2D(target, levels, internalformat, width, height);
 }
 
 void RemoteGraphicsContextGL::texStorage3D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height, int32_t depth)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texStorage3D(target, levels, internalformat, width, height, depth);
+    protect(m_context)->texStorage3D(target, levels, internalformat, width, height, depth);
 }
 
 void RemoteGraphicsContextGL::texImage3D0(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
+    protect(m_context)->texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
 }
 
 void RemoteGraphicsContextGL::texImage3D1(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texImage3D(target, level, internalformat, width, height, depth, border, format, type, static_cast<GCGLintptr>(offset));
+    protect(m_context)->texImage3D(target, level, internalformat, width, height, depth, border, format, type, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::texSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
+    protect(m_context)->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
 void RemoteGraphicsContextGL::texSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, static_cast<GCGLintptr>(offset));
+    protect(m_context)->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::copyTexSubImage3D(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t x, int32_t y, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
+    protect(m_context)->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
 void RemoteGraphicsContextGL::compressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
+    protect(m_context)->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexImage3D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, static_cast<GCGLintptr>(offset));
+    protect(m_context)->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::compressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
+    protect(m_context)->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, static_cast<GCGLintptr>(offset));
+    protect(m_context)->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::getFragDataLocation(uint32_t program, CString&& name, CompletionHandler<void(int32_t)>&& completionHandler)
@@ -1249,159 +1249,159 @@ void RemoteGraphicsContextGL::getFragDataLocation(uint32_t program, CString&& na
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->getFragDataLocation(program, name);
+    returnValue = protect(m_context)->getFragDataLocation(program, name);
     completionHandler(returnValue);
 }
 
 void RemoteGraphicsContextGL::uniform1ui(int32_t location, uint32_t v0)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform1ui(location, v0);
+    protect(m_context)->uniform1ui(location, v0);
 }
 
 void RemoteGraphicsContextGL::uniform2ui(int32_t location, uint32_t v0, uint32_t v1)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform2ui(location, v0, v1);
+    protect(m_context)->uniform2ui(location, v0, v1);
 }
 
 void RemoteGraphicsContextGL::uniform3ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform3ui(location, v0, v1, v2);
+    protect(m_context)->uniform3ui(location, v0, v1, v2);
 }
 
 void RemoteGraphicsContextGL::uniform4ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform4ui(location, v0, v1, v2, v3);
+    protect(m_context)->uniform4ui(location, v0, v1, v2, v3);
 }
 
 void RemoteGraphicsContextGL::uniform1uiv(int32_t location, std::span<const uint32_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform1uiv(location, data);
+    protect(m_context)->uniform1uiv(location, data);
 }
 
 void RemoteGraphicsContextGL::uniform2uiv(int32_t location, std::span<const uint32_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform2uiv(location, data);
+    protect(m_context)->uniform2uiv(location, data);
 }
 
 void RemoteGraphicsContextGL::uniform3uiv(int32_t location, std::span<const uint32_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform3uiv(location, data);
+    protect(m_context)->uniform3uiv(location, data);
 }
 
 void RemoteGraphicsContextGL::uniform4uiv(int32_t location, std::span<const uint32_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniform4uiv(location, data);
+    protect(m_context)->uniform4uiv(location, data);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix2x3fv(int32_t location, bool transpose, std::span<const float>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix2x3fv(location, static_cast<GCGLboolean>(transpose), data);
+    protect(m_context)->uniformMatrix2x3fv(location, static_cast<GCGLboolean>(transpose), data);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix3x2fv(int32_t location, bool transpose, std::span<const float>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix3x2fv(location, static_cast<GCGLboolean>(transpose), data);
+    protect(m_context)->uniformMatrix3x2fv(location, static_cast<GCGLboolean>(transpose), data);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix2x4fv(int32_t location, bool transpose, std::span<const float>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix2x4fv(location, static_cast<GCGLboolean>(transpose), data);
+    protect(m_context)->uniformMatrix2x4fv(location, static_cast<GCGLboolean>(transpose), data);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix4x2fv(int32_t location, bool transpose, std::span<const float>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix4x2fv(location, static_cast<GCGLboolean>(transpose), data);
+    protect(m_context)->uniformMatrix4x2fv(location, static_cast<GCGLboolean>(transpose), data);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix3x4fv(int32_t location, bool transpose, std::span<const float>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix3x4fv(location, static_cast<GCGLboolean>(transpose), data);
+    protect(m_context)->uniformMatrix3x4fv(location, static_cast<GCGLboolean>(transpose), data);
 }
 
 void RemoteGraphicsContextGL::uniformMatrix4x3fv(int32_t location, bool transpose, std::span<const float>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->uniformMatrix4x3fv(location, static_cast<GCGLboolean>(transpose), data);
+    protect(m_context)->uniformMatrix4x3fv(location, static_cast<GCGLboolean>(transpose), data);
 }
 
 void RemoteGraphicsContextGL::vertexAttribI4i(uint32_t index, int32_t x, int32_t y, int32_t z, int32_t w)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttribI4i(index, x, y, z, w);
+    protect(m_context)->vertexAttribI4i(index, x, y, z, w);
 }
 
 void RemoteGraphicsContextGL::vertexAttribI4iv(uint32_t index, std::span<const int32_t, 4>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttribI4iv(index, values);
+    protect(m_context)->vertexAttribI4iv(index, values);
 }
 
 void RemoteGraphicsContextGL::vertexAttribI4ui(uint32_t index, uint32_t x, uint32_t y, uint32_t z, uint32_t w)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttribI4ui(index, x, y, z, w);
+    protect(m_context)->vertexAttribI4ui(index, x, y, z, w);
 }
 
 void RemoteGraphicsContextGL::vertexAttribI4uiv(uint32_t index, std::span<const uint32_t, 4>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttribI4uiv(index, values);
+    protect(m_context)->vertexAttribI4uiv(index, values);
 }
 
 void RemoteGraphicsContextGL::vertexAttribIPointer(uint32_t index, int32_t size, uint32_t type, int32_t stride, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->vertexAttribIPointer(index, size, type, stride, static_cast<GCGLintptr>(offset));
+    protect(m_context)->vertexAttribIPointer(index, size, type, stride, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::drawRangeElements(uint32_t mode, uint32_t start, uint32_t end, int32_t count, uint32_t type, uint64_t offset)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->drawRangeElements(mode, start, end, count, type, static_cast<GCGLintptr>(offset));
+    protect(m_context)->drawRangeElements(mode, start, end, count, type, static_cast<GCGLintptr>(offset));
 }
 
 void RemoteGraphicsContextGL::clearBufferiv(uint32_t buffer, int32_t drawbuffer, std::span<const int32_t>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clearBufferiv(buffer, drawbuffer, values);
+    protect(m_context)->clearBufferiv(buffer, drawbuffer, values);
 }
 
 void RemoteGraphicsContextGL::clearBufferuiv(uint32_t buffer, int32_t drawbuffer, std::span<const uint32_t>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clearBufferuiv(buffer, drawbuffer, values);
+    protect(m_context)->clearBufferuiv(buffer, drawbuffer, values);
 }
 
 void RemoteGraphicsContextGL::clearBufferfv(uint32_t buffer, int32_t drawbuffer, std::span<const float>&& values)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clearBufferfv(buffer, drawbuffer, values);
+    protect(m_context)->clearBufferfv(buffer, drawbuffer, values);
 }
 
 void RemoteGraphicsContextGL::clearBufferfi(uint32_t buffer, int32_t drawbuffer, float depth, int32_t stencil)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clearBufferfi(buffer, drawbuffer, depth, stencil);
+    protect(m_context)->clearBufferfi(buffer, drawbuffer, depth, stencil);
 }
 
 void RemoteGraphicsContextGL::createQuery(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createQuery();
+    auto result = protect(m_context)->createQuery();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -1413,7 +1413,7 @@ void RemoteGraphicsContextGL::deleteQuery(uint32_t query)
     if (!query) [[unlikely]]
         return;
     query = m_objectNames.take(query);
-    protectedContext()->deleteQuery(query);
+    protect(m_context)->deleteQuery(query);
 }
 
 void RemoteGraphicsContextGL::isQuery(uint32_t query, CompletionHandler<void(bool)>&& completionHandler)
@@ -1423,7 +1423,7 @@ void RemoteGraphicsContextGL::isQuery(uint32_t query, CompletionHandler<void(boo
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    returnValue = protectedContext()->isQuery(query);
+    returnValue = protect(m_context)->isQuery(query);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -1433,20 +1433,20 @@ void RemoteGraphicsContextGL::beginQuery(uint32_t target, uint32_t query)
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    protectedContext()->beginQuery(target, query);
+    protect(m_context)->beginQuery(target, query);
 }
 
 void RemoteGraphicsContextGL::endQuery(uint32_t target)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->endQuery(target);
+    protect(m_context)->endQuery(target);
 }
 
 void RemoteGraphicsContextGL::getQuery(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    returnValue = protectedContext()->getQuery(target, pname);
+    returnValue = protect(m_context)->getQuery(target, pname);
     completionHandler(returnValue);
 }
 
@@ -1457,7 +1457,7 @@ void RemoteGraphicsContextGL::getQueryObjectui(uint32_t query, uint32_t pname, C
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    returnValue = protectedContext()->getQueryObjectui(query, pname);
+    returnValue = protect(m_context)->getQueryObjectui(query, pname);
     completionHandler(returnValue);
 }
 
@@ -1465,7 +1465,7 @@ void RemoteGraphicsContextGL::createSampler(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createSampler();
+    auto result = protect(m_context)->createSampler();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -1477,7 +1477,7 @@ void RemoteGraphicsContextGL::deleteSampler(uint32_t sampler)
     if (!sampler) [[unlikely]]
         return;
     sampler = m_objectNames.take(sampler);
-    protectedContext()->deleteSampler(sampler);
+    protect(m_context)->deleteSampler(sampler);
 }
 
 void RemoteGraphicsContextGL::isSampler(uint32_t sampler, CompletionHandler<void(bool)>&& completionHandler)
@@ -1487,7 +1487,7 @@ void RemoteGraphicsContextGL::isSampler(uint32_t sampler, CompletionHandler<void
     MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
-    returnValue = protectedContext()->isSampler(sampler);
+    returnValue = protect(m_context)->isSampler(sampler);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -1497,7 +1497,7 @@ void RemoteGraphicsContextGL::bindSampler(uint32_t unit, uint32_t sampler)
     MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
-    protectedContext()->bindSampler(unit, sampler);
+    protect(m_context)->bindSampler(unit, sampler);
 }
 
 void RemoteGraphicsContextGL::samplerParameteri(uint32_t sampler, uint32_t pname, int32_t param)
@@ -1506,7 +1506,7 @@ void RemoteGraphicsContextGL::samplerParameteri(uint32_t sampler, uint32_t pname
     MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
-    protectedContext()->samplerParameteri(sampler, pname, param);
+    protect(m_context)->samplerParameteri(sampler, pname, param);
 }
 
 void RemoteGraphicsContextGL::samplerParameterf(uint32_t sampler, uint32_t pname, float param)
@@ -1515,7 +1515,7 @@ void RemoteGraphicsContextGL::samplerParameterf(uint32_t sampler, uint32_t pname
     MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
-    protectedContext()->samplerParameterf(sampler, pname, param);
+    protect(m_context)->samplerParameterf(sampler, pname, param);
 }
 
 void RemoteGraphicsContextGL::getSamplerParameterf(uint32_t sampler, uint32_t pname, CompletionHandler<void(float)>&& completionHandler)
@@ -1525,7 +1525,7 @@ void RemoteGraphicsContextGL::getSamplerParameterf(uint32_t sampler, uint32_t pn
     MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
-    returnValue = protectedContext()->getSamplerParameterf(sampler, pname);
+    returnValue = protect(m_context)->getSamplerParameterf(sampler, pname);
     completionHandler(returnValue);
 }
 
@@ -1536,7 +1536,7 @@ void RemoteGraphicsContextGL::getSamplerParameteri(uint32_t sampler, uint32_t pn
     MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
-    returnValue = protectedContext()->getSamplerParameteri(sampler, pname);
+    returnValue = protect(m_context)->getSamplerParameteri(sampler, pname);
     completionHandler(returnValue);
 }
 
@@ -1544,7 +1544,7 @@ void RemoteGraphicsContextGL::fenceSync(uint32_t condition, uint32_t flags, Comp
 {
     assertIsCurrent(workQueue());
     GCGLsync returnValue = { };
-    returnValue = protectedContext()->fenceSync(condition, flags);
+    returnValue = protect(m_context)->fenceSync(condition, flags);
     completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(returnValue)));
 }
 
@@ -1552,35 +1552,35 @@ void RemoteGraphicsContextGL::isSync(uint64_t arg0, CompletionHandler<void(bool)
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    returnValue = protectedContext()->isSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)));
+    returnValue = protect(m_context)->isSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)));
     completionHandler(static_cast<bool>(returnValue));
 }
 
 void RemoteGraphicsContextGL::deleteSync(uint64_t arg0)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->deleteSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)));
+    protect(m_context)->deleteSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)));
 }
 
 void RemoteGraphicsContextGL::clientWaitSync(uint64_t arg0, uint32_t flags, uint64_t timeout, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     GCGLenum returnValue = { };
-    returnValue = protectedContext()->clientWaitSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), flags, static_cast<GCGLuint64>(timeout));
+    returnValue = protect(m_context)->clientWaitSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), flags, static_cast<GCGLuint64>(timeout));
     completionHandler(returnValue);
 }
 
 void RemoteGraphicsContextGL::waitSync(uint64_t arg0, uint32_t flags, int64_t timeout)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->waitSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), flags, static_cast<GCGLint64>(timeout));
+    protect(m_context)->waitSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), flags, static_cast<GCGLint64>(timeout));
 }
 
 void RemoteGraphicsContextGL::getSynci(uint64_t arg0, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    returnValue = protectedContext()->getSynci(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), pname);
+    returnValue = protect(m_context)->getSynci(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), pname);
     completionHandler(returnValue);
 }
 
@@ -1588,7 +1588,7 @@ void RemoteGraphicsContextGL::createTransformFeedback(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createTransformFeedback();
+    auto result = protect(m_context)->createTransformFeedback();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -1600,7 +1600,7 @@ void RemoteGraphicsContextGL::deleteTransformFeedback(uint32_t id)
     if (!id) [[unlikely]]
         return;
     id = m_objectNames.take(id);
-    protectedContext()->deleteTransformFeedback(id);
+    protect(m_context)->deleteTransformFeedback(id);
 }
 
 void RemoteGraphicsContextGL::isTransformFeedback(uint32_t id, CompletionHandler<void(bool)>&& completionHandler)
@@ -1610,7 +1610,7 @@ void RemoteGraphicsContextGL::isTransformFeedback(uint32_t id, CompletionHandler
     MESSAGE_CHECK(m_objectNames.isValidKey(id));
     if (id)
         id = m_objectNames.get(id);
-    returnValue = protectedContext()->isTransformFeedback(id);
+    returnValue = protect(m_context)->isTransformFeedback(id);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -1620,19 +1620,19 @@ void RemoteGraphicsContextGL::bindTransformFeedback(uint32_t target, uint32_t id
     MESSAGE_CHECK(m_objectNames.isValidKey(id));
     if (id)
         id = m_objectNames.get(id);
-    protectedContext()->bindTransformFeedback(target, id);
+    protect(m_context)->bindTransformFeedback(target, id);
 }
 
 void RemoteGraphicsContextGL::beginTransformFeedback(uint32_t primitiveMode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->beginTransformFeedback(primitiveMode);
+    protect(m_context)->beginTransformFeedback(primitiveMode);
 }
 
 void RemoteGraphicsContextGL::endTransformFeedback()
 {
     assertIsCurrent(workQueue());
-    protectedContext()->endTransformFeedback();
+    protect(m_context)->endTransformFeedback();
 }
 
 void RemoteGraphicsContextGL::transformFeedbackVaryings(uint32_t program, Vector<CString>&& varyings, uint32_t bufferMode)
@@ -1641,7 +1641,7 @@ void RemoteGraphicsContextGL::transformFeedbackVaryings(uint32_t program, Vector
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    protectedContext()->transformFeedbackVaryings(program, varyings, bufferMode);
+    protect(m_context)->transformFeedbackVaryings(program, varyings, bufferMode);
 }
 
 void RemoteGraphicsContextGL::getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GCGLTransformFeedbackActiveInfo>&&)>&& completionHandler)
@@ -1651,20 +1651,20 @@ void RemoteGraphicsContextGL::getTransformFeedbackVarying(uint32_t program, uint
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->getTransformFeedbackVarying(program, index);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->getTransformFeedbackVarying(program, index);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::pauseTransformFeedback()
 {
     assertIsCurrent(workQueue());
-    protectedContext()->pauseTransformFeedback();
+    protect(m_context)->pauseTransformFeedback();
 }
 
 void RemoteGraphicsContextGL::resumeTransformFeedback()
 {
     assertIsCurrent(workQueue());
-    protectedContext()->resumeTransformFeedback();
+    protect(m_context)->resumeTransformFeedback();
 }
 
 void RemoteGraphicsContextGL::bindBufferBase(uint32_t target, uint32_t index, uint32_t buffer)
@@ -1673,7 +1673,7 @@ void RemoteGraphicsContextGL::bindBufferBase(uint32_t target, uint32_t index, ui
     MESSAGE_CHECK(m_objectNames.isValidKey(buffer));
     if (buffer)
         buffer = m_objectNames.get(buffer);
-    protectedContext()->bindBufferBase(target, index, buffer);
+    protect(m_context)->bindBufferBase(target, index, buffer);
 }
 
 void RemoteGraphicsContextGL::bindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4)
@@ -1682,7 +1682,7 @@ void RemoteGraphicsContextGL::bindBufferRange(uint32_t target, uint32_t index, u
     MESSAGE_CHECK(m_objectNames.isValidKey(buffer));
     if (buffer)
         buffer = m_objectNames.get(buffer);
-    protectedContext()->bindBufferRange(target, index, buffer, static_cast<GCGLintptr>(offset), static_cast<GCGLsizeiptr>(arg4));
+    protect(m_context)->bindBufferRange(target, index, buffer, static_cast<GCGLintptr>(offset), static_cast<GCGLsizeiptr>(arg4));
 }
 
 void RemoteGraphicsContextGL::getUniformBlockIndex(uint32_t program, CString&& uniformBlockName, CompletionHandler<void(uint32_t)>&& completionHandler)
@@ -1692,7 +1692,7 @@ void RemoteGraphicsContextGL::getUniformBlockIndex(uint32_t program, CString&& u
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->getUniformBlockIndex(program, uniformBlockName);
+    returnValue = protect(m_context)->getUniformBlockIndex(program, uniformBlockName);
     completionHandler(returnValue);
 }
 
@@ -1703,8 +1703,8 @@ void RemoteGraphicsContextGL::getActiveUniformBlockName(uint32_t program, uint32
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->getActiveUniformBlockName(program, uniformBlockIndex);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->getActiveUniformBlockName(program, uniformBlockIndex);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::uniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)
@@ -1713,7 +1713,7 @@ void RemoteGraphicsContextGL::uniformBlockBinding(uint32_t program, uint32_t uni
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    protectedContext()->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+    protect(m_context)->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
 }
 
 void RemoteGraphicsContextGL::getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
@@ -1725,7 +1725,7 @@ void RemoteGraphicsContextGL::getActiveUniformBlockiv(uint32_t program, uint32_t
     if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
         paramsSize = 4;
     Vector<GCGLint, 4> params(paramsSize, 0);
-    protectedContext()->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
+    protect(m_context)->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
     completionHandler(spanReinterpretCast<const int32_t>(params.span()));
 }
 
@@ -1736,15 +1736,15 @@ void RemoteGraphicsContextGL::getTranslatedShaderSourceANGLE(uint32_t arg0, Comp
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    returnValue = protectedContext()->getTranslatedShaderSourceANGLE(arg0);
-    completionHandler(WTFMove(returnValue));
+    returnValue = protect(m_context)->getTranslatedShaderSourceANGLE(arg0);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::createQueryEXT(uint32_t name)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createQueryEXT();
+    auto result = protect(m_context)->createQueryEXT();
     if (result)
         m_objectNames.add(name, result);
 }
@@ -1756,7 +1756,7 @@ void RemoteGraphicsContextGL::deleteQueryEXT(uint32_t query)
     if (!query) [[unlikely]]
         return;
     query = m_objectNames.take(query);
-    protectedContext()->deleteQueryEXT(query);
+    protect(m_context)->deleteQueryEXT(query);
 }
 
 void RemoteGraphicsContextGL::isQueryEXT(uint32_t query, CompletionHandler<void(bool)>&& completionHandler)
@@ -1766,7 +1766,7 @@ void RemoteGraphicsContextGL::isQueryEXT(uint32_t query, CompletionHandler<void(
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    returnValue = protectedContext()->isQueryEXT(query);
+    returnValue = protect(m_context)->isQueryEXT(query);
     completionHandler(static_cast<bool>(returnValue));
 }
 
@@ -1776,13 +1776,13 @@ void RemoteGraphicsContextGL::beginQueryEXT(uint32_t target, uint32_t query)
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    protectedContext()->beginQueryEXT(target, query);
+    protect(m_context)->beginQueryEXT(target, query);
 }
 
 void RemoteGraphicsContextGL::endQueryEXT(uint32_t target)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->endQueryEXT(target);
+    protect(m_context)->endQueryEXT(target);
 }
 
 void RemoteGraphicsContextGL::queryCounterEXT(uint32_t query, uint32_t target)
@@ -1791,14 +1791,14 @@ void RemoteGraphicsContextGL::queryCounterEXT(uint32_t query, uint32_t target)
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    protectedContext()->queryCounterEXT(query, target);
+    protect(m_context)->queryCounterEXT(query, target);
 }
 
 void RemoteGraphicsContextGL::getQueryiEXT(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    returnValue = protectedContext()->getQueryiEXT(target, pname);
+    returnValue = protect(m_context)->getQueryiEXT(target, pname);
     completionHandler(returnValue);
 }
 
@@ -1809,7 +1809,7 @@ void RemoteGraphicsContextGL::getQueryObjectiEXT(uint32_t query, uint32_t pname,
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    returnValue = protectedContext()->getQueryObjectiEXT(query, pname);
+    returnValue = protect(m_context)->getQueryObjectiEXT(query, pname);
     completionHandler(returnValue);
 }
 
@@ -1820,7 +1820,7 @@ void RemoteGraphicsContextGL::getQueryObjectui64EXT(uint32_t query, uint32_t pna
     MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
-    returnValue = protectedContext()->getQueryObjectui64EXT(query, pname);
+    returnValue = protect(m_context)->getQueryObjectui64EXT(query, pname);
     completionHandler(static_cast<uint64_t>(returnValue));
 }
 
@@ -1828,92 +1828,92 @@ void RemoteGraphicsContextGL::getInteger64EXT(uint32_t pname, CompletionHandler<
 {
     assertIsCurrent(workQueue());
     GCGLint64 returnValue = { };
-    returnValue = protectedContext()->getInteger64EXT(pname);
+    returnValue = protect(m_context)->getInteger64EXT(pname);
     completionHandler(static_cast<int64_t>(returnValue));
 }
 
 void RemoteGraphicsContextGL::enableiOES(uint32_t target, uint32_t index)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->enableiOES(target, index);
+    protect(m_context)->enableiOES(target, index);
 }
 
 void RemoteGraphicsContextGL::disableiOES(uint32_t target, uint32_t index)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->disableiOES(target, index);
+    protect(m_context)->disableiOES(target, index);
 }
 
 void RemoteGraphicsContextGL::blendEquationiOES(uint32_t buf, uint32_t mode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendEquationiOES(buf, mode);
+    protect(m_context)->blendEquationiOES(buf, mode);
 }
 
 void RemoteGraphicsContextGL::blendEquationSeparateiOES(uint32_t buf, uint32_t modeRGB, uint32_t modeAlpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendEquationSeparateiOES(buf, modeRGB, modeAlpha);
+    protect(m_context)->blendEquationSeparateiOES(buf, modeRGB, modeAlpha);
 }
 
 void RemoteGraphicsContextGL::blendFunciOES(uint32_t buf, uint32_t src, uint32_t dst)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendFunciOES(buf, src, dst);
+    protect(m_context)->blendFunciOES(buf, src, dst);
 }
 
 void RemoteGraphicsContextGL::blendFuncSeparateiOES(uint32_t buf, uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->blendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+    protect(m_context)->blendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
 void RemoteGraphicsContextGL::colorMaskiOES(uint32_t buf, bool red, bool green, bool blue, bool alpha)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->colorMaskiOES(buf, static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
+    protect(m_context)->colorMaskiOES(buf, static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
 }
 
 void RemoteGraphicsContextGL::drawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
+    protect(m_context)->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
 }
 
 void RemoteGraphicsContextGL::drawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, static_cast<GCGLintptr>(offset), instanceCount, baseVertex, baseInstance);
+    protect(m_context)->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, static_cast<GCGLintptr>(offset), instanceCount, baseVertex, baseInstance);
 }
 
 void RemoteGraphicsContextGL::clipControlEXT(uint32_t origin, uint32_t depth)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->clipControlEXT(origin, depth);
+    protect(m_context)->clipControlEXT(origin, depth);
 }
 
 void RemoteGraphicsContextGL::provokingVertexANGLE(uint32_t provokeMode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->provokingVertexANGLE(provokeMode);
+    protect(m_context)->provokingVertexANGLE(provokeMode);
 }
 
 void RemoteGraphicsContextGL::polygonModeANGLE(uint32_t face, uint32_t mode)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->polygonModeANGLE(face, mode);
+    protect(m_context)->polygonModeANGLE(face, mode);
 }
 
 void RemoteGraphicsContextGL::polygonOffsetClampEXT(float factor, float units, float clamp)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->polygonOffsetClampEXT(factor, units, clamp);
+    protect(m_context)->polygonOffsetClampEXT(factor, units, clamp);
 }
 
 void RemoteGraphicsContextGL::renderbufferStorageMultisampleANGLE(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->renderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
+    protect(m_context)->renderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
 }
 
 void RemoteGraphicsContextGL::getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
@@ -1922,7 +1922,7 @@ void RemoteGraphicsContextGL::getInternalformativ(uint32_t target, uint32_t inte
     if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
         paramsSize = 4;
     Vector<GCGLint, 4> params(paramsSize, 0);
-    protectedContext()->getInternalformativ(target, internalformat, pname, params);
+    protect(m_context)->getInternalformativ(target, internalformat, pname, params);
     completionHandler(spanReinterpretCast<const int32_t>(params.span()));
 }
 
@@ -1932,7 +1932,7 @@ void RemoteGraphicsContextGL::createExternalImage(uint32_t name, WebCore::Graphi
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createExternalImage(WTFMove(arg0), internalFormat, layer);
+    auto result = protect(m_context)->createExternalImage(WTF::move(arg0), internalFormat, layer);
     if (result)
         m_objectNames.add(name, result);
 }
@@ -1945,7 +1945,7 @@ void RemoteGraphicsContextGL::deleteExternalImage(uint32_t handle)
     if (!handle) [[unlikely]]
         return;
     handle = m_objectNames.take(handle);
-    protectedContext()->deleteExternalImage(handle);
+    protect(m_context)->deleteExternalImage(handle);
 }
 
 void RemoteGraphicsContextGL::bindExternalImage(uint32_t target, uint32_t arg1)
@@ -1955,7 +1955,7 @@ void RemoteGraphicsContextGL::bindExternalImage(uint32_t target, uint32_t arg1)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
-    protectedContext()->bindExternalImage(target, arg1);
+    protect(m_context)->bindExternalImage(target, arg1);
 }
 
 void RemoteGraphicsContextGL::createExternalSync(uint32_t name, WebCore::GraphicsContextGL::ExternalSyncSource&& arg0)
@@ -1963,7 +1963,7 @@ void RemoteGraphicsContextGL::createExternalSync(uint32_t name, WebCore::Graphic
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
     MESSAGE_CHECK(m_objectNames.isValidKey(name));
-    auto result = protectedContext()->createExternalSync(WTFMove(arg0));
+    auto result = protect(m_context)->createExternalSync(WTF::move(arg0));
     if (result)
         m_objectNames.add(name, result);
 }
@@ -1976,7 +1976,7 @@ void RemoteGraphicsContextGL::deleteExternalSync(uint32_t arg0)
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
-    protectedContext()->deleteExternalSync(arg0);
+    protect(m_context)->deleteExternalSync(arg0);
 }
 
 void RemoteGraphicsContextGL::enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
@@ -1984,7 +1984,7 @@ void RemoteGraphicsContextGL::enableRequiredWebXRExtensions(CompletionHandler<vo
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXREnabled());
     bool returnValue = { };
-    returnValue = protectedContext()->enableRequiredWebXRExtensions();
+    returnValue = protect(m_context)->enableRequiredWebXRExtensions();
     completionHandler(returnValue);
 }
 
@@ -1993,7 +1993,7 @@ void RemoteGraphicsContextGL::addFoveation(WebCore::IntSize&& physicalSizeLeft, 
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
     bool returnValue = { };
-    returnValue = protectedContext()->addFoveation(physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamples, horizontalSamplesRight);
+    returnValue = protect(m_context)->addFoveation(physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamples, horizontalSamplesRight);
     completionHandler(returnValue);
 }
 
@@ -2004,14 +2004,14 @@ void RemoteGraphicsContextGL::enableFoveation(uint32_t arg0)
     MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    protectedContext()->enableFoveation(arg0);
+    protect(m_context)->enableFoveation(arg0);
 }
 
 void RemoteGraphicsContextGL::disableFoveation()
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    protectedContext()->disableFoveation();
+    protect(m_context)->disableFoveation();
 }
 
 void RemoteGraphicsContextGL::framebufferResolveRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
@@ -2021,7 +2021,7 @@ void RemoteGraphicsContextGL::framebufferResolveRenderbuffer(uint32_t target, ui
     MESSAGE_CHECK(m_objectNames.isValidKey(arg3));
     if (arg3)
         arg3 = m_objectNames.get(arg3);
-    protectedContext()->framebufferResolveRenderbuffer(target, attachment, renderbuffertarget, arg3);
+    protect(m_context)->framebufferResolveRenderbuffer(target, attachment, renderbuffertarget, arg3);
 }
 
 #endif

@@ -26,14 +26,16 @@
 #import "config.h"
 #import "JavaScriptEvaluationResult.h"
 
-#import "_WKJSHandleInternal.h"
-#import "_WKSerializedNodeInternal.h"
+#import "WKJSHandleInternal.h"
+#import "WKJSSerializedNodeInternal.h"
+#import "_WKJSHandle.h"
+#import "_WKSerializedNode.h"
 
 namespace WebKit {
 
 class JavaScriptEvaluationResult::ObjCExtractor {
 public:
-    Map takeMap() { return WTFMove(m_map); }
+    Map takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(id);
 private:
     Value toValue(id);
@@ -47,8 +49,8 @@ public:
     using Dictionaries = Vector<std::pair<ObjectMap, RetainPtr<NSMutableDictionary>>>;
     using Arrays = Vector<std::pair<Vector<JSObjectID>, RetainPtr<NSMutableArray>>>;
     RetainPtr<id> toID(Value&&);
-    Dictionaries takeDictionaries() { return WTFMove(m_dictionaries); }
-    Arrays takeArrays() { return WTFMove(m_arrays); }
+    Dictionaries takeDictionaries() { return WTF::move(m_dictionaries); }
+    Arrays takeArrays() { return WTF::move(m_arrays); }
 private:
     Dictionaries m_dictionaries;
     Arrays m_arrays;
@@ -56,7 +58,7 @@ private:
 
 RetainPtr<id> JavaScriptEvaluationResult::ObjCInserter::toID(Value&& root)
 {
-    return WTF::switchOn(WTFMove(root), [] (EmptyType type) -> RetainPtr<id> {
+    return WTF::switchOn(WTF::move(root), [] (EmptyType type) -> RetainPtr<id> {
         switch (type) {
         case EmptyType::Null:
             return NSNull.null;
@@ -74,16 +76,16 @@ RetainPtr<id> JavaScriptEvaluationResult::ObjCInserter::toID(Value&& root)
         return [NSDate dateWithTimeIntervalSince1970:value.seconds()];
     }, [&] (Vector<JSObjectID>&& vector) -> RetainPtr<id> {
         RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
-        m_arrays.append({ WTFMove(vector), array });
+        m_arrays.append({ WTF::move(vector), array });
         return array;
     }, [&] (ObjectMap&& map) -> RetainPtr<id> {
         RetainPtr dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
-        m_dictionaries.append({ WTFMove(map), dictionary });
+        m_dictionaries.append({ WTF::move(map), dictionary });
         return dictionary;
     }, [] (UniqueRef<JSHandleInfo>&& info) -> RetainPtr<id> {
-        return wrapper(API::JSHandle::create(WTFMove(info.get())));
+        return wrapper(API::JSHandle::create(WTF::move(info.get())));
     }, [] (UniqueRef<WebCore::SerializedNode>&& serializedNode) -> RetainPtr<id> {
-        return wrapper(API::SerializedNode::create(WTFMove(serializedNode.get())).get());
+        return wrapper(API::SerializedNode::create(WTF::move(serializedNode.get())).get());
     });
 }
 
@@ -93,7 +95,7 @@ RetainPtr<id> JavaScriptEvaluationResult::toID()
     ObjCInserter inserter;
 
     for (auto&& [identifier, value] : std::exchange(m_map, { }))
-        instantiatedObjects.add(identifier, inserter.toID(WTFMove(value)));
+        instantiatedObjects.add(identifier, inserter.toID(WTF::move(value)));
 
     for (auto [vector, array] : inserter.takeArrays()) {
         for (auto identifier : vector) {
@@ -146,7 +148,7 @@ auto JavaScriptEvaluationResult::ObjCExtractor::toValue(id object) -> Value
         Vector<JSObjectID> vector;
         for (id element : (NSArray *)object)
             vector.append(addObjectToMap(element));
-        return { WTFMove(vector) };
+        return { WTF::move(vector) };
     }
 
     if ([object isKindOfClass:NSDictionary.class]) {
@@ -154,7 +156,7 @@ auto JavaScriptEvaluationResult::ObjCExtractor::toValue(id object) -> Value
         [(NSDictionary *)object enumerateKeysAndObjectsUsingBlock:[&](id key, id value, BOOL *) {
             map.add(addObjectToMap(key), addObjectToMap(value));
         }];
-        return { WTFMove(map) };
+        return { WTF::move(map) };
     }
 
     if ([object isKindOfClass:_WKSerializedNode.class])

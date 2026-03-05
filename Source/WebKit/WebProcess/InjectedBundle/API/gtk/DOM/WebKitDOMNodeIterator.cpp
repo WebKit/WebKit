@@ -67,7 +67,9 @@ WebKitDOMNodeIterator* wrapNodeIterator(WebCore::NodeIterator* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMNodeIterator, webkit_dom_node_iterator, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_NODE_ITERATOR_PROP_0,

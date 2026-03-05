@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APICustomProtocolManagerClient.h"
 #include "AppPrivacyReport.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundFetchState.h"
@@ -34,6 +35,7 @@
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
 #include "QuotaIncreaseRequestIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
@@ -59,7 +61,6 @@ class FormDataReference;
 }
 
 namespace API {
-class CustomProtocolManagerClient;
 class DataTask;
 }
 
@@ -131,7 +132,7 @@ public:
     using OpenerDomain = WebCore::RegistrableDomain;
 
     static Ref<NetworkProcessProxy> ensureDefaultNetworkProcess();
-    static WeakPtr<NetworkProcessProxy>& defaultNetworkProcess();
+    static WeakPtr<NetworkProcessProxy>& NODELETE defaultNetworkProcess();
     static Ref<NetworkProcessProxy> create() { return adoptRef(*new NetworkProcessProxy); }
     ~NetworkProcessProxy();
 
@@ -145,6 +146,7 @@ public:
     void dataTaskWithRequest(WebPageProxy&, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, bool shouldRunAtForegroundPriority, CompletionHandler<void(API::DataTask&)>&&);
 
     void addAllowedFirstPartyForCookies(WebProcessProxy&, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive, CompletionHandler<void()>&&);
+    void addAllowedFilePaths(WebProcessProxy&, const Vector<String>& paths);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, const HashSet<WebCore::ProcessIdentifier>&, CompletionHandler<void()>&&);
@@ -160,6 +162,7 @@ public:
     void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
     void hasHadUserInteraction(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isRelationshipOnlyInDatabaseOnce(PAL::SessionID, const RegistrableDomain& subDomain, const RegistrableDomain& topDomain, CompletionHandler<void(bool)>&&);
+    void hasLocalStorageOrCookies(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void hasLocalStorage(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isGrandfathered(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
@@ -253,7 +256,7 @@ public:
     void sendProcessDidResume(ResumeReason) final;
     ASCIILiteral clientName() const final { return "NetworkProcess"_s; }
     
-    static void setSuspensionAllowedForTesting(bool);
+    static void NODELETE setSuspensionAllowedForTesting(bool);
     void sendProcessWillSuspendImminentlyForTesting();
 
     void registerSchemeForLegacyCustomProtocol(const String&);
@@ -287,6 +290,7 @@ public:
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&);
+    void notifyWillPresentPaymentUI(WebPageProxyIdentifier);
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
@@ -300,7 +304,7 @@ public:
     void updateBundleIdentifier(const String&, CompletionHandler<void()>&&);
     void clearBundleIdentifier(CompletionHandler<void()>&&);
 
-    API::CustomProtocolManagerClient& customProtocolManagerClient() { return m_customProtocolManagerClient.get(); }
+    API::CustomProtocolManagerClient& customProtocolManagerClient() LIFETIME_BOUND { return m_customProtocolManagerClient.get(); }
 
 #if PLATFORM(COCOA)
     bool sendXPCEndpointToProcess(AuxiliaryProcessProxy&);
@@ -442,10 +446,6 @@ private:
     void removeBackgroundStateObservers();
 #endif
 
-#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    Ref<LegacyCustomProtocolManagerProxy> protectedCustomProtocolManagerProxy() { return m_customProtocolManagerProxy; }
-#endif
-
     const std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
 
     UniqueRef<API::CustomProtocolManagerClient> m_customProtocolManagerClient;
@@ -462,7 +462,7 @@ private:
     struct UploadActivity {
         RefPtr<ProcessAssertion> uiAssertion;
         RefPtr<ProcessAssertion> networkAssertion;
-        HashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>> webProcessAssertions;
+        HashMap<WebCore::ProcessIdentifier, Ref<ProcessAssertion>> webProcessAssertions;
     };
     std::optional<UploadActivity> m_uploadActivity;
 
@@ -476,11 +476,12 @@ private:
     private:
         WeakPtr<NetworkProcessProxy> m_networkProcess;
     };
-    XPCObjectPtr<xpc_object_t> m_endpointMessage;
+    OSObjectPtr<xpc_object_t> m_endpointMessage;
 #endif
 
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
     WeakHashMap<WebProcessProxy, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
+    WeakHashMap<WebProcessProxy, HashSet<String>> m_allowedFilePathsByProcess;
     HashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
 #if PLATFORM(MAC)
     // On macOS, we prevent suspension of the NetworkProcess to avoid kills when holding

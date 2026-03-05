@@ -59,7 +59,7 @@ void WebSharedWorkerObjectConnection::requestSharedWorker(const WebCore::SharedW
 {
     CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
-    send(Messages::WebSharedWorkerServerConnection::RequestSharedWorker { sharedWorkerKey, sharedWorkerObjectIdentifier, WTFMove(port), workerOptions });
+    send(Messages::WebSharedWorkerServerConnection::RequestSharedWorker { sharedWorkerKey, sharedWorkerObjectIdentifier, WTF::move(port), workerOptions });
 }
 
 void WebSharedWorkerObjectConnection::sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)

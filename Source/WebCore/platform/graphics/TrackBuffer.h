@@ -67,28 +67,28 @@ public:
     void clearSamples();
 
     const MediaTime& lastDecodeTimestamp() const { return m_lastDecodeTimestamp; }
-    void setLastDecodeTimestamp(MediaTime timestamp) { m_lastDecodeTimestamp = WTFMove(timestamp); }
+    void setLastDecodeTimestamp(MediaTime timestamp) { m_lastDecodeTimestamp = WTF::move(timestamp); }
 
     const MediaTime& greatestFrameDuration() const { return m_greatestFrameDuration; }
-    void setGreatestFrameDuration(MediaTime duration) { m_greatestFrameDuration = WTFMove(duration); }
+    void setGreatestFrameDuration(MediaTime duration) { m_greatestFrameDuration = WTF::move(duration); }
     const MediaTime& lastFrameDuration() const { return m_lastFrameDuration; }
-    void setLastFrameDuration(MediaTime duration) { m_lastFrameDuration = WTFMove(duration); }
+    void setLastFrameDuration(MediaTime duration) { m_lastFrameDuration = WTF::move(duration); }
 
     const MediaTime& highestPresentationTimestamp() const { return m_highestPresentationTimestamp; }
-    void setHighestPresentationTimestamp(MediaTime timestamp) { m_highestPresentationTimestamp = WTFMove(timestamp); }
+    void setHighestPresentationTimestamp(MediaTime timestamp) { m_highestPresentationTimestamp = WTF::move(timestamp); }
 
     const MediaTime& highestEnqueuedPresentationTime() const { return m_highestEnqueuedPresentationTime; }
-    void setHighestEnqueuedPresentationTime(MediaTime timestamp) { m_highestEnqueuedPresentationTime = WTFMove(timestamp); }
+    void setHighestEnqueuedPresentationTime(MediaTime timestamp) { m_highestEnqueuedPresentationTime = WTF::move(timestamp); }
     const MediaTime& minimumEnqueuedPresentationTime() const { return m_minimumEnqueuedPresentationTime; }
 
     const DecodeOrderSampleMap::KeyType& lastEnqueuedDecodeKey() const { return m_lastEnqueuedDecodeKey; }
-    void setLastEnqueuedDecodeKey(DecodeOrderSampleMap::KeyType key) { m_lastEnqueuedDecodeKey = WTFMove(key); }
+    void setLastEnqueuedDecodeKey(DecodeOrderSampleMap::KeyType key) { m_lastEnqueuedDecodeKey = WTF::move(key); }
 
     const MediaTime& enqueueDiscontinuityBoundary() const { return m_enqueueDiscontinuityBoundary; }
-    void setEnqueueDiscontinuityBoundary(MediaTime boundary) { m_enqueueDiscontinuityBoundary = WTFMove(boundary); }
+    void setEnqueueDiscontinuityBoundary(MediaTime boundary) { m_enqueueDiscontinuityBoundary = WTF::move(boundary); }
 
     const MediaTime& roundedTimestampOffset() const { return m_roundedTimestampOffset; }
-    void setRoundedTimestampOffset(MediaTime offset) { m_roundedTimestampOffset = WTFMove(offset); }
+    void setRoundedTimestampOffset(MediaTime offset) { m_roundedTimestampOffset = WTF::move(offset); }
     void setRoundedTimestampOffset(const MediaTime&, uint32_t, const MediaTime&);
 
     uint32_t lastFrameTimescale() const { return m_lastFrameTimescale; }

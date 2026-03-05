@@ -30,8 +30,10 @@ struct WebKit::RemoteMediaPlayerConfiguration {
     bool supportsAcceleratedRendering;
     bool supportsPlayAtHostTime;
     bool supportsPauseAtHostTime;
-    bool canPlayToWirelessPlaybackTarget;
     bool shouldIgnoreIntrinsicSize;
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    OptionSet<WebCore::MediaPlaybackTargetType> supportedPlaybackTargetTypes;
+#endif
 };
 
 #endif

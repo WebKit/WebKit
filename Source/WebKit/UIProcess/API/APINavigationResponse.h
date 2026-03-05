@@ -44,15 +44,14 @@ public:
     ~NavigationResponse();
 
     FrameInfo& frame() { return m_frame.get(); }
-    Ref<FrameInfo> protectedFrame() { return m_frame.get(); }
 
-    const WebCore::ResourceRequest& request() const { return m_request; }
-    const WebCore::ResourceResponse& response() const { return m_response; }
+    const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_request; }
+    const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
     FrameInfo* navigationInitiatingFrame();
     Navigation* navigation() { return m_navigation.get(); }
 
     bool canShowMIMEType() const { return m_canShowMIMEType; }
-    const WTF::String& downloadAttribute() const { return m_downloadAttribute; }
+    const WTF::String& downloadAttribute() const LIFETIME_BOUND { return m_downloadAttribute; }
 
 private:
     NavigationResponse(API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, bool canShowMIMEType, WTF::String&& downloadAttribute, Navigation*);

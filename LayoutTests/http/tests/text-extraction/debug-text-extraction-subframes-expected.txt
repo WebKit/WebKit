@@ -1,0 +1,20 @@
+root
+	aria-label='Main content'
+		'Before subframes'
+		role='document'
+			iframe,title='Same origin iframe',origin='http://127.0.0.1:8000'
+				aria-label='Heading','Hello world'
+				form,autocomplete='on'
+					aria-label='Sign in with email'
+						input,'email',placeholder='Enter your email'
+						link,url='javascript:','Forgot your email?'
+					input,'password',placeholder='Enter your password',secure
+				iframe,origin='http://127.0.0.1:8000'
+					contentEditable,role='textbox',focused
+						aria-label='Heading','Nested subframe'
+				link,url='www.apple.com','Link in subframe'
+				image,aria-label='Square icon',src='square20.jpg'
+		role='document'
+			iframe,title='Cross origin iframe',origin='http://localhost:8000'
+		button,aria-label='Submit','After subframes'
+		link,url='webkit.org','Link in mainframe'

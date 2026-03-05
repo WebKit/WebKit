@@ -33,7 +33,7 @@ public:
     using DOMWrapped = DedicatedWorkerGlobalScope;
     static JSDedicatedWorkerGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<DedicatedWorkerGlobalScope>&& impl, JSC::JSGlobalProxy* proxy)
     {
-        JSDedicatedWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSDedicatedWorkerGlobalScope>(vm)) JSDedicatedWorkerGlobalScope(vm, structure, WTFMove(impl));
+        JSDedicatedWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSDedicatedWorkerGlobalScope>(vm)) JSDedicatedWorkerGlobalScope(vm, structure, WTF::move(impl));
         ptr->finishCreation(vm, proxy);
         return ptr;
     }
@@ -59,8 +59,6 @@ public:
     {
         return static_cast<DedicatedWorkerGlobalScope&>(Base::wrapped());
     }
-
-    Ref<DedicatedWorkerGlobalScope> protectedWrapped() const;
 
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;

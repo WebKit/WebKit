@@ -192,6 +192,14 @@ const NumberOfWasmArgumentFPRs = 8
 
 macro ipintOp(name, impl)
     instructionLabel(name)
+
+    if TRACING
+        move cfr, a1
+        move PC, a2
+        move MC, a3
+        operationCall(macro() cCall4(_ipint_extern_trace) end)
+    end
+
     impl()
 end
 
@@ -269,7 +277,12 @@ end
 .checkStack:
     operationCallMayThrowPreservingVolatileRegisters(macro()
         move scratch, a1
+if X86_64
+        # On x86_64, callee parameter (ws0) gets clobbered by saveCallSiteIndex(). Reload from stack.
+        loadp UnboxedWasmCalleeStackSlot[cfr], a2
+else
         move callee, a2
+end
         cCall3(_ipint_extern_check_stack_and_vm_traps)
     end)
 
@@ -512,9 +525,6 @@ macro uintAlign(instrname)
 end
 
 # On JSVALUE64, each 64-bit argument GPR holds one whole Wasm value.
-# On JSVALUE32_64, a consecutive pair of even/odd numbered GPRs hold a single
-# Wasm value (even if that value is i32/f32, the odd numbered GPR holds the
-# more significant word).
 macro forEachWasmArgumentGPR(fn)
     if ARM64 or ARM64E
         fn(0, wa0, wa1)
@@ -1079,11 +1089,7 @@ end
     btpnz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .found
 
 .notfound:
-if ARM64 or ARM64E
     pcrtoaddr _llint_default_call_trampoline, t5
-else
-    leap (_llint_default_call_trampoline), t5
-end
     loadp CallLinkInfo::m_codeBlock[t2], t3
     storep t3, (CodeBlock - CallerFrameAndPCSize)[sp]
     call _llint_default_call_trampoline
@@ -1210,10 +1216,6 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
     unboxWasmCallee(ws0, ws1)
     storep ws0, UnboxedWasmCalleeStackSlot[cfr]
 
-    # on x86, PL will hold the PC relative offset for argumINT, then IB will take over
-    if X86_64
-        initPCRelative(ipint_entry, PL)
-    end
 ipintEntry()
 else
     break
@@ -1525,6 +1527,392 @@ defineWasmBuiltinTrampoline(jsstring, equals, a2)
 # (externref, externref, wasmInstance) -> i32
 defineWasmBuiltinTrampoline(jsstring, compare, a2)
 
+# Low-level logic for JSPI
+
+# Move $sp down enough to reserve at least this many bytes,
+# ensuring $sp ends up properly aligned.
+#
+macro alloca(byteSize, temp)
+    move byteSize, temp
+    addp StackAlignmentMask, temp
+    andp ~StackAlignmentMask, temp
+    subp temp, sp
+end
+
+macro storeAllArgumentRegisters(base)
+    forEachWasmArgumentGPR(macro(index, reg1, reg2)
+        if ARM64 or ARM64E
+            storepairq reg1, reg2, index * MachineRegisterSize[base]
+        elsif JSVALUE64
+            storeq reg1, (index + 0) * MachineRegisterSize[base]
+            storeq reg2, (index + 1) * MachineRegisterSize[base]
+        else
+            store2ia reg1, reg2, index * MachineRegisterSize[base]
+        end
+    end)
+    forEachWasmArgumentFPR(macro(index, reg1, reg2)
+        if ARM64 or ARM64E
+            storepaird reg1, reg2, NumberOfWasmArgumentGPRs * MachineRegisterSize + index * FPRRegisterSize[base]
+        else
+            stored reg1, NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 0) * FPRRegisterSize[base]
+            stored reg2, NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 1) * FPRRegisterSize[base]
+        end
+    end)
+end
+
+macro loadAllArgumentRegisters(base)
+    forEachWasmArgumentGPR(macro(index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            loadpairq index * MachineRegisterSize[base], gpr1, gpr2
+        elsif JSVALUE64
+            loadq (index + 0) * MachineRegisterSize[base], gpr1
+            loadq (index + 1) * MachineRegisterSize[base], gpr2
+        else
+            load2ia index * MachineRegisterSize[base], gpr1, gpr2
+        end
+    end)
+    forEachWasmArgumentFPR(macro(index, fpr1, fpr2)
+        if ARM64 or ARM64E
+            loadpaird NumberOfWasmArgumentGPRs * MachineRegisterSize + index * FPRRegisterSize[base], fpr1, fpr2
+        else
+            loadd NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 0) * FPRRegisterSize[base], fpr1
+            loadd NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 1) * FPRRegisterSize[base], fpr2
+        end
+    end)
+end
+
+macro populateSentinelVMEntryRecord(context, vmTemp, temp)
+    loadp PinballHandlerContext::vm[context], vmTemp
+
+    storep vmTemp, VMEntryRecord::m_vm[sp]
+    storep 0, VMEntryRecord::m_context[sp]
+    loadp VM::topCallFrame[vmTemp], temp
+    storep temp, VMEntryRecord::m_prevTopCallFrame[sp]
+    loadp VM::topEntryFrame[vmTemp], temp
+    storep temp, VMEntryRecord::m_prevTopEntryFrame[sp]
+
+    storep cfr, VM::topEntryFrame[vmTemp]
+    storep 0, VM::topCallFrame[vmTemp]
+end
+
+# Allocate space for the slices to implant and prepare the implant call args.
+# a0 should point at the context and is preserved; temp is a scratch register.
+#
+macro prepareImplantationCall(temp)
+    loadp PinballHandlerContext::sliceByteSize[a0], temp
+    subp temp, sp # sliceByteSize is always stack-aligned by construction
+    bpa sp, JSWebAssemblyInstance::m_stackMirror + StackManager::Mirror::m_softStackLimit[wasmInstance], .stackOK
+    break
+.stackOK:
+    move sp, a1 # a1 = implantation base
+    move cfr, a2 # a2 = returnFP (the sentinel frame)
+end
+
+# Construct a new frame on the stack and point cfr at it.
+# The frame's caller slot contains the old cfr, but the return PC is left uninitialized.
+#
+macro createArtificialFrame()
+    subp 2 * MachineRegisterSize, sp
+    storep cfr, [sp]
+    move sp, cfr
+end
+
+# void* relocateJITReturnPC(const void* codePtr, const void* oldSignatureSP, const void* newSignatureSP)
+global _relocateJITReturnPC
+_relocateJITReturnPC:
+    functionPrologue()
+if ARM64E
+    leap _g_config, ws1
+    jmp JSCConfigGateMapOffset + (constexpr Gate::relocateJITReturnPC) * PtrSize[ws1], NativeToJITGatePtrTag
+end
+
+_relocate_jit_return_pc_return_location:
+_relocate_jit_return_pc_trampoline:
+if X86_64
+    move a0, r0
+end
+    functionEpilogue()
+    ret
+
+# void* getSentinelFrameReturnPC(void* signatureSP)
+#
+global _getSentinelFrameReturnPC
+_getSentinelFrameReturnPC:
+functionPrologue()
+if ARM64E
+    leap _g_config, ws1
+    jmp JSCConfigGateMapOffset + (constexpr Gate::getSentinelFrameReturnPCGate) * PtrSize[ws1], NativeToJITGatePtrTag
+end
+
+_get_sentinel_frame_return_pc_trampoline:
+if ARM64E
+    pcrtoaddr _exit_implanted_slice, ws0
+    tagCodePtr ws0, a0
+    move ws0, r0
+else
+    pcrtoaddr _exit_implanted_slice, r0
+end
+    functionEpilogue()
+    ret
+
+_get_sentinel_frame_return_pc_return_location:
+if X86_64
+    move a0, r0
+end
+    functionEpilogue()
+    ret
+
+
+# EncodedJSValue enterWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+#
+global _enterWebAssemblySuspendingFunction
+_enterWebAssemblySuspendingFunction:
+    functionPrologue()
+
+    # Allocate the buffer to capture callee saves passed to runWebAssemblySuspendingFunction as originalCalleeSaves
+    alloca(MachineRegisterSize * constexpr NUMBER_OF_CALLEE_SAVES_REGISTERS, ws0)
+    copyCalleeSavesToBuffer(sp)
+    move sp, a2
+
+    # While we have the globalObject pointer in a0, fetch and store the address of the callee saves buffer
+    # in vm.topEntryFrame - we will need it later.
+    loadp JSGlobalObject::m_vm[a0], ws0
+    loadp VM::topEntryFrame[ws0], ws0
+    vmEntryRecord(ws0, ws0)
+    leap VMEntryRecord::calleeSaveRegistersBuffer[ws0], ws0
+    push ws0, ws0
+
+    cCall3(_runWebAssemblySuspendingFunction)
+    # A non-zero return value is the stack frame to teleport to, skipping the evacuated frames.
+    # A zero return means we return normally, typically because an exception was thrown.
+    btiz r0, .normalReturn
+
+    # Teleport over the evacuated frames by returning from the frame in r0.
+    # This is where we need the pushed pointer to the callee saves buffer in vm.topEntryFrame.
+    # It holds the initial state of callee saves for the return computed while walking the stack.
+    pop ws1, t5 # don't accidentally clobber r0 (no ws0) on x86
+    restoreCalleeSavesFromBuffer(ws1)
+    move r0, sp
+    move 0, r0
+    functionEpilogue()
+if ARM64E
+    leap _g_config, ws0
+    jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
+else
+    ret
+end
+
+.normalReturn:
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+# EncodedJSValue pinballHandlerFulfillFunction(JGlobalObject* globalObject, CallFrame* callFrame)
+#
+# This is the host function handling the fulfillment of a future on which Wasm code is suspended.
+# Because it needs to engage in invasive stack surgery and register juggling, the core logic is implemented
+# here in assembly, with calls to C++ functions implementing higher-level logic.
+# Execution state shared between assembly and C++ is kept on the stack as a struct PinballHandlerContext,
+# and SP always points at it.
+# Key invariant: SP is stable and not perturbed by any calls we make.
+#
+global  _pinballHandlerFulfillFunction
+_pinballHandlerFulfillFunction:
+    functionPrologue()
+    alloca(constexpr (sizeof(PinballHandlerContext)), ws0)
+    # Saving our callee saves in the context
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws0
+    copyCalleeSavesToBuffer(ws0)
+
+    move sp, a2
+    call _pinballHandlerInitContextForFulfill #(globalObject, callFrame, contextPtr)
+    # Restore callee saves of the evacuated Wasm code
+    loadp PinballHandlerContext::evacuatedCalleeSaves[sp], ws0
+    restoreCalleeSavesFromBuffer(ws0)
+
+.execute:
+    move sp, a0
+    call .execute_evacuated_slice #(context)
+    # Execution returns here from the sentinel frame after the slice has completed.
+    # The sentinel has already spilled Wasm argument registers into the context.
+    # Finish this iteration and loop to the next slice or exit with the result.
+    move sp, a0
+    call _pinballHandlerFulfillFunctionContinue #(context) -> true if we should do another cycle
+    btinz r0, .execute
+
+    # Done. The first Wasm argument is the return value.
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws0
+    restoreCalleeSavesFromBuffer(ws0)
+    loadp PinballHandlerContext::arguments[sp], r0
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+# Perform stack surgery to implant the frames from the slice currently in the context onto the execution stack
+# and kick off its execution. The following is the stack structure at the end of this function, just before the
+# final 'ret':
+#
+#   [ _pinballHandlerFulfillFunction ]
+#     {struct PinballHandlerContext - at the bottom of the _pinballHandlerFulfillFunction frame}
+#   [ sentinel     ] <- VM.topEntryFrame
+#   [ Wasm Frame N ]
+#         ...
+#   [ Wasm Frame 0 ]
+#   [ return frame ]
+#
+# The sentinel frame is constructed by 'functionPrologue()'' at the top of this function.
+# The return frame is constructed by 'createArtificialFrame()' further down and is the current
+# frame from that point on, so the 'ret' at the end of this function returns into Wasm Frame 0.
+# Prior to that return we must load argument registers with values expected by the implanted slice.
+# After all Wasm frames have executed, Wasm Frame N returns into the sentinel frame.
+# The code that runs upon that return is _exit_implanted_slice.
+#
+# The sentinel frame ensures that SP is reset to its original value before returning into _pinballHandlerFulfillFunction.
+# That is essential because the caller expects SP to be stable. Wasm slices include additional "headroom" slots
+# above the topmost frame record and returning from them does not by itself reset SP to the bottom of the caller frame.
+# The sentinel also functions as the top VM entry frame (essential for exception unwinding).
+#
+# Wasm Frame 0 may be a WasmToJS frame, and Wasm Frame N may be a JSToWasmFrame.
+# At this time we exclusively use the "slab" slicing strategy, which evacuates the entire Wasm stack portion
+# as a single slice, so Frame 0 is always a WasmToJS frame and Frame N is always a JSToWasmFrame.
+# This assumption for now simplifies exception handling.
+#
+.execute_evacuated_slice:
+    # Construct the sentinel and make it a VM entry frame.
+    # The sentinel must be right below the PinballHandlerContext allocated by the caller.
+    functionPrologue()
+    vmEntryRecord(cfr, sp)
+    populateSentinelVMEntryRecord(a0, ws0, ws1)
+
+    prepareImplantationCall(ws0) # moves sp further down to allocate space for implanted frames, loads a1-a2
+    # IMPORTANT: Preserve a0-a2 from here on until the _pinballHandlerImplantSlice call!
+    checkStackPointerAlignment(ws0, 0xbad0fff1)
+    # Preserve on the stack the arguments buffer ptr. Two copies to keep stack aligned
+    # and work around the push order difference between arm64 and x86.
+    leap PinballHandlerContext::arguments[a0], ws0
+    push ws0, ws0
+
+    # Create the return frame (the frame the 'ret' at the end of this function returns from)
+    createArtificialFrame()
+    move cfr, a3
+    call _pinballHandlerImplantSlice #(context, base, sentinelFP, thisFrame)
+    # implantSlice sets the caller and returnPC of the return frame (current frame)
+
+    # Now load the return value
+    move cfr, ws1
+    addp 2 * MachineRegisterSize, ws1
+    loadp [ws1], sc0 # sc0 -> arguments
+    loadAllArgumentRegisters(sc0)
+if X86_64
+    move a0, r0
+end
+    checkStackPointerAlignment(ws1, 0xbad0fff2)
+    functionEpilogue()
+    # return into Wasm Frame 0
+if ARM64E
+    leap _g_config, ws0
+    jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
+else
+    ret
+end
+
+
+# Returning into a sentinel frame executes this code
+global _exit_implanted_slice
+_exit_implanted_slice:
+    # We should spill all Wasm arg registers into the PinballHandlerContext.
+    # The context struct is expected right above this frame, that is cfr + 2 registers.
+    # ws1 is the only scratch safe to use before we spill (ws0 overlaps r0 on x86).
+    leap 2 * MachineRegisterSize + PinballHandlerContext::arguments[cfr], ws1
+if X86_64
+    move r0, a0 # fix the usual x86 a0/r0 discrepancy
+end
+    storeAllArgumentRegisters(ws1)
+
+    vmEntryRecord(cfr, sp)
+    loadp VMEntryRecord::m_vm[sp], t0
+    loadp VMEntryRecord::m_prevTopCallFrame[sp], t1
+    storep t1, VM::topCallFrame[t0]
+    loadp VMEntryRecord::m_prevTopEntryFrame[sp], t1
+    storep t1, VM::topEntryFrame[t0]
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+# EncodedJSValue pinballHandlerRejectFunction(JGlobalObject* globalObject, CallFrame* callFrame)
+#
+# This is the host function handling the rejection of a future on which Wasm code is suspended.
+# The overall structure is similar to _pinballHandlerFulfillFunction.
+#
+global _pinballHandlerRejectFunction
+_pinballHandlerRejectFunction:
+    functionPrologue()
+
+    alloca(constexpr(sizeof(PinballHandlerContext)), ws0)
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws0
+    copyCalleeSavesToBuffer(ws0)
+    move sp, a2 # the context pointer
+    call _pinballHandlerInitContextForReject #(globalObject, callFrame, context)
+
+    # Restore callee saves of the evacuated Wasm code
+    loadp PinballHandlerContext::evacuatedCalleeSaves[sp], ws0
+    restoreCalleeSavesFromBuffer(ws0)
+
+    move sp, a0
+    call .unwind_current_slice
+    # Execution returns here from the sentinel frame if the exception was caught in Wasm.
+    # Wasm argument registers were already spilled into the context by the sentinel.
+    move sp, a0
+    call _pinballHandlerFinishReject #(context)
+
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws1
+    restoreCalleeSavesFromBuffer(ws1)
+    move 0, r0
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+
+# This is almost the same as .execute_evacuated_slice in how the stack is shaped
+# by the time we get to the end of this function. The differences are:
+#
+# - What used to be a return frame is shaped as a pretend throwing frame,
+#   so it's business as usual for the unwind machinery.
+#
+# - Instead of returning at the end of the function, we store the exception
+#   into the VM and jump to the unwind logic. All together this works as if
+#   the exception was thrown from somewhere in our pretend throwing frame.
+#
+.unwind_current_slice:
+    functionPrologue()
+    vmEntryRecord(cfr, sp)
+    populateSentinelVMEntryRecord(a0, ws0, ws1)
+
+    prepareImplantationCall(ws0) # moves sp further down to allocate space for implanted frames, loads a1-a2
+    checkStackPointerAlignment(ws0, 0xbad0fff3)
+
+    # Set up a pretend throwing frame with a zombie callee and a null codeblock.
+    subp 4 * MachineRegisterSize, sp
+    createArtificialFrame()
+    loadp PinballHandlerContext::zombieFrameCallee[a0], ws0
+    storep 0, CodeBlock[cfr]
+    storep ws0, Callee[cfr]
+    storep 0, ArgumentCountIncludingThis[cfr]
+    storep a0, ThisArgumentOffset[cfr] # context, stored temporarily to preserve it across the function call
+    move cfr, a3
+    call _pinballHandlerImplantSlice #(context, base, sentinelFP, returnFrame)
+    # implantSlice has set the caller and returnPC of the throwing frame
+
+    # Retrieve the context pointer and clean up the frame
+    loadp ThisArgumentOffset[cfr], t0
+    storep 0, ThisArgumentOffset[cfr]
+
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t1 # t1 -> vm
+    loadp PinballHandlerContext::exception[t0], t2 # t2 -> exception
+    storep t2, VM::m_exception[t1]
+
+    jmp _wasm_unwind_from_slow_path_trampoline
+
 
 #################################
 # 5. Instruction implementation #
@@ -1532,8 +1920,6 @@ defineWasmBuiltinTrampoline(jsstring, compare, a2)
 
 if JSVALUE64 and (ARM64 or ARM64E or X86_64)
     include InPlaceInterpreter64
-elsif ARMv7
-    include InPlaceInterpreter32_64
 else
 # For unimplemented architectures: make sure that the assertions can still find the labels
 # See https://webassembly.github.io/spec/core/appendix/index-instructions.html for the list of instructions.
@@ -2165,4 +2551,3 @@ unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
 end
-

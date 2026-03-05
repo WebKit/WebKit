@@ -67,6 +67,22 @@ PASS matchedLang(child) is "zh"
 ----
 PASS matchedLang(container) is "de"
 ----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "zh"
+PASS matchedLang(child) is "zh"
+----
+PASS matchedLang(container) is "zh"
+PASS matchedLang(child) is "zh"
+----
+PASS matchedLang(container) is ""
+PASS matchedLang(grandchild) is ""
+----
+PASS matchedLang(container) is ""
+PASS matchedLang(child) is "de"
+PASS matchedLang(grandchild) is "de"
+----
 PASS successfullyParsed is true
 
 TEST COMPLETE

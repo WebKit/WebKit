@@ -31,13 +31,13 @@
 namespace WebCore {
 
 struct AV1CodecConfigurationRecord;
-struct VideoConfiguration;
-struct MediaCapabilitiesInfo;
+struct PlatformMediaCapabilitiesInfo;
+struct PlatformMediaCapabilitiesVideoConfiguration;
 
-std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord&, const VideoConfiguration&);
+std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 WEBCORE_EXPORT bool av1HardwareDecoderAvailable();
 WEBCORE_EXPORT void setAV1HardwareDecoderAvailable(bool);
-
+WEBCORE_EXPORT bool av1HardwareDecoderAvailableInProcess();
 }
 
 #endif

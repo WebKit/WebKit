@@ -48,6 +48,7 @@ Overview
 
     glTexSubImage* will accept the following format+type combinations:
         1. format = GL_RGB, type = GL_UNSIGNED_BYTE
+        2. format = GL_RGBA, type = GL_UNSIGNED_BYTE
 
 New Types
 

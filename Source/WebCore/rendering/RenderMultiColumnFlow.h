@@ -34,7 +34,7 @@ class RenderMultiColumnSet;
 class RenderMultiColumnSpannerPlaceholder;
 
 class RenderMultiColumnFlow final : public RenderFragmentedFlow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMultiColumnFlow);
+    WTF_MAKE_TZONE_ALLOCATED(RenderMultiColumnFlow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnFlow);
 public:
     RenderMultiColumnFlow(Document&, RenderStyle&&);
@@ -49,7 +49,7 @@ public:
     static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
     static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
 
-    RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(const RenderBox& spanner) const;
+    RenderMultiColumnSpannerPlaceholder* NODELETE findColumnSpannerPlaceholder(const RenderBox& spanner) const;
 
     void layout() override;
 

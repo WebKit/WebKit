@@ -101,7 +101,7 @@ std::vector<VkFormat> DisplayVkLinux::getVkFormatsWithDrmModifiers(const vk::Ren
     {
         const vk::Format &format = renderer->getFormat(angle::FormatID(formatIndex));
         VkFormat vkFormat =
-            format.getActualImageVkFormat(renderer, rx::vk::ImageAccess::Renderable);
+            format.getActualImageVkFormat(renderer, rx::vk::ImageFormatSupport::Renderable);
 
         if (vkFormat != VK_FORMAT_UNDEFINED &&
             supportsDrmModifiers(renderer->getPhysicalDevice(), vkFormat))

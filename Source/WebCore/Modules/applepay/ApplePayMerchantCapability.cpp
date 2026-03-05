@@ -61,7 +61,7 @@ ExceptionOr<ApplePaySessionPaymentRequest::MerchantCapabilities> convertAndValid
         }
     }
 
-    return WTFMove(result);
+    return WTF::move(result);
 }
 
 } // namespace WebCore

@@ -33,9 +33,10 @@
 #if defined(JSC_GLIB_API_ENABLED)
 #include "JSAPIWrapperGlobalObject.h"
 #endif
+#include "JSGlobalObject.h"
+#include "JSObject.h"
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
-#include "JSObject.h"
 #include <wtf/PlatformCallingConventions.h>
 
 namespace JSC {

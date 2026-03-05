@@ -27,7 +27,7 @@
     Conditional=MEDIA_SESSION,
     Exposed=Window,
 ] interface MediaMetadata {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional MediaMetadataInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional MediaMetadataInit init = {});
     attribute DOMString title;
     attribute DOMString artist;
     attribute DOMString album;

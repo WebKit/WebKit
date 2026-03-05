@@ -45,7 +45,7 @@ RetainPtr<PKPaymentTokenContext> platformPaymentTokenContext(const ApplePayPayme
     RetainPtr<NSString> merchantDomain;
     if (!webTokenContext.merchantDomain.isNull())
         merchantDomain = webTokenContext.merchantDomain.createNSString();
-    return adoptNS([PAL::allocPKPaymentTokenContextInstance() initWithMerchantIdentifier:webTokenContext.merchantIdentifier.createNSString().get() externalIdentifier:webTokenContext.externalIdentifier.createNSString().get() merchantName:webTokenContext.merchantName.createNSString().get() merchantDomain:merchantDomain.get() amount:WebCore::toProtectedDecimalNumber(webTokenContext.amount).get()]);
+    return adoptNS([PAL::allocPKPaymentTokenContextInstance() initWithMerchantIdentifier:webTokenContext.merchantIdentifier.createNSString().get() externalIdentifier:webTokenContext.externalIdentifier.createNSString().get() merchantName:webTokenContext.merchantName.createNSString().get() merchantDomain:merchantDomain.get() amount:protect(WebCore::toDecimalNumber(webTokenContext.amount)).get()]);
 }
 
 RetainPtr<NSArray<PKPaymentTokenContext *>> platformPaymentTokenContexts(const Vector<ApplePayPaymentTokenContext>& webTokenContexts)

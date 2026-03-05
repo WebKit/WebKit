@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/async-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/async-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/async-03.html
@@ -34,3 +35,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/svg-root-border-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/svg-small-big-path.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/tabindex-focus-flag.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/text-hittest-001.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/text-hittest-002.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/text-hittest-003.html

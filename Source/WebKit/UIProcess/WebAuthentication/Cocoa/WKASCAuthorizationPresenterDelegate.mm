@@ -52,8 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
     auto requestHandler = [completionHandler = makeBlockPtr(completionHandler)] (ASCAppleIDCredential *credential, NSError *error) {
         completionHandler(credential, error);
     };
-    [self dispatchCoordinatorCallback:[requestHandler = WTFMove(requestHandler)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
-        coordinator.setCredentialRequestHandler(WTFMove(requestHandler));
+    [self dispatchCoordinatorCallback:[requestHandler = WTF::move(requestHandler)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+        coordinator.setCredentialRequestHandler(WTF::move(requestHandler));
     }];
 
     if ([loginChoice isKindOfClass:WebKit::getASCPlatformPublicKeyCredentialLoginChoiceClassSingleton()]) {
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         String loginChoiceName = platformLoginChoice.name;
-        [self dispatchCoordinatorCallback:[loginChoiceName = WTFMove(loginChoiceName), context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+        [self dispatchCoordinatorCallback:[loginChoiceName = WTF::move(loginChoiceName), context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
             coordinator.didSelectAssertionResponse(loginChoiceName, context.get());
         }];
 
@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         if ([securityKeyLoginChoice credentialKind] == ASCSecurityKeyPublicKeyCredentialKindAssertion) {
             String loginChoiceName = securityKeyLoginChoice.name;
-            [self dispatchCoordinatorCallback:[loginChoiceName = WTFMove(loginChoiceName)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+            [self dispatchCoordinatorCallback:[loginChoiceName = WTF::move(loginChoiceName)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
                 coordinator.didSelectAssertionResponse(loginChoiceName, nil);
             }];
 
@@ -94,12 +94,12 @@ NS_ASSUME_NONNULL_BEGIN
     auto requestHandler = [completionHandler = makeBlockPtr(completionHandler)] (ASCAppleIDCredential *credential, NSError *error) {
         completionHandler(credential, error);
     };
-    [self dispatchCoordinatorCallback:[requestHandler = WTFMove(requestHandler)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
-        coordinator.setCredentialRequestHandler(WTFMove(requestHandler));
+    [self dispatchCoordinatorCallback:[requestHandler = WTF::move(requestHandler)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+        coordinator.setCredentialRequestHandler(WTF::move(requestHandler));
     }];
 
     String pinString = pin;
-    [self dispatchCoordinatorCallback:[pinString = WTFMove(pinString)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+    [self dispatchCoordinatorCallback:[pinString = WTF::move(pinString)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
         coordinator.setPin(pinString);
     }];
 }
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dispatchCoordinatorCallback:(Function<void(WebKit::AuthenticatorPresenterCoordinator&)>&&)callback
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::mainSingleton().dispatch([coordinator = _coordinator, callback = WTFMove(callback)] {
+    RunLoop::mainSingleton().dispatch([coordinator = _coordinator, callback = WTF::move(callback)] {
         if (!coordinator)
             return;
         callback(*coordinator);

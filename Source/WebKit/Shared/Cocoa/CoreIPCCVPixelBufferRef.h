@@ -47,7 +47,7 @@ public:
     }
 
     CoreIPCCVPixelBufferRef(MachSendRight&& sendRight)
-        : m_sendRight(WTFMove(sendRight))
+        : m_sendRight(WTF::move(sendRight))
     {
     }
 

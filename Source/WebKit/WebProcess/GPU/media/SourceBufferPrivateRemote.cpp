@@ -61,7 +61,7 @@ WorkQueue& SourceBufferPrivateRemote::queueSingleton()
 
 void SourceBufferPrivateRemote::ensureWeakOnDispatcher(Function<void(SourceBufferPrivateRemote&)>&& function)
 {
-    auto weakWrapper = [function = WTFMove(function), weakThis = ThreadSafeWeakPtr(*this)] {
+    auto weakWrapper = [function = WTF::move(function), weakThis = ThreadSafeWeakPtr(*this)] {
         if (RefPtr protectedThis = weakThis.get()) {
             auto gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
             if (!gpuProcessConnection || !protectedThis->isGPURunning())
@@ -69,7 +69,7 @@ void SourceBufferPrivateRemote::ensureWeakOnDispatcher(Function<void(SourceBuffe
             function(*protectedThis);
         }
     };
-    ensureOnDispatcher(WTFMove(weakWrapper));
+    ensureOnDispatcher(WTF::move(weakWrapper));
 }
 
 Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate)
@@ -100,12 +100,12 @@ SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
 
 Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
 {
-    return invokeAsync(m_dispatcher, [protectedThis = Ref { *this }, this, data = WTFMove(data)]() mutable -> Ref<MediaPromise> {
+    return invokeAsync(m_dispatcher, [protectedThis = Ref { *this }, this, data = WTF::move(data)]() mutable -> Ref<MediaPromise> {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }))->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTF::move(data) }))->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
             if (!result)
                 return MediaPromise::createAndReject(PlatformMediaError::IPCError);
             if (RefPtr protectedThis = weakThis.get())
@@ -172,7 +172,7 @@ bool SourceBufferPrivateRemote::canSwitchToType(const ContentType& contentType)
         RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
         if (gpuProcessConnection && isGPURunning()) {
             ContentType contentType { contentTypeString };
-            auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(WTFMove(contentType)), m_remoteSourceBufferIdentifier);
+            auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(WTF::move(contentType)), m_remoteSourceBufferIdentifier);
             std::tie(canSwitch) = sendResult.takeReplyOr(false);
         }
     });
@@ -340,8 +340,8 @@ Ref<GenericPromise> SourceBufferPrivateRemote::setMaximumBufferSize(size_t size)
         return GenericPromise::createAndResolve();
     GenericPromise::AutoRejectProducer producer;
     Ref promise = producer.promise();
-    ensureWeakOnDispatcher([size, producer = WTFMove(producer)](auto& buffer) mutable {
-        buffer.sendWithPromisedReply(Messages::RemoteSourceBufferProxy::SetMaximumBufferSize(size))->chainTo(WTFMove(producer));
+    ensureWeakOnDispatcher([size, producer = WTF::move(producer)](auto& buffer) mutable {
+        buffer.sendWithPromisedReply(Messages::RemoteSourceBufferProxy::SetMaximumBufferSize(size))->chainTo(WTF::move(producer));
     });
     return promise;
 }
@@ -364,8 +364,8 @@ void SourceBufferPrivateRemote::seekToTime(const MediaTime& time)
 
 void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIDPairs)
 {
-    ensureWeakOnDispatcher([trackIDPairs = WTFMove(trackIDPairs)](auto& buffer) mutable {
-        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::UpdateTrackIds(WTFMove(trackIDPairs)));
+    ensureWeakOnDispatcher([trackIDPairs = WTF::move(trackIDPairs)](auto& buffer) mutable {
+        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::UpdateTrackIds(WTF::move(trackIDPairs)));
     });
 }
 
@@ -423,7 +423,7 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveIn
     if (!mediaPlayer)
         return completionHandler(makeUnexpected(WebCore::PlatformMediaError::SourceRemoved));
 
-    client->sourceBufferPrivateDidReceiveInitializationSegment(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queueSingleton(), WTFMove(completionHandler));
+    client->sourceBufferPrivateDidReceiveInitializationSegment(createInitializationSegment(*mediaPlayer, WTF::move(segmentInfo)))->whenSettled(parent->queueSingleton(), WTF::move(completionHandler));
 }
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateEvictionDataChanged(SourceBufferEvictionData&& evictionData)
@@ -432,10 +432,10 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateEvictionData
 
     if (RefPtr parent = m_parent.get()) {
         Locker locker { parent->m_lock };
-        parent->m_evictionData = WTFMove(evictionData);
+        parent->m_evictionData = WTF::move(evictionData);
     }
     if (auto client = this->client())
-        client->sourceBufferPrivateEvictionDataChanged(WTFMove(evictionData));
+        client->sourceBufferPrivateEvictionDataChanged(WTF::move(evictionData));
 }
 
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
@@ -451,7 +451,7 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDurationChan
     assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     if (auto client = this->client()) {
-        client->sourceBufferPrivateDurationChanged(duration)->whenSettled(SourceBufferPrivateRemote::queueSingleton(), WTFMove(completionHandler));
+        client->sourceBufferPrivateDurationChanged(duration)->whenSettled(SourceBufferPrivateRemote::queueSingleton(), WTF::move(completionHandler));
         return;
     }
     completionHandler();
@@ -462,7 +462,7 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateBufferedChan
     assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());
 
     if (auto client = this->client()) {
-        client->sourceBufferPrivateBufferedChanged(WTFMove(trackBuffersRanges))->whenSettled(SourceBufferPrivateRemote::queueSingleton(), WTFMove(completionHandler));
+        client->sourceBufferPrivateBufferedChanged(WTF::move(trackBuffersRanges))->whenSettled(SourceBufferPrivateRemote::queueSingleton(), WTF::move(completionHandler));
         return;
     }
     completionHandler();
@@ -489,7 +489,7 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidAttach(In
     if (!mediaPlayer)
         return completionHandler(makeUnexpected(WebCore::PlatformMediaError::SourceRemoved));
 
-    client->sourceBufferPrivateDidAttach(createInitializationSegment(*mediaPlayer, WTFMove(segmentInfo)))->whenSettled(parent->queueSingleton(), WTFMove(completionHandler));
+    client->sourceBufferPrivateDidAttach(createInitializationSegment(*mediaPlayer, WTF::move(segmentInfo)))->whenSettled(parent->queueSingleton(), WTF::move(completionHandler));
 }
 
 SourceBufferPrivateClient::InitializationSegment SourceBufferPrivateRemote::MessageReceiver::createInitializationSegment(MediaPlayerPrivateRemote& mediaPlayer, InitializationSegmentInfo&& segmentInfo) const

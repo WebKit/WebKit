@@ -43,7 +43,7 @@ void SynchronousLoaderClient::willSendRequestAsync(ResourceHandle* handle, Resou
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
     if (protocolHostAndPortAreEqual(handle->firstRequest().url(), request.url())) {
-        completionHandler(WTFMove(request));
+        completionHandler(WTF::move(request));
         return;
     }
 
@@ -68,7 +68,7 @@ void SynchronousLoaderClient::canAuthenticateAgainstProtectionSpaceAsync(Resourc
 
 void SynchronousLoaderClient::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response, CompletionHandler<void()>&& completionHandler)
 {
-    m_response = WTFMove(response);
+    m_response = WTF::move(response);
     completionHandler();
 }
 

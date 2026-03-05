@@ -33,7 +33,7 @@
     Exposed=Window,
     SecureContext
 ] interface AudioWorkletNode : AudioNode {
-    [CallWith=CurrentGlobalObject] constructor (BaseAudioContext context, DOMString name, optional AudioWorkletNodeOptions options);
+    [CallWith=CurrentGlobalObject] constructor (BaseAudioContext context, DOMString name, optional AudioWorkletNodeOptions options = {});
     readonly attribute AudioParamMap parameters;
     readonly attribute MessagePort port;
     attribute EventHandler onprocessorerror;

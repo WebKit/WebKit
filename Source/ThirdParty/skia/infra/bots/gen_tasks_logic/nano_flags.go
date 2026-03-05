@@ -316,6 +316,11 @@ func (b *TaskBuilder) nanobenchFlags(doUpload bool) {
 		match = append(match, "~svg", "~chalkboard", "~motionmark")
 	}
 
+	// TODO (thomsmit): Remove this when testing is over
+	if b.ExtraConfig("TestDrawListLayer") {
+		args = append(args, "--useDrawListLayer")
+		match = append(match, "skp")
+	}
 	// We do not need or want to benchmark the decodes of incomplete images.
 	// In fact, in nanobench we assert that the full image decode succeeds.
 	match = append(match, "~inc0.gif")

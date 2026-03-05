@@ -3,6 +3,7 @@ WK_NOTIFICATION_COMMENT("These notifyd notifications are forwarded from the UIPr
 WK_NOTIFICATION("_AXNotification__UUID_")
 WK_NOTIFICATION("_AXNotification_AXMRInvertColors")
 WK_NOTIFICATION("_AXNotification_AXMRReduceWhitePoint")
+WK_NOTIFICATION("_AXNotification_AXMRReduceWhitePointAmount")
 WK_NOTIFICATION("_AXNotification_AXMuseDisplayFiltersEnabled")
 WK_NOTIFICATION("_UUID_.notification")
 WK_NOTIFICATION("CPActiveCountryCodeChanged.Internal")

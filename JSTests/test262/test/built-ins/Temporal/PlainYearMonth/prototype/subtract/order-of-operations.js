@@ -51,14 +51,14 @@ const instance = new Temporal.PlainYearMonth(2000, 5, "iso8601");
 const fields = TemporalHelpers.propertyBagObserver(actual, {
   years: 1,
   months: 1,
-  weeks: 1,
-  days: 1,
-  hours: 1,
-  minutes: 1,
-  seconds: 1,
-  milliseconds: 1,
-  microseconds: 1,
-  nanoseconds: 1,
+  weeks: 0,
+  days: 0,
+  hours: 0,
+  minutes: 0,
+  seconds: 0,
+  milliseconds: 0,
+  microseconds: 0,
+  nanoseconds: 0,
 }, "fields");
 
 const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constrain" }, "options");

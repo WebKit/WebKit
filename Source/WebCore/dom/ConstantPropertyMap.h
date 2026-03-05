@@ -62,7 +62,7 @@ public:
     explicit ConstantPropertyMap(Document&);
 
     using Values = HashMap<AtomString, Ref<const Style::CustomProperty>>;
-    const Values& values() const;
+    const Values& values() const LIFETIME_BOUND;
 
     void didChangeSafeAreaInsets();
     void didChangeFullscreenInsets();
@@ -77,7 +77,6 @@ private:
     void updateConstantsForSafeAreaInsets();
     void updateConstantsForFullscreen();
 
-    Ref<Document> protectedDocument() const;
 
     std::optional<Values> m_values;
 

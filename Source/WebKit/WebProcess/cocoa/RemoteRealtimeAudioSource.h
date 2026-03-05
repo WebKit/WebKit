@@ -38,7 +38,7 @@ public:
     ~RemoteRealtimeAudioSource();
 
     void remoteAudioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
-    void setDescription(const WebCore::CAAudioStreamDescription&);
+    void NODELETE setDescription(const WebCore::CAAudioStreamDescription&);
 
 private:
     RemoteRealtimeAudioSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, std::optional<WebCore::PageIdentifier>);

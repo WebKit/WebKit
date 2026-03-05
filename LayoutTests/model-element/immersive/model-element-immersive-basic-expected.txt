@@ -1,0 +1,15 @@
+
+PASS Immersive API exists on model and document
+PASS Model immersive request fails without user activation
+PASS Model enters immersive mode with user activation
+PASS Document.exitImmersive() exits immersive model
+PASS WKWebview._exitImmersive() exits immersive model
+PASS Immersivechange events fire when entering immersive
+PASS Only one model can be immersive at a time
+PASS Exiting immersive model after an immersive update exits immersive mode
+PASS Removing immersive model from DOM exits immersive mode
+PASS Immersiveerror event fires when request fails
+PASS CSS :immersive pseudo-class matches correctly
+PASS Model is complete once presented as immersive
+PASS Multiple concurrent requestImmersive calls are handled correctly
+

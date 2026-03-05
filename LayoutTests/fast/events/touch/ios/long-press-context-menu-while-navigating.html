@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta charset="utf-8">
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width, user-scalable=no">
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+a {
+    border: 1px solid red;
+    font-size: 18px;
+    -webkit-user-select: none;
+}
+</style>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dumpAsText();
+
+addEventListener("load", async () => {
+    if (new URL(document.URL)?.searchParams?.get("done") === "1") {
+        // Wait for the context menu to finish presenting or dismissing.
+        await UIHelper.delayFor(500);
+        await UIHelper.activateAt(0, 0);
+        await UIHelper.delayFor(500);
+
+        document.writeln("PASS");
+        window.testRunner?.notifyDone();
+    } else {
+        const link = document.getElementById("target");
+        link.addEventListener("touchstart", event => {
+            setTimeout(() => window.location = document.URL + "?done=1", 400);
+            event.stopImmediatePropagation();
+        });
+
+        await UIHelper.longPressElement(link);
+    }
+});
+</script>
+</head>
+<body>
+    <div>
+        <a id="target" href="http://localhost:54321/">Long press here</a>
+    </div>
+    <pre id="description">Long pressing a link that triggers top level navigation on touchstart should not crash WebKitTestRunner.</pre>
+</body>
+</html>

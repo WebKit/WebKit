@@ -24,7 +24,6 @@
  */
 
 // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#gethtmloptions
-
 dictionary GetHTMLOptions {
     boolean serializableShadowRoots = false;
     sequence<ShadowRoot> shadowRoots = [];

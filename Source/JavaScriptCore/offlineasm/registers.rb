@@ -42,6 +42,7 @@ GPRS =
      "sp",
      "lr",
      "pc",
+     "zr",
      "csr0",
      "csr1",
      "csr2",

@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTsRGB);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTsRGB);
 
 EXTsRGB::EXTsRGB(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTsRGB)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::EXT_sRGB);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::EXT_sRGB);
 }
 
 EXTsRGB::~EXTsRGB() = default;

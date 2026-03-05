@@ -37,7 +37,7 @@ namespace WebCore {
 class MathMLFractionElement;
 
 class RenderMathMLFraction final : public RenderMathMLRow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLFraction);
+    WTF_MAKE_TZONE_ALLOCATED(RenderMathMLFraction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFraction);
 public:
     RenderMathMLFraction(MathMLFractionElement&, RenderStyle&&);
@@ -57,7 +57,7 @@ private:
     RenderMathMLOperator* unembellishedOperator() const final;
     bool isMathContentCentered() const final { return true; }
 
-    MathMLFractionElement& element() const;
+    MathMLFractionElement& NODELETE element() const;
 
     bool isValid() const;
     RenderBox& numerator() const;

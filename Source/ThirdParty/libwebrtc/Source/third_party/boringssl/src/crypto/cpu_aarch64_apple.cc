@@ -24,7 +24,7 @@
 static int has_hw_feature(const char *name) {
   int value;
   size_t len = sizeof(value);
-  if (sysctlbyname(name, &value, &len, NULL, 0) != 0) {
+  if (sysctlbyname(name, &value, &len, nullptr, 0) != 0) {
     return 0;
   }
   if (len != sizeof(int)) {

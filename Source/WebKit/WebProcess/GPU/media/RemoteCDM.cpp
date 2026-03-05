@@ -37,20 +37,23 @@
 #include <WebCore/CDMKeySystemConfiguration.h>
 #include <WebCore/CDMRestrictions.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCDM);
 
 using namespace WebCore;
 
 std::unique_ptr<RemoteCDM> RemoteCDM::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration, const String& mediaKeysHashSalt)
 {
-    return std::unique_ptr<RemoteCDM>(new RemoteCDM(WTFMove(factory), WTFMove(identifier), WTFMove(configuration), mediaKeysHashSalt));
+    return std::unique_ptr<RemoteCDM>(new RemoteCDM(WTF::move(factory), WTF::move(identifier), WTF::move(configuration), mediaKeysHashSalt));
 }
 
 RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration, const String& mediaKeysHashSalt)
-    : m_factory(WTFMove(factory))
-    , m_identifier(WTFMove(identifier))
-    , m_configuration(WTFMove(configuration))
+    : m_factory(WTF::move(factory))
+    , m_identifier(WTF::move(identifier))
+    , m_configuration(WTF::move(configuration))
     , m_mediaKeysHashSalt { mediaKeysHashSalt }
 {
 }
@@ -71,7 +74,7 @@ void RemoteCDM::getSupportedConfiguration(CDMKeySystemConfiguration&& configurat
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMProxy::GetSupportedConfiguration(WTFMove(configuration), access), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMProxy::GetSupportedConfiguration(WTF::move(configuration), access), WTF::move(callback), m_identifier);
 }
 
 bool RemoteCDM::supportsConfiguration(const CDMKeySystemConfiguration&) const
@@ -126,7 +129,7 @@ RefPtr<CDMInstance> RemoteCDM::createInstance()
     auto [identifier, configuration] = sendResult.takeReplyOr(std::nullopt, RemoteCDMInstanceConfiguration { });
     if (!identifier)
         return nullptr;
-    return RemoteCDMInstance::create(factory.get(), WTFMove(*identifier), WTFMove(configuration));
+    return RemoteCDMInstance::create(factory.get(), WTF::move(*identifier), WTF::move(configuration));
 }
 
 void RemoteCDM::loadAndInitialize()

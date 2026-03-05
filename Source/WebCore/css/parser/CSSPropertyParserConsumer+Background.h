@@ -129,15 +129,15 @@ template<typename Container, typename T> Container completeQuadFromArray(std::ar
     ASSERT(optionals[0].has_value());
 
     if (!optionals[1])
-        return completeQuad<Container>(WTFMove(*optionals[0]));
+        return completeQuad<Container>(WTF::move(*optionals[0]));
 
     if (!optionals[2])
-        return completeQuad<Container>(WTFMove(*optionals[0]), WTFMove(*optionals[1]));
+        return completeQuad<Container>(WTF::move(*optionals[0]), WTF::move(*optionals[1]));
 
     if (!optionals[3])
-        return completeQuad<Container>(WTFMove(*optionals[0]), WTFMove(*optionals[1]), WTFMove(*optionals[2]));
+        return completeQuad<Container>(WTF::move(*optionals[0]), WTF::move(*optionals[1]), WTF::move(*optionals[2]));
 
-    return Container { WTFMove(*optionals[0]), WTFMove(*optionals[1]), WTFMove(*optionals[2]), WTFMove(*optionals[3]) };
+    return Container { WTF::move(*optionals[0]), WTF::move(*optionals[1]), WTF::move(*optionals[2]), WTF::move(*optionals[3]) };
 }
 
 } // namespace CSSPropertyParserHelpers

@@ -123,6 +123,7 @@ public:
     TaggedNativeFunction nativeConstructor();
 
     JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);
+    static CallData getConstructDataInline(JSCell*);
     JS_EXPORT_PRIVATE static CallData getCallData(JSCell*);
     static CallData getCallDataInline(JSCell*);
 

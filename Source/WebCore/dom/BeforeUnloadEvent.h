@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class BeforeUnloadEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BeforeUnloadEvent);
+    WTF_MAKE_TZONE_ALLOCATED(BeforeUnloadEvent);
 public:
     static Ref<BeforeUnloadEvent> create()
     {
@@ -47,9 +47,7 @@ public:
 private:
     enum ForBindingsFlag { ForBindings };
     BeforeUnloadEvent();
-    BeforeUnloadEvent(ForBindingsFlag);
-
-    bool isBeforeUnloadEvent() const final;
+    explicit BeforeUnloadEvent(ForBindingsFlag);
 
     String m_returnValue;
 };

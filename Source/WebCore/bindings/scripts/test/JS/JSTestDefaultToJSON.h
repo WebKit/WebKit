@@ -32,7 +32,7 @@ public:
     static JSTestDefaultToJSON* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestDefaultToJSON* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSON>(vm)) JSTestDefaultToJSON(structure, *globalObject, WTFMove(impl));
+        JSTestDefaultToJSON* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSON>(vm)) JSTestDefaultToJSON(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestDefaultToJSON* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestDefaultToJSON&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSON* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestDefaultToJSON>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSON& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestDefaultToJSON>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestDefaultToJSON> {
     using WrapperClass = JSTestDefaultToJSON;

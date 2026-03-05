@@ -37,7 +37,7 @@ namespace WebCore {
 
 struct BackgroundFetchRequest {
     BackgroundFetchRequest isolatedCopy() const & { return { internalRequest.isolatedCopy(), options.isolatedCopy(), guard, httpHeaders.isolatedCopy(), referrer.isolatedCopy(), crossThreadCopy(cspResponseHeaders) }; }
-    BackgroundFetchRequest isolatedCopy() && { return { WTFMove(internalRequest).isolatedCopy(), WTFMove(options).isolatedCopy(), guard, WTFMove(httpHeaders).isolatedCopy(), WTFMove(referrer).isolatedCopy(), crossThreadCopy(WTFMove(cspResponseHeaders)) }; }
+    BackgroundFetchRequest isolatedCopy() && { return { WTF::move(internalRequest).isolatedCopy(), WTF::move(options).isolatedCopy(), guard, WTF::move(httpHeaders).isolatedCopy(), WTF::move(referrer).isolatedCopy(), crossThreadCopy(WTF::move(cspResponseHeaders)) }; }
 
     ResourceRequest internalRequest;
     FetchOptions options;

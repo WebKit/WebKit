@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "api/environment/environment.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_controller_interface.h"
 #include "p2p/base/ice_transport_internal.h"
@@ -25,6 +26,7 @@ namespace webrtc {
 
 // struct with arguments to IceControllerFactoryInterface::Create
 struct IceControllerFactoryArgs {
+  Environment env;
   std::function<IceTransportStateInternal()> ice_transport_state_func;
   std::function<IceRole()> ice_role_func;
   std::function<bool(const Connection*)> is_connection_pruned_func;

@@ -13,8 +13,11 @@ PASS: Completions should still contain myVariable before cache is cleared.
 PASS: Completions should change after cache is cleared.
 PASS: Completions should not contain myVariable after it's deleted by code run in console.
 
+-- Running test case: console.jsCompletions.revokedProxy
+PASS: Completions for a revoked proxy should return an empty array and should not crash.
+
 -- Running test case: console.jsCompletions.completionOrdering
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":""} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":""}:
 [
   "aa",
   "Aa",
@@ -24,7 +27,7 @@ Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":
   "__ab__"
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"a"} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"a"}:
 [
   "aa",
   "ab",
@@ -32,7 +35,7 @@ Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":
   "Ab"
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"A"} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"A"}:
 [
   "Aa",
   "Ab",
@@ -40,13 +43,13 @@ Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":
   "ab"
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"_"} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"_"}:
 [
   "__aa__",
   "__ab__"
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":""} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":""}:
 [
   "1",
   "2",
@@ -60,13 +63,13 @@ Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":
   "\"Ab\""
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"1"} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"1"}:
 [
   "1",
   "10"
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"a"} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"a"}:
 [
   "\"aa\"",
   "\"ab\"",
@@ -74,7 +77,7 @@ Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":
   "\"Ab\""
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"A"} and experimentalShowCaseSensitiveAutocomplete=false:
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"A"}:
 [
   "\"Aa\"",
   "\"Ab\"",
@@ -82,73 +85,7 @@ Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":
   "\"ab\""
 ]
 
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"_"} and experimentalShowCaseSensitiveAutocomplete=false:
-[
-  "\"__aa__\"",
-  "\"__ab__\""
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":""} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "aa",
-  "Aa",
-  "ab",
-  "Ab",
-  "__aa__",
-  "__ab__"
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"a"} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "aa",
-  "ab"
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"A"} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "Aa",
-  "Ab"
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"_"} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "__aa__",
-  "__ab__"
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":""} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "1",
-  "2",
-  "10",
-  "20",
-  "\"__aa__\"",
-  "\"__ab__\"",
-  "\"aa\"",
-  "\"Aa\"",
-  "\"ab\"",
-  "\"Ab\""
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"1"} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "1",
-  "10"
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"a"} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "\"aa\"",
-  "\"ab\""
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"A"} and experimentalShowCaseSensitiveAutocomplete=true:
-[
-  "\"Aa\"",
-  "\"Ab\""
-]
-
-Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"_"} and experimentalShowCaseSensitiveAutocomplete=true:
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"_"}:
 [
   "\"__aa__\"",
   "\"__ab__\""

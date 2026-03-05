@@ -48,7 +48,7 @@ public:
 
     void add(CellProfile&& profile)
     {
-        m_cells.append(WTFMove(profile));
+        m_cells.append(WTF::move(profile));
         m_mapIsUpToDate = false;
     }
 

@@ -28,26 +28,26 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteDDMesh.h"
+#include "RemoteMesh.h"
 #include <wtf/TZoneMallocInlines.h>
 
-#include <WebCore/DDMesh.h>
+#include "Mesh.h"
 
-namespace WebKit::DDModel {
+namespace WebKit {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ObjectHeap);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelObjectHeap);
 
-ObjectHeap::ObjectHeap()
+ModelObjectHeap::ModelObjectHeap()
 {
     weakPtrFactory().prepareForUseOnlyOnNonMainThread();
 }
 
-ObjectHeap::~ObjectHeap() = default;
+ModelObjectHeap::~ModelObjectHeap() = default;
 
-void ObjectHeap::addObject(DDModelIdentifier identifier, RemoteDDMesh& mesh)
+void ModelObjectHeap::addObject(WebModelIdentifier identifier, RemoteMesh& mesh)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteDDMesh> { Ref { mesh } } });
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteMesh> { Ref { mesh } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 #else
     UNUSED_PARAM(identifier);
@@ -55,46 +55,28 @@ void ObjectHeap::addObject(DDModelIdentifier identifier, RemoteDDMesh& mesh)
 #endif
 }
 
-void ObjectHeap::removeObject(DDModelIdentifier identifier)
+void ModelObjectHeap::removeObject(WebModelIdentifier identifier)
 {
     auto result = m_objects.remove(identifier);
     ASSERT_UNUSED(result, result);
 }
 
-void ObjectHeap::clear()
+void ModelObjectHeap::clear()
 {
     m_objects.clear();
 }
 
-WeakPtr<WebCore::DDModel::DDMesh> ObjectHeap::convertDDMeshFromBacking(DDModelIdentifier identifier)
+WeakPtr<WebKit::Mesh> ModelObjectHeap::convertMeshFromBacking(WebModelIdentifier identifier)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteDDMesh>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteMesh>>(iterator->value))
         return nullptr;
-    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteDDMesh>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteMesh>>(iterator->value)->backing();
 #else
     UNUSED_PARAM(identifier);
     return nullptr;
 #endif
-}
-
-ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPU::GPU& gpu, DDModelIdentifier identifier) const
-{
-    ExistsAndValid result;
-    auto it = m_objects.find(identifier);
-    if (it == m_objects.end())
-        return result;
-
-    result.exists = true;
-    result.valid = WTF::switchOn(it->value, [&](std::monostate) -> bool {
-        return false;
-    },
-    [&](auto&) -> bool {
-        return true;
-    });
-
-    return result;
 }
 
 }

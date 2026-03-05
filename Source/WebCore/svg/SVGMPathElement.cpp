@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGMPathElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGMPathElement);
 
 inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -59,12 +59,12 @@ void SVGMPathElement::buildPendingResource()
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
-        auto& treeScope = treeScopeForSVGReferences();
-        if (treeScope.isPendingSVGResource(*this, target.identifier))
+        Ref treeScope = treeScopeForSVGReferences();
+        if (treeScope->isPendingSVGResource(*this, target.identifier))
             return;
 
         if (!target.identifier.isEmpty()) {
-            treeScope.addPendingSVGResource(target.identifier, *this);
+            treeScope->addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
     } else if (RefPtr svgElement = dynamicDowncast<SVGElement>(*target.element))

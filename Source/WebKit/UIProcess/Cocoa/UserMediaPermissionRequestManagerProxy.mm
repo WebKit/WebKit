@@ -78,7 +78,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
 
 - (id)initWithRequestManagerProxy:(WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy>&&)managerProxy {
     if ((self = [super init]))
-        _managerProxy = WTFMove(managerProxy);
+        _managerProxy = WTF::move(managerProxy);
     return self;
 }
 
@@ -96,7 +96,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
     String persistentId = [coordinator device].uniqueID;
     auto rotation = computeVideoFrameRotation(clampToInteger([coordinator videoRotationAngleForHorizonLevelPreview]));
 
-    RunLoop::mainSingleton().dispatch([protectedSelf = retainPtr(self), self, persistentId = WTFMove(persistentId).isolatedCopy(), rotation] {
+    RunLoop::mainSingleton().dispatch([protectedSelf = retainPtr(self), self, persistentId = WTF::move(persistentId).isolatedCopy(), rotation] {
         if (_managerProxy)
             _managerProxy->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
     });
@@ -119,7 +119,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
         RetainPtr coordinator = adoptNS([PAL::allocAVCaptureDeviceRotationCoordinatorInstance() initWithDevice:avDevice.get() previewLayer:layer]);
         [coordinator addObserver:self forKeyPath:@"videoRotationAngleForHorizonLevelPreview" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
-        iterator->value = WTFMove(coordinator);
+        iterator->value = WTF::move(coordinator);
     }
 
     return computeVideoFrameRotation((clampToInteger([iterator->value videoRotationAngleForHorizonLevelPreview])));
@@ -157,7 +157,7 @@ bool UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()
 #if ENABLE(MEDIA_STREAM)
 void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy& page, UserMediaPermissionRequestProxy& request, CompletionHandler<void(bool)>&& callback)
 {
-    if (page.protectedPreferences()->mockCaptureDevicesEnabled()) {
+    if (protect(page.preferences())->mockCaptureDevicesEnabled()) {
         callback(true);
         return;
     }
@@ -176,19 +176,19 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
     }
 
     if (audioStatus == MediaPermissionResult::Unknown) {
-        requestAVCaptureAccessForType(MediaPermissionType::Audio, [videoStatus, completionHandler = WTFMove(callback)](bool authorized) mutable {
+        requestAVCaptureAccessForType(MediaPermissionType::Audio, [videoStatus, completionHandler = WTF::move(callback)](bool authorized) mutable {
             if (videoStatus == MediaPermissionResult::Granted) {
                 completionHandler(authorized);
                 return;
             }
                 
-            requestAVCaptureAccessForType(MediaPermissionType::Video, WTFMove(completionHandler));
+            requestAVCaptureAccessForType(MediaPermissionType::Video, WTF::move(completionHandler));
         });
         return;
     }
 
     if (videoStatus == MediaPermissionResult::Unknown) {
-        requestAVCaptureAccessForType(MediaPermissionType::Video, WTFMove(callback));
+        requestAVCaptureAccessForType(MediaPermissionType::Video, WTF::move(callback));
         return;
     }
 

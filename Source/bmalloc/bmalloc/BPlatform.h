@@ -35,7 +35,11 @@
 
 #if defined(__has_include)
 #if __has_include(<WebKitAdditions/pas_mte_additions.h>)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/pas_mte_additions.h>
+#pragma clang diagnostic pop
 #endif // __has_include(<WebKitAdditions/pas_mte_additions.h>)
 #endif // defined(__has_include)
 
@@ -68,6 +72,10 @@
 
 #if defined(WIN32) || defined(_WIN32)
 #define BOS_WINDOWS 1
+#endif
+
+#if defined(__HAIKU__)
+#define BOS_HAIKU 1
 #endif
 
 #if BOS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
@@ -317,14 +325,11 @@
 #error "Unsupported compiler for bmalloc"
 #endif
 
-#if BCPU(ADDRESS64) && BPLATFORM(IOS_FAMILY) && !BPLATFORM(IOS_FAMILY_SIMULATOR) && !BPLATFORM(MACCATALYST)
-#define BHAVE_36BIT_ADDRESS 1
-#endif
-
 #if BCPU(ADDRESS64)
 #if BHAVE(36BIT_ADDRESS)
 #define BOS_EFFECTIVE_ADDRESS_WIDTH 36
-#elif BOS(DARWIN)
+/* iOS simulators lie about the size of the address space */
+#elif BOS(DARWIN) && !BPLATFORM(IOS_FAMILY_SIMULATOR)
 #define BOS_EFFECTIVE_ADDRESS_WIDTH (bmalloc::getMSBSetConstexpr(MACH_VM_MAX_ADDRESS) + 1)
 #else
 /* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
@@ -376,9 +381,25 @@
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
 
+#if defined(USE_MIMALLOC) && USE_MIMALLOC
+#define BUSE_MIMALLOC 1
+#else
+#define BUSE_MIMALLOC 0
+#endif
+
+#if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+#define BUSE_SYSTEM_MALLOC 1
+#else
+#if BOS(DARWIN) && !BCPU(ADDRESS64)
+#define BUSE_SYSTEM_MALLOC 1
+#else
+#define BUSE_SYSTEM_MALLOC 0
+#endif
+#endif
+
 /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
 #if !defined(BENABLE_LIBPAS)
-#if BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
+#if (!BUSE(MIMALLOC) && !BUSE(SYSTEM_MALLOC)) && BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
 #define BENABLE_LIBPAS 1
 #ifndef PAS_BMALLOC
 #define PAS_BMALLOC 1
@@ -397,17 +418,31 @@
 #endif
 #endif
 
-#if BUSE_LIBPAS
-#ifndef BUSE_OPENSOURCE_MTE
-#define BUSE_OPENSOURCE_MTE 1
-#endif // BUSE_OPENSOURCE_MTE
+#if BUSE(LIBPAS)
+#if BUSE(MIMALLOC) || BUSE(SYSTEM_MALLOC)
+#error "libpas, mimalloc, and system malloc are exclusive"
+#endif
+#elif BUSE(MIMALLOC)
+#if BUSE(LIBPAS) || BUSE(SYSTEM_MALLOC)
+#error "libpas, mimalloc, and system malloc are exclusive"
+#endif
+#elif BUSE(SYSTEM_MALLOC)
+#if BUSE(LIBPAS) || BUSE(MIMALLOC)
+#error "libpas, mimalloc, and system malloc are exclusive"
+#endif
+#if BOS(WINDOWS)
+#error "System malloc configuration is not supported in Windows since aligned memory cannot be freed via ::free. Use mimalloc instead"
+#endif
+#else
+#error "libpas, mimalloc, or system malloc needs to be specified"
+#endif
 
+#if BUSE_LIBPAS
 #ifndef BENABLE_MTE
-#define BENABLE_MTE (BUSE(APPLE_INTERNAL_SDK) && BCPU(ARM64E) && BUSE_OPENSOURCE_MTE)
+#define BENABLE_MTE (BUSE(APPLE_INTERNAL_SDK) && BCPU(ARM64E) && !BASAN_ENABLED)
 #endif // !defined(BENABLE_MTE)
 #else // !BUSE_LIBPAS
 #define BENABLE_MTE 0
-#define BUSE_OPENSOURCE_MTE 0
 #endif // BUSE_LIBPAS
 
 #if !defined(BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K)
@@ -435,10 +470,10 @@
 #endif
 #endif
 
-#if !defined(BUSE_DYNAMIC_TZONE_COMPACTION)
-#if BUSE(TZONE) && (BASAN_ENABLED || BASSERT_ENABLED)
-#define BUSE_DYNAMIC_TZONE_COMPACTION 1
+#if ((BOS(DARWIN) || BOS(LINUX)) && \
+    !BUSE(MIMALLOC) && \
+    (BCPU(X86_64) || (BCPU(ARM64) && !defined(__ILP32__) && (!BPLATFORM(IOS_FAMILY) || BPLATFORM(IOS)))))
+#define GIGACAGE_ENABLED 1
 #else
-#define BUSE_DYNAMIC_TZONE_COMPACTION 0
-#endif
+#define GIGACAGE_ENABLED 0
 #endif

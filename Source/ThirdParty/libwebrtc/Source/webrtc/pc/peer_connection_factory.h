@@ -37,7 +37,6 @@
 #include "api/transport/network_control.h"
 #include "api/transport/sctp_transport_factory_interface.h"
 #include "call/call.h"
-#include "call/rtp_transport_controller_send_factory_interface.h"
 #include "media/base/media_engine.h"
 #include "pc/codec_vendor.h"
 #include "pc/connection_context.h"
@@ -103,34 +102,32 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
     return options_;
   }
 
-  const FieldTrialsView& field_trials() const {
-    return context_->env().field_trials();
-  }
+  const FieldTrialsView& field_trials() const { return env_.field_trials(); }
 
-  MediaEngineInterface* media_engine() const;
+  const MediaEngineInterface* media_engine() const;
   CodecVendor& CodecVendorForTesting() { return codec_vendor_; }
 
  protected:
   // Constructor used by the static Create() method. Modifies the dependencies.
-  PeerConnectionFactory(scoped_refptr<ConnectionContext> context,
+  PeerConnectionFactory(Environment env,
+                        scoped_refptr<ConnectionContext> context,
                         PeerConnectionFactoryDependencies* dependencies);
 
-  // Constructor for use in testing. Ignores the possibility of initialization
-  // failure. The dependencies are passed in by std::move().
+  // Constructor for use in testing. The dependencies are passed in by
+  // std::move().
   explicit PeerConnectionFactory(
       PeerConnectionFactoryDependencies dependencies);
 
-  virtual ~PeerConnectionFactory();
+  ~PeerConnectionFactory() override;
 
  private:
   Thread* network_thread() const { return context_->network_thread(); }
 
   std::unique_ptr<Call> CreateCall_w(
       const Environment& env,
-      const PeerConnectionInterface::RTCConfiguration& configuration,
-      std::unique_ptr<NetworkControllerFactoryInterface>
-          network_controller_factory);
+      const PeerConnectionInterface::RTCConfiguration& configuration);
 
+  Environment env_;
   scoped_refptr<ConnectionContext> context_;
   PeerConnectionFactoryInterface::Options options_
       RTC_GUARDED_BY(signaling_thread());
@@ -142,10 +139,11 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
   std::unique_ptr<NetworkControllerFactoryInterface>
       injected_network_controller_factory_;
   std::unique_ptr<NetEqFactory> neteq_factory_;
-  const std::unique_ptr<RtpTransportControllerSendFactoryInterface>
-      transport_controller_send_factory_;
   std::unique_ptr<Metronome> decode_metronome_ RTC_GUARDED_BY(worker_thread());
   std::unique_ptr<Metronome> encode_metronome_ RTC_GUARDED_BY(worker_thread());
+  // While AEC dump is ongoing, we retain a reference to the media engine.
+  std::unique_ptr<ConnectionContext::MediaEngineReference> media_engine_ref_
+      RTC_GUARDED_BY(worker_thread());
 };
 
 }  // namespace webrtc

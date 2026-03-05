@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<meter id="meter-with-title" min="0" max="100" low="33" high="66" optimum="80" value="80" title="Fuel level" tabindex="0"></meter>
+<meter id="meter-without-title" min="0" max="100" value="50" tabindex="0"></meter>
+
+<script>
+var output = "This test ensures the title attribute on meter elements is exposed as part of the accessible description, not as help text.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var meterWithTitle = accessibilityController.accessibleElementById("meter-with-title");
+    output += "Meter with title attribute:\n";
+    output += platformTextAlternatives(meterWithTitle) + "\n";
+    output += expect("meterWithTitle.description.includes('Fuel level')", "true");
+    output += expect("meterWithTitle.helpText.includes('Fuel level')", "false");
+
+    var meterWithoutTitle = accessibilityController.accessibleElementById("meter-without-title");
+    output += "\nMeter without title attribute:\n";
+    output += platformTextAlternatives(meterWithoutTitle) + "\n";
+    output += expect("meterWithoutTitle.description", "'AXDescription: '");
+
+    // Test dynamic update: add a title to the meter without one.
+    document.getElementById("meter-without-title").setAttribute("title", "Battery level");
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            meterWithoutTitle = accessibilityController.accessibleElementById("meter-without-title");
+            return meterWithoutTitle && meterWithoutTitle.description.includes("Battery level");
+        });
+
+        output += "\nAfter dynamically adding title attribute:\n";
+        output += platformTextAlternatives(meterWithoutTitle) + "\n";
+        output += expect("meterWithoutTitle.description.includes('Battery level')", "true");
+        output += expect("meterWithoutTitle.helpText.includes('Battery level')", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

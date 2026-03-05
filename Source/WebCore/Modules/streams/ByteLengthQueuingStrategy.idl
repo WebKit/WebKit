@@ -29,7 +29,7 @@
  */
 
 dictionary QueuingStrategyInit {
-  required unrestricted double highWaterMark;
+    required unrestricted double highWaterMark;
 };
 
 [

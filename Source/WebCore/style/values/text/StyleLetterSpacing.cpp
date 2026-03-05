@@ -26,9 +26,8 @@
 #include "StyleLetterSpacing.h"
 
 #include "FrameDestructionObserverInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
-#include "StyleBuilderConverter.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 
 namespace WebCore {
@@ -37,10 +36,10 @@ namespace Style {
 auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CSSValue& value) -> LetterSpacing
 {
     auto cssToLengthConversionDataWithTextZoomFactor = [](BuilderState& state) -> CSSToLengthConversionData {
-        auto zoom = zoomWithTextZoomFactor(state);
+        auto zoom = state.zoomWithTextZoomFactor();
         if (zoom == state.cssToLengthConversionData().zoom())
             return state.cssToLengthConversionData();
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom);
+        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, LetterSpacing::Fixed::range.zoomOptions);
     };
 
     RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
@@ -74,7 +73,7 @@ auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CS
     if (primitiveValue->isCalculatedPercentageWithLength()) {
         return LetterSpacing {
             typename LetterSpacing::Calc {
-                primitiveValue->protectedCssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })
+                protect(primitiveValue->cssCalcValue())->createCalculationValue(conversionData, CSSCalcSymbolTable { })
             }
         };
     }

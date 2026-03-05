@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/PropertySetCSSDescriptors.h>
+#include "PropertySetCSSDescriptors.h"
 
 namespace WebCore {
 
@@ -32,7 +32,7 @@ class CSSPositionTryRule;
 struct CSSParserContext;
 
 class CSSPositionTryDescriptors final : public PropertySetCSSDescriptors {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSPositionTryDescriptors);
+    WTF_MAKE_TZONE_ALLOCATED(CSSPositionTryDescriptors);
 public:
     static Ref<CSSPositionTryDescriptors> create(MutableStyleProperties& propertySet, CSSPositionTryRule& parentRule)
     {
@@ -128,7 +128,7 @@ private:
     // when property value changes.
     ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) override;
 
-    StyleRuleType ruleType() const final;
+    StyleRuleType NODELETE ruleType() const final;
 };
 
 } // namespace WebCore

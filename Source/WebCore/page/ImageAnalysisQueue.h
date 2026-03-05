@@ -67,7 +67,7 @@ public:
     WEBCORE_EXPORT void setDidBecomeEmptyCallback(Function<void()>&&);
     WEBCORE_EXPORT void clearDidBecomeEmptyCallback();
 
-    void setTranslationLanguageIdentifiers(ImageTranslationLanguageIdentifiers&& identifiers) { m_languageIdentifiers = WTFMove(identifiers); }
+    void setTranslationLanguageIdentifiers(ImageTranslationLanguageIdentifiers&& identifiers) { m_languageIdentifiers = WTF::move(identifiers); }
 
 private:
     explicit ImageAnalysisQueue(Page&);

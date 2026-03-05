@@ -32,6 +32,7 @@
 #include <pal/HysteresisActivity.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
@@ -148,8 +149,8 @@ private:
 
     ChromeClient& m_chromeClient;
 
-    SingleThreadWeakHashSet<RenderLayer> m_scrollingLayers;
-    SingleThreadWeakHashSet<RenderLayer> m_viewportConstrainedLayers;
+    InlineWeakKeyHashSet<RenderLayer> m_scrollingLayers;
+    InlineWeakKeyHashSet<RenderLayer> m_viewportConstrainedLayers;
 
     const bool m_coordinateViewportConstrainedLayers;
 };
@@ -185,7 +186,7 @@ public:
     // Returns true if the accelerated compositing is enabled
     bool hasAcceleratedCompositing() const { return m_hasAcceleratedCompositing; }
 
-    bool canRender3DTransforms() const;
+    bool NODELETE canRender3DTransforms() const;
 
     void willRecalcStyle();
 
@@ -197,7 +198,7 @@ public:
     void notifyFlushRequired(const GraphicsLayer*) override;
     void notifySubsequentFlushRequired(const GraphicsLayer*) override;
     void flushPendingLayerChanges(bool isFlushRoot = true);
-    void setRenderingIsSuppressed(bool);
+    void NODELETE setRenderingIsSuppressed(bool);
 
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
     void didChangePlatformLayerForLayer(RenderLayer&, const GraphicsLayer*);
@@ -241,7 +242,7 @@ public:
 
     bool fixedLayerIntersectsViewport(const RenderLayer&) const;
 
-    bool supportsFixedRootBackgroundCompositing() const;
+    bool NODELETE supportsFixedRootBackgroundCompositing() const;
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
     GraphicsLayer* fixedRootBackgroundLayer() const;
 
@@ -258,13 +259,13 @@ public:
     // Notify us that a layer has been removed
     void layerWillBeRemoved(RenderLayer& parent, RenderLayer& child);
 
-    void layerStyleChanged(StyleDifference, RenderLayer&, const RenderStyle* oldStyle);
+    void layerStyleChanged(Style::Difference, RenderLayer&, const RenderStyle* oldStyle);
     void layerGainedCompositedScrollableOverflow(RenderLayer&);
 
     void establishesTopLayerWillChangeForLayer(RenderLayer&);
 
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
-    RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
+    RenderLayer* NODELETE enclosingNonStackingClippingLayer(const RenderLayer&) const;
 
     // Repaint all composited layers.
     void repaintCompositedLayers();
@@ -272,8 +273,8 @@ public:
     // Returns true if the given layer needs it own backing store.
     bool requiresOwnBackingStore(const RenderLayer&, const RenderLayer* compositingAncestorLayer, const LayoutRect& layerCompositedBoundsInAncestor, const LayoutRect& ancestorCompositedBounds) const;
 
-    WEBCORE_EXPORT RenderLayer& rootRenderLayer() const;
-    GraphicsLayer* rootGraphicsLayer() const;
+    WEBCORE_EXPORT RenderLayer& NODELETE rootRenderLayer() const;
+    GraphicsLayer* NODELETE rootGraphicsLayer() const;
 
     GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
     GraphicsLayer* scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
@@ -303,7 +304,7 @@ public:
     void invalidateEventRegionForAllFrames();
     void invalidateEventRegionForAllLayers();
     
-    void layerBecameComposited(const RenderLayer&);
+    void NODELETE layerBecameComposited(const RenderLayer&);
     void layerBecameNonComposited(const RenderLayer&);
     
 #if ENABLE(VIDEO)
@@ -530,8 +531,7 @@ private:
 
     FloatRect visibleRectForLayerFlushing() const;
     
-    Page& page() const;
-    Ref<Page> protectedPage() const;
+    Page& NODELETE page() const;
 
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
@@ -539,13 +539,13 @@ private:
     // Non layout-dependent
     bool requiresCompositingForAnimation(RenderLayerModelObject&) const;
     bool requiresCompositingForTransform(RenderLayerModelObject&) const;
-    bool requiresCompositingForBackfaceVisibility(RenderLayerModelObject&) const;
+    bool NODELETE requiresCompositingForBackfaceVisibility(RenderLayerModelObject&) const;
     bool requiresCompositingForViewTransition(RenderLayerModelObject&) const;
     bool requiresCompositingForVideo(RenderLayerModelObject&) const;
     bool requiresCompositingForCanvas(RenderLayerModelObject&) const;
-    bool requiresCompositingForFilters(RenderLayerModelObject&) const;
+    bool NODELETE requiresCompositingForFilters(RenderLayerModelObject&) const;
     bool requiresCompositingForWillChange(RenderLayerModelObject&) const;
-    bool requiresCompositingForModel(RenderLayerModelObject&) const;
+    bool NODELETE requiresCompositingForModel(RenderLayerModelObject&) const;
 
     // Layout-dependent
     bool requiresCompositingForPlugin(RenderLayerModelObject&, RequiresCompositingData&) const;
@@ -553,7 +553,7 @@ private:
     bool requiresCompositingForScrollableFrame(RequiresCompositingData&) const;
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
-    bool requiresCompositingForAnchorPositioning(const RenderLayer&) const;
+    bool NODELETE requiresCompositingForAnchorPositioning(const RenderLayer&) const;
     IndirectCompositingReason computeIndirectCompositingReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const;
 
     static ScrollPositioningBehavior layerScrollBehahaviorRelativeToCompositedAncestor(const RenderLayer&, const RenderLayer& compositedAncestor);
@@ -622,7 +622,7 @@ private:
     void logLayerInfo(const RenderLayer&, ASCIILiteral, int depth);
 #endif
 
-    bool documentUsesTiledBacking() const;
+    bool NODELETE documentUsesTiledBacking() const;
     bool isRootFrameCompositor() const;
     bool isMainFrameCompositor() const;
 
@@ -694,8 +694,8 @@ private:
     Color m_viewBackgroundColor;
     Color m_rootExtendedBackgroundColor;
 
-    HashMap<ScrollingNodeID, SingleThreadWeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
-    SingleThreadWeakHashSet<RenderLayer> m_layersWithUnresolvedRelations;
+    HashMap<ScrollingNodeID, InlineWeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
+    InlineWeakKeyHashSet<RenderLayer> m_layersWithUnresolvedRelations;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<LegacyWebKitScrollingLayerCoordinator> m_legacyScrollingLayerCoordinator;
 #endif

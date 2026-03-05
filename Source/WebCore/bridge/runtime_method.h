@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include "BridgeJSC.h"
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <WebCore/BridgeJSC.h>
 
 namespace JSC {
 
@@ -73,7 +73,7 @@ protected:
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
 
 private:
-    static GCClient::IsoSubspace* subspaceForImpl(VM&);
+    static GCClient::IsoSubspace* NODELETE subspaceForImpl(VM&);
 
     Bindings::Method* m_method;
 };

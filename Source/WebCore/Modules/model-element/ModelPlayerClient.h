@@ -46,6 +46,9 @@ public:
 
     virtual void didFinishLoading(ModelPlayer&) = 0;
     virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
+#if ENABLE(MODEL_PROCESS)
+    virtual void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, const String& convertedMIMEType) = 0;
+#endif
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     // FIXME: This should be made consistent with didFinishLoading/didFailLoading, by splitting it into a didFinishEnvironmentMapLoading and a didFailEnvironmentMapLoading which takes a `const ResourceError&`.
     virtual void didFinishEnvironmentMapLoading(ModelPlayer&, bool succeeded) = 0;

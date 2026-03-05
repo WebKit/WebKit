@@ -34,7 +34,7 @@ namespace WebCore {
 class MediaDescription : public ThreadSafeRefCounted<MediaDescription> {
 public:
     explicit MediaDescription(String&& codec)
-        : m_codec(WTFMove(codec))
+        : m_codec(WTF::move(codec))
     {
         ASSERT(m_codec.isSafeToSendToAnotherThread());
     }

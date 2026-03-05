@@ -133,7 +133,7 @@ typedef void *vpx_rc_model_t;
 #define VPX_DEFAULT_RDMULT -1
 
 /*!\brief Superblock quantization parameters
- * Store the superblock quantiztaion parameters
+ * Store the superblock quantization parameters
  */
 typedef struct sb_parameters {
   int q_index; /**< Quantizer step index [0..255]*/

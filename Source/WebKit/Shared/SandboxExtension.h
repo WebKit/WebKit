@@ -61,9 +61,9 @@ public:
     SandboxExtensionImpl(std::span<const uint8_t>);
     ~SandboxExtensionImpl();
 
-    bool WARN_UNUSED_RETURN consume();
+    [[nodiscard]] bool consume();
     bool invalidate();
-    std::span<const uint8_t> WARN_UNUSED_RETURN getSerializedFormat();
+    [[nodiscard]] std::span<const uint8_t> getSerializedFormat();
 
     SandboxExtensionImpl(SandboxExtensionImpl&& other)
         : m_token(std::exchange(other.m_token, CString()))
@@ -86,7 +86,7 @@ public:
     SandboxExtensionHandle(SandboxExtensionHandle&&);
     SandboxExtensionHandle& operator=(SandboxExtensionHandle&&);
     SandboxExtensionHandle(std::unique_ptr<SandboxExtensionImpl>&& impl)
-        : m_sandboxExtension(WTFMove(impl)) { }
+        : m_sandboxExtension(WTF::move(impl)) { }
 #else
     SandboxExtensionHandle(SandboxExtensionHandle&&) = default;
     SandboxExtensionHandle& operator=(SandboxExtensionHandle&&) = default;

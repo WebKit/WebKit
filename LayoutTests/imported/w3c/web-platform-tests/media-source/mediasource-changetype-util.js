@@ -116,11 +116,12 @@ function appendBuffer(test, sourceBuffer, data) {
   sourceBuffer.appendBuffer(data);
 }
 
-function trimBuffered(test, mediaElement, sourceBuffer, minimumPreviousDuration, newDuration, skip_duration_prechecks) {
+function trimBuffered(test, mediaElement, sourceBuffer, newDuration, skip_duration_prechecks) {
   if (!skip_duration_prechecks) {
-    assert_less_than(newDuration, minimumPreviousDuration);
-    assert_less_than(minimumPreviousDuration, mediaElement.duration);
+    assert_less_than_equal(newDuration, mediaElement.duration);
   }
+  if (mediaElement.duration <= newDuration)
+    return;
   test.expectEvent(sourceBuffer, "update");
   test.expectEvent(sourceBuffer, "updateend");
   sourceBuffer.remove(newDuration, Infinity);
@@ -128,8 +129,10 @@ function trimBuffered(test, mediaElement, sourceBuffer, minimumPreviousDuration,
 
 function trimDuration(test, mediaElement, mediaSource, newDuration, skip_duration_prechecks) {
   if (!skip_duration_prechecks) {
-    assert_less_than(newDuration, mediaElement.duration);
+    assert_less_than_equal(newDuration, mediaElement.duration);
   }
+  if (mediaElement.duration == newDuration)
+    return;
   test.expectEvent(mediaElement, "durationchange");
   mediaSource.duration = newDuration;
 }
@@ -277,7 +280,7 @@ function runChangeTypeTest(test, mediaElement, mediaSource, metadataA, typeA, da
   // Trim duration to 2 seconds, then play through to end.
   test.waitForExpectedEvents(() => {
     // If negative testing, then skip fragile assertions.
-    trimBuffered(test, mediaElement, sourceBuffer, 2.1, 2, negative_test);
+    trimBuffered(test, mediaElement, sourceBuffer, 2, negative_test);
   });
 
   test.waitForExpectedEvents(() => {

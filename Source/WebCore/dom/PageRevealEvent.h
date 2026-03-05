@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class PageRevealEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PageRevealEvent);
+    WTF_MAKE_TZONE_ALLOCATED(PageRevealEvent);
 public:
     struct Init : EventInit {
         RefPtr<ViewTransition> viewTransition;

@@ -153,7 +153,7 @@ enum ContextMenuAction {
     ContextMenuItemTagPauseAnimation,
     ContextMenuItemTagToggleVideoFullscreen,
     ContextMenuItemTagShareMenu,
-    ContextMenuItemTagToggleVideoEnhancedFullscreen,
+    ContextMenuItemTagTogglePictureInPicture,
     ContextMenuItemTagToggleVideoViewer,
     ContextMenuItemTagAddHighlightToCurrentQuickNote,
     ContextMenuItemTagAddHighlightToNewQuickNote,
@@ -172,7 +172,9 @@ enum ContextMenuAction {
     ContextMenuItemCaptionDisplayStyleSubmenu,
 #if PLATFORM(COCOA)
     ContextMenuItemTagSmartLists,
-    ContextMenuItemLastNonCustomTag = ContextMenuItemTagSmartLists,
+    ContextMenuItemTagConvertToTraditionalChinese,
+    ContextMenuItemTagConvertToSimplifiedChinese,
+    ContextMenuItemLastNonCustomTag = ContextMenuItemTagConvertToSimplifiedChinese,
 #else
     ContextMenuItemLastNonCustomTag = ContextMenuItemCaptionDisplayStyleSubmenu,
 #endif
@@ -218,11 +220,11 @@ public:
 
     bool isNull() const;
 
-    void setTitle(String&& title) { m_title = WTFMove(title); }
+    void setTitle(String&& title) { m_title = WTF::move(title); }
     void setTitle(const String& title) { m_title = title; }
-    const String& title() const { return m_title; }
+    const String& title() const LIFETIME_BOUND { return m_title; }
 
-    const Vector<ContextMenuItem>& subMenuItems() const { return m_subMenuItems; }
+    const Vector<ContextMenuItem>& subMenuItems() const LIFETIME_BOUND { return m_subMenuItems; }
 private:
     ContextMenuItemType m_type;
     ContextMenuAction m_action;

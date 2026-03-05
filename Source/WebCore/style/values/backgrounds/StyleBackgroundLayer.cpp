@@ -48,7 +48,7 @@ BackgroundLayer::BackgroundLayer()
 BackgroundLayer::BackgroundLayer(ImageOrNone&& image)
     : BackgroundLayer { }
 {
-    setImage(WTFMove(image));
+    setImage(WTF::move(image));
 }
 
 BackgroundLayer::BackgroundLayer(CSS::Keyword::None keyword)
@@ -56,8 +56,8 @@ BackgroundLayer::BackgroundLayer(CSS::Keyword::None keyword)
 {
 }
 
-BackgroundLayer::BackgroundLayer(RefPtr<StyleImage>&& image)
-    : BackgroundLayer { ImageOrNone { WTFMove(image) } }
+BackgroundLayer::BackgroundLayer(RefPtr<Image>&& image)
+    : BackgroundLayer { ImageOrNone { WTF::move(image) } }
 {
 }
 

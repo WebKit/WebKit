@@ -13,7 +13,7 @@ info: |
     b. Let kValue be ? Get(O, Pk).
     c. Let mappedValue be ? Call(callbackfn, T, « kValue, k, O »).
   ...
-includes: [detachArrayBuffer.js, testBigIntTypedArray.js]
+includes: [detachArrayBuffer.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -30,4 +30,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(loops, 2);
-});
+}, null, ["passthrough"]);

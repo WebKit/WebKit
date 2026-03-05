@@ -39,6 +39,7 @@ struct PaintInfo;
 template<typename> struct FillLayerToPaint;
 
 namespace Style {
+struct ZoomFactor;
 enum class ShadowStyle : bool;
 }
 
@@ -55,7 +56,7 @@ private:
 
     void paintMask();
     void paintDecorations();
-    template<typename Layers> void paintFillLayers(const Color&, const Layers&, const LayoutRect& paintRect, CompositeOperator);
+    template<typename Layers> void paintFillLayers(const Color&, const Layers&, Style::ZoomFactor, const LayoutRect& paintRect, CompositeOperator);
     template<typename Layer> void paintFillLayer(const Color&, const FillLayerToPaint<Layer>&, const LayoutRect& paintRect, CompositeOperator);
     void paintBoxShadow(Style::ShadowStyle, const LayoutRect& paintRect);
 

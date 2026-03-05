@@ -47,7 +47,6 @@
 #include <WebCore/MediationRequirement.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
-#include <WebCore/WebAuthenticationUtils.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -63,8 +62,7 @@ const unsigned maxTimeOutValue = 120000;
 static AuthenticatorManager::TransportSet collectTransports(const std::optional<AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
-    auto attachment = authenticatorSelection ? authenticatorSelection->authenticatorAttachment() : std::nullopt;
-    if (!attachment) {
+    if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Usb);
@@ -78,12 +76,12 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         return result;
     }
 
-    if (*attachment == AuthenticatorAttachment::Platform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::Platform) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
-    if (*attachment == AuthenticatorAttachment::CrossPlatform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::CrossPlatform) {
         auto addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
@@ -131,15 +129,13 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             break;
         }
 
-        for (const auto& transportString : allowCredential.transports) {
-            // Convert string to enum, skip unknown/invalid transport values
-            auto transport = convertStringToAuthenticatorTransport(transportString);
-            if (!transport)
+        for (const auto& transport : allowCredential.transports) {
+            if (transport == AuthenticatorTransport::Ble)
                 continue;
-            if (*transport == AuthenticatorTransport::Ble)
-                continue;
+            if (transport == AuthenticatorTransport::Nfc)
+                result.add(AuthenticatorTransport::SmartCard);
 
-            result.add(*transport);
+            result.add(transport);
 
             if (result.size() >= AuthenticatorManager::maxTransportNumber)
                 break;
@@ -190,6 +186,8 @@ Ref<AuthenticatorManager> AuthenticatorManager::create()
     return adoptRef(*new AuthenticatorManager);
 }
 
+AuthenticatorManager::~AuthenticatorManager() = default;
+
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::mainSingleton(), "AuthenticatorManager::RequestTimeOutTimer"_s, this, &AuthenticatorManager::timeOutTimerFired)
 {
@@ -197,15 +195,14 @@ AuthenticatorManager::AuthenticatorManager()
 
 void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Callback&& callback)
 {
-    if (m_pendingCompletionHandler) {
+    if (m_pendingRequest && m_pendingRequest->completionHandler) {
         invokePendingCompletionHandler(ExceptionData { ExceptionCode::NotAllowedError, "This request has been cancelled by a new request."_s });
         m_requestTimeOutTimer.stop();
     }
     clearState();
 
     // 1. Save request for async operations.
-    m_pendingRequestData = WTFMove(data);
-    m_pendingCompletionHandler = WTFMove(callback);
+    m_pendingRequest = { WTF::move(data), WTF::move(callback) };
 
     // 2. Ask clients to show appropriate UI if any and then start the request.
     initTimeOutTimer();
@@ -221,9 +218,9 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
 
 void AuthenticatorManager::cancelRequest(const PageIdentifier& pageID, const std::optional<FrameIdentifier>& frameID)
 {
-    if (!m_pendingCompletionHandler)
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
         return;
-    if (auto pendingFrameID = m_pendingRequestData.globalFrameID) {
+    if (auto pendingFrameID = m_pendingRequest->data.globalFrameID) {
         if (pendingFrameID->pageID != pageID)
             return;
         if (frameID && frameID != pendingFrameID->frameID)
@@ -238,7 +235,7 @@ void AuthenticatorManager::cancelRequest(const PageIdentifier& pageID, const std
 void AuthenticatorManager::cancelRequest(const API::WebAuthenticationPanel& panel)
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    if (!m_pendingCompletionHandler || m_pendingRequestData.panel.get() != &panel)
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler || m_pendingRequest->data.panel.get() != &panel)
         return;
     cancelRequest();
 }
@@ -246,7 +243,7 @@ void AuthenticatorManager::cancelRequest(const API::WebAuthenticationPanel& pane
 void AuthenticatorManager::cancel()
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    if (!m_pendingCompletionHandler)
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
         return;
     cancelRequest();
 }
@@ -267,20 +264,23 @@ void AuthenticatorManager::clearStateAsync()
 
 void AuthenticatorManager::clearState()
 {
-    if (m_pendingCompletionHandler)
+    if (m_pendingRequest && m_pendingRequest->completionHandler)
         return;
+    m_pendingRequest = { };
     m_authenticators.clear();
     m_services.clear();
-    m_pendingRequestData = { };
     m_presenter = nullptr;
 }
 
 void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator)
 {
     ASSERT(RunLoop::isMain());
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return;
+
     authenticator->setObserver(*this);
-    authenticator->handleRequest(m_pendingRequestData);
-    auto addResult = m_authenticators.add(WTFMove(authenticator));
+    authenticator->handleRequest(m_pendingRequest->data);
+    auto addResult = m_authenticators.add(WTF::move(authenticator));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
@@ -293,23 +293,23 @@ void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
     }
 
     dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
-        panel.protectedClient()->updatePanel(status);
+        protect(panel.client())->updatePanel(status);
     });
 }
 
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
     ASSERT(RunLoop::isMain());
-    if (!m_requestTimeOutTimer.isActive() && (m_pendingRequestData.mediation != WebCore::MediationRequirement::Conditional || !m_pendingCompletionHandler))
+    if (!m_requestTimeOutTimer.isActive() && (!m_pendingRequest || !m_pendingRequest->completionHandler || m_pendingRequest->data.mediation != WebCore::MediationRequirement::Conditional))
         return;
-    ASSERT(m_pendingCompletionHandler);
+    ASSERT(m_pendingRequest);
 
     auto shouldComplete = std::holds_alternative<Ref<AuthenticatorResponse>>(respond);
     if (!shouldComplete) {
         auto code = std::get<ExceptionData>(respond).code;
         shouldComplete = code == ExceptionCode::InvalidStateError || code == ExceptionCode::NotSupportedError;
     }
-    respondReceivedInternal(WTFMove(respond), shouldComplete);
+    respondReceivedInternal(WTF::move(respond), shouldComplete);
     if (!shouldComplete)
         restartDiscovery();
 }
@@ -317,7 +317,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
 void AuthenticatorManager::respondReceivedInternal(Respond&& respond, bool shouldComplete)
 {
     if (shouldComplete) {
-        invokePendingCompletionHandler(WTFMove(respond));
+        invokePendingCompletionHandler(WTF::move(respond));
         clearStateAsync();
         m_requestTimeOutTimer.stop();
     }
@@ -332,15 +332,18 @@ void AuthenticatorManager::downgrade(Authenticator& id, Ref<Authenticator>&& dow
         auto removed = protectedThis->m_authenticators.remove(id.ptr());
         ASSERT_UNUSED(removed, removed);
     });
-    authenticatorAdded(WTFMove(downgradedAuthenticator));
+    authenticatorAdded(WTF::move(downgradedAuthenticator));
 }
 
 void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus status)
 {
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return;
+
     if (status != WebAuthenticationStatus::PINSuccessful) {
         // Immediately invalidate the cache if the PIN is incorrect. A status update often means
         // an error. We don't really care what kind of error it really is.
-        m_pendingRequestData.cachedPin = String();
+        m_pendingRequest->data.cachedPin = String();
     }
 
     // This is for the new UI.
@@ -350,60 +353,66 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
     }
 
     dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
-        panel.protectedClient()->updatePanel(status);
+        protect(panel.client())->updatePanel(status);
     });
 }
 
 void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler)
 {
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return;
+
     // Cache the PIN to improve NFC user experience so that a momentary movement of the NFC key away from the scanner doesn't
     // force the PIN entry to be re-entered.
     // We don't distinguish USB and NFC here becuase there is no harms to have this optimization for USB even though it is useless.
-    if (!m_pendingRequestData.cachedPin.isNull()) {
-        completionHandler(m_pendingRequestData.cachedPin);
-        m_pendingRequestData.cachedPin = String();
+    if (!m_pendingRequest->data.cachedPin.isNull()) {
+        completionHandler(m_pendingRequest->data.cachedPin);
+        m_pendingRequest->data.cachedPin = String();
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (const WTF::String& pin) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (const WTF::String& pin) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
-        protectedThis->m_pendingRequestData.cachedPin = pin;
+        protectedThis->m_pendingRequest->data.cachedPin = pin;
         completionHandler(pin);
     };
 
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
-        presenter->requestPin(retries, WTFMove(callback));
+        presenter->requestPin(retries, WTF::move(callback));
         return;
     }
 
-    dispatchPanelClientCall([retries, callback = WTFMove(callback)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->requestPin(retries, WTFMove(callback));
+    dispatchPanelClientCall([retries, callback = WTF::move(callback)] (const API::WebAuthenticationPanel& panel) mutable {
+        protect(panel.client())->requestPin(retries, WTF::move(callback));
     });
 }
 
 void AuthenticatorManager::requestNewPin(uint64_t minLength, CompletionHandler<void(const WTF::String&)>&& completionHandler)
 {
-    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (const WTF::String& pin) mutable {
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return;
+
+    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (const WTF::String& pin) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
-        protectedThis->m_pendingRequestData.cachedPin = pin;
+        protectedThis->m_pendingRequest->data.cachedPin = pin;
         completionHandler(pin);
     };
 
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
-        presenter->requestNewPin(minLength, WTFMove(callback));
+        presenter->requestNewPin(minLength, WTF::move(callback));
         return;
     }
 
-    dispatchPanelClientCall([minLength, callback = WTFMove(callback)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->requestNewPin(minLength, WTFMove(callback));
+    dispatchPanelClientCall([minLength, callback = WTF::move(callback)] (const API::WebAuthenticationPanel& panel) mutable {
+        protect(panel.client())->requestNewPin(minLength, WTF::move(callback));
     });
 }
 
@@ -411,31 +420,31 @@ void AuthenticatorManager::selectAssertionResponse(Vector<Ref<WebCore::Authentic
 {
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
-        presenter->selectAssertionResponse(WTFMove(responses), source, WTFMove(completionHandler));
+        presenter->selectAssertionResponse(WTF::move(responses), source, WTF::move(completionHandler));
         return;
     }
 
-    dispatchPanelClientCall([responses = WTFMove(responses), source, completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->selectAssertionResponse(WTFMove(responses), source, WTFMove(completionHandler));
+    dispatchPanelClientCall([responses = WTF::move(responses), source, completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        protect(panel.client())->selectAssertionResponse(WTF::move(responses), source, WTF::move(completionHandler));
     });
 }
 
 void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&& completionHandler)
 {
-    dispatchPanelClientCall([completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->decidePolicyForLocalAuthenticator(WTFMove(completionHandler));
+    dispatchPanelClientCall([completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        protect(panel.client())->decidePolicyForLocalAuthenticator(WTF::move(completionHandler));
     });
 }
 
 void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
 {
     if (RefPtr presenter = m_presenter) {
-        presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
+        presenter->requestLAContextForUserVerification(WTF::move(completionHandler));
         return;
     }
 
-    dispatchPanelClientCall([completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->requestLAContextForUserVerification(WTFMove(completionHandler));
+    dispatchPanelClientCall([completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        protect(panel.client())->requestLAContextForUserVerification(WTF::move(completionHandler));
     });
 }
 
@@ -464,7 +473,8 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
 void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
+    ASSERT(m_services.isEmpty());
+    ASSERT(transports.size() <= maxTransportNumber);
     m_services = WTF::map(transports, [this](auto& transport) {
         Ref service = createService(transport, *this);
         service->startDiscovery();
@@ -474,14 +484,17 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 
 void AuthenticatorManager::initTimeOutTimer()
 {
-    if (m_pendingRequestData.mediation == WebCore::MediationRequirement::Conditional)
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler || m_pendingRequest->data.mediation == WebCore::MediationRequirement::Conditional)
         return;
-    std::optional<unsigned> timeOutInMs;
-    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        timeOutInMs = options.timeout;
-    }, [&](const PublicKeyCredentialRequestOptions& options) {
-        timeOutInMs = options.timeout;
-    });
+
+    auto timeOutInMs = WTF::switchOn(m_pendingRequest->data.options,
+        [&](const PublicKeyCredentialCreationOptions& options) {
+            return options.timeout;
+        },
+        [&](const PublicKeyCredentialRequestOptions& options) {
+            return options.timeout;
+        }
+    );
 
     unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.value_or(maxTimeOutValue));
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
@@ -495,32 +508,36 @@ void AuthenticatorManager::timeOutTimerFired()
 
 void AuthenticatorManager::runPanel()
 {
-    RefPtr page = m_pendingRequestData.page.get();
-    if (!page)
-        return;
-    ASSERT(m_pendingRequestData.globalFrameID && page->webPageIDInMainFrameProcess() == m_pendingRequestData.globalFrameID->pageID);
-    RefPtr frame = WebFrameProxy::webFrame(m_pendingRequestData.globalFrameID->frameID);
-    if (!frame)
-        return;
-    if (!m_pendingRequestData.frameInfo)
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
         return;
 
+    RefPtr page = m_pendingRequest->data.page.get();
+    if (!page)
+        return;
+    ASSERT(m_pendingRequest->data.globalFrameID && page->webPageIDInMainFrameProcess() == m_pendingRequest->data.globalFrameID->pageID);
+    RefPtr frame = WebFrameProxy::webFrame(m_pendingRequest->data.globalFrameID->frameID);
+    if (!frame)
+        return;
+    if (!m_pendingRequest->data.frameInfo)
+        return;
+
+    auto& options = m_pendingRequest->data.options;
+
     // Get available transports and start discovering authenticators on them.
-    auto& options = m_pendingRequestData.options;
-    auto transports = getTransports();
+    auto transports = getTransports(options);
     if (transports.isEmpty()) {
         cancel();
         return;
     }
 
-    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
-    Ref panel = *m_pendingRequestData.panel;
-    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { *m_pendingRequestData.frameInfo }, [transports = WTFMove(transports), weakPanel = WeakPtr { panel.get() }, weakThis = WeakPtr { *this }] (WebAuthenticationPanelResult result) {
+    m_pendingRequest->data.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
+    Ref panel = *m_pendingRequest->data.panel;
+    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { *m_pendingRequest->data.frameInfo }, [transports = WTF::move(transports), weakPanel = WeakPtr { panel.get() }, weakThis = WeakPtr { *this }] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !weakPanel
             || (result == WebAuthenticationPanelResult::DidNotPresent)
-            || (weakPanel.get() != protectedThis->m_pendingRequestData.panel.get()))
+            || (weakPanel.get() != protectedThis->m_pendingRequest->data.panel.get()))
             return;
         protectedThis->startDiscovery(transports);
     });
@@ -528,8 +545,11 @@ void AuthenticatorManager::runPanel()
 
 void AuthenticatorManager::runPresenter()
 {
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return;
+
     // Get available transports and start discovering authenticators on them.
-    auto transports = getTransports();
+    auto transports = getTransports(m_pendingRequest->data.options);
     if (transports.isEmpty()) {
         cancel();
         return;
@@ -546,7 +566,10 @@ void AuthenticatorManager::runPresenter()
 
 void AuthenticatorManager::runPresenterInternal(const TransportSet& transports)
 {
-    auto& options = m_pendingRequestData.options;
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return;
+
+    auto& options = m_pendingRequest->data.options;
     m_presenter = AuthenticatorPresenterCoordinator::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
 }
 
@@ -559,11 +582,11 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
         presenter->dimissPresenter(result);
     else {
         dispatchPanelClientCall([result] (const API::WebAuthenticationPanel& panel) {
-            panel.protectedClient()->dismissPanel(result);
+            protect(panel.client())->dismissPanel(result);
         });
     }
 
-    m_pendingCompletionHandler(WTFMove(respond));
+    m_pendingRequest->completionHandler(WTF::move(respond));
 }
 
 void AuthenticatorManager::restartDiscovery()
@@ -574,27 +597,39 @@ void AuthenticatorManager::restartDiscovery()
 
 auto AuthenticatorManager::getTransports() const -> TransportSet
 {
-    TransportSet transports;
-    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        transports = collectTransports(options.authenticatorSelection);
-    }, [&](const PublicKeyCredentialRequestOptions& options) {
-        transports = collectTransports(options.allowCredentials, options.authenticatorAttachment);
-    });
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return TransportSet { };
+
+    return getTransports(m_pendingRequest->data.options);
+}
+
+auto AuthenticatorManager::getTransports(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>& options) const -> TransportSet
+{
+    auto transports = WTF::switchOn(options,
+        [&](const PublicKeyCredentialCreationOptions& options) {
+            return collectTransports(options.authenticatorSelection);
+        },
+        [&](const PublicKeyCredentialRequestOptions& options) {
+            return collectTransports(options.allowCredentials, options.authenticatorAttachment);
+        }
+    );
     filterTransports(transports);
     return transports;
 }
 
 void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebAuthenticationPanel&)>&& call) const
 {
-    auto weakPanel = m_pendingRequestData.weakPanel;
+    if (!m_pendingRequest || !m_pendingRequest->completionHandler)
+        return;
+    auto weakPanel = m_pendingRequest->data.weakPanel;
     if (!weakPanel)
-        weakPanel = m_pendingRequestData.panel;
+        weakPanel = m_pendingRequest->data.panel;
     if (!weakPanel)
         return;
 
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
-    RunLoop::mainSingleton().dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
+    RunLoop::mainSingleton().dispatch([weakPanel = WTF::move(weakPanel), call = WTF::move(call)] () {
         if (!weakPanel)
             return;
         call(*weakPanel);

@@ -42,6 +42,8 @@ public:
     virtual Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return { }; }
     virtual Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() = 0;
     virtual std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() = 0;
+
+    virtual bool isLibWebRTCRtpReceiverBackend() const { return false; }
 };
 
 } // namespace WebCore

@@ -49,7 +49,7 @@ template<typename> class ExceptionOr;
 
 class DataTransferItemList final : public ScriptWrappable, public ContextDestructionObserver {
     WTF_MAKE_NONCOPYABLE(DataTransferItemList);
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DataTransferItemList);
+    WTF_MAKE_TZONE_ALLOCATED(DataTransferItemList);
 public:
     DataTransferItemList(Document&, DataTransfer&);
     ~DataTransferItemList();
@@ -57,7 +57,7 @@ public:
     // DataTransfer owns DataTransferItemList, and DataTransfer is kept alive as long as DataTransferItemList is alive.
     void ref() const final { m_dataTransfer->ref(); }
     void deref() const final { m_dataTransfer->deref(); }
-    DataTransfer& dataTransfer() { return m_dataTransfer.get(); }
+    DataTransfer& dataTransfer() { return m_dataTransfer; }
 
     // DOM API
     unsigned length() const;
@@ -79,7 +79,7 @@ public:
 
 private:
     Vector<Ref<DataTransferItem>>& ensureItems() const;
-    Document* document() const;
+    Document* NODELETE document() const;
 
     WeakRef<DataTransfer> m_dataTransfer;
     mutable std::optional<Vector<Ref<DataTransferItem>>> m_items;

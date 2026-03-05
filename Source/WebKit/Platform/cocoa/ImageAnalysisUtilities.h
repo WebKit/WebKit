@@ -95,7 +95,9 @@ void prepareImageAnalysisForOverlayView(PlatformImageAnalysisObject *);
 
 #if HAVE(VISION)
 void requestPayloadForQRCode(CGImageRef, CompletionHandler<void(NSString *)>&&);
-void recognizeText(CGImageRef, CompletionHandler<void(NSString *, NSError *)>&&);
+
+enum class TextRecognitionLevel : bool { Accurate, Fast };
+void recognizeText(CGImageRef, std::optional<TextRecognitionLevel>, CompletionHandler<void(NSString *, NSError *)>&&);
 #endif
 
 } // namespace WebKit

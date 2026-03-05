@@ -15,12 +15,8 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include <string>
-#include <string_view>
 
 #include <openssl/crypto.h>
-#include <openssl/span.h>
 
 #include "modulewrapper.h"
 
@@ -76,39 +72,5 @@ int main(int argc, char **argv) {
     return 4;
   }
 
-  // modulewrapper buffers responses to the greatest degree allowed in order to
-  // fully exercise the async handling in acvptool.
-  std::unique_ptr<bssl::acvp::RequestBuffer> buffer =
-      bssl::acvp::RequestBuffer::New();
-  const bssl::acvp::ReplyCallback write_reply = std::bind(
-      bssl::acvp::WriteReplyToFd, STDOUT_FILENO, std::placeholders::_1);
-  const bssl::acvp::ReplyCallback buffer_reply =
-      std::bind(bssl::acvp::WriteReplyToBuffer, std::placeholders::_1);
-
-  for (;;) {
-    const bssl::Span<const bssl::Span<const uint8_t>> args =
-        ParseArgsFromFd(STDIN_FILENO, buffer.get());
-    if (args.empty()) {
-      return 1;
-    }
-
-    auto name = bssl::BytesAsStringView(args[0]);
-    if (name == "flush") {
-      if (!bssl::acvp::FlushBuffer(STDOUT_FILENO)) {
-        abort();
-      }
-      continue;
-    }
-
-    const bssl::acvp::Handler handler = bssl::acvp::FindHandler(args);
-    if (!handler) {
-      return 2;
-    }
-
-    auto &reply_callback = name == "getConfig" ? write_reply : buffer_reply;
-    if (!handler(args.subspan(1).data(), reply_callback)) {
-      fprintf(stderr, "\'%s\' operation failed.\n", std::string(name).c_str());
-      return 3;
-    }
-  }
+  return bssl::acvp::RunModuleWrapper();
 }

@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AbstractWorker);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AbstractWorker);
 
 FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options, FetchOptions::Destination destination)
 {
@@ -72,11 +72,11 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
 std::optional<Exception> AbstractWorker::validateURL(ScriptExecutionContext& context, const URL& scriptURL)
 {
     // Per the specification, any same-origin URL (including blob: URLs) can be used. data: URLs can also be used, but they create a worker with an opaque origin.
-    if (!context.protectedSecurityOrigin()->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
+    if (!protect(context.securityOrigin())->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
         return Exception { ExceptionCode::SecurityError };
 
     ASSERT(context.contentSecurityPolicy());
-    if (!context.checkedContentSecurityPolicy()->allowWorkerFromSource(scriptURL))
+    if (!protect(context.contentSecurityPolicy())->allowWorkerFromSource(scriptURL))
         return Exception { ExceptionCode::SecurityError };
 
     return { };

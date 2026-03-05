@@ -20,23 +20,23 @@ layer at (0,0) size 800x600
                                   RenderImage {IMG} at (0,0) size 97x180
       RenderBlock {P} at (0,74) size 800x0
       RenderBlock (floating) {DIV} at (0,74) size 104x54 [border: (2px solid #FF0000)]
-        RenderText {#text} at (2,2) size 84x59
+        RenderText {#text} at (2,2) size 84x60
           text run at (2,2) width 84: "Here is some"
           text run at (2,22) width 32: "text. "
           text run at (33,22) width 53: "I should"
           text run at (2,42) width 61: "overflow."
-        RenderBR {BR} at (62,42) size 1x19
-        RenderText {#text} at (2,62) size 99x19
+        RenderBR {BR} at (62,42) size 1x20
+        RenderText {#text} at (2,62) size 99x20
           text run at (2,62) width 99: "I will overflow."
-        RenderBR {BR} at (100,62) size 1x19
-        RenderText {#text} at (2,82) size 100x39
+        RenderBR {BR} at (100,62) size 1x20
+        RenderText {#text} at (2,82) size 100x40
           text run at (2,82) width 100: "I definitely will"
           text run at (2,102) width 58: "overflow"
-        RenderBR {BR} at (59,102) size 1x19
-        RenderText {#text} at (2,122) size 68x39
+        RenderBR {BR} at (59,102) size 1x20
+        RenderText {#text} at (2,122) size 68x40
           text run at (2,122) width 68: "I promis. I"
           text run at (2,142) width 66: "lvoerflow."
-        RenderBR {BR} at (67,142) size 1x19
-        RenderText {#text} at (2,162) size 45x19
+        RenderBR {BR} at (67,142) size 1x20
+        RenderText {#text} at (2,162) size 45x20
           text run at (2,162) width 45: "Really."
       RenderBlock {P} at (0,74) size 800x0

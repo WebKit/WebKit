@@ -33,6 +33,10 @@
 #include "FELightingSoftwareParallelApplier.h"
 #include "Filter.h"
 
+#if USE(CORE_IMAGE)
+#include "FELightingCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 FELighting::FELighting(Type type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, DestinationColorSpace colorSpace)
@@ -44,7 +48,7 @@ FELighting::FELighting(Type type, const Color& lightingColor, float surfaceScale
     , m_specularExponent(clampTo<float>(specularExponent, 1.0f, 128.0f))
     , m_kernelUnitLengthX(kernelUnitLengthX)
     , m_kernelUnitLengthY(kernelUnitLengthY)
-    , m_lightSource(WTFMove(lightSource))
+    , m_lightSource(WTF::move(lightSource))
 {
 }
 
@@ -100,6 +104,24 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
 FloatRect FELighting::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
+}
+
+OptionSet<FilterRenderingMode> FELighting::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FELighting::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FELightingCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FELighting::createSoftwareApplier() const

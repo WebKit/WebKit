@@ -62,13 +62,13 @@ bool RemoteSnapshot::setFrame(FrameIdentifier frameIdentifier, Ref<const Display
     m_completedFrames++;
     auto iterator = m_frameDisplayLists.find(frameIdentifier);
     if (iterator == m_frameDisplayLists.end()) {
-        m_frameDisplayLists.add(frameIdentifier, DisplayListAndReleaseDispatcher { WTFMove(displayList), releaseDispatcher });
+        m_frameDisplayLists.add(frameIdentifier, DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher });
         return true;
     }
     // It is ok to addFrameReference to win the race. It's not ok to have two setFrames.
     if (iterator->value)
         return false;
-    iterator->value = DisplayListAndReleaseDispatcher { WTFMove(displayList), releaseDispatcher };
+    iterator->value = DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher };
     return true;
 }
 
@@ -94,7 +94,7 @@ bool RemoteSnapshot::isComplete() const
 }
 
 RemoteSnapshot::DisplayListAndReleaseDispatcher::DisplayListAndReleaseDispatcher(Ref<const WebCore::DisplayList::DisplayList>&& displayList, SerialFunctionDispatcher& dispatcher)
-    : m_displayList(WTFMove(displayList))
+    : m_displayList(WTF::move(displayList))
     , m_dispatcher(dispatcher)
 {
 }
@@ -102,7 +102,7 @@ RemoteSnapshot::DisplayListAndReleaseDispatcher::DisplayListAndReleaseDispatcher
 RemoteSnapshot::DisplayListAndReleaseDispatcher::~DisplayListAndReleaseDispatcher()
 {
     if (m_displayList)
-        m_dispatcher->dispatch([displayList = WTFMove(m_displayList)]() mutable { });
+        m_dispatcher->dispatch([displayList = WTF::move(m_displayList)]() mutable { });
 }
 
 #if PLATFORM(COCOA)
@@ -119,7 +119,7 @@ std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& s
     if (!applyFrame(rootIdentifier, context))
         return std::nullopt;
 
-    return ImageBuffer::sinkIntoPDFDocument(WTFMove(buffer));
+    return ImageBuffer::sinkIntoPDFDocument(WTF::move(buffer));
 }
 
 #endif

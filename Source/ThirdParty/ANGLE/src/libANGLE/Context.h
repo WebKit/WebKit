@@ -593,7 +593,6 @@ class StateCache final : angle::NonCopyable
     bool mCachedCanDraw;
 };
 
-using VertexArrayMap       = ResourceMap<VertexArray, VertexArrayID>;
 using QueryMap             = ResourceMap<Query, QueryID>;
 using TransformFeedbackMap = ResourceMap<TransformFeedback, TransformFeedbackID>;
 
@@ -629,12 +628,12 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     egl::Error unMakeCurrent(const egl::Display *display);
 
     // These create and destroy methods pass through to ResourceManager, which owns these objects.
-    BufferID createBuffer();
-    TextureID createTexture();
-    RenderbufferID createRenderbuffer();
-    ProgramPipelineID createProgramPipeline();
-    MemoryObjectID createMemoryObject();
-    SemaphoreID createSemaphore();
+    bool createBuffer(BufferID *outBuffer);
+    bool createTexture(TextureID *outTexture);
+    bool createRenderbuffer(RenderbufferID *outRenderbuffer);
+    bool createProgramPipeline(ProgramPipelineID *outProgramPipeline);
+    bool createMemoryObject(MemoryObjectID *outMemoryObject);
+    bool createSemaphore(SemaphoreID *outSemaphore);
 
     void deleteBuffer(BufferID buffer);
     void deleteTexture(TextureID texture);
@@ -656,7 +655,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     Framebuffer *getFramebuffer(FramebufferID handle) const;
     Renderbuffer *getRenderbuffer(RenderbufferID handle) const;
-    VertexArray *getVertexArray(VertexArrayID handle) const;
     Sampler *getSampler(SamplerID handle) const;
     Query *getOrCreateQuery(QueryID handle, QueryType type);
     Query *getQuery(QueryID handle) const;
@@ -671,7 +669,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     Compiler *getCompiler() const;
 
-    bool isVertexArrayGenerated(VertexArrayID vertexArray) const;
     bool isTransformFeedbackGenerated(TransformFeedbackID transformFeedback) const;
 
     bool isZeroTextureBound(TextureType textureType) const;
@@ -686,7 +683,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     void getVertexAttribivImpl(GLuint index, GLenum pname, GLint *params) const;
 
     // Framebuffers are owned by the Context, so these methods do not pass through
-    FramebufferID createFramebuffer();
+    bool createFramebuffer(FramebufferID *outFramebuffer);
     void deleteFramebuffer(FramebufferID framebuffer);
 
     bool hasActiveTransformFeedback(ShaderProgramID program) const;
@@ -790,6 +787,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     ErrorSet *getMutableErrorSetForValidation() const { return &mErrors; }
 
+    void handleExhaustionError(angle::EntryPoint entryPoint);
+
     // Specific methods needed for validation.
     bool getQueryParameterInfo(GLenum pname, GLenum *type, unsigned int *numParams) const;
     bool getIndexedQueryParameterInfo(GLenum target, GLenum *type, unsigned int *numParams) const;
@@ -837,6 +836,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     bool isWebGL() const { return mState.isWebGL(); }
     bool isWebGL1() const { return mState.isWebGL1(); }
+    bool isHardenedContext() const { return mHardenedContext; }
     const char *getRendererString() const { return mRendererString; }
 
     bool isValidBufferBinding(BufferBinding binding) const { return mValidBufferBindings[binding]; }
@@ -875,7 +875,10 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     angle::FrameCapture *getFrameCapture() const { return mFrameCapture.get(); }
 
-    const VertexArrayMap &getVertexArraysForCapture() const { return mVertexArrayMap; }
+    const VertexArrayMap &getVertexArraysForCapture() const
+    {
+        return getPrivateState().getVertexArrayMap();
+    }
     const QueryMap &getQueriesForCapture() const { return mQueryMap; }
     const TransformFeedbackMap &getTransformFeedbacksForCapture() const
     {
@@ -945,7 +948,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     // Needed by capture serialization logic that works with a "const" Context pointer.
     void finishImmutable() const;
 
-    const angle::PerfMonitorCounterGroups &getPerfMonitorCounterGroups() const;
+    const angle::PerfMonitorCounterGroupsInfo &getPerfMonitorCounterGroups() const;
 
     // Ends the currently active pixel local storage session with GL_STORE_OP_STORE on all planes.
     void endPixelLocalStorageImplicit();
@@ -1077,9 +1080,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     QueryMap mQueryMap;
     HandleAllocator mQueryHandleAllocator;
 
-    VertexArrayMap mVertexArrayMap;
-    HandleAllocator mVertexArrayHandleAllocator;
-
     TransformFeedbackMap mTransformFeedbackMap;
     HandleAllocator mTransformFeedbackHandleAllocator;
 
@@ -1102,7 +1102,9 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     egl::Surface *mCurrentReadSurface;
     egl::Display *mDisplay;
     const bool mWebGLContext;
+    const bool mHardenedContext;
     bool mBufferAccessValidationEnabled;
+    bool mRequiresRobustBehavior;
     const bool mExtensionsEnabled;
     MemoryProgramCache *mMemoryProgramCache;
     MemoryShaderCache *mMemoryShaderCache;

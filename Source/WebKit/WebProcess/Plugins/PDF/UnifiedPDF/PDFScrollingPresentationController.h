@@ -46,8 +46,8 @@ public:
 
 
 private:
-    bool supportsDisplayMode(PDFDocumentLayout::DisplayMode) const override;
-    void willChangeDisplayMode(PDFDocumentLayout::DisplayMode) override { }
+    bool supportsDisplayMode(PDFDisplayMode) const override;
+    void willChangeDisplayMode(PDFDisplayMode) override { }
 
     void teardown() override;
 
@@ -71,7 +71,6 @@ private:
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
 #if PLATFORM(MAC)
     bool handleKeyboardCommand(const WebKeyboardEvent&);
-    CheckedPtr<WebCore::KeyboardScrollingAnimator> checkedKeyboardScrollingAnimator() const;
 #endif
 
     std::optional<PDFDocumentLayout::PageIndex> pageIndexForCurrentView(AnchorPoint) const override;
@@ -96,7 +95,7 @@ private:
     std::optional<WebCore::PlatformLayerIdentifier> contentsLayerIdentifier() const final;
 
     void updatePageBackgroundLayers();
-    std::optional<PDFDocumentLayout::PageIndex> pageIndexForPageBackgroundLayer(const WebCore::GraphicsLayer&) const;
+    std::optional<PDFDocumentLayout::PageIndex> NODELETE pageIndexForPageBackgroundLayer(const WebCore::GraphicsLayer&) const;
     WebCore::GraphicsLayer* backgroundLayerForPage(PDFDocumentLayout::PageIndex) const;
 
     void didGeneratePreviewForPage(PDFDocumentLayout::PageIndex) override;
@@ -107,13 +106,6 @@ private:
 
     void setSelectionLayerEnabled(bool) final;
 
-    RefPtr<WebCore::GraphicsLayer> protectedContentsLayer() { return m_contentsLayer; }
-    RefPtr<WebCore::GraphicsLayer> protectedPageBackgroundsContainerLayer() { return m_pageBackgroundsContainerLayer; }
-
-#if ENABLE(PDFKIT_PAINTED_SELECTIONS)
-    RefPtr<WebCore::GraphicsLayer> protectedSelectionLayer() { return m_selectionLayer; }
-#endif
-
     RefPtr<WebCore::GraphicsLayer> m_pageBackgroundsContainerLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
 
@@ -121,7 +113,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_selectionLayer;
 #endif
 
-    HashMap<RefPtr<WebCore::GraphicsLayer>, PDFDocumentLayout::PageIndex> m_pageBackgroundLayers;
+    HashMap<Ref<WebCore::GraphicsLayer>, PDFDocumentLayout::PageIndex> m_pageBackgroundLayers;
 };
 
 

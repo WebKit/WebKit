@@ -58,6 +58,7 @@ private:
 
 class CDMPrivateFairPlayStreaming final : public CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(CDMPrivateFairPlayStreaming);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivateFairPlayStreaming);
 public:
     CDMPrivateFairPlayStreaming(const String& mediaKeysHashSalt, const CDMPrivateClient&);
     virtual ~CDMPrivateFairPlayStreaming();

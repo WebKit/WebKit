@@ -120,14 +120,11 @@ public:
     void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
-    WebPageProxy* inspectedPage() const { return m_inspectedPage.get(); }
-    RefPtr<WebPageProxy> protectedInspectedPage() const { return m_inspectedPage.get(); }
-    WebPageProxy* inspectorPage() const { return m_inspectorPage.get(); }
-    RefPtr<WebPageProxy> protectedInspectorPage() const { return m_inspectorPage.get(); }
+    WebPageProxy* inspectedPage() const { return m_inspectedPage; }
+    WebPageProxy* inspectorPage() const { return m_inspectorPage; }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
-    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController() const;
 #endif
 
     bool isConnected() const { return !!m_inspectorPage; }
@@ -165,7 +162,7 @@ public:
     void attachmentWillMoveFromWindow(NSWindow *oldWindow);
     void attachmentDidMoveToWindow(NSWindow *newWindow);
 
-    const WebCore::FloatRect& sheetRect() const { return m_sheetRect; }
+    const WebCore::FloatRect& sheetRect() const LIFETIME_BOUND { return m_sheetRect; }
 #endif
 
 #if PLATFORM(WIN)
@@ -209,6 +206,8 @@ public:
 
     void setDiagnosticLoggingAvailable(bool);
 
+    void systemAppearanceDidChange();
+
     // Provided by platform WebInspectorUIProxy implementations.
     static String inspectorPageURL();
     static String inspectorTestPageURL();
@@ -225,7 +224,7 @@ public:
     void evaluateInFrontendForTesting(const String&);
 
 private:
-    const RefPtr<WebInspectorBackendProxy> m_backend;
+    const Ref<WebInspectorBackendProxy> m_backend;
 
     void createFrontendPage();
     void closeFrontendPageAndWindow();
@@ -311,7 +310,6 @@ private:
     unsigned inspectionLevel() const;
 
     WebPreferences& inspectorPagePreferences() const;
-    Ref<WebPreferences> protectedInspectorPagePreferences() const;
 
 #if PLATFORM(MAC)
     void applyForcedAppearance();

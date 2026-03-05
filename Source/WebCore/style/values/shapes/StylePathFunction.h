@@ -79,11 +79,11 @@ template<> struct Serialize<Path> { void operator()(StringBuilder&, const CSS::S
 
 // MARK: - Path
 
-template<> struct PathComputation<Path> { WebCore::Path operator()(const Path&, const FloatRect&); };
+template<> struct PathComputation<Path> { WebCore::Path operator()(const Path&, const FloatRect&, ZoomFactor); };
 
 // MARK: - Wind Rule
 
-template<> struct WindRuleComputation<Path> { WebCore::WindRule operator()(const Path&); };
+template<> struct WindRuleComputation<Path> { WebCore::WindRule NODELETE operator()(const Path&); };
 
 // MARK: - Blending
 

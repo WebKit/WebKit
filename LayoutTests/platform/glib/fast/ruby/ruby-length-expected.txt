@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 772x35
+      RenderText {#text} at (0,0) size 772x36
         text run at (0,0) width 772: "This is a initial test for simple ruby. There should be 2 ruby annotations on below line, one with a ruby text shorter than the"
         text run at (0,18) width 36: "base, "
         text run at (36,18) width 287: "and one with a ruby text longer than the base."
-      RenderBR {BR} at (323,18) size 0x17
-      RenderBR {BR} at (0,36) size 0x17
+      RenderBR {BR} at (323,18) size 0x18
+      RenderBR {BR} at (0,36) size 0x18
       RenderText {#text} at (0,63) size 155x18
         text run at (0,63) width 155: "<ruby> is defined in the "
       RenderInline {RUBY} at (155,63) size 184x18

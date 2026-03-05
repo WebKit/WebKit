@@ -75,8 +75,8 @@ DOMCSSValue *kit(WebCore::DeprecatedCSSOMValue* value)
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
-    if (DOMCSSValue *wrapper = getDOMWrapper(value))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(value))
+        return wrapper.autorelease();
     RetainPtr<DOMCSSValue> wrapper = adoptNS([[kitClass(value) alloc] _init]);
     if (!wrapper)
         return nil;

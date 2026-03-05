@@ -38,7 +38,7 @@ enum SupportRayPathOperation : bool { No, Yes };
 
 // <ray-path> = <ray()> || <coord-box>
 struct RayPath {
-    explicit RayPath(Ref<RayPathOperation>&& operation) : operation { WTFMove(operation) } { }
+    explicit RayPath(Ref<RayPathOperation>&& operation) : operation { WTF::move(operation) } { }
     explicit RayPath(const Ref<RayPathOperation>& operation) : operation { operation } { }
 
     ALWAYS_INLINE const RayFunction& ray() const { return operation->ray(); }
@@ -61,7 +61,7 @@ struct RayPath {
 private:
     friend ClipPath;
     friend OffsetPath;
-    friend std::optional<WebCore::Path> tryPath(const RayPath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const RayPath&, const TransformOperationData&, ZoomFactor);
     friend WTF::TextStream& operator<<(WTF::TextStream&, const RayPath&);
 
     Ref<RayPathOperation> operation;
@@ -69,7 +69,7 @@ private:
 
 // <reference-path> = <url> || <coord-box>
 struct ReferencePath {
-    explicit ReferencePath(Ref<ReferencePathOperation>&& operation) : operation { WTFMove(operation) } { }
+    explicit ReferencePath(Ref<ReferencePathOperation>&& operation) : operation { WTF::move(operation) } { }
     explicit ReferencePath(const Ref<ReferencePathOperation>& operation) : operation { operation } { }
 
     ALWAYS_INLINE const URL& url() const { return operation->url(); }
@@ -93,7 +93,7 @@ struct ReferencePath {
 private:
     friend ClipPath;
     friend OffsetPath;
-    friend std::optional<WebCore::Path> tryPath(const ReferencePath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const ReferencePath&, const TransformOperationData&, ZoomFactor);
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ReferencePath&);
 
     Ref<ReferencePathOperation> operation;
@@ -101,7 +101,7 @@ private:
 
 // <basic-shape-path> = <basic-shape> || <coord-box>
 struct BasicShapePath {
-    explicit BasicShapePath(Ref<ShapePathOperation>&& operation) : operation { WTFMove(operation) } { }
+    explicit BasicShapePath(Ref<ShapePathOperation>&& operation) : operation { WTF::move(operation) } { }
     explicit BasicShapePath(const Ref<ShapePathOperation>& operation) : operation { operation } { }
 
     ALWAYS_INLINE const BasicShape& shape() const { return operation->shape(); }
@@ -124,7 +124,7 @@ struct BasicShapePath {
 private:
     friend ClipPath;
     friend OffsetPath;
-    friend std::optional<WebCore::Path> tryPath(const BasicShapePath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const BasicShapePath&, const TransformOperationData&, ZoomFactor);
     friend WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapePath&);
 
     Ref<ShapePathOperation> operation;
@@ -132,7 +132,7 @@ private:
 
 // <box-path> = <coord-box>
 struct BoxPath {
-    explicit BoxPath(Ref<BoxPathOperation>&& operation) : operation { WTFMove(operation) } { }
+    explicit BoxPath(Ref<BoxPathOperation>&& operation) : operation { WTF::move(operation) } { }
     explicit BoxPath(const Ref<BoxPathOperation>& operation) : operation { operation } { }
 
     ALWAYS_INLINE CSSBoxType referenceBox() const { return operation->referenceBox(); }
@@ -151,33 +151,33 @@ struct BoxPath {
 private:
     friend ClipPath;
     friend OffsetPath;
-    friend std::optional<WebCore::Path> tryPath(const BoxPath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const BoxPath&, const TransformOperationData&, ZoomFactor);
 
     Ref<BoxPathOperation> operation;
 };
 
-inline std::optional<WebCore::Path> tryPath(const RayPath& rayPath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const RayPath& rayPath, const TransformOperationData& data, ZoomFactor zoom)
 {
     Ref operation = rayPath.operation;
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
-inline std::optional<WebCore::Path> tryPath(const ReferencePath& referencePath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const ReferencePath& referencePath, const TransformOperationData& data, ZoomFactor zoom)
 {
     Ref operation = referencePath.operation;
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
-inline std::optional<WebCore::Path> tryPath(const BasicShapePath& basicShapePath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const BasicShapePath& basicShapePath, const TransformOperationData& data, ZoomFactor zoom)
 {
     Ref operation = basicShapePath.operation;
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
-inline std::optional<WebCore::Path> tryPath(const BoxPath& boxPath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const BoxPath& boxPath, const TransformOperationData& data, ZoomFactor zoom)
 {
     Ref operation = boxPath.operation;
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
 // MARK: - Conversion

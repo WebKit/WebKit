@@ -162,9 +162,9 @@ class RtpTransportControllerSendInterface {
   // Called once it's known that the remote end supports RFC 8888.
   virtual void EnableCongestionControlFeedbackAccordingToRfc8888() = 0;
   // Count of RFC8888 feedback reports received
-  virtual int ReceivedCongestionControlFeedbackCount() const = 0;
+  virtual std::optional<int> ReceivedCongestionControlFeedbackCount() const = 0;
   // Count of transport-cc feedback reports received
-  virtual int ReceivedTransportCcFeedbackCount() const = 0;
+  virtual std::optional<int> ReceivedTransportCcFeedbackCount() const = 0;
 };
 
 }  // namespace webrtc

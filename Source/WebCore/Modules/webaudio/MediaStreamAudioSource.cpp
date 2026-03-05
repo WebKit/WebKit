@@ -61,6 +61,15 @@ const RealtimeMediaSourceSettings& MediaStreamAudioSource::settings()
     return m_currentSettings;
 }
 
+#if !PLATFORM(COCOA)
+void MediaStreamAudioSource::setNumberOfChannels(unsigned)
+{
+    // FIXME: implement this.
+    // https://bugs.webkit.org/show_bug.cgi?id=122430
+    notImplemented();
+}
+#endif
+
 #if !PLATFORM(COCOA) && !USE(GSTREAMER)
 void MediaStreamAudioSource::consumeAudio(AudioBus&, size_t)
 {

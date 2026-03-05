@@ -47,17 +47,17 @@ class TargetedElementInfo final : public ObjectImpl<Object::Type::TargetedElemen
 public:
     static Ref<TargetedElementInfo> create(WebKit::WebPageProxy& page, WebCore::TargetedElementInfo&& info)
     {
-        return adoptRef(*new TargetedElementInfo(page, WTFMove(info)));
+        return adoptRef(*new TargetedElementInfo(page, WTF::move(info)));
     }
 
     explicit TargetedElementInfo(WebKit::WebPageProxy&, WebCore::TargetedElementInfo&&);
 
     WebCore::RectEdges<bool> offsetEdges() const { return m_info.offsetEdges; }
 
-    const WTF::String& renderedText() const { return m_info.renderedText; }
-    const WTF::String& searchableText() const { return m_info.searchableText; }
-    const WTF::String& screenReaderText() const { return m_info.screenReaderText; }
-    const Vector<Vector<WTF::String>>& selectors() const { return m_info.selectors; }
+    const WTF::String& renderedText() const LIFETIME_BOUND { return m_info.renderedText; }
+    const WTF::String& searchableText() const LIFETIME_BOUND { return m_info.searchableText; }
+    const WTF::String& screenReaderText() const LIFETIME_BOUND { return m_info.screenReaderText; }
+    const Vector<Vector<WTF::String>>& selectors() const LIFETIME_BOUND { return m_info.selectors; }
     WebCore::PositionType positionType() const { return m_info.positionType; }
     WebCore::FloatRect boundsInRootView() const { return m_info.boundsInRootView; }
     WebCore::FloatRect boundsInWebView() const;
@@ -70,11 +70,11 @@ public:
     bool hasLargeReplacedDescendant() const { return m_info.hasLargeReplacedDescendant; }
     bool hasAudibleMedia() const { return m_info.hasAudibleMedia; }
 
-    const HashSet<WTF::URL>& mediaAndLinkURLs() const { return m_info.mediaAndLinkURLs; }
+    const HashSet<WTF::URL>& mediaAndLinkURLs() const LIFETIME_BOUND { return m_info.mediaAndLinkURLs; }
 
     void childFrames(CompletionHandler<void(Vector<Ref<FrameTreeNode>>&&)>&&) const;
 
-    bool isSameElement(const TargetedElementInfo&) const;
+    bool NODELETE isSameElement(const TargetedElementInfo&) const;
 
     WebCore::NodeIdentifier nodeIdentifier() const { return m_info.nodeIdentifier; }
     WebCore::ScriptExecutionContextIdentifier documentIdentifier() const { return m_info.documentIdentifier; }

@@ -87,7 +87,7 @@ RefPtr<CSSValue> consumeRotate3dFunction(CSSParserTokenRange& range, CSS::Proper
         parameters.append(secondValue.releaseNonNull());
         parameters.append(thirdValue.releaseNonNull());
         parameters.append(angle.releaseNonNull());
-        return { WTFMove(parameters) };
+        return { WTF::move(parameters) };
     };
 
     auto functionId = range.peek().functionId();
@@ -104,7 +104,7 @@ RefPtr<CSSValue> consumeRotate3dFunction(CSSParserTokenRange& range, CSS::Proper
         return { };
 
     range = rangeCopy;
-    return CSSFunctionValue::create(functionId, WTFMove(*parameters));
+    return CSSFunctionValue::create(functionId, WTF::move(*parameters));
 }
 
 RefPtr<CSSValue> consumeTranslateFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -129,7 +129,7 @@ RefPtr<CSSValue> consumeTranslateFunction(CSSParserTokenRange& range, CSS::Prope
                 arguments.append(secondValue.releaseNonNull());
         }
 
-        return { WTFMove(arguments) };
+        return { WTF::move(arguments) };
     };
 
     auto functionId = range.peek().functionId();
@@ -146,7 +146,7 @@ RefPtr<CSSValue> consumeTranslateFunction(CSSParserTokenRange& range, CSS::Prope
         return { };
 
     range = rangeCopy;
-    return CSSFunctionValue::create(functionId, WTFMove(*parameters));
+    return CSSFunctionValue::create(functionId, WTF::move(*parameters));
 }
 
 RefPtr<CSSValue> consumeTranslate3dFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -177,7 +177,7 @@ RefPtr<CSSValue> consumeTranslate3dFunction(CSSParserTokenRange& range, CSS::Pro
         parameters.append(firstValue.releaseNonNull());
         parameters.append(secondValue.releaseNonNull());
         parameters.append(thirdValue.releaseNonNull());
-        return { WTFMove(parameters) };
+        return { WTF::move(parameters) };
     };
 
     auto functionId = range.peek().functionId();
@@ -194,7 +194,7 @@ RefPtr<CSSValue> consumeTranslate3dFunction(CSSParserTokenRange& range, CSS::Pro
         return { };
 
     range = rangeCopy;
-    return CSSFunctionValue::create(functionId, WTFMove(*parameters));
+    return CSSFunctionValue::create(functionId, WTF::move(*parameters));
 }
 
 RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -294,7 +294,7 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserSt
             // If we had already parsed an angle or numbers but not 3 in a row, this value is invalid.
             if (angle || (!list.isEmpty() && list.size() != 3))
                 return nullptr;
-            angle = WTFMove(parsedValue);
+            angle = WTF::move(parsedValue);
             range.consumeWhitespace();
             continue;
         }
@@ -305,7 +305,7 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserSt
         // encountered numbers to specify a rotation axis, then this value is invalid.
         if (!parsedValue || axisIdentifier || !list.isEmpty())
             return nullptr;
-        axisIdentifier = WTFMove(parsedValue);
+        axisIdentifier = WTF::move(parsedValue);
         range.consumeWhitespace();
     }
 
@@ -340,7 +340,7 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserSt
             return CSSValueList::createSpaceSeparated(angle.releaseNonNull());
 
         list.append(angle.releaseNonNull());
-        return CSSValueList::createSpaceSeparated(WTFMove(list));
+        return CSSValueList::createSpaceSeparated(WTF::move(list));
     }
 
     if (list.isEmpty()) {

@@ -16,6 +16,8 @@
 #include <optional>
 #include <string>
 
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/transport/ecn_marking.h"
 #include "api/units/timestamp.h"
 #include "p2p/base/packet_transport_internal.h"
@@ -78,7 +80,11 @@ class FakePacketTransport : public PacketTransportInternal {
     SendPacketInternal(packet, options);
 
     SentPacketInfo sent_packet(options.packet_id, TimeMillis());
-    SignalSentPacket(this, sent_packet);
+    // Because handlers of NotifySentPacket may be sending packets,
+    // dispatch this call to a new task.
+    TaskQueueBase::Current()->PostTask(
+        SafeTask(safety_.flag(),
+                 [this, sent_packet] { NotifySentPacket(this, sent_packet); }));
     return static_cast<int>(len);
   }
 
@@ -106,7 +112,7 @@ class FakePacketTransport : public PacketTransportInternal {
   }
   void SetNetworkRoute(std::optional<NetworkRoute> network_route) {
     network_route_ = network_route;
-    SignalNetworkRouteChanged(network_route);
+    NotifyNetworkRouteChanged(network_route);
   }
 
   using PacketTransportInternal::NotifyOnClose;
@@ -119,9 +125,9 @@ class FakePacketTransport : public PacketTransportInternal {
     }
     writable_ = writable;
     if (writable_) {
-      SignalReadyToSend(this);
+      NotifyReadyToSend(this);
     }
-    SignalWritableState(this);
+    NotifyWritableState(this);
   }
 
   void set_receiving(bool receiving) {
@@ -129,7 +135,7 @@ class FakePacketTransport : public PacketTransportInternal {
       return;
     }
     receiving_ = receiving;
-    SignalReceivingState(this);
+    NotifyReceivingState(this);
   }
 
   void SendPacketInternal(const CopyOnWriteBuffer& packet,
@@ -138,7 +144,7 @@ class FakePacketTransport : public PacketTransportInternal {
     if (dest_) {
       dest_->NotifyPacketReceived(ReceivedIpPacket(
           packet, SocketAddress(), Timestamp::Micros(TimeMicros()),
-          options.ecn_1 ? EcnMarking::kEct1 : EcnMarking::kNotEct));
+          options.ect_1 ? EcnMarking::kEct1 : EcnMarking::kNotEct));
     }
   }
 
@@ -152,6 +158,7 @@ class FakePacketTransport : public PacketTransportInternal {
   int error_ = 0;
 
   std::optional<NetworkRoute> network_route_;
+  ScopedTaskSafety safety_;
 };
 
 }  //  namespace webrtc

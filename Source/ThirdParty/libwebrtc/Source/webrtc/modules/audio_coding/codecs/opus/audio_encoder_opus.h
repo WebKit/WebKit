@@ -16,7 +16,6 @@
 #include <functional>
 #include <memory>
 #include <optional>
-#include <string>
 #include <utility>
 #include <vector>
 
@@ -35,8 +34,6 @@
 
 namespace webrtc {
 
-class RtcEventLog;
-
 class AudioEncoderOpusImpl final : public AudioEncoder {
  public:
   // Returns empty if the current bitrate falls within the hysteresis window,
@@ -54,8 +51,7 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
       OpusEncInst* inst);
 
   using AudioNetworkAdaptorCreator =
-      std::function<std::unique_ptr<AudioNetworkAdaptor>(absl::string_view,
-                                                         RtcEventLog*)>;
+      std::function<std::unique_ptr<AudioNetworkAdaptor>(absl::string_view)>;
 
   static std::unique_ptr<AudioEncoderOpusImpl> CreateForTesting(
       const Environment& env,
@@ -91,8 +87,7 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
 
   bool SetApplication(Application application) override;
   void SetMaxPlaybackRate(int frequency_hz) override;
-  bool EnableAudioNetworkAdaptor(const std::string& config_string,
-                                 RtcEventLog* event_log) override;
+  bool EnableAudioNetworkAdaptor(absl::string_view config) override;
   void DisableAudioNetworkAdaptor() override;
   void OnReceivedUplinkPacketLossFraction(
       float uplink_packet_loss_fraction) override;
@@ -156,11 +151,11 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
 
   void ApplyAudioNetworkAdaptor();
   std::unique_ptr<AudioNetworkAdaptor> DefaultAudioNetworkAdaptorCreator(
-      absl::string_view config_string,
-      RtcEventLog* event_log) const;
+      absl::string_view config_string) const;
 
   void MaybeUpdateUplinkBandwidth();
 
+  const Environment env_;
   AudioEncoderOpusConfig config_;
   const int payload_type_;
   const bool adjust_bandwidth_;

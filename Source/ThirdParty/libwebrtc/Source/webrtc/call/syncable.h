@@ -14,32 +14,45 @@
 #ifndef CALL_SYNCABLE_H_
 #define CALL_SYNCABLE_H_
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 
 class Syncable {
  public:
   struct Info {
-    int64_t latest_receive_time_ms = 0;
-    uint32_t latest_received_capture_timestamp = 0;
-    uint32_t capture_time_ntp_secs = 0;
-    uint32_t capture_time_ntp_frac = 0;
-    uint32_t capture_time_source_clock = 0;
-    int current_delay_ms = 0;
+    // Local time when the the last RTP packet was received.
+    Timestamp latest_receive_time = Timestamp::Zero();
+    // RTP timestamp of the last RTP packet received.
+    uint32_t latest_received_capture_rtp_timestamp = 0;
+
+    // NTP and RTP timestamp from the last RTCP sender report received.
+    uint32_t capture_time_rtp = 0;
+    NtpTime capture_time_ntp;
+
+    // Current playout delay for the given `Syncable`.
+    TimeDelta current_delay;
+  };
+
+  // Mapping between capture/render time in RTP timestamps and local clock.
+  struct PlayoutInfo {
+    Timestamp time;
+    uint32_t rtp_timestamp;
   };
 
   virtual ~Syncable();
 
   virtual uint32_t id() const = 0;
   virtual std::optional<Info> GetInfo() const = 0;
-  virtual bool GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
-                                      int64_t* time_ms) const = 0;
-  virtual bool SetMinimumPlayoutDelay(int delay_ms) = 0;
-  virtual void SetEstimatedPlayoutNtpTimestampMs(int64_t ntp_timestamp_ms,
-                                                 int64_t time_ms) = 0;
+  virtual std::optional<PlayoutInfo> GetPlayoutRtpTimestamp() const = 0;
+  virtual bool SetMinimumPlayoutDelay(TimeDelta delay) = 0;
+  virtual void SetEstimatedPlayoutNtpTimestamp(NtpTime ntp_time,
+                                               Timestamp time) = 0;
 };
 }  // namespace webrtc
 

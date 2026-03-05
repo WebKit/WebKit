@@ -32,7 +32,7 @@
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuProvider.h>
 #include <WebCore/InspectorFrontendClient.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -51,7 +51,7 @@ class Page;
 class Path2D;
 template<typename> class ExceptionOr;
 
-class InspectorFrontendHost : public RefCounted<InspectorFrontendHost> {
+class InspectorFrontendHost : public RefCountedAndCanMakeWeakPtr<InspectorFrontendHost> {
 public:
     static Ref<InspectorFrontendHost> create(InspectorFrontendClient* client, Page* frontendPage)
     {
@@ -189,7 +189,7 @@ private:
     InspectorFrontendClient* m_client;
     WeakPtr<Page> m_frontendPage;
 #if ENABLE(CONTEXT_MENUS)
-    FrontendMenuProvider* m_menuProvider;
+    WeakPtr<FrontendMenuProvider> m_menuProvider;
 #endif
 };
 

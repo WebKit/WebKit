@@ -41,7 +41,7 @@ public:
     template<typename... Arguments>
     SVGValuePropertyListAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, Arguments&&... arguments)
         : Base(attributeName, std::forward<Arguments>(arguments)...)
-        , m_list(unsafeRefDowncast<ListType>(WTFMove(property)))
+        , m_list(unsafeRefDowncast<ListType>(WTF::move(property)))
     {
     }
 
@@ -59,7 +59,7 @@ protected:
     using Base::computeCSSPropertyValue;
     using Base::m_attributeName;
 
-    RefPtr<ListType> m_list;
+    const Ref<ListType> m_list;
 };
 
 #define TZONE_TEMPLATE_PARAMS template<typename ListType, typename AnimationFunction>

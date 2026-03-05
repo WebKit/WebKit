@@ -111,22 +111,23 @@ WebDataListSuggestionsDropdownIOS::WebDataListSuggestionsDropdownIOS(WebPageProx
 void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformation&& information)
 {
     if (m_suggestionsControl) {
-        [m_suggestionsControl updateWithInformation:WTFMove(information)];
+        [m_suggestionsControl updateWithInformation:WTF::move(information)];
         return;
     }
 
     WebCore::DataListSuggestionActivationType type = information.activationType;
 
-    if (m_contentView._shouldUseContextMenusForFormControls) {
-        m_suggestionsControl = adoptNS([[WKDataListSuggestionsDropdown alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
+    RetainPtr contentView = m_contentView.get();
+    if ([contentView _shouldUseContextMenusForFormControls]) {
+        m_suggestionsControl = adoptNS([[WKDataListSuggestionsDropdown alloc] initWithInformation:WTF::move(information) inView:contentView.get()]);
         [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
         return;
     }
 
     if (PAL::currentUserInterfaceIdiomIsSmallScreen())
-        m_suggestionsControl = adoptNS([[WKDataListSuggestionsPicker alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
+        m_suggestionsControl = adoptNS([[WKDataListSuggestionsPicker alloc] initWithInformation:WTF::move(information) inView:contentView.get()]);
     else
-        m_suggestionsControl = adoptNS([[WKDataListSuggestionsPopover alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
+        m_suggestionsControl = adoptNS([[WKDataListSuggestionsPopover alloc] initWithInformation:WTF::move(information) inView:contentView.get()]);
 
     [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
 }
@@ -147,7 +148,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     if (!m_page)
         return;
 
-    m_page->didSelectOption(selectedOption);
+    protect(m_page)->didSelectOption(selectedOption);
     close();
 }
 
@@ -166,16 +167,16 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
         return nil;
 
     _view = view;
-    _suggestions = WTFMove(information.suggestions);
+    _suggestions = WTF::move(information.suggestions);
 
-    [_view _setDataListSuggestionsControl:self];
+    [protect(_view) _setDataListSuggestionsControl:self];
 
     return self;
 }
 
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
 {
-    _suggestions = WTFMove(information.suggestions);
+    _suggestions = WTF::move(information.suggestions);
 }
 
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
@@ -185,7 +186,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (void)didSelectOptionAtIndex:(NSInteger)index
 {
-    _dropdown->didSelectOption(_suggestions[index].value);
+    protect(*_dropdown)->didSelectOption(_suggestions[index].value);
 }
 
 - (void)invalidate
@@ -222,7 +223,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (NSTextAlignment)textAlignment
 {
-    return _view.focusedElementInformation.isRTL ? NSTextAlignmentRight : NSTextAlignmentLeft;
+    return [protect(_view) focusedElementInformation].isRTL ? NSTextAlignmentRight : NSTextAlignmentLeft;
 }
 
 @end
@@ -235,7 +236,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (instancetype)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(WKContentView *)view
 {
-    if (!(self = [super initWithInformation:WTFMove(information) inView:view]))
+    if (!(self = [super initWithInformation:WTF::move(information) inView:view]))
         return nil;
 
     _pickerView = adoptNS([[WKDataListSuggestionsPickerView alloc] initWithFrame:CGRectZero]);
@@ -253,7 +254,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
 {
-    [super updateWithInformation:WTFMove(information)];
+    [super updateWithInformation:WTF::move(information)];
     if (information.activationType != WebCore::DataListSuggestionActivationType::IndicatorClicked) {
         self.view.dataListTextSuggestionsInputView = nil;
         self.view.dataListTextSuggestions = self.textSuggestions;
@@ -334,7 +335,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (instancetype)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(WKContentView *)view
 {
-    if (!(self = [super initWithInformation:WTFMove(information) inView:view]))
+    if (!(self = [super initWithInformation:WTF::move(information) inView:view]))
         return nil;
 
     _popover = adoptNS([[WKFormRotatingAccessoryPopover alloc] initWithView:view]);
@@ -344,7 +345,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
 {
-    [super updateWithInformation:WTFMove(information)];
+    [super updateWithInformation:WTF::move(information)];
     [_suggestionsViewController reloadData];
     self.view.dataListTextSuggestions = self.textSuggestions;
 }
@@ -428,7 +429,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (instancetype)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(WKContentView *)view
 {
-    if (!(self = [super initWithInformation:WTFMove(information) inView:view]))
+    if (!(self = [super initWithInformation:WTF::move(information) inView:view]))
         return nil;
 
     return self;
@@ -438,7 +439,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     auto activationType = information.activationType;
 
-    [super updateWithInformation:WTFMove(information)];
+    [super updateWithInformation:WTF::move(information)];
     [self _displayWithActivationType:activationType];
 }
 
@@ -537,16 +538,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSMutableArray *suggestions = [NSMutableArray arrayWithCapacity:self.suggestionsCount];
 
     for (NSInteger index = 0; index < self.suggestionsCount; index++) {
-        UIAction *suggestionAction = [UIAction actionWithTitle:[self suggestionAtIndex:index].createNSString().get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKDataListSuggestionsDropdown>(self), index] (UIAction *) {
+        RetainPtr suggestionAction = [UIAction actionWithTitle:[self suggestionAtIndex:index].createNSString().get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKDataListSuggestionsDropdown>(self), index] (UIAction *) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
 
             [strongSelf didSelectOptionAtIndex:index];
         }];
-        suggestionAction.subtitle = [self suggestionLabelAtIndex:index].createNSString().get();
+        suggestionAction.get().subtitle = [self suggestionLabelAtIndex:index].createNSString().get();
 
-        [suggestions addObject:suggestionAction];
+        [suggestions addObject:suggestionAction.get()];
     }
 
     _suggestionsMenuElements = adoptNS([suggestions copy]);

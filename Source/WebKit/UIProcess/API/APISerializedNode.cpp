@@ -29,7 +29,7 @@
 namespace API {
 
 SerializedNode::SerializedNode(WebCore::SerializedNode&& serializedNode)
-    : m_serializedNode(WTFMove(serializedNode))
+    : m_serializedNode(WTF::move(serializedNode))
 {
 }
 

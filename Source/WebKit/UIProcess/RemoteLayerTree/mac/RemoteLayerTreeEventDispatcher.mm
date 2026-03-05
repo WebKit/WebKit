@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeEventDispatcher.h"
 
-#if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#if PLATFORM(MAC)
 
 #import "DisplayLink.h"
 #import "Logging.h"
@@ -127,7 +127,7 @@ RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
 // This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
 void RemoteLayerTreeEventDispatcher::invalidate()
 {
-    checkedDisplayLinkClient()->invalidate();
+    protect(m_displayLinkClient)->invalidate();
 
     removeDisplayLinkClient();
 
@@ -148,7 +148,7 @@ void RemoteLayerTreeEventDispatcher::setScrollingTree(RefPtr<RemoteScrollingTree
     ASSERT(isMainRunLoop());
 
     Locker locker { m_scrollingTreeLock };
-    m_scrollingTree = WTFMove(scrollingTree);
+    m_scrollingTree = WTF::move(scrollingTree);
 }
 
 RefPtr<RemoteScrollingTree> RemoteLayerTreeEventDispatcher::scrollingTree()
@@ -160,11 +160,6 @@ RefPtr<RemoteScrollingTree> RemoteLayerTreeEventDispatcher::scrollingTree()
     }
     
     return result;
-}
-
-CheckedPtr<RemoteLayerTreeEventDispatcherDisplayLinkClient> RemoteLayerTreeEventDispatcher::checkedDisplayLinkClient()
-{
-    return m_displayLinkClient.get();
 }
 
 void RemoteLayerTreeEventDispatcher::wheelEventHysteresisUpdated(PAL::HysteresisState state)
@@ -195,7 +190,7 @@ void RemoteLayerTreeEventDispatcher::cacheWheelEventScrollingAccelerationCurve(c
         });
         return curve;
     });
-    m_momentumEventDispatcher->setScrollingAccelerationCurve(m_pageIdentifier, WTFMove(curve));
+    m_momentumEventDispatcher->setScrollingAccelerationCurve(m_pageIdentifier, WTF::move(curve));
 #endif
 }
 
@@ -326,7 +321,7 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
         auto result = scrollingTree->handleWheelEventAfterDefaultHandling(wheelEvent, scrollingNodeID, gestureState);
         RunLoop::mainSingleton().dispatch([protectedThis, wasHandled, result]() {
             if (CheckedPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator.get())
-                scrollingCoordinator->protectedWebPageProxy()->wheelEventHandlingCompleted(wasHandled || result.wasHandled);
+                protect(scrollingCoordinator->webPageProxy())->wheelEventHandlingCompleted(wasHandled || result.wasHandled);
         });
 
     });
@@ -350,11 +345,6 @@ RemoteLayerTreeDrawingAreaProxyMac& RemoteLayerTreeEventDispatcher::drawingAreaM
     return *downcast<RemoteLayerTreeDrawingAreaProxyMac>(CheckedRef { *m_scrollingCoordinator }->webPageProxy().drawingArea());
 }
 
-Ref<RemoteLayerTreeDrawingAreaProxyMac> RemoteLayerTreeEventDispatcher::protectedDrawingAreaMac() const
-{
-    return drawingAreaMac();
-}
-
 DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
 {
     ASSERT(isMainRunLoop());
@@ -362,7 +352,7 @@ DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
     if (!m_scrollingCoordinator)
         return nullptr;
 
-    return &protectedDrawingAreaMac()->displayLink();
+    return &protect(drawingAreaMac())->displayLink();
 }
 
 DisplayLink* RemoteLayerTreeEventDispatcher::existingDisplayLink() const
@@ -372,7 +362,7 @@ DisplayLink* RemoteLayerTreeEventDispatcher::existingDisplayLink() const
     if (!m_scrollingCoordinator)
         return nullptr;
 
-    return protectedDrawingAreaMac()->existingDisplayLink();
+    return protect(drawingAreaMac())->existingDisplayLink();
 }
 
 void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
@@ -431,7 +421,7 @@ void RemoteLayerTreeEventDispatcher::startDisplayLinkObserver()
 
     m_displayRefreshObserverID = DisplayLinkObserverID::generate();
     // This display link always runs at the display update frequency (e.g. 120Hz).
-    displayLink->addObserver(*checkedDisplayLinkClient(), *m_displayRefreshObserverID, displayLink->nominalFramesPerSecond());
+    displayLink->addObserver(*protect(m_displayLinkClient), *m_displayRefreshObserverID, displayLink->nominalFramesPerSecond());
 }
 
 void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
@@ -445,7 +435,7 @@ void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
 
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver");
 
-    displayLink->removeObserver(*checkedDisplayLinkClient(), *m_displayRefreshObserverID);
+    displayLink->removeObserver(*protect(m_displayLinkClient), *m_displayRefreshObserverID);
     m_displayRefreshObserverID = { };
 }
 
@@ -456,7 +446,7 @@ void RemoteLayerTreeEventDispatcher::removeDisplayLinkClient()
         return;
 
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::removeDisplayLinkClient");
-    displayLink->removeClient(*checkedDisplayLinkClient());
+    displayLink->removeClient(*protect(m_displayLinkClient));
     m_displayRefreshObserverID = { };
 }
 
@@ -478,32 +468,37 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     }
 #endif
 
-    Locker locker { m_scrollingTreeLock };
+    auto needsAnimationUpdate = false;
+    {
+        Locker locker { m_scrollingTreeLock };
 
-    auto now = MonotonicTime::now();
-    m_lastDisplayDidRefreshTime = now;
+        auto now = MonotonicTime::now();
+        m_lastDisplayDidRefreshTime = now;
 
-    scrollingTree->displayDidRefresh(displayID);
+        scrollingTree->displayDidRefresh(displayID);
 
-    if (m_state != SynchronizationState::Idle) {
-        scrollingTree->tryToApplyLayerPositions();
+        if (m_state != SynchronizationState::Idle) {
+            scrollingTree->tryToApplyLayerPositions();
+            needsAnimationUpdate = true;
+        }
+
+        switch (m_state) {
+        case SynchronizationState::Idle: {
+            m_state = SynchronizationState::WaitingForRenderingUpdate;
+            constexpr auto maxStartRenderingUpdateDelay = 1_ms;
+            scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
+            break;
+        }
+        case SynchronizationState::WaitingForRenderingUpdate:
+        case SynchronizationState::InRenderingUpdate:
+        case SynchronizationState::Desynchronized:
+            break;
+        }
+    }
 #if ENABLE(THREADED_ANIMATIONS)
+    if (needsAnimationUpdate)
         updateAnimations();
 #endif
-    }
-
-    switch (m_state) {
-    case SynchronizationState::Idle: {
-        m_state = SynchronizationState::WaitingForRenderingUpdate;
-        constexpr auto maxStartRenderingUpdateDelay = 1_ms;
-        scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
-        break;
-    }
-    case SynchronizationState::WaitingForRenderingUpdate:
-    case SynchronizationState::InRenderingUpdate:
-    case SynchronizationState::Desynchronized:
-        break;
-    }
 }
 
 void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay)
@@ -617,6 +612,10 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
 {
     ASSERT(isMainRunLoop());
 
+#if ENABLE(THREADED_ANIMATIONS)
+    updateAnimations();
+#endif
+
     Locker locker { m_scrollingTreeLock };
 
     if (m_state == SynchronizationState::InRenderingUpdate)
@@ -653,17 +652,17 @@ void RemoteLayerTreeEventDispatcher::animationsWereRemovedFromNode(RemoteLayerTr
     ASSERT(isMainRunLoop());
     assertIsHeld(m_animationLock);
     if (auto animationStack = m_animationStacks.take(node.layerID()))
-        animationStack->clear(node.protectedLayer().get());
+        animationStack->clear(protect(node.layer()).get());
 }
 
-void RemoteLayerTreeEventDispatcher::updateTimelineRegistration(WebCore::ProcessIdentifier processIdentifier, const HashSet<Ref<WebCore::AcceleratedTimeline>>& timelineRepresentations, MonotonicTime now)
+void RemoteLayerTreeEventDispatcher::updateTimelinesRegistration(WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate, MonotonicTime now)
 {
     assertIsHeld(m_animationLock);
     if (auto scrollingTree = this->scrollingTree())
-        scrollingTree->updateTimelineRegistration(processIdentifier, timelineRepresentations);
+        scrollingTree->updateTimelinesRegistration(processIdentifier, timelinesUpdate);
     if (!m_monotonicTimelineRegistry)
         m_monotonicTimelineRegistry = makeUnique<RemoteMonotonicTimelineRegistry>();
-    m_monotonicTimelineRegistry->update(processIdentifier, timelineRepresentations, now);
+    m_monotonicTimelineRegistry->update(processIdentifier, timelinesUpdate, now);
     if (m_monotonicTimelineRegistry->isEmpty())
         m_monotonicTimelineRegistry = nullptr;
 }
@@ -682,7 +681,7 @@ RefPtr<const RemoteAnimationTimeline> RemoteLayerTreeEventDispatcher::timeline(c
 
 void RemoteLayerTreeEventDispatcher::updateAnimations()
 {
-    ASSERT(!isMainRunLoop());
+    ASSERT(isMainRunLoop() || ScrollingThread::isCurrentThread());
     Locker lock { m_animationLock };
 
     // FIXME: Rather than using 'now' at the point this is called, we
@@ -694,24 +693,27 @@ void RemoteLayerTreeEventDispatcher::updateAnimations()
     auto animationStacks = std::exchange(m_animationStacks, { });
     for (auto [layerID, currentAnimationStack] : animationStacks) {
         Ref animationStack = currentAnimationStack;
-        animationStack->applyEffectsFromScrollingThread();
+        animationStack->applyEffects();
 
         // We can clear the effect stack if it's empty, but the previous
         // call to applyEffects() is important so that the base values
         // were re-applied.
         if (!animationStack->isEmpty())
-            m_animationStacks.set(layerID, WTFMove(animationStack));
+            m_animationStacks.set(layerID, WTF::move(animationStack));
     }
 }
 
 RefPtr<const RemoteAnimationStack> RemoteLayerTreeEventDispatcher::animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
     assertIsHeld(m_animationLock);
+    return m_animationStacks.get(layerID);
+}
 
-    auto it = m_animationStacks.find(layerID);
-    if (it != m_animationStacks.end())
-        return it->value.ptr();
-    return nullptr;
+HashSet<Ref<RemoteProgressBasedTimeline>> RemoteLayerTreeEventDispatcher::timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID scrollingNodeID)
+{
+    if (auto scrollingTree = this->scrollingTree())
+        return scrollingTree->timelinesForScrollingNodeIDForTesting(scrollingNodeID);
+    return { };
 }
 #endif
 
@@ -821,4 +823,4 @@ void RemoteLayerTreeEventDispatcher::flushMomentumEventLoggingSoon()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#endif // PLATFORM(MAC)

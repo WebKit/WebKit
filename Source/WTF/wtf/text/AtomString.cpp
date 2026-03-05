@@ -159,7 +159,7 @@ AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&& string
 {
     // Fast path for the case where there are no unpaired surrogates.
     if (!hasUnpairedSurrogate(string)) [[likely]]
-        return WTFMove(string);
+        return WTF::move(string);
     return replaceUnpairedSurrogatesWithReplacementCharacterInternal(string).toAtomString();
 }
 
@@ -167,7 +167,7 @@ String replaceUnpairedSurrogatesWithReplacementCharacter(String&& string)
 {
     // Fast path for the case where there are no unpaired surrogates.
     if (!hasUnpairedSurrogate(string)) [[likely]]
-        return WTFMove(string);
+        return WTF::move(string);
     return replaceUnpairedSurrogatesWithReplacementCharacterInternal(string).toString();
 }
 

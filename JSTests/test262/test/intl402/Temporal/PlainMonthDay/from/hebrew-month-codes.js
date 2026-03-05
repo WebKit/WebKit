@@ -5,57 +5,83 @@
 esid: sec-temporal.plainmonthday.from
 description: PlainMonthDay can be created for all regular month codes and leap month in Hebrew calendar
 features: [Temporal, Intl.Era-monthcode]
+includes: [temporalHelpers.js]
 ---*/
 
 // Test that all regular month codes M01-M12 and leap month M05L are valid for the Hebrew calendar
 
 const calendar = "hebrew";
+const commonMonthCodes = [
+  { monthCode: "M01", has30: true },
+  { monthCode: "M02", has30: true, referenceYear30: 1971 },
+  { monthCode: "M03", has30: true, referenceYear30: 1971 },
+  { monthCode: "M04" },
+  { monthCode: "M05", has30: true },
+  { monthCode: "M06" },
+  { monthCode: "M07", has30: true },
+  { monthCode: "M08" },
+  { monthCode: "M09", has30: true },
+  { monthCode: "M10" },
+  { monthCode: "M11", has30: true },
+  { monthCode: "M12" },
+];
 
-// Months with 30 days maximum
-// M05L is the leap month (Adar I); in leap years M05L is Adar I and M06 is Adar II
-const monthsWith30Days = ["M01", "M02", "M03", "M05", "M05L", "M07", "M09", "M11"];
-
-for (const monthCode of monthsWith30Days) {
+for (const { monthCode, has30 = false, referenceYear = 1972, referenceYear30 = referenceYear } of commonMonthCodes) {
   const pmd = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 1 });
-  assert.sameValue(pmd.monthCode, monthCode, `monthCode ${monthCode} should be preserved`);
-  assert.sameValue(pmd.day, 1, "day should be 1");
+  TemporalHelpers.assertPlainMonthDay(pmd, monthCode, 1, `${monthCode}-01`, referenceYear);
 
-  const pmd30 = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 30 });
-  assert.sameValue(pmd30.monthCode, monthCode, `${monthCode} with day 30 should be valid`);
-  assert.sameValue(pmd30.day, 30, `day should be 30 for ${monthCode}`);
+  const pmd29 = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 29 });
+  TemporalHelpers.assertPlainMonthDay(pmd29, monthCode, 29, `${monthCode}-29`, referenceYear);
 
+  const pmd30 = Temporal.PlainMonthDay.from(
+    { calendar, monthCode, day: 30 },
+    { overflow: "constrain" }
+  );
   const constrained = Temporal.PlainMonthDay.from(
     { calendar, monthCode, day: 31 },
     { overflow: "constrain" }
   );
-  assert.sameValue(constrained.monthCode, monthCode, `${monthCode} should be preserved with constrain`);
-  assert.sameValue(constrained.day, 30, `day 31 should be constrained to 30 for ${monthCode}`);
+  if (has30) {
+    TemporalHelpers.assertPlainMonthDay(pmd30, monthCode, 30, `${monthCode}-30`, referenceYear30);
+    TemporalHelpers.assertPlainMonthDay(constrained, monthCode, 30, `day 31 should be constrained to 30 for ${monthCode}`, referenceYear30);
+  } else {
+    TemporalHelpers.assertPlainMonthDay(pmd30, monthCode, 29, `day 30 should be constrained to 29 for ${monthCode}`, referenceYear);
+    TemporalHelpers.assertPlainMonthDay(constrained, monthCode, 29, `day 31 should be constrained to 29 for ${monthCode}`, referenceYear);
+
+    assert.throws(RangeError, () => {
+      Temporal.PlainMonthDay.from({ calendar, monthCode, day: 30 }, { overflow: "reject" });
+    }, `${monthCode} with day 30 should throw with reject overflow`);
+  }
 
   assert.throws(RangeError, () => {
     Temporal.PlainMonthDay.from({ calendar, monthCode, day: 31 }, { overflow: "reject" });
   }, `${monthCode} with day 31 should throw with reject overflow`);
 }
 
-// Months with 29 days maximum
-const monthsWith29Days = ["M04", "M06", "M08", "M10", "M12"];
+// Leap month
+{
+  const monthCode = "M05L";
+  const referenceYear = 1970;
 
-for (const monthCode of monthsWith29Days) {
   const pmd = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 1 });
-  assert.sameValue(pmd.monthCode, monthCode, `monthCode ${monthCode} should be preserved`);
-  assert.sameValue(pmd.day, 1, "day should be 1");
+  TemporalHelpers.assertPlainMonthDay(pmd, monthCode, 1, `${monthCode}-01`, referenceYear);
 
   const pmd29 = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 29 });
-  assert.sameValue(pmd29.monthCode, monthCode, `${monthCode} with day 29 should be valid`);
-  assert.sameValue(pmd29.day, 29, `day should be 29 for ${monthCode}`);
+  TemporalHelpers.assertPlainMonthDay(pmd29, monthCode, 29, `${monthCode}-29`, referenceYear);
+
+  const pmd30 = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 30 });
+  TemporalHelpers.assertPlainMonthDay(pmd30, monthCode, 30, `${monthCode}-30`, referenceYear);
 
   const constrained = Temporal.PlainMonthDay.from(
-    { calendar, monthCode, day: 30 },
+    { calendar, monthCode, day: 31 },
     { overflow: "constrain" }
   );
-  assert.sameValue(constrained.monthCode, monthCode, `${monthCode} should be preserved with constrain`);
-  assert.sameValue(constrained.day, 29, `day 30 should be constrained to 29 for ${monthCode}`);
+  // This follows the same rules as Chinese leap months that are known to have
+  // 30 days, and therefore constrains to M05L-30, rather than M05-30 as with
+  // Chinese leap months that are not certain to have ever had 30 days.
+  TemporalHelpers.assertPlainMonthDay(constrained, "M05L", 30, "day 31 of leap month should be constrained to day 30", referenceYear);
 
   assert.throws(RangeError, () => {
-    Temporal.PlainMonthDay.from({ calendar, monthCode, day: 30 }, { overflow: "reject" });
-  }, `${monthCode} with day 30 should throw with reject overflow`);
+    Temporal.PlainMonthDay.from({ calendar, monthCode, day: 31 }, { overflow: "reject" });
+  }, `${monthCode} with day 31 should throw with reject overflow`);
 }

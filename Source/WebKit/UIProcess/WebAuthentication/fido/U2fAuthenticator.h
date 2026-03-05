@@ -42,7 +42,7 @@ class U2fAuthenticator final : public FidoAuthenticator {
 public:
     static Ref<U2fAuthenticator> create(Ref<CtapDriver>&& driver)
     {
-        return adoptRef(*new U2fAuthenticator(WTFMove(driver)));
+        return adoptRef(*new U2fAuthenticator(WTF::move(driver)));
     }
 
 private:

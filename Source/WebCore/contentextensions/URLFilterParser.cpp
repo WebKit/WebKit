@@ -71,7 +71,7 @@ public:
         combinedURLFilters.addPattern(patternId, m_sunkTerms);
     }
 
-    URLFilterParser::ParseStatus parseStatus() const
+    URLFilterParser::ParseStatus NODELETE parseStatus() const
     {
         return m_parseStatus;
     }
@@ -107,7 +107,7 @@ public:
             fail(URLFilterParser::UnsupportedCharacterClass);
     }
 
-    void quantifyAtom(unsigned minimum, unsigned maximum, bool)
+    void NODELETE quantifyAtom(unsigned minimum, unsigned maximum, bool)
     {
         if (hasError())
             return;
@@ -124,22 +124,22 @@ public:
             fail(URLFilterParser::InvalidQuantifier);
     }
 
-    void atomBackReference(unsigned)
+    void NODELETE atomBackReference(unsigned)
     {
         fail(URLFilterParser::BackReference);
     }
 
-    void atomNamedBackReference(const String&)
+    void NODELETE atomNamedBackReference(const String&)
     {
         fail(URLFilterParser::BackReference);
     }
 
-    void atomNamedForwardReference(const String&)
+    void NODELETE atomNamedForwardReference(const String&)
     {
         fail(URLFilterParser::ForwardReference);
     }
     
-    void assertionBOL()
+    void NODELETE assertionBOL()
     {
         if (hasError())
             return;
@@ -163,7 +163,7 @@ public:
         m_floatingTerm = Term(Term::EndOfLineAssertionTerm);
     }
 
-    void assertionWordBoundary(bool)
+    void NODELETE assertionWordBoundary(bool)
     {
         fail(URLFilterParser::WordBoundary);
     }
@@ -179,7 +179,7 @@ public:
         m_floatingTerm = Term(Term::CharacterSetTerm, inverted);
     }
 
-    void atomCharacterClassAtom(char16_t character)
+    void NODELETE atomCharacterClassAtom(char16_t character)
     {
         if (hasError())
             return;
@@ -192,7 +192,7 @@ public:
         m_floatingTerm.addCharacter(character, m_patternIsCaseSensitive);
     }
 
-    void atomCharacterClassRange(char16_t a, char16_t b)
+    void NODELETE atomCharacterClassRange(char16_t a, char16_t b)
     {
         if (hasError())
             return;
@@ -206,32 +206,32 @@ public:
             m_floatingTerm.addCharacter(static_cast<char16_t>(i), m_patternIsCaseSensitive);
     }
 
-    void atomClassStringDisjunction(Vector<Vector<char32_t>>)
+    void NODELETE atomClassStringDisjunction(Vector<Vector<char32_t>>)
     {
         fail(URLFilterParser::AtomCharacter);
     }
 
-    void atomCharacterClassSetOp(JSC::Yarr::CharacterClassSetOp)
+    void NODELETE atomCharacterClassSetOp(JSC::Yarr::CharacterClassSetOp)
     {
         // Nothing to do here.
     }
 
-    void atomCharacterClassPushNested(bool)
+    void NODELETE atomCharacterClassPushNested(bool)
     {
         // Nothing to do here.
     }
 
-    void atomCharacterClassPopNested(bool)
+    void NODELETE atomCharacterClassPopNested(bool)
     {
         // Nothing to do here.
     }
 
-    void atomCharacterClassEnd()
+    void NODELETE atomCharacterClassEnd()
     {
         // Nothing to do here. The character set atom may have a quantifier, we sink the atom lazily.
     }
 
-    void atomCharacterClassBuiltIn(JSC::Yarr::BuiltInCharacterClassID, bool)
+    void NODELETE atomCharacterClassBuiltIn(JSC::Yarr::BuiltInCharacterClassID, bool)
     {
         fail(URLFilterParser::AtomCharacter);
     }
@@ -246,12 +246,12 @@ public:
         m_openGroups.append(Term(Term::GroupTerm));
     }
 
-    void atomParentheticalAssertionBegin(bool, MatchDirection)
+    void NODELETE atomParentheticalAssertionBegin(bool, MatchDirection)
     {
         fail(URLFilterParser::Group);
     }
 
-    void atomParentheticalModifierBegin(OptionSet<JSC::Yarr::Flags>, OptionSet<JSC::Yarr::Flags>)
+    void NODELETE atomParentheticalModifierBegin(OptionSet<JSC::Yarr::Flags>, OptionSet<JSC::Yarr::Flags>)
     {
         fail(URLFilterParser::Group);
     }
@@ -267,7 +267,7 @@ public:
         m_floatingTerm = m_openGroups.takeLast();
     }
 
-    void disjunction(JSC::Yarr::CreateDisjunctionPurpose)
+    void NODELETE disjunction(JSC::Yarr::CreateDisjunctionPurpose)
     {
         fail(URLFilterParser::Disjunction);
     }
@@ -277,16 +277,16 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    constexpr static bool abortedDueToError() { return false; }
-    constexpr static JSC::Yarr::ErrorCode abortErrorCode() { return JSC::Yarr::ErrorCode::NoError; }
+    constexpr static bool NODELETE abortedDueToError() { return false; }
+    constexpr static JSC::Yarr::ErrorCode NODELETE abortErrorCode() { return JSC::Yarr::ErrorCode::NoError; }
 
 private:
-    bool hasError() const
+    bool NODELETE hasError() const
     {
         return m_parseStatus != URLFilterParser::Ok;
     }
 
-    void fail(URLFilterParser::ParseStatus reason)
+    void NODELETE fail(URLFilterParser::ParseStatus reason)
     {
         if (hasError())
             return;

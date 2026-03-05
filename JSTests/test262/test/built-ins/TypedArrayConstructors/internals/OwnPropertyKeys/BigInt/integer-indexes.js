@@ -13,20 +13,20 @@ info: |
   4. For each integer i starting with 0 such that i < len, in ascending order,
     a. Add ! ToString(i) as the last element of keys.
   ...
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, Reflect, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample1 = new TA([42n, 42n, 42n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample1 = new TA(makeCtorArg([42n, 42n, 42n]));
   var result1 = Reflect.ownKeys(sample1);
   assert(compareArray(result1, ["0", "1", "2"]), "result1");
 
-  var sample2 = new TA(4);
+  var sample2 = new TA(makeCtorArg(4));
   var result2 = Reflect.ownKeys(sample2);
   assert(compareArray(result2, ["0", "1", "2", "3"]), "result2");
 
-  var sample3 = new TA(4).subarray(2);
+  var sample3 = new TA(makeCtorArg(4)).subarray(2);
   var result3 = Reflect.ownKeys(sample3);
   assert(compareArray(result3, ["0", "1"]), "result3");
 

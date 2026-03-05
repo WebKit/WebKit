@@ -52,21 +52,21 @@ namespace JSC {
         }
 
         UnlinkedSourceCode(Ref<SourceProvider>&& provider)
-            : m_provider(WTFMove(provider))
+            : m_provider(WTF::move(provider))
             , m_startOffset(0)
             , m_endOffset(m_provider->source().length())
         {
         }
 
         UnlinkedSourceCode(Ref<SourceProvider>&& provider, int startOffset, int endOffset)
-            : m_provider(WTFMove(provider))
+            : m_provider(WTF::move(provider))
             , m_startOffset(startOffset)
             , m_endOffset(endOffset)
         {
         }
 
         UnlinkedSourceCode(RefPtr<SourceProvider>&& provider, int startOffset, int endOffset)
-            : m_provider(WTFMove(provider))
+            : m_provider(WTF::move(provider))
             , m_startOffset(startOffset)
             , m_endOffset(endOffset)
         {

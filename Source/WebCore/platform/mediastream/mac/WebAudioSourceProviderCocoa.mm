@@ -58,7 +58,7 @@ void WebAudioSourceProviderCocoa::setClient(WeakPtr<AudioSourceProviderClient>&&
 {
     if (m_client == client)
         return;
-    m_client = WTFMove(client);
+    m_client = WTF::move(client);
     hasNewClient(m_client.get());
 }
 

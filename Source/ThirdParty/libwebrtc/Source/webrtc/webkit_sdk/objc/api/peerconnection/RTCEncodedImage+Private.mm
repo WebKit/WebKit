@@ -23,10 +23,6 @@ class ObjCEncodedImageBuffer : public webrtc::EncodedImageBufferInterface {
     return webrtc::make_ref_counted<ObjCEncodedImageBuffer>(data);
   }
   const uint8_t *data() const override { return static_cast<const uint8_t *>(data_.bytes); }
-  // TODO(bugs.webrtc.org/9378): delete this non-const data method.
-  uint8_t *data() override {
-    return const_cast<uint8_t *>(static_cast<const uint8_t *>(data_.bytes));
-  }
   size_t size() const override { return data_.length; }
 
  protected:
@@ -79,7 +75,12 @@ __attribute__((objc_runtime_name("WK_RTCWrappedEncodedImageBuffer")))
     // self.buffer references its underlying data.
     self.encodedData = encodedImage.GetEncodedData();
     // Wrap the buffer in NSData without copying, do not take ownership.
-    self.buffer = [NSData dataWithBytesNoCopy:self.encodedData->data()
+    // `NSData` provides interface that allows to write into the buffer,
+    // `EncodedImageBufferInterface` gives read-only access to the buffer.
+    // As of now write part of ths NSData interface are not used when accessing
+    // `buffer`, however it might be safer to refactor RTCEncodedImage not
+    // to expose buffer as NSData, and then remove this unsafe const_cast.
+    self.buffer = [NSData dataWithBytesNoCopy:const_cast<uint8_t*>(self.encodedData->data())
                                        length:self.encodedData->size()
                                  freeWhenDone:NO];
     self.encodedWidth = webrtc::dchecked_cast<int32_t>(encodedImage._encodedWidth);

@@ -18,6 +18,7 @@
 #include <optional>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/fec_controller_override.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
@@ -184,6 +185,7 @@ class Vp8FrameBufferControllerFactory {
 
   // Create a Vp8FrameBufferController instance.
   virtual std::unique_ptr<Vp8FrameBufferController> Create(
+      const Environment& env,
       const VideoCodec& codec,
       const VideoEncoder::Settings& settings,
       FecControllerOverride* fec_controller_override) = 0;

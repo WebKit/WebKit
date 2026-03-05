@@ -32,10 +32,6 @@
 #include "Logging.h"
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-#include "ReplayKitCaptureSource.h"
-#endif
-
 #if HAVE(SCREEN_CAPTURE_KIT)
 #include "ScreenCaptureKitCaptureSource.h"
 #endif

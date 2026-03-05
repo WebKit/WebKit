@@ -37,10 +37,10 @@
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferVideoRenderer;
@@ -70,8 +70,7 @@ public:
     static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer, const Logger& logger, uint64_t logIdentifier) { return adoptRef(*new VideoMediaSampleRenderer(renderer, logger, logIdentifier)); }
     ~VideoMediaSampleRenderer();
 
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     using Preferences = VideoRendererPreferences;
     bool prefersDecompressionSession() const;
@@ -195,7 +194,6 @@ private:
 #if !RELEASE_LOG_DISABLED
     // Logger
     const Logger& logger() const final { return m_logger.get(); }
-    Ref<const Logger> protectedLogger() const { return logger(); }
     ASCIILiteral logClassName() const final { return "VideoMediaSampleRenderer"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;

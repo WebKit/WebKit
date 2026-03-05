@@ -35,11 +35,11 @@
 namespace WebKit {
 
 AssertionCapability::AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
-    : m_environmentIdentifier { WTFMove(environmentIdentifier) }
-    , m_domain { WTFMove(domain) }
-    , m_name { WTFMove(name) }
-    , m_willInvalidateBlock { willInvalidateFunction ? makeBlockPtr(WTFMove(willInvalidateFunction)) : nullptr }
-    , m_didInvalidateBlock { didInvalidateFunction ? makeBlockPtr(WTFMove(didInvalidateFunction)) : nullptr }
+    : m_environmentIdentifier { WTF::move(environmentIdentifier) }
+    , m_domain { WTF::move(domain) }
+    , m_name { WTF::move(name) }
+    , m_willInvalidateBlock { willInvalidateFunction ? makeBlockPtr(WTF::move(willInvalidateFunction)) : nullptr }
+    , m_didInvalidateBlock { didInvalidateFunction ? makeBlockPtr(WTF::move(didInvalidateFunction)) : nullptr }
 {
     RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8().data());
     if (m_name == "Suspended"_s)

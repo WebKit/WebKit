@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLElement;
 
 class LabelsNodeList final : public CachedLiveNodeList<LabelsNodeList, CollectionTraversalType::WeakPtrDescendants> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LabelsNodeList);
+    WTF_MAKE_TZONE_ALLOCATED(LabelsNodeList);
 public:
     static Ref<LabelsNodeList> create(HTMLElement&, const AtomString&);
     virtual ~LabelsNodeList();
@@ -44,3 +44,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_LIVENODELIST(LabelsNodeList)

@@ -97,7 +97,7 @@ public:
 #endif
 
 private:
-    Image& image() const { return m_image.get(); }
+    Image& image() const { return m_image; }
 
     RefPtr<NativeImage> nativeImageOfSize(const IntSize&);
     Vector<Ref<NativeImage>> allNativeImages();

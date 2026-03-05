@@ -294,24 +294,6 @@ function flatIntoArray(target, source, sourceLength, targetIndex, depth)
     return targetIndex;
 }
 
-function flat()
-{
-    "use strict";
-
-    var array = @toObject(this, "Array.prototype.flat requires that |this| not be null or undefined");
-    var length = @toLength(array.length);
-
-    var depthNum = 1;
-    var depth = @argument(0);
-    if (depth !== @undefined)
-        depthNum = @toIntegerOrInfinity(depth);
-
-    var result = @newArrayWithSpecies(0, array);
-
-    @flatIntoArray(result, array, length, 0, depthNum);
-    return result;
-}
-
 @linkTimeConstant
 function flatIntoArrayWithCallback(target, source, sourceLength, targetIndex, callback, thisArg)
 {

@@ -86,8 +86,8 @@ DOMAbstractView *kit(WebCore::LocalDOMWindow* value)
     auto* frame = value->frame();
     if (!frame)
         return nil;
-    if (DOMAbstractView *wrapper = getDOMWrapper(frame))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(frame))
+        return wrapper.autorelease();
     auto wrapper = adoptNS([[DOMAbstractView alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(frame);
     addDOMWrapper(wrapper.get(), frame);

@@ -62,7 +62,7 @@ struct WebkitBoxReflect {
     }
 
     WebkitBoxReflect(WebkitBoxReflection&& reflection)
-        : m_reflection { WTFMove(reflection) }
+        : m_reflection { WTF::move(reflection) }
     {
     }
 

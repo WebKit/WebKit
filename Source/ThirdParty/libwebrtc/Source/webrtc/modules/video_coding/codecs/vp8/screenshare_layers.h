@@ -18,6 +18,7 @@
 
 #include "absl/container/inlined_vector.h"
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/vp8_frame_buffer_controller.h"
@@ -29,16 +30,13 @@
 
 namespace webrtc {
 
-struct CodecSpecificInfoVP8;
-class Clock;
-
 class ScreenshareLayers final : public Vp8FrameBufferController {
  public:
   static const double kMaxTL0FpsReduction;
   static const double kAcceptableTargetOvershoot;
   static const int kMaxFrameIntervalMs;
 
-  explicit ScreenshareLayers(int num_temporal_layers);
+  ScreenshareLayers(const Environment& env, int num_temporal_layers);
   ~ScreenshareLayers() override;
 
   void SetQpLimits(size_t stream_index, int min_qp, int max_qp) override;
@@ -93,6 +91,7 @@ class ScreenshareLayers final : public Vp8FrameBufferController {
   bool TimeToSync(int64_t timestamp) const;
   uint32_t GetCodecTargetBitrateKbps() const;
 
+  const Environment env_;
   const int number_of_temporal_layers_;
 
   // TODO(eladalon/sprang): These should be made into const-int set in the ctor.

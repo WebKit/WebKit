@@ -197,7 +197,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
             elementInterface->setFormStateRestoreCallback(formStateRestoreCallback);
     }
 
-    if (auto promise = registry.addElementDefinition(WTFMove(elementInterface)))
+    if (auto promise = registry.addElementDefinition(WTF::move(elementInterface)))
         promise->resolveWithJSValue(constructor);
 
     return jsUndefined();
@@ -233,7 +233,7 @@ static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame
 
 JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    auto catchScope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(lexicalGlobalObject.vm());
 
     ASSERT(globalObject());
     auto* result = JSPromise::create(lexicalGlobalObject.vm(), lexicalGlobalObject.promiseStructure());
@@ -253,7 +253,7 @@ JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject
 template<typename Visitor>
 void JSCustomElementRegistry::visitAdditionalChildren(Visitor& visitor)
 {
-    wrapped().visitJSCustomElementInterfaces(visitor);
+    wrapped().visitJSCustomElementInterfacesInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCustomElementRegistry);

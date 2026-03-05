@@ -85,7 +85,7 @@ RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range, CSS::PropertyPars
         if (!range.atEnd() && !consumeCommaIncludingWhitespace(range))
             return nullptr;
     }
-    return CSSValueList::createCommaSeparated(WTFMove(values));
+    return CSSValueList::createCommaSeparated(WTF::move(values));
 }
 
 } // namespace CSSPropertyParserHelpers

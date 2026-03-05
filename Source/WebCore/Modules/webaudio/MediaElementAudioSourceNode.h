@@ -40,7 +40,7 @@ class HTMLMediaElement;
 struct MediaElementAudioSourceOptions;
     
 class MediaElementAudioSourceNode final : public AudioNode, public AudioSourceProviderClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaElementAudioSourceNode);
+    WTF_MAKE_TZONE_ALLOCATED(MediaElementAudioSourceNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaElementAudioSourceNode);
 public:
     static ExceptionOr<Ref<MediaElementAudioSourceNode>> create(BaseAudioContext&, MediaElementAudioSourceOptions&&);

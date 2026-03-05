@@ -4,7 +4,7 @@ layer at (0,0) size 800x126
   RenderBlock {HTML} at (0,0) size 800x126
     RenderBody {BODY} at (8,16) size 784x94
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 240x17
+        RenderText {#text} at (0,0) size 240x18
           text run at (0,0) width 240: "The next two bars should be identical:"
       RenderBlock {DIV} at (16,34) size 134x22 [border: (3px solid #000000)]
         RenderBlock {P} at (3,3) size 128x16 [color=#FFA500] [bgcolor=#FFFF00]

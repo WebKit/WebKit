@@ -4,18 +4,18 @@ layer at (0,0) size 800x306
   RenderBlock {HTML} at (0,0) size 800x306
     RenderBody {BODY} at (8,8) size 784x290
       RenderBlock {DIV} at (0,0) size 784x42 [bgcolor=#CCCCCC]
-        RenderInline {SPAN} at (0,21) size 46x19 [bgcolor=#FF0000]
-          RenderText {#text} at (0,21) size 46x19
+        RenderInline {SPAN} at (0,21) size 46x20 [bgcolor=#FF0000]
+          RenderText {#text} at (0,21) size 46x20
             text run at (0,21) width 46: "small"
         RenderText {#text} at (45,21) size 10x20
           text run at (45,21) width 10: " "
-        RenderInline {SPAN} at (54,1) size 55x38 [bgcolor=#FF0000]
-          RenderText {#text} at (54,1) size 55x38
+        RenderInline {SPAN} at (54,1) size 55x39 [bgcolor=#FF0000]
+          RenderText {#text} at (54,1) size 55x39
             text run at (54,1) width 55: "BIG"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,46) size 784x140 [bgcolor=#CCCCCC]
-        RenderInline {SPAN} at (0,40) size 46x19 [bgcolor=#FF0000]
-          RenderText {#text} at (0,40) size 46x19
+      RenderBlock {DIV} at (0,45) size 784x141 [bgcolor=#CCCCCC]
+        RenderInline {SPAN} at (0,40) size 46x20 [bgcolor=#FF0000]
+          RenderText {#text} at (0,40) size 46x20
             text run at (0,40) width 46: "small"
         RenderText {#text} at (45,80) size 10x20
           text run at (45,80) width 10: " "
@@ -23,13 +23,13 @@ layer at (0,0) size 800x306
           RenderText {#text} at (54,31) size 55x38
             text run at (54,31) width 55: "BIG"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,190) size 784x100 [bgcolor=#CCCCCC]
-        RenderInline {SPAN} at (0,21) size 46x19 [bgcolor=#FF0000]
-          RenderText {#text} at (0,21) size 46x19
+      RenderBlock {DIV} at (0,189) size 784x101 [bgcolor=#CCCCCC]
+        RenderInline {SPAN} at (0,21) size 46x20 [bgcolor=#FF0000]
+          RenderText {#text} at (0,21) size 46x20
             text run at (0,21) width 46: "small"
         RenderText {#text} at (45,21) size 10x20
           text run at (45,21) width 10: " "
-        RenderInline {SPAN} at (54,1) size 55x38 [bgcolor=#FF0000]
-          RenderText {#text} at (54,1) size 55x38
+        RenderInline {SPAN} at (54,1) size 55x39 [bgcolor=#FF0000]
+          RenderText {#text} at (54,1) size 55x39
             text run at (54,1) width 55: "BIG"
         RenderText {#text} at (0,0) size 0x0

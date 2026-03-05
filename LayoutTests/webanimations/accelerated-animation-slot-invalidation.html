@@ -19,7 +19,7 @@ div {
 }
 
 .animate-class {
-    animation: 1s linear 0s 1 normal scale;
+    animation: scale 1s linear;
 }
 
 .first-letter::first-letter {
@@ -27,24 +27,15 @@ div {
 }
 
 @keyframes scale {
-    0% {
-        transform: scale(0);
-    }
-
-    10% {
-        transform: scale(1);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+    0% { scale: 0.5 }
+    5%, 100% { scale: 1 }
 }
 
 </style>
+<script src="threaded-animations/threaded-animations-utils.js"></script>
 <script>
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.testRunner?.waitUntilDone();
 
 window.onload = async function() {
     let shadowRoot = document.body.attachShadow({ mode: "open" });
@@ -69,20 +60,18 @@ window.onload = async function() {
 
     const animation = secondElement.getAnimations()[0];
 
-    await animation.ready;
-
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
+    await animationAcceleration(animation);
 
     firstElement.remove();
 
     // Wait until animation has progressed some before snapshotting the test result.
-    while (animation.currentTime < 100)
+    while (animation.currentTime <= 50)
         await new Promise(requestAnimationFrame);
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    // Wait another frame to ensure the accelerated animations has reached the same 10% keyframe.
+    await new Promise(requestAnimationFrame);
+
+    window.testRunner?.notifyDone();
 }
 
 </script>

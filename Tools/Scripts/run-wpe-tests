@@ -21,6 +21,9 @@ import logging
 import os
 import sys
 
+from webkitpy.port.linux_container_sdk_utils import maybe_use_container_sdk_root_dir
+maybe_use_container_sdk_root_dir()
+
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "jhbuild"))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))

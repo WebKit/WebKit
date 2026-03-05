@@ -47,8 +47,8 @@ public:
     // Get the magnitude and phase response of the filter at the given set of frequencies (in Hz). The phase response is in radians.
     void getFrequencyResponse(unsigned length, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse);
 
-    const Vector<double>& feedforward() const { return m_feedforward; }
-    const Vector<double>& feedback() const { return m_feedback; }
+    const Vector<double>& feedforward() const LIFETIME_BOUND { return m_feedforward; }
+    const Vector<double>& feedback() const LIFETIME_BOUND { return m_feedback; }
     bool isFilterStable() const { return m_isFilterStable; }
 
 private:

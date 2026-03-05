@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 main frame - willPerformClientRedirectToURL: resources/object.webarchive
 main frame - didFinishDocumentLoadForFrame
 main frame - didFinishLoadForFrame

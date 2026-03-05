@@ -25,9 +25,12 @@
 
 #pragma once
 
+#include <JavaScriptCore/CollectionScope.h>
 #include <JavaScriptCore/GCIncomingRefCounted.h>
 
 namespace JSC {
+
+class VM;
 
 // T = some subtype of GCIncomingRefCounted, must support a gcSizeEstimateInBytes()
 // method.

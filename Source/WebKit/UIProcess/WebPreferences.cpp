@@ -45,6 +45,11 @@ namespace WebKit {
 
 static bool forceSiteIsolationAlwaysOnForTesting;
 
+bool WebPreferences::forcedSiteIsolationAlwaysOnForTesting()
+{
+    return WebKit::forceSiteIsolationAlwaysOnForTesting;
+}
+
 Ref<WebPreferences> WebPreferences::create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
     return adoptRef(*new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
@@ -143,7 +148,7 @@ void WebPreferences::update()
         m_needUpdateAfterBatch = true;
         return;
     }
-        
+
     for (Ref page : m_pages)
         page->preferencesDidChange();
 }
@@ -254,7 +259,7 @@ void WebPreferences::registerDefaultUInt32ValueForKey(const String& key, uint32_
         m_store.setUInt32ValueForKey(key, userValue);
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE) && !PLATFORM(PLAYSTATION)
 void WebPreferences::platformInitializeStore()
 {
     notImplemented();

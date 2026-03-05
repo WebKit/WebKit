@@ -26,4 +26,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(sample.join(), "");
   assert.sameValue(sample.join("test262"), "");
-});
+}, null, ["passthrough"]);

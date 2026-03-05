@@ -30,15 +30,15 @@
 #include "ExceptionOr.h"
 #include "PlatformXR.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebXRSession;
 
-class WebXRTransientInputHitTestSource : public RefCounted<WebXRTransientInputHitTestSource> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRTransientInputHitTestSource);
+class WebXRTransientInputHitTestSource : public WTF::RefCountedAndCanMakeWeakPtr<WebXRTransientInputHitTestSource> {
+    WTF_MAKE_TZONE_ALLOCATED(WebXRTransientInputHitTestSource);
 public:
     static Ref<WebXRTransientInputHitTestSource> create(WebXRSession&, PlatformXR::TransientInputHitTestSource&&);
     ~WebXRTransientInputHitTestSource();

@@ -119,7 +119,7 @@ TEST_F(TimerTest, TimerWithNoRestarts) {
   std::unique_ptr<Timer> t1 = manager_.CreateTimer(
       "t1", on_expired_.AsStdFunction(),
       TimerOptions(TimeDelta::Seconds(5), TimerBackoffAlgorithm::kFixed,
-                   /*max_restart=*/0));
+                   /*max_restarts=*/0));
 
   EXPECT_CALL(on_expired_, Call).Times(0);
   t1->Start();
@@ -141,7 +141,7 @@ TEST_F(TimerTest, TimerWithOneRestart) {
   std::unique_ptr<Timer> t1 = manager_.CreateTimer(
       "t1", on_expired_.AsStdFunction(),
       TimerOptions(TimeDelta::Seconds(5), TimerBackoffAlgorithm::kFixed,
-                   /*max_restart=*/1));
+                   /*max_restarts=*/1));
 
   EXPECT_CALL(on_expired_, Call).Times(0);
   t1->Start();
@@ -170,7 +170,7 @@ TEST_F(TimerTest, TimerWithTwoRestart) {
   std::unique_ptr<Timer> t1 = manager_.CreateTimer(
       "t1", on_expired_.AsStdFunction(),
       TimerOptions(TimeDelta::Seconds(5), TimerBackoffAlgorithm::kFixed,
-                   /*max_restart=*/2));
+                   /*max_restarts=*/2));
 
   EXPECT_CALL(on_expired_, Call).Times(0);
   t1->Start();

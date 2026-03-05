@@ -72,6 +72,7 @@ SVGTextBoxIterator svgTextBoxFor(const SVGInlineTextBox*);
 SVGTextBoxIterator svgTextBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
 BoxRange<BoxIterator> boxesFor(const RenderSVGText&);
+BoxIterator lastBoxFor(const RenderSVGText&);
 
 SVGTextBox::Key makeKey(const SVGTextBox&);
 

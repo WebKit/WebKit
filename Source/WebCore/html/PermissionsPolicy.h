@@ -75,7 +75,7 @@ public:
     };
     enum class ShouldReportViolation : bool { No, Yes };
     static bool isFeatureEnabled(Feature, const Document&, ShouldReportViolation = ShouldReportViolation::Yes);
-    bool inheritedPolicyValueForFeature(Feature) const;
+    bool NODELETE inheritedPolicyValueForFeature(Feature) const;
 
     // InheritedPolicy contains enabled features.
     using InheritedPolicy = HashSet<Feature, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;

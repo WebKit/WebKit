@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-static inline bool isTestEventListener(WebExtensionEventListenerType type)
+static inline bool NODELETE isTestEventListener(WebExtensionEventListenerType type)
 {
     return type == WebExtensionEventListenerType::TestOnMessage
         || type == WebExtensionEventListenerType::TestOnTestStarted
@@ -53,9 +53,9 @@ void WebExtensionContext::addListener(WebCore::FrameIdentifier frameIdentifier, 
     if (!frame)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", enumToUnderlyingType(listenerType), toDebugString(contentWorldType).createNSString().get());
+    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", std::to_underlying(listenerType), toDebugString(contentWorldType).createNSString().get());
 
-    if (!protectedExtension()->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier))
+    if (!protect(extension())->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier))
         m_backgroundContentEventListeners.add(listenerType);
 
     auto result = m_eventListenerFrames.add({ listenerType, contentWorldType }, WeakFrameCountedSet { });
@@ -93,9 +93,9 @@ void WebExtensionContext::removeListener(WebCore::FrameIdentifier frameIdentifie
     if (!frame)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}llu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, enumToUnderlyingType(listenerType), toDebugString(contentWorldType).createNSString().get());
+    RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}llu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, std::to_underlying(listenerType), toDebugString(contentWorldType).createNSString().get());
 
-    if (!protectedExtension()->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier)) {
+    if (!protect(extension())->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier)) {
         for (size_t i = 0; i < removedCount; ++i)
             m_backgroundContentEventListeners.remove(listenerType);
     }

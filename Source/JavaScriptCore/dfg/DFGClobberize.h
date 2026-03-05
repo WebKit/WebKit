@@ -236,6 +236,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case StringCharCodeAt:
     case StringCodePointAt:
     case StringIndexOf:
+    case StringStartsWith:
+    case StringEndsWith:
     case CompareStrictEq:
     case SameValue:
     case IsEmpty:
@@ -480,13 +482,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ArithAdd:
-    case ArithMod:
     case DoubleAsInt32:
     case UInt32ToNumber:
         def(PureValue(node, node->arithMode()));
         return;
 
     case ArithDiv:
+    case ArithMod:
     case ArithMul:
     case ArithSub:
         switch (node->binaryUseKind()) {
@@ -763,6 +765,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case SetPrivateBrand:
     case DefineDataProperty:
     case DefineAccessorProperty:
+    case ObjectDefineProperty:
     case DeleteById:
     case DeleteByVal:
     case ArrayPush:
@@ -959,10 +962,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case SetArgumentCountIncludingThis:
         write(AbstractHeap(Stack, VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
-        return;
-
-    case GetRestLength:
-        read(Stack);
         return;
         
     case GetLocal:
@@ -2149,8 +2148,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case NewObject:
-    case NewGenerator:
-    case NewAsyncGenerator:
     case NewInternalFieldObject:
     case NewRegExp:
     case NewStringObject:
@@ -2415,6 +2412,20 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case MapOrSetSize: {
+        Edge& mapOrSetEdge = node->child1();
+        AbstractHeapKind heap = (mapOrSetEdge.useKind() == MapObjectUse) ? JSMapFields : JSSetFields;
+        read(heap);
+        def(HeapLocation(MapOrSetSizeLoc, heap, mapOrSetEdge), LazyNode(node));
+        return;
+    }
+
+    case GetRegExpFlag: {
+        read(MiscFields);
+        def(HeapLocation(GetRegExpFlagLoc, MiscFields, node->child1(), std::bit_cast<void*>(static_cast<uintptr_t>(node->regExpFlag()))), LazyNode(node));
+        return;
+    }
+
     case SetAdd: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();
@@ -2524,6 +2535,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PromiseResolve:
     case PromiseReject:
     case PromiseThen:
+    case PerformPromiseThen:
         clobberTop();
         return;
 

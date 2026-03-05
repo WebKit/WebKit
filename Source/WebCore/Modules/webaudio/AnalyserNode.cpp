@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AnalyserNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AnalyserNode);
 
 ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, const AnalyserOptions& options)
 {
@@ -76,14 +76,14 @@ AnalyserNode::~AnalyserNode()
 
 void AnalyserNode::process(size_t framesToProcess)
 {
-    Ref outputBus = checkedOutput(0)->bus();
+    Ref outputBus = protect(output(0))->bus();
 
     if (!isInitialized()) {
         outputBus->zero();
         return;
     }
 
-    Ref inputBus = checkedInput(0)->bus();
+    Ref inputBus = protect(input(0))->bus();
 
     // Give the analyser the audio which is passing through this AudioNode. This must always
     // be done so that the state of the Analyser reflects the current input.
@@ -154,7 +154,7 @@ void AnalyserNode::updatePullStatus()
 {
     ASSERT(context().isGraphOwner());
 
-    if (checkedOutput(0)->isConnected()) {
+    if (protect(output(0))->isConnected()) {
         // When an AudioBasicInspectorNode is connected to a downstream node, it
         // will get pulled by the downstream node, thus remove it from the context's
         // automatic pull list.

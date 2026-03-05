@@ -32,7 +32,7 @@ platform/graphics/cairo/GraphicsContextGLCairo.cpp
 platform/graphics/cairo/ImageBufferCairoBackend.cpp
 platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp
 platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp
-platform/graphics/cairo/ImageBufferUtilitiesCairo.cpp
+platform/graphics/cairo/ImageUtilitiesCairo.cpp
 platform/graphics/cairo/IntRectCairo.cpp
 platform/graphics/cairo/NativeImageCairo.cpp
 platform/graphics/cairo/PathCairo.cpp

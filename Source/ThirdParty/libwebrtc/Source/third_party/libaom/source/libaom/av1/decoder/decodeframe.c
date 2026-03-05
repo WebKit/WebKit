@@ -5276,6 +5276,9 @@ void av1_decode_tg_tiles_and_wrapup(AV1Decoder *pbi, const uint8_t *data,
                                     const uint8_t *data_end,
                                     const uint8_t **p_data_end, int start_tile,
                                     int end_tile, int initialize_flag) {
+#if CONFIG_COLLECT_COMPONENT_TIMING
+  start_timing(pbi, av1_decode_tg_tiles_and_wrapup_time);
+#endif
   AV1_COMMON *const cm = &pbi->common;
   CommonTileParams *const tiles = &cm->tiles;
   MACROBLOCKD *const xd = &pbi->dcb.xd;
@@ -5404,4 +5407,8 @@ void av1_decode_tg_tiles_and_wrapup(AV1Decoder *pbi, const uint8_t *data,
   if (cm->show_frame && !cm->seq_params->order_hint_info.enable_order_hint) {
     ++cm->current_frame.frame_number;
   }
+
+#if CONFIG_COLLECT_COMPONENT_TIMING
+  end_timing(pbi, av1_decode_tg_tiles_and_wrapup_time);
+#endif
 }

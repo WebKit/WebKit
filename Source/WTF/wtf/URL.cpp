@@ -27,7 +27,6 @@
 #include "config.h"
 #include <wtf/URL.h>
 
-#include "URLParser.h"
 #include <ranges>
 #include <stdio.h>
 #include <unicode/uidna.h>
@@ -38,6 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URLParser.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -71,10 +71,10 @@ URL::URL(const URL& base, const String& relative, const URLTextEncoding* encodin
 
 URL::URL(String&& absoluteURL, const URLTextEncoding* encoding)
 {
-    *this = URLParser(WTFMove(absoluteURL), URL(), encoding).result();
+    *this = URLParser(WTF::move(absoluteURL), URL(), encoding).result();
 }
 
-static bool shouldTrimFromURL(char16_t character)
+static bool NODELETE shouldTrimFromURL(char16_t character)
 {
     // Ignore leading/trailing whitespace and control characters.
     return character <= ' ';
@@ -89,12 +89,12 @@ URL URL::isolatedCopy() const &
 
 URL URL::isolatedCopy() &&
 {
-    URL result { WTFMove(*this) };
-    result.m_string = WTFMove(result.m_string).isolatedCopy();
+    URL result { WTF::move(*this) };
+    result.m_string = WTF::move(result.m_string).isolatedCopy();
     return result;
 }
 
-StringView URL::lastPathComponent() const
+StringView URL::lastPathComponent() const LIFETIME_BOUND
 {
     if (!hasPath())
         return { };
@@ -157,7 +157,7 @@ unsigned URL::pathStart() const
     return start;
 }
 
-StringView URL::protocol() const
+StringView URL::protocol() const LIFETIME_BOUND
 {
     if (!m_isValid)
         return { };
@@ -165,7 +165,7 @@ StringView URL::protocol() const
     return StringView(m_string).left(m_schemeEnd);
 }
 
-StringView URL::host() const
+StringView URL::host() const LIFETIME_BOUND
 {
     if (!m_isValid)
         return { };
@@ -197,7 +197,7 @@ String URL::protocolHostAndPort() const
     );
 }
 
-static std::optional<Latin1Character> decodeEscapeSequence(StringView input, unsigned index, unsigned length)
+static std::optional<Latin1Character> NODELETE decodeEscapeSequence(StringView input, unsigned index, unsigned length)
 {
     if (index + 3 > length || input[index] != '%')
         return std::nullopt;
@@ -244,12 +244,12 @@ String URL::password() const
     return decodeEscapeSequencesFromParsedURL(encodedPassword());
 }
 
-StringView URL::encodedUser() const
+StringView URL::encodedUser() const LIFETIME_BOUND
 {
     return StringView(m_string).substring(m_userStart, m_userEnd - m_userStart);
 }
 
-StringView URL::encodedPassword() const
+StringView URL::encodedPassword() const LIFETIME_BOUND
 {
     if (m_passwordEnd == m_userEnd)
         return { };
@@ -257,7 +257,7 @@ StringView URL::encodedPassword() const
     return StringView(m_string).substring(m_userEnd + 1, m_passwordEnd - m_userEnd - 1);
 }
 
-StringView URL::fragmentIdentifier() const
+StringView URL::fragmentIdentifier() const LIFETIME_BOUND
 {
     if (!hasFragmentIdentifier())
         return { };
@@ -311,7 +311,7 @@ String URL::fileSystemPath() const
 
 #if !ASSERT_ENABLED
 
-static inline void assertProtocolIsGood(StringView)
+static inline void NODELETE assertProtocolIsGood(StringView)
 {
 }
 
@@ -335,13 +335,13 @@ static void assertProtocolIsGood(StringView protocol)
 static Lock defaultPortForProtocolMapForTestingLock;
 
 using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
-static DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
+static DefaultPortForProtocolMapForTesting*& NODELETE defaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
 {
     static DefaultPortForProtocolMapForTesting* defaultPortForProtocolMap;
     return defaultPortForProtocolMap;
 }
 
-static DefaultPortForProtocolMapForTesting& ensureDefaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
+static DefaultPortForProtocolMapForTesting& NODELETE ensureDefaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
 {
     DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMap = defaultPortForProtocolMapForTesting();
     if (!defaultPortForProtocolMap)
@@ -403,7 +403,7 @@ bool URL::protocolIs(StringView protocol) const
     return true;
 }
 
-StringView URL::query() const
+StringView URL::query() const LIFETIME_BOUND
 {
     if (m_queryEnd == m_pathEnd)
         return { };
@@ -411,7 +411,7 @@ StringView URL::query() const
     return StringView(m_string).substring(m_pathEnd + 1, m_queryEnd - (m_pathEnd + 1));
 }
 
-StringView URL::path() const
+StringView URL::path() const LIFETIME_BOUND
 {
     if (!m_isValid)
         return { };
@@ -484,14 +484,14 @@ unsigned URL::credentialsEnd() const
     return end;
 }
 
-static bool forwardSlashHashOrQuestionMark(char16_t c)
+static bool NODELETE forwardSlashHashOrQuestionMark(char16_t c)
 {
     return c == '/'
         || c == '#'
         || c == '?';
 }
 
-static bool slashHashOrQuestionMark(char16_t c)
+static bool NODELETE slashHashOrQuestionMark(char16_t c)
 {
     return forwardSlashHashOrQuestionMark(c) || c == '\\';
 }
@@ -543,7 +543,7 @@ void URL::setPort(std::optional<uint16_t> port)
     ));
 }
 
-static unsigned countASCIIDigits(StringView string)
+static unsigned NODELETE countASCIIDigits(StringView string)
 {
     unsigned length = string.length();
     for (unsigned count = 0; count < length; ++count) {
@@ -641,12 +641,12 @@ static String percentEncodeCharacters(const StringType& input, bool(*shouldEncod
 
 void URL::parse(String&& string)
 {
-    *this = URLParser(WTFMove(string)).result();
+    *this = URLParser(WTF::move(string)).result();
 }
 
 void URL::parseAllowingC0AtEnd(String&& string)
 {
-    *this = URLParser(WTFMove(string), { }, URLTextEncodingSentinelAllowingC0AtEnd).result();
+    *this = URLParser(WTF::move(string), { }, URLTextEncodingSentinelAllowingC0AtEnd).result();
 }
 
 void URL::remove(unsigned start, unsigned length)
@@ -657,7 +657,7 @@ void URL::remove(unsigned start, unsigned length)
     ASSERT(length <= m_string.length() - start);
 
     auto stringAfterRemoval = makeStringByRemoving(std::exchange(m_string, { }), start, length);
-    parse(WTFMove(stringAfterRemoval));
+    parse(WTF::move(stringAfterRemoval));
 }
 
 void URL::setUser(StringView newUser)
@@ -775,7 +775,7 @@ void URL::setPath(StringView path)
     ));
 }
 
-StringView URL::viewWithoutQueryOrFragmentIdentifier() const
+StringView URL::viewWithoutQueryOrFragmentIdentifier() const LIFETIME_BOUND
 {
     if (!m_isValid)
         return m_string;
@@ -783,7 +783,7 @@ StringView URL::viewWithoutQueryOrFragmentIdentifier() const
     return StringView(m_string).left(pathEnd());
 }
 
-StringView URL::viewWithoutFragmentIdentifier() const
+StringView URL::viewWithoutFragmentIdentifier() const LIFETIME_BOUND
 {
     if (!m_isValid)
         return m_string;
@@ -1000,7 +1000,7 @@ bool portAllowed(const URL& url)
 
     // This blocked port list is defined by the Fetch spec, with the addition of port 0.
     // See https://fetch.spec.whatwg.org/#port-blocking for more information.
-    static const uint16_t blockedPortList[] = {
+    static constexpr auto blockedPortList = std::to_array<uint16_t>({
         0, // reserved
         1, // tcpmux
         7, // echo
@@ -1084,7 +1084,7 @@ bool portAllowed(const URL& url)
         6679, // Alternate IRC SSL [Apple addition]
         6697, // IRC+SSL [Apple addition]
         10080, // amanda
-    };
+    });
 
     // If the port is not in the blocked port list, allow it.
     ASSERT(std::is_sorted(std::begin(blockedPortList), std::end(blockedPortList)));
@@ -1144,7 +1144,7 @@ URL URL::fileURLWithFileSystemPath(StringView path)
     ));
 }
 
-StringView URL::queryWithLeadingQuestionMark() const
+StringView URL::queryWithLeadingQuestionMark() const LIFETIME_BOUND
 {
     if (m_queryEnd <= m_pathEnd)
         return { };
@@ -1152,7 +1152,7 @@ StringView URL::queryWithLeadingQuestionMark() const
     return StringView(m_string).substring(m_pathEnd, m_queryEnd - m_pathEnd);
 }
 
-StringView URL::fragmentIdentifierWithLeadingNumberSign() const
+StringView URL::fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND
 {
     if (!m_isValid || m_string.length() <= m_queryEnd)
         return { };
@@ -1168,12 +1168,6 @@ bool URL::isAboutBlank() const
 bool URL::isAboutSrcDoc() const
 {
     return protocolIsAbout() && path() == "srcdoc"_s;
-}
-
-TextStream& operator<<(TextStream& ts, const URL& url)
-{
-    ts << url.string();
-    return ts;
 }
 
 static bool isIPv4Address(StringView string)

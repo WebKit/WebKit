@@ -54,6 +54,114 @@ x
 x
 x
 x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
 
 PASS role: alert
 PASS role: alertdialog
@@ -109,4 +217,112 @@ PASS role: time
 PASS role: timer
 PASS role: toolbar
 PASS role: tooltip
+PASS role: ALERT
+PASS role: ALERTDIALOG
+PASS role: APPLICATION
+PASS role: ARTICLE
+PASS role: BANNER
+PASS role: BLOCKQUOTE
+PASS role: BUTTON
+PASS role: CAPTION
+PASS role: CHECKBOX
+PASS role: CODE
+PASS role: COMBOBOX
+PASS role: COMPLEMENTARY
+PASS role: CONTENTINFO
+PASS role: DEFINITION
+PASS role: DELETION
+PASS role: DIALOG
+PASS role: DOCUMENT
+PASS role: EMPHASIS
+PASS role: FEED
+PASS role: FIGURE
+PASS role: GENERIC
+PASS role: GROUP
+PASS role: HEADING
+PASS role: INSERTION
+PASS role: LINK
+PASS role: LOG
+PASS role: MAIN
+PASS role: MARQUEE
+PASS role: MATH
+PASS role: METER
+PASS role: NAVIGATION
+PASS role: NOTE
+PASS role: PARAGRAPH
+PASS role: PROGRESSBAR
+PASS role: RADIO
+PASS role: RADIOGROUP
+PASS role: SCROLLBAR
+PASS role: SEARCH
+PASS role: SEARCHBOX
+PASS role: SEPARATOR
+PASS role: SLIDER
+PASS role: SPINBUTTON
+PASS role: STATUS
+PASS role: STRONG
+PASS role: SUBSCRIPT
+PASS role: SUGGESTION
+PASS role: SUPERSCRIPT
+PASS role: SWITCH
+PASS role: TERM
+PASS role: TEXTBOX
+PASS role: TIME
+PASS role: TIMER
+PASS role: TOOLBAR
+PASS role: TOOLTIP
+PASS role: Alert
+PASS role: Alertdialog
+PASS role: Application
+PASS role: Article
+PASS role: Banner
+PASS role: Blockquote
+PASS role: Button
+PASS role: Caption
+PASS role: Checkbox
+PASS role: Code
+PASS role: Combobox
+PASS role: Complementary
+PASS role: Contentinfo
+PASS role: Definition
+PASS role: Deletion
+PASS role: Dialog
+PASS role: Document
+PASS role: Emphasis
+PASS role: Feed
+PASS role: Figure
+PASS role: Generic
+PASS role: Group
+PASS role: Heading
+PASS role: Insertion
+PASS role: Link
+PASS role: Log
+PASS role: Main
+PASS role: Marquee
+PASS role: Math
+PASS role: Meter
+PASS role: Navigation
+PASS role: Note
+PASS role: Paragraph
+PASS role: Progressbar
+PASS role: Radio
+PASS role: Radiogroup
+PASS role: Scrollbar
+PASS role: Search
+PASS role: Searchbox
+PASS role: Separator
+PASS role: Slider
+PASS role: Spinbutton
+PASS role: Status
+PASS role: Strong
+PASS role: Subscript
+PASS role: Suggestion
+PASS role: Superscript
+PASS role: Switch
+PASS role: Term
+PASS role: Textbox
+PASS role: Time
+PASS role: Timer
+PASS role: Toolbar
+PASS role: Tooltip
 

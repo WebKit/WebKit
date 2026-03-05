@@ -34,7 +34,7 @@ public:
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 
-    WARN_UNUSED_RETURN GRefPtr<GstPad> outgoingSourcePad() const final;
+    [[nodiscard]] GRefPtr<GstPad> outgoingSourcePad() const final;
     RefPtr<GStreamerRTPPacketizer> createPacketizer(RefPtr<UniqueSSRCGenerator>, const GstStructure*, GUniquePtr<GstStructure>&&) final;
 
     void dispatchBitrateRequest(uint32_t bitrate) final;

@@ -68,7 +68,7 @@ GroupActivitiesSessionNotifier::GroupActivitiesSessionNotifier()
         for (auto& page : copyToVector(protectedThis->m_webPages)) {
             if (page->mainFrame() && page->mainFrame()->url() == session->fallbackURL()) {
                 auto coordinator = GroupActivitiesCoordinator::create(session);
-                page->createMediaSessionCoordinator(WTFMove(coordinator), [] (bool) { });
+                page->createMediaSessionCoordinator(WTF::move(coordinator), [] (bool) { });
                 return;
             }
         }
@@ -100,7 +100,7 @@ void GroupActivitiesSessionNotifier::addWebPage(WebPageProxy& webPage)
         return;
 
     auto coordinator = GroupActivitiesCoordinator::create(*session);
-    webPage.createMediaSessionCoordinator(WTFMove(coordinator), [] (bool) { });
+    webPage.createMediaSessionCoordinator(WTF::move(coordinator), [] (bool) { });
 }
 
 void GroupActivitiesSessionNotifier::removeWebPage(WebPageProxy& webPage)
@@ -124,7 +124,7 @@ void GroupActivitiesSessionNotifier::webPageURLChanged(WebPageProxy& webPage)
         return;
 
     auto coordinator = GroupActivitiesCoordinator::create(*session);
-    webPage.createMediaSessionCoordinator(WTFMove(coordinator), [] (bool) { });
+    webPage.createMediaSessionCoordinator(WTF::move(coordinator), [] (bool) { });
 }
 
 bool GroupActivitiesSessionNotifier::hasSessionForURL(const URL& url)

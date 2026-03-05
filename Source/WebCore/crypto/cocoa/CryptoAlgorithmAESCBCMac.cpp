@@ -60,7 +60,7 @@ static ExceptionOr<Vector<uint8_t>> transformAESCBC(CCOperation operation, const
 
     CCCryptorRelease(cryptor);
 
-    return WTFMove(result);
+    return WTF::move(result);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding padding)

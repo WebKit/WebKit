@@ -338,7 +338,7 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
     }
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptXPCObject(xpc_connection_create_mach_service(WIRXPCMachPortName, m_xpcQueue.get(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptOSObject(xpc_connection_create_mach_service(WIRXPCMachPortName, m_xpcQueue.get(), 0));
     if (!connection) {
         WTFLogAlways("RemoteInspector failed to create XPC connection.");
         return;
@@ -487,8 +487,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         return nil;
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
-    // FIXME: This is a safer cpp false positive (rdar://161698063).
-    SUPPRESS_UNRETAINED_ARG [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
+    [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
 
     switch (target.type()) {
     case RemoteInspectionTarget::Type::ITML:
@@ -501,12 +500,6 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeJavaScript forKey:WIRTypeKey];
         break;
-    case RemoteInspectionTarget::Type::Page:
-        [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
-        [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
-        [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
-        [listing setObject:WIRTypePage forKey:WIRTypeKey];
-        break;
     case RemoteInspectionTarget::Type::ServiceWorker:
         [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
         [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
@@ -514,6 +507,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         [listing setObject:WIRTypeServiceWorker forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::WebPage:
+    case RemoteInspectionTarget::Type::LegacyWebPage:
         [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
         [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
         [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
@@ -539,7 +533,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         [listing setObject:identifierForPID(presentingApplicationPID.value()).get() forKey:WIRHostApplicationIdentifierKey];
 
     if (RefPtr connectionToTarget = m_targetConnectionMap.get(target.targetIdentifier()))
-        [listing setObject:connectionToTarget->protectedConnectionIdentifier().get() forKey:WIRConnectionIdentifierKey];
+        [listing setObject:protect(connectionToTarget->connectionIdentifier()).get() forKey:WIRConnectionIdentifierKey];
 
     if (target.hasLocalDebugger())
         [listing setObject:@YES forKey:WIRHasLocalDebuggerKey];
@@ -557,19 +551,17 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
         return nullptr;
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
-    // FIXME: This is a safer cpp false positive (rdar://161698063).
-    SUPPRESS_UNRETAINED_ARG [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
+    [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
     [listing setObject:target.name().createNSString().get() forKey:WIRSessionIdentifierKey];
     [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
-    // FIXME: This is a safer cpp false positive (rdar://161698063).
-    SUPPRESS_UNRETAINED_ARG [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
+    [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
     if (m_clientCapabilities) {
         [listing setObject:m_clientCapabilities->browserName.createNSString().get() forKey:WIRAutomationTargetNameKey];
         [listing setObject:m_clientCapabilities->browserVersion.createNSString().get() forKey:WIRAutomationTargetVersionKey];
     }
 
     if (RefPtr connectionToTarget = m_targetConnectionMap.get(target.targetIdentifier()))
-        [listing setObject:connectionToTarget->protectedConnectionIdentifier().get() forKey:WIRConnectionIdentifierKey];
+        [listing setObject:protect(connectionToTarget->connectionIdentifier()).get() forKey:WIRConnectionIdentifierKey];
 
     return listing;
 }
@@ -666,13 +658,13 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
             connectionToTarget->close();
             return;
         }
-        m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
+        m_targetConnectionMap.set(targetIdentifier, WTF::move(connectionToTarget));
     } else if (is<RemoteAutomationTarget>(target)) {
         if (!connectionToTarget->setup()) {
             connectionToTarget->close();
             return;
         }
-        m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
+        m_targetConnectionMap.set(targetIdentifier, WTF::move(connectionToTarget));
     } else
         ASSERT_NOT_REACHED();
 
@@ -715,7 +707,7 @@ void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
     if (!connectionToTarget)
         return;
 
-    if (![connectionIdentifier isEqualToString:connectionToTarget->protectedConnectionIdentifier().get()])
+    if (![connectionIdentifier isEqualToString:protect(connectionToTarget->connectionIdentifier()).get()])
         return;
 
     connectionToTarget->close();
@@ -759,7 +751,7 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
 
             target = findResult->value;
         }
-        if (RefPtr inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(WTFMove(target)))
+        if (RefPtr inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(WTF::move(target)))
             inspectionTarget->setIndicating(indicateEnabled);
     });
 }
@@ -804,7 +796,7 @@ void RemoteInspector::receivedConnectionDiedMessage(NSDictionary *userInfo)
     auto it = m_targetConnectionMap.begin();
     auto end = m_targetConnectionMap.end();
     for (; it != end; ++it) {
-        if ([connectionIdentifier isEqualToString:RefPtr { it->value }->protectedConnectionIdentifier().get()])
+        if ([connectionIdentifier isEqualToString:protect(RefPtr { it->value }->connectionIdentifier()).get()])
             break;
     }
 

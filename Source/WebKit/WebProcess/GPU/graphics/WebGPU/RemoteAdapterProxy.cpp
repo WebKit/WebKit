@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAdapterProxy);
 
 RemoteAdapterProxy::RemoteAdapterProxy(String&& name, WebCore::WebGPU::SupportedFeatures& features, WebCore::WebGPU::SupportedLimits& limits, bool isFallbackAdapter, bool xrCompatible, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
-    : Adapter(WTFMove(name), features, limits, isFallbackAdapter)
+    : Adapter(WTF::move(name), features, limits, isFallbackAdapter)
     , m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
@@ -72,7 +72,7 @@ void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& 
         return;
     }
 
-    auto resultSupportedFeatures = WebCore::WebGPU::SupportedFeatures::create(WTFMove(supportedFeatures.features));
+    auto resultSupportedFeatures = WebCore::WebGPU::SupportedFeatures::create(WTF::move(supportedFeatures.features));
     auto resultSupportedLimits = WebCore::WebGPU::SupportedLimits::create(
         supportedLimits.maxTextureDimension1D,
         supportedLimits.maxTextureDimension2D,
@@ -111,9 +111,9 @@ void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& 
         supportedLimits.maxStorageBuffersInVertexStage,
         supportedLimits.maxStorageTexturesInVertexStage
     );
-    auto result = RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, convertToBackingContext, identifier, queueIdentifier);
-    result->setLabel(WTFMove(convertedDescriptor->label));
-    callback(WTFMove(result));
+    auto result = RemoteDeviceProxy::create(WTF::move(resultSupportedFeatures), WTF::move(resultSupportedLimits), *this, convertToBackingContext, identifier, queueIdentifier);
+    result->setLabel(WTF::move(convertedDescriptor->label));
+    callback(WTF::move(result));
 }
 
 bool RemoteAdapterProxy::xrCompatible()

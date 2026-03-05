@@ -66,7 +66,6 @@ enum class ProfilingReason : uint8_t {
 // Convenience wrapper so you don't need to deal with CallData unless you are going to use it.
 JS_EXPORT_PRIVATE JSValue call(JSGlobalObject*, JSValue functionObject, const ArgList&, ASCIILiteral errorMessage);
 JS_EXPORT_PRIVATE JSValue call(JSGlobalObject*, JSValue functionObject, JSValue thisValue, const ArgList&, ASCIILiteral errorMessage);
-JSValue callMicrotask(JSGlobalObject*, JSValue functionObject, JSValue thisValue, JSCell* context, const ArgList&, ASCIILiteral errorMessage);
 
 JS_EXPORT_PRIVATE JSValue call(JSGlobalObject*, JSValue functionObject, const CallData&, JSValue thisValue, const ArgList&);
 JS_EXPORT_PRIVATE JSValue call(JSGlobalObject*, JSValue functionObject, const CallData&, JSValue thisValue, const ArgList&, NakedPtr<Exception>& returnedException);

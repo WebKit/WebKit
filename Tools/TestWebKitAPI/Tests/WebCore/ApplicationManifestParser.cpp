@@ -203,6 +203,11 @@ public:
         EXPECT_EQ(expectedValue, value);
     }
 
+    void testLang(const String& rawJSON, const String& expectedValue)
+    {
+        EXPECT_EQ(expectedValue, parseTopLevelProperty("lang"_s, rawJSON).lang);
+    }
+
     void testName(const String& rawJSON, const String& expectedValue)
     {
         auto manifest = parseTopLevelProperty("name"_s, rawJSON);
@@ -348,7 +353,6 @@ public:
         auto value = manifest.id;
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
     }
-
 };
 
 static void assertManifestHasDefaultValues(const URL& manifestURL, const URL& documentURL, const ApplicationManifest& manifest)
@@ -520,6 +524,39 @@ TEST_F(ApplicationManifestParserTest, Orientation)
     testOrientation("\"portrait\""_s, WebCore::ScreenOrientationLockType::Portrait);
     testOrientation("\"portrait-primary\""_s, WebCore::ScreenOrientationLockType::PortraitPrimary);
     testOrientation("\"portrait-secondary\""_s, WebCore::ScreenOrientationLockType::PortraitSecondary);
+}
+
+TEST_F(ApplicationManifestParserTest, Lang)
+{
+    testLang("123"_s, String());
+    testLang("null"_s, String());
+    testLang("true"_s, String());
+    testLang("{ }"_s, String());
+    testLang("[ ]"_s, String());
+    testLang("\"\""_s, String());
+
+    // Invalid language tags should be ignored.
+    testLang("\"invalid-language-tag\""_s, String());
+
+    testLang("\"en\""_s, "en"_s);
+    testLang("\" en \""_s, "en"_s);
+    testLang("\"en-AU\""_s, "en-AU"_s);
+    testLang("\"zh-Hans-CN\""_s, "zh-Hans-CN"_s);
+    testLang("\"en-x-custom\""_s, "en-x-custom"_s);
+
+    // Language tags should be canonicalized.
+    testLang("\"DE-DE\""_s, "de-DE"_s);
+    testLang("\" DE-DE \""_s, "de-DE"_s);
+
+    // ISO-8859-1 characters.
+    testLang(String::fromUTF8("\"en-Latn-US-àéîöü\""), String());
+    testLang(String::fromUTF8("\"frçñch\""), String());
+
+    // Unicode characters beyond ISO-8859-1.
+    testLang(String::fromUTF8("\"zh-中文\""), String());
+    testLang(String::fromUTF8("\"ja-日本語\""), String());
+    testLang(String::fromUTF8("\"ko-한국어\""), String());
+    testLang(String::fromUTF8("\"ar-العربية\""), String());
 }
 
 TEST_F(ApplicationManifestParserTest, Name)

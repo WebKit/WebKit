@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,6 +115,12 @@
 #if PLATFORM(COCOA)
 #include <WebKit/WKContextPrivateMac.h>
 #include <WebKit/WKPagePrivateMac.h>
+#endif
+
+#if PLATFORM(MAC)
+#import <ApplicationServices/ApplicationServices.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -835,7 +841,7 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
     TestController::singleton().updateWindowScaleForTest(view.ptr(), *TestController::singleton().protectedCurrentInvocation());
 
     PlatformWebView* viewToReturn = view.ptr();
-    m_auxiliaryWebViews.append(WTFMove(view));
+    m_auxiliaryWebViews.append(WTF::move(view));
     return viewToReturn;
 }
 
@@ -1544,6 +1550,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setNavigationGesturesEnabled(false);
     
     setIgnoresViewportScaleLimits(options.ignoresViewportScaleLimits());
+    m_mainWebView->setEditable(options.editable());
 
     m_openPanelFileURLs = nullptr;
 #if PLATFORM(IOS_FAMILY)
@@ -1889,8 +1896,8 @@ static void adoptAndCallCompletionHandler(void* context)
 struct UIScriptInvocationData {
     UIScriptInvocationData(unsigned callbackID, WebKit::WKRetainPtr<WKStringRef>&& scriptString, WeakPtr<TestInvocation>&& testInvocation)
         : callbackID(callbackID)
-        , scriptString(WTFMove(scriptString))
-        , testInvocation(WTFMove(testInvocation)) { }
+        , scriptString(WTF::move(scriptString))
+        , testInvocation(WTF::move(testInvocation)) { }
 
     unsigned callbackID;
     WebKit::WKRetainPtr<WKStringRef> scriptString;
@@ -2150,9 +2157,9 @@ static WKRetainPtr<WKArrayRef> WKURLArrayFromWKStringArray(const WKTypeRef array
     auto urlArray = adoptWK(WKMutableArrayCreate());
     const auto length = WKArrayGetSize(stringArray);
     for (size_t i = 0; i < length; i++) {
-        const auto str = WKArrayGetItemAtIndex(stringArray, i);
-        const auto cstr = toWTFString(stringValue(str)).utf8().data();
-        WKArrayAppendItem(urlArray.get(), adoptWK(WKURLCreateWithUTF8CString(cstr)).get());
+        auto str = WKArrayGetItemAtIndex(stringArray, i);
+        auto cstr = toWTFString(stringValue(str)).utf8();
+        WKArrayAppendItem(urlArray.get(), adoptWK(WKURLCreateWithUTF8CString(cstr.data())).get());
     }
 
     return urlArray;
@@ -2205,23 +2212,24 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, WKCompl
     });
 }
 
-static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, const char* filePath)
+static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, const String& filePath)
 {
 #if OS(WINDOWS)
-    if (!PathIsRelativeA(filePath)) {
+    auto cFilePath = FileSystem::fileSystemRepresentation(filePath);
+    if (!PathIsRelativeA(cFilePath.data())) {
         char fileURI[INTERNET_MAX_PATH_LENGTH];
         DWORD fileURILength = INTERNET_MAX_PATH_LENGTH;
-        UrlCreateFromPathA(filePath, fileURI, &fileURILength, 0);
+        UrlCreateFromPathA(cFilePath.data(), fileURI, &fileURILength, 0);
         return adoptWK(WKURLCreateWithUTF8CString(fileURI));
     }
 #else
     WKRetainPtr<WKURLRef> fileURL;
-    if (filePath[0] == '/') {
+    if (!filePath.isEmpty() && filePath[0] == '/') {
         fileURL = adoptWK(WKURLCreateWithUTF8CString("file://"));
         baseURL = fileURL.get();
     }
 #endif
-    return adoptWK(WKURLCreateWithBaseURL(baseURL, filePath));
+    return adoptWK(WKURLCreateWithBaseURL(baseURL, filePath.utf8().data()));
 }
 
 void TestController::didReceiveScriptMessage(WKScriptMessageRef message, CompletionHandler<void(WKTypeRef)>&& completionHandler)
@@ -2247,7 +2255,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
     }
 
     if (WKStringIsEqualToUTF8CString(command, "RemoveAllCookies"))
-        return removeAllCookies(WTFMove(completionHandler));
+        return removeAllCookies(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "AddChromeInputField")) {
         mainWebView()->addChromeInputField();
@@ -2291,7 +2299,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         return WKPageDisplayAndTrackRepaintsForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
 
     if (WKStringIsEqualToUTF8CString(command, "SetResourceMonitorList"))
-        return setResourceMonitorList(stringValue(argument), WTFMove(completionHandler));
+        return setResourceMonitorList(stringValue(argument), WTF::move(completionHandler));
 
 
     if (WKStringIsEqualToUTF8CString(command, "SetPageScaleFactor")) {
@@ -2299,7 +2307,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto scaleFactor = doubleValue(argumentDictionary, "scaleFactor");
         auto x = doubleValue(argumentDictionary, "x");
         auto y = doubleValue(argumentDictionary, "y");
-        return setPageScaleFactor(static_cast<float>(scaleFactor), static_cast<int>(x), static_cast<int>(y), WTFMove(completionHandler));
+        return setPageScaleFactor(static_cast<float>(scaleFactor), static_cast<int>(x), static_cast<int>(y), WTF::move(completionHandler));
     }
 
     if (WKStringIsEqualToUTF8CString(command, "SetObscuredContentInsets")) {
@@ -2312,7 +2320,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
     }
 
     if (WKStringIsEqualToUTF8CString(command, "UpdatePresentation"))
-        return updatePresentation(WTFMove(completionHandler));
+        return updatePresentation(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "FlushConsoleLogs"))
         return completionHandler(nullptr);
@@ -2324,33 +2332,33 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         return completionHandler(takeViewPortSnapshot().get());
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldBlockThirdPartyCookies"))
-        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::All, WTFMove(completionHandler));
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::All, WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldDowngradeReferrer"))
-        return setStatisticsShouldDowngradeReferrer(booleanValue(argument), WTFMove(completionHandler));
+        return setStatisticsShouldDowngradeReferrer(booleanValue(argument), WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsFirstPartyWebsiteDataRemovalMode"))
-        return setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(argument), WTFMove(completionHandler));
+        return setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(argument), WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsSetToSameSiteStrictCookies"))
-        return setStatisticsToSameSiteStrictCookies(stringValue(argument), WTFMove(completionHandler));
+        return setStatisticsToSameSiteStrictCookies(stringValue(argument), WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsSetFirstPartyHostCNAMEDomain")) {
         auto argumentDictionary = dictionaryValue(argument);
         auto firstPartyURLString = stringValue(argumentDictionary, "FirstPartyURL");
         auto cnameURLString = stringValue(argumentDictionary, "CNAME");
-        setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString, WTFMove(completionHandler));
+        setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString, WTF::move(completionHandler));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsSetThirdPartyCNAMEDomain"))
-        return setStatisticsThirdPartyCNAMEDomain(stringValue(argument), WTFMove(completionHandler));
+        return setStatisticsThirdPartyCNAMEDomain(stringValue(argument), WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "LoadedSubresourceDomains"))
-        return loadedSubresourceDomains(WTFMove(completionHandler));
+        return loadedSubresourceDomains(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "RemoveAllSessionCredentials"))
-        return TestController::singleton().removeAllSessionCredentials(WTFMove(completionHandler));
+        return TestController::singleton().removeAllSessionCredentials(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "SetStorageAccessPermission")) {
         auto argumentDictionary = dictionaryValue(argument);
@@ -2367,7 +2375,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
 
 
     if (WKStringIsEqualToUTF8CString(command, "GetAllStorageAccessEntries"))
-        return getAllStorageAccessEntries(WTFMove(completionHandler));
+        return getAllStorageAccessEntries(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsResetToConsistentState")) {
         protectedCurrentInvocation()->dumpResourceLoadStatisticsIfNecessary();
@@ -2379,37 +2387,37 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto argumentDictionary = dictionaryValue(argument);
         auto hostName = stringValue(argumentDictionary, "HostName");
         auto includeHttpOnlyCookies = booleanValue(argumentDictionary, "IncludeHttpOnlyCookies");
-        return TestController::singleton().statisticsDeleteCookiesForHost(hostName, includeHttpOnlyCookies, WTFMove(completionHandler));
+        return TestController::singleton().statisticsDeleteCookiesForHost(hostName, includeHttpOnlyCookies, WTF::move(completionHandler));
     }
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsClearInMemoryAndPersistentStore"))
-        return statisticsClearInMemoryAndPersistentStore(WTFMove(completionHandler));
+        return statisticsClearInMemoryAndPersistentStore(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsClearThroughWebsiteDataRemoval"))
-        return statisticsClearThroughWebsiteDataRemoval(WTFMove(completionHandler));
+        return statisticsClearThroughWebsiteDataRemoval(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours"))
-        return statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uint64Value(argument), WTFMove(completionHandler));
+        return statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uint64Value(argument), WTF::move(completionHandler));
 
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsUpdateCookieBlocking"))
-        return statisticsUpdateCookieBlocking(WTFMove(completionHandler));
+        return statisticsUpdateCookieBlocking(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "StatisticsProcessStatisticsAndDataRecords"))
-        return TestController::singleton().statisticsProcessStatisticsAndDataRecords(WTFMove(completionHandler));
+        return TestController::singleton().statisticsProcessStatisticsAndDataRecords(WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsHasHadUserInteraction")) {
         auto argumentDictionary = dictionaryValue(argument);
         auto hostName = stringValue(argumentDictionary, "HostName");
         auto value = booleanValue(argumentDictionary, "Value");
-        setStatisticsHasHadUserInteraction(hostName, value, WTFMove(completionHandler));
+        setStatisticsHasHadUserInteraction(hostName, value, WTF::move(completionHandler));
         return;
     }
 
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsPrevalentResourceForDebugMode")) {
         WKStringRef hostName = stringValue(argument);
-        setStatisticsPrevalentResourceForDebugMode(hostName, WTFMove(completionHandler));
+        setStatisticsPrevalentResourceForDebugMode(hostName, WTF::move(completionHandler));
         return;
     }
 
@@ -2417,7 +2425,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto argumentDictionary = dictionaryValue(argument);
         auto hostName = stringValue(argumentDictionary, "HostName");
         auto value = doubleValue(argumentDictionary, "Value");
-        setStatisticsLastSeen(hostName, value, WTFMove(completionHandler));
+        setStatisticsLastSeen(hostName, value, WTF::move(completionHandler));
         return;
     }
 
@@ -2433,7 +2441,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto isPrevalent = booleanValue(argumentDictionary, "IsPrevalent");
         auto isVeryPrevalent = booleanValue(argumentDictionary, "IsVeryPrevalent");
         auto dataRecordsRemoved = uint64Value(argumentDictionary, "DataRecordsRemoved");
-        setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTFMove(completionHandler));
+        setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTF::move(completionHandler));
         return;
     }
 
@@ -2444,7 +2452,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto hadUserInteraction = booleanValue(argumentDictionary, "HadUserInteraction");
         auto isScheduledForAllButCookieDataRemoval = booleanValue(argumentDictionary, "IsScheduledForAllButCookieDataRemoval");
         auto isPrevalent = booleanValue(argumentDictionary, "IsPrevalent");
-        setStatisticsExpiredStatistic(hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
+        setStatisticsExpiredStatistic(hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTF::move(completionHandler));
         return;
     }
 
@@ -2452,7 +2460,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto argumentDictionary = dictionaryValue(argument);
         auto hostName = stringValue(argumentDictionary, "HostName");
         auto value = booleanValue(argumentDictionary, "Value");
-        setStatisticsPrevalentResource(hostName, value, WTFMove(completionHandler));
+        setStatisticsPrevalentResource(hostName, value, WTF::move(completionHandler));
         return;
     }
 
@@ -2460,12 +2468,12 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto argumentDictionary = dictionaryValue(argument);
         auto hostName = stringValue(argumentDictionary, "HostName");
         auto value = booleanValue(argumentDictionary, "Value");
-        setStatisticsVeryPrevalentResource(hostName, value, WTFMove(completionHandler));
+        setStatisticsVeryPrevalentResource(hostName, value, WTF::move(completionHandler));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsDebugMode"))
-        return setStatisticsDebugMode(booleanValue(argument), WTFMove(completionHandler));
+        return setStatisticsDebugMode(booleanValue(argument), WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "InstallTooltipCallback")) {
         m_tooltipCallbacks.append(dynamic_wk_cast<WKJSHandleRef>(argument));
@@ -2628,10 +2636,10 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
     }
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction"))
-        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::AllOnlyOnSitesWithoutUserInteraction, WTFMove(completionHandler));
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::AllOnlyOnSitesWithoutUserInteraction, WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldBlockThirdPartyCookiesExceptPartitioned"))
-        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::AllExceptPartitioned, WTFMove(completionHandler));
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::AllExceptPartitioned, WTF::move(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(command, "FindStringMatches")) {
         auto argumentDictionary = dictionaryValue(argument);
@@ -2644,12 +2652,12 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
 
     if (WKStringIsEqualToUTF8CString(command, "SetManagedDomains")) {
         const auto urlArray = WKURLArrayFromWKStringArray(argument);
-        return setManagedDomains(urlArray.get(), WTFMove(completionHandler));
+        return setManagedDomains(urlArray.get(), WTF::move(completionHandler));
     }
 
     if (WKStringIsEqualToUTF8CString(command, "SetAppBoundDomains")) {
         const auto urlArray = WKURLArrayFromWKStringArray(argument);
-        return setAppBoundDomains(urlArray.get(), WTFMove(completionHandler));
+        return setAppBoundDomains(urlArray.get(), WTF::move(completionHandler));
     }
 
     if (WKStringIsEqualToUTF8CString(command, "SetAuthenticationUsername")) {
@@ -2691,9 +2699,9 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
 
         const auto length = WKArrayGetSize(files);
         for (size_t i = 0; i < length; i++) {
-            const auto file = WKArrayGetItemAtIndex(files, i);
-            const auto fileStr = toWTFString(dynamic_wk_cast<WKStringRef>(file)).utf8().data();
-            auto fileURL = makeOpenPanelURL(currentTestURL(), fileStr);
+            auto file = WKArrayGetItemAtIndex(files, i);
+            String fileString = toWTFString(dynamic_wk_cast<WKStringRef>(file));
+            auto fileURL = makeOpenPanelURL(currentTestURL(), fileString);
             WKArrayAppendItem(fileURLs.get(), fileURL.get());
         }
 
@@ -2709,9 +2717,9 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         const auto length = WKArrayGetSize(keys);
         Vector<unsigned char> bytes;
         for (size_t i = 0; i < length; i++) {
-            const auto key = WKArrayGetItemAtIndex(keys, i);
-            const auto keyStr = toWTFString(stringValue(key)).utf8().data();
-            const auto intValue = doubleValue(dictionary, keyStr);
+            auto key = WKArrayGetItemAtIndex(keys, i);
+            auto keyStr = toWTFString(stringValue(key)).utf8();
+            auto intValue = doubleValue(dictionary, keyStr.data());
             bytes.append(static_cast<unsigned char>(intValue));
         }
         WKDataRef data = WKDataCreate(bytes.begin(), bytes.size());
@@ -2807,11 +2815,15 @@ static void contentExtensionStoreCallback(WKUserContentFilterRef filter, uint32_
 
 static std::string contentExtensionJSONPath(WKURLRef url)
 {
+    auto toJSON = [](std::string path) {
+        return path.substr(0, path.rfind('.')) + ".json";
+    };
+
     auto path = testPath(url);
     if (path.length())
-        return path + ".json";
+        return toJSON(path);
 
-    return "LayoutTests/http/tests" + toSTD(adoptWK(WKURLCopyPath(url)).get()) + ".json";
+    return "LayoutTests/http/tests" + toJSON(toSTD(adoptWK(WKURLCopyPath(url)).get()));
 }
 
 void TestController::configureContentExtensionForTest(const TestInvocation& test)
@@ -3368,7 +3380,7 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
     }
 
     auto setHTTPCookieAcceptPolicy = [&] (WKHTTPCookieAcceptPolicy policy, CompletionHandler<void(WKTypeRef)>&& completionHandler) {
-        auto context = new CompletionHandler<void(WKTypeRef)>(WTFMove(completionHandler));
+        auto context = new CompletionHandler<void(WKTypeRef)>(WTF::move(completionHandler));
         WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), policy, context, [] (void* context) {
             auto completionHandlerPointer = static_cast<CompletionHandler<void(WKTypeRef)>*>(context);
             (*completionHandlerPointer)(nullptr);
@@ -3380,15 +3392,41 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         auto policy = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody))
             ? kWKHTTPCookieAcceptPolicyAlways
             : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-        return setHTTPCookieAcceptPolicy(policy, WTFMove(completionHandler));
+        return setHTTPCookieAcceptPolicy(policy, WTF::move(completionHandler));
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetOnlyAcceptFirstPartyCookies")) {
         auto policy = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody))
             ? kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain
             : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-        return setHTTPCookieAcceptPolicy(policy, WTFMove(completionHandler));
+        return setHTTPCookieAcceptPolicy(policy, WTF::move(completionHandler));
     }
+
+#if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "AXGetRoot"))
+        return completionHandler(handleAXGetRoot().get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsString"))
+        return completionHandler(handleAXCopyAttributeValueAsString(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsElement"))
+        return completionHandler(handleAXCopyAttributeValueAsElement(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsElementArray"))
+        return completionHandler(handleAXCopyAttributeValueAsElementArray(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsNumber"))
+        return completionHandler(handleAXCopyAttributeValueAsNumber(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsBoolean"))
+        return completionHandler(handleAXCopyAttributeValueAsBoolean(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsPoint"))
+        return completionHandler(handleAXCopyAttributeValueAsPoint(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsSize"))
+        return completionHandler(handleAXCopyAttributeValueAsSize(dictionaryValue(messageBody)).get());
+#endif
 
     completionHandler(protectedCurrentInvocation()->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).get());
 }
@@ -4206,7 +4244,7 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     }
 
     if (m_shouldDecideNavigationPolicyAfterDelay)
-        RunLoop::mainSingleton().dispatch(WTFMove(decisionFunction));
+        RunLoop::mainSingleton().dispatch(WTF::move(decisionFunction));
     else
         decisionFunction();
 }
@@ -4249,7 +4287,7 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
     }
 
     if (m_shouldDecideResponsePolicyAfterDelay)
-        RunLoop::mainSingleton().dispatch(WTFMove(decisionFunction));
+        RunLoop::mainSingleton().dispatch(WTF::move(decisionFunction));
     else
         decisionFunction();
 }
@@ -5372,5 +5410,208 @@ void TestController::setHasMouseDeviceForTesting(bool)
 {
 }
 #endif
+
+#if PLATFORM(MAC)
+// Client accessibility IPC implementation
+
+// Private API for creating an AXUIElement from a remote token
+extern "C" AXUIElementRef _AXUIElementCreateWithRemoteToken(CFDataRef remoteToken);
+
+uint64_t TestController::storeAXElement(CFTypeRef element)
+{
+    if (!element)
+        return 0;
+
+    uint64_t token = m_nextAXElementToken++;
+    m_axElementTokens.set(token, element);
+    return token;
+}
+
+CFTypeRef TestController::getAXElement(uint64_t token)
+{
+    if (!token)
+        return nullptr;
+
+    auto tokenIterator = m_axElementTokens.find(token);
+    if (tokenIterator == m_axElementTokens.end())
+        return nullptr;
+
+    return tokenIterator->value.get();
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXGetRoot()
+{
+    CFDataRef remoteToken = getRemoteAccessibilityToken();
+    if (!remoteToken)
+        return nullptr;
+
+    AXUIElementRef webContentElement = _AXUIElementCreateWithRemoteToken(remoteToken);
+    if (!webContentElement)
+        return nullptr;
+
+    // Try to get children
+    CFTypeRef childrenValue = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(webContentElement, kAXChildrenAttribute, &childrenValue);
+    RetainPtr adoptedChildren = adoptCF(childrenValue);
+
+    if (error != kAXErrorSuccess || !childrenValue)
+        return nullptr;
+
+    CFArrayRef children = static_cast<CFArrayRef>(childrenValue);
+    CFIndex childCount = CFArrayGetCount(children);
+    if (!childCount)
+        return nullptr;
+
+    AXUIElementRef child = static_cast<AXUIElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(children, 0)));
+
+    uint64_t token = storeAXElement(child);
+    return adoptWK(WKUInt64Create(token));
+}
+
+RetainPtr<CFTypeRef> TestController::axCopyAttributeValue(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    WKStringRef attributeName = stringValue(messageBody, "attributeName");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return nullptr;
+
+    RetainPtr attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
+    CFTypeRef value = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
+
+    if (error != kAXErrorSuccess || !value)
+        return nullptr;
+
+    return adoptCF(value);
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsString(WKDictionaryRef messageBody)
+{
+    RetainPtr value = axCopyAttributeValue(messageBody);
+    if (!value)
+        return nullptr;
+
+    if (CFGetTypeID(value.get()) != CFStringGetTypeID())
+        return nullptr;
+
+    return toWK(String(static_cast<CFStringRef>(value.get())));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElement(WKDictionaryRef messageBody)
+{
+    RetainPtr value = axCopyAttributeValue(messageBody);
+    if (!value)
+        return nullptr;
+
+    if (CFGetTypeID(value.get()) != AXUIElementGetTypeID())
+        return nullptr;
+
+    uint64_t token = storeAXElement(value.get());
+    return adoptWK(WKUInt64Create(token));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElementArray(WKDictionaryRef messageBody)
+{
+    RetainPtr value = axCopyAttributeValue(messageBody);
+    if (!value)
+        return nullptr;
+
+    if (CFGetTypeID(value.get()) != CFArrayGetTypeID())
+        return nullptr;
+
+    CFArrayRef elementArray = static_cast<CFArrayRef>(value.get());
+    CFIndex count = CFArrayGetCount(elementArray);
+
+    Vector<WKTypeRef> tokens;
+    tokens.reserveInitialCapacity(count);
+
+    for (CFIndex i = 0; i < count; i++) {
+        CFTypeRef childElement = CFArrayGetValueAtIndex(elementArray, i);
+        if (CFGetTypeID(childElement) == AXUIElementGetTypeID()) {
+            uint64_t token = storeAXElement(childElement);
+            tokens.append(WKUInt64Create(token));
+        }
+    }
+
+    // Build array from individual elements since Vector::data() is private
+    WKRetainPtr result = adoptWK(WKMutableArrayCreate());
+    for (WKTypeRef token : tokens) {
+        WKArrayAppendItem(result.get(), token);
+        WKRelease(token);
+    }
+
+    return result;
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsNumber(WKDictionaryRef messageBody)
+{
+    RetainPtr value = axCopyAttributeValue(messageBody);
+    if (!value)
+        return nullptr;
+
+    if (CFGetTypeID(value.get()) != CFNumberGetTypeID())
+        return nullptr;
+
+    double doubleValue;
+    CFNumberGetValue(static_cast<CFNumberRef>(value.get()), kCFNumberDoubleType, &doubleValue);
+
+    return adoptWK(WKDoubleCreate(doubleValue));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsBoolean(WKDictionaryRef messageBody)
+{
+    RetainPtr value = axCopyAttributeValue(messageBody);
+    if (!value)
+        return nullptr;
+
+    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
+        return nullptr;
+
+    bool boolValue = CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
+
+    return adoptWK(WKBooleanCreate(boolValue));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsPoint(WKDictionaryRef messageBody)
+{
+    RetainPtr value = axCopyAttributeValue(messageBody);
+    if (!value)
+        return nullptr;
+
+    if (CFGetTypeID(value.get()) != AXValueGetTypeID())
+        return nullptr;
+
+    CGPoint point;
+    if (!AXValueGetValue(static_cast<AXValueRef>(value.get()), static_cast<AXValueType>(kAXValueCGPointType), &point))
+        return nullptr;
+
+    WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+    setValue(dictionary, "x", point.x);
+    setValue(dictionary, "y", point.y);
+    return dictionary;
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsSize(WKDictionaryRef messageBody)
+{
+    RetainPtr value = axCopyAttributeValue(messageBody);
+    if (!value)
+        return nullptr;
+
+    if (CFGetTypeID(value.get()) != AXValueGetTypeID())
+        return nullptr;
+
+    CGSize size;
+    if (!AXValueGetValue(static_cast<AXValueRef>(value.get()), static_cast<AXValueType>(kAXValueCGSizeType), &size))
+        return nullptr;
+
+    WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+    setValue(dictionary, "width", size.width);
+    setValue(dictionary, "height", size.height);
+    return dictionary;
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace WTR

@@ -40,10 +40,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGForeignObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGForeignObject);
 
 RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
-    : RenderSVGBlock(Type::SVGForeignObject, element, WTFMove(style))
+    : RenderSVGBlock(Type::SVGForeignObject, element, WTF::move(style))
 {
     ASSERT(isRenderSVGForeignObject());
 }
@@ -53,11 +53,6 @@ RenderSVGForeignObject::~RenderSVGForeignObject() = default;
 SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
 {
     return downcast<SVGForeignObjectElement>(RenderSVGBlock::graphicsElement());
-}
-
-Ref<SVGForeignObjectElement> RenderSVGForeignObject::protectedForeignObjectElement() const
-{
-    return foreignObjectElement();
 }
 
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -104,8 +99,8 @@ void RenderSVGForeignObject::layout()
     // Cache viewport boundaries
     auto x = useForeignObjectElement->x().value(lengthContext);
     auto y = useForeignObjectElement->y().value(lengthContext);
-    auto width = useForeignObjectElement->width().value(lengthContext);
-    auto height = useForeignObjectElement->height().value(lengthContext);
+    auto width = std::max(0.0f, useForeignObjectElement->width().value(lengthContext));
+    auto height = std::max(0.0f, useForeignObjectElement->height().value(lengthContext));
     m_viewport = { x, y, width, height };
 
     RenderSVGBlock::layout();
@@ -130,9 +125,9 @@ void RenderSVGForeignObject::updateFromStyle()
         setHasNonVisibleOverflow();
 }
 
-void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
-    applySVGTransform(transform, protectedForeignObjectElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+    applySVGTransform(transform, protect(foreignObjectElement()), style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
 }

@@ -83,10 +83,10 @@ public:
     void encodedDataStatusChanged(size_t frameCount, const WebCore::IntSize&, bool hasTrack);
 
 private:
-    Ref<RemoteImageDecoderAVFManager> protectedManager() const;
+    Ref<RemoteImageDecoderAVFManager> manager() const;
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    ThreadSafeWeakPtr<RemoteImageDecoderAVFManager> m_manager; // Cannot be null.
+    ThreadSafeWeakRef<RemoteImageDecoderAVFManager> m_manager;
     WebCore::ImageDecoderIdentifier m_identifier;
 
     String m_mimeType;

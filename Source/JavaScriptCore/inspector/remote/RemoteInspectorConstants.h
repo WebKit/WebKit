@@ -82,7 +82,6 @@
 #define WIRTypeAutomation                       @"WIRTypeAutomation"
 #define WIRTypeITML                             @"WIRTypeITML"
 #define WIRTypeJavaScript                       @"WIRTypeJavaScript"
-#define WIRTypePage                             @"WIRTypePage"
 #define WIRTypeServiceWorker                    @"WIRTypeServiceWorker"
 #define WIRTypeWeb                              @"WIRTypeWeb" // COMPATIBILITY (iOS 13): "Web" was split into "Page" (WebCore::Page) and "WebPage" (WebKit::WebPageProxy).
 #define WIRTypeWebPage                          @"WIRTypeWebPage"

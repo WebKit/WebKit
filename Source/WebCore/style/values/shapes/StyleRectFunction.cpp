@@ -45,23 +45,23 @@ auto ToStyle<CSS::Rect>::operator()(const CSS::Rect& value, const BuilderState& 
     // Conversion applies reflection to the trailing (right/bottom) edges to convert from rect()
     // form to inset() form. This means that all the `auto` values are converted to 0%.
 
-    auto convertLeadingEdge = [&](const Variant<CSS::LengthPercentage<>, CSS::Keyword::Auto>& edge) -> LengthPercentage<> {
+    auto convertLeadingEdge = [&](const Variant<CSS::LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto>& edge) -> LengthPercentage<CSS::AllUnzoomed> {
         return WTF::switchOn(edge,
-            [&](const CSS::LengthPercentage<>& value) -> LengthPercentage<> {
+            [&](const CSS::LengthPercentage<CSS::AllUnzoomed>& value) -> LengthPercentage<CSS::AllUnzoomed> {
                 return toStyle(value, state);
             },
-            [&](const CSS::Keyword::Auto&) -> LengthPercentage<> {
+            [&](const CSS::Keyword::Auto&) -> LengthPercentage<CSS::AllUnzoomed> {
                 return 0_css_percentage;
             }
         );
     };
 
-    auto convertTrailingEdge = [&](const Variant<CSS::LengthPercentage<>, CSS::Keyword::Auto>& edge) -> LengthPercentage<> {
+    auto convertTrailingEdge = [&](const Variant<CSS::LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto>& edge) -> LengthPercentage<CSS::AllUnzoomed> {
         return WTF::switchOn(edge,
-            [&](const CSS::LengthPercentage<>& value) -> LengthPercentage<> {
+            [&](const CSS::LengthPercentage<CSS::AllUnzoomed>& value) -> LengthPercentage<CSS::AllUnzoomed> {
                 return reflect(toStyle(value, state));
             },
-            [&](const CSS::Keyword::Auto&) -> LengthPercentage<> {
+            [&](const CSS::Keyword::Auto&) -> LengthPercentage<CSS::AllUnzoomed> {
                 return 0_css_percentage;
             }
         );

@@ -37,7 +37,7 @@ struct WebKit::NavigationActionData {
     bool hasOpenedFrames;
     bool openedByDOMWithOpener;
     bool hasOpener;
-    bool isPerformingHTTPFallback;
+    WebCore::NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior;
     bool isInitialFrameSrcLoad;
     bool isContentRuleListRedirect;
     String openedMainFrameName;

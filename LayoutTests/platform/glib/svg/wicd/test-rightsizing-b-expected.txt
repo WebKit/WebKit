@@ -1,16 +1,16 @@
-layer at (0,0) size 785x854
+layer at (0,0) size 785x853
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x854
-  RenderBlock {html} at (0,0) size 785x855
-    RenderBody {body} at (47,30) size 738x817
-      RenderBlock {div} at (0,0) size 738x816
+layer at (0,0) size 785x853
+  RenderBlock {html} at (0,0) size 785x854
+    RenderBody {body} at (47,30) size 738x816
+      RenderBlock {div} at (0,0) size 738x815
         RenderBlock {h1} at (0,0) size 679x29
-          RenderText {#text} at (0,0) size 382x28
+          RenderText {#text} at (0,0) size 382x29
             text run at (0,0) width 382: "rightsizing to percentage width"
         RenderBlock {h4} at (0,29) size 738x16
           RenderText {#text} at (0,0) size 140x16
             text run at (0,0) width 140: "WICD Core 1.0 #20-2"
-        RenderBlock (anonymous) at (0,64) size 738x300
+        RenderBlock (anonymous) at (0,64) size 738x299
           RenderEmbeddedObject {object} at (0,0) size 296x296 [bgcolor=#FF0000]
             layer at (0,0) size 295x295
               RenderView at (0,0) size 295x295
@@ -23,9 +23,9 @@ layer at (0,0) size 785x854
                   RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
                     RenderSVGInlineText {#text} at (0,0) size 147x82
                       chunk 1 (middle anchor) text run 1 at (26.78,125.00) startOffset 0 endOffset 3 width 146.44: "SVG"
-          RenderText {#text} at (295,281) size 5x17
+          RenderText {#text} at (295,281) size 5x18
             text run at (295,281) width 5: " "
-          RenderEmbeddedObject {object} at (299,147) size 148x148 [bgcolor=#FF0000]
+          RenderEmbeddedObject {object} at (299,147) size 148x149 [bgcolor=#FF0000]
             layer at (0,0) size 148x148
               RenderView at (0,0) size 148x148
             layer at (0,0) size 148x148
@@ -37,9 +37,9 @@ layer at (0,0) size 785x854
                   RenderSVGText {text} at (27,60) size 146x82 contains 1 chunk(s)
                     RenderSVGInlineText {#text} at (0,0) size 146x82
                       chunk 1 (middle anchor) text run 1 at (27.03,125.00) startOffset 0 endOffset 3 width 145.95: "SVG"
-          RenderText {#text} at (446,281) size 5x17
+          RenderText {#text} at (446,281) size 5x18
             text run at (446,281) width 5: " "
-          RenderEmbeddedObject {object} at (450,221) size 75x74 [bgcolor=#FF0000]
+          RenderEmbeddedObject {object} at (450,221) size 75x75 [bgcolor=#FF0000]
             layer at (0,0) size 74x74
               RenderView at (0,0) size 74x74
             layer at (0,0) size 74x74
@@ -51,9 +51,9 @@ layer at (0,0) size 785x854
                   RenderSVGText {text} at (27,60) size 146x82 contains 1 chunk(s)
                     RenderSVGInlineText {#text} at (0,0) size 146x82
                       chunk 1 (middle anchor) text run 1 at (27.03,125.00) startOffset 0 endOffset 3 width 145.95: "SVG"
-          RenderText {#text} at (524,281) size 5x17
+          RenderText {#text} at (524,281) size 5x18
             text run at (524,281) width 5: " "
-          RenderEmbeddedObject {object} at (528,258) size 38x37 [bgcolor=#FF0000]
+          RenderEmbeddedObject {object} at (528,258) size 38x38 [bgcolor=#FF0000]
             layer at (0,0) size 37x37
               RenderView at (0,0) size 37x37
             layer at (0,0) size 37x37
@@ -66,32 +66,32 @@ layer at (0,0) size 785x854
                     RenderSVGInlineText {#text} at (0,0) size 146x82
                       chunk 1 (middle anchor) text run 1 at (27.03,125.00) startOffset 0 endOffset 3 width 145.95: "SVG"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {p} at (0,366) size 679x69
-          RenderText {#text} at (0,0) size 632x33
+        RenderBlock {p} at (0,365) size 679x69
+          RenderText {#text} at (0,0) size 632x34
             text run at (0,0) width 632: "Above there must be four times the same, square SVG child visible, each referenced by an object element with"
             text run at (0,17) width 357: "different widths (40%, 20%, 10%, 5%) and no height defined."
-          RenderBR {br} at (356,17) size 1x16
-          RenderBR {br} at (0,34) size 0x16
-          RenderText {#text} at (0,51) size 378x16
+          RenderBR {br} at (356,17) size 1x17
+          RenderBR {br} at (0,34) size 0x17
+          RenderText {#text} at (0,51) size 378x17
             text run at (0,51) width 378: "Beyond there is the same, only with PNG images instead of SVG."
         RenderBlock (anonymous) at (0,439) size 738x300
           RenderImage {object} at (0,0) size 296x296 [bgcolor=#FF0000]
-          RenderText {#text} at (295,281) size 5x17
+          RenderText {#text} at (295,281) size 5x18
             text run at (295,281) width 5: " "
-          RenderImage {object} at (299,147) size 148x148 [bgcolor=#FF0000]
-          RenderText {#text} at (446,281) size 5x17
+          RenderImage {object} at (299,147) size 148x149 [bgcolor=#FF0000]
+          RenderText {#text} at (446,281) size 5x18
             text run at (446,281) width 5: " "
-          RenderImage {object} at (450,221) size 75x74 [bgcolor=#FF0000]
-          RenderText {#text} at (524,281) size 5x17
+          RenderImage {object} at (450,221) size 75x75 [bgcolor=#FF0000]
+          RenderText {#text} at (524,281) size 5x18
             text run at (524,281) width 5: " "
-          RenderImage {object} at (528,258) size 38x37 [bgcolor=#FF0000]
+          RenderImage {object} at (528,258) size 38x38 [bgcolor=#FF0000]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {p} at (0,741) size 679x35
-          RenderText {#text} at (0,0) size 663x33
+        RenderBlock {p} at (0,740) size 679x35
+          RenderText {#text} at (0,0) size 663x34
             text run at (0,0) width 663: "This test has succeeded, if both rows look exactly the same (SVGs must be square!) and no red background color is"
             text run at (0,17) width 42: "visible."
-        RenderBlock {p} at (0,781) size 679x35
-          RenderBR {br} at (0,0) size 0x16
-          RenderInline {a} at (0,17) size 29x16 [color=#000066]
-            RenderText {#text} at (0,17) size 29x16
+        RenderBlock {p} at (0,780) size 679x35
+          RenderBR {br} at (0,0) size 0x17
+          RenderInline {a} at (0,17) size 29x17 [color=#000066]
+            RenderText {#text} at (0,17) size 29x17
               text run at (0,17) width 29: "Back"

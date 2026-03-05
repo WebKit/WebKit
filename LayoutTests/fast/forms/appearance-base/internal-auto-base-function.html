@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ CSSInternalAutoBaseParsingEnabled=true HTMLEnhancedSelectEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>-internal-auto-base() basic tests</title>
+</head>
+<body>
+    <style>
+        .color-toggle {
+            color: -internal-auto-base(orange, blue);
+        }
+        /* Test a high-priority property */
+        .display-toggle {
+            display: -internal-auto-base(none, block);
+        }
+        select {
+            all: unset; /* Remove all UA styles */
+            display: inline-block;
+            background-color: -internal-auto-base(red, green);
+            color: white;
+        }
+        ::picker-icon {
+            display: none;
+        }
+    </style>
+    <div class="color-toggle">This text should be orange (default)</div>
+    <div class="color-toggle" style="appearance: base-select">This text should be orange (base-select on non-select)</div>
+    <div class="color-toggle" style="appearance: base">This text should be blue (base)</div>
+
+    <div class="display-toggle">This should be hidden.</div>
+    <div class="display-toggle" style="appearance: base-select">This should be hidden (base-select on non-select).</div>
+    <div class="display-toggle" style="appearance: base">This should be visible (base).</div>
+
+    <select style="appearance: base-select"><option>This select should be green with white text. (base-select)</option></select>
+    <select style="appearance: base"><option>This select should be green with white text. (base)</option></select>
+    <select><option>This select should be red with white text. (default)</option></select>
+</body>
+</html>

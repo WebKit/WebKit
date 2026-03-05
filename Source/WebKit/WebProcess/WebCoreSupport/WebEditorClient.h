@@ -131,6 +131,11 @@ private:
     void uppercaseWord() final;
     void lowercaseWord() final;
     void capitalizeWord() final;
+    bool canApplyCaseTransformations(const String&) final;
+    bool canConvertToTraditionalChinese(const String&) final;
+    bool canConvertToSimplifiedChinese(const String&) final;
+    void convertToTraditionalChinese() final;
+    void convertToSimplifiedChinese() final;
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
@@ -177,6 +182,7 @@ private:
     void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) final;
     void setInputMethodState(WebCore::Element*) final;
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
+    void requestExtendedCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
 
 #if PLATFORM(GTK)
     bool shouldShowUnicodeMenu() final;
@@ -184,6 +190,10 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(MAC)
     void didDispatchInputMethodKeydown(WebCore::KeyboardEvent&) final;
+#endif
+
+#if PLATFORM(COCOA)
+    bool shouldAllowSingleClickToChangeSelection(WebCore::Node&, const WebCore::VisibleSelection&, WebCore::MouseEventInputSource) const final;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -194,7 +204,6 @@ private:
     RefPtr<WebCore::DocumentFragment> documentFragmentFromDelegate(int index) final;
     bool performsTwoStepPaste(WebCore::DocumentFragment*) final;
     void updateStringForFind(const String&) final;
-    bool shouldAllowSingleClickToChangeSelection(WebCore::Node&, const WebCore::VisibleSelection&) const final;
     bool shouldRevealCurrentSelectionAfterInsertion() const final;
     bool shouldSuppressPasswordEcho() const final;
     bool shouldRemoveDictationAlternativesAfterEditing() const final;

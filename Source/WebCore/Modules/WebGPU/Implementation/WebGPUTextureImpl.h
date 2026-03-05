@@ -44,7 +44,7 @@ class TextureImpl final : public Texture {
 public:
     static Ref<TextureImpl> create(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new TextureImpl(WTFMove(texture), format, dimension, convertToBackingContext));
+        return adoptRef(*new TextureImpl(WTF::move(texture), format, dimension, convertToBackingContext));
     }
 
     virtual ~TextureImpl();
@@ -60,6 +60,7 @@ private:
     TextureImpl& operator=(TextureImpl&&) = delete;
 
     WGPUTexture backing() const { return m_backing.get(); }
+    bool isTextureImpl() const final { return true; }
 
     RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) final;
 
@@ -76,5 +77,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::TextureImpl)
+    static bool isType(const WebCore::WebGPU::Texture& texture) { return texture.isTextureImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

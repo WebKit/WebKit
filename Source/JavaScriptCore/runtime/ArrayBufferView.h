@@ -72,16 +72,16 @@ public:
         return m_buffer->isShared();
     }
 
-    void* baseAddress() const
+    void* baseAddress() const LIFETIME_BOUND
     {
         if (isDetached())
             return nullptr;
         return m_baseAddress.getMayBeNull();
     }
 
-    void* data() const { return baseAddress(); }
-    std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(data()), byteLength() }; }
-    std::span<uint8_t> mutableSpan() const { return { static_cast<uint8_t*>(data()), byteLength() }; }
+    void* data() const LIFETIME_BOUND { return baseAddress(); }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return { static_cast<const uint8_t*>(data()), byteLength() }; }
+    std::span<uint8_t> mutableSpan() const LIFETIME_BOUND { return { static_cast<uint8_t*>(data()), byteLength() }; }
     Vector<uint8_t> toVector() const { return span(); }
 
     size_t byteOffsetRaw() const { return m_byteOffset; }

@@ -148,7 +148,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
     Vector<CGFloat, 4 * reservedStops> colorComponents;
     colorComponents.reserveInitialCapacity(numberOfStops * 4);
 
-    auto cgColorSpace = [&] {
+    RetainPtr cgColorSpace = [&] {
         // FIXME: Now that we only ever use CGGradientCreateWithColorComponents, we should investigate
         // if there is any real benefit to using sRGB when all the stops are bounded vs just using
         // extended sRGB for all gradients.
@@ -204,7 +204,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
 
     apply139572277Workaround();
 
-    return Gradient { adoptCF(CGGradientCreateWithColorComponentsAndOptions(cgColorSpace, colorComponents.span().data(), locations.span().data(), numberOfStops, gradientOptionsDictionary(colorInterpolationMethod))), destinationColorSpace };
+    return Gradient { adoptCF(CGGradientCreateWithColorComponentsAndOptions(cgColorSpace.get(), colorComponents.span().data(), locations.span().data(), numberOfStops, gradientOptionsDictionary(colorInterpolationMethod))), destinationColorSpace };
 }
 
 // MARK: - Shading strategy.
@@ -314,7 +314,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
         if (!hasZero)
             convertedStops[0].colorComponents = convertedStops[1].colorComponents;
 
-        return Shading::Data::create(colorInterpolationMethod, WTFMove(convertedStops), !hasZero, !hasOne);
+        return Shading::Data::create(colorInterpolationMethod, WTF::move(convertedStops), !hasZero, !hasOne);
     };
 
     auto makeFunction = [&] (auto colorInterpolationMethod, auto& data) {
@@ -359,7 +359,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
     // FIXME: Investigate using bounded sRGB when the input stops are all bounded sRGB.
     auto colorSpace = cachedCGColorSpaceSingleton<ColorSpaceFor<OutputSpaceColorType>>();
 
-    return Shading { WTFMove(data), WTFMove(function), colorSpace };
+    return Shading { WTF::move(data), WTF::move(function), colorSpace };
 }
 
 // MARK: - Drawing functions.

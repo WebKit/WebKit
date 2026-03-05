@@ -19,7 +19,7 @@ info: |
 
   ...
   7. Return obj
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -29,4 +29,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(typedArray.length, 0);
   assert.sameValue(typedArray.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(typedArray), TA.prototype);
-});
+}, null, ["passthrough"]);

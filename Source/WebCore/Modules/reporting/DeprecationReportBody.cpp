@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DeprecationReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecationReportBody);
 
 DeprecationReportBody::DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
-    : m_id(WTFMove(id))
+    : m_id(WTF::move(id))
     , m_anticipatedRemoval(anticipatedRemoval)
-    , m_message(WTFMove(message))
-    , m_sourceFile(WTFMove(sourceFile))
+    , m_message(WTF::move(message))
+    , m_sourceFile(WTF::move(sourceFile))
     , m_lineNumber(lineNumber)
     , m_columnNumber(columnNumber)
 {
@@ -48,7 +48,7 @@ DeprecationReportBody::DeprecationReportBody(String&& id, WallTime anticipatedRe
 
 Ref<DeprecationReportBody> DeprecationReportBody::create(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
 {
-    return adoptRef(*new DeprecationReportBody(WTFMove(id), anticipatedRemoval, WTFMove(message), WTFMove(sourceFile), lineNumber, columnNumber));
+    return adoptRef(*new DeprecationReportBody(WTF::move(id), anticipatedRemoval, WTF::move(message), WTF::move(sourceFile), lineNumber, columnNumber));
 }
 
 const String& DeprecationReportBody::type() const
@@ -74,7 +74,7 @@ Ref<FormData> DeprecationReportBody::createReportFormDataForViolation() const
     auto reportObject = JSON::Object::create();
     reportObject->setString("type"_s, type());
     reportObject->setString("url"_s, ""_s);
-    reportObject->setObject("body"_s, WTFMove(reportBody));
+    reportObject->setObject("body"_s, WTF::move(reportBody));
 
     return FormData::create(reportObject->toJSONString().utf8());
 }

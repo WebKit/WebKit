@@ -31,4 +31,4 @@ testWithTypedArrayConstructors(function(TA) {
   }, '`sample.slice()` throws TypeError');
 
   assert.sameValue(counter, 2, 'The value of `counter` is 2');
-});
+}, null, ["passthrough"]);

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="test()">
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"></canvas>
+<script>
+"use strict";
+description("Test that modifying READ_FRAMEBUFFER does not affect DRAW_FRAMEBUFFER state.");
+
+var wtu = WebGLTestUtils;
+var gl;
+
+function test()
+{
+    var canvas = document.getElementById("canvas");
+    gl = wtu.create3DContext(canvas, undefined, 2);
+
+    if (!gl) {
+        testFailed("WebGL2 context does not exist");
+        finishTest();
+        return;
+    }
+
+    var vertexShaderSource = `#version 300 es
+        layout(location=0) in highp vec4 a_position;
+        void main() { gl_Position = a_position; }`;
+
+    var fragmentShaderSource = `#version 300 es
+        precision highp float;
+        out ivec4 outColor0;
+        void main() { outColor0.a = 1; }`;
+
+    var program = wtu.setupProgram(gl, [vertexShaderSource, fragmentShaderSource]);
+    if (!program) {
+        testFailed("Failed to create program");
+        finishTest();
+        return;
+    }
+
+    // Verify initial state
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.BACK");
+
+    // Create framebuffer and set its draw buffers to COLOR_ATTACHMENT0
+    var framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, framebuffer);
+    gl.drawBuffers([gl.COLOR_ATTACHMENT0]); // Set explicit draw buffer state
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+
+    // Set default framebuffer draw buffer to NONE
+    gl.drawBuffers([gl.NONE]);
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.NONE");
+
+    // Bind framebuffer to READ_FRAMEBUFFER only
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
+    shouldBe("gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING)", "null");
+
+    // Attach texture to READ_FRAMEBUFFER (should NOT corrupt DRAW_FRAMEBUFFER state)
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "framebufferTexture2D should succeed");
+
+    // Verify draw buffer state was not corrupted
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.NONE");
+
+    // Draw should succeed
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawArrays should succeed");
+
+    // Verify draw buffer state is still preserved
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.NONE");
+
+    finishTest();
+}
+</script>
+</body>
+</html>

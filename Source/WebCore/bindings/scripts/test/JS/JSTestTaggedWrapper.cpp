@@ -119,7 +119,7 @@ void JSTestTaggedWrapperPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestTaggedWrapper::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapper) };
 
 JSTestTaggedWrapper::JSTestTaggedWrapper(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTaggedWrapper>&& impl)
-    : JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -189,7 +189,7 @@ void JSTestTaggedWrapperOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestTaggedWrapper = static_cast<JSTestTaggedWrapper*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestTaggedWrapper->protectedWrapped().ptr(), jsTestTaggedWrapper);
+    uncacheWrapper(world, protect(jsTestTaggedWrapper->wrapped()).ptr(), jsTestTaggedWrapper);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -227,7 +227,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestTaggedWrapper>(impl.ptr());
 #endif
-    return createWrapper<TestTaggedWrapper>(globalObject, WTFMove(impl));
+    return createWrapper<TestTaggedWrapper>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestTaggedWrapper& impl)

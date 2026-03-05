@@ -65,7 +65,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
     Locker locker { m_lock };
 
     ASSERT(isMainThread());
-    m_completionCallback = WTFMove(functionCallback);
+    m_completionCallback = WTF::move(functionCallback);
 #if ENABLE(KINETIC_SCROLLING)
     m_expectWheelEndOrCancel = expectWheelEndOrCancel;
     m_expectMomentumEnd = expectMomentumEnd;
@@ -74,7 +74,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
     UNUSED_PARAM(expectMomentumEnd);
 #endif
 
-    m_page.scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
+    m_page->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
 
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::setTestCallbackAndStartMonitoring - expect end/cancel " << expectWheelEndOrCancel << ", expect momentum end " << expectMomentumEnd);
 }
@@ -135,7 +135,7 @@ void WheelEventTestMonitor::scheduleCallbackCheck()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->m_page.scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
+        protectedThis->m_page->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
     });
 }
 
@@ -166,7 +166,7 @@ void WheelEventTestMonitor::checkShouldFireCallbacks()
         }
     }
 
-    if (auto functionCallback = WTFMove(m_completionCallback)) {
+    if (auto functionCallback = WTF::move(m_completionCallback)) {
         LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::checkShouldFireCallbacks: scrolling is idle, FIRING TEST");
         functionCallback();
     } else

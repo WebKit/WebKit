@@ -80,14 +80,9 @@ CALayer *VideoFullscreenCaptions::captionsLayer()
     return m_captionsLayer.get();
 }
 
-RetainPtr<CALayer> VideoFullscreenCaptions::protectedCaptionsLayer()
-{
-    return captionsLayer();
-}
-
 void VideoFullscreenCaptions::setCaptionsFrame(const CGRect& frame)
 {
-    [protectedCaptionsLayer() setFrame:frame];
+    [protect(captionsLayer()) setFrame:frame];
 }
 
 void VideoFullscreenCaptions::setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize& initialSize)

@@ -291,8 +291,8 @@ private:
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
 
-    static inline bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&);
-    bool addDerivedHash(Hasher&) const;
+    static inline bool NODELETE customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&);
+    bool NODELETE addDerivedHash(Hasher&) const;
 
     mutable unsigned m_refCount { refCountIncrement };
 

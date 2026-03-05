@@ -19,12 +19,8 @@ list(APPEND WebKitGLibAPITests_INCLUDE_DIRECTORIES
     ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension
 )
 
-list(APPEND WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATSPI_INCLUDE_DIRS}
-)
-
 list(APPEND WebKitGLibAPITest_LIBRARIES
-    ${ATSPI_LIBRARIES}
+    ATSPI::ATSPI
     GTK::GTK
 )
 

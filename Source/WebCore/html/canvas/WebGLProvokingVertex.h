@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLProvokingVertex final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLProvokingVertex);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLProvokingVertex);
     WTF_MAKE_NONCOPYABLE(WebGLProvokingVertex);
 public:
     explicit WebGLProvokingVertex(WebGLRenderingContextBase&);
@@ -45,3 +45,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLProvokingVertex)

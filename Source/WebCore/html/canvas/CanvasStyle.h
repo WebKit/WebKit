@@ -75,17 +75,17 @@ Color parseColor(const String& colorString, CanvasBase&);
 Color parseColor(const String& colorString, ScriptExecutionContext&);
 
 inline CanvasStyle::CanvasStyle(Color color)
-    : m_style(WTFMove(color))
+    : m_style(WTF::move(color))
 {
 }
 
 inline CanvasStyle::CanvasStyle(Ref<CanvasGradient>&& gradient)
-    : m_style(WTFMove(gradient))
+    : m_style(WTF::move(gradient))
 {
 }
 
 inline CanvasStyle::CanvasStyle(Ref<CanvasPattern>&& pattern)
-    : m_style(WTFMove(pattern))
+    : m_style(WTF::move(pattern))
 {
 }
 

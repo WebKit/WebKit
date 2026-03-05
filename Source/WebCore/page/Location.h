@@ -41,7 +41,7 @@ class LocalDOMWindow;
 template<typename> class ExceptionOr;
 
 class Location final : public ScriptWrappable, public RefCounted<Location> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Location);
+    WTF_MAKE_TZONE_ALLOCATED(Location);
 public:
     static Ref<Location> create(DOMWindow& window) { return adoptRef(*new Location(window)); }
 
@@ -75,16 +75,15 @@ public:
     Ref<DOMStringList> ancestorOrigins() const;
 
     DOMWindow* window() { return m_window.get(); }
-    RefPtr<DOMWindow> protectedWindow();
 
-    const URL& url() const;
+    const URL& url() const LIFETIME_BOUND;
 
 private:
     explicit Location(DOMWindow&);
 
     ExceptionOr<void> setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
 
-    Frame* frame();
+    Frame* NODELETE frame();
     const Frame* frame() const;
 
     WeakPtr<DOMWindow, WeakPtrImplWithEventTargetData> m_window;

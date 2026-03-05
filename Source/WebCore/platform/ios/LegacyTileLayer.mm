@@ -93,7 +93,7 @@ using WebCore::LegacyTileCache;
         WebThreadLock();
     // This may trigger WebKit layout and generate more repaint rects.
     if (_tileGrid)
-        _tileGrid->protectedTileCache()->prepareToDraw();
+        protect(_tileGrid->tileCache())->prepareToDraw();
 }
 
 - (void)renderInContext:(CGContextRef)context
@@ -114,7 +114,7 @@ using WebCore::LegacyTileCache;
         WebThreadLock();
 
     if (_tileGrid)
-        _tileGrid->protectedTileCache()->drawLayer(self, context, self.isRenderingInContext ? LegacyTileCache::DrawingFlags::Snapshotting : LegacyTileCache::DrawingFlags::None);
+        protect(_tileGrid->tileCache())->drawLayer(self, context, self.isRenderingInContext ? LegacyTileCache::DrawingFlags::Snapshotting : LegacyTileCache::DrawingFlags::None);
 }
 
 - (id<CAAction>)actionForKey:(NSString *)key

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/ForbidHeapAllocation.h>
@@ -92,6 +93,17 @@ public:
             return m_ownerThread;
         return std::nullopt;
     }
+
+    // Returns the owner thread's UID without creating temporary RefPtr objects.
+    // This avoids ref counting operations that can cause lock contention
+    // with thread suspension. Returns std::nullopt if there is no owner thread.
+    std::optional<uint64_t> ownerThreadUID() const
+    {
+        if (!m_hasOwnerThread)
+            return std::nullopt;
+        return m_ownerThread->uid();
+    }
+
     bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread.get() == &Thread::currentSingleton(); }
 
     void willDestroyVM(VM*);
@@ -129,6 +141,11 @@ private:
 
     unsigned dropAllLocks(DropAllLocks*);
     void grabAllLocks(DropAllLocks*, unsigned lockCount);
+
+#if PLATFORM(COCOA) && CPU(ADDRESS64) && CPU(ARM64)
+    // FIXME: rdar://168614004
+    NO_RETURN_DUE_TO_CRASH NEVER_INLINE void dumpInfoAndCrashForLockNotOwned();
+#endif
 
     Lock m_lock;
     bool m_isWebThreadAware { false };

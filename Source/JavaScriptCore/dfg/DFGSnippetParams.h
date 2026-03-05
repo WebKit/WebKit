@@ -37,7 +37,7 @@ class SpeculativeJIT;
 class SnippetParams final : public JSC::SnippetParams {
 public:
     SnippetParams(SpeculativeJIT* jit, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : JSC::SnippetParams(jit->vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+        : JSC::SnippetParams(jit->vm(), WTF::move(regs), WTF::move(gpScratch), WTF::move(fpScratch))
         , m_jit(jit)
     {
     }

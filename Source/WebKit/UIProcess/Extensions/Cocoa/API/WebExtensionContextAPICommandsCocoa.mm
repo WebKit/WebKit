@@ -43,7 +43,7 @@ namespace WebKit {
 
 bool WebExtensionContext::isCommandsMessageAllowed(IPC::Decoder& message)
 {
-    return isLoadedAndPrivilegedMessage(message) && protectedExtension()->hasCommands();
+    return isLoadedAndPrivilegedMessage(message) && protect(extension())->hasCommands();
 }
 
 void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&& completionHandler)
@@ -52,7 +52,7 @@ void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtens
         return command->parameters();
     });
 
-    completionHandler(WTFMove(results));
+    completionHandler(WTF::move(results));
 }
 
 void WebExtensionContext::fireCommandEventIfNeeded(const WebExtensionCommand& command, WebExtensionTab* tab)

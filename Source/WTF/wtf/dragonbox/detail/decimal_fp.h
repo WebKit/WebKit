@@ -33,6 +33,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace WTF {
 
 namespace dragonbox {

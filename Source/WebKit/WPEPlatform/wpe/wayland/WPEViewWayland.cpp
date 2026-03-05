@@ -27,7 +27,7 @@
 #include "WPEViewWayland.h"
 
 #include "GRefPtrWPE.h"
-#include "WPEBufferDMABufFormats.h"
+#include "WPEBufferFormats.h"
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEToplevelWaylandPrivate.h"
 #include "WPEWaylandSHMPool.h"
@@ -230,7 +230,7 @@ class SharedMemoryBuffer final : public WaylandBuffer {
 public:
     SharedMemoryBuffer(WPEView* view, std::unique_ptr<WPE::WaylandSHMPool>&& pool, uint32_t offset, uint32_t width, uint32_t height, uint32_t stride)
         : WaylandBuffer(view, pool->createBuffer(offset, width, height, stride))
-        , m_wlPool(WTFMove(pool))
+        , m_wlPool(WTF::move(pool))
     {
     }
 
@@ -340,7 +340,7 @@ static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEView* view, GBytes* bytes
         return nullptr;
 
     wlPool->write(WTF::span(bytes), offset);
-    return new SharedMemoryBuffer(view, WTFMove(wlPool), offset, width, height, stride);
+    return new SharedMemoryBuffer(view, WTF::move(wlPool), offset, width, height, stride);
 }
 
 static struct wl_buffer* createWaylandBufferSHM(WPEView* view, WPEBuffer* buffer, GError** error)

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class OESTextureFloatLinear final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OESTextureFloatLinear);
+    WTF_MAKE_TZONE_ALLOCATED(OESTextureFloatLinear);
 public:
     explicit OESTextureFloatLinear(WebGLRenderingContextBase&);
     ~OESTextureFloatLinear();
@@ -42,3 +42,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(OESTextureFloatLinear)

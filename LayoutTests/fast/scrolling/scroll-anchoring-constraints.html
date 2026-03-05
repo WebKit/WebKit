@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        
+        .above-top {
+            margin-top: -2000px;
+            height: 2500px;
+            border: 1px solid black;
+        }
+        
+        #changer {
+            height: 1800px;
+            width: 100%;
+            background-color: orange;
+        }
+        
+        .anchor {
+            width: 100%;
+            height: 300px;
+            background-color: cyan;
+        }
+        
+        body.changed #changer {
+            height: 100px;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        window.addEventListener('load', async () => {
+            await UIHelper.delayFor(0);
+            // Need to scroll to trigger anchoring.
+            window.scrollTo(0, 10);
+
+            await UIHelper.renderingUpdate();
+            document.body.classList.add('changed');
+            
+            shouldBe('window.scrollY', '0');
+
+            window.scrollTo(0, 0);
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="above-top">
+        <div id="changer"></div>
+        <div class="anchor"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

@@ -25,10 +25,11 @@
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpuimagecopytexturetagged
 
+// FIXME: This has been rename to `GPUCopyExternalImageDestInfo`
+// https://gpuweb.github.io/gpuweb/#gpucopyexternalimagedestinfo
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUImageCopyTextureTagged : GPUImageCopyTexture {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUImageCopyTextureTagged : GPUImageCopyTexture {
     GPUPredefinedColorSpace colorSpace = "srgb";
     boolean premultipliedAlpha = false;
 };

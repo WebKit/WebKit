@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class WaveShaperNode final : public AudioBasicProcessorNode {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WaveShaperNode);
+    WTF_MAKE_TZONE_ALLOCATED(WaveShaperNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WaveShaperNode);
 public:
     static ExceptionOr<Ref<WaveShaperNode>> create(BaseAudioContext&, const WaveShaperOptions& = { });
@@ -45,7 +45,7 @@ public:
     RefPtr<Float32Array> curveForBindings();
 
     void setOversampleForBindings(OverSampleType);
-    OverSampleType oversampleForBindings() const;
+    OverSampleType NODELETE oversampleForBindings() const;
 
     double latency() const { return latencyTime(); }
 

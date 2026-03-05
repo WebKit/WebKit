@@ -25,6 +25,12 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <CoreVideo/CoreVideo.h>
@@ -317,6 +323,8 @@ bool CARenderServerSnapshot(mach_port_t, NSDictionary *);
 
 WTF_EXTERN_C_END
 
+#endif // !__has_feature(modules)
+
 extern NSString * const kCAFilterColorInvert;
 extern NSString * const kCAFilterColorMatrix;
 extern NSString * const kCAFilterColorMonochrome;
@@ -357,6 +365,8 @@ extern NSString * const kCAContextSecure;
 extern NSString * const kCAContentsFormatRGBA10XR;
 #endif
 
+extern NSString * const kCAContentsFormatRGBA16Float;
+
 #if HAVE(CORE_ANIMATION_RENDER_SERVER)
 extern NSString * const kCASnapshotMode;
 extern NSString * const kCASnapshotModeLayer;
@@ -371,9 +381,9 @@ extern NSString * const kCASnapshotTransform;
 extern NSString * const kCASnapshotTimeOffset;
 #endif
 
-#if PLATFORM(VISION)
+#if PLATFORM(VISION) && !__has_feature(modules)
 // FIXME:rdar://160881286 - clean-up once in SDK.
 @interface CARemoteExternalEffect (Radar_160881286)
 + (instancetype)rcp_requiresTwoHandedInteractionProcessorEffect;
 @end
-#endif
+#endif // PLATFORM(VISION) && !__has_feature(modules)

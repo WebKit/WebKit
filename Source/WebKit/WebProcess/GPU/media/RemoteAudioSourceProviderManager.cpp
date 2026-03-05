@@ -73,11 +73,11 @@ void RemoteAudioSourceProviderManager::addProvider(Ref<RemoteAudioSourceProvider
     ASSERT(WTF::isMainRunLoop());
     setConnection(WebProcess::singleton().ensureGPUProcessConnection().connection());
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, provider = WTFMove(provider)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, provider = WTF::move(provider)]() mutable {
         auto identifier = provider->identifier();
 
         ASSERT(!m_providers.contains(identifier));
-        m_providers.add(identifier, makeUnique<RemoteAudio>(WTFMove(provider)));
+        m_providers.add(identifier, makeUnique<RemoteAudio>(WTF::move(provider)));
     });
 }
 
@@ -100,7 +100,7 @@ void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier
         RELEASE_LOG_ERROR(Media, "Unable to find provider %llu for storageChanged", identifier.toUInt64());
         return;
     }
-    iterator->value->setStorage(WTFMove(handle), description);
+    iterator->value->setStorage(WTF::move(handle), description);
 }
 
 void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifier identifier, uint64_t startFrame, uint64_t numberOfFrames, bool needsFlush)
@@ -118,7 +118,7 @@ void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifi
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSourceProviderManager::RemoteAudio);
 
 RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio(Ref<RemoteAudioSourceProvider>&& provider)
-    : m_provider(WTFMove(provider))
+    : m_provider(WTF::move(provider))
 {
 }
 
@@ -126,7 +126,7 @@ void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(ConsumerSharedCAR
 {
     m_buffer = nullptr;
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTF::move(handle));
     if (!m_ringBuffer)
         return;
     m_description = description;

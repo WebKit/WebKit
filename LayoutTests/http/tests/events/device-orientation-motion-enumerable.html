@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Test that ondevicemotion and ondeviceorientation are enumerable.");
+
+shouldBeTrue("Object.getOwnPropertyNames(window).includes('ondeviceorientation')");
+shouldBeTrue("Object.getOwnPropertyNames(window).includes('ondevicemotion')");
+</script>

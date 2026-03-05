@@ -40,6 +40,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebInspectorUIMessages.h"
 #include "WebInspectorUIProxyClient.h"
+#include "WebInspectorUIProxyGLib.h"
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -68,7 +69,7 @@ static void inspectorViewDestroyed(GtkWidget*, gpointer userData)
 
 void WebInspectorUIProxy::setClient(std::unique_ptr<WebInspectorUIProxyClient>&& client)
 {
-    m_client = WTFMove(client);
+    m_client = WTF::move(client);
 }
 
 void WebInspectorUIProxy::updateInspectorWindowTitle() const
@@ -139,7 +140,7 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
     toImpl(listenerRef)->ignore();
 
     // And instead load it in the inspected page.
-    inspector->protectedInspectedPage()->loadRequest(WTFMove(request));
+    protect(inspector->inspectedPage())->loadRequest(WTF::move(request));
 }
 
 static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef proposedMenuRef, WKArrayRef* newMenuRef, WKHitTestResultRef, WKTypeRef, const void*)
@@ -173,7 +174,7 @@ static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
     String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
 
     auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(baseCacheDirectory, baseDataDirectory);
-    return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
+    return WebsiteDataStore::create(WTF::move(configuration), PAL::SessionID::generatePersistentSessionID());
 }
 
 RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
@@ -191,11 +192,11 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     });
     if (m_underTest)
         preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
-    Ref inspectedPagePreferences = protectedInspectedPage()->preferences();
+    Ref inspectedPagePreferences = protect(inspectedPage())->preferences();
     preferences->setAcceleratedCompositingEnabled(inspectedPagePreferences->acceleratedCompositingEnabled());
     preferences->setForceCompositingMode(inspectedPagePreferences->forceCompositingMode());
     preferences->setThreadedScrollingEnabled(inspectedPagePreferences->threadedScrollingEnabled());
-    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protectedInspectedPage().get()));
+    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protect(inspectedPage()).get()));
     auto websiteDataStore = inspectorWebsiteDataStore();
     auto& processPool = WebKit::defaultInspectorProcessPool(inspectionLevel());
 
@@ -456,11 +457,11 @@ void WebInspectorUIProxy::platformAttach()
     }
 
     if (m_attachmentSide == AttachmentSide::Bottom) {
-        unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(protectedInspectedPage()->viewWidget());
+        unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(protect(inspectedPage())->viewWidget());
         unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
         platformSetAttachedWindowHeight(std::max(s_minimumAttachedHeight, std::min(s_defaultAttachedSize, maximumAttachedHeight)));
     } else {
-        unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(protectedInspectedPage()->viewWidget());
+        unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(protect(inspectedPage())->viewWidget());
         unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
         platformSetAttachedWindowWidth(std::max(s_minimumAttachedWidth, std::min(s_defaultAttachedSize, maximumAttachedWidth)));
     }
@@ -468,13 +469,13 @@ void WebInspectorUIProxy::platformAttach()
     if (m_client && m_client->attach(*this))
         return;
 
-    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(protectedInspectedPage()->viewWidget()), m_inspectorView.get(), m_attachmentSide);
+    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(protect(inspectedPage())->viewWidget()), m_inspectorView.get(), m_attachmentSide);
     gtk_widget_show(m_inspectorView.get());
 }
 
 void WebInspectorUIProxy::platformDetach()
 {
-    if (!protectedInspectedPage()->hasRunningProcess())
+    if (!protect(inspectedPage())->hasRunningProcess())
         return;
 
     GRefPtr<GtkWidget> inspectorView = m_inspectorView.get();
@@ -506,7 +507,7 @@ void WebInspectorUIProxy::platformSetAttachedWindowHeight(unsigned height)
 
     if (m_client)
         m_client->didChangeAttachedHeight(*this, height);
-    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protectedInspectedPage()->viewWidget()), height);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protect(inspectedPage())->viewWidget()), height);
 }
 
 void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned width)
@@ -516,7 +517,7 @@ void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned width)
 
     if (m_client)
         m_client->didChangeAttachedWidth(*this, width);
-    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protectedInspectedPage()->viewWidget()), width);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protect(inspectedPage())->viewWidget()), width);
 }
 
 void WebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&)
@@ -527,12 +528,6 @@ void WebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&)
 void WebInspectorUIProxy::platformStartWindowDrag()
 {
     notImplemented();
-}
-
-static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
-{
-    GFile* file = G_FILE(sourceObject);
-    g_file_replace_contents_finish(file, result, nullptr, nullptr);
 }
 
 void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -562,23 +557,8 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
         return;
 
-    Vector<uint8_t> dataVector;
-    CString dataString;
-    if (saveDatas[0].base64Encoded) {
-        auto decodedData = base64Decode(saveDatas[0].content, { Base64DecodeOption::ValidatePadding });
-        if (!decodedData)
-            return;
-        decodedData->shrinkToFit();
-        dataVector = WTFMove(*decodedData);
-    } else
-        dataString = saveDatas[0].content.utf8();
-
-    const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<const char*>(dataVector.span().data());
-    size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
-    GUniquePtr<char> path(g_file_get_path(file.get()));
-    g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
-        G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, protectedInspectorPage().get());
+    platformSaveDataToFile(WTF::move(file), saveDatas[0].content, saveDatas[0].base64Encoded);
 }
 
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

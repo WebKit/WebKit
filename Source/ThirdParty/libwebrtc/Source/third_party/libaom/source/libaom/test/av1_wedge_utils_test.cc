@@ -156,9 +156,9 @@ TEST_F(WedgeUtilsSSEFuncTest, ResidualBlendingMethod) {
 // av1_wedge_sse_from_residuals - optimizations
 //////////////////////////////////////////////////////////////////////////////
 
-typedef uint64_t (*FSSE)(const int16_t *r1, const int16_t *d, const uint8_t *m,
-                         int N);
-typedef libaom_test::FuncParam<FSSE> TestFuncsFSSE;
+using FSSE = uint64_t (*)(const int16_t *r1, const int16_t *d, const uint8_t *m,
+                          int N);
+using TestFuncsFSSE = libaom_test::FuncParam<FSSE>;
 
 class WedgeUtilsSSEOptTest : public FunctionEquivalenceTest<FSSE> {
  protected:
@@ -222,9 +222,9 @@ TEST_P(WedgeUtilsSSEOptTest, ExtremeValues) {
 // av1_wedge_sign_from_residuals
 //////////////////////////////////////////////////////////////////////////////
 
-typedef int8_t (*FSign)(const int16_t *ds, const uint8_t *m, int N,
-                        int64_t limit);
-typedef libaom_test::FuncParam<FSign> TestFuncsFSign;
+using FSign = int8_t (*)(const int16_t *ds, const uint8_t *m, int N,
+                         int64_t limit);
+using TestFuncsFSign = libaom_test::FuncParam<FSign>;
 
 class WedgeUtilsSignOptTest : public FunctionEquivalenceTest<FSign> {
  protected:
@@ -324,8 +324,8 @@ TEST_P(WedgeUtilsSignOptTest, ExtremeValues) {
 // av1_wedge_compute_delta_squares
 //////////////////////////////////////////////////////////////////////////////
 
-typedef void (*FDS)(int16_t *d, const int16_t *a, const int16_t *b, int N);
-typedef libaom_test::FuncParam<FDS> TestFuncsFDS;
+using FDS = void (*)(int16_t *d, const int16_t *a, const int16_t *b, int N);
+using TestFuncsFDS = libaom_test::FuncParam<FDS>;
 
 class WedgeUtilsDeltaSquaresOptTest : public FunctionEquivalenceTest<FDS> {
  protected:

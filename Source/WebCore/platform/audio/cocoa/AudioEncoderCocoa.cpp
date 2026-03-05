@@ -40,6 +40,7 @@
 
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
@@ -72,7 +73,7 @@ public:
 
     static Ref<InternalAudioEncoderCocoa> create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
     {
-        return adoptRef(*new InternalAudioEncoderCocoa(config, WTFMove(internalConfig), WTFMove(descriptionCallback), WTFMove(outputCallback)));
+        return adoptRef(*new InternalAudioEncoderCocoa(config, WTF::move(internalConfig), WTF::move(descriptionCallback), WTF::move(outputCallback)));
     }
     ~InternalAudioEncoderCocoa() = default;
 
@@ -157,13 +158,13 @@ Ref<AudioEncoder::CreatePromise> AudioEncoderCocoa::create(const String& codecNa
     auto result = InternalAudioEncoderCocoa::checkConfiguration(codecName, config);
     if (!result)
         return CreatePromise::createAndReject(makeString("AudioEncoder initialization failed with error: "_s, result.error()));
-    Ref internalEncoder = InternalAudioEncoderCocoa::create(config, WTFMove(*result), WTFMove(descriptionCallback), WTFMove(outputCallback));
-    Ref encoder = adoptRef(*new AudioEncoderCocoa(WTFMove(internalEncoder)));
-    return CreatePromise::createAndResolve(WTFMove(encoder));
+    Ref internalEncoder = InternalAudioEncoderCocoa::create(config, WTF::move(*result), WTF::move(descriptionCallback), WTF::move(outputCallback));
+    Ref encoder = adoptRef(*new AudioEncoderCocoa(WTF::move(internalEncoder)));
+    return CreatePromise::createAndResolve(WTF::move(encoder));
 }
 
 AudioEncoderCocoa::AudioEncoderCocoa(Ref<InternalAudioEncoderCocoa>&& internalEncoder)
-    : m_internalEncoder(WTFMove(internalEncoder))
+    : m_internalEncoder(WTF::move(internalEncoder))
 {
 }
 
@@ -177,8 +178,8 @@ AudioEncoderCocoa::~AudioEncoderCocoa()
 
 Ref<AudioEncoder::EncodePromise> AudioEncoderCocoa::encode(RawFrame&& frame)
 {
-    return invokeAsync(InternalAudioEncoderCocoa::queueSingleton(), [frame = WTFMove(frame), encoder = m_internalEncoder]() mutable {
-        return encoder->encode(WTFMove(frame));
+    return invokeAsync(InternalAudioEncoderCocoa::queueSingleton(), [frame = WTF::move(frame), encoder = m_internalEncoder]() mutable {
+        return encoder->encode(WTF::move(frame));
     });
 }
 
@@ -204,10 +205,10 @@ void AudioEncoderCocoa::close()
 }
 
 InternalAudioEncoderCocoa::InternalAudioEncoderCocoa(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
-    : m_descriptionCallback(WTFMove(descriptionCallback))
-    , m_outputCallback(WTFMove(outputCallback))
+    : m_descriptionCallback(WTF::move(descriptionCallback))
+    , m_outputCallback(WTF::move(outputCallback))
     , m_config(config)
-    , m_internalConfig(WTFMove(internalConfig))
+    , m_internalConfig(WTF::move(internalConfig))
 {
 }
 
@@ -268,22 +269,21 @@ void InternalAudioEncoderCocoa::processEncodedOutputs()
 
     while (RetainPtr cmSample = converter()->takeOutputSampleBuffer()) {
         Ref sample = MediaSampleAVFObjC::create(cmSample.get(), 0);
-        CMBlockBufferRef rawBuffer = PAL::CMSampleBufferGetDataBuffer(cmSample.get());
+        RetainPtr rawBuffer = PAL::CMSampleBufferGetDataBuffer(cmSample.get());
         ASSERT(rawBuffer);
-        RetainPtr buffer = rawBuffer;
         // Make sure block buffer is contiguous.
-        if (!PAL::CMBlockBufferIsRangeContiguous(rawBuffer, 0, 0)) {
+        if (!PAL::CMBlockBufferIsRangeContiguous(rawBuffer.get(), 0, 0)) {
             CMBlockBufferRef contiguousBuffer;
-            if (auto error = PAL::CMBlockBufferCreateContiguous(nullptr, rawBuffer, nullptr, nullptr, 0, 0, 0, &contiguousBuffer)) {
+            if (auto error = PAL::CMBlockBufferCreateContiguous(nullptr, rawBuffer.get(), nullptr, nullptr, 0, 0, 0, &contiguousBuffer)) {
                 RELEASE_LOG_ERROR(MediaStream, "Couldn't create buffer with error %d", error);
                 m_lastError = error;
                 continue;
             }
-            buffer = adoptCF(contiguousBuffer);
+            rawBuffer = adoptCF(contiguousBuffer);
         }
-        auto size = PAL::CMBlockBufferGetDataLength(buffer.get());
+        auto size = PAL::CMBlockBufferGetDataLength(rawBuffer.get());
         char* data = nullptr;
-        if (auto error = PAL::CMBlockBufferGetDataPointer(buffer.get(), 0, nullptr, nullptr, &data)) {
+        if (auto error = PAL::CMBlockBufferGetDataPointer(rawBuffer.get(), 0, nullptr, nullptr, &data)) {
             RELEASE_LOG_ERROR(MediaStream, "Couldn't create buffer with error %d", error);
             m_lastError = error;
             continue;
@@ -304,7 +304,7 @@ void InternalAudioEncoderCocoa::processEncodedOutputs()
             m_hasProvidedDecoderConfig = true;
             m_descriptionCallback(activeConfiguration(cmSample.get()));
         }
-        m_outputCallback({ WTFMove(encodedFrame) });
+        m_outputCallback({ WTF::move(encodedFrame) });
     }
 }
 
@@ -317,10 +317,10 @@ Ref<AudioEncoder::EncodePromise> InternalAudioEncoderCocoa::encode(AudioEncoder:
     if (auto error = PAL::CMSampleBufferSetOutputPresentationTimeStamp(cmSample.get(), PAL::CMTimeMake(rawFrame.timestamp, 1000000)))
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMSampleBufferSetOutputPresentationTimeStamp failed with %d", error);
 
-    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(cmSample.get());
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(cmSample.get());
     if (!formatDescription)
         return EncodePromise::createAndReject("Couldn't retrieve AudioData's format description"_s);
-    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
     if (!asbd)
         return EncodePromise::createAndReject("Couldn't retrieve AudioData's basic description"_s);
 
@@ -351,7 +351,7 @@ Ref<AudioEncoder::EncodePromise> InternalAudioEncoderCocoa::encode(AudioEncoder:
     ASSERT(m_converter);
     AudioEncoder::EncodePromise::Producer producer;
     Ref promise = producer.promise();
-    converter()->addSampleBuffer(cmSample.get())->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, producer = WTFMove(producer)](auto result) mutable {
+    converter()->addSampleBuffer(cmSample.get())->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, producer = WTF::move(producer)](auto result) mutable {
         assertIsCurrent(queueSingleton());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !result || protectedThis->m_lastError) {

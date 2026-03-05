@@ -32,7 +32,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity)
-    : WebEvent(WTFMove(event))
+    : WebEvent(WTF::move(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
     , m_delta(delta)
@@ -44,7 +44,7 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
 
 #if PLATFORM(COCOA)
 WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType)
-    : WebEvent(WTFMove(event))
+    : WebEvent(WTF::move(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
     , m_delta(delta)
@@ -62,9 +62,9 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
 {
     ASSERT(isWheelEventType(type()));
 }
-#elif PLATFORM(GTK) || USE(LIBWPE)
+#elif PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
 WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas)
-    : WebEvent(WTFMove(event))
+    : WebEvent(WTF::move(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
     , m_delta(delta)
@@ -132,7 +132,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const WebWheelEvent& event)
     ts.dumpProperty("phase"_s, event.phase());
     ts.dumpProperty("momentumPhase"_s, event.momentumPhase());
     ts.dumpProperty("momentumEndType"_s, event.momentumEndType());
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     ts.dumpProperty("hasPreciseScrollingDeltas"_s, event.hasPreciseScrollingDeltas());
 #endif
 #if PLATFORM(COCOA)

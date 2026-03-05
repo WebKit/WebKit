@@ -80,7 +80,7 @@ BlobResourceSynchronousLoader::BlobResourceSynchronousLoader(ResourceError& erro
 void BlobResourceSynchronousLoader::willSendRequestAsync(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
-    completionHandler(WTFMove(request));
+    completionHandler(WTF::move(request));
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -209,7 +209,7 @@ int BlobResourceHandle::readDataSync(const BlobDataItem& item, std::span<uint8_t
 
     uint64_t remaining = item.length() - currentItemReadSize();
     uint64_t bytesToRead = std::min(std::min<uint64_t>(remaining, buffer.size()), totalRemainingSize());
-    memcpySpan(buffer, item.protectedData()->span().subspan(item.offset() + currentItemReadSize()).first(bytesToRead));
+    memcpySpan(buffer, protect(item.data())->span().subspan(item.offset() + currentItemReadSize()).first(bytesToRead));
     decrementTotalRemainingSizeBy(bytesToRead);
 
     setCurrentItemReadSize(currentItemReadSize() + bytesToRead);
@@ -231,7 +231,7 @@ int BlobResourceHandle::readFileSync(const BlobDataItem& item, std::span<uint8_t
         auto bytesToRead = lengthOfItemBeingRead() - currentItemReadSize();
         if (bytesToRead > totalRemainingSize())
             bytesToRead = totalRemainingSize();
-        bool success = syncStream()->openForRead(item.protectedFile()->path(), item.offset() + currentItemReadSize(), bytesToRead);
+        bool success = syncStream()->openForRead(protect(item.file())->path(), item.offset() + currentItemReadSize(), bytesToRead);
         setCurrentItemReadSize(0);
         if (!success) {
             m_errorCode = Error::NotReadableError;
@@ -271,7 +271,7 @@ bool BlobResourceHandle::shouldAbortDispatchDidReceiveResponse()
 
 void BlobResourceHandle::didReceiveResponse(ResourceResponse&& response)
 {
-    client()->didReceiveResponseAsync(this, WTFMove(response), [this, protectedThis = Ref { *this }] {
+    client()->didReceiveResponseAsync(this, WTF::move(response), [this, protectedThis = Ref { *this }] {
         buffer().resize(bufferSize);
         readAsync();
     });

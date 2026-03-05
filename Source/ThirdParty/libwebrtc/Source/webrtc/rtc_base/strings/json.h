@@ -16,9 +16,14 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "json/json.h"    // IWYU pragma: export
-#include "json/reader.h"  // IWYU pragma: export
-#include "json/value.h"   // IWYU pragma: export
+// IWYU pragma: begin_exports
+#include "json/config.h"
+#include "json/json.h"
+#include "json/json_features.h"
+#include "json/reader.h"
+#include "json/value.h"
+#include "json/writer.h"
+// IWYU pragma: end_exports
 
 namespace webrtc {
 
@@ -82,6 +87,5 @@ bool GetDoubleFromJsonObject(const Json::Value& in,
 std::string JsonValueToString(const Json::Value& json);
 
 }  //  namespace webrtc
-
 
 #endif  // RTC_BASE_STRINGS_JSON_H_

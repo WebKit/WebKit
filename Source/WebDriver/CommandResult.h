@@ -65,12 +65,12 @@ public:
 
     static CommandResult success(RefPtr<JSON::Value>&& result = nullptr)
     {
-        return CommandResult(WTFMove(result));
+        return CommandResult(WTF::move(result));
     }
 
     static CommandResult fail(RefPtr<JSON::Value>&& result = nullptr)
     {
-        return CommandResult(WTFMove(result), CommandResult::ErrorCode::UnknownError);
+        return CommandResult(WTF::move(result), CommandResult::ErrorCode::UnknownError);
     }
 
     static CommandResult fail(ErrorCode errorCode, std::optional<String> errorMessage = std::nullopt)
@@ -82,7 +82,7 @@ public:
     static unsigned errorCodeToHTTPStatusCode(ErrorCode);
     static String errorCodeToString(ErrorCode);
     const RefPtr<JSON::Value>& result() const { return m_result; };
-    void setAdditionalErrorData(RefPtr<JSON::Object>&& errorData) { m_errorAdditionalData = WTFMove(errorData); }
+    void setAdditionalErrorData(RefPtr<JSON::Object>&& errorData) { m_errorAdditionalData = WTF::move(errorData); }
     bool isError() const { return !!m_errorCode; }
     ErrorCode errorCode() const { ASSERT(isError()); return m_errorCode.value_or(ErrorCode::UnknownError); }
     String errorString() const;

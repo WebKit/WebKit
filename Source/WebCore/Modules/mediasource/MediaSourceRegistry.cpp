@@ -59,7 +59,7 @@ void MediaSourceRegistry::registerURL(const ScriptExecutionContext& context, con
 
     Ref source = downcast<MediaSource>(registrable);
     source->addedToRegistry();
-    m_mediaSources.add(urlString, std::pair { WTFMove(source), context.identifier() });
+    m_mediaSources.add(urlString, std::pair { WTF::move(source), context.identifier() });
 }
 
 void MediaSourceRegistry::unregisterURL(const URL& url, const SecurityOriginData&)

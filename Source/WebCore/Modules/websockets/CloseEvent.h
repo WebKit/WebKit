@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class CloseEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CloseEvent);
+    WTF_MAKE_TZONE_ALLOCATED(CloseEvent);
 public:
     static Ref<CloseEvent> create(bool wasClean, unsigned short code, const String& reason)
     {
@@ -46,12 +46,12 @@ public:
     struct Init : EventInit {
         bool wasClean { false };
         unsigned short code { 0 };
-        String reason;
+        String reason { emptyString() };
     };
 
-    static Ref<CloseEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CloseEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new CloseEvent(type, initializer, isTrusted));
+        return adoptRef(*new CloseEvent(type, WTF::move(initializer), isTrusted));
     }
 
     bool wasClean() const { return m_wasClean; }
@@ -67,11 +67,11 @@ private:
     {
     }
 
-    CloseEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+    CloseEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
         : Event(EventInterfaceType::CloseEvent, type, initializer, isTrusted)
         , m_wasClean(initializer.wasClean)
         , m_code(initializer.code)
-        , m_reason(initializer.reason)
+        , m_reason(WTF::move(initializer.reason))
     {
     }
 

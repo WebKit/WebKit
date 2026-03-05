@@ -52,7 +52,7 @@ PASS UA stylesheet rule for unicode-bidi, for <img>
 PASS UA stylesheet rule for unicode-bidi, for <ins>
 PASS UA stylesheet rule for unicode-bidi, for <kbd>
 PASS UA stylesheet rule for unicode-bidi, for <label>
-FAIL UA stylesheet rule for unicode-bidi, for <legend> assert_equals: expected "isolate" but got "normal"
+PASS UA stylesheet rule for unicode-bidi, for <legend>
 FAIL UA stylesheet rule for unicode-bidi, for <li> assert_equals: expected "isolate" but got "normal"
 PASS UA stylesheet rule for unicode-bidi, for <link>
 FAIL UA stylesheet rule for unicode-bidi, for <main> assert_equals: expected "isolate" but got "normal"

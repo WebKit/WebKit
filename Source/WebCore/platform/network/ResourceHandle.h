@@ -158,8 +158,9 @@ public:
 
     NetworkingContext* context() const;
 
-    using RefCounted<ResourceHandle>::ref;
-    using RefCounted<ResourceHandle>::deref;
+    // AuthenticationClient.
+    void ref() const override { RefCounted::ref(); }
+    void deref() const override { RefCounted::deref(); }
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static CFStringRef synchronousLoadRunLoopMode();
@@ -187,9 +188,6 @@ private:
 
     bool start();
     static void platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, SecurityOrigin*, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
-
-    void refAuthenticationClient() override { ref(); }
-    void derefAuthenticationClient() override { deref(); }
 
 #if PLATFORM(COCOA)
     enum class SchedulingBehavior { Asynchronous, Synchronous };

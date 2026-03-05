@@ -42,7 +42,7 @@ namespace WebCore {
 
 static CSSParserContext parserContextForElement(const Element& element)
 {
-    auto* shadowRoot = element.containingShadowRoot();
+    RefPtr shadowRoot = element.containingShadowRoot();
     // User agent shadow trees can't contain document-relative URLs. Use blank URL as base allowing cross-document sharing.
     auto& baseURL = shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent ? aboutBlankURL() : element.document().baseURL();
 
@@ -147,7 +147,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
         return;
 
     ASSERT(document->contentSecurityPolicy());
-    if (!document->checkedContentSecurityPolicy()->allowInlineStyle(document->url().string(), m_startTextPosition.m_line, text, CheckUnsafeHashes::No, element, element.nonce(), element.isInUserAgentShadowTree() || is<PluginDocument>(document))) {
+    if (!protect(document->contentSecurityPolicy())->allowInlineStyle(document->url().string(), m_startTextPosition.m_line, text, CheckUnsafeHashes::No, element, element.nonce(), element.isInUserAgentShadowTree() || is<PluginDocument>(document))) {
         element.notifyLoadedSheetAndAllCriticalSubresources(true);
         return;
     }
@@ -162,7 +162,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
         ASSERT(cachedSheet->isCacheableWithNoBaseURLDependency());
         Ref sheet = CSSStyleSheet::createInline(*cachedSheet, element, m_startTextPosition);
         m_sheet = sheet.copyRef();
-        sheet->setMediaQueries(WTFMove(mediaQueries));
+        sheet->setMediaQueries(WTF::move(mediaQueries));
         if (!element.isInShadowTree())
             sheet->setTitle(element.title());
 
@@ -177,7 +177,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     Ref sheet = CSSStyleSheet::createInline(contents.get(), element, m_startTextPosition);
     m_sheet = sheet.copyRef();
-    sheet->setMediaQueries(WTFMove(mediaQueries));
+    sheet->setMediaQueries(WTF::move(mediaQueries));
     if (!element.isInShadowTree())
         sheet->setTitle(element.title());
 
@@ -188,7 +188,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     contents->checkLoaded();
 
     if (contents->isCacheableWithNoBaseURLDependency())
-        Style::StyleSheetContentsCache::singleton().add(WTFMove(cacheKey), contents);
+        Style::StyleSheetContentsCache::singleton().add(WTF::move(cacheKey), contents);
 }
 
 bool InlineStyleSheetOwner::isLoading() const

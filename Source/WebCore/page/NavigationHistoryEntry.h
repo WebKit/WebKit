@@ -26,9 +26,8 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include "EventHandler.h"
 #include "EventTarget.h"
-#include "HistoryItem.h"
+#include "EventTargetInterfaces.h"
 #include "ReferrerPolicy.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/RefCounted.h>
@@ -39,12 +38,13 @@ class JSValue;
 
 namespace WebCore {
 
+class HistoryItem;
 class JSDOMGlobalObject;
 class Navigation;
 class SerializedScriptValue;
 
 class NavigationHistoryEntry final : public RefCounted<NavigationHistoryEntry>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationHistoryEntry);
+    WTF_MAKE_TZONE_ALLOCATED(NavigationHistoryEntry);
 public:
     static Ref<NavigationHistoryEntry> create(Navigation&, Ref<HistoryItem>&&);
     static Ref<NavigationHistoryEntry> create(Navigation&, const NavigationHistoryEntry&);
@@ -56,7 +56,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const String& url() const;
+    const String& url() const LIFETIME_BOUND;
     String key() const;
     String id() const;
     uint64_t index() const;
@@ -81,12 +81,11 @@ private:
     NavigationHistoryEntry(Navigation&, const DocumentState&, Ref<HistoryItem>&&, String urlString, WTF::UUID key, RefPtr<SerializedScriptValue>&& state = { }, WTF::UUID = WTF::UUID::createVersion4());
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
@@ -103,3 +102,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(NavigationHistoryEntry)

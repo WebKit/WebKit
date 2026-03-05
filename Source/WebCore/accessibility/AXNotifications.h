@@ -36,6 +36,7 @@ namespace WebCore {
     macro(AutofillTypeChanged) \
     macro(ARIAColumnIndexChanged) \
     macro(ARIAColumnIndexTextChanged) \
+    macro(ARIANotify) \
     macro(ARIARoleDescriptionChanged) \
     macro(ARIARowIndexChanged) \
     macro(ARIARowIndexTextChanged) \
@@ -108,6 +109,7 @@ namespace WebCore {
     macro(LiveRegionChanged) \
     macro(LiveRegionRelevantChanged) \
     macro(LiveRegionStatusChanged) \
+    macro(LiveRegionAnnouncement) \
     macro(MaximumValueChanged) \
     macro(MenuListItemSelected) \
     macro(MenuListValueChanged) \

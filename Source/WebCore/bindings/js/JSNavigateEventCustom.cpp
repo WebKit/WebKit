@@ -33,8 +33,7 @@ void JSNavigateEvent::visitAdditionalChildren(Visitor& visitor)
 {
     auto& event = wrapped();
     event.infoWrapper().visit(visitor);
-    if (auto* signal = event.signal())
-        addWebCoreOpaqueRoot(visitor, signal);
+    addWebCoreOpaqueRoot(visitor, &event.signal());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNavigateEvent);

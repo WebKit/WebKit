@@ -10,15 +10,19 @@
 #ifndef API_FIELD_TRIALS_VIEW_H_
 #define API_FIELD_TRIALS_VIEW_H_
 
+#include <memory>
 #include <string>
 
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // An interface that provides the means to access field trials.
+//
+// A FieldTrialsView is guaranteed to be immutable,
 //
 // Note that there are no guarantess that the meaning of a particular key-value
 // mapping will be preserved over time and no announcements will be made if they
@@ -38,6 +42,16 @@ class RTC_EXPORT FieldTrialsView {
 
   bool IsDisabled(absl::string_view key) const {
     return absl::StartsWith(Lookup(key), "Disabled");
+  }
+
+  // Create a copy of this view.
+  //
+  // This method can't be pure virtual, due to downstream projects
+  // but that is fine since they won't use the method...if they
+  // implement their own FieldTrialsView.
+  virtual std::unique_ptr<FieldTrialsView> CreateCopy() const {
+    RTC_CHECK_NOTREACHED();
+    return nullptr;
   }
 };
 

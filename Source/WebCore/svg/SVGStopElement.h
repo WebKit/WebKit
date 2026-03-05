@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class SVGStopElement final : public SVGElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGStopElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGStopElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGStopElement);
 public:
     static Ref<SVGStopElement> create(const QualifiedName&, Document&);
@@ -51,7 +51,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool rendererIsNeeded(const RenderStyle&) final;
 
-    Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this, 0) };
+    const Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this, 0) };
 };
 
 } // namespace WebCore

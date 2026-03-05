@@ -28,7 +28,6 @@
 #include <wtf/Compiler.h>
 #include <wtf/HashTraits.h>
 #include <wtf/UUID.h>
-#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -221,10 +220,6 @@ template<typename T, typename U, typename V> struct HashTraits<ObjectIdentifierG
         return identifier;
     }
 };
-
-WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<uint64_t>&);
-
-WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<UUID>&);
 
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const ObjectIdentifierGenericBase<uint64_t>&);
 

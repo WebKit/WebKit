@@ -144,11 +144,11 @@ public:
     // Can be called in worker threads.
     virtual Ref<RealtimeMediaSource> clone() { return *this; }
 
-    const String& hashedId() const;
-    const String& hashedGroupId() const;
-    const MediaDeviceHashSalts& deviceIDHashSalts() const;
+    const String& hashedId() const LIFETIME_BOUND;
+    const String& hashedGroupId() const LIFETIME_BOUND;
+    const MediaDeviceHashSalts& deviceIDHashSalts() const LIFETIME_BOUND;
 
-    const String& persistentID() const { return m_device.persistentId(); }
+    const String& persistentID() const LIFETIME_BOUND { return m_device.persistentId(); }
 
     enum class Type : bool { Audio, Video };
     Type type() const { return m_type; }
@@ -171,7 +171,7 @@ public:
 
     virtual bool interrupted() const { return false; }
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
     double fitnessScore() const { return m_fitnessScore; }
 
@@ -237,7 +237,7 @@ public:
     struct ApplyConstraintsError {
         MediaConstraintType invalidConstraint;
         String message;
-        ApplyConstraintsError isolatedCopy() && { return { invalidConstraint, WTFMove(message).isolatedCopy() }; }
+        ApplyConstraintsError isolatedCopy() && { return { invalidConstraint, WTF::move(message).isolatedCopy() }; }
     };
     using ApplyConstraintsHandler = CompletionHandler<void(std::optional<ApplyConstraintsError>&&)>;
     virtual void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
@@ -284,12 +284,14 @@ public:
     virtual void delaySamples(Seconds) { };
     virtual void setInterruptedForTesting(bool);
 
-    virtual bool setShouldApplyRotation();
+    virtual void setShouldApplyRotation();
+    bool isApplyingRotation() const;
+
     virtual void setIsInBackground(bool);
 
     std::optional<PageIdentifier> pageIdentifier() const { return m_pageIdentifier.asOptional(); }
 
-    const CaptureDevice& captureDevice() const { return m_device; }
+    const CaptureDevice& captureDevice() const LIFETIME_BOUND { return m_device; }
     bool isEphemeral() const { return m_device.isEphemeral(); }
 
     virtual double facingModeFitnessScoreAdjustment() const { return 0; }
@@ -423,7 +425,7 @@ private:
     bool m_captureDidFailed { false };
     bool m_isEnded { false };
     bool m_hasStartedProducingData { false };
-    std::atomic<bool> m_shouldApplyRotation { false };
+    std::atomic<bool> m_isApplyingRotation { false };
 
     unsigned m_videoFrameObserversWithAdaptors { 0 };
 };
@@ -431,7 +433,7 @@ private:
 struct CaptureSourceError {
     CaptureSourceError() = default;
     CaptureSourceError(String&& errorMessage, MediaAccessDenialReason denialReason, MediaConstraintType invalidConstraint = MediaConstraintType::Unknown)
-        : errorMessage(WTFMove(errorMessage))
+        : errorMessage(WTF::move(errorMessage))
         , denialReason(denialReason)
         , invalidConstraint(invalidConstraint)
     {
@@ -451,8 +453,8 @@ struct CaptureSourceError {
 
 struct CaptureSourceOrError {
     CaptureSourceOrError() = default;
-    CaptureSourceOrError(Ref<RealtimeMediaSource>&& source) : captureSource(WTFMove(source)) { }
-    explicit CaptureSourceOrError(CaptureSourceError&& error) : error(WTFMove(error)) { }
+    CaptureSourceOrError(Ref<RealtimeMediaSource>&& source) : captureSource(WTF::move(source)) { }
+    explicit CaptureSourceOrError(CaptureSourceError&& error) : error(WTF::move(error)) { }
 
     operator bool() const { return !!captureSource; }
     Ref<RealtimeMediaSource> source() { return captureSource.releaseNonNull(); }

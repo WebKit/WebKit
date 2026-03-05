@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@ namespace WebCore {
 
 class RenderBlock;
 class RenderButton;
-class RenderMenuList;
 
 class RenderTreeBuilder::FormControls {
     WTF_MAKE_TZONE_ALLOCATED(FormControls);
@@ -40,17 +39,17 @@ public:
     FormControls(RenderTreeBuilder&);
 
     void attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    void attach(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
-    RenderPtr<RenderObject> detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detach(RenderMenuList& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed) WARN_UNUSED_RETURN;
+    [[nodiscard]] RenderPtr<RenderObject> detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed);
+
+    void updateAfterDescendants(RenderElement&);
 
 private:
     RenderBlock& findOrCreateParentForChild(RenderButton&);
-    RenderBlock& findOrCreateParentForChild(RenderMenuList&);
+
+    void updatePseudoElement(PseudoElementType, RenderElement&, StyleAppearance, RenderObject* beforeChild = nullptr);
 
     RenderTreeBuilder& m_builder;
 };
 
-}
-
+} // namespace WebCore

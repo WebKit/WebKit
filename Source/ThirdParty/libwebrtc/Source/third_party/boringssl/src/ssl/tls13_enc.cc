@@ -98,7 +98,7 @@ static bool hkdf_expand_label_with_prefix(Span<uint8_t> out,
   // arbitrary prefix for the label instead of using the hardcoded "tls13 "
   // prefix.
   CBB cbb, child;
-  uint8_t *hkdf_label = NULL;
+  uint8_t *hkdf_label = nullptr;
   size_t hkdf_label_len;
   CBB_zero(&cbb);
   if (!CBB_init(&cbb,
@@ -284,7 +284,7 @@ class ChaChaRecordNumberEncrypter : public RecordNumberEncrypter {
       return false;
     }
     uint32_t counter = CRYPTO_load_u32_le(sample.data());
-    Span<const uint8_t> nonce = sample.subspan(4);
+    auto nonce = sample.subspan<4>();
     OPENSSL_memset(out.data(), 0, out.size());
     CRYPTO_chacha_20(out.data(), out.data(), out.size(), key_, nonce.data(),
                      counter);
@@ -558,8 +558,8 @@ static bool tls13_psk_binder(uint8_t *out, size_t *out_len,
     if (truncated.size() < DTLS1_HM_HEADER_LENGTH) {
       return false;
     }
-    auto header = truncated.subspan(0, 4);
-    auto body = truncated.subspan(12);
+    auto header = truncated.first<4>();
+    auto body = truncated.subspan<12>();
     if (!transcript.CopyToHashContext(ctx.get(), digest) ||
         !EVP_DigestUpdate(ctx.get(), header.data(), header.size()) ||
         !EVP_DigestUpdate(ctx.get(), body.data(), body.size()) ||
@@ -644,10 +644,11 @@ size_t ssl_ech_confirmation_signal_hello_offset(const SSL *ssl) {
          ECH_CONFIRMATION_SIGNAL_LEN;
 }
 
-bool ssl_ech_accept_confirmation(const SSL_HANDSHAKE *hs, Span<uint8_t> out,
-                                 Span<const uint8_t> client_random,
-                                 const SSLTranscript &transcript, bool is_hrr,
-                                 Span<const uint8_t> msg, size_t offset) {
+bool ssl_ech_accept_confirmation(
+    const SSL_HANDSHAKE *hs, Span<uint8_t, ECH_CONFIRMATION_SIGNAL_LEN> out,
+    Span<const uint8_t, SSL3_RANDOM_SIZE> client_random,
+    const SSLTranscript &transcript, bool is_hrr, Span<const uint8_t> msg,
+    size_t offset) {
   // See draft-ietf-tls-esni-13, sections 7.2 and 7.2.1.
   static const uint8_t kZeros[EVP_MAX_MD_SIZE] = {0};
 
@@ -659,7 +660,9 @@ bool ssl_ech_accept_confirmation(const SSL_HANDSHAKE *hs, Span<uint8_t> out,
 
   // We represent DTLS messages with the longer DTLS 1.2 header, but DTLS 1.3
   // removes the extra fields from the transcript.
-  auto header = msg.subspan(0, SSL3_HM_HEADER_LENGTH);
+  //
+  // Size bound implied by ECH_CONFIRMATION_SIGNAL_LEN >= SSL3_HM_HEADER_LENGTH.
+  auto header = msg.first<SSL3_HM_HEADER_LENGTH>();
   size_t full_header_len =
       SSL_is_dtls(hs->ssl) ? DTLS1_HM_HEADER_LENGTH : SSL3_HM_HEADER_LENGTH;
   auto before_zeros = msg.subspan(full_header_len, offset - full_header_len);
@@ -685,7 +688,6 @@ bool ssl_ech_accept_confirmation(const SSL_HANDSHAKE *hs, Span<uint8_t> out,
     return false;
   }
 
-  assert(out.size() == ECH_CONFIRMATION_SIGNAL_LEN);
   return hkdf_expand_label(
       out, transcript.Digest(), Span(secret, secret_len),
       is_hrr ? "hrr ech accept confirmation" : "ech accept confirmation",

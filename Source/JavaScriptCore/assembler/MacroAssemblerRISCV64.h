@@ -115,10 +115,6 @@ public:
         return { m_allowScratchRegister };
     }
 
-    static bool supportsFloatingPoint() { return true; }
-    static bool supportsFloatingPointTruncate() { return true; }
-    static bool supportsFloatingPointSqrt() { return true; }
-    static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloatingPointRounding() { return true; }
     static bool supportsFloat16() { return false; }
 

@@ -35,15 +35,6 @@
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
-class DOMObjectCacheFrameObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DOMObjectCacheFrameObserver> : std::true_type { };
-}
-
-namespace WebKit {
 
 struct DOMObjectCacheData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DOMObjectCacheData);
@@ -82,7 +73,7 @@ struct DOMObjectCacheData {
 };
 
 class DOMObjectCacheFrameObserver;
-typedef HashMap<WebCore::LocalFrame*, std::unique_ptr<DOMObjectCacheFrameObserver>> DOMObjectCacheFrameObserverMap;
+typedef HashMap<WebCore::LocalFrame*, RefPtr<DOMObjectCacheFrameObserver>> DOMObjectCacheFrameObserverMap;
 
 static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
 {
@@ -90,18 +81,22 @@ static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
     return map;
 }
 
-class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver {
+class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver, public RefCounted<DOMObjectCacheFrameObserver> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMObjectCacheFrameObserver);
 public:
-    DOMObjectCacheFrameObserver(WebCore::LocalFrame& frame)
-        : FrameDestructionObserver(&frame)
+    static RefPtr<DOMObjectCacheFrameObserver> create(WebCore::LocalFrame& frame)
     {
+        return adoptRef(*new DOMObjectCacheFrameObserver(frame));
     }
 
     ~DOMObjectCacheFrameObserver()
     {
         ASSERT(m_objects.isEmpty());
     }
+
+    // WebCore::FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void addObjectCacheData(DOMObjectCacheData& data)
     {
@@ -170,7 +165,7 @@ private:
         if (m_objects.isEmpty())
             return;
 
-        auto objects = WTFMove(m_objects);
+        auto objects = WTF::move(m_objects);
 
         // Deleting of DOM wrappers might end up deleting the wrapped core object which could cause some problems
         // for example if a Document is deleted during the frame destruction, so we remove the weak references now
@@ -203,6 +198,11 @@ private:
         m_domWindowObserver = nullptr;
     }
 
+    DOMObjectCacheFrameObserver(WebCore::LocalFrame& frame)
+        : FrameDestructionObserver(&frame)
+    {
+    }
+
     Vector<DOMObjectCacheData*, 8> m_objects;
     RefPtr<DOMWindowObserver> m_domWindowObserver;
 };
@@ -211,7 +211,7 @@ static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCo
 {
     DOMObjectCacheFrameObserverMap::AddResult result = domObjectCacheFrameObservers().add(&frame, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = makeUnique<DOMObjectCacheFrameObserver>(frame);
+        result.iterator->value = DOMObjectCacheFrameObserver::create(frame);
     return *result.iterator->value;
 }
 

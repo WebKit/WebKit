@@ -49,10 +49,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
 
 LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
-    : RenderElement(type, element, WTFMove(style), { }, typeFlags | SVGModelObjectFlag::IsLegacy | SVGModelObjectFlag::UsesBoundaryCaching)
+    : RenderElement(type, element, WTF::move(style), { }, typeFlags | SVGModelObjectFlag::IsLegacy | SVGModelObjectFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGModelObject());
     ASSERT(!isRenderSVGModelObject());
@@ -96,7 +96,7 @@ static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& rend
         Style::adjustRectForShadow(shadowRect, boxShadow, zoomFactor);
 
     auto outlineRect = rect;
-    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().outlineSize() };
+    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().usedOutlineSize() };
     if (outlineSize)
         outlineRect.inflate(outlineSize);
 
@@ -112,7 +112,7 @@ LayoutRect LegacyRenderSVGModelObject::outlineBoundsForRepaint(const RenderLayer
     adjustRectForOutlineAndShadow(*this, box, style().usedZoomForLength());
 
     FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
-    return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
+    return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), protect(document())->deviceScaleFactor()));
 }
 
 void LegacyRenderSVGModelObject::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -129,13 +129,20 @@ void LegacyRenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* w
 
 void LegacyRenderSVGModelObject::willBeDestroyed()
 {
+    SVGRenderSupport::elementWillBeRemovedFromTree(*this);
     SVGResourcesCache::clientDestroyed(*this);
     RenderElement::willBeDestroyed();
 }
 
-void LegacyRenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGModelObject::insertedIntoTree()
 {
-    if (diff == StyleDifference::Layout) {
+    RenderElement::insertedIntoTree();
+    SVGRenderSupport::elementInsertedIntoTree(*this);
+}
+
+void LegacyRenderSVGModelObject::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+{
+    if (diff == Style::DifferenceResult::Layout) {
         invalidateCachedBoundaries();
         if (style().affectsTransform() || (oldStyle && oldStyle->affectsTransform()))
             setNeedsTransformUpdate();
@@ -158,9 +165,9 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
     ASSERT(stopAtElement);
 
     AffineTransform localTransform;
-    Node* current = element;
+    RefPtr<Node> current = element;
 
-    while (RefPtr currentElement = dynamicDowncast<SVGElement>(current)) {
+    while (RefPtr currentElement = dynamicDowncast<SVGElement>(current.get())) {
         localTransform = currentElement->renderer()->localToParentTransform();
         transform = localTransform.multiply(transform);
         // For getCTM() computation, stop at the nearest viewport element
@@ -186,7 +193,7 @@ static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 
 // One of the element types that can cause graphics to be drawn onto the target canvas. Specifically: circle, ellipse,
 // image, line, path, polygon, polyline, rect, text and use.
-static bool isGraphicsElement(const RenderElement& renderer)
+static bool NODELETE isGraphicsElement(const RenderElement& renderer)
 {
     return renderer.isLegacyRenderSVGShape() || renderer.isRenderSVGText() || renderer.isLegacyRenderSVGImage() || renderer.element()->hasTagName(SVGNames::useTag);
 }
@@ -210,7 +217,7 @@ bool LegacyRenderSVGModelObject::checkIntersection(RenderElement* renderer, cons
     ASSERT(svgElement->renderer());
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->checkedRenderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
+    return intersectsAllowingEmpty(rect, ctm.mapRect(protect(svgElement->renderer())->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
@@ -225,12 +232,11 @@ bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const F
     ASSERT(svgElement->renderer());
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return rect.contains(ctm.mapRect(svgElement->checkedRenderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
+    return rect.contains(ctm.mapRect(protect(svgElement->renderer())->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
-Ref<SVGElement> LegacyRenderSVGModelObject::protectedElement() const
+void LegacyRenderSVGModelObject::addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*) const
 {
-    return element();
 }
 
 } // namespace WebCore

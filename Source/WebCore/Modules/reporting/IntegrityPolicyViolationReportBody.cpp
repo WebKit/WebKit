@@ -32,19 +32,19 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IntegrityPolicyViolationReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IntegrityPolicyViolationReportBody);
 
 IntegrityPolicyViolationReportBody::IntegrityPolicyViolationReportBody(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly)
     : m_documentURL(documentURL)
     , m_blockedURL(blockedURL)
-    , m_destination(WTFMove(destination))
+    , m_destination(WTF::move(destination))
     , m_reportOnly(reportOnly)
 {
 }
 
 Ref<IntegrityPolicyViolationReportBody> IntegrityPolicyViolationReportBody::create(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly)
 {
-    return adoptRef(*new IntegrityPolicyViolationReportBody(documentURL, blockedURL, WTFMove(destination), reportOnly));
+    return adoptRef(*new IntegrityPolicyViolationReportBody(documentURL, blockedURL, WTF::move(destination), reportOnly));
 }
 
 const String& IntegrityPolicyViolationReportBody::type() const

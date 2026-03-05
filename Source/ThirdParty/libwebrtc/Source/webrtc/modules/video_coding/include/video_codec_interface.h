@@ -15,13 +15,12 @@
 #include <cstdint>
 #include <optional>
 #include <type_traits>
-#include <variant>
 
 #include "api/transport/rtp/dependency_descriptor.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/video_codec_type.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_encoder.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
@@ -124,9 +123,7 @@ struct RTC_EXPORT CodecSpecificInfo {
   std::optional<ScalabilityMode> scalability_mode;
 
   // Required for automatic corruption detection.
-  std::optional<
-      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
-      frame_instrumentation_data;
+  std::optional<FrameInstrumentationData> frame_instrumentation_data;
 };
 
 }  // namespace webrtc

@@ -383,7 +383,6 @@ void AecState::FilterDelay::Update(
   if (external_delay &&
       (!external_delay_ || external_delay_->delay != external_delay->delay)) {
     external_delay_ = external_delay;
-    external_delay_reported_ = true;
   }
 
   // Override the estimated delay if it is not certain that the filter has had

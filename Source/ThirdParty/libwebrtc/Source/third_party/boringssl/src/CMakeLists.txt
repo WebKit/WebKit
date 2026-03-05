@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 
 # Defer enabling C and CXX languages.
 project(BoringSSL NONE)
@@ -42,11 +42,6 @@ include(CTest)
 include(GNUInstallDirs)
 
 set(INSTALL_ENABLED 1)
-
-if(CMAKE_VERSION VERSION_LESS 3.21 AND
-   CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  set(PROJECT_IS_TOP_LEVEL 1)
-endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CROSSCOMPILING AND
    BUILD_TESTING)
@@ -384,20 +379,10 @@ if(FIPS_DELOCATE OR NOT OPENSSL_NO_ASM)
     if (NOT OPENSSL_NO_ASM)
       set(OPENSSL_ASM TRUE)
     endif()
-    # Work around https://gitlab.kitware.com/cmake/cmake/-/issues/20771 in older
-    # CMake versions.
-    if(APPLE AND CMAKE_VERSION VERSION_LESS 3.19)
-      if(CMAKE_OSX_SYSROOT)
-        set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -isysroot \"${CMAKE_OSX_SYSROOT}\"")
-      endif()
-      foreach(arch ${CMAKE_OSX_ARCHITECTURES})
-        set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -arch ${arch}")
-      endforeach()
-    endif()
     if(NOT WIN32)
       set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,--noexecstack")
     endif()
-    # Clang's integerated assembler does not support debug symbols.
+    # Clang's integrated assembler does not support debug symbols.
     if(NOT CMAKE_ASM_COMPILER_ID MATCHES "Clang")
       set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,-g")
     endif()
@@ -721,6 +706,8 @@ endif()
 if(FIPS)
   add_executable(modulewrapper ${MODULEWRAPPER_SOURCES})
   target_link_libraries(modulewrapper crypto)
+  add_executable(entropy_modulewrapper ${ENTROPY_MODULEWRAPPER_SOURCES})
+  target_link_libraries(entropy_modulewrapper crypto)
 endif()
 
 add_executable(bssl ${BSSL_SOURCES})
@@ -742,12 +729,8 @@ if(FUZZ)
 endif()
 
 if(RUST_BINDINGS)
-  find_program(BINDGEN_EXECUTABLE bindgen)
-  if(NOT BINDGEN_EXECUTABLE)
-    message(FATAL_ERROR "Could not find bindgen but was asked to generate Rust bindings.")
-  else()
-    add_subdirectory(rust)
-  endif()
+  find_program(BINDGEN_EXECUTABLE bindgen REQUIRED)
+  add_subdirectory(rust)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

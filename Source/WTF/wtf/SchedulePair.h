@@ -30,6 +30,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
+#include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -50,9 +51,7 @@ public:
 #endif
 
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
-    RetainPtr<CFRunLoopRef> protectedRunLoop() const { return m_runLoop; }
     CFStringRef mode() const { return m_mode.get(); }
-    RetainPtr<CFStringRef> protectedMode() const { return m_mode; }
 
     WTF_EXPORT_PRIVATE bool operator==(const SchedulePair& other) const;
 
@@ -87,19 +86,19 @@ struct SchedulePairHash {
         return computeHash(*pair);
     }
 
-    static unsigned hash(const RefPtr<SchedulePair>& pair)
+    static unsigned hash(const Ref<SchedulePair>& pair)
     {
-        return computeHash(*pair);
+        return computeHash(pair);
     }
 
-    static bool equal(const SchedulePair* a, const RefPtr<SchedulePair>& b) { return a == b; }
-    static bool equal(const RefPtr<SchedulePair>& a, const RefPtr<SchedulePair>& b) { return a == b; }
-    static bool equal(const RefPtr<SchedulePair>& a, const SchedulePair* b) { return a == b; }
+    static bool equal(const SchedulePair* a, const Ref<SchedulePair>& b) { return a == b.ptr(); }
+    static bool equal(const Ref<SchedulePair>& a, const Ref<SchedulePair>& b) { return a.ptr() == b.ptr(); }
+    static bool equal(const Ref<SchedulePair>& a, const SchedulePair* b) { return a.ptr() == b; }
 
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-using SchedulePairHashSet = HashSet<RefPtr<SchedulePair>, SchedulePairHash>;
+using SchedulePairHashSet = HashSet<Ref<SchedulePair>, SchedulePairHash>;
 
 } // namespace WTF
 

@@ -40,7 +40,7 @@ static constexpr auto dummyURLCharacters { "https://w/"_s };
 static bool isValidIPv6HostCodePoint(auto codepoint)
 {
     static constexpr std::array validSpecialCodepoints { '[', ']', ':' };
-    return isASCIIHexDigit(codepoint) || std::find(validSpecialCodepoints.begin(), validSpecialCodepoints.end(), codepoint) != validSpecialCodepoints.end();
+    return isASCIIHexDigit(codepoint) || std::ranges::find(validSpecialCodepoints, codepoint) != validSpecialCodepoints.end();
 }
 
 // https://urlpattern.spec.whatwg.org/#is-an-absolute-pathname

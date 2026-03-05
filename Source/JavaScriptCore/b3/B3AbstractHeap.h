@@ -183,8 +183,8 @@ public:
 
     AbstractHeap& atAnyNumber() { return m_indexedHeap.atAnyIndex(); }
 
-    const AbstractHeap& at(unsigned number) { return m_indexedHeap.at(number); }
-    const AbstractHeap& operator[](unsigned number) { return at(number); }
+    const AbstractHeap& at(ptrdiff_t number) { return m_indexedHeap.at(number); }
+    const AbstractHeap& operator[](ptrdiff_t number) { return at(number); }
 
     void dump(PrintStream&);
 

@@ -86,9 +86,9 @@ static void PEM_dek_info(char buf[PEM_BUFSIZE], const char *type, size_t len,
 void *PEM_ASN1_read(d2i_of_void *d2i, const char *name, FILE *fp, void **x,
                     pem_password_cb *cb, void *u) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_BUF_LIB);
-    return NULL;
+    return nullptr;
   }
   void *ret = PEM_ASN1_read_bio(d2i, name, b, x, cb, u);
   BIO_free(b);
@@ -167,7 +167,7 @@ static const EVP_CIPHER *cipher_by_name(std::string_view name) {
   } else if (name == SN_aes_256_cbc) {
     return EVP_aes_256_cbc();
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -175,8 +175,8 @@ int PEM_bytes_read_bio(unsigned char **pdata, long *plen, char **pnm,
                        const char *name, BIO *bp, pem_password_cb *cb,
                        void *u) {
   EVP_CIPHER_INFO cipher;
-  char *nm = NULL, *header = NULL;
-  unsigned char *data = NULL;
+  char *nm = nullptr, *header = nullptr;
+  unsigned char *data = nullptr;
   long len;
   int ret = 0;
 
@@ -225,7 +225,7 @@ int PEM_ASN1_write(i2d_of_void *i2d, const char *name, FILE *fp, void *x,
                    const EVP_CIPHER *enc, const unsigned char *pass,
                    int pass_len, pem_password_cb *callback, void *u) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_BUF_LIB);
     return 0;
   }
@@ -240,22 +240,22 @@ int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name, BIO *bp, void *x,
                        int pass_len, pem_password_cb *callback, void *u) {
   bssl::ScopedEVP_CIPHER_CTX ctx;
   int dsize = 0, i, j, ret = 0;
-  unsigned char *p, *data = NULL;
-  const char *objstr = NULL;
+  unsigned char *p, *data = nullptr;
+  const char *objstr = nullptr;
   char buf[PEM_BUFSIZE];
   unsigned char key[EVP_MAX_KEY_LENGTH];
   unsigned char iv[EVP_MAX_IV_LENGTH];
 
-  if (enc != NULL) {
+  if (enc != nullptr) {
     objstr = OBJ_nid2sn(EVP_CIPHER_nid(enc));
-    if (objstr == NULL || cipher_by_name(objstr) == NULL ||
+    if (objstr == nullptr || cipher_by_name(objstr) == nullptr ||
         EVP_CIPHER_iv_length(enc) < 8) {
       OPENSSL_PUT_ERROR(PEM, PEM_R_UNSUPPORTED_CIPHER);
       goto err;
     }
   }
 
-  if ((dsize = i2d(x, NULL)) < 0) {
+  if ((dsize = i2d(x, nullptr)) < 0) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_ASN1_LIB);
     dsize = 0;
     goto err;
@@ -263,16 +263,16 @@ int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name, BIO *bp, void *x,
   // dzise + 8 bytes are needed
   // actually it needs the cipher block size extra...
   data = (unsigned char *)OPENSSL_malloc((unsigned int)dsize + 20);
-  if (data == NULL) {
+  if (data == nullptr) {
     goto err;
   }
   p = data;
   i = i2d(x, &p);
 
-  if (enc != NULL) {
+  if (enc != nullptr) {
     const unsigned iv_len = EVP_CIPHER_iv_length(enc);
 
-    if (pass == NULL) {
+    if (pass == nullptr) {
       if (!callback) {
         callback = PEM_def_callback;
       }
@@ -289,7 +289,7 @@ int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name, BIO *bp, void *x,
     }
     // The 'iv' is used as the iv and as a salt.  It is NOT taken from
     // the BytesToKey function
-    if (!EVP_BytesToKey(enc, EVP_md5(), iv, pass, pass_len, 1, key, NULL)) {
+    if (!EVP_BytesToKey(enc, EVP_md5(), iv, pass, pass_len, 1, key, nullptr)) {
       goto err;
     }
 
@@ -305,7 +305,7 @@ int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name, BIO *bp, void *x,
     // k=strlen(buf);
 
     ret = 1;
-    if (!EVP_EncryptInit_ex(ctx.get(), enc, NULL, key, iv) ||
+    if (!EVP_EncryptInit_ex(ctx.get(), enc, nullptr, key, iv) ||
         !EVP_EncryptUpdate(ctx.get(), data, &j, data, i) ||
         !EVP_EncryptFinal_ex(ctx.get(), &(data[j]), &i)) {
       ret = 0;
@@ -341,7 +341,7 @@ int PEM_do_header(const EVP_CIPHER_INFO *cipher, unsigned char *data,
 
   len = *plen;
 
-  if (cipher->cipher == NULL) {
+  if (cipher->cipher == nullptr) {
     return 1;
   }
 
@@ -356,12 +356,12 @@ int PEM_do_header(const EVP_CIPHER_INFO *cipher, unsigned char *data,
   }
 
   if (!EVP_BytesToKey(cipher->cipher, EVP_md5(), cipher->iv,
-                      (unsigned char *)buf, pass_len, 1, key, NULL)) {
+                      (unsigned char *)buf, pass_len, 1, key, nullptr)) {
     return 0;
   }
 
   j = (int)len;
-  o = EVP_DecryptInit_ex(ctx.get(), cipher->cipher, NULL, key, cipher->iv);
+  o = EVP_DecryptInit_ex(ctx.get(), cipher->cipher, nullptr, key, cipher->iv);
   if (o) {
     o = EVP_DecryptUpdate(ctx.get(), data, &i, data, j);
   }
@@ -380,9 +380,9 @@ int PEM_do_header(const EVP_CIPHER_INFO *cipher, unsigned char *data,
 }
 
 int PEM_get_EVP_CIPHER_INFO(const char *header, EVP_CIPHER_INFO *cipher) {
-  cipher->cipher = NULL;
+  cipher->cipher = nullptr;
   OPENSSL_memset(cipher->iv, 0, sizeof(cipher->iv));
-  if ((header == NULL) || (*header == '\0') || (*header == '\n')) {
+  if ((header == nullptr) || (*header == '\0') || (*header == '\n')) {
     return 1;
   }
   if (strncmp(header, "Proc-Type: ", 11) != 0) {
@@ -423,7 +423,7 @@ int PEM_get_EVP_CIPHER_INFO(const char *header, EVP_CIPHER_INFO *cipher) {
   }
   cipher->cipher = cipher_by_name(std::string_view(p, header - p));
   header++;
-  if (cipher->cipher == NULL) {
+  if (cipher->cipher == nullptr) {
     OPENSSL_PUT_ERROR(PEM, PEM_R_UNSUPPORTED_ENCRYPTION);
     return 0;
   }
@@ -467,7 +467,7 @@ static int load_iv(const char **fromp, unsigned char *to, size_t num) {
 int PEM_write(FILE *fp, const char *name, const char *header,
               const unsigned char *data, long len) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_BUF_LIB);
     return 0;
   }
@@ -479,7 +479,7 @@ int PEM_write(FILE *fp, const char *name, const char *header,
 int PEM_write_bio(BIO *bp, const char *name, const char *header,
                   const unsigned char *data, long len) {
   int nlen, n, i, j, outl;
-  unsigned char *buf = NULL;
+  unsigned char *buf = nullptr;
   EVP_ENCODE_CTX ctx;
   int reason = ERR_R_BUF_LIB;
   int retval = 0;
@@ -501,7 +501,7 @@ int PEM_write_bio(BIO *bp, const char *name, const char *header,
   }
 
   buf = reinterpret_cast<uint8_t *>(OPENSSL_malloc(PEM_BUFSIZE * 8));
-  if (buf == NULL) {
+  if (buf == nullptr) {
     goto err;
   }
 
@@ -538,7 +538,7 @@ err:
 int PEM_read(FILE *fp, char **name, char **header, unsigned char **data,
              long *len) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_BUF_LIB);
     return 0;
   }
@@ -559,7 +559,7 @@ int PEM_read_bio(BIO *bp, char **name, char **header, unsigned char **data,
   nameB = BUF_MEM_new();
   headerB = BUF_MEM_new();
   dataB = BUF_MEM_new();
-  if ((nameB == NULL) || (headerB == NULL) || (dataB == NULL)) {
+  if ((nameB == nullptr) || (headerB == nullptr) || (dataB == nullptr)) {
     BUF_MEM_free(nameB);
     BUF_MEM_free(headerB);
     BUF_MEM_free(dataB);

@@ -38,7 +38,7 @@ void CurlSSLHandle::platformInitialize()
     CertificateInfo::Certificate caCertData;
     caCertData.append(std::span { certificateData->data(), certificateData->size() });
     if (certificateData->size())
-        setCACertData(WTFMove(caCertData));
+        setCACertData(WTF::move(caCertData));
 
     setCipherList(CertificateStore::cipherSuites());
     setECCurves(CertificateStore::supportedGroups());

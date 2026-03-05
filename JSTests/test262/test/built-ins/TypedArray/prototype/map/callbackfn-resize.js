@@ -73,4 +73,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.compareArray(indices, expectedIndices, 'indices (grow)');
   assert.compareArray(arrays, expectedArrays, 'arrays (grow)');
   assert.compareArray(result, expectedIndices, 'result (grow)');
-});
+}, null, ["passthrough"]);

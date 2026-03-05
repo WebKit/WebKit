@@ -86,6 +86,7 @@ TEST(WebKit, MSEHasMediaStreamingActivity)
     notify_cancel(token);
 }
 
+// FIXME when webkit.org/b/306970 is resolved.
 #if ENABLE(MEDIA_SOURCE)
 TEST(WebKit, ManagedMSEHasMediaStreamingActivity)
 {

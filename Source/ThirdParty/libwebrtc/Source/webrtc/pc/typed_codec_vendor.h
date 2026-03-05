@@ -26,7 +26,7 @@ class TypedCodecVendor {
   // Constructor for the case where media engine is not provided. The resulting
   // vendor will always return an empty codec list.
   TypedCodecVendor() {}
-  TypedCodecVendor(MediaEngineInterface* media_engine,
+  TypedCodecVendor(const MediaEngineInterface* media_engine,
                    MediaType type,
                    bool is_sender,
                    bool rtx_enabled,

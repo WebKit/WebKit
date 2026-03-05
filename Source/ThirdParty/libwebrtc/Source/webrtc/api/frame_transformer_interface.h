@@ -114,9 +114,8 @@ class TransformableVideoFrameInterface : public TransformableFrameInterface {
   RTC_EXPORT explicit TransformableVideoFrameInterface(Passkey passkey);
   virtual ~TransformableVideoFrameInterface() = default;
   virtual bool IsKeyFrame() const = 0;
-
+  virtual std::optional<std::string> Rid() const { return std::nullopt; }
   virtual VideoFrameMetadata Metadata() const = 0;
-
   virtual void SetMetadata(const VideoFrameMetadata&) = 0;
 };
 

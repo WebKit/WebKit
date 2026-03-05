@@ -54,7 +54,7 @@ public:
 
     static RegistrableDomain fromRawString(String&& origin)
     {
-        return RegistrableDomain(WTFMove(origin));
+        return RegistrableDomain(WTF::move(origin));
     }
 
     bool isEmpty() const { return m_registrableDomain.isEmpty() || m_registrableDomain == "nullOrigin"_s; }
@@ -74,7 +74,7 @@ public:
     }
 
     RegistrableDomain isolatedCopy() const & { return RegistrableDomain { m_registrableDomain.isolatedCopy() }; }
-    RegistrableDomain isolatedCopy() && { return RegistrableDomain { WTFMove(m_registrableDomain).isolatedCopy() }; }
+    RegistrableDomain isolatedCopy() && { return RegistrableDomain { WTF::move(m_registrableDomain).isolatedCopy() }; }
 
     RegistrableDomain(WTF::HashTableDeletedValueType)
         : m_registrableDomain(WTF::HashTableDeletedValue) { }
@@ -97,12 +97,12 @@ public:
         auto registrableDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(host);
         if (registrableDomain.isEmpty())
             return uncheckedCreateFromRegistrableDomainString(host);
-        return RegistrableDomain { WTFMove(registrableDomain) };
+        return RegistrableDomain { WTF::move(registrableDomain) };
     }
 
 private:
     explicit RegistrableDomain(String&& domain)
-        : m_registrableDomain { domain.isEmpty() ? "nullOrigin"_s : WTFMove(domain) }
+        : m_registrableDomain { domain.isEmpty() ? "nullOrigin"_s : WTF::move(domain) }
     {
     }
 

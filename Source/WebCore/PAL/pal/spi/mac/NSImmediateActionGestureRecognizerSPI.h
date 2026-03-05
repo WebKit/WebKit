@@ -25,7 +25,13 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
+
+#include <wtf/Platform.h>
+
+#if USE(APPKIT)
 
 #import <AppKit/NSGestureRecognizer.h>
 
@@ -67,3 +73,5 @@ DECLARE_SYSTEM_HEADER
 @end
 
 #endif
+
+#endif // USE(APPKIT)

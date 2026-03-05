@@ -82,13 +82,13 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     std::optional<WebCore::PushSubscriptionSetIdentifier> subscriptionSetIdentifierForOrigin(const WebCore::SecurityOriginData&) const;
-    const String& hostAppCodeSigningIdentifier() const { return m_hostAppCodeSigningIdentifier; }
+    const String& hostAppCodeSigningIdentifier() const LIFETIME_BOUND { return m_hostAppCodeSigningIdentifier; }
     bool hostAppHasPushInjectEntitlement() const { return m_hostAppHasPushInjectEntitlement; };
     std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
     bool declarativeWebPushEnabled() const { return m_declarativeWebPushEnabled; }
 
     // You almost certainly do not want to use this and should probably use subscriptionSetIdentifierForOrigin instead.
-    const String& pushPartitionIfExists() const { return m_pushPartitionString; }
+    const String& pushPartitionIfExists() const LIFETIME_BOUND { return m_pushPartitionString; }
 
     String debugDescription() const;
 
@@ -126,7 +126,7 @@ private:
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
     void setProtocolVersionForTesting(unsigned, CompletionHandler<void()>&&);
 
-    XPCObjectPtr<xpc_connection_t> m_xpcConnection;
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
     String m_hostAppCodeSigningIdentifier;
     bool m_hostAppHasPushInjectEntitlement { false };
     String m_pushPartitionString;

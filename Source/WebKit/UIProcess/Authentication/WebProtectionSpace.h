@@ -38,16 +38,16 @@ public:
         return adoptRef(*new WebProtectionSpace(protectionSpace));
     }
     
-    const String& protocol() const;
-    const String& host() const;
-    int port() const;
-    const String& realm() const;
+    const String& protocol() const LIFETIME_BOUND;
+    const String& NODELETE host() const LIFETIME_BOUND;
+    int NODELETE port() const;
+    const String& NODELETE realm() const LIFETIME_BOUND;
     bool isProxy() const;
-    WebCore::ProtectionSpace::ServerType serverType() const;
+    WebCore::ProtectionSpace::ServerType NODELETE serverType() const;
     bool receivesCredentialSecurely() const;
-    WebCore::ProtectionSpace::AuthenticationScheme authenticationScheme() const;
+    WebCore::ProtectionSpace::AuthenticationScheme NODELETE authenticationScheme() const;
 
-    const WebCore::ProtectionSpace& protectionSpace() const { return m_coreProtectionSpace; }
+    const WebCore::ProtectionSpace& protectionSpace() const LIFETIME_BOUND { return m_coreProtectionSpace; }
 
 private:
     explicit WebProtectionSpace(const WebCore::ProtectionSpace&);

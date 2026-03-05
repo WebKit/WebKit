@@ -28,10 +28,10 @@ struct TwoBandsStates {
   }
 
   static const int kStateSize = 6;
-  int analysis_state1[kStateSize];
-  int analysis_state2[kStateSize];
-  int synthesis_state1[kStateSize];
-  int synthesis_state2[kStateSize];
+  float analysis_state1[kStateSize];
+  float analysis_state2[kStateSize];
+  float synthesis_state1[kStateSize];
+  float synthesis_state2[kStateSize];
 };
 
 // Splitting filter which is able to split into and merge from 2 or 3 frequency

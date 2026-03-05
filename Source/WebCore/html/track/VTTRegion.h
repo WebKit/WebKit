@@ -58,14 +58,14 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const String& id() const { return m_id; }
+    const String& id() const LIFETIME_BOUND { return m_id; }
     void setId(const String&);
 
     double width() const { return m_width; }
     ExceptionOr<void> setWidth(double);
 
     unsigned lines() const { return m_lines; }
-    void setLines(unsigned);
+    void NODELETE setLines(unsigned);
 
     double regionAnchorX() const { return m_regionAnchor.x(); }
     ExceptionOr<void> setRegionAnchorX(double);
@@ -81,11 +81,11 @@ public:
 
     enum class ScrollSetting : bool { EmptyString, Up };
     ScrollSetting scroll() const { return m_scroll; }
-    void setScroll(const ScrollSetting);
+    void NODELETE setScroll(const ScrollSetting);
 
-    void updateParametersFromRegion(const VTTRegion&);
+    void NODELETE updateParametersFromRegion(const VTTRegion&);
 
-    const String& regionSettings() const { return m_settings; }
+    const String& regionSettings() const LIFETIME_BOUND { return m_settings; }
     void setRegionSettings(const String&);
 
     HTMLDivElement& getDisplayTree();
@@ -122,7 +122,7 @@ private:
 
     static const AtomString& textTrackCueContainerScrollingClass();
 
-    RefPtr<Document> protectedDocument() const;
+    Document* document() const;
 
     String m_id;
     String m_settings;

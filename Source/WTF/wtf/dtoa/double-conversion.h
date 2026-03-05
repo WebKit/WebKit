@@ -130,10 +130,10 @@ class DoubleToStringConverter {
   }
 
   // Returns a converter following the EcmaScript specification.
-  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& EcmaScriptConverter();
-  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& EcmaScriptConverterWithTrailingPoint();
+  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& NODELETE EcmaScriptConverter();
+  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& NODELETE EcmaScriptConverterWithTrailingPoint();
 
-  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& CSSConverter();
+  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& NODELETE CSSConverter();
 
   // Computes the shortest string of digits that correctly represent the input
   // number. Depending on decimal_in_shortest_low and decimal_in_shortest_high

@@ -43,7 +43,7 @@ static AudioHardwareListener::CreationFunction& audioHardwareListenerCreationFun
 
 void AudioHardwareListener::setCreationFunction(CreationFunction&& function)
 {
-    audioHardwareListenerCreationFunction() = WTFMove(function);
+    audioHardwareListenerCreationFunction() = WTF::move(function);
 }
 
 void AudioHardwareListener::resetCreationFunction()

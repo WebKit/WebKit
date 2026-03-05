@@ -59,7 +59,7 @@ void SQLTransactionCoordinator::processPendingTransactions(CoordinationInfo& inf
     if (info.activeWriteTransaction || info.pendingTransactions.isEmpty())
         return;
 
-    RefPtr<SQLTransaction> firstPendingTransaction = info.pendingTransactions.first();
+    Ref firstPendingTransaction = info.pendingTransactions.first();
     if (firstPendingTransaction->isReadOnly()) {
         do {
             firstPendingTransaction = info.pendingTransactions.takeFirst();
@@ -68,7 +68,7 @@ void SQLTransactionCoordinator::processPendingTransactions(CoordinationInfo& inf
         } while (!info.pendingTransactions.isEmpty() && info.pendingTransactions.first()->isReadOnly());
     } else if (info.activeReadTransactions.isEmpty()) {
         info.pendingTransactions.removeFirst();
-        info.activeWriteTransaction = firstPendingTransaction;
+        info.activeWriteTransaction = firstPendingTransaction.ptr();
         firstPendingTransaction->lockAcquired();
     }
 }
@@ -86,7 +86,7 @@ void SQLTransactionCoordinator::acquireLock(SQLTransaction& transaction)
     }
 
     CoordinationInfo& info = coordinationInfoIterator->value;
-    info.pendingTransactions.append(&transaction);
+    info.pendingTransactions.append(transaction);
     processPendingTransactions(info);
 }
 
@@ -102,8 +102,8 @@ void SQLTransactionCoordinator::releaseLock(SQLTransaction& transaction)
     CoordinationInfo& info = coordinationInfoIterator->value;
 
     if (transaction.isReadOnly()) {
-        ASSERT(info.activeReadTransactions.contains(&transaction));
-        info.activeReadTransactions.remove(&transaction);
+        ASSERT(info.activeReadTransactions.contains(transaction));
+        info.activeReadTransactions.remove(transaction);
     } else {
         ASSERT(info.activeWriteTransaction == &transaction);
         info.activeWriteTransaction = nullptr;
@@ -123,8 +123,8 @@ void SQLTransactionCoordinator::shutdown()
         // Clean up transactions that have reached "lockAcquired":
         // Transaction phase 4 cleanup. See comment on "What happens if a
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
-        if (info.activeWriteTransaction)
-            info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
+        if (RefPtr transaction = info.activeWriteTransaction)
+            transaction->notifyDatabaseThreadIsShuttingDown();
         for (auto& transaction : info.activeReadTransactions)
             transaction->notifyDatabaseThreadIsShuttingDown();
 

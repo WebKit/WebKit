@@ -44,8 +44,8 @@ public:
         , m_type(type)
         , m_name(name)
         , m_scopeDepth(scopeDepth)
-        , m_breakTarget(WTFMove(breakTarget))
-        , m_continueTarget(WTFMove(continueTarget))
+        , m_breakTarget(WTF::move(breakTarget))
+        , m_continueTarget(WTF::move(continueTarget))
     {
     }
 
@@ -80,7 +80,7 @@ private:
     const Identifier* m_name;
     int m_scopeDepth;
     const Ref<Label> m_breakTarget;
-    RefPtr<Label> m_continueTarget;
+    const RefPtr<Label> m_continueTarget;
 };
 
 } // namespace JSC

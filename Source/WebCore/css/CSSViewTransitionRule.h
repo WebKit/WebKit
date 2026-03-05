@@ -64,7 +64,7 @@ public:
     virtual ~CSSViewTransitionRule();
 
     String cssText() const final;
-    void reattach(StyleRuleBase&) final;
+    void NODELETE reattach(StyleRuleBase&) final;
     StyleRuleType styleRuleType() const final { return StyleRuleType::ViewTransition; }
 
     AtomString navigation() const;

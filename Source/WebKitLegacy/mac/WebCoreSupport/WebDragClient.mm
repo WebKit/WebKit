@@ -150,35 +150,39 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Fra
     if (!localFrame)
         return;
 
-    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[kit(localFrame) frameView] documentView];
+    RefPtr<LocalFrame> localMainFrame = localFrame->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[kit(localMainFrame) frameView] documentView];
     if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
         return;
     
-    NSEvent *event = (dragItem.sourceAction && *dragItem.sourceAction == DragSourceAction::Link) ? localFrame->eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
-    WebHTMLView* topHTMLView = getTopHTMLView(localFrame);
+    RetainPtr event = (dragItem.sourceAction && *dragItem.sourceAction == DragSourceAction::Link) ? localMainFrame->eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
+    RetainPtr topHTMLView = getTopHTMLView(localMainFrame);
     RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
     
-    [topHTMLView _stopAutoscrollTimer];
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name().createNSString().get()];
+    [topHTMLView.get() _stopAutoscrollTimer];
+    RetainPtr pasteboard = [NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name().createNSString().get()];
 
-    NSImage *dragNSImage = dragImage.get().unsafeGet();
-    WebHTMLView *sourceHTMLView = htmlView.get();
+    RetainPtr dragNSImage = dragImage.get().unsafeGet();
+    RetainPtr sourceHTMLView = htmlView.get();
 
-    IntSize size([dragNSImage size]);
-    size.scale(1 / localFrame->page()->deviceScaleFactor());
-    [dragNSImage setSize:size];
+    IntSize size([dragNSImage.get() size]);
+    size.scale(1 / localMainFrame->page()->deviceScaleFactor());
+    [dragNSImage.get() setSize:size];
 
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:);
     if ([delegate respondsToSelector:selector]) {
         @try {
-            [delegate webView:m_webView dragImage:dragNSImage at:dragLocationInContentCoordinates offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES forView:topHTMLView];
+            [delegate webView:m_webView dragImage:dragNSImage.get() at:dragLocationInContentCoordinates offset:NSZeroSize event:event.get() pasteboard:pasteboard.get() source:sourceHTMLView.get() slideBack:YES forView:topHTMLView.get()];
         } @catch (id exception) {
             ReportDiscardedDelegateException(selector, exception);
         }
     } else
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [topHTMLView dragImage:dragNSImage at:dragLocationInContentCoordinates offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES];
+        [topHTMLView.get() dragImage:dragNSImage.get() at:dragLocationInContentCoordinates offset:NSZeroSize event:event.get() pasteboard:pasteboard.get() source:sourceHTMLView.get() slideBack:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
@@ -202,8 +206,8 @@ void WebDragClient::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPoi
     [draggingItem setDraggingFrame:draggingFrame contents:dragItem.image.get().get()];
 
     // FIXME: We should be able to make a fake event with the mosue dragged coordinates.
-    NSEvent *event = frame.eventHandler().currentNSEvent();
-    [topWebHTMLView.get() beginDraggingSessionWithItems:@[ draggingItem.get() ] event:event source:topWebHTMLView.get()];
+    RetainPtr event = frame.eventHandler().currentNSEvent();
+    [topWebHTMLView.get() beginDraggingSessionWithItems:@[ draggingItem.get() ] event:event.get() source:topWebHTMLView.get()];
 }
 
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& title, WebCore::LocalFrame* frame)

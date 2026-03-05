@@ -72,8 +72,8 @@ private:
     bool currentLogicalCharacterMetrics(SVGTextLayoutAttributes*&, SVGTextMetrics&);
     bool currentVisualCharacterMetrics(const InlineIterator::SVGTextBox&, const Vector<SVGTextMetrics>&, SVGTextMetrics&);
 
-    void advanceToNextLogicalCharacter(const SVGTextMetrics&);
-    void advanceToNextVisualCharacter(const SVGTextMetrics&);
+    void NODELETE advanceToNextLogicalCharacter(const SVGTextMetrics&);
+    void NODELETE advanceToNextVisualCharacter(const SVGTextMetrics&);
 
 private:
     Vector<SVGTextLayoutAttributes*>& m_layoutAttributes;

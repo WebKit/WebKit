@@ -48,7 +48,7 @@ static DoubleRange capabilityDoubleRange(const DoubleCapabilityRange& value)
     return range;
 }
 
-static LongRange capabilityLongRange(const LongCapabilityRange& value)
+static LongRange NODELETE capabilityLongRange(const LongCapabilityRange& value)
 {
     return { value.max(), value.min() };
 }

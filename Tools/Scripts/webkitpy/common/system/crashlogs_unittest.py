@@ -432,3 +432,27 @@ class CrashLogsTest(unittest.TestCase):
         crash_report = crash_report.replace("Date/Time", "")
         crash_timestamp = crash_logs.get_timestamp_from_log(crash_report)
         self.assertIsNone(crash_timestamp)
+
+    def test_find_log_darwin_multiple_directories(self):
+        if not SystemHost.get_default().platform.is_mac():
+            return
+
+        files = {}
+        files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash'] = \
+            string_utils.encode(make_mock_crash_report_darwin('DumpRenderTree', 28530))
+        files['/Library/Logs/CrashboardArchive/DumpRenderTree_2011-06-13-150720_quadzen.ips'] = \
+            string_utils.encode(make_mock_ips_crash_report_darwin('DumpRenderTree', 28529))
+
+        filesystem = MockFileSystem(files)
+        crash_logs = CrashLogs(
+            MockSystemHost(filesystem=filesystem),
+            ['/Users/mock/Library/Logs/DiagnosticReports', '/Library/Logs/CrashboardArchive'],
+        )
+
+        all_logs = crash_logs.find_all_logs()
+        self.assertEqual(len(all_logs), 2)
+
+        log = crash_logs.find_newest_log("DumpRenderTree", 28529)
+        self.assertIsNotNone(log)
+        log = crash_logs.find_newest_log("DumpRenderTree", 28530)
+        self.assertIsNotNone(log)

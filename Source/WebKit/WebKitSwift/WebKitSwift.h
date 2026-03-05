@@ -23,19 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKGroupSession.h"
-#import "WKIntelligenceReplacementTextEffectCoordinator.h"
-#import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
-#import "WKIntelligenceTextEffectCoordinator.h"
-#import "WKMarketplaceKit.h"
-#import "WKPreviewWindowController.h"
-#import "WKRKEntity.h"
-#import "WKSLinearMediaPlayer.h"
-#import "WKSLinearMediaTypes.h"
-#import "WKStageMode.h"
-#import "WKTextAnimationManagerIOS.h"
+#import "CredentialUpdaterShim.h"
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#import "ModelTypes.h"
+#import "WKGroupSession.h"
 #import "WKIdentityDocumentPresentmentController.h"
 #import "WKIdentityDocumentPresentmentDelegate.h"
 #import "WKIdentityDocumentPresentmentError.h"
@@ -44,4 +35,14 @@
 #import "WKIdentityDocumentPresentmentRequest.h"
 #import "WKIdentityDocumentPresentmentResponse.h"
 #import "WKIdentityDocumentRawRequestValidator.h"
-#endif
+#import "WKIntelligenceReplacementTextEffectCoordinator.h"
+#import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
+#import "WKIntelligenceTextEffectCoordinator.h"
+#import "WKMarketplaceKit.h"
+#import "WKPreviewWindowController.h"
+#import "WKRKEntity.h"
+#import "WKSExperienceController.h"
+#import "WKSLinearMediaPlayer.h"
+#import "WKSLinearMediaTypes.h"
+#import "WKStageMode.h"
+#import "WKTextAnimationManagerIOS.h"

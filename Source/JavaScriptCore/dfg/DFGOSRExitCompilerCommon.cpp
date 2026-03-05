@@ -489,7 +489,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     }
 
     if (exit.isExceptionHandler()) {
-        ASSERT(!RegisterSetBuilder::vmCalleeSaveRegisters().contains(LLInt::Registers::pcGPR, IgnoreVectors));
+        ASSERT(!RegisterSet::vmCalleeSaveRegisters().contains(LLInt::Registers::pcGPR, IgnoreVectors));
         jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, AssemblyHelpers::selectScratchGPR(LLInt::Registers::pcGPR));
 
         // Since we're jumping to op_catch, we need to set callFrameForCatch.

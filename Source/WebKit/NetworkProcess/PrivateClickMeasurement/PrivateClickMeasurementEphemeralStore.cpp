@@ -39,7 +39,7 @@ void EphemeralStore::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurem
 {
     ASSERT(attribution.isEphemeral() == WebCore::PCM::AttributionEphemeral::Yes);
     ASSERT_UNUSED(type, type == PrivateClickMeasurementAttributionType::Unattributed);
-    m_clickMeasurement = WTFMove(attribution);
+    m_clickMeasurement = WTF::move(attribution);
     completionHandler();
 }
 
@@ -53,15 +53,15 @@ void EphemeralStore::attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&
 {
     DebugInfo debugInfo;
     if (!m_clickMeasurement)
-        return completionHandler(std::nullopt, WTFMove(debugInfo));
+        return completionHandler(std::nullopt, WTF::move(debugInfo));
 
     if (m_clickMeasurement->sourceSite() != sourceSite || m_clickMeasurement->destinationSite() != destinationSite)
-        return completionHandler(std::nullopt, WTFMove(debugInfo));
+        return completionHandler(std::nullopt, WTF::move(debugInfo));
 
     if (!applicationBundleIdentifier.isEmpty() && m_clickMeasurement->sourceApplicationBundleID() != applicationBundleIdentifier)
-        return completionHandler(std::nullopt, WTFMove(debugInfo));
+        return completionHandler(std::nullopt, WTF::move(debugInfo));
 
-    completionHandler(m_clickMeasurement->attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData), isLayoutTest), WTFMove(debugInfo));
+    completionHandler(m_clickMeasurement->attributeAndGetEarliestTimeToSend(WTF::move(attributionTriggerData), isLayoutTest), WTF::move(debugInfo));
 }
 
 void EphemeralStore::privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
@@ -146,8 +146,8 @@ void EphemeralStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& att
         return;
     }
 
-    attributionToClear.setTimesToSend(WTFMove(timesToSend));
-    m_clickMeasurement = WTFMove(attributionToClear);
+    attributionToClear.setTimesToSend(WTF::move(timesToSend));
+    m_clickMeasurement = WTF::move(attributionToClear);
 }
 
 void EphemeralStore::close(CompletionHandler<void()>&& completionHandler)

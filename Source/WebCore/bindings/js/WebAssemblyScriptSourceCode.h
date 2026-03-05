@@ -43,14 +43,14 @@ namespace WebCore {
 class WebAssemblyScriptSourceCode {
 public:
     WebAssemblyScriptSourceCode(CachedScript* cachedScript, Ref<CachedScriptFetcher>&& scriptFetcher)
-        : m_provider(WebAssemblyCachedScriptSourceProvider::create(cachedScript, WTFMove(scriptFetcher)))
+        : m_provider(WebAssemblyCachedScriptSourceProvider::create(cachedScript, WTF::move(scriptFetcher)))
         , m_code(m_provider.copyRef())
         , m_cachedScript(cachedScript)
     {
     }
 
     WebAssemblyScriptSourceCode(const ScriptBuffer& source, URL&& url, Ref<JSC::ScriptFetcher>&& scriptFetcher)
-        : m_provider(WebAssemblyScriptBufferSourceProvider::create(source, WTFMove(url), WTFMove(scriptFetcher)))
+        : m_provider(WebAssemblyScriptBufferSourceProvider::create(source, WTF::move(url), WTF::move(scriptFetcher)))
         , m_code(m_provider.copyRef())
     {
     }

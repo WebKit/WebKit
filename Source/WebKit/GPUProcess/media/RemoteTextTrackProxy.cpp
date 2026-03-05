@@ -51,7 +51,7 @@ RemoteTextTrackProxy::RemoteTextTrackProxy(GPUConnectionToWebProcess& connection
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_clientId = trackPrivate.addClient([](auto&& task) {
-        ensureOnMainThread(WTFMove(task));
+        ensureOnMainThread(WTF::move(task));
     }, *this);
     connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteTextTrack(configuration()), m_mediaPlayerIdentifier);
 }

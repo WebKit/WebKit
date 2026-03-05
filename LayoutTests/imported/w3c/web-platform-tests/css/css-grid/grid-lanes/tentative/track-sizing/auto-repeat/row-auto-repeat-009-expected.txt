@@ -1,13 +1,5 @@
 
-FAIL .grid-lanes 1 assert_equals:
-<div class="grid-lanes" data-expected-width="100" data-expected-height="500">
-      <div class="item" data-expected-width="100" data-expected-height="100">Cell 1</div>
-      <div class="item" data-expected-width="100" data-expected-height="100">Cell 2</div>
-      <div class="item" data-expected-width="100" data-expected-height="100">Cell 3</div>
-      <div class="item" data-expected-width="100" data-expected-height="100">Cell 4</div>
-      <div class="item" data-expected-width="100" data-expected-height="100">Cell 5</div>
-    </div>
-height expected 100 but got 18
+PASS .grid-lanes 1
 Cell 1
 Cell 2
 Cell 3

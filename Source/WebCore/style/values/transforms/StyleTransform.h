@@ -65,7 +65,7 @@ inline Transform::Transform(std::initializer_list<TransformFunction> transformFu
 }
 
 inline Transform::Transform(TransformFunction&& transformFunction)
-    : Transform { TransformList { WTFMove(transformFunction) } }
+    : Transform { TransformList { WTF::move(transformFunction) } }
 {
 }
 

@@ -1,6 +1,6 @@
 
-FAIL Smooth scrollIntoView should scroll the element to the 'nearest' position promise_test: Unhandled rejection with value: object "TypeError: getValue is not a function. (In 'getValue()', 'getValue' is undefined)"
-FAIL Smooth scrollIntoView should scroll the element to the 'start' position promise_test: Unhandled rejection with value: object "TypeError: getValue is not a function. (In 'getValue()', 'getValue' is undefined)"
-FAIL Smooth scrollIntoView should scroll the element to the 'center' position promise_test: Unhandled rejection with value: object "TypeError: getValue is not a function. (In 'getValue()', 'getValue' is undefined)"
-FAIL Smooth scrollIntoView should scroll the element to the 'end' position promise_test: Unhandled rejection with value: object "TypeError: getValue is not a function. (In 'getValue()', 'getValue' is undefined)"
+PASS Smooth scrollIntoView should scroll the element to the 'nearest' position
+PASS Smooth scrollIntoView should scroll the element to the 'start' position
+PASS Smooth scrollIntoView should scroll the element to the 'center' position
+PASS Smooth scrollIntoView should scroll the element to the 'end' position
 

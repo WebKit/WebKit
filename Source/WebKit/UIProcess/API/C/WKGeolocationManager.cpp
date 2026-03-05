@@ -40,20 +40,20 @@ WKTypeID WKGeolocationManagerGetTypeID()
 
 void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProviderBase* wkProvider)
 {
-    toProtectedImpl(geolocationManagerRef)->setProvider(makeUnique<WebGeolocationProvider>(wkProvider));
+    protect(toImpl(geolocationManagerRef))->setProvider(makeUnique<WebGeolocationProvider>(wkProvider));
 }
 
 void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManagerRef, WKGeolocationPositionRef positionRef)
 {
-    toProtectedImpl(geolocationManagerRef)->providerDidChangePosition(toProtectedImpl(positionRef).get());
+    protect(toImpl(geolocationManagerRef))->providerDidChangePosition(protect(toImpl(positionRef)).get());
 }
 
 void WKGeolocationManagerProviderDidFailToDeterminePosition(WKGeolocationManagerRef geolocationManagerRef)
 {
-    toProtectedImpl(geolocationManagerRef)->providerDidFailToDeterminePosition();
+    protect(toImpl(geolocationManagerRef))->providerDidFailToDeterminePosition();
 }
 
 void WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage(WKGeolocationManagerRef geolocationManagerRef, WKStringRef errorMessage)
 {
-    toProtectedImpl(geolocationManagerRef)->providerDidFailToDeterminePosition(toWTFString(errorMessage));
+    protect(toImpl(geolocationManagerRef))->providerDidFailToDeterminePosition(toWTFString(errorMessage));
 }

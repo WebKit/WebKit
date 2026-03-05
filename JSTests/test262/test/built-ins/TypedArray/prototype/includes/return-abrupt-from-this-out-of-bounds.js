@@ -56,4 +56,4 @@ testWithTypedArrayConstructors(TA => {
     array.includes(0);
     throw new Test262Error('includes completed successfully');
   });
-});
+}, null, ["passthrough"]);

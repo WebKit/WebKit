@@ -115,7 +115,7 @@ void AudioNodeInput::disable(AudioNodeOutput* output)
     }
 
     // Propagate disabled state to outputs.
-    checkedNode()->disableOutputsIfNecessary();
+    protect(node())->disableOutputsIfNecessary();
 }
 
 void AudioNodeInput::enable(AudioNodeOutput* output)
@@ -139,12 +139,12 @@ void AudioNodeInput::enable(AudioNodeOutput* output)
     m_disabledOutputs.remove(output);
 
     // Propagate enabled state to outputs.
-    checkedNode()->enableOutputsIfNecessary();
+    protect(node())->enableOutputsIfNecessary();
 }
 
 void AudioNodeInput::didUpdate()
 {
-    checkedNode()->checkNumberOfChannelsForInput(this);
+    protect(node())->checkNumberOfChannelsForInput(this);
 }
 
 void AudioNodeInput::updateInternalBus()
@@ -178,14 +178,14 @@ unsigned AudioNodeInput::numberOfChannels() const
     return maxChannels;
 }
 
-AudioBus& AudioNodeInput::bus()
+AudioBus& AudioNodeInput::bus() LIFETIME_BOUND
 {
     ASSERT(context());
     ASSERT(context()->isAudioThread());
 
     // Handle single connection specially to allow for in-place processing.
     if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max)
-        return renderingOutput(0)->bus();
+        SUPPRESS_UNCHECKED_ARG return renderingOutput(0)->bus();
 
     // Multiple connections case or complex ChannelCountMode (or no connections).
     return m_internalSummingBus;
@@ -237,7 +237,7 @@ AudioBus& AudioNodeInput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
     if (!numberOfRenderingConnections()) {
         // At least, generate silence if we're not connected to anything.
         // FIXME: if we wanted to get fancy, we could propagate a 'silent hint' here to optimize the downstream graph processing.
-        m_internalSummingBus->zero();
+        protect(m_internalSummingBus)->zero();
         return m_internalSummingBus;
     }
 

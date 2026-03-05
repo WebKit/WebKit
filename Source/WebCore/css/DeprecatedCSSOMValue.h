@@ -47,7 +47,7 @@ public:
         CSS_CUSTOM = 3
     };
 
-    WEBCORE_EXPORT unsigned short cssValueType() const;
+    WEBCORE_EXPORT unsigned short NODELETE cssValueType() const;
 
     WEBCORE_EXPORT String cssText() const;
     ExceptionOr<void> setCssText(const String&) { return { }; } // Will never implement.
@@ -76,7 +76,7 @@ protected:
     ClassType classType() const { return static_cast<ClassType>(m_classType); }
 
     DeprecatedCSSOMValue(ClassType classType, CSSStyleDeclaration& owner)
-        : m_classType(enumToUnderlyingType(classType))
+        : m_classType(std::to_underlying(classType))
         , m_owner(owner)
     {
     }
@@ -92,16 +92,16 @@ class DeprecatedCSSOMComplexValue : public DeprecatedCSSOMValue {
 public:
     static Ref<DeprecatedCSSOMComplexValue> create(Ref<const CSSValue> value, CSSStyleDeclaration& owner)
     {
-        return adoptRef(*new DeprecatedCSSOMComplexValue(WTFMove(value), owner));
+        return adoptRef(*new DeprecatedCSSOMComplexValue(WTF::move(value), owner));
     }
 
     String cssText() const;
-    unsigned short cssValueType() const;
+    unsigned short NODELETE cssValueType() const;
 
 protected:
     DeprecatedCSSOMComplexValue(Ref<const CSSValue> value, CSSStyleDeclaration& owner)
         : DeprecatedCSSOMValue(ClassType::Complex, owner)
-        , m_value(WTFMove(value))
+        , m_value(WTF::move(value))
     {
     }
 

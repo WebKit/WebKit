@@ -43,15 +43,15 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGContainer);
 
 RenderSVGContainer::RenderSVGContainer(Type type, Document& document, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
-    : RenderSVGModelObject(type, document, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer)
+    : RenderSVGModelObject(type, document, WTF::move(style), svgFlags | SVGModelObjectFlag::IsContainer)
 {
 }
 
 RenderSVGContainer::RenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
-    : RenderSVGModelObject(type, element, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer)
+    : RenderSVGModelObject(type, element, WTF::move(style), svgFlags | SVGModelObjectFlag::IsContainer)
 {
 }
 
@@ -91,6 +91,7 @@ void RenderSVGContainer::layoutChildren()
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration, &m_objectBoundingBoxValid);
     m_strokeBoundingBox = std::nullopt;
+    m_cachedVisualOverflowRect = std::nullopt;
 
     if (auto objectBoundingBoxWithoutTransformations = overridenObjectBoundingBoxWithoutTransformations())
         m_objectBoundingBoxWithoutTransformations = objectBoundingBoxWithoutTransformations.value();
@@ -174,10 +175,10 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
         return false;
 
 
-    for (auto* child = lastChild(); child; child = child->previousSibling()) {
+    for (CheckedPtr child = lastChild(); child; child = child->previousSibling()) {
         if (!child->hasLayer() && child->nodeAtPoint(request, result, locationInContainer, adjustedLocation, hitTestAction)) {
             updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-            if (result.addNodeToListBasedTestResult(child->protectedNode().get(), request, locationInContainer, visualOverflowRect) == HitTestProgress::Stop)
+            if (result.addNodeToListBasedTestResult(protect(child->node()).get(), request, locationInContainer, visualOverflowRect) == HitTestProgress::Stop)
                 return true;
         }
     }
@@ -185,7 +186,7 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
     // Accessibility wants to return SVG containers, if appropriate.
     if (request.type() & HitTestRequest::Type::AccessibilityHitTest && m_objectBoundingBox.contains(localPoint)) {
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-        if (result.addNodeToListBasedTestResult(protectedNodeForHitTest().get(), request, locationInContainer, visualOverflowRect) == HitTestProgress::Stop)
+        if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, locationInContainer, visualOverflowRect) == HitTestProgress::Stop)
             return true;
     }
 
@@ -200,6 +201,16 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
     }
     // 16.4: "If there are no graphics elements whose relevant graphics content is under the pointer (i.e., there is no target element), the event is not dispatched."
     return false;
+}
+
+void RenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* container) const
+{
+    if (needsHasSVGTransformFlags())
+        return RenderSVGModelObject::addFocusRingRects(rects, additionalOffset, container);
+    auto repaintBoundingBox = enclosingLayoutRect(repaintRectInLocalCoordinates());
+    if (repaintBoundingBox.size().isEmpty())
+        return;
+    rects.append(repaintBoundingBox);
 }
 
 }

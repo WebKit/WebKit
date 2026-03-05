@@ -39,7 +39,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 #endif
 
 namespace WTF {
@@ -95,20 +95,20 @@ public:
 
     WTF_EXPORT_PRIVATE void install();
 
-    WTF_EXPORT_PRIVATE void setMemoryFootprintPollIntervalForTesting(Seconds);
+    WTF_EXPORT_PRIVATE void NODELETE setMemoryFootprintPollIntervalForTesting(Seconds);
     WTF_EXPORT_PRIVATE void setShouldUsePeriodicMemoryMonitor(bool);
 
 #if OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(QNX)
     WTF_EXPORT_PRIVATE void triggerMemoryPressureEvent(bool isCritical);
 #endif
 
-    void setMemoryKillCallback(WTF::Function<void()>&& function) { m_memoryKillCallback = WTFMove(function); }
-    void setMemoryPressureStatusChangedCallback(WTF::Function<void()>&& function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
-    void setDidExceedProcessMemoryLimitCallback(WTF::Function<void(ProcessMemoryLimit)>&& function) { m_didExceedProcessMemoryLimitCallback = WTFMove(function); }
+    void setMemoryKillCallback(WTF::Function<void()>&& function) { m_memoryKillCallback = WTF::move(function); }
+    void setMemoryPressureStatusChangedCallback(WTF::Function<void()>&& function) { m_memoryPressureStatusChangedCallback = WTF::move(function); }
+    void setDidExceedProcessMemoryLimitCallback(WTF::Function<void(ProcessMemoryLimit)>&& function) { m_didExceedProcessMemoryLimitCallback = WTF::move(function); }
 
     void setLowMemoryHandler(LowMemoryHandler&& handler)
     {
-        m_lowMemoryHandler = WTFMove(handler);
+        m_lowMemoryHandler = WTF::move(handler);
     }
 
     bool isUnderMemoryWarning() const
@@ -141,7 +141,7 @@ public:
     void setDispatchQueue(OSObjectPtr<dispatch_queue_t>&& queue)
     {
         RELEASE_ASSERT(!m_installed);
-        m_dispatchQueue = WTFMove(queue);
+        m_dispatchQueue = WTF::move(queue);
     }
 #endif
 
@@ -195,7 +195,7 @@ public:
 
     using Configuration = MemoryPressureHandlerConfiguration;
 
-    void setConfiguration(Configuration&& configuration) { m_configuration = WTFMove(configuration); }
+    void setConfiguration(Configuration&& configuration) { m_configuration = WTF::move(configuration); }
     void setConfiguration(const Configuration& configuration) { m_configuration = configuration; }
 
     WTF_EXPORT_PRIVATE void releaseMemory(Critical, Synchronous = Synchronous::No);
@@ -205,7 +205,7 @@ public:
     WTF_EXPORT_PRIVATE void beginSimulatedMemoryPressure();
     WTF_EXPORT_PRIVATE void endSimulatedMemoryPressure();
 
-    WTF_EXPORT_PRIVATE void setProcessState(WebsamProcessState);
+    WTF_EXPORT_PRIVATE void NODELETE setProcessState(WebsamProcessState);
     WebsamProcessState processState() const { return m_processState; }
 
     WTF_EXPORT_PRIVATE static ASCIILiteral processStateDescription();
@@ -220,8 +220,8 @@ public:
 
 private:
     std::optional<size_t> thresholdForMemoryKill();
-    size_t thresholdForPolicy(MemoryUsagePolicy);
-    MemoryUsagePolicy policyForFootprint(size_t);
+    size_t NODELETE thresholdForPolicy(MemoryUsagePolicy);
+    MemoryUsagePolicy NODELETE policyForFootprint(size_t);
 
     void memoryPressureStatusChanged();
 
@@ -235,7 +235,7 @@ private:
     void didExceedProcessMemoryLimit(ProcessMemoryLimit);
     void respondToMemoryPressure(Critical, Synchronous = Synchronous::No);
     void platformReleaseMemory(Critical);
-    void platformInitialize();
+    void NODELETE platformInitialize();
 
     void measurementTimerFired();
     void shrinkOrDie(size_t killThreshold);

@@ -38,10 +38,9 @@
 #include "GraphicsContextSwitcher.h"
 #include "LegacyRenderSVGResourceFilter.h"
 #include "Logging.h"
-#include "ReferenceFilterOperation.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGShape.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -49,8 +48,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayerFilters);
 
-RenderLayerFilters::RenderLayerFilters(RenderLayer& layer)
-    : m_layer(layer)
+Ref<RenderLayerFilters> RenderLayerFilters::create(RenderLayer& layer, FloatSize scale)
+{
+    return adoptRef(*new RenderLayerFilters(layer, scale));
+}
+
+RenderLayerFilters::RenderLayerFilters(RenderLayer& layer, FloatSize scale)
+    : m_layer(&layer)
+    , m_filterScale(scale)
 {
 }
 
@@ -76,11 +81,15 @@ bool RenderLayerFilters::hasSourceImage() const
 
 void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
+    CheckedPtr layer = m_layer.get();
+    if (!layer)
+        return;
+
     // FIXME: This really shouldn't have to invalidate layer composition,
     // but tests like css3/filters/effect-reference-delete.html fail if that doesn't happen.
-    if (auto* enclosingElement = m_layer->enclosingElement())
+    if (RefPtr enclosingElement = layer->enclosingElement())
         enclosingElement->invalidateStyleAndLayerComposition();
-    m_layer->renderer().repaint();
+    layer->renderer().repaint();
 }
 
 void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filter)
@@ -88,27 +97,30 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
     removeReferenceFilterClients();
 
     for (auto& value : filter) {
-        Ref operation = value.value;
-        RefPtr referenceOperation = dynamicDowncast<Style::ReferenceFilterOperation>(operation);
-        if (!referenceOperation)
-            continue;
-
-        auto* documentReference = referenceOperation->cachedSVGDocumentReference();
-        if (auto* cachedSVGDocument = documentReference ? documentReference->document() : nullptr) {
-            // Reference is external; wait for notifyFinished().
-            cachedSVGDocument->addClient(*this);
-            m_externalSVGReferences.append(cachedSVGDocument);
-        } else {
-            // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
-            RefPtr filterElement = m_layer->renderer().document().getElementById(referenceOperation->fragment());
-            if (!filterElement)
-                continue;
-            CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFilter>(filterElement->renderer());
-            if (!renderer)
-                continue;
-            renderer->addClientRenderLayer(m_layer);
-            m_internalSVGReferences.append(WTFMove(filterElement));
-        }
+        WTF::switchOn(value,
+            [&](const Style::FilterReference& filterReference) {
+                RefPtr documentReference = filterReference.cachedSVGDocumentReference;
+                if (auto* cachedSVGDocument = documentReference ? documentReference->document() : nullptr) {
+                    // Reference is external; wait for notifyFinished().
+                    cachedSVGDocument->addClient(*this);
+                    m_externalSVGReferences.append(cachedSVGDocument);
+                } else {
+                    // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
+                    CheckedPtr layer = m_layer.get();
+                    if (!layer)
+                        return;
+                    RefPtr filterElement = layer->renderer().document().getElementById(filterReference.cachedFragment);
+                    if (!filterElement)
+                        return;
+                    CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFilter>(filterElement->renderer());
+                    if (!renderer)
+                        return;
+                    renderer->addClientRenderLayer(*layer);
+                    m_internalSVGReferences.append(filterElement.releaseNonNull());
+                }
+            },
+            []<CSSValueID C, typename T>(const FunctionNotation<C, T>&) { }
+        );
     }
 }
 
@@ -119,9 +131,11 @@ void RenderLayerFilters::removeReferenceFilterClients()
 
     m_externalSVGReferences.clear();
 
-    for (auto& filterElement : m_internalSVGReferences) {
-        if (CheckedPtr renderer = filterElement->renderer())
-            downcast<LegacyRenderSVGResourceContainer>(*renderer).removeClientRenderLayer(m_layer);
+    if (CheckedPtr layer = m_layer.get()) {
+        for (auto& filterElement : m_internalSVGReferences) {
+            if (CheckedPtr renderer = filterElement->renderer())
+                downcast<LegacyRenderSVGResourceContainer>(*renderer).removeClientRenderLayer(*layer);
+        }
     }
     m_internalSVGReferences.clear();
 }
@@ -144,58 +158,59 @@ IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const F
 
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect)
 {
-    auto expandedDirtyRect = dirtyRect;
-    auto targetBoundingBox = intersection(filterBoxRect, dirtyRect);
-
     auto preferredFilterRenderingModes = renderer.page().preferredFilterRenderingModes(context);
+    auto outsets = calculateOutsets(renderer, filterBoxRect);
 
-    auto outsets = calculateOutsets(renderer, targetBoundingBox);
-    if (!outsets.isZero()) {
-        LayoutBoxExtent flippedOutsets { outsets.bottom(), outsets.left(), outsets.top(), outsets.right() };
-        expandedDirtyRect.expand(flippedOutsets);
+    auto dirtyFilterRegion = dirtyRect;
+    auto filterRegion = dirtyRect;
+
+    if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer)) {
+        // In LBSE, the filter region will be recomputed in createReferenceFilter().
+        // FIXME: The LBSE filter geometry is not correct.
+        filterRegion = dirtyFilterRegion = enclosingLayoutRect(shape->objectBoundingBox());
+    } else {
+        if (!outsets.isZero()) {
+            // FIXME: This flipping was added for drop-shadow, but it's not obvious that it's correct.
+            LayoutBoxExtent flippedOutsets { outsets.bottom(), outsets.left(), outsets.top(), outsets.right() };
+            dirtyFilterRegion.expand(flippedOutsets);
+        }
+
+        dirtyFilterRegion = intersection(filterBoxRect, dirtyFilterRegion);
+        filterRegion = dirtyFilterRegion;
+
+        if (!outsets.isZero())
+            filterRegion.expand(toLayoutBoxExtent(outsets));
     }
 
-    if (is<RenderSVGShape>(renderer))
-        targetBoundingBox = enclosingLayoutRect(renderer.objectBoundingBox());
-    else {
-        // Calculate targetBoundingBox since it will be used if the filter is created.
-        targetBoundingBox = intersection(filterBoxRect, expandedDirtyRect);
-    }
-
-    if (targetBoundingBox.isEmpty())
+    if (filterRegion.isEmpty())
         return nullptr;
 
-    if (!m_filter || m_targetBoundingBox != targetBoundingBox || m_preferredFilterRenderingModes != preferredFilterRenderingModes) {
-        m_targetBoundingBox = targetBoundingBox;
+    auto geometryReferenceGeometryChanged = [](auto& existingGeometry, auto& newGeometry) {
+        return existingGeometry.referenceBox != newGeometry.referenceBox || existingGeometry.scale != newGeometry.scale;
+    };
+
+    auto geometry = FilterGeometry {
+        .referenceBox = filterBoxRect,
+        .filterRegion = filterRegion,
+        .scale = m_filterScale,
+    };
+
+    bool hasUpdatedBackingStore = false;
+    if (!m_filter || geometryReferenceGeometryChanged(m_filter->geometry(), geometry) || m_preferredFilterRenderingModes != preferredFilterRenderingModes) {
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilterRenderer::create(renderer, renderer.style().filter(), preferredFilterRenderingModes, m_filterScale, m_targetBoundingBox, context);
+        m_filter = CSSFilterRenderer::create(renderer, renderer.style().filter(), geometry, preferredFilterRenderingModes, renderer.settings().showDebugBorders(), context);
+        hasUpdatedBackingStore = true;
+    } else if (filterRegion != m_filter->filterRegion()) {
+        m_filter->setFilterRegion(filterRegion);
+        hasUpdatedBackingStore = true;
     }
+
+    m_preferredFilterRenderingModes = preferredFilterRenderingModes;
 
     if (!m_filter)
         return nullptr;
 
     Ref filter = *m_filter;
-    auto filterRegion = m_targetBoundingBox;
-
-    if (filter->hasFilterThatMovesPixels()) {
-        // For CSSFilterRenderer, filterRegion = targetBoundingBox + filter->outsets()
-        filterRegion.expand(toLayoutBoxExtent(outsets));
-    } else if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer))
-        filterRegion = shape->currentSVGLayoutRect();
-
-    if (filterRegion.isEmpty())
-        return nullptr;
-
-    // For CSSFilterRenderer, sourceImageRect = filterRegion.
-    bool hasUpdatedBackingStore = false;
-    if (m_filterRegion != filterRegion || m_preferredFilterRenderingModes != preferredFilterRenderingModes) {
-        m_filterRegion = filterRegion;
-        m_preferredFilterRenderingModes = preferredFilterRenderingModes;
-        hasUpdatedBackingStore = true;
-    }
-
-    filter->setFilterRegion(m_filterRegion);
-
     if (!filter->hasFilterThatMovesPixels())
         m_repaintRect = dirtyRect;
     else if (hasUpdatedBackingStore || !hasSourceImage())
@@ -211,10 +226,10 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_targetSwitcher || hasUpdatedBackingStore) {
         FloatRect sourceImageRect;
         if (is<RenderSVGShape>(renderer))
-            sourceImageRect = renderer.strokeBoundingBox();
+            sourceImageRect = renderer.objectBoundingBox();
         else
-            sourceImageRect = m_targetBoundingBox;
-        m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, DestinationColorSpace::SRGB(), { WTFMove(filter) });
+            sourceImageRect = dirtyFilterRegion;
+        m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, DestinationColorSpace::SRGB(), { WTF::move(filter) });
     }
 
     if (!m_targetSwitcher)

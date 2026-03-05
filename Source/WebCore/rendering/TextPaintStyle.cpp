@@ -33,7 +33,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -78,7 +78,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     TextPaintStyle paintStyle;
 
     auto viewportSize = frameView ? frameView->size() : IntSize();
-    paintStyle.strokeWidth = lineStyle.computedStrokeWidth(viewportSize);
+    paintStyle.strokeWidth = lineStyle.usedStrokeWidth(viewportSize);
     paintStyle.paintOrder = lineStyle.paintOrder();
     paintStyle.lineJoin = lineStyle.joinStyle();
     paintStyle.lineCap = lineStyle.capStyle();
@@ -114,10 +114,10 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
         }
     }
 
-    paintStyle.fillColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor, paintInfo.paintBehavior);
+    paintStyle.fillColor = lineStyle.visitedDependentTextFillColorApplyingColorFilter(paintInfo.paintBehavior);
 
     bool forceBackgroundToWhite = false;
-    if (frame->document() && frame->document()->printing()) {
+    if (frame->document() && protect(frame->document())->printing()) {
         if (lineStyle.printColorAdjust() == PrintColorAdjust::Economy)
             forceBackgroundToWhite = true;
 
@@ -125,7 +125,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
             forceBackgroundToWhite = false;
 
         if (forceBackgroundToWhite) {
-            if (Style::hasAnyBackgroundClipText(renderer.checkedStyle()->backgroundLayers()))
+            if (Style::hasAnyBackgroundClipText(protect(renderer.style())->backgroundLayers()))
                 paintStyle.fillColor = Color::black;
         }
     }
@@ -134,13 +134,13 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     if (forceBackgroundToWhite)
         paintStyle.fillColor = adjustColorForVisibilityOnBackground(paintStyle.fillColor, Color::white);
 
-    paintStyle.strokeColor = lineStyle.colorByApplyingColorFilter(lineStyle.computedStrokeColor());
+    paintStyle.strokeColor = lineStyle.usedStrokeColorApplyingColorFilter();
 
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)
         paintStyle.strokeColor = adjustColorForVisibilityOnBackground(paintStyle.strokeColor, Color::white);
 
-    paintStyle.emphasisMarkColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyTextEmphasisColor);
+    paintStyle.emphasisMarkColor = lineStyle.visitedDependentTextEmphasisColorApplyingColorFilter();
 
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)
@@ -167,11 +167,11 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
         selectionPaintStyle.hasExplicitlySetFillColor = pseudoStyle->hasExplicitlySetColor();
         selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : pseudoStyle->textShadow();
         auto viewportSize = view ? view->size() : IntSize();
-        float strokeWidth = pseudoStyle->computedStrokeWidth(viewportSize);
+        float strokeWidth = pseudoStyle->usedStrokeWidth(viewportSize);
         if (strokeWidth != selectionPaintStyle.strokeWidth)
             selectionPaintStyle.strokeWidth = strokeWidth;
 
-        Color stroke = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : pseudoStyle->computedStrokeColor();
+        Color stroke = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : pseudoStyle->usedStrokeColor();
         if (stroke != selectionPaintStyle.strokeColor)
             selectionPaintStyle.strokeColor = stroke;
     } else

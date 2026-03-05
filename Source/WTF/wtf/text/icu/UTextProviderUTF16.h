@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <span>
 #include <unicode/utext.h>
+#include <wtf/ExportMacros.h>
 
 namespace WTF {
 

@@ -155,7 +155,7 @@ enum class CoreTextTypesetterEmbeddingLevel : short { LTR = 0, RTL = 1 };
 
 NEVER_INLINE static RetainPtr<CFDictionaryRef> buildCoreTextTypesetterEmbeddingLevelDictionary(CoreTextTypesetterEmbeddingLevel embeddingLevel)
 {
-    auto embeddingLevelValue = enumToUnderlyingType(embeddingLevel);
+    auto embeddingLevelValue = std::to_underlying(embeddingLevel);
     static_assert(std::is_same_v<short, decltype(embeddingLevelValue)>);
     const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
     RetainPtr cfEmbeddingLevelValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &embeddingLevelValue));
@@ -178,7 +178,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), characters, stringLocation, 0, characters.size(), m_run->ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(protect(m_fontCascade->primaryFont()), characters, stringLocation, 0, characters.size(), m_run->ltr()));
         return;
     }
 
@@ -272,17 +272,17 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
                 if (!runFont) {
                     RetainPtr fontName = adoptCF(CTFontCopyPostScriptName(runCTFont.get()));
                     if (CFEqual(fontName.get(), CFSTR("LastResort"))) {
-                        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), characters, stringLocation, runRange.location, runRange.location + runRange.length, m_run->ltr()));
+                        m_complexTextRuns.append(ComplexTextRun::create(protect(m_fontCascade->primaryFont()), characters, stringLocation, runRange.location, runRange.location + runRange.length, m_run->ltr()));
                         continue;
                     }
                     FontPlatformData runFontPlatformData(runCTFont.get(), CTFontGetSize(runCTFont.get()));
                     runFont = FontCache::forCurrentThread()->fontForPlatformData(runFontPlatformData).ptr();
                 }
-                if (m_fallbackFonts && runFont != m_fontCascade->primaryFont().ptr())
+                if (m_fallbackFonts && runFont != &m_fontCascade->primaryFont())
                     m_fallbackFonts->add(*runFont);
             }
         }
-        if (m_fallbackFonts && runFont != m_fontCascade->primaryFont().ptr())
+        if (m_fallbackFonts && runFont != &m_fontCascade->primaryFont())
             m_fallbackFonts->add(*effectiveFont);
 
         LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");

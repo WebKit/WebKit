@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 80x582
           RenderTableRow {TR} at (0,0) size 80x408
             RenderTableCell {TD} at (0,192) size 80x23 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,194) size 76x18
-                text run at (2,2) width 76: "height: 70%"
+              RenderText {#text} at (2,195) size 76x18
+                text run at (2,3) width 76: "height: 70%"
           RenderTableRow {TR} at (0,407) size 80x175
             RenderTableCell {TD} at (0,483) size 80x23 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,78) size 76x18

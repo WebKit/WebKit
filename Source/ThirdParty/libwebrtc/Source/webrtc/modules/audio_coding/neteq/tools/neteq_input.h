@@ -17,8 +17,7 @@
 #include <optional>
 #include <string>
 
-#include "api/rtp_headers.h"
-#include "rtc_base/buffer.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -26,22 +25,14 @@ namespace test {
 // Interface class for input to the NetEqTest class.
 class NetEqInput {
  public:
-  struct PacketData {
-    PacketData();
-    ~PacketData();
-    std::string ToString() const;
-
-    RTPHeader header;
-    Buffer payload;
-    int64_t time_ms;
-  };
-
   struct SetMinimumDelayInfo {
     SetMinimumDelayInfo(int64_t timestamp_ms_in, int delay_ms_in)
         : timestamp_ms(timestamp_ms_in), delay_ms(delay_ms_in) {}
     int64_t timestamp_ms;
     int delay_ms;
   };
+
+  static std::string ToString(const RtpPacketReceived& packet);
 
   virtual ~NetEqInput() = default;
 
@@ -82,9 +73,9 @@ class NetEqInput {
 
   // Returns the next packet to be inserted into NetEq. The packet following the
   // returned one is pre-fetched in the NetEqInput object, such that future
-  // calls to NextPacketTime() or NextHeader() will return information from that
+  // calls to NextPacketTime() or NextPacket() will return information from that
   // packet.
-  virtual std::unique_ptr<PacketData> PopPacket() = 0;
+  virtual std::unique_ptr<RtpPacketReceived> PopPacket() = 0;
 
   // Move to the next output event. This will make NextOutputEventTime() return
   // a new value (potentially the same if several output events share the same
@@ -100,9 +91,9 @@ class NetEqInput {
   // infinite loop.
   virtual bool ended() const = 0;
 
-  // Returns the RTP header for the next packet, i.e., the packet that will be
-  // delivered next by PopPacket().
-  virtual std::optional<RTPHeader> NextHeader() const = 0;
+  // Returns the next RTP packet, i.e., the packet that will be delivered next
+  // by PopPacket().
+  virtual const RtpPacketReceived* NextPacket() const = 0;
 };
 
 // Wrapper class to impose a time limit on a NetEqInput object, typically
@@ -115,11 +106,11 @@ class TimeLimitedNetEqInput : public NetEqInput {
   std::optional<int64_t> NextPacketTime() const override;
   std::optional<int64_t> NextOutputEventTime() const override;
   std::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override;
-  std::unique_ptr<PacketData> PopPacket() override;
+  std::unique_ptr<RtpPacketReceived> PopPacket() override;
   void AdvanceOutputEvent() override;
   void AdvanceSetMinimumDelay() override;
   bool ended() const override;
-  std::optional<RTPHeader> NextHeader() const override;
+  const RtpPacketReceived* NextPacket() const override;
 
  private:
   void MaybeSetEnded();

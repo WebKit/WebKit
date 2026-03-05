@@ -98,11 +98,11 @@ void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 
     auto attachments = original->releaseAttachments();
     reserve(attachments.size());
-    for (auto&& attachment : WTFMove(attachments))
-        addAttachment(WTFMove(attachment));
+    for (auto&& attachment : WTF::move(attachments))
+        addAttachment(WTF::move(attachment));
 }
 
-static inline size_t roundUpToAlignment(size_t value, size_t alignment)
+static inline size_t NODELETE roundUpToAlignment(size_t value, size_t alignment)
 {
     return ((value + alignment - 1) / alignment) * alignment;
 }
@@ -121,7 +121,7 @@ void Encoder::reserve(size_t size)
     RELEASE_ASSERT(newBuffer);
     memcpySpan(newBuffer.mutableSpan(), span());
 
-    m_outOfLineBuffer = WTFMove(newBuffer);
+    m_outOfLineBuffer = WTF::move(newBuffer);
 }
 
 void Encoder::encodeHeader()
@@ -172,7 +172,7 @@ std::span<const uint8_t> Encoder::capacityBuffer() const
 
 void Encoder::addAttachment(Attachment&& attachment)
 {
-    m_attachments.append(WTFMove(attachment));
+    m_attachments.append(WTF::move(attachment));
 }
 
 Vector<Attachment> Encoder::releaseAttachments()

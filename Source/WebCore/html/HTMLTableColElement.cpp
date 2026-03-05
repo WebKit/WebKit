@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableColElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTableColElement);
 
 const unsigned defaultSpan { 1 };
 const unsigned minSpan { 1 };

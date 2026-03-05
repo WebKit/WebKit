@@ -474,7 +474,14 @@ if ARGV.length != 1
     exit 1
 end
 
-$json = JSON::parse(IO::read(ARGV[0]))
+# Read large files in chunks to avoid system read() limits
+content = ""
+File.open(ARGV[0], 'rb') do |file|
+  while chunk = file.read(1024 * 1024 * 1024)  # Read 1GB at a time
+    content << chunk
+  end
+end
+$json = JSON::parse(content)
 $bytecodes = $json["bytecodes"].map {
     | subJson |
     Bytecodes.new(subJson)

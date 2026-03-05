@@ -130,7 +130,7 @@ WI.Gradient = class Gradient
                     continue;
 
                 var stop = {color};
-                if (component.length && component[0].substr(-1) === "%")
+                if (component.length && component[0].at(-1) === "%")
                     stop.offset = parseFloat(component.shift()) / 100;
                 return stop;
             }

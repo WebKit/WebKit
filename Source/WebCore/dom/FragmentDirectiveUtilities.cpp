@@ -29,7 +29,7 @@
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -55,7 +55,7 @@ namespace FragmentDirectiveUtilities {
 ContainerNode& nearestBlockAncestor(Node& node)
 {
     for (RefPtr currentNode = node; currentNode; currentNode = currentNode->parentNode()) {
-        if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(currentNode->renderer()); renderElement && renderElement->style().isDisplayBlockLevel())
+        if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(currentNode->renderer()); renderElement && renderElement->style().display().isBlockType())
             return downcast<ContainerNode>(*currentNode);
     }
     return node.document();

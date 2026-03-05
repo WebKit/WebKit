@@ -5,6 +5,7 @@
 esid: sec-temporal.plainmonthday.from
 description: PlainMonthDay can be created for all month codes (M01-M12) in Islamic-umalqura calendar
 features: [Temporal, Intl.Era-monthcode]
+includes: [temporalHelpers.js]
 ---*/
 
 // Test that all month codes M01-M12 are valid for the Islamic-umalqura calendar
@@ -14,23 +15,33 @@ features: [Temporal, Intl.Era-monthcode]
 
 const calendar = "islamic-umalqura";
 
-const allMonths = ["M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12"];
+const allMonths = [
+  ["M01", 1972],
+  ["M02", 1970],
+  ["M03", 1971],
+  ["M04", 1972],
+  ["M05", 1971],
+  ["M06", 1972],
+  ["M07", 1969],
+  ["M08", 1972],
+  ["M09", 1972],
+  ["M10", 1970],
+  ["M11", 1972],
+  ["M12", 1971],
+];
 
-for (const monthCode of allMonths) {
+for (const [monthCode, referenceYear30] of allMonths) {
   const pmd = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 1 });
-  assert.sameValue(pmd.monthCode, monthCode, `monthCode ${monthCode} should be preserved`);
-  assert.sameValue(pmd.day, 1, `day should be 1 for ${monthCode}`);
+  TemporalHelpers.assertPlainMonthDay(pmd, monthCode, 1, `${monthCode}-01`);
 
   const pmd30 = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 30 });
-  assert.sameValue(pmd30.monthCode, monthCode, `${monthCode} with day 30 should be valid`);
-  assert.sameValue(pmd30.day, 30, `day should be 30 for ${monthCode}`);
+  TemporalHelpers.assertPlainMonthDay(pmd30, monthCode, 30, `${monthCode}-30`, referenceYear30);
 
   const constrained = Temporal.PlainMonthDay.from(
     { calendar, monthCode, day: 31 },
     { overflow: "constrain" }
   );
-  assert.sameValue(constrained.monthCode, monthCode, `${monthCode} should be preserved with constrain`);
-  assert.sameValue(constrained.day, 30, `day 31 should be constrained to 30 for ${monthCode}`);
+  TemporalHelpers.assertPlainMonthDay(constrained, monthCode, 30, `day 31 should be constrained to 30 for ${monthCode}`, referenceYear30);
 
   assert.throws(RangeError, () => {
     Temporal.PlainMonthDay.from({ calendar, monthCode, day: 31 }, { overflow: "reject" });

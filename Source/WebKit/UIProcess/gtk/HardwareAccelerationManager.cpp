@@ -27,9 +27,9 @@
 #include "HardwareAccelerationManager.h"
 
 #include "AcceleratedBackingStore.h"
+#include <wtf/text/CStringView.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 HardwareAccelerationManager& HardwareAccelerationManager::singleton()
 {
@@ -37,23 +37,13 @@ HardwareAccelerationManager& HardwareAccelerationManager::singleton()
     return manager;
 }
 
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 HardwareAccelerationManager::HardwareAccelerationManager()
-    : m_canUseHardwareAcceleration(true)
-    , m_forceHardwareAcceleration(true)
 {
-#if !ENABLE(WEBGL)
-    m_canUseHardwareAcceleration = false;
-#else
-    const char* disableCompositing = getenv("WEBKIT_DISABLE_COMPOSITING_MODE");
-    if ((disableCompositing && strcmp(disableCompositing, "0")) || !AcceleratedBackingStore::checkRequirements())
+    if (!AcceleratedBackingStore::canUseHardwareAcceleration()) {
         m_canUseHardwareAcceleration = false;
-#endif
-
-    const char* forceCompositing = getenv("WEBKIT_FORCE_COMPOSITING_MODE");
-    if (forceCompositing && !strcmp(forceCompositing, "0"))
-        m_forceHardwareAcceleration = false;
+        m_acceleratedCompositingModeEnabled = false;
+    } else if (const auto disableCompositingMode = CStringView::unsafeFromUTF8(getenv("WEBKIT_DISABLE_COMPOSITING_MODE")))
+        m_acceleratedCompositingModeEnabled = disableCompositingMode == "0"_s;
 }
-IGNORE_CLANG_WARNINGS_END
 
 } // namespace WebKit

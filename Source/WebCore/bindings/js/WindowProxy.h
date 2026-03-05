@@ -43,7 +43,7 @@ public:
     static Ref<WindowProxy> create(Frame&);
     WEBCORE_EXPORT ~WindowProxy();
 
-    WEBCORE_EXPORT Frame* frame() const;
+    WEBCORE_EXPORT Frame* NODELETE frame() const;
     void detachFromFrame();
     void replaceFrame(Frame&);
 
@@ -72,7 +72,7 @@ private:
     JSWindowProxy& createJSWindowProxyWithInitializedScript(DOMWrapperWorld&);
 
     WeakPtr<Frame> m_frame;
-    HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>> m_jsWindowProxies;
+    HashMap<Ref<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>> m_jsWindowProxies;
 };
 
 } // namespace WebCore

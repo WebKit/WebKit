@@ -16,7 +16,10 @@ const years1 = new Temporal.Duration(1);
 const years1n = new Temporal.Duration(-1);
 const years4 = new Temporal.Duration(4);
 const years4n = new Temporal.Duration(-4);
+const years3months6days17 = new Temporal.Duration(3, 6, 0, 17);
+const years3months6days17n = new Temporal.Duration(-3, -6, 0, -17);
 
+const date19191201 = Temporal.PlainDate.from({ year: 1919, monthCode: "M12", day: 1, calendar });
 const date19200716 = Temporal.PlainDate.from({ year: 1920, monthCode: "M07", day: 16, calendar });
 
 TemporalHelpers.assertPlainDate(
@@ -37,15 +40,29 @@ TemporalHelpers.assertPlainDate(
   1916, 7, "M07", 16, "subtract 4y",
   "shaka", 1916);
 
+TemporalHelpers.assertPlainDate(
+  date19191201.add(years3months6days17),
+  1923, 6, "M06", 18, "Adding 3y6m17d to day 1 of a month",
+  "shaka", 1923);
+var calculatedStart = date19191201.add(years3months6days17).add(years3months6days17n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  1919, 12, "M12", 1, "subtract 3y6m17d",
+  "shaka", 1919);
 
 // Months
 
 const months5 = new Temporal.Duration(0, 5);
 const months5n = new Temporal.Duration(0, -5);
+const months6 = new Temporal.Duration(0, 6);
+const months6n = new Temporal.Duration(0, -6);
 const months8 = new Temporal.Duration(0, 8);
 const months8n = new Temporal.Duration(0, -8);
 const years1months2 = new Temporal.Duration(1, 2);
 const years1months2n = new Temporal.Duration(-1, -2);
+
+const date19220101 = Temporal.PlainDate.from({ year: 1922, monthCode: "M01", day: 1, calendar });
+const date19221201 = Temporal.PlainDate.from({ year: 1922, monthCode: "M12", day: 1, calendar });
 
 TemporalHelpers.assertPlainDate(
   date19200716.add(months5),
@@ -99,12 +116,24 @@ TemporalHelpers.assertPlainDate(
   1918, 12, "M12", 17, "subtract 1y 2mo with result in the previous year",
   "shaka", 1918);
 
+TemporalHelpers.assertPlainDate(
+  date19221201.add(months6),
+  1923, 6, "M06", 1, "add 6 months, with result in next year",
+  "shaka", 1923);
+calculatedStart = date19221201.add(months6).add(months6n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  1922, 12, "M12", 1, "subtract 6 months, with result in previous year",
+  "shaka", 1922);
+
 // Weeks
 
 const weeks1 = new Temporal.Duration(0, 0, 1);
 const weeks1n = new Temporal.Duration(0, 0, -1);
 const weeks6 = new Temporal.Duration(0, 0, 6);
 const weeks6n = new Temporal.Duration(0, 0, -6);
+const weeks40 = new Temporal.Duration(0, 0, 40);
+const weeks40n = new Temporal.Duration(0, 0, -40);
 const years1weeks2 = new Temporal.Duration(1, 0, 2);
 const years1weeks2n = new Temporal.Duration(-1, 0, -2);
 const months2weeks3 = new Temporal.Duration(0, 2, 3);
@@ -222,10 +251,22 @@ TemporalHelpers.assertPlainDate(
   1917, 12, "M12", 11, "subtract 2mo 3w with result in the previous year",
   "shaka", 1917);
 
+TemporalHelpers.assertPlainDate(
+  date19220101.add(weeks40),
+  1922, 10, "M10", 5, "add 40 weeks, ending in same year",
+  "shaka", 1922);
+calculatedStart = date19220101.add(weeks40).add(weeks40n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  1922, 1, "M01", 1, "subtract 40 weeks, ending in same year",
+  "shaka", 1922);
+
 // Days
 
 const days10 = new Temporal.Duration(0, 0, 0, 10);
 const days10n = new Temporal.Duration(0, 0, 0, -10);
+const days280 = new Temporal.Duration(0, 0, 0, 280);
+const days280n = new Temporal.Duration(0, 0, 0, -280);
 const weeks2days3 = new Temporal.Duration(0, 0, 2, 3);
 const weeks2days3n = new Temporal.Duration(0, 0, -2, -3);
 const years1months2days4 = new Temporal.Duration(1, 2, 0, 4);
@@ -292,3 +333,13 @@ TemporalHelpers.assertPlainDate(
   date19200604.add(years1months2days4n),
   1919, 3, "M03", 31, "subtract 1y 2mo 4d with result in a 31-day month",
   "shaka", 1919);
+
+TemporalHelpers.assertPlainDate(
+  date19220101.add(days280),
+  1922, 10, "M10", 5, "add 40 weeks, ending in same year",
+  "shaka", 1922);
+calculatedStart = date19220101.add(days280).add(days280n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  1922, 1, "M01", 1, "subtract 40 weeks, ending in same year",
+  "shaka", 1922);

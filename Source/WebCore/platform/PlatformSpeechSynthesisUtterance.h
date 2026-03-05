@@ -29,26 +29,26 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include <WebCore/PlatformSpeechSynthesisVoice.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class PlatformSpeechSynthesisUtteranceClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlatformSpeechSynthesisUtteranceClient> : std::true_type { };
-}
-
-namespace WebCore {
     
-class PlatformSpeechSynthesisUtteranceClient : public CanMakeWeakPtr<PlatformSpeechSynthesisUtteranceClient> {
+class PlatformSpeechSynthesisUtteranceClient : public CanMakeWeakPtr<PlatformSpeechSynthesisUtteranceClient>, public AbstractRefCounted {
+public:
+    virtual ~PlatformSpeechSynthesisUtteranceClient() = default;
+    virtual void eventOccurred(const AtomString& type, uint32_t charIndex, uint32_t charLength, const String& name) = 0;
+
+    virtual bool isSpeechSynthesisUtterance() const { return false; }
+
+protected:
+    PlatformSpeechSynthesisUtteranceClient() = default;
 };
     
 class PlatformSpeechSynthesisUtterance : public RefCounted<PlatformSpeechSynthesisUtterance> {
 public:
-    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient&);
+    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient*);
 
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
@@ -75,7 +75,6 @@ public:
     void setStartTime(MonotonicTime startTime) { m_startTime = startTime; }
     
     PlatformSpeechSynthesisUtteranceClient* client() const { return m_client.get(); }
-    void setClient(PlatformSpeechSynthesisUtteranceClient* client) { m_client = client; }
 
 #ifdef __OBJC__
     id wrapper() const { return m_wrapper.get(); }
@@ -83,7 +82,7 @@ public:
 #endif
 
 private:
-    explicit PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient&);
+    explicit PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient*);
 
     WeakPtr<PlatformSpeechSynthesisUtteranceClient> m_client;
     String m_text;

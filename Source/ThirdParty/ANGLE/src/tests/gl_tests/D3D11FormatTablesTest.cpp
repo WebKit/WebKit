@@ -130,7 +130,7 @@ TEST_P(D3D11FormatTablesTest, TestFormatSupport)
         EXPECT_EQ(renderable, textureInfo.textureAttachment)
             << " for " << gl::FmtHex(internalFormat);
         EXPECT_EQ(renderable, textureInfo.renderbuffer) << " for " << gl::FmtHex(internalFormat);
-        if (!textureInfo.sampleCounts.empty())
+        if (textureInfo.sampleCounts.getMaxSamples() > 0)
         {
             EXPECT_TRUE(renderable) << " for " << gl::FmtHex(internalFormat);
         }
@@ -138,24 +138,25 @@ TEST_P(D3D11FormatTablesTest, TestFormatSupport)
         // Multisample counts
         if (renderable)
         {
+            auto sampleCounts = textureInfo.sampleCounts.sampleCounts();
             if ((renderSupport & D3D11_FORMAT_SUPPORT_MULTISAMPLE_RENDERTARGET) != 0)
             {
-                EXPECT_TRUE(!textureInfo.sampleCounts.empty());
+                EXPECT_TRUE(!sampleCounts.empty());
                 for (unsigned int sampleCount = 1;
                      sampleCount <= D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT; sampleCount *= 2)
                 {
                     UINT qualityCount    = 0;
                     bool sampleSuccess   = SUCCEEDED(device->CheckMultisampleQualityLevels(
                           renderFormat, sampleCount, &qualityCount));
-                    GLuint expectedCount = (!sampleSuccess || qualityCount == 0) ? 0 : 1;
-                    EXPECT_EQ(expectedCount, textureInfo.sampleCounts.count(sampleCount))
-                        << " for " << gl::FmtHex(internalFormat);
+                    bool expected        = sampleSuccess && qualityCount != 0;
+                    bool exists          = std::find(sampleCounts.begin(), sampleCounts.end(),
+                                                     sampleCount) != sampleCounts.end();
+                    EXPECT_EQ(expected, exists) << " for " << gl::FmtHex(internalFormat);
                 }
             }
             else
             {
-                EXPECT_TRUE(textureInfo.sampleCounts.empty())
-                    << " for " << gl::FmtHex(internalFormat);
+                EXPECT_TRUE(sampleCounts.empty()) << " for " << gl::FmtHex(internalFormat);
             }
         }
     }

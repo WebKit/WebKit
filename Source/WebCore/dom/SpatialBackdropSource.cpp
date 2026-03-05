@@ -25,16 +25,16 @@
 namespace WebCore {
 
 SpatialBackdropSource::SpatialBackdropSource(URL&& sourceURL, URL&& modelURL, std::optional<URL>&& environmentMapURL)
-    : m_sourceURL(WTFMove(sourceURL))
-    , m_modelURL(WTFMove(modelURL))
-    , m_environmentMapURL(WTFMove(environmentMapURL))
+    : m_sourceURL(WTF::move(sourceURL))
+    , m_modelURL(WTF::move(modelURL))
+    , m_environmentMapURL(WTF::move(environmentMapURL))
 {
 }
 
 SpatialBackdropSource::SpatialBackdropSource(URL&& sourceURL, URL&& modelURL, URL&& environmentMapURL)
-    : m_sourceURL(WTFMove(sourceURL))
-    , m_modelURL(WTFMove(modelURL))
-    , m_environmentMapURL(environmentMapURL.isValid() ? std::make_optional(WTFMove(environmentMapURL)) : std::nullopt)
+    : m_sourceURL(WTF::move(sourceURL))
+    , m_modelURL(WTF::move(modelURL))
+    , m_environmentMapURL(environmentMapURL.isValid() ? std::make_optional(WTF::move(environmentMapURL)) : std::nullopt)
 {
 }
 

@@ -24,25 +24,22 @@
 
 namespace skgpu::graphite {
 
-AtlasProvider::PathAtlasFlagsBitMask AtlasProvider::QueryPathAtlasSupport(const Caps* caps) {
-    // The raster-backend path atlas is always supported.
-    PathAtlasFlagsBitMask flags = PathAtlasFlags::kRaster;
-    if (RendererProvider::IsVelloRendererSupported(caps)) {
-        flags |= PathAtlasFlags::kCompute;
-    }
-    return flags;
+static bool use_clip_atlas(const Recorder* recorder) {
+    // Currently only the raster atlas strategy utilizes the clip atlas.
+    return recorder->priv().rendererProvider()->pathRendererStrategy() ==
+            PathRendererStrategy::kRasterAtlas;
 }
 
 AtlasProvider::AtlasProvider(Recorder* recorder)
         : fTextAtlasManager(std::make_unique<TextAtlasManager>(recorder))
         , fRasterPathAtlas(std::make_unique<RasterPathAtlas>(recorder))
-        , fClipAtlasManager(std::make_unique<ClipAtlasManager>(recorder))
-        , fPathAtlasFlags(QueryPathAtlasSupport(recorder->priv().caps())) {}
+        , fClipAtlasManager(use_clip_atlas(recorder) ? std::make_unique<ClipAtlasManager>(recorder)
+                                                     : nullptr) {}
 
 AtlasProvider::~AtlasProvider() = default;
 
 std::unique_ptr<ComputePathAtlas> AtlasProvider::createComputePathAtlas(Recorder* recorder) const {
-    if (this->isAvailable(PathAtlasFlags::kCompute)) {
+    if (recorder->priv().caps()->computeSupport()) {
         return ComputePathAtlas::CreateDefault(recorder);
     }
     return nullptr;

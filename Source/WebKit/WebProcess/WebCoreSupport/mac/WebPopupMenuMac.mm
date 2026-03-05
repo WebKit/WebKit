@@ -38,10 +38,10 @@ using namespace WebCore;
 void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data)
 {
 #if USE(APPKIT)
-    CheckedPtr popupClient = m_popupClient;
-    std::optional<InstalledFont> font = popupClient->menuStyle().checkedFont()->primaryFont()->toSerializableInstalledFont();
+    RefPtr popupClient = m_popupClient;
+    std::optional<InstalledFont> font = protect(protect(popupClient->menuStyle().font())->primaryFont())->toSerializableInstalledFont();
     if (!font) {
-        double pointSize = popupClient->menuStyle().checkedFont()->primaryFont()->platformData().size();
+        double pointSize = protect(popupClient->menuStyle().font())->primaryFont().platformData().size();
         font = Font::create(FontPlatformData(bridge_cast([NSFont menuFontOfSize:pointSize]), pointSize))->toSerializableInstalledFont();
     }
     ASSERT(font);

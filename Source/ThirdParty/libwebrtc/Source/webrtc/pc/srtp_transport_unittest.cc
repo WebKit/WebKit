@@ -29,7 +29,7 @@
 #include "rtc_base/containers/flat_set.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/ssl_stream_adapter.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/thread.h"
 #include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
@@ -49,7 +49,7 @@ static const ZeroOnFreeBuffer<uint8_t> kTestKeyGcm256_1{
 static const ZeroOnFreeBuffer<uint8_t> kTestKeyGcm256_2{
     "rqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA", 44};
 
-class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
+class SrtpTransportTest : public ::testing::Test {
  protected:
   SrtpTransportTest() {
     bool rtcp_mux_enabled = true;
@@ -321,6 +321,7 @@ class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
     TestSendRecvPacketWithEncryptedHeaderExtension(crypto_suite,
                                                    encrypted_headers);
   }
+  AutoThread main_thread;
 
   std::unique_ptr<SrtpTransport> srtp_transport1_;
   std::unique_ptr<SrtpTransport> srtp_transport2_;

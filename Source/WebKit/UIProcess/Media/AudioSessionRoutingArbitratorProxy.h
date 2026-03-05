@@ -67,7 +67,7 @@ public:
 
     ArbitrationStatus arbitrationStatus() const { return m_arbitrationStatus; }
     WallTime arbitrationUpdateTime() const { return m_arbitrationUpdateTime; }
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
     void ref() const final;
     void deref() const final;
@@ -76,11 +76,9 @@ protected:
     Logger& logger();
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "AudioSessionRoutingArbitrator"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 
 private:
-    Ref<WebProcessProxy> protectedProcess();
-
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

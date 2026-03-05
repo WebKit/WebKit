@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 
 #include "CSSFilterFunctionDescriptor.h"
 #include "CSSSepiaFunction.h"
+#include "ColorMatrix.h"
+#include "FEColorMatrix.h"
 #include "FilterOperation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -34,20 +36,52 @@
 namespace WebCore {
 namespace Style {
 
-CSS::Sepia toCSSSepia(Ref<BasicColorMatrixFilterOperation> operation, const RenderStyle& style)
+Sepia Sepia::passthroughForInterpolation()
 {
-    return { CSS::Sepia::Parameter { toCSS(Number<CSS::ClosedUnitRangeClampUpper> { operation->amount() }, style) } };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueSepia>::initialValueForInterpolation };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::Sepia& filter, const BuilderState& state)
+bool Sepia::transformColor(SRGBA<float>& color) const
 {
-    double value;
-    if (auto parameter = filter.value)
-        value = evaluate<double>(toStyle(*parameter, state));
-    else
-        value = filterFunctionDefaultValue<CSS::SepiaFunction::name>().value;
+    color = makeFromComponentsClamping<SRGBA<float>>(sepiaColorMatrix(evaluate<float>(value)).transformedColorComponents(asColorComponents(color.resolved())));
+    return true;
+}
 
-    return BasicColorMatrixFilterOperation::create(value, filterFunctionOperationType<CSS::SepiaFunction::name>());
+// MARK: - Conversion
+
+auto ToCSS<Sepia>::operator()(const Sepia& value, const RenderStyle& style) -> CSS::Sepia
+{
+    return { .value = CSS::Sepia::Parameter { toCSS(value.value, style) } };
+}
+
+auto ToStyle<CSS::Sepia>::operator()(const CSS::Sepia& value, const BuilderState& state) -> Sepia
+{
+    if (auto parameter = value.value) {
+        return { .value = WTF::switchOn(*parameter,
+            [&](const CSS::Sepia::Parameter::Number& number) -> Sepia::Parameter {
+                return { toStyle(number, state) };
+            },
+            [&](const CSS::Sepia::Parameter::Percentage& percentage) -> Sepia::Parameter {
+                return { toStyle(percentage, state).value / 100 };
+            }
+        ) };
+    }
+    return { .value = CSSFilterFunctionDescriptor<CSSValueSepia>::defaultValue };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<Sepia, Ref<FilterEffect>>::operator()(const Sepia& value) -> Ref<FilterEffect>
+{
+    ColorMatrix<5, 4> sepiaMatrix = sepiaColorMatrix(evaluate<float>(value));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX, sepiaMatrix);
+}
+
+// MARK: - Platform
+
+auto ToPlatform<Sepia>::operator()(const Sepia& value) -> Ref<FilterOperation>
+{
+    return BasicColorMatrixFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<CSS::SepiaFunction::name>());
 }
 
 } // namespace Style

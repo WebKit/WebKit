@@ -207,7 +207,7 @@ std::optional<std::vector<std::vector<std::string>>> CertificateVerifyInternal(
   if (opts.time.has_value()) {
     now = opts.time.value();
   } else {
-    now = time(NULL);
+    now = time(nullptr);
   }
 
   der::GeneralizedTime verification_time;

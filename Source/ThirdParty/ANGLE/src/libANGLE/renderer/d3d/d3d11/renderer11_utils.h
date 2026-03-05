@@ -87,8 +87,6 @@ void GenerateCaps(ID3D11Device *device,
                   gl::Limitations *limitations,
                   ShPixelLocalStorageOptions *);
 
-D3D_FEATURE_LEVEL GetMinimumFeatureLevelForES31();
-
 }  // namespace d3d11_gl
 
 namespace d3d11

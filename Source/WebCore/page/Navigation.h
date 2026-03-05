@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "BackForwardItemIdentifier.h"
 #include "EventTarget.h"
+#include "EventTargetInterfaces.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigateEvent.h"
@@ -58,7 +60,7 @@ struct NavigationAPIMethodTracker : public RefCounted<NavigationAPIMethodTracker
 
     static Ref<NavigationAPIMethodTracker> create(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
     {
-        return adoptRef(*new NavigationAPIMethodTracker(WTFMove(committed), WTFMove(finished), WTFMove(info), WTFMove(serializedState)));
+        return adoptRef(*new NavigationAPIMethodTracker(WTF::move(committed), WTF::move(finished), WTF::move(info), WTF::move(serializedState)));
     }
 
     bool operator==(const NavigationAPIMethodTracker& other) const
@@ -69,7 +71,7 @@ struct NavigationAPIMethodTracker : public RefCounted<NavigationAPIMethodTracker
 
     bool finishedBeforeCommit { false };
     String key;
-    JSC::JSValue info;
+    JSValueInWrappedObject info;
     RefPtr<SerializedScriptValue> serializedState;
     RefPtr<NavigationHistoryEntry> committedToEntry;
     Ref<DeferredPromise> committedPromise;
@@ -79,8 +81,8 @@ private:
     explicit NavigationAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
         : info(info)
         , serializedState(serializedState)
-        , committedPromise(WTFMove(committed))
-        , finishedPromise(WTFMove(finished))
+        , committedPromise(WTF::move(committed))
+        , finishedPromise(WTF::move(finished))
         , identifier(NavigationAPIMethodTrackerIdentifier::generate())
     {
     }
@@ -96,14 +98,14 @@ enum class ShouldCopyStateObjectFromCurrentEntry : bool { No, Yes };
 enum class ShouldNotifyCommitted : bool { No, Yes };
 
 class Navigation final : public RefCounted<Navigation>, public EventTarget, public LocalDOMWindowProperty {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Navigation);
+    WTF_MAKE_TZONE_ALLOCATED(Navigation);
 public:
     ~Navigation();
 
     static Ref<Navigation> create(LocalDOMWindow& window) { return adoptRef(*new Navigation(window)); }
 
-    using RefCounted<Navigation>::ref;
-    using RefCounted<Navigation>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
     using HistoryBehavior = NavigationHistoryBehavior;
 
@@ -129,9 +131,8 @@ public:
         RefPtr<DOMPromise> finished;
     };
 
-    const Vector<Ref<NavigationHistoryEntry>>& entries() const;
+    const Vector<Ref<NavigationHistoryEntry>>& entries() const LIFETIME_BOUND;
     NavigationHistoryEntry* currentEntry() const;
-    RefPtr<NavigationHistoryEntry> protectedCurrentEntry() const { return currentEntry(); }
     NavigationTransition* transition() { return m_transition.get(); };
     NavigationActivation* activation() { return m_activation.get(); };
 
@@ -169,10 +170,11 @@ public:
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final;
-    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
 
     void rejectFinishedPromise(NavigationAPIMethodTracker*);
-    NavigationAPIMethodTracker* upcomingTraverseMethodTracker(const String& key) const { return m_upcomingTraverseMethodTrackers.get(key); }
+    NavigationAPIMethodTracker* upcomingTraverseMethodTracker(const String& key) const;
+
+    void visitAdditionalChildren(JSC::AbstractSlotVisitor&);
 
     class AbortHandler : public RefCountedAndCanMakeWeakPtr<AbortHandler> {
     public:
@@ -231,10 +233,9 @@ public:
     };
 
     // Testing support
-    RateLimiter& rateLimiterForTesting() { return m_rateLimiter; }
+    RateLimiter& rateLimiterForTesting() LIFETIME_BOUND { return m_rateLimiter; }
 
-    NavigateEvent* ongoingNavigateEvent() { return m_ongoingNavigateEvent.get(); } // This may get called on the GC thread.
-    RefPtr<NavigateEvent> protectedOngoingNavigateEvent() { return m_ongoingNavigateEvent; }
+    NavigateEvent* ongoingNavigateEvent() { return m_ongoingNavigateEvent.get(); } // This may get called on a GC thread.
     bool hasInterceptedOngoingNavigateEvent() const { return m_ongoingNavigateEvent && m_ongoingNavigateEvent->wasIntercepted(); }
 
     void updateNavigationEntry(Ref<HistoryItem>&&, ShouldCopyStateObjectFromCurrentEntry);
@@ -258,11 +259,11 @@ private:
 
     RefPtr<NavigationAPIMethodTracker> maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue info, RefPtr<SerializedScriptValue>&&);
     RefPtr<NavigationAPIMethodTracker> addUpcomingTraverseAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, const String& key, JSC::JSValue info);
-    void cleanupAPIMethodTracker(NavigationAPIMethodTracker*);
+    void cleanupAPIMethodTracker(NavigationAPIMethodTracker*) WTF_EXCLUDES_LOCK(m_apiMethodTrackersLock);
     void resolveFinishedPromise(NavigationAPIMethodTracker*);
     void rejectFinishedPromise(NavigationAPIMethodTracker*, const Exception&, JSC::JSValue exceptionObject);
     void abortOngoingNavigation(NavigateEvent&);
-    void promoteUpcomingAPIMethodTracker(const String& destinationKey);
+    void promoteUpcomingAPIMethodTracker(const String& destinationKey) WTF_EXCLUDES_LOCK(m_apiMethodTrackersLock);
     void notifyCommittedToEntry(NavigationAPIMethodTracker*, NavigationHistoryEntry*, NavigationNavigationType);
     Result apiMethodTrackerDerivedResult(const NavigationAPIMethodTracker&);
 
@@ -280,11 +281,14 @@ private:
     RefPtr<NavigateEvent> m_ongoingNavigateEvent;
     FocusDidChange m_focusChangedDuringOngoingNavigation { FocusDidChange::No };
     bool m_suppressNormalScrollRestorationDuringOngoingNavigation { false };
-    RefPtr<NavigationAPIMethodTracker> m_ongoingAPIMethodTracker;
-    RefPtr<NavigationAPIMethodTracker> m_upcomingNonTraverseMethodTracker;
-    HashMap<String, Ref<NavigationAPIMethodTracker>> m_upcomingTraverseMethodTrackers;
+    mutable Lock m_apiMethodTrackersLock;
+    RefPtr<NavigationAPIMethodTracker> m_ongoingAPIMethodTracker WTF_GUARDED_BY_LOCK(m_apiMethodTrackersLock);
+    RefPtr<NavigationAPIMethodTracker> m_upcomingNonTraverseMethodTracker WTF_GUARDED_BY_LOCK(m_apiMethodTrackersLock);
+    HashMap<String, Ref<NavigationAPIMethodTracker>> m_upcomingTraverseMethodTrackers WTF_GUARDED_BY_LOCK(m_apiMethodTrackersLock);
     WeakHashSet<AbortHandler> m_abortHandlers;
     RateLimiter m_rateLimiter;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(Navigation)

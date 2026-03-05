@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGRootInlineBox);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGRootInlineBox);
 
 SVGRootInlineBox::SVGRootInlineBox(RenderSVGText& renderSVGText)
     : LegacyRootInlineBox(renderSVGText)

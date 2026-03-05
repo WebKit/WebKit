@@ -164,6 +164,41 @@ NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(NonSharedCharac
     std::swap(m_iterator, other.m_iterator);
 }
 
+ALLOW_DEPRECATED_PRAGMA_BEGIN
+static std::atomic<UBreakIterator*> nonSharedSentenceBreakIterator = ATOMIC_VAR_INIT(nullptr);
+ALLOW_DEPRECATED_PRAGMA_END
+
+static inline UBreakIterator* getNonSharedSentenceBreakIterator()
+{
+    if (auto *res = nonSharedSentenceBreakIterator.exchange(nullptr, std::memory_order_acquire))
+        return res;
+    return initializeIterator(UBRK_SENTENCE);
+}
+
+static inline void cacheNonSharedSentenceBreakIterator(UBreakIterator* cacheMe)
+{
+    if (auto *old = nonSharedSentenceBreakIterator.exchange(cacheMe, std::memory_order_release))
+        ubrk_close(old);
+}
+
+NonSharedSentenceBreakIterator::NonSharedSentenceBreakIterator(StringView string)
+{
+    if ((m_iterator = getNonSharedSentenceBreakIterator()))
+        m_iterator = setTextForIterator(*m_iterator, string);
+}
+
+NonSharedSentenceBreakIterator::~NonSharedSentenceBreakIterator()
+{
+    if (m_iterator)
+        cacheNonSharedSentenceBreakIterator(m_iterator);
+}
+
+NonSharedSentenceBreakIterator::NonSharedSentenceBreakIterator(NonSharedSentenceBreakIterator&& other)
+    : m_iterator(nullptr)
+{
+    std::swap(m_iterator, other.m_iterator);
+}
+
 // Iterator implemenation.
 
 bool isWordTextBreak(UBreakIterator* iterator)

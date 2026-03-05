@@ -46,7 +46,10 @@ class WinPortTest(port_testcase.PortTestCase):
     port_maker = WinPort
 
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
-        port = self.make_port(port_name='win', os_version=version, options=MockOptions(webkit_test_runner=use_webkit2))
+        port = self.make_port(
+            port_name='win', os_version=version,
+            options=MockOptions(driver_names=[('WebKitTestRunner' if use_webkit2 else 'DumpRenderTree')]),
+        )
         platform_dir = port.host.filesystem.dirname(port._webkit_baseline_path("xxx"))
         relative_search_paths = [port.host.filesystem.relpath(p, platform_dir) for p in port.baseline_search_path()]
         self.assertEqual(relative_search_paths, expected_search_paths)
@@ -73,13 +76,13 @@ class WinPortTest(port_testcase.PortTestCase):
 
     def test_compare_text(self):
         expected = "EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\nfoo\nEDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n"
-        port = self.make_port()
+        port = self.make_port(options=MockOptions(driver_names=['DumpRenderTree']))
         self.assertFalse(port.do_text_results_differ(expected, "foo\n"))
         self.assertTrue(port.do_text_results_differ(expected, "foo"))
         self.assertTrue(port.do_text_results_differ(expected, "bar"))
 
         # This hack doesn't exist in WK2.
-        port._options = MockOptions(webkit_test_runner=True)
+        port._options = MockOptions()
         self.assertTrue(port.do_text_results_differ(expected, "foo\n"))
 
     def test_operating_system(self):
@@ -87,7 +90,7 @@ class WinPortTest(port_testcase.PortTestCase):
 
     def test_expectations_files(self):
         self.assertEqual(
-            self.make_port().expectations_files(),
+            self.make_port(options=MockOptions(driver_names=["DumpRenderTree"])).expectations_files(),
             [
                 "/mock-checkout/LayoutTests/TestExpectations",
                 "/mock-checkout/LayoutTests/platform/win/TestExpectations",
@@ -108,9 +111,7 @@ class WinPortTest(port_testcase.PortTestCase):
         )
 
         self.assertEqual(
-            self.make_port(
-                options=MockOptions(webkit_test_runner=True, configuration="Release")
-            ).expectations_files(),
+            self.make_port().expectations_files(),
             [
                 "/mock-checkout/LayoutTests/TestExpectations",
                 "/mock-checkout/LayoutTests/platform/wk2/TestExpectations",

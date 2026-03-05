@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DataTransferItemList);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DataTransferItemList);
 
 DataTransferItemList::DataTransferItemList(Document& document, DataTransfer& dataTransfer)
     : ContextDestructionObserver(&document)
@@ -124,7 +124,7 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
     removedItem->clearListAndPutIntoDisabledMode();
     items.removeAt(index);
     if (removedItem->isFile())
-        dataTransfer->updateFileList(protectedScriptExecutionContext().get());
+        dataTransfer->updateFileList(protect(scriptExecutionContext()).get());
 
     return { };
 }
@@ -143,7 +143,7 @@ void DataTransferItemList::clear()
     }
 
     if (removedItemContainingFile)
-        dataTransfer->updateFileList(protectedScriptExecutionContext().get());
+        dataTransfer->updateFileList(protect(scriptExecutionContext()).get());
 }
 
 Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
@@ -171,7 +171,7 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
         }));
     }
 
-    m_items = WTFMove(items);
+    m_items = WTF::move(items);
 
     return *m_items;
 }

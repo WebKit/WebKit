@@ -31,7 +31,7 @@
 #include "InlineIteratorLineBox.h"
 #include "PlacedFloats.h"
 #include "RenderBlockFlow.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleOrphans.h"
 #include "StyleWidows.h"
 
@@ -64,8 +64,8 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
         if (!floatBox.layoutBox())
             continue;
 
-        auto& renderer = downcast<RenderBox>(*floatBox.layoutBox()->rendererForIntegration());
-        bool isUsplittable = renderer.isUnsplittableForPagination() || renderer.style().breakInside() == BreakInside::Avoid;
+        CheckedRef renderer = downcast<RenderBox>(*floatBox.layoutBox()->rendererForIntegration());
+        bool isUsplittable = renderer->isUnsplittableForPagination() || renderer->style().breakInside() == BreakInside::Avoid;
 
         auto placedByLine = floatBox.placedByLine();
         if (!placedByLine) {
@@ -80,7 +80,7 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
             if (isUsplittable)
                 return floatBox.absoluteRectWithMargin().bottom();
 
-            if (auto* block = dynamicDowncast<RenderBlockFlow>(renderer)) {
+            if (CheckedPtr block = dynamicDowncast<RenderBlockFlow>(renderer)) {
                 if (auto firstLine = InlineIterator::firstLineBoxFor(*block))
                     return LayoutUnit { firstLine->logicalBottom() };
             }
@@ -170,7 +170,7 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
     for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex) {
         auto& line = displayContent.lines[lineIndex];
         auto& adjustment = adjustments[lineIndex];
-        line.moveInBlockDirection(adjustment.offset);
+        displayContent.moveLineInBlockDirection(lineIndex, adjustment.offset);
         if (adjustment.isFirstAfterPageBreak)
             line.setIsFirstAfterPageBreak();
     }

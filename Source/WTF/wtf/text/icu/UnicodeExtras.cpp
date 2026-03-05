@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "UnicodeExtras.h"
+#include <wtf/text/icu/UnicodeExtras.h>
 
 #include <wtf/StdLibExtras.h>
 

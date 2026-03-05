@@ -26,9 +26,7 @@
 #import "objc_class.h"
 #import "objc_utility.h"
 
-namespace JSC {
-
-namespace Bindings {
+namespace JSC::Bindings {
 
 class ObjcClass;
 
@@ -56,8 +54,8 @@ public:
     ObjectStructPtr getObject() const { return _instance.get(); }
     
     JSValue stringValue(JSGlobalObject*) const;
-    JSValue numberValue(JSGlobalObject*) const;
-    JSValue booleanValue() const;
+    JSValue NODELETE numberValue(JSGlobalObject*) const;
+    JSValue NODELETE booleanValue() const;
 
     static bool isInStringValue();
 
@@ -71,6 +69,8 @@ private:
 
     ObjcInstance(ObjectStructPtr, RefPtr<RootObject>&&);
 
+    bool isObjcInstance() const final { return true; }
+
     virtual RuntimeObject* newRuntimeObject(JSGlobalObject*);
 
     RetainPtr<ObjectStructPtr> _instance;
@@ -79,6 +79,8 @@ private:
     int _beginCount { 0 };
 };
 
-} // namespace Bindings
+} // namespace JSC::Bindings
 
-} // namespace JSC
+SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Bindings::ObjcInstance)
+    static bool isType(const JSC::Bindings::Instance& instance) { return instance.isObjcInstance(); }
+SPECIALIZE_TYPE_TRAITS_END()

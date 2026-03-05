@@ -55,7 +55,7 @@ CurlStreamID CurlStreamScheduler::createStream(const URL& url, CurlStream::Clien
     m_clientList.add(streamID, &client);
 
     callOnWorkerThread([this, streamID, url = url.isolatedCopy(), serverTrustEvaluation, localhostAlias]() mutable {
-        m_streamList.add(streamID, CurlStream::create(*this, streamID, WTFMove(url), serverTrustEvaluation, localhostAlias));
+        m_streamList.add(streamID, CurlStream::create(*this, streamID, WTF::move(url), serverTrustEvaluation, localhostAlias));
     });
 
     return streamID;
@@ -78,9 +78,9 @@ void CurlStreamScheduler::send(CurlStreamID streamID, UniqueArray<uint8_t>&& dat
 {
     ASSERT(isMainThread());
 
-    callOnWorkerThread([this, streamID, data = WTFMove(data), length]() mutable {
+    callOnWorkerThread([this, streamID, data = WTF::move(data), length]() mutable {
         if (auto stream = m_streamList.get(streamID))
-            stream->send(WTFMove(data), length);
+            stream->send(WTF::move(data), length);
     });
 }
 
@@ -90,7 +90,7 @@ void CurlStreamScheduler::callOnWorkerThread(Function<void()>&& task)
 
     {
         Locker locker { m_mutex };
-        m_taskQueue.append(WTFMove(task));
+        m_taskQueue.append(WTF::move(task));
     }
 
     startThreadIfNeeded();
@@ -100,7 +100,7 @@ void CurlStreamScheduler::callClientOnMainThread(CurlStreamID streamID, Function
 {
     ASSERT(!isMainThread());
 
-    callOnMainThread([this, streamID, task = WTFMove(task)]() {
+    callOnMainThread([this, streamID, task = WTF::move(task)]() {
         if (auto client = m_clientList.get(streamID))
             task(*client);
     });
@@ -146,7 +146,7 @@ void CurlStreamScheduler::executeTasks()
 
     {
         Locker locker { m_mutex };
-        taskQueue = WTFMove(m_taskQueue);
+        taskQueue = WTF::move(m_taskQueue);
     }
 
     for (auto& task : taskQueue)

@@ -40,13 +40,13 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamAudioSourceNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamAudioSourceNode);
 
 ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(BaseAudioContext& context, MediaStreamAudioSourceOptions&& options)
 {
-    RELEASE_ASSERT(options.mediaStream);
+    Ref mediaStream = WTF::move(options.mediaStream);
 
-    auto audioTracks = options.mediaStream->getAudioTracks();
+    auto audioTracks = mediaStream->getAudioTracks();
     if (audioTracks.isEmpty())
         return Exception { ExceptionCode::InvalidStateError, "Media stream has no audio tracks"_s };
 
@@ -59,7 +59,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     if (!provider)
         return Exception { ExceptionCode::InvalidStateError, "Could not find an audio track with an audio source provider"_s };
 
-    auto node = adoptRef(*new MediaStreamAudioSourceNode(context, *options.mediaStream, provider.releaseNonNull()));
+    auto node = adoptRef(*new MediaStreamAudioSourceNode(context, WTF::move(mediaStream), provider.releaseNonNull()));
     node->setFormat(2, context.sampleRate());
 
     // Context keeps reference until node is disconnected.
@@ -68,9 +68,9 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     return node;
 }
 
-MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, MediaStream& mediaStream, Ref<WebAudioSourceProvider>&& provider)
+MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, Ref<MediaStream>&& mediaStream, Ref<WebAudioSourceProvider>&& provider)
     : AudioNode(context, NodeTypeMediaStreamAudioSource)
-    , m_mediaStream(mediaStream)
+    , m_mediaStream(WTF::move(mediaStream))
     , m_provider(provider)
 {
     m_provider->setClient(this);
@@ -121,7 +121,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         Locker contextLocker { context().graphLock() };
 
         // Do any necesssary re-configuration to the output's number of channels.
-        checkedOutput(0)->setNumberOfChannels(numberOfChannels);
+        protect(output(0))->setNumberOfChannels(numberOfChannels);
     }
 }
 
@@ -132,7 +132,7 @@ void MediaStreamAudioSourceNode::provideInput(AudioBus& bus, size_t framesToProc
 
 void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
 {
-    Ref outputBus = checkedOutput(0)->bus();
+    Ref outputBus = protect(output(0))->bus();
 
     // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the MediaStream must be in the middle of

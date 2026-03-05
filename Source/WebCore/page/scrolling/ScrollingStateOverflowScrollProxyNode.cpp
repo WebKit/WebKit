@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateOverflowScrollProxyNode);
 
 ScrollingStateOverflowScrollProxyNode::ScrollingStateOverflowScrollProxyNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, std::optional<ScrollingNodeID> overflowScrollingNode)
-    : ScrollingStateNode(ScrollingNodeType::OverflowProxy, nodeID, WTFMove(children), changedProperties, layerID)
+    : ScrollingStateNode(ScrollingNodeType::OverflowProxy, nodeID, WTF::move(children), changedProperties, layerID)
     , m_overflowScrollingNodeID(overflowScrollingNode)
 {
 }

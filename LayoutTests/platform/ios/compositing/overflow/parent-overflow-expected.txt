@@ -4,7 +4,7 @@ layer at (0,0) size 800x227
   RenderBlock {HTML} at (0,0) size 800x227
     RenderBody {BODY} at (8,16) size 784x203
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 367x19
+        RenderText {#text} at (0,0) size 367x20
           text run at (0,0) width 367: "Gray box should be clipped by black border in each case."
       RenderBlock (anonymous) at (0,36) size 784x167
         RenderText {#text} at (162,147) size 4x19

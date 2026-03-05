@@ -63,8 +63,6 @@ private:
     void updateToStorage(CompletionHandler<void()>&&);
     void updateTimerFired() { updateToStorage([] { }); }
 
-    RefPtr<WebCore::SWServer> protectedServer() const;
-
     WeakPtr<WebCore::SWServer> m_server;
     ThreadSafeWeakPtr<NetworkStorageManager> m_manager;
     WebCore::Timer m_updateTimer;

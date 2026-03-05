@@ -13,12 +13,12 @@ info: |
     b. If numericIndex is not undefined, then
       [...]
       ii. If Desc has a [[Configurable]] field and if Desc.[[Configurable]] is false, return false.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([0n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([0n]));
 
   assert.throws(TypeError, function() {
     Object.defineProperty(sample, "0", {
@@ -36,4 +36,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   }, "complete descriptor");
 
   assert.sameValue(sample[0], 0n, "side effect check");
-});
+}, null, ["passthrough"]);

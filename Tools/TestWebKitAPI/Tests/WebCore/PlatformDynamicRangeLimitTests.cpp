@@ -27,7 +27,7 @@
 
 #include <WebCore/PlatformDynamicRangeLimit.h>
 
-#include <WebCore/RenderStyleInlines.h>
+#include <WebCore/StyleComputedStyle+InitialInlines.h>
 #include <WebCore/StyleDynamicRangeLimit.h>
 
 namespace TestWebKitAPI {
@@ -93,8 +93,8 @@ TEST(PlatformDynamicRangeLimit, StaticValues)
     EXPECT_EQ(WebCore::PlatformDynamicRangeLimit::constrained(), WebCore::Style::DynamicRangeLimit(WebCore::CSS::Keyword::Constrained()).toPlatformDynamicRangeLimit());
     EXPECT_EQ(WebCore::PlatformDynamicRangeLimit::noLimit(), WebCore::Style::DynamicRangeLimit(WebCore::CSS::Keyword::NoLimit()).toPlatformDynamicRangeLimit());
 
-    EXPECT_EQ(WebCore::PlatformDynamicRangeLimit::initialValue(), WebCore::Style::DynamicRangeLimit(WebCore::RenderStyle::initialDynamicRangeLimit()).toPlatformDynamicRangeLimit());
-    EXPECT_GE(WebCore::PlatformDynamicRangeLimit::initialValueForVideos(), WebCore::Style::DynamicRangeLimit(WebCore::RenderStyle::initialDynamicRangeLimit()).toPlatformDynamicRangeLimit());
+    EXPECT_EQ(WebCore::PlatformDynamicRangeLimit::initialValue(), WebCore::Style::DynamicRangeLimit(WebCore::Style::ComputedStyle::initialDynamicRangeLimit()).toPlatformDynamicRangeLimit());
+    EXPECT_GE(WebCore::PlatformDynamicRangeLimit::initialValueForVideos(), WebCore::Style::DynamicRangeLimit(WebCore::Style::ComputedStyle::initialDynamicRangeLimit()).toPlatformDynamicRangeLimit());
 
     EXPECT_EQ(WebCore::PlatformDynamicRangeLimit::defaultWhenSuppressingHDR(), WebCore::Style::DynamicRangeLimit(WebCore::CSS::Keyword::Standard()).toPlatformDynamicRangeLimit());
     EXPECT_EQ(WebCore::PlatformDynamicRangeLimit::defaultWhenSuppressingHDRInVideos(), WebCore::Style::DynamicRangeLimit(WebCore::CSS::Keyword::Constrained()).toPlatformDynamicRangeLimit());

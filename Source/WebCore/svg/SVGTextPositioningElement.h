@@ -27,18 +27,18 @@
 namespace WebCore {
 
 class SVGTextPositioningElement : public SVGTextContentElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGTextPositioningElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGTextPositioningElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTextPositioningElement);
 public:
     static RefPtr<SVGTextPositioningElement> elementFromRenderer(RenderBoxModelObject&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPositioningElement, SVGTextContentElement>;
 
-    const SVGLengthList& x() const { return m_x->currentValue(); }
-    const SVGLengthList& y() const { return m_y->currentValue(); }
-    const SVGLengthList& dx() const { return m_dx->currentValue(); }
-    const SVGLengthList& dy() const { return m_dy->currentValue(); }
-    const SVGNumberList& rotate() const { return m_rotate->currentValue(); }
+    const SVGLengthList& x() const LIFETIME_BOUND { return m_x->currentValue(); }
+    const SVGLengthList& y() const LIFETIME_BOUND { return m_y->currentValue(); }
+    const SVGLengthList& dx() const LIFETIME_BOUND { return m_dx->currentValue(); }
+    const SVGLengthList& dy() const LIFETIME_BOUND { return m_dy->currentValue(); }
+    const SVGNumberList& rotate() const LIFETIME_BOUND { return m_rotate->currentValue(); }
 
     SVGAnimatedLengthList& xAnimated() { return m_x; }
     SVGAnimatedLengthList& yAnimated() { return m_y; }
@@ -58,11 +58,11 @@ private:
 
     bool isSVGTextPositioningElement() const override { return true; }
 
-    Ref<SVGAnimatedLengthList> m_x { SVGAnimatedLengthList::create(this, SVGLengthMode::Width) };
-    Ref<SVGAnimatedLengthList> m_y { SVGAnimatedLengthList::create(this, SVGLengthMode::Height) };
-    Ref<SVGAnimatedLengthList> m_dx { SVGAnimatedLengthList::create(this, SVGLengthMode::Width) };
-    Ref<SVGAnimatedLengthList> m_dy { SVGAnimatedLengthList::create(this, SVGLengthMode::Height) };
-    Ref<SVGAnimatedNumberList> m_rotate { SVGAnimatedNumberList::create(this) };
+    const Ref<SVGAnimatedLengthList> m_x { SVGAnimatedLengthList::create(this, SVGLengthMode::Width) };
+    const Ref<SVGAnimatedLengthList> m_y { SVGAnimatedLengthList::create(this, SVGLengthMode::Height) };
+    const Ref<SVGAnimatedLengthList> m_dx { SVGAnimatedLengthList::create(this, SVGLengthMode::Width) };
+    const Ref<SVGAnimatedLengthList> m_dy { SVGAnimatedLengthList::create(this, SVGLengthMode::Height) };
+    const Ref<SVGAnimatedNumberList> m_rotate { SVGAnimatedNumberList::create(this) };
 };
 
 } // namespace WebCore

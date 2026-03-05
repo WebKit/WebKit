@@ -48,7 +48,7 @@ Ref<RemoteSnapshotRecorder> RemoteSnapshotRecorder::create(RemoteSnapshotRecorde
 RemoteSnapshotRecorder::RemoteSnapshotRecorder(UniqueRef<DisplayList::RecorderImpl>&& recorder, RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshot& snapshot, RemoteRenderingBackend& renderingBackend)
     : RemoteGraphicsContext(recorder, renderingBackend)
     , m_snapshot(snapshot)
-    , m_recorder(WTFMove(recorder))
+    , m_recorder(WTF::move(recorder))
     , m_identifier(identifier)
 {
 }

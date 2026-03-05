@@ -55,9 +55,9 @@ public:
 
     unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
 
-    operator const String&() const { return m_string; }
-    const String& string() const { return m_string; }
-    String releaseString() { return WTFMove(m_string); }
+    operator const String&() const LIFETIME_BOUND { return m_string; }
+    const String& string() const LIFETIME_BOUND { return m_string; }
+    String releaseString() { return WTF::move(m_string); }
 
     // FIXME: What guarantees this isn't a SymbolImpl rather than an AtomStringImpl?
     AtomStringImpl* impl() const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<AtomStringImpl*>(m_string.impl()); }
@@ -181,12 +181,12 @@ inline AtomString::AtomString(AtomStringImpl* string)
 }
 
 inline AtomString::AtomString(RefPtr<AtomStringImpl>&& string)
-    : m_string(WTFMove(string))
+    : m_string(WTF::move(string))
 {
 }
 
 inline AtomString::AtomString(Ref<AtomStringImpl>&& string)
-    : m_string(WTFMove(string))
+    : m_string(WTF::move(string))
 {
 }
 
@@ -254,7 +254,7 @@ inline const AtomString& nullAtom() { SUPPRESS_MEMORY_UNSAFE_CAST return *reinte
 inline const AtomString& emptyAtom() { SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<const AtomString*>(&emptyAtomData); }
 
 inline AtomString::AtomString(ASCIILiteral literal)
-    : m_string(literal.length() ? AtomStringImpl::add(literal.span8()) : Ref { *emptyAtom().impl() })
+    : m_string(literal.length() ? AtomStringImpl::add(literal) : Ref { *emptyAtom().impl() })
 {
 }
 
@@ -324,7 +324,7 @@ inline std::strong_ordering codePointCompare(const AtomString& a, const AtomStri
     return codePointCompare(a.string(), b.string());
 }
 
-ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const AtomString& string, char16_t target, char16_t replacement)
+[[nodiscard]] ALWAYS_INLINE String makeStringByReplacingAll(const AtomString& string, char16_t target, char16_t replacement)
 {
     return makeStringByReplacingAll(string.string(), target, replacement);
 }

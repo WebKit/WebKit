@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "DrawingAreaCoordinatedGraphics.h"
+#include "DrawingAreaCoordinatedGraphicsGLib.h"
 #include "EditorState.h"
 #include "InputMethodState.h"
 #include "MessageSenderInlines.h"
@@ -112,12 +112,12 @@ void WebPage::sendMessageToWebProcessExtensionWithReply(UserMessage&& message, C
         return;
     }
 
-    webkitWebPageDidReceiveUserMessage(page, WTFMove(message), WTFMove(completionHandler));
+    webkitWebPageDidReceiveUserMessage(page, WTF::move(message), WTF::move(completionHandler));
 }
 
 void WebPage::sendMessageToWebProcessExtension(UserMessage&& message)
 {
-    sendMessageToWebProcessExtensionWithReply(WTFMove(message), [](UserMessage&&) { });
+    sendMessageToWebProcessExtensionWithReply(WTF::move(message), [](UserMessage&&) { });
 }
 
 void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
@@ -257,7 +257,7 @@ void WebPage::getRenderProcessInfo(CompletionHandler<void(RenderProcessInfo&&)>&
 
     auto* display = PlatformDisplay::sharedDisplayIfExists();
     if (!display) {
-        completionHandler(WTFMove(info));
+        completionHandler(WTF::move(info));
         return;
     }
 
@@ -292,9 +292,7 @@ void WebPage::getRenderProcessInfo(CompletionHandler<void(RenderProcessInfo&&)>&
         break;
     }
 
-#if USE(SKIA)
     info.msaaSampleCount = display->msaaSampleCount();
-#endif
 
 #if USE(GBM)
     if (info.platform != "WPE"_s) {
@@ -307,7 +305,7 @@ void WebPage::getRenderProcessInfo(CompletionHandler<void(RenderProcessInfo&&)>&
     }
 #endif // USE(GBM)
 
-    static_cast<DrawingAreaCoordinatedGraphics*>(m_drawingArea.get())->fillGLInformation(WTFMove(info), WTFMove(completionHandler));
+    static_cast<DrawingAreaCoordinatedGraphics*>(m_drawingArea.get())->fillGLInformation(WTF::move(info), WTF::move(completionHandler));
 }
 
 } // namespace WebKit

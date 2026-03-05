@@ -62,7 +62,7 @@ WI.ScriptTimeline = class ScriptTimeline extends WI.Timeline
     {
         let targetAdded = false;
 
-        let callingContextTrees = this._callingContextTreesForTarget.getOrInitialize(target, () => {
+        let callingContextTrees = this._callingContextTreesForTarget.getOrInsertComputed(target, () => {
             targetAdded = true;
 
             let callingContextTrees = {};

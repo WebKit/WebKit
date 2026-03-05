@@ -39,14 +39,14 @@ class ScriptModuleLoader;
 
 class ShadowRealmGlobalScope : public RefCounted<ShadowRealmGlobalScope> {
     friend class JSShadowRealmGlobalScopeBase;
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ShadowRealmGlobalScope);
+    WTF_MAKE_TZONE_ALLOCATED(ShadowRealmGlobalScope);
 
 public:
     static Ref<ShadowRealmGlobalScope> create(JSDOMGlobalObject*, ScriptModuleLoader*);
     ~ShadowRealmGlobalScope();
 
     ShadowRealmGlobalScope& self();
-    ScriptModuleLoader& moduleLoader();
+    ScriptModuleLoader& moduleLoader() LIFETIME_BOUND;
     JSShadowRealmGlobalScopeBase* wrapper();
 
 protected:

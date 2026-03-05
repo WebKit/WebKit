@@ -236,6 +236,6 @@ GResolver* webkitCachedResolverNew(GRefPtr<GResolver>&& wrappedResolver)
     g_return_val_if_fail(wrappedResolver, nullptr);
 
     auto* resolver = WEBKIT_CACHED_RESOLVER(g_object_new(WEBKIT_TYPE_CACHED_RESOLVER, nullptr));
-    resolver->priv->wrappedResolver = WTFMove(wrappedResolver);
+    resolver->priv->wrappedResolver = WTF::move(wrappedResolver);
     return G_RESOLVER(resolver);
 }

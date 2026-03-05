@@ -1,7 +1,9 @@
 <head>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
+}
 
 var results=[];
 function checkForPreload(url, shouldbe) {

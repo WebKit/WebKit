@@ -48,7 +48,7 @@ enum PeerConnectionMetricsName {
 enum IceCandidatePairType {
   // HostHost is deprecated. It was replaced with the set of types at the bottom
   // to report private or public host IP address.
-  kIceCandidatePairHostHost = 0,
+  kIceCandidatePairHostHost [[deprecated]] = 0,
   kIceCandidatePairHostSrflx = 1,
   kIceCandidatePairHostRelay = 2,
   kIceCandidatePairHostPrflx = 3,
@@ -177,7 +177,8 @@ enum RtcpMuxPolicyUsage {
 
 // Metrics for SDP munging.
 // These values are persisted to logs. Entries should not be renumbered and
-// numeric values should never be reused. Keep in sync with SdpMungingType from
+// numeric values should never be reused. Keep in (loose) sync with
+// SdpMungingType from Chromium's
 // tools/metrics/histograms/metadata/web_rtc/enums.xml
 enum SdpMungingType {
   kNoModification = 0,
@@ -185,6 +186,7 @@ enum SdpMungingType {
   kWithoutCreateAnswer = 2,
   kWithoutCreateOffer = 3,
   kNumberOfContents = 4,
+  kCurrentDescriptionFailedToParse = 5,  // This is an internal error.
   // Transport-related munging.
   kIceOptions = 20,
   kIcePwd = 21,
@@ -198,6 +200,9 @@ enum SdpMungingType {
   kDirection = 29,
   kRtcpMux = 30,
   kIceOptionsTrickle = 31,
+  kIceCandidateCount = 32,
+  kBundle = 33,
+  kBandwidth = 34,
   // RTP header extension munging.
   kRtpHeaderExtensionRemoved = 40,
   kRtpHeaderExtensionAdded = 41,
@@ -228,6 +233,10 @@ enum SdpMungingType {
   kVideoCodecsAddedWithRawPacketization = 87,
   kVideoCodecsModifiedWithRawPacketization = 88,
   kVideoCodecsRtcpReducedSize = 89,
+  // DataChannel-related munging.
+  kDataChannelSctpInit = 100,
+  kDataChannelMaxMessageSize = 101,
+  kDataChannelSctpPort = 101,
   kMaxValue,
 };
 

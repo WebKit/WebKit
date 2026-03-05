@@ -42,10 +42,11 @@ class WebKitMediaKeyError;
 template<typename> class ExceptionOr;
 
 class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTarget, public ActiveDOMObject, private LegacyCDMSessionClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebKitMediaKeySession);
+    WTF_MAKE_TZONE_ALLOCATED(WebKitMediaKeySession);
 public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
+    // ActiveDOMObject, LegacyCDMSessionClient.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
@@ -53,8 +54,8 @@ public:
     ~WebKitMediaKeySession();
 
     WebKitMediaKeyError* error() { return m_error.get(); }
-    const String& keySystem() const { return m_keySystem; }
-    const String& sessionId() const { return m_sessionId; }
+    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    const String& sessionId() const LIFETIME_BOUND { return m_sessionId; }
     ExceptionOr<void> update(Ref<Uint8Array>&& key);
     void close();
 
@@ -80,16 +81,16 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebKitMediaKeySession; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebKitMediaKeySession"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
@@ -113,6 +114,8 @@ private:
     Timer m_addKeyTimer;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebKitMediaKeySession)
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)

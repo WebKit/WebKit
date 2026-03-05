@@ -53,7 +53,7 @@ ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(Variant<Vector<Vector<
                 return Exception { ExceptionCode::TypeError };
             pairs.append({pair[0], pair[1]});
         }
-        return adoptRef(*new URLSearchParams(WTFMove(pairs)));
+        return adoptRef(*new URLSearchParams(WTF::move(pairs)));
     }, [&](const Vector<KeyValuePair<String, String>>& pairs) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(pairs));
     }, [&](const String& string) -> ExceptionOr<Ref<URLSearchParams>> {

@@ -39,29 +39,24 @@ using namespace WebCore;
 
 Ref<RemoteCDMInstanceSession> RemoteCDMInstanceSession::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceSessionIdentifier&& identifier)
 {
-    return adoptRef(*new RemoteCDMInstanceSession(WTFMove(factory), WTFMove(identifier)));
+    return adoptRef(*new RemoteCDMInstanceSession(WTF::move(factory), WTF::move(identifier)));
 }
 
 RemoteCDMInstanceSession::RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMInstanceSessionIdentifier&& identifier)
-    : m_factory(WTFMove(factory))
-    , m_identifier(WTFMove(identifier))
+    : m_factory(WTF::move(factory))
+    , m_identifier(WTF::move(identifier))
 {
 }
 
 RemoteCDMInstanceSession::~RemoteCDMInstanceSession()
 {
-    protectedFactory()->removeSession(m_identifier);
-}
-
-RefPtr<RemoteCDMFactory> RemoteCDMInstanceSession::protectedFactory() const
-{
-    return m_factory.get();
+    protect(m_factory.get())->removeSession(m_identifier);
 }
 
 #if !RELEASE_LOG_DISABLED
 void RemoteCDMInstanceSession::setLogIdentifier(uint64_t logIdentifier)
 {
-    protectedFactory()->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceSessionProxy::SetLogIdentifier(reinterpret_cast<uint64_t>(logIdentifier)), m_identifier);
+    protect(m_factory.get())->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceSessionProxy::SetLogIdentifier(reinterpret_cast<uint64_t>(logIdentifier)), m_identifier);
 }
 #endif
 
@@ -73,7 +68,7 @@ void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrat
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, keyGroupingStrategy, initDataType, WTFMove(initData)), [callback = WTFMove(callback)] (RefPtr<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, keyGroupingStrategy, initDataType, WTF::move(initData)), [callback = WTF::move(callback)] (RefPtr<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
         if (!message) {
             callback(SharedBuffer::create(), emptyString(), false, Failed);
             return;
@@ -90,8 +85,8 @@ void RemoteCDMInstanceSession::updateLicense(const String& sessionId, LicenseTyp
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::UpdateLicense(sessionId, type, WTFMove(response)), [callback = WTFMove(callback)] (bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded) mutable {
-        callback(sessionWasClosed, WTFMove(changedKeys), WTFMove(changedExpiration), WTFMove(message), succeeded ? Succeeded : Failed);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::UpdateLicense(sessionId, type, WTF::move(response)), [callback = WTF::move(callback)] (bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded) mutable {
+        callback(sessionWasClosed, WTF::move(changedKeys), WTF::move(changedExpiration), WTF::move(message), succeeded ? Succeeded : Failed);
     }, m_identifier);
 }
 
@@ -103,8 +98,8 @@ void RemoteCDMInstanceSession::loadSession(LicenseType type, const String& sessi
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::LoadSession(type, sessionId, origin), [callback = WTFMove(callback)] (std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded, SessionLoadFailure loadFailure) mutable {
-        callback(WTFMove(changedKeys), WTFMove(changedExpiration), WTFMove(message), succeeded ? Succeeded : Failed, loadFailure);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::LoadSession(type, sessionId, origin), [callback = WTF::move(callback)] (std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded, SessionLoadFailure loadFailure) mutable {
+        callback(WTF::move(changedKeys), WTF::move(changedExpiration), WTF::move(message), succeeded ? Succeeded : Failed, loadFailure);
     }, m_identifier);
 }
 
@@ -116,7 +111,7 @@ void RemoteCDMInstanceSession::closeSession(const String& sessionId, CloseSessio
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::CloseSession(sessionId), [callback = WTFMove(callback)] () mutable {
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::CloseSession(sessionId), [callback = WTF::move(callback)] () mutable {
         callback();
     }, m_identifier);
 }
@@ -129,8 +124,8 @@ void RemoteCDMInstanceSession::removeSessionData(const String& sessionId, Licens
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RemoveSessionData(sessionId, type), [callback = WTFMove(callback)] (KeyStatusVector&& changedKeys, RefPtr<SharedBuffer>&& message, bool succeeded) mutable {
-        callback(WTFMove(changedKeys), WTFMove(message), succeeded ? Succeeded : Failed);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RemoveSessionData(sessionId, type), [callback = WTF::move(callback)] (KeyStatusVector&& changedKeys, RefPtr<SharedBuffer>&& message, bool succeeded) mutable {
+        callback(WTF::move(changedKeys), WTF::move(message), succeeded ? Succeeded : Failed);
     }, m_identifier);
 }
 
@@ -142,20 +137,23 @@ void RemoteCDMInstanceSession::storeRecordOfKeyUsage(const String& sessionId)
 
 void RemoteCDMInstanceSession::updateKeyStatuses(KeyStatusVector&& keyStatuses)
 {
-    if (m_client)
-        m_client->updateKeyStatuses(WTFMove(keyStatuses));
+    if (RefPtr client = m_client.get())
+        client->updateKeyStatuses(WTF::move(keyStatuses));
 }
 
 void RemoteCDMInstanceSession::sendMessage(WebCore::CDMMessageType type, RefPtr<SharedBuffer>&& message)
 {
-    if (m_client && message)
-        m_client->sendMessage(type, message.releaseNonNull());
+    if (!message)
+        return;
+
+    if (RefPtr client = m_client.get())
+        client->sendMessage(type, message.releaseNonNull());
 }
 
 void RemoteCDMInstanceSession::sessionIdChanged(const String& sessionId)
 {
-    if (m_client)
-        m_client->sessionIdChanged(sessionId);
+    if (RefPtr client = m_client.get())
+        client->sessionIdChanged(sessionId);
 }
 
 }

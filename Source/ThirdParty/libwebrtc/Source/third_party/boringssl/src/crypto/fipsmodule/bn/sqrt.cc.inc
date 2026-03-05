@@ -32,33 +32,31 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
 
   if (!BN_is_odd(p) || BN_abs_is_word(p, 1)) {
     if (BN_abs_is_word(p, 2)) {
-      if (ret == NULL) {
+      if (ret == nullptr) {
         ret = BN_new();
       }
-      if (ret == NULL ||
-          !BN_set_word(ret, BN_is_bit_set(a, 0))) {
+      if (ret == nullptr || !BN_set_word(ret, BN_is_bit_set(a, 0))) {
         if (ret != in) {
           BN_free(ret);
         }
-        return NULL;
+        return nullptr;
       }
       return ret;
     }
 
     OPENSSL_PUT_ERROR(BN, BN_R_P_IS_NOT_PRIME);
-    return NULL;
+    return nullptr;
   }
 
   if (BN_is_zero(a) || BN_is_one(a)) {
-    if (ret == NULL) {
+    if (ret == nullptr) {
       ret = BN_new();
     }
-    if (ret == NULL ||
-        !BN_set_word(ret, BN_is_one(a))) {
+    if (ret == nullptr || !BN_set_word(ret, BN_is_one(a))) {
       if (ret != in) {
         BN_free(ret);
       }
-      return NULL;
+      return nullptr;
     }
     return ret;
   }
@@ -70,14 +68,14 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
   t = BN_CTX_get(ctx);
   x = BN_CTX_get(ctx);
   y = BN_CTX_get(ctx);
-  if (y == NULL) {
+  if (y == nullptr) {
     goto end;
   }
 
-  if (ret == NULL) {
+  if (ret == nullptr) {
     ret = BN_new();
   }
-  if (ret == NULL) {
+  if (ret == nullptr) {
     goto end;
   }
 
@@ -104,8 +102,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
       goto end;
     }
     q->neg = 0;
-    if (!BN_add_word(q, 1) ||
-        !BN_mod_exp_mont(ret, A, q, p, ctx, NULL)) {
+    if (!BN_add_word(q, 1) || !BN_mod_exp_mont(ret, A, q, p, ctx, nullptr)) {
       goto end;
     }
     err = 0;
@@ -149,7 +146,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
       goto end;
     }
     q->neg = 0;
-    if (!BN_mod_exp_mont(b, t, q, p, ctx, NULL)) {
+    if (!BN_mod_exp_mont(b, t, q, p, ctx, nullptr)) {
       goto end;
     }
 
@@ -192,19 +189,8 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
         goto end;
       }
     } else {
-      if (!BN_pseudo_rand(y, BN_num_bits(p), 0, 0)) {
+      if (!BN_rand_range_ex(y, 22, p)) {
         goto end;
-      }
-      if (BN_ucmp(y, p) >= 0) {
-        if (BN_usub(y, y, p)) {
-          goto end;
-        }
-      }
-      // now 0 <= y < |p|
-      if (BN_is_zero(y)) {
-        if (!BN_set_word(y, i)) {
-          goto end;
-        }
       }
     }
 
@@ -235,7 +221,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
 
   // Now that we have some non-square, we can find an element
   // of order  2^e  by computing its q'th power.
-  if (!BN_mod_exp_mont(y, y, q, p, ctx, NULL)) {
+  if (!BN_mod_exp_mont(y, y, q, p, ctx, nullptr)) {
     goto end;
   }
   if (BN_is_one(y)) {
@@ -279,7 +265,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
       goto end;
     }
   } else {
-    if (!BN_mod_exp_mont(x, A, t, p, ctx, NULL)) {
+    if (!BN_mod_exp_mont(x, A, t, p, ctx, nullptr)) {
       goto end;
     }
     if (BN_is_zero(x)) {
@@ -376,7 +362,7 @@ end:
     if (ret != in) {
       BN_clear_free(ret);
     }
-    ret = NULL;
+    ret = nullptr;
   }
   return ret;
 }

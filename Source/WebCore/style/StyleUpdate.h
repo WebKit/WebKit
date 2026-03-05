@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/Node.h>
-#include <WebCore/StyleChange.h>
+#include "Node.h"
+#include "StyleChange.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -63,18 +63,18 @@ public:
     Update(Document&);
     ~Update();
 
-    const ListHashSet<RefPtr<ContainerNode>>& roots() const { return m_roots; }
-    ListHashSet<RefPtr<Element>> takeRebuildRoots() { return WTFMove(m_rebuildRoots); }
+    const ListHashSet<Ref<ContainerNode>>& roots() const { return m_roots; }
+    ListHashSet<Ref<Element>> takeRebuildRoots() { return WTF::move(m_rebuildRoots); }
 
-    const ElementUpdate* elementUpdate(const Element&) const;
-    ElementUpdate* elementUpdate(const Element&);
+    const ElementUpdate* NODELETE elementUpdate(const Element&) const;
+    ElementUpdate* NODELETE elementUpdate(const Element&);
 
-    const TextUpdate* textUpdate(const Text&) const;
+    const TextUpdate* NODELETE textUpdate(const Text&) const;
 
     const RenderStyle* initialContainingBlockUpdate() const { return m_initialContainingBlockUpdate.get(); }
 
-    const RenderStyle* elementStyle(const Element&) const;
-    RenderStyle* elementStyle(const Element&);
+    const RenderStyle* NODELETE elementStyle(const Element&) const;
+    RenderStyle* NODELETE elementStyle(const Element&);
 
     const Document& document() const { return m_document; }
 
@@ -92,10 +92,10 @@ private:
     void addPossibleRebuildRoot(Element&, Element* parent);
 
     const Ref<Document> m_document;
-    ListHashSet<RefPtr<ContainerNode>> m_roots;
-    ListHashSet<RefPtr<Element>> m_rebuildRoots;
-    HashMap<RefPtr<const Element>, ElementUpdate> m_elements;
-    HashMap<RefPtr<const Text>, TextUpdate> m_texts;
+    ListHashSet<Ref<ContainerNode>> m_roots;
+    ListHashSet<Ref<Element>> m_rebuildRoots;
+    HashMap<Ref<const Element>, ElementUpdate> m_elements;
+    HashMap<Ref<const Text>, TextUpdate> m_texts;
     std::unique_ptr<RenderStyle> m_initialContainingBlockUpdate;
 };
 

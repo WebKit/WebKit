@@ -60,7 +60,7 @@ using ProcessAndInteractionPair = std::pair<WeakPtr<AuxiliaryProcessProxy>, Reta
     RELEASE_LOG(Process, "Created visibility propagation interaction %@ for process with PID=%d", visibilityPropagationInteraction.get(), process.processID());
 
     auto processAndInteraction = std::make_pair(WeakPtr(process), visibilityPropagationInteraction);
-    _processesAndInteractions.append(WTFMove(processAndInteraction));
+    _processesAndInteractions.append(WTF::move(processAndInteraction));
 }
 
 - (void)stopPropagatingVisibilityToProcess:(WebKit::AuxiliaryProcessProxy&)process
@@ -82,6 +82,11 @@ using ProcessAndInteractionPair = std::pair<WeakPtr<AuxiliaryProcessProxy>, Reta
     return _processesAndInteractions.containsIf([&](auto& processAndInteraction) {
         return processAndInteraction.first.get() == &process;
     });
+}
+
+- (void)clear
+{
+    _processesAndInteractions.clear();
 }
 
 @end

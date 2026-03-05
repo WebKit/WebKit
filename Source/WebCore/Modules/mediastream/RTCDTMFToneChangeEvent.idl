@@ -24,19 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcdtmftonechangeevent
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCDTMFToneChangeEvent : Event {
-    constructor([AtomString] DOMString type, optional RTCDTMFToneChangeEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional RTCDTMFToneChangeEventInit eventInitDict = {});
 
     readonly attribute DOMString tone;
 };
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcdtmftonechangeeventinit
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnectionEnabled
+    EnabledBySetting=PeerConnectionEnabled,
 ] dictionary RTCDTMFToneChangeEventInit : EventInit {
-    DOMString tone;
+    DOMString tone = "";
 };

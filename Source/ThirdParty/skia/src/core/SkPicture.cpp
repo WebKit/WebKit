@@ -195,7 +195,7 @@ sk_sp<SkPicture> SkPicture::MakeFromStreamPriv(SkStream* stream, const SkDeseria
                 return nullptr;
             }
             size_t size = sk_negate_to_size_t(ssize);
-            if (StreamRemainingLengthIsBelow(stream, size)) {
+            if (SkStreamPriv::RemainingLengthIsBelow(stream, size)) {
                 return nullptr;
             }
             auto data = SkData::MakeUninitialized(size);
@@ -252,7 +252,7 @@ sk_sp<SkData> SkPicture::serialize(const SkSerialProcs* procs) const {
     return stream.detachAsData();
 }
 
-static sk_sp<SkData> custom_serialize(const SkPicture* picture, const SkSerialProcs& procs) {
+static sk_sp<const SkData> custom_serialize(const SkPicture* picture, const SkSerialProcs& procs) {
     if (procs.fPictureProc) {
         auto data = procs.fPictureProc(const_cast<SkPicture*>(picture), procs.fPictureCtx);
         if (data) {

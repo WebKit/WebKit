@@ -61,11 +61,12 @@ JSFunction* CommandLineAPIModule::injectModuleFunction(JSC::JSGlobalObject* lexi
 JSValue CommandLineAPIModule::host(InjectedScriptManager* injectedScriptManager, JSGlobalObject* lexicalGlobalObject) const
 {
     // CommandLineAPIModule should only ever be used by a WebInjectedScriptManager.
-    WebInjectedScriptManager* pageInjectedScriptManager = static_cast<WebInjectedScriptManager*>(injectedScriptManager);
-    ASSERT(pageInjectedScriptManager->commandLineAPIHost());
+    auto* pageInjectedScriptManager = downcast<WebInjectedScriptManager>(injectedScriptManager);
+    RefPtr commandLineAPIHost = pageInjectedScriptManager->commandLineAPIHost();
+    ASSERT(commandLineAPIHost);
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
-    return pageInjectedScriptManager->commandLineAPIHost()->wrapper(lexicalGlobalObject, globalObject);
+    return commandLineAPIHost->wrapper(lexicalGlobalObject, globalObject);
 }
 
 } // namespace WebCore

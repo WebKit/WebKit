@@ -56,7 +56,7 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     parameters.applicationVisibleName = applicationVisibleName().get();
 #if PLATFORM(MAC)
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
-        parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
+        parameters.launchServicesExtensionHandle = WTF::move(*launchServicesExtensionHandle);
 #endif
     parameters.enableMetalDebugDeviceForTesting = m_isMetalDebugDeviceEnabledForTesting;
     parameters.enableMetalShaderValidationForTesting = m_isMetalShaderValidationEnabledForTesting;
@@ -96,7 +96,7 @@ void GPUProcessProxy::enablePowerLogging()
     auto handle = SandboxExtension::createHandleForMachLookup("com.apple.powerlog.plxpclogger.xpc"_s, std::nullopt);
     if (!handle)
         return;
-    send(Messages::GPUProcess::EnablePowerLogging(WTFMove(*handle)), 0);
+    send(Messages::GPUProcess::EnablePowerLogging(WTF::move(*handle)), 0);
 }
 #endif // HAVE(POWERLOG_TASK_MODE_QUERY)
 
@@ -112,7 +112,7 @@ Vector<SandboxExtension::Handle> GPUProcessProxy::createGPUToolsSandboxExtension
 void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
 {
     Ref protectedConnection = connection();
-    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([protectedConnection = WTFMove(protectedConnection)] () mutable {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([protectedConnection = WTF::move(protectedConnection)] () mutable {
         NSError *error = nil;
         RetainPtr directoryURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&error];
         RetainPtr url = adoptNS([[NSURL alloc] initFileURLWithPath:@"Caches/com.apple.WebKit.GPU/" relativeToURL:directoryURL.get()]);
@@ -125,12 +125,12 @@ void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
 
 void GPUProcessProxy::postWillTakeSnapshotNotification(CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::PostWillTakeSnapshotNotification { }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::PostWillTakeSnapshotNotification { }, WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, const WebCore::FloatSize& size, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToPDF { identifier, size, rootFrameIdentifier }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToPDF { identifier, size, rootFrameIdentifier }, WTF::move(completionHandler));
 }
 
 }

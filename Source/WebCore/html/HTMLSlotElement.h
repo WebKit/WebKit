@@ -30,10 +30,10 @@
 namespace WebCore {
 
 class HTMLSlotElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLSlotElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLSlotElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSlotElement);
 public:
-    using ElementOrText = Variant<RefPtr<Element>, RefPtr<Text>>;
+    using ElementOrText = Variant<Ref<Element>, Ref<Text>>;
 
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 
@@ -45,7 +45,7 @@ public:
     Vector<Ref<Element>> assignedElements(const AssignedNodesOptions&) const;
 
     void assign(FixedVector<ElementOrText>&&);
-    const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& manuallyAssignedNodes() const { return m_manuallyAssignedNodes; }
+    const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& manuallyAssignedNodes() const LIFETIME_BOUND { return m_manuallyAssignedNodes; }
     void removeManuallyAssignedNode(Node&);
 
     void enqueueSlotChangeEvent();

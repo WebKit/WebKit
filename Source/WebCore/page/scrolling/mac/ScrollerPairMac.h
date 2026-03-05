@@ -76,8 +76,8 @@ public:
     void updateValues();
 
     FloatSize visibleSize() const;
-    bool useDarkAppearance() const;
-    ScrollbarWidth scrollbarWidthStyle() const;
+    bool NODELETE useDarkAppearance() const;
+    ScrollbarWidth NODELETE scrollbarWidthStyle() const;
 
     struct Values {
         float value;
@@ -114,7 +114,7 @@ public:
 
     NSScrollerImpPair *scrollerImpPair() const { return m_scrollerImpPair.get(); }
     void ensureOnMainThreadWithProtectedThis(Function<void(ScrollerPairMac&)>&&);
-    RefPtr<ScrollingTreeScrollingNode> protectedNode() const { return m_scrollingNode.get(); }
+    RefPtr<ScrollingTreeScrollingNode> node() const { return m_scrollingNode.get(); }
 
     bool mouseInContentArea() const { return m_mouseInContentArea; }
 

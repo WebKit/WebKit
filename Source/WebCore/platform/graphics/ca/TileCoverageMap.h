@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileCoverageMap_h
-#define TileCoverageMap_h
+#pragma once
 
 #include "FloatRect.h"
 #include "IntRect.h"
@@ -48,7 +47,7 @@ class TileCoverageMap final : public PlatformCALayerClient, public CanMakeChecke
     WTF_MAKE_NONCOPYABLE(TileCoverageMap);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TileCoverageMap);
 public:
-    TileCoverageMap(const TileController&);
+    explicit TileCoverageMap(const TileController&);
     ~TileCoverageMap();
 
     void update();
@@ -71,9 +70,9 @@ private:
     OptionSet<ContentsFormat> screenContentsFormats() const override;
 
     void updateTimerFired();
-    
-    const TileController& m_controller;
-    
+
+    const CheckedRef<const TileController> m_controller;
+
     Timer m_updateTimer;
 
     const Ref<PlatformCALayer> m_layer;
@@ -84,6 +83,4 @@ private:
     FloatPoint m_position;
 };
 
-}
-
-#endif
+} // namespace WebCore

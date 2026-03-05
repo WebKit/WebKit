@@ -57,9 +57,11 @@ struct UmaRampUpMetric {
 };
 
 const UmaRampUpMetric kUmaRampupMetrics[] = {
-    {"WebRTC.BWE.RampUpTimeTo500kbpsInMs", 500},
-    {"WebRTC.BWE.RampUpTimeTo1000kbpsInMs", 1000},
-    {"WebRTC.BWE.RampUpTimeTo2000kbpsInMs", 2000}};
+    {.metric_name = "WebRTC.BWE.RampUpTimeTo500kbpsInMs", .bitrate_kbps = 500},
+    {.metric_name = "WebRTC.BWE.RampUpTimeTo1000kbpsInMs",
+     .bitrate_kbps = 1000},
+    {.metric_name = "WebRTC.BWE.RampUpTimeTo2000kbpsInMs",
+     .bitrate_kbps = 2000}};
 const size_t kNumUmaRampupMetrics =
     sizeof(kUmaRampupMetrics) / sizeof(kUmaRampupMetrics[0]);
 

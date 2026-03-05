@@ -16,11 +16,6 @@
 
 namespace webrtc {
 
-constexpr int DependencyDescriptor::kMaxSpatialIds;
-constexpr int DependencyDescriptor::kMaxTemporalIds;
-constexpr int DependencyDescriptor::kMaxTemplates;
-constexpr int DependencyDescriptor::kMaxDecodeTargets;
-
 namespace webrtc_impl {
 
 absl::InlinedVector<DecodeTargetIndication, 10> StringToDecodeTargetIndications(

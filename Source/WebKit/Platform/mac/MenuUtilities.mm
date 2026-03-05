@@ -109,7 +109,7 @@ static RetainPtr<PlatformDDAction> actionForMenuItem(NSMenuItem *item)
         return nil;
 
     RetainPtr<id> action = [representedObject objectForKey:@"DDAction"];
-    return dynamic_objc_cast<PlatformDDAction>(WTFMove(action));
+    return dynamic_objc_cast<PlatformDDAction>(WTF::move(action));
 }
 
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
@@ -117,8 +117,7 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    // FIXME: This is a safer cpp false positive (rdar://161378050).
-    SUPPRESS_UNRETAINED_ARG auto actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
 
     [actionContext setAllowedActionUTIs:@[ @"com.apple.dial" ]];
 
@@ -250,6 +249,12 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
     case WebCore::ContextMenuItemTagCapitalize:
     case WebCore::ContextMenuItemTagTransformationsMenu:
         return symbolForTransformationItem("textformat.characters"_s);
+    case WebCore::ContextMenuItemTagConvertToSimplifiedChinese:
+    case WebCore::ContextMenuItemTagConvertToTraditionalChinese:
+    case WebCore::ContextMenuItemTagDefaultDirection:
+    case WebCore::ContextMenuItemTagTextDirectionDefault:
+    case WebCore::ContextMenuItemTagWritingDirectionMenu:
+        return { { SymbolType::Public, "arrow.left.arrow.right"_s } };
     case WebCore::ContextMenuItemTagChangeBack:
         return { { SymbolType::Public, "arrow.uturn.backward.circle"_s } };
     case WebCore::ContextMenuItemTagCopy:
@@ -259,10 +264,6 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
         return { { SymbolType::Public, "document.on.document"_s } };
     case WebCore::ContextMenuItemTagCut:
         return { { SymbolType::Public, "scissors"_s } };
-    case WebCore::ContextMenuItemTagDefaultDirection:
-    case WebCore::ContextMenuItemTagTextDirectionDefault:
-    case WebCore::ContextMenuItemTagWritingDirectionMenu:
-        return { { SymbolType::Public, "arrow.left.arrow.right"_s } };
     case WebCore::ContextMenuItemTagDownloadImageToDisk:
     case WebCore::ContextMenuItemTagDownloadLinkToDisk:
     case WebCore::ContextMenuItemTagDownloadMediaToDisk:
@@ -355,7 +356,7 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
     }
     case WebCore::ContextMenuItemTagToggleMediaLoop:
         return { { SymbolType::Public, "arrow.2.squarepath"_s } };
-    case WebCore::ContextMenuItemTagToggleVideoEnhancedFullscreen: {
+    case WebCore::ContextMenuItemTagTogglePictureInPicture: {
         const auto symbolName =  useAlternateImage ? "pip.exit"_s : "pip.enter"_s;
         return { { SymbolType::Public, symbolName } };
     }

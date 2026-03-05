@@ -4,7 +4,7 @@ layer at (0,0) size 800x388
   RenderBlock {HTML} at (0,0) size 800x388
     RenderBody {BODY} at (8,8) size 784x372
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 164x19
+        RenderText {#text} at (0,0) size 164x20
           text run at (0,0) width 164: "All cells should be green."
 layer at (8,28) size 340x176
   RenderTable {TABLE} at (0,20) size 340x176 [border: (1px solid #000000)]

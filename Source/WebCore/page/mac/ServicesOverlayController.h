@@ -53,7 +53,7 @@ public:
     ~ServicesOverlayController();
 
     // DataDetectorHighlightClient.
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     void selectedTelephoneNumberRangesChanged();
@@ -62,8 +62,8 @@ public:
 private:
     // PageOverlayClient
     void willMoveToPage(PageOverlay&, Page*) override;
-    void didMoveToPage(PageOverlay&, Page*) override;
-    void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
+    void NODELETE didMoveToPage(PageOverlay&, Page*) override;
+    void NODELETE drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
     void didScrollFrame(PageOverlay&, LocalFrame&) override;
 
@@ -75,7 +75,7 @@ private:
     void invalidateHighlightsOfType(DataDetectorHighlight::Type);
     void buildPotentialHighlightsIfNeeded();
 
-    void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<DataDetectorHighlight>>&&, DataDetectorHighlight::Type);
+    void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<Ref<DataDetectorHighlight>>&&, DataDetectorHighlight::Type);
     void removeAllPotentialHighlightsOfType(DataDetectorHighlight::Type);
     void buildPhoneNumberHighlights();
     void buildSelectionHighlight();
@@ -102,15 +102,14 @@ private:
     Vector<SimpleRange> telephoneNumberRangesForFocusedFrame();
 
     Page& page() const { return m_page; }
-    Ref<Page> protectedPage() const { return m_page.get(); }
 
     WeakRef<Page> m_page;
     WeakPtr<PageOverlay> m_servicesOverlay;
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;
-    HashSet<RefPtr<DataDetectorHighlight>> m_potentialHighlights;
-    HashSet<RefPtr<DataDetectorHighlight>> m_animatingHighlights;
+    HashSet<Ref<DataDetectorHighlight>> m_potentialHighlights;
+    HashSet<Ref<DataDetectorHighlight>> m_animatingHighlights;
     WeakHashSet<DataDetectorHighlight> m_highlights;
 
     Vector<LayoutRect> m_currentSelectionRects;

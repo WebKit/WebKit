@@ -36,6 +36,7 @@
 #include "rtc_base/dscp.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/net_helper.h"
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/socket.h"
@@ -93,6 +94,7 @@ class TurnPort : public Port {
                       .network = args.network,
                       .ice_username_fragment = args.username,
                       .ice_password = args.password,
+                      .content_name = args.content_name,
                       .lna_permission_factory = args.lna_permission_factory},
                      socket, *args.server_address, args.config->credentials,
                      args.relative_priority, args.config->tls_alpn_protocols,
@@ -116,6 +118,7 @@ class TurnPort : public Port {
          .network = args.network,
          .ice_username_fragment = args.username,
          .ice_password = args.password,
+         .content_name = args.content_name,
          .lna_permission_factory = args.lna_permission_factory},
         min_port, max_port, *args.server_address, args.config->credentials,
         args.relative_priority, args.config->tls_alpn_protocols,
@@ -272,18 +275,9 @@ class TurnPort : public Port {
   void OnAllocateError(int error_code, absl::string_view reason);
   void OnAllocateRequestTimeout();
 
-  void HandleDataIndication(const char* data,
-                            size_t size,
-                            int64_t packet_time_us);
-  void HandleChannelData(uint16_t channel_id,
-                         const char* data,
-                         size_t size,
-                         int64_t packet_time_us);
-  void DispatchPacket(const char* data,
-                      size_t size,
-                      const SocketAddress& remote_addr,
-                      ProtocolType proto,
-                      int64_t packet_time_us);
+  void HandleDataIndication(const ReceivedIpPacket& packet);
+  void HandleChannelData(uint16_t channel_id, const ReceivedIpPacket& packet);
+  void DispatchPacket(const ReceivedIpPacket& packet, ProtocolType proto);
 
   bool ScheduleRefresh(uint32_t lifetime);
   void SendRequest(StunRequest* request, int delay);
@@ -324,6 +318,7 @@ class TurnPort : public Port {
   AttemptedServerSet attempted_server_addresses_;
 
   AsyncPacketSocket* socket_;
+  std::unique_ptr<AsyncPacketSocket> owned_socket_;
   SocketOptionsMap socket_options_;
   std::unique_ptr<AsyncDnsResolverInterface> resolver_;
   int error_;

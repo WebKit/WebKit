@@ -55,7 +55,7 @@ void PublicURLManager::registerURL(const URL& url, URLRegistrable& registrable)
     if (m_isStopped || !scriptExecutionContext())
         return;
 
-    registrable.registry().registerURL(*protectedScriptExecutionContext(), url, registrable);
+    registrable.registry().registerURL(*protect(scriptExecutionContext()), url, registrable);
 }
 
 void PublicURLManager::revoke(const URL& url)

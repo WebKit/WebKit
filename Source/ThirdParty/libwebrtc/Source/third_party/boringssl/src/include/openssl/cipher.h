@@ -133,6 +133,12 @@ OPENSSL_EXPORT int EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx,
 // |out| must have sufficient space. The number of bytes actually output is
 // written to |*out_len|. It returns one on success and zero otherwise.
 //
+// Note that the total output length across |EVP_EncryptUpdate| and
+// |EVP_EncryptFinal_ex| will never exceed the sum of |in_len|. However, in
+// ciphers whose the block size is not 1, such as CBC, individual calls to
+// |EVP_EncryptUpdate| may output more or less than |in_len| bytes. In this
+// case, the maximum output length is |in_len| plus the block size minus one.
+//
 // If |ctx| is an AEAD cipher, e.g. |EVP_aes_128_gcm|, and |out| is NULL, this
 // function instead adds |in_len| bytes from |in| to the AAD and sets |*out_len|
 // to |in_len|. The AAD must be fully specified in this way before this function
@@ -141,19 +147,26 @@ OPENSSL_EXPORT int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out,
                                      int *out_len, const uint8_t *in,
                                      int in_len);
 
-// EVP_EncryptFinal_ex writes at most a block of ciphertext to |out| and sets
-// |*out_len| to the number of bytes written. If padding is enabled (the
-// default) then standard padding is applied to create the final block. If
-// padding is disabled (with |EVP_CIPHER_CTX_set_padding|) then any partial
-// block remaining will cause an error. The function returns one on success and
-// zero otherwise.
+// EVP_EncryptFinal_ex writes at most a block of ciphertext (if block length is
+// >1) to |out| and sets |*out_len| to the number of bytes written. If padding
+// is enabled (the default) then standard padding is applied to create the
+// final block. If padding is disabled (with |EVP_CIPHER_CTX_set_padding|) then
+// any partial block remaining will cause an error. The function returns one on
+// success and zero otherwise.
 OPENSSL_EXPORT int EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, uint8_t *out,
                                        int *out_len);
 
 // EVP_DecryptUpdate decrypts |in_len| bytes from |in| to |out|. The number of
-// output bytes may be up to |in_len| plus the block length minus one and |out|
-// must have sufficient space. The number of bytes actually output is written
-// to |*out_len|. It returns one on success and zero otherwise.
+// output bytes may be up to |in_len| plus the block length (if block length is
+// >1) and |out| must have sufficient space. The number of bytes actually
+// output is written to |*out_len|. It returns one on success and zero
+// otherwise.
+//
+// Note that the total output length across |EVP_DecryptUpdate| and
+// |EVP_DecryptFinal_ex| will never exceed the sum of |in_len|. However, in
+// ciphers whose the block size is not 1, such as CBC, individual calls to
+// |EVP_DecryptUpdate| may output more or less than |in_len| bytes. In this
+// case, the maximum output length is |in_len| plus the block size.
 //
 // If |ctx| is an AEAD cipher, e.g. |EVP_aes_128_gcm|, and |out| is NULL, this
 // function instead adds |in_len| bytes from |in| to the AAD and sets |*out_len|
@@ -163,9 +176,9 @@ OPENSSL_EXPORT int EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out,
                                      int *out_len, const uint8_t *in,
                                      int in_len);
 
-// EVP_DecryptFinal_ex writes at most a block of ciphertext to |out| and sets
-// |*out_len| to the number of bytes written. If padding is enabled (the
-// default) then padding is removed from the final block.
+// EVP_DecryptFinal_ex writes at most a block of ciphertext (if block length is
+// >1) to |out| and sets |*out_len| to the number of bytes written. If padding
+// is enabled (the default) then padding is removed from the final block.
 //
 // WARNING: it is unsafe to call this function with unauthenticated
 // ciphertext if padding is enabled.

@@ -470,7 +470,7 @@ static gboolean webkitWebExtensionInitableInit(GInitable* initable, GCancellable
         return FALSE;
     }
 
-    self->priv->extension = WTFMove(extension);
+    self->priv->extension = WTF::move(extension);
 
     return TRUE;
 #else
@@ -489,9 +489,9 @@ WebKitWebExtension* webkitWebExtensionCreate(HashMap<String, GRefPtr<GBytes>>&& 
 {
     WebExtension::Resources newResources;
     for (auto& it : resources)
-        newResources.add(it.key, API::Data::createWithoutCopying(WTFMove(it.value)));
+        newResources.add(it.key, API::Data::createWithoutCopying(WTF::move(it.value)));
 
-    Ref extension = WebKit::WebExtension::create(WTFMove(newResources));
+    Ref extension = WebKit::WebExtension::create(WTF::move(newResources));
 
     if (!extension->errors().isEmpty()) {
         Ref internalError = extension->errors().last();
@@ -500,7 +500,7 @@ WebKitWebExtension* webkitWebExtensionCreate(HashMap<String, GRefPtr<GBytes>>&& 
     }
 
     WebKitWebExtension* object = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, nullptr));
-    object->priv->extension = WTFMove(extension);
+    object->priv->extension = WTF::move(extension);
     return object;
 }
 

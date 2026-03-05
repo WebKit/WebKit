@@ -31,17 +31,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PageSwapEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageSwapEvent);
 
 Ref<PageSwapEvent> PageSwapEvent::create(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
 {
-    return adoptRef(*new PageSwapEvent(type, WTFMove(eventInitDict), isTrusted));
+    return adoptRef(*new PageSwapEvent(type, WTF::move(eventInitDict), isTrusted));
 }
 
 PageSwapEvent::PageSwapEvent(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
     : Event(EventInterfaceType::PageSwapEvent, type, eventInitDict, isTrusted)
-    , m_activation(WTFMove(eventInitDict.activation))
-    , m_viewTransition(WTFMove(eventInitDict.viewTransition))
+    , m_activation(WTF::move(eventInitDict.activation))
+    , m_viewTransition(WTF::move(eventInitDict.viewTransition))
 { }
 
 PageSwapEvent::~PageSwapEvent() = default;

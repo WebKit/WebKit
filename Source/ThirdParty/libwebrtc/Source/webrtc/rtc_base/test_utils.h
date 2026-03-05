@@ -43,18 +43,22 @@ class StreamSink : public sigslot::has_slots<> {
   ~StreamSink() override;
 
   void Monitor(Socket* socket) {
-    socket->SignalConnectEvent.connect(this, &StreamSink::OnConnectEvent);
+    socket->SubscribeConnectEvent(
+        this, [this](Socket* socket) { OnConnectEvent(socket); });
     socket->SignalReadEvent.connect(this, &StreamSink::OnReadEvent);
     socket->SignalWriteEvent.connect(this, &StreamSink::OnWriteEvent);
-    socket->SignalCloseEvent.connect(this, &StreamSink::OnCloseEvent);
+    socket->SubscribeCloseEvent(this, [this](Socket* socket, int error) {
+      OnCloseEvent(socket, error);
+    });
     // In case you forgot to unmonitor a previous object with this address
     events_.erase(socket);
   }
   void Unmonitor(Socket* socket) {
-    socket->SignalConnectEvent.disconnect(this);
+    socket->UnsubscribeConnectEvent(this);
     socket->SignalReadEvent.disconnect(this);
     socket->SignalWriteEvent.disconnect(this);
-    socket->SignalCloseEvent.disconnect(this);
+    socket->UnsubscribeCloseEvent(this);
+
     events_.erase(socket);
   }
   bool Check(Socket* socket, StreamSinkEvent event, bool reset = true) {

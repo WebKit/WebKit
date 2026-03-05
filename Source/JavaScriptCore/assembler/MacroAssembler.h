@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/TargetAssemblerDefinitions.h>
 #include <wtf/Compiler.h>
 #include <wtf/Platform.h>
 
@@ -32,66 +33,23 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(ASSEMBLER)
 
-#include <JavaScriptCore/JSCJSValue.h>
-
-#define DEFINE_SIMD_FUNC(name, func, lane) \
-    template <typename ...Args> \
-    void name(Args&&... args) { func(lane, std::forward<Args>(args)...); }
-
-#define DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name, func, lane, mode) \
-    template <typename ...Args> \
-    void name(Args&&... args) { func(lane, mode, std::forward<Args>(args)...); }
-
-#define DEFINE_SIMD_FUNCS(name) \
-    DEFINE_SIMD_FUNC(name##Int8, name, SIMDLane::i8x16) \
-    DEFINE_SIMD_FUNC(name##Int16, name, SIMDLane::i16x8) \
-    DEFINE_SIMD_FUNC(name##Int32, name, SIMDLane::i32x4) \
-    DEFINE_SIMD_FUNC(name##Int64, name, SIMDLane::i64x2) \
-    DEFINE_SIMD_FUNC(name##Float32, name, SIMDLane::f32x4) \
-    DEFINE_SIMD_FUNC(name##Float64, name, SIMDLane::f64x2)
-
-#define DEFINE_SIGNED_SIMD_FUNCS(name) \
-    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##SignedInt8, name, SIMDLane::i8x16, SIMDSignMode::Signed) \
-    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##UnsignedInt8, name, SIMDLane::i8x16, SIMDSignMode::Unsigned) \
-    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##SignedInt16, name, SIMDLane::i16x8, SIMDSignMode::Signed) \
-    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##UnsignedInt16, name, SIMDLane::i16x8, SIMDSignMode::Unsigned) \
-    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##Int32, name, SIMDLane::i32x4, SIMDSignMode::None) \
-    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##Int64, name, SIMDLane::i64x2, SIMDSignMode::None) \
-    DEFINE_SIMD_FUNC(name##Float32, name, SIMDLane::f32x4) \
-    DEFINE_SIMD_FUNC(name##Float64, name, SIMDLane::f64x2)
-
-#if CPU(ADDRESS64)
-#define DEFINE_PTR_FUNC(name) \
-    template <typename ...Args> \
-    auto name##Ptr(Args&&... args) -> decltype(auto) { return name##64(std::forward<Args>(args)...); }
-#else
-#define DEFINE_PTR_FUNC(name) \
-    template <typename ...Args> \
-    auto name##Ptr(Args&&... args) -> decltype(auto) { return name##32(std::forward<Args>(args)...); }
-#endif
-
 #if CPU(ARM_THUMB2)
-#define TARGET_ASSEMBLER ARMv7Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARMv7
 #include <JavaScriptCore/MacroAssemblerARMv7.h>
 
 #elif CPU(ARM64E)
-#define TARGET_ASSEMBLER ARM64EAssembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARM64E
 #include <JavaScriptCore/MacroAssemblerARM64E.h>
 
 #elif CPU(ARM64)
-#define TARGET_ASSEMBLER ARM64Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARM64
 #include <JavaScriptCore/MacroAssemblerARM64.h>
 
 #elif CPU(X86_64)
-#define TARGET_ASSEMBLER X86Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerX86_64
 #include <JavaScriptCore/MacroAssemblerX86_64.h>
 
 #elif CPU(RISCV64)
-#define TARGET_ASSEMBLER RISCV64Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerRISCV64
 #include "MacroAssemblerRISCV64.h"
 
@@ -112,17 +70,10 @@ namespace JSC {
 
 namespace Probe {
 
-enum class SavedFPWidth {
-    SaveVectors,
-    DontSaveVectors
-};
-
 class Context;
 typedef void (SYSV_ABI *Function)(Context&);
 
 } // namespace Probe
-
-using Probe::SavedFPWidth;
 
 namespace Printer {
 
@@ -2475,11 +2426,10 @@ public:
     //
     // Note: this version of probe() should be implemented by the target specific
     // MacroAssembler.
-    void probe(Probe::Function, void* arg, SavedFPWidth = SavedFPWidth::DontSaveVectors);
+    void probe(Probe::Function, void* arg);
 
     // This leaks memory. Must not be used for production.
     JS_EXPORT_PRIVATE void probeDebug(Function<void(Probe::Context&)>);
-    JS_EXPORT_PRIVATE void probeDebugSIMD(Function<void(Probe::Context&)>);
 
     // Let's you print from your JIT generated code.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.

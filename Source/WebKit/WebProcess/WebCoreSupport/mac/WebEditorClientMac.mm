@@ -72,7 +72,7 @@ void WebEditorClient::setInsertionPasteboard(const String&)
     notImplemented();
 }
 
-static void changeWordCase(WebPage& page, NSString *(*changeCase)(NSString *))
+static void applyTextTransformation(WebPage& page, NSString *(*transform)(NSString *))
 {
     RefPtr frame = page.corePage()->focusController().focusedOrMainFrame();
     if (!frame)
@@ -85,7 +85,7 @@ static void changeWordCase(WebPage& page, NSString *(*changeCase)(NSString *))
     editor->command("selectWord"_s).execute();
 
     RetainPtr selectedString = frame->displayStringModifiedByEncoding(editor->selectedText()).createNSString();
-    page.replaceSelectionWithText(frame.get(), changeCase(selectedString.get()));
+    page.replaceSelectionWithText(frame.get(), transform(selectedString.get()));
 }
 
 void WebEditorClient::uppercaseWord()
@@ -93,7 +93,7 @@ void WebEditorClient::uppercaseWord()
     RefPtr page = m_page.get();
     if (!page)
         return;
-    changeWordCase(*page, [] (NSString *string) {
+    applyTextTransformation(*page, [] (NSString *string) {
         return [string uppercaseString];
     });
 }
@@ -103,7 +103,7 @@ void WebEditorClient::lowercaseWord()
     RefPtr page = m_page.get();
     if (!page)
         return;
-    changeWordCase(*page, [] (NSString *string) {
+    applyTextTransformation(*page, [] (NSString *string) {
         return [string lowercaseString];
     });
 }
@@ -113,8 +113,55 @@ void WebEditorClient::capitalizeWord()
     RefPtr page = m_page.get();
     if (!page)
         return;
-    changeWordCase(*page, [] (NSString *string) {
+    applyTextTransformation(*page, [] (NSString *string) {
         return [string capitalizedString];
+    });
+}
+
+bool WebEditorClient::canApplyCaseTransformations(const String& selection)
+{
+    RetainPtr selectedText = selection.createNSString();
+    return [selectedText rangeOfCharacterFromSet:[NSCharacterSet lowercaseLetterCharacterSet]].location != NSNotFound
+        || [selectedText rangeOfCharacterFromSet:[NSCharacterSet uppercaseLetterCharacterSet]].location != NSNotFound;
+}
+
+bool WebEditorClient::canConvertToTraditionalChinese(const String& selection)
+{
+    RetainPtr untransformed = selection.createNSString();
+    RetainPtr transformed = [untransformed stringByApplyingTransform:@"Hans-Hant" reverse:NO];
+    if ([transformed isEqualToString:untransformed.get()])
+        return false;
+
+    return true;
+}
+
+bool WebEditorClient::canConvertToSimplifiedChinese(const String& selection)
+{
+    RetainPtr untransformed = selection.createNSString();
+    RetainPtr transformed = [untransformed stringByApplyingTransform:@"Hant-Hans" reverse:NO];
+    if ([transformed isEqualToString:untransformed.get()])
+        return false;
+
+    return true;
+}
+
+void WebEditorClient::convertToTraditionalChinese()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+    applyTextTransformation(*page, [] (NSString *string) {
+        return [string stringByApplyingTransform:@"Hans-Hant" reverse:NO];
+    });
+}
+
+void WebEditorClient::convertToSimplifiedChinese()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+    applyTextTransformation(*page, [] (NSString *string) {
+        return [string stringByApplyingTransform:@"Hant-Hans" reverse:NO];
     });
 }
 

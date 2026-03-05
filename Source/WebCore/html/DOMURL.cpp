@@ -41,7 +41,7 @@
 namespace WebCore {
 
 inline DOMURL::DOMURL(URL&& completeURL)
-    : m_url(WTFMove(completeURL))
+    : m_url(WTF::move(completeURL))
 {
     ASSERT(m_url.isValid());
 }
@@ -52,7 +52,7 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
     URL completeURL { base, url };
     if (!completeURL.isValid())
         return Exception { ExceptionCode::TypeError, makeString('"', url, "\" cannot be parsed as a URL."_s) };
-    return adoptRef(*new DOMURL(WTFMove(completeURL)));
+    return adoptRef(*new DOMURL(WTF::move(completeURL)));
 }
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
@@ -78,7 +78,7 @@ RefPtr<DOMURL> DOMURL::parse(const String& url, const String& base)
     auto completeURL = parseInternal(url, base);
     if (!completeURL.isValid())
         return { };
-    return adoptRef(*new DOMURL(WTFMove(completeURL)));
+    return adoptRef(*new DOMURL(WTF::move(completeURL)));
 }
 
 bool DOMURL::canParse(const String& url, const String& base)
@@ -91,7 +91,7 @@ ExceptionOr<void> DOMURL::setHref(const String& url)
     URL completeURL { url };
     if (!completeURL.isValid())
         return Exception { ExceptionCode::TypeError };
-    m_url = WTFMove(completeURL);
+    m_url = WTF::move(completeURL);
     if (RefPtr searchParams = m_searchParams)
         searchParams->updateFromAssociatedURL();
     return { };
@@ -104,11 +104,11 @@ String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, B
 
 String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable& registrable)
 {
-    URL publicURL = BlobURL::createPublicURL(scriptExecutionContext.protectedSecurityOrigin().get());
+    URL publicURL = BlobURL::createPublicURL(protect(scriptExecutionContext.securityOrigin()).get());
     if (publicURL.isEmpty())
         return String();
 
-    scriptExecutionContext.protectedPublicURLManager()->registerURL(publicURL, registrable);
+    protect(scriptExecutionContext.publicURLManager())->registerURL(publicURL, registrable);
 
     return publicURL.string();
 }
@@ -123,12 +123,12 @@ URLSearchParams& DOMURL::searchParams()
 void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
 {
     URL url { urlString };
-    ResourceRequest request(WTFMove(url));
+    ResourceRequest request(WTF::move(url));
     request.setDomainForCachePartition(scriptExecutionContext.domainForCachePartition());
 
     MemoryCache::removeRequestFromSessionCaches(scriptExecutionContext, request);
 
-    scriptExecutionContext.protectedPublicURLManager()->revoke(request.url());
+    protect(scriptExecutionContext.publicURLManager())->revoke(request.url());
 }
 
 } // namespace WebCore

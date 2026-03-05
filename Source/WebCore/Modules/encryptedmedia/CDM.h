@@ -69,7 +69,7 @@ public:
     using SupportedConfigurationCallback = Function<void(std::optional<MediaKeySystemConfiguration>)>;
     void getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfiguration, SupportedConfigurationCallback&&);
 
-    const String& keySystem() const { return m_keySystem; }
+    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
     void loadAndInitialize();
     RefPtr<CDMInstance> createInstance();
@@ -86,7 +86,7 @@ public:
 
     String storageDirectory() const;
 
-    const String& mediaKeysHashSalt() const { return m_mediaKeysHashSalt; }
+    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -102,7 +102,7 @@ private:
 #endif
     String m_keySystem;
     String m_mediaKeysHashSalt;
-    std::unique_ptr<CDMPrivate> m_private;
+    const std::unique_ptr<CDMPrivate> m_private;
 };
 
 }

@@ -1143,18 +1143,18 @@ enum {
     unsigned i;
     for (i=0; i < [frameChildren count]; i++) {
         WebFrameView *childFrameView = [[frameChildren objectAtIndex:i] frameView];
-        WebFrameView *scrollableFrameView = [childFrameView _isScrollable] ? childFrameView : [childFrameView _largestScrollableChild];
+        RetainPtr scrollableFrameView = [childFrameView _isScrollable] ? childFrameView : [childFrameView _largestScrollableChild];
         if (!scrollableFrameView)
             continue;
-        
+
         // Some ads lurk in child frames of zero width and height, see radar 4406994. These don't count as scrollable.
         // Maybe someday we'll discover that this minimum area check should be larger, but this covers the known cases.
-        float area = [scrollableFrameView _area];
+        float area = [scrollableFrameView.get() _area];
         if (area < 1.0)
             continue;
-        
+
         if (!largest || (area > [largest _area])) {
-            largest = scrollableFrameView;
+            largest = scrollableFrameView.get();
         }
     }
     
@@ -1181,18 +1181,18 @@ enum {
     unsigned i;
     for (i=0; i < [frameChildren count]; i++) {
         WebFrameView *childFrameView = [[frameChildren objectAtIndex:i] frameView];
-        WebFrameView *scrollableFrameView = [childFrameView _hasScrollBars] ? childFrameView : [childFrameView _largestChildWithScrollBars];
+        RetainPtr scrollableFrameView = [childFrameView _hasScrollBars] ? childFrameView : [childFrameView _largestChildWithScrollBars];
         if (!scrollableFrameView)
             continue;
-        
+
         // Some ads lurk in child frames of zero width and height, see radar 4406994. These don't count as scrollable.
         // Maybe someday we'll discover that this minimum area check should be larger, but this covers the known cases.
-        float area = [scrollableFrameView _area];
+        float area = [scrollableFrameView.get() _area];
         if (area < 1.0)
             continue;
-        
+
         if (!largest || (area > [largest _area])) {
-            largest = scrollableFrameView;
+            largest = scrollableFrameView.get();
         }
     }
     
@@ -1239,7 +1239,7 @@ enum {
     // together with our becomeFirstResponder and setNextKeyView overrides.
     [super setNextKeyView:scrollView.get()];
 
-    _private->frameScrollView = WTFMove(scrollView);
+    _private->frameScrollView = WTF::move(scrollView);
 
     [self _setDocumentView:documentView.get()];
     [self _install];

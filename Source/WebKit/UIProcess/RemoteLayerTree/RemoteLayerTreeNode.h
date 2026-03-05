@@ -61,7 +61,6 @@ public:
     static Ref<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
 
     CALayer *layer() const { return m_layer.get(); }
-    RetainPtr<CALayer> protectedLayer() const;
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     const Markable<WebCore::FloatRect> visibleRect() const { return m_visibleRect; }
     void setVisibleRect(const WebCore::FloatRect& value) { m_visibleRect = value; }
@@ -78,22 +77,38 @@ public:
     void setShouldBeSeparated(bool value) { m_shouldBeSeparated = value; }
 #endif
 
+#if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
+    bool isLookToScrollExclusion() const { return m_isLookToScrollExclusion; }
+    void setIsLookToScrollExclusion(bool);
+
+    bool isFixedSubtreeRoot() const { return m_isFixedSubtreeRoot; }
+    void setIsFixedSubtreeRoot(bool value) { m_isFixedSubtreeRoot = value; }
+
+    enum class EventRegionChanged : bool { No, Yes };
+    void updateExclusionRegion(EventRegionChanged = EventRegionChanged::No);
+
+    void updateExclusionRegionAndDescendants(bool isExclusion);
+
+    void visibleRectChangedForOverlayRegions();
+    void updateOverlayRegionAfterHierarchyChange();
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     UIView *uiView() const { return m_uiView.get(); }
 #endif
 
     WebCore::PlatformLayerIdentifier layerID() const { return m_layerID; }
 
-    const WebCore::EventRegion& eventRegion() const { return m_eventRegion; }
+    const WebCore::EventRegion& eventRegion() const LIFETIME_BOUND { return m_eventRegion; }
     void setEventRegion(const WebCore::EventRegion&);
 
     // Non-ancestor scroller that controls positioning of the layer.
     std::optional<WebCore::PlatformLayerIdentifier> actingScrollContainerID() const { return m_actingScrollContainerID.asOptional(); }
     // Ancestor scrollers that don't affect positioning of the layer.
-    const Vector<WebCore::PlatformLayerIdentifier>& stationaryScrollContainerIDs() const { return m_stationaryScrollContainerIDs; }
+    const Vector<WebCore::PlatformLayerIdentifier>& stationaryScrollContainerIDs() const LIFETIME_BOUND { return m_stationaryScrollContainerIDs; }
 
     void setActingScrollContainerID(std::optional<WebCore::PlatformLayerIdentifier> value) { m_actingScrollContainerID = value; }
-    void setStationaryScrollContainerIDs(Vector<WebCore::PlatformLayerIdentifier>&& value) { m_stationaryScrollContainerIDs = WTFMove(value); }
+    void setStationaryScrollContainerIDs(Vector<WebCore::PlatformLayerIdentifier>&& value) { m_stationaryScrollContainerIDs = WTF::move(value); }
 
     void detachFromParent();
 
@@ -125,7 +140,7 @@ public:
     Vector<CachedContentsBuffer> takeCachedContentsBuffers() { return std::exchange(m_cachedContentsBuffers, { }); }
     void setCachedContentsBuffers(Vector<CachedContentsBuffer>&& buffers)
     {
-        m_cachedContentsBuffers = WTFMove(buffers);
+        m_cachedContentsBuffers = WTF::move(buffers);
     }
 
     std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier() const
@@ -142,6 +157,7 @@ public:
     void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, const WebCore::AcceleratedEffectValues&, RemoteLayerTreeHost&);
     const RemoteAnimationStack* animationStack() const { return m_animationStack.get(); }
     RefPtr<RemoteAnimationStack> takeAnimationStack() { return std::exchange(m_animationStack, nullptr); }
+    bool hasHighImpactMonotonicAnimations() const { return m_hasHighImpactMonotonicAnimations; }
 #endif
 
     bool backdropRootIsOpaque() const { return m_backdropRootIsOpaque; }
@@ -182,6 +198,13 @@ private:
     bool m_shouldBeSeparated { false };
 #endif
 
+#if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
+    bool m_isLookToScrollExclusion { false };
+    bool m_isFixedSubtreeRoot { false };
+    bool m_hasLookToScrollExclusionEffect { false };
+    bool m_hasVisibleRect { false };
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;
 #endif
@@ -200,6 +223,7 @@ private:
 
 #if ENABLE(THREADED_ANIMATIONS)
     RefPtr<RemoteAnimationStack> m_animationStack;
+    bool m_hasHighImpactMonotonicAnimations { false };
 #endif
     bool m_backdropRootIsOpaque { false };
 };

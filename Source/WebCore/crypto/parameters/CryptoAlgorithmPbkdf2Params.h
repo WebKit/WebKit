@@ -27,6 +27,7 @@
 
 #include "BufferSource.h"
 #include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmPbkdf2ParamsInit.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Vector.h>
@@ -36,18 +37,33 @@ namespace WebCore {
 class CryptoAlgorithmPbkdf2Params final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmPbkdf2Params);
 public:
-    BufferSource salt;
+    std::optional<BufferSource> salt;
     unsigned long iterations;
     // FIXME: Consider merging hash and hashIdentifier.
     Variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
+    CryptoAlgorithmPbkdf2Params(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmPbkdf2Params(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmPbkdf2ParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , salt { WTF::move(init.salt) }
+        , iterations { WTF::move(init.iterations) }
+        , hash { WTF::move(init.hash) }
+        , hashIdentifier { WTF::move(hashIdentifier) }
+    {
+    }
+
     const Vector<uint8_t>& saltVector() const
     {
-        if (!m_saltVector.isEmpty() || !salt.length())
+        if (!m_saltVector.isEmpty() || !salt || !salt->byteLength())
             return m_saltVector;
 
-        m_saltVector.append(salt.span());
+        if (salt)
+            m_saltVector.append(salt->span());
         return m_saltVector;
     }
 
@@ -55,8 +71,7 @@ public:
 
     CryptoAlgorithmPbkdf2Params isolatedCopy() const
     {
-        CryptoAlgorithmPbkdf2Params result;
-        result.identifier = identifier;
+        CryptoAlgorithmPbkdf2Params result { identifier };
         result.m_saltVector = saltVector();
         result.iterations = iterations;
         result.hashIdentifier = hashIdentifier;

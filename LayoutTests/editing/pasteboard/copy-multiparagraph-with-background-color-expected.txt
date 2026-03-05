@@ -1,0 +1,12 @@
+Pasted content should preserve background-color on block elements.
+
+Pasted multi-paragraph content:
+| <p>
+|   style="caret-color: rgb(255, 255, 255); color: rgb(255, 255, 255); background-color: rgb(30, 30, 30);"
+|   "First paragraph"
+| <p>
+|   style="caret-color: rgb(255, 255, 255); color: rgb(255, 255, 255); background-color: rgb(30, 30, 30);"
+|   "Second paragraph"
+| <p>
+|   style="caret-color: rgb(255, 255, 255); color: rgb(255, 255, 255); background-color: rgb(30, 30, 30);"
+|   "Third paragraph<#selection-caret>"

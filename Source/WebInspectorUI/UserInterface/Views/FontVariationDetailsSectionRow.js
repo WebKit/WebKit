@@ -141,7 +141,8 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
             minimumFractionDigits: 0,
             maximumFractionDigits: 2,
             useGrouping: false,
-        }
+            trailingZeroDisplay: "stripIfInteger",
+        };
         return value.toLocaleString(undefined, options);
     }
 

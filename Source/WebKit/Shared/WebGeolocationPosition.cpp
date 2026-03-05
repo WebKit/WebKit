@@ -34,7 +34,7 @@ using namespace WebCore;
 
 Ref<WebGeolocationPosition> WebGeolocationPosition::create(GeolocationPositionData&& geolocationPosition)
 {
-    return adoptRef(*new WebGeolocationPosition(WTFMove(geolocationPosition)));
+    return adoptRef(*new WebGeolocationPosition(WTF::move(geolocationPosition)));
 }
 
 WebGeolocationPosition::~WebGeolocationPosition()

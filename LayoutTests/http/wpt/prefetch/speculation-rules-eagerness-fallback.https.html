@@ -1,0 +1,220 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpeculationRulesPrefetchEnabled=true ] -->
+<meta charset="utf-8">
+<meta name="timeout" content="long">
+<title>Speculation Rules Eagerness Fallback to Conservative</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<body>
+<script>
+
+setup(() => {
+  assert_implements(
+      'supports' in HTMLScriptElement,
+      'HTMLScriptElement.supports must be supported');
+  assert_implements(
+      HTMLScriptElement.supports('speculationrules'),
+      '<script type="speculationrules"> must be supported');
+});
+
+const PREFETCH_RESOURCE_URL = new URL('/speculation-rules/prefetch/resources/prefetch.py', location.href);
+
+function getPrefetchUrl(extra_params = {}) {
+  let params = new URLSearchParams({ uuid: token(), ...extra_params });
+  return new URL(`${PREFETCH_RESOURCE_URL}?${params}`);
+}
+
+async function isUrlPrefetched(url) {
+  let response = await fetch(url, { redirect: 'follow' });
+  return response.json();
+}
+
+function insertSpeculationRules(body) {
+  let script = document.createElement('script');
+  script.type = 'speculationrules';
+  script.textContent = JSON.stringify(body);
+  document.head.appendChild(script);
+  return script;
+}
+
+function addLink(href, parent = document.body) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.textContent = 'link';
+  parent.appendChild(a);
+  return a;
+}
+
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'immediate' });
+  const link = addLink(url);
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'immediate',
+      where: { href_matches: url.href }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  await new Promise(resolve => t.step_timeout(resolve, 2000));
+  assert_equals(await isUrlPrefetched(url), 1, 'immediate eagerness should prefetch immediately');
+}, 'Document rule with immediate eagerness prefetches immediately');
+
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'eager' });
+  const link = addLink(url);
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'eager',
+      where: { href_matches: url.href }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  await new Promise(resolve => t.step_timeout(resolve, 2000));
+  assert_equals(await isUrlPrefetched(url), 0, 'eager eagerness should fall back to conservative (no immediate prefetch)');
+}, 'Document rule with eager eagerness falls back to conservative');
+
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'moderate' });
+  const link = addLink(url);
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'moderate',
+      where: { href_matches: url.href }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  await new Promise(resolve => t.step_timeout(resolve, 2000));
+  assert_equals(await isUrlPrefetched(url), 0, 'moderate eagerness should fall back to conservative (no immediate prefetch)');
+}, 'Document rule with moderate eagerness falls back to conservative');
+
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'conservative' });
+  const link = addLink(url);
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'conservative',
+      where: { href_matches: url.href }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  await new Promise(resolve => t.step_timeout(resolve, 2000));
+  assert_equals(await isUrlPrefetched(url), 0, 'conservative eagerness should not prefetch immediately');
+}, 'Document rule with conservative eagerness does not prefetch immediately');
+
+function triggerPointerDown(element) {
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  const pointerdownEvent = new PointerEvent('pointerdown', {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    clientX: x,
+    clientY: y,
+    button: 0,
+    pointerType: 'mouse'
+  });
+  element.dispatchEvent(pointerdownEvent);
+
+  const mousedownEvent = new MouseEvent('mousedown', {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    clientX: x,
+    clientY: y,
+    button: 0
+  });
+  element.dispatchEvent(mousedownEvent);
+}
+
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'eager-click' });
+  const link = addLink(url);
+  link.id = 'eager-click-link';
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'eager',
+      where: { href_matches: url.href }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  assert_equals(await isUrlPrefetched(url), 0, 'should not be prefetched before interaction');
+
+  triggerPointerDown(link);
+  await new Promise(resolve => t.step_timeout(resolve, 500));
+
+  assert_equals(await isUrlPrefetched(url), 1, 'eager eagerness should prefetch on pointerdown');
+}, 'Document rule with eager eagerness prefetches on pointerdown');
+
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'moderate-click' });
+  const link = addLink(url);
+  link.id = 'moderate-click-link';
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'moderate',
+      where: { href_matches: url.href }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  assert_equals(await isUrlPrefetched(url), 0, 'should not be prefetched before interaction');
+
+  triggerPointerDown(link);
+  await new Promise(resolve => t.step_timeout(resolve, 500));
+
+  assert_equals(await isUrlPrefetched(url), 1, 'moderate eagerness should prefetch on pointerdown');
+}, 'Document rule with moderate eagerness prefetches on pointerdown');
+
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'conservative-click' });
+  const link = addLink(url);
+  link.id = 'conservative-click-link';
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'conservative',
+      where: { href_matches: url.href }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  assert_equals(await isUrlPrefetched(url), 0, 'should not be prefetched before interaction');
+
+  triggerPointerDown(link);
+  await new Promise(resolve => t.step_timeout(resolve, 500));
+
+  assert_equals(await isUrlPrefetched(url), 1, 'conservative eagerness should prefetch on pointerdown');
+}, 'Document rule with conservative eagerness prefetches on pointerdown');
+
+</script>
+</body>

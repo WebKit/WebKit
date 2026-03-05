@@ -92,7 +92,7 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
     _highlightRect = highlightRect;
     _useDefaultHighlight = useDefaultHighlight;
     _attributedString = adoptNS([attributedString copy]);
-    _clearTextIndicator = WTFMove(clearTextIndicatorCallback);
+    _clearTextIndicator = WTF::move(clearTextIndicatorCallback);
     
     return self;
 }
@@ -169,7 +169,7 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
 
 - (void)setImage:(RefPtr<WebCore::Image>&&)image
 {
-    _image = WTFMove(image);
+    _image = WTF::move(image);
 }
 
 - (NSArray<NSValue *> *)highlightRectsForItem:(RVItem *)item
@@ -292,11 +292,11 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
     if (!canCreateRevealItems())
         return std::nullopt;
     
-    auto* node = hitTestResult.innerNonSharedNode();
+    RefPtr node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())
         return std::nullopt;
 
-    auto* frame = node->document().frame();
+    RefPtr frame = node->document().frame();
     if (!frame)
         return std::nullopt;
 
@@ -307,7 +307,7 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
 
     auto position = frame->visiblePositionForPoint(framePoint);
     if (position.isNull())
-        position = firstPositionInOrBeforeNode(node);
+        position = firstPositionInOrBeforeNode(node.get());
 
     RefPtr focusedOrMainFrame = frame->page()->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
@@ -461,11 +461,11 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();
-    auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:attributedString.get() clearTextIndicatorCallback:WTFMove(clearTextIndicator)]);
+    auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:attributedString.get() clearTextIndicatorCallback:WTF::move(clearTextIndicator)]);
     auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
 #else
     RetainPtr text = dictionaryPopupInfo.text.createNSString();
-    RetainPtr webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:adoptNS([[NSAttributedString alloc] initWithString:text.get()]).get() clearTextIndicatorCallback:WTFMove(clearTextIndicator)]);
+    RetainPtr webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:adoptNS([[NSAttributedString alloc] initWithString:text.get()]).get() clearTextIndicatorCallback:WTF::move(clearTextIndicator)]);
     RetainPtr item = adoptNS([PAL::allocRVItemInstance() initWithText:text.get() selectedRange:NSMakeRange(0, text.get().length)]);
 #endif
 
@@ -511,7 +511,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
 
 void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, CocoaView *view, NOESCAPE const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, NOESCAPE const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
-    showPopupOrCreateAnimationController(false, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTFMove(clearTextIndicator));
+    showPopupOrCreateAnimationController(false, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTF::move(clearTextIndicator));
 }
 
 void DictionaryLookup::hidePopup()
@@ -523,7 +523,7 @@ void DictionaryLookup::hidePopup()
 
 WKRevealController DictionaryLookup::animationControllerForPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, NOESCAPE const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, NOESCAPE const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
-    return showPopupOrCreateAnimationController(true, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTFMove(clearTextIndicator));
+    return showPopupOrCreateAnimationController(true, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTF::move(clearTextIndicator));
 }
 
 #endif // PLATFORM(MAC)

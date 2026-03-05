@@ -12,6 +12,7 @@
 #define PC_CONNECTION_CONTEXT_H_
 
 #include <memory>
+#include <utility>
 
 #include "api/environment/environment.h"
 #include "api/packet_socket_factory.h"
@@ -46,6 +47,29 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
       const Environment& env,
       PeerConnectionFactoryDependencies* dependencies);
 
+  class MediaEngineReference {
+   public:
+    explicit MediaEngineReference(scoped_refptr<ConnectionContext> c)
+        : c_(std::move(c)) {
+      if (c_->media_engine()) {
+        c_->AddRefMediaEngine();
+      }
+    }
+    ~MediaEngineReference() {
+      if (c_->media_engine()) {
+        c_->ReleaseMediaEngine();
+      }
+    }
+
+    // Ideally, access to the media engine should be constrained to the worker
+    // thread. This accessor is provided to help ensure that a reference is held
+    // and that the call is being issued on the worker thread.
+    MediaEngineInterface* media_engine() const;
+
+   private:
+    const scoped_refptr<ConnectionContext> c_;
+  };
+
   // This class is not copyable or movable.
   ConnectionContext(const ConnectionContext&) = delete;
   ConnectionContext& operator=(const ConnectionContext&) = delete;
@@ -55,7 +79,12 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
     return sctp_factory_.get();
   }
 
-  MediaEngineInterface* media_engine() const { return media_engine_.get(); }
+  // Const access to the media engine is allowed from the signaling thread.
+  const MediaEngineInterface* media_engine() const {
+    return media_engine_.get();
+  }
+
+  bool is_configured_for_media() const { return is_configured_for_media_; }
 
   Thread* signaling_thread() { return signaling_thread_; }
   const Thread* signaling_thread() const { return signaling_thread_; }
@@ -64,17 +93,12 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
   Thread* network_thread() { return network_thread_; }
   const Thread* network_thread() const { return network_thread_; }
 
-  // Environment associated with the PeerConnectionFactory.
-  // Note: environments are different for different PeerConnections,
-  // but they are not supposed to change after creating the PeerConnection.
-  const Environment& env() const { return env_; }
-
   // Accessors only used from the PeerConnectionFactory class
-  NetworkManager* default_network_manager() {
+  NetworkManager* default_network_manager() const {
     RTC_DCHECK_RUN_ON(signaling_thread_);
     return default_network_manager_.get();
   }
-  PacketSocketFactory* default_socket_factory() {
+  PacketSocketFactory* default_socket_factory() const {
     RTC_DCHECK_RUN_ON(signaling_thread_);
     return default_socket_factory_.get();
   }
@@ -87,12 +111,25 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
   // use RTX, but so far, no code has been found that sets it to false.
   // Kept in the API in order to ease introduction if we want to resurrect
   // the functionality.
-  bool use_rtx() { return use_rtx_; }
+  bool use_rtx() const { return use_rtx_; }
 
   // For use by tests.
   void set_use_rtx(bool use_rtx) { use_rtx_ = use_rtx; }
 
  protected:
+  friend class MediaEngineReference;
+  // Registers a media engine usage. Calls Init() to initialize the media engine
+  // on the first reference. Must be called on the worker thread.
+  void AddRefMediaEngine();
+
+  // Unregisters a media engine usage. Calls Terminate() to uninitialize the
+  // media engine on the last reference. Must be called on the worker thread.
+  void ReleaseMediaEngine();
+
+  // Non-const access requires using MediaEngineReference and calling methods
+  // on the worker thread.
+  MediaEngineInterface* media_engine_w();
+
   ConnectionContext(const Environment& env,
                     PeerConnectionFactoryDependencies* dependencies);
 
@@ -100,21 +137,22 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
   ~ConnectionContext();
 
  private:
-  // The following three variables are used to communicate between the
+  // The following four variables are used to communicate between the
   // constructor and the destructor, and are never exposed externally.
   bool wraps_current_thread_;
+  const bool is_configured_for_media_;
   std::unique_ptr<SocketFactory> owned_socket_factory_;
   std::unique_ptr<Thread> owned_network_thread_
       RTC_GUARDED_BY(signaling_thread_);
+  bool blocking_media_engine_destruction_;
   Thread* const network_thread_;
   AlwaysValidPointer<Thread> const worker_thread_;
   Thread* const signaling_thread_;
 
-  const Environment env_;
-
   // This object is const over the lifetime of the ConnectionContext, and is
   // only altered in the destructor.
   std::unique_ptr<MediaEngineInterface> media_engine_;
+  int media_engine_reference_count_ RTC_GUARDED_BY(worker_thread()) = 0;
 
   // This object should be used to generate any SSRC that is not explicitly
   // specified by the user (or by the remote party).

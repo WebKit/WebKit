@@ -36,8 +36,8 @@ inline void SegmentedString::Substring::appendTo(StringBuilder& builder) const
 
 SegmentedString& SegmentedString::operator=(SegmentedString&& other)
 {
-    m_currentSubstring = WTFMove(other.m_currentSubstring);
-    m_otherSubstrings = WTFMove(other.m_otherSubstrings);
+    m_currentSubstring = WTF::move(other.m_currentSubstring);
+    m_otherSubstrings = WTF::move(other.m_otherSubstrings);
 
     m_isClosed = other.m_isClosed;
 
@@ -96,10 +96,10 @@ inline void SegmentedString::appendSubstring(Substring&& substring)
     if (!substring.length())
         return;
     if (m_currentSubstring.length())
-        m_otherSubstrings.append(WTFMove(substring));
+        m_otherSubstrings.append(WTF::move(substring));
     else {
         m_numberOfCharactersConsumedPriorToCurrentSubstring += m_currentSubstring.numberOfCharactersConsumed();
-        m_currentSubstring = WTFMove(substring);
+        m_currentSubstring = WTF::move(substring);
         m_currentCharacter = m_currentSubstring.currentCharacter();
         updateAdvanceFunctionPointers();
     }
@@ -120,8 +120,8 @@ void SegmentedString::pushBack(String&& string)
 
     m_numberOfCharactersConsumedPriorToCurrentSubstring += m_currentSubstring.numberOfCharactersConsumed();
     if (m_currentSubstring.length())
-        m_otherSubstrings.prepend(WTFMove(m_currentSubstring));
-    m_currentSubstring = WTFMove(string);
+        m_otherSubstrings.prepend(WTF::move(m_currentSubstring));
+    m_currentSubstring = WTF::move(string);
     m_numberOfCharactersConsumedPriorToCurrentSubstring -= m_currentSubstring.length();
     m_currentCharacter = m_currentSubstring.currentCharacter();
     updateAdvanceFunctionPointers();
@@ -142,14 +142,14 @@ void SegmentedString::append(const SegmentedString& string)
 
 void SegmentedString::append(SegmentedString&& string)
 {
-    appendSubstring(WTFMove(string.m_currentSubstring));
+    appendSubstring(WTF::move(string.m_currentSubstring));
     for (auto& substring : string.m_otherSubstrings)
-        m_otherSubstrings.append(WTFMove(substring));
+        m_otherSubstrings.append(WTF::move(substring));
 }
 
 void SegmentedString::append(String&& string)
 {
-    appendSubstring(WTFMove(string));
+    appendSubstring(WTF::move(string));
 }
 
 void SegmentedString::append(const String& string)

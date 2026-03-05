@@ -31,5 +31,5 @@
 
 WK_EXPORT NSURLProtectionSpace *WKProtectionSpaceCopyNSURLProtectionSpace(WKProtectionSpaceRef protectionSpace)
 {
-    return [WebKit::toImpl(protectionSpace)->protectionSpace().protectedNSSpace() copy];
+    return [protect(WebKit::toImpl(protectionSpace)->protectionSpace().nsSpace()) copy];
 }

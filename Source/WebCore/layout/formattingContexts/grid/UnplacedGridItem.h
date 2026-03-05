@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/StyleGridPosition.h>
+#include "StyleGridPosition.h"
 
 namespace WebCore {
 namespace Layout {
@@ -38,7 +38,7 @@ public:
     UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd);
     UnplacedGridItem(WTF::HashTableEmptyValueType);
 
-    bool operator==(const UnplacedGridItem& other) const;
+    bool NODELETE operator==(const UnplacedGridItem& other) const;
 
     bool isHashTableDeletedValue() const { return m_layoutBox.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return m_layoutBox.isHashTableEmptyValue(); }
@@ -49,10 +49,12 @@ public:
     size_t normalizedRowStart() const;
     size_t normalizedRowEnd() const;
 
-    bool hasDefiniteRowPosition() const;
-    bool hasDefiniteColumnPosition() const;
-    bool hasAutoColumnPosition() const;
+    bool NODELETE hasDefiniteRowPosition() const;
+    bool NODELETE hasDefiniteColumnPosition() const;
+    bool NODELETE hasAutoColumnPosition() const;
+    bool NODELETE hasAutoRowPosition() const;
     size_t columnSpanSize() const;
+    size_t rowSpanSize() const;
 
     std::pair<size_t, size_t> normalizedRowStartEnd() const;
     std::pair<size_t, size_t> normalizedColumnStartEnd() const;
@@ -78,7 +80,7 @@ private:
     std::pair<int, int> definiteRowStartEnd() const;
     std::pair<int, int> definiteColumnStartEnd() const;
 
-    void applyGridOffsets(size_t rowOffset, size_t columnOffset);
+    void NODELETE applyGridOffsets(size_t rowOffset, size_t columnOffset);
 
     // Offsets applied to normalize negative grid positions to non-negative matrix indices.
     size_t m_rowNormalizationOffset { 0 };

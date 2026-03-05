@@ -1,7 +1,7 @@
 
-FAIL Throw after the first suspension undefined is not a constructor (evaluating 'new WebAssembly.Suspending(js_import)')
-FAIL Throw before suspending promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.promising is not a function. (In 'WebAssembly.promising(instance.exports.test)', 'WebAssembly.promising' is undefined)"
-FAIL Throw and propagate via Promise promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(js_import)')"
-FAIL Stack overflow promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.promising is not a function. (In 'WebAssembly.promising(instance.exports.test)', 'WebAssembly.promising' is undefined)"
-FAIL Try to suspend JS promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(import2)')"
+PASS Throw after the first suspension
+PASS Throw before suspending
+PASS Throw and propagate via Promise
+PASS Stack overflow
+PASS Try to suspend JS
 

@@ -25,11 +25,45 @@
 
 #include "config.h"
 #include "PathImpl.h"
+#include <wtf/DataMutex.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PathImpl);
+
+using PathImplObserversMap = HashMap<const PathImpl*, WeakHashSet<RenderingResourceObserver>>;
+static DataMutex<PathImplObserversMap>* gLockedPathImplObserversMap;
+static DataMutex<PathImplObserversMap>& lockedPathImplObserversMapSingleton()
+{
+    if (!gLockedPathImplObserversMap)
+        gLockedPathImplObserversMap = new DataMutex<PathImplObserversMap>;
+    return *gLockedPathImplObserversMap;
+}
+
+PathImpl::~PathImpl()
+{
+    if (gLockedPathImplObserversMap) {
+        DataMutexLocker locker(lockedPathImplObserversMapSingleton());
+        if (auto observers = locker->takeOptional(this)) {
+            for (CheckedRef observer : *observers)
+                observer->willDestroyPathImpl(*this);
+        }
+    }
+}
+
+Vector<PathSegment> PathImpl::segments() const
+{
+    if (const auto* segments = segmentsIfExists())
+        return *segments;
+
+    Vector<PathSegment> segments;
+    applySegments([&](const PathSegment& segment) {
+        segments.append(segment);
+    });
+
+    return segments;
+}
 
 void PathImpl::addLinesForRect(const FloatRect& rect)
 {
@@ -139,6 +173,14 @@ bool PathImpl::hasSubpaths() const
 {
     auto rect = fastBoundingRect();
     return rect.height() || rect.width();
+}
+
+void PathImpl::addObserver(WeakRef<RenderingResourceObserver>&& observer) const
+{
+    DataMutexLocker locker(lockedPathImplObserversMapSingleton());
+    locker->ensure(this, [] {
+        return WeakHashSet<RenderingResourceObserver> { };
+    }).iterator->value.add(WTF::move(observer));
 }
 
 } // namespace WebCore

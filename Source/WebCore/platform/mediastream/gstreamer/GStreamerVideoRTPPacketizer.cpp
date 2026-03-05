@@ -134,7 +134,7 @@ RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<U
         payloadType = gstStructureGet<int>(encodingParameters.get(), "payload"_s);
 
     GRefPtr<GstElement> encoder = gst_element_factory_make("webkitvideoencoder", nullptr);
-    if (!videoEncoderSetCodec(WEBKIT_VIDEO_ENCODER(encoder.get()), { WTFMove(codec), false }, { })) {
+    if (!videoEncoderSetCodec(WEBKIT_VIDEO_ENCODER(encoder.get()), { WTF::move(codec), false }, { })) {
         GST_ERROR("Unable to set encoder format");
         return nullptr;
     }
@@ -145,11 +145,11 @@ RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<U
 
     auto rtpCaps = adoptGRef(gst_caps_new_empty());
     gst_caps_append_structure(rtpCaps.get(), codecParameters.release());
-    return adoptRef(*new GStreamerVideoRTPPacketizer(WTFMove(encoder), WTFMove(payloader), WTFMove(encodingParameters), WTFMove(rtpCaps), WTFMove(payloadType)));
+    return adoptRef(*new GStreamerVideoRTPPacketizer(WTF::move(encoder), WTF::move(payloader), WTF::move(encodingParameters), WTF::move(rtpCaps), WTF::move(payloadType)));
 }
 
 GStreamerVideoRTPPacketizer::GStreamerVideoRTPPacketizer(GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, GRefPtr<GstCaps>&& rtpCaps, std::optional<int>&& payloadType)
-    : GStreamerRTPPacketizer(WTFMove(encoder), WTFMove(payloader), WTFMove(encodingParameters), WTFMove(payloadType))
+    : GStreamerRTPPacketizer(WTF::move(encoder), WTF::move(payloader), WTF::move(encodingParameters), WTF::move(payloadType))
 {
     GST_DEBUG_OBJECT(m_bin.get(), "RTP caps: %" GST_PTR_FORMAT, rtpCaps.get());
     g_object_set(m_capsFilter.get(), "caps", rtpCaps.get(), nullptr);
@@ -191,7 +191,7 @@ void GStreamerVideoRTPPacketizer::configure(const GstStructure* encodingParamete
     ASSERT(encodingParameters);
     GST_DEBUG_OBJECT(m_bin.get(), "Configuring with encoding parameters: %" GST_PTR_FORMAT, encodingParameters);
 
-    auto maxFrameRate = gstStructureGet<unsigned>(encodingParameters, "max-framerate"_s).value_or(0);
+    auto maxFrameRate = gstStructureGet<double>(encodingParameters, "max-framerate"_s).value_or(0);
     if (maxFrameRate) {
         if (!m_videoRate)
             GST_WARNING_OBJECT(m_bin.get(), "Unable to configure max-framerate");
@@ -201,7 +201,7 @@ void GStreamerVideoRTPPacketizer::configure(const GstStructure* encodingParamete
                 maxFrameRate = 2;
 
             int numerator, denominator;
-            gst_util_double_to_fraction(static_cast<double>(maxFrameRate), &numerator, &denominator);
+            gst_util_double_to_fraction(maxFrameRate, &numerator, &denominator);
 
             auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "framerate", GST_TYPE_FRACTION, numerator, denominator, nullptr));
             g_object_set(m_frameRateCapsFilter.get(), "caps", caps.get(), nullptr);

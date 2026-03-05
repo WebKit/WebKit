@@ -38,7 +38,7 @@ public:
     GstElement* bin() const { return m_bin.get(); }
     GstElement* payloader() const { return m_payloader.get(); }
 
-    WARN_UNUSED_RETURN GUniquePtr<GstStructure> rtpParameters() const;
+    [[nodiscard]] GUniquePtr<GstStructure> rtpParameters() const;
 
     void configureExtensions();
     void ensureMidExtension(const String&);

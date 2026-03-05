@@ -129,7 +129,7 @@ private:
 class WebTouchEvent : public WebEvent {
 public:
     WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, const Vector<WebTouchEvent>& coalescedEvents, const Vector<WebTouchEvent>& predictedEvents, WebCore::DoublePoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
-        : WebEvent(WTFMove(event))
+        : WebEvent(WTF::move(event))
         , m_touchPoints(touchPoints)
         , m_coalescedEvents(coalescedEvents)
         , m_predictedEvents(predictedEvents)
@@ -234,7 +234,7 @@ public:
 
     bool allTouchPointsAreReleased() const;
 
-#if USE(LIBWPE)
+#if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     virtual bool isNativeWebTouchEvent() const { return false; }
 #endif
 

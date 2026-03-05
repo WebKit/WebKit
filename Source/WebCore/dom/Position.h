@@ -81,13 +81,11 @@ public:
 
     // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
     // will return img->parentNode() and img->computeNodeIndex() from these functions.
-    WEBCORE_EXPORT Node* containerNode() const; // null for a before/after position anchored to a node with no parent
-    RefPtr<Node> protectedContainerNode() const { return containerNode(); }
-    Text* containerText() const;
-    RefPtr<Text> protectedContainerText() const;
-    Element* containerOrParentElement() const;
+    WEBCORE_EXPORT Node* NODELETE containerNode() const; // null for a before/after position anchored to a node with no parent
+    Text* NODELETE containerText() const;
+    Element* NODELETE containerOrParentElement() const;
 
-    int computeOffsetInContainerNode() const;  // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
+    int NODELETE computeOffsetInContainerNode() const; // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
     WEBCORE_EXPORT Position parentAnchoredEquivalent() const; // Convenience method for DOM positions that also fixes up some positions for editing
 
     // Inline O(1) access for Positions which callers know to be parent-anchored
@@ -108,17 +106,15 @@ public:
     RefPtr<Node> firstNode() const;
 
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
-    WEBCORE_EXPORT Node* computeNodeBeforePosition() const;
-    WEBCORE_EXPORT Node* computeNodeAfterPosition() const;
+    WEBCORE_EXPORT Node* NODELETE computeNodeBeforePosition() const;
+    WEBCORE_EXPORT Node* NODELETE computeNodeAfterPosition() const;
 
     Node* anchorNode() const { return m_anchorNode.get(); }
-    RefPtr<Node> protectedAnchorNode() const { return m_anchorNode; }
 
     // FIXME: Callers should be moved off of node(), node() is not always the container for this position.
     // For nodes which editingIgnoresContent(node()) returns true, positions like [ignoredNode, 0]
     // will be treated as before ignoredNode (thus node() is really after the position, not containing it).
     Node* deprecatedNode() const { return m_anchorNode.get(); }
-    RefPtr<Node> protectedDeprecatedNode() const { return m_anchorNode; }
 
     inline Document* document() const; // Defined in PositionInlines.h.
     inline TreeScope* treeScope() const;
@@ -177,13 +173,13 @@ public:
     InlineBoxAndOffset inlineBoxAndOffset(Affinity) const;
     InlineBoxAndOffset inlineBoxAndOffset(Affinity, TextDirection primaryDirection) const;
 
-    TextDirection primaryDirection() const;
+    TextDirection NODELETE primaryDirection() const;
 
     // Returns the number of positions that exist between two positions.
     static unsigned positionCountBetweenPositions(const Position&, const Position&);
 
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
-    static bool nodeIsUserSelectNone(Node*);
+    static bool nodeIsUserSelectNone(const Node*);
     static bool nodeIsUserSelectAll(const Node*);
     static RefPtr<Node> rootUserSelectAllForNode(Node*);
 
@@ -267,7 +263,7 @@ public:
     {
     }
 
-    const Position& position() const { return m_position; }
+    const Position& position() const LIFETIME_BOUND { return m_position; }
     Affinity affinity() const { return m_affinity; }
 
 private:
@@ -279,12 +275,12 @@ private:
 
 inline Position makeContainerOffsetPosition(RefPtr<Node>&& node, unsigned offset)
 {
-    return { WTFMove(node), offset, Position::PositionIsOffsetInAnchor };
+    return { WTF::move(node), offset, Position::PositionIsOffsetInAnchor };
 }
 
 inline Position makeDeprecatedLegacyPosition(RefPtr<Node>&& node, unsigned offset)
 {
-    return { WTFMove(node), offset, Position::LegacyEditingPositionFlag::On };
+    return { WTF::move(node), offset, Position::LegacyEditingPositionFlag::On };
 }
 
 // FIXME: Positions at the same document location with different anchoring will return false; that's unlike <= and >=.

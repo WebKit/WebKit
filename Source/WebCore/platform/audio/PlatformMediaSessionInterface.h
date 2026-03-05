@@ -105,15 +105,18 @@ public:
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
     virtual WeakPtr<PlatformMediaSessionInterface> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSessionInterface>>&, PlatformMediaSessionPlaybackControlsPurpose) { return nullptr; }
 
+    virtual bool isRemoteSessionClientProxy() const;
+
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
-    Ref<const Logger> protectedLogger() const { return logger(); }
     virtual uint64_t logIdentifier() const = 0;
 #endif
 
 protected:
     virtual ~PlatformMediaSessionClient();
 };
+
+inline bool PlatformMediaSessionClient::isRemoteSessionClientProxy() const { return false; }
 
 PlatformMediaSessionClient& emptyPlatformMediaSessionClient();
 
@@ -136,8 +139,8 @@ public:
     virtual void setActive(bool) = 0;
 
     using MediaType = PlatformMediaSessionMediaType;
-    virtual MediaType mediaType() const { return client().mediaType(); }
-    virtual MediaType presentationType() const { return client().presentationType(); }
+    virtual MediaType mediaType() const { return protect(client())->mediaType(); }
+    virtual MediaType presentationType() const { return protect(client())->presentationType(); }
 
     using State = PlatformMediaSessionState;
     virtual State state() const = 0;
@@ -154,7 +157,7 @@ public:
     virtual void clientCharacteristicsChanged(bool) = 0;
 
     virtual void clientWillBeginAutoplaying() = 0;
-    virtual bool clientWillBeginPlayback() = 0;
+    virtual void clientWillBeginPlayback(CompletionHandler<void(bool)>&&) = 0;
     virtual bool clientWillPausePlayback() = 0;
 
     virtual void clientWillBeDOMSuspended() = 0;
@@ -167,20 +170,20 @@ public:
 
     using RemoteCommandArgument = PlatformMediaSessionRemoteCommandArgument;
     using RemoteControlCommandType = PlatformMediaSessionRemoteControlCommandType;
-    bool canReceiveRemoteControlCommands() const { return client().canReceiveRemoteControlCommands(); }
+    bool canReceiveRemoteControlCommands() const { return protect(client())->canReceiveRemoteControlCommands(); }
     virtual void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument&) = 0;
 
     using DisplayType = PlatformMediaSessionDisplayType;
-    virtual DisplayType displayType() const { return client().displayType(); }
+    virtual DisplayType displayType() const { return protect(client())->displayType(); }
 
-    virtual bool supportsSeeking() const { return client().supportsSeeking(); }
-    virtual bool isSuspended() const { return client().isSuspended(); }
-    virtual bool isPlaying() const { return client().isPlaying(); }
-    virtual bool isAudible() const { return client().isAudible(); }
-    virtual bool isEnded() const { return client().isEnded(); }
-    virtual MediaTime duration() const { return client().mediaSessionDuration(); }
+    virtual bool supportsSeeking() const { return protect(client())->supportsSeeking(); }
+    virtual bool isSuspended() const { return protect(client())->isSuspended(); }
+    virtual bool isPlaying() const { return protect(client())->isPlaying(); }
+    virtual bool isAudible() const { return protect(client())->isAudible(); }
+    virtual bool isEnded() const { return protect(client())->isEnded(); }
+    virtual MediaTime duration() const { return protect(client())->mediaSessionDuration(); }
 
-    virtual bool shouldOverrideBackgroundLoadingRestriction() const { return client().shouldOverrideBackgroundLoadingRestriction(); }
+    virtual bool shouldOverrideBackgroundLoadingRestriction() const { return protect(client())->shouldOverrideBackgroundLoadingRestriction(); }
 
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
     virtual void isPlayingToWirelessPlaybackTargetChanged(bool) = 0;
@@ -199,8 +202,8 @@ public:
 
     virtual bool blockedBySystemInterruption() const = 0;
     virtual bool activeAudioSessionRequired() const = 0;
-    virtual bool canProduceAudio() const { return client().canProduceAudio(); }
-    virtual bool hasMediaStreamSource() const { return client().hasMediaStreamSource(); }
+    virtual bool canProduceAudio() const { return protect(client())->canProduceAudio(); }
+    virtual bool hasMediaStreamSource() const { return protect(client())->hasMediaStreamSource(); }
     virtual void canProduceAudioChanged() = 0;
 
     virtual void resetPlaybackSessionState() { }
@@ -211,10 +214,10 @@ public:
     virtual bool preparingToPlay() const = 0;
 
     virtual bool canPlayConcurrently(const PlatformMediaSessionInterface&) const = 0;
-    virtual bool shouldOverridePauseDuringRouteChange() const { return client().shouldOverridePauseDuringRouteChange(); }
+    virtual bool shouldOverridePauseDuringRouteChange() const { return protect(client())->shouldOverridePauseDuringRouteChange(); }
 
-    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return client().nowPlayingInfo(); }
-    virtual bool isNowPlayingEligible() const { return client().isNowPlayingEligible(); }
+    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return protect(client())->nowPlayingInfo(); }
+    virtual bool isNowPlayingEligible() const { return protect(client())->isNowPlayingEligible(); }
 
     using PlaybackControlsPurpose = PlatformMediaSessionPlaybackControlsPurpose;
     virtual WeakPtr<PlatformMediaSessionInterface> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSessionInterface>>&, PlaybackControlsPurpose) = 0;
@@ -235,16 +238,16 @@ public:
     virtual String description() const = 0;
 #endif
 
-    virtual std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const { return client().mediaSessionGroupIdentifier(); }
-    virtual bool isPlayingOnSecondScreen() const { return client().isPlayingOnSecondScreen(); }
+    virtual std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const { return protect(client())->mediaSessionGroupIdentifier(); }
+    virtual bool isPlayingOnSecondScreen() const { return protect(client())->isPlayingOnSecondScreen(); }
+
+    virtual bool isRemoteSessionProxy() const;
 
     void invalidateClient() { m_client = emptyPlatformMediaSessionClient(); }
     PlatformMediaSessionClient& client() const;
-    CheckedRef<PlatformMediaSessionClient> checkedClient() const;
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
-    Ref<const Logger> protectedLogger() const { return logger(); }
     virtual uint64_t logIdentifier() const = 0;
     virtual ASCIILiteral logClassName() const = 0;
     virtual WTFLogChannel& logChannel() const = 0;
@@ -257,7 +260,7 @@ protected:
     {
     }
 
-    RefPtr<MediaSessionManagerInterface> sessionManager() const { return m_client->sessionManager(); }
+    RefPtr<MediaSessionManagerInterface> sessionManager() const { return protect(client())->sessionManager(); }
 
 private:
     CheckedRef<PlatformMediaSessionClient> m_client;
@@ -267,6 +270,6 @@ private:
 
 inline void PlatformMediaSessionInterface::setMediaSessionIdentifier(MediaSessionIdentifier identifier) { m_mediaSessionIdentifier = identifier; }
 inline PlatformMediaSessionClient& PlatformMediaSessionInterface::client() const { return m_client; }
-inline CheckedRef<PlatformMediaSessionClient> PlatformMediaSessionInterface::checkedClient() const { return m_client; }
+inline bool PlatformMediaSessionInterface::isRemoteSessionProxy() const { return false; }
 
 } // namespace WebCore

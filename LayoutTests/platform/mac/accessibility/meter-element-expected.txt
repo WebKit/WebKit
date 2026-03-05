@@ -23,7 +23,7 @@ Meter3
 AXRole: AXLevelIndicator
 AXTitle:
 AXDescription:
-AXValueDescription:
+AXValueDescription: 75
 AXValueSettable: false
 
 
@@ -46,7 +46,7 @@ AXValueSettable: false
 Meter6
 AXRole: AXLevelIndicator
 AXTitle:
-AXDescription:
+AXDescription: centimeters
 AXValueDescription: 12cm
 AXValueSettable: false
 
@@ -54,7 +54,7 @@ AXValueSettable: false
 Meter7
 AXRole: AXLevelIndicator
 AXTitle:
-AXDescription:
+AXDescription: centimeters
 AXValueDescription: 2cm
 AXValueSettable: false
 

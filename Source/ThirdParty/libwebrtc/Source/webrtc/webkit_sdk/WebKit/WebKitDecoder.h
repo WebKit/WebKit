@@ -83,7 +83,6 @@ public:
     }
 
     const uint8_t* data() const final { return m_data; }
-    uint8_t* data() final { return m_data; }
     size_t size() const final { return m_size; }
 
  private:

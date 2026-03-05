@@ -28,4 +28,5 @@
 
 dictionary TestDictionary {
     double member;
+    [EnabledForWorld=someWorld] boolean guardedMember;
 };

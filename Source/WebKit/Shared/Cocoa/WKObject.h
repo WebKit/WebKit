@@ -51,57 +51,37 @@ namespace WebKit {
 
 template<typename WrappedObjectClass> struct WrapperTraits;
 
-template<typename DestinationClass, typename SourceClass> inline DestinationClass *checkedObjCCast(SourceClass *source)
+template<typename DestinationClass, typename SourceClass> inline DestinationClass *CLANG_POINTER_CONVERSION checkedObjCCast(SourceClass *source)
 {
     return checked_objc_cast<DestinationClass>(source);
 }
 
-template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(ObjectClass& object)
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *CLANG_POINTER_CONVERSION wrapper(ObjectClass& object)
 {
     return checkedObjCCast<typename WrapperTraits<ObjectClass>::WrapperClass>(object.wrapper());
 }
 
-template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(ObjectClass* object)
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *CLANG_POINTER_CONVERSION wrapper(ObjectClass* object)
 {
     return object ? wrapper(*object) : nil;
 }
 
-template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(ObjectClass& object)
-{
-    return wrapper(object);
-}
-
-template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(ObjectClass* object)
-{
-    return wrapper(object);
-}
-
-template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(const Ref<ObjectClass>& object)
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *CLANG_POINTER_CONVERSION wrapper(const Ref<ObjectClass>& object)
 {
     return wrapper(object.get());
 }
 
-template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(const RefPtr<ObjectClass>& object)
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *CLANG_POINTER_CONVERSION wrapper(const RefPtr<ObjectClass>& object)
 {
     return wrapper(object.get());
 }
 
-template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(const Ref<ObjectClass>& object)
-{
-    return wrapper(object);
-}
-
-template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(const RefPtr<ObjectClass>& object)
-{
-    return wrapper(object);
-}
-
-template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> wrapper(Ref<ObjectClass>&& object)
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> CLANG_POINTER_CONVERSION wrapper(Ref<ObjectClass>&& object)
 {
     return wrapper(object.get());
 }
 
-template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> wrapper(RefPtr<ObjectClass>&& object)
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> CLANG_POINTER_CONVERSION wrapper(RefPtr<ObjectClass>&& object)
 {
     return object ? wrapper(object.releaseNonNull()) : nil;
 }
@@ -110,7 +90,6 @@ template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectCla
 
 namespace API {
 
-using WebKit::protectedWrapper;
 using WebKit::wrapper;
 
 }

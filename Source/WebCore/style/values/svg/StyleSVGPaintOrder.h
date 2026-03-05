@@ -97,7 +97,7 @@ struct SVGPaintOrder {
     {
         return SVGPaintOrder { static_cast<Type>(rawValue) } ;
     }
-    constexpr uint8_t toRaw() const { return enumToUnderlyingType(m_type); }
+    constexpr uint8_t toRaw() const { return std::to_underlying(m_type); }
 
 private:
     Type m_type { Type::Normal };

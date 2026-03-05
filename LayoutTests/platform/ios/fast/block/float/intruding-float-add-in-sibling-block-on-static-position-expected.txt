@@ -10,7 +10,7 @@ layer at (8,8) size 18x180
       RenderBlock {DIV} at (0,0) size 18x180
         RenderBlock (floating) {DIV} at (3,0) size 5x50 [bgcolor=#FFA500]
         RenderBlock {DIV} at (0,0) size 18x180 [bgcolor=#0000FF]
-          RenderText {#text} at (0,100) size 12x79
+          RenderText {#text} at (0,100) size 12x80
             text run at (0,100) width 11: "A"
             text run at (0,120) width 11: "B"
             text run at (0,140) width 11: "C"

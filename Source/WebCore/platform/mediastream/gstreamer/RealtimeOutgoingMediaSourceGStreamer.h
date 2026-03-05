@@ -49,7 +49,7 @@ public:
     void setMediaStreamID(const String& mediaStreamId) { m_mediaStreamId = mediaStreamId; }
     const String& mediaStreamID() const { return m_mediaStreamId; }
     const GRefPtr<GstCaps>& allowedCaps() const;
-    WARN_UNUSED_RETURN GRefPtr<GstCaps> rtpCaps() const;
+    [[nodiscard]] GRefPtr<GstCaps> rtpCaps() const;
 
     void link();
     const GRefPtr<GstPad>& pad() const { return m_webrtcSinkPad; }
@@ -66,18 +66,22 @@ public:
 
     void configure(GRefPtr<GstCaps>&&);
 
-    WARN_UNUSED_RETURN GUniquePtr<GstStructure> stats();
+    [[nodiscard]] GUniquePtr<GstStructure> stats();
 
-    virtual WARN_UNUSED_RETURN GRefPtr<GstPad> outgoingSourcePad() const = 0;
+    [[nodiscard]] GUniquePtr<GstStructure> mediaCaptureStats();
+
+    [[nodiscard]] virtual GRefPtr<GstPad> outgoingSourcePad() const = 0;
     virtual RefPtr<GStreamerRTPPacketizer> createPacketizer(RefPtr<UniqueSSRCGenerator>, const GstStructure*, GUniquePtr<GstStructure>&&) = 0;
 
-    void replaceTrack(RefPtr<MediaStreamTrack>&&);
+    void replaceTrack(const RefPtr<MediaStreamTrack>&);
 
     void teardown();
 
     virtual void dispatchBitrateRequest(uint32_t bitrate) = 0;
 
     RealtimeMediaSource::Type type() const;
+
+    void setRtpHeaderExtensionMapping(RTPHeaderExtensionMapping mapping) { m_rtpHeaderExtensionMapping = mapping; }
 
 protected:
     enum Type {
@@ -105,6 +109,8 @@ protected:
     RefPtr<MediaStreamTrackPrivate> m_track;
     std::optional<RealtimeMediaSourceSettings> m_initialSettings;
     GRefPtr<GstElement> m_bin;
+    GRefPtr<GstElement> m_inputSelector;
+    GRefPtr<GstElement> m_fallbackSource;
     GRefPtr<GstElement> m_outgoingSource;
     GRefPtr<GstElement> m_tee;
     GRefPtr<GstElement> m_rtpFunnel;
@@ -115,7 +121,7 @@ protected:
     GRefPtr<GstPad> m_webrtcSinkPad;
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
     GUniquePtr<GstStructure> m_parameters;
-
+    RTPHeaderExtensionMapping m_rtpHeaderExtensionMapping;
     Vector<RefPtr<GStreamerRTPPacketizer>> m_packetizers;
 
 private:

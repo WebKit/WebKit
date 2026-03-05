@@ -194,7 +194,6 @@ mfrac > :nth-child(2) {
 
 /* Other rules for scriptlevel, displaystyle and math-shift */
 mroot > :not(:first-child) {
-    font-size: 0.5041em; /* This 0.71^2 since the scriptlevel is incremented by 2 in the index. */
     math-depth: add(2);
     math-style: compact;
 }
@@ -210,7 +209,6 @@ mmultiscripts > :not(:first-child),
 munder > :not(:first-child),
 mover > :not(:first-child),
 munderover > :not(:first-child) {
-    font-size: 0.71em;
     math-depth: add(1);
     math-style: compact;
 }

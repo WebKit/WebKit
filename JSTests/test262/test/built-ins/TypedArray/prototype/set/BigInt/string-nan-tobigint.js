@@ -36,12 +36,12 @@ info: |
       2. If n is NaN, throw a SyntaxError exception.
       3. Return n.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(1);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(1));
 
   assert.throws(SyntaxError, function() {
     typedArray.set(["definately not a number"]);

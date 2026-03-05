@@ -31,15 +31,13 @@
 namespace WebCore {
 
 struct CookieListItem {
-    CookieListItem() = default;
-
-    CookieListItem(Cookie&& cookie)
-        : name(WTFMove(cookie.name))
-        , value(WTFMove(cookie.value))
-    { }
-
     String name;
     String value;
+
+    static CookieListItem fromCookie(Cookie&& cookie)
+    {
+        return { WTF::move(cookie.name), WTF::move(cookie.value) };
+    }
 };
 
-}
+} // namespace WebCore

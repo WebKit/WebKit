@@ -34,13 +34,13 @@
 #include "config.h"
 #include <wtf/dragonbox/dragonbox_to_chars.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
 namespace dragonbox {
 
-static constexpr char radix_100_table[] = {
+static constexpr std::array radix_100_table {
     '0', '0', '0', '1', '0', '2', '0', '3', '0', '4', //
     '0', '5', '0', '6', '0', '7', '0', '8', '0', '9', //
     '1', '0', '1', '1', '1', '2', '1', '3', '1', '4', //
@@ -63,7 +63,7 @@ static constexpr char radix_100_table[] = {
     '9', '5', '9', '6', '9', '7', '9', '8', '9', '9' //
 };
 
-static constexpr char radix_100_head_table[] = {
+static constexpr std::array radix_100_head_table {
     '0', '.', '1', '.', '2', '.', '3', '.', '4', '.', //
     '5', '.', '6', '.', '7', '.', '8', '.', '9', '.', //
     '1', '.', '1', '.', '1', '.', '1', '.', '1', '.', //
@@ -86,15 +86,15 @@ static constexpr char radix_100_head_table[] = {
     '9', '.', '9', '.', '9', '.', '9', '.', '9', '.' //
 };
 
-ALWAYS_INLINE void print_1_digit(uint32_t n, char* buffer) noexcept
+ALWAYS_INLINE void print_1_digit(uint32_t n, std::span<char> buffer) noexcept
 {
     static_assert(!('0' & 0xf));
-    *buffer = static_cast<char>('0' | n);
+    buffer[0] = static_cast<char>('0' | n);
 }
 
-ALWAYS_INLINE void print_2_digits(uint32_t n, char* buffer) noexcept
+ALWAYS_INLINE void print_2_digits(uint32_t n, std::span<char> buffer) noexcept
 {
-    memcpy(buffer, radix_100_table + n * 2, 2);
+    memcpySpan(buffer, std::span { radix_100_table }.subspan(n * 2, 2));
 }
 
 // These digit generation routines are inspired by James Anhalt's itoa algorithm:
@@ -110,7 +110,7 @@ ALWAYS_INLINE void print_2_digits(uint32_t n, char* buffer) noexcept
 // Note that this fuction ignores trailing zeros.
 
 template <Mode mode>
-ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer) noexcept
+ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, std::span<char>& buffer) noexcept
 {
     ASSERT(s32);
 
@@ -129,19 +129,19 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
         // 1441151882 = ceil(2^57 / 1'0000'0000) + 1
         auto prod = s32 * static_cast<uint64_t>(1441151882);
         prod >>= 25;
-        memcpy(buffer, radix_100_head_table + static_cast<uint32_t>(prod >> 32) * 2, first_head_digit_chars_count);
+        memcpySpan(buffer, std::span { radix_100_head_table }.subspan(static_cast<uint32_t>(prod >> 32) * 2, first_head_digit_chars_count));
 
         prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count);
+        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count));
         prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 2);
+        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 2));
         prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 4);
+        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 4));
         prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 6);
+        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 6));
 
         exponent += 8;
-        buffer += 8 + first_head_digit_chars_count;
+        skip(buffer, 8 + first_head_digit_chars_count);
     } else if (s32 >= 100'0000) {
         // 7 or 8 digits which consist of the head digits (one or two digits) and the remaining 6 digits (d1, d2, d3, d4, d5, d6).
 
@@ -157,7 +157,7 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
 
         uint32_t first_head_digit_index = head_digits * 2;
         // Write the first head digit and the decimal point if needed.
-        memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+        memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
         // Write the second head digit. This character may be overwritten later but we don't care.
         buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
@@ -168,44 +168,44 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
             //   2. Otherwise, we need first_head_digit_chars_count + 1 digits in the buffer.
             // Note that the first digit is never '0' if s32 is of 7 digits, because the input is never zero.
             uint32_t has_non_zero_second_head_digit = has_second_head_digit & static_cast<uint32_t>(buffer[first_head_digit_chars_count] > '0');
-            buffer += 1 + has_non_zero_second_head_digit * first_head_digit_chars_count;
+            skip(buffer, 1 + has_non_zero_second_head_digit * first_head_digit_chars_count);
         } else {
             // At least one of the remaining 6 digits are nonzero.
 
             // After this adjustment, now the first destination becomes buffer + first_head_digit_chars_count.
-            buffer += has_second_head_digit;
+            skip(buffer, has_second_head_digit);
 
             // Obtain the next two digits (d1, d2).
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
             uint32_t d1_index = first_head_digit_chars_count;
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + d1_index);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(d1_index));
 
             if (static_cast<uint32_t>(prod) <= static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) / 1'0000)) {
                 // The remaining 4 digits (d3, d4, d5, d6) are all zero.
                 uint32_t d2_index = d1_index + 1;
                 uint32_t has_non_zero_d2 = static_cast<uint32_t>(buffer[d2_index] > '0');
-                buffer += d2_index + has_non_zero_d2;
+                skip(buffer, d2_index + has_non_zero_d2);
             } else {
                 // At least one of the remaining 4 digits are nonzero.
                 // Obtain the next two digits (d3, d4).
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
                 uint32_t d3_index = d1_index + 2;
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + d3_index);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(d3_index));
 
                 if (static_cast<uint32_t>(prod) <= static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) / 100)) {
                     // The remaining 2 digits (d5, d6) are all zero.
                     uint32_t d4_index = d3_index + 1;
                     uint32_t has_non_zero_d4 = static_cast<uint32_t>(buffer[d4_index] > '0');
-                    buffer += d4_index + has_non_zero_d4;
+                    skip(buffer, d4_index + has_non_zero_d4);
                 } else {
                     // Obtain the last two digits (d5, d6).
                     prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
                     uint32_t d5_index = d3_index + 2;
-                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + d5_index);
+                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(d5_index));
 
                     uint32_t d6_index = d5_index + 1;
                     uint32_t has_non_zero_d6 = static_cast<uint32_t>(buffer[d6_index] > '0');
-                    buffer += d6_index + has_non_zero_d6;
+                    skip(buffer, d6_index + has_non_zero_d6);
                 }
             }
         }
@@ -223,7 +223,7 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
 
         uint32_t first_head_digit_index = head_digits * 2;
         // Write the first head digit and the decimal point if needed.
-        memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+        memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
         // Write the second head digit. This character may be overwritten later but we don't care.
         buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
@@ -231,32 +231,32 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
             // The remaining 4 digits (d1, d2, d3, d4) are all zero.
             // The number of characters actually written is 1 or first_head_digit_chars_count + 1, similarly to the case of 7 or 8 digits.
             uint32_t has_non_zero_second_head_digit = has_second_head_digit & static_cast<uint32_t>(buffer[first_head_digit_chars_count] > '0');
-            buffer += 1 + has_non_zero_second_head_digit * first_head_digit_chars_count;
+            skip(buffer, 1 + has_non_zero_second_head_digit * first_head_digit_chars_count);
         } else {
             // At least one of the remaining 4 digits are nonzero.
 
             // After this adjustment, now the first destination becomes buffer + first_head_digit_chars_count.
-            buffer += has_second_head_digit;
+            skip(buffer, has_second_head_digit);
 
             // Obtain the next two digits (d1, d2).
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
             uint32_t d1_index = first_head_digit_chars_count;
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + d1_index);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(d1_index));
 
             if (static_cast<uint32_t>(prod) <= static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) / 100)) {
                 // The remaining 2 digits (d3, d4) are all zero.
                 uint32_t d2_index = d1_index + 1;
                 uint32_t has_non_zero_d2 = static_cast<uint32_t>(buffer[d2_index] > '0');
-                buffer += d2_index + has_non_zero_d2;
+                skip(buffer, d2_index + has_non_zero_d2);
             } else {
                 // Obtain the last two digits (d3, d4).
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
                 uint32_t d3_index = d1_index + 2;
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + d3_index);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(d3_index));
 
                 uint32_t d4_index = d3_index + 1;
                 uint32_t has_non_zero_d4 = static_cast<uint32_t>(buffer[d4_index] > '0');
-                buffer += d4_index + has_non_zero_d4;
+                skip(buffer, d4_index + has_non_zero_d4);
             }
         }
     } else if (s32 >= 100) {
@@ -273,7 +273,7 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
 
         uint32_t first_head_digit_index = head_digits * 2;
         // Write the first head digit and the decimal point if needed.
-        memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+        memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
         // Write the second head digit. This character may be overwritten later but we don't care.
         buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
@@ -281,21 +281,21 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
             // The remaining 2 digits (d1, d2) are all zero.
             // The number of characters actually written is 1 or first_head_digit_chars_count + 1, similarly to the case of 7 or 8 digits.
             uint32_t has_non_zero_second_head_digit = has_second_head_digit & static_cast<uint32_t>(buffer[first_head_digit_chars_count] > '0');
-            buffer += 1 + has_non_zero_second_head_digit * first_head_digit_chars_count;
+            skip(buffer, 1 + has_non_zero_second_head_digit * first_head_digit_chars_count);
         } else {
             // At least one of the remaining 2 digits (d1, d2) are nonzero.
 
             // After this adjustment, now the first destination becomes buffer + first_head_digit_chars_count.
-            buffer += has_second_head_digit;
+            skip(buffer, has_second_head_digit);
 
             // Obtain the last two digits.
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
             uint32_t d1_index = first_head_digit_chars_count;
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + d1_index);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(d1_index));
 
             uint32_t d2_index = d1_index + 1;
             uint32_t has_non_zero_d2 = static_cast<uint32_t>(buffer[d2_index] > '0');
-            buffer += d2_index + has_non_zero_d2;
+            skip(buffer, d2_index + has_non_zero_d2);
         }
     } else {
         // 1 or 2 digits which consist of the head digits (one or two digits).
@@ -307,52 +307,52 @@ ALWAYS_INLINE void print_9_digits(uint32_t s32, int32_t& exponent, char*& buffer
 
         uint32_t first_head_digit_index = s32 * 2;
         // Write the first head digit and the decimal point if needed.
-        memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+        memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
         // Write the second head digit. This character may be overwritten later but we don't care.
         buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
         // The number of characters actually written is 1 or first_head_digit_chars_count + 1, similarly to the case of 7 or 8 digits.
         uint32_t has_non_zero_second_head_digit = has_second_head_digit & static_cast<uint32_t>(buffer[first_head_digit_chars_count] > '0');
-        buffer += 1 + has_non_zero_second_head_digit * first_head_digit_chars_count;
+        skip(buffer, 1 + has_non_zero_second_head_digit * first_head_digit_chars_count);
     }
 }
 
 namespace detail {
 
-ALWAYS_INLINE static char* float_to_chars_impl(const uint32_t significand, int32_t exponent, char* buffer)
+ALWAYS_INLINE static std::span<char> float_to_chars_impl(const uint32_t significand, int32_t exponent, std::span<char> buffer)
 {
     // Print significand.
     print_9_digits<Mode::ToExponential>(significand, exponent, buffer);
 
     // Print exponent and return
     if (exponent < 0) {
-        memcpy(buffer, "e-", 2);
-        buffer += 2;
+        memcpySpan(buffer, "e-"_span);
+        skip(buffer, 2);
         exponent = -exponent;
     } else {
-        memcpy(buffer, "e+", 2);
-        buffer += 2;
+        memcpySpan(buffer, "e+"_span);
+        skip(buffer, 2);
     }
 
     if (exponent >= 10) {
         print_2_digits(static_cast<uint32_t>(exponent), buffer);
-        buffer += 2;
+        skip(buffer, 2);
     } else {
         print_1_digit(static_cast<uint32_t>(exponent), buffer);
-        buffer += 1;
+        skip(buffer, 1);
     }
 
     return buffer;
 }
 
 template <>
-char* to_chars_impl<float, default_float_traits<float>, Mode::ToExponential, PrintTrailingZero::No>(uint32_t significand, int32_t exponent, char* buffer)
+std::span<char> to_chars_impl<float, default_float_traits<float>, Mode::ToExponential, PrintTrailingZero::No>(uint32_t significand, int32_t exponent, std::span<char> buffer)
 {
     return float_to_chars_impl(significand, exponent, buffer);
 }
 
 template <Mode mode, PrintTrailingZero print_trailing_zero>
-ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int32_t exponent, char* buffer)
+ALWAYS_INLINE static std::span<char> double_to_chars_impl(const uint64_t significand, int32_t exponent, std::span<char> buffer)
 {
     // Print significand by decomposing it into a 9-digit block and a 8-digit block.
     uint32_t first_block = 0;
@@ -383,31 +383,31 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
             // 1441151882 = ceil(2^57 / 1'0000'0000) + 1
             auto prod = first_block * static_cast<uint64_t>(1441151882);
             prod >>= 25;
-            memcpy(buffer, radix_100_head_table + static_cast<uint32_t>(prod >> 32) * 2, first_head_digit_chars_count);
+            memcpySpan(buffer, std::span { radix_100_head_table }.subspan(static_cast<uint32_t>(prod >> 32) * 2, first_head_digit_chars_count));
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count));
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 2);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 2));
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 4);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 4));
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 6);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 6));
 
             // The second block is of 8 digits.
             // 281474978 = ceil(2^48 / 100'0000) + 1
             prod = second_block * static_cast<uint64_t>(281474978);
             prod >>= 16;
             prod += 1;
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 8);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 8));
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 10);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 10));
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 12);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 12));
             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 14);
+            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 14));
 
             exponent += 8;
-            buffer += first_head_digit_chars_count + 16;
+            skip(buffer, first_head_digit_chars_count + 16);
         } else {
             if (first_block >= 100'0000) {
                 // 7 or 8 digits which consist of the head digits (one or two digits) and the remaining 6 digits.
@@ -419,21 +419,21 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
                 uint32_t has_second_head_digit = static_cast<uint32_t>(head_digits >= 10);
 
                 uint32_t first_head_digit_index = head_digits * 2;
-                memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+                memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
                 buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
                 exponent += 6 + has_second_head_digit;
-                buffer += has_second_head_digit;
+                skip(buffer, has_second_head_digit);
 
                 // Print remaining 6 digits.
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count));
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 2);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 2));
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 4);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 4));
 
-                buffer += first_head_digit_chars_count + 6;
+                skip(buffer, first_head_digit_chars_count + 6);
             } else if (first_block >= 1'0000) {
                 // 5 or 6 digits which consist of the head digits (one or two digits) and the remaining 4 digits.
 
@@ -444,19 +444,19 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
                 uint32_t has_second_head_digit = static_cast<uint32_t>(head_digits >= 10);
 
                 uint32_t first_head_digit_index = head_digits * 2;
-                memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+                memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
                 buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
                 exponent += 4 + has_second_head_digit;
-                buffer += has_second_head_digit;
+                skip(buffer, has_second_head_digit);
 
                 // Print remaining 4 digits.
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count));
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count + 2);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count + 2));
 
-                buffer += first_head_digit_chars_count + 4;
+                skip(buffer, first_head_digit_chars_count + 4);
             } else if (first_block >= 100) {
                 // 3 or 4 digits which consist of the head digits (one or two digits) and the remaining 2 digits.
 
@@ -467,17 +467,17 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
                 uint32_t has_second_head_digit = static_cast<uint32_t>(head_digits >= 10);
 
                 uint32_t first_head_digit_index = head_digits * 2;
-                memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+                memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
                 buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
                 exponent += 2 + has_second_head_digit;
-                buffer += has_second_head_digit;
+                skip(buffer, has_second_head_digit);
 
                 // Print remaining 2 digits.
                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + first_head_digit_chars_count);
+                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(first_head_digit_chars_count));
 
-                buffer += first_head_digit_chars_count + 2;
+                skip(buffer, first_head_digit_chars_count + 2);
             } else {
                 // 1 or 2 digits which consist of the head digits (one or two digits).
 
@@ -485,11 +485,11 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
                 uint32_t has_second_head_digit = static_cast<uint32_t>(first_block >= 10);
 
                 uint32_t first_head_digit_index = first_block * 2;
-                memcpy(buffer, radix_100_head_table + first_head_digit_index, first_head_digit_chars_count);
+                memcpySpan(buffer, std::span { radix_100_head_table }.subspan(first_head_digit_index, first_head_digit_chars_count));
                 buffer[first_head_digit_chars_count] = radix_100_table[first_head_digit_index + 1];
 
                 exponent += has_second_head_digit;
-                buffer += first_head_digit_chars_count + has_second_head_digit;
+                skip(buffer, first_head_digit_chars_count + has_second_head_digit);
             }
 
             // Next, print the second block. The second block is of 8 digits, but we may have trailing zeros.
@@ -503,40 +503,40 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
                 if constexpr (print_trailing_zero == PrintTrailingZero::No) {
                     // Remaining 6 digits are all zero?
                     if (static_cast<uint32_t>(prod) <= static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) / 100'0000))
-                        buffer += (1 + unsigned(buffer[1] > '0'));
+                        skip(buffer, (1 + unsigned(buffer[1] > '0')));
                     else {
                         // Obtain the next two digits.
                         prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + 2);
+                        print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(2));
 
                         // Remaining 4 digits are all zero?
                         if (static_cast<uint32_t>(prod) <= static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) / 1'0000))
-                            buffer += (3 + unsigned(buffer[3] > '0'));
+                            skip(buffer, (3 + unsigned(buffer[3] > '0')));
                         else {
                             // Obtain the next two digits.
                             prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + 4);
+                            print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(4));
 
                             // Remaining 2 digits are all zero?
                             if (static_cast<uint32_t>(prod) <= static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) / 100))
-                                buffer += (5 + unsigned(buffer[5] > '0'));
+                                skip(buffer, (5 + unsigned(buffer[5] > '0')));
                             else {
                                 // Obtain the last two digits.
                                 prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + 6);
-                                buffer += (7 + unsigned(buffer[7] > '0'));
+                                print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(6));
+                                skip(buffer, (7 + unsigned(buffer[7] > '0')));
                             }
                         }
                     }
                 } else {
                     // Obtain the remaining 6 digits.
                     prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + 2);
+                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(2));
                     prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + 4);
+                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(4));
                     prod = static_cast<uint32_t>(prod) * static_cast<uint64_t>(100);
-                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer + 6);
-                    buffer += 8;
+                    print_2_digits(static_cast<uint32_t>(prod >> 32), buffer.subspan(6));
+                    skip(buffer, 8);
                 }
             }
         }
@@ -547,12 +547,12 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
 
     // Print exponent and return
     if (exponent < 0) {
-        memcpy(buffer, "e-", 2);
-        buffer += 2;
+        memcpySpan(buffer, "e-"_span);
+        skip(buffer, 2);
         exponent = -exponent;
     } else {
-        memcpy(buffer, "e+", 2);
-        buffer += 2;
+        memcpySpan(buffer, "e+"_span);
+        skip(buffer, 2);
     }
 
     if (exponent >= 100) {
@@ -563,26 +563,26 @@ ALWAYS_INLINE static char* double_to_chars_impl(const uint64_t significand, int3
         prod = static_cast<uint16_t>(prod) * static_cast<uint32_t>(5); // * 10
         auto d2 = prod >> 15; // >> 16
         print_2_digits(d1, buffer);
-        print_1_digit(d2, buffer + 2);
-        buffer += 3;
+        print_1_digit(d2, buffer.subspan(2));
+        skip(buffer, 3);
     } else if (exponent >= 10) {
         print_2_digits(static_cast<uint32_t>(exponent), buffer);
-        buffer += 2;
+        skip(buffer, 2);
     } else {
         print_1_digit(static_cast<uint32_t>(exponent), buffer);
-        buffer += 1;
+        skip(buffer, 1);
     }
 
     return buffer;
 }
 
 template <>
-char* to_chars_impl<double, default_float_traits<double>, Mode::ToExponential, PrintTrailingZero::No>(uint64_t significand, int32_t exponent, char* buffer)
+std::span<char> to_chars_impl<double, default_float_traits<double>, Mode::ToExponential, PrintTrailingZero::No>(uint64_t significand, int32_t exponent, std::span<char> buffer)
 {
     return double_to_chars_impl<Mode::ToExponential, PrintTrailingZero::No>(significand, exponent, buffer);
 }
 
-char* to_shortest(const uint64_t significand, int32_t exponent, char* buffer)
+std::span<char> to_shortest(const uint64_t significand, int32_t exponent, std::span<char> buffer)
 {
     ASSERT(significand);
 
@@ -596,8 +596,8 @@ char* to_shortest(const uint64_t significand, int32_t exponent, char* buffer)
 
     if (exponent >= 0) {
         buffer = double_to_chars_impl<Mode::ToShortest, PrintTrailingZero::Yes>(significand, exponent, buffer);
-        while (exponent--)
-            *buffer++ = '0';
+		while (exponent--)
+            consume(buffer) = '0';
         return buffer;
     }
 
@@ -619,21 +619,21 @@ char* to_shortest(const uint64_t significand, int32_t exponent, char* buffer)
             //     significand = 12305, exponent = -2, integral_digits_count = 3, fractional_digits_count = 2, integral = 123, fractional = 5
             // Write ".0" first and then write "5".
             int32_t actual_fractional_digits_count = count_digits_base10_with_max_17(fractional);
-            *buffer++ = '.';
+            consume(buffer) = '.';
             while (actual_fractional_digits_count++ < fractional_digits_count)
-                *buffer++ = '0';
+                consume(buffer) = '0';
             buffer = double_to_chars_impl<Mode::ToShortest, PrintTrailingZero::No>(fractional, exponent, buffer);
-        }
+		}
     } else {
         // Given this case:
         //     significand = 12345, exponent = -7, integral_digits_count = -2, result = 0.0012345
         // Write "0.00" first and then write "12345".
-        memcpy(buffer, "0.", 2);
-        buffer += 2;
+        memcpySpan(buffer, "0."_span);
+        skip(buffer, 2);
         while (integral_digits_count++ < 0)
-            *buffer++ = '0';
+            consume(buffer) = '0';
         buffer = double_to_chars_impl<Mode::ToShortest, PrintTrailingZero::No>(significand, exponent, buffer);
-    }
+	}
     return buffer;
 }
 
@@ -642,5 +642,3 @@ char* to_shortest(const uint64_t significand, int32_t exponent, char* buffer)
 } // namespace dragonbox
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -118,7 +118,7 @@ private:
         if (plan->hasWork() && !wasMultiThreaded && plan->multiThreaded()) {
             Locker locker { *worklist.m_lock };
             element.setToNextPriority();
-            worklist.m_queue.enqueue(WTFMove(element));
+            worklist.m_queue.enqueue(WTF::move(element));
             worklist.m_planEnqueued->notifyAll(locker);
             return complete(locker);
         }
@@ -163,7 +163,7 @@ void Worklist::enqueue(Ref<Plan> plan)
 
     dataLogLnIf(WasmWorklistInternal::verbose, "Enqueuing plan");
     bool multiThreaded = plan->multiThreaded();
-    m_queue.enqueue({ multiThreaded ? Priority::Compilation : Priority::Preparation, nextTicket(),  WTFMove(plan) });
+    m_queue.enqueue({ multiThreaded ? Priority::Compilation : Priority::Preparation, nextTicket(),  WTF::move(plan) });
     if (multiThreaded)
         m_planEnqueued->notifyAll(locker);
     else
@@ -199,11 +199,11 @@ void Worklist::stopAllPlansForContext(VM& vm)
         QueueElement element = m_queue.dequeue();
         bool didCancel = element.plan->tryRemoveContextAndCancelIfLast(vm);
         if (!didCancel)
-            elements.append(WTFMove(element));
+            elements.append(WTF::move(element));
     }
 
     for (auto& element : elements)
-        m_queue.enqueue(WTFMove(element));
+        m_queue.enqueue(WTF::move(element));
 
     for (auto& thread : m_threads) {
         if (thread->element.plan) {

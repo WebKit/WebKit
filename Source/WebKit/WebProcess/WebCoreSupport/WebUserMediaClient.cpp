@@ -55,13 +55,13 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
 void WebUserMediaClient::enumerateMediaDevices(Document& document, UserMediaClient::EnumerateDevicesCallback&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->userMediaPermissionRequestManager().enumerateMediaDevices(document, WTFMove(completionHandler));
+        page->userMediaPermissionRequestManager().enumerateMediaDevices(document, WTF::move(completionHandler));
 }
 
 WebUserMediaClient::DeviceChangeObserverToken WebUserMediaClient::addDeviceChangeObserver(WTF::Function<void()>&& observer)
 {
     if (RefPtr page = m_page.get())
-        return page->userMediaPermissionRequestManager().addDeviceChangeObserver(WTFMove(observer));
+        return page->userMediaPermissionRequestManager().addDeviceChangeObserver(WTF::move(observer));
     return DeviceChangeObserverToken { 0 };
 }
 
@@ -74,7 +74,7 @@ void WebUserMediaClient::removeDeviceChangeObserver(DeviceChangeObserverToken to
 void WebUserMediaClient::updateCaptureState(const WebCore::Document& document, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->userMediaPermissionRequestManager().updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
+        page->userMediaPermissionRequestManager().updateCaptureState(document, isActive, kind, WTF::move(completionHandler));
 }
 
 void WebUserMediaClient::setShouldListenToVoiceActivity(bool shouldListen)

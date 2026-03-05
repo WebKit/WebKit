@@ -109,12 +109,12 @@ void serialize(StringBuilder& builder, const Feature& feature)
         }
         serializeIdentifier(feature.name, builder);
 
-        builder.append(": "_s, feature.rightComparison->value->cssText(CSS::defaultSerializationContext()));
+        builder.append(": "_s, protect(feature.rightComparison->value)->cssText(CSS::defaultSerializationContext()));
         break;
 
     case Syntax::Range:
         if (feature.leftComparison) {
-            builder.append(feature.leftComparison->value->cssText(CSS::defaultSerializationContext()));
+            builder.append(protect(feature.leftComparison->value)->cssText(CSS::defaultSerializationContext()));
             serializeRangeComparisonOperator(feature.leftComparison->op);
         }
 
@@ -122,7 +122,7 @@ void serialize(StringBuilder& builder, const Feature& feature)
 
         if (feature.rightComparison) {
             serializeRangeComparisonOperator(feature.rightComparison->op);
-            builder.append(feature.rightComparison->value->cssText(CSS::defaultSerializationContext()));
+            builder.append(protect(feature.rightComparison->value)->cssText(CSS::defaultSerializationContext()));
         }
         break;
     }

@@ -57,21 +57,20 @@ public:
         return adoptRef(*new WebNotification(data, std::nullopt, dataStoreIdentifier, sourceConnection));
     }
 
-    const String& title() const { return m_data.title; }
-    const String& body() const { return m_data.body; }
-    const String& iconURL() const { return m_data.iconURL; }
-    const String& tag() const { return m_data.tag; }
-    const String& lang() const { return m_data.language; }
+    const String& title() const LIFETIME_BOUND { return m_data.title; }
+    const String& body() const LIFETIME_BOUND { return m_data.body; }
+    const String& iconURL() const LIFETIME_BOUND { return m_data.iconURL; }
+    const String& tag() const LIFETIME_BOUND { return m_data.tag; }
+    const String& lang() const LIFETIME_BOUND { return m_data.language; }
     WebCore::NotificationDirection dir() const { return m_data.direction; }
-    const WTF::UUID& coreNotificationID() const { return m_data.notificationID; }
+    const WTF::UUID& coreNotificationID() const LIFETIME_BOUND { return m_data.notificationID; }
     const std::optional<WTF::UUID>& dataStoreIdentifier() const { return m_dataStoreIdentifier; }
     PAL::SessionID sessionID() const { return m_data.sourceSession; }
 
-    const WebCore::NotificationData& data() const { return m_data; }
+    const WebCore::NotificationData& data() const LIFETIME_BOUND { return m_data; }
     bool isPersistentNotification() const { return !m_data.serviceWorkerRegistrationURL.isEmpty(); }
 
-    const API::SecurityOrigin* origin() const { return m_origin.get(); }
-    API::SecurityOrigin* origin() { return m_origin.get(); }
+    API::SecurityOrigin& origin() const { return m_origin; }
 
     std::optional<WebPageProxyIdentifier> pageIdentifier() const { return m_pageIdentifier; }
     RefPtr<IPC::Connection> sourceConnection() const { return m_sourceConnection.get(); }
@@ -80,7 +79,7 @@ private:
     WebNotification(const WebCore::NotificationData&, std::optional<WebPageProxyIdentifier>, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection*);
 
     WebCore::NotificationData m_data;
-    RefPtr<API::SecurityOrigin> m_origin;
+    const Ref<API::SecurityOrigin> m_origin;
     Markable<WebPageProxyIdentifier> m_pageIdentifier;
     std::optional<WTF::UUID> m_dataStoreIdentifier;
     ThreadSafeWeakPtr<IPC::Connection> m_sourceConnection;

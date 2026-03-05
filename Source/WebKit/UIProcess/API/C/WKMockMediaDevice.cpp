@@ -39,7 +39,7 @@ using namespace WebKit;
 void WKAddMockMediaDevice(WKContextRef context, WKStringRef persistentId, WKStringRef label, WKStringRef type, WKDictionaryRef properties, bool isDefault)
 {
 #if ENABLE(MEDIA_STREAM)
-    String typeString = WebKit::toProtectedImpl(type)->string();
+    String typeString = protect(WebKit::toImpl(type))->string();
     Variant<WebCore::MockMicrophoneProperties, WebCore::MockSpeakerProperties, WebCore::MockCameraProperties, WebCore::MockDisplayProperties> deviceProperties;
     if (typeString == "camera"_s) {
         WebCore::MockCameraProperties cameraProperties;
@@ -55,7 +55,7 @@ void WKAddMockMediaDevice(WKContextRef context, WKStringRef persistentId, WKStri
                     cameraProperties.fillColor = WebCore::Color::green;
             }
         }
-        deviceProperties = WTFMove(cameraProperties);
+        deviceProperties = WTF::move(cameraProperties);
     } else if (typeString == "screen"_s)
         deviceProperties = WebCore::MockDisplayProperties { };
     else if (typeString == "speaker"_s)
@@ -72,26 +72,26 @@ void WKAddMockMediaDevice(WKContextRef context, WKStringRef persistentId, WKStri
         }
     }
 
-    toProtectedImpl(context)->addMockMediaDevice({ WebKit::toProtectedImpl(persistentId)->string(), WebKit::toProtectedImpl(label)->string(), flags, isDefault, WTFMove(deviceProperties) });
+    protect(toImpl(context))->addMockMediaDevice({ protect(WebKit::toImpl(persistentId))->string(), protect(WebKit::toImpl(label))->string(), flags, isDefault, WTF::move(deviceProperties) });
 #endif
 }
 
 void WKClearMockMediaDevices(WKContextRef context)
 {
-    toProtectedImpl(context)->clearMockMediaDevices();
+    protect(toImpl(context))->clearMockMediaDevices();
 }
 
 void WKRemoveMockMediaDevice(WKContextRef context, WKStringRef persistentId)
 {
-    toProtectedImpl(context)->removeMockMediaDevice(WebKit::toProtectedImpl(persistentId)->string());
+    protect(toImpl(context))->removeMockMediaDevice(protect(WebKit::toImpl(persistentId))->string());
 }
 
 void WKResetMockMediaDevices(WKContextRef context)
 {
-    toProtectedImpl(context)->resetMockMediaDevices();
+    protect(toImpl(context))->resetMockMediaDevices();
 }
 
 void WKSetMockMediaDeviceIsEphemeral(WKContextRef context, WKStringRef persistentId, bool isEphemeral)
 {
-    toProtectedImpl(context)->setMockMediaDeviceIsEphemeral(WebKit::toProtectedImpl(persistentId)->string(), isEphemeral);
+    protect(toImpl(context))->setMockMediaDeviceIsEphemeral(protect(WebKit::toImpl(persistentId))->string(), isEphemeral);
 }

@@ -59,7 +59,7 @@ public:
     //
     // This approximation is also the algorithm called for when parsing an HTML fragment.
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
-    void updateStateFor(const AtomString& tagName);
+    void NODELETE updateStateFor(const AtomString& tagName);
 
     void setForceNullCharacterReplacement(bool);
 
@@ -155,7 +155,7 @@ private:
     bool processToken(SegmentedString&);
     bool processEntity(SegmentedString&);
 
-    void parseError();
+    void NODELETE parseError();
 
     void bufferASCIICharacter(char16_t);
     void bufferCharacter(char16_t);
@@ -176,12 +176,12 @@ private:
 
     // Sometimes we speculatively consume input characters and we don't know whether they represent
     // end tags or RCDATA, etc. These functions help manage these state.
-    bool inEndTagBufferingState() const;
+    bool NODELETE inEndTagBufferingState() const;
     void appendToPossibleEndTag(char16_t);
     void saveEndTagNameIfNeeded();
     bool isAppropriateEndTag() const;
 
-    bool haveBufferedCharacterToken() const;
+    bool NODELETE haveBufferedCharacterToken() const;
 
     static bool isNullCharacterSkippingState(State);
 
@@ -222,8 +222,8 @@ public:
 
     operator bool() const;
 
-    HTMLToken& operator*() const;
-    HTMLToken* operator->() const;
+    HTMLToken& operator*() const LIFETIME_BOUND;
+    HTMLToken* operator->() const LIFETIME_BOUND;
 
 private:
     friend class HTMLTokenizer;

@@ -50,6 +50,7 @@ namespace WebCore {
     macro(none, "none") \
     macro(off, "off") \
     macro(on, "on") \
+    macro(pickerSelect, "picker(select)") \
     macro(plaintextOnly, "plaintext-only") \
     macro(print, "print") \
     macro(reset, "reset") \

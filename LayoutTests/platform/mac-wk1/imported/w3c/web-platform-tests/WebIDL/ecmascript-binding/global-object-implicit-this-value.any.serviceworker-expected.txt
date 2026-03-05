@@ -1,4 +1,0 @@
-
-Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-
-

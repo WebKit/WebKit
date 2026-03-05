@@ -61,7 +61,7 @@ public:
     const static size_t maxTransportNumber;
 
     static Ref<AuthenticatorManager> create();
-    virtual ~AuthenticatorManager() = default;
+    virtual ~AuthenticatorManager();
 
     void handleRequest(WebAuthenticationRequestData&&, Callback&&);
     void cancelRequest(const WebCore::PageIdentifier&, const std::optional<WebCore::FrameIdentifier>&); // Called from WebPageProxy/WebProcessProxy.
@@ -71,7 +71,7 @@ public:
     virtual bool isMock() const { return false; }
     virtual bool isVirtual() const { return false; }
 
-    void enableNativeSupport();
+    void NODELETE enableNativeSupport();
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -79,7 +79,7 @@ public:
 protected:
     AuthenticatorManager();
 
-    RunLoop::Timer& requestTimeOutTimer() { return m_requestTimeOutTimer; }
+    RunLoop::Timer& requestTimeOutTimer() LIFETIME_BOUND { return m_requestTimeOutTimer; }
     void clearStateAsync(); // To void cyclic dependence.
     void clearState();
     void invokePendingCompletionHandler(Respond&&);
@@ -91,7 +91,7 @@ protected:
     void startDiscovery(const TransportSet&);
 
 protected:
-    const Vector<Ref<AuthenticatorTransportService>>& services() const { return m_services; }
+    const Vector<Ref<AuthenticatorTransportService>>& services() const LIFETIME_BOUND { return m_services; }
 
 private:
     enum class Mode {
@@ -126,9 +126,14 @@ private:
     void restartDiscovery();
     void dispatchPanelClientCall(Function<void(const API::WebAuthenticationPanel&)>&&) const;
 
+    TransportSet getTransports(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&) const;
+
     // Request: We only allow one request per time. A new request will cancel any pending ones.
-    WebAuthenticationRequestData m_pendingRequestData;
-    Callback m_pendingCompletionHandler; // Should not be invoked directly, use invokePendingCompletionHandler.
+    struct Request {
+        WebAuthenticationRequestData data;
+        Callback completionHandler; // Should not be invoked directly, use invokePendingCompletionHandler.
+    };
+    std::optional<Request> m_pendingRequest;
     RunLoop::Timer m_requestTimeOutTimer;
     RefPtr<AuthenticatorPresenterCoordinator> m_presenter;
 

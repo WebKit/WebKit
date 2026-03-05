@@ -1,0 +1,8 @@
+
+PASS Property z-index value 'clamp(10, 20, 30)'
+PASS Property z-index value 'clamp(none, 30, 33)'
+PASS Property z-index value 'clamp(none, 33, 30)'
+PASS Property z-index value 'clamp(30, 33, none)'
+PASS Property z-index value 'clamp(33, 30, none)'
+PASS Property z-index value 'clamp(none, 30, none)'
+

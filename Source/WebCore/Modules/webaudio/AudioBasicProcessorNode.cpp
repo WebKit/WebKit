@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBasicProcessorNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioBasicProcessorNode);
 
 AudioBasicProcessorNode::AudioBasicProcessorNode(BaseAudioContext& context, NodeType type)
     : AudioNode(context, type)
@@ -103,7 +103,7 @@ void AudioBasicProcessorNode::processOnlyAudioParams(size_t framesToProcess)
 void AudioBasicProcessorNode::pullInputs(size_t framesToProcess)
 {
     // Render input stream - suggest to the input to render directly into output bus for in-place processing in process() if possible.
-    checkedInput(0)->pull(&checkedOutput(0)->bus(), framesToProcess);
+    protect(input(0))->pull(protect(protect(output(0))->bus()).ptr(), framesToProcess);
 }
 
 // As soon as we know the channel count of our input, we can lazily initialize.
@@ -130,7 +130,7 @@ void AudioBasicProcessorNode::checkNumberOfChannelsForInput(AudioNodeInput* inpu
     
     if (!isInitialized()) {
         // This will propagate the channel count to any nodes connected further down the chain...
-        checkedOutput(0)->setNumberOfChannels(numberOfChannels);
+        protect(output(0))->setNumberOfChannels(numberOfChannels);
 
         // Re-initialize the processor with the new channel count.
         processor()->setNumberOfChannels(numberOfChannels);

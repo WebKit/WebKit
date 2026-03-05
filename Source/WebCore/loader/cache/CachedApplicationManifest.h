@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLICATION_MANIFEST)
 
-#include <WebCore/ApplicationManifest.h>
-#include <WebCore/CachedResource.h>
+#include "ApplicationManifest.h"
+#include "CachedResource.h"
 
 namespace WebCore {
 
@@ -44,7 +44,6 @@ public:
 private:
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) final;
     const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.ptr(); }
-    Ref<TextResourceDecoder> protectedDecoder() const;
     void setEncoding(const String&) final;
     ASCIILiteral encoding() const final;
 

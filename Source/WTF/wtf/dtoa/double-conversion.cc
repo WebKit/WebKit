@@ -446,7 +446,7 @@ void DoubleToStringConverter::DoubleToAscii(double v,
 const int kMaxSignificantDigits = 772;
 
 
-static double SignedZero(bool sign) {
+static double NODELETE SignedZero(bool sign) {
   return sign ? -0.0 : 0.0;
 }
 

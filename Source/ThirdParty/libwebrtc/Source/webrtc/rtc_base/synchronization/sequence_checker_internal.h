@@ -33,6 +33,7 @@ class RTC_EXPORT SequenceCheckerImpl {
  public:
   explicit SequenceCheckerImpl(bool attach_to_current_thread);
   explicit SequenceCheckerImpl(TaskQueueBase* attached_queue);
+  SequenceCheckerImpl(SequenceCheckerImpl&& o);
   ~SequenceCheckerImpl() = default;
 
   bool IsCurrent() const;

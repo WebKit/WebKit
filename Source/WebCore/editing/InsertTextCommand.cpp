@@ -46,7 +46,7 @@
 namespace WebCore {
 
 InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& text, AllowPasswordEcho allowPasswordEcho, bool selectInsertedText, RebalanceType rebalanceType, EditAction editingAction)
-    : CompositeEditCommand(WTFMove(document), editingAction)
+    : CompositeEditCommand(WTF::move(document), editingAction)
     , m_text(text)
     , m_allowPasswordEcho(allowPasswordEcho)
     , m_selectInsertedText(selectInsertedText)
@@ -55,11 +55,11 @@ InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& tex
 }
 
 InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction)
-    : CompositeEditCommand(WTFMove(document), editingAction)
+    : CompositeEditCommand(WTF::move(document), editingAction)
     , m_text(text)
     , m_selectInsertedText(false)
     , m_rebalanceType(RebalanceLeadingAndTrailingWhitespaces)
-    , m_markerSupplier(WTFMove(markerSupplier))
+    , m_markerSupplier(WTF::move(markerSupplier))
 {
 }
 
@@ -170,7 +170,7 @@ bool InsertTextCommand::applySmartListsIfNeeded()
 
     Ref document = this->document();
     auto listType = smartList->ordered ? InsertListCommand::Type::OrderedList : InsertListCommand::Type::UnorderedList;
-    applyCommandToComposite(InsertListCommand::create(document.copyRef(), listType), *range);
+    applyCommandToComposite(InsertListCommand::create(document.copyRef(), listType, smartList->styleType), *range);
 
     // This list is the one that was just created or modified.
     RefPtr listElement = enclosingList(endingSelection().base().anchorNode());
@@ -179,7 +179,7 @@ bool InsertTextCommand::applySmartListsIfNeeded()
         return false;
     }
 
-    auto attributes = nodeAttributesForSmartList(*listElement, *smartList);
+    auto attributes = nodeAttributesForSmartList(*listElement, *smartList, lineText);
     for (const auto& [attribute, value] : attributes)
         setNodeAttribute(*listElement, attribute, value);
 
@@ -338,7 +338,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     if (parentTabSpanNode(node.get())) {
         Ref textNode = downcast<Text>(node.releaseNonNull());
         insertTextIntoNode(textNode, offset, "\t"_s);
-        return Position(WTFMove(textNode), offset + 1);
+        return Position(WTF::move(textNode), offset + 1);
     }
     
     // create new tab span

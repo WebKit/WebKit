@@ -82,7 +82,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     self = [super init];
     if (!self)
         return nil;
-    coreResource = WTFMove(passedResource);
+    coreResource = WTF::move(passedResource);
     return self;
 }
 
@@ -119,11 +119,13 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (!self)
         return nil;
 
-    NSData *data = nil;
-    NSURL *url = nil;
-    NSString *mimeType = nil, *textEncoding = nil, *frameName = nil;
-    NSURLResponse *response = nil;
-    
+    RetainPtr<NSData> data;
+    RetainPtr<NSURL> url;
+    RetainPtr<NSString> mimeType;
+    RetainPtr<NSString> textEncoding;
+    RetainPtr<NSString> frameName;
+    RetainPtr<NSURLResponse> response;
+
     @try {
         id object = [decoder decodeObjectForKey:WebResourceDataKey];
         if ([object isKindOfClass:[NSData class]])
@@ -148,7 +150,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = ArchiveResource::create(SharedBuffer::create(data), url, mimeType, textEncoding, frameName, response);
+    auto coreResource = ArchiveResource::create(SharedBuffer::create(data.get()), url.get(), mimeType.get(), textEncoding.get(), frameName.get(), response.get());
     if (!coreResource) {
         [self release];
         return nil;
@@ -256,7 +258,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (!self)
         return nil;
 
-    _private = [[WebResourcePrivate alloc] initWithCoreResource:WTFMove(coreResource)];
+    _private = [[WebResourcePrivate alloc] initWithCoreResource:WTF::move(coreResource)];
     return self;
 }
 

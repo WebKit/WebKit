@@ -28,9 +28,8 @@
 
 #include "AsyncGeneratorPrototype.h"
 #include "BuiltinNames.h"
-#include "CatchScope.h"
-#include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "CommonIdentifiers.h"
 #include "FunctionExecutableInlines.h"
 #include "GeneratorPrototype.h"
 #include "JSBoundFunction.h"
@@ -41,6 +40,7 @@
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "StackVisitor.h"
+#include "TopExceptionScope.h"
 #include "TypeError.h"
 #include "VMTrapsInlines.h"
 #if ENABLE(WEBASSEMBLY)
@@ -165,7 +165,7 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, JSGlobalObject* globalObj
     // true when we can use the allocation profile.
     ASSERT(canUseAllocationProfiles());
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSValue prototype = get(globalObject, vm.propertyNames->prototype);
     scope.releaseAssertNoException();
     if (prototype.isObject()) [[likely]]
@@ -368,7 +368,7 @@ void JSFunction::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* gl
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (mode == DontEnumPropertiesMode::Include) {
         bool hasLength = thisObject->hasOwnProperty(globalObject, vm.propertyNames->length);
@@ -482,32 +482,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
 // ECMA 13.2.2 [[Construct]]
 CallData JSFunction::getConstructData(JSCell* cell)
 {
-    // Keep this function OK for invocation from concurrent compilers.
-    CallData constructData;
-
-    JSFunction* thisObject = jsCast<JSFunction*>(cell);
-    if (thisObject->isHostFunction()) {
-        if (thisObject->inherits<JSBoundFunction>()) {
-            if (jsCast<JSBoundFunction*>(thisObject)->canConstruct()) {
-                constructData.type = CallData::Type::Native;
-                constructData.native.function = thisObject->nativeConstructor();
-                constructData.native.isBoundFunction = true;
-                constructData.native.isWasm = false;
-            }
-        } else if (thisObject->nativeConstructor() != callHostFunctionAsConstructor) {
-            constructData.type = CallData::Type::Native;
-            constructData.native.function = thisObject->nativeConstructor();
-        }
-    } else {
-        FunctionExecutable* functionExecutable = thisObject->jsExecutable();
-        if (functionExecutable->constructAbility() != ConstructAbility::CannotConstruct) {
-            constructData.type = CallData::Type::JS;
-            constructData.js.functionExecutable = functionExecutable;
-            constructData.js.scope = thisObject->scope();
-        }
-    }
-
-    return constructData;
+    return getConstructDataInline(cell);
 }
 
 String getCalculatedDisplayName(VM& vm, JSObject* object)
@@ -612,7 +587,7 @@ JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(throwScope, PropertyStatus::Lazy);
 
     rareData->setHasReifiedName();
-    putDirect(vm, propID, jsString(vm, WTFMove(name)), initialAttributes);
+    putDirect(vm, propID, jsString(vm, WTF::move(name)), initialAttributes);
     return PropertyStatus::Reified;
 }
 

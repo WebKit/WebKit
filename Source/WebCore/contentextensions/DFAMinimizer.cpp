@@ -102,7 +102,7 @@ public:
         m_sets.append(SetDescriptor { start, size, 0 });
     }
 
-    void setElementUnchecked(unsigned elementIndex, unsigned positionInPartition, unsigned setIndex)
+    void NODELETE setElementUnchecked(unsigned elementIndex, unsigned positionInPartition, unsigned setIndex)
     {
         ASSERT(setIndex < m_sets.size());
         m_partitionedElements[positionInPartition] = elementIndex;
@@ -110,7 +110,7 @@ public:
         m_elementToSetMap[elementIndex] = setIndex;
     }
 
-    unsigned startOffsetOfSet(unsigned setIndex) const
+    unsigned NODELETE startOffsetOfSet(unsigned setIndex) const
     {
         return m_sets[setIndex].start;
     }
@@ -189,18 +189,18 @@ public:
     }
 
     // Index of the set containing the Node.
-    unsigned setIndex(unsigned elementIndex) const
+    unsigned NODELETE setIndex(unsigned elementIndex) const
     {
         return m_elementToSetMap[elementIndex];
     }
 
     // NodeIndex of the first element in the set.
-    unsigned firstElementInSet(unsigned setIndex) const
+    unsigned NODELETE firstElementInSet(unsigned setIndex) const
     {
         return m_partitionedElements[m_sets[setIndex].start];
     }
 
-    unsigned size() const
+    unsigned NODELETE size() const
     {
         return m_sets.size();
     }
@@ -211,8 +211,8 @@ private:
         unsigned size;
         unsigned markedCount;
 
-        unsigned indexAfterMarkedElements() const { return start + markedCount; }
-        unsigned end() const { return start + size; }
+        unsigned NODELETE indexAfterMarkedElements() const { return start + markedCount; }
+        unsigned NODELETE end() const { return start + size; }
     };
 
     // List of sets.
@@ -352,7 +352,7 @@ public:
         }
     }
 
-    unsigned nodeReplacement(unsigned nodeIndex)
+    unsigned NODELETE nodeReplacement(unsigned nodeIndex)
     {
         unsigned setIndex = m_nodePartition.setIndex(nodeIndex);
         return m_nodePartition.firstElementInSet(setIndex);
@@ -364,12 +364,12 @@ private:
     };
 
     struct CounterConverter {
-        uint32_t convert(uint32_t)
+        uint32_t NODELETE convert(uint32_t)
         {
             return 1;
         }
 
-        void extend(uint32_t& destination, uint32_t)
+        void NODELETE extend(uint32_t& destination, uint32_t)
         {
             ++destination;
         }
@@ -403,8 +403,8 @@ struct ActionKey {
         hash = hasher.hash();
     }
 
-    bool isEmptyValue() const { return state == Empty; }
-    bool isDeletedValue() const { return state == Deleted; }
+    bool NODELETE isEmptyValue() const { return state == Empty; }
+    bool NODELETE isDeletedValue() const { return state == Deleted; }
 
     unsigned hash { 0 };
     
@@ -420,12 +420,12 @@ struct ActionKey {
 };
 
 struct ActionKeyHash {
-    static unsigned hash(const ActionKey& actionKey)
+    static unsigned NODELETE hash(const ActionKey& actionKey)
     {
         return actionKey.hash;
     }
 
-    static bool equal(const ActionKey& a, const ActionKey& b)
+    static bool NODELETE equal(const ActionKey& a, const ActionKey& b)
     {
         if (a.state != b.state
             || a.dfa != b.dfa

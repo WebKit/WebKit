@@ -42,21 +42,21 @@ class VideoColorSpace : public RefCounted<VideoColorSpace> {
 public:
     static Ref<VideoColorSpace> create() { return adoptRef(*new VideoColorSpace()); };
     static Ref<VideoColorSpace> create(const VideoColorSpaceInit& init) { return adoptRef(*new VideoColorSpace(init)); }
-    static Ref<VideoColorSpace> create(VideoColorSpaceInit&& init) { return adoptRef(*new VideoColorSpace(WTFMove(init))); }
+    static Ref<VideoColorSpace> create(VideoColorSpaceInit&& init) { return adoptRef(*new VideoColorSpace(WTF::move(init))); }
 
     void setState(const VideoColorSpaceInit& state) { m_state = state; }
 
-    const std::optional<VideoColorPrimaries>& primaries() const { return m_state.primaries; }
-    void setPrimaries(std::optional<VideoColorPrimaries>&& primaries) { m_state.primaries = WTFMove(primaries); }
+    const std::optional<VideoColorPrimaries>& primaries() const LIFETIME_BOUND { return m_state.primaries; }
+    void setPrimaries(std::optional<VideoColorPrimaries>&& primaries) { m_state.primaries = WTF::move(primaries); }
 
-    const std::optional<VideoTransferCharacteristics>& transfer() const { return m_state.transfer; }
-    void setTransfer(std::optional<VideoTransferCharacteristics>&& transfer) { m_state.transfer = WTFMove(transfer); }
+    const std::optional<VideoTransferCharacteristics>& transfer() const LIFETIME_BOUND { return m_state.transfer; }
+    void setTransfer(std::optional<VideoTransferCharacteristics>&& transfer) { m_state.transfer = WTF::move(transfer); }
 
-    const std::optional<VideoMatrixCoefficients>& matrix() const { return m_state.matrix; }
-    void setMatrix(std::optional<VideoMatrixCoefficients>&& matrix) { m_state.matrix = WTFMove(matrix); }
+    const std::optional<VideoMatrixCoefficients>& matrix() const LIFETIME_BOUND { return m_state.matrix; }
+    void setMatrix(std::optional<VideoMatrixCoefficients>&& matrix) { m_state.matrix = WTF::move(matrix); }
 
-    const std::optional<bool>& fullRange() const { return m_state.fullRange; }
-    void setfFullRange(std::optional<bool>&& fullRange) { m_state.fullRange = WTFMove(fullRange); }
+    const std::optional<bool>& fullRange() const LIFETIME_BOUND { return m_state.fullRange; }
+    void setfFullRange(std::optional<bool>&& fullRange) { m_state.fullRange = WTF::move(fullRange); }
 
     VideoColorSpaceInit state() const { return m_state; }
 
@@ -69,7 +69,7 @@ private:
     {
     }
     VideoColorSpace(VideoColorSpaceInit&& init)
-        : m_state(WTFMove(init))
+        : m_state(WTF::move(init))
     {
     }
 

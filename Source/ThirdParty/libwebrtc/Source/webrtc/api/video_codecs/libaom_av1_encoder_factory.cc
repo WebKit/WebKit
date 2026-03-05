@@ -80,7 +80,13 @@ constexpr std::array<VideoFrameBuffer::Type, 2> kSupportedInputFormats = {
     VideoFrameBuffer::Type::kI420, VideoFrameBuffer::Type::kNV12};
 
 constexpr std::array<Rational, 7> kSupportedScalingFactors = {
-    {{8, 1}, {4, 1}, {2, 1}, {1, 1}, {1, 2}, {1, 4}, {1, 8}}};
+    {{.numerator = 8, .denominator = 1},
+     {.numerator = 4, .denominator = 1},
+     {.numerator = 2, .denominator = 1},
+     {.numerator = 1, .denominator = 1},
+     {.numerator = 1, .denominator = 2},
+     {.numerator = 1, .denominator = 4},
+     {.numerator = 1, .denominator = 8}}};
 
 std::optional<Rational> GetScalingFactor(const Resolution& from,
                                          const Resolution& to) {
@@ -561,7 +567,8 @@ aom_svc_params_t GetSvcParams(
   for (const VideoEncoderInterface::FrameEncodeSettings& settings :
        frame_settings) {
     std::optional<Rational> scaling_factor = GetScalingFactor(
-        {frame_buffer.width(), frame_buffer.height()}, settings.resolution);
+        {.width = frame_buffer.width(), .height = frame_buffer.height()},
+        settings.resolution);
     RTC_CHECK(scaling_factor);
     svc_params.scaling_factor_num[settings.spatial_id] =
         scaling_factor->numerator;

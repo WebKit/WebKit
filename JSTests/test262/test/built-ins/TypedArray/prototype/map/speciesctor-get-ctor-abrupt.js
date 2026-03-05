@@ -26,8 +26,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([40, 41, 42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([40, 41, 42, 43]));
   var callCount = 0;
 
   Object.defineProperty(sample, "constructor", {
@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA) {
     });
   });
   assert.sameValue(callCount, 0, "callback should not be called");
-});
+}, null, ["passthrough"]);

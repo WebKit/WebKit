@@ -40,7 +40,7 @@ std::optional<QuerySetDescriptor> ConvertToBackingContext::convertToBacking(cons
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), querySetDescriptor.type, querySetDescriptor.count } };
+    return { { WTF::move(*base), querySetDescriptor.type, querySetDescriptor.count } };
 }
 
 std::optional<WebCore::WebGPU::QuerySetDescriptor> ConvertFromBackingContext::convertFromBacking(const QuerySetDescriptor& querySetDescriptor)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::QuerySetDescriptor> ConvertFromBackingContext::co
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), querySetDescriptor.type, querySetDescriptor.count } };
+    return { { WTF::move(*base), querySetDescriptor.type, querySetDescriptor.count } };
 }
 
 } // namespace WebKit

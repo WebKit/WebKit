@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaQueryListEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaQueryListEvent);
 
 MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, const String& media, bool matches)
     : Event(EventInterfaceType::MediaQueryListEvent, type, CanBubble::No, IsCancelable::No)
@@ -39,9 +39,9 @@ MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, const String& m
 {
 }
 
-MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, const Init& init, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MediaQueryListEvent, type, init, isTrusted)
-    , m_media(init.media)
+MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : Event(EventInterfaceType::MediaQueryListEvent, type, WTF::move(init), isTrusted)
+    , m_media(WTF::move(init.media))
     , m_matches(init.matches)
 {
 }
@@ -51,9 +51,9 @@ Ref<MediaQueryListEvent> MediaQueryListEvent::create(const AtomString& type, con
     return adoptRef(*new MediaQueryListEvent(type, media, matches));
 }
 
-Ref<MediaQueryListEvent> MediaQueryListEvent::create(const AtomString& type, const Init& init, IsTrusted isTrusted)
+Ref<MediaQueryListEvent> MediaQueryListEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    return adoptRef(*new MediaQueryListEvent(type, init, isTrusted));
+    return adoptRef(*new MediaQueryListEvent(type, WTF::move(init), isTrusted));
 }
 
 } // namespace WebCore

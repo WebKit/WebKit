@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/README.md
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/document-element.window.js
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/document-function.window.js
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/encoding-single-chunk-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/encoding-single-chunk-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/encoding-single-chunk.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/externalScript.js
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/functions.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/invalid-output-encoding-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/large-cdata-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/large-cdata-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/large-cdata.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/sort-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/sort-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/sort.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/strip-space-crash.xml
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/transformToFragment-on-node-from-inactive-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/transformToFragment.tentative.window.js

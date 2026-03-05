@@ -41,17 +41,17 @@ class AudioWorkletThread final : public WorkerOrWorkletThread {
 public:
     static Ref<AudioWorkletThread> create(AudioWorkletMessagingProxy& messagingProxy, WorkletParameters&& parameters)
     {
-        return adoptRef(*new AudioWorkletThread(messagingProxy, WTFMove(parameters)));
+        return adoptRef(*new AudioWorkletThread(messagingProxy, WTF::move(parameters)));
     }
     ~AudioWorkletThread();
 
-    AudioWorkletGlobalScope* globalScope() const;
+    AudioWorkletGlobalScope* NODELETE globalScope() const;
 
     void clearProxies() final;
 
     // WorkerOrWorkletThread.
-    WorkerLoaderProxy* workerLoaderProxy() const final;
-    WorkerDebuggerProxy* workerDebuggerProxy() const final;
+    WorkerLoaderProxy* NODELETE workerLoaderProxy() const final;
+    WorkerDebuggerProxy* NODELETE workerDebuggerProxy() const final;
 
     AudioWorkletMessagingProxy* messagingProxy() { return m_messagingProxy.get(); }
 

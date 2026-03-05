@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <WebCore/AffineTransform.h>
+#include "AffineTransform.h"
 
 namespace WebCore {
 
@@ -40,9 +40,6 @@ public:
     virtual ~SVGLocatable() = default;
 
     // 'SVGLocatable' functions
-    virtual SVGElement* nearestViewportElement() const = 0;
-    virtual SVGElement* farthestViewportElement() const = 0;
-
     enum StyleUpdateStrategy { AllowStyleUpdate, DisallowStyleUpdate };
     
     virtual FloatRect getBBox(StyleUpdateStrategy) = 0;

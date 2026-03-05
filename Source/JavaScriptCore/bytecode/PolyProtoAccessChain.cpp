@@ -85,7 +85,7 @@ RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* glo
     if (!found && !!target)
         return nullptr;
 
-    return adoptRef(*new PolyProtoAccessChain(WTFMove(chain)));
+    return adoptRef(*new PolyProtoAccessChain(WTF::move(chain)));
 }
 
 bool PolyProtoAccessChain::needImpurePropertyWatchpoint(VM&) const

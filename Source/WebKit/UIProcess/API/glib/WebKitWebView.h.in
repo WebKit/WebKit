@@ -73,7 +73,9 @@
 #elif PLATFORM(WPE)
 #include <wpe/WebKitColor.h>
 #include <wpe/WebKitRectangle.h>
+#if USE(LIBWPE)
 #include <wpe/WebKitWebViewBackend.h>
+#endif
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
 #endif
@@ -452,6 +454,7 @@ webkit_web_view_new_with_user_content_manager        (WebKitUserContentManager  
 #endif
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
 WEBKIT_API WebKitWebView *
 webkit_web_view_new                                  (WebKitWebViewBackend      *backend);
 
@@ -475,6 +478,7 @@ webkit_web_view_new_with_user_content_manager        (WebKitWebViewBackend      
 
 WEBKIT_API WebKitWebViewBackend *
 webkit_web_view_get_backend                          (WebKitWebView             *web_view);
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 WEBKIT_API WPEDisplay *
@@ -778,6 +782,7 @@ webkit_web_view_get_tls_info                         (WebKitWebView             
                                                       GTlsCertificate          **certificate,
                                                       GTlsCertificateFlags      *errors);
 
+#if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 WEBKIT_API void
 webkit_web_view_get_snapshot                         (WebKitWebView             *web_view,
                                                       WebKitSnapshotRegion       region,
@@ -802,6 +807,7 @@ WEBKIT_API WebKitImage *
 webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
+#endif
 #endif
 
 WEBKIT_API WebKitUserContentManager *

@@ -1,0 +1,18 @@
+abc
+
+PASS document.caretRangeFromPoint() (no supplied coordinates) returns Range with 0 0 values
+PASS document.caretRangeFromPoint() should return null for a document with no viewport
+PASS document.caretRangeFromPoint() should return null if given coordinates outside of the viewport
+PASS document.caretRangeFromPoint() should return a Range at the specified location
+PASS document.caretRangeFromPoint() should return a client rect close to the given coords
+FAIL document.caretRangeFromPoint() on a shadow should return a Range pointing at the same node as caretPositionFromPoint assert_equals: expected Element node <body><div id="div">abc</div>
+<div id="shadow">
+
+</div>... but got Element node <div id="shadow">
+
+</div>
+FAIL document.caretRangeFromPoint() on a textarea should return a Range pointing at canvas assert_equals: expected Element node <canvas id="canvas" width="500" height="500"></canvas> but got Element node <body><div id="div">abc</div>
+<div id="shadow">
+
+</div>...
+

@@ -147,7 +147,7 @@ private:
     void mergeStatistic(const ResourceLoadStatistics&);
     void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void clearDatabaseContents();
-    bool insertObservedDomain(const ResourceLoadStatistics&) WARN_UNUSED_RETURN;
+    [[nodiscard]] bool insertObservedDomain(const ResourceLoadStatistics&);
     void insertDomainRelationships(const ResourceLoadStatistics&);
     void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
     bool relationshipExists(WebCore::SQLiteStatementAutoResetScope&, std::optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
@@ -203,7 +203,7 @@ private:
     void removeDataRecords(CompletionHandler<void()>&&);
     void pruneStatisticsIfNeeded() override;
     enum class AddedRecord : bool { No, Yes };
-    std::pair<AddedRecord, std::optional<unsigned>> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&) WARN_UNUSED_RETURN;
+    [[nodiscard]] std::pair<AddedRecord, std::optional<unsigned>> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
     bool shouldRemoveAllWebsiteDataFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldEnforceSameSiteStrictFor(DomainData&, bool shouldCheckForGrandfathering);

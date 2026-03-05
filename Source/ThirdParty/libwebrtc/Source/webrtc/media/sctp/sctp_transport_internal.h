@@ -15,7 +15,6 @@
 // anything in media/.
 
 #include <cstddef>
-#include <cstdint>
 #include <functional>
 #include <optional>
 
@@ -27,48 +26,6 @@
 #include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
-
-// Constants that are important to API users
-
-// The number of outgoing streams that we'll negotiate. Since stream IDs (SIDs)
-// are 0-based, the highest usable SID is 1023.
-//
-// It's recommended to use the maximum of 65535 in:
-// https://tools.ietf.org/html/draft-ietf-rtcweb-data-channel-13#section-6.2
-// However, we use 1024 in order to save memory. usrsctp allocates 104 bytes
-// for each pair of incoming/outgoing streams (on a 64-bit system), so 65535
-// streams would waste ~6MB.
-//
-// Note: "max" and "min" here are inclusive.
-constexpr uint16_t kMaxSctpStreams = 1024;
-constexpr uint16_t kMaxSctpSid = kMaxSctpStreams - 1;
-constexpr uint16_t kMinSctpSid = 0;
-// The maximum number of streams that can be negotiated according to spec.
-constexpr uint16_t kSpecMaxSctpSid = 65535;
-
-// This is the default SCTP port to use. It is passed along the wire and the
-// connectee and connector must be using the same port. It is not related to the
-// ports at the IP level. (Corresponds to: sockaddr_conn.sconn_port in
-// usrsctp.h)
-const int kSctpDefaultPort = 5000;
-
-// Error cause codes defined at
-// https://www.iana.org/assignments/sctp-parameters/sctp-parameters.xhtml#sctp-parameters-24
-enum class SctpErrorCauseCode : uint16_t {
-  kInvalidStreamIdentifier = 1,
-  kMissingMandatoryParameter = 2,
-  kStaleCookieError = 3,
-  kOutOfResource = 4,
-  kUnresolvableAddress = 5,
-  kUnrecognizedChunkType = 6,
-  kInvalidMandatoryParameter = 7,
-  kUnrecognizedParameters = 8,
-  kNoUserData = 9,
-  kCookieReceivedWhileShuttingDown = 10,
-  kRestartWithNewAddresses = 11,
-  kUserInitiatedAbort = 12,
-  kProtocolViolation = 13,
-};
 
 // Abstract SctpTransport interface for use internally (by PeerConnection etc.).
 // Exists to allow mock/fake SctpTransports to be created.
@@ -93,6 +50,8 @@ class SctpTransportInternal {
   // and create a new association? Not clear if this is something we need to
   // support though. See: https://github.com/w3c/webrtc-pc/issues/979
   [[deprecated("Call with SctpOptions")]]
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-designated-field-initializers"
   virtual bool Start(int local_sctp_port,
                      int remote_sctp_port,
                      int max_message_size) {
@@ -102,6 +61,7 @@ class SctpTransportInternal {
         .max_message_size = max_message_size,
     });
   }
+#pragma clang diagnostic pop
 
   // NOTE: Initially there was a "Stop" method here, but it was never used, so
   // it was removed.

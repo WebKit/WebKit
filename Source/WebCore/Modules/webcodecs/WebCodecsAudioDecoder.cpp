@@ -46,11 +46,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebCodecsAudioDecoder);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsAudioDecoder);
 
 Ref<WebCodecsAudioDecoder> WebCodecsAudioDecoder::create(ScriptExecutionContext& context, Init&& init)
 {
-    auto decoder = adoptRef(*new WebCodecsAudioDecoder(context, WTFMove(init)));
+    auto decoder = adoptRef(*new WebCodecsAudioDecoder(context, WTF::move(init)));
     decoder->suspendIfNeeded();
     return decoder;
 }
@@ -68,15 +68,13 @@ static AudioDecoder::Config createAudioDecoderConfig(const WebCodecsAudioDecoder
 {
     Vector<uint8_t> description;
     if (config.description) {
-        auto data = WTF::visit([](auto& buffer) {
-            return buffer ? buffer->span() : std::span<const uint8_t> { };
-        }, *config.description);
+        auto data = WTF::switchOn(*config.description, [](auto& buffer) { return buffer->span(); });
         if (!data.empty())
             description = data;
     }
 
     return {
-        .description = WTFMove(description),
+        .description = WTF::move(description),
         .sampleRate = config.sampleRate,
         .numberOfChannels = config.numberOfChannels
     };
@@ -132,38 +130,41 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
         if (!isSupportedCodec) {
             postTaskToCodec<WebCodecsAudioDecoder>(identifier, *this, [] (auto& decoder) {
                 decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
+                decoder.unblockControlMessageQueue();
             });
             return WebCodecsControlMessageOutcome::Processed;
         }
 
         Ref createDecoderPromise = AudioDecoder::create(codec, config, [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
-            postTaskToCodec<WebCodecsAudioDecoder>(identifier, weakThis, [result = WTFMove(result), decoderCount] (auto& decoder) mutable {
+            postTaskToCodec<WebCodecsAudioDecoder>(identifier, weakThis, [result = WTF::move(result), decoderCount] (auto& decoder) mutable {
                 if (decoder.state() != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
                     return;
 
                 if (!result.has_value()) {
-                    decoder.closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result).error() });
+                    decoder.closeDecoder(Exception { ExceptionCode::EncodingError, WTF::move(result).error() });
                     return;
                 }
 
-                auto decodedResult = WTFMove(result).value();
-                auto audioData = WebCodecsAudioData::create(*decoder.scriptExecutionContext(), WTFMove(decodedResult.data));
-                decoder.m_output->invoke(WTFMove(audioData));
+                auto decodedResult = WTF::move(result).value();
+                auto audioData = WebCodecsAudioData::create(*decoder.scriptExecutionContext(), WTF::move(decodedResult.data));
+                decoder.m_output->invoke(WTF::move(audioData));
             });
         });
 
-        protectedScriptExecutionContext()->enqueueTaskWhenSettled(WTFMove(createDecoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }] (AudioDecoder::CreateResult&& result) mutable {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(WTF::move(createDecoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }] (AudioDecoder::CreateResult&& result) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
+            auto scopeExit = makeScopeExit([protectedThis] {
+                protectedThis->unblockControlMessageQueue();
+            });
 
             if (!result) {
-                protectedThis->closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                protectedThis->closeDecoder(Exception { ExceptionCode::NotSupportedError, WTF::move(result.error()) });
                 return;
             }
 
-            protectedThis->setInternalDecoder(WTFMove(*result));
-            protectedThis->unblockControlMessageQueue();
+            protectedThis->setInternalDecoder(WTF::move(*result));
         });
         return WebCodecsControlMessageOutcome::Processed;
     } });
@@ -181,15 +182,15 @@ ExceptionOr<void> WebCodecsAudioDecoder::decode(Ref<WebCodecsEncodedAudioChunk>&
         m_isKeyChunkRequired = false;
     }
 
-    queueCodecControlMessageAndProcess({ *this, [this, chunk = WTFMove(chunk)]() mutable {
+    queueCodecControlMessageAndProcess({ *this, [this, chunk = WTF::move(chunk)]() mutable {
         incrementCodecOperationCount();
-        protectedScriptExecutionContext()->enqueueTaskWhenSettled(Ref { *m_internalDecoder }->decode({ chunk->span(), chunk->type() == WebCodecsEncodedAudioChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(Ref { *m_internalDecoder }->decode({ chunk->span(), chunk->type() == WebCodecsEncodedAudioChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
 
             if (!result) {
-                protectedThis->closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result.error()) });
+                protectedThis->closeDecoder(Exception { ExceptionCode::EncodingError, WTF::move(result.error()) });
                 return;
             }
             protectedThis->decrementCodecOperationCountAndMaybeProcessControlMessageQueue();
@@ -207,8 +208,8 @@ ExceptionOr<void> WebCodecsAudioDecoder::flush(Ref<DeferredPromise>&& promise)
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise);
-    queueControlMessageAndProcess({ *this, [this, promise = WTFMove(promise)]() mutable {
-        protectedScriptExecutionContext()->enqueueTaskWhenSettled(Ref { *m_internalDecoder }->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)] (auto&&) {
+    queueControlMessageAndProcess({ *this, [this, promise = WTF::move(promise)]() mutable {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(Ref { *m_internalDecoder }->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
             promise->resolve();
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->m_pendingFlushPromises.removeFirstMatching([&](auto& flushPromise) { return promise.ptr() == flushPromise.ptr(); });
@@ -236,13 +237,13 @@ void WebCodecsAudioDecoder::isConfigSupported(ScriptExecutionContext& context, W
     }
 
     if (!AudioDecoder::isCodecSupported(config.codec)) {
-        promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { false, WTFMove(config) });
+        promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { false, WTF::move(config) });
         return;
     }
 
     Ref createDecoderPromise = AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [](auto&&) { });
-    context.enqueueTaskWhenSettled(WTFMove(createDecoderPromise), TaskSource::MediaElement, [config = WTFMove(config), promise = WTFMove(promise)](auto&& result) mutable {
-        promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { !!result, WTFMove(config) });
+    context.enqueueTaskWhenSettled(WTF::move(createDecoderPromise), TaskSource::MediaElement, [config = WTF::move(config), promise = WTF::move(promise)](auto&& result) mutable {
+        promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { !!result, WTF::move(config) });
     });
 }
 
@@ -254,7 +255,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::closeDecoder(Exception&& exception)
     setState(WebCodecsCodecState::Closed);
     m_internalDecoder = nullptr;
     if (exception.code() != ExceptionCode::AbortError)
-        m_error->invoke(DOMException::create(WTFMove(exception)));
+        m_error->invoke(DOMException::create(WTF::move(exception)));
 
     return { };
 }
@@ -278,7 +279,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::resetDecoder(const Exception& exception
 
 void WebCodecsAudioDecoder::setInternalDecoder(Ref<AudioDecoder>&& internalDecoder)
 {
-    m_internalDecoder = WTFMove(internalDecoder);
+    m_internalDecoder = WTF::move(internalDecoder);
 }
 
 void WebCore::WebCodecsAudioDecoder::suspend(ReasonForSuspension)

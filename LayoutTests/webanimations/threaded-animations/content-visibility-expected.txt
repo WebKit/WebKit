@@ -1,0 +1,4 @@
+
+PASS Setting 'content-visiblity' to 'auto' prevents an 'opacity' animation from being accelerated.
+PASS Setting 'content-visiblity' to 'auto' interrupts a running accelerated 'opacity' animation.
+

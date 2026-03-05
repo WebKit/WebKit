@@ -69,9 +69,9 @@ public:
         OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other)
     {
         return adoptRef(*new NetworkLoadChecker(networkProcess, networkResourceLoader, schemeRegistry,
-            WTFMove(options), sessionID, webPageProxyID, WTFMove(originalRequestHeaders),
-            WTFMove(url), WTFMove(documentURL), WTFMove(sourceOrigin), WTFMove(topOrigin),
-            WTFMove(parentOrigin), preflightPolicy, WTFMove(referrer), allowPrivacyProxy,
+            WTF::move(options), sessionID, webPageProxyID, WTF::move(originalRequestHeaders),
+            WTF::move(url), WTF::move(documentURL), WTF::move(sourceOrigin), WTF::move(topOrigin),
+            WTF::move(parentOrigin), preflightPolicy, WTF::move(referrer), allowPrivacyProxy,
             advancedPrivacyProtections, shouldCaptureExtraNetworkLoadMetrics, requestLoadType));
     }
 
@@ -93,33 +93,32 @@ public:
 
     WebCore::ResourceError validateResponse(const WebCore::ResourceRequest&, WebCore::ResourceResponse&);
 
-    void setCSPResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders&& headers) { m_cspResponseHeaders = WTFMove(headers); }
+    void setCSPResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders&& headers) { m_cspResponseHeaders = WTF::move(headers); }
     void setParentCrossOriginEmbedderPolicy(const WebCore::CrossOriginEmbedderPolicy& parentCrossOriginEmbedderPolicy) { m_parentCrossOriginEmbedderPolicy = parentCrossOriginEmbedderPolicy; }
     void setCrossOriginEmbedderPolicy(const WebCore::CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
 #if ENABLE(CONTENT_EXTENSIONS)
     void setContentExtensionController(URL&& mainDocumentURL, URL&& frameURL, std::optional<UserContentControllerIdentifier> identifier)
     {
-        m_mainDocumentURL = WTFMove(mainDocumentURL);
-        m_frameURL = WTFMove(frameURL);
+        m_mainDocumentURL = WTF::move(mainDocumentURL);
+        m_frameURL = WTF::move(frameURL);
         m_userContentControllerIdentifier = identifier;
     }
 #endif
 
     NetworkProcess& networkProcess() { return m_networkProcess; }
-    Ref<NetworkProcess> protectedNetworkProcess();
 
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
 
-    WebCore::NetworkLoadInformation takeNetworkLoadInformation() { return WTFMove(m_loadInformation); }
+    WebCore::NetworkLoadInformation takeNetworkLoadInformation() { return WTF::move(m_loadInformation); }
     void storeRedirectionIfNeeded(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void enableContentExtensionsCheck() { m_checkContentExtensions = true; }
 
-    RefPtr<WebCore::SecurityOrigin> origin() const { return m_origin; }
-    RefPtr<WebCore::SecurityOrigin> topOrigin() const { return m_topOrigin; }
+    WebCore::SecurityOrigin* origin() const { return m_origin; }
+    WebCore::SecurityOrigin* topOrigin() const { return m_topOrigin; }
 
-    const WebCore::FetchOptions& options() const { return m_options; }
+    const WebCore::FetchOptions& options() const LIFETIME_BOUND { return m_options; }
 
     bool timingAllowFailedFlag() const { return m_timingAllowFailedFlag; }
 
@@ -137,6 +136,7 @@ private:
     bool isAllowedByContentSecurityPolicy(const WebCore::ResourceRequest&, WebCore::ContentSecurityPolicyClient*);
 
     void continueCheckingRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
+    bool shouldBlockForTrackingPolicy(const WebCore::ResourceRequest&);
     void continueCheckingRequestOrDoSyntheticRedirect(WebCore::ResourceRequest&& originalRequest, WebCore::ResourceRequest&& currentRequest, ValidationHandler&&);
 
     bool doesNotNeedCORSCheck(const URL&) const;
@@ -156,8 +156,6 @@ private:
     void processContentRuleListsForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif
 
-    RefPtr<NetworkCORSPreflightChecker> protectedCORSPreflightChecker() const;
-    RefPtr<WebCore::SecurityOrigin> protectedOrigin() const { return m_origin; }
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const { return m_parentOrigin; }
 
     bool checkTAO(const WebCore::ResourceResponse&);

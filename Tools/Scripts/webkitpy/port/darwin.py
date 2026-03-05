@@ -45,7 +45,7 @@ class DarwinPort(ApplePort):
     API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL']
 
     def __init__(self, host, port_name, **kwargs):
-        ApplePort.__init__(self, host, port_name, **kwargs)
+        super(DarwinPort, self).__init__(host, port_name, **kwargs)
 
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):
@@ -77,10 +77,12 @@ class DarwinPort(ApplePort):
 
     def sharding_groups(self, suite=None):
         if suite == 'api-tests':
-            return {
-                'system': lambda shard: self._should_use_system_shard(shard.name),
-                'system': lambda shard: self._should_use_system_shard(shard.name),
-            }
+            groups = {}
+
+            # Add system group - test-parallel-safety groups will be created dynamically in runner.py
+            groups['system'] = lambda shard: '__WEBKIT_TEST_PARALLEL_SAFETY_SHARD_' not in shard.name and self._should_use_system_shard(shard.name)
+
+            return groups
         return {
             'media': lambda shard: 'media' in shard.name or 'webaudio' in shard.name,
         }
@@ -131,6 +133,13 @@ class DarwinPort(ApplePort):
             return diagnositc_reports_directory
         return self.host.filesystem.join(log_directory, 'CrashReporter')
 
+    def crash_log_directories(self):
+        directories = [self.path_to_crash_logs()]
+        crashboard_archive = '/Library/Logs/CrashboardArchive'
+        if self.host.filesystem.exists(crashboard_archive):
+            directories.append(crashboard_archive)
+        return directories
+
     def _merge_crash_logs(self, logs, new_logs, crashed_processes):
         for test, crash_log in new_logs.items():
             try:
@@ -148,7 +157,7 @@ class DarwinPort(ApplePort):
         return logs
 
     def _look_for_all_crash_logs_in_log_dir(self, newer_than):
-        crash_log = CrashLogs(self.host, self.path_to_crash_logs(), crash_logs_to_skip=self._crash_logs_to_skip_for_host.get(self.host, []))
+        crash_log = CrashLogs(self.host, self.crash_log_directories(), crash_logs_to_skip=self._crash_logs_to_skip_for_host.get(self.host, []))
         return crash_log.find_all_logs(newer_than=newer_than)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True, target_host=None):
@@ -158,7 +167,7 @@ class DarwinPort(ApplePort):
         time_fn = time_fn or time.time
         sleep_fn = sleep_fn or time.sleep
         crash_log = ''
-        crash_logs = CrashLogs(target_host or self.host, self.path_to_crash_logs(), crash_logs_to_skip=self._crash_logs_to_skip_for_host.get(target_host or self.host, []))
+        crash_logs = CrashLogs(target_host or self.host, self.crash_log_directories(), crash_logs_to_skip=self._crash_logs_to_skip_for_host.get(target_host or self.host, []))
         now = time_fn()
         deadline = now + 5 * int(self.get_option('child_processes', 1))
         while not crash_log and now <= deadline:

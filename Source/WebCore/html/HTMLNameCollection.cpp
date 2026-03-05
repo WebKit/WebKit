@@ -39,11 +39,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-template HTMLNameCollection<WindowNameCollection, CollectionTraversalType::Descendants>::~HTMLNameCollection();
-template HTMLNameCollection<DocumentNameCollection, CollectionTraversalType::Descendants>::~HTMLNameCollection();
+template HTMLNameCollection<WindowNameCollection>::~HTMLNameCollection();
+template HTMLNameCollection<DocumentNameCollection>::~HTMLNameCollection();
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WindowNameCollection);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DocumentNameCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WindowNameCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentNameCollection);
 
 bool WindowNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {
@@ -60,7 +60,7 @@ bool WindowNameCollection::elementMatches(const Element& element, const AtomStri
         || element.getIdAttribute() == name;
 }
 
-static inline bool isObjectElementForDocumentNameCollection(const Element& element)
+static inline bool NODELETE isObjectElementForDocumentNameCollection(const Element& element)
 {
     auto* objectElement = dynamicDowncast<HTMLObjectElement>(element);
     return objectElement && objectElement->isExposed();

@@ -46,8 +46,8 @@ namespace WebCore {
 HTTPHeaderMap::HTTPHeaderMap() = default;
 
 HTTPHeaderMap::HTTPHeaderMap(CommonHeadersVector&& commonHeaders, UncommonHeadersVector&& uncommonHeaders)
-    : m_commonHeaders(WTFMove(commonHeaders))
-    , m_uncommonHeaders(WTFMove(uncommonHeaders))
+    : m_commonHeaders(WTF::move(commonHeaders))
+    , m_uncommonHeaders(WTF::move(uncommonHeaders))
 {
 }
 
@@ -62,8 +62,8 @@ HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const &
 HTTPHeaderMap HTTPHeaderMap::isolatedCopy() &&
 {
     HTTPHeaderMap map;
-    map.m_commonHeaders = crossThreadCopy(WTFMove(m_commonHeaders));
-    map.m_uncommonHeaders = crossThreadCopy(WTFMove(m_uncommonHeaders));
+    map.m_commonHeaders = crossThreadCopy(WTF::move(m_commonHeaders));
+    map.m_uncommonHeaders = crossThreadCopy(WTF::move(m_uncommonHeaders));
     return map;
 }
 

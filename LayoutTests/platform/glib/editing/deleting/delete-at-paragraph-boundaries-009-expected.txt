@@ -18,17 +18,17 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 742x53
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 742x54
             text run at (0,27) width 742: "Deleting when a selection starts at the beginning of a paragraph preceded by"
             text run at (0,54) width 665: "a text element and extends into the middle of a following paragraph."
         RenderBlock {DIV} at (14,111) size 756x108
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 747x80
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 747x81
             text run at (0,27) width 747: "Should see the three lines in the red box. First line should be \"one\". Next one"
             text run at (0,54) width 153: "should be \"ee\". "
             text run at (153,54) width 593: "Next one should be \"four\". Insertion point should be blinking"
@@ -36,12 +36,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,257) size 784x85
         RenderBlock {DIV} at (0,0) size 784x85 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (2,2) size 780x27
-            RenderText {#text} at (0,0) size 35x26
+            RenderText {#text} at (0,0) size 35x27
               text run at (0,0) width 35: "one"
           RenderBlock {P} at (2,29) size 780x27
-            RenderText {#text} at (0,0) size 22x26
+            RenderText {#text} at (0,0) size 22x27
               text run at (0,0) width 22: "ee"
           RenderBlock {P} at (2,56) size 780x27
-            RenderText {#text} at (0,0) size 40x26
+            RenderText {#text} at (0,0) size 40x27
               text run at (0,0) width 40: "four"
 caret: position 0 of child 0 {#text} of child 1 {P} of child 1 {DIV} of child 3 {DIV} of body

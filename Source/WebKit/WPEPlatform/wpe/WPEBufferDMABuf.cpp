@@ -203,7 +203,7 @@ static bool wpeBufferDMABufTryEnsureGBMDevice(WPEBufferDMABuf* buffer)
     if (!device)
         return false;
 
-    priv->deviceFD = WTFMove(fd);
+    priv->deviceFD = WTF::move(fd);
     priv->device = device;
 
     return true;

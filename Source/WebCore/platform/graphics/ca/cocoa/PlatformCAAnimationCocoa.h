@@ -124,7 +124,7 @@ public:
     void copyTimingFunctionsFrom(const PlatformCAAnimation&) override;
 
     // Animation group properties.
-    void setAnimations(const Vector<RefPtr<PlatformCAAnimation>>&) final;
+    void setAnimations(const Vector<Ref<PlatformCAAnimation>>&) final;
     void copyAnimationsFrom(const PlatformCAAnimation&) final;
 
 private:

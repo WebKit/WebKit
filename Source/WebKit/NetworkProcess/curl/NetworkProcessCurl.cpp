@@ -49,7 +49,7 @@ void NetworkProcess::allowSpecificHTTPSCertificateForHost(PAL::SessionID, const 
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
-    auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
     forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {
         if (auto* cache = session.cache())
             cache->clear(modifiedSince, [aggregator] () { });

@@ -32,7 +32,7 @@ public:
     static JSTestInterfaceLeadingUnderscore* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterfaceLeadingUnderscore>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestInterfaceLeadingUnderscore* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscore>(vm)) JSTestInterfaceLeadingUnderscore(structure, *globalObject, WTFMove(impl));
+        JSTestInterfaceLeadingUnderscore* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscore>(vm)) JSTestInterfaceLeadingUnderscore(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestInterfaceLeadingUnderscore* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestInterfaceLeadingUnderscore&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestInterfaceLeadingUnderscore* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestInterfaceLeadingUnderscore>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestInterfaceLeadingUnderscore& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestInterfaceLeadingUnderscore>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestInterfaceLeadingUnderscore> {
     using WrapperClass = JSTestInterfaceLeadingUnderscore;

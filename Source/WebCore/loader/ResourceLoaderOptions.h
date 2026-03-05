@@ -166,7 +166,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     }
 
     ResourceLoaderOptions(FetchOptions options)
-        : FetchOptions { WTFMove(options) }
+        : FetchOptions { WTF::move(options) }
         , sendLoadCallbacks(SendCallbackPolicy::DoNotSendCallbacks)
         , sniffContent(ContentSniffingPolicy::DoNotSniffContent)
         , contentEncodingSniffingPolicy(ContentEncodingSniffingPolicy::Default)

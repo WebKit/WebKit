@@ -37,7 +37,7 @@ namespace StringWrapperCFAllocator {
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(StringWrapperCFAllocator, WTF_INTERNAL);
     DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringWrapperCFAllocator);
 
-    static RefPtr<StringImpl>& currentString()
+    static RefPtr<StringImpl>& NODELETE currentString()
     {
         static NeverDestroyed<RefPtr<StringImpl>> currentString;
         return currentString;
@@ -47,18 +47,18 @@ namespace StringWrapperCFAllocator {
         RefPtr<StringImpl> m_stringImpl;
     };
 
-    static const void* retain(const void* info)
+    static const void* NODELETE retain(const void* info)
     {
         return info;
     }
 
     NO_RETURN_DUE_TO_ASSERT
-    static void release(const void*)
+    static void NODELETE release(const void*)
     {
         ASSERT_NOT_REACHED();
     }
 
-    static CFStringRef copyDescription(const void*)
+    static CFStringRef NODELETE copyDescription(const void*)
     {
         return CFSTR("WTF::String-based allocator");
     }
@@ -69,7 +69,7 @@ namespace StringWrapperCFAllocator {
         if (isMainThread())
             underlyingString = std::exchange(currentString(), nullptr);
 
-        auto [ wrapper, trailingBytes ] = createWithTrailingBytes<StringImplWrapper, StringWrapperCFAllocatorMalloc>(size, StringImplWrapper { WTFMove(underlyingString) });
+        auto [ wrapper, trailingBytes ] = createWithTrailingBytes<StringImplWrapper, StringWrapperCFAllocatorMalloc>(size, StringImplWrapper { WTF::move(underlyingString) });
         return trailingBytes;
     }
 
@@ -93,7 +93,7 @@ namespace StringWrapperCFAllocator {
         }
     }
 
-    static CFIndex preferredSize(CFIndex size, CFOptionFlags, void*)
+    static CFIndex NODELETE preferredSize(CFIndex size, CFOptionFlags, void*)
     {
         // FIXME: If FastMalloc provided a "good size" callback, we'd want to use it here.
         // Note that this optimization would help performance for strings created with the

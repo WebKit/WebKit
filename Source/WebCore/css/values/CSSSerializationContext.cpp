@@ -34,8 +34,8 @@ SerializationContext::SerializationContext() = default;
 SerializationContext::~SerializationContext() = default;
 
 SerializationContext::SerializationContext(HashMap<String, String>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, bool shouldUseResolvedURLInCSSText)
-    : replacementURLStrings { WTFMove(replacementURLStrings) }
-    , replacementURLStringsForCSSStyleSheet { WTFMove(replacementURLStringsForCSSStyleSheet) }
+    : replacementURLStrings { WTF::move(replacementURLStrings) }
+    , replacementURLStringsForCSSStyleSheet { WTF::move(replacementURLStringsForCSSStyleSheet) }
     , shouldUseResolvedURLInCSSText { shouldUseResolvedURLInCSSText }
 {
 }

@@ -32,7 +32,7 @@
 using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
-using ::testing::Invoke;
+
 using ::testing::Not;
 using ::testing::Optional;
 using ::testing::Return;
@@ -114,8 +114,7 @@ class AudioEncoderCngTest : public ::testing::Test {
     }
     info.encoded_bytes = kMockReturnEncodedBytes;
     EXPECT_CALL(*mock_encoder_, EncodeImpl(_, _, _))
-        .WillOnce(
-            Invoke(MockAudioEncoder::FakeEncoding(kMockReturnEncodedBytes)));
+        .WillOnce(MockAudioEncoder::FakeEncoding(kMockReturnEncodedBytes));
   }
 
   // Verifies that the cng_ object waits until it has collected
@@ -416,8 +415,7 @@ TEST_F(AudioEncoderCngTest, VerifySidFrameAfterSpeech) {
   EXPECT_CALL(*mock_vad_, VoiceActivity(_, _, _))
       .WillOnce(Return(Vad::kActive));
   EXPECT_CALL(*mock_encoder_, EncodeImpl(_, _, _))
-      .WillOnce(
-          Invoke(MockAudioEncoder::FakeEncoding(kMockReturnEncodedBytes)));
+      .WillOnce(MockAudioEncoder::FakeEncoding(kMockReturnEncodedBytes));
   Encode();
   EXPECT_EQ(kMockReturnEncodedBytes, encoded_info_.encoded_bytes);
 

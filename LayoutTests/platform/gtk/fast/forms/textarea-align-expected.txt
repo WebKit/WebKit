@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 624x17
+        RenderText {#text} at (0,0) size 624x18
           text run at (0,0) width 624: "The following textarea elements should all be rendered on the left, with their text aligned to the left."
       RenderBlock (anonymous) at (0,34) size 784x168
         RenderBR {BR} at (471,28) size 0x17
@@ -17,25 +17,25 @@ layer at (0,0) size 800x600
 layer at (8,42) size 471x42 clip at (9,43) size 469x40
   RenderTextControl {TEXTAREA} at (0,0) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
-      RenderText {#text} at (0,0) size 250x17
+      RenderText {#text} at (0,0) size 250x18
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (8,84) size 471x42 clip at (9,85) size 469x40
   RenderTextControl {TEXTAREA} at (0,42) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
-      RenderText {#text} at (0,0) size 250x17
+      RenderText {#text} at (0,0) size 250x18
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (8,126) size 471x42 clip at (9,127) size 469x40
   RenderTextControl {TEXTAREA} at (0,84) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
-      RenderText {#text} at (0,0) size 250x17
+      RenderText {#text} at (0,0) size 250x18
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (8,168) size 471x42 clip at (9,169) size 469x40
   RenderTextControl {TEXTAREA} at (0,126) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
-      RenderText {#text} at (0,0) size 250x17
+      RenderText {#text} at (0,0) size 250x18
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (8,210) size 471x42 clip at (9,211) size 469x40
   RenderTextControl {TEXTAREA} at (0,0) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
-      RenderText {#text} at (0,0) size 250x17
+      RenderText {#text} at (0,0) size 250x18
         text run at (0,0) width 250: "This is should be aligned to the left."

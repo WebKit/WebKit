@@ -38,7 +38,9 @@ bool pas_heap_config_activate(const pas_heap_config* config)
 
     if (config->activate_callback)
         config->activate_callback();
-    
+
+    pas_heap_config_assert_global_invariants(*config);
+
     return true;
 }
 

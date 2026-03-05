@@ -74,8 +74,7 @@ public:
         return adoptRef(*new FrameState(std::forward<Args>(args)...));
     }
 
-    // These are used to help debug <rdar://problem/48634553>.
-    FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
+    // This is used to help debug <rdar://problem/48634553>.
     ~FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
 
     Ref<FrameState> copy();
@@ -128,6 +127,9 @@ public:
     bool isEqualForTesting(const FrameState&) const;
 
 private:
+    // This is used to help debug <rdar://problem/48634553>.
+    FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
+
     FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier>, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, bool hasCachedPage, String&& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession,  std::optional<WebCore::PolicyContainer>&&,
 #if PLATFORM(IOS_FAMILY)
         WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
@@ -145,8 +147,18 @@ private:
     Vector<AtomString> m_documentState;
 } SWIFT_SHARED_REFERENCE(refFrameState, derefFrameState);
 
+// FIXME(rdar://171785683): see if this SWIFT_ESCAPABLE can be avoided
+struct BackForwardListItemState {
+    Ref<FrameState> frameState;
+    std::optional<WebCore::FrameIdentifier> navigatedFrameID;
+
+    bool isEqualForTesting(const BackForwardListItemState&) const;
+} SWIFT_ESCAPABLE;
+
+using VectorBackForwardListItemState = Vector<BackForwardListItemState>;
+
 struct BackForwardListState {
-    Vector<Ref<FrameState>> items;
+    Vector<BackForwardListItemState> items;
     std::optional<uint32_t> currentIndex;
 
     bool isEqualForTesting(const BackForwardListState&) const;
@@ -160,6 +172,10 @@ struct SessionState {
 
     bool isEqualForTesting(const SessionState&) const;
 };
+
+using RefFrameState = Ref<FrameState>;
+using RefPtrFrameState = RefPtr<FrameState>;
+using VectorRefFrameState = Vector<Ref<FrameState>>;
 
 } // namespace WebKit
 

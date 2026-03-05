@@ -28,7 +28,6 @@
 namespace WebCore {
 class BitmapTexture;
 class CoordinatedTileBuffer;
-class TextureMapper;
 
 class CoordinatedBackingStoreTile {
 public:
@@ -47,7 +46,7 @@ public:
     };
     void addUpdate(Update&&);
 
-    void processPendingUpdates(TextureMapper&);
+    void processPendingUpdates();
 
     bool canBePainted() const { return !!m_texture; }
 

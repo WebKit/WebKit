@@ -49,9 +49,9 @@ static int ipv6_hex(uint8_t *out, const char *in, size_t inlen);
 static int x509V3_add_len_value(const char *name, const char *value,
                                 size_t value_len, int omit_value,
                                 STACK_OF(CONF_VALUE) **extlist) {
-  CONF_VALUE *vtmp = NULL;
-  char *tname = NULL, *tvalue = NULL;
-  int extlist_was_null = *extlist == NULL;
+  CONF_VALUE *vtmp = nullptr;
+  char *tname = nullptr, *tvalue = nullptr;
+  int extlist_was_null = *extlist == nullptr;
   if (name && !(tname = OPENSSL_strdup(name))) {
     goto err;
   }
@@ -62,7 +62,7 @@ static int x509V3_add_len_value(const char *name, const char *value,
       goto err;
     }
     tvalue = OPENSSL_strndup(value, value_len);
-    if (tvalue == NULL) {
+    if (tvalue == nullptr) {
       goto err;
     }
   }
@@ -72,7 +72,7 @@ static int x509V3_add_len_value(const char *name, const char *value,
   if (!*extlist && !(*extlist = sk_CONF_VALUE_new_null())) {
     goto err;
   }
-  vtmp->section = NULL;
+  vtmp->section = nullptr;
   vtmp->name = tname;
   vtmp->value = tvalue;
   if (!sk_CONF_VALUE_push(*extlist, vtmp)) {
@@ -82,7 +82,7 @@ static int x509V3_add_len_value(const char *name, const char *value,
 err:
   if (extlist_was_null) {
     sk_CONF_VALUE_free(*extlist);
-    *extlist = NULL;
+    *extlist = nullptr;
   }
   OPENSSL_free(vtmp);
   OPENSSL_free(tname);
@@ -92,8 +92,8 @@ err:
 
 int X509V3_add_value(const char *name, const char *value,
                      STACK_OF(CONF_VALUE) **extlist) {
-  return x509V3_add_len_value(name, value, value != NULL ? strlen(value) : 0,
-                              /*omit_value=*/value == NULL, extlist);
+  return x509V3_add_len_value(name, value, value != nullptr ? strlen(value) : 0,
+                              /*omit_value=*/value == nullptr, extlist);
 }
 
 int x509V3_add_value_asn1_string(const char *name, const ASN1_STRING *value,
@@ -133,8 +133,8 @@ static char *bignum_to_string(const BIGNUM *bn) {
   }
 
   tmp = BN_bn2hex(bn);
-  if (tmp == NULL) {
-    return NULL;
+  if (tmp == nullptr) {
+    return nullptr;
   }
 
   // Prepend "0x", but place it after the "-" if negative.
@@ -148,12 +148,12 @@ static char *bignum_to_string(const BIGNUM *bn) {
 
 char *i2s_ASN1_ENUMERATED(const X509V3_EXT_METHOD *method,
                           const ASN1_ENUMERATED *a) {
-  BIGNUM *bntmp = NULL;
-  char *strtmp = NULL;
+  BIGNUM *bntmp = nullptr;
+  char *strtmp = nullptr;
   if (!a) {
-    return NULL;
+    return nullptr;
   }
-  if (!(bntmp = ASN1_ENUMERATED_to_BN(a, NULL)) ||
+  if (!(bntmp = ASN1_ENUMERATED_to_BN(a, nullptr)) ||
       !(strtmp = bignum_to_string(bntmp))) {
   }
   BN_free(bntmp);
@@ -161,12 +161,12 @@ char *i2s_ASN1_ENUMERATED(const X509V3_EXT_METHOD *method,
 }
 
 char *i2s_ASN1_INTEGER(const X509V3_EXT_METHOD *method, const ASN1_INTEGER *a) {
-  BIGNUM *bntmp = NULL;
-  char *strtmp = NULL;
+  BIGNUM *bntmp = nullptr;
+  char *strtmp = nullptr;
   if (!a) {
-    return NULL;
+    return nullptr;
   }
-  if (!(bntmp = ASN1_INTEGER_to_BN(a, NULL)) ||
+  if (!(bntmp = ASN1_INTEGER_to_BN(a, nullptr)) ||
       !(strtmp = bignum_to_string(bntmp))) {
   }
   BN_free(bntmp);
@@ -175,13 +175,13 @@ char *i2s_ASN1_INTEGER(const X509V3_EXT_METHOD *method, const ASN1_INTEGER *a) {
 
 ASN1_INTEGER *s2i_ASN1_INTEGER(const X509V3_EXT_METHOD *method,
                                const char *value) {
-  BIGNUM *bn = NULL;
+  BIGNUM *bn = nullptr;
   ASN1_INTEGER *aint;
   int isneg, ishex;
   int ret;
   if (!value) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_VALUE);
-    return 0;
+    return nullptr;
   }
   bn = BN_new();
   if (value[0] == '-') {
@@ -203,13 +203,13 @@ ASN1_INTEGER *s2i_ASN1_INTEGER(const X509V3_EXT_METHOD *method,
   } else {
     // Decoding from decimal scales quadratically in the input length. Bound the
     // largest decimal input we accept in the config parser. 8,192 decimal
-    // digits allows values up to 27,213 bits. Ths exceeds the largest RSA, DSA,
-    // or DH modulus we support, and those are not usefully represented in
+    // digits allows values up to 27,213 bits. This exceeds the largest RSA,
+    // DSA, or DH modulus we support, and those are not usefully represented in
     // decimal.
     if (strlen(value) > 8192) {
       BN_free(bn);
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NUMBER);
-      return 0;
+      return nullptr;
     }
     ret = BN_dec2bn(&bn, value);
   }
@@ -217,18 +217,18 @@ ASN1_INTEGER *s2i_ASN1_INTEGER(const X509V3_EXT_METHOD *method,
   if (!ret || value[ret]) {
     BN_free(bn);
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_BN_DEC2BN_ERROR);
-    return 0;
+    return nullptr;
   }
 
   if (isneg && BN_is_zero(bn)) {
     isneg = 0;
   }
 
-  aint = BN_to_ASN1_INTEGER(bn, NULL);
+  aint = BN_to_ASN1_INTEGER(bn, nullptr);
   BN_free(bn);
   if (!aint) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_BN_TO_ASN1_INTEGER_ERROR);
-    return 0;
+    return nullptr;
   }
   if (isneg) {
     aint->type |= V_ASN1_NEG;
@@ -243,7 +243,7 @@ int X509V3_add_value_int(const char *name, const ASN1_INTEGER *aint,
   if (!aint) {
     return 1;
   }
-  if (!(strtmp = i2s_ASN1_INTEGER(NULL, aint))) {
+  if (!(strtmp = i2s_ASN1_INTEGER(nullptr, aint))) {
     return 0;
   }
   ret = X509V3_add_value(name, strtmp, extlist);
@@ -268,7 +268,7 @@ int X509V3_bool_from_string(const char *str, ASN1_BOOLEAN *out_bool) {
 
 int X509V3_get_value_bool(const CONF_VALUE *value, ASN1_BOOLEAN *out_bool) {
   const char *btmp = value->value;
-  if (btmp == NULL) {
+  if (btmp == nullptr) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_BOOLEAN_STRING);
     goto err;
   }
@@ -284,7 +284,7 @@ err:
 
 int X509V3_get_value_int(const CONF_VALUE *value, ASN1_INTEGER **aint) {
   ASN1_INTEGER *itmp;
-  if (!(itmp = s2i_ASN1_INTEGER(NULL, value->value))) {
+  if (!(itmp = s2i_ASN1_INTEGER(nullptr, value->value))) {
     X509V3_conf_err(value);
     return 0;
   }
@@ -301,16 +301,16 @@ int X509V3_get_value_int(const CONF_VALUE *value, ASN1_INTEGER **aint) {
 STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line) {
   char *p, *q, c;
   char *ntmp, *vtmp;
-  STACK_OF(CONF_VALUE) *values = NULL;
+  STACK_OF(CONF_VALUE) *values = nullptr;
   char *linebuf;
   int state;
   // We are going to modify the line so copy it first
   linebuf = OPENSSL_strdup(line);
-  if (linebuf == NULL) {
+  if (linebuf == nullptr) {
     goto err;
   }
   state = HDR_NAME;
-  ntmp = NULL;
+  ntmp = nullptr;
   // Go through all characters
   for (p = linebuf, q = linebuf; (c = *p) && (c != '\r') && (c != '\n'); p++) {
     switch (state) {
@@ -335,7 +335,7 @@ STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line) {
             OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_NAME);
             goto err;
           }
-          X509V3_add_value(ntmp, NULL, &values);
+          X509V3_add_value(ntmp, nullptr, &values);
         }
         break;
 
@@ -352,7 +352,7 @@ STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line) {
             goto err;
           }
           X509V3_add_value(ntmp, vtmp, &values);
-          ntmp = NULL;
+          ntmp = nullptr;
           q = p + 1;
         }
     }
@@ -377,7 +377,7 @@ STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_NAME);
       goto err;
     }
-    X509V3_add_value(ntmp, NULL, &values);
+    X509V3_add_value(ntmp, nullptr, &values);
   }
   OPENSSL_free(linebuf);
   return values;
@@ -385,7 +385,7 @@ STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line) {
 err:
   OPENSSL_free(linebuf);
   sk_CONF_VALUE_pop_free(values, X509V3_conf_free);
-  return NULL;
+  return nullptr;
 }
 
 // Delete leading and trailing spaces from a string
@@ -397,7 +397,7 @@ static char *strip_spaces(char *name) {
     p++;
   }
   if (!*p) {
-    return NULL;
+    return nullptr;
   }
   q = p + strlen(p) - 1;
   while ((q != p) && OPENSSL_isspace((unsigned char)*q)) {
@@ -407,7 +407,7 @@ static char *strip_spaces(char *name) {
     q[1] = 0;
   }
   if (!*p) {
-    return NULL;
+    return nullptr;
   }
   return p;
 }
@@ -437,7 +437,7 @@ char *x509v3_bytes_to_hex(const uint8_t *in, size_t len) {
 
 err:
   CBB_cleanup(&cbb);
-  return NULL;
+  return nullptr;
 }
 
 unsigned char *x509v3_hex_to_bytes(const char *str, size_t *len) {
@@ -446,7 +446,7 @@ unsigned char *x509v3_hex_to_bytes(const char *str, size_t *len) {
   uint8_t high, low;
   if (!str) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_ARGUMENT);
-    return NULL;
+    return nullptr;
   }
   if (!(hexbuf =
             reinterpret_cast<uint8_t *>(OPENSSL_malloc(strlen(str) >> 1)))) {
@@ -461,7 +461,7 @@ unsigned char *x509v3_hex_to_bytes(const char *str, size_t *len) {
     if (!cl) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_ODD_NUMBER_OF_DIGITS);
       OPENSSL_free(hexbuf);
-      return NULL;
+      return nullptr;
     }
     if (!OPENSSL_fromxdigit(&high, ch)) {
       goto badhex;
@@ -480,12 +480,12 @@ unsigned char *x509v3_hex_to_bytes(const char *str, size_t *len) {
 
 err:
   OPENSSL_free(hexbuf);
-  return NULL;
+  return nullptr;
 
 badhex:
   OPENSSL_free(hexbuf);
   OPENSSL_PUT_ERROR(X509V3, X509V3_R_ILLEGAL_HEX_DIGIT);
-  return NULL;
+  return nullptr;
 }
 
 int x509v3_conf_name_matches(const char *name, const char *cmp) {
@@ -507,7 +507,7 @@ STACK_OF(OPENSSL_STRING) *X509_get1_email(const X509 *x) {
   STACK_OF(OPENSSL_STRING) *ret;
 
   gens = reinterpret_cast<GENERAL_NAMES *>(
-      X509_get_ext_d2i(x, NID_subject_alt_name, NULL, NULL));
+      X509_get_ext_d2i(x, NID_subject_alt_name, nullptr, nullptr));
   ret = get_email(X509_get_subject_name(x), gens);
   sk_GENERAL_NAME_pop_free(gens, GENERAL_NAME_free);
   return ret;
@@ -515,13 +515,13 @@ STACK_OF(OPENSSL_STRING) *X509_get1_email(const X509 *x) {
 
 STACK_OF(OPENSSL_STRING) *X509_get1_ocsp(const X509 *x) {
   AUTHORITY_INFO_ACCESS *info;
-  STACK_OF(OPENSSL_STRING) *ret = NULL;
+  STACK_OF(OPENSSL_STRING) *ret = nullptr;
   size_t i;
 
   info = reinterpret_cast<AUTHORITY_INFO_ACCESS *>(
-      X509_get_ext_d2i(x, NID_info_access, NULL, NULL));
+      X509_get_ext_d2i(x, NID_info_access, nullptr, nullptr));
   if (!info) {
-    return NULL;
+    return nullptr;
   }
   for (i = 0; i < sk_ACCESS_DESCRIPTION_num(info); i++) {
     ACCESS_DESCRIPTION *ad = sk_ACCESS_DESCRIPTION_value(info, i);
@@ -544,7 +544,7 @@ STACK_OF(OPENSSL_STRING) *X509_REQ_get1_email(const X509_REQ *x) {
 
   exts = X509_REQ_get_extensions(x);
   gens = reinterpret_cast<GENERAL_NAMES *>(
-      X509V3_get_d2i(exts, NID_subject_alt_name, NULL, NULL));
+      X509V3_get_d2i(exts, NID_subject_alt_name, nullptr, nullptr));
   ret = get_email(X509_REQ_get_subject_name(x), gens);
   sk_GENERAL_NAME_pop_free(gens, GENERAL_NAME_free);
   sk_X509_EXTENSION_pop_free(exts, X509_EXTENSION_free);
@@ -553,7 +553,7 @@ STACK_OF(OPENSSL_STRING) *X509_REQ_get1_email(const X509_REQ *x) {
 
 static STACK_OF(OPENSSL_STRING) *get_email(const X509_NAME *name,
                                            const GENERAL_NAMES *gens) {
-  STACK_OF(OPENSSL_STRING) *ret = NULL;
+  STACK_OF(OPENSSL_STRING) *ret = nullptr;
   // Now add any email address(es) to STACK
   int i = -1;
   // First supplied X509_NAME
@@ -562,7 +562,7 @@ static STACK_OF(OPENSSL_STRING) *get_email(const X509_NAME *name,
     const X509_NAME_ENTRY *ne = X509_NAME_get_entry(name, i);
     const ASN1_IA5STRING *email = X509_NAME_ENTRY_get_data(ne);
     if (!append_ia5(&ret, email)) {
-      return NULL;
+      return nullptr;
     }
   }
   for (size_t j = 0; j < sk_GENERAL_NAME_num(gens); j++) {
@@ -571,7 +571,7 @@ static STACK_OF(OPENSSL_STRING) *get_email(const X509_NAME *name,
       continue;
     }
     if (!append_ia5(&ret, gen->d.ia5)) {
-      return NULL;
+      return nullptr;
     }
   }
   return ret;
@@ -585,16 +585,16 @@ static int append_ia5(STACK_OF(OPENSSL_STRING) **sk,
   if (email->type != V_ASN1_IA5STRING) {
     return 1;
   }
-  if (email->data == NULL || email->length == 0) {
+  if (email->data == nullptr || email->length == 0) {
     return 1;
   }
   // |OPENSSL_STRING| cannot represent strings with embedded NULs. Do not
   // report them as outputs.
-  if (OPENSSL_memchr(email->data, 0, email->length) != NULL) {
+  if (OPENSSL_memchr(email->data, 0, email->length) != nullptr) {
     return 1;
   }
 
-  char *emtmp = NULL;
+  char *emtmp = nullptr;
   if (!*sk) {
     *sk = sk_OPENSSL_STRING_new(sk_strcmp);
   }
@@ -603,13 +603,13 @@ static int append_ia5(STACK_OF(OPENSSL_STRING) **sk,
   }
 
   emtmp = OPENSSL_strndup((char *)email->data, email->length);
-  if (emtmp == NULL) {
+  if (emtmp == nullptr) {
     goto err;
   }
 
   // Don't add duplicates
   sk_OPENSSL_STRING_sort(*sk);
-  if (sk_OPENSSL_STRING_find(*sk, NULL, emtmp)) {
+  if (sk_OPENSSL_STRING_find(*sk, nullptr, emtmp)) {
     OPENSSL_free(emtmp);
     return 1;
   }
@@ -623,7 +623,7 @@ err:
   // on |append_ia5| leaving |*sk| at NULL on error.
   OPENSSL_free(emtmp);
   X509_email_free(*sk);
-  *sk = NULL;
+  *sk = nullptr;
   return 0;
 }
 
@@ -754,7 +754,7 @@ static int wildcard_match(const unsigned char *prefix, size_t prefix_len,
 
 static const unsigned char *valid_star(const unsigned char *p, size_t len,
                                        unsigned int flags) {
-  const unsigned char *star = 0;
+  const unsigned char *star = nullptr;
   size_t i;
   int state = LABEL_START;
   int dots = 0;
@@ -767,12 +767,12 @@ static const unsigned char *valid_star(const unsigned char *p, size_t len,
       // At most one wildcard per pattern.
       // No wildcards in IDNA labels.
       // No wildcards after the first label.
-      if (star != NULL || (state & LABEL_IDNA) != 0 || dots) {
-        return NULL;
+      if (star != nullptr || (state & LABEL_IDNA) != 0 || dots) {
+        return nullptr;
       }
       // Only full-label '*.example.com' wildcards.
       if (!atstart || !atend) {
-        return NULL;
+        return nullptr;
       }
       star = &p[i];
       state &= ~LABEL_START;
@@ -784,25 +784,25 @@ static const unsigned char *valid_star(const unsigned char *p, size_t len,
       state &= ~(LABEL_HYPHEN | LABEL_START);
     } else if (p[i] == '.') {
       if ((state & (LABEL_HYPHEN | LABEL_START)) != 0) {
-        return NULL;
+        return nullptr;
       }
       state = LABEL_START;
       ++dots;
     } else if (p[i] == '-') {
       // no domain/subdomain starts with '-'
       if ((state & LABEL_START) != 0) {
-        return NULL;
+        return nullptr;
       }
       state |= LABEL_HYPHEN;
     } else {
-      return NULL;
+      return nullptr;
     }
   }
 
   // The final label must not end in a hyphen or ".", and
   // there must be at least two dots after the star.
   if ((state & (LABEL_START | LABEL_HYPHEN)) != 0 || dots < 2) {
-    return NULL;
+    return nullptr;
   }
   return star;
 }
@@ -811,14 +811,14 @@ static const unsigned char *valid_star(const unsigned char *p, size_t len,
 static int equal_wildcard(const unsigned char *pattern, size_t pattern_len,
                           const unsigned char *subject, size_t subject_len,
                           unsigned int flags) {
-  const unsigned char *star = NULL;
+  const unsigned char *star = nullptr;
 
   // Subject names starting with '.' can only match a wildcard pattern
   // via a subject sub-domain pattern suffix match.
   if (!(subject_len > 1 && subject[0] == '.')) {
     star = valid_star(pattern, pattern_len, flags);
   }
-  if (star == NULL) {
+  if (star == nullptr) {
     return equal_nocase(pattern, pattern_len, subject, subject_len, flags);
   }
   return wildcard_match(pattern, star - pattern, star + 1,
@@ -892,7 +892,7 @@ static int do_check_string(const ASN1_STRING *a, int cmp_type, equal_fn equal,
     }
     if (rv > 0 && peername) {
       *peername = OPENSSL_strndup((char *)a->data, a->length);
-      if (*peername == NULL) {
+      if (*peername == nullptr) {
         return -1;
       }
     }
@@ -913,7 +913,7 @@ static int do_check_string(const ASN1_STRING *a, int cmp_type, equal_fn equal,
     }
     if (rv > 0 && peername) {
       *peername = OPENSSL_strndup((char *)astr, astrlen);
-      if (*peername == NULL) {
+      if (*peername == nullptr) {
         return -1;
       }
     }
@@ -946,7 +946,7 @@ static int do_x509_check(const X509 *x, const char *chk, size_t chklen,
   }
 
   GENERAL_NAMES *gens = reinterpret_cast<GENERAL_NAMES *>(
-      X509_get_ext_d2i(x, NID_subject_alt_name, NULL, NULL));
+      X509_get_ext_d2i(x, NID_subject_alt_name, nullptr, nullptr));
   if (gens) {
     for (size_t i = 0; i < sk_GENERAL_NAME_num(gens); i++) {
       const GENERAL_NAME *gen = sk_GENERAL_NAME_value(gens, i);
@@ -992,7 +992,7 @@ static int do_x509_check(const X509 *x, const char *chk, size_t chklen,
 
 int X509_check_host(const X509 *x, const char *chk, size_t chklen,
                     unsigned int flags, char **peername) {
-  if (chk == NULL) {
+  if (chk == nullptr) {
     return -2;
   }
   if (OPENSSL_memchr(chk, '\0', chklen)) {
@@ -1003,35 +1003,36 @@ int X509_check_host(const X509 *x, const char *chk, size_t chklen,
 
 int X509_check_email(const X509 *x, const char *chk, size_t chklen,
                      unsigned int flags) {
-  if (chk == NULL) {
+  if (chk == nullptr) {
     return -2;
   }
   if (OPENSSL_memchr(chk, '\0', chklen)) {
     return -2;
   }
-  return do_x509_check(x, chk, chklen, flags, GEN_EMAIL, NULL);
+  return do_x509_check(x, chk, chklen, flags, GEN_EMAIL, nullptr);
 }
 
 int X509_check_ip(const X509 *x, const unsigned char *chk, size_t chklen,
                   unsigned int flags) {
-  if (chk == NULL) {
+  if (chk == nullptr) {
     return -2;
   }
-  return do_x509_check(x, (const char *)chk, chklen, flags, GEN_IPADD, NULL);
+  return do_x509_check(x, (const char *)chk, chklen, flags, GEN_IPADD, nullptr);
 }
 
 int X509_check_ip_asc(const X509 *x, const char *ipasc, unsigned int flags) {
   unsigned char ipout[16];
   size_t iplen;
 
-  if (ipasc == NULL) {
+  if (ipasc == nullptr) {
     return -2;
   }
   iplen = (size_t)x509v3_a2i_ipadd(ipout, ipasc);
   if (iplen == 0) {
     return -2;
   }
-  return do_x509_check(x, (const char *)ipout, iplen, flags, GEN_IPADD, NULL);
+  return do_x509_check(x, (const char *)ipout, iplen, flags, GEN_IPADD,
+                       nullptr);
 }
 
 // Convert IP addresses both IPv4 and IPv6 into an OCTET STRING compatible
@@ -1044,33 +1045,33 @@ ASN1_OCTET_STRING *a2i_IPADDRESS(const char *ipasc) {
 
   iplen = x509v3_a2i_ipadd(ipout, ipasc);
   if (!iplen) {
-    return NULL;
+    return nullptr;
   }
 
   ret = ASN1_OCTET_STRING_new();
   if (!ret) {
-    return NULL;
+    return nullptr;
   }
   if (!ASN1_OCTET_STRING_set(ret, ipout, iplen)) {
     ASN1_OCTET_STRING_free(ret);
-    return NULL;
+    return nullptr;
   }
   return ret;
 }
 
 ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc) {
-  ASN1_OCTET_STRING *ret = NULL;
+  ASN1_OCTET_STRING *ret = nullptr;
   unsigned char ipout[32];
-  char *iptmp = NULL, *p;
+  char *iptmp = nullptr, *p;
   int iplen1, iplen2;
   // FIXME: yes, this function takes a const pointer and writes to it!
   p = const_cast<char *>(strchr(ipasc, '/'));
   if (!p) {
-    return NULL;
+    return nullptr;
   }
   iptmp = OPENSSL_strdup(ipasc);
   if (!iptmp) {
-    return NULL;
+    return nullptr;
   }
   p = iptmp + (p - ipasc);
   *p++ = 0;
@@ -1084,7 +1085,7 @@ ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc) {
   iplen2 = x509v3_a2i_ipadd(ipout + iplen1, p);
 
   OPENSSL_free(iptmp);
-  iptmp = NULL;
+  iptmp = nullptr;
 
   if (!iplen2 || (iplen1 != iplen2)) {
     goto err;
@@ -1103,7 +1104,7 @@ ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc) {
 err:
   OPENSSL_free(iptmp);
   ASN1_OCTET_STRING_free(ret);
-  return NULL;
+  return nullptr;
 }
 
 int x509v3_a2i_ipadd(uint8_t ipout[16], const char *ipasc) {

@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLObject.h"
+#include <WebCore/WebGLObject.h>
 
 namespace WTF {
 class AbstractLocker;
@@ -37,7 +37,8 @@ namespace WebCore {
 
 class WebGLQuery final : public WebGLObject {
 public:
-    static RefPtr<WebGLQuery> create(WebGLRenderingContextBase&);
+    static Ref<WebGLQuery> createLost();
+    static Ref<WebGLQuery> create(WebGLRenderingContextBase&);
     virtual ~WebGLQuery();
 
     bool isResultAvailable() const { return m_isResultAvailable; }
@@ -50,6 +51,7 @@ public:
     bool isInitialized() const { return true; }
 private:
     WebGLQuery(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLQuery();
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     bool m_isResultAvailable { false };

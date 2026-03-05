@@ -1667,14 +1667,6 @@ void ScalePlaneVertical(int src_height,
     InterpolateRow = InterpolateRow_SME;
   }
 #endif
-#if defined(HAS_INTERPOLATEROW_MSA)
-  if (TestCpuFlag(kCpuHasMSA)) {
-    InterpolateRow = InterpolateRow_Any_MSA;
-    if (IS_ALIGNED(dst_width_bytes, 32)) {
-      InterpolateRow = InterpolateRow_MSA;
-    }
-  }
-#endif
 #if defined(HAS_INTERPOLATEROW_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     InterpolateRow = InterpolateRow_Any_LSX;

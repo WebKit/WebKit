@@ -63,7 +63,7 @@ void NetworkRTCSharedMonitor::addListener(NetworkRTCMonitor& monitor)
         return;
 
 #if PLATFORM(COCOA)
-    if (monitor.rtcProvider().webRTCInterfaceMonitoringViaNWEnabled()) {
+    if (protect(monitor.rtcProvider())->webRTCInterfaceMonitoringViaNWEnabled()) {
         setupNWPathMonitor();
         return;
     }
@@ -105,18 +105,18 @@ webrtc::AdapterType NetworkRTCSharedMonitor::adapterTypeFromInterfaceName(const 
 void NetworkRTCSharedMonitor::updateNetworks()
 {
     auto aggregator = IPAddressCallbackAggregator::create([] (auto&& ipv4, auto&& ipv6, auto&& networkList) mutable {
-        NetworkRTCSharedMonitor::singleton().onGatheredNetworks(WTFMove(ipv4), WTFMove(ipv6), WTFMove(networkList));
+        NetworkRTCSharedMonitor::singleton().onGatheredNetworks(WTF::move(ipv4), WTF::move(ipv6), WTF::move(networkList));
     });
     Ref protectedQueue = m_queue;
     protectedQueue->dispatch([aggregator] {
         bool useIPv4 = true;
         if (auto address = NetworkRTCMonitor::getDefaultIPAddress(useIPv4))
-            aggregator->setIPv4(WTFMove(*address));
+            aggregator->setIPv4(WTF::move(*address));
     });
     protectedQueue->dispatch([aggregator] {
         bool useIPv4 = false;
         if (auto address = NetworkRTCMonitor::getDefaultIPAddress(useIPv4))
-            aggregator->setIPv6(WTFMove(*address));
+            aggregator->setIPv6(WTF::move(*address));
     });
     protectedQueue->dispatch([aggregator] {
         aggregator->setNetworkMap(NetworkRTCMonitor::gatherNetworkMap());
@@ -127,9 +127,9 @@ void NetworkRTCSharedMonitor::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, R
 {
     if (!m_didReceiveResults) {
         m_didReceiveResults = true;
-        m_networkMap = WTFMove(networkMap);
-        m_ipv4 = WTFMove(ipv4);
-        m_ipv6 = WTFMove(ipv6);
+        m_networkMap = WTF::move(networkMap);
+        m_ipv4 = WTF::move(ipv4);
+        m_ipv6 = WTF::move(ipv6);
 
         for (auto& network : m_networkMap.values())
             network.id = ++m_networkLastIndex;
@@ -152,11 +152,11 @@ void NetworkRTCSharedMonitor::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, R
         if (!didChange && (ipv4.isUnspecified() || NetworkRTCMonitor::isEqual(ipv4, m_ipv4)) && (ipv6.isUnspecified() || NetworkRTCMonitor::isEqual(ipv6, m_ipv6)))
             return;
 
-        m_networkMap = WTFMove(networkMap);
+        m_networkMap = WTF::move(networkMap);
         if (!ipv4.isUnspecified())
-            m_ipv4 = WTFMove(ipv4);
+            m_ipv4 = WTF::move(ipv4);
         if (!ipv6.isUnspecified())
-            m_ipv6 = WTFMove(ipv6);
+            m_ipv6 = WTF::move(ipv6);
     }
     RELEASE_LOG(WebRTC, "NetworkRTCSharedMonitor::onGatheredNetworks - networks changed");
 

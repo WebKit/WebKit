@@ -44,7 +44,7 @@ RefPtr<HTMLFormElement> FormAssociatedElement::formForBindings() const
 void FormAssociatedElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
 {
     ASSERT(m_form.get() != newForm);
-    m_form = WTFMove(newForm);
+    m_form = WTF::move(newForm);
 }
 
 void FormAssociatedElement::elementInsertedIntoAncestor(Element& element, Node::InsertionType)

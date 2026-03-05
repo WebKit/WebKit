@@ -41,7 +41,7 @@ public:
     RouterNotCondition(RouterCondition&&);
 
     RouterCondition& value() & { return m_value.get(); }
-    RouterCondition&& value() && { return WTFMove(m_value.get()); }
+    RouterCondition&& value() && { return WTF::move(m_value.get()); }
 
 private:
     UniqueRef<RouterCondition> m_value;
@@ -57,12 +57,12 @@ struct RouterCondition {
     std::optional<RunningStatus> runningStatus;
 
     using Condition = RouterCondition;
-    Vector<Condition> orConditions;
+    std::optional<Vector<Condition>> orConditions;
     std::optional<RouterNotCondition> notCondition;
 };
 
 inline RouterNotCondition::RouterNotCondition(RouterCondition&& value)
-    : m_value(makeUniqueRef<RouterCondition>(WTFMove(value)))
+    : m_value(makeUniqueRef<RouterCondition>(WTF::move(value)))
 {
 }
 

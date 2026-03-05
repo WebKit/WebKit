@@ -36,6 +36,7 @@
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextMessages.h"
 #include "RemoteImageBufferProxy.h"
+#include "RemotePathImplIdentifier.h"
 #include "RemoteRenderingBackendIdentifier.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteResourceCacheProxy.h"
@@ -119,6 +120,8 @@ public:
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheNativeImageFromSharedNativeImage(const RemoteNativeImageProxy&);
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
+    void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
+    void releasePathImpl(RemotePathImplIdentifier);
     void cacheFont(const WebCore::Font::Attributes&, const WebCore::FontPlatformDataAttributes&, std::optional<WebCore::RenderingResourceIdentifier>);
     void releaseFont(WebCore::RenderingResourceIdentifier);
     void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);
@@ -165,7 +168,7 @@ public:
         bool requiresClearedPixels { true };
     };
 
-    void startPreparingImageBufferSetsForDisplay();
+    void NODELETE startPreparingImageBufferSetsForDisplay();
     void endPreparingImageBufferSetsForDisplay();
 
     void prepareImageBufferSetForDisplay(LayerPrepareBuffersData&&);
@@ -177,7 +180,7 @@ public:
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
     unsigned delayedRenderingUpdateCount() const { return m_renderingUpdateID - m_didRenderingUpdateID; }
 
-    RemoteRenderingBackendIdentifier renderingBackendIdentifier() const;
+    RemoteRenderingBackendIdentifier NODELETE renderingBackendIdentifier() const;
 
     RemoteRenderingBackendIdentifier ensureBackendCreated();
 
@@ -194,7 +197,7 @@ public:
 
     static constexpr Seconds defaultTimeout = 15_s;
 
-    unsigned nativeImageCountForTesting() const;
+    unsigned NODELETE nativeImageCountForTesting() const;
 private:
     explicit RemoteRenderingBackendProxy(SerialFunctionDispatcher&);
 
@@ -216,7 +219,7 @@ private:
     void ensureGPUProcessConnection();
 
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool NODELETE dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     // Returns std::nullopt if no update is needed or allocation failed.
     // Returns handle if that should be sent to the receiver process.
@@ -230,8 +233,6 @@ private:
 
     // SerialFunctionDispatcher
     void dispatch(Function<void()>&&) final;
-
-    RefPtr<IPC::StreamClientConnection> protectedConnection() const { return m_connection; }
 
     ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,14 +26,15 @@
 #include "Document.h"
 #include "LegacyRenderSVGResource.h"
 #include "RenderSVGGradientStop.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGStopElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGStopElement);
 
 inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -56,10 +57,19 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
 void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::offsetAttr) {
-        if (newValue.endsWith('%'))
-            Ref { m_offset }->setBaseValInternal(newValue.string().left(newValue.length() - 1).toFloat() / 100.0f);
-        else
-            Ref { m_offset }->setBaseValInternal(newValue.toFloat());
+        auto valueView = StringView(newValue).trim(isASCIIWhitespace<char16_t>);
+        bool isPercentage = valueView.endsWith('%');
+
+        if (isPercentage)
+            valueView = valueView.left(valueView.length() - 1);
+
+        auto parsedValue = parseNumber(valueView, SuffixSkippingPolicy::DontSkip);
+        float value = parsedValue.value_or(0);
+
+        if (parsedValue && isPercentage)
+            value /= 100.0f;
+
+        Ref { m_offset }->setBaseValInternal(value);
     }
 
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -79,7 +89,7 @@ void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGStopElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGGradientStop>(*this, WTFMove(style));
+    return createRenderer<RenderSVGGradientStop>(*this, WTF::move(style));
 }
 
 bool SVGStopElement::rendererIsNeeded(const RenderStyle&)
@@ -94,9 +104,9 @@ Color SVGStopElement::stopColorIncludingOpacity() const
     if (!renderer())
         return Color::black;
 
-    auto& style = renderer()->style();
-    auto stopColor = style.colorResolvingCurrentColor(style.stopColor());
-    return stopColor.colorWithAlphaMultipliedBy(style.stopOpacity().value.value);
+    CheckedRef style = renderer()->style();
+    auto stopColor = style->stopColorResolvingCurrentColor();
+    return stopColor.colorWithAlphaMultipliedBy(style->stopOpacity().value.value);
 }
 
 }

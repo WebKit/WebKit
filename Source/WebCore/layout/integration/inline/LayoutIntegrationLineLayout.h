@@ -69,7 +69,7 @@ public:
     LineLayout(RenderBlockFlow&);
     ~LineLayout();
 
-    static RenderBlockFlow* blockContainer(const RenderObject&);
+    static RenderBlockFlow* NODELETE blockContainer(const RenderObject&);
     static LineLayout* containing(RenderObject&);
     static const LineLayout* containing(const RenderObject&);
 
@@ -87,7 +87,7 @@ public:
     bool removedFromTree(const RenderElement& parent, RenderObject& child);
     bool updateTextContent(const RenderText&, std::optional<size_t> offset, size_t oldLength);
     bool rootStyleWillChange(const RenderBlockFlow&, const RenderStyle& newStyle);
-    bool styleWillChange(const RenderElement&, const RenderStyle& newStyle, StyleDifference);
+    bool styleWillChange(const RenderElement&, const RenderStyle& newStyle, Style::Difference);
     bool boxContentWillChange(const RenderBox&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
@@ -108,11 +108,14 @@ public:
     bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;
     bool contains(const RenderElement& renderer) const;
 
-    bool isPaginated() const;
-    size_t lineCount() const;
+    bool NODELETE isPaginated() const;
+    size_t NODELETE lineCount() const;
+    bool NODELETE hasContentfulInlineOrBlockLine() const;
+    bool NODELETE hasContentfulInlineLine() const;
+    bool isSelfCollapsingContent() const;
     bool hasInkOverflow() const;
-    LayoutUnit firstLineBaseline() const;
-    LayoutUnit lastLineBaseline() const;
+    std::optional<LayoutUnit> firstLineBaseline() const;
+    std::optional<LayoutUnit> lastLineBaseline() const;
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
     LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
 
@@ -120,6 +123,7 @@ public:
     InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
     InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderInline&) const;
     InlineIterator::InlineBoxIterator firstRootInlineBox() const;
+    InlineIterator::InlineBoxIterator lastRootInlineBox() const;
     InlineIterator::LineBoxIterator firstLineBox() const;
     InlineIterator::LineBoxIterator lastLineBox() const;
 
@@ -133,7 +137,7 @@ public:
 #endif
 
     // This is temporary, required by partial bailout check.
-    bool contentNeedsVisualReordering() const;
+    bool NODELETE contentNeedsVisualReordering() const;
     bool isDamaged() const { return !!m_lineDamage; }
     const Layout::InlineDamage* damage() const { return m_lineDamage.get(); }
 #ifndef NDEBUG
@@ -142,9 +146,11 @@ public:
 
     FloatRect applySVGTextFragments(SVGTextFragmentMap&&);
 
+    bool NODELETE hasBlocks() const;
+
 private:
     void preparePlacedFloats();
-    FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
+    FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
     Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
     void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent);
 

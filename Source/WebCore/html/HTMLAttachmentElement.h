@@ -44,7 +44,7 @@ class ShadowRoot;
 class FragmentedSharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAttachmentElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLAttachmentElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAttachmentElement);
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
@@ -52,12 +52,12 @@ public:
     static URL archiveResourceURL(const String&);
 
     WEBCORE_EXPORT URL blobURL() const;
-    WEBCORE_EXPORT File* file() const;
+    WEBCORE_EXPORT File* NODELETE file() const;
 
     enum class UpdateDisplayAttributes : bool { No, Yes };
     void setFile(RefPtr<File>&&, UpdateDisplayAttributes = UpdateDisplayAttributes::No);
 
-    const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
+    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
     void setUniqueIdentifier(const String&);
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
@@ -95,7 +95,17 @@ public:
 
     bool isWideLayout() const { return m_implementation == Implementation::WideLayout; }
     HTMLElement* wideLayoutShadowContainer() const { return m_containerElement.get(); }
-    HTMLElement* wideLayoutImageElement() const;
+    HTMLElement* NODELETE wideLayoutImageElement() const;
+    WEBCORE_EXPORT static String shadowUserAgentStyleSheetText();
+
+    enum class HighlightState : uint8_t {
+        None, // The object is not selected.
+        Start, // The object either contains the start of a selection run or is the start of a run
+        Inside, // The object is fully encompassed by a selection run
+        End, // The object either contains the end of a selection run or is the end of a run
+        Both // The object contains an entire run or is the sole selected object in that run
+    };
+    void addSelectionClasses(HighlightState);
 
 private:
     friend class AttachmentSaveEventListener;
@@ -109,7 +119,7 @@ private:
     void updateSaveButton(bool);
     void updateImage();
 
-    void setNeedsIconRequest();
+    void NODELETE setNeedsIconRequest();
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool isReplaced(const RenderStyle* = nullptr) const final { return true; }

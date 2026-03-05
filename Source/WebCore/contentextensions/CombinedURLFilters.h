@@ -46,7 +46,7 @@ public:
 
     void addPattern(uint64_t actionId, const Vector<Term>& pattern);
     bool processNFAs(size_t maxNFASize, Function<bool(NFA&&)>&&);
-    bool isEmpty() const;
+    bool NODELETE isEmpty() const;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     size_t memoryUsed() const;

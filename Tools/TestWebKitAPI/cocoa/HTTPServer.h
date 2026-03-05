@@ -30,6 +30,7 @@
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringHash.h>
 
@@ -43,7 +44,16 @@ struct HTTPResponse;
 class HTTPServer {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HTTPServer);
 public:
-    struct RequestData;
+    struct RequestData : public ThreadSafeRefCounted<RequestData, WTF::DestructionThread::MainRunLoop> {
+        RequestData(std::initializer_list<std::pair<String, HTTPResponse>>);
+
+        size_t requestCount { 0 };
+        HashMap<String, HTTPResponse> requestMap;
+        Vector<Connection> connections;
+        Vector<CoroutineHandle<ConnectionTask::promise_type>> coroutineHandles;
+        String lastRequestCookies;
+    };
+
     enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2, HttpsProxy, HttpsProxyWithAuthentication };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
 
@@ -92,15 +102,15 @@ struct HTTPResponse {
     };
 
     HTTPResponse(Vector<uint8_t>&& body)
-        : body(WTFMove(body)) { }
+        : body(WTF::move(body)) { }
     HTTPResponse(const String& body)
         : body(bodyFromString(body)) { }
     HTTPResponse(HashMap<String, String>&& headerFields, const String& body)
-        : headerFields(WTFMove(headerFields))
+        : headerFields(WTF::move(headerFields))
         , body(bodyFromString(body)) { }
     HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields = { }, const String& body = { })
         : statusCode(statusCode)
-        , headerFields(WTFMove(headerFields))
+        , headerFields(WTF::move(headerFields))
         , body(bodyFromString(body)) { }
     HTTPResponse(Behavior behavior)
         : behavior(behavior) { }
@@ -116,7 +126,7 @@ struct HTTPResponse {
     void setShouldRespondWith304ToConditionalRequests(HashMap<String, String>&& headerFields = { })
     {
         shouldRespondWith304ToConditionalRequests = true;
-        headerFieldsFor304 = WTFMove(headerFields);
+        headerFieldsFor304 = WTF::move(headerFields);
     }
 
     enum class IncludeContentLength : bool { No, Yes };
@@ -155,7 +165,7 @@ public:
         : m_type(type)
         , m_flags(flags)
         , m_streamID(streamID)
-        , m_payload(WTFMove(payload)) { }
+        , m_payload(WTF::move(payload)) { }
 
     Type type() const { return m_type; }
     uint8_t flags() const { return m_flags; }

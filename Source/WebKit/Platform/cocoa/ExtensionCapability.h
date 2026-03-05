@@ -40,7 +40,7 @@ class ExtensionCapability {
 public:
     virtual ~ExtensionCapability() = default;
     virtual String environmentIdentifier() const = 0;
-    const PlatformCapability& platformCapability() const { return m_platformCapability; }
+    const PlatformCapability& platformCapability() const LIFETIME_BOUND { return m_platformCapability; }
 
     bool hasPlatformCapability() const { return platformCapabilityIsValid(m_platformCapability); }
 
@@ -51,7 +51,7 @@ public:
 
 protected:
     ExtensionCapability() = default;
-    void setPlatformCapability(PlatformCapability&& capability) { m_platformCapability = WTFMove(capability); }
+    void setPlatformCapability(PlatformCapability&& capability) { m_platformCapability = WTF::move(capability); }
 
 private:
     PlatformCapability m_platformCapability;

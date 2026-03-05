@@ -53,7 +53,7 @@ void MockAudioDestinationCocoa::startRendering(CompletionHandler<void(bool)>&& c
     m_timer.startRepeating(Seconds { m_numberOfFramesToProcess / sampleRate() });
     setIsPlaying(true);
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(true);
     });
 }
@@ -63,7 +63,7 @@ void MockAudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& co
     m_timer.stop();
     setIsPlaying(false);
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(true);
     });
 }

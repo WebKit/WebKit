@@ -286,6 +286,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
 
         // The overlay is automatically hidden on the backend when the context type changes.
+        this._layoutOverlayShowing = false;
         this.dispatchEventToListeners(WI.DOMNode.Event.LayoutOverlayHidden);
 
         switch (oldLayoutContextType) {
@@ -299,6 +300,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowOrderNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             break;
         }
     }
@@ -658,6 +660,7 @@ WI.DOMNode = class DOMNode extends WI.Object
                 showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
                 showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
                 showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
+                showOrderNumbers: WI.settings.gridOverlayShowOrderNumbers.value,
             };
 
             // COMPATIBILITY (macOS 13.3, iOS 16.4): DOM.GridOverlayConfig did not exist yet.
@@ -674,6 +677,7 @@ WI.DOMNode = class DOMNode extends WI.Object
                 WI.settings.gridOverlayShowLineNumbers.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
                 WI.settings.gridOverlayShowTrackSizes.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
                 WI.settings.gridOverlayShowAreaNames.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+                WI.settings.gridOverlayShowOrderNumbers.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             }
             break;
 
@@ -723,6 +727,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowOrderNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
 
             agentCommandFunction = target.DOMAgent.hideGridOverlay;
             break;

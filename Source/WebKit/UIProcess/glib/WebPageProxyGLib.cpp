@@ -65,25 +65,25 @@ void WebPageProxy::loadRecentSearches(IPC::Connection&, const String&, Completio
 void WebPageProxy::didInitiateLoadForResource(WebCore::ResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, WebCore::ResourceRequest&& request)
 {
     if (auto* manager = pageClient() ? pageClient()->webResourceLoadManager() : nullptr)
-        manager->didInitiateLoad(resourceID, frameID, WTFMove(request));
+        manager->didInitiateLoad(resourceID, frameID, WTF::move(request));
 }
 
 void WebPageProxy::didSendRequestForResource(WebCore::ResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, WebCore::ResourceRequest&& request, WebCore::ResourceResponse&& redirectResponse)
 {
     if (auto* manager = pageClient() ? pageClient()->webResourceLoadManager() : nullptr)
-        manager->didSendRequest(resourceID, frameID, WTFMove(request), WTFMove(redirectResponse));
+        manager->didSendRequest(resourceID, frameID, WTF::move(request), WTF::move(redirectResponse));
 }
 
 void WebPageProxy::didReceiveResponseForResource(WebCore::ResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, WebCore::ResourceResponse&& response)
 {
     if (auto* manager = pageClient() ? pageClient()->webResourceLoadManager() : nullptr)
-        manager->didReceiveResponse(resourceID, frameID, WTFMove(response));
+        manager->didReceiveResponse(resourceID, frameID, WTF::move(response));
 }
 
 void WebPageProxy::didFinishLoadForResource(WebCore::ResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, WebCore::ResourceError&& error)
 {
     if (auto* manager = pageClient() ? pageClient()->webResourceLoadManager() : nullptr)
-        manager->didFinishLoad(resourceID, frameID, WTFMove(error));
+        manager->didFinishLoad(resourceID, frameID, WTF::move(error));
 }
 
 void WebPageProxy::scheduleActivityStateUpdate()

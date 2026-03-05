@@ -199,7 +199,7 @@ TEST(DHTest, BadY) {
 }
 
 static bool BIGNUMEqualsHex(const BIGNUM *bn, const char *hex) {
-  BIGNUM *hex_bn = NULL;
+  BIGNUM *hex_bn = nullptr;
   if (!BN_hex2bn(&hex_bn, hex)) {
     return false;
   }
@@ -406,7 +406,7 @@ TEST(DHTest, GenerateKeyTwice) {
   bssl::UniquePtr<DH> key2(DHparams_dup(key1.get()));
   ASSERT_TRUE(key2);
   bssl::UniquePtr<BIGNUM> priv_key(BN_dup(DH_get0_priv_key(key1.get())));
-  ASSERT_TRUE(DH_set0_key(key2.get(), /*pub_key=*/NULL, priv_key.get()));
+  ASSERT_TRUE(DH_set0_key(key2.get(), /*pub_key=*/nullptr, priv_key.get()));
   priv_key.release();
 
   // This time, calling |DH_generate_key| preserves the old key and recomputes

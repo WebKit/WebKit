@@ -43,7 +43,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
             return;
 
         // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptXPCObject(xpc_connection_create_from_endpoint(endpoint));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));
 
         xpc_connection_set_target_queue(m_connection.get(), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
         xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
@@ -58,7 +58,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
             if (type != XPC_TYPE_DICTIONARY)
                 return;
 
-            XPCObjectPtr<xpc_connection_t> connection = xpc_dictionary_get_remote_connection(message);
+            OSObjectPtr<xpc_connection_t> connection = xpc_dictionary_get_remote_connection(message);
             if (!connection)
                 return;
 #if USE(APPLE_INTERNAL_SDK)
@@ -77,7 +77,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
     didConnect();
 }
 
-XPCObjectPtr<xpc_connection_t> XPCEndpointClient::connection()
+OSObjectPtr<xpc_connection_t> XPCEndpointClient::connection()
 {
     Locker locker { m_connectionLock };
     return m_connection;

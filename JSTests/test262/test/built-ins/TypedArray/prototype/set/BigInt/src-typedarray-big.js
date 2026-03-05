@@ -15,7 +15,7 @@ info: |
       other does not, throw a TypeError exception.
   ...
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -23,11 +23,11 @@ var srcTypedArray;
 var targetTypedArray;
 var testValue = 42n;
 
-testWithBigIntTypedArrayConstructors(function(BTA1) {
+testWithBigIntTypedArrayConstructors(function(BTA1, makeCtorArg) {
 
-  srcTypedArray = new BTA1([testValue]);
+  srcTypedArray = new BTA1(makeCtorArg([testValue]));
 
-  testWithBigIntTypedArrayConstructors(function(BTA2) {
+  testWithBigIntTypedArrayConstructors(function(BTA2, makeCtorArg) {
 
     targetTypedArray = new BTA2(1);
     targetTypedArray.set(srcTypedArray);

@@ -56,7 +56,7 @@ template<typename T> struct Converter<IDLEnumeration<T>> : DefaultConverter<IDLE
             exceptionThrower(lexicalGlobalObject, throwScope);
             return Result::exception();
         }
-        return Result { WTFMove(result.value()) };
+        return Result { WTF::move(result.value()) };
     }
 };
 

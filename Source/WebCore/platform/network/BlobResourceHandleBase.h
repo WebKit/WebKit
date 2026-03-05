@@ -70,7 +70,7 @@ protected:
     void incrementReadItemCount() { ++m_readItemCount; }
     uint64_t lengthOfItemBeingRead() const { return m_itemLengthList[m_readItemCount]; }
     WEBCORE_EXPORT void clearAsyncStream();
-    WEBCORE_EXPORT BlobData* blobData() const;
+    WEBCORE_EXPORT BlobData* NODELETE blobData() const;
     FileStream* syncStream() const;
     AsyncFileStream* asyncStream() const;
     Vector<uint8_t>& buffer() { return m_buffer; }

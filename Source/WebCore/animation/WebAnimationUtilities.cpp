@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@
 #include "KeyframeEffectStack.h"
 #include "NodeDocument.h"
 #include "RenderStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "ScriptExecutionContext.h"
 #include "StyleAnimations.h"
 #include "StyleOriginatedAnimation.h"
@@ -65,7 +65,7 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     //     - any other pseudo-elements not mentioned specifically in this list, sorted in ascending order by the Unicode codepoints that make up each selector
     //     - ::after
     //     - element children
-    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, TargetText, After, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
+    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, TargetText, Checkmark, After, PickerIcon, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
     auto sortingIndex = [](const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
         if (!pseudoElementIdentifier)
             return NotPseudo;
@@ -93,6 +93,10 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
             return TargetText;
         case PseudoElementType::After:
             return After;
+        case PseudoElementType::Checkmark:
+            return Checkmark;
+        case PseudoElementType::PickerIcon:
+            return PickerIcon;
         case PseudoElementType::ViewTransition:
             return ViewTransition;
         case PseudoElementType::ViewTransitionGroup:
@@ -113,13 +117,13 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     Ref bReferenceElement = b.element;
 
     if (aReferenceElement.ptr() == bReferenceElement.ptr()) {
-        if (isNamedViewTransitionPseudoElement(a.pseudoElementIdentifier) && isNamedViewTransitionPseudoElement(b.pseudoElementIdentifier) && a.pseudoElementIdentifier->nameArgument != b.pseudoElementIdentifier->nameArgument) {
+        if (isNamedViewTransitionPseudoElement(a.pseudoElementIdentifier) && isNamedViewTransitionPseudoElement(b.pseudoElementIdentifier) && a.pseudoElementIdentifier->nameOrPart != b.pseudoElementIdentifier->nameOrPart) {
             RefPtr activeViewTransition = aReferenceElement->document().activeViewTransition();
             ASSERT(activeViewTransition);
             for (auto& key : activeViewTransition->namedElements().keys()) {
-                if (key == a.pseudoElementIdentifier->nameArgument)
+                if (key == a.pseudoElementIdentifier->nameOrPart)
                     return true;
-                if (key == b.pseudoElementIdentifier->nameArgument)
+                if (key == b.pseudoElementIdentifier->nameOrPart)
                     return false;
             }
             return false;
@@ -328,6 +332,8 @@ String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementI
     static NeverDestroyed<const String> selection(MAKE_STATIC_STRING_IMPL("::selection"));
     static NeverDestroyed<const String> spellingError(MAKE_STATIC_STRING_IMPL("::spelling-error"));
     static NeverDestroyed<const String> targetText(MAKE_STATIC_STRING_IMPL("::target-text"));
+    static NeverDestroyed<const String> checkmark(MAKE_STATIC_STRING_IMPL("::checkmark"));
+    static NeverDestroyed<const String> pickerIcon(MAKE_STATIC_STRING_IMPL("::picker-icon"));
     static NeverDestroyed<const String> viewTransition(MAKE_STATIC_STRING_IMPL("::view-transition"));
     static NeverDestroyed<const String> webkitScrollbar(MAKE_STATIC_STRING_IMPL("::-webkit-scrollbar"));
     switch (pseudoElementIdentifier->type) {
@@ -342,7 +348,7 @@ String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementI
     case PseudoElementType::GrammarError:
         return grammarError;
     case PseudoElementType::Highlight:
-        return makeString("::highlight"_s, '(', pseudoElementIdentifier->nameArgument, ')');
+        return makeString("::highlight"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
     case PseudoElementType::Marker:
         return marker;
     case PseudoElementType::Selection:
@@ -351,33 +357,40 @@ String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementI
         return spellingError;
     case PseudoElementType::TargetText:
         return targetText;
+    case PseudoElementType::Checkmark:
+        return checkmark;
+    case PseudoElementType::PickerIcon:
+        return pickerIcon;
     case PseudoElementType::ViewTransition:
         return viewTransition;
     case PseudoElementType::ViewTransitionGroup:
-        return makeString("::view-transition-group"_s, '(', pseudoElementIdentifier->nameArgument, ')');
+        return makeString("::view-transition-group"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
     case PseudoElementType::ViewTransitionImagePair:
-        return makeString("::view-transition-image-pair"_s, '(', pseudoElementIdentifier->nameArgument, ')');
+        return makeString("::view-transition-image-pair"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
     case PseudoElementType::ViewTransitionOld:
-        return makeString("::view-transition-old"_s, '(', pseudoElementIdentifier->nameArgument, ')');
+        return makeString("::view-transition-old"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
     case PseudoElementType::ViewTransitionNew:
-        return makeString("::view-transition-new"_s, '(', pseudoElementIdentifier->nameArgument, ')');
+        return makeString("::view-transition-new"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
     case PseudoElementType::WebKitScrollbar:
         return webkitScrollbar;
     default:
+        ASSERT(pseudoElementIdentifier->type != PseudoElementType::UserAgentPartFallback);
         return emptyString();
     }
 }
 
 // bool represents whether parsing was successful, std::optional<Style::PseudoElementIdentifier> is the result of the parsing when successful.
-std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String& pseudoElement, Document* document)
+std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String& pseudoElement, const CSSSelectorParserContext& context)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
     if (pseudoElement.isNull())
-        return { true, std::nullopt };
+        return { true, { } };
 
-    // FIXME: We should always have a document for accurate settings.
-    auto parserContext = document ? CSSSelectorParserContext { *document } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    return CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
+    auto identifier = CSSSelectorParser::parsePseudoElement(pseudoElement, context);
+    // FIXME: Add API support for UserAgentPartFallback pseudo-elements like ::picker(select).
+    if (identifier && identifier->type == PseudoElementType::UserAgentPartFallback)
+        return { true, std::nullopt };
+    return { !!identifier, identifier };
 }
 
 AtomString animatablePropertyAsString(AnimatableCSSProperty property)
@@ -394,7 +407,7 @@ AtomString animatablePropertyAsString(AnimatableCSSProperty property)
 
 bool styleHasDisplayTransition(const RenderStyle& style)
 {
-    if (!style.hasTransitions())
+    if (style.transitions().isInitial())
         return false;
 
     for (auto& transition : style.transitions().usedValues()) {

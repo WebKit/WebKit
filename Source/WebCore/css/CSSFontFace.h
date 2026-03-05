@@ -30,6 +30,7 @@
 #include "RenderStyleConstants.h"
 #include "Settings.h"
 #include "TextFlags.h"
+#include "TrustedFonts.h"
 #include <memory>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
@@ -104,7 +105,7 @@ public:
 
     std::span<const UnicodeRange> ranges() const LIFETIME_BOUND { ASSERT(m_status != Status::Failure); return m_ranges.span(); }
 
-    RefPtr<CSSValue> familyCSSValue() const;
+    RefPtr<CSSValue> NODELETE familyCSSValue() const;
 
     void setFontSelectionCapabilities(FontSelectionCapabilities capabilities) { m_fontSelectionCapabilities = capabilities; }
     FontSelectionCapabilities fontSelectionCapabilities() const { ASSERT(m_status != Status::Failure); return m_fontSelectionCapabilities.computeFontSelectionCapabilities(); }
@@ -116,11 +117,11 @@ public:
     void addClient(CSSFontFaceClient&);
     void removeClient(CSSFontFaceClient&);
 
-    bool computeFailureState() const;
+    bool NODELETE computeFailureState() const;
 
-    void opportunisticallyStartFontDataURLLoading();
+    void opportunisticallyStartFontDataURLLoading(DownloadableBinaryFontTrustedTypes);
 
-    void adoptSource(std::unique_ptr<CSSFontFaceSource>&&);
+    void adoptSource(std::unique_ptr<CSSFontFaceSource>);
     void sourcesPopulated() { m_sourcesPopulated = true; }
     size_t sourceCount() const { return m_sources.size(); }
 
@@ -132,12 +133,12 @@ public:
 
     static void appendSources(CSSFontFace&, CSSValueList&, ScriptExecutionContext*, bool isInitiatingElementInUserAgentShadowTree);
 
-    bool rangesMatchCodePoint(char32_t) const;
+    bool NODELETE rangesMatchCodePoint(char32_t) const;
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
     Ref<FontFace> wrapper(ScriptExecutionContext*);
     void setWrapper(FontFace&);
-    FontFace* existingWrapper();
+    FontFace* NODELETE existingWrapper();
 
     struct FontLoadTiming {
         Seconds blockPeriod;
@@ -170,7 +171,7 @@ private:
     const StyleProperties& properties() const;
     MutableStyleProperties& mutableProperties();
 
-    RefPtr<Document> protectedDocument();
+    Document* document() const;
 
     const Variant<Ref<MutableStyleProperties>, Ref<StyleRuleFontFace>> m_propertiesOrCSSConnection;
     RefPtr<CSSValue> m_family;
@@ -193,6 +194,7 @@ private:
     bool m_shouldIgnoreFontLoadCompletions : 1 { false };
     FontLoadTimingOverride m_fontLoadTimingOverride { FontLoadTimingOverride::None };
     AllowUserInstalledFonts m_allowUserInstalledFonts { AllowUserInstalledFonts::Yes };
+    DownloadableBinaryFontTrustedTypes m_trustedType { DownloadableBinaryFontTrustedTypes::Any };
 
     Timer m_timeoutTimer;
 };

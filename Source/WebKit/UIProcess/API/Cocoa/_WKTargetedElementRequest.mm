@@ -28,11 +28,6 @@
 
 #import <WebCore/WebCoreObjCExtras.h>
 
-static Ref<API::TargetedElementRequest> protectedRequest(_WKTargetedElementRequest *request)
-{
-    return *request->_request;
-}
-
 @implementation _WKTargetedElementRequest {
     RetainPtr<NSString> _searchText;
 }
@@ -41,7 +36,7 @@ static Ref<API::TargetedElementRequest> protectedRequest(_WKTargetedElementReque
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKTargetedElementRequest.class, self))
         return;
-    _request->API::TargetedElementRequest::~TargetedElementRequest();
+    SUPPRESS_UNRETAINED_ARG _request->API::TargetedElementRequest::~TargetedElementRequest();
     [super dealloc];
 }
 
@@ -64,7 +59,7 @@ static Ref<API::TargetedElementRequest> protectedRequest(_WKTargetedElementReque
     if (!(self = [self init]))
         return nil;
 
-    protectedRequest(self)->setSearchText(searchText);
+    protect(*_request)->setSearchText(searchText);
     return self;
 }
 
@@ -73,7 +68,7 @@ static Ref<API::TargetedElementRequest> protectedRequest(_WKTargetedElementReque
     if (!(self = [self init]))
         return nil;
 
-    protectedRequest(self)->setPoint(point);
+    protect(*_request)->setPoint(point);
     return self;
 }
 
@@ -89,10 +84,10 @@ static Ref<API::TargetedElementRequest> protectedRequest(_WKTargetedElementReque
         selectors.reserveInitialCapacity(nsSelectors.count);
         for (NSString *selector in nsSelectors)
             selectors.add(selector);
-        selectorsForElement.append(WTFMove(selectors));
+        selectorsForElement.append(WTF::move(selectors));
     }
 
-    protectedRequest(self)->setSelectors(WTFMove(selectorsForElement));
+    protect(*_request)->setSelectors(WTF::move(selectorsForElement));
     return self;
 }
 

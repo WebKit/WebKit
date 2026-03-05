@@ -21,15 +21,15 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
-#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class GStreamerVideoFrameConverter final : public CanMakeWeakPtr<GStreamerVideoFrameConverter> {
+class GStreamerVideoFrameConverter final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerVideoFrameConverter> {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoFrameConverter);
     friend NeverDestroyed<GStreamerVideoFrameConverter>;
 
@@ -40,7 +40,7 @@ public:
     void ref() const { }
     void deref() const { }
 
-    WARN_UNUSED_RETURN GRefPtr<GstSample> convert(const GRefPtr<GstSample>&, const GRefPtr<GstCaps>&);
+    [[nodiscard]] GRefPtr<GstSample> convert(const GRefPtr<GstSample>&, const GRefPtr<GstCaps>&);
 
 private:
     GStreamerVideoFrameConverter();

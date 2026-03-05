@@ -67,7 +67,7 @@ Ref<JSON::Object> RemoteAnimation::toJSONForTesting() const
             convertedKeyframe->setDouble("offset"_s, keyframe.offset());
             convertedKeyframe->setValue("composite"_s, WebKit::toJSONForTesting(keyframe.compositeOperation()));
             convertedKeyframe->setValue("easing"_s, WebKit::toJSONForTesting(keyframe.timingFunction()));
-            convertedKeyframes->pushObject(WTFMove(convertedKeyframe));
+            convertedKeyframes->pushObject(WTF::move(convertedKeyframe));
         }
         return convertedKeyframes;
     };

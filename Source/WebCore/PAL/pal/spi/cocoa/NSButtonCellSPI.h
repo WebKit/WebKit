@@ -25,7 +25,12 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
+
+#if PLATFORM(MAC)
 
 #import <AppKit/NSButtonCell.h>
 
@@ -44,3 +49,4 @@ DECLARE_SYSTEM_HEADER
 
 #endif
 
+#endif // PLATFORM(MAC)

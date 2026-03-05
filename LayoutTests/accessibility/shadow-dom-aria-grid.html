@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="grid-with-shadow-rows" role="grid" aria-label="Shadow DOM grid"></div>
+
+<script>
+var output = "This tests that ARIA grids correctly recognize rows in shadow DOM, including after dynamic changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var shadowHost = document.getElementById("grid-with-shadow-rows");
+    var shadowRoot = shadowHost.attachShadow({ mode: "open" });
+    shadowRoot.innerHTML = `
+        <div role="row" id="shadow-row-1">
+            <div role="gridcell">Shadow Row 1 Cell 1</div>
+            <div role="gridcell">Shadow Row 1 Cell 2</div>
+        </div>
+        <div role="row" id="shadow-row-2">
+            <div role="gridcell">Shadow Row 2 Cell 1</div>
+            <div role="gridcell">Shadow Row 2 Cell 2</div>
+        </div>
+    `;
+
+    var shadowGrid = accessibilityController.accessibleElementById("grid-with-shadow-rows");
+
+    output += "Initial shadow DOM grid state:\n";
+    output += expect("shadowGrid.rowCount", "2");
+    output += expect("shadowGrid.columnCount", "2");
+    output += expect("shadowGrid.width >= 2", "true");
+    output += expect("shadowGrid.height >= 2", "true");
+    output += expect("shadowGrid.cellForColumnAndRow(0, 0).role.toLowerCase().includes('cell')", "true");
+
+    output += "\nAdding a third row dynamically to shadow DOM...\n";
+    var newRow = document.createElement("div");
+    newRow.setAttribute("role", "row");
+    newRow.innerHTML = `
+        <div role="gridcell">Shadow Row 3 Cell 1</div>
+        <div role="gridcell">Shadow Row 3 Cell 2</div>
+    `;
+    shadowRoot.appendChild(newRow);
+
+    setTimeout(async function() {
+        output += await expectAsync("shadowGrid.rowCount", "3");
+        output += expect("shadowGrid.columnCount", "2");
+        cell = shadowGrid.cellForColumnAndRow(0, 2);
+        output += expect("cell.role.toLowerCase().includes('cell')", "true");
+
+        output += "\nRemoving the first row from shadow DOM...\n";
+        shadowRoot.querySelector("[role='row']").remove();
+        output += await expectAsync("shadowGrid.rowCount", "2");
+        output += expect("shadowGrid.columnCount", "2");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

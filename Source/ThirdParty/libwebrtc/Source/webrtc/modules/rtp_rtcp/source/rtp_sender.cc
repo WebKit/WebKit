@@ -91,8 +91,8 @@ constexpr RtpExtensionSize kVideoExtensionSizes[] = {
     CreateMaxExtensionSize<RepairedRtpStreamId>(),
     CreateMaxExtensionSize<RtpMid>(),
     CreateMaxExtensionSize<CorruptionDetectionExtension>(),
-    {RtpGenericFrameDescriptorExtension00::kId,
-     RtpGenericFrameDescriptorExtension00::kMaxSizeBytes},
+    {.type = RtpGenericFrameDescriptorExtension00::kId,
+     .value_size = RtpGenericFrameDescriptorExtension00::kMaxSizeBytes},
 };
 
 // Size info for header extensions that might be used in audio packets.

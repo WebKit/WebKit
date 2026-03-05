@@ -66,7 +66,7 @@ void View::setClient(std::unique_ptr<API::ViewClient>&& client)
     if (!client)
         m_client = makeUnique<API::ViewClient>();
     else
-        m_client = WTFMove(client);
+        m_client = WTF::move(client);
 }
 
 void View::frameDisplayed()
@@ -86,7 +86,7 @@ void View::didChangePageID()
 
 void View::didReceiveUserMessage(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
-    m_client->didReceiveUserMessage(*this, WTFMove(message), WTFMove(completionHandler));
+    m_client->didReceiveUserMessage(*this, WTF::move(message), WTF::move(completionHandler));
 }
 
 WebKitWebResourceLoadManager* View::webResourceLoadManager()
@@ -106,7 +106,7 @@ WebKitInputMethodContext* View::inputMethodContext() const
 
 void View::setInputMethodState(std::optional<InputMethodState>&& state)
 {
-    m_inputMethodFilter.setState(WTFMove(state));
+    m_inputMethodFilter.setState(WTF::move(state));
 }
 
 void View::selectionDidChange()

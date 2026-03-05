@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="auto"
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="  100"
 CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="100   px"
 CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="100px;"
 CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="100px !important"

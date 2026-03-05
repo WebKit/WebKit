@@ -37,7 +37,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(QuerySetImpl);
 
 QuerySetImpl::QuerySetImpl(WebGPUPtr<WGPUQuerySet>&& querySet, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(querySet))
+    : m_backing(WTF::move(querySet))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }

@@ -24,7 +24,7 @@
  */
 
 [
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary QueuingStrategy {
     unrestricted double highWaterMark;
     QueuingStrategySize size;

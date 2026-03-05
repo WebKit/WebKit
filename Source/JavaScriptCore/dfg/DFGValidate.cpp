@@ -274,6 +274,7 @@ public:
                     case DoubleRepUse:
                     case BooleanUse:
                     case KnownBooleanUse:
+                    case KnownStorageUse:
                         break;
                     default:
                         VALIDATE((node), !"Bad use kind");

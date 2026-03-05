@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 425x75 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (25,25) size 100x20 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,91) size 784x40
-        RenderText {#text} at (0,0) size 747x39
+        RenderText {#text} at (0,0) size 747x40
           text run at (0,0) width 747: "This test clicks inside an editable div element, and must result in the element receiving focus. If the test succeeds the"
           text run at (0,20) width 216: "element should have a focus ring."

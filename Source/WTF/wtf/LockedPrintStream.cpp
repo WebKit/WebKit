@@ -29,7 +29,7 @@
 namespace WTF {
 
 LockedPrintStream::LockedPrintStream(std::unique_ptr<PrintStream> target)
-    : m_target(WTFMove(target))
+    : m_target(WTF::move(target))
 {
 }
 

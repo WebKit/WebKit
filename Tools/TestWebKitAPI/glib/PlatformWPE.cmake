@@ -18,13 +18,10 @@ list(APPEND WebKitGLibAPITests_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}
 )
 
-list(APPEND WebKitGLibAPITestsCore_LIBRARIES
-    WebKit::WPEToolingBackends
-)
-
-list(APPEND WebKitGLibAPITest_LIBRARIES
-    WebKit::WPEToolingBackends
-)
+if (ENABLE_WPE_LEGACY_API)
+    list(APPEND WebKitGLibAPITestsCore_LIBRARIES WebKit::WPEToolingBackends)
+    list(APPEND WebKitGLibAPITest_LIBRARIES WebKit::WPEToolingBackends)
+endif ()
 
 if (ENABLE_WPE_PLATFORM)
     add_subdirectory(WPEPlatform)

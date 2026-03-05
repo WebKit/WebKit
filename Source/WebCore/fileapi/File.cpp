@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(File);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(File);
 
 Ref<File> File::createWithRelativePath(ScriptExecutionContext* context, const String& path, const String& relativePath)
 {
@@ -55,22 +55,22 @@ Ref<File> File::create(ScriptExecutionContext* context, const String& path, cons
     auto internalURL = BlobURL::createInternalURL();
     ThreadableBlobRegistry::registerInternalFileBlobURL(internalURL, path, replacementPath, type);
 
-    auto file = adoptRef(*new File(context, WTFMove(internalURL), WTFMove(type), WTFMove(effectivePath), WTFMove(name), fileID));
+    auto file = adoptRef(*new File(context, WTF::move(internalURL), WTF::move(type), WTF::move(effectivePath), WTF::move(name), fileID));
     file->suspendIfNeeded();
     return file;
 }
 
 File::File(ScriptExecutionContext* context, URL&& url, String&& type, String&& path, String&& name)
-    : Blob(uninitializedContructor, context, WTFMove(url), WTFMove(type))
-    , m_path(WTFMove(path))
-    , m_name(WTFMove(name))
+    : Blob(uninitializedContructor, context, WTF::move(url), WTF::move(type))
+    , m_path(WTF::move(path))
+    , m_name(WTF::move(name))
 {
 }
 
 File::File(ScriptExecutionContext* context, URL&& url, String&& type, String&& path, String&& name, const std::optional<FileSystem::PlatformFileID>& fileID)
-    : Blob(uninitializedContructor, context, WTFMove(url), WTFMove(type))
-    , m_path(WTFMove(path))
-    , m_name(WTFMove(name))
+    : Blob(uninitializedContructor, context, WTF::move(url), WTF::move(type))
+    , m_path(WTF::move(path))
+    , m_name(WTF::move(name))
     , m_fileID(fileID)
 {
 }
@@ -84,7 +84,7 @@ File::File(DeserializationContructor, ScriptExecutionContext* context, const Str
 }
 
 File::File(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
-    : Blob(context, WTFMove(blobPartVariants), propertyBag)
+    : Blob(context, WTF::move(blobPartVariants), propertyBag)
     , m_name(filename)
     , m_lastModifiedDateOverride(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
 {

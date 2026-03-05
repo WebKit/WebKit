@@ -1,5 +1,5 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'danilchap' reviewed: '2025-03-13'} *-->
+<!--* freshness: {owner: 'danilchap' reviewed: '2025-09-24'} *-->
 
 # Using Abseil in WebRTC
 
@@ -40,7 +40,7 @@ on a monolithic Abseil build target that will generate a shared library.
 * The macros in `absl/base/attributes.h`, `absl/base/config.h` and
   `absl/base/macros.h`.
 * `absl/numeric/bits.h`
-* Single argument absl::StrCat
+* Single argument `absl::StrCat`
 
 * ABSL_FLAG is allowed in tests and tools, but disallowed in in non-test code.
 
@@ -66,8 +66,9 @@ on a monolithic Abseil build target that will generate a shared library.
 
 `absl::Span` differs from `webrtc::ArrayView` on several points, and both
 of them differ from the `std::span` introduced in C++20. We should just keep
-using `webrtc::ArrayView` and avoid `absl::Span`. When WebRTC switches to C++20,
-we will consider replacing `webrtc::ArrayView` with `std::span`.
+using `webrtc::ArrayView` and avoid `absl::Span`. Note that we are planning
+to replace `webrtc::ArrayView` with `std::span` rather than with `absl::Span`,
+see https://bugs.webrtc.org/439801349
 
 ### `absl::StrCat`, `absl::StrAppend`, `absl::StrJoin`, `absl::StrSplit`
 

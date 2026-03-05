@@ -10,14 +10,14 @@ info: |
 
   ...
   3. Return CreateArrayIterator(O, "key+value").
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.iterator, TypedArray]
 ---*/
 
 var ArrayIteratorProto = Object.getPrototypeOf([][Symbol.iterator]());
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([0n, 42n, 64n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([0n, 42n, 64n]));
   var iter = sample.entries();
 
   assert.sameValue(Object.getPrototypeOf(iter), ArrayIteratorProto);

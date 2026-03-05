@@ -61,9 +61,9 @@ void SetupReplayContextShared(void)
     UpdateUniformLocation(1, "s_texture1", 0, 1);
     UpdateUniformLocation(1, "s_texture2", 1, 1);
     glUseProgram(gShaderProgramMap[1]);
-    UpdateCurrentProgram(1);
-    glUniform1iv(gUniformLocations[gCurrentProgram][0], 1, (const GLint *)GetBinaryData(480));
-    glUniform1iv(gUniformLocations[gCurrentProgram][1], 1, (const GLint *)GetBinaryData(496));
+    UpdateCurrentProgramPerContext(1);
+    glUniform1iv(gUniformLocations[gCurrentProgramPerContext[gCurrentContext]][0], 1, (const GLint *)GetBinaryData(480));
+    glUniform1iv(gUniformLocations[gCurrentProgramPerContext[gCurrentContext]][1], 1, (const GLint *)GetBinaryData(496));
     glDeleteShader(gShaderProgramMap[4]);
     glDeleteShader(gShaderProgramMap[5]);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);

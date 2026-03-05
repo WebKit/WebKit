@@ -54,8 +54,8 @@ public:
 
     using Type = WebExtensionDataType;
 
-    const String& displayName() const { return m_displayName; }
-    const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
+    const String& displayName() const LIFETIME_BOUND { return m_displayName; }
+    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
 
     OptionSet<Type> types() const;
 
@@ -96,9 +96,10 @@ public:
         return adoptRef(*new WebExtensionDataRecordHolder(std::forward<Args>(args)...));
     }
 
-    WebExtensionDataRecordHolder() { };
-
     HashMap<String, Ref<WebExtensionDataRecord>> recordsMap;
+
+private:
+    WebExtensionDataRecordHolder() = default;
 };
 
 } // namespace WebKit

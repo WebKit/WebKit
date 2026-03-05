@@ -35,7 +35,7 @@ namespace Layout {
 
 // TableFormattingState holds the state for a particular table formatting context tree.
 class TableFormattingState : public FormattingState {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableFormattingState);
+    WTF_MAKE_TZONE_ALLOCATED(TableFormattingState);
 public:
     TableFormattingState(LayoutState&, const ElementBox& tableBox);
     ~TableFormattingState();

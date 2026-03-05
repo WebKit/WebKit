@@ -49,9 +49,9 @@ public:
     WTF_EXPORT_PRIVATE ThreadGroupAddResult add(const AbstractLocker&, Thread&);
     WTF_EXPORT_PRIVATE ThreadGroupAddResult addCurrentThread();
 
-    const ListHashSet<Ref<Thread>>& threads(const AbstractLocker&) const { return m_threads; }
+    const ListHashSet<Ref<Thread>>& threads(const AbstractLocker&) const LIFETIME_BOUND { return m_threads; }
 
-    WordLock& getLock() { return m_lock; }
+    WordLock& getLock() LIFETIME_BOUND { return m_lock; }
 
     WTF_EXPORT_PRIVATE ~ThreadGroup();
 

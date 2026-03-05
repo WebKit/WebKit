@@ -4,16 +4,16 @@ layer at (0,0) size 800x327
   RenderBlock {html} at (0,0) size 800x327
     RenderBody {body} at (8,16) size 784x303
       RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 186x19
+        RenderText {#text} at (0,0) size 186x20
           text run at (0,0) width 186: "TFOOT VALIGN=MIDDLE"
       RenderTable {table} at (0,36) size 627x267 [border: (1px outset #000000)]
         RenderTableSection {thead} at (1,1) size 625x28
           RenderTableRow {tr} at (0,2) size 625x24
             RenderTableCell {td} at (2,2) size 204x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 55x19
+              RenderText {#text} at (2,2) size 55x20
                 text run at (2,2) width 55: "THEAD"
             RenderTableCell {td} at (208,2) size 415x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 55x19
+              RenderText {#text} at (2,2) size 55x20
                 text run at (2,2) width 55: "THEAD"
         RenderTableSection {tfoot} at (1,55) size 625x211
           RenderTableRow {tr} at (0,0) size 625x209
@@ -26,8 +26,8 @@ layer at (0,0) size 800x327
         RenderTableSection {tbody} at (1,29) size 625x26
           RenderTableRow {tr} at (0,0) size 625x24
             RenderTableCell {td} at (2,0) size 204x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 56x19
+              RenderText {#text} at (2,2) size 56x20
                 text run at (2,2) width 56: "TBODY"
             RenderTableCell {td} at (208,0) size 415x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 56x19
+              RenderText {#text} at (2,2) size 56x20
                 text run at (2,2) width 56: "TBODY"

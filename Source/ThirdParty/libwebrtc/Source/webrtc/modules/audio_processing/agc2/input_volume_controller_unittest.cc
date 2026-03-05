@@ -165,7 +165,8 @@ class SpeechSamplesReader {
     RTC_DCHECK(controller.capture_output_used());
 
     float gain = std::pow(10.0f, gain_db / 20.0f);  // From dB to linear gain.
-    is_.seekg(0, is_.beg);  // Start from the beginning of the PCM file.
+    is_.seekg(0,
+              std::ifstream::beg);  // Start from the beginning of the PCM file.
 
     // Read and feed frames.
     for (int i = 0; i < num_frames; ++i) {

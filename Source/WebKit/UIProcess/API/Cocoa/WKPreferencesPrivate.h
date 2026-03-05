@@ -87,6 +87,8 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setAnimatedImageAsyncDecodingEnabled:) BOOL _animatedImageAsyncDecodingEnabled WK_API_AVAILABLE(macos(10.12.4), ios(10.3));
 @property (nonatomic, setter=_setTextAutosizingEnabled:) BOOL _textAutosizingEnabled WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
+@property (nonatomic, setter=_setUseUIProcessForBackForwardItemLoading:) BOOL _useUIProcessForBackForwardItemLoading WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 @property (nonatomic, setter=_setLogsPageMessagesToSystemConsoleEnabled:) BOOL _logsPageMessagesToSystemConsoleEnabled WK_API_AVAILABLE(macos(10.11), ios(9.0));
@@ -202,6 +204,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setModelElementEnabled:) BOOL _modelElementEnabled WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, setter=_setModelProcessEnabled:) BOOL _modelProcessEnabled WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, setter=_setModelNoPortalAttributeEnabled:) BOOL _modelNoPortalAttributeEnabled WK_API_AVAILABLE(visionos(2.4));
+@property (nonatomic, setter=_setUpdateSceneGeometryEnabled:) BOOL _updateSceneGeometryEnabled WK_API_AVAILABLE(visionos(WK_XROS_TBA));
 @property (nonatomic, setter=_setRequiresPageVisibilityForVideoToBeNowPlayingForTesting:) BOOL _requiresPageVisibilityForVideoToBeNowPlayingForTesting WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, setter=_setSiteIsolationEnabled:) BOOL _siteIsolationEnabled WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 

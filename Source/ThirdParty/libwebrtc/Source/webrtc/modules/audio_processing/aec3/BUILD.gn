@@ -7,6 +7,9 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("../../../webrtc.gni")
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
 
 rtc_library("aec3") {
   visibility = [ "*" ]
@@ -144,6 +147,7 @@ rtc_library("aec3") {
     "../../../api:field_trials_view",
     "../../../api/audio:aec3_config",
     "../../../api/audio:echo_control",
+    "../../../api/audio:neural_residual_echo_estimator_api",
     "../../../api/environment",
     "../../../common_audio:common_audio_c",
     "../../../rtc_base:checks",
@@ -320,16 +324,19 @@ if (rtc_include_tests) {
       "../../../api:field_trials",
       "../../../api/audio:aec3_config",
       "../../../api/audio:echo_control",
+      "../../../api/audio:neural_residual_echo_estimator_api",
       "../../../api/environment",
       "../../../api/environment:environment_factory",
       "../../../rtc_base:checks",
       "../../../rtc_base:cpu_info",
+      "../../../rtc_base:gunit_helpers",
       "../../../rtc_base:random",
       "../../../rtc_base:safe_minmax",
       "../../../rtc_base:stringutils",
       "../../../rtc_base/system:arch",
       "../../../system_wrappers:metrics",
       "../../../test:create_test_field_trials",
+      "../../../test:fileutils",
       "../../../test:test_support",
       "../utility:cascaded_biquad_filter",
     ]
@@ -337,6 +344,7 @@ if (rtc_include_tests) {
     defines = []
 
     if (rtc_enable_protobuf) {
+      configs += [ "//third_party/tflite:tflite_config_no_undef" ]
       sources += [
         "adaptive_fir_filter_erl_unittest.cc",
         "adaptive_fir_filter_unittest.cc",
@@ -382,7 +390,6 @@ if (rtc_include_tests) {
         "vector_math_unittest.cc",
       ]
     }
-
     if (!build_with_chromium) {
       deps += [ "..:audio_processing_unittests" ]
     }

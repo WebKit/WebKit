@@ -62,7 +62,7 @@ class RtcEventAlrState final : public RtcEvent {
                                       std::vector<LoggedAlrStateEvent>& output);
 
  private:
-  RtcEventAlrState(const RtcEventAlrState& other);
+  RtcEventAlrState(const RtcEventAlrState&) = default;
 
   const bool in_alr_;
 

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include <WebCore/Color.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/IntSize.h>
-#include <WebCore/NativeImage.h>
-#include <WebCore/SharedBuffer.h>
+#include "Color.h"
+#include "IntRect.h"
+#include "IntSize.h"
+#include "NativeImage.h"
+#include "SharedBuffer.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -69,7 +69,7 @@ public:
             return false;
 
         buffer.grow(bufferSize);
-        m_pixels = FragmentedSharedBuffer::DataSegment::create(WTFMove(buffer));
+        m_pixels = FragmentedSharedBuffer::DataSegment::create(WTF::move(buffer));
         m_pixelsSpan = spanReinterpretCast<uint32_t>(spanConstCast<uint8_t>(m_pixels->span()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
@@ -216,7 +216,7 @@ private:
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
         Vector<uint8_t> buffer(other.m_pixels->span());
-        m_pixels = FragmentedSharedBuffer::DataSegment::create(WTFMove(buffer));
+        m_pixels = FragmentedSharedBuffer::DataSegment::create(WTF::move(buffer));
         m_pixelsSpan = spanReinterpretCast<uint32_t>(spanConstCast<uint8_t>(m_pixels->span()));
     }
 

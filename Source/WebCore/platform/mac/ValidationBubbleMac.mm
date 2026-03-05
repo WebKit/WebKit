@@ -52,7 +52,7 @@ static const CGFloat maxLabelWidth = 300;
 
 ValidationBubble::ValidationBubble(NSView* view, String&& message, const Settings& settings)
     : m_view(view)
-    , m_message(WTFMove(message))
+    , m_message(WTF::move(message))
 {
     RetainPtr<NSViewController> controller = adoptNS([[NSViewController alloc] init]);
 

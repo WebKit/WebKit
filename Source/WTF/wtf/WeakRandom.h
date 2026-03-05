@@ -32,6 +32,7 @@
 
 #include <limits>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

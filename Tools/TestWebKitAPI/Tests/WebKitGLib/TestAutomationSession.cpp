@@ -37,7 +37,7 @@ public:
         GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
         g_socket_client_connect_to_host_async(socketClient.get(), "127.0.0.1:2229", 0, nullptr, [](GObject* client, GAsyncResult* result, gpointer userData) {
             GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, nullptr));
-            static_cast<AutomationTest*>(userData)->setConnection(SocketConnection::create(WTFMove(connection), s_messageHandlers, userData));
+            static_cast<AutomationTest*>(userData)->setConnection(SocketConnection::create(WTF::move(connection), s_messageHandlers, userData));
         }, this);
         g_main_loop_run(m_mainLoop.get());
     }
@@ -58,7 +58,7 @@ public:
 
     void setConnection(Ref<SocketConnection>&& connection)
     {
-        m_connection = WTFMove(connection);
+        m_connection = WTF::move(connection);
         g_main_loop_quit(m_mainLoop.get());
     }
 
@@ -67,7 +67,7 @@ public:
         bool newConnection = !m_connectionID;
         bool wasPaired = m_target.isPaired;
         m_connectionID = connectionID;
-        m_target = WTFMove(target);
+        m_target = WTF::move(target);
         if (newConnection || (!wasPaired && m_target.isPaired))
             g_main_loop_quit(m_mainLoop.get());
     }
@@ -296,14 +296,14 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
-    String sessionID = createVersion4UUIDString();
+    CString sessionID = createVersion4UUIDString().utf8();
     // WebKitAutomationSession::automation-started is never emitted if automation is not enabled.
     g_assert_false(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
 #if ENABLE(2022_GLIB_API)
     // Network session for automation is nullptr if automation is not enabled.
     g_assert_null(webkit_web_context_get_network_session_for_automation(test->m_webContext.get()));
 #endif
-    auto* session = test->requestSession(sessionID.utf8().data());
+    auto* session = test->requestSession(sessionID.data());
     g_assert_null(session);
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
@@ -323,10 +323,10 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
     g_assert_false(webkit_web_context_is_automation_allowed(otherContext.get()));
 
-    session = test->requestSession(sessionID.utf8().data());
-    g_assert_cmpstr(webkit_automation_session_get_id(session), ==, sessionID.utf8().data());
+    session = test->requestSession(sessionID.data());
+    g_assert_cmpstr(webkit_automation_session_get_id(session), ==, sessionID.data());
     g_assert_cmpuint(test->m_target.id, >, 0);
-    ASSERT_CMP_CSTRING(test->m_target.name, ==, sessionID.utf8());
+    ASSERT_CMP_CSTRING(test->m_target.name, ==, sessionID);
     g_assert_false(test->m_target.isPaired);
 
     // Will fail to create a browsing context when not creating a web view (or not handling the signal).

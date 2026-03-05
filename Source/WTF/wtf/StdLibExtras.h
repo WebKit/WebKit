@@ -36,6 +36,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -91,6 +92,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 // The magic number 0x4000 is insignificant. We use it to avoid using NULL, since
 // NULL can cause compiler problems, especially in cases of multiple inheritance.
 #define CAST_OFFSET(from, to) (reinterpret_cast<uintptr_t>(static_cast<to>((reinterpret_cast<from>(0x4000)))) - 0x4000)
+#define RELEASE_ASSERT_NOT_CAST_OFFSET(from, to) SUPPRESS_MEMORY_UNSAFE_CAST RELEASE_ASSERT(!CAST_OFFSET(from, to))
 
 // STRINGIZE: Can convert any value to quoted string, even expandable macros
 #define STRINGIZE(exp) #exp
@@ -141,8 +143,6 @@ inline bool isPointerTypeAlignmentOkay(Type*)
 #endif
 
 namespace WTF {
-
-enum CheckMoveParameterTag { CheckMoveParameter };
 
 static constexpr size_t KB = 1024;
 static constexpr size_t MB = 1024 * 1024;
@@ -535,6 +535,9 @@ template<typename T> concept HasSwitchOn = requires(T t) {
     t.switchOn([](const auto&) {});
 };
 
+template<typename Derived, typename Base>
+concept DerivedFromOrConvertibleTo = std::is_base_of_v<Base, Derived> || std::is_convertible_v<Derived, Base>;
+
 #ifdef _LIBCPP_VERSION
 
 // Single-variant switch-based visit function adapted from https://www.reddit.com/r/cpp/comments/kst2pu/comment/giilcxv/.
@@ -664,7 +667,7 @@ template<size_t I, typename V> constexpr bool holdsAlternative(const V& v)
     }                                                                                \
     template<typename T> friend T&& get(Self&& self)                                 \
     {                                                                                \
-        return std::get<T>(WTFMove(self.name));                                      \
+        return std::get<T>(WTF::move(self.name));                                      \
     }                                                                                \
     template<typename T> friend const T& get(const Self& self)                       \
     {                                                                                \
@@ -846,25 +849,21 @@ inline void* operator new(size_t, NotNullTag, void* location)
     return location;
 }
 
-namespace std {
-
-template<WTF::CheckMoveParameterTag, typename T>
-ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
-{
-    static_assert(is_lvalue_reference<T>::value, "T is not an lvalue reference; move() is unnecessary.");
-
-    using NonRefQualifiedType = typename remove_reference<T>::type;
-    static_assert(!is_const<NonRefQualifiedType>::value, "T is const qualified.");
-
-    return move(forward<T>(value));
-}
-
-} // namespace std
-
 namespace WTF {
 
+template<typename T>
+[[nodiscard]] ALWAYS_INLINE constexpr std::remove_reference_t<T>&& move(T&& value)
+{
+    static_assert(std::is_lvalue_reference_v<T>, "T is not an lvalue reference; move() is unnecessary.");
+
+    using NonRefQualifiedType = std::remove_reference_t<T>;
+    static_assert(!std::is_const_v<NonRefQualifiedType>, "T is const qualified.");
+
+    return std::move(std::forward<T>(value));
+}
+
 template<class T, class... Args>
-ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
+[[nodiscard]] ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 {
     static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_DEPRECATED_MAKE_FAST_ALLOCATED)");
     static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
@@ -876,14 +875,14 @@ ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 // case of reassignment, ref-counting forwarding wouldn't be safe. This function is commonly used
 // with `lazyInitialize()` to initialize a const data member.
 template<class T, class U = T, class... Args>
-ALWAYS_INLINE const std::unique_ptr<U> makeUniqueWithoutRefCountedCheck(Args&&... args)
+[[nodiscard]] ALWAYS_INLINE const std::unique_ptr<U> makeUniqueWithoutRefCountedCheck(Args&&... args)
 {
     static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_DEPRECATED_MAKE_FAST_ALLOCATED)");
     return std::unique_ptr<U>(std::make_unique<T>(std::forward<Args>(args)...));
 }
 
 template<class T, class... Args>
-ALWAYS_INLINE decltype(auto) makeUniqueWithoutFastMallocCheck(Args&&... args)
+[[nodiscard]] ALWAYS_INLINE decltype(auto) makeUniqueWithoutFastMallocCheck(Args&&... args)
 {
     static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
     return std::make_unique<T>(std::forward<Args>(args)...);
@@ -1070,10 +1069,10 @@ template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
     requires(TriviallyComparableOneByteCodeUnits<T, U>)
 size_t find(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
 {
-#if !HAVE(MEMMEM)
     if (needle.empty())
         return 0;
 
+#if !HAVE(MEMMEM)
     if (haystack.size() < needle.size())
         return notFound;
 
@@ -1292,6 +1291,10 @@ template<typename Functor, typename Signature> concept Invocable = requires(std:
     { expected = std::move(f) };
 };
 
+template<typename Functor, typename Signature> concept ConstInvocable = requires(const std::decay_t<Functor>& f, std::function<Signature> expected) {
+    { expected = f };
+};
+
 // Concept for constraining to user-defined "Tuple-like" types.
 //
 // Based on exposition-only text in https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2165r3.pdf
@@ -1508,11 +1511,11 @@ template<typename Object, typename Allocator = FastMalloc> void destroyWithTrail
     Allocator::free(object);
 }
 
-template<typename T, typename U>
-ALWAYS_INLINE void lazyInitialize(const std::unique_ptr<T>& ptr, const std::unique_ptr<U>&& obj)
+template<typename T, typename TDeleter, typename U, typename UDeleter>
+ALWAYS_INLINE void lazyInitialize(const std::unique_ptr<T, TDeleter>& ptr, const std::unique_ptr<U, UDeleter>&& obj)
 {
     RELEASE_ASSERT(!ptr);
-    const_cast<std::unique_ptr<T>&>(ptr) = std::move(const_cast<std::unique_ptr<U>&&>(obj));
+    const_cast<std::unique_ptr<T, TDeleter>&>(ptr) = std::move(const_cast<std::unique_ptr<U, UDeleter>&&>(obj)); // NOLINT.
 }
 
 ALWAYS_INLINE std::optional<double> stringToDouble(std::span<const char> buffer, size_t& parsedLength)
@@ -1557,9 +1560,13 @@ struct SizedUnsignedTrait<8> {
 template<typename T>
 using SameSizeUnsignedInteger = SizedUnsignedTrait<sizeof(T)>::Type;
 
-} // namespace WTF
+namespace Views {
 
-#define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
+static constexpr auto dereferenceView = std::views::transform([](auto&& x) -> decltype(auto) { return *x; });
+
+}
+
+} // namespace WTF
 
 namespace WTF {
 namespace detail {
@@ -1633,5 +1640,7 @@ using WTF::SameSizeUnsignedInteger;
 using WTF::SizedUnsignedTrait;
 using WTF::VariantWrapper;
 using WTF::VariantOrSingle;
+
+using WTF::Views::dereferenceView;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

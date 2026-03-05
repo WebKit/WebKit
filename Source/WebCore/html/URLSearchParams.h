@@ -60,7 +60,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(URLSearchParams&);
-        std::optional<KeyValuePair<String, String>> next();
+        std::optional<KeyValuePair<String, String>> NODELETE next();
 
     private:
         const Ref<URLSearchParams> m_target;
@@ -69,7 +69,7 @@ public:
     Iterator createIterator(ScriptExecutionContext*) { return Iterator { *this }; }
 
 private:
-    const Vector<KeyValuePair<String, String>>& pairs() const { return m_pairs; }
+    const Vector<KeyValuePair<String, String>>& pairs() const LIFETIME_BOUND { return m_pairs; }
     URLSearchParams(const String&, DOMURL*);
     URLSearchParams(const Vector<KeyValuePair<String, String>>&);
     void updateURL();

@@ -199,18 +199,18 @@ static NSArray *writableTypesForImageWithArchive()
     // This image data is either the only subresource of an archive (HTML image case)
     // or the main resource (standalone image case).
     NSArray *subresources = [archive subresources];
-    WebResource *resource = [archive mainResource];
+    RetainPtr resource = [archive mainResource];
     if (containsImage && [subresources count] > 0) {
         WebResource *subresource = [subresources objectAtIndex:0];
         NSString *subresourceMIMEType = [subresource MIMEType];
         if (MIMETypeRegistry::isSupportedImageMIMEType(subresourceMIMEType) || MIMETypeRegistry::isPDFMIMEType(subresourceMIMEType))
             resource = subresource;
     }
-    ASSERT(resource != nil);
-    
-    ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFMIMEType([resource MIMEType]));
-    if (!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFMIMEType([resource MIMEType]))
-        [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
+    ASSERT(resource);
+
+    ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource.get() MIMEType]) || MIMETypeRegistry::isPDFMIMEType([resource.get() MIMEType]));
+    if (!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource.get() MIMEType]) || MIMETypeRegistry::isPDFMIMEType([resource.get() MIMEType]))
+        [self _web_writeFileWrapperAsRTFDAttachment:[resource.get() _fileWrapperRepresentation]];
     
 }
 

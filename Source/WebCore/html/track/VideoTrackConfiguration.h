@@ -42,10 +42,11 @@ using VideoTrackConfigurationInit = PlatformVideoTrackConfiguration;
 class VideoTrackConfiguration : public RefCounted<VideoTrackConfiguration> {
     WTF_MAKE_TZONE_ALLOCATED(VideoTrackConfiguration);
 public:
-    static Ref<VideoTrackConfiguration> create(VideoTrackConfigurationInit&& init) { return adoptRef(*new VideoTrackConfiguration(WTFMove(init))); }
+    static Ref<VideoTrackConfiguration> create(VideoTrackConfigurationInit&& init) { return adoptRef(*new VideoTrackConfiguration(WTF::move(init))); }
     static Ref<VideoTrackConfiguration> create() { return adoptRef(*new VideoTrackConfiguration()); }
 
-    void setState(const VideoTrackConfigurationInit&);
+    enum class StateChanged : bool { No, Yes };
+    StateChanged updateState(const VideoTrackConfigurationInit&);
 
     String codec() const { return m_state.codec; }
     void setCodec(String);
@@ -65,11 +66,8 @@ public:
     uint64_t bitrate() const { return m_state.bitrate; }
     void setBitrate(uint64_t);
 
-    std::optional<SpatialVideoMetadata> spatialVideoMetadata() const { return m_state.spatialVideoMetadata; }
-    void setSpatialVideoMetadata(std::optional<SpatialVideoMetadata>);
-
-    std::optional<VideoProjectionMetadata> videoProjectionMetadata() const { return m_state.videoProjectionMetadata; }
-    void setVideoProjectionMetadata(std::optional<VideoProjectionMetadata>);
+    std::optional<ImmersiveVideoMetadata> immersiveVideoMetadata() const { return m_state.immersiveVideoMetadata; }
+    void setImmersiveVideoMetadata(std::optional<ImmersiveVideoMetadata>);
 
     bool isProtected() const { return m_state.isProtected; }
     void setProtected(bool);

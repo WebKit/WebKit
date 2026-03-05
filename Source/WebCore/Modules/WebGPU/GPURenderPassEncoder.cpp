@@ -36,7 +36,7 @@
 namespace WebCore {
 
 GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device& device)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
     , m_device(&device)
 {
 }
@@ -48,52 +48,52 @@ String GPURenderPassEncoder::label() const
 
 void GPURenderPassEncoder::setLabel(String&& label)
 {
-    protectedBacking()->setLabel(WTFMove(label));
+    protect(backing())->setLabel(WTF::move(label));
 }
 
 void GPURenderPassEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
 {
-    protectedBacking()->setPipeline(renderPipeline.backing());
+    protect(backing())->setPipeline(renderPipeline.backing());
 }
 
-void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
+void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
 {
-    protectedBacking()->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
+    protect(backing())->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
 }
 
-void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer* buffer, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
+void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer* buffer, GPUSize64 offset, std::optional<GPUSize64> size)
 {
-    protectedBacking()->setVertexBuffer(slot, buffer ? &buffer->backing() : nullptr, offset, size);
+    protect(backing())->setVertexBuffer(slot, buffer ? &buffer->backing() : nullptr, offset, size);
 }
 
-void GPURenderPassEncoder::draw(GPUSize32 vertexCount, std::optional<GPUSize32> instanceCount,
-    std::optional<GPUSize32> firstVertex, std::optional<GPUSize32> firstInstance)
+void GPURenderPassEncoder::draw(GPUSize32 vertexCount, GPUSize32 instanceCount,
+    GPUSize32 firstVertex, GPUSize32 firstInstance)
 {
-    protectedBacking()->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    protect(backing())->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-void GPURenderPassEncoder::drawIndexed(GPUSize32 indexCount, std::optional<GPUSize32> instanceCount,
-    std::optional<GPUSize32> firstIndex,
-    std::optional<GPUSignedOffset32> baseVertex,
-    std::optional<GPUSize32> firstInstance)
+void GPURenderPassEncoder::drawIndexed(GPUSize32 indexCount, GPUSize32 instanceCount,
+    GPUSize32 firstIndex,
+    GPUSignedOffset32 baseVertex,
+    GPUSize32 firstInstance)
 {
-    protectedBacking()->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    protect(backing())->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void GPURenderPassEncoder::drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    protectedBacking()->drawIndirect(indirectBuffer.backing(), indirectOffset);
+    protect(backing())->drawIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
 void GPURenderPassEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    protectedBacking()->drawIndexedIndirect(indirectBuffer.backing(), indirectOffset);
+    protect(backing())->drawIndexedIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
 void GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
     std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-    protectedBacking()->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTFMove(dynamicOffsets));
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTF::move(dynamicOffsets));
 }
 
 ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
@@ -105,56 +105,56 @@ ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPU
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
-    protectedBacking()->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     return { };
 }
 
 void GPURenderPassEncoder::pushDebugGroup(String&& groupLabel)
 {
-    protectedBacking()->pushDebugGroup(WTFMove(groupLabel));
+    protect(backing())->pushDebugGroup(WTF::move(groupLabel));
 }
 
 void GPURenderPassEncoder::popDebugGroup()
 {
-    protectedBacking()->popDebugGroup();
+    protect(backing())->popDebugGroup();
 }
 
 void GPURenderPassEncoder::insertDebugMarker(String&& markerLabel)
 {
-    protectedBacking()->insertDebugMarker(WTFMove(markerLabel));
+    protect(backing())->insertDebugMarker(WTF::move(markerLabel));
 }
 
 void GPURenderPassEncoder::setViewport(float x, float y,
     float width, float height,
     float minDepth, float maxDepth)
 {
-    protectedBacking()->setViewport(x, y, width, height, minDepth, maxDepth);
+    protect(backing())->setViewport(x, y, width, height, minDepth, maxDepth);
 }
 
 void GPURenderPassEncoder::setScissorRect(GPUIntegerCoordinate x, GPUIntegerCoordinate y,
     GPUIntegerCoordinate width, GPUIntegerCoordinate height)
 {
-    protectedBacking()->setScissorRect(x, y, width, height);
+    protect(backing())->setScissorRect(x, y, width, height);
 }
 
 void GPURenderPassEncoder::setBlendConstant(GPUColor color)
 {
-    protectedBacking()->setBlendConstant(convertToBacking(color));
+    protect(backing())->setBlendConstant(convertToBacking(color));
 }
 
 void GPURenderPassEncoder::setStencilReference(GPUStencilValue stencilValue)
 {
-    protectedBacking()->setStencilReference(stencilValue);
+    protect(backing())->setStencilReference(stencilValue);
 }
 
 void GPURenderPassEncoder::beginOcclusionQuery(GPUSize32 queryIndex)
 {
-    protectedBacking()->beginOcclusionQuery(queryIndex);
+    protect(backing())->beginOcclusionQuery(queryIndex);
 }
 
 void GPURenderPassEncoder::endOcclusionQuery()
 {
-    protectedBacking()->endOcclusionQuery();
+    protect(backing())->endOcclusionQuery();
 }
 
 void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles)
@@ -162,12 +162,12 @@ void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles
     auto result = WTF::map(bundles, [](auto& bundle) -> Ref<WebGPU::RenderBundle> {
         return bundle->backing();
     });
-    protectedBacking()->executeBundles(WTFMove(result));
+    protect(backing())->executeBundles(WTF::move(result));
 }
 
 void GPURenderPassEncoder::end()
 {
-    protectedBacking()->end();
+    protect(backing())->end();
     if (RefPtr device = m_device.get()) {
         m_overrideLabel = label();
         m_backing = device->invalidRenderPassEncoder();

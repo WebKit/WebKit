@@ -81,7 +81,7 @@ public:
     WTF_EXPORT_PRIVATE bool tryLock();
     WTF_EXPORT_PRIVATE void unlock();
 
-    PlatformMutex& impl() { return m_mutex; }
+    PlatformMutex& impl() LIFETIME_BOUND { return m_mutex; }
 
 private:
 #if USE(PTHREADS)

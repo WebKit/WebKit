@@ -25,24 +25,21 @@
 
 #pragma once
 
-#import "WebGPU.h"
-#import "WebGPUExt.h"
+#import "BindableResource.h"
+#import <WebGPU/WGPUQuerySetImpl.h>
+#import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUExt.h>
 #import <optional>
 #import <wtf/FastMalloc.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
-
-// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
-// annotating incomplete types
-struct SWIFT_SHARED_REFERENCE(wgpuQuerySetReference, wgpuQuerySetRelease) WGPUQuerySetImpl {
-};
 
 namespace WebGPU {
 
@@ -51,7 +48,7 @@ class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpuqueryset
-class QuerySet : public WGPUQuerySetImpl, public RefCounted<QuerySet> {
+class QuerySet : public WGPUQuerySetImpl, public RefCountedAndCanMakeWeakPtr<QuerySet>, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(QuerySet);
 public:
     struct CounterSampleBuffer {
@@ -65,7 +62,7 @@ public:
     }
     static Ref<QuerySet> create(CounterSampleBuffer&& counterSampleBuffer, uint32_t count, WGPUQueryType type, Device& device)
     {
-        return adoptRef(*new QuerySet(WTFMove(counterSampleBuffer), count, type, device));
+        return adoptRef(*new QuerySet(WTF::move(counterSampleBuffer), count, type, device));
     }
     static Ref<QuerySet> createInvalid(Device& device)
     {
@@ -114,7 +111,6 @@ private:
         Ref<QuerySet> other;
         uint32_t otherIndex;
     };
-    mutable Vector<uint64_t> m_commandEncoders;
     bool m_destroyed { false };
 
     // static is intentional here as the limit is per process

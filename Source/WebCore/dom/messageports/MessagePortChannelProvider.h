@@ -39,7 +39,6 @@ struct MessageWithMessagePorts;
 class MessagePortChannelProvider : public AbstractRefCountedAndCanMakeWeakPtr<MessagePortChannelProvider> {
 public:
     static MessagePortChannelProvider& fromContext(ScriptExecutionContext&);
-    static Ref<MessagePortChannelProvider> protectedFromContext(ScriptExecutionContext& context) { return fromContext(context); }
     static MessagePortChannelProvider& singleton();
     WEBCORE_EXPORT static void setSharedProvider(MessagePortChannelProvider&);
 

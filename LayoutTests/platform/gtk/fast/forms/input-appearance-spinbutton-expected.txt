@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 240x17
+        RenderText {#text} at (0,0) size 240x18
           text run at (0,0) width 240: "Test appearances of outer-spin-button."
       RenderBlock {DIV} at (0,34) size 784x0
       RenderBlock {DIV} at (0,34) size 784x464
@@ -63,49 +63,49 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (179,2) size 277x460 [r=0 c=1 rs=1 cs=1]
                 RenderBlock {DIV} at (1,1) size 275x48
                   RenderTextControl {INPUT} at (0,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (192,3) size 0x17
+                  RenderBR {BR} at (192,3) size 0x18
                   RenderTextControl {INPUT} at (0,24) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,0) size 186x24
                       RenderBlock {DIV} at (0,3) size 170x18
                 RenderBlock {DIV} at (1,49) size 275x52
                   RenderTextControl {INPUT} at (0,0) size 193x26 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (193,4) size 0x17
+                  RenderBR {BR} at (193,4) size 0x18
                   RenderTextControl {INPUT} at (0,26) size 193x26 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,3) size 187x20
                       RenderBlock {DIV} at (0,0) size 171x20
                 RenderBlock {DIV} at (1,101) size 275x54
                   RenderTextControl {INPUT} at (0,0) size 213x27 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (213,5) size 0x17
+                  RenderBR {BR} at (213,5) size 0x18
                   RenderTextControl {INPUT} at (0,27) size 213x27 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,3) size 207x21
                       RenderBlock {DIV} at (0,0) size 191x21
                 RenderBlock {DIV} at (1,155) size 275x56
                   RenderTextControl {INPUT} at (0,0) size 233x28 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (233,6) size 0x17
+                  RenderBR {BR} at (233,6) size 0x18
                   RenderTextControl {INPUT} at (0,28) size 233x28 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,3) size 227x22
                       RenderBlock {DIV} at (0,0) size 211x22
                 RenderBlock {DIV} at (1,211) size 275x58
                   RenderTextControl {INPUT} at (0,0) size 234x29 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (234,7) size 0x17
+                  RenderBR {BR} at (234,7) size 0x18
                   RenderTextControl {INPUT} at (0,29) size 234x29 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,3) size 228x23
                       RenderBlock {DIV} at (0,0) size 212x23
                 RenderBlock {DIV} at (1,269) size 275x60
                   RenderTextControl {INPUT} at (0,0) size 254x30 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (254,8) size 0x17
+                  RenderBR {BR} at (254,8) size 0x18
                   RenderTextControl {INPUT} at (0,30) size 254x30 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,3) size 248x24
                       RenderBlock {DIV} at (0,0) size 232x24
                 RenderBlock {DIV} at (1,329) size 275x64
                   RenderTextControl {INPUT} at (0,0) size 255x32 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (255,9) size 0x17
+                  RenderBR {BR} at (255,9) size 0x18
                   RenderTextControl {INPUT} at (0,32) size 255x32 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,3) size 249x26
                       RenderBlock {DIV} at (0,0) size 233x26
                 RenderBlock {DIV} at (1,393) size 275x66
                   RenderTextControl {INPUT} at (0,0) size 275x33 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderBR {BR} at (275,10) size 0x17
+                  RenderBR {BR} at (275,10) size 0x18
                   RenderTextControl {INPUT} at (0,33) size 275x33 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                     RenderFlexibleBox {DIV} at (3,3) size 269x27
                       RenderBlock {DIV} at (0,0) size 253x27

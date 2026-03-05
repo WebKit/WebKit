@@ -7,4 +7,5 @@ PASS addTransceiver() with inactive direction should not cause remote connection
 PASS Using offerToReceiveAudio and offerToReceiveVideo should only cause a audio track event to fire, if audio was the only type negotiated
 PASS Using offerToReceiveAudio and offerToReceiveVideo should only cause a video track event to fire, if video was the only type negotiated
 PASS addTransceiver order of kinds is retained in ontrack at the receiver
+FAIL ontrack should not fire for rejected media sections assert_unreached: ontrack event should not fire for track in a rejected media section Reached unreachable code
 

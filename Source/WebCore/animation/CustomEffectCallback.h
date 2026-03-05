@@ -40,6 +40,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSCustomEffectCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(double progress) = 0;
     virtual CallbackResult<void> invokeRethrowingException(double progress) = 0;
 

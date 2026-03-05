@@ -57,8 +57,10 @@ AstcDecompressorPerfTest::AstcDecompressorPerfTest()
       mDecompressor(AstcDecompressor::get()),
       mInput(makeAstcCheckerboard(GetParam().width, GetParam().height)),
       mOutput(GetParam().width * GetParam().height * 4),
-      mSingleThreadPool(WorkerThreadPool::Create(1, ANGLEPlatformCurrent())),
-      mMultiThreadPool(WorkerThreadPool::Create(0, ANGLEPlatformCurrent()))
+      mSingleThreadPool(
+          WorkerThreadPool::Create(angle::ThreadPoolType::Synchronous, 0, ANGLEPlatformCurrent())),
+      mMultiThreadPool(
+          WorkerThreadPool::Create(angle::ThreadPoolType::Asynchronous, 0, ANGLEPlatformCurrent()))
 {}
 
 void AstcDecompressorPerfTest::step()

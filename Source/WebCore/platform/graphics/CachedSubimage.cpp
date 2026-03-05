@@ -80,7 +80,7 @@ std::unique_ptr<CachedSubimage> CachedSubimage::createPixelated(GraphicsContext&
 }
 
 CachedSubimage::CachedSubimage(Ref<ImageBuffer>&& imageBuffer, const FloatSize& scaleFactor, const FloatRect& destinationRect, const FloatRect& sourceRect)
-    : m_imageBuffer(WTFMove(imageBuffer))
+    : m_imageBuffer(WTF::move(imageBuffer))
     , m_scaleFactor(scaleFactor)
     , m_destinationRect(destinationRect)
     , m_sourceRect(sourceRect)

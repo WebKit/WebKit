@@ -30,5 +30,5 @@ typedef (double or CSSNumericValue) CSSNumberish;
     Exposed=Window
 ] interface AnimationTimeline {
     readonly attribute CSSNumberish? currentTime;
-    [EnabledBySetting=ScrollDrivenAnimationsEnabled] readonly attribute CSSNumberish? duration;
+    readonly attribute CSSNumberish? duration;
 };

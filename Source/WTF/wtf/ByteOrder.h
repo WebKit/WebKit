@@ -31,6 +31,7 @@
 #pragma once
 
 #include <bit>
+#include <wtf/Platform.h>
 
 #if OS(UNIX)
 #include <arpa/inet.h>

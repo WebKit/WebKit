@@ -28,24 +28,24 @@ includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
-    compareArray(new TA([0, 0, 0]).fill(8, 1), [0, 8, 8]),
+    compareArray(new TA(makeCtorArg([0, 0, 0])).fill(8, 1), [0, 8, 8]),
     "Fill elements from custom start position"
   );
 
   assert(
-    compareArray(new TA([0, 0, 0]).fill(8, 4), [0, 0, 0]),
+    compareArray(new TA(makeCtorArg([0, 0, 0])).fill(8, 4), [0, 0, 0]),
     "start position is never higher than length"
   );
 
   assert(
-    compareArray(new TA([0, 0, 0]).fill(8, -1), [0, 0, 8]),
+    compareArray(new TA(makeCtorArg([0, 0, 0])).fill(8, -1), [0, 0, 8]),
     "start < 0 sets initial position to max((len + relativeStart), 0)"
   );
 
   assert(
-    compareArray(new TA([0, 0, 0]).fill(8, -5), [8, 8, 8]),
+    compareArray(new TA(makeCtorArg([0, 0, 0])).fill(8, -5), [8, 8, 8]),
     "start position is 0 when (len + relativeStart) < 0"
   );
 });

@@ -40,6 +40,7 @@
 #include <iosfwd>
 #include <limits>
 #include <utility>
+#include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
 
 #if COMPILER(MSVC)

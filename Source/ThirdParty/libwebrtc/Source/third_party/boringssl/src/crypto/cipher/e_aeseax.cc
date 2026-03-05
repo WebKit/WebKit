@@ -258,13 +258,13 @@ static const EVP_AEAD aead_aes_128_eax = {
     0,                         // seal_scatter_supports_extra_in
 
     aead_aes_eax_init,
-    NULL,  // init_with_direction
+    nullptr,  // init_with_direction
     aead_aes_eax_cleanup,
-    NULL,  // open
+    nullptr,  // open
     aead_aes_eax_seal_scatter,
     aead_aes_eax_open_gather,
-    NULL,  // get_iv
-    NULL,  // tag_len
+    nullptr,  // get_iv
+    nullptr,  // tag_len
 };
 
 static const EVP_AEAD aead_aes_256_eax = {
@@ -275,13 +275,13 @@ static const EVP_AEAD aead_aes_256_eax = {
     0,                         // seal_scatter_supports_extra_in
 
     aead_aes_eax_init,
-    NULL,  // init_with_direction
+    nullptr,  // init_with_direction
     aead_aes_eax_cleanup,
-    NULL,  // open
+    nullptr,  // open
     aead_aes_eax_seal_scatter,
     aead_aes_eax_open_gather,
-    NULL,  // get_iv
-    NULL,  // tag_len
+    nullptr,  // get_iv
+    nullptr,  // tag_len
 };
 
 const EVP_AEAD *EVP_aead_aes_128_eax(void) { return &aead_aes_128_eax; }

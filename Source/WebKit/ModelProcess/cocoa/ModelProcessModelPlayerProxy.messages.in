@@ -32,7 +32,7 @@ messages -> ModelProcessModelPlayerProxy {
     CreateLayer()
     ReloadModel(Ref<WebCore::Model> model, WebCore::LayoutSize layoutSize, std::optional<WebCore::TransformationMatrix> entityTransformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore)
     ModelVisibilityDidChange(bool isVisible)
-    DisableUnloadDelayForTesting()
+    [EnabledBy=AllowTestOnlyIPC] DisableUnloadDelayForTesting()
     
     # WebCore::ModelPlayer
     LoadModel(Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize)
@@ -51,6 +51,11 @@ messages -> ModelProcessModelPlayerProxy {
     EndStageModeInteraction()
     AnimateModelToFitPortal() -> (bool success)
     ResetModelTransformAfterDrag()
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    EnsureImmersivePresentation() -> (std::optional<WebCore::LayerHostingContextIdentifier> contextID) Async
+    ExitImmersivePresentation() -> () Async
+#endif
 }
 
 #endif

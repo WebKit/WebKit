@@ -82,8 +82,11 @@ class RegatheringControllerTest : public ::testing::Test,
     // call of StartGettingPorts is blocking. We will not ClearGettingPorts
     // prematurely.
     allocator_session_->StartGettingPorts();
-    allocator_session_->SignalIceRegathering.connect(
-        this, &RegatheringControllerTest::OnIceRegathering);
+    allocator_session_->SubscribeIceRegathering(
+        [this](PortAllocatorSession* allocator_session,
+               IceRegatheringReason reason) {
+          OnIceRegathering(allocator_session, reason);
+        });
     regathering_controller_->set_allocator_session(allocator_session_.get());
   }
 

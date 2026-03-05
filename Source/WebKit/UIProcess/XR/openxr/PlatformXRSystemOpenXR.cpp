@@ -52,7 +52,7 @@ void PlatformXRSystem::createLayerProjection(IPC::Connection&, uint32_t width, u
     }
 
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
-        xrCoordinator->createLayerProjection(width, height, alpha, WTFMove(reply));
+        xrCoordinator->createLayerProjection(width, height, alpha, WTF::move(reply));
 }
 
 } // namespace WebKit

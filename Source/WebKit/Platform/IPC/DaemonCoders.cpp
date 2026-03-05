@@ -89,7 +89,7 @@ std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(
     auto trust = adoptCF(SecTrustDeserialize(adoptCF(CFDataCreate(nullptr, bytes.data(), bytes.size())).get(), nullptr));
     if (!trust)
         return std::nullopt;
-    return WebCore::CertificateInfo(WTFMove(trust));
+    return WebCore::CertificateInfo(WTF::move(trust));
 #else
     return WebCore::CertificateInfo();
 #endif
@@ -106,7 +106,7 @@ template<> struct Coder<WebCore::PCM::SourceSite> {
         decoder >> registrableDomain;
         if (!registrableDomain)
             return std::nullopt;
-        return { WebCore::PCM::SourceSite { WTFMove(*registrableDomain) } };
+        return { WebCore::PCM::SourceSite { WTF::move(*registrableDomain) } };
     }
 };
 
@@ -121,7 +121,7 @@ template<> struct Coder<WebCore::PCM::AttributionDestinationSite> {
         decoder >> registrableDomain;
         if (!registrableDomain)
             return std::nullopt;
-        return { WebCore::PCM::AttributionDestinationSite { WTFMove(*registrableDomain) } };
+        return { WebCore::PCM::AttributionDestinationSite { WTF::move(*registrableDomain) } };
     }
 };
 
@@ -136,7 +136,7 @@ template<> struct Coder<WebCore::PCM::EphemeralNonce> {
         decoder >> nonce;
         if (!nonce)
             return std::nullopt;
-        return { WebCore::PCM::EphemeralNonce { WTFMove(*nonce) } };
+        return { WebCore::PCM::EphemeralNonce { WTF::move(*nonce) } };
     }
 };
 
@@ -158,7 +158,7 @@ template<> struct Coder<WebCore::PCM::AttributionTimeToSendData> {
         if (!destinationEarliestTimeToSend)
             return std::nullopt;
 
-        return { { WTFMove(*sourceEarliestTimeToSend), WTFMove(*destinationEarliestTimeToSend) } };
+        return { { WTF::move(*sourceEarliestTimeToSend), WTF::move(*destinationEarliestTimeToSend) } };
     }
 };
 
@@ -229,16 +229,16 @@ std::optional<WebCore::PrivateClickMeasurement> Coder<WebCore::PrivateClickMeasu
         return std::nullopt;
 
     return { {
-        WTFMove(*sourceID),
-        WTFMove(*sourceSite),
-        WTFMove(*destinationSite),
-        WTFMove(*timeOfAdClick),
-        WTFMove(*isEphemeral),
-        WTFMove(*adamID),
-        WTFMove(*attributionTriggerData),
-        WTFMove(*timesToSend),
-        WTFMove(*ephemeralSourceNonce),
-        WTFMove(*sourceApplicationBundleID),
+        WTF::move(*sourceID),
+        WTF::move(*sourceSite),
+        WTF::move(*destinationSite),
+        WTF::move(*timeOfAdClick),
+        WTF::move(*isEphemeral),
+        WTF::move(*adamID),
+        WTF::move(*attributionTriggerData),
+        WTF::move(*timesToSend),
+        WTF::move(*ephemeralSourceNonce),
+        WTF::move(*sourceApplicationBundleID),
     } };
 }
 
@@ -285,12 +285,12 @@ std::optional<WebCore::PCM::AttributionTriggerData> Coder<WebCore::PCM::Attribut
         return std::nullopt;
 
     return { {
-        WTFMove(*data),
-        WTFMove(*priority),
-        WTFMove(*wasSent),
-        WTFMove(*sourceRegistrableDomain),
-        WTFMove(*ephemeralDestinationNonce),
-        WTFMove(*destinationSite),
+        WTF::move(*data),
+        WTF::move(*priority),
+        WTF::move(*wasSent),
+        WTF::move(*sourceRegistrableDomain),
+        WTF::move(*ephemeralDestinationNonce),
+        WTF::move(*destinationSite),
         // destinationUnlinkableToken and destinationSecretToken are not serialized.
     } };
 }
@@ -307,7 +307,7 @@ std::optional<WebCore::RegistrableDomain> Coder<WebCore::RegistrableDomain, void
     if (!host)
         return std::nullopt;
 
-    return { WebCore::RegistrableDomain::fromRawString(WTFMove(*host)) };
+    return { WebCore::RegistrableDomain::fromRawString(WTF::move(*host)) };
 }
 
 }

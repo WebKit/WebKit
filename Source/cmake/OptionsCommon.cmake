@@ -66,7 +66,7 @@ unset(LD_USAGE_COMMAND)
 
 set(LD_SUPPORTS_SPLIT_DEBUG TRUE)
 set(LD_SUPPORTS_THIN_ARCHIVES TRUE)
-if (LD_VERSION MATCHES "^LLD ")
+if (LD_VERSION MATCHES "(^|[ \t])LLD ")
     set(LD_VARIANT LLD)
 elseif (LD_VERSION MATCHES "^mold ")
     set(LD_VARIANT MOLD)
@@ -118,7 +118,7 @@ if (AR_STATUS EQUAL 0)
     if (AR_VERSION MATCHES "^GNU ar ")
         set(AR_VARIANT BFD)
         set(AR_SUPPORTS_THIN_ARCHIVES TRUE)
-    elseif (AR_VERSION MATCHES "^LLVM ")
+    elseif (AR_VERSION MATCHES "(^|[ \t])LLVM ")
         set(AR_VARIANT LLVM)
         set(AR_SUPPORTS_THIN_ARCHIVES TRUE)
     else ()
@@ -194,6 +194,8 @@ endif ()
 option(GCC_OFFLINEASM_SOURCE_MAP
   "Produce debug line information for offlineasm-generated code"
   ${GCC_OFFLINEASM_SOURCE_MAP_DEFAULT})
+
+option(USE_APPLE_ICU "Use Apple's internal ICU" ${APPLE})
 
 # Enable the usage of OpenMP.
 #  - At this moment, OpenMP is only used as an alternative implementation
@@ -308,6 +310,7 @@ WEBKIT_CHECK_HAVE_FUNCTION(HAVE_LOCALTIME_R localtime_r time.h)
 WEBKIT_CHECK_HAVE_FUNCTION(HAVE_MALLOC_TRIM malloc_trim malloc.h)
 WEBKIT_CHECK_HAVE_FUNCTION(HAVE_STATX statx sys/stat.h)
 WEBKIT_CHECK_HAVE_FUNCTION(HAVE_TIMEGM timegm time.h)
+WEBKIT_CHECK_HAVE_FUNCTION(HAVE_TIMERFD timerfd_create sys/timerfd.h)
 WEBKIT_CHECK_HAVE_FUNCTION(HAVE_VASPRINTF vasprintf stdio.h)
 
 # Check for symbols

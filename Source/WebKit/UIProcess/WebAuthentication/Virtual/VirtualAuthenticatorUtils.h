@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-uint8_t flagsForConfig(const VirtualAuthenticatorConfiguration&);
+uint8_t NODELETE flagsForConfig(const VirtualAuthenticatorConfiguration&);
 RetainPtr<SecKeyRef> createPrivateKey();
 std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateKey(RetainPtr<SecKeyRef> privateKey);
 String base64PrivateKey(RetainPtr<SecKeyRef> privateKey);

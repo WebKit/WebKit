@@ -242,7 +242,7 @@ static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
 
 - (id<WKShareSheetDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<WKShareSheetDelegate>)delegate
@@ -271,7 +271,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     });
 
     auto queue = WorkQueue::create("com.apple.WebKit.WKShareSheet.ShareableFileWriter"_s);
-    queue->dispatch([shareDataArray = WTFMove(shareDataArray), fileWriteTasks = WTFMove(fileWriteTasks), temporaryDirectory = retainPtr(temporaryDirectory), usePlaceholderFiles, completionHandler = WTFMove(completionHandler)]() mutable {
+    queue->dispatch([shareDataArray = WTF::move(shareDataArray), fileWriteTasks = WTF::move(fileWriteTasks), temporaryDirectory = retainPtr(temporaryDirectory), usePlaceholderFiles, completionHandler = WTF::move(completionHandler)]() mutable {
         RetainPtr fileURLs = adoptNS([[NSMutableArray alloc] initWithCapacity:fileWriteTasks.size()]);
         for (auto& fileWriteTask : fileWriteTasks) {
             RetainPtr fileURL = [WKShareSheet writeFileToShareableURL:WebCore::ResourceResponseBase::sanitizeSuggestedFilename(fileWriteTask.fileName).createNSString().get() data:fileWriteTask.fileData.get() temporaryDirectory:temporaryDirectory.get()];
@@ -281,7 +281,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
             [fileURLs addObject:fileURL.get()];
         }
 
-        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), shareDataArray = WTFMove(shareDataArray), fileURLs = WTFMove(fileURLs), usePlaceholderFiles] mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), shareDataArray = WTF::move(shareDataArray), fileURLs = WTF::move(fileURLs), usePlaceholderFiles] mutable {
             if (usePlaceholderFiles) {
                 RetainPtr placeholderShareDataArray = adoptNS([[NSMutableArray alloc] initWithCapacity:[fileURLs count]]);
                 for (NSURL *fileURL in fileURLs.get()) {
@@ -301,7 +301,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
             } else
                 [shareDataArray addObjectsFromArray:fileURLs.get()];
 
-            completionHandler(WTFMove(shareDataArray));
+            completionHandler(WTF::move(shareDataArray));
         });
     });
 }
@@ -338,7 +338,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     if (!data.shareData.title.isEmpty() && ![shareDataArray count])
         [shareDataArray addObject:data.shareData.title.createNSString().get()];
 
-    _completionHandler = WTFMove(completionHandler);
+    _completionHandler = WTF::move(completionHandler);
 
     if (auto resolution = [_webView.get() _resolutionForShareSheetImmediateCompletionForTesting]) {
         _didShareSuccessfully = *resolution;
@@ -350,7 +350,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
         bool usePlaceholderFiles = data.originator == WebCore::ShareDataOriginator::Web;
 
         _temporaryFileShareDirectory = [WKShareSheet createTemporarySharingDirectory];
-        appendFilesAsShareableURLs(WTFMove(shareDataArray), data.files, _temporaryFileShareDirectory.get(), usePlaceholderFiles, [retainedSelf = retainPtr(self), rect = WTFMove(rect)](RetainPtr<NSMutableArray>&& shareDataArray) mutable {
+        appendFilesAsShareableURLs(WTF::move(shareDataArray), data.files, _temporaryFileShareDirectory.get(), usePlaceholderFiles, [retainedSelf = retainPtr(self), rect = WTF::move(rect)](RetainPtr<NSMutableArray>&& shareDataArray) mutable {
             if (!shareDataArray) {
                 [retainedSelf dismiss];
                 return;
@@ -405,6 +405,8 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     if (webView.get().traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomVision) {
         [_shareSheetViewController setAllowsCustomPresentationStyle:YES];
         [_shareSheetViewController setModalPresentationStyle:UIModalPresentationFormSheet];
+
+        [webView _page]->dispatchWillPresentModalUI();
     } else
 #endif // PLATFORM(VISION)
     {
@@ -455,7 +457,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
 - (void)dismiss
 {
-    auto completionHandler = WTFMove(_completionHandler);
+    auto completionHandler = WTF::move(_completionHandler);
     if (completionHandler)
         completionHandler(_didShareSuccessfully);
     

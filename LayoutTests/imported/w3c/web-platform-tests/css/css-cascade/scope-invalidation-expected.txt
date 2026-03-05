@@ -27,4 +27,5 @@ PASS Modifying selectorText invalidates affected elements (>)
 PASS Relative selectors set with selectorText are relative to :scope and &
 PASS Ancestor element affecting nested scope root (Through latter selector in list)
 PASS Parent element of subject affecting scope limit
+PASS Sandwiched deep implicit scope root, :scope in subject
 

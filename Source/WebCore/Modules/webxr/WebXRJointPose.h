@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class WebXRJointPose : public WebXRPose {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRJointPose);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRJointPose);
 public:
     static Ref<WebXRJointPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition, float radius);
 

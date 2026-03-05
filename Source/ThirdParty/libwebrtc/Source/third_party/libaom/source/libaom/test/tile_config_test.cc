@@ -19,14 +19,14 @@
 #include "test/util.h"
 
 namespace {
-typedef struct {
+struct uniformTileConfigParam {
   // Superblock size
   const unsigned int sb_size;
   // log2(number of tile rows)
   const unsigned int tile_rows;
   // log2(number of tile columns)
   const unsigned int tile_cols;
-} uniformTileConfigParam;
+};
 
 const libaom_test::TestMode kTestModeParams[] =
 #if CONFIG_REALTIME_ONLY
@@ -42,7 +42,7 @@ static const uniformTileConfigParam uniformTileConfigParams[] = {
   { 64, 2, 2 },  { 64, 3, 3 },  { 64, 4, 4 }
 };
 
-typedef struct {
+struct nonUniformTileConfigParam {
   // Superblock size
   const unsigned int sb_size;
   // number of tile widths
@@ -53,7 +53,7 @@ typedef struct {
   const unsigned int tile_height_count;
   // list of tile heights
   int tile_heights[AOM_MAX_TILE_ROWS];
-} nonUniformTileConfigParam;
+};
 
 const nonUniformTileConfigParam nonUniformTileConfigParams[] = {
   { 64, 1, { 3 }, 1, { 3 } },          { 64, 2, { 1, 2 }, 2, { 1, 2 } },
@@ -271,14 +271,14 @@ AV1_INSTANTIATE_TEST_SUITE(NonUniformTileConfigTestLarge,
                            ::testing::ValuesIn(nonUniformTileConfigParams),
                            ::testing::Values(AOM_Q, AOM_VBR, AOM_CBR, AOM_CQ));
 
-typedef struct {
+struct TileGroupConfigParams {
   // Number of tile groups to set.
   const int num_tg;
   // Number of tile rows to set
   const int num_tile_rows;
   // Number of tile columns to set
   const int num_tile_cols;
-} TileGroupConfigParams;
+};
 
 static const TileGroupConfigParams tileGroupTestParams[] = {
   { 5, 4, 4 }, { 3, 3, 3 }, { 5, 3, 3 }, { 7, 5, 5 }, { 7, 3, 3 }, { 7, 4, 4 }

@@ -33,10 +33,10 @@
 #include "LibWebRTCLogSink.h"
 #include "LibWebRTCUtils.h"
 #include "Logging.h"
-#include "MediaCapabilitiesDecodingInfo.h"
-#include "MediaCapabilitiesEncodingInfo.h"
-#include "MediaDecodingConfiguration.h"
-#include "MediaEncodingConfiguration.h"
+#include "PlatformMediaCapabilitiesDecodingInfo.h"
+#include "PlatformMediaCapabilitiesEncodingInfo.h"
+#include "PlatformMediaDecodingConfiguration.h"
+#include "PlatformMediaEncodingConfiguration.h"
 #include "ProcessQualified.h"
 #include <dlfcn.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -107,19 +107,19 @@ public:
 
     void setDisableNonLocalhostConnections(bool disableNonLocalhostConnections) { m_disableNonLocalhostConnections = disableNonLocalhostConnections; }
 
-    webrtc::AsyncPacketSocket* CreateUdpSocket(const webrtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort) final
+    std::unique_ptr<webrtc::AsyncPacketSocket> CreateUdpSocket(const webrtc::Environment& env, const webrtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort) final
     {
-        return m_socketFactory->CreateUdpSocket(prepareSocketAddress(address, m_disableNonLocalhostConnections), minPort, maxPort);
+        return m_socketFactory->CreateUdpSocket(env, prepareSocketAddress(address, m_disableNonLocalhostConnections), minPort, maxPort);
     }
 
-    webrtc::AsyncListenSocket* CreateServerTcpSocket(const webrtc::SocketAddress&, uint16_t, uint16_t, int) final
+    std::unique_ptr<webrtc::AsyncListenSocket> CreateServerTcpSocket(const webrtc::Environment&, const webrtc::SocketAddress&, uint16_t, uint16_t, int) final
     {
         return nullptr;
     }
 
-    webrtc::AsyncPacketSocket* CreateClientTcpSocket(const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, const webrtc::PacketSocketTcpOptions& options) final
+    std::unique_ptr<webrtc::AsyncPacketSocket> CreateClientTcpSocket(const webrtc::Environment& env, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, const webrtc::PacketSocketTcpOptions& options) final
     {
-        return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, options);
+        return m_socketFactory->CreateClientTcpSocket(env, prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, options);
     }
 
     std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver() final { return m_socketFactory->CreateAsyncDnsResolver(); }
@@ -180,7 +180,7 @@ static LibWebRTCLogSink& getRTCLogSink()
         LibWebRTCLogSink::LogCallback callback = [] (auto&& severity, auto&& message) {
             doReleaseLogging(severity, message.c_str());
         };
-        logSink.construct(WTFMove(callback));
+        logSink.construct(WTF::move(callback));
     });
     return logSink.get();
 }
@@ -234,13 +234,13 @@ bool LibWebRTCProvider::hasWebRTCThreads()
 void LibWebRTCProvider::callOnWebRTCNetworkThread(Function<void()>&& callback)
 {
     PeerConnectionFactoryAndThreads& threads = staticFactoryAndThreads();
-    threads.networkThread->PostTask(WTFMove(callback));
+    threads.networkThread->PostTask(WTF::move(callback));
 }
 
 void LibWebRTCProvider::callOnWebRTCSignalingThread(Function<void()>&& callback)
 {
     PeerConnectionFactoryAndThreads& threads = staticFactoryAndThreads();
-    threads.signalingThread->PostTask(WTFMove(callback));
+    threads.signalingThread->PostTask(WTF::move(callback));
 }
 
 webrtc::Thread& LibWebRTCProvider::signalingThread()
@@ -279,7 +279,7 @@ void LibWebRTCProvider::disableNonLocalhostConnections()
     m_disableNonLocalhostConnections = true;
 }
 
-std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&)
+std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool)
 {
     return nullptr;
 }
@@ -332,7 +332,7 @@ private:
     {
         if (!m_useL4S || trial != "WebRTC-RFC8888CongestionControlFeedback")
             return "";
-        return "Enabled,force_send:true";
+        return "Enabled";
     }
 
     bool m_useL4S { false };
@@ -369,7 +369,7 @@ Ref<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnect
 
     webrtc::EnableMedia(dependencies);
 
-    return toRef(webrtc::CreateModularPeerConnectionFactory(WTFMove(dependencies)));
+    return toRef(webrtc::CreateModularPeerConnectionFactory(WTF::move(dependencies)));
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFactory()
@@ -390,7 +390,7 @@ void LibWebRTCProvider::startedNetworkThread()
 void LibWebRTCProvider::setPeerConnectionFactory(webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)
 {
     auto* thread = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer).signalingThread.get();
-    m_factory = toRef<webrtc::PeerConnectionFactoryInterface>(webrtc::PeerConnectionFactoryProxy::Create(thread, thread, WTFMove(factory)));
+    m_factory = toRef<webrtc::PeerConnectionFactoryInterface>(webrtc::PeerConnectionFactoryProxy::Create(thread, thread, WTF::move(factory)));
 }
 
 webrtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver& observer, webrtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
@@ -406,7 +406,7 @@ webrtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::create
         factoryAndThreads.packetSocketFactory = makeUnique<BasicPacketSocketFactory>(*factoryAndThreads.networkThread);
     factoryAndThreads.packetSocketFactory->setDisableNonLocalhostConnections(m_disableNonLocalhostConnections);
 
-    return createPeerConnection(observer, *factoryAndThreads.networkManager, *factoryAndThreads.packetSocketFactory, WTFMove(configuration), nullptr);
+    return createPeerConnection(observer, *factoryAndThreads.networkManager, *factoryAndThreads.packetSocketFactory, WTF::move(configuration), nullptr);
 }
 
 void LibWebRTCProvider::setEnableWebRTCEncryption(bool enableWebRTCEncryption)
@@ -433,17 +433,17 @@ webrtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::create
         auto basicPortAllocator = makeUniqueWithoutFastMallocCheck<webrtc::BasicPortAllocator>(webrtc::CreateEnvironment(), &networkManager, &packetSocketFactory);
 
         basicPortAllocator->set_allow_tcp_listen(false);
-        portAllocator = WTFMove(basicPortAllocator);
+        portAllocator = WTF::move(basicPortAllocator);
     });
 
     if (auto portRange = portAllocatorRange())
         portAllocator->SetPortRange(portRange->first, portRange->second);
 
     webrtc::PeerConnectionDependencies dependencies { &observer };
-    dependencies.allocator = WTFMove(portAllocator);
-    dependencies.async_dns_resolver_factory = WTFMove(asyncDnsResolverFactory);
+    dependencies.allocator = WTF::move(portAllocator);
+    dependencies.async_dns_resolver_factory = WTF::move(asyncDnsResolverFactory);
 
-    auto peerConnectionOrError = m_factory->CreatePeerConnectionOrError(configuration, WTFMove(dependencies));
+    auto peerConnectionOrError = m_factory->CreatePeerConnectionOrError(configuration, WTF::move(dependencies));
     if (!peerConnectionOrError.ok())
         return nullptr;
 
@@ -457,7 +457,7 @@ void LibWebRTCProvider::prepareCertificateGenerator(Function<void(webrtc::RTCCer
         factoryAndThreads.certificateGenerator = makeUniqueWithoutFastMallocCheck<webrtc::RTCCertificateGenerator>(factoryAndThreads.signalingThread.get(), factoryAndThreads.networkThread.get());
 
     auto& generator = *factoryAndThreads.certificateGenerator;
-    callOnWebRTCSignalingThread([&generator, callback = WTFMove(callback)]() mutable {
+    callOnWebRTCSignalingThread([&generator, callback = WTF::move(callback)]() mutable {
         callback(generator);
     });
 }
@@ -485,7 +485,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
         String sdpFmtpLine;
         if (sdpFmtpLineBuilder.length())
             sdpFmtpLine = sdpFmtpLineBuilder.toString();
-        return RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), codec.num_channels, WTFMove(sdpFmtpLine) };
+        return RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), codec.num_channels, WTF::move(sdpFmtpLine) };
 
     });
 
@@ -571,9 +571,9 @@ void LibWebRTCProvider::initializeVideoEncodingCapabilities()
         m_videoEncodingCapabilities = toRTCRtpCapabilities(factory->GetRtpSenderCapabilities(webrtc::MediaType::VIDEO));
 }
 
-std::optional<MediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCapabilitiesOverride(const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
-    MediaCapabilitiesDecodingInfo info;
+    PlatformMediaCapabilitiesDecodingInfo info;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {
@@ -600,9 +600,9 @@ std::optional<MediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCap
     return { info };
 }
 
-std::optional<MediaCapabilitiesEncodingInfo> LibWebRTCProvider::videoEncodingCapabilitiesOverride(const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesEncodingInfo> LibWebRTCProvider::videoEncodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
-    MediaCapabilitiesEncodingInfo info;
+    PlatformMediaCapabilitiesEncodingInfo info;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s) || equalLettersIgnoringASCIICase(containerType, "video/vp9"_s))
@@ -615,7 +615,7 @@ std::optional<MediaCapabilitiesEncodingInfo> LibWebRTCProvider::videoEncodingCap
         info.powerEfficient = info.smooth = false;
 
     info.supported = true;
-    info.configuration.type = MediaEncodingType::WebRTC;
+    info.configuration.type = PlatformMediaEncodingType::WebRTC;
     return { info };
 }
 

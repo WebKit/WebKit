@@ -67,3 +67,4 @@
 
 extern NSPoint lastMousePosition;
 extern NSPoint lastClickPosition;
+extern NSInteger lastButtonDown;

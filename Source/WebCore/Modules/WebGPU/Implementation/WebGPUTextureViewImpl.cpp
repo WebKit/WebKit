@@ -37,7 +37,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureViewImpl);
 
 TextureViewImpl::TextureViewImpl(WebGPUPtr<WGPUTextureView>&& textureView, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(textureView))
+    : m_backing(WTF::move(textureView))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }

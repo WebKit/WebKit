@@ -69,7 +69,7 @@ FAIL table 3 assert_equals:
     </tr>
   </tbody>
 </table>
-height expected 100 but got 40
+height expected 25 but got 10
 FAIL table 4 assert_equals:
 <table id="four">
   <tbody style="height:100px">
@@ -140,7 +140,7 @@ FAIL table 11 assert_equals:
     <tr data-expected-height="25"></tr>
   </tbody>
 </table>
-height expected 75 but got 0
+height expected 25 but got 0
 FAIL table 12 assert_equals:
 <table id="ten" style="width:50px">
   <tbody style="height:50px" data-expected-height="50">
@@ -149,5 +149,5 @@ FAIL table 12 assert_equals:
     <tr data-expected-height="25"><td></td></tr>
   </tbody>
 </table>
-height expected 50 but got 0
+height expected 25 but got 0
 

@@ -39,7 +39,7 @@ public:
 private:
     ReferenceTypeExpression(SourceSpan span, Expression::Ref&& type)
         : Expression(span)
-        , m_type(WTFMove(type))
+        , m_type(WTF::move(type))
     { }
 
     Expression::Ref m_type;

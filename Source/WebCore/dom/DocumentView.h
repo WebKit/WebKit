@@ -36,19 +36,9 @@ inline LocalFrameView* LocalFrame::view() const
     return m_view.get();
 }
 
-inline RefPtr<LocalFrameView> LocalFrame::protectedView() const
-{
-    return m_view;
-}
-
 inline LocalFrameView* Document::view() const
 {
     return m_frame ? m_frame->view() : nullptr;
-}
-
-inline RefPtr<LocalFrameView> Document::protectedView() const
-{
-    return view();
 }
 
 }

@@ -36,7 +36,7 @@ class CSSParserToken;
 class MediaQueryBlockWatcher {
 public:
     MediaQueryBlockWatcher();
-    void handleToken(const CSSParserToken&);
+    void NODELETE handleToken(const CSSParserToken&);
     unsigned blockLevel() const { return m_blockLevel; }
 
 private:

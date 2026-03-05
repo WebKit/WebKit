@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 93x18
           text run at (0,0) width 93: "This tests that "
-        RenderInline {TT} at (92,2) size 25x15
-          RenderText {#text} at (92,2) size 25x15
+        RenderInline {TT} at (92,2) size 25x16
+          RenderText {#text} at (92,2) size 25x16
             text run at (92,2) width 25: "WBR"
         RenderText {#text} at (116,0) size 309x18
           text run at (116,0) width 309: " elements cannot be styled and that setting their "
-        RenderInline {TT} at (424,2) size 63x15
-          RenderText {#text} at (424,2) size 63x15
+        RenderInline {TT} at (424,2) size 63x16
+          RenderText {#text} at (424,2) size 63x16
             text run at (424,2) width 63: "position"
         RenderText {#text} at (486,0) size 22x18
           text run at (486,0) width 22: " to "
-        RenderInline {TT} at (507,2) size 63x15
-          RenderText {#text} at (507,2) size 63x15
+        RenderInline {TT} at (507,2) size 63x16
+          RenderText {#text} at (507,2) size 63x16
             text run at (507,2) width 63: "absolute"
         RenderText {#text} at (569,0) size 154x18
           text run at (569,0) width 154: " does not crash WebKit."

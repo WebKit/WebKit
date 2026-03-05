@@ -20,16 +20,24 @@ target.width = source.width;
 target.height = source.height;
 var ctx2 = target.getContext("2d");
 ctx2.globalCompositeOperation = "copy";
-var i = 0;
-PerfTestRunner.measureRunsPerSecond({run: function() {
-    ctx1.fillStyle = `rgba(0, ${i}, 0, 0.5)`;
-    ctx1.fillRect(0, 0, source.width, source.height);
-    i += 1;
-   if (i > 255)
-        i = 0;
-    ctx2.drawImage(source, 0, 0);   
+var isDone = false;
+PerfTestRunner.prepareToMeasureValuesAsync({ done: done, unit: 'ms' });
+function done() {
+    isDone = true;
+}
+async function runTest() {
+    let startTime = PerfTestRunner.now();
+    for (let i = 0.0; i < 100.0; i += 1.0) {
+        ctx1.fillStyle = `rgba(0, ${i}, 0, 0.5)`;
+        ctx1.fillRect(0, 0, source.width, source.height);
+        ctx2.drawImage(source, 0, 0);   
+    }
     ctx2.getImageData(0, 0, 1, 1); // FIXME: WebKit does not have backpressure, draws too much.
-}});
+    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+    if (!isDone)
+        setTimeout(runTest, 0);
+}
+runTest();
 </script>
 </body>
 </html>

@@ -37,7 +37,7 @@ Ref<ToggleEventTask> ToggleEventTask::create(Element& element)
     return adoptRef(*new ToggleEventTask(element));
 }
 
-void ToggleEventTask::queue(ToggleState oldState, ToggleState newState)
+void ToggleEventTask::queue(ToggleState oldState, ToggleState newState, Element* source)
 {
     if (m_data)
         oldState = m_data->oldState;
@@ -46,7 +46,7 @@ void ToggleEventTask::queue(ToggleState oldState, ToggleState newState)
     if (!element)
         return;
 
-    m_data = { oldState, newState };
+    m_data = { oldState, newState, source };
     element->queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [task = Ref { *this }, element, newState] {
         if (!task->m_data || task->m_data->newState != newState)
             return;
@@ -56,7 +56,11 @@ void ToggleEventTask::queue(ToggleState oldState, ToggleState newState)
         };
 
         auto data = *std::exchange(task->m_data, std::nullopt);
-        element->dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, { EventInit { }, stringForState(data.oldState), stringForState(data.newState) }, Event::IsCancelable::No));
+        ToggleEvent::Init init;
+        init.oldState = stringForState(data.oldState);
+        init.newState = stringForState(data.newState);
+        init.source = data.source;
+        element->dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, init, Event::IsCancelable::No));
     });
 }
 

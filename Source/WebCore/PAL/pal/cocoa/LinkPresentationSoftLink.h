@@ -26,6 +26,7 @@
 #pragma once
 
 #import <pal/spi/cocoa/LinkPresentationSPI.h>
+#import <wtf/Platform.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, LinkPresentation)

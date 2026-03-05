@@ -40,15 +40,15 @@ namespace WebCore {
 class SVGPathByteStream final : public CanMakeSingleThreadWeakPtr<SVGPathByteStream> {
     WTF_MAKE_TZONE_ALLOCATED(SVGPathByteStream);
 public:
-    class Data final : public RefCounted<Data> {
+    class Data final : public ThreadSafeRefCounted<Data> {
     public:
-        friend class NeverDestroyed<Data, MainThreadAccessTraits>;
+        friend class NeverDestroyed<Data>;
 
         using Bytes = Vector<uint8_t>;
 
         static Ref<Data> create(Bytes&& bytes)
         {
-            return adoptRef(*new Data(WTFMove(bytes)));
+            return adoptRef(*new Data(WTF::move(bytes)));
         }
 
         void updatePath(const Path& path) const
@@ -58,7 +58,7 @@ public:
 
         static Ref<Data> empty()
         {
-            static MainThreadNeverDestroyed<Data> singleton;
+            static NeverDestroyed<Data> singleton;
             return Ref { singleton.get() };
         }
 
@@ -99,7 +99,7 @@ public:
 
     private:
         Data(Bytes&& bytes)
-            : m_bytes(WTFMove(bytes))
+            : m_bytes(WTF::move(bytes))
         {
         }
 
@@ -140,18 +140,18 @@ public:
     }
 
     SVGPathByteStream(Ref<Data>&& data)
-        : m_data(WTFMove(data))
+        : m_data(WTF::move(data))
     {
     }
 
     SVGPathByteStream(Data::Bytes&& data)
-        : m_data(Data::create(WTFMove(data)))
+        : m_data(Data::create(WTF::move(data)))
     {
     }
 
     static SVGPathByteStream& empty()
     {
-        static MainThreadNeverDestroyed<SVGPathByteStream> singleton;
+        static NeverDestroyed<SVGPathByteStream> singleton;
         return singleton;
     }
 
@@ -181,8 +181,8 @@ public:
         return makeUnique<SVGPathByteStream>(*this);
     }
 
-    DataIterator begin() const { return m_data->bytes().begin(); }
-    DataIterator end() const { return m_data->bytes().end(); }
+    DataIterator begin() const LIFETIME_BOUND { return m_data->bytes().begin(); }
+    DataIterator end() const LIFETIME_BOUND { return m_data->bytes().end(); }
 
     void append(uint8_t byte) { m_data.access().append(byte); }
     void append(std::span<const uint8_t> bytes) { m_data.access().append(bytes); }
@@ -205,10 +205,10 @@ public:
         m_data->updatePath(path);
     }
 
-    const Data::Bytes& bytes() const { return m_data->bytes(); }
+    const Data::Bytes& bytes() const LIFETIME_BOUND { return m_data->bytes(); }
 
     DataRef<Data> data() const { return m_data; }
-    void setData(DataRef<Data>&& data) { m_data = WTFMove(data); }
+    void setData(DataRef<Data>&& data) { m_data = WTF::move(data); }
 
 private:
     DataRef<Data> m_data;

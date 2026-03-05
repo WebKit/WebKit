@@ -65,9 +65,9 @@ public:
     static std::optional<MockMediaDevice> mockMicrophoneFromDeviceID(uint32_t);
     static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    CaptureDeviceManager& audioCaptureDeviceManager() { return m_audioCaptureDeviceManager; }
-    CaptureDeviceManager& videoCaptureDeviceManager() { return m_videoCaptureDeviceManager; }
-    DisplayCaptureManager& displayCaptureDeviceManager() { return m_displayCaptureDeviceManager; }
+    CaptureDeviceManager& audioCaptureDeviceManager() LIFETIME_BOUND { return m_audioCaptureDeviceManager; }
+    CaptureDeviceManager& videoCaptureDeviceManager() LIFETIME_BOUND { return m_videoCaptureDeviceManager; }
+    DisplayCaptureManager& displayCaptureDeviceManager() LIFETIME_BOUND { return m_displayCaptureDeviceManager; }
 
 private:
     MockRealtimeMediaSourceCenter() = default;

@@ -52,8 +52,6 @@ public:
 
     void release() { m_isReleased = true; }
 
-    void clearException() { m_vm.clearException(); }
-
 private:
     void simulateThrow();
 
@@ -77,8 +75,6 @@ public:
     ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, JSValue value) { return m_vm.throwException(globalObject, value); }
 
     ALWAYS_INLINE void release() { }
-
-    ALWAYS_INLINE void clearException() { m_vm.clearException(); }
 };
 
 #define DECLARE_THROW_SCOPE(vm__) \

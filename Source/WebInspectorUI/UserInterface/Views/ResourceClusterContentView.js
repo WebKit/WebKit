@@ -51,13 +51,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             this._tryEnableCustomRequestContentViews();
         }
 
-        // FIXME: Since a custom response content view may only become available after a response is received
-        // we need to figure out a way to restore / prefer the custom content view. For example if users
-        // always want to prefer the JSON view to the normal Response text view.
-
-        this._currentContentViewSetting = new WI.Setting("resource-current-view-" + this._resource.url.hash, ResourceClusterContentView.Identifier.Response);
-
-        this._tryEnableCustomResponseContentViews();
+        this._enableCustomResponseContentViewsPromise = this._tryEnableCustomResponseContentViews();
     }
 
     // Public
@@ -78,58 +72,41 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         return components.concat(currentContentView.selectionPathComponents);
     }
 
-    attached()
-    {
-        super.attached();
-
-        if (this._shownInitialContent)
-            return;
-
-        this._showContentViewForIdentifier(this._currentContentViewSetting.value);
-    }
-
-    closed()
-    {
-        super.closed();
-
-        this._shownInitialContent = false;
-    }
-
     restoreFromCookie(cookie)
     {
-        let contentView = this._showContentViewForIdentifier(cookie[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey]);
+        let contentViewIdentifier = cookie[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey] || this._getPreferredContentViewIdentifier();
 
-        if (contentView.revealPosition) {
-            let textRangeToSelect = null;
-            if (!isNaN(cookie.startLine) && !isNaN(cookie.startColumn) && !isNaN(cookie.endLine) && !isNaN(cookie.endColumn))
-                textRangeToSelect = new WI.TextRange(cookie.startLine, cookie.startColumn, cookie.endLine, cookie.endColumn);
+        this._enableCustomResponseContentViewsPromise.then(() => {
+            let contentView = this._showContentViewForIdentifier(contentViewIdentifier);
 
-            let position = null;
-            if (!isNaN(cookie.lineNumber) && !isNaN(cookie.columnNumber))
-                position = new WI.SourceCodePosition(cookie.lineNumber, cookie.columnNumber);
-            else if (textRangeToSelect)
-                position = textRangeToSelect.startPosition();
+            if (contentView.revealPosition) {
+                let textRangeToSelect = null;
+                if (!isNaN(cookie.startLine) && !isNaN(cookie.startColumn) && !isNaN(cookie.endLine) && !isNaN(cookie.endColumn))
+                    textRangeToSelect = new WI.TextRange(cookie.startLine, cookie.startColumn, cookie.endLine, cookie.endColumn);
 
-            let scrollOffset = null;
-            if (!isNaN(cookie.scrollOffsetX) && !isNaN(cookie.scrollOffsetY))
-                scrollOffset = new WI.Point(cookie.scrollOffsetX, cookie.scrollOffsetY);
+                let position = null;
+                if (!isNaN(cookie.lineNumber) && !isNaN(cookie.columnNumber))
+                    position = new WI.SourceCodePosition(cookie.lineNumber, cookie.columnNumber);
+                else if (textRangeToSelect)
+                    position = textRangeToSelect.startPosition();
 
-            if (position)
-                contentView.revealPosition(position, {...cookie, textRangeToSelect, scrollOffset});
-        }
+                let scrollOffset = null;
+                if (!isNaN(cookie.scrollOffsetX) && !isNaN(cookie.scrollOffsetY))
+                    scrollOffset = new WI.Point(cookie.scrollOffsetX, cookie.scrollOffsetY);
+
+                if (position)
+                    contentView.revealPosition(position, {...cookie, textRangeToSelect, scrollOffset});
+            }
+        });
     }
 
     showRequest()
     {
-        this._shownInitialContent = true;
-
         return this._showContentViewForIdentifier(ResourceClusterContentView.Identifier.Request);
     }
 
     showResponse()
     {
-        this._shownInitialContent = true;
-
         return this._showContentViewForIdentifier(ResourceClusterContentView.Identifier.Response);
     }
 
@@ -337,7 +314,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         return null;
     }
 
-    _showContentViewForIdentifier(identifier)
+    _showContentViewForIdentifier(identifier, {saveAsPreference} = {})
     {
         let contentViewToShow = null;
 
@@ -381,14 +358,15 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
         console.assert(contentViewToShow);
 
-        this._currentContentViewSetting.value = this._identifierForContentView(contentViewToShow);
+        if (saveAsPreference)
+            this._setPreferredContentViewIdentifier(identifier);
 
         return this.contentViewContainer.showContentView(contentViewToShow);
     }
 
     _pathComponentSelected(event)
     {
-        this._showContentViewForIdentifier(event.data.pathComponent.representedObject);
+        this._showContentViewForIdentifier(event.data.pathComponent.representedObject, {saveAsPreference: true});
     }
 
     _resourceTypeDidChange(event)
@@ -408,7 +386,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     _resourceLoadingDidFinish(event)
     {
-        this._tryEnableCustomResponseContentViews();
+        this._enableCustomResponseContentViewsPromise = this._tryEnableCustomResponseContentViews();
     }
 
     _canUseJSONContentViewForContent(content)
@@ -463,6 +441,46 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         return mimeType;
     }
 
+    _getMIMETypeForPreferences()
+    {
+        if (!this._resource.mimeType)
+            return null;
+
+        return parseMIMEType(this._resource.mimeType).type;
+    }
+
+    _getPreferredContentViewIdentifier()
+    {
+        let mimeType = this._getMIMETypeForPreferences();
+        if (!mimeType)
+            return null;
+
+        return this._getPreferredContentViewSetting(mimeType).value;
+    }
+
+    _getPreferredContentViewSetting(mimeType)
+    {
+        WI.ResourceClusterContentView._preferredContentViewIdentifierSettingForMIMEType ??= new Map;
+        let setting = WI.ResourceClusterContentView._preferredContentViewIdentifierSettingForMIMEType.getOrInsertComputed(mimeType, () => new WI.Setting("resource-preferred-content-view-" + mimeType, ResourceClusterContentView.Identifier.Response));
+
+        return setting;
+    }
+
+    _setPreferredContentViewIdentifier(identifier)
+    {
+        let mimeType = this._getMIMETypeForPreferences();
+        if (!mimeType)
+            return;
+
+        let setting = this._getPreferredContentViewSetting(mimeType);
+
+        if (identifier === setting.defaultValue)
+            WI.ResourceClusterContentView._preferredContentViewIdentifierSettingForMIMEType.delete(mimeType);
+
+        // Resetting to the default value automatically removes the setting from persistent storage.
+        setting.value = identifier;
+    }
+
     _tryEnableCustomRequestContentViews()
     {
         let content = this._resource.requestData;
@@ -500,7 +518,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         }
     }
 
-    _tryEnableCustomResponseContentViews()
+    async _tryEnableCustomResponseContentViews()
     {
         if (!this._resource.hasResponse())
             return;
@@ -509,52 +527,50 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         if (this._resource instanceof WI.WebSocketResource)
             return;
 
-        this._resource.requestContent()
-        .then(({error, content}) => {
-            if (error || typeof content !== "string")
-                return;
+        let {error, content} = await this._resource.requestContent();
+        if (error || typeof content !== "string")
+            return;
 
-            if (this._canUseJSONContentViewForContent(content)) {
-                this._customResponseJSONContentViewInitializer = () => new WI.LocalJSONContentView(content, this._resource);
+        if (this._canUseJSONContentViewForContent(content)) {
+            this._customResponseJSONContentViewInitializer = () => new WI.LocalJSONContentView(content, this._resource);
 
-                this._customResponseJSONPathComponent = this._createPathComponent({
-                    displayName: WI.UIString("Response (Object Tree)"),
-                    styleClassNames: ["object-icon"],
-                    identifier: ResourceClusterContentView.Identifier.ResponseJSON,
+            this._customResponseJSONPathComponent = this._createPathComponent({
+                displayName: WI.UIString("Response (Object Tree)"),
+                styleClassNames: ["object-icon"],
+                identifier: ResourceClusterContentView.Identifier.ResponseJSON,
+                previousSibling: this._responsePathComponent,
+            });
+
+            this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
+            return;
+        }
+
+        let mimeType = this._normalizeMIMETypeForDOM(this._resource.mimeType);
+
+        if (this._canUseDOMContentViewForContent(content, mimeType)) {
+            if (mimeType === "image/svg+xml") {
+                this._customResponseTextContentViewInitializer = () => new WI.TextContentView(content, mimeType, this._resource);
+
+                this._customResponseTextPathComponent = this._createPathComponent({
+                    displayName: WI.UIString("Response (Text)"),
+                    styleClassNames: ["source-icon"],
+                    identifier: ResourceClusterContentView.Identifier.ResponseText,
                     previousSibling: this._responsePathComponent,
                 });
-
-                this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
-                return;
             }
 
-            let mimeType = this._normalizeMIMETypeForDOM(this._resource.mimeType);
+            this._customResponseDOMContentViewInitializer = () => new WI.LocalDOMContentView(content, mimeType, this._resource);
 
-            if (this._canUseDOMContentViewForContent(content, mimeType)) {
-                if (mimeType === "image/svg+xml") {
-                    this._customResponseTextContentViewInitializer = () => new WI.TextContentView(content, mimeType, this._resource);
+            this._customResponseDOMPathComponent = this._createPathComponent({
+                displayName: WI.UIString("Response (DOM Tree)"),
+                styleClassNames: ["dom-document-icon"],
+                identifier: ResourceClusterContentView.Identifier.ResponseDOM,
+                previousSibling: this._customResponseTextPathComponent || this._responsePathComponent,
+            });
 
-                    this._customResponseTextPathComponent = this._createPathComponent({
-                        displayName: WI.UIString("Response (Text)"),
-                        styleClassNames: ["source-icon"],
-                        identifier: ResourceClusterContentView.Identifier.ResponseText,
-                        previousSibling: this._responsePathComponent,
-                    });
-                }
-
-                this._customResponseDOMContentViewInitializer = () => new WI.LocalDOMContentView(content, mimeType, this._resource);
-
-                this._customResponseDOMPathComponent = this._createPathComponent({
-                    displayName: WI.UIString("Response (DOM Tree)"),
-                    styleClassNames: ["dom-document-icon"],
-                    identifier: ResourceClusterContentView.Identifier.ResponseDOM,
-                    previousSibling: this._customResponseTextPathComponent || this._responsePathComponent,
-                });
-
-                this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
-                return;
-            }
-        });
+            this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
+            return;
+        }
     }
 };
 

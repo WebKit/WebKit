@@ -34,16 +34,16 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<H
 {
     switch (collection->type()) {
     case CollectionType::FormControls:
-        return createWrapper<HTMLFormControlsCollection>(globalObject, WTFMove(collection));
+        return createWrapper<HTMLFormControlsCollection>(globalObject, WTF::move(collection));
     case CollectionType::SelectOptions:
-        return createWrapper<HTMLOptionsCollection>(globalObject, WTFMove(collection));
+        return createWrapper<HTMLOptionsCollection>(globalObject, WTF::move(collection));
     case CollectionType::DocAll:
-        return createWrapper<HTMLAllCollection>(globalObject, WTFMove(collection));
+        return createWrapper<HTMLAllCollection>(globalObject, WTF::move(collection));
     default:
         break;
     }
 
-    return createWrapper<HTMLCollection>(globalObject, WTFMove(collection));
+    return createWrapper<HTMLCollection>(globalObject, WTF::move(collection));
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, HTMLCollection& collection)

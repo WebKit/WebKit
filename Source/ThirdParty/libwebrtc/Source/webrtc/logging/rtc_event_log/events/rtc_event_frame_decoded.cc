@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "absl/memory/memory.h"
-#include "api/rtc_event_log/rtc_event.h"
 #include "api/video/video_codec_type.h"
 
 namespace webrtc {
@@ -32,18 +31,8 @@ RtcEventFrameDecoded::RtcEventFrameDecoded(int64_t render_time_ms,
       codec_(codec),
       qp_(qp) {}
 
-RtcEventFrameDecoded::RtcEventFrameDecoded(const RtcEventFrameDecoded& other)
-    : RtcEvent(other.timestamp_us_),
-      render_time_ms_(other.render_time_ms_),
-      ssrc_(other.ssrc_),
-      width_(other.width_),
-      height_(other.height_),
-      codec_(other.codec_),
-      qp_(other.qp_) {}
-
 std::unique_ptr<RtcEventFrameDecoded> RtcEventFrameDecoded::Copy() const {
-  return absl::WrapUnique<RtcEventFrameDecoded>(
-      new RtcEventFrameDecoded(*this));
+  return absl::WrapUnique(new RtcEventFrameDecoded(*this));
 }
 
 }  // namespace webrtc

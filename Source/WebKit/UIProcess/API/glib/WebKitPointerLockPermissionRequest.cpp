@@ -67,7 +67,7 @@ static void webkitPointerLockPermissionRequestAllow(WebKitPermissionRequest* req
     if (!priv->completionHandler)
         return;
 
-    webkitWebViewRequestPointerLock(priv->webView.get(), WTFMove(priv->completionHandler));
+    webkitWebViewRequestPointerLock(priv->webView.get(), WTF::move(priv->completionHandler));
 }
 
 static void webkitPointerLockPermissionRequestDeny(WebKitPermissionRequest* request)
@@ -80,7 +80,7 @@ static void webkitPointerLockPermissionRequestDeny(WebKitPermissionRequest* requ
     if (!priv->completionHandler)
         return;
 
-    webkitWebViewDenyPointerLockRequest(WTFMove(priv->completionHandler));
+    webkitWebViewDenyPointerLockRequest(WTF::move(priv->completionHandler));
 }
 #endif // ENABLE(POINTER_LOCK)
 
@@ -114,7 +114,7 @@ WebKitPointerLockPermissionRequest* webkitPointerLockPermissionRequestCreate(Web
 {
     WebKitPointerLockPermissionRequest* request = WEBKIT_POINTER_LOCK_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_POINTER_LOCK_PERMISSION_REQUEST, nullptr));
     request->priv->webView = webView;
-    request->priv->completionHandler = WTFMove(completionHandler);
+    request->priv->completionHandler = WTF::move(completionHandler);
     return request;
 }
 

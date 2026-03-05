@@ -29,27 +29,54 @@
 #include "Exception.h"
 #include "IDLTypes.h"
 #include "JSDOMGlobalObject.h"
+#include "JSWebTransportError.h"
 #include "ScriptExecutionContextInlines.h"
+#include "WebTransport.h"
+#include "WebTransportError.h"
 #include "WebTransportSession.h"
+#include "WritableStream.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-WebTransportSendStreamSink::WebTransportSendStreamSink(WebTransportSession& session, WebTransportStreamIdentifier identifier)
-    : m_session(session)
+WebTransportSendStreamSink::WebTransportSendStreamSink(WebTransport& transport, WebTransportStreamIdentifier identifier)
+    : m_transport(transport)
     , m_identifier(identifier)
 {
-    ASSERT(RunLoop::isMain());
 }
 
 WebTransportSendStreamSink::~WebTransportSendStreamSink()
 {
 }
 
+RefPtr<WritableStream> WebTransportSendStreamSink::stream() const
+{
+    return m_stream.get();
+}
+
+void WebTransportSendStreamSink::sendError(JSDOMGlobalObject& globalObject, JSC::JSValue error)
+{
+    if (m_isClosed || m_isCancelled)
+        return;
+    m_isCancelled = true;
+
+    if (RefPtr stream = m_stream.get()) {
+        Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
+        stream->errorIfPossible(globalObject, error);
+    }
+
+    if (RefPtr transport = m_transport.get())
+        transport->sendStreamClosed(m_identifier);
+}
+
 void WebTransportSendStreamSink::write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
 {
-    RefPtr session = m_session.get();
+    RefPtr transport = m_transport.get();
+    if (!transport)
+        return promise.reject(Exception { ExceptionCode::InvalidStateError });
+
+    RefPtr session = transport->session();
     if (!session)
         return promise.reject(Exception { ExceptionCode::InvalidStateError });
 
@@ -68,35 +95,56 @@ void WebTransportSendStreamSink::write(ScriptExecutionContext& context, JSC::JSV
 
     WTF::switchOn(bufferSource.releaseReturnValue(), [&] (auto&& arrayBufferOrView) {
         constexpr bool withFin { false };
-        context.enqueueTaskWhenSettled(session->streamSendBytes(m_identifier, arrayBufferOrView->span(), withFin), TaskSource::Networking, [promise = WTFMove(promise)] (auto&& exception) mutable {
+        context.enqueueTaskWhenSettled(session->streamSendBytes(m_identifier, arrayBufferOrView->span(), withFin), TaskSource::Networking, [promise = WTF::move(promise)] (auto&& exception) mutable {
             if (!exception)
                 promise.settle(Exception { ExceptionCode::NetworkError });
             else if (*exception)
-                promise.settle(WTFMove(**exception));
+                promise.settle(WTF::move(**exception));
             else
                 promise.resolve();
         });
     });
 }
 
-void WebTransportSendStreamSink::close()
+void WebTransportSendStreamSink::close(JSDOMGlobalObject&)
 {
     if (m_isClosed)
         return;
-    if (RefPtr session = m_session.get())
-        session->streamSendBytes(m_identifier, { }, true);
     m_isClosed = true;
+
+    if (RefPtr transport = m_transport.get()) {
+        if (RefPtr session = transport->session())
+            session->streamSendBytes(m_identifier, { }, true);
+        transport->sendStreamClosed(m_identifier);
+    }
 }
 
-void WebTransportSendStreamSink::error(String&&)
+void WebTransportSendStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
 {
+    auto scope = makeScopeExit([&promise] {
+        promise.resolve();
+    });
+
     if (m_isCancelled)
         return;
-    if (RefPtr session = m_session.get()) {
-        // FIXME: Use error code from WebTransportError
-        session->cancelSendStream(m_identifier, std::nullopt);
-    }
     m_isCancelled = true;
+
+    RefPtr transport = m_transport.get();
+    if (!transport)
+        return;
+    transport->sendStreamClosed(m_identifier);
+
+    RefPtr session = transport->session();
+    if (!session)
+        return;
+
+    std::optional<uint64_t> errorCode;
+    if (auto* jsWebTransportError = JSC::jsDynamicCast<JSWebTransportError*>(value)) {
+        Ref webTransportError = jsWebTransportError->wrapped();
+        if (auto webTransportErrorCode = webTransportError->streamErrorCode())
+            errorCode = static_cast<uint64_t>(*webTransportErrorCode);
+    }
+    session->cancelSendStream(m_identifier, errorCode);
 }
 
 }

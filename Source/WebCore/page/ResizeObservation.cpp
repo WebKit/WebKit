@@ -33,6 +33,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "SVGElement.h"
+#include "StyleZoomPrimitivesInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ Ref<ResizeObservation> ResizeObservation::create(Element& target, ResizeObserver
     return adoptRef(*new ResizeObservation(target, observedBox));
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ResizeObservation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResizeObservation);
 
 ResizeObservation::ResizeObservation(Element& element, ResizeObserverBoxOptions observedBox)
     : m_target { element }
@@ -65,7 +66,7 @@ void ResizeObservation::resetObservationSize()
 
 auto ResizeObservation::computeObservedSizes() const -> std::optional<BoxSizes>
 {
-    if (auto* svg = dynamicDowncast<SVGElement>(target())) {
+    if (RefPtr svg = dynamicDowncast<SVGElement>(target())) {
         if (svg->hasAssociatedSVGLayoutBox()) {
             LayoutSize size;
             if (auto svgRect = svg->getBoundingBox()) {
@@ -76,14 +77,14 @@ auto ResizeObservation::computeObservedSizes() const -> std::optional<BoxSizes>
         }
     }
 
-    auto* box = m_target->renderBox();
+    CheckedPtr box = m_target->renderBox();
     if (box) {
         if (box->isSkippedContent())
             return std::nullopt;
         return { {
-            adjustLayoutSizeForAbsoluteZoom(box->contentBoxSize(), *box),
-            adjustLayoutSizeForAbsoluteZoom(box->contentBoxLogicalSize(), *box),
-            adjustLayoutSizeForAbsoluteZoom(box->borderBoxLogicalSize(), *box)
+            Style::adjustLayoutSizeForAbsoluteZoom(box->contentBoxSize(), *box),
+            Style::adjustLayoutSizeForAbsoluteZoom(box->contentBoxLogicalSize(), *box),
+            Style::adjustLayoutSizeForAbsoluteZoom(box->borderBoxLogicalSize(), *box)
         } };
     }
 
@@ -96,7 +97,7 @@ LayoutPoint ResizeObservation::computeTargetLocation() const
         return { };
 
     if (!m_target->isSVGElement()) {
-        if (auto box = m_target->renderBox())
+        if (CheckedPtr box = m_target->renderBox())
             return LayoutPoint(box->paddingLeft(), box->paddingTop());
     }
 
@@ -121,11 +122,6 @@ FloatSize ResizeObservation::contentBoxSize() const
 FloatSize ResizeObservation::snappedContentBoxSize() const
 {
     return m_lastObservationSizes.contentBoxLogicalSize; // FIXME: Need to pixel snap.
-}
-
-RefPtr<Element> ResizeObservation::protectedTarget() const
-{
-    return m_target.get();
 }
 
 std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged() const
@@ -156,8 +152,8 @@ std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged
 size_t ResizeObservation::targetElementDepth() const
 {
     unsigned depth = 0;
-    for (Element* ownerElement = m_target.get(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-        for (Element* parent = ownerElement; parent; parent = parent->parentElementInComposedTree())
+    for (RefPtr ownerElement = m_target.get(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
+        for (RefPtr parent = ownerElement; parent; parent = parent->parentElementInComposedTree())
             ++depth;
     }
 
@@ -168,7 +164,7 @@ TextStream& operator<<(TextStream& ts, const ResizeObservation& observation)
 {
     ts.dumpProperty("target"_s, ValueOrNull(observation.target()));
 
-    if (auto* box = observation.target()->renderBox())
+    if (CheckedPtr box = observation.target()->renderBox())
         ts.dumpProperty("target box"_s, box);
 
     ts.dumpProperty("border box"_s, observation.borderBoxSize());

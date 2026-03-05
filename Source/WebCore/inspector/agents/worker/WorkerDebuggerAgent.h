@@ -49,7 +49,7 @@ private:
     void muteConsole() { }
     void unmuteConsole() { }
 
-    Ref<WorkerOrWorkletGlobalScope> protectedGlobalScope() const;
+    WorkerOrWorkletGlobalScope& globalScope() const { return m_globalScope.get(); }
 
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 

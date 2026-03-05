@@ -35,7 +35,7 @@ using namespace WebCore;
 #if !PLATFORM(COCOA)
 Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, std::optional<WebCore::UserMediaRequestIdentifier> userMediaID, WebCore::FrameIdentifier mainFrameID, FrameInfoData&& frameInfo, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
 {
-    return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, WTFMove(frameInfo), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request), WTFMove(decisionCompletionHandler)));
+    return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, WTF::move(frameInfo), WTF::move(userMediaDocumentOrigin), WTF::move(topLevelDocumentOrigin), WTF::move(audioDevices), WTF::move(videoDevices), WTF::move(request), WTF::move(decisionCompletionHandler)));
 }
 #endif
 
@@ -43,13 +43,13 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
     : m_manager(manager)
     , m_userMediaID(userMediaID)
     , m_mainFrameID(mainFrameID)
-    , m_frameInfo(WTFMove(frameInfo))
-    , m_userMediaDocumentSecurityOrigin(WTFMove(userMediaDocumentOrigin))
-    , m_topLevelDocumentSecurityOrigin(WTFMove(topLevelDocumentOrigin))
-    , m_eligibleVideoDevices(WTFMove(videoDevices))
-    , m_eligibleAudioDevices(WTFMove(audioDevices))
-    , m_request(WTFMove(request))
-    , m_decisionCompletionHandler(WTFMove(decisionCompletionHandler))
+    , m_frameInfo(WTF::move(frameInfo))
+    , m_userMediaDocumentSecurityOrigin(WTF::move(userMediaDocumentOrigin))
+    , m_topLevelDocumentSecurityOrigin(WTF::move(topLevelDocumentOrigin))
+    , m_eligibleVideoDevices(WTF::move(videoDevices))
+    , m_eligibleAudioDevices(WTF::move(audioDevices))
+    , m_request(WTF::move(request))
+    , m_decisionCompletionHandler(WTF::move(decisionCompletionHandler))
 {
 }
 
@@ -60,11 +60,6 @@ UserMediaPermissionRequestProxy::~UserMediaPermissionRequestProxy()
 }
 
 UserMediaPermissionRequestManagerProxy* UserMediaPermissionRequestProxy::manager() const
-{
-    return m_manager.get();
-}
-
-RefPtr<UserMediaPermissionRequestManagerProxy> UserMediaPermissionRequestProxy::protectedManager() const
 {
     return m_manager.get();
 }
@@ -82,7 +77,7 @@ static inline void setDeviceAsFirst(Vector<CaptureDevice>& devices, const String
         ASSERT(device.enabled());
 
         devices.removeAt(index);
-        devices.insert(0, WTFMove(device));
+        devices.insert(0, WTF::move(device));
     }
 }
 #endif
@@ -180,7 +175,7 @@ void UserMediaPermissionRequestProxy::promptForGetDisplayMedia(UserMediaDisplayC
         return;
     }
 
-    alertForPermission(*manager->protectedPage(), MediaPermissionReason::ScreenCapture, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
+    alertForPermission(*protect(manager->page()), MediaPermissionReason::ScreenCapture, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else
@@ -203,7 +198,7 @@ void UserMediaPermissionRequestProxy::promptForGetUserMedia()
     if (requiresAudioCapture())
         reason = requiresVideoCapture() ? MediaPermissionReason::CameraAndMicrophone : MediaPermissionReason::Microphone;
 
-    alertForPermission(*manager->protectedPage(), reason, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
+    alertForPermission(*protect(manager->page()), reason, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else

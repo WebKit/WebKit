@@ -85,7 +85,7 @@ protected:
 
         // Spec: Attach newItem to the list object.
         newItem->attach(this, m_access);
-        m_items.insert(index, WTFMove(newItem));
+        m_items.insert(index, WTF::move(newItem));
         return at(index);
     }
 
@@ -102,7 +102,7 @@ protected:
         if (newItem->isAttached())
             item = newItem->clone();
         else
-            item = WTFMove(newItem);
+            item = WTF::move(newItem);
 
         // Spec: Attach newItem to the list object.
         item->attach(this, m_access);
@@ -129,7 +129,7 @@ protected:
 
         // Spec: Attach newItem to the list object.
         newItem->attach(this, m_access);
-        m_items.append(WTFMove(newItem));
+        m_items.append(WTF::move(newItem));
         return at(size() - 1);
     }
 };

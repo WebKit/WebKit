@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,8 +210,18 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::backdrop");
         case CSSManager.PseudoSelectorNames.SpellingError:
             return WI.unlocalizedString("::spelling-error");
+        case CSSManager.PseudoSelectorNames.Checkmark:
+            return WI.unlocalizedString("::checkmark");
+        case CSSManager.PseudoSelectorNames.PickerIcon:
+            return WI.unlocalizedString("::picker-icon");
         case CSSManager.PseudoSelectorNames.TargetText:
             return WI.unlocalizedString("::target-text");
+        case CSSManager.PseudoSelectorNames.SliderFill:
+            return WI.unlocalizedString("::slider-fill");
+        case CSSManager.PseudoSelectorNames.SliderThumb:
+            return WI.unlocalizedString("::slider-thumb");
+        case CSSManager.PseudoSelectorNames.SliderTrack:
+            return WI.unlocalizedString("::slider-track");
         case CSSManager.PseudoSelectorNames.ViewTransition:
             return WI.unlocalizedString("::view-transition");
         case CSSManager.PseudoSelectorNames.ViewTransitionGroup:
@@ -856,14 +866,19 @@ WI.CSSManager.PseudoSelectorNames = {
     After: "after",
     Before: "before",
     Backdrop: "backdrop",
+    Checkmark: "checkmark",
     FirstLetter: "first-letter",
     FirstLine: "first-line",
     Highlight: "highlight",
     GrammarError: "grammar-error",
     Marker: "marker",
+    PickerIcon: "picker-icon",
     Selection: "selection",
     SpellingError: "spelling-error",
     TargetText: "target-text",
+    SliderFill: "slider-fill",
+    SliderThumb: "slider-thumb",
+    SliderTrack: "slider-track",
     ViewTransition: "view-transition",
     ViewTransitionGroup: "view-transition-group",
     ViewTransitionImagePair: "view-transition-image-pair",

@@ -71,8 +71,6 @@ public:
     void notifyCookiesDidChange(PAL::SessionID);
 
 private:
-    Ref<NetworkProcess> protectedProcess();
-
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

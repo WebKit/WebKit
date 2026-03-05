@@ -95,7 +95,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleCustomSections, (JSGlobalObject* globa
             if (!buffer)
                 return JSValue::encode(throwException(globalObject, throwScope, createOutOfMemoryError(globalObject)));
 
-            result->push(globalObject, JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer)));
+            result->push(globalObject, JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTF::move(buffer)));
             RETURN_IF_EXCEPTION(throwScope, { });
         }
     }
@@ -154,7 +154,8 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
         break;
     }
     case Wasm::ExternalKind::Memory: {
-        const auto& memory = module->moduleInformation().memory;
+        // FIXME(wasm-multimemory): double check this code
+        const auto& memory = module->moduleInformation().memory(impOrExp.kindIndex);
         PageCount maximum = memory.maximum();
         if (maximum.isValid()) {
             typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
@@ -306,7 +307,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyModule, (JSGlobalObject* globalOb
     auto compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(WebAssemblyModuleConstructor::createModule(globalObject, callFrame, WTFMove(source), compileOptions)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(WebAssemblyModuleConstructor::createModule(globalObject, callFrame, WTF::move(source), compileOptions)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyModule, (JSGlobalObject* globalObject, CallFrame*))
@@ -325,7 +326,7 @@ JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(JSGlobalObject* 
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyModuleStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto result = Wasm::Module::validateSync(vm, WTFMove(buffer));
+    auto result = Wasm::Module::validateSync(vm, WTF::move(buffer));
     if (!result.has_value()) [[unlikely]] {
         throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
         return nullptr;
@@ -340,7 +341,7 @@ JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(JSGlobalObject* 
         result.value()->applyCompileOptions(options.value());
     }
 
-    RELEASE_AND_RETURN(scope, JSWebAssemblyModule::create(vm, structure, WTFMove(result.value())));
+    RELEASE_AND_RETURN(scope, JSWebAssemblyModule::create(vm, structure, WTF::move(result.value())));
 }
 
 WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)

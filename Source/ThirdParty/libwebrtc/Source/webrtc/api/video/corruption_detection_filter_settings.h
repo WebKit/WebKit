@@ -11,21 +11,8 @@
 #ifndef API_VIDEO_CORRUPTION_DETECTION_FILTER_SETTINGS_H_
 #define API_VIDEO_CORRUPTION_DETECTION_FILTER_SETTINGS_H_
 
-#include <stdint.h>
+#include "api/video/corruption_detection/corruption_detection_filter_settings.h"
 
-namespace webrtc {
-
-// Filter settings for automatic corruption detection. See
-// http://www.webrtc.org/experiments/rtp-hdrext/corruption-detection for more
-// information.
-struct CorruptionDetectionFilterSettings {
-  // Size of the blur kernel used.
-  double std_dev = 0.0;
-  // Allowed error thresholds (maps to `Y err` and `UV err` respectively).
-  int luma_error_threshold = 0;
-  int chroma_error_threshold = 0;
-};
-
-}  // namespace webrtc
+// TODO: bugs.webrtc.org/358039777 - Remove this file when safe to do so.
 
 #endif  // API_VIDEO_CORRUPTION_DETECTION_FILTER_SETTINGS_H_

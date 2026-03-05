@@ -69,7 +69,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function"_s, &InternalFunction::s
   getOwnPropertyNames       objectConstructorGetOwnPropertyNames        DontEnum|Function 1 ObjectGetOwnPropertyNamesIntrinsic
   getOwnPropertySymbols     objectConstructorGetOwnPropertySymbols      DontEnum|Function 1 ObjectGetOwnPropertySymbolsIntrinsic
   keys                      objectConstructorKeys                       DontEnum|Function 1 ObjectKeysIntrinsic
-  defineProperty            objectConstructorDefineProperty             DontEnum|Function 3
+  defineProperty            objectConstructorDefineProperty             DontEnum|Function 3 ObjectDefinePropertyIntrinsic
   defineProperties          objectConstructorDefineProperties           DontEnum|Function 2
   create                    objectConstructorCreate                     DontEnum|Function 2 ObjectCreateIntrinsic
   seal                      objectConstructorSeal                       DontEnum|Function 1
@@ -109,8 +109,8 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().definePropertyPrivateName(), objectConstructorDefineProperty, static_cast<unsigned>(PropertyAttribute::DontEnum), 3, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().createPrivateName(), objectConstructorCreate, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().valuesPrivateName(), objectConstructorValues, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwn, objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hasOwnPrivateName(), objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwn, objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, ObjectHasOwnIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hasOwnPrivateName(), objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, ObjectHasOwnIntrinsic);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().groupByPublicName(), objectConstructorGroupByCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

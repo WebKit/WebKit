@@ -122,9 +122,6 @@ void InterleaveToAudioFrame(DeinterleavedView<float> deinterleaved,
 }
 }  // namespace
 
-constexpr size_t FrameCombiner::kMaximumNumberOfChannels;
-constexpr size_t FrameCombiner::kMaximumChannelSize;
-
 FrameCombiner::FrameCombiner(bool use_limiter)
     : data_dumper_(new ApmDataDumper(0)),
       limiter_(data_dumper_.get(), kMaximumChannelSize, "AudioMixer"),

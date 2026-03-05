@@ -26,8 +26,8 @@
 #include "StyleOffsetAnchor.h"
 
 #include "CSSPositionValue.h"
-#include "RenderStyleInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include <wtf/text/TextStream.h>
@@ -55,7 +55,7 @@ auto CSSValueConversion<OffsetAnchor>::operator()(BuilderState& state, const CSS
 
     RefPtr positionValue = requiredDowncast<CSSPositionValue>(state, value);
     if (!positionValue)
-        return RenderStyle::initialOffsetAnchor();
+        return Style::ComputedStyle::initialOffsetAnchor();
     return OffsetAnchor { toStyle(positionValue->position(), state) };
 }
 
@@ -87,11 +87,11 @@ auto Blending<OffsetAnchor>::blend(const OffsetAnchor& a, const OffsetAnchor& b,
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-auto Evaluation<OffsetAnchor, AcceleratedEffectOffsetAnchor>::operator()(const OffsetAnchor& value, FloatSize referenceBox, ZoomNeeded token) -> AcceleratedEffectOffsetAnchor
+auto Evaluation<OffsetAnchor, AcceleratedEffectOffsetAnchor>::operator()(const OffsetAnchor& value, FloatSize referenceBox, ZoomFactor zoom) -> AcceleratedEffectOffsetAnchor
 {
     return WTF::switchOn(value,
         [&](const Position& position) -> AcceleratedEffectOffsetAnchor {
-            return { .value = evaluate<FloatPoint>(position, referenceBox, token) };
+            return { .value = evaluate<FloatPoint>(position, referenceBox, zoom) };
         },
         [](const CSS::Keyword::Auto&) -> AcceleratedEffectOffsetAnchor {
             return { .value = std::nullopt };

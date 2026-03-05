@@ -63,16 +63,16 @@ static EVP_PKEY_CTX *evp_pkey_ctx_new(EVP_PKEY *pkey,
 }
 
 EVP_PKEY_CTX *EVP_PKEY_CTX_new(EVP_PKEY *pkey, ENGINE *e) {
-  if (pkey == NULL || pkey->ameth == NULL) {
+  if (pkey == nullptr || pkey->ameth == nullptr) {
     OPENSSL_PUT_ERROR(EVP, ERR_R_PASSED_NULL_PARAMETER);
-    return NULL;
+    return nullptr;
   }
 
   const EVP_PKEY_CTX_METHOD *pkey_method = pkey->ameth->pkey_method;
-  if (pkey_method == NULL) {
+  if (pkey_method == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     ERR_add_error_dataf("algorithm %d", pkey->ameth->pkey_id);
-    return NULL;
+    return nullptr;
   }
 
   return evp_pkey_ctx_new(pkey, pkey_method);
@@ -80,13 +80,13 @@ EVP_PKEY_CTX *EVP_PKEY_CTX_new(EVP_PKEY *pkey, ENGINE *e) {
 
 EVP_PKEY_CTX *EVP_PKEY_CTX_new_id(int id, ENGINE *e) {
   const EVP_PKEY_CTX_METHOD *pkey_method = evp_pkey_meth_find(id);
-  if (pkey_method == NULL) {
+  if (pkey_method == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     ERR_add_error_dataf("algorithm %d", id);
-    return NULL;
+    return nullptr;
   }
 
-  return evp_pkey_ctx_new(NULL, pkey_method);
+  return evp_pkey_ctx_new(nullptr, pkey_method);
 }
 
 evp_pkey_ctx_st::~evp_pkey_ctx_st() {
@@ -147,8 +147,8 @@ int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX *ctx, int keytype, int optype, int cmd,
 }
 
 int EVP_PKEY_sign_init(EVP_PKEY_CTX *ctx) {
-  if (ctx == NULL || ctx->pmeth == NULL ||
-      (ctx->pmeth->sign == NULL && ctx->pmeth->sign_message == NULL)) {
+  if (ctx == nullptr || ctx->pmeth == nullptr ||
+      (ctx->pmeth->sign == nullptr && ctx->pmeth->sign_message == nullptr)) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     return 0;
   }
@@ -171,8 +171,9 @@ int EVP_PKEY_sign(EVP_PKEY_CTX *ctx, uint8_t *sig, size_t *sig_len,
 }
 
 int EVP_PKEY_verify_init(EVP_PKEY_CTX *ctx) {
-  if (ctx == NULL || ctx->pmeth == NULL ||
-      (ctx->pmeth->verify == NULL && ctx->pmeth->verify_message == NULL)) {
+  if (ctx == nullptr || ctx->pmeth == nullptr ||
+      (ctx->pmeth->verify == nullptr &&
+       ctx->pmeth->verify_message == nullptr)) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     return 0;
   }
@@ -369,7 +370,7 @@ int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **out_pkey) {
 
   if (!ctx->pmeth->keygen(ctx, *out_pkey)) {
     EVP_PKEY_free(*out_pkey);
-    *out_pkey = NULL;
+    *out_pkey = nullptr;
     return 0;
   }
   return 1;
@@ -408,7 +409,7 @@ int EVP_PKEY_paramgen(EVP_PKEY_CTX *ctx, EVP_PKEY **out_pkey) {
 
   if (!ctx->pmeth->paramgen(ctx, *out_pkey)) {
     EVP_PKEY_free(*out_pkey);
-    *out_pkey = NULL;
+    *out_pkey = nullptr;
     return 0;
   }
   return 1;

@@ -46,7 +46,8 @@ LegacyEncodedAudioFrame::Decode(ArrayView<int16_t> decoded) const {
   if (ret < 0)
     return std::nullopt;
 
-  return DecodeResult{static_cast<size_t>(ret), speech_type};
+  return DecodeResult{.num_decoded_samples = static_cast<size_t>(ret),
+                      .speech_type = speech_type};
 }
 
 std::vector<AudioDecoder::ParseResult> LegacyEncodedAudioFrame::SplitBySamples(

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class EXTColorBufferHalfFloat final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTColorBufferHalfFloat);
+    WTF_MAKE_TZONE_ALLOCATED(EXTColorBufferHalfFloat);
     WTF_MAKE_NONCOPYABLE(EXTColorBufferHalfFloat);
 public:
     explicit EXTColorBufferHalfFloat(WebGLRenderingContextBase&);
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTColorBufferHalfFloat)

@@ -25,23 +25,18 @@
 
 #pragma once
 
+#include <wtf/AbstractCanMakeCheckedPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class CanvasObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CanvasObserver> : std::true_type { };
-}
 
 namespace WebCore {
 
 class CanvasBase;
 class FloatRect;
 
-class CanvasObserver : public CanMakeWeakPtr<CanvasObserver> {
+class CanvasObserver : public CanMakeWeakPtr<CanvasObserver>, public AbstractCanMakeCheckedPtr {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CanvasObserver);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CanvasObserver);
 public:
     virtual ~CanvasObserver() = default;
 

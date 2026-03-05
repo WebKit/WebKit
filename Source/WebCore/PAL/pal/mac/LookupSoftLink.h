@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __cplusplus
+
 #if PLATFORM(MAC)
 
 #import <wtf/SoftLinking.h>
@@ -36,3 +38,5 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, Lookup, LUNotificationPopoverWillClo
 #endif
 
 #endif // PLATFORM(MAC)
+
+#endif // __cplusplus

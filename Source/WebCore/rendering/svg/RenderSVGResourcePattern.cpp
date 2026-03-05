@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourcePattern);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourcePattern);
 
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, RenderStyle&& style)
-    : RenderSVGResourcePaintServer(Type::SVGResourcePattern, element, WTFMove(style))
+    : RenderSVGResourcePaintServer(Type::SVGResourcePattern, element, WTF::move(style))
 {
 }
 
@@ -73,12 +73,12 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
     if (attributes.hasViewBox() && attributes.viewBox().isEmpty())
         return;
 
-    m_attributes = WTFMove(attributes);
+    m_attributes = WTF::move(attributes);
 }
 
 RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context, const RenderLayerModelObject& renderer)
 {
-    RefPtr<ImageBuffer> tileImage = m_imageMap.get(renderer);
+    RefPtr tileImage = m_imageMap.get(renderer);
     if (!tileImage) {
         collectPatternAttributesIfNeeded();
 
@@ -94,7 +94,7 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
         // Compute all necessary transformations to build the tile image & the pattern.
         FloatRect tileBoundaries;
         AffineTransform tileImageTransform;
-        if (!buildTileImageTransform(renderer, *m_attributes, protectedPatternElement(), tileBoundaries, tileImageTransform))
+        if (!buildTileImageTransform(renderer, *m_attributes, protect(patternElement()), tileBoundaries, tileImageTransform))
             return nullptr;
 
         // Ignore 2D rotation, as it doesn't affect the size of the tile.
@@ -121,12 +121,12 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
         if (!patternTransform.isIdentity())
             transform = patternTransform * transform;
 
-        m_imageMap.set(renderer, tileImage);
+        m_imageMap.set(renderer, *tileImage);
         m_transformMap.set(renderer, transform);
     }
 
     // Build pattern.
-    return Pattern::create({ *tileImage }, { true, true, m_transformMap.get(renderer) } );
+    return Pattern::create({ tileImage.releaseNonNull() }, { true, true, m_transformMap.get(renderer) } );
 }
 
 bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const RenderStyle& style)
@@ -177,7 +177,7 @@ bool RenderSVGResourcePattern::buildTileImageTransform(const RenderElement& rend
 
 RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& context, const PatternAttributes& attributes, const FloatSize& size, const FloatSize& scale, const AffineTransform& tileImageTransform) const
 {
-    CheckedPtr patternRenderer = static_cast<RenderSVGResourcePattern*>(attributes.patternContentElement()->renderer());
+    CheckedPtr patternRenderer = downcast<RenderSVGResourcePattern>(attributes.patternContentElement()->renderer());
     ASSERT(patternRenderer);
     ASSERT(patternRenderer->hasLayer());
 
@@ -205,7 +205,7 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& c
     GraphicsContextStateSaver stateSaver(tileImageContext);
 
     // Draw the content into the ImageBuffer.
-    patternRenderer->checkedLayer()->paintSVGResourceLayer(tileImageContext, tileImageTransform);
+    protect(patternRenderer->layer())->paintSVGResourceLayer(tileImageContext, tileImageTransform);
     return tileImage;
 }
 

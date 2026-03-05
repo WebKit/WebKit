@@ -455,7 +455,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
         IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
         auto lengthValue = integerIndexedObjectLength(thisObject, getter);
         if (!lengthValue) [[unlikely]]
-            return JSValue::encode(jsBoolean(valueToFind.isUndefined()));
+            return JSValue::encode(jsBoolean(index < length && valueToFind.isUndefined()));
 
         updatedLength = lengthValue.value();
     }
@@ -465,7 +465,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
     if (!targetOption) {
         // Even though our TypedArray's length is updated, we iterate up to `length`.
         // So, if `updatedLength` is smaller than `length`, we will see undefined after that.
-        return JSValue::encode(jsBoolean(valueToFind.isUndefined() && length > updatedLength));
+        return JSValue::encode(jsBoolean(index < length && updatedLength < length && valueToFind.isUndefined()));
     }
 
     scope.assertNoExceptionExceptTermination();
@@ -1843,6 +1843,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
     ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
 
     size_t thisLength = thisObject->length();
+    size_t srcByteOffset = thisObject->byteOffsetRaw();
 
     JSValue start = callFrame->argument(0);
     if (!start.isInt32()) [[unlikely]] {
@@ -1881,14 +1882,14 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
         return { };
     }
 
-    size_t newByteOffset = thisObject->byteOffsetRaw() + begin * ViewClass::elementSize;
+    size_t newByteOffset = srcByteOffset + begin * ViewClass::elementSize;
 
     scope.release();
     return JSValue::encode(speciesConstruct(globalObject, thisObject, [&]() {
         Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, arrayBuffer->isResizableOrGrowableShared());
-        return ViewClass::create(globalObject, structure, WTFMove(arrayBuffer), newByteOffset, count);
+        return ViewClass::create(globalObject, structure, WTF::move(arrayBuffer), newByteOffset, count);
     }, [&](MarkedArgumentBuffer& args) {
-        args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->globalObject(), arrayBuffer.get()));
+        args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->globalObject(), *arrayBuffer));
         args.append(jsNumber(newByteOffset));
         if (count)
             args.append(jsNumber(count.value()));

@@ -61,16 +61,16 @@ struct lhash_st {
 
 _LHASH *OPENSSL_lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
   _LHASH *ret = reinterpret_cast<_LHASH *>(OPENSSL_zalloc(sizeof(_LHASH)));
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   ret->num_buckets = kMinNumBuckets;
   ret->buckets = reinterpret_cast<LHASH_ITEM **>(
       OPENSSL_calloc(ret->num_buckets, sizeof(LHASH_ITEM *)));
-  if (ret->buckets == NULL) {
+  if (ret->buckets == nullptr) {
     OPENSSL_free(ret);
-    return NULL;
+    return nullptr;
   }
 
   ret->comp = comp;
@@ -79,13 +79,13 @@ _LHASH *OPENSSL_lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
 }
 
 void OPENSSL_lh_free(_LHASH *lh) {
-  if (lh == NULL) {
+  if (lh == nullptr) {
     return;
   }
 
   for (size_t i = 0; i < lh->num_buckets; i++) {
     LHASH_ITEM *next;
-    for (LHASH_ITEM *n = lh->buckets[i]; n != NULL; n = next) {
+    for (LHASH_ITEM *n = lh->buckets[i]; n != nullptr; n = next) {
       next = n->next;
       OPENSSL_free(n);
     }
@@ -109,12 +109,12 @@ static LHASH_ITEM **get_next_ptr_and_hash(const _LHASH *lh, uint32_t *out_hash,
                                           lhash_hash_func_helper call_hash_func,
                                           lhash_cmp_func_helper call_cmp_func) {
   const uint32_t hash = call_hash_func(lh->hash, data);
-  if (out_hash != NULL) {
+  if (out_hash != nullptr) {
     *out_hash = hash;
   }
 
   LHASH_ITEM **ret = &lh->buckets[hash % lh->num_buckets];
-  for (LHASH_ITEM *cur = *ret; cur != NULL; cur = *ret) {
+  for (LHASH_ITEM *cur = *ret; cur != nullptr; cur = *ret) {
     if (call_cmp_func(lh->comp, cur->data, data) == 0) {
       break;
     }
@@ -131,7 +131,7 @@ static LHASH_ITEM **get_next_ptr_by_key(const _LHASH *lh, const void *key,
                                         int (*cmp_key)(const void *key,
                                                        const void *value)) {
   LHASH_ITEM **ret = &lh->buckets[key_hash % lh->num_buckets];
-  for (LHASH_ITEM *cur = *ret; cur != NULL; cur = *ret) {
+  for (LHASH_ITEM *cur = *ret; cur != nullptr; cur = *ret) {
     if (cmp_key(key, cur->data) == 0) {
       break;
     }
@@ -145,8 +145,8 @@ void *OPENSSL_lh_retrieve(const _LHASH *lh, const void *data,
                           lhash_hash_func_helper call_hash_func,
                           lhash_cmp_func_helper call_cmp_func) {
   LHASH_ITEM **next_ptr =
-      get_next_ptr_and_hash(lh, NULL, data, call_hash_func, call_cmp_func);
-  return *next_ptr == NULL ? NULL : (*next_ptr)->data;
+      get_next_ptr_and_hash(lh, nullptr, data, call_hash_func, call_cmp_func);
+  return *next_ptr == nullptr ? nullptr : (*next_ptr)->data;
 }
 
 void *OPENSSL_lh_retrieve_key(const _LHASH *lh, const void *key,
@@ -154,7 +154,7 @@ void *OPENSSL_lh_retrieve_key(const _LHASH *lh, const void *key,
                               int (*cmp_key)(const void *key,
                                              const void *value)) {
   LHASH_ITEM **next_ptr = get_next_ptr_by_key(lh, key, key_hash, cmp_key);
-  return *next_ptr == NULL ? NULL : (*next_ptr)->data;
+  return *next_ptr == nullptr ? nullptr : (*next_ptr)->data;
 }
 
 // lh_rebucket allocates a new array of |new_num_buckets| pointers and
@@ -170,12 +170,12 @@ static void lh_rebucket(_LHASH *lh, const size_t new_num_buckets) {
   }
 
   new_buckets = reinterpret_cast<LHASH_ITEM **>(OPENSSL_zalloc(alloc_size));
-  if (new_buckets == NULL) {
+  if (new_buckets == nullptr) {
     return;
   }
 
   for (i = 0; i < lh->num_buckets; i++) {
-    for (cur = lh->buckets[i]; cur != NULL; cur = next) {
+    for (cur = lh->buckets[i]; cur != nullptr; cur = next) {
       const size_t new_bucket = cur->hash % new_num_buckets;
       next = cur->next;
       cur->next = new_buckets[new_bucket];
@@ -225,12 +225,12 @@ int OPENSSL_lh_insert(_LHASH *lh, void **old_data, void *data,
   uint32_t hash;
   LHASH_ITEM **next_ptr, *item;
 
-  *old_data = NULL;
+  *old_data = nullptr;
   next_ptr =
       get_next_ptr_and_hash(lh, &hash, data, call_hash_func, call_cmp_func);
 
 
-  if (*next_ptr != NULL) {
+  if (*next_ptr != nullptr) {
     // An element equal to |data| already exists in the hash table. It will be
     // replaced.
     *old_data = (*next_ptr)->data;
@@ -240,13 +240,13 @@ int OPENSSL_lh_insert(_LHASH *lh, void **old_data, void *data,
 
   // An element equal to |data| doesn't exist in the hash table yet.
   item = reinterpret_cast<LHASH_ITEM *>(OPENSSL_malloc(sizeof(LHASH_ITEM)));
-  if (item == NULL) {
+  if (item == nullptr) {
     return 0;
   }
 
   item->data = data;
   item->hash = hash;
-  item->next = NULL;
+  item->next = nullptr;
   *next_ptr = item;
   lh->num_items++;
   lh_maybe_resize(lh);
@@ -260,11 +260,11 @@ void *OPENSSL_lh_delete(_LHASH *lh, const void *data,
   LHASH_ITEM **next_ptr, *item, *ret;
 
   next_ptr =
-      get_next_ptr_and_hash(lh, NULL, data, call_hash_func, call_cmp_func);
+      get_next_ptr_and_hash(lh, nullptr, data, call_hash_func, call_cmp_func);
 
-  if (*next_ptr == NULL) {
+  if (*next_ptr == nullptr) {
     // No such element.
-    return NULL;
+    return nullptr;
   }
 
   item = *next_ptr;
@@ -279,7 +279,7 @@ void *OPENSSL_lh_delete(_LHASH *lh, const void *data,
 }
 
 void OPENSSL_lh_doall_arg(_LHASH *lh, void (*func)(void *, void *), void *arg) {
-  if (lh == NULL) {
+  if (lh == nullptr) {
     return;
   }
 
@@ -290,7 +290,7 @@ void OPENSSL_lh_doall_arg(_LHASH *lh, void (*func)(void *, void *), void *arg) {
 
   for (size_t i = 0; i < lh->num_buckets; i++) {
     LHASH_ITEM *next;
-    for (LHASH_ITEM *cur = lh->buckets[i]; cur != NULL; cur = next) {
+    for (LHASH_ITEM *cur = lh->buckets[i]; cur != nullptr; cur = next) {
       next = cur->next;
       func(cur->data, arg);
     }

@@ -48,7 +48,7 @@ public:
 
     // Worklet.
     void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&) final;
-    Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() final;
+    Vector<Ref<WorkletGlobalScopeProxy>> NODELETE createGlobalScopes() final;
 
 private:
     explicit PaintWorklet(Document& document)

@@ -35,7 +35,7 @@ namespace Style {
 
 // <'scroll-padding-*'> = auto | <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-scroll-snap-1/#padding-longhands-physical
-struct ScrollPaddingEdge : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Auto> {
+struct ScrollPaddingEdge : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Auto> {
     using Base::Base;
 };
 
@@ -46,15 +46,15 @@ using ScrollPaddingBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollPaddi
 // MARK: - Evaluation
 
 template<> struct Evaluation<ScrollPaddingEdge, LayoutUnit> {
-    auto operator()(const ScrollPaddingEdge&, LayoutUnit referenceLength, ZoomNeeded) -> LayoutUnit;
+    auto operator()(const ScrollPaddingEdge&, LayoutUnit referenceLength, ZoomFactor) -> LayoutUnit;
 };
 template<> struct Evaluation<ScrollPaddingEdge, float> {
-    auto operator()(const ScrollPaddingEdge&, float referenceLength, ZoomNeeded) -> float;
+    auto operator()(const ScrollPaddingEdge&, float referenceLength, ZoomFactor) -> float;
 };
 
 // MARK: - Extent
 
-LayoutBoxExtent extentForRect(const ScrollPaddingBox&, const LayoutRect&, ZoomNeeded);
+LayoutBoxExtent extentForRect(const ScrollPaddingBox&, const LayoutRect&, ZoomFactor);
 
 } // namespace Style
 } // namespace WebCore

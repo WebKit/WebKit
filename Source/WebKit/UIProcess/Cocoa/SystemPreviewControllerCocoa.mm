@@ -113,7 +113,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 - (void)dealloc
 {
     [_completionHandler release];
-    [_mimeType release];
+    SUPPRESS_UNRETAINED_ARG [_mimeType release];
     [super dealloc];
 }
 
@@ -152,7 +152,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     WeakObjCPtr<_WKPreviewControllerDataSource> weakSelf { self };
     // FIXME: rdar://164693881
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_itemProvider registerItemForTypeIdentifier:contentType.get() loadHandler:[weakSelf = WTFMove(weakSelf)] (NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
+    [_itemProvider registerItemForTypeIdentifier:contentType.get() loadHandler:[weakSelf = WTF::move(weakSelf)] (NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
 ALLOW_DEPRECATED_DECLARATIONS_END
         if (auto strongSelf = weakSelf.get()) {
             // If the download happened instantly, the call to finish might have come before this
@@ -353,7 +353,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto result = FileSystem::openTemporaryFile("SystemPreview"_s, fileExtension);
     _filePath = result.first;
-    _fileHandle = WTFMove(result.second);
+    _fileHandle = WTF::move(result.second);
     ASSERT(_fileHandle);
 
     if (previewController)
@@ -431,23 +431,23 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
 
     m_systemPreviewInfo = systemPreviewInfo;
 
-    auto successHandler = [completionHandler = WTFMove(completionHandler), topOrigin, weakThis = WeakPtr { *this }, url, presentingViewController] (bool success) mutable {
+    auto successHandler = [completionHandler = WTF::move(completionHandler), topOrigin, weakThis = WeakPtr { *this }, url, presentingViewController] (bool success) mutable {
         if (!success || !weakThis)
             return completionHandler();
 
-        auto protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis.get();
         RefPtr webPageProxy = protectedThis->m_webPageProxy.get();
         if (!webPageProxy)
             return completionHandler();
         RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", protectedThis->m_systemPreviewInfo.element.nodeIdentifier ? protectedThis->m_systemPreviewInfo.element.nodeIdentifier->toUInt64() : 0);
         auto request = WebCore::ResourceRequest(URL { url });
         bool shouldRunAtForegroundPriority = false;
-        webPageProxy->dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
+        webPageProxy->dataTaskWithRequest(WTF::move(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTF::move(completionHandler)] (Ref<API::DataTask>&& task) mutable {
             if (!weakThis)
                 return completionHandler();
 
-            auto protectedThis = weakThis.get();
-            _WKDataTask *dataTask = wrapper(task);
+            RefPtr protectedThis = weakThis.get();
+            RetainPtr dataTask = wrapper(task);
             protectedThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:protectedThis]);
             [dataTask setDelegate:protectedThis->m_wkSystemPreviewDataTaskDelegate.get()];
             protectedThis->takeActivityToken();
@@ -473,26 +473,26 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
 
         protectedThis->m_state = State::Initial;
     };
-    m_allowPreviewCallback = makeBlockPtr([successHandler = WTFMove(successHandler)](bool success) mutable {
+    m_allowPreviewCallback = makeBlockPtr([successHandler = WTF::move(successHandler)](bool success) mutable {
         successHandler(success);
     });
-    auto alert = WebKit::createUIAlertController(WEB_UI_NSSTRING(@"View in AR?", "View in AR?"), WEB_UI_NSSTRING(@"You can view this object in 3D and place it in your surroundings using augmented reality.", "You can view this object in 3D and place it in your surroundings using augmented reality."));
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"View in AR", @"View in AR (usdz QuickLook Preview)", "Allow displaying QuickLook Preview of 3D model") style:UIAlertActionStyleDefault handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+    auto alert = WebKit::createUIAlertController(protect(WEB_UI_NSSTRING(@"View in AR?", "View in AR?")).get(), protect(WEB_UI_NSSTRING(@"You can view this object in 3D and place it in your surroundings using augmented reality.", "You can view this object in 3D and place it in your surroundings using augmented reality.")).get());
+    RetainPtr allowAction = [UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING_KEY(@"View in AR", @"View in AR (usdz QuickLook Preview)", "Allow displaying QuickLook Preview of 3D model")).get() style:UIAlertActionStyleDefault handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
         if (!weakThis)
             return;
 
         std::exchange(weakThis->m_allowPreviewCallback, nullptr)(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (usdz QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D model") style:UIAlertActionStyleCancel handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+    RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (usdz QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D model")).get() style:UIAlertActionStyleCancel handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
         if (!weakThis)
             return;
 
         std::exchange(weakThis->m_allowPreviewCallback, nullptr)(false);
     }];
 
-    [alert addAction:doNotAllowAction];
-    [alert addAction:allowAction];
+    [alert addAction:doNotAllowAction.get()];
+    [alert addAction:allowAction.get()];
 
     if (m_testingCallback)
         std::exchange(m_allowPreviewCallback, nullptr)(true);
@@ -603,7 +603,7 @@ void SystemPreviewController::takeActivityToken()
     if (!page)
         return;
 
-    m_activity = page->legacyMainFrameProcess().protectedThrottler()->backgroundActivity("System preview download"_s);
+    m_activity = protect(page->legacyMainFrameProcess().throttler())->backgroundActivity("System preview download"_s);
 #endif
 }
 
@@ -619,7 +619,7 @@ void SystemPreviewController::releaseActivityTokenIfNecessary()
 
 void SystemPreviewController::setCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&& handler)
 {
-    m_testingCallback = WTFMove(handler);
+    m_testingCallback = WTF::move(handler);
 }
 
 void SystemPreviewController::triggerSystemPreviewAction()

@@ -1675,7 +1675,7 @@ static int test_decode(aom_codec_ctx_t *encoder, aom_codec_ctx_t *decoder,
 }
 #endif  // CONFIG_AV1_DECODER
 
-struct psnr_stats {
+struct PsnrStats {
   // The second element of these arrays is reserved for high bitdepth.
   uint64_t psnr_sse_total[2];
   uint64_t psnr_samples_total[2];
@@ -1683,19 +1683,22 @@ struct psnr_stats {
   int psnr_count[2];
 };
 
-static void show_psnr(struct psnr_stats *psnr_stream, double peak) {
-  double ovpsnr;
+static void show_psnr(struct PsnrStats *psnr_stream, double peak,
+                      int num_layers) {
+  for (int sl = 0; sl < num_layers; ++sl) {
+    if (!psnr_stream[sl].psnr_count[0]) continue;
 
-  if (!psnr_stream->psnr_count[0]) return;
+    fprintf(stderr, "\nPSNR (Layer %d, Overall/Avg/Y/U/V)", sl);
+    const double ovpsnr =
+        sse_to_psnr((double)psnr_stream[sl].psnr_samples_total[0], peak,
+                    (double)psnr_stream[sl].psnr_sse_total[0]);
+    fprintf(stderr, " %.3f", ovpsnr);
 
-  fprintf(stderr, "\nPSNR (Overall/Avg/Y/U/V)");
-  ovpsnr = sse_to_psnr((double)psnr_stream->psnr_samples_total[0], peak,
-                       (double)psnr_stream->psnr_sse_total[0]);
-  fprintf(stderr, " %.3f", ovpsnr);
-
-  for (int i = 0; i < 4; i++) {
-    fprintf(stderr, " %.3f",
-            psnr_stream->psnr_totals[0][i] / psnr_stream->psnr_count[0]);
+    for (int i = 0; i < 4; i++) {
+      fprintf(
+          stderr, " %.3f",
+          psnr_stream[sl].psnr_totals[0][i] / psnr_stream[sl].psnr_count[0]);
+    }
   }
   fprintf(stderr, "\n");
 }
@@ -2133,7 +2136,7 @@ int main(int argc, const char **argv) {
   }
 
   frame_avail = 1;
-  struct psnr_stats psnr_stream;
+  struct PsnrStats psnr_stream[MAX_NUM_SPATIAL_LAYERS];
   memset(&psnr_stream, 0, sizeof(psnr_stream));
   while (frame_avail || got_data) {
     struct aom_usec_timer timer;
@@ -2414,12 +2417,17 @@ int main(int argc, const char **argv) {
             break;
           case AOM_CODEC_PSNR_PKT:
             if (app_input.show_psnr) {
-              psnr_stream.psnr_sse_total[0] += pkt->data.psnr.sse[0];
-              psnr_stream.psnr_samples_total[0] += pkt->data.psnr.samples[0];
-              for (int plane = 0; plane < 4; plane++) {
-                psnr_stream.psnr_totals[0][plane] += pkt->data.psnr.psnr[plane];
+              const int sl = layer_id.spatial_layer_id;
+              const int show_psnr_hbd =
+                  (cfg.g_input_bit_depth > 8 || cfg.g_bit_depth > AOM_BITS_8);
+              const int hbd = show_psnr_hbd;
+              psnr_stream[sl].psnr_sse_total[hbd] += pkt->data.psnr.sse[0];
+              psnr_stream[sl].psnr_samples_total[hbd] +=
+                  pkt->data.psnr.samples[0];
+              for (i = 0; i < 4; i++) {
+                psnr_stream[sl].psnr_totals[hbd][i] += pkt->data.psnr.psnr[i];
               }
-              psnr_stream.psnr_count[0]++;
+              psnr_stream[sl].psnr_count[hbd]++;
             }
             break;
           default: break;
@@ -2470,7 +2478,10 @@ int main(int argc, const char **argv) {
          1000000 * (double)frame_cnt / (double)cx_time);
 
   if (app_input.show_psnr) {
-    show_psnr(&psnr_stream, 255.0);
+    const int show_psnr_hbd =
+        (cfg.g_input_bit_depth > 8 || cfg.g_bit_depth > AOM_BITS_8);
+    show_psnr(psnr_stream, (double)((1 << (show_psnr_hbd ? 12 : 8)) - 1),
+              ss_number_layers);
   }
 
   if (aom_codec_destroy(&codec)) die_codec(&codec, "Failed to destroy encoder");

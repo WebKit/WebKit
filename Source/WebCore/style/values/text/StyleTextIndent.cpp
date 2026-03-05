@@ -60,7 +60,7 @@ auto CSSValueConversion<TextIndent>::operator()(BuilderState& state, const CSSVa
         return 0_css_px;
     }
 
-    return TextIndent { WTFMove(*length), hanging, eachLine };
+    return TextIndent { WTF::move(*length), hanging, eachLine };
 }
 
 // MARK: - Blending

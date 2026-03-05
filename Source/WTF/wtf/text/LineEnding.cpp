@@ -106,9 +106,9 @@ Vector<uint8_t> normalizeLineEndingsToCRLF(Vector<uint8_t>&& source)
 Vector<uint8_t> normalizeLineEndingsToNative(Vector<uint8_t>&& from)
 {
 #if OS(WINDOWS)
-    return normalizeLineEndingsToCRLF(WTFMove(from));
+    return normalizeLineEndingsToCRLF(WTF::move(from));
 #else
-    return normalizeLineEndingsToLF(WTFMove(from));
+    return normalizeLineEndingsToLF(WTF::move(from));
 #endif
 }
 

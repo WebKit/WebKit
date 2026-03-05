@@ -56,8 +56,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorRuntimeAgent);
 InspectorRuntimeAgent::InspectorRuntimeAgent(AgentContext& context)
     : InspectorAgentBase("Runtime"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_debugger(*context.environment.debugger())
-    , m_vm(context.environment.vm())
+    , m_debugger(*CheckedRef { context.environment }->debugger())
+    , m_vm(CheckedRef { context.environment }->vm())
 {
 }
 
@@ -121,18 +121,18 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Runtime::SyntaxErrorType, String /*
         range = buildErrorRangeObject(error.token().location());
     }
 
-    return { { *result, message, WTFMove(range) } };
+    return { { *result, message, WTF::move(range) } };
 }
 
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorRuntimeAgent::evaluate(const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
+    InjectedScript injectedScript = injectedScriptForEval(errorString, WTF::move(executionContextId));
     if (injectedScript.hasNoValue())
         return makeUnexpected(errorString);
 
-    return evaluate(injectedScript, expression, objectGroup, WTFMove(includeCommandLineAPI), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(saveResult), WTFMove(emulateUserGesture));
+    return evaluate(injectedScript, expression, objectGroup, WTF::move(includeCommandLineAPI), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(saveResult), WTF::move(emulateUserGesture));
 }
 
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorRuntimeAgent::evaluate(InjectedScript& injectedScript, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& /* emulateUserGesture */)
@@ -161,34 +161,34 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     if (!result)
         return makeUnexpected(errorString);
 
-    return { {result.releaseNonNull(), WTFMove(wasThrown), WTFMove(savedResultIndex) } };
+    return { {result.releaseNonNull(), WTF::move(wasThrown), WTF::move(savedResultIndex) } };
 }
 
 void InspectorRuntimeAgent::awaitPromise(const Protocol::Runtime::RemoteObjectId& promiseObjectId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, Ref<AwaitPromiseCallback>&& callback)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(promiseObjectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(promiseObjectId);
     if (injectedScript.hasNoValue()) {
         callback->sendFailure("Missing injected script for given promiseObjectId"_s);
         return;
     }
 
-    injectedScript.awaitPromise(promiseObjectId, returnByValue.value_or(false), generatePreview.value_or(false), saveResult.value_or(false), [callback = WTFMove(callback)] (Protocol::ErrorString& errorString, RefPtr<Protocol::Runtime::RemoteObject>&& result, std::optional<bool>&& wasThrown, std::optional<int>&& savedResultIndex) {
+    injectedScript.awaitPromise(promiseObjectId, returnByValue.value_or(false), generatePreview.value_or(false), saveResult.value_or(false), [callback = WTF::move(callback)] (Protocol::ErrorString& errorString, RefPtr<Protocol::Runtime::RemoteObject>&& result, std::optional<bool>&& wasThrown, std::optional<int>&& savedResultIndex) {
         if (!result)
             callback->sendFailure(errorString);
         else
-            callback->sendSuccess(result.releaseNonNull(), WTFMove(wasThrown), WTFMove(savedResultIndex));
+            callback->sendSuccess(result.releaseNonNull(), WTF::move(wasThrown), WTF::move(savedResultIndex));
     });
 }
 
 void InspectorRuntimeAgent::callFunctionOn(const Protocol::Runtime::RemoteObjectId& objectId, const String& functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         callback->sendFailure("Missing injected script for given objectId"_s);
         return;
     }
 
-    callFunctionOn(injectedScript, objectId, functionDeclaration, WTFMove(arguments), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(emulateUserGesture), WTFMove(awaitPromise), WTFMove(callback));
+    callFunctionOn(injectedScript, objectId, functionDeclaration, WTF::move(arguments), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(emulateUserGesture), WTF::move(awaitPromise), WTF::move(callback));
 }
 
 void InspectorRuntimeAgent::callFunctionOn(InjectedScript& injectedScript, const Protocol::Runtime::RemoteObjectId& objectId, const String& functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& /* emulateUserGesture */, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
@@ -203,12 +203,12 @@ void InspectorRuntimeAgent::callFunctionOn(InjectedScript& injectedScript, const
         muteConsole();
     }
 
-    injectedScript.callFunctionOn(objectId, functionDeclaration, arguments ? arguments->toJSONString() : nullString(), returnByValue.value_or(false), generatePreview.value_or(false), awaitPromise.value_or(false), [callback = WTFMove(callback)] (Protocol::ErrorString& errorString, RefPtr<Protocol::Runtime::RemoteObject>&& result, std::optional<bool>&& wasThrown, std::optional<int>&& savedResultIndex) {
+    injectedScript.callFunctionOn(objectId, functionDeclaration, arguments ? arguments->toJSONString() : nullString(), returnByValue.value_or(false), generatePreview.value_or(false), awaitPromise.value_or(false), [callback = WTF::move(callback)] (Protocol::ErrorString& errorString, RefPtr<Protocol::Runtime::RemoteObject>&& result, std::optional<bool>&& wasThrown, std::optional<int>&& savedResultIndex) {
         UNUSED_PARAM(savedResultIndex);
         if (!result)
             callback->sendFailure(errorString);
         else
-            callback->sendSuccess(result.releaseNonNull(), WTFMove(wasThrown));
+            callback->sendSuccess(result.releaseNonNull(), WTF::move(wasThrown));
     });
 
     if (pauseAndMute)
@@ -219,7 +219,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::ObjectPreview>> InspectorRuntimeA
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -244,7 +244,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -275,14 +275,14 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
     if (!properties)
         return makeUnexpected(errorString);
 
-    return { { properties.releaseNonNull(), WTFMove(internalProperties) } };
+    return { { properties.releaseNonNull(), WTF::move(internalProperties) } };
 }
 
 Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>>> InspectorRuntimeAgent::getDisplayableProperties(const Protocol::Runtime::RemoteObjectId& objectId, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount, std::optional<bool>&& generatePreview)
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -313,14 +313,14 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
     if (!properties)
         return makeUnexpected(errorString);
 
-    return { { properties.releaseNonNull(), WTFMove(internalProperties) } };
+    return { { properties.releaseNonNull(), WTF::move(internalProperties) } };
 }
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>> InspectorRuntimeAgent::getCollectionEntries(const Protocol::Runtime::RemoteObjectId& objectId, const String& objectGroup, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount)
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -350,11 +350,11 @@ Protocol::ErrorStringOr<std::optional<int> /* saveResultIndex */> InspectorRunti
 
     auto objectId = callArgument->getString("objectId"_s);
     if (!objectId) {
-        injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
+        injectedScript = injectedScriptForEval(errorString, WTF::move(executionContextId));
         if (injectedScript.hasNoValue())
             return makeUnexpected(errorString);
     } else {
-        injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+        injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
         if (injectedScript.hasNoValue())
             return makeUnexpected("Missing injected script for given objectId"_s);
     }
@@ -371,14 +371,14 @@ Protocol::ErrorStringOr<std::optional<int> /* saveResultIndex */> InspectorRunti
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::setSavedResultAlias(const String& savedResultAlias)
 {
-    m_injectedScriptManager.injectedScriptHost().setSavedResultAlias(savedResultAlias);
+    injectedScriptManager().injectedScriptHost().setSavedResultAlias(savedResultAlias);
 
     return { };
 }
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObject(const Protocol::Runtime::RemoteObjectId& objectId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (!injectedScript.hasNoValue())
         injectedScript.releaseObject(objectId);
 
@@ -387,7 +387,7 @@ Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObject(const Protoco
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObjectGroup(const String& objectGroup)
 {
-    m_injectedScriptManager.releaseObjectGroup(objectGroup);
+    injectedScriptManager().releaseObjectGroup(objectGroup);
 
     return { };
 }
@@ -435,7 +435,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
             description->setIsTruncated(typeSet->isOverflown());
         }
 
-        types->addItem(WTFMove(description));
+        types->addItem(WTF::move(description));
     }
 
     MonotonicTime end = MonotonicTime::now();
@@ -454,7 +454,7 @@ void InspectorRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reaso
     if (reason != DisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
         setTypeProfilerEnabledState(false);
 
-    disable();
+    std::ignore = disable();
 }
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::enableTypeProfiler()
@@ -527,7 +527,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>> Inspe
             .setHasExecuted(block.m_hasExecuted)
             .setExecutionCount(block.m_executionCount)
             .release();
-        basicBlocks->addItem(WTFMove(location));
+        basicBlocks->addItem(WTF::move(location));
     }
     return basicBlocks;
 }

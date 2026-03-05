@@ -66,14 +66,14 @@ RefPtr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorag
     if (!canAccess)
         return nullptr;
 
-    return adoptRef(*new FileSystemStorageHandle(manager, type, WTFMove(path), WTFMove(name)));
+    return adoptRef(*new FileSystemStorageHandle(manager, type, WTF::move(path), WTF::move(name)));
 }
 
 FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
     : m_manager(manager)
     , m_type(type)
-    , m_path(WTFMove(path))
-    , m_name(WTFMove(name))
+    , m_path(WTF::move(path))
+    , m_name(WTF::move(name))
 {
     ASSERT(!m_path.isEmpty());
 }
@@ -130,17 +130,17 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
         return makeUnexpected(FileSystemStorageError::InvalidName);
 
     auto path = FileSystem::pathByAppendingComponent(m_path, name);
-    return manager->createHandle(connection, type, WTFMove(path), WTFMove(name), createIfNecessary);
+    return manager->createHandle(connection, type, WTF::move(path), WTF::move(name), createIfNecessary);
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::getFileHandle(IPC::Connection::UniqueID connection, String&& name, bool createIfNecessary)
 {
-    return requestCreateHandle(connection, FileSystemStorageHandle::Type::File, WTFMove(name), createIfNecessary);
+    return requestCreateHandle(connection, FileSystemStorageHandle::Type::File, WTF::move(name), createIfNecessary);
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::getDirectoryHandle(IPC::Connection::UniqueID connection, String&& name, bool createIfNecessary)
 {
-    return requestCreateHandle(connection, FileSystemStorageHandle::Type::Directory, WTFMove(name), createIfNecessary);
+    return requestCreateHandle(connection, FileSystemStorageHandle::Type::Directory, WTF::move(name), createIfNecessary);
 }
 
 std::optional<FileSystemStorageError> FileSystemStorageHandle::removeEntry(const String& name, bool deleteRecursively)
@@ -210,14 +210,14 @@ Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> FileSystemStora
     if (!handle)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    auto ipcHandle = IPC::SharedFileHandle::create(WTFMove(handle));
+    auto ipcHandle = IPC::SharedFileHandle::create(WTF::move(handle));
     if (!ipcHandle)
         return makeUnexpected(FileSystemStorageError::BackendNotSupported);
 
     ASSERT(!m_activeSyncAccessHandle);
     m_activeSyncAccessHandle = SyncAccessHandleInfo { WebCore::FileSystemSyncAccessHandleIdentifier::generate() };
     uint64_t initialCapacity = valueOrDefault(FileSystem::fileSize(m_path));
-    return FileSystemSyncAccessHandleInfo { m_activeSyncAccessHandle->identifier, WTFMove(*ipcHandle), initialCapacity };
+    return FileSystemSyncAccessHandleInfo { m_activeSyncAccessHandle->identifier, WTF::move(*ipcHandle), initialCapacity };
 }
 
 std::optional<FileSystemStorageError> FileSystemStorageHandle::closeSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
@@ -259,7 +259,7 @@ Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError
     if (!activeWritableFile)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    m_activeWritableFiles.add(streamIdentifier, FileHandleWithPath { WTFMove(activeWritableFile), WTFMove(path) });
+    m_activeWritableFiles.add(streamIdentifier, FileHandleWithPath { WTF::move(activeWritableFile), WTF::move(path) });
     return streamIdentifier;
 }
 
@@ -384,7 +384,7 @@ void FileSystemStorageHandle::executeCommandForWritable(WebCore::FileSystemWrita
         return;
     }
 
-    manager->requestSpace(*spaceRequired, [weakThis = WeakPtr { *this }, streamIdentifier, type, position, size, dataBytes = Vector<uint8_t>(dataBytes), completionHandler = WTFMove(completionHandler)](bool granted) mutable {
+    manager->requestSpace(*spaceRequired, [weakThis = WeakPtr { *this }, streamIdentifier, type, position, size, dataBytes = Vector<uint8_t>(dataBytes), completionHandler = WTF::move(completionHandler)](bool granted) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler(FileSystemStorageError::Unknown);
@@ -421,7 +421,7 @@ Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::getHan
 Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorageError> FileSystemStorageHandle::getHandle(IPC::Connection::UniqueID connection, String&& name)
 {
     bool createIfNecessary = false;
-    auto result = requestCreateHandle(connection, FileSystemStorageHandle::Type::Any, WTFMove(name), createIfNecessary);
+    auto result = requestCreateHandle(connection, FileSystemStorageHandle::Type::Any, WTF::move(name), createIfNecessary);
     if (!result)
         return makeUnexpected(result.error());
 
@@ -506,7 +506,7 @@ void FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::Fil
     else
         newCapacity = defaultCapacityStep * ((newCapacity / defaultCapacityStep) + 1);
 
-    manager->requestSpace(newCapacity - currentCapacity, [weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTFMove(completionHandler)](bool granted) mutable {
+    manager->requestSpace(newCapacity - currentCapacity, [weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTF::move(completionHandler)](bool granted) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler(std::nullopt);

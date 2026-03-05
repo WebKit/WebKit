@@ -23,10 +23,10 @@
 static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc, long argl,
                         char **ret);
 static const X509_LOOKUP_METHOD x509_file_lookup = {
-    NULL,          // new
-    NULL,          // free
+    nullptr,       // new
+    nullptr,       // free
     by_file_ctrl,  // ctrl
-    NULL,          // get_by_subject
+    nullptr,       // get_by_subject
 };
 
 const X509_LOOKUP_METHOD *X509_LOOKUP_file(void) { return &x509_file_lookup; }
@@ -39,7 +39,7 @@ static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
   const char *file = argp;
   int type = argl;
   if (argl == X509_FILETYPE_DEFAULT) {
-    if ((file = getenv(X509_get_default_cert_file_env())) == NULL) {
+    if ((file = getenv(X509_get_default_cert_file_env())) == nullptr) {
       file = X509_get_default_cert_file();
     }
     type = X509_FILETYPE_PEM;
@@ -55,21 +55,21 @@ static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
 
 int X509_load_cert_file(X509_LOOKUP *ctx, const char *file, int type) {
   int ret = 0;
-  BIO *in = NULL;
+  BIO *in = nullptr;
   int i, count = 0;
-  X509 *x = NULL;
+  X509 *x = nullptr;
 
   in = BIO_new(BIO_s_file());
 
-  if ((in == NULL) || (BIO_read_filename(in, file) <= 0)) {
+  if ((in == nullptr) || (BIO_read_filename(in, file) <= 0)) {
     OPENSSL_PUT_ERROR(X509, ERR_R_SYS_LIB);
     goto err;
   }
 
   if (type == X509_FILETYPE_PEM) {
     for (;;) {
-      x = PEM_read_bio_X509_AUX(in, NULL, NULL, NULL);
-      if (x == NULL) {
+      x = PEM_read_bio_X509_AUX(in, nullptr, nullptr, nullptr);
+      if (x == nullptr) {
         if (ERR_equals(ERR_peek_last_error(), ERR_LIB_PEM,
                        PEM_R_NO_START_LINE) &&
             count > 0) {
@@ -85,12 +85,12 @@ int X509_load_cert_file(X509_LOOKUP *ctx, const char *file, int type) {
       }
       count++;
       X509_free(x);
-      x = NULL;
+      x = nullptr;
     }
     ret = count;
   } else if (type == X509_FILETYPE_ASN1) {
-    x = d2i_X509_bio(in, NULL);
-    if (x == NULL) {
+    x = d2i_X509_bio(in, nullptr);
+    if (x == nullptr) {
       OPENSSL_PUT_ERROR(X509, ERR_R_ASN1_LIB);
       goto err;
     }
@@ -116,21 +116,21 @@ err:
 
 int X509_load_crl_file(X509_LOOKUP *ctx, const char *file, int type) {
   int ret = 0;
-  BIO *in = NULL;
+  BIO *in = nullptr;
   int i, count = 0;
-  X509_CRL *x = NULL;
+  X509_CRL *x = nullptr;
 
   in = BIO_new(BIO_s_file());
 
-  if ((in == NULL) || (BIO_read_filename(in, file) <= 0)) {
+  if ((in == nullptr) || (BIO_read_filename(in, file) <= 0)) {
     OPENSSL_PUT_ERROR(X509, ERR_R_SYS_LIB);
     goto err;
   }
 
   if (type == X509_FILETYPE_PEM) {
     for (;;) {
-      x = PEM_read_bio_X509_CRL(in, NULL, NULL, NULL);
-      if (x == NULL) {
+      x = PEM_read_bio_X509_CRL(in, nullptr, nullptr, nullptr);
+      if (x == nullptr) {
         if (ERR_equals(ERR_peek_last_error(), ERR_LIB_PEM,
                        PEM_R_NO_START_LINE) &&
             count > 0) {
@@ -146,12 +146,12 @@ int X509_load_crl_file(X509_LOOKUP *ctx, const char *file, int type) {
       }
       count++;
       X509_CRL_free(x);
-      x = NULL;
+      x = nullptr;
     }
     ret = count;
   } else if (type == X509_FILETYPE_ASN1) {
-    x = d2i_X509_CRL_bio(in, NULL);
-    if (x == NULL) {
+    x = d2i_X509_CRL_bio(in, nullptr);
+    if (x == nullptr) {
       OPENSSL_PUT_ERROR(X509, ERR_R_ASN1_LIB);
       goto err;
     }
@@ -190,7 +190,7 @@ int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file, int type) {
     OPENSSL_PUT_ERROR(X509, ERR_R_SYS_LIB);
     return 0;
   }
-  inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
+  inf = PEM_X509_INFO_read_bio(in, nullptr, nullptr, nullptr);
   BIO_free(in);
   if (!inf) {
     OPENSSL_PUT_ERROR(X509, ERR_R_PEM_LIB);
@@ -222,5 +222,5 @@ err:
 }
 
 int X509_LOOKUP_load_file(X509_LOOKUP *lookup, const char *name, int type) {
-  return X509_LOOKUP_ctrl(lookup, X509_L_FILE_LOAD, name, type, NULL);
+  return X509_LOOKUP_ctrl(lookup, X509_L_FILE_LOAD, name, type, nullptr);
 }

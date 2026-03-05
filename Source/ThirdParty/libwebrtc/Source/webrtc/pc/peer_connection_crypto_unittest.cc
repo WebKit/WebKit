@@ -443,8 +443,7 @@ TEST_P(PeerConnectionCryptoTest, CreateAnswerWithDifferentSslRoles) {
   AudioConnectionRole(answer->description()) = CONNECTIONROLE_ACTIVE;
   VideoConnectionRole(answer->description()) = CONNECTIONROLE_PASSIVE;
 
-  ASSERT_TRUE(
-      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(callee->SetLocalDescription(answer->Clone()));
   ASSERT_TRUE(caller->SetRemoteDescription(std::move(answer)));
 
   // Now create an offer in the reverse direction, and ensure the initial
@@ -455,8 +454,7 @@ TEST_P(PeerConnectionCryptoTest, CreateAnswerWithDifferentSslRoles) {
   EXPECT_EQ(CONNECTIONROLE_PASSIVE, AudioConnectionRole(answer->description()));
   EXPECT_EQ(CONNECTIONROLE_ACTIVE, VideoConnectionRole(answer->description()));
 
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(answer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(answer)));
 
   // Lastly, start BUNDLE-ing on "audio", expecting that the "passive" role of
@@ -471,8 +469,7 @@ TEST_P(PeerConnectionCryptoTest, CreateAnswerWithDifferentSslRoles) {
   EXPECT_EQ(CONNECTIONROLE_PASSIVE, AudioConnectionRole(answer->description()));
   EXPECT_EQ(CONNECTIONROLE_PASSIVE, VideoConnectionRole(answer->description()));
 
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(answer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(answer)));
 }
 
@@ -493,7 +490,7 @@ TEST_P(PeerConnectionCryptoTest, SessionErrorIfFingerprintInvalid) {
 
   // Create an invalid answer with the other certificate's fingerprint.
   auto valid_answer = callee->CreateAnswer();
-  auto invalid_answer = CloneSessionDescription(valid_answer.get());
+  auto invalid_answer = valid_answer->Clone();
   auto* audio_content = GetFirstAudioContent(invalid_answer->description());
   ASSERT_TRUE(audio_content);
   auto* audio_transport_info =

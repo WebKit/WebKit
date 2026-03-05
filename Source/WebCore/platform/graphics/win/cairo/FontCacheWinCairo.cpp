@@ -55,7 +55,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool synthesizeItalic = !options.contains(FontLookupOptions::DisallowObliqueSynthesis)
         && isItalic(fontDescription.fontStyleSlope()) && !logFont.lfItalic;
 
-    auto result = makeUnique<FontPlatformData>(WTFMove(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic);
+    auto result = makeUnique<FontPlatformData>(WTF::move(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic);
 
     bool fontCreationFailed = !result->scaledFont();
 

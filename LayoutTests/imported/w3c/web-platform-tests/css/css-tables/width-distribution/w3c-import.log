@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/computing-column-measure-0.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/computing-column-measure-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/width-distribution/computing-column-measure-2.html

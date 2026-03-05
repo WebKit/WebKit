@@ -1,5 +1,5 @@
 
-FAIL match closest named container assert_equals: expected "yes" but got "no"
-FAIL match ancestor named container assert_equals: expected "yes" but got "no"
+PASS match closest named container
+PASS match ancestor named container
 PASS no match for unused container name
 

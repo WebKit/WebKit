@@ -36,14 +36,14 @@ namespace WebCore {
 class MathMLOperatorElement;
 
 class RenderMathMLOperator : public RenderMathMLToken {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLOperator);
+    WTF_MAKE_TZONE_ALLOCATED(RenderMathMLOperator);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLOperator);
 public:
     RenderMathMLOperator(Type, MathMLOperatorElement&, RenderStyle&&);
     RenderMathMLOperator(Type, Document&, RenderStyle&&);
     virtual ~RenderMathMLOperator();
 
-    MathMLOperatorElement& element() const;
+    MathMLOperatorElement& NODELETE element() const;
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
     void stretchTo(LayoutUnit width);
@@ -72,7 +72,7 @@ protected:
     virtual bool useMathOperator() const;
 
 private:
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
     void computePreferredLogicalWidths() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;

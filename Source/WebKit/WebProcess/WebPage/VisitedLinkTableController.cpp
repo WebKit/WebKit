@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>& visitedLinkTableControllers()
+static HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>& NODELETE visitedLinkTableControllers()
 {
     static NeverDestroyed<HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>> visitedLinkTableControllers;
     RELEASE_ASSERT(isMainRunLoop());
@@ -80,12 +80,12 @@ void VisitedLinkTableController::addVisitedLink(Page& page, SharedStringHash lin
     if (m_visitedLinkTable.contains(linkHash))
         return;
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::VisitedLinkStore::AddVisitedLinkHashFromPage(WebPage::fromCorePage(page)->webPageProxyIdentifier(), linkHash), m_identifier);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::VisitedLinkStore::AddVisitedLinkHashFromPage(WebPage::fromCorePage(page)->webPageProxyIdentifier(), linkHash), m_identifier);
 }
 
 void VisitedLinkTableController::setVisitedLinkTable(SharedMemory::Handle&& handle)
 {
-    auto sharedMemory = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(WTF::move(handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return;
 

@@ -905,6 +905,22 @@ const gCSSProperties2 = {
       { type: 'discrete', options: [ [ 'circle', 'square' ] ] }
     ]
   },
+  "math-depth": {
+    // https://w3c.github.io/mathml-core/#propdef-math-depth
+    types: [ "integer" ],
+  },
+  "math-shift": {
+    // https://w3c.github.io/mathml-core/#propdef-math-shift
+    types: [
+      { type: "discrete", options: [ [ "normal", "compact" ] ] },
+    ],
+  },
+  "math-style": {
+    // https://w3c.github.io/mathml-core/#propdef-math-style
+    types: [
+      { type: "discrete", options: [ [ "normal", "compact" ] ] },
+    ],
+  },
   'margin-block-end': {
     // https://drafts.csswg.org/css-logical-props/#propdef-margin-block-end
     types: [

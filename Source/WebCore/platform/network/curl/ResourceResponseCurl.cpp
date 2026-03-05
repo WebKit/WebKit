@@ -108,7 +108,7 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
 
     setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
     setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toString());
-    setCertificateInfo(WTFMove(response.certificateInfo));
+    setCertificateInfo(WTF::move(response.certificateInfo));
     setSource(ResourceResponse::Source::Network);
 }
 

@@ -39,9 +39,9 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStatePositionedNode);
 
 ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, Vector<ScrollingNodeID>&& relatedOverflowScrollingNodes, AbsolutePositionConstraints&& constraints)
-    : ScrollingStateNode(ScrollingNodeType::Positioned, nodeID, WTFMove(children), changedProperties, layerID)
-    , m_relatedOverflowScrollingNodes(WTFMove(relatedOverflowScrollingNodes))
-    , m_constraints(WTFMove(constraints))
+    : ScrollingStateNode(ScrollingNodeType::Positioned, nodeID, WTF::move(children), changedProperties, layerID)
+    , m_relatedOverflowScrollingNodes(WTF::move(relatedOverflowScrollingNodes))
+    , m_constraints(WTF::move(constraints))
 {
 }
 
@@ -78,7 +78,7 @@ void ScrollingStatePositionedNode::setRelatedOverflowScrollingNodes(Vector<Scrol
     if (nodes == m_relatedOverflowScrollingNodes)
         return;
 
-    m_relatedOverflowScrollingNodes = WTFMove(nodes);
+    m_relatedOverflowScrollingNodes = WTF::move(nodes);
     setPropertyChanged(Property::RelatedOverflowScrollingNodes);
 }
 

@@ -52,14 +52,14 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
 
     explicit SendStreamServerConnection(IPC::StreamServerConnectionHandle&& handle)
-        : m_handle(WTFMove(handle))
+        : m_handle(WTF::move(handle))
     {
     }
 
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << WTFMove(m_handle);
+        encoder << WTF::move(m_handle);
     }
 
 private:

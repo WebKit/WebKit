@@ -1,4 +1,5 @@
 
+option
 
-FAIL Select should not match :focus-visible when using mouse. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Select should not match :focus-visible when using mouse. assert_equals: Nothing should be :focus-visible after opening select with mouse. expected null but got Element node <option>option</option>
 

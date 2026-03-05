@@ -1,3 +1,0 @@
-
-FAIL Tests scrollend event for scrollIntoView with behavior 'auto' on root. assert_equals: HTML.scrollIntoView scrollLeft expected 10000 but got 2200
-

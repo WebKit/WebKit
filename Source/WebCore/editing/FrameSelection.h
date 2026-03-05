@@ -78,7 +78,7 @@ protected:
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
     void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, CaretAnimator*) const;
 
-    const LayoutRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
+    const LayoutRect& localCaretRectWithoutUpdate() const LIFETIME_BOUND { return m_caretLocalRect; }
 
     bool shouldUpdateCaretRect() const { return m_caretRectNeedsUpdate; }
     void setCaretRectNeedsUpdate() { m_caretRectNeedsUpdate = true; }
@@ -106,7 +106,7 @@ public:
     WEBCORE_EXPORT bool isContentRichlyEditable() const;
 
     bool hasCaret() const { return m_position.isNotNull(); }
-    const VisiblePosition& caretPosition() { return m_position; }
+    const VisiblePosition& caretPosition() const LIFETIME_BOUND { return m_position; }
     void setCaretPosition(const VisiblePosition&);
     void clear() { setCaretPosition(VisiblePosition()); }
     WEBCORE_EXPORT IntRect caretRectInRootViewCoordinates() const;
@@ -169,7 +169,7 @@ public:
     void moveTo(const Position&, const Position&, Affinity, UserTriggered = UserTriggered::No);
     void moveWithoutValidationTo(const Position&, const Position&, bool selectionHasDirection, OptionSet<SetSelectionOption> = defaultSetSelectionOptions(), const AXTextStateChangeIntent& = AXTextStateChangeIntent());
 
-    const VisibleSelection& selection() const { return m_selection; }
+    const VisibleSelection& selection() const LIFETIME_BOUND { return m_selection; }
     WEBCORE_EXPORT void setSelection(const VisibleSelection&, OptionSet<SetSelectionOption> = defaultSetSelectionOptions(), AXTextStateChangeIntent = AXTextStateChangeIntent(), CursorAlignOnScroll = CursorAlignOnScroll::IfNeeded, TextGranularity = TextGranularity::CharacterGranularity);
 
     enum class ShouldCloseTyping : bool { No, Yes };
@@ -353,8 +353,7 @@ private:
 
     void caretAnimationDidUpdate(CaretAnimator&) final;
 
-    Document* document() final;
-    inline RefPtr<Document> protectedDocument() const; // Defined in DocumentInlines.h
+    Document* NODELETE document() final;
 
     Node* caretNode() final;
 

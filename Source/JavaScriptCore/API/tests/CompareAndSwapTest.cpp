@@ -39,7 +39,7 @@ public:
 
     inline void clearAll();
     inline bool concurrentTestAndSet(size_t n);
-    inline size_t numBits() const { return words * wordSize; }
+    inline size_t NODELETE numBits() const { return words * wordSize; }
 
 private:
     static constexpr size_t Size = 4096*10;
@@ -56,7 +56,7 @@ inline void Bitmap::clearAll()
     memset(&bits, 0, sizeof(bits));
 }
 
-inline bool Bitmap::concurrentTestAndSet(size_t n)
+inline bool NODELETE Bitmap::concurrentTestAndSet(size_t n)
 {
     uint8_t mask = one << (n % wordSize);
     size_t index = n / wordSize;

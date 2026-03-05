@@ -20,10 +20,12 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
+
+#include <wtf/Platform.h>
 
 #if ENABLE(JIT)
 
@@ -112,12 +114,21 @@ namespace Throw {
     static_assert(noOverlap(globalObjectGPR, thrownValueJSR), "Required for call to slow operation");
 }
 
+namespace SwitchString {
+    using SlowOperation = decltype(operationSwitchStringWithUnknownKeyType);
+
+    static constexpr GPRReg globalObjectGPR { preferredArgumentGPR<SlowOperation, 0>() };
+    static constexpr JSValueRegs scrutineeJSR { preferredArgumentJSR<SlowOperation, 1>() };
+    static_assert(noOverlap(globalObjectGPR, scrutineeJSR), "Required for call to slow operation");
+}
+
 namespace ResolveScope {
     static constexpr GPRReg metadataGPR { GPRInfo::regT2 };
     static constexpr GPRReg scopeGPR { GPRInfo::regT0 };
     static constexpr GPRReg bytecodeOffsetGPR { GPRInfo::regT3 };
     static constexpr GPRReg scratch1GPR { GPRInfo::regT5 };
-    static_assert(noOverlap(metadataGPR, scopeGPR, bytecodeOffsetGPR, scratch1GPR), "Required for call to CTI thunk");
+    static constexpr GPRReg scratch2GPR { GPRInfo::regT1 };
+    static_assert(noOverlap(metadataGPR, scopeGPR, bytecodeOffsetGPR, scratch1GPR, scratch2GPR), "Required for call to CTI thunk");
 }
 
 namespace GetFromScope {

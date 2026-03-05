@@ -51,12 +51,12 @@ struct FontPalette {
     }
 
     FontPalette(CustomIdentifier&& identifier)
-        : m_platform { .type = WebCore::FontPalette::Type::Custom, .identifier = WTFMove(identifier.value) }
+        : m_platform { .type = WebCore::FontPalette::Type::Custom, .identifier = WTF::move(identifier.value) }
     {
     }
 
     FontPalette(WebCore::FontPalette&& platform)
-        : m_platform { WTFMove(platform) }
+        : m_platform { WTF::move(platform) }
     {
     }
 

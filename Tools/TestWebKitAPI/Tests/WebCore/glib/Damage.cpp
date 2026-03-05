@@ -149,7 +149,7 @@ TEST(Damage, Move)
     EXPECT_EQ(damage.size(), 2);
     EXPECT_EQ(damage.bounds(), IntRect(100, 100, 400, 400));
 
-    Damage other = WTFMove(damage);
+    Damage other = WTF::move(damage);
     EXPECT_FALSE(other.isEmpty());
     EXPECT_EQ(other.size(), 2);
     EXPECT_EQ(other.bounds(), IntRect(100, 100, 400, 400));

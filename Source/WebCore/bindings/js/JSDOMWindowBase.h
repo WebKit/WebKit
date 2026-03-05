@@ -60,7 +60,7 @@ public:
     ~JSDOMWindowBase();
     void updateDocument();
 
-    DOMWindow& wrapped() const;
+    DOMWindow& wrapped() const { return m_wrapped; }
     Document* scriptExecutionContext() const;
 
     // Called just before removing this window from the JSWindowProxy.
@@ -74,25 +74,24 @@ public:
     }
 
     static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
-    static bool shouldInterruptScript(const JSC::JSGlobalObject*);
+    static bool NODELETE shouldInterruptScript(const JSC::JSGlobalObject*);
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
-    static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
-    static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, JSC::QueuedTask&&);
+    static JSC::RuntimeFlags NODELETE javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::JSObject* currentScriptExecutionOwner(JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
     void printErrorMessage(const String&) const;
 
-    JSWindowProxy& proxy() const;
+    JSWindowProxy& NODELETE proxy() const;
 
     static void fireFrameClearedWatchpointsForWindow(LocalDOMWindow*);
 
     void setCurrentEvent(Event*);
-    Event* currentEvent() const;
+    Event* NODELETE currentEvent() const;
 
 protected:
-    JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSWindowProxy*);
+    JSDOMWindowBase(JSC::VM&, JSC::Structure*, Ref<DOMWindow>&&, JSWindowProxy*);
     void finishCreation(JSC::VM&, JSWindowProxy*);
     void initStaticGlobals(JSC::VM&);
 
@@ -101,7 +100,7 @@ protected:
     static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
 
 private:
-    RefPtr<DOMWindow> m_wrapped;
+    const Ref<DOMWindow> m_wrapped;
     RefPtr<Event> m_currentEvent;
 };
 
@@ -124,7 +123,7 @@ inline JSDOMWindow* toJSDOMWindow(LocalFrame* frame, DOMWrapperWorld& world) { r
 LocalDOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&, JSC::CallFrame&);
 LocalDOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&);
 
-LocalDOMWindow& activeDOMWindow(JSC::JSGlobalObject&);
+LocalDOMWindow& NODELETE activeDOMWindow(JSC::JSGlobalObject&);
 LocalDOMWindow& firstDOMWindow(JSC::JSGlobalObject&);
 
 LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSC::JSGlobalObject&, JSC::CallFrame&);

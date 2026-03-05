@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableRowElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTableRowElement);
 
 using namespace HTMLNames;
 
@@ -122,7 +122,7 @@ ExceptionOr<Ref<HTMLTableCellElement>> HTMLTableRowElement::insertCell(int index
     int numCells = children->length();
     if (index > numCells)
         return Exception { ExceptionCode::IndexSizeError };
-    Ref cell = HTMLTableCellElement::create(tdTag, protectedDocument());
+    Ref cell = HTMLTableCellElement::create(tdTag, protect(document()));
     ExceptionOr<void> result;
     if (numCells == index || index == -1)
         result = appendChild(cell);
@@ -149,7 +149,7 @@ ExceptionOr<void> HTMLTableRowElement::deleteCell(int index)
 
 Ref<HTMLCollection> HTMLTableRowElement::cells()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::TRCells>::traversalType>>(*this, CollectionType::TRCells);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTRCellsCollection>(*this);
 }
 
 }

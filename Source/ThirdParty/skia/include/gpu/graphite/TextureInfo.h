@@ -9,7 +9,6 @@
 #define skgpu_graphite_TextureInfo_DEFINED
 
 #include "include/core/SkString.h"
-#include "include/core/SkTextureCompressionType.h"
 #include "include/gpu/graphite/GraphiteTypes.h"
 #include "include/private/base/SkAPI.h"
 #include "include/private/base/SkAnySubclass.h"
@@ -43,13 +42,11 @@ private:
     //   static constexpr BackendApi kBackend;
     //   Protected isProtected() const;
     //   TextureFormat viewFormat() const;
-    //   bool serialize(SkWStream*) const;
-    //   bool deserialize(SkStream*);
     class Data {
     public:
         virtual ~Data() = default;
 
-        Data(uint8_t sampleCount, skgpu::Mipmapped mipmapped)
+        Data(SampleCount sampleCount, skgpu::Mipmapped mipmapped)
                 : fSampleCount(sampleCount)
                 , fMipmapped(mipmapped) {}
 
@@ -59,7 +56,7 @@ private:
         Data& operator=(const Data&) = default;
 
         // NOTE: These fields are accessible via the backend-specific subclasses.
-        uint8_t fSampleCount = 1;
+        SampleCount fSampleCount = SampleCount::k1;
         Mipmapped fMipmapped = Mipmapped::kNo;
 
     private:
@@ -92,9 +89,13 @@ public:
         return fBackend;
     }
 
-    uint8_t numSamples() const { return fData.has_value() ? fData->fSampleCount : 1; }
-    Mipmapped mipmapped() const { return fData.has_value() ? fData->fMipmapped   : Mipmapped::kNo; }
     Protected isProtected() const { return fProtected; }
+    SampleCount sampleCount() const {
+        return fData.has_value() ? fData->fSampleCount : SampleCount::k1;
+    }
+    Mipmapped mipmapped() const {
+        return fData.has_value() ? fData->fMipmapped   : Mipmapped::kNo;
+    }
 
     // Return true if `that` describes a texture that is compatible with this info and can validly
     // be used to fulfill a promise image that was created with this TextureInfo.

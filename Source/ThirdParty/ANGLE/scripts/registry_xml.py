@@ -147,6 +147,7 @@ gles_requestable_extensions = [
     "GL_EXT_shader_io_blocks",
     "GL_EXT_shader_non_constant_global_initializers",
     "GL_EXT_shader_texture_lod",
+    "GL_EXT_shader_texture_samples",
     "GL_EXT_shadow_samplers",
     "GL_EXT_sRGB",
     "GL_EXT_tessellation_shader",
@@ -246,6 +247,7 @@ gles_requestable_extensions = [
     "GL_OES_vertex_type_10_10_10_2",
     "GL_OVR_multiview",
     "GL_OVR_multiview2",
+    "GL_OVR_multiview_multisampled_render_to_texture",
     "GL_QCOM_framebuffer_foveated",
     "GL_QCOM_render_shared_exponent",
     "GL_QCOM_shading_rate",
@@ -429,6 +431,9 @@ supported_egl_extensions = [
 check_sorted('supported_egl_extensions', supported_egl_extensions)
 
 supported_cl_extensions = [
+    # OpenCL 1.0
+    "cl_arm_import_memory",
+
     # Since OpenCL 1.1
     "cl_khr_byte_addressable_store",
     "cl_khr_global_int32_base_atomics",
@@ -493,7 +498,7 @@ class apis:
     CL = 'CL'
 
 # For GLenum types
-api_enums = {apis.GL: 'BigGLEnum', apis.GLES: 'GLESEnum'}
+api_enums = {apis.GLES: 'GLESEnum'}
 default_enum_group_name = 'AllEnums'
 
 

@@ -23,9 +23,10 @@
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
 #include "GStreamerWebRTCUtils.h"
-#include "NotImplemented.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+#include "RTCIceTcpCandidateType.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
@@ -33,38 +34,33 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_webrtc_ice_transport_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_ice_transport_debug
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerIceTransportBackend);
+class GStreamerIceTransportBackendObserver final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerIceTransportBackendObserver> {
+public:
+    static Ref<GStreamerIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, GRefPtr<GstWebRTCICETransport>&& iceTransport) { return adoptRef(*new GStreamerIceTransportBackendObserver(client, WTF::move(iceTransport))); }
 
-GStreamerIceTransportBackend::GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
-    : m_backend(WTFMove(transport))
+    void start();
+    void stop();
+
+private:
+    GStreamerIceTransportBackendObserver(RTCIceTransportBackendClient&, GRefPtr<GstWebRTCICETransport>&&);
+
+    void onIceTransportStateChanged();
+    void onGatheringStateChanged();
+    void onSelectedCandidatePairChanged();
+
+    GRefPtr<GstWebRTCICETransport> m_iceTransport;
+    WeakPtr<RTCIceTransportBackendClient> m_client;
+};
+
+GStreamerIceTransportBackendObserver::GStreamerIceTransportBackendObserver(RTCIceTransportBackendClient& client, GRefPtr<GstWebRTCICETransport>&& iceTransport)
+    : m_iceTransport(WTF::move(iceTransport))
+    , m_client(client)
 {
-    ASSERT(m_backend);
-
-    static std::once_flag debugRegisteredFlag;
-    std::call_once(debugRegisteredFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_ice_transport_debug, "webkitwebrtcice", 0, "WebKit WebRTC ICE Transport");
-    });
-
-    iceTransportChanged();
-    g_signal_connect_swapped(m_backend.get(), "notify::transport", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
-        backend->iceTransportChanged();
-    }), this);
+    ASSERT(m_iceTransport);
 }
 
-GStreamerIceTransportBackend::~GStreamerIceTransportBackend()
+void GStreamerIceTransportBackendObserver::start()
 {
-    if (G_IS_OBJECT(m_iceTransport.get()))
-        g_signal_handlers_disconnect_by_data(m_iceTransport.get(), this);
-    g_signal_handlers_disconnect_by_data(m_backend.get(), this);
-}
-
-void GStreamerIceTransportBackend::iceTransportChanged()
-{
-    if (G_IS_OBJECT(m_iceTransport.get()))
-        g_signal_handlers_disconnect_by_data(m_iceTransport.get(), this);
-
-    g_object_get(m_backend.get(), "transport", &m_iceTransport.outPtr(), nullptr);
-
     // Setting same libnice socket size options as LibWebRTC. 1MB for incoming streams and 256Kb for outgoing streams.
     if (gstObjectHasProperty(GST_OBJECT_CAST(m_iceTransport.get()), "receive-buffer-size"_s))
         g_object_set(m_iceTransport.get(), "receive-buffer-size", 1048576, nullptr);
@@ -72,51 +68,24 @@ void GStreamerIceTransportBackend::iceTransportChanged()
     if (gstObjectHasProperty(GST_OBJECT_CAST(m_iceTransport.get()), "send-buffer-size"_s))
         g_object_set(m_iceTransport.get(), "send-buffer-size", 262144, nullptr);
 
-    g_signal_connect_swapped(m_iceTransport.get(), "notify::state", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
-        backend->stateChanged();
+    g_signal_connect_swapped(m_iceTransport.get(), "notify::state", G_CALLBACK(+[](GStreamerIceTransportBackendObserver* backend) {
+        backend->onIceTransportStateChanged();
     }), this);
-    g_signal_connect_swapped(m_iceTransport.get(), "notify::gathering-state", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
-        backend->gatheringStateChanged();
+    g_signal_connect_swapped(m_iceTransport.get(), "notify::gathering-state", G_CALLBACK(+[](GStreamerIceTransportBackendObserver* backend) {
+        backend->onGatheringStateChanged();
     }), this);
-    g_signal_connect_swapped(m_iceTransport.get(), "on-selected-candidate-pair-change", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
-        backend->selectedCandidatePairChanged();
+    g_signal_connect_swapped(m_iceTransport.get(), "on-selected-candidate-pair-change", G_CALLBACK(+[](GStreamerIceTransportBackendObserver* backend) {
+        backend->onSelectedCandidatePairChanged();
     }), this);
 }
 
-void GStreamerIceTransportBackend::registerClient(RTCIceTransportBackendClient& client)
+void GStreamerIceTransportBackendObserver::stop()
 {
-    ASSERT(!m_client);
-    m_client = client;
-
-    GstWebRTCICEConnectionState transportState;
-    GstWebRTCICEGatheringState gatheringState;
-    g_object_get(m_iceTransport.get(), "state", &transportState, "gathering-state", &gatheringState, nullptr);
-
-    callOnMainThread([weakThis = WeakPtr { *this }, transportState, gatheringState] {
-        if (!weakThis || !weakThis->m_client)
-            return;
-
-#ifndef GST_DISABLE_GST_DEBUG
-        GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_ICE_CONNECTION_STATE, transportState));
-        GST_DEBUG_OBJECT(weakThis->m_backend.get(), "Initial ICE transport state: %s", desc.get());
-#endif
-
-        // We start observing a bit late and might miss the checking state. Synthesize it as needed.
-        if (transportState > GST_WEBRTC_ICE_CONNECTION_STATE_CHECKING && transportState != GST_WEBRTC_ICE_CONNECTION_STATE_CLOSED)
-            weakThis->m_client->onStateChanged(RTCIceTransportState::Checking);
-
-        weakThis->m_client->onStateChanged(toRTCIceTransportState(transportState));
-        weakThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
-    });
+    m_client = nullptr;
+    g_signal_handlers_disconnect_by_data(m_iceTransport.get(), this);
 }
 
-void GStreamerIceTransportBackend::unregisterClient()
-{
-    ASSERT(m_client);
-    m_client.clear();
-}
-
-void GStreamerIceTransportBackend::stateChanged() const
+void GStreamerIceTransportBackendObserver::onIceTransportStateChanged()
 {
     if (!m_client)
         return;
@@ -125,36 +94,121 @@ void GStreamerIceTransportBackend::stateChanged() const
     g_object_get(m_iceTransport.get(), "state", &transportState, nullptr);
 
 #ifndef GST_DISABLE_GST_DEBUG
-    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_ICE_CONNECTION_STATE, transportState));
-    GST_DEBUG_OBJECT(m_backend.get(), "ICE transport state changed to %s", desc.get());
+    auto desc = GMallocString::unsafeAdoptFromUTF8(g_enum_to_string(GST_TYPE_WEBRTC_ICE_CONNECTION_STATE, transportState));
+    GST_DEBUG_OBJECT(m_iceTransport.get(), "ICE transport state changed to %s", desc.utf8());
 #endif
 
-    callOnMainThread([weakThis = WeakPtr { *this }, transportState] {
-        if (!weakThis || !weakThis->m_client)
-            return;
-        weakThis->m_client->onStateChanged(toRTCIceTransportState(transportState));
+    callOnMainThread([protectedThis = Ref { *this }, transportState] {
+        if (RefPtr client = protectedThis->m_client.get())
+            client->onStateChanged(toRTCIceTransportState(transportState));
     });
 }
 
-void GStreamerIceTransportBackend::gatheringStateChanged() const
+void GStreamerIceTransportBackendObserver::onGatheringStateChanged()
 {
     if (!m_client)
         return;
 
     GstWebRTCICEGatheringState gatheringState;
     g_object_get(m_iceTransport.get(), "gathering-state", &gatheringState, nullptr);
-    callOnMainThread([weakThis = WeakPtr { *this }, gatheringState] {
-        if (!weakThis || !weakThis->m_client)
-            return;
-        weakThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
+    callOnMainThread([protectedThis = Ref { *this }, gatheringState] {
+        if (RefPtr client = protectedThis->m_client.get())
+            client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
     });
 }
 
-void GStreamerIceTransportBackend::selectedCandidatePairChanged()
+#if GST_CHECK_VERSION(1, 28, 0)
+static Ref<RTCIceCandidate> candidateFromGstWebRTC(const GstWebRTCICECandidate* candidate)
 {
-    // FIXME: call m_client->onSelectedCandidatePairChanged(). See also
-    // https://github.com/WebKit/WebKit/commit/0692fae10c8e53deba214fd080a35f7c54bd6985
-    notImplemented();
+    RTCIceCandidate::Fields fields;
+
+    fields.component = toRTCIceComponent(candidate->component);
+
+    if (candidate->stats) [[likely]] {
+        fields.foundation = String::fromUTF8(GST_WEBRTC_ICE_CANDIDATE_STATS_FOUNDATION(candidate->stats));
+        fields.priority = GST_WEBRTC_ICE_CANDIDATE_STATS_PRIORITY(candidate->stats);
+        fields.address = String::fromUTF8(GST_WEBRTC_ICE_CANDIDATE_STATS_ADDRESS(candidate->stats));
+        fields.protocol = toRTCIceProtocol(StringView::fromLatin1(GST_WEBRTC_ICE_CANDIDATE_STATS_PROTOCOL(candidate->stats)));
+        fields.port = GST_WEBRTC_ICE_CANDIDATE_STATS_PORT(candidate->stats);
+
+        fields.type = toRTCIceCandidateType(StringView::fromLatin1(GST_WEBRTC_ICE_CANDIDATE_STATS_TYPE(candidate->stats)));
+
+        fields.usernameFragment = String::fromUTF8(GST_WEBRTC_ICE_CANDIDATE_STATS_USERNAME_FRAGMENT(candidate->stats));
+
+        switch (GST_WEBRTC_ICE_CANDIDATE_STATS_TCP_TYPE(candidate->stats)) {
+        case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_ACTIVE:
+            fields.tcpType = RTCIceTcpCandidateType::Active;
+            break;
+        case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_PASSIVE:
+            fields.tcpType = RTCIceTcpCandidateType::Passive;
+            break;
+        case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_SO:
+            fields.tcpType = RTCIceTcpCandidateType::So;
+            break;
+        case GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_NONE:
+            break;
+        };
+
+        auto relatedAddress = CStringView::unsafeFromUTF8(GST_WEBRTC_ICE_CANDIDATE_STATS_RELATED_ADDRESS(candidate->stats));
+        if (!relatedAddress.isNull()) {
+            fields.relatedAddress = relatedAddress.span();
+            fields.relatedPort = GST_WEBRTC_ICE_CANDIDATE_STATS_RELATED_PORT(candidate->stats);
+        }
+    }
+
+    // FIXME: relayProtocol is not exposed in RTCIceCandidate::Fields.
+
+    auto sdpMid = emptyString();
+    auto candidateString = String::fromUTF8(candidate->candidate);
+    return RTCIceCandidate::create(candidateString, sdpMid, WTF::move(fields));
+}
+#endif
+
+void GStreamerIceTransportBackendObserver::onSelectedCandidatePairChanged()
+{
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/8484
+#if GST_CHECK_VERSION(1, 28, 0)
+    GUniquePtr<GstWebRTCICECandidatePair> selectedPair(gst_webrtc_ice_transport_get_selected_candidate_pair(m_iceTransport.get()));
+    if (!selectedPair)
+        return;
+
+    auto localCandidate = candidateFromGstWebRTC(selectedPair->local);
+    auto remoteCandidate = candidateFromGstWebRTC(selectedPair->remote);
+    WTF::callOnMainThreadAndWait([protectedThis = Ref { *this }, localCandidate = WTF::move(localCandidate), remoteCandidate = WTF::move(remoteCandidate)] mutable {
+        if (RefPtr client = protectedThis->m_client.get())
+            client->onSelectedCandidatePairChanged(WTF::move(localCandidate), WTF::move(remoteCandidate));
+    });
+#endif
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerIceTransportBackend);
+
+GStreamerIceTransportBackend::GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
+    : m_dtlsTransport(WTF::move(transport))
+{
+    ASSERT(m_dtlsTransport);
+
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_ice_transport_debug, "webkitwebrtcicetransport", 0, "WebKit WebRTC ICE Transport");
+    });
+}
+
+GStreamerIceTransportBackend::~GStreamerIceTransportBackend() = default;
+
+void GStreamerIceTransportBackend::registerClient(RTCIceTransportBackendClient& client)
+{
+    ASSERT(!m_observer);
+    GRefPtr<GstWebRTCICETransport> iceTransport;
+    g_object_get(m_dtlsTransport.get(), "transport", &iceTransport.outPtr(), nullptr);
+    lazyInitialize(m_observer, GStreamerIceTransportBackendObserver::create(client, WTF::move(iceTransport)));
+    m_observer->start();
+}
+
+void GStreamerIceTransportBackend::unregisterClient()
+{
+    ASSERT(m_observer);
+    m_observer->stop();
 }
 
 #undef GST_CAT_DEFAULT

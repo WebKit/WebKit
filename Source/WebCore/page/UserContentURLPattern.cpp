@@ -259,10 +259,10 @@ struct MatchTester {
     {
     }
 
-    bool testStringFinished() const { return m_testIndex >= m_test.length(); }
-    bool patternStringFinished() const { return m_patternIndex >= m_pattern.length(); }
+    bool NODELETE testStringFinished() const { return m_testIndex >= m_test.length(); }
+    bool NODELETE patternStringFinished() const { return m_patternIndex >= m_pattern.length(); }
 
-    void eatWildcard()
+    void NODELETE eatWildcard()
     {
         while (!patternStringFinished()) {
             if (m_pattern[m_patternIndex] != '*')
@@ -271,7 +271,7 @@ struct MatchTester {
         }
     }
 
-    void eatSameChars()
+    void NODELETE eatSameChars()
     {
         while (!patternStringFinished() && !testStringFinished()) {
             if (m_pattern[m_patternIndex] == '*')
@@ -283,7 +283,7 @@ struct MatchTester {
         }
     }
 
-    bool test()
+    bool NODELETE test()
     {
         // Eat all the matching chars.
         eatSameChars();

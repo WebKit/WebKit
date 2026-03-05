@@ -13,8 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <memory>
+#include <utility>
 
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "p2p/test/nat_socket_factory.h"
 #include "p2p/test/nat_types.h"
 #include "rtc_base/async_packet_socket.h"
@@ -122,7 +125,7 @@ class NATProxyServerSocket : public AsyncProxyServerSocket {
 
     bool remainder = (*len > 0);
     BufferInput(false);
-    SignalConnectRequest(this, dest_addr);
+    NotifyConnectRequest(this, dest_addr);
     if (remainder) {
       SignalReadEvent(this);
     }
@@ -143,7 +146,8 @@ class NATProxyServer : public ProxyServer {
   }
 };
 
-NATServer::NATServer(NATType type,
+NATServer::NATServer(const Environment& env,
+                     NATType type,
                      Thread& internal_socket_thread,
                      SocketFactory* internal,
                      const SocketAddress& internal_udp_addr,
@@ -151,14 +155,16 @@ NATServer::NATServer(NATType type,
                      Thread& external_socket_thread,
                      SocketFactory* external,
                      const SocketAddress& external_ip)
-    : internal_socket_thread_(internal_socket_thread),
+    : env_(env),
+      internal_socket_thread_(internal_socket_thread),
       external_socket_thread_(external_socket_thread),
       external_(external),
       external_ip_(external_ip.ipaddr(), 0) {
   nat_ = NAT::Create(type);
 
   internal_socket_thread_.BlockingCall([&] {
-    udp_server_socket_ = AsyncUDPSocket::Create(internal, internal_udp_addr);
+    udp_server_socket_ =
+        AsyncUDPSocket::Create(env_, internal_udp_addr, *internal);
     udp_server_socket_->RegisterReceivedPacketCallback(
         [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
           OnInternalUDPPacket(socket, packet);
@@ -178,7 +184,6 @@ NATServer::~NATServer() {
     delete iter->second;
 
   delete nat_;
-  delete udp_server_socket_;
   delete tcp_proxy_server_;
   delete int_map_;
   delete ext_map_;
@@ -220,7 +225,7 @@ void NATServer::OnExternalUDPPacket(AsyncPacketSocket* socket,
   RTC_DCHECK(iter != ext_map_->end());
 
   // Allow the NAT to reject this packet.
-  if (ShouldFilterOut(iter->second, packet.source_address())) {
+  if (iter->second->ShouldFilterOut(packet.source_address())) {
     RTC_LOG(LS_INFO) << "Packet from "
                      << packet.source_address().ToSensitiveString()
                      << " was filtered out by the NAT.";
@@ -240,48 +245,37 @@ void NATServer::OnExternalUDPPacket(AsyncPacketSocket* socket,
 
 void NATServer::Translate(const SocketAddressPair& route) {
   external_socket_thread_.BlockingCall([&] {
-    AsyncUDPSocket* socket = AsyncUDPSocket::Create(external_, external_ip_);
+    std::unique_ptr<AsyncUDPSocket> socket =
+        AsyncUDPSocket::Create(env_, external_ip_, *external_);
 
     if (!socket) {
       RTC_LOG(LS_ERROR) << "Couldn't find a free port!";
       return;
     }
 
-    TransEntry* entry = new TransEntry(route, socket, nat_);
+    TransEntry* entry = new TransEntry(route, std::move(socket), nat_);
     (*int_map_)[route] = entry;
-    (*ext_map_)[socket->GetLocalAddress()] = entry;
-    socket->RegisterReceivedPacketCallback(
+    (*ext_map_)[entry->socket->GetLocalAddress()] = entry;
+    entry->socket->RegisterReceivedPacketCallback(
         [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
           OnExternalUDPPacket(socket, packet);
         });
   });
 }
 
-bool NATServer::ShouldFilterOut(TransEntry* entry,
-                                const SocketAddress& ext_addr) {
-  return entry->AllowlistContains(ext_addr);
-}
-
 NATServer::TransEntry::TransEntry(const SocketAddressPair& r,
-                                  AsyncUDPSocket* s,
+                                  std::unique_ptr<AsyncUDPSocket> s,
                                   NAT* nat)
-    : route(r), socket(s) {
-  allowlist = new AddressSet(AddrCmp(nat));
-}
-
-NATServer::TransEntry::~TransEntry() {
-  delete allowlist;
-  delete socket;
-}
+    : route(r), socket(std::move(s)), allowlist(AddrCmp(nat)) {}
 
 void NATServer::TransEntry::AllowlistInsert(const SocketAddress& addr) {
   MutexLock lock(&mutex_);
-  allowlist->insert(addr);
+  allowlist.insert(addr);
 }
 
-bool NATServer::TransEntry::AllowlistContains(const SocketAddress& ext_addr) {
+bool NATServer::TransEntry::ShouldFilterOut(const SocketAddress& ext_addr) {
   MutexLock lock(&mutex_);
-  return allowlist->find(ext_addr) == allowlist->end();
+  return !allowlist.contains(ext_addr);
 }
 
 }  // namespace webrtc

@@ -79,6 +79,7 @@ enum class ScrollAnimationStatus : uint8_t {
 };
 
 enum class ScrollIsAnimated : bool { No, Yes };
+enum class InterruptScrollAnimation : bool { No, Yes };
 
 enum class OverflowAnchor : bool {
     Auto,
@@ -312,6 +313,11 @@ enum class ScrollbarOverlayStyle : uint8_t {
     Light
 };
 
+enum class ScrollbarRevealBehavior : bool {
+    DontReveal,
+    Default,
+};
+
 enum class ScrollPinningBehavior : uint8_t {
     DoNotPin,
     PinToTop,
@@ -321,6 +327,11 @@ enum class ScrollPinningBehavior : uint8_t {
 enum class ScrollClamping : bool {
     Unclamped,
     Clamped
+};
+
+enum class ScrollInterruptsAnimation : bool {
+    No,
+    Yes
 };
 
 enum class ScrollBehaviorForFixedElements : bool {
@@ -362,10 +373,11 @@ using ScrollbarControlPartMask = unsigned;
 
 struct ScrollPositionChangeOptions {
     ScrollType type;
-    ScrollClamping clamping = ScrollClamping::Clamped;
-    ScrollIsAnimated animated = ScrollIsAnimated::No;
-    ScrollSnapPointSelectionMethod snapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest;
-    std::optional<FloatSize> originalScrollDelta = std::nullopt;
+    ScrollClamping clamping { ScrollClamping::Clamped };
+    ScrollIsAnimated animated { ScrollIsAnimated::No };
+    ScrollSnapPointSelectionMethod snapPointSelectionMethod { ScrollSnapPointSelectionMethod::Closest };
+    std::optional<FloatSize> originalScrollDelta { };
+    ScrollInterruptsAnimation interruptsAnimation { ScrollInterruptsAnimation::Yes };
 
     static ScrollPositionChangeOptions createProgrammatic()
     {
@@ -401,6 +413,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehavior);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollElasticity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RubberBandingBehavior);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarMode);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarRevealBehavior);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OverflowAnchor);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollDirection);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollGranularity);

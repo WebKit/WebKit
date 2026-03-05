@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLColorBufferFloat);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLColorBufferFloat);
 
 WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLColorBufferFloat)

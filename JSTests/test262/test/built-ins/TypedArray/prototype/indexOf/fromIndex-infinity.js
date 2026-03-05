@@ -31,8 +31,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43, 43, 41]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43, 43, 41]));
 
   assert.sameValue(sample.indexOf(43, Infinity), -1, "indexOf(43, Infinity)");
   assert.sameValue(sample.indexOf(43, -Infinity), 1, "indexOf(43, -Infinity)");

@@ -54,7 +54,7 @@ CertificateInfo::CertificateInfo(const ResourceError& resourceError)
 }
 
 CertificateInfo::CertificateInfo(GRefPtr<GTlsCertificate>&& certificate, GTlsCertificateFlags tlsErrors)
-    : m_certificate(WTFMove(certificate))
+    : m_certificate(WTF::move(certificate))
     , m_tlsErrors(tlsErrors)
 {
 }

@@ -34,18 +34,17 @@ namespace WebCore {
 class HTMLCanvasElement;
 
 class GPUBasedCanvasRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_NON_HEAP_ALLOCATABLE(GPUBasedCanvasRenderingContext);
+    WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(GPUBasedCanvasRenderingContext);
 public:
     // ContextDestructionObserver.
     void ref() const final { CanvasRenderingContext::ref(); }
     void deref() const final { CanvasRenderingContext::deref(); }
     USING_CAN_MAKE_WEAKPTR(CanvasRenderingContext);
 
-    virtual void reshape() = 0;
 protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&, CanvasRenderingContext::Type);
 
-    HTMLCanvasElement* htmlCanvas() const;
+    HTMLCanvasElement* NODELETE htmlCanvas() const;
     void markCanvasChanged();
 };
     

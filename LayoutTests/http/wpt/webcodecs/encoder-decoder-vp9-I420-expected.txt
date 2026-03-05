@@ -1,0 +1,12 @@
+
+PASS VP9 encoding preserves pixel values fullRange: true color:255,0,0,255
+PASS VP9 encoding preserves pixel values fullRange: true color:0,255,0,255
+PASS VP9 encoding preserves pixel values fullRange: true color:0,255,255,255
+PASS VP9 encoding preserves pixel values fullRange: true color:30,30,230,255
+PASS VP9 encoding preserves pixel values fullRange: true color:3,3,77,255
+PASS VP9 encoding preserves pixel values fullRange: false color:255,0,0,255
+PASS VP9 encoding preserves pixel values fullRange: false color:0,255,0,255
+PASS VP9 encoding preserves pixel values fullRange: false color:0,255,255,255
+PASS VP9 encoding preserves pixel values fullRange: false color:30,30,230,255
+PASS VP9 encoding preserves pixel values fullRange: false color:3,3,77,255
+

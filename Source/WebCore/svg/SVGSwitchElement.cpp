@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGSwitchElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSwitchElement);
 
 inline SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -49,10 +49,10 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const
 {
     // We create a renderer for the first valid SVG element child.
     // FIXME: The renderer must be updated after dynamic change of the requiredFeatures, requiredExtensions and systemLanguage attributes (https://bugs.webkit.org/show_bug.cgi?id=74749).
-    for (auto& element : childrenOfType<SVGElement>(*this)) {
-        if (!element.isValid())
+    for (Ref element : childrenOfType<SVGElement>(*this)) {
+        if (!element->isValid())
             continue;
-        return &element == &child; // Only allow this child if it's the first valid child
+        return element.ptr() == &child; // Only allow this child if it's the first valid child
     }
 
     return false;
@@ -61,8 +61,8 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const
 RenderPtr<RenderElement> SVGSwitchElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
+        return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTF::move(style));
 }
 
 }

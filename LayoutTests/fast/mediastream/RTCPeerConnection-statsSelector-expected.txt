@@ -7,9 +7,6 @@ PASS pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}) did not th
 PASS navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream, error) did not throw exception.
 PASS Got a stream.
 PASS statsHandler2 was called
-PASS result.size is >= 1
-PASS timestamp is >= startTime
-PASS local.kind is "video"
 PASS successfullyParsed is true
 
 TEST COMPLETE

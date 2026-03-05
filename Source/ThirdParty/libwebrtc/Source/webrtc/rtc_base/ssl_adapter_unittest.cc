@@ -73,8 +73,10 @@ class SSLAdapterTestDummy : public sigslot::has_slots<> {
 
     ssl_adapter_->SignalReadEvent.connect(
         this, &SSLAdapterTestDummy::OnSSLAdapterReadEvent);
-    ssl_adapter_->SignalCloseEvent.connect(
-        this, &SSLAdapterTestDummy::OnSSLAdapterCloseEvent);
+    ssl_adapter_->SubscribeCloseEvent(
+        [this](webrtc::Socket* socket, int error) {
+          OnSSLAdapterCloseEvent(socket, error);
+        });
     ssl_adapter_->SetRole(role);
   }
 

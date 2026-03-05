@@ -121,7 +121,7 @@ class  Testprinter(unittest.TestCase):
         self.assertIn('Verbose baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> generic', err.getvalue())
         self.assertIn('Baseline search path: platform/test-mac-leopard -> generic', err.getvalue())
 
-        self.assertIn('Verbose test expectations: platform/test-mac-leopard/TestExpectations -> platform/test/TestExpectations -> TestExpectations', err.getvalue())
+        self.assertIn('Verbose test expectations: platform/test-wk2/TestExpectations -> platform/wk2/TestExpectations -> platform/test-mac-leopard/TestExpectations -> platform/test/TestExpectations -> TestExpectations', err.getvalue())
         self.assertIn('Test expectations: platform/test/TestExpectations', err.getvalue())
 
         self.reset(err)

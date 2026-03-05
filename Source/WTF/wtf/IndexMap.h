@@ -64,30 +64,30 @@ public:
 
     size_t size() const { return m_vector.size(); }
 
-    Value& at(const Key& key)
+    Value& at(const Key& key) LIFETIME_BOUND
     {
         return m_vector[IndexKeyType<Key>::index(key)];
     }
     
-    const Value& at(const Key& key) const
+    const Value& at(const Key& key) const LIFETIME_BOUND
     {
         return m_vector[IndexKeyType<Key>::index(key)];
     }
 
-    Value& at(size_t index)
+    Value& at(size_t index) LIFETIME_BOUND
     {
         return m_vector[index];
     }
 
-    const Value& at(size_t index) const
+    const Value& at(size_t index) const LIFETIME_BOUND
     {
         return m_vector[index];
     }
     
-    Value& operator[](size_t index) { return at(index); }
-    const Value& operator[](size_t index) const { return at(index); }
-    Value& operator[](const Key& key) { return at(key); }
-    const Value& operator[](const Key& key) const { return at(key); }
+    Value& operator[](size_t index) LIFETIME_BOUND { return at(index); }
+    const Value& operator[](size_t index) const LIFETIME_BOUND { return at(index); }
+    Value& operator[](const Key& key) LIFETIME_BOUND { return at(key); }
+    const Value& operator[](const Key& key) const LIFETIME_BOUND { return at(key); }
     
     template<typename PassedValue>
     void append(const Key& key, PassedValue&& value)

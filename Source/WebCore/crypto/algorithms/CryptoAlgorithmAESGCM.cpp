@@ -47,12 +47,12 @@ static const uint64_t PlainTextMaxLength = 549755813632ULL; // 2^39 - 256
 static constexpr std::array<uint8_t, 7> validTagLengths { 32, 64, 96, 104, 112, 120, 128 };
 }
 
-static inline bool usagesAreInvalidForCryptoAlgorithmAESGCM(CryptoKeyUsageBitmap usages)
+static inline bool NODELETE usagesAreInvalidForCryptoAlgorithmAESGCM(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
 }
 
-static inline bool tagLengthIsValid(uint8_t tagLength)
+static inline bool NODELETE tagLengthIsValid(uint8_t tagLength)
 {
     using namespace CryptoAlgorithmAESGCMInternal;
     return std::ranges::find(validTagLengths, tagLength) != std::ranges::end(validTagLengths);
@@ -95,8 +95,8 @@ void CryptoAlgorithmAESGCM::encrypt(const CryptoAlgorithmParameters& parameters,
         return;
     }
 
-    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
+    dispatchOperationInWorkQueue(workQueue, context, WTF::move(callback), WTF::move(exceptionCallback),
+        [parameters = crossThreadCopy(aesParameters), key = WTF::move(key), plainText = WTF::move(plainText)] {
             return platformEncrypt(parameters, downcast<CryptoKeyAES>(key.get()), plainText);
     });
 }
@@ -128,8 +128,8 @@ void CryptoAlgorithmAESGCM::decrypt(const CryptoAlgorithmParameters& parameters,
     }
 #endif
 
-    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
+    dispatchOperationInWorkQueue(workQueue, context, WTF::move(callback), WTF::move(exceptionCallback),
+        [parameters = crossThreadCopy(aesParameters), key = WTF::move(key), cipherText = WTF::move(cipherText)] {
             return platformDecrypt(parameters, downcast<CryptoKeyAES>(key.get()), cipherText);
         });
 }
@@ -149,7 +149,7 @@ void CryptoAlgorithmAESGCM::generateKey(const CryptoAlgorithmParameters& paramet
         return;
     }
 
-    callback(WTFMove(result));
+    callback(result.releaseNonNull());
 }
 
 void CryptoAlgorithmAESGCM::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
@@ -164,7 +164,7 @@ void CryptoAlgorithmAESGCM::importKey(CryptoKeyFormat format, KeyData&& data, co
     RefPtr<CryptoKeyAES> result;
     switch (format) {
     case CryptoKeyFormat::Raw:
-        result = CryptoKeyAES::importRaw(parameters.identifier, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyAES::importRaw(parameters.identifier, WTF::move(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Jwk: {
         auto checkAlgCallback = [](size_t length, const String& alg) -> bool {
@@ -178,7 +178,7 @@ void CryptoAlgorithmAESGCM::importKey(CryptoKeyFormat format, KeyData&& data, co
             }
             return false;
         };
-        result = CryptoKeyAES::importJwk(parameters.identifier, WTFMove(std::get<JsonWebKey>(data)), extractable, usages, WTFMove(checkAlgCallback));
+        result = CryptoKeyAES::importJwk(parameters.identifier, WTF::move(std::get<JsonWebKey>(data)), extractable, usages, WTF::move(checkAlgCallback));
         break;
     }
     default:
@@ -223,7 +223,7 @@ void CryptoAlgorithmAESGCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
         default:
             ASSERT_NOT_REACHED();
         }
-        result = WTFMove(jwk);
+        result = WTF::move(jwk);
         break;
     }
     default:
@@ -231,7 +231,7 @@ void CryptoAlgorithmAESGCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
         return;
     }
 
-    callback(format, WTFMove(result));
+    callback(format, WTF::move(result));
 }
 
 ExceptionOr<std::optional<size_t>> CryptoAlgorithmAESGCM::getKeyLength(const CryptoAlgorithmParameters& parameters)

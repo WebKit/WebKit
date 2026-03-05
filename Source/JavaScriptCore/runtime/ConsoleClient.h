@@ -26,17 +26,11 @@
 #pragma once
 
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <JavaScriptCore/JSExportMacros.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace JSC {
-class ConsoleClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<JSC::ConsoleClient> : std::true_type { };
-}
 
 namespace Inspector {
 class ScriptArguments;
@@ -47,7 +41,9 @@ namespace JSC {
 class CallFrame;
 class JSGlobalObject;
 
-class ConsoleClient : public CanMakeWeakPtr<ConsoleClient> {
+class ConsoleClient : public CanMakeWeakPtr<ConsoleClient>, public CanMakeThreadSafeCheckedPtr<ConsoleClient> {
+    WTF_MAKE_TZONE_ALLOCATED(ConsoleClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ConsoleClient);
 public:
     virtual ~ConsoleClient() { }
 

@@ -265,7 +265,7 @@ dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
 #endif
 
 #if HAVE(SCHEDULING_POLICIES) || OS(LINUX)
-static int schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
+static int NODELETE schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
 {
     switch (schedulingPolicy) {
     case Thread::SchedulingPolicy::FIFO:
@@ -303,7 +303,7 @@ static int schedPolicy(Thread::QOS qos, Thread::SchedulingPolicy schedulingPolic
 }
 #endif
 
-bool Thread::establishHandle(NewThreadContext& context, std::optional<size_t> stackSize, QOS qos, SchedulingPolicy schedulingPolicy)
+bool Thread::establishHandle(NewThreadContext& context, StackAllocationSpecification stackSpec, QOS qos, SchedulingPolicy schedulingPolicy)
 {
     pthread_t threadHandle;
     pthread_attr_t attr;
@@ -314,8 +314,24 @@ bool Thread::establishHandle(NewThreadContext& context, std::optional<size_t> st
 #if HAVE(SCHEDULING_POLICIES)
     pthread_attr_setschedpolicy(&attr, schedPolicy(schedulingPolicy));
 #endif
-    if (stackSize)
-        pthread_attr_setstacksize(&attr, stackSize.value());
+
+    switch (stackSpec.kind()) {
+    case StackAllocationSpecification::Kind::Default:
+        break;
+    case StackAllocationSpecification::Kind::SizeOnly:
+        pthread_attr_setstacksize(&attr, stackSpec.sizeBytes());
+        break;
+    case StackAllocationSpecification::Kind::SizeAndLocation: {
+        auto bounds = stackSpec.stackSpan();
+        int result = pthread_attr_setstack(&attr, bounds.data(), bounds.size_bytes());
+        if (result) {
+            LOG_ERROR("Failed to set custom stack at %p size %zu: %s",
+                bounds.data(), bounds.size_bytes(), safeStrerror(result).data());
+            pthread_attr_destroy(&attr);
+            return false;
+        } } break;
+    }
+
     int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, &context);
     pthread_attr_destroy(&attr);
     if (error) {
@@ -442,7 +458,7 @@ Thread& Thread::initializeCurrentTLS()
     thread->initializeInThread();
     initializeCurrentThreadEvenIfNonWTFCreated();
 
-    return initializeTLS(WTFMove(thread));
+    return initializeTLS(WTF::move(thread));
 }
 
 bool Thread::signal(int signalNumber)
@@ -514,7 +530,7 @@ struct ThreadStateMetadata {
     thread_state_flavor_t flavor;
 };
 
-static ThreadStateMetadata threadStateMetadata()
+static ThreadStateMetadata NODELETE threadStateMetadata()
 {
 #if CPU(X86)
     unsigned userCount = sizeof(PlatformRegisters) / sizeof(int);

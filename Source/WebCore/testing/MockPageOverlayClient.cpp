@@ -50,11 +50,11 @@ MockPageOverlayClient::MockPageOverlayClient() = default;
 
 Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(Page& page, PageOverlay::OverlayType overlayType)
 {
-    auto overlay = PageOverlay::create(*this, overlayType);
+    Ref overlay = PageOverlay::create(*this, overlayType);
     page.pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
 
-    auto mockOverlay = MockPageOverlay::create(overlay.ptr());
-    m_overlays.add(mockOverlay.ptr());
+    Ref mockOverlay = MockPageOverlay::create(overlay.ptr());
+    m_overlays.add(mockOverlay);
 
     return mockOverlay;
 }
@@ -62,7 +62,7 @@ Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(Page& page, PageOverl
 void MockPageOverlayClient::uninstallAllOverlays()
 {
     while (!m_overlays.isEmpty()) {
-        RefPtr<MockPageOverlay> mockOverlay = m_overlays.takeAny();
+        RefPtr mockOverlay = m_overlays.takeAny();
         PageOverlayController* overlayController = mockOverlay->overlay()->controller();
         ASSERT(overlayController);
         overlayController->uninstallPageOverlay(*mockOverlay->overlay(), PageOverlay::FadeMode::DoNotFade);
@@ -71,8 +71,8 @@ void MockPageOverlayClient::uninstallAllOverlays()
 
 String MockPageOverlayClient::layerTreeAsText(Page& page, OptionSet<LayerTreeAsTextOptions> options)
 {
-    GraphicsLayer* viewOverlayRoot = page.pageOverlayController().viewOverlayRootLayer();
-    GraphicsLayer* documentOverlayRoot = page.pageOverlayController().documentOverlayRootLayer();
+    RefPtr viewOverlayRoot = page.pageOverlayController().viewOverlayRootLayer();
+    RefPtr documentOverlayRoot = page.pageOverlayController().documentOverlayRootLayer();
     
     return makeString("View-relative:\n"_s, (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
         , "\n\nDocument-relative:\n"_s, (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_s));

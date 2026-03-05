@@ -25,14 +25,13 @@
 #include "Event.h"
 #include "RenderCombineText.h"
 #include "RenderSVGInlineText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "ScopedEventQueue.h"
 #include "SerializedNode.h"
 #include "ShadowRoot.h"
-#include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "StyleUpdate.h"
 #include "TextManipulationController.h"
@@ -44,11 +43,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Text);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Text);
 
 Ref<Text> Text::createEditingText(Document& document, String&& data)
 {
-    auto node = adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { TypeFlag::IsPseudoElementOrSpecialInternalNode }));
+    auto node = adoptRef(*new Text(document, WTF::move(data), NodeType::Text, { TypeFlag::IsPseudoElementOrSpecialInternalNode }));
     ASSERT(node->isEditingText());
     return node;
 }
@@ -68,19 +67,19 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
     dispatchModifiedEvent(oldData);
 
     if (RefPtr parent = parentNode()) {
-        auto insertResult = parent->insertBefore(newText, protectedNextSibling());
+        auto insertResult = parent->insertBefore(newText, protect(nextSibling()));
         if (insertResult.hasException())
             return insertResult.releaseException();
     }
 
-    protectedDocument()->textNodeSplit(*this);
+    protect(document())->textNodeSplit(*this);
 
     updateRendererAfterContentChange(0, oldData.length());
 
     return newText;
 }
 
-static const Text* earliestLogicallyAdjacentTextNode(const Text* text)
+static const Text* NODELETE earliestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->previousSibling())) {
@@ -92,7 +91,7 @@ static const Text* earliestLogicallyAdjacentTextNode(const Text* text)
     return text;
 }
 
-static const Text* latestLogicallyAdjacentTextNode(const Text* text)
+static const Text* NODELETE latestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->nextSibling())) {
@@ -124,7 +123,7 @@ void Text::replaceWholeText(const String& newText)
     RefPtr endText = const_cast<Text*>(latestLogicallyAdjacentTextNode(this));
 
     RefPtr parent = parentNode(); // Protect against mutation handlers moving this node during traversal
-    for (RefPtr<Node> node = WTFMove(startText); is<Text>(node) && node != this && node->parentNode() == parent;) {
+    for (RefPtr<Node> node = WTF::move(startText); is<Text>(node) && node != this && node->parentNode() == parent;) {
         Ref nodeToRemove = node.releaseNonNull();
         node = nodeToRemove->nextSibling();
         parent->removeChild(nodeToRemove);
@@ -163,14 +162,14 @@ SerializedNode Text::serializeNode(CloningOperation) const
     return { SerializedNode::Text { data() } };
 }
 
-static bool isSVGShadowText(const Text& text)
+static bool NODELETE isSVGShadowText(const Text& text)
 {
     ASSERT(text.parentNode());
     auto* parentShadowRoot = dynamicDowncast<ShadowRoot>(*text.parentNode());
     return parentShadowRoot && parentShadowRoot->host()->hasTagName(SVGNames::trefTag);
 }
 
-static bool isSVGText(const Text& text)
+static bool NODELETE isSVGText(const Text& text)
 {
     ASSERT(text.parentNode());
     auto* parentElement = dynamicDowncast<SVGElement>(*text.parentNode());
@@ -182,7 +181,7 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
     if (isSVGText(*this) || isSVGShadowText(*this))
         return createRenderer<RenderSVGInlineText>(*this, data());
 
-    if (style.hasTextCombine())
+    if (style.textCombine() != TextCombine::None)
         return createRenderer<RenderCombineText>(*this, data());
 
     return createRenderer<RenderText>(RenderObject::Type::Text, *this, data());
@@ -190,7 +189,7 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
 
 Ref<Text> Text::virtualCreate(String&& data)
 {
-    return create(protectedDocument(), WTFMove(data));
+    return create(protect(document()), WTF::move(data));
 }
 
 void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
@@ -201,7 +200,7 @@ void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsig
     if (hasInvalidRenderer())
         return;
 
-    protectedDocument()->updateTextRenderer(*this, offsetOfReplacedData, lengthOfReplacedData);
+    protect(document())->updateTextRenderer(*this, offsetOfReplacedData, lengthOfReplacedData);
 }
 
 static void appendTextRepresentation(StringBuilder& builder, const Text& text)

@@ -60,10 +60,8 @@ public:
 
     virtual WorkerDebuggerProxy* workerDebuggerProxy() const = 0;
     virtual WorkerLoaderProxy* workerLoaderProxy() const = 0;
-    virtual CheckedPtr<WorkerLoaderProxy> checkedWorkerLoaderProxy() const;
 
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
-    RefPtr<WorkerOrWorkletGlobalScope> protectedGlobalScope() const;
     WorkerRunLoop& runLoop() { return m_runLoop; }
 
     void start(Function<void(const String&)>&& evaluateCallback = { });

@@ -131,7 +131,7 @@ void JSTestIndexedSetterWithIdentifierPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestIndexedSetterWithIdentifier::s_info = { "TestIndexedSetterWithIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterWithIdentifier) };
 
 JSTestIndexedSetterWithIdentifier::JSTestIndexedSetterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIndexedSetterWithIdentifier>&& impl)
-    : JSDOMWrapper<TestIndexedSetterWithIdentifier>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestIndexedSetterWithIdentifier>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -168,7 +168,7 @@ bool JSTestIndexedSetterWithIdentifier::legacyPlatformObjectGetOwnProperty(JSObj
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (auto index = parseIndex(propertyName)) {
         if (auto item = thisObject->wrapped().item(index.value()); !!item) [[likely]] {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(WTF::move(item)));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -191,7 +191,7 @@ bool JSTestIndexedSetterWithIdentifier::getOwnPropertySlotByIndex(JSObject* obje
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (index <= MAX_ARRAY_INDEX) [[likely]] {
         if (auto item = thisObject->wrapped().item(index); !!item) [[likely]] {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(WTF::move(item)));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -372,7 +372,7 @@ void JSTestIndexedSetterWithIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> 
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIndexedSetterWithIdentifier = static_cast<JSTestIndexedSetterWithIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestIndexedSetterWithIdentifier->protectedWrapped().ptr(), jsTestIndexedSetterWithIdentifier);
+    uncacheWrapper(world, protect(jsTestIndexedSetterWithIdentifier->wrapped()).ptr(), jsTestIndexedSetterWithIdentifier);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -410,7 +410,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestIndexedSetterWithIdentifier>(impl.ptr());
 #endif
-    return createWrapper<TestIndexedSetterWithIdentifier>(globalObject, WTFMove(impl));
+    return createWrapper<TestIndexedSetterWithIdentifier>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestIndexedSetterWithIdentifier& impl)

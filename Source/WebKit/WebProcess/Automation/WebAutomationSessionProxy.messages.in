@@ -26,6 +26,7 @@
 ]
 messages -> WebAutomationSessionProxy {
     EvaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout) -> (String result, String errorType)
+    EvaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout) -> (String result, String errorType)
 
     ResolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal) -> (std::optional<String> errorType, std::optional<WebCore::FrameIdentifier> frameID)
     ResolveChildFrameWithNodeHandle(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> errorType, std::optional<WebCore::FrameIdentifier> frameID)

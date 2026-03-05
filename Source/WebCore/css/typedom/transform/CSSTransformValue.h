@@ -38,7 +38,7 @@ class Document;
 template<typename> class ExceptionOr;
 
 class CSSTransformValue final : public CSSStyleValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransformValue);
+    WTF_MAKE_TZONE_ALLOCATED(CSSTransformValue);
 public:
     static ExceptionOr<Ref<CSSTransformValue>> create(Ref<const CSSTransformListValue>, Document&);
     static ExceptionOr<Ref<CSSTransformValue>> create(Vector<Ref<CSSTransformComponent>>&&);
@@ -47,7 +47,7 @@ public:
 
     size_t length() const { return m_components.size(); }
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_components.size(); }
-    RefPtr<CSSTransformComponent> item(size_t);
+    RefPtr<CSSTransformComponent> NODELETE item(size_t);
     ExceptionOr<Ref<CSSTransformComponent>> setItem(size_t, Ref<CSSTransformComponent>&&);
     
     bool is2D() const;

@@ -92,7 +92,7 @@ public:
 
     void add(T&& data)
     {
-        insertNode(new Node(WTFMove(data)));
+        insertNode(new Node(WTF::move(data)));
     }
 
     // Returns true if the datum was found in the tree.
@@ -148,7 +148,7 @@ protected:
         WTF_MAKE_NONCOPYABLE(Node);
     public:
         explicit Node(T&& data)
-            : m_data(WTFMove(data))
+            : m_data(WTF::move(data))
         {
         }
 
@@ -157,7 +157,7 @@ protected:
 
         T& data() { return m_data; }
 
-        void moveDataFrom(Node& src) { m_data = WTFMove(src.m_data); }
+        void moveDataFrom(Node& src) { m_data = WTF::move(src.m_data); }
 
         Node* left() const { return m_left; }
         void setLeft(Node* node) { m_left = node; }

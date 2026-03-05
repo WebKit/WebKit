@@ -50,14 +50,14 @@ info: |
     Argument Type: Undefined
     Result: Throw a TypeError exception.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
 
   assert.throws(TypeError, function() {
-    new TA([undefined]);
+    new TA(makeCtorArg([undefined]));
   }, "abrupt completion from undefined");
 
 });

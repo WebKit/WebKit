@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
 
+#include <mach/message.h>
 #include <optional>
 #include <wtf/BitSet.h>
 #include <wtf/Forward.h>
@@ -74,7 +77,6 @@ enum class SDKAlignedBehavior {
     ModernCompabilityModeByDefault,
     MutationEventsDisabledByDefault,
     NavigationActionSourceFrameNonNull,
-    AllowBackgroundAudioPlayback,
     NoClientCertificateLookup,
     NoExpandoIndexedPropertiesOnWindow,
     NoPokerBrosBuiltInTagQuirk,
@@ -131,6 +133,8 @@ enum class SDKAlignedBehavior {
     ExecutionTimingChangeOfModuleScripts,
     GetBoundingClientRectZoomed,
     CrashWhenMutatingProcessAssertionsFromBackgroundThread,
+    NoFontFaceSetConstructor,
+    NoHTMLEnhancedSelectParsingQuirk,
 
     NumberOfBehaviors
 };
@@ -138,20 +142,25 @@ enum class SDKAlignedBehavior {
 using SDKAlignedBehaviors = WTF::BitSet<static_cast<size_t>(SDKAlignedBehavior::NumberOfBehaviors), uint32_t>;
 
 WTF_EXPORT_PRIVATE const SDKAlignedBehaviors& sdkAlignedBehaviors();
-WTF_EXPORT_PRIVATE void setSDKAlignedBehaviors(SDKAlignedBehaviors);
+WTF_EXPORT_PRIVATE void NODELETE setSDKAlignedBehaviors(SDKAlignedBehaviors);
 
 WTF_EXPORT_PRIVATE void enableAllSDKAlignedBehaviors();
 WTF_EXPORT_PRIVATE void disableAllSDKAlignedBehaviors();
 
 WTF_EXPORT_PRIVATE bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior);
 
-WTF_EXPORT_PRIVATE bool processIsExtension();
-WTF_EXPORT_PRIVATE void setProcessIsExtension(bool);
+WTF_EXPORT_PRIVATE bool NODELETE processIsExtension();
+WTF_EXPORT_PRIVATE void NODELETE setProcessIsExtension(bool);
 
 WTF_EXPORT_PRIVATE void setApplicationBundleIdentifier(const String&);
 WTF_EXPORT_PRIVATE void setApplicationBundleIdentifierOverride(const String&);
 WTF_EXPORT_PRIVATE String applicationBundleIdentifier();
 WTF_EXPORT_PRIVATE void clearApplicationBundleIdentifierTestingOverride();
+
+#if USE(SOURCE_APPLICATION_AUDIT_DATA)
+WTF_EXPORT_PRIVATE void setApplicationAuditToken(audit_token_t);
+WTF_EXPORT_PRIVATE std::optional<audit_token_t> applicationAuditToken();
+#endif
 
 namespace CocoaApplication {
 
@@ -178,6 +187,7 @@ WTF_EXPORT_PRIVATE bool isHRBlock();
 WTF_EXPORT_PRIVATE bool isTurboTax();
 WTF_EXPORT_PRIVATE bool isEpsonSoftwareUpdater();
 WTF_EXPORT_PRIVATE bool isMimeoPhotoProject();
+WTF_EXPORT_PRIVATE bool isGridLegends();
 
 } // MacApplication
 
@@ -197,6 +207,7 @@ WTF_EXPORT_PRIVATE bool isHoYoLAB();
 WTF_EXPORT_PRIVATE bool isMailCompositionService();
 WTF_EXPORT_PRIVATE bool isMiniBrowser();
 WTF_EXPORT_PRIVATE bool isMobileMail();
+WTF_EXPORT_PRIVATE bool isMaild();
 WTF_EXPORT_PRIVATE bool isMobileSafari();
 WTF_EXPORT_PRIVATE bool isNews();
 WTF_EXPORT_PRIVATE bool isSafariViewService();
@@ -207,8 +218,6 @@ WTF_EXPORT_PRIVATE bool isMobileStore();
 WTF_EXPORT_PRIVATE bool isUNIQLOApp();
 WTF_EXPORT_PRIVATE bool isDOFUSTouch();
 WTF_EXPORT_PRIVATE bool isMyRideK12();
-WTF_EXPORT_PRIVATE bool isFirefox();
-WTF_EXPORT_PRIVATE bool isFirefoxFocus();
 
 } // IOSApplication
 
@@ -229,5 +238,10 @@ using WTF::setApplicationBundleIdentifier;
 using WTF::setApplicationBundleIdentifierOverride;
 using WTF::setProcessIsExtension;
 using WTF::setSDKAlignedBehaviors;
+
+#if USE(SOURCE_APPLICATION_AUDIT_DATA)
+using WTF::applicationAuditToken;
+using WTF::setApplicationAuditToken;
+#endif
 
 #endif // PLATFORM(COCOA)

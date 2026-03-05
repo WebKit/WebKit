@@ -13,6 +13,8 @@
 
 #include <cstdint>
 
+#include "api/units/timestamp.h"
+
 namespace webrtc {
 
 // This class allows us to store unencoded RTC events. Subclasses of this class
@@ -37,6 +39,7 @@ class RtcEvent {
     AudioSendStreamConfig,
     BweUpdateDelayBased,
     BweUpdateLossBased,
+    BweUpdateScream,
     DtlsTransportState,
     DtlsWritableState,
     IceCandidatePairConfig,
@@ -50,9 +53,6 @@ class RtcEvent {
     RtpPacketOutgoing,
     VideoReceiveStreamConfig,
     VideoSendStreamConfig,
-    GenericPacketSent,
-    GenericPacketReceived,
-    GenericAckReceived,
     FrameDecoded,
     NetEqSetMinimumDelay,
     BeginV3Log = 0x2501580,
@@ -61,6 +61,8 @@ class RtcEvent {
   };
 
   RtcEvent();
+  RtcEvent(const RtcEvent&) = default;
+  RtcEvent& operator=(const RtcEvent&) = delete;
   virtual ~RtcEvent() = default;
 
   virtual Type GetType() const = 0;
@@ -77,10 +79,15 @@ class RtcEvent {
   int64_t timestamp_ms() const { return timestamp_us_ / 1000; }
   int64_t timestamp_us() const { return timestamp_us_; }
 
+  // Time when the event was logged.
+  Timestamp timestamp() const { return Timestamp::Micros(timestamp_us_); }
+  void SetTimestamp(Timestamp timestamp) { timestamp_us_ = timestamp.us(); }
+
  protected:
   explicit RtcEvent(int64_t timestamp_us) : timestamp_us_(timestamp_us) {}
 
-  const int64_t timestamp_us_;
+ private:
+  int64_t timestamp_us_;
 };
 
 }  // namespace webrtc

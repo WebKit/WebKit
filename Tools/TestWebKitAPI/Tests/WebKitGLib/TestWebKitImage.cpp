@@ -33,16 +33,16 @@ public:
         auto* test = static_cast<WebKitImageTest*>(userData);
         GUniqueOutPtr<char> type;
         GUniqueOutPtr<GError> error;
-        GInputStream* stream = g_loadable_icon_load_finish(G_LOADABLE_ICON(source),
-        result, &type.outPtr(), &error.outPtr());
+        GRefPtr<GInputStream> stream = adoptGRef(g_loadable_icon_load_finish(G_LOADABLE_ICON(source),
+        result, &type.outPtr(), &error.outPtr()));
 
         g_assert_no_error(error.get());
-        g_assert_nonnull(stream);
+        g_assert_nonnull(stream.get());
         g_assert_cmpstr(type.get(), ==, "image/png");
 
         gsize bytes_read;
         unsigned char buffer[8];
-        gboolean success = g_input_stream_read_all(stream, buffer, sizeof(buffer),
+        gboolean success = g_input_stream_read_all(stream.get(), buffer, sizeof(buffer),
             &bytes_read, nullptr, &error.outPtr());
 
         g_assert_no_error(error.get());
@@ -87,7 +87,7 @@ static void testWebKitImagePropertiesConstruct(WebKitImageTest*, gconstpointer)
         "stride", &stride,
         nullptr);
 
-    GBytes* retrieved_data = webkit_image_as_rgba_bytes(image.get());
+    GBytes* retrieved_data = webkit_image_as_bytes(image.get());
 
     g_assert_cmpint(width, ==, 1);
     g_assert_cmpint(height, ==, 2);

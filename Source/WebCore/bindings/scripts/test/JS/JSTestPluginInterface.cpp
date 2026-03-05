@@ -121,7 +121,7 @@ void JSTestPluginInterfacePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestPluginInterface::s_info = { "TestPluginInterface"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPluginInterface) };
 
 JSTestPluginInterface::JSTestPluginInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestPluginInterface>&& impl)
-    : JSDOMWrapper<TestPluginInterface>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestPluginInterface>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -295,7 +295,7 @@ void JSTestPluginInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestPluginInterface = static_cast<JSTestPluginInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestPluginInterface->protectedWrapped().ptr(), jsTestPluginInterface);
+    uncacheWrapper(world, protect(jsTestPluginInterface->wrapped()).ptr(), jsTestPluginInterface);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -333,7 +333,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestPluginInterface>(impl.ptr());
 #endif
-    return createWrapper<TestPluginInterface>(globalObject, WTFMove(impl));
+    return createWrapper<TestPluginInterface>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestPluginInterface& impl)

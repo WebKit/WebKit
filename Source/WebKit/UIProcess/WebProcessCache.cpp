@@ -27,6 +27,7 @@
 #include "WebProcessCache.h"
 
 #include "APIPageConfiguration.h"
+#include "EnhancedSecurity.h"
 #include "LegacyGlobalSettings.h"
 #include "Logging.h"
 #include "ProcessThrottler.h"
@@ -64,7 +65,7 @@ void WebProcessCache::setCachedProcessLifetimeForTesting(Seconds lifetime)
     m_cachedProcessLifetime = lifetime;
 }
 
-static uint64_t generateAddRequestIdentifier()
+static uint64_t NODELETE generateAddRequestIdentifier()
 {
     static uint64_t identifier = 0;
     return ++identifier;
@@ -91,6 +92,11 @@ void WebProcessCache::deref() const
 
 bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
 {
+    if (!process.isEligibleForWebProcessCache()) {
+        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because WebProcessProxy does not allow it", process.processID());
+        return false;
+    }
+
     if (!capacity()) {
         WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because the cache has no capacity", process.processID());
         return false;
@@ -175,7 +181,7 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
         evictAtRandomIfNeeded();
 
         WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added shared process to WebProcess cache (size=%u, capacity=%u) %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), site->toString().utf8().data());
-        m_sharedProcessesPerSite.add(*site, WTFMove(cachedProcess));
+        m_sharedProcessesPerSite.add(*site, WTF::move(cachedProcess));
 
         return true;
     }
@@ -183,14 +189,18 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
     RELEASE_ASSERT(process->site());
     RELEASE_ASSERT(!process->site()->isEmpty());
     auto site = *process->site();
+    auto isolatedProcessType = process->isolatedProcessType();
 
-    if (auto previousProcess = m_processesPerSite.take(site))
+    auto& optionalMainFrameSite = process->mainFrameSite();
+    auto mainFrameSite = optionalMainFrameSite && isolatedProcessType == WebProcessProxy::IsolatedProcessType::SubFrame ? *optionalMainFrameSite : WebCore::Site(URL());
+
+    if (auto previousProcess = m_processesPerSite.take({ site, mainFrameSite }))
         WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting process from WebProcess cache because a new process was added for the same domain", previousProcess->process().processID());
 
     evictAtRandomIfNeeded();
 
-    WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u) %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), site.toString().utf8().data());
-    m_processesPerSite.add(site, WTFMove(cachedProcess));
+    WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u, isolatedProcessType=%d) %" SENSITIVE_LOG_STRING ", mainFrameSite: %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), isolatedProcessType, site.toString().utf8().data(), mainFrameSite.toString().utf8().data());
+    m_processesPerSite.add({ site, mainFrameSite }, WTF::move(cachedProcess));
 
     return true;
 }
@@ -207,7 +217,9 @@ void WebProcessCache::evictAtRandomIfNeeded()
         }
         if (!m_processesPerSite.isEmpty()) {
             auto it = m_processesPerSite.random();
-            if (RefPtr sharedProcess = m_sharedProcessesPerSite.take(it->key)) {
+            auto site = std::get<0>(it->key);
+            auto mainFrameSite = std::get<1>(it->key);
+            if (RefPtr sharedProcess = m_sharedProcessesPerSite.take(mainFrameSite); sharedProcess && mainFrameSite.isEmpty()) {
                 WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting shared process from WebProcess cache because capacity was reached", sharedProcess->process().processID());
                 if (size() < capacity())
                     break;
@@ -218,11 +230,13 @@ void WebProcessCache::evictAtRandomIfNeeded()
     }
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, WebProcessProxy::EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<WebCore::Site>& optionalMainFrameSite, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
 {
-    auto it = m_processesPerSite.find(site);
+    auto mainFrameSite = optionalMainFrameSite && isolatedProcessType == WebProcessProxy::IsolatedProcessType::SubFrame ? *optionalMainFrameSite : WebCore::Site(URL());
+
+    auto it = m_processesPerSite.find({ site, mainFrameSite });
     if (it == m_processesPerSite.end()) {
-        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: did not find %" SENSITIVE_LOG_STRING, 0, site.toString().utf8().data());
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: did not find %" SENSITIVE_LOG_STRING ", mainFrameSite: %" SENSITIVE_LOG_STRING, 0, site.toString().utf8().data(), mainFrameSite.toString().utf8().data());
         return nullptr;
     }
 
@@ -247,7 +261,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, 
     }
 
     Ref process = m_processesPerSite.take(it)->takeProcess();
-    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d) %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), site.toString().utf8().data());
+    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d, isolatedProcessType=%d) %" SENSITIVE_LOG_STRING ", mainFrameSite %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), isolatedProcessType, site.toString().utf8().data(), mainFrameSite.toString().utf8().data());
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
@@ -261,7 +275,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, 
     return process;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, WebProcessProxy::EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
 {
     auto it = m_sharedProcessesPerSite.find(mainFrameSite);
     if (it == m_sharedProcessesPerSite.end()) {
@@ -320,11 +334,12 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
     } else if (capacityOverride >= 0) {
         m_capacity = capacityOverride;
     } else {
+        unsigned maxProcesses = 32;
 #if PLATFORM(IOS_FAMILY)
-        constexpr unsigned maxProcesses = 10;
+        if (!processPool.hasUsedSiteIsolation())
+            maxProcesses = 10;
         size_t memorySize = WTF::ramSizeDisregardingJetsamLimit();
 #else
-        constexpr unsigned maxProcesses = 30;
         size_t memorySize = WTF::ramSize();
 #endif
         WEBPROCESSCACHE_RELEASE_LOG("memory size %zu bytes", 0, memorySize);
@@ -356,7 +371,7 @@ void WebProcessCache::clear()
 
 void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
 {
-    Vector<WebCore::Site> keysToRemove;
+    Vector<std::tuple<WebCore::Site, WebCore::Site>> keysToRemove;
     for (auto& pair : m_processesPerSite) {
         RefPtr dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
@@ -407,15 +422,16 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
     RefPtr<CachedProcess> cachedProcess;
 
     if (auto expectedSite = process.site()) {
-        auto it = m_processesPerSite.find(expectedSite.value());
+        auto& mainFrameSite = process.mainFrameSite();
+        auto it = m_processesPerSite.find({ expectedSite.value(), mainFrameSite && mainFrameSite != expectedSite.value() ? *mainFrameSite : WebCore::Site(URL()) });
         if (it != m_processesPerSite.end() && &it->value->process() == &process) {
-            cachedProcess = WTFMove(it->value);
+            cachedProcess = WTF::move(it->value);
             m_processesPerSite.remove(it);
         }
     } else if (process.isSharedProcess()) {
         for (auto it = m_sharedProcessesPerSite.begin(); it != m_sharedProcessesPerSite.end(); ++it) {
             if (&it->value->process() == &process) {
-                cachedProcess = WTFMove(it->value);
+                cachedProcess = WTF::move(it->value);
                 m_sharedProcessesPerSite.remove(it);
                 break;
             }
@@ -425,7 +441,7 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
     if (!cachedProcess) {
         for (auto& pair : m_pendingAddRequests) {
             if (&pair.value->process() == &process) {
-                cachedProcess = WTFMove(pair.value);
+                cachedProcess = WTF::move(pair.value);
                 m_pendingAddRequests.remove(pair.key);
                 break;
             }
@@ -443,11 +459,11 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
 
 Ref<WebProcessCache::CachedProcess> WebProcessCache::CachedProcess::create(Ref<WebProcessProxy>&& process, Seconds cachedProcessEvictionDelay)
 {
-    return adoptRef(*new WebProcessCache::CachedProcess(WTFMove(process), cachedProcessEvictionDelay));
+    return adoptRef(*new WebProcessCache::CachedProcess(WTF::move(process), cachedProcessEvictionDelay));
 }
 
 WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process, Seconds cachedProcessEvictionDelay)
-    : m_process(WTFMove(process))
+    : m_process(WTF::move(process))
     , m_evictionTimer(RunLoop::mainSingleton(), "WebProcessCache::CachedProcess::EvictionTimer"_s, this, &CachedProcess::evictionTimerFired)
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     , m_suspensionTimer(RunLoop::mainSingleton(), "WebProcessCache::CachedProcess::SuspensionTimer"_s, this, &CachedProcess::suspensionTimerFired)
@@ -456,7 +472,7 @@ WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process, Se
     RELEASE_ASSERT(!m_process->pageCount());
     RefPtr dataStore = m_process->websiteDataStore();
     RELEASE_ASSERT_WITH_MESSAGE(dataStore && !dataStore->processes().contains(*m_process), "Only processes with pages should be registered with the data store");
-    protectedProcess()->setIsInProcessCache(true);
+    protect(this->process())->setIsInProcessCache(true);
     m_evictionTimer.startOneShot(cachedProcessEvictionDelay);
 }
 
@@ -496,7 +512,7 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
     //
     // To avoid this, let the background activity live until the next runloop turn.
     if (m_backgroundActivity)
-        RunLoop::currentSingleton().dispatch([backgroundActivity = WTFMove(m_backgroundActivity)]() { });
+        RunLoop::currentSingleton().dispatch([backgroundActivity = WTF::move(m_backgroundActivity)]() { });
 #endif
     process->setIsInProcessCache(false);
     return m_process.releaseNonNull();
@@ -506,7 +522,7 @@ void WebProcessCache::CachedProcess::evictionTimerFired()
 {
     ASSERT(m_process);
     auto process = m_process.copyRef();
-    process->protectedProcessPool()->webProcessCache().removeProcess(*process, ShouldShutDownProcess::Yes);
+    protect(process->processPool())->webProcessCache().removeProcess(*process, ShouldShutDownProcess::Yes);
 }
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
@@ -517,7 +533,7 @@ void WebProcessCache::CachedProcess::startSuspensionTimer()
     // Allow the cached process to run for a while before dropping all assertions. This is useful
     // if the cached process will be reused fairly quickly after it goes into the cache, which
     // occurs in some benchmarks like PLT5.
-    m_backgroundActivity = m_process->protectedThrottler()->backgroundActivity("Cached process near-suspended"_s);
+    m_backgroundActivity = protect(m_process->throttler())->backgroundActivity("Cached process near-suspended"_s);
     m_suspensionTimer.startOneShot(cachedProcessSuspensionDelay);
 }
 
@@ -525,7 +541,7 @@ void WebProcessCache::CachedProcess::suspensionTimerFired()
 {
     ASSERT(m_process);
     m_backgroundActivity = nullptr;
-    protectedProcess()->platformSuspendProcess();
+    protect(process())->platformSuspendProcess();
 }
 #endif
 

@@ -39,6 +39,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSVoidCallback() const { return false; }
+
     virtual CallbackResult<void> invoke() = 0;
     virtual CallbackResult<void> invokeRethrowingException() = 0;
 

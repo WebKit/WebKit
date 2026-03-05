@@ -1,5 +1,7 @@
-PASS clickError is ""
-PASS clickCount.textContent is "1"
+PASS firstClickError is ""
+PASS secondClickError is ""
+PASS clickCount1.textContent is "1"
+PASS clickCount2.textContent is "1"
 PASS textInputError is ""
 PASS textField.value is "bar"
 PASS selectMenuItemError is ""
@@ -7,19 +9,35 @@ PASS select.value is "Three"
 PASS selectTextError is ""
 PASS getSelection().toString() is "Subject"
 PASS scrollChildContainerError is ""
-PASS childScroller.scrollTop is 100
+PASS childScrollerScrollTopAfterScrollBy is 100
 PASS scrollPageError is ""
-PASS document.scrollingElement.scrollTop is 100
+PASS pageScrollTopAfterScrollBy is 100
+PASS scrollToRevealInScrollerError is ""
+PASS childScrollerScrollTopAfterScrollToReveal is > 0
+PASS scrollToRevealInPageError is ""
+PASS pageScrollTopAfterScrollToReveal is > 100
+PASS scrollToRevealNotFoundError is "'Nonexistent text' not found inside the target node"
 PASS invalidActionError is "Failed to resolve nodeIdentifier 4294967293"
+PASS clickDisabledError is "Click target is disabled"
+PASS textInputReadonlyError is "Target is readonly"
+PASS selectDisabledMenuItemError is "Select is disabled"
+PASS readonlyField.value is "readonly"
+PASS disabledSelect.value is "Beta"
 PASS successfullyParsed is true
 
 TEST COMPLETE
 Test
+1
+
+Disabled
 Subject
 
 Hello world.
 
+Hello World: more options  Hello World
 1
 
 Foo bar
+Hidden in scroller
 
+Hidden in page

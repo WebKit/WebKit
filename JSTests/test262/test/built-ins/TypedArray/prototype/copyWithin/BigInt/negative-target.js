@@ -22,14 +22,14 @@ info: |
   4. If relativeTarget < 0, let to be max((len + relativeTarget), 0); else let
   to be min(relativeTarget, len).
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(-1, 0),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(-1, 0),
       [0n, 1n, 2n, 0n]
     ),
     '[0, 1, 2, 3].copyWithin(-1, 0) -> [0, 1, 2, 0]'
@@ -37,7 +37,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n]).copyWithin(-2, 2),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n])).copyWithin(-2, 2),
       [0n, 1n, 2n, 2n, 3n]
     ),
     '[0, 1, 2, 3, 4].copyWithin(-2, 2) -> [0, 1, 2, 2, 3]'
@@ -45,7 +45,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(-1, 2),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(-1, 2),
       [0n, 1n, 2n, 2n]
     ),
     '[0, 1, 2, 3].copyWithin(-1, 2) -> [0, 1, 2, 2]'

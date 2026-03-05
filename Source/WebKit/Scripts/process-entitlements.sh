@@ -80,9 +80,14 @@ function mac_process_webcontent_enhancedsecurity_entitlements()
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
 
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 260000 ))
+    then
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
+    fi
+
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
-        plistbuddy Add :com.apple.private.webkit.enhanced-security bool YES
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitWebContentSandbox bool YES
         plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
@@ -293,7 +298,7 @@ function mac_process_webcontent_shared_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
-            if [[ "${PRODUCT_NAME}" != com.apple.WebKit.WebContent.EnhancedSecurity ]]
+            if [[ "${PRODUCT_NAME}" != com.apple.WebKit.WebContent.EnhancedSecurity && "${PRODUCT_NAME}" != com.apple.WebKit.WebContent.CaptivePortal ]]
             then
                 plistbuddy Add :com.apple.private.verified-jit bool YES
                 plistbuddy Add :com.apple.security.cs.single-jit bool YES
@@ -434,6 +439,12 @@ function maccatalyst_process_webcontent_enhancedsecurity_entitlements()
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
     plistbuddy Add :com.apple.developer.hardened-process bool YES
 
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 260000 ))
+    then
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
+    fi
+
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
     plistbuddy Add :com.apple.pac.shared_region_id string WebContent
     plistbuddy Add :com.apple.private.pac.exception bool YES
@@ -443,7 +454,6 @@ function maccatalyst_process_webcontent_enhancedsecurity_entitlements()
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
-        plistbuddy Add :com.apple.private.webkit.enhanced-security bool YES
         plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
     fi
 
@@ -574,6 +584,8 @@ function ios_family_process_webcontent_enhancedsecurity_entitlements()
 {
     plistbuddy Add :com.apple.private.webkit.enhanced-security bool YES
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+    plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
+    plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
 
     ios_family_process_webcontent_shared_entitlements
 }
@@ -710,6 +722,11 @@ fi
     plistbuddy Add :com.apple.private.assets.accessible-asset-types array
     plistbuddy Add :com.apple.private.assets.accessible-asset-types:0 string com.apple.MobileAsset.WebContentRestrictions
     plistbuddy Add :com.apple.developer.hardened-process bool YES
+
+    plistbuddy Add :com.apple.private.security.mutable-state-flags array
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string BlockNetworkAccess
+    plistbuddy Add :com.apple.private.security.enable-state-flags array
+    plistbuddy Add :com.apple.private.security.enable-state-flags:0 string BlockNetworkAccess
 }
 
 rm -f "${WK_PROCESSED_XCENT_FILE}"
@@ -734,7 +751,7 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.EnhancedSecurity ]]; then mac_process_webcontent_enhancedsecurity_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then mac_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then mac_process_gpu_entitlements
-    elif [[ "${PRODUCT_NAME}" == webpushd ]]; then mac_process_webpushd_entitlements
+    elif [[ "${PRODUCT_NAME}" == webpushd* ]]; then mac_process_webpushd_entitlements
     elif [[ "${PRODUCT_NAME}" != adattributiond ]]; then echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == maccatalyst || "${WK_PLATFORM_NAME}" == iosmac ]]
@@ -768,7 +785,7 @@ then
     elif [[ "${PRODUCT_NAME}" == GPUExtension ]]; then ios_family_process_gpu_entitlements
     elif [[ "${PRODUCT_NAME}" == adattributiond ]]; then
         ios_family_process_adattributiond_entitlements
-    elif [[ "${PRODUCT_NAME}" == webpushd ]]; then
+    elif [[ "${PRODUCT_NAME}" == webpushd* ]]; then
         ios_family_process_webpushd_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi

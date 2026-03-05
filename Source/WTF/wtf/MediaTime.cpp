@@ -38,13 +38,12 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/TextStream.h>
 
 namespace WTF {
 
 static_assert(std::is_trivially_destructible_v<MediaTime>, "MediaTime should be trivially destructible.");
 
-static uint32_t greatestCommonDivisor(uint32_t a, uint32_t b)
+static uint32_t NODELETE greatestCommonDivisor(uint32_t a, uint32_t b)
 {
     ASSERT(a);
     ASSERT(b);
@@ -60,7 +59,7 @@ static uint32_t greatestCommonDivisor(uint32_t a, uint32_t b)
     return a;
 }
 
-static bool leastCommonMultiple(uint32_t a, uint32_t b, uint32_t& result)
+static bool NODELETE leastCommonMultiple(uint32_t a, uint32_t b, uint32_t& result)
 {
     if (a == b) {
         result = a;
@@ -69,7 +68,7 @@ static bool leastCommonMultiple(uint32_t a, uint32_t b, uint32_t& result)
     return safeMultiply(a, b / greatestCommonDivisor(a, b), result);
 }
 
-static int64_t signum(int64_t val)
+static int64_t NODELETE signum(int64_t val)
 {
     return (0 < val) - (val < 0);
 }
@@ -340,39 +339,39 @@ MediaTime::operator bool() const
         && !isInvalid();
 }
 
-std::weak_ordering operator<=>(const MediaTime& a, const MediaTime& b)
+std::partial_ordering operator<=>(const MediaTime& a, const MediaTime& b)
 {
     auto andFlags = a.m_timeFlags & b.m_timeFlags;
     if (andFlags & (MediaTime::PositiveInfinite | MediaTime::NegativeInfinite | MediaTime::Indefinite))
-        return std::weak_ordering::equivalent;
+        return std::partial_ordering::equivalent;
 
     auto orFlags = a.m_timeFlags | b.m_timeFlags;
     if (!(orFlags & MediaTime::Valid))
-        return std::weak_ordering::equivalent;
+        return std::partial_ordering::equivalent;
 
     if (!(andFlags & MediaTime::Valid))
-        return a.isInvalid() ? std::weak_ordering::greater : std::weak_ordering::less;
+        return std::partial_ordering::unordered;
 
     if (orFlags & MediaTime::NegativeInfinite)
-        return a.isNegativeInfinite() ? std::weak_ordering::less : std::weak_ordering::greater;
+        return a.isNegativeInfinite() ? std::partial_ordering::less : std::partial_ordering::greater;
 
     if (orFlags & MediaTime::PositiveInfinite)
-        return a.isPositiveInfinite() ? std::weak_ordering::greater : std::weak_ordering::less;
+        return a.isPositiveInfinite() ? std::partial_ordering::greater : std::partial_ordering::less;
 
     if (orFlags & MediaTime::Indefinite)
-        return a.isIndefinite() ? std::weak_ordering::greater : std::weak_ordering::less;
+        return a.isIndefinite() ? std::partial_ordering::greater : std::partial_ordering::less;
 
     if (andFlags & MediaTime::DoubleValue)
-        return weakOrderingCast(a.m_timeValueAsDouble <=> b.m_timeValueAsDouble);
+        return a.m_timeValueAsDouble <=> b.m_timeValueAsDouble;
 
     if (orFlags & MediaTime::DoubleValue)
-        return weakOrderingCast(a.toDouble() <=> b.toDouble());
+        return a.toDouble() <=> b.toDouble();
 
     if ((a.m_timeValue < 0) != (b.m_timeValue < 0))
-        return a.m_timeValue < 0 ? std::weak_ordering::less : std::weak_ordering::greater;
+        return a.m_timeValue < 0 ? std::weak_ordering::less : std::partial_ordering::greater;
 
     if (!a.m_timeValue && !b.m_timeValue)
-        return std::weak_ordering::equivalent;
+        return std::partial_ordering::equivalent;
 
     if (a.m_timeScale == b.m_timeScale)
         return a.m_timeValue <=> b.m_timeValue;
@@ -382,16 +381,16 @@ std::weak_ordering operator<=>(const MediaTime& a, const MediaTime& b)
 
     if (a.m_timeValue >= 0) {
         if (a.m_timeValue < b.m_timeValue && a.m_timeScale > b.m_timeScale)
-            return std::weak_ordering::less;
+            return std::partial_ordering::less;
 
         if (a.m_timeValue > b.m_timeValue && a.m_timeScale < b.m_timeScale)
-            return std::weak_ordering::greater;
+            return std::partial_ordering::greater;
     } else {
         if (a.m_timeValue < b.m_timeValue && a.m_timeScale < b.m_timeScale)
-            return std::weak_ordering::less;
+            return std::partial_ordering::less;
 
         if (a.m_timeValue > b.m_timeValue && a.m_timeScale > b.m_timeScale)
-            return std::weak_ordering::greater;
+            return std::partial_ordering::greater;
     }
 
     int64_t aFactor;
@@ -597,11 +596,6 @@ String MediaTimeRange::toJSONString() const
     object->setObject("end"_s, end.toJSONObject());
 
     return object->toJSONString();
-}
-
-TextStream& operator<<(TextStream& stream, const MediaTime& time)
-{
-    return stream << time.toJSONString();
 }
 
 MediaTime MediaTime::isolatedCopy() const

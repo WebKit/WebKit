@@ -99,7 +99,7 @@ void PerformanceLogging::didReachPointOfInterest(PointOfInterest poi)
     UNUSED_VARIABLE(m_page);
 #else
     // Ignore synthetic main frames used internally by SVG and web inspector.
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
         if (localMainFrame->loader().client().isEmptyFrameLoaderClient())
             return;
     }

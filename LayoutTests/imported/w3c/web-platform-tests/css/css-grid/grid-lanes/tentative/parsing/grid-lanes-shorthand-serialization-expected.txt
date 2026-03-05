@@ -2,36 +2,36 @@
 FAIL grid-template-rows: none,
       grid-template-columns: none,
       grid-template-areas: none,
-      masonry-direction: column,
-      masonry-fill: normal should be valid. assert_equals: expected (string) "none column normal" but got (undefined) undefined
+      grid-lanes-direction: column,
+      grid-lanes-fill: normal should be valid. assert_equals: expected (string) "none column normal" but got (undefined) undefined
 FAIL grid-template-rows: 10px,
       grid-template-columns: none,
       grid-template-areas: none,
-      masonry-direction: column,
-      masonry-fill: reverse should be valid. assert_equals: expected (string) "none column reverse" but got (undefined) undefined
+      grid-lanes-direction: column,
+      grid-lanes-fill: reverse should be valid. assert_equals: expected (string) "none column reverse" but got (undefined) undefined
 FAIL grid-template-rows: 10px 20px,
       grid-template-columns: 10% 20%,
       grid-template-areas: none,
-      masonry-direction: row,
-      masonry-fill: normal should be valid. assert_equals: expected (string) "10px 20px row normal" but got (undefined) undefined
+      grid-lanes-direction: row,
+      grid-lanes-fill: normal should be valid. assert_equals: expected (string) "10px 20px row normal" but got (undefined) undefined
 FAIL grid-template-rows: none,
       grid-template-columns: 1fr 1fr 3fr,
       grid-template-areas: "a a b",
-      masonry-direction: column,
-      masonry-fill: reverse should be valid. assert_equals: expected (string) "\"a a b\" 1fr 1fr 3fr column reverse" but got (undefined) undefined
+      grid-lanes-direction: column,
+      grid-lanes-fill: reverse should be valid. assert_equals: expected (string) "\"a a b\" 1fr 1fr 3fr column reverse" but got (undefined) undefined
 FAIL grid-template-rows: 20% 40%,
       grid-template-columns: none,
       grid-template-areas: "b" "a",
-      masonry-direction: row,
-      masonry-fill: normal should be valid. assert_equals: expected (string) "\"b a\" 20% 40% row normal" but got (undefined) undefined
+      grid-lanes-direction: row,
+      grid-lanes-fill: normal should be valid. assert_equals: expected (string) "\"b a\" 20% 40% row normal" but got (undefined) undefined
 FAIL grid-template-rows: none,
       grid-template-columns: fit-content(calc(0.5em + 10px)),
       grid-template-areas: none,
-      masonry-direction: column-reverse,
-      masonry-fill: normal should be valid. assert_equals: expected (string) "fit-content(calc(0.5em + 10px)) column-reverse normal" but got (undefined) undefined
+      grid-lanes-direction: column-reverse,
+      grid-lanes-fill: normal should be valid. assert_equals: expected (string) "fit-content(calc(0.5em + 10px)) column-reverse normal" but got (undefined) undefined
 FAIL grid-template-rows: 10% 20% 40%,
       grid-template-columns: none,
       grid-template-areas: "a" "b" "c",
-      masonry-direction: row-reverse,
-      masonry-fill: normal should be valid. assert_equals: expected (string) "\"a b c\" 10% 20% 40% row-reverse normal" but got (undefined) undefined
+      grid-lanes-direction: row-reverse,
+      grid-lanes-fill: normal should be valid. assert_equals: expected (string) "\"a b c\" 10% 20% 40% row-reverse normal" but got (undefined) undefined
 

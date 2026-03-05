@@ -92,7 +92,7 @@ enum KeyIdentifierMatch {
 // Returns an integer that represents the relative ordering of |issuer| for
 // prioritizing certificates in path building based on |issuer|'s
 // subjectKeyIdentifier and |target|'s authorityKeyIdentifier. Lower return
-// values indicate higer priority.
+// values indicate higher priority.
 KeyIdentifierMatch CalculateKeyIdentifierMatch(
     const ParsedCertificate *target, const ParsedCertificate *issuer) {
   if (!target->authority_key_identifier()) {
@@ -117,7 +117,7 @@ KeyIdentifierMatch CalculateKeyIdentifierMatch(
 
 // Returns an integer that represents the relative ordering of |issuer| based
 // on |issuer_trust| and authorityKeyIdentifier matching for prioritizing
-// certificates in path building. Lower return values indicate higer priority.
+// certificates in path building. Lower return values indicate higher priority.
 int TrustAndKeyIdentifierMatchToOrder(const ParsedCertificate *target,
                                       const ParsedCertificate *issuer,
                                       const CertificateTrust &issuer_trust) {

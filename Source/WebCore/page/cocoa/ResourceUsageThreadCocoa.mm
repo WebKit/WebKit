@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static unsigned categoryForVMTag(unsigned tag)
+static unsigned NODELETE categoryForVMTag(unsigned tag)
 {
     switch (tag) {
     case VM_MEMORY_IOKIT:
@@ -74,7 +74,6 @@ struct ThreadInfo {
     MachSendRight sendRight;
     float usage { 0 };
     String threadName;
-    String dispatchQueueName;
 };
 
 static std::span<const thread_t> task_threads_span()
@@ -123,15 +122,9 @@ static Vector<ThreadInfo> threadInfos()
         if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
             usage = threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
 
-        // FIXME: dispatch_queue_t can be destroyed concurrently while we are accessing to it here. We should not use it.
         auto threadName = String::fromLatin1(threadExtendedInfo.pth_name);
-        String dispatchQueueName;
-        if (threadIdentifierInfo.dispatch_qaddr) {
-            dispatch_queue_t queue = *reinterpret_cast<dispatch_queue_t*>(threadIdentifierInfo.dispatch_qaddr);
-            dispatchQueueName = String::fromLatin1(dispatch_queue_get_label(queue));
-        }
 
-        infos.append(ThreadInfo { WTFMove(sendRight), usage, threadName, dispatchQueueName });
+        infos.append(ThreadInfo { WTF::move(sendRight), usage, threadName });
     }
 
     auto kr = vm_deallocate(mach_task_self(), (vm_offset_t)threadList.data(), threadList.size() * sizeof(thread_t));
@@ -160,16 +153,15 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         return;
     }
 
-    // Main thread is always first.
-    ASSERT(threads[0].dispatchQueueName == "com.apple.main-thread"_s);
-
     mach_port_t resourceUsageMachThread = mach_thread_self();
+
+    // Main thread is always first.
     mach_port_t mainThreadMachThread = threads[0].sendRight.sendRight();
 
     HashSet<mach_port_t> knownWebKitThreads;
     {
-        for (auto& thread : Thread::allThreads()) {
-            mach_port_t machThread = thread.machThread();
+        for (Ref thread : Thread::allThreads()) {
+            mach_port_t machThread = thread->machThread();
             if (MACH_PORT_VALID(machThread))
                 knownWebKitThreads.add(machThread);
         }
@@ -177,13 +169,13 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     HashMap<mach_port_t, String> knownWorkerThreads;
     {
-        for (auto& thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
+        for (Ref thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.
-            if (!thread.thread())
+            if (!thread->thread())
                 continue;
-            mach_port_t machThread = thread.thread()->machThread();
+            mach_port_t machThread = thread->thread()->machThread();
             if (MACH_PORT_VALID(machThread))
-                knownWorkerThreads.set(machThread, thread.inspectorIdentifier().isolatedCopy());
+                knownWorkerThreads.set(machThread, thread->inspectorIdentifier().isolatedCopy());
         }
     }
 
@@ -205,12 +197,6 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
         // The bmalloc scavenger thread is below WTF. Detect it by its name.
         if (thread.threadName == "JavaScriptCore bmalloc scavenger"_s)
-            return true;
-
-        // WebKit uses many WorkQueues with common prefixes.
-        if (thread.dispatchQueueName.startsWith("com.apple.IPC."_s)
-            || thread.dispatchQueueName.startsWith("com.apple.WebKit."_s)
-            || thread.dispatchQueueName.startsWith("org.webkit."_s))
             return true;
 
         return false;

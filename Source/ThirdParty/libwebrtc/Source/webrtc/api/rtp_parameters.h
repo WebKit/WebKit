@@ -23,12 +23,14 @@
 #include "absl/strings/string_view.h"
 #include "api/media_types.h"
 #include "api/priority.h"
+#include "api/rtc_error.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/video/resolution.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
+class StringBuilder;
 
 using CodecParameterMap = std::map<std::string, std::string>;
 
@@ -64,7 +66,41 @@ enum class RtcpFeedbackType {
   NACK,
   REMB,  // "goog-remb"
   TRANSPORT_CC,
+  CCFB,  // RFC8888
 };
+
+template <typename Sink>
+void AbslStringify(Sink& sink, RtcpFeedbackType type) {
+  switch (type) {
+    case RtcpFeedbackType::CCM:
+      sink.Append("CCM");
+      break;
+    case RtcpFeedbackType::LNTF:
+      sink.Append("LNTF");
+      break;
+    case RtcpFeedbackType::NACK:
+      sink.Append("NACK");
+      break;
+    case RtcpFeedbackType::REMB:
+      sink.Append("REMB");
+      break;
+    case RtcpFeedbackType::TRANSPORT_CC:
+      sink.Append("TRANSPORT_CC");
+      break;
+    case RtcpFeedbackType::CCFB:
+      sink.Append("CCFB");
+      break;
+  }
+}
+
+template <typename Sink>
+void AbslStringify(Sink& sink, std::optional<RtcpFeedbackType> type) {
+  if (!type.has_value()) {
+    sink.Append("nullopt");
+    return;
+  }
+  AbslStringify(sink, *type);
+}
 
 // Used in RtcpFeedback struct when type is NACK or CCM.
 enum class RtcpFeedbackMessageType {
@@ -87,9 +123,13 @@ enum class DtxStatus {
 // maintain-framerate option.
 // TODO(deadbeef): Default to "balanced", as the spec indicates?
 enum class DegradationPreference {
-  // Don't take any actions based on over-utilization signals. Not part of the
-  // web API.
-  DISABLED,
+  // Maintain framerate and resolution regardless of video quality. Frames may
+  // be dropped before encoding if necessary not to overuse network and encoder
+  // resources.
+  MAINTAIN_FRAMERATE_AND_RESOLUTION,
+  // TODO(webrtc:450044904): Switch downstream projects to
+  // MAINTAIN_FRAMERATE_AND_RESOLUTION and remove DISABLED.
+  DISABLED = MAINTAIN_FRAMERATE_AND_RESOLUTION,
   // On over-use, request lower resolution, possibly causing down-scaling.
   MAINTAIN_FRAMERATE,
   // On over-use, request lower frame rate, possibly causing frame drops.
@@ -102,6 +142,17 @@ RTC_EXPORT const char* DegradationPreferenceToString(
     DegradationPreference degradation_preference);
 
 RTC_EXPORT extern const double kDefaultBitratePriority;
+
+// Generates an FMTP line based on `parameters`. Please note that some
+// parameters are not considered to be part of the FMTP line, see the function
+// IsFmtpParam(). Returns true if the set of FMTP parameters is nonempty, false
+// otherwise.
+bool WriteFmtpParameters(const CodecParameterMap& parameters,
+                         StringBuilder& os);
+
+// Parses a string into an FMTP parameter set, in key-value format.
+RTCError ParseFmtpParameterSet(absl::string_view line_params,
+                               CodecParameterMap& codec_params);
 
 struct RTC_EXPORT RtcpFeedback {
   RtcpFeedbackType type = RtcpFeedbackType::CCM;
@@ -704,6 +755,12 @@ struct RTC_EXPORT RtpParameters {
            degradation_preference == o.degradation_preference;
   }
   bool operator!=(const RtpParameters& o) const { return !(*this == o); }
+
+  // Returns true if the active encodings use different codecs.
+  // Inactive encodings are ignored.
+  // If at least two active encodings have different codec values
+  // (including one being unset and another set), this is considered mixed.
+  bool IsMixedCodec() const;
 };
 
 }  // namespace webrtc

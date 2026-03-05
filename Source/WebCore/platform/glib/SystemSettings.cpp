@@ -155,7 +155,7 @@ String SystemSettings::defaultSystemFont() const
 
 void SystemSettings::addObserver(Function<void(const SystemSettings::State&)>&& handler, void* context)
 {
-    m_observers.add(context, WTFMove(handler));
+    m_observers.add(context, WTF::move(handler));
 }
 
 void SystemSettings::removeObserver(void* context)

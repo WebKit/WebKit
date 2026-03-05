@@ -237,6 +237,9 @@ WK_EXPORT void WKPageDisplayAndTrackRepaintsForTesting(WKPageRef page, void* con
 typedef void (*WKPageFindStringForTestingFunction)(bool found, void* functionContext);
 WK_EXPORT void WKPageFindStringForTesting(WKPageRef page, void* context, WKStringRef string, WKFindOptions options, unsigned maxMatchCount, WKPageFindStringForTestingFunction completionHandler);
 
+typedef void (*WKPageDoAfterProcessingAllPendingMouseEventsFunction)(void* functionContext);
+WK_EXPORT void WKPageDoAfterProcessingAllPendingMouseEvents(WKPageRef page, void* context, WKPageDoAfterProcessingAllPendingMouseEventsFunction function);
+
 #ifdef __cplusplus
 }
 #endif

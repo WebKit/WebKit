@@ -45,21 +45,21 @@ void RenderTreeBuilder::BlockFlow::attach(RenderBlockFlow& parent, RenderPtr<Ren
     if (auto* multicolumnFlow = parent.multiColumnFlow()) {
         auto legendAvoidsMulticolumn = parent.isFieldset() && child->isLegend();
         if (legendAvoidsMulticolumn)
-            return m_builder.blockBuilder().attach(parent, WTFMove(child), nullptr);
+            return m_builder.blockBuilder().attach(parent, WTF::move(child), nullptr);
 
         auto legendBeforeChildIsIncorrect = parent.isFieldset() && beforeChild && beforeChild->isLegend();
         if (legendBeforeChildIsIncorrect)
-            return m_builder.blockBuilder().attach(*multicolumnFlow, WTFMove(child), nullptr);
+            return m_builder.blockBuilder().attach(*multicolumnFlow, WTF::move(child), nullptr);
 
         // When the before child is set to be the first child of the RenderBlockFlow, we need to readjust it to be the first
         // child of the multicol conainter.
-        return m_builder.attach(*multicolumnFlow, WTFMove(child), beforeChild == multicolumnFlow ? multicolumnFlow->firstChild() : beforeChild);
+        return m_builder.attach(*multicolumnFlow, WTF::move(child), beforeChild == multicolumnFlow ? multicolumnFlow->firstChild() : beforeChild);
     }
 
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* containingFragmentedFlow = parent.enclosingFragmentedFlow())
         beforeChildOrPlaceholder = m_builder.multiColumnBuilder().resolveMovedChild(*containingFragmentedFlow, beforeChild);
-    m_builder.blockBuilder().attach(parent, WTFMove(child), beforeChildOrPlaceholder);
+    m_builder.blockBuilder().attach(parent, WTF::move(child), beforeChildOrPlaceholder);
 }
 
 void RenderTreeBuilder::BlockFlow::moveAllChildrenIncludingFloats(RenderBlockFlow& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion normalizeAfterInsertion)

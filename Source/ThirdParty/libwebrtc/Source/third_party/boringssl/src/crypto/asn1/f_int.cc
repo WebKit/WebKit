@@ -21,7 +21,7 @@ int i2a_ASN1_INTEGER(BIO *bp, const ASN1_INTEGER *a) {
   static const char *h = "0123456789ABCDEF";
   char buf[2];
 
-  if (a == NULL) {
+  if (a == nullptr) {
     return 0;
   }
 

@@ -53,7 +53,7 @@ class Publish(Command):
             help="Run 'git push' as the specified user with https. Program will prompt for a password.",
         )
         parser.add_argument(
-            '--exclude', action='append', type=str, default=[],
+            '--exclude', action='append', type=str, default=['respins', 'safariautomation'],
             help='Exclude inferred branch or tag from publication, if the name starts with the specified substring',
         )
 

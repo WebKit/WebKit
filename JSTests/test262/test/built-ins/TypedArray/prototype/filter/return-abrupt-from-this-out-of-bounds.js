@@ -56,4 +56,4 @@ testWithTypedArrayConstructors(TA => {
     array.filter(() => {});
     throw new Test262Error('filter completed successfully');
   });
-});
+}, null, ["passthrough"]);

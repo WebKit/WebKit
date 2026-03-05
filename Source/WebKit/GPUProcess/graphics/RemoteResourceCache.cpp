@@ -44,7 +44,7 @@ RemoteResourceCache::~RemoteResourceCache() = default;
 
 bool RemoteResourceCache::cacheNativeImage(WebCore::RenderingResourceIdentifier identifier, Ref<NativeImage>&& image)
 {
-    return m_nativeImages.add(identifier, WTFMove(image)).isNewEntry;
+    return m_nativeImages.add(identifier, WTF::move(image)).isNewEntry;
 }
 
 bool RemoteResourceCache::releaseNativeImage(RenderingResourceIdentifier identifier)
@@ -57,9 +57,24 @@ RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIden
     return m_nativeImages.get(identifier);
 }
 
+bool RemoteResourceCache::cachePathImpl(RemotePathImplIdentifier identifier, Ref<PathImpl>&& path)
+{
+    return m_paths.add(identifier, WTF::move(path)).isNewEntry;
+}
+
+bool RemoteResourceCache::releasePathImpl(RemotePathImplIdentifier identifier)
+{
+    return m_paths.remove(identifier);
+}
+
+RefPtr<PathImpl> RemoteResourceCache::cachedPathImpl(RemotePathImplIdentifier identifier) const
+{
+    return m_paths.get(identifier);
+}
+
 bool RemoteResourceCache::cacheGradient(RemoteGradientIdentifier identifier, Ref<Gradient>&& gradient)
 {
-    return m_gradients.add(identifier, WTFMove(gradient)).isNewEntry;
+    return m_gradients.add(identifier, WTF::move(gradient)).isNewEntry;
 }
 
 bool RemoteResourceCache::releaseGradient(RemoteGradientIdentifier identifier)
@@ -75,7 +90,7 @@ RefPtr<Gradient> RemoteResourceCache::cachedGradient(RemoteGradientIdentifier id
 void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter)
 {
     auto identifier = filter->renderingResourceIdentifier();
-    m_filters.add(identifier, WTFMove(filter));
+    m_filters.add(identifier, WTF::move(filter));
 }
 
 bool RemoteResourceCache::releaseFilter(RenderingResourceIdentifier identifier)
@@ -91,7 +106,7 @@ RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier ide
 void RemoteResourceCache::cacheFont(Ref<Font>&& font)
 {
     auto identifier = font->renderingResourceIdentifier();
-    m_fonts.add(identifier, WTFMove(font));
+    m_fonts.add(identifier, WTF::move(font));
 }
 
 bool RemoteResourceCache::releaseFont(RenderingResourceIdentifier identifier)
@@ -107,7 +122,7 @@ RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier identif
 void RemoteResourceCache::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& customPlatformData)
 {
     auto identifier = customPlatformData->m_renderingResourceIdentifier;
-    m_fontCustomPlatformDatas.add(identifier, WTFMove(customPlatformData));
+    m_fontCustomPlatformDatas.add(identifier, WTF::move(customPlatformData));
 }
 
 bool RemoteResourceCache::releaseFontCustomPlatformData(RenderingResourceIdentifier identifier)
@@ -147,6 +162,7 @@ void RemoteResourceCache::releaseMemory()
     m_gradients.clear();
     m_filters.clear();
     m_fonts.clear();
+    m_paths.clear();
     m_fontCustomPlatformDatas.clear();
     m_displayLists.clear();
 }

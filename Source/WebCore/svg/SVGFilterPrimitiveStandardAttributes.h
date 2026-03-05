@@ -36,15 +36,15 @@ class Filter;
 class FilterEffect;
 
 class SVGFilterPrimitiveStandardAttributes : public SVGElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
+    WTF_MAKE_TZONE_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFilterPrimitiveStandardAttributes);
 public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterPrimitiveStandardAttributes, SVGElement>;
 
-    const SVGLengthValue& x() const { return m_x->currentValue(); }
-    const SVGLengthValue& y() const { return m_y->currentValue(); }
-    const SVGLengthValue& width() const { return m_width->currentValue(); }
-    const SVGLengthValue& height() const { return m_height->currentValue(); }
+    const SVGLengthValue& x() const LIFETIME_BOUND { return m_x->currentValue(); }
+    const SVGLengthValue& y() const LIFETIME_BOUND { return m_y->currentValue(); }
+    const SVGLengthValue& width() const LIFETIME_BOUND { return m_width->currentValue(); }
+    const SVGLengthValue& height() const LIFETIME_BOUND { return m_height->currentValue(); }
     String result() const { return m_result->currentValue(); }
 
     SVGAnimatedLength& xAnimated() { return m_x; }
@@ -89,11 +89,11 @@ private:
 
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
-    Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width, "0%"_s) };
-    Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_s) };
-    Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
-    Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_s) };
-    Ref<SVGAnimatedString> m_result { SVGAnimatedString::create(this) };
+    const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width, "0%"_s) };
+    const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_s) };
+    const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
+    const Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_s) };
+    const Ref<SVGAnimatedString> m_result { SVGAnimatedString::create(this) };
 };
 
 } // namespace WebCore

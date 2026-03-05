@@ -46,7 +46,7 @@ struct RangeResponseGeneratorDataTaskData final : public CanMakeWeakPtr<RangeRes
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RangeResponseGeneratorDataTaskData);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(RangeResponseGeneratorDataTaskData);
     RangeResponseGeneratorDataTaskData(ParsedRequestRange&& range)
-        : range(WTFMove(range))
+        : range(WTF::move(range))
         , nextByteToGiveBufferIndex(range.begin) { }
 
     ParsedRequestRange range;
@@ -133,12 +133,11 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     if (bufferSize < range.begin)
         return;
 
-    auto buffer = data.buffer.get();
     CheckedPtr taskData = data.taskData.get(task);
     if (!taskData)
         return;
 
-    auto giveBytesToTask = [task = retainPtr(task), buffer, bufferSize, weakTaskData = WeakPtr { *taskData }, weakGenerator = ThreadSafeWeakPtr { *this }, targetQueue = m_targetDispatcher] {
+    auto giveBytesToTask = [task = retainPtr(task), buffer = protect(data.buffer.buffer()), bufferSize, weakTaskData = WeakPtr { *taskData }, weakGenerator = ThreadSafeWeakPtr { *this }, targetQueue = m_targetDispatcher] {
         assertIsCurrent(targetQueue);
         if ([task state] != NSURLSessionTaskStateRunning)
             return;
@@ -172,7 +171,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     switch (taskData->responseState) {
     case RangeResponseGeneratorDataTaskData::ResponseState::NotSynthesizedYet: {
         auto response = synthesizedResponseForRange(data.originalResponse, range, expectedContentLength);
-        [task resource:nullptr receivedResponse:response completionHandler:[giveBytesToTask = WTFMove(giveBytesToTask), taskData = WeakPtr { *taskData }, task = retainPtr(task)] (WebCore::ShouldContinuePolicyCheck shouldContinue) mutable {
+        [task resource:nullptr receivedResponse:response completionHandler:[giveBytesToTask = WTF::move(giveBytesToTask), taskData = WeakPtr { *taskData }, task = retainPtr(task)] (WebCore::ShouldContinuePolicyCheck shouldContinue) mutable {
             if (taskData)
                 taskData->responseState = RangeResponseGeneratorDataTaskData::ResponseState::SessionCalledCompletionHandler;
             if (shouldContinue == ShouldContinuePolicyCheck::Yes)
@@ -227,7 +226,7 @@ bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task
         return false;
 
     auto expectedContentLength = expectedContentLengthFromData(*data);
-    data->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(WTFMove(*range)));
+    data->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(WTF::move(*range)));
     giveResponseToTaskIfBytesInRangeReceived(task, *range, expectedContentLength, *data);
 
     return true;
@@ -237,7 +236,7 @@ class RangeResponseGenerator::MediaResourceClient : public PlatformMediaResource
 public:
     MediaResourceClient(RangeResponseGenerator& generator, URL&& url)
         : m_generator(generator)
-        , m_urlString(WTFMove(url).string()) { }
+        , m_urlString(WTF::move(url).string()) { }
 private:
 
     // These methods should have been called before changing the client to this.
@@ -325,7 +324,7 @@ bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDat
 
     m_map.ensure(originalRequest.get().URL.absoluteString, [&] {
         return makeUnique<Data>(response, resource);
-    }).iterator->value->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(WTFMove(*parsedRequestRange)));
+    }).iterator->value->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(WTF::move(*parsedRequestRange)));
 
     return true;
 }

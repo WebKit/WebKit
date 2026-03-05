@@ -12,9 +12,11 @@
 #define TEST_PC_SCTP_FAKE_SCTP_TRANSPORT_H_
 
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <optional>
+#include <vector>
 
 #include "api/environment/environment.h"
 #include "api/priority.h"
@@ -89,6 +91,16 @@ class FakeSctpTransportFactory : public webrtc::SctpTransportFactoryInterface {
 
   FakeSctpTransport* last_fake_sctp_transport() {
     return last_fake_sctp_transport_;
+  }
+
+  std::vector<uint8_t> GenerateConnectionToken(
+      const webrtc::Environment& env) override {
+    RTC_DCHECK(env.field_trials().IsEnabled("WebRTC-Sctp-Snap"))
+        << "Only implemented under field trial.";
+    // Example connection token.
+    return {0x01, 0x00, 0x00, 0x1e, 0x89, 0x6c, 0xdd, 0x1d, 0x00, 0x50,
+            0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xe0, 0x79, 0x65, 0x1d,
+            0xc0, 0x00, 0x00, 0x04, 0x80, 0x08, 0x00, 0x06, 0x82, 0xc0};
   }
 
  private:

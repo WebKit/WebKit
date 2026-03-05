@@ -673,7 +673,7 @@ enum vp8e_enc_control_id {
    */
   VP9E_SET_TPL,
 
-  /*!\brief Codec control function to enable postencode frame drop.
+  /*!\brief Codec control function to enable post encode frame drop.
    *
    * This will allow encoder to drop frame after it's encoded.
    *

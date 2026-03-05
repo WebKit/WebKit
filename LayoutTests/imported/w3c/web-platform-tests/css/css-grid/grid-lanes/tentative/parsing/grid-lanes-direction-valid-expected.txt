@@ -1,6 +1,6 @@
 
-FAIL e.style['masonry-direction'] = "row" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['masonry-direction'] = "row-reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['masonry-direction'] = "column" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['masonry-direction'] = "column-reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-direction'] = "row" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-direction'] = "row-reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-direction'] = "column" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-direction'] = "column-reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
 

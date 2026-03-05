@@ -220,6 +220,22 @@ class YoctoCrossBuilder():
                         os.remove(candidate_cmake_cache_file)
 
     def _initialize_environment_for_target(self, no_export_environment):
+        # If running inside the SDK then clear all the jhbuild related vars which may cause issues with the cross-target environment
+        if os.environ.get('WEBKIT_CONTAINER_SDK') == '1':
+            for env_var, env_val in list(os.environ.items()):
+                if '/jhbuild/install/' in env_val:
+                    if env_var == 'PATH':
+                        os.environ['PATH'] = ':'.join(p for p in os.environ['PATH'].split(':') if '/jhbuild/install/' not in p)
+                        _log.debug(f'cross-target environment: reset variable "PATH={os.environ["PATH"]}"')
+                    else:
+                        os.environ.pop(env_var)
+                        _log.debug(f'cross-target environment: unset variable "{env_var}={env_val}"')
+        # Otherwise clear the usual suspects but in this case also warn the user
+        for env_var in ['C_INCLUDE_PATH', 'CPLUS_INCLUDE_PATH', 'GI_TYPELIB_PATH', 'LDFLAGS', 'LD_LIBRARY_PATH', 'PKG_CONFIG_PATH']:
+            if env_var in os.environ:
+                _log.warning(f'Detected environment variable "{env_var}={os.environ[env_var]}". This is problematic. Unsetting it for the cross-target environment.')
+                os.environ.pop(env_var)
+        # Now set the env vars for the target
         environment_for_target = self._targets_config.get_environment(self._target)
         if environment_for_target:
             if no_export_environment:

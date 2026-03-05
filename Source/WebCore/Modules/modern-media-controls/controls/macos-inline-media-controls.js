@@ -112,6 +112,13 @@ class MacOSInlineMediaControls extends InlineMediaControls
         if (!this._volumeSliderContainer)
             return;
 
+        if (this.mediaControlsHost?.isMediaControlsMacInlineSizeSpecsEnabled && !this.element.classList.contains('audio')) {
+            if (this.rightContainer?.element) {
+                this.rightContainer.element.style.removeProperty('left');
+                this.rightContainer._dirtyProperties.delete('x');
+            }
+        }
+
         if (!this._volumeSliderSetupComplete) {
             this._setupVolumeSliderConfiguration();
         }
@@ -126,7 +133,7 @@ class MacOSInlineMediaControls extends InlineMediaControls
             this._volumeSliderContainer.y = this.bottomControlsBar.y - this._inlineBottomControlsBarHeight - this._inlineInsideMargin;
         } else {
             const hasMinimumHeight = this.height >= MinimumHeightToShowVolumeSlider;
-            const hasMinimumWidth = this.width >= 60;
+            const hasMinimumWidth = this.width >= this.volumeSlider.width + 130;
             const shouldShowVolumeContainer = hasMinimumHeight && hasMinimumWidth && !this.showsStartButton && this.visible && this.playPauseButton && this.playPauseButton.enabled;
 
             // Force mute button visibility based on width even if container logic doesn't run
@@ -139,6 +146,13 @@ class MacOSInlineMediaControls extends InlineMediaControls
                 this._volumeSliderContainer.children = [new BackgroundTint, this.volumeSlider, this.muteButton];
                 children.push(this._volumeSliderContainer);
                 this.children = children;
+                // Clear any old x-y values which may override CSS
+                this._volumeSliderContainer.x = 0;
+                this._volumeSliderContainer.y = 0;
+                if (this._volumeSliderContainer.element) {
+                    this._volumeSliderContainer.element.style.removeProperty('left');
+                    this._volumeSliderContainer.element.style.removeProperty('top');
+                }
 
                 if (this.muteButton)
                     this.muteButton.visible = true;

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLDrawInstancedBaseVertexBaseInstance final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLDrawInstancedBaseVertexBaseInstance);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLDrawInstancedBaseVertexBaseInstance);
 public:
     explicit WebGLDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase&);
     ~WebGLDrawInstancedBaseVertexBaseInstance();
@@ -46,3 +46,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLDrawInstancedBaseVertexBaseInstance)

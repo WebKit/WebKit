@@ -32,11 +32,14 @@
 #include <WebCore/RectEdges.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <wtf/RefCounted.h>
 #include <wtf/URLHash.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class SharedBuffer;
 
 using TargetedElementSelectors = Vector<HashSet<String>>;
 using TargetedElementIdentifiers = std::pair<NodeIdentifier, ScriptExecutionContextIdentifier>;
@@ -72,5 +75,8 @@ struct TargetedElementInfo {
     bool hasLargeReplacedDescendant { false };
     bool hasAudibleMedia { false };
 };
+
+WEBCORE_EXPORT Ref<SharedBuffer> serializeTargetedElementSelectors(const TargetedElementSelectors&);
+WEBCORE_EXPORT std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std::span<const uint8_t>);
 
 } // namespace WebCore

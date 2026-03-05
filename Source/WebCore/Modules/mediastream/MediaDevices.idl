@@ -40,8 +40,8 @@ typedef (MediaDeviceInfo or InputDeviceInfo) DeviceInfo;
     Promise<sequence<DeviceInfo>> enumerateDevices();
 
     MediaTrackSupportedConstraints getSupportedConstraints();
-    [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints);
-    [EnabledBySetting=ScreenCaptureEnabled] Promise<MediaStream> getDisplayMedia(optional DisplayMediaStreamConstraints constraints);
+    [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints = {});
+    [EnabledBySetting=ScreenCaptureEnabled] Promise<MediaStream> getDisplayMedia(optional DisplayMediaStreamConstraints constraints = {});
 };
 
 [

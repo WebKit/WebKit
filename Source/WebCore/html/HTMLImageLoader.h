@@ -22,14 +22,13 @@
 
 #pragma once
 
-#include <WebCore/ImageLoader.h>
+#include "ImageLoader.h"
 
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLImageLoader);
 class HTMLImageLoader final : public ImageLoader {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLImageLoader, HTMLImageLoader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLImageLoader);
 public:
     explicit HTMLImageLoader(Element&);
     virtual ~HTMLImageLoader();

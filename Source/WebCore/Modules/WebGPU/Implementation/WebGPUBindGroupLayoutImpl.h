@@ -41,7 +41,7 @@ class BindGroupLayoutImpl final : public BindGroupLayout {
 public:
     static Ref<BindGroupLayoutImpl> create(WebGPUPtr<WGPUBindGroupLayout>&& bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new BindGroupLayoutImpl(WTFMove(bindGroupLayout), convertToBackingContext));
+        return adoptRef(*new BindGroupLayoutImpl(WTF::move(bindGroupLayout), convertToBackingContext));
     }
 
     virtual ~BindGroupLayoutImpl();
@@ -57,6 +57,7 @@ private:
     BindGroupLayoutImpl& operator=(BindGroupLayoutImpl&&) = delete;
 
     WGPUBindGroupLayout backing() const { return m_backing.get(); }
+    bool isBindGroupLayoutImpl() const final { return true; }
 
     void setLabelInternal(const String&) final;
 
@@ -65,5 +66,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::BindGroupLayoutImpl)
+    static bool isType(const WebCore::WebGPU::BindGroupLayout& bindGroupLayout) { return bindGroupLayout.isBindGroupLayoutImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

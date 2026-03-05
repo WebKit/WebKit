@@ -57,24 +57,24 @@ public:
     // This is used during style building. The 'zoom' property is taken into account.
     CSSToLengthConversionData(const RenderStyle&, Style::BuilderState&);
     // This constructor ignores the `zoom` property.
-    CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr);
+    CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr, CSS::RangeZoomOptions = CSS::RangeZoomOptions::Default);
 
     WEBCORE_EXPORT ~CSSToLengthConversionData();
 
     const RenderStyle* style() const { return m_style; }
     const RenderStyle* rootStyle() const { return m_rootStyle; }
     const RenderStyle* parentStyle() const { return m_parentStyle; }
-    float zoom() const;
+    float NODELETE zoom() const;
     CSS::RangeZoomOptions rangeZoomOption() const { return m_rangeZoomOption; }
     bool computingFontSize() const { return m_propertyToCompute == CSSPropertyFontSize; }
     bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
     CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
-    bool evaluationTimeZoomEnabled() const;
+    bool NODELETE evaluationTimeZoomEnabled() const;
     const RenderView* renderView() const { return m_renderView; }
     const Element* elementForContainerUnitResolution() const { return m_elementForContainerUnitResolution.get(); }
 
-    const FontCascade& fontCascadeForFontUnits() const;
-    int computedLineHeightForFontUnits() const;
+    const FontCascade& NODELETE fontCascadeForFontUnits() const;
+    float computedLineHeightForFontUnits() const;
 
     FloatSize defaultViewportFactor() const;
     FloatSize smallViewportFactor() const;
@@ -106,10 +106,9 @@ public:
         return copy;
     }
 
-    void setUsesContainerUnits() const;
+    void NODELETE setUsesContainerUnits() const;
 
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
-    CheckedPtr<Style::BuilderState> protectedStyleBuilderState() const;
 
 private:
     const RenderStyle* m_style { nullptr };

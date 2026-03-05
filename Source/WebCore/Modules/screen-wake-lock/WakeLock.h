@@ -52,7 +52,7 @@ public:
 private:
     explicit WakeLock(Document*);
 
-    Document* document();
+    Document* NODELETE document();
 
     bool m_wasPreviouslyAuthorizedDueToTransientActivation { false };
 };

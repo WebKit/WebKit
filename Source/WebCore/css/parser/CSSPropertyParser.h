@@ -80,6 +80,6 @@ WEBCORE_EXPORT CSSValueID cssValueKeywordID(StringView);
 
 // MARK: - Custom property name validation
 
-bool isCustomPropertyName(StringView);
+bool NODELETE isCustomPropertyName(StringView);
 
 } // namespace WebCore

@@ -45,13 +45,13 @@ class SVGPrimitivePropertyAnimator : public SVGPropertyAnimator<AnimationFunctio
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return adoptRef(*new SVGPrimitivePropertyAnimator(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive));
+        return adoptRef(*new SVGPrimitivePropertyAnimator(attributeName, WTF::move(property), animationMode, calcMode, isAccumulated, isAdditive));
     }
     
     template<typename... Arguments>
     SVGPrimitivePropertyAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, Arguments&&... arguments)
         : Base(attributeName, std::forward<Arguments>(arguments)...)
-        , m_property(unsafeRefDowncast<ValuePropertyType>(WTFMove(property)))
+        , m_property(unsafeRefDowncast<ValuePropertyType>(WTF::move(property)))
     {
     }
 

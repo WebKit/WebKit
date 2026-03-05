@@ -53,10 +53,10 @@ class GPUQueue : public RefCounted<GPUQueue> {
 public:
     static Ref<GPUQueue> create(Ref<WebGPU::Queue>&& backing, WebGPU::Device& device)
     {
-        return adoptRef(*new GPUQueue(WTFMove(backing), device));
+        return adoptRef(*new GPUQueue(WTF::move(backing), device));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     void submit(Vector<Ref<GPUCommandBuffer>>&&);
@@ -68,7 +68,7 @@ public:
         const GPUBuffer&,
         GPUSize64 bufferOffset,
         BufferSource&& data,
-        std::optional<GPUSize64> dataOffset,
+        GPUSize64 dataOffset,
         std::optional<GPUSize64>);
 
     void writeTexture(

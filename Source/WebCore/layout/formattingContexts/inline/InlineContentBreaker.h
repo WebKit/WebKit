@@ -128,7 +128,7 @@ public:
 
     private:
         void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
-        void resetTrailingTrimmableContent();
+        void NODELETE resetTrailingTrimmableContent();
 
         RunList m_runs;
         InlineLayoutUnit m_logicalWidth { 0.f };
@@ -157,7 +157,6 @@ public:
     Result processInlineContent(const ContinuousContent&, const LineStatus&);
     void setHyphenationDisabled(bool hyphenationIsDisabled) { n_hyphenationIsDisabled = hyphenationIsDisabled; }
     void setIsMinimumInIntrinsicWidthMode(bool isMinimumInIntrinsicWidthMode) { m_isMinimumInIntrinsicWidthMode = isMinimumInIntrinsicWidthMode; }
-    static bool isWrappingAllowed(const ContinuousContent::Run&);
 
 private:
     Result processOverflowingContent(const ContinuousContent&, const LineStatus&) const;
@@ -185,12 +184,12 @@ private:
     std::optional<OverflowingTextContent::BreakingPosition> tryBreakingNextOverflowingRuns(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
     std::optional<OverflowingTextContent::BreakingPosition> tryHyphenationAcrossOverflowingInlineTextItems(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex) const;
 
-    enum class WordBreakRule {
-        AtArbitraryPositionWithinWords = 1 << 0,
-        AtArbitraryPosition            = 1 << 1,
-        AtHyphenationOpportunities     = 1 << 2
+    enum class WordBreakRule : uint8_t {
+        AtArbitraryPositionWithinWords,
+        AtArbitraryPosition,
+        AtHyphenationOpportunities
     };
-    OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
+    EnumSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
     bool isMinimumInIntrinsicWidthMode() const { return m_isMinimumInIntrinsicWidthMode; }
 
 private:

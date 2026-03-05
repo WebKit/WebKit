@@ -67,7 +67,7 @@ void MediaKeySystemPermissionRequestManager::startMediaKeySystemRequest(MediaKey
         return;
     }
 
-    auto& pendingRequests = m_pendingMediaKeySystemRequests.add(document.get(), Vector<Ref<MediaKeySystemRequest>>()).iterator->value;
+    auto& pendingRequests = m_pendingMediaKeySystemRequests.add(*document, Vector<Ref<MediaKeySystemRequest>>()).iterator->value;
     if (pendingRequests.isEmpty())
         document->addMediaCanStartListener(*this);
     pendingRequests.append(request);
@@ -89,7 +89,7 @@ void MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest(MediaKeyS
 
     m_ongoingMediaKeySystemRequests.add(userRequest.identifier(), userRequest);
 
-    auto webFrame = WebFrame::fromCoreFrame(*frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     Ref { m_page.get() }->send(Messages::WebPageProxy::RequestMediaKeySystemPermissionForFrame(userRequest.identifier(), webFrame->frameID(), document->clientOrigin(), userRequest.keySystem()));
@@ -104,7 +104,7 @@ void MediaKeySystemPermissionRequestManager::cancelMediaKeySystemRequest(MediaKe
     if (!document)
         return;
 
-    auto iterator = m_pendingMediaKeySystemRequests.find(document.get());
+    auto iterator = m_pendingMediaKeySystemRequests.find(*document);
     if (iterator == m_pendingMediaKeySystemRequests.end())
         return;
 
@@ -124,7 +124,7 @@ void MediaKeySystemPermissionRequestManager::mediaCanStart(Document& document)
 {
     ASSERT(document.page()->canStartMedia());
 
-    auto pendingRequests = m_pendingMediaKeySystemRequests.take(&document);
+    auto pendingRequests = m_pendingMediaKeySystemRequests.take(document);
     for (auto& pendingRequest : pendingRequests)
         sendMediaKeySystemRequest(pendingRequest);
 }
@@ -135,7 +135,7 @@ void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(MediaKeySy
     if (!request)
         return;
 
-    request->allow(WTFMove(mediaKeysHashSalt));
+    request->allow(WTF::move(mediaKeysHashSalt));
 }
 
 void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySystemRequestIdentifier requestID, String&& message)
@@ -144,7 +144,7 @@ void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySys
     if (!request)
         return;
 
-    request->deny(WTFMove(message));
+    request->deny(WTF::move(message));
 }
 
 void MediaKeySystemPermissionRequestManager::ref() const

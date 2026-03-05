@@ -18,9 +18,7 @@ PASS Highlight must be primary interface of new Highlight(new Range())
 PASS Stringification of new Highlight(new Range())
 PASS Highlight interface: new Highlight(new Range()) must inherit property "priority" with the proper type
 PASS Highlight interface: new Highlight(new Range()) must inherit property "type" with the proper type
-FAIL HighlightRegistry interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function() {
-                new interface_object();
-            }" did not throw
+PASS HighlightRegistry interface: existence and properties of interface object
 PASS HighlightRegistry interface object length
 PASS HighlightRegistry interface object name
 PASS HighlightRegistry interface: existence and properties of interface prototype object

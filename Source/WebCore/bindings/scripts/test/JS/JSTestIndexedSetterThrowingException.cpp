@@ -122,7 +122,7 @@ void JSTestIndexedSetterThrowingExceptionPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestIndexedSetterThrowingException::s_info = { "TestIndexedSetterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingException) };
 
 JSTestIndexedSetterThrowingException::JSTestIndexedSetterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIndexedSetterThrowingException>&& impl)
-    : JSDOMWrapper<TestIndexedSetterThrowingException>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestIndexedSetterThrowingException>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -159,7 +159,7 @@ bool JSTestIndexedSetterThrowingException::legacyPlatformObjectGetOwnProperty(JS
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (auto index = parseIndex(propertyName)) {
         if (auto item = thisObject->wrapped().item(index.value()); !!item) [[likely]] {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(WTF::move(item)));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -182,7 +182,7 @@ bool JSTestIndexedSetterThrowingException::getOwnPropertySlotByIndex(JSObject* o
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (index <= MAX_ARRAY_INDEX) [[likely]] {
         if (auto item = thisObject->wrapped().item(index); !!item) [[likely]] {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(WTF::move(item)));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -338,7 +338,7 @@ void JSTestIndexedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknow
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIndexedSetterThrowingException = static_cast<JSTestIndexedSetterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestIndexedSetterThrowingException->protectedWrapped().ptr(), jsTestIndexedSetterThrowingException);
+    uncacheWrapper(world, protect(jsTestIndexedSetterThrowingException->wrapped()).ptr(), jsTestIndexedSetterThrowingException);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -376,7 +376,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestIndexedSetterThrowingException>(impl.ptr());
 #endif
-    return createWrapper<TestIndexedSetterThrowingException>(globalObject, WTFMove(impl));
+    return createWrapper<TestIndexedSetterThrowingException>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestIndexedSetterThrowingException& impl)

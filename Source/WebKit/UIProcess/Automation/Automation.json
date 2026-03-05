@@ -131,7 +131,9 @@
                 "None",
                 "Left",
                 "Middle",
-                "Right"
+                "Right",
+                "Back",
+                "Forward"
             ]
         },
         {

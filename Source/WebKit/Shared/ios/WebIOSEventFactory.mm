@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "AdditionalButtonMasksIOS.h"
 #import "UIKitSPI.h"
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
@@ -77,9 +78,11 @@ UIEventButtonMask WebIOSEventFactory::toUIEventButtonMask(WebKit::WebMouseEventB
     case WebKit::WebMouseEventButton::Right:
         return UIEventButtonMaskSecondary;
     case WebKit::WebMouseEventButton::Middle:
-        // iOS does not currently support any mouse buttons other than Primary and Secondary.
-        ASSERT_NOT_REACHED();
-        return UIEventButtonMaskPrimary;
+        return UIEventButtonMaskTertiary;
+    case WebKit::WebMouseEventButton::Back:
+        return UIEventButtonMaskQuaternary;
+    case WebKit::WebMouseEventButton::Forward:
+        return UIEventButtonMaskQuinary;
     }
 }
 
@@ -163,7 +166,7 @@ WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     int clickCount = 0;
     double timestamp = event.timestamp;
 
-    return WebMouseEvent({ type, OptionSet<WebEventModifier> { }, MonotonicTime::fromRawSeconds(timestamp) }, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount);
+    return WebMouseEvent({ type, OptionSet<WebEventModifier> { }, MonotonicTime::fromRawSeconds(timestamp) }, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount, 0, WebMouseEventInputSource::UserDriven);
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)

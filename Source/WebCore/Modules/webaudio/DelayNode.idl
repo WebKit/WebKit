@@ -27,7 +27,7 @@
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface DelayNode : AudioNode {
-    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional DelayOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional DelayOptions options = {});
 
     readonly attribute AudioParam delayTime;
 };

@@ -297,7 +297,8 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             minimumFractionDigits: 0,
             maximumFractionDigits: 2,
             useGrouping: false,
-        }
+            trailingZeroDisplay: "stripIfInteger",
+        };
         return value.toLocaleString(undefined, options);
     }
 

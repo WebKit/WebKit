@@ -64,14 +64,14 @@ void WorkQueueBase::platformInvalidate()
 
 void WorkQueueBase::dispatch(Function<void()>&& function)
 {
-    m_runLoop->dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
+    m_runLoop->dispatch([protectedThis = Ref { *this }, function = WTF::move(function)] {
         function();
     });
 }
 
 void WorkQueueBase::dispatchAfter(Seconds delay, Function<void()>&& function)
 {
-    m_runLoop->dispatchAfter(delay, [protectedThis = Ref { *this }, function = WTFMove(function)] {
+    m_runLoop->dispatchAfter(delay, [protectedThis = Ref { *this }, function = WTF::move(function)] {
         function();
     });
 }

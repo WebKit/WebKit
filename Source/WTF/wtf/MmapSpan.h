@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if HAVE(MMAP)
 
 #include <sys/mman.h>
@@ -45,13 +47,12 @@ public:
         auto* data = ::mmap(addr, size, pageProtection, options, fileDescriptor, 0);
         if (data == MAP_FAILED)
             return { };
-        RELEASE_ASSERT((pageProtection & PROT_EXEC) || WTF_DATA_ADDRESS_IS_SANE(data));
         return MmapSpan { data, size };
     }
 
     MmapSpan() = default;
     MmapSpan(MmapSpan&& other)
-        : AllocSpanMixin<T>(WTFMove(other))
+        : AllocSpanMixin<T>(WTF::move(other))
     {
     }
 
@@ -70,7 +71,7 @@ public:
 
     MmapSpan& operator=(MmapSpan&& other)
     {
-        MmapSpan ptr { WTFMove(other) };
+        MmapSpan ptr { WTF::move(other) };
         this->swap(ptr);
         return *this;
     }

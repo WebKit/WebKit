@@ -40,7 +40,7 @@ struct __Node {
 };
 
 extern Node* Node_new(void);
-extern void Node_ref(Node* node);
+extern void NODELETE Node_ref(Node* node);
 extern void Node_deref(Node* node);
 extern void Node_appendChild(Node* node, Node* child);
 extern void Node_removeChild(Node* node, Node* child);

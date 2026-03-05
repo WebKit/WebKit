@@ -45,7 +45,7 @@ class MediaKeySystemPermissionRequestProxy : public RefCounted<MediaKeySystemPer
 public:
     static Ref<MediaKeySystemPermissionRequestProxy> create(MediaKeySystemPermissionRequestManagerProxy& manager, WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& mediaOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)
     {
-        return adoptRef(*new MediaKeySystemPermissionRequestProxy(manager, mediaKeySystemID, mainFrameID, frameID, WTFMove(mediaOrigin), WTFMove(topLevelDocumentOrigin), keySystem));
+        return adoptRef(*new MediaKeySystemPermissionRequestProxy(manager, mediaKeySystemID, mainFrameID, frameID, WTF::move(mediaOrigin), WTF::move(topLevelDocumentOrigin), keySystem));
     }
 
     void allow();
@@ -63,10 +63,10 @@ public:
     WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
     const WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() const { return m_topLevelDocumentSecurityOrigin.get(); }
 
-    const String& keySystem() const { return m_keySystem; }
+    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
-    const String& mediaKeysHashSalt() const { return m_mediaKeysHashSalt; }
-    void setMediaKeysHashSalt(String&& salt) { m_mediaKeysHashSalt = WTFMove(salt); }
+    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
+    void setMediaKeysHashSalt(String&& salt) { m_mediaKeysHashSalt = WTF::move(salt); }
 
     void doDefaultAction();
 

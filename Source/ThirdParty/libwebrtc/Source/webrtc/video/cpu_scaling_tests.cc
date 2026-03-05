@@ -20,6 +20,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "test/call_test.h"
+#include "test/create_test_field_trials.h"
 #include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
 #include "test/video_test_constants.h"
@@ -36,7 +37,8 @@ constexpr int kFps = 28;
 class CpuOveruseTest : public test::CallTest {
  protected:
   CpuOveruseTest()
-      : CallTest("WebRTC-ForceSimulatedOveruseIntervalMs/1-60000-60000/") {}
+      : CallTest(CreateTestFieldTrials(
+            "WebRTC-ForceSimulatedOveruseIntervalMs/1-60000-60000/")) {}
 
   void RunTestAndCheckForAdaptation(
       const DegradationPreference& degradation_preference,
@@ -138,6 +140,7 @@ TEST_F(CpuOveruseTest, AdaptsDownInResolutionOrFpsOnOveruse) {
 }
 
 TEST_F(CpuOveruseTest, NoAdaptDownOnOveruse) {
-  RunTestAndCheckForAdaptation(DegradationPreference::DISABLED, false);
+  RunTestAndCheckForAdaptation(
+      DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION, false);
 }
 }  // namespace webrtc

@@ -26,6 +26,8 @@
 #ifndef PAS_SEGREGATED_PAGE_H
 #define PAS_SEGREGATED_PAGE_H
 
+#include "pas_platform.h"
+
 PAS_IGNORE_WARNINGS_BEGIN("cast-align")
 
 #include "pas_allocator_index.h"

@@ -40,7 +40,7 @@ class TextCheckerCompletion : public RefCounted<TextCheckerCompletion> {
 public:
     static Ref<TextCheckerCompletion> create(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&);
 
-    const WebCore::TextCheckingRequestData& textCheckingRequestData() const;
+    const WebCore::TextCheckingRequestData& NODELETE textCheckingRequestData() const;
     SpellDocumentTag spellDocumentTag();
     void didFinishCheckingText(const Vector<WebCore::TextCheckingResult>&) const;
     void didCancelCheckingText() const;
@@ -48,11 +48,9 @@ public:
 private:
     TextCheckerCompletion(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&);
 
-    Ref<WebPageProxy> protectedPage() const;
-
     const TextCheckerRequestID m_requestID;
     const WebCore::TextCheckingRequestData m_requestData;
-    WeakRef<WebPageProxy> m_page;
+    WeakPtr<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

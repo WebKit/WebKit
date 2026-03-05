@@ -45,7 +45,7 @@ std::unique_ptr<PlatformDisplayDefault> PlatformDisplayDefault::create()
 }
 
 PlatformDisplayDefault::PlatformDisplayDefault(Ref<GLDisplay>&& glDisplay)
-    : PlatformDisplay(WTFMove(glDisplay))
+    : PlatformDisplay(WTF::move(glDisplay))
 {
 #if ENABLE(WEBGL)
     m_anglePlatform = 0;

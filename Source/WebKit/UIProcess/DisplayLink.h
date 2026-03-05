@@ -70,7 +70,7 @@ public:
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     WebCore::FramesPerSecond nominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
 
-    void displayPropertiesChanged();
+    void NODELETE displayPropertiesChanged();
 
     void addObserver(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
     void removeObserver(Client&, DisplayLinkObserverID);
@@ -84,7 +84,7 @@ public:
     void setObserverPreferredFramesPerSecond(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    DisplayVBlankMonitor& vblankMonitor() const { return *m_vblankMonitor; }
+    DisplayVBlankMonitor& vblankMonitor() const LIFETIME_BOUND { return *m_vblankMonitor; }
 #endif
 
 private:
@@ -117,6 +117,8 @@ private:
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;
+    unsigned m_fpsThrottleRatio { 1 };
+    unsigned m_fpsThrottleCallCounter { 0 };
 #endif
 #if USE(WPE_BACKEND_PLAYSTATION)
     struct wpe_playstation_display* m_display;
@@ -131,8 +133,8 @@ private:
 
 class DisplayLinkCollection {
 public:
-    DisplayLink& displayLinkForDisplay(WebCore::PlatformDisplayID);
-    DisplayLink* existingDisplayLinkForDisplay(WebCore::PlatformDisplayID) const;
+    DisplayLink& displayLinkForDisplay(WebCore::PlatformDisplayID) LIFETIME_BOUND;
+    DisplayLink* NODELETE existingDisplayLinkForDisplay(WebCore::PlatformDisplayID) const LIFETIME_BOUND;
 
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
     void startDisplayLink(DisplayLink::Client&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond preferredFramesPerSecond);

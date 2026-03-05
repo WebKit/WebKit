@@ -51,7 +51,7 @@
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "StylableInlines.h"
 #include "WebAnimation.h"
@@ -74,17 +74,17 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
     document.hitTest(hitTestRequestTypes, hitTestResult);
 
     for (auto& hitTestNode : hitTestResult.listBasedTestResult()) {
-        auto& node = hitTestNode.get();
+        Ref node = hitTestNode.get();
 
-        auto* renderer = node.renderer();
+        CheckedPtr renderer = node->renderer();
         if (!renderer)
             return false;
 
         // Skip images (both `<img>` and CSS `background-image`) as they're likely not a solid color.
-        if (is<RenderImage>(renderer) || renderer->style().hasBackgroundImage())
+        if (is<RenderImage>(renderer) || Style::hasImageInAnyLayer(renderer->style().backgroundLayers()))
             return false;
 
-        RefPtr element = dynamicDowncast<Element>(node);
+        RefPtr element = dynamicDowncast<Element>(node.get());
         if (!element)
             continue;
 
@@ -124,7 +124,7 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     auto colorSpace = DestinationColorSpace::SRGB();
 
     ASSERT(document.view());
-    auto snapshot = snapshotFrameRect(document.view()->protectedFrame(), IntRect(location, IntSize(1, 1)), { { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, colorSpace });
+    auto snapshot = snapshotFrameRect(protect(document.view()->frame()), IntRect(location, IntSize(1, 1)), { { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
         return std::nullopt;
 
@@ -352,7 +352,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
             if (isNearlyTransparent(color))
                 return PredominantColorType::None;
 
-            return { WTFMove(color) };
+            return { WTF::move(color) };
         }
     }
 
@@ -384,7 +384,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
             if (isNearlyTransparent(*mostFrequentColor))
                 return PredominantColorType::None;
 
-            return { WTFMove(*mostFrequentColor) };
+            return { WTF::move(*mostFrequentColor) };
         }
     }
 

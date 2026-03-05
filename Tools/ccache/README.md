@@ -1,6 +1,11 @@
+**NOTE:** As of Xcode 26, content-based caching is built in to LLVM. WebKit
+enables it via the `COMPILATION_CACHE_ENABLE_CACHING` build setting and emits
+cache hit metrics in build logs. Extra diagnostics are available with
+`COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS=YES`.
+
 # Prerequisites
 
-- Xcode
+- Xcode < 26 (or opt out of the default compilation caching behavior).
 - ```ccache(1)``` installed in /usr/local/bin
 
 # Configuring ccache

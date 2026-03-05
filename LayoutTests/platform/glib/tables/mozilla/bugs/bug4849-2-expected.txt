@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,0) size 600x90
               RenderTableCell {TD} at (0,0) size 150x36 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {CENTER} at (0,0) size 150x36
-                  RenderInline {IFRAMEX} at (75,0) size 0x35
+                  RenderInline {IFRAMEX} at (75,0) size 0x36
                     RenderText {#text} at (0,0) size 0x0
-                    RenderBR {BR} at (75,0) size 0x17
-                    RenderBR {BR} at (75,18) size 0x17
+                    RenderBR {BR} at (75,0) size 0x18
+                    RenderBR {BR} at (75,18) size 0x18
               RenderTableCell {TD} at (150,0) size 1x1 [bgcolor=#FFFFFF] [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 1x1
                 RenderText {#text} at (0,0) size 0x0
@@ -22,10 +22,10 @@ layer at (0,0) size 800x600
                     RenderTableRow {TR} at (0,2) size 449x58
                       RenderTableCell {TD} at (2,2) size 445x58 [r=0 c=0 rs=1 cs=1]
                         RenderBlock {P} at (2,2) size 441x54
-                          RenderText {#text} at (0,0) size 162x17
+                          RenderText {#text} at (0,0) size 162x18
                             text run at (0,0) width 162: "IMPROVE YOUR SITE"
-                          RenderBR {BR} at (162,0) size 0x17
-                          RenderText {#text} at (0,18) size 435x35
+                          RenderBR {BR} at (162,0) size 0x18
+                          RenderText {#text} at (0,18) size 435x36
                             text run at (0,18) width 435: "In this week's Home Improvements you can find an article on how to"
                             text run at (0,36) width 256: "spice up your page by using imagemaps."
                         RenderBlock {P} at (2,72) size 441x0
@@ -38,9 +38,9 @@ layer at (0,0) size 800x600
                             text run at (347,5) width 47: "MORE"
                           RenderImage {IMG} at (394,1) size 50x18
                         RenderText {#text} at (0,0) size 0x0
-            RenderTableRow {TR} at (0,90) size 600x35
-              RenderTableCell {TD} at (0,90) size 600x35 [r=1 c=0 rs=1 cs=3]
+            RenderTableRow {TR} at (0,89) size 600x36
+              RenderTableCell {TD} at (0,89) size 600x36 [r=1 c=0 rs=1 cs=3]
                 RenderBlock (anonymous) at (0,0) size 600x1
                   RenderImage {IMG} at (0,0) size 600x1
                 RenderBlock {P} at (0,17) size 600x18
-                  RenderBR {BR} at (300,0) size 0x17
+                  RenderBR {BR} at (300,0) size 0x18

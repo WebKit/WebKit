@@ -95,3 +95,12 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRou
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, MRUIControllerProvider);
 #endif
+
+#if HAVE(AVEXPERIENCECONTROLLER)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoMediaType, CFStringRef);
+#define kMRMediaRemoteNowPlayingInfoMediaType get_MediaRemote_kMRMediaRemoteNowPlayingInfoMediaTypeSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoTypeAudio, CFStringRef);
+#define kMRMediaRemoteNowPlayingInfoTypeAudio get_MediaRemote_kMRMediaRemoteNowPlayingInfoTypeAudioSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoTypeVideo, CFStringRef);
+#define kMRMediaRemoteNowPlayingInfoTypeVideo get_MediaRemote_kMRMediaRemoteNowPlayingInfoTypeVideoSingleton()
+#endif

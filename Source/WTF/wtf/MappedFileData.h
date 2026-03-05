@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <cstdint>
 #include <span>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 #if HAVE(MMAP)
 #include <wtf/MallocSpan.h>
@@ -58,7 +60,7 @@ public:
 #if HAVE(MMAP)
     explicit MappedFileData(MmapSpan<uint8_t>&&);
 
-    std::span<uint8_t> leakHandle() WARN_UNUSED_RETURN { return m_fileData.leakSpan(); }
+    [[nodiscard]] std::span<uint8_t> leakHandle() { return m_fileData.leakSpan(); }
     explicit operator bool() const { return !!m_fileData; }
     size_t size() const { return m_fileData.span().size(); }
     std::span<const uint8_t> span() const LIFETIME_BOUND { return m_fileData.span(); }
@@ -69,8 +71,8 @@ public:
     const Win32Handle& fileMapping() const { return m_fileMapping; }
     explicit operator bool() const { return !!m_fileData.data(); }
     size_t size() const { return m_fileData.size(); }
-    std::span<const uint8_t> span() const { return m_fileData; }
-    std::span<uint8_t> mutableSpan() { return m_fileData; }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_fileData; }
+    std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return m_fileData; }
 #endif
 
 private:

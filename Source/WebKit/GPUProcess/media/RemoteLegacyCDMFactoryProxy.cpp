@@ -80,8 +80,8 @@ void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::option
 
     auto proxy = RemoteLegacyCDMProxy::create(*this, playerId, privateCDM.releaseNonNull());
     auto identifier = RemoteLegacyCDMIdentifier::generate();
-    addProxy(identifier, WTFMove(proxy));
-    completion(WTFMove(identifier));
+    addProxy(identifier, WTF::move(proxy));
+    completion(WTF::move(identifier));
 }
 
 void RemoteLegacyCDMFactoryProxy::supportsKeySystem(const String& keySystem, std::optional<String> mimeType, CompletionHandler<void(bool)>&& completion)
@@ -137,7 +137,7 @@ void RemoteLegacyCDMFactoryProxy::addProxy(RemoteLegacyCDMIdentifier identifier,
     connection->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), identifier.toUInt64(), proxy.get());
 
     ASSERT(!m_proxies.contains(identifier));
-    m_proxies.set(identifier, WTFMove(proxy));
+    m_proxies.set(identifier, WTF::move(proxy));
 }
 
 void RemoteLegacyCDMFactoryProxy::removeProxy(RemoteLegacyCDMIdentifier identifier)
@@ -161,7 +161,7 @@ void RemoteLegacyCDMFactoryProxy::addSession(RemoteLegacyCDMSessionIdentifier id
     connection->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64(), session.get());
 
     ASSERT(!m_sessions.contains(identifier));
-    m_sessions.set(identifier, WTFMove(session));
+    m_sessions.set(identifier, WTF::move(session));
 }
 
 void RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier identifier, CompletionHandler<void()>&& completionHandler)

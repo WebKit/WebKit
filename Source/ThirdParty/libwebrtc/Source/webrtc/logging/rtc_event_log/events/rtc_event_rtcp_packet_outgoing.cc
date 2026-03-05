@@ -25,15 +25,13 @@ RtcEventRtcpPacketOutgoing::RtcEventRtcpPacketOutgoing(
 
 RtcEventRtcpPacketOutgoing::RtcEventRtcpPacketOutgoing(
     const RtcEventRtcpPacketOutgoing& other)
-    : RtcEvent(other.timestamp_us_),
-      packet_(other.packet_.data(), other.packet_.size()) {}
+    : RtcEvent(other), packet_(other.packet_.data(), other.packet_.size()) {}
 
 RtcEventRtcpPacketOutgoing::~RtcEventRtcpPacketOutgoing() = default;
 
 std::unique_ptr<RtcEventRtcpPacketOutgoing> RtcEventRtcpPacketOutgoing::Copy()
     const {
-  return absl::WrapUnique<RtcEventRtcpPacketOutgoing>(
-      new RtcEventRtcpPacketOutgoing(*this));
+  return absl::WrapUnique(new RtcEventRtcpPacketOutgoing(*this));
 }
 
 }  // namespace webrtc

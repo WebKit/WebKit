@@ -33,7 +33,7 @@ std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Deco
 {
     if (auto attachment = decoder.takeLastAttachment()) {
         if (holdsAlternative<UnixFileDescriptor>(attachment.value()))
-            return { WTFMove(get<UnixFileDescriptor>(attachment.value())) };
+            return { WTF::move(get<UnixFileDescriptor>(attachment.value())) };
     }
     return std::nullopt;
 }
@@ -45,14 +45,14 @@ void ArgumentCoder<RefPtr<AHardwareBuffer>>::encode(Encoder& encoder, const RefP
 
 void ArgumentCoder<RefPtr<AHardwareBuffer>>::encode(Encoder& encoder, RefPtr<AHardwareBuffer>&& buffer)
 {
-    encoder.addAttachment(WTFMove(buffer));
+    encoder.addAttachment(WTF::move(buffer));
 }
 
 std::optional<RefPtr<AHardwareBuffer>> ArgumentCoder<RefPtr<AHardwareBuffer>>::decode(Decoder& decoder)
 {
     if (auto attachment = decoder.takeLastAttachment()) {
         if (holdsAlternative<RefPtr<AHardwareBuffer>>(attachment.value()))
-            return { WTFMove(get<RefPtr<AHardwareBuffer>>(attachment.value())) };
+            return { WTF::move(get<RefPtr<AHardwareBuffer>>(attachment.value())) };
     }
     return std::nullopt;
 }

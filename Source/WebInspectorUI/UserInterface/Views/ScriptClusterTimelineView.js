@@ -168,8 +168,8 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
 
     _updateCurrentContentView()
     {
-        let contentViews = this._contentViewsForTarget.getOrInitialize(this._displayedTarget, () => new Map);
-        let contentViewToShow = contentViews.getOrInitialize(this._currentContentViewSetting.value, (contentViewIdentifier) => {
+        let contentViews = this._contentViewsForTarget.getOrInsert(this._displayedTarget, new Map);
+        let contentViewToShow = contentViews.getOrInsertComputed(this._currentContentViewSetting.value, (contentViewIdentifier) => {
             switch (contentViewIdentifier) {
             case WI.ScriptClusterTimelineView.EventsIdentifier:
                 return new WI.ScriptDetailsTimelineView(this._displayedTarget, this.representedObject);

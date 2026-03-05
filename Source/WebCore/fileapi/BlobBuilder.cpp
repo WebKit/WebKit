@@ -46,24 +46,18 @@ BlobBuilder::BlobBuilder(EndingType endings)
 {
 }
 
-void BlobBuilder::append(RefPtr<ArrayBuffer>&& arrayBuffer)
+void BlobBuilder::append(Ref<ArrayBuffer>&& arrayBuffer)
 {
-    if (!arrayBuffer)
-        return;
     m_appendableData.append(arrayBuffer->span());
 }
 
-void BlobBuilder::append(RefPtr<ArrayBufferView>&& arrayBufferView)
+void BlobBuilder::append(Ref<ArrayBufferView>&& arrayBufferView)
 {
-    if (!arrayBufferView)
-        return;
     m_appendableData.append(arrayBufferView->span());
 }
 
-void BlobBuilder::append(RefPtr<Blob>&& blob)
+void BlobBuilder::append(Ref<Blob>&& blob)
 {
-    if (!blob)
-        return;
     if (!m_appendableData.isEmpty())
         m_items.append(std::exchange(m_appendableData, { }));
     m_items.append(blob->url());
@@ -74,10 +68,10 @@ void BlobBuilder::append(const String& text)
     auto bytes = PAL::TextCodecUTF8::encodeUTF8(text);
 
     if (m_endings == EndingType::Native)
-        bytes = normalizeLineEndingsToNative(WTFMove(bytes));
+        bytes = normalizeLineEndingsToNative(WTF::move(bytes));
 
     if (m_appendableData.isEmpty())
-        m_appendableData = WTFMove(bytes);
+        m_appendableData = WTF::move(bytes);
     else {
         // FIXME: Would it be better to move multiple vectors into m_items instead of merging them into one?
         m_appendableData.appendVector(bytes);
@@ -90,7 +84,7 @@ void BlobBuilder::append(Ref<FragmentedSharedBuffer>&& buffer)
         m_items.append(std::exchange(m_appendableData, { }));
 
     buffer->forEachSegmentAsSharedBuffer([&](Ref<SharedBuffer>&& sharedBuffer) {
-        m_items.append(WTFMove(sharedBuffer));
+        m_items.append(WTF::move(sharedBuffer));
     });
 }
 
@@ -98,7 +92,7 @@ Vector<BlobPart> BlobBuilder::finalize()
 {
     if (!m_appendableData.isEmpty())
         m_items.append(std::exchange(m_appendableData, { }));
-    return WTFMove(m_items);
+    return WTF::move(m_items);
 }
 
 } // namespace WebCore

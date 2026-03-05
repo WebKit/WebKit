@@ -33,7 +33,7 @@ namespace WebCore {
 IndexKey::IndexKey() = default;
 
 IndexKey::IndexKey(Data&& keys)
-    : m_keys(WTFMove(keys))
+    : m_keys(WTF::move(keys))
 {
 }
 
@@ -44,7 +44,7 @@ IndexKey IndexKey::isolatedCopy() const &
 
 IndexKey IndexKey::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTFMove(m_keys)) };
+    return { crossThreadCopy(WTF::move(m_keys)) };
 }
 
 IDBKeyData IndexKey::asOneKey() const

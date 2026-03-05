@@ -1,0 +1,8 @@
+
+PASS can detect whether align-content is supported on display:block
+FAIL @supports named-feature(align-content-on-display-block) should be false assert_equals: expected "1" but got "auto"
+FAIL @supports named-feature( align-content-on-display-block ) should be false assert_equals: expected "2" but got "auto"
+PASS @supports named-feature(unknown-feature) should be false
+PASS @supports named-feature(named-feature) should be false
+PASS @supports named-feature(color) should be false
+

@@ -34,6 +34,9 @@ struct ParentalControlsURLFilterParameters {
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     String configurationPath;
 #endif
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+    std::optional<URL> referrerURL;
+#endif
 };
 
 }

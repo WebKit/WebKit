@@ -14,30 +14,30 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 623x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 623x27
             text run at (0,27) width 623: "Delete at the end of document when there is a BR following a P."
-          RenderBR {BR} at (622,27) size 1x26
-          RenderText {#text} at (0,54) size 442x26
+          RenderBR {BR} at (622,27) size 1x27
+          RenderText {#text} at (0,54) size 442x27
             text run at (0,54) width 442: "This is a test case for rdar://problem/4110366"
         RenderBlock {DIV} at (14,111) size 756x108
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 720x53
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 720x54
             text run at (0,27) width 240: "Red box with four lines. "
             text run at (240,27) width 480: "The second line is a nested red box with the word"
             text run at (0,54) width 81: "\"hello\". "
             text run at (81,54) width 309: "The other three lines are empty."
-          RenderBR {BR} at (389,54) size 1x26
-          RenderText {#text} at (0,81) size 468x26
+          RenderBR {BR} at (389,54) size 1x27
+          RenderText {#text} at (0,81) size 468x27
             text run at (0,81) width 468: "Selection is a caret at the start of the fourth line."
       RenderBlock {DIV} at (0,257) size 784x138 [border: (2px solid #FF0000)]
         RenderBlock {P} at (2,26) size 780x31 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 49x26
+          RenderText {#text} at (2,2) size 49x27
             text run at (2,2) width 49: "hello"
         RenderBlock {P} at (2,81) size 780x31 [border: (2px solid #FF0000)]
-          RenderBR {BR} at (2,2) size 0x26
+          RenderBR {BR} at (2,2) size 0x27
 caret: position 0 of child 0 {BR} of child 1 {P} of child 3 {DIV} of body

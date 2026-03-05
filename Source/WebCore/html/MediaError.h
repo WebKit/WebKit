@@ -46,16 +46,16 @@ public:
 
     static Ref<MediaError> create(Code code, String&& message)
     {
-        return adoptRef(*new MediaError(code, WTFMove(message)));
+        return adoptRef(*new MediaError(code, WTF::move(message)));
     }
 
     Code code() const { return m_code; }
-    const String& message() const { return m_message; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
 
 private:
     MediaError(Code code, String&& message)
         : m_code(code)
-        , m_message(WTFMove(message))
+        , m_message(WTF::move(message))
     { }
 
     Code m_code;

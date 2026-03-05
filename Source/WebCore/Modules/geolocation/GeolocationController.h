@@ -61,12 +61,10 @@ public:
 
     std::optional<GeolocationPositionData> lastPosition();
 
-    GeolocationClient& client();
-    Ref<GeolocationClient> protectedClient();
+    GeolocationClient& NODELETE client();
 
     WEBCORE_EXPORT static ASCIILiteral supplementName();
     static GeolocationController* from(Page* page) { return downcast<GeolocationController>(Supplement<Page>::from(page, supplementName())); }
-    static CheckedPtr<GeolocationController> checkedFrom(Page* page) { return from(page); }
 
     void revokeAuthorizationToken(const String&);
 

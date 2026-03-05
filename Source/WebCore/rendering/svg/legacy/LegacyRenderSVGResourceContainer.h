@@ -22,6 +22,7 @@
 #include "LegacyRenderSVGHiddenContainer.h"
 #include "LegacyRenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -29,15 +30,15 @@ namespace WebCore {
 class RenderLayer;
 
 class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer, public LegacyRenderSVGResource {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceContainer);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceContainer);
 public:
     virtual ~LegacyRenderSVGResourceContainer();
 
     void layout() override;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
 
-    static float computeTextPaintingScale(const RenderElement&);
+    static float NODELETE computeTextPaintingScale(const RenderElement&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 
     void removeClientFromCacheAndMarkForInvalidation(RenderElement&, bool markForInvalidation = true) override;
@@ -75,8 +76,8 @@ private:
     void registerResource();
 
     AtomString m_id;
-    SingleThreadWeakHashSet<RenderElement> m_clients;
-    SingleThreadWeakHashSet<RenderLayer> m_clientLayers;
+    SingleThreadWeakKeyHashSet<RenderElement> m_clients;
+    InlineWeakKeyHashSet<RenderLayer> m_clientLayers;
     bool m_registered { false };
     bool m_isInvalidating { false };
 };
@@ -103,4 +104,7 @@ Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGResourceContainer, isLegacyRenderSVGResourceContainer())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceContainer)
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceContainer(); }
+    static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() != WebCore::SolidColorResourceType; }
+SPECIALIZE_TYPE_TRAITS_END()

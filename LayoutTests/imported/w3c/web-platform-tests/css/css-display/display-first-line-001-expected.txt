@@ -3,5 +3,5 @@ First line is float but not flex.
 First line is flex but not float.
 First line is not float or flex.
 
-FAIL display of first-line assert_equals: expected "inline" but got "flex"
+PASS display of first-line
 

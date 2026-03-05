@@ -41,7 +41,7 @@ struct DiagnosticLoggingDictionary {
     using Payload = Variant<String, uint64_t, int64_t, bool, double>;
     using Dictionary = HashMap<String, Payload>;
     Dictionary dictionary;
-    void set(String key, Payload value) { dictionary.set(WTFMove(key), WTFMove(value)); }
+    void set(String key, Payload value) { dictionary.set(WTF::move(key), WTF::move(value)); }
 };
 
 class DiagnosticLoggingClient : public CanMakeCheckedPtr<DiagnosticLoggingClient> {

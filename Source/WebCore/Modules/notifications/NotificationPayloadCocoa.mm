@@ -71,7 +71,7 @@ std::optional<NotificationPayload> NotificationPayload::fromDictionary(NSDiction
     if (!isMutable)
         return std::nullopt;
 
-    return NotificationPayload { defaultAction.get(), title.get(), WTFMove(rawAppBadge), WTFMove(rawOptions), !![isMutable boolValue] };
+    return NotificationPayload { defaultAction.get(), title.get(), WTF::move(rawAppBadge), WTF::move(rawOptions), !![isMutable boolValue] };
 }
 
 NSDictionary *NotificationPayload::dictionaryRepresentation() const

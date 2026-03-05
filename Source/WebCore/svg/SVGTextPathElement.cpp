@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTextPathElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTextPathElement);
 
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document& document)
     : SVGTextContentElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -123,7 +123,7 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTextPath>(*this, WTFMove(style));
+    return createRenderer<RenderSVGTextPath>(*this, WTF::move(style));
 }
 
 bool SVGTextPathElement::childShouldCreateRenderer(const Node& child) const

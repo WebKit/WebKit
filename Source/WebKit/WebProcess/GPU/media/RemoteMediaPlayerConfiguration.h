@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/MediaPlaybackTarget.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformTimeRanges.h>
 #include <wtf/MediaTime.h>
@@ -41,8 +42,10 @@ struct RemoteMediaPlayerConfiguration {
     bool supportsAcceleratedRendering { false };
     bool supportsPlayAtHostTime { false };
     bool supportsPauseAtHostTime { false };
-    bool canPlayToWirelessPlaybackTarget { false };
     bool shouldIgnoreIntrinsicSize { false };
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    OptionSet<WebCore::MediaPlaybackTargetType> supportedPlaybackTargetTypes;
+#endif
 };
 
 } // namespace WebKit

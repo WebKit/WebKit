@@ -77,7 +77,7 @@
 // number in any output. |PrintLine| does this automatically.
 //
 // Each attribute in a test and all instructions applying to it must be
-// consumed. When a test completes, if any attributes or insturctions haven't
+// consumed. When a test completes, if any attributes or instructions haven't
 // been processed, the framework reports an error.
 
 class FileTest;

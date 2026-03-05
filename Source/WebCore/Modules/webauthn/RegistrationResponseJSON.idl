@@ -22,7 +22,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
+// https://w3c.github.io/webauthn/#dictdef-authenticatorattestationresponsejson
 [
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
@@ -44,6 +45,7 @@
     required Base64URLString attestationObject;
 };
 
+// https://w3c.github.io/webauthn/#dictdef-registrationresponsejson
 [
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,

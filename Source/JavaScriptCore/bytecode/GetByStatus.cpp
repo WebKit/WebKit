@@ -266,7 +266,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
         CacheableIdentifier identifier = stubInfo->identifier();
         UniquedStringImpl* uid = identifier.uid();
         RELEASE_ASSERT(uid);
-        GetByVariant variant(WTFMove(identifier));
+        GetByVariant variant(WTF::move(identifier));
         unsigned attributes;
         variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
@@ -293,7 +293,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
                 if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0, access))
                     *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
-                status.appendVariant(GetByVariant(access.identifier(), { }, /* viaGlobalProxy */ false, invalidOffset, { }, WTFMove(callLinkStatus)));
+                status.appendVariant(GetByVariant(access.identifier(), { }, /* viaGlobalProxy */ false, invalidOffset, { }, WTF::move(callLinkStatus)));
                 return status;
             }
             case AccessCase::LoadMegamorphic:
@@ -352,10 +352,10 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
 
                 ASSERT((AccessCase::Miss == access.type() || access.isCustom()) == (access.offset() == invalidOffset));
                 GetByVariant variant(access.identifier(), StructureSet(structure), viaGlobalProxy, invalidOffset,
-                    WTFMove(conditionSet), nullptr,
+                    WTF::move(conditionSet), nullptr,
                     nullptr,
                     customAccessorGetter,
-                    WTFMove(domAttribute));
+                    WTF::move(domAttribute));
 
                 if (!result.appendVariant(variant))
                     return GetByStatus(JSC::slowVersion(summary), stubInfo);
@@ -409,7 +409,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
 
                     ASSERT((AccessCase::Miss == access.type() || access.isCustom()) == (access.offset() == invalidOffset));
                     GetByVariant variant(access.identifier(), StructureSet(structure), viaGlobalProxy, complexGetStatus.offset(),
-                        complexGetStatus.conditionSet(), WTFMove(callLinkStatus), intrinsicFunction);
+                        complexGetStatus.conditionSet(), WTF::move(callLinkStatus), intrinsicFunction);
 
                     if (!result.appendVariant(variant))
                         return GetByStatus(JSC::slowVersion(summary), stubInfo);
@@ -526,6 +526,17 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
                     size_t i = 0;
                     size_t totalSize = conditionSet.size();
                     for (auto& condition : conditionSet) {
+                        auto* object = condition.object();
+                        if (!object)
+                            return std::nullopt;
+
+                        auto* currentStructure = object->structure();
+                        if (currentStructure->typeInfo().overridesGetOwnPropertySlot())
+                            return std::nullopt;
+
+                        if (!currentStructure->propertyAccessesAreCacheable())
+                            return std::nullopt;
+
                         if ((i + 1) == totalSize) {
                             // The last condition
                             if (condition.kind() != PropertyCondition::Presence)
@@ -541,6 +552,9 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
 
                             return result;
                         }
+
+                        if (currentStructure->hasPolyProto())
+                            return std::nullopt;
 
                         if (condition.kind() != PropertyCondition::Absence)
                             return std::nullopt;
@@ -764,7 +778,7 @@ void GetByStatus::filterById(UniquedStringImpl* uid)
         });
     if (filtered.isEmpty())
         return;
-    m_variants = WTFMove(filtered);
+    m_variants = WTF::move(filtered);
 }
 
 #if ENABLE(JIT)

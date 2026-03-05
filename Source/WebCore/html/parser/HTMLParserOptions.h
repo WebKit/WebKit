@@ -38,6 +38,7 @@ public:
     bool scriptingFlag;
     bool usePreHTML5ParserQuirks;
     bool enhancedSelect;
+    bool enhancedSelectQuirk;
     unsigned maximumDOMTreeDepth;
 };
 

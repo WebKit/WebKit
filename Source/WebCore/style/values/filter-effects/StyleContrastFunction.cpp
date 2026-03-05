@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,90 @@
 #include "config.h"
 #include "StyleContrastFunction.h"
 
+#include "AnimationUtilities.h"
 #include "CSSContrastFunction.h"
 #include "CSSFilterFunctionDescriptor.h"
+#include "ColorMatrix.h"
+#include "ColorUtilities.h"
+#include "FEColorMatrix.h"
 #include "FilterOperation.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
 
-CSS::Contrast toCSSContrast(Ref<BasicComponentTransferFilterOperation> operation, const RenderStyle& style)
+Contrast Contrast::passthroughForInterpolation()
 {
-    return { CSS::Contrast::Parameter { toCSS(Number<CSS::Nonnegative> { operation->amount() }, style) } };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueContrast>::initialValueForInterpolation };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::Contrast& filter, const BuilderState& state)
+bool Contrast::transformColor(SRGBA<float>& color) const
 {
-    double value;
-    if (auto parameter = filter.value)
-        value = evaluate<double>(toStyle(*parameter, state));
-    else
-        value = filterFunctionDefaultValue<CSS::ContrastFunction::name>().value;
+    auto amount = evaluate<float>(value);
+    auto intercept = -(0.5f * amount) + 0.5f;
+    color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
+        return std::clamp<float>(intercept + amount * component, 0.0f, 1.0f);
+    });
+    return true;
+}
 
-    return BasicComponentTransferFilterOperation::create(value, filterFunctionOperationType<CSS::ContrastFunction::name>());
+// MARK: - Conversion
+
+auto ToCSS<Contrast>::operator()(const Contrast& value, const RenderStyle& style) -> CSS::Contrast
+{
+    return { .value = CSS::Contrast::Parameter { toCSS(value.value, style) } };
+}
+
+auto ToStyle<CSS::Contrast>::operator()(const CSS::Contrast& value, const BuilderState& state) -> Contrast
+{
+    if (auto parameter = value.value) {
+        return { .value = WTF::switchOn(*parameter,
+            [&](const CSS::Contrast::Parameter::Number& number) -> Contrast::Parameter {
+                return { toStyle(number, state) };
+            },
+            [&](const CSS::Contrast::Parameter::Percentage& percentage) -> Contrast::Parameter {
+                return { toStyle(percentage, state).value / 100 };
+            }
+        ) };
+    }
+    return { .value = CSSFilterFunctionDescriptor<CSSValueContrast>::defaultValue };
+}
+
+// MARK: - Blending
+
+auto Blending<Contrast>::blend(const Contrast& from, const Contrast& to, const BlendingContext& context) -> Contrast
+{
+    // Accumulate needs to be special cased for filter functions with "initial values
+    // for interpolation of 1" to use the formula "Vresult = Va + Vb - 1".
+    // https://drafts.csswg.org/filter-effects/#accumulation
+    static_assert(CSSFilterFunctionDescriptor<CSSValueContrast>::initialValueForInterpolation == 1_css_number);
+
+    if (context.compositeOperation == CompositeOperation::Accumulate) {
+        return { Contrast::Parameter {
+            CSS::clampToRange<Contrast::Parameter::range, typename Contrast::Parameter::ResolvedValueType>(
+                from.value.value + to.value.value - 1
+            )
+        } };
+    }
+
+    return { Style::blend(from.value, to.value, context) };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<Contrast, Ref<FilterEffect>>::operator()(const Contrast& value) -> Ref<FilterEffect>
+{
+    ColorMatrix<5, 4> contrastMatrix = contrastColorMatrix(evaluate<float>(value));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX, contrastMatrix);
+}
+
+// MARK: - Platform
+
+auto ToPlatform<Contrast>::operator()(const Contrast& value) -> Ref<FilterOperation>
+{
+    return BasicComponentTransferFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<ContrastFunction::name>());
 }
 
 } // namespace Style

@@ -43,7 +43,7 @@ class ScriptBufferSourceProvider final : public JSC::SourceProvider, public Abst
 public:
     static Ref<ScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String sourceURL, String preRedirectURL, const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
     {
-        return adoptRef(*new ScriptBufferSourceProvider(scriptBuffer, sourceOrigin, WTFMove(sourceURL), WTFMove(preRedirectURL), startPosition, sourceType));
+        return adoptRef(*new ScriptBufferSourceProvider(scriptBuffer, sourceOrigin, WTF::move(sourceURL), WTF::move(preRedirectURL), startPosition, sourceType));
     }
 
     unsigned hash() const final
@@ -85,7 +85,7 @@ public:
 
 private:
     ScriptBufferSourceProvider(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType)
-        : JSC::SourceProvider(sourceOrigin, WTFMove(sourceURL), WTFMove(preRedirectURL), JSC::SourceTaintedOrigin::Untainted, startPosition, sourceType)
+        : JSC::SourceProvider(sourceOrigin, WTF::move(sourceURL), WTF::move(preRedirectURL), JSC::SourceTaintedOrigin::Untainted, startPosition, sourceType)
         , m_scriptBuffer(scriptBuffer)
     {
     }
@@ -98,7 +98,7 @@ private:
             return emptyString();
 
         if (!m_contiguousBuffer && (!m_containsOnlyASCII || *m_containsOnlyASCII))
-            m_contiguousBuffer = m_scriptBuffer.protectedBuffer()->makeContiguous();
+            m_contiguousBuffer = m_scriptBuffer.buffer()->makeContiguous();
         if (!m_containsOnlyASCII) {
             m_containsOnlyASCII = charactersAreAllASCII(m_contiguousBuffer->span());
             if (*m_containsOnlyASCII)

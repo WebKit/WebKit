@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <atomic>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -75,14 +76,8 @@ private:
     {
     }
 
-    OpaqueJSString(const String& string)
-        : m_string(string.isolatedCopy())
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
-    {
-    }
-
     explicit OpaqueJSString(String&& string)
-        : m_string(WTFMove(string))
+        : m_string(WTF::move(string).isolatedCopy())
         , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
     {
     }

@@ -61,8 +61,6 @@ public:
     ThreadData();
     ~ThreadData();
 
-    Ref<Thread> thread;
-    
     Mutex parkingLock;
     ThreadCondition parkingCondition;
 
@@ -152,14 +150,14 @@ public:
         while (shouldContinue) {
             RefPtr current = *currentPtr;
             if (verbose)
-                dataLogForCurrentThread(": got thread ", RawPointer(current.get()), "\n");
+                dataLogForCurrentThread(": got thread ", RawPointer(current), "\n");
             if (!current)
                 break;
-            DequeueResult result = functor(current.get(), timeToBeFair);
+            DequeueResult result = functor(current, timeToBeFair);
             switch (result) {
             case DequeueResult::Ignore:
                 if (verbose)
-                    dataLogForCurrentThread(": currentPtr = ", RawPointer(currentPtr), ", *currentPtr = ", RawPointer((*currentPtr).get()), "\n");
+                    dataLogForCurrentThread(": currentPtr = ", RawPointer(currentPtr), ", *currentPtr = ", RawPointer(*currentPtr), "\n");
                 previous = current;
                 currentPtr = &(*currentPtr)->nextInQueue;
                 break;
@@ -168,7 +166,7 @@ public:
                 [[fallthrough]];
             case DequeueResult::RemoveAndContinue:
                 if (verbose)
-                    dataLogForCurrentThread(": dequeueing ", RawPointer(current.get()), " from ", RawPointer(this), "\n");
+                    dataLogForCurrentThread(": dequeueing ", RawPointer(current), " from ", RawPointer(this), "\n");
                 if (current == queueTail)
                     queueTail = previous;
                 didDequeue = true;
@@ -257,7 +255,7 @@ const unsigned maxLoadFactor = 3;
 
 const unsigned growthFactor = 2;
 
-unsigned hashAddress(const void* address)
+unsigned NODELETE hashAddress(const void* address)
 {
     return WTF::PtrHash<const void*>::hash(address);
 }
@@ -378,7 +376,7 @@ void ensureHashtableSize(unsigned numThreads)
     Vector<RefPtr<ThreadData>> threadDatas;
     for (Bucket* bucket : reusableBuckets) {
         while (RefPtr threadData = bucket->dequeue())
-            threadDatas.append(WTFMove(threadData));
+            threadDatas.append(WTF::move(threadData));
     }
 
     unsigned newSize = numThreads * growthFactor * maxLoadFactor;
@@ -389,7 +387,7 @@ void ensureHashtableSize(unsigned numThreads)
         dataLogForCurrentThread(": created new hashtable: ", RawPointer(newHashtable.get()), "\n");
     for (auto& threadData : threadDatas) {
         if (verbose)
-            dataLogForCurrentThread(": rehashing thread data ", RawPointer(threadData.get()), " with address = ", RawPointer(threadData->address), "\n");
+            dataLogForCurrentThread(": rehashing thread data ", RawPointer(threadData), " with address = ", RawPointer(threadData->address), "\n");
         unsigned hash = hashAddress(threadData->address);
         unsigned index = hash % newHashtable->data.size();
         if (verbose)
@@ -402,8 +400,8 @@ void ensureHashtableSize(unsigned numThreads)
                 bucket = reusableBuckets.takeLast();
             newHashtable->data[index].store(bucket);
         }
-        
-        bucket->enqueue(threadData.get());
+
+        bucket->enqueue(threadData);
     }
     
     // At this point there may be some buckets left unreused. This could easily happen if the
@@ -431,7 +429,6 @@ void ensureHashtableSize(unsigned numThreads)
 }
 
 ThreadData::ThreadData()
-    : thread(Thread::currentSingleton())
 {
     unsigned currentNumThreads;
     for (;;) {
@@ -460,8 +457,8 @@ ThreadData* myThreadData()
     RefPtr<ThreadData>& result = *threadData.get();
     if (!result)
         result = adoptRef(new ThreadData());
-    
-    return result.get();
+
+    return result;
 }
 
 template<typename Functor>
@@ -499,8 +496,8 @@ bool enqueue(const void* address, NOESCAPE const Functor& functor)
         bool result;
         if (threadData) {
             if (verbose)
-                dataLogForCurrentThread(": proceeding to enqueue ", RawPointer(threadData.get()), "\n");
-            bucket->enqueue(threadData.get());
+                dataLogForCurrentThread(": proceeding to enqueue ", RawPointer(threadData), "\n");
+            bucket->enqueue(threadData);
             result = true;
         } else
             result = false;
@@ -583,7 +580,7 @@ NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
                 return nullptr;
 
             me->address = address;
-            return me.get();
+            return me;
         });
 
     if (!enqueueResult)
@@ -773,7 +770,7 @@ NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned coun
 
     for (auto& threadData : threadDatas) {
         if (verbose)
-            dataLogForCurrentThread(": unparking ", RawPointer(threadData.get()), " with address ", RawPointer(threadData->address), "\n");
+            dataLogForCurrentThread(": unparking ", RawPointer(threadData), " with address ", RawPointer(threadData->address), "\n");
         ASSERT(threadData->address);
         {
             MutexLocker locker(threadData->parkingLock);
@@ -793,7 +790,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
     unparkCount(address, UINT_MAX);
 }
 
-NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(Thread&, const void*)>& callback)
+NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(uintptr_t, const void*)>& callback)
 {
     Vector<Bucket*> bucketsToUnlock = lockHashtable();
 
@@ -803,10 +800,15 @@ NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(Thread&, const
         if (!bucket)
             continue;
         for (RefPtr currentThreadData = bucket->queueHead; currentThreadData; currentThreadData = currentThreadData->nextInQueue)
-            callback(currentThreadData->thread.get(), currentThreadData->address);
+            callback(reinterpret_cast<uintptr_t>(static_cast<ThreadData*>(currentThreadData)), currentThreadData->address);
     }
     
     unlockHashtable(bucketsToUnlock);
+}
+
+uintptr_t ParkingLot::currentThreadID()
+{
+    return reinterpret_cast<uintptr_t>(myThreadData());
 }
 
 } // namespace WTF

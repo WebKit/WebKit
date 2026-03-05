@@ -38,13 +38,18 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FetchEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchEvent);
 
 Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {
-    FetchEvent::Init init;
-    init.request = FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { });
-    return FetchEvent::create(*context.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
+    auto init = FetchEvent::Init {
+        ExtendableEventInit { EventInit { false, false, false } },
+        FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { }),
+        nullString(),
+        nullString(),
+        nullptr,
+    };
+    return FetchEvent::create(*context.globalObject(), eventNames().fetchEvent, WTF::move(init), Event::IsTrusted::Yes);
 }
 
 static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& globalObject, RefPtr<DOMPromise>&& promise)
@@ -61,16 +66,16 @@ static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& global
 
 FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::FetchEvent, type, initializer, isTrusted)
-    , m_request(initializer.request.releaseNonNull())
-    , m_clientId(WTFMove(initializer.clientId))
-    , m_resultingClientId(WTFMove(initializer.resultingClientId))
-    , m_handled(retrieveHandledPromise(globalObject, WTFMove(initializer.handled)))
+    , m_request(WTF::move(initializer.request))
+    , m_clientId(WTF::move(initializer.clientId))
+    , m_resultingClientId(WTF::move(initializer.resultingClientId))
+    , m_handled(retrieveHandledPromise(globalObject, WTF::move(initializer.handled)))
 {
 }
 
 FetchEvent::~FetchEvent()
 {
-    if (auto callback = WTFMove(m_onResponse)) {
+    if (auto callback = WTF::move(m_onResponse)) {
         RELEASE_LOG_ERROR_IF(m_respondWithEntered, ServiceWorker, "Fetch event is destroyed without a response, respondWithEntered=%d, waitToRespond=%d, respondWithError=%d, respondPromise=%d", m_respondWithEntered, m_waitToRespond, m_respondWithError, !!m_respondPromise);
         callback(makeUnexpected(std::optional<ResourceError> { }));
     }
@@ -112,21 +117,21 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
 void FetchEvent::onResponse(ResponseCallback&& callback)
 {
     ASSERT(!m_onResponse);
-    m_onResponse = WTFMove(callback);
+    m_onResponse = WTF::move(callback);
 }
 
 void FetchEvent::respondWithError(ResourceError&& error)
 {
     m_respondWithError = true;
-    processResponse(makeUnexpected(WTFMove(error)));
+    processResponse(makeUnexpected(WTF::move(error)));
 }
 
 void FetchEvent::processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result)
 {
     m_respondPromise = nullptr;
     m_waitToRespond = false;
-    if (auto callback = WTFMove(m_onResponse))
-        callback(WTFMove(result));
+    if (auto callback = WTF::move(m_onResponse))
+        callback(WTF::move(result));
 }
 
 void FetchEvent::promiseIsSettled()
@@ -194,7 +199,7 @@ void FetchEvent::navigationPreloadIsReady(ResourceResponse&& response)
     m_preloadResponsePromise->resolve(value);
 
     // We postpone the load to leave some time for the service worker to use the preload before loading it.
-    context->postTask([fetchResponse = WTFMove(fetchResponse), request = WTFMove(request)](auto& context) {
+    context->postTask([fetchResponse = WTF::move(fetchResponse), request = WTF::move(request)](auto& context) {
         if (!fetchResponse->isUsedForPreload())
             fetchResponse->startLoader(context, request.get(), cachedResourceRequestInitiatorTypes().navigation);
     });

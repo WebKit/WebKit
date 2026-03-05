@@ -23,8 +23,8 @@ Number.prototype.toString = function() {
   toStringCalled = true;
 }
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([20, 100, 3]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([20, 100, 3]));
   var result = sample.sort();
   assert.sameValue(toStringCalled, false, "Number.prototype.toString will not be called");
   assert(compareArray(result, [3, 20, 100]), "Default sorting by value");

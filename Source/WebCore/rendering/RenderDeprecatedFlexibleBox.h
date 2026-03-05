@@ -29,7 +29,7 @@ namespace WebCore {
 class FlexBoxIterator;
 
 class RenderDeprecatedFlexibleBox final : public RenderBlock {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderDeprecatedFlexibleBox);
+    WTF_MAKE_TZONE_ALLOCATED(RenderDeprecatedFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderDeprecatedFlexibleBox);
 public:
     RenderDeprecatedFlexibleBox(Element&, RenderStyle&&);
@@ -39,7 +39,7 @@ public:
 
     ASCIILiteral renderName() const override;
 
-    void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
 
     void layoutBlock(RelayoutChildren, LayoutUnit pageHeight = 0_lu) override;
     void layoutHorizontalBox(RelayoutChildren);
@@ -56,7 +56,7 @@ private:
     bool hasClampingAndNoFlexing() const;
 
     LayoutUnit allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
-    void placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = nullptr);
+    void NODELETE placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = nullptr);
 
     bool hasMultipleLines() const { return style().boxLines() == BoxLines::Multiple; }
     bool isVertical() const { return style().boxOrient() == BoxOrient::Vertical; }

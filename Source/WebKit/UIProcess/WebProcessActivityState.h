@@ -46,17 +46,22 @@ public:
     void takeAudibleActivity();
     void takeCapturingActivity();
     void takeMutedCaptureAssertion();
+    void takeNetworkActivity();
+    void takeTextExtractionAssertion();
 
     void reset();
     void dropVisibleActivity();
     void dropAudibleActivity();
     void dropCapturingActivity();
     void dropMutedCaptureAssertion();
+    void dropNetworkActivity();
+    void dropTextExtractionAssertion();
 
-    bool hasValidVisibleActivity() const;
-    bool hasValidAudibleActivity() const;
-    bool hasValidCapturingActivity() const;
-    bool hasValidMutedCaptureAssertion() const;
+    bool NODELETE hasValidVisibleActivity() const;
+    bool NODELETE hasValidAudibleActivity() const;
+    bool NODELETE hasValidCapturingActivity() const;
+    bool NODELETE hasValidMutedCaptureAssertion() const;
+    bool NODELETE hasValidNetworkActivity() const;
 
 #if PLATFORM(IOS_FAMILY)
     void takeOpeningAppLinkActivity();
@@ -68,14 +73,13 @@ public:
     void updateWebProcessSuspensionDelay();
     void takeAccessibilityActivityWhenInWindow();
     void takeAccessibilityActivity();
-    bool hasAccessibilityActivityForTesting() const;
+    bool NODELETE hasAccessibilityActivityForTesting() const;
     void viewDidEnterWindow();
     void viewDidLeaveWindow();
 #endif
 
 private:
     WebProcessProxy& process() const;
-    Ref<WebProcessProxy> protectedProcess() const;
 
     Variant<WeakRef<WebPageProxy>, WeakRef<RemotePageProxy>> m_page;
 
@@ -91,6 +95,8 @@ private:
 #if PLATFORM(IOS_FAMILY)
     RefPtr<ProcessThrottlerActivity> m_openingAppLinkActivity;
 #endif
+    RefPtr<ProcessThrottlerActivity> m_networkActivity;
+    RefPtr<ProcessAssertion> m_textExtractionAssertion;
 };
 
 } // namespace WebKit

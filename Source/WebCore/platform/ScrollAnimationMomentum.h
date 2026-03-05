@@ -33,6 +33,7 @@ class ScrollingMomentumCalculator;
 
 class ScrollAnimationMomentum final : public ScrollAnimation {
     WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationMomentum);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollAnimationMomentum);
 public:
     ScrollAnimationMomentum(ScrollAnimationClient&);
     virtual ~ScrollAnimationMomentum();

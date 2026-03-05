@@ -19,6 +19,7 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
 #include "include/core/SkSerialProcs.h"
+#include "include/core/SkStream.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTextBlob.h"
 #include "include/core/SkTypeface.h"
@@ -182,7 +183,7 @@ public:
 
             const char* txt = "BOOO";
             const size_t txtLen = strlen(txt);
-            const int glyphCount = font.countText(txt, txtLen, SkTextEncoding::kUTF8);
+            const size_t glyphCount = font.countText(txt, txtLen, SkTextEncoding::kUTF8);
             const SkTextBlobBuilder::RunBuffer& buffer = builder.allocRunPos(font, glyphCount);
 
             font.textToGlyphs(txt, txtLen, SkTextEncoding::kUTF8, {buffer.glyphs, glyphCount});
@@ -337,14 +338,14 @@ DEF_TEST(TextBlob_extended, reporter) {
     const char text1[] = "Foo";
     const char text2[] = "Bar";
 
-    int glyphCount = font.countText(text1, strlen(text1), SkTextEncoding::kUTF8);
-    AutoTMalloc<SkGlyphID> glyphs(glyphCount);
-    (void)font.textToGlyphs(text1, strlen(text1), SkTextEncoding::kUTF8, {glyphs, glyphCount});
+    size_t glyphCount = font.countText(text1, strlen(text1), SkTextEncoding::kUTF8);
+    AutoTArray<SkGlyphID> glyphs(glyphCount);
+    (void)font.textToGlyphs(text1, strlen(text1), SkTextEncoding::kUTF8, glyphs);
 
     auto run = textBlobBuilder.allocRunText(font, glyphCount, 0, 0, SkToInt(strlen(text2)));
     memcpy(run.glyphs, glyphs.get(), sizeof(uint16_t) * glyphCount);
     memcpy(run.utf8text, text2, strlen(text2));
-    for (int i = 0; i < glyphCount; ++i) {
+    for (size_t i = 0; i < glyphCount; ++i) {
         run.clusters[i] = std::min(SkToU32(i), SkToU32(strlen(text2)));
     }
     sk_sp<SkTextBlob> blob(textBlobBuilder.make());
@@ -375,7 +376,7 @@ static void add_run(SkTextBlobBuilder* builder, const char text[], SkScalar x, S
     font.setSize(16);
     font.setTypeface(tf);
 
-    int glyphCount = font.countText(text, strlen(text), SkTextEncoding::kUTF8);
+    size_t glyphCount = font.countText(text, strlen(text), SkTextEncoding::kUTF8);
 
     SkTextBlobBuilder::RunBuffer buffer = builder->allocRun(font, glyphCount, x, y);
 
@@ -395,7 +396,7 @@ static sk_sp<SkImage> render(const SkTextBlob* blob) {
     return surf->makeImageSnapshot();
 }
 
-static sk_sp<SkData> SerializeTypeface(SkTypeface* tf, void* ctx) {
+static sk_sp<const SkData> SerializeTypeface(SkTypeface* tf, void* ctx) {
     // Do not serialize the empty font.
     if (!tf || (tf->countGlyphs() == 0 && tf->getBounds().isEmpty())) {
         return nullptr;
@@ -407,17 +408,13 @@ static sk_sp<SkData> SerializeTypeface(SkTypeface* tf, void* ctx) {
     return SkData::MakeWithCopy(&idx, sizeof(idx));
 }
 
-static sk_sp<SkTypeface> DeserializeTypeface(const void* data, size_t length, void* ctx) {
+static sk_sp<SkTypeface> DeserializeTypeface(SkStream& s, void* ctx) {
     auto array = (TArray<sk_sp<SkTypeface>>*)ctx;
-    if (length != sizeof(size_t)) {
+    size_t idx = 0;
+    if (s.read(&idx, sizeof(idx)) != sizeof(idx)) {
         SkDEBUGFAIL("Did not serialize an index");
         return nullptr;
     }
-    if (!data) {
-        return nullptr;
-    }
-    size_t idx = 0;
-    std::memcpy(&idx, data, sizeof(size_t));
     if (idx >= SkToSizeT(array->size())) {
         SkDEBUGFAIL("Index too big");
         return nullptr;
@@ -452,7 +449,7 @@ DEF_TEST(TextBlob_serialize, reporter) {
         "Did not serialize exactly one non-empty font, instead %d", array.size());
     REPORTER_ASSERT(reporter, array[0]->countGlyphs() > 0, "Serialized typeface had no glyphs");
     SkDeserialProcs deserializeProcs;
-    deserializeProcs.fTypefaceProc = &DeserializeTypeface;
+    deserializeProcs.fTypefaceStreamProc = &DeserializeTypeface;
     deserializeProcs.fTypefaceCtx = (void*) &array;
     sk_sp<SkTextBlob> blob1 = SkTextBlob::Deserialize(data->data(), data->size(), deserializeProcs);
     REPORTER_ASSERT(reporter, blob1);

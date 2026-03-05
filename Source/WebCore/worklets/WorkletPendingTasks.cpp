@@ -32,7 +32,7 @@ namespace WebCore {
 
 WorkletPendingTasks::WorkletPendingTasks(Worklet& worklet, DOMPromiseDeferred<void>&& promise, int counter)
     : m_worklet(worklet)
-    , m_promise(WTFMove(promise))
+    , m_promise(WTF::move(promise))
     , m_counter(counter)
 {
     ASSERT(isMainThread());
@@ -46,7 +46,7 @@ void WorkletPendingTasks::abort(Exception&& exception)
         return;
 
     m_counter = -1;
-    m_promise.reject(WTFMove(exception));
+    m_promise.reject(WTF::move(exception));
     if (m_worklet)
         m_worklet->finishPendingTasks(*this);
 }

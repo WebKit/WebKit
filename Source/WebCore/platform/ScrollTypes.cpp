@@ -125,6 +125,19 @@ TextStream& operator<<(TextStream& ts, ScrollbarMode behavior)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollbarRevealBehavior behavior)
+{
+    switch (behavior) {
+    case ScrollbarRevealBehavior::DontReveal:
+        ts << "dont-reveal"_s;
+        break;
+    case ScrollbarRevealBehavior::Default:
+        ts << "default"_s;
+        break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, OverflowAnchor behavior)
 {
     switch (behavior) {
@@ -199,6 +212,7 @@ TextStream& operator<<(TextStream& ts, ScrollPositionChangeOptions options)
     ts.dumpProperty("animated"_s, options.animated == ScrollIsAnimated::Yes);
     ts.dumpProperty("snap point selection method"_s, options.snapPointSelectionMethod);
     ts.dumpProperty("original scroll delta"_s, options.originalScrollDelta ? *options.originalScrollDelta : FloatSize());
+    ts.dumpProperty("interrupts animation"_s, options.interruptsAnimation == ScrollInterruptsAnimation::Yes);
 
     return ts;
 }

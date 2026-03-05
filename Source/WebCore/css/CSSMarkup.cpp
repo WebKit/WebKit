@@ -36,7 +36,7 @@
 namespace WebCore {
 
 template <typename CharacterType>
-static inline bool isCSSTokenizerIdentifier(std::span<const CharacterType> characters)
+static inline bool NODELETE isCSSTokenizerIdentifier(std::span<const CharacterType> characters)
 {
     // -?
     skipWhile(characters, '-');
@@ -52,7 +52,7 @@ static inline bool isCSSTokenizerIdentifier(std::span<const CharacterType> chara
 }
 
 // "ident" from the CSS tokenizer, minus backslash-escape sequences
-static bool isCSSTokenizerIdentifier(const String& string)
+static bool NODELETE isCSSTokenizerIdentifier(const String& string)
 {
     if (string.isEmpty())
         return false;

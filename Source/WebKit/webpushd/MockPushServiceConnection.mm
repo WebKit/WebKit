@@ -45,7 +45,7 @@ ClientKeys MockPushServiceConnection::generateClientKeys()
     auto privateKey = base64URLDecode("q1dXpw3UpT5VOmu_cf_v6ih07Aems3njxI-JWgLcM94"_s).value();
     auto secret = base64URLDecode("BTBZMqHH6r4Tts7J_aSIgg"_s).value();
 
-    return ClientKeys { P256DHKeyPair { WTFMove(publicKey), WTFMove(privateKey) }, WTFMove(secret) };
+    return ClientKeys { P256DHKeyPair { WTF::move(publicKey), WTF::move(privateKey) }, WTF::move(secret) };
 }
 
 void MockPushServiceConnection::subscribe(const String&, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& handler)
@@ -66,15 +66,15 @@ void MockPushServiceConnection::unsubscribe(const String&, const Vector<uint8_t>
 
 void MockPushServiceConnection::setTopicLists(TopicLists&& topics)
 {
-    setEnabledTopics(WTFMove(topics.enabledTopics));
-    setIgnoredTopics(WTFMove(topics.ignoredTopics));
-    setOpportunisticTopics(WTFMove(topics.opportunisticTopics));
-    setNonWakingTopics(WTFMove(topics.nonWakingTopics));
+    setEnabledTopics(WTF::move(topics.enabledTopics));
+    setIgnoredTopics(WTF::move(topics.ignoredTopics));
+    setOpportunisticTopics(WTF::move(topics.opportunisticTopics));
+    setNonWakingTopics(WTF::move(topics.nonWakingTopics));
 }
 
 void MockPushServiceConnection::setPublicTokenForTesting(Vector<uint8_t>&& token)
 {
-    didReceivePublicToken(WTFMove(token));
+    didReceivePublicToken(WTF::move(token));
 }
 
 } // namespace WebPushD

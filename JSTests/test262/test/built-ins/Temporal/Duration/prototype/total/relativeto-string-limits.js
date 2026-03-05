@@ -64,3 +64,7 @@ for (const relativeTo of invalidStrings) {
     `"${relativeTo}" is outside the representable range for a relativeTo parameter`
   );
 }
+
+const duration = Temporal.Duration.from({nanoseconds: 0});
+const options = {unit: "nanoseconds", relativeTo: "+999999-01-01"};
+assert.throws(RangeError, () => duration.total(options));

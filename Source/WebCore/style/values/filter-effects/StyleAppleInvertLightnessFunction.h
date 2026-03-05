@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,10 @@
 
 #pragma once
 
-namespace WebCore {
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StyleValueTypes.h>
 
-class FilterOperation;
-class InvertLightnessFilterOperation;
-class RenderStyle;
+namespace WebCore {
 
 namespace CSS {
 struct AppleInvertLightness;
@@ -36,10 +35,25 @@ struct AppleInvertLightness;
 
 namespace Style {
 
-class BuilderState;
+// Non-standard addition.
+struct AppleInvertLightness {
+    constexpr bool operator==(const AppleInvertLightness&) const = default;
 
-CSS::AppleInvertLightness toCSSAppleInvertLightness(Ref<InvertLightnessFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::AppleInvertLightness&, const BuilderState&);
+    static constexpr AppleInvertLightness passthroughForInterpolation() { return { }; }
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+
+    bool transformColor(SRGBA<float>&) const;
+    bool inverseTransformColor(SRGBA<float>&) const;
+};
+using AppleInvertLightnessFunction = FunctionNotation<CSSValueAppleInvertLightness, AppleInvertLightness>;
+
+DEFINE_TYPE_MAPPING(CSS::AppleInvertLightness, AppleInvertLightness)
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_EMPTY_LIKE_CONFORMANCE(WebCore::Style::AppleInvertLightness)

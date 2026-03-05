@@ -29,6 +29,7 @@
 #include "NavigatingToAppBoundDomain.h"
 #include "SafeBrowsingCheckOngoing.h"
 #include "SandboxExtension.h"
+#include "SessionState.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/NavigationIdentifier.h>
 
@@ -54,6 +55,7 @@ struct PolicyDecision {
     std::optional<SandboxExtension::Handle> sandboxExtensionHandle { std::nullopt };
     std::optional<PolicyDecisionConsoleMessage> consoleMessage { std::nullopt };
     SafeBrowsingCheckOngoing isSafeBrowsingCheckOngoing { SafeBrowsingCheckOngoing::No };
+    RefPtr<FrameState> backForwardFrameState { nullptr };
 };
 
 } // namespace WebKit

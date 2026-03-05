@@ -542,7 +542,7 @@ TEST_F(WTF_URL, URLRemoveQueryParameters)
     HashSet<String> keyRemovalSet4 { "key"_s, "key1"_s };
 
     auto checkRemovedParameters = [](int lineNumber, const Vector<String>& removedParameters, std::initializer_list<String>&& expected) {
-        Vector<String> expectedParameters { WTFMove(expected) };
+        Vector<String> expectedParameters { WTF::move(expected) };
         bool areEqual = removedParameters == expectedParameters;
         EXPECT_TRUE(areEqual);
         if (areEqual)
@@ -648,7 +648,7 @@ TEST_F(WTF_URL, IsolatedCopy)
     // Tests optimization for URL::isolatedCopy() on a r-value reference.
     URL url2 { "https://www.webkit.org"_str };
     originalStringImpl = url2.string().impl();
-    URL url2Copy = WTFMove(url2).isolatedCopy();
+    URL url2Copy = WTF::move(url2).isolatedCopy();
     EXPECT_EQ(url2Copy, URL { "https://www.webkit.org"_str });
     EXPECT_EQ(url2Copy.string().impl(), originalStringImpl); // Should have adopted the StringImpl of url2.
 }
@@ -657,12 +657,12 @@ TEST_F(WTF_URL, MoveInvalidatesURL)
 {
     URL url1 { "http://www.apple.com"_str };
     EXPECT_TRUE(url1.isValid());
-    URL url2 { WTFMove(url1) };
+    URL url2 { WTF::move(url1) };
     EXPECT_TRUE(url2.isValid());
     SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(url1.isValid());
 
     URL url3 { "http://www.webkit.org"_str };
-    url3 = WTFMove(url2);
+    url3 = WTF::move(url2);
     EXPECT_TRUE(url3.isValid());
     SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(url2.isValid());
 

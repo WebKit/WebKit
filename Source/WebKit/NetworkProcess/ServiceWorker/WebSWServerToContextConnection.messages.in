@@ -41,7 +41,7 @@ messages -> WebSWServerToContextConnection {
     [EnabledBy=ServiceWorkersEnabled] Focus(WebCore::ScriptExecutionContextIdentifier serviceWorkerClientIdentifier) -> (struct std::optional<WebCore::ServiceWorkerClientData> result)
     [EnabledBy=ServiceWorkersEnabled] Navigate(WebCore::ScriptExecutionContextIdentifier clientIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> result)
     [EnabledBy=ServiceWorkersEnabled] SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, struct WebCore::ServiceWorkerImportedScript script)
-    [EnabledBy=ServiceWorkersEnabled] PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
+    [EnabledBy=ServiceWorkersEnabled] PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, WebCore::SecurityOriginData sourceOrigin)
     [EnabledBy=ServiceWorkersEnabled] DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)
     [EnabledBy=ServiceWorkersEnabled] SetAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
 

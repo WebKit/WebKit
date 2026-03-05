@@ -73,7 +73,7 @@ Ref<Touch> DocumentTouch::createTouch(Document& document, RefPtr<WindowProxy>&& 
 
 Ref<TouchList> DocumentTouch::createTouchList(Document&, FixedVector<std::reference_wrapper<Touch>>&& touches)
 {
-    return TouchList::create(WTFMove(touches));
+    return TouchList::create(WTF::move(touches));
 }
 
 }

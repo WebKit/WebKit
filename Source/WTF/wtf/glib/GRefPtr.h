@@ -132,17 +132,18 @@ public:
     }
 
     // Relinquishes the owned reference as a raw pointer. GRefPtr<T> is empty afterwards.
-    T* /* (transfer full) */ leakRef() WARN_UNUSED_RETURN
+    [[nodiscard]] T* /* (transfer full) */ leakRef()
     {
         return std::exchange(m_ptr, nullptr);
     }
 
     // Increments the reference count.
-    T* /* (transfer full) */ ref() WARN_UNUSED_RETURN {
+    [[nodiscard]] T* /* (transfer full) */ ref()
+    {
         return RefDerefTraits::refIfNotNull(m_ptr);
     }
 
-    T*& outPtr()
+    T*& outPtr() LIFETIME_BOUND
     {
         clear();
         return m_ptr;
@@ -162,7 +163,7 @@ public:
     // Only used for C API functions returning (transfer none) of objects where the above
     // can be established, e.g. objects stored in a global dictionary.
     T* /* (transfer none) */ getUncheckedLifetime() const { return m_ptr; }
-    ALWAYS_INLINE T* operator->() const { return m_ptr; }
+    ALWAYS_INLINE T* operator->() const LIFETIME_BOUND { return m_ptr; }
 
     bool operator!() const { return !m_ptr; }
     explicit operator bool() const { return !!m_ptr; }
@@ -180,7 +181,7 @@ public:
 
     GRefPtr& operator=(GRefPtr&& other)
     {
-        GRefPtr ptr = WTFMove(other);
+        GRefPtr ptr = WTF::move(other);
         swap(ptr);
         return *this;
     }
@@ -258,7 +259,7 @@ template<typename P> struct HashTraits<GRefPtr<P>> : SimpleClassHashTraits<GRefP
     {
         // See unique_ptr's customDeleteBucket() for an explanation.
         ASSERT(!SimpleClassHashTraits<GRefPtr<P>>::isDeletedValue(value));
-        auto valueToBeDestroyed = WTFMove(value);
+        auto valueToBeDestroyed = WTF::move(value);
         SimpleClassHashTraits<GRefPtr<P>>::constructDeletedValue(value);
     }
 };

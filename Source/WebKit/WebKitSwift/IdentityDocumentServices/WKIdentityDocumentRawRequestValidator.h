@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #import "WKISO18013Request.h"
 #import "WKIdentityDocumentPresentmentRequest.h"
 #import "WKIdentityDocumentPresentmentResponse.h"
@@ -38,3 +40,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(WEB_AUTHN)

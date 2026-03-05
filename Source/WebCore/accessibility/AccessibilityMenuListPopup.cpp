@@ -35,7 +35,6 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
-#include "RenderMenuList.h"
 
 namespace WebCore {
 

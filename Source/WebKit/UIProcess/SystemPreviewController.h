@@ -70,7 +70,7 @@ public:
     void end();
 
     WebPageProxy* page() { return m_webPageProxy.get(); }
-    const WebCore::SystemPreviewInfo& previewInfo() const { return m_systemPreviewInfo; }
+    const WebCore::SystemPreviewInfo& previewInfo() const LIFETIME_BOUND { return m_systemPreviewInfo; }
 
     void triggerSystemPreviewAction();
 

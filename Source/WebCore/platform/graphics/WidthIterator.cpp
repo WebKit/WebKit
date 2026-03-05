@@ -396,11 +396,11 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     auto shouldProcessTextSpacingTrim = !fontDescription.textSpacingTrim().isSpaceAll();
     if (shouldProcessTextSpacingTrim) {
         TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
-        halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*glyphData.protectedFont(), fontDescription.textSpacingTrim(), charactersData);
+        halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*protect(glyphData.font), fontDescription.textSpacingTrim(), charactersData);
         glyphData.font = halfWidthFont ? halfWidthFont.get() : glyphData.font;
     }
 
-    advanceInternalState.updateFont(glyphData.font ? glyphData.protectedFont().get() : primaryFont.ptr());
+    advanceInternalState.updateFont(glyphData.font ? protect(glyphData.font).get() : primaryFont.ptr());
     auto capitalizedCharacter = capitalized(character);
     if (shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing))
         smallCapsState.setSmallCapsData(advanceInternalState.font.get(), fontDescription);
@@ -432,11 +432,11 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
         if (shouldProcessTextSpacingTrim) {
             TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
-            halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*glyphData.protectedFont(), fontDescription.textSpacingTrim(), charactersData);
+            halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*protect(glyphData.font), fontDescription.textSpacingTrim(), charactersData);
             glyphData.font = halfWidthFont ? halfWidthFont.get() : glyphData.font;
         }
 
-        advanceInternalState.updateFont(glyphData.font ? glyphData.protectedFont().get() : primaryFont.ptr());
+        advanceInternalState.updateFont(glyphData.font ? protect(glyphData.font).get() : primaryFont.ptr());
         smallCapsState.shouldSynthesizeCharacter = shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing);
         updateCharacterAndSmallCapsIfNeeded(smallCapsState, capitalizedCharacter, characterToWrite);
 
@@ -646,7 +646,7 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
         if (!textAutospace.isNoAutospace()) {
             characterClass = TextSpacing::characterClass(m_run.get()[i]);
             if (textAutospace.shouldApplySpacing(characterClass, previousCharacterClass)) {
-                textAutospaceSpacing = TextAutospace::textAutospaceSize(glyphBuffer.protectedFontAt(glyphIndexRange->leadingGlyphIndex));
+                textAutospaceSpacing = TextAutospace::textAutospaceSize(protect(glyphBuffer.fontAt(glyphIndexRange->leadingGlyphIndex)));
                 glyphBuffer.expandAdvanceToLogicalRight(glyphIndexRange->leadingGlyphIndex, textAutospaceSpacing);
                 m_runWidthSoFar += textAutospaceSpacing;
             }
@@ -801,7 +801,7 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
             // Let's assume that .notdef is visible.
             GlyphBufferGlyph visibleGlyph = 0;
             clobberGlyph(i, visibleGlyph);
-            clobberAdvance(i, glyphBuffer.protectedFontAt(i)->widthForGlyph(visibleGlyph));
+            clobberAdvance(i, protect(glyphBuffer.fontAt(i))->widthForGlyph(visibleGlyph));
             continue;
         }
 

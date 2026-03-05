@@ -55,7 +55,7 @@ public:
     Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
     Ref<FetchResponse> createOpaqueWithBlobBodyResponse(ScriptExecutionContext&);
 
-    void schedulePushEvent(const String&, RefPtr<DeferredPromise>&&);
+    void schedulePushEvent(const String&, Ref<DeferredPromise>&&);
     void schedulePushSubscriptionChangeEvent(PushSubscription* newSubscription, PushSubscription* oldSubscription);
     Vector<String> fetchResponseHeaderList(FetchResponse&);
 
@@ -81,7 +81,7 @@ private:
 
     ServiceWorkerIdentifier m_identifier;
     RefPtr<DeferredPromise> m_lastNavigationWasAppInitiatedPromise;
-    HashMap<uint64_t, RefPtr<DeferredPromise>> m_pushEventPromises;
+    HashMap<uint64_t, Ref<DeferredPromise>> m_pushEventPromises;
     uint64_t m_pushEventCounter { 0 };
 };
 

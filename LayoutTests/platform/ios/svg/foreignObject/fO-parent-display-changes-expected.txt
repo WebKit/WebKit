@@ -8,5 +8,5 @@ layer at (0,0) size 800x600
         RenderBlock {html} at (0,0) size 100x100
 layer at (0,0) size 100x100
   RenderBody {body} at (0,0) size 100x100 [color=#FFFFFF]
-    RenderText {#text} at (0,0) size 37x19
+    RenderText {#text} at (0,0) size 37x20
       text run at (0,0) width 37: "PASS"

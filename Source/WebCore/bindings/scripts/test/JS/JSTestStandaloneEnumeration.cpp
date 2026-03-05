@@ -55,12 +55,11 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestStandaloneEnumeration en
 
 template<> std::optional<TestStandaloneEnumeration> parseEnumerationFromString<TestStandaloneEnumeration>(const String& stringValue)
 {
-    static constexpr std::array<std::pair<ComparableASCIILiteral, TestStandaloneEnumeration>, 3> mappings {
-        std::pair<ComparableASCIILiteral, TestStandaloneEnumeration> { "enum-value3"_s, TestStandaloneEnumeration::EnumValue3 },
-        std::pair<ComparableASCIILiteral, TestStandaloneEnumeration> { "enumValue1"_s, TestStandaloneEnumeration::EnumValue1 },
-        std::pair<ComparableASCIILiteral, TestStandaloneEnumeration> { "enumValue2"_s, TestStandaloneEnumeration::EnumValue2 },
-    };
-    static constexpr SortedArrayMap enumerationMapping { mappings };
+    static constexpr SortedArrayMap enumerationMapping { std::to_array<std::pair<ComparableASCIILiteral, TestStandaloneEnumeration>>({
+        { "enum-value3"_s, TestStandaloneEnumeration::EnumValue3 },
+        { "enumValue1"_s, TestStandaloneEnumeration::EnumValue1 },
+        { "enumValue2"_s, TestStandaloneEnumeration::EnumValue2 },
+    }) };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); enumerationValue) [[likely]]
         return *enumerationValue;
     return std::nullopt;

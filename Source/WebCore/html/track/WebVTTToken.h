@@ -77,10 +77,10 @@ public:
     }
 
     Type::Type type() const { return m_type; }
-    const String& name() const { return m_data; }
-    const String& characters() const { return m_data; }
-    const AtomString& classes() const { return m_classes; }
-    const AtomString& annotation() const { return m_annotation; }
+    const String& name() const LIFETIME_BOUND { return m_data; }
+    const String& characters() const LIFETIME_BOUND { return m_data; }
+    const AtomString& classes() const LIFETIME_BOUND { return m_classes; }
+    const AtomString& annotation() const LIFETIME_BOUND { return m_annotation; }
 
 private:
     WebVTTToken(Type::Type type, const String& data)

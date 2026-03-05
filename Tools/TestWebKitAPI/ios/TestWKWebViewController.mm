@@ -59,7 +59,7 @@
         return nil;
 
     _initialViewFrame = frame;
-    _configuration = configuration ?: adoptNS([[WKWebViewConfiguration alloc] init]);
+    _configuration = configuration ? RetainPtr { configuration } : adoptNS([[WKWebViewConfiguration alloc] init]);
     return self;
 }
 

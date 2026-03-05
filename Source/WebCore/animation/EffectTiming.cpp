@@ -33,7 +33,7 @@ OptionalDoubleOrString EffectTiming::durationAsDoubleOrString() const
     return WTF::switchOn(duration,
         [](double doubleDuration) -> OptionalDoubleOrString { return doubleDuration; },
         [](const String& stringDuration) -> OptionalDoubleOrString { return stringDuration; },
-        [](const RefPtr<CSSNumericValue>&) -> OptionalDoubleOrString { return std::nullopt; }
+        [](const Ref<CSSNumericValue>&) -> OptionalDoubleOrString { return std::nullopt; }
     );
 }
 

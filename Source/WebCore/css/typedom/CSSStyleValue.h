@@ -158,7 +158,7 @@ enum class SerializationArguments : uint8_t {
 };
 
 class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleValue);
+    WTF_MAKE_TZONE_ALLOCATED(CSSStyleValue);
 public:
     String toString() const;
     virtual void serialize(StringBuilder&, OptionSet<SerializationArguments> = { }) const;

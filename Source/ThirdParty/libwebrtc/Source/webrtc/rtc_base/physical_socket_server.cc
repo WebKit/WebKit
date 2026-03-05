@@ -658,7 +658,7 @@ void PhysicalSocket::OnResolveResult(const AsyncDnsResolverResult& result) {
 
   if (error) {
     SetError(error);
-    SignalCloseEvent(this, error);
+    NotifyCloseEvent(this, error);
   }
 }
 
@@ -1037,7 +1037,7 @@ void SocketDispatcher::OnEvent(uint32_t ff, int err) {
   // something like a READ followed by a CONNECT, which would be odd.
   if ((ff & DE_CONNECT) != 0) {
     DisableEvents(DE_CONNECT);
-    SignalConnectEvent(this);
+    NotifyConnectEvent(this);
   }
   if ((ff & DE_ACCEPT) != 0) {
     DisableEvents(DE_ACCEPT);
@@ -1054,7 +1054,7 @@ void SocketDispatcher::OnEvent(uint32_t ff, int err) {
   if ((ff & DE_CLOSE) != 0) {
     // The socket is now dead to us, so stop checking it.
     SetEnabledEvents(0);
-    SignalCloseEvent(this, err);
+    NotifyCloseEvent(this, err);
   }
 #if defined(WEBRTC_USE_EPOLL)
   FinishBatchedEventUpdates();
@@ -1652,7 +1652,7 @@ void PhysicalSocketServer::AddEpoll(Dispatcher* pdispatcher, uint64_t key) {
     return;
   }
 
-  struct epoll_event event = {0};
+  struct epoll_event event = {};
   event.events = GetEpollEvents(pdispatcher->GetRequestedEvents());
   if (event.events == 0u) {
     // Don't add at all if we don't have any requested events. Could indicate a
@@ -1675,7 +1675,7 @@ void PhysicalSocketServer::RemoveEpoll(Dispatcher* pdispatcher) {
     return;
   }
 
-  struct epoll_event event = {0};
+  struct epoll_event event = {};
   int err = epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, fd, &event);
   RTC_DCHECK(err == 0 || errno == ENOENT);
   // Ignore ENOENT, which could occur if this descriptor wasn't added due to
@@ -1693,7 +1693,7 @@ void PhysicalSocketServer::UpdateEpoll(Dispatcher* pdispatcher, uint64_t key) {
     return;
   }
 
-  struct epoll_event event = {0};
+  struct epoll_event event = {};
   event.events = GetEpollEvents(pdispatcher->GetRequestedEvents());
   event.data.u64 = key;
   // Remove if we don't have any requested events. Could indicate a closed

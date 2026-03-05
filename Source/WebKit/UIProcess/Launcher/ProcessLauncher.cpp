@@ -39,7 +39,7 @@ namespace WebKit {
 
 ProcessLauncher::ProcessLauncher(Client* client, LaunchOptions&& launchOptions)
     : m_client(client)
-    , m_launchOptions(WTFMove(launchOptions))
+    , m_launchOptions(WTF::move(launchOptions))
 {
     tracePoint(ProcessLaunchStart, m_launchOptions.processIdentifier.toUInt64());
     launchProcess();
@@ -76,7 +76,7 @@ void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC
         return;
     }
 
-    client->didFinishLaunching(this, WTFMove(identifier));
+    client->didFinishLaunching(this, WTF::move(identifier));
 }
 
 void ProcessLauncher::invalidate()

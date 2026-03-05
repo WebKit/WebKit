@@ -34,7 +34,7 @@
 
 - (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions attestationObject:(NSData *)attestationObject attachment:(_WKAuthenticatorAttachment)attachment transports:(NSArray<NSNumber *> *)transports
 {
-    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensions:WTFMove(extensions) attachment:attachment]))
+    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensions:WTF::move(extensions) attachment:attachment]))
         return nil;
 
     _attestationObject = [attestationObject retain];
@@ -44,7 +44,7 @@
 
 - (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensionOutputsCBOR:(NSData *)extensionOutputsCBOR attestationObject:(NSData *)attestationObject attachment:(_WKAuthenticatorAttachment)attachment transports:(NSArray<NSNumber *> *)transports
 {
-    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensionOutputsCBOR:WTFMove(extensionOutputsCBOR) attachment:attachment]))
+    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensionOutputsCBOR:WTF::move(extensionOutputsCBOR) attachment:attachment]))
         return nil;
 
     _attestationObject = [attestationObject retain];

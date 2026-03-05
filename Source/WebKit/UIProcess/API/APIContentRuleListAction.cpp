@@ -32,11 +32,11 @@ namespace API {
 
 Ref<ContentRuleListAction> ContentRuleListAction::create(WebCore::ContentRuleListResults::Result&& result)
 {
-    return adoptRef(*new ContentRuleListAction(WTFMove(result)));
+    return adoptRef(*new ContentRuleListAction(WTF::move(result)));
 }
 
 ContentRuleListAction::ContentRuleListAction(WebCore::ContentRuleListResults::Result&& result)
-    : m_result(WTFMove(result))
+    : m_result(WTF::move(result))
 {
 }
 

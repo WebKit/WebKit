@@ -121,7 +121,7 @@ static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType
     bool isResizableOrGrowableShared = buffer->isResizableOrGrowableShared();
     switch (static_cast<int>(type)) {
 #define JSC_TYPED_ARRAY_FACTORY(type) case kJSTypedArrayType##type##Array: { \
-        return JS##type##Array::create(globalObject, globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared), WTFMove(buffer), offset, length.value()); \
+        return JS##type##Array::create(globalObject, globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared), WTF::move(buffer), offset, length.value()); \
     }
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_FACTORY)
 #undef JSC_TYPED_ARRAY_CHECK
@@ -158,7 +158,7 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -166,7 +166,7 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
     unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
 
     auto buffer = ArrayBuffer::tryCreate(length, elementByteSize);
-    JSObject* result = createTypedArray(globalObject, arrayType, WTFMove(buffer), 0, length);
+    JSObject* result = createTypedArray(globalObject, arrayType, WTF::move(buffer), 0, length);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
@@ -177,7 +177,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -188,7 +188,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
         if (destructor)
             destructor(p, destructorContext);
     }));
-    JSObject* result = createTypedArray(globalObject, arrayType, WTFMove(buffer), 0, length / elementByteSize);
+    JSObject* result = createTypedArray(globalObject, arrayType, WTF::move(buffer), 0, length / elementByteSize);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
@@ -199,7 +199,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -216,7 +216,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     std::optional<size_t> length;
     if (!buffer->isResizableOrGrowableShared())
         length = buffer->byteLength() / elementByteSize;
-    JSObject* result = createTypedArray(globalObject, arrayType, WTFMove(buffer), 0, length);
+    JSObject* result = createTypedArray(globalObject, arrayType, WTF::move(buffer), 0, length);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
@@ -227,7 +227,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -302,7 +302,7 @@ JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef,
 
     if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object)) {
         if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer())
-            return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(), buffer));
+            return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(), *buffer));
 
         setException(ctx, exception, createOutOfMemoryError(globalObject));
     }
@@ -315,14 +315,14 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(bytes), byteLength }, createSharedTask<void(void*)>([=](void* p) {
         if (bytesDeallocator)
             bytesDeallocator(p, deallocatorContext);
     }));
 
-    JSArrayBuffer* jsBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer));
+    JSArrayBuffer* jsBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTF::move(buffer));
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
 

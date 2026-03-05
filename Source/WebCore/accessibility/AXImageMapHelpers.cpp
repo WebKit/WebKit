@@ -40,7 +40,7 @@ using namespace HTMLNames;
 void AXImageMapHelpers::accessibilityText(const HTMLAreaElement& areaElement, String&& description, Vector<AccessibilityText>& textOrder)
 {
     if (!description.isEmpty())
-        textOrder.append(AccessibilityText(WTFMove(description), AccessibilityTextSource::Alternative));
+        textOrder.append(AccessibilityText(WTF::move(description), AccessibilityTextSource::Alternative));
 
     const AtomString& titleText = areaElement.getAttribute(titleAttr);
     if (!titleText.isEmpty())

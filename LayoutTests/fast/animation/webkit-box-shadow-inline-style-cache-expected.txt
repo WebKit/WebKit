@@ -1,0 +1,5 @@
+START: Testing -webkit-box-shadow
+CHECKING FOR element.getAnimations()
+1 ANIMATIONS FOUND: [object CSSTransition]
+
+

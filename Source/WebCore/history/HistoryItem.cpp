@@ -153,12 +153,12 @@ const String& HistoryItem::alternateTitle() const
 
 bool HistoryItem::isInBackForwardCache() const
 {
-    return BackForwardCache::singleton().isInBackForwardCache(m_itemID);
+    return BackForwardCache::singleton().isInBackForwardCache(m_frameItemID);
 }
 
 bool HistoryItem::hasCachedPageExpired() const
 {
-    return BackForwardCache::singleton().hasCachedPageExpired(m_itemID);
+    return BackForwardCache::singleton().hasCachedPageExpired(m_frameItemID);
 }
 
 URL HistoryItem::url() const
@@ -208,13 +208,13 @@ void HistoryItem::setOriginalURLString(const String& urlString)
 
 void HistoryItem::setReferrer(String&& referrer)
 {
-    m_referrer = WTFMove(referrer);
+    m_referrer = WTF::move(referrer);
     notifyChanged();
 }
 
 void HistoryItem::setTitle(String&& title)
 {
-    m_title = WTFMove(title);
+    m_title = WTF::move(title);
     notifyChanged();
 }
 
@@ -294,20 +294,20 @@ ShouldOpenExternalURLsPolicy HistoryItem::shouldOpenExternalURLsPolicy() const
 
 void HistoryItem::setStateObject(RefPtr<SerializedScriptValue>&& object)
 {
-    m_stateObject = WTFMove(object);
+    m_stateObject = WTF::move(object);
     notifyChanged();
 }
 
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#she-navigation-api-state
 void HistoryItem::setNavigationAPIStateObject(RefPtr<SerializedScriptValue>&& object)
 {
-    m_navigationAPIStateObject = WTFMove(object);
+    m_navigationAPIStateObject = WTF::move(object);
 }
 
 void HistoryItem::addChildItem(Ref<HistoryItem>&& child)
 {
     ASSERT(!child->frameID() || !childItemWithFrameID(*child->frameID()));
-    m_children.append(WTFMove(child));
+    m_children.append(WTF::move(child));
 }
 
 void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
@@ -317,11 +317,11 @@ void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
     for (unsigned i = 0; i < size; ++i)  {
         if (m_children[i]->target() == child->target()) {
             child->setIsTargetItem(m_children[i]->isTargetItem());
-            m_children[i] = WTFMove(child);
+            m_children[i] = WTF::move(child);
             return;
         }
     }
-    m_children.append(WTFMove(child));
+    m_children.append(WTF::move(child));
 }
 
 HistoryItem* HistoryItem::childItemWithTarget(const AtomString& target)
@@ -397,7 +397,7 @@ void HistoryItem::setFormInfoFromRequest(const ResourceRequest& request)
 
 void HistoryItem::setFormData(RefPtr<FormData>&& formData)
 {
-    m_formData = WTFMove(formData);
+    m_formData = WTF::move(formData);
 }
 
 void HistoryItem::setFormContentType(const String& formContentType)

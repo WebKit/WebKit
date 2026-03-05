@@ -45,7 +45,7 @@ public:
     // ProcessIdentifier of the process which created them.
 
     ProcessQualified(T&& object, ProcessIdentifier processIdentifier)
-        : m_object(WTFMove(object))
+        : m_object(WTF::move(object))
         , m_processIdentifier(processIdentifier)
     {
     }

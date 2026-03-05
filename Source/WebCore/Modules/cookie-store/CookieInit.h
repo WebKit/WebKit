@@ -34,7 +34,7 @@ namespace WebCore {
 
 struct CookieInit {
     CookieInit isolatedCopy() const & { return { name.isolatedCopy(), value.isolatedCopy(), expires, domain.isolatedCopy(), path.isolatedCopy(), sameSite }; }
-    CookieInit isolatedCopy() && { return { WTFMove(name).isolatedCopy(), WTFMove(value).isolatedCopy(), expires, WTFMove(domain).isolatedCopy(), WTFMove(path).isolatedCopy(), sameSite }; }
+    CookieInit isolatedCopy() && { return { WTF::move(name).isolatedCopy(), WTF::move(value).isolatedCopy(), expires, WTF::move(domain).isolatedCopy(), WTF::move(path).isolatedCopy(), sameSite }; }
 
     String name;
     String value;

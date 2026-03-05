@@ -43,7 +43,7 @@ class WebCodecsErrorCallback;
 class WebCodecsVideoFrameOutputCallback;
 
 class WebCodecsVideoDecoder : public WebCodecsBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsVideoDecoder);
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsVideoDecoder);
 public:
     ~WebCodecsVideoDecoder();
 
@@ -73,7 +73,7 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    void suspend(ReasonForSuspension) final;
+    void NODELETE suspend(ReasonForSuspension) final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsVideoDecoder; }
@@ -90,6 +90,8 @@ private:
     size_t m_decoderCount { 0 };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebCodecsVideoDecoder)
 
 #endif

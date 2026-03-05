@@ -94,7 +94,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySetLength(VM& vm, uint32_t newLen
         for (unsigned i = std::min(m_length, newLength); i--;)
             newArguments.at(i) = this->at(i);
         m_length = newLength;
-        m_arguments = WTFMove(newArguments);
+        m_arguments = WTF::move(newArguments);
         m_watchpointSets.resize(newLength);
         return this;
     }

@@ -26,11 +26,14 @@
 #pragma once
 
 #include <WebCore/AXID.h>
+#include <WebCore/AXStitchGroup.h>
 #include <WebCore/AXTextRun.h>
 #include <WebCore/AccessibilityRole.h>
+#include <WebCore/AffineTransform.h>
 #include <WebCore/CharacterRange.h>
 #include <WebCore/Color.h>
 #include <WebCore/ColorConversion.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/HTMLTextFormControlElement.h>
 #include <WebCore/InputType.h>
 #include <WebCore/LayoutRect.h>
@@ -143,7 +146,7 @@ enum class AccessibilityDetachmentType { CacheDestroyed, ElementDestroyed, Eleme
 enum class AccessibilityConversionSpace { Screen, Page };
 
 // FIXME: This should be replaced by AXDirection (or vice versa).
-enum class AccessibilitySearchDirection {
+enum class AccessibilitySearchDirection : uint8_t {
     Next = 1,
     Previous,
 };
@@ -214,6 +217,51 @@ struct AccessibilitySearchTextCriteria {
         : start(AccessibilitySearchTextStartFrom::Selection)
         , direction(AccessibilitySearchTextDirection::Forward)
     { }
+
+    String debugDescription() const
+    {
+        String startFrom;
+        switch (start) {
+        case AccessibilitySearchTextStartFrom::Begin:
+            startFrom = "begin"_s;
+            break;
+        case AccessibilitySearchTextStartFrom::Selection:
+            startFrom = "selection"_s;
+            break;
+        case AccessibilitySearchTextStartFrom::End:
+            startFrom = "end"_s;
+            break;
+        }
+
+        String directionString;
+        switch (direction) {
+        case AccessibilitySearchTextDirection::Forward:
+            directionString = "forward"_s;
+            break;
+        case AccessibilitySearchTextDirection::Backward:
+            directionString = "backward"_s;
+            break;
+        case AccessibilitySearchTextDirection::Closest:
+            directionString = "closest"_s;
+            break;
+        case AccessibilitySearchTextDirection::All:
+            directionString = "all"_s;
+            break;
+        }
+
+        StringBuilder allSearchStrings;
+        for (unsigned i = 0; i < searchStrings.size(); i++) {
+            allSearchStrings.append(searchStrings[i]);
+            if (i != searchStrings.size() - 1)
+                allSearchStrings.append(", "_s);
+        }
+
+        return makeString(
+            "starting from "_s, startFrom, ", "_s,
+            "with direction "_s, directionString, ", "_s,
+            "seeking strings: {"_s, allSearchStrings.toString(), "}"_s
+        );
+    }
 };
 
 struct AccessibilityText {
@@ -221,7 +269,7 @@ struct AccessibilityText {
     AccessibilityTextSource textSource;
 
     AccessibilityText(String&& text, AccessibilityTextSource source)
-        : text(WTFMove(text))
+        : text(WTF::move(text))
         , textSource(source)
     { }
     AccessibilityText(const String& text, AccessibilityTextSource source)
@@ -254,6 +302,7 @@ enum class AccessibilityOrientation : uint8_t {
     Horizontal
 };
 
+enum class DescendIntoContainers : bool { No, Yes };
 enum class DidTimeout : bool { No, Yes };
 enum class IncludeListMarkerText : bool { No, Yes };
 enum class IncludeImageAltText : bool { No, Yes };
@@ -270,8 +319,14 @@ struct TextUnderElementMode {
     bool includeFocusableContent { false };
     bool considerHiddenState { true };
     bool inHiddenSubtree { false };
+    IncludeListMarkerText includeListMarkers { IncludeListMarkerText::No };
+    DescendIntoContainers descendIntoContainers { DescendIntoContainers::No };
     TrimWhitespace trimWhitespace { TrimWhitespace::Yes };
     CheckedPtr<Node> ignoredChildNode { nullptr };
+    // Tracks nodes that have already been referenced via aria-labelledby during
+    // the current name computation. These nodes should be skipped when encountered
+    // directly in the tree to avoid double-counting.
+    HashSet<const Node*>* nodesReferencedViaLabeledby { nullptr };
 
     bool isHidden() { return considerHiddenState && inHiddenSubtree; }
 };
@@ -309,6 +364,8 @@ enum class CompositionState : uint8_t { Started, InProgress, Ended };
 // Relationships between AX objects.
 enum class AXRelation : uint8_t {
     None,
+    Actions,
+    ActionsOf,
     ActiveDescendant,
     ActiveDescendantOf,
     ControlledBy,
@@ -325,6 +382,8 @@ enum class AXRelation : uint8_t {
     HeaderFor,
     LabeledBy,
     LabelFor,
+    NativeLabeledBy,
+    NativeLabelFor,
     OwnedBy,
     OwnerFor,
 };
@@ -423,7 +482,7 @@ public:
     String debugDescription(OptionSet<AXDebugStringOption> options) const { return debugDescriptionInternal(false, { options }); }
 
     inline AXID objectID() const { return m_id; }
-    virtual std::optional<AXID> treeID() const = 0;
+    virtual std::optional<AXTreeID> treeID() const = 0;
     virtual ProcessID processID() const = 0;
 
     // When the corresponding WebCore object that this accessible object
@@ -446,6 +505,7 @@ public:
     bool isLink() const { return role() == AccessibilityRole::Link; };
     bool isCode() const { return role() == AccessibilityRole::Code; }
     bool isImage() const { return role() == AccessibilityRole::Image; }
+    bool isInImage() const;
     bool isImageMap() const { return role() == AccessibilityRole::ImageMap; }
     bool isVideo() const { return role() == AccessibilityRole::Video; }
     virtual bool isSecureField() const = 0;
@@ -459,23 +519,23 @@ public:
     ListBoxInterpretation listBoxInterpretation() const;
     bool isListBoxOption() const { return role() == AccessibilityRole::ListBoxOption; }
     virtual bool isAttachment() const = 0;
-    bool isMenuRelated() const;
+    bool NODELETE isMenuRelated() const;
     bool isMenu() const { return role() == AccessibilityRole::Menu; }
     bool isMenuBar() const { return role() == AccessibilityRole::MenuBar; }
-    bool isMenuItem() const;
+    bool NODELETE isMenuItem() const;
     bool isInputImage() const;
     bool isProgressIndicator() const { return role() == AccessibilityRole::ProgressIndicator || role() == AccessibilityRole::Meter; }
     bool isSlider() const { return role() == AccessibilityRole::Slider; }
     bool isControl() const;
     bool isRadioInput() const;
     // lists support (l, ul, ol, dl)
-    bool isList() const;
+    bool NODELETE isList() const;
     virtual bool isDescriptionList() const = 0;
     bool isFileUploadButton() const;
     // Returns true for objects whose role implies interactivity. For example, when a screen
     // reader announces "link", it doesn't need to announce "clickable" or "pressable" — that
     // is implicit in the concept of a link.
-    bool isImplicitlyInteractive() const;
+    bool NODELETE isImplicitlyInteractive() const;
     bool isReplacedElement() const;
 
     virtual std::optional<InputType::Type> inputType() const = 0;
@@ -484,9 +544,9 @@ public:
     virtual bool isTable() const = 0;
     virtual bool isExposableTable() const = 0;
     unsigned tableLevel() const;
-    bool hasGridRole() const;
-    bool hasCellRole() const;
-    bool hasCellOrRowRole() const;
+    bool NODELETE hasGridRole() const;
+    bool NODELETE hasCellRole() const;
+    bool NODELETE hasCellOrRowRole() const;
     bool supportsSelectedRows() const { return hasGridRole(); }
     virtual AccessibilityChildrenVector columns() = 0;
     virtual AccessibilityChildrenVector rows() = 0;
@@ -544,7 +604,7 @@ public:
 
     virtual bool isFieldset() const = 0;
     bool isImageMapLink() const;
-    bool isGroup() const;
+    bool NODELETE isGroup() const;
 #if PLATFORM(MAC)
     bool isEmptyGroup();
 #endif
@@ -558,7 +618,7 @@ public:
     virtual bool isMockObject() const = 0;
     bool isSwitch() const { return role() == AccessibilityRole::Switch; }
     bool isToggleButton() const { return role() == AccessibilityRole::ToggleButton; }
-    bool isTextControl() const;
+    bool NODELETE isTextControl() const;
     virtual bool isEditableWebArea() const = 0;
     virtual bool isNonNativeTextControl() const = 0;
     bool isTabList() const { return role() == AccessibilityRole::TabList; }
@@ -573,21 +633,25 @@ public:
     bool isScrollbar() const { return role() == AccessibilityRole::ScrollBar; }
     bool isRemoteFrame() const { return role() == AccessibilityRole::RemoteFrame; }
     bool isLocalFrame() const { return role() == AccessibilityRole::LocalFrame; }
+    bool isFrame() const;
 #if PLATFORM(COCOA)
     virtual RetainPtr<id> remoteFramePlatformElement() const = 0;
+    virtual pid_t remoteFramePID() const = 0;
+    virtual std::optional<FrameIdentifier> remoteFrameID() const = 0;
 #endif
     virtual bool hasRemoteFrameChild() const = 0;
 
-    bool isButton() const;
+    bool NODELETE isButton() const;
     bool isMeter() const { return role() == AccessibilityRole::Meter; }
 
     bool isListItem() const { return role() == AccessibilityRole::ListItem; }
     bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }
-    bool isScrollView() const { return role() == AccessibilityRole::ScrollArea; }
+    bool isScrollArea() const { return role() == AccessibilityRole::ScrollArea; }
     bool isCanvas() const { return role() == AccessibilityRole::Canvas; }
     bool isPopUpButton() const { return role() == AccessibilityRole::PopUpButton; }
     bool isColorWell() const { return role() == AccessibilityRole::ColorWell; }
     bool isSplitter() const { return role() == AccessibilityRole::Splitter; }
+    bool isFocusableSplitter() const { return isSplitter() && canSetFocusAttribute(); }
     bool isToolbar() const { return role() == AccessibilityRole::Toolbar; }
     bool isSummary() const { return role() == AccessibilityRole::Summary; }
     bool isBlockquote() const { return role() == AccessibilityRole::Blockquote; }
@@ -596,7 +660,7 @@ public:
 #endif
     bool isLineBreak() const { return role() == AccessibilityRole::LineBreak; }
 
-    bool isLandmark() const;
+    bool NODELETE isLandmark() const;
     virtual bool isKeyboardFocusable() const = 0;
     virtual bool isOutput() const = 0;
 
@@ -656,7 +720,7 @@ public:
     bool canSetExpandedAttribute() const;
 
     virtual Element* element() const = 0;
-    virtual Node* node() const = 0;
+    virtual Node* NODELETE node() const = 0;
     virtual RenderObject* renderer() const = 0;
 
     virtual bool isIgnored() const = 0;
@@ -681,14 +745,16 @@ public:
     virtual std::optional<AccessibilityChildrenVector> imageOverlayElements() = 0;
     virtual String extendedDescription() const = 0;
 
-    bool supportsActiveDescendant() const;
+    bool NODELETE supportsActiveDescendant() const;
     bool isActiveDescendantOfFocusedContainer() const;
     virtual bool supportsARIAOwns() const = 0;
-    bool supportsARIARoleDescription() const;
+    bool NODELETE supportsARIARoleDescription() const;
 
     // Retrieval of related objects.
     AXCoreObject* activeDescendant() const;
     AccessibilityChildrenVector activeDescendantOfObjects() const { return relatedObjects(AXRelation::ActiveDescendantOf); }
+    AccessibilityChildrenVector associatedActionElements() const { return relatedObjects(AXRelation::Actions); }
+    AccessibilityChildrenVector ariaActionsOfObjects() const { return relatedObjects(AXRelation::ActionsOf); }
     AccessibilityChildrenVector controlledObjects() const { return relatedObjects(AXRelation::ControllerFor); }
     AccessibilityChildrenVector controllers() const { return relatedObjects(AXRelation::ControlledBy); }
     AccessibilityChildrenVector describedByObjects() const { return relatedObjects(AXRelation::DescribedBy); }
@@ -701,6 +767,11 @@ public:
     AccessibilityChildrenVector flowFromObjects() const { return relatedObjects(AXRelation::FlowsFrom); }
     AccessibilityChildrenVector labeledByObjects() const { return relatedObjects(AXRelation::LabeledBy); }
     AccessibilityChildrenVector labelForObjects() const { return relatedObjects(AXRelation::LabelFor); }
+    // This function exists because in the accname calculation, aria-labelledby takes precedence over "native"
+    // labels (like <label for="z"><input id="z">), and thus we do not create a LabelFor relationship for the native
+    // label. However, sometimes outside of accname, we do also want to know the native label relationship,
+    // which is what this function is for.
+    AccessibilityChildrenVector nativeLabeledByObjects() const { return relatedObjects(AXRelation::NativeLabeledBy); }
     AccessibilityChildrenVector ownedObjects() const { return relatedObjects(AXRelation::OwnerFor); }
     AccessibilityChildrenVector owners() const { return relatedObjects(AXRelation::OwnedBy); }
     virtual AccessibilityChildrenVector relatedObjects(AXRelation) const = 0;
@@ -749,7 +820,7 @@ public:
     virtual Vector<String> determineDropEffects() const = 0;
 
     // Called on the root AX object to return the deepest available element.
-    virtual AXCoreObject* accessibilityHitTest(const IntPoint&) const = 0;
+    virtual RefPtr<AXCoreObject> accessibilityHitTest(const IntPoint&) const = 0;
 
     virtual AXCoreObject* focusedUIElement() const = 0;
     virtual AXCoreObject* focusedUIElementInAnyLocalFrame() const = 0;
@@ -786,8 +857,10 @@ public:
     bool crossFrameIsDescendantOfObject(const AXCoreObject&) const;
     // TODO: this name is not consistent with the others
     AXCoreObject* parentObjectIncludingCrossFrame() const;
+    AXCoreObject* parentObjectUnignoredIncludingCrossFrame() const;
 
-    virtual AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) = 0;
+    // Finds objects within |this| object matching the given search criteria.
+    virtual AccessibilityChildrenVector findMatchingObjectsWithin(AccessibilitySearchCriteria&&);
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
     AXCoreObject* selfOrFirstTextDescendant();
 
@@ -821,7 +894,8 @@ public:
     }
     // This should be the visible text that's actually on the screen if possible.
     // If there's alternative text (e.g. provided by description()), that can override the title.
-    virtual String title() const;
+    // The `computedText` parameter is a performance optimization for callsites that have already computed the AccessibilityText.
+    virtual String title(Vector<AccessibilityText>* computedText = nullptr) const;
     // This is the value of the title HTML / SVG attribute, differing from the above function which refers to
     // the notion of "title" accessibility text, a composite of many different attributes and page text.
     virtual String titleAttribute() const = 0;
@@ -831,7 +905,7 @@ public:
 
     virtual std::optional<String> textContent() const = 0;
     virtual String textContentPrefixFromListMarker() const = 0;
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     virtual bool hasTextRuns() = 0;
     virtual TextEmissionBehavior textEmissionBehavior() const = 0;
     bool emitsNewline() const;
@@ -908,6 +982,11 @@ public:
     // This is the amount that the RemoteFrame is offset from its containing parent.
     virtual IntPoint remoteFrameOffset() const = 0;
 
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    virtual IntPoint frameScreenPosition() const = 0;
+    virtual AffineTransform frameScreenTransform() const = 0;
+#endif
+
     virtual FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
 #if PLATFORM(COCOA)
     virtual FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
@@ -937,9 +1016,6 @@ public:
     virtual bool isWidget() const = 0;
     virtual Widget* widget() const = 0;
     virtual PlatformWidget platformWidget() const = 0;
-#if PLATFORM(COCOA)
-    virtual RetainPtr<PlatformWidget> protectedPlatformWidget() const;
-#endif
     virtual Widget* widgetForAttachmentView() const = 0;
     virtual bool isPlugin() const = 0;
 
@@ -982,7 +1058,7 @@ public:
     // which inherently are horizontal or vertical.
     virtual std::optional<AccessibilityOrientation> explicitOrientation() const = 0;
     AccessibilityOrientation orientation() const;
-    std::optional<AccessibilityOrientation> defaultOrientation() const;
+    std::optional<AccessibilityOrientation> NODELETE defaultOrientation() const;
 
     virtual void increment() = 0;
     virtual void decrement() = 0;
@@ -1001,13 +1077,13 @@ public:
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     bool onlyAddsUnignoredChildren() const { return isTableColumn() || role() == AccessibilityRole::TableHeaderContainer; }
     AccessibilityChildrenVector unignoredChildren(bool updateChildrenIfNeeded = true);
-    AXCoreObject* firstUnignoredChild();
+    bool hasUnignoredChild();
 #else
     const AccessibilityChildrenVector& unignoredChildren(bool updateChildrenIfNeeded = true) { return children(updateChildrenIfNeeded); }
-    AXCoreObject* firstUnignoredChild()
+    bool hasUnignoredChild()
     {
         const auto& children = this->children();
-        return children.size() ? children[0].ptr() : nullptr;
+        return !children.isEmpty();
     }
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     AccessibilityChildrenVector stitchedUnignoredChildren();
@@ -1015,38 +1091,22 @@ public:
     virtual bool isBlockFlow() const { return false; }
     bool hasStitchableRole() const
     {
-        // FIXME: We probably want to stitch list markers too.
-        return role() == AccessibilityRole::StaticText;
+        return role() == AccessibilityRole::StaticText || role() == AccessibilityRole::ListMarker;
     }
     AXCoreObject* blockFlowAncestor() const;
     AXCoreObject* blockFlowAncestorForStitchable() const
     {
         return hasStitchableRole() ? blockFlowAncestor() : nullptr;
     }
-    struct StitchState {
-        // Given object |A| that produced this StitchState, |stitchedIntoID| represents
-        // the ID of the object that |A| is stitched into. This can be |A|'s own ID if
-        // it is the first member of its stitch group (and is thus what is stitched into).
-        // If std::nullopt, |A| is not stitched into any other object, nor is any other object
-        // stitched into it.
-        const std::optional<AXID> stitchedIntoID { std::nullopt };
-        // The stitch group that |A| belongs to, if any.
-        Vector<AXID> group;
 
-        StitchState() = default;
-        StitchState(std::optional<AXID> stitchedIntoID, const Vector<AXID>& group)
-            : stitchedIntoID(stitchedIntoID)
-            , group(group)
-        {
-            // If there is an object being stitched into, there _must_ be an associated group.
-            ASSERT(!stitchedIntoID || group.size());
-        }
-    };
-    enum class IncludeStitchGroup : bool { No, Yes };
-    virtual StitchState stitchState(IncludeStitchGroup = IncludeStitchGroup::Yes) const { return { }; }
+    enum class IncludeGroupMembers : bool { No, Yes };
+    virtual std::optional<AXStitchGroup> stitchGroup(IncludeGroupMembers = IncludeGroupMembers::Yes) const { return { }; }
+    std::optional<AXStitchGroup> stitchGroupIfRepresentative() const;
     std::optional<AXID> stitchedIntoID() const
     {
-        return stitchState(IncludeStitchGroup::No).stitchedIntoID;
+        if (std::optional stitchGroup = this->stitchGroup(IncludeGroupMembers::No))
+            return stitchGroup->representativeID();
+        return std::nullopt;
     }
 
     // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) is true, this returns IDs of ignored children.
@@ -1054,8 +1114,8 @@ public:
     // is the default, we should rename this function to childrenIDsIncludingIgnored, as that is what all
     // callers will expect at the time this comment was written.
     Vector<AXID> childrenIDs(bool updateChildrenIfNeeded = true);
-    AXCoreObject* nextInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
-    AXCoreObject* nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin, bool includeCrossFrame);
+    RefPtr<AXCoreObject> nextInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
+    RefPtr<AXCoreObject> nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin, bool includeCrossFrame);
     AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded) const;
     AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded, bool includeCrossFrame) const;
     AXCoreObject* nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent = nullptr) const;
@@ -1066,7 +1126,7 @@ public:
         return object ? std::optional(object->objectID()) : std::nullopt;
     }
 
-    AXCoreObject* previousInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
+    RefPtr<AXCoreObject> previousInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
     AXCoreObject* previousSiblingIncludingIgnored(bool updateChildrenIfNeeded);
     AXCoreObject* deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded);
 
@@ -1100,7 +1160,7 @@ public:
     AccessibilityChildrenVector listboxSelectedChildren();
     AccessibilityChildrenVector selectedRows();
     AccessibilityChildrenVector selectedListItems();
-    bool canHaveSelectedChildren() const;
+    bool NODELETE canHaveSelectedChildren() const;
     AccessibilityChildrenVector selectedChildren();
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
@@ -1173,7 +1233,7 @@ public:
     virtual AccessibilityChildrenVector allSortedNonRootWebAreas() const = 0;
     AccessibilityChildrenVector crossFrameSortedDescendants(size_t limit, PreSortedObjectType) const;
 #endif // PLATFORM(MAC)
-    virtual AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const = 0;
+    AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const;
     virtual const String explicitLiveRegionStatus() const = 0;
     const String liveRegionStatus() const;
     virtual const String explicitLiveRegionRelevant() const = 0;
@@ -1238,7 +1298,7 @@ public:
 
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT RetainPtr<AccessibilityObjectWrapper> protectedWrapper() const;
+    WEBCORE_EXPORT RetainPtr<id> platformElement() const;
 #endif
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
     void detachWrapper(AccessibilityDetachmentType);
@@ -1257,7 +1317,9 @@ public:
     virtual void setPreventKeyboardDOMEventDispatch(bool) = 0;
     virtual Style::SpeakAs speakAs() const = 0;
     String speechHint() const;
-    String descriptionAttributeValue() const;
+
+    // The `computedText` parameter is a performance optimization for callsites that have already computed the AccessibilityText.
+    String descriptionAttributeValue(Vector<AccessibilityText>* computedText = nullptr) const;
     String helpTextAttributeValue() const;
 
     virtual bool hasApplePDFAnnotationAttribute() const = 0;
@@ -1275,11 +1337,11 @@ public:
     // style of pointer-events:none.
     virtual bool hasPointerEventsNone() const = 0;
     AXCoreObject* clickableSelfOrNonInteractiveAncestor();
-    virtual AXCoreObject* clickableSelfOrAncestor(ClickHandlerFilter = ClickHandlerFilter::ExcludeBody) const = 0;
-    virtual AXCoreObject* focusableAncestor() = 0;
-    virtual AXCoreObject* editableAncestor() const = 0;
-    virtual AXCoreObject* highestEditableAncestor() = 0;
-    virtual AXCoreObject* exposedTableAncestor(bool includeSelf = false) const = 0;
+    AXCoreObject* clickableSelfOrAncestor(ClickHandlerFilter = ClickHandlerFilter::ExcludeBody) const;
+    AXCoreObject* focusableAncestor() const;
+    AXCoreObject* editableAncestor() const;
+    AXCoreObject* highestEditableAncestor() const;
+    AXCoreObject* exposedTableAncestor(bool includeSelf = false) const;
     AXCoreObject* detailsAncestor() const;
 
     virtual AccessibilityChildrenVector documentLinks() = 0;
@@ -1318,7 +1380,7 @@ protected:
         , m_id(axID)
     { }
 
-    StitchState stitchStateFromGroups(const Vector<Vector<AXID>>*, IncludeStitchGroup) const;
+    std::optional<AXStitchGroup> stitchGroupFromGroups(const Vector<AXStitchGroup>*, IncludeGroupMembers) const;
 
 private:
     virtual String debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const = 0;
@@ -1462,13 +1524,19 @@ inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNeeded)
     return axIDs(children(updateChildrenIfNeeded));
 }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+inline bool AXCoreObject::isFrame() const
+{
+    auto role = this->role();
+    return role == AccessibilityRole::LocalFrame || role == AccessibilityRole::RemoteFrame;
+}
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 inline bool AXCoreObject::emitsNewline() const
 {
     auto behavior = textEmissionBehavior();
     return behavior == TextEmissionBehavior::Newline || behavior == TextEmissionBehavior::DoubleNewline;
 }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 namespace Accessibility {
 
@@ -1526,29 +1594,6 @@ T* crossFrameFindAncestor(const T& object, bool includeSelf, const MatchFunction
     });
 }
 
-template<typename T>
-T* focusableAncestor(T& startObject)
-{
-    return findAncestor<T>(startObject, false, [] (const auto& ancestor) {
-        return ancestor.canSetFocusAttribute();
-    });
-}
-
-template<typename T>
-T* clickableSelfOrAncestor(const T& startObject, ClickHandlerFilter filter)
-{
-    if (filter == ClickHandlerFilter::IncludeBody) {
-        return clickableSelfOrAncestor<T>(startObject, [] (const T&) {
-            return false;
-        });
-    }
-
-    return clickableSelfOrAncestor<T>(startObject, [] (const T& ancestor) {
-        // Stop iterating if we get to the <body>.
-        return ancestor.hasBodyTag();
-    });
-}
-
 template<typename T, typename F>
 T* clickableSelfOrAncestor(const T& startObject, const F& shouldStop)
 {
@@ -1563,33 +1608,6 @@ T* clickableSelfOrAncestor(const T& startObject, const F& shouldStop)
 }
 
 template<typename T>
-T* editableAncestor(const T& startObject)
-{
-    return findAncestor<T>(startObject, false, [] (const auto& ancestor) {
-        return ancestor.isTextControl() || ancestor.isEditableWebArea();
-    });
-}
-
-template<typename T>
-T* highestEditableAncestor(T& startObject)
-{
-    RefPtr<T> editableAncestor = startObject.editableAncestor();
-    RefPtr<T> previousEditableAncestor;
-    while (editableAncestor) {
-        if (editableAncestor == previousEditableAncestor) {
-            if (RefPtr<T> parent = editableAncestor->parentObject()) {
-                editableAncestor = parent->editableAncestor();
-                continue;
-            }
-            break;
-        }
-        previousEditableAncestor = editableAncestor;
-        editableAncestor = editableAncestor->editableAncestor();
-    }
-    return previousEditableAncestor.unsafeGet();
-}
-
-template<typename T>
 T* findRelatedObjectInAncestry(const T& object, AXRelation relation, const T& descendant)
 {
     auto relatedObjects = object.relatedObjects(relation);
@@ -1601,22 +1619,6 @@ T* findRelatedObjectInAncestry(const T& object, AXRelation relation, const T& de
             return ancestor.unsafeGet();
     }
     return nullptr;
-}
-
-template<typename T>
-T* liveRegionAncestor(const T& object, bool excludeIfOff)
-{
-    return findAncestor<T>(object, true, [excludeIfOff] (const T& object) {
-        return object.supportsLiveRegion(excludeIfOff);
-    });
-}
-
-template<typename T>
-T* exposedTableAncestor(const T& object, bool includeSelf = false)
-{
-    return findAncestor<T>(object, includeSelf, [] (const T& object) {
-        return object.isExposableTable();
-    });
 }
 
 template<typename T, typename F>
@@ -1689,6 +1691,31 @@ template<typename U> inline void performFunctionOnMainThread(U&& lambda)
     });
 }
 
+template<typename T = std::monostate>
+struct TimeoutSafeSemaphore : RefCounted<TimeoutSafeSemaphore<T>> {
+    // This struct is useful for passing in lambdas from one thread to another, as it is ref-counted,
+    // meaning it won't be destroyed out from any thread involved even when a timeout happens
+    // and one of the threads moves on (which would normally destroy the semaphore it had on
+    // the stack, causing a use-after-free).
+
+    BinarySemaphore semaphore;
+    std::atomic<bool> shouldSignal { true };
+    std::optional<T> value { std::nullopt };
+
+    void signal() { semaphore.signal(); }
+    bool wait(Seconds timeout) { return semaphore.waitFor(timeout); }
+};
+
+constexpr Seconds HitTestCacheExpiration = 500_ms;
+// Timeout constants for retrieveValueFromMainThreadWithTimeoutAndDefault.
+// These are grouped by operation type to make it easier to tune timeouts.
+constexpr Seconds HitTestTimeout = 15_ms;
+constexpr Seconds BoundingBoxTimeout = 25_ms;
+constexpr Seconds GeneralPropertyTimeout = 25_ms;
+constexpr Seconds VisibilityCheckTimeout = 50_ms;
+constexpr Seconds SpellCheckTimeout = 100_ms;
+constexpr Seconds InteractiveTimeout = 250_ms;
+
 template<typename U>
 inline DidTimeout performFunctionOnMainThreadAndWaitWithTimeout(U&& lambda, Seconds timeout)
 {
@@ -1697,18 +1724,7 @@ inline DidTimeout performFunctionOnMainThreadAndWaitWithTimeout(U&& lambda, Seco
         return DidTimeout::No;
     }
 
-    // Because this is ref-counted, we can give it to the lambda to keep alive
-    // even if this thread gave up due to a timeout and moved on (which would normally destroy
-    // the semaphore, causing a use-after-free).
-    struct TimeoutSafeSemaphore : RefCounted<TimeoutSafeSemaphore> {
-        BinarySemaphore semaphore;
-        std::atomic<bool> shouldSignal { true };
-
-        void signal() { semaphore.signal(); }
-        bool wait(Seconds timeout) { return semaphore.waitFor(timeout); }
-    };
-
-    Ref<TimeoutSafeSemaphore> semaphore = adoptRef(*new TimeoutSafeSemaphore);
+    Ref<TimeoutSafeSemaphore<>> semaphore = adoptRef(*new TimeoutSafeSemaphore<>);
     ensureOnMainThread([semaphore, lambda = std::forward<U>(lambda)] () mutable {
         lambda();
         // Only signal if the calling thread didn't timeout waiting for the main-thread to complete the lambda.
@@ -1722,6 +1738,68 @@ inline DidTimeout performFunctionOnMainThreadAndWaitWithTimeout(U&& lambda, Seco
         semaphore->shouldSignal.exchange(false, std::memory_order_acq_rel);
     }
     return completedInTime ? DidTimeout::No : DidTimeout::Yes;
+}
+
+template<typename RetrieveValueType>
+struct TimeoutableValue {
+    // If a timeout ocurred, this will have std::nullopt.
+    std::optional<RetrieveValueType> value { std::nullopt };
+};
+
+template<typename U>
+inline auto retrieveValueFromMainThreadWithTimeout(U&& lambda, Seconds timeout)
+{
+    using RetrieveValueType = decltype(lambda());
+
+    if (isMainThread()) {
+        auto value = std::forward<U>(lambda)();
+        return TimeoutableValue<RetrieveValueType> { value };
+    }
+
+    Ref<TimeoutSafeSemaphore<RetrieveValueType>> semaphore = adoptRef(*new TimeoutSafeSemaphore<RetrieveValueType>);
+    ensureOnMainThread([semaphore, lambda = std::forward<U>(lambda)] () mutable {
+        // Execute lambda and store result.
+        semaphore->value = lambda();
+        // Only signal if the calling thread didn't timeout waiting for the main-thread to complete the lambda.
+        if (semaphore->shouldSignal.exchange(false, std::memory_order_acq_rel))
+            semaphore->signal();
+    });
+
+    bool completedInTime = semaphore->wait(timeout);
+    if (!completedInTime) {
+        // If we timed out, prevent a later signal attempt from the lambda.
+        semaphore->shouldSignal.exchange(false, std::memory_order_acq_rel);
+        return TimeoutableValue<RetrieveValueType> { std::nullopt };
+    }
+    // If we completed in time, the value was written before the signal, so we can safely read it.
+    return TimeoutableValue<RetrieveValueType> { semaphore->value };
+}
+
+template<typename U, typename DefaultType>
+inline auto retrieveValueFromMainThreadWithTimeoutAndDefault(U&& lambda, Seconds timeout, DefaultType&& defaultValue)
+{
+    using RetrieveValueType = decltype(lambda());
+
+    if (isMainThread())
+        return std::forward<U>(lambda)();
+
+    Ref<TimeoutSafeSemaphore<RetrieveValueType>> semaphore = adoptRef(*new TimeoutSafeSemaphore<RetrieveValueType>);
+    ensureOnMainThread([semaphore, lambda = std::forward<U>(lambda)] () mutable {
+        // Execute lambda and store result.
+        semaphore->value = lambda();
+        // Only signal if the calling thread didn't timeout waiting for the main-thread to complete the lambda.
+        if (semaphore->shouldSignal.exchange(false, std::memory_order_acq_rel))
+            semaphore->signal();
+    });
+
+    bool completedInTime = semaphore->wait(timeout);
+    if (!completedInTime) {
+        // If we timed out, prevent a later signal attempt from the lambda.
+        semaphore->shouldSignal.exchange(false, std::memory_order_acq_rel);
+        return static_cast<RetrieveValueType>(std::forward<DefaultType>(defaultValue));
+    }
+    // If we completed in time, the value was written before the signal, so we can safely read it.
+    return *semaphore->value;
 }
 
 template<typename T, typename U> inline T retrieveValueFromMainThread(U&& lambda)
@@ -1744,17 +1822,21 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 }
 #endif
 
-bool inRenderTreeOrStyleUpdate(const Document&);
+bool NODELETE inRenderTreeOrStyleUpdate(const Document&);
 
 using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
 void initializeRoleMap();
 PlatformRoleMap createPlatformRoleMap();
 String roleToPlatformString(AccessibilityRole);
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 std::optional<AXTextMarkerRange> markerRangeFrom(NSRange, const AXCoreObject&);
 #endif
 Color defaultColor();
+
+// Performs a press action on the target object identified by treeID and targetID.
+// Handles the tree lookup and main thread execution. Returns true if the press succeeded.
+bool performCustomActionPress(AXTreeID, AXID targetID);
 
 // Intended to work with size-types (like IntSize) or rect-types (like LayoutRect).
 template <typename SizeOrRectType>
@@ -1786,7 +1868,74 @@ inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject& axObject) const
 inline AXCoreObject* AXCoreObject::axScrollView() const
 {
     return Accessibility::findAncestor(*this, true, [] (const auto& ancestor) {
-        return ancestor.isScrollView();
+        return ancestor.isScrollArea();
+    });
+}
+
+inline AXCoreObject* AXCoreObject::editableAncestor() const
+{
+    return Accessibility::findAncestor(*this, false, [] (const auto& ancestor) {
+        return ancestor.isTextControl() || ancestor.isEditableWebArea();
+    });
+}
+
+inline AXCoreObject* AXCoreObject::highestEditableAncestor() const
+{
+    RefPtr editableAncestor = this->editableAncestor();
+    RefPtr<AXCoreObject> previousEditableAncestor;
+    while (editableAncestor) {
+        if (editableAncestor == previousEditableAncestor) {
+            if (RefPtr parent = editableAncestor->parentObject()) {
+                editableAncestor = parent->editableAncestor();
+                continue;
+            }
+            break;
+        }
+        previousEditableAncestor = editableAncestor;
+        editableAncestor = editableAncestor->editableAncestor();
+    }
+    return previousEditableAncestor.unsafeGet();
+}
+
+inline AXCoreObject* AXCoreObject::focusableAncestor() const
+{
+    return Accessibility::findAncestor(*this, false, [] (const auto& ancestor) {
+        return ancestor.canSetFocusAttribute();
+    });
+}
+
+inline AXCoreObject* AXCoreObject::clickableSelfOrAncestor(ClickHandlerFilter filter) const
+{
+    if (filter == ClickHandlerFilter::IncludeBody) {
+        return Accessibility::clickableSelfOrAncestor(*this, [] (const AXCoreObject&) {
+            return false;
+        });
+    }
+
+    return Accessibility::clickableSelfOrAncestor(*this, [] (const AXCoreObject& ancestor) {
+        // Stop iterating if we get to the <body>.
+        return ancestor.hasBodyTag();
+    });
+}
+
+inline AXCoreObject* AXCoreObject::liveRegionAncestor(bool excludeIfOff) const
+{
+    return Accessibility::findAncestor(*this, true, [excludeIfOff] (const auto& object) {
+        return object.supportsLiveRegion(excludeIfOff);
+    });
+}
+
+inline AXCoreObject* AXCoreObject::exposedTableAncestor(bool includeSelf) const
+{
+    return Accessibility::findAncestor(*this, includeSelf, [] (const auto& object) {
+        return object.isExposableTable();
+    });
+}
+
+inline bool AXCoreObject::isInImage() const
+{
+    return Accessibility::findAncestor<AXCoreObject>(*this, /* includeSelf */ false, [] (const AXCoreObject& ancestor) {
+        return ancestor.role() == AccessibilityRole::Image;
     });
 }
 

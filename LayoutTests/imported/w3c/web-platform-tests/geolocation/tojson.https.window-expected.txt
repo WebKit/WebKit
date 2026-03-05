@@ -1,3 +1,5 @@
 
-PASS Test toJSON() in GeolocationPosition and GeolocationCoordinates.
+Harness Error (FAIL), message = Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js
+
+NOTRUN Test toJSON() in GeolocationPosition and GeolocationCoordinates.
 

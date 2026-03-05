@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 http://127.0.0.1:8000/loading/resources/basic-auth-testing.py?username=webkit&password=rocks - didReceiveAuthenticationChallenge - Responding with webkit:rocks

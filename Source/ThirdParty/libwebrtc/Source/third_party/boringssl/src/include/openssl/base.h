@@ -73,7 +73,7 @@ extern "C" {
 // A consumer may use this symbol in the preprocessor to temporarily build
 // against multiple revisions of BoringSSL at the same time. It is not
 // recommended to do so for longer than is necessary.
-#define BORINGSSL_API_VERSION 36
+#define BORINGSSL_API_VERSION 37
 
 #if defined(BORINGSSL_SHARED_LIBRARY)
 
@@ -183,7 +183,7 @@ extern "C" {
 // C and C++ handle inline functions differently. In C++, an inline function is
 // defined in just the header file, potentially emitted in multiple compilation
 // units (in cases the compiler did not inline), but each copy must be identical
-// to satsify ODR. In C, a non-static inline must be manually emitted in exactly
+// to satisfy ODR. In C, a non-static inline must be manually emitted in exactly
 // one compilation unit with a separate extern inline declaration.
 //
 // In both languages, exported inline functions referencing file-local symbols

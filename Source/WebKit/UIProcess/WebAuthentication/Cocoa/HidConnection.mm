@@ -112,7 +112,7 @@ auto HidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
 void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
     ASSERT(m_isInitialized);
-    auto task = makeBlockPtr([device = m_device, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+    auto task = makeBlockPtr([device = m_device, data = WTF::move(data), callback = WTF::move(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
 
 #if HAVE(SECURITY_KEY_API)
@@ -125,7 +125,7 @@ void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 #else
         DataSent sent = DataSent::No;
 #endif
-        RunLoop::mainSingleton().dispatch([callback = WTFMove(callback), sent]() mutable {
+        RunLoop::mainSingleton().dispatch([callback = WTF::move(callback), sent]() mutable {
             callback(sent);
         });
     });
@@ -136,7 +136,7 @@ void HidConnection::registerDataReceivedCallback(DataReceivedCallback&& callback
 {
     ASSERT(m_isInitialized);
     ASSERT(!m_inputCallback);
-    m_inputCallback = WTFMove(callback);
+    m_inputCallback = WTF::move(callback);
     consumeReports();
     registerDataReceivedCallbackInternal();
 }
@@ -148,7 +148,7 @@ void HidConnection::unregisterDataReceivedCallback()
 
 void HidConnection::receiveReport(Vector<uint8_t>&& report)
 {
-    m_inputReports.append(WTFMove(report));
+    m_inputReports.append(WTF::move(report));
     consumeReports();
 }
 

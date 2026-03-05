@@ -54,7 +54,7 @@ static DynamicRangeLimit resolve(DynamicRangeLimitMixFunction&& mix)
         return DynamicRangeLimit(CSS::Keyword::Constrained { });
     if (mix->noLimit == 100_css_percentage)
         return DynamicRangeLimit(CSS::Keyword::NoLimit { });
-    return DynamicRangeLimit(WTFMove(mix));
+    return DynamicRangeLimit(WTF::move(mix));
 }
 
 // MARK: - Conversion
@@ -133,7 +133,7 @@ auto Blending<DynamicRangeLimit>::blend(const DynamicRangeLimit& from, const Dyn
     addWeightedLimitTo(function, from, fromMixPercentage);
     addWeightedLimitTo(function, to, toMixPercentage);
 
-    return resolve(WTFMove(function));
+    return resolve(WTF::move(function));
 }
 
 // MARK: - Conversion to platform object

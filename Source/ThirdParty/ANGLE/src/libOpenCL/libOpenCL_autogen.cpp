@@ -1150,6 +1150,18 @@ cl_mem CL_API_CALL clCreateImageWithProperties(cl_context context,
                                                          image_desc, host_ptr, errcode_ret);
 }
 
+// cl_arm_import_memory
+cl_mem CL_API_CALL clImportMemoryARM(cl_context context,
+                                     cl_mem_flags flags,
+                                     const cl_import_properties_arm *properties,
+                                     void *memory,
+                                     size_t size,
+                                     cl_int *errcode_ret)
+{
+    return cl::GetDispatch().clImportMemoryARM(context, flags, properties, memory, size,
+                                               errcode_ret);
+}
+
 // cl_khr_external_memory
 cl_int CL_API_CALL clEnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                                          cl_uint num_mem_objects,
@@ -1181,6 +1193,17 @@ cl_int CL_API_CALL clIcdGetPlatformIDsKHR(cl_uint num_entries,
                                           cl_uint *num_platforms)
 {
     return cl::GetDispatch().clIcdGetPlatformIDsKHR(num_entries, platforms, num_platforms);
+}
+
+void *CL_API_CALL clIcdGetFunctionAddressForPlatformKHR(cl_platform_id platform,
+                                                        const char *func_name)
+{
+    return cl::GetDispatch().clIcdGetFunctionAddressForPlatformKHR(platform, func_name);
+}
+
+cl_int CL_API_CALL clIcdSetPlatformDispatchDataKHR(cl_platform_id platform, void *dispatch_data)
+{
+    return cl::GetDispatch().clIcdSetPlatformDispatchDataKHR(platform, dispatch_data);
 }
 
 }  // extern "C"

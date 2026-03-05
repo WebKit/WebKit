@@ -35,11 +35,6 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/WeakObjCPtr.h>
 
-static Ref<WebKit::WebAutomationSession> protectedSession(_WKAutomationSession *session)
-{
-    return *session->_session;
-}
-
 @implementation _WKAutomationSession {
     RetainPtr<_WKAutomationSessionConfiguration> _configuration;
     WeakObjCPtr<id <_WKAutomationSessionDelegate>> _delegate;
@@ -67,7 +62,7 @@ static Ref<WebKit::WebAutomationSession> protectedSession(_WKAutomationSession *
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKAutomationSession.class, self))
         return;
 
-    protectedSession(self)->setClient(nullptr);
+    protect(*_session)->setClient(nullptr);
     SUPPRESS_UNCOUNTED_ARG _session->~WebAutomationSession();
 
     [super dealloc];
@@ -81,7 +76,7 @@ static Ref<WebKit::WebAutomationSession> protectedSession(_WKAutomationSession *
 - (void)setDelegate:(id <_WKAutomationSessionDelegate>)delegate
 {
     _delegate = delegate;
-    protectedSession(self)->setClient(delegate ? makeUnique<WebKit::AutomationSessionClient>(delegate) : nullptr);
+    protect(*_session)->setClient(delegate ? makeUnique<WebKit::AutomationSessionClient>(delegate) : nullptr);
 }
 
 - (NSString *)sessionIdentifier
@@ -91,7 +86,7 @@ static Ref<WebKit::WebAutomationSession> protectedSession(_WKAutomationSession *
 
 - (void)setSessionIdentifier:(NSString *)sessionIdentifier
 {
-    _session->setSessionIdentifier(sessionIdentifier);
+    protect(*_session)->setSessionIdentifier(sessionIdentifier);
 }
 
 - (_WKAutomationSessionConfiguration *)configuration
@@ -101,33 +96,33 @@ static Ref<WebKit::WebAutomationSession> protectedSession(_WKAutomationSession *
 
 - (BOOL)isPaired
 {
-    return protectedSession(self)->isPaired();
+    return protect(*_session)->isPaired();
 }
 
 - (BOOL)isPendingTermination
 {
-    return protectedSession(self)->isPendingTermination();
+    return protect(*_session)->isPendingTermination();
 }
 
 - (BOOL)isSimulatingUserInteraction
 {
-    return protectedSession(self)->isSimulatingUserInteraction();
+    return protect(*_session)->isSimulatingUserInteraction();
 }
 
 - (void)terminate
 {
-    protectedSession(self)->terminate();
+    protect(*_session)->terminate();
 }
 
 #if PLATFORM(MAC)
 - (BOOL)wasEventSynthesizedForAutomation:(NSEvent *)event
 {
-    return protectedSession(self)->wasEventSynthesizedForAutomation(event);
+    return protect(*_session)->wasEventSynthesizedForAutomation(event);
 }
 
 - (void)markEventAsSynthesizedForAutomation:(NSEvent *)event
 {
-    protectedSession(self)->markEventAsSynthesizedForAutomation(event);
+    protect(*_session)->markEventAsSynthesizedForAutomation(event);
 }
 #endif
 

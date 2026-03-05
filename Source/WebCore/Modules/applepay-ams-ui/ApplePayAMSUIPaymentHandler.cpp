@@ -51,7 +51,7 @@ static ExceptionOr<ApplePayAMSUIRequest> convertAndValidateApplePayAMSUIRequest(
     if (!applePayAMSUIRequest.engagementRequest.startsWith('{'))
         return Exception { ExceptionCode::TypeError, "Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object"_s };
 
-    return WTFMove(applePayAMSUIRequest);
+    return WTF::move(applePayAMSUIRequest);
 }
 
 ExceptionOr<void> ApplePayAMSUIPaymentHandler::validateData(Document& document, JSC::JSValue data)

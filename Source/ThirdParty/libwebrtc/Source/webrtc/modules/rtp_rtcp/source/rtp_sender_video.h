@@ -90,6 +90,7 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
     const FieldTrialsView* field_trials = nullptr;
     scoped_refptr<FrameTransformerInterface> frame_transformer;
     TaskQueueFactory* task_queue_factory = nullptr;
+    bool raw_packetization = false;
   };
 
   explicit RTPSenderVideo(const Config& config);
@@ -102,7 +103,7 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
   // video encoder, excluding any additional overhead.
   // Calls to this method are assumed to be externally serialized.
   bool SendVideo(int payload_type,
-                 std::optional<VideoCodecType> codec_type,
+                 VideoCodecType codec_type,
                  uint32_t rtp_timestamp,
                  Timestamp capture_time,
                  ArrayView<const uint8_t> payload,
@@ -112,7 +113,7 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
                  std::vector<uint32_t> csrcs) override;
 
   bool SendEncodedImage(int payload_type,
-                        std::optional<VideoCodecType> codec_type,
+                        VideoCodecType codec_type,
                         uint32_t rtp_timestamp,
                         const EncodedImage& encoded_image,
                         RTPVideoHeader video_header,
@@ -248,6 +249,8 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
   const bool require_frame_encryption_;
   // Set to true if the generic descriptor should be authenticated.
   const bool generic_descriptor_auth_experiment_;
+
+  const bool raw_packetization_;
 
   AbsoluteCaptureTimeSender absolute_capture_time_sender_
       RTC_GUARDED_BY(send_checker_);

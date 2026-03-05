@@ -48,9 +48,9 @@ public:
     bool removeKey(const IDBKeyData&);
     bool contains(const IDBKeyData&);
 
-    const IDBKeyData* getLowest() const;
+    const IDBKeyData* NODELETE getLowest() const LIFETIME_BOUND;
 
-    uint64_t getCount() const;
+    uint64_t NODELETE getCount() const;
 
     class Iterator {
     public:
@@ -62,10 +62,10 @@ public:
         Iterator(IndexValueEntry&, IDBKeyDataSet::iterator);
         Iterator(IndexValueEntry&, IDBKeyDataSet::reverse_iterator);
 
-        bool isValid() const;
-        void invalidate();
+        bool NODELETE isValid() const;
+        void NODELETE invalidate();
 
-        const IDBKeyData& key() const;
+        const IDBKeyData& NODELETE key() const;
         const ThreadSafeDataBuffer& value() const;
 
         Iterator& operator++();
@@ -77,13 +77,13 @@ public:
         IDBKeyDataSet::reverse_iterator m_reverseIterator;
     };
 
-    Iterator begin();
-    Iterator reverseBegin(CursorDuplicity);
+    Iterator begin() LIFETIME_BOUND;
+    Iterator reverseBegin(CursorDuplicity) LIFETIME_BOUND;
 
     // Finds the key, or the next higher record after the key.
-    Iterator find(const IDBKeyData&);
+    Iterator find(const IDBKeyData&) LIFETIME_BOUND;
     // Finds the key, or the next lowest record before the key.
-    Iterator reverseFind(const IDBKeyData&, CursorDuplicity);
+    Iterator reverseFind(const IDBKeyData&, CursorDuplicity) LIFETIME_BOUND;
 
     bool unique() const { return m_unique; }
     Vector<IDBKeyData> keys() const;

@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static inline bool cueSortsBefore(const RefPtr<TextTrackCue>& a, const RefPtr<TextTrackCue>& b)
+static inline bool cueSortsBefore(const Ref<TextTrackCue>& a, const Ref<TextTrackCue>& b)
 {
     if (a->startMediaTime() < b->startMediaTime())
         return true;
@@ -58,7 +58,7 @@ Ref<TextTrackCueList> TextTrackCueList::create()
 
 void TextTrackCueList::didMoveToNewDocument(Document& newDocument)
 {
-    for (RefPtr cue : m_vector)
+    for (Ref cue : m_vector)
         cue->didMoveToNewDocument(newDocument);
 }
 
@@ -72,14 +72,14 @@ TextTrackCue* TextTrackCueList::item(unsigned index) const
 {
     if (index >= m_vector.size())
         return nullptr;
-    return m_vector[index].get();
+    return m_vector[index].ptr();
 }
 
 TextTrackCue* TextTrackCueList::getCueById(const String& id) const
 {
     for (auto& cue : m_vector) {
         if (cue->id() == id)
-            return cue.get();
+            return cue.ptr();
     }
     return nullptr;
 }
@@ -89,13 +89,13 @@ TextTrackCueList& TextTrackCueList::activeCues()
     if (!m_activeCues)
         m_activeCues = create();
 
-    Vector<RefPtr<TextTrackCue>> activeCuesVector;
+    Vector<Ref<TextTrackCue>> activeCuesVector;
     for (auto& cue : m_vector) {
         if (cue->isActive())
-            activeCuesVector.append(cue);
+            activeCuesVector.append(cue.copyRef());
     }
     ASSERT_SORTED(activeCuesVector);
-    m_activeCues->m_vector = WTFMove(activeCuesVector);
+    m_activeCues->m_vector = WTF::move(activeCuesVector);
 
     // FIXME: This list of active cues is not updated as cues are added, removed, become active, and become inactive.
     // Instead it is only updated each time this function is called again. That is not consistent with other dynamic DOM lists.
@@ -106,10 +106,9 @@ void TextTrackCueList::add(Ref<TextTrackCue>&& cue)
 {
     ASSERT(!m_vector.contains(cue.ptr()));
 
-    RefPtr<TextTrackCue> cueRefPtr { WTFMove(cue) };
-    unsigned insertionPosition = std::ranges::upper_bound(m_vector, cueRefPtr, cueSortsBefore) - m_vector.begin();
+    unsigned insertionPosition = std::ranges::upper_bound(m_vector, cue, cueSortsBefore) - m_vector.begin();
     ASSERT_SORTED(m_vector);
-    m_vector.insert(insertionPosition, WTFMove(cueRefPtr));
+    m_vector.insert(insertionPosition, WTF::move(cue));
     ASSERT_SORTED(m_vector);
 }
 

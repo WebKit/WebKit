@@ -96,8 +96,8 @@ public:
     OptionSet<BufferInSetType> requestedVolatility() { return m_requestedVolatility; }
     OptionSet<BufferInSetType> confirmedVolatility() { return m_confirmedVolatility; }
     void clearVolatility();
-    void addRequestedVolatility(OptionSet<BufferInSetType> request);
-    void setConfirmedVolatility(OptionSet<BufferInSetType> types);
+    void NODELETE addRequestedVolatility(OptionSet<BufferInSetType> request);
+    void NODELETE setConfirmedVolatility(OptionSet<BufferInSetType> types);
 
     void setNeedsDisplay();
 
@@ -105,12 +105,13 @@ public:
     void prepareToDisplay(const WebCore::Region& dirtyRegion, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, bool drawingRequiresClearedPixels);
 #endif
 
-    WebCore::GraphicsContext& context();
+    WebCore::GraphicsContext& NODELETE context();
     bool hasContext() const { return !!m_context; }
 
     RemoteGraphicsContextIdentifier contextIdentifier() const { return m_contextIdentifier; }
 
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType);
+    void submitDrawingCommands();
 
     void setConfiguration(RemoteImageBufferSetConfiguration&&);
     void willPrepareForDisplay();

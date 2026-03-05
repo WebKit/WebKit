@@ -29,4 +29,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.forEach(callbackfn);
   });
-});
+}, null, ["passthrough"]);

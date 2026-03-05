@@ -21,7 +21,6 @@ window.addEventListener("load", () => {
   window.jsTestIsAsync = true;
   if (!window.internals)
     return;
-  internals.settings.setImageAnimationControlEnabled(true);
 
   eventSender.mouseMoveTo(1, 1);
   eventSender.contextClick().filter(item => item.title).forEach((item) => {
@@ -30,7 +29,6 @@ window.addEventListener("load", () => {
       debug(`FAIL: Unexpected context menu item ${item.title}.`);
   });
 
-  internals.settings.setImageAnimationControlEnabled(false);
   internals.clearMemoryCache();
   finishJSTest();
 });

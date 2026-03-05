@@ -14,8 +14,8 @@
 #include <cstdint>
 #include <optional>
 
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -39,8 +39,8 @@ SmoothingFilterImpl::SmoothingFilterImpl(int init_time_ms)
 
 SmoothingFilterImpl::~SmoothingFilterImpl() = default;
 
-void SmoothingFilterImpl::AddSample(float sample) {
-  const int64_t now_ms = TimeMillis();
+void SmoothingFilterImpl::AddSample(float sample, Timestamp now) {
+  const int64_t now_ms = now.ms();
 
   if (!init_end_time_ms_) {
     // This is equivalent to assuming the filter has been receiving the same
@@ -55,12 +55,12 @@ void SmoothingFilterImpl::AddSample(float sample) {
   last_sample_ = sample;
 }
 
-std::optional<float> SmoothingFilterImpl::GetAverage() {
+std::optional<float> SmoothingFilterImpl::GetAverage(Timestamp now) {
   if (!init_end_time_ms_) {
     // `init_end_time_ms_` undefined since we have not received any sample.
     return std::nullopt;
   }
-  ExtrapolateLastSample(TimeMillis());
+  ExtrapolateLastSample(now.ms());
   return state_;
 }
 

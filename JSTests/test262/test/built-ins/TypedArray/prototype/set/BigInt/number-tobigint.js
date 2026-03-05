@@ -34,12 +34,12 @@ info: |
     Argument Type: Number
     Result: Throw a TypeError exception.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(1);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(1));
 
   assert.throws(TypeError, function() {
     typedArray.set([1]);

@@ -43,14 +43,14 @@ namespace WebCore {
 // Column spans result in the creation of new column sets as well, since a spanning fragment has to be placed in between the column sets that
 // come before and after the span.
 class RenderMultiColumnSet final : public RenderFragmentContainerSet {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMultiColumnSet);
+    WTF_MAKE_TZONE_ALLOCATED(RenderMultiColumnSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSet);
 public:
     RenderMultiColumnSet(RenderFragmentedFlow&, RenderStyle&&);
     virtual ~RenderMultiColumnSet();
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
-    RenderMultiColumnFlow* multiColumnFlow() const { return static_cast<RenderMultiColumnFlow*>(fragmentedFlow()); }
+    RenderMultiColumnFlow* multiColumnFlow() const { return downcast<RenderMultiColumnFlow>(fragmentedFlow()); }
 
     RenderMultiColumnSet* nextSiblingMultiColumnSet() const;
     RenderMultiColumnSet* previousSiblingMultiColumnSet() const;
@@ -63,7 +63,7 @@ public:
     // Return true if the specified renderer (descendant of the flow thread) is inside this column set.
     bool containsRendererInFragmentedFlow(const RenderObject&) const;
 
-    void setLogicalTopInFragmentedFlow(LayoutUnit);
+    void NODELETE setLogicalTopInFragmentedFlow(LayoutUnit);
     LayoutUnit logicalTopInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().y() : fragmentedFlowPortionRect().x(); }
     void setLogicalBottomInFragmentedFlow(LayoutUnit);
     LayoutUnit logicalBottomInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().maxY() : fragmentedFlowPortionRect().maxX(); }
@@ -176,7 +176,7 @@ private:
     LayoutUnit columnLogicalLeft(unsigned) const;
     LayoutUnit columnLogicalTop(unsigned) const;
 
-    LayoutRect fragmentedFlowPortionRectAt(unsigned index) const;
+    LayoutRect NODELETE fragmentedFlowPortionRectAt(unsigned index) const;
     LayoutRect fragmentedFlowPortionOverflowRect(const LayoutRect& fragmentedFlowPortion, unsigned index, unsigned colCount, LayoutUnit colGap) const;
 
     LayoutUnit initialBlockOffsetForPainting() const;

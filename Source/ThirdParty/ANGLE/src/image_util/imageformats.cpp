@@ -280,17 +280,17 @@ void R5G6B5::average(R5G6B5 *dst, const R5G6B5 *src1, const R5G6B5 *src2)
 
 void B5G6R5::readColor(gl::ColorF *dst, const B5G6R5 *src)
 {
-    dst->red   = gl::normalizedToFloat<5>(gl::getShiftedData<5, 11>(src->BGR));
+    dst->red   = gl::normalizedToFloat<5>(gl::getShiftedData<5, 0>(src->BGR));
     dst->green = gl::normalizedToFloat<6>(gl::getShiftedData<6, 5>(src->BGR));
-    dst->blue  = gl::normalizedToFloat<5>(gl::getShiftedData<5, 0>(src->BGR));
+    dst->blue  = gl::normalizedToFloat<5>(gl::getShiftedData<5, 11>(src->BGR));
     dst->alpha = 1.0f;
 }
 
 void B5G6R5::writeColor(B5G6R5 *dst, const gl::ColorF *src)
 {
-    dst->BGR = gl::shiftData<5, 0>(gl::floatToNormalized<5, unsigned short>(src->blue)) |
+    dst->BGR = gl::shiftData<5, 11>(gl::floatToNormalized<5, unsigned short>(src->blue)) |
                gl::shiftData<6, 5>(gl::floatToNormalized<6, unsigned short>(src->green)) |
-               gl::shiftData<5, 11>(gl::floatToNormalized<5, unsigned short>(src->red));
+               gl::shiftData<5, 0>(gl::floatToNormalized<5, unsigned short>(src->red));
 }
 
 void B5G6R5::average(B5G6R5 *dst, const B5G6R5 *src1, const B5G6R5 *src2)

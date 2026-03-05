@@ -172,7 +172,7 @@ class TestImporter(object):
         webkit_finder = WebKitFinder(self.filesystem)
         self._webkit_root = webkit_finder.webkit_base()
 
-        self.destination_directory = self.port.path_from_webkit_base("LayoutTests", options.destination)
+        self.destination_directory = self.port.path_from_webkit_base('LayoutTests', options.destination)
         self.tests_w3c_relative_path = self.filesystem.join('imported', 'w3c')
         self.layout_tests_path = self.port.path_from_webkit_base('LayoutTests')
         self.layout_tests_w3c_path = self.filesystem.join(self.layout_tests_path, self.tests_w3c_relative_path)
@@ -180,13 +180,14 @@ class TestImporter(object):
 
         self._test_downloader = None
 
-        self._potential_test_resource_files = []
-
         self.import_list = []
         self.upstream_revision = None
 
-        self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
-        self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
+        self._resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, 'resources', 'resource-files.json')
+        self._resource_files = json.loads(self.filesystem.read_text_file(self._resource_files_json_path)) if self.filesystem.exists(self._resource_files_json_path) else None
+
+        self._new_resource_files = set()
+        self._non_resource_files = set()
 
         self._tests_options_json_path = self.filesystem.join(self.layout_tests_path, 'tests-options.json')
         self._tests_options = json.loads(self.filesystem.read_text_file(self._tests_options_json_path)) if self.filesystem.exists(self._tests_options_json_path) else None
@@ -243,10 +244,13 @@ class TestImporter(object):
         if self.options.clean_destination_directory:
             for test_path in test_paths:
                 self.clean_destination_directory(test_path)
-            if self._test_resource_files:
+            if self._resource_files:
                 test_paths_tuple = tuple(test_paths)
-                self._test_resource_files["files"] = [t for t in self._test_resource_files["files"]
-                                                      if not t.startswith(test_paths_tuple)]
+                self._resource_files['files'] = [
+                    t
+                    for t in self._resource_files['files']
+                    if not t.startswith(test_paths_tuple)
+                ]
                 if self._tests_options:
                     self.remove_slow_from_w3c_tests_options(test_paths_tuple)
 
@@ -415,6 +419,8 @@ class TestImporter(object):
                 if self.should_skip_path(fullpath):
                     continue
 
+                relpath = self.filesystem.relpath(fullpath, self.source_directory)
+
                 mimetype = mimetypes.guess_type(fullpath)
                 if 'html' not in str(mimetype[0]) and 'application/xhtml+xml' not in str(mimetype[0]) and 'application/xml' not in str(mimetype[0]) and 'image/svg+xml' not in str(mimetype[0]):
                     copy_list.append({'src': fullpath, 'dest': filename})
@@ -425,11 +431,13 @@ class TestImporter(object):
                 if test_info is None:
                     # This is probably a resource file, but we should generate WPT manifest instead and get the list of resource files from it.
                     if not self._is_in_resources_directory(fullpath):
-                        self._potential_test_resource_files.append(fullpath)
+                        self._new_resource_files.add(relpath)
                     copy_list.append({'src': fullpath, 'dest': filename})
                     continue
                 elif self._is_in_resources_directory(fullpath):
                     _log.warning('%s is a test located in a "resources" folder. This test will be skipped by WebKit test runners.', fullpath)
+
+                self._non_resource_files.add(relpath)
 
                 if 'manualtest' in test_info.keys():
                     continue
@@ -704,40 +712,47 @@ class TestImporter(object):
             _log.info('Upstream commit: https://github.com/web-platform-tests/wpt/commit/%s', self.upstream_revision)
             _log.info('-' * 72)
 
-        if self._test_resource_files:
-            # FIXME: We should check that actual tests are not in the test_resource_files list
-            should_update_json_file = self.options.clean_destination_directory
-            files = self._test_resource_files["files"]
-            for full_path in self._potential_test_resource_files:
-                resource_file_path = self.filesystem.relpath(full_path, self.source_directory)
-                if not self._already_identified_as_resource_file(resource_file_path):
-                    files.append(resource_file_path)
-                    should_update_json_file = True
+        if self._resource_files is not None:
+            files = set(self._resource_files['files'])
+
+            directories_tuple = tuple(
+                f'{d}{self.filesystem.sep}'
+                for d in self._resource_files['directories']
+            )
+
+            files |= {
+                p
+                for p in self._new_resource_files
+                if not p.startswith(directories_tuple)
+            }
+            files -= self._non_resource_files
+
+            should_update_json_file = (
+                self.options.clean_destination_directory
+                or files != set(self._resource_files['files'])
+            )
+
             if should_update_json_file:
-                files.sort()
-                self.filesystem.write_text_file(self._test_resource_files_json_path, json.dumps(self._test_resource_files, sort_keys=True, indent=4).replace(' \n', '\n'))
+                self._resource_files['files'] = sorted(files)
+                self.filesystem.write_text_file(
+                    self._resource_files_json_path,
+                    json.dumps(
+                        self._resource_files,
+                        sort_keys=True,
+                        indent=4,
+                    ).replace(' \n', '\n'),
+                )
 
         if self._tests_options:
             self.update_tests_options()
 
-    def _already_identified_as_resource_file(self, path):
-        if not self._test_resource_files:
-            return False
-        if path in self._test_resource_files["files"]:
-            return True
-        return any([path.find(directory) != -1 for directory in self._test_resource_files["directories"]])
-
     def _is_in_resources_directory(self, path):
-        return "resources" in path.split(self.filesystem.sep)
+        return 'resources' in path.split(self.filesystem.sep)
 
     def update_tests_options(self):
         should_update = self.options.clean_destination_directory
         for full_path in self._slow_tests:
             w3c_test_path = self.filesystem.relpath(full_path, self.source_directory)
-            # No need to mark tests as slow if they are in skipped directories
-            if self._already_identified_as_resource_file(w3c_test_path):
-                continue
-
             test_path = self.filesystem.join(self.tests_w3c_relative_path, w3c_test_path)
             options = self._tests_options.get(test_path, [])
             if not 'slow' in options:

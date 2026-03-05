@@ -32,7 +32,7 @@ int BN_parse_asn1_unsigned(CBS *cbs, BIGNUM *ret) {
     return 0;
   }
 
-  return BN_bin2bn(CBS_data(&child), CBS_len(&child), ret) != NULL;
+  return BN_bin2bn(CBS_data(&child), CBS_len(&child), ret) != nullptr;
 }
 
 int BN_marshal_asn1(CBB *cbb, const BIGNUM *bn) {

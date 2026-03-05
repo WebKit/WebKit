@@ -43,7 +43,7 @@ static ExceptionOr<Vector<uint8_t>> encryptRSA_OAEP(CryptoAlgorithmIdentifier ha
     if (CCRSACryptorEncrypt(key, ccOAEPPadding, data.span().data(), data.size(), cipherText.mutableSpan().data(), &cipherTextLength, label.span().data(), label.size(), digestAlgorithm))
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(cipherText);
+    return WTF::move(cipherText);
 }
 
 static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier hash, const Vector<uint8_t>& label, const PlatformRSAKey key, size_t keyLength, const Vector<uint8_t>& data)
@@ -58,7 +58,7 @@ static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier ha
         return Exception { ExceptionCode::OperationError };
 
     plainText.shrink(plainTextLength);
-    return WTFMove(plainText);
+    return WTF::move(plainText);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& plainText)

@@ -39,7 +39,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferRemoteIOSurfaceBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferRemoteIOSurfaceBackend);
 
 IntSize ImageBufferRemoteIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
@@ -58,7 +58,7 @@ std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBac
         return nullptr;
     }
 
-    return makeUnique<ImageBufferRemoteIOSurfaceBackend>(parameters, WTFMove(std::get<MachSendRight>(handle)));
+    return makeUnique<ImageBufferRemoteIOSurfaceBackend>(parameters, WTF::move(std::get<MachSendRight>(handle)));
 }
 
 std::optional<ImageBufferBackendHandle> ImageBufferRemoteIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
@@ -77,7 +77,7 @@ void ImageBufferRemoteIOSurfaceBackend::setBackendHandle(ImageBufferBackendHandl
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }
-    m_handle = WTFMove(std::get<MachSendRight>(handle));
+    m_handle = WTF::move(std::get<MachSendRight>(handle));
 }
 
 void ImageBufferRemoteIOSurfaceBackend::clearBackendHandle()

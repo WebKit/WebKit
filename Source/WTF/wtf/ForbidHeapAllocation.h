@@ -58,3 +58,11 @@ private: \
     void* operator new(size_t) = delete; \
     void* operator new[](size_t size) = delete; \
     typedef int __thisIsHereToForceASemicolonAfterThisForbidHeapAllocationAllowingPlacementNewMacro
+
+// WTF::usesTZoneHeap is defined in FastMalloc.h
+#define WTF_FORBID_HEAP_ALLOCATION_WITH_VALIDATION(name) \
+    static_assert(!WTF::usesTZoneHeap<name>()); \
+    WTF_FORBID_HEAP_ALLOCATION
+
+#define WTF_FORBID_HEAP_ALLOCATION_FOR_ABSTRACT_CLASS(name) \
+    WTF_FORBID_HEAP_ALLOCATION_WITH_VALIDATION(name)

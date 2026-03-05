@@ -27,6 +27,6 @@
 [
     Exposed=*,
 ] interface PerformanceMark : PerformanceEntry {
-    [CallWith=CurrentGlobalObject&CurrentScriptExecutionContext] constructor(DOMString markName, optional PerformanceMarkOptions markOptions);
+    [CallWith=CurrentGlobalObject&CurrentScriptExecutionContext] constructor(DOMString markName, optional PerformanceMarkOptions markOptions = {});
     [CallWith=CurrentGlobalObject, CachedAttribute] readonly attribute any detail;
 };

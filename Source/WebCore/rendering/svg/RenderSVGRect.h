@@ -35,13 +35,13 @@ namespace WebCore {
 class SVGRectElement;
 
 class RenderSVGRect final : public RenderSVGShape {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGRect);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGRect);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGRect);
 public:
     RenderSVGRect(SVGRectElement&, RenderStyle&&);
     virtual ~RenderSVGRect();
 
-    SVGRectElement& rectElement() const;
+    SVGRectElement& NODELETE rectElement() const;
 
 private:
     void graphicsElement() const = delete;

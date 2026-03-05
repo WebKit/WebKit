@@ -25,7 +25,7 @@ info: |
     b. If SameValueZero(searchElement, elementK) is true, return true.
     c. Increase k by 1.
   8. Return false.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -35,10 +35,10 @@ var obj = {
   }
 };
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample;
 
-  sample = new TA([42n, 43n]);
+  sample = new TA(makeCtorArg([42n, 43n]));
   assert.sameValue(sample.includes(42n, "1"), false, "string [0]");
   assert.sameValue(sample.includes(43n, "1"), true, "string [1]");
 

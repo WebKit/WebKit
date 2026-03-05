@@ -66,11 +66,11 @@ struct Base64DecodeTestCase {
 };
 
 const Base64DecodeTestCase kBase64DecodeTestCases[] = {
-    {"InvalidCharacters", "invalid;;;", std::nullopt},
-    {"InvalidLength", "abcde", std::nullopt},
-    {"ValidInput", "abcd", "i\xB7\x1D"},
-    {"ValidInputPadding", "abc=", "i\xB7"},
-    {"EmptyInput", "", ""},
+    {.name = "InvalidCharacters", .data = "invalid;;;", .result = std::nullopt},
+    {.name = "InvalidLength", .data = "abcde", .result = std::nullopt},
+    {.name = "ValidInput", .data = "abcd", .result = "i\xB7\x1D"},
+    {.name = "ValidInputPadding", .data = "abc=", .result = "i\xB7"},
+    {.name = "EmptyInput", .data = "", .result = ""},
 };
 
 using Base64DecodeTest = TestWithParam<Base64DecodeTestCase>;
@@ -93,31 +93,35 @@ TEST_P(Base64DecodeTest, TestDecodeForgiving) {
 
 const Base64DecodeTestCase kBase64DecodeForgivingTestCases[] = {
     {
-        "ForgivingPadding",
-        "abc",
-        "i\xB7",
+        .name = "ForgivingPadding",
+        .data = "abc",
+        .result = "i\xB7",
     },
     {
-        "WhitespaceForgivenTab",
-        "ab\tcd",
-        "i\xB7\x1D",
+        .name = "WhitespaceForgivenTab",
+        .data = "ab\tcd",
+        .result = "i\xB7\x1D",
     },
     {
-        "WhitespaceForgivenSpace",
-        "a bc d",
-        "i\xB7\x1D",
+        .name = "WhitespaceForgivenSpace",
+        .data = "a bc d",
+        .result = "i\xB7\x1D",
     },
     {
-        "WhitespaceForgivenNewline",
-        "a\nbc\nd",
-        "i\xB7\x1D",
+        .name = "WhitespaceForgivenNewline",
+        .data = "a\nbc\nd",
+        .result = "i\xB7\x1D",
     },
     {
-        "WhitespaceForgivenCarriageReturn",
-        "a\r\nbc\rd",
-        "i\xB7\x1D",
+        .name = "WhitespaceForgivenCarriageReturn",
+        .data = "a\r\nbc\rd",
+        .result = "i\xB7\x1D",
     },
-    {"WhitespaceForgivenLineFeed", "a\fbcd", "i\xB7\x1D"},
+    {
+        .name = "WhitespaceForgivenLineFeed",
+        .data = "a\fbcd",
+        .result = "i\xB7\x1D",
+    },
 };
 
 using Base64DecodeForgivingTest = TestWithParam<Base64DecodeTestCase>;

@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKContentRuleList;
 @class WKContentWorld;
+@class WKJSScriptingBuffer;
 @class WKUserScript;
 @protocol WKScriptMessageHandler;
 @protocol WKScriptMessageHandlerWithReply;
@@ -141,6 +142,21 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract Removes all associated content rule lists.
  */
 - (void)removeAllContentRuleLists WK_API_AVAILABLE(macos(10.13), ios(11.0));
+
+/*! @abstract Adds a data buffer that will be available to JavaScript through the `window.webkit.buffers` object
+ @param buffer The buffer to add.
+ @param name The name of the buffer to be referenced from JavaScript.
+        e.g. with a `name` parameter of `@"mybuffer"`, JavaScript can reference the buffer via `window.webkit.buffers.mybuffer`
+ @param contentWorld The WKContentWorld to add the buffer to.
+        The buffer will only be visible to JavaScript executing in that content world.
+ */
+- (void)addBuffer:(WKJSScriptingBuffer *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+/*! @abstract Removes a previously added data buffer from the given `WKContentWorld
+ @param name The name of the buffer to remove.
+ @param contentWorld The WKContentWorld from which to remove the buffer.
+ */
+- (void)removeBufferWithName:(NSString *)name contentWorld:(WKContentWorld *)world WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

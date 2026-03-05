@@ -62,13 +62,18 @@ struct TextExtractionTestOptions {
     bool clipToBounds { false };
     bool includeRects { false };
     bool includeURLs { false };
+    bool includeSelectOptions { false };
+    bool shortenURLs { false };
     JSRetainPtr<JSStringRef> nodeIdentifierInclusion;
-    bool includeEventListeners { false };
+    JSValueRef eventListenerCategories { nullptr };
     bool includeAccessibilityAttributes { false };
     bool includeTextInAutoFilledControls { false };
+    bool includeOffscreenPasswordFields { false };
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
     JSRetainPtr<JSStringRef> outputFormat;
+    JSValueRef dataDetectorTypes { nullptr };
+    JSRetainPtr<JSStringRef> wordLimitPolicy;
 };
 
 TextExtractionTestOptions* toTextExtractionTestOptions(JSContextRef, JSValueRef);
@@ -283,6 +288,7 @@ public:
     virtual bool hasInputSession() const { notImplemented(); return false; }
 
     virtual void setHardwareKeyboardAttached(bool) { }
+    virtual void setShowKeyboardAfterElementFocusDelay(double) { }
 
     virtual void setKeyboardInputModeIdentifier(JSStringRef) { notImplemented(); }
     virtual void setFocusStartsInputSessionPolicy(JSStringRef) { notImplemented(); }
@@ -330,6 +336,7 @@ public:
     virtual JSObjectRef inputViewBounds() const { notImplemented(); return nullptr; }
     virtual void activateDataListSuggestion(unsigned, JSValueRef) { notImplemented(); }
     virtual void setSelectedColorForColorPicker(double, double, double) { notImplemented(); }
+    virtual bool isShowingColorPicker() const { notImplemented(); return false; }
     virtual void setAppAccentColor(unsigned short, unsigned short, unsigned short) { notImplemented(); }
 
     // Find in Page
@@ -475,7 +482,9 @@ public:
 #if ENABLE(THREADED_ANIMATIONS)
     // Animations
     virtual JSRetainPtr<JSStringRef> animationStackForLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
+    virtual JSRetainPtr<JSStringRef> progressBasedTimelinesForScrollingNodeID(unsigned long long, unsigned long long) const { notImplemented(); return nullptr; }
 #endif
+    virtual bool displayLinkWantsHighFrameRate() const { notImplemented(); return false; };
 
 protected:
     explicit UIScriptController(UIScriptContext&);

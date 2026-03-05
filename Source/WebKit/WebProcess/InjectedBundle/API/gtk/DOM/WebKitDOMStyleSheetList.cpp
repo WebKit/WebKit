@@ -66,7 +66,9 @@ WebKitDOMStyleSheetList* wrapStyleSheetList(WebCore::StyleSheetList* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMStyleSheetList, webkit_dom_style_sheet_list, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_STYLE_SHEET_LIST_PROP_0,

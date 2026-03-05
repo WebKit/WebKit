@@ -53,9 +53,9 @@ void RunBasicSetupAndApiCallTest(const Environment& env,
   constexpr size_t kNumRenderChannels = 1;
   constexpr size_t kNumCaptureChannels = 1;
 
-  std::unique_ptr<BlockProcessor> block_processor =
-      BlockProcessor::Create(env, EchoCanceller3Config(), sample_rate_hz,
-                             kNumRenderChannels, kNumCaptureChannels);
+  std::unique_ptr<BlockProcessor> block_processor = BlockProcessor::Create(
+      env, EchoCanceller3Config(), sample_rate_hz, kNumRenderChannels,
+      kNumCaptureChannels, /*neural_residual_echo_estimator=*/nullptr);
   Block block(NumBandsForRate(sample_rate_hz), kNumRenderChannels, 1000.f);
   for (int k = 0; k < num_iterations; ++k) {
     block_processor->BufferRender(block);
@@ -70,9 +70,9 @@ void RunRenderBlockSizeVerificationTest(const Environment& env,
   constexpr size_t kNumRenderChannels = 1;
   constexpr size_t kNumCaptureChannels = 1;
 
-  std::unique_ptr<BlockProcessor> block_processor =
-      BlockProcessor::Create(env, EchoCanceller3Config(), sample_rate_hz,
-                             kNumRenderChannels, kNumCaptureChannels);
+  std::unique_ptr<BlockProcessor> block_processor = BlockProcessor::Create(
+      env, EchoCanceller3Config(), sample_rate_hz, kNumRenderChannels,
+      kNumCaptureChannels, /*neural_residual_echo_estimator=*/nullptr);
   Block block(NumBandsForRate(sample_rate_hz), kNumRenderChannels);
 
   EXPECT_DEATH(block_processor->BufferRender(block), "");
@@ -86,9 +86,9 @@ void RunRenderNumBandsVerificationTest(const Environment& env,
   const size_t wrong_num_bands = NumBandsForRate(sample_rate_hz) < 3
                                      ? NumBandsForRate(sample_rate_hz) + 1
                                      : 1;
-  std::unique_ptr<BlockProcessor> block_processor =
-      BlockProcessor::Create(env, EchoCanceller3Config(), sample_rate_hz,
-                             kNumRenderChannels, kNumCaptureChannels);
+  std::unique_ptr<BlockProcessor> block_processor = BlockProcessor::Create(
+      env, EchoCanceller3Config(), sample_rate_hz, kNumRenderChannels,
+      kNumCaptureChannels, /*neural_residual_echo_estimator=*/nullptr);
   Block block(wrong_num_bands, kNumRenderChannels);
 
   EXPECT_DEATH(block_processor->BufferRender(block), "");
@@ -102,9 +102,9 @@ void RunCaptureNumBandsVerificationTest(const Environment& env,
   const size_t wrong_num_bands = NumBandsForRate(sample_rate_hz) < 3
                                      ? NumBandsForRate(sample_rate_hz) + 1
                                      : 1;
-  std::unique_ptr<BlockProcessor> block_processor =
-      BlockProcessor::Create(env, EchoCanceller3Config(), sample_rate_hz,
-                             kNumRenderChannels, kNumCaptureChannels);
+  std::unique_ptr<BlockProcessor> block_processor = BlockProcessor::Create(
+      env, EchoCanceller3Config(), sample_rate_hz, kNumRenderChannels,
+      kNumCaptureChannels, /*neural_residual_echo_estimator=*/nullptr);
   Block block(wrong_num_bands, kNumRenderChannels);
 
   EXPECT_DEATH(block_processor->ProcessCapture(false, false, nullptr, &block),
@@ -155,7 +155,8 @@ TEST(BlockProcessor, DISABLED_DelayControllerIntegration) {
         .WillRepeatedly(Return(0));
     std::unique_ptr<BlockProcessor> block_processor = BlockProcessor::Create(
         env, EchoCanceller3Config(), rate, kNumRenderChannels,
-        kNumCaptureChannels, std::move(render_delay_buffer_mock));
+        kNumCaptureChannels, std::move(render_delay_buffer_mock),
+        /*neural_residual_echo_estimator=*/nullptr);
 
     Block render_block(NumBandsForRate(rate), kNumRenderChannels);
     Block capture_block(NumBandsForRate(rate), kNumCaptureChannels);
@@ -269,19 +270,21 @@ TEST(BlockProcessorDeathTest, VerifyCaptureNumBandsCheck) {
 
 // Verifiers that the verification for null ProcessCapture input works.
 TEST(BlockProcessorDeathTest, NullProcessCaptureParameter) {
-  EXPECT_DEATH(BlockProcessor::Create(CreateEnvironment(),
-                                      EchoCanceller3Config(), 16000, 1, 1)
-                   ->ProcessCapture(false, false, nullptr, nullptr),
-               "");
+  EXPECT_DEATH(
+      BlockProcessor::Create(CreateEnvironment(), EchoCanceller3Config(), 16000,
+                             1, 1, /*neural_residual_echo_estimator=*/nullptr)
+          ->ProcessCapture(false, false, nullptr, nullptr),
+      "");
 }
 
 // Verifies the check for correct sample rate.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
 TEST(BlockProcessor, DISABLED_WrongSampleRate) {
-  EXPECT_DEATH(BlockProcessor::Create(CreateEnvironment(),
-                                      EchoCanceller3Config(), 8001, 1, 1),
-               "");
+  EXPECT_DEATH(
+      BlockProcessor::Create(CreateEnvironment(), EchoCanceller3Config(), 8001,
+                             1, 1, /*neural_residual_echo_estimator=*/nullptr),
+      "");
 }
 
 #endif

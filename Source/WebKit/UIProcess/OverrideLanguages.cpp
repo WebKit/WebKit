@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-static Vector<String>& overrideLanguagesStorage()
+static Vector<String>& NODELETE overrideLanguagesStorage()
 {
     static NeverDestroyed<Vector<String>> storage;
     return storage.get();
@@ -37,7 +37,7 @@ static Vector<String>& overrideLanguagesStorage()
 
 void setOverrideLanguages(Vector<String>&& languages)
 {
-    overrideLanguagesStorage() = WTFMove(languages);
+    overrideLanguagesStorage() = WTF::move(languages);
 }
 
 const Vector<String>& overrideLanguages()

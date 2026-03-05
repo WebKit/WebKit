@@ -83,12 +83,12 @@ static const Seconds PostAnimationDelay { 100_ms };
     [super dealloc];
 }
 
-- (WebKit::VideoLayerRemoteParent*)parent
+- (RefPtr<WebKit::VideoLayerRemoteParent>)parent
 {
-    return _parent.get().unsafeGet();
+    return _parent.get();
 }
 
-- (void)setParent:(WebKit::VideoLayerRemoteParent*)parent
+- (void)setParent:(RefPtr<WebKit::VideoLayerRemoteParent>)parent
 {
     _parent = *parent;
 }
@@ -199,7 +199,7 @@ static const Seconds PostAnimationDelay { 100_ms };
         self.videoLayerFrame = self.bounds;
         if (RefPtr<WebKit::VideoLayerRemoteParent> parent = self.parent) {
             MachSendRight fenceSendRight = MachSendRight::adopt([_context createFencePort]);
-            parent->setVideoLayerSizeFenced(WebCore::FloatSize(self.videoLayerFrame.size), { WTFMove(fenceSendRight), { } });
+            parent->setVideoLayerSizeFenced(WebCore::FloatSize(self.videoLayerFrame.size), { WTF::move(fenceSendRight), { } });
         }
     }
 

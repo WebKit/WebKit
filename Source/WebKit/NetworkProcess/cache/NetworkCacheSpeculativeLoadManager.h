@@ -84,14 +84,11 @@ private:
     static bool canUsePreloadedEntry(const PreloadedEntry&, const WebCore::ResourceRequest& actualRequest);
     static bool canUsePendingPreload(const SpeculativeLoad&, const WebCore::ResourceRequest& actualRequest);
 
-    Ref<Storage> protectedStorage() const;
-    Ref<Cache> protectedCache() const;
-
     const WeakRef<Cache> m_cache;
-    ThreadSafeWeakPtr<Storage> m_storage; // Not expected to be null.
+    ThreadSafeWeakRef<Storage> m_storage;
 
     class PendingFrameLoad;
-    HashMap<GlobalFrameID, RefPtr<PendingFrameLoad>> m_pendingFrameLoads;
+    HashMap<GlobalFrameID, Ref<PendingFrameLoad>> m_pendingFrameLoads;
 
     HashMap<Key, RefPtr<SpeculativeLoad>> m_pendingPreloads;
     HashMap<Key, std::unique_ptr<Vector<RetrieveCompletionHandler>>> m_pendingRetrieveRequests;

@@ -41,13 +41,13 @@ public:
 
     friend bool operator==(const GridSpan&, const GridSpan&) = default;
 
-    unsigned integerSpan() const;
+    unsigned NODELETE integerSpan() const;
 
-    int untranslatedStartLine() const;
-    int untranslatedEndLine() const;
+    int NODELETE untranslatedStartLine() const;
+    int NODELETE untranslatedEndLine() const;
 
-    unsigned startLine() const;
-    unsigned endLine() const;
+    unsigned NODELETE startLine() const;
+    unsigned NODELETE endLine() const;
 
     struct GridSpanIterator {
         GridSpanIterator(unsigned value)
@@ -61,18 +61,18 @@ public:
         unsigned value;
     };
 
-    GridSpanIterator begin() const;
+    GridSpanIterator NODELETE begin() const;
 
-    GridSpanIterator end() const;
+    GridSpanIterator NODELETE end() const;
 
-    bool isTranslatedDefinite() const;
-    bool isIndefinite() const;
+    bool NODELETE isTranslatedDefinite() const;
+    bool NODELETE isIndefinite() const;
 
-    void translate(unsigned offset);
+    void NODELETE translate(unsigned offset);
 
     // Moves this span to be in the same coordinate space as |parent|.
     // If reverse is specified, then swaps the direction to handle RTL/LTR changes.
-    void translateTo(const GridSpan& parent, bool reverse);
+    void NODELETE translateTo(const GridSpan& parent, bool reverse);
 
     void clamp(int max);
 

@@ -92,7 +92,7 @@ public:
     
     // Called by code walking the renderer or layer trees.
     void pushMappingsToAncestor(const RenderLayer*, const RenderLayer* ancestorLayer, bool respectTransforms = true);
-    void popMappingsToAncestor(const RenderLayer*);
+    void NODELETE popMappingsToAncestor(const RenderLayer*);
     void pushMappingsToAncestor(const RenderElement*, const RenderLayerModelObject* ancestorRenderer);
     void popMappingsToAncestor(const RenderLayerModelObject*);
     
@@ -110,8 +110,8 @@ public:
 private:
     void mapToContainer(TransformState&, const RenderLayerModelObject* container = nullptr) const;
 
-    void stepInserted(const RenderGeometryMapStep&);
-    void stepRemoved(const RenderGeometryMapStep&);
+    void NODELETE stepInserted(const RenderGeometryMapStep&);
+    void NODELETE stepRemoved(const RenderGeometryMapStep&);
     
     bool hasNonUniformStep() const { return m_nonUniformStepsCount; }
     bool hasTransformStep() const { return m_transformedStepsCount; }

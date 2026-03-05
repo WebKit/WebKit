@@ -40,12 +40,12 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
   BIGNUM *X = BN_CTX_get(ctx);
   BIGNUM *Y = BN_CTX_get(ctx);
   BIGNUM *R = out;
-  if (Y == NULL) {
+  if (Y == nullptr) {
     return 0;
   }
 
   BN_zero(Y);
-  if (!BN_one(X) || BN_copy(B, a) == NULL || BN_copy(A, n) == NULL) {
+  if (!BN_one(X) || BN_copy(B, a) == nullptr || BN_copy(A, n) == nullptr) {
     return 0;
   }
   A->neg = 0;

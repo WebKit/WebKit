@@ -28,7 +28,6 @@ namespace dcsctp {
 //  /                  Unrecognized Parameters                      /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int UnrecognizedParametersCause::kType;
 
 std::optional<UnrecognizedParametersCause> UnrecognizedParametersCause::Parse(
     webrtc::ArrayView<const uint8_t> data) {

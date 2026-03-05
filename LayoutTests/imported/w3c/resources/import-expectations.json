@@ -89,6 +89,7 @@
     "web-platform-tests/css/css-font-loading": "import",
     "web-platform-tests/css/css-fonts": "import",
     "web-platform-tests/css/css-forced-color-adjust": "skip",
+    "web-platform-tests/css/css-forms": "import",
     "web-platform-tests/css/css-gcpm": "skip",
     "web-platform-tests/css/css-grid": "import",
     "web-platform-tests/css/css-highlight-api": "import",
@@ -380,5 +381,6 @@
     "web-platform-tests/workers": "import",
     "web-platform-tests/worklets": "import",
     "web-platform-tests/x-frame-options": "import",
-    "web-platform-tests/xhr": "import"
+    "web-platform-tests/xhr": "import",
+    "web-platform-tests/xml": "import"
 }

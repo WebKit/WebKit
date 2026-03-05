@@ -55,8 +55,6 @@ public:
     NullPlaybackSessionInterface& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
-    void setSpatialVideoMetadata(const std::optional<SpatialVideoMetadata>&) { }
-    void setVideoProjectionMetadata(const std::optional<VideoProjectionMetadata>&) { }
     void setVideoPresentationModel(VideoPresentationModel* model) { m_videoPresentationModel = model; }
     void setupFullscreen(const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) { }
     void enterFullscreen() { }
@@ -77,7 +75,7 @@ public:
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode) const { return false; }
     bool pictureInPictureWasStartedWhenEnteringBackground() const { return false; }
     AVPlayerViewController *avPlayerViewController() const { return nullptr; }
-    bool isPlayingVideoInEnhancedFullscreen() const { return false; }
+    bool isPlayingVideoInPictureInPicture() const { return false; }
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return std::nullopt; }
     bool changingStandbyOnly() { return false; }
     bool returningToStandby() const { return false; }

@@ -46,7 +46,7 @@ ParallelHelperPool& heapHelperPool()
 #endif
             Ref pool = ParallelHelperPool::create(threadName);
             pool->ensureThreads(Options::numberOfGCMarkers() - 1);
-            helperPool.construct(WTFMove(pool));
+            helperPool.construct(WTF::move(pool));
         });
     return helperPool.get().get();
 }

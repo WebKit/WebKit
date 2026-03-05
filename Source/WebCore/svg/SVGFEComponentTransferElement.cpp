@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEComponentTransferElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEComponentTransferElement);
 
 inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -76,19 +76,19 @@ RefPtr<FilterEffect> SVGFEComponentTransferElement::createFilterEffect(const Fil
 {
     ComponentTransferFunctions functions;
 
-    for (auto& child : childrenOfType<SVGComponentTransferFunctionElement>(*this))
-        functions[child.channel()] = child.transferFunction();
+    for (Ref child : childrenOfType<SVGComponentTransferFunctionElement>(*this))
+        functions[child->channel()] = child->transferFunction();
 
-    return FEComponentTransfer::create(WTFMove(functions));
+    return FEComponentTransfer::create(WTF::move(functions));
 }
 
-static bool isRelevantTransferFunctionElement(const Element& child)
+static bool NODELETE isRelevantTransferFunctionElement(const Element& child)
 {
     auto name = child.elementName();
 
     ASSERT(is<SVGComponentTransferFunctionElement>(child));
 
-    for (auto laterSibling = child.nextElementSibling(); laterSibling; laterSibling = laterSibling->nextElementSibling()) {
+    for (CheckedPtr laterSibling = child.nextElementSibling(); laterSibling; laterSibling = laterSibling->nextElementSibling()) {
         if (laterSibling->elementName() == name)
             return false;
     }

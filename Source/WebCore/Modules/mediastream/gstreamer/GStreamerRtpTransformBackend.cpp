@@ -29,7 +29,7 @@ namespace WebCore {
 void GStreamerRtpTransformBackend::setInputCallback(Callback&& callback)
 {
     Locker holdLock { m_inputCallbackLock };
-    m_inputCallback = WTFMove(callback);
+    m_inputCallback = WTF::move(callback);
 }
 
 void GStreamerRtpTransformBackend::clearTransformableFrameCallback()

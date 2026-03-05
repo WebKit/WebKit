@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: The Notification permission may only be requested in a browsing context with the same security origin as the top level browsing context.
+This test checks requesting Notification permissions in iframes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

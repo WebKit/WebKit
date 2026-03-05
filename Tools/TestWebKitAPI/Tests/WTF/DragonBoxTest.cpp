@@ -47,15 +47,13 @@ public:
         : builder1(std::span<char> { buffer1 })
         , builder2(std::span<char> { buffer2 })
         , converter(DoubleToStringConverter::EcmaScriptConverter())
+        , m_floatGen(m_randomDevice())
     {
     }
 
     float randomFloat()
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-        return dis(gen);
+        return m_floatDis(m_floatGen);
     }
 
     double randomDouble()
@@ -122,6 +120,9 @@ public:
     DoubleConversionStringBuilder builder1;
     DoubleConversionStringBuilder builder2;
     const DoubleToStringConverter& converter;
+    std::random_device m_randomDevice;
+    std::mt19937 m_floatGen;
+    std::uniform_real_distribution<float> m_floatDis { 0.0f, 1.0f };
     WeakRandom weakRandom;
     static constexpr bool verbose = false;
 };

@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/media-capabilities/#dictdef-mediacapabilitiesencodinginfo
 [
     EnabledBySetting=MediaCapabilitiesEnabled,
     JSGenerateToJSObject,

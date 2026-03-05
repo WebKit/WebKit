@@ -43,7 +43,7 @@ class Land(Command):
     help = 'If on a pull-request or commit-queue branch, rebase the ' \
            'current branch onto the target production branch and push.'
 
-    OOPS_RE = re.compile(r'\(O+P+S!*\)')
+    OOPS_RE = re.compile(r'^[^-]+\(O+P+S!*\)')
     REVIEWED_BY_RE = re.compile('Reviewed by (?P<approver>.+)')
     GIT_SVN_COMMITTED_RE = re.compile(r'Committed r(?P<revision>\d+)')
     REMOTE = 'origin'

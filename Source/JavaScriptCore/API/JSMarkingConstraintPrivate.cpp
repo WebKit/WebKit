@@ -84,5 +84,5 @@ void JSContextGroupAddMarkingConstraint(JSContextGroupRef group, JSMarkingConstr
         volatility,
         ConstraintConcurrency::Sequential);
     
-    vm.heap.addMarkingConstraint(WTFMove(constraint));
+    vm.heap.addMarkingConstraint(WTF::move(constraint));
 }

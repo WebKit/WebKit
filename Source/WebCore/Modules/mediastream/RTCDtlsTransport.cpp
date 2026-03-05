@@ -42,19 +42,19 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCDtlsTransport);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDtlsTransport);
 
 Ref<RTCDtlsTransport> RTCDtlsTransport::create(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend, Ref<RTCIceTransport>&& iceTransport)
 {
-    auto result = adoptRef(*new RTCDtlsTransport(context, WTFMove(backend), WTFMove(iceTransport)));
+    auto result = adoptRef(*new RTCDtlsTransport(context, WTF::move(backend), WTF::move(iceTransport)));
     result->suspendIfNeeded();
     return result;
 }
 
 RTCDtlsTransport::RTCDtlsTransport(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend, Ref<RTCIceTransport>&& iceTransport)
     : ActiveDOMObject(&context)
-    , m_backend(WTFMove(backend))
-    , m_iceTransport(WTFMove(iceTransport))
+    , m_backend(WTF::move(backend))
+    , m_iceTransport(WTF::move(iceTransport))
 {
     m_backend->registerClient(*this);
 }
@@ -86,12 +86,12 @@ bool RTCDtlsTransport::virtualHasPendingActivity() const
 
 void RTCDtlsTransport::onStateChanged(RTCDtlsTransportState state, Vector<Ref<JSC::ArrayBuffer>>&& certificates)
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [state, certificates = WTFMove(certificates)](auto& transport) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [state, certificates = WTF::move(certificates)](auto& transport) mutable {
         if (transport.m_state == RTCDtlsTransportState::Closed)
             return;
 
         if (transport.m_remoteCertificates != certificates)
-            transport.m_remoteCertificates = WTFMove(certificates);
+            transport.m_remoteCertificates = WTF::move(certificates);
 
         if (transport.m_state != state) {
             transport.m_state = state;

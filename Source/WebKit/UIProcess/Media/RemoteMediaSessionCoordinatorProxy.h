@@ -88,13 +88,12 @@ private:
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
-    Ref<WebPageProxy> protectedWebPageProxy();
 
 #if !RELEASE_LOG_DISABLED
     const WTF::Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "RemoteMediaSessionCoordinatorProxy"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     WeakRef<WebPageProxy> m_webPageProxy;

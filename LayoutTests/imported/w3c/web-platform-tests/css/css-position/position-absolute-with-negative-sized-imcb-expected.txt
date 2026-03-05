@@ -1,0 +1,116 @@
+
+
+
+
+
+
+
+
+
+
+
+PASS .abspos 1
+PASS .abspos 2
+FAIL .abspos 3 assert_equals:
+<div class="container">
+  <div class="abspos case1" style="inset: 12px" data-expected-width="18" data-expected-height="18" data-offset-x="12" data-offset-y="3"></div>
+</div>
+offsetTop expected 3 but got 1
+FAIL .abspos 4 assert_equals:
+<div class="container">
+  <div class="abspos case1" style="inset: 18px" data-expected-width="18" data-expected-height="18" data-offset-x="18" data-offset-y="9"></div>
+</div>
+offsetTop expected 9 but got 1
+PASS .abspos 5
+PASS .abspos 6
+FAIL .abspos 7 assert_equals:
+<div class="abspos case1" style="inset: 12px" data-expected-width="18" data-expected-height="18" data-offset-x="-10" data-offset-y="3"></div>
+offsetTop expected 3 but got 1
+FAIL .abspos 8 assert_equals:
+<div class="abspos case1" style="inset: 18px" data-expected-width="18" data-expected-height="18" data-offset-x="-16" data-offset-y="9"></div>
+offsetTop expected 9 but got 1
+FAIL .abspos 9 assert_equals:
+<div class="container">
+  <div class="abspos case2" style="border: solid orange 6px;" data-expected-width="12" data-expected-height="12" data-offset-x="18" data-offset-y="12"></div>
+</div>
+offsetTop expected 12 but got 4
+FAIL .abspos 10 assert_equals:
+<div class="container">
+  <div class="abspos case2" style="width: 12px; height: 12px;" data-expected-width="12" data-expected-height="12" data-offset-x="18" data-offset-y="12"></div>
+</div>
+offsetTop expected 12 but got 4
+FAIL .abspos 11 assert_equals:
+<div class="container">
+  <div class="abspos case2" style="min-width: 12px; min-height: 12px;" data-expected-width="12" data-expected-height="12" data-offset-x="18" data-offset-y="12"></div>
+</div>
+offsetTop expected 12 but got 4
+FAIL .abspos 12 assert_equals:
+<div class="container">
+  <div class="abspos case2" style="width: min-content; height: min-content;" data-expected-width="12" data-expected-height="12" data-offset-x="18" data-offset-y="12">
+    <div style="width: 12px; height: 12px"></div>
+  </div>
+</div>
+offsetTop expected 12 but got 4
+FAIL .abspos 13 assert_equals:
+<div class="container">
+  <div class="abspos case2" style="display: table;" data-expected-width="12" data-expected-height="12" data-offset-x="18" data-offset-y="12">
+    <div style="width: 12px; height: 12px"></div>
+  </div>
+</div>
+offsetTop expected 12 but got 4
+FAIL .abspos 14 assert_equals:
+<div class="abspos case2" style="border: solid orange 6px;" data-expected-width="12" data-expected-height="12" data-offset-x="-10" data-offset-y="12"></div>
+offsetTop expected 12 but got 4
+FAIL .abspos 15 assert_equals:
+<div class="abspos case2" style="width: 12px; height: 12px;" data-expected-width="12" data-expected-height="12" data-offset-x="-10" data-offset-y="12"></div>
+offsetTop expected 12 but got 4
+FAIL .abspos 16 assert_equals:
+<div class="abspos case2" style="min-width: 12px; min-height: 12px;" data-expected-width="12" data-expected-height="12" data-offset-x="-10" data-offset-y="12"></div>
+offsetTop expected 12 but got 4
+FAIL .abspos 17 assert_equals:
+<div class="abspos case2" style="width: min-content; height: min-content;" data-expected-width="12" data-expected-height="12" data-offset-x="-10" data-offset-y="12">
+    <div style="width: 12px; height: 12px"></div>
+  </div>
+offsetTop expected 12 but got 4
+FAIL .abspos 18 assert_equals:
+<div class="abspos case2" style="display: table;" data-expected-width="12" data-expected-height="12" data-offset-x="-10" data-offset-y="12">
+    <div style="width: 12px; height: 12px"></div>
+  </div>
+offsetLeft expected -10 but got 2
+FAIL .abspos 19 assert_equals:
+<div class="container">
+  <div class="abspos case3" data-expected-width="20" data-expected-height="20" data-offset-x="8" data-offset-y="8"></div>
+</div>
+width expected 20 but got 4
+FAIL .abspos 20 assert_equals:
+<div class="abspos case3" data-expected-width="20" data-expected-height="20" data-offset-x="-8" data-offset-y="8"></div>
+width expected 20 but got 4
+PASS .abspos 21
+PASS .abspos 22
+FAIL .abspos 23 assert_equals:
+<div class="container">
+  <div class="abspos case4" style="inset: 15px" data-expected-width="10" data-expected-height="10" data-offset-x="10" data-offset-y="10"></div>
+</div>
+offsetLeft expected 10 but got 5
+FAIL .abspos 24 assert_equals:
+<div class="container">
+  <div class="abspos case4" style="inset: 20px" data-expected-width="10" data-expected-height="10" data-offset-x="15" data-offset-y="15"></div>
+</div>
+offsetLeft expected 15 but got 5
+FAIL .abspos 25 assert_equals:
+<div class="container">
+  <div class="abspos case4" style="inset: 25px" data-expected-width="10" data-expected-height="10" data-offset-x="20" data-offset-y="20"></div>
+</div>
+offsetLeft expected 20 but got 5
+PASS .abspos 26
+PASS .abspos 27
+FAIL .abspos 28 assert_equals:
+<div class="abspos case4" style="inset: 15px" data-expected-width="10" data-expected-height="10" data-offset-x="0" data-offset-y="10"></div>
+offsetLeft expected 0 but got 5
+FAIL .abspos 29 assert_equals:
+<div class="abspos case4" style="inset: 20px" data-expected-width="10" data-expected-height="10" data-offset-x="-5" data-offset-y="15"></div>
+offsetLeft expected -5 but got 5
+FAIL .abspos 30 assert_equals:
+<div class="abspos case4" style="inset: 25px" data-expected-width="10" data-expected-height="10" data-offset-x="-10" data-offset-y="20"></div>
+offsetLeft expected -10 but got 5
+

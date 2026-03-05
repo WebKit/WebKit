@@ -41,7 +41,7 @@ class CommandEncoderImpl final : public CommandEncoder {
 public:
     static Ref<CommandEncoderImpl> create(WebGPUPtr<WGPUCommandEncoder>&& commandEncoder, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new CommandEncoderImpl(WTFMove(commandEncoder), convertToBackingContext));
+        return adoptRef(*new CommandEncoderImpl(WTF::move(commandEncoder), convertToBackingContext));
     }
 
     virtual ~CommandEncoderImpl();
@@ -57,6 +57,7 @@ private:
     CommandEncoderImpl& operator=(CommandEncoderImpl&&) = delete;
 
     WGPUCommandEncoder backing() const { return m_backing.get(); }
+    bool isCommandEncoderImpl() const final { return true; }
 
     RefPtr<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) final;
     RefPtr<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) final;
@@ -110,5 +111,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::CommandEncoderImpl)
+    static bool isType(const WebCore::WebGPU::CommandEncoder& commandEncoder) { return commandEncoder.isCommandEncoderImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

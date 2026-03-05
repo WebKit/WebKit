@@ -1,0 +1,9 @@
+
+Harness Error (FAIL), message = Error: assert_unreached: channel1 must not dispatch error events: OperationError. Reached unreachable code
+
+TIMEOUT Negotiated datachannel should be able to send and receive all string messages on close Test timed out
+
+Harness Error (FAIL), message = Error: assert_unreached: channel1 must not dispatch error events: OperationError. Reached unreachable code
+
+TIMEOUT Negotiated datachannel should be able to send and receive all string messages on close Test timed out
+

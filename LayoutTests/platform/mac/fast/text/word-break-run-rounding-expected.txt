@@ -19,21 +19,21 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 314x18
           text run at (0,0) width 314: "Test that the preferred (maximum) width is right:"
       RenderBlock (floating) {DIV} at (0,68) size 733x24 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 727x18
-          text run at (3,3) width 727: "The black border should fit tightly around this one line of text with no space after the period."
+        RenderText {#text} at (3,2) size 727x20
+          text run at (3,2) width 727: "The black border should fit tightly around this one line of text with no space after the period."
       RenderBlock (anonymous) at (0,68) size 784x24
         RenderBR {BR} at (732,0) size 1x18
       RenderBlock {P} at (0,108) size 784x18
         RenderText {#text} at (0,0) size 388x18
           text run at (0,0) width 388: "Test that text does not wrap too early due to rounding errors:"
       RenderBlock {DIV} at (0,142) size 431x24 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 422x18
-          text run at (3,3) width 422: "This text fits nicely on a single line of the given width."
+        RenderText {#text} at (3,2) size 422x20
+          text run at (3,2) width 422: "This text fits nicely on a single line of the given width."
       RenderBlock {P} at (0,182) size 784x18
         RenderText {#text} at (0,0) size 233x18
           text run at (0,0) width 233: "Test that text does not wrap too late:"
       RenderBlock {DIV} at (0,216) size 597x42 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 584x36
-          text run at (3,3) width 485: "J u s t a b u n c h o f l e t t e r s h e r e , n o t h i n g t o s e e . "
-          text run at (487,3) width 100: "Thisisonebig"
-          text run at (3,21) width 169: "wordwhichisverylong."
+        RenderText {#text} at (3,2) size 584x38
+          text run at (3,2) width 485: "J u s t a b u n c h o f l e t t e r s h e r e , n o t h i n g t o s e e . "
+          text run at (487,2) width 100: "Thisisonebig"
+          text run at (3,20) width 169: "wordwhichisverylong."

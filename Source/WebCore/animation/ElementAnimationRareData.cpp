@@ -61,18 +61,18 @@ void ElementAnimationRareData::setAnimationsCreatedByMarkup(CSSAnimationCollecti
         }
     }
 
-    m_animationsCreatedByMarkup = WTFMove(animations);
+    m_animationsCreatedByMarkup = WTF::move(animations);
 }
 
 void ElementAnimationRareData::setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style)
 {
     if (m_keyframeEffectStack && m_lastStyleChangeEventStyle != style) {
-        auto previousStyleChangeEventStyle = std::exchange(m_lastStyleChangeEventStyle, WTFMove(style));
+        auto previousStyleChangeEventStyle = std::exchange(m_lastStyleChangeEventStyle, WTF::move(style));
         m_keyframeEffectStack->lastStyleChangeEventStyleDidChange(previousStyleChangeEventStyle.get(), m_lastStyleChangeEventStyle.get());
         return;
     }
 
-    m_lastStyleChangeEventStyle = WTFMove(style);
+    m_lastStyleChangeEventStyle = WTF::move(style);
 }
 
 } // namespace WebCore

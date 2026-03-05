@@ -28,9 +28,13 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
 #include <unicode/uconfig.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 struct UCharIterator;

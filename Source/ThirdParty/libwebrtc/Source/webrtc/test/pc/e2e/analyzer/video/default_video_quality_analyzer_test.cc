@@ -613,7 +613,7 @@ TEST(DefaultVideoQualityAnalyzerTest,
 
     VideoFrame received_frame = frame;
     // Shift frame by a few pixels.
-    test::CropRegion crop_region{0, 1, 3, 0};
+    test::CropRegion crop_region{.left = 0, .right = 1, .top = 3, .bottom = 0};
     scoped_refptr<VideoFrameBuffer> cropped_buffer =
         CropAndZoom(crop_region, received_frame.video_frame_buffer()->ToI420());
     received_frame.set_video_frame_buffer(cropped_buffer);

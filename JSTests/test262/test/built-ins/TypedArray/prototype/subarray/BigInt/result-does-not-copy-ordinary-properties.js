@@ -8,12 +8,12 @@ info: |
 
   ...
   17. Return ? TypedArraySpeciesCreate(O, argumentsList).
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([41n, 42n, 43n, 44n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([41n, 42n, 43n, 44n]));
   var result;
 
   sample.foo = 42;

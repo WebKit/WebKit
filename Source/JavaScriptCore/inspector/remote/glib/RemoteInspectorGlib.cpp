@@ -72,7 +72,7 @@ void RemoteInspector::start()
             RemoteInspector* inspector = static_cast<RemoteInspector*>(userData);
             GUniqueOutPtr<GError> error;
             if (GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr())))
-                inspector->setupConnection(SocketConnection::create(WTFMove(connection), messageHandlers(), inspector));
+                inspector->setupConnection(SocketConnection::create(WTF::move(connection), messageHandlers(), inspector));
             else if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
                 g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", s_inspectorServerAddress.data(), error->message);
         }, this);
@@ -147,7 +147,7 @@ void RemoteInspector::setupConnection(Ref<SocketConnection>&& connection)
     Locker locker { m_mutex };
 
     ASSERT(!m_socketConnection);
-    m_socketConnection = WTFMove(connection);
+    m_socketConnection = WTF::move(connection);
     if (!m_targetMap.isEmpty())
         pushListingsSoon();
 }
@@ -296,7 +296,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
     }
 
     Locker locker { m_mutex };
-    m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
+    m_targetConnectionMap.set(targetIdentifier, WTF::move(connectionToTarget));
 
     updateHasActiveDebugSession();
 }
@@ -331,7 +331,7 @@ void RemoteInspector::automationConnectionDidClose()
 
 void RemoteInspector::setInspectorServerAddress(CString&& address)
 {
-    s_inspectorServerAddress = WTFMove(address);
+    s_inspectorServerAddress = WTF::move(address);
 }
 
 const CString& RemoteInspector::inspectorServerAddress()

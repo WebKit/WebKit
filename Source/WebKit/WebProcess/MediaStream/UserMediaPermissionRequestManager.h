@@ -77,12 +77,10 @@ private:
     // WebCore::MediaCanStartListener
     void mediaCanStart(WebCore::Document&) final;
 
-    Ref<WebPage> protectedPage() const;
-
     WeakRef<WebPage> m_page;
 
     HashMap<WebCore::UserMediaRequestIdentifier, Ref<WebCore::UserMediaRequest>> m_ongoingUserMediaRequests;
-    HashMap<RefPtr<WebCore::Document>, Vector<Ref<WebCore::UserMediaRequest>>> m_pendingUserMediaRequests;
+    HashMap<Ref<WebCore::Document>, Vector<Ref<WebCore::UserMediaRequest>>> m_pendingUserMediaRequests;
 
     HashMap<WebCore::UserMediaClient::DeviceChangeObserverToken, Function<void()>> m_deviceChangeObserverMap;
     bool m_monitoringDeviceChange { false };

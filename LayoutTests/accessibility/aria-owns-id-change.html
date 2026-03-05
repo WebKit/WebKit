@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div tabindex="0" role="group" aria-owns="owned" id="owner">
+    <div>Item 1</div>
+</div>
+
+<div tabindex="0" role="group" aria-owns="different-id" id="other-owner">
+    <div>Item 2</div>
+</div>
+
+<div role="button" id="owned">Owned button</div>
+
+<script>
+var output = "This test ensures aria-owns relationships update when a target element's id changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var owner, otherOwner;
+    setTimeout(async () => {
+        owner = accessibilityController.accessibleElementById("owner");
+        otherOwner = accessibilityController.accessibleElementById("other-owner");
+
+        output += "Initial state - owner should have 2 children (Item 1 + owned button), other-owner should have 1 child:\n";
+        output += expect("owner.childrenCount", "2");
+        output += expect("owner.childAtIndex(1).role.toLowerCase().includes('button')", "true");
+        output += expect("otherOwner.childrenCount", "1");
+
+        output += "\nChanging the owned element's id from 'owned' to 'not-owned':\n";
+        output += evalAndReturn("document.getElementById('owned').id = 'not-owned'");
+        output += "\nOwner should now only have 1 child (Item 1):\n";
+        output += await expectAsync("owner.childrenCount", "1");
+
+        output += "\nChanging the element's id back to 'owned':\n";
+        output += evalAndReturn("document.getElementById('not-owned').id = 'owned'");
+        output += "\nOwner should now have 2 children again:\n";
+        output += await expectAsync("owner.childrenCount", "2");
+
+        output += expect("owner.childAtIndex(1).role.toLowerCase().includes('button')", "true");
+
+        output += "\nTesting ownership transfer - changing id to match other-owner's aria-owns:\n";
+        output += evalAndReturn("document.getElementById('owned').id = 'different-id'");
+        output += "\nOwner should have 1 child, other-owner should have 2 children:\n";
+        output += await expectAsync("owner.childrenCount", "1");
+        output += await expectAsync("otherOwner.childrenCount", "2");
+        output += expect("otherOwner.childAtIndex(1).role.toLowerCase().includes('button')", "true");
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

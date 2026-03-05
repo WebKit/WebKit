@@ -46,7 +46,7 @@ public:
     WebKeyboardEvent(WebEvent&&, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad);
 #elif PLATFORM(IOS_FAMILY)
     WebKeyboardEvent(WebEvent&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
-#elif USE(LIBWPE)
+#elif USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     WebKeyboardEvent(WebEvent&&, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, bool isAutoRepeat, bool isKeypad);
 #else
     WebKeyboardEvent(WebEvent&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
@@ -63,10 +63,10 @@ public:
 #endif
     int32_t nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
     int32_t macCharCode() const { return m_macCharCode; }
-#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
-#if PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     const std::optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
     const std::optional<EditingRange>& preeditSelectionRange() const { return m_preeditSelectionRange; }
 #endif
@@ -79,7 +79,7 @@ public:
     bool isKeypad() const { return m_isKeypad; }
     bool isSystemKey() const { return m_isSystemKey; }
 
-    static bool isKeyboardEventType(WebEventType);
+    static bool NODELETE isKeyboardEventType(WebEventType);
 
 #if PLATFORM(WPE)
     static String keyValueStringForWPEKeyval(unsigned);
@@ -105,10 +105,10 @@ private:
     int32_t m_windowsVirtualKeyCode { 0 };
     int32_t m_nativeVirtualKeyCode { 0 };
     int32_t m_macCharCode { 0 };
-#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     bool m_handledByInputMethod { false };
 #endif
-#if PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     std::optional<Vector<WebCore::CompositionUnderline>> m_preeditUnderlines;
     std::optional<EditingRange> m_preeditSelectionRange;
 #endif

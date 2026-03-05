@@ -4,38 +4,38 @@ layer at (0,0) size 800x600 isolatesBlending
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 503x19
+        RenderText {#text} at (0,0) size 503x20
           text run at (0,0) width 503: "This tests that the AutoFill button renders. It can only be tested in the test tool."
-      RenderBlock {DIV} at (0,36) size 784x21
-        RenderTextControl {INPUT} at (0,1) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBlock {DIV} at (0,36) size 784x22
+        RenderTextControl {INPUT} at (0,1) size 154x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,0) size 142x20
             RenderBlock {DIV} at (0,3) size 115x14
-        RenderText {#text} at (153,0) size 5x19
+        RenderText {#text} at (153,0) size 5x20
           text run at (153,0) width 5: " "
-        RenderTextControl {INPUT} at (157,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (157,1) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,0) size 142x20
             RenderBlock {DIV} at (0,3) size 115x14
-        RenderText {#text} at (311,0) size 5x19
+        RenderText {#text} at (311,0) size 5x20
           text run at (311,0) width 5: " "
-        RenderTextControl {INPUT} at (315,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (315,1) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,0) size 142x20
             RenderBlock {DIV} at (0,3) size 115x14
-        RenderTextControl {INPUT} at (469,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (469,1) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,0) size 142x20
             RenderBlock {DIV} at (0,3) size 115x14
-layer at (14,48) size 115x14
+layer at (14,49) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (172,48) size 115x14
+layer at (172,49) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (330,48) size 115x14
+layer at (330,49) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (484,48) size 115x14
+layer at (484,49) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (131,43) size 24x24 blendMode: luminosity
+layer at (131,44) size 24x24 blendMode: luminosity
   RenderBlock {DIV} at (116,-2) size 25x24
-layer at (289,43) size 24x24 blendMode: luminosity
+layer at (289,44) size 24x24 blendMode: luminosity
   RenderBlock {DIV} at (116,-2) size 25x24
-layer at (447,43) size 24x24 blendMode: luminosity
+layer at (447,44) size 24x24 blendMode: luminosity
   RenderBlock {DIV} at (116,-2) size 25x24
-layer at (601,43) size 24x24 blendMode: luminosity
+layer at (601,44) size 24x24 blendMode: luminosity
   RenderBlock {DIV} at (116,-2) size 25x24

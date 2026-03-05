@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr-hand-input/#xrhand
 [
     Conditional=WEBXR_HANDS,
     EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
@@ -31,8 +32,10 @@
     Exposed=Window,
     InterfaceName=XRHand
 ] interface WebXRHand {
-    iterable<XRHandJoint, WebXRJointSpace>;
+    // FIXME: iterable value should not be nullable.
+    iterable<XRHandJoint, WebXRJointSpace?>;
 
     readonly attribute unsigned long size;
-    WebXRJointSpace get(XRHandJoint key);
+    // FIXME: `get` should not return a nullable type.
+    WebXRJointSpace? get(XRHandJoint key);
 };

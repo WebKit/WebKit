@@ -30,9 +30,8 @@ typedef [EnforceRange] unsigned long GPUIndex32;
 typedef [EnforceRange] unsigned long GPUShaderStageFlags;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUBindGroupLayoutEntry {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUBindGroupLayoutEntry {
     required GPUIndex32 binding;
     required GPUShaderStageFlags visibility;
 

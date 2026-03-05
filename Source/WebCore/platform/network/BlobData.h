@@ -28,14 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlobData_h
-#define BlobData_h
+#pragma once
 
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/PolicyContainer.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,20 +44,31 @@ class BlobDataItem {
 public:
     WEBCORE_EXPORT static const long long toEndOfFile;
 
-    enum class Type {
+    enum class Type : bool {
         Data,
         File
     };
 
-    Type type() const { return m_type; }
+    Type type() const
+    {
+        static_assert(std::is_same_v<Ref<DataSegment>, WTF::variant_alternative_t<static_cast<bool>(Type::Data), decltype(m_data)>>);
+        static_assert(std::is_same_v<Ref<BlobDataFileReference>, WTF::variant_alternative_t<static_cast<bool>(Type::File), decltype(m_data)>>);
+        return static_cast<Type>(m_data.index());
+    }
 
     // For Data type.
-    DataSegment* data() const { return m_data.get(); }
-    RefPtr<DataSegment> protectedData() const { return m_data; }
+    DataSegment& data() const
+    {
+        ASSERT(type() == Type::Data);
+        return std::get<Ref<DataSegment>>(m_data).get();
+    }
 
     // For File type.
-    BlobDataFileReference* file() const { return m_file.get(); }
-    RefPtr<BlobDataFileReference> protectedFile() const { return file(); }
+    BlobDataFileReference& file() const
+    {
+        ASSERT(type() == Type::File);
+        return std::get<Ref<BlobDataFileReference>>(m_data).get();
+    }
 
     long long offset() const { return m_offset; }
     WEBCORE_EXPORT long long length() const; // Computes file length if it's not known yet.
@@ -66,33 +77,27 @@ private:
     friend class BlobData;
 
     explicit BlobDataItem(Ref<BlobDataFileReference>&& file)
-        : m_type(Type::File)
-        , m_file(WTFMove(file))
+        : m_data(WTF::move(file))
         , m_offset(0)
         , m_length(toEndOfFile)
     {
     }
 
     BlobDataItem(Ref<DataSegment>&& data, long long offset, long long length)
-        : m_type(Type::Data)
-        , m_data(WTFMove(data))
+        : m_data(WTF::move(data))
         , m_offset(offset)
         , m_length(length)
     {
     }
 
-    BlobDataItem(BlobDataFileReference* file, long long offset, long long length)
-        : m_type(Type::File)
-        , m_file(file)
+    BlobDataItem(Ref<BlobDataFileReference>&& file, long long offset, long long length)
+        : m_data(WTF::move(file))
         , m_offset(offset)
         , m_length(length)
     {
     }
 
-    Type m_type;
-    RefPtr<DataSegment> m_data;
-    RefPtr<BlobDataFileReference> m_file;
-
+    Variant<Ref<DataSegment>, Ref<BlobDataFileReference>> m_data;
     long long m_offset;
     long long m_length;
 };
@@ -124,7 +129,7 @@ private:
     BlobData(const String& contentType);
 
     void appendData(Ref<DataSegment>&&, long long offset, long long length);
-    void appendFile(BlobDataFileReference*, long long offset, long long length);
+    void appendFile(Ref<BlobDataFileReference>&&, long long offset, long long length);
 
     String m_contentType;
     PolicyContainer m_policyContainer;
@@ -132,5 +137,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BlobData_h

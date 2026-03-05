@@ -64,7 +64,7 @@ void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<Stri
     Vector<FileChooserFileInfo> files(filenames.size(), [&](size_t i) {
         return FileChooserFileInfo { filenames[i], i < replacementNames.size() ? replacementNames[i] : nullString(), { } };
     });
-    m_client->filesChosen(WTFMove(files));
+    m_client->filesChosen(WTF::move(files));
 }
 
 void FileChooser::cancelFileChoosing()
@@ -85,7 +85,7 @@ void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String
     auto files = filenames.map([](auto& filename) {
         return FileChooserFileInfo { filename, { }, { } };
     });
-    m_client->filesChosen(WTFMove(files), displayString, icon);
+    m_client->filesChosen(WTF::move(files), displayString, icon);
 }
 
 #endif

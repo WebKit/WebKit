@@ -217,6 +217,8 @@ void WindowCapturerMac::CaptureFrame() {
 // static
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options) {
+  RTC_LOG(LS_INFO) << "video capture: DesktopCapturer::CreateRawWindowCapturer "
+                      "creates DesktopCapturer of type WindowCapturerMac";
   return std::unique_ptr<DesktopCapturer>(new WindowCapturerMac(
       options.full_screen_window_detector(), options.configuration_monitor()));
 }

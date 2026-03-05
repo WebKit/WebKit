@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     for (SocketArray::iterator i = sockets.begin(); i != sockets.end(); ++i)
       FD_SET((*i)->socket(), &socket_set);
 
-    struct timeval timeout = {10, 0};
+    struct timeval timeout = {.tv_sec = 10, .tv_usec = 0};
     if (select(FD_SETSIZE, &socket_set, nullptr, nullptr, &timeout) ==
         SOCKET_ERROR) {
       printf("select failed\n");

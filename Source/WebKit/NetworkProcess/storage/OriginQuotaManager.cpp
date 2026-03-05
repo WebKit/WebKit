@@ -37,16 +37,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(OriginQuotaManager);
 
 Ref<OriginQuotaManager> OriginQuotaManager::create(Parameters&& parameters, GetUsageFunction&& getUsageFunction)
 {
-    return adoptRef(*new OriginQuotaManager(WTFMove(parameters), WTFMove(getUsageFunction)));
+    return adoptRef(*new OriginQuotaManager(WTF::move(parameters), WTF::move(getUsageFunction)));
 }
 
 OriginQuotaManager::OriginQuotaManager(Parameters&& parameters, GetUsageFunction&& getUsageFunction)
     : m_quota(parameters.quota)
     , m_standardReportedQuota(parameters.standardReportedQuota)
     , m_initialQuota(parameters.quota)
-    , m_getUsageFunction(WTFMove(getUsageFunction))
-    , m_increaseQuotaFunction(WTFMove(parameters.increaseQuotaFunction))
-    , m_notifySpaceGrantedFunction(WTFMove(parameters.notifySpaceGrantedFunction))
+    , m_getUsageFunction(WTF::move(getUsageFunction))
+    , m_increaseQuotaFunction(WTF::move(parameters.increaseQuotaFunction))
+    , m_notifySpaceGrantedFunction(WTF::move(parameters.notifySpaceGrantedFunction))
 {
     ASSERT(m_quota);
 }
@@ -65,7 +65,7 @@ uint64_t OriginQuotaManager::usage()
 
 void OriginQuotaManager::requestSpace(uint64_t spaceRequested, RequestCallback&& callback)
 {
-    m_requests.append(OriginQuotaManager::Request { spaceRequested, WTFMove(callback), std::nullopt });
+    m_requests.append(OriginQuotaManager::Request { spaceRequested, WTF::move(callback), std::nullopt });
     handleRequests();
 }
 
@@ -165,8 +165,8 @@ void OriginQuotaManager::updateParametersForTesting(Parameters&& parameters)
 {
     m_quota = parameters.quota;
     m_standardReportedQuota = parameters.standardReportedQuota;
-    m_increaseQuotaFunction = WTFMove(parameters.increaseQuotaFunction);
-    m_notifySpaceGrantedFunction = WTFMove(parameters.notifySpaceGrantedFunction);
+    m_increaseQuotaFunction = WTF::move(parameters.increaseQuotaFunction);
+    m_notifySpaceGrantedFunction = WTF::move(parameters.notifySpaceGrantedFunction);
     m_initialQuota = m_quota;
     m_quotaCountdown = 0;
     m_usage = std::nullopt;

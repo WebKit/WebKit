@@ -52,7 +52,7 @@ public:
 
     void setTagName(TagName);
 
-    const AtomString& name() const;
+    const AtomString& name() const LIFETIME_BOUND;
 
     // DOCTYPE.
 
@@ -62,12 +62,12 @@ public:
 
     // StartTag, EndTag.
 
-    Vector<Attribute>& attributes();
+    Vector<Attribute>& attributes() LIFETIME_BOUND;
 
     TagName tagName() const;
     bool selfClosing() const;
     void setSelfClosingToFalse();
-    const Vector<Attribute>& attributes() const;
+    const Vector<Attribute>& attributes() const LIFETIME_BOUND;
 
     // Characters
 
@@ -76,8 +76,8 @@ public:
 
     // Comment
 
-    const String& comment() const;
-    String& comment();
+    const String& comment() const LIFETIME_BOUND;
+    String& comment() LIFETIME_BOUND;
 
     bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; }
 
@@ -241,7 +241,7 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
             return std::nullopt;
         }
 
-        return Attribute(WTFMove(qualifiedName), HTMLNameCache::makeAttributeValue(attribute.value));
+        return Attribute(WTF::move(qualifiedName), HTMLNameCache::makeAttributeValue(attribute.value));
     });
 }
 
@@ -286,7 +286,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
 
 inline AtomHTMLToken::AtomHTMLToken(HTMLToken::Type type, TagName tagName, const AtomString& name, Vector<Attribute>&& attributes)
     : m_name(name)
-    , m_attributes(WTFMove(attributes))
+    , m_attributes(WTF::move(attributes))
     , m_type(type)
     , m_tagName(tagName)
 {
@@ -295,7 +295,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken::Type type, TagName tagName, const
 }
 
 inline AtomHTMLToken::AtomHTMLToken(HTMLToken::Type type, TagName tagName, Vector<Attribute>&& attributes)
-    : m_attributes(WTFMove(attributes))
+    : m_attributes(WTF::move(attributes))
     , m_type(type)
     , m_tagName(tagName)
 {

@@ -45,7 +45,7 @@ namespace WebCore {
 ExceptionOr<Ref<WebTransportSendStream>> WebTransportSendStream::create(WebTransport& transport, JSDOMGlobalObject& globalObject, Ref<WebTransportSendStreamSink>&& sink)
 {
     auto identifier = sink->identifier();
-    auto result = createInternalWritableStream(globalObject, WTFMove(sink));
+    auto result = createInternalWritableStream(globalObject, WTF::move(sink));
     if (result.hasException())
         return result.releaseException();
 
@@ -53,7 +53,7 @@ ExceptionOr<Ref<WebTransportSendStream>> WebTransportSendStream::create(WebTrans
 }
 
 WebTransportSendStream::WebTransportSendStream(WebTransportStreamIdentifier identifier, WebTransport& transport, Ref<InternalWritableStream>&& stream)
-    : WritableStream(WTFMove(stream))
+    : WritableStream(WTF::move(stream))
     , m_identifier(identifier)
     , m_transport(transport) { }
 
@@ -67,7 +67,7 @@ void WebTransportSendStream::getStats(ScriptExecutionContext& context, Ref<Defer
     RefPtr session = transport->session();
     if (!session)
         return promise->reject(ExceptionCode::InvalidStateError);
-    context.enqueueTaskWhenSettled(session->getSendStreamStats(m_identifier), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&& stats) mutable {
+    context.enqueueTaskWhenSettled(session->getSendStreamStats(m_identifier), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& stats) mutable {
         if (!stats)
             return promise->reject(ExceptionCode::InvalidStateError);
         promise->resolve<IDLDictionary<WebTransportSendStreamStats>>(*stats);

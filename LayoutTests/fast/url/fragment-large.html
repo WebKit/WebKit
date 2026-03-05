@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+const dataUrl = "data:text/plain,hello";
+
+let shouldPass = true;
+
+async function testURL(url) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => resolve(true);
+        xhr.onerror = () => resolve(false);
+        xhr.open("GET", url);
+        xhr.send();
+    });
+}
+
+function expectedSuccess(result, message) {
+    if (result) {
+        testPassed(message);
+    } else {
+        testFailed(message);
+    }
+}
+
+function expectedFail(result, message) {
+    if (result) {
+        testFailed(message);
+    } else {
+        testPassed(message);
+    }
+}
+
+async function runTest() {
+    try {
+        const result1 = await testURL(dataUrl + "#" + "a".repeat(2 * 1024 * 1024));
+        expectedSuccess(result1, "2MB fragment");
+
+        const result2 = await testURL(dataUrl + "#" + "a".repeat(2 * 1024 * 1024 + 1));
+        expectedFail(result2, "Blocked 2MB+1 fragment");
+    } catch (e) {
+        testFailed(`Unknown exception: ${e}`);
+    }
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

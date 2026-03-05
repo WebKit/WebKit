@@ -32,10 +32,10 @@
 
 namespace WPE {
 
-void GestureDetector::handleEvent(WPEEvent* event)
+bool GestureDetector::handleEvent(WPEEvent* event)
 {
     if (m_sequenceId && *m_sequenceId != wpe_event_touch_get_sequence_id(event))
-        return;
+        return false;
 
     switch (wpe_event_get_event_type(event)) {
     case WPE_EVENT_TOUCH_DOWN:
@@ -50,6 +50,8 @@ void GestureDetector::handleEvent(WPEEvent* event)
         reset();
         break;
     case WPE_EVENT_TOUCH_MOVE:
+        if (!m_sequenceId)
+            return false;
         if (double x, y; wpe_event_get_position(event, &x, &y) && m_position) {
             auto* settings = wpe_display_get_settings(wpe_view_get_display(wpe_event_get_view(event)));
             auto dragActivationThresholdPx = wpe_settings_get_uint32(settings, WPE_SETTING_DRAG_THRESHOLD, nullptr);
@@ -67,6 +69,8 @@ void GestureDetector::handleEvent(WPEEvent* event)
             reset();
         break;
     case WPE_EVENT_TOUCH_UP:
+        if (!m_sequenceId)
+            return false;
         if (double x, y; wpe_event_get_position(event, &x, &y) && m_position) {
             if (m_gesture == WPE_GESTURE_DRAG)
                 m_delta = { x - m_nextDeltaReferencePosition->x, y - m_nextDeltaReferencePosition->y };
@@ -77,6 +81,8 @@ void GestureDetector::handleEvent(WPEEvent* event)
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
+
+    return true;
 }
 
 void GestureDetector::reset()

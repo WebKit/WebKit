@@ -25,7 +25,7 @@ extern "C" {
 // env_md_st is typoed ("evp" -> "env"), but the typo comes from OpenSSL and
 // some consumers forward-declare these structures so we're leaving it alone.
 struct env_md_st {
-  // type contains a NID identifing the digest function. (For example,
+  // type contains a NID identifying the digest function. (For example,
   // NID_md5.)
   int type;
 

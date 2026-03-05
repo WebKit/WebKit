@@ -42,10 +42,10 @@ public:
     static Ref<RTCCertificate> create(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
 
     double expires() const { return m_expires; }
-    const Vector<DtlsFingerprint>& getFingerprints() const { return m_fingerprints; }
+    const Vector<DtlsFingerprint>& getFingerprints() const LIFETIME_BOUND { return m_fingerprints; }
 
-    const String& pemCertificate() const { return m_pemCertificate; }
-    const String& pemPrivateKey() const { return m_pemPrivateKey; }
+    const String& pemCertificate() const LIFETIME_BOUND { return m_pemCertificate; }
+    const String& pemPrivateKey() const LIFETIME_BOUND { return m_pemPrivateKey; }
     const SecurityOrigin& origin() const { return m_origin.get(); }
 
 private:

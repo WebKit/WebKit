@@ -66,10 +66,10 @@ private:
     {
         RetainPtr delegate = m_delegate.get();
         if (!delegate || !m_respondsToWillPerformHTTPRedirection)
-            return completionHandler(WTFMove(request));
+            return completionHandler(WTF::move(request));
 
         RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
-        [delegate download:protectedWrapper(download).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:nsRequest.get() decisionHandler:makeBlockPtr([request = WTFMove(request), completionHandler = WTFMove(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:willPerformHTTPRedirection:newRequest:decisionHandler:))](WKDownloadRedirectPolicy policy) mutable {
+        [delegate download:protect(wrapper(download)).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:nsRequest.get() decisionHandler:makeBlockPtr([request = WTF::move(request), completionHandler = WTF::move(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:willPerformHTTPRedirection:newRequest:decisionHandler:))](WKDownloadRedirectPolicy policy) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -77,7 +77,7 @@ private:
             case WKDownloadRedirectPolicyCancel:
                 return completionHandler({ });
             case WKDownloadRedirectPolicyAllow:
-                return completionHandler(WTFMove(request));
+                return completionHandler(WTF::move(request));
             default:
                 [NSException raise:NSInvalidArgumentException format:@"Invalid WKDownloadRedirectPolicy (%ld)", (long)policy];
             }
@@ -90,7 +90,7 @@ private:
         if (!delegate || !m_respondsToDidReceiveAuthenticationChallenge)
             return challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
 
-        [delegate download:protectedWrapper(download).get() didReceiveAuthenticationChallenge:protectedWrapper(challenge).get() completionHandler:makeBlockPtr([challenge = Ref { challenge }, checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) mutable {
+        [delegate download:protect(wrapper(download)).get() didReceiveAuthenticationChallenge:protect(wrapper(challenge)).get() completionHandler:makeBlockPtr([challenge = Ref { challenge }, checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -119,7 +119,7 @@ private:
         if (!delegate)
             return completionHandler(WebKit::AllowOverwrite::No, { });
 
-        [delegate download:protectedWrapper(download).get() decideDestinationUsingResponse:response.protectedNSURLResponse().get() suggestedFilename:suggestedFilename.createNSString().get() completionHandler:makeBlockPtr([download = Ref { download }, completionHandler = WTFMove(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
+        [delegate download:protect(wrapper(download)).get() decideDestinationUsingResponse:protect(response.nsURLResponse()).get() suggestedFilename:suggestedFilename.createNSString().get() completionHandler:makeBlockPtr([download = Ref { download }, completionHandler = WTF::move(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -139,7 +139,7 @@ private:
             if ([fileManager fileExistsAtPath:retainPtr(destination.path).get()])
                 return completionHandler(WebKit::AllowOverwrite::No, { });
 
-            protectedWrapper(download.get()).get().progress.fileURL = destination;
+            protect(wrapper(download.get())).get().progress.fileURL = destination;
 
             completionHandler(WebKit::AllowOverwrite::No, destination.path);
         }).get()];
@@ -152,7 +152,7 @@ private:
             return;
         }
         if (m_respondsToDecidePlaceholderPolicy) {
-            [m_delegate.get() _download:protectedWrapper(download).get() decidePlaceholderPolicy:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (_WKPlaceholderPolicy policy, NSURL *alternatePlaceholderURL) mutable {
+            [m_delegate.get() _download:protect(wrapper(download)).get() decidePlaceholderPolicy:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (_WKPlaceholderPolicy policy, NSURL *alternatePlaceholderURL) mutable {
                 switch (policy) {
                 case _WKPlaceholderPolicyDisable: {
                     completionHandler(WebKit::UseDownloadPlaceholder::No, alternatePlaceholderURL);
@@ -167,7 +167,7 @@ private:
                 }
             }).get()];
         } else {
-            [m_delegate.get() download:protectedWrapper(download).get() decidePlaceholderPolicy:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (WKDownloadPlaceholderPolicy policy, NSURL *alternatePlaceholderURL) mutable {
+            [m_delegate.get() download:protect(wrapper(download)).get() decidePlaceholderPolicy:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (WKDownloadPlaceholderPolicy policy, NSURL *alternatePlaceholderURL) mutable {
                 switch (policy) {
                 case WKDownloadPlaceholderPolicyDisable: {
                     completionHandler(WebKit::UseDownloadPlaceholder::No, alternatePlaceholderURL);
@@ -186,7 +186,7 @@ private:
 
     void didReceiveData(WebKit::DownloadProxy& download, uint64_t, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite) final
     {
-        RetainPtr<NSProgress> progress = protectedWrapper(download).get().progress;
+        RetainPtr<NSProgress> progress = protect(wrapper(download)).get().progress;
         progress.get().totalUnitCount = totalBytesExpectedToWrite;
         progress.get().completedUnitCount = totalBytesWritten;
     }
@@ -197,7 +197,7 @@ private:
         if (!delegate || !m_respondsToDidFinish)
             return;
 
-        [delegate downloadDidFinish:protectedWrapper(download).get()];
+        [delegate downloadDidFinish:protect(wrapper(download)).get()];
     }
 
     void didFail(WebKit::DownloadProxy& download, const WebCore::ResourceError& error, API::Data* resumeData) final
@@ -206,7 +206,7 @@ private:
         if (!delegate || !m_respondsToDidFailWithError)
             return;
 
-        [delegate download:protectedWrapper(download).get() didFailWithError:error.protectedNSError().get() resumeData:protectedWrapper(resumeData).get()];
+        [delegate download:protect(wrapper(download)).get() didFailWithError:protect(error.nsError()).get() resumeData:protect(wrapper(resumeData)).get()];
     }
 
     void processDidCrash(WebKit::DownloadProxy& download) final
@@ -215,7 +215,7 @@ private:
         if (!delegate || !m_respondsToDidFailWithError)
             return;
 
-        [delegate download:protectedWrapper(download).get() didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNetworkConnectionLost userInfo:nil] resumeData:nil];
+        [delegate download:protect(wrapper(download)).get() didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNetworkConnectionLost userInfo:nil] resumeData:nil];
     }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
@@ -238,9 +238,9 @@ private:
             urlFromBookmark = url.createNSURL();
 
         if (m_respondsToDidReceivePlaceholderURL)
-            [delegate _download:protectedWrapper(download).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+            [delegate _download:protect(wrapper(download)).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
         else
-            [delegate download:protectedWrapper(download).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+            [delegate download:protect(wrapper(download)).get() didReceivePlaceholderURL:urlFromBookmark.get() completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
     }
 
     void didReceiveFinalURL(WebKit::DownloadProxy& download, const WTF::URL& url, std::span<const uint8_t> bookmarkData) final
@@ -260,9 +260,9 @@ private:
             urlFromBookmark = url.createNSURL();
 
         if (m_respondsToDidReceiveFinalURL)
-            [delegate _download:protectedWrapper(download).get() didReceiveFinalURL:urlFromBookmark.get()];
+            [delegate _download:protect(wrapper(download)).get() didReceiveFinalURL:urlFromBookmark.get()];
         else
-            [delegate download:protectedWrapper(download).get() didReceiveFinalURL:urlFromBookmark.get()];
+            [delegate download:protect(wrapper(download)).get() didReceiveFinalURL:urlFromBookmark.get()];
     }
 #endif
 
@@ -286,14 +286,9 @@ private:
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
-- (RefPtr<WebKit::DownloadProxy>) protectedDownload
-{
-    return _download.get();
-}
-
 - (void)cancel:(void (^)(NSData *resumeData))completionHandler
 {
-    self.protectedDownload->cancel([completionHandler = makeBlockPtr(completionHandler)] (auto* data) {
+    protect(_download.get())->cancel([completionHandler = makeBlockPtr(completionHandler)] (auto* data) {
         if (completionHandler)
             completionHandler(wrapper(data));
     });
@@ -301,12 +296,12 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURLRequest *)originalRequest
 {
-    return _download->request().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).autorelease();
+    return protect(_download->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)).autorelease();
 }
 
 - (WKWebView *)webView
 {
-    RefPtr page = self.protectedDownload->originatingPage();
+    RefPtr page = protect(_download.get())->originatingPage();
     return page ? page->cocoaView().autorelease() : nil;
 }
 
@@ -322,13 +317,13 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id <WKDownloadDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<WKDownloadDelegatePrivate>)delegate
 {
     _delegate = delegate;
-    self.protectedDownload->setClient(adoptRef(*new DownloadClient(delegate)));
+    protect(_download.get())->setClient(adoptRef(*new DownloadClient(delegate)));
 }
 
 #pragma mark NSProgressReporting protocol implementation
@@ -345,13 +340,13 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
         downloadProgress.get().cancellable = YES;
         downloadProgress.get().cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKDownload> { self }] () mutable {
-            ensureOnMainRunLoop([weakSelf = WTFMove(weakSelf)] {
+            ensureOnMainRunLoop([weakSelf = WTF::move(weakSelf)] {
                 if (RetainPtr strongSelf = weakSelf.get())
                     [strongSelf cancel:nil];
             });
         }).get();
 
-        self.protectedDownload->setProgress(downloadProgress.get());
+        protect(_download.get())->setProgress(downloadProgress.get());
     }
     return downloadProgress.autorelease();
 }

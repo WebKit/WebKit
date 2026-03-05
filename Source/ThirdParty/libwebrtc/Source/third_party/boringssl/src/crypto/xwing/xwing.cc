@@ -29,18 +29,19 @@ struct private_key {
   uint8_t seed[XWING_PRIVATE_KEY_BYTES];
 };
 
-static struct private_key *private_key_from_external(
-    const struct XWING_private_key *external) {
-  static_assert(sizeof(struct XWING_private_key) == sizeof(struct private_key),
-                "XWING private key size is incorrect");
-  static_assert(
-      alignof(struct XWING_private_key) == alignof(struct private_key),
-      "XWING private key alignment is incorrect");
-  return (struct private_key *)external;
+static_assert(sizeof(XWING_private_key) == sizeof(private_key));
+static_assert(alignof(XWING_private_key) == alignof(private_key));
+
+static const private_key *private_key_from_external(
+    const XWING_private_key *external) {
+  return reinterpret_cast<const private_key *>(external);
+}
+static private_key *private_key_from_external(XWING_private_key *external) {
+  return reinterpret_cast<private_key *>(external);
 }
 
-static void xwing_expand_private_key(struct private_key *inout_private_key) {
-  struct BORINGSSL_keccak_st context;
+static void xwing_expand_private_key(private_key *inout_private_key) {
+  BORINGSSL_keccak_st context;
   BORINGSSL_keccak_init(&context, boringssl_shake256);
   BORINGSSL_keccak_absorb(&context, inout_private_key->seed,
                           sizeof(inout_private_key->seed));
@@ -56,8 +57,7 @@ static void xwing_expand_private_key(struct private_key *inout_private_key) {
                            sizeof(inout_private_key->x25519_private_key));
 }
 
-static int xwing_parse_private_key(struct private_key *out_private_key,
-                                   CBS *in) {
+static int xwing_parse_private_key(private_key *out_private_key, CBS *in) {
   if (!CBS_copy_bytes(in, out_private_key->seed,
                       sizeof(out_private_key->seed))) {
     return 0;
@@ -67,14 +67,13 @@ static int xwing_parse_private_key(struct private_key *out_private_key,
   return 1;
 }
 
-static int xwing_marshal_private_key(CBB *out,
-                                     const struct private_key *private_key) {
+static int xwing_marshal_private_key(CBB *out, const private_key *private_key) {
   return CBB_add_bytes(out, private_key->seed, sizeof(private_key->seed));
 }
 
 static int xwing_public_from_private(
     uint8_t out_encoded_public_key[XWING_PUBLIC_KEY_BYTES],
-    const struct private_key *private_key) {
+    const private_key *private_key) {
   CBB cbb;
   if (!CBB_init_fixed(&cbb, out_encoded_public_key, XWING_PUBLIC_KEY_BYTES)) {
     return 0;
@@ -107,7 +106,7 @@ static void xwing_combiner(
     const uint8_t mlkem_shared_secret[MLKEM_SHARED_SECRET_BYTES],
     const uint8_t x25519_shared_secret[32], const uint8_t x25519_ciphertext[32],
     const uint8_t x25519_public_key[32]) {
-  struct BORINGSSL_keccak_st context;
+  BORINGSSL_keccak_st context;
   BORINGSSL_keccak_init(&context, boringssl_sha3_256);
 
   BORINGSSL_keccak_absorb(&context, mlkem_shared_secret,
@@ -142,7 +141,7 @@ int XWING_marshal_private_key(CBB *out,
 
 int XWING_generate_key(uint8_t out_encoded_public_key[XWING_PUBLIC_KEY_BYTES],
                        struct XWING_private_key *out_private_key) {
-  struct private_key *private_key = private_key_from_external(out_private_key);
+  private_key *private_key = private_key_from_external(out_private_key);
   RAND_bytes(private_key->seed, sizeof(private_key->seed));
 
   xwing_expand_private_key(private_key);
@@ -191,9 +190,8 @@ int XWING_encap_external_entropy(
   static_assert(MLKEM768_PUBLIC_KEY_BYTES <= XWING_PUBLIC_KEY_BYTES);
   CBS_init(&mlkem_cbs, encoded_public_key, MLKEM768_PUBLIC_KEY_BYTES);
 
-  BCM_mlkem768_public_key mlkem_public_key;
-  if (!bcm_success(
-          BCM_mlkem768_parse_public_key(&mlkem_public_key, &mlkem_cbs))) {
+  MLKEM768_public_key mlkem_public_key;
+  if (!MLKEM768_parse_public_key(&mlkem_public_key, &mlkem_cbs)) {
     return 0;
   }
 
@@ -210,7 +208,7 @@ int XWING_encap_external_entropy(
 
 static int xwing_decap(uint8_t out_shared_secret[XWING_SHARED_SECRET_BYTES],
                        const uint8_t ciphertext[XWING_CIPHERTEXT_BYTES],
-                       const struct private_key *private_key) {
+                       const private_key *private_key) {
   static_assert(XWING_CIPHERTEXT_BYTES >= MLKEM768_CIPHERTEXT_BYTES + 32);
   const uint8_t *mlkem_ciphertext = ciphertext;
   const uint8_t *x25519_ciphertext = ciphertext + MLKEM768_CIPHERTEXT_BYTES;

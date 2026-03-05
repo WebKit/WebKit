@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __cplusplus
+
+#import <wtf/Platform.h>
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_DETECTION)
 
 #import <pal/spi/ios/DataDetectorsUISPI.h>
@@ -42,3 +46,5 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDataDetectorsTrailingText, 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDDContextMenuWantsPreviewKey, const NSString *)
 
 #endif
+
+#endif // __cplusplus

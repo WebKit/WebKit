@@ -37,12 +37,12 @@ namespace WebCore {
 
 Ref<CSSBoxShadowPropertyValue> CSSBoxShadowPropertyValue::create(CSS::BoxShadowProperty shadow)
 {
-    return adoptRef(*new CSSBoxShadowPropertyValue(WTFMove(shadow)));
+    return adoptRef(*new CSSBoxShadowPropertyValue(WTF::move(shadow)));
 }
 
 CSSBoxShadowPropertyValue::CSSBoxShadowPropertyValue(CSS::BoxShadowProperty&& shadow)
     : CSSValue(ClassType::BoxShadowProperty)
-    , m_shadow(WTFMove(shadow))
+    , m_shadow(WTF::move(shadow))
 {
 }
 
@@ -72,7 +72,7 @@ Ref<DeprecatedCSSOMValue> CSSBoxShadowPropertyValue::createDeprecatedCSSOMWrappe
                 return DeprecatedCSSOMBoxShadowValue::create(value, owner);
             });
 
-            return DeprecatedCSSOMValueList::create(WTFMove(values), CSSValue::CommaSeparator, owner);
+            return DeprecatedCSSOMValueList::create(WTF::move(values), CSSValue::CommaSeparator, owner);
         }
     );
 }

@@ -87,7 +87,7 @@ std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem,
     auto [identifier, configuration] = sendResult.takeReplyOr(std::nullopt, RemoteCDMConfiguration { });
     if (!identifier)
         return nullptr;
-    return RemoteCDM::create(*this, WTFMove(*identifier), WTFMove(configuration), mediaKeysHashSalt);
+    return RemoteCDM::create(*this, WTF::move(*identifier), WTF::move(configuration), mediaKeysHashSalt);
 }
 
 void RemoteCDMFactory::addSession(RemoteCDMInstanceSession& session)
@@ -111,7 +111,7 @@ void RemoteCDMFactory::removeInstance(RemoteCDMInstanceIdentifier identifier)
 void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
-        if (auto session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
+        if (RefPtr session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
             session->didReceiveMessage(connection, decoder);
     }
 }

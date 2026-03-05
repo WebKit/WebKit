@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 // Either the mutator has the conn (https://en.wikipedia.org/wiki/Conn_(nautical)), meaning that the

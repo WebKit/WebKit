@@ -373,9 +373,11 @@ class Rewriter2 : public TIntermRebuild
 
     PreResult visitUnaryPre(TIntermUnary &node) override
     {
-        // Unary ++, -- operators for signed ints are implemented as functions. These take in a reference. Addressing is needed to
-        // support swizzles. This can be removed when a pass is added to replace the operators with builtin function calls.
-        bool childRequiresAddressing = IsLValueUnaryOp(node.getOp()) && node.getType().isSignedInt();
+        // Unary ++, -- operators for signed ints are implemented as functions. These take in a
+        // reference. Addressing is needed to support swizzles. This can be removed when a pass is
+        // added to replace the operators with builtin function calls.
+        bool childRequiresAddressing =
+            IsLValueUnaryOp(node.getOp()) && node.getType().isSignedInt();
         mRequiresAddressingStack.push_back(childRequiresAddressing);
         return {node, VisitBits::Both};
     }

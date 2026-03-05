@@ -238,7 +238,7 @@ int WebSocketHandshake::readServerHandshake(std::span<const uint8_t> header)
 
     m_serverHandshakeResponse = ResourceResponse();
     m_serverHandshakeResponse.setHTTPStatusCode(statusCode);
-    m_serverHandshakeResponse.setHTTPStatusText(WTFMove(statusText));
+    m_serverHandshakeResponse.setHTTPStatusText(WTF::move(statusText));
 
     if (statusCode != 101) {
         m_mode = Failed;
@@ -314,7 +314,7 @@ const ResourceResponse& WebSocketHandshake::serverHandshakeResponse() const
 
 void WebSocketHandshake::addExtensionProcessor(std::unique_ptr<WebSocketExtensionProcessor> processor)
 {
-    m_extensionDispatcher.addProcessor(WTFMove(processor));
+    m_extensionDispatcher.addProcessor(WTF::move(processor));
 }
 
 URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const

@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <cstdint>
 #include <wtf/Compiler.h>
+#include <wtf/Platform.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

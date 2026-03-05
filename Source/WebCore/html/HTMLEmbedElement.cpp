@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLEmbedElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLEmbedElement);
 
 using namespace HTMLNames;
 
@@ -77,7 +77,7 @@ static inline RenderWidget* findWidgetRenderer(const Node* node)
 CheckedPtr<RenderWidget> HTMLEmbedElement::renderWidgetLoadingPlugin() const
 {
     CheckedPtr widget = HTMLPlugInElement::renderWidgetLoadingPlugin();
-    return widget ? widget : findWidgetRenderer(this);
+    return widget ? widget : CheckedPtr { findWidgetRenderer(this) };
 }
 
 void HTMLEmbedElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
@@ -219,7 +219,7 @@ void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLPlugInElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(attributeWithoutSynchronization(srcAttr)));
+    addSubresourceURL(urls, protect(document())->completeURL(attributeWithoutSynchronization(srcAttr)));
 }
 
 }

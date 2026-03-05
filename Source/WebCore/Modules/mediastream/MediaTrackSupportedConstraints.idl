@@ -28,6 +28,7 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://w3c.github.io/mediacapture-main/#dom-mediatracksupportedconstraints
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,

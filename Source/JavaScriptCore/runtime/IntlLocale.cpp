@@ -105,7 +105,7 @@ CString LocaleIDBuilder::toCanonical()
     if (!buffer)
         return { };
 
-    return canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer.value())).span();
+    return canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTF::move(buffer.value())).span();
 }
 
 // Because ICU's C API doesn't have set[Language|Script|Region|Variants] functions...
@@ -663,8 +663,8 @@ JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
 
     String preferred = calendar();
     if (!preferred.isEmpty()) {
-        elements.append(WTFMove(preferred));
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        elements.append(WTF::move(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -680,20 +680,20 @@ JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
     while ((pointer = uenum_next(calendars.get(), &length, &status)) && U_SUCCESS(status)) {
         String calendar(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
         if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
-            calendar = WTFMove(mapped.value());
+            calendar = WTF::move(mapped.value());
 
         // Skip if the obtained calendar code is not meeting Unicode Locale Identifier's `type` definition
         // as whole ECMAScript's i18n is relying on Unicode Local Identifiers.
         if (!isUnicodeLocaleIdentifierType(calendar))
             continue;
-        elements.append(WTFMove(calendar));
+        elements.append(WTF::move(calendar));
     }
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return nullptr;
     }
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
@@ -705,8 +705,8 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
 
     String preferred = collation();
     if (!preferred.isEmpty()) {
-        elements.append(WTFMove(preferred));
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        elements.append(WTF::move(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -725,16 +725,16 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
         if (collation == "standard"_s || collation == "search"_s)
             continue;
         if (auto mapped = mapICUCollationKeywordToBCP47(collation))
-            elements.append(WTFMove(mapped.value()));
+            elements.append(WTF::move(mapped.value()));
         else
-            elements.append(WTFMove(collation));
+            elements.append(WTF::move(collation));
     }
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return nullptr;
     }
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
@@ -746,8 +746,8 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
 
     String preferred = hourCycle();
     if (!preferred.isEmpty()) {
-        elements.append(WTFMove(preferred));
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        elements.append(WTF::move(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -773,23 +773,23 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
         break;
     case IntlDateTimeFormat::HourCycle::H11: {
         elements.append("h11"_s);
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
     case IntlDateTimeFormat::HourCycle::H12: {
         elements.append("h12"_s);
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
     case IntlDateTimeFormat::HourCycle::H23: {
         elements.append("h23"_s);
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
     case IntlDateTimeFormat::HourCycle::H24: {
         elements.append("h24"_s);
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
     }
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 JSArray* IntlLocale::numberingSystems(JSGlobalObject* globalObject)
@@ -800,8 +800,8 @@ JSArray* IntlLocale::numberingSystems(JSGlobalObject* globalObject)
     Vector<String, 1> elements;
     String preferred = numberingSystem();
     if (!preferred.isEmpty()) {
-        elements.append(WTFMove(preferred));
-        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        elements.append(WTF::move(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -812,7 +812,7 @@ JSArray* IntlLocale::numberingSystems(JSGlobalObject* globalObject)
     }
     elements.append(String::fromLatin1(unumsys_getName(numberingSystem.get())));
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 JSValue IntlLocale::timeZones(JSGlobalObject* globalObject)
@@ -843,7 +843,7 @@ JSValue IntlLocale::timeZones(JSGlobalObject* globalObject)
         return { };
     }
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 JSObject* IntlLocale::textInfo(JSGlobalObject* globalObject)
@@ -954,7 +954,7 @@ JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
         }
     }
 
-    auto* weekendArray = createArrayFromIntVector(globalObject, WTFMove(weekend));
+    auto* weekendArray = createArrayFromIntVector(globalObject, WTF::move(weekend));
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* result = constructEmptyObject(globalObject);

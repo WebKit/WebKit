@@ -58,7 +58,7 @@ public:
     };
 
     Entry* get(const String& subject, RegExp*);
-    void set(const String& subject, RegExp*, JSCellButterfly*, MatchResult, const Vector<int>&);
+    void set(const String& subject, RegExp*, JSCellButterfly*, MatchResult, std::span<const int> lastMatch);
 
     DECLARE_VISIT_AGGREGATE;
 

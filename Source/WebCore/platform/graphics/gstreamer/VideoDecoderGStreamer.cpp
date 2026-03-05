@@ -26,10 +26,15 @@
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
+#include "PlatformDisplay.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
+
+#if USE(GSTREAMER_GL)
+#include <gst/gl/gl.h>
+#endif
 
 namespace WebCore {
 
@@ -54,7 +59,7 @@ class GStreamerInternalVideoDecoder : public ThreadSafeRefCountedAndCanMakeThrea
 public:
     static Ref<GStreamerInternalVideoDecoder> create(const String& codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     {
-        return adoptRef(*new GStreamerInternalVideoDecoder(codecName, config, WTFMove(outputCallback), WTFMove(element)));
+        return adoptRef(*new GStreamerInternalVideoDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     }
     ~GStreamerInternalVideoDecoder()
     {
@@ -109,7 +114,7 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     }
 
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
-    Ref decoder = adoptRef(*new GStreamerVideoDecoder(codecName, config, WTFMove(outputCallback), WTFMove(element)));
+    Ref decoder = adoptRef(*new GStreamerVideoDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     Ref internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
         GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.utf8().data());
@@ -117,15 +122,15 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
         return;
     }
 
-    gstDecoderWorkQueue().dispatch([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
+    gstDecoderWorkQueue().dispatch([callback = WTF::move(callback), decoder = WTF::move(decoder)]() mutable {
         auto internalDecoder = decoder->m_internalDecoder;
         GST_DEBUG_OBJECT(decoder->m_internalDecoder->harnessedElement(), "Video decoder created");
-        callback(Ref<VideoDecoder> { WTFMove(decoder) });
+        callback(Ref<VideoDecoder> { WTF::move(decoder) });
     });
 }
 
 GStreamerVideoDecoder::GStreamerVideoDecoder(const String& codecName, const Config& config, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
-    : m_internalDecoder(GStreamerInternalVideoDecoder::create(codecName, config, WTFMove(outputCallback), WTFMove(element)))
+    : m_internalDecoder(GStreamerInternalVideoDecoder::create(codecName, config, WTF::move(outputCallback), WTF::move(element)))
 {
 }
 
@@ -160,10 +165,18 @@ void GStreamerVideoDecoder::close()
 }
 
 GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
-    : m_outputCallback(WTFMove(outputCallback))
+    : m_outputCallback(WTF::move(outputCallback))
 {
     GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
     configureVideoDecoderForHarnessing(element);
+
+#if USE(GSTREAMER_GL)
+    static ASCIILiteral gstGlDisplayContextType = ASCIILiteral::fromLiteralUnsafe(GST_GL_DISPLAY_CONTEXT_TYPE);
+    if (!setGstElementGLContext(element.get(), gstGlDisplayContextType))
+        return;
+    if (!setGstElementGLContext(element.get(), "gst.gl.app_context"_s))
+        return;
+#endif
 
     auto* factory = gst_element_get_factory(element.get());
     ASCIILiteral parser;
@@ -193,7 +206,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
             parser = "h265parse"_s;
     } else {
-        WTFLogAlways("Codec %s not wired in yet", codecName.ascii().data());
+        GST_ERROR("Codec %s not wired in yet", codecName.ascii().data());
         return;
     }
 
@@ -217,11 +230,18 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         auto srcPad = adoptGRef(gst_element_get_static_pad(element.get(), "src"));
         gst_element_add_pad(harnessedElement.get(), gst_ghost_pad_new("src", srcPad.get()));
     } else
-        harnessedElement = WTFMove(element);
+        harnessedElement = WTF::move(element);
 
-    // FIXME: Add DMABuf and GL caps here. See also https://bugs.webkit.org/show_bug.cgi?id=288625.
-    auto allowedSinkCaps = adoptGRef(gst_caps_from_string("video/x-raw"));
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
+    auto allowedSinkCaps = adoptGRef(gst_caps_new_empty());
+#if USE(GSTREAMER_GL)
+#if USE(GBM)
+    gst_caps_append(allowedSinkCaps.get(), buildDMABufCaps().leakRef());
+#endif // USE(GBM)
+    gst_caps_append(allowedSinkCaps.get(), gst_caps_from_string("video/x-raw(memory:GLMemory)"));
+#endif // USE(GSTREAMER_GL)
+    gst_caps_append(allowedSinkCaps.get(), gst_caps_from_string("video/x-raw"));
+
+    m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -249,9 +269,9 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         VideoFrameGStreamer::CreateOptions options(IntSize(m_presentationSize), { *m_videoInfo });
         options.presentationTime = fromGstClockTime(timestamp);
         options.contentHint = VideoFrameContentHint::WebCodecs;
-        auto videoFrame = VideoFrameGStreamer::create(WTFMove(outputSample), options);
-        m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
-    }, std::nullopt, WTFMove(allowedSinkCaps));
+        auto videoFrame = VideoFrameGStreamer::create(WTF::move(outputSample), options);
+        m_outputCallback(VideoDecoder::DecodedFrame { WTF::move(videoFrame), timestamp, duration });
+    }, std::nullopt, WTF::move(allowedSinkCaps));
 
     const auto& stream = m_harness->outputStreams().first();
     const auto& pad = stream->targetPad();

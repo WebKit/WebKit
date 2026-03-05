@@ -249,7 +249,7 @@ struct DropReadAsyncData {
 
     DropReadAsyncData(GCancellable* cancellable, CompletionHandler<T>&& handler)
         : cancellable(cancellable)
-        , completionHandler(WTFMove(handler))
+        , completionHandler(WTF::move(handler))
     {
     }
 
@@ -281,9 +281,9 @@ void DropTarget::loadData(const char* mimeType, CompletionHandler<void(GRefPtr<G
                     return;
                 }
                 GRefPtr<GBytes> bytes = adoptGRef(g_memory_output_stream_steal_as_bytes(G_MEMORY_OUTPUT_STREAM(stream)));
-                data->completionHandler(WTFMove(bytes));
+                data->completionHandler(WTF::move(bytes));
             }, data.release());
-    }, new DropReadAsyncData<void(GRefPtr<GBytes>&&)>(m_cancellable.get(), WTFMove(completionHandler)));
+    }, new DropReadAsyncData<void(GRefPtr<GBytes>&&)>(m_cancellable.get(), WTF::move(completionHandler)));
 }
 
 void DropTarget::loadData(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -302,8 +302,8 @@ void DropTarget::loadData(CompletionHandler<void(Vector<String>&&)>&& completion
             }
         }
 
-        data->completionHandler(WTFMove(fileUris));
-    }, new DropReadAsyncData<void(Vector<String>&&)>(m_cancellable.get(), WTFMove(completionHandler)));
+        data->completionHandler(WTF::move(fileUris));
+    }, new DropReadAsyncData<void(Vector<String>&&)>(m_cancellable.get(), WTF::move(completionHandler)));
 }
 
 void DropTarget::didLoadData()
@@ -331,7 +331,7 @@ void DropTarget::didLoadData()
 
 void DropTarget::enter(IntPoint&& position, unsigned)
 {
-    m_position = WTFMove(position);
+    m_position = WTF::move(position);
     if (m_cancellable)
         return;
 
@@ -345,7 +345,7 @@ void DropTarget::enter(IntPoint&& position, unsigned)
 
 void DropTarget::update(IntPoint&& position, unsigned)
 {
-    m_position = WTFMove(position);
+    m_position = WTF::move(position);
     if (m_cancellable)
         return;
 
@@ -392,7 +392,7 @@ void DropTarget::leave()
 
 void DropTarget::drop(IntPoint&& position, unsigned)
 {
-    m_position = WTFMove(position);
+    m_position = WTF::move(position);
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 

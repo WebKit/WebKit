@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BackgroundFetchRegistration);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchRegistration);
 
 void BackgroundFetchRegistration::updateIfExisting(ScriptExecutionContext& context, const BackgroundFetchInformation& information)
 {
@@ -57,14 +57,14 @@ void BackgroundFetchRegistration::updateIfExisting(ScriptExecutionContext& conte
 
 Ref<BackgroundFetchRegistration> BackgroundFetchRegistration::create(ScriptExecutionContext& context, BackgroundFetchInformation&& information)
 {
-    auto registration = adoptRef(*new BackgroundFetchRegistration(context, WTFMove(information)));
+    auto registration = adoptRef(*new BackgroundFetchRegistration(context, WTF::move(information)));
     registration->suspendIfNeeded();
     return registration;
 }
 
 BackgroundFetchRegistration::BackgroundFetchRegistration(ScriptExecutionContext& context, BackgroundFetchInformation&& information)
     : ActiveDOMObject(&context)
-    , m_information(WTFMove(information))
+    , m_information(WTF::move(information))
 {
 }
 
@@ -74,7 +74,7 @@ BackgroundFetchRegistration::~BackgroundFetchRegistration()
 
 void BackgroundFetchRegistration::abort(ScriptExecutionContext& context, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    SWClientConnection::fromScriptExecutionContext(context)->abortBackgroundFetch(registrationIdentifier(), id(), [promise = WTFMove(promise)](auto&& result) mutable {
+    SWClientConnection::fromScriptExecutionContext(context)->abortBackgroundFetch(registrationIdentifier(), id(), [promise = WTF::move(promise)](auto&& result) mutable {
         promise.resolve(result);
     });
 }
@@ -85,7 +85,7 @@ static ExceptionOr<ResourceRequest> requestFromInfo(ScriptExecutionContext& cont
         return ResourceRequest { };
 
     ResourceRequest resourceRequest;
-    ExceptionOr<Ref<FetchRequest>> requestOrException = FetchRequest::create(context, WTFMove(*info), { });
+    ExceptionOr<Ref<FetchRequest>> requestOrException = FetchRequest::create(context, WTF::move(*info), { });
     if (requestOrException.hasException())
         return requestOrException.releaseException();
 
@@ -116,11 +116,11 @@ private:
 
             if (!result.has_value()) {
                 checkedThis->m_response = nullptr;
-                protectedResponse->receivedError(WTFMove(result.error()));
+                protectedResponse->receivedError(WTF::move(result.error()));
                 return;
             }
 
-            auto buffer = WTFMove(result.value());
+            auto buffer = WTF::move(result.value());
             if (!buffer) {
                 checkedThis->m_response = nullptr;
                 protectedResponse->didSucceed({ });
@@ -143,7 +143,7 @@ private:
 static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information)
 {
     auto recordIdentifier = information.identifier;
-    auto record = BackgroundFetchRecord::create(context, WTFMove(information));
+    auto record = BackgroundFetchRecord::create(context, WTF::move(information));
     SWClientConnection::fromScriptExecutionContext(context)->retrieveRecordResponse(recordIdentifier, [weakContext = WeakPtr { context }, record, recordIdentifier](auto&& result) {
         RefPtr context = weakContext.get();
         if (!context)
@@ -157,7 +157,7 @@ static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, 
         auto response = FetchResponse::create(context.get(), { }, FetchHeaders::Guard::Immutable, { });
         response->setReceivedInternalResponse(result.releaseReturnValue(), FetchOptions::Credentials::Omit);
         response->setBodyLoader(makeUniqueRef<BackgroundFetchResponseBodyLoader>(*context, response.get(), recordIdentifier));
-        record->settleResponseReadyPromise(WTFMove(response));
+        record->settleResponseReadyPromise(WTF::move(response));
     });
     return record;
 }
@@ -169,7 +169,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
         return;
     }
 
-    auto requestOrException = requestFromInfo(context, WTFMove(info));
+    auto requestOrException = requestFromInfo(context, WTF::move(info));
     if (requestOrException.hasException()) {
         promise.reject(requestOrException.releaseException());
         return;
@@ -178,7 +178,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
     bool shouldRetrieveResponses = false;
     RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
 
-    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTFMove(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTFMove(promise)](Vector<BackgroundFetchRecordInformation>&& results) mutable {
+    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTF::move(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTF::move(promise)](Vector<BackgroundFetchRecordInformation>&& results) mutable {
         if (!weakContext)
             return;
 
@@ -187,7 +187,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
             return;
         }
 
-        promise.resolve(createRecord(*weakContext, WTFMove(results[0])));
+        promise.resolve(createRecord(*weakContext, WTF::move(results[0])));
     });
 }
 
@@ -198,7 +198,7 @@ void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std:
         return;
     }
 
-    auto requestOrException = requestFromInfo(context, WTFMove(info));
+    auto requestOrException = requestFromInfo(context, WTF::move(info));
     if (requestOrException.hasException()) {
         promise.reject(requestOrException.releaseException());
         return;
@@ -207,15 +207,15 @@ void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std:
     bool shouldRetrieveResponses = false;
     RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
 
-    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTFMove(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& results) mutable {
+    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTF::move(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTF::move(promise)](auto&& results) mutable {
         if (!weakContext)
             return;
 
         auto records = WTF::map(results, [&weakContext](auto& result) {
-            return createRecord(*weakContext, WTFMove(result));
+            return createRecord(*weakContext, WTF::move(result));
         });
 
-        promise.resolve(WTFMove(records));
+        promise.resolve(WTF::move(records));
     });
 }
 

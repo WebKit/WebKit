@@ -31,6 +31,7 @@
 #include <WebCore/AudioSession.h>
 #include <WebCore/ContextDestructionObserver.h>
 #include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -42,7 +43,7 @@ enum class DOMAudioSessionType : uint8_t { Auto, Playback, Transient, TransientS
 enum class DOMAudioSessionState : uint8_t { Inactive, Active, Interrupted };
 
 class DOMAudioSession final : public RefCounted<DOMAudioSession>, public ActiveDOMObject, public EventTarget, public AudioSessionInterruptionObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMAudioSession);
+    WTF_MAKE_TZONE_ALLOCATED(DOMAudioSession);
 public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
@@ -64,12 +65,12 @@ private:
 
     // EventTarget
     EventTargetInterfaceType eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject
-    void stop() final;
+    void NODELETE stop() final;
     bool virtualHasPendingActivity() const final;
 
     // InterruptionObserver
@@ -84,5 +85,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(DOMAudioSession)
 
 #endif // ENABLE(DOM_AUDIO_SESSION)

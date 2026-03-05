@@ -32,20 +32,20 @@ IMPLEMENT_ASN1_FUNCTIONS_const(X509_SIG)
 
 void X509_SIG_get0(const X509_SIG *sig, const X509_ALGOR **out_alg,
                    const ASN1_OCTET_STRING **out_digest) {
-  if (out_alg != NULL) {
+  if (out_alg != nullptr) {
     *out_alg = sig->algor;
   }
-  if (out_digest != NULL) {
+  if (out_digest != nullptr) {
     *out_digest = sig->digest;
   }
 }
 
 void X509_SIG_getm(X509_SIG *sig, X509_ALGOR **out_alg,
                    ASN1_OCTET_STRING **out_digest) {
-  if (out_alg != NULL) {
+  if (out_alg != nullptr) {
     *out_alg = sig->algor;
   }
-  if (out_digest != NULL) {
+  if (out_digest != nullptr) {
     *out_digest = sig->digest;
   }
 }

@@ -28,18 +28,31 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedPlatformLayerBuffer.h"
 
+#if USE(GSTREAMER) && USE(GBM)
+#include "GRefPtrGStreamer.h"
+#endif
+
 namespace WebCore {
 
 class CoordinatedPlatformLayerBufferExternalOES final : public CoordinatedPlatformLayerBuffer {
 public:
     static std::unique_ptr<CoordinatedPlatformLayerBufferExternalOES> create(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferExternalOES(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
+#if USE(GSTREAMER) && USE(GBM)
+    static std::unique_ptr<CoordinatedPlatformLayerBufferExternalOES> create(GRefPtr<GstBuffer>&&, uint32_t fourcc, const IntSize&, OptionSet<TextureMapperFlags>);
+    CoordinatedPlatformLayerBufferExternalOES(GRefPtr<GstBuffer>&&, uint32_t fourcc, const IntSize&, OptionSet<TextureMapperFlags>);
+#endif
+
     virtual ~CoordinatedPlatformLayerBufferExternalOES();
 
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
     unsigned m_textureID { 0 };
+#if USE(GSTREAMER) && USE(GBM)
+    uint32_t m_fourcc { 0 };
+    GRefPtr<GstBuffer> m_buffer;
+#endif
 };
 
 } // namespace WebCore

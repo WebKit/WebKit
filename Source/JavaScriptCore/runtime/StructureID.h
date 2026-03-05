@@ -37,23 +37,17 @@ class Structure;
 
 #if CPU(ADDRESS64)
 
-// We would like to define this value in PlatformEnable.h, but it is not possible since the following is relying on MACH_VM_MAX_ADDRESS.
-#if OS(DARWIN) && HAVE(36BIT_ADDRESS)
-#define ENABLE_STRUCTURE_ID_WITH_SHIFT 1
-static_assert(MACH_VM_MAX_ADDRESS_RAW == MACH_VM_MAX_ADDRESS);
-#endif
-
-#if !ENABLE(STRUCTURE_ID_WITH_SHIFT)
 #if defined(STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB) && STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB > 0
 constexpr uintptr_t structureHeapAddressSize = STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB * MB;
-#elif PLATFORM(PLAYSTATION)
+#elif PLATFORM(PLAYSTATION) || OS(QNX)
 constexpr uintptr_t structureHeapAddressSize = 128 * MB;
-#elif PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
+#elif (PLATFORM(IOS_FAMILY) && !CPU(ARM64E)) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
 constexpr uintptr_t structureHeapAddressSize = 512 * MB;
+#elif PLATFORM(IOS_FAMILY)
+constexpr uintptr_t structureHeapAddressSize = 2 * GB;
 #else
 constexpr uintptr_t structureHeapAddressSize = 4 * GB;
 #endif
-#endif // !ENABLE(STRUCTURE_ID_WITH_SHIFT)
 
 #endif // CPU(ADDRESS64)
 
@@ -61,14 +55,9 @@ class StructureID {
 public:
     static constexpr uint32_t nukedStructureIDBit = 1;
 
-#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-    // ENABLE(STRUCTURE_ID_WITH_SHIFT) is used when our virtual memory space is limited (specifically, less than or equal to 36 bit) while pointer is 64 bit.
-    // In that case, we round up Structures size with 32 bytes instead of 16 bytes. This ensures that lower 5 bit become zero for Structure.
-    // By shifting this address with 4, we can encode 36 bit address into 32 bit StructureID. And we can ensure that StructureID's lowest bit is still zero
-    // because we round Structure size with 32 bytes. This lowest bit is used for nuke bit.
-    static constexpr unsigned encodeShiftAmount = 4;
-#elif CPU(ADDRESS64)
-    static constexpr CPURegister structureIDMask = structureHeapAddressSize - 1;
+#if CPU(ADDRESS64)
+    static constexpr uintptr_t structureIDMask = static_cast<uintptr_t>(UINT_MAX);
+    static_assert(structureHeapAddressSize - 1 <= structureIDMask, "StructureID relies on only the lower 32 bits of Structure addresses varying");
 #endif
 
     constexpr StructureID() = default;
@@ -97,54 +86,30 @@ private:
 };
 static_assert(sizeof(StructureID) == sizeof(uint32_t));
 
-#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-
-ALWAYS_INLINE Structure* StructureID::decode() const
-{
-    ASSERT(decontaminate());
-    return reinterpret_cast<Structure*>(static_cast<uintptr_t>(decontaminate().m_bits) << encodeShiftAmount);
-}
-
-ALWAYS_INLINE Structure* StructureID::tryDecode() const
-{
-    // Take care to only use the bits from m_bits in the structure's address reservation.
-    uintptr_t address = static_cast<uintptr_t>(decontaminate().m_bits) << encodeShiftAmount;
-    if (address < MarkedBlock::blockSize)
-        return nullptr;
-    return reinterpret_cast<Structure*>(address);
-}
-
-ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
-{
-    ASSERT(structure);
-    auto result = StructureID(reinterpret_cast<uintptr_t>(structure) >> encodeShiftAmount);
-    ASSERT(result.decode() == structure);
-    return result;
-}
-
-#elif CPU(ADDRESS64)
+#if CPU(ADDRESS64)
 
 ALWAYS_INLINE Structure* StructureID::decode() const
 {
     // Take care to only use the bits from m_bits in the structure's address reservation.
     ASSERT(decontaminate());
-    return reinterpret_cast<Structure*>((static_cast<uintptr_t>(decontaminate().m_bits) & structureIDMask) + startOfStructureHeap());
+    return reinterpret_cast<Structure*>(static_cast<uintptr_t>(decontaminate().m_bits) + structureIDBase());
 }
 
 ALWAYS_INLINE Structure* StructureID::tryDecode() const
 {
     // Take care to only use the bits from m_bits in the structure's address reservation.
-    uintptr_t offset = static_cast<uintptr_t>(decontaminate().m_bits);
+    SUPPRESS_UNRETAINED_LOCAL Structure* structure = decode();
+    uintptr_t offset = std::bit_cast<uintptr_t>(structure) - startOfStructureHeap();
     if (offset < MarkedBlock::blockSize || offset >= g_jscConfig.sizeOfStructureHeap)
         return nullptr;
-    return reinterpret_cast<Structure*>((offset & structureIDMask) + startOfStructureHeap());
+    return structure;
 }
 
 ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
 {
     ASSERT(structure);
-    ASSERT(g_jscConfig.startOfStructureHeap <= reinterpret_cast<uintptr_t>(structure) && reinterpret_cast<uintptr_t>(structure) < startOfStructureHeap() + structureHeapAddressSize);
-    auto result = StructureID(reinterpret_cast<uintptr_t>(structure) & structureIDMask);
+    ASSERT(startOfStructureHeap() <= reinterpret_cast<uintptr_t>(structure) && reinterpret_cast<uintptr_t>(structure) < startOfStructureHeap() + structureHeapAddressSize);
+    auto result = StructureID(reinterpret_cast<uintptr_t>(structure));
     ASSERT(result.decode() == structure);
     return result;
 }

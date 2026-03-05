@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class TrustedHTML : public ScriptWrappable, public RefCounted<TrustedHTML> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(TrustedHTML, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TrustedHTML, WEBCORE_EXPORT);
 public:
     static Ref<TrustedHTML> create(const String& data);
     WEBCORE_EXPORT ~TrustedHTML();

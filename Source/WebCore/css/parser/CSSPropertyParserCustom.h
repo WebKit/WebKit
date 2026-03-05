@@ -72,6 +72,7 @@
 #include "CSSPropertyParserConsumer+Masking.h"
 #include "CSSPropertyParserConsumer+Motion.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
+#include "CSSPropertyParserConsumer+Overflow.h"
 #include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Position.h"
@@ -268,7 +269,7 @@ inline bool PropertyParserCustom::consumeStandardSpaceSeparatedShorthand(CSSPars
     } while (!range.atEnd());
 
     for (size_t i = 0; i < shorthand.length(); ++i)
-        result.addPropertyForCurrentShorthand(state, shorthandProperties[i], WTFMove(longhands[i]));
+        result.addPropertyForCurrentShorthand(state, shorthandProperties[i], WTF::move(longhands[i]));
     return true;
 }
 
@@ -394,7 +395,7 @@ inline bool PropertyParserCustom::consumeFontShorthand(CSSParserTokenRange& rang
 
     auto shorthandProperties = shorthand.properties();
     for (auto [value, longhand] : zippedRange(values, shorthandProperties.first(values.size())))
-        result.addPropertyForCurrentShorthand(state, longhand, WTFMove(value), IsImplicit::Yes);
+        result.addPropertyForCurrentShorthand(state, longhand, WTF::move(value), IsImplicit::Yes);
     for (auto longhand : shorthandProperties.subspan(values.size()))
         result.addPropertyForCurrentShorthand(state, longhand, nullptr, IsImplicit::Yes);
 
@@ -462,12 +463,12 @@ inline bool PropertyParserCustom::consumeFontVariantShorthand(CSSParserTokenRang
     } while (!range.atEnd());
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantLigatures, ligaturesParser.finalizeValue().releaseNonNull(), implicitLigatures);
-    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantCaps, WTFMove(capsValue));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantAlternates, WTFMove(alternatesValue));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantCaps, WTF::move(capsValue));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantAlternates, WTF::move(alternatesValue));
     result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantNumeric, numericParser.finalizeValue().releaseNonNull(), implicitNumeric);
-    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantEastAsian, WTFMove(eastAsianValue));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantPosition, WTFMove(positionValue));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantEmoji, WTFMove(emojiValue));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantEastAsian, WTF::move(eastAsianValue));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantPosition, WTF::move(positionValue));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyFontVariantEmoji, WTF::move(emojiValue));
     return true;
 }
 
@@ -578,8 +579,8 @@ inline bool PropertyParserCustom::consumeColumnsShorthand(CSSParserTokenRange& r
     if (!range.atEnd())
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyColumnWidth, WTFMove(columnWidth));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyColumnCount, WTFMove(columnCount));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyColumnWidth, WTF::move(columnWidth));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyColumnCount, WTF::move(columnCount));
     return true;
 }
 
@@ -627,9 +628,9 @@ inline bool PropertyParserCustom::consumeFlexShorthand(CSSParserTokenRange& rang
         while (!range.atEnd() && index++ < 3) {
             if (auto number = CSSPrimitiveValueResolver<Number<Nonnegative>>::consumeAndResolve(range, state)) {
                 if (!flexGrow)
-                    flexGrow = WTFMove(number);
+                    flexGrow = WTF::move(number);
                 else if (!flexShrink)
-                    flexShrink = WTFMove(number);
+                    flexShrink = WTF::move(number);
                 else if (number->isZero() == true) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
                     flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
                 else
@@ -673,9 +674,9 @@ inline bool PropertyParserCustom::consumeBorderShorthand(CSSParserTokenRange& ra
     if (!components)
         return false;
 
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderWidth, WTFMove(components->width), state.important);
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderStyle, WTFMove(components->style), state.important);
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderColor, WTFMove(components->color), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderWidth, WTF::move(components->width), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderStyle, WTF::move(components->style), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderColor, WTF::move(components->color), state.important);
 
     for (auto longhand : borderImageShorthand())
         result.addPropertyForCurrentShorthand(state, longhand, nullptr);
@@ -688,9 +689,9 @@ inline bool PropertyParserCustom::consumeBorderInlineShorthand(CSSParserTokenRan
     if (!components)
         return false;
 
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderInlineWidth, WTFMove(components->width), state.important);
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderInlineStyle, WTFMove(components->style), state.important);
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderInlineColor, WTFMove(components->color), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderInlineWidth, WTF::move(components->width), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderInlineStyle, WTF::move(components->style), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderInlineColor, WTF::move(components->color), state.important);
     return true;
 }
 
@@ -700,9 +701,9 @@ inline bool PropertyParserCustom::consumeBorderBlockShorthand(CSSParserTokenRang
     if (!components)
         return false;
 
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderBlockWidth, WTFMove(components->width), state.important);
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderBlockStyle, WTFMove(components->style), state.important);
-    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderBlockColor, WTFMove(components->color), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderBlockWidth, WTF::move(components->width), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderBlockStyle, WTF::move(components->style), state.important);
+    result.addPropertyForAllLonghandsOfShorthand(state, CSSPropertyBorderBlockColor, WTF::move(components->color), state.important);
     return true;
 }
 
@@ -738,11 +739,11 @@ inline bool PropertyParserCustom::consumeBorderImageShorthand(CSSParserTokenRang
     if (!components)
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSource, WTFMove(components->source));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSlice, WTFMove(components->slice));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageWidth, WTFMove(components->width));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageOutset, WTFMove(components->outset));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageRepeat, WTFMove(components->repeat));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSource, WTF::move(components->source));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSlice, WTF::move(components->slice));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageWidth, WTF::move(components->width));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageOutset, WTF::move(components->outset));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageRepeat, WTF::move(components->repeat));
     return true;
 }
 
@@ -755,11 +756,11 @@ inline bool PropertyParserCustom::consumeWebkitBorderImageShorthand(CSSParserTok
     if (!components)
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSource, WTFMove(components->source));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSlice, WTFMove(components->slice));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageWidth, WTFMove(components->width));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageOutset, WTFMove(components->outset));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageRepeat, WTFMove(components->repeat));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSource, WTF::move(components->source));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageSlice, WTF::move(components->slice));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageWidth, WTF::move(components->width));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageOutset, WTF::move(components->outset));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBorderImageRepeat, WTF::move(components->repeat));
     return true;
 }
 
@@ -769,11 +770,11 @@ inline bool PropertyParserCustom::consumeMaskBorderShorthand(CSSParserTokenRange
     if (!components)
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSource, WTFMove(components->source));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSlice, WTFMove(components->slice));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderWidth, WTFMove(components->width));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderOutset, WTFMove(components->outset));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderRepeat, WTFMove(components->repeat));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSource, WTF::move(components->source));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSlice, WTF::move(components->slice));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderWidth, WTF::move(components->width));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderOutset, WTF::move(components->outset));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderRepeat, WTF::move(components->repeat));
     return true;
 }
 
@@ -788,11 +789,11 @@ inline bool PropertyParserCustom::consumeWebkitMaskBoxImageShorthand(CSSParserTo
     if (!components->slice)
         components->slice = CSSBorderImageSliceValue::create({ CSSPrimitiveValue::create(0), CSSPrimitiveValue::create(0), CSSPrimitiveValue::create(0), CSSPrimitiveValue::create(0) }, true);
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSource, WTFMove(components->source));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSlice, WTFMove(components->slice));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderWidth, WTFMove(components->width));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderOutset, WTFMove(components->outset));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderRepeat, WTFMove(components->repeat));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSource, WTF::move(components->source));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderSlice, WTF::move(components->slice));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderWidth, WTF::move(components->width));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderOutset, WTF::move(components->outset));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaskBorderRepeat, WTF::move(components->repeat));
     return true;
 }
 
@@ -987,7 +988,7 @@ inline bool PropertyParserCustom::consumeAnimationShorthand(CSSParserTokenRange&
         if (list.isEmpty()) // reset-only property
             result.addPropertyForCurrentShorthand(state, shorthandProperties[i], nullptr);
         else
-            result.addPropertyForCurrentShorthand(state, shorthandProperties[i], CSSValueList::createCommaSeparated(WTFMove(list)));
+            result.addPropertyForCurrentShorthand(state, shorthandProperties[i], CSSValueList::createCommaSeparated(WTF::move(list)));
     }
 
     return range.atEnd();
@@ -1064,7 +1065,7 @@ inline bool PropertyParserCustom::consumeTransitionShorthand(CSSParserTokenRange
     }
 
     for (size_t i = 0; i < longhandCount; ++i)
-        result.addPropertyForCurrentShorthand(state, shorthandProperties[i], CSSValueList::createCommaSeparated(WTFMove(longhands[i])));
+        result.addPropertyForCurrentShorthand(state, shorthandProperties[i], CSSValueList::createCommaSeparated(WTF::move(longhands[i])));
 
     return range.atEnd();
 }
@@ -1078,7 +1079,7 @@ inline bool PropertyParserCustom::consumeBackgroundShorthand(CSSParserTokenRange
         switch (property) {
         // background-*
         case CSSPropertyBackgroundClip:
-            return CSSPropertyParsing::consumeSingleBackgroundClip(range, state);
+            return CSSPropertyParsing::consumeSingleBackgroundClip(range);
         case CSSPropertyBackgroundBlendMode:
             return CSSPropertyParsing::consumeSingleBackgroundBlendMode(range);
         case CSSPropertyBackgroundAttachment:
@@ -1169,9 +1170,9 @@ inline bool PropertyParserCustom::consumeBackgroundShorthand(CSSParserTokenRange
                     auto position = consumeBackgroundPositionUnresolved(range, state);
                     if (!position)
                         continue;
-                    auto [positionX, positionY] = split(WTFMove(*position));
-                    value = CSSPositionXValue::create(WTFMove(positionX));
-                    valueY = CSSPositionYValue::create(WTFMove(positionY));
+                    auto [positionX, positionY] = split(WTF::move(*position));
+                    value = CSSPositionXValue::create(WTF::move(positionX));
+                    valueY = CSSPositionYValue::create(WTF::move(positionY));
                 } else if (property == CSSPropertyBackgroundSize) {
                     if (!consumeSlashIncludingWhitespace(range))
                         continue;
@@ -1237,9 +1238,9 @@ inline bool PropertyParserCustom::consumeBackgroundShorthand(CSSParserTokenRange
     for (size_t i = 0; i < longhandCount; ++i) {
         auto property = shorthandProperties[i];
         if (longhands[i].size() == 1)
-            result.addPropertyForCurrentShorthand(state, property, WTFMove(longhands[i][0]));
+            result.addPropertyForCurrentShorthand(state, property, WTF::move(longhands[i][0]));
         else
-            result.addPropertyForCurrentShorthand(state, property, CSSValueList::createCommaSeparated(WTFMove(longhands[i])));
+            result.addPropertyForCurrentShorthand(state, property, CSSValueList::createCommaSeparated(WTF::move(longhands[i])));
     }
     return true;
 }
@@ -1254,9 +1255,9 @@ inline bool PropertyParserCustom::consumeBackgroundPositionShorthand(CSSParserTo
         auto position = consumeBackgroundPositionUnresolved(range, state);
         if (!position)
             return false;
-        auto [positionX, positionY] = split(WTFMove(*position));
-        x.append(CSSPositionXValue::create(WTFMove(positionX)));
-        y.append(CSSPositionYValue::create(WTFMove(positionY)));
+        auto [positionX, positionY] = split(WTF::move(*position));
+        x.append(CSSPositionXValue::create(WTF::move(positionX)));
+        y.append(CSSPositionYValue::create(WTF::move(positionY)));
     } while (consumeCommaIncludingWhitespace(range));
 
     if (!range.atEnd())
@@ -1265,11 +1266,11 @@ inline bool PropertyParserCustom::consumeBackgroundPositionShorthand(CSSParserTo
     RefPtr<CSSValue> resultX;
     RefPtr<CSSValue> resultY;
     if (x.size() == 1) {
-        resultX = WTFMove(x[0]);
-        resultY = WTFMove(y[0]);
+        resultX = WTF::move(x[0]);
+        resultY = WTF::move(y[0]);
     } else {
-        resultX = CSSValueList::createCommaSeparated(WTFMove(x));
-        resultY = CSSValueList::createCommaSeparated(WTFMove(y));
+        resultX = CSSValueList::createCommaSeparated(WTF::move(x));
+        resultY = CSSValueList::createCommaSeparated(WTF::move(y));
     }
 
     auto longhands = shorthand.properties();
@@ -1306,9 +1307,9 @@ inline bool PropertyParserCustom::consumeMaskPositionShorthand(CSSParserTokenRan
         auto position = consumePositionUnresolved(range, state);
         if (!position)
             return false;
-        auto [positionX, positionY] = split(WTFMove(*position));
-        x.append(CSSPositionXValue::create(WTFMove(positionX)));
-        y.append(CSSPositionYValue::create(WTFMove(positionY)));
+        auto [positionX, positionY] = split(WTF::move(*position));
+        x.append(CSSPositionXValue::create(WTF::move(positionX)));
+        y.append(CSSPositionYValue::create(WTF::move(positionY)));
     } while (consumeCommaIncludingWhitespace(range));
 
     if (!range.atEnd())
@@ -1317,11 +1318,11 @@ inline bool PropertyParserCustom::consumeMaskPositionShorthand(CSSParserTokenRan
     RefPtr<CSSValue> resultX;
     RefPtr<CSSValue> resultY;
     if (x.size() == 1) {
-        resultX = WTFMove(x[0]);
-        resultY = WTFMove(y[0]);
+        resultX = WTF::move(x[0]);
+        resultY = WTF::move(y[0]);
     } else {
-        resultX = CSSValueList::createCommaSeparated(WTFMove(x));
-        resultY = CSSValueList::createCommaSeparated(WTFMove(y));
+        resultX = CSSValueList::createCommaSeparated(WTF::move(x));
+        resultY = CSSValueList::createCommaSeparated(WTF::move(y));
     }
 
     auto longhands = shorthand.properties();
@@ -1506,9 +1507,9 @@ inline bool PropertyParserCustom::consumeGridTemplateShorthand(CSSParserTokenRan
     } else {
         columnsValue = CSSPrimitiveValue::create(CSSValueNone);
     }
-    result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateRows, CSSValueList::createSpaceSeparated(WTFMove(templateRows)));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateRows, CSSValueList::createSpaceSeparated(WTF::move(templateRows)));
     result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateColumns, columnsValue.releaseNonNull());
-    result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateAreas, CSSGridTemplateAreasValue::create({ WTFMove(gridAreaMap) }));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyGridTemplateAreas, CSSGridTemplateAreasValue::create({ WTF::move(gridAreaMap) }));
     return true;
 }
 
@@ -1674,10 +1675,10 @@ inline bool PropertyParserCustom::consumeBlockStepShorthand(CSSParserTokenRange&
     if (!round)
         round = CSSPrimitiveValue::create(CSSValueUp);
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepSize, WTFMove(size));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepInsert, WTFMove(insert));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepAlign, WTFMove(align));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepRound, WTFMove(round));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepSize, WTF::move(size));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepInsert, WTF::move(insert));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepAlign, WTF::move(align));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockStepRound, WTF::move(round));
     return true;
 }
 
@@ -1703,8 +1704,8 @@ inline bool PropertyParserCustom::consumeOverscrollBehaviorShorthand(CSSParserTo
             return false;
     }
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyOverscrollBehaviorX, WTFMove(overscrollBehaviorX));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyOverscrollBehaviorY, WTFMove(overscrollBehaviorY));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyOverscrollBehaviorX, WTF::move(overscrollBehaviorX));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyOverscrollBehaviorY, WTF::move(overscrollBehaviorY));
     return true;
 }
 
@@ -1731,7 +1732,7 @@ inline bool PropertyParserCustom::consumeContainerShorthand(CSSParserTokenRange&
         return false;
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyContainerName, name.releaseNonNull());
-    result.addPropertyForCurrentShorthand(state, CSSPropertyContainerType, WTFMove(type));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyContainerType, WTF::move(type));
     return true;
 }
 
@@ -1758,8 +1759,8 @@ inline bool PropertyParserCustom::consumeContainIntrinsicSizeShorthand(CSSParser
             return false;
     }
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyContainIntrinsicWidth, WTFMove(containIntrinsicWidth));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyContainIntrinsicHeight, WTFMove(containIntrinsicHeight));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyContainIntrinsicWidth, WTF::move(containIntrinsicWidth));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyContainIntrinsicHeight, WTF::move(containIntrinsicHeight));
     return true;
 }
 
@@ -1772,9 +1773,9 @@ inline bool PropertyParserCustom::consumeTransformOriginShorthand(CSSParserToken
         if ((!resultZ && !atEnd) || !range.atEnd())
             return false;
 
-        auto [positionX, positionY] = split(WTFMove(*position));
-        result.addPropertyForCurrentShorthand(state, CSSPropertyTransformOriginX, CSSPositionXValue::create(WTFMove(positionX)));
-        result.addPropertyForCurrentShorthand(state, CSSPropertyTransformOriginY, CSSPositionYValue::create(WTFMove(positionY)));
+        auto [positionX, positionY] = split(WTF::move(*position));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyTransformOriginX, CSSPositionXValue::create(WTF::move(positionX)));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyTransformOriginY, CSSPositionYValue::create(WTF::move(positionY)));
         result.addPropertyForCurrentShorthand(state, CSSPropertyTransformOriginZ, resultZ);
         return true;
     }
@@ -1784,9 +1785,9 @@ inline bool PropertyParserCustom::consumeTransformOriginShorthand(CSSParserToken
 inline bool PropertyParserCustom::consumePerspectiveOriginShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand&, PropertyParserResult& result)
 {
     if (auto position = consumePositionUnresolved(range, state)) {
-        auto [positionX, positionY] = split(WTFMove(*position));
-        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspectiveOriginX, CSSPositionXValue::create(WTFMove(positionX)));
-        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspectiveOriginY, CSSPositionYValue::create(WTFMove(positionY)));
+        auto [positionX, positionY] = split(WTF::move(*position));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspectiveOriginX, CSSPositionXValue::create(WTF::move(positionX)));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspectiveOriginY, CSSPositionYValue::create(WTF::move(positionY)));
         return true;
     }
 
@@ -1801,7 +1802,7 @@ inline bool PropertyParserCustom::consumeWebkitPerspectiveShorthand(CSSParserTok
     }
 
     if (auto perspective = CSSPrimitiveValueResolver<Number<Nonnegative>>::consumeAndResolve(range, state)) {
-        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspective, WTFMove(perspective));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspective, WTF::move(perspective));
         return range.atEnd();
     }
 
@@ -1850,11 +1851,11 @@ inline bool PropertyParserCustom::consumeOffsetShorthand(CSSParserTokenRange& ra
             return false;
     }
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetPath, WTFMove(offsetPath));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetDistance, WTFMove(offsetDistance));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetPosition, WTFMove(offsetPosition));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetAnchor, WTFMove(offsetAnchor));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetRotate, WTFMove(offsetRotate));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetPath, WTF::move(offsetPath));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetDistance, WTF::move(offsetDistance));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetPosition, WTF::move(offsetPosition));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetAnchor, WTF::move(offsetAnchor));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyOffsetRotate, WTF::move(offsetRotate));
 
     return range.atEnd();
 }
@@ -1897,9 +1898,9 @@ inline bool PropertyParserCustom::consumeListStyleShorthand(CSSParserTokenRange&
             type = CSSPrimitiveValue::create(CSSValueNone);
     }
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyListStylePosition, WTFMove(position));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyListStyleImage, WTFMove(image));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyListStyleType, WTFMove(type));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyListStylePosition, WTF::move(position));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyListStyleImage, WTF::move(image));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyListStyleType, WTF::move(type));
     return range.atEnd();
 }
 
@@ -1934,9 +1935,9 @@ inline bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange&
     if (!maxLines)
         maxLines = CSSPrimitiveValue::create(CSSValueNone);
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMaxLines, WTFMove(maxLines));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMaxLines, WTF::move(maxLines));
     result.addPropertyForCurrentShorthand(state, CSSPropertyContinue, CSSPrimitiveValue::create(CSSValueDiscard));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockEllipsis, WTFMove(blockEllipsis));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyBlockEllipsis, WTF::move(blockEllipsis));
     return range.atEnd();
 }
 
@@ -1973,8 +1974,8 @@ inline bool PropertyParserCustom::consumeTextBoxShorthand(CSSParserTokenRange& r
     if (!textBoxTrim)
         textBoxTrim = CSSPrimitiveValue::create(CSSValueTrimBoth);
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyTextBoxTrim, WTFMove(textBoxTrim));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyTextBoxEdge, WTFMove(textBoxEdge));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyTextBoxTrim, WTF::move(textBoxTrim));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyTextBoxEdge, WTF::move(textBoxEdge));
     return true;
 }
 
@@ -2001,8 +2002,8 @@ inline bool PropertyParserCustom::consumeTextWrapShorthand(CSSParserTokenRange& 
     if (!style)
         style = CSSPrimitiveValue::create(CSSValueAuto);
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyTextWrapMode, WTFMove(mode));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyTextWrapStyle, WTFMove(style));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyTextWrapMode, WTF::move(mode));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyTextWrapStyle, WTF::move(style));
     return true;
 }
 
@@ -2062,8 +2063,8 @@ inline bool PropertyParserCustom::consumeWhiteSpaceShorthand(CSSParserTokenRange
     if (!textWrapMode)
         textWrapMode = CSSPrimitiveValue::create(CSSValueWrap);
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyWhiteSpaceCollapse, WTFMove(whiteSpaceCollapse));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyTextWrapMode, WTFMove(textWrapMode));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyWhiteSpaceCollapse, WTF::move(whiteSpaceCollapse));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyTextWrapMode, WTF::move(textWrapMode));
     return true;
 }
 
@@ -2110,8 +2111,8 @@ inline bool PropertyParserCustom::consumeAnimationRangeShorthand(CSSParserTokenR
     if (!range.atEnd())
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyAnimationRangeStart, CSSValueList::createCommaSeparated(WTFMove(startList)));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyAnimationRangeEnd, CSSValueList::createCommaSeparated(WTFMove(endList)));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyAnimationRangeStart, CSSValueList::createCommaSeparated(WTF::move(startList)));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyAnimationRangeEnd, CSSValueList::createCommaSeparated(WTF::move(endList)));
     return true;
 }
 
@@ -2139,9 +2140,9 @@ inline bool PropertyParserCustom::consumeScrollTimelineShorthand(CSSParserTokenR
     if (namesList.isEmpty())
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyScrollTimelineName, CSSValueList::createCommaSeparated(WTFMove(namesList)));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyScrollTimelineName, CSSValueList::createCommaSeparated(WTF::move(namesList)));
     if (!axesList.isEmpty())
-        result.addPropertyForCurrentShorthand(state, CSSPropertyScrollTimelineAxis, CSSValueList::createCommaSeparated(WTFMove(axesList)));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyScrollTimelineAxis, CSSValueList::createCommaSeparated(WTF::move(axesList)));
     return true;
 }
 
@@ -2181,9 +2182,9 @@ inline bool PropertyParserCustom::consumeViewTimelineShorthand(CSSParserTokenRan
     if (namesList.isEmpty())
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyViewTimelineName, CSSValueList::createCommaSeparated(WTFMove(namesList)));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyViewTimelineAxis, CSSValueList::createCommaSeparated(WTFMove(axesList)));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyViewTimelineInset, CSSValueList::createCommaSeparated(WTFMove(insetsList)));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyViewTimelineName, CSSValueList::createCommaSeparated(WTF::move(namesList)));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyViewTimelineAxis, CSSValueList::createCommaSeparated(WTF::move(axesList)));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyViewTimelineInset, CSSValueList::createCommaSeparated(WTF::move(insetsList)));
     return true;
 }
 
@@ -2194,8 +2195,8 @@ inline bool PropertyParserCustom::consumePositionTryShorthand(CSSParserTokenRang
     if (!fallbacks)
         return false;
 
-    result.addPropertyForCurrentShorthand(state, CSSPropertyPositionTryOrder, WTFMove(order));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyPositionTryFallbacks, WTFMove(fallbacks));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyPositionTryOrder, WTF::move(order));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyPositionTryFallbacks, WTF::move(fallbacks));
     return range.atEnd();
 }
 
@@ -2208,7 +2209,7 @@ inline bool PropertyParserCustom::consumeMarkerShorthand(CSSParserTokenRange& ra
     Ref markerRef = marker.releaseNonNull();
     result.addPropertyForCurrentShorthand(state, CSSPropertyMarkerStart, markerRef.copyRef());
     result.addPropertyForCurrentShorthand(state, CSSPropertyMarkerMid, markerRef.copyRef());
-    result.addPropertyForCurrentShorthand(state, CSSPropertyMarkerEnd, WTFMove(markerRef));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyMarkerEnd, WTF::move(markerRef));
     return true;
 }
 

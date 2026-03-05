@@ -137,13 +137,13 @@ public:
 
     void dump(PrintStream& out) const;
 
-    std::span<WordType> storage() { return bits; }
-    std::span<const WordType> storage() const { return bits; }
+    std::span<WordType> storage() LIFETIME_BOUND { return bits; }
+    std::span<const WordType> storage() const LIFETIME_BOUND { return bits; }
 
     constexpr size_t storageLengthInBytes() { return sizeof(bits); }
 
-    std::span<uint8_t> storageBytes() { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(bits.data()), storageLengthInBytes()); }
-    std::span<const uint8_t> storageBytes() const { return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(bits.data()), storageLengthInBytes()); }
+    std::span<uint8_t> storageBytes() LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(bits.data()), storageLengthInBytes()); }
+    std::span<const uint8_t> storageBytes() const LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(bits.data()), storageLengthInBytes()); }
 
 private:
     void cleanseLastWord();

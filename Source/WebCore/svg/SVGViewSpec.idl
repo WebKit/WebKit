@@ -31,7 +31,8 @@
     Exposed=Window
 ] interface SVGViewSpec {
     readonly attribute SVGTransformList transform;
-    readonly attribute SVGElement viewTarget;
+    // FIXME: `viewTarget` should not be nullable.
+    readonly attribute SVGElement? viewTarget;
     readonly attribute DOMString viewBoxString;
     readonly attribute DOMString preserveAspectRatioString;
     readonly attribute DOMString transformString;

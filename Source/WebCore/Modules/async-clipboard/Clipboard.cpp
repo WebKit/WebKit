@@ -50,7 +50,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Clipboard);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Clipboard);
 
 static bool shouldProceedWithClipboardWrite(const LocalFrame& frame)
 {
@@ -83,7 +83,7 @@ Clipboard::Clipboard(Navigator& navigator)
 
 Clipboard::~Clipboard()
 {
-    if (auto writer = WTFMove(m_activeItemWriter))
+    if (auto writer = WTF::move(m_activeItemWriter))
         writer->invalidate();
 }
 
@@ -128,13 +128,13 @@ void Clipboard::readText(Ref<DeferredPromise>&& promise)
         if (allInfo->at(index).webSafeTypesByFidelity.contains(textPlainContentTypeAtom())) {
             PasteboardPlainText plainTextReader;
             pasteboard->read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, index);
-            text = WTFMove(plainTextReader.text);
+            text = WTF::move(plainTextReader.text);
             break;
         }
     }
 
     if (changeCountAtStart == pasteboard->changeCount())
-        promise->resolve<IDLDOMString>(WTFMove(text));
+        promise->resolve<IDLDOMString>(WTF::move(text));
     else
         promise->reject(ExceptionCode::NotAllowedError);
 }
@@ -151,7 +151,7 @@ void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
     PasteboardCustomData customData;
     customData.writeString(textPlainContentTypeAtom(), data);
     customData.setOrigin(document->originIdentifierForPasteboard());
-    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()))->writeCustomData({ WTFMove(customData) });
+    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()))->writeCustomData({ WTF::move(customData) });
     promise->resolve();
 }
 
@@ -186,7 +186,7 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
         auto clipboardItems = allInfo->map([this](auto& itemInfo) {
             return ClipboardItem::create(*this, itemInfo);
         });
-        m_activeSession = {{ WTFMove(pasteboard), WTFMove(clipboardItems), changeCountAtStart }};
+        m_activeSession = {{ WTF::move(pasteboard), WTF::move(clipboardItems), changeCountAtStart }};
     }
 
     promise->resolve<IDLSequence<IDLInterface<ClipboardItem>>>(m_activeSession->items);
@@ -241,7 +241,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
     if (type == textPlainContentTypeAtom()) {
         PasteboardPlainText plainTextReader;
         activePasteboard().read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, itemIndex);
-        resultAsString = WTFMove(plainTextReader.text);
+        resultAsString = WTF::move(plainTextReader.text);
     }
 
     if (type == textHTMLContentTypeAtom()) {
@@ -259,7 +259,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
     if (RefPtr page = frame->page())
         resultAsString = page->applyLinkDecorationFiltering(resultAsString, LinkDecorationFilteringTrigger::Paste);
 
-    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->protectedDocument().get(), resultAsString, type));
+    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(protect(frame->document()).get(), resultAsString, type));
 }
 
 Clipboard::SessionIsValid Clipboard::updateSessionValidity()
@@ -283,7 +283,7 @@ void Clipboard::write(const Vector<Ref<ClipboardItem>>& items, Ref<DeferredPromi
         return;
     }
 
-    Ref newActiveItemWriter = ItemWriter::create(*this, WTFMove(promise));
+    Ref newActiveItemWriter = ItemWriter::create(*this, WTF::move(promise));
     if (RefPtr existingWriter = std::exchange(m_activeItemWriter, newActiveItemWriter.copyRef()))
         existingWriter->invalidate();
 
@@ -310,7 +310,7 @@ Pasteboard& Clipboard::activePasteboard()
 
 Clipboard::ItemWriter::ItemWriter(Clipboard& clipboard, Ref<DeferredPromise>&& promise)
     : m_clipboard(clipboard)
-    , m_promise(WTFMove(promise))
+    , m_promise(WTF::move(promise))
     , m_pasteboard(Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(clipboard.frame()->pageID())))
 {
 }
@@ -326,7 +326,7 @@ void Clipboard::ItemWriter::write(const Vector<Ref<ClipboardItem>>& items)
     m_pendingItemCount = items.size();
     for (size_t index = 0; index < items.size(); ++index) {
         Ref { items[index] }->collectDataForWriting(Ref { *m_clipboard }.get(), [this, protectedThis = Ref { *this }, index](auto data) {
-            protectedThis->setData(WTFMove(data), index);
+            protectedThis->setData(WTF::move(data), index);
             if (!--m_pendingItemCount)
                 didSetAllData();
         });
@@ -348,7 +348,7 @@ void Clipboard::ItemWriter::setData(std::optional<PasteboardCustomData>&& data, 
         return;
     }
 
-    m_dataToWrite[index] = WTFMove(data);
+    m_dataToWrite[index] = WTF::move(data);
 }
 
 void Clipboard::ItemWriter::didSetAllData()
@@ -376,7 +376,7 @@ void Clipboard::ItemWriter::didSetAllData()
         customData.append(*data);
     }
 
-    m_pasteboard->writeCustomData(WTFMove(customData));
+    m_pasteboard->writeCustomData(WTF::move(customData));
     promise->resolve();
     m_promise = nullptr;
 

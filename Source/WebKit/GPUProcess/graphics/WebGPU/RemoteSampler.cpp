@@ -41,33 +41,28 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSampler);
 RemoteSampler::RemoteSampler(WebCore::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(sampler)
     , m_objectHeap(objectHeap)
-    , m_streamConnection(WTFMove(streamConnection))
+    , m_streamConnection(WTF::move(streamConnection))
     , m_gpu(gpu)
     , m_identifier(identifier)
 {
-    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());
+    protect(m_streamConnection)->startReceivingMessages(*this, Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteSampler::~RemoteSampler() = default;
 
 void RemoteSampler::destruct()
 {
-    Ref { m_objectHeap.get() }->removeObject(m_identifier);
+    protect(m_objectHeap)->removeObject(m_identifier);
 }
 
 void RemoteSampler::stopListeningForIPC()
 {
-    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());
+    protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteSampler::setLabel(String&& label)
 {
-    Ref { m_backing }->setLabel(WTFMove(label));
-}
-
-Ref<IPC::StreamServerConnection> RemoteSampler::protectedStreamConnection() const
-{
-    return m_streamConnection;
+    protect(m_backing)->setLabel(WTF::move(label));
 }
 
 } // namespace WebKit

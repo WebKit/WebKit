@@ -52,8 +52,7 @@ class RtcEventNetEqSetMinimumDelay final : public RtcEvent {
   int minimum_delay_ms() const { return minimum_delay_ms_; }
 
   std::unique_ptr<RtcEventNetEqSetMinimumDelay> Copy() const {
-    return absl::WrapUnique<RtcEventNetEqSetMinimumDelay>(
-        new RtcEventNetEqSetMinimumDelay(*this));
+    return absl::WrapUnique(new RtcEventNetEqSetMinimumDelay(*this));
   }
 
  private:

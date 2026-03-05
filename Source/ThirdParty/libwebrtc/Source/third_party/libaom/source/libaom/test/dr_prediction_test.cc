@@ -50,19 +50,19 @@ const char *const kTxSizeStrings[] = {
 
 using libaom_test::ACMRandom;
 
-typedef void (*DrPred_Hbd)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
-                           const uint16_t *above, const uint16_t *left,
-                           int upsample_above, int upsample_left, int dx,
-                           int dy, int bd);
+using DrPred_Hbd = void (*)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
+                            const uint16_t *above, const uint16_t *left,
+                            int upsample_above, int upsample_left, int dx,
+                            int dy, int bd);
 
-typedef void (*DrPred)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
-                       const uint8_t *above, const uint8_t *left,
-                       int upsample_above, int upsample_left, int dx, int dy,
-                       int bd);
+using DrPred = void (*)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
+                        const uint8_t *above, const uint8_t *left,
+                        int upsample_above, int upsample_left, int dx, int dy,
+                        int bd);
 
-typedef void (*Z1_Lbd)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
-                       const uint8_t *above, const uint8_t *left,
-                       int upsample_above, int dx, int dy);
+using Z1_Lbd = void (*)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
+                        const uint8_t *above, const uint8_t *left,
+                        int upsample_above, int dx, int dy);
 template <Z1_Lbd fn>
 void z1_wrapper(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
                 const uint8_t *above, const uint8_t *left, int upsample_above,
@@ -72,9 +72,9 @@ void z1_wrapper(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
   fn(dst, stride, bw, bh, above, left, upsample_above, dx, dy);
 }
 
-typedef void (*Z2_Lbd)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
-                       const uint8_t *above, const uint8_t *left,
-                       int upsample_above, int upsample_left, int dx, int dy);
+using Z2_Lbd = void (*)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
+                        const uint8_t *above, const uint8_t *left,
+                        int upsample_above, int upsample_left, int dx, int dy);
 template <Z2_Lbd fn>
 void z2_wrapper(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
                 const uint8_t *above, const uint8_t *left, int upsample_above,
@@ -84,9 +84,9 @@ void z2_wrapper(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
   fn(dst, stride, bw, bh, above, left, upsample_above, upsample_left, dx, dy);
 }
 
-typedef void (*Z3_Lbd)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
-                       const uint8_t *above, const uint8_t *left,
-                       int upsample_left, int dx, int dy);
+using Z3_Lbd = void (*)(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
+                        const uint8_t *above, const uint8_t *left,
+                        int upsample_left, int dx, int dy);
 template <Z3_Lbd fn>
 void z3_wrapper(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
                 const uint8_t *above, const uint8_t *left, int upsample_above,
@@ -96,9 +96,9 @@ void z3_wrapper(uint8_t *dst, ptrdiff_t stride, int bw, int bh,
   fn(dst, stride, bw, bh, above, left, upsample_left, dx, dy);
 }
 
-typedef void (*Z1_Hbd)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
-                       const uint16_t *above, const uint16_t *left,
-                       int upsample_above, int dx, int dy, int bd);
+using Z1_Hbd = void (*)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
+                        const uint16_t *above, const uint16_t *left,
+                        int upsample_above, int dx, int dy, int bd);
 template <Z1_Hbd fn>
 void z1_wrapper_hbd(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
                     const uint16_t *above, const uint16_t *left,
@@ -109,10 +109,10 @@ void z1_wrapper_hbd(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
   fn(dst, stride, bw, bh, above, left, upsample_above, dx, dy, bd);
 }
 
-typedef void (*Z2_Hbd)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
-                       const uint16_t *above, const uint16_t *left,
-                       int upsample_above, int upsample_left, int dx, int dy,
-                       int bd);
+using Z2_Hbd = void (*)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
+                        const uint16_t *above, const uint16_t *left,
+                        int upsample_above, int upsample_left, int dx, int dy,
+                        int bd);
 template <Z2_Hbd fn>
 void z2_wrapper_hbd(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
                     const uint16_t *above, const uint16_t *left,
@@ -123,9 +123,9 @@ void z2_wrapper_hbd(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
      bd);
 }
 
-typedef void (*Z3_Hbd)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
-                       const uint16_t *above, const uint16_t *left,
-                       int upsample_left, int dx, int dy, int bd);
+using Z3_Hbd = void (*)(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
+                        const uint16_t *above, const uint16_t *left,
+                        int upsample_left, int dx, int dy, int bd);
 template <Z3_Hbd fn>
 void z3_wrapper_hbd(uint16_t *dst, ptrdiff_t stride, int bw, int bh,
                     const uint16_t *above, const uint16_t *left,

@@ -46,7 +46,7 @@ void UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&
 
 void UIClient::decidePolicyForMediaKeySystemPermissionRequest(WebKit::WebPageProxy& page, SecurityOrigin& origin, const WTF::String& keySystem, CompletionHandler<void(bool)>&& completionHandler)
 {
-    page.requestMediaKeySystemPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler));
+    page.requestMediaKeySystemPermissionByDefaultAction(origin.securityOrigin(), WTF::move(completionHandler));
 }
 
 } // namespace API

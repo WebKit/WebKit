@@ -59,7 +59,7 @@ auto CSSValueConversion<ColorScheme>::operator()(BuilderState& state, const CSSV
 {
     RefPtr colorSchemeValue = requiredDowncast<CSSColorSchemeValue>(state, value);
     if (!colorSchemeValue)
-        return { };
+        return CSS::Keyword::Normal { };
     return toStyle(colorSchemeValue->colorScheme(), state);
 }
 

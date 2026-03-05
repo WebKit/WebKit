@@ -28,6 +28,9 @@
 
 #include <WebCore/LibWebRTCMacros.h>
 
+// FIXME: Modularize WebRTC
+IGNORE_CLANG_WARNINGS_BEGIN("non-modular-include-in-module")
+
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 #include <webrtc/api/data_channel_interface.h>
@@ -44,12 +47,16 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
+IGNORE_CLANG_WARNINGS_END
+
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WTF {
 
 template<typename T> struct RTCDefaultRefDerefTraits {
+    static constexpr bool isDefaultImplementation = false;
+
     static ALWAYS_INLINE T* refIfNotNull(T* buffer)
     {
         if (buffer) [[likely]]

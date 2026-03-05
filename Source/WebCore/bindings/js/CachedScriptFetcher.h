@@ -57,7 +57,7 @@ protected:
     {
     }
 
-    CachedScriptFetcher(const AtomString& charset)
+    explicit CachedScriptFetcher(const AtomString& charset)
         : m_charset(charset)
     {
     }
@@ -65,6 +65,8 @@ protected:
     CachedResourceHandle<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL, FetchOptionsDestination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority>, std::optional<ServiceWorkersMode>) const;
 
 private:
+    bool isCachedScriptFetcher() const final { return true; }
+
     String m_nonce;
     AtomString m_charset;
     AtomString m_initiatorType;
@@ -74,3 +76,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CachedScriptFetcher)
+    static bool isType(const JSC::ScriptFetcher& fetcher) { return fetcher.isCachedScriptFetcher(); }
+SPECIALIZE_TYPE_TRAITS_END()

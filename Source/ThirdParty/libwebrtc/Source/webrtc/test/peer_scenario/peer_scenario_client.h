@@ -19,13 +19,13 @@
 #include <vector>
 
 #include "api/audio_options.h"
-#include "api/candidate.h"
 #include "api/data_channel_interface.h"
 #include "api/environment/environment.h"
 #include "api/field_trials.h"
 #include "api/jsep.h"
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/rtp_sender_interface.h"
 #include "api/rtp_transceiver_interface.h"
@@ -75,7 +75,7 @@ class PeerScenarioClient {
                                    int,
                                    const std::string&)>>
         on_ice_candidate_error;
-    std::vector<std::function<void(const std::vector<webrtc::Candidate>&)>>
+    std::vector<std::function<void(const webrtc::IceCandidate*)>>
         on_ice_candidates_removed;
     std::vector<std::function<void(
         webrtc::scoped_refptr<RtpReceiverInterface>,
@@ -173,6 +173,13 @@ class PeerScenarioClient {
       std::string remote_answer,
       std::function<void(const SessionDescriptionInterface& answer)>
           done_handler);
+
+  void SetLocalDescription(std::string sdp,
+                           SdpType type,
+                           std::function<void(RTCError)> on_complete);
+  void SetRemoteDescription(std::string sdp,
+                            SdpType type,
+                            std::function<void(RTCError)> on_complete);
 
   // Adds the given ice candidate when the peer connection is ready.
   void AddIceCandidate(std::unique_ptr<IceCandidate> candidate);

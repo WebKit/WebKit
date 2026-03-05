@@ -42,7 +42,7 @@
 namespace WebCore {
 
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
-static SelectorTextCache& selectorTextCache()
+static SelectorTextCache& NODELETE selectorTextCache()
 {
     static NeverDestroyed<SelectorTextCache> cache;
     return cache;
@@ -89,7 +89,7 @@ StylePropertyMap& CSSStyleRule::styleMap()
 
 String CSSStyleRule::generateSelectorText() const
 {
-    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+    if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
         return styleRule->originalSelectorList().selectorsText();
 
     return m_styleRule->selectorList().selectorsText();
@@ -127,10 +127,10 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
-        styleRule->wrapperAdoptOriginalSelectorList(WTFMove(*selectorList));
+    if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+        styleRule->wrapperAdoptOriginalSelectorList(WTF::move(*selectorList));
     else
-        m_styleRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
+        m_styleRule->wrapperAdoptSelectorList(WTF::move(*selectorList));
 
     if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);
@@ -140,7 +140,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
 Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 {
-    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+    if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
         return styleRule->nestedRules();
 
     return { };
@@ -163,7 +163,7 @@ void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
     for (unsigned index = 0; index < length(); ++index) {
         auto ruleText = item(index)->cssText();
         if (!ruleText.isEmpty())
-            rules.append("\n  "_s, WTFMove(ruleText));
+            rules.append("\n  "_s, WTF::move(ruleText));
     }
 }
 
@@ -256,7 +256,7 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
         else if (RefPtr parent = parentStyleSheet())
             styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(m_styleRule.get());
         else
-            styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(m_styleRule.get()));
+            styleRuleWithNesting = StyleRuleWithNesting::create(WTF::move(m_styleRule.get()));
         ASSERT(styleRuleWithNesting);
         m_styleRule = *styleRuleWithNesting;
     }
@@ -315,7 +315,7 @@ CSSRuleList& CSSStyleRule::cssRules() const
     return *m_ruleListCSSOMWrapper;
 }
 
-void CSSStyleRule::getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
+void CSSStyleRule::getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>& childStyleSheets)
 {
     for (unsigned index = 0; index < length(); ++index)
         item(index)->getChildStyleSheets(childStyleSheets);

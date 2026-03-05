@@ -43,14 +43,14 @@ class WebXRRigidTransform;
 class DOMPointReadOnly;
 
 class WebXRRay : public RefCounted<WebXRRay> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRRay);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRRay);
 public:
     static ExceptionOr<Ref<WebXRRay>> create(const DOMPointInit&, const XRRayDirectionInit&);
     static Ref<WebXRRay> create(WebXRRigidTransform&);
     ~WebXRRay();
     const DOMPointReadOnly& origin();
     const DOMPointReadOnly& direction();
-    const Float32Array& matrix();
+    const Float32Array& NODELETE matrix();
 
 private:
     WebXRRay(Ref<DOMPointReadOnly>&& origin, Ref<DOMPointReadOnly>&& direction);

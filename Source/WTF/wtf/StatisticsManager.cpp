@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "StatisticsManager.h"
+#include <wtf/StatisticsManager.h>
 
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
@@ -101,6 +101,7 @@ void StatisticsManager::dumpStatistics()
         double stddev = std::sqrt(variance);
 
         CString utf8ID = id.utf8();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         dataLogF(
             "Statistics for %s:\n"
             "  Count    : %zu\n"
@@ -111,6 +112,7 @@ void StatisticsManager::dumpStatistics()
             "  Std Dev  : %.6f\n"
             "  Histogram:\n",
             utf8ID.data(), count, min, max, mean, variance, stddev);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         dumpHistogram(locker, values, min, max);
         dataLogF("\n");

@@ -75,11 +75,14 @@ PASS e.style['view-timeline'] = "--abc 1px inline" should set view-timeline-axis
 PASS e.style['view-timeline'] = "--abc 1px inline" should set view-timeline-inset
 PASS e.style['view-timeline'] = "--abc 1px inline" should set view-timeline-name
 PASS e.style['view-timeline'] = "--abc 1px inline" should not set unrelated longhands
-PASS Shorthand contraction of view-timeline-name:--abc:undefined;view-timeline-axis:inline:undefined;view-timeline-inset:auto:undefined
-PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, block:undefined;view-timeline-inset:auto, auto:undefined
-PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, block:undefined;view-timeline-inset:1px 2px, 3px 3px:undefined
-PASS Shorthand contraction of view-timeline-name:none, none:undefined;view-timeline-axis:block, block:undefined;view-timeline-inset:auto auto, auto:undefined
-PASS Shorthand contraction of view-timeline-name:--a, --b, --c:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto:undefined
-PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined
-PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined
+PASS Shorthand contraction of view-timeline-name:--abc;view-timeline-axis:inline;view-timeline-inset:auto
+PASS Shorthand contraction of view-timeline-name:--a, --b;view-timeline-axis:inline, block;view-timeline-inset:auto, auto
+PASS Shorthand contraction of view-timeline-name:--a, --b;view-timeline-axis:inline, block;view-timeline-inset:1px 2px, 3px 3px
+PASS Shorthand contraction of view-timeline-name:none, none;view-timeline-axis:block, block;view-timeline-inset:auto auto, auto
+PASS Shorthand contraction of view-timeline-name:--a, --b, --c;view-timeline-axis:inline, inline;view-timeline-inset:auto, auto
+PASS Shorthand contraction of view-timeline-name:--a, --b;view-timeline-axis:inline, inline, inline;view-timeline-inset:auto, auto, auto
+PASS Shorthand contraction of view-timeline-name:--a, --b;view-timeline-axis:inline, inline;view-timeline-inset:auto, auto, auto
+PASS Shorthand contraction of view-timeline-name:--a, --b
+PASS Shorthand contraction of view-timeline-axis:inline, inline
+PASS Shorthand contraction of view-timeline-name:--a, --b;view-timeline-axis:inline, inline
 

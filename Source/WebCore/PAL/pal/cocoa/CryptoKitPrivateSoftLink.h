@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 #if HAVE(RSA_BSSA)
 
 #import <pal/spi/cocoa/CryptoKitPrivateSPI.h>

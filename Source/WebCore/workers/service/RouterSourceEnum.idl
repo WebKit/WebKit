@@ -27,4 +27,5 @@ enum RouterSourceEnum {
     "cache",
     "fetch-event",
     "network",
+    "race-network-and-fetch-handler"
 };

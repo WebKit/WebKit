@@ -19,12 +19,12 @@ info: |
       ...
   Return ? OrdinaryDelete(O, P).
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  let sample = new TA(1);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  let sample = new TA(makeCtorArg(1));
 
   Object.defineProperty(sample, "foo", {
     get() {
@@ -35,4 +35,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, () => {
     sample.foo;
   });
-});
+}, null, ["passthrough"]);

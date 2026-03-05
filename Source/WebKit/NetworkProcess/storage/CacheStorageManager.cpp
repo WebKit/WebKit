@@ -81,7 +81,7 @@ static std::optional<Vector<std::pair<String, String>>> readCachesList(const Str
         if (!uniqueName)
             return std::nullopt;
 
-        result.append({ WTFMove(*name), WTFMove(*uniqueName) });
+        result.append({ WTF::move(*name), WTF::move(*uniqueName) });
     }
 
     return result;
@@ -236,7 +236,7 @@ void CacheStorageManager::makeDirty()
 
 Ref<CacheStorageManager> CacheStorageManager::create(const String& path, CacheStorageRegistry& registry, const std::optional<WebCore::ClientOrigin>& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
 {
-    return adoptRef(*new CacheStorageManager(path, registry, origin, WTFMove(quotaCheckFunction), WTFMove(queue)));
+    return adoptRef(*new CacheStorageManager(path, registry, origin, WTF::move(quotaCheckFunction), WTF::move(queue)));
 }
 
 CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistry& registry, const std::optional<WebCore::ClientOrigin>& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
@@ -244,8 +244,8 @@ CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistr
     , m_path(path)
     , m_salt(readOrMakeSalt(saltFilePath(m_path)))
     , m_registry(registry)
-    , m_quotaCheckFunction(WTFMove(quotaCheckFunction))
-    , m_queue(WTFMove(queue))
+    , m_quotaCheckFunction(WTF::move(quotaCheckFunction))
+    , m_queue(WTF::move(queue))
 {
     if (m_path.isEmpty() || !origin)
         return;
@@ -294,7 +294,7 @@ bool CacheStorageManager::initializeCaches()
     for (auto& [name, uniqueName] : *cachesList) {
         Ref cache = CacheStorageCache::create(*this, name, uniqueName, m_path, m_queue.copyRef());
         m_registry->registerCache(cache->identifier(), cache.get());
-        m_caches.append(WTFMove(cache));
+        m_caches.append(WTF::move(cache));
     }
 
     return true;
@@ -309,7 +309,7 @@ void CacheStorageManager::openCache(const String& name, WebCore::DOMCacheEngine:
         return cache->name() == name;
     });
     if (index != notFound)
-        return Ref { m_caches[index] }->open(WTFMove(callback));
+        return Ref { m_caches[index] }->open(WTF::move(callback));
 
     Ref cache = CacheStorageCache::create(*this, name, createVersion4UUIDString(), m_path, m_queue.copyRef());
     m_caches.append(cache);
@@ -321,7 +321,7 @@ void CacheStorageManager::openCache(const String& name, WebCore::DOMCacheEngine:
 
     makeDirty();
     m_registry->registerCache(cache->identifier(), cache);
-    cache->open(WTFMove(callback));
+    cache->open(WTF::move(callback));
 }
 
 void CacheStorageManager::removeCache(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
@@ -336,7 +336,7 @@ void CacheStorageManager::removeCache(WebCore::DOMCacheIdentifier cacheIdentifie
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::WriteDisk));
 
     makeDirty();
-    m_removedCaches.set(cacheIdentifier, WTFMove(m_caches[index]));
+    m_removedCaches.set(cacheIdentifier, WTF::move(m_caches[index]));
     m_caches.removeAt(index);
     return callback(true);
 }
@@ -349,8 +349,8 @@ void CacheStorageManager::allCaches(uint64_t updateCounter, WebCore::DOMCacheEng
     auto cacheInfos = WTF::map(m_caches, [](const auto& cache) {
         return WebCore::DOMCacheEngine::CacheInfo { cache->identifier(), cache->name() };
     });
-    auto callbackAggregator = CallbackAggregator::create([callback = WTFMove(callback), cacheInfos = WTFMove(cacheInfos), updateCounter = m_updateCounter]() mutable {
-        callback(WebCore::DOMCacheEngine::CacheInfos { WTFMove(cacheInfos), updateCounter });
+    auto callbackAggregator = CallbackAggregator::create([callback = WTF::move(callback), cacheInfos = WTF::move(cacheInfos), updateCounter = m_updateCounter]() mutable {
+        callback(WebCore::DOMCacheEngine::CacheInfos { WTF::move(cacheInfos), updateCounter });
     });
     for (Ref cache : m_caches)
         cache->open([callbackAggregator](auto) { });
@@ -379,16 +379,16 @@ void CacheStorageManager::finishInitializingSize()
 
     while (!m_pendingSpaceRequests.isEmpty()) {
         auto [size, callback] = m_pendingSpaceRequests.takeFirst();
-        m_quotaCheckFunction(size, WTFMove(callback));
+        m_quotaCheckFunction(size, WTF::move(callback));
     }
 }
 
 void CacheStorageManager::requestSpaceAfterInitializingSize(uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (m_size)
-        return m_quotaCheckFunction(spaceRequested, WTFMove(completionHandler));
+        return m_quotaCheckFunction(spaceRequested, WTF::move(completionHandler));
 
-    m_pendingSpaceRequests.append({ spaceRequested, WTFMove(completionHandler) });
+    m_pendingSpaceRequests.append({ spaceRequested, WTF::move(completionHandler) });
     if (m_pendingSpaceRequests.size() > 1)
         return;
 
@@ -408,7 +408,7 @@ void CacheStorageManager::requestSpaceAfterInitializingSize(uint64_t spaceReques
 
 void CacheStorageManager::requestSpace(uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
 {
-    requestSpaceAfterInitializingSize(size, WTFMove(completionHandler));
+    requestSpaceAfterInitializingSize(size, WTF::move(completionHandler));
 }
 
 void CacheStorageManager::sizeIncreased(uint64_t amount)
@@ -541,6 +541,62 @@ String CacheStorageManager::representationString()
     }
     builder.append("]}\n"_s);
     return builder.toString();
+}
+
+static void queryCaches(Vector<Ref<CacheStorageCache>>&& caches, size_t index, WebCore::RetrieveRecordsOptions&& options, bool shouldIterate, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::CrossThreadRecord>&&)>&& callback)
+{
+    if (index >= caches.size()) {
+        callback({ });
+        return;
+    }
+
+    Ref cache = caches[index];
+    cache->open([caches = WTF::move(caches), index, options = WTF::move(options), shouldIterate, callback = WTF::move(callback)](auto&& openResult) mutable {
+        if (!openResult.has_value()) {
+            if (!shouldIterate) {
+                callback({ });
+                return;
+            }
+
+            queryCaches(WTF::move(caches), index + 1, WTF::move(options), shouldIterate, WTF::move(callback));
+            return;
+        }
+
+        Ref cache = caches[index];
+        auto matches = cache->findRecords(options);
+        if (!matches.isEmpty()) {
+            cache->retrieveRecords({ WTF::move(matches[0]) }, WTF::move(options), [callback = WTF::move(callback)](auto&& result) mutable {
+                if (!result.has_value()) {
+                    callback({ });
+                    return;
+                }
+                callback(WTF::move(result.value()[0]));
+            });
+            return;
+        }
+        queryCaches(WTF::move(caches), index + 1, WTF::move(options), shouldIterate, WTF::move(callback));
+    });
+}
+
+void CacheStorageManager::query(WebCore::RetrieveRecordsOptions&& options, String&& cacheName, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::CrossThreadRecord>&&)>&& callback)
+{
+    if (!initializeCaches()) {
+        callback({ });
+        return;
+    }
+
+    size_t index = 0;
+    if (!cacheName.isEmpty()) {
+        index = m_caches.findIf([&](auto& cache) {
+            return cache->name() == cacheName;
+        });
+        if (index == notFound) {
+            callback({ });
+            return;
+        }
+    }
+
+    queryCaches(Vector<Ref<CacheStorageCache>> { m_caches }, index, WTF::move(options), cacheName.isEmpty(), WTF::move(callback));
 }
 
 } // namespace WebKit

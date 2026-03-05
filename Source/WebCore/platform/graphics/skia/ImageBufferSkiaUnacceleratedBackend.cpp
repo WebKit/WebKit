@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferSkiaUnacceleratedBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferSkiaUnacceleratedBackend);
 
 std::unique_ptr<ImageBufferSkiaUnacceleratedBackend> ImageBufferSkiaUnacceleratedBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
@@ -46,16 +46,16 @@ std::unique_ptr<ImageBufferSkiaUnacceleratedBackend> ImageBufferSkiaUnaccelerate
         return nullptr;
 
     auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height(), parameters.colorSpace.platformColorSpace());
-    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+    SkSurfaceProps properties = FontRenderOptions::singleton().createSurfaceProps();
     auto surface = SkSurfaces::Raster(imageInfo, &properties);
     if (!surface || !surface->getCanvas())
         return nullptr;
 
-    return std::unique_ptr<ImageBufferSkiaUnacceleratedBackend>(new ImageBufferSkiaUnacceleratedBackend(parameters, WTFMove(surface)));
+    return std::unique_ptr<ImageBufferSkiaUnacceleratedBackend>(new ImageBufferSkiaUnacceleratedBackend(parameters, WTF::move(surface)));
 }
 
 ImageBufferSkiaUnacceleratedBackend::ImageBufferSkiaUnacceleratedBackend(const Parameters& parameters, sk_sp<SkSurface>&& surface)
-    : ImageBufferSkiaSurfaceBackend(parameters, WTFMove(surface), RenderingMode::Unaccelerated)
+    : ImageBufferSkiaSurfaceBackend(parameters, WTF::move(surface), RenderingMode::Unaccelerated)
 {
 }
 

@@ -50,7 +50,7 @@ class RemoteRemoteCommandListenerProxy : public RefCounted<RemoteRemoteCommandLi
 public:
     static Ref<RemoteRemoteCommandListenerProxy> create(GPUConnectionToWebProcess& process, RemoteRemoteCommandListenerIdentifier&& identifier)
     {
-        return adoptRef(*new RemoteRemoteCommandListenerProxy(process, WTFMove(identifier)));
+        return adoptRef(*new RemoteRemoteCommandListenerProxy(process, WTF::move(identifier)));
     }
 
     virtual ~RemoteRemoteCommandListenerProxy();

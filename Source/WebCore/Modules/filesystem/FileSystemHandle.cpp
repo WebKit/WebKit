@@ -32,14 +32,14 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileSystemHandle);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemHandle);
 
 FileSystemHandle::FileSystemHandle(ScriptExecutionContext& context, FileSystemHandle::Kind kind, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
     : ActiveDOMObject(&context)
     , m_kind(kind)
-    , m_name(WTFMove(name))
+    , m_name(WTF::move(name))
     , m_identifier(identifier)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
 {
 }
 
@@ -65,8 +65,8 @@ void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<
     if (m_kind != handle.kind() || m_name != handle.name())
         return promise.resolve(false);
 
-    m_connection->isSameEntry(m_identifier, handle.identifier(), [promise = WTFMove(promise)](auto result) mutable {
-        promise.settle(WTFMove(result));
+    m_connection->isSameEntry(m_identifier, handle.identifier(), [promise = WTF::move(promise)](auto result) mutable {
+        promise.settle(WTF::move(result));
     });
 }
 
@@ -78,11 +78,11 @@ void FileSystemHandle::move(FileSystemHandle& destinationHandle, const String& n
     if (destinationHandle.kind() != Kind::Directory)
         return promise.reject(Exception { ExceptionCode::TypeMismatchError });
 
-    m_connection->move(m_identifier, destinationHandle.identifier(), newName, [this, protectedThis = Ref { *this }, newName, promise = WTFMove(promise)](auto result) mutable {
+    m_connection->move(m_identifier, destinationHandle.identifier(), newName, [this, protectedThis = Ref { *this }, newName, promise = WTF::move(promise)](auto result) mutable {
         if (!result.hasException())
             m_name = newName;
 
-        promise.settle(WTFMove(result));
+        promise.settle(WTF::move(result));
     });
 }
 

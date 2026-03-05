@@ -34,14 +34,13 @@ namespace WebCore {
 class TextMetrics;
 
 class CanvasRenderingContext2D final : public CanvasRenderingContext2DBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CanvasRenderingContext2D);
+    WTF_MAKE_TZONE_ALLOCATED(CanvasRenderingContext2D);
 public:
     static std::unique_ptr<CanvasRenderingContext2D> create(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
     virtual ~CanvasRenderingContext2D();
 
     HTMLCanvasElement& canvas() const { return downcast<HTMLCanvasElement>(canvasBase()); }
-    Ref<HTMLCanvasElement> protectedCanvas() const { return canvas(); }
 
     void drawFocusIfNeeded(Element&);
     void drawFocusIfNeeded(Path2D&, Element&);

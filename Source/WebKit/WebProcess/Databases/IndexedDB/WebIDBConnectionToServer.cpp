@@ -330,7 +330,7 @@ void WebIDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdent
 
 void WebIDBConnectionToServer::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, Vector<IDBDatabaseNameAndVersion>&& databases)
 {
-    m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
+    m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(databases));
 }
 
 void WebIDBConnectionToServer::connectionToServerLost()

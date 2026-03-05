@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGCursorElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGCursorElement);
 
 inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -58,8 +58,8 @@ Ref<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Doc
 
 SVGCursorElement::~SVGCursorElement()
 {
-    for (auto& client : m_clients)
-        client.cursorElementRemoved(*this);
+    for (Ref client : m_clients)
+        client->cursorElementRemoved(*this);
 }
 
 void SVGCursorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -78,12 +78,12 @@ void SVGCursorElement::attributeChanged(const QualifiedName& name, const AtomStr
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-void SVGCursorElement::addClient(StyleCursorImage& value)
+void SVGCursorElement::addClient(Style::CursorImage& value)
 {
     m_clients.add(value);
 }
 
-void SVGCursorElement::removeClient(StyleCursorImage& value)
+void SVGCursorElement::removeClient(Style::CursorImage& value)
 {
     m_clients.remove(value);
 }
@@ -92,8 +92,8 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        for (auto& client : m_clients)
-            client.cursorElementChanged(*this);
+        for (Ref client : m_clients)
+            client->cursorElementChanged(*this);
         return;
     }
 

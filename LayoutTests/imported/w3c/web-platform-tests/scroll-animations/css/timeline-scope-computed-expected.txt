@@ -1,0 +1,14 @@
+
+PASS Property timeline-scope value 'initial'
+PASS Property timeline-scope value 'inherit'
+PASS Property timeline-scope value 'unset'
+PASS Property timeline-scope value 'revert'
+PASS Property timeline-scope value 'none'
+PASS Property timeline-scope value 'all'
+PASS Property timeline-scope value '--test'
+PASS Property timeline-scope value '--foo, --bar'
+PASS Property timeline-scope value '--bar, --foo'
+PASS Property timeline-scope value '--a, --b, --c, --D, --e'
+PASS The timeline-scope property shows up in CSSStyleDeclaration enumeration
+PASS The timeline-scope property shows up in CSSStyleDeclaration.cssText
+

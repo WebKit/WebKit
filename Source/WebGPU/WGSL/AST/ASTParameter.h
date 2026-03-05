@@ -74,9 +74,9 @@ private:
     Parameter(SourceSpan span, Identifier&& name, Expression::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
         : Node(span)
         , m_role(role)
-        , m_name(WTFMove(name))
-        , m_typeName(WTFMove(typeName))
-        , m_attributes(WTFMove(attributes))
+        , m_name(WTF::move(name))
+        , m_typeName(WTF::move(typeName))
+        , m_attributes(WTF::move(attributes))
     { }
 
     ParameterRole m_role;

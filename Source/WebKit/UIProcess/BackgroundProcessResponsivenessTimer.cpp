@@ -48,11 +48,6 @@ BackgroundProcessResponsivenessTimer::~BackgroundProcessResponsivenessTimer()
 {
 }
 
-Ref<WebProcessProxy> BackgroundProcessResponsivenessTimer::protectedWebProcessProxy() const
-{
-    return const_cast<WebProcessProxy&>(m_webProcessProxy.get());
-}
-
 void BackgroundProcessResponsivenessTimer::updateState()
 {
     if (!shouldBeActive()) {
@@ -98,7 +93,7 @@ void BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired()
     ASSERT(!m_timeoutTimer.isActive());
 
     m_timeoutTimer.startOneShot(responsivenessTimeout);
-    protectedWebProcessProxy()->send(Messages::WebProcess::BackgroundResponsivenessPing(), 0);
+    protect(m_webProcessProxy)->send(Messages::WebProcess::BackgroundResponsivenessPing(), 0);
 }
 
 void BackgroundProcessResponsivenessTimer::timeoutTimerFired()
@@ -109,13 +104,13 @@ void BackgroundProcessResponsivenessTimer::timeoutTimerFired()
 
     // This shouldn't happen but still check to be 100% sure we don't report
     // suspended processes as unresponsive.
-    if (protectedWebProcessProxy()->throttler().isSuspended())
+    if (protect(m_webProcessProxy)->throttler().isSuspended())
         return;
 
     if (!m_isResponsive)
         return;
 
-    if (!protectedClient()->mayBecomeUnresponsive())
+    if (!protect(client())->mayBecomeUnresponsive())
         return;
 
     setResponsive(false);

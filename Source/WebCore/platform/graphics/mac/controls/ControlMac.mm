@@ -45,6 +45,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
@@ -95,8 +96,8 @@ void ControlMac::updateCheckedState(NSCell *cell, const ControlStyle& style)
 
     auto newState = indeterminate ? NSControlStateValueMixed : (checked ? NSControlStateValueOn : NSControlStateValueOff);
 
-    if ([cell isKindOfClass:[NSButtonCell class]])
-        [(NSButtonCell *)cell _setState:newState animated:false];
+    if (auto *buttonCell = dynamic_objc_cast<NSButtonCell>(cell))
+        [buttonCell _setState:newState animated:false];
     else
         [cell setState:newState];
 }
@@ -126,8 +127,8 @@ void ControlMac::updatePressedState(NSCell *cell, const ControlStyle& style)
     if (pressed == oldPressed)
         return;
 
-    if ([cell isKindOfClass:[NSButtonCell class]])
-        [(NSButtonCell *)cell _setHighlighted:pressed animated:false];
+    if (auto *buttonCell = dynamic_objc_cast<NSButtonCell>(cell))
+        [buttonCell _setHighlighted:pressed animated:false];
     else
         [cell setHighlighted:pressed];
 }
@@ -225,16 +226,16 @@ static void performDrawingWithUnflippedContext(GraphicsContext& context, const F
 {
     auto adjustedRect = rect;
 
-    CGContextRef cgContext = context.platformContext();
-    CGContextStateSaver stateSaver(cgContext);
+    RetainPtr cgContext = context.platformContext();
+    CGContextStateSaver stateSaver(cgContext.get());
 
     // Move the coordinates origin to topleft of rect.
-    CGContextTranslateCTM(cgContext, adjustedRect.x(), adjustedRect.y());
+    CGContextTranslateCTM(cgContext.get(), adjustedRect.x(), adjustedRect.y());
     adjustedRect.setLocation(FloatPoint::zero());
 
     // Un-flip the coordinates.
-    CGContextTranslateCTM(cgContext, 0, adjustedRect.height());
-    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextTranslateCTM(cgContext.get(), 0, adjustedRect.height());
+    CGContextScaleCTM(cgContext.get(), 1, -1);
 
     LocalCurrentGraphicsContext localContext(context, false);
     draw(adjustedRect);
@@ -269,8 +270,8 @@ static void drawCellInView(GraphicsContext& context, const FloatRect& rect, NSCe
 void ControlMac::drawCellInternal(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
 {
     // For slider cells, draw only the knob.
-    if ([cell isKindOfClass:[NSSliderCell class]]) {
-        drawSliderCell(context, rect, (NSSliderCell *)cell);
+    if (auto *sliderCell = dynamic_objc_cast<NSSliderCell>(cell)) {
+        drawSliderCell(context, rect, sliderCell);
         return;
     }
 
@@ -279,8 +280,8 @@ void ControlMac::drawCellInternal(GraphicsContext& context, const FloatRect& rec
         return;
     }
 
-    auto *view = m_controlFactory->drawingView(rect, style);
-    drawCellInView(context, rect, cell, view);
+    RetainPtr view = m_controlFactory->drawingView(rect, style);
+    drawCellInView(context, rect, cell, view.get());
 }
 
 static void drawViewlessCellFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
@@ -309,14 +310,14 @@ void ControlMac::drawCellFocusRingInternal(GraphicsContext& context, const Float
         return;
     }
 
-    auto *view = m_controlFactory->drawingView(rect, style);
-    drawCellFocusRingInView(context, rect, cell, view);
+    RetainPtr view = m_controlFactory->drawingView(rect, style);
+    drawCellFocusRingInView(context, rect, cell, view.get());
 }
 
 void ControlMac::drawCellFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
 {
-    CGContextRef cgContext = context.platformContext();
-    CGContextStateSaver stateSaver(cgContext);
+    RetainPtr cgContext = context.platformContext();
+    CGContextStateSaver stateSaver(cgContext.get());
 
     CGFocusRingStyle focusRingStyle;
     NSInitializeCGFocusRingStyleForTime(NSFocusRingOnly, &focusRingStyle, std::numeric_limits<double>::max());
@@ -331,11 +332,11 @@ void ControlMac::drawCellFocusRing(GraphicsContext& context, const FloatRect& re
     // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
     auto color = colorFromCocoaColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
     auto cgStyle = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color).get()));
-    CGContextSetStyle(cgContext, cgStyle.get());
+    CGContextSetStyle(cgContext.get(), cgStyle.get());
 
-    CGContextBeginTransparencyLayerWithRect(cgContext, rect, nullptr);
+    CGContextBeginTransparencyLayerWithRect(cgContext.get(), rect, nullptr);
     drawCellFocusRingInternal(context, rect, deviceScaleFactor, style, cell);
-    CGContextEndTransparencyLayer(cgContext);
+    CGContextEndTransparencyLayer(cgContext.get());
 }
 
 void ControlMac::drawCellOrFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, bool drawCell)
@@ -353,8 +354,8 @@ void ControlMac::drawCellOrFocusRing(GraphicsContext& context, const FloatRect& 
 
 void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, bool drawCell)
 {
-    auto platformContext = context.platformContext();
-    auto userCTM = AffineTransform(CGAffineTransformConcat(CGContextGetCTM(platformContext), CGAffineTransformInvert(CGContextGetBaseCTM(platformContext))));
+    RetainPtr platformContext = context.platformContext();
+    auto userCTM = AffineTransform(CGAffineTransformConcat(CGContextGetCTM(platformContext.get()), CGAffineTransformInvert(CGContextGetBaseCTM(platformContext.get()))));
     bool useImageBuffer = userCTM.xScale() != 1.0 || userCTM.yScale() != 1.0;
 
     if (!useImageBuffer) {
@@ -373,7 +374,7 @@ void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float
         return;
 
     drawCellOrFocusRing(imageBuffer->context(), cellDrawingRect, deviceScaleFactor, style, cell, drawCell);
-    context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect.location() - focusRingPadding);
+    context.drawConsumingImageBuffer(WTF::move(imageBuffer), rect.location() - focusRingPadding);
 }
 
 void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
@@ -395,14 +396,14 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     if (!comboBoxImageBuffer)
         return;
 
-    CGContextRef cgContext = comboBoxImageBuffer->context().platformContext();
+    RetainPtr cgContext = comboBoxImageBuffer->context().platformContext();
 
     NSString *coreUIState;
     if (style.states.containsAny({ ControlStyle::State::Presenting, ControlStyle::State::ListButtonPressed }))
         coreUIState = (__bridge NSString *)kCUIStatePressed;
     else
         coreUIState = (__bridge NSString *)kCUIStateActive;
-    [[NSAppearance currentDrawingAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext options:@{
+    [[NSAppearance currentDrawingAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext.get() options:@{
         (__bridge NSString *)kCUIWidgetKey : (__bridge NSString *)kCUIWidgetButtonComboBox,
         (__bridge NSString *)kCUISizeKey : (__bridge NSString *)kCUISizeRegular,
         (__bridge NSString *)kCUIStateKey : coreUIState,
@@ -416,9 +417,9 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     auto& comboBoxButtonContext = comboBoxButtonImageBuffer->context();
 
     comboBoxButtonContext.scale(desiredComboBoxButtonSize.width() / comboBoxButtonSize.width());
-    comboBoxButtonContext.clipRoundedRect(FloatRoundedRect(FloatRect(FloatPoint::zero(), comboBoxButtonSize), FloatRoundedRect::Radii(comboBoxButtonCornerRadii)));
+    comboBoxButtonContext.clipRoundedRect(FloatRoundedRect(FloatRect(FloatPoint::zero(), comboBoxButtonSize), CornerRadii(comboBoxButtonCornerRadii)));
     comboBoxButtonContext.translate(comboBoxButtonInset.scaled(-1));
-    comboBoxButtonContext.drawConsumingImageBuffer(WTFMove(comboBoxImageBuffer), FloatPoint::zero(), ImagePaintingOptions { ImageOrientation::Orientation::OriginBottomRight });
+    comboBoxButtonContext.drawConsumingImageBuffer(WTF::move(comboBoxImageBuffer), FloatPoint::zero(), ImagePaintingOptions { ImageOrientation::Orientation::OriginBottomRight });
 
     auto isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
 
@@ -435,7 +436,7 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     if (isVerticalWritingMode)
         listButtonLocation = listButtonLocation.transposedPoint();
 
-    context.drawConsumingImageBuffer(WTFMove(comboBoxButtonImageBuffer), listButtonLocation);
+    context.drawConsumingImageBuffer(WTF::move(comboBoxButtonImageBuffer), listButtonLocation);
 }
 
 } // namespace WebCore

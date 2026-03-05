@@ -38,8 +38,6 @@ struct EvaluationContext {
     unsigned position;
     HashMap<String, String> variableBindings;
     bool hadTypeConversionError;
-
-    RefPtr<Node> protectedNode() const { return node; }
 };
 
 class Expression {
@@ -68,7 +66,7 @@ protected:
         m_isContextNodeSensitive |= expression->m_isContextNodeSensitive;
         m_isContextPositionSensitive |= expression->m_isContextPositionSensitive;
         m_isContextSizeSensitive |= expression->m_isContextSizeSensitive;
-        m_subexpressions.append(WTFMove(expression));
+        m_subexpressions.append(WTF::move(expression));
     }
 
     void setSubexpressions(Vector<std::unique_ptr<Expression>>);

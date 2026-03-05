@@ -34,7 +34,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteHost::create(WebCore::LayerHosti
 {
     auto layer = adoptRef(*new PlatformCALayerRemoteHost(identifier, owner, context));
     context.layerDidEnterContext(layer.get(), layer->layerType());
-    return WTFMove(layer);
+    return WTF::move(layer);
 }
 
 PlatformCALayerRemoteHost::PlatformCALayerRemoteHost(WebCore::LayerHostingContextIdentifier identifier, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)

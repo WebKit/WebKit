@@ -38,14 +38,14 @@ struct OffsetPath;
 // <'clip-path'> = none | <url> | [ <basic-shape> || <geometry-box> ]
 struct ClipPath {
     ClipPath(CSS::Keyword::None) : operation { nullptr } { }
-    ClipPath(ReferencePath&& reference) : operation { WTFMove(reference.operation) } { }
+    ClipPath(ReferencePath&& reference) : operation { WTF::move(reference.operation) } { }
     ClipPath(const ReferencePath& reference) : operation { reference.operation } { }
-    ClipPath(BasicShapePath&& basicShape) : operation { WTFMove(basicShape.operation) } { }
+    ClipPath(BasicShapePath&& basicShape) : operation { WTF::move(basicShape.operation) } { }
     ClipPath(const BasicShapePath& basicShape) : operation { basicShape.operation } { }
-    ClipPath(BoxPath&& box) : operation { WTFMove(box.operation) } { }
+    ClipPath(BoxPath&& box) : operation { WTF::move(box.operation) } { }
     ClipPath(const BoxPath& box) : operation { box.operation } { }
 
-    explicit ClipPath(RefPtr<PathOperation>&& operation) : operation { WTFMove(operation) } { RELEASE_ASSERT(isValid(operation)); }
+    explicit ClipPath(RefPtr<PathOperation>&& operation) : operation { WTF::move(operation) } { RELEASE_ASSERT(isValid(operation)); }
     explicit ClipPath(const RefPtr<PathOperation>& operation) : operation { operation } { RELEASE_ASSERT(isValid(operation)); }
 
     bool isNone() const { return !operation; }
@@ -68,7 +68,7 @@ struct ClipPath {
 private:
     friend struct Blending<ClipPath>;
     friend CSSBoxType referenceBox(const ClipPath&);
-    friend std::optional<WebCore::Path> tryPath(const ClipPath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const ClipPath&, const TransformOperationData&, ZoomFactor);
 
     static bool isValid(RefPtr<PathOperation> operation)
     {
@@ -78,12 +78,12 @@ private:
     RefPtr<PathOperation> operation;
 };
 
-inline std::optional<WebCore::Path> tryPath(const ClipPath& clipPath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const ClipPath& clipPath, const TransformOperationData& data, ZoomFactor zoom)
 {
     RefPtr operation = clipPath.operation;
     if (!operation)
         return { };
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
 template<typename T> bool ClipPath::holdsAlternative() const

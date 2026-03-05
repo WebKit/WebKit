@@ -24,10 +24,12 @@
  */
 #import "config.h"
 
+#import "PasteboardUtilities.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -35,11 +37,14 @@
 
 namespace TestWebKitAPI {
 
-RetainPtr<WKWebView> createWebViewForFragmentDirectiveGenerationWithHTML(NSString *HTMLString, NSString *javaScript)
+RetainPtr<TestWKWebView> createWebViewForFragmentDirectiveGenerationWithHTML(NSString *HTMLString, NSURL *baseURL, NSString *javaScript)
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:HTMLString];
+    if (baseURL)
+        [webView synchronouslyLoadHTMLString:HTMLString baseURL:baseURL];
+    else
+        [webView synchronouslyLoadHTMLString:HTMLString];
     [webView stringByEvaluatingJavaScript:javaScript];
 
     return webView;
@@ -47,7 +52,7 @@ RetainPtr<WKWebView> createWebViewForFragmentDirectiveGenerationWithHTML(NSStrin
 
 TEST(FragmentDirectiveGeneration, GenerateFragment)
 {
-    RetainPtr webView = createWebViewForFragmentDirectiveGenerationWithHTML(@"Test", @"document.execCommand('SelectAll')");
+    RetainPtr webView = createWebViewForFragmentDirectiveGenerationWithHTML(@"Test", nil, @"document.execCommand('SelectAll')");
 
     __block bool done = false;
     [webView _textFragmentDirectiveFromSelectionWithCompletionHandler:^(NSURL* url) {
@@ -59,7 +64,7 @@ TEST(FragmentDirectiveGeneration, GenerateFragment)
 
 TEST(FragmentDirectiveGeneration, VerifyFragmentRanges)
 {
-    RetainPtr webView = createWebViewForFragmentDirectiveGenerationWithHTML(@"Test Page", @"location.href = \"#:~:text=Page\"");
+    RetainPtr webView = createWebViewForFragmentDirectiveGenerationWithHTML(@"Test Page", nil, @"location.href = \"#:~:text=Page\"");
 
     __block bool done = false;
     [webView _textFragmentRangesWithCompletionHandlerForTesting:^(NSArray<NSValue *> * fragmentRanges) {
@@ -68,5 +73,23 @@ TEST(FragmentDirectiveGeneration, VerifyFragmentRanges)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+#if PLATFORM(MAC)
+TEST(FragmentDirectiveGeneration, IncludesSelectionAsURLTitle)
+{
+    RetainPtr webView = createWebViewForFragmentDirectiveGenerationWithHTML(@"WebKit is very cool", [NSURL URLWithString:@"https://webkit.org"], @"document.execCommand('SelectAll')");
+
+    clearPasteboard();
+
+    [webView rightClick:NSMakePoint(10, 10) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.identifier isEqualToString:_WKMenuItemIdentifierCopyLinkWithHighlight];
+    }];
+
+    while (!readTitleFromPasteboard())
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_WK_STREQ(@"WebKit is very cool", readTitleFromPasteboard());
+}
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

@@ -28,7 +28,6 @@ window.onload = function() {
   if (!window.internals)
     return;
   debug("Disabling animations.");
-  window.internals.settings.setImageAnimationControlEnabled(true);
   window.internals.setImageAnimationEnabled(false);
 
   svgElement = document.getElementById("svg");

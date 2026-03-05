@@ -35,8 +35,8 @@ includes: [testTypedArray.js]
 features: [Reflect, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([0, 0]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([0, 0]));
 
   assert.sameValue(
     Reflect.defineProperty(sample, "0", {value: 1}),
@@ -52,4 +52,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(sample[0], 1, "sample[0]");
   assert.sameValue(sample[1], 2, "sample[1]");
-});
+}, null, ["passthrough"]);

@@ -1,0 +1,28 @@
+<html>
+<body>
+<canvas width="100" height="100" style="border: solid 1px gray"></canvas>
+<script>
+const shadowOffsetX = -20;
+const iterations = 10;
+const increment = 4;
+
+const canvas = document.getElementsByTagName('canvas')[0];
+const width = canvas.width;
+const ctx = canvas.getContext('2d');
+
+ctx.font = "10px monospace";
+
+for (let i = 0; i < iterations; ++i) {
+  const x = width + (i - iterations / 2) * increment;
+  const y = i * 10;
+  ctx.fillStyle = "black";
+  ctx.fillText("Hi", x + shadowOffsetX, y);
+  if (x < width) {
+    ctx.fillStyle = "blue";
+    ctx.fillText("Hi", x, y);
+  }
+}
+
+</script>
+</body>
+</html>

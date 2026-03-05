@@ -51,7 +51,7 @@ private:
     {
     }
 
-    bool hasCallback() const final { return true; }
+    bool NODELETE hasCallback() const final { return true; }
 
     CallbackResult<void> invoke(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
     {
@@ -77,7 +77,7 @@ private:
 void LazyLoadImageObserver::observe(Element& element)
 {
     auto& observer = element.document().lazyLoadImageObserver();
-    auto* intersectionObserver = observer.intersectionObserver(element.protectedDocument());
+    RefPtr intersectionObserver = observer.intersectionObserver(protect(element.document()));
     if (!intersectionObserver)
         return;
     intersectionObserver->observe(element);
@@ -95,7 +95,7 @@ IntersectionObserver* LazyLoadImageObserver::intersectionObserver(Document& docu
         auto callback = LazyImageLoadIntersectionObserverCallback::create(document);
         static NeverDestroyed<const String> lazyLoadingScrollMarginFallback(MAKE_STATIC_STRING_IMPL("100%"));
         IntersectionObserver::Init options { std::nullopt, { }, lazyLoadingScrollMarginFallback, { } };
-        auto observer = IntersectionObserver::create(document, WTFMove(callback), WTFMove(options));
+        auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options));
         if (observer.hasException())
             return nullptr;
         m_observer = observer.returnValue().ptr();

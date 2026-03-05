@@ -62,7 +62,6 @@
                 shouldBe("pc.getTransceivers().length", "3");
                 shouldBe("pc.iceConnectionState", "'new'");
 
-                window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "step-ice-transport-states");
                 testPassed("End of test promise chain");
                 debug("");
                 stream1.getTracks().forEach(track => track.stop());

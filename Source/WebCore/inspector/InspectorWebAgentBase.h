@@ -44,7 +44,7 @@ struct WebAgentContext : public Inspector::AgentContext {
     {
     }
 
-    InstrumentingAgents& instrumentingAgents;
+    WeakRef<InstrumentingAgents> instrumentingAgents;
 };
 
 struct PageAgentContext : public WebAgentContext {
@@ -86,8 +86,12 @@ protected:
     {
     }
 
+    Inspector::InspectorEnvironment& environment() { return m_environment.get(); }
+
     WeakRef<InstrumentingAgents> m_instrumentingAgents;
-    Inspector::InspectorEnvironment& m_environment;
+
+private:
+    WeakRef<Inspector::InspectorEnvironment> m_environment;
 };
     
 } // namespace WebCore

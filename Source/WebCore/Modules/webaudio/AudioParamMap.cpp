@@ -49,7 +49,7 @@ void AudioParamMap::initializeMapLike(DOMMapAdapter& map)
 
 void AudioParamMap::add(const String& name, Ref<AudioParam>&& param)
 {
-    m_map.add(name, WTFMove(param));
+    m_map.add(name, WTF::move(param));
 }
 
 } // namespace WebCore

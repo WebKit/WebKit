@@ -131,6 +131,14 @@ def compress_parser(subparsers, parent_parser):
     parser.set_defaults(func=compress)
     return parser
 
+def decompress_parser(subparsers, parent_parser):
+    parser = subparsers.add_parser('decompress', parents=[parent_parser],
+                                   help='Decompress *.profdata files so that they can be checked in.')
+    parser.add_argument('--input', help='Path to the directory containing the input *.profdata.compressed files.')
+    parser.add_argument('--output', help='Path to the directory where the output will be placed.')
+    parser.set_defaults(func=decompress)
+    return parser
+
 
 def compress(args):
     out = assert_directory(args.output)
@@ -147,6 +155,21 @@ def compress(args):
         compress_process.check_returncode()
         logger.info(f'{lib} is successfully compressed')
 
+def decompress(args):
+    out = assert_directory(args.output)
+    input_directory = assert_directory(args.input)
+
+    for lib in PROFILED_DYLIBS:
+        logger.info(f'Decompressing {lib}')
+        input_file = os.path.join(input_directory, f'{lib}.profdata.compressed')
+        output_file = os.path.join(out, f'{lib}.profdata')
+
+        compress_process = LLVMProfileData.decompress(input_file, output_file)
+        logger.info(f'stdout: {compress_process.stdout}')
+        logger.info(f'stderr: {compress_process.stderr}')
+        compress_process.check_returncode()
+        logger.info(f'{lib} is successfully compressed')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='pgo-profile')
@@ -157,6 +180,7 @@ if __name__ == '__main__':
     summarize_parser(subparsers, verbose_parser)
     combine_parser(subparsers, verbose_parser)
     compress_parser(subparsers, verbose_parser)
+    decompress_parser(subparsers, verbose_parser)
 
     args = parser.parse_args()
     if args.verbose:

@@ -26,6 +26,7 @@
 #include <JavaScriptCore/DeferredWorkTimer.h>
 #include <JavaScriptCore/JSSegmentedVariableObject.h>
 #include <JavaScriptCore/LazyClassStructure.h>
+#include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/RegExpGlobalData.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <JavaScriptCore/SourceTaintedOrigin.h>
@@ -37,7 +38,11 @@
 #include <wtf/WeakPtr.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/JSGlobalObjectAdditions.h>
+#pragma clang diagnostic pop
 #else
 #define JS_GLOBAL_OBJECT_ADDITIONS_1
 #define JS_GLOBAL_OBJECT_ADDITIONS_2
@@ -100,6 +105,7 @@ class JSTypedArrayViewPrototype;
 class MapIteratorPrototype;
 class MapPrototype;
 class Microtask;
+class MicrotaskQueue;
 class NullGetterFunction;
 class NullSetterFunction;
 class ObjectAdaptiveStructureWatchpoint;
@@ -198,6 +204,8 @@ constexpr bool typeExposedByDefault = true;
     macro(WebAssemblyMemory,       webAssemblyMemory,       webAssemblyMemory,       JSWebAssemblyMemory,       Memory,       object, typeExposedByDefault) \
     macro(WebAssemblyModule,       webAssemblyModule,       webAssemblyModule,       JSWebAssemblyModule,       Module,       object, typeExposedByDefault) \
     macro(WebAssemblyRuntimeError, webAssemblyRuntimeError, webAssemblyRuntimeError, ErrorInstance,             RuntimeError, error,  typeExposedByDefault) \
+    macro(WebAssemblySuspendError, webAssemblySuspendError, webAssemblySuspendError, ErrorInstance,             SuspendError, error,  typeExposedByDefault) \
+    macro(WebAssemblySuspending,   webAssemblySuspending,   webAssemblySuspending,   JSFunctionWithFields,   Suspending, object, typeExposedByDefault) \
     macro(WebAssemblyTable,        webAssemblyTable,        webAssemblyTable,        JSWebAssemblyTable,        Table,        object, typeExposedByDefault) \
     macro(WebAssemblyTag,          webAssemblyTag,          webAssemblyTag,          JSWebAssemblyTag,          Tag,          object, typeExposedByDefault) 
 #else
@@ -221,6 +229,9 @@ private:
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
     VM* const m_vm;
+    Debugger* m_debugger { nullptr };
+    QueuedTaskResult m_microtaskRunnability { QueuedTaskResult::Executed };
+    Ref<MicrotaskQueue> m_microtaskQueue;
 
 // Our hashtable code-generator tries to access these properties, so we make them public.
 // However, we'd like it better if they could be protected.
@@ -268,6 +279,12 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_segmentIteratorStructure;
     LazyProperty<JSGlobalObject, Structure> m_segmenterStructure;
     LazyProperty<JSGlobalObject, Structure> m_segmentsStructure;
+    LazyProperty<JSGlobalObject, Structure> m_segmentDataObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_segmentDataObjectWithIsWordLikeStructure;
+    LazyProperty<JSGlobalObject, Structure> m_intlPartObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_intlPartObjectWithSourceStructure;
+    LazyProperty<JSGlobalObject, Structure> m_intlPartObjectWithUnitStructure;
+    LazyProperty<JSGlobalObject, Structure> m_intlPartObjectWithUnitAndSourceStructure;
     LazyClassStructure m_dateTimeFormatStructure;
     LazyClassStructure m_numberFormatStructure;
 
@@ -278,6 +295,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_plainDateTimeStructure;
     LazyProperty<JSGlobalObject, Structure> m_plainMonthDayStructure;
     LazyProperty<JSGlobalObject, Structure> m_plainTimeStructure;
+    LazyProperty<JSGlobalObject, Structure> m_plainYearMonthStructure;
     LazyProperty<JSGlobalObject, Structure> m_timeZoneStructure;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
@@ -383,8 +401,6 @@ public:
     WriteBarrierStructureID m_mapIteratorStructure;
     WriteBarrierStructureID m_setIteratorStructure;
     WriteBarrierStructureID m_wrapForValidIteratorStructure;
-    WriteBarrierStructureID m_promiseAllContextStructure;
-    WriteBarrierStructureID m_promiseAllGlobalContextStructure;
     WriteBarrierStructureID m_regExpMatchesArrayStructure;
     WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
     WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
@@ -398,6 +414,8 @@ public:
     WriteBarrier<AsyncFunctionPrototype> m_asyncFunctionPrototype;
     WriteBarrier<AsyncGeneratorFunctionPrototype> m_asyncGeneratorFunctionPrototype;
     LazyProperty<JSGlobalObject, Structure> m_iteratorResultObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_promiseAllSettledFulfilledResultStructure;
+    LazyProperty<JSGlobalObject, Structure> m_promiseAllSettledRejectedResultStructure;
     LazyProperty<JSGlobalObject, Structure> m_dataPropertyDescriptorObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_accessorPropertyDescriptorObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_promiseCapabilityObjectStructure;
@@ -461,8 +479,6 @@ public:
 
     String m_name;
 
-    Debugger* m_debugger;
-
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
     std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
@@ -495,6 +511,7 @@ public:
     InlineWatchpointSet m_mapSetWatchpointSet { IsWatched };
     InlineWatchpointSet m_setAddWatchpointSet { IsWatched };
     InlineWatchpointSet m_promiseThenWatchpointSet { IsWatched };
+    InlineWatchpointSet m_promiseResolveWatchpointSet { IsWatched };
     InlineWatchpointSet m_promiseSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_setPrimordialPropertiesWatchpointSet { IsWatched };
     InlineWatchpointSet m_arraySpeciesWatchpointSet { ClearWatchpoint };
@@ -568,6 +585,7 @@ public:
     InlineWatchpointSet& setAddWatchpointSet() { return m_setAddWatchpointSet; }
     InlineWatchpointSet& setPrimordialPropertiesWatchpointSet() { return m_setPrimordialPropertiesWatchpointSet; }
     InlineWatchpointSet& promiseThenWatchpointSet() { return m_promiseThenWatchpointSet; }
+    InlineWatchpointSet& promiseResolveWatchpointSet() { return m_promiseResolveWatchpointSet; }
     InlineWatchpointSet& arraySpeciesWatchpointSet() { return m_arraySpeciesWatchpointSet; }
     InlineWatchpointSet& promiseSpeciesWatchpointSet() { return m_promiseSpeciesWatchpointSet; }
     InlineWatchpointSet& arrayPrototypeChainIsSaneWatchpointSet() { return m_arrayPrototypeChainIsSaneWatchpointSet; }
@@ -741,7 +759,6 @@ public:
     JSFunction* parseIntFunction() const { return m_parseIntFunction.get(this); }
     JSFunction* parseFloatFunction() const { return m_parseFloatFunction.get(this); }
 
-    JSFunction* asyncGeneratorYieldOnRejectedFunction() const;
     JSFunction* promiseEmptyOnFulfilledFunction() const;
     JSFunction* promiseEmptyOnRejectedFunction() const;
     JSFunction* evalFunction() const;
@@ -919,14 +936,14 @@ public:
     Structure* mapIteratorStructure() const { return m_mapIteratorStructure.get(); }
     Structure* setIteratorStructure() const { return m_setIteratorStructure.get(); }
     Structure* wrapForValidIteratorStructure() const { return m_wrapForValidIteratorStructure.get(); }
-    Structure* promiseAllContextStructure() const { return m_promiseAllContextStructure.get(); }
-    Structure* promiseAllGlobalContextStructure() const { return m_promiseAllGlobalContextStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(this); }
     Structure* dataPropertyDescriptorObjectStructure() const { return m_dataPropertyDescriptorObjectStructure.get(this); }
     Structure* accessorPropertyDescriptorObjectStructure() const { return m_accessorPropertyDescriptorObjectStructure.get(this); }
     Structure* promiseCapabilityObjectStructure() const { return m_promiseCapabilityObjectStructure.get(this); }
+    Structure* promiseAllSettledFulfilledResultStructure() const { return m_promiseAllSettledFulfilledResultStructure.get(this); }
+    Structure* promiseAllSettledRejectedResultStructure() const { return m_promiseAllSettledRejectedResultStructure.get(this); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpMatchesArrayWithIndicesStructure() const { return m_regExpMatchesArrayWithIndicesStructure.get(); }
     Structure* regExpMatchesIndicesArrayStructure() const { return m_regExpMatchesIndicesArrayStructure.get(); }
@@ -960,6 +977,12 @@ public:
     Structure* segmentIteratorStructure() { return m_segmentIteratorStructure.get(this); }
     Structure* segmenterStructure() { return m_segmenterStructure.get(this); }
     Structure* segmentsStructure() { return m_segmentsStructure.get(this); }
+    Structure* segmentDataObjectStructure() { return m_segmentDataObjectStructure.get(this); }
+    Structure* segmentDataObjectWithIsWordLikeStructure() { return m_segmentDataObjectWithIsWordLikeStructure.get(this); }
+    Structure* intlPartObjectStructure() { return m_intlPartObjectStructure.get(this); }
+    Structure* intlPartObjectWithSourceStructure() { return m_intlPartObjectWithSourceStructure.get(this); }
+    Structure* intlPartObjectWithUnitStructure() { return m_intlPartObjectWithUnitStructure.get(this); }
+    Structure* intlPartObjectWithUnitAndSourceStructure() { return m_intlPartObjectWithUnitAndSourceStructure.get(this); }
     Structure* trustedScriptStructure() { return m_trustedScriptStructure.get(); }
 
     JSObject* dateTimeFormatConstructor() { return m_dateTimeFormatStructure.constructor(this); }
@@ -974,6 +997,7 @@ public:
     Structure* plainDateTimeStructure() { return m_plainDateTimeStructure.get(this); }
     Structure* plainMonthDayStructure() { return m_plainMonthDayStructure.get(this); }
     Structure* plainTimeStructure() { return m_plainTimeStructure.get(this); }
+    Structure* plainYearMonthStructure() { return m_plainYearMonthStructure.get(this); }
     Structure* timeZoneStructure() { return m_timeZoneStructure.get(this); }
 
     JS_EXPORT_PRIVATE void setInspectable(bool);
@@ -1006,9 +1030,8 @@ public:
 
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
-    Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
+    Inspector::JSGlobalObjectInspectorController& inspectorController() const;
     JSGlobalObjectDebuggable& inspectorDebuggable() { return *m_inspectorDebuggable; }
-    Ref<JSGlobalObjectDebuggable> protectedInspectorDebuggable();
 #endif
 
     void bumpGlobalLexicalBindingEpoch(VM&);
@@ -1017,7 +1040,7 @@ public:
     unsigned* addressOfGlobalLexicalBindingEpoch() { return &m_globalLexicalBindingEpoch; }
 
     JS_EXPORT_PRIVATE void setConsoleClient(WeakPtr<ConsoleClient>&&);
-    JS_EXPORT_PRIVATE WeakPtr<ConsoleClient> consoleClient() const;
+    JS_EXPORT_PRIVATE CheckedPtr<ConsoleClient> consoleClient() const;
 
     void setName(const String&);
     const String& name() const { return m_name; }
@@ -1152,7 +1175,8 @@ public:
             m_trustedTypesEnforcement = enforcement;
     }
 
-    void queueMicrotask(InternalMicrotask, JSValue, JSValue, JSValue, JSValue);
+    void queueMicrotask(VM&, QueuedTask&&);
+    void queueMicrotask(VM&, InternalMicrotask, uint8_t, JSValue, JSValue, JSValue);
 
 #if ASSERT_ENABLED
     const JSGlobalObject* globalObjectAtDebuggerEntry() const { return m_globalObjectAtDebuggerEntry; }
@@ -1208,13 +1232,19 @@ public:
     const ImportMap& importMap() const { return m_importMap.get(); }
     ImportMap& importMap() { return m_importMap.get(); }
 
+    QueuedTaskResult microtaskRunnability() const { return m_microtaskRunnability; }
+    void setMicrotaskRunnability(QueuedTaskResult runnability) { m_microtaskRunnability = runnability; }
+
+    MicrotaskQueue& microtaskQueue() const { return m_microtaskQueue.get(); }
+    JS_EXPORT_PRIVATE void setMicrotaskQueue(Ref<MicrotaskQueue>&&);
+
 protected:
     enum class HasSpeciesProperty : bool { No, Yes };
     template<typename SpeciesWatchpoint>
     void tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* constructor, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& constructorWatchpoint, std::unique_ptr<SpeciesWatchpoint>&, InlineWatchpointSet&, HasSpeciesProperty, GetterSetter*);
 
     struct GlobalPropertyInfo;
-    JS_EXPORT_PRIVATE void addStaticGlobals(GlobalPropertyInfo*, int count);
+    JS_EXPORT_PRIVATE void addStaticGlobals(std::span<GlobalPropertyInfo>);
 
     void setNeedsSiteSpecificQuirks(bool needQuirks) { m_needsSiteSpecificQuirks = needQuirks; }
 

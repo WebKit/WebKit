@@ -3,7 +3,7 @@
 /*---
 esid: sec-atomics.load
 description: Test Atomics.load on arrays that allow atomic operations.
-includes: [testAtomics.js, testBigIntTypedArray.js]
+includes: [testAtomics.js, testTypedArray.js]
 features: [ArrayBuffer, Atomics, BigInt, DataView, SharedArrayBuffer, Symbol, TypedArray]
 ---*/
 const sab = new SharedArrayBuffer(1024);
@@ -45,4 +45,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     Atomics.store(view, Idx, 37n);
     assert.sameValue(Atomics.load(view, Idx), 37n, 'Atomics.load(view, Idx) returns 37n');
   });
-});
+}, null, ["passthrough"]);

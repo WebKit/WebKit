@@ -26,7 +26,6 @@ bytecompiler/NodesCodegen.cpp
 bytecompiler/StaticPropertyAnalyzer.h
 debugger/Debugger.cpp
 dfg/DFGAbstractInterpreterInlines.h
-dfg/DFGArrayMode.cpp
 dfg/DFGByteCodeParser.cpp
 dfg/DFGClobberize.h
 dfg/DFGCommonData.cpp
@@ -36,7 +35,6 @@ dfg/DFGDesiredIdentifiers.cpp
 dfg/DFGDesiredWatchpoints.cpp
 dfg/DFGFixupPhase.cpp
 dfg/DFGGraph.cpp
-dfg/DFGJITCode.cpp
 dfg/DFGLazyJSValue.cpp
 dfg/DFGOSREntry.cpp
 dfg/DFGOSRExit.cpp
@@ -60,7 +58,6 @@ ftl/FTLPatchpointExceptionHandle.cpp
 heap/ConservativeRoots.cpp
 heap/JITStubRoutineSet.cpp
 inspector/AsyncStackTrace.cpp
-inspector/JSJavaScriptCallFrame.cpp
 inspector/ScriptCallStackFactory.cpp
 inspector/agents/InspectorDebuggerAgent.cpp
 inspector/agents/InspectorScriptProfilerAgent.cpp
@@ -78,7 +75,7 @@ parser/Parser.h
 parser/SourceProviderCacheItem.h
 parser/SourceTaintedOrigin.cpp
 profiler/ProfilerDatabase.cpp
-runtime/BrandedStructure.h
+[ iOS ] runtime/BrandedStructure.h
 runtime/CachedTypes.cpp
 runtime/DeferredWorkTimer.cpp
 runtime/FileBasedFuzzerAgent.cpp
@@ -87,13 +84,13 @@ runtime/HashMapHelper.h
 runtime/InferredValue.h
 runtime/JSArrayBufferView.cpp
 runtime/JSCJSValue.cpp
-runtime/JSCJSValueInlines.h
 runtime/JSFinalizationRegistry.cpp
 runtime/JSGlobalObject.cpp
 runtime/JSObject.cpp
 runtime/JSString.cpp
 runtime/JSSymbolTableObject.h
 runtime/KeyAtomStringCacheInlines.h
+runtime/LiteralParser.cpp
 runtime/Lookup.h
 runtime/ProgramExecutable.cpp
 runtime/ProxyObject.cpp
@@ -105,14 +102,14 @@ runtime/StructureInlines.h
 runtime/SymbolTable.h
 runtime/TypeSet.cpp
 runtime/VMTraps.cpp
-runtime/WaiterListManager.h
+[ macOS ] runtime/WaiterListManager.h
 tools/JSDollarVM.cpp
 wasm/WasmBBQJIT.cpp
 wasm/WasmBBQJIT64.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmCallee.cpp
-wasm/WasmConstExprGenerator.cpp
 wasm/WasmFaultSignalHandler.cpp
+[ iOS ] wasm/WasmFormat.h
 wasm/WasmFunctionParser.h
 wasm/WasmIPIntGenerator.cpp
 wasm/WasmIPIntPlan.cpp

@@ -35,7 +35,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 class NodeIterator final : public ScriptWrappable, public RefCountedAndCanMakeWeakPtr<NodeIterator>, public NodeIteratorBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(NodeIterator, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NodeIterator, WEBCORE_EXPORT);
 public:
     static Ref<NodeIterator> create(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);
     WEBCORE_EXPORT ~NodeIterator();
@@ -59,7 +59,6 @@ private:
 
         NodePointer() = default;
         NodePointer(Node&, bool);
-        RefPtr<Node> protectedNode() const { return node; }
 
         void clear();
         bool moveToNext(Node& root);

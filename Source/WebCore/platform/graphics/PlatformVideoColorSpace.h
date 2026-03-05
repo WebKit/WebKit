@@ -43,4 +43,6 @@ struct PlatformVideoColorSpace {
     friend bool operator==(const PlatformVideoColorSpace&, const PlatformVideoColorSpace&) = default;
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformVideoColorSpace);
+
 }

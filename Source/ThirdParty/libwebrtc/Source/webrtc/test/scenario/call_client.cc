@@ -20,7 +20,6 @@
 #include "api/audio/builtin_audio_processing_builder.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
-#include "api/field_trials.h"
 #include "api/media_types.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
@@ -48,6 +47,7 @@
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/logging/log_writer.h"
 #include "test/scenario/column_printer.h"
 #include "test/scenario/network_node.h"
@@ -235,10 +235,9 @@ CallClient::CallClient(
     std::unique_ptr<LogWriterFactoryInterface> log_writer_factory,
     CallClientConfig config)
     : time_controller_(time_controller),
-      env_(CreateEnvironment(
-          std::make_unique<FieldTrials>(std::move(config.field_trials)),
-          time_controller_->CreateTaskQueueFactory(),
-          time_controller_->GetClock())),
+      env_(
+          CreateTestEnvironment({.field_trials = std::move(config.field_trials),
+                                 .time = time_controller_})),
       log_writer_factory_(std::move(log_writer_factory)),
       network_controller_factory_(log_writer_factory_.get(), config.transport),
       task_queue_(env_.task_queue_factory().CreateTaskQueue(

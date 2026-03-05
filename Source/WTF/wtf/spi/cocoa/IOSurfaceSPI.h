@@ -25,9 +25,15 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
 #if HAVE(IOSURFACE)
+
+#include <CoreFoundation/CoreFoundation.h>
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
@@ -88,8 +94,14 @@ IOSurfaceRef IOSurfaceLookupFromMachPort(mach_port_t);
 IOReturn IOSurfaceUnlock(IOSurfaceRef buffer, uint32_t options, uint32_t *seed);
 size_t IOSurfaceGetWidthOfPlane(IOSurfaceRef buffer, size_t planeIndex);
 size_t IOSurfaceGetHeightOfPlane(IOSurfaceRef buffer, size_t planeIndex);
+CFTypeID IOSurfaceGetTypeID(void);
 
 WTF_EXTERN_C_END
+
+#ifdef __cplusplus
+#include <wtf/cf/CFTypeTraits.h>
+WTF_DECLARE_CF_TYPE_TRAIT(IOSurface);
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 

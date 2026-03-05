@@ -61,7 +61,7 @@ ExceptionOr<bool> InspectorAuditDOMObject::hasEventListeners(Node& node, const S
             eventTypes.append(type);
 
         for (AtomString& type : eventTypes) {
-            for (const RefPtr<RegisteredEventListener>& listener : node.eventListeners(type)) {
+            for (auto& listener : node.eventListeners(type)) {
                 if (listener->callback().type() == EventListener::JSEventListenerType)
                     return true;
             }

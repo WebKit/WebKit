@@ -27,17 +27,14 @@
 #include <wtf/RAMSize.h>
 
 #include <mutex>
+#include <wtf/AvailableMemory.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
-#elif USE(SYSTEM_MALLOC)
-#if OS(LINUX) || OS(FREEBSD)
+#elif OS(LINUX) || OS(FREEBSD)
 #include <sys/sysinfo.h>
 #elif OS(UNIX) || OS(HAIKU)
 #include <unistd.h>
-#endif // OS(LINUX) || OS(FREEBSD) || OS(UNIX) || OS(HAIKU)
-#else
-#include <bmalloc/bmalloc.h>
 #endif
 
 #if OS(DARWIN)
@@ -46,39 +43,9 @@
 
 namespace WTF {
 
-#if OS(WINDOWS)
-static constexpr size_t ramSizeGuess = 512 * MB;
-#endif
-
-static size_t computeRAMSize()
-{
-#if OS(WINDOWS)
-    MEMORYSTATUSEX status;
-    status.dwLength = sizeof(status);
-    bool result = GlobalMemoryStatusEx(&status);
-    if (!result)
-        return ramSizeGuess;
-    return status.ullTotalPhys;
-#elif USE(SYSTEM_MALLOC)
-#if OS(LINUX) || OS(FREEBSD)
-    struct sysinfo si;
-    sysinfo(&si);
-    return si.totalram * si.mem_unit;
-#elif OS(UNIX) || OS(HAIKU)
-    long pages = sysconf(_SC_PHYS_PAGES);
-    long pageSize = sysconf(_SC_PAGE_SIZE);
-    return pages * pageSize;
-#else
-#error "Missing a platform specific way of determining the available RAM"
-#endif // OS(LINUX) || OS(FREEBSD) || OS(UNIX) || OS(HAIKU)
-#else
-    return bmalloc::api::availableMemory();
-#endif
-}
-
 size_t ramSize()
 {
-    static size_t ramSize = computeRAMSize();
+    static size_t ramSize = availableMemory();
     return ramSize;
 }
 

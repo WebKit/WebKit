@@ -38,13 +38,12 @@ class SVGFilterElement;
 
 class SVGFilterRenderer final : public Filter {
 public:
-    static RefPtr<SVGFilterRenderer> create(SVGElement* contextElement, SVGFilterElement&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    WEBCORE_EXPORT static Ref<SVGFilterRenderer> create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>, OptionSet<FilterRenderingMode>, const FloatSize& filterScale, const FloatRect& filterRegion);
+    static RefPtr<SVGFilterRenderer> create(SVGElement* contextElement, SVGFilterElement&, const FilterGeometry&, OptionSet<FilterRenderingMode>, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> = std::nullopt);
+    WEBCORE_EXPORT static Ref<SVGFilterRenderer> create(SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, const FilterGeometry&, OptionSet<FilterRenderingMode>, bool showDebugOverlay, std::optional<RenderingResourceIdentifier>);
 
     static bool isIdentity(SVGFilterElement&);
     static IntOutsets calculateOutsets(SVGFilterElement&, const FloatRect& targetBoundingBox);
 
-    FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
 
     const SVGFilterExpression& expression() const { return m_expression; }
@@ -63,14 +62,14 @@ public:
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
-    WEBCORE_EXPORT static bool isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
+    WEBCORE_EXPORT static bool NODELETE isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
 private:
-    SVGFilterRenderer(const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, std::optional<RenderingResourceIdentifier>);
-    SVGFilterRenderer(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>, const FloatSize& filterScale, const FloatRect& filterRegion);
+    SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, std::optional<RenderingResourceIdentifier>);
+    SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>);
 
     static std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> buildExpression(SVGElement* contextElement, SVGFilterElement&, const SVGFilterRenderer&, const GraphicsContext& destinationContext);
-    void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
-    void setEffects(FilterEffectVector&& effects) { m_effects = WTFMove(effects); }
+    void setExpression(SVGFilterExpression&& expression) { m_expression = WTF::move(expression); }
+    void setEffects(FilterEffectVector&& effects) { m_effects = WTF::move(effects); }
 
     FloatSize resolvedSize(const FloatSize&) const final;
     FloatPoint3D resolvedPoint3D(const FloatPoint3D&) const final;
@@ -80,7 +79,6 @@ private:
     RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage, FilterResults&) final;
     FilterStyleVector createFilterStyles(GraphicsContext&, const Filter&, const FilterStyle& sourceStyle) const final;
 
-    FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits;
 
     SVGFilterExpression m_expression;

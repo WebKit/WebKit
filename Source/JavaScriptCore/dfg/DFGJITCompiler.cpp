@@ -58,7 +58,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     if (shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler) [[unlikely]]
         m_disassembler = makeUniqueWithoutFastMallocCheck<Disassembler>(dfg);
 #if ENABLE(FTL_JIT)
-    m_jitCode->tierUpInLoopHierarchy = WTFMove(m_graph.m_plan.tierUpInLoopHierarchy());
+    m_jitCode->tierUpInLoopHierarchy = WTF::move(m_graph.m_plan.tierUpInLoopHierarchy());
     for (BytecodeIndex tierUpBytecode : m_graph.m_plan.tierUpAndOSREnterBytecodes())
         m_jitCode->tierUpEntryTriggers.add(tierUpBytecode, JITCode::TriggerReason::DontTrigger);
 #endif
@@ -189,13 +189,13 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         FixedVector<std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> tables(m_graph.m_stringSearchTable8.size());
         unsigned index = 0;
         for (auto& entry : m_graph.m_stringSearchTable8)
-            tables[index++] = WTFMove(entry.value);
-        m_jitCode->common.m_stringSearchTable8 = WTFMove(tables);
+            tables[index++] = WTF::move(entry.value);
+        m_jitCode->common.m_stringSearchTable8 = WTF::move(tables);
     }
-    m_jitCode->common.m_concatKeyAtomStringCaches = WTFMove(m_graph.m_concatKeyAtomStringCaches);
+    m_jitCode->common.m_concatKeyAtomStringCaches = WTF::move(m_graph.m_concatKeyAtomStringCaches);
 
 #if USE(JSVALUE32_64)
-    m_jitCode->common.doubleConstants = WTFMove(m_graph.m_doubleConstants);
+    m_jitCode->common.doubleConstants = WTF::move(m_graph.m_doubleConstants);
 #endif
     
     m_graph.registerFrozenValues();
@@ -203,9 +203,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     ASSERT(m_jitCode->m_stringSwitchJumpTables.isEmpty());
     ASSERT(m_jitCode->m_switchJumpTables.isEmpty());
     if (!m_graph.m_stringSwitchJumpTables.isEmpty()) 
-        m_jitCode->m_stringSwitchJumpTables = WTFMove(m_graph.m_stringSwitchJumpTables);
+        m_jitCode->m_stringSwitchJumpTables = WTF::move(m_graph.m_stringSwitchJumpTables);
     if (!m_graph.m_switchJumpTables.isEmpty())
-        m_jitCode->m_switchJumpTables = WTFMove(m_graph.m_switchJumpTables);
+        m_jitCode->m_switchJumpTables = WTF::move(m_graph.m_switchJumpTables);
 
     for (Bag<SwitchData>::iterator iter = m_graph.m_switchData.begin(); !!iter; ++iter) {
         SwitchData& data = **iter;
@@ -315,7 +315,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
                     linkBuffer.locationOf<OSRExitPtrTag>(info.m_replacementDestination)));
             }
         }
-        m_jitCode->common.m_jumpReplacements = WTFMove(jumpReplacements);
+        m_jitCode->common.m_jumpReplacements = WTF::move(jumpReplacements);
     }
 
 #if ASSERT_ENABLED
@@ -340,8 +340,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(!m_exitSiteLabels.size());
 
     m_jitCode->common.compilation = m_graph.compilation();
-    m_jitCode->m_osrExit = WTFMove(m_osrExit);
-    m_jitCode->m_speculationRecovery = WTFMove(m_speculationRecovery);
+    m_jitCode->m_osrExit = WTF::move(m_osrExit);
+    m_jitCode->m_speculationRecovery = WTF::move(m_speculationRecovery);
     
     // Link new DFG exception handlers and remove baseline JIT handlers.
     m_codeBlock->clearExceptionHandlers();
@@ -363,9 +363,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        m_jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), linkBuffer);
+        m_jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTF::move(m_pcToCodeOriginMapBuilder), linkBuffer);
 
-    m_jitCode->m_linkerIR = LinkerIR(WTFMove(m_graph.m_constantPool));
+    m_jitCode->m_linkerIR = LinkerIR(WTF::move(m_graph.m_constantPool));
 }
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)
@@ -396,7 +396,7 @@ void JITCompiler::noticeCatchEntrypoint(BasicBlock& basicBlock, JITCompiler::Lab
 {
     RELEASE_ASSERT(basicBlock.isCatchEntrypoint);
     RELEASE_ASSERT(basicBlock.intersectionOfCFAHasVisited); // An entrypoint is reachable by definition.
-    m_graph.appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.locationOf<ExceptionHandlerPtrTag>(blockHead), WTFMove(argumentFormats));
+    m_graph.appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.locationOf<ExceptionHandlerPtrTag>(blockHead), WTF::move(argumentFormats));
 }
 
 void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
@@ -450,9 +450,9 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
         }
     }
         
-    entry.m_expectedValues = WTFMove(expectedValues);
-    entry.m_reshufflings = WTFMove(reshufflings);
-    m_osrEntry.append(WTFMove(entry));
+    entry.m_expectedValues = WTF::move(expectedValues);
+    entry.m_reshufflings = WTF::move(reshufflings);
+    m_osrEntry.append(WTF::move(entry));
 }
 
 void JITCompiler::setEndOfMainPath(CodeOrigin semanticOrigin)

@@ -46,7 +46,7 @@ SampleBufferDisplayLayerManager::SampleBufferDisplayLayerManager(GPUProcessConne
 void SampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>::isValidIdentifier(decoder.destinationID())) {
-        if (RefPtr layer = m_layers.get(ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())).get())
+        if (RefPtr layer = m_layers.get(ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())))
             layer->didReceiveMessage(connection, decoder);
     }
 }

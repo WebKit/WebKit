@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                video = document.getElementsByTagName('video')[0];
+                testExpected('video.remote.state', 'disconnected');
+
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                await waitFor(video, 'canplaythrough');
+
+                run(`video.play()`)
+                await waitFor(video, 'playing');
+
+                const connectPromise = waitFor(video.remote, 'connect');
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+                await connectPromise;
+
+                testExpected('video.remote.state', 'connected');
+
+                const disconnectPromise = waitFor(video.remote, 'disconnect');
+                run(`internals.mockMediaDeviceRouteController.deactivateRoute(route)`);
+                await disconnectPromise;
+
+                testExpected('video.remote.state', 'disconnected');
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that a 'disconnect' event is dispatched when a MediaDeviceRoute deactivates.</p> 
+    </body>
+</html>

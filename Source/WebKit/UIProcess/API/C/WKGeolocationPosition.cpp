@@ -61,5 +61,5 @@ WKGeolocationPositionRef WKGeolocationPositionCreate_c(double timestamp, double 
     if (providesFloorLevel)
         corePosition.floorLevel = floorLevel;
 
-    return toAPILeakingRef(WebGeolocationPosition::create(WTFMove(corePosition)));
+    return toAPILeakingRef(WebGeolocationPosition::create(WTF::move(corePosition)));
 }

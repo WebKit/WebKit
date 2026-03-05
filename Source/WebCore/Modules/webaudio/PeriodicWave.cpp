@@ -73,17 +73,17 @@ ExceptionOr<Ref<PeriodicWave>> PeriodicWave::create(BaseAudioContext& context, P
             return Exception { ExceptionCode::IndexSizeError, "real's length cannot be less than 2"_s };
         if (options.imag->size() < 2)
             return Exception { ExceptionCode::IndexSizeError, "imag's length cannot be less than 2"_s };
-        real = WTFMove(*options.real);
-        imag = WTFMove(*options.imag);
+        real = WTF::move(*options.real);
+        imag = WTF::move(*options.imag);
     } else if (options.real) {
         if (options.real->size() < 2)
             return Exception { ExceptionCode::IndexSizeError, "real's length cannot be less than 2"_s };
-        real = WTFMove(*options.real);
+        real = WTF::move(*options.real);
         imag.fill(0, real.size());
     } else if (options.imag) {
         if (options.imag->size() < 2)
             return Exception { ExceptionCode::IndexSizeError, "imag's length cannot be less than 2"_s };
-        imag = WTFMove(*options.imag);
+        imag = WTF::move(*options.imag);
         real.fill(0, imag.size());
     } else {
         real.fill(0, 2);

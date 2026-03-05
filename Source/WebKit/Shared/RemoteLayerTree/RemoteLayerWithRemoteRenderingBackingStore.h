@@ -59,6 +59,7 @@ public:
     RemoteImageBufferSetProxy* bufferSet() { return m_bufferSet.get(); }
 
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType) final;
+    void submitDrawingCommands() final;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<WebCore::DynamicContentScalingDisplayList> displayListHandle() const final;
 #endif

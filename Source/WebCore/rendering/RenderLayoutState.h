@@ -75,7 +75,7 @@ public:
 
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
-    LayoutUnit pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
+    LayoutUnit NODELETE pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
     
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
@@ -97,7 +97,7 @@ public:
     LayoutRect clipRect() const { return m_clipRect; }
     bool isClipped() const { return m_clipped; }
 
-    void addLayoutDelta(LayoutSize);
+    void NODELETE addLayoutDelta(LayoutSize);
     LayoutSize layoutDelta() const { return m_layoutDelta; }
 #if ASSERT_ENABLED
     bool layoutDeltaMatches(LayoutSize) const;

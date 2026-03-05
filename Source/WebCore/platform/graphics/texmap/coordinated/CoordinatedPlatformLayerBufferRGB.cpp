@@ -34,22 +34,22 @@ namespace WebCore {
 
 std::unique_ptr<CoordinatedPlatformLayerBufferRGB> CoordinatedPlatformLayerBufferRGB::create(Ref<BitmapTexture>&& texture, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
 {
-    return makeUnique<CoordinatedPlatformLayerBufferRGB>(WTFMove(texture), flags, WTFMove(fence));
+    return makeUnique<CoordinatedPlatformLayerBufferRGB>(WTF::move(texture), flags, WTF::move(fence));
 }
 
 std::unique_ptr<CoordinatedPlatformLayerBufferRGB> CoordinatedPlatformLayerBufferRGB::create(unsigned textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
 {
-    return makeUnique<CoordinatedPlatformLayerBufferRGB>(textureID, size, flags, WTFMove(fence));
+    return makeUnique<CoordinatedPlatformLayerBufferRGB>(textureID, size, flags, WTF::move(fence));
 }
 
 CoordinatedPlatformLayerBufferRGB::CoordinatedPlatformLayerBufferRGB(Ref<BitmapTexture>&& texture, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
-    : CoordinatedPlatformLayerBuffer(Type::RGB, texture->size(), flags, WTFMove(fence))
-    , m_texture(WTFMove(texture))
+    : CoordinatedPlatformLayerBuffer(Type::RGB, texture->size(), flags, WTF::move(fence))
+    , m_texture(WTF::move(texture))
 {
 }
 
 CoordinatedPlatformLayerBufferRGB::CoordinatedPlatformLayerBufferRGB(unsigned textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
-    : CoordinatedPlatformLayerBuffer(Type::RGB, size, flags, WTFMove(fence))
+    : CoordinatedPlatformLayerBuffer(Type::RGB, size, flags, WTF::move(fence))
     , m_textureID(textureID)
 {
 }

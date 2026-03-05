@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WPEToplevel.h"
 
-#include "WPEBufferDMABufFormats.h"
+#include "WPEBufferFormats.h"
 #include "WPEDisplay.h"
 #include "WPEViewPrivate.h"
 #include <wtf/ListHashSet.h>
@@ -36,8 +36,8 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(ATK)
-#include "WPEApplicationAccessibleAtk.h"
-#include "WPEToplevelAccessibleAtk.h"
+#include "atk/WPEApplicationAccessibleAtk.h"
+#include "atk/WPEToplevelAccessibleAtk.h"
 #endif
 
 #if USE(LIBDRM)
@@ -59,7 +59,7 @@ struct _WPEToplevelPrivate {
     WPEToplevelState state;
     bool closed;
 #if USE(LIBDRM)
-    GRefPtr<WPEBufferDMABufFormats> overridenDMABufFormats;
+    GRefPtr<WPEBufferFormats> overridenBufferFormats;
 #endif
 #if USE(ATK)
     GRefPtr<AtkObject> accessible;
@@ -591,23 +591,23 @@ gboolean wpe_toplevel_minimize(WPEToplevel* toplevel)
 }
 
 /**
- * wpe_toplevel_get_preferred_dma_buf_formats:
+ * wpe_toplevel_get_preferred_buffer_formats:
  * @toplevel: a #WPEToplevel
  *
- * Get the list of preferred DMA-BUF buffer formats for @toplevel.
+ * Get the list of preferred buffer formats for @toplevel.
  *
- * Returns: (transfer none) (nullable): a #WPEBufferDMABufFormats
+ * Returns: (transfer none) (nullable): a #WPEBufferFormats
  */
-WPEBufferDMABufFormats* wpe_toplevel_get_preferred_dma_buf_formats(WPEToplevel* toplevel)
+WPEBufferFormats* wpe_toplevel_get_preferred_buffer_formats(WPEToplevel* toplevel)
 {
     g_return_val_if_fail(WPE_IS_TOPLEVEL(toplevel), nullptr);
 
     auto* priv = toplevel->priv;
 #if USE(LIBDRM)
-    if (priv->overridenDMABufFormats)
-        return priv->overridenDMABufFormats.get();
+    if (priv->overridenBufferFormats)
+        return priv->overridenBufferFormats.get();
 
-    const char* formatString = getenv("WPE_DMABUF_BUFFER_FORMAT");
+    const char* formatString = getenv("WPE_BUFFER_FORMAT");
     if (formatString && *formatString) {
         auto tokens = String::fromUTF8(formatString).split(':');
         if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
@@ -615,49 +615,49 @@ WPEBufferDMABufFormats* wpe_toplevel_get_preferred_dma_buf_formats(WPEToplevel* 
             char* endptr = nullptr;
             guint64 modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), &endptr, 16) : DRM_FORMAT_MOD_INVALID;
             if (!(modifier == G_MAXUINT64 && errno == ERANGE) && !(!modifier && !endptr)) {
-                WPEBufferDMABufFormatUsage usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
+                WPEBufferFormatUsage usage = WPE_BUFFER_FORMAT_USAGE_RENDERING;
                 if (tokens.size() > 2) {
                     if (tokens[2] == "rendering"_s)
-                        usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
+                        usage = WPE_BUFFER_FORMAT_USAGE_RENDERING;
                     else if (tokens[2] == "mapping"_s)
-                        usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_MAPPING;
+                        usage = WPE_BUFFER_FORMAT_USAGE_MAPPING;
                     else if (tokens[2] == "scanout"_s)
-                        usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT;
+                        usage = WPE_BUFFER_FORMAT_USAGE_SCANOUT;
                 }
-                auto* builder = wpe_buffer_dma_buf_formats_builder_new(priv->display ? wpe_display_get_drm_device(priv->display.get()) : nullptr);
-                wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, usage);
-                wpe_buffer_dma_buf_formats_builder_append_format(builder, format, modifier);
-                priv->overridenDMABufFormats = adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
-                return priv->overridenDMABufFormats.get();
+                auto* builder = wpe_buffer_formats_builder_new(priv->display ? wpe_display_get_drm_device(priv->display.get()) : nullptr);
+                wpe_buffer_formats_builder_append_group(builder, nullptr, usage);
+                wpe_buffer_formats_builder_append_format(builder, format, modifier);
+                priv->overridenBufferFormats = adoptGRef(wpe_buffer_formats_builder_end(builder));
+                return priv->overridenBufferFormats.get();
             }
         }
 
-        WTFLogAlways("Invalid format %s set in WPE_DMABUF_BUFFER_FORMAT, ignoring...", formatString);
+        g_warning("Invalid format %s set in WPE_BUFFER_FORMAT, ignoring...", formatString);
     }
 #endif
 
     auto* toplevelClass = WPE_TOPLEVEL_GET_CLASS(toplevel);
-    if (toplevelClass->get_preferred_dma_buf_formats) {
-        if (auto* formats = toplevelClass->get_preferred_dma_buf_formats(toplevel))
+    if (toplevelClass->get_preferred_buffer_formats) {
+        if (auto* formats = toplevelClass->get_preferred_buffer_formats(toplevel))
             return formats;
     }
 
-    return priv->display ? wpe_display_get_preferred_dma_buf_formats(priv->display.get()) : nullptr;
+    return priv->display ? wpe_display_get_preferred_buffer_formats(priv->display.get()) : nullptr;
 }
 
 /**
- * wpe_toplevel_preferred_dma_buf_formats_changed:
+ * wpe_toplevel_preferred_buffer_formats_changed:
  * @toplevel: a #WPEToplevel
  *
- * Notify that @toplevel preferred DMA-BUF formats have changed.
+ * Notify that @toplevel preferred buffer formats have changed.
  *
  * This function should only be called by #WPEToplevel derived classes
  * in platform implementations.
  */
-void wpe_toplevel_preferred_dma_buf_formats_changed(WPEToplevel* toplevel)
+void wpe_toplevel_preferred_buffer_formats_changed(WPEToplevel* toplevel)
 {
     g_return_if_fail(WPE_IS_TOPLEVEL(toplevel));
 
     for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views))
-        wpeViewPreferredDMABufFormatsChanged(view.get());
+        wpeViewPreferredBufferFormatsChanged(view.get());
 }

@@ -85,7 +85,7 @@ void WebSpeechRecognitionConnection::start(WebCore::SpeechRecognitionConnectionC
         return;
     }
 
-    send(Messages::SpeechRecognitionServer::Start(clientIdentifier, lang, continuous, interimResults, maxAlternatives, WTFMove(clientOrigin), coreFrame->mainFrame().frameID(), frame->info()));
+    send(Messages::SpeechRecognitionServer::Start(clientIdentifier, lang, continuous, interimResults, maxAlternatives, WTF::move(clientOrigin), coreFrame->mainFrame().frameID(), frame->info()));
 }
 
 void WebSpeechRecognitionConnection::stop(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
@@ -109,7 +109,7 @@ void WebSpeechRecognitionConnection::didReceiveUpdate(WebCore::SpeechRecognition
     if (!m_clientMap.contains(clientIdentifier))
         return;
 
-    auto client = m_clientMap.get(clientIdentifier);
+    RefPtr client = m_clientMap.get(clientIdentifier);
     if (!client) {
         m_clientMap.remove(clientIdentifier);
         // Inform server that client does not exist any more.

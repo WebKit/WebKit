@@ -59,11 +59,11 @@ public:
 
     Type type() const { return m_type; }
 
-    const HitTestResult& hitTestResult() const { return m_hitTestResult; }
+    const HitTestResult& hitTestResult() const LIFETIME_BOUND { return m_hitTestResult; }
     Event* event() const { return m_event.get(); }
 
     void setSelectedText(const String& selectedText) { m_selectedText = selectedText; }
-    const String& selectedText() const { return m_selectedText; }
+    const String& selectedText() const LIFETIME_BOUND { return m_selectedText; }
 
     bool hasEntireImage() const { return m_hasEntireImage; }
     bool allowsFollowingLink() const { return m_allowsFollowingLink; }

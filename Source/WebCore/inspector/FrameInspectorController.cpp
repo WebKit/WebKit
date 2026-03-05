@@ -32,7 +32,9 @@
 
 #include "CommonVM.h"
 #include "DocumentPage.h"
+#include "FrameConsoleAgent.h"
 #include "FrameInlines.h"
+#include "FrameRuntimeAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
@@ -43,11 +45,13 @@
 #include "Settings.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
+#include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -58,14 +62,16 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameInspectorController);
 
-FrameInspectorController::FrameInspectorController(LocalFrame& frame)
+FrameInspectorController::FrameInspectorController(LocalFrame& frame, PageInspectorController& parentPageController)
     : m_frame(frame)
-    , m_instrumentingAgents(InstrumentingAgents::create(*this, frame.protectedPage()->protectedInspectorController()->instrumentingAgents()))
-    , m_injectedScriptManager(makeUniqueRef<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
+    , m_instrumentingAgents(InstrumentingAgents::create(*this, parentPageController.instrumentingAgents()))
+    , m_injectedScriptManager(WebInjectedScriptManager::create(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
-    , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef(), &frame.protectedPage()->protectedInspectorController()->backendDispatcher()))
+    , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef(), &parentPageController.backendDispatcher()))
     , m_executionStopwatch(Stopwatch::create())
 {
+    if (protect(frame.settings())->siteIsolationEnabled())
+        createConsoleAgent();
 }
 
 FrameInspectorController::~FrameInspectorController()
@@ -87,7 +93,7 @@ FrameAgentContext FrameInspectorController::frameAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        m_injectedScriptManager,
+        m_injectedScriptManager.get(),
         m_frontendRouter.get(),
         m_backendDispatcher
     };
@@ -101,6 +107,39 @@ FrameAgentContext FrameInspectorController::frameAgentContext()
     };
 }
 
+// For the main frame, the siteIsolationEnabled setting is loaded separately after the creation of the LocalFrame
+// and thus this controller.
+void FrameInspectorController::siteIsolationFirstEnabled()
+{
+    createConsoleAgent();
+}
+
+void FrameInspectorController::createConsoleAgent()
+{
+    if (m_didCreateConsoleAgent)
+        return;
+
+    auto context = frameAgentContext();
+    UniqueRef consoleAgent = makeUniqueRef<FrameConsoleAgent>(context);
+    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
+    m_agents.append(WTF::move(consoleAgent));
+    m_didCreateConsoleAgent = true;
+}
+
+void FrameInspectorController::createRuntimeAgent()
+{
+    if (m_didCreateRuntimeAgent)
+        return;
+
+    RefPtr frame = m_frame.get();
+    if (!frame)
+        return;
+
+    auto context = frameAgentContext();
+    m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
+    m_didCreateRuntimeAgent = true;
+}
+
 void FrameInspectorController::createLazyAgents()
 {
     if (m_didCreateLazyAgents)
@@ -108,9 +147,15 @@ void FrameInspectorController::createLazyAgents()
 
     m_didCreateLazyAgents = true;
 
-    m_injectedScriptManager->connect();
-    if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_instrumentingAgents.copyRef());
+    RefPtr frame = m_frame.get();
+    if (!frame || !protect(frame->settings())->siteIsolationEnabled())
+        return;
+
+    // Create debugger before agents that depend on it.
+    // FIXME: <https://webkit.org/b/298909> Add FrameDebuggerAgent to actively use this debugger.
+    m_debugger = makeUnique<JSC::Debugger>(vm());
+
+    createRuntimeAgent();
 }
 
 void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
@@ -128,8 +173,9 @@ void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& front
     InspectorInstrumentation::frontendCreated();
 
     if (connectedFirstFrontend) {
-        m_agents.didCreateFrontendAndBackend();
         InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
+        m_injectedScriptManager->addClient();
+        m_agents.didCreateFrontendAndBackend();
     }
 }
 
@@ -140,9 +186,9 @@ void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& fr
 
     bool disconnectedLastFrontend = !m_frontendRouter->hasFrontends();
     if (disconnectedLastFrontend) {
-        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
-        m_injectedScriptManager->discardInjectedScripts();
+        m_injectedScriptManager->removeClient();
+        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     }
 }
 
@@ -157,7 +203,7 @@ void FrameInspectorController::inspectedFrameDestroyed()
     InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
-    m_injectedScriptManager->disconnect();
+    m_injectedScriptManager->removeClient();
     m_frontendRouter->disconnectAllFrontends();
 
     m_agents.discardValues();
@@ -207,8 +253,8 @@ Stopwatch& FrameInspectorController::executionStopwatch() const
 
 JSC::Debugger* FrameInspectorController::debugger()
 {
-    // FIXME <https://webkit.org/b/298909> Add Debugger support for frame targets.
-    return nullptr;
+    // FIXME: <https://webkit.org/b/298909> Add full Debugger domain support for frame targets.
+    return m_debugger.get();
 }
 
 JSC::VM& FrameInspectorController::vm()

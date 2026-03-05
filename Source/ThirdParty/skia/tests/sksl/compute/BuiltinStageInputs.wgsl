@@ -1,5 +1,6 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct CSIn {
   @builtin(global_invocation_id) sk_GlobalInvocationID: vec3<u32>,
   @builtin(local_invocation_id) sk_LocalInvocationID: vec3<u32>,
@@ -18,8 +19,7 @@ fn helper_I(_stageIn: CSIn) -> u32 {
 }
 fn _skslMain(_stageIn: CSIn) {
   {
-    let _skTemp1 = helper_I(_stageIn);
-    _storage0.outputBuffer[_stageIn.sk_LocalInvocationIndex] = _skTemp1;
+    _storage0.outputBuffer[_stageIn.sk_LocalInvocationIndex] = helper_I(_stageIn);
   }
 }
 @compute @workgroup_size(64, 1, 1) fn main(_stageIn: CSIn) {

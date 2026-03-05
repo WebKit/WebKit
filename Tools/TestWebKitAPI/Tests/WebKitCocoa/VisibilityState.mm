@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,13 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
+
+#if !PLATFORM(IOS_SIMULATOR)
+#import "DeprecatedGlobalValues.h"
+#endif
 
 TEST(VisibilityState, InitialHiddenState)
 {
@@ -59,3 +65,63 @@ TEST(VisibilityState, InitialVisibleState)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+#if !PLATFORM(IOS_SIMULATOR)
+
+@interface PiPUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation PiPUIDelegate
+
+- (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)value
+{
+    if (value)
+        didEnterPiP = true;
+    else
+        didExitPiP = true;
+}
+
+@end
+
+TEST(VisibilityState, PIPKeepsDocumentVisibleQuirk)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get() addToWindow:YES]);
+
+    RetainPtr<PiPUIDelegate> handler = adoptNS([[PiPUIDelegate alloc] init]);
+    [webView setUIDelegate:handler.get()];
+
+    [webView loadTestPageNamed:@"twitch_quirk"];
+    [webView waitForMessage:@"playing"];
+
+    didEnterPiP = false;
+    [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')" completionHandler:nil];
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didEnterPiP, 10_s));
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"document.visibilityState" completionHandler:^(NSString *visibilityState, NSError *error) {
+        EXPECT_WK_STREQ("visible", visibilityState);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Hide the primary window (leaving the PIP window active)
+#if PLATFORM(MAC)
+    [webView.get().window setIsVisible:NO];
+#else
+    webView.get().window.hidden = YES;
+#endif
+    [webView.get().window resignKeyWindow];
+
+    [webView waitUntilActivityStateUpdateDone];
+
+    done = false;
+    [webView evaluateJavaScript:@"document.visibilityState" completionHandler:^(NSString *visibilityState, NSError *error) {
+        EXPECT_WK_STREQ("visible", visibilityState);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif // !PLATFORM(IOS_SIMULATOR)

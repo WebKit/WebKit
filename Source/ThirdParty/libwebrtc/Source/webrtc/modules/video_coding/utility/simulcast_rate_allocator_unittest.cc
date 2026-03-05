@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/environment/environment.h"
@@ -23,6 +24,7 @@
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video/video_codec_type.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_frame_config.h"
@@ -587,6 +589,47 @@ TEST_F(SimulcastRateAllocatorTest, NonConferenceModeScreenshare) {
   EXPECT_EQ(alloc.GetTemporalLayerAllocation(0).size(), 3u);
   EXPECT_EQ(alloc.GetTemporalLayerAllocation(1).size(), 3u);
   EXPECT_EQ(alloc.GetTemporalLayerAllocation(2).size(), 3u);
+}
+
+TEST_F(SimulcastRateAllocatorTest, TemporalLayerForMixedCodec) {
+  // Singlecast stream
+  {
+    SetupCodec3TL();
+    codec_.numberOfSimulcastStreams = 0;
+    CreateAllocator();
+
+    const uint32_t bitrate = codec_.simulcastStream[0].maxBitrate +
+                             codec_.simulcastStream[1].maxBitrate +
+                             codec_.simulcastStream[2].maxBitrate;
+    const VideoBitrateAllocation alloc = GetAllocation(bitrate);
+
+    // If the single stream, use default temporal layer count.
+    EXPECT_EQ(alloc.GetTemporalLayerAllocation(0).size(), 3u);
+  }
+
+  // Simulcast stream
+  {
+    SetupCodec3SL3TL({true, true, true});
+    codec_.numberOfSimulcastStreams = 3;
+    codec_.simulcastStream[0].format = std::nullopt;
+    codec_.simulcastStream[0].numberOfTemporalLayers = 1;
+    codec_.simulcastStream[1].format = SdpVideoFormat::VP8();
+    codec_.simulcastStream[1].numberOfTemporalLayers = 2;
+    codec_.simulcastStream[2].format = SdpVideoFormat::VP9Profile0();
+    codec_.simulcastStream[2].numberOfTemporalLayers = 0;
+    CreateAllocator();
+
+    const uint32_t bitrate = codec_.simulcastStream[0].maxBitrate +
+                             codec_.simulcastStream[1].maxBitrate +
+                             codec_.simulcastStream[2].maxBitrate;
+    const VideoBitrateAllocation alloc = GetAllocation(bitrate);
+
+    // If the simulcast stream, use the layer specific temporal layer count
+    // (minimum is 1).
+    EXPECT_EQ(alloc.GetTemporalLayerAllocation(0).size(), 1u);
+    EXPECT_EQ(alloc.GetTemporalLayerAllocation(1).size(), 2u);
+    EXPECT_EQ(alloc.GetTemporalLayerAllocation(2).size(), 1u);
+  }
 }
 
 class ScreenshareRateAllocationTest : public SimulcastRateAllocatorTest {

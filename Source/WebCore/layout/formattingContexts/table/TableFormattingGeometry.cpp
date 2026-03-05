@@ -30,7 +30,7 @@
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutInitialContainingBlock.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingQuirks.h"
 
@@ -48,13 +48,13 @@ LayoutUnit TableFormattingGeometry::cellBoxContentHeight(const ElementBox& cellB
     if (layoutState().inQuirksMode() && TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(cellBox)) {
         ASSERT(cellBox.firstInFlowChild());
         auto formattingContext = this->formattingContext();
-        auto& firstInFlowChild = *cellBox.firstInFlowChild();
-        auto& lastInFlowChild = *cellBox.lastInFlowChild();
+        CheckedRef firstInFlowChild = *cellBox.firstInFlowChild();
+        CheckedRef lastInFlowChild = *cellBox.lastInFlowChild();
         auto& firstInFlowChildGeometry = formattingContext.geometryForBox(firstInFlowChild, FormattingContext::EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
         auto& lastInFlowChildGeometry = formattingContext.geometryForBox(lastInFlowChild, FormattingContext::EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
 
-        auto top = firstInFlowChild.style().marginBefore().hasQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
-        auto bottom = lastInFlowChild.style().marginAfter().hasQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();
+        auto top = firstInFlowChild->style().marginBefore().hasQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
+        auto bottom = lastInFlowChild->style().marginAfter().hasQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();
         return bottom - top;
     }
     return contentHeightForFormattingContextRoot(cellBox);
@@ -63,7 +63,7 @@ LayoutUnit TableFormattingGeometry::cellBoxContentHeight(const ElementBox& cellB
 BoxGeometry::Edges TableFormattingGeometry::computedCellBorder(const TableGridCell& cell) const
 {
     auto& grid = formattingContext().formattingState().tableGrid();
-    auto& cellBox = cell.box();
+    CheckedRef cellBox = cell.box();
     auto border = computedBorder(cellBox);
     auto collapsedBorder = grid.collapsedBorder();
     if (!collapsedBorder)
@@ -118,11 +118,11 @@ std::optional<LayoutUnit> TableFormattingGeometry::computedColumnWidth(const Ele
 
 IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCellContent(const TableGridCell& cell) const
 {
-    auto& cellBox = cell.box();
-    if (!cellBox.hasInFlowOrFloatingChild())
+    CheckedRef cellBox = cell.box();
+    if (!cellBox->hasInFlowOrFloatingChild())
         return { };
-    auto& layoutState = this->layoutState();
-    return LayoutContext::createFormattingContext(cellBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
+    CheckedRef layoutState = this->layoutState();
+    return LayoutContext::createFormattingContext(cellBox, const_cast<LayoutState&>(layoutState.get()))->computedIntrinsicWidthConstraints();
 }
 
 InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ElementBox& cellBox) const
@@ -135,13 +135,13 @@ InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ElementBox& 
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
-    for (auto& cellDescendant : descendantsOfType<ElementBox>(cellBox)) {
-        if (cellDescendant.establishesInlineFormattingContext()) {
+    for (CheckedRef cellDescendant : descendantsOfType<ElementBox>(cellBox)) {
+        if (cellDescendant->establishesInlineFormattingContext()) {
             // FIXME: Check for baseline value based on display content.
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };
         }
-        if (cellDescendant.establishesTableFormattingContext())
+        if (cellDescendant->establishesTableFormattingContext())
             return layoutState().formattingStateForTableFormattingContext(cellDescendant).tableGrid().rows().list()[0].baseline();
     }
     return formattingContext().geometryForBox(cellBox).contentBoxBottom();
@@ -163,12 +163,12 @@ LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGri
 
 LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGridCell& cell, std::optional<LayoutUnit> availableVerticalSpace) const
 {
-    auto& cellBox = cell.box();
+    CheckedRef cellBox = cell.box();
     auto contentHeight = cellBoxContentHeight(cellBox);
     auto computedHeight = this->computedHeight(cellBox, availableVerticalSpace);
     if (!computedHeight)
         return contentHeight;
-    auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox.style().boxSizing() == BoxSizing::BorderBox;
+    auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox->style().boxSizing() == BoxSizing::BorderBox;
     if (heightUsesBorderBox) {
         auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());
         *computedHeight -= cellBoxGeometry.verticalBorderAndPadding();

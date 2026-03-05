@@ -195,7 +195,7 @@ static UniquePtr<DTLSIncomingMessage> dtls_new_incoming_message(
       !CBB_add_u16(cbb.get(), msg_hdr->seq) ||
       !CBB_add_u24(cbb.get(), 0 /* frag_off */) ||
       !CBB_add_u24(cbb.get(), msg_hdr->msg_len) ||
-      !CBB_finish(cbb.get(), NULL, NULL)) {
+      !CBB_finish(cbb.get(), nullptr, nullptr)) {
     return nullptr;
   }
 
@@ -223,12 +223,12 @@ static DTLSIncomingMessage *dtls1_get_incoming_message(
   if (msg_hdr->seq < ssl->d1->handshake_read_seq ||
       msg_hdr->seq - ssl->d1->handshake_read_seq >= SSL_MAX_HANDSHAKE_FLIGHT) {
     *out_alert = SSL_AD_INTERNAL_ERROR;
-    return NULL;
+    return nullptr;
   }
 
   size_t idx = msg_hdr->seq % SSL_MAX_HANDSHAKE_FLIGHT;
   DTLSIncomingMessage *frag = ssl->d1->incoming_messages[idx].get();
-  if (frag != NULL) {
+  if (frag != nullptr) {
     assert(frag->seq == msg_hdr->seq);
     // The new fragment must be compatible with the previous fragments from this
     // message.
@@ -236,7 +236,7 @@ static DTLSIncomingMessage *dtls1_get_incoming_message(
         frag->msg_len() != msg_hdr->msg_len) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_FRAGMENT_MISMATCH);
       *out_alert = SSL_AD_ILLEGAL_PARAMETER;
-      return NULL;
+      return nullptr;
     }
     return frag;
   }
@@ -245,7 +245,7 @@ static DTLSIncomingMessage *dtls1_get_incoming_message(
   ssl->d1->incoming_messages[idx] = dtls_new_incoming_message(msg_hdr);
   if (!ssl->d1->incoming_messages[idx]) {
     *out_alert = SSL_AD_INTERNAL_ERROR;
-    return NULL;
+    return nullptr;
   }
   return ssl->d1->incoming_messages[idx].get();
 }
@@ -337,7 +337,9 @@ bool dtls1_process_handshake_fragments(SSL *ssl, uint8_t *out_alert,
 
     // Copy the body into the fragment.
     Span<uint8_t> dest = frag->msg().subspan(frag_off, CBS_len(&body));
+    assert(dest.size() == CBS_len(&body));
     OPENSSL_memcpy(dest.data(), CBS_data(&body), CBS_len(&body));
+    assert(dest.size() == CBS_len(&body));
     frag->reassembly.MarkRange(frag_off, frag_off + frag_len);
   }
 
@@ -589,7 +591,7 @@ static bool add_outgoing(SSL *ssl, bool is_ccs, Array<uint8_t> data) {
     }
     // TODO(svaldez): Move this up a layer to fix abstraction for SSLTranscript
     // on hs.
-    if (ssl->s3->hs != NULL && !ssl->s3->hs->transcript.Update(data)) {
+    if (ssl->s3->hs != nullptr && !ssl->s3->hs->transcript.Update(data)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
@@ -646,12 +648,12 @@ static void dtls1_update_mtu(SSL *ssl) {
   // |SSL_set_mtu|. Does this need to be so complex?
   if (ssl->d1->mtu < dtls1_min_mtu() &&
       !(SSL_get_options(ssl) & SSL_OP_NO_QUERY_MTU)) {
-    long mtu = BIO_ctrl(ssl->wbio.get(), BIO_CTRL_DGRAM_QUERY_MTU, 0, NULL);
+    long mtu = BIO_ctrl(ssl->wbio.get(), BIO_CTRL_DGRAM_QUERY_MTU, 0, nullptr);
     if (mtu >= 0 && mtu <= (1 << 30) && (unsigned)mtu >= dtls1_min_mtu()) {
       ssl->d1->mtu = (unsigned)mtu;
     } else {
       ssl->d1->mtu = kDefaultMTU;
-      BIO_ctrl(ssl->wbio.get(), BIO_CTRL_DGRAM_SET_MTU, ssl->d1->mtu, NULL);
+      BIO_ctrl(ssl->wbio.get(), BIO_CTRL_DGRAM_SET_MTU, ssl->d1->mtu, nullptr);
     }
   }
 
@@ -722,7 +724,7 @@ static seal_result_t seal_next_record(SSL *ssl, Span<uint8_t> out,
   // Pack as many handshake fragments into one record as we can. We stage the
   // fragments in the output buffer, to be sealed in-place.
   bool should_continue = false;
-  Span<uint8_t> fragments = out.subspan(prefix_len, max_in_len);
+  Span<uint8_t> fragments = out.subspan(prefix_len, /* up to */ max_in_len);
   CBB cbb;
   CBB_init_fixed(&cbb, fragments.data(), fragments.size());
   DTLSSentRecord sent_record;

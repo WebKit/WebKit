@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ImageBufferIOSurfaceBackend, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBufferIOSurfaceBackend, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(ImageBufferIOSurfaceBackend);
 public:
     static IntSize calculateSafeBackendSize(const Parameters&);
@@ -53,6 +53,7 @@ public:
     IOSurface* surface() override;
     GraphicsContext& context() override;
     void flushContext() override;
+    void submitDrawingCommands() override;
 
 protected:
     ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*);

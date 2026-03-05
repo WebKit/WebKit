@@ -1,11 +1,13 @@
 Name: WebRTC
-URL: http://www.webrtc.org
-Version: 90
-CPEPrefix: cpe:/a:webrtc_project:webrtc:90
-License: BSD
+URL: This is the canonical repository
+Version: DEPS
+CPEPrefix: cpe:/a:webrtc_project:webrtc
+License: BSD-3-Clause
 License File: LICENSE
 Shipped: yes
 Security Critical: yes
+Mitigated: CVE-2022-2294
+CVE-2022-2294: Fixed by https://crbug.com/40060120.
 
 Description:
 WebRTC provides real time voice and video processing

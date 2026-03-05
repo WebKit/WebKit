@@ -85,16 +85,15 @@ public:
     void providerDidUpdateNotificationPolicy(const API::SecurityOrigin*, bool allowed);
     void providerDidRemoveNotificationPolicies(API::Array* origins);
 
-    using API::Object::ref;
-    using API::Object::deref;
+    // WebContextSupplement.
+    void ref() const final { API::ObjectImpl<API::Object::Type::NotificationManager>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::NotificationManager>::deref(); }
 
 private:
     explicit WebNotificationManagerProxy(WebProcessPool*);
 
     // WebContextSupplement
     void processPoolDestroyed() override;
-    void refWebContextSupplement() override;
-    void derefWebContextSupplement() override;
 
     bool showImpl(WebPageProxy*, Ref<WebNotification>&&, RefPtr<WebCore::NotificationResources>&&);
 

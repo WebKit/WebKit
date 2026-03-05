@@ -35,9 +35,9 @@
 #include "MultiChannelResampler.h"
 #include "PushPullFIFO.h"
 #include "SharedAudioDestination.h"
-#include "SpanCoreAudio.h"
 #include "SpatialAudioExperienceHelper.h"
 #include <algorithm>
+#include <pal/cf/CoreAudioExtras.h>
 
 namespace WebCore {
 
@@ -94,7 +94,7 @@ void AudioDestinationCocoa::startRendering(CompletionHandler<void(bool)>&& compl
     if (success)
         setIsPlaying(true);
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler), success]() mutable {
         completionHandler(success);
     });
 }
@@ -106,7 +106,7 @@ void AudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& comple
     if (success)
         setIsPlaying(false);
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler), success]() mutable {
         completionHandler(success);
     });
 }

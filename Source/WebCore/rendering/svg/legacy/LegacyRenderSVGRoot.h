@@ -34,14 +34,13 @@ class LegacyRenderSVGResourceContainer;
 class SVGSVGElement;
 
 class LegacyRenderSVGRoot final : public RenderReplaced {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGRoot);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGRoot);
 public:
     LegacyRenderSVGRoot(SVGSVGElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGRoot();
 
-    SVGSVGElement& svgSVGElement() const;
-    Ref<SVGSVGElement> protectedSVGSVGElement() const;
+    SVGSVGElement& NODELETE svgSVGElement() const;
 
     bool isEmbeddedThroughSVGImage() const;
     bool isEmbeddedThroughFrameContainingSVGDocument() const;
@@ -67,6 +66,13 @@ public:
     // method during layout when they are invalidated by a filter.
     static void addResourceForClientInvalidation(LegacyRenderSVGResourceContainer*);
 
+    bool hasNonScalingStrokeDescendant() const { return m_nonScalingStrokeDescendantCount > 0; }
+    void adjustNonScalingStrokeDescendantCount(int delta)
+    {
+        ASSERT(delta > 0 || m_nonScalingStrokeDescendantCount >= static_cast<unsigned>(-delta));
+        m_nonScalingStrokeDescendantCount += delta;
+    }
+
 private:
     void element() const = delete;
 
@@ -83,13 +89,14 @@ private:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     const AffineTransform& localToParentTransform() const override;
 
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox.value_or(FloatRect()); }
     FloatRect strokeBoundingBox() const override;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const override;
+    FloatRect decoratedBoundingBox() const override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
@@ -108,7 +115,7 @@ private:
     bool canBeSelectionLeaf() const override { return false; }
     bool canHaveChildren() const override { return true; }
 
-    bool shouldApplyViewportClip() const;
+    bool NODELETE shouldApplyViewportClip() const;
     void updateCachedBoundaries();
     void buildLocalToBorderBoxTransform();
 
@@ -125,6 +132,7 @@ private:
     bool m_isLayoutSizeChanged : 1 { false };
     bool m_needsBoundariesOrTransformUpdate : 1 { true };
     bool m_hasBoxDecorations : 1 { false };
+    unsigned m_nonScalingStrokeDescendantCount { 0 };
 };
 
 } // namespace WebCore

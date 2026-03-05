@@ -21,7 +21,7 @@ info: |
   ...
   3. Let relativeTarget be ? ToInteger(target).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
@@ -32,4 +32,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.copyWithin(s, 0);
   });
-});
+}, null, ["passthrough"]);

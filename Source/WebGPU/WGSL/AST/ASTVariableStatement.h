@@ -39,7 +39,7 @@ public:
 private:
     VariableStatement(SourceSpan span, Variable::Ref&& variable)
         : Statement(span)
-        , m_variable(WTFMove(variable))
+        , m_variable(WTF::move(variable))
     { }
 
     Variable::Ref m_variable;

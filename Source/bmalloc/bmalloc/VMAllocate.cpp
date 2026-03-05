@@ -44,7 +44,6 @@ static void zeroFillLatchIfMadvZeroIsSupported()
     size_t pageSize = vmPageSize();
     void* base = mmap(NULL, pageSize, PROT_NONE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, static_cast<int>(VMTag::Malloc), 0);
     BASSERT(base);
-    RELEASE_BASSERT_DATA_ADDRESS_IS_SANE(p);
 
     int rc = madvise(base, pageSize, MADV_ZERO);
     if (rc)

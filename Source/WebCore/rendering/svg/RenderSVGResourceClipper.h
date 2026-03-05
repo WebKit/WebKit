@@ -30,13 +30,11 @@ class SVGClipPathElement;
 class SVGGraphicsElement;
 
 class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourceClipper);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceClipper);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceClipper);
 public:
     RenderSVGResourceClipper(SVGClipPathElement&, RenderStyle&&);
     virtual ~RenderSVGResourceClipper();
-
-    inline Ref<SVGClipPathElement> protectedClipPathElement() const;
 
     RefPtr<SVGGraphicsElement> shouldApplyPathClipping() const;
     void applyPathClipping(GraphicsContext&, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox, SVGGraphicsElement&);
@@ -47,8 +45,9 @@ public:
     bool hitTestClipContent(const FloatRect&, const LayoutPoint&);
 
     inline SVGUnitTypes::SVGUnitType clipPathUnits() const;
+    inline SVGClipPathElement& clipPathElement() const;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
 private:
     void element() const = delete;
@@ -59,7 +58,7 @@ private:
 
     ASCIILiteral renderName() const final { return "RenderSVGResourceClipper"_s; }
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
 };
 
 }

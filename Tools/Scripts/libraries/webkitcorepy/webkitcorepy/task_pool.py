@@ -36,7 +36,7 @@ class _Message(object):
         self.who = who or _Process.name
 
     def __call__(self, caller):
-        NotImplemented()
+        raise NotImplementedError()
 
 
 class _Task(_Message):
@@ -47,22 +47,41 @@ class _Task(_Message):
         self.id = id
         self.args = tuple(args)
         self.kwargs = kwargs
+        self.repeat = False  # Will be set by TaskPool
 
     def __call__(self, caller):
         return self.function(*self.args, **self.kwargs)
 
 
 class _Result(_Message):
-    def __init__(self, value, id):
+    def __init__(self, value, id, repeat=False):
         super(_Result, self).__init__()
         self.value = value
         self.id = id
+        self.repeat = repeat
 
     def __call__(self, caller):
         if caller:
-            caller.pending_count -= 1
+            if getattr(self, 'repeat', False):
+                # For repeat tasks, only decrement count when they actually stop
+                # (not on each iteration)
+                if getattr(self, 'stopped', False):
+                    caller.repeat_pending_count -= 1
+            else:
+                caller.pending_count -= 1
             caller.callbacks.pop(self.id, lambda value: value)(self.value)
         return self.value
+
+
+class _StopRepeat(_Message):
+    def __init__(self):
+        super(_StopRepeat, self).__init__()
+
+    def __call__(self, caller):
+        # This message signals workers to stop repeat tasks
+        if hasattr(caller, 'stop_repeat'):
+            caller.stop_repeat = True
+        return None
 
 
 class _Log(_Message):
@@ -210,6 +229,12 @@ class _Process(object):
     name = None
     working = False
     queue = None
+    stop_repeat = False
+    name = None
+    working = False
+    queue = None
+    stop_repeat = False
+    repeat_task_queue = None
 
     class LogHandler(logging.Handler):
         def __init__(self, queue, **kwargs):
@@ -296,6 +321,9 @@ class _Process(object):
 
         cls.name = name
         cls.working = True
+        cls.name = name
+        cls.working = True
+        cls.repeat_task_queue = []
 
         setupargs = setupargs or []
         setupkwargs = setupkwargs or {}
@@ -326,6 +354,8 @@ class _Process(object):
 
                 while cls.working:
                     task = None
+
+                    # Check group queues first (including for control messages)
                     for i in range(len(group_queues)):
                         group_queue = group_queues[i]
                         task = group_queue.receive(blocking=False)
@@ -333,22 +363,73 @@ class _Process(object):
                             del group_queues[i]
                             group_queues.append(group_queue)
                             break
-                    if not task:
-                        task = queue.receive()
 
-                    # Since queue.receive is blocking, we should check group_queues one final time before breaking the work loop
-                    if not task:
-                        for group_queue in group_queues:
-                            while True:
-                                grouped_task = group_queue.receive(blocking=False)
-                                if not grouped_task:
-                                    break
-                                queue.send(_Result(value=grouped_task(None), id=grouped_task.id))
-
-                    if not task:
+                    # Handle _StopRepeat message early (before checking repeat queue)
+                    if isinstance(task, _StopRepeat):
+                        task(cls)  # This sets cls.stop_repeat = True
+                        # Send final results for any queued repeat tasks
+                        while cls.repeat_task_queue:
+                            stopped_task = cls.repeat_task_queue.pop(0)
+                            result_msg = _Result(value=None, id=stopped_task.id, repeat=True)
+                            result_msg.stopped = True
+                            queue.send(result_msg)
+                        # Exit worker loop immediately to proceed to teardown
                         break
 
-                    queue.send(_Result(value=task(None), id=task.id))
+                    # If no task from group queues, check for repeat tasks
+                    if not task and cls.repeat_task_queue:
+                        task = cls.repeat_task_queue.pop(0)
+
+                    # If still no task, handle main queue access
+                    if not task:
+                        if not group_queues:
+                            # Workers NOT assigned to any groups can pull regular tasks from main queue
+                            task = queue.receive()
+                            # Handle shutdown signal (None)
+                            if task is None:
+                                break
+                        else:
+                            # Grouped workers check main queue for shutdown signals (non-blocking)
+                            try:
+                                main_task = queue.receive(blocking=False)
+                                if main_task is None:
+                                    break  # Shutdown signal received
+                                elif main_task is not None:
+                                    task = main_task  # Got a task from main queue
+                            except Queue.Empty:
+                                pass  # No task available, continue looping
+                            if not task:
+                                continue  # Continue to next iteration of worker loop
+
+                    # Handle _StopRepeat message (applies to all workers from any queue)
+                    if isinstance(task, _StopRepeat):
+                        task(cls)  # This sets cls.stop_repeat = True
+                        # Send final "stopped" results for any queued repeat tasks
+                        while cls.repeat_task_queue:
+                            stopped_task = cls.repeat_task_queue.pop(0)
+                            result_msg = _Result(value=None, id=stopped_task.id, repeat=True)
+                            result_msg.stopped = True
+                            queue.send(result_msg)
+                        # Only grouped workers exit here; regular workers continue to wait for None
+                        if group_queues:
+                            break
+                        continue
+
+                    # For repeat tasks, check stop condition
+                    if getattr(task, 'repeat', False):
+                        if not cls.stop_repeat:
+                            result = task(None)
+                            queue.send(_Result(value=result, id=task.id, repeat=True))
+                            # Re-queue the repeat task to run again
+                            cls.repeat_task_queue.append(task)
+                        else:
+                            # Task is stopping - send a final result with stopped=True
+                            result_msg = _Result(value=None, id=task.id, repeat=True)
+                            result_msg.stopped = True
+                            queue.send(result_msg)
+                    else:
+                        result = task(None)
+                        queue.send(_Result(value=result, id=task.id, repeat=False))
 
             except BaseException:
                 typ, exception, traceback = sys.exc_info()
@@ -413,7 +494,9 @@ class TaskPool(object):
         self.callbacks = {}
         self._id_count = 0
         self.pending_count = 0
+        self.repeat_pending_count = 0
         self.enter_grace_period = enter_grace_period
+        self._has_repeat_tasks = False
         self.exit_grace_period = exit_grace_period
         self.block_size = block_size
         self.force_fork = force_fork
@@ -462,6 +545,7 @@ class TaskPool(object):
     def do(self, function, *args, **kwargs):
         callback = kwargs.pop('callback', None)
         group = kwargs.pop('group', None)
+        repeat = kwargs.pop('repeat', False)
         if group and group not in self.mutually_exclusive_groups:
             raise ValueError("'{}' is not a recognized group".format(group))
 
@@ -475,8 +559,17 @@ class TaskPool(object):
 
         if callback:
             self.callbacks[self._id_count] = callback
-        self.pending_count += 1
-        queue.send(self.Task(function, self._id_count, *args, **kwargs))
+
+        task = self.Task(function, self._id_count, *args, **kwargs)
+        task.repeat = repeat
+
+        if repeat:
+            self._has_repeat_tasks = True
+            self.repeat_pending_count += 1
+        else:
+            self.pending_count += 1
+
+        queue.send(task)
         self._id_count += 1
 
         # For every block of tasks passed to our workers, we need consume messages so we don't get deadlocked
@@ -491,6 +584,27 @@ class TaskPool(object):
         if not self.queue:
             return
 
+        # Wait for regular tasks to complete first
+        while self.pending_count > 0:
+            self.queue.receive()(self)
+
+        # If we have repeat tasks, signal them to stop
+        if self._has_repeat_tasks:
+            log.info('Regular tasks completed, signaling repeat tasks to stop')
+            # Send _StopRepeat message to main queue and all group queues
+            for _ in self.workers:
+                self.queue.send(_StopRepeat())
+            # Also send to all group queues so workers assigned to groups receive the signal
+            for group_queue in self._group_queues.values():
+                group_queue.send(_StopRepeat())
+
+            # Wait for repeat tasks to be stopped (not "complete" - they're repeat!)
+            while self.repeat_pending_count > 0:
+                message = self.queue.receive()
+                if message is not None:
+                    message(self)
+
+        # Now do normal shutdown - send shutdown signals to main queue only
         for _ in self.workers:
             self.queue.send(None)
 

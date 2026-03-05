@@ -95,8 +95,8 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
         return;
     }
 
-    auto request = MediaKeySystemRequest::create(document, keySystem, WTFMove(promise));
-    request->setAllowCallback([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), weakDocument = WeakPtr { document }, logger = WTFMove(logger), identifier = WTFMove(identifier)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&& promise) mutable {
+    auto request = MediaKeySystemRequest::create(document, keySystem, WTF::move(promise));
+    request->setAllowCallback([keySystem, supportedConfigurations = WTF::move(supportedConfigurations), weakDocument = WeakPtr { document }, logger = WTF::move(logger), identifier = WTF::move(identifier)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&& promise) mutable {
         RefPtr document = weakDocument.get();
         if (!document) {
             if (promise)
@@ -104,7 +104,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
             return;
         }
 
-        document->postTask([promise = WTFMove(promise), keySystem, logger = WTFMove(logger), identifier = WTFMove(identifier), supportedConfigurations = WTFMove(supportedConfigurations), mediaKeysHashSalt = WTFMove(mediaKeysHashSalt)] (ScriptExecutionContext& context) mutable {
+        document->postTask([promise = WTF::move(promise), keySystem, logger = WTF::move(logger), identifier = WTF::move(identifier), supportedConfigurations = WTF::move(supportedConfigurations), mediaKeysHashSalt = WTF::move(mediaKeysHashSalt)] (ScriptExecutionContext& context) mutable {
             // 3. Let document be the calling context's Document.
             // 4. Let origin be the origin of document.
             // 5. Let promise be a new promise.
@@ -121,7 +121,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
             // 6.2. Let implementation be the implementation of keySystem.
             auto& document = downcast<Document>(context);
             auto implementation = CDM::create(document, keySystem, mediaKeysHashSalt);
-            tryNextSupportedConfiguration(document, WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
+            tryNextSupportedConfiguration(document, WTF::move(implementation), WTF::move(supportedConfigurations), WTF::move(promise), WTF::move(logger), WTF::move(identifier));
         });
     });
     request->start();
@@ -134,10 +134,10 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
         // 6.3.1. Let candidate configuration be the value.
         // 6.3.2. Let supported configuration be the result of executing the Get Supported Configuration
         //        algorithm on implementation, candidate configuration, and origin.
-        MediaKeySystemConfiguration candidateConfiguration = WTFMove(supportedConfigurations.first());
+        MediaKeySystemConfiguration candidateConfiguration = WTF::move(supportedConfigurations.first());
         supportedConfigurations.removeAt(0);
 
-        CDM::SupportedConfigurationCallback callback = [weakDocument = WeakPtr { document }, implementation = implementation, supportedConfigurations = WTFMove(supportedConfigurations), promise, logger = WTFMove(logger), identifier = WTFMove(identifier)] (std::optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {
+        CDM::SupportedConfigurationCallback callback = [weakDocument = WeakPtr { document }, implementation = implementation, supportedConfigurations = WTF::move(supportedConfigurations), promise, logger = WTF::move(logger), identifier = WTF::move(identifier)] (std::optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {
             RefPtr document = weakDocument.get();
             if (!document) {
                 infoLog(logger, identifier, "Rejected: document no longer exists");
@@ -155,18 +155,18 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
 
                 // Obtain reference to the key system string before the `implementation` RefPtr<> is cleared out.
                 const String& keySystem = implementation->keySystem();
-                auto access = MediaKeySystemAccess::create(*document, keySystem, WTFMove(supportedConfiguration.value()), implementation.releaseNonNull());
+                auto access = MediaKeySystemAccess::create(*document, keySystem, WTF::move(supportedConfiguration.value()), implementation.releaseNonNull());
 
                 // 6.3.3.2. Resolve promise with access and abort the parallel steps of this algorithm.
                 infoLog(logger, identifier, "Resolved: keySystem(", keySystem, "), supportedConfiguration(", supportedConfiguration, ")");
                 if (promise)
-                    promise->resolveWithNewlyCreated<IDLInterface<MediaKeySystemAccess>>(WTFMove(access));
+                    promise->resolveWithNewlyCreated<IDLInterface<MediaKeySystemAccess>>(WTF::move(access));
                 return;
             }
 
-            tryNextSupportedConfiguration(*document, WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
+            tryNextSupportedConfiguration(*document, WTF::move(implementation), WTF::move(supportedConfigurations), WTF::move(promise), WTF::move(logger), WTF::move(identifier));
         };
-        implementation->getSupportedConfiguration(WTFMove(candidateConfiguration), WTFMove(callback));
+        implementation->getSupportedConfiguration(WTF::move(candidateConfiguration), WTF::move(callback));
         return;
     }
 

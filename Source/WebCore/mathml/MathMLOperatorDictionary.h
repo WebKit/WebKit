@@ -34,7 +34,7 @@
 namespace WebCore {
 
 namespace MathMLOperatorDictionary {
-enum Form { Infix, Prefix, Postfix };
+enum class Form : uint8_t { Infix, Prefix, Postfix };
 enum Flag {
     Accent = 0x1,
     Fence = 0x2, // This has no visual effect but allows to expose semantic information via the accessibility tree.

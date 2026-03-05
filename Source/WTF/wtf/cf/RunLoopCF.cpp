@@ -96,13 +96,13 @@ void RunLoop::dispatch(const SchedulePairHashSet& schedulePairs, Function<void()
     }, function.leak());
 
     for (auto& schedulePair : schedulePairs)
-        CFRunLoopAddTimer(schedulePair->protectedRunLoop().get(), timer.get(), schedulePair->protectedMode().get());
+        CFRunLoopAddTimer(protect(schedulePair->runLoop()).get(), timer.get(), protect(schedulePair->mode()).get());
 }
 
 // RunLoop::Timer
 
 RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
-    : m_runLoop(WTFMove(runLoop))
+    : m_runLoop(WTF::move(runLoop))
     , m_description(description)
 {
     m_runLoop->registerTimer(*this);

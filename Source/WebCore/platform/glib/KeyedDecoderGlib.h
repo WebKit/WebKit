@@ -41,15 +41,15 @@ public:
     ~KeyedDecoderGlib() override;
 
 private:
-    WARN_UNUSED_RETURN bool decodeBytes(const String& key, std::span<const uint8_t>&) override;
-    WARN_UNUSED_RETURN bool decodeBool(const String& key, bool&) override;
-    WARN_UNUSED_RETURN bool decodeUInt32(const String& key, uint32_t&) override;
-    WARN_UNUSED_RETURN bool decodeUInt64(const String& key, uint64_t&) override;
-    WARN_UNUSED_RETURN bool decodeInt32(const String& key, int32_t&) override;
-    WARN_UNUSED_RETURN bool decodeInt64(const String& key, int64_t&) override;
-    WARN_UNUSED_RETURN bool decodeFloat(const String& key, float&) override;
-    WARN_UNUSED_RETURN bool decodeDouble(const String& key, double&) override;
-    WARN_UNUSED_RETURN bool decodeString(const String& key, String&) override;
+    [[nodiscard]] bool decodeBytes(const String& key, std::span<const uint8_t>&) override;
+    [[nodiscard]] bool decodeBool(const String& key, bool&) override;
+    [[nodiscard]] bool decodeUInt32(const String& key, uint32_t&) override;
+    [[nodiscard]] bool decodeUInt64(const String& key, uint64_t&) override;
+    [[nodiscard]] bool decodeInt32(const String& key, int32_t&) override;
+    [[nodiscard]] bool decodeInt64(const String& key, int64_t&) override;
+    [[nodiscard]] bool decodeFloat(const String& key, float&) override;
+    [[nodiscard]] bool decodeDouble(const String& key, double&) override;
+    [[nodiscard]] bool decodeString(const String& key, String&) override;
 
     bool beginObject(const String& key) override;
     void endObject() override;
@@ -59,7 +59,7 @@ private:
     void endArrayElement() override;
     void endArray() override;
 
-    template<typename T, typename F> WARN_UNUSED_RETURN bool decodeSimpleValue(const String& key, T& result, F getFunction);
+    template<typename T, typename F> [[nodiscard]] bool decodeSimpleValue(const String& key, T& result, F getFunction);
     HashMap<String, GRefPtr<GVariant>> dictionaryFromGVariant(GVariant*);
 
     Vector<HashMap<String, GRefPtr<GVariant>>> m_dictionaryStack;

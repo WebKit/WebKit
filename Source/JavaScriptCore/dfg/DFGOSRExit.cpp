@@ -235,7 +235,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (V
     sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
     auto sideStateCommitter = makeScopeExit([&] {
         for (size_t i = sideStates.size(); i--;)
-            vm.pushCheckpointOSRSideState(WTFMove(sideStates[i]));
+            vm.pushCheckpointOSRSideState(WTF::move(sideStates[i]));
     });
 
     auto addSideState = [&] (CallFrame* frame, BytecodeIndex index, size_t tmpOffset) {
@@ -245,7 +245,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (V
         for (size_t i = 0; i < maxNumCheckpointTmps; ++i)
             sideState->tmps[i] = JSValue::decode(tmpScratch[i + tmpOffset]);
 
-        sideStates.append(WTFMove(sideState));
+        sideStates.append(WTF::move(sideState));
     };
 
     const CodeOrigin* codeOrigin;
@@ -276,7 +276,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         debugInfo->kind = exit.m_kind;
         debugInfo->exitIndex = osrExitIndex;
         debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
-        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo, SavedFPWidth::DontSaveVectors);
+        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo);
     }
 
     // Perform speculation recovery. This only comes into play when an operation

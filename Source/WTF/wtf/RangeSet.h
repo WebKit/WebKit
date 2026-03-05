@@ -129,12 +129,12 @@ public:
         out.print("{", listDump(m_ranges), ", isCompact = ", m_isCompact, "}");
     }
     
-    typename VectorType::const_iterator begin() const
+    typename VectorType::const_iterator begin() const LIFETIME_BOUND
     {
         return m_ranges.begin();
     }
     
-    typename VectorType::const_iterator end() const
+    typename VectorType::const_iterator end() const LIFETIME_BOUND
     {
         return m_ranges.end();
     }

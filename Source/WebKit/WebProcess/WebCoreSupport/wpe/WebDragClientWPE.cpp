@@ -52,7 +52,7 @@ void WebDragClient::startDrag(DragItem, DataTransfer& dataTransfer, Frame&, cons
     m_page->willStartDrag();
 
     std::optional<ShareableBitmap::Handle> handle;
-    m_page->send(Messages::WebPageProxy::StartDrag(dataTransfer.pasteboard().selectionData(), dataTransfer.sourceOperationMask(), WTFMove(handle), dataTransfer.dragLocation()));
+    m_page->send(Messages::WebPageProxy::StartDrag(dataTransfer.pasteboard().selectionData(), dataTransfer.sourceOperationMask(), WTF::move(handle), dataTransfer.dragLocation()));
 }
 
 }; // namespace WebKit.

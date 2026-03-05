@@ -37,25 +37,3 @@ int32_t SkSqrtBits(int32_t x, int count) {
 
     return root;
 }
-
-// Kernighan's method
-int SkPopCount_portable(uint32_t n) {
-    int count = 0;
-
-    while (n) {
-        n &= (n - 1); // Remove the lowest bit in the integer.
-        count++;
-    }
-    return count;
-}
-
-// Here we strip off the unwanted bits and then return the number of trailing zero bits
-int SkNthSet(uint32_t target, int n) {
-    SkASSERT(n < SkPopCount(target));
-
-    for (int i = 0; i < n; ++i) {
-        target &= (target - 1); // Remove the lowest bit in the integer.
-    }
-
-    return SkCTZ(target);
-}

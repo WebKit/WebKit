@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CryptoAlgorithmIdentifier.h>
+#include <WebCore/CryptoAlgorithmParametersInit.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +54,24 @@ public:
         RsaPssParams,
         X25519Params,
     };
+
+    CryptoAlgorithmParameters(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmParametersInit init)
+        : name { WTF::move(init.name) }
+        , identifier { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmParameters(CryptoAlgorithmIdentifier identifier)
+        : name { }
+        , identifier { identifier }
+    {
+    }
+
+    CryptoAlgorithmParameters()
+        : name { }
+        , identifier { 0 }
+    {
+    }
 
     // FIXME: Consider merging name and identifier.
     String name;

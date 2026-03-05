@@ -37,7 +37,7 @@ String GPUComputePipeline::label() const
 
 void GPUComputePipeline::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    m_backing->setLabel(WTF::move(label));
 }
 
 Ref<GPUBindGroupLayout> GPUComputePipeline::getBindGroupLayout(uint32_t index)

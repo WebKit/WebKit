@@ -78,9 +78,6 @@ int64_t WinUwpSystemTimeNanos();
 // Useful for timeouts while using a test clock, or for logging.
 int64_t SystemTimeMillis();
 
-// Returns the current time in milliseconds in 32 bits.
-uint32_t Time32();
-
 // Returns the current time in milliseconds in 64 bits.
 RTC_EXPORT int64_t TimeMillis();
 // Deprecated. Do not use this in any new code.

@@ -129,7 +129,7 @@ TEST(WebKit, SOCKS5)
                         'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'c', 'o', 'm',
                         httpPortFirstByte, httpPortSecondByte
                     };
-                    connection.send(WTFMove(response), [=] {
+                    connection.send(WTF::move(response), [=] {
                         connection.receiveHTTPRequest([=] (Vector<char>&&) {
                             connection.send(
                                 "HTTP/1.1 200 OK\r\n"
@@ -284,7 +284,7 @@ TEST(WebKit, SOCKS5API)
                         'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'c', 'o', 'm',
                         httpPortFirstByte, httpPortSecondByte
                     };
-                    connection.send(WTFMove(response), [=] {
+                    connection.send(WTF::move(response), [=] {
                         connection.receiveHTTPRequest([=] (Vector<char>&&) {
                             connection.send(
                                 "HTTP/1.1 200 OK\r\n"
@@ -493,7 +493,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                 default:
                     ASSERT_NOT_REACHED();
                 }
-                connection.send(WTFMove(reply));
+                connection.send(WTF::move(reply));
             });
         });
 

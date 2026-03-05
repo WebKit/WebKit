@@ -66,7 +66,9 @@ public:
     PageClientImpl(WKWPE::View&);
     virtual ~PageClientImpl();
 
+#if USE(LIBWPE)
     struct wpe_view_backend* viewBackend();
+#endif
 #if ENABLE(WPE_PLATFORM)
     WPEView* wpeView() const;
 #endif
@@ -83,7 +85,7 @@ private:
     // PageClient
     Ref<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) override;
     void setViewNeedsDisplay(const WebCore::Region&) override;
-    void requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated) override;
+    void requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated, WebCore::InterruptScrollAnimation) override;
     WebCore::FloatPoint viewScrollPosition() override;
     WebCore::IntSize viewSize() override;
     bool isViewWindowActive() override;
@@ -164,7 +166,7 @@ private:
     void didRestoreScrollPosition() override;
 
 #if ENABLE(FULLSCREEN_API)
-    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() final;
+    WebFullScreenManagerProxyClient& NODELETE fullScreenManagerProxyClient() final;
     void setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&&) final;
 
     void closeFullScreenManager() override;
@@ -175,7 +177,10 @@ private:
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) override;
 #endif
 
+#if USE(WPE_RENDERER)
     UnixFileDescriptor hostFileDescriptor() final;
+#endif
+
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
@@ -188,9 +193,7 @@ private:
 
     WebKitWebResourceLoadManager* webResourceLoadManager() override;
 
-#if USE(SKIA)
     RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&) override;
-#endif
 
     WKWPE::View& m_view;
     DefaultUndoController m_undoController;

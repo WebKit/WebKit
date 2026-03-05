@@ -378,6 +378,8 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColor
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
         if (outputColorSpace == DestinationColorSpace::DisplayP3())
             return asColorComponents(convertColor<DisplayP3<float>>(inputColor).resolved());
+        if (outputColorSpace == DestinationColorSpace::LinearDisplayP3())
+            return asColorComponents(convertColor<LinearDisplayP3<float>>(inputColor).resolved());
 #endif
 
         ASSERT_NOT_REACHED();

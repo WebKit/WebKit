@@ -1,0 +1,5 @@
+
+PASS Close peerconnection causes close event on local channel
+PASS Close peerconnection causes close event on transfered channel
+PASS Close peerconnection causes close event on local being transfered channel
+

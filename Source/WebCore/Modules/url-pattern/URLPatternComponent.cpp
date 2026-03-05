@@ -41,9 +41,9 @@ using namespace JSC;
 namespace URLPatternUtilities {
 
 URLPatternComponent::URLPatternComponent(String&& patternString, JSC::Strong<JSC::RegExp>&& regex, Vector<String>&& groupNameList, bool hasRegexpGroupsFromPartsList)
-    : m_patternString(WTFMove(patternString))
-    , m_regularExpression(WTFMove(regex))
-    , m_groupNameList(WTFMove(groupNameList))
+    : m_patternString(WTF::move(patternString))
+    , m_regularExpression(WTF::move(regex))
+    , m_groupNameList(WTF::move(groupNameList))
     , m_hasRegexGroupsFromPartList(hasRegexpGroupsFromPartsList)
 {
 }
@@ -72,7 +72,7 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compile(Ref<JSC::VM> vm, S
         return part.type == PartType::Regexp;
     });
 
-    return URLPatternComponent { WTFMove(patternString), JSC::Strong<JSC::RegExp> { vm, regularExpression }, WTFMove(nameList), hasRegexGroups };
+    return URLPatternComponent { WTF::move(patternString), JSC::Strong<JSC::RegExp> { vm, regularExpression }, WTF::move(nameList), hasRegexGroups };
 }
 
 // https://urlpattern.spec.whatwg.org/#protocol-component-matches-a-special-scheme
@@ -114,8 +114,7 @@ URLPatternComponentResult URLPatternComponent::createComponentMatchResult(JSC::J
 
     Ref vm = globalObject->vm();
 
-    auto length = execResult.get(globalObject, vm->propertyNames->length).toIntegerOrInfinity(globalObject);
-    ASSERT(length >= 0 && std::isfinite(length));
+    auto length = std::min<unsigned>(execResult.get(globalObject, vm->propertyNames->length).toIntegerOrInfinity(globalObject), m_groupNameList.size() + 1);
 
     for (unsigned index = 1; index < length; ++index) {
         auto match = execResult.get(globalObject, index);
@@ -124,10 +123,10 @@ URLPatternComponentResult URLPatternComponent::createComponentMatchResult(JSC::J
         if (!match.isNull() && !match.isUndefined())
             value = match.toWTFString(globalObject);
 
-        groups.append(URLPatternComponentResult::NameMatchPair { m_groupNameList[index - 1], WTFMove(value) });
+        groups.append(URLPatternComponentResult::NameMatchPair { m_groupNameList[index - 1], WTF::move(value) });
     }
 
-    return URLPatternComponentResult { !input.isEmpty() ? WTFMove(input) : emptyString(), WTFMove(groups) };
+    return URLPatternComponentResult { !input.isEmpty() ? WTF::move(input) : emptyString(), WTF::move(groups) };
 }
 
 }

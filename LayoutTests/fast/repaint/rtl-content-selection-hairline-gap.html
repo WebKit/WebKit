@@ -28,7 +28,7 @@ async function repaintTest() {
     internals.stopTrackingRepaints();
     var pre = document.createElement('pre');
     document.body.appendChild(pre);
-    pre.innerText = repaintRects.indexOf("88 18 694 40") != -1 ? "PASS" : "FAIL";
+    pre.innerText = repaintRects.indexOf("88 17 694 41") != -1 ? "PASS" : "FAIL";
   }
 
   if (window.testRunner)

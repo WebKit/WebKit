@@ -47,11 +47,13 @@ class FakeEncodedFrame : public AudioDecoder::EncodedAudioFrame {
       ArrayView<int16_t> decoded) const override {
     if (is_dtx_) {
       std::fill_n(decoded.data(), duration_, 0);
-      return DecodeResult{duration_, AudioDecoder::kComfortNoise};
+      return DecodeResult{.num_decoded_samples = duration_,
+                          .speech_type = AudioDecoder::kComfortNoise};
     }
 
     decoder_->ReadFromFile(timestamp_, duration_, decoded.data());
-    return DecodeResult{Duration(), AudioDecoder::kSpeech};
+    return DecodeResult{.num_decoded_samples = Duration(),
+                        .speech_type = AudioDecoder::kSpeech};
   }
 
   bool IsDtxPacket() const override { return is_dtx_; }

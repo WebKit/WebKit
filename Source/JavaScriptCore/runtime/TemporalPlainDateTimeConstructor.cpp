@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDateTime, (JSGlobalObject* global
             return throwVMRangeError(globalObject, scope, "Temporal.PlainDateTime properties must be finite"_s);
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTFMove(duration))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTF::move(duration))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainDateTime, (JSGlobalObject* globalObject, CallFrame*))
@@ -138,10 +138,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimeConstructorFuncCompare, (JSGlobalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* one = TemporalPlainDateTime::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* one = TemporalPlainDateTime::from(globalObject, callFrame->argument(0), nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* two = TemporalPlainDateTime::from(globalObject, callFrame->argument(1), std::nullopt);
+    auto* two = TemporalPlainDateTime::from(globalObject, callFrame->argument(1), nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsNumber(TemporalPlainDateTime::compare(one, two)));

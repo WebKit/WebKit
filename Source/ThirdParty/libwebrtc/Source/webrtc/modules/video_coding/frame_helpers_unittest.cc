@@ -15,14 +15,13 @@
 #include <memory>
 #include <optional>
 #include <utility>
-#include <variant>
 
 #include "absl/container/inlined_vector.h"
 #include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/encoded_image.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -68,48 +67,41 @@ TEST(FrameInstrumentationDataTest,
      CombinedFrameHasSameDataAsHighestSpatialLayer) {
   // Assume L2T1 scalability mode.
   EncodedFrame spatial_layer_1 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/1);
-  const FrameInstrumentationData frame_ins_data_1 = {
-      .sequence_index = 100,
-      .communicate_upper_bits = false,
-      .std_dev = 0.5,
-      .luma_error_threshold = 5,
-      .chroma_error_threshold = 4,
-      .sample_values = {0.2, 0.7, 1.9}};
+  FrameInstrumentationData frame_ins_data_1;
+  frame_ins_data_1.SetSequenceIndex(100);
+  frame_ins_data_1.SetStdDev(0.5);
+  frame_ins_data_1.SetLumaErrorThreshold(5);
+  frame_ins_data_1.SetChromaErrorThreshold(5);
+  frame_ins_data_1.SetSampleValues({0.2, 0.7, 1.9});
   spatial_layer_1.SetFrameInstrumentationData(frame_ins_data_1);
 
   EncodedFrame spatial_layer_2 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/11);
-  FrameInstrumentationData frame_ins_data_2 = {
-      .sequence_index = 10,
-      .communicate_upper_bits = false,
-      .std_dev = 1.0,
-      .luma_error_threshold = 3,
-      .chroma_error_threshold = 4,
-      .sample_values = {0.1, 0.3, 2.1}};
+  FrameInstrumentationData frame_ins_data_2;
+  frame_ins_data_2.SetSequenceIndex(10);
+  frame_ins_data_2.SetStdDev(1.0);
+  frame_ins_data_2.SetLumaErrorThreshold(3);
+  frame_ins_data_2.SetChromaErrorThreshold(4);
+  frame_ins_data_2.SetSampleValues({0.1, 0.3, 2.1});
   spatial_layer_2.SetFrameInstrumentationData(frame_ins_data_2);
 
   absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames;
   frames.push_back(std::make_unique<EncodedFrame>(spatial_layer_1));
   frames.push_back(std::make_unique<EncodedFrame>(spatial_layer_2));
 
-  std::optional<
-      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
-      data = CombineAndDeleteFrames(std::move(frames))
-                 ->CodecSpecific()
-                 ->frame_instrumentation_data;
+  std::optional<FrameInstrumentationData> frame_instrumentation_data =
+      CombineAndDeleteFrames(std::move(frames))
+          ->CodecSpecific()
+          ->frame_instrumentation_data;
 
-  ASSERT_TRUE(data.has_value());
-  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data));
-  FrameInstrumentationData frame_instrumentation_data =
-      std::get<FrameInstrumentationData>(*data);
+  ASSERT_TRUE(frame_instrumentation_data.has_value());
 
   // Expect to have the same frame_instrumentation_data as the highest spatial
   // layer.
-  EXPECT_EQ(frame_instrumentation_data.sequence_index, 10);
-  EXPECT_FALSE(frame_instrumentation_data.communicate_upper_bits);
-  EXPECT_EQ(frame_instrumentation_data.std_dev, 1.0);
-  EXPECT_EQ(frame_instrumentation_data.luma_error_threshold, 3);
-  EXPECT_EQ(frame_instrumentation_data.chroma_error_threshold, 4);
-  EXPECT_THAT(frame_instrumentation_data.sample_values,
+  EXPECT_EQ(frame_instrumentation_data->sequence_index(), 10);
+  EXPECT_EQ(frame_instrumentation_data->std_dev(), 1.0);
+  EXPECT_EQ(frame_instrumentation_data->luma_error_threshold(), 3);
+  EXPECT_EQ(frame_instrumentation_data->chroma_error_threshold(), 4);
+  EXPECT_THAT(frame_instrumentation_data->sample_values(),
               ElementsAre(0.1, 0.3, 2.1));
 }
 

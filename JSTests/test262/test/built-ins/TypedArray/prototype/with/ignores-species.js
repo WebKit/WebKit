@@ -20,22 +20,22 @@ includes: [testTypedArray.js]
 features: [TypedArray, change-array-by-copy]
 ---*/
 
-testWithTypedArrayConstructors(TA => {
-  var ta = new TA([1, 2, 3]);
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
+  var ta = new TA(makeCtorArg([1, 2, 3]));
   ta.constructor = TA === Uint8Array ? Int32Array : Uint8Array;
   assert.sameValue(Object.getPrototypeOf(ta.with(0, 2)), TA.prototype);
 
-  ta = new TA([1, 2, 3]);
+  ta = new TA(makeCtorArg([1, 2, 3]));
   ta.constructor = {
     [Symbol.species]: TA === Uint8Array ? Int32Array : Uint8Array,
   };
   assert.sameValue(Object.getPrototypeOf(ta.with(0, 2)), TA.prototype);
 
-  ta = new TA([1, 2, 3]);
+  ta = new TA(makeCtorArg([1, 2, 3]));
   Object.defineProperty(ta, "constructor", {
     get() {
       throw new Test262Error("Should not get .constructor");
     }
   });
   ta.with(0, 2);
-});
+}, null, ["passthrough"]);

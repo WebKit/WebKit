@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <WebCore/BoxSides.h>
-#include <WebCore/LayoutRange.h>
-#include <WebCore/RenderBox.h>
-#include <WebCore/StyleInset.h>
-#include <WebCore/StyleMargin.h>
-#include <WebCore/StyleSelfAlignmentData.h>
+#include "BoxSides.h"
+#include "LayoutRange.h"
+#include "RenderBox.h"
+#include "StyleInset.h"
+#include "StyleMargin.h"
+#include "StyleSelfAlignmentData.h"
 
 namespace WebCore {
 
@@ -54,11 +54,11 @@ public:
     WritingMode containingWritingMode() const { return m_containingWritingMode; }
     WritingMode selfWritingMode() const { return m_writingMode; }
 
-    bool needsAnchor() const;
+    bool NODELETE needsAnchor() const;
     const RenderBoxModelObject* defaultAnchorBox() const { return m_defaultAnchorBox.get(); }
     const StyleSelfAlignmentData& alignment() const { return m_alignment; }
     ItemPosition resolveAlignmentValue() const; // Convert auto/normal as necessary.
-    bool alignmentAppliesStretch(ItemPosition normalAlignment) const;
+    bool NODELETE alignmentAppliesStretch(ItemPosition normalAlignment) const;
 
     bool isOrthogonal() const { return m_containingWritingMode.isOrthogonal(m_writingMode); }
     inline bool isOpposing() const;
@@ -89,10 +89,12 @@ public:
     LayoutUnit resolveAlignmentShift(const LayoutUnit unusedSpace, const LayoutUnit itemSize) const;
 
     void fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues&) const;
-    void adjustLogicalTopWithLogicalHeightIfNeeded(RenderBox::LogicalExtentComputedValues&) const;
+    void NODELETE adjustLogicalTopWithLogicalHeightIfNeeded(RenderBox::LogicalExtentComputedValues&) const;
+
+    LayoutUnit computedInlineStaticDistance() const;
 
 private:
-    bool containingCoordsAreFlipped() const;
+    bool NODELETE containingCoordsAreFlipped() const;
 
     void captureInsets();
     void captureGridArea();
@@ -104,8 +106,7 @@ private:
     bool needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     void computeStaticPosition();
-    void computeInlineStaticDistance();
-    void computeBlockStaticDistance();
+    LayoutUnit computedBlockStaticDistance() const;
 
     CheckedRef<const RenderBox> m_renderer;
     CheckedPtr<const RenderBoxModelObject> m_container;

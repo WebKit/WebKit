@@ -45,6 +45,8 @@ enum {
     kWKEventMouseButtonLeftButton = 0,
     kWKEventMouseButtonMiddleButton = 1,
     kWKEventMouseButtonRightButton = 2,
+    kWKEventMouseButtonBackButton = 3,
+    kWKEventMouseButtonForwardButton = 4,
     kWKEventMouseButtonNoButton = -2
 };
 typedef int32_t WKEventMouseButton;

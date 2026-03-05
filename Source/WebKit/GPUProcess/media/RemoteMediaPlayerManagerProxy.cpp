@@ -102,8 +102,8 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
     ASSERT(RunLoop::isMain());
     ASSERT(!m_proxies.contains(identifier));
 
-    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, clientIdentifier, connection->connection(), engineIdentifier, WTFMove(proxyConfiguration), Ref { connection->videoFrameObjectHeap() }, connection->webProcessIdentity());
-    m_proxies.add(identifier, WTFMove(proxy));
+    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, clientIdentifier, connection->connection(), engineIdentifier, WTF::move(proxyConfiguration), Ref { connection->videoFrameObjectHeap() }, connection->webProcessIdentity());
+    m_proxies.add(identifier, WTF::move(proxy));
 }
 
 void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier identifier)
@@ -123,7 +123,7 @@ void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier iden
 
 void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    auto engine = MediaPlayer::mediaEngine(engineIdentifier);
+    CheckedPtr engine = MediaPlayer::mediaEngine(engineIdentifier);
     if (!engine) {
         WTFLogAlways("Failed to find media engine.");
         completionHandler({ });
@@ -137,12 +137,12 @@ void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEng
         return type;
     });
 
-    completionHandler(WTFMove(result));
+    completionHandler(WTF::move(result));
 }
 
 void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const MediaEngineSupportParameters&& parameters, CompletionHandler<void(MediaPlayer::SupportsType)>&& completionHandler)
 {
-    auto engine = MediaPlayer::mediaEngine(engineIdentifier);
+    CheckedPtr engine = MediaPlayer::mediaEngine(engineIdentifier);
     if (!engine) {
         WTFLogAlways("Failed to find media engine.");
         completionHandler(MediaPlayer::SupportsType::IsNotSupported);
@@ -155,7 +155,7 @@ void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::Medi
 
 void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& keySystem, const String&& mimeType, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto engine = MediaPlayer::mediaEngine(engineIdentifier);
+    CheckedPtr engine = MediaPlayer::mediaEngine(engineIdentifier);
     if (!engine) {
         WTFLogAlways("Failed to find media engine.");
         return;
@@ -202,30 +202,6 @@ WTFLogChannel& RemoteMediaPlayerManagerProxy::logChannel() const
     return WebKit2LogMedia;
 }
 #endif
-
-std::optional<ShareableBitmap::Handle> RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier identifier)
-{
-    auto player = mediaPlayer(identifier);
-    if (!player)
-        return { };
-
-    auto image = player->nativeImageForCurrentTime();
-    if (!image)
-        return { };
-
-    auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::create({ imageSize, player->colorSpace() });
-    if (!bitmap)
-        return { };
-
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return { };
-
-    context->drawNativeImage(*image, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
-
-    return bitmap->createHandle();
-}
 
 #if ENABLE(MEDIA_SOURCE)
 void RemoteMediaPlayerManagerProxy::registerMediaSource(RemoteMediaSourceIdentifier identifier, RemoteMediaSourceProxy& mediaSource)

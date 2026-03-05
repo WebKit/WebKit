@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Grid with aria-owned rows -->
+<div id="grid-with-owned-rows" role="grid" aria-label="Grid with owned rows" aria-owns="owned-row-1 owned-row-2"></div>
+<div id="owned-row-1" role="row">
+    <div id="owned-row-cell-1-1" role="gridcell">Owned Row 1 Cell 1</div>
+    <div id="owned-row-cell-1-2" role="gridcell">Owned Row 1 Cell 2</div>
+</div>
+<div id="owned-row-2" role="row">
+    <div id="owned-row-cell-2-1" role="gridcell">Owned Row 2 Cell 1</div>
+    <div id="owned-row-cell-2-2" role="gridcell">Owned Row 2 Cell 2</div>
+</div>
+<div id="owned-row-3" role="row">
+    <div id="owned-row-cell-3-1" role="gridcell">Owned Row 3 Cell 1</div>
+    <div id="owned-row-cell-3-2" role="gridcell">Owned Row 3 Cell 2</div>
+</div>
+
+<!-- Grid with aria-owned cells in a row -->
+<div id="grid-with-owned-cells" role="grid" aria-label="Grid with owned cells">
+    <div id="row-with-owned-cells" role="row" aria-owns="owned-cell-1 owned-cell-2"></div>
+</div>
+<div id="owned-cell-1" role="gridcell">Owned Cell 1</div>
+<div id="owned-cell-2" role="gridcell">Owned Cell 2</div>
+<div id="owned-cell-3" role="gridcell">Owned Cell 3</div>
+
+<!-- Grid where rows are both DOM children AND aria-owned (tests ordering) -->
+<div id="grid-with-dom-and-owned-rows" role="grid" aria-label="Grid with DOM and owned rows" aria-owns="dom-row-B dom-row-A">
+    <div id="dom-row-A" role="row">
+        <div id="dom-row-A-cell" role="gridcell">Row A Cell</div>
+    </div>
+    <div id="dom-row-B" role="row">
+        <div id="dom-row-B-cell" role="gridcell">Row B Cell</div>
+    </div>
+    <div id="dom-row-C" role="row">
+        <div id="dom-row-C-cell" role="gridcell">Row C Cell</div>
+    </div>
+</div>
+
+<script>
+var output = "This tests that ARIA grids correctly recognize rows and cells via aria-owns, including after dynamic attribute changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += "Testing grid with aria-owned rows:\n";
+    var ownedRowsGrid = accessibilityController.accessibleElementById("grid-with-owned-rows");
+    output += expect("ownedRowsGrid.rowCount", "2");
+    output += expect("ownedRowsGrid.columnCount", "2");
+    output += expect("ownedRowsGrid.width >= 2", "true");
+    output += expect("ownedRowsGrid.height >= 2", "true");
+    output += expect("ownedRowsGrid.cellForColumnAndRow(0, 0).domIdentifier", "'owned-row-cell-1-1'");
+    output += expect("ownedRowsGrid.cellForColumnAndRow(1, 1).domIdentifier", "'owned-row-cell-2-2'");
+
+    output += "\nTesting grid with aria-owned cells:\n";
+    var ownedCellsGrid = accessibilityController.accessibleElementById("grid-with-owned-cells");
+    output += expect("ownedCellsGrid.rowCount", "1");
+    output += expect("ownedCellsGrid.columnCount", "2");
+    output += expect("ownedCellsGrid.width >= 2", "true");
+    output += expect("ownedCellsGrid.height >= 2", "true");
+    output += expect("ownedCellsGrid.cellForColumnAndRow(0, 0).domIdentifier", "'owned-cell-1'");
+    output += expect("ownedCellsGrid.cellForColumnAndRow(1, 0).domIdentifier", "'owned-cell-2'");
+
+    // Test grid where rows are both DOM children AND aria-owned.
+    // aria-owns="dom-row-B dom-row-A" should reorder: C (not owned, DOM order), then B, then A.
+    output += "\nTesting grid with DOM children that are also aria-owned (ordering test):\n";
+    var domAndOwnedGrid = accessibilityController.accessibleElementById("grid-with-dom-and-owned-rows");
+    output += expect("domAndOwnedGrid.rowCount", "3");
+    output += expect("domAndOwnedGrid.width >= 2", "true");
+    output += expect("domAndOwnedGrid.height >= 2", "true");
+    // Row C is not aria-owned, so it comes first (DOM order for non-owned children).
+    output += expect("domAndOwnedGrid.cellForColumnAndRow(0, 0).domIdentifier", "'dom-row-C-cell'");
+    // Row B is first in aria-owns, so it comes second.
+    output += expect("domAndOwnedGrid.cellForColumnAndRow(0, 1).domIdentifier", "'dom-row-B-cell'");
+    // Row A is second in aria-owns, so it comes third.
+    output += expect("domAndOwnedGrid.cellForColumnAndRow(0, 2).domIdentifier", "'dom-row-A-cell'");
+
+    output += "\nAdding row-3 to aria-owns...\n";
+    document.getElementById("grid-with-owned-rows").setAttribute("aria-owns", "owned-row-1 owned-row-2 owned-row-3");
+
+    setTimeout(async function() {
+        output += await expectAsync("ownedRowsGrid.rowCount", "3");
+        output += expect("ownedRowsGrid.cellForColumnAndRow(0, 2).domIdentifier", "'owned-row-cell-3-1'");
+
+        output += "\nAdding owned-cell-3 to row...\n";
+        document.getElementById("row-with-owned-cells").setAttribute("aria-owns", "owned-cell-1 owned-cell-2 owned-cell-3");
+
+        await waitFor(() => ownedCellsGrid.cellForColumnAndRow(2, 0) !== null);
+        output += expect("ownedCellsGrid.cellForColumnAndRow(2, 0).domIdentifier", "'owned-cell-3'");
+
+        output += "\nRemoving owned-row-1 from aria-owns...\n";
+        document.getElementById("grid-with-owned-rows").setAttribute("aria-owns", "owned-row-2 owned-row-3");
+
+        output += await expectAsync("ownedRowsGrid.rowCount", "2");
+        output += expect("ownedRowsGrid.cellForColumnAndRow(0, 0).domIdentifier", "'owned-row-cell-2-1'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -26,7 +26,7 @@
 #pragma once
 
 #if USE(CG)
-#include <WebCore/ImageBufferCGBitmapBackend.h>
+#include "ImageBufferCGBitmapBackend.h"
 #elif USE(CAIRO)
 #include "ImageBufferCairoImageSurfaceBackend.h"
 #elif USE(SKIA)

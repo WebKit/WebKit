@@ -71,10 +71,6 @@ class PerfTestsRunner(object):
         # Timeouts are controlled by the Python Driver, so DRT/WTR runs with no-timeout.
         self._options.additional_drt_flag.append('--no-timeout')
 
-        # The GTK+ port only supports WebKit2, so it always uses WKTR.
-        if self._port.name().startswith("gtk"):
-            self._options.webkit_test_runner = True
-
         self._host.initialize_scm()
         self._webkit_base_dir_len = len(self._port.webkit_base())
         self._base_path = self._port.perf_tests_dir()
@@ -122,8 +118,10 @@ class PerfTestsRunner(object):
                 help="Don't launch a browser with results after the tests are done"),
             optparse.make_option("--test-results-server",
                 help="Upload the generated JSON file to the specified server when --output-json-path is present."),
-            optparse.make_option("--dump-render-tree", "-1", action="store_false", default=True, dest="webkit_test_runner",
-                help="Use DumpRenderTree rather than WebKitTestRunner."),
+            optparse.make_option("--dump-render-tree", "-1", action='append_const', dest='driver_names', const="DumpRenderTree", default=[],
+                help="Use DumpRenderTree rather than WebKitTestRunner. This runs the wk1 single-process architecture."),
+            optparse.make_option("--webkit-test-runner", "-2", action='append_const', dest='driver_names', const="WebKitTestRunner", default=[],
+                help="Use WebKitTestRunner exclusively, skip any wk1 specific tests."),
             optparse.make_option("--force", dest="use_skipped_list", action="store_false", default=True,
                 help="Run all tests, including the ones in the Skipped list."),
             optparse.make_option("--profile", action="store_true",

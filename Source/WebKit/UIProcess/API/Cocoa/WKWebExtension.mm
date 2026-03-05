@@ -190,141 +190,141 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (NSDictionary<NSString *, id> *)manifest
 {
-    return self._protectedWebExtension->manifestDictionary();
+    return protect(*_webExtension)->manifestDictionary();
 }
 
 - (double)manifestVersion
 {
-    return self._protectedWebExtension->manifestVersion();
+    return protect(*_webExtension)->manifestVersion();
 }
 
 - (BOOL)supportsManifestVersion:(double)version
 {
-    return self._protectedWebExtension->supportsManifestVersion(version);
+    return protect(*_webExtension)->supportsManifestVersion(version);
 }
 
 - (NSLocale *)defaultLocale
 {
-    if (RetainPtr defaultLocale = nsStringNilIfEmpty(self._protectedWebExtension->defaultLocale()))
+    if (RetainPtr defaultLocale = nsStringNilIfEmpty(protect(*_webExtension)->defaultLocale()))
         return [NSLocale localeWithLocaleIdentifier:defaultLocale.get()];
     return nil;
 }
 
 - (NSString *)displayName
 {
-    return nsStringNilIfEmpty(self._protectedWebExtension->displayName()).autorelease();
+    return nsStringNilIfEmpty(protect(*_webExtension)->displayName()).autorelease();
 }
 
 - (NSString *)displayShortName
 {
-    return nsStringNilIfEmpty(self._protectedWebExtension->displayShortName()).autorelease();
+    return nsStringNilIfEmpty(protect(*_webExtension)->displayShortName()).autorelease();
 }
 
 - (NSString *)displayVersion
 {
-    return nsStringNilIfEmpty(self._protectedWebExtension->displayVersion()).autorelease();
+    return nsStringNilIfEmpty(protect(*_webExtension)->displayVersion()).autorelease();
 }
 
 - (NSString *)displayDescription
 {
-    return nsStringNilIfEmpty(self._protectedWebExtension->displayDescription()).autorelease();
+    return nsStringNilIfEmpty(protect(*_webExtension)->displayDescription()).autorelease();
 }
 
 - (NSString *)displayActionLabel
 {
-    return nsStringNilIfEmpty(self._protectedWebExtension->displayActionLabel()).autorelease();
+    return nsStringNilIfEmpty(protect(*_webExtension)->displayActionLabel()).autorelease();
 }
 
 - (NSString *)version
 {
-    return nsStringNilIfEmpty(self._protectedWebExtension->version()).autorelease();
+    return nsStringNilIfEmpty(protect(*_webExtension)->version()).autorelease();
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return WebKit::toCocoaImage(self._protectedWebExtension->icon(WebCore::FloatSize(size)));
+    return WebKit::toCocoaImage(protect(*_webExtension)->icon(WebCore::FloatSize(size)));
 }
 
 - (CocoaImage *)actionIconForSize:(CGSize)size
 {
-    return WebKit::toCocoaImage(self._protectedWebExtension->actionIcon(WebCore::FloatSize(size)));
+    return WebKit::toCocoaImage(protect(*_webExtension)->actionIcon(WebCore::FloatSize(size)));
 }
 
 - (NSSet<WKWebExtensionPermission> *)requestedPermissions
 {
-    return WebKit::toAPI(self._protectedWebExtension->requestedPermissions());
+    return WebKit::toAPI(protect(*_webExtension)->requestedPermissions());
 }
 
 - (NSSet<WKWebExtensionPermission> *)optionalPermissions
 {
-    return WebKit::toAPI(self._protectedWebExtension->optionalPermissions());
+    return WebKit::toAPI(protect(*_webExtension)->optionalPermissions());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)requestedPermissionMatchPatterns
 {
-    return toAPI(self._protectedWebExtension->requestedPermissionMatchPatterns());
+    return toAPI(protect(*_webExtension)->requestedPermissionMatchPatterns());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)optionalPermissionMatchPatterns
 {
-    return toAPI(self._protectedWebExtension->optionalPermissionMatchPatterns());
+    return toAPI(protect(*_webExtension)->optionalPermissionMatchPatterns());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)allRequestedMatchPatterns
 {
-    return toAPI(self._protectedWebExtension->allRequestedMatchPatterns());
+    return toAPI(protect(*_webExtension)->allRequestedMatchPatterns());
 }
 
 - (NSArray<NSError *> *)errors
 {
-    return createNSArray(self._protectedWebExtension->errors(), [](auto&& child) -> id {
+    return createNSArray(protect(*_webExtension)->errors(), [](auto&& child) -> id {
         return wrapper(child);
     }).autorelease();
 }
 
 - (BOOL)hasBackgroundContent
 {
-    return self._protectedWebExtension->hasBackgroundContent();
+    return protect(*_webExtension)->hasBackgroundContent();
 }
 
 - (BOOL)hasPersistentBackgroundContent
 {
-    return self._protectedWebExtension->backgroundContentIsPersistent();
+    return protect(*_webExtension)->backgroundContentIsPersistent();
 }
 
 - (BOOL)hasInjectedContent
 {
-    return self._protectedWebExtension->hasStaticInjectedContent();
+    return protect(*_webExtension)->hasStaticInjectedContent();
 }
 
 - (BOOL)hasOptionsPage
 {
-    return self._protectedWebExtension->hasOptionsPage();
+    return protect(*_webExtension)->hasOptionsPage();
 }
 
 - (BOOL)hasOverrideNewTabPage
 {
-    return self._protectedWebExtension->hasOverrideNewTabPage();
+    return protect(*_webExtension)->hasOverrideNewTabPage();
 }
 
 - (BOOL)hasCommands
 {
-    return self._protectedWebExtension->hasCommands();
+    return protect(*_webExtension)->hasCommands();
 }
 
 - (BOOL)hasContentModificationRules
 {
-    return self._protectedWebExtension->hasContentModificationRules();
+    return protect(*_webExtension)->hasContentModificationRules();
 }
 
 - (BOOL)_hasServiceWorkerBackgroundContent
 {
-    return self._protectedWebExtension->backgroundContentIsServiceWorker();
+    return protect(*_webExtension)->backgroundContentIsServiceWorker();
 }
 
 - (BOOL)_hasModularBackgroundContent
 {
-    return self._protectedWebExtension->backgroundContentUsesModules();
+    return protect(*_webExtension)->backgroundContentUsesModules();
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
@@ -347,11 +347,6 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 }
 
 - (WebKit::WebExtension&)_webExtension
-{
-    return *_webExtension;
-}
-
-- (Ref<WebKit::WebExtension>)_protectedWebExtension
 {
     return *_webExtension;
 }

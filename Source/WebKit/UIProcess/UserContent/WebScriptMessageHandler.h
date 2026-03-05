@@ -63,7 +63,7 @@ public:
 
     API::ContentWorld& world() { return m_world.get(); }
 
-    Client& client() const { return *m_client; }
+    Client& client() const LIFETIME_BOUND { return *m_client; }
 
 private:
     WebScriptMessageHandler(std::unique_ptr<Client>, const String&, API::ContentWorld&);

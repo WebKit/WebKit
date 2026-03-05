@@ -61,13 +61,13 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
     auto rootObject = createRootObject((__bridge void*)widgetView);
 
     if ([widgetView respondsToSelector:@selector(createPluginBindingsInstance:)])
-        return [widgetView createPluginBindingsInstance:WTFMove(rootObject)];
+        return [widgetView createPluginBindingsInstance:WTF::move(rootObject)];
         
     if ([widgetView respondsToSelector:@selector(objectForWebScript)]) {
         id objectForWebScript = [widgetView objectForWebScript];
         if (!objectForWebScript)
             return nullptr;
-        return JSC::Bindings::ObjcInstance::create(objectForWebScript, WTFMove(rootObject));
+        return JSC::Bindings::ObjcInstance::create(objectForWebScript, WTF::move(rootObject));
     }
     return nullptr;
 }
@@ -91,7 +91,7 @@ JSContext *ScriptController::javaScriptContext()
 #if JSC_OBJC_API_ENABLED
     if (!canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return 0;
-    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(protectedBindingRootObject()->globalObject())];
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(protect(bindingRootObject())->globalObject())];
     return context;
 #else
     return 0;

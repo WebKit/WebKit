@@ -37,6 +37,8 @@ struct _WebKitAudioSinkPrivate {
     GRefPtr<GstElement> interAudioSink;
     GRefPtr<GstPad> mixerPad;
     String role;
+    String deviceId;
+    GRefPtr<GstDevice> device;
 };
 
 enum {
@@ -100,7 +102,7 @@ static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
 
         auto sink = adoptGRef(gst_pad_get_parent_element(pad));
         uint64_t periodTime = gst_util_uint64_scale_ceil(AudioUtilities::renderQuantumSize, GST_SECOND, *sampleRate);
-        GStreamerAudioMixer::singleton().configureSourcePeriodTime(StringView::fromLatin1(GST_ELEMENT_NAME(sink.get())), periodTime);
+        GStreamerAudioMixer::singleton().configureSourcePeriodTime(CStringView::unsafeFromUTF8(GST_ELEMENT_NAME(sink.get())), periodTime);
         return GST_PAD_PROBE_OK;
     }), nullptr, nullptr);
     return true;
@@ -158,11 +160,11 @@ static GstStateChangeReturn webKitAudioSinkChangeState(GstElement* element, GstS
         if (priv->role == "webaudio"_s)
             forcedSampleRate = AudioDestination::hardwareSampleRate();
 #endif
-        priv->mixerPad = mixer.registerProducer(priv->interAudioSink.get(), forcedSampleRate);
+        priv->mixerPad = mixer.registerProducer(priv->interAudioSink.get(), forcedSampleRate, priv->deviceId, priv->device);
     }
 
     if (priv->mixerPad)
-        mixer.ensureState(stateChange);
+        mixer.ensureState(stateChange, priv->deviceId);
 
     GstStateChangeReturn result = GST_ELEMENT_CLASS(webkit_audio_sink_parent_class)->change_state(element, stateChange);
 
@@ -206,18 +208,63 @@ static void webkit_audio_sink_class_init(WebKitAudioSinkClass* klass)
     eklass->change_state = GST_DEBUG_FUNCPTR(webKitAudioSinkChangeState);
 }
 
-GstElement* /* (transfer floating) */ webkitAudioSinkNew(const String& role)
+GstElement* /* (transfer floating) */ webkitAudioSinkNew(const String& role, const String& deviceId, const GRefPtr<GstDevice>& device)
 {
     auto element = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_AUDIO_SINK, nullptr));
     auto audioSink = WEBKIT_AUDIO_SINK(element);
 
     audioSink->priv->role = role;
+    audioSink->priv->deviceId = deviceId;
+    if (device)
+        audioSink->priv->device = device;
     if (!webKitAudioSinkConfigure(audioSink)) {
         gst_object_unref(element);
         return nullptr;
     }
     ASSERT(g_object_is_floating(element));
     return element;
+}
+
+bool webkitAudioSinkSetDevice(GstElement* element, const String& deviceId, const GRefPtr<GstDevice>& device)
+{
+    if (!WEBKIT_IS_AUDIO_SINK(element))
+        return false;
+
+    auto* sink = WEBKIT_AUDIO_SINK(element);
+    auto* priv = sink->priv;
+
+    // No-op if already on the requested device.
+    if (priv->deviceId == deviceId)
+        return true;
+
+    auto& mixer = GStreamerAudioMixer::singleton();
+
+    if (priv->mixerPad) {
+        mixer.unregisterProducer(priv->mixerPad);
+        priv->mixerPad = nullptr;
+    }
+
+    priv->deviceId = deviceId;
+    priv->device = device;
+
+    if (priv->interAudioSink) {
+        std::optional<int> forcedSampleRate;
+#if ENABLE(WEB_AUDIO)
+        if (priv->role == "webaudio"_s)
+            forcedSampleRate = AudioDestination::hardwareSampleRate();
+#endif
+        priv->mixerPad = mixer.registerProducer(priv->interAudioSink.get(), forcedSampleRate, priv->deviceId, priv->device);
+
+        // Bring the new pipeline to the current element state.
+        GstState currentState;
+        gst_element_get_state(element, &currentState, nullptr, 0);
+        if (currentState >= GST_STATE_PAUSED) {
+            mixer.ensureState(GST_STATE_CHANGE_READY_TO_PAUSED, priv->deviceId);
+            if (currentState >= GST_STATE_PLAYING)
+                mixer.ensureState(GST_STATE_CHANGE_PAUSED_TO_PLAYING, priv->deviceId);
+        }
+    }
+    return true;
 }
 
 #undef GST_CAT_DEFAULT

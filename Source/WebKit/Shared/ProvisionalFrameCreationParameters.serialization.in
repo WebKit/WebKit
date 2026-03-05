@@ -27,6 +27,6 @@ struct WebKit::ProvisionalFrameCreationParameters {
     WebCore::SandboxFlags effectiveSandboxFlags;
     WebCore::ReferrerPolicy effectiveReferrerPolicy;
     WebCore::ScrollbarMode scrollingMode;
-    std::optional<WebCore::IntSize> initialSize;
+    std::optional<WebCore::IntRect> initialRect;
     WebKit::CommitTiming commitTiming;
 };

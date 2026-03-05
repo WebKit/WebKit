@@ -50,7 +50,7 @@ G_DEFINE_BOXED_TYPE(WebKitJavascriptResult, webkit_javascript_result, webkit_jav
 WebKitJavascriptResult* webkitJavascriptResultCreate(WebKit::JavaScriptEvaluationResult&& scriptResult)
 {
     WebKitJavascriptResult* result = static_cast<WebKitJavascriptResult*>(fastMalloc(sizeof(WebKitJavascriptResult)));
-    new (result) WebKitJavascriptResult(WTFMove(scriptResult));
+    new (result) WebKitJavascriptResult(WTF::move(scriptResult));
     return result;
 }
 

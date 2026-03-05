@@ -73,7 +73,7 @@ void WaveShaperProcessor::setOversampleForBindings(OverSampleType oversample)
         return;
 
     for (auto& audioDSPKernel : m_kernels)
-        static_cast<WaveShaperDSPKernel&>(*audioDSPKernel).lazyInitializeOversampling();
+        downcast<WaveShaperDSPKernel>(*audioDSPKernel).lazyInitializeOversampling();
 }
 
 void WaveShaperProcessor::process(const AudioBus& source, AudioBus& destination, size_t framesToProcess)
@@ -98,7 +98,7 @@ void WaveShaperProcessor::process(const AudioBus& source, AudioBus& destination,
 
     // For each channel of our input, process using the corresponding WaveShaperDSPKernel into the output channel.
     for (size_t i = 0; i < m_kernels.size(); ++i)
-        static_cast<WaveShaperDSPKernel&>(*m_kernels[i]).process(source.channel(i)->span().first(framesToProcess), destination.channel(i)->mutableSpan());
+        downcast<WaveShaperDSPKernel>(*m_kernels[i]).process(source.channel(i)->span().first(framesToProcess), destination.channel(i)->mutableSpan());
 }
 
 } // namespace WebCore

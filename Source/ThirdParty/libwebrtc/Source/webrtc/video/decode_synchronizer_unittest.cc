@@ -10,7 +10,6 @@
 
 #include "video/decode_synchronizer.h"
 
-#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <utility>
@@ -29,7 +28,6 @@
 
 using ::testing::_;
 using ::testing::Eq;
-using ::testing::Invoke;
 using ::testing::Mock;
 using ::testing::MockFunction;
 using ::testing::Return;
@@ -242,9 +240,9 @@ TEST(DecodeSynchronizerStandaloneTest,
                                           time_controller.GetMainThread());
   absl::AnyInvocable<void() &&> callback;
   EXPECT_CALL(metronome, RequestCallOnNextTick)
-      .WillOnce(Invoke([&callback](absl::AnyInvocable<void()&&> cb) {
+      .WillOnce([&callback](absl::AnyInvocable<void() &&> cb) {
         callback = std::move(cb);
-      }));
+      });
   auto scheduler = decode_synchronizer_.CreateSynchronizedFrameScheduler();
   auto scheduler2 = decode_synchronizer_.CreateSynchronizedFrameScheduler();
   scheduler->Stop();

@@ -165,6 +165,7 @@ void DisplayGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->robustResourceInitializationANGLE = true;
 
     outExtensions->createContextPassthroughShadersANGLE =
+        !getRenderer()->getFeatures().disablePassthroughShaders.enabled &&
         getRenderer()->getFunctions()->standard == STANDARD_GL_ES;
 }
 

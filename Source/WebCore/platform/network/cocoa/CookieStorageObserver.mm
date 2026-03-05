@@ -106,19 +106,30 @@ void CookieStorageObserver::startObserving(WTF::Function<void()>&& callback)
     ASSERT(!m_observerAdapter);
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-    m_cookieChangeCallback = WTFMove(callback);
+    m_cookieChangeCallback = WTF::move(callback);
     m_observerAdapter = adoptNS([[WebCookieObserverAdapter alloc] initWithObserver:*this]);
 
     if (!m_hasRegisteredInternalsForNotifications) {
-        if (m_cookieStorage.get() != [NSHTTPCookieStorage sharedHTTPCookieStorage]) {
-            RetainPtr internalObject = (static_cast<WebNSHTTPCookieStorageDummyForInternalAccess *>(m_cookieStorage.get()))->_internal;
-            [internalObject registerForPostingNotificationsWithContext:m_cookieStorage.get()];
-        }
-
+        registerInternalsForNotifications(false);
         m_hasRegisteredInternalsForNotifications = true;
     }
 
     [[NSNotificationCenter defaultCenter] addObserver:m_observerAdapter.get() selector:@selector(cookiesChangedNotificationHandler:) name:NSHTTPCookieManagerCookiesChangedNotification object:m_cookieStorage.get()];
+}
+
+void CookieStorageObserver::registerInternalsForNotifications(bool isReregistering)
+{
+    // FIXME: rdar://168454473 (Remove workaround in CookieStorageObserver once CFNetwork bug is resolved)
+    ASSERT(isMainThread());
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
+    if (isReregistering && !m_hasRegisteredInternalsForNotifications)
+        return;
+
+    if (m_cookieStorage.get() != [NSHTTPCookieStorage sharedHTTPCookieStorage]) {
+        RetainPtr internalObject = (static_cast<WebNSHTTPCookieStorageDummyForInternalAccess *>(m_cookieStorage.get()))->_internal;
+        [internalObject registerForPostingNotificationsWithContext:m_cookieStorage.get()];
+    }
 }
 
 void CookieStorageObserver::stopObserving()

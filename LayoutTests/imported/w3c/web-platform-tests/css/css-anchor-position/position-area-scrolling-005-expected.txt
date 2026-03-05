@@ -1,9 +1,9 @@
 
 PASS Initial scroll position
 FAIL Scroll to 40,60 assert_equals: anchored x expected 60 but got 100
-FAIL Scroll to 100,150 assert_equals: anchored y expected 100 but got 25
+PASS Scroll to 100,200
 FAIL Scroll to 0,0 assert_equals: anchored x expected 150 but got 50
 PASS Redisplay at 0,0
-PASS Scroll to 750,100
-PASS Scroll to 750,196
+PASS Scroll to 200,100
+PASS Scroll to 200,200
 

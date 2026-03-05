@@ -40,7 +40,7 @@ namespace WebCore {
 class RTCDataChannelRemoteSource : public RTCDataChannelHandlerClient, public RefCounted<RTCDataChannelRemoteSource> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(RTCDataChannelRemoteSource, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<RTCDataChannelRemoteSource> create(RTCDataChannelIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
+    WEBCORE_EXPORT static Ref<RTCDataChannelRemoteSource> create(RTCDataChannelIdentifier localIdentifier, RTCDataChannelIdentifier remoteIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
     ~RTCDataChannelRemoteSource();
 
     void ref() const final { RefCounted::ref(); }
@@ -51,17 +51,19 @@ public:
     void close() { m_handler->close(); }
 
 private:
-    WEBCORE_EXPORT RTCDataChannelRemoteSource(RTCDataChannelIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
+    WEBCORE_EXPORT RTCDataChannelRemoteSource(RTCDataChannelIdentifier localIdentifier, RTCDataChannelIdentifier remoteIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
 
     // RTCDataChannelHandlerClient
-    void didChangeReadyState(RTCDataChannelState state) final { m_connection->didChangeReadyState(m_identifier, state); }
-    void didReceiveStringData(const String& text) final { m_connection->didReceiveStringData(m_identifier, text); }
-    void didReceiveRawData(std::span<const uint8_t> data) final { m_connection->didReceiveRawData(m_identifier, data); }
-    void didDetectError(Ref<RTCError>&& error) final { m_connection->didDetectError(m_identifier, error->errorDetail(), error->message()); }
-    void bufferedAmountIsDecreasing(size_t amount) final { m_connection->bufferedAmountIsDecreasing(m_identifier, amount); }
-    size_t bufferedAmount() const final { return 0; }
+    void didChangeReadyState(RTCDataChannelState) final;
+    void didReceiveStringData(const String&) final;
+    void didReceiveRawData(std::span<const uint8_t>) final;
+    void didDetectError(Ref<RTCError>&&) final;
+    void bufferedAmountIsDecreasing(size_t) final;
+    size_t NODELETE bufferedAmount() const final;
+    void peerConnectionIsClosing() final;
 
-    RTCDataChannelIdentifier m_identifier;
+    const RTCDataChannelIdentifier m_remoteIdentifier;
+    bool m_isClosed { false };
     const UniqueRef<RTCDataChannelHandler> m_handler;
     const Ref<RTCDataChannelRemoteSourceConnection> m_connection;
 };

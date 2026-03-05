@@ -23,8 +23,10 @@
 
 from __future__ import annotations
 
+import re
 import sys
 from dataclasses import dataclass, field
+from decimal import Decimal
 from pathlib import Path
 from enum import Enum
 from typing import Any, NamedTuple, Optional, Union
@@ -41,6 +43,8 @@ if sys.version_info < (3, 11):
 else:
     from enum import StrEnum
 
+VERSION_REQ = re.compile(r'(?P<platform>[a-zA-Z]+) ?(?P<op>==|!=|>|>=|<=|<) '
+                         r'?(?P<version>\d+(\.\d+\*?|\.\*)?)', flags=re.ASCII)
 
 @dataclass
 class AllowedSPI:
@@ -51,6 +55,8 @@ class AllowedSPI:
     selectors: list[Selector]
     classes: list[str]
     requires: list[str] = field(default_factory=list)
+    requires_os: list[RequiredVersion] = field(default_factory=list)
+    requires_sdk: list[RequiredVersion] = field(default_factory=list)
     allow_unused: bool = False
 
     class Selector(NamedTuple):
@@ -60,6 +66,11 @@ class AllowedSPI:
     class Bugs(NamedTuple):
         request: Optional[str]
         cleanup: Optional[str]
+
+    class RequiredVersion(NamedTuple):
+        platform: str
+        operator: str
+        version: str
 
 
 class AllowedReason(StrEnum):
@@ -79,6 +90,30 @@ class AllowedReason(StrEnum):
     # For SPI that has same behavior as API except in internal builds.
     EQUIVALENT_API = 'equivalent-api'
 
+
+def _transform_wildcard_version(op: str, version: str) -> tuple[str, str]:
+    '''
+    As syntactic sugar, transform a gte (<=) version clause ending in a
+    wildcard into its logical equivalent. This is helpful to avoid writing what
+    appear to be unreleased marketing versions in allowlists. For example:
+
+        iOS <= 26.*      =>     iOS < 27.00
+        iOS <= 26.3*     =>     iOS < 26.40
+    '''
+    if op != '<=':
+        raise ValueError(op)
+
+    new_version = Decimal(version.replace('*', '99'))
+    # `exponent` represents the location of the decimal point, which varies
+    # based on where the "*" appeared. For example: 26.* => 26.99 => E -2
+    _, _, exponent = new_version.as_tuple()
+    assert isinstance(exponent, int), \
+        f'exponent of version number "{version}" outside representible bounds'
+    # Increment to the next possible new_version number.
+    new_version += Decimal(10) ** exponent
+    # Major and minor components must be no more than two digits.
+    new_version = min(new_version, Decimal('99.99'))
+    return '<', f'{new_version:.2f}'
 
 @dataclass
 class AllowList:
@@ -110,9 +145,32 @@ class AllowList:
                 bugs = AllowedSPI.Bugs(entry.pop('request', None),
                                        entry.pop('cleanup', None))
                 allow_unused = bool(entry.pop('allow-unused', False))
+
+                requires_os: list[AllowedSPI.RequiredVersion] = []
+                requires_sdk: list[AllowedSPI.RequiredVersion] = []
+                for required_versions, key in ((requires_os, 'requires-os'),
+                                               (requires_sdk, 'requires-sdk')):
+                    for clause in entry.pop(key, []):
+                        m = VERSION_REQ.fullmatch(clause)
+                        if not m:
+                            raise ValueError('unmatched requirement '
+                                             f'clause: "{clause}"')
+                        platform, op, version = m.group('platform', 'op',
+                                                        'version')
+                        if version.endswith('*'):
+                            if op != '<=':
+                                raise ValueError('wildcard in required version '
+                                                 'only supported when operator '
+                                                 f'is "<=": "{clause}"')
+                            op, version = _transform_wildcard_version(op, version)
+                        required_versions.append(
+                            AllowedSPI.RequiredVersion(platform, op,
+                                                       version))
                 allow = AllowedSPI(reason=reason, bugs=bugs, symbols=syms,
                                    selectors=sels, classes=clss, requires=reqs,
-                                   allow_unused=allow_unused)
+                                   allow_unused=allow_unused,
+                                   requires_os=requires_os,
+                                   requires_sdk=requires_sdk)
 
                 if reason == AllowedReason.TEMPORARY_USAGE:
                     if not bugs.cleanup:
@@ -124,8 +182,16 @@ class AllowList:
                         raise ValueError('Allowlist entries marked '
                                          'temporary-usage must have a '
                                          f'"cleanup" bug: {allow}')
-                elif reason not in (AllowedReason.LEGACY,
-                                    AllowedReason.STAGING):
+                elif reason == AllowedReason.STAGING:
+                    pass
+                    # FIXME: Disabled while allowlist entries are cleaned up,
+                    # cf. rdar://170360205
+                    # if not requires_sdk:
+                    #     raise ValueError('Allowlist entries marked staging '
+                    #                      'must have a "requires-sdk" clause '
+                    #                      'that specifies which SDK(s) do not '
+                    #                      'yet have the API avaiable: {allow}')
+                elif reason != AllowedReason.LEGACY:
                     if not bugs.request:
                         raise ValueError('Allowlist entries must have a '
                                          f'"request" bug: {allow}')

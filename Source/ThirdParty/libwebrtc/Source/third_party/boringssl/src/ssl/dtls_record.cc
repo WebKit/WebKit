@@ -504,7 +504,7 @@ bool dtls_seal_record(SSL *ssl, DTLSRecordNumber *out_number, uint8_t *out,
   }
 
   bool dtls13_header = use_dtls13_record_header(ssl, epoch);
-  uint8_t *extra_in = NULL;
+  uint8_t *extra_in = nullptr;
   size_t extra_in_len = 0;
   if (dtls13_header) {
     extra_in = &type;

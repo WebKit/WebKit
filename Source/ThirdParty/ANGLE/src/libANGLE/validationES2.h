@@ -345,7 +345,7 @@ ANGLE_INLINE bool ValidateGenBuffers(const Context *context,
                                      GLint n,
                                      const BufferID *buffers)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, buffers);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n, buffers);
 }
 
 ANGLE_INLINE bool ValidateGenFramebuffers(const Context *context,
@@ -353,7 +353,8 @@ ANGLE_INLINE bool ValidateGenFramebuffers(const Context *context,
                                           GLint n,
                                           const FramebufferID *framebuffers)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, framebuffers);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n,
+                               framebuffers);
 }
 
 ANGLE_INLINE bool ValidateGenRenderbuffers(const Context *context,
@@ -361,7 +362,8 @@ ANGLE_INLINE bool ValidateGenRenderbuffers(const Context *context,
                                            GLint n,
                                            const RenderbufferID *renderbuffers)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, renderbuffers);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n,
+                               renderbuffers);
 }
 
 ANGLE_INLINE bool ValidateGenTextures(const Context *context,
@@ -369,7 +371,7 @@ ANGLE_INLINE bool ValidateGenTextures(const Context *context,
                                       GLint n,
                                       const TextureID *textures)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, textures);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n, textures);
 }
 
 ANGLE_INLINE bool ValidateGenerateMipmap(const Context *context,

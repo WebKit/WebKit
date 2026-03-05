@@ -75,7 +75,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_type(type)
     , m_level(level)
     , m_message(message)
-    , m_callStack(WTFMove(callStack))
+    , m_callStack(WTF::move(callStack))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
@@ -93,8 +93,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_type(type)
     , m_level(level)
     , m_message(message)
-    , m_arguments(WTFMove(arguments))
-    , m_callStack(WTFMove(callStack))
+    , m_arguments(WTF::move(arguments))
+    , m_callStack(WTF::move(callStack))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
@@ -112,7 +112,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_type(type)
     , m_level(level)
     , m_message(message)
-    , m_arguments(WTFMove(arguments))
+    , m_arguments(WTF::move(arguments))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
@@ -311,14 +311,14 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
             }
 
             if (argumentsObject->length())
-                messageObject->setParameters(WTFMove(argumentsObject));
+                messageObject->setParameters(WTF::move(argumentsObject));
         }
     }
 
     if (m_callStack)
         messageObject->setStackTrace(m_callStack->buildInspectorObject());
 
-    consoleFrontendDispatcher.messageAdded(WTFMove(messageObject));
+    consoleFrontendDispatcher.messageAdded(WTF::move(messageObject));
 }
 
 String ConsoleMessage::toString() const

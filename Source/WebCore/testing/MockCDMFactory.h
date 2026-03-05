@@ -41,15 +41,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class MockCDM;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MockCDM> : std::true_type { };
-}
-
-namespace WebCore {
 
 class MockCDMFactory : public RefCounted<MockCDMFactory>, public CDMFactory {
 public:
@@ -63,10 +54,10 @@ public:
     void setSupportedDataTypes(Vector<String>&&);
 
     const Vector<MediaKeySessionType>& supportedSessionTypes() const { return m_supportedSessionTypes; }
-    void setSupportedSessionTypes(Vector<MediaKeySessionType>&& types) { m_supportedSessionTypes = WTFMove(types); }
+    void setSupportedSessionTypes(Vector<MediaKeySessionType>&& types) { m_supportedSessionTypes = WTF::move(types); }
 
     const Vector<String>& supportedRobustness() const { return m_supportedRobustness; }
-    void setSupportedRobustness(Vector<String>&& supportedRobustness) { m_supportedRobustness = WTFMove(supportedRobustness); }
+    void setSupportedRobustness(Vector<String>&& supportedRobustness) { m_supportedRobustness = WTF::move(supportedRobustness); }
 
     MediaKeysRequirement distinctiveIdentifiersRequirement() const { return m_distinctiveIdentifiersRequirement; }
     void setDistinctiveIdentifiersRequirement(MediaKeysRequirement requirement) { m_distinctiveIdentifiersRequirement = requirement; }
@@ -84,7 +75,7 @@ public:
     void setSupportsSessions(bool flag) { m_supportsSessions = flag; }
 
     const Vector<MediaKeyEncryptionScheme>& supportedEncryptionSchemes() const { return m_supportedEncryptionSchemes; }
-    void setSupportedEncryptionSchemes(Vector<MediaKeyEncryptionScheme>&& schemes) { m_supportedEncryptionSchemes = WTFMove(schemes); }
+    void setSupportedEncryptionSchemes(Vector<MediaKeyEncryptionScheme>&& schemes) { m_supportedEncryptionSchemes = WTF::move(schemes); }
 
     void unregister();
 
@@ -114,6 +105,7 @@ private:
 
 class MockCDM : public CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(MockCDM);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockCDM);
 public:
     MockCDM(WeakPtr<MockCDMFactory>, const String&);
 
@@ -145,13 +137,15 @@ private:
 
 class MockCDMInstance : public CDMInstance, public CanMakeWeakPtr<MockCDMInstance> {
 public:
-    MockCDMInstance(WeakPtr<MockCDM>);
+    static Ref<MockCDMInstance> create(MockCDM&);
 
     MockCDMFactory* factory() const { return m_cdm ? m_cdm->factory() : nullptr; }
     bool distinctiveIdentifiersAllowed() const { return m_distinctiveIdentifiersAllowed; }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
 
 private:
+    explicit MockCDMInstance(MockCDM&);
+
     ImplementationType implementationType() const final { return ImplementationType::Mock; }
     void initializeWithConfiguration(const MediaKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
@@ -166,7 +160,7 @@ private:
 
 class MockCDMInstanceSession : public CDMInstanceSession {
 public:
-    MockCDMInstanceSession(WeakPtr<MockCDMInstance>&&);
+    explicit MockCDMInstanceSession(WeakPtr<MockCDMInstance>&&);
 
 private:
     void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;

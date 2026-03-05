@@ -1,0 +1,12 @@
+Test that scrubbing the timeline does not propagate touch events to parent elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS containerReceivedTouchStart is false
+PASS containerReceivedTouchMove is false
+PASS containerReceivedTouchEnd is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

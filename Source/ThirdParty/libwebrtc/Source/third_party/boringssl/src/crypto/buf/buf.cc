@@ -53,7 +53,7 @@ int BUF_MEM_reserve(BUF_MEM *buf, size_t cap) {
 
   char *new_buf =
       reinterpret_cast<char *>(OPENSSL_realloc(buf->data, alloc_size));
-  if (new_buf == NULL) {
+  if (new_buf == nullptr) {
     return 0;
   }
 

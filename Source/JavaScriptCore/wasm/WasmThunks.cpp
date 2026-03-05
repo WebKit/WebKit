@@ -127,7 +127,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     CCallHelpers jit;
     JIT_COMMENT(jit, "throwStackOverflowFromWasmThunkGenerator");
 
-    int32_t stackSpace = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(RegisterSetBuilder::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
+    int32_t stackSpace = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(RegisterSet::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
     ASSERT(static_cast<unsigned>(stackSpace) < Options::softReservedZoneSize());
     jit.addPtr(CCallHelpers::TrustedImm32(-stackSpace), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
@@ -144,13 +144,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> materializeBaselineDataGenerator(const Abs
     jit.emitFunctionPrologue();
 
     const unsigned extraPaddingBytes = 0;
-    RegisterSetBuilder builder;
+    RegisterSet builder;
     for (auto regs : wasmCallingConvention().jsrArgs)
         builder.add(regs, IgnoreVectors);
     for (auto reg : wasmCallingConvention().fprArgs)
         builder.add(reg, Options::useWasmSIMD() ? Width128 : Width64);
 
-    auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(builder.buildWithLowerBits()).buildWithLowerBits();
+    auto registersToSpill = RegisterSet::registersToSaveForCCall(builder.normalizeWidths()).normalizeWidths();
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     // We can clobber these argument registers now since we saved them and later we restore them.
@@ -205,13 +205,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> callPolymorphicCalleeGenerator(const Abstr
     needsPolyMaterialization.link(jit);
     jit.emitFunctionPrologue();
     const unsigned extraPaddingBytes = 0;
-    RegisterSetBuilder builder;
+    RegisterSet builder;
     for (auto regs : wasmCallingConvention().jsrArgs)
         builder.add(regs, IgnoreVectors);
     for (auto reg : wasmCallingConvention().fprArgs)
         builder.add(reg, Options::useWasmSIMD() ? Width128 : Width64);
 
-    auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(builder.buildWithLowerBits()).buildWithLowerBits();
+    auto registersToSpill = RegisterSet::registersToSaveForCCall(builder.normalizeWidths()).normalizeWidths();
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     // We can clobber these argument registers now since we saved them and later we restore them.
@@ -357,7 +357,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(co
     jit.emitFunctionPrologue();
 
     const unsigned extraPaddingBytes = 0;
-    auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(isSIMDContext ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits();
+    auto registersToSpill = RegisterSet::registersToSaveForCCall(isSIMDContext ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()).normalizeWidths();
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     // We can clobber these argument registers now since we saved them and later we restore them.

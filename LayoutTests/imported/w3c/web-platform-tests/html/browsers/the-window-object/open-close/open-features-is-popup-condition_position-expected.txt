@@ -1,12 +1,12 @@
 
-FAIL "left=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "screenX=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "top=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "screenY=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "width=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "innerWidth=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "outerWidth=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "height=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "innerHeight=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "outerHeight=500" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
+PASS "left=500" should set BarProp visibility to false
+PASS "screenX=500" should set BarProp visibility to false
+PASS "top=500" should set BarProp visibility to false
+PASS "screenY=500" should set BarProp visibility to false
+PASS "width=500" should set BarProp visibility to false
+PASS "innerWidth=500" should set BarProp visibility to false
+PASS "outerWidth=500" should set BarProp visibility to false
+PASS "height=500" should set BarProp visibility to false
+PASS "innerHeight=500" should set BarProp visibility to false
+PASS "outerHeight=500" should set BarProp visibility to false
 

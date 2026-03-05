@@ -9,7 +9,7 @@ layer at (0,0) size 800x174
       RenderBlock (anonymous) at (0,18) size 784x140
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,26) size 97x136 clip at (9,27) size 80x134 scrollY 98 scrollHeight 420
+layer at (8,26) size 97x136 clip at (9,27) size 80x134 scrollY 97 scrollHeight 420
   RenderTextControl {TEXTAREA} at (0,0) size 97x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (6,3) size 70x416
       RenderText {#text} at (0,0) size 19x403

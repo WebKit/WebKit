@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include "AirArg.h"
@@ -62,12 +64,12 @@ enum class CatchKind {
 OVERLOAD_RELATIONAL_OPERATORS_FOR_ENUM_CLASS_WITH_INTEGRALS(CatchKind);
 
 template<typename EnclosingStack, typename NewStack>
-void splitStack(BlockSignature signature, EnclosingStack& enclosingStack, NewStack& newStack)
+void splitStack(const BlockSignature& signature, EnclosingStack& enclosingStack, NewStack& newStack)
 {
-    ASSERT(enclosingStack.size() >= signature.m_signature->argumentCount());
+    ASSERT(enclosingStack.size() >= signature.argumentCount());
 
-    unsigned offset = enclosingStack.size() - signature.m_signature->argumentCount();
-    newStack = NewStack(signature.m_signature->argumentCount(), [&](size_t i) {
+    unsigned offset = enclosingStack.size() - signature.argumentCount();
+    newStack = NewStack(signature.argumentCount(), [&](size_t i) {
         return enclosingStack.at(i + offset);
     });
     enclosingStack.shrink(offset);
@@ -153,8 +155,8 @@ public:
 
     FunctionParser(Context&, std::span<const uint8_t> function, const TypeDefinition&, const ModuleInformation&);
 
-    Result WARN_UNUSED_RETURN parse();
-    Result WARN_UNUSED_RETURN parseConstantExpression();
+    [[nodiscard]] Result parse();
+    [[nodiscard]] Result parseConstantExpression();
 
     OpType currentOpcode() const { return m_currentOpcode; }
     uint32_t currentExtendedOpcode() const { return m_currentExtOp; }
@@ -205,25 +207,25 @@ public:
 private:
     static constexpr bool verbose = false;
 
-    PartialResult WARN_UNUSED_RETURN parseBody();
-    PartialResult WARN_UNUSED_RETURN parseExpression();
-    PartialResult WARN_UNUSED_RETURN parseUnreachableExpression();
-    PartialResult WARN_UNUSED_RETURN unifyControl(ArgumentList&, unsigned level);
-    PartialResult WARN_UNUSED_RETURN checkLocalInitialized(uint32_t);
-    PartialResult WARN_UNUSED_RETURN checkExpressionStack(const ControlType&, bool forceSignature = false);
+    [[nodiscard]] PartialResult parseBody();
+    [[nodiscard]] PartialResult parseExpression();
+    [[nodiscard]] PartialResult parseUnreachableExpression();
+    [[nodiscard]] PartialResult unifyControl(ArgumentList&, unsigned level);
+    [[nodiscard]] PartialResult checkLocalInitialized(uint32_t);
+    [[nodiscard]] PartialResult checkExpressionStack(const ControlType&, bool forceSignature = false);
 
     enum BranchConditionalityTag {
         Unconditional,
         Conditional
     };
 
-    PartialResult WARN_UNUSED_RETURN checkBranchTarget(const ControlType&, BranchConditionalityTag);
+    [[nodiscard]] PartialResult checkBranchTarget(const ControlType&, BranchConditionalityTag);
 
-    PartialResult WARN_UNUSED_RETURN parseImmLaneIdx(uint8_t laneCount, uint8_t&);
-    PartialResult WARN_UNUSED_RETURN parseBlockSignature(const ModuleInformation&, BlockSignature&);
-    PartialResult WARN_UNUSED_RETURN parseReftypeSignature(const ModuleInformation&, BlockSignature&);
+    [[nodiscard]] PartialResult parseImmLaneIdx(uint8_t laneCount, uint8_t&);
+    [[nodiscard]] PartialResult parseBlockSignature(const ModuleInformation&, BlockSignature&);
+    [[nodiscard]] PartialResult parseReftypeSignature(const ModuleInformation&, BlockSignature&);
 
-    PartialResult WARN_UNUSED_RETURN parseNestedBlocksEagerly(bool&);
+    [[nodiscard]] PartialResult parseNestedBlocksEagerly(bool&);
     void switchToBlock(ControlType&&, Stack&&);
 
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do { \
@@ -233,90 +235,88 @@ private:
     } while (0)
 
     using UnaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType&);
-    PartialResult WARN_UNUSED_RETURN unaryCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
-    PartialResult WARN_UNUSED_RETURN unaryCompareCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
+    [[nodiscard]] PartialResult unaryCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
+    [[nodiscard]] PartialResult unaryCompareCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
     using BinaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType, ExpressionType&);
-    PartialResult WARN_UNUSED_RETURN binaryCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
-    PartialResult WARN_UNUSED_RETURN binaryCompareCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
+    [[nodiscard]] PartialResult binaryCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
+    [[nodiscard]] PartialResult binaryCompareCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
 
-    PartialResult WARN_UNUSED_RETURN store(Type memoryType);
-    PartialResult WARN_UNUSED_RETURN load(Type memoryType);
+    [[nodiscard]] PartialResult store(Type memoryType);
+    [[nodiscard]] PartialResult load(Type memoryType);
 
-    PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, Type returnType, Type operandType);
+    [[nodiscard]] PartialResult truncSaturated(Ext1OpType, Type returnType, Type operandType);
 
-    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type memoryType);
-    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType, Type memoryType);
-    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType, Type memoryType);
-    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType, Type memoryType);
-    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType, Type memoryType);
-    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType);
-    PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType);
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type memoryType);
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type memoryType);
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type memoryType);
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type memoryType);
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, Type memoryType);
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType);
+    [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType);
 
 #if ENABLE(B3_JIT)
     template<bool isReachable, typename = void>
-    PartialResult
-    WARN_UNUSED_RETURN
-    simd(SIMDLaneOperation, SIMDLane, SIMDSignMode, B3::Air::Arg optionalRelation = { });
+    [[nodiscard]] PartialResult simd(SIMDLaneOperation, SIMDLane, SIMDSignMode, B3::Air::Arg optionalRelation = { });
 #endif
 
-    PartialResult WARN_UNUSED_RETURN parseTableIndex(unsigned&);
-    PartialResult WARN_UNUSED_RETURN parseElementIndex(unsigned&);
-    PartialResult WARN_UNUSED_RETURN parseDataSegmentIndex(unsigned&);
+    [[nodiscard]] PartialResult parseTableIndex(unsigned&);
+    [[nodiscard]] PartialResult parseElementIndex(unsigned&);
+    [[nodiscard]] PartialResult parseDataSegmentIndex(unsigned&);
 
-    PartialResult WARN_UNUSED_RETURN parseIndexForLocal(uint32_t&);
-    PartialResult WARN_UNUSED_RETURN parseIndexForGlobal(uint32_t&);
-    PartialResult WARN_UNUSED_RETURN parseFunctionIndex(FunctionSpaceIndex&);
-    PartialResult WARN_UNUSED_RETURN parseExceptionIndex(uint32_t&);
-    PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&, uint32_t = 0);
-    PartialResult WARN_UNUSED_RETURN parseDelegateTarget(uint32_t&, uint32_t);
+    [[nodiscard]] PartialResult parseIndexForLocal(uint32_t&);
+    [[nodiscard]] PartialResult parseIndexForGlobal(uint32_t&);
+    [[nodiscard]] PartialResult parseFunctionIndex(FunctionSpaceIndex&);
+    [[nodiscard]] PartialResult parseExceptionIndex(uint32_t&);
+    [[nodiscard]] PartialResult parseBranchTarget(uint32_t&, uint32_t = 0);
+    [[nodiscard]] PartialResult parseDelegateTarget(uint32_t&, uint32_t);
 
     struct TableInitImmediates {
         unsigned elementIndex;
         unsigned tableIndex;
     };
-    PartialResult WARN_UNUSED_RETURN parseTableInitImmediates(TableInitImmediates&);
+    [[nodiscard]] PartialResult parseTableInitImmediates(TableInitImmediates&);
 
     struct TableCopyImmediates {
         unsigned srcTableIndex;
         unsigned dstTableIndex;
     };
-    PartialResult WARN_UNUSED_RETURN parseTableCopyImmediates(TableCopyImmediates&);
+    [[nodiscard]] PartialResult parseTableCopyImmediates(TableCopyImmediates&);
 
     struct AnnotatedSelectImmediates {
         unsigned sizeOfAnnotationVector;
         Type targetType;
     };
-    PartialResult WARN_UNUSED_RETURN parseAnnotatedSelectImmediates(AnnotatedSelectImmediates&);
+    [[nodiscard]] PartialResult parseAnnotatedSelectImmediates(AnnotatedSelectImmediates&);
 
-    PartialResult WARN_UNUSED_RETURN parseMemoryFillImmediate();
-    PartialResult WARN_UNUSED_RETURN parseMemoryCopyImmediates();
+    [[nodiscard]] PartialResult parseMemoryFillImmediate();
+    [[nodiscard]] PartialResult parseMemoryCopyImmediates();
 
     struct MemoryInitImmediates {
         unsigned dataSegmentIndex;
         unsigned unused;
     };
-    PartialResult WARN_UNUSED_RETURN parseMemoryInitImmediates(MemoryInitImmediates&);
+    [[nodiscard]] PartialResult parseMemoryInitImmediates(MemoryInitImmediates&);
 
-    PartialResult WARN_UNUSED_RETURN parseStructTypeIndex(uint32_t& structTypeIndex, ASCIILiteral operation);
-    PartialResult WARN_UNUSED_RETURN parseStructFieldIndex(uint32_t& structFieldIndex, const StructType&, ASCIILiteral operation);
+    [[nodiscard]] PartialResult parseStructTypeIndex(uint32_t& structTypeIndex, ASCIILiteral operation);
+    [[nodiscard]] PartialResult parseStructFieldIndex(uint32_t& structFieldIndex, const StructType&, ASCIILiteral operation);
 
     struct StructTypeIndexAndFieldIndex {
         uint32_t structTypeIndex;
         uint32_t fieldIndex;
     };
-    PartialResult WARN_UNUSED_RETURN parseStructTypeIndexAndFieldIndex(StructTypeIndexAndFieldIndex& result, ASCIILiteral operation);
+    [[nodiscard]] PartialResult parseStructTypeIndexAndFieldIndex(StructTypeIndexAndFieldIndex& result, ASCIILiteral operation);
 
     struct StructFieldManipulation {
         StructTypeIndexAndFieldIndex indices;
         TypedExpression structReference;
         FieldType field;
     };
-    PartialResult WARN_UNUSED_RETURN parseStructFieldManipulation(StructFieldManipulation& result, ASCIILiteral operation);
+    [[nodiscard]] PartialResult parseStructFieldManipulation(StructFieldManipulation& result, ASCIILiteral operation);
 
 #define WASM_TRY_ADD_TO_CONTEXT(add_expression) WASM_FAIL_IF_HELPER_FAILS(m_context.add_expression)
 
     template <typename ...Args>
-    NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN validationFail(const Args&... args) const
+    [[nodiscard]] NEVER_INLINE UnexpectedResult validationFail(const Args&... args) const
     {
         using namespace FailureHelper; // See ADL comment in WasmParser.h.
         if (ASSERT_ENABLED && Options::crashOnFailedWasmValidate())
@@ -328,7 +328,7 @@ private:
     }
 
     template <typename Arg>
-    String WARN_UNUSED_RETURN validationFailHelper(const Arg& arg) const
+    [[nodiscard]] String validationFailHelper(const Arg& arg) const
     {
         if constexpr (std::is_same<Arg, Type>())
             return typeToStringModuleRelative(arg);
@@ -378,14 +378,14 @@ private:
     // FIXME add a macro as above for WASM_TRY_APPEND_TO_CONTROL_STACK https://bugs.webkit.org/show_bug.cgi?id=165862
 
     void addReferencedFunctions(const Element&);
-    PartialResult WARN_UNUSED_RETURN parseArrayTypeDefinition(ASCIILiteral, bool, uint32_t&, FieldType&, Type&);
-    PartialResult WARN_UNUSED_RETURN parseBlockSignatureAndNotifySIMDUseIfNeeded(BlockSignature&);
+    [[nodiscard]] PartialResult parseArrayTypeDefinition(ASCIILiteral, bool, uint32_t&, FieldType&, Type&);
+    [[nodiscard]] PartialResult parseBlockSignatureAndNotifySIMDUseIfNeeded(BlockSignature&);
 
     Context& m_context;
     Stack m_expressionStack;
     ControlStack m_controlStack;
     Vector<Type, 16> m_locals;
-    Ref<const TypeDefinition> m_signature;
+    const Ref<const TypeDefinition> m_signature;
     const ModuleInformation& m_info;
 
     Vector<uint32_t> m_localInitStack;
@@ -406,14 +406,8 @@ template<typename Context>
 auto FunctionParser<Context>::parseBlockSignatureAndNotifySIMDUseIfNeeded(BlockSignature& signature) -> PartialResult
 {
     auto result = parseBlockSignature(m_info, signature);
-
-    // This check ensures the valid result and the non empty signature.
-    if (!result || !signature.m_signature)
-        return result;
-
-    if (signature.m_signature->hasReturnVector())
+    if (result && signature.hasReturnVector())
         m_context.notifyFunctionUsesSIMD();
-
     return result;
 }
 
@@ -508,7 +502,8 @@ auto FunctionParser<Context>::parseConstantExpression() -> Result
 template<typename Context>
 auto FunctionParser<Context>::parseBody() -> PartialResult
 {
-    m_controlStack.append({ { }, { }, 0, m_context.addTopLevel({ m_signature->template as<FunctionSignature>(), nullptr }) });
+    const auto& functionSignature = *m_signature->template as<FunctionSignature>();
+    m_controlStack.append({ { }, { }, 0, m_context.addTopLevel(BlockSignature { functionSignature }) });
     uint8_t op = 0;
     while (m_controlStack.size()) {
         m_currentOpcodeStartingOffset = m_offset;
@@ -548,7 +543,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseExpression());
         m_context.didParseOpcode();
     }
-    WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel({ m_signature->template as<FunctionSignature>(), nullptr }, m_expressionStack));
+    WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel(m_expressionStack));
     if (Context::validateFunctionBodySize)
         WASM_PARSER_FAIL_IF(m_offset != source().size(), "function body size doesn't match the expected size");
 
@@ -614,20 +609,20 @@ auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandle
             BlockSignature inlineSignature;
             WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
 
-            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature.m_signature->toString());
-            unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
-            for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.m_signature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature);
+            unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
+            for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
 
             int64_t oldSize = m_expressionStack.size();
             Stack newStack;
             ControlType control;
-            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, left, right, inlineSignature, m_expressionStack, control, newStack));
-            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-            ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, left, right, WTF::move(inlineSignature), m_expressionStack, control, newStack));
+            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
+            ASSERT(newStack.size() == control.signature().argumentCount());
 
-            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
-            m_expressionStack = WTFMove(newStack);
+            m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
+            m_expressionStack = WTF::move(newStack);
             m_context.didParseOpcode();
             return { };
         }
@@ -682,20 +677,20 @@ auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler 
             BlockSignature inlineSignature;
             WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
 
-            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature.m_signature->toString());
-            unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
-            for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.m_signature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature);
+            unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
+            for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
 
             int64_t oldSize = m_expressionStack.size();
             Stack newStack;
             ControlType control;
-            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, value, inlineSignature, m_expressionStack, control, newStack));
-            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-            ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, value, WTF::move(inlineSignature), m_expressionStack, control, newStack));
+            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
+            ASSERT(newStack.size() == control.signature().argumentCount());
 
-            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
-            m_expressionStack = WTFMove(newStack);
+            m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
+            m_expressionStack = WTF::move(newStack);
             return { };
         }
     }
@@ -709,17 +704,27 @@ auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler 
 template<typename Context>
 auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "load instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "load instruction without memory"_s);
 
     uint32_t alignment;
-    uint32_t offset;
+    uint64_t offset;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
+    if (m_info.theOnlyMemory().isMemory64())
+        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
+    else {
+        uint32_t offset32;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
+        offset = offset32;
+    }
+
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
+    if (m_info.theOnlyMemory().isMemory64())
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI64(), m_currentOpcode, " pointer type mismatch"_s);
+    else
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
 
     ExpressionType result;
     WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset));
@@ -730,19 +735,29 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
 template<typename Context>
 auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "store instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "store instruction without memory"_s);
 
     uint32_t alignment;
-    uint32_t offset;
+    uint64_t offset;
     TypedExpression value;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset"_s);
+    if (m_info.theOnlyMemory().isMemory64())
+        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get store offset"_s);
+    else {
+        uint32_t offset32;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get store offset"_s);
+        offset = offset32;
+    }
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
+    if (m_info.theOnlyMemory().isMemory64())
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI64(), m_currentOpcode, " pointer type mismatch"_s);
+    else
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
+
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
     WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(m_currentOpcode), pointer, value, offset));
@@ -766,7 +781,7 @@ auto FunctionParser<Context>::truncSaturated(Ext1OpType op, Type returnType, Typ
 template<typename Context>
 auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
     uint32_t offset;
@@ -787,7 +802,7 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
 template<typename Context>
 auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
     uint32_t offset;
@@ -809,7 +824,7 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
 template<typename Context>
 auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryType) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
     uint32_t offset;
@@ -833,7 +848,7 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
 template<typename Context>
 auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type memoryType) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
     uint32_t offset;
@@ -860,7 +875,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
 template<typename Context>
 auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
     uint32_t offset;
@@ -887,7 +902,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
 template<typename Context>
 auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
 {
-    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
     uint32_t offset;
@@ -975,7 +990,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         default: RELEASE_ASSERT_NOT_REACHED();
         }
 
-        WASM_VALIDATOR_FAIL_IF(!m_info.memory, "simd memory instructions need a memory defined in the module"_s);
+        WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "simd memory instructions need a memory defined in the module"_s);
 
         uint32_t alignment;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get simd memory op alignment"_s);
@@ -1756,7 +1771,7 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target, Branc
     if (!target.branchTargetArity())
         return { };
 
-    WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < target.branchTargetArity(), ControlType::isTopLevel(target) ? "branch out of function"_s : "branch to block"_s, " on expression stack of size "_s, m_expressionStack.size(), ", but block, "_s, target.signature().m_signature->toString() , " expects "_s, target.branchTargetArity(), " values"_s);
+    WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < target.branchTargetArity(), ControlType::isTopLevel(target) ? "branch out of function"_s : "branch to block"_s, " on expression stack of size "_s, m_expressionStack.size(), ", but block, "_s, target.signature() , " expects "_s, target.branchTargetArity(), " values"_s);
 
     unsigned offset = m_expressionStack.size() - target.branchTargetArity();
     for (unsigned i = 0; i < target.branchTargetArity(); ++i) {
@@ -1788,12 +1803,11 @@ auto FunctionParser<Context>::checkLocalInitialized(uint32_t index) -> PartialRe
 template<typename Context>
 auto FunctionParser<Context>::checkExpressionStack(const ControlType& controlData, bool forceSignature) -> PartialResult
 {
-    auto blockSignature = controlData.signature();
-    const FunctionSignature* signature = blockSignature.m_signature;
-    WASM_VALIDATOR_FAIL_IF(signature->returnCount() != m_expressionStack.size(), " block with type: "_s, signature->toString(), " returns: "_s, signature->returnCount(), " but stack has: "_s, m_expressionStack.size(), " values"_s);
-    for (unsigned i = 0; i < signature->returnCount(); ++i) {
+    const auto& blockSignature = controlData.signature();
+    WASM_VALIDATOR_FAIL_IF(blockSignature.returnCount() != m_expressionStack.size(), " block with type: "_s, blockSignature, " returns: "_s, blockSignature.returnCount(), " but stack has: "_s, m_expressionStack.size(), " values"_s);
+    for (unsigned i = 0; i < blockSignature.returnCount(); ++i) {
         const auto actualType = m_expressionStack[i].type();
-        const auto expectedType = signature->returnType(i);
+        const auto expectedType = blockSignature.returnType(i);
         WASM_VALIDATOR_FAIL_IF(!isSubtype(actualType, expectedType), "control flow returns with unexpected type. "_s, actualType, " is not a "_s, expectedType);
         if (forceSignature)
             m_expressionStack[i].setType(expectedType);
@@ -1855,21 +1869,21 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseNestedBlocksEagerly(bool& shoul
             Type type = { typeKind, TypeDefinition::invalidIndex };
             if (!(type.isVoid() || isValueType(type))) [[unlikely]]
                 return { };
-            inlineSignature = { m_typeInformation.thunkFor(type), nullptr };
+            inlineSignature = BlockSignature { type };
             m_offset++;
         } else
             return { };
 
-        ASSERT(!inlineSignature.m_signature->argumentCount());
+        ASSERT(!inlineSignature.argumentCount());
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType block;
-        WASM_TRY_ADD_TO_CONTEXT(addBlock(inlineSignature, m_expressionStack, block, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-        ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addBlock(WTF::move(inlineSignature), m_expressionStack, block, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == block.signature().argumentCount());
+        ASSERT(newStack.size() == block.signature().argumentCount());
 
-        switchToBlock(WTFMove(block), WTFMove(newStack));
+        switchToBlock(WTF::move(block), WTF::move(newStack));
 
         if (m_offset >= source().size()) {
             shouldContinue = false;
@@ -1910,7 +1924,8 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseBlockSignature(const ModuleInfo
 
         Type type = { typeKind, TypeDefinition::invalidIndex };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: "_s, makeString(type.kind), " is not a value type or Void"_s);
-        result = { m_typeInformation.thunkFor(type), nullptr };
+
+        result = BlockSignature { type };
         m_offset++;
         return { };
     }
@@ -1923,7 +1938,7 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseBlockSignature(const ModuleInfo
     const auto& signature = info.typeSignatures[index].get().expand();
     WASM_PARSER_FAIL_IF(!signature.is<FunctionSignature>(), "Block-like instruction signature index does not refer to a function type definition"_s);
 
-    result = { signature.as<FunctionSignature>(), nullptr };
+    result = BlockSignature { *signature.as<FunctionSignature>() };
     return { };
 }
 
@@ -1932,9 +1947,7 @@ inline auto FunctionParser<Context>::parseReftypeSignature(const ModuleInformati
 {
     Type resultType;
     WASM_PARSER_FAIL_IF(!parseValueType(info, resultType), "result type of block is not a valid ref type"_s);
-    Vector<Type, 16> returnTypes { resultType };
-    auto typeDefinition = TypeInformation::typeDefinitionForFunction(returnTypes, { });
-    result = { &TypeInformation::getFunctionSignature(typeDefinition->index()), typeDefinition };
+    result = BlockSignature { resultType };
 
     return { };
 }
@@ -1942,8 +1955,8 @@ inline auto FunctionParser<Context>::parseReftypeSignature(const ModuleInformati
 template <typename Context>
 ALWAYS_INLINE void FunctionParser<Context>::switchToBlock(ControlType&& block, Stack&& newStack)
 {
-    m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(block) });
-    m_expressionStack = WTFMove(newStack);
+    m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(block) });
+    m_expressionStack = WTF::move(newStack);
 }
 
 template<typename Context>
@@ -2189,9 +2202,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(targetValue, "memory.fill");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.fill");
 
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind, "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.fill size to type ", count.type(), " expected ", TypeKind::I32);
+            if (m_info.theOnlyMemory().isMemory64()) {
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind, "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind, "memory.fill size to type ", count.type(), " expected ", TypeKind::I64);
+            } else {
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind, "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.fill size to type ", count.type(), " expected ", TypeKind::I32);
+            }
 
             WASM_TRY_ADD_TO_CONTEXT(addMemoryFill(dstAddress, targetValue, count));
             break;
@@ -2209,9 +2228,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(srcAddress, "memory.copy");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.copy");
 
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I32);
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I32);
+            if (m_info.theOnlyMemory().isMemory64()) {
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I64);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I64);
+            } else {
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I32);
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I32);
+            }
 
             WASM_TRY_ADD_TO_CONTEXT(addMemoryCopy(dstAddress, srcAddress, count));
             break;
@@ -2227,7 +2252,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(srcAddress, "memory.init");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.init");
 
-            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I32);
+            if (m_info.theOnlyMemory().isMemory64())
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I64);
+            else
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I32);
+
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.init src address to type ", srcAddress.type(), " expected ", TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind, "memory.init length to type ", length.type(), " expected ", TypeKind::I32);
 
@@ -2696,7 +2725,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             ExpressionType result;
             const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->expand().template as<StructType>();
-            WASM_TRY_ADD_TO_CONTEXT(addStructGet(op, structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
+            const RTT& rtt = m_info.rtts[structGetInput.indices.structTypeIndex].get();
+            WASM_TRY_ADD_TO_CONTEXT(addStructGet(op, structGetInput.structReference, structType, rtt, structGetInput.indices.fieldIndex, result));
 
             m_expressionStack.constructAndAppend(structGetInput.field.type.unpacked(), result);
             break;
@@ -2716,7 +2746,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 m_context.notifyFunctionUsesSIMD();
 
             const auto& structType = *m_info.typeSignatures[structSetInput.indices.structTypeIndex]->expand().template as<StructType>();
-            WASM_TRY_ADD_TO_CONTEXT(addStructSet(structSetInput.structReference, structType, structSetInput.indices.fieldIndex, value));
+            const RTT& rtt = m_info.rtts[structSetInput.indices.structTypeIndex].get();
+            WASM_TRY_ADD_TO_CONTEXT(addStructSet(structSetInput.structReference, structType, rtt, structSetInput.indices.fieldIndex, value));
             break;
         }
         case ExtGCOpType::RefTest:
@@ -3296,21 +3327,21 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get block's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature.m_signature->toString());
-        unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
-        for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i) {
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature);
+        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
+        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i) {
             Type type = m_expressionStack.at(offset + i).type();
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.m_signature->argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", type);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
         }
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType block;
-        WASM_TRY_ADD_TO_CONTEXT(addBlock(inlineSignature, m_expressionStack, block, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-        ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addBlock(WTF::move(inlineSignature), m_expressionStack, block, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == block.signature().argumentCount());
+        ASSERT(newStack.size() == block.signature().argumentCount());
 
-        switchToBlock(WTFMove(block), WTFMove(newStack));
+        switchToBlock(WTF::move(block), WTF::move(newStack));
         return { };
     }
 
@@ -3318,22 +3349,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get loop's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few values on stack for loop block. Loop expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Loop has inlineSignature: ", inlineSignature.m_signature->toString());
-        unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
-        for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i) {
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few values on stack for loop block. Loop expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Loop has inlineSignature: ", inlineSignature);
+        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
+        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i) {
             Type type = m_expressionStack.at(offset + i).type();
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.m_signature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", type);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
         }
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType loop;
-        WASM_TRY_ADD_TO_CONTEXT(addLoop(inlineSignature, m_expressionStack, loop, newStack, m_loopIndex++));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-        ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addLoop(WTF::move(inlineSignature), m_expressionStack, loop, newStack, m_loopIndex++));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == loop.signature().argumentCount());
+        ASSERT(newStack.size() == loop.signature().argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(loop) });
-        m_expressionStack = WTFMove(newStack);
+        m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(loop) });
+        m_expressionStack = WTF::move(newStack);
         return { };
     }
 
@@ -3344,20 +3375,20 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "if condition"_s);
 
         WASM_VALIDATOR_FAIL_IF(!condition.type().isI32(), "if condition must be i32, got ", condition.type());
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature.m_signature->toString());
-        unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
-        for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i)
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.m_signature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature);
+        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
+        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType control;
-        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, inlineSignature, m_expressionStack, control, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-        ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, WTF::move(inlineSignature), m_expressionStack, control, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
+        ASSERT(newStack.size() == control.signature().argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
-        m_expressionStack = WTFMove(newStack);
+        m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
+        m_expressionStack = WTF::move(newStack);
         return { };
     }
 
@@ -3369,7 +3400,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(controlEntry.controlData), "else block isn't associated to an if");
         WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
         WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, m_expressionStack));
-        m_expressionStack = WTFMove(controlEntry.elseBlockStack);
+        m_expressionStack = WTF::move(controlEntry.elseBlockStack);
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         return { };
     }
@@ -3379,20 +3410,20 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few arguments on stack for try block. Try expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Try block has signature: ", inlineSignature.m_signature->toString());
-        unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
-        for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i)
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.m_signature->argumentType(i)), "Try expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for try block. Try expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Try block has signature: ", inlineSignature);
+        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
+        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Try expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType control;
-        WASM_TRY_ADD_TO_CONTEXT(addTry(inlineSignature, m_expressionStack, control, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-        ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addTry(WTF::move(inlineSignature), m_expressionStack, control, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
+        ASSERT(newStack.size() == control.signature().argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(control) });
-        m_expressionStack = WTFMove(newStack);
+        m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(control) });
+        m_expressionStack = WTF::move(newStack);
         return { };
     }
 
@@ -3450,11 +3481,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try_table's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature.m_signature->toString());
-        unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
-        for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i) {
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature);
+        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
+        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i) {
             Type type = m_expressionStack.at(offset + i).type();
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.m_signature->argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", type);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
         }
 
         uint32_t numberOfCatches;
@@ -3524,11 +3555,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType block;
-        WASM_TRY_ADD_TO_CONTEXT(addTryTable(inlineSignature, m_expressionStack, targets, block, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
-        ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addTryTable(WTF::move(inlineSignature), m_expressionStack, targets, block, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == block.signature().argumentCount());
+        ASSERT(newStack.size() == block.signature().argumentCount());
 
-        switchToBlock(WTFMove(block), WTFMove(newStack));
+        switchToBlock(WTF::move(block), WTF::move(newStack));
         return { };
     }
 
@@ -3559,7 +3590,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
         const auto& exceptionSignature = *signature.as<FunctionSignature>();
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature.toString());
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature);
         unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
         ArgumentList args;
         WASM_ALLOCATOR_FAIL_IF(!args.tryReserveInitialCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's "_s, exceptionSignature.argumentCount(), " arguments"_s);
@@ -3679,7 +3710,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         if (ControlType::isIf(data.controlData)) {
             WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
-            m_expressionStack = WTFMove(data.elseBlockStack);
+            m_expressionStack = WTF::move(data.elseBlockStack);
         }
         // When ending an 'if'/'else', including a synthetic 'else' added right above,
         // the spec requires the output type of 'if' to be the type from the signature.
@@ -3713,25 +3744,31 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case GrowMemory: {
-        WASM_PARSER_FAIL_IF(!m_info.memory, "grow_memory is only valid if a memory is defined or imported"_s);
+        WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory is only valid if a memory is defined or imported"_s);
 
         uint8_t reserved;
         WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for grow_memory"_s);
         WASM_PARSER_FAIL_IF(reserved, "reserved byte for grow_memory must be zero"_s);
 
         TypedExpression delta;
-        WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "expect an i32 argument to grow_memory on the stack"_s);
-        WASM_VALIDATOR_FAIL_IF(!delta.type().isI32(), "grow_memory with non-i32 delta argument has type: ", delta.type());
+        bool isMemory64 = m_info.theOnlyMemory().isMemory64();
+        if (isMemory64) {
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "expect an i64 argument to grow_memory on the stack"_s);
+            WASM_VALIDATOR_FAIL_IF(!delta.type().isI64(), "grow_memory with non-i64 delta argument has type: ", delta.type());
+        } else {
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "expect an i32 argument to grow_memory on the stack"_s);
+            WASM_VALIDATOR_FAIL_IF(!delta.type().isI32(), "grow_memory with non-i32 delta argument has type: ", delta.type());
+        }
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addGrowMemory(delta, result));
-        m_expressionStack.constructAndAppend(Types::I32, result);
+        m_expressionStack.constructAndAppend(isMemory64 ? Types::I64 : Types::I32, result);
 
         return { };
     }
 
     case CurrentMemory: {
-        WASM_PARSER_FAIL_IF(!m_info.memory, "current_memory is only valid if a memory is defined or imported"_s);
+        WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "current_memory is only valid if a memory is defined or imported"_s);
 
         uint8_t reserved;
         WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for current_memory"_s);
@@ -3739,7 +3776,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result));
-        m_expressionStack.constructAndAppend(Types::I32, result);
+        m_expressionStack.constructAndAppend(m_info.theOnlyMemory().isMemory64() ? Types::I64 : Types::I32, result);
 
         return { };
     }
@@ -3795,7 +3832,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         m_unreachableBlocks = 0;
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(data.controlData), "else block isn't associated to an if");
         WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
-        m_expressionStack = WTFMove(data.elseBlockStack);
+        m_expressionStack = WTF::move(data.elseBlockStack);
+        resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
 
@@ -3824,6 +3862,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
                 m_context.notifyFunctionUsesSIMD();
             m_expressionStack.constructAndAppend(argumentType, results[i]);
         }
+        resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
 
@@ -3836,6 +3875,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         m_expressionStack = { };
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
         WASM_TRY_ADD_TO_CONTEXT(addCatchAllToUnreachable(data.controlData));
+        resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
 
@@ -3856,6 +3896,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             Stack emptyStack;
             WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(controlEntry, emptyStack));
             m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+            resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         }
         m_unreachableBlocks--;
         return { };
@@ -3866,7 +3907,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             ControlEntry data = m_controlStack.takeLast();
             if (ControlType::isIf(data.controlData)) {
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
-                m_expressionStack = WTFMove(data.elseBlockStack);
+                m_expressionStack = WTF::move(data.elseBlockStack);
                 WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
                 WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
             } else {
@@ -3875,6 +3916,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             }
 
             m_expressionStack.swap(data.enclosedExpressionStack);
+            if (!ControlType::isTopLevel(data.controlData))
+                resetLocalInitStackToHeight(data.localInitStackHeight);
         }
         m_unreachableBlocks--;
         return { };
@@ -3960,9 +4003,14 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     // two immediate cases
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE)
     FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE) {
+        WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "load/store instruction without memory"_s);
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for "_s, m_currentOpcode, " in unreachable context"_s);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        if (m_info.theOnlyMemory().isMemory64()) {
+            uint64_t unused64;
+            WASM_PARSER_FAIL_IF(!parseVarUInt64(unused64), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        } else
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
         return { };
     }
 
@@ -4329,7 +4377,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         case ExtAtomicOpType::I64AtomicRmw32CmpxchgU:
         case ExtAtomicOpType::I64AtomicRmwCmpxchg:
         {
-            WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory"_s);
+            WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
             uint32_t alignment;
             uint32_t unused;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);

@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "api/async_dns_resolver.h"
+#include "api/environment/environment.h"
 #include "api/packet_socket_factory.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/socket.h"
@@ -29,14 +30,19 @@ class RTC_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
   explicit BasicPacketSocketFactory(SocketFactory* socket_factory);
   ~BasicPacketSocketFactory() override;
 
-  AsyncPacketSocket* CreateUdpSocket(const SocketAddress& local_address,
-                                     uint16_t min_port,
-                                     uint16_t max_port) override;
-  AsyncListenSocket* CreateServerTcpSocket(const SocketAddress& local_address,
-                                           uint16_t min_port,
-                                           uint16_t max_port,
-                                           int opts) override;
-  AsyncPacketSocket* CreateClientTcpSocket(
+  std::unique_ptr<AsyncPacketSocket> CreateUdpSocket(
+      const Environment& env,
+      const SocketAddress& local_address,
+      uint16_t min_port,
+      uint16_t max_port) override;
+  std::unique_ptr<AsyncListenSocket> CreateServerTcpSocket(
+      const Environment& env,
+      const SocketAddress& local_address,
+      uint16_t min_port,
+      uint16_t max_port,
+      int opts) override;
+  std::unique_ptr<AsyncPacketSocket> CreateClientTcpSocket(
+      const Environment& env,
       const SocketAddress& local_address,
       const SocketAddress& remote_address,
       const PacketSocketTcpOptions& tcp_options) override;
@@ -44,7 +50,7 @@ class RTC_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
   std::unique_ptr<AsyncDnsResolverInterface> CreateAsyncDnsResolver() override;
 
  private:
-  int BindSocket(Socket* socket,
+  int BindSocket(Socket& socket,
                  const SocketAddress& local_address,
                  uint16_t min_port,
                  uint16_t max_port);

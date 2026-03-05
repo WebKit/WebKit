@@ -13,7 +13,7 @@ info: |
     ...
     c. Let mappedValue be ? Call(callbackfn, T, « kValue, k, O »).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -25,4 +25,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(called, 0);
-});
+}, null, ["passthrough"]);

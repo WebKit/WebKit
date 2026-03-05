@@ -40,7 +40,7 @@ std::optional<CommandEncoderDescriptor> ConvertToBackingContext::convertToBackin
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base) } };
+    return { { WTF::move(*base) } };
 }
 
 std::optional<WebCore::WebGPU::CommandEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const CommandEncoderDescriptor& commandEncoderDescriptor)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::CommandEncoderDescriptor> ConvertFromBackingConte
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base) } };
+    return { { WTF::move(*base) } };
 }
 
 } // namespace WebKit

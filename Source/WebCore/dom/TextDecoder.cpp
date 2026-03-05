@@ -57,7 +57,7 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType>
     std::optional<BufferSource> inputBuffer;
     std::span<const uint8_t> data;
     if (input) {
-        inputBuffer = BufferSource(WTFMove(input.value()));
+        inputBuffer = BufferSource(WTF::move(input.value()));
         data = inputBuffer->span();
     }
 

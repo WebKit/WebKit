@@ -35,14 +35,14 @@ struct LinkDecorationFilteringData {
     String linkDecoration;
 
     LinkDecorationFilteringData(RegistrableDomain&& domain, String&& path, String&& linkDecoration)
-        : domain(WTFMove(domain))
-        , path(WTFMove(path))
-        , linkDecoration(WTFMove(linkDecoration))
+        : domain(WTF::move(domain))
+        , path(WTF::move(path))
+        , linkDecoration(WTF::move(linkDecoration))
     {
     }
 
     LinkDecorationFilteringData(String&& domain, String&& path, String&& linkDecoration)
-        : LinkDecorationFilteringData(RegistrableDomain { URL { WTFMove(domain) } }, WTFMove(path), WTFMove(linkDecoration))
+        : LinkDecorationFilteringData(RegistrableDomain { URL { WTF::move(domain) } }, WTF::move(path), WTF::move(linkDecoration))
     {
     }
 
@@ -50,17 +50,17 @@ struct LinkDecorationFilteringData {
     LinkDecorationFilteringData& operator=(const LinkDecorationFilteringData&) = default;
 
     LinkDecorationFilteringData(LinkDecorationFilteringData&& data)
-        : domain(WTFMove(data.domain))
-        , path(WTFMove(data.path))
-        , linkDecoration(WTFMove(data.linkDecoration))
+        : domain(WTF::move(data.domain))
+        , path(WTF::move(data.path))
+        , linkDecoration(WTF::move(data.linkDecoration))
     {
     }
 
     LinkDecorationFilteringData& operator=(LinkDecorationFilteringData&& data)
     {
-        domain = WTFMove(data.domain);
-        path = WTFMove(data.path);
-        linkDecoration = WTFMove(data.linkDecoration);
+        domain = WTF::move(data.domain);
+        path = WTF::move(data.path);
+        linkDecoration = WTF::move(data.linkDecoration);
         return *this;
     }
 };

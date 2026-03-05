@@ -1,0 +1,5 @@
+
+
+FAIL document.caretRangeFromPoint(0, 0) assert_equals: expected Element node <textarea id="textarea">AAAAAAAAAAAAAAAAAAAAA</textarea> but got Element node <body><textarea id="textarea">AAAAAAAAAAAAAAAAAAAAA</text...
+PASS document.caretRangeFromPoint(10, 10)
+

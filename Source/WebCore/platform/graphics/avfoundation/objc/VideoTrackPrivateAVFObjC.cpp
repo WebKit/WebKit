@@ -53,7 +53,7 @@ VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& 
 }
 
 VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(Ref<AVTrackPrivateAVFObjCImpl>&& impl)
-    : m_impl(WTFMove(impl))
+    : m_impl(WTF::move(impl))
     , m_videoTrackConfigurationObserver(VideoTrackConfigurationObserver::create([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->videoTrackConfigurationChanged();
@@ -85,7 +85,7 @@ void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
     if (!configuration().codec.isEmpty() && newConfiguration.codec.isEmpty())
         return;
 
-    setConfiguration(WTFMove(newConfiguration));
+    setConfiguration(WTF::move(newConfiguration));
 }
 
 void VideoTrackPrivateAVFObjC::videoTrackConfigurationChanged()

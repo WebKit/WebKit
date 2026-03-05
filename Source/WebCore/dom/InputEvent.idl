@@ -28,7 +28,7 @@
 [
     Exposed=Window
 ] interface InputEvent : UIEvent {
-    constructor([AtomString] DOMString type, optional InputEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional InputEventInit eventInitDict = {});
 
     readonly attribute DOMString inputType;
     readonly attribute USVString? data;
@@ -39,7 +39,6 @@
 };
 
 // https://w3c.github.io/uievents/#idl-inputeventinit
-
 dictionary InputEventInit : UIEventInit {
     DOMString? data = null;
     boolean isComposing = false;

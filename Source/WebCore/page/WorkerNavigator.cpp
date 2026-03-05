@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerNavigator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerNavigator);
 
 WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& userAgent, bool isOnline)
     : NavigatorBase(&context)
@@ -91,7 +91,7 @@ void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<D
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     if (RefPtr context = dynamicDowncast<ServiceWorkerGlobalScope>(scriptExecutionContext())) {
         if (RefPtr declarativePushEvent = context->declarativePushEvent()) {
-            declarativePushEvent->setUpdatedAppBadge(WTFMove(badge));
+            declarativePushEvent->setUpdatedAppBadge(WTF::move(badge));
             return;
         }
     }
@@ -110,7 +110,7 @@ void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<D
 
 void WorkerNavigator::clearAppBadge(Ref<DeferredPromise>&& promise)
 {
-    setAppBadge(0, WTFMove(promise));
+    setAppBadge(0, WTF::move(promise));
 }
 
 NavigatorUAData& WorkerNavigator::userAgentData() const
@@ -118,7 +118,7 @@ NavigatorUAData& WorkerNavigator::userAgentData() const
     Ref parser = UserAgentStringParser::create(m_userAgent);
     std::optional userAgentStringData = parser->parse();
     if (userAgentStringData) {
-        m_navigatorUAData = NavigatorUAData::create(WTFMove(*userAgentStringData));
+        m_navigatorUAData = NavigatorUAData::create(WTF::move(*userAgentStringData));
         return *m_navigatorUAData;
     }
 

@@ -374,17 +374,13 @@ set(
   crypto/evp/evp_asn1.cc
   crypto/evp/evp_ctx.cc
   crypto/evp/p_dh.cc
-  crypto/evp/p_dh_asn1.cc
-  crypto/evp/p_dsa_asn1.cc
+  crypto/evp/p_dsa.cc
   crypto/evp/p_ec.cc
-  crypto/evp/p_ec_asn1.cc
   crypto/evp/p_ed25519.cc
-  crypto/evp/p_ed25519_asn1.cc
   crypto/evp/p_hkdf.cc
+  crypto/evp/p_mldsa.cc
   crypto/evp/p_rsa.cc
-  crypto/evp/p_rsa_asn1.cc
   crypto/evp/p_x25519.cc
-  crypto/evp/p_x25519_asn1.cc
   crypto/evp/pbkdf.cc
   crypto/evp/print.cc
   crypto/evp/scrypt.cc
@@ -517,7 +513,6 @@ set(
   crypto/x509/x_req.cc
   crypto/x509/x_sig.cc
   crypto/x509/x_spki.cc
-  crypto/x509/x_val.cc
   crypto/x509/x_x509.cc
   crypto/x509/x_x509a.cc
   crypto/xwing/xwing.cc
@@ -536,7 +531,6 @@ set(
   include/openssl/asn1t.h
   include/openssl/base.h
   include/openssl/base64.h
-  include/openssl/bcm_public.h
   include/openssl/bio.h
   include/openssl/blake2.h
   include/openssl/blowfish.h
@@ -863,6 +857,7 @@ set(
   crypto/evp/test/ec_tests.txt
   crypto/evp/test/ed25519_tests.txt
   crypto/evp/test/evp_tests.txt
+  crypto/evp/test/mldsa_tests.txt
   crypto/evp/test/rsa_tests.txt
   crypto/evp/test/scrypt_tests.txt
   crypto/evp/test/x25519_tests.txt
@@ -1021,6 +1016,7 @@ set(
   crypto/x509/test/pss_sha256_wrong_trailer.pem
   crypto/x509/test/pss_sha384.pem
   crypto/x509/test/pss_sha512.pem
+  crypto/x509/test/rsa_pss_sha256_key.pk8
   crypto/x509/test/some_names1.pem
   crypto/x509/test/some_names2.pem
   crypto/x509/test/some_names3.pem
@@ -1031,13 +1027,32 @@ set(
   crypto/x509/test/trailing_data_leaf_name_constraints.pem
   crypto/x509/test/trailing_data_leaf_subject_alt_name.pem
   crypto/x509/test/trailing_data_leaf_subject_key_identifier.pem
+  crypto/x509/test/unusual_tbs_critical_ber.pem
+  crypto/x509/test/unusual_tbs_critical_false_not_omitted.pem
+  crypto/x509/test/unusual_tbs_empty_extension_not_omitted.pem
+  crypto/x509/test/unusual_tbs_key.pem
+  crypto/x509/test/unusual_tbs_null_sigalg_param.pem
+  crypto/x509/test/unusual_tbs_uid_both.pem
+  crypto/x509/test/unusual_tbs_uid_issuer.pem
+  crypto/x509/test/unusual_tbs_uid_subject.pem
+  crypto/x509/test/unusual_tbs_v1_not_omitted.pem
+  crypto/x509/test/unusual_tbs_wrong_attribute_order.pem
   third_party/wycheproof_testvectors/aes_cbc_pkcs5_test.txt
   third_party/wycheproof_testvectors/aes_cmac_test.txt
   third_party/wycheproof_testvectors/aes_eax_test.txt
   third_party/wycheproof_testvectors/aes_gcm_siv_test.txt
   third_party/wycheproof_testvectors/aes_gcm_test.txt
+  third_party/wycheproof_testvectors/aes_kwp_test.txt
+  third_party/wycheproof_testvectors/aes_wrap_test.txt
   third_party/wycheproof_testvectors/chacha20_poly1305_test.txt
-  third_party/wycheproof_testvectors/dsa_test.txt
+  third_party/wycheproof_testvectors/dsa_2048_224_sha224_p1363_test.txt
+  third_party/wycheproof_testvectors/dsa_2048_224_sha224_test.txt
+  third_party/wycheproof_testvectors/dsa_2048_224_sha256_p1363_test.txt
+  third_party/wycheproof_testvectors/dsa_2048_224_sha256_test.txt
+  third_party/wycheproof_testvectors/dsa_2048_256_sha256_p1363_test.txt
+  third_party/wycheproof_testvectors/dsa_2048_256_sha256_test.txt
+  third_party/wycheproof_testvectors/dsa_3072_256_sha256_p1363_test.txt
+  third_party/wycheproof_testvectors/dsa_3072_256_sha256_test.txt
   third_party/wycheproof_testvectors/ecdh_secp224r1_test.txt
   third_party/wycheproof_testvectors/ecdh_secp256r1_test.txt
   third_party/wycheproof_testvectors/ecdh_secp384r1_test.txt
@@ -1058,7 +1073,7 @@ set(
   third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt
   third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_p1363_test.txt
   third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt
-  third_party/wycheproof_testvectors/eddsa_test.txt
+  third_party/wycheproof_testvectors/ed25519_test.txt
   third_party/wycheproof_testvectors/hkdf_sha1_test.txt
   third_party/wycheproof_testvectors/hkdf_sha256_test.txt
   third_party/wycheproof_testvectors/hkdf_sha384_test.txt
@@ -1068,14 +1083,12 @@ set(
   third_party/wycheproof_testvectors/hmac_sha256_test.txt
   third_party/wycheproof_testvectors/hmac_sha384_test.txt
   third_party/wycheproof_testvectors/hmac_sha512_test.txt
-  third_party/wycheproof_testvectors/kw_test.txt
-  third_party/wycheproof_testvectors/kwp_test.txt
-  third_party/wycheproof_testvectors/mldsa_44_standard_sign_test.txt
-  third_party/wycheproof_testvectors/mldsa_44_standard_verify_test.txt
-  third_party/wycheproof_testvectors/mldsa_65_standard_sign_test.txt
-  third_party/wycheproof_testvectors/mldsa_65_standard_verify_test.txt
-  third_party/wycheproof_testvectors/mldsa_87_standard_sign_test.txt
-  third_party/wycheproof_testvectors/mldsa_87_standard_verify_test.txt
+  third_party/wycheproof_testvectors/mldsa_44_sign_noseed_test.txt
+  third_party/wycheproof_testvectors/mldsa_44_verify_test.txt
+  third_party/wycheproof_testvectors/mldsa_65_sign_noseed_test.txt
+  third_party/wycheproof_testvectors/mldsa_65_verify_test.txt
+  third_party/wycheproof_testvectors/mldsa_87_sign_noseed_test.txt
+  third_party/wycheproof_testvectors/mldsa_87_verify_test.txt
   third_party/wycheproof_testvectors/primality_test.txt
   third_party/wycheproof_testvectors/rsa_oaep_2048_sha1_mgf1sha1_test.txt
   third_party/wycheproof_testvectors/rsa_oaep_2048_sha224_mgf1sha1_test.txt
@@ -1095,8 +1108,13 @@ set(
   third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha1_test.txt
   third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha512_test.txt
   third_party/wycheproof_testvectors/rsa_oaep_misc_test.txt
+  third_party/wycheproof_testvectors/rsa_pkcs1_1024_sig_gen_test.txt
+  third_party/wycheproof_testvectors/rsa_pkcs1_1536_sig_gen_test.txt
+  third_party/wycheproof_testvectors/rsa_pkcs1_2048_sig_gen_test.txt
   third_party/wycheproof_testvectors/rsa_pkcs1_2048_test.txt
+  third_party/wycheproof_testvectors/rsa_pkcs1_3072_sig_gen_test.txt
   third_party/wycheproof_testvectors/rsa_pkcs1_3072_test.txt
+  third_party/wycheproof_testvectors/rsa_pkcs1_4096_sig_gen_test.txt
   third_party/wycheproof_testvectors/rsa_pkcs1_4096_test.txt
   third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt
   third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt
@@ -1105,7 +1123,6 @@ set(
   third_party/wycheproof_testvectors/rsa_pss_4096_sha256_mgf1_32_test.txt
   third_party/wycheproof_testvectors/rsa_pss_4096_sha512_mgf1_32_test.txt
   third_party/wycheproof_testvectors/rsa_pss_misc_test.txt
-  third_party/wycheproof_testvectors/rsa_sig_gen_misc_test.txt
   third_party/wycheproof_testvectors/rsa_signature_2048_sha224_test.txt
   third_party/wycheproof_testvectors/rsa_signature_2048_sha256_test.txt
   third_party/wycheproof_testvectors/rsa_signature_2048_sha384_test.txt
@@ -1113,9 +1130,12 @@ set(
   third_party/wycheproof_testvectors/rsa_signature_3072_sha256_test.txt
   third_party/wycheproof_testvectors/rsa_signature_3072_sha384_test.txt
   third_party/wycheproof_testvectors/rsa_signature_3072_sha512_test.txt
+  third_party/wycheproof_testvectors/rsa_signature_4096_sha256_test.txt
   third_party/wycheproof_testvectors/rsa_signature_4096_sha384_test.txt
   third_party/wycheproof_testvectors/rsa_signature_4096_sha512_test.txt
-  third_party/wycheproof_testvectors/rsa_signature_test.txt
+  third_party/wycheproof_testvectors/rsa_signature_8192_sha256_test.txt
+  third_party/wycheproof_testvectors/rsa_signature_8192_sha384_test.txt
+  third_party/wycheproof_testvectors/rsa_signature_8192_sha512_test.txt
   third_party/wycheproof_testvectors/x25519_test.txt
   third_party/wycheproof_testvectors/xchacha20_poly1305_test.txt
 )
@@ -1163,6 +1183,20 @@ set(
 )
 
 set(
+  ENTROPY_MODULEWRAPPER_SOURCES
+
+  util/fipstools/acvp/entropy_modulewrapper/main.cc
+  util/fipstools/acvp/entropy_modulewrapper/modulewrapper.cc
+  util/fipstools/acvp/modulewrapper/proto.cc
+)
+
+set(
+  ENTROPY_MODULEWRAPPER_INTERNAL_HEADERS
+
+  util/fipstools/acvp/modulewrapper/modulewrapper.h
+)
+
+set(
   FUZZ_SOURCES
 
   fuzz/arm_cpuinfo.cc
@@ -1206,6 +1240,7 @@ set(
 
   util/fipstools/acvp/modulewrapper/main.cc
   util/fipstools/acvp/modulewrapper/modulewrapper.cc
+  util/fipstools/acvp/modulewrapper/proto.cc
 )
 
 set(
@@ -2898,6 +2933,7 @@ set(
   TEST_SUPPORT_SOURCES
 
   crypto/test/abi_test.cc
+  crypto/test/der_trailing_data.cc
   crypto/test/file_test.cc
   crypto/test/file_test_gtest.cc
   crypto/test/file_util.cc
@@ -2910,6 +2946,7 @@ set(
   TEST_SUPPORT_INTERNAL_HEADERS
 
   crypto/test/abi_test.h
+  crypto/test/der_trailing_data.h
   crypto/test/file_test.h
   crypto/test/file_util.h
   crypto/test/gtest_main.h

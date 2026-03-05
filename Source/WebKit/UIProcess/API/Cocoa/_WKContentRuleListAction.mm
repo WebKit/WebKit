@@ -29,11 +29,6 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-static Ref<API::ContentRuleListAction> protectedAction(_WKContentRuleListAction *action)
-{
-    return *action->_action;
-}
-
 @implementation _WKContentRuleListAction
 
 - (void)dealloc
@@ -49,7 +44,7 @@ static Ref<API::ContentRuleListAction> protectedAction(_WKContentRuleListAction 
 - (BOOL)blockedLoad
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protectedAction(self)->blockedLoad();
+    return protect(*_action)->blockedLoad();
 #else
     return NO;
 #endif
@@ -58,7 +53,7 @@ static Ref<API::ContentRuleListAction> protectedAction(_WKContentRuleListAction 
 - (BOOL)blockedCookies
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protectedAction(self)->blockedCookies();
+    return protect(*_action)->blockedCookies();
 #else
     return NO;
 #endif
@@ -67,7 +62,7 @@ static Ref<API::ContentRuleListAction> protectedAction(_WKContentRuleListAction 
 - (BOOL)madeHTTPS
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protectedAction(self)->madeHTTPS();
+    return protect(*_action)->madeHTTPS();
 #else
     return NO;
 #endif
@@ -76,7 +71,7 @@ static Ref<API::ContentRuleListAction> protectedAction(_WKContentRuleListAction 
 - (BOOL)redirected
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protectedAction(self)->redirected();
+    return protect(*_action)->redirected();
 #else
     return NO;
 #endif
@@ -85,7 +80,7 @@ static Ref<API::ContentRuleListAction> protectedAction(_WKContentRuleListAction 
 - (BOOL)modifiedHeaders
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protectedAction(self)->modifiedHeaders();
+    return protect(*_action)->modifiedHeaders();
 #else
     return NO;
 #endif
@@ -94,7 +89,8 @@ static Ref<API::ContentRuleListAction> protectedAction(_WKContentRuleListAction 
 - (NSArray<NSString *> *)notifications
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    auto& vector = protectedAction(self)->notifications();
+    Ref action = *_action;
+    auto& vector = action->notifications();
     if (vector.isEmpty())
         return nil;
     return createNSArray(vector).autorelease();

@@ -56,8 +56,10 @@ Y4mFrameGenerator::Y4mFrameGenerator(absl::string_view filename,
 }
 
 Y4mFrameGenerator::VideoFrameData Y4mFrameGenerator::NextFrame() {
-  VideoFrame::UpdateRect update_rect{0, 0, static_cast<int>(width_),
-                                     static_cast<int>(height_)};
+  VideoFrame::UpdateRect update_rect{.offset_x = 0,
+                                     .offset_y = 0,
+                                     .width = static_cast<int>(width_),
+                                     .height = static_cast<int>(height_)};
   scoped_refptr<I420Buffer> next_frame_buffer = frame_reader_->PullFrame();
 
   if (!next_frame_buffer ||

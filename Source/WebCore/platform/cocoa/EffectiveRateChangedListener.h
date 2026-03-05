@@ -37,7 +37,7 @@ class EffectiveRateChangedListener final : public ThreadSafeRefCountedAndCanMake
 public:
     static Ref<EffectiveRateChangedListener> create(Function<void(double)>&& callback, CMTimebaseRef timebase)
     {
-        return adoptRef(*new EffectiveRateChangedListener(WTFMove(callback), timebase));
+        return adoptRef(*new EffectiveRateChangedListener(WTF::move(callback), timebase));
     }
     ~EffectiveRateChangedListener();
 

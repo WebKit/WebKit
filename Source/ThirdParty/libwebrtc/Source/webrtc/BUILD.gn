@@ -78,6 +78,7 @@ if (!build_with_chromium) {
         "video:screenshare_loopback",
         "video:sv_loopback",
         "video:video_loopback",
+        "video/timing:video_timing_tests",
       ]
       if (use_libfuzzer) {
         deps += [ "test/fuzzers" ]
@@ -372,6 +373,10 @@ config("common_config") {
     defines += [ "WEBRTC_EXCLUDE_AUDIO_PROCESSING_MODULE" ]
   }
 
+  if (rtc_video_psnr) {
+    defines += [ "WEBRTC_ENCODER_PSNR_STATS" ]
+  }
+
   if (is_clang) {
     cflags += [
       "-Wshadow",
@@ -660,6 +665,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "rtc_base:rtc_numerics_unittests",
       "rtc_base:rtc_operations_chain_unittests",
       "rtc_base:rtc_task_queue_unittests",
+      "rtc_base:sigslot_trampoline_unittest",
       "rtc_base:sigslot_unittest",
       "rtc_base:task_queue_stdlib_unittest",
       "rtc_base:untyped_function_unittest",
@@ -829,6 +835,9 @@ group("poison_environment_construction") {
 }
 
 group("poison_software_video_codecs") {
+}
+
+group("poison_default_neural_residual_echo_estimator") {
 }
 
 if (!build_with_chromium) {

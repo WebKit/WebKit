@@ -160,7 +160,7 @@ TEST(AlignmentMixer, FixedMode) {
                       /*adaptive_selection*/ false, /*excitation_limit*/ 1.f,
                       /*prefer_first_two_channels*/ false);
 
-    Block x(/*num_band=*/1, num_channels);
+    Block x(/*num_bands=*/1, num_channels);
     const auto channel_value = [](int frame_index, int channel_index) {
       return static_cast<float>(frame_index + channel_index);
     };

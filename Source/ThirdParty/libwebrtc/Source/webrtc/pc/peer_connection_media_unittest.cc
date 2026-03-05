@@ -12,7 +12,6 @@
 // PeerConnection and the underlying media engine, as well as tests that check
 // the media-related aspects of SDP.
 
-#include <algorithm>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -1578,13 +1577,11 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan,
   auto codecs =
       caller->pc_factory()->GetRtpSenderCapabilities(MediaType::AUDIO).codecs;
   auto codecs_only_rtx_red_fec = codecs;
-  auto it = std::remove_if(
-      codecs_only_rtx_red_fec.begin(), codecs_only_rtx_red_fec.end(),
-      [](const RtpCodecCapability& codec) {
+  std::erase_if(
+      codecs_only_rtx_red_fec, [](const RtpCodecCapability& codec) {
         return !(codec.name == kRtxCodecName || codec.name == kRedCodecName ||
                  codec.name == kUlpfecCodecName);
       });
-  codecs_only_rtx_red_fec.erase(it, codecs_only_rtx_red_fec.end());
   ASSERT_THAT(codecs_only_rtx_red_fec.size(), Gt(0));
   auto result = transceiver->SetCodecPreferences(codecs_only_rtx_red_fec);
   EXPECT_EQ(RTCErrorType::INVALID_MODIFICATION, result.type());
@@ -1656,13 +1653,11 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan,
   auto codecs =
       caller->pc_factory()->GetRtpSenderCapabilities(MediaType::VIDEO).codecs;
   auto codecs_only_rtx_red_fec = codecs;
-  auto it = std::remove_if(
-      codecs_only_rtx_red_fec.begin(), codecs_only_rtx_red_fec.end(),
-      [](const RtpCodecCapability& codec) {
+  std::erase_if(
+      codecs_only_rtx_red_fec, [](const RtpCodecCapability& codec) {
         return !(codec.name == kRtxCodecName || codec.name == kRedCodecName ||
                  codec.name == kUlpfecCodecName);
       });
-  codecs_only_rtx_red_fec.erase(it, codecs_only_rtx_red_fec.end());
 
   auto result = transceiver->SetCodecPreferences(codecs_only_rtx_red_fec);
   EXPECT_EQ(RTCErrorType::INVALID_MODIFICATION, result.type());
@@ -1749,13 +1744,10 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan, SetCodecPreferencesVideoWithRtx) {
 
   // Check that RTX codec is properly added
   auto video_codecs_vpx_rtx = sender_video_codecs;
-  auto it = std::remove_if(
-      video_codecs_vpx_rtx.begin(), video_codecs_vpx_rtx.end(),
-      [](const RtpCodecCapability& codec) {
-        return codec.name != kRtxCodecName && codec.name != kVp8CodecName &&
-               codec.name != kVp9CodecName;
-      });
-  video_codecs_vpx_rtx.erase(it, video_codecs_vpx_rtx.end());
+  std::erase_if(video_codecs_vpx_rtx, [](const RtpCodecCapability& codec) {
+    return codec.name != kRtxCodecName && codec.name != kVp8CodecName &&
+           codec.name != kVp9CodecName;
+  });
   absl::c_reverse(video_codecs_vpx_rtx);
   EXPECT_EQ(video_codecs_vpx_rtx.size(), 3u);  // VP8, VP9, RTX
   EXPECT_TRUE(
@@ -1794,12 +1786,9 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan,
   auto send_transceiver = caller->pc()->GetTransceivers().front();
 
   auto video_codecs_vpx = video_codecs;
-  auto it = std::remove_if(video_codecs_vpx.begin(), video_codecs_vpx.end(),
-                           [](const RtpCodecCapability& codec) {
-                             return codec.name != kVp8CodecName &&
-                                    codec.name != kVp9CodecName;
-                           });
-  video_codecs_vpx.erase(it, video_codecs_vpx.end());
+  std::erase_if(video_codecs_vpx, [](const RtpCodecCapability& codec) {
+    return codec.name != kVp8CodecName && codec.name != kVp9CodecName;
+  });
   EXPECT_EQ(video_codecs_vpx.size(), 2u);  // VP8, VP9
   EXPECT_TRUE(send_transceiver->SetCodecPreferences(video_codecs_vpx).ok());
 
@@ -1815,13 +1804,10 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan,
 
   auto recv_transceiver = callee->pc()->GetTransceivers().front();
   auto video_codecs_vp8_rtx = video_codecs;
-  it = std::remove_if(video_codecs_vp8_rtx.begin(), video_codecs_vp8_rtx.end(),
-                      [](const RtpCodecCapability& codec) {
-                        bool r = codec.name != kVp8CodecName &&
-                                 codec.name != kRtxCodecName;
-                        return r;
-                      });
-  video_codecs_vp8_rtx.erase(it, video_codecs_vp8_rtx.end());
+  std::erase_if(video_codecs_vp8_rtx, [](const RtpCodecCapability& codec) {
+    bool r = codec.name != kVp8CodecName && codec.name != kRtxCodecName;
+    return r;
+  });
   EXPECT_EQ(video_codecs_vp8_rtx.size(), 2u);  // VP8, RTX
   recv_transceiver->SetCodecPreferences(video_codecs_vp8_rtx);
 
@@ -1859,12 +1845,9 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan,
   auto send_transceiver = caller->pc()->GetTransceivers().front();
 
   auto video_codecs_vpx = video_codecs;
-  auto it = std::remove_if(video_codecs_vpx.begin(), video_codecs_vpx.end(),
-                           [](const RtpCodecCapability& codec) {
-                             return codec.name != kVp8CodecName &&
-                                    codec.name != kVp9CodecName;
-                           });
-  video_codecs_vpx.erase(it, video_codecs_vpx.end());
+  std::erase_if(video_codecs_vpx, [](const RtpCodecCapability& codec) {
+    return codec.name != kVp8CodecName && codec.name != kVp9CodecName;
+  });
   EXPECT_EQ(video_codecs_vpx.size(), 2u);  // VP8, VP9
   EXPECT_TRUE(send_transceiver->SetCodecPreferences(video_codecs_vpx).ok());
 
@@ -2103,12 +2086,10 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan, SetCodecPreferencesVideoNoRtx) {
                   .ok());
   auto capabilities =
       caller->pc_factory()->GetRtpSenderCapabilities(MediaType::VIDEO);
-  auto it =
-      std::remove_if(capabilities.codecs.begin(), capabilities.codecs.end(),
-                     [](const RtpCodecCapability& codec) {
-                       return codec.name == kRtxCodecName;
-                     });
-  capabilities.codecs.erase(it, capabilities.codecs.end());
+
+  std::erase_if(capabilities.codecs, [](const RtpCodecCapability& codec) {
+    return codec.name == kRtxCodecName;
+  });
   EXPECT_EQ(capabilities.codecs.size(), 2u);
   EXPECT_TRUE(video_transceiver->SetCodecPreferences(capabilities.codecs).ok());
 

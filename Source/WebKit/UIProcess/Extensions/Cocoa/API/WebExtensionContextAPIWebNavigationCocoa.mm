@@ -99,7 +99,7 @@ void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIde
         return;
     }
 
-    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab, frameIdentifier](_WKFrameTreeNode *mainFrame) mutable {
+    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), tab, frameIdentifier](_WKFrameTreeNode *mainFrame) mutable {
         if (!mainFrame.info.isMainFrame) {
             RELEASE_LOG_INFO(Extensions, "Skipping frame traversal because the mainFrame is nil");
             completionHandler(toWebExtensionError(@"webNavigation.getFrame()", nullString(), @"main frame not found"));
@@ -107,7 +107,7 @@ void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIde
         }
 
         if (auto frameParameters = webNavigationFindFrameIdentifierInFrameTree(mainFrame, nil, tab.get(), frameIdentifier))
-            completionHandler(WTFMove(frameParameters));
+            completionHandler(WTF::move(frameParameters));
         else
             completionHandler(toWebExtensionError(@"webNavigation.getFrame()", nullString(), @"frame not found"));
     }).get()];
@@ -127,7 +127,7 @@ void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier ta
         return;
     }
 
-    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab](_WKFrameTreeNode *mainFrame) mutable {
+    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), tab](_WKFrameTreeNode *mainFrame) mutable {
         if (!mainFrame.info.isMainFrame) {
             RELEASE_LOG_INFO(Extensions, "Skipping frame traversal because the mainFrame is nil");
             completionHandler(toWebExtensionError(@"webNavigation.getAllFrames()", nullString(), @"main frame not found"));
@@ -137,7 +137,7 @@ void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier ta
         Vector<WebExtensionFrameParameters> frameParameters;
         webNavigationTraverseFrameTreeForFrame(mainFrame, nil, tab.get(), frameParameters);
 
-        completionHandler(WTFMove(frameParameters));
+        completionHandler(WTF::move(frameParameters));
     }).get()];
 }
 

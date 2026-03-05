@@ -29,6 +29,10 @@
 #include "FEOffsetSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEOffsetCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEOffset> FEOffset::create(float dx, float dy, DestinationColorSpace colorSpace)
@@ -93,6 +97,24 @@ IntOutsets FEOffset::calculateOutsets(const FloatSize& offset)
 bool FEOffset::resultIsAlphaImage(std::span<const Ref<FilterImage>> inputs) const
 {
     return inputs[0]->isAlphaImage();
+}
+
+OptionSet<FilterRenderingMode> FEOffset::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEOffset::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEOffsetCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FEOffset::createSoftwareApplier() const

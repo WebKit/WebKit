@@ -147,7 +147,7 @@ void JSTestSetLikePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestSetLike::s_info = { "TestSetLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLike) };
 
 JSTestSetLike::JSTestSetLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSetLike>&& impl)
-    : JSDOMWrapper<TestSetLike>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestSetLike>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -365,7 +365,7 @@ void JSTestSetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* contex
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSetLike = static_cast<JSTestSetLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestSetLike->protectedWrapped().ptr(), jsTestSetLike);
+    uncacheWrapper(world, protect(jsTestSetLike->wrapped()).ptr(), jsTestSetLike);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -403,7 +403,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestSetLike>(impl.ptr());
 #endif
-    return createWrapper<TestSetLike>(globalObject, WTFMove(impl));
+    return createWrapper<TestSetLike>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestSetLike& impl)

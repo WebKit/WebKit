@@ -61,13 +61,13 @@ private:
     using LinesCrossPositionList = Vector<LayoutUnit>;
 
     FlexBaseAndHypotheticalMainSizeList flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalFlexItems&, bool isSizedUnderMinMaxConstraints) const;
-    LayoutUnit flexContainerInnerMainSize(const ConstraintsForFlexContent::AxisGeometry&) const;
+    LayoutUnit NODELETE flexContainerInnerMainSize(const ConstraintsForFlexContent::AxisGeometry&) const;
     LineRanges computeFlexLines(const LogicalFlexItems&, LayoutUnit flexContainerInnerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
     SizeList computeMainSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, LayoutUnit flexContainerInnerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
     SizeList hypotheticalCrossSizeForFlexItems(const LogicalFlexItems&, const SizeList& flexItemsMainSizeList);
     LinesCrossSizeList crossSizeForFlexLines(const LineRanges&, const ConstraintsForFlexContent::AxisGeometry& crossAxis, const LogicalFlexItems&, const SizeList& flexItemsHypotheticalCrossSizeList) const;
     void stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, std::optional<LayoutUnit> crossAxisAvailableSpace) const;
-    bool collapseNonVisibleFlexItems();
+    bool NODELETE collapseNonVisibleFlexItems();
     SizeList computeCrossSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsHypotheticalCrossSizeList) const;
     PositionAndMarginsList handleMainAxisAlignment(LayoutUnit availableMainSpace, const LineRanges&, const LogicalFlexItems&, const SizeList& flexItemsMainSizeList) const;
     PositionAndMarginsList handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems&, const LineRanges&, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const;
@@ -77,11 +77,11 @@ private:
     LayoutUnit crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const;
 
     bool isSingleLineFlexContainer() const { return flexContainer().style().flexWrap() == FlexWrap::NoWrap; }
-    const ElementBox& flexContainer() const;
+    const ElementBox& NODELETE flexContainer() const;
     const RenderStyle& flexContainerStyle() const { return flexContainer().style(); }
 
-    const FlexFormattingContext& formattingContext() const;
-    const FlexFormattingUtils& formattingUtils() const;
+    const FlexFormattingContext& NODELETE formattingContext() const;
+    const FlexFormattingUtils& NODELETE formattingUtils() const;
 
 private:
     FlexFormattingContext& m_flexFormattingContext;

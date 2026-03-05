@@ -42,7 +42,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSHTMLTemplateElement::visitAdditionalChildren(Visitor& visitor)
 {
-    if (auto* content = wrapped().contentIfAvailable())
+    if (SUPPRESS_UNCHECKED_LOCAL auto* content = wrapped().contentIfAvailable())
         addWebCoreOpaqueRoot(visitor, *content);
 }
 

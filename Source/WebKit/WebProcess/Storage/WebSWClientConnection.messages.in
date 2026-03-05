@@ -41,7 +41,7 @@ messages -> WebSWClientConnection {
 
     SetSWOriginTableIsImported()
     SetSWOriginTableSharedMemory(WebCore::SharedMemory::Handle handle)
-    PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
+    PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, WebCore::SecurityOriginData sourceOrigin)
 
     SetServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier workerIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)
 

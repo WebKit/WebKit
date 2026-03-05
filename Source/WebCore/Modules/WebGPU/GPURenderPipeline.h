@@ -38,10 +38,10 @@ class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
 public:
     static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
     {
-        return adoptRef(*new GPURenderPipeline(WTFMove(backing), uniqueId));
+        return adoptRef(*new GPURenderPipeline(WTF::move(backing), uniqueId));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
@@ -51,7 +51,7 @@ public:
 
 private:
     GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
         , m_uniqueId(uniqueId)
     {
     }

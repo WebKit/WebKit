@@ -23,8 +23,8 @@ includes: [testTypedArray.js]
 features: [Reflect, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 42]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 42]));
 
   assert.sameValue(
     Reflect.defineProperty(sample, "0", {
@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(descriptor0.configurable, true);
   assert.sameValue(descriptor0.enumerable, true);
   assert.sameValue(descriptor0.writable, true);
-});
+}, null, ["passthrough"]);

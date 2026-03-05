@@ -43,6 +43,10 @@
 #include "unistd.h"
 #endif
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 #if defined(__has_include)
 #if __has_include(<libproc.h>)
 #include <libproc.h>
@@ -59,25 +63,19 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WTFConfigAdditions.h>
 #endif
-#if !USE(SYSTEM_MALLOC)
 #if BUSE(LIBPAS)
 #include "bmalloc/pas_mte_config.h"
-#endif
 #endif
 
 #include <mutex>
 
-#if OS(DARWIN) && !USE(SYSTEM_MALLOC)
-
-#if BUSE(LIBPAS)
+#if OS(DARWIN) && BUSE(LIBPAS)
 #if HAVE(36BIT_ADDRESS) && !PAS_HAVE(36BIT_ADDRESS)
 #error HAVE(36BIT_ADDRESS) is true, but PAS_HAVE(36BIT_ADDRESS) is false. They should match.
 #elif !HAVE(36BIT_ADDRESS) && PAS_HAVE(36BIT_ADDRESS)
 #error HAVE(36BIT_ADDRESS) is false, but PAS_HAVE(36BIT_ADDRESS) is true. They should match.
 #endif
-#endif // BUSE(LIBPAS)
-
-#endif // OS(DARWIN)
+#endif // OS(DARWIN) && BUSE(LIBPAS)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -157,6 +155,7 @@ void Config::initialize()
     // FIXME: We should do a placement new for Config so we can use default initializers.
     []() -> void {
         uintptr_t onePage = pageSize(); // At least, first one page must be unmapped.
+        uintptr_t address = 0;
 #if OS(DARWIN)
 #ifdef __LP64__
         using Header = struct mach_header_64;
@@ -170,13 +169,23 @@ void Config::initialize()
             if (!data && size) {
                 // If __PAGEZERO starts with 0 address and it has size. [0, size] region cannot be
                 // mapped for accessible pages.
-                uintptr_t afterZeroPages = std::bit_cast<uintptr_t>(data) + size;
-                g_wtfConfig.lowestAccessibleAddress = roundDownToMultipleOf(onePage, std::max<uintptr_t>(onePage, afterZeroPages));
-                return;
+                address = reinterpret_cast<uintptr_t>(data) + size;
             }
         }
+#elif OS(WINDOWS)
+        SYSTEM_INFO sysInfo;
+        GetSystemInfo(&sysInfo);
+        address = reinterpret_cast<uintptr_t>(sysInfo.lpMinimumApplicationAddress);
+#elif OS(LINUX)
+        FILE* file = fopen("/proc/sys/vm/mmap_min_addr", "r");
+        if (file) {
+            unsigned long value = 0;
+            if (fscanf(file, "%lu", &value) == 1)
+                address = static_cast<uintptr_t>(value);
+            fclose(file);
+        }
 #endif
-        g_wtfConfig.lowestAccessibleAddress = onePage;
+        g_wtfConfig.lowestAccessibleAddress = roundDownToMultipleOf(onePage, std::max<uintptr_t>(onePage, address));
     }();
     g_wtfConfig.highestAccessibleAddress = static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1);
     SignalHandlers::initialize();

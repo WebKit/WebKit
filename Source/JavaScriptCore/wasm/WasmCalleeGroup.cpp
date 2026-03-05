@@ -40,7 +40,7 @@ namespace JSC { namespace Wasm {
 
 Ref<CalleeGroup> CalleeGroup::createFromIPInt(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, Ref<IPIntCallees>&& ipintCallees)
 {
-    return adoptRef(*new CalleeGroup(vm, mode, moduleInformation, WTFMove(ipintCallees)));
+    return adoptRef(*new CalleeGroup(vm, mode, moduleInformation, WTF::move(ipintCallees)));
 }
 
 Ref<CalleeGroup> CalleeGroup::createFromExisting(MemoryMode mode, const CalleeGroup& other)
@@ -65,11 +65,11 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
 CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, Ref<IPIntCallees>&& ipintCallees)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
-    , m_ipintCallees(WTFMove(ipintCallees))
+    , m_ipintCallees(WTF::move(ipintCallees))
     , m_callers(m_calleeCount)
 {
     RefPtr<CalleeGroup> protectedThis = this;
-    m_plan = adoptRef(*new IPIntPlan(vm, moduleInformation, m_ipintCallees->span().data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+    m_plan = adoptRef(*new IPIntPlan(vm, moduleInformation, m_ipintCallees->span().data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTF::move(protectedThis)] (Plan&) {
         Locker locker { m_lock };
         if (m_plan->failed()) {
             m_errorMessage = m_plan->errorMessage();
@@ -239,6 +239,7 @@ bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCo
     }
     ASSERT(slot);
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     if (callee.compilationMode() == CompilationMode::OMGMode) {
         // Why does it happen? It is possible that some code is still running IPIntCallee, and OMGCallee is installed and BBQCallee gets retired.
         // But since IPIntCallee can only tier up to BBQCallee, it may spin up BBQCallee again.
@@ -249,7 +250,7 @@ bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCo
         m_currentlyInstallingOptimizedCallees.m_omgCallee = Ref { uncheckedDowncast<OMGCallee>(callee) };
     } else
         m_currentlyInstallingOptimizedCallees.m_omgCallee = slot->m_omgCallee;
-
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)
     {
         Locker replacerLocker { m_currentlyInstallingOptimizedCallees.m_bbqCalleeLock };
         Locker locker { slot->m_bbqCalleeLock };
@@ -272,7 +273,9 @@ void CalleeGroup::finalizeInstallingCallee(const AbstractLocker&, FunctionCodeIn
         slot->m_bbqCallee = m_currentlyInstallingOptimizedCallees.m_bbqCallee;
         m_currentlyInstallingOptimizedCallees.m_bbqCallee = nullptr;
     }
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     slot->m_omgCallee = std::exchange(m_currentlyInstallingOptimizedCallees.m_omgCallee, nullptr);
+#endif
     m_currentlyInstallingOptimizedCalleesIndex = { };
 }
 
@@ -326,7 +329,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
     // threads and not wasm ones. So the OMGOSREntryCallee could die between the time we collect the callsites and when
     // we actually repatch its callsites.
     // FIXME: These inline capacities were picked semi-randomly. We should figure out if there's a better number.
-    Vector<RefPtr<OMGOSREntryCallee>, 4> keepAliveOSREntryCallees;
+    Vector<Ref<OMGOSREntryCallee>, 4> keepAliveOSREntryCallees;
     Vector<Callsite, 16> callsites;
 
     auto functionSpaceIndex = toSpaceIndex(functionIndex);
@@ -369,7 +372,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         if (auto iter = m_osrEntryCallees.find(callerIndex); iter != m_osrEntryCallees.end()) {
             if (RefPtr callee = iter->value.get()) {
                 collectCallsites(callee.get());
-                keepAliveOSREntryCallees.append(WTFMove(callee));
+                keepAliveOSREntryCallees.append(callee.releaseNonNull());
             } else
                 m_osrEntryCallees.remove(iter);
         }
@@ -428,7 +431,7 @@ void CalleeGroup::reportCallees(const AbstractLocker&, JITCallee* caller, const 
                     BitVector vector;
                     for (uint32_t caller : callers)
                         vector.set(caller);
-                    m_callers[calleeIndex] = WTFMove(vector);
+                    m_callers[calleeIndex] = WTF::move(vector);
                 }
             },
             [&](DenseCallers& callers) {
@@ -530,7 +533,7 @@ void CalleeGroup::ensureOptimizedCalleesSlow(const AbstractLocker&)
     // We would like to expose this vector concurrently for optimization. Thus we must ensure that fields are fully initialized.
     WTF::storeStoreFence();
 
-    m_optimizedCallees = WTFMove(vector);
+    m_optimizedCallees = WTF::move(vector);
 }
 
 } } // namespace JSC::Wasm

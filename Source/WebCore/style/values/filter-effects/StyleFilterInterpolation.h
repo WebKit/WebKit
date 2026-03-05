@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Apple Inc. All rights reserved.
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 
 #include <WebCore/AnimationUtilities.h>
 #include <WebCore/CompositeOperation.h>
-#include <WebCore/FilterOperation.h>
+#include <algorithm>
 
 namespace WebCore {
 namespace Style {
@@ -37,19 +37,52 @@ namespace Style {
 // Generic implementation of interpolation for filter lists for use by both `Style::Filter` and `Style::AppleColorFilter`.
 // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
 
+template<typename FilterValue>
+auto blendFilterValue(const FilterValue& from, const FilterValue& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterValue
+{
+    ASSERT(from.index() == to.index());
+
+    return WTF::visit(WTF::makeVisitor(
+        [&]<typename T>(const T& fromValue, const T& toValue) -> FilterValue {
+            return Style::blend(fromValue, toValue, fromStyle, toStyle, context);
+        },
+        [](const auto&, const auto&) -> FilterValue {
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    ), from.value, to.value);
+}
+
+template<typename FilterValue>
+auto blendFilterValueFromOnly(const FilterValue& from, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterValue
+{
+    return WTF::visit(WTF::makeVisitor(
+        [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& fromValue) -> FilterValue {
+            return Style::blend(fromValue, FunctionNotation<C, T> { T::passthroughForInterpolation() }, fromStyle, toStyle, context);
+        },
+        [](const auto&) -> FilterValue {
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    ), from.value);
+}
+
+template<typename FilterValue>
+auto blendFilterValueToOnly(const FilterValue& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterValue
+{
+    return WTF::visit(WTF::makeVisitor(
+        [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& toValue) -> FilterValue {
+            return Style::blend(FunctionNotation<C, T> { T::passthroughForInterpolation() }, toValue, fromStyle, toStyle, context);
+        },
+        [](const auto&) -> FilterValue {
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    ), to.value);
+}
+
 template<typename FilterList>
 auto canBlendFilterLists(const FilterList& from, const FilterList& to, CompositeOperation compositeOperation) -> bool
 {
-    auto hasReferenceFilter = [](const FilterList& list) {
-        return std::ranges::any_of(list, [](const auto& value) { return value->type() == FilterOperation::Type::Reference; });
-    };
-
-    // We can't interpolate between lists if a reference filter is involved.
-    if (hasReferenceFilter(from) || hasReferenceFilter(to))
-        return false;
-
-    // Additive and accumulative composition will always yield interpolation.
-    if (compositeOperation != CompositeOperation::Replace)
+    // Additive composition will always yield interpolation.
+    if (compositeOperation == CompositeOperation::Add)
         return true;
 
     // Provided the two filter lists have a shared set of initial primitives, we will be able to interpolate.
@@ -60,10 +93,7 @@ auto canBlendFilterLists(const FilterList& from, const FilterList& to, Composite
     auto minLength = std::min(fromLength, toLength);
 
     for (size_t i = 0; i < minLength; ++i) {
-        Ref fromOperation = from[i].platform();
-        Ref toOperation = to[i].platform();
-
-        if (fromOperation->type() != toOperation->type())
+        if (from[i].index() != to[i].index())
             return false;
     }
 
@@ -71,7 +101,7 @@ auto canBlendFilterLists(const FilterList& from, const FilterList& to, Composite
 }
 
 template<typename FilterList>
-auto blendFilterLists(const FilterList& from, const FilterList& to, const BlendingContext& context) -> FilterList
+auto blendFilterLists(const FilterList& from, const FilterList& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterList
 {
     using FilterValue = typename FilterList::value_type;
 
@@ -101,29 +131,14 @@ auto blendFilterLists(const FilterList& from, const FilterList& to, const Blendi
 
     return FilterList {
         FilterList::Container::createWithSizeFromGenerator(maxLength, [&](auto index) {
-            RefPtr<FilterOperation> fromOp = (index < fromLength) ? from[index].value.ptr() : nullptr;
-            RefPtr<FilterOperation> toOp = (index < toLength) ? to[index].value.ptr() : nullptr;
+            std::optional<FilterValue> fromOp = (index < fromLength) ? std::make_optional(from[index]) : std::nullopt;
+            std::optional<FilterValue> toOp = (index < toLength) ? std::make_optional(to[index]) : std::nullopt;
 
-            RefPtr<FilterOperation> blendedOp;
-            if (toOp)
-                blendedOp = toOp->blend(fromOp.get(), context);
-            else if (fromOp)
-                blendedOp = fromOp->blend(nullptr, context, true);
-
-            if (blendedOp)
-                return FilterValue { blendedOp.releaseNonNull() };
-
-            if (context.progress > 0.5) {
-                if (toOp)
-                    return FilterValue { toOp.releaseNonNull() };
-                else
-                    return FilterValue { PassthroughFilterOperation::create() };
-            } else {
-                if (fromOp)
-                    return FilterValue { fromOp.releaseNonNull() };
-                else
-                    return FilterValue { PassthroughFilterOperation::create() };
-            }
+            if (fromOp && toOp)
+                return blendFilterValue(*fromOp, *toOp, fromStyle, toStyle, context);
+            if (fromOp)
+                return blendFilterValueFromOnly(*fromOp, fromStyle, toStyle, context);
+            return blendFilterValueToOnly(*toOp, fromStyle, toStyle, context);
         })
     };
 }

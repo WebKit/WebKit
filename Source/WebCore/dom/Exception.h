@@ -39,11 +39,11 @@ public:
     explicit Exception(ExceptionCode, String = { });
 
     ExceptionCode code() const { return m_code; }
-    const String& message() const { return m_message; }
-    String&& releaseMessage() { return WTFMove(m_message); }
+    const String& message() const LIFETIME_BOUND { return m_message; }
+    String&& releaseMessage() { return WTF::move(m_message); }
 
     Exception isolatedCopy() const & { return Exception { m_code, m_message.isolatedCopy() }; }
-    Exception isolatedCopy() && { return Exception { m_code, WTFMove(m_message).isolatedCopy() }; }
+    Exception isolatedCopy() && { return Exception { m_code, WTF::move(m_message).isolatedCopy() }; }
     
 private:
     ExceptionCode m_code;
@@ -52,7 +52,7 @@ private:
 
 inline Exception::Exception(ExceptionCode code, String message)
     : m_code { code }
-    , m_message { WTFMove(message) }
+    , m_message { WTF::move(message) }
 {
 }
 

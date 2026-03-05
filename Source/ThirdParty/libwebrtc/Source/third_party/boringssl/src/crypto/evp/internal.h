@@ -15,7 +15,9 @@
 #ifndef OPENSSL_HEADER_CRYPTO_EVP_INTERNAL_H
 #define OPENSSL_HEADER_CRYPTO_EVP_INTERNAL_H
 
-#include <openssl/base.h>
+#include <openssl/evp.h>
+
+#include <array>
 
 #include <openssl/span.h>
 
@@ -32,10 +34,6 @@ typedef struct evp_pkey_ctx_method_st EVP_PKEY_CTX_METHOD;
 struct evp_pkey_alg_st {
   // method implements operations for this |EVP_PKEY_ALG|.
   const EVP_PKEY_ASN1_METHOD *method;
-
-  // ec_group returns the |EC_GROUP| for this algorithm, if |method| is for
-  // |EVP_PKEY_EC|.
-  const EC_GROUP *(*ec_group)();
 };
 
 enum evp_decode_result_t {
@@ -91,8 +89,10 @@ struct evp_pkey_asn1_method_st {
   int (*priv_encode)(CBB *out, const EVP_PKEY *key);
 
   int (*set_priv_raw)(EVP_PKEY *pkey, const uint8_t *in, size_t len);
+  int (*set_priv_seed)(EVP_PKEY *pkey, const uint8_t *in, size_t len);
   int (*set_pub_raw)(EVP_PKEY *pkey, const uint8_t *in, size_t len);
   int (*get_priv_raw)(const EVP_PKEY *pkey, uint8_t *out, size_t *out_len);
+  int (*get_priv_seed)(const EVP_PKEY *pkey, uint8_t *out, size_t *out_len);
   int (*get_pub_raw)(const EVP_PKEY *pkey, uint8_t *out, size_t *out_len);
 
   // TODO(davidben): Can these be merged with the functions above? OpenSSL does
@@ -255,33 +255,8 @@ struct evp_pkey_ctx_method_st {
   int (*ctrl)(EVP_PKEY_CTX *ctx, int type, int p1, void *p2);
 } /* EVP_PKEY_CTX_METHOD */;
 
-typedef struct {
-  // key is the concatenation of the private seed and public key. It is stored
-  // as a single 64-bit array to allow passing to |ED25519_sign|. If
-  // |has_private| is false, the first 32 bytes are uninitialized and the public
-  // key is in the last 32 bytes.
-  uint8_t key[64];
-  char has_private;
-} ED25519_KEY;
-
-#define ED25519_PUBLIC_KEY_OFFSET 32
-
-typedef struct {
-  uint8_t pub[32];
-  uint8_t priv[32];
-  char has_private;
-} X25519_KEY;
-
-extern const EVP_PKEY_ASN1_METHOD dsa_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD rsa_pss_sha256_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD dh_asn1_meth;
-
 extern const EVP_PKEY_CTX_METHOD rsa_pkey_meth;
-extern const EVP_PKEY_CTX_METHOD rsa_pss_sha256_pkey_meth;
+extern const EVP_PKEY_CTX_METHOD rsa_pss_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD ec_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD ed25519_pkey_meth;
 extern const EVP_PKEY_CTX_METHOD x25519_pkey_meth;
@@ -298,5 +273,24 @@ void evp_pkey_set0(EVP_PKEY *pkey, const EVP_PKEY_ASN1_METHOD *method,
 #if defined(__cplusplus)
 }  // extern C
 #endif
+
+BSSL_NAMESPACE_BEGIN
+inline auto GetDefaultEVPAlgorithms() {
+  // A set of algorithms to use by default in |EVP_parse_public_key| and
+  // |EVP_parse_private_key|.
+  return std::array{
+      EVP_pkey_ec_p224(),
+      EVP_pkey_ec_p256(),
+      EVP_pkey_ec_p384(),
+      EVP_pkey_ec_p521(),
+      EVP_pkey_ed25519(),
+      EVP_pkey_rsa(),
+      EVP_pkey_x25519(),
+      // TODO(crbug.com/438761503): Remove DSA from this set, after callers that
+      // need DSA pass in |EVP_pkey_dsa| explicitly.
+      EVP_pkey_dsa(),
+  };
+}
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_EVP_INTERNAL_H

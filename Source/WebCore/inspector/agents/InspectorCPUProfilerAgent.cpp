@@ -56,7 +56,7 @@ void InspectorCPUProfilerAgent::didCreateFrontendAndBackend()
 
 void InspectorCPUProfilerAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    stopTracking();
+    std::ignore = stopTracking();
 
     Ref { m_instrumentingAgents.get() }->setPersistentCPUProfilerAgent(nullptr);
 }
@@ -72,7 +72,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::startTrackin
 
     m_tracking = true;
 
-    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingStart(protect(environment())->executionStopwatch().elapsedTime().seconds());
 
     return { };
 }
@@ -86,7 +86,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::stopTracking
 
     m_tracking = false;
 
-    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingComplete(protect(environment())->executionStopwatch().elapsedTime().seconds());
 
     return { };
 }
@@ -114,7 +114,7 @@ static Ref<Inspector::Protocol::CPUProfiler::ThreadInfo> buildThreadInfo(const T
 void InspectorCPUProfilerAgent::collectSample(const ResourceUsageData& data)
 {
     auto event = Inspector::Protocol::CPUProfiler::Event::create()
-        .setTimestamp(m_environment.executionStopwatch().elapsedTimeSince(data.timestamp).seconds())
+        .setTimestamp(protect(environment())->executionStopwatch().elapsedTimeSince(data.timestamp).seconds())
         .setUsage(data.cpuExcludingDebuggerThreads)
         .release();
 
@@ -122,10 +122,10 @@ void InspectorCPUProfilerAgent::collectSample(const ResourceUsageData& data)
         auto threads = JSON::ArrayOf<Inspector::Protocol::CPUProfiler::ThreadInfo>::create();
         for (auto& threadInfo : data.cpuThreads)
             threads->addItem(buildThreadInfo(threadInfo));
-        event->setThreads(WTFMove(threads));
+        event->setThreads(WTF::move(threads));
     }
 
-    m_frontendDispatcher->trackingUpdate(WTFMove(event));
+    m_frontendDispatcher->trackingUpdate(WTF::move(event));
 }
 
 } // namespace WebCore

@@ -35,12 +35,12 @@
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Layout {
 
-static bool isQuirkContainer(const ElementBox& layoutBox)
+static bool NODELETE isQuirkContainer(const ElementBox& layoutBox)
 {
     return layoutBox.isBodyBox() || layoutBox.isDocumentBox() || layoutBox.isTableCell();
 }
@@ -50,7 +50,7 @@ BlockFormattingQuirks::BlockFormattingQuirks(const BlockFormattingContext& block
 {
 }
 
-static bool needsStretching(const ElementBox& layoutBox)
+static bool NODELETE needsStretching(const ElementBox& layoutBox)
 {
     ASSERT(layoutBox.isInFlow());
     // In quirks mode, in-flow body and html stretch to the initial containing block (height: auto only).
@@ -78,7 +78,7 @@ std::optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicab
 
     // Here is the quirky part for body box when it stretches all the way to the ICB even when the document box does not (e.g. out-of-flow positioned).
     ASSERT(layoutBox.isBodyBox());
-    auto& initialContainingBlock = FormattingContext::initialContainingBlock(layoutBox);
+    CheckedRef initialContainingBlock = FormattingContext::initialContainingBlock(layoutBox);
     auto& initialContainingBlockGeometry = formattingContext.geometryForBox(initialContainingBlock, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk);
     // Start the content height with the ICB.
     auto bodyBoxContentHeight = initialContainingBlockGeometry.contentBoxHeight();
@@ -93,11 +93,11 @@ std::optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicab
     usedVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.value_or(nonCollapsedMargin.after);
     bodyBoxContentHeight -= usedVerticalMargin;
     // Document box's padding and border also shrink the body box's content height.
-    auto& documentBox = layoutBox.parent();
+    CheckedRef documentBox = layoutBox.parent();
     auto& documentBoxGeometry = formattingContext.geometryForBox(documentBox, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk);
     bodyBoxContentHeight -= documentBoxGeometry.verticalBorderAndPadding();
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.
-    if (documentBox.isInFlow()) {
+    if (documentBox->isInFlow()) {
         auto& formattingGeometry = formattingContext.formattingGeometry();
         auto precomputeDocumentBoxVerticalMargin = formattingGeometry.computedVerticalMargin(documentBox, formattingGeometry.constraintsForInFlowContent(initialContainingBlock, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk).horizontal());
         bodyBoxContentHeight -= precomputeDocumentBoxVerticalMargin.before.value_or(0) + precomputeDocumentBoxVerticalMargin.after.value_or(0);
@@ -115,8 +115,8 @@ static inline bool hasQuirkMarginToCollapse(const ElementBox& layoutBox, Vertica
 {
     if (!layoutBox.isInFlow())
         return false;
-    auto& style = layoutBox.style();
-    return (verticalMargin == VerticalMargin::Before && style.marginBefore().hasQuirk()) || (verticalMargin == VerticalMargin::After && style.marginAfter().hasQuirk());
+    CheckedRef style = layoutBox.style();
+    return (verticalMargin == VerticalMargin::Before && style->marginBefore().hasQuirk()) || (verticalMargin == VerticalMargin::After && style->marginAfter().hasQuirk());
 }
 
 bool BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(const ElementBox& layoutBox)
@@ -136,14 +136,14 @@ LayoutUnit BlockFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
     // the current formatting context. FIXME: surely we need to do some tricks here when block direction support is added.
     auto& formattingContext = downcast<BlockFormattingContext>(this->formattingContext());
     auto bodyAndDocumentVerticalMarginPaddingAndBorder = LayoutUnit { };
-    for (auto& containingBlock : containingBlockChain(layoutBox)) {
-        auto containingBlockHeight = containingBlock.style().logicalHeight();
+    for (CheckedRef containingBlock : containingBlockChain(layoutBox)) {
+        auto containingBlockHeight = containingBlock->style().logicalHeight();
         if (auto fixedContainingBlockHeight = containingBlockHeight.tryFixed())
-            return LayoutUnit(fixedContainingBlockHeight->resolveZoom(containingBlock.style().usedZoomForLength()) - bodyAndDocumentVerticalMarginPaddingAndBorder);
+            return LayoutUnit(fixedContainingBlockHeight->resolveZoom(containingBlock->style().usedZoomForLength()) - bodyAndDocumentVerticalMarginPaddingAndBorder);
 
         // If the only fixed value box we find is the ICB, then ignore the body and the document (vertical) margin, padding and border. So much quirkiness.
         // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
-        if (containingBlock.isBodyBox() || containingBlock.isDocumentBox()) {
+        if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
             auto& formattingGeometry = formattingContext.formattingGeometry();
             auto horizontalConstraints = formattingGeometry.constraintsForInFlowContent(FormattingContext::containingBlock(containingBlock), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal();
             auto verticalMargin = formattingGeometry.computedVerticalMargin(containingBlock, horizontalConstraints);

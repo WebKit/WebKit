@@ -28,11 +28,12 @@ int64_t FakeClock::TimeNanos() const {
 
 void FakeClock::SetTime(Timestamp new_time) {
   MutexLock lock(&lock_);
-  RTC_DCHECK(new_time.us() * 1000 >= time_ns_);
+  RTC_DCHECK_GE(new_time.us() * 1000, time_ns_);
   time_ns_ = new_time.us() * 1000;
 }
 
 void FakeClock::AdvanceTime(TimeDelta delta) {
+  RTC_DCHECK_GE(delta, TimeDelta::Zero());
   MutexLock lock(&lock_);
   time_ns_ += delta.ns();
 }

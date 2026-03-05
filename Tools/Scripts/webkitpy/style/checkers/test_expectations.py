@@ -48,14 +48,17 @@ class TestExpectationsChecker(object):
 
     def _determine_port_from_expectations_path(self, host, expectations_path):
         # Pass a configuration to avoid calling default_configuration() when initializing the port (takes 0.5 seconds on a Mac Pro!).
-        options_wk1 = optparse.Values({'configuration': 'Release', 'webkit_test_runner': False})
-        options_wk2 = optparse.Values({'configuration': 'Release', 'webkit_test_runner': True})
+        options_wk1 = optparse.Values({'configuration': 'Release', 'driver_name': 'DumpRenderTree'})
+        options_wk2 = optparse.Values({'configuration': 'Release', 'driver_name': 'WebKitTestRunner'})
         for port_name in host.port_factory.all_port_names():
-            ports = [host.port_factory.get(port_name, options=options_wk1), host.port_factory.get(port_name, options=options_wk2)]
-            for port in ports:
-                for test_expectation_file in port.expectations_files():
-                    if test_expectation_file.replace(port.path_from_webkit_base() + host.filesystem.sep, '') == expectations_path:
-                        return port
+            for option in (options_wk1, options_wk2):
+                try:
+                    port = host.port_factory.get(port_name, options=option)
+                    for test_expectation_file in port.expectations_files():
+                        if test_expectation_file.replace(port.path_from_webkit_base() + host.filesystem.sep, '') == expectations_path:
+                            return port
+                except NotImplementedError:
+                    continue
         return None
 
     def __init__(self, file_path, handle_style_error, host=None):

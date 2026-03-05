@@ -236,7 +236,7 @@ template<typename Primitive> struct FunctionConsumerForCalcValues {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (RefPtr value = CSSCalc::Value::parse(rangeCopy, state, Primitive::category, Primitive::range, WTFMove(symbolsAllowed), options)) {
+        if (RefPtr value = CSSCalc::Value::parse(rangeCopy, state, Primitive::category, Primitive::range, WTF::move(symbolsAllowed), options)) {
             range = rangeCopy;
             return {{ value.releaseNonNull() }};
         }

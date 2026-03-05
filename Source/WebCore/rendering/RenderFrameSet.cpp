@@ -54,10 +54,10 @@ static constexpr auto borderStartEdgeColor = SRGBA<uint8_t> { 170, 170, 170 };
 static constexpr auto borderEndEdgeColor = Color::black;
 static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFrameSet);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFrameSet);
 
 RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
-    : RenderBox(Type::FrameSet, frameSet, WTFMove(style))
+    : RenderBox(Type::FrameSet, frameSet, WTF::move(style))
     , m_isResizing(false)
 {
     ASSERT(isRenderFrameSet());
@@ -66,7 +66,7 @@ RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& styl
 
 RenderFrameSet::~RenderFrameSet() = default;
 
-HTMLFrameSetElement& RenderFrameSet::frameSetElement() const
+HTMLFrameSetElement& NODELETE RenderFrameSet::frameSetElement() const
 {
     return downcast<HTMLFrameSetElement>(nodeForNonAnonymous());
 }
@@ -85,7 +85,7 @@ void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect
     
     // Fill first.
     GraphicsContext& context = paintInfo.context();
-    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? style().visitedDependentColorWithColorFilter(CSSPropertyBorderLeftColor) : borderFillColor);
+    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? style().visitedDependentBorderLeftColorApplyingColorFilter() : borderFillColor);
     
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
@@ -104,7 +104,7 @@ void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& b
     
     // Fill first.
     GraphicsContext& context = paintInfo.context();
-    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? style().visitedDependentColorWithColorFilter(CSSPropertyBorderLeftColor) : borderFillColor);
+    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? style().visitedDependentBorderLeftColorApplyingColorFilter() : borderFillColor);
 
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
@@ -365,22 +365,22 @@ void RenderFrameSet::notifyFrameEdgeInfoChanged()
 
 void RenderFrameSet::fillFromEdgeInfo(const FrameEdgeInfo& edgeInfo, int r, int c)
 {
-    if (edgeInfo.allowBorder(LeftFrameEdge))
+    if (edgeInfo.allowBorder(FrameEdge::Left))
         m_cols.m_allowBorder[c] = true;
-    if (edgeInfo.allowBorder(RightFrameEdge))
+    if (edgeInfo.allowBorder(FrameEdge::Right))
         m_cols.m_allowBorder[c + 1] = true;
-    if (edgeInfo.preventResize(LeftFrameEdge))
+    if (edgeInfo.preventResize(FrameEdge::Left))
         m_cols.m_preventResize[c] = true;
-    if (edgeInfo.preventResize(RightFrameEdge))
+    if (edgeInfo.preventResize(FrameEdge::Right))
         m_cols.m_preventResize[c + 1] = true;
-    
-    if (edgeInfo.allowBorder(TopFrameEdge))
+
+    if (edgeInfo.allowBorder(FrameEdge::Top))
         m_rows.m_allowBorder[r] = true;
-    if (edgeInfo.allowBorder(BottomFrameEdge))
+    if (edgeInfo.allowBorder(FrameEdge::Bottom))
         m_rows.m_allowBorder[r + 1] = true;
-    if (edgeInfo.preventResize(TopFrameEdge))
+    if (edgeInfo.preventResize(FrameEdge::Top))
         m_rows.m_preventResize[r] = true;
-    if (edgeInfo.preventResize(BottomFrameEdge))
+    if (edgeInfo.preventResize(FrameEdge::Bottom))
         m_rows.m_preventResize[r + 1] = true;
 }
 
@@ -419,14 +419,14 @@ FrameEdgeInfo RenderFrameSet::edgeInfo() const
     int rows = frameSetElement().totalRows();
     int cols = frameSetElement().totalCols();
     if (rows && cols) {
-        result.setPreventResize(LeftFrameEdge, m_cols.m_preventResize[0]);
-        result.setAllowBorder(LeftFrameEdge, m_cols.m_allowBorder[0]);
-        result.setPreventResize(RightFrameEdge, m_cols.m_preventResize[cols]);
-        result.setAllowBorder(RightFrameEdge, m_cols.m_allowBorder[cols]);
-        result.setPreventResize(TopFrameEdge, m_rows.m_preventResize[0]);
-        result.setAllowBorder(TopFrameEdge, m_rows.m_allowBorder[0]);
-        result.setPreventResize(BottomFrameEdge, m_rows.m_preventResize[rows]);
-        result.setAllowBorder(BottomFrameEdge, m_rows.m_allowBorder[rows]);
+        result.setPreventResize(FrameEdge::Left, m_cols.m_preventResize[0]);
+        result.setAllowBorder(FrameEdge::Left, m_cols.m_allowBorder[0]);
+        result.setPreventResize(FrameEdge::Right, m_cols.m_preventResize[cols]);
+        result.setAllowBorder(FrameEdge::Right, m_cols.m_allowBorder[cols]);
+        result.setPreventResize(FrameEdge::Top, m_rows.m_preventResize[0]);
+        result.setAllowBorder(FrameEdge::Top, m_rows.m_allowBorder[0]);
+        result.setPreventResize(FrameEdge::Bottom, m_rows.m_preventResize[rows]);
+        result.setAllowBorder(FrameEdge::Bottom, m_rows.m_allowBorder[rows]);
     }
     
     return result;

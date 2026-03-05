@@ -46,7 +46,7 @@ Ref<JSON::Object> RemoteAnimationTimeline::toJSONForTesting() const
     Ref object = JSON::Object::create();
     object->setValue("currentTime"_s, WebKit::toJSONForTesting(m_currentTime));
     object->setValue("duration"_s, WebKit::toJSONForTesting(m_duration));
-    object->setString("identifier"_s, m_identifier.loggingString());
+    object->setInteger("identifier"_s, m_identifier.object().toRawValue());
     return object;
 }
 

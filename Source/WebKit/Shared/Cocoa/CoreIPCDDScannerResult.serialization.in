@@ -32,14 +32,14 @@ header: "CoreIPCDDScannerResult.h"
     RetainPtr<NSNumber> P;
     RetainPtr<NSNumber> VN;
     std::optional<Vector<RetainPtr<DDScannerResult>>> SR;
-    std::optional<RetainPtr<NSString>> V;
-    std::optional<RetainPtr<NSNumber>> CF;
+    RetainPtr<NSString> V;
+    RetainPtr<NSNumber> CF;
 
-    std::optional<RetainPtr<NSString>> AddressBookUID;
-    std::optional<RetainPtr<NSString>> Domain;
-    std::optional<RetainPtr<NSString>> UUID;
-    std::optional<RetainPtr<NSNumber>> UrlificationBegin;
-    std::optional<RetainPtr<NSNumber>> UrlificationLength;
+    RetainPtr<NSString> AddressBookUID;
+    RetainPtr<NSString> Domain;
+    RetainPtr<NSString> UUID;
+    RetainPtr<NSNumber> UrlificationBegin;
+    RetainPtr<NSNumber> UrlificationLength;
 };
 
 [WebKitPlatform] class WebKit::CoreIPCDDScannerResult {

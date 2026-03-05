@@ -1,0 +1,17 @@
+This tests that using the 'Copy Image' context menu item codepath does not copy the image URL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL event.clipboardData.items.length should be 2. Was 0.
+FAIL event.clipboardData.items[0].type should be text/html. Threw exception TypeError: undefined is not an object (evaluating 'event.clipboardData.items[0].type')
+FAIL event.clipboardData.items[1].type should be image/png. Threw exception TypeError: undefined is not an object (evaluating 'event.clipboardData.items[1].type')
+To run this test manually, click "Copy Image" in the context menu with the image below, and paste in the box with the black border.
+
+NOTE: This test needs to run on a HTTP server as this bug reproduces only with hosted images.
+
+
+

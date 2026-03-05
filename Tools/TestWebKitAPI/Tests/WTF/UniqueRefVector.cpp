@@ -133,7 +133,7 @@ TEST(WTF_UniqueRefVector, UncheckedAppend)
     intRefVector.reserveInitialCapacity(100);
     for (int i = 0; i < 100; ++i) {
         auto moveOnly = MAKE(i);
-        intRefVector.append(WTFMove(moveOnly));
+        intRefVector.append(WTF::move(moveOnly));
         EXPECT_EQ(moveOnly.moveToUniquePtr(), nullptr);
     }
 
@@ -147,7 +147,7 @@ TEST(WTF_UniqueRefVector, Insert)
 
     for (int i = 0; i < 100; ++i) {
         auto moveOnly = MAKE(i);
-        intRefVector.insert(0, WTFMove(moveOnly));
+        intRefVector.insert(0, WTF::move(moveOnly));
         EXPECT_EQ(moveOnly.moveToUniquePtr(), nullptr);
     }
 
@@ -157,7 +157,7 @@ TEST(WTF_UniqueRefVector, Insert)
 
     for (int i = 0; i < 200; i += 2) {
         auto moveOnly = MAKE(1000 + i);
-        intRefVector.insert(i, WTFMove(moveOnly));
+        intRefVector.insert(i, WTF::move(moveOnly));
         EXPECT_EQ(moveOnly.moveToUniquePtr(), nullptr);
     }
 
@@ -176,7 +176,7 @@ TEST(WTF_UniqueRefVector, TakeLast)
 
     for (int i = 0; i < 100; ++i) {
         auto moveOnly = MAKE(i);
-        intRefVector.append(WTFMove(moveOnly));
+        intRefVector.append(WTF::move(moveOnly));
         EXPECT_EQ(moveOnly.moveToUniquePtr(), nullptr);
     }
 

@@ -243,9 +243,7 @@ sk_sp<SkShader> SkImage::makeRawShader(SkTileMode tmx, SkTileMode tmy,
                                   sampling, localMatrix);
 }
 
-sk_sp<SkData> SkImage::refEncodedData() const {
-    return sk_sp<SkData>(as_IB(this)->onRefEncoded());
-}
+sk_sp<const SkData> SkImage::refEncodedData() const { return as_IB(this)->onRefEncoded(); }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

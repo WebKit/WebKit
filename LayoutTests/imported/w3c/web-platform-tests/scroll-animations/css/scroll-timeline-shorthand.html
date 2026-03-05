@@ -67,7 +67,7 @@ test_shorthand_value('scroll-timeline', '--abc, --def',
 });
 
 function test_shorthand_contraction(shorthand, longhands, expected) {
-  let longhands_fmt = Object.entries(longhands).map((e) => `${e[0]}:${e[1]}:${e[2]}`).join(';');
+  let longhands_fmt = Object.entries(longhands).map((e) => `${e[0]}:${e[1]}`).join(';');
   test((t) => {
     t.add_cleanup(() => {
       for (let shorthand of Object.keys(longhands))
@@ -95,15 +95,23 @@ test_shorthand_contraction('scroll-timeline', {
   'scroll-timeline-axis': 'block, block',
 }, 'none, none');
 
-// Longhands with different lengths:
+// Longhands with different lengths will cause the shorthand to serialize as the empty string due to no longer being able to round trip.
 
 test_shorthand_contraction('scroll-timeline', {
   'scroll-timeline-name': '--a, --b, --c',
   'scroll-timeline-axis': 'inline, inline',
-}, '--a inline, --b inline, --c inline');
+}, '');
 
 test_shorthand_contraction('scroll-timeline', {
   'scroll-timeline-name': '--a, --b',
   'scroll-timeline-axis': 'inline, inline, inline',
-}, '--a inline, --b inline');
+}, '');
+
+test_shorthand_contraction('scroll-timeline', {
+  'scroll-timeline-name': '--a, --b',
+}, '');
+
+test_shorthand_contraction('scroll-timeline', {
+  'scroll-timeline-axis': 'inline, inline',
+}, '');
 </script>

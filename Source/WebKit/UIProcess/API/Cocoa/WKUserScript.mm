@@ -55,7 +55,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKUserScript.class, self))
         return;
 
-    _userScript->~UserScript();
+    SUPPRESS_UNRETAINED_ARG _userScript->~UserScript();
 
     [super dealloc];
 }
@@ -94,7 +94,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (_WKUserContentWorld *)_userContentWorld
 {
-    return adoptNS([[_WKUserContentWorld alloc] _initWithContentWorld:protectedWrapper(_userScript->contentWorld()).get()]).autorelease();
+    return adoptNS([[_WKUserContentWorld alloc] _initWithContentWorld:protect(wrapper(_userScript->contentWorld())).get()]).autorelease();
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

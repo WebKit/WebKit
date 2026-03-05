@@ -26,8 +26,8 @@
 #ifndef PAS_SEGREGATED_SHARED_HANDLE_INLINES_H
 #define PAS_SEGREGATED_SHARED_HANDLE_INLINES_H
 
+#include "pas_page_base.h"
 #include "pas_segregated_shared_handle.h"
-
 #include "pas_segregated_shared_view.h"
 
 PAS_BEGIN_EXTERN_C;

@@ -27,6 +27,10 @@
 #include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEMergeCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEMerge> FEMerge::create(unsigned numberOfEffectInputs, DestinationColorSpace colorSpace)
@@ -43,6 +47,24 @@ FEMerge::FEMerge(unsigned numberOfEffectInputs, DestinationColorSpace colorSpace
 bool FEMerge::operator==(const FEMerge& other) const
 {
     return FilterEffect::operator==(other) && m_numberOfEffectInputs == other.m_numberOfEffectInputs;
+}
+
+OptionSet<FilterRenderingMode> FEMerge::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEMerge::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEMergeCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FEMerge::createSoftwareApplier() const

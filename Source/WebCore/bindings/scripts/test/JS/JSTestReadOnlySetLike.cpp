@@ -141,7 +141,7 @@ void JSTestReadOnlySetLikePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestReadOnlySetLike::s_info = { "TestReadOnlySetLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLike) };
 
 JSTestReadOnlySetLike::JSTestReadOnlySetLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReadOnlySetLike>&& impl)
-    : JSDOMWrapper<TestReadOnlySetLike>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestReadOnlySetLike>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -305,7 +305,7 @@ void JSTestReadOnlySetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReadOnlySetLike = static_cast<JSTestReadOnlySetLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestReadOnlySetLike->protectedWrapped().ptr(), jsTestReadOnlySetLike);
+    uncacheWrapper(world, protect(jsTestReadOnlySetLike->wrapped()).ptr(), jsTestReadOnlySetLike);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -343,7 +343,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestReadOnlySetLike>(impl.ptr());
 #endif
-    return createWrapper<TestReadOnlySetLike>(globalObject, WTFMove(impl));
+    return createWrapper<TestReadOnlySetLike>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestReadOnlySetLike& impl)

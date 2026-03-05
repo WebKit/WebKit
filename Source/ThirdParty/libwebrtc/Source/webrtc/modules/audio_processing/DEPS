@@ -5,10 +5,16 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  ".*test\.cc": [
+  ".*test\\.cc": [
     "+rtc_tools",
     # Android platform build has different paths.
     "+gtest",
     "+external/webrtc",
+  ],
+  "audioproc_float_impl\\.cc": [
+    "+third_party/tflite"
+  ],
+  "audio_processing_simulator\\.h": [
+    "+third_party/tflite"
   ],
 }

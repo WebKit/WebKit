@@ -64,90 +64,90 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 
 - (WKWebExtensionContext *)webExtensionContext
 {
-    if (RefPtr context = self._protectedWebExtensionAction->extensionContext())
+    if (RefPtr context = protect(*_webExtensionAction)->extensionContext())
         return context->wrapper();
     return nil;
 }
 
 - (id<WKWebExtensionTab>)associatedTab
 {
-    if (RefPtr tab = self._protectedWebExtensionAction->tab())
+    if (RefPtr tab = protect(*_webExtensionAction)->tab())
         return tab->delegate();
     return nil;
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return WebKit::toCocoaImage(self._protectedWebExtensionAction->icon(WebCore::FloatSize(size)));
+    return WebKit::toCocoaImage(protect(*_webExtensionAction)->icon(WebCore::FloatSize(size)));
 }
 
 - (NSString *)label
 {
-    return self._protectedWebExtensionAction->label().createNSString().autorelease();
+    return protect(*_webExtensionAction)->label().createNSString().autorelease();
 }
 
 - (NSString *)badgeText
 {
-    return self._protectedWebExtensionAction->badgeText().createNSString().autorelease();
+    return protect(*_webExtensionAction)->badgeText().createNSString().autorelease();
 }
 
 - (BOOL)hasUnreadBadgeText
 {
-    return self._protectedWebExtensionAction->hasUnreadBadgeText();
+    return protect(*_webExtensionAction)->hasUnreadBadgeText();
 }
 
 - (void)setHasUnreadBadgeText:(BOOL)hasUnreadBadgeText
 {
-    return self._protectedWebExtensionAction->setHasUnreadBadgeText(hasUnreadBadgeText);
+    return protect(*_webExtensionAction)->setHasUnreadBadgeText(hasUnreadBadgeText);
 }
 
 - (NSString *)inspectionName
 {
-    return self._protectedWebExtensionAction->popupWebViewInspectionName();
+    return protect(*_webExtensionAction)->popupWebViewInspectionName();
 }
 
 - (void)setInspectionName:(NSString *)name
 {
-    self._protectedWebExtensionAction->setPopupWebViewInspectionName(name);
+    protect(*_webExtensionAction)->setPopupWebViewInspectionName(name);
 }
 
 - (BOOL)isEnabled
 {
-    return self._protectedWebExtensionAction->isEnabled();
+    return protect(*_webExtensionAction)->isEnabled();
 }
 
 - (NSArray<CocoaMenuItem *> *)menuItems
 {
-    return self._protectedWebExtensionAction->platformMenuItems();
+    return protect(*_webExtensionAction)->platformMenuItems();
 }
 
 - (BOOL)presentsPopup
 {
-    return self._protectedWebExtensionAction->presentsPopup();
+    return protect(*_webExtensionAction)->presentsPopup();
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (UIViewController *)popupViewController
 {
-    return self._protectedWebExtensionAction->popupViewController();
+    return protect(*_webExtensionAction)->popupViewController();
 }
 #endif
 
 #if PLATFORM(MAC)
 - (NSPopover *)popupPopover
 {
-    return self._protectedWebExtensionAction->popupPopover();
+    return protect(*_webExtensionAction)->popupPopover();
 }
 #endif
 
 - (WKWebView *)popupWebView
 {
-    return self._protectedWebExtensionAction->popupWebView();
+    return protect(*_webExtensionAction)->popupWebView();
 }
 
 - (void)closePopup
 {
-    self._protectedWebExtensionAction->closePopup();
+    protect(*_webExtensionAction)->closePopup();
 }
 
 #pragma mark WKObject protocol implementation
@@ -158,11 +158,6 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 }
 
 - (WebKit::WebExtensionAction&)_webExtensionAction
-{
-    return *_webExtensionAction;
-}
-
-- (Ref<WebKit::WebExtensionAction>)_protectedWebExtensionAction
 {
     return *_webExtensionAction;
 }

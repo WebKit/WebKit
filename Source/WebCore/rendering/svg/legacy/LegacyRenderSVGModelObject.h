@@ -44,7 +44,7 @@ namespace WebCore {
 class SVGElement;
 
 class LegacyRenderSVGModelObject : public RenderElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGModelObject);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGModelObject);
 public:
     virtual ~LegacyRenderSVGModelObject();
@@ -60,18 +60,20 @@ public:
 
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
     const RenderElement* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const final;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     static bool checkIntersection(RenderElement*, const FloatRect&);
     static bool checkEnclosure(RenderElement*, const FloatRect&);
 
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
-    Ref<SVGElement> protectedElement() const;
+
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) const;
 
 protected:
     LegacyRenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
     void willBeDestroyed() override;
+    void insertedIntoTree() override;
 
 private:
     // This method should never be called, SVG uses a different nodeAtPoint method

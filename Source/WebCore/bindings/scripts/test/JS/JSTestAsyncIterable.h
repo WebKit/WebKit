@@ -32,7 +32,7 @@ public:
     static JSTestAsyncIterable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestAsyncIterable>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestAsyncIterable* ptr = new (NotNull, JSC::allocateCell<JSTestAsyncIterable>(vm)) JSTestAsyncIterable(structure, *globalObject, WTFMove(impl));
+        JSTestAsyncIterable* ptr = new (NotNull, JSC::allocateCell<JSTestAsyncIterable>(vm)) JSTestAsyncIterable(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestAsyncIterable* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestAsyncIterable&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestAsyncIterable* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestAsyncIterable>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestAsyncIterable& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestAsyncIterable>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestAsyncIterable> {
     using WrapperClass = JSTestAsyncIterable;

@@ -1,0 +1,4 @@
+
+FAIL ::scroll-marker is not active when its originating element is not scrolled into the view assert_equals: ::scroll-marker background-color should be rgb(255, 0, 0) but was  expected "rgb(255, 0, 0)" but got ""
+FAIL ::scroll-marker is active when its originating element is scrolled into the view assert_equals: ::scroll-marker background-color should be rgb(0, 128, 0) but was  expected "rgb(0, 128, 0)" but got ""
+

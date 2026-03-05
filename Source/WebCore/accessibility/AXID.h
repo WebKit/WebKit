@@ -32,4 +32,7 @@ namespace WebCore {
 enum class AXIDType { };
 using AXID = ObjectIdentifier<AXIDType>;
 
+enum class AXTreeIDType { };
+using AXTreeID = ObjectIdentifier<AXTreeIDType>;
+
 } // namespace WebCore

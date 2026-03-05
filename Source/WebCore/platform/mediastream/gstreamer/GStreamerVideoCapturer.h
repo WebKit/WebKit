@@ -42,7 +42,7 @@ public:
     void tearDown(bool disconnectSignals) final;
     void setupPipeline() final;
     GstElement* createConverter() final;
-    const char* name() final { return "Video"; }
+    ASCIILiteral name() final { return "Video"_s; }
 
     using SinkVideoFrameCallback = Function<void(Ref<VideoFrameGStreamer>&&)>;
     void setSinkVideoFrameCallback(SinkVideoFrameCallback&&);

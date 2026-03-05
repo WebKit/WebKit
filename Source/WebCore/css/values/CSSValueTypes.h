@@ -516,7 +516,7 @@ struct CSSValueCreationInvoker {
 };
 inline constexpr CSSValueCreationInvoker createCSSValue{};
 
-Ref<CSSValue> makePrimitiveCSSValue(CSSValueID);
+Ref<CSSValue> NODELETE makePrimitiveCSSValue(CSSValueID);
 Ref<CSSValue> makePrimitiveCSSValue(const CustomIdentifier&);
 Ref<CSSValue> makePrimitiveCSSValue(const PropertyIdentifier&);
 Ref<CSSValue> makePrimitiveCSSValue(const WTF::AtomString&);
@@ -567,7 +567,7 @@ template<TupleLike CSSType> struct CSSValueCreation<CSSType> {
             );
             WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value);
 
-            return makeListCSSValue<SerializationSeparator<CSSType>>(WTFMove(list));
+            return makeListCSSValue<SerializationSeparator<CSSType>>(WTF::move(list));
         }
     }
 };
@@ -580,7 +580,7 @@ template<RangeLike CSSType> struct CSSValueCreation<CSSType> {
         for (const auto& element : value)
             list.append(createCSSValue(pool, element, rest...));
 
-        return makeListCSSValue<SerializationSeparator<CSSType>>(WTFMove(list));
+        return makeListCSSValue<SerializationSeparator<CSSType>>(WTF::move(list));
     }
 };
 

@@ -45,7 +45,7 @@ public:
     explicit WakeLockManager(Document&);
     ~WakeLockManager();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     void addWakeLock(Ref<WakeLockSentinel>&&, std::optional<PageIdentifier>);
@@ -57,7 +57,7 @@ private:
     void visibilityStateChanged() final;
 
     const CheckedRef<Document> m_document;
-    HashMap<WakeLockType, Vector<RefPtr<WakeLockSentinel>>, WTF::IntHash<WakeLockType>, WTF::StrongEnumHashTraits<WakeLockType>> m_wakeLocks;
+    HashMap<WakeLockType, Vector<Ref<WakeLockSentinel>>, WTF::IntHash<WakeLockType>, WTF::StrongEnumHashTraits<WakeLockType>> m_wakeLocks;
     std::unique_ptr<SleepDisabler> m_screenLockDisabler;
 };
 

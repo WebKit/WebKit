@@ -1,6 +1,0 @@
-[ iOS ] UIProcess/API/ios/WKWebViewIOS.mm
-[ iOS ] UIProcess/ApplicationStateTracker.mm
-[ iOS ] UIProcess/ios/PageClientImplIOS.mm
-[ iOS ] UIProcess/ios/ViewGestureControllerIOS.mm
-[ iOS ] WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
-[ iOS ] WebProcess/WebPage/ios/WebPageIOS.mm

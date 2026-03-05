@@ -62,8 +62,8 @@ def get_browser_relevant_objects_glib(browser_driver):
         raise ValueError(f"The browser path does not exist: {browser_path}")
     libraries, interpreter = SharedObjectResolver('ldd', browser_env).get_libs_and_interpreter(browser_path)
     browser_build_dir = port_driver._build_path()
-    for library in libraries:
-        if library.startswith(browser_build_dir):
+    for library in sorted(libraries):
+        if library.startswith(browser_build_dir) or os.path.realpath(library).startswith(browser_build_dir):
             browser_relevant_objects.append(library)
     return browser_relevant_objects
 

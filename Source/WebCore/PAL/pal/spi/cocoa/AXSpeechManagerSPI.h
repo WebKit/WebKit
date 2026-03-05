@@ -25,11 +25,15 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(COCOA)
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://167375794) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #include <AXSpeechManager.h>
 
@@ -37,11 +41,16 @@ DECLARE_SYSTEM_HEADER
 
 #include <AVFoundation/AVFoundation.h>
 
+#endif // USE(APPLE_INTERNAL_SDK)
+
+typedef void (^AVSpeechSynthesisVoiceCallbackBlock)(NSArray<AVSpeechSynthesisVoice *> *);
+
 @interface AVSpeechSynthesisVoice (PrivateAttributes)
 @property (nonatomic, readonly) BOOL isSystemVoice;
 + (nonnull NSArray<AVSpeechSynthesisVoice *> *)speechVoicesIncludingSuperCompact;
++ (void)speechVoicesIncludingSuperCompactWithCompletionHandler:(nonnull AVSpeechSynthesisVoiceCallbackBlock)completion;
 @end
 
-#endif // USE(APPLE_INTERNAL_SDK)
-
 #endif // PLATFORM(COCOA)
+
+#endif // !__has_feature(modules)

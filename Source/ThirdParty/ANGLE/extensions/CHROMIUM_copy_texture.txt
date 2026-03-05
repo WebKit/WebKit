@@ -8,7 +8,7 @@ Name Strings
 
 Version
 
-    Last Modifed Date: March 24, 2017
+    Last Modified Date: September 3, 2025
 
 Dependencies
 
@@ -17,6 +17,7 @@ Dependencies
     EXT_texture_format_BGRA8888 affects the definition of this extension.
     ARB_texture_rg affects the definition of this extension.
     CHROMIUM_ycbcr_422_image affects the definition of this extension.
+    ANGLE_yuv_internal_format affects the definition of this extension.
 
 Overview
 
@@ -81,18 +82,27 @@ Additions to the OpenGL ES 2.0 Specification
 
        source format           color components
        ----------------------------------------
-       ALPHA                   (0, 0, 0, A)
-       RED                     (R, 0, 0, 1)
-       LUMINANCE               (L, L, L, 1)
-       LUMINANCE_ALPHA         (L, L, L, A)
-       RGB                     (R, G, B, 1)
-       RGB8                    (R, G, B, 1)
-       RGBA                    (R, G, B, A)
-       RGBA8                   (R, G, B, A)
-       BGRA_EXT                (R, G, B, A)
-       BGRA8_EXT               (R, G, B, A)
-       RGB_YCBCR_420V_CHROMIUM (R, G, B, 1)
-       RGB_YCBCR_422_CHROMIUM  (R, G, B, 1)
+       ALPHA                                            (0, 0, 0, A)
+       RED                                              (R, 0, 0, 1)
+       LUMINANCE                                        (L, L, L, 1)
+       LUMINANCE_ALPHA                                  (L, L, L, A)
+       RGB                                              (R, G, B, 1)
+       RGB8                                             (R, G, B, 1)
+       RGBA                                             (R, G, B, A)
+       RGBA8                                            (R, G, B, A)
+       BGRA_EXT                                         (R, G, B, A)
+       BGRA8_EXT                                        (R, G, B, A)
+       RGB_YCBCR_420V_CHROMIUM                          (R, G, B, 1)
+       RGB_YCBCR_422_CHROMIUM                           (R, G, B, 1)
+       G8_B8R8_2PLANE_420_UNORM_ANGLE                   (R, G, B, 1)
+       G8_B8_R8_3PLANE_420_UNORM_ANGLE                  (R, G, B, 1)
+       G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16_ANGLE  (R, G, B, 1)
+       G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16_ANGLE (R, G, B, 1)
+       G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16_ANGLE  (R, G, B, 1)
+       G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16_ANGLE (R, G, B, 1)
+       G16_B16R16_2PLANE_420_UNORM_ANGLE                (R, G, B, 1)
+       G16_B16_R16_3PLANE_420_UNORM_ANGLE               (R, G, B, 1)
+
 
     The format type of the destination texture is converted to that specified
     by <destType>.
@@ -230,6 +240,15 @@ Additions to the OpenGL ES 2.0 Specification
         BGRA8_EXT
         RGB_YCBCR_420V_CHROMIUM
         RGB_YCBCR_422_CHROMIUM
+        G8_B8R8_2PLANE_420_UNORM_ANGLE
+        G8_B8_R8_3PLANE_420_UNORM_ANGLE
+        G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16_ANGLE
+        G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16_ANGLE
+        G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16_ANGLE
+        G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16_ANGLE
+        G16_B16R16_2PLANE_420_UNORM_ANGLE
+        G16_B16_R16_3PLANE_420_UNORM_ANGLE
+
 
 Dependencies on ARB_texture_rg
 
@@ -240,6 +259,18 @@ Dependencies on CHROMIUM_ycbcr_422_image
 
     If CHROMIUM_ycbcr_422_image is not supported:
      * delete any reference to the RGB_YCBCR_422_CHROMIUM format.
+
+Dependencies on ANGLE_yuv_internal_format
+
+   If ANGLE_yuv_internal_format is not supported:
+     * Delete references to the G8_B8R8_2PLANE_420_UNORM_ANGLE,
+        G8_B8_R8_3PLANE_420_UNORM_ANGLE,
+        G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16_ANGLE,
+        G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16_ANGLE,
+        G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16_ANGLE,
+        G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16_ANGLE,
+        G16_B16R16_2PLANE_420_UNORM_ANGLE, and
+        G16_B16_R16_3PLANE_420_UNORM_ANGLE formats.
 
 Errors
 
@@ -266,3 +297,4 @@ Revision History
     18/1/2017   Supported source_level and dest_level.
     19/1/2017   Added TEXTURE_CUBE_MAP as valid dest_id target.
     24/3/2017   Clean up naming and move formats into tables.
+    3/9/2025    Add source copy formats from ANGLE_yuv_internal_format

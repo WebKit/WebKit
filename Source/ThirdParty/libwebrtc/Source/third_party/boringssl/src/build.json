@@ -261,17 +261,13 @@
             "crypto/evp/evp_asn1.cc",
             "crypto/evp/evp_ctx.cc",
             "crypto/evp/p_dh.cc",
-            "crypto/evp/p_dh_asn1.cc",
-            "crypto/evp/p_dsa_asn1.cc",
+            "crypto/evp/p_dsa.cc",
             "crypto/evp/p_ec.cc",
-            "crypto/evp/p_ec_asn1.cc",
             "crypto/evp/p_ed25519.cc",
-            "crypto/evp/p_ed25519_asn1.cc",
             "crypto/evp/p_hkdf.cc",
+            "crypto/evp/p_mldsa.cc",
             "crypto/evp/p_rsa.cc",
-            "crypto/evp/p_rsa_asn1.cc",
             "crypto/evp/p_x25519.cc",
-            "crypto/evp/p_x25519_asn1.cc",
             "crypto/evp/pbkdf.cc",
             "crypto/evp/print.cc",
             "crypto/evp/scrypt.cc",
@@ -404,7 +400,6 @@
             "crypto/x509/x_req.cc",
             "crypto/x509/x_sig.cc",
             "crypto/x509/x_spki.cc",
-            "crypto/x509/x_val.cc",
             "crypto/x509/x_x509.cc",
             "crypto/x509/x_x509a.cc",
             "crypto/xwing/xwing.cc"
@@ -419,7 +414,6 @@
             "include/openssl/asn1t.h",
             "include/openssl/base.h",
             "include/openssl/base64.h",
-            "include/openssl/bcm_public.h",
             "include/openssl/bio.h",
             "include/openssl/blake2.h",
             "include/openssl/blowfish.h",
@@ -773,6 +767,7 @@
     "test_support": {
         "srcs": [
             "crypto/test/abi_test.cc",
+            "crypto/test/der_trailing_data.cc",
             "crypto/test/file_test.cc",
             "crypto/test/file_test_gtest.cc",
             "crypto/test/file_util.cc",
@@ -782,6 +777,7 @@
         ],
         "internal_hdrs": [
             "crypto/test/abi_test.h",
+            "crypto/test/der_trailing_data.h",
             "crypto/test/file_test.h",
             "crypto/test/file_util.h",
             "crypto/test/gtest_main.h",
@@ -946,6 +942,7 @@
             "crypto/slhdsa/slhdsa_siggen.txt",
             "crypto/slhdsa/slhdsa_sigver.txt",
             "crypto/x509/test/*.pem",
+            "crypto/x509/test/*.pk8",
             "third_party/wycheproof_testvectors/*.txt"
         ]
     },
@@ -1080,7 +1077,18 @@
     "modulewrapper": {
         "srcs": [
             "util/fipstools/acvp/modulewrapper/main.cc",
-            "util/fipstools/acvp/modulewrapper/modulewrapper.cc"
+            "util/fipstools/acvp/modulewrapper/modulewrapper.cc",
+            "util/fipstools/acvp/modulewrapper/proto.cc"
+        ],
+        "internal_hdrs": [
+            "util/fipstools/acvp/modulewrapper/modulewrapper.h"
+        ]
+    },
+    "entropy_modulewrapper": {
+        "srcs": [
+            "util/fipstools/acvp/entropy_modulewrapper/main.cc",
+            "util/fipstools/acvp/entropy_modulewrapper/modulewrapper.cc",
+            "util/fipstools/acvp/modulewrapper/proto.cc"
         ],
         "internal_hdrs": [
             "util/fipstools/acvp/modulewrapper/modulewrapper.h"

@@ -83,6 +83,8 @@ vulkan_backend_sources = [
   "android/vk_android_utils.h",
   "spv_utils.cpp",
   "spv_utils.h",
+  "vk_barrier_data.cpp",
+  "vk_barrier_data.h",
   "vk_cache_utils.cpp",
   "vk_cache_utils.h",
   "vk_caps_utils.cpp",

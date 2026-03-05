@@ -1036,8 +1036,8 @@ TEST(RtpPacketTest, CreateAndParseAbsoluteCaptureTime) {
   send_packet.SetSsrc(kSsrc);
 
   constexpr AbsoluteCaptureTime kAbsoluteCaptureTime{
-      /*absolute_capture_timestamp=*/9876543210123456789ULL,
-      /*estimated_capture_clock_offset=*/-1234567890987654321LL};
+      .absolute_capture_timestamp = 9876543210123456789ULL,
+      .estimated_capture_clock_offset = -1234567890987654321LL};
   ASSERT_TRUE(send_packet.SetExtension<AbsoluteCaptureTimeExtension>(
       kAbsoluteCaptureTime));
 
@@ -1066,8 +1066,8 @@ TEST(RtpPacketTest,
   send_packet.SetSsrc(kSsrc);
 
   constexpr AbsoluteCaptureTime kAbsoluteCaptureTime{
-      /*absolute_capture_timestamp=*/9876543210123456789ULL,
-      /*estimated_capture_clock_offset=*/std::nullopt};
+      .absolute_capture_timestamp = 9876543210123456789ULL,
+      .estimated_capture_clock_offset = std::nullopt};
   ASSERT_TRUE(send_packet.SetExtension<AbsoluteCaptureTimeExtension>(
       kAbsoluteCaptureTime));
 
@@ -1155,7 +1155,7 @@ TEST(RtpPacketTest, CreateAndParseTransportSequenceNumberV2Preallocated) {
 
   constexpr int kTransportSequenceNumber = 12345;
   constexpr std::optional<FeedbackRequest> kNoFeedbackRequest =
-      FeedbackRequest{/*include_timestamps=*/false, /*sequence_count=*/0};
+      FeedbackRequest{.include_timestamps = false, .sequence_count = 0};
   send_packet.ReserveExtension<TransportSequenceNumberV2>();
   send_packet.SetExtension<TransportSequenceNumberV2>(kTransportSequenceNumber,
                                                       kNoFeedbackRequest);
@@ -1188,7 +1188,7 @@ TEST(RtpPacketTest,
 
   constexpr int kTransportSequenceNumber = 12345;
   constexpr std::optional<FeedbackRequest> kFeedbackRequest =
-      FeedbackRequest{/*include_timestamps=*/true, /*sequence_count=*/3};
+      FeedbackRequest{.include_timestamps = true, .sequence_count = 3};
   send_packet.SetExtension<TransportSequenceNumberV2>(kTransportSequenceNumber,
                                                       kFeedbackRequest);
 

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if USE(AVFOUNDATION)
 
 #include <wtf/text/WTFString.h>

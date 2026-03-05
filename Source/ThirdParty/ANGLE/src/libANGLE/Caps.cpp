@@ -41,30 +41,6 @@ TextureCaps &TextureCaps::operator=(const TextureCaps &other) = default;
 
 TextureCaps::~TextureCaps() = default;
 
-GLuint TextureCaps::getMaxSamples() const
-{
-    return !sampleCounts.empty() ? *sampleCounts.rbegin() : 0;
-}
-
-GLuint TextureCaps::getNearestSamples(GLuint requestedSamples) const
-{
-    if (requestedSamples == 0)
-    {
-        return 0;
-    }
-
-    for (SupportedSampleSet::const_iterator i = sampleCounts.begin(); i != sampleCounts.end(); i++)
-    {
-        GLuint samples = *i;
-        if (samples >= requestedSamples)
-        {
-            return samples;
-        }
-    }
-
-    return 0;
-}
-
 TextureCaps GenerateMinimumTextureCaps(GLenum sizedInternalFormat,
                                        const Version &clientVersion,
                                        const Extensions &extensions)
@@ -1401,6 +1377,7 @@ std::vector<std::string> DisplayExtensions::getStrings() const
     InsertExtensionString("EGL_ANGLE_metal_create_context_ownership_identity",   metalCreateContextOwnershipIdentityANGLE, &extensionStrings);
     InsertExtensionString("EGL_KHR_partial_update",                              partialUpdateKHR,                   &extensionStrings);
     InsertExtensionString("EGL_ANGLE_metal_shared_event_sync",                   mtlSyncSharedEventANGLE,            &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_metal_commands_scheduled_sync",             mtlSyncCommandsScheduledANGLE,      &extensionStrings);
     InsertExtensionString("EGL_ANGLE_global_fence_sync",                         globalFenceSyncANGLE,               &extensionStrings);
     InsertExtensionString("EGL_ANGLE_memory_usage_report",                       memoryUsageReportANGLE,             &extensionStrings);
     InsertExtensionString("EGL_EXT_surface_compression",                         surfaceCompressionEXT,              &extensionStrings);

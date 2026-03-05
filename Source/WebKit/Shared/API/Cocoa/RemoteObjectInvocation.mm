@@ -36,8 +36,8 @@ RemoteObjectInvocation::RemoteObjectInvocation() = default;
 
 RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&& replyInfo)
     : m_interfaceIdentifier(interfaceIdentifier)
-    , m_encodedInvocation(WTFMove(encodedInvocation))
-    , m_replyInfo(WTFMove(replyInfo))
+    , m_encodedInvocation(WTF::move(encodedInvocation))
+    , m_replyInfo(WTF::move(replyInfo))
 {
 }
 

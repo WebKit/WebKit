@@ -99,7 +99,7 @@ bool LegacyLineLayout::shouldSkipCreatingRunsForObject(RenderObject& object)
     auto& renderElement = downcast<RenderElement>(object);
     if (renderElement.isFloating())
         return true;
-    if (renderElement.isOutOfFlowPositioned() && !renderElement.style().isOriginalDisplayInlineType() && !renderElement.container()->isRenderInline())
+    if (renderElement.isOutOfFlowPositioned() && !renderElement.style().originalDisplay().isInlineType() && !renderElement.container()->isRenderInline())
         return true;
     return false;
 }
@@ -191,7 +191,7 @@ static inline void dirtyLineBoxesForRenderer(RenderObject& renderer)
         renderInline->deleteLegacyLineBoxes();
 }
 
-static bool parentIsConstructedOrHaveNext(LegacyInlineFlowBox* parentBox)
+static bool NODELETE parentIsConstructedOrHaveNext(LegacyInlineFlowBox* parentBox)
 {
     do {
         if (parentBox->isConstructed() || parentBox->nextOnLine())
@@ -377,7 +377,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
 
     while (!topResolver.isolatedRuns().isEmpty()) {
         // It does not matter which order we resolve the runs as long as we resolve them all.
-        auto isolatedRun = WTFMove(topResolver.isolatedRuns().last());
+        auto isolatedRun = WTF::move(topResolver.isolatedRuns().last());
         topResolver.isolatedRuns().removeLast();
 
         RenderObject& startObject = isolatedRun.object;
@@ -421,10 +421,10 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         // If we encountered any nested isolate runs, just move them
         // to the top resolver's list for later processing.
         while (!isolatedResolver.isolatedRuns().isEmpty()) {
-            auto runWithContext = WTFMove(isolatedResolver.isolatedRuns().last());
+            auto runWithContext = WTF::move(isolatedResolver.isolatedRuns().last());
             isolatedResolver.isolatedRuns().removeLast();
             topResolver.setWhitespaceCollapsingTransitionForIsolatedRun(runWithContext.runToReplace, isolatedResolver.whitespaceCollapsingTransitionForIsolatedRun(runWithContext.runToReplace));
-            topResolver.isolatedRuns().append(WTFMove(runWithContext));
+            topResolver.isolatedRuns().append(WTF::move(runWithContext));
         }
     }
 }

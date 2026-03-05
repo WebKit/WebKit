@@ -21,7 +21,7 @@
 #include "gtest/gtest.h"
 
 namespace {
-typedef std::tuple<const char *, const char *> KeyValParam;
+using KeyValParam = std::tuple<const char *, const char *>;
 
 class BaseKeyValAPI : public testing::Test {
  public:

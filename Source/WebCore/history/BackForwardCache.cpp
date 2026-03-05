@@ -78,7 +78,7 @@ static inline void logBackForwardCacheFailureDiagnosticMessage(Page* page, const
     if (!page)
         return;
 
-    logBackForwardCacheFailureDiagnosticMessage(page->checkedDiagnosticLoggingClient(), reason);
+    logBackForwardCacheFailureDiagnosticMessage(protect(page->diagnosticLoggingClient()), reason);
 }
 
 static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
@@ -112,7 +112,6 @@ static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnostic
 
     if (!document->frame()) {
         PCLOG("   -Document is detached from frame"_s);
-        ASSERT_NOT_REACHED();
         return false;
     }
 
@@ -286,7 +285,7 @@ static bool canCachePage(Page& page)
     if (RefPtr provisionalDocumentLoader = localMainFrame->loader().provisionalDocumentLoader()) {
         if (provisionalDocumentLoader->responseClearSiteDataValues().contains(ClearSiteDataValue::Cache)) {
             if (RefPtr topDocument = localMainFrame->document()) {
-                if (topDocument->protectedSecurityOrigin()->isSameOriginAs(SecurityOrigin::create(provisionalDocumentLoader->response().url()))) {
+                if (protect(topDocument->securityOrigin())->isSameOriginAs(SecurityOrigin::create(provisionalDocumentLoader->response().url()))) {
                     PCLOG("   -`Clear-Site-Data: cache` HTTP header is present"_s);
                     isCacheable = false;
                 }
@@ -325,7 +324,7 @@ void BackForwardCache::dump() const
     for (auto& item : m_cachedPageMap) {
         if (auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&item.value)) {
             RefPtr document = (*cachedPage)->document();
-            WTFLogAlways("  Page %p, document %p %s", (*cachedPage)->protectedPage().ptr(), document.get(), document ? document->url().string().utf8().data() : "");
+            WTFLogAlways("  Page %p, document %p %s", protect((*cachedPage)->page()).ptr(), document.get(), document ? document->url().string().utf8().data() : "");
         }
     }
 }
@@ -378,7 +377,7 @@ void BackForwardCache::markPagesForDeviceOrPageScaleChanged(Page& page)
             ASSERT(!m_items.contains(item.key));
             continue;
         }
-        if (&page.mainFrame() == &(*cachedPage)->cachedMainFrame()->protectedView()->frame())
+        if (&page.mainFrame() == &protect((*cachedPage)->cachedMainFrame()->view())->frame())
             (*cachedPage)->markForDeviceOrPageScaleChanged();
     }
 }
@@ -391,7 +390,7 @@ void BackForwardCache::markPagesForContentsSizeChanged(Page& page)
             ASSERT(!m_items.contains(item.key));
             continue;
         }
-        if (&page.mainFrame() == &(*cachedPage)->cachedMainFrame()->protectedView()->frame())
+        if (&page.mainFrame() == &protect((*cachedPage)->cachedMainFrame()->view())->frame())
             (*cachedPage)->markForContentsSizeChanged();
     }
 }
@@ -509,8 +508,8 @@ bool BackForwardCache::addIfCacheable(HistoryItem& item, Page* page)
         // Make sure we don't fire any JS events in this scope.
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        m_cachedPageMap.set(item.itemID(), makeUniqueRefFromNonNullUniquePtr(WTFMove(cachedPage)));
-        m_items.add(item.itemID());
+        m_cachedPageMap.set(item.frameItemID(), makeUniqueRefFromNonNullUniquePtr(WTF::move(cachedPage)));
+        m_items.add(item.frameItemID());
         item.notifyChanged();
     }
     prune(PruningReason::ReachedMaxSize);
@@ -529,7 +528,7 @@ std::unique_ptr<CachedPage> BackForwardCache::suspendPage(Page& page)
 
 std::unique_ptr<CachedPage> BackForwardCache::take(HistoryItem& item, Page* page)
 {
-    auto it = m_cachedPageMap.find(item.itemID());
+    auto it = m_cachedPageMap.find(item.frameItemID());
     if (it == m_cachedPageMap.end())
         return nullptr;
     if (auto* pruningReason = std::get_if<PruningReason>(&it->value)) {
@@ -539,11 +538,11 @@ std::unique_ptr<CachedPage> BackForwardCache::take(HistoryItem& item, Page* page
         return nullptr;
     }
 
-    m_items.remove(item.itemID());
+    m_items.remove(item.frameItemID());
     auto cachedPage = std::get<UniqueRef<CachedPage>>(m_cachedPageMap.take(it));
     item.notifyChanged();
 
-    RELEASE_LOG(BackForwardCache, "BackForwardCache::take item: %s, size: %u / %u", item.itemID().toString().utf8().data(), pageCount(), maxSize());
+    RELEASE_LOG(BackForwardCache, "BackForwardCache::take item: %s, frameItem: %s, size: %u / %u", item.itemID().toString().utf8().data(), item.frameItemID().toString().utf8().data(), pageCount(), maxSize());
 
     if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByWebInspector())) {
         LOG(BackForwardCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
@@ -575,7 +574,7 @@ void BackForwardCache::removeAllItemsForPage(Page& page)
 
 CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
 {
-    auto it = m_cachedPageMap.find(item.itemID());
+    auto it = m_cachedPageMap.find(item.frameItemID());
     if (it == m_cachedPageMap.end())
         return nullptr;
 
@@ -595,22 +594,22 @@ CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
     });
 }
 
-void BackForwardCache::remove(BackForwardItemIdentifier itemID)
+void BackForwardCache::remove(BackForwardFrameItemIdentifier frameItemID)
 {
     // Safely ignore attempts to remove items not in the cache.
-    auto it = m_cachedPageMap.find(itemID);
+    auto it = m_cachedPageMap.find(frameItemID);
     if (it == m_cachedPageMap.end() || std::holds_alternative<PruningReason>(it->value))
         return;
 
-    m_items.remove(itemID);
+    m_items.remove(frameItemID);
     m_cachedPageMap.remove(it);
 
-    RELEASE_LOG(BackForwardCache, "BackForwardCache::remove item: %s, size: %u / %u", itemID.toString().utf8().data(), pageCount(), maxSize());
+    RELEASE_LOG(BackForwardCache, "BackForwardCache::remove item: %s, size: %u / %u", frameItemID.toString().utf8().data(), pageCount(), maxSize());
 }
 
 void BackForwardCache::remove(HistoryItem& item)
 {
-    remove(item.itemID());
+    remove(item.frameItemID());
     item.notifyChanged();
 }
 
@@ -626,7 +625,7 @@ void BackForwardCache::prune(PruningReason pruningReason)
     }
 }
 
-void BackForwardCache::clearEntriesForOrigins(const HashSet<RefPtr<SecurityOrigin>>& origins)
+void BackForwardCache::clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>>& origins)
 {
     m_cachedPageMap.removeIf([&](auto& pair) -> bool {
         if (auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&pair.value)) {
@@ -640,13 +639,13 @@ void BackForwardCache::clearEntriesForOrigins(const HashSet<RefPtr<SecurityOrigi
     });
 }
 
-bool BackForwardCache::isInBackForwardCache(BackForwardItemIdentifier identifier) const
+bool BackForwardCache::isInBackForwardCache(BackForwardFrameItemIdentifier identifier) const
 {
     auto it = m_cachedPageMap.find(identifier);
     return it != m_cachedPageMap.end() && std::holds_alternative<UniqueRef<CachedPage>>(it->value);
 }
 
-bool BackForwardCache::hasCachedPageExpired(BackForwardItemIdentifier identifier) const
+bool BackForwardCache::hasCachedPageExpired(BackForwardFrameItemIdentifier identifier) const
 {
     auto it = m_cachedPageMap.find(identifier);
     if (it == m_cachedPageMap.end())

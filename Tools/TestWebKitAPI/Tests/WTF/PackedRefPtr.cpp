@@ -77,7 +77,7 @@ TEST(WTF_PackedRefPtr, Basic)
 
     {
         PackedRefPtr<RefLogger> p1 = &a;
-        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<RefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -85,7 +85,7 @@ TEST(WTF_PackedRefPtr, Basic)
 
     {
         PackedRefPtr<RefLogger> p1 = &a;
-        PackedRefPtr<RefLogger> p2(WTFMove(p1));
+        PackedRefPtr<RefLogger> p2(WTF::move(p1));
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -101,7 +101,7 @@ TEST(WTF_PackedRefPtr, Basic)
 
     {
         PackedRefPtr<DerivedRefLogger> p1 = &a;
-        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<RefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -121,7 +121,7 @@ TEST(WTF_PackedRefPtr, AssignPassRefToRefPtr)
     DerivedRefLogger a("a");
     {
         PackedRef<RefLogger> passRef(a);
-        PackedRefPtr<RefLogger> ptr = WTFMove(passRef);
+        PackedRefPtr<RefLogger> ptr = WTF::move(passRef);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -202,7 +202,7 @@ TEST(WTF_PackedRefPtr, Assignment)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&b, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -248,7 +248,7 @@ TEST(WTF_PackedRefPtr, Assignment)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&c, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -278,7 +278,7 @@ TEST(WTF_PackedRefPtr, Assignment)
         PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         IGNORE_WARNINGS_BEGIN("self-move")
-        ptr = WTFMove(ptr);
+        ptr = WTF::move(ptr);
         IGNORE_WARNINGS_END
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(&a, ptr.get());
     }
@@ -337,7 +337,7 @@ TEST(WTF_PackedRefPtr, Release)
 
     {
         PackedRefPtr<RefLogger> p1 = &a;
-        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<RefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -345,7 +345,7 @@ TEST(WTF_PackedRefPtr, Release)
 
     {
         PackedRefPtr<RefLogger> p1 = &a;
-        PackedRefPtr<RefLogger> p2(WTFMove(p1));
+        PackedRefPtr<RefLogger> p2(WTF::move(p1));
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -353,7 +353,7 @@ TEST(WTF_PackedRefPtr, Release)
 
     {
         PackedRefPtr<DerivedRefLogger> p1 = &a;
-        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<RefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -365,7 +365,7 @@ TEST(WTF_PackedRefPtr, Release)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&b, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -378,7 +378,7 @@ TEST(WTF_PackedRefPtr, Release)
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(&c, p1.get());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -426,7 +426,7 @@ TEST(WTF_PackedRefPtr, Const)
 {
     // This test passes if it compiles without an error.
     auto a = ConstRefCounted::create();
-    PackedRef<const ConstRefCounted> b = WTFMove(a);
+    PackedRef<const ConstRefCounted> b = WTF::move(a);
     PackedRefPtr<const ConstRefCounted> c = b.ptr();
     PackedRef<const ConstRefCounted> d = returnConstRefCountedRef();
     PackedRefPtr<const ConstRefCounted> e = &returnConstRefCountedRef();
@@ -521,7 +521,7 @@ TEST(WTF_PackedRefPtr, AssignBeforeDeref)
         log() << "| ";
         a.slotToCheck = &p1;
         b.slotToCheck = &p1;
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         a.slotToCheck = nullptr;
         b.slotToCheck = nullptr;
         EXPECT_EQ(&b, p1.get());

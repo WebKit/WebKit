@@ -1,0 +1,14 @@
+Test that WebGL2 framebuffer rendering works correctly without an explicit drawBuffers call.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 5 PASS, 0 FAIL
+
+PASS WebGL2 context created
+PASS WebGL2 framebuffer created WITHOUT calling drawBuffers()
+PASS getError was expected value: NO_ERROR : draw should succeed
+PASS framebuffer should contain red pixels after draw
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

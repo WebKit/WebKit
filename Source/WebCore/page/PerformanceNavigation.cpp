@@ -45,11 +45,11 @@ PerformanceNavigation::PerformanceNavigation(LocalDOMWindow* window)
 
 unsigned short PerformanceNavigation::type() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame)
         return TYPE_NAVIGATE;
 
-    DocumentLoader* documentLoader = frame->loader().documentLoader();
+    RefPtr documentLoader = frame->loader().documentLoader();
     if (!documentLoader)
         return TYPE_NAVIGATE;
 
@@ -70,11 +70,11 @@ unsigned short PerformanceNavigation::redirectCount() const
     if (!frame)
         return 0;
 
-    RefPtr loader = frame->loader().documentLoader();
-    if (!loader)
+    RefPtr documentLoader = frame->loader().documentLoader();
+    if (!documentLoader)
         return 0;
 
-    auto* metrics = loader->response().deprecatedNetworkLoadMetricsOrNull();
+    auto* metrics = documentLoader->response().deprecatedNetworkLoadMetricsOrNull();
     if (!metrics)
         return 0;
 

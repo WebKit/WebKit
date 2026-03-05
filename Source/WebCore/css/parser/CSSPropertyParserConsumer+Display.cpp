@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,18 +29,183 @@
 #include "CSSParserContext.h"
 #include "CSSParserMode.h"
 #include "CSSParserTokenRange.h"
+#include "CSSParserTokenRangeGuard.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserState.h"
 #include "CSSValueKeywords.h"
+#include <wtf/EnumeratedArray.h>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
+using DisplayOutsideInsideMap = EnumeratedArray<DisplayOutside, EnumeratedArray<DisplayInside, std::pair<CSSValueID, CSSValueID>>>;
+
+consteval DisplayOutsideInsideMap NODELETE makeDisplayOutsideInsideMap()
+{
+    using enum DisplayOutside;
+    using enum DisplayInside;
+
+    DisplayOutsideInsideMap result;
+
+    // One of either <display-inside> or <display-outside> is needed, so this is case is invalid.
+    result[NoOutside][NoInside]  = { CSSValueInvalid, CSSValueInvalid };
+
+    // Aliasing `block <display-inside>`.
+    //
+    // Everything shortens to be just `<display-inside>` except:
+    //   - `block` on its own is aliased to `block flow`, thus stays `block`.
+    //   - `block flow` is aliased to `block`, not `flow`.
+    //   - `block ruby` is not aliased to anything.
+
+    result[Block][NoInside]      = { CSSValueBlock,     CSSValueInvalid };
+    result[Block][Flow]          = { CSSValueBlock,     CSSValueInvalid };
+    result[Block][FlowRoot]      = { CSSValueFlowRoot,  CSSValueInvalid };
+    result[Block][Table]         = { CSSValueTable,     CSSValueInvalid };
+    result[Block][Flex]          = { CSSValueFlex,      CSSValueInvalid };
+    result[Block][Grid]          = { CSSValueGrid,      CSSValueInvalid };
+    result[Block][GridLanes]     = { CSSValueGridLanes, CSSValueInvalid };
+    result[Block][Ruby]          = { CSSValueBlock,     CSSValueRuby };
+
+    // Aliasing `inline <display-inside>`.
+    //
+    // Everything shortens to `inline-<display-inside>` except:
+    //   - `inline` on its own is the same as `inline flow`, thus stays `inline`.
+    //   - `inline flow` is aliased to `inline`. not `inline-flow`.
+    //   - `inline flow-root` is aliased to `inline-block`. not `inline-flow-root`.
+    //   - `inline ruby` is aliased to `ruby`, not `inline-ruby`.
+
+    result[Inline][NoInside]     = { CSSValueInline,          CSSValueInvalid };
+    result[Inline][Flow]         = { CSSValueInline,          CSSValueInvalid };
+    result[Inline][FlowRoot]     = { CSSValueInlineBlock,     CSSValueInvalid };
+    result[Inline][Table]        = { CSSValueInlineTable,     CSSValueInvalid };
+    result[Inline][Flex]         = { CSSValueInlineFlex,      CSSValueInvalid };
+    result[Inline][Grid]         = { CSSValueInlineGrid,      CSSValueInvalid };
+    result[Inline][GridLanes]    = { CSSValueInlineGridLanes, CSSValueInvalid };
+    result[Inline][Ruby]         = { CSSValueRuby,            CSSValueInvalid };
+
+    // Aliasing `<display-inside>` on its own.
+    //
+    // Everything aliases to `block <display-inside>` (and then recursively to what that aliases to) except:
+    //   - `ruby` on its own is aliased to `inline ruby`, not `block ruby`, which ultimately aliases back to `ruby`.
+
+    result[NoOutside][Flow]      = result[Block][Flow];
+    result[NoOutside][FlowRoot]  = result[Block][FlowRoot];
+    result[NoOutside][Table]     = result[Block][Table];
+    result[NoOutside][Flex]      = result[Block][Flex];
+    result[NoOutside][Grid]      = result[Block][Grid];
+    result[NoOutside][GridLanes] = result[Block][GridLanes];
+    result[NoOutside][Ruby]      = result[Inline][Ruby];
+
+    return result;
+}
+
+constexpr auto displayOutsideInsideMap = makeDisplayOutsideInsideMap();
+
+template<DisplayOutside outside, DisplayInside inside>
+RefPtr<CSSValue> mappedDisplayValue()
+{
+    static constexpr auto result = displayOutsideInsideMap[outside][inside];
+
+    if constexpr (result.first == CSSValueInvalid && result.second == CSSValueInvalid)
+        return nullptr;
+    else if constexpr (result.second == CSSValueInvalid)
+        return CSSPrimitiveValue::create(result.first);
+    else
+        return CSSValuePair::createNoncoalescing(CSSPrimitiveValue::create(result.first), CSSPrimitiveValue::create(result.second));
+}
+
+template<DisplayOutside outside>
+static RefPtr<CSSValue> consumeAfterInitialDisplayOutside(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    using enum DisplayInside;
+
+    CSSParserTokenRangeGuard guard { range };
+    range.consumeIncludingWhitespace();
+
+    switch (range.peek().id()) {
+    case CSSValueFlow:
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<outside, Flow>();
+
+    case CSSValueFlowRoot:
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<outside, FlowRoot>();
+
+    case CSSValueTable:
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<outside, Table>();
+
+    case CSSValueFlex:
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<outside, Flex>();
+
+    case CSSValueGrid:
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<outside, Grid>();
+
+    case CSSValueGridLanes:
+        if (!state.context.gridLanesEnabled)
+            return nullptr;
+
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<outside, GridLanes>();
+
+    case CSSValueRuby:
+        if (!state.context.cssRubyDisplayTypesEnabled)
+            return nullptr;
+
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<outside, Ruby>();
+
+    case CSSValueInvalid:
+        guard.commit();
+        return mappedDisplayValue<outside, NoInside>();
+
+    default:
+        return nullptr;
+    }
+}
+
+template<DisplayInside inside>
+static RefPtr<CSSValue> consumeAfterInitialDisplayInside(CSSParserTokenRange& range, CSS::PropertyParserState&)
+{
+    using enum DisplayOutside;
+
+    CSSParserTokenRangeGuard guard { range };
+    range.consumeIncludingWhitespace();
+
+    switch (range.peek().id()) {
+    case CSSValueBlock:
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<Block, inside>();
+
+    case CSSValueInline:
+        range.consumeIncludingWhitespace();
+        guard.commit();
+        return mappedDisplayValue<Inline, inside>();
+
+    case CSSValueInvalid:
+        guard.commit();
+        return mappedDisplayValue<NoOutside, inside>();
+
+    default:
+        return nullptr;
+    }
+}
+
 // Keep in sync with the single keyword value fast path of CSSParserFastPaths's parseDisplay.
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    // <'display'>        = [ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy>
+    // <'display'>        = [ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> | <display-non-standard>
     // <display-outside>  = block | inline | run-in
     // <display-inside>   = flow | flow-root | table | flex | grid | grid-lanes | ruby
     // <display-listitem> = <display-outside>? && [ flow | flow-root ]? && list-item
@@ -51,141 +216,93 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSS::PropertyParserS
     //                      ruby-text-container
     // <display-box>      = contents | none
     // <display-legacy>   = inline-block | inline-table | inline-flex | inline-grid | inline-grid-lanes
+    // <display-non-standard> = -webkit-box | -webkit-inline-box | -webkit-flex | -webkit-inline-flex
     // https://drafts.csswg.org/css-display/#propdef-display
-    // FIXME: The grid-lanes keyword is a temporary placeholder for now, so that we can run WPT tests.
+    //  and
+    // https://drafts.csswg.org/css-grid-3/#grid-lanes-containers (for additions of grid-lanes and inline-grid-lanes)
 
-    // Parse single keyword values
-    auto singleKeyword = [&]() {
-        if (state.context.gridLanesEnabled && range.peek().id() == CSSValueInlineGridLanes)
-            return consumeIdent(range);
-        return consumeIdent<
-            // <display-box>
-            CSSValueContents,
-            CSSValueNone,
-            // <display-internal>
-            CSSValueTableCaption,
-            CSSValueTableCell,
-            CSSValueTableColumnGroup,
-            CSSValueTableColumn,
-            CSSValueTableHeaderGroup,
-            CSSValueTableFooterGroup,
-            CSSValueTableRow,
-            CSSValueTableRowGroup,
-            CSSValueRubyBase,
-            CSSValueRubyText,
-            // <display-legacy>
-            CSSValueInlineBlock,
-            CSSValueInlineFlex,
-            CSSValueInlineGrid,
-            CSSValueInlineTable,
-            // Prefixed values
-            CSSValueWebkitInlineBox,
-            CSSValueWebkitBox,
-            // No layout support for the full <display-listitem> syntax, so treat it as <display-legacy>
-            CSSValueListItem
-        >(range);
-    }();
+    switch (range.peek().id()) {
+    // <display-outside>
+    // FIXME: Add support for `run-in`.
+    case CSSValueBlock:
+        return consumeAfterInitialDisplayOutside<DisplayOutside::Block>(range, state);
+    case CSSValueInline:
+        return consumeAfterInitialDisplayOutside<DisplayOutside::Inline>(range, state);
 
-    auto allowsValue = [&](CSSValueID value) {
-        bool isRuby = value == CSSValueRubyBase || value == CSSValueRubyText || value == CSSValueBlockRuby || value == CSSValueRuby;
-        return !isRuby || isUASheetBehavior(state.context.mode);
-    };
-
-    if (singleKeyword) {
-        if (!allowsValue(singleKeyword->valueID()))
+    // <display-inside>
+    case CSSValueFlow:
+        return consumeAfterInitialDisplayInside<DisplayInside::Flow>(range, state);
+    case CSSValueFlowRoot:
+        return consumeAfterInitialDisplayInside<DisplayInside::FlowRoot>(range, state);
+    case CSSValueTable:
+        return consumeAfterInitialDisplayInside<DisplayInside::Table>(range, state);
+    case CSSValueFlex:
+        return consumeAfterInitialDisplayInside<DisplayInside::Flex>(range, state);
+    case CSSValueGrid:
+        return consumeAfterInitialDisplayInside<DisplayInside::Grid>(range, state);
+    case CSSValueGridLanes:
+        if (!state.context.gridLanesEnabled)
             return nullptr;
-        return singleKeyword;
-    }
-
-    // Empty value, stop parsing
-    if (range.atEnd())
-        return nullptr;
-
-    // Convert -webkit-flex/-webkit-inline-flex to flex/inline-flex
-    CSSValueID nextValueID = range.peek().id();
-    if (nextValueID == CSSValueWebkitInlineFlex || nextValueID == CSSValueWebkitFlex) {
-        consumeIdent(range);
-        return CSSPrimitiveValue::create(
-            nextValueID == CSSValueWebkitInlineFlex ? CSSValueInlineFlex : CSSValueFlex);
-    }
-
-    // Parse [ <display-outside> || <display-inside> ]
-    std::optional<CSSValueID> parsedDisplayOutside;
-    std::optional<CSSValueID> parsedDisplayInside;
-    while (!range.atEnd()) {
-        auto nextValueID = range.peek().id();
-        switch (nextValueID) {
-        // <display-outside>
-        case CSSValueBlock:
-        case CSSValueInline:
-            if (parsedDisplayOutside)
-                return nullptr;
-            parsedDisplayOutside = nextValueID;
-            break;
-        // <display-inside>
-        case CSSValueGridLanes:
-            if (!state.context.gridLanesEnabled)
-                return nullptr;
-            [[fallthrough]];
-        case CSSValueFlex:
-        case CSSValueFlow:
-        case CSSValueFlowRoot:
-        case CSSValueGrid:
-        case CSSValueTable:
-        case CSSValueRuby:
-            if (parsedDisplayInside)
-                return nullptr;
-            parsedDisplayInside = nextValueID;
-            break;
-        default:
+        return consumeAfterInitialDisplayInside<DisplayInside::GridLanes>(range, state);
+    case CSSValueRuby:
+        if (!state.context.cssRubyDisplayTypesEnabled)
             return nullptr;
-        }
-        consumeIdent(range);
-    }
+        return consumeAfterInitialDisplayInside<DisplayInside::Ruby>(range, state);
 
-    // Set defaults when one of the two values are unspecified
-    CSSValueID displayInside = parsedDisplayInside.value_or(CSSValueFlow);
+    // <display-listitem>
+    // FIXME: Add support for the full <display-listitem> syntax, not just the single value version.
+    case CSSValueListItem:
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
 
-    auto selectShortValue = [&]() -> CSSValueID {
-        if (!parsedDisplayOutside || *parsedDisplayOutside == CSSValueInline) {
-            if (displayInside == CSSValueRuby)
-                return CSSValueRuby;
-        }
+    // <display-internal>
+    // FIXME: Add support for `ruby-base-container` and `ruby-text-container`.
+    case CSSValueTableCaption:
+    case CSSValueTableCell:
+    case CSSValueTableColumnGroup:
+    case CSSValueTableColumn:
+    case CSSValueTableHeaderGroup:
+    case CSSValueTableFooterGroup:
+    case CSSValueTableRow:
+    case CSSValueTableRowGroup:
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
+    case CSSValueRubyBase:
+    case CSSValueRubyText:
+        if (!state.context.cssRubyDisplayTypesEnabled)
+            return nullptr;
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
 
-        if (!parsedDisplayOutside || *parsedDisplayOutside == CSSValueBlock) {
-            // Alias display: flow to display: block
-            if (displayInside == CSSValueFlow)
-                return CSSValueBlock;
-            if (displayInside == CSSValueRuby)
-                return CSSValueBlockRuby;
-            return displayInside;
-        }
+    // <display-box>
+    case CSSValueContents:
+    case CSSValueNone:
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
 
-        // Convert `display: inline <display-inside>` to the equivalent short value
-        switch (displayInside) {
-        case CSSValueFlex:
-            return CSSValueInlineFlex;
-        case CSSValueFlow:
-            return CSSValueInline;
-        case CSSValueFlowRoot:
-            return CSSValueInlineBlock;
-        case CSSValueGrid:
-            return CSSValueInlineGrid;
-        case CSSValueGridLanes:
-            return CSSValueInlineGridLanes;
-        case CSSValueTable:
-            return CSSValueInlineTable;
-        default:
-            ASSERT_NOT_REACHED();
-            return CSSValueInline;
-        }
-    };
+    // <display-legacy>
+    case CSSValueInlineBlock:
+    case CSSValueInlineTable:
+    case CSSValueInlineFlex:
+    case CSSValueInlineGrid:
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
+    case CSSValueInlineGridLanes:
+        if (!state.context.gridLanesEnabled)
+            return nullptr;
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
 
-    auto shortValue = selectShortValue();
-    if (!allowsValue(shortValue))
+    // <display-non-standard>
+    case CSSValueWebkitBox:
+    case CSSValueWebkitInlineBox:
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
+    case CSSValueWebkitFlex:
+        // `-webkit-flex` is aliased to `flex`.
+        range.consumeIncludingWhitespace();
+        return CSSPrimitiveValue::create(CSSValueFlex);
+    case CSSValueWebkitInlineFlex:
+        // `-webkit-inline-flex` is aliased to `inline-flex`.
+        range.consumeIncludingWhitespace();
+        return CSSPrimitiveValue::create(CSSValueInlineFlex);
+
+    default:
         return nullptr;
-
-    return CSSPrimitiveValue::create(shortValue);
+    }
 }
 
 } // namespace CSSPropertyParserHelpers

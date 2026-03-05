@@ -139,7 +139,7 @@ void EncodeDecodeSpeech(AudioEncoderOpusImpl& encoder,
     encoder.Encode(rtp_timestamp++, audio_frame.data_view().data(), &payload);
 
     // Ignore empty payloads: the encoder needs more audio to produce a packet.
-    if (payload.size() == 0) {
+    if (payload.empty()) {
       continue;
     }
 
@@ -171,7 +171,7 @@ void EncodeDecodeNoiseUntilDecoderInDtxMode(AudioEncoderOpusImpl& encoder,
         encoder.Encode(rtp_timestamp++, input_frame, &payload);
 
     // Ignore empty payloads: the encoder needs more audio to produce a packet.
-    if (payload.size() == 0) {
+    if (payload.empty()) {
       continue;
     }
 
@@ -222,7 +222,7 @@ std::vector<int16_t> EncodeDecodeSpeechUntilOneFrameIsDecoded(
     encoder.Encode(rtp_timestamp++, audio_frame.data_view().data(), &payload);
 
     // Ignore empty payloads: the encoder needs more audio to produce a packet.
-    if (payload.size() == 0) {
+    if (payload.empty()) {
       continue;
     }
 
@@ -265,7 +265,7 @@ TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereo) {
     generator.GenerateNextFrame(input_frame);
     Buffer payload;
     encoder.Encode(rtp_timestamp++, input_frame, &payload);
-    if (payload.size() == 0) {
+    if (payload.empty()) {
       continue;
     }
 
@@ -364,6 +364,60 @@ TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereoPlc) {
   ASSERT_THAT(decoded_frame, SizeIs(kDecoderNumChannels * kEncoderFrameLength));
   ASSERT_FALSE(IsZeroedFrame(decoded_frame));
   EXPECT_TRUE(IsTrivialStereo(decoded_frame));
+}
+
+TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereoFec) {
+  const Environment env = EnvironmentFactory().Create();
+  AudioEncoderOpusConfig encoder_config =
+      GetEncoderConfig(/*num_channels=*/1, /*dtx_enabled=*/false);
+  encoder_config.fec_enabled = true;
+  AudioEncoderOpusImpl encoder(env, encoder_config, kPayloadType);
+  // FEC will only be encoded if there is packet loss.
+  encoder.OnReceivedUplinkPacketLossFraction(0.2);
+
+  constexpr size_t kDecoderNumChannels = 2;
+  AudioDecoderOpusImpl decoder(env.field_trials(), kDecoderNumChannels,
+                               kSampleRateHz);
+  std::vector<int16_t> decoded_frame(kEncoderFrameLength * kDecoderNumChannels);
+
+  PCMFile pcm_file;
+  pcm_file.Open(test::ResourcePath("near48_mono", "pcm"), kSampleRateHz, "rb");
+  pcm_file.ReadStereo(false);
+
+  AudioFrame audio_frame;
+  uint32_t rtp_timestamp = 0xFFFu;
+  uint32_t timestamp = 0;
+  // Encode and decode until FEC is found in a packet.
+  bool fec_found = false;
+  while (!fec_found && !pcm_file.EndOfFile()) {
+    pcm_file.Read10MsData(audio_frame);
+    Buffer payload;
+    encoder.Encode(rtp_timestamp++, audio_frame.data_view().data(), &payload);
+
+    // Ignore empty payloads: the encoder needs more audio to produce a packet.
+    if (payload.empty()) {
+      continue;
+    }
+
+    // Decode `payload`.
+    std::vector<ParseResult> parse_results =
+        decoder.ParsePayload(std::move(payload), timestamp++);
+    if (parse_results.size() == 1) {
+      // No FEC frame encoded. Decode to update the decoder state.
+      parse_results[0].frame->Decode(decoded_frame);
+      continue;
+    }
+    ASSERT_EQ(parse_results.size(), 2u);
+    ASSERT_EQ(parse_results[0].priority, 1);  // FEC frame.
+    fec_found = true;
+
+    std::optional<DecodeResult> decode_results =
+        parse_results[0].frame->Decode(decoded_frame);
+    ASSERT_TRUE(decode_results.has_value());
+    EXPECT_EQ(decode_results->num_decoded_samples, decoded_frame.size());
+    EXPECT_TRUE(IsTrivialStereo(decoded_frame));
+  }
+  EXPECT_TRUE(fec_found);
 }
 
 TEST(AudioDecoderOpusTest,

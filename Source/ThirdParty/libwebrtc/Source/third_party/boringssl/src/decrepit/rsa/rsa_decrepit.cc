@@ -38,17 +38,17 @@ RSA *RSA_generate_key(int bits, uint64_t e_value, void *callback,
 
 int RSA_padding_add_PKCS1_PSS(const RSA *rsa, uint8_t *EM, const uint8_t *mHash,
                               const EVP_MD *Hash, int sLen) {
-  return RSA_padding_add_PKCS1_PSS_mgf1(rsa, EM, mHash, Hash, NULL, sLen);
+  return RSA_padding_add_PKCS1_PSS_mgf1(rsa, EM, mHash, Hash, nullptr, sLen);
 }
 
 int RSA_verify_PKCS1_PSS(const RSA *rsa, const uint8_t *mHash,
                          const EVP_MD *Hash, const uint8_t *EM, int sLen) {
-  return RSA_verify_PKCS1_PSS_mgf1(rsa, mHash, Hash, NULL, EM, sLen);
+  return RSA_verify_PKCS1_PSS_mgf1(rsa, mHash, Hash, nullptr, EM, sLen);
 }
 
 int RSA_padding_add_PKCS1_OAEP(uint8_t *to, size_t to_len,
                                const uint8_t *from, size_t from_len,
                                const uint8_t *param, size_t param_len) {
   return RSA_padding_add_PKCS1_OAEP_mgf1(to, to_len, from, from_len, param,
-                                         param_len, NULL, NULL);
+                                         param_len, nullptr, nullptr);
 }

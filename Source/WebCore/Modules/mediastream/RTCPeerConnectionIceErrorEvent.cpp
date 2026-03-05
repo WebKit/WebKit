@@ -33,26 +33,26 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCPeerConnectionIceErrorEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCPeerConnectionIceErrorEvent);
 
 Ref<RTCPeerConnectionIceErrorEvent> RTCPeerConnectionIceErrorEvent::create(CanBubble canBubble, IsCancelable isCancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText)
 {
-    return adoptRef(*new RTCPeerConnectionIceErrorEvent(eventNames().icecandidateerrorEvent, canBubble, isCancelable, WTFMove(address), port, WTFMove(url), errorCode, WTFMove(errorText)));
+    return adoptRef(*new RTCPeerConnectionIceErrorEvent(eventNames().icecandidateerrorEvent, canBubble, isCancelable, WTF::move(address), port, WTF::move(url), errorCode, WTF::move(errorText)));
 }
 
 Ref<RTCPeerConnectionIceErrorEvent> RTCPeerConnectionIceErrorEvent::create(const AtomString& type, Init&& init)
 {
     return adoptRef(*new RTCPeerConnectionIceErrorEvent(type, init.bubbles ? CanBubble::Yes : CanBubble::No,
-        init.cancelable ? IsCancelable::Yes : IsCancelable::No, WTFMove(init.address), init.port, WTFMove(init.url), WTFMove(init.errorCode), WTFMove(init.errorText)));
+        init.cancelable ? IsCancelable::Yes : IsCancelable::No, WTF::move(init.address), init.port, WTF::move(init.url), WTF::move(init.errorCode), WTF::move(init.errorText)));
 }
 
 RTCPeerConnectionIceErrorEvent::RTCPeerConnectionIceErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText)
     : Event(EventInterfaceType::RTCPeerConnectionIceErrorEvent, type, canBubble, cancelable)
-    , m_address(WTFMove(address))
+    , m_address(WTF::move(address))
     , m_port(port)
-    , m_url(WTFMove(url))
+    , m_url(WTF::move(url))
     , m_errorCode(errorCode)
-    , m_errorText(WTFMove(errorText))
+    , m_errorText(WTF::move(errorText))
 {
 }
 

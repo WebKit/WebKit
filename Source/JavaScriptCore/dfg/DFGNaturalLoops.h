@@ -43,6 +43,11 @@ public:
         : WTF::NaturalLoops<CFGKind>(selectCFG<CFGKind>(graph), ensureDominatorsForCFG<CFGKind>(graph), validationEnabled())
     {
     }
+
+    NaturalLoops(Graph& graph, Dominators<CFGKind>& dominators)
+        : WTF::NaturalLoops<CFGKind>(selectCFG<CFGKind>(graph), dominators, validationEnabled())
+    {
+    }
 };
 
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL(template<typename CFGKind>, NaturalLoops<CFGKind>);

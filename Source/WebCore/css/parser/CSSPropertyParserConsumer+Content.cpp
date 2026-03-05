@@ -65,7 +65,7 @@ RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range, CSS::PropertyParserSt
         values.append(parsedValue.releaseNonNull());
     }
     if (values.size() && !(values.size() % 2))
-        return CSSValueList::createSpaceSeparated(WTFMove(values));
+        return CSSValueList::createSpaceSeparated(WTF::move(values));
     return nullptr;
 }
 
@@ -90,7 +90,7 @@ static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, CSS::Pro
     if (!args.atEnd())
         return nullptr;
 
-    return CSSCounterValue::create(WTFMove(identifier), AtomString { nullAtom() }, counterStyle.releaseNonNull());
+    return CSSCounterValue::create(WTF::move(identifier), AtomString { nullAtom() }, counterStyle.releaseNonNull());
 }
 
 static RefPtr<CSSValue> consumeCountersContent(CSSParserTokenRange args, CSS::PropertyParserState& state)
@@ -118,7 +118,7 @@ static RefPtr<CSSValue> consumeCountersContent(CSSParserTokenRange args, CSS::Pr
     if (!args.atEnd())
         return nullptr;
 
-    return CSSCounterValue::create(WTFMove(identifier), WTFMove(separator), counterStyle.releaseNonNull());
+    return CSSCounterValue::create(WTF::move(identifier), WTF::move(separator), counterStyle.releaseNonNull());
 }
 
 RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -178,12 +178,12 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, CSS::PropertyParserS
         if (!consumeContentList(altText, ContentListType::AltText))
             return nullptr;
         return CSSValuePair::createSlashSeparated(
-            CSSValueList::createSpaceSeparated(WTFMove(visibleContent)),
-            CSSValueList::createSpaceSeparated(WTFMove(altText))
+            CSSValueList::createSpaceSeparated(WTF::move(visibleContent)),
+            CSSValueList::createSpaceSeparated(WTF::move(altText))
         );
     }
 
-    return CSSValueList::createSpaceSeparated(WTFMove(visibleContent));
+    return CSSValueList::createSpaceSeparated(WTF::move(visibleContent));
 }
 
 } // namespace CSSPropertyParserHelpers

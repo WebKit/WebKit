@@ -1,13 +1,14 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
 fn TrueFalse_b() -> bool {
   {
     const x: i32 = 1;
@@ -77,32 +78,29 @@ fn FalseFalse_b() -> bool {
   }
   return bool();
 }
-fn _skslMain(_skParam0: vec2<f32>) -> vec4<f32> {
+fn _skslMain(_skParam0: vec2<f32>) -> vec4<f16> {
   {
     var _0_TrueTrue: bool;
     const _2_y: i32 = 1;
     {
       _0_TrueTrue = (_2_y == 1);
     }
-    var _skTemp3: vec4<f32>;
+    var _skTemp3: vec4<f16>;
     var _skTemp4: bool;
     var _skTemp5: bool;
     var _skTemp6: bool;
     if _0_TrueTrue {
-      let _skTemp7 = TrueFalse_b();
-      _skTemp6 = _skTemp7;
+      _skTemp6 = TrueFalse_b();
     } else {
       _skTemp6 = false;
     }
     if _skTemp6 {
-      let _skTemp8 = FalseTrue_b();
-      _skTemp5 = _skTemp8;
+      _skTemp5 = FalseTrue_b();
     } else {
       _skTemp5 = false;
     }
     if _skTemp5 {
-      let _skTemp9 = FalseFalse_b();
-      _skTemp4 = _skTemp9;
+      _skTemp4 = FalseFalse_b();
     } else {
       _skTemp4 = false;
     }

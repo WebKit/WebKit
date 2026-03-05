@@ -412,7 +412,17 @@ def _CheckCommentBeforeTestInTestFiles(input_api, output_api):
             if line.startswith('-'):
                 continue
 
-            new_line_is_comment = line.startswith(' //') or line.startswith('+//')
+            # Note: we don't always get the context of the diff, so if a test already has a comment
+            # but is only renamed, the diff looks like:
+            #
+            #     @@ <line info>
+            #     -TEST_P(OLD, NAME)
+            #     +TEST_P(NEW, NAME)
+            #
+            # Treat @@ as if it was a comment in that case, assuming the test already had a comment
+            # previously.
+            new_line_is_comment = (
+                line.startswith(' //') or line.startswith('+//') or line.startswith('@@'))
             new_line_is_test_declaration = (
                 line.startswith('+TEST_P(') or line.startswith('+TEST(') or
                 line.startswith('+TYPED_TEST('))

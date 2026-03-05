@@ -15,6 +15,7 @@ if (rtc_include_tests) {
       "builtin_video_encoder_factory_unittest.cc",
       "h264_profile_level_id_unittest.cc",
       "sdp_video_format_unittest.cc",
+      "video_codec_unittest.cc",
       "video_decoder_software_fallback_wrapper_unittest.cc",
       "video_encoder_software_fallback_wrapper_unittest.cc",
     ]

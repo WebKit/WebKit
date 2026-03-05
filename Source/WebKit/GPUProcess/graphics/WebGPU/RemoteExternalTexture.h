@@ -54,7 +54,7 @@ class RemoteExternalTexture final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteExternalTexture> create(WebCore::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteExternalTexture(externalTexture, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteExternalTexture(externalTexture, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteExternalTexture();
@@ -74,9 +74,6 @@ private:
     RemoteExternalTexture& operator=(RemoteExternalTexture&&) = delete;
 
     WebCore::WebGPU::ExternalTexture& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::ExternalTexture> protectedBacking();
-
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -85,9 +82,9 @@ private:
     void undestroy();
     void destruct();
 
-    Ref<WebCore::WebGPU::ExternalTexture> m_backing;
+    const Ref<WebCore::WebGPU::ExternalTexture> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

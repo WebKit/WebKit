@@ -75,7 +75,7 @@ static bool indicatorWantsContentCrossfade(const WebCore::TextIndicator& indicat
     return false;
 }
 
-static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
+static bool NODELETE indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
 {
     switch (indicator.presentationTransition()) {
     case WebCore::TextIndicatorPresentationTransition::FadeIn:
@@ -231,7 +231,7 @@ static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval durat
 static RetainPtr<CABasicAnimation> createContentCrossfadeAnimation(CFTimeInterval duration, WebCore::TextIndicator& textIndicator)
 {
     RetainPtr crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-    RefPtr contentsImage = textIndicator.protectedContentImage()->nativeImage();
+    RefPtr contentsImage = protect(textIndicator.contentImage())->nativeImage();
     [crossfadeAnimation setToValue:(__bridge id)contentsImage->platformImage().get()];
     [crossfadeAnimation setFillMode:kCAFillModeForwards];
     [crossfadeAnimation setRemovedOnCompletion:NO];

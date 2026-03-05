@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock {DETAILS} at (0,0) size 800x27
         RenderListItem {SUMMARY} at (0,0) size 800x27
-          RenderListMarker at (0,5) size 25x19: "\x{25B6}"
-          RenderText {#text} at (25,5) size 39x19
-            text run at (25,5) width 39: "new 2"
+          RenderListMarker at (0,5) size 17x19: "\x{25B6}"
+          RenderText {#text} at (16,5) size 40x19
+            text run at (16,5) width 40: "new 2"

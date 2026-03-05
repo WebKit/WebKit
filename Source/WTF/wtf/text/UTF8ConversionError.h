@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace WTF {
 
 enum class UTF8ConversionError : uint8_t { OutOfMemory, Invalid };

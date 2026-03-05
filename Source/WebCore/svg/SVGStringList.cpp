@@ -57,8 +57,6 @@ bool SVGStringList::parse(StringView data, char16_t delimiter)
             skipOptionalSVGSpacesOrDelimiter(buffer, delimiter);
         }
 
-        // FIXME: Should this clearItems() on failure like SVGTransformList does?
-
         return buffer.atEnd();
     });
 }

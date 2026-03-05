@@ -69,7 +69,7 @@ static int PacketedBioMethodType() {
 
 PacketedBio *GetData(BIO *bio) {
   if (BIO_method_type(bio) != PacketedBioMethodType()) {
-    return NULL;
+    return nullptr;
   }
   return static_cast<PacketedBio *>(BIO_get_data(bio));
 }

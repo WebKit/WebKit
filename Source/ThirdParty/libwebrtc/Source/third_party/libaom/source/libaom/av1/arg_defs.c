@@ -709,9 +709,11 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
       ARG_DEF(NULL, "sb-qp-sweep", 1,
               "When set to 1, enable the superblock level qp sweep for a "
               "given lambda to minimize the rdcost."),
-  .enable_low_complexity_decode =
-      ARG_DEF(NULL, "enable-low-complexity-decode", 1,
-              "Enable low complexity decode (0: false (default), 1: true)"),
+  .enable_low_complexity_decode = ARG_DEF(
+      NULL, "enable-low-complexity-decode", 1,
+      "Enable low complexity decode (0: false (default), 1: true). As of now, "
+      "this only supports good-quality encoding (speed 1 to 3) for vertical "
+      "videos between 608p and 720p."),
   .screen_detection_mode =
       ARG_DEF(NULL, "screen-detection-mode", 1,
               "Screen content detection mode (1: standard (default), "

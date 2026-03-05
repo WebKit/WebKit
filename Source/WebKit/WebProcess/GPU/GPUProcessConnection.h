@@ -82,29 +82,24 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     IPC::Connection& connection() { return m_connection.get(); }
-    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
+    IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
 
     void didBecomeUnresponsive();
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> auditToken();
 #endif
-    RemoteSharedResourceCacheProxy& sharedResourceCache();
-    Ref<RemoteSharedResourceCacheProxy> protectedSharedResourceCache();
+    Ref<RemoteSharedResourceCacheProxy> sharedResourceCache();
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
-    Ref<SampleBufferDisplayLayerManager> protectedSampleBufferDisplayLayerManager();
+    SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager() LIFETIME_BOUND;
     void resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
 #endif
 #if ENABLE(VIDEO)
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy();
-    Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy();
     RemoteMediaPlayerManager& mediaPlayerManager();
-    Ref<RemoteMediaPlayerManager> protectedMediaPlayerManager();
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RemoteAudioSourceProviderManager& audioSourceProviderManager();
-    Ref<RemoteAudioSourceProviderManager> protectedAudioSourceProviderManager();
 #endif
 
     void updateMediaConfiguration(bool forceUpdate);
@@ -115,7 +110,8 @@ public:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    void setMediaEnvironment(WebCore::PageIdentifier, const String&);
+    void setMediaPlaybackEnvironment(WebCore::PageIdentifier, const String&);
+    void setDisplayCaptureEnvironment(WebCore::PageIdentifier, const String&);
 #endif
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
@@ -166,11 +162,15 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
     GPUProcessConnectionIdentifier m_identifier { GPUProcessConnectionIdentifier::generate() };
     bool m_hasInitialized { false };
+    RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_auditToken;
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     const std::unique_ptr<SampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
+#endif
+#if ENABLE(VIDEO)
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RefPtr<RemoteAudioSourceProviderManager> m_audioSourceProviderManager;

@@ -28,24 +28,16 @@
 #include <WebCore/NowPlayingInfo.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/RemoteCommandListener.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class NowPlayingManagerClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::NowPlayingManagerClient> : std::true_type { };
-}
 
 namespace WebCore {
 
 class Image;
 struct NowPlayingInfo;
 
-class NowPlayingManagerClient : public CanMakeWeakPtr<NowPlayingManagerClient> {
+class NowPlayingManagerClient : public AbstractRefCountedAndCanMakeWeakPtr<NowPlayingManagerClient> {
 public:
     virtual ~NowPlayingManagerClient() = default;
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) = 0;

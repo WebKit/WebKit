@@ -57,10 +57,10 @@ class RTC_EXPORT AsyncDnsResolver : public AsyncDnsResolverInterface {
 
  private:
   class State;
-  ScopedTaskSafety safety_;          // To check for client going away
   scoped_refptr<State> state_;       // To check for "this" going away
   AsyncDnsResolverResultImpl result_;
   absl::AnyInvocable<void()> callback_;
+  ScopedTaskSafety safety_;  // To check for client going away. Must be last.
 };
 
 }  // namespace webrtc

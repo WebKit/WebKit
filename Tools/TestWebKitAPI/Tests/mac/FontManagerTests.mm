@@ -595,7 +595,45 @@ TEST(FontManagerTests, ObservingFontPanelShouldNotCrashWhenUnparentingViewTwice)
     EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
     EXPECT_WK_STREQ("Times-Bold", [fontManager selectedFont].fontName);
+}
 
+TEST(FontManagerTests, SelectionSpanningEmptyElementDoesNotReportMultipleFonts)
+{
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
+
+    auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager, @"<body contenteditable><font face=Helvetica>First</font><div><font face=Helvetica> Second</font></div></body>");
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ([[fontManager selectedFont] fontName], "Helvetica");
+    EXPECT_FALSE([fontManager isMultiple]);
+}
+
+TEST(FontManagerTests, SelectionSpanningTwoFontsDoesReportMultipleFonts)
+{
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
+
+    auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager, @"<body contenteditable><font face=Helvetica>First</font><br/><font face=Arial> Second</font></body>");
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ([[fontManager selectedFont] fontName], "Helvetica");
+    EXPECT_TRUE([fontManager isMultiple]);
+}
+
+TEST(FontManagerTests, SelectionSpanningBRDoesReportMultipleFonts)
+{
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
+
+    auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager, @"<body contenteditable><font face=Helvetica>First</font><br/><font face=Helvetica> Second</font></body>");
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ([[fontManager selectedFont] fontName], "Helvetica");
+    EXPECT_TRUE([fontManager isMultiple]);
 }
 
 } // namespace TestWebKitAPI

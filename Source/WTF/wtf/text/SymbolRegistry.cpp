@@ -39,7 +39,7 @@ SymbolRegistry::SymbolRegistry(Type type)
 SymbolRegistry::~SymbolRegistry()
 {
     for (auto& key : m_table)
-        downcast<SymbolImpl>(key.get())->asRegisteredSymbolImpl()->clearSymbolRegistry();
+        SUPPRESS_UNCOUNTED_ARG downcast<SymbolImpl>(key.get())->asRegisteredSymbolImpl()->clearSymbolRegistry();
 }
 
 Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
@@ -61,7 +61,7 @@ Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
 // When removing a registered symbol from the table, we know it's already the one in the table, so no need for a string equality check.
 struct SymbolRegistryTableRemovalHashTranslator {
     static unsigned hash(const RegisteredSymbolImpl* key) { return key->hash(); }
-    static bool equal(const RefPtr<StringImpl>& a, const RegisteredSymbolImpl* b) { return a.get() == b; }
+    static bool NODELETE equal(const RefPtr<StringImpl>& a, const RegisteredSymbolImpl* b) { return a == b; }
 };
 
 void SymbolRegistry::remove(RegisteredSymbolImpl& uid)

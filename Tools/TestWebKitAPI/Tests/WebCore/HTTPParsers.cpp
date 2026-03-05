@@ -163,6 +163,296 @@ TEST(RFC8941, ParseItemStructuredFieldValue)
     parameterValueString = result->second.getIf<String>("report-to"_s);
     EXPECT_TRUE(!!parameterValueString);
     EXPECT_STREQ("http://example.com", parameterValueString->utf8().data());
+
+    // Integer BareItem tests.
+    result = RFC8941::parseItemStructuredFieldValue("42"_s);
+    EXPECT_TRUE(!!result);
+    auto* intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 42);
+
+    result = RFC8941::parseItemStructuredFieldValue("0"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 0);
+
+    result = RFC8941::parseItemStructuredFieldValue("-42"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, -42);
+
+    result = RFC8941::parseItemStructuredFieldValue("-0"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 0);
+
+    result = RFC8941::parseItemStructuredFieldValue("042"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 42);
+
+    result = RFC8941::parseItemStructuredFieldValue("-042"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, -42);
+
+    result = RFC8941::parseItemStructuredFieldValue("999999999999999"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 999999999999999LL);
+
+    result = RFC8941::parseItemStructuredFieldValue("-999999999999999"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, -999999999999999LL);
+
+    result = RFC8941::parseItemStructuredFieldValue("000000000000000"_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 0);
+
+    // Invalid Integer BareItem.
+    result = RFC8941::parseItemStructuredFieldValue("0000000000000000"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("9999999999999999"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("-9999999999999999"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("-"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("-."_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("--0"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("- 42"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("2,3"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("-a23"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("4-2"_s);
+    EXPECT_FALSE(!!result);
+
+    // Decimal BareItem tests.
+    result = RFC8941::parseItemStructuredFieldValue("1.5"_s);
+    EXPECT_TRUE(!!result);
+    auto* decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 1.5);
+
+    result = RFC8941::parseItemStructuredFieldValue("-1.5"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, -1.5);
+
+    result = RFC8941::parseItemStructuredFieldValue("0.0"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 0.0);
+
+    result = RFC8941::parseItemStructuredFieldValue("1.123"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 1.123);
+
+    result = RFC8941::parseItemStructuredFieldValue("-1.123"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, -1.123);
+
+    result = RFC8941::parseItemStructuredFieldValue("1.000"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 1.0);
+
+    result = RFC8941::parseItemStructuredFieldValue("123456789012.123"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 123456789012.123);
+
+    result = RFC8941::parseItemStructuredFieldValue("000000000100.123"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 100.123);
+
+    result = RFC8941::parseItemStructuredFieldValue("-999999999999.999"_s);
+    EXPECT_TRUE(!!result);
+    decimalValue = std::get_if<double>(&result->first);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, -999999999999.999);
+
+    // Invalid Decimal BareItem.
+    result = RFC8941::parseItemStructuredFieldValue("0000000000000.1"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1.0000"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("-1.1234"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1."_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("-1."_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1.1234"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1234567890123.0"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("-1234567890123.0"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1. 23"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1 .23"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1..4"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("1.5.4"_s);
+    EXPECT_FALSE(!!result);
+
+    // Byte sequence BareItem tests.
+    result = RFC8941::parseItemStructuredFieldValue("::"_s);
+    EXPECT_TRUE(!!result);
+    auto* bytes = std::get_if<Vector<uint8_t>>(&result->first);
+    EXPECT_TRUE(!!bytes);
+    EXPECT_TRUE(bytes->isEmpty());
+
+    result = RFC8941::parseItemStructuredFieldValue(":aGVsbG8=:"_s);
+    EXPECT_TRUE(!!result);
+    bytes = std::get_if<Vector<uint8_t>>(&result->first);
+    EXPECT_TRUE(!!bytes);
+    EXPECT_EQ(bytes->size(), 5u);
+    EXPECT_EQ((*bytes)[0], 'h');
+    EXPECT_EQ((*bytes)[1], 'e');
+    EXPECT_EQ((*bytes)[2], 'l');
+    EXPECT_EQ((*bytes)[3], 'l');
+    EXPECT_EQ((*bytes)[4], 'o');
+
+    result = RFC8941::parseItemStructuredFieldValue(":cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg==:"_s);
+    EXPECT_TRUE(!!result);
+    bytes = std::get_if<Vector<uint8_t>>(&result->first);
+    EXPECT_TRUE(!!bytes);
+    EXPECT_EQ(bytes->size(), 31u);
+
+    result = RFC8941::parseItemStructuredFieldValue(":/+Ah:"_s);
+    EXPECT_TRUE(!!result);
+    bytes = std::get_if<Vector<uint8_t>>(&result->first);
+    EXPECT_TRUE(!!bytes);
+    EXPECT_EQ(bytes->size(), 3u);
+
+    // Invalid Byte sequence BareItem.
+    result = RFC8941::parseItemStructuredFieldValue("aGVsbG8=:"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue(":aGVsbG8="_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue("aGVsbG8="_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue(":=aGVsbG8=:"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue(":a=GVsbG8=:"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue(":aGVsbG8.:"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue(":aGVsb G8=:"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue(":aGVsbG!8=:"_s);
+    EXPECT_FALSE(!!result);
+
+    result = RFC8941::parseItemStructuredFieldValue(":_-Ah:"_s);
+    EXPECT_FALSE(!!result);
+
+    // Integer parameter tests.
+    result = RFC8941::parseItemStructuredFieldValue("token;count=42"_s);
+    EXPECT_TRUE(!!result);
+    auto* token = std::get_if<RFC8941::Token>(&result->first);
+    EXPECT_TRUE(!!token);
+    EXPECT_STREQ("token", token->string().utf8().data());
+    EXPECT_EQ(result->second.map().size(), 1U);
+    auto* paramIntValue = result->second.getIf<int64_t>("count"_s);
+    EXPECT_TRUE(!!paramIntValue);
+    EXPECT_EQ(*paramIntValue, 42);
+
+    // Negative integer parameter tests.
+    result = RFC8941::parseItemStructuredFieldValue("token;offset=-10"_s);
+    EXPECT_TRUE(!!result);
+    token = std::get_if<RFC8941::Token>(&result->first);
+    EXPECT_TRUE(!!token);
+    paramIntValue = result->second.getIf<int64_t>("offset"_s);
+    EXPECT_TRUE(!!paramIntValue);
+    EXPECT_EQ(*paramIntValue, -10);
+
+    // Decimal parameter tests.
+    result = RFC8941::parseItemStructuredFieldValue("token;ratio=1.5"_s);
+    EXPECT_TRUE(!!result);
+    token = std::get_if<RFC8941::Token>(&result->first);
+    EXPECT_TRUE(!!token);
+    auto* paramDecimal = result->second.getIf<double>("ratio"_s);
+    EXPECT_TRUE(!!paramDecimal);
+    EXPECT_DOUBLE_EQ(*paramDecimal, 1.5);
+
+    // String with multiple parameters (token and integer values).
+    result = RFC8941::parseItemStructuredFieldValue("\"b\"; a=c; c=2"_s);
+    EXPECT_TRUE(!!result);
+    auto* stringValue = std::get_if<String>(&result->first);
+    EXPECT_TRUE(!!stringValue);
+    EXPECT_STREQ("b", stringValue->utf8().data());
+    EXPECT_EQ(result->second.map().size(), 2U);
+    auto* paramTokenValue = result->second.getIf<RFC8941::Token>("a"_s);
+    EXPECT_TRUE(!!paramTokenValue);
+    EXPECT_STREQ("c", paramTokenValue->string().utf8().data());
+    auto* paramIntValue2 = result->second.getIf<int64_t>("c"_s);
+    EXPECT_TRUE(!!paramIntValue2);
+    EXPECT_EQ(*paramIntValue2, 2);
+
+    // Empty item.
+    result = RFC8941::parseItemStructuredFieldValue(""_s);
+    EXPECT_FALSE(!!result);
+
+    // Leading and trailing whitespace
+    result = RFC8941::parseItemStructuredFieldValue("     1  "_s);
+    EXPECT_TRUE(!!result);
+    intValue = std::get_if<int64_t>(&result->first);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 1);
 }
 
 TEST(RFC8941, ParseDictionaryStructuredFieldValue)
@@ -216,6 +506,52 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     valueList = std::get_if<RFC8941::InnerList>(&valueAndParameters.first);
     EXPECT_TRUE(!!valueList);
     EXPECT_TRUE(valueList->isEmpty());
+
+    result = RFC8941::parseDictionaryStructuredFieldValue("count=42"_s);
+    EXPECT_TRUE(!!result);
+    EXPECT_EQ(result->size(), 1U);
+    EXPECT_TRUE(result->contains("count"_s));
+    valueAndParameters = result->get("count"_s);
+    bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
+    EXPECT_TRUE(!!bareItem);
+    auto* intValue = std::get_if<int64_t>(bareItem);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 42);
+
+    result = RFC8941::parseDictionaryStructuredFieldValue("ratio=1.5"_s);
+    EXPECT_TRUE(!!result);
+    EXPECT_TRUE(result->contains("ratio"_s));
+    valueAndParameters = result->get("ratio"_s);
+    bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
+    EXPECT_TRUE(!!bareItem);
+    auto* decimalValue = std::get_if<double>(bareItem);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 1.5);
+
+    result = RFC8941::parseDictionaryStructuredFieldValue("count=42, ratio=1.5, offset=-10"_s);
+    EXPECT_TRUE(!!result);
+    EXPECT_EQ(result->size(), 3U);
+    EXPECT_TRUE(result->contains("count"_s));
+    valueAndParameters = result->get("count"_s);
+    bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
+    EXPECT_TRUE(!!bareItem);
+    intValue = std::get_if<int64_t>(bareItem);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 42);
+    EXPECT_TRUE(result->contains("ratio"_s));
+    valueAndParameters = result->get("ratio"_s);
+    bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
+    EXPECT_TRUE(!!bareItem);
+    decimalValue = std::get_if<double>(bareItem);
+    EXPECT_TRUE(!!decimalValue);
+    EXPECT_DOUBLE_EQ(*decimalValue, 1.5);
+    EXPECT_TRUE(result->contains("offset"_s));
+    valueAndParameters = result->get("offset"_s);
+    bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
+    EXPECT_TRUE(!!bareItem);
+    intValue = std::get_if<int64_t>(bareItem);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, -10);
 }
 
 } // namespace TestWebKitAPI

@@ -58,15 +58,15 @@ void AboutSchemeHandler::platformStartTask(WebPageProxy&, WebURLSchemeTask& task
 
     if (auto* handler = handlerForURL(url)) {
         handler->loadContent(url, [task = Ref { task }](auto&& response, auto&& buffer) mutable {
-            task->didReceiveResponse(WTFMove(response));
-            task->didReceiveData(WTFMove(buffer));
+            task->didReceiveResponse(WTF::move(response));
+            task->didReceiveData(WTF::move(buffer));
             task->didComplete({ });
         });
         return;
     }
 
     WebCore::ResourceResponse response(WTF::URL { url }, "text/html"_s, 0, "UTF-8"_s);
-    task.didReceiveResponse(WTFMove(response));
+    task.didReceiveResponse(WTF::move(response));
     task.didComplete({ });
 }
 
@@ -84,7 +84,7 @@ void AboutSchemeHandler::platformInitialize()
 
 void AboutSchemeHandler::registerHandler(const String& opaquePath, std::unique_ptr<OpaquePathHandler>&& handler)
 {
-    auto addResult = m_handlers.set(opaquePath, WTFMove(handler));
+    auto addResult = m_handlers.set(opaquePath, WTF::move(handler));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 

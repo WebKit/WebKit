@@ -9,7 +9,7 @@ info: |
   ...
   9. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -18,4 +18,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   var buffer = new ArrayBuffer(3 * offset);
   var byteOffset = { valueOf() { $DETACHBUFFER(buffer); return offset; } };
   assert.throws(TypeError, () => new TA(buffer, byteOffset));
-});
+}, null, ["passthrough"]);

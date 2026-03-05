@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/HdrMetadataType.h>
 #include <WebCore/MediaSample.h>
+#include <WebCore/PlatformMediaCapabilitiesHdrMetadataType.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/TrackInfo.h>
 #include <wtf/MediaTime.h>
@@ -43,12 +43,12 @@ public:
     struct MediaSampleItem {
         using MediaSampleDataType = RefPtr<FragmentedSharedBuffer>;
         MediaTime presentationTime;
-        MediaTime decodeTime { MediaTime::indefiniteTime() };
+        MediaTime decodeTime { MediaTime::invalidTime() };
         MediaTime duration { MediaTime::zeroTime() };
         std::pair<MediaTime, MediaTime> trimInterval { MediaTime::zeroTime(), MediaTime::zeroTime() };
         MediaSampleDataType data;
         RefPtr<SharedBuffer> hdrMetadata { nullptr };
-        std::optional<HdrMetadataType> hdrMetadataType { std::nullopt };
+        std::optional<PlatformMediaCapabilitiesHdrMetadataType> hdrMetadataType { std::nullopt };
         uint32_t flags { };
         bool isSync() const { return flags & MediaSample::IsSync; }
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -64,13 +64,12 @@ public:
     MediaSamplesBlock() = default;
     MediaSamplesBlock(const TrackInfo* info, SamplesVector&& items)
         : m_info(info)
-        , m_samples(WTFMove(items))
+        , m_samples(WTF::move(items))
     {
     }
 
-    void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTFMove(info); }
+    void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTF::move(info); }
     const TrackInfo* info() const { return m_info.get(); }
-    RefPtr<const TrackInfo> protectedInfo() const { return m_info; }
     MediaTime presentationTime() const { return isEmpty() ? MediaTime::invalidTime() : first().presentationTime; }
     MediaTime duration() const
     {
@@ -81,13 +80,13 @@ public:
     }
     MediaTime presentationEndTime() const { return presentationTime() + duration(); }
     bool isSync() const { return size() ? (first().flags & MediaSample::IsSync) : false; }
-    TrackID trackID() const { return m_info ? m_info->trackID : -1; }
+    TrackID trackID() const { return m_info ? m_info->trackID() : -1; }
     bool isVideo() const { return m_info && m_info->isVideo(); }
     bool isAudio() const { return m_info && m_info->isAudio(); }
     TrackInfo::TrackType type() const { return m_info ? m_info->type() : TrackInfo::TrackType::Unknown; }
-    void append(MediaSampleItem&& item) { m_samples.append(WTFMove(item)); }
+    void append(MediaSampleItem&& item) { m_samples.append(WTF::move(item)); }
     void append(MediaSamplesBlock&& block) { append(std::exchange(block.m_samples, { })); }
-    void append(SamplesVector&& samples) { m_samples.appendVector(WTFMove(samples)); }
+    void append(SamplesVector&& samples) { m_samples.appendVector(WTF::move(samples)); }
     size_t size() const { return m_samples.size(); };
     bool isEmpty() const { return m_samples.isEmpty(); }
     void clear() { m_samples.clear(); }
@@ -103,15 +102,15 @@ public:
     SamplesVector::const_iterator begin() const LIFETIME_BOUND { return m_samples.begin(); }
     SamplesVector::const_iterator end() const LIFETIME_BOUND { return m_samples.end(); }
 
-    WEBCORE_EXPORT RefPtr<MediaSample> toMediaSample() const;
+    WEBCORE_EXPORT RefPtr<MediaSample> toMediaSample(const MediaSample* = nullptr) const;
     WEBCORE_EXPORT static UniqueRef<MediaSamplesBlock> fromMediaSample(const MediaSample&, const TrackInfo* = nullptr);
 
 private:
     // Used by IPC generator
     friend struct IPC::ArgumentCoder<MediaSamplesBlock>;
     MediaSamplesBlock(RefPtr<const TrackInfo>&& info, SamplesVector&& items, std::optional<bool> discontinuity)
-        : m_info(WTFMove(info))
-        , m_samples(WTFMove(items))
+        : m_info(WTF::move(info))
+        , m_samples(WTF::move(items))
         , m_discontinuity(discontinuity)
     {
     }

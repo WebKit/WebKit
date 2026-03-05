@@ -38,6 +38,8 @@ class RenderGrid;
 
 namespace Layout {
 class ElementBox;
+struct GridLayoutConstraints;
+struct UsedTrackSizes;
 }
 
 namespace LayoutIntegration {
@@ -50,11 +52,13 @@ public:
 
     void layout();
 
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidths();
+
     friend WTF::TextStream& operator<<(WTF::TextStream&, const GridLayout&);
 
 private:
     void updateGridItemRenderers();
-    void updateFormattingContextRootRenderer();
+    void updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints&, const Layout::UsedTrackSizes&);
 
     const Layout::ElementBox& gridBox() const { return *m_gridBox; }
     Layout::ElementBox& gridBox() { return *m_gridBox; }

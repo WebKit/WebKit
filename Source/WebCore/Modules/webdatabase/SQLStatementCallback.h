@@ -45,6 +45,8 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
+    virtual bool isJSSQLStatementCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(SQLTransaction&, SQLResultSet&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(SQLTransaction&, SQLResultSet&) = 0;
 

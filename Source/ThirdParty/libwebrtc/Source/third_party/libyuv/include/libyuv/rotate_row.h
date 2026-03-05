@@ -60,11 +60,6 @@ extern "C" {
 #define HAS_TRANSPOSEUVWXH_SME
 #endif
 
-#if !defined(LIBYUV_DISABLE_MSA) && defined(__mips_msa)
-#define HAS_TRANSPOSEWX16_MSA
-#define HAS_TRANSPOSEUVWX16_MSA
-#endif
-
 #if !defined(LIBYUV_DISABLE_LSX) && defined(__loongarch_sx)
 #define HAS_TRANSPOSEWX16_LSX
 #define HAS_TRANSPOSEUVWX16_LSX
@@ -113,11 +108,6 @@ void TransposeWx8_Fast_SSSE3(const uint8_t* src,
                              uint8_t* dst,
                              int dst_stride,
                              int width);
-void TransposeWx16_MSA(const uint8_t* src,
-                       int src_stride,
-                       uint8_t* dst,
-                       int dst_stride,
-                       int width);
 void TransposeWx16_LSX(const uint8_t* src,
                        int src_stride,
                        uint8_t* dst,
@@ -144,11 +134,6 @@ void TransposeWx8_Fast_Any_SSSE3(const uint8_t* src,
                                  uint8_t* dst,
                                  int dst_stride,
                                  int width);
-void TransposeWx16_Any_MSA(const uint8_t* src,
-                           int src_stride,
-                           uint8_t* dst,
-                           int dst_stride,
-                           int width);
 void TransposeWx16_Any_LSX(const uint8_t* src,
                            int src_stride,
                            uint8_t* dst,
@@ -200,13 +185,6 @@ void TransposeUVWxH_SME(const uint8_t* src,
                         int dst_stride_b,
                         int width,
                         int height);
-void TransposeUVWx16_MSA(const uint8_t* src,
-                         int src_stride,
-                         uint8_t* dst_a,
-                         int dst_stride_a,
-                         uint8_t* dst_b,
-                         int dst_stride_b,
-                         int width);
 void TransposeUVWx16_LSX(const uint8_t* src,
                          int src_stride,
                          uint8_t* dst_a,
@@ -223,13 +201,6 @@ void TransposeUVWx8_Any_SSE2(const uint8_t* src,
                              int dst_stride_b,
                              int width);
 void TransposeUVWx8_Any_NEON(const uint8_t* src,
-                             int src_stride,
-                             uint8_t* dst_a,
-                             int dst_stride_a,
-                             uint8_t* dst_b,
-                             int dst_stride_b,
-                             int width);
-void TransposeUVWx16_Any_MSA(const uint8_t* src,
                              int src_stride,
                              uint8_t* dst_a,
                              int dst_stride_a,

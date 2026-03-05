@@ -35,39 +35,39 @@ namespace WebCore {
 class RenderTextControlInnerBlock;
 
 class TextControlInnerContainer final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextControlInnerContainer);
+    WTF_MAKE_TZONE_ALLOCATED(TextControlInnerContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextControlInnerContainer);
 public:
     static Ref<TextControlInnerContainer> create(Document&);
 
 private:
     explicit TextControlInnerContainer(Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
 };
 
 class TextControlInnerElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextControlInnerElement);
+    WTF_MAKE_TZONE_ALLOCATED(TextControlInnerElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextControlInnerElement);
 public:
     static Ref<TextControlInnerElement> create(Document&);
 
 private:
     explicit TextControlInnerElement(Document&);
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
 
-    bool isMouseFocusable() const override { return false; }
+    bool isMouseFocusable() const final { return false; }
 };
 
 class TextControlInnerTextElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextControlInnerTextElement);
+    WTF_MAKE_TZONE_ALLOCATED(TextControlInnerTextElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextControlInnerTextElement);
 public:
     static Ref<TextControlInnerTextElement> create(Document&, bool isEditable);
 
-    void defaultEventHandler(Event&) override;
+    void defaultEventHandler(Event&) final;
 
-    RenderTextControlInnerBlock* renderer() const;
+    RenderTextControlInnerBlock* NODELETE renderer() const;
 
     inline void updateInnerTextElementEditability(bool isEditable)
     {
@@ -79,61 +79,61 @@ private:
     void updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization);
 
     explicit TextControlInnerTextElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
-    bool isMouseFocusable() const override { return false; }
-    bool isTextControlInnerTextElement() const override { return true; }
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    bool isMouseFocusable() const final { return false; }
+    bool isTextControlInnerTextElement() const final { return true; }
 };
 
 class TextControlPlaceholderElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextControlPlaceholderElement);
+    WTF_MAKE_TZONE_ALLOCATED(TextControlPlaceholderElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextControlPlaceholderElement);
 public:
     static Ref<TextControlPlaceholderElement> create(Document&);
 
 private:
     explicit TextControlPlaceholderElement(Document&);
-    
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
+
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
 };
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SearchFieldResultsButtonElement);
+    WTF_MAKE_TZONE_ALLOCATED(SearchFieldResultsButtonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SearchFieldResultsButtonElement);
 public:
     static Ref<SearchFieldResultsButtonElement> create(Document&);
 
-    void defaultEventHandler(Event&) override;
+    void defaultEventHandler(Event&) final;
 #if !PLATFORM(IOS_FAMILY)
-    bool willRespondToMouseClickEventsWithEditability(Editability) const override;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 #endif
 
     bool canAdjustStyleForAppearance() const { return m_canAdjustStyleForAppearance; }
 
 private:
     explicit SearchFieldResultsButtonElement(Document&);
-    bool isMouseFocusable() const override { return false; }
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
-    bool isSearchFieldResultsButtonElement() const override { return true; }
+    bool isMouseFocusable() const final { return false; }
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    bool isSearchFieldResultsButtonElement() const final { return true; }
 
     bool m_canAdjustStyleForAppearance { true };
 };
 
 class SearchFieldCancelButtonElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SearchFieldCancelButtonElement);
+    WTF_MAKE_TZONE_ALLOCATED(SearchFieldCancelButtonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SearchFieldCancelButtonElement);
 public:
     static Ref<SearchFieldCancelButtonElement> create(Document&);
 
-    void defaultEventHandler(Event&) override;
+    void defaultEventHandler(Event&) final;
 #if !PLATFORM(IOS_FAMILY)
-    bool willRespondToMouseClickEventsWithEditability(Editability) const override;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 #endif
 
 private:
     explicit SearchFieldCancelButtonElement(Document&);
-    bool isMouseFocusable() const override { return false; }
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
+    bool isMouseFocusable() const final { return false; }
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
 };
 
 } // namespace WebCore

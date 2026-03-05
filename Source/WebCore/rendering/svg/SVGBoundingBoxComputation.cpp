@@ -142,13 +142,31 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
         ASSERT(!child.isRenderSVGRoot());
 
         auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(m_renderer.ptr(), TransformState::TrackSVGCTMMatrix);
-        return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));
+        return transform.isIdentity() ? std::nullopt : std::make_optional(WTF::move(transform));
     };
 
-    auto uniteBoundingBoxRespectingValidity = [] (bool& boxValid, FloatRect& box, const RenderLayerModelObject& child, const FloatRect& childBoundingBox) {
-        auto* containerChild = dynamicDowncast<RenderSVGContainer>(child);
-        bool isBoundingBoxValid = !containerChild || containerChild->isObjectBoundingBoxValid();
-        if (!isBoundingBoxValid)
+    // https://svgwg.org/svg2-draft/coords.html#BoundingBoxes
+    auto hasValidBoundingBoxForContainer = [] (const RenderLayerModelObject& object) {
+        if (auto* shape = dynamicDowncast<RenderSVGShape>(object))
+            return !shape->isRenderingDisabled();
+
+        if (auto* text = dynamicDowncast<RenderSVGText>(object))
+            return text->isObjectBoundingBoxValid();
+
+        if (auto* container = dynamicDowncast<RenderSVGContainer>(object))
+            return container->isObjectBoundingBoxValid();
+
+        if (auto* foreignObject = dynamicDowncast<RenderSVGForeignObject>(object))
+            return foreignObject->isObjectBoundingBoxValid();
+
+        if (auto* image = dynamicDowncast<RenderSVGImage>(object))
+            return image->isObjectBoundingBoxValid();
+
+        return false;
+    };
+
+    auto uniteBoundingBoxRespectingValidity = [hasValidBoundingBoxForContainer] (bool& boxValid, FloatRect& box, const RenderLayerModelObject& child, const FloatRect& childBoundingBox) {
+        if (!hasValidBoundingBoxForContainer(child))
             return;
 
         if (boxValid) {
@@ -258,7 +276,7 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
     }
 
     if (includeFilter) {
-        if (auto* referencedFilterRenderer = m_renderer->svgFilterResourceFromStyle()) {
+        if (CheckedPtr referencedFilterRenderer = m_renderer->svgFilterResourceFromStyle()) {
             auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
 
             auto resourceRect = referencedFilterRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation);
@@ -289,7 +307,7 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
     }
 
     if (options.contains(DecorationOption::IncludeOutline))
-        box.inflate(m_renderer->outlineStyleForRepaint().outlineSize());
+        box.inflate(m_renderer->outlineStyleForRepaint().usedOutlineSize());
 }
 
 LayoutRect SVGBoundingBoxComputation::computeVisualOverflowRect(const RenderLayerModelObject& renderer)

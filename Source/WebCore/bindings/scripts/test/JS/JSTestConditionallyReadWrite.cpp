@@ -199,7 +199,7 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestConditionallyReadWrite::s_info = { "TestConditionallyReadWrite"_s, &Base::s_info, &JSTestConditionallyReadWriteTable, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWrite) };
 
 JSTestConditionallyReadWrite::JSTestConditionallyReadWrite(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestConditionallyReadWrite>&& impl)
-    : JSDOMWrapper<TestConditionallyReadWrite>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestConditionallyReadWrite>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -270,7 +270,7 @@ static inline bool setJSTestConditionallyReadWrite_conditionallyReadWriteAttribu
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setConditionallyReadWriteAttribute(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setConditionallyReadWriteAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -310,7 +310,7 @@ static inline bool setJSTestConditionallyReadWrite_conditionalAndConditionallyRe
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setConditionalAndConditionallyReadWriteAttribute(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setConditionalAndConditionallyReadWriteAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -347,7 +347,7 @@ static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWrite
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteBySettingAttribute(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setEnabledConditionallyReadWriteBySettingAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -380,7 +380,7 @@ static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWrite
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeable(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeable(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -413,7 +413,7 @@ static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWrite
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate(*nativeValueConversionResult.releaseReturnValue());
+        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -487,7 +487,7 @@ void JSTestConditionallyReadWriteOwner::finalize(JSC::Handle<JSC::Unknown> handl
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestConditionallyReadWrite = static_cast<JSTestConditionallyReadWrite*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestConditionallyReadWrite->protectedWrapped().ptr(), jsTestConditionallyReadWrite);
+    uncacheWrapper(world, protect(jsTestConditionallyReadWrite->wrapped()).ptr(), jsTestConditionallyReadWrite);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -525,7 +525,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestConditionallyReadWrite>(impl.ptr());
 #endif
-    return createWrapper<TestConditionallyReadWrite>(globalObject, WTFMove(impl));
+    return createWrapper<TestConditionallyReadWrite>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestConditionallyReadWrite& impl)

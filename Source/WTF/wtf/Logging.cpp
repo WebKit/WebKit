@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Logging.h"
+#include <wtf/Logging.h>
 
 namespace WTF {
 

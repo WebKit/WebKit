@@ -47,43 +47,45 @@ static void visitNodeList(JSC::AbstractSlotVisitor& visitor, NodeList& nodeList)
 {
     ASSERT(!nodeList.isLiveNodeList());
     unsigned length = nodeList.length();
-    for (unsigned i = 0; i < length; ++i)
-        addWebCoreOpaqueRoot(visitor, nodeList.item(i));
+    for (unsigned i = 0; i < length; ++i) {
+        // We cannot ref the item here as this function may get called from a GC thread.
+        SUPPRESS_UNRETAINED_ARG addWebCoreOpaqueRoot(visitor, nodeList.item(i));
+    }
 }
 
 class ChildListRecord final : public MutationRecord {
 public:
     ChildListRecord(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
         : m_target(target)
-        , m_addedNodes(WTFMove(added))
-        , m_removedNodes(WTFMove(removed))
-        , m_previousSibling(WTFMove(previousSibling))
-        , m_nextSibling(WTFMove(nextSibling))
+        , m_addedNodes(WTF::move(added))
+        , m_removedNodes(WTF::move(removed))
+        , m_previousSibling(WTF::move(previousSibling))
+        , m_nextSibling(WTF::move(nextSibling))
     {
     }
 
 private:
     const AtomString& type() override;
-    Node* target() override { return m_target.ptr(); }
-    NodeList* addedNodes() override { return m_addedNodes.get(); }
-    NodeList* removedNodes() override { return m_removedNodes.get(); }
+    Node& target() override { return m_target; }
+    NodeList& addedNodes() override { return m_addedNodes; }
+    NodeList& removedNodes() override { return m_removedNodes; }
     Node* previousSibling() override { return m_previousSibling.get(); }
     Node* nextSibling() override { return m_nextSibling.get(); }
 
     void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
     {
         addWebCoreOpaqueRoot(visitor, m_target.get());
-        if (m_addedNodes)
-            visitNodeList(visitor, *m_addedNodes);
-        if (m_removedNodes)
-            visitNodeList(visitor, *m_removedNodes);
+        // We cannot ref m_addedNodes here as this function may get called from a GC thread.
+        SUPPRESS_UNRETAINED_ARG visitNodeList(visitor, m_addedNodes.get());
+        // We cannot ref m_removedNodes here as this function may get called from a GC thread.
+        SUPPRESS_UNRETAINED_ARG visitNodeList(visitor, m_removedNodes.get());
     }
     
     const Ref<ContainerNode> m_target;
-    RefPtr<NodeList> m_addedNodes;
-    RefPtr<NodeList> m_removedNodes;
-    RefPtr<Node> m_previousSibling;
-    RefPtr<Node> m_nextSibling;
+    const Ref<NodeList> m_addedNodes;
+    const Ref<NodeList> m_removedNodes;
+    const RefPtr<Node> m_previousSibling;
+    const RefPtr<Node> m_nextSibling;
 };
 
 class RecordWithEmptyNodeLists : public MutationRecord {
@@ -95,16 +97,16 @@ public:
     }
 
 private:
-    Node* target() override { return m_target.ptr(); }
+    Node& target() override { return m_target; }
     String oldValue() override { return m_oldValue; }
-    NodeList* addedNodes() override { return lazilyInitializeEmptyNodeList(m_addedNodes); }
-    NodeList* removedNodes() override { return lazilyInitializeEmptyNodeList(m_removedNodes); }
+    NodeList& addedNodes() override { return lazilyInitializeEmptyNodeList(m_addedNodes); }
+    NodeList& removedNodes() override { return lazilyInitializeEmptyNodeList(m_removedNodes); }
 
-    static NodeList* lazilyInitializeEmptyNodeList(RefPtr<NodeList>& nodeList)
+    static NodeList& lazilyInitializeEmptyNodeList(RefPtr<NodeList>& nodeList)
     {
         if (!nodeList)
             nodeList = StaticNodeList::create();
-        return nodeList.get();
+        return *nodeList;
     }
 
     void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
@@ -156,9 +158,9 @@ public:
 
 private:
     const AtomString& type() override { return m_record->type(); }
-    Node* target() override { return m_record->target(); }
-    NodeList* addedNodes() override { return m_record->addedNodes(); }
-    NodeList* removedNodes() override { return m_record->removedNodes(); }
+    Node& target() override { return m_record->target(); }
+    NodeList& addedNodes() override { return m_record->addedNodes(); }
+    NodeList& removedNodes() override { return m_record->removedNodes(); }
     Node* previousSibling() override { return m_record->previousSibling(); }
     Node* nextSibling() override { return m_record->nextSibling(); }
     const AtomString& attributeName() override { return m_record->attributeName(); }
@@ -196,7 +198,7 @@ const AtomString& CharacterDataRecord::type()
 
 Ref<MutationRecord> MutationRecord::createChildList(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
 {
-    return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, WTFMove(added), WTFMove(removed), WTFMove(previousSibling), WTFMove(nextSibling))));
+    return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, WTF::move(added), WTF::move(removed), WTF::move(previousSibling), WTF::move(nextSibling))));
 }
 
 Ref<MutationRecord> MutationRecord::createAttributes(Element& target, const QualifiedName& name, const AtomString& oldValue)

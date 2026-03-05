@@ -85,11 +85,11 @@ WebDataListSuggestionsDropdownMac::WebDataListSuggestionsDropdownMac(WebPageProx
 void WebDataListSuggestionsDropdownMac::show(WebCore::DataListSuggestionInformation&& information)
 {
     if (m_dropdownUI) {
-        [m_dropdownUI updateWithInformation:WTFMove(information)];
+        [m_dropdownUI updateWithInformation:WTF::move(information)];
         return;
     }
 
-    m_dropdownUI = adoptNS([[WKDataListSuggestionsController alloc] initWithInformation:WTFMove(information) inView:m_view.get().get()]);
+    m_dropdownUI = adoptNS([[WKDataListSuggestionsController alloc] initWithInformation:WTF::move(information) inView:m_view.get().get()]);
     [m_dropdownUI showSuggestionsDropdown:*this];
 }
 
@@ -337,7 +337,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
         return self;
 
     _presentingView = presentingView;
-    _suggestions = WTFMove(information.suggestions);
+    _suggestions = WTF::move(information.suggestions);
     _showDividersBetweenCells = shouldShowDividersBetweenCells(_suggestions);
     _table = adoptNS([[WKDataListSuggestionTableView alloc] initWithElementRect:information.elementRect]);
 
@@ -389,7 +389,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
 {
-    _suggestions = WTFMove(information.suggestions);
+    _suggestions = WTF::move(information.suggestions);
     _showDividersBetweenCells = shouldShowDividersBetweenCells(_suggestions);
     [_table reload];
 

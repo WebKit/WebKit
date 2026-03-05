@@ -32,35 +32,34 @@
 namespace WebCore {
 
 struct JsonWebKey {
-    JsonWebKey isolatedCopy() && {
+    JsonWebKey isolatedCopy() &&
+    {
         return {
-            crossThreadCopy(WTFMove(kty)),
-            crossThreadCopy(WTFMove(use)),
+            crossThreadCopy(WTF::move(kty)),
+            crossThreadCopy(WTF::move(use)),
             key_ops,
-            usages,
-            crossThreadCopy(WTFMove(alg)),
+            crossThreadCopy(WTF::move(alg)),
             ext,
-            crossThreadCopy(WTFMove(crv)),
-            crossThreadCopy(WTFMove(x)),
-            crossThreadCopy(WTFMove(y)),
-            crossThreadCopy(WTFMove(d)),
-            crossThreadCopy(WTFMove(n)),
-            crossThreadCopy(WTFMove(e)),
-            crossThreadCopy(WTFMove(p)),
-            crossThreadCopy(WTFMove(q)),
-            crossThreadCopy(WTFMove(dp)),
-            crossThreadCopy(WTFMove(dq)),
-            crossThreadCopy(WTFMove(qi)),
-            crossThreadCopy(WTFMove(oth)),
-            crossThreadCopy(WTFMove(k))
+            crossThreadCopy(WTF::move(crv)),
+            crossThreadCopy(WTF::move(x)),
+            crossThreadCopy(WTF::move(y)),
+            crossThreadCopy(WTF::move(d)),
+            crossThreadCopy(WTF::move(n)),
+            crossThreadCopy(WTF::move(e)),
+            crossThreadCopy(WTF::move(p)),
+            crossThreadCopy(WTF::move(q)),
+            crossThreadCopy(WTF::move(dp)),
+            crossThreadCopy(WTF::move(dq)),
+            crossThreadCopy(WTF::move(qi)),
+            crossThreadCopy(WTF::move(oth)),
+            crossThreadCopy(WTF::move(k)),
+            usages,
         };
     }
 
     String kty;
     String use;
-    // FIXME: Consider merging key_ops and usages.
     std::optional<Vector<CryptoKeyUsage>> key_ops;
-    CryptoKeyUsageBitmap usages;
     String alg;
 
     std::optional<bool> ext;
@@ -78,6 +77,9 @@ struct JsonWebKey {
     String qi;
     std::optional<Vector<RsaOtherPrimesInfo>> oth;
     String k;
+
+    // Not part of exposed dictionary.
+    CryptoKeyUsageBitmap usages = 0;
 };
 
 } // namespace WebCore

@@ -116,9 +116,11 @@ class EventLogAnalyzer {
   void CreateBitrateAllocationGraph(PacketDirection direction,
                                     Plot* plot) const;
 
-  void CreateOutgoingTWCCLossRateGraph(Plot* plot) const;
+  void CreateOutgoingLossRateGraph(Plot* plot) const;
   void CreateOutgoingEcnFeedbackGraph(Plot* plot) const;
   void CreateIncomingEcnFeedbackGraph(Plot* plot) const;
+  void CreateScreamRefWindowGraph(Plot* plot) const;
+  void CreateScreamDelayEstimateGraph(Plot* plot) const;
   void CreateGoogCcSimulationGraph(Plot* plot) const;
   void CreateSendSideBweSimulationGraph(Plot* plot) const;
   void CreateReceiveSideBweSimulationGraph(Plot* plot) const;

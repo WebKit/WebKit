@@ -27,8 +27,8 @@ includes: [testTypedArray.js]
 features: [Symbol, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([39, 3, 9]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([39, 3, 9]));
   var called = 0;
 
   var result = sample.findIndex(function() {

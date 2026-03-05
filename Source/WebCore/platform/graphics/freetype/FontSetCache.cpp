@@ -28,7 +28,7 @@
 namespace WebCore {
 
 FontSetCache::FontSet::FontSet(RefPtr<FcPattern>&& fontPattern)
-    : pattern(WTFMove(fontPattern))
+    : pattern(WTF::move(fontPattern))
 {
     FcResult result;
     fontSet.reset(FcFontSort(nullptr, pattern.get(), FcTrue, nullptr, &result));
@@ -58,7 +58,7 @@ RefPtr<FcPattern> FontSetCache::bestForCharacters(const FontDescription& fontDes
         FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
         cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
         FcDefaultSubstitute(pattern.get());
-        return makeUnique<FontSetCache::FontSet>(WTFMove(pattern));
+        return makeUnique<FontSetCache::FontSet>(WTF::move(pattern));
     });
 
     if (!addResult.iterator->value)

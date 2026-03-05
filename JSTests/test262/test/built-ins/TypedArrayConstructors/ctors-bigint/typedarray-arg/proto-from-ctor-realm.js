@@ -22,7 +22,7 @@ info: |
        a. Let realm be ? GetFunctionRealm(constructor).
        b. Let proto be realm's intrinsic object named intrinsicDefaultProto.
     5. Return proto.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, cross-realm, Reflect, TypedArray]
 ---*/
 
@@ -34,4 +34,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   var ta = Reflect.construct(TA, [new TA()], C);
 
   assert.sameValue(Object.getPrototypeOf(ta), other[TA.name].prototype);
-});
+}, null, ["passthrough"]);

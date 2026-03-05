@@ -74,7 +74,7 @@ public:
     JITConstantPool& operator=(JITConstantPool&&) = default;
 
     JITConstantPool(Vector<Value>&& constants)
-        : m_constants(WTFMove(constants))
+        : m_constants(WTF::move(constants))
     {
     }
 

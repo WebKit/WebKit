@@ -16,4 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/resources/iframe-code.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/resources/iframe-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/resources/iframe-viewport-first-line.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/resources/iframe-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/painting/resources/run-after-layout-and-paint.js

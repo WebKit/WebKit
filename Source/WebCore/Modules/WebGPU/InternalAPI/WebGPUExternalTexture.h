@@ -45,7 +45,7 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
     virtual void destroy() = 0;
@@ -54,6 +54,7 @@ public:
     virtual void updateExternalTexture(CVPixelBufferRef) = 0;
 #endif
     virtual bool isRemoteExternalTextureProxy() const { return false; }
+    virtual bool isExternalTextureImpl() const { return false; }
 
 protected:
     ExternalTexture() = default;

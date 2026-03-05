@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/InlineItem.h>
+#include "InlineItem.h"
 
 namespace WebCore {
 namespace Layout {

@@ -172,7 +172,7 @@ class FrameEncoderSettingsBuilder {
   }
 
   FrameEncoderSettingsBuilder& Res(int width, int height) {
-    frame_encode_settings_.resolution = {width, height};
+    frame_encode_settings_.resolution = {.width = width, .height = height};
     return *this;
   }
 
@@ -390,16 +390,16 @@ TEST(LibaomAv1Encoder, InputResolutionSwitching) {
 
   scoped_refptr<I420Buffer> in1 = frame_reader->PullFrame(
       /*frame_num=*/nullptr,
-      /*resolution=*/{320, 180},
-      /*framerate_scale=*/{1, 1});
+      /*resolution=*/{.width = 320, .height = 180},
+      /*framerate_scale=*/{.num = 1, .den = 1});
   EncOut tu1;
   enc->Encode(in1, {.presentation_timestamp = Timestamp::Millis(100)},
               ToVec({Fb().Rate(kCbr).Res(160, 90).Ref({0}).Out(tu1)}));
 
   scoped_refptr<I420Buffer> in2 = frame_reader->PullFrame(
       /*frame_num=*/nullptr,
-      /*resolution=*/{160, 90},
-      /*framerate_scale=*/{1, 1});
+      /*resolution=*/{.width = 160, .height = 90},
+      /*framerate_scale=*/{.num = 1, .den = 1});
   EncOut tu2;
   enc->Encode(in2, {.presentation_timestamp = Timestamp::Millis(200)},
               ToVec({Fb().Rate(kCbr).Res(160, 90).Ref({0}).Out(tu2)}));

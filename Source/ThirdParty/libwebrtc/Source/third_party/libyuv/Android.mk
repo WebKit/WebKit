@@ -9,7 +9,6 @@ LOCAL_SRC_FILES := \
     source/compare.cc           \
     source/compare_common.cc    \
     source/compare_gcc.cc       \
-    source/compare_msa.cc       \
     source/compare_neon.cc      \
     source/compare_neon64.cc    \
     source/compare_win.cc       \
@@ -26,14 +25,12 @@ LOCAL_SRC_FILES := \
     source/rotate_argb.cc       \
     source/rotate_common.cc     \
     source/rotate_gcc.cc        \
-    source/rotate_msa.cc        \
     source/rotate_neon.cc       \
     source/rotate_neon64.cc     \
     source/rotate_win.cc        \
     source/row_any.cc           \
     source/row_common.cc        \
     source/row_gcc.cc           \
-    source/row_msa.cc           \
     source/row_neon.cc          \
     source/row_neon64.cc        \
     source/row_win.cc           \
@@ -42,7 +39,6 @@ LOCAL_SRC_FILES := \
     source/scale_argb.cc        \
     source/scale_common.cc      \
     source/scale_gcc.cc         \
-    source/scale_msa.cc         \
     source/scale_neon.cc        \
     source/scale_neon64.cc      \
     source/scale_rgb.cc         \

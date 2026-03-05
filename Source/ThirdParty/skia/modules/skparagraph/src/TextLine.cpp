@@ -753,6 +753,7 @@ std::unique_ptr<Run> TextLine::shapeEllipsis(const SkString& ellipsis, const Clu
         // they will not be resolved with the pretiest color emoji font
         auto typeface = fOwner->fontCollection()->defaultFallback(
                                             unicode,
+                                            textStyle.getFontFamilies(),
                                             textStyle.getFontStyle(),
                                             textStyle.getLocale(),
                                             textStyle.getFontArguments());
@@ -929,7 +930,7 @@ void TextLine::iterateThroughClustersInGlyphsOrder(bool reversed,
         auto trimmed = fOwner->clusters(trimmedRange);
         directional_for_each(trailed, reversed != run.leftToRight(), [&](Cluster& cluster) {
             if (ignore) return;
-            bool ghost =  &cluster >= trimmed.end();
+            bool ghost =  &cluster >= trimmed.data() + trimmed.size();
             if (!includeGhosts && ghost) {
                 return;
             }
@@ -1134,7 +1135,7 @@ LineMetrics TextLine::getMetrics() const {
     result.fLeft = this->offset().fX;
     // This is Flutter definition of a baseline
     result.fBaseline = this->offset().fY + this->height() - this->sizes().descent();
-    result.fLineNumber = this - fOwner->lines().begin();
+    result.fLineNumber = this - fOwner->lines().data();
 
     // Fill out the style parts
     this->iterateThroughVisualRuns(false,

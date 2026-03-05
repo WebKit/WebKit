@@ -27,7 +27,6 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-#include "ArgumentCoders.h"
 #include <optional>
 
 #if HAVE(AUDIT_TOKEN)

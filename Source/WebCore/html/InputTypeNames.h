@@ -26,12 +26,12 @@ namespace WebCore {
 
 namespace InputTypeNames {
 
-const AtomString& button();
+const AtomString& NODELETE button();
 const AtomString& checkbox();
 const AtomString& color();
 const AtomString& date();
 const AtomString& datetimelocal();
-const AtomString& email();
+const AtomString& NODELETE email();
 const AtomString& file();
 const AtomString& hidden();
 const AtomString& image();
@@ -40,13 +40,13 @@ const AtomString& number();
 const AtomString& password();
 const AtomString& radio();
 const AtomString& range();
-const AtomString& reset();
-const AtomString& search();
-const AtomString& submit();
-const AtomString& telephone();
-const AtomString& text();
+const AtomString& NODELETE reset();
+const AtomString& NODELETE search();
+const AtomString& NODELETE submit();
+const AtomString& NODELETE telephone();
+const AtomString& NODELETE text();
 const AtomString& time();
-const AtomString& url();
+const AtomString& NODELETE url();
 const AtomString& week();
 
 }

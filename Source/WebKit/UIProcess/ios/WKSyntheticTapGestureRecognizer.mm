@@ -64,9 +64,9 @@
 - (void)setState:(UIGestureRecognizerState)state
 {
     if (state == UIGestureRecognizerStateEnded)
-        [_gestureIdentifiedTarget performSelector:_gestureIdentifiedAction withObject:self];
+        [protect(_gestureIdentifiedTarget) performSelector:_gestureIdentifiedAction withObject:self];
     else if (state == UIGestureRecognizerStateFailed)
-        [_gestureFailedTarget performSelector:_gestureFailedAction withObject:self];
+        [protect(_gestureFailedTarget) performSelector:_gestureFailedAction withObject:self];
     [super setState:state];
 }
 
@@ -74,7 +74,7 @@
 {
     [super reset];
 
-    [_resetTarget performSelector:_resetAction withObject:self];
+    [protect(_resetTarget) performSelector:_resetAction withObject:self];
     _lastActiveTouchIdentifier = nil;
 }
 
@@ -84,8 +84,8 @@
     if (!_supportingTouchEventsGestureRecognizer)
         return;
 
-    NSMapTable<NSNumber *, UITouch *> *activeTouches = [_supportingTouchEventsGestureRecognizer activeTouchesByIdentifier];
-    for (NSNumber *touchIdentifier in activeTouches) {
+    RetainPtr activeTouches = [protect(_supportingTouchEventsGestureRecognizer) activeTouchesByIdentifier];
+    for (NSNumber *touchIdentifier in activeTouches.get()) {
         UITouch *touch = [activeTouches objectForKey:touchIdentifier];
         if ([touch.gestureRecognizers containsObject:self]) {
             _lastActiveTouchIdentifier = touchIdentifier;

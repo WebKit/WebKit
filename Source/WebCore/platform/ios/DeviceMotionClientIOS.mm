@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceMotionClientIOS);
 
 DeviceMotionClientIOS::DeviceMotionClientIOS(RefPtr<DeviceOrientationUpdateProvider>&& deviceOrientationUpdateProvider)
     : DeviceMotionClient()
-    , m_deviceOrientationUpdateProvider(WTFMove(deviceOrientationUpdateProvider))
+    , m_deviceOrientationUpdateProvider(WTF::move(deviceOrientationUpdateProvider))
 {
 }
 
@@ -123,7 +123,7 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
         rotationRate = DeviceMotionData::RotationRate::create(*xRotationRate, *yRotationRate, *zRotationRate);
 #endif // PLATFORM(IOS_FAMILY_SIMULATOR)
 
-    m_currentDeviceMotionData = DeviceMotionData::create(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), kMotionUpdateInterval);
+    m_currentDeviceMotionData = DeviceMotionData::create(WTF::move(acceleration), WTF::move(accelerationIncludingGravity), WTF::move(rotationRate), kMotionUpdateInterval);
     m_controller->didChangeDeviceMotion(m_currentDeviceMotionData.get());
 }
 

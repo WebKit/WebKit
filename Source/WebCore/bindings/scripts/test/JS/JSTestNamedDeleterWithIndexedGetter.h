@@ -32,7 +32,7 @@ public:
     static JSTestNamedDeleterWithIndexedGetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedDeleterWithIndexedGetter>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestNamedDeleterWithIndexedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterWithIndexedGetter>(vm)) JSTestNamedDeleterWithIndexedGetter(structure, *globalObject, WTFMove(impl));
+        JSTestNamedDeleterWithIndexedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterWithIndexedGetter>(vm)) JSTestNamedDeleterWithIndexedGetter(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -93,10 +93,8 @@ inline void* wrapperKey(TestNamedDeleterWithIndexedGetter* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNamedDeleterWithIndexedGetter&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedDeleterWithIndexedGetter* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNamedDeleterWithIndexedGetter>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedDeleterWithIndexedGetter& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNamedDeleterWithIndexedGetter>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestNamedDeleterWithIndexedGetter> {
     using WrapperClass = JSTestNamedDeleterWithIndexedGetter;

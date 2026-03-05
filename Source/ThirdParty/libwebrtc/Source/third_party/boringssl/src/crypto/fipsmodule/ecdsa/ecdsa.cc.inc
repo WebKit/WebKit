@@ -22,6 +22,7 @@
 #include <openssl/mem.h>
 
 #include "../../internal.h"
+#include "../bcm_interface.h"
 #include "../bn/internal.h"
 #include "../ec/internal.h"
 #include "../service_indicator/internal.h"
@@ -61,7 +62,7 @@ int ecdsa_verify_fixed_no_self_test(const uint8_t *digest, size_t digest_len,
                                     const EC_KEY *eckey) {
   const EC_GROUP *group = EC_KEY_get0_group(eckey);
   const EC_POINT *pub_key = EC_KEY_get0_public_key(eckey);
-  if (group == NULL || pub_key == NULL || sig == NULL) {
+  if (group == nullptr || pub_key == nullptr || sig == nullptr) {
     OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_MISSING_PARAMETERS);
     return 0;
   }
@@ -194,7 +195,7 @@ int ecdsa_sign_fixed_with_nonce_for_known_answer_test(
   }
 
   const EC_GROUP *group = EC_KEY_get0_group(eckey);
-  if (group == NULL || eckey->priv_key == NULL) {
+  if (group == nullptr || eckey->priv_key == nullptr) {
     OPENSSL_PUT_ERROR(ECDSA, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -220,7 +221,7 @@ int ecdsa_sign_fixed(const uint8_t *digest, size_t digest_len, uint8_t *sig,
   }
 
   const EC_GROUP *group = EC_KEY_get0_group(eckey);
-  if (group == NULL || eckey->priv_key == NULL) {
+  if (group == nullptr || eckey->priv_key == nullptr) {
     OPENSSL_PUT_ERROR(ECDSA, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -229,13 +230,13 @@ int ecdsa_sign_fixed(const uint8_t *digest, size_t digest_len, uint8_t *sig,
 
   // Pass a SHA512 hash of the private key and digest as additional data
   // into the RBG. This is a hardening measure against entropy failure.
-  static_assert(BCM_SHA512_DIGEST_LENGTH >= 32,
+  static_assert(SHA512_DIGEST_LENGTH >= 32,
                 "additional_data is too large for SHA-512");
 
   FIPS_service_indicator_lock_state();
 
   SHA512_CTX sha;
-  uint8_t additional_data[BCM_SHA512_DIGEST_LENGTH];
+  uint8_t additional_data[SHA512_DIGEST_LENGTH];
   BCM_sha512_init(&sha);
   BCM_sha512_update(&sha, priv_key->words, order->width * sizeof(BN_ULONG));
   BCM_sha512_update(&sha, digest, digest_len);

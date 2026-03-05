@@ -424,7 +424,7 @@ void UIScriptControllerIOS::singleTapAtPointWithModifiers(WebCore::FloatPoint lo
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag.createNSString().get()];
 
-    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[this, protectedThis = Ref { *this }, modifierFlags = WTFMove(modifierFlags), block = WTFMove(block)] () mutable {
+    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[this, protectedThis = Ref { *this }, modifierFlags = WTF::move(modifierFlags), block = WTF::move(block)] () mutable {
         if (!m_context)
             return;
 
@@ -499,7 +499,7 @@ void UIScriptControllerIOS::stylusTapAtPointWithModifiers(long x, long y, float 
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag.createNSString().get()];
 
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID, modifierFlags = WTFMove(modifierFlags)] {
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID, modifierFlags = WTF::move(modifierFlags)] {
         if (!m_context)
             return;
         for (size_t i = modifierFlags.size(); i; ) {
@@ -999,7 +999,7 @@ JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (RetainPtr view = [textSelectionDisplayInteraction().handleViews firstObject]; !isHiddenOrHasHiddenAncestor(view.get())) {
         sanityCheckCustomHandlePath(view.get());
-        handleView = WTFMove(view);
+        handleView = WTF::move(view);
     }
 #endif
 
@@ -1015,7 +1015,7 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (RetainPtr view = [textSelectionDisplayInteraction().handleViews lastObject]; !isHiddenOrHasHiddenAncestor(view.get())) {
         sanityCheckCustomHandlePath(view.get());
-        handleView = WTFMove(view);
+        handleView = WTF::move(view);
     }
 #endif
 
@@ -1454,6 +1454,12 @@ void UIScriptControllerIOS::setSelectedColorForColorPicker(double red, double gr
     [webView() setSelectedColorForColorPicker:color];
 }
 
+bool UIScriptControllerIOS::isShowingColorPicker() const
+{
+    RetainPtr<UIViewController> presentedViewController = webView().window.rootViewController.presentedViewController;
+    return [presentedViewController.get() isKindOfClass:[UIColorPickerViewController class]];
+}
+
 void UIScriptControllerIOS::setKeyboardInputModeIdentifier(JSStringRef identifier)
 {
     TestController::singleton().setKeyboardInputModeIdentifier(toWTFString(identifier));
@@ -1565,6 +1571,11 @@ void UIScriptControllerIOS::setHardwareKeyboardAttached(bool attached)
 {
     GSEventSetHardwareKeyboardAttached(attached, 0);
     TestController::singleton().setIsInHardwareKeyboardMode(attached);
+}
+
+void UIScriptControllerIOS::setShowKeyboardAfterElementFocusDelay(double delay)
+{
+    webView().showKeyboardAfterElementFocusDelay = delay;
 }
 
 void UIScriptControllerIOS::setAllowsViewportShrinkToFit(bool allows)

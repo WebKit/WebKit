@@ -177,50 +177,77 @@ JavaScriptCore's offline assembler (offlineasm) uses portable logical register n
 
 ### InPlaceInterpreter (IPInt) Conventions
 
-IPInt is the WebAssembly in-place interpreter with its own specialized register assignments:
+#### ARGUMENT REGISTERS (C calling convention)
 
-| Purpose | Offlineasm | ARM64/ARM64E Physical | X86_64 Physical | ARMv7 Physical | RISCV64 Physical | Description |
-|---------|------------|----------------------|-----------------|----------------|------------------|-------------|
-| **PC** (Program Counter) | csr7 | x26 | csr2 (r13) | csr1 | csr7 | IPInt bytecode position |
-| **MC** (Metadata Counter) | csr6 | x25 | csr1 (r12) | t6 | csr6 | Metadata pointer |
-| **PL** (Pointer to Locals) | t6 | x6 | t5 (r10) | t7 | csr10 | Address of local 0 |
-| **WI** (Wasm Instance) | csr0 | x19 | rbx | csr0 | csr0 | JSWebAssemblyInstance pointer |
-| **MB** (Memory Base) | csr3 | x22 | r14 | t2 (ARMv7) | csr3 | Wasm memory base address |
-| **BC** (Bounds Check) | csr4 | x23 | r15 | t3 (ARMv7) | csr4 | Wasm memory bounds size |
-| **sc0** (safe for call) | ws0 (t9) | x9 | t9 | t4 | ws0 (t9) | Safe call register 0 |
-| **sc1** (safe for call) | ws1 (t10) | x10 | t10 | t5 | ws1 (t10) | Safe call register 1 |
-| **sc2** (safe for call) | ws2 (t11) | x11 | csr3 (r14) | csr0 | csr9 | Safe call register 2 |
-| **sc3** (safe for call) | ws3 (t12) | x12 | csr4 (r15) | t7 | csr10 | Safe call register 3 |
+| Logical | Alias | ARM64 | x86_64   | Notes                   |
+| ------- | ----- | ----- | -------- | ----------------------- |
+| a0      | t0    | x0    | rdi (t6) | 1st argument            |
+| a1      | t1    | x1    | rsi      | 2nd argument            |
+| a2      | t2    | x2    | rdx      | 3rd argument            |
+| a3      | t3    | x3    | rcx      | 4th argument            |
+| a4      | t4    | x4    | r8       | 5th argument            |
+| a5      | t5/t7 | x5    | r9 (t7)  | 6th argument            |
+| a6      | t6    | x6    | (none)   | 7th argument (ARM only) |
+| a7      | t7    | x7    | (none)   | 8th argument (ARM only) |
 
-#### IPInt Special Notes
+#### WASM ARGUMENT/RETURN REGISTERS (IPInt calling convention)
 
-- **PC (Program Counter)**: Records interpreter position in Wasm bytecode
-- **MC (Metadata Counter)**: Tracks corresponding position in generated metadata
-- **PL (Pointer to Locals)**: Fast access to local variables (points to local 0)
-- **WI (Wasm Instance)**: Current JSWebAssemblyInstance object (callee-save)
-- **MB (Memory Base)**: Current Wasm memory base address (callee-save)
-- **BC (Bounds Check)**: Size of Wasm memory region for bounds checking (callee-save)
-- **Safe call registers (sc0-sc3)**: Guaranteed not to overlap with argument registers, safe across calls
+| Logical | Alias | ARM64 | x86_64    | Notes             |
+| ------- | ----- | ----- | --------- | ----------------- |
+| wa0     | a0    | x0    | rdi       | Wasm arg/return 0 |
+| wa1     | a1    | x1    | rsi       | Wasm arg/return 1 |
+| wa2     | a2    | x2    | rdx       | Wasm arg/return 2 |
+| wa3     | a3    | x3    | rcx       | Wasm arg/return 3 |
+| wa4     | a4    | x4    | r8        | Wasm arg/return 4 |
+| wa5     | a5    | x5    | r9        | Wasm arg/return 5 |
+| wa6     | a6    | x6    | (invalid) | Wasm arg/return 6 |
+| wa7     | a7    | x7    | (invalid) | Wasm arg/return 7 |
 
-#### Platform-Specific IPInt Notes
+#### RETURN REGISTERS (C function returns)
 
-**ARM64/ARM64E:**
-- Uses ldp/stp instructions for efficient register pair operations
-- Memory registers (MB, BC) loaded via `loadpairq` from instance
+| Logical | Alias | ARM64   | x86_64   | Notes                  |
+| ------- | ----- | ------- | -------- | ---------------------- |
+| r0      | t0    | x0      | rax      | Primary return (GPR)   |
+| r1      | t1/t2 | x1      | rdx (t2) | Secondary return (GPR) |
+| fr      | fa0   | d0 (q0) | xmm0     | Float/double return    |
 
-**X86_64:**
-- PC maps to csr2 instead of csr7 (different from LLInt)
-- MC maps to csr1 instead of csr6 (different from LLInt)
-- sc2 and sc3 reuse csr3/csr4 (MB/BC) as they're already in use
-- Fewer argument registers (6 vs 8 on ARM64)
+#### WASM SCRATCH REGISTERS
 
-**ARMv7:**
-- MB and BC use temporary registers (t2, t3) instead of callee-save
-- More limited register set requires creative reuse
+| Logical | Alias  | ARM64 | x86_64    | Notes          |
+| ------- | ------ | ----- | --------- | -------------- |
+| ws0     | t9/t0  | x9    | rax       | Wasm scratch 0 |
+| ws1     | t10/t5 | x10   | r10       | Wasm scratch 1 |
+| ws2     | t11    | x11   | (invalid) | Wasm scratch 2 |
+| ws3     | t12    | x12   | (invalid) | Wasm scratch 3 |
 
-**RISCV64:**
-- Similar to ARM64 in register allocation
-- PL uses csr10 instead of t6
+#### "SAFE FOR CALL" REGISTERS
+
+| Logical | Alias    | ARM64 | x86_64 | Notes                    |
+| ------- | -------- | ----- | ------ | ------------------------ |
+| sc0     | ws0      | x9    | rax    | Overlaps with r0 on x86! |
+| sc1     | ws1      | x10   | r10    | Volatile                 |
+| sc2     | ws2/csr3 | x11   | r14    | Callee-save on x86       |
+| sc3     | ws3/csr4 | x12   | r15    | Callee-save on x86       |
+
+#### Register Overlap Summary
+
+##### ARM64 - Clean separation
+- Return registers (x0, x1) separate from scratch registers (x9-x12)
+- 8 Wasm argument registers available
+
+##### x86_64 - Heavy overlap
+- r0, ws0, sc0 all share **rax**
+- r1 and wa2 share **rdx**
+- Only 6 Wasm argument registers (wa6-wa7 invalid)
+- ws2-ws3 invalid, but sc2-sc3 map to callee-save r14-r15
+
+##### Key Takeaways
+
+  1. **wa0-wa7**: Used for WebAssembly multi-value arguments and returns
+  2. **r0, r1, fr**: Used for C function call returns (UGPRPair + float)
+  3. **sc2, sc3 on x86_64**: Actually **callee-save** - truly safe across calls
+  4. **sc0, sc1**: Volatile, not preserved unless explicitly saved
+  5. **ARM64 advantage**: More registers, cleaner separation, less juggling
 
 ## Source Files
 

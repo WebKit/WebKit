@@ -43,7 +43,7 @@ WPE_API WPE_DECLARE_DERIVABLE_TYPE (WPEScreenSyncObserver, wpe_screen_sync_obser
  * @observer: a #WPEScreenSyncObserver
  * @user_data: user data
  *
- * Function passed to wpe_screen_sync_observer_add() to be called on
+ * Function passed to wpe_screen_sync_observer_add_callback() to be called on
  * every #WPEScreen sync.
  */
 typedef void (* WPEScreenSyncObserverSyncFunc) (WPEScreenSyncObserver *observer,
@@ -60,13 +60,12 @@ struct _WPEScreenSyncObserverClass
     gpointer padding[32];
 };
 
-WPE_API void     wpe_screen_sync_observer_set_callback (WPEScreenSyncObserver        *observer,
-                                                        WPEScreenSyncObserverSyncFunc sync_func,
-                                                        gpointer                      user_data,
-                                                        GDestroyNotify                destroy_notify);
-WPE_API void     wpe_screen_sync_observer_start        (WPEScreenSyncObserver        *observer);
-WPE_API void     wpe_screen_sync_observer_stop         (WPEScreenSyncObserver        *observer);
-WPE_API gboolean wpe_screen_sync_observer_is_active    (WPEScreenSyncObserver        *observer);
+WPE_API guint    wpe_screen_sync_observer_add_callback    (WPEScreenSyncObserver        *observer,
+                                                           WPEScreenSyncObserverSyncFunc sync_func,
+                                                           gpointer                      user_data,
+                                                           GDestroyNotify                destroy_notify);
+WPE_API void     wpe_screen_sync_observer_remove_callback (WPEScreenSyncObserver        *observer,
+                                                           guint                         id);
 
 G_END_DECLS
 

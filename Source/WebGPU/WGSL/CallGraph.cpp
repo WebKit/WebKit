@@ -59,7 +59,7 @@ private:
 void CallGraphBuilder::build()
 {
     initializeMappings();
-    m_shaderModule.setCallGraph(WTFMove(m_callGraph));
+    m_shaderModule.setCallGraph(WTF::move(m_callGraph));
 }
 
 void CallGraphBuilder::initializeMappings()

@@ -35,8 +35,8 @@ namespace CSS {
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-drop-shadow
 struct DropShadow {
     Markable<Color> color;
-    SpaceSeparatedPoint<Length<CSS::AllUnzoomed>> location;
-    Markable<Length<CSS::NonnegativeUnzoomed>> stdDeviation;
+    SpaceSeparatedPoint<Length<AllUnzoomed>> location;
+    Markable<Length<NonnegativeUnzoomed>> stdDeviation;
 
     bool operator==(const DropShadow&) const = default;
 };

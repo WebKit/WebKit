@@ -23,7 +23,7 @@
 #include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
-#include "api/video/corruption_detection_filter_settings.h"
+#include "api/video/corruption_detection/corruption_detection_filter_settings.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame_type.h"
@@ -43,9 +43,6 @@ class EncodedImageBufferInterface : public RefCountInterface {
   using value_type = uint8_t;
 
   virtual const uint8_t* data() const = 0;
-  // TODO(bugs.webrtc.org/9378): Make interface essentially read-only, delete
-  // this non-const data method.
-  virtual uint8_t* data() = 0;
   virtual size_t size() const = 0;
 
   const uint8_t* begin() const { return data(); }
@@ -62,7 +59,7 @@ class RTC_EXPORT EncodedImageBuffer : public EncodedImageBufferInterface {
   static scoped_refptr<EncodedImageBuffer> Create(Buffer buffer);
 
   const uint8_t* data() const override;
-  uint8_t* data() override;
+  uint8_t* data();
   size_t size() const override;
   void Realloc(size_t t);
 
@@ -78,6 +75,13 @@ class RTC_EXPORT EncodedImageBuffer : public EncodedImageBufferInterface {
 // cleaned up. Direct use of its members is strongly discouraged.
 class RTC_EXPORT EncodedImage {
  public:
+  // Peak signal to noise ratio, Y/U/V components.
+  struct Psnr {
+    double y = 0.0;
+    double u = 0.0;
+    double v = 0.0;
+  };
+
   EncodedImage();
   EncodedImage(EncodedImage&&);
   EncodedImage(const EncodedImage&);
@@ -260,6 +264,9 @@ class RTC_EXPORT EncodedImage {
   EncodedImage::Timing video_timing() const { return timing_; }
   EncodedImage::Timing* video_timing_mutable() { return &timing_; }
 
+  std::optional<Psnr> psnr() const { return psnr_; }
+  void set_psnr(std::optional<Psnr> psnr) { psnr_ = psnr; }
+
  private:
   size_t capacity() const { return encoded_data_ ? encoded_data_->size() : 0; }
 
@@ -296,6 +303,9 @@ class RTC_EXPORT EncodedImage {
   // used.
   std::optional<CorruptionDetectionFilterSettings>
       corruption_detection_filter_settings_;
+
+  // Encoders may compute PSNR for a frame.
+  std::optional<Psnr> psnr_;
 };
 
 }  // namespace webrtc

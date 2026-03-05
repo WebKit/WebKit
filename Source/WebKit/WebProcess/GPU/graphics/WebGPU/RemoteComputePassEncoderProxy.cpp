@@ -84,7 +84,7 @@ void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index,
     if (bindGroup)
         convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
-    auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, WTFMove(offsets)));
+    auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, WTF::move(offsets)));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -103,7 +103,7 @@ void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index,
 
 void RemoteComputePassEncoderProxy::pushDebugGroup(String&& groupLabel)
 {
-    auto sendResult = send(Messages::RemoteComputePassEncoder::PushDebugGroup(WTFMove(groupLabel)));
+    auto sendResult = send(Messages::RemoteComputePassEncoder::PushDebugGroup(WTF::move(groupLabel)));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -115,7 +115,7 @@ void RemoteComputePassEncoderProxy::popDebugGroup()
 
 void RemoteComputePassEncoderProxy::insertDebugMarker(String&& markerLabel)
 {
-    auto sendResult = send(Messages::RemoteComputePassEncoder::InsertDebugMarker(WTFMove(markerLabel)));
+    auto sendResult = send(Messages::RemoteComputePassEncoder::InsertDebugMarker(WTF::move(markerLabel)));
     UNUSED_VARIABLE(sendResult);
 }
 

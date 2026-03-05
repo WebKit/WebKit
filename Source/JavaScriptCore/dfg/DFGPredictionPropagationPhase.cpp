@@ -220,6 +220,8 @@ private:
             if (left && right) {
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(left) && isFullNumberOrBooleanSpeculationExpectingDefined(right))
                     changed |= mergePrediction(SpecInt32Only);
+                else if (m_graph.binaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
                 else {
                     if (node->mayHaveBigIntResult())
                         changed |= mergePrediction(SpecBigInt);
@@ -240,6 +242,8 @@ private:
                 else if (m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
                     changed |= mergePrediction(SpecBigInt32);
 #endif
+                else if (m_graph.unaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(prediction))
                     changed |= mergePrediction(SpecBigInt);
                 else {
@@ -273,6 +277,8 @@ private:
                 else if (m_graph.binaryArithShouldSpeculateBigInt32(node, m_pass))
                     changed |= mergePrediction(SpecBigInt32);
 #endif
+                else if (m_graph.binaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
                     changed |= mergePrediction(SpecBigInt);
                 else {
@@ -346,6 +352,8 @@ private:
                 else if (m_graph.binaryArithShouldSpeculateBigInt32(node, m_pass))
                     changed |= mergePrediction(SpecBigInt32);
 #endif
+                else if (m_graph.binaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
                     changed |= mergePrediction(SpecBigInt);
                 else {
@@ -377,6 +385,8 @@ private:
                 else if (m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
                     changed |= mergePrediction(SpecBigInt32);
 #endif
+                else if (m_graph.unaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
                 else if (isBigIntSpeculation(prediction))
                     changed |= mergePrediction(SpecBigInt);
                 else {
@@ -408,6 +418,8 @@ private:
                 else if (node->op() == ToNumeric && m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
                     changed |= mergePrediction(SpecBigInt32);
 #endif
+                else if (node->op() == ToNumeric && m_graph.unaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
                 else if (node->op() == ToNumeric && isBigIntSpeculation(prediction))
                     changed |= mergePrediction(SpecBigInt);
                 else {
@@ -426,7 +438,9 @@ private:
             SpeculatedType right = node->child2()->prediction();
 
             if (left && right) {
-                if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())          
+                if (m_graph.binaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
+                else if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())
                     changed |= mergePrediction(SpecBigInt);
                 else if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
                     && isFullNumberOrBooleanSpeculationExpectingDefined(right))
@@ -499,6 +513,8 @@ private:
                 else if (op == ValueMul && m_graph.binaryArithShouldSpeculateBigInt32(node, m_pass))
                     changed |= mergePrediction(SpecBigInt32);
 #endif
+                else if (op == ValueMul && m_graph.binaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
                 else if (op == ValueMul && isBigIntSpeculation(left) && isBigIntSpeculation(right))
                     changed |= mergePrediction(SpecBigInt);
                 else {
@@ -528,9 +544,13 @@ private:
                     && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
                     if (m_graph.binaryArithShouldSpeculateInt32(node, m_pass))
                         changed |= mergePrediction(SpecInt32Only);
+                    else if ((op == ValueMod || op == ArithMod) && m_graph.modShouldSpeculateInt52(node))
+                        changed |= mergePrediction(SpecInt52Any);
                     else
                         changed |= mergePrediction(SpecBytecodeDouble);
-                } else if ((op == ValueDiv || op == ValueMod) && isBigIntSpeculation(left) && isBigIntSpeculation(right))
+                } else if ((op == ValueDiv || op == ValueMod) && m_graph.binaryArithShouldSpeculateHeapBigInt(node))
+                    changed |= mergePrediction(SpecHeapBigInt);
+                else if ((op == ValueDiv || op == ValueMod) && isBigIntSpeculation(left) && isBigIntSpeculation(right))
                     changed |= mergePrediction(SpecBigInt);
                 else {
                     changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
@@ -853,16 +873,17 @@ private:
         case ArithDiv: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
-                
+
             DoubleBallot ballot;
-                
+
             if (isFullNumberSpeculation(left)
                 && isFullNumberSpeculation(right)
-                && !m_graph.binaryArithShouldSpeculateInt32(node, m_pass))
+                && !m_graph.binaryArithShouldSpeculateInt32(node, m_pass)
+                && !((node->op() == ArithMod || node->op() == ValueMod) && m_graph.modShouldSpeculateInt52(node)))
                 ballot = VoteDouble;
             else
                 ballot = VoteValue;
-                
+
             m_graph.voteNode(node->child1(), ballot, weight);
             m_graph.voteNode(node->child2(), ballot, weight);
             break;
@@ -1132,10 +1153,12 @@ private:
 
         case MapHash:
         case MapIterationEntry:
+        case MapOrSetSize:
             setPrediction(SpecInt32Only);
             break;
 
         case MapIteratorNext:
+        case GetRegExpFlag:
             setPrediction(SpecBoolean);
             break;
 
@@ -1148,7 +1171,6 @@ private:
             setPrediction(SpecCellOther);
             break;
 
-        case GetRestLength:
         case ArrayIndexOf:
         case RegExpSearch: {
             setPrediction(SpecInt32Only);
@@ -1184,6 +1206,12 @@ private:
 
         case StringIndexOf: {
             setPrediction(SpecInt32Only);
+            break;
+        }
+
+        case StringStartsWith:
+        case StringEndsWith: {
+            setPrediction(SpecBoolean);
             break;
         }
 
@@ -1320,9 +1348,7 @@ private:
             break;
 
         case CreateGenerator:
-        case NewGenerator:
         case CreateAsyncGenerator:
-        case NewAsyncGenerator:
             setPrediction(SpecObjectOther);
             break;
 
@@ -1684,6 +1710,7 @@ private:
         case PutSetterByVal:
         case DefineDataProperty:
         case DefineAccessorProperty:
+        case ObjectDefineProperty:
         case CallCustomAccessorSetter:
         case DFG::Jump:
         case Branch:
@@ -1744,6 +1771,7 @@ private:
         case PromiseResolve:
         case PromiseReject:
         case PromiseThen:
+        case PerformPromiseThen:
             break;
             
         // This gets ignored because it only pretends to produce a value.

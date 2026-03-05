@@ -70,14 +70,18 @@ public:
     // Takes `closedEdges` into account.
     const RectEdges<LayoutUnit>& borderWidths() const { return m_borderWidths; }
 
-    LayoutRoundedRect deprecatedRoundedRect() const;
-    LayoutRoundedRect deprecatedInnerRoundedRect() const;
+    LayoutRoundedRect NODELETE deprecatedRoundedRect() const;
+    LayoutRoundedRect NODELETE deprecatedInnerRoundedRect() const;
     FloatRoundedRect deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const;
     FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
 
-    // Returns true if the given rect is entirely inside the shape, without impinging on any of the corners.
+    // Returns true if the given rect is entirely inside the inner/outer shape.
     bool innerShapeContains(const LayoutRect&) const;
     bool outerShapeContains(const LayoutRect&) const;
+
+    // Returns true if no corner regions of the outer border intersect the given rect,
+    // meaning border painting can use simpler rectangular paths.
+    bool allCornersClippedOut(const LayoutRect&) const;
 
     const LayoutRoundedRectRadii& radii() const { return m_borderRect.radii(); }
     void setRadii(const LayoutRoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
@@ -95,7 +99,7 @@ public:
 
     bool isEmpty() const { return m_borderRect.rect().isEmpty(); }
 
-    void move(LayoutSize);
+    void NODELETE move(LayoutSize);
 
     // This will inflate the m_borderRect, and scale the radii up accordingly. Note that this changes the meaning of "inner shape" which will no longer correspond to the padding box.
     void inflate(LayoutUnit);

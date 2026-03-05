@@ -25,7 +25,8 @@ namespace {
 constexpr auto kMaxWaitForKeyframe = TimeDelta::Millis(500);
 constexpr auto kMaxWaitForFrame = TimeDelta::Millis(1500);
 constexpr VideoReceiveStreamTimeoutTracker::Timeouts config = {
-    kMaxWaitForKeyframe, kMaxWaitForFrame};
+    .max_wait_for_keyframe = kMaxWaitForKeyframe,
+    .max_wait_for_frame = kMaxWaitForFrame};
 }  // namespace
 
 class VideoReceiveStreamTimeoutTrackerTest : public ::testing::Test {

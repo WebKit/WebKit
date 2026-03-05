@@ -3,14 +3,17 @@ Storage/StorageAreaImpl.cpp
 Storage/StorageAreaSync.cpp
 Storage/StorageNamespaceImpl.cpp
 Storage/StorageThread.cpp
-Storage/WebDatabaseProvider.cpp
 Storage/WebStorageNamespaceProvider.cpp
-WebCoreSupport/PageStorageSessionProvider.h
 WebCoreSupport/PingHandle.h
 WebCoreSupport/SocketStreamHandleImpl.cpp
 WebCoreSupport/SocketStreamHandleImplCFNet.cpp
 WebCoreSupport/WebResourceLoadScheduler.cpp
 WebCoreSupport/WebSocketChannel.cpp
+[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
+[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
+[ iOS ] ios/WebCoreSupport/WebGeolocation.mm
+[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
+[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
 mac/DOM/DOM.mm
 mac/DOM/DOMAbstractView.mm
 mac/DOM/DOMAttr.mm
@@ -112,12 +115,14 @@ mac/DOM/DOMTimeRanges.mm
 mac/DOM/DOMTokenList.mm
 mac/DOM/DOMTreeWalker.mm
 mac/DOM/DOMUIEvent.mm
+[ iOS ] mac/DOM/DOMUIKitExtensions.mm
 mac/DOM/DOMXPath.mm
 mac/DOM/DOMXPathExpression.mm
 mac/DOM/DOMXPathResult.mm
 mac/DOM/WebDOMOperations.mm
 mac/History/WebBackForwardList.mm
 mac/History/WebHistoryItem.mm
+[ iOS ] mac/Misc/WebCache.mm
 mac/Misc/WebCoreStatistics.mm
 mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
@@ -138,7 +143,7 @@ mac/WebCoreSupport/WebNotificationClient.mm
 mac/WebCoreSupport/WebOpenPanelResultListener.mm
 mac/WebCoreSupport/WebSecurityOrigin.mm
 mac/WebCoreSupport/WebValidationMessageClient.mm
-mac/WebInspector/WebNodeHighlightView.mm
+[ iOS ] mac/WebInspector/WebNodeHighlightView.mm
 mac/WebView/WebArchive.mm
 mac/WebView/WebDataSource.mm
 mac/WebView/WebFrame.mm
@@ -154,10 +159,3 @@ mac/WebView/WebScriptWorld.mm
 mac/WebView/WebTextIterator.mm
 [ Mac ] mac/WebView/WebVideoFullscreenController.mm
 mac/WebView/WebView.mm
-[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
-[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
-[ iOS ] ios/WebCoreSupport/WebGeolocation.mm
-[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
-[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
-[ iOS ] mac/DOM/DOMUIKitExtensions.mm
-[ iOS ] mac/Misc/WebCache.mm

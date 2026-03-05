@@ -29,7 +29,7 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
 SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(SYSTEM_FRAMEWORK_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 SYSTEM_FRAMEWORK_SEARCH_PATHS_ = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 
-PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
+PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC $(inherited);
 
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=xr*] = -framework AppServerSupport

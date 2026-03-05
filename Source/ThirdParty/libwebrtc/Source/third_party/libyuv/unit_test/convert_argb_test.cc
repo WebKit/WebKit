@@ -2771,10 +2771,10 @@ TEST_F(LibYUVConvertTest, TestARGBToUVRow) {
       benchmark_width_ * benchmark_height_ * benchmark_iterations_ / 32;
 
   for (int i = 0; i < benchmark_iterations; ++i) {
-#if defined(HAS_ARGBTOUVROW_SSSE3)
-    int has_ssse3 = TestCpuFlag(kCpuHasSSSE3);
-    if (has_ssse3) {
-      ARGBToUVRow_SSSE3(&orig_argb_pixels[0], 0, &dest_u[0], &dest_v[0], 64);
+#if defined(HAS_ARGBTOUVROW_AVX2)
+    int has_avx2 = TestCpuFlag(kCpuHasAVX2);
+    if (has_avx2) {
+      ARGBToUVRow_AVX2(&orig_argb_pixels[0], 0, &dest_u[0], &dest_v[0], 64);
     } else {
       ARGBToUVRow_C(&orig_argb_pixels[0], 0, &dest_u[0], &dest_v[0], 64);
     }

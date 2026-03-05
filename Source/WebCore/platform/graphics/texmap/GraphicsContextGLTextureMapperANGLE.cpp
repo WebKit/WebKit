@@ -36,6 +36,7 @@
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 #include "VideoFrame.h"
@@ -67,6 +68,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLTextureMapperANGLE);
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
@@ -168,7 +171,7 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
 #elif USE(GBM)
     if (GraphicsContextGLTextureMapperGBM::checkRequirements()) {
         RefPtr delegate = GraphicsLayerContentsDisplayDelegateCoordinated::create();
-        if (auto context = GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes { attributes }, WTFMove(delegate)))
+        if (auto context = GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes { attributes }, WTF::move(delegate)))
             return context;
         WTFLogAlways("Failed to create a graphics context for WebGL using GBM, falling back to textures");
     }
@@ -178,14 +181,14 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
 
 RefPtr<GraphicsContextGLTextureMapperANGLE> GraphicsContextGLTextureMapperANGLE::create(GraphicsContextGLAttributes&& attributes)
 {
-    auto context = adoptRef(*new GraphicsContextGLTextureMapperANGLE(WTFMove(attributes)));
+    auto context = adoptRef(*new GraphicsContextGLTextureMapperANGLE(WTF::move(attributes)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
 GraphicsContextGLTextureMapperANGLE::GraphicsContextGLTextureMapperANGLE(GraphicsContextGLAttributes&& attributes)
-    : GraphicsContextGLANGLE(WTFMove(attributes))
+    : GraphicsContextGLANGLE(WTF::move(attributes))
 {
 }
 
@@ -425,7 +428,7 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
         flags.add(TextureMapperFlags::ShouldBlend);
     auto fboSize = getInternalFramebufferSize();
     auto fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTFMove(fence)));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTF::move(fence)));
 #endif
 }
 

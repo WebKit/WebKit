@@ -30,24 +30,70 @@ archs=blank
 variants=all
 target=all
 port=10022
+testArgs=""
 
 show_help() {
     set +x
-    echo "$0 [-hcsavtpb]"
+    echo "$0 [-hcsavtpb] [test_args]"
     echo
-    echo "-h             Show help"
-    echo "-c <config>    Set the config. Could be Release or Debug. Default is $config."
-    echo "-s <sdk>       Set the SDK. Could be macosx.internal or iphoneos.internal."
-    echo "               Default is $sdk."
-    echo "-a <archs>     Set the archs. Default is blank (we don't set them)."
-    echo "-v <variants>  Set the variants. Could be all, testing, or default. Default is"
-    echo "               $variants."
-    echo "-t <target>    Set the target. Could be all, pas, test_pas, mbmalloc, verifier,"
-    echo "               or chaos. Default is $target."
-    echo "-p <port>      Set the localhost port to use for iOS on-device testing. Default"
-    echo "               is $port."
+    echo "Script options:"
+    echo "-h                     Show help"
+    echo "-c <config>            Set the config. Could be Release or Debug."
+    echo "                       Default is $config."
+    echo "-s <sdk>               Set the SDK. Could be macosx.internal or iphoneos.internal."
+    echo "                       Default is $sdk."
+    echo "-a <archs>             Set the archs. Default is blank (we don't set them)."
+    echo "-v <variants>          Set the variants. Could be all, testing, or default."
+    echo "                       Default is $variants."
+    echo "-t <target>            Set the target. Could be all, pas, test_pas, mbmalloc,"
+    echo "                       verifier, or chaos. Default is $target."
+    echo "-p <port>              Set the localhost port to use for iOS on-device testing."
+    echo "                       Default is $port."
+    echo "--child-processes <n>  Set the maximum number of concurrent test-runner processes."
+    echo "                       Default is nprocs / 2."
     exit 0
 }
+
+scriptArgs=""
+inTestArgs=false
+
+for arg in "$@"; do
+    case "$arg" in
+        --)
+            # Explicit separator - everything after goes to test, overrides long/short check below
+            inTestArgs=true
+            ;;
+        --*)
+            # Long option - pass through to test binary by default
+            testArgs="$testArgs $arg"
+            inTestArgs=true
+            ;;
+        -*)
+            # Short option - consume within this script by default
+            if [ "$inTestArgs" = "true" ]; then
+                testArgs="$testArgs $arg"
+            else
+                scriptArgs="$scriptArgs $arg"
+            fi
+            ;;
+        *)
+            # Non-option argument
+            # If we've seen test args already, or if this looks like a test filter, add to test args
+            # Otherwise, it's a script arg value (like the value for -c Release)
+            if [ "$inTestArgs" = "true" ]; then
+                testArgs="$testArgs $arg"
+            else
+                # This could be a value for a script option, or a test filter
+                # We'll add it to scriptArgs and let getopts handle it
+                scriptArgs="$scriptArgs $arg"
+            fi
+            ;;
+    esac
+done
+
+# Now parse script args with getopts
+# We need to reset positional parameters for getopts to work
+eval set -- $scriptArgs
 
 while getopts ":hc:s:a:v:t:p:" opt
 do
@@ -74,17 +120,18 @@ do
             port=$OPTARG
             ;;
         \?)
-            echo "Bad argument. Use -h for help."
+            echo "Bad argument: -$OPTARG. Use -h for help."
             exit 1
+            ;;
     esac
 done
 
 shift $((OPTIND -1))
 
+# Any remaining non-option args after script options are test filters/args
 if [ "x$*" != "x" ]
 then
-    echo "Bad argument. Use -h for help."
-    exit 1
+    testArgs="$testArgs $*"
 fi
 
 ios=no

@@ -28,52 +28,50 @@
 
 #include <WebCore/Node.h>
 
-namespace WebCore {
-    namespace XPath {
+namespace WebCore::XPath {
 
-        class NodeSet {
-        public:
-            NodeSet() : m_isSorted(true), m_subtreesAreDisjoint(false) { }
-            explicit NodeSet(RefPtr<Node>&& node)
-                : m_isSorted(true), m_subtreesAreDisjoint(false), m_nodes(1, WTFMove(node))
-            { }
-            
-            size_t size() const { return m_nodes.size(); }
-            bool isEmpty() const { return m_nodes.isEmpty(); }
-            Node* operator[](unsigned i) const { return m_nodes.at(i).get(); }
-            void reserveCapacity(size_t newCapacity) { m_nodes.reserveCapacity(newCapacity); }
-            void clear() { m_nodes.clear(); }
+class NodeSet {
+public:
+    NodeSet() : m_isSorted(true), m_subtreesAreDisjoint(false) { }
+    explicit NodeSet(Ref<Node>&& node)
+        : m_isSorted(true), m_subtreesAreDisjoint(false), m_nodes(1, WTF::move(node))
+    { }
 
-            // NodeSet itself does not verify that nodes in it are unique.
-            void append(RefPtr<Node>&& node) { m_nodes.append(WTFMove(node)); }
-            void append(const NodeSet& nodeSet) { m_nodes.appendVector(nodeSet.m_nodes); }
+    size_t size() const { return m_nodes.size(); }
+    bool isEmpty() const { return m_nodes.isEmpty(); }
+    Node* operator[](unsigned i) const LIFETIME_BOUND { return m_nodes.at(i).ptr(); }
+    void reserveCapacity(size_t newCapacity) { m_nodes.reserveCapacity(newCapacity); }
+    void clear() { m_nodes.clear(); }
 
-            // Returns the set's first node in document order, or nullptr if the set is empty.
-            Node* firstNode() const;
+    // NodeSet itself does not verify that nodes in it are unique.
+    void append(Ref<Node>&& node) { m_nodes.append(WTF::move(node)); }
+    void append(const NodeSet& nodeSet) { m_nodes.appendVector(nodeSet.m_nodes); }
 
-            // Returns nullptr if the set is empty.
-            Node* anyNode() const;
+    // Returns the set's first node in document order, or nullptr if the set is empty.
+    Node* firstNode() const;
 
-            // NodeSet itself doesn't check if it contains nodes in document order - the caller should tell it if it does not.
-            void markSorted(bool isSorted) { m_isSorted = isSorted; }
-            bool isSorted() const { return m_isSorted || m_nodes.size() < 2; }
+    // Returns nullptr if the set is empty.
+    Node* anyNode() const;
 
-            void sort() const;
+    // NodeSet itself doesn't check if it contains nodes in document order - the caller should tell it if it does not.
+    void markSorted(bool isSorted) { m_isSorted = isSorted; }
+    bool isSorted() const { return m_isSorted || m_nodes.size() < 2; }
 
-            // No node in the set is ancestor of another. Unlike m_isSorted, this is assumed to be false, unless the caller sets it to true.
-            void markSubtreesDisjoint(bool disjoint) { m_subtreesAreDisjoint = disjoint; }
-            bool subtreesAreDisjoint() const { return m_subtreesAreDisjoint || m_nodes.size() < 2; }
+    void sort() const;
 
-            const RefPtr<Node>* begin() const { return m_nodes.begin(); }
-            const RefPtr<Node>* end() const { return m_nodes.end(); }
+    // No node in the set is ancestor of another. Unlike m_isSorted, this is assumed to be false, unless the caller sets it to true.
+    void markSubtreesDisjoint(bool disjoint) { m_subtreesAreDisjoint = disjoint; }
+    bool subtreesAreDisjoint() const { return m_subtreesAreDisjoint || m_nodes.size() < 2; }
 
-        private:
-            void traversalSort() const;
+    auto begin() const LIFETIME_BOUND { return m_nodes.begin(); }
+    auto end() const LIFETIME_BOUND { return m_nodes.end(); }
 
-            mutable bool m_isSorted;
-            bool m_subtreesAreDisjoint;
-            mutable Vector<RefPtr<Node>> m_nodes;
-        };
+private:
+    void traversalSort() const;
 
-    } // namespace XPath
-} // namespace WebCore
+    mutable bool m_isSorted;
+    bool m_subtreesAreDisjoint;
+    mutable Vector<Ref<Node>> m_nodes;
+};
+
+} // namespace WebCore::XPath

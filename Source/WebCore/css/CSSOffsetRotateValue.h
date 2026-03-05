@@ -34,7 +34,7 @@ class CSSOffsetRotateValue final : public CSSValue {
 public:
     static Ref<CSSOffsetRotateValue> create(RefPtr<CSSValue>&& modifier, RefPtr<CSSValue>&& angle)
     {
-        return adoptRef(*new CSSOffsetRotateValue(downcast<CSSPrimitiveValue>(WTFMove(modifier)), downcast<CSSPrimitiveValue>(WTFMove(angle))));
+        return adoptRef(*new CSSOffsetRotateValue(downcast<CSSPrimitiveValue>(WTF::move(modifier)), downcast<CSSPrimitiveValue>(WTF::move(angle))));
     }
 
     String customCSSText(const CSS::SerializationContext&) const;
@@ -62,8 +62,8 @@ public:
 private:
     CSSOffsetRotateValue(RefPtr<CSSPrimitiveValue>&& modifier, RefPtr<CSSPrimitiveValue>&& angle)
         : CSSValue(ClassType::OffsetRotate)
-        , m_modifier(WTFMove(modifier))
-        , m_angle(WTFMove(angle))
+        , m_modifier(WTF::move(modifier))
+        , m_angle(WTF::move(angle))
     {
         ASSERT(m_modifier || m_angle);
 
@@ -74,8 +74,8 @@ private:
             ASSERT(m_angle->isAngle());
     }
 
-    RefPtr<CSSPrimitiveValue> m_modifier;
-    RefPtr<CSSPrimitiveValue> m_angle;
+    const RefPtr<CSSPrimitiveValue> m_modifier;
+    const RefPtr<CSSPrimitiveValue> m_angle;
 };
 
 } // namespace WebCore

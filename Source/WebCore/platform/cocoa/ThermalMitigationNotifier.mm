@@ -67,8 +67,8 @@ static bool isThermalMitigationEnabled()
 - (void)thermalStateDidChange
 {
     callOnMainThread([self, protectedSelf = RetainPtr<WebThermalMitigationObserver>(self)] {
-        if (_notifier)
-            notifyThermalMitigationChanged(*_notifier, self.thermalMitigationEnabled);
+        if (CheckedPtr notifier = _notifier.get())
+            notifyThermalMitigationChanged(*notifier, self.thermalMitigationEnabled);
     });
 }
 
@@ -85,7 +85,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ThermalMitigationNotifier);
 
 ThermalMitigationNotifier::ThermalMitigationNotifier(ThermalMitigationChangeCallback&& callback)
     : m_observer(adoptNS([[WebThermalMitigationObserver alloc] initWithNotifier:*this]))
-    , m_callback(WTFMove(callback))
+    , m_callback(WTF::move(callback))
 {
 }
 

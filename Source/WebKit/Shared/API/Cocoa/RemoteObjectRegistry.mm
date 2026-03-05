@@ -54,7 +54,7 @@ template<typename M> void RemoteObjectRegistry::send(M&& message)
         return;
 
     WTF::switchOn(*messageSender, [&] (auto sender) {
-        sender.get().send(WTFMove(message), *messageDestinationID);
+        sender.get().send(WTF::move(message), *messageDestinationID);
     });
 }
 

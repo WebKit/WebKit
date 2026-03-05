@@ -39,5 +39,5 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.map(() => {});
   });
-});
+}, null, ["passthrough"]);
 

@@ -93,9 +93,9 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
                 if (collation == "standard"_s || collation == "search"_s)
                     continue;
                 if (auto mapped = mapICUCollationKeywordToBCP47(collation))
-                    keyLocaleData.append(WTFMove(mapped.value()));
+                    keyLocaleData.append(WTF::move(mapped.value()));
                 else
-                    keyLocaleData.append(WTFMove(collation));
+                    keyLocaleData.append(WTF::move(collation));
             }
         }
         break;
@@ -164,7 +164,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
                 throwRangeError(globalObject, scope, "collation is not a well-formed collation value"_s);
                 return;
             }
-            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Co)] = WTFMove(collation);
+            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Co)] = WTF::move(collation);
         }
     }
 

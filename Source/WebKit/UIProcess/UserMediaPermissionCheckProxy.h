@@ -44,7 +44,7 @@ public:
 
     static Ref<UserMediaPermissionCheckProxy> create(WebCore::FrameIdentifier frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     {
-        return adoptRef(*new UserMediaPermissionCheckProxy(frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin)));
+        return adoptRef(*new UserMediaPermissionCheckProxy(frameID, WTF::move(handler), WTF::move(userMediaDocumentOrigin), WTF::move(topLevelDocumentOrigin)));
     }
 
     void deny() { setUserMediaAccessInfo(false); }

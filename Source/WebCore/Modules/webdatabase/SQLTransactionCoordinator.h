@@ -51,10 +51,10 @@ public:
     void releaseLock(SQLTransaction&);
     void shutdown();
 private:
-    typedef Deque<RefPtr<SQLTransaction>> TransactionsQueue;
+    typedef Deque<Ref<SQLTransaction>> TransactionsQueue;
     struct CoordinationInfo {
         TransactionsQueue pendingTransactions;
-        HashSet<RefPtr<SQLTransaction>> activeReadTransactions;
+        HashSet<Ref<SQLTransaction>> activeReadTransactions;
         RefPtr<SQLTransaction> activeWriteTransaction;
     };
     // Maps database names to information about pending transactions

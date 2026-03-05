@@ -25,7 +25,7 @@
 
 namespace {
 
-typedef void (*tform_fun_t)(const float *input, float *temp, float *output);
+using tform_fun_t = void (*)(const float *input, float *temp, float *output);
 
 // Simple 1D FFT implementation
 template <typename InputType>

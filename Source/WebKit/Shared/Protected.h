@@ -45,13 +45,13 @@ public:
         protectIfNonNull();
     }
 
-    Protected(Protected&& other) { moveFrom(WTFMove(other)); }
+    Protected(Protected&& other) { moveFrom(WTF::move(other)); }
 
     Protected(const Protected& other) { copyFrom(other); }
 
     Protected& operator=(Protected&& other)
     {
-        moveFrom(WTFMove(other));
+        moveFrom(WTF::move(other));
         return *this;
     }
 

@@ -47,26 +47,26 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample;
 
-  sample = new TA([42]);
+  sample = new TA(makeCtorArg([42]));
   sample.fill(null);
   assert.sameValue(sample[0], 0, "null => 0");
 
-  sample = new TA([42]);
+  sample = new TA(makeCtorArg([42]));
   sample.fill(false);
   assert.sameValue(sample[0], 0, "false => 0");
 
-  sample = new TA([42]);
+  sample = new TA(makeCtorArg([42]));
   sample.fill(true);
   assert.sameValue(sample[0], 1, "true => 1");
 
-  sample = new TA([42]);
+  sample = new TA(makeCtorArg([42]));
   sample.fill("7");
   assert.sameValue(sample[0], 7, "string conversion");
 
-  sample = new TA([42]);
+  sample = new TA(makeCtorArg([42]));
   sample.fill({
     toString: function() {
       return "1";
@@ -77,7 +77,7 @@ testWithTypedArrayConstructors(function(TA) {
   });
   assert.sameValue(sample[0], 7, "object valueOf conversion before toString");
 
-  sample = new TA([42]);
+  sample = new TA(makeCtorArg([42]));
   sample.fill({
     toString: function() {
       return "7";

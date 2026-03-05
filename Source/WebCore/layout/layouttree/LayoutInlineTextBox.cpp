@@ -33,10 +33,10 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineTextBox);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineTextBox);
 
-InlineTextBox::InlineTextBox(String content, bool isCombined, OptionSet<ContentCharacteristic> contentCharacteristicSet, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-: Box({ NodeType::Text, IsAnonymous::Yes }, WTFMove(style), WTFMove(firstLineStyle), Box::InlineTextBoxFlag)
+InlineTextBox::InlineTextBox(String content, bool isCombined, EnumSet<ContentCharacteristic> contentCharacteristicSet, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+: Box({ NodeType::Text, IsAnonymous::Yes }, WTF::move(style), WTF::move(firstLineStyle), Box::InlineTextBoxFlag)
     , m_content(content)
     , m_isCombined(isCombined)
     , m_contentCharacteristicSet(contentCharacteristicSet)

@@ -42,7 +42,7 @@ public:
 
     WTF_EXPORT_PRIVATE ~AtomStringTable();
 
-    StringTableImpl& table() { return m_table; }
+    StringTableImpl& table() LIFETIME_BOUND { return m_table; }
 
 private:
     StringTableImpl m_table;

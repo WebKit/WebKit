@@ -9,8 +9,8 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-box-reflect
 line-grid
+box-reflect
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------

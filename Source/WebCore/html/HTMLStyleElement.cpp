@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLStyleElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLStyleElement);
 
 using namespace HTMLNames;
 
@@ -91,8 +91,8 @@ void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::mediaAttr:
         m_styleSheetOwner.setMedia(newValue);
         if (RefPtr sheet = this->sheet()) {
-            sheet->setMediaQueries(MQ::MediaQueryParser::parse(newValue, protectedDocument()->cssParserContext()));
-            if (auto* scope = m_styleSheetOwner.styleScope())
+            sheet->setMediaQueries(MQ::MediaQueryParser::parse(newValue, protect(document())->cssParserContext()));
+            if (CheckedPtr scope = m_styleSheetOwner.styleScope())
                 scope->didChangeStyleSheetContents();
         } else
             m_styleSheetOwner.childrenChanged(*this);
@@ -100,7 +100,7 @@ void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::typeAttr:
         m_styleSheetOwner.setContentType(newValue);
         m_styleSheetOwner.childrenChanged(*this);
-        if (auto* scope = m_styleSheetOwner.styleScope())
+        if (CheckedPtr scope = m_styleSheetOwner.styleScope())
             scope->didChangeStyleSheetContents();
         break;
     case AttributeNames::blockingAttr:
@@ -177,7 +177,7 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     HTMLElement::addSubresourceAttributeURLs(urls);
 
     if (RefPtr sheet = this->sheet()) {
-        sheet->protectedContents()->traverseSubresources([&] (auto& resource) {
+        protect(sheet->contents())->traverseSubresources([&] (auto& resource) {
             urls.add(resource.url());
             return false;
         });

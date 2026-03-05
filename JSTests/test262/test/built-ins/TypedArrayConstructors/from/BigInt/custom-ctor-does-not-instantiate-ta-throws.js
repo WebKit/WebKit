@@ -16,7 +16,7 @@ info: |
   1. Let newTypedArray be ? Construct(constructor, argumentList).
   2. Perform ? ValidateTypedArray(newTypedArray).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -26,4 +26,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     TA.from.call(ctor, []);
   });
-});
+}, null, ["passthrough"]);

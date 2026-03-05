@@ -59,6 +59,7 @@
 #include "RenderTheme.h"
 #include "RuleSetBuilder.h"
 #include "SVGElement.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
@@ -80,6 +81,8 @@ StyleSheetContents* UserAgentStyle::quirksStyleSheet;
 StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLCoreExtrasStyleSheet;
+StyleSheetContents* UserAgentStyle::mathMLFontSizeMathStyleSheet;
+StyleSheetContents* UserAgentStyle::mathMLLegacyFontSizeMathStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 StyleSheetContents* UserAgentStyle::popoverStyleSheet;
 StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
@@ -110,14 +113,15 @@ static const MQ::MediaQueryEvaluator& printEval()
 
 static StyleSheetContents* parseUASheet(const String& str)
 {
-    StyleSheetContents& sheet = StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef(); // leak the sheet on purpose
-    sheet.parseString(str);
-    return &sheet;
+    Ref sheet = StyleSheetContents::create(CSSParserContext(UASheetMode));
+    sheet->parseString(str);
+    return &sheet.leakRef();
 }
+
 void static addToCounterStyleRegistry(StyleSheetContents& sheet)
 {
     for (auto& rule : sheet.childRules()) {
-        if (auto* counterStyleRule = dynamicDowncast<StyleRuleCounterStyle>(rule.get()))
+        if (RefPtr counterStyleRule = dynamicDowncast<StyleRuleCounterStyle>(rule.get()))
             CSSCounterStyleRegistry::addUserAgentCounterStyle(counterStyleRule->descriptors());
     }
     CSSCounterStyleRegistry::resolveUserAgentReferences();
@@ -127,7 +131,7 @@ void static addUserAgentKeyframes(StyleSheetContents& sheet)
 {
     // This does not handle nested rules.
     for (auto& rule : sheet.childRules()) {
-        if (auto* styleRuleKeyframes = dynamicDowncast<StyleRuleKeyframes>(rule.get()))
+        if (RefPtr styleRuleKeyframes = dynamicDowncast<StyleRuleKeyframes>(rule.get()))
             Style::Resolver::addUserAgentKeyframeStyle(*styleRuleKeyframes);
     }
 }
@@ -230,6 +234,17 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         if (!mathMLCoreExtrasStyleSheet && element.document().settings().coreMathMLEnabled()) {
             mathMLCoreExtrasStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet));
             addToDefaultStyle(*mathMLCoreExtrasStyleSheet);
+        }
+        if (element.document().settings().cssMathDepthEnabled()) {
+            if (!mathMLFontSizeMathStyleSheet) {
+                mathMLFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet));
+                addToDefaultStyle(*mathMLFontSizeMathStyleSheet);
+            }
+        } else {
+            if (!mathMLLegacyFontSizeMathStyleSheet) {
+                mathMLLegacyFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlLegacyFontSizeMathUserAgentStyleSheet));
+                addToDefaultStyle(*mathMLLegacyFontSizeMathStyleSheet);
+            }
         }
     }
 #endif // ENABLE(MATHML)

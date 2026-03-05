@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-using BlobURLOriginMap = HashMap<String, RefPtr<SecurityOrigin>>;
+using BlobURLOriginMap = HashMap<String, Ref<SecurityOrigin>>;
 
 static BlobURLOriginMap& originMap()
 {
@@ -83,7 +83,7 @@ static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& o
         return;
 
     auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
-    originMap().add(urlWithoutFragment, WTFMove(origin));
+    originMap().add(urlWithoutFragment, origin.releaseNonNull());
     blobURLReferencesMap().add(urlWithoutFragment);
 };
 
@@ -106,13 +106,13 @@ void ThreadableBlobRegistry::registerInternalBlobURL(const URL& url, Vector<Blob
 {
     ASSERT(BlobURL::isInternalURL(url));
     if (isMainThread()) {
-        blobRegistry()->registerInternalBlobURL(url, WTFMove(blobParts), contentType);
+        blobRegistry()->registerInternalBlobURL(url, WTF::move(blobParts), contentType);
         return;
     }
     for (auto& part : blobParts)
         part.detachFromCurrentThread();
-    callOnMainThread([url = url.isolatedCopy(), blobParts = WTFMove(blobParts), contentType = contentType.isolatedCopy()]() mutable {
-        blobRegistry()->registerInternalBlobURL(url, WTFMove(blobParts), contentType);
+    callOnMainThread([url = url.isolatedCopy(), blobParts = WTF::move(blobParts), contentType = contentType.isolatedCopy()]() mutable {
+        blobRegistry()->registerInternalBlobURL(url, WTF::move(blobParts), contentType);
     });
 }
 
@@ -139,8 +139,8 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
     if (origin)
         strongOrigin = origin->isolatedCopy();
 
-    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTFMove(policyContainer)), strongOrigin = WTFMove(strongOrigin), topOrigin = crossThreadCopy(topOrigin)]() mutable {
-        addToOriginMapIfNecessary(url, WTFMove(strongOrigin));
+    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTF::move(policyContainer)), strongOrigin = WTF::move(strongOrigin), topOrigin = crossThreadCopy(topOrigin)]() mutable {
+        addToOriginMapIfNecessary(url, WTF::move(strongOrigin));
         blobRegistry()->registerBlobURL(url, srcURL, policyContainer, topOrigin);
     });
 }

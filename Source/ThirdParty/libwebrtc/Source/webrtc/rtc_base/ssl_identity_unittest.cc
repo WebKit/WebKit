@@ -514,58 +514,63 @@ class SSLIdentityExpirationTest : public ::testing::Test {
       int64_t want;
     } static const data[] = {
         // clang-format off
-        // clang formatting breaks this nice alignment
+      // clang formatting breaks this nice alignment
 
       // Valid examples.
-      {"19700101000000Z",  true,  0},
-      {"700101000000Z",    false, 0},
-      {"19700101000001Z",  true,  1},
-      {"700101000001Z",    false, 1},
-      {"19700101000100Z",  true,  60},
-      {"19700101000101Z",  true,  61},
-      {"19700101010000Z",  true,  3600},
-      {"19700101010001Z",  true,  3601},
-      {"19700101010100Z",  true,  3660},
-      {"19700101010101Z",  true,  3661},
-      {"710911012345Z",    false, 53400225},
-      {"20000101000000Z",  true,  946684800},
-      {"20000101000000Z",  true,  946684800},
-      {"20151130140156Z",  true,  1448892116},
-      {"151130140156Z",    false, 1448892116},
-      {"20491231235959Z",  true,  2524607999},
-      {"491231235959Z",    false, 2524607999},
-      {"20500101000000Z",  true,  2524607999+1},
-      {"20700101000000Z",  true,  3155760000},
-      {"21000101000000Z",  true,  4102444800},
-      {"24000101000000Z",  true,  13569465600},
+      {.string="19700101000000Z",  .long_format=true,  .want=0},
+      {.string="700101000000Z",    .long_format=false, .want=0},
+      {.string="19700101000001Z",  .long_format=true,  .want=1},
+      {.string="700101000001Z",    .long_format=false, .want=1},
+      {.string="19700101000100Z",  .long_format=true,  .want=60},
+      {.string="19700101000101Z",  .long_format=true,  .want=61},
+      {.string="19700101010000Z",  .long_format=true,  .want=3600},
+      {.string="19700101010001Z",  .long_format=true,  .want=3601},
+      {.string="19700101010100Z",  .long_format=true,  .want=3660},
+      {.string="19700101010101Z",  .long_format=true,  .want=3661},
+      {.string="710911012345Z",    .long_format=false, .want=53400225},
+      {.string="20000101000000Z",  .long_format=true,  .want=946684800},
+      {.string="20000101000000Z",  .long_format=true,  .want=946684800},
+      {.string="20151130140156Z",  .long_format=true,  .want=1448892116},
+      {.string="151130140156Z",    .long_format=false, .want=1448892116},
+      {.string="20491231235959Z",  .long_format=true,  .want=2524607999},
+      {.string="491231235959Z",    .long_format=false, .want=2524607999},
+      {.string="20500101000000Z",  .long_format=true,  .want=2524607999+1},
+      {.string="20700101000000Z",  .long_format=true,  .want=3155760000},
+      {.string="21000101000000Z",  .long_format=true,  .want=4102444800},
+      {.string="24000101000000Z",  .long_format=true,  .want=13569465600},
 
       // Invalid examples.
-      {"19700101000000",    true,  -1},  // missing Z long format
-      {"19700101000000X",   true,  -1},  // X instead of Z long format
-      {"197001010000000",   true,  -1},  // 0 instead of Z long format
-      {"1970010100000000Z", true,  -1},  // excess digits long format
-      {"700101000000",      false, -1},  // missing Z short format
-      {"700101000000X",     false, -1},  // X instead of Z short format
-      {"7001010000000",     false, -1},  // 0 instead of Z short format
-      {"70010100000000Z",   false, -1},  // excess digits short format
-      {":9700101000000Z",   true,  -1},  // invalid character
-      {"1:700101000001Z",   true,  -1},  // invalid character
-      {"19:00101000100Z",   true,  -1},  // invalid character
-      {"197:0101000101Z",   true,  -1},  // invalid character
-      {"1970:101010000Z",   true,  -1},  // invalid character
-      {"19700:01010001Z",   true,  -1},  // invalid character
-      {"197001:1010100Z",   true,  -1},  // invalid character
-      {"1970010:010101Z",   true,  -1},  // invalid character
-      {"70010100:000Z",     false, -1},  // invalid character
-      {"700101000:01Z",     false, -1},  // invalid character
-      {"2000010100:000Z",   true,  -1},  // invalid character
-      {"21000101000:00Z",   true,  -1},  // invalid character
-      {"240001010000:0Z",   true,  -1},  // invalid character
-      {"500101000000Z",     false, -1},  // but too old for epoch
-      {"691231235959Z",     false, -1},  // too old for epoch
-      {"19611118043000Z",   false, -1},  // way too old for epoch
-
-        // clang-format off
+      // Long format: missing Z, X instead of Z, 0 instead of Z,
+      // excess digits.
+      {.string="19700101000000",    .long_format=true,  .want=-1},
+      {.string="19700101000000X",   .long_format=true,  .want=-1},
+      {.string="197001010000000",   .long_format=true,  .want=-1},
+      {.string="1970010100000000Z", .long_format=true,  .want=-1},
+      // Short format: missing Z, X instead of Z, 0 instead of Z,
+      // excess digits.
+      {.string="700101000000",      .long_format=false, .want=-1},
+      {.string="700101000000X",     .long_format=false, .want=-1},
+      {.string="7001010000000",     .long_format=false, .want=-1},
+      {.string="70010100000000Z",   .long_format=false, .want=-1},
+      // Invalid character.
+      {.string=":9700101000000Z",   .long_format=true,  .want=-1},
+      {.string="1:700101000001Z",   .long_format=true,  .want=-1},
+      {.string="19:00101000100Z",   .long_format=true,  .want=-1},
+      {.string="197:0101000101Z",   .long_format=true,  .want=-1},
+      {.string="1970:101010000Z",   .long_format=true,  .want=-1},
+      {.string="19700:01010001Z",   .long_format=true,  .want=-1},
+      {.string="197001:1010100Z",   .long_format=true,  .want=-1},
+      {.string="1970010:010101Z",   .long_format=true,  .want=-1},
+      {.string="70010100:000Z",     .long_format=false, .want=-1},
+      {.string="700101000:01Z",     .long_format=false, .want=-1},
+      {.string="2000010100:000Z",   .long_format=true,  .want=-1},
+      {.string="21000101000:00Z",   .long_format=true,  .want=-1},
+      {.string="240001010000:0Z",   .long_format=true,  .want=-1},
+      // Dates prior to unix epoch (January 1st, 1970).
+      {.string="500101000000Z",     .long_format=false, .want=-1},
+      {.string="691231235959Z",     .long_format=false, .want=-1},
+      {.string="19611118043000Z",   .long_format=false, .want=-1},
+      // clang-format off
     };
 
     unsigned char buf[EVP_MAX_MD_SIZE];

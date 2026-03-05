@@ -48,25 +48,27 @@ class LocalAudioSessionRoutingArbitrator final
 public:
     USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionRoutingArbitrationClient);
 
-    static std::unique_ptr<LocalAudioSessionRoutingArbitrator> create(GPUConnectionToWebProcess&);
     LocalAudioSessionRoutingArbitrator(GPUConnectionToWebProcess&);
     virtual ~LocalAudioSessionRoutingArbitrator();
 
     void processDidTerminate();
 
-private:
+    // WebCore::AudioSessionRoutingArbitrationClient.
+    void ref() const final;
+    void deref() const final;
 
+private:
     // AudioSessionRoutingArbitrationClient
     void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&&) final;
-    void leaveRoutingAbritration() final;
+    void leaveRoutingArbitration() final;
 
     Logger& logger();
     ASCIILiteral logClassName() const { return "LocalAudioSessionRoutingArbitrator"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     bool canLog() const final;
 
-    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    const CheckedRef<GPUConnectionToWebProcess> m_connectionToWebProcess;
     const uint64_t m_logIdentifier;
 };
 

@@ -64,7 +64,7 @@ class RtcEventDtlsTransportState : public RtcEvent {
   }
 
  private:
-  RtcEventDtlsTransportState(const RtcEventDtlsTransportState& other);
+  RtcEventDtlsTransportState(const RtcEventDtlsTransportState&) = default;
 
   const DtlsTransportState dtls_transport_state_;
 };

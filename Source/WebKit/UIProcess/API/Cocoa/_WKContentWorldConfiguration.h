@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WKContentWorldConfiguration.h>
 #import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -34,7 +35,7 @@ For example:
 WK_SWIFT_UI_ACTOR
 NS_SWIFT_SENDABLE
 WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
-@interface _WKContentWorldConfiguration : NSObject<NSCopying, NSSecureCoding>
+@interface _WKContentWorldConfiguration : WKContentWorldConfiguration
 
 @property (nonatomic, copy) NSString *name;
 
@@ -48,6 +49,7 @@ WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 @property (nonatomic) BOOL allowElementUserInfo;
 
 /*! @abstract A boolean value indicating whether the behavior that elements with a name attribute overrides builtin methods on document object should be disabled or not. */
+// FIXME: Give this a positive name like enableLegacyBuiltinOverrides to avoid double-negatives in code.
 @property (nonatomic) BOOL disableLegacyBuiltinOverrides;
 
 /*! @abstract A boolean indicating whether window.webkit.createJSHandle is available. */

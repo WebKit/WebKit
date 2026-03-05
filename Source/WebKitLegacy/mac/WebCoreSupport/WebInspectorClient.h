@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "LegacyWebPageInspectorController.h"
 #import <JavaScriptCore/InspectorFrontendChannel.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/InspectorBackendClient.h>
@@ -50,6 +51,7 @@ namespace WebCore {
 class CertificateInfo;
 class LocalFrame;
 class Page;
+class PageInspectorController;
 }
 
 class WebInspectorFrontendClient;
@@ -68,10 +70,6 @@ public:
 
     void highlight() override;
     void hideHighlight() override;
-
-#if ENABLE(REMOTE_INSPECTOR)
-    bool allowRemoteInspectionToPageDirectly() const override { return true; }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     void showInspectorIndication() override;
@@ -113,7 +111,7 @@ private:
 
 class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
 public:
-    WebInspectorFrontendClient(WebView*, WebInspectorWindowController*, WebCore::PageInspectorController*, WebCore::Page*, std::unique_ptr<Settings>);
+    WebInspectorFrontendClient(WebView*, LegacyWebPageInspectorController&, WebInspectorWindowController*, WebCore::PageInspectorController*, WebCore::Page*, std::unique_ptr<Settings>);
 
     void attachAvailabilityChanged(bool);
     bool canAttach();
@@ -123,12 +121,11 @@ public:
     void startWindowDrag() override;
 
     String localizedStringsURL() const override;
-    Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::Page; };
+    Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::WebPage; };
     String targetPlatformName() const final { return "macOS"_s; };
     String targetBuildVersion() const final { return "Unknown"_s; };
     String targetProductVersion() const final { return "Unknown"_s; };
     bool targetIsSimulator() const final { return false; }
-
 
     void bringToFront() override;
     void closeWindow() override;
@@ -157,6 +154,8 @@ public:
     void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
 #endif
 
+    void sendMessageToBackend(const String& message) final;
+
 private:
     void updateWindowTitle() const;
 
@@ -165,6 +164,7 @@ private:
 
 #if !PLATFORM(IOS_FAMILY)
     WeakObjCPtr<WebView> m_inspectedWebView;
+    WeakPtr<LegacyWebPageInspectorController> m_webPageInspectorController;
     RetainPtr<WebInspectorWindowController> m_frontendWindowController;
     String m_inspectedURL;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;

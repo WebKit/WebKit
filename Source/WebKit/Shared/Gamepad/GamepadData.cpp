@@ -48,12 +48,12 @@ GamepadData::GamepadData(unsigned index, const String& id, const String& mapping
 
 GamepadData::GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes)
     : m_index(index)
-    , m_id(WTFMove(id))
-    , m_mapping(WTFMove(mapping))
-    , m_axisValues(WTFMove(axisValues))
-    , m_buttonValues(WTFMove(buttonValues))
+    , m_id(WTF::move(id))
+    , m_mapping(WTF::move(mapping))
+    , m_axisValues(WTF::move(axisValues))
+    , m_buttonValues(WTF::move(buttonValues))
     , m_lastUpdateTime(lastUpdateTime)
-    , m_supportedEffectTypes(WTFMove(supportedEffectTypes))
+    , m_supportedEffectTypes(WTF::move(supportedEffectTypes))
 {
 }
 

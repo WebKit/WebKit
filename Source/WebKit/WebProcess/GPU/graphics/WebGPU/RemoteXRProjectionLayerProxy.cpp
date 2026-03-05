@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRProjectionLayerProxy);
 RemoteXRProjectionLayerProxy::RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_parent(WTFMove(parent))
+    , m_parent(WTF::move(parent))
 {
 }
 
@@ -57,7 +57,7 @@ RemoteXRProjectionLayerProxy::~RemoteXRProjectionLayerProxy()
 void RemoteXRProjectionLayerProxy::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&& rateMapDescription)
 {
 #if PLATFORM(VISION)
-    auto sendResult = send(Messages::RemoteXRProjectionLayer::StartFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex, WTFMove(rateMapDescription)));
+    auto sendResult = send(Messages::RemoteXRProjectionLayer::StartFrame(frameIndex, WTF::move(colorBuffer), WTF::move(depthBuffer), WTF::move(completionSyncEvent), reusableTextureIndex, WTF::move(rateMapDescription)));
     UNUSED_VARIABLE(sendResult);
 #else
     UNUSED_VARIABLE(frameIndex);

@@ -46,7 +46,7 @@ private:
     ExceptionOr<void> perform() final { return { }; }
     ExceptionOr<void> undo() final { return { }; }
     ExceptionOr<void> redo() final { return { }; }
-    bool isUndoableStateMark() final { return true; }
+    bool isUndoableStateMark() const final { return true; }
 };
 
 ExceptionOr<void> InspectorHistory::perform(std::unique_ptr<Action> action)
@@ -56,10 +56,10 @@ ExceptionOr<void> InspectorHistory::perform(std::unique_ptr<Action> action)
         return performResult.releaseException();
 
     if (!action->mergeId().isEmpty() && m_afterLastActionIndex > 0 && action->mergeId() == m_history[m_afterLastActionIndex - 1]->mergeId())
-        m_history[m_afterLastActionIndex - 1]->merge(WTFMove(action));
+        m_history[m_afterLastActionIndex - 1]->merge(WTF::move(action));
     else {
         m_history.resize(m_afterLastActionIndex);
-        m_history.append(WTFMove(action));
+        m_history.append(WTF::move(action));
         ++m_afterLastActionIndex;
     }
     return { };

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#if USE(LIBWPE)
 #include "WPEWebView.h"
 #include "WebKitWebViewAccessible.h"
 #include <wtf/glib/GRefPtr.h>
@@ -84,3 +85,5 @@ private:
 };
 
 } // namespace WKWPE
+
+#endif // USE(LIBWPE)

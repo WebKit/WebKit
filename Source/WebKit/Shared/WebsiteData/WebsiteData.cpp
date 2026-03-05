@@ -83,6 +83,8 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
     case WebsiteDataType::ScreenTime:
         return WebsiteDataProcessType::UI;
 #endif
+    case WebsiteDataType::EnhancedSecurityRecord:
+        return WebsiteDataProcessType::UI;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -112,10 +114,10 @@ WebsiteData WebsiteData::isolatedCopy() const &
 WebsiteData WebsiteData::isolatedCopy() &&
 {
     return WebsiteData {
-        crossThreadCopy(WTFMove(entries)),
-        crossThreadCopy(WTFMove(hostNamesWithCookies)),
-        crossThreadCopy(WTFMove(hostNamesWithHSTSCache)),
-        crossThreadCopy(WTFMove(registrableDomainsWithResourceLoadStatistics)),
+        crossThreadCopy(WTF::move(entries)),
+        crossThreadCopy(WTF::move(hostNamesWithCookies)),
+        crossThreadCopy(WTF::move(hostNamesWithHSTSCache)),
+        crossThreadCopy(WTF::move(registrableDomainsWithResourceLoadStatistics)),
     };
 }
 
@@ -127,7 +129,7 @@ WebsiteData::Entry::Entry(WebCore::SecurityOriginData inOrigin, WebsiteDataType 
 }
 
 WebsiteData::Entry::Entry(WebCore::SecurityOriginData&& inOrigin, OptionSet<WebsiteDataType>&& inType, uint64_t inSize)
-    : origin(WTFMove(inOrigin))
+    : origin(WTF::move(inOrigin))
     , size(inSize)
 {
     RELEASE_ASSERT(inType.hasExactlyOneBitSet());
@@ -141,7 +143,7 @@ auto WebsiteData::Entry::isolatedCopy() const & -> Entry
 
 auto WebsiteData::Entry::isolatedCopy() && -> Entry
 {
-    return { crossThreadCopy(WTFMove(origin)), crossThreadCopy(WTFMove(type)), size };
+    return { crossThreadCopy(WTF::move(origin)), crossThreadCopy(WTF::move(type)), size };
 }
 
 }

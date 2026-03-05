@@ -52,7 +52,7 @@ public:
 
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
 private:
@@ -60,8 +60,6 @@ private:
     using GeolocationToIDMap = HashMap<WeakRef<WebCore::Geolocation>, GeolocationIdentifier>;
     IDToGeolocationMap m_idToGeolocationMap;
     GeolocationToIDMap m_geolocationToIDMap;
-
-    Ref<WebPage> protectedPage() const;
 
     WeakRef<WebPage> m_page;
 };

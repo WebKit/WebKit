@@ -30,10 +30,7 @@
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 #include <libintl.h>
-
-#if !USE(GTK4) && USE(CAIRO)
-#include <gtk/gtk.h>
-#endif
+#include <locale.h>
 
 #if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
@@ -43,14 +40,12 @@
 #include <pal/crypto/gcrypt/Initialization.h>
 #endif
 
-#if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkGraphics.h>
 #if USE(SKIA_OPENTYPE_SVG)
 #include <skia/modules/svg/SkSVGOpenTypeSVGDecoder.h>
 #endif
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 #if USE(SYSPROF_CAPTURE)
 #include <wtf/SystemTracing.h>
@@ -71,21 +66,18 @@ public:
         PAL::GCrypt::initialize();
 #endif
 
-#if USE(SKIA)
         SkGraphics::Init();
 #if USE(SKIA_OPENTYPE_SVG)
         SkGraphics::SetOpenTypeSVGDecoderFactory(SkSVGOpenTypeSVGDecoder::Make);
 #endif
-#endif
 
 #if ENABLE(DEVELOPER_MODE)
-        if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
+        if (g_getenv("WEBKIT_PAUSE_WEB_PROCESS_ON_LAUNCH"))
             g_usleep(30 * G_USEC_PER_SEC);
 #endif
 
-#if !USE(GTK4) && USE(CAIRO)
-        gtk_init(nullptr, nullptr);
-#endif
+        if (!setlocale(LC_ALL, ""))
+            g_warning("Locale not supported by C library.\n\tUsing the fallback 'C' locale.");
 
         bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -103,17 +95,6 @@ public:
 
 int WebProcessMain(int argc, char** argv)
 {
-#if !USE(GTK4) && USE(CAIRO)
-#if USE(ATSPI)
-    // Disable ATK accessibility support in the WebProcess.
-    g_setenv("NO_AT_BRIDGE", "1", TRUE);
-#endif
-
-    // Ignore the GTK_THEME environment variable, the theme is always set by the UI process now.
-    // This call needs to happen before any threads begin execution
-    unsetenv("GTK_THEME");
-#endif
-
     return AuxiliaryProcessMain<WebProcessMainGtk>(argc, argv);
 }
 

@@ -373,7 +373,7 @@ public:
 
         ConcurrentJSLocker locker(m_lock);
         WTF::storeStoreFence(); // This is probably not needed because the lock will also do something similar, but it's good to be paranoid.
-        m_jitCode = WTFMove(code);
+        m_jitCode = WTF::move(code);
     }
 
     RefPtr<JSC::JITCode> jitCode() { return m_jitCode; }
@@ -673,7 +673,7 @@ public:
     void countReoptimization();
 
 #if !ENABLE(C_LOOP)
-    static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return RegisterSetBuilder::llintBaselineCalleeSaveRegisters().numberOfSetRegisters(); }
+    static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return RegisterSet::llintBaselineCalleeSaveRegisters().numberOfSetRegisters(); }
     static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters();
     static size_t calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList&);
 #else
@@ -758,6 +758,16 @@ public:
     uint32_t exitCountThresholdForReoptimizationFromLoop();
     bool shouldReoptimizeNow();
     bool shouldReoptimizeFromLoopNow();
+
+    void didInstallDFGCode();
+    void didDFGJettison(Profiler::JettisonReason);
+    void didFailDFGCompilation();
+
+#if ENABLE(FTL_JIT)
+    void didInstallFTLCode();
+    void didFTLJettison(Profiler::JettisonReason);
+    void didFailFTLCompilation();
+#endif
 
 #else // No JIT
     void optimizeAfterWarmUp() { }
@@ -961,7 +971,7 @@ private:
         if (!m_rareData) {
             auto rareData = makeUnique<RareData>();
             WTF::storeStoreFence();
-            m_rareData = WTFMove(rareData);
+            m_rareData = WTF::move(rareData);
         }
     }
 

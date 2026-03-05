@@ -643,11 +643,10 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
         /* % Adjustment limited to the range 1% to 10% */
         Adjustment = (cpi->last_boost - 100) >> 5;
 
-        if (Adjustment < 1) {
-          Adjustment = 1;
-        } else if (Adjustment > 10) {
+        if (Adjustment > 10) {
           Adjustment = 10;
         }
+        assert(Adjustment >= 1);
 
         /* Convert to bits */
         Adjustment = (cpi->this_frame_target * Adjustment) / 100;

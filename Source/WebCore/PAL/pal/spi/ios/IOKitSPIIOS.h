@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(IOS_FAMILY)
 
 #if USE(APPLE_INTERNAL_SDK)

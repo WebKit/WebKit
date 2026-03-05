@@ -296,17 +296,6 @@ bool OutstandingData::NackItem(UnwrappedTSN tsn,
   return true;
 }
 
-auto OutstandingData::enqueueItem(std::deque<Item>& deque, const Item& item) -> Item&
-{
-    Data message_end(item.data().stream_id, item.data().ssn, item.data().mid,
-                     item.data().fsn, item.data().ppid, std::vector<uint8_t>(),
-                     Data::IsBeginning(false), Data::IsEnd(true),
-                     item.data().is_unordered);
-    return deque.emplace_back(
-        item.message_id(), std::move(message_end), Timestamp::Zero(),
-        MaxRetransmits(0), Timestamp::PlusInfinity(), LifecycleId::NotSet());
-}
-
 void OutstandingData::AbandonAllFor(const Item& item) {
   // Erase all remaining chunks from the producer, if any.
   if (discard_from_send_queue_(item.data().stream_id, item.message_id())) {
@@ -318,8 +307,14 @@ void OutstandingData::AbandonAllFor(const Item& item) {
     // skipped over). So create a new fragment, representing the end, that the
     // received will never see as it is abandoned immediately and used as cum
     // TSN in the sent FORWARD-TSN.
+    Data message_end(item.data().stream_id, item.data().ssn, item.data().mid,
+                     item.data().fsn, item.data().ppid, std::vector<uint8_t>(),
+                     Data::IsBeginning(false), Data::IsEnd(true),
+                     item.data().is_unordered);
     UnwrappedTSN tsn = next_tsn();
-    Item& added_item = enqueueItem(outstanding_data_, item);
+    Item& added_item = outstanding_data_.emplace_back(
+        item.message_id(), std::move(message_end), Timestamp::Zero(),
+        MaxRetransmits(0), Timestamp::PlusInfinity(), LifecycleId::NotSet());
 
     // The added chunk shouldn't be included in `unacked_bytes`, so set it
     // as acked.
@@ -407,8 +402,8 @@ std::vector<std::pair<TSN, Data>> OutstandingData::GetChunksToBeRetransmitted(
 }
 
 void OutstandingData::ExpireOutstandingChunks(Timestamp now) {
+  std::vector<UnwrappedTSN> tsns_to_expire;
   UnwrappedTSN tsn = last_cumulative_tsn_ack_;
-  std::deque<Item> to_be_abandoned;
   for (const Item& item : outstanding_data_) {
     tsn.Increment();
     // Chunks that are nacked can be expired. Care should be taken not to expire
@@ -417,19 +412,22 @@ void OutstandingData::ExpireOutstandingChunks(Timestamp now) {
     if (item.is_abandoned()) {
       // Already abandoned.
     } else if (item.is_nacked() && item.has_expired(now)) {
-      RTC_DLOG(LS_VERBOSE) << "Will mark nacked chunk " << *tsn.Wrap()
-                             << " and message " << *item.data().mid
-                             << " as expired";
-      enqueueItem(to_be_abandoned, item);
+      tsns_to_expire.push_back(tsn);
     } else {
       // A non-expired chunk. No need to iterate any further.
       break;
     }
   }
-  for (const Item& item : to_be_abandoned) {
+
+  for (UnwrappedTSN tsn_to_expire : tsns_to_expire) {
+    // The item is retrieved by TSN, as AbandonAllFor may have modified
+    // `outstanding_data_` and invalidated iterators from the first loop.
+    Item& item = GetItem(tsn_to_expire);
+    RTC_DLOG(LS_WARNING) << "Marking nacked chunk " << *tsn_to_expire.Wrap()
+                         << " and message " << *item.data().mid
+                         << " as expired";
     AbandonAllFor(item);
   }
-
   RTC_DCHECK(IsConsistent());
 }
 

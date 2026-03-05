@@ -1,6 +1,8 @@
 Name: Bison skeletons
 URL: https://git.savannah.gnu.org/r/bison.git/
-Version: 3.3.2
+Revision: 437f6250c5e8e49d1d3bf437246f1d034897728e
+Version: v3.3.2
+Update Mechanism: Manual
 License: GPL-3.0
 License File: LICENSE
 Shipped: no

@@ -72,7 +72,7 @@ void WebCoreAVCFResourceLoader::startLoading()
     resourceRequest.setPriority(ResourceLoadPriority::Low);
 
     // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
-    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(
+    CachedResourceRequest request(WTF::move(resourceRequest), ResourceLoaderOptions(
         SendCallbackPolicy::SendCallbacks,
         ContentSniffingPolicy::DoNotSniffContent,
         DataBufferingPolicy::BufferData,
@@ -87,7 +87,7 @@ void WebCoreAVCFResourceLoader::startLoading()
         CachingPolicy::DisallowCaching));
 
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
-    m_resource = loader ? loader->requestRawResource(WTFMove(request)).value_or(nullptr) : nullptr;
+    m_resource = loader ? loader->requestRawResource(WTF::move(request)).value_or(nullptr) : nullptr;
     if (m_resource)
         m_resource->addClient(*this);
     else {
@@ -124,7 +124,7 @@ void WebCoreAVCFResourceLoader::invalidate()
 void WebCoreAVCFResourceLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
+    CompletionHandlerCallingScope completionHandlerCaller(WTF::move(completionHandler));
 
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {

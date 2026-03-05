@@ -34,14 +34,14 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PrefetchCache);
 
 PrefetchCache::Entry::Entry(WebCore::ResourceResponse&& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
-    : response(WTFMove(response))
+    : response(WTF::move(response))
     , privateRelayed(privateRelayed)
-    , buffer(WTFMove(buffer))
+    , buffer(WTF::move(buffer))
 {
 }
 
 PrefetchCache::Entry::Entry(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& redirectRequest)
-    : response(WTFMove(redirectResponse)), redirectRequest(WTFMove(redirectRequest))
+    : response(WTF::move(redirectResponse)), redirectRequest(WTF::move(redirectRequest))
 {
 }
 
@@ -81,7 +81,7 @@ void PrefetchCache::store(const URL& requestURL, WebCore::ResourceResponse&& res
 {
     if (!m_sessionPrefetches)
         m_sessionPrefetches = makeUnique<PrefetchEntriesMap>();
-    auto addResult = m_sessionPrefetches->add(requestURL, makeUnique<PrefetchCache::Entry>(WTFMove(response), privateRelayed, WTFMove(buffer)));
+    auto addResult = m_sessionPrefetches->add(requestURL, makeUnique<PrefetchCache::Entry>(WTF::move(response), privateRelayed, WTF::move(buffer)));
     // Limit prefetches for same url to 1.
     if (!addResult.isNewEntry)
         return;
@@ -95,7 +95,7 @@ void PrefetchCache::storeRedirect(const URL& requestUrl, WebCore::ResourceRespon
     if (!m_sessionPrefetches)
         m_sessionPrefetches = makeUnique<PrefetchEntriesMap>();
     redirectRequest.clearPurpose();
-    m_sessionPrefetches->set(requestUrl, makeUnique<PrefetchCache::Entry>(WTFMove(redirectResponse), WTFMove(redirectRequest)));
+    m_sessionPrefetches->set(requestUrl, makeUnique<PrefetchCache::Entry>(WTF::move(redirectResponse), WTF::move(redirectRequest)));
     m_sessionExpirationList.append(std::make_tuple(requestUrl, WallTime::now()));
     if (!m_expirationTimer.isActive())
         m_expirationTimer.startOneShot(expirationTimeout);

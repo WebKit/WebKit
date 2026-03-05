@@ -54,7 +54,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class ScriptMessageClient final : public WebScriptMessageHandler::Client {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(X);
+    WTF_MAKE_TZONE_ALLOCATED(ScriptMessageClient);
 public:
     ScriptMessageClient(RemoteInspectorProtocolHandler& inspectorProtocolHandler)
         : m_inspectorProtocolHandler(inspectorProtocolHandler) { }
@@ -92,11 +92,13 @@ private:
     CheckedRef<RemoteInspectorProtocolHandler> m_inspectorProtocolHandler;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptMessageClient);
+
 class LoaderClient final : public API::LoaderClient {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(LoaderClient);
+    WTF_MAKE_TZONE_ALLOCATED(LoaderClient);
 public:
     LoaderClient(Function<void()>&& loadedCallback)
-        : m_loadedCallback { WTFMove(loadedCallback) } { }
+        : m_loadedCallback { WTF::move(loadedCallback) } { }
 
     void didFinishLoadForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, API::Object*) final
     {
@@ -106,6 +108,8 @@ public:
 private:
     Function<void()> m_loadedCallback;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LoaderClient);
 
 static std::optional<Inspector::DebuggableType> parseDebuggableTypeFromString(const String& debuggableTypeString)
 {
@@ -137,16 +141,16 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, Connecti
         m_inspectorClient->inspect(connectionID, targetID, debuggableType.value());
 }
 
-Ref<WebPageProxy> RemoteInspectorProtocolHandler::protectedPage() const
-{
-    return m_page.get();
-}
-
 void RemoteInspectorProtocolHandler::runScript(const String& script)
 {
     constexpr bool wantsResult = true;
-    protectedPage()->runJavaScriptInMainFrame(WebKit::RunJavaScriptParameters {
-        script,
+    auto scriptString = IPC::TransferString::create(script);
+    if (!scriptString) {
+        LOG_ERROR("Out of memory running script");
+        return;
+    }
+    protect(m_page)->runJavaScriptInMainFrame(WebKit::RunJavaScriptParameters {
+        WTF::move(*scriptString),
         JSC::SourceTaintedOrigin::Untainted,
         URL { },
         WebCore::RunAsAsyncFunction::No,
@@ -204,7 +208,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
     pageProxy.configuration().userContentController().addUserScriptMessageHandler(handler.get());
 
     // Setup loader client to get notified of page load
-    protectedPage()->setLoaderClient(makeUnique<LoaderClient>([this] {
+    protect(m_page)->setLoaderClient(makeUnique<LoaderClient>([this] {
         m_pageLoaded = true;
         updateTargetList();
     }));
@@ -241,9 +245,9 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
 
     auto html = htmlBuilder.toString().utf8();
     auto data = SharedBuffer::create(html.span());
-    ResourceResponse response(WTFMove(requestURL), "text/html"_s, html.length(), "UTF-8"_s);
-    task.didReceiveResponse(WTFMove(response));
-    task.didReceiveData(WTFMove(data));
+    ResourceResponse response(WTF::move(requestURL), "text/html"_s, html.length(), "UTF-8"_s);
+    task.didReceiveResponse(WTF::move(response));
+    task.didReceiveData(WTF::move(data));
     task.didComplete(ResourceError());
 }
 

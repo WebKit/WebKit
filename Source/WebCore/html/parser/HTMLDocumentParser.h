@@ -69,7 +69,7 @@ public:
     void resumeParsingAfterYield();
 
     // For HTMLTreeBuilder.
-    HTMLTokenizer& tokenizer();
+    HTMLTokenizer& tokenizer() LIFETIME_BOUND;
     TextPosition textPosition() const final;
 
     bool isOnStackOfOpenElements(Element&) const;
@@ -82,7 +82,7 @@ protected:
     void appendSynchronously(RefPtr<StringImpl>&&) override;
     void finish() override;
 
-    HTMLTreeBuilder& treeBuilder() { return m_treeBuilder; }
+    HTMLTreeBuilder& treeBuilder() LIFETIME_BOUND { return m_treeBuilder; }
 
 private:
     HTMLDocumentParser(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, CustomElementRegistry*);
@@ -106,14 +106,14 @@ private:
     // HTMLScriptRunnerHost
     void watchForLoad(PendingScript&) final;
     void stopWatchingForLoad(PendingScript&) final;
-    HTMLInputStream& inputStream() final;
+    HTMLInputStream& inputStream() LIFETIME_BOUND final;
     bool hasPreloadScanner() const final;
     void appendCurrentInputStreamToPreloadScannerAndScan() final;
 
     // PendingScriptClient
     void notifyFinished(PendingScript&) final;
 
-    Document* contextForParsingSession();
+    Document* NODELETE contextForParsingSession();
 
     enum class SynchronousMode : bool { AllowYield, ForceSynchronous };
     void append(RefPtr<StringImpl>&&, SynchronousMode);
@@ -131,9 +131,9 @@ private:
     void attemptToRunDeferredScriptsAndEnd();
     void end();
 
-    bool isParsingFragment() const;
+    bool NODELETE isParsingFragment() const;
     bool isScheduledForResume() const;
-    bool inPumpSession() const;
+    bool NODELETE inPumpSession() const;
     bool shouldDelayEnd() const;
 
     void didBeginYieldingParser() final;
@@ -150,7 +150,7 @@ private:
     RefPtr<HTMLParserScheduler> m_parserScheduler;
     TextPosition m_textPosition;
 
-    std::unique_ptr<HTMLResourcePreloader> m_preloader;
+    const RefPtr<HTMLResourcePreloader> m_preloader;
 
     bool m_endWasDelayed { false };
     unsigned m_pumpSessionNestingLevel { 0 };

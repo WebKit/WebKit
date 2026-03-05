@@ -23,13 +23,13 @@
 #include "api/audio_codecs/audio_format.h"
 #include "api/make_ref_counted.h"
 #include "api/neteq/neteq.h"
-#include "api/rtp_headers.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/audio_checksum.h"
 #include "modules/audio_coding/neteq/tools/encode_neteq_input.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -141,7 +141,7 @@ class LossyInput : public NetEqInput {
     return input_->NextSetMinimumDelayInfo();
   }
 
-  std::unique_ptr<PacketData> PopPacket() override {
+  std::unique_ptr<RtpPacketReceived> PopPacket() override {
     if (loss_cadence_ != 0 && (++count_ % loss_cadence_) == 0) {
       // Pop `burst_length_` packets to create the loss.
       auto packet_to_return = input_->PopPacket();
@@ -161,8 +161,8 @@ class LossyInput : public NetEqInput {
 
   bool ended() const override { return input_->ended(); }
 
-  std::optional<RTPHeader> NextHeader() const override {
-    return input_->NextHeader();
+  const RtpPacketReceived* NextPacket() const override {
+    return input_->NextPacket();
   }
 
  private:
@@ -233,7 +233,8 @@ TestStatistics RunTest(int loss_cadence,
   auto lifetime_stats = neteq_test.LifetimeStats();
   EXPECT_EQ(dec.concealed_samples(), lifetime_stats.concealed_samples);
   EXPECT_EQ(dec.concealment_events(), lifetime_stats.concealment_events);
-  return {neteq_test.SimulationStats(), neteq_test.LifetimeStats()};
+  return {.network = neteq_test.SimulationStats(),
+          .lifetime = neteq_test.LifetimeStats()};
 }
 }  // namespace
 

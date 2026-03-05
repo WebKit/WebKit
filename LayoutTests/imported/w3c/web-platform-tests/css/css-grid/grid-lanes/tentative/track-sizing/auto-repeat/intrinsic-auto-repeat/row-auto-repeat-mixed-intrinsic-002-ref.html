@@ -5,7 +5,7 @@
 .grid {
     display: grid;
     background: gray;
-    item-tolerance: 0;
+    flow-tolerance: 0;
     grid-template-rows: repeat(5, auto fit-content(100px));
     grid-template-columns: 100px 100px;
     height: 300px;
@@ -38,8 +38,8 @@
       Number 6
     </div>
     <!-- Fit content in grid requires an item to be placed in that track for it to be
-    non-zero. In masonry, this is not the case. Add an item to mimic the spanner
-    in the masonry test case. -->
+    non-zero. In grid-lanes, this is not the case. Add an item to mimic the spanner
+    in the grid-lanes test case. -->
     <div style="background: brown; color: transparent; grid-column: 1;">
       Number 6
     </div>

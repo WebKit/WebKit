@@ -1,5 +1,6 @@
 //@ $skipModes << :lockdown
 "use strict"
+const DEBUG = false;
 const consoleStub = console || {
   log: print
 }
@@ -94,11 +95,15 @@ for (let i = 0; i < warmup; i++) {
 }
 run = 1_000_000
 
-console.log("Warmup complete")
+globalThis.log = function (v) { };
+if (DEBUG)
+    log = console.log.bind(console);
+
+log("Warmup complete")
 
 let [resultsTotal, resultsFor, resultsForOf, resultsForEach] = runTest()
 
-console.log("Total:", resultsTotal)
-console.log("For:", resultsFor)
-console.log("ForOf:", resultsForOf)
-console.log("ForEach:", resultsForEach)
+log("Total:", resultsTotal)
+log("For:", resultsFor)
+log("ForOf:", resultsForOf)
+log("ForEach:", resultsForEach)

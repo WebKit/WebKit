@@ -210,7 +210,6 @@ static void intra_mode_cnn_partition(const AV1_COMMON *const cm, MACROBLOCK *x,
                                                 bit_depth, &output)) {
         aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
                            "Error allocating CNN data");
-        return;
       }
     } else {
       uint8_t *image[1] = { x->plane[AOM_PLANE_Y].src.buf - stride - 1 };
@@ -219,7 +218,6 @@ static void intra_mode_cnn_partition(const AV1_COMMON *const cm, MACROBLOCK *x,
                                          cnn_config, &thread_data, &output)) {
         aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
                            "Error allocating CNN data");
-        return;
       }
     }
 
@@ -1773,6 +1771,7 @@ void av1_prune_partitions_before_search(AV1_COMP *const cpi,
       av1_is_whole_blk_in_frame(blk_params, mi_params);
 
   if (try_intra_cnn_based_part_prune) {
+    assert(x->e_mbd.error_info->setjmp);
     intra_mode_cnn_partition(&cpi->common, x, x->part_search_info.quad_tree_idx,
                              cpi->sf.part_sf.intra_cnn_based_part_prune_level,
                              part_state);

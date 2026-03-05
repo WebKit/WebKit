@@ -1,6 +1,6 @@
 
 PASS automatic scriptlevel on mfrac (displaystyle=true)
-FAIL automatic scriptlevel on mfrac (displaystyle=false) assert_approx_equals: numerator expected 71 +/- 0.1 but got 100
+PASS automatic scriptlevel on mfrac (displaystyle=false)
 PASS automatic scriptlevel on mroot
 PASS automatic scriptlevel on msub
 PASS automatic scriptlevel on msup

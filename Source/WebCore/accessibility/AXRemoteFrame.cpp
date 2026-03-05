@@ -27,6 +27,7 @@
 #include "AXRemoteFrame.h"
 
 #include "AccessibilityObjectInlines.h"
+#include "AccessibilityScrollView.h"
 
 namespace WebCore {
 
@@ -38,6 +39,15 @@ AXRemoteFrame::AXRemoteFrame(AXID axID, AXObjectCache& cache)
 Ref<AXRemoteFrame> AXRemoteFrame::create(AXID axID, AXObjectCache& cache)
 {
     return adoptRef(*new AXRemoteFrame(axID, cache));
+}
+
+bool AXRemoteFrame::computeIsIgnored() const
+{
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    if (RefPtr hostingScrollView = dynamicDowncast<AccessibilityScrollView>(parentObject()))
+        return hostingScrollView->isIgnoredFromHostingFrame();
+#endif
+    return false;
 }
 
 LayoutRect AXRemoteFrame::elementRect() const

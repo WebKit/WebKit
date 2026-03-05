@@ -47,11 +47,10 @@ FloatRect SliderTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     static constexpr int sliderTrackWidth = 5;
     float trackWidth = sliderTrackWidth * style.zoomFactor;
 
-    auto& sliderTrackPart = owningSliderTrackPart();
     auto rect = bounds;
     
     // Set the height/width and align the location in the center of the difference.
-    if (sliderTrackPart.type() == StyleAppearance::SliderHorizontal) {
+    if (owningSliderTrackPart()->type() == StyleAppearance::SliderHorizontal) {
         rect.setHeight(trackWidth);
         rect.setY(rect.y() + (bounds.height() - rect.height()) / 2);
     } else {
@@ -82,9 +81,9 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     CGContextRef cgContext = context.platformContext();
     CGColorSpaceRef cspace = sRGBColorSpaceSingleton();
 
-    auto& sliderTrackPart = owningSliderTrackPart();
+    Ref sliderTrackPart = owningSliderTrackPart();
 
-    sliderTrackPart.drawTicks(context, borderRect.rect(), style);
+    sliderTrackPart->drawTicks(context, borderRect.rect(), style);
 
     GraphicsContextStateSaver stateSaver(context);
 
@@ -94,7 +93,7 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     struct CGFunctionCallbacks mainCallbacks = { 0, trackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (sliderTrackPart.type() == StyleAppearance::SliderVertical)
+    if (sliderTrackPart->type() == StyleAppearance::SliderVertical)
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(logicalRect.x(),  logicalRect.maxY()), CGPointMake(logicalRect.maxX(), logicalRect.maxY()), mainFunction.get(), false, false));
     else
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(logicalRect.x(),  logicalRect.y()), CGPointMake(logicalRect.x(), logicalRect.maxY()), mainFunction.get(), false, false));

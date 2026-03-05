@@ -25,6 +25,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/text/StringBuffer.h>
 
 namespace WTF {
@@ -34,7 +35,9 @@ String::String(CFStringRef str)
     if (!str)
         return;
 
-    CFIndex size = CFStringGetLength(str);
+    // We cannot use CFIndex here since CFStringGetLength can return values larger than
+    // CFIndex can hold.  (<rdar://problem/6806478>)
+    size_t size = CFStringGetLength(str);
     if (!size) {
         m_impl = StringImpl::empty();
         return;
@@ -44,15 +47,15 @@ String::String(CFStringRef str)
         StringBuffer<Latin1Character> buffer(size);
         CFIndex usedBufLen;
         CFIndex convertedSize = CFStringGetBytes(str, CFRangeMake(0, size), kCFStringEncodingISOLatin1, 0, false, byteCast<UInt8>(buffer.characters()), size, &usedBufLen);
-        if (convertedSize == size && usedBufLen == size) {
-            m_impl = StringImpl::adopt(WTFMove(buffer));
+        if (static_cast<size_t>(convertedSize) == size && static_cast<size_t>(usedBufLen) == size) {
+            m_impl = StringImpl::adopt(WTF::move(buffer));
             return;
         }
     }
 
     StringBuffer<char16_t> ucharBuffer(size);
-    CFStringGetCharacters(str, CFRangeMake(0, size), reinterpret_cast<UniChar *>(ucharBuffer.characters()));
-    m_impl = StringImpl::adopt(WTFMove(ucharBuffer));
+    CFStringCopyCharactersSpan(str, ucharBuffer.span());
+    m_impl = StringImpl::adopt(WTF::move(ucharBuffer));
 }
 
 RetainPtr<CFStringRef> String::createCFString() const

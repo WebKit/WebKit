@@ -34,7 +34,9 @@
 #include "api/crypto/crypto_options.h"
 #include "api/data_channel_interface.h"
 #include "api/dtls_transport_interface.h"
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
+#include "api/field_trials.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
@@ -62,7 +64,6 @@
 #include "media/base/stream_params.h"
 #include "p2p/base/ice_transport_internal.h"
 #include "p2p/base/port.h"
-#include "p2p/base/port_interface.h"
 #include "p2p/test/fake_ice_transport.h"
 #include "p2p/test/test_turn_customizer.h"
 #include "p2p/test/test_turn_server.h"
@@ -84,15 +85,16 @@
 #include "rtc_base/firewall_socket_server.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/net_helper.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_factory.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/time_utils.h"
 #include "rtc_base/virtual_socket_server.h"
-#include "system_wrappers/include/metrics.h"
+#include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -362,7 +364,7 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
 
   scoped_refptr<VideoTrackInterface> CreateLocalVideoTrack() {
     FakePeriodicVideoSource::Config config;
-    config.timestamp_offset_ms = TimeMillis();
+    config.timestamp_offset_ms = env_.clock().TimeInMilliseconds();
     return CreateLocalVideoTrackInternal(config);
   }
 
@@ -375,7 +377,7 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
       VideoRotation rotation) {
     FakePeriodicVideoSource::Config config;
     config.rotation = rotation;
-    config.timestamp_offset_ms = TimeMillis();
+    config.timestamp_offset_ms = env_.clock().TimeInMilliseconds();
     return CreateLocalVideoTrackInternal(config);
   }
 
@@ -672,8 +674,7 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
     return WaitForDescriptionFromObserver(observer.get());
   }
   bool Rollback() {
-    return SetRemoteDescription(
-        CreateSessionDescription(SdpType::kRollback, ""));
+    return SetRemoteDescription(CreateRollbackSessionDescription());
   }
 
   // Functions for querying stats.
@@ -691,7 +692,7 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
     std::string sdp;
     EXPECT_TRUE(desc->ToString(&sdp));
     RTC_LOG(LS_INFO) << debug_name_
-                     << ": SetRemoteDescription SDP: type=" << desc->type()
+                     << ": SetRemoteDescription SDP: type=" << desc->GetType()
                      << " contents=\n"
                      << sdp;
     pc()->SetRemoteDescription(std::move(desc), observer);  // desc.release());
@@ -777,7 +778,7 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
     SdpType type = desc->GetType();
     std::string sdp;
     EXPECT_TRUE(desc->ToString(&sdp));
-    RTC_LOG(LS_INFO) << debug_name_ << ": local SDP type=" << desc->type()
+    RTC_LOG(LS_INFO) << debug_name_ << ": local SDP type=" << desc->GetType()
                      << " contents=\n"
                      << sdp;
     pc()->SetLocalDescription(observer.get(), desc.release());
@@ -793,8 +794,9 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
 
  private:
   // Constructor used by friend class PeerConnectionIntegrationBaseTest.
-  explicit PeerConnectionIntegrationWrapper(const std::string& debug_name)
-      : debug_name_(debug_name) {}
+  explicit PeerConnectionIntegrationWrapper(const std::string& debug_name,
+                                            Environment env)
+      : debug_name_(debug_name), env_(env) {}
 
   bool Init(const PeerConnectionFactory::Options* options,
             const PeerConnectionInterface::RTCConfiguration* config,
@@ -802,7 +804,6 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
             SocketServer* socket_server,
             Thread* network_thread,
             Thread* worker_thread,
-            std::unique_ptr<FieldTrialsView> field_trials,
             std::unique_ptr<FakeRtcEventLogFactory> event_log_factory,
             bool reset_encoder_factory,
             bool reset_decoder_factory,
@@ -915,7 +916,6 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
     }
     return description;
   }
-
 
   // This is a work around to remove unused fake_video_renderers from
   // transceivers that have either stopped or are no longer receiving.
@@ -1125,6 +1125,9 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
     error_event_ =
         IceCandidateErrorEvent(address, port, url, error_code, error_text);
   }
+
+  void OnIceCandidateRemoved(const IceCandidate* candidate) override {}
+
   void OnDataChannel(
       scoped_refptr<DataChannelInterface> data_channel) override {
     RTC_LOG(LS_INFO) << debug_name_ << ": OnDataChannel";
@@ -1142,6 +1145,7 @@ class PeerConnectionIntegrationWrapper : public PeerConnectionObserver,
   }
 
   std::string debug_name_;
+  const Environment env_;
 
   // Network manager is owned by the `peer_connection_factory_`.
   FakeNetworkManager* fake_network_manager_ = nullptr;
@@ -1373,43 +1377,8 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
   static constexpr char kCallerName[] = "Caller";
   static constexpr char kCalleeName[] = "Callee";
 
-  explicit PeerConnectionIntegrationBaseTest(SdpSemantics sdp_semantics)
-      : sdp_semantics_(sdp_semantics),
-        ss_(new VirtualSocketServer()),
-        fss_(new FirewallSocketServer(ss_.get())),
-        network_thread_(new Thread(fss_.get())),
-        worker_thread_(Thread::Create()) {
-    network_thread_->SetName("PCNetworkThread", this);
-    worker_thread_->SetName("PCWorkerThread", this);
-    RTC_CHECK(network_thread_->Start());
-    RTC_CHECK(worker_thread_->Start());
-    metrics::Reset();
-  }
-
-  ~PeerConnectionIntegrationBaseTest() {
-    // The PeerConnections should be deleted before the TurnCustomizers.
-    // A TurnPort is created with a raw pointer to a TurnCustomizer. The
-    // TurnPort has the same lifetime as the PeerConnection, so it's expected
-    // that the TurnCustomizer outlives the life of the PeerConnection or else
-    // when Send() is called it will hit a seg fault.
-    if (caller_) {
-      caller_->set_signaling_message_receiver(nullptr);
-      caller_->pc()->Close();
-      caller_.reset();
-    }
-    if (callee_) {
-      callee_->set_signaling_message_receiver(nullptr);
-      callee_->pc()->Close();
-      callee_.reset();
-    }
-
-    // If turn servers were created for the test they need to be destroyed on
-    // the network thread.
-    SendTask(network_thread(), [this] {
-      turn_servers_.clear();
-      turn_customizers_.clear();
-    });
-  }
+  explicit PeerConnectionIntegrationBaseTest(SdpSemantics sdp_semantics);
+  ~PeerConnectionIntegrationBaseTest() override;
 
   bool SignalingStateStable() {
     return caller_->SignalingStateStable() && callee_->SignalingStateStable();
@@ -1472,17 +1441,21 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
       dependencies.cert_generator =
           std::make_unique<FakeRTCCertificateGenerator>();
     }
-    std::unique_ptr<PeerConnectionIntegrationWrapper> client(
-        new PeerConnectionIntegrationWrapper(debug_name));
-
     std::string field_trials = field_trials_;
+    EnvironmentFactory env = EnvironmentFactory(env_);
+
     auto it = field_trials_overrides_.find(debug_name);
     if (it != field_trials_overrides_.end()) {
       field_trials = it->second;
+      dependencies.trials = std::make_unique<FieldTrials>(it->second);
     }
+    env.Set(CreateTestFieldTrialsPtr(field_trials));
+
+    std::unique_ptr<PeerConnectionIntegrationWrapper> client(
+        new PeerConnectionIntegrationWrapper(debug_name, env.Create()));
+
     if (!client->Init(options, &modified_config, std::move(dependencies),
                       fss_.get(), network_thread_.get(), worker_thread_.get(),
-                      CreateTestFieldTrialsPtr(field_trials),
                       std::move(event_log_factory), reset_encoder_factory,
                       reset_decoder_factory, create_media_engine)) {
       return nullptr;
@@ -1650,7 +1623,8 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
     std::unique_ptr<TestTurnServer> turn_server;
     SendTask(network_thread(), [&] {
       turn_server = std::make_unique<TestTurnServer>(
-          thread, socket_factory, internal_address, external_address, type,
+          CreateTestEnvironment(), thread, socket_factory, internal_address,
+          external_address, type,
           /*ignore_bad_certs=*/true, common_name);
     });
     turn_servers_.push_back(std::move(turn_server));
@@ -1719,7 +1693,7 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
 
   PeerConnectionIntegrationWrapper* caller() { return caller_.get(); }
 
-  // Destroy peerconnections.
+  // Destroy peer connections.
   // This can be used to ensure that all pointers to on-stack mocks
   // get dropped before exit.
   void DestroyPeerConnections() {
@@ -1910,9 +1884,18 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
   }
 
  protected:
+  void OverrideLoggingLevelForTest(LoggingSeverity new_severity);
+
   SdpSemantics sdp_semantics_;
+  const Environment env_;
 
  private:
+  // Support for optionally changing the default logging level for the duration
+  // of the test. Scoped wider than other member variables to also affect
+  // logging that's done in destructors.
+  class ScopedSetLoggingLevel;
+  std::unique_ptr<ScopedSetLoggingLevel> overridden_logging_level_;
+
   AutoThread main_thread_;  // Used as the signal thread by most tests.
   // `ss_` is used by `network_thread_` so it must be destroyed later.
   std::unique_ptr<VirtualSocketServer> ss_;

@@ -42,6 +42,32 @@ void CopyBGRA8ToRGBA8Fast(const uint8_t *source,
         }
     }
 }
+
+void CopyRGBA8ToRGBA8Fast(const uint8_t *source,
+                          int srcYAxisPitch,
+                          uint8_t *dest,
+                          int destYAxisPitch,
+                          int destWidth,
+                          int destHeight)
+{
+    // If Y axis pitch is packed and the source is also packed and stored contiguously, copy the
+    // whole source to the dest in a single memcpy operation.
+    if (destYAxisPitch == destWidth * 4 && srcYAxisPitch == destWidth * 4)
+    {
+        size_t totalSize = destHeight * destWidth * 4;
+        memcpy(dest, source, totalSize);
+        return;
+    }
+
+    // If X axis pitch is 4 bytes but Y axis pitch is not packed, copy the source to dest line by
+    // line.
+    for (int y = 0; y < destHeight; ++y)
+    {
+        const uint8_t *src = source + y * srcYAxisPitch;
+        uint8_t *dst       = dest + y * destYAxisPitch;
+        memcpy(dst, src, destWidth * 4);
+    }
+}
 }  // namespace
 
 void CopyBGRA8ToRGBA8(const uint8_t *source,
@@ -69,6 +95,36 @@ void CopyBGRA8ToRGBA8(const uint8_t *source,
         {
             *reinterpret_cast<uint32_t *>(dst) =
                 SwizzleBGRAToRGBA(*reinterpret_cast<const uint32_t *>(src));
+            src += srcXAxisPitch;
+            dst += destXAxisPitch;
+        }
+    }
+}
+
+void CopyRGBA8ToRGBA8(const uint8_t *source,
+                      int srcXAxisPitch,
+                      int srcYAxisPitch,
+                      uint8_t *dest,
+                      int destXAxisPitch,
+                      int destYAxisPitch,
+                      int destWidth,
+                      int destHeight)
+{
+    if (srcXAxisPitch == 4 && destXAxisPitch == 4)
+    {
+        CopyRGBA8ToRGBA8Fast(source, srcYAxisPitch, dest, destYAxisPitch, destWidth, destHeight);
+        return;
+    }
+
+    for (int y = 0; y < destHeight; ++y)
+    {
+        uint8_t *dst       = dest + y * destYAxisPitch;
+        const uint8_t *src = source + y * srcYAxisPitch;
+        const uint8_t *end = src + destWidth * srcXAxisPitch;
+
+        while (src != end)
+        {
+            *reinterpret_cast<uint32_t *>(dst) = *reinterpret_cast<const uint32_t *>(src);
             src += srcXAxisPitch;
             dst += destXAxisPitch;
         }

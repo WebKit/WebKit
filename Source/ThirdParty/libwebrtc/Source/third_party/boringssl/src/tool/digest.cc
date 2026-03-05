@@ -326,7 +326,7 @@ static bool Check(const CheckModeArguments &args, const EVP_MD *md,
   return ok;
 }
 
-// DigestSum acts like the coreutils *sum utilites, with the given hash
+// DigestSum acts like the coreutils *sum utilities, with the given hash
 // function.
 static bool DigestSum(const EVP_MD *md,
                       const std::vector<std::string> &args) {
@@ -359,7 +359,7 @@ static bool DigestSum(const EVP_MD *md,
         switch (arg[i]) {
           case 'b':
           case 't':
-            // Binary/text mode – irrelevent, even on Windows.
+            // Binary/text mode – irrelevant, even on Windows.
             break;
           case 'c':
             check_mode = true;
@@ -374,7 +374,7 @@ static bool DigestSum(const EVP_MD *md,
         }
       }
     } else if (arg == "--binary" || arg == "--text") {
-      // Binary/text mode – irrelevent, even on Windows.
+      // Binary/text mode – irrelevant, even on Windows.
     } else if (arg == "--check") {
       check_mode = true;
     } else if (arg == "--quiet") {

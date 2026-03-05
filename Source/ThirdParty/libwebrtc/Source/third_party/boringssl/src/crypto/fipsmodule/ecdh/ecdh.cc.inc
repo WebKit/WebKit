@@ -23,6 +23,7 @@
 #include <openssl/mem.h>
 
 #include "../../internal.h"
+#include "../bcm_interface.h"
 #include "../ec/internal.h"
 #include "../service_indicator/internal.h"
 
@@ -31,13 +32,13 @@ int ECDH_compute_key_fips(uint8_t *out, size_t out_len, const EC_POINT *pub_key,
                           const EC_KEY *priv_key) {
   boringssl_ensure_ecc_self_test();
 
-  if (priv_key->priv_key == NULL) {
+  if (priv_key->priv_key == nullptr) {
     OPENSSL_PUT_ERROR(ECDH, ECDH_R_NO_PRIVATE_VALUE);
     return 0;
   }
   const EC_SCALAR *const priv = &priv_key->priv_key->scalar;
   const EC_GROUP *const group = EC_KEY_get0_group(priv_key);
-  if (EC_GROUP_cmp(group, pub_key->group, NULL) != 0) {
+  if (EC_GROUP_cmp(group, pub_key->group, nullptr) != 0) {
     OPENSSL_PUT_ERROR(EC, EC_R_INCOMPATIBLE_OBJECTS);
     return 0;
   }

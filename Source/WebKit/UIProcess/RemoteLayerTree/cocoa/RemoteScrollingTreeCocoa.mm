@@ -38,11 +38,9 @@ using namespace WebCore;
 
 const EventRegion* eventRegionForLayer(CALayer *layer)
 {
-    RefPtr layerTreeNode = RemoteLayerTreeNode::forCALayer(layer);
-    if (!layerTreeNode)
-        return nullptr;
-
-    return &layerTreeNode->eventRegion();
+    if (auto* layerTreeNode = RemoteLayerTreeNode::forCALayer(layer))
+        return &layerTreeNode->eventRegion();
+    return nullptr;
 }
 
 bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)

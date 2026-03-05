@@ -101,13 +101,11 @@ public:
 
     WebPageProxy* page() { return m_page.get(); }
     const WebPageProxy* page() const { return m_page.get(); }
-    RefPtr<WebPageProxy> protectedPage() const;
 
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
-    BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
-    WebProcessProxy& process();
-    Ref<WebProcessProxy> protectedProcess();
+    BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup.get(); }
+    WebProcessProxy& NODELETE process();
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
     const URL& provisionalURL() const { return m_provisionalLoadURL; }
@@ -118,10 +116,10 @@ public:
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     RefPtr<DrawingAreaProxy> takeDrawingArea();
 
-    void setNavigation(API::Navigation&);
+    void NODELETE setNavigation(API::Navigation&);
 
 #if PLATFORM(COCOA)
-    Vector<uint8_t> takeAccessibilityToken() { return WTFMove(m_accessibilityToken); }
+    Vector<uint8_t> takeAccessibilityToken() { return WTF::move(m_accessibilityToken); }
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     const String& accessibilityPlugID() { return m_accessibilityPlugID; }
@@ -139,7 +137,7 @@ public:
 #endif
 
     void loadData(API::Navigation&, Ref<WebCore::SharedBuffer>&&, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, WebCore::SubstituteData::SessionHistoryVisibility);
-    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&& = nullptr, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt, WebCore::IsPerformingHTTPFallback = WebCore::IsPerformingHTTPFallback::No);
+    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&& = nullptr, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt, WebCore::NavigationUpgradeToHTTPSBehavior = WebCore::NavigationUpgradeToHTTPSBehavior::BasedOnPolicy);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt, WebCore::ProcessSwapDisposition processSwapDisposition = WebCore::ProcessSwapDisposition::None);
     void cancel();
 
@@ -157,8 +155,6 @@ public:
 
 private:
     ProvisionalPageProxy(WebPageProxy&, Ref<FrameProcess>&&, BrowsingContextGroup&, RefPtr<SuspendedPageProxy>&&, API::Navigation&, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*, WebsiteDataStore* replacedDataStoreForWebArchiveLoad = nullptr);
-
-    RefPtr<WebFrameProxy> protectedMainFrame() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -178,7 +174,7 @@ private:
     void didNavigateWithNavigationData(const WebNavigationDataStore&, WebCore::FrameIdentifier);
     void didPerformClientRedirect(String&& sourceURLString, String&& destinationURLString, WebCore::FrameIdentifier);
     void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&, WallTime);
-    void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
+    void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, const UserData&);
     void didFailProvisionalLoadForFrame(FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& provisionalURL, WebCore::ResourceError&&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
     void logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(const String& message, const String& description, WebCore::ShouldSample);
@@ -225,7 +221,7 @@ private:
     ProcessSwapRequestedByClient m_processSwapRequestedByClient;
     bool m_wasCommitted { false };
     bool m_isProcessSwappingOnNavigationResponse { false };
-    const bool m_isProcessSwappingForNewWindow;
+    const bool m_shouldReuseMainFrame;
     bool m_needsCookieAccessAddedInNetworkProcess { false };
     bool m_needsDidStartProvisionalLoad { true };
     bool m_shouldClosePage { true };

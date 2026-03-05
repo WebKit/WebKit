@@ -53,9 +53,9 @@ class WatchpointCollector final {
     WTF_MAKE_NONCOPYABLE(WatchpointCollector);
 public:
     WatchpointCollector(CommonData& commonData)
-        : m_watchpoints(WTFMove(commonData.m_watchpoints))
-        , m_adaptiveStructureWatchpoints(WTFMove(commonData.m_adaptiveStructureWatchpoints))
-        , m_adaptiveInferredPropertyValueWatchpoints(WTFMove(commonData.m_adaptiveInferredPropertyValueWatchpoints))
+        : m_watchpoints(WTF::move(commonData.m_watchpoints))
+        , m_adaptiveStructureWatchpoints(WTF::move(commonData.m_adaptiveStructureWatchpoints))
+        , m_adaptiveInferredPropertyValueWatchpoints(WTF::move(commonData.m_adaptiveInferredPropertyValueWatchpoints))
     { }
 
     DesiredWatchpointCounts counts() { return m_counts; }
@@ -67,9 +67,9 @@ public:
 
     void finalize(CommonData& commonData)
     {
-        commonData.m_watchpoints = WTFMove(m_watchpoints);
-        commonData.m_adaptiveStructureWatchpoints = WTFMove(m_adaptiveStructureWatchpoints);
-        commonData.m_adaptiveInferredPropertyValueWatchpoints = WTFMove(m_adaptiveInferredPropertyValueWatchpoints);
+        commonData.m_watchpoints = WTF::move(m_watchpoints);
+        commonData.m_adaptiveStructureWatchpoints = WTF::move(m_adaptiveStructureWatchpoints);
+        commonData.m_adaptiveInferredPropertyValueWatchpoints = WTF::move(m_adaptiveInferredPropertyValueWatchpoints);
     }
 
     template<typename Func>

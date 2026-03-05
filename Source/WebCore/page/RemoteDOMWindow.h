@@ -46,20 +46,20 @@ class Document;
 class Location;
 
 class RemoteDOMWindow final : public DOMWindow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(RemoteDOMWindow, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RemoteDOMWindow, WEBCORE_EXPORT);
 public:
     static Ref<RemoteDOMWindow> create(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
     {
-        return adoptRef(*new RemoteDOMWindow(frame, WTFMove(identifier)));
+        return adoptRef(*new RemoteDOMWindow(frame, WTF::move(identifier)));
     }
 
     ~RemoteDOMWindow() final;
 
-    RemoteFrame* frame() const final { return m_frame.get(); }
-    ScriptExecutionContext* scriptExecutionContext() const final { return nullptr; }
+    RemoteFrame* NODELETE frame() const final { return m_frame; }
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final { return nullptr; }
 
     // DOM API exposed cross-origin.
-    WindowProxy* self() const;
+    WindowProxy* NODELETE self() const;
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
     unsigned length() const;

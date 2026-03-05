@@ -60,6 +60,15 @@ void PlatformKeyboardEvent::setCurrentModifierState(OptionSet<Modifier> modifier
     s_currentModifiers = modifiers;
 }
 
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
+OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
+{
+    if (s_currentModifiers)
+        return *s_currentModifiers;
+    return { };
+}
+#endif
+
 struct KeyEventData {
     String text;
     int keyCode { 0 };
@@ -210,15 +219,15 @@ std::optional<PlatformKeyboardEvent> PlatformKeyboardEvent::syntheticEventFromTe
         auto [editCommandName, text] = *commandAndText;
         auto commandName = makeString(editCommandName, ':');
         if (text.isEmpty())
-            event.m_commands = { KeypressCommand { WTFMove(commandName) } };
+            event.m_commands = { KeypressCommand { WTF::move(commandName) } };
         else
-            event.m_commands = { { WTFMove(commandName), WTFMove(text) } };
+            event.m_commands = { { WTF::move(commandName), WTF::move(text) } };
     }
 #else
     UNUSED_VARIABLE(commandAndText);
 #endif
 
-    return { WTFMove(event) };
+    return { WTF::move(event) };
 }
 
 } // namespace WebCore

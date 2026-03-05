@@ -57,14 +57,14 @@ void CGSubimageCacheWithTimer::clear()
 }
 
 struct CGSubimageRequest {
-    CGImageRef image;
+    RetainPtr<CGImageRef> image;
     const FloatRect& rect;
 };
 
 struct CGSubimageCacheAdder {
     static unsigned hash(const CGSubimageRequest& value)
     {
-        return CGSubimageCacheWithTimer::CacheHash::hash(value.image, value.rect);
+        return CGSubimageCacheWithTimer::CacheHash::hash(value.image.get(), value.rect);
     }
 
     static bool equal(const CGSubimageCacheWithTimer::CacheEntry& a, const CGSubimageRequest& b)
@@ -74,8 +74,8 @@ struct CGSubimageCacheAdder {
 
     static void translate(CGSubimageCacheWithTimer::CacheEntry& entry, const CGSubimageRequest& request, unsigned /*hashCode*/)
     {
-        entry.image = request.image;
-        entry.subimage = adoptCF(CGImageCreateWithImageInRect(request.image, request.rect));
+        entry.image = request.image.get();
+        entry.subimage = adoptCF(CGImageCreateWithImageInRect(request.image.get(), request.rect));
         entry.rect = request.rect;
     }
 };

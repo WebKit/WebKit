@@ -30,13 +30,17 @@
         case 1:
             setEnableFeature(true, () => {
                 testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
-                    iframeElement.contentWindow.postMessage("getCookieEnabled", "*");
+                    setTimeout(() => {
+                        iframeElement.contentWindow.postMessage("getCookieEnabled", "*");
+                    }, 100);
                 });
             });
             break;
         case 2:
             testRunner.setManagedDomains([ "http://127.0.0.1:8000" ], () => {
-                iframeElement.contentWindow.postMessage("getCookieEnabled", "*");
+                setTimeout(() => {
+                    iframeElement.contentWindow.postMessage("getCookieEnabled", "*");
+                }, 100);
             });
             break;
         case 3:

@@ -35,19 +35,20 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRInputSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRInputSpace);
 
 // WebXRInputSpace
 
-Ref<WebXRInputSpace> WebXRInputSpace::create(Document& document, WebXRSession& session, const PlatformXR::FrameData::InputSourcePose& pose)
+Ref<WebXRInputSpace> WebXRInputSpace::create(Document& document, WebXRSession& session, const PlatformXR::FrameData::InputSourcePose& pose, PlatformXR::InputSourceHandle handle)
 {
-    return adoptRef(*new WebXRInputSpace(document, session, pose));
+    return adoptRef(*new WebXRInputSpace(document, session, pose, handle));
 }
 
-WebXRInputSpace::WebXRInputSpace(Document& document, WebXRSession& session, const PlatformXR::FrameData::InputSourcePose& pose)
+WebXRInputSpace::WebXRInputSpace(Document& document, WebXRSession& session, const PlatformXR::FrameData::InputSourcePose& pose, PlatformXR::InputSourceHandle handle)
     : WebXRSpace(document, WebXRRigidTransform::create())
     , m_session(session)
     , m_pose(pose)
+    , m_handle(handle)
 {
 }
 
@@ -57,6 +58,13 @@ std::optional<TransformationMatrix> WebXRInputSpace::nativeOrigin() const
 {
     return WebXRFrame::matrixFromPose(m_pose.pose);
 }
+
+#if ENABLE(WEBXR_HIT_TEST)
+std::optional<PlatformXR::NativeOriginInformation> WebXRInputSpace::nativeOriginInformation() const
+{
+    return { PlatformXR::InputSourceSpaceInfo { m_handle, m_type } };
+}
+#endif
 
 } // namespace WebCore
 

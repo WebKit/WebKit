@@ -10,7 +10,6 @@
 #include "pc/sdp_munging_detector.h"
 
 #include <algorithm>
-#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -26,6 +25,7 @@
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/candidate.h"
 #include "api/create_peerconnection_factory.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
@@ -50,9 +50,11 @@
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
 #include "media/base/stream_params.h"
+#include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_description.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_wrapper.h"
+#include "pc/session_description.h"
 #include "pc/test/fake_audio_capture_module.h"
 #include "pc/test/fake_rtc_certificate_generator.h"
 #include "pc/test/integration_test_helpers.h"
@@ -75,8 +77,11 @@ namespace webrtc {
 
 using ::testing::ElementsAre;
 using ::testing::Eq;
+using ::testing::IsNull;
 using ::testing::IsTrue;
+using ::testing::Not;
 using ::testing::Pair;
+using ::testing::SizeIs;
 
 namespace {
 
@@ -294,9 +299,9 @@ TEST_F(SdpMungingTest, DenyListThrows) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   for (auto& codec : codecs) {
     if (codec.name == kOpusCodecName) {
@@ -320,9 +325,9 @@ TEST_F(SdpMungingTest, DenyListExceptionDoesNotThrow) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   for (auto& codec : codecs) {
     if (codec.name == kOpusCodecName) {
@@ -679,13 +684,13 @@ TEST_F(SdpMungingTest, DtlsRole) {
       ElementsAre(Pair(SdpMungingType::kDtlsSetup, 1)));
 }
 
-TEST_F(SdpMungingTest, RemoveContentDefault) {
+TEST_F(SdpMungingTest, RemoveContentRejected) {
   auto pc = CreatePeerConnection();
   pc->AddAudioTrack("audio_track", {});
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto name = contents[0].mid();
   EXPECT_TRUE(offer->description()->RemoveContentByName(contents[0].mid()));
   std::string sdp;
@@ -707,35 +712,6 @@ TEST_F(SdpMungingTest, RemoveContentDefault) {
       ElementsAre(Pair(static_cast<int>(SdpMungingOutcome::kRejected), 1)));
 }
 
-TEST_F(SdpMungingTest, RemoveContentKillswitch) {
-  auto pc =
-      CreatePeerConnection("WebRTC-NoSdpMangleNumberOfContents/Disabled/");
-  pc->AddAudioTrack("audio_track", {});
-
-  std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
-  auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
-  auto name = contents[0].mid();
-  EXPECT_TRUE(offer->description()->RemoveContentByName(contents[0].mid()));
-  std::string sdp;
-  offer->ToString(&sdp);
-  auto modified_offer = CreateSessionDescription(
-      SdpType::kOffer,
-      absl::StrReplaceAll(sdp, {{"a=group:BUNDLE " + name, "a=group:BUNDLE"}}));
-
-  RTCError error;
-  EXPECT_TRUE(pc->SetLocalDescription(std::move(modified_offer), &error));
-  EXPECT_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
-      ElementsAre(Pair(SdpMungingType::kNumberOfContents, 1)));
-  EXPECT_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpMunging.SdpOutcome.Accepted"),
-      ElementsAre(Pair(SdpMungingType::kNumberOfContents, 1)));
-  EXPECT_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Outcome"),
-      ElementsAre(Pair(static_cast<int>(SdpMungingOutcome::kAccepted), 1)));
-}
-
 TEST_F(SdpMungingTest, TransceiverDirection) {
   auto pc = CreatePeerConnection();
   pc->AddAudioTrack("audio_track", {});
@@ -743,9 +719,9 @@ TEST_F(SdpMungingTest, TransceiverDirection) {
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
 
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto direction = media_description->direction();
   if (direction == RtpTransceiverDirection::kInactive) {
     media_description->set_direction(RtpTransceiverDirection::kSendRecv);
@@ -765,7 +741,7 @@ TEST_F(SdpMungingTest, Mid) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   std::string name(contents[0].mid());
   contents[0].set_mid("amungedmid");
 
@@ -792,9 +768,9 @@ TEST_F(SdpMungingTest, LegacySimulcast) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   uint32_t ssrc = media_description->first_ssrc();
   ASSERT_EQ(media_description->streams().size(), 1u);
   const std::string& cname = media_description->streams()[0].cname;
@@ -824,9 +800,9 @@ TEST_F(SdpMungingTest, H264SpsPpsIdrInKeyFrame) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   for (auto& codec : codecs) {
     if (codec.name == webrtc::kH264CodecName) {
@@ -850,9 +826,9 @@ TEST_F(SdpMungingTest, OpusStereo) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   for (auto& codec : codecs) {
     if (codec.name == kOpusCodecName) {
@@ -873,9 +849,9 @@ TEST_F(SdpMungingTest, OpusFec) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   for (auto& codec : codecs) {
     if (codec.name == kOpusCodecName) {
@@ -897,9 +873,9 @@ TEST_F(SdpMungingTest, OpusDtx) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   for (auto& codec : codecs) {
     if (codec.name == kOpusCodecName) {
@@ -920,9 +896,9 @@ TEST_F(SdpMungingTest, OpusCbr) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   for (auto& codec : codecs) {
     if (codec.name == kOpusCodecName) {
@@ -943,9 +919,9 @@ TEST_F(SdpMungingTest, AudioCodecsRemoved) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   codecs.pop_back();
   media_description->set_codecs(codecs);
@@ -962,9 +938,9 @@ TEST_F(SdpMungingTest, AudioCodecsAdded) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   auto codec = CreateAudioCodec(SdpAudioFormat("pcmu", 8000, 1, {}));
   codec.id = 19;  // IANA reserved payload type, should not conflict.
@@ -983,9 +959,9 @@ TEST_F(SdpMungingTest, VideoCodecsRemoved) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   codecs.pop_back();
   media_description->set_codecs(codecs);
@@ -1002,9 +978,9 @@ TEST_F(SdpMungingTest, VideoCodecsAdded) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   auto codec = CreateVideoCodec(SdpVideoFormat("VP8", {}));
   codec.id = 19;  // IANA reserved payload type, should not conflict.
@@ -1023,9 +999,9 @@ TEST_F(SdpMungingTest, VideoCodecsAddedWithRawPacketization) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   auto codec = CreateVideoCodec(SdpVideoFormat("VP8", {}));
   codec.id = 19;  // IANA reserved payload type, should not conflict.
@@ -1046,11 +1022,11 @@ TEST_F(SdpMungingTest, VideoCodecsModifiedWithRawPacketization) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
-  ASSERT_TRUE(!codecs.empty());
+  ASSERT_THAT(codecs, Not(SizeIs(0)));
   codecs[0].packetization = "raw";
   media_description->set_codecs(codecs);
   RTCError error;
@@ -1067,9 +1043,9 @@ TEST_F(SdpMungingTest, MultiOpus) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   auto multiopus =
       CreateAudioCodec(SdpAudioFormat("multiopus", 48000, 4,
@@ -1092,9 +1068,9 @@ TEST_F(SdpMungingTest, L16) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   std::vector<Codec> codecs = media_description->codecs();
   auto l16 = CreateAudioCodec(SdpAudioFormat("L16", 48000, 2, {}));
   l16.id = 19;  // IANA reserved payload type, should not conflict.
@@ -1115,9 +1091,9 @@ TEST_F(SdpMungingTest, AudioSsrc) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   ASSERT_EQ(media_description->streams().size(), 1u);
   media_description->mutable_streams()[0].ssrcs[0] = 4404;
 
@@ -1134,9 +1110,9 @@ TEST_F(SdpMungingTest, HeaderExtensionAdded) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   // VLA is off by default, id=42 should be unused.
   media_description->AddRtpHeaderExtension(
       {RtpExtension::kVideoLayersAllocationUri, 42});
@@ -1154,9 +1130,9 @@ TEST_F(SdpMungingTest, HeaderExtensionRemoved) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   media_description->set_rtp_header_extensions({});
 
   RTCError error;
@@ -1172,9 +1148,9 @@ TEST_F(SdpMungingTest, HeaderExtensionModified) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto extensions = media_description->rtp_header_extensions();
   ASSERT_GT(extensions.size(), 0u);
   extensions[0].id = 42;  // id=42 should be unused.
@@ -1193,9 +1169,9 @@ TEST_F(SdpMungingTest, PayloadTypeChanged) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 0u);
   codecs[0].id = 19;  // IANA reserved payload type, should not conflict.
@@ -1214,9 +1190,9 @@ TEST_F(SdpMungingTest, AudioCodecsReordered) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 1u);
   std::swap(codecs[0], codecs[1]);
@@ -1235,9 +1211,9 @@ TEST_F(SdpMungingTest, VideoCodecsReordered) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 1u);
   std::swap(codecs[0], codecs[1]);
@@ -1256,9 +1232,9 @@ TEST_F(SdpMungingTest, AudioCodecsFmtp) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 0u);
   codecs[0].params["dont"] = "munge";
@@ -1277,9 +1253,9 @@ TEST_F(SdpMungingTest, VideoCodecsFmtp) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 0u);
   codecs[0].params["dont"] = "munge";
@@ -1298,9 +1274,9 @@ TEST_F(SdpMungingTest, AudioCodecsRtcpFb) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 0u);
   codecs[0].feedback_params.Add({"dont", "munge"});
@@ -1319,9 +1295,9 @@ TEST_F(SdpMungingTest, AudioCodecsRtcpFbNack) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 0u);
   codecs[0].feedback_params.Add(FeedbackParam("nack"));
@@ -1340,9 +1316,9 @@ TEST_F(SdpMungingTest, AudioCodecsRtcpFbRrtr) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 0u);
   codecs[0].feedback_params.Add(FeedbackParam("rrtr"));
@@ -1383,9 +1359,9 @@ TEST_F(SdpMungingTest, RtcpMux) {
 
   std::unique_ptr<SessionDescriptionInterface> answer = pc->CreateAnswer();
   auto& contents = answer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   EXPECT_TRUE(media_description->rtcp_mux());
   media_description->set_rtcp_mux(false);
   // BUNDLE needs to be disabled too for this to work.
@@ -1403,9 +1379,9 @@ TEST_F(SdpMungingTest, VideoCodecsRtcpFb) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   auto codecs = media_description->codecs();
   ASSERT_GT(codecs.size(), 0u);
   codecs[0].feedback_params.Add({"dont", "munge"});
@@ -1424,9 +1400,9 @@ TEST_F(SdpMungingTest, AudioCodecsRtcpReducedSize) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   EXPECT_TRUE(media_description->rtcp_reduced_size());
   media_description->set_rtcp_reduced_size(false);
 
@@ -1443,9 +1419,9 @@ TEST_F(SdpMungingTest, VideoCodecsRtcpReducedSize) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
   auto& contents = offer->description()->contents();
-  ASSERT_EQ(contents.size(), 1u);
+  ASSERT_THAT(contents, SizeIs(1));
   auto* media_description = contents[0].media_description();
-  ASSERT_TRUE(media_description);
+  ASSERT_THAT(media_description, Not(IsNull()));
   EXPECT_TRUE(media_description->rtcp_reduced_size());
   media_description->set_rtcp_reduced_size(false);
 
@@ -1454,6 +1430,154 @@ TEST_F(SdpMungingTest, VideoCodecsRtcpReducedSize) {
   EXPECT_THAT(
       metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
       ElementsAre(Pair(SdpMungingType::kVideoCodecsRtcpReducedSize, 1)));
+}
+
+TEST_F(SdpMungingTest, NumberOfCandidates) {
+  auto pc = CreatePeerConnection();
+  pc->AddVideoTrack("video_track", {});
+
+  std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
+  IceCandidate candidate("", 0, Candidate());
+  EXPECT_TRUE(offer->AddCandidate(&candidate));
+
+  RTCError error;
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(offer), &error));
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kIceCandidateCount, 1)));
+}
+
+TEST_F(SdpMungingTest, Bandwidth) {
+  auto pc = CreatePeerConnection();
+  pc->AddVideoTrack("video_track", {});
+
+  std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
+  auto& contents = offer->description()->contents();
+  ASSERT_THAT(contents, SizeIs(1));
+  auto* media_description = contents[0].media_description();
+  ASSERT_THAT(media_description, Not(IsNull()));
+  EXPECT_NE(media_description->bandwidth(), 100000);
+  media_description->set_bandwidth(100000);
+
+  RTCError error;
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(offer), &error));
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kBandwidth, 1)));
+}
+
+#ifdef WEBRTC_HAVE_SCTP
+TEST_F(SdpMungingTest, NoMungingForDataChannels) {
+  auto pc = CreatePeerConnection();
+  EXPECT_TRUE(pc->CreateDataChannel("somelabel"));
+  EXPECT_TRUE(pc->CreateOfferAndSetAsLocal());
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kNoModification, 1)));
+}
+
+TEST_F(SdpMungingTest, SctpInit) {
+  auto pc = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  EXPECT_TRUE(pc->CreateDataChannel("dc"));
+  auto offer = pc->CreateOffer();
+  ASSERT_THAT(offer, Not(IsNull()));
+
+  auto& contents = offer->description()->contents();
+  ASSERT_THAT(contents, SizeIs(1));
+  auto* media_description = contents[0].media_description();
+  ASSERT_THAT(media_description, Not(IsNull()));
+  auto* sctp_description = media_description->as_sctp();
+  ASSERT_THAT(sctp_description, Not(IsNull()));
+  EXPECT_TRUE(sctp_description->sctp_init());
+
+  std::vector<uint8_t> test_value = {
+      0x01, 0x00, 0x00, 0x1e, 0xde, 0xad, 0xbe, 0xef, 0x00, 0x50,
+      0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xde, 0xad, 0xbe, 0xef,
+      0xc0, 0x00, 0x00, 0x04, 0x80, 0x08, 0x00, 0x06, 0x82, 0xc0};
+  sctp_description->set_sctp_init(test_value);
+
+  RTCError error;
+  EXPECT_FALSE(pc->SetLocalDescription(std::move(offer), &error));
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kDataChannelSctpInit, 1)));
+}
+
+TEST_F(SdpMungingTest, MaxMessageSize) {
+  auto pc = CreatePeerConnection();
+  EXPECT_TRUE(pc->CreateDataChannel("dc"));
+  auto offer = pc->CreateOffer();
+  ASSERT_THAT(offer, Not(IsNull()));
+
+  auto& contents = offer->description()->contents();
+  ASSERT_THAT(contents, SizeIs(1));
+  auto* media_description = contents[0].media_description();
+  ASSERT_THAT(media_description, Not(IsNull()));
+  auto* sctp_description = media_description->as_sctp();
+  ASSERT_THAT(sctp_description, Not(IsNull()));
+
+  sctp_description->set_max_message_size(sctp_description->max_message_size() /
+                                         2);
+
+  RTCError error;
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(offer), &error));
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kDataChannelMaxMessageSize, 1)));
+}
+
+TEST_F(SdpMungingTest, SctpPort) {
+  auto pc = CreatePeerConnection();
+  EXPECT_TRUE(pc->CreateDataChannel("dc"));
+  auto offer = pc->CreateOffer();
+  ASSERT_THAT(offer, Not(IsNull()));
+
+  auto& contents = offer->description()->contents();
+  ASSERT_THAT(contents, SizeIs(1));
+  auto* media_description = contents[0].media_description();
+  ASSERT_THAT(media_description, Not(IsNull()));
+  auto* sctp_description = media_description->as_sctp();
+  ASSERT_THAT(sctp_description, Not(IsNull()));
+
+  sctp_description->set_port(sctp_description->port() + 1);
+
+  RTCError error;
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(offer), &error));
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kDataChannelSctpPort, 1)));
+}
+#endif  // WEBRTC_HAVE_SCTP
+
+TEST_F(SdpMungingTest, MungeNumberOfBundleGroups) {
+  auto pc = CreatePeerConnection();
+  pc->AddVideoTrack("video", {});
+  pc->AddAudioTrack("audio", {});
+  std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
+  offer->description()->RemoveGroupByName(GROUP_TYPE_BUNDLE);
+
+  RTCError error;
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(offer), &error));
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kBundle, 1)));
+}
+
+TEST_F(SdpMungingTest, MungeBundleGroupContent) {
+  auto pc = CreatePeerConnection();
+  pc->AddVideoTrack("video", {});
+  pc->AddAudioTrack("audio", {});
+  std::unique_ptr<SessionDescriptionInterface> offer = pc->CreateOffer();
+  ContentGroup group = *offer->description()->GetGroupByName(GROUP_TYPE_BUNDLE);
+  offer->description()->RemoveGroupByName(GROUP_TYPE_BUNDLE);
+  ASSERT_TRUE(group.RemoveContentName("1"));
+  offer->description()->AddGroup(group);
+
+  RTCError error;
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(offer), &error));
+  EXPECT_THAT(
+      metrics::Samples("WebRTC.PeerConnection.SdpMunging.Offer.Initial"),
+      ElementsAre(Pair(SdpMungingType::kBundle, 1)));
 }
 
 }  // namespace webrtc

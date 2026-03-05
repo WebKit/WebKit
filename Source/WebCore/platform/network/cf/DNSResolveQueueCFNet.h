@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class DNSResolveQueueCFNet final : public DNSResolveQueue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DNSResolveQueueCFNet);
+    WTF_MAKE_TZONE_ALLOCATED(DNSResolveQueueCFNet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DNSResolveQueueCFNet);
 public:
     DNSResolveQueueCFNet();

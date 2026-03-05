@@ -48,7 +48,7 @@ using RTCEncodedStreamProducerIdentifier = AtomicObjectIdentifier<RTCEncodedStre
 
 class RTCEncodedStreamProducer final : public RefCounted<RTCEncodedStreamProducer>
     , public CanMakeWeakPtr<RTCEncodedStreamProducer> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCEncodedStreamProducer);
+    WTF_MAKE_TZONE_ALLOCATED(RTCEncodedStreamProducer);
 public:
     static ExceptionOr<Ref<RTCEncodedStreamProducer>> create(ScriptExecutionContext&);
     ~RTCEncodedStreamProducer();

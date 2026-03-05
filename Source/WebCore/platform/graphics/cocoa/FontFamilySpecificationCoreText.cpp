@@ -54,7 +54,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
         UnrealizedCoreTextFont unrealizedFont = { adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr)) };
         unrealizedFont.setSize(size);
 
-        auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, { }, FontTypeForPreparation::SystemFont);
+        auto font = preparePlatformFont(WTF::move(unrealizedFont), fontDescription, { }, FontTypeForPreparation::SystemFont);
 
         auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, { }, ShouldComputePhysicalTraits::Yes).boldObliquePair();
 

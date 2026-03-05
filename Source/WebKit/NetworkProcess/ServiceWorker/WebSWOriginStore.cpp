@@ -88,7 +88,7 @@ void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
     auto handle = m_store->createSharedMemoryHandle();
     if (!handle)
         return;
-    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(WTFMove(*handle)));
+    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(WTF::move(*handle)));
 }
 
 void WebSWOriginStore::didInvalidateSharedMemory()

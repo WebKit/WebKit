@@ -46,7 +46,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandChapterTrackPrivateAVFObjC);
 
 InbandChapterTrackPrivateAVFObjC::InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale> locale, TrackID trackID)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , m_locale(WTFMove(locale))
+    , m_locale(WTF::move(locale))
     , m_id(trackID)
 {
     setMode(Mode::Hidden);
@@ -69,8 +69,8 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
 
         ISOWebVTTCue cueData = ISOWebVTTCue(PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), String::number(chapterNumber), [item stringValue]);
         INFO_LOG(identifier, "created cue ", cueData);
-        notifyMainThreadClient([cueData = crossThreadCopy(WTFMove(cueData))](TrackPrivateBaseClient& client) mutable {
-            downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTFMove(cueData));
+        notifyMainThreadClient([cueData = crossThreadCopy(WTF::move(cueData))](TrackPrivateBaseClient& client) mutable {
+            downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTF::move(cueData));
         });
     });
 
@@ -89,7 +89,7 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
                         ERROR_LOG(identifier, "@\"value\" failed failed to load, status is ", (int)keyStatus, ", error = ", error);
 
                     if (keyStatus == AVKeyValueStatusLoaded && !error) {
-                        callOnMainThread([item = WTFMove(item), protectedThis = WTFMove(protectedThis), createChapterCue = WTFMove(createChapterCue), chapterNumber] () mutable {
+                        callOnMainThread([item = WTF::move(item), protectedThis = WTF::move(protectedThis), createChapterCue = WTF::move(createChapterCue), chapterNumber] () mutable {
                             createChapterCue(item.get(), chapterNumber);
                         });
                     }

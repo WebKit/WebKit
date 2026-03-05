@@ -62,7 +62,7 @@ bool PrintSpecial::admitsExtendedOffsetAddr(Inst&, unsigned)
     return false;
 }
 
-void PrintSpecial::reportUsedRegisters(Inst&, const RegisterSetBuilder&)
+void PrintSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 {
 }
 
@@ -90,12 +90,12 @@ MacroAssembler::Jump PrintSpecial::generate(Inst& inst, CCallHelpers& jit, Gener
     return CCallHelpers::Jump();
 }
 
-RegisterSetBuilder PrintSpecial::extraEarlyClobberedRegs(Inst&)
+RegisterSet PrintSpecial::extraEarlyClobberedRegs(Inst&)
 {
     return { };
 }
 
-RegisterSetBuilder PrintSpecial::extraClobberedRegs(Inst&)
+RegisterSet PrintSpecial::extraClobberedRegs(Inst&)
 {
     return { };
 }

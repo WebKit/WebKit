@@ -60,7 +60,7 @@ class RtcEventBeginLog final : public RtcEvent {
                                       std::vector<LoggedStartEvent>& output);
 
  private:
-  RtcEventBeginLog(const RtcEventBeginLog& other);
+  RtcEventBeginLog(const RtcEventBeginLog&) = default;
 
   int64_t utc_start_time_ms_;
 

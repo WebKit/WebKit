@@ -2,6 +2,7 @@ include_rules = [
   "+json",
   "+system_wrappers",
   "+third_party/jsoncpp",
+  "+absl/strings/str_format.h",
 ]
 
 specific_include_rules = {

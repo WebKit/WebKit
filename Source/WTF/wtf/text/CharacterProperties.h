@@ -169,6 +169,18 @@ inline bool isCombiningMark(char32_t character)
     return 0x0300 <= character && character <= 0x036F;
 }
 
+inline bool isCurrencySymbol(char32_t character)
+{
+    return u_charType(character) == U_CURRENCY_SYMBOL;
+}
+
+inline bool isLetterOrSymbolModifier(char32_t character)
+{
+    // Includes letter accents and diacritics.
+    auto category = u_charType(character);
+    return category == U_MODIFIER_SYMBOL || category == U_MODIFIER_LETTER;
+}
+
 } // namespace WTF
 
 using WTF::isEmojiGroupCandidate;
@@ -189,3 +201,5 @@ using WTF::isEastAsianFullWidth;
 using WTF::isCJKSymbolOrPunctuation;
 using WTF::isFullwidthMiddleDotPunctuation;
 using WTF::isCombiningMark;
+using WTF::isCurrencySymbol;
+using WTF::isLetterOrSymbolModifier;

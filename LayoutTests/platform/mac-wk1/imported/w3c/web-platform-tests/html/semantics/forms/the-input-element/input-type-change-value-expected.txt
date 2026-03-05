@@ -1,5 +1,0 @@
-
-
-FAIL Without focus assert_equals: Invalid color should return a non-empty sanitized value expected "#000000" but got ""
-FAIL With focus assert_equals: Invalid color should return a non-empty sanitized value expected "#000000" but got ""
-

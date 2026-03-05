@@ -202,15 +202,15 @@ void StatsBasedNetworkQualityMetricsReporter::NetworkLayerStatsCollector::
   MutexLock lock(&mutex_);
   // When new peer is added not in the constructor, don't check if it has empty
   // stats, because their endpoint could be used for traffic before.
-  peer_endpoints_.emplace(peer_name, std::move(endpoints));
-  peer_uplinks_.emplace(peer_name, std::move(uplink));
-  peer_downlinks_.emplace(peer_name, std::move(downlink));
   for (const EmulatedEndpoint* const endpoint : endpoints) {
     RTC_CHECK(ip_to_peer_.find(endpoint->GetPeerLocalAddress()) ==
               ip_to_peer_.end())
         << "Two peers can't share the same endpoint";
     ip_to_peer_.emplace(endpoint->GetPeerLocalAddress(), peer_name);
   }
+  peer_endpoints_.emplace(peer_name, std::move(endpoints));
+  peer_uplinks_.emplace(peer_name, std::move(uplink));
+  peer_downlinks_.emplace(peer_name, std::move(downlink));
 }
 
 std::map<std::string, NetworkLayerStats>

@@ -87,7 +87,7 @@ TEST(CrossTrafficTest, PulsedPeaksCrossTraffic) {
   PulsedPeaksCrossTraffic pulsed_peaks(config, &traffic);
   const auto kRunTime = TimeDelta::Seconds(1);
   while (fixture.clock.TimeInMilliseconds() < kRunTime.ms()) {
-    pulsed_peaks.Process(Timestamp::Millis(fixture.clock.TimeInMilliseconds()));
+    pulsed_peaks.Process(fixture.clock.CurrentTime());
     fixture.clock.AdvanceTimeMilliseconds(1);
   }
 
@@ -115,7 +115,7 @@ TEST(CrossTrafficTest, RandomWalkCrossTraffic) {
   RandomWalkCrossTraffic random_walk(config, &traffic);
   const auto kRunTime = TimeDelta::Seconds(1);
   while (fixture.clock.TimeInMilliseconds() < kRunTime.ms()) {
-    random_walk.Process(Timestamp::Millis(fixture.clock.TimeInMilliseconds()));
+    random_walk.Process(fixture.clock.CurrentTime());
     fixture.clock.AdvanceTimeMilliseconds(1);
   }
 

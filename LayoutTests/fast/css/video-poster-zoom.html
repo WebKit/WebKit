@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Video poster image should respect CSS zoom</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+  video {
+    /* Ensure no default styling interferes. */
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<script>
+// Helper to create a data URL image of specific size.
+function createImageDataURL(width, height) {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  // Fill with a color so it's visible.
+  ctx.fillStyle = 'blue';
+  ctx.fillRect(0, 0, width, height);
+  return canvas.toDataURL();
+}
+
+promise_test(async t => {
+  const video = document.createElement('video');
+  video.poster = createImageDataURL(10, 10);
+  video.style.zoom = '1';
+  document.body.appendChild(video);
+  
+  // Wait for poster to load.
+  await new Promise(resolve => {
+    const img = new Image();
+    img.onload = resolve;
+    img.src = video.poster;
+  });
+  
+  // Force layout.
+  video.getBoundingClientRect();
+  
+  const rect = video.getBoundingClientRect();
+  assert_equals(rect.width, 10, 'Video width should match poster width with zoom:1');
+  assert_equals(rect.height, 10, 'Video height should match poster height with zoom:1');
+  
+  video.remove();
+}, 'Video poster size with zoom:1');
+
+promise_test(async t => {
+  const video = document.createElement('video');
+  video.poster = createImageDataURL(10, 10);
+  video.style.zoom = '1.5';
+  document.body.appendChild(video);
+  
+  // Wait for poster to load.
+  await new Promise(resolve => {
+    const img = new Image();
+    img.onload = resolve;
+    img.src = video.poster;
+  });
+  
+  // Force layout.
+  video.getBoundingClientRect();
+  
+  const rect = video.getBoundingClientRect();
+  assert_equals(rect.width, 15, 'Video width should be scaled by zoom:1.5');
+  assert_equals(rect.height, 15, 'Video height should be scaled by zoom:1.5');
+  
+  video.remove();
+}, 'Video poster size with zoom:1.5');
+
+promise_test(async t => {
+  const video = document.createElement('video');
+  video.poster = createImageDataURL(20, 10);
+  video.style.zoom = '2';
+  document.body.appendChild(video);
+  
+  // Wait for poster to load.
+  await new Promise(resolve => {
+    const img = new Image();
+    img.onload = resolve;
+    img.src = video.poster;
+  });
+  
+  // Force layout.
+  video.getBoundingClientRect();
+  
+  const rect = video.getBoundingClientRect();
+  assert_equals(rect.width, 40, 'Video width should be scaled by zoom:2');
+  assert_equals(rect.height, 20, 'Video height should be scaled by zoom:2');
+  
+  video.remove();
+}, 'Video poster size with zoom:2 and non-square dimensions');
+</script>
+</body>
+</html>

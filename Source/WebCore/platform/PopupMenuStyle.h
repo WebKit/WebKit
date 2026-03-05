@@ -60,7 +60,6 @@ public:
     const Color& foregroundColor() const { return m_foregroundColor; }
     const Color& backgroundColor() const { return m_backgroundColor; }
     const FontCascade& font() const { return m_font; }
-    CheckedRef<const FontCascade> checkedFont() const { return font(); }
     const String& language() const { return m_language; }
     bool isVisible() const { return m_visible; }
     bool isDisplayNone() const { return m_isDisplayNone; }

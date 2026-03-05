@@ -260,7 +260,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
         function receivedObjectPropertyNames(propertyNames)
         {
-            receivedPropertyNames.call(this, Object.keys(propertyNames));
+            receivedPropertyNames.call(this, propertyNames ? Object.keys(propertyNames) : null);
         }
 
         function receivedArrayPropertyNames(propertyNames)
@@ -358,10 +358,9 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                     implicitSuffix = "]";
             }
 
-            var completions = defaultCompletions;
+            let completions = defaultCompletions;
             let knownCompletions = new Set(completions);
             let prefixLowerCase = prefix.toLowerCase();
-            let caseSensitiveMatching = WI.settings.experimentalShowCaseSensitiveAutocomplete.value;
 
             for (var i = 0; i < propertyNames.length; ++i) {
                 var property = propertyNames[i];
@@ -377,8 +376,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 if (knownCompletions.has(property))
                     continue;
 
-                let startsWithPrefix = caseSensitiveMatching ? property.startsWith(prefix) : property.toLowerCase().startsWith(prefixLowerCase);
-                if (!startsWithPrefix)
+                if (!property.toLowerCase().startsWith(prefixLowerCase))
                     continue;
 
                 completions.push(property);

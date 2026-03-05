@@ -36,11 +36,11 @@ namespace WebCore {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context));
+    return makeUnique<Pasteboard>(WTF::move(context));
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
 {
 }
 

@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 294x18
           text run at (0,0) width 294: "These lines should be in Lucida Grande Bold:"
       RenderBlock {P} at (0,68) size 784x18
-        RenderText {#text} at (0,0) size 229x18
+        RenderText {#text} at (0,-1) size 229x20
           text run at (0,0) width 229: "Lorem ipsum dolor sit amet"
       RenderBlock {P} at (0,102) size 784x18
-        RenderText {#text} at (0,0) size 229x18
+        RenderText {#text} at (0,-1) size 229x20
           text run at (0,0) width 229: "Lorem ipsum dolor sit amet"

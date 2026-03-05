@@ -33,8 +33,8 @@ namespace WebCore {
 
 MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(Ref<Element>&& first, Ref<Element>&& second)
     : SimpleEditCommand(first->document())
-    , m_element1(WTFMove(first))
-    , m_element2(WTFMove(second))
+    , m_element1(WTF::move(first))
+    , m_element2(WTF::move(second))
 {
     ASSERT(m_element1->nextSibling() == m_element2.ptr());
 }
@@ -58,7 +58,7 @@ void MergeIdenticalElementsCommand::doApply()
 
 void MergeIdenticalElementsCommand::doUnapply()
 {
-    RefPtr<Node> atChild = WTFMove(m_atChild);
+    RefPtr<Node> atChild = WTF::move(m_atChild);
 
     RefPtr parent = m_element2->parentNode();
     if (!parent || !parent->hasEditableStyle())

@@ -125,4 +125,46 @@ PASS Web Animations: property <column-span> from [initial] to [all] at (0.5) sho
 PASS Web Animations: property <column-span> from [initial] to [all] at (0.6) should be [all]
 PASS Web Animations: property <column-span> from [initial] to [all] at (1) should be [all]
 PASS Web Animations: property <column-span> from [initial] to [all] at (1.5) should be [all]
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (-0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0.6) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (1) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (1.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (-0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (0.6) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (1) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <column-wrap> from [wrap] to [nowrap] at (1.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <column-wrap> from [wrap] to [nowrap] at (-0.3) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <column-wrap> from [wrap] to [nowrap] at (0) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <column-wrap> from [wrap] to [nowrap] at (0.3) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <column-wrap> from [wrap] to [nowrap] at (0.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <column-wrap> from [wrap] to [nowrap] at (0.6) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <column-wrap> from [wrap] to [nowrap] at (1) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <column-wrap> from [wrap] to [nowrap] at (1.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <column-wrap> from [wrap] to [nowrap] at (-0.3) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <column-wrap> from [wrap] to [nowrap] at (0) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <column-wrap> from [wrap] to [nowrap] at (0.3) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <column-wrap> from [wrap] to [nowrap] at (0.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <column-wrap> from [wrap] to [nowrap] at (0.6) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <column-wrap> from [wrap] to [nowrap] at (1) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <column-wrap> from [wrap] to [nowrap] at (1.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <column-wrap> from [wrap] to [nowrap] at (-0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <column-wrap> from [wrap] to [nowrap] at (0) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <column-wrap> from [wrap] to [nowrap] at (0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <column-wrap> from [wrap] to [nowrap] at (0.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <column-wrap> from [wrap] to [nowrap] at (0.6) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <column-wrap> from [wrap] to [nowrap] at (1) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <column-wrap> from [wrap] to [nowrap] at (1.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <column-wrap> from [wrap] to [nowrap] at (-0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <column-wrap> from [wrap] to [nowrap] at (0) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <column-wrap> from [wrap] to [nowrap] at (0.3) should be [wrap] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <column-wrap> from [wrap] to [nowrap] at (0.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <column-wrap> from [wrap] to [nowrap] at (0.6) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <column-wrap> from [wrap] to [nowrap] at (1) should be [nowrap] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <column-wrap> from [wrap] to [nowrap] at (1.5) should be [nowrap] assert_true: 'from' value should be supported expected true got false
 

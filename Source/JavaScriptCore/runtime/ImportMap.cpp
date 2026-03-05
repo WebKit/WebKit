@@ -142,7 +142,7 @@ URL ImportMap::resolve(const String& specifier, const URL& baseURL)
             if (!result)
                 return { };
             if (!result.value().isNull())
-                resolvedURL = WTFMove(result.value());
+                resolvedURL = WTF::move(result.value());
         }
     }
 
@@ -151,12 +151,14 @@ URL ImportMap::resolve(const String& specifier, const URL& baseURL)
         auto result = resolveImportMatch(normalizedSpecifier, asURL, m_imports);
         if (!result)
             return { };
-        resolvedURL = WTFMove(result.value());
+        resolvedURL = WTF::move(result.value());
         if (resolvedURL.isNull() && asURL.isValid())
-            resolvedURL = WTFMove(asURL);
+            resolvedURL = WTF::move(asURL);
     }
-    if (!resolvedURL.isNull())
+    if (!resolvedURL.isNull()) {
         addModuleToResolvedModuleSet(baseURL.string(), normalizedSpecifier);
+        dataLogLnIf(ImportMapInternal::verbose, "    ", resolvedURL);
+    }
 
     return resolvedURL;
 }
@@ -180,7 +182,8 @@ static ImportMap::SpecifierMap sortAndNormalizeSpecifierMap(Ref<JSON::Object> im
     // https://html.spec.whatwg.org/C#sorting-and-normalizing-a-module-specifier-map
 
     ImportMap::SpecifierMap normalized;
-    for (auto& [key, value] : importsMap.get()) {
+    for (auto& key : importsMap->keys()) {
+        auto value = importsMap->getValue(key);
         AtomString normalizedSpecifierKey = AtomString(normalizeSpecifierKey(key, baseURL, reporter));
         if (normalizedSpecifierKey.isNull())
             continue;
@@ -188,18 +191,18 @@ static ImportMap::SpecifierMap sortAndNormalizeSpecifierMap(Ref<JSON::Object> im
             URL addressURL = parseURLLikeModuleSpecifier(valueAsString, baseURL);
             if (!addressURL.isValid()) [[unlikely]] {
                 reporter.reportWarning(makeString("value in specifier map cannot be parsed as URL "_s, valueAsString));
-                normalized.add(normalizedSpecifierKey, URL { });
+                normalized.set(normalizedSpecifierKey, URL { });
                 continue;
             }
             if (key.endsWith('/') && !addressURL.string().endsWith('/')) [[unlikely]] {
                 reporter.reportWarning(makeString("address "_s, addressURL.string(), " does not end with '/' while key "_s, key, " ends with '/'"_s));
-                normalized.add(normalizedSpecifierKey, URL { });
+                normalized.set(normalizedSpecifierKey, URL { });
                 continue;
             }
-            normalized.add(normalizedSpecifierKey, WTFMove(addressURL));
+            normalized.set(normalizedSpecifierKey, WTF::move(addressURL));
         } else {
             reporter.reportWarning("value in specifier map needs to be a string"_s);
-            normalized.add(normalizedSpecifierKey, URL { });
+            normalized.set(normalizedSpecifierKey, URL { });
             continue;
         }
     }
@@ -242,7 +245,8 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
         }
 
         // https://html.spec.whatwg.org/C#sorting-and-normalizing-scopes
-        for (auto& [key, value] : *scopesMapObject) {
+        for (auto& key : scopesMapObject->keys()) {
+            auto value = scopesMapObject->getValue(key);
             auto potentialSpecifierMap = value->asObject();
             if (!potentialSpecifierMap) {
                 reporter.reportError("scopes' value is not a map"_s);
@@ -255,7 +259,7 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
                 continue;
             }
 
-            scopesMap.set(WTFMove(scopePrefixURL), sortAndNormalizeSpecifierMap(potentialSpecifierMap.releaseNonNull(), baseURL, reporter));
+            scopesMap.set(WTF::move(scopePrefixURL), sortAndNormalizeSpecifierMap(potentialSpecifierMap.releaseNonNull(), baseURL, reporter));
         }
     }
 
@@ -269,7 +273,8 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
         }
 
         // https://html.spec.whatwg.org/C#normalizing-a-module-integrity-map
-        for (auto& [key, value] : *integrityMap) {
+        for (auto& key : integrityMap->keys()) {
+            auto value = integrityMap->getValue(key);
             URL integrityURL = parseURLLikeModuleSpecifier(key, baseURL);
             if (integrityURL.isNull()) [[unlikely]] {
                 errorMessage.append("Integrity URL "_s);
@@ -293,7 +298,7 @@ std::optional<Ref<ImportMap>> ImportMap::parseImportMapString(const SourceCode& 
     if (!errorMessage.isEmpty())
         reporter.reportError(errorMessage.toString());
 
-    return adoptRef(*new ImportMap(WTFMove(normalizedImports), WTFMove(scopesMap), WTFMove(integrity)));
+    return adoptRef(*new ImportMap(WTF::move(normalizedImports), WTF::move(scopesMap), WTF::move(integrity)));
 }
 
 String ImportMap::integrityForURL(const URL& url) const
@@ -316,7 +321,7 @@ void ImportMap::mergeExistingAndNewImportMaps(Ref<ImportMap>&& newImportMap, con
 
     // 3. For each scopePrefix → scopeImports of newImportMapScopes:
     for (auto& scope : newImportMapScopes) {
-        auto scopeImports = WTFMove(scope.value);
+        auto scopeImports = WTF::move(scope.value);
         // 3.1. For each pair of global's resolved module set:
         //
         // 3.1.1. If pair's referring script does not start with scopePrefix,
@@ -360,7 +365,7 @@ void ImportMap::mergeExistingAndNewImportMaps(Ref<ImportMap>&& newImportMap, con
         } else {
             // 3.3 Otherwise, set oldImportMap's scopes[scopePrefix] to
             // scopeImports.
-            m_scopesMap.set(scope.key, WTFMove(scopeImports));
+            m_scopesMap.set(scope.key, WTF::move(scopeImports));
             m_scopesVector.append(scope.key);
         }
     }

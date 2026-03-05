@@ -99,7 +99,7 @@ public:
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;
 
-    WEBCORE_EXPORT void sendMessageToBackend(const String& message) final;
+    WEBCORE_EXPORT void sendMessageToBackend(const String& message) override;
 
     WEBCORE_EXPORT bool isUnderTest() final;
     bool isRemote() const final { return false; }
@@ -107,7 +107,7 @@ public:
     String backendCommandsURL() const final { return String(); };
 
     InspectorFrontendAPIDispatcher& frontendAPIDispatcher() final { return m_frontendAPIDispatcher; }
-    WEBCORE_EXPORT Page* frontendPage() final;
+    WEBCORE_EXPORT Page* NODELETE frontendPage() final;
     
     WEBCORE_EXPORT bool canAttachWindow();
     WEBCORE_EXPORT void setDockingUnavailable(bool);
@@ -147,8 +147,7 @@ private:
     friend class FrontendMenuProvider;
     std::optional<bool> evaluationResultToBoolean(InspectorFrontendAPIDispatcher::EvaluationResult);
 
-    RefPtr<Page> protectedFrontendPage() const;
-    RefPtr<PageInspectorController> protectedInspectedPageController() const;
+    PageInspectorController* NODELETE inspectedPageController() const;
 
     WeakPtr<PageInspectorController> m_inspectedPageController;
     WeakPtr<Page> m_frontendPage;

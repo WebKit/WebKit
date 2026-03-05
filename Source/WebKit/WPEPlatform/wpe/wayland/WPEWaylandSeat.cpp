@@ -33,6 +33,7 @@
 #include "WPEToplevelWaylandPrivate.h"
 #include <linux/input.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -99,6 +100,8 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     // motion
     [](void* data, struct wl_pointer*, uint32_t time, wl_fixed_t fixedX, wl_fixed_t fixedY)
     {
+        WTFEmitSignpost(wl_pointer, WaylandMotionEvent);
+
         auto& seat = *static_cast<WaylandSeat*>(data);
         if (!seat.m_pointer.toplevel)
             return;
@@ -122,6 +125,8 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     // button
     [](void* data, struct wl_pointer*, uint32_t /*serial*/, uint32_t time, uint32_t button, uint32_t state)
     {
+        WTFEmitSignpost(wl_pointer, WaylandButtonEvent);
+
         auto& seat = *static_cast<WaylandSeat*>(data);
         if (!seat.m_pointer.toplevel)
             return;

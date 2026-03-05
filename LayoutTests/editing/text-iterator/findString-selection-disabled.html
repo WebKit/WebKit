@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Find string with selection disabled</title>
 <meta charset="utf-8">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
 <style type="text/css">
  .selectionDisabled { -webkit-user-select: none; }
  .selectionEnabled { -webkit-user-select: auto; }
@@ -10,49 +12,40 @@
 </head>
 <body>
 <div id="container"></div>
-<pre id="console" style="visibility: hidden;"></pre>
 <script>
-function log(message)
-{
-    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
-}
 
-function testFindString(text, target, disableSelection, expected)
-{
-    var selectionStatus = disableSelection ? "selection disabled:" : "selection enabled:";
-    log("Searching for '" + target + "' in '" + text + "' with " + selectionStatus);
-
-    var container = document.getElementById("container");
+async function testFindString(text, target, expected, disableSelection) {
+    const container = document.getElementById("container");
     container.innerText = text;
-    document.body.offsetTop;
-
     container.className = disableSelection ? "selectionDisabled" : "selectionEnabled";
 
-    shouldBe("testRunner.findString('" + target + "', [])", expected);
+    const result = await testRunner.findString(target, []);
+    assert_equals(result, expected);
 
     container.innerText = "";
-    log("");
 }
 
-if (!window.testRunner)
-    testFailed('This test requires the testRunner object');
-else {
-    for (i = 0; i < 2; i++) {
-        var disableSelection = (i == 1);
+async function runTest(text, target, expected, disableSelection) {
+    await promise_test(() => testFindString(text, target, expected, disableSelection), `find "${target}" in "${text}" with selection ${disableSelection ? "disabled" : "enabled"}`);
+}
 
-        testFindString("Some sample text that can be searched", "e", disableSelection, "true");
-        testFindString("Some sample text that can be searched", "o", disableSelection, "true");
-        testFindString("Some sample text that can be searched", "y", disableSelection, "false");
-        testFindString("Some sample text that can be searched", "t t", disableSelection, "true");
-        testFindString("insurmountable mountain", "mount", disableSelection, "true");
-        testFindString("insurmountable mountain", "Wally", disableSelection, "false");
+const text1 = "Some sample text that can be searched";
+const text2 = "insurmountable mountain";
+const testData = [
+    { text: text1, target: "e" },
+    { text: text1, target: "o" },
+    { text: text1, target: "y" },
+    { text: text1, target: "t t" },
+    { text: text2, target: "mount" },
+    { text: text2, target: "Wally" },
+];
+
+for (disableSelection of [true, false]) {
+    for (data of testData) {
+        runTest(data.text, data.target, data.text.includes(data.target), disableSelection);
     }
 }
 
-document.getElementById("console").style.removeProperty("visibility");
-
-var successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

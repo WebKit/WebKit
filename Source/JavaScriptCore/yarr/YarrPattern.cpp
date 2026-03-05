@@ -1127,7 +1127,7 @@ public:
         auto body = makeUnique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
-        m_pattern.m_disjunctions.append(WTFMove(body));
+        m_pattern.m_disjunctions.append(WTF::move(body));
 
         m_flags = m_initialFlags;
         m_parenthesisContext.setFlags(m_initialFlags);
@@ -1150,7 +1150,7 @@ public:
         auto body = makeUnique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
-        m_pattern.m_disjunctions.append(WTFMove(body));
+        m_pattern.m_disjunctions.append(WTF::move(body));
 
         m_flags = m_initialFlags;
     }
@@ -1244,7 +1244,7 @@ public:
         m_currentCharacterClassConstructor->putUnicodeIgnoreCase(ch, info);
         auto newCharacterClass = m_currentCharacterClassConstructor->charClass();
         m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), false, m_flags, parenthesisMatchDirection()));
-        m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
+        m_pattern.m_userCharacterClasses.append(WTF::move(newCharacterClass));
     }
 
     void atomBuiltInCharacterClass(BuiltInCharacterClassID classID, bool invert)
@@ -1436,7 +1436,7 @@ public:
             atomParenthesesEnd();
         }
 
-        m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
+        m_pattern.m_userCharacterClasses.append(WTF::move(newCharacterClass));
     }
 
     void atomParenthesesSubpatternBegin(bool capture = true, std::optional<String> optGroupName = std::nullopt)
@@ -1454,7 +1454,7 @@ public:
         m_alternative->m_terms.append(PatternTerm(PatternTerm::Type::ParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), m_flags, capture, false, parenthesisMatchDirection()));
         m_alternative = parenthesesDisjunction->addNewAlternative(m_pattern.m_numSubpatterns, parenthesisMatchDirection());
         pushParenthesisContext();
-        m_pattern.m_disjunctions.append(WTFMove(parenthesesDisjunction));
+        m_pattern.m_disjunctions.append(WTF::move(parenthesesDisjunction));
     }
 
     void atomParentheticalAssertionBegin(bool invert, MatchDirection matchDirection)
@@ -1467,7 +1467,7 @@ public:
         setParenthesisMatchDirection(matchDirection);
         if (matchDirection == Backward)
             m_pattern.m_containsLookbehinds = true;
-        m_pattern.m_disjunctions.append(WTFMove(parenthesesDisjunction));
+        m_pattern.m_disjunctions.append(WTF::move(parenthesesDisjunction));
     }
 
     void atomParentheticalModifierBegin(OptionSet<Flags> set, OptionSet<Flags> unset)
@@ -1476,7 +1476,7 @@ public:
         m_alternative->m_terms.append(PatternTerm(PatternTerm::Type::ParenthesesSubpattern, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction.get(), m_flags, false, false, parenthesisMatchDirection()));
         m_alternative = parenthesesDisjunction->addNewAlternative(m_pattern.m_numSubpatterns, parenthesisMatchDirection());
         pushParenthesisContext();
-        m_pattern.m_disjunctions.append(WTFMove(parenthesesDisjunction));
+        m_pattern.m_disjunctions.append(WTF::move(parenthesesDisjunction));
 
         // Mark this context as a modifier, so we restore the flags afterwards
         m_parenthesisContext.setModifier(true);
@@ -1645,7 +1645,7 @@ public:
                 newAlternative->m_terms.reserveCapacity(alternative->m_terms.size());
                 for (auto& term : alternative->m_terms) {
                     if (auto copied = copyTerm(term, filterStartsWithBOL))
-                        newAlternative->m_terms.append(WTFMove(*copied));
+                        newAlternative->m_terms.append(WTF::move(*copied));
                 }
             }
         }
@@ -1659,7 +1659,7 @@ public:
             return nullptr;
 
         PatternDisjunction* copiedDisjunction = newDisjunction.get();
-        m_pattern.m_disjunctions.append(WTFMove(newDisjunction));
+        m_pattern.m_disjunctions.append(WTF::move(newDisjunction));
         return copiedDisjunction;
     }
     
@@ -1768,7 +1768,7 @@ public:
         return m_error;
     }
 
-    ErrorCode setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition, unsigned& newCallFrameSize) WARN_UNUSED_RETURN
+    [[nodiscard]] ErrorCode setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition, unsigned& newCallFrameSize)
     {
         if (!isSafeToRecurse()) [[unlikely]]
             return ErrorCode::TooManyDisjunctions;
@@ -2218,7 +2218,7 @@ public:
             }
             String atom = builder.toString();
             if (atom.length() > 0) {
-                m_pattern.m_atom = WTFMove(atom);
+                m_pattern.m_atom = WTF::move(atom);
                 m_pattern.m_specificPattern = SpecificPattern::Atom;
                 return true;
             }

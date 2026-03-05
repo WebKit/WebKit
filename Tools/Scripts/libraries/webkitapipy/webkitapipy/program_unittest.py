@@ -120,11 +120,11 @@ class CLITest(TestCase):
         # When invoked with a ld-style framework argument:
         result = self.call(self.dylib, '-framework', 'foo')
         # It loads the framework binary...
-        result.sdkdb.add_binary.assert_called_with(
+        result.sdkdb.add_binary.assert_any_call(
             self.framework / 'foo', arch='arm64e'
         )
         # ...and the corresponding partial SDKDB.
-        result.sdkdb.add_partial_sdkdb.assert_called_with(
+        result.sdkdb.add_partial_sdkdb.assert_any_call(
             self.local_sdkdb, spi=True, abi=True
         )
 

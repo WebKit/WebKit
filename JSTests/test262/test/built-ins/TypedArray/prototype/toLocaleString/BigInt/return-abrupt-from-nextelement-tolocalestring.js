@@ -21,7 +21,7 @@ info: |
       i. Let R be the empty String.
     d. Else,
       i. Let R be ? ToString(? Invoke(nextElement, "toLocaleString")).
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -34,9 +34,9 @@ BigInt.prototype.toLocaleString = function() {
   }
 };
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   calls = 0;
-  var sample = new TA([42n, 0n]);
+  var sample = new TA(makeCtorArg([42n, 0n]));
   assert.throws(Test262Error, function() {
     sample.toLocaleString();
   });

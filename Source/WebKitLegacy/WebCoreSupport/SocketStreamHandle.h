@@ -51,7 +51,7 @@ class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle, WTF::
 public:
     enum SocketStreamState { Connecting, Open, Closing, Closed };
     virtual ~SocketStreamHandle() = default;
-    SocketStreamState state() const;
+    SocketStreamState state() const { return m_state; }
 
     void sendData(std::span<const uint8_t> data, Function<void(bool)>);
     void sendHandshake(CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&&, Function<void(bool, bool)>);

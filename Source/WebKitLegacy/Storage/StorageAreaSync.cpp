@@ -51,8 +51,9 @@ inline StorageAreaSync::StorageAreaSync(RefPtr<StorageSyncManager>&& storageSync
     : m_syncTimer(*this, &StorageAreaSync::syncTimerFired)
     , m_itemsCleared(false)
     , m_finalSyncScheduled(false)
-    , m_storageArea(WTFMove(storageArea))
-    , m_syncManager(WTFMove(storageSyncManager))
+    , m_storageArea(WTF::move(storageArea))
+    , m_syncManager(WTF::move(storageSyncManager))
+    , m_database(makeUniqueRef<SQLiteDatabase>())
     , m_databaseIdentifier(databaseIdentifier.isolatedCopy())
     , m_clearItemsWhileSyncing(false)
     , m_syncScheduled(false)
@@ -75,7 +76,7 @@ inline StorageAreaSync::StorageAreaSync(RefPtr<StorageSyncManager>&& storageSync
 
 Ref<StorageAreaSync> StorageAreaSync::create(RefPtr<StorageSyncManager>&& storageSyncManager, Ref<StorageAreaImpl>&& storageArea, const String& databaseIdentifier)
 {
-    return adoptRef(*new StorageAreaSync(WTFMove(storageSyncManager), WTFMove(storageArea), databaseIdentifier));
+    return adoptRef(*new StorageAreaSync(WTF::move(storageSyncManager), WTF::move(storageArea), databaseIdentifier));
 }
 
 StorageAreaSync::~StorageAreaSync()
@@ -146,7 +147,7 @@ void StorageAreaSync::scheduleCloseDatabase()
     ASSERT(isMainThread());
     ASSERT(!m_finalSyncScheduled);
 
-    if (!m_database.isOpen())
+    if (!m_database->isOpen())
         return;
 
     m_syncCloseDatabase = true;
@@ -232,7 +233,7 @@ void StorageAreaSync::syncTimerFired()
 void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 {
     ASSERT(!isMainThread());
-    ASSERT(!m_database.isOpen());
+    ASSERT(!m_database->isOpen());
     ASSERT(!m_databaseOpenFailed);
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
@@ -253,7 +254,7 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
     // reopening, so cancel possible deletion.
     StorageTracker::tracker().cancelDeletingOrigin(m_databaseIdentifier);
 
-    if (!m_database.open(databaseFilename)) {
+    if (!m_database->open(databaseFilename)) {
         LOG_ERROR("Failed to open database file %s for local storage", databaseFilename.utf8().data());
         markImported();
         m_databaseOpenFailed = true;
@@ -262,7 +263,7 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 
     migrateItemTableIfNeeded();
 
-    if (!m_database.executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s)) {
+    if (!m_database->executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s)) {
         LOG_ERROR("Failed to create table ItemTable for local storage");
         markImported();
         m_databaseOpenFailed = true;
@@ -274,11 +275,11 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 
 void StorageAreaSync::migrateItemTableIfNeeded()
 {
-    if (!m_database.tableExists("ItemTable"_s))
+    if (!m_database->tableExists("ItemTable"_s))
         return;
 
     {
-        auto query = m_database.prepareStatement("SELECT value FROM ItemTable LIMIT 1"_s);
+        auto query = m_database->prepareStatement("SELECT value FROM ItemTable LIMIT 1"_s);
         // this query isn't ever executed.
         if (query && query->isColumnDeclaredAsBlob(0))
             return;
@@ -294,10 +295,10 @@ void StorageAreaSync::migrateItemTableIfNeeded()
         { },
     };
 
-    SQLiteTransaction transaction(m_database, false);
+    SQLiteTransaction transaction(m_database.get(), false);
     transaction.begin();
     for (size_t i = 0; commands[i]; ++i) {
-        if (!m_database.executeCommand(commands[i])) {
+        if (!m_database->executeCommand(commands[i])) {
             LOG_ERROR("Failed to migrate table ItemTable for local storage when executing: %s", commands[i].characters());
             transaction.rollback();
 
@@ -306,7 +307,7 @@ void StorageAreaSync::migrateItemTableIfNeeded()
             // than continually hitting this case and never being able to use the local storage.
             // if this is ever hit, it's definitely a bug.
             ASSERT_NOT_REACHED();
-            if (!m_database.executeCommand("ALTER TABLE ItemTable RENAME TO Backup_ItemTable"_s))
+            if (!m_database->executeCommand("ALTER TABLE ItemTable RENAME TO Backup_ItemTable"_s))
                 LOG_ERROR("Failed to save ItemTable after migration job failed.");
 
             return;
@@ -318,15 +319,15 @@ void StorageAreaSync::migrateItemTableIfNeeded()
 void StorageAreaSync::performImport()
 {
     ASSERT(!isMainThread());
-    ASSERT(!m_database.isOpen());
+    ASSERT(!m_database->isOpen());
 
     openDatabase(SkipIfNonExistent);
-    if (!m_database.isOpen()) {
+    if (!m_database->isOpen()) {
         markImported();
         return;
     }
 
-    auto query = m_database.prepareStatement("SELECT key, value FROM ItemTable"_s);
+    auto query = m_database->prepareStatement("SELECT key, value FROM ItemTable"_s);
     if (!query) {
         LOG_ERROR("Unable to select items from ItemTable for local storage");
         markImported();
@@ -347,7 +348,7 @@ void StorageAreaSync::performImport()
         return;
     }
 
-    m_storageArea->importItems(WTFMove(itemMap));
+    m_storageArea->importItems(WTF::move(itemMap));
 
     markImported();
 }
@@ -389,14 +390,14 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
     if (m_databaseOpenFailed)
         return;
 
-    if (!m_database.isOpen() && m_syncCloseDatabase) {
+    if (!m_database->isOpen() && m_syncCloseDatabase) {
         m_syncCloseDatabase = false;
         return;
     }
 
-    if (!m_database.isOpen())
+    if (!m_database->isOpen())
         openDatabase(CreateIfNonExistent);
-    if (!m_database.isOpen())
+    if (!m_database->isOpen())
         return;
 
     // Closing this db because it is about to be deleted by StorageTracker.
@@ -404,7 +405,7 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
     // to write new items created after the request to delete the db.
     if (m_syncCloseDatabase) {
         m_syncCloseDatabase = false;
-        m_database.close();
+        m_database->close();
         return;
     }
     
@@ -412,7 +413,7 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
 
     // If the clear flag is set, then we clear all items out before we write any new ones in.
     if (clearItems) {
-        auto clear = m_database.prepareStatement("DELETE FROM ItemTable"_s);
+        auto clear = m_database->prepareStatement("DELETE FROM ItemTable"_s);
         if (!clear) {
             LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
             return;
@@ -425,13 +426,13 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
         }
     }
 
-    auto insert = m_database.prepareStatement("INSERT INTO ItemTable VALUES (?, ?)"_s);
+    auto insert = m_database->prepareStatement("INSERT INTO ItemTable VALUES (?, ?)"_s);
     if (!insert) {
         LOG_ERROR("Failed to prepare insert statement - cannot write to local storage database");
         return;
     }
 
-    auto remove = m_database.prepareStatement("DELETE FROM ItemTable WHERE key=?"_s);
+    auto remove = m_database->prepareStatement("DELETE FROM ItemTable WHERE key=?"_s);
     if (!remove) {
         LOG_ERROR("Failed to prepare delete statement - cannot write to local storage database");
         return;
@@ -496,11 +497,11 @@ void StorageAreaSync::performSync()
 void StorageAreaSync::deleteEmptyDatabase()
 {
     ASSERT(!isMainThread());
-    if (!m_database.isOpen())
+    if (!m_database->isOpen())
         return;
 
     auto count = [&] {
-        auto query = m_database.prepareStatement("SELECT COUNT(*) FROM ItemTable"_s);
+        auto query = m_database->prepareStatement("SELECT COUNT(*) FROM ItemTable"_s);
         if (!query) {
             LOG_ERROR("Unable to count number of rows in ItemTable for local storage");
             return -1;
@@ -517,7 +518,7 @@ void StorageAreaSync::deleteEmptyDatabase()
     if (count)
         return;
 
-    m_database.close();
+    m_database->close();
     if (StorageTracker::tracker().isActive()) {
         callOnMainThread([databaseIdentifier = m_databaseIdentifier.isolatedCopy()] {
             StorageTracker::tracker().deleteOriginWithIdentifier(databaseIdentifier);

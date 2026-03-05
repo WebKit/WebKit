@@ -44,11 +44,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadTimers);
 
-inline CheckedPtr<SharedTimer> ThreadTimers::checkedSharedTimer()
-{
-    return m_sharedTimer.get();
-}
-
 // Timers are created, started and fired on the same thread, and each thread has its own ThreadTimers
 // copy to keep the heap and a set of currently firing timers.
 
@@ -89,7 +84,7 @@ void ThreadTimers::updateSharedTimer()
 
     if (m_firingTimers || m_timerHeap.isEmpty()) {
         m_pendingSharedTimerFireTime = MonotonicTime { };
-        checkedSharedTimer()->stop();
+        protect(m_sharedTimer)->stop();
     } else {
         MonotonicTime nextFireTime = m_timerHeap.first()->time;
         MonotonicTime currentMonotonicTime = MonotonicTime::now();
@@ -97,9 +92,9 @@ void ThreadTimers::updateSharedTimer()
             // No need to restart the timer if both the pending fire time and the new fire time are in the past.
             if (m_pendingSharedTimerFireTime <= currentMonotonicTime && nextFireTime <= currentMonotonicTime)
                 return;
-        } 
+        }
         m_pendingSharedTimerFireTime = nextFireTime;
-        checkedSharedTimer()->setFireInterval(std::max(nextFireTime - currentMonotonicTime, 0_s));
+        protect(m_sharedTimer)->setFireInterval(std::max(nextFireTime - currentMonotonicTime, 0_s));
     }
 }
 
@@ -118,7 +113,7 @@ void ThreadTimers::sharedTimerFiredInternal()
     auto timeToQuit = ApproximateTime::now() + maxDurationOfFiringTimers;
 
     while (!m_timerHeap.isEmpty()) {
-        Ref<ThreadTimerHeapItem> item = *m_timerHeap.first();
+        Ref item = m_timerHeap.first();
         ASSERT(item->hasTimer());
         if (!item->hasTimer()) {
             TimerBase::heapDeleteNullMin(m_timerHeap);

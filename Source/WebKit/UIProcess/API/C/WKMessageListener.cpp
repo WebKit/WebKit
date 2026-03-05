@@ -38,5 +38,5 @@ WKTypeID WKMessageListenerGetTypeID()
 
 void WKMessageListenerSendReply(WKMessageListenerRef listenerRef, WKTypeRef value)
 {
-    toProtectedImpl(listenerRef)->sendReply(toImpl(value));
+    protect(toImpl(listenerRef))->sendReply(toImpl(value));
 }

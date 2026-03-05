@@ -37,6 +37,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
+#include "StyleZoomPrimitivesInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -99,7 +100,7 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
 
     // Update layout before processing form actions in case the style changes
     // the Form or button relationships.
-    element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(element->document())->updateLayoutIgnorePendingStylesheets();
 
     if (RefPtr currentForm = element->form())
         currentForm->submitIfPossible(&event, element.ptr()); // Event handlers can run.
@@ -111,7 +112,7 @@ RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderImage>(RenderObject::Type::Image, *protectedElement(), WTFMove(style));
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderImage>(RenderObject::Type::Image, *protect(element()), WTF::move(style));
 }
 
 void ImageInputType::attributeChanged(const QualifiedName& name)
@@ -124,7 +125,7 @@ void ImageInputType::attributeChanged(const QualifiedName& name)
     } else if (name == srcAttr) {
         if (RefPtr element = this->element()) {
             if (element->renderer())
-                element->ensureProtectedImageLoader()->updateFromElementIgnoringPreviousError();
+                protect(element->ensureImageLoader())->updateFromElementIgnoringPreviousError();
         }
     }
     BaseButtonInputType::attributeChanged(name);
@@ -135,7 +136,7 @@ void ImageInputType::attach()
     BaseButtonInputType::attach();
 
     ASSERT(element());
-    Ref imageLoader = protectedElement()->ensureImageLoader();
+    Ref imageLoader = protect(element())->ensureImageLoader();
     imageLoader->updateFromElement();
 
     CheckedPtr renderer = downcast<RenderImage>(element()->renderer());
@@ -146,7 +147,7 @@ void ImageInputType::attach()
         return;
 
     CheckedRef imageResource = renderer->imageResource();
-    imageResource->setCachedImage(imageLoader->protectedImage());
+    imageResource->setCachedImage(protect(imageLoader->image()));
 
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.
@@ -174,18 +175,18 @@ unsigned ImageInputType::height() const
     ASSERT(element());
     Ref element = *this->element();
 
-    element->protectedDocument()->updateLayout({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
+    protect(element->document())->updateLayout({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
 
     CheckedPtr renderer = element->renderer();
     if (renderer)
-        return adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentBoxHeight(), *renderer);
+        return Style::adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentBoxHeight(), *renderer);
 
     // Check the attribute first for an explicit pixel value.
     if (auto optionalHeight = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(heightAttr)))
         return optionalHeight.value();
 
     // If the image is available, use its height.
-    CheckedPtr imageLoader = element->imageLoader();
+    RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image())
         return imageLoader->image()->imageSizeForRenderer(renderer.get(), 1).height().toUnsigned();
 
@@ -197,18 +198,18 @@ unsigned ImageInputType::width() const
     ASSERT(element());
     Ref element = *this->element();
 
-    element->protectedDocument()->updateLayout({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
+    protect(element->document())->updateLayout({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
 
     CheckedPtr renderer = element->renderer();
     if (renderer)
-        return adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentBoxWidth(), *renderer);
+        return Style::adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentBoxWidth(), *renderer);
 
     // Check the attribute first for an explicit pixel value.
     if (auto optionalWidth = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(widthAttr)))
         return optionalWidth.value();
 
     // If the image is available, use its width.
-    CheckedPtr imageLoader = element->imageLoader();
+    RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image())
         return imageLoader->image()->imageSizeForRenderer(renderer.get(), 1).width().toUnsigned();
 

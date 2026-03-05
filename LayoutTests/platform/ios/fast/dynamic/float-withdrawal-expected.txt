@@ -4,24 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 54x19
+        RenderText {#text} at (0,0) size 54x20
           text run at (0,0) width 54: "Test for "
-        RenderInline {I} at (53,0) size 589x19
-          RenderInline {A} at (53,0) size 305x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 305x19
+        RenderInline {I} at (53,0) size 589x20
+          RenderInline {A} at (53,0) size 305x20 [color=#0000EE]
+            RenderText {#text} at (53,0) size 305x20
               text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=12886"
-          RenderText {#text} at (357,0) size 285x19
+          RenderText {#text} at (357,0) size 285x20
             text run at (357,0) width 5: " "
             text run at (361,0) width 281: "Crash with Scriptalicious javascript library"
-        RenderText {#text} at (641,0) size 5x19
+        RenderText {#text} at (641,0) size 5x20
           text run at (641,0) width 5: "."
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 300x19
+        RenderText {#text} at (0,0) size 300x20
           text run at (0,0) width 300: "You should see two purple 100\x{D7}50 rectangles, "
-        RenderInline {EM} at (299,0) size 22x19
-          RenderText {#text} at (299,0) size 22x19
+        RenderInline {EM} at (299,0) size 22x20
+          RenderText {#text} at (299,0) size 22x20
             text run at (299,0) width 22: "not"
-        RenderText {#text} at (320,0) size 154x19
+        RenderText {#text} at (320,0) size 154x20
           text run at (320,0) width 154: " a checkerboard pattern."
       RenderTable {TABLE} at (0,72) size 100x300
         RenderTableSection {TBODY} at (0,0) size 100x300

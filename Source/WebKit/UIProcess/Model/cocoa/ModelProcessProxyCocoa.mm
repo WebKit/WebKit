@@ -79,7 +79,7 @@ void ModelProcessProxy::requestSharedSimulationConnection(WebCore::ProcessIdenti
     }
 
     RELEASE_LOG(ModelElement, "%p - ModelProcessProxy: Requesting shared simulation connection for model process with audit token for pid=%d", this, processID());
-    GPUProcessProxy::getOrCreate()->requestSharedSimulationConnection(process.auditToken, WTFMove(completionHandler));
+    GPUProcessProxy::getOrCreate()->requestSharedSimulationConnection(process.auditToken, WTF::move(completionHandler));
 }
 
 }

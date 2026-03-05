@@ -26,13 +26,13 @@
 #include "api/data_channel_interface.h"
 #include "api/dtls_transport_interface.h"
 #include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/priority.h"
 #include "api/rtc_error.h"
 #include "api/sctp_transport_interface.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/transport/data_channel_transport_interface.h"
-#include "media/sctp/sctp_transport_internal.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
@@ -200,21 +200,8 @@ bool DcSctpTransport::Start(const SctpOptions& options) {
                     << ", max_message_size=" << options.max_message_size << ")";
 
   if (!socket_) {
-    dcsctp::DcSctpOptions dcsctp_options;
-    dcsctp_options.local_port = options.local_port;
-    dcsctp_options.remote_port = options.remote_port;
-    dcsctp_options.max_message_size = options.max_message_size;
-    dcsctp_options.max_timer_backoff_duration = kMaxTimerBackoffDuration;
-    // Don't close the connection automatically on too many retransmissions.
-    dcsctp_options.max_retransmissions = std::nullopt;
-    dcsctp_options.max_init_retransmits = std::nullopt;
-    dcsctp_options.per_stream_send_queue_limit =
-        DataChannelInterface::MaxSendQueueSize();
-    // This is just set to avoid denial-of-service. Practically unlimited.
-    dcsctp_options.max_send_buffer_size = std::numeric_limits<size_t>::max();
-    dcsctp_options.enable_message_interleaving =
-        env_.field_trials().IsEnabled("WebRTC-DataChannelMessageInterleaving");
-
+    dcsctp::DcSctpOptions dcsctp_options =
+        CreateDcSctpOptions(options, env_.field_trials());
     std::unique_ptr<dcsctp::PacketObserver> packet_observer;
     if (RTC_LOG_CHECK_LEVEL(LS_VERBOSE)) {
       packet_observer =
@@ -662,8 +649,11 @@ void DcSctpTransport::ConnectTransportSignals() {
   if (!transport_) {
     return;
   }
-  transport_->SignalWritableState.connect(
-      this, &DcSctpTransport::OnTransportWritableState);
+  transport_->SubscribeWritableState(
+      this, [this](PacketTransportInternal* transport) {
+        OnTransportWritableState(transport);
+      });
+
   transport_->RegisterReceivedPacketCallback(
       this,
       [&](PacketTransportInternal* transport, const ReceivedIpPacket& packet) {
@@ -687,7 +677,7 @@ void DcSctpTransport::DisconnectTransportSignals() {
   if (!transport_) {
     return;
   }
-  transport_->SignalWritableState.disconnect(this);
+  transport_->UnsubscribeWritableState(this);
   transport_->DeregisterReceivedPacketCallback(this);
   transport_->SetOnCloseCallback(nullptr);
   transport_->UnsubscribeDtlsTransportState(this);
@@ -750,4 +740,36 @@ void DcSctpTransport::MaybeConnectSocket() {
     socket_->Connect();
   }
 }
+
+dcsctp::DcSctpOptions DcSctpTransport::CreateDcSctpOptions(
+    const SctpOptions& options,
+    const FieldTrialsView& field_trials) {
+  dcsctp::DcSctpOptions dcsctp_options;
+  dcsctp_options.local_port = options.local_port;
+  dcsctp_options.remote_port = options.remote_port;
+  dcsctp_options.max_message_size = options.max_message_size;
+  dcsctp_options.max_timer_backoff_duration = kMaxTimerBackoffDuration;
+  // Don't close the connection automatically on too many retransmissions.
+  dcsctp_options.max_retransmissions = std::nullopt;
+  dcsctp_options.max_init_retransmits = std::nullopt;
+  dcsctp_options.per_stream_send_queue_limit =
+      DataChannelInterface::MaxSendQueueSize();
+  // This is just set to avoid denial-of-service. Practically unlimited.
+  dcsctp_options.max_send_buffer_size = std::numeric_limits<size_t>::max();
+  dcsctp_options.enable_message_interleaving =
+      field_trials.IsEnabled("WebRTC-DataChannelMessageInterleaving");
+
+  return dcsctp_options;
+}
+
+std::vector<uint8_t> DcSctpTransport::GenerateConnectionToken(
+    const Environment& env) {
+  RTC_DCHECK(env.field_trials().IsEnabled("WebRTC-Sctp-Snap"))
+      << "Only implemented under field trial.";
+  // Example connection token.
+  return {0x01, 0x00, 0x00, 0x1e, 0x89, 0x6c, 0xdd, 0x1d, 0x00, 0x50,
+          0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xe0, 0x79, 0x65, 0x1d,
+          0xc0, 0x00, 0x00, 0x04, 0x80, 0x08, 0x00, 0x06, 0x82, 0xc0};
+}
+
 }  // namespace webrtc

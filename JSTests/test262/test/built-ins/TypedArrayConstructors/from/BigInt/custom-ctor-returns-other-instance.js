@@ -18,11 +18,11 @@ info: |
   10. Let len be ? ToLength(? Get(arrayLike, "length")).
   11. Let targetObj be ? TypedArrayCreate(C, « len »).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.iterator, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sourceItor = [1n, 2n];
   var sourceObj = {
     0: 0n,
@@ -31,7 +31,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   };
 
   var result;
-  var custom = new TA(2);
+  var custom = new TA(makeCtorArg(2));
   var ctor = function() {
     return custom;
   };
@@ -42,7 +42,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   result = TypedArray.from.call(ctor, sourceObj);
   assert.sameValue(result, custom, "not using iterator, same length");
 
-  custom = new TA(3);
+  custom = new TA(makeCtorArg(3));
 
   result = TypedArray.from.call(ctor, sourceItor);
   assert.sameValue(result, custom, "using iterator, higher length");

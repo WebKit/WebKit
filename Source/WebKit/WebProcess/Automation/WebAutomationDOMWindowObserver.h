@@ -38,7 +38,7 @@ class WebAutomationDOMWindowObserver final : public RefCounted<WebAutomationDOMW
 public:
     static Ref<WebAutomationDOMWindowObserver> create(WebCore::LocalDOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
     {
-        return adoptRef(*new WebAutomationDOMWindowObserver(window, WTFMove(callback)));
+        return adoptRef(*new WebAutomationDOMWindowObserver(window, WTF::move(callback)));
     }
 
     ~WebAutomationDOMWindowObserver();

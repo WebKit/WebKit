@@ -106,7 +106,7 @@ public:
     bool add(CachedResource&);
     void remove(CachedResource&);
 
-    static bool shouldRemoveFragmentIdentifier(const URL&);
+    static bool NODELETE shouldRemoveFragmentIdentifier(const URL&);
     WEBCORE_EXPORT static URL removeFragmentIdentifierIfNeeded(const URL&);
 
     void revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse&);
@@ -143,7 +143,7 @@ public:
     void removeFromLRUList(CachedResource&);
 
     // Called to adjust the cache totals when a resource changes size.
-    void adjustSize(bool live, long long delta);
+    void NODELETE adjustSize(bool live, long long delta);
 
     // Track decoded resources that are in the cache and referenced by a Web page.
     void insertInLiveDecodedResourcesList(CachedResource&);
@@ -161,13 +161,13 @@ public:
     void resourceAccessed(CachedResource&);
     bool inLiveDecodedResourcesList(CachedResource&) const;
 
-    using SecurityOriginSet = HashSet<RefPtr<SecurityOrigin>>;
+    using SecurityOriginSet = HashSet<Ref<SecurityOrigin>>;
     WEBCORE_EXPORT void removeResourcesWithOrigin(const SecurityOrigin&);
     void removeResourcesWithOrigin(const SecurityOrigin&, const String& cachePartition);
     WEBCORE_EXPORT void removeResourcesWithOrigin(const ClientOrigin&);
-    WEBCORE_EXPORT void removeResourcesWithOrigins(PAL::SessionID, const HashSet<RefPtr<SecurityOrigin>>&);
+    WEBCORE_EXPORT void removeResourcesWithOrigins(PAL::SessionID, const HashSet<Ref<SecurityOrigin>>&);
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
-    WEBCORE_EXPORT HashSet<RefPtr<SecurityOrigin>> originsWithCache(PAL::SessionID) const;
+    WEBCORE_EXPORT HashSet<Ref<SecurityOrigin>> originsWithCache(PAL::SessionID) const;
 
     // pruneDead*() - Flush decoded and encoded data from resources not referenced by Web pages.
     // pruneLive*() - Flush decoded data from resources still referenced by Web pages.
@@ -191,7 +191,7 @@ private:
 
     unsigned liveCapacity() const;
     unsigned deadCapacity() const;
-    bool needsPruning() const;
+    bool NODELETE needsPruning() const;
 
     CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
 

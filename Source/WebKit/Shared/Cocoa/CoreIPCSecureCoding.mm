@@ -76,7 +76,7 @@ void applyProcessCreationParameters(AuxiliaryProcessCreationParameters&& paramet
     RELEASE_ASSERT(!exemptClassNames);
 
     if (parameters.classNamesExemptFromSecureCodingCrash)
-        *exemptClassNames = WTFMove(*parameters.classNamesExemptFromSecureCodingCrash);
+        *exemptClassNames = WTF::move(*parameters.classNamesExemptFromSecureCodingCrash);
 }
 
 } // namespace SecureCoding

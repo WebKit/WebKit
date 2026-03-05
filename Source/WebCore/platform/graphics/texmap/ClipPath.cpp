@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipPath);
 
 ClipPath::ClipPath(Vector<FloatPoint>&& vertices, unsigned bufferID, unsigned bufferOffsetInBytes)
-    : m_vertices(WTFMove(vertices))
+    : m_vertices(WTF::move(vertices))
     , m_bufferID(bufferID)
     , m_bufferOffsetInBytes(bufferOffsetInBytes)
 {

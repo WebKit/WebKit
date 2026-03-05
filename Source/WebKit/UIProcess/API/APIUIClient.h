@@ -30,7 +30,6 @@
 #include "WKPage.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
-#include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/ModalContainerTypes.h>
 #include <WebCore/PermissionState.h>
@@ -159,7 +158,6 @@ public:
     virtual void decidePolicyForScreenCaptureUnmuting(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, SecurityOrigin&, SecurityOrigin&, CompletionHandler<void(bool isAllowed)>&& completionHandler) { completionHandler(false); }
     virtual void decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy&, SecurityOrigin&, CompletionHandler<void(bool allowed)>&& completionHandler) { completionHandler(false); }
     virtual void requestStorageAccessConfirm(WebKit::WebPageProxy&, WebKit::WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
-    virtual void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&& completionHandler) { completionHandler(WebCore::CookieConsentDecisionResult::NotSupported); }
     virtual void addMessageToConsoleForTesting(WebKit::WebPageProxy&, WTF::String&&) { }
 
     // Printing.
@@ -260,6 +258,10 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void didEnterStandby(WebKit::WebPageProxy&) { }
     virtual void didExitStandby(WebKit::WebPageProxy&) { }
+#endif
+
+#if PLATFORM(VISION)
+    virtual void willPresentModalUI(WebKit::WebPageProxy&) { }
 #endif
 };
 

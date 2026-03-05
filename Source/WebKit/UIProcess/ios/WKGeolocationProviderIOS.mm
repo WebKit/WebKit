@@ -31,9 +31,11 @@
 #import "APIFrameInfo.h"
 #import "APISecurityOrigin.h"
 #import "CompletionHandlerCallChecker.h"
+#import "WKAPICast.h"
 #import "WKFrameInfoInternal.h"
 #import "WKGeolocationManager.h"
 #import "WKProcessPoolInternal.h"
+#import "WKSharedAPICast.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebGeolocationPolicyDecider.h"
 #import "WKWebViewInternal.h"
@@ -107,7 +109,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     // If we have the last position, it is from the initialization or warm up. It is the last known
     // good position so we can return it directly.
     if (_lastActivePosition)
-        _geolocationManager->providerDidChangePosition(_lastActivePosition.get());
+        protect(_geolocationManager)->providerDidChangePosition(_lastActivePosition.get());
 }
 
 - (void)_stopUpdating
@@ -141,7 +143,8 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     // This is useful for WebKitTestRunner to provide a dummy geolocation provider. It is also used by certain apps to deny all
     // geolocation authorization as a way to disable support for geolocation.
     Ref protectedProcessPool { processPool };
-    if (wrapper(protectedProcessPool.get())._coreLocationProvider) {
+    RetainPtr wrappedProcessPool = wrapper(protectedProcessPool.get());
+    if (wrappedProcessPool.get()._coreLocationProvider) {
         _geolocationManager = protectedProcessPool->supplement<WebKit::WebGeolocationManagerProxy>();
         WKGeolocationProviderV1 providerCallback = {
             { 1, self },
@@ -150,7 +153,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
             setEnableHighAccuracy
         };
         WKGeolocationManagerSetProvider(toAPI(_geolocationManager.get()), &providerCallback.base);
-        _coreLocationProvider = wrapper(protectedProcessPool.get())._coreLocationProvider;
+        _coreLocationProvider = wrappedProcessPool.get()._coreLocationProvider;
         [_coreLocationProvider setListener:self];
     }
     return self;
@@ -159,8 +162,8 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 - (void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
 {
     WebCore::RegistrableDomain registrableDomain(frameInfo.securityOrigin);
-    GeolocationRequestData geolocationRequestData { [contentView URL], WTFMove(frameInfo), WTFMove(completionHandler), contentView };
-    _requestsWaitingForCoreLocationAuthorization.append(WTFMove(geolocationRequestData));
+    GeolocationRequestData geolocationRequestData { [contentView URL], WTF::move(frameInfo), WTF::move(completionHandler), contentView };
+    _requestsWaitingForCoreLocationAuthorization.append(WTF::move(geolocationRequestData));
     if (_coreLocationProvider) {
         // Step 1: ask the user if the app can use Geolocation.
         [_coreLocationProvider requestGeolocationAuthorization];
@@ -187,16 +190,16 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
         return;
 
     auto request = _requestsWaitingForCoreLocationAuthorization.takeFirst();
-    Function<void(bool)> decisionHandler = [completionHandler = WTFMove(request.completionHandler), protectedSelf = retainPtr(self)](bool result) {
+    Function<void(bool)> decisionHandler = [completionHandler = WTF::move(request.completionHandler), protectedSelf = retainPtr(self)](bool result) {
         completionHandler(result);
         [protectedSelf geolocationAuthorizationGranted];
     };
 
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([request.view UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:)]) {
-        RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(request.frameInfo)));
+        RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTF::move(request.frameInfo)));
         auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:));
-        [uiDelegate _webView:request.view.get() requestGeolocationAuthorizationForURL:request.url.createNSURL().get() frame:frameInfo.get() decisionHandler:makeBlockPtr([decisionHandler = WTFMove(decisionHandler), checker = WTFMove(checker)](BOOL authorized) {
+        [uiDelegate _webView:request.view.get() requestGeolocationAuthorizationForURL:request.url.createNSURL().get() frame:frameInfo.get() decisionHandler:makeBlockPtr([decisionHandler = WTF::move(decisionHandler), checker = WTF::move(checker)](BOOL authorized) {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -205,13 +208,13 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
         return;
     }
 
-    auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTFMove(decisionHandler)]);
+    auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTF::move(decisionHandler)]);
     [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(request.url) requestingURL:request.url.createNSURL().get() view:request.view.get() listener:policyListener.get()];
 }
 
 - (void)geolocationAuthorizationDenied
 {
-    auto requests = WTFMove(_requestsWaitingForCoreLocationAuthorization);
+    auto requests = WTF::move(_requestsWaitingForCoreLocationAuthorization);
     for (const auto& requestData : requests)
         requestData.completionHandler(false);
 }
@@ -219,17 +222,17 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 - (void)positionChanged:(_WKGeolocationPosition *)position
 {
     _lastActivePosition = position->_geolocationPosition.get();
-    _geolocationManager->providerDidChangePosition(_lastActivePosition.get());
+    protect(_geolocationManager)->providerDidChangePosition(_lastActivePosition.get());
 }
 
 - (void)errorOccurred:(NSString *)errorMessage
 {
-    _geolocationManager->providerDidFailToDeterminePosition(errorMessage);
+    protect(_geolocationManager)->providerDidFailToDeterminePosition(errorMessage);
 }
 
 - (void)resetGeolocation
 {
-    _geolocationManager->resetPermissions();
+    protect(_geolocationManager)->resetPermissions();
 }
 
 @end
@@ -245,7 +248,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     if (!self)
         return nil;
 
-    _completionHandler = WTFMove(completionHandler);
+    _completionHandler = WTF::move(completionHandler);
     return self;
 }
 

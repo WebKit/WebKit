@@ -30,13 +30,9 @@ SCRIPT_DIR=$(dirname "$0")
 LIBVPX_SOURCE_DIR=$(cd ${SCRIPT_DIR}/../..; pwd)
 LIPO=$(xcrun -sdk iphoneos${SDK} -find lipo)
 ORIG_PWD="$(pwd)"
-ARM_TARGETS="arm64-darwin-gcc
-             armv7-darwin-gcc
-             armv7s-darwin-gcc"
-SIM_TARGETS="x86-iphonesimulator-gcc
-             x86_64-iphonesimulator-gcc"
-OSX_TARGETS="x86-darwin16-gcc
-             x86_64-darwin16-gcc"
+ARM_TARGETS="arm64-darwin-gcc"
+SIM_TARGETS="x86_64-iphonesimulator-gcc"
+OSX_TARGETS="x86_64-darwin16-gcc"
 TARGETS="${ARM_TARGETS} ${SIM_TARGETS}"
 
 # Configures for the target specified by $1, and invokes make with the dist

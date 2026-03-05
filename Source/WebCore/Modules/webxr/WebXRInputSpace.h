@@ -36,9 +36,9 @@
 namespace WebCore {
 
 class WebXRInputSpace : public RefCounted<WebXRInputSpace>, public WebXRSpace {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRInputSpace);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRInputSpace);
 public:
-    static Ref<WebXRInputSpace> create(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&);
+    static Ref<WebXRInputSpace> create(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&, PlatformXR::InputSourceHandle);
     virtual ~WebXRInputSpace();
 
     // ContextDestructionObserver.
@@ -48,16 +48,27 @@ public:
     std::optional<bool> isPositionEmulated() const final { return m_pose.isPositionEmulated; }
     void setPose(const PlatformXR::FrameData::InputSourcePose& pose) { m_pose = pose; }
 
+#if ENABLE(WEBXR_HIT_TEST)
+    void setType(PlatformXR::InputSourceSpaceType type) { m_type = type; }
+#endif
+
 private:
-    WebXRInputSpace(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&);
+    WebXRInputSpace(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&, PlatformXR::InputSourceHandle);
     WebXRSession* session() const final { return m_session.get(); }
     std::optional<TransformationMatrix> nativeOrigin() const final;
+#if ENABLE(WEBXR_HIT_TEST)
+    std::optional<PlatformXR::NativeOriginInformation> nativeOriginInformation() const final;
+#endif
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     WeakPtr<WebXRSession> m_session;
     PlatformXR::FrameData::InputSourcePose m_pose;
+    [[maybe_unused]] PlatformXR::InputSourceHandle m_handle;
+#if ENABLE(WEBXR_HIT_TEST)
+    PlatformXR::InputSourceSpaceType m_type { PlatformXR::InputSourceSpaceType::TargetRay };
+#endif
 };
 
 } // namespace WebCore

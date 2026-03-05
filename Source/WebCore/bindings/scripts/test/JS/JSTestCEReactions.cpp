@@ -155,7 +155,7 @@ void JSTestCEReactionsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestCEReactions::s_info = { "TestCEReactions"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactions) };
 
 JSTestCEReactions::JSTestCEReactions(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCEReactions>&& impl)
-    : JSDOMWrapper<TestCEReactions>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestCEReactions>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -467,7 +467,7 @@ void JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCEReactions = static_cast<JSTestCEReactions*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestCEReactions->protectedWrapped().ptr(), jsTestCEReactions);
+    uncacheWrapper(world, protect(jsTestCEReactions->wrapped()).ptr(), jsTestCEReactions);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -505,7 +505,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestCEReactions>(impl.ptr());
 #endif
-    return createWrapper<TestCEReactions>(globalObject, WTFMove(impl));
+    return createWrapper<TestCEReactions>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestCEReactions& impl)

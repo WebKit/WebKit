@@ -89,7 +89,7 @@ void ResourceUsageThread::waitUntilObservers()
 
 void ResourceUsageThread::notifyObservers(ResourceUsageData&& data)
 {
-    callOnMainThread([data = WTFMove(data)]() mutable {
+    callOnMainThread([data = WTF::move(data)]() mutable {
         Vector<std::pair<ResourceUsageCollectionMode, std::function<void (const ResourceUsageData&)>>> pairs;
 
         {
@@ -140,7 +140,7 @@ void ResourceUsageThread::createThreadIfNeeded()
         if (mode & Memory)
             platformCollectMemoryData(m_vm, data);
 
-        notifyObservers(WTFMove(data));
+        notifyObservers(WTF::move(data));
 
         // NOTE: Web Inspector expects this interval to be 500ms (CPU / Memory timelines),
         // so if this interval changes Web Inspector may need to change.

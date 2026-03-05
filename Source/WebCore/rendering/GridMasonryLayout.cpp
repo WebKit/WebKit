@@ -28,9 +28,9 @@
 #include "GridLayoutFunctions.h"
 #include "RenderBoxInlines.h"
 #include "RenderGrid.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "StyleFlowTolerance.h"
 #include "StyleGridPositionsResolver.h"
-#include "StyleItemTolerance.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WritingMode.h"
 
@@ -43,6 +43,7 @@ void GridMasonryLayout::initializeMasonry(unsigned gridAxisTracks, Style::GridTr
     m_masonryAxisGridGap = m_renderGrid->gridGap(m_masonryAxisDirection);
     m_gridAxisTracksCount = gridAxisTracks;
     m_gridContentSize = 0;
+    m_itemOffsets.clear();
 
     m_renderGrid->currentGrid().setupGridForMasonryLayout();
     m_renderGrid->populateExplicitGridAndOrderIterator();
@@ -109,13 +110,25 @@ LayoutUnit GridMasonryLayout::calculateMasonryIntrinsicLogicalWidth(RenderBox& g
     return { };
 }
 
-void GridMasonryLayout::setItemGridAxisContainingBlockToGridArea(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem)
+void GridMasonryLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem)
 {
-    if (auto direction = gridAxisDirection(); direction == Style::GridTrackSizingDirection::Columns)
+    CheckedPtr<RenderGrid> containingBlock = dynamicDowncast<RenderGrid>(gridItem.containingBlock());
+    if (!containingBlock) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // FIXME: We need to set both axes here because RenderGrid sets and expects them all over the place.
+    // Ideally we untangle all that and only set the grid axis that we need. webkit.org/b/305136
+    auto direction = gridAxisDirection();
+    if (direction == Style::GridTrackSizingDirection::Columns) {
         gridItem.setGridAreaContentLogicalWidth(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
-    else
+        gridItem.setGridAreaContentLogicalHeight(containingBlock->availableLogicalHeightForContentBox());
+    } else {
         gridItem.setGridAreaContentLogicalHeight(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
-    
+        gridItem.setGridAreaContentLogicalWidth(containingBlock->contentBoxLogicalWidth());
+    }
+
     // FIXME(249230): Try to cache masonry layout sizes
     gridItem.setChildNeedsLayout(MarkOnlyThis);
 }
@@ -144,7 +157,7 @@ void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorit
         gridItem.setOverridingBorderBoxLogicalWidth(calculateMasonryIntrinsicLogicalWidth(gridItem, layoutPhase));
 
     m_renderGrid->currentGrid().insert(gridItem, area);
-    setItemGridAxisContainingBlockToGridArea(algorithm, gridItem);
+    setItemContainingBlockToGridArea(algorithm, gridItem);
     gridItem.layoutIfNeeded();
     updateRunningPositions(gridItem, area);
     m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % m_gridAxisTracksCount;
@@ -182,7 +195,7 @@ void GridMasonryLayout::updateRunningPositions(const RenderBox& gridItem, const 
     m_gridContentSize = std::max(m_gridContentSize, newRunningPosition - m_masonryAxisGridGap);
 
     for (auto span : gridAxisSpan)
-        m_runningPositions[span] = std::max(m_runningPositions[span], newRunningPosition);
+        m_runningPositions[span] = newRunningPosition;
 
     updateItemOffset(gridItem, previousRunningPosition);
 }
@@ -206,8 +219,8 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
     auto itemSpanLength = Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection());
     auto gridAxisLines = m_gridAxisTracksCount + 1;
 
-    // Get item-tolerance from the masonry container's style
-    const auto& tolerance = m_renderGrid->style().itemTolerance();
+    // Get flow-tolerance from the masonry container's style
+    const auto& tolerance = m_renderGrid->style().flowTolerance();
 
     if (tolerance.isInfinite()) {
         // Infinite tolerance: place items strictly in order without considering track lengths
@@ -231,15 +244,15 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
     LayoutUnit toleranceValue = tolerance.switchOn(
         [&](const CSS::Keyword::Normal&) -> LayoutUnit {
             // Normal resolves to 1em
-            return LayoutUnit { m_renderGrid->checkedStyle()->computedFontSize() };
+            return LayoutUnit { protect(m_renderGrid->style())->computedFontSize() };
         },
-        [&](const typename Style::ItemTolerance::Fixed& fixed) -> LayoutUnit {
+        [&](const typename Style::FlowTolerance::Fixed& fixed) -> LayoutUnit {
             return LayoutUnit { fixed.resolveZoom(m_renderGrid->style().usedZoomForLength()) };
         },
-        [&](const typename Style::ItemTolerance::Percentage& percentage) -> LayoutUnit {
+        [&](const typename Style::FlowTolerance::Percentage& percentage) -> LayoutUnit {
             return Style::evaluate<LayoutUnit>(percentage, contentBoxSize);
         },
-        [&](const typename Style::ItemTolerance::Calc& calc) -> LayoutUnit {
+        [&](const typename Style::FlowTolerance::Calc& calc) -> LayoutUnit {
             return Style::evaluate<LayoutUnit>(calc, contentBoxSize, m_renderGrid->style().usedZoomForLength());
         },
         [](const CSS::Keyword::Infinite&) -> LayoutUnit {
@@ -255,11 +268,11 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
     for (unsigned i = 0; i < maxStartingLine; i++)
         absoluteShortest = std::min(absoluteShortest, maxRunningPositionForSpan(i, itemSpanLength));
 
-    // Step 2: Find first position within tolerance of shortest
+    // Step 2: Find first position within tolerance of shortest, starting from the cursor position.
     unsigned smallestMaxPosLine = 0;
+    auto autoFlowNextCursorShift = (m_autoFlowNextCursor > maxStartingLine) ? 0 : m_autoFlowNextCursor;
     for (unsigned i = 0; i < maxStartingLine; i++) {
-        // Start from cursor position and wrap around
-        auto startingLine = (m_autoFlowNextCursor + i) % maxStartingLine;
+        auto startingLine = (autoFlowNextCursorShift + i) % maxStartingLine;
 
         auto maxPosForCurrentStartingLine = maxRunningPositionForSpan(startingLine, itemSpanLength);
 

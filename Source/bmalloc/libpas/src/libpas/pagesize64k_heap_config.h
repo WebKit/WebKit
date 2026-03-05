@@ -67,7 +67,8 @@ PAS_API void pagesize64k_heap_config_activate(void);
     .use_small_bitfit = true, \
     .small_bitfit_min_align_shift = PAGESIZE64K_MINALIGN_SHIFT, \
     .small_bitfit_page_size = PAGESIZE64K_SMALL_PAGE_SIZE, \
-    .medium_page_size = PAGESIZE64K_MEDIUM_PAGE_SIZE, \
+    .medium_segregated_page_size = PAGESIZE64K_MEDIUM_PAGE_SIZE, \
+    .medium_bitfit_page_size = PAS_MEDIUM_BITFIT_PAGE_DEFAULT_SIZE, \
     .granule_size = PAS_GRANULE_DEFAULT_SIZE, \
     .use_medium_segregated = true, \
     .medium_segregated_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
@@ -79,7 +80,8 @@ PAS_API void pagesize64k_heap_config_activate(void);
     .use_medium_bitfit = true, \
     .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .use_marge_bitfit = false, \
-    .pgm_enabled = false)
+    .pgm_enabled = false, \
+    .delegate_large_user_allocations = true)
 
 PAS_API extern const pas_heap_config pagesize64k_heap_config;
 

@@ -1,0 +1,10 @@
+This tests that webkitTrustedOnly getter is not called during addEventListener
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS webkitTrustedOnlyGetterWasCalled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

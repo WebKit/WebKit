@@ -52,32 +52,25 @@ namespace WebKit {
 
 class JavaScriptEvaluationResult::JSExtractor {
 public:
-    Map takeMap() { return WTFMove(m_map); }
-    std::optional<JSObjectID> addObjectToMap(JSGlobalContextRef, JSValueRef);
+    Map takeMap() { return WTF::move(m_map); }
+    std::optional<JSObjectID> addObjectToMap(JSGlobalContextRef, JSValueRef, size_t nestingLevel);
+    bool processContainersWithoutRecursion(JSGlobalContextRef);
 
 private:
-    void extractJSValue(JSGlobalContextRef, JSValueRef);
-
-    struct UnsupportedTypeTag { };
-    struct PendingCollectionTag { };
-    using ExtractionResult = Variant <
-        Value,
-        UnsupportedTypeTag,
-        PendingCollectionTag
-    >;
-
-    ExtractionResult jsValueToExtractedValue(JSGlobalContextRef, JSValueRef);
+    std::optional<Value> jsValueToExtractedValue(JSGlobalContextRef, JSValueRef);
 
     Map m_map;
     HashMap<Protected<JSValueRef>, JSObjectID> m_valuesInMap;
 
     static constexpr size_t maximumNestingLevel { 40000 };
-    size_t m_currentNestingLevel { 0 };
 
-    Vector<Protected<JSValueRef>> m_futureJSValuesToExtract;
-    Vector<Protected<JSValueRef>> m_currentJSValuesToExtract;
-    HashMap<Protected<JSValueRef>, Vector<Protected<JSValueRef>>> m_jsArraysToExtract;
-    HashMap<Protected<JSValueRef>, HashMap<Protected<JSValueRef>, Protected<JSValueRef>>> m_jsObjectsToExtract;
+    struct PendingContainer {
+        JSObjectID objectIdentifier;
+        Protected<JSValueRef> containerValue;
+        size_t nestingLevel { 0 };
+        enum class ContainerType : bool { Array, Dictionary } containerType;
+    };
+    Vector<PendingContainer> m_unprocessedContainers;
 };
 
 class JavaScriptEvaluationResult::JSInserter {
@@ -85,8 +78,8 @@ public:
     using Dictionaries = Vector<std::pair<ObjectMap, Protected<JSObjectRef>>>;
     using Arrays = Vector<std::pair<Vector<JSObjectID>, Protected<JSValueRef>>>;
     JSValueRef toJS(JSGlobalContextRef, Value&&);
-    Dictionaries takeDictionaries() { return WTFMove(m_dictionaries); }
-    Arrays takeArrays() { return WTFMove(m_arrays); }
+    Dictionaries takeDictionaries() { return WTF::move(m_dictionaries); }
+    Arrays takeArrays() { return WTF::move(m_arrays); }
 private:
     Dictionaries m_dictionaries;
     Arrays m_arrays;
@@ -94,7 +87,7 @@ private:
 
 class JavaScriptEvaluationResult::APIExtractor {
 public:
-    Map takeMap() { return WTFMove(m_map); }
+    Map takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(API::Object&);
 private:
     Value toValue(API::Object&);
@@ -108,20 +101,20 @@ public:
     using Dictionaries = Vector<std::pair<ObjectMap, Ref<API::Dictionary>>>;
     using Arrays = Vector<std::pair<Vector<JSObjectID>, Ref<API::Array>>>;
     RefPtr<API::Object> toAPI(Value&&);
-    Dictionaries takeDictionaries() { return WTFMove(m_dictionaries); }
-    Arrays takeArrays() { return WTFMove(m_arrays); }
+    Dictionaries takeDictionaries() { return WTF::move(m_dictionaries); }
+    Arrays takeArrays() { return WTF::move(m_arrays); }
 private:
     Dictionaries m_dictionaries;
     Arrays m_arrays;
 };
 
 JavaScriptEvaluationResult::JavaScriptEvaluationResult(JSObjectID root, Map&& map)
-    : m_map(WTFMove(map))
+    : m_map(WTF::move(map))
     , m_root(root) { }
 
 RefPtr<API::Object> JavaScriptEvaluationResult::APIInserter::toAPI(Value&& root)
 {
-    return WTF::switchOn(WTFMove(root), [] (EmptyType) -> RefPtr<API::Object> {
+    return WTF::switchOn(WTF::move(root), [] (EmptyType) -> RefPtr<API::Object> {
         return nullptr;
     }, [] (bool value) -> RefPtr<API::Object> {
         return API::Boolean::create(value);
@@ -133,16 +126,16 @@ RefPtr<API::Object> JavaScriptEvaluationResult::APIInserter::toAPI(Value&& root)
         return API::Double::create(value.seconds());
     }, [&] (Vector<JSObjectID>&& vector) -> RefPtr<API::Object> {
         Ref array = API::Array::create();
-        m_arrays.append({ WTFMove(vector), array });
-        return { WTFMove(array) };
+        m_arrays.append({ WTF::move(vector), array });
+        return { WTF::move(array) };
     }, [&] (ObjectMap&& map) -> RefPtr<API::Object> {
         Ref dictionary = API::Dictionary::create();
-        m_dictionaries.append({ WTFMove(map), dictionary });
-        return { WTFMove(dictionary) };
+        m_dictionaries.append({ WTF::move(map), dictionary });
+        return { WTF::move(dictionary) };
     }, [] (UniqueRef<JSHandleInfo>&& info) -> RefPtr<API::Object> {
-        return API::JSHandle::create(WTFMove(info.get()));
+        return API::JSHandle::create(WTF::move(info.get()));
     }, [] (UniqueRef<WebCore::SerializedNode>&& node) -> RefPtr<API::Object> {
-        return API::SerializedNode::create(WTFMove(node.get()));
+        return API::SerializedNode::create(WTF::move(node.get()));
     });
 }
 
@@ -196,7 +189,7 @@ auto JavaScriptEvaluationResult::APIExtractor::toValue(API::Object& object) -> V
             if (element)
                 vector.append(addObjectToMap(*element));
         }
-        return { WTFMove(vector) };
+        return { WTF::move(vector) };
     }
     case API::Object::Type::Dictionary: {
         ObjectMap map;
@@ -204,7 +197,7 @@ auto JavaScriptEvaluationResult::APIExtractor::toValue(API::Object& object) -> V
             if (RefPtr protectedValue = value)
                 map.set(addObjectToMap(API::String::create(key).get()), addObjectToMap(*protectedValue));
         }
-        return { WTFMove(map) };
+        return { WTF::move(map) };
     }
     default:
         // This object has been null checked and went through isSerializable which only supports these types.
@@ -242,7 +235,7 @@ RefPtr<API::Object> JavaScriptEvaluationResult::toAPI()
     APIInserter inserter;
 
     for (auto&& [identifier, value] : std::exchange(m_map, { }))
-        instantiatedObjects.add(identifier, inserter.toAPI(WTFMove(value)));
+        instantiatedObjects.add(identifier, inserter.toAPI(WTF::move(value)));
 
     for (auto [vector, array] : inserter.takeArrays()) {
         for (auto identifier : vector) {
@@ -259,81 +252,110 @@ RefPtr<API::Object> JavaScriptEvaluationResult::toAPI()
             RefPtr value = instantiatedObjects.get(valueIdentifier);
             if (!value)
                 continue;
-            Ref { dictionary }->add(key->string(), WTFMove(value));
+            Ref { dictionary }->add(key->string(), WTF::move(value));
         }
     }
 
     return std::exchange(instantiatedObjects, { }).take(m_root);
 }
 
-std::optional<JSObjectID> JavaScriptEvaluationResult::JSExtractor::addObjectToMap(JSGlobalContextRef context, JSValueRef rootValue)
+std::optional<JSObjectID> JavaScriptEvaluationResult::JSExtractor::addObjectToMap(JSGlobalContextRef context, JSValueRef rootValue, size_t nestingLevel)
 {
     ASSERT(context);
     ASSERT(rootValue);
 
-    // Extract the root value.
-    // If it is a collection (Array or Object), then we'll handle its sub-objects iteratively.
-    extractJSValue(context, rootValue);
+    auto it = m_valuesInMap.find({ context, rootValue });
+    if (it != m_valuesInMap.end())
+        return it->value;
 
-    // The m_futureJSValuesToExtract set contains all sub-objects from the previous nesting level's collections.
-    // We extract all objects from the current nesting level before moving one level deeper,
-    // iterating until we either run out of objects or hit our nesting limit.
-    while (!m_futureJSValuesToExtract.isEmpty()) {
-        if (++m_currentNestingLevel > maximumNestingLevel) {
-            RELEASE_LOG(IPC, "When serializing JavaScript object for IPC to the UI Process, reached maxiumum nesting limit of %lu", maximumNestingLevel);
-            return std::nullopt;
+    auto identifier = JSObjectID::generate();
+
+    auto extractedValue = jsValueToExtractedValue(context, rootValue);
+    if (!extractedValue)
+        return std::nullopt;
+
+    if (std::holds_alternative<Vector<JSObjectID>>(*extractedValue))
+        m_unprocessedContainers.append(PendingContainer { identifier, { context, rootValue }, nestingLevel, PendingContainer::ContainerType::Array });
+    else if (std::holds_alternative<ObjectMap>(*extractedValue))
+        m_unprocessedContainers.append(PendingContainer { identifier, { context, rootValue }, nestingLevel, PendingContainer::ContainerType::Dictionary });
+
+    m_valuesInMap.set({ context, rootValue }, identifier);
+    auto result = m_map.set(identifier, WTF::move(*extractedValue));
+    ASSERT_UNUSED(result, result.isNewEntry);
+
+    return identifier;
+}
+
+bool JavaScriptEvaluationResult::JSExtractor::processContainersWithoutRecursion(JSGlobalContextRef context)
+{
+    while (!m_unprocessedContainers.isEmpty()) {
+        auto pendingContainer = m_unprocessedContainers.takeLast();
+        JSObjectRef object = JSValueToObject(context, pendingContainer.containerValue.get(), nullptr);
+        size_t nextNestingLevel = pendingContainer.nestingLevel + 1;
+
+        if (nextNestingLevel > maximumNestingLevel)
+            return false;
+
+        switch (pendingContainer.containerType) {
+        case PendingContainer::ContainerType::Dictionary: {
+            JSPropertyNameArrayRef names = JSObjectCopyPropertyNames(context, object);
+            auto releaseNames = makeScopeExit([&] {
+                JSPropertyNameArrayRelease(names);
+            });
+            size_t length = JSPropertyNameArrayGetCount(names);
+            ObjectMap map;
+            map.reserveInitialCapacity(length);
+
+            for (size_t i = 0; i < length; i++) {
+                JSRetainPtr<JSStringRef> key = JSPropertyNameArrayGetNameAtIndex(names, i);
+                SUPPRESS_UNCOUNTED_ARG JSValueRef keyJSValue = JSValueMakeString(context, key.get());
+                JSValueRef exception { nullptr };
+                SUPPRESS_UNCOUNTED_ARG JSValueRef valueJSValue = JSObjectGetPropertyForKey(context, object, keyJSValue, &exception);
+                if (exception)
+                    continue;
+                auto keyIdentifier = addObjectToMap(context, keyJSValue, nextNestingLevel);
+                if (!keyIdentifier)
+                    continue;
+                auto valueIdentifier = addObjectToMap(context, valueJSValue, nextNestingLevel);
+                if (!valueIdentifier)
+                    continue;
+                map.add(*keyIdentifier, *valueIdentifier);
+            }
+            m_map.set(pendingContainer.objectIdentifier, WTF::move(map));
         }
+            break;
+        case PendingContainer::ContainerType::Array: {
+            JSValueRef exception { nullptr };
+            SUPPRESS_UNCOUNTED_ARG JSValueRef lengthPropertyName = JSValueMakeString(context, adopt(JSStringCreateWithUTF8CString("length")).get());
+            JSValueRef lengthValue = JSObjectGetPropertyForKey(context, object, lengthPropertyName, &exception);
+            if (exception)
+                return false;
+            double lengthDouble = JSValueToNumber(context, lengthValue, &exception);
+            if (exception)
+                return false;
+            if (lengthDouble < 0 || lengthDouble > static_cast<double>(std::numeric_limits<size_t>::max()))
+                return false;
+            size_t length = lengthDouble;
+            Vector<JSObjectID> vector;
+            if (!vector.tryReserveInitialCapacity(length))
+                return false;
 
-        RELEASE_ASSERT(m_currentJSValuesToExtract.isEmpty());
-        m_currentJSValuesToExtract = std::exchange(m_futureJSValuesToExtract, { });
-
-        while (!m_currentJSValuesToExtract.isEmpty()) {
-            auto protectedValue = m_currentJSValuesToExtract.takeLast();
-            extractJSValue(context, protectedValue.get());
+            for (size_t i = 0; i < length; ++i) {
+                JSValueRef exception { nullptr };
+                JSValueRef element = JSObjectGetPropertyAtIndex(context, object, i, &exception);
+                if (!element || exception)
+                    return false;
+                auto elementID = addObjectToMap(context, element, nextNestingLevel);
+                if (!elementID)
+                    return false;
+                vector.append(*elementID);
+            }
+            m_map.set(pendingContainer.objectIdentifier, WTF::move(vector));
+        }
+            break;
         }
     }
-
-    // For every Array we encountered previously we kept a placeholder Vector of JSValueRefs.
-    // Now that we have the JSObjectID for every JSValueRef, we can fill in the final Array values.
-    for (auto& [arrayObject, valueVector] : m_jsArraysToExtract) {
-        auto iterator = m_valuesInMap.find(arrayObject);
-        ASSERT(iterator != m_valuesInMap.end());
-
-        Vector<JSObjectID> mapVector;
-        for (auto& valueEntry : valueVector) {
-            auto identifierIterator = m_valuesInMap.find(valueEntry);
-            if (identifierIterator == m_valuesInMap.end())
-                continue;
-            mapVector.append(identifierIterator->value);
-        }
-
-        auto result = m_map.add(iterator->value, WTFMove(mapVector));
-        RELEASE_ASSERT(result.isNewEntry);
-    }
-
-    // For every Object we encountered previously we kept a placeholder HashMap of JSValueRefs.
-    // Now that we have the JSObjectID for every JSValueRef, we can fill in the final Object values.
-    for (auto& [object, valueMap] : m_jsObjectsToExtract) {
-        auto iterator = m_valuesInMap.find(object);
-        ASSERT(iterator != m_valuesInMap.end());
-
-        ObjectMap objectMap;
-        for (auto& [key, value] : valueMap) {
-            auto keyIdentifier = m_valuesInMap.find(key);
-            if (keyIdentifier == m_valuesInMap.end())
-                continue;
-            auto valueIdentifier = m_valuesInMap.find(value);
-            if (valueIdentifier == m_valuesInMap.end())
-                continue;
-
-            objectMap.set(keyIdentifier->value, valueIdentifier->value);
-        }
-
-        auto result = m_map.add(iterator->value, WTFMove(objectMap));
-        RELEASE_ASSERT(result.isNewEntry);
-    }
-
-    return m_valuesInMap.get({ context, rootValue });
+    return true;
 }
 
 std::optional<JavaScriptEvaluationResult> JavaScriptEvaluationResult::extract(JSGlobalContextRef context, JSValueRef value)
@@ -344,41 +366,21 @@ std::optional<JavaScriptEvaluationResult> JavaScriptEvaluationResult::extract(JS
     }
 
     JSExtractor extractor;
-    if (auto root = extractor.addObjectToMap(context, value)) {
+    constexpr size_t nestingLevel { 0 };
+    if (auto root = extractor.addObjectToMap(context, value, nestingLevel)) {
 #if PLATFORM(COCOA)
         if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::JavaScriptEvaluationResultWithoutSerializedScriptValue)
             && !WebCore::SerializedScriptValue::create(context, value, nullptr))
             return std::nullopt;
 #endif
+        if (!extractor.processContainersWithoutRecursion(context))
+            return std::nullopt;
         return JavaScriptEvaluationResult { *root, extractor.takeMap() };
     }
     return std::nullopt;
 }
 
-void JavaScriptEvaluationResult::JSExtractor::extractJSValue(JSGlobalContextRef context, JSValueRef value)
-{
-    auto addResult = m_valuesInMap.ensure({ context, value }, [] {
-        return JSObjectID::generate();
-    });
-
-    if (!addResult.isNewEntry)
-        return;
-    auto identifier = addResult.iterator->value;
-    auto extractedValue = jsValueToExtractedValue(context, value);
-
-    WTF::switchOn(WTFMove(extractedValue), [&] (Value&& value) {
-        auto result = m_map.set(identifier, WTFMove(value));
-        RELEASE_ASSERT(result.isNewEntry);
-    }, [&] (UnsupportedTypeTag) {
-        // We already committed an entry into the values map for this object identifier,
-        // but it failed to extract. So remove it from the values map.
-        m_valuesInMap.remove({ context, value });
-    }, [] (PendingCollectionTag) {
-        // This space intentionally left blank, as Array/Object values will be finished up later.
-    });
-}
-
-auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalContextRef context, JSValueRef value) -> ExtractionResult
+auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalContextRef context, JSValueRef value) -> std::optional<Value>
 {
     using namespace WebCore;
 
@@ -423,41 +425,13 @@ auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalCo
         return Seconds(JSValueToNumber(context, object, 0) / 1000.0);
 
     if (JSValueIsArray(context, object)) {
-        JSValueRef exception { nullptr };
-        SUPPRESS_UNCOUNTED_ARG JSValueRef lengthPropertyName = JSValueMakeString(context, adopt(JSStringCreateWithUTF8CString("length")).get());
-        JSValueRef lengthValue = JSObjectGetPropertyForKey(context, object, lengthPropertyName, &exception);
-        if (exception)
-            return UnsupportedTypeTag { };
-        double lengthDouble = JSValueToNumber(context, lengthValue, &exception);
-        if (exception)
-            return JSExtractor::UnsupportedTypeTag { };
-        if (lengthDouble < 0 || lengthDouble > static_cast<double>(std::numeric_limits<size_t>::max()))
-            return EmptyType::Undefined;
-
-        size_t length = lengthDouble;
-        Vector<Protected<JSValueRef>> vector;
-        if (!vector.tryReserveInitialCapacity(length))
-            return EmptyType::Undefined;
-
-        for (size_t i = 0; i < length; ++i) {
-            JSValueRef exception { nullptr };
-            JSValueRef element = JSObjectGetPropertyAtIndex(context, object, i, &exception);
-            if (!element || exception)
-                return UnsupportedTypeTag { };
-            m_futureJSValuesToExtract.append({ context, element });
-            vector.append({ context, element });
-
-        }
-
-        // The m_jsArraysToExtract map remembers what this extracted Array should eventually look like.
-        // We'll do a final step later to fill it in with the correct extracted values.
-        m_jsArraysToExtract.add({ context, object }, WTFMove(vector));
-        return PendingCollectionTag { };
+        // Members will be filled in by processContainersWithoutRecursion.
+        return Vector<JSObjectID> { };
     }
 
     switch (SerializedScriptValue::deserializationBehavior(*jsObject)) {
     case SerializedScriptValue::DeserializationBehavior::Fail:
-        return UnsupportedTypeTag { };
+        return std::nullopt;
     case SerializedScriptValue::DeserializationBehavior::Succeed:
         break;
     case SerializedScriptValue::DeserializationBehavior::LegacyMapToNull:
@@ -465,31 +439,11 @@ auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalCo
     case SerializedScriptValue::DeserializationBehavior::LegacyMapToUndefined:
         return EmptyType::Undefined;
     case SerializedScriptValue::DeserializationBehavior::LegacyMapToEmptyObject:
-        return Value { ObjectMap { } };
+        return ObjectMap { };
     }
 
-    JSPropertyNameArrayRef names = JSObjectCopyPropertyNames(context, object);
-    size_t length = JSPropertyNameArrayGetCount(names);
-    HashMap<Protected<JSValueRef>, Protected<JSValueRef>> map;
-    for (size_t i = 0; i < length; i++) {
-        JSRetainPtr<JSStringRef> key = JSPropertyNameArrayGetNameAtIndex(names, i);
-        SUPPRESS_UNCOUNTED_ARG JSValueRef keyJSValue = JSValueMakeString(context, key.get());
-        JSValueRef exception { nullptr };
-        SUPPRESS_UNCOUNTED_ARG JSValueRef valueJSValue = JSObjectGetPropertyForKey(context, object, keyJSValue, &exception);
-        if (exception)
-            continue;
-
-        m_futureJSValuesToExtract.append({ context, keyJSValue });
-        m_futureJSValuesToExtract.append({ context, valueJSValue });
-        map.add(Protected<JSValueRef> { context, keyJSValue }, Protected<JSValueRef> { context, valueJSValue });
-    }
-    JSPropertyNameArrayRelease(names);
-
-    // The m_jsObjectsToExtract map remembers what this extracted Object should eventually look like.
-    // We'll do a final step later to fill it in with the correct extracted values.
-    m_jsObjectsToExtract.add(Protected<JSValueRef> { context, object }, WTFMove(map));
-
-    return PendingCollectionTag { };
+    // Members will be filled in by processContainersWithoutRecursion.
+    return ObjectMap { };
 }
 
 JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef context, Value&& root)
@@ -500,10 +454,10 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
         auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(lexicalGlobalObject);
         RefPtr document = dynamicDowncast<WebCore::Document>(domGlobalObject->scriptExecutionContext());
         RELEASE_ASSERT(document);
-        return std::make_tuple(lexicalGlobalObject, domGlobalObject, WTFMove(document));
+        return std::make_tuple(lexicalGlobalObject, domGlobalObject, WTF::move(document));
     };
 
-    return WTF::switchOn(WTFMove(root), [&] (EmptyType emptyType) -> JSValueRef {
+    return WTF::switchOn(WTF::move(root), [&] (EmptyType emptyType) -> JSValueRef {
         switch (emptyType) {
         case EmptyType::Undefined:
             return JSValueMakeUndefined(context);
@@ -515,7 +469,7 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
     }, [&] (double value) -> JSValueRef {
         return JSValueMakeNumber(context, value);
     }, [&] (String&& value) -> JSValueRef {
-        auto string = OpaqueJSString::tryCreate(WTFMove(value));
+        auto string = OpaqueJSString::tryCreate(WTF::move(value));
         return JSValueMakeString(context, string.get());
     }, [&] (Seconds value) -> JSValueRef {
         JSValueRef exception { nullptr };
@@ -529,14 +483,14 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
         JSValueRef exception { nullptr };
         JSValueRef array = JSObjectMakeArray(context, 0, nullptr, &exception);
         if (array && !exception) {
-            m_arrays.append({ WTFMove(vector), Protected<JSValueRef>(context, array) });
+            m_arrays.append({ WTF::move(vector), Protected<JSValueRef>(context, array) });
             return array;
         }
         ASSERT_NOT_REACHED();
         return JSValueMakeUndefined(context);
     }, [&] (ObjectMap&& map) -> JSValueRef {
         if (JSObjectRef dictionary = JSObjectMake(context, nullptr, nullptr)) {
-            m_dictionaries.append({ WTFMove(map), Protected<JSObjectRef>(context, dictionary) });
+            m_dictionaries.append({ WTF::move(map), Protected<JSObjectRef>(context, dictionary) });
             return dictionary;
         }
         ASSERT_NOT_REACHED();
@@ -551,7 +505,7 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
         return ::toRef(object);
     }, [&] (UniqueRef<WebCore::SerializedNode>&& serializedNode) -> JSValueRef {
         auto [lexicalGlobalObject, domGlobalObject, document] = globalObjectTuple(context);
-        return ::toRef(lexicalGlobalObject, WebCore::SerializedNode::deserialize(WTFMove(serializedNode.get()), lexicalGlobalObject, domGlobalObject, *document));
+        return ::toRef(lexicalGlobalObject, WebCore::SerializedNode::deserialize(WTF::move(serializedNode.get()), lexicalGlobalObject, domGlobalObject, *document));
     });
 }
 
@@ -561,7 +515,7 @@ Protected<JSValueRef> JavaScriptEvaluationResult::toJS(JSGlobalContextRef contex
     JSInserter inserter;
 
     for (auto&& [identifier, value] : std::exchange(m_map, { }))
-        instantiatedJSObjects.add(identifier, Protected<JSValueRef>(context, inserter.toJS(context, WTFMove(value))));
+        instantiatedJSObjects.add(identifier, Protected<JSValueRef>(context, inserter.toJS(context, WTF::move(value))));
 
     for (auto& [vector, array] : inserter.takeArrays()) {
         JSObjectRef jsArray = JSValueToObject(context, array.get(), 0);
@@ -614,7 +568,7 @@ JavaScriptEvaluationResult JavaScriptEvaluationResult::jsUndefined()
     auto root = JSObjectID::generate();
     Map map;
     map.set(root, EmptyType::Undefined);
-    return { root, WTFMove(map) };
+    return { root, WTF::move(map) };
 }
 
 } // namespace WebKit

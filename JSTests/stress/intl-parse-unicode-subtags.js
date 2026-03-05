@@ -3,6 +3,11 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
+function shouldBeOneOf(actual, expectedArray) {
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
+}
+
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;
@@ -44,7 +49,7 @@ shouldBe(languageNames.of("es-419"), `Latin American Spanish`);
 if (languageNames.of('zh-Hant') !== `Chinese, Traditional`)
     shouldBe(languageNames.of('zh-Hant'), `Traditional Chinese`);
 if (languageNames.of('zh-Hans-HK') !== `Chinese, Simplified (Hong Kong)` && languageNames.of('zh-Hans-HK') !== `Simplified Chinese (Hong Kong SAR China)`)
-    shouldBe(languageNames.of('zh-Hans-HK'), `Simplified Chinese (Hong Kong)`);
+    shouldBeOneOf(languageNames.of('zh-Hans-HK'), [`Simplified Chinese (Hong Kong)`, `Chinese (Simplified, Hong Kong SAR China)`]);
 shouldThrow(() => languageNames.of("Hant"), `RangeError: argument is not a language id`); // Script only
 shouldBe(languageNames.of('sr-Latn'), `Serbian (Latin)`); // Language-Script
 shouldBe(languageNames.of('sr-Cyrl'), `Serbian (Cyrillic)`); // Language-Script

@@ -49,14 +49,12 @@ selectors = [
     { name = "prepareResourceMonitorRulesForStore:completionHandler:", class = "?" },
     { name = "presentNewPINEntryInterfaceWithMinLength:", class = "?" },
     { name = "quad", class = "VKCTranslatedParagraph" },
-    { name = "rectValue", class = "?" },
     { name = "rtfData", class = "?" },
     { name = "sendResponse:", class = "?" },
     { name = "setDefaultActionBundleIdentifier:", class = "?" },
     { name = "setHasHighLatencyDataProvider:", class = "?" },
     { name = "setRecipe:", class = "?" },
     { name = "shouldUseAlternateKeychainAttribute", class = "?" },
-    { name = "valueWithRect:", class = "?" },
     { name = "willStartScrollingOverflow", class = "?" },
 ]
 symbols = [
@@ -67,6 +65,13 @@ symbols = [
     "kCGDataProviderHasHighLatency",
     "kCGDataProviderIndeterminateSize",
 ]
+
+[[legacy]]
+selectors = [
+    { name = "rectValue", class = "?" },
+    { name = "valueWithRect:", class = "?" },
+]
+requires = [ "!HAVE_WK_SECURE_CODING_PKPAYMENT" ]
 
 [[legacy]]
 classes = [
@@ -370,7 +375,7 @@ selectors = [
     { name = "handleKeyInputMethodCommandForCurrentEvent", class = "?" },
     { name = "handleKeyTextCommandForCurrentEvent", class = "?" },
     { name = "hasActiveTextSelection", class = "?" },
-    { name = "hasAudio", class = "?" },
+    { name = "hasAudio", class = "ASVInlinePreview" },
     { name = "hasResultsForAnalysisTypes:", class = "?" },
     { name = "hasUserInterface", class = "?" },
     { name = "hideAnimated:allowDelay:", class = "?" },
@@ -424,7 +429,7 @@ selectors = [
     { name = "isLowConfidence", class = "?" },
     { name = "isMalware", class = "?" },
     { name = "isMinimized", class = "?" },
-    { name = "isOnScreen", class = "?" },
+    { name = "isOnScreen", class = "UIPeripheralHost" },
     { name = "isPassthrough", class = "VKCTranslatedParagraph" },
     { name = "isPhishing", class = "?" },
     { name = "isRegistrationRequest", class = "?" },
@@ -759,7 +764,6 @@ symbols = [
     "CGPDFDocumentIsTaggedPDF",
     "CGPDFPageLayoutGetAreaOfInterestAtPoint",
     "CGSVGDocumentCreateFromData",
-    "CGSVGDocumentRelease",
     "FBSActivateForEventOptionTypeBackgroundContentFetching",
     "FBSOpenApplicationOptionKeyActivateForEvent",
     "FBSOpenApplicationOptionKeyPayloadOptions",
@@ -1035,6 +1039,14 @@ requires = [
     "USE_APPLE_INTERNAL_SDK"
 ]
 
+[[legacy]]
+symbols = [
+    "nw_settings_get_unified_http_enabled_webkit",
+]
+requires = [
+    "HAVE_NWSETTINGS_UNIFIED_HTTP_WEBKIT"
+]
+
 # The public iOS build uses CGGeometry methods instead of internal only
 # NSGeometry methods. Clean up in rdar://6669434.
 [[legacy]]
@@ -1085,3 +1097,38 @@ selectors = [
     { name = "getClientCapabilitiesForRelyingParty:withCompletionHandler:", class = "ASCWebKitSPISupport" },
 ]
 requires = ["!SDKDB_HAS_148943382"]
+
+[[legacy]]
+requires = ["!SDKDB_HAS_164901718", "HAVE_UIINTELLIGENCESUPPORT_FRAMEWORK"]
+symbols = [
+    "$s21UIIntelligenceSupport0A16ElementCollectorC7collectyyAA012IntelligenceC0V7ContentOF",
+    "$s21UIIntelligenceSupport0A16ElementCollectorC7contextAA29IntelligenceCollectionContext_pvg",
+    "$s21UIIntelligenceSupport0A30CollectionRemoteContextWrapperCMn",
+    "$s21UIIntelligenceSupport17IntelligenceImageVMa",
+    "$s21UIIntelligenceSupport17IntelligenceImageVMn",
+    "$s21UIIntelligenceSupport19IntelligenceElementV11boundingBox7content11subelementsACSo6CGRectV_AC7ContentOSayACGtcfC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV11subelementsSayACGvs",
+    "$s21UIIntelligenceSupport19IntelligenceElementV4TextV010attributedE08editable11textOptionsAE10Foundation16AttributedStringV_AE8EditableVSgAA0C17CollectionRequestV0eI0VSgtcfC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV4TextV10AttributesV17SelectedAttributeV10Foundation19AttributedStringKeyAAMc",
+    "$s21UIIntelligenceSupport19IntelligenceElementV4TextV10AttributesV17SelectedAttributeVMa",
+    "$s21UIIntelligenceSupport19IntelligenceElementV4TextV8EditableV5label6prompt11contentType8isSecure0K7FocusedAGSSSg_A2MS2btcfC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV4TextV8EditableVMa",
+    "$s21UIIntelligenceSupport19IntelligenceElementV4TextV8EditableVMn",
+    "$s21UIIntelligenceSupport19IntelligenceElementV5ImageV4name15textDescription5imageAESSSg_AiA0cE0VSgtcfC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV7ContentO4baseyA2EmFWC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV7ContentO4textyAeC4TextVcAEmFWC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV7ContentO5imageyAeC5ImageVcAEmFWC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV7ContentO6remoteyAeA0C8FragmentV13RemoteContextVcAEmFWC",
+    "$s21UIIntelligenceSupport19IntelligenceElementV7ContentOMa",
+    "$s21UIIntelligenceSupport19IntelligenceElementVMa",
+    "$s21UIIntelligenceSupport19IntelligenceElementVMn",
+    "$s21UIIntelligenceSupport20IntelligenceFragmentV13RemoteContextVMa",
+    "$s21UIIntelligenceSupport29IntelligenceCollectionContextP012createRemoteE011descriptionAA0C8FragmentV0gE0VSS_tFTj",
+    "$s21UIIntelligenceSupport29IntelligenceCollectionRequestV11TextOptionsVMa",
+    "$s21UIIntelligenceSupport29IntelligenceCollectionRequestV11TextOptionsVMn",
+    "$s21UIIntelligenceSupport29IntelligenceFragmentCollectorC7collectyyAA0C7ElementVF",
+    "$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorC06finishD0yyAA0C17FragmentCollectorCF",
+    "$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorC15createCollector20remoteContextWrapperAA0c8FragmentG0CAA0ad6RemoteiJ0C_tF",
+    "$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorC6sharedACvgZ",
+    "$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorCMa",
+]

@@ -37,7 +37,7 @@ namespace WebCore {
 
 RemoveNodeCommand::RemoveNodeCommand(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     : SimpleEditCommand(node->document(), editingAction)
-    , m_node(WTFMove(node))
+    , m_node(WTF::move(node))
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {
     ASSERT(m_node->parentNode());
@@ -51,7 +51,7 @@ void RemoveNodeCommand::doApply()
         return;
     ASSERT(isEditableNode(*parent) || !parent->renderer());
 
-    m_parent = WTFMove(parent);
+    m_parent = WTF::move(parent);
     m_refChild = m_node->nextSibling();
 
     m_node->remove();
@@ -59,12 +59,12 @@ void RemoveNodeCommand::doApply()
 
 void RemoveNodeCommand::doUnapply()
 {
-    RefPtr<ContainerNode> parent = WTFMove(m_parent);
-    RefPtr<Node> refChild = WTFMove(m_refChild);
+    RefPtr<ContainerNode> parent = WTF::move(m_parent);
+    RefPtr<Node> refChild = WTF::move(m_refChild);
     if (!parent || !parent->hasEditableStyle())
         return;
 
-    parent->insertBefore(m_node, WTFMove(refChild));
+    parent->insertBefore(m_node, WTF::move(refChild));
 }
 
 #ifndef NDEBUG

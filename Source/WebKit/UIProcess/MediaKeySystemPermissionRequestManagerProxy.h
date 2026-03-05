@@ -57,7 +57,7 @@ public:
     void grantRequest(MediaKeySystemPermissionRequestProxy&);
     void denyRequest(MediaKeySystemPermissionRequestProxy&, const String& message = { });
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
 private:
@@ -68,7 +68,7 @@ private:
 
     WeakRef<WebPageProxy> m_page;
 
-    HashMap<WebCore::MediaKeySystemRequestIdentifier, RefPtr<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
+    HashMap<WebCore::MediaKeySystemRequestIdentifier, Ref<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
     HashSet<String> m_validAuthorizationTokens;
 
 #if !RELEASE_LOG_DISABLED

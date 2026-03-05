@@ -40,8 +40,10 @@
 
 namespace JSC {
 class JSGlobalObject;
+class JSMicrotaskDispatcher;
 class QueuedTask;
 class MicrotaskDispatcher;
+class VM;
 }
 
 namespace WebCore {
@@ -121,7 +123,7 @@ public:
     void queueMicrotask(JSC::QueuedTask&&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
-    void performMicrotaskCheckpoint();
+    void performMicrotaskCheckpoint(JSC::VM&);
     virtual MicrotaskQueue& microtaskQueue() = 0;
 
     void resumeGroup(EventLoopTaskGroup&);
@@ -139,10 +141,11 @@ public:
     void invalidateNextTimerFireTimeCache() { m_nextTimerFireTimeCache = std::nullopt; }
     Markable<MonotonicTime> nextTimerFireTime() const;
 
+    void scheduleToRunIfNeeded();
+
 protected:
     EventLoop();
-    void scheduleToRunIfNeeded();
-    void run(std::optional<ApproximateTime> deadline = std::nullopt);
+    void run(JSC::VM&, std::optional<ApproximateTime> deadline = std::nullopt);
     void clearAllTasks();
 
     bool hasTasksForFullyActiveDocument() const;
@@ -158,7 +161,6 @@ private:
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     WeakHashSet<ScriptExecutionContext> m_associatedContexts;
-    bool m_isScheduledToRun { false };
     mutable Markable<MonotonicTime> m_nextTimerFireTimeCache;
 };
 
@@ -187,13 +189,7 @@ public:
     void markAsReadyToStop();
 
     // This gets called by the event loop when all groups in the EventLoop as ready to stop.
-    void stopAndDiscardAllTasks()
-    {
-        ASSERT(isReadyToStop());
-        m_state = State::Stopped;
-        if (RefPtr eventLoop = m_eventLoop.get())
-            eventLoop->stopGroup(*this);
-    }
+    void stopAndDiscardAllTasks();
 
     void suspend();
     void resume();
@@ -206,12 +202,12 @@ public:
     WEBCORE_EXPORT void queueTask(TaskSource, EventLoop::TaskFunction&&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
-    WEBCORE_EXPORT void queueMicrotask(EventLoop::TaskFunction&&);
+    WEBCORE_EXPORT void queueMicrotask(JSC::VM&, EventLoop::TaskFunction&&);
     WEBCORE_EXPORT void queueMicrotask(JSC::QueuedTask&&);
-    MicrotaskQueue& microtaskQueue() { return protectedEventLoop()->microtaskQueue(); }
+    MicrotaskQueue& microtaskQueue() { return protect(m_eventLoop)->microtaskQueue(); }
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
-    void performMicrotaskCheckpoint();
+    void performMicrotaskCheckpoint(JSC::VM&);
 
     void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
 
@@ -232,16 +228,15 @@ public:
     void didAddTimer(EventLoopTimer&);
     void didRemoveTimer(EventLoopTimer&);
 
-    Ref<JSC::MicrotaskDispatcher> jsMicrotaskDispatcher(JSC::QueuedTask&);
+    void setScriptExecutionContext(ScriptExecutionContext&);
 
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };
 
-    RefPtr<EventLoop> protectedEventLoop() const;
 
     WeakPtr<EventLoop> m_eventLoop;
     WeakHashSet<EventLoopTimer> m_timers;
-    const Ref<JSC::MicrotaskDispatcher> m_jsMicrotaskDispatcher;
+    WeakPtr<ScriptExecutionContext> m_context;
     State m_state { State::Running };
 };
 

@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_ANIMATIONS)
 
 #include "AnimationEffect.h"
+#include "AnimationTimeline.h"
 #include "AnimationUtilities.h"
 #include "BlendingKeyframes.h"
 #include "CSSPropertyNames.h"
@@ -49,22 +50,30 @@ namespace WebCore {
 
 AcceleratedEffect::Keyframe::Keyframe(double offset, AcceleratedEffectValues&& values)
     : m_offset(offset)
-    , m_values(WTFMove(values))
+    , m_values(WTF::move(values))
 {
 }
 
 AcceleratedEffect::Keyframe::Keyframe(double offset, AcceleratedEffectValues&& values, RefPtr<TimingFunction>&& timingFunction, std::optional<CompositeOperation> compositeOperation, OptionSet<AcceleratedEffectProperty>&& animatedProperties)
     : m_offset(offset)
-    , m_values(WTFMove(values))
-    , m_timingFunction(WTFMove(timingFunction))
+    , m_values(WTF::move(values))
+    , m_timingFunction(WTF::move(timingFunction))
     , m_compositeOperation(compositeOperation)
-    , m_animatedProperties(WTFMove(animatedProperties))
+    , m_animatedProperties(WTF::move(animatedProperties))
 {
 }
 
 void AcceleratedEffect::Keyframe::clearProperty(AcceleratedEffectProperty property)
 {
     m_animatedProperties.remove({ property });
+
+    // If a filter property is removed, it's because it cannot be represented remotely,
+    // so we must ensure we reset it in the base values so that we don't attempt to encode
+    // an unsupported filter operation.
+    if (property == AcceleratedEffectProperty::Filter)
+        m_values.filter = { };
+    if (property == AcceleratedEffectProperty::BackdropFilter)
+        m_values.backdropFilter = { };
 }
 
 bool AcceleratedEffect::Keyframe::animatesProperty(KeyframeInterpolation::Property property) const
@@ -88,9 +97,9 @@ AcceleratedEffect::Keyframe AcceleratedEffect::Keyframe::clone() const
     return {
         m_offset,
         m_values.clone(),
-        WTFMove(clonedTimingFunction),
+        WTF::move(clonedTimingFunction),
         m_compositeOperation,
-        WTFMove(clonedAnimatedProperties)
+        WTF::move(clonedAnimatedProperties)
     };
 }
 
@@ -170,18 +179,16 @@ static CSSPropertyID cssPropertyFromAcceleratedProperty(AcceleratedEffectPropert
     }
 }
 
-RefPtr<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect, const TimelineIdentifier& timelineIdentifier, const IntRect& borderBoxRect, const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>& disallowedProperties)
+Ref<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect, const IntRect& borderBoxRect, const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>& disallowedProperties)
 {
-    RefPtr acceleratedEffect = adoptRef(new AcceleratedEffect(effect, timelineIdentifier, borderBoxRect, disallowedProperties));
+    Ref acceleratedEffect = adoptRef(*new AcceleratedEffect(effect, borderBoxRect, disallowedProperties));
     acceleratedEffect->validateFilters(baseValues, disallowedProperties);
-    if (acceleratedEffect->animatedProperties().isEmpty())
-        return nullptr;
     return acceleratedEffect;
 }
 
 Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, TimelineIdentifier&& timelineIdentifier, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
 {
-    return adoptRef(*new AcceleratedEffect(WTFMove(timing), WTFMove(timelineIdentifier), WTFMove(keyframes), type, composite, WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, playbackRate, startTime, holdTime));
+    return adoptRef(*new AcceleratedEffect(WTF::move(timing), WTF::move(timelineIdentifier), WTF::move(keyframes), type, composite, WTF::move(defaultKeyframeTimingFunction), WTF::move(animatedProperties), paused, playbackRate, startTime, holdTime));
 }
 
 Ref<AcceleratedEffect> AcceleratedEffect::clone() const
@@ -197,7 +204,7 @@ Ref<AcceleratedEffect> AcceleratedEffect::clone() const
     auto clonedAnimatedProperties = m_animatedProperties;
     auto clonedIdentifier = m_timelineIdentifier;
 
-    return AcceleratedEffect::create(m_timing, WTFMove(clonedIdentifier), WTFMove(clonedKeyframes), m_animationType, m_compositeOperation, WTFMove(clonedDefaultKeyframeTimingFunction), WTFMove(clonedAnimatedProperties), m_paused, m_playbackRate, m_startTime, m_holdTime);
+    return AcceleratedEffect::create(m_timing, WTF::move(clonedIdentifier), WTF::move(clonedKeyframes), m_animationType, m_compositeOperation, WTF::move(clonedDefaultKeyframeTimingFunction), WTF::move(clonedAnimatedProperties), m_paused, m_playbackRate, m_startTime, m_holdTime);
 }
 
 Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<AcceleratedEffectProperty>& propertyFilter) const
@@ -205,9 +212,14 @@ Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<Accelerat
     return adoptRef(*new AcceleratedEffect(*this, propertyFilter));
 }
 
-AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const TimelineIdentifier& timelineIdentifier, const IntRect& borderBoxRect, const OptionSet<AcceleratedEffectProperty>& disallowedProperties)
-    : m_timelineIdentifier(timelineIdentifier)
+AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect& borderBoxRect, const OptionSet<AcceleratedEffectProperty>& disallowedProperties)
+    : m_timelineIdentifier(effect.animation()->timeline()->acceleratedTimelineIdentifier())
 {
+    ASSERT(effect.animation());
+    ASSERT(effect.animation()->timeline());
+    ASSERT(effect.animation()->timeline()->canBeAccelerated());
+    m_timeline = Ref { *effect.animation()->timeline() }->acceleratedRepresentation();
+
     m_timing = effect.timing();
     m_compositeOperation = effect.composite();
     m_animationType = effect.animationType();
@@ -222,14 +234,21 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const Timelin
         m_startTime = animation->startTime();
         if (RefPtr styleAnimation = dynamicDowncast<StyleOriginatedAnimation>(*animation)) {
             if (RefPtr defaultKeyframeTimingFunction = styleAnimation->backingAnimationTimingFunction())
-                m_defaultKeyframeTimingFunction = WTFMove(defaultKeyframeTimingFunction);
+                m_defaultKeyframeTimingFunction = WTF::move(defaultKeyframeTimingFunction);
         }
     }
 
-    ASSERT(effect.document());
-    auto& settings = effect.document()->settings();
+    auto& settings = effect.document().settings();
+    CheckedPtr renderLayerModelObject = dynamicDowncast<RenderLayerModelObject>(effect.renderer());
+
+    OptionSet<AcceleratedEffectProperty> propertiesReplacedByZeroKeyframe;
+    OptionSet<AcceleratedEffectProperty> propertiesReplacedByOneKeyframe;
 
     for (auto& srcKeyframe : effect.blendingKeyframes()) {
+        ASSERT(!std::isnan(srcKeyframe.offset()));
+        auto offset = srcKeyframe.offset();
+        auto isReplacingKeyframe = m_compositeOperation == CompositeOperation::Replace
+            && (!srcKeyframe.compositeOperation() || srcKeyframe.compositeOperation() == CompositeOperation::Replace);
         OptionSet<AcceleratedEffectProperty> animatedProperties;
         for (auto animatedCSSProperty : srcKeyframe.properties()) {
             if (Style::Interpolation::isAccelerated(animatedCSSProperty, settings)) {
@@ -238,6 +257,12 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const Timelin
                     continue;
                 animatedProperties.add(acceleratedProperty);
                 m_animatedProperties.add(acceleratedProperty);
+                if (!isReplacingKeyframe)
+                    continue;
+                if (!offset)
+                    propertiesReplacedByZeroKeyframe.add(acceleratedProperty);
+                if (offset == 1.0)
+                    propertiesReplacedByOneKeyframe.add(acceleratedProperty);
             }
         }
 
@@ -245,25 +270,30 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const Timelin
             continue;
 
         auto values = [&]() -> AcceleratedEffectValues {
-            if (auto* style = srcKeyframe.style())
-                return { *style, borderBoxRect };
+            if (CheckedPtr style = srcKeyframe.style())
+                return { *style, borderBoxRect, renderLayerModelObject.get() };
             return { };
         }();
 
-        m_keyframes.append({ srcKeyframe.offset(), WTFMove(values), srcKeyframe.timingFunction(), srcKeyframe.compositeOperation(), WTFMove(animatedProperties) });
+        m_keyframes.append({ offset, WTF::move(values), srcKeyframe.timingFunction(), srcKeyframe.compositeOperation(), WTF::move(animatedProperties) });
     }
+
+    // Any property that was added to both the zero and one keyframe replaced
+    // properties is a property fully replaced by this effect.
+    m_replacedProperties = propertiesReplacedByZeroKeyframe & propertiesReplacedByOneKeyframe;
+    ASSERT(!m_replacedProperties.containsAny(disallowedProperties));
 
     m_animatedProperties.remove(disallowedProperties);
 }
 
 AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, TimelineIdentifier&& timelineIdentifier, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
     : m_timing(timing)
-    , m_timelineIdentifier(WTFMove(timelineIdentifier))
-    , m_keyframes(WTFMove(keyframes))
+    , m_timelineIdentifier(WTF::move(timelineIdentifier))
+    , m_keyframes(WTF::move(keyframes))
     , m_animationType(type)
     , m_compositeOperation(composite)
-    , m_defaultKeyframeTimingFunction(WTFMove(defaultKeyframeTimingFunction))
-    , m_animatedProperties(WTFMove(animatedProperties))
+    , m_defaultKeyframeTimingFunction(WTF::move(defaultKeyframeTimingFunction))
+    , m_animatedProperties(WTF::move(animatedProperties))
     , m_paused(paused)
     , m_playbackRate(playbackRate)
     , m_startTime(startTime)
@@ -298,7 +328,7 @@ AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<
         };
 
         m_animatedProperties.add(keyframe.animatedProperties());
-        m_keyframes.append(WTFMove(keyframe));
+        m_keyframes.append(WTF::move(keyframe));
     }
 }
 
@@ -324,6 +354,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
             output.scale = toScale->blend(from.scale.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetAnchor:
+        if (!canBlend(from.offsetAnchor, to.offsetAnchor)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
         output.offsetAnchor = blend(from.offsetAnchor, to.offsetAnchor, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetDistance:
@@ -334,6 +368,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
             output.offsetPath = fromOffsetPath->blend(to.offsetPath.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetPosition:
+        if (!canBlend(from.offsetPosition, to.offsetPosition)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
         output.offsetPosition = blend(from.offsetPosition, to.offsetPosition, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetRotate:
@@ -344,10 +382,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
         output.offsetRotate = blend(from.offsetRotate, to.offsetRotate, blendingContext);
         break;
     case AcceleratedEffectProperty::Filter:
-        output.filter = to.filter.blend(from.filter, blendingContext);
+        output.filter = from.filter.blend(to.filter, blendingContext);
         break;
     case AcceleratedEffectProperty::BackdropFilter:
-        output.backdropFilter = to.backdropFilter.blend(from.backdropFilter, blendingContext);
+        output.backdropFilter = from.backdropFilter.blend(to.backdropFilter, blendingContext);
         break;
     case AcceleratedEffectProperty::Invalid:
         ASSERT_NOT_REACHED();
@@ -457,6 +495,7 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
     auto isValidProperty = [&](AcceleratedEffectProperty property) {
         // First, let's assemble the matching values.
         Vector<const AcceleratedEffectValues*> values;
+        bool hasToKeyframe = false;
         for (auto& keyframe : m_keyframes) {
             if (keyframe.animatesProperty(property)) {
                 // If this is the first value we're processing and it's not the
@@ -464,14 +503,19 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
                 if (values.isEmpty() && keyframe.offset())
                     values.append(&baseValues);
                 values.append(&keyframe.values());
-            } else {
-                // If this is the last keyframe we'll be processing and it's not the
-                // keyframe with offset 1, then we need to add the implicit 100% values.
-                if (&keyframe == &m_keyframes.last() && keyframe.offset() == 1)
-                    values.append(&baseValues);
+                hasToKeyframe = hasToKeyframe || keyframe.offset() == 1;
             }
         }
 
+        // At this stage we should have found at least an explicit 0% keyframe
+        // or have added an implicit 0% keyframe.
+        ASSERT(values.size());
+
+        // Add the implicit 100% value if one wasn't provided.
+        if (!hasToKeyframe)
+            values.append(&baseValues);
+
+        // Now we should have at least 0% and 100% values.
         ASSERT(values.size() > 1);
 
         const FilterOperations* longestFilterList = nullptr;
@@ -490,9 +534,11 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         // We need to make sure that the longest filter, if it contains a drop-shadow() operation,
         // has it as its final operation since it will be applied by a separate CALayer property
         // from the other filter operations and it will be applied to the layer as the last filer.
+        // However, drop-shadow() operations with a style color are never supported, see
+        // PlatformCAFilters::setFiltersOnLayer().
         ASSERT(longestFilterList);
         for (auto& operation : *longestFilterList) {
-            if ((operation->type() == FilterOperation::Type::DropShadow || operation->type() == FilterOperation::Type::DropShadowWithStyleColor) && operation != longestFilterList->last())
+            if (operation->type() == FilterOperation::Type::DropShadow && operation != longestFilterList->last())
                 return false;
         }
 
@@ -503,10 +549,8 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         if (isValidProperty(property))
             return;
         disallowedProperties.add({ property });
-        m_animatedProperties.remove({ property });
         m_disallowedProperties.add({ property });
-        for (auto& keyframe : m_keyframes)
-            keyframe.clearProperty(property);
+        clearProperty(property);
     };
 
     if (m_animatedProperties.contains(AcceleratedEffectProperty::Filter))
@@ -518,6 +562,14 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
 bool AcceleratedEffect::animatesTransformRelatedProperty() const
 {
     return m_animatedProperties.containsAny(transformRelatedAcceleratedProperties);
+}
+
+bool AcceleratedEffect::hasHighImpact() const
+{
+    // FIXME: This is just an initial implementation. A logical next step would be to
+    // compute the distance traveled over time and only mark effects with distance traveled
+    // over a certain threshold (over 60px, 90px, 120px per second?) as high impact.
+    return animatesTransformRelatedProperty();
 }
 
 const KeyframeInterpolation::Keyframe& AcceleratedEffect::keyframeAtIndex(size_t index) const
@@ -555,6 +607,14 @@ bool AcceleratedEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Pr
         ASSERT_NOT_REACHED();
         return false;
     });
+}
+
+void AcceleratedEffect::clearProperty(AcceleratedEffectProperty property)
+{
+    m_animatedProperties.remove({ property });
+
+    for (auto& keyframe : m_keyframes)
+        keyframe.clearProperty(property);
 }
 
 } // namespace WebCore

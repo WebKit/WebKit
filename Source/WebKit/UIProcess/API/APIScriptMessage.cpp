@@ -37,19 +37,19 @@ ScriptMessage::~ScriptMessage() = default;
 
 #if PLATFORM(COCOA)
 ScriptMessage::ScriptMessage(RetainPtr<id>&& body, WebKit::WebPageProxy& page, Ref<API::FrameInfo>&& frame, RetainPtr<NSString>&& name, Ref<API::ContentWorld>&& world)
-    : m_body(WTFMove(body))
-    , m_cocoaName(WTFMove(name))
+    : m_body(WTF::move(body))
+    , m_cocoaName(WTF::move(name))
     , m_page(page)
-    , m_frame(WTFMove(frame))
-    , m_world(WTFMove(world)) { }
+    , m_frame(WTF::move(frame))
+    , m_world(WTF::move(world)) { }
 #endif
 
 ScriptMessage::ScriptMessage(RefPtr<API::Object>&& body, WebKit::WebPageProxy& page, Ref<API::FrameInfo>&& frame, const WTF::String& name, Ref<API::ContentWorld>&& world)
-    : m_apiBody(WTFMove(body))
+    : m_apiBody(WTF::move(body))
     , m_page(page)
-    , m_frame(WTFMove(frame))
+    , m_frame(WTF::move(frame))
     , m_name(name)
-    , m_world(WTFMove(world)) { }
+    , m_world(WTF::move(world)) { }
 
 WebKit::WebPageProxy* ScriptMessage::page() const
 {

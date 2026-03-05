@@ -138,7 +138,7 @@ public:
     }
     
     uint32_t word(size_t index) const { return words()[index]; }
-    uint32_t& word(size_t index) { return words()[index]; }
+    uint32_t& word(size_t index) LIFETIME_BOUND { return words()[index]; }
 
     std::span<uint32_t> words() { return unsafeMakeSpan(m_words, arrayLength()); }
     std::span<const uint32_t> words() const { return unsafeMakeSpan(m_words, arrayLength()); }
@@ -255,7 +255,7 @@ public:
     }
     
     FastBitVectorImpl(Words&& words)
-        : m_words(WTFMove(words))
+        : m_words(WTF::move(words))
     {
     }
 
@@ -400,8 +400,8 @@ public:
     
     typename Words::ViewType wordView() const { return m_words.view(); }
 
-    Words& unsafeWords() { return m_words; }
-    const Words& unsafeWords() const { return m_words; }
+    Words& unsafeWords() LIFETIME_BOUND { return m_words; }
+    const Words& unsafeWords() const LIFETIME_BOUND { return m_words; }
     
 private:
     // You'd think that we could remove this friend if we used protected, but you'd be wrong,
@@ -505,7 +505,7 @@ public:
     void fill(bool value) { value ? setAll() : clearAll(); }
     void grow(size_t newSize) { resize(newSize); }
 
-    WTF_EXPORT_PRIVATE void clearRange(size_t begin, size_t end);
+    WTF_EXPORT_PRIVATE void NODELETE clearRange(size_t begin, size_t end);
 
     // Returns true if the contents of this bitvector changed.
     template<typename OtherWords>

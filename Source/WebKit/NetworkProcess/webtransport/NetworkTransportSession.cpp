@@ -56,19 +56,29 @@ uint64_t NetworkTransportSession::messageSenderDestinationID() const
 void NetworkTransportSession::streamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
     if (RefPtr stream = m_streams.get(identifier))
-        stream->sendBytes(bytes, withFin, WTFMove(completionHandler));
+        stream->sendBytes(bytes, withFin, WTF::move(completionHandler));
     else
         completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
 }
 
 void NetworkTransportSession::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<WebCore::Exception>&& exception)
 {
-    send(Messages::WebTransportSession::ReceiveDatagram(datagram, withFin, WTFMove(exception)));
+    send(Messages::WebTransportSession::ReceiveDatagram(datagram, withFin, WTF::move(exception)));
 }
 
 void NetworkTransportSession::streamReceiveBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, std::optional<WebCore::Exception>&& exception)
 {
-    send(Messages::WebTransportSession::StreamReceiveBytes(identifier, bytes, withFin, WTFMove(exception)));
+    send(Messages::WebTransportSession::StreamReceiveBytes(identifier, bytes, withFin, WTF::move(exception)));
+}
+
+void NetworkTransportSession::streamReceiveError(WebCore::WebTransportStreamIdentifier identifier, uint64_t errorCode)
+{
+    send(Messages::WebTransportSession::StreamReceiveError(identifier, errorCode));
+}
+
+void NetworkTransportSession::streamSendError(WebCore::WebTransportStreamIdentifier identifier, uint64_t errorCode)
+{
+    send(Messages::WebTransportSession::StreamSendError(identifier, errorCode));
 }
 
 void NetworkTransportSession::receiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
@@ -192,6 +202,11 @@ void NetworkTransportSession::getStats(CompletionHandler<void(WebCore::WebTransp
 
 void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode, CString&&)
 {
+}
+
+bool NetworkTransportSession::isSessionClosed() const
+{
+    return false;
 }
 #endif
 

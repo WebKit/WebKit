@@ -131,7 +131,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         RefPtr manager = m_manager.get();
         if (!manager)
             return;
-        manager->didTap([completion = WTFMove(completion)] {
+        manager->didTap([completion = WTF::move(completion)] {
             completion.get()();
         });
     });
@@ -160,12 +160,12 @@ bool MediaCaptureStatusBarManager::hasSupport()
 
 Ref<MediaCaptureStatusBarManager> MediaCaptureStatusBarManager::create(TapCallback&& callback, ErrorCallback&& errorCallback)
 {
-    return adoptRef(*new MediaCaptureStatusBarManager(WTFMove(callback), WTFMove(errorCallback)));
+    return adoptRef(*new MediaCaptureStatusBarManager(WTF::move(callback), WTF::move(errorCallback)));
 }
 
 MediaCaptureStatusBarManager::MediaCaptureStatusBarManager(TapCallback&& callback, ErrorCallback&& errorCallback)
-    : m_tapCallback(WTFMove(callback))
-    , m_errorCallback(WTFMove(errorCallback))
+    : m_tapCallback(WTF::move(callback))
+    , m_errorCallback(WTF::move(errorCallback))
 {
 }
 

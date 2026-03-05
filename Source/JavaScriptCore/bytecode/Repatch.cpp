@@ -240,7 +240,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         slot.m_codeBlock = codeBlock;
         slot.m_calleeOrExecutable = caseValue;
 
-        callSlots.append(WTFMove(slot));
+        callSlots.append(WTF::move(slot));
     }
 
     bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
@@ -269,11 +269,11 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
             code = LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_polymorphic_normal_call_trampoline);
     }
 
-    auto stubRoutine = PolymorphicCallStubRoutine::create(WTFMove(code), vm, owner, callerFrame, callLinkInfo, callSlots, notUsingCounting, isClosureCall);
+    auto stubRoutine = PolymorphicCallStubRoutine::create(WTF::move(code), vm, owner, callerFrame, callLinkInfo, callSlots, notUsingCounting, isClosureCall);
 
     // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
     // that it's no longer on stack.
-    callLinkInfo.setStub(WTFMove(stubRoutine));
+    callLinkInfo.setStub(WTF::move(stubRoutine));
 }
 
 #if ENABLE(JIT)
@@ -632,9 +632,9 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 else
                     RELEASE_ASSERT_NOT_REACHED();
 
-                newCase = ProxyableAccessCase::create(vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
+                newCase = ProxyableAccessCase::create(vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTF::move(prototypeAccessChain));
             } else if (!loadTargetFromProxy && getter && InlineCacheCompiler::canEmitIntrinsicGetter(stubInfo, getter, structure))
-                newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, propertyName, slot.cachedOffset(), structure, conditionSet, getter, WTFMove(prototypeAccessChain));
+                newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, propertyName, slot.cachedOffset(), structure, conditionSet, getter, WTF::move(prototypeAccessChain));
             else {
                 if (isPrivate) {
                     RELEASE_ASSERT(!slot.isUnset());
@@ -643,10 +643,10 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                     if (!slot.isCacheable())
                         return GiveUpOnCache;
                     newCase = ProxyableAccessCase::create(vm, codeBlock, AccessCase::Load, propertyName, offset, structure,
-                        conditionSet, isGlobalProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
+                        conditionSet, isGlobalProxy, slot.watchpointSet(), WTF::move(prototypeAccessChain));
                 } else if (slot.isCacheableValue() || slot.isUnset()) {
                     newCase = ProxyableAccessCase::create(vm, codeBlock, slot.isUnset() ? AccessCase::Miss : AccessCase::Load,
-                        propertyName, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
+                        propertyName, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTF::move(prototypeAccessChain));
                 } else {
                     AccessCase::AccessType type;
                     if (slot.isCacheableGetter())
@@ -666,14 +666,14 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                         vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy,
                         slot.watchpointSet(), customAccessor,
                         slot.isCacheableCustom() && slot.slotBase() != baseValue ? slot.slotBase() : nullptr,
-                        domAttribute, WTFMove(prototypeAccessChain));
+                        domAttribute, WTF::move(prototypeAccessChain));
                 }
             }
         }
 
         LOG_IC((vm, ICEvent::GetByAddAccessCase, baseValue.classInfoOrNull(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
@@ -1129,7 +1129,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                     break;
                 }
 
-                newCase = AccessCase::createTransition(vm, codeBlock, propertyName, offset, oldStructure, newStructure, conditionSet, WTFMove(prototypeAccessChain), stubInfo);
+                newCase = AccessCase::createTransition(vm, codeBlock, propertyName, offset, oldStructure, newStructure, conditionSet, WTF::move(prototypeAccessChain), stubInfo);
             }
         } else if (slot.isCacheableCustom() || slot.isCacheableSetter()) {
             if (slot.isCacheableCustom()) {
@@ -1159,7 +1159,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, oldStructure, propertyName,
-                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isGlobalProxy, slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
+                    invalidOffset, conditionSet, WTF::move(prototypeAccessChain), isGlobalProxy, slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
             } else {
                 ASSERT(slot.isCacheableSetter());
                 ObjectPropertyConditionSet conditionSet;
@@ -1196,7 +1196,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 }
 
                 newCase = GetterSetterAccessCase::create(
-                    vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain), isGlobalProxy);
+                    vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTF::move(prototypeAccessChain), isGlobalProxy);
             }
         } else if (!propertyName.isPrivateName() && isProxyObject) {
             switch (putByKind) {
@@ -1226,7 +1226,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
 
         LOG_IC((vm, ICEvent::PutByAddAccessCase, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
         
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy(), propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy(), propertyName, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::PutByReplaceWithJump, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
@@ -1370,7 +1370,7 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
         if (!newCase)
             newCase = AccessCase::create(vm, codeBlock, accessType, nullptr);
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaModeFor(putByKind), nullptr, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaModeFor(putByKind), nullptr, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::PutByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));
@@ -1471,7 +1471,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
         } else
             newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteMiss, propertyName, invalidOffset, oldStructure, { }, nullptr);
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaMode, propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaMode, propertyName, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::DelByReplaceWithJump, oldStructure->classInfoForCells(), Identifier::fromUid(vm, propertyName.uid())));
@@ -1641,9 +1641,9 @@ static InlineCacheAction tryCacheInBy(
         LOG_IC((vm, ICEvent::InAddAccessCase, structure->classInfoForCells(), ident, slot.slotBase() == base));
 
         if (!newCase)
-            newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
+            newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTF::move(prototypeAccessChain));
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::InReplaceWithJump, structure->classInfoForCells(), ident, slot.slotBase() == base));
@@ -1706,7 +1706,7 @@ static InlineCacheAction tryCacheHasPrivateBrand(JSGlobalObject* globalObject, C
 
         Ref<AccessCase> newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, brandID, invalidOffset, structure, { }, { });
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::InReplaceWithJump, structure->classInfoForCells(), ident, isBaseProperty));
@@ -1748,7 +1748,7 @@ static InlineCacheAction tryCacheCheckPrivateBrand(
 
         Ref<AccessCase> newCase = AccessCase::createCheckPrivateBrand(vm, codeBlock, brandID, structure);
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::CheckPrivateBrandReplaceWithJump, structure->classInfoForCells(), ident, isBaseProperty));
@@ -1802,7 +1802,7 @@ static InlineCacheAction tryCacheSetPrivateBrand(
 
         Ref<AccessCase> newCase = AccessCase::createSetPrivateBrand(vm, codeBlock, brandID, oldStructure, newStructure);
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::SetPrivateBrandReplaceWithJump, oldStructure->classInfoForCells(), ident, isBaseProperty));
@@ -1863,7 +1863,7 @@ static InlineCacheAction tryCacheInstanceOf(JSGlobalObject* globalObject, CodeBl
         
         LOG_IC((vm, ICEvent::InstanceOfAddAccessCase, structure->classInfoForCells(), Identifier()));
         
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, WTF::move(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::InstanceOfReplaceWithJump, structure->classInfoForCells(), Identifier()));

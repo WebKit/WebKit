@@ -1,7 +1,7 @@
 {
     "timeout": 300,
     "count": 5,
-    "remote_archive": "http://hg.mozilla.org/projects/kraken/archive/tip.zip",
+    "remote_archive": "https://github.com/mozilla-it/krakenbenchmark.mozilla.org/archive/refs/heads/master.zip",
     "webserver_benchmark_patch": "data/patches/webserver/Kraken.patch",
     "webdriver_benchmark_patch": "data/patches/webdriver/Kraken.patch",
     "create_script": ["python", "make-hosted.py"],

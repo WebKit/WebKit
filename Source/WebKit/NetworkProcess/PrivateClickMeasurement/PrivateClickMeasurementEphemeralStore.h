@@ -65,7 +65,7 @@ public:
 private:
     EphemeralStore();
 
-    void reset();
+    void NODELETE reset();
 
     std::optional<WebCore::PrivateClickMeasurement> m_clickMeasurement;
 };

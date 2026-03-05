@@ -54,22 +54,12 @@ inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
     return static_cast<NSScrollView<WebCoreFrameScrollView> *>(platformWidget());
 }
 
-RetainPtr<PlatformScrollView> ScrollView::protectedScrollView() const
-{
-    return scrollView();
-}
-
 NSView *ScrollView::documentView() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return [protectedScrollView() documentView];
+    return [protect(scrollView()) documentView];
     END_BLOCK_OBJC_EXCEPTIONS
     return nil;
-}
-
-RetainPtr<NSView> ScrollView::protectedDocumentView() const
-{
-    return documentView();
 }
 
 void ScrollView::platformAddChild(Widget* child)
@@ -97,14 +87,14 @@ void ScrollView::platformRemoveChild(Widget* child)
 void ScrollView::platformSetScrollbarModes()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [protectedScrollView() setScrollingModes:m_horizontalScrollbarMode vertical:m_verticalScrollbarMode andLock:NO];
+    [protect(scrollView()) setScrollingModes:m_horizontalScrollbarMode vertical:m_verticalScrollbarMode andLock:NO];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode& vertical) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [protectedScrollView() scrollingModes:&horizontal vertical:&vertical];
+    [protect(scrollView()) scrollingModes:&horizontal vertical:&vertical];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -112,7 +102,7 @@ void ScrollView::platformSetCanBlitOnScroll(bool canBlitOnScroll)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[protectedScrollView() contentView] setCopiesOnScroll:canBlitOnScroll];
+    [[protect(scrollView()) contentView] setCopiesOnScroll:canBlitOnScroll];
 ALLOW_DEPRECATED_DECLARATIONS_END
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -120,14 +110,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 bool ScrollView::platformCanBlitOnScroll() const
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [[protectedScrollView() contentView] copiesOnScroll];
+    return [[protect(scrollView()) contentView] copiesOnScroll];
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 FloatBoxExtent ScrollView::platformContentInsets() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    auto insets = [protectedScrollView() contentInsets];
+    auto insets = [protect(scrollView()) contentInsets];
     return {
         static_cast<float>(insets.top),
         static_cast<float>(insets.right),
@@ -204,14 +194,14 @@ void ScrollView::platformSetContentsSize()
     int w = m_contentsSize.width();
     int h = m_contentsSize.height();
     LOG(Frames, "%p %@ at w %d h %d\n", documentView(), [(id)[documentView() class] className], w, h);            
-    [protectedDocumentView() setFrameSize:NSMakeSize(std::max(0, w), std::max(0, h))];
+    [protect(documentView()) setFrameSize:NSMakeSize(std::max(0, w), std::max(0, h))];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [protectedScrollView() setScrollBarsSuppressed:m_scrollbarsSuppressed
+    [protect(scrollView()) setScrollBarsSuppressed:m_scrollbarsSuppressed
                       repaintOnUnsuppress:repaintOnUnsuppress];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -228,7 +218,7 @@ void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
     tempPoint.x = tempPoint.x - [scrollView contentInsets].left;
     tempPoint.y = tempPoint.y - [scrollView contentInsets].top;
 
-    [protectedDocumentView() scrollPoint:tempPoint];
+    [protect(documentView()) scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -294,13 +284,13 @@ static inline NSScrollerKnobStyle toNSScrollerKnobStyle(ScrollbarOverlayStyle st
 
 void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
 {
-    [protectedScrollView() setScrollerKnobStyle:toNSScrollerKnobStyle(overlayStyle)];
+    [protect(scrollView()) setScrollerKnobStyle:toNSScrollerKnobStyle(overlayStyle)];
 }
 
 void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [protectedScrollView() setScrollOrigin:origin updatePositionAtAll:updatePositionAtAll immediately:updatePositionSynchronously];
+    [protect(scrollView()) setScrollOrigin:origin updatePositionAtAll:updatePositionAtAll immediately:updatePositionSynchronously];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

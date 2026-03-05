@@ -10,7 +10,6 @@
 
 #include "test/pc/e2e/sdp/sdp_changer.h"
 
-#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <map>
@@ -21,7 +20,6 @@
 
 #include "api/array_view.h"
 #include "api/jsep.h"
-#include "api/jsep_session_description.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
@@ -32,7 +30,6 @@
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_info.h"
-#include "pc/sdp_utils.h"
 #include "pc/session_description.h"
 #include "pc/simulcast_description.h"
 #include "rtc_base/checks.h"
@@ -213,7 +210,7 @@ LocalAndRemoteSdp SignalingInterceptor::PatchOffer(
     }
   }
 
-  auto offer_for_remote = CloneSessionDescription(offer.get());
+  auto offer_for_remote = offer->Clone();
   return LocalAndRemoteSdp(std::move(offer), std::move(offer_for_remote));
 }
 
@@ -221,7 +218,7 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp8Offer(
     std::unique_ptr<SessionDescriptionInterface> offer) {
   FillSimulcastContext(offer.get());
   if (!context_.HasSimulcast()) {
-    auto offer_for_remote = CloneSessionDescription(offer.get());
+    auto offer_for_remote = offer->Clone();
     return LocalAndRemoteSdp(std::move(offer), std::move(offer_for_remote));
   }
 
@@ -298,13 +295,10 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp8Offer(
 
   // Update transport_infos to add TransportInfo for each new media section.
   std::vector<TransportInfo> transport_infos = desc->transport_infos();
-  transport_infos.erase(std::remove_if(
-      transport_infos.begin(), transport_infos.end(),
-      [this](const TransportInfo& ti) {
-        // Remove transport infos that correspond to simulcast video sections.
-        return context_.simulcast_infos_by_mid.find(ti.content_name) !=
-               context_.simulcast_infos_by_mid.end();
-      }));
+  std::erase_if(transport_infos, [this](const TransportInfo& ti) {
+    // Remove transport infos that correspond to simulcast video sections.
+    return context_.simulcast_infos_by_mid.contains(ti.content_name);
+  });
   for (auto& info : context_.simulcast_infos) {
     for (auto& rid : info.rids) {
       transport_infos.emplace_back(rid, info.transport_description);
@@ -313,10 +307,10 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp8Offer(
   desc->set_transport_infos(transport_infos);
 
   // Create patched offer.
-  auto patched_offer =
-      std::make_unique<JsepSessionDescription>(SdpType::kOffer);
-  patched_offer->Initialize(std::move(desc), offer->session_id(),
-                            offer->session_version());
+  std::unique_ptr<SessionDescriptionInterface> patched_offer =
+      CreateSessionDescription(SdpType::kOffer, offer->session_id(),
+                               offer->session_version(), std::move(desc));
+
   return LocalAndRemoteSdp(std::move(offer), std::move(patched_offer));
 }
 
@@ -371,7 +365,7 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp9Offer(
     stream.ssrc_groups.push_back(
         SsrcGroup(kSimSsrcGroupSemantics, primary_ssrcs));
   }
-  auto offer_for_remote = CloneSessionDescription(offer.get());
+  auto offer_for_remote = offer->Clone();
   return LocalAndRemoteSdp(std::move(offer), std::move(offer_for_remote));
 }
 
@@ -401,14 +395,14 @@ LocalAndRemoteSdp SignalingInterceptor::PatchAnswer(
     }
   }
 
-  auto answer_for_remote = CloneSessionDescription(answer.get());
+  auto answer_for_remote = answer->Clone();
   return LocalAndRemoteSdp(std::move(answer), std::move(answer_for_remote));
 }
 
 LocalAndRemoteSdp SignalingInterceptor::PatchVp8Answer(
     std::unique_ptr<SessionDescriptionInterface> answer) {
   if (!context_.HasSimulcast()) {
-    auto answer_for_remote = CloneSessionDescription(answer.get());
+    auto answer_for_remote = answer->Clone();
     return LocalAndRemoteSdp(std::move(answer), std::move(answer_for_remote));
   }
 
@@ -434,13 +428,10 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp8Answer(
     // Restore mid/rid rtp header extensions
     std::vector<RtpExtension> extensions = media_desc->rtp_header_extensions();
     // First remove existing rid/mid header extensions.
-    extensions.erase(std::remove_if(extensions.begin(), extensions.end(),
-                                    [](const webrtc::RtpExtension& e) {
-                                      return e.uri == RtpExtension::kMidUri ||
-                                             e.uri == RtpExtension::kRidUri ||
-                                             e.uri ==
-                                                 RtpExtension::kRepairedRidUri;
-                                    }));
+    std::erase_if(extensions, [](const webrtc::RtpExtension& e) {
+      return e.uri == RtpExtension::kMidUri || e.uri == RtpExtension::kRidUri ||
+             e.uri == RtpExtension::kRepairedRidUri;
+    });
 
     // Then add right ones.
     extensions.push_back(info.mid_extension);
@@ -504,10 +495,10 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp8Answer(
   }
   desc->set_transport_infos(transport_infos);
 
-  auto patched_answer =
-      std::make_unique<JsepSessionDescription>(SdpType::kAnswer);
-  patched_answer->Initialize(std::move(desc), answer->session_id(),
-                             answer->session_version());
+  std::unique_ptr<SessionDescriptionInterface> patched_answer =
+      CreateSessionDescription(SdpType::kAnswer, answer->session_id(),
+                               answer->session_version(), std::move(desc));
+
   return LocalAndRemoteSdp(std::move(answer), std::move(patched_answer));
 }
 
@@ -529,7 +520,7 @@ SignalingInterceptor::RestoreMediaSectionsOrder(
 
 LocalAndRemoteSdp SignalingInterceptor::PatchVp9Answer(
     std::unique_ptr<SessionDescriptionInterface> answer) {
-  auto answer_for_remote = CloneSessionDescription(answer.get());
+  auto answer_for_remote = answer->Clone();
   return LocalAndRemoteSdp(std::move(answer), std::move(answer_for_remote));
 }
 

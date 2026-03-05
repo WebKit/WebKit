@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-height-in-flex-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-height-in-flex-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/customizable-select/min-height-in-flex.html

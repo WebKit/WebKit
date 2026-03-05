@@ -407,7 +407,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     }
 
     auto hFont = adoptGDIObject(static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
-    FontPlatformData platformData(WTFMove(hFont), fontDescription.computedSize(), false, false);
+    FontPlatformData platformData(WTF::move(hFont), fontDescription.computedSize(), false, false);
     return fontForPlatformData(platformData);
 }
 
@@ -596,7 +596,7 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
     result.weight = FontSelectionRange(weight, weight);
     result.width = FontSelectionRange(width, width);
     result.slope = FontSelectionRange(italic, italic);
-    procData->m_capabilities.append(WTFMove(result));
+    procData->m_capabilities.append(WTF::move(result));
     return 1;
 }
 

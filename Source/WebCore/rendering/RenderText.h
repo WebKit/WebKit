@@ -49,7 +49,7 @@ class LineLayout;
 }
 
 class RenderText : public RenderObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderText);
+    WTF_MAKE_TZONE_ALLOCATED(RenderText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderText);
 public:
     RenderText(Type, Text&, const String&);
@@ -57,15 +57,13 @@ public:
 
     virtual ~RenderText();
 
-    Layout::InlineTextBox* layoutBox();
-    const Layout::InlineTextBox* layoutBox() const;
+    Layout::InlineTextBox* NODELETE layoutBox();
+    const Layout::InlineTextBox* NODELETE layoutBox() const;
 
-    WEBCORE_EXPORT Text* textNode() const;
-    RefPtr<Text> protectedTextNode() const { return textNode(); }
+    WEBCORE_EXPORT Text* NODELETE textNode() const;
 
     const RenderStyle& style() const;
-    // FIXME: Remove checkedStyle once https://github.com/llvm/llvm-project/pull/142485 lands. This is a false positive.
-    const CheckedRef<const RenderStyle> checkedStyle() const { return style(); }
+
     const RenderStyle& firstLineStyle() const;
     const RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const;
 
@@ -86,9 +84,8 @@ public:
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
-#if PLATFORM(IOS_FAMILY)
+
     void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;
-#endif
 
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
     Vector<FloatQuad> absoluteQuadsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, OptionSet<RenderObject::BoundingRectBehavior> = { }, bool* wasFixed = nullptr) const;
@@ -126,9 +123,9 @@ public:
 
     float hangablePunctuationStartWidth(unsigned index) const;
     float hangablePunctuationEndWidth(unsigned index) const;
-    unsigned firstCharacterIndexStrippingSpaces() const;
-    unsigned lastCharacterIndexStrippingSpaces() const;
-    static bool isHangableStopOrComma(char16_t);
+    unsigned NODELETE firstCharacterIndexStrippingSpaces() const;
+    unsigned NODELETE lastCharacterIndexStrippingSpaces() const;
+    static bool NODELETE isHangableStopOrComma(char16_t);
     
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
@@ -162,11 +159,11 @@ public:
 
     bool containsOnlyCollapsibleWhitespace() const;
 
-    FontCascade::CodePath fontCodePath() const { return static_cast<FontCascade::CodePath>(m_fontCodePath); }
+    FontCascade::CodePath fontCodePath() const { return m_fontCodePath; }
     bool canUseSimpleFontCodePath() const { return fontCodePath() == FontCascade::CodePath::Simple; }
     bool shouldUseSimpleGlyphOverflowCodePath() const { return fontCodePath() == FontCascade::CodePath::SimpleWithGlyphOverflow; }
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void styleDidChange(Style::Difference, const RenderStyle* oldStyle);
 
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
@@ -179,7 +176,7 @@ public:
 
     Vector<std::pair<unsigned, unsigned>> contentRangesBetweenOffsetsForType(const DocumentMarkerType, unsigned startOffset, unsigned endOffset) const;
 
-    RenderInline* inlineWrapperForDisplayContents();
+    RenderInline* NODELETE inlineWrapperForDisplayContents();
     void setInlineWrapperForDisplayContents(RenderInline*);
 
     template <typename MeasureTextCallback>
@@ -218,8 +215,6 @@ private:
 
     void computePreferredLogicalWidths(float leadWidth, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
 
-    void computeFontCodePath();
-    
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
     float widthFromCache(const FontCascade&, unsigned start, unsigned len, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;
@@ -265,15 +260,15 @@ private:
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
     unsigned m_hasSecureTextTimer : 1 { false };
-    unsigned m_fontCodePath : 2 { 0 };
+    FontCascade::CodePath m_fontCodePath : 2;
 };
 
 String applyTextTransform(const RenderStyle&, const String&, Vector<char16_t> previousCharacter);
 String applyTextTransform(const RenderStyle&, const String&);
 String capitalize(const String&, Vector<char16_t> previousCharacter);
 String capitalize(const String&);
-TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak);
-TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak);
+TextBreakIterator::LineMode::Behavior NODELETE mapLineBreakToIteratorMode(LineBreak);
+TextBreakIterator::ContentAnalysis NODELETE mapWordBreakToContentAnalysis(WordBreak);
 
 inline char16_t RenderText::characterAt(unsigned i) const
 {
@@ -350,11 +345,6 @@ inline const RenderStyle* RenderText::targetTextPseudoStyle() const
 inline RenderText* Text::renderer() const
 {
     return downcast<RenderText>(Node::renderer());
-}
-
-inline CheckedPtr<RenderText> Text::checkedRenderer() const
-{
-    return renderer();
 }
 
 inline void RenderText::resetMinMaxWidth()

@@ -181,7 +181,7 @@ RetainPtr<SecIdentityRef> testIdentity2()
     auto privateKeyBytes = base64Decode(pemEncodedPrivateKey);
     auto certificateBytes = base64Decode(pemEncodedCertificate);
 
-    return createTestIdentity(WTFMove(*privateKeyBytes), WTFMove(*certificateBytes));
+    return createTestIdentity(WTF::move(*privateKeyBytes), WTF::move(*certificateBytes));
 }
 
 static RetainPtr<NSURLCredential> credentialWithIdentity()

@@ -75,7 +75,7 @@ struct ClientState {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ClientState);
 
-static bool flagsAreSet(MediaProducerMediaStateFlags value, MediaProducerMediaStateFlags flags)
+static bool NODELETE flagsAreSet(MediaProducerMediaStateFlags value, MediaProducerMediaStateFlags flags)
 {
     return value.containsAny(flags);
 }
@@ -177,13 +177,13 @@ void WebMediaSessionManager::setMockMediaPlaybackTargetPickerEnabled(bool enable
 void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetMockState state)
 {
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__);
-    checkedMockPicker()->setState(name, state);
+    protect(mockPicker())->setState(name, state);
 }
 
 void WebMediaSessionManager::mockMediaPlaybackTargetPickerDismissPopup()
 {
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__);
-    checkedMockPicker()->dismissPopup();
+    protect(mockPicker())->dismissPopup();
 }
 
 MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
@@ -194,22 +194,12 @@ MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
     return *m_pickerOverride.get();
 }
 
-CheckedRef<WebCore::MediaPlaybackTargetPickerMock> WebMediaSessionManager::checkedMockPicker()
-{
-    return mockPicker();
-}
-
 WebCore::MediaPlaybackTargetPicker& WebMediaSessionManager::targetPicker()
 {
     if (m_mockPickerEnabled)
         return mockPicker();
 
     return platformPicker();
-}
-
-CheckedRef<WebCore::MediaPlaybackTargetPicker> WebMediaSessionManager::checkedTargetPicker()
-{
-    return targetPicker();
 }
 
 WebMediaSessionManager::WebMediaSessionManager()
@@ -279,7 +269,7 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, m_clientState[index].get());
 
     bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducerMediaState::IsPlayingToExternalDevice);
-    checkedTargetPicker()->showPlaybackTargetPicker(client.platformView().get(), FloatRect(rect), hasActiveRoute, useDarkAppearance);
+    protect(targetPicker())->showPlaybackTargetPicker(client.platformView().get(), FloatRect(rect), hasActiveRoute, useDarkAppearance);
 }
 
 void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId, MediaProducerMediaStateFlags newFlags)
@@ -347,7 +337,7 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
 void WebMediaSessionManager::setPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, "has active route = ", target->hasActiveRoute());
-    m_playbackTarget = WTFMove(target);
+    m_playbackTarget = WTF::move(target);
     m_targetChanged = true;
     scheduleDelayedTask(ConfigurationTaskFlags::TargetClientsConfiguration);
 }
@@ -467,10 +457,10 @@ void WebMediaSessionManager::configurePlaybackTargetMonitoring()
 
     if (monitoringRequired || (hasAvailabilityListener && haveClientWithMedia)) {
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, "starting monitoring");
-        checkedTargetPicker()->startingMonitoringPlaybackTargets();
+        protect(targetPicker())->startingMonitoringPlaybackTargets();
     } else {
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, "stopping monitoring");
-        checkedTargetPicker()->stopMonitoringPlaybackTargets();
+        protect(targetPicker())->stopMonitoringPlaybackTargets();
     }
 }
 
@@ -552,7 +542,7 @@ void WebMediaSessionManager::watchdogTimerFired()
         return;
 
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__);
-    checkedTargetPicker()->invalidatePlaybackTargets();
+    protect(targetPicker())->invalidatePlaybackTargets();
 }
 
 } // namespace WebCore

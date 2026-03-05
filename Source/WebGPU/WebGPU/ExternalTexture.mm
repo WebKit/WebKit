@@ -70,12 +70,7 @@ void ExternalTexture::destroy()
 {
     m_pixelBuffer = nil;
     m_destroyed = true;
-    for (auto commandEncoder : m_commandEncoders) {
-        if (RefPtr ptr = m_device->commandEncoderFromIdentifier(commandEncoder))
-            ptr->makeSubmitInvalid();
-    }
-
-    m_commandEncoders.clear();
+    m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
 }
 
 void ExternalTexture::undestroy()
@@ -108,7 +103,7 @@ void ExternalTexture::update(CVPixelBufferRef pixelBuffer)
 {
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     if (RetainPtr ioSurface = CVPixelBufferGetIOSurface(pixelBuffer)) {
-        if (auto optionalWebProcessID = protectedDevice()->webProcessID()) {
+        if (auto optionalWebProcessID = protect(m_device)->webProcessID()) {
             if (auto webProcessID = optionalWebProcessID->sendRight())
                 IOSurfaceSetOwnershipIdentity(ioSurface.get(), webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
         }
@@ -140,15 +135,15 @@ void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture)
 
 void wgpuExternalTextureDestroy(WGPUExternalTexture externalTexture)
 {
-    WebGPU::protectedFromAPI(externalTexture)->destroy();
+    protect(WebGPU::fromAPI(externalTexture))->destroy();
 }
 
 void wgpuExternalTextureUndestroy(WGPUExternalTexture externalTexture)
 {
-    WebGPU::protectedFromAPI(externalTexture)->undestroy();
+    protect(WebGPU::fromAPI(externalTexture))->undestroy();
 }
 
 void wgpuExternalTextureUpdate(WGPUExternalTexture externalTexture, CVPixelBufferRef pixelBuffer)
 {
-    WebGPU::protectedFromAPI(externalTexture)->update(pixelBuffer);
+    protect(WebGPU::fromAPI(externalTexture))->update(pixelBuffer);
 }

@@ -128,9 +128,9 @@ public:
     }
 
     // FIXME: Stop minimizing killed nodes and add ASSERT(!isKilled()) in many functions here.
-    void kill(DFA&);
+    void NODELETE kill(DFA&);
     Vector<uint64_t> actions(const DFA&) const;
-    bool containsTransition(char, const DFA&) const;
+    bool NODELETE containsTransition(char, const DFA&) const;
     
     bool isKilled() const { return m_flags & IsKilled; }
     bool hasActions() const { return !!m_actionsLength; }

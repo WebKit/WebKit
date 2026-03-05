@@ -300,12 +300,11 @@ static void setup_viewport_scissor_state(VkPipelineViewportStateCreateInfo* view
     SkASSERT(viewportInfo->viewportCount == viewportInfo->scissorCount);
 }
 
-static void setup_multisample_state(int numSamples,
+static void setup_multisample_state(SampleCount sampleCount,
                                     VkPipelineMultisampleStateCreateInfo* multisampleInfo) {
     *multisampleInfo = {};
     multisampleInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    SkAssertResult(skgpu::SampleCountToVkSampleCount(numSamples,
-                                                     &multisampleInfo->rasterizationSamples));
+    multisampleInfo->rasterizationSamples = SampleCountToVkSampleCount(sampleCount);
     multisampleInfo->sampleShadingEnable = VK_FALSE;
     multisampleInfo->minSampleShading = 0.0f;
     multisampleInfo->pSampleMask = nullptr;
@@ -513,8 +512,7 @@ static bool input_attachment_desc_set_layout(VkDescriptorSetLayout& outLayout,
 
 static bool uniform_desc_set_layout(VkDescriptorSetLayout& outLayout,
                                     const VulkanSharedContext* sharedContext,
-                                    bool hasStepUniforms,
-                                    bool hasPaintUniforms,
+                                    bool hasCombinedUniforms,
                                     bool hasGradientBuffer) {
     // Define a container with size reserved for up to kNumUniformBuffers descriptors. Only add
     // DescriptorData for uniforms that actually are used and need to be included in the layout.
@@ -524,16 +522,10 @@ static bool uniform_desc_set_layout(VkDescriptorSetLayout& outLayout,
     DescriptorType uniformBufferType =
             sharedContext->caps()->storageBufferSupport() ? DescriptorType::kStorageBuffer
                                                           : DescriptorType::kUniformBuffer;
-    if (hasStepUniforms) {
+    if (hasCombinedUniforms) {
         uniformDescriptors.push_back({
                 uniformBufferType, /*count=*/1,
-                VulkanGraphicsPipeline::kRenderStepUniformBufferIndex,
-                PipelineStageFlags::kVertexShader | PipelineStageFlags::kFragmentShader});
-    }
-    if (hasPaintUniforms) {
-        uniformDescriptors.push_back({
-                uniformBufferType, /*count=*/1,
-                VulkanGraphicsPipeline::kPaintUniformBufferIndex,
+                VulkanGraphicsPipeline::kCombinedUniformIndex,
                 PipelineStageFlags::kVertexShader | PipelineStageFlags::kFragmentShader});
     }
     if (hasGradientBuffer) {
@@ -583,8 +575,7 @@ static bool texture_sampler_desc_set_layout(VkDescriptorSetLayout& outLayout,
 static VkPipelineLayout setup_pipeline_layout(const VulkanSharedContext* sharedContext,
                                               uint32_t pushConstantSize,
                                               VkShaderStageFlagBits pushConstantPipelineStageFlags,
-                                              bool hasStepUniforms,
-                                              bool hasPaintUniforms,
+                                              bool hasCombinedUniforms,
                                               bool hasGradientBuffer,
                                               int numTextureSamplers,
                                               bool loadMsaaFromResolve,
@@ -610,8 +601,7 @@ static VkPipelineLayout setup_pipeline_layout(const VulkanSharedContext* sharedC
         !uniform_desc_set_layout(
                 setLayouts[VulkanGraphicsPipeline::kUniformBufferDescSetIndex],
                 sharedContext,
-                hasStepUniforms,
-                hasPaintUniforms,
+                hasCombinedUniforms,
                 hasGradientBuffer) ||
         !texture_sampler_desc_set_layout(
                 setLayouts[VulkanGraphicsPipeline::kTextureBindDescSetIndex],
@@ -929,7 +919,7 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
         // independently from flags used in SkSL->SPIRV compilation.
         SPIRVTransformOptions options;
         options.fMultisampleInputLoad =
-                renderPassDesc.fSampleCount > 1 &&
+                renderPassDesc.fSampleCount > SampleCount::k1 &&
                 shaderInfo->dstReadStrategy() == DstReadStrategy::kReadFromInput;
         if (options.fMultisampleInputLoad) {
             fsSPIRV = TransformSPIRV(fsSPIRV, options);
@@ -962,8 +952,7 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
                 sharedContext,
                 VulkanResourceProvider::kIntrinsicConstantSize,
                 VulkanResourceProvider::kIntrinsicConstantStageFlags,
-                !step->uniforms().empty(),
-                shaderInfo->hasPaintUniforms(),
+                shaderInfo->hasCombinedUniforms(),
                 shaderInfo->hasGradientBuffer(),
                 shaderInfo->numFragmentTexturesAndSamplers(),
                 /*loadMsaaFromResolve=*/false,
@@ -1233,8 +1222,7 @@ std::unique_ptr<VulkanProgramInfo> VulkanGraphicsPipeline::CreateLoadMSAAProgram
                 sharedContext,
                 /*pushConstantSize=*/32,
                 (VkShaderStageFlagBits)VK_SHADER_STAGE_VERTEX_BIT,
-                /*hasStepUniforms=*/false,
-                /*hasPaintUniforms=*/false,
+                /*hasCombinedUniforms=*/false,
                 /*hasGradientBuffer=*/false,
                 /*numTextureSamplers=*/0,
                 /*loadMsaaFromResolve=*/true,
@@ -1318,7 +1306,10 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(
     , fDepthStencilSettings(depthStencilSettings)
     , fRenderStepID(renderStepID)
     , fVertexBindingDescriptions(std::move(vertexBindingDescriptions))
-    , fVertexAttributeDescriptions(std::move(vertexAttributeDescriptions)) {}
+    , fVertexAttributeDescriptions(std::move(vertexAttributeDescriptions)) {
+    // Update the newly-created underlying GPU object's label to match the Resource's
+    this->synchronizeBackendLabel();
+}
 
 void VulkanGraphicsPipeline::freeGpuData() {
     auto sharedCtxt = static_cast<const VulkanSharedContext*>(this->sharedContext());

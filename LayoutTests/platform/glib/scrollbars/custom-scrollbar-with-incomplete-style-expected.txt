@@ -4,11 +4,11 @@ layer at (0,0) size 787x1410
   RenderBlock {HTML} at (0,0) size 787x1410
     RenderBody {BODY} at (8,8) size 771x1389
       RenderBlock {H2} at (0,0) size 771x54
-        RenderText {#text} at (0,0) size 736x53
+        RenderText {#text} at (0,0) size 736x54
           text run at (0,0) width 736: "It's OK if nothing drawn for a scrollbar (for an outermost frame and an"
           text run at (0,27) width 228: "element with overlow)"
       RenderBlock {P} at (0,73) size 771x19
-        RenderText {#text} at (0,0) size 579x17
+        RenderText {#text} at (0,0) size 579x18
           text run at (0,0) width 579: "Note that Safari doesn't allow to customize the outermost scdrollbars and just show Cocoa's."
       RenderBlock {PRE} at (0,220) size 771x1169 [bgcolor=#008000]
       RenderBlock {PRE} at (0,1401) size 1542x0 [bgcolor=#008000]

@@ -73,7 +73,7 @@ struct MaskLayer {
     MaskLayer();
     MaskLayer(CSS::Keyword::None);
     MaskLayer(ImageOrNone&&);
-    MaskLayer(RefPtr<StyleImage>&&);
+    MaskLayer(RefPtr<Image>&&);
 
     const ImageOrNone& image() const { return m_image; }
     const PositionX& positionX() const { return m_positionX; }
@@ -122,8 +122,8 @@ struct MaskLayer {
     // Support for the `mask-position` shorthand.
     static Position initialPosition() { return { initialPositionX(), initialPositionY() }; }
     Position position() const { return { m_positionX, m_positionY }; }
-    void setPosition(Position&& position) { setPositionX(WTFMove(position.x)); setPositionY(WTFMove(position.y)); }
-    void fillPosition(Position&& position) { fillPositionX(WTFMove(position.x)); fillPositionY(WTFMove(position.y)); }
+    void setPosition(Position&& position) { setPositionX(WTF::move(position.x)); setPositionY(WTF::move(position.y)); }
+    void fillPosition(Position&& position) { fillPositionX(WTF::move(position.x)); fillPositionY(WTF::move(position.y)); }
     void clearPosition() { clearPositionX(); clearPositionY(); }
     bool isPositionUnset() const { return isPositionXUnset() && isPositionYUnset(); }
     bool isPositionSet() const { return isPositionXSet() || isPositionYSet(); }
@@ -133,7 +133,7 @@ struct MaskLayer {
 
     static constexpr auto computedValueUsesUsedValues = true;
     static constexpr auto baseProperty = PropertyNameConstant<CSSPropertyMaskImage> { };
-    static constexpr auto properties =  std::tuple { FOR_EACH_MASK_LAYER_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_PROPERTY) };
+    static constexpr auto properties = std::tuple { FOR_EACH_MASK_LAYER_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_PROPERTY) };
     static MaskLayer clone(const MaskLayer& other) { return other; }
     bool isInitial() const { return m_image.isNone(); }
 

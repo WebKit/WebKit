@@ -24,6 +24,10 @@ onload = () => {
         container.remove();
 
         shouldBeNull('container.firstChild.contentWindow');
+
+        // Make sure frames and script execution contexts don't get left around for future tests.
+        GCController.collect();
+
         finishJSTest();
     }, 0);
 }

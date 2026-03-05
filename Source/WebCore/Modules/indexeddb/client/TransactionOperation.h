@@ -50,7 +50,7 @@ enum class IndexRecordType : bool;
 namespace IDBClient {
 
 class TransactionOperation : public ThreadSafeRefCounted<TransactionOperation> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TransactionOperation);
+    WTF_MAKE_TZONE_ALLOCATED(TransactionOperation);
     friend IDBRequestData::IDBRequestData(TransactionOperation&);
 public:
     virtual ~TransactionOperation()
@@ -96,7 +96,7 @@ public:
         m_transaction->operationCompletedOnClient(*this);
     }
 
-    const IDBResourceIdentifier& identifier() const { return m_identifier; }
+    const IDBResourceIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     Thread& originThread() const { return m_originThread.get(); }
 
@@ -139,7 +139,7 @@ private:
 };
 
 class TransactionOperationImpl final : public TransactionOperation {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TransactionOperationImpl);
+    WTF_MAKE_TZONE_ALLOCATED(TransactionOperationImpl);
 public:
     template<typename... Args> static Ref<TransactionOperationImpl> create(Args&&... args) { return adoptRef(*new TransactionOperationImpl(std::forward<Args>(args)...)); }
 private:
@@ -147,12 +147,12 @@ private:
         : TransactionOperation(transaction)
     {
         ASSERT(performMethod);
-        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTFMove(performMethod)] {
+        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTF::move(performMethod)] {
             performMethod(protectedThis.get());
         };
 
         if (completeMethod) {
-            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
+            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTF::move(completeMethod)] (const IDBResultData& resultData) {
                 completeMethod(resultData);
             };
         }
@@ -162,12 +162,12 @@ private:
         : TransactionOperation(transaction, request)
     {
         ASSERT(performMethod);
-        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTFMove(performMethod)] {
+        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTF::move(performMethod)] {
             performMethod(protectedThis.get());
         };
 
         if (completeMethod) {
-            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
+            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTF::move(completeMethod)] (const IDBResultData& resultData) {
                 completeMethod(resultData);
             };
         }

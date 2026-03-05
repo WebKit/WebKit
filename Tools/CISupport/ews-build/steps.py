@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,7 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from base64 import b64encode
 from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver, properties, remotecommand
 from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
@@ -46,7 +45,7 @@ import socket
 import sys
 import time
 
-from Shared.steps import ShellMixin, SetBuildSummary
+from Shared.steps import ShellMixin, SetBuildSummary, SetO3OptimizationLevel, WaitForDuration, InstallSwiftToolchain, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, SWIFT_DIR, USER_TOOLCHAINS_DIR
 
 if sys.version_info < (3, 9):  # noqa: UP036
     print('ERROR: Minimum supported Python version for this code is Python 3.9')
@@ -82,6 +81,8 @@ SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
 LLVM_DIR = 'llvm-project'
 STATIC_ANALYSIS_ARCHIVE_PATH = '/tmp/static-analysis.zip'
 SHOULD_FILTER_LOGS = load_password('SHOULD_FILTER_LOGS', default=True)
+SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK = load_password('SHOULD_FILTER_LOGS', default=True)
+SUFFIX_WITHOUT_CHANGE = '-without-change'
 
 if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES:
     CURRENT_HOSTNAME = 'ews-build.webkit.org'
@@ -220,8 +221,7 @@ class GitHubMixin(object):
         headers = {'Accept': ['application/vnd.github.v3+json']}
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         if username and access_token:
-            auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
-            headers['Authorization'] = ['Basic {}'.format(auth_header)]
+            headers['Authorization'] = [f'Bearer {access_token}']
 
         response = yield TwistedAdditions.request(
             url, type=b'GET',
@@ -240,7 +240,6 @@ class GitHubMixin(object):
         graphql_url = 'https://api.github.com/graphql'
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         if username and access_token:
-            auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
             headers['Authorization'] = ['bearer {}'.format(access_token)]
 
         response = yield TwistedAdditions.request(
@@ -261,8 +260,7 @@ class GitHubMixin(object):
     @defer.inlineCallbacks
     def get_number_of_prs_with_label(self, label, retry=0):
         project = self.getProperty('project') or CANONICAL_GITHUB_PROJECT
-        owner, name = project.split('/', 1)
-        query_body = '{repository(owner:"%s", name:"%s") { pullRequests(labels: "%s") { totalCount } } }' % (owner, name, label)
+        query_body = '{search(query: "repo:%s is:pr is:open label:%s", type: ISSUE, first: 1) { issueCount } }' % (project, label)
         query = {'query': query_body}
 
         for attempt in range(retry + 1):
@@ -271,7 +269,7 @@ class GitHubMixin(object):
                 if 'errors' in response:
                     yield self._addToLog('stdio', response['errors'][0]['message'])
                 else:
-                    num_prs = response['data']['repository']['pullRequests']['totalCount']
+                    num_prs = response['data']['search']['issueCount']
                     break
             except Exception as e:
                 yield self._addToLog('stdio', 'Failed to retrieve number of PRs.\n')
@@ -421,8 +419,7 @@ class GitHubMixin(object):
             headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             if username and access_token:
-                auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
-                headers['Authorization'] = ['Basic {}'.format(auth_header)]
+                headers['Authorization'] = [f'Bearer {access_token}']
 
             response = yield TwistedAdditions.request(
                 pr_label_url, type=b'POST', timeout=60,
@@ -465,8 +462,7 @@ class GitHubMixin(object):
             headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             if username and access_token:
-                auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
-                headers['Authorization'] = ['Basic {}'.format(auth_header)]
+                headers['Authorization'] = [f'Bearer {access_token}']
 
             response = yield TwistedAdditions.request(
                 pr_label_url, type=b'PUT', timeout=60,
@@ -496,8 +492,7 @@ class GitHubMixin(object):
             headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             if username and access_token:
-                auth_header = b64encode(f'{username}:{access_token}'.encode('utf-8')).decode('utf-8')
-                headers['Authorization'] = [f'Basic {auth_header}']
+                headers['Authorization'] = [f'Bearer {access_token}']
             response = yield TwistedAdditions.request(
                 comment_url, type=b'POST', timeout=60,
                 headers=headers, json=dict(body=content),
@@ -538,8 +533,7 @@ class GitHubMixin(object):
             headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             if username and access_token:
-                auth_header = b64encode(f'{username}:{access_token}'.encode('utf-8')).decode('utf-8')
-                headers['Authorization'] = [f'Basic {auth_header}']
+                headers['Authorization'] = [f'Bearer {access_token}']
             response = yield TwistedAdditions.request(
                 update_url, type=b'PATCH', timeout=60,
                 headers=headers, json=pr_info,
@@ -661,7 +655,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
     description = ['configuring build']
     descriptionDone = ['Configured build']
 
-    def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments, triggered_by=None):
+    def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments, triggered_by=None, rebuild_without_change_on_builder=False):
         super().__init__()
         self.platform = platform
         if platform != 'jsc-only':
@@ -674,6 +668,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         self.triggered_by = triggered_by
         self.remotes = remotes
         self.additionalArguments = additionalArguments
+        self.rebuild_without_change_on_builder = rebuild_without_change_on_builder
 
     @defer.inlineCallbacks
     def run(self):
@@ -696,6 +691,8 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
             self.setProperty('remotes', self.remotes, 'config.json')
         if self.additionalArguments:
             self.setProperty('additionalArguments', self.additionalArguments, 'config.json')
+        if self.rebuild_without_change_on_builder:
+            self.setProperty('rebuild_without_change_on_builder', self.rebuild_without_change_on_builder, 'config.json')
 
         self.add_patch_id_url()
         yield self.add_pr_details()
@@ -1085,7 +1082,7 @@ class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
         commands = [
             ['git', 'checkout', '--progress', 'remotes/{}/{}'.format(remote, base), '-f'],
             self.shell_command('git branch -D {} || {}'.format(base, self.shell_exit_0())),
-            ['git', 'checkout', '--progress', '-b', base],
+            ['git', 'checkout', '--progress', '-B', base],
         ]
         if base != DEFAULT_BRANCH:
             commands.append(self.shell_command('git branch -D {} || {}'.format(DEFAULT_BRANCH, self.shell_exit_0())))
@@ -1199,7 +1196,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             self.shell_command(f'git remote add {remote} {GITHUB_URL}{project}.git || {self.shell_exit_0()}'),
             ['git', 'remote', 'set-url', remote, f'{GITHUB_URL}{project}.git'],
             ['git', 'fetch', remote, pr_branch],
-            ['git', 'checkout', '--progress', '-b', pr_branch],
+            ['git', 'checkout', '--progress', '-B', pr_branch],
             ['git', 'cherry-pick', '--allow-empty', f'HEAD..remotes/{remote}/{pr_branch}'],
         ]
 
@@ -1327,6 +1324,8 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/Scripts/compare-static-analysis-results', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/generate-dirty-files', re.IGNORECASE),
         re.compile(rb'Tools/CISupport/Shared/download-and-install-build-tools', re.IGNORECASE),
+        re.compile(rb'Tools/CISupport/safer-cpp-llvm-version', re.IGNORECASE),
+        re.compile(rb'Tools/CISupport/safer-cpp-swift-version', re.IGNORECASE)
     ]
 
     group_to_paths_mapping = {
@@ -1458,10 +1457,11 @@ class FindModifiedLayoutTests(shell.ShellCommand, AnalyzeChange):
     RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html|LayoutTests.*\.svg|LayoutTests.*\.xml)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
-    command = ['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']
+    MAX_MODIFIED_TESTS = 100
 
     def __init__(self, skipBuildIfNoResult=True):
         self.skipBuildIfNoResult = skipBuildIfNoResult
+        self.command = ['bash', '-c', f'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n {self.MAX_MODIFIED_TESTS * 10} || true']
         super().__init__(logEnviron=False)
 
     @defer.inlineCallbacks
@@ -1494,6 +1494,10 @@ class FindModifiedLayoutTests(shell.ShellCommand, AnalyzeChange):
         modified_tests += tests_from_patch
 
         if modified_tests:
+            total_tests = len(modified_tests)
+            if total_tests > self.MAX_MODIFIED_TESTS:
+                yield self._addToLog('stdio', f'\nFound {total_tests} modified layout tests, limiting to first {self.MAX_MODIFIED_TESTS}\n')
+                modified_tests = modified_tests[:self.MAX_MODIFIED_TESTS]
             yield self._addToLog('stdio', '\nThis change modifies following tests: {}\n'.format(modified_tests))
             self.setProperty('modified_tests', modified_tests)
             self.results = SUCCESS
@@ -2085,7 +2089,7 @@ class ValidateUserForQueue(buildstep.BuildStep, AddToLogMixin):
 
     @defer.inlineCallbacks
     def run(self):
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
 
@@ -2195,7 +2199,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
     @defer.inlineCallbacks
     def run(self):
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
 
@@ -2594,8 +2598,7 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     @defer.inlineCallbacks
     def getAllPRData(self, limit, label, retry=0):
         project = self.getProperty('project') or CANONICAL_GITHUB_PROJECT
-        owner, name = project.split('/', 1)
-        query_body = '{repository(owner:"%s", name:"%s") { pullRequests(labels: "%s", last: %s) { edges { node { title number commits(last: 3) { nodes { commit { commitUrl status { state contexts { context state } } } } } } } } } }' % (owner, name, label, limit)
+        query_body = '{search(query: "repo:%s is:pr label:%s", type: ISSUE, last: %s) { edges { node { ... on PullRequest { title number commits(last: 3) { nodes { commit { commitUrl status { state contexts { context state } } } } } } } } } }' % (project, label, limit)
         query = {'query': query_body}
 
         yield self._addToLog('stdio', f"Fetching all PRs with label {label}...\n")
@@ -2611,7 +2614,7 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
                 if 'errors' in response:
                     yield self._addToLog('stdio', response['errors'][0]['message'])
                 else:
-                    all_pr_data = response['data']['repository']['pullRequests']['edges']
+                    all_pr_data = response['data']['search']['edges']
                     break
             except Exception as e:
                 yield self._addToLog('stdio', 'Failed to retrieve PR data.\n')
@@ -2636,8 +2639,8 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     flunkOnFailure = False
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
-    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc', 'jsc-arm64']
-    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-cairo-libwebrtc', 'wpe-wk2', 'api-wpe']
+    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc', 'jsc-debug-arm64']
+    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'gtk3-libwebrtc', 'wpe-wk2', 'api-wpe']
     WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1
@@ -2950,6 +2953,9 @@ class Trigger(trigger.Trigger):
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
         properties_to_pass['os_version_builder'] = properties.Property('os_version', default='')
         properties_to_pass['xcode_version_builder'] = properties.Property('xcode_version', default='')
+        properties_to_pass['parent_buildnumber'] = properties.Property('buildnumber')
+        properties_to_pass['parent_builderid'] = properties.Property('builderid')
+        properties_to_pass['rebuild_without_change_on_builder'] = properties.Property('rebuild_without_change_on_builder', default=False)
         if self.include_revision:
             properties_to_pass['ews_revision'] = properties.Property('got_revision')
         return properties_to_pass
@@ -3087,7 +3093,7 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
 class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
     name = 'build-webkit-org-unit-tests'
     description = ['build-webkit-unit-tests running']
-    command = ['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall']
+    command = ['python3', './run-tests', 'build-webkit-org']
 
     def __init__(self, **kwargs):
         super().__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
@@ -3101,7 +3107,7 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
 class RunEWSUnitTests(shell.ShellCommand):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
-    command = ['python3', 'runUnittests.py', 'ews-build', '--autoinstall']
+    command = ['python3', './run-tests', 'ews-build']
 
     def __init__(self, **kwargs):
         super().__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
@@ -3110,6 +3116,20 @@ class RunEWSUnitTests(shell.ShellCommand):
         if self.results == SUCCESS:
             return {'step': 'Passed EWS unit tests'}
         return {'step': 'Failed EWS unit tests'}
+
+
+class RunSharedUnitTests(shell.ShellCommand):
+    name = 'shared-unit-tests'
+    description = ['shared-unit-tests running']
+    command = ['python3', './run-tests', 'Shared']
+
+    def __init__(self, **kwargs):
+        super().__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Passed Shared unit tests'}
+        return {'step': 'Failed Shared unit tests'}
 
 
 class RunBuildbotCheckConfig(shell.ShellCommand):
@@ -3423,6 +3443,16 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
                         pull_request=bool(self.getProperty('github.number')),
                     ))
 
+                    if self.getProperty('rebuild_without_change_on_builder', False):
+                        steps_to_add.extend([
+                            RevertAppliedChanges(),
+                            ValidateChange(verifyBugClosed=False, addURLs=False),
+                            CompileWebKitWithoutChange(),
+                            ArchiveBuiltProduct(),
+                            GenerateS3URL(f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}{SUFFIX_WITHOUT_CHANGE}"),
+                            UploadFileToS3(f"WebKitBuild/{self.getProperty('configuration')}.zip", links={self.name: 'Archive without change'}),
+                        ])
+
         # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
@@ -3710,6 +3740,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
     command_extra = ['--treat-failing-as-flaky=0.6,10,200']
     prefix = 'jsc_'
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
+    FAILURE_THRESHOLD = 1000
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, sigtermTime=10, timeout=3 * 60 * 60, **kwargs)
@@ -3751,6 +3782,11 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         if SHOULD_FILTER_LOGS is True:
             self.command = self.shell_command(' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs jsc')
         rc = yield super().run()
+        defer.returnValue(rc)
+
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield super().runCommand(command)
 
         yield self._addToLog('json', '\n')
         logLines = self.log_observer_json.getStdout().rstrip()
@@ -3759,7 +3795,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             jsc_results = json.loads(json_text)
         except Exception as ex:
             yield self._addToLog('stderr', f'ERROR: unable to parse data, exception: {ex}')
-            defer.returnValue(rc)
+            return
 
         if jsc_results.get('allMasmTestsPassed') is False:
             self.binaryFailures.append('testmasm')
@@ -3771,23 +3807,25 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             self.binaryFailures.append('testdfg')
         if jsc_results.get('allApiTestsPassed') is False:
             self.binaryFailures.append('testapi')
-        self.stressTestFailures = jsc_results.get('stressTestFailures')
-        if self.stressTestFailures:
-            self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
         self.flaky = jsc_results.get('flakyAndPassed')
         if self.flaky:
             self.setProperty(self.prefix + 'flaky_and_passed', self.flaky)
         if self.binaryFailures:
             self.setProperty(self.prefix + 'binary_failures', self.binaryFailures)
 
+        self.stressTestFailures = jsc_results.get('stressTestFailures', [])
+        if len(self.stressTestFailures) > self.FAILURE_THRESHOLD:
+            self.setProperty(self.prefix + 'stress_test_failures', [f'Too many failures: {len(self.stressTestFailures)} jsc tests failed'])
+            yield self._addToLog('stderr', f'Too many failures: {len(self.stressTestFailures)} jsc tests failed\n')
+            return
+
+        self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
         is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
         if is_main and (self.stressTestFailures or self.binaryFailures):
             yield self.filter_failures_using_results_db(self.stressTestFailures, self.binaryFailures)
             self.setProperty('jsc_stress_test_failures_filtered', sorted(self.stressTestFailures_filtered))
             self.setProperty('jsc_binary_failures_filtered', sorted(self.binaryFailures_filtered))
             self.setProperty('results-db_jsc_pre_existing', sorted(self.preexisting_failures_in_results_db))
-
-        defer.returnValue(rc)
 
     def evaluateCommand(self, cmd):
         rc = super().evaluateCommand(cmd)
@@ -3824,6 +3862,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
                 RevertAppliedChanges(),
                 CleanWorkingDirectory(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
+                SetO3OptimizationLevel(),
                 CompileJSCWithoutChange(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
@@ -4309,6 +4348,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
         previous_build_summary = self.getProperty('build_summary', '')
+        platform = self.getProperty('platform')
         steps_to_add = []
 
         if SHOULD_FILTER_LOGS is True:
@@ -4353,12 +4393,18 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
                     KillOldProcesses(),
                     ReRunWebKitTests(),
                 ]
-            else:
+            elif platform != 'win':
                 steps_to_add += [
                     RevertAppliedChanges(),
                     CleanWorkingDirectory(),
-                    ValidateChange(verifyBugClosed=False, addURLs=False),
-                    CompileWebKitWithoutChange(retry_build_on_failure=True),
+                    ValidateChange(verifyBugClosed=False, addURLs=False)
+                ]
+                if self.getProperty('rebuild_without_change_on_builder', False):
+                    steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
+                else:
+                    steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+
+                steps_to_add += [
                     ValidateChange(verifyBugClosed=False, addURLs=False),
                     KillOldProcesses(),
                     RunWebKitTestsWithoutChange(),
@@ -4468,6 +4514,7 @@ class ReRunWebKitTests(RunWebKitTests):
         flaky_failures = sorted(list(flaky_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
         previous_build_summary = self.getProperty('build_summary', '')
+        platform = self.getProperty('platform')
         steps_to_add = []
 
         if SHOULD_FILTER_LOGS is True:
@@ -4522,19 +4569,29 @@ class ReRunWebKitTests(RunWebKitTests):
                 steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='rerun'), ExtractTestResults(identifier='rerun')]
                 self.build.addStepsAfterCurrentStep(steps_to_add)
                 return WARNINGS
-            steps_to_add += [
-                ArchiveTestResults(),
-                UploadTestResults(identifier='rerun'),
-                ExtractTestResults(identifier='rerun'),
-                RevertAppliedChanges(),
-                CleanWorkingDirectory(),
-                ValidateChange(verifyBugClosed=False, addURLs=False),
-                CompileWebKitWithoutChange(retry_build_on_failure=True),
-                ValidateChange(verifyBugClosed=False, addURLs=False),
-                KillOldProcesses(),
-                RunWebKitTestsWithoutChange()
-            ]
-            self.build.addStepsAfterCurrentStep(steps_to_add)
+
+            # The significant additional build time isn't worth it on Windows, we'd rather
+            # the worker start on another job in the queue.
+            if platform not in ('win',):
+                steps_to_add += [
+                    ArchiveTestResults(),
+                    UploadTestResults(identifier='rerun'),
+                    ExtractTestResults(identifier='rerun'),
+                    RevertAppliedChanges(),
+                    CleanWorkingDirectory(),
+                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                ]
+                if self.getProperty('rebuild_without_change_on_builder', False):
+                    steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
+                else:
+                    steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+
+                steps_to_add += [
+                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    KillOldProcesses(),
+                    RunWebKitTestsWithoutChange()
+                ]
+                self.build.addStepsAfterCurrentStep(steps_to_add)
         return rc
 
     @defer.inlineCallbacks
@@ -4866,6 +4923,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 rc = yield self.report_failure(set())
                 return defer.returnValue(rc)
             self.send_email_for_infrastructure_issue('Both first and second layout-test runs with patch generated no list of results but exited with error, and the clean_tree without change retry also failed.')
+            if (self.getProperty('first_run_flakies', False) or self.getProperty('second_run_flakies', False)) and self.getProperty('clean_tree_run_flakies', False):
+                self.build.results = SUCCESS
+                message = 'Passed layout tests with flaky tests'
+                self.descriptionDone = message
+                self.setProperty('build_summary', message)
+                return defer.returnValue(SUCCESS)
             return defer.returnValue(self.retry_build('Unexpected infrastructure issue, retrying build'))
 
         if first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit:
@@ -5202,18 +5265,15 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
         self.setProperty('build_summary', message)
         return SUCCESS
 
-    def report_warning(self, message):
-        self.build.results = WARNINGS
-        self.descriptionDone = message
-        self.setProperty('build_summary', message)
-        return WARNINGS
-
     def report_infrastructure_issue_and_maybe_retry_build(self, message):
         retry_count = int(self.getProperty('retry_count', 0))
         if retry_count >= self.MAX_RETRY:
             message += '\nReached the maximum number of retries ({}). Unable to determine if change is bad or there is a pre-existent infrastructure issue.'.format(self.MAX_RETRY)
             self.send_email_for_infrastructure_issue(message)
-            return self.report_warning(message)
+            self.build.results = FAILURE
+            self.descriptionDone = message
+            self.setProperty('build_summary', message)
+            return FAILURE
         message += "\nRetrying build [retry count is {} of {}]".format(retry_count, self.MAX_RETRY)
         self.setProperty('retry_count', retry_count + 1)
         self.send_email_for_infrastructure_issue(message)
@@ -5318,21 +5378,22 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
             return defer.returnValue(rc)
 
         # The checks below need to be after the timeout ones (above) because when a timeout is trigerred no results will be generated for the step.
-        # The step with_change_repeat_failures generated no list of failures or flakies, which should only happen when the return code of the step is SUCESS or WARNINGS.
-        if not with_change_repeat_failures_results_nonflaky_failures and not with_change_repeat_failures_results_flakies:
-            with_change_repeat_failures_retcode = self.getProperty('with_change_repeat_failures_retcode', FAILURE)
-            if with_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
+        # The step with_change_repeat_failures generated an error code. That means there should be either tests failing or tests flakies. Check that.
+        with_change_repeat_failures_retcode = self.getProperty('with_change_repeat_failures_retcode', FAILURE)
+        if first_run_failures and with_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
+            if not with_change_repeat_failures_results_nonflaky_failures and not with_change_repeat_failures_results_flakies:
                 return defer.returnValue(self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures" failed to generate any list of failures or flakies and returned an error code.'))
-
-        # Check the same for the step without_change_repeat_failures
-        if not without_change_repeat_failures_results_nonflaky_failures and not without_change_repeat_failures_results_flakies:
-            without_change_repeat_failures_retcode = self.getProperty('without_change_repeat_failures_retcode', FAILURE)
-            if without_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
-                return defer.returnValue(self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures-without-change" failed to generate any list of failures or flakies and returned an error code.'))
+            elif with_change_repeat_failures_results_nonflaky_failures:
+                # Check the same for the step without_change_repeat_failures but only if there where failures on the previous step (with_change_repeat_failures), because otherwise the check doesn't make sense (the step would have not run at all)
+                without_change_repeat_failures_retcode = self.getProperty('without_change_repeat_failures_retcode', FAILURE)
+                if without_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
+                    if not without_change_repeat_failures_results_nonflaky_failures and not without_change_repeat_failures_results_flakies:
+                        return defer.returnValue(self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures-without-change" failed to generate any list of failures or flakies and returned an error code.'))
 
         # Warn EWS bot watchers about flakies so they can garden those. Include the step where the flaky was found in the e-mail to know if it was found with change or without it.
         # Due to the way this class works most of the flakies are filtered on the step with change even when those were pre-existent issues (so this is also useful for bot watchers).
         all_flaky_failures = first_run_flakies.union(with_change_repeat_failures_results_flakies).union(without_change_repeat_failures_results_flakies)
+        all_flaky_failures.update(first_run_failures - with_change_repeat_failures_results_nonflaky_failures)
         flaky_steps_dict = {}
         for flaky_failure in all_flaky_failures:
             step_names = []
@@ -5552,11 +5613,6 @@ class TransferToS3(master.MasterShellCommand):
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
-    command = [
-        'python3', 'Tools/CISupport/download-built-product',
-        WithProperties('--%(configuration)s'),
-        WithProperties(S3URL + S3_BUCKET + '/%(fullPlatform)s-%(archForUpload)s-%(configuration)s/%(change_id)s.zip'),
-    ]
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['Downloaded built product']
@@ -5568,8 +5624,12 @@ class DownloadBuiltProduct(shell.ShellCommand):
             return {'step': 'Failed to download built product from S3'}
         return super().getResultSummary()
 
-    def __init__(self, **kwargs):
+    def __init__(self, suffix='', **kwargs):
+        self.suffix = suffix
+        self.name += suffix
         super().__init__(logEnviron=False, **kwargs)
+        if suffix == SUFFIX_WITHOUT_CHANGE:
+            self.haltOnFailure = False
 
     @defer.inlineCallbacks
     def run(self):
@@ -5578,9 +5638,20 @@ class DownloadBuiltProduct(shell.ShellCommand):
             self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
             return defer.returnValue(SKIPPED)
 
+        full_platform = self.getProperty('fullPlatform')
+        arch_for_upload = self.getProperty('archForUpload')
+        configuration = self.getProperty('configuration')
+        change_id = self.getProperty('change_id')
+        url = f'{S3URL}{S3_BUCKET}/{full_platform}-{arch_for_upload}-{configuration}{self.suffix}/{change_id}.zip'
+
+        self.command = ['python3', 'Tools/CISupport/download-built-product', f'--{configuration}', url]
+
         rc = yield super().run()
         if rc == FAILURE:
-            self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
+            if self.suffix == SUFFIX_WITHOUT_CHANGE:
+                self.build.addStepsAfterCurrentStep([CheckParentBuildStatus()])
+            else:
+                self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
         defer.returnValue(rc)
 
 
@@ -5605,6 +5676,86 @@ class DownloadBuiltProductFromMaster(transfer.FileDownload):
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {'step': 'Failed to download built product from build master'}
+        return super().getResultSummary()
+
+
+class CheckParentBuildStatus(buildstep.BuildStep):
+    name = 'check-parent-build-status'
+    description = ['checking parent build status']
+    descriptionDone = ['Checked parent build status']
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    WAIT_DURATION_SECONDS = 300
+    PARENT_BUILD_ONGOING_MSG = 'Parent build is still in progress, waiting to re-check'
+    PARENT_BUILD_SUCCESS_MSG = 'Parent build succeeded, downloading built product'
+    PARENT_BUILD_SUCCESS_BUT_DOWNLOAD_FAILED_MSG = 'Parent build succeeded but built product not available'
+
+    def __init__(self, after_waiting=False, **kwargs):
+        super().__init__(**kwargs)
+        self._summary = ''
+        self.after_waiting = after_waiting
+
+    @defer.inlineCallbacks
+    def run(self):
+        parent_buildnumber = self.getProperty('parent_buildnumber')
+        parent_builderid = self.getProperty('parent_builderid')
+
+        if not parent_buildnumber or not parent_builderid:
+            self._summary = 'No parent build information available'
+            self.build.buildFinished([self._summary], FAILURE)
+            return defer.returnValue(FAILURE)
+
+        try:
+            parent_builderid = int(parent_builderid)
+        except (ValueError, TypeError):
+            self._summary = 'Invalid parent build information'
+            self.build.buildFinished([self._summary], FAILURE)
+            return defer.returnValue(FAILURE)
+
+        parent_build = yield self.master.data.get(('builders', parent_builderid, 'builds', parent_buildnumber))
+
+        if not parent_build:
+            self._summary = f'Could not find parent build with builder id: {parent_builderid} and number: {parent_buildnumber}'
+            self.build.buildFinished([self._summary], FAILURE)
+            return defer.returnValue(FAILURE)
+
+        parent_build_result = parent_build.get('results')
+
+        if parent_build_result is None:
+            self._summary = self.PARENT_BUILD_ONGOING_MSG
+            self.descriptionDone = self._summary
+            # Parent build not finished yet, wait and re-check
+            self.build.addStepsAfterCurrentStep([
+                WaitForDuration(duration=self.WAIT_DURATION_SECONDS),
+                CheckParentBuildStatus(after_waiting=True),
+            ])
+            return defer.returnValue(SUCCESS)
+
+        if parent_build_result in [SUCCESS, WARNINGS]:
+            if self.after_waiting:
+                # Parent build just finished after waiting, try downloading the built product
+                self._summary = self.PARENT_BUILD_SUCCESS_MSG
+                self.descriptionDone = self._summary
+                self.build.addStepsAfterCurrentStep([
+                    DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE),
+                ])
+                return defer.returnValue(SUCCESS)
+            else:
+                # Parent build was successful but download of build product failed, this is unexpected
+                self._summary = self.PARENT_BUILD_SUCCESS_BUT_DOWNLOAD_FAILED_MSG
+                self.descriptionDone = self._summary
+                self.build.buildFinished([self._summary], FAILURE)
+                return defer.returnValue(FAILURE)
+
+        self._summary = f'Parent build failed with result: {Results[parent_build_result]}'
+        self.descriptionDone = self._summary
+        self.build.buildFinished([self._summary], FAILURE)
+        return defer.returnValue(FAILURE)
+
+    def getResultSummary(self):
+        if self._summary:
+            return {'step': self._summary}
         return super().getResultSummary()
 
 
@@ -5707,6 +5858,13 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
             if self.name != RunAPITestsWithoutChange.name:
                 self.build.results = SUCCESS
                 self.setProperty('build_summary', message)
+                # Add parallel safety testing for modified API tests (only for initial run)
+                if self.name == RunAPITests.name:
+                    self.steps_to_add += [
+                        FindModifiedAPITests(skipBuildIfNoResult=False),
+                        FilterAPITestsForPlatform(),
+                        RunAPITestsParallelSafety(),
+                    ]
         elif (self.name != RunAPITestsWithoutChange.name and self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
             # This means all the tests which failed in this run were also failing or flaky in results database
             message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
@@ -5842,7 +6000,12 @@ class ReRunAPITests(RunAPITests):
             self.steps_to_add.append(InstallWpeDependencies())
         elif platform == 'gtk':
             self.steps_to_add.append(InstallGtkDependencies())
-        self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+
+        if self.getProperty('rebuild_without_change_on_builder', False):
+            self.steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
+        else:
+            self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+
         self.steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.steps_to_add.append(KillOldProcesses())
         self.steps_to_add.append(RunAPITestsWithoutChange())
@@ -6007,6 +6170,353 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 
+class FindModifiedAPITests(shell.ShellCommand, AnalyzeChange):
+    name = 'find-modified-api-tests'
+    description = ['find-modified-api tests running']
+    descriptionDone = ['Found modified API tests']
+    RE_API_TEST = br'^(\+\+\+).*(Tools/TestWebKitAPI/Tests/.*\.(cpp|mm|m))'
+    RE_TEST_F = re.compile(r'TEST_F\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)')
+    RE_TEST = re.compile(r'TEST\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)')
+    API_TEST_PATHS = ['Tools/TestWebKitAPI/Tests/']
+
+    def __init__(self, skipBuildIfNoResult=True):
+        self.skipBuildIfNoResult = skipBuildIfNoResult
+        super().__init__(logEnviron=False)
+
+    @staticmethod
+    def _extract_test_names_from_content(content):
+        """Extract test names from file content string"""
+        test_names = []
+        for pattern in [FindModifiedAPITests.RE_TEST_F, FindModifiedAPITests.RE_TEST]:
+            matches = pattern.findall(content)
+            for suite, test in matches:
+                test_names.append(f'{suite}.{test}')
+        return test_names
+
+    @staticmethod
+    def _get_binary_for_test_path(file_path):
+        """Determine which test binary a file belongs to"""
+        binaries = ['TestWTF', 'TestWebCore', 'TestIPC', 'TestWGSL']
+        for binary in binaries:
+            if binary in file_path:
+                return binary
+        return 'TestWebKitAPI'
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        patch = self._get_patch()
+        if not patch:
+            yield self._addToLog('stdio', 'No patch found, using git diff against base branch\n')
+            remote = self.getProperty('remote', 'origin')
+            base_ref = self.getProperty('github.base.ref', 'main')
+            # Use triple-dot diff to compare merge-base with HEAD (only PR changes)
+            self.command = ['git', 'diff', f'remotes/{remote}/{base_ref}...HEAD', '--name-only']
+            rc = yield super().run()
+
+            if rc != SUCCESS:
+                return defer.returnValue(SKIPPED)
+
+            log_text = self.log_observer.getStdout()
+            changed_files = [f for f in log_text.splitlines() if any(f.startswith(path) for path in self.API_TEST_PATHS)]
+        else:
+            yield self._addToLog('stdio', 'Found patch, analyzing for API test changes\n')
+            changed_files = self.find_test_names_from_patch(patch)
+
+        if not changed_files:
+            yield self._addToLog('stdio', 'No API test files were modified\n')
+            self.setProperty('modified_api_tests', [])
+            if self.skipBuildIfNoResult:
+                self.build.results = SKIPPED
+                self.build.buildFinished(['{} {} doesn\'t modify any API tests'.format(
+                    self.change_type,
+                    self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
+                )], SKIPPED)
+            return defer.returnValue(SKIPPED)
+
+        yield self._addToLog('stdio', f'Found {len(changed_files)} modified API test file(s):\n')
+        for file_path in changed_files:
+            yield self._addToLog('stdio', f'  - {file_path}\n')
+
+        # Extract test names from modified files, keyed by file for round-robin selection
+        # Note: Files are on the worker, not master, so we use git show to read content
+        tests_by_file = {}
+        for file_path in changed_files:
+            # Create fresh log observer for each file to avoid accumulation
+            file_log_observer = logobserver.BufferLogObserver()
+            self.addLogObserver('stdio', file_log_observer)
+
+            self.command = ['git', 'show', f'HEAD:{file_path}']
+            rc = yield super().run()
+
+            if rc != SUCCESS:
+                yield self._addToLog('stdio', f'  Warning: Could not read {file_path} via git show\n')
+                continue
+
+            content = file_log_observer.getStdout()
+            binary = self._get_binary_for_test_path(file_path)
+            test_names = self._extract_test_names_from_content(content)
+            yield self._addToLog('stdio', f'  Extracted {len(test_names)} test(s) from {file_path}\n')
+
+            if test_names:
+                tests_by_file[file_path] = [(binary, test) for test in test_names]
+
+        if not tests_by_file:
+            yield self._addToLog('stdio', '\nCould not extract test names from modified files, will skip parallel safety testing\n')
+            self.setProperty('modified_api_tests', [])
+            return defer.returnValue(SKIPPED)
+
+        # Collect all tests with file info for round-robin selection in later step
+        seen_tests = {}
+        for file_path, tests in tests_by_file.items():
+            for binary, test in tests:
+                full_test_name = f'{binary}.{test}'
+                if full_test_name not in seen_tests:
+                    seen_tests[full_test_name] = {'file': file_path, 'test': full_test_name}
+        all_tests = list(seen_tests.values())
+
+        MAX_TESTS = 250
+        if all_tests:
+            total_tests = len(all_tests)
+            if total_tests > MAX_TESTS:
+                yield self._addToLog('stdio', f'\nWarning: Truncating to {MAX_TESTS} tests (was {total_tests})\n')
+                all_tests = all_tests[:MAX_TESTS]
+            yield self._addToLog('stdio', f'\nIdentified {len(all_tests)} API test(s) for parallel safety testing:\n')
+            for item in all_tests:
+                yield self._addToLog('stdio', f'  - {item["test"]}\n')
+
+        self.setProperty('modified_api_tests', all_tests)
+        defer.returnValue(SUCCESS if all_tests else SKIPPED)
+
+    def find_test_names_from_patch(self, patch):
+        """Find modified API test files from patch"""
+        test_files = []
+        for line in patch.splitlines():
+            match = re.search(self.RE_API_TEST, line, re.IGNORECASE)
+            if match:
+                test_name = match.group(2).decode('utf-8')
+                test_files.append(test_name)
+        return list(set(test_files))
+
+    def getResultSummary(self):
+        modified_tests = self.getProperty('modified_api_tests', [])
+        if self.results == SUCCESS and modified_tests:
+            return {'step': f'Found {len(modified_tests)} modified API test(s)'}
+        if self.results == SKIPPED:
+            return {'step': 'No API tests modified'}
+        return super().getResultSummary()
+
+
+class FilterAPITestsForPlatform(shell.ShellCommand, AddToLogMixin):
+    name = 'filter-api-tests-for-platform'
+    description = ['filtering api tests for platform']
+    descriptionDone = ['filtered api tests']
+    UNSUPPORTED_PLATFORMS = ['gtk', 'wpe']
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, timeout=120, **kwargs)
+
+    def doStepIf(self, step):
+        platform = self.getProperty('platform')
+        if platform in self.UNSUPPORTED_PLATFORMS:
+            return False
+        return bool(self.getProperty('modified_api_tests', []))
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    @defer.inlineCallbacks
+    def run(self):
+        modified_tests = self.getProperty('modified_api_tests', [])
+        if not modified_tests:
+            defer.returnValue(SKIPPED)
+
+        platform = self.getProperty('platform')
+        configuration = self.getProperty('configuration', 'debug')
+
+        # iOS simulators have significant boot overhead, so use a lower cap
+        MAX_TESTS = 5 if platform == 'ios' else 30
+
+        self.log_observer = logobserver.BufferLogObserver(wantStdout=True, wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        self.command = [
+            'python3', 'Tools/Scripts/run-api-tests',
+            '--dump',
+            f'--{configuration}',
+        ]
+        self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+
+        yield self._addToLog('stdio', f'Querying available tests on this platform...\n')
+        yield self._addToLog('stdio', f'Command: {" ".join(self.command)}\n\n')
+
+        rc = yield super().run()
+
+        if rc != SUCCESS:
+            yield self._addToLog('stdio', '\nWarning: Could not query available tests, proceeding with all tests\n')
+            # Fall back to all tests without filtering
+            all_test_names = [item['test'] for item in modified_tests]
+            self.setProperty('modified_api_tests', all_test_names[:MAX_TESTS])
+            defer.returnValue(SUCCESS)
+
+        available_tests = set()
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        for line in log_text.splitlines():
+            line = line.strip()
+            if line and '.' in line and not line.startswith('Command:'):
+                available_tests.add(line)
+
+        yield self._addToLog('stdio', f'\nFound {len(available_tests)} available tests on this platform\n')
+
+        # Filter by availability and group by file
+        tests_by_file = {}
+        filtered_out = 0
+        for item in modified_tests:
+            test_name = item['test']
+            file_path = item['file']
+            if test_name in available_tests:
+                if file_path not in tests_by_file:
+                    tests_by_file[file_path] = []
+                tests_by_file[file_path].append(test_name)
+            else:
+                filtered_out += 1
+
+        if filtered_out:
+            yield self._addToLog('stdio', f'Filtered out {filtered_out} test(s) not available on this platform\n')
+
+        # Round-robin selection up to MAX_TESTS
+        selected_tests = []
+        file_iterators = {f: iter(tests) for f, tests in tests_by_file.items()}
+        active_files = list(file_iterators.keys())
+
+        while active_files and len(selected_tests) < MAX_TESTS:
+            for file_path in list(active_files):
+                if len(selected_tests) >= MAX_TESTS:
+                    break
+                try:
+                    test = next(file_iterators[file_path])
+                    selected_tests.append(test)
+                except StopIteration:
+                    active_files.remove(file_path)
+
+        total_available = sum(len(tests) for tests in tests_by_file.values())
+        truncated_count = total_available - len(selected_tests)
+
+        if selected_tests:
+            yield self._addToLog('stdio', f'Selected {len(selected_tests)} test(s) for parallel safety testing:\n')
+            for test in selected_tests:
+                yield self._addToLog('stdio', f'  - {test}\n')
+            if truncated_count:
+                yield self._addToLog('stdio', f'({truncated_count} test(s) skipped due to {MAX_TESTS} test limit)\n')
+        else:
+            yield self._addToLog('stdio', 'No modified tests are available on this platform\n')
+
+        self.setProperty('modified_api_tests', selected_tests)
+        defer.returnValue(SUCCESS if selected_tests else SKIPPED)
+
+    def doStepIf(self, step):
+        return bool(self.getProperty('modified_api_tests', []))
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    def getResultSummary(self):
+        modified_tests = self.getProperty('modified_api_tests', [])
+        if self.results == SUCCESS and modified_tests:
+            return {'step': f'{len(modified_tests)} test(s) available on platform'}
+        if self.results == SKIPPED:
+            return {'step': 'No tests available on platform'}
+        return super().getResultSummary()
+
+
+class RunAPITestsParallelSafety(RunAPITests):
+    name = 'run-api-tests-parallel-safety'
+    description = ['api-tests-parallel-safety running']
+    descriptionDone = ['api-tests-parallel-safety']
+    suffix = 'parallel_safety'
+    UNSUPPORTED_PLATFORMS = ['gtk', 'wpe']
+
+    def doStepIf(self, step):
+        platform = self.getProperty('platform')
+        if platform in self.UNSUPPORTED_PLATFORMS:
+            return False
+        return bool(self.getProperty('modified_api_tests', []))
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    @defer.inlineCallbacks
+    def run(self):
+        modified_tests_raw = self.getProperty('modified_api_tests', [])
+        if not modified_tests_raw:
+            return defer.returnValue(SKIPPED)
+
+        # Handle both dict format (from FindModifiedAPITests) and string format (from FilterAPITestsForPlatform)
+        modified_tests = []
+        for item in modified_tests_raw:
+            if isinstance(item, dict):
+                modified_tests.append(item.get('test', ''))
+            else:
+                modified_tests.append(item)
+        modified_tests = [t for t in modified_tests if t]  # Filter empty strings
+
+        if not modified_tests:
+            return defer.returnValue(SKIPPED)
+
+        platform = self.getProperty('platform')
+        configuration = self.getProperty('configuration', 'debug')
+
+        # Build command
+        self.command = [
+            'python3', 'Tools/Scripts/run-api-tests',
+            '--timestamps', '--no-build',
+            f'--{configuration}',
+            '--verbose',
+            f'--json-output={self.jsonFileName}'
+        ]
+
+        self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+
+        # Add each test with its own --test-parallel-safety flag
+        for test in modified_tests:
+            self.command += ['--test-parallel-safety', test]
+
+        yield self._addToLog('stdio', f'Running parallel safety testing on {len(modified_tests)} test(s)\n')
+        yield self._addToLog('stdio', f'Command: {" ".join(self.command)}\n\n')
+
+        rc = yield shell.Test.run(self)
+
+        if self.failedTestCount:
+            rc = FAILURE
+
+        defer.returnValue(rc)
+
+    def doOnFailure(self):
+        # No retry needed for parallel safety tests - failures are legitimate
+        pass
+
+    def analyze_failures_using_results_db(self):
+        # Skip results DB checking for parallel safety tests
+        pass
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'No API tests to check for parallel safety'}
+
+        modified_tests = self.getProperty('modified_api_tests', [])
+        if self.results == SUCCESS:
+            return {'step': f'Passed parallel safety for {len(modified_tests)} test(s)'}
+
+        if self.failedTestCount:
+            self.failedTestPluralSuffix = '' if self.failedTestCount == 1 else 's'
+            status = f'{self.failedTestCount} parallel safety test{self.failedTestPluralSuffix} failed'
+            return {'step': status}
+
+        return super().getResultSummary()
+
+
 class ArchiveTestResults(shell.ShellCommand):
     command = ['python3', 'Tools/CISupport/test-result-archive',
                Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']
@@ -6080,7 +6590,7 @@ class ExtractTestResults(master.MasterShellCommand):
         defer.returnValue(rc)
 
 
-class PrintConfiguration(steps.ShellSequence):
+class PrintConfiguration(steps.ShellSequence, ShellMixin):
     name = 'configuration'
     description = ['configuration']
     haltOnFailure = False
@@ -6107,6 +6617,8 @@ class PrintConfiguration(steps.ShellSequence):
             command_list.extend(self.command_list_apple)
         elif platform in ('gtk', 'wpe', 'jsc-only'):
             command_list.extend(self.command_list_linux)
+            if platform in ('gtk', 'wpe'):
+                command_list.append(self.shell_command('if test -f /etc/build-info; then cat /etc/build-info; else cat /etc/os-release; fi'))
 
         for command in command_list:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
@@ -6666,7 +7178,7 @@ class ValidateSquashed(shell.ShellCommand, AddToLogMixin):
 
 
 class AddReviewerMixin(object):
-    NOBODY_SED = 's/NOBODY (OO*PP*S!*)/{}/g'
+    NOBODY_SED = 's/by NOBODY( \\(OO*PP*S!*\\))?/by {}/g'
 
     @defer.inlineCallbacks
     def gitCommitEnvironment(self):
@@ -6723,7 +7235,7 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         self.command = [
             'git', 'filter-branch', '-f',
             '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'",
-            '--msg-filter', f'sed "{self.NOBODY_SED.format(self.reviewers())}"',
+            '--msg-filter', f'sed -E "{self.NOBODY_SED.format(self.reviewers())}"',
             f'{head_ref}...{base_ref}',
         ]
 
@@ -6809,6 +7321,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         self.commands = []
         commands = [
             f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!){reviewer_error_msg}' || test $? -eq 1",
+            f"git log {head_ref} ^{base_ref} | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\"{reviewer_error_msg}' || test $? -eq 1",
             "git log {} ^{} > commit_msg.txt; grep -q '\\({}\\)' commit_msg.txt || echo 'No reviewer information in commit message';".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS)
@@ -6830,7 +7343,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             defer.returnValue(rc)
             return
 
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
         yield self._addToLog('stdio', '\n')
@@ -6899,7 +7412,7 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
     @defer.inlineCallbacks
     def run(self):
         self.commands = []
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
 
@@ -7099,6 +7612,108 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
         return not self.doStepIf(step)
 
 
+class BuildSwift(steps.ShellSequence, ShellMixin):
+    name = 'build-swift'
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, workdir=SWIFT_DIR, **kwargs)
+        self.commands = []
+
+    @defer.inlineCallbacks
+    def run(self):
+        builddir = self.getProperty('builddir')
+        swift_install_dir = f'{builddir}/{SWIFT_DIR}/swift-nightly-install'
+        swift_symroot_dir = f'{builddir}/{SWIFT_DIR}/swift-nightly-symroot'
+
+        build_script_args = [
+            'utils/build-script',
+            '--swift-install-components=autolink-driver;back-deployment;compiler;clang-resource-dir-symlink;libexec;stdlib;sdk-overlay;static-mirror-lib;toolchain-tools;license;sourcekit-xpc-service;sourcekit-inproc;swift-remote-mirror;swift-remote-mirror-headers',
+            '--llvm-install-components=llvm-ar;llvm-nm;llvm-ranlib;llvm-cov;llvm-profdata;llvm-objdump;llvm-objcopy;llvm-symbolizer;IndexStore;clang;clang-resource-headers;builtins;runtimes;clangd;libclang;dsymutil;LTO;clang-features-file;lld',
+            '--ios',
+            '--release',
+            '--no-assertions',
+            '--compiler-vendor=apple',
+            '--infer-cross-compile-hosts-on-darwin',
+            '--build-ninja',
+            '--skip-build-benchmarks',
+            '--skip-tvos',
+            '--skip-watchos',
+            '--skip-xros',
+            '--build-subdir=buildbot_osx',
+            '--install-llvm',
+            '--install-swift',
+            f'--install-destdir={swift_install_dir}',
+            f'--install-prefix=/Library/Developer/Toolchains/{SWIFT_TOOLCHAIN_NAME}.xctoolchain/usr',
+            '--darwin-install-extract-symbols',
+            f'--install-symroot={swift_symroot_dir}',
+            f'--installable-package={swift_install_dir}/{SWIFT_TOOLCHAIN_NAME}-osx.tar.gz',
+            f'--symbols-package={swift_install_dir}/{SWIFT_TOOLCHAIN_NAME}-osx-symbols.tar.gz',
+            f'--darwin-toolchain-bundle-identifier={SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER}',
+            '--darwin-toolchain-display-name=WebKit Swift Toolchain',
+            '--darwin-toolchain-display-name-short=WebKit Swift',
+            f'--darwin-toolchain-name={SWIFT_TOOLCHAIN_NAME}',
+            '--darwin-toolchain-version=6.0.0',
+            '--darwin-toolchain-alias=webkit',
+            '--darwin-toolchain-require-use-os-runtime=0',
+            '--swift-testing=1',
+            '--install-swift-testing=1',
+            '--swift-testing-macros=1',
+            '--install-swift-testing-macros=1',
+            '--swift-driver=1',
+            '--install-swift-driver=1',
+        ]
+
+        filter_command = ' '.join(quote(str(c)) for c in build_script_args) + f" 2>&1 | python3 {builddir}/build/Tools/Scripts/filter-test-logs swift --output {builddir}/build/swift-build-log.txt"
+
+        self.commands = [
+            util.ShellArg(command=self.shell_command('rm -rf ../build'), logname='stdio', haltOnFailure=False),
+            util.ShellArg(command=self.shell_command('rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'), logname='stdio', haltOnFailure=False),
+            util.ShellArg(command=self.shell_command('rm -rf /Users/buildbot/Library/Developer/Xcode/DerivedData'), logname='stdio'),
+            util.ShellArg(command=self.shell_command(filter_command), logname='stdio', haltOnFailure=True),
+        ]
+
+        rc = yield super().run()
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+                additions=f'{self.build.number}',
+            ),
+            UploadFileToS3(
+                'swift-build-log.txt',
+                links={self.name: 'Swift build log'},
+                content_type='text/plain',
+            )
+        ]
+
+        if rc != SUCCESS:
+            if self.getProperty('current_swift_tag', '') and self.getProperty('has_swift_toolchain', False):
+                return WARNINGS
+            self.build.buildFinished(['Failed to set up swift, retrying update'], RETRY)
+        else:
+            self.setProperty('swift_toolchain_rebuilt', True)
+            steps_to_add += [InstallSwiftToolchain(), CleanBuild()]
+
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
+        return defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'Swift toolchain already exists'}
+        elif self.results == WARNINGS:
+            return {'step': 'Failed to update swift, using previous checkout'}
+        elif self.results != SUCCESS:
+            return {'step': 'Failed to build Swift'}
+        return {'step': 'Successfully built Swift'}
+
+    def doStepIf(self, step):
+        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+
+
 # FIXME: Share static analyzer steps with build-webkit-org since they have a lot of similarities
 class ScanBuild(steps.ShellSequence, ShellMixin):
     name = "scan-build"
@@ -7115,9 +7730,15 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
     @defer.inlineCallbacks
     def run(self):
         self.commands = []
-        build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{self.output_directory}')} --configuration {self.build.getProperty('configuration')} "
-        build_command += f"--only-smart-pointers --analyzer-path={os.path.join(self.getProperty('builddir'), 'llvm-project/build/bin/clang')} "
-        build_command += '--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 '
+
+        build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{self.output_directory}')} --configuration {self.build.getProperty('configuration')} --only-smart-pointers "
+        if self.getProperty('platform', '').lower() == 'ios':
+            sdkroot = 'iphonesimulator'
+            build_command += f'--toolchains={SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER} --swift-conditions=SWIFT_WEBKIT_TOOLCHAIN '
+        else:
+            sdkroot = 'macosx'
+            build_command += f"--analyzer-path={os.path.join(self.getProperty('builddir'), 'llvm-project/build/bin/clang')} --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 "
+        build_command += f'--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot={sdkroot} '
         if SHOULD_FILTER_LOGS is True:
             build_command += '2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt'
 
@@ -7372,7 +7993,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
         else:
             yield self._addToLog('stdio', 'No API key for {} found'.format(RESULTS_DB_URL))
 
-        self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', os.path.join(self.getProperty('builddir'), 'build/new'), '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations']
+        self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', os.path.join(self.getProperty('builddir'), 'build/new'), '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations', '--platform', self.getProperty('platform', '')]
 
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
@@ -7799,6 +8420,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
     NUM_TO_DISPLAY = 10
     UPDATE_COMMAND = 'Tools/Scripts/update-safer-cpp-expectations -p {project}'
     CHECKER_ARGS = '--{checker} {files}'
+    PLATFORM_ARGS = '--platform {platform}'
 
     def __init___(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
@@ -7840,6 +8462,8 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
                     file_str = '\n'.join((sorted(files)))
                     log_content += f'=> {checker}\n\n{file_str}\n\n'
                     command += ' ' + self.CHECKER_ARGS.format(checker=checker, files=' '.join(files))
+            if self.formattedPlatform:
+                command += ' ' + self.PLATFORM_ARGS.format(platform=self.formattedPlatform)
             if log_content:
                 yield self._addToLog(f'{project}-unexpected-{type}', log_content)
                 is_log += 1
@@ -7860,7 +8484,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         results_link = self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/new-results.html"
         build_link = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
         formatted_build_link = f'[#{self.getProperty("buildnumber", "")}]({build_link})'
-        comment = f'### Safer C++ Build {formatted_build_link} ({commit_url})\n'
+        comment = f'### {self.formattedPlatform} Safer C++ Build {formatted_build_link} ({commit_url})\n'
 
         if num_failures:
             issue_comment = f" with {num_issues} issue{'s' if num_issues > 1 else ''}" if num_issues else ''
@@ -7872,10 +8496,19 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
             pluralCommand = 's' if len(commands_for_comment) > 1 else ''
             comment += f'\n:warning: Found {num_passes} fixed file{pluralSuffix}! Please update expectations in `Source/[Project]/SaferCPPExpectations` by running the following command{pluralCommand} and update your {self.change_type}:\n'
             comment += '\n'.join([f"- `{c}`" for c in commands_for_comment])
+        if not self.formattedPlatform:
+            comment += '\nUnable to find associated platform. See build for details.'
 
         self.setProperty('comment_text', comment)
-        # FIXME: Add merging blocked upon failure after initial deployment period
-        self.build.addStepsAfterCurrentStep([LeaveComment(), SetBuildSummary()])
+        self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest(), SetBuildSummary()])
+
+    @property
+    def formattedPlatform(self):
+        if self.getProperty('platform', '').lower() == 'ios':
+            return 'iOS'
+        elif self.getProperty('platform', '').lower() == 'mac':
+            return 'macOS'
+        return ''
 
     @property
     def change_type(self):

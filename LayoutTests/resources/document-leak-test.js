@@ -6,7 +6,8 @@ if (!window.testRunner || !window.internals) {
 }
 
 var allFrames;
-var maxFailCount = 0;
+var frameDocumentIDs = [];
+var checkCount = 0;
 
 // Generally for these kinds of tests we want to create more than one frame.
 // Since the GC is conservative and stack-scanning it could find on the stack something
@@ -23,7 +24,6 @@ function createFrames(framesToCreate)
         throw TypeError("framesToCreate must be a number.");
 
     allFrames = new Array(framesToCreate);
-    maxFailCount = framesToCreate;
 
     for (let i = 0; i < allFrames.length; ++i) {
         let frame = document.createElement("iframe");
@@ -40,43 +40,33 @@ function iframeForMessage(message)
     return allFrames.find(frame => frame.contentWindow === message.source);
 }
 
-var failCount = 0;
-function iframeLeaked()
-{
-    if (++failCount >= maxFailCount) {
-        testFailed("All iframe documents leaked.");
-        finishJSTest();
-    }
-}
-
 function iframeSentMessage(message)
 {
-    if (message.data === "testFailed") {
-        testFailed("Error loading the initial frameURL.");
-        return finishJSTest();
-    }
-
     let iframe = iframeForMessage(message);
     let frameDocumentID = internals.documentIdentifier(iframe.contentWindow.document);
-    let checkCount = 0;
-
-    iframe.addEventListener("load", () => {
-        let handle = setInterval(() => {
-            gc();
-            if (!internals.isDocumentAlive(frameDocumentID)) {
-                clearInterval(handle);
-                testPassed("The iframe document didn't leak.");
-                finishJSTest();
-            }
-
-            if (++checkCount > 50) {
-                clearInterval(handle);
-                iframeLeaked();
-            }
-        }, 10);
-    }, { once: true });
+    frameDocumentIDs.push(frameDocumentID);
 
     iframe.src = "about:blank";
+
+    if (frameDocumentIDs.length == allFrames.length) {
+        handle = setInterval(() => {
+            gc();
+            for (const documentID of frameDocumentIDs) {
+                if (!internals.isDocumentAlive(documentID)) {
+                    clearInterval(handle);
+                    testPassed("The iframe document didn't leak.");
+                    finishJSTest();
+                    return;
+                }
+                if (++checkCount > allFrames.length * 20) {
+                    clearInterval(handle);
+                    testFailed("All iframe documents leaked.");
+                    finishJSTest();
+                    return;
+                }
+            }
+        }, 10);
+    }
 }
 
 function runDocumentLeakTest(options)

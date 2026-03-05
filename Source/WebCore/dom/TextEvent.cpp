@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextEvent);
 
 Ref<TextEvent> TextEvent::createForBindings()
 {
@@ -43,27 +43,27 @@ Ref<TextEvent> TextEvent::createForBindings()
 
 Ref<TextEvent> TextEvent::create(RefPtr<WindowProxy>&& view, const String& data, TextEventInputType inputType)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), data, inputType));
+    return adoptRef(*new TextEvent(WTF::move(view), data, inputType));
 }
 
 Ref<TextEvent> TextEvent::createForPlainTextPaste(RefPtr<WindowProxy>&& view, const String& data, bool shouldSmartReplace)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), data, nullptr, TextEventInputPaste, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
+    return adoptRef(*new TextEvent(WTF::move(view), data, nullptr, TextEventInputPaste, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
 }
 
 Ref<TextEvent> TextEvent::createForFragmentPaste(RefPtr<WindowProxy>&& view, RefPtr<DocumentFragment>&& data, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), emptyString(), WTFMove(data), inputType, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
+    return adoptRef(*new TextEvent(WTF::move(view), emptyString(), WTF::move(data), inputType, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
 }
 
 Ref<TextEvent> TextEvent::createForDrop(RefPtr<WindowProxy>&& view, const String& data)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), data, TextEventInputDrop));
+    return adoptRef(*new TextEvent(WTF::move(view), data, TextEventInputDrop));
 }
 
 Ref<TextEvent> TextEvent::createForDictation(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), data, dictationAlternatives));
+    return adoptRef(*new TextEvent(WTF::move(view), data, dictationAlternatives));
 }
 
 TextEvent::TextEvent()
@@ -75,7 +75,7 @@ TextEvent::TextEvent()
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventInputType inputType)
-    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTF::move(view), 0)
     , m_inputType(inputType)
     , m_data(data)
     , m_shouldSmartReplace(false)
@@ -85,10 +85,10 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventIn
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
-    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTF::move(view), 0)
     , m_inputType(inputType)
     , m_data(data)
-    , m_pastingFragment(WTFMove(pastingFragment))
+    , m_pastingFragment(WTF::move(pastingFragment))
     , m_shouldSmartReplace(shouldSmartReplace)
     , m_shouldMatchStyle(shouldMatchStyle)
     , m_mailBlockquoteHandling(mailBlockquoteHandling)
@@ -96,7 +96,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<Docu
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
-    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTF::move(view), 0)
     , m_inputType(TextEventInputDictation)
     , m_data(data)
     , m_shouldSmartReplace(false)
@@ -113,7 +113,7 @@ void TextEvent::initTextEvent(const AtomString& type, bool canBubble, bool cance
     if (isBeingDispatched())
         return;
 
-    initUIEvent(type, canBubble, cancelable, WTFMove(view), 0);
+    initUIEvent(type, canBubble, cancelable, WTF::move(view), 0);
 
     m_inputType = TextEventInputKeyboard;
 
@@ -124,11 +124,6 @@ void TextEvent::initTextEvent(const AtomString& type, bool canBubble, bool cance
     m_shouldMatchStyle = false;
     m_mailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote;
     m_dictationAlternatives = { };
-}
-
-bool TextEvent::isTextEvent() const
-{
-    return true;
 }
 
 } // namespace WebCore

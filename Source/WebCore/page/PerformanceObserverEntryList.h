@@ -39,7 +39,7 @@ class PerformanceObserverEntryList : public RefCounted<PerformanceObserverEntryL
 public:
     static Ref<PerformanceObserverEntryList> create(Vector<Ref<PerformanceEntry>>&& entries);
 
-    const Vector<Ref<PerformanceEntry>>& getEntries() const { return m_entries; }
+    const Vector<Ref<PerformanceEntry>>& getEntries() const LIFETIME_BOUND { return m_entries; }
     Vector<Ref<PerformanceEntry>> getEntriesByType(const String& entryType) const;
     Vector<Ref<PerformanceEntry>> getEntriesByName(const String& name, const String& entryType) const;
 

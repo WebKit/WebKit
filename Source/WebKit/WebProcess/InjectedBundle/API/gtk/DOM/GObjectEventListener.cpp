@@ -56,9 +56,9 @@ void GObjectEventListener::gobjectDestroyed()
     // Protect 'this' class in case the 'm_coreTarget' holds the last reference,
     // which may cause, inside removeEventListener(), free of this object
     // and later use-after-free with the m_handler = 0; assignment.
-    RefPtr<GObjectEventListener> protectedThis(this);
+    RefPtr protectedThis { this };
 
-    m_coreTarget->removeEventListener(m_eventType, *this, m_capture);
+    m_coreTarget->removeEventListener(m_eventType, *this, { .capture = m_capture });
     m_coreTarget = nullptr;
     m_handler = nullptr;
 }
@@ -66,7 +66,7 @@ void GObjectEventListener::gobjectDestroyed()
 void GObjectEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-    GValue parameters[2] = { G_VALUE_INIT, G_VALUE_INIT };
+    std::array<GValue, 2> parameters = {{ G_VALUE_INIT , G_VALUE_INIT }};
     g_value_init(&parameters[0], WEBKIT_DOM_TYPE_EVENT_TARGET);
     g_value_set_object(&parameters[0], m_target);
 
@@ -74,9 +74,9 @@ void GObjectEventListener::handleEvent(ScriptExecutionContext&, Event& event)
     g_value_init(&parameters[1], WEBKIT_DOM_TYPE_EVENT);
     g_value_set_object(&parameters[1], domEvent.get());
 
-    g_closure_invoke(m_handler.get(), 0, 2, parameters, NULL);
-    g_value_unset(parameters + 0);
-    g_value_unset(parameters + 1);
+    g_closure_invoke(m_handler.get(), 0, 2, parameters.data(), NULL);
+    g_value_unset(&parameters[0]);
+    g_value_unset(&parameters[1]);
     G_GNUC_END_IGNORE_DEPRECATIONS;
 }
 

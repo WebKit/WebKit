@@ -39,16 +39,16 @@ WKTypeID WKBundleDOMWindowExtensionGetTypeID()
 
 WKBundleDOMWindowExtensionRef WKBundleDOMWindowExtensionCreate(WKBundleFrameRef frame, WKBundleScriptWorldRef world)
 {
-    RefPtr<WebKit::InjectedBundleDOMWindowExtension> extension = WebKit::InjectedBundleDOMWindowExtension::create(WebKit::toProtectedImpl(frame).get(), WebKit::toProtectedImpl(world).get());
-    return toAPILeakingRef(WTFMove(extension));
+    RefPtr<WebKit::InjectedBundleDOMWindowExtension> extension = WebKit::InjectedBundleDOMWindowExtension::create(protect(WebKit::toImpl(frame)).get(), protect(WebKit::toImpl(world)).get());
+    return toAPILeakingRef(WTF::move(extension));
 }
 
 WKBundleFrameRef WKBundleDOMWindowExtensionGetFrame(WKBundleDOMWindowExtensionRef extension)
 {
-    return toAPI(WebKit::toProtectedImpl(extension)->frame().get());
+    return toAPI(protect(WebKit::toImpl(extension))->frame().get());
 }
 
 WKBundleScriptWorldRef WKBundleDOMWindowExtensionGetScriptWorld(WKBundleDOMWindowExtensionRef extension)
 {
-    return toAPI(RefPtr { WebKit::toProtectedImpl(extension)->world() }.get());
+    return toAPI(RefPtr { protect(WebKit::toImpl(extension))->world() }.get());
 }

@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=PAYMENT_REQUEST
+    Conditional=PAYMENT_REQUEST,
 ] dictionary PaymentCurrencyAmount {
     required DOMString currency;
     required DOMString value;

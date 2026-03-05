@@ -43,17 +43,17 @@
 namespace WTF {
 
 static Lock languagesLock;
-static Vector<String>& cachedFullPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
+static Vector<String>& NODELETE cachedFullPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> languages;
     return languages;
 }
-static Vector<String>& cachedMinimizedPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
+static Vector<String>& NODELETE cachedMinimizedPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> languages;
     return languages;
 }
-static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(languagesLock)
+static Vector<String>& NODELETE preferredLanguagesOverride() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> override;
     return override;
@@ -61,7 +61,7 @@ static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(languagesL
 static std::optional<bool> cachedUserPrefersSimplifiedChinese WTF_GUARDED_BY_LOCK(languagesLock);
 
 using ObserverMap = HashMap<void*, LanguageChangeObserverFunction>;
-static ObserverMap& observerMap()
+static ObserverMap& NODELETE observerMap()
 {
     static NeverDestroyed<ObserverMap> map;
     return map.get();

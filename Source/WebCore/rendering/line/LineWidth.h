@@ -69,7 +69,7 @@ public:
         addUncommittedWidth(delta);
         m_hasUncommittedReplaced = true;
     }
-    void commit();
+    void NODELETE commit();
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
 
 private:

@@ -47,7 +47,7 @@ std::unique_ptr<RTCDataChannelRemoteHandler> RTCDataChannelRemoteHandler::create
 
 RTCDataChannelRemoteHandler::RTCDataChannelRemoteHandler(RTCDataChannelIdentifier remoteIdentifier, Ref<RTCDataChannelRemoteHandlerConnection>&& connection)
     : m_remoteIdentifier(remoteIdentifier)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
 {
 }
 
@@ -74,7 +74,7 @@ void RTCDataChannelRemoteHandler::didReceiveRawData(std::span<const uint8_t> dat
 void RTCDataChannelRemoteHandler::didDetectError(Ref<RTCError>&& error)
 {
     if (RefPtr client = m_client.get())
-        client->didDetectError(WTFMove(error));
+        client->didDetectError(WTF::move(error));
 }
 
 void RTCDataChannelRemoteHandler::bufferedAmountIsDecreasing(size_t amount)
@@ -88,7 +88,7 @@ void RTCDataChannelRemoteHandler::readyToSend()
     m_isReadyToSend = true;
 
     for (auto& message : m_pendingMessages)
-        m_connection->sendData(m_remoteIdentifier, message.isRaw, message.buffer->makeContiguous()->span());
+        m_connection->sendData(m_remoteIdentifier, message.isRaw, protect(message.buffer)->makeContiguous()->span());
     m_pendingMessages.clear();
 
     if (m_isPendingClose)

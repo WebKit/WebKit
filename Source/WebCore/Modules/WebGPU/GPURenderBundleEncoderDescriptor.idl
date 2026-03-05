@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurenderbundleencoderdescriptor
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPURenderBundleEncoderDescriptor : GPURenderPassLayout {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPURenderBundleEncoderDescriptor : GPURenderPassLayout {
     boolean depthReadOnly = false;
     boolean stencilReadOnly = false;
 };

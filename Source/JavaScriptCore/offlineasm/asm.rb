@@ -258,14 +258,10 @@ class Assembler
         @outp.puts(formatDump("  OFFLINE_ASM_LOCAL_LABEL(#{labelName})", lastComment))
     end
 
-    def self.externLabelReference(labelName)
-        "\" LOCAL_REFERENCE(#{labelName}) \""
+    def self.externOrGlobalLabelReference(labelName)
+        "\" LABEL_REFERENCE(#{labelName}) \""
     end
 
-    def self.labelReference(labelName)
-        "\" LOCAL_LABEL_STRING(#{labelName}) \""
-    end
-    
     def self.localLabelReference(labelName)
         "\" LOCAL_LABEL_STRING(#{labelName}) \""
     end

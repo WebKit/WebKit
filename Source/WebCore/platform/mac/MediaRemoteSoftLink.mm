@@ -68,3 +68,9 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteCopyPickableRou
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, MediaRemote, MRUIControllerProvider);
 #endif
+
+#if HAVE(AVEXPERIENCECONTROLLER)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoMediaType, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoTypeAudio, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoTypeVideo, CFStringRef);
+#endif

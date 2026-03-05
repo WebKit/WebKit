@@ -1,0 +1,134 @@
+/* --------------------------------------------
+   Importing all other styles
+----------------------------------------------- */
+@layer museum, sideways;
+
+@import "styles.css" layer(museum);
+
+/* --------------------------------------------
+   Sideways layout
+----------------------------------------------- */
+
+@layer sideways {
+  main {
+    --tall-height: 300px;
+    --wide-height: 200px;
+    --gap-space: 30px;
+    --total-height: calc(var(--tall-height) + var(--wide-height) + (3 * var(--gap-space)));
+    --spacing: 0.8lh;
+  }
+  h2 {
+    text-wrap: auto;
+  }
+  /* ---- Sideways Grid layout ---- */
+  body:has(option[value="five"]:checked) main {
+    display: grid;
+    gap: var(--gap-space);
+    grid-template-columns: var(--tall-height) var(--wide-height);
+    grid-template-areas: "tall wide";
+    min-height: 0;
+    height: var(--total-height); 
+    padding-block: var(--gap-space);
+    padding-inline: var(--gap-space);
+    article {
+      width: auto;
+      display: grid;
+      grid-template: "image titles" auto
+                     "image metadata" 1fr
+                   /  min-content  auto;
+    }
+    section, footer {
+      width: auto;
+      min-width: 22ch;
+    }
+  }
+  
+ /* ---- Sideways Masonry layout ---- */
+ body:has(option[value="six"]:checked) main {
+   display: grid;
+   gap: var(--gap-space);
+   grid-template-rows: masonry;
+   grid-template-columns: var(--tall-height) var(--wide-height);
+   grid-template-areas: "tall wide";
+ 
+   min-height: 0;
+   height: var(--total-height); 
+   padding-block: var(--gap-space);
+   padding-inline: var(--gap-space);
+   article {
+    width: max-content;
+    display: grid;
+    grid-template: "image titles" auto
+                   "image metadata" 1fr
+                 /  min-content  max-content;
+   }
+   section, footer {
+     width: 22ch;
+   }
+ } 
+  /* ---- Both Sideways Grid and Masonry layout ---- */
+  body:has(option[value="five"]:checked) main,
+  body:has(option[value="six"]:checked) main {
+    overflow: scroll;
+    background: color(display-p3 0.0157 0.1647 0.2902);
+    header {
+      grid-row: 1 / -1;
+      width: 300px;
+      overflow: auto;
+      img {
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+        object-fit: cover;
+        max-height: none;
+      }
+    }
+    article {
+      grid-row: tall;
+      background: none;
+      a {
+         grid-area: image;
+         width: auto;
+         min-height: 100%;
+         height: 1em;
+      }
+      img {
+        width: auto;
+        height: var(--tall-height);
+        border-radius: 4px 0 0 4px;
+      }
+      section {
+        grid-area: titles;
+        border-start-end-radius: 4px;
+      }
+      footer {
+        grid-area: metadata;
+        border-end-end-radius: 4px;
+      }
+      section, footer {
+        background: color(display-p3 0.304 0.424 0.525);
+        box-shadow: none;
+        padding: var(--spacing);
+        h2 a, h3, p, div {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
+    article.wide {
+      grid-row: wide;
+      img {
+        height: var(--wide-height);
+      }
+    }
+    /* Manual colors for each card */
+    .bird { section, footer { background: color(display-p3 0.312 0.335 0.126) }}
+    .flowers { section, footer { background: color(display-p3 0.29 0.12 0.065) }}
+    .brower { section, footer { background: color(display-p3 0.111 0.26 0.109) }}
+    .sicot { section, footer { background: color(display-p3 0.2706 0.2 0.2941) }}
+    .moonlight { section, footer { background: color(display-p3 0.27 0.338 0.355) }}
+    .niagara { section, footer { background: color(display-p3 0.193 0.2 0.129) }}
+    .bridge { section, footer { background: color(display-p3 0.295 0.197 0.139) }}
+    .alen { section, footer { background: color(display-p3 0.275 0.048 0.126) }}
+
+  }
+}

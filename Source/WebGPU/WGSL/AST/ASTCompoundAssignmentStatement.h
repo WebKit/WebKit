@@ -41,8 +41,8 @@ public:
 private:
     CompoundAssignmentStatement(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs, BinaryOperation operation)
         : Statement(span)
-        , m_leftExpression(WTFMove(lhs))
-        , m_rightExpression(WTFMove(rhs))
+        , m_leftExpression(WTF::move(lhs))
+        , m_rightExpression(WTF::move(rhs))
         , m_operation(operation)
     { }
 

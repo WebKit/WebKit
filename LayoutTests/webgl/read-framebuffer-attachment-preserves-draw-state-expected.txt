@@ -1,0 +1,17 @@
+Test that modifying READ_FRAMEBUFFER does not affect DRAW_FRAMEBUFFER state.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 8 PASS, 0 FAIL
+
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.BACK
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.NONE
+PASS gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING) is null
+PASS getError was expected value: NO_ERROR : framebufferTexture2D should succeed
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.NONE
+PASS getError was expected value: NO_ERROR : drawArrays should succeed
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.NONE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

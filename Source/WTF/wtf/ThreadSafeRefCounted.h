@@ -34,30 +34,36 @@
 
 namespace WTF {
 
-class WTF_EMPTY_BASE_CLASS ThreadSafeRefCountedBase : public RefCountDebugger {
+class WTF_EMPTY_BASE_CLASS ThreadSafeRefCountedBase {
     WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedBase);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeRefCountedBase);
 public:
     void ref() const
     {
-        willRef(m_refCount, RefCountIsThreadSafe::Yes);
+        m_refCountDebugger.willRef(m_refCount);
         ++m_refCount;
     }
 
     bool hasOneRef() const { return m_refCount == 1; }
-    unsigned refCount() const { return m_refCount; }
+    uint32_t refCount() const { return m_refCount; }
+
+    // Debug APIs
+    void adopted() { m_refCountDebugger.adopted(); }
+    void relaxAdoptionRequirement() { m_refCountDebugger.relaxAdoptionRequirement(); }
+    void disableThreadingChecks() { m_refCountDebugger.disableThreadingChecks(); }
+    ThreadSafeRefCountDebugger& refCountDebugger() { return m_refCountDebugger; }
 
 protected:
     ThreadSafeRefCountedBase()
     {
         // FIXME: Lots of subclasses violate our adoption requirements. Migrate
         // this call into only those subclasses that need it.
-        relaxAdoptionRequirement();
+        m_refCountDebugger.relaxAdoptionRequirement();
     }
 
     ~ThreadSafeRefCountedBase()
     {
-        willDestroy(m_refCount);
+        m_refCountDebugger.willDestroy(m_refCount);
         // FIXME: Test performance, then change this to RELEASE_ASSERT.
         ASSERT(m_refCount == 1);
     }
@@ -65,10 +71,10 @@ protected:
     // Returns true if the pointer should be freed.
     bool derefBase() const
     {
-        willDeref(m_refCount, RefCountIsThreadSafe::Yes);
+        m_refCountDebugger.willDeref(m_refCount);
 
         if (!--m_refCount) [[unlikely]] {
-            willDelete();
+            m_refCountDebugger.willDelete();
 
             m_refCount = 1;
             return true;
@@ -78,7 +84,8 @@ protected:
     }
 
 private:
-    mutable std::atomic<unsigned> m_refCount { 1 };
+    mutable std::atomic<uint32_t> m_refCount { 1 };
+    NO_UNIQUE_ADDRESS ThreadSafeRefCountDebugger m_refCountDebugger;
 };
 
 template<class T, DestructionThread destructionThread = DestructionThread::Any> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
@@ -91,11 +98,11 @@ public:
         if constexpr (destructionThread == DestructionThread::Any) {
             delete static_cast<const T*>(this);
         } else if constexpr (destructionThread == DestructionThread::Main) {
-            ensureOnMainThread([this] {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE ensureOnMainThread([this] {
                 delete static_cast<const T*>(this);
             });
         } else if constexpr (destructionThread == DestructionThread::MainRunLoop) {
-            ensureOnMainRunLoop([this] {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE ensureOnMainRunLoop([this] {
                 delete static_cast<const T*>(this);
             });
         } else
@@ -106,6 +113,13 @@ protected:
     ThreadSafeRefCounted() = default;
     ~ThreadSafeRefCounted() = default;
 } SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+
+inline void adopted(ThreadSafeRefCountedBase* object)
+{
+    if (!object)
+        return;
+    object->adopted();
+}
 
 } // namespace WTF
 

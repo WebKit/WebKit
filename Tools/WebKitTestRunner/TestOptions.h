@@ -69,6 +69,7 @@ public:
     bool runSingly() const { return boolTestRunnerFeatureValue("runSingly"); }
     bool runInCrossOriginFrame() const { return boolTestRunnerFeatureValue("runInCrossOriginFrame"); }
     bool shouldHandleRunOpenPanel() const { return boolTestRunnerFeatureValue("shouldHandleRunOpenPanel"); }
+    bool shouldAcceptImmersiveEnvironmentRequests() const { return boolTestRunnerFeatureValue("shouldAcceptImmersiveEnvironmentRequests"); }
     bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }
     bool shouldShowSpellCheckingDots() const { return boolTestRunnerFeatureValue("spellCheckingDots"); }
     bool shouldShowTouches() const { return boolTestRunnerFeatureValue("shouldShowTouches"); }

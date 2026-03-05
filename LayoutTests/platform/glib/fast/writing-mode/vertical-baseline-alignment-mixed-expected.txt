@@ -4,25 +4,25 @@ layer at (548,0) size 252x600
   RenderBlock {HTML} at (0,0) size 252x600
     RenderBody {BODY} at (24,8) size 204x584
       RenderBlock {P} at (0,0) size 110x584
-        RenderInline {SPAN} at (15,0) size 26x102
-          RenderText {#text} at (15,0) size 26x102
-            text run at (15,0) width 102: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
+        RenderInline {SPAN} at (14,0) size 27x102
+          RenderText {#text} at (14,0) size 27x102
+            text run at (14,0) width 103: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
         RenderInline {SPAN} at (1,0) size 108x458
           RenderText {#text} at (1,102) size 53x325
             text run at (1,102) width 325: "PARAGRAPH 1"
           RenderBR {BR} at (1,426) size 53x1
           RenderText {#text} at (56,0) size 53x294
             text run at (56,0) width 294: "MORE TEXT. "
-          RenderInline {SPAN} at (76,293) size 14x165
-            RenderText {#text} at (76,293) size 14x165
-              text run at (76,293) width 164: "SHOULD NOT BE CENTERED."
+          RenderInline {SPAN} at (75,293) size 15x165
+            RenderText {#text} at (75,293) size 15x165
+              text run at (75,293) width 165: "SHOULD NOT BE CENTERED."
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (134,0) size 70x584
         RenderInline {SPAN} at (22,0) size 26x469
           RenderText {#text} at (22,0) size 26x102
             text run at (22,0) width 102: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} "
-          RenderInline {SPAN} at (8,102) size 53x367
-            RenderText {#text} at (8,102) size 53x337
-              text run at (8,102) width 337: "PARAGRAPH 2 "
+          RenderInline {SPAN} at (8,102) size 54x367
+            RenderText {#text} at (8,102) size 54x337
+              text run at (8,102) width 338: "PARAGRAPH 2 "
             RenderImage {IMG} at (0,438) size 70x31 [bgcolor=#008000]
             RenderText {#text} at (0,0) size 0x0

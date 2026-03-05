@@ -33,7 +33,7 @@ class CSSFilterValue final : public CSSValue {
 public:
     static Ref<CSSFilterValue> create(CSS::Filter);
 
-    const CSS::Filter& filter() const { return m_filter; }
+    const CSS::Filter& filter() const LIFETIME_BOUND { return m_filter; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSFilterValue&) const;

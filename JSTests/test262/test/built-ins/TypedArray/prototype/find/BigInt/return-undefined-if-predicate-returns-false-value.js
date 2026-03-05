@@ -24,12 +24,12 @@ info: |
     c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
     ...
   7. Return undefined.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(3);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(3));
   var called = 0;
 
   var result = sample.find(function() {

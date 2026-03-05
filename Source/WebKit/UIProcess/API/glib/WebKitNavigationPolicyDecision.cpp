@@ -314,8 +314,8 @@ const char* webkit_navigation_policy_decision_get_frame_name(WebKitNavigationPol
 WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener)
 {
     WebKitNavigationPolicyDecision* navigationDecision = WEBKIT_NAVIGATION_POLICY_DECISION(g_object_new(WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, nullptr));
-    navigationDecision->priv->navigationAction = webkitNavigationActionCreate(WTFMove(navigationAction));
+    navigationDecision->priv->navigationAction = webkitNavigationActionCreate(WTF::move(navigationAction));
     WebKitPolicyDecision* decision = WEBKIT_POLICY_DECISION(navigationDecision);
-    webkitPolicyDecisionSetListener(decision, WTFMove(listener));
+    webkitPolicyDecisionSetListener(decision, WTF::move(listener));
     return decision;
 }

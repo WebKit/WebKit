@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(UserActivation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserActivation);
 
 Ref<UserActivation> UserActivation::create(Navigator& navigator)
 {

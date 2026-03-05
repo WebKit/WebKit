@@ -17,6 +17,7 @@
 #include <list>
 #include <optional>
 
+#include "api/environment/environment.h"
 #include "api/video/video_frame.h"
 
 namespace webrtc {
@@ -24,7 +25,7 @@ namespace webrtc {
 // Class definitions
 class VideoRenderFrames {
  public:
-  explicit VideoRenderFrames(uint32_t render_delay_ms);
+  VideoRenderFrames(const Environment& env, uint32_t render_delay_ms);
   VideoRenderFrames(const VideoRenderFrames&) = delete;
   ~VideoRenderFrames();
 
@@ -40,6 +41,8 @@ class VideoRenderFrames {
   bool HasPendingFrames() const;
 
  private:
+  const Environment env_;
+
   // Sorted list with framed to be rendered, oldest first.
   std::list<VideoFrame> incoming_frames_;
 

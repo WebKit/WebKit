@@ -35,8 +35,8 @@ InByVariant::InByVariant(CacheableIdentifier identifier, const StructureSet& str
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
-    , m_identifier(WTFMove(identifier))
-    , m_callLinkStatus(WTFMove(callLinkStatus))
+    , m_identifier(WTF::move(identifier))
+    , m_callLinkStatus(WTF::move(callLinkStatus))
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);

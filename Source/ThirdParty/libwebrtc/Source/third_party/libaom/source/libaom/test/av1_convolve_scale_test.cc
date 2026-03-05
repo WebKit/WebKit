@@ -175,7 +175,7 @@ void TestImage<SrcPixel>::Check() const {
   }
 }
 
-typedef tuple<int, int> BlockDimension;
+using BlockDimension = tuple<int, int>;
 
 struct BaseParams {
   BaseParams(BlockDimension dimensions) : dims(dimensions) {}
@@ -321,19 +321,19 @@ class ConvolveScaleTestBase : public ::testing::Test {
   ConvolveParams convolve_params_;
 };
 
-typedef tuple<int, int> BlockDimension;
+using BlockDimension = tuple<int, int>;
 
-typedef void (*LowbdConvolveFunc)(const uint8_t *src, int src_stride,
-                                  uint8_t *dst, int dst_stride, int w, int h,
-                                  const InterpFilterParams *filter_params_x,
-                                  const InterpFilterParams *filter_params_y,
-                                  const int subpel_x_qn, const int x_step_qn,
-                                  const int subpel_y_qn, const int y_step_qn,
-                                  ConvolveParams *conv_params);
+using LowbdConvolveFunc = void (*)(const uint8_t *src, int src_stride,
+                                   uint8_t *dst, int dst_stride, int w, int h,
+                                   const InterpFilterParams *filter_params_x,
+                                   const InterpFilterParams *filter_params_y,
+                                   const int subpel_x_qn, const int x_step_qn,
+                                   const int subpel_y_qn, const int y_step_qn,
+                                   ConvolveParams *conv_params);
 
 // Test parameter list:
 //  <tst_fun, dims, avg>
-typedef tuple<LowbdConvolveFunc, BlockDimension> LowBDParams;
+using LowBDParams = tuple<LowbdConvolveFunc, BlockDimension>;
 
 class LowBDConvolveScaleTest
     : public ConvolveScaleTestBase<uint8_t>,
@@ -417,17 +417,17 @@ INSTANTIATE_TEST_SUITE_P(
 #endif  // HAVE_SSE4_1
 
 #if CONFIG_AV1_HIGHBITDEPTH
-typedef void (*HighbdConvolveFunc)(const uint16_t *src, int src_stride,
-                                   uint16_t *dst, int dst_stride, int w, int h,
-                                   const InterpFilterParams *filter_params_x,
-                                   const InterpFilterParams *filter_params_y,
-                                   const int subpel_x_qn, const int x_step_qn,
-                                   const int subpel_y_qn, const int y_step_qn,
-                                   ConvolveParams *conv_params, int bd);
+using HighbdConvolveFunc = void (*)(const uint16_t *src, int src_stride,
+                                    uint16_t *dst, int dst_stride, int w, int h,
+                                    const InterpFilterParams *filter_params_x,
+                                    const InterpFilterParams *filter_params_y,
+                                    const int subpel_x_qn, const int x_step_qn,
+                                    const int subpel_y_qn, const int y_step_qn,
+                                    ConvolveParams *conv_params, int bd);
 
 // Test parameter list:
 //  <tst_fun, dims, avg, bd>
-typedef tuple<HighbdConvolveFunc, BlockDimension, int> HighBDParams;
+using HighBDParams = tuple<HighbdConvolveFunc, BlockDimension, int>;
 
 class HighBDConvolveScaleTest
     : public ConvolveScaleTestBase<uint16_t>,

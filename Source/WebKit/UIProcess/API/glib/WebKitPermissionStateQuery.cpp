@@ -45,7 +45,7 @@ struct _WebKitPermissionStateQuery {
     explicit _WebKitPermissionStateQuery(const WTF::String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
         : permissionName(permissionName.utf8())
         , securityOrigin(webkitSecurityOriginCreate(origin.securityOrigin().isolatedCopy()))
-        , completionHandler(WTFMove(completionHandler))
+        , completionHandler(WTF::move(completionHandler))
     {
     }
 
@@ -69,7 +69,7 @@ G_DEFINE_BOXED_TYPE(WebKitPermissionStateQuery, webkit_permission_state_query, w
 WebKitPermissionStateQuery* webkitPermissionStateQueryCreate(const WTF::String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
     WebKitPermissionStateQuery* query = static_cast<WebKitPermissionStateQuery*>(fastMalloc(sizeof(WebKitPermissionStateQuery)));
-    new (query) WebKitPermissionStateQuery(permissionName, origin, WTFMove(completionHandler));
+    new (query) WebKitPermissionStateQuery(permissionName, origin, WTF::move(completionHandler));
     return query;
 }
 

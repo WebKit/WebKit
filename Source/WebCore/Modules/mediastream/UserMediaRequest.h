@@ -71,17 +71,17 @@ public:
 
     WEBCORE_EXPORT void deny(MediaAccessDenialReason, const String& errorMessage = emptyString(), MediaConstraintType = MediaConstraintType::Unknown);
 
-    const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
-    const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
+    const Vector<String>& audioDeviceUIDs() const LIFETIME_BOUND { return m_audioDeviceUIDs; }
+    const Vector<String>& videoDeviceUIDs() const LIFETIME_BOUND { return m_videoDeviceUIDs; }
 
-    const MediaConstraints& audioConstraints() const { return m_request.audioConstraints; }
-    const MediaConstraints& videoConstraints() const { return m_request.videoConstraints; }
+    const MediaConstraints& audioConstraints() const LIFETIME_BOUND { return m_request.audioConstraints; }
+    const MediaConstraints& videoConstraints() const LIFETIME_BOUND { return m_request.videoConstraints; }
 
     WEBCORE_EXPORT SecurityOrigin* userMediaDocumentOrigin() const;
     WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
-    WEBCORE_EXPORT Document* document() const;
+    WEBCORE_EXPORT Document* NODELETE document() const;
 
-    const MediaStreamRequest& request() const { return m_request; }
+    const MediaStreamRequest& request() const LIFETIME_BOUND { return m_request; }
 
 private:
     UserMediaRequest(Document&, MediaStreamRequest&&, TrackConstraints&&, TrackConstraints&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);

@@ -57,14 +57,14 @@ void FEComponentTransferSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer)
 
 bool FEComponentTransferSoftwareApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
-    
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
+    Ref input = inputs[0];
+
+    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 
-    auto drawingRect = result.absoluteImageRectRelativeTo(input);
-    input.copyPixelBuffer(*destinationPixelBuffer, drawingRect);
+    auto drawingRect = result.absoluteImageRectRelativeTo(input.get());
+    input->copyPixelBuffer(*destinationPixelBuffer, drawingRect);
 
     applyPlatform(*destinationPixelBuffer);
     return true;

@@ -24,7 +24,6 @@
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/transport/network_types.h"
-#include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -58,11 +57,6 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
 
   ~TaskQueuePacedSender() override;
 
-  // The pacer is allowed to send enqued packets in bursts and can build up a
-  // packet "debt" that correspond to approximately the send rate during
-  // 'burst_interval'.
-  void SetSendBurstInterval(TimeDelta burst_interval);
-
   // A probe may be sent without first waing for a media packet.
   void SetAllowProbeWithoutMediaPacket(bool allow);
 
@@ -92,7 +86,7 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   void SetCongested(bool congested) override;
 
   // Sets the pacing rates. Must be called once before packets can be sent.
-  void SetPacingRates(DataRate pacing_rate, DataRate padding_rate) override;
+  void SetConfig(const PacerConfig& pacer_config) override;
 
   // Currently audio traffic is not accounted for by pacer and passed through.
   // With the introduction of audio BWE, audio traffic will be accounted for
@@ -136,8 +130,10 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
 
  private:
   // Call in response to state updates that could warrant sending out packets.
-  // Protected against re-entry from packet sent receipts.
-  void MaybeScheduleProcessPackets() RTC_RUN_ON(task_queue_);
+  // API methods should use this method if the method can be executed as a
+  // consequence of sending a packet to avoid sending another packet in the same
+  // call stack.
+  void PostMaybeProcessPackets() RTC_RUN_ON(task_queue_);
   // Check if it is time to send packets, or schedule a delayed task if not.
   // Use Timestamp::MinusInfinity() to indicate that this call has _not_
   // been scheduled by the pacing controller. If this is the case, check if we

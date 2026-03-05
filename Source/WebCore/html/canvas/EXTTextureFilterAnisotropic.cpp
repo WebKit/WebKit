@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTTextureFilterAnisotropic);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTTextureFilterAnisotropic);
 
 EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTTextureFilterAnisotropic)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::EXT_texture_filter_anisotropic);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::EXT_texture_filter_anisotropic);
 }
 
 EXTTextureFilterAnisotropic::~EXTTextureFilterAnisotropic() = default;

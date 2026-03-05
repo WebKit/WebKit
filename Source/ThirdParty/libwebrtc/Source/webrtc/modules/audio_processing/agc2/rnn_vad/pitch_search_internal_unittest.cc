@@ -99,14 +99,14 @@ TEST(RnnVadTest, ComputePitchPeriod48kHzBitExactness) {
                                          y_energy_view, cpu_features);
   // TODO(bugs.webrtc.org/8948): Add when the issue is fixed.
   // FloatingPointExceptionObserver fpe_observer;
-  EXPECT_EQ(
-      ComputePitchPeriod48kHz(test_data.PitchBuffer24kHzView(), y_energy_view,
-                              /*pitch_candidates=*/{280, 284}, cpu_features),
-      560);
-  EXPECT_EQ(
-      ComputePitchPeriod48kHz(test_data.PitchBuffer24kHzView(), y_energy_view,
-                              /*pitch_candidates=*/{260, 284}, cpu_features),
-      568);
+  EXPECT_EQ(ComputePitchPeriod48kHz(
+                test_data.PitchBuffer24kHzView(), y_energy_view,
+                /*pitch_candidates_24kHz=*/{280, 284}, cpu_features),
+            560);
+  EXPECT_EQ(ComputePitchPeriod48kHz(
+                test_data.PitchBuffer24kHzView(), y_energy_view,
+                /*pitch_candidates_24kHz=*/{260, 284}, cpu_features),
+            568);
 }
 
 struct PitchCandidatesParameters {
@@ -123,7 +123,8 @@ TEST_P(PitchCandidatesParametrization,
        ComputePitchPeriod48kHzOrderDoesNotMatter) {
   const PitchCandidatesParameters params = GetParam();
   const CandidatePitchPeriods swapped_pitch_candidates{
-      params.pitch_candidates.second_best, params.pitch_candidates.best};
+      .best = params.pitch_candidates.second_best,
+      .second_best = params.pitch_candidates.best};
 
   PitchTestData test_data;
   std::vector<float> y_energy(kRefineNumLags24kHz);
@@ -141,11 +142,12 @@ TEST_P(PitchCandidatesParametrization,
 std::vector<PitchCandidatesParameters> CreatePitchCandidatesParameters() {
   std::vector<PitchCandidatesParameters> v;
   for (AvailableCpuFeatures cpu_features : GetCpuFeaturesToTest()) {
-    v.push_back({{0, 2}, cpu_features});
-    v.push_back({{260, 284}, cpu_features});
-    v.push_back({{280, 284}, cpu_features});
-    v.push_back(
-        {{kInitialNumLags24kHz - 2, kInitialNumLags24kHz - 1}, cpu_features});
+    v.push_back({{.best = 0, .second_best = 2}, cpu_features});
+    v.push_back({{.best = 260, .second_best = 284}, cpu_features});
+    v.push_back({{.best = 280, .second_best = 284}, cpu_features});
+    v.push_back({{.best = kInitialNumLags24kHz - 2,
+                  .second_best = kInitialNumLags24kHz - 1},
+                 cpu_features});
   }
   return v;
 }
@@ -195,14 +197,16 @@ CreateExtendedPitchPeriodSearchParameters() {
          {kTestPitchPeriodsLow, kTestPitchPeriodsHigh}) {
       for (float last_pitch_strength :
            {kTestPitchStrengthLow, kTestPitchStrengthHigh}) {
-        v.push_back({kTestPitchPeriodsLow,
-                     {last_pitch_period, last_pitch_strength},
-                     {91, -0.0188608f},
-                     cpu_features});
-        v.push_back({kTestPitchPeriodsHigh,
-                     {last_pitch_period, last_pitch_strength},
-                     {475, -0.0904344f},
-                     cpu_features});
+        v.push_back(
+            {kTestPitchPeriodsLow,
+             {.period = last_pitch_period, .strength = last_pitch_strength},
+             {.period = 91, .strength = -0.0188608f},
+             cpu_features});
+        v.push_back(
+            {kTestPitchPeriodsHigh,
+             {.period = last_pitch_period, .strength = last_pitch_strength},
+             {.period = 475, .strength = -0.0904344f},
+             cpu_features});
       }
     }
   }

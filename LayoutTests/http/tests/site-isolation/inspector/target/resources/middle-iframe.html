@@ -1,2 +1,10 @@
-<p>Middle iframe</p>
-<iframe src="http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe"></iframe>
+<p>Middle iframe that embeds a cross origin leaf iframe</p>
+
+<script>
+    document.body.onload = function () {
+        let iframe = document.createElement("iframe");
+        let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+        iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/target/resources/leaf-iframe.html`;
+        document.body.append(iframe);
+    };
+</script>

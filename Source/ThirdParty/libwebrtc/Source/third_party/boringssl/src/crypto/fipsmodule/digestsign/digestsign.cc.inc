@@ -33,17 +33,17 @@ DEFINE_LOCAL_DATA(struct evp_md_pctx_ops, md_pctx_ops) {
 }
 
 static int uses_prehash(EVP_MD_CTX *ctx, enum evp_sign_verify_t op) {
-  return (op == evp_sign) ? (ctx->pctx->pmeth->sign != NULL)
-                          : (ctx->pctx->pmeth->verify != NULL);
+  return (op == evp_sign) ? (ctx->pctx->pmeth->sign != nullptr)
+                          : (ctx->pctx->pmeth->verify != nullptr);
 }
 
 static int do_sigver_init(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
                           const EVP_MD *type, ENGINE *e, EVP_PKEY *pkey,
                           enum evp_sign_verify_t op) {
-  if (ctx->pctx == NULL) {
+  if (ctx->pctx == nullptr) {
     ctx->pctx = EVP_PKEY_CTX_new(pkey, e);
   }
-  if (ctx->pctx == NULL) {
+  if (ctx->pctx == nullptr) {
     return 0;
   }
   ctx->pctx_ops = md_pctx_ops();
@@ -58,13 +58,12 @@ static int do_sigver_init(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
     }
   }
 
-  if (type != NULL &&
-      !EVP_PKEY_CTX_set_signature_md(ctx->pctx, type)) {
+  if (type != nullptr && !EVP_PKEY_CTX_set_signature_md(ctx->pctx, type)) {
     return 0;
   }
 
   if (uses_prehash(ctx, op)) {
-    if (type == NULL) {
+    if (type == nullptr) {
       OPENSSL_PUT_ERROR(EVP, EVP_R_NO_DEFAULT_DIGEST);
       return 0;
     }
@@ -135,7 +134,7 @@ int EVP_DigestSignFinal(EVP_MD_CTX *ctx, uint8_t *out_sig,
     return ret;
   } else {
     size_t s = EVP_MD_size(ctx->digest);
-    return EVP_PKEY_sign(ctx->pctx, out_sig, out_sig_len, NULL, s);
+    return EVP_PKEY_sign(ctx->pctx, out_sig, out_sig_len, nullptr, s);
   }
 }
 
@@ -174,8 +173,7 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, uint8_t *out_sig, size_t *out_sig_len,
   if (uses_prehash(ctx, evp_sign)) {
     // If |out_sig| is NULL, the caller is only querying the maximum output
     // length. |data| should only be incorporated in the final call.
-    if (out_sig != NULL &&
-        !EVP_DigestSignUpdate(ctx, data, data_len)) {
+    if (out_sig != nullptr && !EVP_DigestSignUpdate(ctx, data, data_len)) {
       goto end;
     }
 
@@ -183,7 +181,7 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, uint8_t *out_sig, size_t *out_sig_len,
     goto end;
   }
 
-  if (ctx->pctx->pmeth->sign_message == NULL) {
+  if (ctx->pctx->pmeth->sign_message == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     goto end;
   }
@@ -210,7 +208,7 @@ int EVP_DigestVerify(EVP_MD_CTX *ctx, const uint8_t *sig, size_t sig_len,
     goto end;
   }
 
-  if (ctx->pctx->pmeth->verify_message == NULL) {
+  if (ctx->pctx->pmeth->verify_message == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     goto end;
   }

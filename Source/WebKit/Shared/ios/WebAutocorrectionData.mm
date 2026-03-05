@@ -38,7 +38,7 @@ namespace WebKit {
 
 WebAutocorrectionData::WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<String>&& fontName, double pointSize, double weight)
 {
-    this->textRects = WTFMove(textRects);
+    this->textRects = WTF::move(textRects);
     if (fontName.has_value())
         this->font = [UIFont fontWithName:fontName->createNSString().get() size:pointSize];
     else

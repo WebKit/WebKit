@@ -29,7 +29,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineLineBox.h"
 #include "LayoutBoxGeometry.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -90,7 +90,7 @@ bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox)
         // The side effect of having no marker is that in quirks mode we have to specifically check for list-item
         // and make sure it is treated as if it had content and stretched the line.
         // see LegacyInlineFlowBox c'tor.
-        return inlineLevelBox.layoutBox().style().isOriginalDisplayListItemType();
+        return inlineLevelBox.layoutBox().style().originalDisplay().isListItemType();
     }
     // Non-root inline boxes (e.g. <span>).
     auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
@@ -109,11 +109,12 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
     auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
     auto lineHeight = [&]() -> InlineLayoutUnit {
         if (lineBoxStyle.lineHeight().isNormal())
-            return primaryFontMetrics.intAscent() + primaryFontMetrics.intDescent();
+            return InlineFormattingUtils::ascent(primaryFontMetrics, FontBaseline::Alphabetic, floatBox) + InlineFormattingUtils::descent(primaryFontMetrics, FontBaseline::Alphabetic, floatBox);
         return lineBoxStyle.computedLineHeight();
     };
     auto& floatBoxGeometry = formattingContext().geometryForBox(floatBox);
-    return LayoutUnit { primaryFontMetrics.intAscent() + (lineHeight() - primaryFontMetrics.intHeight()) / 2 - primaryFontMetrics.intCapHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
+    auto fontHeight = InlineFormattingUtils::snapToInt(primaryFontMetrics.ascent(), floatBox) + InlineFormattingUtils::snapToInt(primaryFontMetrics.descent(), floatBox);
+    return LayoutUnit { InlineFormattingUtils::ascent(primaryFontMetrics, FontBaseline::Alphabetic, floatBox) + (lineHeight() - fontHeight) / 2 - InlineFormattingUtils::snapToInt(primaryFontMetrics.capHeight().value_or(0.f), floatBox) - floatBoxGeometry.marginBorderAndPaddingBefore() };
 }
 
 std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
@@ -218,16 +219,29 @@ bool InlineQuirks::shouldCollapseLineBoxHeight(const Line::RunList& lineContent,
         return false;
     }
 
-    auto& rootBox = formattingContext().root();
-    if (rootBox.isAnonymous() || rootBox.isListItem())
-        return false;
-
+    size_t emptyInlineBoxCount = 0;
     for (auto& run : lineContent) {
         if (run.isListMarkerOutside())
             continue;
         if (Line::Run::isContentfulOrHasDecoration(run, formattingContext()))
             return false;
+        if (run.isInlineBoxStart())
+            ++emptyInlineBoxCount;
     }
+
+    if (lineContent[0].isListMarkerOutside() && emptyInlineBoxCount && emptyInlineBoxCount == lineContent.size() - 1) {
+        // This is to handle non-contentful lines introduced by block boxes. They are supposed to be collapsed so that
+        // the block content can be placed next to the list marker.
+        // Regular inline content would never produced a line with inline box only runs. Also inline content like <li><span><br>
+        // is not supposed to produce a collapsed line box.
+        // The underlying issue is the assumption that we shouldn’t collapse when rootBox is a list item (see below).
+        return true;
+    }
+
+    auto& rootBox = formattingContext().root();
+    if (rootBox.isAnonymous() || rootBox.isListItem())
+        return false;
+
     return true;
 }
 

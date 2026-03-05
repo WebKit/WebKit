@@ -37,7 +37,6 @@
 #include "BuiltinNames.h"
 #include "Bytecodes.h"
 #include "CallLinkInfo.h"
-#include "CatchScope.h"
 #include "CheckpointOSRExitSideState.h"
 #include "CodeBlock.h"
 #include "Debugger.h"
@@ -51,7 +50,7 @@
 #include "InterpreterInlines.h"
 #include "JITCode.h"
 #include "JSArrayInlines.h"
-#include "JSBoundFunction.h"
+#include "JSBoundFunctionInlines.h"
 #include "JSCInlines.h"
 #include "JSCellButterfly.h"
 #include "JSLexicalEnvironment.h"
@@ -59,8 +58,8 @@
 #include "JSModuleRecord.h"
 #include "JSObject.h"
 #include "JSPromise.h"
-#include "JSPromiseAllContext.h"
-#include "JSPromiseAllGlobalContext.h"
+#include "JSPromiseCombinatorsContext.h"
+#include "JSPromiseCombinatorsGlobalContext.h"
 #include "JSPromiseReaction.h"
 #include "JSRemoteFunction.h"
 #include "JSString.h"
@@ -78,6 +77,7 @@
 #include "StackFrame.h"
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
+#include "TopExceptionScope.h"
 #include "VMEntryScopeInlines.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
@@ -449,7 +449,7 @@ bool Interpreter::isOpcode(Opcode opcode)
         && !HashTraits<Opcode>::isDeletedValue(opcode)
         && opcodeIDTable().contains(opcode);
 #else
-    return opcode >= 0 && opcode <= op_end;
+    return opcode >= 0 && opcode <= op_bitnot;
 #endif
 }
 #endif // ASSERT_ENABLED
@@ -486,9 +486,9 @@ void Interpreter::getAsyncStackTrace(JSCell* owner, Vector<StackFrame>& results,
         if (auto* generator = jsDynamicCast<JSGenerator*>(promiseContext))
             return generator;
 
-        // handle `Promise.all`
-        if (auto* promiseAllContext = jsDynamicCast<JSPromiseAllContext*>(promiseContext)) {
-            if (auto* globalContext = jsDynamicCast<JSPromiseAllGlobalContext*>(promiseAllContext->globalContext())) {
+        // handle `Promise.all`, `Promise.allSettled`, and `Promise.any`
+        if (auto* promiseCombinatorsContext = jsDynamicCast<JSPromiseCombinatorsContext*>(promiseContext)) {
+            if (auto* globalContext = jsDynamicCast<JSPromiseCombinatorsGlobalContext*>(promiseCombinatorsContext->globalContext())) {
                 JSValue promiseValue = globalContext->promise();
                 ASSERT(promiseValue);
                 if (auto* promise = jsDynamicCast<JSPromise*>(promiseValue)) {
@@ -500,7 +500,7 @@ void Interpreter::getAsyncStackTrace(JSCell* owner, Vector<StackFrame>& results,
             }
         }
 
-        // handle `Promise.any`, `Promise.race` and `Promise.allSettled`
+        // handle and `Promise.race`
         if (auto* contextPromise = jsDynamicCast<JSPromise*>(promiseContext)) {
             if (JSValue parentContext = getContextValueFromPromise(contextPromise)) {
                 if (auto* generator = jsDynamicCast<JSGenerator*>(parentContext))
@@ -895,7 +895,7 @@ static void sanitizeRemoteFunctionException(VM& vm, JSRemoteFunction* remoteFunc
 
     JSGlobalObject* globalObject = remoteFunction->globalObject();
     JSValue exceptionValue = exception->value();
-    scope.clearException();
+    TRY_CLEAR_EXCEPTION(scope, void());
 
     // Avoid user-observable ToString()
     String exceptionString;
@@ -938,7 +938,7 @@ NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Except
     std::optional<DeferTerminationForAWhile> deferScope;
     if (!vm.isTerminationException(exception))
         deferScope.emplace(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     ASSERT(reinterpret_cast<void*>(callFrame) != vm.topEntryFrame);
     CodeBlock* codeBlock = callFrame->isNativeCalleeFrame() ? nullptr : callFrame->codeBlock();
@@ -1001,13 +1001,6 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* gl
     exception->setDidNotifyInspectorOfThrow();
 }
 
-NEVER_INLINE JSValue Interpreter::checkVMEntryPermission()
-{
-    if (Options::crashOnDisallowedVMEntry() || g_jscConfig.vmEntryDisallowed)
-        CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMEntryDisallowed, "VM entry disallowed"_s);
-    return jsUndefined();
-}
-
 JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, JSObject* thisObj)
 {
     VM& vm = this->vm();
@@ -1039,7 +1032,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
         return throwStackOverflowError(globalObject, throwScope);
 
     if (vm.disallowVMEntryCount) [[unlikely]]
-        return checkVMEntryPermission();
+        return VM::checkVMEntryPermission();
 
     // First check if the "program" is actually just a JSON object. If so,
     // we'll handle the JSON object here. Else, we'll handle real JS code
@@ -1283,7 +1276,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
         return throwStackOverflowError(globalObject, scope);
 
     if (vm.disallowVMEntryCount) [[unlikely]]
-        return checkVMEntryPermission();
+        return VM::checkVMEntryPermission();
 
     RefPtr<JSC::JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
@@ -1377,7 +1370,7 @@ JSObject* Interpreter::executeConstruct(JSObject* constructor, const CallData& c
     }
 
     if (vm.disallowVMEntryCount) [[unlikely]] {
-        checkVMEntryPermission();
+        VM::checkVMEntryPermission();
         return globalObject->globalThis();
     }
 
@@ -1606,7 +1599,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
         }
     }
     callee->setScope(vm, scope);
-    EncodedJSValue result = vmEntryToJavaScriptWith0Arguments(entry, &vm, codeBlock, callee, thisValue);
+    EncodedJSValue result = vmEntryToJavaScriptWith0Arguments(entry, &vm, codeBlock, callee, thisValue, nullptr);
     callee->setScope(vm, nullptr);
 #else
     RefPtr<JSC::JITCode> jitCode;
@@ -1664,7 +1657,7 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
         return throwStackOverflowError(globalObject, throwScope);
 
     if (vm.disallowVMEntryCount) [[unlikely]]
-        return checkVMEntryPermission();
+        return VM::checkVMEntryPermission();
 
     if (scope->structure()->isUncacheableDictionary())
         scope->flattenDictionaryObject(vm);
@@ -1717,7 +1710,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
 {
     VM& vm = this->vm();
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (Options::debuggerTriggersBreakpointException()) [[unlikely]] {
         if (debugHookType == DidReachDebuggerStatement)

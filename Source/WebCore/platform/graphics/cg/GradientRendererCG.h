@@ -65,7 +65,7 @@ private:
         public:
             static Ref<Data> create(ColorInterpolationMethod colorInterpolationMethod, Vector<ColorConvertedToInterpolationColorSpaceStop> stops, bool firstStopIsSynthetic, bool lastStopIsSynthetic)
             {
-                return adoptRef(*new Data(colorInterpolationMethod, WTFMove(stops), firstStopIsSynthetic, lastStopIsSynthetic));
+                return adoptRef(*new Data(colorInterpolationMethod, WTF::move(stops), firstStopIsSynthetic, lastStopIsSynthetic));
             }
 
             ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
@@ -79,7 +79,7 @@ private:
                 : m_colorInterpolationMethod { colorInterpolationMethod }
                 , m_firstStopIsSynthetic(firstStopIsSynthetic)
                 , m_lastStopIsSynthetic(lastStopIsSynthetic)
-                , m_stops { WTFMove(stops) }
+                , m_stops { WTF::move(stops) }
             {
             }
 

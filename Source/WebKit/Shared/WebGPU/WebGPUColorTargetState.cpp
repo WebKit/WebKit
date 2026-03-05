@@ -43,7 +43,7 @@ std::optional<ColorTargetState> ConvertToBackingContext::convertToBacking(const 
             return std::nullopt;
     }
 
-    return { { colorTargetState.format, WTFMove(blend), colorTargetState.writeMask } };
+    return { { colorTargetState.format, WTF::move(blend), colorTargetState.writeMask } };
 }
 
 std::optional<WebCore::WebGPU::ColorTargetState> ConvertFromBackingContext::convertFromBacking(const ColorTargetState& colorTargetState)
@@ -55,7 +55,7 @@ std::optional<WebCore::WebGPU::ColorTargetState> ConvertFromBackingContext::conv
             return std::nullopt;
     }
 
-    return { { colorTargetState.format, WTFMove(blend), colorTargetState.writeMask } };
+    return { { colorTargetState.format, WTF::move(blend), colorTargetState.writeMask } };
 }
 
 } // namespace WebKit

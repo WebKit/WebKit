@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -42,7 +45,9 @@ typedef enum {
 
 #if HAVE(TCC_IOS_14_BIG_SUR_SPI)
 typedef uint64_t tcc_identity_type_t;
+#ifdef __cplusplus
 constexpr tcc_identity_type_t TCC_IDENTITY_CODE_BUNDLE_ID = 0;
+#endif
 OS_OBJECT_DECL_CLASS(tcc_identity);
 #endif // HAVE(TCC_IOS_14_BIG_SUR_SPI)
 

@@ -34,10 +34,10 @@ bool isCenterPosition(const Position& position)
         return WTF::switchOn(component.offset,
             [](auto)            { return false; },
             [](Keyword::Center) { return true;  },
-            [](const LengthPercentage<>& value) {
+            [](const LengthPercentage<AllUnzoomed>& value) {
                 return WTF::switchOn(value,
-                    [](const LengthPercentage<>::Raw& raw) { return raw == 50_css_percentage; },
-                    [](const LengthPercentage<>::Calc&) { return false; }
+                    [](const LengthPercentage<AllUnzoomed>::Raw& raw) { return raw == 50_css_percentage; },
+                    [](const LengthPercentage<AllUnzoomed>::Calc&) { return false; }
                 );
             }
         );
@@ -68,7 +68,7 @@ std::pair<CSS::PositionX, CSS::PositionY> split(CSS::Position&& position)
     // CSS::PositionX and CSS::PositionY don't utilize the three component variants, so the
     // non-length containing item must be converted to its two component variant.
 
-    return WTF::switchOn(WTFMove(position),
+    return WTF::switchOn(WTF::move(position),
         [&](const auto& components) -> std::pair<CSS::PositionX, CSS::PositionY> {
             return { CSS::PositionX(get<0>(components)), CSS::PositionY(get<1>(components)) };
         },

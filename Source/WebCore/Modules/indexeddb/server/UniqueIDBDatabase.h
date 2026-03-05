@@ -84,9 +84,9 @@ public:
 
     WEBCORE_EXPORT void openDatabaseConnection(IDBConnectionToClient&, const IDBOpenRequestData&);
 
-    const IDBDatabaseInfo& info() const;
-    UniqueIDBDatabaseManager* manager();
-    const IDBDatabaseIdentifier& identifier() const { return m_identifier; }
+    const IDBDatabaseInfo& NODELETE info() const;
+    UniqueIDBDatabaseManager* NODELETE manager();
+    const IDBDatabaseIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     enum class SpaceCheckResult : uint8_t {
         Unknown,
@@ -122,7 +122,7 @@ public:
     WEBCORE_EXPORT void handleDelete(IDBConnectionToClient&, const IDBOpenRequestData&);
     WEBCORE_EXPORT void immediateClose();
 
-    bool hasActiveTransactions() const;
+    bool NODELETE hasActiveTransactions() const;
     WEBCORE_EXPORT void abortActiveTransactions();
     WEBCORE_EXPORT bool tryClose();
 
@@ -139,7 +139,7 @@ private:
     void performCurrentDeleteOperation();
     RefPtr<ServerOpenDBRequest> takeNextRunnableRequest();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
-    bool hasAnyOpenConnections() const;
+    bool NODELETE hasAnyOpenConnections() const;
     bool allConnectionsAreClosedOrClosing() const;
 
     void startVersionChangeTransaction();
@@ -163,16 +163,14 @@ private:
     enum class DidCreateIndexInBackingStore : bool { No, Yes };
     void didCreateIndexAsyncForTransaction(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, const IDBError&, DidCreateIndexInBackingStore = DidCreateIndexInBackingStore::Yes);
 
-    CheckedPtr<IDBBackingStore> checkedBackingStore() const;
-
     WeakPtr<UniqueIDBDatabaseManager> m_manager;
     IDBDatabaseIdentifier m_identifier;
 
-    ListHashSet<RefPtr<ServerOpenDBRequest>> m_pendingOpenDBRequests;
+    ListHashSet<Ref<ServerOpenDBRequest>> m_pendingOpenDBRequests;
     RefPtr<ServerOpenDBRequest> m_currentOpenDBRequest;
     HashSet<IDBResourceIdentifier> m_openDBRequestsForSpaceCheck;
 
-    ListHashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
+    ListHashSet<Ref<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
 
     RefPtr<UniqueIDBDatabaseConnection> m_versionChangeDatabaseConnection;
     RefPtr<UniqueIDBDatabaseTransaction> m_versionChangeTransaction;
@@ -181,8 +179,8 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBDatabaseInfo> m_mostRecentDeletedDatabaseInfo;
 
-    Deque<RefPtr<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
-    HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
+    Deque<Ref<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
+    HashMap<IDBResourceIdentifier, Ref<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
 
     // The keys into these sets are the object store ID.
     // These sets help to decide which transactions can be started and which must be deferred.

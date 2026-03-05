@@ -70,6 +70,8 @@ public:
 private:
     WorkerModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
+    bool isWorkerModuleScriptLoader() const final { return true; }
+
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final { }
     void notifyFinished(std::optional<ScriptExecutionContextIdentifier>) final;
 
@@ -85,3 +87,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerModuleScriptLoader)
+    static bool isType(const WebCore::ModuleScriptLoader& loader) { return loader.isWorkerModuleScriptLoader(); }
+SPECIALIZE_TYPE_TRAITS_END()

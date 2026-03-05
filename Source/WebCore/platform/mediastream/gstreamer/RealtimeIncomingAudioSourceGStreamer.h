@@ -27,7 +27,7 @@ namespace WebCore {
 
 class RealtimeIncomingAudioSourceGStreamer : public RealtimeIncomingSourceGStreamer {
 public:
-    static Ref<RealtimeIncomingAudioSourceGStreamer> create(AtomString&& audioTrackId) { return adoptRef(*new RealtimeIncomingAudioSourceGStreamer(WTFMove(audioTrackId))); }
+    static Ref<RealtimeIncomingAudioSourceGStreamer> create(AtomString&& audioTrackId) { return adoptRef(*new RealtimeIncomingAudioSourceGStreamer(WTF::move(audioTrackId))); }
 
 protected:
     RealtimeIncomingAudioSourceGStreamer(AtomString&&);

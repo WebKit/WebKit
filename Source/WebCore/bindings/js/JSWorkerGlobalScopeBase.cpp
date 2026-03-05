@@ -41,6 +41,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalProxy.h>
+#include <JavaScriptCore/JSMicrotaskDispatcher.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/Language.h>
 
@@ -55,7 +56,6 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
         &supportsRichSourceInfo,
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
-        &queueMicrotaskToEventLoop,
         &shouldInterruptScriptBeforeTimeout,
         &moduleLoaderImportModule,
         &moduleLoaderResolve,
@@ -83,9 +83,9 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
     return &table;
 };
 
-JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, RefPtr<WorkerGlobalScope>&& impl)
+JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, Ref<WorkerGlobalScope>&& impl)
     : JSDOMGlobalObject(vm, structure, normalWorld(vm), globalObjectMethodTable())
-    , m_wrapped(WTFMove(impl))
+    , m_wrapped(WTF::move(impl))
 {
 }
 
@@ -110,12 +110,8 @@ DEFINE_VISIT_CHILDREN(JSWorkerGlobalScopeBase);
 
 void JSWorkerGlobalScopeBase::destroy(JSCell* cell)
 {
-    static_cast<JSWorkerGlobalScopeBase*>(cell)->JSWorkerGlobalScopeBase::~JSWorkerGlobalScopeBase();
-}
-
-ScriptExecutionContext* JSWorkerGlobalScopeBase::scriptExecutionContext() const
-{
-    return m_wrapped.get();
+    // We cannot rely on jsCast() during JSObject destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<JSWorkerGlobalScopeBase*>(cell)->JSWorkerGlobalScopeBase::~JSWorkerGlobalScopeBase();
 }
 
 bool JSWorkerGlobalScopeBase::supportsRichSourceInfo(const JSGlobalObject* object)
@@ -142,20 +138,12 @@ RuntimeFlags JSWorkerGlobalScopeBase::javaScriptRuntimeFlags(const JSGlobalObjec
 JSC::ScriptExecutionStatus JSWorkerGlobalScopeBase::scriptExecutionStatus(JSC::JSGlobalObject* globalObject, JSC::JSObject* owner)
 {
     ASSERT_UNUSED(owner, globalObject == owner);
-    return jsCast<JSWorkerGlobalScopeBase*>(globalObject)->scriptExecutionContext()->jscScriptExecutionStatus();
+    return jsCast<JSWorkerGlobalScopeBase*>(globalObject)->wrapped().jscScriptExecutionStatus();
 }
 
 void JSWorkerGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* globalObject, const String& source)
 {
     return JSGlobalObject::reportViolationForUnsafeEval(globalObject, source);
-}
-
-void JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, JSC::QueuedTask&& task)
-{
-    JSWorkerGlobalScopeBase& thisObject = static_cast<JSWorkerGlobalScopeBase&>(object);
-    auto& context = thisObject.wrapped();
-    task.setDispatcher(context.eventLoop().jsMicrotaskDispatcher(task));
-    context.eventLoop().queueMicrotask(WTFMove(task));
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WorkerGlobalScope& workerGlobalScope)
@@ -165,7 +153,7 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WorkerGlob
 
 JSValue toJS(JSGlobalObject*, WorkerGlobalScope& workerGlobalScope)
 {
-    auto* script = workerGlobalScope.script();
+    CheckedPtr script = workerGlobalScope.script();
     if (!script)
         return jsNull();
     auto* contextWrapper = script->globalScopeWrapper();

@@ -41,11 +41,6 @@ ControlFactory& ControlPart::controlFactory() const
     return m_overrideControlFactory ? *m_overrideControlFactory : ControlFactory::singleton();
 }
 
-Ref<ControlFactory> ControlPart::protectedControlFactory() const
-{
-    return controlFactory();
-}
-
 PlatformControl* ControlPart::platformControl() const
 {
     if (!m_platformControl)

@@ -114,7 +114,7 @@ public:
     Vector<ITPThirdPartyData> aggregatedThirdPartyData() const;
     void updateCookieBlocking(CompletionHandler<void()>&&);
     void processStatisticsAndDataRecords(CompletionHandler<void()>&&);
-    void cancelPendingStatisticsProcessingRequest();
+    void NODELETE cancelPendingStatisticsProcessingRequest();
     void mergeStatistics(Vector<ResourceLoadStatistics>&&);
     void runIncrementalVacuumCommand();
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
@@ -129,7 +129,7 @@ public:
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
     void setGrandfathered(const RegistrableDomain&, bool value);
     bool isGrandfathered(const RegistrableDomain&) const;
-    void setGrandfatheringTime(Seconds);
+    void NODELETE setGrandfatheringTime(Seconds);
 
     bool isRegisteredAsSubresourceUnder(const SubResourceDomain&, const TopFrameDomain&) const;
     bool isRegisteredAsSubFrameUnder(const SubFrameDomain&, const TopFrameDomain&) const;
@@ -149,18 +149,18 @@ public:
     void setTopFrameUniqueRedirectTo(const TopFrameDomain&, const RedirectDomain&);
     void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&);
 
-    void setIsRunningTest(bool);
+    void NODELETE setIsRunningTest(bool);
     void logTestingEvent(String&&);
     void setTimeAdvanceForTesting(Seconds);
 
-    void setMaxStatisticsEntries(size_t maximumEntryCount);
-    void setPruneEntriesDownTo(size_t pruneTargetCount);
+    void NODELETE setMaxStatisticsEntries(size_t maximumEntryCount);
+    void NODELETE setPruneEntriesDownTo(size_t pruneTargetCount);
     void resetParametersToDefaultValues();
 
     bool shouldSkip(const RegistrableDomain&) const;
-    void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
-    void setTimeToLiveUserInteraction(Seconds);
-    void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
+    void NODELETE setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
+    void NODELETE setTimeToLiveUserInteraction(Seconds);
+    void NODELETE setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setResourceLoadStatisticsDebugMode(bool);
     bool isDebugModeEnabled() const { return m_debugModeEnabled; };
     void setPrevalentResourceForDebugMode(const RegistrableDomain&);
@@ -170,8 +170,8 @@ public:
     bool isSameSiteStrictEnforcementEnabled() const { return m_sameSiteStrictEnforcementEnabled == WebCore::SameSiteStrictEnforcementEnabled::Yes; };
     void setFirstPartyWebsiteDataRemovalMode(WebCore::FirstPartyWebsiteDataRemovalMode mode) { m_firstPartyWebsiteDataRemovalMode = mode; }
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode() const { return m_firstPartyWebsiteDataRemovalMode; }
-    void setPersistedDomains(HashSet<RegistrableDomain>&& domains) { m_persistedDomains = WTFMove(domains); }
-    void setStandaloneApplicationDomain(RegistrableDomain&& domain) { m_standaloneApplicationDomain = WTFMove(domain); }
+    void setPersistedDomains(HashSet<RegistrableDomain>&& domains) { m_persistedDomains = WTF::move(domains); }
+    void setStandaloneApplicationDomain(RegistrableDomain&& domain) { m_standaloneApplicationDomain = WTF::move(domain); }
 #if ENABLE(APP_BOUND_DOMAINS)
     void setAppBoundDomains(HashSet<RegistrableDomain>&&);
 #endif
@@ -255,7 +255,7 @@ private:
     void mergeStatistic(const ResourceLoadStatistics&);
     void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&);
-    bool insertObservedDomain(const ResourceLoadStatistics&) WARN_UNUSED_RETURN;
+    [[nodiscard]] bool insertObservedDomain(const ResourceLoadStatistics&);
     void insertDomainRelationships(const ResourceLoadStatistics&);
     void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
     bool relationshipExists(WebCore::SQLiteStatementAutoResetScope&, std::optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
@@ -310,14 +310,14 @@ private:
     void markAsPrevalentIfHasRedirectedToPrevalent();
     
     // reason is used for logging purpose.
-    std::pair<AddedRecord, std::optional<unsigned>> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&, ASCIILiteral reason) WARN_UNUSED_RETURN;
+    [[nodiscard]] std::pair<AddedRecord, std::optional<unsigned>> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&, ASCIILiteral reason);
     bool shouldRemoveAllWebsiteDataFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldEnforceSameSiteStrictFor(DomainData&, bool shouldCheckForGrandfathering);
     void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, DataRemovalFrequency);
     DataRemovalFrequency dataRemovalFrequency(const RegistrableDomain&) const;
     void clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const NavigatedToDomain&, CompletionHandler<void()>&&);
-    bool shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain&) const;
+    bool NODELETE shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain&) const;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor();
 
     bool shouldRemoveDataRecords() const;

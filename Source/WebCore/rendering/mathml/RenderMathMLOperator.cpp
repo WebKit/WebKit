@@ -37,7 +37,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include <cmath>
 #include <wtf/MathExtras.h>
@@ -48,16 +48,16 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLOperator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLOperator);
 
 RenderMathMLOperator::RenderMathMLOperator(Type type, MathMLOperatorElement& element, RenderStyle&& style)
-    : RenderMathMLToken(type, element, WTFMove(style))
+    : RenderMathMLToken(type, element, WTF::move(style))
 {
     updateTokenContent();
 }
 
 RenderMathMLOperator::RenderMathMLOperator(Type type, Document& document, RenderStyle&& style)
-    : RenderMathMLToken(type, document, WTFMove(style))
+    : RenderMathMLToken(type, document, WTF::move(style))
 {
 }
 
@@ -233,7 +233,7 @@ void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     if (useMathOperator()) {
         recomputeLogicalWidth();
-        for (auto child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+        for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->layoutIfNeeded();
         setLogicalWidth(leadingSpaceValue + m_mathOperator.width() + trailingSpaceValue + borderAndPaddingLogicalWidth());
         setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
@@ -278,6 +278,7 @@ void RenderMathMLOperator::updateTokenContent()
 void RenderMathMLOperator::updateFromElement()
 {
     updateTokenContent();
+    resetStretchSize();
 }
 
 bool RenderMathMLOperator::useMathOperator() const
@@ -288,7 +289,7 @@ bool RenderMathMLOperator::useMathOperator() const
     return isStretchy() || (textContent() && isLargeOperatorInDisplayStyle()) || textContent() == minusSign;
 }
 
-void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderMathMLOperator::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     m_mathOperator.reset(style());
@@ -309,8 +310,10 @@ LayoutUnit RenderMathMLOperator::verticalStretchedOperatorShift() const
 
 std::optional<LayoutUnit> RenderMathMLOperator::firstLineBaseline() const
 {
-    if (useMathOperator())
-        return LayoutUnit { static_cast<int>(lround(static_cast<float>(m_mathOperator.ascent() - verticalStretchedOperatorShift()))) } + borderAndPaddingBefore();
+    if (useMathOperator()) {
+        auto baseline = settings().subpixelInlineLayoutEnabled() ? m_mathOperator.ascent() - verticalStretchedOperatorShift() : LayoutUnit(roundf(m_mathOperator.ascent() - verticalStretchedOperatorShift()));
+        return { borderAndPaddingBefore() + baseline };
+    }
     return RenderMathMLToken::firstLineBaseline();
 }
 
@@ -320,10 +323,10 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (!useMathOperator())
         return;
 
-    LayoutPoint operatorTopLeft = paintOffset + location();
+    auto operatorTopLeft = paintOffset + location();
     operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
 
-    m_mathOperator.paint(style(), info, operatorTopLeft);
+    m_mathOperator.paint(style(), info, operatorTopLeft, document().deviceScaleFactor());
 }
 
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)

@@ -36,14 +36,14 @@ class FormDataReference {
 public:
     FormDataReference() = default;
     explicit FormDataReference(RefPtr<WebCore::FormData>&& data)
-        : m_data(WTFMove(data))
+        : m_data(WTF::move(data))
     {
     }
 
     FormDataReference(RefPtr<WebCore::FormData>&&, Vector<WebKit::SandboxExtensionHandle>&&);
 
     RefPtr<WebCore::FormData> data() const { return m_data.get(); }
-    RefPtr<WebCore::FormData> takeData() { return WTFMove(m_data); }
+    RefPtr<WebCore::FormData> takeData() { return WTF::move(m_data); }
 
     Vector<WebKit::SandboxExtensionHandle> sandboxExtensionHandles() const;
 
@@ -52,9 +52,9 @@ private:
 };
 
 inline FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<WebKit::SandboxExtensionHandle>&& sandboxExtensionHandles)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
 {
-    WebKit::SandboxExtension::consumePermanently(WTFMove(sandboxExtensionHandles));
+    WebKit::SandboxExtension::consumePermanently(WTF::move(sandboxExtensionHandles));
 }
 
 inline Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensionHandles() const
@@ -66,7 +66,7 @@ inline Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensio
         if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
             const String& path = fileData->filename;
             if (auto handle = WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly))
-                return { WTFMove(*handle) };
+                return { WTF::move(*handle) };
         }
         return std::nullopt;
     });

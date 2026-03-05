@@ -61,11 +61,11 @@ public:
         std::span<const T> m_span;
     };
 
-    const Range<ImmutableNFANode> nodes() const;
-    const Range<ImmutableRange<char>> transitions() const;
-    const Range<uint32_t> targets() const;
-    const Range<uint32_t> epsilonTransitionsTargets() const;
-    const Range<uint64_t> actions() const;
+    const Range<ImmutableNFANode> NODELETE nodes() const;
+    const Range<ImmutableRange<char>> NODELETE transitions() const;
+    const Range<uint32_t> NODELETE targets() const;
+    const Range<uint32_t> NODELETE epsilonTransitionsTargets() const;
+    const Range<uint64_t> NODELETE actions() const;
 
     uint32_t root() const
     {
@@ -181,7 +181,7 @@ private:
     SerializedNFA(FileSystem::MappedFileData&&, Metadata&&);
 
     template<typename T>
-    std::span<const T> spanAtOffsetInFile(size_t offset, size_t length) const;
+    std::span<const T> NODELETE spanAtOffsetInFile(size_t offset, size_t length) const;
     
     FileSystem::MappedFileData m_file;
     Metadata m_metadata;

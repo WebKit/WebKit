@@ -34,20 +34,15 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
-#if USE(CAIRO)
-#include <cairo.h>
-#elif USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkData.h>
 #include <skia/encode/SkPngEncoder.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 namespace WTR {
 
 void TestController::notifyDone()
 {
-    RunLoop::mainSingleton().stop();
 }
 
 void TestController::setHidden(bool)
@@ -72,9 +67,8 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
     class TimeoutTimer {
     public:
         TimeoutTimer(WTF::Seconds timeout, bool& timedOut)
-            : m_timer(RunLoop::mainSingleton(), "TestController::TimeoutTimer::Timer"_s, [&timedOut] {
+            : m_timer(RunLoop::mainSingleton(), "TestController::TimeoutTimer"_s, [&timedOut] {
                 timedOut = true;
-                RunLoop::mainSingleton().stop();
             })
         {
             m_timer.setPriority(G_PRIORITY_DEFAULT_IDLE);
@@ -85,8 +79,9 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
         RunLoop::Timer m_timer;
     } timeoutTimer(timeout, timedOut);
 
+    auto* mainContext = g_main_context_default();
     while (!done && !timedOut)
-        RunLoop::mainSingleton().run();
+        g_main_context_iteration(mainContext, TRUE);
 }
 
 void TestController::platformDidCommitLoadForFrame(WKPageRef, WKFrameRef)
@@ -147,18 +142,9 @@ TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCo
 
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
-#if USE(CAIRO)
-    Vector<uint8_t> output;
-    cairo_surface_write_to_png_stream(mainWebView()->windowSnapshotImage(), [](void* output, const unsigned char* data, unsigned length) -> cairo_status_t {
-        reinterpret_cast<Vector<uint8_t>*>(output)->append(std::span { reinterpret_cast<const uint8_t*>(data), length });
-        return CAIRO_STATUS_SUCCESS;
-    }, &output);
-    auto uri = makeString("data:image/png;base64,"_s, base64Encoded(output.span()));
-#elif USE(SKIA)
     sk_sp<SkImage> image(mainWebView()->windowSnapshotImage());
     auto data = SkPngEncoder::Encode(nullptr, image.get(), { });
     auto uri = makeString("data:image/png;base64,"_s, base64Encoded(std::span { static_cast<const uint8_t*>(data->data()), data->size() }));
-#endif
     return adoptWK(WKStringCreateWithUTF8CString(uri.utf8().data()));
 }
 

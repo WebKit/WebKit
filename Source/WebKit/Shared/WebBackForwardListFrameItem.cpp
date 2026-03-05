@@ -37,20 +37,20 @@ using namespace WebCore;
 
 Ref<WebBackForwardListFrameItem> WebBackForwardListFrameItem::create(WebBackForwardListItem& item, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&& frameState)
 {
-    return adoptRef(*new WebBackForwardListFrameItem(item, parentItem, WTFMove(frameState)));
+    return adoptRef(*new WebBackForwardListFrameItem(item, parentItem, WTF::move(frameState)));
 }
 
 WebBackForwardListFrameItem::WebBackForwardListFrameItem(WebBackForwardListItem& item, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&& frameState)
     : m_backForwardListItem(item)
     , m_identifier(*frameState->frameItemID)
-    , m_frameState(WTFMove(frameState))
+    , m_frameState(WTF::move(frameState))
     , m_parent(parentItem)
 {
     m_frameState->itemID = item.identifier();
     auto result = allItems().add({ *m_frameState->frameItemID, *m_frameState->itemID }, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
     for (auto& child : std::exchange(m_frameState->children, { }))
-        m_children.append(WebBackForwardListFrameItem::create(item, this, WTFMove(child)));
+        m_children.append(WebBackForwardListFrameItem::create(item, this, WTF::move(child)));
 }
 
 WebBackForwardListFrameItem::~WebBackForwardListFrameItem()
@@ -91,9 +91,11 @@ WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemForFrameID(Fr
     return nullptr;
 }
 
-RefPtr<WebBackForwardListFrameItem> WebBackForwardListFrameItem::protectedChildItemForFrameID(FrameIdentifier frameID)
+WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemAtIndex(uint64_t index)
 {
-    return childItemForFrameID(frameID);
+    if (index >= m_children.size())
+        return nullptr;
+    return m_children[index].ptr();
 }
 
 WebBackForwardListItem* WebBackForwardListFrameItem::backForwardListItem() const
@@ -101,43 +103,33 @@ WebBackForwardListItem* WebBackForwardListFrameItem::backForwardListItem() const
     return m_backForwardListItem.get();
 }
 
-RefPtr<WebBackForwardListItem> WebBackForwardListFrameItem::protectedBackForwardListItem() const
-{
-    return m_backForwardListItem.get();
-}
-
 void WebBackForwardListFrameItem::setChild(Ref<FrameState>&& frameState)
 {
     ASSERT(m_backForwardListItem);
-    Ref childItem = WebBackForwardListFrameItem::create(*protectedBackForwardListItem(), this, WTFMove(frameState));
+    Ref childItem = WebBackForwardListFrameItem::create(*protect(backForwardListItem()), this, WTF::move(frameState));
     for (size_t i = 0; i < m_children.size(); i++) {
         if (m_children[i]->frameID() == childItem->m_frameState->frameID) {
-            m_children[i] = WTFMove(childItem);
+            m_children[i] = WTF::move(childItem);
             return;
         }
     }
-    m_children.append(WTFMove(childItem));
+    m_children.append(WTF::move(childItem));
 }
 
-WebBackForwardListFrameItem& WebBackForwardListFrameItem::rootFrame()
+Ref<WebBackForwardListFrameItem> WebBackForwardListFrameItem::rootFrame()
 {
     Ref rootFrame = *this;
     while (rootFrame->m_parent && rootFrame->m_parent->identifier().processIdentifier() == identifier().processIdentifier())
         rootFrame = *rootFrame->m_parent;
-    return rootFrame.unsafeGet();
+    return rootFrame;
 }
 
-WebBackForwardListFrameItem& WebBackForwardListFrameItem::mainFrame()
+Ref<WebBackForwardListFrameItem> WebBackForwardListFrameItem::mainFrame()
 {
     Ref mainFrame = *this;
     while (mainFrame->m_parent)
         mainFrame = *mainFrame->m_parent;
-    return mainFrame.unsafeGet();
-}
-
-Ref<WebBackForwardListFrameItem> WebBackForwardListFrameItem::protectedMainFrame()
-{
-    return mainFrame();
+    return mainFrame;
 }
 
 void WebBackForwardListFrameItem::setWasRestoredFromSession()
@@ -149,13 +141,18 @@ void WebBackForwardListFrameItem::setWasRestoredFromSession()
 
 void WebBackForwardListFrameItem::setFrameState(Ref<FrameState>&& frameState)
 {
-    m_frameState = WTFMove(frameState);
+    m_frameState = WTF::move(frameState);
     m_frameState->children.clear();
+}
+
+void WebBackForwardListFrameItem::updateFrameID(FrameIdentifier newFrameID)
+{
+    m_frameState->frameID = newFrameID;
 }
 
 Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildren()
 {
-    Ref frameState = protectedFrameState()->copy();
+    Ref frameState = protect(this->frameState())->copy();
     ASSERT(frameState->children.isEmpty());
     for (auto& child : m_children)
         frameState->children.append(child->copyFrameStateWithChildren());
@@ -189,17 +186,18 @@ String WebBackForwardListFrameItem::loggingStringAtIndent(size_t indent)
 
     StringBuilder builder;
     {
-        uint64_t calculatedFrameID = frameID() ? frameID()->toRawValue() : 0;
-        builder.append(makeString(url(), " ("_s, String::number(calculatedFrameID), ")"_s));
+        String frameIDString = String::number(frameID() ? frameID()->toUInt64() : 0);
+        String frameItemIDString = m_identifier.loggingString();
+        builder.append("FrameItemID:"_s, frameItemIDString, ", URL:"_s, url(), ", FrameID:"_s, frameIDString);
         if (!m_frameState->target.isEmpty())
-            builder.append(makeString(" in "_s, m_frameState->target));
+            builder.append(", FrameUniqueName:"_s, m_frameState->target);
         builder.append('\n');
     }
 
     for (size_t i = 0; i < m_children.size(); ++i) {
         Ref child = m_children[i];
         auto childString = child->loggingStringAtIndent(indent + 1);
-        builder.append(makeString(indentString, String::number(i), " - "_s, childString));
+        builder.append(indentString, String::number(i), " - "_s, childString);
     }
 
     return builder.toString();

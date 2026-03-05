@@ -30,10 +30,13 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <wtf/FileHandle.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 #if OS(LINUX)
 #include <sys/mman.h>
@@ -78,35 +81,42 @@ ProfilerSupport::ProfilerSupport()
     : m_queue(WorkQueue::create("JSC PerfLog"_s))
 {
     if (Options::useTextMarkers()) {
-        StringPrintStream filename;
-        if (auto* optionalDirectory = Options::textMarkersDirectory())
-            filename.print(optionalDirectory);
-        else
-            filename.print("/tmp");
-        filename.print("/marker-", getCurrentProcessID(), ".txt");
-
-        m_fd = open(filename.toCString().data(), O_CREAT | O_TRUNC | O_RDWR, 0666);
-        RELEASE_ASSERT(m_fd != -1);
+        m_file = FileSystem::createDumpFile(makeString("marker-"_s, getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".txt"_s, String::fromUTF8(Options::textMarkersDirectory()));
+        RELEASE_ASSERT(m_file);
 
 #if OS(LINUX)
         // Linux perf command records this mmap operation in perf.data as a metadata to the JIT perf annotations.
         // We do not use this mmap-ed memory region actually.
-        auto* marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_fd, 0);
+        auto* marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_file.platformHandle(), 0);
         RELEASE_ASSERT(marker != MAP_FAILED);
 #endif
-
-        auto* file = fdopen(m_fd, "wb");
-        RELEASE_ASSERT(file);
-
-        m_fileStream = makeUnique<FilePrintStream>(file, FilePrintStream::Adopt);
-        RELEASE_ASSERT(m_fileStream);
     }
+}
+
+uint32_t ProfilerSupport::getCurrentThreadID()
+{
+#if OS(LINUX)
+    return static_cast<uint32_t>(syscall(__NR_gettid));
+#elif OS(DARWIN)
+    // Ideally we would like to use pthread_threadid_np. But this is 64bit, while required one is 32bit.
+    // For now, as a workaround, we only report lower 32bit of thread ID.
+    uint64_t thread = 0;
+    pthread_threadid_np(NULL, &thread);
+    return static_cast<uint32_t>(thread);
+#elif OS(WINDOWS)
+    return static_cast<uint32_t>(GetCurrentThreadId());
+#else
+    return 0;
+#endif
 }
 
 void ProfilerSupport::write(const AbstractLocker&, uint64_t start, uint64_t end, const CString& message)
 {
-    m_fileStream->println(start, " ", end, " ", message);
-    m_fileStream->flush();
+    auto header = toCString(start, " ", end, " ");
+    m_file.write(WTF::asByteSpan(header.span()));
+    m_file.write(WTF::asByteSpan(message.span()));
+    m_file.write(WTF::asByteSpan("\n"_span));
+    m_file.flush();
 }
 
 void ProfilerSupport::markStart(const void* identifier, Category category, CString&&)
@@ -146,7 +156,7 @@ void ProfilerSupport::markEnd(const void* identifier, Category category, CString
         }
     }
 
-    profiler.queue().dispatch([message = WTFMove(message), start, end] {
+    profiler.queue().dispatch([message = WTF::move(message), start, end] {
         auto& profiler = singleton();
         Locker locker { profiler.m_lock };
         profiler.write(locker, start, end, message);
@@ -161,7 +171,7 @@ void ProfilerSupport::mark(const void* identifier, Category, CString&& message)
         return;
 
     auto timestamp = generateTimestamp();
-    singleton().queue().dispatch([message = WTFMove(message), timestamp] {
+    singleton().queue().dispatch([message = WTF::move(message), timestamp] {
         auto& profiler = singleton();
         Locker locker { profiler.m_lock };
         profiler.write(locker, timestamp, timestamp, message);
@@ -180,11 +190,28 @@ void ProfilerSupport::markInterval(const void* identifier, Category, MonotonicTi
     uint64_t end = endTime.secondsSinceEpoch().nanosecondsAs<uint64_t>();
 
     auto& profiler = singleton();
-    profiler.queue().dispatch([message = WTFMove(message), start, end] {
+    profiler.queue().dispatch([message = WTF::move(message), start, end] {
         auto& profiler = singleton();
         Locker locker { profiler.m_lock };
         profiler.write(locker, start, end, message);
     });
+}
+
+void ProfilerSupport::dumpIonGraphFunction(const String& functionName, Ref<JSON::Object>&& function)
+{
+    if (!Options::dumpIonGraph())
+        return;
+    auto json = JSON::Object::create();
+    auto functions = JSON::Array::create();
+    functions->pushObject(WTF::move(function));
+    json->setInteger("version"_s, 1);
+    json->setArray("functions"_s, WTF::move(functions));
+    auto string = json->toJSONString();
+
+    auto handle = FileSystem::createDumpFile(makeString("iongraph-"_s, functionName, "-"_s, WTF::getCurrentProcessID(), "-"_s, generateTimestamp()), ".json"_s, String::fromUTF8(Options::ionGraphDirectory()));
+    RELEASE_ASSERT(handle);
+    handle.write(WTF::asByteSpan(string.utf8().span()));
+    handle.flush();
 }
 
 } // namespace JSC

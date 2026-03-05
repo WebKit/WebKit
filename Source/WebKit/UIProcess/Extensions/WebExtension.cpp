@@ -162,7 +162,7 @@ static const size_t maximumNumberOfShortcutCommands = 4;
 
 WebExtension::WebExtension(Resources&& resources)
     : m_manifestJSON(JSON::Value::null())
-    , m_resources(WTFMove(resources))
+    , m_resources(WTF::move(resources))
 {
 }
 
@@ -451,7 +451,7 @@ void WebExtension::parseWebAccessibleResourcesVersion3()
                     continue;
                 }
 
-                m_webAccessibleResources.append({ WTFMove(matchPatterns), makeStringVector(*pathsArray) });
+                m_webAccessibleResources.append({ WTF::move(matchPatterns), makeStringVector(*pathsArray) });
             }
         }
 
@@ -577,7 +577,7 @@ Expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(const S
     return result;
 }
 
-static int toAPI(WebExtension::Error error)
+static int NODELETE toAPI(WebExtension::Error error)
 {
     switch (error) {
     case WebExtension::Error::Unknown:
@@ -1494,8 +1494,8 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `css_origin` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'css_origin' value")));
 
         InjectedContentData injectedContentData;
-        injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
-        injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
+        injectedContentData.includeMatchPatterns = WTF::move(includeMatchPatterns);
+        injectedContentData.excludeMatchPatterns = WTF::move(excludeMatchPatterns);
         injectedContentData.injectionTime = injectionTime;
         injectedContentData.matchParentFrame = matchParentFrame;
         injectedContentData.injectsIntoAllFrames = injectsIntoAllFrames;
@@ -1506,7 +1506,7 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         injectedContentData.includeGlobPatternStrings = makeStringVector(*includeGlobPatternStrings);
         injectedContentData.excludeGlobPatternStrings = makeStringVector(*excludeGlobPatternStrings);
 
-        m_staticInjectedContents.append(WTFMove(injectedContentData));
+        m_staticInjectedContents.append(WTF::move(injectedContentData));
     };
 
     for (Ref injectedContentValue : *contentScriptsManifestArray) {
@@ -1709,7 +1709,7 @@ void WebExtension::populateExternallyConnectableIfNeeded()
         }
     }
 
-    m_externallyConnectableMatchPatterns = WTFMove(matchPatterns);
+    m_externallyConnectableMatchPatterns = WTF::move(matchPatterns);
 
     RefPtr extensionIDs = externallyConnectableObject->getArray(externallyConnectableIDsManifestKey);
     if (extensionIDs) {
@@ -2360,7 +2360,7 @@ void WebExtension::populateCommandsIfNeeded()
                 }
             }
 
-            m_commands.append(WTFMove(commandData));
+            m_commands.append(WTF::move(commandData));
         }
 
         if (error)
@@ -2478,7 +2478,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
         seenRulesetIDs.add(ruleset.rulesetID);
         ++rulesetCount;
 
-        m_declarativeNetRequestRulesets.append(WTFMove(ruleset));
+        m_declarativeNetRequestRulesets.append(WTF::move(ruleset));
     }
 }
 

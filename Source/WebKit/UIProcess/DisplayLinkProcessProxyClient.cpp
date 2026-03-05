@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayLinkProcessProxyClient);
 void DisplayLinkProcessProxyClient::setConnection(RefPtr<IPC::Connection>&& connection)
 {
     Locker locker { m_connectionLock };
-    m_connection = WTFMove(connection);
+    m_connection = WTF::move(connection);
 }
 
 // This is called off the main thread.

@@ -28,4 +28,4 @@ testWithTypedArrayConstructors(function(TA) {
     "baz",
     "return value from a Symbol key"
   );
-});
+}, null, ["passthrough"]);

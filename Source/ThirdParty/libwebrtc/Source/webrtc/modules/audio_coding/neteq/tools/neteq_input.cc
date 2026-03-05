@@ -16,36 +16,33 @@
 #include <string>
 #include <utility>
 
-#include "api/rtp_headers.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 namespace test {
 
-NetEqInput::PacketData::PacketData() = default;
-NetEqInput::PacketData::~PacketData() = default;
-
-std::string NetEqInput::PacketData::ToString() const {
+std::string NetEqInput::ToString(const RtpPacketReceived& packet) {
   StringBuilder ss;
   ss << "{"
         "time_ms: "
-     << static_cast<int64_t>(time_ms)
+     << packet.arrival_time().ms()
      << ", "
         "header: {"
         "pt: "
-     << static_cast<int>(header.payloadType)
+     << static_cast<int>(packet.PayloadType())
      << ", "
         "sn: "
-     << header.sequenceNumber
+     << packet.SequenceNumber()
      << ", "
         "ts: "
-     << header.timestamp
+     << packet.Timestamp()
      << ", "
         "ssrc: "
-     << header.ssrc
+     << packet.Ssrc()
      << "}, "
         "payload bytes: "
-     << payload.size() << "}";
+     << packet.payload_size() << "}";
   return ss.Release();
 }
 
@@ -70,9 +67,9 @@ TimeLimitedNetEqInput::NextSetMinimumDelayInfo() const {
   return ended_ ? std::nullopt : input_->NextSetMinimumDelayInfo();
 }
 
-std::unique_ptr<NetEqInput::PacketData> TimeLimitedNetEqInput::PopPacket() {
+std::unique_ptr<RtpPacketReceived> TimeLimitedNetEqInput::PopPacket() {
   if (ended_) {
-    return std::unique_ptr<PacketData>();
+    return nullptr;
   }
   auto packet = input_->PopPacket();
   MaybeSetEnded();
@@ -97,8 +94,8 @@ bool TimeLimitedNetEqInput::ended() const {
   return ended_ || input_->ended();
 }
 
-std::optional<RTPHeader> TimeLimitedNetEqInput::NextHeader() const {
-  return ended_ ? std::nullopt : input_->NextHeader();
+const RtpPacketReceived* TimeLimitedNetEqInput::NextPacket() const {
+  return ended_ ? nullptr : input_->NextPacket();
 }
 
 void TimeLimitedNetEqInput::MaybeSetEnded() {

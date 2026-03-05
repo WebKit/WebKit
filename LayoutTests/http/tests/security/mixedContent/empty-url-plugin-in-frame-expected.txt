@@ -1,11 +1,3 @@
-frame "<!--frame1-->" - didStartProvisionalLoadForFrame
-main frame - didFinishDocumentLoadForFrame
-frame "<!--frame1-->" - didCommitLoadForFrame
-frame "<!--frame1-->" - didFinishDocumentLoadForFrame
-frame "<!--frame1-->" - didHandleOnloadEventsForFrame
-main frame - didHandleOnloadEventsForFrame
-frame "<!--frame1-->" - didFinishLoadForFrame
-main frame - didFinishLoadForFrame
 This test loads a secure iframe that loads a plugin without a URL. We should *not* get a mixed content callback because the plug-in cannot be controlled by an active network attacker.
 
 

@@ -43,15 +43,15 @@ private:
 
     void consumeProduct();
     void consumeComment();
-    void consumeRWS();
+    void NODELETE consumeRWS();
     void consumeToken();
     void consumeQuotedPair();
 
     void populateUserAgentData();
 
-    inline char16_t peek();
-    inline void increment();
-    inline bool atEnd();
+    inline char16_t NODELETE peek();
+    inline void NODELETE increment();
+    inline bool NODELETE atEnd();
     inline String getSubstring();
 
     bool malformed { false };

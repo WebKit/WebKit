@@ -69,9 +69,9 @@ interface mixin WindowOrWorkerGlobalScope {
     [Custom] undefined queueMicrotask(VoidCallback callback);
 
     // ImageBitmap.
-    Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);
-    Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
+    Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options = {});
+    Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options = {});
 
     // structured cloning
-    [CallWith=CurrentGlobalObject&RelevantGlobalObject] any structuredClone(any value, optional StructuredSerializeOptions options);
+    [CallWith=CurrentGlobalObject&RelevantGlobalObject] any structuredClone(any value, optional StructuredSerializeOptions options = {});
 };

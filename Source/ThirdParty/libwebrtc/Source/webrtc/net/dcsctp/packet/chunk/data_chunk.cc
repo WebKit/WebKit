@@ -42,7 +42,6 @@ namespace dcsctp {
 //  /                 User Data (seq n of Stream S)                 /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int DataChunk::kType;
 
 std::optional<DataChunk> DataChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

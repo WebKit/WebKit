@@ -32,6 +32,10 @@
 #include <numbers>
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEGaussianBlurCoreImageApplier.h"
+#endif
+
 #if USE(SKIA)
 #include "FEGaussianBlurSkiaApplier.h"
 #endif
@@ -157,13 +161,14 @@ bool FEGaussianBlur::resultIsAlphaImage(std::span<const Ref<FilterImage>> inputs
 OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
-#if USE(SKIA)
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#elif USE(SKIA)
     if (m_edgeMode == EdgeModeType::None)
         modes.add(FilterRenderingMode::Accelerated);
 #endif
-    // FIXME: Ensure the correctness of the CG GaussianBlur filter (http://webkit.org/b/243816).
-#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
-    if (m_stdX == m_stdY && preferredFilterRenderingModes.contains(FilterRenderingMode::GraphicsContextBlur))
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR) && HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
+    if (m_stdX == m_stdY)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif
     return modes & preferredFilterRenderingModes;
@@ -171,7 +176,9 @@ OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes(Opt
 
 std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createAcceleratedApplier() const
 {
-#if USE(SKIA)
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEGaussianBlurCoreImageApplier>(*this);
+#elif USE(SKIA)
     return FilterEffectApplier::create<FEGaussianBlurSkiaApplier>(*this);
 #else
     return nullptr;
@@ -187,16 +194,8 @@ std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createSoftwareApplier() con
     return FilterEffectApplier::create<FEGaussianBlurSoftwareApplier>(*this);
 }
 
-std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(GraphicsContext& context, const Filter& filter) const
+std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(GraphicsContext&, const Filter& filter) const
 {
-#if PLATFORM(COCOA) && !HAVE(FIX_FOR_RADAR_160309842)
-    if (context.renderingMode() == RenderingMode::Accelerated) {
-        auto radius = calculateKernelSize(filter, { m_stdX, m_stdY });
-        return GraphicsGaussianBlur { radius };
-    }
-#else
-    UNUSED_PARAM(context);
-#endif
     auto radius = calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
     return GraphicsGaussianBlur { radius };
 }

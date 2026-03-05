@@ -66,7 +66,7 @@ public:
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet* userAgentMediaQueryStyle() const;
-    RuleSet* dynamicViewTransitionsStyle() const;
+    RuleSet* NODELETE dynamicViewTransitionsStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
     RuleSet* styleForDeclarationOrigin(DeclarationOrigin);
@@ -88,13 +88,13 @@ public:
     void initializeUserStyle();
 
     void resetAuthorStyle();
-    void appendAuthorStyleSheets(std::span<const RefPtr<CSSStyleSheet>>, MQ::MediaQueryEvaluator*, Style::InspectorCSSOMWrappers&);
+    void appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>>, MQ::MediaQueryEvaluator*, Style::InspectorCSSOMWrappers&);
 
     void resetUserAgentMediaQueryStyle();
 
-    bool hasViewportDependentMediaQueries() const;
-    bool hasContainerQueries() const;
-    bool hasScopeRules() const;
+    bool NODELETE hasViewportDependentMediaQueries() const;
+    bool NODELETE hasContainerQueries() const;
+    bool NODELETE hasScopeRules() const;
 
     RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
 
@@ -113,7 +113,7 @@ public:
 
 private:
     void collectFeatures() const;
-    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MQ::MediaQueryEvaluator&);
+    void collectRulesFromUserStyleSheets(const Vector<Ref<CSSStyleSheet>>&, RuleSet& userStyle, const MQ::MediaQueryEvaluator&);
     void updateUserAgentMediaQueryStyleIfNeeded() const;
 
     RefPtr<RuleSet> m_authorStyle;

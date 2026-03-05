@@ -41,7 +41,7 @@ class JSArrayBufferView;
 namespace WebCore {
 
 class IDBKey : public RefCounted<IDBKey> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBKey);
+    WTF_MAKE_TZONE_ALLOCATED(IDBKey);
 public:
     static Ref<IDBKey> createInvalid()
     {
@@ -63,39 +63,13 @@ public:
         return adoptRef(*new IDBKey(IndexedDB::KeyType::Date, date));
     }
 
-    static Ref<IDBKey> createMultiEntryArray(const Vector<RefPtr<IDBKey>>& array)
-    {
-        Vector<RefPtr<IDBKey>> result;
-
-        size_t sizeEstimate = 0;
-        for (auto& key : array) {
-            if (!key->isValid())
-                continue;
-
-            bool skip = false;
-            for (auto& resultKey : result) {
-                if (key->isEqual(*resultKey)) {
-                    skip = true;
-                    break;
-                }
-            }
-            if (!skip) {
-                result.append(key);
-                sizeEstimate += key->m_sizeEstimate;
-            }
-        }
-        auto idbKey = adoptRef(*new IDBKey(result, sizeEstimate));
-        ASSERT(idbKey->isValid());
-        return idbKey;
-    }
-
-    static Ref<IDBKey> createArray(const Vector<RefPtr<IDBKey>>& array)
+    static Ref<IDBKey> createArray(Vector<Ref<IDBKey>>&& array)
     {
         size_t sizeEstimate = 0;
         for (auto& key : array)
             sizeEstimate += key->m_sizeEstimate;
 
-        return adoptRef(*new IDBKey(array, sizeEstimate));
+        return adoptRef(*new IDBKey(WTF::move(array), sizeEstimate));
     }
 
     static Ref<IDBKey> createBinary(const ThreadSafeDataBuffer&);
@@ -107,13 +81,13 @@ public:
     IndexedDB::KeyType type() const { return m_type; }
     WEBCORE_EXPORT bool isValid() const;
 
-    const Vector<RefPtr<IDBKey>>& array() const
+    const Vector<Ref<IDBKey>>& array() const
     {
         ASSERT(m_type == IndexedDB::KeyType::Array);
-        return std::get<Vector<RefPtr<IDBKey>>>(m_value);
+        return std::get<Vector<Ref<IDBKey>>>(m_value);
     }
 
-    const String& string() const
+    const String& string() const LIFETIME_BOUND
     {
         ASSERT(m_type == IndexedDB::KeyType::String);
         return std::get<String>(m_value);
@@ -131,7 +105,7 @@ public:
         return std::get<double>(m_value);
     }
 
-    const ThreadSafeDataBuffer& binary() const
+    const ThreadSafeDataBuffer& binary() const LIFETIME_BOUND
     {
         ASSERT(m_type == IndexedDB::KeyType::Binary);
         return std::get<ThreadSafeDataBuffer>(m_value);
@@ -142,9 +116,6 @@ public:
     bool isEqual(const IDBKey& other) const;
 
     size_t sizeEstimate() const { return m_sizeEstimate; }
-
-    using RefCounted<IDBKey>::ref;
-    using RefCounted<IDBKey>::deref;
 
 #if !LOG_DISABLED
     String loggingString() const;
@@ -159,11 +130,11 @@ private:
 
     IDBKey(IndexedDB::KeyType, double number);
     explicit IDBKey(const String& value);
-    IDBKey(const Vector<RefPtr<IDBKey>>& keyArray, size_t arraySize);
+    IDBKey(Vector<Ref<IDBKey>>&& keyArray, size_t arraySize);
     explicit IDBKey(const ThreadSafeDataBuffer&);
 
     const IndexedDB::KeyType m_type;
-    Variant<Vector<RefPtr<IDBKey>>, String, double, ThreadSafeDataBuffer> m_value;
+    Variant<Vector<Ref<IDBKey>>, String, double, ThreadSafeDataBuffer> m_value;
 
     const size_t m_sizeEstimate;
 

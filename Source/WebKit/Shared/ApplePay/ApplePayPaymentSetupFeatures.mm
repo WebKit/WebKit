@@ -54,17 +54,17 @@ static RetainPtr<NSArray<PKPaymentSetupFeature *>> toPlatformFeatures(Vector<Ret
 }
 
 PaymentSetupFeatures::PaymentSetupFeatures(Vector<Ref<WebCore::ApplePaySetupFeature>>&& features)
-    : m_platformFeatures { toPlatformFeatures(WTFMove(features)) }
+    : m_platformFeatures { toPlatformFeatures(WTF::move(features)) }
 {
 }
 
 PaymentSetupFeatures::PaymentSetupFeatures(Vector<RetainPtr<PKPaymentSetupFeature>>&& features)
-    : m_platformFeatures { toPlatformFeatures(WTFMove(features)) }
+    : m_platformFeatures { toPlatformFeatures(WTF::move(features)) }
 {
 }
 
 PaymentSetupFeatures::PaymentSetupFeatures(RetainPtr<NSArray>&& platformFeatures)
-    : m_platformFeatures { WTFMove(platformFeatures) }
+    : m_platformFeatures { WTF::move(platformFeatures) }
 {
 }
 

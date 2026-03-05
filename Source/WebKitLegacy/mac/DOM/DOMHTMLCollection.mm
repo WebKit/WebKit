@@ -87,8 +87,8 @@ DOMHTMLCollection *kit(WebCore::HTMLCollection* value)
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
-    if (DOMHTMLCollection *wrapper = getDOMWrapper(value))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(value))
+        return wrapper.autorelease();
     RetainPtr<DOMHTMLCollection> wrapper = adoptNS([[kitClass(value) alloc] _init]);
     if (!wrapper)
         return nil;

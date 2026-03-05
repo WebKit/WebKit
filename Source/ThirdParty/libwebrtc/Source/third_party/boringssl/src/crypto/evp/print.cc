@@ -45,7 +45,7 @@ static int print_hex(BIO *bp, const uint8_t *data, size_t len, int off) {
 }
 
 static int bn_print(BIO *bp, const char *name, const BIGNUM *num, int off) {
-  if (num == NULL) {
+  if (num == nullptr) {
     return 1;
   }
 
@@ -78,7 +78,7 @@ static int bn_print(BIO *bp, const char *name, const BIGNUM *num, int off) {
   // and negative values are never valid in keys anyway.
   size_t len = BN_num_bytes(num);
   uint8_t *buf = reinterpret_cast<uint8_t *>(OPENSSL_malloc(len + 1));
-  if (buf == NULL) {
+  if (buf == nullptr) {
     return 0;
   }
 
@@ -101,7 +101,7 @@ static int bn_print(BIO *bp, const char *name, const BIGNUM *num, int off) {
 static int do_rsa_print(BIO *out, const RSA *rsa, int off,
                         int include_private) {
   int mod_len = 0;
-  if (rsa->n != NULL) {
+  if (rsa->n != nullptr) {
     mod_len = BN_num_bits(rsa->n);
   }
 
@@ -154,7 +154,7 @@ static int rsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
 
 static int do_EC_KEY_print(BIO *bp, const EC_KEY *x, int off, int ktype) {
   const EC_GROUP *group;
-  if (x == NULL || (group = EC_KEY_get0_group(x)) == NULL) {
+  if (x == nullptr || (group = EC_KEY_get0_group(x)) == nullptr) {
     OPENSSL_PUT_ERROR(EVP, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -181,15 +181,15 @@ static int do_EC_KEY_print(BIO *bp, const EC_KEY *x, int off, int ktype) {
 
   if (ktype == 2) {
     const BIGNUM *priv_key = EC_KEY_get0_private_key(x);
-    if (priv_key != NULL &&  //
+    if (priv_key != nullptr &&  //
         !bn_print(bp, "priv:", priv_key, off)) {
       return 0;
     }
   }
 
-  if (ktype > 0 && EC_KEY_get0_public_key(x) != NULL) {
-    uint8_t *pub = NULL;
-    size_t pub_len = EC_KEY_key2buf(x, EC_KEY_get_conv_form(x), &pub, NULL);
+  if (ktype > 0 && EC_KEY_get0_public_key(x) != nullptr) {
+    uint8_t *pub = nullptr;
+    size_t pub_len = EC_KEY_key2buf(x, EC_KEY_get_conv_form(x), &pub, nullptr);
     if (pub_len == 0) {
       return 0;
     }
@@ -260,7 +260,7 @@ static int print_unsupported(BIO *out, const EVP_PKEY *pkey, int indent,
 int EVP_PKEY_print_public(BIO *out, const EVP_PKEY *pkey, int indent,
                           ASN1_PCTX *pctx) {
   const EVP_PKEY_PRINT_METHOD *method = find_method(EVP_PKEY_id(pkey));
-  if (method != NULL && method->pub_print != NULL) {
+  if (method != nullptr && method->pub_print != nullptr) {
     return method->pub_print(out, pkey, indent);
   }
   return print_unsupported(out, pkey, indent, "Public Key");
@@ -269,7 +269,7 @@ int EVP_PKEY_print_public(BIO *out, const EVP_PKEY *pkey, int indent,
 int EVP_PKEY_print_private(BIO *out, const EVP_PKEY *pkey, int indent,
                            ASN1_PCTX *pctx) {
   const EVP_PKEY_PRINT_METHOD *method = find_method(EVP_PKEY_id(pkey));
-  if (method != NULL && method->priv_print != NULL) {
+  if (method != nullptr && method->priv_print != nullptr) {
     return method->priv_print(out, pkey, indent);
   }
   return print_unsupported(out, pkey, indent, "Private Key");
@@ -278,7 +278,7 @@ int EVP_PKEY_print_private(BIO *out, const EVP_PKEY *pkey, int indent,
 int EVP_PKEY_print_params(BIO *out, const EVP_PKEY *pkey, int indent,
                           ASN1_PCTX *pctx) {
   const EVP_PKEY_PRINT_METHOD *method = find_method(EVP_PKEY_id(pkey));
-  if (method != NULL && method->param_print != NULL) {
+  if (method != nullptr && method->param_print != nullptr) {
     return method->param_print(out, pkey, indent);
   }
   return print_unsupported(out, pkey, indent, "Parameters");

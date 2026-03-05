@@ -109,7 +109,9 @@ shouldBe("parsePath('M100,200 a3,4,5,116,7')", "'M100,200 a3,4,5,1,1,6,7'");
 shouldBe("parsePath('M100,200 a3,4,5,2,1,6,7')", "'M100,200'");
 shouldBe("parsePath('M100,200 a3,4,5,1,2,6,7')", "'M100,200'");
 
-shouldBe("parsePath('M100,200 a0,4,5,0,0,10,0 a4,0,5,0,0,0,10 a0,0,5,0,0,-10,0 z')", "'M100,200 a0,4,5,0,0,10,0 a4,0,5,0,0,0,10 a0,0,5,0,0,-10,0 Z'");
+// FIXME: This uses 'If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto") joining the endpoints.'
+// I think the SVG DOM should still show the arc segment, fix that!
+shouldBe("parsePath('M100,200 a0,4,5,0,0,10,0 a4,0,5,0,0,0,10 a0,0,5,0,0,-10,0 z')", "'M100,200 l10,0 l0,10 l-10,0 Z'");
 
 shouldBe("parsePath('M1,2,3,4')", "'M1,2 L3,4'");
 shouldBe("parsePath('m100,200,3,4')", "'m100,200 l3,4'");

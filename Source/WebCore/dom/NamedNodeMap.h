@@ -34,14 +34,14 @@ class Attr;
 template<typename> class ExceptionOr;
 
 class NamedNodeMap final : public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NamedNodeMap);
+    WTF_MAKE_TZONE_ALLOCATED(NamedNodeMap);
 public:
     explicit NamedNodeMap(Element& element)
         : m_element(element)
     {
     }
 
-    WEBCORE_EXPORT void ref();
+    WEBCORE_EXPORT void NODELETE ref();
     WEBCORE_EXPORT void deref();
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
@@ -56,8 +56,7 @@ public:
 
     Vector<String> supportedPropertyNames() const;
 
-    Element& element();
-    Ref<Element> protectedElement() const;
+    Element& NODELETE element() const;
 
 private:
     WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;

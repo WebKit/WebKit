@@ -11,30 +11,34 @@ canvas {
 <canvas id="target"></canvas>
 <script src="../resources/runner.js"></script>
 <script>
-source.width = 7680;
-source.height = 4320;
+source.width = 2000;
+source.height = 2000;
 var gl = source.getContext("webgl2");
-gl.globalCompositeOperation = "copy";
 
 target.width = source.width;
 target.height = source.height;
 var ctx = target.getContext("2d");
 ctx.globalCompositeOperation = "copy";
-
-var i = 0;
-PerfTestRunner.measureRunsPerSecond({run: function() {
-    gl.clearColor(0, i, 0, 0.5);
-    i += 0.01;
-    if (i > 1.0)
-        i = 0;
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    const frame = new VideoFrame(source, {
-      timestamp: performance.now(),
-    });
-    ctx.drawImage(frame, 0, 0);
-    frame.close();
-}});
+var isDone = false;
+PerfTestRunner.prepareToMeasureValuesAsync({ done: done, unit: 'ms' });
+function done() {
+    isDone = true;
+}
+async function runTest() {
+    let startTime = PerfTestRunner.now();
+    for (let i = 0.0; i < 100.0; i += 1.0) {
+        gl.clearColor(0, i / 100.0, 0, 0.5);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        const frame = new VideoFrame(source, { timestamp: performance.now() });
+        ctx.drawImage(frame, 0, 0);
+        frame.close();
+    }
+    ctx.getImageData(0, 0, 1, 1); // FIXME: WebKit does not have backpressure, draws too much.
+    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+    if (!isDone)
+        setTimeout(runTest, 0);
+}
+runTest();
 </script>
 </body>
 </html>

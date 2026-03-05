@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <WebCore/AnimationFrameRate.h>
-#include <WebCore/AnimationTimeline.h>
-#include <WebCore/DocumentTimelineOptions.h>
-#include <WebCore/Timer.h>
+#include "AnimationFrameRate.h"
+#include "AnimationTimeline.h"
+#include "DocumentTimelineOptions.h"
+#include "Timer.h"
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,7 +58,7 @@ public:
     Document* document() const { return m_document.get(); }
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
-    ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, std::optional<Variant<double, CustomAnimationOptions>>&&);
+    ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, Variant<double, CustomAnimationOptions>&&);
 
     void animationTimingDidChange(WebAnimation&) override;
     void removeAnimation(WebAnimation&) override;
@@ -81,11 +81,11 @@ public:
     void suspendAnimations() override;
     void resumeAnimations() override;
     WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
-    WEBCORE_EXPORT unsigned numberOfAnimationTimelineInvalidationsForTesting() const;
+    WEBCORE_EXPORT unsigned NODELETE numberOfAnimationTimelineInvalidationsForTesting() const;
 
     Seconds convertTimelineTimeToOriginRelativeTime(Seconds) const;
 
-    std::optional<FramesPerSecond> maximumFrameRate() const;
+    std::optional<FramesPerSecond> NODELETE maximumFrameRate() const;
 
 #if ENABLE(THREADED_ANIMATIONS)
     void scheduleAcceleratedEffectStackUpdate();
@@ -98,7 +98,7 @@ private:
 
     AnimationTimelinesController* controller() const override;
 #if ENABLE(THREADED_ANIMATIONS)
-    bool computeCanBeAccelerated() const final { return true; }
+    bool canBeAccelerated() const final { return true; }
     Ref<AcceleratedTimeline> createAcceleratedRepresentation() const final;
 #endif
 
@@ -112,7 +112,7 @@ private:
     bool shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const;
 
     Timer m_tickScheduleTimer;
-    HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
+    HashSet<Ref<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     AnimationEvents m_pendingAnimationEvents;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     Seconds m_originTime;

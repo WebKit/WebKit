@@ -1,7 +1,7 @@
 {
     "domain": "Animation",
     "description": "Domain for tracking/modifying Web Animations, as well as CSS (declarative) animations and transitions.",
-    "debuggableTypes": ["page", "web-page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page"],
     "types": [
         {

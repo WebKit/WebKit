@@ -39,13 +39,6 @@ static_assert(1 == static_cast<int>(SkPathFillType::kEvenOdd), "fill_type_mismat
 static_assert(2 == static_cast<int>(SkPathFillType::kInverseWinding), "fill_type_mismatch");
 static_assert(3 == static_cast<int>(SkPathFillType::kInverseEvenOdd), "fill_type_mismatch");
 
-// These are computed from a stream of verbs
-struct SkPathVerbAnalysis {
-    size_t   points, weights;
-    unsigned segmentMask;
-    bool     valid;
-};
-
 class SkPathPriv {
 public:
     enum class RRectAsEnum {
@@ -74,8 +67,6 @@ public:
      *       if converting from builder or path.
      */
     static bool Contains(const SkPathRaw&, SkPoint);
-
-    static SkPathVerbAnalysis AnalyzeVerbs(SkSpan<const SkPathVerb> verbs);
 
     // skbug.com/40041027: Not a perfect solution for W plane clipping, but 1/16384 is a
     // reasonable limit (roughly 5e-5)
@@ -216,14 +207,6 @@ public:
         const SkScalar* fWeights;
     };
 
-    /** Returns true if the underlying SkPathRef has one single owner. */
-    static bool TestingOnly_unique(const SkPath&);
-
-    // Won't be needed once we can make path's immutable (with their bounds always computed)
-    static bool HasComputedBounds(const SkPath& path) {
-        return path.hasComputedBounds();
-    }
-
     // returns Empty() if there are no points
     static SkRect ComputeTightBounds(SkSpan<const SkPoint> points,
                                      SkSpan<const SkPathVerb> verbs,
@@ -298,7 +281,6 @@ public:
     static int PtsInVerb(SkPathVerb verb) { return PtsInVerb((unsigned)verb); }
 
     static bool IsAxisAligned(SkSpan<const SkPoint>);
-    static bool IsAxisAligned(const SkPath& path);
 
     static bool AllPointsEq(SkSpan<const SkPoint> pts) {
         for (size_t i = 1; i < pts.size(); ++i) {
@@ -308,10 +290,6 @@ public:
         }
         return true;
     }
-
-#ifndef SK_PATH_USES_PATHDATA
-    static int LastMoveToIndex(const SkPath& path) { return path.fLastMoveToIndex; }
-#endif
 
     struct RectContour {
         SkRect          fRect;
@@ -348,30 +326,6 @@ public:
 
     static bool IsInverseFillType(SkPathFillType fill) {
         return (static_cast<int>(fill) & 2) != 0;
-    }
-
-    /*
-     *  We are effectively empty if we have zero or one verbs.
-     *  Zero obviously means we're empty.
-     *  One means we only have a MoveTo -- but no segments, so this is effectively
-     *  empty (e.g. when adding another contour, this moveTo will be overwritten).
-     */
-    static bool IsEffectivelyEmpty(const SkPath& path) {
-        return path.countVerbs() <= 1;
-    }
-    static bool IsEffectivelyEmpty(const SkPathBuilder& builder) {
-        return builder.verbs().size() <= 1;
-    }
-
-    /** Returns equivalent SkPath::FillType representing SkPath fill inside its bounds.
-     .
-
-     @param fill  one of: kWinding_FillType, kEvenOdd_FillType,
-     kInverseWinding_FillType, kInverseEvenOdd_FillType
-     @return      fill, or kWinding_FillType or kEvenOdd_FillType if fill is inverted
-     */
-    static SkPathFillType ConvertToNonInverseFillType(SkPathFillType fill) {
-        return (SkPathFillType)(static_cast<int>(fill) & 1);
     }
 
     /**
@@ -423,13 +377,6 @@ public:
         return bu.detach();
     }
 
-    static std::optional<SkPoint> GetPoint(const SkPathBuilder& builder, int index) {
-        if ((unsigned)index < (unsigned)builder.fPts.size()) {
-            return builder.fPts.at(index);
-        }
-        return std::nullopt;
-    }
-
     static SkSpan<const SkPathVerb> GetVerbs(const SkPathBuilder& builder) {
         return builder.fVerbs;
     }
@@ -464,6 +411,24 @@ public:
             convexity,
             SkTo<uint8_t>(builder.fSegmentMask),
         };
+    }
+
+    // Returns Empty if there are no points
+    // Returns {} if the bounds are not finite
+    static std::optional<SkRect> TrimmedBounds(SkSpan<const SkPoint> pts,
+                                               SkSpan<const SkPathVerb> vbs) {
+        // Does a trailing kMove verb contribute to the bounds?
+        // - only if it is the only verb in the path
+        // - otherwise we ignore it when computing bounds
+        if (vbs.size() > 1 && vbs.back() == SkPathVerb::kMove) {
+            SkASSERT(pts.size() > 0);
+            // While trailing moves do not contribute to the bounds, we still reject them.
+            if (!pts.back().isFinite()) {
+                return {};
+            }
+            pts = pts.subspan(0, pts.size() - 1);
+        }
+        return SkRect::Bounds(pts);
     }
 };
 

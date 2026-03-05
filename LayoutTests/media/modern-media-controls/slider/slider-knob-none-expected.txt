@@ -1,0 +1,13 @@
+Testing that Slider with KnobStyle.None has no visible gap.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS knobStyle.display is "none"
+PASS primaryStyle.flexGrow is "50"
+PASS trackStyle.flexGrow is "50"
+PASS primaryRight is trackLeft
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -48,21 +48,21 @@ InlineStylePropertyMap::InlineStylePropertyMap(StyledElement& element)
 
 RefPtr<CSSValue> InlineStylePropertyMap::propertyValue(CSSPropertyID propertyID) const
 {
-    if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
+    if (RefPtr inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
         return inlineStyle->getPropertyCSSValue(propertyID);
     return nullptr;
 }
 
 String InlineStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
 {
-    if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
+    if (RefPtr inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
         return inlineStyle->getPropertyValue(propertyID);
     return String();
 }
 
 RefPtr<CSSValue> InlineStylePropertyMap::customPropertyValue(const AtomString& property) const
 {
-    if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
+    if (RefPtr inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
         return inlineStyle->getCustomPropertyCSSValue(property.string());
     return nullptr;
 }
@@ -78,7 +78,7 @@ auto InlineStylePropertyMap::entries(ScriptExecutionContext* context) const -> V
     if (!m_element || !context)
         return { };
 
-    auto* inlineStyle = m_element->inlineStyle();
+    RefPtr inlineStyle = m_element->inlineStyle();
     if (!inlineStyle)
         return { };
 
@@ -119,7 +119,7 @@ bool InlineStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
     // parser. This is inefficient.
     m_element->setInlineStyleProperty(propertyID, value->cssText(CSS::defaultSerializationContext()), IsImportant::No, &didFailParsing);
     if (!didFailParsing) {
-        m_element->setInlineStyleProperty(propertyID, WTFMove(value));
+        m_element->setInlineStyleProperty(propertyID, WTF::move(value));
         mutationScope.enqueueMutationRecord();
     }
     return !didFailParsing;
@@ -131,8 +131,8 @@ bool InlineStylePropertyMap::setCustomProperty(Document&, const AtomString& prop
         return false;
 
     StyleAttributeMutationScope mutationScope { m_element.get() };
-    auto customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTFMove(value));
-    if (m_element->setInlineStyleCustomProperty(WTFMove(customPropertyValue)))
+    Ref customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTF::move(value));
+    if (m_element->setInlineStyleCustomProperty(WTF::move(customPropertyValue)))
         mutationScope.enqueueMutationRecord();
     return true;
 }

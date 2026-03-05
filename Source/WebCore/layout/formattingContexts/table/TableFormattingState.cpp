@@ -26,7 +26,8 @@
 #include "config.h"
 #include "TableFormattingState.h"
 
-#include "RenderStyleInlines.h"
+#include "LayoutBoxInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderObject.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TableFormattingContext.h"
@@ -35,17 +36,17 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableFormattingState);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TableFormattingState);
 
 static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
 {
     auto tableGrid = makeUniqueRef<TableGrid>();
-    auto& tableStyle = tableBox.style();
-    auto shouldApplyBorderSpacing = tableStyle.borderCollapse() == BorderCollapse::Separate;
-    tableGrid->setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.borderHorizontalSpacing().resolveZoom(tableStyle.usedZoomForLength()) : 0 });
-    tableGrid->setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.borderVerticalSpacing().resolveZoom(tableStyle.usedZoomForLength()) : 0 });
+    CheckedRef tableStyle = tableBox.style();
+    auto shouldApplyBorderSpacing = tableStyle->borderCollapse() == BorderCollapse::Separate;
+    tableGrid->setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle->borderHorizontalSpacing().resolveZoom(tableStyle->usedZoomForLength()) : 0 });
+    tableGrid->setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle->borderVerticalSpacing().resolveZoom(tableStyle->usedZoomForLength()) : 0 });
 
-    auto* firstChild = tableBox.firstChild();
+    CheckedPtr firstChild = tableBox.firstChild();
     if (!firstChild) {
         // The rare case of empty table.
         return tableGrid;
@@ -57,7 +58,7 @@ static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
     if (firstChild->isTableCaption())
         tableCaption = firstChild;
     // The <colgroup> must appear after any optional <caption> element but before any <thead>, <th>, <tbody>, <tfoot> and <tr> element.
-    auto* colgroupCandidate = firstChild;
+    CheckedPtr colgroupCandidate = firstChild;
     if (tableCaption)
         colgroupCandidate = tableCaption->nextSibling();
     if (colgroupCandidate->isTableColumnGroup())
@@ -65,7 +66,7 @@ static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
 
     if (colgroup) {
         auto& columns = tableGrid->columns();
-        for (auto* column = downcast<ElementBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
+        for (CheckedPtr column = downcast<ElementBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
             ASSERT(column->isTableColumn());
             auto columnSpanCount = column->columnSpan();
             ASSERT(columnSpanCount > 0);
@@ -74,12 +75,12 @@ static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
         }
     }
 
-    auto* firstSection = colgroup ? colgroup->nextSibling() : tableCaption ? tableCaption->nextSibling() : firstChild;
-    for (auto* section = firstSection; section; section = section->nextSibling()) {
+    CheckedPtr firstSection = colgroup ? colgroup->nextSibling() : (tableCaption ? tableCaption->nextSibling() : firstChild.get());
+    for (CheckedPtr section = firstSection; section; section = section->nextSibling()) {
         ASSERT(section->isTableHeader() || section->isTableBody() || section->isTableFooter());
-        for (auto* row = downcast<ElementBox>(*section).firstChild(); row; row = row->nextSibling()) {
+        for (CheckedPtr row = downcast<ElementBox>(*section).firstChild(); row; row = row->nextSibling()) {
             ASSERT(row->isTableRow());
-            for (auto* cell = downcast<ElementBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
+            for (CheckedPtr cell = downcast<ElementBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
                 ASSERT(cell->isTableCell());
                 tableGrid->appendCell(downcast<ElementBox>(*cell));
             }

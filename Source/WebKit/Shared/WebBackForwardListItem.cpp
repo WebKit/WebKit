@@ -44,12 +44,12 @@ using namespace WebCore;
 Ref<WebBackForwardListItem> WebBackForwardListItem::create(Ref<FrameState>&& mainFrameState, WebPageProxyIdentifier pageID, std::optional<FrameIdentifier> navigatedFrameID, BrowsingContextGroup* browsingContextGroup)
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    return adoptRef(*new WebBackForwardListItem(WTFMove(mainFrameState), pageID, navigatedFrameID, browsingContextGroup));
+    return adoptRef(*new WebBackForwardListItem(WTF::move(mainFrameState), pageID, navigatedFrameID, browsingContextGroup));
 }
 
 WebBackForwardListItem::WebBackForwardListItem(Ref<FrameState>&& mainFrameState, WebPageProxyIdentifier pageID, std::optional<FrameIdentifier> navigatedFrameID, BrowsingContextGroup* browsingContextGroup)
     : m_identifier(*mainFrameState->itemID)
-    , m_mainFrameItem(WebBackForwardListFrameItem::create(*this, nullptr, WTFMove(mainFrameState)))
+    , m_mainFrameItem(WebBackForwardListFrameItem::create(*this, nullptr, WTF::move(mainFrameState)))
     , m_navigatedFrameID(navigatedFrameID)
     , m_pageID(pageID)
     , m_lastProcessIdentifier(navigatedFrameItem().identifier().processIdentifier())
@@ -147,14 +147,9 @@ void WebBackForwardListItem::removeFromBackForwardCache()
     ASSERT(!m_backForwardCacheEntry);
 }
 
-RefPtr<WebBackForwardCacheEntry> WebBackForwardListItem::protectedBackForwardCacheEntry() const
-{
-    return m_backForwardCacheEntry;
-}
-
 void WebBackForwardListItem::setBackForwardCacheEntry(RefPtr<WebBackForwardCacheEntry>&& backForwardCacheEntry)
 {
-    m_backForwardCacheEntry = WTFMove(backForwardCacheEntry);
+    m_backForwardCacheEntry = WTF::move(backForwardCacheEntry);
 }
 
 SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
@@ -164,7 +159,7 @@ SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
 
 Ref<FrameState> WebBackForwardListItem::navigatedFrameState() const
 {
-    return protectedNavigatedFrameItem()->copyFrameStateWithChildren();
+    return protect(navigatedFrameItem())->copyFrameStateWithChildren();
 }
 
 Ref<FrameState> WebBackForwardListItem::mainFrameState() const
@@ -174,22 +169,16 @@ Ref<FrameState> WebBackForwardListItem::mainFrameState() const
 
 const String& WebBackForwardListItem::originalURL() const
 {
-    if (m_isRemoteFrameNavigation)
-        return emptyString();
     return mainFrameItem().frameState().originalURLString;
 }
 
 const String& WebBackForwardListItem::url() const
 {
-    if (m_isRemoteFrameNavigation)
-        return emptyString();
     return mainFrameItem().frameState().urlString;
 }
 
 const String& WebBackForwardListItem::title() const
 {
-    if (m_isRemoteFrameNavigation)
-        return emptyString();
     return mainFrameItem().frameState().title;
 }
 
@@ -205,14 +194,11 @@ void WebBackForwardListItem::setWasRestoredFromSession()
 
 WebBackForwardListFrameItem& WebBackForwardListItem::navigatedFrameItem() const
 {
-    if (RefPtr childItem = m_navigatedFrameID ? m_mainFrameItem->childItemForFrameID(*m_navigatedFrameID) : nullptr)
-        return childItem.releaseNonNull().unsafeGet();
+    if (m_navigatedFrameID) {
+        if (auto* childItem = m_mainFrameItem->childItemForFrameID(*m_navigatedFrameID))
+            return *childItem;
+    }
     return m_mainFrameItem;
-}
-
-Ref<WebBackForwardListFrameItem> WebBackForwardListItem::protectedNavigatedFrameItem() const
-{
-    return navigatedFrameItem();
 }
 
 WebBackForwardListFrameItem& WebBackForwardListItem::mainFrameItem() const
@@ -220,14 +206,17 @@ WebBackForwardListFrameItem& WebBackForwardListItem::mainFrameItem() const
     return m_mainFrameItem;
 }
 
-Ref<WebBackForwardListFrameItem> WebBackForwardListItem::protectedMainFrameItem() const
-{
-    return m_mainFrameItem;
-}
-
 String WebBackForwardListItem::loggingString()
 {
     return m_mainFrameItem->loggingString();
+}
+
+void WebBackForwardListItem::updateFrameID(FrameIdentifier oldFrameID, FrameIdentifier newFrameID)
+{
+    if (RefPtr frameItem = m_mainFrameItem->childItemForFrameID(oldFrameID))
+        frameItem->updateFrameID(newFrameID);
+    if (m_navigatedFrameID && *m_navigatedFrameID == oldFrameID)
+        m_navigatedFrameID = newFrameID;
 }
 
 } // namespace WebKit

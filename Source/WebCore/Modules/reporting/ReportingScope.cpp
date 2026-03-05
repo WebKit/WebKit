@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReportingScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingScope);
 
 Ref<ReportingScope> ReportingScope::create(ScriptExecutionContext& scriptExecutionContext)
 {
@@ -101,11 +101,11 @@ void ReportingScope::notifyReportObservers(Ref<Report>&& report)
     for (auto& observer : possibleReportObservers)
         observer->appendQueuedReportIfCorrectType(report);
 
-    auto currentReportType = report->protectedBody()->reportBodyType();
+    auto currentReportType = protect(report->body())->reportBodyType();
 
     // Step 4.2.2
     m_queuedReportTypeCounts.add(currentReportType);
-    m_queuedReports.append(WTFMove(report));
+    m_queuedReports.append(WTF::move(report));
 
     // Step 4.2.3-4: If scope’s report buffer now contains more than 100 reports with type equal to type, remove the earliest item with type equal to type in the report buffer.
     if (m_queuedReportTypeCounts.count(currentReportType) > 100) {
@@ -171,7 +171,7 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
         reportURL = testReportURL.strippedForUseAsReferrer().string;
     }
 
-    auto testReportBody = TestReportBody::create(WTFMove(message));
+    auto testReportBody = TestReportBody::create(WTF::move(message));
 
     // https://w3c.github.io/reporting/#generate-test-report-command, step 7.1.10.
     if (document) {
@@ -182,11 +182,11 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
         if (group.isNull())
             group = "default"_s;
         
-        document->sendReportToEndpoints(testReportURL, { }, singleElementSpan(group), WTFMove(reportFormData), ViolationReportType::Test);
+        document->sendReportToEndpoints(testReportURL, { }, singleElementSpan(group), WTF::move(reportFormData), ViolationReportType::Test);
     }
 
     auto bodyType = testReportBody->type();
-    notifyReportObservers(Report::create(bodyType, reportURL, WTFMove(testReportBody)));
+    notifyReportObservers(Report::create(bodyType, reportURL, WTF::move(testReportBody)));
 }
 
 } // namespace WebCore

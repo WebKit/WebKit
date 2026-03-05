@@ -23,7 +23,6 @@
 #include "config.h"
 #include "SVGTRefElement.h"
 
-#include "AddEventListenerOptionsInlines.h"
 #include "ElementRareData.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -36,13 +35,12 @@
 #include "SVGNames.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
-#include "StyleInheritedData.h"
 #include "Text.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTRefElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTRefElement);
 
 Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document& document)
 {
@@ -58,20 +56,13 @@ public:
         return adoptRef(*new SVGTRefTargetEventListener(trefElement));
     }
 
-    static const SVGTRefTargetEventListener* cast(const EventListener* listener)
-    {
-        return listener->type() == SVGTRefTargetEventListenerType ? static_cast<const SVGTRefTargetEventListener*>(listener) : nullptr;
-    }
-
     void attach(RefPtr<Element>&& target);
     void detach();
-    bool isAttached() const { return m_target.get(); }
+    bool NODELETE isAttached() const { return m_target.get(); }
 
 private:
     explicit SVGTRefTargetEventListener(SVGTRefElement& trefElement);
 
-    Ref<SVGTRefElement> protectedTRefElement() const { return m_trefElement.get(); }
-    RefPtr<Element> protectedTarget() const { return m_target; }
     void handleEvent(ScriptExecutionContext&, Event&) final;
     bool operator==(const EventListener&) const final;
 
@@ -91,9 +82,9 @@ void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
     ASSERT(target.get());
     ASSERT(target->isConnected());
 
-    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
-    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
-    m_target = WTFMove(target);
+    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this);
+    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this);
+    m_target = WTF::move(target);
 }
 
 void SVGTRefTargetEventListener::detach()
@@ -102,14 +93,14 @@ void SVGTRefTargetEventListener::detach()
         return;
 
     RefPtr target = m_target;
-    target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
-    target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
+    target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, { .capture = false });
+    target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, { .capture = false });
     m_target = nullptr;
 }
 
 bool SVGTRefTargetEventListener::operator==(const EventListener& listener) const
 {
-    if (const SVGTRefTargetEventListener* targetListener = SVGTRefTargetEventListener::cast(&listener))
+    if (auto* targetListener = dynamicDowncast<SVGTRefTargetEventListener>(listener))
         return &m_trefElement == &targetListener->m_trefElement;
     return false;
 }
@@ -120,9 +111,9 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext&, Event& eve
         return;
 
     if (event.type() == eventNames().DOMSubtreeModifiedEvent && m_trefElement.ptr() != event.target())
-        protectedTRefElement()->updateReferencedText(protectedTarget().get());
+        protect(m_trefElement)->updateReferencedText(protect(m_target).get());
     else if (event.type() == eventNames().DOMNodeRemovedFromDocumentEvent)
-        protectedTRefElement()->detachTarget();
+        protect(m_trefElement)->detachTarget();
 }
 
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
@@ -135,12 +126,7 @@ inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& do
 
 SVGTRefElement::~SVGTRefElement()
 {
-    protectedTargetListener()->detach();
-}
-
-Ref<SVGTRefTargetEventListener> SVGTRefElement::protectedTargetListener() const
-{
-    return m_targetListener;
+    protect(m_targetListener)->detach();
 }
 
 void SVGTRefElement::updateReferencedText(Element* target)
@@ -153,17 +139,17 @@ void SVGTRefElement::updateReferencedText(Element* target)
     ASSERT(root);
     ScriptDisallowedScope::EventAllowedScope allowedScope(*root);
     if (!root->firstChild())
-        root->appendChild(Text::create(protectedDocument(), WTFMove(textContent)));
+        root->appendChild(Text::create(protect(document()), WTF::move(textContent)));
     else {
         ASSERT(root->firstChild()->isTextNode());
-        root->protectedFirstChild()->setTextContent(WTFMove(textContent));
+        protect(root->firstChild())->setTextContent(WTF::move(textContent));
     }
 }
 
 void SVGTRefElement::detachTarget()
 {
     // Remove active listeners and clear the text content.
-    protectedTargetListener()->detach();
+    protect(m_targetListener)->detach();
 
     ASSERT(shadowRoot());
     RefPtr container = shadowRoot()->firstChild();
@@ -174,7 +160,7 @@ void SVGTRefElement::detachTarget()
         return;
 
     // Mark the referenced ID as pending.
-    auto target = SVGURIReference::targetElementFromIRIString(href(), protectedDocument());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), protect(document()));
     if (!target.identifier.isEmpty())
         treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
 }
@@ -198,7 +184,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTFMove(style));
+    return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
 }
 
 bool SVGTRefElement::childShouldCreateRenderer(const Node& child) const
@@ -221,13 +207,13 @@ bool SVGTRefElement::rendererIsNeeded(const RenderStyle& style)
 
 void SVGTRefElement::clearTarget()
 {
-    protectedTargetListener()->detach();
+    protect(m_targetListener)->detach();
 }
 
 void SVGTRefElement::buildPendingResource()
 {
     // Remove any existing event listener.
-    protectedTargetListener()->detach();
+    protect(m_targetListener)->detach();
 
     // If we're not yet in a document, this function will be called again from insertedIntoAncestor().
     if (!isConnected())
@@ -248,7 +234,7 @@ void SVGTRefElement::buildPendingResource()
     // expects every element instance to have an associated shadow tree element - which is not the
     // case when we land here from SVGUseElement::buildShadowTree().
     if (!isInShadowTree())
-        protectedTargetListener()->attach(target.element.copyRef());
+        protect(m_targetListener)->attach(target.element.copyRef());
 
     updateReferencedText(target.element.get());
 }
@@ -271,7 +257,14 @@ void SVGTRefElement::removedFromAncestor(RemovalType removalType, ContainerNode&
 {
     SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
-        protectedTargetListener()->detach();
+        protect(m_targetListener)->detach();
 }
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGTRefTargetEventListener)
+    static bool NODELETE isType(const WebCore::EventListener& listener)
+    {
+        return listener.type() == WebCore::EventListener::SVGTRefTargetEventListenerType;
+    }
+SPECIALIZE_TYPE_TRAITS_END()

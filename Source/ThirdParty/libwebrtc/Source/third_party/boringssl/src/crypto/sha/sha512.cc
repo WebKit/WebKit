@@ -80,9 +80,9 @@ int SHA512_Update(SHA512_CTX *sha, const void *data, size_t len) {
 }
 
 int SHA512_Final(uint8_t out[SHA512_DIGEST_LENGTH], SHA512_CTX *sha) {
-  // Historically this function retured failure if passed NULL, even
-  // though other final functions do not.
-  if (out == NULL) {
+  // Historically this function returned failure if passed NULL, even though
+  // other final functions do not.
+  if (out == nullptr) {
     return 0;
   }
   BCM_sha512_final(out, sha);

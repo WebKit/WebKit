@@ -64,7 +64,7 @@ struct SecretToken {
     String signatureBase64URL;
     String keyIDBase64URL;
     SecretToken isolatedCopy() const & { return { tokenBase64URL.isolatedCopy(), signatureBase64URL.isolatedCopy(), keyIDBase64URL.isolatedCopy() }; }
-    SecretToken isolatedCopy() && { return { WTFMove(tokenBase64URL).isolatedCopy(), WTFMove(signatureBase64URL).isolatedCopy(), WTFMove(keyIDBase64URL).isolatedCopy() }; }
+    SecretToken isolatedCopy() && { return { WTF::move(tokenBase64URL).isolatedCopy(), WTF::move(signatureBase64URL).isolatedCopy(), WTF::move(keyIDBase64URL).isolatedCopy() }; }
     bool isValid() const;
 };
 

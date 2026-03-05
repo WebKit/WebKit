@@ -23,6 +23,9 @@ using namespace angle;
 
 namespace
 {
+// The relative precision factor of mediump float-point variables declared in shaders
+// Reference: https://developer.arm.com/documentation/102502/0101/Shader-precision
+const float kMediumpFloatRelativePrecisionFactor = std::pow(2.0, -10.0);
 
 class SimpleUniformTest : public ANGLETest<>
 {
@@ -58,7 +61,7 @@ void main() {
     GLfloat f = 0.0f;
     glGetUniformfv(program, uniformLocation, &f);
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(f, expected);
+    EXPECT_NEAR(f, expected, std::abs(expected) * kMediumpFloatRelativePrecisionFactor);
 }
 
 // Test that we can get and set an int uniform successfully.
@@ -129,7 +132,11 @@ void main() {
     std::vector<GLfloat> floats(3, 0);
     glGetUniformfv(program, uniformLocation, floats.data());
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(floats, expected);
+    for (size_t i = 0; i < 3; ++i)
+    {
+        EXPECT_NEAR(floats[i], expected[i],
+                    std::abs(expected[i]) * kMediumpFloatRelativePrecisionFactor);
+    }
 }
 
 // Test that we can get and set a vec4 uniform successfully.
@@ -153,7 +160,59 @@ void main() {
     std::vector<GLfloat> floats(4, 0);
     glGetUniformfv(program, uniformLocation, floats.data());
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(floats, expected);
+    for (size_t i = 0; i < 4; ++i)
+    {
+        EXPECT_NEAR(floats[i], expected[i],
+                    std::abs(expected[i]) * kMediumpFloatRelativePrecisionFactor);
+    }
+}
+
+// Test that we can get and set mediump vec4 uniform arrays successfully.
+TEST_P(SimpleUniformTest, FloatVec4UniformArrayStateQuery)
+{
+    constexpr char kFragShader[] = R"(precision mediump float;
+uniform vec4 uniVec4[2];
+void main() {
+    // Use the uniforms to prevent them from being optimized out.
+    gl_FragColor = uniVec4[0] + uniVec4[1];
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Zero(), kFragShader);
+    glUseProgram(program);
+
+    GLint uniformLocation = glGetUniformLocation(program, "uniVec4");
+    ASSERT_NE(uniformLocation, -1);
+
+    // Define data for an array of two vec4 uniforms
+    std::vector<GLfloat> expected = {
+        1.0f,  0.5f, 0.2f, -0.8f,  // First vec4: uniVec4[0]
+        -0.1f, 0.3f, 0.7f, -0.9f   // Second vec4: uniVec4[1]
+    };
+
+    // Set both uniforms in the array with a single API call
+    glUniform4fv(uniformLocation, 2, expected.data());
+    ASSERT_GL_NO_ERROR();
+
+    // Query and verify the first uniform in the array
+    std::vector<GLfloat> actual1(4, 0);
+    glGetUniformfv(program, uniformLocation, actual1.data());
+    ASSERT_GL_NO_ERROR();
+    for (size_t i = 0; i < 4; ++i)
+    {
+        EXPECT_NEAR(actual1[i], expected[i],
+                    std::abs(expected[i]) * kMediumpFloatRelativePrecisionFactor);
+    }
+
+    // Query and verify the second uniform in the array.
+    // The location of subsequent array elements is found by incrementing the base location.
+    std::vector<GLfloat> actual2(4, 0);
+    glGetUniformfv(program, uniformLocation + 1, actual2.data());
+    ASSERT_GL_NO_ERROR();
+    for (size_t i = 0; i < 4; ++i)
+    {
+        EXPECT_NEAR(actual2[i], expected[i + 4],
+                    std::abs(expected[i + 4]) * kMediumpFloatRelativePrecisionFactor);
+    }
 }
 
 // Test that we can get and set a 2x2 float Matrix uniform successfully.
@@ -177,7 +236,11 @@ void main() {
     std::vector<GLfloat> floats(4, 0);
     glGetUniformfv(program, uniformLocation, floats.data());
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(floats, expected);
+    for (size_t i = 0; i < 4; ++i)
+    {
+        EXPECT_NEAR(expected[i], floats[i],
+                    std::abs(expected[i]) * kMediumpFloatRelativePrecisionFactor);
+    }
 }
 
 // Test that we can get and set a 3x3 float Matrix uniform successfully.
@@ -201,7 +264,12 @@ void main() {
     std::vector<GLfloat> floats(9, 0);
     glGetUniformfv(program, uniformLocation, floats.data());
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(floats, expected);
+
+    for (size_t i = 0; i < 9; ++i)
+    {
+        EXPECT_NEAR(expected[i], floats[i],
+                    std::abs(expected[i]) * kMediumpFloatRelativePrecisionFactor);
+    }
 }
 
 // Test that we can get and set a 4x4 float Matrix uniform successfully.
@@ -226,7 +294,11 @@ void main() {
     std::vector<GLfloat> floats(16, 0);
     glGetUniformfv(program, uniformLocation, floats.data());
     ASSERT_GL_NO_ERROR();
-    ASSERT_EQ(floats, expected);
+    for (size_t i = 0; i < 16; ++i)
+    {
+        EXPECT_NEAR(expected[i], floats[i],
+                    std::abs(expected[i]) * kMediumpFloatRelativePrecisionFactor);
+    }
 }
 
 // Test that we can get and set a float array of uniforms.
@@ -255,7 +327,8 @@ void main() {
         GLfloat result = 0;
         glGetUniformfv(program, uniformLocation, &result);
         ASSERT_GL_NO_ERROR();
-        ASSERT_EQ(result, expected[i]);
+        EXPECT_NEAR(result, expected[i],
+                    std::abs(expected[i]) * kMediumpFloatRelativePrecisionFactor);
     }
 }
 
@@ -286,7 +359,12 @@ void main() {
         std::vector<GLfloat> results(9, 0);
         glGetUniformfv(program, uniformLocation, results.data());
         ASSERT_GL_NO_ERROR();
-        ASSERT_EQ(results, expected[i]);
+        for (size_t matrixElementIndex = 0; matrixElementIndex < 9; ++matrixElementIndex)
+        {
+            EXPECT_NEAR(
+                results[matrixElementIndex], expected[i][matrixElementIndex],
+                std::abs(expected[i][matrixElementIndex]) * kMediumpFloatRelativePrecisionFactor);
+        }
     }
 }
 
@@ -455,12 +533,61 @@ TEST_P(BasicUniformUsageTest, Vec4MultipleDraws)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
 }
 
-// Named differently to instantiate on different backends.
-using SimpleUniformUsageTest = SimpleUniformTest;
+// Test that we can index a uniform matrix correctly.
+TEST_P(SimpleUniformTest, FloatMatrix2UniformIndexed)
+{
+    constexpr char kFragShader[] = R"(precision mediump float;
+uniform mat2 umat2;
+void main() {
+    gl_FragColor = vec4(umat2[0], umat2[1]);
+})";
+
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kFragShader);
+    glUseProgram(program);
+
+    GLint uniformLocation = glGetUniformLocation(program, "umat2");
+    ASSERT_NE(uniformLocation, -1);
+
+    std::vector<GLfloat> expected = {{1.0f, 0.0f, 0.0f, 1.0f}};
+    glUniformMatrix2fv(uniformLocation, 1, false, expected.data());
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that we can index a uniform matrix correctly, when that uniform matrix is an array element.
+TEST_P(SimpleUniformTest, FloatMatrix2ArrayUniformDoubleIndexed)
+{
+    constexpr char kFragShader[] = R"(precision mediump float;
+uniform mat2 umat2Array[2];
+void main() {
+    gl_FragColor = vec4(umat2Array[1][0], umat2Array[1][1]);
+})";
+
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kFragShader);
+    glUseProgram(program);
+
+    GLint uniformLocation = glGetUniformLocation(program, "umat2Array");
+    ASSERT_NE(uniformLocation, -1);
+
+    std::vector<GLfloat> uniformData = {// Data for umat2Array[0]
+                                        0.0f, 0.0f, 1.0f, 1.0f,
+
+                                        // Data for umat2Array[1]
+                                        0.0f, 1.0f, 0.0f, 1.0f};
+
+    glUniformMatrix2fv(uniformLocation, 2, false, uniformData.data());
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
 
 // In std140, the member following a struct will need to be aligned to 16. This tests that backends
 // like WGSL which take std140 buffers correctly align this member.
-TEST_P(SimpleUniformUsageTest, NestedStructAlignedCorrectly)
+TEST_P(SimpleUniformTest, NestedStructAlignedCorrectly)
 {
     constexpr char kFragShader[] = R"(precision mediump float;
 struct NestedUniforms {
@@ -518,7 +645,7 @@ void main() {
 
 // Similarly to the above, tests that structs as array elements are aligned correctly, and nested
 // structs that follow float members are aligned correctly.
-TEST_P(SimpleUniformUsageTest, NestedStructAlignedCorrectly2)
+TEST_P(SimpleUniformTest, NestedStructAlignedCorrectly2)
 {
     constexpr char kFragShader[] = R"(precision mediump float;
 struct NestedUniforms {
@@ -623,7 +750,7 @@ void main() {
 // Tests that arrays in uniforms function corectly. In particular, WGSL requires arrays in uniforms
 // to have a stride a multiple of 16, but some arrays (e.g. vec2[N] or float[N]) will not
 // automatically have stride 16 and need special handling.
-TEST_P(SimpleUniformUsageTest, ArraysInUniforms)
+TEST_P(SimpleUniformTest, ArraysInUniforms)
 {
     constexpr char kFragShader[] = R"(
 precision mediump float;
@@ -696,7 +823,7 @@ void main() {
 }
 
 // Tests that inactive uniforms do not cause buffer offsets to be incorrectly calculated.
-TEST_P(SimpleUniformUsageTest, MiddleInactiveUniform)
+TEST_P(SimpleUniformTest, MiddleInactiveUniform)
 {
     constexpr char kFragShader[] = R"(
 precision mediump float;
@@ -733,10 +860,10 @@ void main() {
     glDeleteProgram(program);
 }
 
-using SimpleUniformUsageTestES3 = SimpleUniformUsageTest;
+using SimpleUniformTestES3 = SimpleUniformTest;
 
 // Tests that making a copy of a struct of uniforms functions correctly.
-TEST_P(SimpleUniformUsageTestES3, CopyOfUniformsWithArrays)
+TEST_P(SimpleUniformTestES3, CopyOfUniformsWithArrays)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -811,7 +938,7 @@ void main() {
 }
 
 // Tests that making a copy of an array from a uniform functions correctly.
-TEST_P(SimpleUniformUsageTestES3, CopyOfArrayInUniform)
+TEST_P(SimpleUniformTestES3, CopyOfArrayInUniform)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -863,18 +990,10 @@ void main() {
 }
 
 // Tests that ternaries function correctly when retrieving an array element from a uniform.
-TEST_P(SimpleUniformUsageTestES3, TernarySelectAnArrayElement)
+TEST_P(SimpleUniformTestES3, TernarySelectAnArrayElement)
 {
-
-    // TODO(anglebug.com/42267100): should eventually have a test (for WGSL) where the array is
-    // select by the ternary, and then the element is selected (`(unis.a > 0.5 ? unis.b :
-    // unis.c)[1]`). It doesn't work right now because ternaries are implemented incorrectly in the
-    // translator (translated as select()).
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
-struct NestedUniforms {
-    vec2 x[5];
-};
 struct Uniforms {
     float a;
     float b[2];
@@ -932,11 +1051,74 @@ void main() {
 
     glDeleteProgram(program);
 }
+// Tests that ternaries function correctly when retrieving an array a uniform and then indexing the
+// result of the ternary.
+TEST_P(SimpleUniformTestES3, TernarySelectAnArrayThenIndex)
+{
+    constexpr char kFragShader[] = R"(#version 300 es
+precision mediump float;
+struct Uniforms {
+    float a;
+    float b[2];
+    float c[2];
+};
+uniform Uniforms unis;
+out vec4 fragColor;
+void main() {
+    fragColor = vec4((unis.a > 0.5 ? unis.b : unis.c)[1],
+                     (unis.a > 0.5 ? unis.c : unis.b)[1],
+                     0.0, 1.0);
+})";
+
+    GLuint program = CompileProgram(essl3_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    GLint uniformALocation = glGetUniformLocation(program, "unis.a");
+    ASSERT_NE(uniformALocation, -1);
+    GLint uniformBLocation = glGetUniformLocation(program, "unis.b[1]");
+    ASSERT_NE(uniformBLocation, -1);
+    GLint uniformCLocation = glGetUniformLocation(program, "unis.c[1]");
+    ASSERT_NE(uniformCLocation, -1);
+
+    // Set to red
+    glUniform1f(uniformALocation, 1.0f);
+    glUniform1f(uniformBLocation, 1.0f);
+    glUniform1f(uniformCLocation, 0.0f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Flip unis.a to set to green
+    glUniform1f(uniformALocation, 0.0f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Set to red by flipping unis.b[1] and unis.c[1].
+    glUniform1f(uniformBLocation, 0.0f);
+    glUniform1f(uniformCLocation, 1.0f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Flip unis.a to set to green
+    glUniform1f(uniformALocation, 1.0f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glDeleteProgram(program);
+}
 
 // Tests that a struct used in the uniform address space can also be used outside of the uniform
 // address space. The WGSL translator changes the type signature of the struct which can cause
 // problems assigning to fields.
-TEST_P(SimpleUniformUsageTestES3, UseUniformStructOutsideOfUniformAddressSpace)
+TEST_P(SimpleUniformTestES3, UseUniformStructOutsideOfUniformAddressSpace)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -984,7 +1166,7 @@ void main() {
 
 // Tests that bools function correctly in a uniform. WGSL does not allow booleans in the uniform
 // address space.
-TEST_P(SimpleUniformUsageTestES3, Bool)
+TEST_P(SimpleUniformTestES3, Bool)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1020,7 +1202,7 @@ void main() {
 }
 
 // Tests that bool in an array in a uniform can be used in a shader.
-TEST_P(SimpleUniformUsageTestES3, BoolInArray)
+TEST_P(SimpleUniformTestES3, BoolInArray)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1065,7 +1247,7 @@ void main() {
 
 // Tests that a uniform array containing bool can be indexed into correctly.
 // The WGSL translator includes some optimizations around this case.
-TEST_P(SimpleUniformUsageTestES3, BoolInArrayWithOptimization)
+TEST_P(SimpleUniformTestES3, BoolInArrayWithOptimization)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1111,7 +1293,7 @@ void main() {
 
 // Tests that matCx2 (matrix with C columns and 2 rows) functions correctly in a
 // uniform. WGSL's matCx2 does not match std140 layout.
-TEST_P(SimpleUniformUsageTestES3, MatCx2)
+TEST_P(SimpleUniformTestES3, MatCx2)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1188,7 +1370,7 @@ void main() {
 }
 
 // Tests that matCx2 in an array in a uniform can be used in a shader.
-TEST_P(SimpleUniformUsageTestES3, MatCx2InArray)
+TEST_P(SimpleUniformTestES3, MatCx2InArray)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1263,7 +1445,7 @@ void main() {
 
 // Tests that a uniform array containing matCx2 can be indexed into correctly.
 // The WGSL translator includes some optimizations around this case..
-TEST_P(SimpleUniformUsageTestES3, MatCx2InArrayWithOptimization)
+TEST_P(SimpleUniformTestES3, MatCx2InArrayWithOptimization)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1338,7 +1520,7 @@ void main() {
 
 // Tests that matCx2 can be used in a uniform at the same time an array of
 // matCx2s is used in a uniform. (The WGSL translator had trouble with this)
-TEST_P(SimpleUniformUsageTestES3, MatCx2InArrayAndOutOfArray)
+TEST_P(SimpleUniformTestES3, MatCx2InArrayAndOutOfArray)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1530,8 +1712,8 @@ void main(void)
     glDeleteProgram(program);
 }
 
-// Test that float to integer GetUniform rounds values correctly.
-TEST_P(UniformTest, FloatUniformStateQuery)
+// Test that float to integer GetUniform rounds values correctly for highp float uniforms
+TEST_P(UniformTest, HighpFloatUniformStateQuery)
 {
 
     std::vector<double> inValues;
@@ -1566,6 +1748,86 @@ TEST_P(UniformTest, FloatUniformStateQuery)
         expectedIValues.push_back(static_cast<GLint>(rounded));
     }
 
+    constexpr char kVS[] = "void main() { gl_Position = vec4(1); }";
+
+    constexpr char kFS[] =
+        "precision highp float;\n"
+        "uniform float uniF;\n"
+        "uniform int uniI;\n"
+        "uniform bool uniB;\n"
+        "uniform bool uniBArr[4];\n"
+        "void main() {\n"
+        "  gl_FragColor = vec4(uniF + float(uniI));\n"
+        "  gl_FragColor += vec4(uniB ? 1.0 : 0.0);\n"
+        "  gl_FragColor += vec4(uniBArr[0] ? 1.0 : 0.0);\n"
+        "  gl_FragColor += vec4(uniBArr[1] ? 1.0 : 0.0);\n"
+        "  gl_FragColor += vec4(uniBArr[2] ? 1.0 : 0.0);\n"
+        "  gl_FragColor += vec4(uniBArr[3] ? 1.0 : 0.0);\n"
+        "}";
+
+    mProgram = CompileProgram(kVS, kFS);
+    ASSERT_NE(mProgram, 0u);
+
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    mUniformFLocation = glGetUniformLocation(mProgram, "uniF");
+    ASSERT_NE(mUniformFLocation, -1);
+
+    for (size_t index = 0; index < inValues.size(); ++index)
+    {
+        GLfloat inValue       = static_cast<GLfloat>(inValues[index]);
+        GLfloat expectedValue = expectedFValues[index];
+
+        glUniform1f(mUniformFLocation, inValue);
+        GLfloat testValue;
+        glGetUniformfv(mProgram, mUniformFLocation, &testValue);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_EQ(expectedValue, testValue);
+    }
+
+    for (size_t index = 0; index < inValues.size(); ++index)
+    {
+        GLfloat inValue     = static_cast<GLfloat>(inValues[index]);
+        GLint expectedValue = expectedIValues[index];
+
+        glUniform1f(mUniformFLocation, inValue);
+        GLint testValue;
+        glGetUniformiv(mProgram, mUniformFLocation, &testValue);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_EQ(expectedValue, testValue);
+    }
+}
+
+// Test that float to integer GetUniform rounds values correctly for mediump float uniforms
+TEST_P(UniformTest, MediumpFloatUniformStateQuery)
+{
+
+    std::vector<double> inValues;
+    std::vector<GLfloat> expectedFValues;
+    std::vector<GLint> expectedIValues;
+
+    double intMaxD = static_cast<double>(std::numeric_limits<GLint>::max());
+    double intMinD = static_cast<double>(std::numeric_limits<GLint>::min());
+
+    // TODO(jmadill): Investigate rounding of .5
+    inValues.push_back(-1.0);
+    inValues.push_back(-0.6);
+    inValues.push_back(-0.4);
+    inValues.push_back(0.0);
+    inValues.push_back(0.4);
+    inValues.push_back(0.6);
+    inValues.push_back(1.0);
+
+    for (double value : inValues)
+    {
+        expectedFValues.push_back(static_cast<GLfloat>(value));
+
+        double clampedValue = std::max(intMinD, std::min(intMaxD, value));
+        double rounded      = round(clampedValue);
+        expectedIValues.push_back(static_cast<GLint>(rounded));
+    }
+
     glUseProgram(mProgram);
     ASSERT_GL_NO_ERROR();
 
@@ -1578,7 +1840,8 @@ TEST_P(UniformTest, FloatUniformStateQuery)
         GLfloat testValue;
         glGetUniformfv(mProgram, mUniformFLocation, &testValue);
         ASSERT_GL_NO_ERROR();
-        EXPECT_EQ(expectedValue, testValue);
+        EXPECT_NEAR(expectedValue, testValue,
+                    std::abs(expectedValue) * kMediumpFloatRelativePrecisionFactor);
     }
 
     for (size_t index = 0; index < inValues.size(); ++index)
@@ -1820,7 +2083,8 @@ TEST_P(UniformTestES3, MatrixArrayUniformStateQuery)
 
         for (size_t compIdx = 0; compIdx < kMatrixStride; compIdx++)
         {
-            EXPECT_EQ(results[compIdx], expected[i][compIdx]);
+            EXPECT_NEAR(results[compIdx], expected[i][compIdx],
+                        std::abs(expected[i][compIdx]) * kMediumpFloatRelativePrecisionFactor);
         }
     }
 }
@@ -2510,6 +2774,80 @@ void main() {
     glDeleteProgram(program);
 }
 
+// Test that nested struct uniform with mediump float works properly with the float being
+// transformed from 32-bit to 16-bit. Also check that highp float member and non-float members
+// are unaffected.
+TEST_P(UniformTestES31, PackUniformFP16TestNestedStruct)
+{
+    setWindowWidth(1);
+    setWindowHeight(1);
+    constexpr char kFragShader[] = R"(#version 310 es
+layout(std140, binding=0) buffer debugBlock {
+     uvec4 data[];
+};
+ precision mediump float;
+ struct InnerStruct {
+    highp float highpFloatInStructs;
+    float mediumpFloatInStructs;
+    uint integerInStructs;
+ };
+
+ struct OuterStruct {
+     InnerStruct structMember;
+ };
+ uniform OuterStruct structUniform;
+
+
+ out vec4 fragColor;
+
+ void main() {
+   data[0] = floatBitsToUint(vec4(structUniform.structMember.mediumpFloatInStructs, structUniform.structMember.highpFloatInStructs, 0.0, 1.0));
+   data[0].z = structUniform.structMember.integerInStructs;
+
+  fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    GLuint program = CompileProgram(essl31_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+    GLint mediumpFloatInStructsUniformLocation =
+        glGetUniformLocation(program, "structUniform.structMember.mediumpFloatInStructs");
+    ASSERT_NE(mediumpFloatInStructsUniformLocation, -1);
+    GLint highpFloatInStructsUniformLocation =
+        glGetUniformLocation(program, "structUniform.structMember.highpFloatInStructs");
+    ASSERT_NE(highpFloatInStructsUniformLocation, -1);
+    GLint integerInStructsUniformLocation =
+        glGetUniformLocation(program, "structUniform.structMember.integerInStructs");
+    ASSERT_NE(integerInStructsUniformLocation, -1);
+    GLfloat mediumpFloatInStructUniformValue = 1.0;
+    glUniform1f(mediumpFloatInStructsUniformLocation, mediumpFloatInStructUniformValue);
+    GLfloat highpFloatInStructUniformValue = 131072.0;
+    glUniform1f(highpFloatInStructsUniformLocation, highpFloatInStructUniformValue);
+    GLuint integerInStructUniformValue = 10;
+    glUniform1ui(integerInStructsUniformLocation, integerInStructUniformValue);
+    constexpr GLint kBufferSize = 1 * 4 * sizeof(GLuint);
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kBufferSize);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    ASSERT(ptr);
+    unsigned int *data = static_cast<unsigned int *>(ptr);
+    ASSERT_EQ(*reinterpret_cast<float *>(&data[0]), 1.0);
+    ASSERT_EQ(*reinterpret_cast<float *>(&data[1]), 131072.0);
+    ASSERT_EQ(data[2], 10u);
+    ASSERT_EQ(*reinterpret_cast<float *>(&data[3]), 1.0);
+    ASSERT_GL_NO_ERROR();
+
+    glDeleteProgram(program);
+}
+
 // Test that TCompiler::sortUniforms() does not break the shader code when there are multiple
 // uniforms of the same struct data type, and one of them is the struct specifier.
 TEST_P(UniformTestES31, UniformReorderDoesNotBreakStructUniforms)
@@ -2540,6 +2878,522 @@ TEST_P(UniformTestES31, UniformReorderDoesNotBreakStructUniformsV2)
         "{}";
     GLuint program = CompileProgram(essl31_shaders::vs::Simple(), kFS);
     ASSERT_NE(program, 0u);
+}
+
+// Test that with the PackedSPIRVBlockEncoder applies to "defaultUniform" ubo interface block,
+// it does not incorrectly interfere with other structs that are also named "defaultUniforms"
+TEST_P(UniformTestES31, PackedEncoderDoesNotApplyToStructNamedDefaultUniforms)
+{
+    setWindowWidth(1);
+    setWindowHeight(1);
+    constexpr char kFragShader[] = R"(#version 310 es
+        layout(std140, binding=0) buffer debugBlock {
+            uvec4 data[];
+        };
+
+        precision mediump float;
+        uniform vec3 vec3Uniform1;
+        uniform vec3 vec3Uniform2;
+        struct defaultUniforms {
+          vec3 vec3Uniform1;
+          vec3 vec3Uniform2;
+        };
+
+        out highp vec4 my_color;
+        void main() {
+            defaultUniforms nonDefaultUniform = defaultUniforms(vec3(1.0, 2.0, 3.0), vec3(4.0, 5.0, 6.0));
+            data[0] = floatBitsToUint(vec4(nonDefaultUniform.vec3Uniform1.x, nonDefaultUniform.vec3Uniform1.y, nonDefaultUniform.vec3Uniform1.z, 1.0));
+            data[1] = floatBitsToUint(vec4(nonDefaultUniform.vec3Uniform2.x, nonDefaultUniform.vec3Uniform2.y, nonDefaultUniform.vec3Uniform2.z, 1.0));
+            data[2] = floatBitsToUint(vec4(vec3Uniform1.x, vec3Uniform1.y, vec3Uniform1.z, 1.0));
+            data[3] = floatBitsToUint(vec4(vec3Uniform2.x, vec3Uniform2.y, vec3Uniform2.z, 1.0));
+            my_color = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
+    GLuint program               = CompileProgram(essl31_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    GLint vec3Uniform1Location = glGetUniformLocation(program, "vec3Uniform1");
+    ASSERT_NE(vec3Uniform1Location, -1);
+    GLfloat vec3Uniform1Value[3] = {11.0f, 12.0f, 13.0f};
+    glUniform3fv(vec3Uniform1Location, 1, vec3Uniform1Value);
+
+    GLint vec3Uniform2Location = glGetUniformLocation(program, "vec3Uniform2");
+    ASSERT_NE(vec3Uniform2Location, -1);
+    GLfloat vec3Uniform2Value[3] = {14.0f, 15.0f, 16.0f};
+    glUniform3fv(vec3Uniform2Location, 1, vec3Uniform2Value);
+
+    constexpr GLint kBufferSize = 4 * 4 * sizeof(GLuint);
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kBufferSize);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    ASSERT_GL_NO_ERROR();
+
+    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    ASSERT(ptr);
+    float *data = static_cast<float *>(ptr);
+
+    ASSERT_EQ(data[0], 1);
+    ASSERT_EQ(data[1], 2);
+    ASSERT_EQ(data[2], 3);
+    ASSERT_EQ(data[3], 1);
+    ASSERT_EQ(data[4], 4);
+    ASSERT_EQ(data[5], 5);
+    ASSERT_EQ(data[6], 6);
+    ASSERT_EQ(data[7], 1);
+    ASSERT_EQ(data[8], 11);
+    ASSERT_EQ(data[9], 12);
+    ASSERT_EQ(data[10], 13);
+    ASSERT_EQ(data[11], 1);
+    ASSERT_EQ(data[12], 14);
+    ASSERT_EQ(data[13], 15);
+    ASSERT_EQ(data[14], 16);
+    ASSERT_EQ(data[15], 1);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glDeleteProgram(program);
+}
+
+// Test that with the PackedSPIRVBlockEncoder applies to "defaultUniform" ubo interface block,
+// it does not incorrectly interfere with other ubo created that are also named "defaultUniforms"
+TEST_P(UniformTestES31, PackedEncoderDoesNotApplyToCustomizedUBONamedDefaultUniforms)
+{
+    setWindowWidth(1);
+    setWindowHeight(1);
+
+    constexpr char kFragShader[] = R"(#version 310 es
+        layout(std140, binding=0) buffer debugBlock {
+            uvec4 data[];
+        };
+
+        precision mediump float;
+        uniform vec3 vec3Uniform1;
+        uniform vec3 vec3Uniform2;
+        layout(std140) uniform defaultUniforms {
+            vec3 vec3Uniform1;
+            vec3 vec3Uniform2;
+        } defaultUniformsBufferInstance;
+
+        out highp vec4 my_color;
+        void main() {
+            data[0] = floatBitsToUint(vec4(defaultUniformsBufferInstance.vec3Uniform1.x, defaultUniformsBufferInstance.vec3Uniform1.y, defaultUniformsBufferInstance.vec3Uniform1.z, 1.0));
+            data[1] = floatBitsToUint(vec4(defaultUniformsBufferInstance.vec3Uniform2.x, defaultUniformsBufferInstance.vec3Uniform2.y, defaultUniformsBufferInstance.vec3Uniform2.z, 1.0));
+            data[2] = floatBitsToUint(vec4(vec3Uniform1.x, vec3Uniform1.y, vec3Uniform1.z, 1.0));
+            data[3] = floatBitsToUint(vec4(vec3Uniform2.x, vec3Uniform2.y, vec3Uniform2.z, 1.0));
+            my_color = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
+
+    GLuint program = CompileProgram(essl31_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    GLint vec3Uniform1Location = glGetUniformLocation(program, "vec3Uniform1");
+    ASSERT_NE(vec3Uniform1Location, -1);
+    GLfloat vec3Uniform1Value[3] = {11.0f, 12.0f, 13.0f};
+    glUniform3fv(vec3Uniform1Location, 1, vec3Uniform1Value);
+
+    GLint vec3Uniform2Location = glGetUniformLocation(program, "vec3Uniform2");
+    ASSERT_NE(vec3Uniform2Location, -1);
+    GLfloat vec3Uniform2Value[3] = {14.0f, 15.0f, 16.0f};
+    glUniform3fv(vec3Uniform2Location, 1, vec3Uniform2Value);
+
+    std::vector<float> uboData;
+    uboData.insert(uboData.end(), {1.0f, 2.0f, 3.0f, 0.0f});
+    uboData.insert(uboData.end(), {4.0f, 5.0f, 6.0f, 0.0f});
+    GLBuffer ubo;
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, uboData.size() * sizeof(float), uboData.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint uboIndex = glGetUniformBlockIndex(program, "defaultUniforms");
+    EXPECT_NE(GL_INVALID_INDEX, uboIndex);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, uboData.size() * sizeof(float));
+    glUniformBlockBinding(program, uboIndex, 0);
+
+    constexpr GLint kBufferSize = 4 * 4 * sizeof(GLuint);
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kBufferSize);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    ASSERT_GL_NO_ERROR();
+
+    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    ASSERT(ptr);
+    float *data = static_cast<float *>(ptr);
+
+    ASSERT_EQ(data[0], 1);
+    ASSERT_EQ(data[1], 2);
+    ASSERT_EQ(data[2], 3);
+    ASSERT_EQ(data[3], 1);
+    ASSERT_EQ(data[4], 4);
+    ASSERT_EQ(data[5], 5);
+    ASSERT_EQ(data[6], 6);
+    ASSERT_EQ(data[7], 1);
+    ASSERT_EQ(data[8], 11);
+    ASSERT_EQ(data[9], 12);
+    ASSERT_EQ(data[10], 13);
+    ASSERT_EQ(data[11], 1);
+    ASSERT_EQ(data[12], 14);
+    ASSERT_EQ(data[13], 15);
+    ASSERT_EQ(data[14], 16);
+    ASSERT_EQ(data[15], 1);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glDeleteProgram(program);
+}
+
+// Same as PackedEncoderDoesNotApplyToCustomizedUBONamedDefaultUniforms, except the SSBO
+// data type is changed from uvec4 to vec4 to add more coverage
+TEST_P(UniformTestES31, PackedEncoderDoesNotApplyToCustomizedUBONamedDefaultUniformsV2)
+{
+    setWindowWidth(1);
+    setWindowHeight(1);
+
+    constexpr char kFragShader[] = R"(#version 310 es
+        precision mediump float;
+        layout(std140, binding=0) buffer debugBlock {
+            vec4 data[];
+        };
+        uniform vec3 vec3Uniform1;
+        uniform vec3 vec3Uniform2;
+        layout(std140) uniform defaultUniforms {
+            vec3 vec3Uniform1;
+            vec3 vec3Uniform2;
+        } defaultUniformsBufferInstance;
+
+        out highp vec4 my_color;
+        void main() {
+            data[0] = vec4(defaultUniformsBufferInstance.vec3Uniform1.x, defaultUniformsBufferInstance.vec3Uniform1.y, defaultUniformsBufferInstance.vec3Uniform1.z, 1.0);
+            data[1] = vec4(defaultUniformsBufferInstance.vec3Uniform2.x, defaultUniformsBufferInstance.vec3Uniform2.y, defaultUniformsBufferInstance.vec3Uniform2.z, 1.0);
+            data[2] = vec4(vec3Uniform1.x, vec3Uniform1.y, vec3Uniform1.z, 1.0);
+            data[3] = vec4(vec3Uniform2.x, vec3Uniform2.y, vec3Uniform2.z, 1.0);
+            my_color = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
+
+    GLuint program = CompileProgram(essl31_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    GLint vec3Uniform1Location = glGetUniformLocation(program, "vec3Uniform1");
+    ASSERT_NE(vec3Uniform1Location, -1);
+    GLfloat vec3Uniform1Value[3] = {11.0f, 12.0f, 13.0f};
+    glUniform3fv(vec3Uniform1Location, 1, vec3Uniform1Value);
+
+    GLint vec3Uniform2Location = glGetUniformLocation(program, "vec3Uniform2");
+    ASSERT_NE(vec3Uniform2Location, -1);
+    GLfloat vec3Uniform2Value[3] = {14.0f, 15.0f, 16.0f};
+    glUniform3fv(vec3Uniform2Location, 1, vec3Uniform2Value);
+
+    std::vector<float> uboData;
+    uboData.insert(uboData.end(), {1.0f, 2.0f, 3.0f, 0.0f});
+    uboData.insert(uboData.end(), {4.0f, 5.0f, 6.0f, 0.0f});
+    GLBuffer ubo;
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, uboData.size() * sizeof(float), uboData.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint uboIndex = glGetUniformBlockIndex(program, "defaultUniforms");
+    EXPECT_NE(GL_INVALID_INDEX, uboIndex);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, uboData.size() * sizeof(float));
+    glUniformBlockBinding(program, uboIndex, 0);
+
+    constexpr GLint kBufferSize = 4 * 4 * sizeof(GLuint);
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kBufferSize);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    ASSERT_GL_NO_ERROR();
+
+    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    ASSERT(ptr);
+    float *data = static_cast<float *>(ptr);
+
+    ASSERT_EQ(data[0], 1);
+    ASSERT_EQ(data[1], 2);
+    ASSERT_EQ(data[2], 3);
+    ASSERT_EQ(data[3], 1);
+    ASSERT_EQ(data[4], 4);
+    ASSERT_EQ(data[5], 5);
+    ASSERT_EQ(data[6], 6);
+    ASSERT_EQ(data[7], 1);
+    ASSERT_EQ(data[8], 11);
+    ASSERT_EQ(data[9], 12);
+    ASSERT_EQ(data[10], 13);
+    ASSERT_EQ(data[11], 1);
+    ASSERT_EQ(data[12], 14);
+    ASSERT_EQ(data[13], 15);
+    ASSERT_EQ(data[14], 16);
+    ASSERT_EQ(data[15], 1);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glDeleteProgram(program);
+}
+
+// Test PackedSPIRVBlockEncoder works properly for array of struct default uniforms
+TEST_P(UniformTestES31, PackedEncoderWorksForArrayOfStructs)
+{
+    setWindowWidth(1);
+    setWindowHeight(1);
+
+    constexpr char kFragShader[] = R"(#version 310 es
+        precision mediump float;
+        layout(std140, binding=0) buffer debugBlock {
+            vec4 data[];
+        };
+
+        struct UniformStruct {
+            float floatMember;
+            vec2 vec2Member;
+            vec3 vec3Member;
+            vec4 vec4Member;
+        };
+
+        uniform UniformStruct uniformStructArray[3];
+
+        out highp vec4 my_color;
+        void main() {
+            for (int i = 0; i < 3; ++i) {
+                int offset = i * 3;
+                data[offset + 0] = vec4(uniformStructArray[i].floatMember, uniformStructArray[i].vec2Member, 0.0);
+                data[offset + 1] = vec4(uniformStructArray[i].vec3Member, 0.0);
+                data[offset + 2] = uniformStructArray[i].vec4Member;
+            }
+            my_color = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
+
+    GLuint program = CompileProgram(essl31_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    GLfloat expectedData[36] = {
+        0.0f,  1.0f,  2.0f,  0.0f, 3.0f,  4.0f,  5.0f,  0.0f, 6.0f,  7.0f,  8.0f,  9.0f,
+
+        10.0f, 11.0f, 12.0f, 0.0f, 13.0f, 14.0f, 15.0f, 0.0f, 16.0f, 17.0f, 18.0f, 19.0f,
+
+        20.0f, 21.0f, 22.0f, 0.0f, 23.0f, 24.0f, 25.0f, 0.0f, 26.0f, 27.0f, 28.0f, 29.0f,
+    };
+
+    for (int i = 0; i < 3; ++i)
+    {
+        std::string base = "uniformStructArray[" + std::to_string(i) + "].";
+        int indexOffset  = i * 12;
+
+        GLfloat floatVal          = expectedData[indexOffset];
+        GLint floatMemberLocation = glGetUniformLocation(program, (base + "floatMember").c_str());
+        ASSERT_NE(floatMemberLocation, -1);
+        glUniform1f(floatMemberLocation, floatVal);
+
+        GLfloat vec2Val[2]       = {expectedData[indexOffset + 1], expectedData[indexOffset + 2]};
+        GLint vec2MemberLocation = glGetUniformLocation(program, (base + "vec2Member").c_str());
+        ASSERT_NE(vec2MemberLocation, -1);
+        glUniform2fv(vec2MemberLocation, 1, vec2Val);
+
+        GLfloat vec3Val[3]       = {expectedData[indexOffset + 4], expectedData[indexOffset + 5],
+                                    expectedData[indexOffset + 6]};
+        GLint vec3MemberLocation = glGetUniformLocation(program, (base + "vec3Member").c_str());
+        ASSERT_NE(vec3MemberLocation, -1);
+        glUniform3fv(vec3MemberLocation, 1, vec3Val);
+
+        GLfloat vec4Val[4]       = {expectedData[indexOffset + 8], expectedData[indexOffset + 9],
+                                    expectedData[indexOffset + 10], expectedData[indexOffset + 11]};
+        GLint vec4MemberLocation = glGetUniformLocation(program, (base + "vec4Member").c_str());
+        glUniform4fv(vec4MemberLocation, 1, vec4Val);
+    }
+
+    constexpr GLint kBufferSize = 9 * 4 * sizeof(GLuint);
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kBufferSize);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    ASSERT_GL_NO_ERROR();
+
+    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    ASSERT(ptr);
+    float *data = static_cast<float *>(ptr);
+
+    for (int i = 0; i < 36; ++i)
+    {
+        ASSERT_EQ(data[i], expectedData[i]);
+    }
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glDeleteProgram(program);
+}
+
+// Test PackedSPIRVBlockEncoder works properly for array of nested struct default uniforms
+TEST_P(UniformTestES31, PackedEncoderWorksForArrayOfNestedStructs)
+{
+    setWindowWidth(1);
+    setWindowHeight(1);
+
+    constexpr char kFragShader[] = R"(#version 310 es
+        precision mediump float;
+        layout(std140, binding=0) buffer debugBlock {
+            vec4 data[];
+        };
+
+        struct InnerStruct {
+            float innerFloatMember;
+            vec2 innerVec2Member;
+            vec3 innerVec3Member;
+            vec4 innerVec4Member;
+        };
+
+        struct OuterStruct {
+            InnerStruct innerStructMember;
+            float outerFloatMember;
+            vec2 outerVec2Member;
+            vec3 outerVec3Member;
+            vec4 outerVec4Member;
+        };
+
+        uniform OuterStruct uniformNestedStructArray[3];
+
+        out highp vec4 my_color;
+        void main() {
+            for (int i = 0; i < 3; ++i) {
+                int offset = i * 6;
+                data[offset + 0] = vec4(uniformNestedStructArray[i].innerStructMember.innerFloatMember, uniformNestedStructArray[i].innerStructMember.innerVec2Member, 0.0);
+                data[offset + 1] = vec4(uniformNestedStructArray[i].innerStructMember.innerVec3Member, 0.0);
+                data[offset + 2] = uniformNestedStructArray[i].innerStructMember.innerVec4Member;
+                data[offset + 3] = vec4(uniformNestedStructArray[i].outerFloatMember, uniformNestedStructArray[i].outerVec2Member, 0.0);
+                data[offset + 4] = vec4(uniformNestedStructArray[i].outerVec3Member, 0.0);
+                data[offset + 5] = uniformNestedStructArray[i].outerVec4Member;
+            }
+            my_color = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
+
+    GLuint program = CompileProgram(essl31_shaders::vs::Simple(), kFragShader);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    GLfloat expectedData[72] = {
+        0.0f,  1.0f,  2.0f,  0.0f, 3.0f,  4.0f,  5.0f,  0.0f, 6.0f,  7.0f,  8.0f,  9.0f,
+
+        10.0f, 11.0f, 12.0f, 0.0f, 13.0f, 14.0f, 15.0f, 0.0f, 16.0f, 17.0f, 18.0f, 19.0f,
+
+        20.0f, 21.0f, 22.0f, 0.0f, 23.0f, 24.0f, 25.0f, 0.0f, 26.0f, 27.0f, 28.0f, 29.0f,
+
+        30.0f, 31.0f, 32.0f, 0.0f, 33.0f, 34.0f, 35.0f, 0.0f, 36.0f, 37.0f, 38.0f, 39.0f,
+
+        40.0f, 41.0f, 42.0f, 0.0f, 43.0f, 44.0f, 45.0f, 0.0f, 46.0f, 47.0f, 48.0f, 49.0f,
+
+        50.0f, 51.0f, 52.0f, 0.0f, 53.0f, 54.0f, 55.0f, 0.0f, 56.0f, 57.0f, 58.0f, 59.0f,
+    };
+
+    for (int i = 0; i < 3; ++i)
+    {
+        std::string base = "uniformNestedStructArray[" + std::to_string(i) + "].";
+        int indexOffset  = i * 24;
+
+        GLfloat innerStructFloatVal = expectedData[indexOffset];
+        GLint innerStructFloatLocation =
+            glGetUniformLocation(program, (base + "innerStructMember.innerFloatMember").c_str());
+        ASSERT_NE(innerStructFloatLocation, -1);
+        glUniform1f(innerStructFloatLocation, innerStructFloatVal);
+
+        GLfloat innerStructVec2Val[2] = {expectedData[indexOffset + 1],
+                                         expectedData[indexOffset + 2]};
+        GLint innerStructVec2Location =
+            glGetUniformLocation(program, (base + "innerStructMember.innerVec2Member").c_str());
+        ASSERT_NE(innerStructVec2Location, -1);
+        glUniform2fv(innerStructVec2Location, 1, innerStructVec2Val);
+
+        GLfloat innerStructVec3Val[3] = {expectedData[indexOffset + 4],
+                                         expectedData[indexOffset + 5],
+                                         expectedData[indexOffset + 6]};
+        GLint innerStructVec3Location =
+            glGetUniformLocation(program, (base + "innerStructMember.innerVec3Member").c_str());
+        ASSERT_NE(innerStructVec3Location, -1);
+        glUniform3fv(innerStructVec3Location, 1, innerStructVec3Val);
+
+        GLfloat innerStructVec4Val[4] = {
+            expectedData[indexOffset + 8], expectedData[indexOffset + 9],
+            expectedData[indexOffset + 10], expectedData[indexOffset + 11]};
+        GLint innerStructVec4Location =
+            glGetUniformLocation(program, (base + "innerStructMember.innerVec4Member").c_str());
+        ASSERT_NE(innerStructVec4Location, -1);
+        glUniform4fv(innerStructVec4Location, 1, innerStructVec4Val);
+
+        GLfloat floatVal = expectedData[indexOffset + 12];
+        GLint floatMemberLocation =
+            glGetUniformLocation(program, (base + "outerFloatMember").c_str());
+        ASSERT_NE(floatMemberLocation, -1);
+        glUniform1f(floatMemberLocation, floatVal);
+
+        GLfloat vec2Val[2] = {expectedData[indexOffset + 13], expectedData[indexOffset + 14]};
+        GLint vec2MemberLocation =
+            glGetUniformLocation(program, (base + "outerVec2Member").c_str());
+        ASSERT_NE(vec2MemberLocation, -1);
+        glUniform2fv(vec2MemberLocation, 1, vec2Val);
+
+        GLfloat vec3Val[3] = {expectedData[indexOffset + 16], expectedData[indexOffset + 17],
+                              expectedData[indexOffset + 18]};
+        GLint vec3MemberLocation =
+            glGetUniformLocation(program, (base + "outerVec3Member").c_str());
+        ASSERT_NE(vec3MemberLocation, -1);
+        glUniform3fv(vec3MemberLocation, 1, vec3Val);
+
+        GLfloat vec4Val[4] = {expectedData[indexOffset + 20], expectedData[indexOffset + 21],
+                              expectedData[indexOffset + 22], expectedData[indexOffset + 23]};
+        GLint vec4MemberLocation =
+            glGetUniformLocation(program, (base + "outerVec4Member").c_str());
+        glUniform4fv(vec4MemberLocation, 1, vec4Val);
+    }
+
+    constexpr GLint kBufferSize = 9 * 4 * sizeof(GLuint);
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kBufferSize);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    ASSERT_GL_NO_ERROR();
+
+    void *ptr = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    ASSERT(ptr);
+    float *data = static_cast<float *>(ptr);
+
+    for (int i = 0; i < 36; ++i)
+    {
+        ASSERT_EQ(data[i], expectedData[i]);
+    }
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glDeleteProgram(program);
 }
 
 // Test a uniform struct containing a non-square matrix and a boolean.
@@ -2866,14 +3720,13 @@ void main() {
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleUniformTest);
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(SimpleUniformUsageTest, ES2_WEBGPU());
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(UniformTest);
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(BasicUniformUsageTest, ES2_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(BasicUniformUsageTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(UniformTestES3);
-ANGLE_INSTANTIATE_TEST_ES3_AND(SimpleUniformUsageTestES3, ES3_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES3(SimpleUniformTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(UniformTestES31);

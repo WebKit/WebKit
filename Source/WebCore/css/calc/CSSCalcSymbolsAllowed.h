@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/CSSValueKeywords.h>
+#include "CSSValueKeywords.h"
 #include <optional>
 #include <wtf/HashMap.h>
 
@@ -43,8 +43,8 @@ public:
     CSSCalcSymbolsAllowed& operator=(CSSCalcSymbolsAllowed&&) = default;
     CSSCalcSymbolsAllowed(CSSCalcSymbolsAllowed&&) = default;
 
-    std::optional<CSSUnitType> get(CSSValueID) const;
-    bool contains(CSSValueID) const;
+    std::optional<CSSUnitType> NODELETE get(CSSValueID) const;
+    bool NODELETE contains(CSSValueID) const;
 
 private:
     // FIXME: A HashMap here is not ideal, as these tables are always constant expressions

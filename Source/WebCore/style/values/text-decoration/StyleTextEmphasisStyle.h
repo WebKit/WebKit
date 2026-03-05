@@ -62,7 +62,7 @@ struct TextEmphasisStyle {
     }
 
     TextEmphasisStyle(AtomString&& customMark)
-        : value { WTFMove(customMark) }
+        : value { WTF::move(customMark) }
     {
     }
 

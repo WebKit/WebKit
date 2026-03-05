@@ -143,7 +143,7 @@ void JSTestReadOnlyMapLikePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestReadOnlyMapLike::s_info = { "TestReadOnlyMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLike) };
 
 JSTestReadOnlyMapLike::JSTestReadOnlyMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReadOnlyMapLike>&& impl)
-    : JSDOMWrapper<TestReadOnlyMapLike>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestReadOnlyMapLike>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -327,7 +327,7 @@ void JSTestReadOnlyMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReadOnlyMapLike = static_cast<JSTestReadOnlyMapLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestReadOnlyMapLike->protectedWrapped().ptr(), jsTestReadOnlyMapLike);
+    uncacheWrapper(world, protect(jsTestReadOnlyMapLike->wrapped()).ptr(), jsTestReadOnlyMapLike);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -365,7 +365,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestReadOnlyMapLike>(impl.ptr());
 #endif
-    return createWrapper<TestReadOnlyMapLike>(globalObject, WTFMove(impl));
+    return createWrapper<TestReadOnlyMapLike>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestReadOnlyMapLike& impl)

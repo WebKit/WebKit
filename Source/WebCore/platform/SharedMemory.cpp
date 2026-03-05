@@ -44,7 +44,7 @@ bool isMemoryAttributionDisabled()
 }
 
 SharedMemoryHandle::SharedMemoryHandle(SharedMemoryHandle::Type&& handle, uint64_t size)
-    : m_handle(WTFMove(handle))
+    : m_handle(WTF::move(handle))
     , m_size(size)
 {
     RELEASE_ASSERT(!!m_handle);

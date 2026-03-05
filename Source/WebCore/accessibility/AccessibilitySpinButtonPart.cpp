@@ -76,4 +76,10 @@ bool AccessibilitySpinButtonPart::press()
     return true;
 }
 
+bool AccessibilitySpinButtonPart::computeIsIgnored() const
+{
+    RefPtr spinButton = dynamicDowncast<AccessibilitySpinButton>(m_parent.get());
+    return !spinButton || spinButton->computeIsIgnored();
+}
+
 } // namespace WebCore

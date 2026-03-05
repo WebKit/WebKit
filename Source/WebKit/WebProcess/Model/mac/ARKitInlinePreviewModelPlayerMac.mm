@@ -75,7 +75,7 @@ std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerMac::modelIdentifier
     return { };
 }
 
-static String& sharedModelElementCacheDirectory()
+static String& NODELETE sharedModelElementCacheDirectory()
 {
     static NeverDestroyed<String> sharedModelElementCacheDirectory;
     return sharedModelElementCacheDirectory;
@@ -199,7 +199,7 @@ void ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL(const URL& 
     };
 
     // Then, create the UIProcess preview.
-    page->sendWithAsyncReply(Messages::WebPageProxy::ModelElementCreateRemotePreview([m_inlinePreview uuid].UUIDString, m_size), WTFMove(completionHandler));
+    page->sendWithAsyncReply(Messages::WebPageProxy::ModelElementCreateRemotePreview([m_inlinePreview uuid].UUIDString, m_size), WTF::move(completionHandler));
 }
 
 void ARKitInlinePreviewModelPlayerMac::didCreateRemotePreviewForModelWithURL(const URL& url)
@@ -235,7 +235,7 @@ void ARKitInlinePreviewModelPlayerMac::didCreateRemotePreviewForModelWithURL(con
     };
 
     // Now that both the WebProcess and UIProcess previews are created, load the file into the remote preview.
-    page->sendWithAsyncReply(Messages::WebPageProxy::ModelElementLoadRemotePreview([m_inlinePreview uuid].UUIDString, URL::fileURLWithFileSystemPath(m_filePath)), WTFMove(completionHandler));
+    page->sendWithAsyncReply(Messages::WebPageProxy::ModelElementLoadRemotePreview([m_inlinePreview uuid].UUIDString, URL::fileURLWithFileSystemPath(m_filePath)), WTF::move(completionHandler));
 }
 
 void ARKitInlinePreviewModelPlayerMac::sizeDidChange(WebCore::LayoutSize size)
@@ -262,13 +262,13 @@ void ARKitInlinePreviewModelPlayerMac::sizeDidChange(WebCore::LayoutSize size)
         if (!drawingArea)
             return;
 
-        auto fenceSendRight = WTFMove(*result);
+        auto fenceSendRight = WTF::move(*result);
         drawingArea->addFence(fenceSendRight);
 
         [strongSelf->m_inlinePreview setFrameWithinFencedTransaction:CGRectMake(0, 0, size.width(), size.height())];
     };
 
-    page->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSizeDidChange(uuid, size), WTFMove(completionHandler));
+    page->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSizeDidChange(uuid, size), WTF::move(completionHandler));
 }
 
 void ARKitInlinePreviewModelPlayerMac::configureGraphicsLayer(WebCore::GraphicsLayer& graphicsLayer, WebCore::ModelPlayerGraphicsLayerConfiguration&&)

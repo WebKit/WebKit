@@ -27,8 +27,10 @@
 #pragma once
 
 #include <wtf/Deque.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/HashTraits.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -37,11 +39,15 @@ OBJC_CLASS NSEvent;
 OBJC_CLASS NSView;
 #endif
 
+namespace WebCore {
+enum class MouseButton : int8_t;
+}
+
 namespace WTR {
 
 class TestController;
 
-#if USE(LIBWPE)
+#if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
 class EventSenderProxyClient;
 #endif
 class EventSenderProxy {
@@ -91,7 +97,8 @@ public:
     void rawKeyUp(WKStringRef key, WKEventModifiers, unsigned location);
 
 #if PLATFORM(COCOA)
-    unsigned mouseButtonsCurrentlyDown() const { return m_mouseButtonsCurrentlyDown; }
+    unsigned mouseButtonsCurrentlyDown() const;
+    unsigned lastButtonDown() const { return m_lastButtonDown; }
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -147,15 +154,18 @@ private:
     double m_clickTime { 0 };
     WKPoint m_clickPosition { };
     WKEventMouseButton m_clickButton { kWKEventMouseButtonNoButton };
-    unsigned m_mouseButtonsCurrentlyDown { 0 };
 #if PLATFORM(COCOA)
     int m_eventNumber { 0 };
     RetainPtr<NSView> m_targetView;
+    WTF::HashMap<WebCore::MouseButton, bool, WTF::IntHash<WebCore::MouseButton>, WTF::StrongEnumHashTraits<WebCore::MouseButton>> m_mouseButtonsCurrentlyDown;
+    unsigned m_lastButtonDown { 0 };
+#else
+    unsigned m_mouseButtonsCurrentlyDown { 0 };
 #endif
 #if PLATFORM(GTK)
     bool m_hasPreciseDeltas { false };
 #endif
-#if USE(LIBWPE)
+#if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     std::unique_ptr<EventSenderProxyClient> m_client;
     uint32_t m_buttonState { 0 };
 #endif

@@ -29,25 +29,22 @@
 #include "ExtendableEvent.h"
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct CookieListItem;
-
 class ExtendableCookieChangeEvent final : public ExtendableEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ExtendableCookieChangeEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ExtendableCookieChangeEvent);
 public:
-    static Ref<ExtendableCookieChangeEvent> create(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted = IsTrusted::No);
+    using Init = ExtendableCookieChangeEventInit;
+
+    static Ref<ExtendableCookieChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
     ~ExtendableCookieChangeEvent();
 
-    const Vector<CookieListItem>& changed() const { return m_changed; }
-    const Vector<CookieListItem>& deleted() const { return m_deleted; }
+    const Vector<CookieListItem>& changed() const LIFETIME_BOUND { return m_changed; }
+    const Vector<CookieListItem>& deleted() const LIFETIME_BOUND { return m_deleted; }
 
 private:
-    ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted);
-
-    bool isExtendableCookieChangeEvent() const final { return true; }
+    ExtendableCookieChangeEvent(const AtomString& type, Init&&, IsTrusted);
 
     Vector<CookieListItem> m_changed;
     Vector<CookieListItem> m_deleted;
@@ -55,6 +52,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ExtendableCookieChangeEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isExtendableCookieChangeEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(ExtendableCookieChangeEvent)

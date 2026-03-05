@@ -61,7 +61,7 @@ private:
     {
     }
 
-    Air::StackSlot* m_slot;
+    SUPPRESS_FORWARD_DECL_MEMBER Air::StackSlot* m_slot;
 };
 
 } } // namespace JSC::B3

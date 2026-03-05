@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebHistoryItemClient);
+
 WebHistoryItemClient::WebHistoryItemClient(WebPage& page)
     : m_page(page)
 {

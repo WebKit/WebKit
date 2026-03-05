@@ -42,62 +42,62 @@ WKTypeID WKInspectorGetTypeID()
 
 WKPageRef WKInspectorGetPage(WKInspectorRef inspectorRef)
 {
-    return toAPI(toProtectedImpl(inspectorRef)->protectedInspectedPage().get());
+    return toAPI(protect(protect(toImpl(inspectorRef))->inspectedPage()).get());
 }
 
 bool WKInspectorIsConnected(WKInspectorRef inspectorRef)
 {
-    return toProtectedImpl(inspectorRef)->isConnected();
+    return protect(toImpl(inspectorRef))->isConnected();
 }
 
 bool WKInspectorIsVisible(WKInspectorRef inspectorRef)
 {
-    return toProtectedImpl(inspectorRef)->isVisible();
+    return protect(toImpl(inspectorRef))->isVisible();
 }
 
 bool WKInspectorIsFront(WKInspectorRef inspectorRef)
 {
-    return toProtectedImpl(inspectorRef)->isFront();
+    return protect(toImpl(inspectorRef))->isFront();
 }
 
 void WKInspectorConnect(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->connect();
+    protect(toImpl(inspectorRef))->connect();
 }
 
 void WKInspectorShow(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->show();
+    protect(toImpl(inspectorRef))->show();
 }
 
 void WKInspectorHide(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->hide();
+    protect(toImpl(inspectorRef))->hide();
 }
 
 void WKInspectorClose(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->close();
+    protect(toImpl(inspectorRef))->close();
 }
 
 void WKInspectorShowConsole(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->showConsole();
+    protect(toImpl(inspectorRef))->showConsole();
 }
 
 void WKInspectorShowResources(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->showResources();
+    protect(toImpl(inspectorRef))->showResources();
 }
 
 void WKInspectorShowMainResourceForFrame(WKInspectorRef inspectorRef, WKFrameRef frameRef)
 {
-    toProtectedImpl(inspectorRef)->showMainResourceForFrame(toProtectedImpl(frameRef)->frameID());
+    protect(toImpl(inspectorRef))->showMainResourceForFrame(protect(toImpl(frameRef))->frameID());
 }
 
 bool WKInspectorIsAttached(WKInspectorRef inspectorRef)
 {
-    return toProtectedImpl(inspectorRef)->isAttached();
+    return protect(toImpl(inspectorRef))->isAttached();
 }
 
 void WKInspectorAttach(WKInspectorRef inspectorRef)
@@ -108,27 +108,27 @@ void WKInspectorAttach(WKInspectorRef inspectorRef)
 
 void WKInspectorDetach(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->detach();
+    protect(toImpl(inspectorRef))->detach();
 }
 
 bool WKInspectorIsProfilingPage(WKInspectorRef inspectorRef)
 {
-    return toProtectedImpl(inspectorRef)->isProfilingPage();
+    return protect(toImpl(inspectorRef))->isProfilingPage();
 }
 
 void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->togglePageProfiling();
+    protect(toImpl(inspectorRef))->togglePageProfiling();
 }
 
 bool WKInspectorIsElementSelectionActive(WKInspectorRef inspectorRef)
 {
-    return toProtectedImpl(inspectorRef)->isElementSelectionActive();
+    return protect(toImpl(inspectorRef))->isElementSelectionActive();
 }
 
 void WKInspectorToggleElementSelection(WKInspectorRef inspectorRef)
 {
-    toProtectedImpl(inspectorRef)->toggleElementSelection();
+    protect(toImpl(inspectorRef))->toggleElementSelection();
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

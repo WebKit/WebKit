@@ -33,11 +33,11 @@ class WritingSuggestionData {
     WTF_MAKE_TZONE_ALLOCATED(WritingSuggestionData);
 public:
     WritingSuggestionData(String&& content, String&& currentText, uint64_t&& offset, String&& originalPrefix, String&& originalSuffix, bool supportsSuffix)
-        : m_content(WTFMove(content))
-        , m_currentText(WTFMove(currentText))
-        , m_originalPrefix(WTFMove(originalPrefix))
-        , m_originalSuffix(WTFMove(originalSuffix))
-        , m_offset(WTFMove(offset))
+        : m_content(WTF::move(content))
+        , m_currentText(WTF::move(currentText))
+        , m_originalPrefix(WTF::move(originalPrefix))
+        , m_originalSuffix(WTF::move(originalSuffix))
+        , m_offset(WTF::move(offset))
         , m_supportsSuffix(supportsSuffix)
     {
         ASSERT(!m_content.isEmpty());

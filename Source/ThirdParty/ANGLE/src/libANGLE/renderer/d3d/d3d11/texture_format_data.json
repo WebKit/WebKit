@@ -131,7 +131,7 @@
       "blue": 8,
       "alpha": 8
     },
-    "siwzzleFormat": "GL_RGBA8"
+    "swizzleFormat": "GL_RGBA8"
   },
   "B8G8R8A8_TYPELESS": {
     "texFormat": "DXGI_FORMAT_B8G8R8A8_TYPELESS",
@@ -792,11 +792,11 @@
     },
     "glInternalFormat": "GL_RGBA32UI"
   },
-  "B5G6R5_UNORM": {
+  "R5G6B5_UNORM": {
     "texFormat": "DXGI_FORMAT_B5G6R5_UNORM",
     "srvFormat": "DXGI_FORMAT_B5G6R5_UNORM",
     "rtvFormat": "DXGI_FORMAT_B5G6R5_UNORM",
-    "channels": "bgr",
+    "channels": "rgb",
     "componentType": "unorm",
     "bits": {
       "red": 5,

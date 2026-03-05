@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathCairo);
+
 Ref<PathCairo> PathCairo::create(std::span<const PathSegment> segments)
 {
     Ref pathCairo = adoptRef(*new PathCairo);
@@ -49,7 +51,7 @@ Ref<PathCairo> PathCairo::create(std::span<const PathSegment> segments)
 
 Ref<PathCairo> PathCairo::create(RefPtr<cairo_t>&& platformPath, RefPtr<PathStream>&& elementsStream)
 {
-    return adoptRef(*new PathCairo(WTFMove(platformPath), WTFMove(elementsStream)));
+    return adoptRef(*new PathCairo(WTF::move(platformPath), WTF::move(elementsStream)));
 }
 
 PlatformPathPtr PathCairo::emptyPlatformPath()
@@ -69,8 +71,8 @@ PathCairo::PathCairo()
 }
 
 PathCairo::PathCairo(RefPtr<cairo_t>&& platformPath, RefPtr<PathStream>&& elementsStream)
-    : m_platformPath(WTFMove(platformPath))
-    , m_elementsStream(WTFMove(elementsStream))
+    : m_platformPath(WTF::move(platformPath))
+    , m_elementsStream(WTF::move(elementsStream))
 {
     ASSERT(m_platformPath);
 }
@@ -106,7 +108,7 @@ Ref<PathImpl> PathCairo::copy() const
 
     auto elementsStream = m_elementsStream ? RefPtr<PathImpl> { m_elementsStream->copy() } : nullptr;
 
-    return PathCairo::create(WTFMove(platformPathCopy), downcast<PathStream>(WTFMove(elementsStream)));
+    return PathCairo::create(WTF::move(platformPathCopy), downcast<PathStream>(WTF::move(elementsStream)));
 }
 
 PlatformPathPtr PathCairo::platformPath() const
@@ -324,7 +326,7 @@ void PathCairo::add(PathRoundedRect roundedRect)
 void PathCairo::add(PathContinuousRoundedRect continuousRoundedRect)
 {
     // Continuous rounded rects are unavailable. Paint a normal rounded rect instead.
-    add(PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, FloatRoundedRect::Radii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
+    add(PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, CornerRadii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
 }
 
 void PathCairo::add(PathCloseSubpath)

@@ -34,7 +34,7 @@ namespace WebCore::ContentExtensions {
 
 void serializeString(Vector<uint8_t>&, const String&);
 String deserializeString(std::span<const uint8_t>);
-size_t stringSerializedLength(std::span<const uint8_t>);
+size_t NODELETE stringSerializedLength(std::span<const uint8_t>);
 
 } // namespace WebCore::ContentExtensions
 

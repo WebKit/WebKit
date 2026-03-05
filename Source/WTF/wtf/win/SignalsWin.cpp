@@ -54,7 +54,7 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
     size_t nextFree = numberOfHandlers[signalIndex];
     RELEASE_ASSERT(nextFree < maxNumberOfHandlers);
     SignalHandlerMemory* memory = &handlers[signalIndex][nextFree];
-    new (memory) SignalHandler(WTFMove(handler));
+    new (memory) SignalHandler(WTF::move(handler));
 
     numberOfHandlers[signalIndex]++;
 }
@@ -125,7 +125,7 @@ void addSignalHandler(Signal signal, SignalHandler&& handler)
 {
     Config::AssertNotFrozenScope assertScope;
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
-    handlers.add(signal, WTFMove(handler));
+    handlers.add(signal, WTF::move(handler));
 }
 
 void activateSignalHandlersFor(Signal signal)

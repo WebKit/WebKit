@@ -60,8 +60,6 @@ public:
 private:
     ImageFrameWorkQueue(BitmapImageSource&);
 
-    Ref<BitmapImageSource> protectedSource() const { return m_source.get().releaseNonNull(); }
-
     static const int BufferSize = 8;
     using RequestQueue = SynchronizedFixedQueue<Request, BufferSize>;
     using DecodeQueue = Deque<Request, BufferSize>;
@@ -71,7 +69,7 @@ private:
 
     Seconds minimumDecodingDurationForTesting() const { return m_minimumDecodingDurationForTesting; }
 
-    ThreadSafeWeakPtr<BitmapImageSource> m_source;
+    ThreadSafeWeakRef<BitmapImageSource> m_source;
 
     RefPtr<RequestQueue> m_requestQueue;
     DecodeQueue m_decodeQueue;

@@ -44,7 +44,7 @@ NS_DIRECT_MEMBERS
 - (instancetype)initWithWeakPtr:(WeakPtr<WebCore::CaptionUserPreferencesMediaAF>&&)weakPtr
 {
     if ((self = [super init]))
-        m_weakPtr = WTFMove(weakPtr);
+        m_weakPtr = WTF::move(weakPtr);
     return self;
 }
 

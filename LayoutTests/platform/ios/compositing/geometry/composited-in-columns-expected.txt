@@ -8,7 +8,7 @@
       (children 2
         (GraphicsLayer
           (offsetFromRenderer width=-5 height=-5)
-          (position 14.00 164.00)
+          (position 14.00 163.00)
           (bounds 210.00 60.00)
           (drawsContent 1)
           (children 1
@@ -21,7 +21,7 @@
         )
         (GraphicsLayer
           (offsetFromRenderer width=-5 height=-5)
-          (position 272.00 89.00)
+          (position 272.00 88.50)
           (bounds 210.00 60.00)
           (drawsContent 1)
           (children 1

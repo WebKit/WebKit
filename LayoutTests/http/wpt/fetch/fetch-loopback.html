@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+promise_test((t) => {
+    return fetch(location.origin + '/resources/gc.js', {
+        targetAddressSpace: 'loopback'
+    });
+}, 'fetch with targetAddressSpace set to "loopback" should succeed');
+
+</script>
+</body>
+</html>

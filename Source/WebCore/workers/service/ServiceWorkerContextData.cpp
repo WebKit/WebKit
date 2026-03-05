@@ -47,6 +47,7 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const &
         crossThreadCopy(scriptResourceMap),
         serviceWorkerPageIdentifier,
         crossThreadCopy(navigationPreloadState),
+        crossThreadCopy(routes)
     };
 }
 
@@ -54,20 +55,43 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() &&
 {
     return {
         jobDataIdentifier,
-        WTFMove(registration).isolatedCopy(),
+        WTF::move(registration).isolatedCopy(),
         serviceWorkerIdentifier,
-        WTFMove(script).isolatedCopy(),
-        WTFMove(certificateInfo).isolatedCopy(),
-        WTFMove(contentSecurityPolicy).isolatedCopy(),
-        WTFMove(crossOriginEmbedderPolicy).isolatedCopy(),
-        WTFMove(referrerPolicy).isolatedCopy(),
-        WTFMove(scriptURL).isolatedCopy(),
+        WTF::move(script).isolatedCopy(),
+        WTF::move(certificateInfo).isolatedCopy(),
+        WTF::move(contentSecurityPolicy).isolatedCopy(),
+        WTF::move(crossOriginEmbedderPolicy).isolatedCopy(),
+        WTF::move(referrerPolicy).isolatedCopy(),
+        WTF::move(scriptURL).isolatedCopy(),
         workerType,
         loadedFromDisk,
         lastNavigationWasAppInitiated,
-        crossThreadCopy(WTFMove(scriptResourceMap)),
+        crossThreadCopy(WTF::move(scriptResourceMap)),
         serviceWorkerPageIdentifier,
-        crossThreadCopy(WTFMove(navigationPreloadState))
+        crossThreadCopy(WTF::move(navigationPreloadState)),
+        crossThreadCopy(WTF::move(routes))
+    };
+}
+
+ServiceWorkerContextData ServiceWorkerContextData::copy() const
+{
+    return {
+        jobDataIdentifier,
+        registration,
+        serviceWorkerIdentifier,
+        script,
+        certificateInfo,
+        contentSecurityPolicy,
+        crossOriginEmbedderPolicy,
+        referrerPolicy,
+        scriptURL,
+        workerType,
+        loadedFromDisk,
+        lastNavigationWasAppInitiated,
+        scriptResourceMap,
+        serviceWorkerPageIdentifier,
+        navigationPreloadState,
+        map(routes, [](auto& route) { return route.copy(); })
     };
 }
 

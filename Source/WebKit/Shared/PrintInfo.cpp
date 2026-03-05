@@ -44,8 +44,8 @@ PrintInfo::PrintInfo(float pageSetupScaleFactor, float availablePaperWidth, floa
     , snapshotFirstPage(snapshotFirstPage)
 #endif
 #if PLATFORM(GTK)
-    , printSettings(WTFMove(printSettings))
-    , pageSetup(WTFMove(pageSetup))
+    , printSettings(WTF::move(printSettings))
+    , pageSetup(WTF::move(pageSetup))
     , printMode(printMode)
 #endif
 {

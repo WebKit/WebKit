@@ -1,3 +1,0 @@
-
-FAIL Ensure fetch() rejects null bytes in headers assert_unreached: Should have rejected: undefined Reached unreachable code
-

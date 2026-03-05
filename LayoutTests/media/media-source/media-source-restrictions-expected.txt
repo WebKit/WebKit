@@ -7,6 +7,7 @@ RUN(sourceBuffer.appendBuffer(initSegment))
 EVENT(updateend)
 RUN(sourceBuffer.appendBuffer(samples))
 EVENT(updateend)
-EVENT(pause)
+EXPECTED (errorName == 'NotAllowedError') OK
+EXPECTED (true == 'true') OK
 END OF TEST
 

@@ -14,7 +14,7 @@ var source = {
   length: 4
 };
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var result = TA.from(source);
 
   assert.sameValue(result.length, 4);
@@ -27,7 +27,7 @@ testWithTypedArrayConstructors(function(TA) {
 },
 floatArrayConstructors);
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var result = TA.from(source);
 
   assert.sameValue(result.length, 4);

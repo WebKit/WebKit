@@ -36,8 +36,8 @@ var (
 	outDir     = flag.String("out-dir", "", "The directory to place the script output, or a temporary directory if unspecified.")
 	numWorkers = flag.Int("num-workers", runtime.NumCPU(), "Runs the given number of workers")
 
-	moduleOverride    = flag.String("module-override", "", "The path to a file that overrides the MODULE.bazel file in the archve.")
-	presubmitOverride = flag.String("presubmit-override", "", "The path to a file that overrides the presubmit.yml file in the archve.")
+	moduleOverride    = flag.String("module-override", "", "The path to a file that overrides the MODULE.bazel file in the archive.")
+	presubmitOverride = flag.String("presubmit-override", "", "The path to a file that overrides the presubmit.yml file in the archive.")
 	skipArchiveCheck  = flag.Bool("skip-archive-check", false, "Skips checking the release tarball against the (potentially unstable) archive tarball.")
 	pipe              = flag.Bool("pipe", false, "Prints output suitable for writing to a pipe instead of a terminal")
 

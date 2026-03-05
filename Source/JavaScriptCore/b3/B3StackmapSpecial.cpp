@@ -45,7 +45,7 @@ StackmapSpecial::StackmapSpecial() = default;
 
 StackmapSpecial::~StackmapSpecial() = default;
 
-void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSetBuilder& usedRegisters)
+void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSet& usedRegisters)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -56,7 +56,7 @@ void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSetBuilder& 
     value->m_usedRegisters.merge(usedRegisters);
 }
 
-RegisterSetBuilder StackmapSpecial::extraClobberedRegs(Inst& inst)
+RegisterSet StackmapSpecial::extraClobberedRegs(Inst& inst)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -64,7 +64,7 @@ RegisterSetBuilder StackmapSpecial::extraClobberedRegs(Inst& inst)
     return value->lateClobbered();
 }
 
-RegisterSetBuilder StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
+RegisterSet StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -89,11 +89,6 @@ void StackmapSpecial::forEachArgImpl(
     for (unsigned i = 0; i < value->numChildren() - numIgnoredB3Args; ++i) {
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
-
-#if USE(JSVALUE32_64)
-        // LowerInt64 should have lowered this argument already.
-        RELEASE_ASSERT(child.value()->type() != Int64 || child.rep().isStack() || child.rep().isStackArgument());
-#endif
 
         Arg::Role role;
         switch (roleMode) {

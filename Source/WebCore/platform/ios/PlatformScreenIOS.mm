@@ -284,7 +284,7 @@ ScreenProperties collectScreenProperties()
         screenData.currentEDRHeadroom = [screen currentEDRHeadroom];
 #endif
 
-        screenProperties.screenDataMap.set(++displayID, WTFMove(screenData));
+        screenProperties.screenDataMap.set(++displayID, WTF::move(screenData));
 
         if (screen == [PAL::getUIScreenClassSingleton() mainScreen])
             screenProperties.primaryDisplayID = displayID;

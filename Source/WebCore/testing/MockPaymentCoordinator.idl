@@ -69,5 +69,7 @@
 
     [Conditional=APPLE_PAY_MERCHANT_CATEGORY_CODE] readonly attribute DOMString? merchantCategoryCode;
 
+    [Conditional=APPLE_PAY_DELEGATED_REQUEST] readonly attribute boolean? isDelegatedRequest;
+
     boolean installmentConfigurationReturnsNil();
 };

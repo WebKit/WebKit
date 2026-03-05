@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a PKCS8 RSA-OAEP key where headerSize equals keyData.size()");
+
+// This test verifies that importing a malformed PKCS8 key where the computed
+// headerSize exactly equals the buffer size is rejected gracefully.
+// After stripping the header, there would be zero bytes left for the key data.
+//
+// Key structure (22 bytes):
+// - Offset 0: 0x30 (SequenceMark)
+// - Offset 1: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 2-20: 19 placeholder bytes (Version + RSAOIDHeader + OctetStringMark)
+// - Offset 21: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+//
+// headerSize computation:
+// 1. headerSize = 1
+// 2. Check: 22 >= 2 (pass)
+// 3. headerSize = 1 + 1 + 3 + 15 + 1 = 21
+// 4. Check: 22 >= 22 (pass)
+// 5. headerSize = 21 + 1 = 22
+// 6. headerSize == keyData.size(), subspan(22) returns empty span
+// 7. CCRSACryptorImport fails with 0 bytes of key data
+
+var extractable = true;
+
+// 22 bytes: 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+var emptyKeyDataPkcs8 = hexStringToUint8Array("30000000000000000000000000000000000000000000");
+
+// Should reject with DataError, not crash
+shouldReject('crypto.subtle.importKey("pkcs8", emptyKeyDataPkcs8, {name: "RSA-OAEP", hash: "sha-256"}, extractable, ["decrypt"])');
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

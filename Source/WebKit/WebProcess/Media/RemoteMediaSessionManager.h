@@ -64,21 +64,19 @@ public:
 
     virtual ~RemoteMediaSessionManager();
 
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    void ref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::ref(); }
+    void deref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::deref(); }
 
 protected:
     RemoteMediaSessionManager(WebPage& topPage, WebPage& localPage);
 
     // Messages
-    void addSession(WebCore::PlatformMediaSessionInterface&) final;
-    void removeSession(WebCore::PlatformMediaSessionInterface&) final;
-    void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
     void clientShouldResumeAutoplaying(WebCore::MediaSessionIdentifier);
     void clientMayResumePlayback(WebCore::MediaSessionIdentifier, bool);
     void clientShouldSuspendPlayback(WebCore::MediaSessionIdentifier);
     void clientSetShouldPlayToPlaybackTarget(WebCore::MediaSessionIdentifier, bool);
     void clientDidReceiveRemoteControlCommand(WebCore::MediaSessionIdentifier, WebCore::PlatformMediaSessionRemoteControlCommandType, WebCore::PlatformMediaSessionRemoteCommandArgument);
+    void setCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier>);
 
 #if USE(AUDIO_SESSION)
     void setAudioSessionCategory(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
@@ -99,7 +97,17 @@ private:
     RemoteMediaSessionState fullSessionState(const WebCore::PlatformMediaSessionInterface&);
     void updateCachedSessionState(const WebCore::PlatformMediaSessionInterface&, RemoteMediaSessionState&);
 
+    void addSession(WebCore::PlatformMediaSessionInterface&) final;
+    void removeSession(WebCore::PlatformMediaSessionInterface&) final;
+    void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
+    void sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) final;
     void updateSessionState() final;
+    void sessionStateChanged(WebCore::PlatformMediaSessionInterface&) final;
+
+    void addRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions) final;
+    void removeRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions) final;
+    void resetRestrictions() final;
+
     RefPtr<WebCore::PlatformMediaSessionInterface> sessionWithIdentifier(WebCore::MediaSessionIdentifier);
 
 #if PLATFORM(COCOA)

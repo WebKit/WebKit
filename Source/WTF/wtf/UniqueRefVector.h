@@ -115,25 +115,25 @@ public:
 
     using Base::size;
 
-    iterator begin() { return iterator { Base::begin() }; }
-    iterator end() { return iterator { Base::end() }; }
-    const_iterator begin() const { return const_iterator { Base::begin() }; }
-    const_iterator end() const { return const_iterator { Base::end() }; }
-    reverse_iterator rbegin() { return reverse_iterator(end()); }
-    reverse_iterator rend() { return reverse_iterator(begin()); }
-    const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
-    const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
+    iterator begin() LIFETIME_BOUND { return iterator { Base::begin() }; }
+    iterator end() LIFETIME_BOUND { return iterator { Base::end() }; }
+    const_iterator begin() const LIFETIME_BOUND { return const_iterator { Base::begin() }; }
+    const_iterator end() const LIFETIME_BOUND { return const_iterator { Base::end() }; }
+    reverse_iterator rbegin() LIFETIME_BOUND { return reverse_iterator(end()); }
+    reverse_iterator rend() LIFETIME_BOUND { return reverse_iterator(begin()); }
+    const_reverse_iterator rbegin() const LIFETIME_BOUND { return const_reverse_iterator(end()); }
+    const_reverse_iterator rend() const LIFETIME_BOUND { return const_reverse_iterator(begin()); }
 
-    T& at(size_t i) { return Base::at(i).get(); }
-    const T& at(size_t i) const { return Base::at(i).get(); }
+    T& at(size_t i) LIFETIME_BOUND { return Base::at(i).get(); }
+    const T& at(size_t i) const LIFETIME_BOUND { return Base::at(i).get(); }
 
-    T& operator[](size_t i) { return Base::at(i).get(); }
-    const T& operator[](size_t i) const { return Base::at(i).get(); }
+    T& operator[](size_t i) LIFETIME_BOUND { return Base::at(i).get(); }
+    const T& operator[](size_t i) const LIFETIME_BOUND { return Base::at(i).get(); }
 
-    T& first() { return Base::at(0).get(); }
-    const T& first() const { return Base::at(0).get(); }
-    T& last() { return Base::at(Base::size() - 1).get(); }
-    const T& last() const { return Base::at(Base::size() - 1).get(); }
+    T& first() LIFETIME_BOUND { return Base::at(0).get(); }
+    const T& first() const LIFETIME_BOUND { return Base::at(0).get(); }
+    T& last() LIFETIME_BOUND { return Base::at(Base::size() - 1).get(); }
+    const T& last() const LIFETIME_BOUND { return Base::at(Base::size() - 1).get(); }
 
     template<typename MatchFunction> size_t findIf(NOESCAPE const MatchFunction&) const;
     template<typename MatchFunction> bool containsIf(NOESCAPE const MatchFunction& matches) const { return findIf(matches) != notFound; }

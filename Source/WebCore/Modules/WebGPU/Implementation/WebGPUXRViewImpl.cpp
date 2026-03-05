@@ -36,7 +36,7 @@
 namespace WebCore::WebGPU {
 
 XRViewImpl::XRViewImpl(WebGPUPtr<WGPUXRView>&& binding, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(binding))
+    : m_backing(WTF::move(binding))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }

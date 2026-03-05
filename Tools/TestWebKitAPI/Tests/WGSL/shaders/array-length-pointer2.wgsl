@@ -7,12 +7,10 @@ struct ad {
 
 fn y(t: ptr<storage, array<u32>, read_write>) {
     t[2083] = 9;
-    ac.af[2083] = 9;
 }
 
 fn x(t: ptr<storage, ad, read_write>) {
     t.af[2083] = 9;
-    ac.af[2083] = 9;
     y(&t.af);
 }
 

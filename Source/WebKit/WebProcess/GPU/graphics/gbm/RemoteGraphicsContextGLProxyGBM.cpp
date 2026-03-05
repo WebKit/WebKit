@@ -75,7 +75,7 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
         std::swap(m_drawingBuffer, m_displayBuffer);
 
     if (bufferAttributes)
-        m_displayBuffer = DMABufBuffer::create(bufferID, WTFMove(*bufferAttributes));
+        m_displayBuffer = DMABufBuffer::create(bufferID, WTF::move(*bufferAttributes));
 
     if (!m_displayBuffer)
         return;
@@ -83,7 +83,7 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
     if (contextAttributes().alpha)
         flags.add(TextureMapperFlags::ShouldBlend);
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer }, flags, WTFMove(fenceFD)));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer }, flags, WTF::move(fenceFD)));
 }
 
 Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)

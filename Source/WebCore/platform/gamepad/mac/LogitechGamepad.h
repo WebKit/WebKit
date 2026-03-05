@@ -34,6 +34,7 @@ namespace WebCore {
 
 class LogitechGamepad final : public HIDGamepad {
     WTF_MAKE_TZONE_ALLOCATED(LogitechGamepad);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LogitechGamepad);
 public:
     LogitechGamepad(HIDDevice&&, unsigned index);
 };

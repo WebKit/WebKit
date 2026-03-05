@@ -190,7 +190,7 @@ public:
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
         fragment.align();
-        insertImpl(InsertionPoint(instruction.offset(), Position::Before), includeBranch, WTFMove(writer));
+        insertImpl(InsertionPoint(instruction.offset(), Position::Before), includeBranch, WTF::move(writer));
     }
 
     template<class Function>
@@ -201,7 +201,7 @@ public:
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
         fragment.align(alignCongruent);
-        insertImpl(InsertionPoint(instruction.offset(), Position::After), includeBranch, WTFMove(writer));
+        insertImpl(InsertionPoint(instruction.offset(), Position::After), includeBranch, WTF::move(writer));
     }
 
     template<class Function>

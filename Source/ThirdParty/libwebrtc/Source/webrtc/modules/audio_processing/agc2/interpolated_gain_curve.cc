@@ -24,15 +24,6 @@
 
 namespace webrtc {
 
-constexpr std::array<float, kInterpolatedGainCurveTotalPoints>
-    InterpolatedGainCurve::approximation_params_x_;
-
-constexpr std::array<float, kInterpolatedGainCurveTotalPoints>
-    InterpolatedGainCurve::approximation_params_m_;
-
-constexpr std::array<float, kInterpolatedGainCurveTotalPoints>
-    InterpolatedGainCurve::approximation_params_q_;
-
 InterpolatedGainCurve::InterpolatedGainCurve(
     ApmDataDumper* apm_data_dumper,
     absl::string_view histogram_name_prefix)

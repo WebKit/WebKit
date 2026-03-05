@@ -31,7 +31,7 @@
 # Target 'wgsl-types' generates TypeDeclarations.h in the build tree.
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h
-    COMMAND ${RUBY_EXECUTABLE}
+    COMMAND ${Ruby_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/generator/main.rb
         ${CMAKE_CURRENT_SOURCE_DIR}/TypeDeclarations.rb
         ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h

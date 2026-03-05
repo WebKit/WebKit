@@ -38,17 +38,17 @@ public:
     struct FunctionParameter {
         String name;
         String type;
-        String defaultValue;
+        std::optional<String> defaultValue;
     };
 
-    String name() const;
+    String NODELETE name() const;
     Vector<FunctionParameter> getParameters() const;
     String returnType() const;
 
     String cssText() const final;
 
 private:
-    const StyleRuleFunction& styleRuleFunction() const;
+    const StyleRuleFunction& NODELETE styleRuleFunction() const;
 
     CSSFunctionRule(StyleRuleFunction&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Function; }

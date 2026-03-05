@@ -52,15 +52,13 @@ public:
     virtual ~AttachmentAssociatedElement() = default;
 
     virtual HTMLElement& asHTMLElement() = 0;
-    Ref<HTMLElement> asProtectedHTMLElement();
     virtual const HTMLElement& asHTMLElement() const = 0;
-    Ref<const HTMLElement> asProtectedHTMLElement() const;
 
     virtual AttachmentAssociatedElementType attachmentAssociatedElementType() const = 0;
 
     virtual void setAttachmentElement(Ref<HTMLAttachmentElement>&&);
 
-    RefPtr<HTMLAttachmentElement> attachmentElement() const;
+    HTMLAttachmentElement* attachmentElement() const;
     const String& attachmentIdentifier() const;
     void didUpdateAttachmentIdentifier();
 

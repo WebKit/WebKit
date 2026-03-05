@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LoadableTextTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LoadableTextTrack);
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
     : TextTrack(track.scriptExecutionContext(), kind, emptyAtom(), label, language, TrackElement)
@@ -64,7 +64,8 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
     // When src attribute is changed we need to flush all collected track data
     removeAllCues();
 
-    if (!m_trackElement)
+    RefPtr trackElement = m_trackElement.get();
+    if (!trackElement)
         return;
 
     // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
@@ -77,13 +78,15 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
     
     // 3. Asynchronously run the remaining steps, while continuing with whatever task
     // was responsible for creating the text track or changing the text track mode.
-    m_trackElement->scheduleTask([this, protectedThis = Ref { *this }](auto&) mutable {
+    trackElement->scheduleTask([this, protectedThis = Ref { *this }](auto&) mutable {
         SetForScope loadPending { m_loadPending, true, false };
 
-        if (m_loader)
-            m_loader->cancelLoad();
+        RefPtr loader = m_loader;
+        if (loader)
+            loader->cancelLoad();
 
-        if (!m_trackElement)
+        RefPtr trackElement = m_trackElement.get();
+        if (!trackElement)
             return;
 
         // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
@@ -91,23 +94,24 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
         // 4. Download: If URL is not the empty string, perform a potentially CORS-enabled fetch of URL, with the
         // mode being the state of the media element's crossorigin content attribute, the origin being the
         // origin of the media element's Document, and the default origin behaviour set to fail.
-        m_loader = makeUnique<TextTrackLoader>(static_cast<TextTrackLoaderClient&>(*this), m_trackElement->document());
-        if (!m_loader->load(m_url, *m_trackElement))
-            m_trackElement->didCompleteLoad(HTMLTrackElement::Failure);
+        loader = TextTrackLoader::create(static_cast<TextTrackLoaderClient&>(*this), protect(trackElement->document()).get());
+        m_loader = loader.copyRef();
+        if (!loader->load(m_url, *trackElement))
+            trackElement->didCompleteLoad(HTMLTrackElement::Failure);
     });
 }
 
 void LoadableTextTrack::newCuesAvailable(TextTrackLoader& loader)
 {
-    ASSERT_UNUSED(loader, m_loader.get() == &loader);
+    ASSERT(m_loader.get() == &loader);
 
     if (!m_cues)
-        m_cues = TextTrackCueList::create();    
+        lazyInitialize(m_cues, TextTrackCueList::create());
 
-    for (auto& newCue : m_loader->getNewCues()) {
+    for (auto& newCue : loader.getNewCues()) {
         newCue->setTrack(this);
         INFO_LOG(LOGIDENTIFIER, newCue.get());
-        m_cues->add(WTFMove(newCue));
+        m_cues->add(WTF::move(newCue));
     }
 
     TextTrack::newCuesAvailable(*m_cues);
@@ -117,32 +121,35 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader& loader, bool loadin
 {
     ASSERT_UNUSED(loader, m_loader.get() == &loader);
 
-    if (!m_trackElement)
+    RefPtr trackElement = m_trackElement.get();
+    if (!trackElement)
         return;
 
     INFO_LOG(LOGIDENTIFIER);
 
-    m_trackElement->didCompleteLoad(loadingFailed ? HTMLTrackElement::Failure : HTMLTrackElement::Success);
+    trackElement->didCompleteLoad(loadingFailed ? HTMLTrackElement::Failure : HTMLTrackElement::Success);
 }
 
 void LoadableTextTrack::newRegionsAvailable(TextTrackLoader& loader)
 {
-    ASSERT_UNUSED(loader, m_loader.get() == &loader);
-    for (auto& newRegion : m_loader->getNewRegions())
-        regions()->add(WTFMove(newRegion));
+    ASSERT(m_loader.get() == &loader);
+    RefPtr regions = this->regions();
+    for (auto& newRegion : loader.getNewRegions())
+        regions->add(WTF::move(newRegion));
 }
 
 void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)
 {
-    ASSERT_UNUSED(loader, m_loader.get() == &loader);
-    m_styleSheets = m_loader->getNewStyleSheets();
+    ASSERT(m_loader.get() == &loader);
+    m_styleSheets = loader.getNewStyleSheets();
 }
 
 AtomString LoadableTextTrack::id() const
 {
-    if (!m_trackElement)
+    RefPtr trackElement = m_trackElement.get();
+    if (!trackElement)
         return emptyAtom();
-    return m_trackElement->attributeWithoutSynchronization(idAttr);
+    return trackElement->attributeWithoutSynchronization(idAttr);
 }
 
 size_t LoadableTextTrack::trackElementIndex()
@@ -165,7 +172,8 @@ size_t LoadableTextTrack::trackElementIndex()
 
 bool LoadableTextTrack::isDefault() const
 {
-    return m_trackElement && m_trackElement->hasAttributeWithoutSynchronization(defaultAttr);
+    RefPtr trackElement = m_trackElement.get();
+    return trackElement && trackElement->hasAttributeWithoutSynchronization(defaultAttr);
 }
 
 } // namespace WebCore

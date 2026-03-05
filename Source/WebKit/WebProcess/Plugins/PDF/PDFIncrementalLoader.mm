@@ -62,12 +62,12 @@ public:
     ByteRangeRequest(uint64_t position, size_t count, DataRequestCompletionHandler&& completionHandler)
         : m_position(position)
         , m_count(count)
-        , m_completionHandler(WTFMove(completionHandler))
+        , m_completionHandler(WTF::move(completionHandler))
     {
     }
 
-    NetscapePlugInStreamLoader* streamLoader() { return m_streamLoader.get(); }
-    void setStreamLoader(NetscapePlugInStreamLoader* loader) { m_streamLoader = loader; }
+    NetscapePlugInStreamLoader* NODELETE streamLoader() { return m_streamLoader; }
+    void setStreamLoader(NetscapePlugInStreamLoader& loader) { m_streamLoader = loader; }
     void clearStreamLoader();
     void addData(std::span<const uint8_t> data) { m_accumulatedData.append(data); }
 
@@ -76,10 +76,10 @@ public:
     bool completeIfPossible(PDFIncrementalLoader&);
     void completeUnconditionally(PDFIncrementalLoader&);
 
-    uint64_t position() const { return m_position; }
-    size_t count() const { return m_count; }
+    uint64_t NODELETE position() const { return m_position; }
+    size_t NODELETE count() const { return m_count; }
 
-    const Vector<uint8_t>& accumulatedData() const { return m_accumulatedData; };
+    const Vector<uint8_t>& NODELETE accumulatedData() const { return m_accumulatedData; };
 
 private:
     uint64_t m_position { 0 };
@@ -149,27 +149,35 @@ void ByteRangeRequest::completeUnconditionally(PDFIncrementalLoader& loader)
 
 #pragma mark -
 
-class PDFPluginStreamLoaderClient : public ThreadSafeRefCounted<PDFPluginStreamLoaderClient>,
+class PDFPluginStreamLoaderClient final : public ThreadSafeRefCounted<PDFPluginStreamLoaderClient>,
     public NetscapePlugInStreamLoaderClient {
 public:
+    static Ref<PDFPluginStreamLoaderClient> create(PDFIncrementalLoader& loader)
+    {
+        return adoptRef(*new PDFPluginStreamLoaderClient(loader));
+    }
+
+    // NetscapePlugInStreamLoaderClient.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+    void willSendRequest(NetscapePlugInStreamLoader&, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) final;
+    void didReceiveResponse(NetscapePlugInStreamLoader&, const ResourceResponse&) final;
+    void didReceiveData(NetscapePlugInStreamLoader&, const SharedBuffer&) final;
+    void didFail(NetscapePlugInStreamLoader&, const ResourceError&) final;
+    void didFinishLoading(NetscapePlugInStreamLoader&) final;
+
+private:
     PDFPluginStreamLoaderClient(PDFIncrementalLoader& loader)
         : m_loader(loader)
     {
     }
 
-    void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) final;
-    void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) final;
-    void didReceiveData(NetscapePlugInStreamLoader*, const SharedBuffer&) final;
-    void didFail(NetscapePlugInStreamLoader*, const ResourceError&) final;
-    void didFinishLoading(NetscapePlugInStreamLoader*) final;
-
-private:
     ThreadSafeWeakPtr<PDFIncrementalLoader> m_loader;
 };
 
 #pragma mark -
 
-void PDFPluginStreamLoaderClient::willSendRequest(NetscapePlugInStreamLoader* streamLoader, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&)
+void PDFPluginStreamLoaderClient::willSendRequest(NetscapePlugInStreamLoader& streamLoader, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&)
 {
     ASSERT(isMainRunLoop());
 
@@ -178,10 +186,10 @@ void PDFPluginStreamLoaderClient::willSendRequest(NetscapePlugInStreamLoader* st
         return;
 
     // Redirections for range requests are unexpected.
-    loader->cancelAndForgetStreamLoader(*streamLoader);
+    loader->cancelAndForgetStreamLoader(streamLoader);
 }
 
-void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader* streamLoader, const ResourceResponse& response)
+void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader& streamLoader, const ResourceResponse& response)
 {
     ASSERT(isMainRunLoop());
 
@@ -189,13 +197,13 @@ void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader*
     if (!loader)
         return;
 
-    auto* request = loader->byteRangeRequestForStreamLoader(*streamLoader);
+    auto* request = loader->byteRangeRequestForStreamLoader(streamLoader);
     if (!request) {
-        loader->cancelAndForgetStreamLoader(*streamLoader);
+        loader->cancelAndForgetStreamLoader(streamLoader);
         return;
     }
 
-    ASSERT(request->streamLoader() == streamLoader);
+    ASSERT(request->streamLoader() == &streamLoader);
 
     // Range success! We'll expect to receive the data in future didReceiveData callbacks.
     if (response.httpStatusCode() == httpStatus206PartialContent)
@@ -206,7 +214,7 @@ void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader*
     // If the response wasn't a successful range response, we don't need this stream loader anymore.
     // This can happen, for example, if the server doesn't support range requests.
     // We'll still resolve the ByteRangeRequest later once enough of the full resource has loaded.
-    loader->cancelAndForgetStreamLoader(*streamLoader);
+    loader->cancelAndForgetStreamLoader(streamLoader);
 
     // The server might support range requests and explicitly told us this range was not satisfiable.
     // In this case, we can reject the ByteRangeRequest right away.
@@ -216,7 +224,7 @@ void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader*
     }
 }
 
-void PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* streamLoader, const SharedBuffer& data)
+void PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader& streamLoader, const SharedBuffer& data)
 {
     ASSERT(isMainRunLoop());
 
@@ -224,14 +232,14 @@ void PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* str
     if (!loader)
         return;
 
-    auto* request = loader->byteRangeRequestForStreamLoader(*streamLoader);
+    auto* request = loader->byteRangeRequestForStreamLoader(streamLoader);
     if (!request)
         return;
 
     request->addData(data.span());
 }
 
-void PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* streamLoader, const ResourceError&)
+void PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader& streamLoader, const ResourceError&)
 {
     ASSERT(isMainRunLoop());
 
@@ -244,10 +252,10 @@ void PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* streamLoad
             loader->removeOutstandingByteRangeRequest(*identifier);
     }
 
-    loader->forgetStreamLoader(*streamLoader);
+    loader->forgetStreamLoader(streamLoader);
 }
 
-void PDFPluginStreamLoaderClient::didFinishLoading(NetscapePlugInStreamLoader* streamLoader)
+void PDFPluginStreamLoaderClient::didFinishLoading(NetscapePlugInStreamLoader& streamLoader)
 {
     ASSERT(isMainRunLoop());
 
@@ -255,7 +263,7 @@ void PDFPluginStreamLoaderClient::didFinishLoading(NetscapePlugInStreamLoader* s
     if (!loader)
         return;
 
-    auto* request = loader->byteRangeRequestForStreamLoader(*streamLoader);
+    auto* request = loader->byteRangeRequestForStreamLoader(streamLoader);
     if (!request)
         return;
 
@@ -269,7 +277,7 @@ struct PDFIncrementalLoader::RequestData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RequestData);
 
     HashMap<ByteRangeRequestIdentifier, ByteRangeRequest> outstandingByteRangeRequests;
-    HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, ByteRangeRequestIdentifier> streamLoaderMap;
+    HashMap<Ref<WebCore::NetscapePlugInStreamLoader>, ByteRangeRequestIdentifier> streamLoaderMap;
 };
 
 #pragma mark -
@@ -283,11 +291,11 @@ Ref<PDFIncrementalLoader> PDFIncrementalLoader::create(PDFPluginBase& plugin)
 
 PDFIncrementalLoader::PDFIncrementalLoader(PDFPluginBase& plugin)
     : m_plugin(plugin)
-    , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
+    , m_streamLoaderClient(PDFPluginStreamLoaderClient::create(*this))
     , m_requestData(makeUniqueRef<RequestData>())
 {
     m_pdfThread = Thread::create("PDF document thread"_s, [protectedThis = Ref { *this }, this] mutable {
-        threadEntry(WTFMove(protectedThis));
+        threadEntry(WTF::move(protectedThis));
     });
 }
 
@@ -318,7 +326,7 @@ void PDFIncrementalLoader::receivedNonLinearizedPDFSentinel()
 
     for (auto iterator = m_requestData->streamLoaderMap.begin(); iterator != m_requestData->streamLoaderMap.end(); iterator = m_requestData->streamLoaderMap.begin()) {
         removeOutstandingByteRangeRequest(iterator->value);
-        cancelAndForgetStreamLoader(Ref { *iterator->key.get() });
+        cancelAndForgetStreamLoader(protect(iterator->key));
     }
 }
 
@@ -359,7 +367,7 @@ void PDFIncrementalLoader::dataSpanForRange(uint64_t position, size_t count, Che
     if (!plugin)
         return completionHandler({ });
 
-    plugin->dataSpanForRange(position, count, checkValidRanges, WTFMove(completionHandler));
+    plugin->dataSpanForRange(position, count, checkValidRanges, WTF::move(completionHandler));
 }
 
 void PDFIncrementalLoader::incrementalPDFStreamDidFinishLoading()
@@ -437,7 +445,7 @@ void PDFIncrementalLoader::getResourceBytesAtPosition(size_t count, off_t positi
     if (!plugin)
         return;
 
-    auto request = ByteRangeRequest(static_cast<uint64_t>(position), count, WTFMove(completionHandler));
+    auto request = ByteRangeRequest(static_cast<uint64_t>(position), count, WTF::move(completionHandler));
     if (request.completeIfPossible(*this))
         return;
 
@@ -447,7 +455,7 @@ void PDFIncrementalLoader::getResourceBytesAtPosition(size_t count, off_t positi
     }
 
     auto identifier = request.identifier();
-    m_requestData->outstandingByteRangeRequests.set(identifier, WTFMove(request));
+    m_requestData->outstandingByteRangeRequests.set(identifier, WTF::move(request));
 
 #if !LOG_DISABLED
     incrementalLoaderLog(makeString("Scheduling a stream loader for request "_s, identifier, " ("_s, count, " bytes at "_s, position, ')'));
@@ -467,8 +475,8 @@ void PDFIncrementalLoader::streamLoaderDidStart(ByteRangeRequestIdentifier reque
         return;
     }
 
-    iterator->value.setStreamLoader(streamLoader.get());
-    m_requestData->streamLoaderMap.set(WTFMove(streamLoader), requestIdentifier);
+    iterator->value.setStreamLoader(*streamLoader);
+    m_requestData->streamLoaderMap.set(streamLoader.releaseNonNull(), requestIdentifier);
 
 #if !LOG_DISABLED
     incrementalLoaderLog(makeString("There are now "_s, m_requestData->streamLoaderMap.size(), " stream loaders in flight"_s));
@@ -477,7 +485,7 @@ void PDFIncrementalLoader::streamLoaderDidStart(ByteRangeRequestIdentifier reque
 
 auto PDFIncrementalLoader::byteRangeRequestForStreamLoader(NetscapePlugInStreamLoader& loader) -> ByteRangeRequest*
 {
-    auto identifier = identifierForLoader(&loader);
+    auto identifier = identifierForLoader(loader);
     if (!identifier)
         return nullptr;
 
@@ -490,9 +498,9 @@ auto PDFIncrementalLoader::byteRangeRequestForStreamLoader(NetscapePlugInStreamL
 
 void PDFIncrementalLoader::forgetStreamLoader(NetscapePlugInStreamLoader& loader)
 {
-    auto identifier = identifierForLoader(&loader);
+    auto identifier = identifierForLoader(loader);
     if (!identifier) {
-        ASSERT(!m_requestData->streamLoaderMap.contains(&loader));
+        ASSERT(!m_requestData->streamLoaderMap.contains(loader));
         return;
     }
 
@@ -503,7 +511,7 @@ void PDFIncrementalLoader::forgetStreamLoader(NetscapePlugInStreamLoader& loader
         }
     }
 
-    m_requestData->streamLoaderMap.remove(&loader);
+    m_requestData->streamLoaderMap.remove(loader);
 
 #if !LOG_DISABLED
     incrementalLoaderLog(makeString("Forgot stream loader for range request "_s, *identifier, ". There are now "_s, m_requestData->streamLoaderMap.size(), " stream loaders remaining"_s));
@@ -517,7 +525,7 @@ void PDFIncrementalLoader::cancelAndForgetStreamLoader(NetscapePlugInStreamLoade
     streamLoader.cancel(streamLoader.cancelledError());
 }
 
-std::optional<ByteRangeRequestIdentifier> PDFIncrementalLoader::identifierForLoader(WebCore::NetscapePlugInStreamLoader* loader)
+std::optional<ByteRangeRequestIdentifier> PDFIncrementalLoader::identifierForLoader(WebCore::NetscapePlugInStreamLoader& loader)
 {
     return m_requestData->streamLoaderMap.get(loader);
 }
@@ -752,7 +760,7 @@ void PDFIncrementalLoader::transitionToMainThreadDocument()
     if (!plugin)
         return;
 
-    plugin->adoptBackgroundThreadDocument(WTFMove(m_backgroundThreadDocument));
+    plugin->adoptBackgroundThreadDocument(WTF::move(m_backgroundThreadDocument));
 
     // If the plugin was manually destroyed, the m_pdfThread might already be gone.
     if (RefPtr pdfThread = m_pdfThread) {
@@ -761,7 +769,7 @@ void PDFIncrementalLoader::transitionToMainThreadDocument()
     }
 }
 
-void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoader)
+void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& loader)
 {
     CGDataProviderDirectAccessRangesCallbacks dataProviderCallbacks {
         0,
@@ -770,10 +778,10 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
         dataProviderReleaseInfoCallback,
     };
 
-    auto scopeExit = makeScopeExit([protectedLoader = WTFMove(protectedLoader)] mutable {
+    auto scopeExit = makeScopeExit([loader = WTF::move(loader)] mutable {
         // Keep the PDFPlugin alive until the end of this function and the end
         // of the last main thread task submitted by this function.
-        callOnMainRunLoop([protectedLoader = WTFMove(protectedLoader)] { });
+        callOnMainRunLoop([loader = WTF::move(loader)] { });
     });
 
     RefPtr plugin = m_plugin.get();
@@ -804,7 +812,7 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
     BinarySemaphore firstPageSemaphore;
     auto firstPageQueue = WorkQueue::create("PDF first page work queue"_s);
 
-    [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->protectedDispatchQueue().get() completion:[&firstPageSemaphore, protectedThis = Ref { *this }] (NSIndexSet *) mutable {
+    [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:protect(firstPageQueue->dispatchQueue()).get() completion:[&firstPageSemaphore, protectedThis = Ref { *this }] (NSIndexSet *) mutable {
         callOnMainRunLoop([protectedThis] {
             protectedThis->transitionToMainThreadDocument();
         });
@@ -863,7 +871,7 @@ void PDFIncrementalLoader::logState(TextStream& ts)
 
     ts << "There are "_s << m_requestData->streamLoaderMap.size() << " active network stream loaders: "_s;
     for (auto& loader : m_requestData->streamLoaderMap.keys())
-        logStreamLoader(ts, *loader);
+        logStreamLoader(ts, loader);
     ts << '\n';
 }
 

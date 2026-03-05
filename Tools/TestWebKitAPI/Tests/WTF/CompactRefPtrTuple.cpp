@@ -193,7 +193,7 @@ TEST(WTF_CompactRefPtrTuple, Move)
     // Move constructor
     {
         CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
-        CompactRefPtrTuple<RefLogger, uint16_t> ptr2(WTFMove(ptr));
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2(WTF::move(ptr));
 
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, ptr.pointer());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr.type(), 0x00);
@@ -206,7 +206,7 @@ TEST(WTF_CompactRefPtrTuple, Move)
 
     {
         CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
-        CompactRefPtrTuple<RefLogger, uint16_t> ptr2 = WTFMove(ptr);
+        CompactRefPtrTuple<RefLogger, uint16_t> ptr2 = WTF::move(ptr);
 
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, ptr.pointer());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr.type(), 0x00);
@@ -222,7 +222,7 @@ TEST(WTF_CompactRefPtrTuple, Move)
         CompactRefPtrTuple<RefLogger, uint16_t> ptr(&a, 0xffff);
         CompactRefPtrTuple<RefLogger, uint16_t> ptr2;
 
-        ptr2 = WTFMove(ptr);
+        ptr2 = WTF::move(ptr);
 
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, ptr.pointer());
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr.type(), 0x00);

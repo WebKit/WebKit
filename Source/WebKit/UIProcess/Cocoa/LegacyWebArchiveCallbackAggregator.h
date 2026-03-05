@@ -35,7 +35,7 @@ class LegacyWebArchiveCallbackAggregator final : public ThreadSafeRefCounted<Leg
 public:
     static Ref<LegacyWebArchiveCallbackAggregator> create(WebCore::FrameIdentifier rootFrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&& frameArchives, CompletionHandler<void(RefPtr<WebCore::LegacyWebArchive>&&)>&& callback)
     {
-        return adoptRef(*new LegacyWebArchiveCallbackAggregator(rootFrameIdentifier, WTFMove(frameArchives), WTFMove(callback)));
+        return adoptRef(*new LegacyWebArchiveCallbackAggregator(rootFrameIdentifier, WTF::move(frameArchives), WTF::move(callback)));
     }
 
     RefPtr<WebCore::LegacyWebArchive> completeFrameArchive(WebCore::FrameIdentifier identifier)
@@ -61,14 +61,14 @@ public:
     void addResult(HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&& frameArchives)
     {
         for (auto&& [frameIdentifier, archive] : frameArchives)
-            m_frameArchives.set(frameIdentifier, WTFMove(archive));
+            m_frameArchives.set(frameIdentifier, WTF::move(archive));
     }
 
 private:
     LegacyWebArchiveCallbackAggregator(WebCore::FrameIdentifier rootFrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&& frameArchives, CompletionHandler<void(RefPtr<WebCore::LegacyWebArchive>&&)>&& callback)
         : m_rootFrameIdentifier(rootFrameIdentifier)
-        , m_frameArchives(WTFMove(frameArchives))
-        , m_callback(WTFMove(callback))
+        , m_frameArchives(WTF::move(frameArchives))
+        , m_callback(WTF::move(callback))
     {
     }
 

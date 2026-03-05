@@ -28,8 +28,8 @@
 #include <WebCore/CSSSelector.h>
 #include <iterator>
 #include <memory>
+#include <wtf/FixedVector.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -43,31 +43,17 @@ public:
     CSSSelectorList(const CSSSelectorList&);
     CSSSelectorList(CSSSelectorList&&) = default;
     explicit CSSSelectorList(MutableCSSSelectorList&&);
-    explicit CSSSelectorList(UniqueArray<CSSSelector>&& array)
-        : m_selectorArray(WTFMove(array)) { }
+    explicit CSSSelectorList(std::span<const CSSSelector* const>);
 
     static CSSSelectorList makeCopyingSimpleSelector(const CSSSelector&);
     static CSSSelectorList makeCopyingComplexSelector(const CSSSelector&);
     static CSSSelectorList makeJoining(const CSSSelectorList&, const CSSSelectorList&);
     static CSSSelectorList makeJoining(const Vector<const CSSSelectorList*>&);
 
-    bool isEmpty() const { return !m_selectorArray; }
-    const CSSSelector* first() const { return m_selectorArray.get(); }
-    const CSSSelector* selectorAt(size_t index) const
-    {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        return &m_selectorArray[index];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    }
-
-    size_t indexOfNextSelectorAfter(size_t index) const
-    {
-        const_iterator current = selectorAt(index);
-        ++current;
-        if (current == end())
-            return notFound;
-        return &*current - m_selectorArray.get();
-    }
+    bool isEmpty() const { return m_selectorArray.isEmpty(); }
+    const CSSSelector& first() const LIFETIME_BOUND { return m_selectorArray[0]; }
+    const CSSSelector& selectorAt(size_t index) const LIFETIME_BOUND { return m_selectorArray[index]; }
+    size_t indexOfSelector(const CSSSelector& selector) const { return m_selectorArray.offsetFromStart(&selector); }
 
     struct const_iterator {
         friend class CSSSelectorList;
@@ -90,7 +76,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             // Skip subparts of compound selectors.
             while (!m_ptr->isFirstInComplexSelector())
                 ++m_ptr;
-            m_ptr = m_ptr->isLastInSelectorList() ? nullptr : m_ptr + 1;
+            ++m_ptr;
             return *this;
         }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -105,26 +91,31 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     private:
         pointer m_ptr = nullptr;
     };
-    const_iterator begin() const LIFETIME_BOUND { return { first() }; };
-    const_iterator end() const LIFETIME_BOUND { return { }; }
+    const_iterator begin() const LIFETIME_BOUND { return { m_selectorArray.begin() }; };
+    const_iterator end() const LIFETIME_BOUND { return { m_selectorArray.end() }; }
 
     bool hasExplicitNestingParent() const;
-    bool hasOnlyNestingSelector() const;
+    bool NODELETE hasOnlyNestingSelector() const;
 
     String selectorsText() const;
     void buildSelectorsText(StringBuilder&) const;
 
-    unsigned componentCount() const;
-    unsigned listSize() const;
+    unsigned componentCount() const { return m_selectorArray.size(); }
+    unsigned size() const;
 
     CSSSelectorList& operator=(CSSSelectorList&&) = default;
 
     bool operator==(const CSSSelectorList&) const;
 
 private:
+    explicit CSSSelectorList(FixedVector<CSSSelector>&& array)
+        : m_selectorArray(WTF::move(array))
+    { }
+
     // End of a multipart selector is indicated by m_isLastInComplexSelector bit in the last item.
-    // End of the array is indicated by m_isLastInSelectorList bit in the last item.
-    UniqueArray<CSSSelector> m_selectorArray;
+    FixedVector<CSSSelector> m_selectorArray;
 };
+
+void add(Hasher&, const CSSSelectorList&);
 
 } // namespace WebCore

@@ -79,7 +79,7 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
     if (!embedShadowElement)
         return nullptr;
     
-    return embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
+    return embedShadowElement->createElementRenderer(WTF::move(style), insertionPosition);
 }
 
 void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
@@ -285,7 +285,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
 
 AtomString YouTubePluginReplacement::youTubeURL(const AtomString& srcString)
 {
-    URL srcURL = m_parentElement->protectedDocument()->completeURL(srcString);
+    URL srcURL = protect(m_parentElement->document())->completeURL(srcString);
     return youTubeURLFromAbsoluteURL(srcURL, srcString);
 }
 

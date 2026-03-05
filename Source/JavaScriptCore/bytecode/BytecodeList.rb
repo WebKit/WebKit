@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,8 @@
 # OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This file us consumed by generator/main.rb in order to generate Bytecodes.h/BytecodeStructs.h
 
 types [
     :VirtualRegister,
@@ -327,19 +329,6 @@ op :call_direct_eval,
         scope: VirtualRegister,
         lexicallyScopedFeatures: unsigned,
         valueProfile: unsigned,
-    },
-    metadata: {
-        callLinkInfo: DataOnlyCallLinkInfo,
-    }
-
-op :tail_call_forward_arguments,
-    args: {
-        dst: VirtualRegister,
-        callee: VirtualRegister,
-        thisValue?: VirtualRegister,
-        arguments?: VirtualRegister,
-        firstFree: VirtualRegister,
-        firstVarArg: int,
     },
     metadata: {
         callLinkInfo: DataOnlyCallLinkInfo,
@@ -1132,11 +1121,6 @@ op :debug,
         data: VirtualRegister,
     }
 
-op :end,
-    args: {
-        value: VirtualRegister,
-    }
-
 op :get_property_enumerator,
     args: {
         dst: VirtualRegister,
@@ -1146,13 +1130,6 @@ op :get_property_enumerator,
 op :unreachable
 
 op :create_rest,
-    args: {
-        dst: VirtualRegister,
-        arraySize: VirtualRegister,
-        numParametersToSkip: unsigned,
-    }
-
-op :get_rest_length,
     args: {
         dst: VirtualRegister,
         numParametersToSkip: unsigned,
@@ -1378,13 +1355,6 @@ op :identity_with_profile,
         bottomProfile: unsigned,
     }
 
-op :overrides_has_instance,
-    args: {
-        dst: VirtualRegister,
-        constructor: VirtualRegister,
-        hasInstanceValue: VirtualRegister,
-    }
-
 op :typeof,
     args: {
         dst: VirtualRegister,
@@ -1416,6 +1386,8 @@ op_group :ProfiledUnaryOp,
         operand: VirtualRegister,
         profileIndex: unsigned,
     }
+
+# If you add any bytecodes after bitnot make sure to update isOpcode
 
 end_section :Bytecode
 

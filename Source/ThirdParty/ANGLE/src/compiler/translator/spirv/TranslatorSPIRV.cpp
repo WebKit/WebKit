@@ -527,7 +527,6 @@ bool HasFramebufferFetch(const TExtensionBehavior &extBehavior,
            IsExtensionEnabled(extBehavior, TExtension::ARM_shader_framebuffer_fetch) ||
            IsExtensionEnabled(extBehavior,
                               TExtension::ARM_shader_framebuffer_fetch_depth_stencil) ||
-           IsExtensionEnabled(extBehavior, TExtension::NV_shader_framebuffer_fetch) ||
            (compileOptions.pls.type == ShPixelLocalStorageType::FramebufferFetch &&
             IsExtensionEnabled(extBehavior, TExtension::ANGLE_shader_pixel_local_storage));
 }
@@ -674,13 +673,16 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
     // - It dramatically simplifies future transformations w.r.t to samplers in structs, array of
     //   arrays of opaque types, atomic counters etc.
     // - Avoids the need for shader*ArrayDynamicIndexing Vulkan features.
-    UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
-                                       UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
-                                       UnsupportedFunctionArgs::AtomicCounter,
-                                       UnsupportedFunctionArgs::Image};
-    if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
+    if (!compileOptions.useIR)
     {
-        return false;
+        UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
+                                           UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
+                                           UnsupportedFunctionArgs::AtomicCounter,
+                                           UnsupportedFunctionArgs::Image};
+        if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
+        {
+            return false;
+        }
     }
 
     if (aggregateTypesUsedForUniforms > 0)
@@ -1037,7 +1039,8 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                     static_cast<const TVariable *>(getSymbolTable().findBuiltIn(
                         ImmutableString("gl_NumSamples"), getShaderVersion()));
                 TIntermTyped *numSamples = driverUniforms->getNumSamples();
-                if (!ReplaceVariableWithTyped(this, root, numSamplesVar, numSamples))
+                if (numSamplesVar &&
+                    !ReplaceVariableWithTyped(this, root, numSamplesVar, numSamples))
                 {
                     return false;
                 }
@@ -1052,10 +1055,14 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 }
             }
 
-            if (!EmulateDithering(this, compileOptions, root, &getSymbolTable(), specConst,
-                                  driverUniforms))
+            if (compileOptions.emulateDithering)
             {
-                return false;
+                // Inject dithering code in fragment shader iff "emulateDithering" is enabled
+                if (!EmulateDithering(this, compileOptions, root, &getSymbolTable(), specConst,
+                                      driverUniforms))
+                {
+                    return false;
+                }
             }
 
             break;

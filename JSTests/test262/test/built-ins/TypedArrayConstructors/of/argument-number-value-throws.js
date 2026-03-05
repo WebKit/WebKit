@@ -39,5 +39,5 @@ testWithTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(lastValue, "obj2");
-});
+}, null, ["passthrough"]);
 

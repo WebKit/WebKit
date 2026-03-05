@@ -119,7 +119,7 @@ RefPtr<Image> ShareableBitmap::createImage()
     if (!surface)
         return nullptr;
 
-    return BitmapImage::create(WTFMove(surface));
+    return BitmapImage::create(WTF::move(surface));
 }
 
 void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity&)

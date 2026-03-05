@@ -37,6 +37,8 @@
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeScrollingNodeDelegate.h"
+#include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -114,7 +116,7 @@ bool ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
         return false;
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
-        handleScrollPositionRequest(scrollingStateNode->requestedScrollData());
+        handleScrollPositionRequests(scrollingStateNode->requestedScrollData());
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::KeyboardScrollData))
         requestKeyboardScroll(scrollingStateNode->keyboardScrollData());
@@ -249,6 +251,13 @@ FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
     return ScrollableArea::scrollPositionFromOffset(maximumScrollOffset, toFloatSize(scrollOrigin()));
 }
 
+FloatPoint ScrollingTreeScrollingNode::clampedCurrentScrollOffset() const
+{
+    auto unconstrainedScrollPosition = currentScrollPosition();
+    auto clampedScrollPosition = clampScrollPosition(unconstrainedScrollPosition);
+    return ScrollableArea::scrollOffsetFromPosition(clampedScrollPosition, toFloatSize(scrollOrigin()));
+}
+
 bool ScrollingTreeScrollingNode::eventCanScrollContents(const PlatformWheelEvent& wheelEvent) const
 {
 #if PLATFORM(WPE) || PLATFORM(GTK)
@@ -311,6 +320,15 @@ void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
     scrollingTree()->setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
 }
 
+#if HAVE(RUBBER_BANDING)
+std::optional<RubberbandingState> ScrollingTreeScrollingNode::captureRubberbandingState() const
+{
+    if (m_delegate)
+        return m_delegate->captureRubberbandingState();
+    return std::nullopt;
+}
+#endif
+
 void ScrollingTreeScrollingNode::willStartAnimatedScroll()
 {
     scrollingTree()->scrollingTreeNodeWillStartAnimatedScroll(*this);
@@ -346,12 +364,6 @@ void ScrollingTreeScrollingNode::stopAnimatedScroll()
         m_delegate->stopAnimatedScroll();
 }
 
-void ScrollingTreeScrollingNode::didStopProgrammaticScroll()
-{
-    if (!isScrollSnapInProgress())
-        scrollingTree()->scrollingTreeNodeDidStopProgrammaticScroll(*this);
-}
-
 void ScrollingTreeScrollingNode::serviceScrollAnimation(MonotonicTime currentTime)
 {
     if (m_delegate)
@@ -374,46 +386,62 @@ void ScrollingTreeScrollingNode::requestKeyboardScroll(const RequestedKeyboardSc
     scrollingTree()->scrollingTreeNodeRequestsKeyboardScroll(scrollingNodeID(), scrollData);
 }
 
+void ScrollingTreeScrollingNode::handleScrollPositionRequests(const ScrollRequestData& requestedScrollData)
+{
+    for (auto& request : requestedScrollData)
+        handleScrollPositionRequest(request);
+}
+
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)
 {
-    stopAnimatedScroll();
+    RefPtr tree = scrollingTree();
+    Ref node = *this;
+    auto shouldFireScrollEnd = ShouldFireScrollEnd::No;
+
+    auto scopeExit = WTF::makeScopeExit([&] {
+        if (tree)
+            tree->didHandleScrollRequestForNode(node->scrollingNodeID(), requestedScrollData.requestType, node->currentScrollPosition(), shouldFireScrollEnd, requestedScrollData.identifier);
+    });
+
+#if HAVE(RUBBER_BANDING)
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingTreeScrollingNode::handleScrollPositionRequest nodeID=" << scrollingNodeID() << " requestType=" << static_cast<unsigned>(requestedScrollData.requestType) << " isRubberBanding=" << tree->isRubberBandInProgressForNode(scrollingNodeID()) << " restoredRubberbandingInProgress=" << restoredRubberbandingInProgress());
+
+    if (restoredRubberbandingInProgress()) {
+        LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingTreeScrollingNode::handleScrollPositionRequest - skipping because restored rubberbanding is in progress");
+        return;
+    }
+#endif
+
+    if (requestedScrollData.requestType != ScrollRequestType::ImplicitDeltaUpdate)
+        stopAnimatedScroll();
 
     if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll) {
-        ASSERT(!requestedScrollData.requestedDataBeforeAnimatedScroll);
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() - cancel animated scroll");
-        scrollingTree()->removePendingScrollAnimationForNode(scrollingNodeID());
+        tree->removePendingScrollAnimationForNode(scrollingNodeID());
         return;
     }
 
-    if (scrollingTree()->scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
+    auto handledByScrollingTree = scrollingTree()->scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData);
+    if (handledByScrollingTree != RequestsScrollHandling::Unhandled) {
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() with data " << requestedScrollData << " handled for delegated scrolling");
+        if (handledByScrollingTree == RequestsScrollHandling::Delayed)
+            scopeExit.release(); // The didHandleScrollRequestForNode() happens in RemoteScrollingCoordinatorProxy::adjustMainFrameDelegatedScrollPosition().
         return;
+    }
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() with data " << requestedScrollData);
 
-    if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
-        auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *requestedScrollData.requestedDataBeforeAnimatedScroll;
-
-        switch (requestType) {
-        case ScrollRequestType::PositionUpdate:
-        case ScrollRequestType::DeltaUpdate: {
-            auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition(), requestType, positionOrDeltaBeforeAnimatedScroll);
-            scrollTo(intermediatePosition, scrollType, clamping);
-            break;
-        }
-        case ScrollRequestType::CancelAnimatedScroll:
-            stopAnimatedScroll();
-            break;
-        }
-    }
-
     auto destinationPosition = requestedScrollData.destinationPosition(currentScrollPosition());
-    if (requestedScrollData.animated == ScrollIsAnimated::Yes) {
+    if (isAnimatedUpdate(requestedScrollData.requestType)) {
         startAnimatedScrollToPosition(destinationPosition);
         return;
     }
 
+    m_scrollbarRevealBehaviorForNextScrollbarUpdate = requestedScrollData.scrollbarRevealBehavior;
+    if (!isScrollSnapInProgress())
+        shouldFireScrollEnd = ShouldFireScrollEnd::Yes;
+
     scrollTo(destinationPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
-    didStopProgrammaticScroll();
 }
 
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
@@ -545,6 +573,11 @@ void ScrollingTreeScrollingNode::setCurrentHorizontalSnapPointIndex(std::optiona
 void ScrollingTreeScrollingNode::setCurrentVerticalSnapPointIndex(std::optional<unsigned> index)
 {
     m_currentVerticalSnapPointIndex = index;
+}
+
+ScrollbarRevealBehavior ScrollingTreeScrollingNode::takeScrollbarRevealBehaviorForNextScrollbarUpdate()
+{
+    return std::exchange(m_scrollbarRevealBehaviorForNextScrollbarUpdate, ScrollbarRevealBehavior::Default);
 }
 
 PlatformWheelEvent ScrollingTreeScrollingNode::eventForPropagation(const PlatformWheelEvent& wheelEvent) const

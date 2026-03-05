@@ -42,7 +42,7 @@ enum class NodeListInvalidationType : uint8_t {
     InvalidateOnHRefAttrChange,
     InvalidateOnAnyAttrChange,
 };
-constexpr auto numNodeListInvalidationTypes = enumToUnderlyingType(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
+constexpr auto numNodeListInvalidationTypes = std::to_underlying(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
 
 enum class DocumentCompatibilityMode : uint8_t {
     NoQuirksMode = 1,
@@ -69,6 +69,11 @@ enum class CanNavigateState : uint8_t {
     Unchecked,
     Unable,
     Able
+};
+
+enum class CanTriggerCrossDocumentViewTransition : bool {
+    No,
+    Yes
 };
 
 } // namespace WebCore

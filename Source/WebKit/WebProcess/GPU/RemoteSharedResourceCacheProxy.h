@@ -32,7 +32,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
-class RemoteVideoFrameObjectHeapProxy;
 
 // Class for maintaining view of GPU process RemoteSharedResourceCache state in Web process.
 // Thread-safe.
@@ -42,18 +41,8 @@ public:
     static Ref<RemoteSharedResourceCacheProxy> create();
     virtual ~RemoteSharedResourceCacheProxy();
 
-#if ENABLE(VIDEO)
-    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy();
-    Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy();
-#endif
-
-    void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
-
 private:
     RemoteSharedResourceCacheProxy();
-#if ENABLE(VIDEO)
-    const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
-#endif
 };
 
 }

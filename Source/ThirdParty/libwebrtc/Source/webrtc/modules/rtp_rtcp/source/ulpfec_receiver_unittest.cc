@@ -525,7 +525,7 @@ TEST_F(UlpfecReceiverTest, MediaWithPadding) {
   ForwardErrorCorrection::PacketList media_packets;
   PacketizeFrame(2, 0, &augmented_media_packets, &media_packets);
 
-  augmented_media_packets.front().SetPadding(/*padding_bytes=*/4);
+  augmented_media_packets.front().SetPadding(/*padding_size=*/4);
   media_packets.front()->data = augmented_media_packets.front().Buffer();
 
   std::list<ForwardErrorCorrection::Packet*> fec_packets;

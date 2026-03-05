@@ -29,6 +29,13 @@ WI.RuntimeObserver = class RuntimeObserver extends InspectorBackend.Dispatcher
 
     executionContextCreated(contextPayload)
     {
+        if (this._target instanceof WI.FrameTarget) {
+            let type = WI.ExecutionContext.typeFromPayload(contextPayload);
+            let executionContext = new WI.ExecutionContext(this._target, contextPayload.id, type, contextPayload.name);
+            this._target.addExecutionContext(executionContext);
+            return;
+        }
+
         WI.networkManager.executionContextCreated(contextPayload);
     }
 };

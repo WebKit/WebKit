@@ -54,7 +54,7 @@ void CompressedLazyValueProfileHolder::initializeData()
     auto data = makeUnique<LazyValueProfileHolder>();
     // Make sure the initialization of the holder happens before we expose the data to compiler threads.
     WTF::storeStoreFence();
-    m_data = WTFMove(data);
+    m_data = WTF::move(data);
 }
 
 LazyOperandValueProfile* CompressedLazyValueProfileHolder::addOperandValueProfile(const LazyOperandValueProfileKey& key)

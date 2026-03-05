@@ -148,6 +148,7 @@ PASS flex-wrap
 PASS float
 PASS flood-color
 PASS flood-opacity
+PASS flow-tolerance
 PASS font-family
 PASS font-feature-settings
 PASS font-kerning
@@ -194,7 +195,6 @@ PASS inset-block-start
 PASS inset-inline-end
 PASS inset-inline-start
 PASS isolation
-PASS item-tolerance
 PASS justify-content
 PASS justify-items
 PASS justify-self
@@ -260,6 +260,7 @@ PASS outline-style
 PASS outline-width
 PASS overflow-anchor
 PASS overflow-block
+PASS overflow-clip-margin
 PASS overflow-inline
 PASS overflow-wrap
 PASS overflow-x

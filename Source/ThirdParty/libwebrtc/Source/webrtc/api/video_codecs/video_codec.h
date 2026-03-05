@@ -143,6 +143,8 @@ class RTC_EXPORT VideoCodec {
 
   bool IsSinglecast() const { return numberOfSimulcastStreams <= 1; }
   bool IsSimulcast() const { return !IsSinglecast(); }
+  // Returns true if the codec is a mixed-codec simulcast.
+  bool IsMixedCodec() const;
 
   // Public variables. TODO(hta): Make them private with accessors.
   VideoCodecType codecType;

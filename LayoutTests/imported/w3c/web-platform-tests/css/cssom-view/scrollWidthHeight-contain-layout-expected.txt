@@ -1,0 +1,130 @@
+
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: hidden, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: hidden, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: hidden, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: hidden, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: hidden, padding: 0, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: grid, overflow: hidden, padding: 0, border: 0 assert_equals: scrollHeight should match for visible and hidden expected 2000 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: hidden, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: hidden, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: hidden, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: hidden, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: hidden, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: hidden, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: hidden, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: grid, overflow: hidden, padding: 0, border: 3px solid assert_equals: scrollHeight should match for visible and hidden expected 2000 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: hidden, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: hidden, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: hidden, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: hidden, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: hidden, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: hidden, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: hidden, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: hidden, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: hidden, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: hidden, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: hidden, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: hidden, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: hidden, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: hidden, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: hidden, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: hidden, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: hidden, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and hidden expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: hidden, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: auto, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: auto, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: auto, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: auto, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: auto, padding: 0, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: grid, overflow: auto, padding: 0, border: 0 assert_equals: scrollHeight should match for visible and auto expected 2000 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: auto, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: auto, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: auto, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: auto, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: auto, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: auto, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: auto, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: grid, overflow: auto, padding: 0, border: 3px solid assert_equals: scrollHeight should match for visible and auto expected 2000 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: auto, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: auto, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: auto, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: auto, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: auto, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: auto, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: auto, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: auto, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: auto, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: auto, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: auto, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: auto, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: auto, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: auto, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: auto, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: auto, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: auto, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and auto expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: auto, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: scroll, padding: 0, border: 0 assert_equals: scrollHeight should match for visible and scroll expected -15 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: scroll, padding: 0, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: scroll, padding: 0, border: 0 assert_equals: scrollHeight should match for visible and scroll expected -15 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: scroll, padding: 0, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: scroll, padding: 0, border: 0 assert_equals: scrollHeight should match for visible and scroll expected -15 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: scroll, padding: 0, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: scroll, padding: 0, border: 0 assert_equals: scrollHeight should match for visible and scroll expected 2000 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: scroll, padding: 0, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: scroll, padding: 0, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected -15 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: scroll, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: scroll, padding: 0, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected -15 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: scroll, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: scroll, padding: 0, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected -15 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: scroll, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: scroll, padding: 0, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected 2000 but got 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: scroll, padding: 0, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: scroll, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: scroll, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: scroll, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: scroll, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: scroll, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: scroll, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: scroll, padding: 2px, border: 0 assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: scroll, padding: 2px, border: 0
+FAIL scroll{Width,Height} should match with contain: layout for display: flex, overflow: scroll, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: scroll, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: scroll, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: scroll, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: scroll, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: scroll, padding: 2px, border: 3px solid
+FAIL scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: scroll, padding: 2px, border: 3px solid assert_equals: scrollHeight should match for visible and scroll expected 2004 but got 4
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: scroll, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: clip, padding: 0, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: clip, padding: 0, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: clip, padding: 2px, border: 0
+PASS scroll{Width,Height} should match with contain: layout for display: flex, overflow: clip, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: block, overflow: clip, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: flow-root, overflow: clip, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-block, overflow: clip, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-flex, overflow: clip, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: grid, overflow: clip, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline-grid, overflow: clip, padding: 2px, border: 3px solid
+PASS scroll{Width,Height} should match with contain: layout for display: inline, overflow: clip, padding: 2px, border: 3px solid
+

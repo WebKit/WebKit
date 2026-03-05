@@ -64,14 +64,14 @@ private:
     WebGPUIdentifier backing() const { return m_backing; }
     
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Error send(T&& message)
+    [[nodiscard]] IPC::Error send(T&& message)
     {
-        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->send(WTF::move(message), backing());
     }
     template<typename T, typename C>
-    WARN_UNUSED_RETURN std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
+    [[nodiscard]] std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().protectedStreamClientConnection()->sendWithAsyncReply(WTFMove(message), completionHandler, backing());
+        return protect(root().streamClientConnection())->sendWithAsyncReply(WTF::move(message), completionHandler, backing());
     }
 
     void compilationInfo(CompletionHandler<void(Ref<WebCore::WebGPU::CompilationInfo>&&)>&&) final;

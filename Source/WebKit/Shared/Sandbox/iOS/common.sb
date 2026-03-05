@@ -149,3 +149,20 @@
     (allow-for-development syscall-unix)
     (allow-for-development syscall-mach)
     (allow-for-development syscall-mig))
+
+#if USE(EXTENSIONKIT)
+(define (wrap-in-parenthesis x)
+    (if (null? x) "" (string-append "(" x ")")))
+
+(define (any-container-regex-with-suffix regexp suffix)
+    (let ((pattern (wrap-in-parenthesis regexp)))
+        (regex (string-append #"^/private/var/mobile/Containers/Data/PluginKitPlugin/[^/]+/" pattern suffix))))
+
+(define (container-regex-with-suffix regexp suffix)
+    (require-all
+        (container)     ; Limit to running app's container.
+        (any-container-regex-with-suffix regexp suffix)))
+
+(define (container-subpath subpath)
+    (container-regex-with-suffix subpath "(/|$)"))
+#endif

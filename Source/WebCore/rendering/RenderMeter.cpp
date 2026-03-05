@@ -32,10 +32,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMeter);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMeter);
 
 RenderMeter::RenderMeter(HTMLElement& element, RenderStyle&& style)
-    : RenderBlockFlow(Type::Meter, element, WTFMove(style))
+    : RenderBlockFlow(Type::Meter, element, WTF::move(style))
 {
     ASSERT(isRenderMeter());
 }
@@ -49,8 +49,8 @@ HTMLMeterElement* RenderMeter::meterElement() const
     if (auto* meterElement = dynamicDowncast<HTMLMeterElement>(*element()))
         return meterElement;
 
-    ASSERT(protectedElement()->shadowHost());
-    return downcast<HTMLMeterElement>(protectedElement()->shadowHost());
+    ASSERT(protect(element())->shadowHost());
+    return downcast<HTMLMeterElement>(protect(element())->shadowHost());
 }
 
 void RenderMeter::updateLogicalWidth()
@@ -66,11 +66,11 @@ RenderBox::LogicalExtentComputedValues RenderMeter::computeLogicalHeight(LayoutU
     auto computedValues = RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
     LayoutRect frame = frameRect();
     if (isHorizontalWritingMode())
-        frame.setHeight(computedValues.m_extent);
+        frame.setHeight(computedValues.extent);
     else
-        frame.setWidth(computedValues.m_extent);
+        frame.setWidth(computedValues.extent);
     auto frameSize = theme().meterSizeForBounds(*this, snappedIntRect(frame));
-    computedValues.m_extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
+    computedValues.extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
     return computedValues;
 }
 

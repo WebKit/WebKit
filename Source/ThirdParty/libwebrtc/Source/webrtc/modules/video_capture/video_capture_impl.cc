@@ -30,6 +30,7 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/rotate.h"
 
@@ -83,16 +84,17 @@ int32_t VideoCaptureImpl::RotationInDegrees(VideoRotation rotation,
   return -1;
 }
 
-VideoCaptureImpl::VideoCaptureImpl()
+VideoCaptureImpl::VideoCaptureImpl(Clock* clock)
     : _deviceUniqueId(nullptr),
       _requestedCapability(),
-      _lastProcessTimeNanos(TimeNanos()),
-      _lastFrameRateCallbackTimeNanos(TimeNanos()),
+      _lastProcessTimeNanos(clock->TimeInMicroseconds() * 1000),
+      _lastFrameRateCallbackTimeNanos(clock->TimeInMicroseconds() * 1000),
       _dataCallBack(nullptr),
       _rawDataCallBack(nullptr),
-      _lastProcessFrameTimeNanos(TimeNanos()),
+      _lastProcessFrameTimeNanos(clock->TimeInMicroseconds() * 1000),
       _rotateFrame(kVideoRotation_0),
-      apply_rotation_(false) {
+      apply_rotation_(false),
+      clock_(clock) {
   _requestedCapability.width = kDefaultWidth;
   _requestedCapability.height = kDefaultHeight;
   _requestedCapability.maxFPS = 30;
@@ -234,7 +236,7 @@ int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
       VideoFrame::Builder()
           .set_video_frame_buffer(buffer)
           .set_rtp_timestamp(0)
-          .set_timestamp_ms(TimeMillis())
+          .set_timestamp_ms(clock_->TimeInMilliseconds())
           .set_rotation(!apply_rotation_ ? _rotateFrame : kVideoRotation_0)
           .build();
   captureFrame.set_ntp_time_ms(captureTime);
@@ -292,7 +294,7 @@ void VideoCaptureImpl::UpdateFrameCount() {
       _incomingFrameTimesNanos[i + 1] = _incomingFrameTimesNanos[i];
     }
   }
-  _incomingFrameTimesNanos[0] = TimeNanos();
+  _incomingFrameTimesNanos[0] = clock_->TimeInMicroseconds() * 1000;
 }
 
 uint32_t VideoCaptureImpl::CalculateFrameRate(int64_t now_ns) {

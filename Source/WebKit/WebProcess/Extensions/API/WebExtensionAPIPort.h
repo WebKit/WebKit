@@ -53,7 +53,7 @@ public:
     WebExtensionContentWorldType targetContentWorldType() const { return m_targetContentWorldType; }
     WebExtensionPortChannelIdentifier channelIdentifier() const { return *m_channelIdentifier; }
     std::optional<WebPageProxyIdentifier> owningPageProxyIdentifier() const { return m_owningPageProxyIdentifier; }
-    const std::optional<WebExtensionMessageSenderParameters>& senderParameters() const { return m_senderParameters; }
+    const std::optional<WebExtensionMessageSenderParameters>& senderParameters() const LIFETIME_BOUND { return m_senderParameters; }
 
     void postMessage(WebFrame&, const String&, NSString **outExceptionString);
     void disconnect();

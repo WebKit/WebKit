@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<script src="../../resources/accessibility-helper.js"></script>
 <script src="../../resources/js-test.js"></script>
 </head>
 <body>
@@ -9,35 +10,35 @@
 <h2 tabindex=0 id="h2">H2</h2>
 
 <script>
+window.jsTestIsAsync = true;
+
 description("This tests that notifications are fired for focus changes");
 
 var focusChangeCount = 0;
-var rootElement = null;
-function focusCallback(notification) {
-    if (notification === "AXFocusChanged") {
+function notificationCallback(element, notificationName) {
+    if (notificationName === "AXFocusChanged") {
         focusChangeCount++;
-        if (focusChangeCount === 1)
-            document.getElementById("h1").focus();
+        if (focusChangeCount === 1) {
+            setTimeout(() => {
+                // Avoid dirtying style in the middle of AXObjectCache::performDeferredCacheUpdate by doing the next
+                // focus asynchronously.
+                document.getElementById("h1").focus();
+            }, 5);
+        }
 
         // We should get a total of 2 focus changes.
         if (focusChangeCount === 2) {
-           rootElement.removeNotificationListener();
-           finishJSTest();
+            accessibilityController.removeNotificationListener();
+            finishJSTest();
         }
     }
 }
 
 if (window.accessibilityController) {
     // Make sure AX gets turned on.
-    rootElement = accessibilityController.rootElement.childAtIndex(0);
-    jsTestIsAsync = true;
+    touchAccessibilityTree(accessibilityController.rootElement);
 
-    var addedNotification = rootElement.addNotificationListener(focusCallback);
-    if (!addedNotification) {
-        rootElement = accessibilityController.rootElement;
-        addedNotification = rootElement.addNotificationListener(focusCallback);
-    }
-
+    var addedNotification = accessibilityController.addNotificationListener(notificationCallback);
     shouldBe("addedNotification", "true");
 
     document.getElementById("h2").focus();

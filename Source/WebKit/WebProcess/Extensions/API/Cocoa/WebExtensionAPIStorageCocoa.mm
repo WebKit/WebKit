@@ -42,7 +42,7 @@ namespace WebKit {
 
 bool WebExtensionAPIStorage::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*)
 {
-    if (protectedExtensionContext()->isUnsupportedAPI(propertyPath(), propertyName)) [[unlikely]]
+    if (protect(extensionContext())->isUnsupportedAPI(propertyPath(), propertyName)) [[unlikely]]
         return false;
 
     if (propertyName == "session"_s)
@@ -107,17 +107,20 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
     return *m_onChanged;
 }
 
-void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& changesJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContextProxy::dispatchStorageChangedEvent(const Vector<String>& changesJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
 {
     if (!hasDOMWrapperWorld(contentWorldType))
         return;
 
-    RetainPtr changes = parseJSON(changesJSON.createNSString().get());
+    auto *changes = [NSDictionary dictionary];
+    for (auto& json : changesJSON)
+        changes = mergeDictionaries(changes, parseJSON(json.createNSString().get()));
+
     RetainPtr areaName = toAPIString(dataType).createNSString();
 
     enumerateFramesAndNamespaceObjects([&](WebFrame&, auto& namespaceObject) {
-        namespaceObject.storage().onChanged().invokeListenersWithArgument(changes.get(), areaName.get());
-        namespaceObject.storage().storageAreaForType(dataType).onChanged().invokeListenersWithArgument(changes.get(), areaName.get());
+        namespaceObject.storage().onChanged().invokeListenersWithArgument(changes, areaName.get());
+        namespaceObject.storage().storageAreaForType(dataType).onChanged().invokeListenersWithArgument(changes, areaName.get());
     }, toDOMWrapperWorld(contentWorldType));
 }
 

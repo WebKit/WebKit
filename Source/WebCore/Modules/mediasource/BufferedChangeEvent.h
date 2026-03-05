@@ -34,7 +34,7 @@ namespace WebCore {
 class TimeRanges;
 
 class BufferedChangeEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BufferedChangeEvent);
+    WTF_MAKE_TZONE_ALLOCATED(BufferedChangeEvent);
 public:
     ~BufferedChangeEvent();
 
@@ -45,23 +45,23 @@ public:
 
     static Ref<BufferedChangeEvent> create(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed)
     {
-        return adoptRef(*new BufferedChangeEvent(WTFMove(added), WTFMove(removed)));
+        return adoptRef(*new BufferedChangeEvent(WTF::move(added), WTF::move(removed)));
     }
 
     static Ref<BufferedChangeEvent> create(const AtomString& type, Init&& init)
     {
-        return adoptRef(*new BufferedChangeEvent(type, WTFMove(init)));
+        return adoptRef(*new BufferedChangeEvent(type, WTF::move(init)));
     }
 
-    RefPtr<TimeRanges> addedRanges() const;
-    RefPtr<TimeRanges> removedRanges() const;
+    RefPtr<TimeRanges> NODELETE addedRanges() const;
+    RefPtr<TimeRanges> NODELETE removedRanges() const;
 
 private:
     BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed);
     BufferedChangeEvent(const AtomString& type, Init&&);
 
-    RefPtr<TimeRanges> m_added;
-    RefPtr<TimeRanges> m_removed;
+    const RefPtr<TimeRanges> m_added;
+    const RefPtr<TimeRanges> m_removed;
 };
 
 } // namespace WebCore

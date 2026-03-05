@@ -132,7 +132,7 @@ void WebSWClientConnection::unregisterServiceWorkerInServer(ServiceWorkerIdentif
 
 void WebSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::ScheduleUnregisterJobInServer { ServiceWorkerJobIdentifier::generate(), registrationIdentifier, documentIdentifier }, [completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::ScheduleUnregisterJobInServer { ServiceWorkerJobIdentifier::generate(), registrationIdentifier, documentIdentifier }, [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
         if (!result.has_value())
             return completionHandler(result.error().toException());
         completionHandler(result.value());
@@ -144,7 +144,7 @@ void WebSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     for (auto& port : message.transferredPorts)
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
-    send(Messages::WebSWServerConnection::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), sourceIdentifier });
+    send(Messages::WebSWServerConnection::PostMessageToServiceWorker { destinationIdentifier, WTF::move(message), sourceIdentifier });
 }
 
 void WebSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, WebCore::ServiceWorkerClientData&& data, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
@@ -172,7 +172,7 @@ bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const Securi
 
 void WebSWClientConnection::setSWOriginTableSharedMemory(SharedMemory::Handle&& handle)
 {
-    m_swOriginTable->setSharedMemory(WTFMove(handle));
+    m_swOriginTable->setSharedMemory(WTF::move(handle));
 }
 
 void WebSWClientConnection::setSWOriginTableIsImported()
@@ -191,12 +191,12 @@ void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, co
         return;
     }
 
-    CompletionHandlerWithFinalizer<void(std::optional<ServiceWorkerRegistrationData>)> completionHandler(WTFMove(callback), [] (auto& callback) {
+    CompletionHandlerWithFinalizer<void(std::optional<ServiceWorkerRegistrationData>)> completionHandler(WTF::move(callback), [] (auto& callback) {
         callback(std::nullopt);
     });
-    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
+    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), topOrigin = WTF::move(topOrigin), clientURL]() mutable {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(completionHandler));
+            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTF::move(completionHandler));
     });
 }
 
@@ -206,27 +206,27 @@ void WebSWClientConnection::runOrDelayTaskForImport(Function<void()>&& task)
         task();
         return;
     }
-    m_tasksPendingOriginImport.append(WTFMove(task));
+    m_tasksPendingOriginImport.append(WTF::move(task));
 }
 
 void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::WhenRegistrationReady { topOrigin, clientURL }, [callback = WTFMove(callback)](auto result) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::WhenRegistrationReady { topOrigin, clientURL }, [callback = WTF::move(callback)](auto result) mutable {
         if (result)
-            callback(*WTFMove(result));
+            callback(*WTF::move(result));
     });
 }
 
 void WebSWClientConnection::setServiceWorkerClientIsControlled(ScriptExecutionContextIdentifier identifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (RefPtr loader = DocumentLoader::fromScriptExecutionContextIdentifier(identifier)) {
-        completionHandler(loader->setControllingServiceWorkerRegistration(WTFMove(data)));
+        completionHandler(loader->setControllingServiceWorkerRegistration(WTF::move(data)));
         return;
     }
 
     if (auto manager = WorkerScriptLoader::serviceWorkerDataManagerFromIdentifier(identifier)) {
         if (data.activeWorker) {
-            manager->setData(WTFMove(*data.activeWorker));
+            manager->setData(WTF::move(*data.activeWorker));
             completionHandler(true);
             return;
         }
@@ -244,9 +244,9 @@ void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, con
         return;
     }
 
-    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
+    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, callback = WTF::move(callback), topOrigin = WTF::move(topOrigin), clientURL]() mutable {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTFMove(callback));
+            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTF::move(callback));
     });
 }
 
@@ -263,12 +263,12 @@ void WebSWClientConnection::clear()
 
 void WebSWClientConnection::terminateWorkerForTesting(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::TerminateWorkerFromClient { identifier }, WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWServerConnection::TerminateWorkerFromClient { identifier }, WTF::move(callback));
 }
 
 void WebSWClientConnection::whenServiceWorkerIsTerminatedForTesting(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::WhenServiceWorkerIsTerminatedForTesting { identifier }, WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWServerConnection::WhenServiceWorkerIsTerminatedForTesting { identifier }, WTF::move(callback));
 }
 
 void WebSWClientConnection::updateThrottleState()
@@ -279,7 +279,7 @@ void WebSWClientConnection::updateThrottleState()
 
 void WebSWClientConnection::storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::StoreRegistrationsOnDisk { }, WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWServerConnection::StoreRegistrationsOnDisk { }, WTF::move(callback));
 }
 
 template<typename C, typename U> void callExceptionOrResultCallback(C&& callback, U&& valueOrException)
@@ -288,33 +288,33 @@ template<typename C, typename U> void callExceptionOrResultCallback(C&& callback
         callback(valueOrException.error().toException());
         return;
     }
-    callback(WTFMove(*valueOrException));
+    callback(WTF::move(*valueOrException));
 }
 
 void WebSWClientConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::SubscribeToPushService { registrationIdentifier, applicationServerKey }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), std::forward<decltype(result)>(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::SubscribeToPushService { registrationIdentifier, applicationServerKey }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), std::forward<decltype(result)>(result));
     });
 }
 
 void WebSWClientConnection::unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::PushSubscriptionIdentifier subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::UnsubscribeFromPushService { registrationIdentifier, subscriptionIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::UnsubscribeFromPushService { registrationIdentifier, subscriptionIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 
 void WebSWClientConnection::getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushSubscriptionCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::GetPushSubscription { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::GetPushSubscription { registrationIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 
 void WebSWClientConnection::getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushPermissionStateCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::GetPushPermissionState { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::GetPushPermissionState { registrationIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
         if (!result.has_value())
             return callback(result.error().toException());
         callback(static_cast<PushPermissionState>(*result));
@@ -326,7 +326,7 @@ void WebSWClientConnection::getNotifications(const URL& registrationURL, const S
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
-        sendWithAsyncReply(Messages::WebSWServerConnection::GetNotifications { registrationURL, tag }, [callback = WTFMove(callback)](auto&& result) mutable {
+        sendWithAsyncReply(Messages::WebSWServerConnection::GetNotifications { registrationURL, tag }, [callback = WTF::move(callback)](auto&& result) mutable {
             if (!result.has_value())
                 return callback(result.error().toException());
 
@@ -337,13 +337,13 @@ void WebSWClientConnection::getNotifications(const URL& registrationURL, const S
     }
 #endif
 
-    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::GetNotifications { registrationURL, tag }, WTFMove(callback));
+    protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::WebProcessProxy::GetNotifications { registrationURL, tag }, WTF::move(callback));
 }
 #endif
 
 void WebSWClientConnection::enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::EnableNavigationPreload { registrationIdentifier }, [callback = WTFMove(callback)](auto&& error) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::EnableNavigationPreload { registrationIdentifier }, [callback = WTF::move(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
         callback({ });
@@ -352,7 +352,7 @@ void WebSWClientConnection::enableNavigationPreload(WebCore::ServiceWorkerRegist
 
 void WebSWClientConnection::disableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::DisableNavigationPreload { registrationIdentifier }, [callback = WTFMove(callback)](auto&& error) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::DisableNavigationPreload { registrationIdentifier }, [callback = WTF::move(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
         callback({ });
@@ -361,7 +361,7 @@ void WebSWClientConnection::disableNavigationPreload(WebCore::ServiceWorkerRegis
 
 void WebSWClientConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String&& headerValue, ExceptionOrVoidCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::SetNavigationPreloadHeaderValue { registrationIdentifier, headerValue }, [callback = WTFMove(callback)](auto&& error) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::SetNavigationPreloadHeaderValue { registrationIdentifier, headerValue }, [callback = WTF::move(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
         callback({ });
@@ -370,51 +370,51 @@ void WebSWClientConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWork
 
 void WebSWClientConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrNavigationPreloadStateCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::GetNavigationPreloadState { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::GetNavigationPreloadState { registrationIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 
 void WebSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::StartBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier, requests, options }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::StartBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier, requests, options }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 
 void WebSWClientConnection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::BackgroundFetchInformation { registrationIdentifier, backgroundFetchIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::BackgroundFetchInformation { registrationIdentifier, backgroundFetchIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 
 void WebSWClientConnection::backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier registrationIdentifier, BackgroundFetchIdentifiersCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::BackgroundFetchIdentifiers { registrationIdentifier }, WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWServerConnection::BackgroundFetchIdentifiers { registrationIdentifier }, WTF::move(callback));
 }
 
 void WebSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, AbortBackgroundFetchCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::AbortBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier }, WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWServerConnection::AbortBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier }, WTF::move(callback));
 }
 
 void WebSWClientConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, RetrieveRecordsOptions&& recordOptions, MatchBackgroundFetchCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::MatchBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier, recordOptions }, WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWServerConnection::MatchBackgroundFetch { registrationIdentifier, backgroundFetchIdentifier, recordOptions }, WTF::move(callback));
 }
 
 void WebSWClientConnection::retrieveRecordResponse(BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::RetrieveRecordResponse { recordIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::RetrieveRecordResponse { recordIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 
 void WebSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseBodyCallback&& callback)
 {
     auto identifier = RetrieveRecordResponseBodyCallbackIdentifier::generate();
-    m_retrieveRecordResponseBodyCallbacks.add(identifier, WTFMove(callback));
+    m_retrieveRecordResponseBodyCallbacks.add(identifier, WTF::move(callback));
     send(Messages::WebSWServerConnection::RetrieveRecordResponseBody { recordIdentifier, identifier });
 }
 
@@ -425,7 +425,7 @@ void WebSWClientConnection::notifyRecordResponseBodyChunk(RetrieveRecordResponse
         return;
     auto buffer = data.unsafeBuffer();
     bool isDone = !buffer;
-    iterator->value(WTFMove(buffer));
+    iterator->value(WTF::move(buffer));
     if (isDone)
         m_retrieveRecordResponseBodyCallbacks.remove(iterator);
 }
@@ -433,7 +433,7 @@ void WebSWClientConnection::notifyRecordResponseBodyChunk(RetrieveRecordResponse
 void WebSWClientConnection::notifyRecordResponseBodyEnd(RetrieveRecordResponseBodyCallbackIdentifier identifier, WebCore::ResourceError&& error)
 {
     if (auto callback = m_retrieveRecordResponseBodyCallbacks.take(identifier))
-        callback(makeUnexpected(WTFMove(error)));
+        callback(makeUnexpected(WTF::move(error)));
 }
 
 static RefPtr<Page> pageFromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier clientIdentifier)
@@ -455,14 +455,14 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
         return;
     }
 
-    WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)] () mutable {
-        auto doFocusSteps = [callback = WTFMove(callback)] (auto* document) mutable {
+    WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTF::move(callback)] () mutable {
+        auto doFocusSteps = [callback = WTF::move(callback)] (auto* document) mutable {
             if (!document) {
                 callback({ });
                 return;
             }
 
-            document->eventLoop().queueTask(TaskSource::Networking, [document = RefPtr { document }, callback = WTFMove(callback)] () mutable {
+            document->eventLoop().queueTask(TaskSource::Networking, [document = RefPtr { document }, callback = WTF::move(callback)] () mutable {
                 RefPtr frame = document ? document->frame() : nullptr;
                 RefPtr page = frame ? frame->page() : nullptr;
 
@@ -484,7 +484,7 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
                 callback({ });
                 return;
             };
-            loader->whenDocumentIsCreated(WTFMove(doFocusSteps));
+            loader->whenDocumentIsCreated(WTF::move(doFocusSteps));
             return;
         }
 
@@ -494,7 +494,7 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
 
 void WebSWClientConnection::addCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::AddCookieChangeSubscriptions { registrationIdentifier, subscriptions }, [callback = WTFMove(callback)](auto&& error) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::AddCookieChangeSubscriptions { registrationIdentifier, subscriptions }, [callback = WTF::move(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
         callback({ });
@@ -503,7 +503,7 @@ void WebSWClientConnection::addCookieChangeSubscriptions(WebCore::ServiceWorkerR
 
 void WebSWClientConnection::removeCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::RemoveCookieChangeSubscriptions { registrationIdentifier, subscriptions }, [callback = WTFMove(callback)](auto&& error) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::RemoveCookieChangeSubscriptions { registrationIdentifier, subscriptions }, [callback = WTF::move(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
         callback({ });
@@ -512,8 +512,8 @@ void WebSWClientConnection::removeCookieChangeSubscriptions(WebCore::ServiceWork
 
 void WebSWClientConnection::cookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::CookieChangeSubscriptions { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+    sendWithAsyncReply(Messages::WebSWServerConnection::CookieChangeSubscriptions { registrationIdentifier }, [callback = WTF::move(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTF::move(callback), WTF::move(result));
     });
 }
 

@@ -29,6 +29,7 @@
 #include "BitmapImageSource.h"
 #include "Logging.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -66,7 +67,7 @@ void ImageFrameAnimator::destroyDecodedData(bool destroyAll)
     // only hang on to one frame at a time.
     static constexpr unsigned LargeAnimationCutoff = 30 * 1024 * 1024;
 
-    RefPtr source = m_source.get();
+    Ref source = m_source.get();
     if (source->decodedSize() < LargeAnimationCutoff)
         return;
 
@@ -89,7 +90,7 @@ void ImageFrameAnimator::timerFired()
 {
     clearTimer();
 
-    RefPtr source = m_source.get();
+    Ref source = m_source.get();
 
     // Don't advance to nextFrame if the next frame is being decoded.
     if (source->isPendingDecodingAtIndex(nextFrameIndex(), m_nextFrameSubsamplingLevel, m_nextFrameOptions))
@@ -124,7 +125,7 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
     if (m_frameTimer)
         return true;
 
-    RefPtr source = m_source.get();
+    Ref source = m_source.get();
 
     // ImageObserver may disallow animation.
     if (!source->isAnimationAllowed())

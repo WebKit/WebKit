@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/img-represents-image-size-before-partially-available.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/img-represents-nothing-style-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/img-sizes-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/input-image-content-expected.html

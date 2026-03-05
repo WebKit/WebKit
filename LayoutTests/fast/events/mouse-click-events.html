@@ -16,9 +16,9 @@ var eventLog = "";
 
 function appendEventLog() {
     if (window.eventSender) {
-        eventLog += event.type + "(" + event.button + ") ";
+        eventLog += event.type + "(button: " + event.button + " which: " + event.which + ") ";
     } else {
-        debug(event.type + "(" + event.button + ")");
+        debug(event.type + "(button: " + event.button + " which: " + event.which + ")");
     }
 }
 
@@ -68,10 +68,11 @@ onload = async () => {
 
     if (window.eventSender) {
         await eventSender.asyncMouseMoveTo(10, 10);
-        await testEvents("Left Mouse Button", 0, "mousedown(0) mouseup(0) click(0) mousedown(0) mouseup(0) click(0) dblclick(0) ");
-        await testEvents("Middle Mouse Button", 1, "mousedown(1) mouseup(1) auxclick(1) mousedown(1) mouseup(1) auxclick(1) ");
-        await testEvents("Right Mouse Button", 2, "mousedown(2) mouseup(2) auxclick(2) mousedown(2) mouseup(2) auxclick(2) ");
-        await testEvents("4th Mouse Button", 3, "mousedown(1) mouseup(1) auxclick(1) mousedown(1) mouseup(1) auxclick(1) ");
+        await testEvents("Left Mouse Button", 0, "mousedown(button: 0 which: 1) mouseup(button: 0 which: 1) click(button: 0 which: 1) mousedown(button: 0 which: 1) mouseup(button: 0 which: 1) click(button: 0 which: 1) dblclick(button: 0 which: 1) ");
+        await testEvents("Middle Mouse Button", 1, "mousedown(button: 1 which: 2) mouseup(button: 1 which: 2) auxclick(button: 1 which: 2) mousedown(button: 1 which: 2) mouseup(button: 1 which: 2) auxclick(button: 1 which: 2) ");
+        await testEvents("Right Mouse Button", 2, "mousedown(button: 2 which: 3) mouseup(button: 2 which: 3) auxclick(button: 2 which: 3) mousedown(button: 2 which: 3) mouseup(button: 2 which: 3) auxclick(button: 2 which: 3) ");
+        await testEvents("Back Mouse Button", 3, "mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) ");
+        await testEvents("Forward Mouse Button", 4, "mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) ");
     }
     testRunner?.notifyDone();
 }

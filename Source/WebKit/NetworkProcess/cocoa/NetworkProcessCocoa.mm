@@ -27,6 +27,7 @@
 #import "NetworkProcess.h"
 
 #import "ArgumentCodersCocoa.h"
+#import "CodeSigning.h"
 #import "CookieStorageUtilsCF.h"
 #import "Logging.h"
 #import "NetworkCache.h"
@@ -48,8 +49,10 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/cocoa/AuditToken.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 
 #if ENABLE(CONTENT_FILTERING)
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
@@ -113,7 +116,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     [NSURLCache setSharedURLCache:urlCache.get()];
 
 #if ENABLE(CONTENT_FILTERING)
-    auto auditToken = protectedParentProcessConnection()->getAuditToken();
+    auto auditToken = protect(parentProcessConnection())->getAuditToken();
     ASSERT(auditToken);
     if (auditToken && [NEFilterSource respondsToSelector:@selector(setDelegation:)])
         [NEFilterSource setDelegation:&auditToken.value()];
@@ -135,6 +138,24 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     }
 #endif // ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 
+#if ENABLE(INHERITANCE_OF_NETWORK_ACCESS_FROM_UI_PROCESS)
+    if (auto auditToken = protect(parentProcessConnection())->getAuditToken()) {
+        bool isNetworkAccessBlockedInUIProcess = (1 == sandbox_check_by_audit_token(*auditToken, "network-outbound", SANDBOX_FILTER_PATH, "/private/var/run/mDNSResponder"));
+
+        OSObjectPtr xpcConnection = protect(parentProcessConnection())->xpcConnection();
+        auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection.get());
+        if (!isPlatformBinary && isNetworkAccessBlockedInUIProcess) {
+            RELEASE_LOG(Process, "Setting sandbox state flag to block network access");
+            if (auto auditTokenForSelf = WTF::auditTokenForSelf()) {
+                if (!sandbox_enable_state_flag("BlockNetworkAccess", *auditTokenForSelf))
+                    RELEASE_LOG_ERROR(Process, "Unable to set sandbox state flag to block network access");
+            } else
+                RELEASE_LOG_FAULT(Process, "Unable to get audit token to block network access");
+        }
+    } else
+        RELEASE_LOG_FAULT(Process, "Unable to get audit token for UI process to block network access");
+#endif
+
     increaseFileDescriptorLimit();
 }
 
@@ -154,7 +175,7 @@ std::optional<audit_token_t> NetworkProcess::sourceApplicationAuditToken() const
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection())
         return { };
-    return parentProcessConnection()->getAuditToken();
+    return protect(parentProcessConnection())->getAuditToken();
 #else
     return { };
 #endif
@@ -164,7 +185,7 @@ HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID)
 {
     HashSet<String> hostNames;
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
-        for (NSString *host in networkSession->protectedHSTSStorage().get().nonPreloadedHosts)
+        for (NSString *host in protect(networkSession->hstsStorage()).get().nonPreloadedHosts)
             hostNames.add(host);
     }
     return hostNames;
@@ -174,7 +195,7 @@ void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const
 {
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
         for (auto& hostName : hostNames)
-            [networkSession->protectedHSTSStorage() resetHSTSForHost:hostName.createNSString().get()];
+            [protect(networkSession->hstsStorage()).get() resetHSTSForHost:hostName.createNSString().get()];
     }
 }
 
@@ -183,7 +204,7 @@ void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedS
     NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
     RetainPtr date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID)))
-        [networkSession->protectedHSTSStorage() resetHSTSHostsSinceDate:date.get()];
+        [protect(networkSession->hstsStorage()).get() resetHSTSHostsSinceDate:date.get()];
 }
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
@@ -192,8 +213,8 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
         m_clearCacheDispatchGroup = adoptOSObject(dispatch_group_create());
 
     RetainPtr group = m_clearCacheDispatchGroup.get();
-    dispatch_group_async(group.get(), mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-        auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    dispatch_group_async(group.get(), mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, modifiedSince, completionHandler = WTF::move(completionHandler)] () mutable {
+        auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
         forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {
             if (RefPtr cache = session.cache())
                 cache->clear(modifiedSince, [aggregator] () { });
@@ -211,16 +232,16 @@ void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifie
 
 void NetworkProcess::flushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    platformFlushCookies(sessionID, WTFMove(completionHandler));
+    platformFlushCookies(sessionID, WTF::move(completionHandler));
 }
 
 void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(cookieStorage);
-    [cookieStorage _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
+    [cookieStorage _saveCookies:makeBlockPtr([completionHandler = WTF::move(completionHandler)]() mutable {
         // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
-        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
     }).get()];
 }
 
@@ -232,7 +253,7 @@ void NetworkProcess::platformFlushCookies(PAL::SessionID sessionID, CompletionHa
         return completionHandler();
 
     RetainPtr cookieStorage = networkStorageSession->nsCookieStorage();
-    saveCookies(cookieStorage.get(), WTFMove(completionHandler));
+    saveCookies(cookieStorage.get(), WTF::move(completionHandler));
 }
 
 const String& NetworkProcess::uiProcessBundleIdentifier() const
@@ -246,7 +267,7 @@ const String& NetworkProcess::uiProcessBundleIdentifier() const
 #if PLATFORM(IOS_FAMILY)
 void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID, Seconds period, CompletionHandler<void()>&& completionHandler)
 {
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
     if (CheckedPtr session = networkSession(sessionID))
         session->storageManager().setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
 }
@@ -268,7 +289,7 @@ void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pa
     if (!session)
         return;
 
-    session->setProxyConfigData(WTFMove(proxyConfigurations));
+    session->setProxyConfigData(WTF::move(proxyConfigurations));
 }
 #endif // HAVE(NW_PROXY_CONFIG)
 

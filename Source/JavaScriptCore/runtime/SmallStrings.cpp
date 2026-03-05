@@ -75,6 +75,8 @@ void SmallStrings::initializeCommonStrings(VM& vm)
     initialize(&vm, m_timedOutString, "timed-out"_s);
     initialize(&vm, m_okString, "ok"_s);
     initialize(&vm, m_sentinelString, "$"_s);
+    initialize(&vm, m_fulfilledString, "fulfilled"_s);
+    initialize(&vm, m_rejectedString, "rejected"_s);
 
     setIsInitialized(true);
 }
@@ -107,6 +109,8 @@ void SmallStrings::visitStrongReferences(Visitor& visitor)
     visitor.appendUnbarriered(m_timedOutString);
     visitor.appendUnbarriered(m_okString);
     visitor.appendUnbarriered(m_sentinelString);
+    visitor.appendUnbarriered(m_fulfilledString);
+    visitor.appendUnbarriered(m_rejectedString);
 }
 
 template void SmallStrings::visitStrongReferences(AbstractSlotVisitor&);

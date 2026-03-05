@@ -78,7 +78,7 @@ void StopWatch::stop()
     m_stopTime = MonotonicTime::now();
 }
 
-long StopWatch::getElapsedMS()
+long NODELETE StopWatch::getElapsedMS()
 {
     return (m_stopTime - m_startTime).millisecondsAs<long>();
 }

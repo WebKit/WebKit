@@ -71,7 +71,7 @@ void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const Re
     if (sharedBuffer) {
         Ref contiguousBuffer = sharedBuffer->makeContiguous();
         auto contiguousBufferSpan = contiguousBuffer->span();
-        data = API::Data::createWithoutCopying(contiguousBufferSpan, [contiguousBuffer = WTFMove(contiguousBuffer)] { });
+        data = API::Data::createWithoutCopying(contiguousBufferSpan, [contiguousBuffer = WTF::move(contiguousBuffer)] { });
     }
 
     m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData), m_client.base.clientInfo);

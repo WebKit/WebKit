@@ -33,6 +33,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/CStringView.h>
 
+#if USE(GSTREAMER_GL)
+#include "GraphicsTypesGL.h"
+#endif
+
 namespace WTF {
 class MediaTime;
 class URL;
@@ -51,10 +55,7 @@ using TrackID = uint64_t;
 template<typename MappedArg>
 using TrackIDHashMap = HashMap<TrackID, MappedArg, WTF::IntHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>>;
 
-#define GST_CHECK_VERSION_FULL(major, minor, micro, nano) \
-    (GST_CHECK_VERSION(major, minor, micro) && (GST_VERSION_NANO >= nano))
-
-#if !GST_CHECK_VERSION_FULL(1, 27, 2, 1)
+#if !GST_CHECK_VERSION(1, 27, 90)
 inline bool gst_check_version(guint major, guint minor, guint micro)
 {
     guint currentMajor, currentMinor, currentMicro, currentNano;
@@ -81,7 +82,7 @@ inline bool gst_check_version(guint major, guint minor, guint micro)
 #define GST_AUDIO_CAPS_TYPE_PREFIX  "audio/"_s
 #define GST_TEXT_CAPS_TYPE_PREFIX   "text/"_s
 
-WARN_UNUSED_RETURN GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, CStringView name, GstPad* target);
+[[nodiscard]] GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, CStringView name, GstPad* target);
 #if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(const GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride, double& frameRate, PlatformVideoColorSpace&);
 std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
@@ -92,17 +93,18 @@ bool isProtocolAllowed(const WTF::URL&);
 CStringView capsMediaType(const GstCaps*);
 std::optional<TrackID> getStreamIdFromPad(const GRefPtr<GstPad>&);
 std::optional<TrackID> getStreamIdFromStream(const GRefPtr<GstStream>&);
-std::optional<TrackID> parseStreamId(StringView stringId);
+std::optional<TrackID> parseStreamId(const String& stringId);
 bool doCapsHaveType(const GstCaps*, ASCIILiteral);
 bool areEncryptedCaps(const GstCaps*);
 Vector<String> extractGStreamerOptionsFromCommandLine();
 void setGStreamerOptionsFromUIProcess(Vector<String>&&);
+bool ensureGStreamerInitializedNonWebProcess();
 bool ensureGStreamerInitialized();
 void registerWebKitGStreamerElements();
 void registerWebKitGStreamerVideoEncoder();
 void deinitializeGStreamer();
 
-unsigned getGstPlayFlag(const char* nick);
+unsigned getGstPlayFlag(ASCIILiteral nick);
 uint64_t toGstUnsigned64Time(const WTF::MediaTime&);
 
 inline GstClockTime toGstClockTime(const WTF::MediaTime& mediaTime)
@@ -211,7 +213,7 @@ public:
 private:
     GstMappedOwnedBuffer(GRefPtr<GstBuffer>&& buffer)
         : GstMappedBuffer(buffer, GST_MAP_READ)
-        , m_ownedBuffer(WTFMove(buffer)) { }
+        , m_ownedBuffer(WTF::move(buffer)) { }
 
     GRefPtr<GstBuffer> m_ownedBuffer;
 };
@@ -219,7 +221,9 @@ private:
 class GstMappedFrame {
     WTF_MAKE_TZONE_ALLOCATED(GstMappedFrame);
     WTF_MAKE_NONCOPYABLE(GstMappedFrame);
+
 public:
+    GstMappedFrame(GstMappedFrame&&);
     GstMappedFrame(GstBuffer*, const GstVideoInfo*, GstMapFlags);
     GstMappedFrame(const GRefPtr<GstSample>&, GstMapFlags);
 
@@ -243,6 +247,13 @@ public:
     bool isValid() const { return m_frame.buffer; }
     explicit operator bool() const { return m_frame.buffer; }
     bool operator!() const { return !m_frame.buffer; }
+
+#if USE(GSTREAMER_GL)
+    GLuint textureID(int) const;
+#endif
+
+    unsigned componentPlane(int) const;
+    unsigned componentPlaneOffset(int) const;
 
 private:
     GstVideoFrame m_frame;
@@ -272,13 +283,13 @@ enum class AsynchronousPipelineDumping : bool { No, Yes };
 void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { }, AsynchronousPipelineDumping = AsynchronousPipelineDumping::No);
 void disconnectSimpleBusMessageCallback(GstElement*);
 
-enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
+enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX, Qualcomm };
 
 bool isGStreamerPluginAvailable(ASCIILiteral name);
 bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);
 
 GstElement* createAutoAudioSink(const String& role);
-GstElement* createPlatformAudioSink(const String& role);
+GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
 
 bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(GstMessage*)>&& = [](GstMessage*) -> bool {
     return true;
@@ -287,7 +298,7 @@ bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(
 GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 
 // These functions should be used for elements not provided by WebKit itself and not provided by GStreamer -core.
-GstElement* makeGStreamerElement(ASCIILiteral factoryName, const String& name = emptyString());
+GstElement* makeGStreamerElement(CStringView factoryName, const String& name = emptyString());
 
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure*, CStringView key);
@@ -315,7 +326,7 @@ void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>&);
 
 void configureMediaStreamAudioDecoder(GstElement*);
 
-void configureMediaStreamVideoDecoder(GstElement*);
+String configureMediaStreamVideoDecoder(GstElement*);
 void configureVideoRTPDepayloader(GstElement*);
 
 bool gstObjectHasProperty(GstObject*, ASCIILiteral name);
@@ -358,11 +369,11 @@ using GstId = GQuark;
 bool gstStructureForeach(const GstStructure*, Function<bool(GstId, const GValue*)>&&);
 void gstStructureIdSetValue(GstStructure*, GstId, const GValue*);
 bool gstStructureMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
-StringView gstIdToString(GstId);
+String gstIdToString(GstId);
 void gstStructureFilterAndMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
 
 #if USE(GBM)
-WARN_UNUSED_RETURN GRefPtr<GstCaps> buildDMABufCaps();
+[[nodiscard]] GRefPtr<GstCaps> buildDMABufCaps();
 #endif
 
 #if USE(GSTREAMER_GL)
@@ -372,6 +383,9 @@ bool setGstElementGLContext(GstElement*, ASCIILiteral contextType);
 GstStateChangeReturn gstElementLockAndSetState(GstElement*, GstState);
 
 GRefPtr<GstElement> createVideoConvertScaleElement(const String& name = emptyString());
+
+void dumpBinToDotFile(GstBin*, const String&, GstDebugGraphDetails = GST_DEBUG_GRAPH_SHOW_ALL);
+void dumpBinToDotFile(const GRefPtr<GstElement>&, const String&, GstDebugGraphDetails = GST_DEBUG_GRAPH_SHOW_ALL);
 
 } // namespace WebCore
 
@@ -480,9 +494,11 @@ private:
 GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size);
 #endif
 
-#if !GST_CHECK_VERSION_FULL(1, 27, 2, 1) && !GST_CHECK_VERSION(1, 27, 3) && !GST_CHECK_VERSION(1, 28, 0)
+#if !GST_CHECK_VERSION(1, 28, 0)
 void gst_pad_probe_info_set_buffer(GstPadProbeInfo*, GstBuffer*);
 void gst_pad_probe_info_set_event(GstPadProbeInfo*, GstEvent*);
+#define gst_state_get_name gst_element_state_get_name
+#define gst_state_change_return_get_name gst_element_state_change_return_get_name
 #endif
 
 #endif // USE(GSTREAMER)

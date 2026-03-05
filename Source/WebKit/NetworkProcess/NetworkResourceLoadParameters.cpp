@@ -42,7 +42,7 @@ void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
                 continue;
             const String& path = fileData->filename;
             if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly))
-                requestBodySandboxExtensions.append(WTFMove(*handle));
+                requestBodySandboxExtensions.append(WTF::move(*handle));
         }
     }
 
@@ -50,12 +50,12 @@ void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
 #if HAVE(AUDIT_TOKEN)
         if (auto networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken()) {
             if (auto handle = SandboxExtension::createHandleForReadByAuditToken(request.url().fileSystemPath(), *networkProcessAuditToken))
-                resourceSandboxExtension = WTFMove(*handle);
+                resourceSandboxExtension = WTF::move(*handle);
         } else
 #endif
         {
             if (auto handle = SandboxExtension::createHandle(request.url().fileSystemPath(), SandboxExtension::Type::ReadOnly))
-                resourceSandboxExtension = WTFMove(*handle);
+                resourceSandboxExtension = WTF::move(*handle);
         }
     }
 }

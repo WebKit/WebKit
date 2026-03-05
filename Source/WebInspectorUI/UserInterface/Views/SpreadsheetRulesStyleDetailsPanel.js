@@ -46,6 +46,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this._suppressLayoutAfterSelectorOrGroupChange = false;
 
         this._emptyFilterResultsElement = WI.createMessageTextView(WI.UIString("No Results Found"));
+
+        WI.settings.showUserAgentStyles.addEventListener(WI.Setting.Event.Changed, this._handleShowUserAgentStylesChanged, this);
     }
 
     // Public
@@ -300,9 +302,16 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                     pseudoElement = this.nodeStyles.node.beforePseudoElement();
                 else if (pseudoId === WI.CSSManager.PseudoSelectorNames.After)
                     pseudoElement = this.nodeStyles.node.afterPseudoElement();
+
+                let orderedPseudoStyles = WI.DOMNodeStyles.uniqueOrderedStyles(pseudoElementInfo.orderedStyles).filter((style) => this._shouldIncludeStyle(style));
+
+                // Don't show an empty "Pseudo-Element..." header
+                if (!orderedPseudoStyles.length)
+                    continue;
+
                 addHeader(WI.UIString("Pseudo-Element"), pseudoElement || pseudoId);
 
-                for (let style of WI.DOMNodeStyles.uniqueOrderedStyles(pseudoElementInfo.orderedStyles))
+                for (let style of orderedPseudoStyles)
                     createSection(style);
             }
 
@@ -312,6 +321,10 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         for (let style of this.nodeStyles.uniqueOrderedStyles) {
             if (style.inherited)
                 addPseudoStyles();
+
+            if (!this._shouldIncludeStyle(style))
+                continue;
+
             createSection(style);
         }
 
@@ -357,6 +370,17 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
     _handleSectionSelectorOrGroupingWillChange(event)
     {
         this._suppressLayoutAfterSelectorOrGroupChange = true;
+    }
+
+    _shouldIncludeStyle(style)
+    {
+        return WI.settings.showUserAgentStyles.value || style.ownerRule?.type !== WI.CSSStyleSheet.Type.UserAgent;
+    }
+
+    _handleShowUserAgentStylesChanged(event)
+    {
+        const significantChange = true;
+        this.refresh(significantChange);
     }
 };
 

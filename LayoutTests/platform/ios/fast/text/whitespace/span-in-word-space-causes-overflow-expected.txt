@@ -4,14 +4,14 @@ layer at (0,0) size 800x56
   RenderBlock {HTML} at (0,0) size 800x56
     RenderBody {BODY} at (8,8) size 784x40
       RenderBlock {DIV} at (0,0) size 200x40 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 152x19
+        RenderText {#text} at (0,0) size 152x20
           text run at (0,0) width 62: "Overflow"
           text run at (81,0) width 47: " should"
           text run at (147,0) width 5: " "
-        RenderInline {SPAN} at (151,0) size 22x19
-          RenderText {#text} at (151,0) size 22x19
+        RenderInline {SPAN} at (151,0) size 22x20
+          RenderText {#text} at (151,0) size 22x20
             text run at (151,0) width 22: "not"
-        RenderText {#text} at (0,20) size 154x19
+        RenderText {#text} at (0,20) size 154x20
           text run at (0,20) width 31: "even"
           text run at (50,20) width 20: " be"
           text run at (89,20) width 65: " tolerated."

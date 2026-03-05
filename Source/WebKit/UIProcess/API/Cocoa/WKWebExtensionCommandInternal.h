@@ -43,7 +43,6 @@ template<> struct WrapperTraits<WebExtensionCommand> {
 }
 
 @property (nonatomic, readonly) WebKit::WebExtensionCommand& _webExtensionCommand;
-- (Ref<WebKit::WebExtensionCommand>)_protectedWebExtensionCommand;
 
 @end
 

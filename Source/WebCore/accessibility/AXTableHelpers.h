@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/AccessibilityRole.h>
+#include "AccessibilityRole.h"
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ struct AccessibilityText;
 namespace AXTableHelpers {
 
 bool appendCaptionTextIfNecessary(Element&, Vector<AccessibilityText>&);
-bool isTableRole(AccessibilityRole);
+bool NODELETE isTableRole(AccessibilityRole);
 bool isTableRowElement(Element&);
 bool isTableCellElement(Element&);
 bool hasRowRole(Element&);

@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA) {
     loops++;
   });
   assert.sameValue(loops, 2, "predicate is called once");
-});
+}, null, ["passthrough"]);

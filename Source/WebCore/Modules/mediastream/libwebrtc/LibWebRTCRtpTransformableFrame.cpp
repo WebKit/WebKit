@@ -41,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpTransformableFrame);
 
 LibWebRTCRtpTransformableFrame::LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame, bool isAudio)
-    : m_rtcFrame(WTFMove(frame))
+    : m_rtcFrame(WTF::move(frame))
     , m_isAudio(isAudio)
 {
 }
@@ -52,7 +52,7 @@ LibWebRTCRtpTransformableFrame::~LibWebRTCRtpTransformableFrame()
 
 std::unique_ptr<webrtc::TransformableFrameInterface> LibWebRTCRtpTransformableFrame::takeRTCFrame()
 {
-    return WTFMove(m_rtcFrame);
+    return WTF::move(m_rtcFrame);
 }
 
 std::span<const uint8_t> LibWebRTCRtpTransformableFrame::data() const
@@ -96,7 +96,7 @@ RTCEncodedAudioFrameMetadata LibWebRTCRtpTransformableFrame::audioMetadata() con
         });
         sequenceNumber = audioFrame->SequenceNumber();
     }
-    return { m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTFMove(cssrcs), sequenceNumber, m_rtcFrame->GetTimestamp(), fromStdString(m_rtcFrame->GetMimeType()) };
+    return { m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTF::move(cssrcs), sequenceNumber, m_rtcFrame->GetTimestamp(), fromStdString(m_rtcFrame->GetMimeType()) };
 }
 
 RTCEncodedVideoFrameMetadata LibWebRTCRtpTransformableFrame::videoMetadata() const
@@ -125,7 +125,7 @@ RTCEncodedVideoFrameMetadata LibWebRTCRtpTransformableFrame::videoMetadata() con
     std::optional<int64_t> timestamp;
     if (auto presentationTimestamp = m_rtcFrame->GetPresentationTimestamp())
         timestamp = presentationTimestamp->us();
-    return { frameId, WTFMove(dependencies), metadata.GetWidth(), metadata.GetHeight(), metadata.GetSpatialIndex(), metadata.GetTemporalIndex(), m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTFMove(cssrcs), timestamp, m_rtcFrame->GetTimestamp(), fromStdString(m_rtcFrame->GetMimeType()) };
+    return { frameId, WTF::move(dependencies), metadata.GetWidth(), metadata.GetHeight(), metadata.GetSpatialIndex(), metadata.GetTemporalIndex(), m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTF::move(cssrcs), timestamp, m_rtcFrame->GetTimestamp(), fromStdString(m_rtcFrame->GetMimeType()) };
 }
 
 Ref<RTCRtpTransformableFrame> LibWebRTCRtpTransformableFrame::clone()
@@ -135,7 +135,7 @@ Ref<RTCRtpTransformableFrame> LibWebRTCRtpTransformableFrame::clone()
         rtcClone = webrtc::CloneAudioFrame(static_cast<webrtc::TransformableAudioFrameInterface*>(m_rtcFrame.get()));
     else
         rtcClone = webrtc::CloneVideoFrame(static_cast<webrtc::TransformableVideoFrameInterface*>(m_rtcFrame.get()));
-    return adoptRef(*new LibWebRTCRtpTransformableFrame(WTFMove(rtcClone), m_isAudio));
+    return adoptRef(*new LibWebRTCRtpTransformableFrame(WTF::move(rtcClone), m_isAudio));
 }
 
 void LibWebRTCRtpTransformableFrame::setOptions(const RTCEncodedAudioFrameMetadata& metadata)
@@ -170,13 +170,13 @@ void LibWebRTCRtpTransformableFrame::setOptions(const RTCEncodedVideoFrameMetada
         std::vector<uint32_t> csrcs(newMetadata.contributingSources->size());
         for (auto& csrc : *newMetadata.contributingSources)
             csrcs.push_back(csrc);
-        rtcMetadata.SetCsrcs(WTFMove(csrcs));
+        rtcMetadata.SetCsrcs(WTF::move(csrcs));
     }
     if (newMetadata.rtpTimestamp)
         m_rtcFrame->SetRTPTimestamp(*newMetadata.rtpTimestamp);
     // FIXME: newMetadata.mimeType
 
-    static_cast<webrtc::TransformableVideoFrameInterface*>(m_rtcFrame.get())->SetMetadata(WTFMove(rtcMetadata));
+    static_cast<webrtc::TransformableVideoFrameInterface*>(m_rtcFrame.get())->SetMetadata(WTF::move(rtcMetadata));
 }
 
 } // namespace WebCore

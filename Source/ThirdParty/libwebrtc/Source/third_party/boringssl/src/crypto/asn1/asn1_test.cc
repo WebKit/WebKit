@@ -693,6 +693,7 @@ TEST(ASN1Test, ASN1Type) {
       {0x05, 0x01, 0xff},        // NULL { `ff` }
       {0x01, 0x00},              // BOOLEAN {}
       {0x01, 0x02, 0x00, 0x00},  // BOOLEAN { `0000` }
+      {0x01, 0x01, 0x42},        // BOOLEAN { `42` }
   };
   for (const auto &t : kInvalidTests) {
     SCOPED_TRACE(Bytes(t));
@@ -723,7 +724,7 @@ TEST(ASN1Test, UnusedBooleanBits) {
   EXPECT_TRUE(val->value.ptr);
 
   // Set |val| to a BOOLEAN containing FALSE.
-  ASN1_TYPE_set(val.get(), V_ASN1_BOOLEAN, NULL);
+  ASN1_TYPE_set(val.get(), V_ASN1_BOOLEAN, nullptr);
   EXPECT_EQ(V_ASN1_BOOLEAN, val->type);
   EXPECT_FALSE(val->value.ptr);
 }
@@ -1317,7 +1318,7 @@ TEST(ASN1Test, StringPrintEx) {
        std::string(1, '\0') + "\n\x80\xff,+\"\\<>;"},
 
       // Flags control different escapes. Note that any escape flag will cause
-      // blackslashes to be escaped.
+      // backslashes to be escaped.
       {V_ASN1_T61STRING,
        {0, '\n', 0x80, 0xff, ',', '+', '"', '\\', '<', '>', ';'},
        0,
@@ -2075,6 +2076,47 @@ TEST(ASN1Test, InvalidMSTRING) {
   EXPECT_EQ(-1, i2d_DIRECTORYSTRING(obj.get(), nullptr));
 }
 
+TEST(ASN1Test, TypeMismatch) {
+  // Pack PSS parameters into an |ASN1_STRING|. This makes an OCTET STRING.
+  bssl::UniquePtr<RSA_PSS_PARAMS> pss(RSA_PSS_PARAMS_new());
+  ASSERT_TRUE(pss);
+  bssl::UniquePtr<ASN1_STRING> str(
+      ASN1_item_pack(pss.get(), ASN1_ITEM_rptr(RSA_PSS_PARAMS), nullptr));
+  ASSERT_TRUE(str);
+  EXPECT_EQ(ASN1_STRING_type(str.get()), V_ASN1_OCTET_STRING);
+
+  // Pass this to |X509_ALGOR_set0| as a |V_ASN1_SEQUENCE|, which uses the
+  // |ASN1_TYPE_set0| calling convention. This leads to an ambiguous state:
+  // whether this should be a SEQUENCE or OCTET STRING value.
+  bssl::UniquePtr<X509_ALGOR> alg(X509_ALGOR_new());
+  ASSERT_TRUE(alg);
+  ASSERT_TRUE(X509_ALGOR_set0(alg.get(), OBJ_nid2obj(NID_rsassaPss),
+                              V_ASN1_SEQUENCE, str.release()));
+
+  // It should be interpreted as a SEQUENCE value and serialize in this way.
+  //
+  // SEQUENCE {
+  //   # rsassa-pss
+  //   OBJECT_IDENTIFIER { 1.2.840.113549.1.1.10 }
+  //   SEQUENCE {}
+  // }
+  //
+  // TODO(davidben): This currently works because |asn1_marshal_any| is careful
+  // to use the |ASN1_TYPE|-level type rather than the |ASN1_STRING|-level type.
+  // Should we also make |ASN1_TYPE_set0| fix the |ASN1_STRING| so fewer
+  // |ASN1_TYPE|s break invariants?
+  static const uint8_t kExpected[] = {0x30, 0x0d, 0x06, 0x09, 0x2a,
+                                      0x86, 0x48, 0x86, 0xf7, 0x0d,
+                                      0x01, 0x01, 0x0a, 0x30, 0x00};
+  TestSerialize(alg.get(), i2d_X509_ALGOR, kExpected);
+
+  // Even if |X509_ALGOR_set0| is fixed to maintain invariants, enough types are
+  // publicly exposed that we should make sure we handle the invalid state. This
+  // test is currently a no-op, but will not be if the above TODO is resolved.
+  alg->parameter->value.asn1_string->type = V_ASN1_OCTET_STRING;
+  TestSerialize(alg.get(), i2d_X509_ALGOR, kExpected);
+}
+
 TEST(ASN1Test, StringTableSorted) {
   const ASN1_STRING_TABLE *table;
   size_t table_len;
@@ -2129,6 +2171,7 @@ TEST(ASN1Test, Pack) {
   bssl::UniquePtr<ASN1_STRING> str(
       ASN1_item_pack(val.get(), ASN1_ITEM_rptr(BASIC_CONSTRAINTS), nullptr));
   ASSERT_TRUE(str);
+  EXPECT_EQ(ASN1_STRING_type(str.get()), V_ASN1_OCTET_STRING);
   EXPECT_EQ(
       Bytes(ASN1_STRING_get0_data(str.get()), ASN1_STRING_length(str.get())),
       Bytes(kExpected));
@@ -2137,6 +2180,7 @@ TEST(ASN1Test, Pack) {
   str.reset(ASN1_item_pack(val.get(), ASN1_ITEM_rptr(BASIC_CONSTRAINTS), &raw));
   ASSERT_TRUE(str);
   EXPECT_EQ(raw, str.get());
+  EXPECT_EQ(ASN1_STRING_type(str.get()), V_ASN1_OCTET_STRING);
   EXPECT_EQ(
       Bytes(ASN1_STRING_get0_data(str.get()), ASN1_STRING_length(str.get())),
       Bytes(kExpected));
@@ -2147,6 +2191,7 @@ TEST(ASN1Test, Pack) {
   EXPECT_TRUE(
       ASN1_item_pack(val.get(), ASN1_ITEM_rptr(BASIC_CONSTRAINTS), &raw));
   EXPECT_EQ(raw, str.get());
+  EXPECT_EQ(ASN1_STRING_type(str.get()), V_ASN1_OCTET_STRING);
   EXPECT_EQ(
       Bytes(ASN1_STRING_get0_data(str.get()), ASN1_STRING_length(str.get())),
       Bytes(kExpected));
@@ -2509,7 +2554,7 @@ TEST(ASN1Test, StringEncoding) {
   }
 }
 
-// Exhaustively test POSIX time conversions for every day across the millenium.
+// Exhaustively test POSIX time conversions for every day across the millennium.
 TEST(ASN1Test, POSIXTime) {
   const int kDaysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 

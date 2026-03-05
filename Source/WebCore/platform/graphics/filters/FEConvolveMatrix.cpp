@@ -29,6 +29,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEConvolveMatrixCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEConvolveMatrix> FEConvolveMatrix::create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, DestinationColorSpace colorSpace)
@@ -131,6 +135,25 @@ bool FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
 FloatRect FEConvolveMatrix::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
+}
+
+OptionSet<FilterRenderingMode> FEConvolveMatrix::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    if (FEConvolveMatrixCoreImageApplier::supportsCoreImageRendering(*this))
+        modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEConvolveMatrix::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEConvolveMatrixCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FEConvolveMatrix::createSoftwareApplier() const

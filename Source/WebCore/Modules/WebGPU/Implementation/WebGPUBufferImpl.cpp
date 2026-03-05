@@ -38,7 +38,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BufferImpl);
 
 BufferImpl::BufferImpl(WebGPUPtr<WGPUBuffer>&& buffer, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(buffer))
+    : m_backing(WTF::move(buffer))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
@@ -67,7 +67,7 @@ void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optiona
     auto usedSize = getMappedSize(m_backing.get(), size, offset);
 
     // FIXME: Check the casts.
-    auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) mutable {
+    auto blockPtr = makeBlockPtr([callback = WTF::move(callback)](WGPUBufferMapAsyncStatus status) mutable {
         callback(status == WGPUBufferMapAsyncStatus_Success);
     });
     wgpuBufferMapAsync(m_backing.get(), backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), &mapAsyncCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in mapAsyncCallback().
@@ -77,13 +77,7 @@ void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, NOESC
 {
     auto usedSize = getMappedSize(m_backing.get(), size, offset);
 
-    auto pointer = wgpuBufferGetMappedRange(m_backing.get(), static_cast<size_t>(offset), static_cast<size_t>(usedSize)).data();
-    auto bufferSize = wgpuBufferGetInitialSize(m_backing.get());
-    size_t actualSize = pointer ? static_cast<size_t>(bufferSize) : 0;
-    size_t actualOffset = pointer ? static_cast<size_t>(offset) : 0;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    callback(unsafeMakeSpan(static_cast<uint8_t*>(pointer) - actualOffset, actualSize));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    callback(wgpuBufferGetMappedRange(m_backing.get(), static_cast<size_t>(offset), static_cast<size_t>(usedSize)));
 }
 
 std::span<uint8_t> BufferImpl::getBufferContents()

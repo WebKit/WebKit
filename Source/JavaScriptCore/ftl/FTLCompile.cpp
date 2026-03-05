@@ -78,7 +78,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     
     RegisterAtOffsetList registerOffsets = state.proc->calleeSaveRegisterAtOffsetList();
     dataLogLnIf(shouldDumpDisassembly(), tierName, "Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", registerOffsets);
-    state.jitCode->m_calleeSaveRegisters = RegisterAtOffsetList(WTFMove(registerOffsets));
+    state.jitCode->m_calleeSaveRegisters = RegisterAtOffsetList(WTF::move(registerOffsets));
     ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
     state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);
 
@@ -205,7 +205,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     if (vm.shouldBuilderPCToCodeOriginMapping()) {
         B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
-        state.jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::JSCodeOriginMap, vm, WTFMove(originMap)), *state.b3CodeLinkBuffer);
+        state.jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::JSCodeOriginMap, vm, WTF::move(originMap)), *state.b3CodeLinkBuffer);
     }
 
     state.jitCode->initializeAddressForCall(state.b3CodeLinkBuffer->locationOf<JSEntryPtrTag>(entryLabel));
@@ -216,9 +216,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
         BytecodeIndex catchBytecodeIndex = pair.value;
         unsigned entrypointIndex = pair.key;
         Vector<FlushFormat> argumentFormats = state.graph.m_argumentFormats[entrypointIndex];
-        state.graph.appendCatchEntrypoint(catchBytecodeIndex, state.b3CodeLinkBuffer->locationOf<ExceptionHandlerPtrTag>(state.proc->code().entrypointLabel(entrypointIndex)), WTFMove(argumentFormats));
+        state.graph.appendCatchEntrypoint(catchBytecodeIndex, state.b3CodeLinkBuffer->locationOf<ExceptionHandlerPtrTag>(state.proc->code().entrypointLabel(entrypointIndex)), WTF::move(argumentFormats));
     }
-    state.jitCode->common.finalizeCatchEntrypoints(WTFMove(state.graph.m_catchEntrypoints));
+    state.jitCode->common.finalizeCatchEntrypoints(WTF::move(state.graph.m_catchEntrypoints));
 
     if (shouldDumpDisassembly())
         state.dumpDisassembly(WTF::dataFile(), *state.b3CodeLinkBuffer);

@@ -36,11 +36,6 @@ inline Page* Frame::page() const
     return m_page.get();
 }
 
-inline RefPtr<Page> Frame::protectedPage() const
-{
-    return m_page.get();
-}
-
 inline std::optional<PageIdentifier> Frame::pageID() const
 {
     if (auto* page = this->page())
@@ -51,11 +46,6 @@ inline std::optional<PageIdentifier> Frame::pageID() const
 inline Page* Document::page() const
 {
     return m_frame ? m_frame->page() : nullptr;
-}
-
-inline RefPtr<Page> Document::protectedPage() const
-{
-    return page();
 }
 
 }

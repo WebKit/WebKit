@@ -38,7 +38,7 @@
 
 - (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions authenticatorData:(NSData *)authenticatorData signature:(NSData *)signature userHandle:(NSData *)userHandle attachment:(_WKAuthenticatorAttachment)attachment
 {
-    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensions:WTFMove(extensions) attachment:attachment]))
+    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensions:WTF::move(extensions) attachment:attachment]))
         return nil;
 
     m_authenticatorData = authenticatorData;

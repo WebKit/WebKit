@@ -161,7 +161,7 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
 {
     static const unsigned kWebSpaceKey = 0x20;
 
-    if (![_scrollable isKeyboardScrollable])
+    if (![protect(_scrollable) isKeyboardScrollable])
         return std::nullopt;
 
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
@@ -279,7 +279,7 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
 
     constexpr auto parameters = WebCore::KeyboardScrollParameters::parameters();
 
-    CGFloat scrollDistance = [_scrollable distanceForIncrement:increment inDirection:direction];
+    CGFloat scrollDistance = [protect(_scrollable) distanceForIncrement:increment inDirection:direction];
 
     WebCore::KeyboardScroll scroll;
     scroll.offset = WebCore::unitVectorForScrollDirection(direction).scaled(scrollDistance);
@@ -308,7 +308,7 @@ static NSString * const scrollToExtentWithAnimationKey = @"ScrollToExtentAnimati
     if (_scrollTriggeringKeyIsPressed)
         return WebKit::BeginAnimatedScrollResult::ScrollTriggeringKeyIsPressed;
 
-    if (![_scrollable rubberbandableDirections].at(boxSide(scroll->direction)))
+    if (![protect(_scrollable) rubberbandableDirections].at(boxSide(scroll->direction)))
         return WebKit::BeginAnimatedScrollResult::NotRubberBandable;
 
     _scrollTriggeringKeyIsPressed = YES;
@@ -319,12 +319,13 @@ static NSString * const scrollToExtentWithAnimationKey = @"ScrollToExtentAnimati
     if (scroll->granularity == WebCore::ScrollGranularity::Document) {
         _velocity = { };
         [self stopAnimatedScroll];
-        auto currentOffset = _scrollable.contentOffset;
-        auto targetOffset = [_scrollable boundedContentOffset:_currentPosition + scroll->offset];
+        RetainPtr scrollable = _scrollable;
+        auto currentOffset = scrollable.get().contentOffset;
+        auto targetOffset = [scrollable boundedContentOffset:_currentPosition + scroll->offset];
         _viewForTrackingScrollToExtentAnimation = adoptNS([UIView new]);
         [_viewForTrackingScrollToExtentAnimation setHidden:YES];
         [_viewForTrackingScrollToExtentAnimation setUserInteractionEnabled:NO];
-        [_scrollable willBeginScrollingToExtentWithAnimationInTrackingView:_viewForTrackingScrollToExtentAnimation.get()];
+        [scrollable willBeginScrollingToExtentWithAnimationInTrackingView:_viewForTrackingScrollToExtentAnimation.get()];
 
         // See also: _smoothDecelerationAnimation() in UIKit.
         auto animation = [CASpringAnimation animationWithKeyPath:@"position"];
@@ -350,7 +351,7 @@ static NSString * const scrollToExtentWithAnimationKey = @"ScrollToExtentAnimati
 
     [self startDisplayLinkIfNeeded];
 
-    auto initialVelocity = WebCore::FloatSize([_scrollable interactiveScrollVelocity]);
+    auto initialVelocity = WebCore::FloatSize([protect(_scrollable) interactiveScrollVelocity]);
     switch (scroll->direction) {
     case WebCore::ScrollDirection::ScrollUp:
         initialVelocity.setHeight(std::min<CGFloat>(0, initialVelocity.height()));
@@ -366,7 +367,7 @@ static NSString * const scrollToExtentWithAnimationKey = @"ScrollToExtentAnimati
         break;
     }
 
-    _currentPosition = WebCore::FloatPoint([_scrollable contentOffset]);
+    _currentPosition = WebCore::FloatPoint([protect(_scrollable) contentOffset]);
     _velocity += initialVelocity;
     _idealPositionForMinimumTravel = _currentPosition + _currentScroll->offset;
 
@@ -426,7 +427,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     // If the spring would settle before the minimum travel distance
     // for an instantaneous tap, move the settling position of the spring
     // out to that point.
-    _idealPosition = [_scrollable boundedContentOffset:farthestPointInDirection(_currentPosition + displacement, _idealPositionForMinimumTravel, _currentScroll->direction)];
+    _idealPosition = [protect(_scrollable) boundedContentOffset:farthestPointInDirection(_currentPosition + displacement, _idealPositionForMinimumTravel, _currentScroll->direction)];
 
     _currentScroll = std::nullopt;
 }
@@ -480,7 +481,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)stopScrollingImmediately
 {
     [self resetViewForScrollToExtentAnimation];
-    [_scrollable didFinishScrolling];
+    [protect(_scrollable) didFinishScrolling];
     [self stopDisplayLink];
     _velocity = { };
 }
@@ -489,11 +490,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (_viewForTrackingScrollToExtentAnimation) {
         if (![[_viewForTrackingScrollToExtentAnimation layer].animationKeys containsObject:scrollToExtentWithAnimationKey]) {
-            [_scrollable didFinishScrolling];
+            [protect(_scrollable) didFinishScrolling];
             [self resetViewForScrollToExtentAnimation];
             [self stopDisplayLink];
         } else if (auto presentationLayer = [_viewForTrackingScrollToExtentAnimation layer].presentationLayer)
-            [_scrollable scrollToContentOffset:presentationLayer.position animated:NO];
+            [protect(_scrollable) scrollToContentOffset:presentationLayer.position animated:NO];
         return;
     }
 
@@ -502,8 +503,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     constexpr auto parameters = WebCore::KeyboardScrollParameters::parameters();
 
+    RetainPtr scrollable = _scrollable;
     if (_currentScroll) {
-        auto scrollableDirections = [_scrollable scrollableDirectionsFromOffset:_currentPosition];
+        auto scrollableDirections = [scrollable scrollableDirectionsFromOffset:_currentPosition];
         auto direction = _currentScroll->direction;
 
         if (scrollableDirections.at(boxSide(direction))) {
@@ -527,7 +529,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             force.setHeight(0);
     }
 
-    WebCore::FloatPoint idealPosition = [_scrollable boundedContentOffset:_currentScroll ? _currentPosition : _idealPosition];
+    WebCore::FloatPoint idealPosition = [scrollable boundedContentOffset:_currentScroll ? _currentPosition : _idealPosition];
     WebCore::FloatSize displacement = _currentPosition - idealPosition;
 
     // Compute the spring's force, and apply it in allowed directions.
@@ -541,12 +543,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _velocity += acceleration.scaled(frameDuration);
     _currentPosition += _velocity.scaled(frameDuration);
 
-    [_scrollable scrollToContentOffset:_currentPosition animated:NO];
+    [scrollable scrollToContentOffset:_currentPosition animated:NO];
 
     // If we've effectively stopped scrolling, and no key is pressed,
     // shut down the display link.
     if (!_scrollTriggeringKeyIsPressed && _velocity.diagonalLengthSquared() < 1) {
-        [_scrollable didFinishScrolling];
+        [scrollable didFinishScrolling];
         [self stopDisplayLink];
         _velocity = { };
     }
@@ -601,10 +603,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _delegate = delegate;
 
-    _delegateRespondsToIsKeyboardScrollable = [_delegate respondsToSelector:@selector(isScrollableForKeyboardScrollViewAnimator:)];
-    _delegateRespondsToDistanceForIncrement = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimator:distanceForIncrement:inDirection:)];
-    _delegateRespondsToWillScroll = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimatorWillScroll:)];
-    _delegateRespondsToDidFinishScrolling = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimatorDidFinishScrolling:)];
+    RetainPtr protectedDelegate = _delegate;
+    _delegateRespondsToIsKeyboardScrollable = [protectedDelegate respondsToSelector:@selector(isScrollableForKeyboardScrollViewAnimator:)];
+    _delegateRespondsToDistanceForIncrement = [protectedDelegate respondsToSelector:@selector(keyboardScrollViewAnimator:distanceForIncrement:inDirection:)];
+    _delegateRespondsToWillScroll = [protectedDelegate respondsToSelector:@selector(keyboardScrollViewAnimatorWillScroll:)];
+    _delegateRespondsToDidFinishScrolling = [protectedDelegate respondsToSelector:@selector(keyboardScrollViewAnimatorDidFinishScrolling:)];
 }
 
 - (void)willStartInteractiveScroll
@@ -655,7 +658,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_delegateRespondsToIsKeyboardScrollable)
         return YES;
-    return [_delegate isScrollableForKeyboardScrollViewAnimator:self];
+    return [protect(_delegate) isScrollableForKeyboardScrollViewAnimator:self];
 }
 
 - (CGFloat)distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction
@@ -669,13 +672,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     BOOL directionIsHorizontal = direction == WebCore::ScrollDirection::ScrollLeft || direction == WebCore::ScrollDirection::ScrollRight;
 
     if (!_delegateRespondsToDistanceForIncrement) {
+        RetainPtr scrollView = _scrollView;
         switch (increment) {
         case WebCore::ScrollGranularity::Document:
-            return directionIsHorizontal ? _scrollView.contentSize.width : _scrollView.contentSize.height;
+            return directionIsHorizontal ? scrollView.get().contentSize.width : scrollView.get().contentSize.height;
         case WebCore::ScrollGranularity::Page:
-            return (directionIsHorizontal ? _scrollView.frame.size.width : _scrollView.frame.size.height) * defaultPageScrollFraction;
+            return (directionIsHorizontal ? scrollView.get().frame.size.width : scrollView.get().frame.size.height) * defaultPageScrollFraction;
         case WebCore::ScrollGranularity::Line:
-            return defaultLineScrollHeight * _scrollView.zoomScale;
+            return defaultLineScrollHeight * scrollView.get().zoomScale;
         case WebCore::ScrollGranularity::Pixel:
             return 0;
         }
@@ -683,7 +687,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return 0;
     }
 
-    return [_delegate keyboardScrollViewAnimator:self distanceForIncrement:increment inDirection:direction];
+    return [protect(_delegate) keyboardScrollViewAnimator:self distanceForIncrement:increment inDirection:direction];
 }
 
 - (void)scrollToContentOffset:(WebCore::FloatPoint)contentOffset animated:(BOOL)animated
@@ -691,14 +695,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_scrollView)
         return;
     if (_delegateRespondsToWillScroll)
-        [_delegate keyboardScrollViewAnimatorWillScroll:self];
-    [_scrollView _wk_setContentOffsetAndShowScrollIndicators:contentOffset animated:animated];
+        [protect(_delegate) keyboardScrollViewAnimatorWillScroll:self];
+    [protect(_scrollView) _wk_setContentOffsetAndShowScrollIndicators:contentOffset animated:animated];
 }
 
 - (void)willBeginScrollingToExtentWithAnimationInTrackingView:(UIView *)view
 {
-    [_scrollView addSubview:view];
-    [_scrollView flashScrollIndicators];
+    RetainPtr scrollView = _scrollView;
+    [scrollView addSubview:view];
+    [scrollView flashScrollIndicators];
 }
 
 - (CGPoint)contentOffset
@@ -706,17 +711,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_scrollView)
         return CGPointZero;
 
-    return _scrollView.contentOffset;
+    return protect(_scrollView).get().contentOffset;
 }
 
 - (CGPoint)boundedContentOffset:(CGPoint)offset
 {
-    return [_scrollView _wk_clampToScrollExtents:offset];
+    return [protect(_scrollView) _wk_clampToScrollExtents:offset];
 }
 
 - (CGSize)interactiveScrollVelocity
 {
-    return _scrollView.interactiveScrollVelocityInPointsPerSecond;
+    return protect(_scrollView).get().interactiveScrollVelocityInPointsPerSecond;
 }
 
 - (WebCore::RectEdges<bool>)scrollableDirectionsFromOffset:(CGPoint)offset
@@ -724,10 +729,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_scrollView)
         return { };
 
-    UIEdgeInsets contentInsets = _scrollView.adjustedContentInset;
+    RetainPtr scrollView = _scrollView;
+    UIEdgeInsets contentInsets = scrollView.get().adjustedContentInset;
 
-    CGSize contentSize = _scrollView.contentSize;
-    CGSize scrollViewSize = _scrollView.bounds.size;
+    CGSize contentSize = scrollView.get().contentSize;
+    CGSize scrollViewSize = scrollView.get().bounds.size;
 
     CGPoint minimumContentOffset = CGPointMake(-contentInsets.left, -contentInsets.top);
     CGPoint maximumContentOffset = CGPointMake(std::max(minimumContentOffset.x, contentSize.width + contentInsets.right - scrollViewSize.width), std::max(minimumContentOffset.y, contentSize.height + contentInsets.bottom - scrollViewSize.height));
@@ -747,11 +753,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_scrollView)
         return { };
 
+    RetainPtr scrollView = _scrollView;
     WebCore::RectEdges<bool> edges;
 
-    edges.setTop(_scrollView._wk_canScrollVerticallyWithoutBouncing);
+    edges.setTop(scrollView.get()._wk_canScrollVerticallyWithoutBouncing);
     edges.setBottom(edges.top());
-    edges.setLeft(_scrollView._wk_canScrollHorizontallyWithoutBouncing);
+    edges.setLeft(scrollView.get()._wk_canScrollHorizontallyWithoutBouncing);
     edges.setRight(edges.left());
 
     return edges;
@@ -760,7 +767,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)didFinishScrolling
 {
     if (_delegateRespondsToDidFinishScrolling)
-        [_delegate keyboardScrollViewAnimatorDidFinishScrolling:self];
+        [protect(_delegate) keyboardScrollViewAnimatorDidFinishScrolling:self];
 
     _scrollView = nil;
 }

@@ -33,7 +33,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutState.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <ranges>
 #include <wtf/FixedVector.h>
@@ -42,7 +42,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FlexFormattingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexFormattingContext);
 
 FlexFormattingContext::FlexFormattingContext(const ElementBox& flexBox, LayoutState& globalLayoutState)
     : m_flexBox(flexBox)
@@ -83,7 +83,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
         auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
         auto isReversedInCrossAxis = FlexFormattingUtils::areFlexLinesReversedInCrossAxis(root());
 
-        for (CheckedPtr flexItem = checkedRoot()->firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
+        for (CheckedPtr flexItem = protect(root())->firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
             auto& flexItemGeometry = m_globalLayoutState->geometryForBox(*flexItem);
             CheckedRef style = flexItem->style();
             auto mainAxis = LogicalFlexItem::MainAxisGeometry { };
@@ -224,7 +224,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         // Let's use content size when available size is inf.
         auto& lastFlexItem = logicalFlexItemList.last();
         auto& lastRect = logicalRects.last();
-        return lastRect.right() + lastRect.marginRight() + (lastFlexItem.isContentBoxBased() ? geometryForFlexItem(lastFlexItem.checkedLayoutBox()).horizontalBorderAndPadding() : 0_lu);
+        return lastRect.right() + lastRect.marginRight() + (lastFlexItem.isContentBoxBased() ? geometryForFlexItem(protect(lastFlexItem.layoutBox())).horizontalBorderAndPadding() : 0_lu);
     }();
     auto flexContainerCrossAxisSize = [&] {
         if (auto crossAxisSize = constraints.crossAxis().availableSize)
@@ -238,7 +238,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
 
     for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
         auto& logicalFlexItem = logicalFlexItemList[index];
-        auto& flexItemGeometry = geometryForFlexItem(logicalFlexItem.checkedLayoutBox());
+        auto& flexItemGeometry = geometryForFlexItem(protect(logicalFlexItem.layoutBox()));
         auto logicalRect = [&] {
             // Note that flex rects are inner size based.
             if (flexBoxStyle->flexWrap() != FlexWrap::Reverse)
@@ -291,7 +291,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
 void FlexFormattingContext::positionOutOfFlowChildren()
 {
     // FIXME: Implement out-of-flow positioning.
-    for (CheckedPtr outOfFlowChild = checkedRoot()->firstOutOfFlowChild(); outOfFlowChild; outOfFlowChild = outOfFlowChild->nextOutOfFlowSibling())
+    for (CheckedPtr outOfFlowChild = protect(root())->firstOutOfFlowChild(); outOfFlowChild; outOfFlowChild = outOfFlowChild->nextOutOfFlowSibling())
         m_globalLayoutState->ensureGeometryForBox(*outOfFlowChild).setTopLeft({ });
 }
 

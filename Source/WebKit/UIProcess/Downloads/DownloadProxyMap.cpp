@@ -72,11 +72,6 @@ void DownloadProxyMap::deref() const
     m_process->deref();
 }
 
-Ref<NetworkProcessProxy> DownloadProxyMap::protectedProcess()
-{
-    return m_process.get();
-}
-
 #if !PLATFORM(COCOA)
 void DownloadProxyMap::platformCreate()
 {
@@ -89,8 +84,8 @@ void DownloadProxyMap::platformDestroy()
 
 Ref<DownloadProxy> DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataStore, Ref<API::DownloadClient>&& client, const WebCore::ResourceRequest& resourceRequest, const std::optional<FrameInfoData>& frameInfo, WebPageProxy* originatingPage)
 {
-    auto downloadProxy = DownloadProxy::create(*this, dataStore, WTFMove(client), resourceRequest, frameInfo, originatingPage);
-    m_downloads.set(downloadProxy->downloadID(), downloadProxy.copyRef());
+    Ref downloadProxy = DownloadProxy::create(*this, dataStore, WTF::move(client), resourceRequest, frameInfo, originatingPage);
+    m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
     RELEASE_LOG(Loading, "Adding download %" PRIu64 " to UIProcess DownloadProxyMap", downloadProxy->downloadID().toUInt64());
 
@@ -100,7 +95,7 @@ Ref<DownloadProxy> DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataS
         RELEASE_LOG(ProcessSuspension, "UIProcess took 'WebKit downloads' assertion for UIProcess");
     }
 
-    protectedProcess()->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().toUInt64(), downloadProxy.get());
+    protect(process())->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().toUInt64(), downloadProxy.get());
 
     return downloadProxy;
 }
@@ -113,7 +108,7 @@ void DownloadProxyMap::downloadFinished(DownloadProxy& downloadProxy)
 
     ASSERT(m_downloads.contains(downloadID));
 
-    protectedProcess()->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadID.toUInt64());
+    protect(process())->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadID.toUInt64());
     downloadProxy.invalidate();
     m_downloads.remove(downloadID);
 
@@ -130,7 +125,7 @@ void DownloadProxyMap::invalidate()
     for (const auto& download : m_downloads.values()) {
         download->processDidClose();
         download->invalidate();
-        protectedProcess()->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), download->downloadID().toUInt64());
+        protect(process())->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), download->downloadID().toUInt64());
     }
 
     m_downloads.clear();

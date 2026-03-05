@@ -1,0 +1,8 @@
+This test ensures that when we hit test onto text stitched into other text, that we return the sitch-group owner object.
+
+PASS: platformStaticTextValue(hitTestResult) === 'AXValue: Hello world! How are you doing on this fine day?'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world! How are you doing on this fine day?

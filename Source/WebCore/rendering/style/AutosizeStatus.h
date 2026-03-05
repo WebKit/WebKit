@@ -40,15 +40,15 @@ public:
         // Adding new values requires giving RenderStyle::InheritedFlags::autosizeStatus additional bits.
     };
 
+    static AutosizeStatus compute(const RenderStyle&);
+
     constexpr AutosizeStatus(OptionSet<Fields>);
     constexpr OptionSet<Fields> fields() const { return m_fields; }
 
     constexpr bool contains(Fields) const;
 
+    bool isIdempotentTextAutosizingCandidate(const RenderStyle&);
     static float idempotentTextSize(float specifiedSize, float pageScale);
-    static AutosizeStatus computeStatus(const RenderStyle&);
-    static void updateStatus(RenderStyle&);
-
     static bool probablyContainsASmallFixedNumberOfLines(const RenderStyle&);
 
     constexpr bool operator==(const AutosizeStatus&) const = default;

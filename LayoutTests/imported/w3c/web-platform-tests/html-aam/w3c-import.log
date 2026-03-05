@@ -15,14 +15,18 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/area-role.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/dir-role.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/figure-name-no-figcaption.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/names.html
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/optgroup-role.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-contextual.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-contextual.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-dynamic-switch.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-generic.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-generic.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-minimum.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/table-roles.html

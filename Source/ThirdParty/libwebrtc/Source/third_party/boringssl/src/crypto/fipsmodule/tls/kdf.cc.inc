@@ -45,11 +45,11 @@ static int tls1_P_hash(uint8_t *out, size_t out_len,
   HMAC_CTX_init(&ctx_tmp);
   HMAC_CTX_init(&ctx_init);
 
-  if (!HMAC_Init_ex(&ctx_init, secret, secret_len, md, NULL) ||
+  if (!HMAC_Init_ex(&ctx_init, secret, secret_len, md, nullptr) ||
       !HMAC_CTX_copy_ex(&ctx, &ctx_init) ||
-      !HMAC_Update(&ctx, (const uint8_t *) label, label_len) ||
+      !HMAC_Update(&ctx, (const uint8_t *)label, label_len) ||
       !HMAC_Update(&ctx, seed1, seed1_len) ||
-      !HMAC_Update(&ctx, seed2, seed2_len) ||
+      !HMAC_Update(&ctx, seed2, seed2_len) ||  //
       !HMAC_Final(&ctx, A1, &A1_len)) {
     goto err;
   }
@@ -148,7 +148,7 @@ int CRYPTO_tls13_hkdf_expand_label(uint8_t *out, size_t out_len,
                                    const uint8_t *hash, size_t hash_len) {
   static const uint8_t kProtocolLabel[] = "tls13 ";
   CBB cbb, child;
-  uint8_t *hkdf_label = NULL;
+  uint8_t *hkdf_label = nullptr;
   size_t hkdf_label_len;
 
   FIPS_service_indicator_lock_state();

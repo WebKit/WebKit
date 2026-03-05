@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (693,0) size 107x600
   RenderBlock {HTML} at (0,0) size 107x600 [border: (10px solid #800000)]
     RenderBody {BODY} at (18,18) size 71x564
-      RenderText {#text} at (21,0) size 40x227
-        text run at (21,0) width 227: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
-      RenderInline {RUBY} at (21,226) size 40x201
-        RenderInline (generated) at (21,226) size 40x81
-          RenderText {#text} at (21,226) size 40x81
-            text run at (21,226) width 80: "\x{653B}\x{6BBB}"
+      RenderText {#text} at (20,0) size 41x227
+        text run at (20,0) width 228: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
+      RenderInline {RUBY} at (20,226) size 41x201
+        RenderInline (generated) at (20,226) size 41x81
+          RenderText {#text} at (20,226) size 41x81
+            text run at (20,226) width 81: "\x{653B}\x{6BBB}"
         RenderBlock {RT} at (0,226) size 21x81
           RenderText {#text} at (0,0) size 21x80
             text run at (0,0) width 80: "\x{3053}\x{3046}\x{304B}\x{304F}"
-        RenderInline (generated) at (21,306) size 40x121
-          RenderText {#text} at (21,306) size 40x121
-            text run at (21,306) width 120: "\x{6A5F}\x{52D5}\x{968A}"
+        RenderInline (generated) at (20,306) size 41x121
+          RenderText {#text} at (20,306) size 41x121
+            text run at (20,306) width 121: "\x{6A5F}\x{52D5}\x{968A}"
         RenderBlock {RT} at (0,306) size 21x121
           RenderText {#text} at (0,2) size 21x116
             text run at (0,2) width 116: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}"

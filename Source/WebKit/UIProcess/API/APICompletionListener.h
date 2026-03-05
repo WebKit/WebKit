@@ -33,12 +33,12 @@ namespace API {
 
 class CompletionListener : public API::ObjectImpl<API::Object::Type::CompletionListener> {
 public:
-    static Ref<CompletionListener> create(CompletionHandler<void(WKTypeRef)>&& completionHandler) { return adoptRef(*new CompletionListener(WTFMove(completionHandler))); }
+    static Ref<CompletionListener> create(CompletionHandler<void(WKTypeRef)>&& completionHandler) { return adoptRef(*new CompletionListener(WTF::move(completionHandler))); }
     void complete(WKTypeRef result) { m_completionHandler(result); }
 
 private:
     explicit CompletionListener(CompletionHandler<void(WKTypeRef)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler)) { }
+        : m_completionHandler(WTF::move(completionHandler)) { }
 
     CompletionHandler<void(WKTypeRef)> m_completionHandler;
 };

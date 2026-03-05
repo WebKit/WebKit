@@ -34,11 +34,16 @@
 
 namespace WebCore {
 
-RefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& context)
+Ref<WebGLTexture> WebGLTexture::createLost()
 {
-    auto object = context.graphicsContextGL()->createTexture();
+    return adoptRef(*new WebGLTexture { });
+}
+
+Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& context)
+{
+    auto object = protect(context.graphicsContextGL())->createTexture();
     if (!object)
-        return nullptr;
+        return createLost();
     return adoptRef(*new WebGLTexture { context, object });
 }
 
@@ -46,6 +51,8 @@ WebGLTexture::WebGLTexture(WebGLRenderingContextBase& context, PlatformGLObject 
     : WebGLObject(context, object)
 {
 }
+
+WebGLTexture::WebGLTexture() = default;
 
 WebGLTexture::~WebGLTexture()
 {

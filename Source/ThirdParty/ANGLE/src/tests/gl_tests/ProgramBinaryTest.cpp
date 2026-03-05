@@ -233,6 +233,82 @@ TEST_P(ProgramBinaryTest, SaveAndLoadBinaryTwice)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test to verify that when saving a program binary twice consecutively, both the length and the
+// binary match. Also verify that when loading each program binary, the quad rendered using the
+// binary matches as expected.
+TEST_P(ProgramBinaryTest, ReturnedBinaryTwiceShouldMatch)
+{
+    if (!supported())
+    {
+        return;
+    }
+
+    // Create a red program.
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    GLint programLength1 = 0;
+    GLint writtenLength1 = 0;
+    GLenum binaryFormat1 = GL_NONE;
+
+    GLint programLength2 = 0;
+    GLint writtenLength2 = 0;
+    GLenum binaryFormat2 = GL_NONE;
+
+    // Get the binary initially.
+    glGetProgramiv(redProgram, GL_PROGRAM_BINARY_LENGTH_OES, &programLength1);
+    std::vector<uint8_t> binary1(programLength1);
+    glGetProgramBinaryOES(redProgram, programLength1, &writtenLength1, &binaryFormat1,
+                          binary1.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Ensure that the lengths from glGetProgramiv and glGetProgramBinaryOES match.
+    EXPECT_EQ(programLength1, writtenLength1);
+
+    // Immediately get the binary again.
+    glGetProgramiv(redProgram, GL_PROGRAM_BINARY_LENGTH_OES, &programLength2);
+    std::vector<uint8_t> binary2(programLength2);
+    glGetProgramBinaryOES(redProgram, programLength2, &writtenLength2, &binaryFormat2,
+                          binary2.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Ensure that the lengths from glGetProgramiv and glGetProgramBinaryOES match again.
+    EXPECT_EQ(programLength2, writtenLength2);
+
+    // Verify length/binary 1 and 2 are the same.
+    EXPECT_EQ(programLength1, programLength2);
+    EXPECT_EQ(binary1, binary2);
+
+    // Load the program binary 1.
+    GLuint loadedProgram = glCreateProgram();
+    glProgramBinaryOES(loadedProgram, binaryFormat1, binary1.data(), writtenLength1);
+    EXPECT_GL_NO_ERROR();
+
+    // Load the program binary 2.
+    GLuint reloadedProgram = glCreateProgram();
+    glProgramBinaryOES(reloadedProgram, binaryFormat2, binary2.data(), writtenLength2);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(loadedProgram);
+
+    // Verify that the red program draws correctly for the program binary 1.
+    drawQuad(loadedProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+
+    // Clear with black before the second iteration.
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(reloadedProgram);
+
+    // Verify that the red program draws correctly for the program binary 2.
+    drawQuad(reloadedProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Ensures that we init the compiler before calling ProgramBinary.
 TEST_P(ProgramBinaryTest, CallProgramBinaryBeforeLink)
 {

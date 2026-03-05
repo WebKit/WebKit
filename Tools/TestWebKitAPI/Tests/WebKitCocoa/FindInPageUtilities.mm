@@ -25,8 +25,21 @@
 
 #import "config.h"
 #import "FindInPageUtilities.h"
+#import "Utilities.h"
+#import <WebKit/WKWebViewPrivate.h>
+
+#import "InstanceMethodSwizzler.h"
+
+#if PLATFORM(IOS_FAMILY)
+#import "UIKITSPIForTesting.h"
+#endif
 
 #if HAVE(UIFINDINTERACTION)
+
+static BOOL swizzledIsEmbeddedScreen(id, SEL, UIScreen *)
+{
+    return NO;
+}
 
 @implementation TestSearchAggregator {
     RetainPtr<NSMutableOrderedSet<UITextRange *>> _foundRanges;
@@ -80,7 +93,84 @@
 
 @end
 
-void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NSString *query, UITextSearchOptions * searchOptions, NSUInteger expectedMatches)
+@interface TestScrollViewDelegate ()
+{
+    std::unique_ptr<InstanceMethodSwizzler> _isEmbeddedScreenSwizzler;
+}
+@end
+
+@implementation TestScrollViewDelegate
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _finishedScrolling = false;
+
+    // Force UIKit to use a `CADisplayLink` rather than its own update cycle for `UIAnimation`s.
+    // UIKit's own update cycle does not work in TestWebKitAPIApp, as it is started in
+    // UIApplicationMain(), and TestWebKitAPIApp is not a real UIApplication. Without this,
+    // scroll view animations would not be completed.
+    _isEmbeddedScreenSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
+        UIScreen.class,
+        @selector(_isEmbeddedScreen),
+        reinterpret_cast<IMP>(swizzledIsEmbeddedScreen)
+    );
+
+    return self;
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    _finishedScrolling = true;
+}
+
+@end
+
+@implementation TestFindDelegate {
+    BlockPtr<void()> _didAddLayerForFindOverlayHandler;
+    BlockPtr<void()> _didRemoveLayerForFindOverlayHandler;
+}
+
+- (void)setDidAddLayerForFindOverlayHandler:(void (^)(void))didAddLayerForFindOverlayHandler
+{
+    _didAddLayerForFindOverlayHandler = makeBlockPtr(didAddLayerForFindOverlayHandler);
+}
+
+- (void (^)(void))didAddLayerForFindOverlayHandler
+{
+    return _didAddLayerForFindOverlayHandler.get();
+}
+
+- (void)setDidRemoveLayerForFindOverlayHandler:(void (^)(void))didRemoveLayerForFindOverlayHandler
+{
+    _didRemoveLayerForFindOverlayHandler = makeBlockPtr(didRemoveLayerForFindOverlayHandler);
+}
+
+- (void (^)(void))didRemoveLayerForFindOverlayHandler
+{
+    return _didRemoveLayerForFindOverlayHandler.get();
+}
+
+- (void)_webView:(WKWebView *)webView didAddLayerForFindOverlay:(CALayer *)layer
+{
+    if (_didAddLayerForFindOverlayHandler)
+        _didAddLayerForFindOverlayHandler();
+}
+
+- (void)_webViewDidRemoveLayerForFindOverlay:(WKWebView *)webView
+{
+    if (_didRemoveLayerForFindOverlayHandler)
+        _didRemoveLayerForFindOverlayHandler();
+}
+
+@end
+
+@interface WKWebView () <UITextSearching>
+@end
+
+void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NSString *query, UITextSearchOptions *searchOptions, NSUInteger expectedMatches)
 {
     __block bool finishedSearching = false;
     RetainPtr aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
@@ -101,7 +191,7 @@ RetainPtr<NSOrderedSet<UITextRange *>> textRangesForQueryString(WKWebView *webVi
         finishedSearching = true;
     }]);
 
-    auto options = adoptNS([[UITextSearchOptions alloc] init]);
+    RetainPtr options = adoptNS([[UITextSearchOptions alloc] init]);
     [webView performTextSearchWithQueryString:query usingOptions:options.get() resultAggregator:aggregator.get()];
 
     TestWebKitAPI::Util::run(&finishedSearching);

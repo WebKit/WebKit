@@ -42,7 +42,7 @@ private:
     template<typename Iterator> bool advance(Iterator&);
     void advanceIterator(WidthIterator&);
     void advanceIterator(ComplexTextController&);
-    bool currentCharacterStartsSurrogatePair() const;
+    bool NODELETE currentCharacterStartsSurrogatePair() const;
 
     void initializeMeasurementWithTextRenderer(RenderSVGInlineText&);
     void walkTree(RenderElement&, RenderSVGInlineText* stopAtLeaf, MeasureTextData&);

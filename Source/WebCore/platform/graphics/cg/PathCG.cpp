@@ -245,7 +245,7 @@ static inline void addToCGPath(CGMutablePathRef path, const PathContinuousRounde
 #else
     // Continuous rounded rects are unavailable. Paint a normal rounded rect instead.
     // FIXME: Determine if PreferNative is the optimal strategy here.
-    addToCGPath(path, PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, FloatRoundedRect::Radii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
+    addToCGPath(path, PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, CornerRadii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
 #endif
 }
 
@@ -348,12 +348,12 @@ Ref<PathCG> PathCG::create(std::span<const PathSegment> segments)
     RetainPtr platformPath = adoptCF(CGPathCreateMutable());
     for (auto& segment : segments)
         addToCGPath(platformPath.get(), segment);
-    return PathCG::create(WTFMove(platformPath));
+    return PathCG::create(WTF::move(platformPath));
 }
 
 Ref<PathCG> PathCG::create(RetainPtr<CGMutablePathRef>&& platformPath)
 {
-    return adoptRef(*new PathCG(WTFMove(platformPath)));
+    return adoptRef(*new PathCG(WTF::move(platformPath)));
 }
 
 PlatformPathPtr PathCG::emptyPlatformPath()
@@ -367,7 +367,7 @@ PlatformPathPtr PathCG::emptyPlatformPath()
 }
 
 PathCG::PathCG(RetainPtr<CGMutablePathRef>&& platformPath)
-    : m_platformPath(WTFMove(platformPath))
+    : m_platformPath(WTF::move(platformPath))
 {
     ASSERT(m_platformPath);
 }

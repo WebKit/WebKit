@@ -25,7 +25,7 @@
 
 static int maybe_write(BIO *out, const void *buf, int len) {
   // If |out| is NULL, ignore the output but report the length.
-  return out == NULL || BIO_write(out, buf, len) == len;
+  return out == nullptr || BIO_write(out, buf, len) == len;
 }
 
 // do_indent prints |indent| spaces to |out|.
@@ -170,12 +170,12 @@ int X509_NAME_print_ex(BIO *out, const X509_NAME *nm, int indent,
 
 int X509_NAME_print_ex_fp(FILE *fp, const X509_NAME *nm, int indent,
                           unsigned long flags) {
-  BIO *bio = NULL;
-  if (fp != NULL) {
+  BIO *bio = nullptr;
+  if (fp != nullptr) {
     // If |fp| is NULL, this function returns the number of bytes without
     // writing.
     bio = BIO_new_fp(fp, BIO_NOCLOSE);
-    if (bio == NULL) {
+    if (bio == nullptr) {
       return -1;
     }
   }

@@ -42,7 +42,7 @@ void TextDocumentParser::append(RefPtr<StringImpl>&& text)
 {
     if (!m_hasInsertedFakeFormattingElements)
         insertFakeFormattingElements();
-    HTMLDocumentParser::append(WTFMove(text));
+    HTMLDocumentParser::append(WTF::move(text));
 }
 
 void TextDocumentParser::insertFakeFormattingElements()
@@ -55,12 +55,12 @@ void TextDocumentParser::insertFakeFormattingElements()
 
     Attribute nameAttribute(nameAttr, "color-scheme"_s);
     Attribute contentAttribute(contentAttr, "light dark"_s);
-    AtomHTMLToken fakeMeta(HTMLToken::Type::StartTag, TagName::meta, { WTFMove(nameAttribute), WTFMove(contentAttribute) });
-    treeBuilder().constructTree(WTFMove(fakeMeta));
+    AtomHTMLToken fakeMeta(HTMLToken::Type::StartTag, TagName::meta, { WTF::move(nameAttribute), WTF::move(contentAttribute) });
+    treeBuilder().constructTree(WTF::move(fakeMeta));
 
     Attribute attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"_s);
-    AtomHTMLToken fakePre(HTMLToken::Type::StartTag, TagName::pre, { WTFMove(attribute) });
-    treeBuilder().constructTree(WTFMove(fakePre));
+    AtomHTMLToken fakePre(HTMLToken::Type::StartTag, TagName::pre, { WTF::move(attribute) });
+    treeBuilder().constructTree(WTF::move(fakePre));
 
     // Normally we would skip the first \n after a <pre> element, but we don't
     // want to skip the first \n for text documents!

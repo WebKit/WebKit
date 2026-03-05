@@ -46,6 +46,8 @@ public:
     virtual CallbackResult<void> invoke(void) = 0;
     virtual CallbackResult<void> invokeRethrowingException(void) = 0;
 
+    virtual bool isJSXRSimulateUserActivationFunction() const { return false; }
+
 private:
     virtual bool hasCallback() const = 0;
 };

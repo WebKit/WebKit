@@ -97,16 +97,16 @@ struct GridPosition {
     bool isSpan() const { return m_type == GridPositionType::Span; }
     bool isNamedGridArea() const { return m_type == GridPositionType::NamedGridArea; }
 
-    WEBCORE_EXPORT int explicitPosition() const;
-    WEBCORE_EXPORT int spanPosition() const;
-    String namedGridLine() const;
+    WEBCORE_EXPORT int NODELETE explicitPosition() const;
+    WEBCORE_EXPORT int NODELETE spanPosition() const;
+    String NODELETE namedGridLine() const;
 
     bool shouldBeResolvedAgainstOppositePosition() const { return isAuto() || isSpan(); }
 
     // Note that grid line 1 is internally represented by the index 0, that's why the max value for
     // a position is gridMaxTracks instead of gridMaxTracks + 1.
-    static int max();
-    static int min();
+    static int NODELETE max();
+    static int NODELETE min();
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
@@ -127,7 +127,7 @@ struct GridPosition {
 
     bool operator==(const GridPosition&) const = default;
 
-    WEBCORE_EXPORT static void setMaxPositionForTesting(unsigned);
+    WEBCORE_EXPORT static void NODELETE setMaxPositionForTesting(unsigned);
 
 private:
     friend void add(Hasher&, const GridPosition&);

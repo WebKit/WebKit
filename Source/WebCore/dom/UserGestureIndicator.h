@@ -25,17 +25,21 @@
 
 #pragma once
 
+#include <JavaScriptCore/CrossTaskToken.h>
 #include <WebCore/DOMPasteAccess.h>
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
+namespace JSC {
+class VM;
+}
 namespace WebCore {
 
 class Document;
@@ -46,11 +50,11 @@ enum class IsProcessingUserGesture : uint8_t { No, Yes, Potentially };
 enum class CanRequestDOMPaste : bool { No, Yes };
 enum class UserGestureType : uint8_t { EscapeKey, ActivationTriggering, Other };
 
-class UserGestureToken : public RefCountedAndCanMakeWeakPtr<UserGestureToken> {
+class UserGestureToken : public JSC::CrossTaskToken {
 public:
     static constexpr Seconds maximumIntervalForUserGestureForwarding { 1_s }; // One second matches Gecko.
-    static const Seconds& maximumIntervalForUserGestureForwardingForFetch();
-    WEBCORE_EXPORT static void setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
+    static const Seconds& NODELETE maximumIntervalForUserGestureForwardingForFetch();
+    WEBCORE_EXPORT static void NODELETE setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
 
     static Ref<UserGestureToken> create(IsProcessingUserGesture isProcessingUserGesture, UserGestureType gestureType, Document* document = nullptr, std::optional<WTF::UUID> authorizationToken = std::nullopt, CanRequestDOMPaste canRequestDOMPaste = CanRequestDOMPaste::Yes)
     {
@@ -66,7 +70,7 @@ public:
 
     void addDestructionObserver(Function<void(UserGestureToken&)>&& observer)
     {
-        m_destructionObservers.append(WTFMove(observer));
+        m_destructionObservers.append(WTF::move(observer));
     }
 
     DOMPasteAccessPolicy domPasteAccessPolicy() const { return m_domPasteAccessPolicy; }
@@ -88,12 +92,11 @@ public:
     enum class GestureScope { All, MediaOnly };
     void setScope(GestureScope scope) { m_scope = scope; }
     void resetScope() { m_scope = GestureScope::All; }
+    GestureScope scope() const { return m_scope; }
 
     // Expand the following methods if more propagation sources are added later.
     enum class ShouldPropagateToMicroTask : bool { No, Yes };
-    void setShouldPropagateToMicroTask(ShouldPropagateToMicroTask is) { m_shouldPropagateToMicroTask = is; }
-    void resetShouldPropagateToMicroTask() { m_shouldPropagateToMicroTask = ShouldPropagateToMicroTask::No; }
-    bool shouldPropagateToMicroTask() const { return m_shouldPropagateToMicroTask == ShouldPropagateToMicroTask::Yes; }
+    void setShouldPropagateToMicroTask(ShouldPropagateToMicroTask is) { CrossTaskToken::setShouldPropagateToMicroTask(is == ShouldPropagateToMicroTask::Yes); }
 
     bool hasExpired(Seconds expirationInterval) const
     {
@@ -106,9 +109,11 @@ public:
 
     bool canRequestDOMPaste() const { return m_canRequestDOMPaste == CanRequestDOMPaste::Yes; }
 
-    bool isValidForDocument(const Document&) const;
+    bool NODELETE isValidForDocument(const Document&) const;
 
     void forEachImpactedDocument(Function<void(Document&)>&&);
+
+    RefPtr<JSC::MicrotaskDispatcher> createMicrotaskDispatcher(JSC::VM&, JSC::JSGlobalObject*) override;
 
 private:
     UserGestureToken(IsProcessingUserGesture, UserGestureType, Document*, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste);
@@ -121,7 +126,6 @@ private:
     DOMPasteAccessPolicy m_domPasteAccessPolicy { DOMPasteAccessPolicy::NotRequestedYet };
     GestureScope m_scope { GestureScope::All };
     MonotonicTime m_startTime { MonotonicTime::now() };
-    ShouldPropagateToMicroTask m_shouldPropagateToMicroTask { ShouldPropagateToMicroTask::No };
     std::optional<WTF::UUID> m_authorizationToken;
 };
 
@@ -130,7 +134,6 @@ class UserGestureIndicator {
     WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
 public:
     WEBCORE_EXPORT static RefPtr<UserGestureToken> currentUserGesture();
-    static RefPtr<UserGestureToken> currentUserGestureForMainThread();
 
     WEBCORE_EXPORT static bool processingUserGesture(const Document* = nullptr);
     WEBCORE_EXPORT static bool processingUserGestureForMedia();

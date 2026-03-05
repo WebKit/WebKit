@@ -103,14 +103,12 @@
 #include <gtk/a11y/gtkatspi.h>
 #endif
 
-#if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 using namespace WebKit;
 using namespace WebCore;
@@ -215,8 +213,8 @@ struct MotionEvent {
     }
 
     MotionEvent(FloatPoint&& position, FloatPoint&& globalPosition, GdkModifierType state)
-        : position(WTFMove(position))
-        , globalPosition(WTFMove(globalPosition))
+        : position(WTF::move(position))
+        , globalPosition(WTF::move(globalPosition))
     {
         setState(state);
     }
@@ -243,6 +241,14 @@ struct MotionEvent {
         if (state & GDK_BUTTON3_MASK) {
             button = WebMouseEventButton::Right;
             buttons |= 2;
+        }
+        if (state & GDK_BUTTON4_MASK) {
+            button = WebMouseEventButton::Back;
+            buttons |= 8;
+        }
+        if (state & GDK_BUTTON5_MASK) {
+            button = WebMouseEventButton::Forward;
+            buttons |= 16;
         }
     }
 
@@ -885,17 +891,8 @@ static void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
 
     bool notifyNextPresentationUpdate = false;
     auto* pageSnapshot = gtk_snapshot_new();
-    if (!webViewBase->priv->isBlank) {
-        if (drawingArea->isInAcceleratedCompositingMode())
-            notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->snapshot(pageSnapshot);
-        else {
-            graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, widgetSize.width(), widgetSize.height());
-            RefPtr<cairo_t> cr = adoptRef(gtk_snapshot_append_cairo(pageSnapshot, &bounds));
-            WebCore::Region unpaintedRegion; // This is simply unused.
-            drawingArea->paint(cr.get(), IntRect { { 0, 0 }, drawingArea->size() }, unpaintedRegion);
-            notifyNextPresentationUpdate = true;
-        }
-    }
+    if (!webViewBase->priv->isBlank)
+        notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->snapshot(pageSnapshot);
 
     if (auto* pageRenderNode = gtk_snapshot_free_to_node(pageSnapshot)) {
         bool showingNavigationSnapshot = webViewBase->priv->pageProxy->isShowingNavigationGestureSnapshot();
@@ -935,14 +932,8 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
         if (showingNavigationSnapshot)
             cairo_push_group(cr);
 
-        if (drawingArea->isInAcceleratedCompositingMode()) {
-            ASSERT(webViewBase->priv->acceleratedBackingStore);
-            notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
-        } else {
-            WebCore::Region unpaintedRegion; // This is simply unused.
-            drawingArea->paint(cr, clipRect, unpaintedRegion);
-            notifyNextPresentationUpdate = true;
-        }
+        ASSERT(webViewBase->priv->acceleratedBackingStore);
+        notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
 
         if (showingNavigationSnapshot) {
             RefPtr<cairo_pattern_t> group = adoptRef(cairo_pop_group(cr));
@@ -1473,7 +1464,7 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
         GdkDevice* device = gdk_event_get_source_device(event);
         GdkInputSource source = gdk_device_get_source(device);
 
-        bool isEnd = gdk_event_is_scroll_stop_event(event) ? true : false;
+        bool isEnd = !!gdk_event_is_scroll_stop_event(event);
 
         PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         if (controller->handleScrollWheelEvent(&scrollData))
@@ -1725,7 +1716,7 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
 #endif
 
 #if USE(GTK4)
-static void webkitWebViewBaseEnter(WebKitWebViewBase* webViewBase, double x, double y, GdkCrossingMode, GtkEventController*)
+static void webkitWebViewBaseEnter(WebKitWebViewBase* webViewBase, double x, double y, GtkEventController*)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
@@ -1758,14 +1749,14 @@ static gboolean webkitWebViewBaseMotion(WebKitWebViewBase* webViewBase, double x
     MotionEvent motionEvent(FloatPoint(x, y), FloatPoint(x, y), gdk_event_get_modifier_state(event));
     if (priv->lastMotionEvent)
         movementDelta = motionEvent.position - priv->lastMotionEvent->position;
-    priv->lastMotionEvent = WTFMove(motionEvent);
+    priv->lastMotionEvent = WTF::move(motionEvent);
 
     webViewBase->priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, DoublePoint(x, y), 0, movementDelta));
 
     return GDK_EVENT_PROPAGATE;
 }
 
-static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMode, GtkEventController*)
+static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GtkEventController*)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
@@ -1890,7 +1881,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
 #else
         GUniquePtr<GdkEvent> event(gdk_event_copy(touchEvent));
 #endif
-        priv->touchEvents.add(sequence, WTFMove(event));
+        priv->touchEvents.add(sequence, WTF::move(event));
         break;
     }
     case GDK_TOUCH_UPDATE: {
@@ -1918,7 +1909,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
 
     Vector<WebPlatformTouchPoint> touchPoints;
     webkitWebViewBaseGetTouchPointsForEvent(webViewBase, touchEvent, touchPoints);
-    priv->pageProxy->handleTouchEvent(nullptr, NativeWebTouchEvent(reinterpret_cast<GdkEvent*>(event), WTFMove(touchPoints)));
+    priv->pageProxy->handleTouchEvent(nullptr, NativeWebTouchEvent(reinterpret_cast<GdkEvent*>(event), WTF::move(touchPoints)));
 
 #if USE(GTK4)
     return GDK_EVENT_PROPAGATE;
@@ -2536,7 +2527,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
     WebProcessPool& processPool = configuration->processPool();
-    priv->pageProxy = processPool.createWebPage(*priv->pageClient, WTFMove(configuration));
+    priv->pageProxy = processPool.createWebPage(*priv->pageClient, WTF::move(configuration));
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
 
@@ -2589,7 +2580,7 @@ void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, SelectionData&& 
     if (!priv->dragSource)
         priv->dragSource = makeUnique<DragSource>(GTK_WIDGET(webViewBase));
 
-    priv->dragSource->begin(WTFMove(selectionData), dragOperationMask, WTFMove(image), WTFMove(dragImageHotspot));
+    priv->dragSource->begin(WTF::move(selectionData), dragOperationMask, WTF::move(image), WTF::move(dragImageHotspot));
 
 #if !USE(GTK4)
     // A drag starting should prevent a double-click from happening. This might
@@ -2747,7 +2738,7 @@ GRefPtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webki
 #else
 GUniquePtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
 {
-    return WTFMove(webkitWebViewBase->priv->contextMenuEvent);
+    return WTF::move(webkitWebViewBase->priv->contextMenuEvent);
 }
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
@@ -2860,7 +2851,7 @@ bool webkitWebViewBaseIsInWindow(WebKitWebViewBase* webViewBase)
 
 void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, std::optional<InputMethodState>&& state)
 {
-    webkitWebViewBase->priv->inputMethodFilter.setState(WTFMove(state));
+    webkitWebViewBase->priv->inputMethodFilter.setState(WTF::move(state));
 }
 
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase* webkitWebViewBase)
@@ -2964,7 +2955,7 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
     }
     webkitWebViewBaseDraw(GTK_WIDGET(webkitWebViewBase), cr.get());
 
-    return ViewSnapshot::create(WTFMove(surface));
+    return ViewSnapshot::create(WTF::move(surface));
 #else
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     auto* renderer = gtk_native_get_renderer(GTK_NATIVE(priv->toplevelOnScreenWindow->window()));
@@ -2995,7 +2986,7 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
     graphene_rect_t viewport = { { 0, 0 }, { static_cast<float>(size.width()), static_cast<float>(size.height()) } };
     GRefPtr<GdkTexture> texture = adoptGRef(gsk_renderer_render_texture(renderer, renderNode.get(), &viewport));
 
-    return ViewSnapshot::create(WTFMove(texture));
+    return ViewSnapshot::create(WTF::move(texture));
 #endif
 }
 
@@ -3076,7 +3067,7 @@ void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, con
         g_signal_connect_swapped(priv->emojiChooser, "closed", G_CALLBACK(emojiChooserClosed), webkitWebViewBase);
     }
 
-    priv->emojiChooserCompletionHandler = WTFMove(completionHandler);
+    priv->emojiChooserCompletionHandler = WTF::move(completionHandler);
 
     GdkRectangle gdkCaretRect = caretRect;
     gtk_popover_set_pointing_to(GTK_POPOVER(priv->emojiChooser), &gdkCaretRect);
@@ -3127,7 +3118,7 @@ WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBa
 
 void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
-    webViewBase->priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(text, WTFMove(underlines), WTFMove(selectionRange)));
+    webViewBase->priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(text, WTF::move(underlines), WTF::move(selectionRange)));
 }
 
 static inline OptionSet<WebEventModifier> toWebKitModifiers(unsigned modifiers)
@@ -3182,6 +3173,12 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
     case GDK_BUTTON_SECONDARY:
         webEventButton = WebMouseEventButton::Right;
         break;
+    case 8:
+        webEventButton = WebMouseEventButton::Back;
+        break;
+    case 9:
+        webEventButton = WebMouseEventButton::Forward;
+        break;
     }
 
     unsigned short webEventButtons = 0;
@@ -3191,6 +3188,10 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         webEventButtons |= 4;
     if (buttons & GDK_BUTTON3_MASK)
         webEventButtons |= 2;
+    if (buttons & GDK_BUTTON4_MASK)
+        webEventButtons |= 8;
+    if (buttons & GDK_BUTTON5_MASK)
+        webEventButtons |= 16;
 
     std::optional<FloatSize> movementDelta;
     WebEventType webEventType;
@@ -3214,7 +3215,7 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
             gdk_window_get_root_coords(event->button.window, x, y, &xRoot, &yRoot);
             event->button.x_root = xRoot;
             event->button.y_root = yRoot;
-            priv->contextMenuEvent = WTFMove(event);
+            priv->contextMenuEvent = WTF::move(event);
         }
 #endif
         if (!gtk_widget_has_focus(GTK_WIDGET(webViewBase)) && gtk_widget_is_focus(GTK_WIDGET(webViewBase)))
@@ -3233,6 +3234,10 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
             webEventButton = WebMouseEventButton::Middle;
         else if (buttons & GDK_BUTTON3_MASK)
             webEventButton = WebMouseEventButton::Right;
+        else if (buttons & GDK_BUTTON4_MASK)
+            webEventButton = WebMouseEventButton::Back;
+        else if (buttons & GDK_BUTTON5_MASK)
+            webEventButton = WebMouseEventButton::Forward;
 
         if (priv->lastMotionEvent)
             movementDelta = FloatPoint(x, y) - priv->lastMotionEvent->globalPosition;
@@ -3294,7 +3299,7 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
             event->key.keyval = keyval;
             event->key.state = modifiers;
             gdk_event_set_device(event.get(), gdk_seat_get_keyboard(gdk_display_get_default_seat(gtk_widget_get_display(GTK_WIDGET(webViewBase)))));
-            priv->contextMenuEvent = WTFMove(event);
+            priv->contextMenuEvent = WTF::move(event);
             priv->pageProxy->handleContextMenuKeyEvent();
             return;
         }
@@ -3438,7 +3443,7 @@ void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase* webViewBase,
 
 void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase* webViewBase, CompletionHandler<void()>&& callback)
 {
-    webViewBase->priv->nextPresentationUpdateCallbacks.insert(0, WTFMove(callback));
+    webViewBase->priv->nextPresentationUpdateCallbacks.insert(0, WTF::move(callback));
 }
 
 #if USE(GTK4)
@@ -3481,17 +3486,13 @@ void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& pl
 RendererBufferDescription webkitWebViewBaseGetRendererBufferDescription(WebKitWebViewBase* webViewBase)
 {
     auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
-    if (!drawingArea || !drawingArea->isInAcceleratedCompositingMode())
+    if (!drawingArea)
         return { };
 
     return webViewBase->priv->acceleratedBackingStore->bufferDescription();
 }
 
-#if USE(CAIRO)
-static cairo_surface_t* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
-#elif USE(SKIA)
 static SkImage* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
-#endif
 {
 #if USE(GTK4)
     int width = gtk_widget_get_width(view);
@@ -3519,37 +3520,18 @@ static SkImage* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
     gtk_widget_draw(view, cr.get());
 #endif
 
-#if USE(CAIRO)
-    return surface.leakRef();
-#elif USE(SKIA)
     cairo_surface_flush(surface.get());
     auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(surface.get()), cairo_image_surface_get_height(surface.get()), SkColorSpace::MakeSRGB());
     SkPixmap pixmap(imageInfo, cairo_image_surface_get_data(surface.get()), cairo_image_surface_get_stride(surface.get()));
     return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         cairo_surface_destroy(static_cast<cairo_surface_t*>(context));
     }, surface.leakRef()).release();
-#endif
 }
 
-#if USE(CAIRO)
-cairo_surface_t* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase* webViewBase)
-{
-    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
-    if (!drawingArea || !drawingArea->isInAcceleratedCompositingMode())
-        return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
-
-    if (auto image = webViewBase->priv->acceleratedBackingStore->bufferAsNativeImageForTesting()) {
-        if (RefPtr<cairo_surface_t> surface = image->platformImage())
-            return surface.leakRef();
-    }
-
-    return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
-}
-#elif USE(SKIA)
 SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase* webViewBase)
 {
     auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
-    if (!drawingArea || !drawingArea->isInAcceleratedCompositingMode())
+    if (!drawingArea)
         return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
 
     if (auto image = webViewBase->priv->acceleratedBackingStore->bufferAsNativeImageForTesting()) {
@@ -3566,7 +3548,6 @@ SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase* webViewBase)
 
     return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
 }
-#endif
 
 #if USE(GTK4)
 static GRefPtr<GdkCursor> fallbackCursor()
@@ -3704,22 +3685,14 @@ void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cu
     auto& platformImage = nativeImage->platformImage();
 
 #if USE(GTK4)
-#if USE(CAIRO)
-    auto texture = cairoSurfaceToGdkTexture(platformImage.get());
-#elif USE(SKIA)
     auto texture = skiaImageToGdkTexture(*platformImage.get());
-#endif
     if (!texture)
         return;
 
     GRefPtr<GdkCursor> newCursor = adoptGRef(gdk_cursor_new_from_texture(texture.get(), effectiveHotSpot.x(), effectiveHotSpot.y(), fallbackCursor().get()));
     gtk_widget_set_cursor(GTK_WIDGET(webViewBase), newCursor.get());
 #else
-#if USE(CAIRO)
-    auto pixbuf = cairoSurfaceToGdkPixbuf(platformImage.get());
-#elif USE(SKIA)
     auto pixbuf = skiaImageToGdkPixbuf(*platformImage.get());
-#endif
     if (!pixbuf)
         return;
 

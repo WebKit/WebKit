@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "AXLoggerBase.h"
 #include "AccessibilityRenderObject.h"
 #include <wtf/WeakPtr.h>
 
@@ -71,7 +72,7 @@ private:
 
 inline void AccessibilitySVGObject::setParent(AccessibilityRenderObject* parent)
 {
-    ASSERT(m_isSVGRoot);
+    AX_ASSERT(m_isSVGRoot);
     m_parent = parent;
 }
 

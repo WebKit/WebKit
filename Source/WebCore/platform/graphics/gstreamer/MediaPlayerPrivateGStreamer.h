@@ -191,7 +191,7 @@ public:
     GstElement* pipeline() const { return m_pipeline.get(); }
 
 #if USE(COORDINATED_GRAPHICS)
-    PlatformLayer* platformLayer() const override;
+    PlatformLayer* NODELETE platformLayer() const override;
     bool supportsAcceleratedRendering() const override { return true; }
 #endif
 
@@ -249,7 +249,7 @@ public:
 
     void setQuirkState(const GStreamerQuirk* owner, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>&& state)
     {
-        m_quirkStates.set(owner, WTFMove(state));
+        m_quirkStates.set(owner, WTF::move(state));
     }
 
     GStreamerQuirkBase::GStreamerQuirkState* quirkState(const GStreamerQuirk* owner)
@@ -466,6 +466,9 @@ protected:
 
     bool updateVideoSinkStatistics();
 
+    uint64_t m_framesReceived { 0 };
+    uint64_t m_decodedKeyFrames { 0 };
+
 private:
     class TaskAtMediaTimeScheduler {
     public:
@@ -476,7 +479,7 @@ private:
         void setTask(Function<void()>&& task, const MediaTime& targetTime, PlaybackDirection playbackDirection)
         {
             m_targetTime = targetTime;
-            m_task = WTFMove(task);
+            m_task = WTF::move(task);
             m_playbackDirection = playbackDirection;
         }
         std::optional<Function<void()>> checkTaskForScheduling(const MediaTime& currentTime)
@@ -486,7 +489,7 @@ private:
                 || (m_playbackDirection == Backward && currentTime > m_targetTime))
                 return std::optional<Function<void()>>();
             m_targetTime = MediaTime::invalidTime();
-            return WTFMove(m_task);
+            return WTF::move(m_task);
         }
     private:
         MediaTime m_targetTime = MediaTime::invalidTime();
@@ -650,12 +653,19 @@ private:
     uint64_t m_totalVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
     uint64_t m_decodedVideoFrames { 0 };
+    double m_averageFrameRate { 0 };
+
+    // https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totaldecodetime
+    MediaTime m_totalVideoDecodeTime { MediaTime::zeroTime() };
 
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
 private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final;
-    bool applyAudioSinkDevice(GstElement* audioSink, GstDevice*);
+#if ENABLE(MEDIA_STREAM)
+    std::pair<String, GRefPtr<GstDevice>> resolveAudioOutputDevice(const String& deviceId);
+#endif
+    bool applyAudioSinkDevice(GstElement* audioSink, const GRefPtr<GstDevice>&, const String& deviceId);
 
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
@@ -681,6 +691,7 @@ private:
     // Specific to MediaStream playback.
     MediaTime m_startTime;
     std::optional<MediaTime> m_pausedTime;
+    String m_videoDecoderName;
 
     void setupCodecProbe(GstElement*);
     Lock m_codecsLock;

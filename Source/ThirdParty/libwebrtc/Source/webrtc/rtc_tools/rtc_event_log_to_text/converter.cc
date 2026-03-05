@@ -12,6 +12,7 @@
 
 #include <cinttypes>
 #include <cstdio>
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
@@ -29,13 +30,11 @@
 #include "logging/rtc_event_log/events/rtc_event_begin_log.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_scream.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
 #include "logging/rtc_event_log/events/rtc_event_end_log.h"
 #include "logging/rtc_event_log/events/rtc_event_frame_decoded.h"
-#include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
-#include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
-#include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 #include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
@@ -50,6 +49,7 @@
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/str_join.h"
 
 namespace webrtc {
 namespace {
@@ -65,6 +65,17 @@ void PrintHeaderExtensionConfig(
   }
 }
 
+inline const char* GetLabel(PacketDirection direction) {
+  static constexpr char kInLabel[] = "IN";
+  static constexpr char kOutLabel[] = "OUT";
+  return direction == PacketDirection::kIncomingPacket ? kInLabel : kOutLabel;
+}
+
+template <typename T>
+auto bind_direction(std::function<void(const T&, PacketDirection)> f,
+                    PacketDirection direction) {
+  return [f, direction](const T& msg) { f(msg, direction); };
+}
 }  // namespace
 
 bool Convert(std::string inputfile,
@@ -72,7 +83,7 @@ bool Convert(std::string inputfile,
              ParsedRtcEventLog::UnconfiguredHeaderExtensions
                  handle_unconfigured_extensions) {
   ParsedRtcEventLog parsed_log(handle_unconfigured_extensions,
-                               /*allow_incomplete_logs=*/true);
+                               /*allow_incomplete_log=*/true);
 
   auto status = parsed_log.ParseFile(inputfile);
   if (!status.ok()) {
@@ -212,6 +223,18 @@ bool Convert(std::string inputfile,
             event.expected_packets);
   };
 
+  auto bwe_scream_update_handler = [&](const LoggedBweScreamUpdate& event) {
+    fprintf(output,
+            "BWE_SCREAM %" PRId64 "ref_window_bytes=%" PRId64
+            " data_in_flight_bytes=%" PRId64 " target_rate_kbps=%" PRId64
+            " smoothed_rtt_ms=%" PRId64 " avg_queue_delay_ms=%" PRId64
+            " l4s_marked_permille=%u\n",
+            event.log_time_ms(), event.ref_window.bytes(),
+            event.data_in_flight.bytes(), event.target_rate.kbps(),
+            event.smoothed_rtt.ms(), event.avg_queue_delay.ms(),
+            event.l4s_marked_permille);
+  };
+
   auto dtls_transport_state_handler =
       [&](const LoggedDtlsTransportState& event) {
         fprintf(output, "DTLS_TRANSPORT_STATE %" PRId64 " state=%d\n",
@@ -326,7 +349,7 @@ bool Convert(std::string inputfile,
   auto incoming_rtp_packet_handler = [&](const LoggedRtpPacketIncoming& event) {
     fprintf(output, "RTP_IN %" PRId64, event.log_time_ms());
     fprintf(output, " ssrc=%u", event.rtp.header.ssrc);
-    fprintf(output, " seq_no=%u", event.rtp.header.sequenceNumber);
+    fprintf(output, " seq_num=%u", event.rtp.header.sequenceNumber);
     fprintf(output, " marker=%u", event.rtp.header.markerBit);
     fprintf(output, " pt=%u", event.rtp.header.payloadType);
     fprintf(output, " timestamp=%u", event.rtp.header.timestamp);
@@ -349,7 +372,7 @@ bool Convert(std::string inputfile,
               event.rtp.header.extension.videoRotation);
     }
     if (event.rtp.header.extension.hasTransportSequenceNumber) {
-      fprintf(output, " transport_seq_no=%u",
+      fprintf(output, " transport_seq_num=%u",
               event.rtp.header.extension.transportSequenceNumber);
     }
     fprintf(output, " header_length=%zu", event.rtp.header_length);
@@ -361,7 +384,7 @@ bool Convert(std::string inputfile,
   auto outgoing_rtp_packet_handler = [&](const LoggedRtpPacketOutgoing& event) {
     fprintf(output, "RTP_OUT %" PRId64, event.log_time_ms());
     fprintf(output, " ssrc=%u", event.rtp.header.ssrc);
-    fprintf(output, " seq_no=%u", event.rtp.header.sequenceNumber);
+    fprintf(output, " seq_num=%u", event.rtp.header.sequenceNumber);
     fprintf(output, " marker=%u", event.rtp.header.markerBit);
     fprintf(output, " pt=%u", event.rtp.header.payloadType);
     fprintf(output, " timestamp=%u", event.rtp.header.timestamp);
@@ -384,7 +407,7 @@ bool Convert(std::string inputfile,
               event.rtp.header.extension.videoRotation);
     }
     if (event.rtp.header.extension.hasTransportSequenceNumber) {
-      fprintf(output, " transport_seq_no=%u",
+      fprintf(output, " transport_seq_num=%u",
               event.rtp.header.extension.transportSequenceNumber);
     }
     fprintf(output, " header_length=%zu", event.rtp.header_length);
@@ -405,27 +428,75 @@ bool Convert(std::string inputfile,
                 event.log_time_ms());
       };
 
-  auto generic_packet_received_handler =
-      [&](const LoggedGenericPacketReceived& event) {
-        fprintf(output,
-                "GENERIC_PACKET_RECV %" PRId64 " packet_no=%" PRId64
-                " length=%d\n",
-                event.log_time_ms(), event.packet_number, event.packet_length);
-      };
-
-  auto generic_packet_sent_handler = [&](const LoggedGenericPacketSent& event) {
-    fprintf(output,
-            "GENERIC_PACKET_SENT %" PRId64 " packet_no=%" PRId64
-            " overhead_length=%zu "
-            "payload_length=%zu padding_length=%zu\n",
-            event.log_time_ms(), event.packet_number, event.overhead_length,
-            event.payload_length, event.padding_length);
+  auto rr_handler = [&output](const LoggedRtcpPacketReceiverReport& msg,
+                              PacketDirection direction) {
+    fprintf(output, "RTCP_RR_%s %" PRId64 " <contents omitted>\n",
+            GetLabel(direction), msg.log_time_ms());
   };
 
-  auto generic_ack_received_handler =
-      [&](const LoggedGenericAckReceived& event) {
-        fprintf(output, "GENERIC_ACK_RECV %" PRId64 " <contents omitted>\n",
-                event.log_time_ms());
+  auto sr_handler = [&output](const LoggedRtcpPacketSenderReport& msg,
+                              PacketDirection direction) {
+    fprintf(output, "RTCP_SR_%s %" PRId64 " <contents omitted>\n",
+            GetLabel(direction), msg.log_time_ms());
+  };
+
+  auto xr_handler = [&output](const LoggedRtcpPacketExtendedReports& msg,
+                              PacketDirection direction) {
+    fprintf(output, "RTCP_XR_%s %" PRId64 " <contents omitted>\n",
+            GetLabel(direction), msg.log_time_ms());
+  };
+
+  auto nack_handler = [&output](const LoggedRtcpPacketNack& msg,
+                                PacketDirection direction) {
+    fprintf(output, "RTCP_NACK_%s %" PRId64 " seq_nums=%s\n",
+            GetLabel(direction), msg.log_time_ms(),
+            StrJoin(msg.nack.packet_ids(), ",").c_str());
+  };
+
+  auto remb_handler = [&output](const LoggedRtcpPacketRemb& msg,
+                                PacketDirection direction) {
+    fprintf(output, "RTCP_REMB_%s %" PRId64 " <contents omitted>\n",
+            GetLabel(direction), msg.log_time_ms());
+  };
+
+  auto fir_handler = [&output](const LoggedRtcpPacketFir& msg,
+                               PacketDirection direction) {
+    fprintf(output, "RTCP_FIR_%s %" PRId64 " <contents omitted>\n",
+            GetLabel(direction), msg.log_time_ms());
+  };
+
+  auto pli_handler = [&output](const LoggedRtcpPacketPli& msg,
+                               PacketDirection direction) {
+    fprintf(output, "RTCP_PLI_%s %" PRId64 " <contents omitted>\n",
+            GetLabel(direction), msg.log_time_ms());
+  };
+
+  auto bye_handler = [&output](const LoggedRtcpPacketBye& msg,
+                               PacketDirection direction) {
+    fprintf(output, "RTCP_BYE_%s %" PRId64 " <contents omitted>\n",
+            GetLabel(direction), msg.log_time_ms());
+  };
+
+  auto transport_feedback_handler =
+      [&output](const LoggedRtcpPacketTransportFeedback& msg,
+                PacketDirection direction) {
+        fprintf(output, "RTCP_TWCC_%s %" PRId64 " <contents omitted>\n",
+                GetLabel(direction), msg.log_time_ms());
+      };
+
+  auto congestion_feedback_handler =
+      [&output](const LoggedRtcpCongestionControlFeedback& msg,
+                PacketDirection direction) {
+        fprintf(output, "RTCP_CCFB_%s %" PRId64 " <contents omitted>\n",
+                GetLabel(direction), msg.log_time_ms());
+      };
+
+  auto loss_notification_handler =
+      [&output](const LoggedRtcpPacketLossNotification& msg,
+                PacketDirection direction) {
+        fprintf(output,
+                "RTCP_LOSS_NOTIFICATION_%s %" PRId64 " <contents omitted>\n",
+                GetLabel(direction), msg.log_time_ms());
       };
 
   auto decoded_frame_handler = [&](const LoggedFrameDecoded& event) {
@@ -485,6 +556,8 @@ bool Convert(std::string inputfile,
   processor.AddEvents(parsed_log.bwe_loss_updates(), bwe_loss_update_handler);
   processor.AddEvents(parsed_log.remote_estimate_events(),
                       remote_estimate_handler);
+  processor.AddEvents(parsed_log.bwe_scream_updates(),
+                      bwe_scream_update_handler);
 
   // Connectivity
   processor.AddEvents(parsed_log.dtls_transport_states(),
@@ -505,19 +578,112 @@ bool Convert(std::string inputfile,
     processor.AddEvents(stream.outgoing_packets, outgoing_rtp_packet_handler);
   }
 
-  // RTCP
+  // RTCP packets
   processor.AddEvents(parsed_log.incoming_rtcp_packets(),
                       incoming_rtcp_packet_handler);
   processor.AddEvents(parsed_log.outgoing_rtcp_packets(),
                       outgoing_rtcp_packet_handler);
 
-  // Generic packets
-  processor.AddEvents(parsed_log.generic_packets_received(),
-                      generic_packet_received_handler);
-  processor.AddEvents(parsed_log.generic_packets_sent(),
-                      generic_packet_sent_handler);
-  processor.AddEvents(parsed_log.generic_acks_received(),
-                      generic_ack_received_handler);
+  // RTCP submessages
+  processor.AddEvents(parsed_log.receiver_reports(kIncomingPacket),
+                      bind_direction<LoggedRtcpPacketReceiverReport>(
+                          rr_handler, kIncomingPacket),
+                      kIncomingPacket);
+
+  processor.AddEvents(parsed_log.receiver_reports(kOutgoingPacket),
+                      bind_direction<LoggedRtcpPacketReceiverReport>(
+                          rr_handler, kOutgoingPacket),
+                      kOutgoingPacket);
+
+  processor.AddEvents(
+      parsed_log.sender_reports(kIncomingPacket),
+      bind_direction<LoggedRtcpPacketSenderReport>(sr_handler, kIncomingPacket),
+      kIncomingPacket);
+  processor.AddEvents(
+      parsed_log.sender_reports(kOutgoingPacket),
+      bind_direction<LoggedRtcpPacketSenderReport>(sr_handler, kOutgoingPacket),
+      kOutgoingPacket);
+
+  processor.AddEvents(parsed_log.extended_reports(kIncomingPacket),
+                      bind_direction<LoggedRtcpPacketExtendedReports>(
+                          xr_handler, kIncomingPacket),
+                      kIncomingPacket);
+  processor.AddEvents(parsed_log.extended_reports(kOutgoingPacket),
+                      bind_direction<LoggedRtcpPacketExtendedReports>(
+                          xr_handler, kOutgoingPacket),
+                      kOutgoingPacket);
+
+  processor.AddEvents(
+      parsed_log.nacks(kIncomingPacket),
+      bind_direction<LoggedRtcpPacketNack>(nack_handler, kIncomingPacket),
+      kIncomingPacket);
+  processor.AddEvents(
+      parsed_log.nacks(kOutgoingPacket),
+      bind_direction<LoggedRtcpPacketNack>(nack_handler, kOutgoingPacket),
+      kOutgoingPacket);
+
+  processor.AddEvents(
+      parsed_log.rembs(kIncomingPacket),
+      bind_direction<LoggedRtcpPacketRemb>(remb_handler, kIncomingPacket),
+      kIncomingPacket);
+  processor.AddEvents(
+      parsed_log.rembs(kOutgoingPacket),
+      bind_direction<LoggedRtcpPacketRemb>(remb_handler, kOutgoingPacket),
+      kOutgoingPacket);
+
+  processor.AddEvents(
+      parsed_log.firs(kIncomingPacket),
+      bind_direction<LoggedRtcpPacketFir>(fir_handler, kIncomingPacket),
+      kIncomingPacket);
+  processor.AddEvents(
+      parsed_log.firs(kOutgoingPacket),
+      bind_direction<LoggedRtcpPacketFir>(fir_handler, kOutgoingPacket),
+      kOutgoingPacket);
+
+  processor.AddEvents(
+      parsed_log.plis(kIncomingPacket),
+      bind_direction<LoggedRtcpPacketPli>(pli_handler, kIncomingPacket),
+      kIncomingPacket);
+  processor.AddEvents(
+      parsed_log.plis(kOutgoingPacket),
+      bind_direction<LoggedRtcpPacketPli>(pli_handler, kOutgoingPacket),
+      kOutgoingPacket);
+
+  processor.AddEvents(
+      parsed_log.byes(kIncomingPacket),
+      bind_direction<LoggedRtcpPacketBye>(bye_handler, kIncomingPacket),
+      kIncomingPacket);
+  processor.AddEvents(
+      parsed_log.byes(kOutgoingPacket),
+      bind_direction<LoggedRtcpPacketBye>(bye_handler, kOutgoingPacket),
+      kOutgoingPacket);
+
+  processor.AddEvents(parsed_log.transport_feedbacks(kIncomingPacket),
+                      bind_direction<LoggedRtcpPacketTransportFeedback>(
+                          transport_feedback_handler, kIncomingPacket),
+                      kIncomingPacket);
+  processor.AddEvents(parsed_log.transport_feedbacks(kOutgoingPacket),
+                      bind_direction<LoggedRtcpPacketTransportFeedback>(
+                          transport_feedback_handler, kOutgoingPacket),
+                      kOutgoingPacket);
+
+  processor.AddEvents(parsed_log.congestion_feedback(kIncomingPacket),
+                      bind_direction<LoggedRtcpCongestionControlFeedback>(
+                          congestion_feedback_handler, kIncomingPacket),
+                      kIncomingPacket);
+  processor.AddEvents(parsed_log.congestion_feedback(kOutgoingPacket),
+                      bind_direction<LoggedRtcpCongestionControlFeedback>(
+                          congestion_feedback_handler, kOutgoingPacket),
+                      kOutgoingPacket);
+
+  processor.AddEvents(parsed_log.loss_notifications(kIncomingPacket),
+                      bind_direction<LoggedRtcpPacketLossNotification>(
+                          loss_notification_handler, kIncomingPacket),
+                      kIncomingPacket);
+  processor.AddEvents(parsed_log.loss_notifications(kOutgoingPacket),
+                      bind_direction<LoggedRtcpPacketLossNotification>(
+                          loss_notification_handler, kOutgoingPacket),
+                      kOutgoingPacket);
 
   // Video frames
   for (const auto& kv : parsed_log.decoded_frames()) {
@@ -527,6 +693,6 @@ bool Convert(std::string inputfile,
   processor.ProcessEventsInOrder();
 
   return true;
-}
+}  // NOLINT(readability/fn_size)
 
 }  // namespace webrtc

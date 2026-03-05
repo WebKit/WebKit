@@ -34,11 +34,16 @@ rtc_library("dependency_descriptor") {
   ]
 }
 
-rtc_source_set("corruption_detection_message") {
+rtc_library("corruption_detection_message") {
   visibility = [ "*" ]
-  sources = [ "corruption_detection_message.h" ]
+  sources = [
+    "corruption_detection_message.cc",
+    "corruption_detection_message.h",
+  ]
   deps = [
-    "../../../api:array_view",
+    "../../:array_view",
+    "../../../rtc_base:checks",
+    "../../video/corruption_detection:frame_instrumentation_data",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
 }
@@ -50,6 +55,7 @@ if (rtc_include_tests && !build_with_chromium) {
     deps = [
       ":corruption_detection_message",
       "../../../test:test_support",
+      "../../video/corruption_detection:frame_instrumentation_data",
     ]
   }
 }

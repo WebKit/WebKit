@@ -30,9 +30,11 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
 struct UALowEntropyJSON {
     Vector<NavigatorUABrandVersion> brands;
     bool mobile;
     String platform;
 };
-}
+
+} // namespace WebCore

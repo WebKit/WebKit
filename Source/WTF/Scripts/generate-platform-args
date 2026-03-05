@@ -27,6 +27,9 @@ system_header_search_paths = shlex.split(
 preprocessor_definitions = shlex.split(
     '__WK_GENERATING_PLATFORM_ARGS__ RELEASE_WITHOUT_OPTIMIZATIONS '
     '{GCC_PREPROCESSOR_DEFINITIONS}'.format_map(os.environ))
+sanitizer_flags = []
+if os.environ.get('ENABLE_ADDRESS_SANITIZER') == 'YES':
+    sanitizer_flags.append('-fsanitize=address')
 
 archs = shlex.split(os.environ['ARCHS'])
 if 'SWIFT_MODULE_ONLY_ARCHS' in os.environ:
@@ -61,6 +64,7 @@ for arch in archs:
     feature_and_platform_defines = subprocess.check_output(
         ('xcrun', 'clang', '-x', 'c++', '-std={CLANG_CXX_LANGUAGE_STANDARD}'.format_map(os.environ),
          '-target', target_triple, '-E', '-P', '-dM', '-MD', '-MF', depfile, '-MT', output_name,
+         *(sanitizer_flags),
          *(f'-D{token}' for token in preprocessor_definitions),
          *(arg for path in framework_search_paths for arg in ('-F', path)),
          *(arg for path in header_search_paths for arg in ('-I', path)),

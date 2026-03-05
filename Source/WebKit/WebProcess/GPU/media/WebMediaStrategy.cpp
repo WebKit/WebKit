@@ -38,7 +38,8 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/SharedAudioDestination.h>
-
+#include <wtf/NeverDestroyed.h>
+#include <wtf/threads/BinarySemaphore.h>
 #if PLATFORM(COCOA)
 #include <WebCore/MediaSessionManagerCocoa.h>
 #endif
@@ -53,7 +54,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebMediaStrategy);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMediaStrategy);
 
 WebMediaStrategy::~WebMediaStrategy() = default;
 
@@ -74,7 +75,29 @@ Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(const We
 #if ENABLE(VIDEO) && ENABLE(GPU_PROCESS)
 RefPtr<AudioVideoRenderer> WebMediaStrategy::createAudioVideoRenderer(LoggerHelper* loggerHelper, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) const
 {
-    return AudioVideoRendererRemote::create(loggerHelper, mediaElementIdentifier, playerIdentifier, WebProcess::singleton().ensureProtectedGPUProcessConnection());
+    return AudioVideoRendererRemote::create(loggerHelper, mediaElementIdentifier, playerIdentifier, protect(WebProcess::singleton().ensureGPUProcessConnection()));
+}
+
+static WorkQueue& webMediaStrategyQueueSingleton()
+{
+    static const NeverDestroyed<Ref<WorkQueue>> workQueue = WorkQueue::create("WebMediaStrategy"_s);
+    return workQueue.get();
+}
+
+bool WebMediaStrategy::canDecodeExtendedType(PlatformMediaDecodingType platformType, const ContentType& contentType)
+{
+    std::atomic<bool> isSupported = false;
+    BinarySemaphore semaphore;
+    webMediaStrategyQueueSingleton().dispatch([&] {
+        if (RefPtr connection = WebProcess::singleton().existingGPUProcessConnection()) {
+            connection->connection().sendWithAsyncReplyOnDispatcher(Messages::GPUConnectionToWebProcess::CanDecodeExtendedType(platformType, contentType), webMediaStrategyQueueSingleton(), [&semaphore, &isSupported](bool supported) {
+                isSupported = supported;
+                semaphore.signal();
+            });
+        }
+    });
+    semaphore.wait();
+    return isSupported;
 }
 #endif
 
@@ -138,6 +161,14 @@ void WebMediaStrategy::enableMockMediaSource()
     }
 #endif
     WebCore::MediaStrategy::addMockMediaSourceEngine();
+}
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+void WebMediaStrategy::nativeImageFromVideoFrame(const WebCore::VideoFrame& frame, CompletionHandler<void(std::optional<RefPtr<WebCore::NativeImage>>&&)>&& completionHandler)
+{
+    // FIXME: Move out of sync IPC.
+    completionHandler(protect(protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy())->getNativeImage(frame));
 }
 #endif
 

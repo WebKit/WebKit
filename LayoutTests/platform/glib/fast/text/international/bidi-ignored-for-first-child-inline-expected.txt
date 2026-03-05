@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,1) size 771x36
             text run at (132,1) width 639: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5980 Bidi properties of an inline"
             text run at (0,20) width 478: "container whose first child is an inline container are ignored"
-        RenderText {#text} at (478,20) size 5x17
-          text run at (478,20) width 5: "."
+        RenderText {#text} at (477,20) size 6x17
+          text run at (477,20) width 6: "."
       RenderBlock {P} at (0,72) size 784x19
         RenderText {#text} at (0,1) size 363x17
           text run at (0,1) width 363: "The following lines should read \x{201C}ABCDEFGHI\x{201D}:"

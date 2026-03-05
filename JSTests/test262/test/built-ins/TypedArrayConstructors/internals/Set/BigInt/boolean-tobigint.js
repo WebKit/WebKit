@@ -47,11 +47,11 @@ info: |
     Argument Type: Boolean
     Result: Return 1n if prim is true and 0n if prim is false.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(2));
   typedArray[0] = false;
   typedArray[1] = true;
   assert.sameValue(typedArray[0], 0n, 'The value of typedArray[0] is 0n');

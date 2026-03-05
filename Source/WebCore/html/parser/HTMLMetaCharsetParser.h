@@ -45,7 +45,7 @@ public:
     // Returns true if done checking, regardless whether an encoding is found.
     bool checkForMetaCharset(std::span<const uint8_t>);
 
-    const PAL::TextEncoding& encoding() { return m_encoding; }
+    const PAL::TextEncoding& encoding() LIFETIME_BOUND { return m_encoding; }
 
     // The returned encoding might not be valid.
     static PAL::TextEncoding encodingFromMetaAttributes(std::span<const std::pair<StringView, StringView>>);

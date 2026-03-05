@@ -102,9 +102,9 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
     auto url = document.url();
     std::optional<SecurityOriginData> crossOriginParent;
     for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
-        if (!origin->isSameOriginDomain(parentDocument->protectedSecurityOrigin()) && !areRegistrableDomainsEqual(url, parentDocument->url()))
+        if (!origin->isSameOriginDomain(protect(parentDocument->securityOrigin())) && !areRegistrableDomainsEqual(url, parentDocument->url()))
             isSameSite = false;
-        if (!crossOriginParent && !origin->isSameOriginAs(parentDocument->protectedSecurityOrigin()))
+        if (!crossOriginParent && !origin->isSameOriginAs(protect(parentDocument->securityOrigin())))
             crossOriginParent = parentDocument->securityOrigin().data();
     }
 
@@ -121,7 +121,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinator);
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(Page& page, std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
     : m_page(page)
-    , m_client(WTFMove(client))
+    , m_client(WTF::move(client))
 {
 }
 
@@ -139,15 +139,15 @@ void AuthenticatorCoordinator::deref() const
 
 void AuthenticatorCoordinator::setClient(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
 {
-    m_client = WTFMove(client);
+    m_client = WTF::move(client);
 }
 
 void AuthenticatorCoordinator::create(const Document& document, CredentialCreationOptions&& createOptions, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
-    const auto& callerOrigin = document.securityOrigin();
-    auto* frame = document.frame();
+    Ref callerOrigin = document.securityOrigin();
+    RefPtr frame = document.frame();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn-2/#createCredential as of 28 June 2022.
     // Step 1, 3, 16 are handled by the caller.
@@ -165,7 +165,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     }
 
     // Step 5.
-    if (options.user.id.length() < 1 || options.user.id.length() > 64) {
+    if (options.user.id.byteLength() < 1 || options.user.id.byteLength() > 64) {
         promise.reject(Exception { ExceptionCode::TypeError, "The length options.user.id must be between 1-64 bytes."_s });
         return;
     }
@@ -173,14 +173,14 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     // Step 6. Skipped since SecurityOrigin doesn't have the concept of "opaque origin".
     // Step 7. The effective domain may be represented in various manners, such as a domain or an ip address.
     // Only the domain format of host is permitted in WebAuthN.
-    if (URL::hostIsIPAddress(callerOrigin.domain())) {
+    if (URL::hostIsIPAddress(callerOrigin->domain())) {
         promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_s });
         return;
     }
 
     // Step 8.
     if (!options.rp.id)
-        options.rp.id = callerOrigin.domain();
+        options.rp.id = callerOrigin->domain();
 
     // Step 9-11.
     // Most of the jobs are done by bindings.
@@ -227,28 +227,28 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         return;
     }
 
-    if (createOptions.signal) {
-        createOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
+    if (RefPtr signal = createOptions.signal) {
+        signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
             if (!weakThis)
                 return;
             weakThis->m_isCancelling = true;
-            weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
+            weakThis->m_client->cancel([weakThis = WTF::move(weakThis)] mutable {
                 if (!weakThis)
                     return;
                 weakThis->m_isCancelling = false;
-                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest))
+                if (auto queuedRequest = WTF::move(weakThis->m_queuedRequest))
                     queuedRequest();
             });
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [promise = WTF::move(promise), abortSignal = WTF::move(abortSignal)](AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
-        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
+        if (RefPtr response = AuthenticatorResponse::tryCreate(WTF::move(data), attachment)) {
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
@@ -257,26 +257,26 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     };
 
     if (m_isCancelling) {
-        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, createOptions = WTFMove(createOptions), callback = WTFMove(callback)]() mutable {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, createOptions = WTF::move(createOptions), callback = WTF::move(callback)] mutable {
             if (!weakThis || !weakFrame)
                 return;
             const auto options = createOptions.publicKey.value();
             RefPtr frame = weakFrame.get();
             if (!frame)
                 return;
-            weakThis->m_client->makeCredential(*weakFrame, options, createOptions.mediation, WTFMove(callback));
+            weakThis->m_client->makeCredential(*weakFrame, options, createOptions.mediation, WTF::move(callback));
         };
         return;
     }
     // Async operations are dispatched and handled in the messenger.
-    m_client->makeCredential(*frame, options, createOptions.mediation, WTFMove(callback));
+    m_client->makeCredential(*frame, options, createOptions.mediation, WTF::move(callback));
 }
 
 void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
-    auto& callerOrigin = document.securityOrigin();
+    Ref callerOrigin = document.securityOrigin();
     RefPtr frame = document.frame();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
@@ -289,7 +289,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     }
 
     // The request will be aborted in WebAuthenticatorCoordinatorProxy if conditional mediation is not available.
-    if (requestOptions.mediation() != MediationRequirement::Conditional && !document.hasFocus()) {
+    if (requestOptions.mediation != MediationRequirement::Conditional && !document.hasFocus()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
         return;
     }
@@ -304,14 +304,14 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     // Step 5. Skipped since SecurityOrigin doesn't have the concept of "opaque origin".
     // Step 6. The effective domain may be represented in various manners, such as a domain or an ip address.
     // Only the domain format of host is permitted in WebAuthN.
-    if (URL::hostIsIPAddress(callerOrigin.domain())) {
+    if (URL::hostIsIPAddress(callerOrigin->domain())) {
         promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_s });
         return;
     }
 
     // Step 7.
     if (options.rpId.isEmpty())
-        options.rpId = callerOrigin.domain();
+        options.rpId = callerOrigin->domain();
 
     // Step 8-9.
     // Only FIDO AppID Extension is supported.
@@ -321,7 +321,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
             promise.reject(Exception { ExceptionCode::NotAllowedError, "Empty appid in create request."_s });
             return;
         }
-        auto appid = processAppIdExtension(callerOrigin, options.extensions->appid);
+        auto appid = processAppIdExtension(callerOrigin.get(), options.extensions->appid);
         if (!appid) {
             promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided App ID."_s });
             return;
@@ -346,28 +346,28 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         return;
     }
 
-    if (requestOptions.signal) {
-        requestOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
+    if (RefPtr signal = requestOptions.signal) {
+        signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
             if (!weakThis)
                 return;
             weakThis->m_isCancelling = true;
-            weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
+            weakThis->m_client->cancel([weakThis = WTF::move(weakThis)] mutable {
                 if (!weakThis)
                     return;
                 weakThis->m_isCancelling = false;
-                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest))
+                if (auto queuedRequest = WTF::move(weakThis->m_queuedRequest))
                     queuedRequest();
             });
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal), weakPage = WeakPtr { document.page() }] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTF::move(promise), abortSignal = WTF::move(requestOptions.signal), weakPage = WeakPtr { document.page() }] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
-        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
+        if (auto response = AuthenticatorResponse::tryCreate(WTF::move(data), attachment)) {
             if (RefPtr page = weakPage.get())
                 page->setLastAuthentication(LoginStatus::AuthenticationType::WebAuthn);
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
@@ -378,19 +378,19 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     };
 
     if (m_isCancelling) {
-        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, requestOptions = WTFMove(requestOptions), scopeCrossOriginParent, callback = WTFMove(callback)]() mutable {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, requestOptions = WTF::move(requestOptions), scopeCrossOriginParent, callback = WTF::move(callback)] mutable {
             if (!weakThis || !weakFrame)
                 return;
             const auto options = requestOptions.publicKey.value();
             RefPtr frame = weakFrame.get();
             if (!frame)
                 return;
-            weakThis->m_client->getAssertion(*weakFrame, options, requestOptions.mediation(), scopeCrossOriginParent, WTFMove(callback));
+            weakThis->m_client->getAssertion(*weakFrame, options, requestOptions.mediation, scopeCrossOriginParent, WTF::move(callback));
         };
         return;
     }
     // Async operations are dispatched and handled in the messenger.
-    m_client->getAssertion(*frame, options, requestOptions.mediation(), scopeCrossOriginParent, WTFMove(callback));
+    m_client->getAssertion(*frame, options, requestOptions.mediation, scopeCrossOriginParent, WTF::move(callback));
 }
 
 void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const
@@ -404,27 +404,27 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(con
 
     // FIXME(182767): We should consider more on the assessment of the return value. Right now, we return true/false
     // immediately according to platform specific procedures.
-    auto completionHandler = [promise = WTFMove(promise)] (bool result) mutable {
+    auto completionHandler = [promise = WTF::move(promise)] (bool result) mutable {
         promise.resolve(result);
     };
 
     // Async operation are dispatched and handled in the messenger.
-    m_client->isUserVerifyingPlatformAuthenticatorAvailable(document.securityOrigin(), WTFMove(completionHandler));
+    m_client->isUserVerifyingPlatformAuthenticatorAvailable(protect(document.securityOrigin()).get(), WTF::move(completionHandler));
 }
 
 
 void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
-    if (!m_client)  {
+    if (!m_client) {
         promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
         return;
     }
 
-    auto completionHandler = [promise = WTFMove(promise)] (bool result) mutable {
+    auto completionHandler = [promise = WTF::move(promise)](bool result) mutable {
         promise.resolve(result);
     };
     // Async operations are dispatched and handled in the messenger.
-    m_client->isConditionalMediationAvailable(document.securityOrigin(), WTFMove(completionHandler));
+    m_client->isConditionalMediationAvailable(protect(document.securityOrigin()).get(), WTF::move(completionHandler));
 }
 
 void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<PublicKeyCredentialClientCapabilities>&& promise) const
@@ -434,11 +434,11 @@ void AuthenticatorCoordinator::getClientCapabilities(const Document& document, D
         return;
     }
 
-    auto completionHandler = [promise = WTFMove(promise)] (const Vector<KeyValuePair<String, bool>> result) mutable {
+    auto completionHandler = [promise = WTF::move(promise)] (const Vector<KeyValuePair<String, bool>> result) mutable {
         promise.resolve(result);
     };
 
-    m_client->getClientCapabilities(document.securityOrigin(), WTFMove(completionHandler));
+    m_client->getClientCapabilities(protect(document.securityOrigin()).get(), WTF::move(completionHandler));
 }
 
 void AuthenticatorCoordinator::signalUnknownCredential(const Document& document, UnknownCredentialOptions&& options, DOMPromiseDeferred<void>&& promise)
@@ -447,18 +447,20 @@ void AuthenticatorCoordinator::signalUnknownCredential(const Document& document,
         promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_s });
         return;
     }
-    if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { document.securityOrigin().data() }) {
+    Ref securityOrigin = document.securityOrigin();
+    if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { securityOrigin->data() }) {
         promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
         return;
     }
 
-    auto completionHandler = [promise = WTFMove(promise)] (std::optional<WebCore::ExceptionData> error) mutable {
+    auto completionHandler = [promise = WTF::move(promise)] (std::optional<WebCore::ExceptionData> error) mutable {
         if (error) {
             promise.reject(error->toException());
             return;
         }
+        promise.resolve();
     };
-    m_client->signalUnknownCredential(document.securityOrigin(), WTFMove(options), WTFMove(completionHandler));
+    m_client->signalUnknownCredential(securityOrigin.get(), WTF::move(options), WTF::move(completionHandler));
 }
 
 void AuthenticatorCoordinator::signalAllAcceptedCredentials(const Document& document, AllAcceptedCredentialsOptions&& options, DOMPromiseDeferred<void>&& promise)
@@ -467,18 +469,20 @@ void AuthenticatorCoordinator::signalAllAcceptedCredentials(const Document& docu
         promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_s });
         return;
     }
-    if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { document.securityOrigin().data() }) {
+    Ref securityOrigin = document.securityOrigin();
+    if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { securityOrigin->data() }) {
         promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
         return;
     }
 
-    auto completionHandler = [promise = WTFMove(promise)] (std::optional<WebCore::ExceptionData> error) mutable {
+    auto completionHandler = [promise = WTF::move(promise)] (std::optional<WebCore::ExceptionData> error) mutable {
         if (error) {
             promise.reject(error->toException());
             return;
         }
+        promise.resolve();
     };
-    m_client->signalAllAcceptedCredentials(document.securityOrigin(), WTFMove(options), WTFMove(completionHandler));
+    m_client->signalAllAcceptedCredentials(securityOrigin.get(), WTF::move(options), WTF::move(completionHandler));
 }
 
 void AuthenticatorCoordinator::signalCurrentUserDetails(const Document& document, CurrentUserDetailsOptions&& options, DOMPromiseDeferred<void>&& promise)
@@ -487,19 +491,20 @@ void AuthenticatorCoordinator::signalCurrentUserDetails(const Document& document
         promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_s });
         return;
     }
-    if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { document.securityOrigin().data() }) {
+    Ref securityOrigin = document.securityOrigin();
+    if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { securityOrigin->data() }) {
         promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
         return;
     }
 
-    auto completionHandler = [promise = WTFMove(promise)] (std::optional<WebCore::ExceptionData> error) mutable {
+    auto completionHandler = [promise = WTF::move(promise)] (std::optional<WebCore::ExceptionData> error) mutable {
         if (error) {
             promise.reject(error->toException());
             return;
         }
         promise.resolve();
     };
-    m_client->signalCurrentUserDetails(document.securityOrigin(), WTFMove(options), WTFMove(completionHandler));
+    m_client->signalCurrentUserDetails(securityOrigin.get(), WTF::move(options), WTF::move(completionHandler));
 }
 
 } // namespace WebCore

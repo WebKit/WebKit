@@ -60,7 +60,7 @@ private:
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final { return m_configuration.keySystem; }
     RefPtr<WebCore::CDMInstanceSession> createSession() final;
-    void setClient(WeakPtr<WebCore::CDMInstanceClient>&& client) final { m_client = WTFMove(client); }
+    void setClient(WeakPtr<WebCore::CDMInstanceClient>&& client) final { m_client = WTF::move(client); }
     void clearClient() final { m_client.clear(); }
 
     WeakPtr<RemoteCDMFactory> m_factory;

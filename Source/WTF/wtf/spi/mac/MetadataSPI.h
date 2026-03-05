@@ -25,9 +25,17 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
+#if PLATFORM(MAC)
+
 #ifdef __OBJC__
+
+#include <CoreServices/CoreServices.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -42,3 +50,5 @@ Boolean MDItemSetAttribute(MDItemRef, CFStringRef name, CFTypeRef attr);
 WTF_EXTERN_C_END
 
 #endif // __OBJC__
+
+#endif // PLATFORM(MAC)

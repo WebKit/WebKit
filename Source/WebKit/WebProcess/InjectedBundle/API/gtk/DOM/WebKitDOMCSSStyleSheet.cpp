@@ -56,7 +56,9 @@ WebKitDOMCSSStyleSheet* wrapCSSStyleSheet(WebCore::CSSStyleSheet* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMCSSStyleSheet, webkit_dom_css_style_sheet, WEBKIT_DOM_TYPE_STYLE_SHEET)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_CSS_STYLE_SHEET_PROP_0,

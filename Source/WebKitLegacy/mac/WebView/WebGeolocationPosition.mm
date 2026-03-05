@@ -47,7 +47,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    _position = WTFMove(coreGeolocationPosition);
+    _position = WTF::move(coreGeolocationPosition);
     return self;
 }
 
@@ -76,7 +76,7 @@ std::optional<GeolocationPositionData> core(WebGeolocationPosition *position)
     self = [super init];
     if (!self)
         return nil;
-    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:WTFMove(coreGeolocationPosition)];
+    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:WTF::move(coreGeolocationPosition)];
     return self;
 }
 

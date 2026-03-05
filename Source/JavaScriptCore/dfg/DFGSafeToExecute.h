@@ -99,7 +99,7 @@ public:
         case NeitherDoubleNorHeapBigIntNorStringUse:
         case NeitherDoubleNorHeapBigIntUse:
             return;
-            
+
         case KnownInt32Use:
             if (m_state.forNode(edge).m_type & ~SpecInt32Only)
                 m_result = false;
@@ -109,7 +109,8 @@ public:
             if (m_state.forNode(edge).m_type & ~SpecBoolean)
                 m_result = false;
             return;
-            
+
+        case KnownStorageUse:
         case KnownCellUse:
             if (m_state.forNode(edge).m_type & ~SpecCell)
                 m_result = false;
@@ -197,7 +198,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case IdentityWithProfile:
     case GetCallee:
     case GetArgumentCountIncludingThis:
-    case GetRestLength:
     case GetLocal:
     case GetStack:
     case ExitOK:
@@ -322,6 +322,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToLowerCase:
     case MapGet:
     case LoadMapValue:
+    case MapOrSetSize:
+    case GetRegExpFlag:
     case MapStorage:
     case MapStorageOrSentinel:
     case MapIterationNext:
@@ -344,6 +346,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NumberIsFinite:
     case NumberIsSafeInteger:
     case StringIndexOf:
+    case StringStartsWith:
+    case StringEndsWith:
         return true;
 
     case GlobalIsFinite:
@@ -616,6 +620,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case SetPrivateBrand:
     case DefineDataProperty:
     case DefineAccessorProperty:
+    case ObjectDefineProperty:
     case Arrayify:
     case ArrayifyToStructure:
     case PutClosureVar:
@@ -648,8 +653,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CallForwardVarargs:
     case ConstructForwardVarargs:
     case NewObject:
-    case NewGenerator:
-    case NewAsyncGenerator:
     case NewArray:
     case NewArrayWithSize:
     case NewArrayWithButterfly:
@@ -785,6 +788,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case PromiseResolve:
     case PromiseReject:
     case PromiseThen:
+    case PerformPromiseThen:
     case SetAdd:
     case MapSet:
     case MapOrSetDelete:

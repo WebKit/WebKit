@@ -506,14 +506,14 @@ private:
     bool equalsSlowCaseSimple(const BitVector& other) const;
     WTF_EXPORT_PRIVATE uintptr_t hashSlowCase() const;
     
-    std::span<uintptr_t> words()
+    std::span<uintptr_t> words() LIFETIME_BOUND
     {
         if (isInline())
             return singleElementSpan(m_bitsOrPointer);
         return outOfLineBits()->wordsSpan();
     }
 
-    std::span<const uintptr_t> words() const
+    std::span<const uintptr_t> words() const LIFETIME_BOUND
     {
         if (isInline())
             return singleElementSpan(m_bitsOrPointer);

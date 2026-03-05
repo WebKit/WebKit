@@ -38,12 +38,12 @@ struct CookieChangeSubscription {
     CookieChangeSubscription() = default;
 
     CookieChangeSubscription(String&& name, String&& url)
-        : name(WTFMove(name))
-        , url(WTFMove(url))
+        : name(WTF::move(name))
+        , url(WTF::move(url))
     { }
 
     CookieChangeSubscription isolatedCopy() const & { return { name.isolatedCopy(), url.isolatedCopy() }; }
-    CookieChangeSubscription isolatedCopy() && { return { WTFMove(name).isolatedCopy(), WTFMove(url).isolatedCopy() }; }
+    CookieChangeSubscription isolatedCopy() && { return { WTF::move(name).isolatedCopy(), WTF::move(url).isolatedCopy() }; }
 
     explicit CookieChangeSubscription(WTF::HashTableDeletedValueType deletedValue)
         : name(deletedValue)

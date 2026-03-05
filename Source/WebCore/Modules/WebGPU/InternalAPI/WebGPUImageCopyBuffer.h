@@ -36,8 +36,6 @@ class Buffer;
 
 struct ImageCopyBuffer : public ImageDataLayout {
     WeakRef<Buffer> buffer;
-
-    Ref<Buffer> protectedBuffer() const { return buffer.get(); }
 };
 
 } // namespace WebCore::WebGPU

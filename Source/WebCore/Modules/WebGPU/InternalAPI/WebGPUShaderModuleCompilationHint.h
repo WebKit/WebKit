@@ -33,8 +33,6 @@ namespace WebCore::WebGPU {
 
 struct ShaderModuleCompilationHint {
     WeakRef<PipelineLayout> pipelineLayout;
-
-    Ref<PipelineLayout> protectedPipelineLayout() const { return pipelineLayout.get(); }
 };
 
 } // namespace WebCore::WebGPU

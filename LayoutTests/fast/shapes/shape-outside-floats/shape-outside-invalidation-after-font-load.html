@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        width: 200px;
+        font: 20px/1 Ahem;
+    }
+
+    .float-shape {
+        float: left;
+        font-size: 60px;
+        line-height: 1;
+        font-family: serif;
+        shape-outside: margin-box;
+        margin-right: 10px;
+        background-color: blue;
+        color: white;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="float-shape" id="float">O</div>
+    <span id="firstWord">Once</span> upon a time there was text that wrapped around a float.
+</div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+
+function runTest() {
+    description("Test that shape-outside is invalidated when font changes, even when CSS shape properties remain unchanged.");
+
+    const floatElem = document.getElementById('float');
+    const firstWord = document.getElementById('firstWord');
+
+    document.body.offsetTop;
+
+    const initialLeft = firstWord.getBoundingClientRect().left;
+    const initialTop = firstWord.getBoundingClientRect().top;
+
+    floatElem.style.fontFamily = 'Ahem';
+
+    document.body.offsetTop;
+
+    const newLeft = firstWord.getBoundingClientRect().left;
+    const newTop = firstWord.getBoundingClientRect().top;
+
+    const positionChanged = (Math.abs(newLeft - initialLeft) > 1) || (Math.abs(newTop - initialTop) > 1);
+
+    if (positionChanged) {
+        testPassed("Content position changed, indicating shape was properly invalidated");
+    } else {
+        testFailed("Content position unchanged. Shape was not invalidated when font metrics changed.");
+    }
+
+    finishJSTest();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener('load', () => {
+    runTest();
+});
+</script>
+</body>
+</html>

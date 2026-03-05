@@ -160,7 +160,10 @@ static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocati
         @"LaunchOnlyOnce" : @(static_cast<BOOL>(launchOnlyOnce)),
         @"ThrottleInterval" : @(1),
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
-        @"EnvironmentVariables" : @{ @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path },
+        @"EnvironmentVariables" : @{
+            @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path,
+            @"DYLD_LIBRARY_PATH"   : currentExecutableDirectory().get().path
+        },
         @"MachServices" : @{ @"org.webkit.webpushtestdaemon.service" : @YES },
         @"ProgramArguments" : @[
             testWebPushDaemonLocation().get().path,
@@ -303,7 +306,7 @@ template<> struct TestArgumentCoder<URL> {
         auto string = decoder.template decode<String>();
         if (!string)
             return std::nullopt;
-        return { URL(WTFMove(*string)) };
+        return { URL(WTF::move(*string)) };
     }
 };
 
@@ -427,16 +430,16 @@ public:
     void sendWithAsyncReplyWithoutUsingIPCConnection(M&&, CH&&) const;
 
 private:
-    XPCObjectPtr<xpc_object_t> messageDictionaryFromEncoder(TestEncoder&&) const;
+    OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(TestEncoder&&) const;
 
-    XPCObjectPtr<xpc_connection_t> m_connection;
+    OSObjectPtr<xpc_connection_t> m_connection;
     bool m_shouldIncrementProtocolVersionForTesting { false };
 };
 
-XPCObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(TestEncoder&& encoder) const
+OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(TestEncoder&& encoder) const
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     uint64_t protocolVersion = WebKit::WebPushD::protocolVersionValue;
     if (m_shouldIncrementProtocolVersionForTesting)
@@ -449,7 +452,7 @@ XPCObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryF
         blockBytes.clear();
     }));
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto encoderData = adoptXPCObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto encoderData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 
     xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encoderData.get());
 
@@ -462,7 +465,7 @@ void WebPushXPCConnectionMessageSender::sendWithoutUsingIPCConnection(M&& messag
     TestEncoder encoder;
     encoder.encodeHeader<M>();
     message.encode(encoder);
-    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    auto dictionary = messageDictionaryFromEncoder(WTF::move(encoder));
     xpc_connection_send_message(m_connection.get(), dictionary.get());
 }
 
@@ -472,12 +475,12 @@ void WebPushXPCConnectionMessageSender::sendWithAsyncReplyWithoutUsingIPCConnect
     TestEncoder encoder;
     encoder.encodeHeader<M>();
     message.encode(encoder);
-    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
-    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([this, completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    auto dictionary = messageDictionaryFromEncoder(WTF::move(encoder));
+    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([this, completionHandler = WTF::move(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) == XPC_TYPE_ERROR) {
             // We only expect an error if we were purposefully testing the wrong protocol version.
             RELEASE_ASSERT(m_shouldIncrementProtocolVersionForTesting);
-            return IPC::cancelReplyWithoutUsingConnection<M>(WTFMove(completionHandler));
+            return IPC::cancelReplyWithoutUsingConnection<M>(WTF::move(completionHandler));
         }
 
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY)
@@ -488,7 +491,7 @@ void WebPushXPCConnectionMessageSender::sendWithAsyncReplyWithoutUsingIPCConnect
         auto data = xpcDictionaryGetData(reply, WebKit::WebPushD::protocolEncodedMessageKey);
         TestDecoder decoder(data);
         decoder.ignoreHeader<M>();
-        IPC::callReplyWithoutUsingConnection<M>(decoder, WTFMove(completionHandler));
+        IPC::callReplyWithoutUsingConnection<M>(decoder, WTF::move(completionHandler));
     }).get());
 }
 
@@ -507,14 +510,14 @@ static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaem
     memcpySpan(auditToken.mutableSpan(), asByteSpan(token));
 
     IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
-    return { .hostAppAuditTokenData = WTFMove(auditToken) };
+    return { .hostAppAuditTokenData = WTF::move(auditToken) };
     IGNORE_CLANG_WARNINGS_END
 }
 
-XPCObjectPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
+OSObjectPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptXPCObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
     xpc_connection_activate(connection.get());
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
@@ -531,7 +534,7 @@ TEST(WebPushD, BasicCommunication)
     NSURL *tempDir = setUpTestWebPushD();
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptXPCObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
 
     __block bool done = false;
     __block bool interrupted = false;
@@ -1381,19 +1384,19 @@ public:
         m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [processPool _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
 
         auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
-        m_webViews.append(WTFMove(webView));
+        m_webViews.append(WTF::move(webView));
 
         auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
-        m_webViews.append(WTFMove(webViewWithIdentifier1));
+        m_webViews.append(WTF::move(webViewWithIdentifier1));
 
         auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
-        m_webViews.append(WTFMove(webViewWithIdentifier2));
+        m_webViews.append(WTF::move(webViewWithIdentifier2));
 
         auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
-        m_webViews.append(WTFMove(webViewWithPartition));
+        m_webViews.append(WTF::move(webViewWithPartition));
 
         auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
-        m_webViews.append(WTFMove(webViewWithPartitionAndIdentifier));
+        m_webViews.append(WTF::move(webViewWithPartitionAndIdentifier));
     }
 
     ~WebPushDTest()
@@ -1417,7 +1420,7 @@ public:
         });
         TestWebKitAPI::Util::run(&done);
 
-        return std::make_pair(WTFMove(enabledTopics), WTFMove(ignoredTopics));
+        return std::make_pair(WTF::move(enabledTopics), WTF::move(ignoredTopics));
     }
 
     size_t subscribedTopicsCount() { return getPushTopics().first.size(); }
@@ -1500,6 +1503,23 @@ TEST_F(WebPushDTest, SubscribeWithBadIPCVersionRaisesExceptionTest)
         ASSERT_FALSE(v->hasPushSubscription());
         id obj = v->subscribe();
         ASSERT_TRUE([obj isEqual:@"Error: AbortError: Connection to web push daemon failed"]);
+    }
+}
+
+TEST_F(WebPushDTest, GetPushSubscriptionWithBadIPCVersionRaisesExceptionTest)
+{
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    bool done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    for (auto& v : webViews()) {
+        ASSERT_FALSE(v->hasPushSubscription());
+        id obj = v->getPushSubscription();
+        ASSERT_TRUE([obj containsString:@"AbortError: Connection to web push daemon failed"]);
     }
 }
 
@@ -1869,7 +1889,7 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
     auto configuration = defaultWebPushDaemonConfiguration();
     configuration.pushPartitionString = dataStore.get()._webPushPartition;
     configuration.dataStoreIdentifier = WTF::UUID::fromNSUUID(dataStore.get()._identifier);
-    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTFMove(configuration));
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTF::move(configuration));
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
 
     WebKit::WebPushD::PushMessageForTesting message;

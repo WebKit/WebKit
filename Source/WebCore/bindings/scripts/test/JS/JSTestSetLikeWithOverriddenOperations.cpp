@@ -151,7 +151,7 @@ void JSTestSetLikeWithOverriddenOperationsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestSetLikeWithOverriddenOperations::s_info = { "TestSetLikeWithOverriddenOperations"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperations) };
 
 JSTestSetLikeWithOverriddenOperations::JSTestSetLikeWithOverriddenOperations(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl)
-    : JSDOMWrapper<TestSetLikeWithOverriddenOperations>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestSetLikeWithOverriddenOperations>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -377,7 +377,7 @@ void JSTestSetLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unkno
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSetLikeWithOverriddenOperations = static_cast<JSTestSetLikeWithOverriddenOperations*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestSetLikeWithOverriddenOperations->protectedWrapped().ptr(), jsTestSetLikeWithOverriddenOperations);
+    uncacheWrapper(world, protect(jsTestSetLikeWithOverriddenOperations->wrapped()).ptr(), jsTestSetLikeWithOverriddenOperations);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -415,7 +415,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestSetLikeWithOverriddenOperations>(impl.ptr());
 #endif
-    return createWrapper<TestSetLikeWithOverriddenOperations>(globalObject, WTFMove(impl));
+    return createWrapper<TestSetLikeWithOverriddenOperations>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestSetLikeWithOverriddenOperations& impl)

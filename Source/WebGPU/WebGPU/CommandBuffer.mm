@@ -37,7 +37,7 @@ CommandBuffer::CommandBuffer(id<MTLCommandBuffer> commandBuffer, Device& device,
     : m_commandBuffer(commandBuffer)
     , m_device(device)
     , m_sharedEvent(sharedEvent)
-    , m_preCommitHandlers(WTFMove(onCommitHandlers))
+    , m_preCommitHandlers(WTF::move(onCommitHandlers))
     , m_sharedEventSignalValue(sharedEventSignalValue)
     , m_commandEncoder(&commandEncoder)
 {
@@ -52,13 +52,13 @@ void CommandBuffer::retainTimestampsForOneUpdateLoop()
 {
     // Workaround for rdar://143905417
     if (RefPtr commandEncoder = m_commandEncoder)
-        m_device->protectedQueue()->retainTimestampsForOneUpdate(commandEncoder->timestampBuffers());
+        m_device->getQueue()->retainTimestampsForOneUpdate(commandEncoder->timestampBuffers());
 }
 
 CommandBuffer::~CommandBuffer()
 {
     retainTimestampsForOneUpdateLoop();
-    m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
+    m_device->getQueue()->removeMTLCommandBuffer(m_commandBuffer);
     m_commandBuffer = nil;
     m_cachedCommandBuffer = nil;
 }
@@ -74,10 +74,12 @@ void CommandBuffer::makeInvalid(NSString* lastError)
         return;
 
     m_lastErrorString = lastError;
-    m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
+    m_device->getQueue()->removeMTLCommandBuffer(m_commandBuffer);
     retainTimestampsForOneUpdateLoop();
     m_commandBuffer = nil;
     m_cachedCommandBuffer = nil;
+    if (RefPtr commandEncoder = m_commandEncoder)
+        commandEncoder->clearTracking();
     m_commandEncoder = nullptr;
     m_preCommitHandlers.clear();
     m_postCommitHandlers.clear();
@@ -106,7 +108,7 @@ void CommandBuffer::postCommitHandler()
 
 void CommandBuffer::addPostCommitHandler(Function<void(id<MTLCommandBuffer>)>&& function)
 {
-    m_postCommitHandlers.append(WTFMove(function));
+    m_postCommitHandlers.append(WTF::move(function));
 }
 
 void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
@@ -117,8 +119,11 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
     m_cachedCommandBuffer = m_commandBuffer;
     [m_commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
         protectedThis->m_commandBufferComplete.signal();
-        protectedThis->m_device->protectedQueue()->scheduleWork([protectedThis]() mutable {
+        protectedThis->m_device->getQueue()->scheduleWork([protectedThis]() mutable {
             protectedThis->m_cachedCommandBuffer = nil;
+            if (RefPtr commandEncoder = protectedThis->m_commandEncoder)
+                commandEncoder->clearTracking();
+
             protectedThis->m_commandEncoder = nullptr;
         });
     }];
@@ -157,5 +162,5 @@ void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 
 void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, const char* label)
 {
-    WebGPU::protectedFromAPI(commandBuffer)->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::fromAPI(commandBuffer))->setLabel(WebGPU::fromAPI(label));
 }

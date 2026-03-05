@@ -65,7 +65,7 @@ IPC::Connection* LibWebRTCSocketFactory::connection()
     return m_connection.get();
 }
 
-webrtc::AsyncPacketSocket* LibWebRTCSocketFactory::createUdpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
+std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createUdpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
     ASSERT(!WTF::isMainRunLoop());
     auto socket = makeUnique<LibWebRTCSocket>(*this, contextIdentifier, LibWebRTCSocket::Type::UDP, address, webrtc::SocketAddress());
@@ -81,10 +81,10 @@ webrtc::AsyncPacketSocket* LibWebRTCSocketFactory::createUdpSocket(WebCore::Scri
         });
     }
 
-    return socket.release();
+    return socket;
 }
 
-webrtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions& options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
+std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions& options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -103,7 +103,7 @@ webrtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(WebCore
         });
     }
 
-    return socket.release();
+    return socket;
 }
 
 void LibWebRTCSocketFactory::addSocket(LibWebRTCSocket& socket)

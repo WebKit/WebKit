@@ -30,17 +30,17 @@ namespace WebCore {
 struct LinearGradientAttributes;
 
 class SVGLinearGradientElement final : public SVGGradientElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGLinearGradientElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGLinearGradientElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGLinearGradientElement);
 public:
     static Ref<SVGLinearGradientElement> create(const QualifiedName&, Document&);
 
     bool collectGradientAttributes(LinearGradientAttributes&);
 
-    const SVGLengthValue& x1() const { return m_x1->currentValue(); }
-    const SVGLengthValue& y1() const { return m_y1->currentValue(); }
-    const SVGLengthValue& x2() const { return m_x2->currentValue(); }
-    const SVGLengthValue& y2() const { return m_y2->currentValue(); }
+    const SVGLengthValue& x1() const LIFETIME_BOUND { return m_x1->currentValue(); }
+    const SVGLengthValue& y1() const LIFETIME_BOUND { return m_y1->currentValue(); }
+    const SVGLengthValue& x2() const LIFETIME_BOUND { return m_x2->currentValue(); }
+    const SVGLengthValue& y2() const LIFETIME_BOUND { return m_y2->currentValue(); }
 
     SVGAnimatedLength& x1Animated() { return m_x1; }
     SVGAnimatedLength& y1Animated() { return m_y1; }
@@ -60,10 +60,10 @@ private:
     bool selfHasRelativeLengths() const override;
     bool supportsFocus() const final { return false; }
 
-    Ref<SVGAnimatedLength> m_x1 { SVGAnimatedLength::create(this, SVGLengthMode::Width, "0%"_s) };
-    Ref<SVGAnimatedLength> m_y1 { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_s) };
-    Ref<SVGAnimatedLength> m_x2 { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
-    Ref<SVGAnimatedLength> m_y2 { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_s) };
+    const Ref<SVGAnimatedLength> m_x1 { SVGAnimatedLength::create(this, SVGLengthMode::Width, "0%"_s) };
+    const Ref<SVGAnimatedLength> m_y1 { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_s) };
+    const Ref<SVGAnimatedLength> m_x2 { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
+    const Ref<SVGAnimatedLength> m_y2 { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_s) };
 };
 
 } // namespace WebCore

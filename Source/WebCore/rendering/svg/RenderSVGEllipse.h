@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class RenderSVGEllipse final : public RenderSVGShape {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGEllipse);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGEllipse);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGEllipse);
 public:
     RenderSVGEllipse(SVGGraphicsElement&, RenderStyle&&);
@@ -51,7 +51,7 @@ private:
     void calculateRadiiAndCenter();
 
 private:
-    bool canUseStrokeHitTestFastPath() const;
+    bool NODELETE canUseStrokeHitTestFastPath() const;
 
     FloatPoint m_center;
     FloatSize m_radii;

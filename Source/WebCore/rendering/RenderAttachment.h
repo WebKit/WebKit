@@ -33,16 +33,16 @@
 namespace WebCore {
 
 class RenderAttachment final : public RenderReplaced {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderAttachment);
+    WTF_MAKE_TZONE_ALLOCATED(RenderAttachment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderAttachment);
 public:
     RenderAttachment(HTMLAttachmentElement&, RenderStyle&&);
     virtual ~RenderAttachment();
 
-    HTMLAttachmentElement& attachmentElement() const;
+    HTMLAttachmentElement& NODELETE attachmentElement() const;
 
     void setShouldDrawBorder(bool drawBorder) { m_shouldDrawBorder = drawBorder; }
-    bool shouldDrawBorder() const;
+    bool NODELETE shouldDrawBorder() const;
 
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
     bool hasShadowControls() const { return m_hasShadowControls; }
@@ -59,7 +59,8 @@ private:
     LayoutSize layoutWideLayoutAttachmentOnly();
     void layoutShadowContent(const LayoutSize&) override;
 
-    bool shouldDrawSelectionTint() const override { return isWideLayout(); }
+    bool shouldDrawSelectionTint() const final { return false; }
+    void setSelectionState(HighlightState) final;
     void paintReplaced(PaintInfo&, const LayoutPoint& offset) final;
 
     void layout() override;

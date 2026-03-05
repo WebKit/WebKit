@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/JITCompilation.h>
 #include <JavaScriptCore/SIMDInfo.h>
+#include <JavaScriptCore/WasmLimits.h>
 #include <JavaScriptCore/WasmOps.h>
 #include <JavaScriptCore/WasmSIMDOpcodes.h>
 #include <JavaScriptCore/Width.h>
@@ -46,12 +49,6 @@
 
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 #include <JavaScriptCore/B3Type.h>
-#endif
-
-#if HAVE(36BIT_ADDRESS)
-#define RTT_ALIGNMENT alignas(16)
-#else
-#define RTT_ALIGNMENT
 #endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -836,35 +833,66 @@ enum class RTTKind : uint8_t {
     Struct
 };
 
-class RTT_ALIGNMENT RTT final : public ThreadSafeRefCounted<RTT>, private TrailingArray<RTT, RefPtr<const RTT>> {
+class alignas(16) RTT final : public ThreadSafeRefCounted<RTT>, private TrailingArray<RTT, RefPtr<const RTT>> {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(RTT);
     WTF_MAKE_NONMOVABLE(RTT);
     using TrailingArrayType = TrailingArray<RTT, RefPtr<const RTT>>;
     friend TrailingArrayType;
 public:
     static_assert(sizeof(const RTT*) == sizeof(RefPtr<const RTT>));
+    static constexpr unsigned inlinedDisplaySize = 6;
     RTT() = delete;
 
-    static RefPtr<RTT> tryCreate(RTTKind);
-    static RefPtr<RTT> tryCreate(RTTKind, const RTT&);
+    static RefPtr<RTT> tryCreate(RTTKind, bool isFinalType, StructFieldCount fieldCount);
+    static RefPtr<RTT> tryCreate(RTTKind, const RTT&, bool isFinalType, StructFieldCount fieldCount);
 
     RTTKind kind() const { return m_kind; }
     DisplayCount displaySizeExcludingThis() const { return m_displaySizeExcludingThis; }
     const RTT* displayEntry(DisplayCount i) const { return at(i).get(); }
+    StructFieldCount fieldCount() const { return m_fieldCount; }
+
+    const RTT& definingRTTForField(StructFieldCount fieldIndex) const
+    {
+        ASSERT(m_kind == RTTKind::Struct);
+        ASSERT(fieldIndex < m_fieldCount);
+        for (DisplayCount i = 0; i < m_displaySizeExcludingThis; ++i) {
+            const RTT* ancestor = displayEntry(i);
+            if (ancestor->kind() == RTTKind::Struct && fieldIndex < ancestor->fieldCount())
+                return *ancestor;
+        }
+        return *this;
+    }
+
+    // Generate a key for each field, which can be usable for B3 TBAA.
+    uint64_t fieldHeapKey(StructFieldCount fieldIndex) const
+    {
+        uint64_t ptr = std::bit_cast<uintptr_t>(this);
+#if CPU(ADDRESS64)
+        static_assert(maxStructFieldCount <= (1U << 20));
+        constexpr uint32_t fieldIndexMask = (1 << 20) - 1;
+        uint32_t maskedFieldIndex = fieldIndex & fieldIndexMask; // mod 20-bits.
+        return static_cast<uint64_t>(ptr | (maskedFieldIndex & 0b1111) | (static_cast<uint64_t>(maskedFieldIndex >> 4) << 48));
+#else
+        return static_cast<uint64_t>(ptr | (static_cast<uint64_t>(fieldIndex) << 32));
+#endif
+    }
 
     bool isSubRTT(const RTT& other) const;
     bool isStrictSubRTT(const RTT& other) const;
+    bool isFinalType() const { return m_isFinalType; }
 
     static constexpr ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
     static constexpr ptrdiff_t offsetOfDisplaySizeExcludingThis() { return OBJECT_OFFSETOF(RTT, m_displaySizeExcludingThis); }
     using TrailingArrayType::offsetOfData;
 
 private:
-    explicit RTT(RTTKind kind);
-    RTT(RTTKind, const RTT& supertype);
+    explicit RTT(RTTKind kind, bool isFinalType, StructFieldCount fieldCount);
+    RTT(RTTKind, const RTT& supertype, bool isFinalType, StructFieldCount fieldCount);
 
     const RTTKind m_kind;
-    unsigned m_displaySizeExcludingThis { };
+    const bool m_isFinalType { false };
+    const unsigned m_displaySizeExcludingThis { };
+    const StructFieldCount m_fieldCount { 0 };
 };
 
 inline void Type::dump(PrintStream& out) const
@@ -895,7 +923,7 @@ struct TypeHash {
     RefPtr<TypeDefinition> key { nullptr };
     TypeHash() = default;
     explicit TypeHash(Ref<TypeDefinition>&& key)
-        : key(WTFMove(key))
+        : key(WTF::move(key))
     { }
     explicit TypeHash(WTF::HashTableDeletedValueType)
         : key(WTF::HashTableDeletedValue)

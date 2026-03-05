@@ -37,7 +37,7 @@ struct CPUTime {
     Seconds userTime;
     Seconds systemTime;
 
-    WTF_EXPORT_PRIVATE double percentageCPUUsageSince(const CPUTime&) const;
+    WTF_EXPORT_PRIVATE double NODELETE percentageCPUUsageSince(const CPUTime&) const;
 
     WTF_EXPORT_PRIVATE static std::optional<CPUTime> get();
 

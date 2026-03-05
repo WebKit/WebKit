@@ -10,10 +10,19 @@
 
 #include "modules/audio_device/win/core_audio_output_win.h"
 
+#include <cstdint>
 #include <memory>
+#include <string>
 
+#include "api/array_view.h"
+#include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
+#include "api/sequence_checker.h"
+#include "api/units/time_delta.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/fine_audio_buffer.h"
+#include "modules/audio_device/win/core_audio_base_win.h"
+#include "modules/audio_device/win/core_audio_utility_win.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
@@ -23,8 +32,9 @@ using Microsoft::WRL::ComPtr;
 namespace webrtc {
 namespace webrtc_win {
 
-CoreAudioOutput::CoreAudioOutput(bool automatic_restart)
+CoreAudioOutput::CoreAudioOutput(const Environment& env, bool automatic_restart)
     : CoreAudioBase(
+          env,
           CoreAudioBase::Direction::kOutput,
           automatic_restart,
           [this](uint64_t freq) { return OnDataCallback(freq); },

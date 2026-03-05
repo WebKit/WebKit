@@ -1,10 +1,11 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct _GlobalUniforms {
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
 fn test_matrix_b() -> bool {
   {
     var ok: bool = true;
@@ -108,7 +109,7 @@ fn test_matrix_b() -> bool {
     return ok && (num == 11.0);
   }
 }
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
     var _0_ok: bool = true;
     var _1_num: f32 = 0.0;
@@ -184,11 +185,10 @@ fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
       _skTemp27 = false;
     }
     _0_ok = _skTemp27;
-    var _skTemp28: vec4<f32>;
+    var _skTemp28: vec4<f16>;
     var _skTemp29: bool;
     if _0_ok && (_1_num == 9.0) {
-      let _skTemp30 = test_matrix_b();
-      _skTemp29 = _skTemp30;
+      _skTemp29 = test_matrix_b();
     } else {
       _skTemp29 = false;
     }
@@ -200,6 +200,6 @@ fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
     return _skTemp28;
   }
 }
-@fragment fn main(@location(0) _coords: vec2<f32>) -> @location(0) vec4<f32> {
+@fragment fn main(@location(0) _coords: vec2<f32>) -> @location(0) vec4<f16> {
   return _skslMain(_coords);
 }

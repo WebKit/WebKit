@@ -150,7 +150,7 @@
         WeakPtr weakPage = menuProxy ? menuProxy->page() : nullptr;
         RetainPtr<NSString> itemUTI = itemProvider.get().registeredTypeIdentifiers.firstObject;
         [itemProvider loadDataRepresentationForTypeIdentifier:itemUTI.get() completionHandler:[weakPage, attachmentID = _attachmentID, itemUTI](NSData *data, NSError *error) mutable {
-            ensureOnMainRunLoop([weakPage = WTFMove(weakPage), attachmentID, itemUTI, data = RetainPtr { data }, error = RetainPtr { error }] {
+            ensureOnMainRunLoop([weakPage = WTF::move(weakPage), attachmentID, itemUTI, data = RetainPtr { data }, error = RetainPtr { error }] {
                 RefPtr webPage = weakPage.get();
 
                 if (!webPage)
@@ -176,7 +176,7 @@
 
     // FIXME: We should adopt replaceSelectionWithAttributedString instead of bouncing through the (fake) pasteboard.
     if (RefPtr menuProxy = _menuProxy.get())
-        menuProxy->protectedPage()->replaceSelectionWithPasteboardData(types, dataReference);
+        protect(menuProxy->page())->replaceSelectionWithPasteboardData(types, dataReference);
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope

@@ -48,16 +48,18 @@
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
 {
-    if ([_externalDelegate respondsToSelector:@selector(contextMenuInteraction:configurationForMenuAtLocation:)])
-        return [_externalDelegate contextMenuInteraction:interaction configurationForMenuAtLocation:location];
+    RetainPtr externalDelegate = _externalDelegate;
+    if ([externalDelegate respondsToSelector:@selector(contextMenuInteraction:configurationForMenuAtLocation:)])
+        return [externalDelegate contextMenuInteraction:interaction configurationForMenuAtLocation:location];
 
     return [super contextMenuInteraction:interaction configurationForMenuAtLocation:location];
 }
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
-    if ([_externalDelegate respondsToSelector:@selector(contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:)])
-        return [_externalDelegate contextMenuInteraction:interaction configuration:configuration highlightPreviewForItemWithIdentifier:identifier];
+    RetainPtr externalDelegate = _externalDelegate;
+    if ([externalDelegate respondsToSelector:@selector(contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:)])
+        return [externalDelegate contextMenuInteraction:interaction configuration:configuration highlightPreviewForItemWithIdentifier:identifier];
 
     return [super contextMenuInteraction:interaction configuration:configuration highlightPreviewForItemWithIdentifier:identifier];
 }
@@ -66,16 +68,18 @@
 {
     [super contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
 
-    if ([_externalDelegate respondsToSelector:@selector(contextMenuInteraction:willDisplayMenuForConfiguration:animator:)])
-        [_externalDelegate contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
+    RetainPtr externalDelegate = _externalDelegate;
+    if ([externalDelegate respondsToSelector:@selector(contextMenuInteraction:willDisplayMenuForConfiguration:animator:)])
+        [externalDelegate contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
 {
     [super contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
 
-    if ([_externalDelegate respondsToSelector:@selector(contextMenuInteraction:willEndForConfiguration:animator:)])
-        [_externalDelegate contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
+    RetainPtr externalDelegate = _externalDelegate;
+    if ([externalDelegate respondsToSelector:@selector(contextMenuInteraction:willEndForConfiguration:animator:)])
+        [externalDelegate contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
 }
 
 @end
@@ -116,12 +120,13 @@ UIContextMenuInteraction *CompactContextMenuPresenter::interaction() const
 
 void CompactContextMenuPresenter::present(CGRect rectInRootView)
 {
-    if (!m_rootView.window)
+    RetainPtr rootView = m_rootView;
+    if (!rootView.get().window)
         return;
 
     [m_button setFrame:rectInRootView];
     if (![m_button superview])
-        [m_rootView addSubview:m_button.get()];
+        [rootView addSubview:m_button.get()];
 
 #if HAVE(UI_BUTTON_PERFORM_PRIMARY_ACTION)
     static BOOL canPerformPrimaryAction = [UIButton instancesRespondToSelector:@selector(performPrimaryAction)];
@@ -131,7 +136,7 @@ void CompactContextMenuPresenter::present(CGRect rectInRootView)
     }
 #endif
 
-    [interaction() _presentMenuAtLocation:CGPointMake(CGRectGetMidX(rectInRootView), CGRectGetMidY(rectInRootView))];
+    [protect(interaction()) _presentMenuAtLocation:CGPointMake(CGRectGetMidX(rectInRootView), CGRectGetMidY(rectInRootView))];
 }
 
 void CompactContextMenuPresenter::dismiss()
@@ -141,7 +146,7 @@ void CompactContextMenuPresenter::dismiss()
 
 void CompactContextMenuPresenter::updateVisibleMenu(UIMenu *(^updateBlock)(UIMenu *))
 {
-    [interaction() updateVisibleMenuWithBlock:updateBlock];
+    [protect(interaction()) updateVisibleMenuWithBlock:updateBlock];
 }
 
 } // namespace WebKit

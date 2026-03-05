@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/rendering-frames.js"></script>
+<div id="target"></div>
+
+<script>
+
+promise_test(async () => {
+    const target = document.getElementById("target");
+    target.animate({ transform: ["translateX(100px)", "none"] }, 1000 * 1000);
+
+    await renderingFrames(3);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1, "There should be a single accelerated animation before suspension.");
+
+    internals.suspendAnimations();
+    await renderingFrames(2);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "There should be no accelerated animation after suspension.");
+
+    internals.resumeAnimations();
+    await renderingFrames(2);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1, "There should be a single accelerated animation after resumption.");
+
+    await new Promise(setTimeout);
+}, "Suspending animations should pause running accelerated animations.");
+
+</script>
+</body>
+</html>

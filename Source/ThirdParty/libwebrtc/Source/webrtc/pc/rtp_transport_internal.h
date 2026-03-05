@@ -17,6 +17,7 @@
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "call/rtp_demuxer.h"
 #include "pc/session_description.h"
 #include "rtc_base/async_packet_socket.h"
@@ -169,6 +170,7 @@ class RtpTransportInternal : public sigslot::has_slots<> {
       callback_list_network_route_changed_;
   CallbackList<bool> callback_list_writable_state_;
   CallbackList<const SentPacketInfo&> callback_list_sent_packet_;
+  ScopedTaskSafety safety_;
 };
 
 }  // namespace webrtc

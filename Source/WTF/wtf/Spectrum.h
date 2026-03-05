@@ -95,7 +95,7 @@ public:
         CounterType count;
     };
 
-    Lock& getLock() { return m_lock; }
+    Lock& getLock() LIFETIME_BOUND { return m_lock; }
     
     // Returns a list ordered from lowest-count to highest-count.
     Vector<KeyAndCount> buildList(AbstractLocker&) const

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AnimationEventBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AnimationEventBase);
 
 AnimationEventBase::AnimationEventBase(enum EventInterfaceType eventInterface, const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime)
     : Event(eventInterface, type, CanBubble::Yes, IsCancelable::No)
@@ -42,8 +42,8 @@ AnimationEventBase::AnimationEventBase(enum EventInterfaceType eventInterface, c
 {
 }
 
-AnimationEventBase::AnimationEventBase(enum EventInterfaceType eventInterface, const AtomString& type, const EventInit& initializer, IsTrusted isTrusted)
-    : Event(eventInterface, type, initializer, isTrusted)
+AnimationEventBase::AnimationEventBase(enum EventInterfaceType eventInterface, const AtomString& type, EventInit&& initializer, IsTrusted isTrusted)
+    : Event(eventInterface, type, WTF::move(initializer), isTrusted)
 {
 }
 

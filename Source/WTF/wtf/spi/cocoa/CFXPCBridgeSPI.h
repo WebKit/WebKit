@@ -25,11 +25,27 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
+
+#include <CoreFoundation/CoreFoundation.h>
+#include <os/object.h>
+#include <wtf/Platform.h>
+
+#if HAVE(XPC_API) || USE(APPLE_INTERNAL_SDK)
+#include <xpc/xpc.h>
+#else
+#if OS_OBJECT_USE_OBJC
+OS_OBJECT_DECL(xpc_object);
+#else
+typedef void* xpc_object_t;
+#endif // OS_OBJECT_USE_OBJC
+#endif // HAVE(XPC_API) || USE(APPLE_INTERNAL_SDK)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <CoreFoundation/CFXPCBridge.h>
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
 

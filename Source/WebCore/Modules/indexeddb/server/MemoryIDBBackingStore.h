@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT ~MemoryIDBBackingStore();
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
-    uint64_t databaseVersion() final;
+    uint64_t NODELETE databaseVersion() final;
     void setDatabaseInfo(const IDBDatabaseInfo&);
     bool hasObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier) { return !!infoForObjectStore(objectStoreIdentifier); }
     MemoryObjectStore* objectStoreForName(const String& name) const;
@@ -82,7 +82,7 @@ private:
     IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
 
     IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) final;
-    void deleteBackingStore() final;
+    void NODELETE deleteBackingStore() final;
 
     bool supportsSimultaneousReadWriteTransactions() final { return true; }
     bool isEphemeral() final { return true; }
@@ -97,7 +97,7 @@ private:
 
     RefPtr<MemoryObjectStore> takeObjectStoreByIdentifier(IDBObjectStoreIdentifier);
 
-    void close() final;
+    void NODELETE close() final;
 
     void registerObjectStore(Ref<MemoryObjectStore>&&);
     void unregisterObjectStore(MemoryObjectStore&);
@@ -106,8 +106,8 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
     HashMap<IDBResourceIdentifier, Ref<MemoryBackingStoreTransaction>> m_transactions;
-    HashMap<IDBObjectStoreIdentifier, RefPtr<MemoryObjectStore>> m_objectStoresByIdentifier;
-    HashMap<String, RefPtr<MemoryObjectStore>> m_objectStoresByName;
+    HashMap<IDBObjectStoreIdentifier, Ref<MemoryObjectStore>> m_objectStoresByIdentifier;
+    HashMap<String, Ref<MemoryObjectStore>> m_objectStoresByName;
 };
 
 } // namespace IDBServer

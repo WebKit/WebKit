@@ -44,11 +44,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSUnparsedValue);
 
 Ref<CSSUnparsedValue> CSSUnparsedValue::create(Vector<CSSUnparsedSegment>&& segments)
 {
-    return adoptRef(*new CSSUnparsedValue(WTFMove(segments)));
+    return adoptRef(*new CSSUnparsedValue(WTF::move(segments)));
 }
 
 Ref<CSSUnparsedValue> CSSUnparsedValue::create(CSSParserTokenRange tokens)
@@ -82,7 +82,7 @@ Ref<CSSUnparsedValue> CSSUnparsedValue::create(CSSParserTokenRange tokens)
                     // No fallback
                     auto variableReference = CSSOMVariableReferenceValue::create(identToken.value().toString());
                     ASSERT(!variableReference.hasException());
-                    segmentStack.last().append(CSSUnparsedSegment { RefPtr<CSSOMVariableReferenceValue> { variableReference.releaseReturnValue() } });
+                    segmentStack.last().append(CSSUnparsedSegment { variableReference.releaseReturnValue() });
                     tokens.consume();
                 } else
                     ASSERT_NOT_REACHED();
@@ -111,11 +111,11 @@ Ref<CSSUnparsedValue> CSSUnparsedValue::create(CSSParserTokenRange tokens)
     if (!builder.isEmpty())
         segmentStack.last().append(builder.toString());
     
-    return CSSUnparsedValue::create(WTFMove(segmentStack.last()));
+    return CSSUnparsedValue::create(WTF::move(segmentStack.last()));
 }
 
 CSSUnparsedValue::CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments)
-    : m_segments(WTFMove(segments))
+    : m_segments(WTF::move(segments))
 {
 }
 
@@ -124,11 +124,14 @@ CSSUnparsedValue::~CSSUnparsedValue() = default;
 void CSSUnparsedValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {
     for (auto& segment : m_segments) {
-        WTF::visit(WTF::makeVisitor([&] (const String& value) {
-            builder.append(value);
-        }, [&] (const RefPtr<CSSOMVariableReferenceValue>& value) {
-            value->serialize(builder, arguments);
-        }), segment);
+        WTF::switchOn(segment,
+            [&](const String& value) {
+                builder.append(value);
+            },
+            [&](const Ref<CSSOMVariableReferenceValue>& value) {
+                value->serialize(builder, arguments);
+            }
+        );
     }
 }
 
@@ -144,9 +147,9 @@ ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnpar
     if (index > m_segments.size())
         return Exception { ExceptionCode::RangeError, makeString("Index "_s, index, " exceeds index range for unparsed segments."_s) };
     if (index == m_segments.size())
-        m_segments.append(WTFMove(val));
+        m_segments.append(WTF::move(val));
     else
-        m_segments[index] = WTFMove(val);
+        m_segments[index] = WTF::move(val);
     return CSSUnparsedSegment { m_segments[index] };
 }
 

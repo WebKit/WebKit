@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(FTL_JIT)
 
-#include <JavaScriptCore/FTLAbbreviatedTypes.h>
+#include "FTLAbbreviatedTypes.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace FTL {

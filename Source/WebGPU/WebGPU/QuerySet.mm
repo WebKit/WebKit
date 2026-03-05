@@ -60,7 +60,7 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         if (!querySetWithOffset.buffer)
             return QuerySet::createInvalid(*this);
 
-        return QuerySet::create(WTFMove(querySetWithOffset), count, type, *this);
+        return QuerySet::create(WTF::move(querySetWithOffset), count, type, *this);
 #else
         return QuerySet::createInvalid(*this);
 #endif
@@ -87,7 +87,7 @@ QuerySet::QuerySet(id<MTLBuffer> buffer, uint32_t count, WGPUQueryType type, Dev
 
 QuerySet::QuerySet(CounterSampleBuffer&& buffer, uint32_t count, WGPUQueryType type, Device& device)
     : m_device(device)
-    , m_timestampBufferWithOffset(WTFMove(buffer))
+    , m_timestampBufferWithOffset(WTF::move(buffer))
     , m_count(count)
     , m_type(type)
 {
@@ -122,12 +122,7 @@ void QuerySet::destroy()
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
     m_timestampBufferWithOffset.buffer = nil;
-    for (auto commandEncoder : m_commandEncoders) {
-        if (RefPtr ptr = m_device->commandEncoderFromIdentifier(commandEncoder))
-            ptr->makeSubmitInvalid();
-    }
-
-    m_commandEncoders.clear();
+    m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
 }
 
 void QuerySet::setLabel(String&& label)
@@ -248,20 +243,20 @@ void wgpuQuerySetRelease(WGPUQuerySet querySet)
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 {
-    WebGPU::protectedFromAPI(querySet)->destroy();
+    protect(WebGPU::fromAPI(querySet))->destroy();
 }
 
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
 {
-    WebGPU::protectedFromAPI(querySet)->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::fromAPI(querySet))->setLabel(WebGPU::fromAPI(label));
 }
 
 uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
 {
-    return WebGPU::protectedFromAPI(querySet)->count();
+    return protect(WebGPU::fromAPI(querySet))->count();
 }
 
 WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
 {
-    return WebGPU::protectedFromAPI(querySet)->type();
+    return protect(WebGPU::fromAPI(querySet))->type();
 }

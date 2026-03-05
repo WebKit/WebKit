@@ -27,16 +27,11 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include <WebCore/MediaPlayerEnums.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-
-enum class MediaPlaybackTargetType : uint8_t {
-    AVOutputContext,
-    Mock,
-    Serialized,
-};
 
 class MediaPlaybackTarget : public ThreadSafeRefCounted<MediaPlaybackTarget> {
 public:
@@ -45,6 +40,7 @@ public:
     virtual ~MediaPlaybackTarget() = default;
 
     Type type() const { return m_type; }
+    virtual Type targetType() const { return type(); }
 
     virtual bool hasActiveRoute() const = 0;
     virtual String deviceName() const = 0;

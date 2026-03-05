@@ -53,7 +53,7 @@ inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, const SecurityO
     : m_storageType(storageType)
     , m_securityOrigin(origin)
     , m_storageMap(quota)
-    , m_storageSyncManager(WTFMove(syncManager))
+    , m_storageSyncManager(WTF::move(syncManager))
     , m_accessCount(0)
     , m_closeDatabaseTimer(*this, &StorageAreaImpl::closeDatabaseTimerFired)
 {
@@ -66,7 +66,7 @@ inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, const SecurityO
 
 Ref<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, const SecurityOrigin& origin, RefPtr<StorageSyncManager>&& syncManager, unsigned quota)
 {
-    Ref<StorageAreaImpl> area = adoptRef(*new StorageAreaImpl(storageType, origin, WTFMove(syncManager), quota));
+    Ref<StorageAreaImpl> area = adoptRef(*new StorageAreaImpl(storageType, origin, WTF::move(syncManager), quota));
     // FIXME: If there's no backing storage for LocalStorage, the default WebKit behavior should be that of private browsing,
     // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
     if (area->m_storageSyncManager) {
@@ -95,11 +95,6 @@ StorageAreaImpl::StorageAreaImpl(const StorageAreaImpl& area)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
-}
-
-StorageType StorageAreaImpl::storageType() const
-{
-    return m_storageType;
 }
 
 unsigned StorageAreaImpl::length()
@@ -191,7 +186,7 @@ void StorageAreaImpl::importItems(HashMap<String, String>&& items)
     ASSERT(!m_isShutdown);
     ASSERT(!isMainThread());
 
-    m_storageMap.importItems(WTFMove(items));
+    m_storageMap.importItems(WTF::move(items));
 }
 
 void StorageAreaImpl::close()
@@ -284,9 +279,9 @@ void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldV
         return storage.frame() == &sourceFrame;
     };
     if (isLocalStorage(m_storageType))
-        StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, &page->group(), m_securityOrigin, sourceFrame.document()->url().string(), WTFMove(isSourceStorage));
+        StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, &page->group(), m_securityOrigin, sourceFrame.document()->url().string(), WTF::move(isSourceStorage));
     else
-        StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, *page, m_securityOrigin, sourceFrame.document()->url().string(), WTFMove(isSourceStorage));
+        StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, *page, m_securityOrigin, sourceFrame.document()->url().string(), WTF::move(isSourceStorage));
 }
 
 void StorageAreaImpl::sessionChanged(bool isNewSessionPersistent)

@@ -43,11 +43,11 @@ namespace WebKit {
 #define MDNS_RELEASE_LOG_IN_CALLBACK(sessionID, fmt, ...) RELEASE_LOG(Network, "NetworkMDNSRegister callback - " fmt, ##__VA_ARGS__)
 
 NetworkMDNSRegister::PendingRegistrationRequest::PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess>&& connection, String&& name, String address, PAL::SessionID sessionID, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
-    : connection(WTFMove(connection))
-    , name(WTFMove(name))
-    , address(WTFMove(address))
+    : connection(WTF::move(connection))
+    , name(WTF::move(name))
+    , address(WTF::move(address))
     , sessionID(sessionID)
-    , completionHandler(WTFMove(completionHandler))
+    , completionHandler(WTF::move(completionHandler))
 {
 }
 
@@ -78,7 +78,7 @@ bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
 }
 
 #if ENABLE_MDNS
-static HashMap<NetworkMDNSRegister::PendingRegistrationRequestIdentifier, std::unique_ptr<NetworkMDNSRegister::PendingRegistrationRequest>>& pendingRegistrationRequestMap()
+static HashMap<NetworkMDNSRegister::PendingRegistrationRequestIdentifier, std::unique_ptr<NetworkMDNSRegister::PendingRegistrationRequest>>& NODELETE pendingRegistrationRequestMap()
 {
     static NeverDestroyed<HashMap<NetworkMDNSRegister::PendingRegistrationRequestIdentifier, std::unique_ptr<NetworkMDNSRegister::PendingRegistrationRequest>>> map;
     return map.get();
@@ -111,7 +111,7 @@ static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record,
     MDNS_RELEASE_LOG_IN_CALLBACK(request->sessionID, "registerMDNSNameCallback with error %d", errorCode);
 
     if (errorCode) {
-        request->connection->protectedMDNSRegister()->closeAndForgetService(service);
+        protect(request->connection->mdnsRegister())->closeAndForgetService(service);
         request->completionHandler(request->name, WebCore::MDNSRegisterError::DNSSD);
         return;
     }
@@ -155,8 +155,8 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
 
     auto identifier = PendingRegistrationRequestIdentifier::generate();
     Ref connection = m_connection.get();
-    auto pendingRequest = makeUnique<PendingRegistrationRequest>(connection.get(), WTFMove(name), ipAddress, sessionID(), WTFMove(completionHandler));
-    auto addResult = pendingRegistrationRequestMap().add(identifier, WTFMove(pendingRequest));
+    auto pendingRequest = makeUnique<PendingRegistrationRequest>(connection.get(), WTF::move(name), ipAddress, sessionID(), WTF::move(completionHandler));
+    auto addResult = pendingRegistrationRequestMap().add(identifier, WTF::move(pendingRequest));
     DNSRecordRef record { nullptr };
     auto error = DNSServiceRegisterRecord(service,
         &record,

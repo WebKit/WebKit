@@ -35,7 +35,7 @@ PushSubscriptionData PushSubscriptionData::isolatedCopy() const &
 
 PushSubscriptionData PushSubscriptionData::isolatedCopy() &&
 {
-    return { identifier, WTFMove(endpoint).isolatedCopy(), expirationTime, WTFMove(serverVAPIDPublicKey), WTFMove(clientECDHPublicKey), WTFMove(sharedAuthenticationSecret) };
+    return { identifier, WTF::move(endpoint).isolatedCopy(), expirationTime, WTF::move(serverVAPIDPublicKey), WTF::move(clientECDHPublicKey), WTF::move(sharedAuthenticationSecret) };
 }
 
 } // namespace WebCore

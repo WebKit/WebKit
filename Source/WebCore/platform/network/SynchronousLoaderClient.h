@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceHandleClient.h>
-#include <WebCore/ResourceResponse.h>
+#include "ResourceError.h"
+#include "ResourceHandleClient.h"
+#include "ResourceResponse.h"
 #include <wtf/Function.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -40,7 +40,7 @@ class SynchronousLoaderMessageQueue : public ThreadSafeRefCounted<SynchronousLoa
 public:
     static Ref<SynchronousLoaderMessageQueue> create() { return adoptRef(*new SynchronousLoaderMessageQueue); }
 
-    void append(std::unique_ptr<Function<void()>>&& task) { m_queue.append(WTFMove(task)); }
+    void append(std::unique_ptr<Function<void()>>&& task) { m_queue.append(WTF::move(task)); }
     void kill() { m_queue.kill(); }
     bool killed() const { return m_queue.killed(); }
     std::unique_ptr<Function<void()>> waitForMessage() { return m_queue.waitForMessage(); }

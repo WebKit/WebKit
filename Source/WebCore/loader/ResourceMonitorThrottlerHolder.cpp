@@ -70,7 +70,7 @@ ResourceMonitorThrottlerHolder::ResourceMonitorThrottlerHolder(const String& dat
 
     sharedWorkQueueSingleton()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, path = crossThreadCopy(databaseDirectoryPath), count, duration, maxHosts] mutable {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->m_throttler = makeUnique<ResourceMonitorThrottler>(WTFMove(path), count, duration, maxHosts);
+            protectedThis->m_throttler = makeUnique<ResourceMonitorThrottler>(WTF::move(path), count, duration, maxHosts);
     });
 }
 
@@ -78,7 +78,7 @@ ResourceMonitorThrottlerHolder::~ResourceMonitorThrottlerHolder()
 {
     ASSERT(isMainThread());
 
-    sharedWorkQueueSingleton()->dispatch([container = WTFMove(m_throttler)] { });
+    sharedWorkQueueSingleton()->dispatch([container = WTF::move(m_throttler)] { });
 }
 
 void ResourceMonitorThrottlerHolder::tryAccess(const String& host, ContinuousApproximateTime time, CompletionHandler<void(bool)>&& completionHandler)
@@ -90,11 +90,11 @@ void ResourceMonitorThrottlerHolder::tryAccess(const String& host, ContinuousApp
         return;
     }
 
-    sharedWorkQueueSingleton()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, host = crossThreadCopy(host), time, completionHandler = WTFMove(completionHandler)] mutable {
+    sharedWorkQueueSingleton()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, host = crossThreadCopy(host), time, completionHandler = WTF::move(completionHandler)] mutable {
         RefPtr protectedThis = weakThis.get();
         bool wasGranted = protectedThis && protectedThis->m_throttler->tryAccess(host, time);
 
-        callOnMainThread([wasGranted, completionHandler = WTFMove(completionHandler)] mutable {
+        callOnMainThread([wasGranted, completionHandler = WTF::move(completionHandler)] mutable {
             completionHandler(wasGranted);
         });
     });
@@ -104,11 +104,11 @@ void ResourceMonitorThrottlerHolder::clearAllData(CompletionHandler<void()>&& co
 {
     ASSERT(isMainThread());
 
-    sharedWorkQueueSingleton()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler)] mutable {
+    sharedWorkQueueSingleton()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)] mutable {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->m_throttler->clearAllData();
 
-        callOnMainThread(WTFMove(completionHandler));
+        callOnMainThread(WTF::move(completionHandler));
     });
 }
 

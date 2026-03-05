@@ -68,11 +68,11 @@ void RemoteFaceDetectorProxy::detect(const WebCore::NativeImage& image, Completi
         completionHandler({ });
         return;
     }
-    if (!renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(const_cast<WebCore::NativeImage&>(image), WebCore::DestinationColorSpace::SRGB())) {
+    if (!renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, WebCore::DestinationColorSpace::SRGB())) {
         completionHandler({ });
         return;
     }
-    connection->sendWithAsyncReply(Messages::RemoteFaceDetector::Detect(image.renderingResourceIdentifier()), WTFMove(completionHandler), identifier());
+    connection->sendWithAsyncReply(Messages::RemoteFaceDetector::Detect(image.renderingResourceIdentifier()), WTF::move(completionHandler), identifier());
 }
 
 } // namespace WebKit::WebGPU

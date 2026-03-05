@@ -97,15 +97,10 @@ void WebContextMenuClient::stopSpeaking()
 
 void WebContextMenuClient::showContextMenu()
 {
-    protectedPage()->protectedContextMenu()->show();
+    protect(protect(m_page.get())->contextMenu())->show();
 }
 
 #endif
-
-RefPtr<WebPage> WebContextMenuClient::protectedPage() const
-{
-    return m_page.get();
-}
 
 } // namespace WebKit
 

@@ -14,7 +14,10 @@
 
 package runner
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 func addPAKETests() {
 	spakeCredential := Credential{
@@ -231,16 +234,21 @@ func addPAKETests() {
 		shimCredentials: []*Credential{&spakeCredential},
 	})
 	testCases = append(testCases, testCase{
-		// A PAKE client will not offer key shares, so the client should
-		// reject a HelloRetryRequest requesting a different key share.
+		// A PAKE client will not offer key shares, even if explicitly configured,
+		// and the client should reject a HelloRetryRequest requesting a different
+		// key share.
 		name:     "PAKE-Client-HRRKeyShare",
 		testType: clientTest,
 		config: Config{
 			MinVersion: VersionTLS13,
 			Credential: &spakeCredential,
 			Bugs: ProtocolBugs{
+				ExpectedKeyShares:          []CurveID{},
 				SendHelloRetryRequestCurve: CurveX25519,
 			},
+		},
+		flags: []string{
+			"-key-shares", strconv.Itoa(int(CurveP256)),
 		},
 		shimCredentials:    []*Credential{&spakeCredential},
 		shouldFail:         true,
@@ -501,7 +509,7 @@ func addPAKETests() {
 				// Check that the ClientHello does not offer a session, even
 				// though one was configured.
 				ExpectNoTLS13PSK: true,
-				// Respond with an unsolicted PSK extension in ServerHello, to
+				// Respond with an unsolicited PSK extension in ServerHello, to
 				// check that the client rejects it.
 				AlwaysSelectPSKIdentity: true,
 			},

@@ -18,8 +18,8 @@ includes: [testTypedArray.js]
 
 function MyError() {}
 
-testWithTypedArrayConstructors(function(TA) {
-  var ta = new TA(1);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var ta = new TA(makeCtorArg(1));
 
   var value = {
     valueOf() {

@@ -45,11 +45,11 @@ struct NotificationOptionsPayload {
     {
         return NotificationOptionsPayload {
             dir,
-            WTFMove(lang).isolatedCopy(),
-            WTFMove(body).isolatedCopy(),
-            WTFMove(tag).isolatedCopy(),
-            WTFMove(icon).isolatedCopy(),
-            WTFMove(dataJSONString).isolatedCopy(),
+            WTF::move(lang).isolatedCopy(),
+            WTF::move(body).isolatedCopy(),
+            WTF::move(tag).isolatedCopy(),
+            WTF::move(icon).isolatedCopy(),
+            WTF::move(dataJSONString).isolatedCopy(),
             silent
         };
     }

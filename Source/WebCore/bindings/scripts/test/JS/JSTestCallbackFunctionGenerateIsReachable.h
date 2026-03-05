@@ -25,6 +25,7 @@
 #include "TestCallbackFunctionGenerateIsReachable.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/Forward.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -49,6 +50,8 @@ private:
 
     bool hasCallback() const final { return m_data && m_data->callback(); }
 
+    bool isJSTestCallbackFunctionGenerateIsReachable() const final { return true; }
+
     JSCallbackData* m_data;
 };
 
@@ -59,3 +62,7 @@ template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionGenerateIsR
     using Base = TestCallbackFunctionGenerateIsReachable;
 };
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::JSTestCallbackFunctionGenerateIsReachable)
+    static bool isType(const WebCore::TestCallbackFunctionGenerateIsReachable& callback) { return callback.isJSTestCallbackFunctionGenerateIsReachable(); }
+SPECIALIZE_TYPE_TRAITS_END()

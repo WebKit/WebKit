@@ -37,7 +37,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PipelineLayoutImpl);
 
 PipelineLayoutImpl::PipelineLayoutImpl(WebGPUPtr<WGPUPipelineLayout>&& pipelineLayout, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(pipelineLayout))
+    : m_backing(WTF::move(pipelineLayout))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }

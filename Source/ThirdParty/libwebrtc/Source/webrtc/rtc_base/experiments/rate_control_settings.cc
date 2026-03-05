@@ -37,8 +37,6 @@ const char kUseBaseHeavyVp8Tl3RateAllocationFieldTrialName[] =
 
 }  // namespace
 
-constexpr char CongestionWindowConfig::kKey[];
-
 std::unique_ptr<StructParametersParser> CongestionWindowConfig::Parser() {
   return StructParametersParser::Create("QueueSize", &queue_size_ms,  //
                                         "MinBitrate", &min_bitrate_bps,
@@ -52,8 +50,6 @@ CongestionWindowConfig CongestionWindowConfig::Parse(absl::string_view config) {
   res.Parser()->Parse(config);
   return res;
 }
-
-constexpr char VideoRateControlConfig::kKey[];
 
 std::unique_ptr<StructParametersParser> VideoRateControlConfig::Parser() {
   // The empty comments ensures that each pair is on a separate line.

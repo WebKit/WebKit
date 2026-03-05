@@ -10,10 +10,10 @@
 #ifndef API_TEST_TIME_CONTROLLER_H_
 #define API_TEST_TIME_CONTROLLER_H_
 
-#include <functional>
 #include <memory>
 #include <string>
 
+#include "api/function_view.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/socket_server.h"
@@ -57,7 +57,7 @@ class TimeController {
   // intervals.
   // Returns true if condition() was evaluated to true before `max_duration`
   // elapsed and false otherwise.
-  bool Wait(const std::function<bool()>& condition,
+  bool Wait(FunctionView<bool()> condition,
             TimeDelta max_duration = TimeDelta::Seconds(5));
 };
 

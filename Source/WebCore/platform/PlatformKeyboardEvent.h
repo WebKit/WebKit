@@ -95,10 +95,10 @@ namespace WebCore {
         void setWindowsVirtualKeyCode(int code) { m_windowsVirtualKeyCode = code; }
         int windowsVirtualKeyCodeWithoutKeyPressOverride() const { return m_windowsVirtualKeyCode; }
 
-#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
         bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
-#if PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
         const std::optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
         const std::optional<uint64_t>& preeditSelectionRangeStart() const { return m_preeditSelectionRangeStart; }
         const std::optional<uint64_t>& preeditSelectionRangeLength() const { return m_preeditSelectionRangeLength; }
@@ -150,10 +150,10 @@ namespace WebCore {
         int m_windowsVirtualKeyCode { 0 };
 
         bool m_isSyntheticEvent { false };
-#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
         bool m_handledByInputMethod { false };
 #endif
-#if PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
         std::optional<Vector<WebCore::CompositionUnderline>> m_preeditUnderlines;
         std::optional<uint64_t> m_preeditSelectionRangeStart;
         std::optional<uint64_t> m_preeditSelectionRangeLength;

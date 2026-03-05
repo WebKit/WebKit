@@ -31,12 +31,12 @@ namespace WebCore {
 
 Ref<CSSColorSchemeValue> CSSColorSchemeValue::create(CSS::ColorScheme colorScheme)
 {
-    return adoptRef(*new CSSColorSchemeValue(WTFMove(colorScheme)));
+    return adoptRef(*new CSSColorSchemeValue(WTF::move(colorScheme)));
 }
 
 CSSColorSchemeValue::CSSColorSchemeValue(CSS::ColorScheme colorScheme)
     : CSSValue(ClassType::ColorScheme)
-    , m_colorScheme(WTFMove(colorScheme))
+    , m_colorScheme(WTF::move(colorScheme))
 {
 }
 

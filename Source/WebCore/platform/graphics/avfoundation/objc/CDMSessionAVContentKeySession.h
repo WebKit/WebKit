@@ -47,13 +47,14 @@ namespace WebCore {
 class AudioVideoRenderer;
 class LegacyCDMPrivateAVFObjC;
 class MediaSampleAVFObjC;
+class SharedBuffer;
 
 class CDMSessionAVContentKeySession final : public LegacyCDMSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CDMSessionAVContentKeySession> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVContentKeySession);
 public:
     static Ref<CDMSessionAVContentKeySession> create(Vector<int>&& protocolVersions, int cdmVersion, LegacyCDMPrivateAVFObjC& parent, LegacyCDMSessionClient& client)
     {
-        return adoptRef(*new CDMSessionAVContentKeySession(WTFMove(protocolVersions), cdmVersion, parent, client));
+        return adoptRef(*new CDMSessionAVContentKeySession(WTF::move(protocolVersions), cdmVersion, parent, client));
     }
 
     ~CDMSessionAVContentKeySession();

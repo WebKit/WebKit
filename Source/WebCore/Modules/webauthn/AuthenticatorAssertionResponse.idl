@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webauthn/#authenticatorassertionresponse
 [
     Conditional=WEB_AUTHN,
     EnabledBySetting=WebAuthenticationEnabled,
     Exposed=Window,
     SecureContext
 ] interface AuthenticatorAssertionResponse : AuthenticatorResponse {
-    [SameObject] readonly attribute ArrayBuffer authenticatorData;
-    [SameObject] readonly attribute ArrayBuffer signature;
+    // FIXME: `authenticatorData` should not be nullable.
+    [SameObject] readonly attribute ArrayBuffer? authenticatorData;
+    // FIXME: `signature` should not be nullable.
+    [SameObject] readonly attribute ArrayBuffer? signature;
     [SameObject] readonly attribute ArrayBuffer? userHandle;
 };

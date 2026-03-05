@@ -72,5 +72,22 @@
 	<string>Recording audio on behalf of websites</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Recognizing captured audio on behalf of websites</string>
+	<key>UIApplicationSupportsMultipleScenes</key>
+	<false/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>SceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 </dict>
 </plist>

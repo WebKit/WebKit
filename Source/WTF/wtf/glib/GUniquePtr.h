@@ -92,30 +92,30 @@ public:
         reset();
     }
 
-    T*& outPtr()
+    T*& outPtr() LIFETIME_BOUND
     {
         reset();
         return m_ptr;
     }
 
-    T* release()
+    [[nodiscard]] T* release()
     {
         return std::exchange(m_ptr, nullptr);
     }
 
-    T& operator*() const
+    T& operator*() const LIFETIME_BOUND
     {
         ASSERT(m_ptr);
         return *m_ptr;
     }
 
-    T* operator->() const
+    T* operator->() const LIFETIME_BOUND
     {
         ASSERT(m_ptr);
         return m_ptr;
     }
 
-    T* get() const { return m_ptr; }
+    T* get() const LIFETIME_BOUND { return m_ptr; }
 
     bool operator!() const { return !m_ptr; }
 

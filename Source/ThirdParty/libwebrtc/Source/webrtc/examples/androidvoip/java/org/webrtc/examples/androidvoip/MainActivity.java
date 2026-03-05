@@ -132,7 +132,7 @@ public class MainActivity extends Activity implements OnVoipClientTaskCompleted 
           supportedCodecsArray, isDecoderSelected, (dialog, position, isChecked) -> {
             if (isChecked) {
               selectedDecoders.add(position);
-            } else if (!isChecked) {
+            } else {
               selectedDecoders.remove(position);
             }
           });

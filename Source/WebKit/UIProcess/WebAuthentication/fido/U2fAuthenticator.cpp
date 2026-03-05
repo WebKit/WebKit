@@ -50,7 +50,7 @@ const unsigned retryTimeOutValueMs = 200;
 }
 
 U2fAuthenticator::U2fAuthenticator(Ref<CtapDriver>&& driver)
-    : FidoAuthenticator(WTFMove(driver))
+    : FidoAuthenticator(WTF::move(driver))
     , m_retryTimer(RunLoop::mainSingleton(), "U2fAuthenticator::RetryTimer"_s, this, &U2fAuthenticator::retryLastCommand)
 {
 }
@@ -79,7 +79,7 @@ void U2fAuthenticator::checkExcludeList(size_t index)
     }
     auto u2fCmd = convertToU2fCheckOnlySignCommand(requestData().hash, creationOptions, creationOptions.excludeCredentials[index]);
     ASSERT(u2fCmd);
-    issueNewCommand(WTFMove(*u2fCmd), CommandType::CheckOnlyCommand);
+    issueNewCommand(WTF::move(*u2fCmd), CommandType::CheckOnlyCommand);
 }
 
 void U2fAuthenticator::issueRegisterCommand()
@@ -90,7 +90,7 @@ void U2fAuthenticator::issueRegisterCommand()
         return;
     }
     U2F_RELEASE_LOG("issueRegisterCommand: Sending %s", base64EncodeToString(*u2fCmd).utf8().data());
-    issueNewCommand(WTFMove(*u2fCmd), CommandType::RegisterCommand);
+    issueNewCommand(WTF::move(*u2fCmd), CommandType::RegisterCommand);
 }
 
 void U2fAuthenticator::getAssertion()
@@ -118,13 +118,13 @@ void U2fAuthenticator::issueSignCommand(size_t index)
         return;
     }
     U2F_RELEASE_LOG("issueSignCommand: index: %lu Sending %s", index, base64EncodeToString(*u2fCmd).utf8().data());
-    issueNewCommand(WTFMove(*u2fCmd), CommandType::SignCommand);
+    issueNewCommand(WTF::move(*u2fCmd), CommandType::SignCommand);
 }
 
 void U2fAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType type)
 {
     U2F_RELEASE_LOG("issueNewCommand, type=%hhu", type);
-    m_lastCommand = WTFMove(command);
+    m_lastCommand = WTF::move(command);
     m_lastCommandType = type;
     issueCommand(m_lastCommand, m_lastCommandType);
 }
@@ -132,39 +132,39 @@ void U2fAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType ty
 void U2fAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandType type)
 {
     U2F_RELEASE_LOG("issueCommand: Sending %s", base64EncodeToString(command).utf8().data());
-    protectedDriver()->transact(Vector<uint8_t>(command), [weakThis = WeakPtr { *this }, type](Vector<uint8_t>&& data) {
+    protect(driver())->transact(Vector<uint8_t>(command), [weakThis = WeakPtr { *this }, type](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
-        weakThis->responseReceived(WTFMove(data), type);
+        weakThis->responseReceived(WTF::move(data), type);
     });
 }
 
 void U2fAuthenticator::responseReceived(Vector<uint8_t>&& response, CommandType type)
 {
-    auto apduResponse = ApduResponse::createFromMessage(WTFMove(response));
+    auto apduResponse = ApduResponse::createFromMessage(WTF::move(response));
     if (!apduResponse) {
         U2F_RELEASE_LOG("responseReceived: Failed to parse response.");
         receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Couldn't parse the APDU response."_s });
         return;
     }
-    U2F_RELEASE_LOG("responseReceived: Got response for command type: %hhu", enumToUnderlyingType(type));
+    U2F_RELEASE_LOG("responseReceived: Got response for command type: %hhu", std::to_underlying(type));
 
     switch (type) {
     case CommandType::RegisterCommand:
-        continueRegisterCommandAfterResponseReceived(WTFMove(*apduResponse));
+        continueRegisterCommandAfterResponseReceived(WTF::move(*apduResponse));
         return;
     case CommandType::CheckOnlyCommand:
-        continueCheckOnlyCommandAfterResponseReceived(WTFMove(*apduResponse));
+        continueCheckOnlyCommandAfterResponseReceived(WTF::move(*apduResponse));
         return;
     case CommandType::BogusCommandExcludeCredentialsMatch:
-        continueBogusCommandExcludeCredentialsMatchAfterResponseReceived(WTFMove(*apduResponse));
+        continueBogusCommandExcludeCredentialsMatchAfterResponseReceived(WTF::move(*apduResponse));
         return;
     case CommandType::BogusCommandNoCredentials:
-        continueBogusCommandNoCredentialsAfterResponseReceived(WTFMove(*apduResponse));
+        continueBogusCommandNoCredentialsAfterResponseReceived(WTF::move(*apduResponse));
         return;
     case CommandType::SignCommand:
-        continueSignCommandAfterResponseReceived(WTFMove(*apduResponse));
+        continueSignCommandAfterResponseReceived(WTF::move(*apduResponse));
         return;
     }
     ASSERT_NOT_REACHED();
@@ -172,7 +172,7 @@ void U2fAuthenticator::responseReceived(Vector<uint8_t>&& response, CommandType 
 
 void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse&& apduResponse)
 {
-    U2F_RELEASE_LOG("continueRegisterCommandAfterResponseReceived: Status %hu", enumToUnderlyingType(apduResponse.status()));
+    U2F_RELEASE_LOG("continueRegisterCommandAfterResponseReceived: Status %hu", std::to_underlying(apduResponse.status()));
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
         auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
@@ -180,7 +180,7 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
             U2F_RELEASE_LOG("continueRegisterCommandAfterResponseReceived: rp.id empty. Should not be.");
             ASSERT(false);
         }
-        auto response = readU2fRegisterResponse(options.rp.id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform, { driver().transport() }, options.attestation());
+        auto response = readU2fRegisterResponse(options.rp.id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform, { driver().transport() }, options.attestation);
         if (!response) {
             receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Couldn't parse the U2F register response."_s });
             return;
@@ -199,7 +199,7 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
 
 void U2fAuthenticator::continueCheckOnlyCommandAfterResponseReceived(ApduResponse&& apduResponse)
 {
-    U2F_RELEASE_LOG("continueCheckOnlyCommandAfterResponseReceived: Status %hu", enumToUnderlyingType(apduResponse.status()));
+    U2F_RELEASE_LOG("continueCheckOnlyCommandAfterResponseReceived: Status %hu", std::to_underlying(apduResponse.status()));
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR:
     case ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED:
@@ -212,7 +212,7 @@ void U2fAuthenticator::continueCheckOnlyCommandAfterResponseReceived(ApduRespons
 
 void U2fAuthenticator::continueBogusCommandExcludeCredentialsMatchAfterResponseReceived(ApduResponse&& apduResponse)
 {
-    U2F_RELEASE_LOG("continueBogusCommandExcludeCredentialsMatchAfterResponseReceived: Status %hu", enumToUnderlyingType(apduResponse.status()));
+    U2F_RELEASE_LOG("continueBogusCommandExcludeCredentialsMatchAfterResponseReceived: Status %hu", std::to_underlying(apduResponse.status()));
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR:
         receiveRespond(ExceptionData { ExceptionCode::InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the authenticator."_s });
@@ -228,7 +228,7 @@ void U2fAuthenticator::continueBogusCommandExcludeCredentialsMatchAfterResponseR
 
 void U2fAuthenticator::continueBogusCommandNoCredentialsAfterResponseReceived(ApduResponse&& apduResponse)
 {
-    U2F_RELEASE_LOG("continueBogusCommandNoCredentialsAfterResponseReceived: Status %hu", enumToUnderlyingType(apduResponse.status()));
+    U2F_RELEASE_LOG("continueBogusCommandNoCredentialsAfterResponseReceived: Status %hu", std::to_underlying(apduResponse.status()));
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR:
         if (RefPtr observer = this->observer())
@@ -246,7 +246,7 @@ void U2fAuthenticator::continueBogusCommandNoCredentialsAfterResponseReceived(Ap
 
 void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& apduResponse)
 {
-    U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: Status %hu", enumToUnderlyingType(apduResponse.status()));
+    U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: Status %hu", std::to_underlying(apduResponse.status()));
     auto& requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {

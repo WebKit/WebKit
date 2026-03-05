@@ -129,10 +129,8 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
     targetListing->setString("url"_s, target.url());
     targetListing->setInteger("targetID"_s, target.targetIdentifier());
     targetListing->setBoolean("hasLocalDebugger"_s, target.hasLocalDebugger());
-    if (target.type() == RemoteInspectionTarget::Type::WebPage)
+    if (target.type() == RemoteInspectionTarget::Type::WebPage || target.type() == RemoteInspectionTarget::Type::LegacyWebPage)
         targetListing->setString("type"_s, "web-page"_s);
-    else if (target.type() == RemoteInspectionTarget::Type::Page)
-        targetListing->setString("type"_s, "page"_s);
     else if (target.type() == RemoteInspectionTarget::Type::JavaScript)
         targetListing->setString("type"_s, "javascript"_s);
     else if (target.type() == RemoteInspectionTarget::Type::ServiceWorker)
@@ -211,7 +209,7 @@ void RemoteInspector::requestAutomationSession(String&& sessionID, const Client:
         return;
     }
 
-    m_client->requestAutomationSession(WTFMove(sessionID), capabilities);
+    m_client->requestAutomationSession(WTF::move(sessionID), capabilities);
     updateClientCapabilities();
 }
 
@@ -246,7 +244,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
     }
 
     Locker locker { m_mutex };
-    m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
+    m_targetConnectionMap.set(targetIdentifier, WTF::move(connectionToTarget));
 
     updateHasActiveDebugSession();
 }
@@ -371,7 +369,7 @@ void RemoteInspector::startAutomationSession(const Event& event)
     if (capabilitiesObject)
         capabilities.acceptInsecureCertificates = capabilitiesObject->getBoolean("acceptInsecureCerts"_s).value_or(false);
 
-    requestAutomationSession(WTFMove(sessionID), capabilities);
+    requestAutomationSession(WTF::move(sessionID), capabilities);
 
     auto sendEvent = JSON::Object::create();
     sendEvent->setString("event"_s, "StartAutomationSession_Return"_s);

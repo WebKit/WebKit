@@ -73,20 +73,20 @@ public:
 
     WEBCORE_EXPORT bool needsUIProcess() const;
     WEBCORE_EXPORT bool canHandleRequest(const ResourceRequest&) const;
-    WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction&&);
+    WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction&&, std::optional<URL> requestURL = std::nullopt);
     void wrapWithDecisionHandler(const DecisionHandlerFunction&);
 #if HAVE(WEBCONTENTRESTRICTIONS)
     WEBCORE_EXPORT bool needsNetworkProcess() const;
 #endif
 
-    const String& unblockURLHost() const { return m_unblockURLHost; }
-    const URL& unreachableURL() const { return m_unreachableURL; }
+    const String& unblockURLHost() const LIFETIME_BOUND { return m_unblockURLHost; }
+    const URL& unreachableURL() const LIFETIME_BOUND { return m_unreachableURL; }
     void setUnreachableURL(const URL& url) { m_unreachableURL = url; }
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     std::optional<URL> evaluatedURL() const { return m_evaluatedURL; }
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    const String& configurationPath() const { return m_configurationPath; }
+    const String& configurationPath() const LIFETIME_BOUND { return m_configurationPath; }
     void setConfigurationPath(const String& path) { m_configurationPath = path; }
 #endif
 #elif HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)

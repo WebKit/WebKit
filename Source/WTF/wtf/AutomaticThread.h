@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Box.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Condition.h>
@@ -72,7 +73,7 @@ class AutomaticThread;
 class AutomaticThreadCondition : public ThreadSafeRefCounted<AutomaticThreadCondition> {
 public:
     static WTF_EXPORT_PRIVATE Ref<AutomaticThreadCondition> create();
-    
+
     WTF_EXPORT_PRIVATE ~AutomaticThreadCondition();
     
     WTF_EXPORT_PRIVATE void notifyOne(const AbstractLocker&);
@@ -122,9 +123,9 @@ public:
     // running. Returns true if the thread has been stopped. A good idiom for stopping your automatic
     // thread is to first try this, and if that doesn't work, to tell the thread using your own
     // mechanism (set some flag and then notify the condition).
-    bool tryStop(const AbstractLocker&);
+    bool NODELETE tryStop(const AbstractLocker&);
 
-    bool isWaiting(const AbstractLocker&);
+    bool NODELETE isWaiting(const AbstractLocker&);
 
     bool notify(const AbstractLocker&);
 
@@ -181,12 +182,17 @@ protected:
     // By overriding this function, we can customize how automatic threads will sleep.
     // For example, when you have thread pool, you can decrease active threads moderately.
     virtual bool shouldSleep(const AbstractLocker&) { return true; }
-    
+
+    // Override to provide a pre-allocated stack for the thread,
+    // or to specify a custom stack size.
+    virtual StackAllocationSpecification stackSpecification() { return { }; }
+
 private:
     friend class AutomaticThreadCondition;
-    
+
     void start(const AbstractLocker&);
-    
+
+protected:
     Box<Lock> m_lock;
     const Ref<AutomaticThreadCondition> m_condition;
     Seconds m_timeout;

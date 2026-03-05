@@ -11,25 +11,39 @@
 #include "test/fuzzers/utils/rtp_replayer.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/memory/memory.h"
+#include "api/call/transport.h"
+#include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/media_types.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "call/call.h"
+#include "call/call_config.h"
+#include "call/video_receive_stream.h"
 #include "media/engine/internal_decoder_factory.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/fake_clock.h"
+#include "rtc_base/logging.h"
 #if !WEBRTC_WEBKIT_BUILD
 #include "rtc_base/strings/json.h"
 #endif
 #include "system_wrappers/include/clock.h"
 #include "test/call_config_utils.h"
 #include "test/encoder_settings.h"
-#include "test/fake_decoder.h"
 #include "test/rtp_file_reader.h"
 #include "test/run_loop.h"
+#include "test/video_renderer.h"
 
 namespace webrtc {
 namespace test {
@@ -77,7 +91,8 @@ void RtpReplayer::Replay(
   }
 
   // Setup the video streams based on the configuration.
-  CallConfig call_config(CreateEnvironment());
+  Environment env = CreateEnvironment();
+  CallConfig call_config(env);
   std::unique_ptr<Call> call(Call::Create(std::move(call_config)));
   SetupVideoStreams(&receive_stream_configs, stream_state.get(), call.get());
 
@@ -86,7 +101,8 @@ void RtpReplayer::Replay(
     receive_stream->Start();
   }
 
-  ReplayPackets(&fake_clock, call.get(), rtp_reader.get(), extensions);
+  ReplayPackets(&fake_clock, env.clock(), call.get(), rtp_reader.get(),
+                extensions);
 
   for (const auto& receive_stream : stream_state->receive_streams) {
     call->DestroyVideoReceiveStream(receive_stream);
@@ -156,14 +172,15 @@ std::unique_ptr<test::RtpFileReader> RtpReplayer::CreateRtpReader(
 }
 
 void RtpReplayer::ReplayPackets(
-    FakeClock* clock,
+    FakeClock* fake_clock,
+    Clock& clock,
     Call* call,
     test::RtpFileReader* rtp_reader,
     const RtpPacketReceived::ExtensionManager& extensions) {
   int64_t replay_start_ms = -1;
 
   while (true) {
-    int64_t now_ms = TimeMillis();
+    int64_t now_ms = clock.TimeInMilliseconds();
     if (replay_start_ms == -1) {
       replay_start_ms = now_ms;
     }
@@ -177,12 +194,11 @@ void RtpReplayer::ReplayPackets(
     if (deliver_in_ms > 0) {
       // StatsCounter::ReportMetricToAggregatedCounter is O(elapsed time).
       // Set an upper limit to prevent waste time.
-      clock->AdvanceTime(TimeDelta::Millis(
+      fake_clock->AdvanceTime(TimeDelta::Millis(
           std::min(deliver_in_ms, static_cast<int64_t>(100))));
     }
 
-    RtpPacketReceived received_packet(
-        &extensions, Timestamp::Micros(clock->TimeNanos() / 1000));
+    RtpPacketReceived received_packet(&extensions, clock.CurrentTime());
     if (!received_packet.Parse(packet.data, packet.length)) {
       RTC_LOG(LS_ERROR) << "Packet error, corrupt packets or incorrect setup?";
       break;

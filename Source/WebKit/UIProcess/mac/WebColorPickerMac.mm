@@ -77,7 +77,7 @@ namespace WebKit {
 
 Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, NSView *view)
 {
-    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, supportsAlpha, WTFMove(suggestions), view));
+    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, supportsAlpha, WTF::move(suggestions), view));
 }
 
 WebColorPickerMac::~WebColorPickerMac()
@@ -91,7 +91,7 @@ WebColorPickerMac::~WebColorPickerMac()
 WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, NSView *view)
     : WebColorPicker(client)
     , m_supportsAlpha(supportsAlpha)
-    , m_suggestions(WTFMove(suggestions))
+    , m_suggestions(WTF::move(suggestions))
 {
     m_colorPickerUI = adoptNS([[WKColorPopoverMac alloc] initWithFrame:rect inView:view]);
 }
@@ -122,7 +122,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     if (!client())
         return;
 
-    [m_colorPickerUI setAndShowPicker:this withColor:cocoaColor(color).get() supportsAlpha:m_supportsAlpha suggestions:WTFMove(m_suggestions)];
+    [m_colorPickerUI setAndShowPicker:this withColor:cocoaColor(color).get() supportsAlpha:m_supportsAlpha suggestions:WTF::move(m_suggestions)];
 }
 
 } // namespace WebKit
@@ -141,7 +141,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
         [popover setContentViewController:controller.get()];
         [controller setPopover:popover.get()];
 
-        colorPopover.get() = WTFMove(popover);
+        colorPopover.get() = WTF::move(popover);
     }
 
     return colorPopover.get().get();
@@ -160,7 +160,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 - (void)_showPopover
 {
     RetainPtr popover = [[self class] _colorPopoverCreateIfNecessary:YES];
-    popover.get().delegate = self;
+    popover.get().delegate = (id)self;
 
     [self deactivate];
 
@@ -190,7 +190,8 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSMinYEdge];
 }
 
-- (void)popoverDidClose:(NSNotification *)notification {
+- (void)popoverDidClose:(NSNotification *)notification
+{
     [retainPtr(self.webDelegate) didClosePopover];
 }
 
@@ -264,16 +265,31 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     }
 }
 
+- (void)didClosePopover
+{
+    callOnMainRunLoop([retainedSelf = retainPtr(self), self] {
+        RefPtr picker = _picker.get();
+        if (!picker)
+            return;
+
+        if (![NSColorPanel sharedColorPanel].isVisible)
+            picker->endPicker();
+    });
+}
+
 - (void)windowWillClose:(NSNotification *)notification
 {
-    RefPtr picker = _picker.get();
-    if (!picker)
+    if (notification.object != [NSColorPanel sharedColorPanel])
         return;
 
-    if (notification.object == [NSColorPanel sharedColorPanel]) {
+    callOnMainRunLoop([retainedSelf = retainPtr(self), self] {
+        RefPtr picker = _picker.get();
+        if (!picker)
+            return;
+
         _lastChangedByUser = YES;
         picker->endPicker();
-    }
+    });
 }
 
 - (void)didChooseColor:(id)sender
@@ -295,16 +311,6 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 {
     _lastChangedByUser = NO;
     [_popoverWell setColor:color];
-}
-
-- (void)didClosePopover
-{
-    RefPtr picker = _picker.get();
-    if (!picker)
-        return;
-
-    if (![NSColorPanel sharedColorPanel].isVisible)
-        picker->endPicker();
 }
 
 @end

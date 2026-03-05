@@ -40,7 +40,7 @@
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/NetworkSPI.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/NetworkOSObject.h>
 #endif // PLATFORM(COCOA)
 
 extern FILE* testResult;
@@ -64,11 +64,11 @@ public:
 
     void addDisallowedURL(JSStringRef url);
     const std::set<std::string>& allowedHosts() const { return m_allowedHosts; }
-    void setAllowedHosts(std::set<std::string> hosts) { m_allowedHosts = WTFMove(hosts); }
+    void setAllowedHosts(std::set<std::string> hosts) { m_allowedHosts = WTF::move(hosts); }
     bool allowAnyHTTPSCertificateForAllowedHosts() const { return m_allowAnyHTTPSCertificateForAllowedHosts; }
     void setAllowAnyHTTPSCertificateForAllowedHosts(bool allow) { m_allowAnyHTTPSCertificateForAllowedHosts = allow; }
     const std::set<std::string>& localhostAliases() const { return m_localhostAliases; }
-    void setLocalhostAliases(std::set<std::string> hosts) { m_localhostAliases = WTFMove(hosts); }
+    void setLocalhostAliases(std::set<std::string> hosts) { m_localhostAliases = WTF::move(hosts); }
     void addURLToRedirect(std::string origin, std::string destination);
     const char* redirectionDestinationForURL(const char*);
     void setPortsForUpgradingInsecureScheme(uint16_t insecurePort, uint16_t securePort) { m_portsForUpgradingInsecureScheme = { insecurePort, securePort }; }

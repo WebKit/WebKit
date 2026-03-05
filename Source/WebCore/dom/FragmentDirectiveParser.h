@@ -37,7 +37,7 @@ public:
     WEBCORE_EXPORT explicit FragmentDirectiveParser(StringView);
     WEBCORE_EXPORT ~FragmentDirectiveParser();
     
-    const Vector<ParsedTextDirective>& parsedTextDirectives() const { return m_parsedTextDirectives; };
+    const Vector<ParsedTextDirective>& parsedTextDirectives() const LIFETIME_BOUND { return m_parsedTextDirectives; };
     StringView fragmentDirective() const { return m_fragmentDirective; };
     StringView remainingURLFragment() const { return m_remainingURLFragment; };
     bool isValid() const { return  m_isValid; };

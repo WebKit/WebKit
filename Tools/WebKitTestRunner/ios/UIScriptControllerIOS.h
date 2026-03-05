@@ -145,6 +145,7 @@ private:
     bool isShowingDataListSuggestions() const override;
     void activateDataListSuggestion(unsigned, JSValueRef) override;
     void setSelectedColorForColorPicker(double, double, double) override;
+    bool isShowingColorPicker() const override;
     void setKeyboardInputModeIdentifier(JSStringRef) override;
     void setFocusStartsInputSessionPolicy(JSStringRef) override;
     void toggleCapsLock(JSValueRef) override;
@@ -158,6 +159,7 @@ private:
     UIView *platformContentView() const override;
     JSObjectRef calendarType() const override;
     void setHardwareKeyboardAttached(bool) override;
+    void setShowKeyboardAfterElementFocusDelay(double) override;
     void setAllowsViewportShrinkToFit(bool) override;
     void copyText(JSStringRef) override;
     void installTapGestureOnWindow(JSValueRef) override;

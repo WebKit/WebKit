@@ -84,6 +84,7 @@ class Conductor : public webrtc::PeerConnectionObserver,
       webrtc::PeerConnectionInterface::IceGatheringState new_state) override {}
   void OnIceCandidate(const webrtc::IceCandidate* candidate) override;
   void OnIceConnectionReceivingChange(bool receiving) override {}
+  void OnIceCandidateRemoved(const webrtc::IceCandidate* candidate) override {}
 
   //
   // PeerConnectionClientObserver implementation.

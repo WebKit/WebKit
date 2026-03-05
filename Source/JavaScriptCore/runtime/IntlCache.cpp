@@ -39,7 +39,7 @@ UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const CString&
     if (U_FAILURE(status))
         return nullptr;
     m_cachedDateTimePatternGeneratorLocale = locale;
-    m_cachedDateTimePatternGenerator = WTFMove(generator);
+    m_cachedDateTimePatternGenerator = WTF::move(generator);
     return m_cachedDateTimePatternGenerator.get();
 }
 

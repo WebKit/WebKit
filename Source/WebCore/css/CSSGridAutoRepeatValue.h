@@ -49,7 +49,7 @@ class CSSGridAutoRepeatValue final : public CSSValueContainingVector {
 public:
     static Ref<CSSGridAutoRepeatValue> create(CSSValueID, CSSValueListBuilder);
 
-    CSSValueID autoRepeatID() const;
+    CSSValueID NODELETE autoRepeatID() const;
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSGridAutoRepeatValue&) const;

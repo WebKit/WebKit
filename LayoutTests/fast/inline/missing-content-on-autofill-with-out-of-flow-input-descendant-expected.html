@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<style>
+.form-element {
+    position: relative;
+}
+
+.form-textbox {
+	height: 200px;
+}
+</style>
+<div class=form-element>
+  <input class=form-textbox type="text" value="Text">
+</div>
+<script>
+if (window.testRunner) {
+	testRunner.waitUntilDone();
+	eventSender.mouseMoveTo(10, 10);
+	eventSender.mouseDown();
+	eventSender.mouseUp();
+	testRunner.notifyDone();
+}
+</script>

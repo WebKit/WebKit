@@ -59,7 +59,7 @@
 namespace JSC {
 namespace Bindings {
 
-static RetainPtr<NSString>& globalException()
+static RetainPtr<NSString>& NODELETE globalException()
 {
     static NeverDestroyed<RetainPtr<NSString>> exception;
     return exception;
@@ -69,7 +69,7 @@ static RetainPtr<NSString>& globalException()
 // FIXME: A new object can happen to be equal to the old one, so even pointer comparison is not safe. Maybe we can use NeverDestroyed<JSC::Weak>?
 static JSGlobalObject* s_exceptionEnvironment;
 
-static HashMap<CFTypeRef, ObjcInstance*>& wrapperCache()
+static HashMap<CFTypeRef, ObjcInstance*>& NODELETE wrapperCache()
 {
     static NeverDestroyed<HashMap<CFTypeRef, ObjcInstance*>> map;
     return map;
@@ -107,7 +107,7 @@ void ObjcInstance::moveGlobalExceptionToExecState(JSGlobalObject* lexicalGlobalO
 }
 
 ObjcInstance::ObjcInstance(id instance, RefPtr<RootObject>&& rootObject) 
-    : Instance(WTFMove(rootObject))
+    : Instance(WTF::move(rootObject))
     , _instance(instance)
 {
 }
@@ -116,7 +116,7 @@ Ref<ObjcInstance> ObjcInstance::create(id instance, RefPtr<RootObject>&& rootObj
 {
     auto result = wrapperCache().add((__bridge CFTypeRef)instance, nullptr);
     if (result.isNewEntry) {
-        auto wrapper = adoptRef(*new ObjcInstance(instance, WTFMove(rootObject)));
+        auto wrapper = adoptRef(*new ObjcInstance(instance, WTF::move(rootObject)));
         result.iterator->value = wrapper.ptr();
         return wrapper;
     }
@@ -221,7 +221,7 @@ JSC::JSValue ObjcInstance::invokeMethod(JSGlobalObject* lexicalGlobalObject, Cal
     if (!asObject(runtimeMethod)->inherits<ObjCRuntimeMethod>())
         return throwTypeError(lexicalGlobalObject, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
 
-    ObjcMethod *method = static_cast<ObjcMethod*>(runtimeMethod->method());
+    auto* method = downcast<ObjcMethod>(runtimeMethod->method());
     ASSERT(method);
 
     return invokeObjcMethod(lexicalGlobalObject, callFrame, method);

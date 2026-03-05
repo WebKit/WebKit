@@ -85,7 +85,7 @@ class RtcEventRtpPacketOutgoing final : public RtcEvent {
   }
 
  private:
-  RtcEventRtpPacketOutgoing(const RtcEventRtpPacketOutgoing& other);
+  RtcEventRtpPacketOutgoing(const RtcEventRtpPacketOutgoing& other) = default;
 
   const RtpPacket packet_;
   // TODO(eladalon): Delete `probe_cluster_id_` along with legacy encoding.

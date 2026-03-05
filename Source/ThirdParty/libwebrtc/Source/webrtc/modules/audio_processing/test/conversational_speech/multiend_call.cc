@@ -109,8 +109,8 @@ bool MultiEndCall::CheckTiming() {
   speaking_turns_.clear();
 
   // Begin and end timestamps for the last two turns (unit: number of samples).
-  Interval second_last_turn = {0, 0};
-  Interval last_turn = {0, 0};
+  Interval second_last_turn = {.begin = 0, .end = 0};
+  Interval last_turn = {.begin = 0, .end = 0};
 
   // Initialize map to store speaking turn indices of each speaker (used to
   // detect self cross-talk).

@@ -40,14 +40,14 @@ namespace WebCore {
 
 static std::optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
 {
-    auto startNode = selection.start().containerNode();
-    auto endNode = selection.end().containerNode();
+    RefPtr startNode = selection.start().containerNode();
+    RefPtr endNode = selection.end().containerNode();
     if (!startNode || !endNode)
         return { };
-    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(*startNode, *endNode);
+    RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(*startNode, *endNode);
 
     RefPtr<HTMLElement> listToReplace;
-    if (auto* htmlElement = dynamicDowncast<HTMLElement>(commonAncestor); is<HTMLUListElement>(htmlElement) || is<HTMLOListElement>(htmlElement))
+    if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(commonAncestor); is<HTMLUListElement>(htmlElement) || is<HTMLOListElement>(htmlElement))
         listToReplace = htmlElement;
     else
         listToReplace = enclosingList(commonAncestor);
@@ -87,10 +87,10 @@ void ChangeListTypeCommand::doApply()
     if (!typeAndElement || typeAndElement->first != m_type)
         return;
 
-    Ref listToReplace = WTFMove(typeAndElement->second);
+    Ref listToReplace = WTF::move(typeAndElement->second);
     Ref newList = createNewList(listToReplace);
     insertNodeBefore(newList.copyRef(), listToReplace);
-    moveRemainingSiblingsToNewParent(listToReplace->protectedFirstChild().get(), nullptr, newList);
+    moveRemainingSiblingsToNewParent(protect(listToReplace->firstChild()).get(), nullptr, newList);
     removeNode(listToReplace);
     setEndingSelection({ Position { newList.ptr(), Position::PositionIsAfterChildren }});
 }

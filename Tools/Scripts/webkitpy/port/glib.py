@@ -28,15 +28,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
+import re
 import uuid
 
+from webkitpy.common.memoized import memoized
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 
+_log = logging.getLogger(__name__)
+
 
 class GLibPort(Port):
+
+    ARCHITECTURES = ['x86_64', 'arm64']
 
     def __init__(self, *args, **kwargs):
         super(GLibPort, self).__init__(*args, **kwargs)
@@ -63,6 +71,25 @@ class GLibPort(Port):
         if self.get_option('configuration') == 'Debug':
             multiplier *= 2
         return multiplier * default_timeout
+
+    def architecture(self):
+        result = self.get_option('architecture') or self.host.platform.architecture()
+        if result == 'aarch64':
+            return 'arm64'
+        return result
+
+    def _generate_all_test_configurations(self):
+        configurations = []
+        for build_type in self.ALL_BUILD_TYPES:
+            for architecture in self.ARCHITECTURES:
+                configurations.append(TestConfiguration(version=self.version_name(), architecture=architecture, build_type=build_type))
+        return configurations
+
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        """Return a fully-specified port name that can be used to construct objects."""
+        # gtk and wpe ports don't add a -wk2 suffix on the default port name because they don't support -wk1
+        return port_name
 
     def _built_executables_path(self, *path):
         return self._build_path(*(('bin',) + path))
@@ -95,6 +122,7 @@ class GLibPort(Port):
 
         # Copy all GStreamer related env vars
         self._copy_values_from_environ_with_prefix(environment, 'GST_')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DISABLE_WEBRTC_NETWORK_SANDBOX')
 
         gst_feature_rank_override = os.environ.get('GST_PLUGIN_FEATURE_RANK')
         # Disable hardware-accelerated device providers, encoders and decoders. Depending on the underlying platform
@@ -128,6 +156,9 @@ class GLibPort(Port):
 
         # Disable SIMD optimization in GStreamer's ORC. Some bots (WPE release) crash in ORC's optimizations.
         environment['ORC_CODE'] = 'backup'
+
+        # Workaround for bots not using latest SDK version.
+        environment['RICE_LOG'] = 'none'
 
         if self.get_option("leaks"):
             # Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.
@@ -211,3 +242,23 @@ class GLibPort(Port):
         environment['TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH'] = self.path_from_webkit_base('Tools', 'TestWebKitAPI', 'Tests', 'WebKit')
         environment['TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH'] = self._build_path('lib')
         return environment
+
+    @memoized
+    def _webkit_version(self):
+        options_filename = 'Options{}.cmake'.format(self.port_name.upper())
+        options_file = self.path_from_webkit_base('Source', 'cmake', options_filename)
+        try:
+            contents = self._filesystem.read_text_file(options_file)
+            match = re.search(r'SET_PROJECT_VERSION\((\d+)\s+(\d+)\s+(\d+)\)', contents)
+            if match:
+                return '{}.{}'.format(match.group(1), match.group(2))
+        except IOError:
+            _log.warning('Could not read %s to determine WebKit version' % options_file)
+        return None
+
+    def configuration_for_upload(self, host=None):
+        configuration = super(GLibPort, self).configuration_for_upload(host=host)
+        webkit_version = self._webkit_version()
+        if webkit_version:
+            configuration['version'] = webkit_version
+        return configuration

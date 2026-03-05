@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("This tests that using the 'Copy Image' context menu item codepath does not copy the image URL.");
+
+async function runTest()
+{
+    var img = document.getElementById("img");
+    var rect = img.getBoundingClientRect();
+
+    var event = await new Promise(resolve => {
+        addEventListener("paste", resolve, { once: true });
+        if (window.internals)
+            internals.copyImageAtLocation(rect.x + 1, rect.y + 1);
+        pasteArea.focus();
+        UIHelper.paste();
+    });
+
+    shouldBe("event.clipboardData.items.length", "2");
+    shouldBe("event.clipboardData.items[0].type", "'text/html'");
+    shouldBe("event.clipboardData.items[1].type", "'image/png'");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = function()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    runTest();
+};
+</script>
+</head>
+<body>
+
+<p>To run this test manually, click "Copy Image" in the context menu with the image below, and paste in the box with the black border.</p>
+<p>NOTE: This test needs to run on a HTTP server as this bug reproduces only with hosted images.</p>
+<img src="resources/green-100.png" id="img">
+
+<div contenteditable id="pasteArea" style="border: 1px solid"></div>
+
+</body>
+</html>

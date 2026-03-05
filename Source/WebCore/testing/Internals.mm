@@ -156,7 +156,7 @@ bool Internals::userPrefersReducedMotion() const
 
 ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, int y)
 {
-    auto* document = contextDocument();
+    RefPtr document = contextDocument();
     if (!document || !document->frame())
         return Exception { ExceptionCode::InvalidAccessError };
 
@@ -164,7 +164,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     
-    auto* localFrame = dynamicDowncast<LocalFrame>(document->frame()->mainFrame());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(document->frame()->mainFrame());
     if (!localFrame)
         return nullptr; 
 
@@ -191,15 +191,15 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
     NSScrollerStyle style = enabled ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
 
-    auto* document = contextDocument();
+    RefPtr document = contextDocument();
     if (!document || !document->frame())
         return;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(document->frame()->mainFrame());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(document->frame()->mainFrame());
     if (!localFrame)
         return;
 
-    localFrame->view()->scrollbarStyleDidChange();
+    protect(localFrame->view())->scrollbarStyleDidChange();
 }
 
 #endif
@@ -210,7 +210,7 @@ double Internals::privatePlayerVolume(const HTMLMediaElement& element)
     RefPtr corePlayer = element.player();
     if (!corePlayer)
         return 0;
-    auto player = corePlayer->objCAVFoundationAVPlayer();
+    RetainPtr player = corePlayer->objCAVFoundationAVPlayer();
     if (!player)
         return 0;
     return [player volume];
@@ -221,7 +221,7 @@ bool Internals::privatePlayerMuted(const HTMLMediaElement& element)
     RefPtr corePlayer = element.player();
     if (!corePlayer)
         return false;
-    auto player = corePlayer->objCAVFoundationAVPlayer();
+    RetainPtr player = corePlayer->objCAVFoundationAVPlayer();
     if (!player)
         return false;
     return [player isMuted];

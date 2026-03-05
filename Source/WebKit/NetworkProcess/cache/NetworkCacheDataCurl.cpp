@@ -39,7 +39,7 @@ Data::Data(std::span<const uint8_t> data)
 }
 
 Data::Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
-    : m_buffer(Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(WTFMove(data)))
+    : m_buffer(Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(WTF::move(data)))
     , m_isMap(std::holds_alternative<FileSystem::MappedFileData>(*m_buffer))
 {
 }
@@ -47,7 +47,7 @@ Data::Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
 Data Data::empty()
 {
     Vector<uint8_t> buffer;
-    return { WTFMove(buffer) };
+    return { WTF::move(buffer) };
 }
 
 std::span<const uint8_t> Data::span() const
@@ -102,7 +102,7 @@ Data concatenate(const Data& a, const Data& b)
     Vector<uint8_t> buffer(a.size() + b.size());
     memcpySpan(buffer.mutableSpan(), a.span());
     memcpySpan(buffer.mutableSpan().subspan(a.size()), b.span());
-    return Data(WTFMove(buffer));
+    return Data(WTF::move(buffer));
 }
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHandle&& fileHandle)
@@ -110,7 +110,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHan
     ASSERT(mappedFile);
     fileHandle = { };
 
-    return { WTFMove(mappedFile) };
+    return { WTF::move(mappedFile) };
 }
 
 #if ENABLE(SHAREABLE_RESOURCE) && OS(WINDOWS)
@@ -123,7 +123,7 @@ RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
     if (!newHandle)
         return nullptr;
 
-    return WebCore::SharedMemory::map({ WTFMove(newHandle), size() }, WebCore::SharedMemory::Protection::ReadOnly);
+    return WebCore::SharedMemory::map({ WTF::move(newHandle), size() }, WebCore::SharedMemory::Protection::ReadOnly);
 }
 #endif
 

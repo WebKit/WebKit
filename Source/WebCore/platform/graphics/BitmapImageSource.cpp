@@ -121,7 +121,7 @@ EncodedDataStatus BitmapImageSource::dataChanged(FragmentedSharedBuffer* data, b
     return status;
 }
 
-void BitmapImageSource::destroyDecodedData(bool destroyAll)
+void BitmapImageSource::destroyDecodedFrames(bool destroyAll)
 {
     LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoded data with destroyAll = %d will be destroyed.", __FUNCTION__, this, sourceUTF8().data(), destroyAll);
 
@@ -142,6 +142,11 @@ void BitmapImageSource::destroyDecodedData(bool destroyAll)
     }
 
     decodedSizeReset(decodedSize);
+}
+
+void BitmapImageSource::destroyDecodedData(bool destroyAll)
+{
+    destroyDecodedFrames(destroyAll);
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
@@ -260,6 +265,18 @@ void BitmapImageSource::resetData()
         setData(m_bitmapImage->data(), m_allDataReceived);
 }
 
+void BitmapImageSource::dataReplaced(FragmentedSharedBuffer* data)
+{
+    destroyDecodedFrames(true);
+
+    m_decoder = nullptr;
+    m_descriptor.clear();
+
+    // This function is only meant to replace complete data with an identical copy of that data (which is clean and backed by disk cache).
+    ASSERT(m_allDataReceived);
+    setData(data, true);
+}
+
 void BitmapImageSource::startAnimation()
 {
     startAnimation(SubsamplingLevel::Default, DecodingMode::Synchronous);
@@ -354,7 +371,7 @@ bool BitmapImageSource::isCompatibleWithOptionsAtIndex(unsigned index, Subsampli
 
 void BitmapImageSource::decode(Function<void(DecodingStatus)>&& decodeCallback)
 {
-    m_decodeCallbacks.append(WTFMove(decodeCallback));
+    m_decodeCallbacks.append(WTF::move(decodeCallback));
     unsigned index = currentFrameIndex();
 
     if (isPendingDecodingAtIndex(index, SubsamplingLevel::Default, DecodingMode::Asynchronous)) {
@@ -571,7 +588,7 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
         DecodingOptions decodingOptions = { DecodingMode::Synchronous, options.shouldDecodeToHDR() };
         PlatformImagePtr platformImage = m_decoder->createFrameImageAtIndex(index, subsamplingLevel, decodingOptions);
 
-        RefPtr nativeImage = NativeImage::create(WTFMove(platformImage));
+        RefPtr nativeImage = NativeImage::create(WTF::move(platformImage));
         if (!nativeImage)
             return makeUnexpected(DecodingStatus::Invalid);
 
@@ -655,7 +672,7 @@ RefPtr<NativeImage> BitmapImageSource::preTransformedNativeImageAtIndex(unsigned
     auto sourceRect = FloatRect { FloatPoint(), sourceSize };
 
     buffer->context().drawNativeImage(*nativeImage, destinationRect, sourceRect, { orientation });
-    return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }
 
 IntSize BitmapImageSource::frameSizeAtIndex(unsigned index, SubsamplingLevel subsamplingLevel) const

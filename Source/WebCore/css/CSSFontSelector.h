@@ -51,16 +51,14 @@ class ScriptExecutionContext;
 
 class CSSFontSelector final : public FontSelector, public CSSFontFaceClient, public ActiveDOMObject {
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
-    USING_CAN_MAKE_WEAKPTR(FontSelector);
-
-    using FontSelector::ref;
-    using FontSelector::deref;
-
     static Ref<CSSFontSelector> create(ScriptExecutionContext&);
     virtual ~CSSFontSelector();
+
+    // ActiveDOMObject, CSSFontFaceClient.
+    void ref() const final { FontSelector::ref(); }
+    void deref() const final { FontSelector::deref(); }
+
+    USING_CAN_MAKE_WEAKPTR(FontSelector);
 
     unsigned version() const final { return m_version; }
     unsigned uniqueId() const final { return m_uniqueId; }
@@ -80,7 +78,7 @@ public:
 
     void fontCacheInvalidated() final;
 
-    bool isEmpty() const;
+    bool NODELETE isEmpty() const;
 
     void registerForInvalidationCallbacks(FontSelectorClient&) final;
     void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
@@ -90,9 +88,8 @@ public:
     bool isCSSFontSelector() const final { return true; }
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_context.get(); }
-    Ref<ScriptExecutionContext> protectedScriptExecutionContext() const { return *m_context; }
 
-    FontFaceSet* fontFaceSetIfExists();
+    FontFaceSet* NODELETE fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
     CSSFontFaceSet& cssFontFaceSet() { return m_cssFontFaceSet; }
 
@@ -146,8 +143,8 @@ private:
     HashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
     HashMap<String, Ref<FontFeatureValues>> m_featureValues;
 
-    HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
-    HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
+    HashSet<Ref<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
+    HashSet<Ref<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
 
     const Ref<CSSFontFaceSet::FontModifiedObserver> m_fontModifiedObserver;
 

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(SAMPLING_PROFILER)
 
 #include <JavaScriptCore/CallFrame.h>
@@ -175,7 +177,7 @@ public:
         { }
         StackTrace(StackTrace&& other)
             : timestamp(other.timestamp)
-            , frames(WTFMove(other.frames))
+            , frames(WTF::move(other.frames))
         { }
     };
 
@@ -194,7 +196,7 @@ public:
     JS_EXPORT_PRIVATE void noticeCurrentThreadAsJSCExecutionThread();
     void noticeCurrentThreadAsJSCExecutionThreadWithLock() WTF_REQUIRES_LOCK(m_lock);
     void processUnverifiedStackTraces() WTF_REQUIRES_LOCK(m_lock);
-    void setStopWatch(Ref<Stopwatch>&& stopwatch) WTF_REQUIRES_LOCK(m_lock) { m_stopwatch = WTFMove(stopwatch); }
+    void setStopWatch(Ref<Stopwatch>&& stopwatch) WTF_REQUIRES_LOCK(m_lock) { m_stopwatch = WTF::move(stopwatch); }
     void pause() WTF_REQUIRES_LOCK(m_lock);
     void clearData() WTF_REQUIRES_LOCK(m_lock);
 

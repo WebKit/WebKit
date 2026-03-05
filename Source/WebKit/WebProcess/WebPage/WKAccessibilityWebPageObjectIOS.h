@@ -28,7 +28,7 @@
 #import "WKAccessibilityWebPageObjectBase.h"
 
 @interface WKAccessibilityWebPageObject : WKAccessibilityWebPageObjectBase
-@property(nonatomic, retain) NSData *remoteTokenData;
+@property (nonatomic, retain) NSDictionary *remoteTokenDictionary;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -23,7 +23,7 @@ declare_args() {
 config("libyuv_config") {
   include_dirs = [ "include" ]
   if (is_android) {
-    if (target_cpu == "arm" || target_cpu == "x86" || target_cpu == "mipsel") {
+    if (target_cpu == "arm" || target_cpu == "x86") {
       ldflags = [ "-Wl,--dynamic-linker,/system/bin/linker" ]
     } else {
       ldflags = [ "-Wl,--dynamic-linker,/system/bin/linker64" ]
@@ -92,10 +92,6 @@ group("libyuv") {
     deps += [ ":libyuv_sme" ]
   }
 
-  if (libyuv_use_msa) {
-    deps += [ ":libyuv_msa" ]
-  }
-
   if (libyuv_use_lsx) {
     deps += [ ":libyuv_lsx" ]
   }
@@ -127,7 +123,6 @@ static_library("libyuv_internal") {
     "include/libyuv/convert_from_argb.h",
     "include/libyuv/cpu_id.h",
     "include/libyuv/loongson_intrinsics.h",
-    "include/libyuv/macros_msa.h",
     "include/libyuv/mjpeg_decoder.h",
     "include/libyuv/planar_functions.h",
     "include/libyuv/rotate.h",
@@ -255,6 +250,7 @@ if (libyuv_use_sve) {
 
     # The -march arguments below are incompatible with libc++ modules.
     use_libcxx_modules = false
+
     # SVE2 is an Armv9-A feature.
     cflags = [ "-march=armv9-a+i8mm+sve2" ]
   }
@@ -274,24 +270,9 @@ if (libyuv_use_sme) {
 
     # The -march arguments below are incompatible with libc++ modules.
     use_libcxx_modules = false
+
     # SME is an Armv9-A feature.
     cflags = [ "-march=armv9-a+i8mm+sme" ]
-  }
-}
-
-if (libyuv_use_msa) {
-  static_library("libyuv_msa") {
-    sources = [
-      # MSA Source Files
-      "source/compare_msa.cc",
-      "source/rotate_msa.cc",
-      "source/row_msa.cc",
-      "source/scale_msa.cc",
-    ]
-
-    deps = [ ":libyuv_internal" ]
-
-    public_configs = [ ":libyuv_config" ]
   }
 }
 

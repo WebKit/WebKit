@@ -76,7 +76,7 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     };
 
     auto* webSocketServer = static_cast<WebSocketServer*>(userData);
-    if (webSocketServer->messageHandler().acceptHandshake(WTFMove(handshakeMessage))) // Follow with handshake procedure
+    if (webSocketServer->messageHandler().acceptHandshake(WTF::move(handshakeMessage))) // Follow with handshake procedure
         return;
 
     HTTPRequestHandler::Response errorResponse = { 503, "Service Unavailable", "text/plain"_s };
@@ -104,7 +104,7 @@ static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebs
     gsize messageSize;
     gconstpointer messageData = g_bytes_get_data(message, &messageSize);
     WebSocketMessageHandler::Message messageObj = { connection, { std::span<const char>(static_cast<const char*>(messageData), messageSize) } };
-    webSocketServer->messageHandler().handleMessage(WTFMove(messageObj), [](WebSocketMessageHandler::Message&& message) {
+    webSocketServer->messageHandler().handleMessage(WTF::move(messageObj), [](WebSocketMessageHandler::Message&& message) {
         if (!message.connection) {
             RELEASE_LOG(WebDriverBiDi, "No connection found when trying to send message: %s", message.payload.data());
             return;

@@ -67,13 +67,13 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     if constexpr (validateDFGDoesGC)
         vm.verifyCanGC();
 
-    Vector<int, 32> subpatternResults;
-    int position = regExp->matchInline(globalObject, vm, inputValue, startOffset, subpatternResults);
+    int position = regExp->matchInline<Yarr::MatchFrom::VMThread>(globalObject, vm, inputValue, startOffset, regExp->ovectorSpan());
     if (position == -1) {
         result = MatchResult::failed();
         return nullptr;
     }
 
+    auto subpatternResults = regExp->ovectorSpan();
     result.start = position;
     result.end = subpatternResults[1];
     
@@ -146,9 +146,10 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
 
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
             int start = subpatternResults[2 * i];
+            int end = subpatternResults[2 * i + 1];
             JSValue value;
-            if (start >= 0)
-                value = jsSubstringOfResolved(vm, &deferralContext, input, start, subpatternResults[2 * i + 1] - start);
+            if (start >= 0 && end >= start)
+                value = jsSubstringOfResolved(vm, &deferralContext, input, start, end - start);
             else
                 value = jsUndefined();
             array->initializeIndexWithoutBarrier(matchesArrayScope, i, value);
@@ -157,9 +158,10 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         if (createIndices) {
             for (unsigned i = 0; i <= numSubpatterns; ++i) {
                 int start = subpatternResults[2 * i];
+                int end = subpatternResults[2 * i + 1];
                 JSValue value;
-                if (start >= 0)
-                    indicesArray->initializeIndexWithoutBarrier(indicesArrayScope, i, createIndexArray(deferralContext, start, subpatternResults[2 * i + 1]));
+                if (start >= 0 && end >= start)
+                    indicesArray->initializeIndexWithoutBarrier(indicesArrayScope, i, createIndexArray(deferralContext, start, end));
                 else
                     indicesArray->initializeIndexWithoutBarrier(indicesArrayScope, i, jsUndefined());
             }
@@ -185,9 +187,10 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
             int start = subpatternResults[2 * i];
+            int end = subpatternResults[2 * i + 1];
             JSValue value;
-            if (start >= 0)
-                value = jsSubstringOfResolved(vm, &deferralContext, input, start, subpatternResults[2 * i + 1] - start);
+            if (start >= 0 && end >= start)
+                value = jsSubstringOfResolved(vm, &deferralContext, input, start, end - start);
             else
                 value = jsUndefined();
             array->initializeIndexWithoutBarrier(matchesArrayScope, i, value, ArrayWithContiguous);
@@ -196,8 +199,9 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         if (createIndices) {
             for (unsigned i = 0; i <= numSubpatterns; ++i) {
                 int start = subpatternResults[2 * i];
-                if (start >= 0)
-                    indicesArray->initializeIndexWithoutBarrier(indicesArrayScope, i, createIndexArray(deferralContext, start, subpatternResults[2 * i + 1]));
+                int end = subpatternResults[2 * i + 1];
+                if (start >= 0 && end >= start)
+                    indicesArray->initializeIndexWithoutBarrier(indicesArrayScope, i, createIndexArray(deferralContext, start, end));
                 else
                     indicesArray->initializeIndexWithoutBarrier(indicesArrayScope, i, jsUndefined());
             }

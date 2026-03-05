@@ -38,7 +38,7 @@ WKTypeID WKBundleScriptWorldGetTypeID()
 WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld()
 {
     RefPtr<WebKit::InjectedBundleScriptWorld> world = WebKit::InjectedBundleScriptWorld::create(WebKit::ContentWorldIdentifier::generate());
-    return toAPILeakingRef(WTFMove(world));
+    return toAPILeakingRef(WTF::move(world));
 }
 
 WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
@@ -48,27 +48,27 @@ WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
 
 void WKBundleScriptWorldClearWrappers(WKBundleScriptWorldRef scriptWorldRef)
 {
-    WebKit::toProtectedImpl(scriptWorldRef)->clearWrappers();
+    protect(WebKit::toImpl(scriptWorldRef))->clearWrappers();
 }
 
 void WKBundleScriptWorldMakeAllShadowRootsOpen(WKBundleScriptWorldRef scriptWorldRef)
 {
-    WebKit::toProtectedImpl(scriptWorldRef)->makeAllShadowRootsOpen();
+    protect(WebKit::toImpl(scriptWorldRef))->makeAllShadowRootsOpen();
 }
 
 void WKBundleScriptWorldExposeClosedShadowRootsForExtensions(WKBundleScriptWorldRef scriptWorldRef)
 {
-    WebKit::toProtectedImpl(scriptWorldRef)->exposeClosedShadowRootsForExtensions();
+    protect(WebKit::toImpl(scriptWorldRef))->exposeClosedShadowRootsForExtensions();
 }
 
 void WKBundleScriptWorldDisableOverrideBuiltinsBehavior(WKBundleScriptWorldRef scriptWorldRef)
 {
-    WebKit::toProtectedImpl(scriptWorldRef)->disableOverrideBuiltinsBehavior();
+    protect(WebKit::toImpl(scriptWorldRef))->disableOverrideBuiltinsBehavior();
 }
 
 void WKBundleScriptWorldSetAllowElementUserInfo(WKBundleScriptWorldRef scriptWorldRef)
 {
-    WebKit::toProtectedImpl(scriptWorldRef)->setAllowElementUserInfo();
+    protect(WebKit::toImpl(scriptWorldRef))->setAllowElementUserInfo();
 }
 
 WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorldRef)
@@ -78,5 +78,5 @@ WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorldRef)
 
 void WKBundleScriptWorldSetAllowJSHandleCreation(WKBundleScriptWorldRef scriptWorldRef)
 {
-    WebKit::toProtectedImpl(scriptWorldRef)->setAllowJSHandleCreation();
+    protect(WebKit::toImpl(scriptWorldRef))->setAllowJSHandleCreation();
 }

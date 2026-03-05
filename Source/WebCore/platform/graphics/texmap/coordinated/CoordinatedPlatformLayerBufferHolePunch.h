@@ -49,9 +49,6 @@ public:
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
-    void notifyVideoPosition(const FloatRect&, const TransformationMatrix&) override;
-    void paintTransparentRectangle(TextureMapper&, const FloatRect&, const TransformationMatrix&) override;
-
 #if USE(GSTREAMER)
     GRefPtr<GstElement> m_videoSink;
     RefPtr<GStreamerQuirksManager> m_quirksManager;

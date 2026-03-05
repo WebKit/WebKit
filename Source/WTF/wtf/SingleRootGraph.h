@@ -125,8 +125,8 @@ public:
     }
 
     SingleRootMap(SingleRootMap&& other)
-        : m_map(WTFMove(other.m_map))
-        , m_root(WTFMove(other.m_root))
+        : m_map(WTF::move(other.m_map))
+        , m_root(WTF::move(other.m_root))
     {
     }
 
@@ -138,26 +138,26 @@ public:
 
     size_t size() const { return m_map.size() + 1; }
 
-    T& operator[](size_t index)
+    T& operator[](size_t index) LIFETIME_BOUND
     {
         if (!index)
             return m_root;
         return m_map[index - 1];
     }
 
-    const T& operator[](size_t index) const
+    const T& operator[](size_t index) const LIFETIME_BOUND
     {
         return (*const_cast<SingleRootMap*>(this))[index];
     }
 
-    T& operator[](const Node& node)
+    T& operator[](const Node& node) LIFETIME_BOUND
     {
         if (node.isRoot())
             return m_root;
         return m_map[node.node()];
     }
 
-    const T& operator[](const Node& node) const
+    const T& operator[](const Node& node) const LIFETIME_BOUND
     {
         return (*const_cast<SingleRootMap*>(this))[node];
     }

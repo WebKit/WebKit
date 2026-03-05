@@ -47,7 +47,7 @@ std::optional<Extent3D> ConvertToBackingContext::convertToBacking(const WebCore:
         auto extent3D = convertToBacking(extent3DDict);
         if (!extent3D)
             return std::nullopt;
-        return { { WTFMove(*extent3D) } };
+        return { { WTF::move(*extent3D) } };
     });
 }
 
@@ -64,7 +64,7 @@ std::optional<WebCore::WebGPU::Extent3D> ConvertFromBackingContext::convertFromB
         auto extent3D = convertFromBacking(extent3DDict);
         if (!extent3D)
             return std::nullopt;
-        return { { WTFMove(*extent3D) } };
+        return { { WTF::move(*extent3D) } };
     });
 }
 

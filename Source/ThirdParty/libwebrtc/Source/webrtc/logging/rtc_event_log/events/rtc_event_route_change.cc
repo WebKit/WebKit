@@ -14,22 +14,16 @@
 #include <memory>
 
 #include "absl/memory/memory.h"
-#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 
 RtcEventRouteChange::RtcEventRouteChange(bool connected, uint32_t overhead)
     : connected_(connected), overhead_(overhead) {}
 
-RtcEventRouteChange::RtcEventRouteChange(const RtcEventRouteChange& other)
-    : RtcEvent(other.timestamp_us_),
-      connected_(other.connected_),
-      overhead_(other.overhead_) {}
-
 RtcEventRouteChange::~RtcEventRouteChange() = default;
 
 std::unique_ptr<RtcEventRouteChange> RtcEventRouteChange::Copy() const {
-  return absl::WrapUnique<RtcEventRouteChange>(new RtcEventRouteChange(*this));
+  return absl::WrapUnique(new RtcEventRouteChange(*this));
 }
 
 }  // namespace webrtc

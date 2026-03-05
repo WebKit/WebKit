@@ -94,9 +94,6 @@ TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     , m_textOutput(OverflowPolicy::RecordOverflow)
 {
     m_urlString = toWTFString(adoptWK(WKURLCopyString(m_url.get())).get());
-
-    // FIXME: Avoid mutating the setting via a test directory like this.
-    m_dumpFrameLoadCallbacks = urlContains("loading/"_s) && !urlContains("://localhost"_s);
 }
 
 TestInvocation::~TestInvocation() = default;
@@ -594,6 +591,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "GetDumpFrameLoadCallbacks"))
         return adoptWK(WKBooleanCreate(m_dumpFrameLoadCallbacks));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetGlobalFlag")) {
+        m_globalFlag = booleanValue(messageBody);
+        return nullptr;
+    }
+    if (WKStringIsEqualToUTF8CString(messageName, "GetGlobalFlag"))
+        return adoptWK(WKBooleanCreate(m_globalFlag));
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetCanOpenWindows")) {
         m_canOpenWindows = booleanValue(messageBody);
         return nullptr;
@@ -609,6 +613,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().mainWebView()->setWindowIsKey(booleanValue(messageBody));
         return nullptr;
     }
+
+#if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "InitializeWebProcessAccessibility")) {
+        // Initialize accessibility in the web content process by sending the IPC message
+        TestController::singleton().initializeWebProcessAccessibility();
+        return nullptr;
+    }
+#endif
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetPrinting")) {
         setPrinting();
@@ -1306,6 +1318,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setHasMouseDeviceForTesting((booleanValue(messageBody)));
         return nullptr;
     }
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    if (WKStringIsEqualToUTF8CString(messageName, "ExitImmersive")) {
+        TestController::singleton().exitImmersive();
+        return nullptr;
+    }
+#endif
 
     if (WKStringIsEqualToUTF8CString(messageName, "ShouldForceRepaint"))
         return adoptWK(WKBooleanCreate(m_forceRepaint));

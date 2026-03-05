@@ -93,9 +93,6 @@ public:
     WEBCORE_EXPORT virtual ~Widget();
 
     WEBCORE_EXPORT PlatformWidget platformWidget() const;
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT RetainPtr<NSView> protectedPlatformWidget() const;
-#endif
     WEBCORE_EXPORT void setPlatformWidget(PlatformWidget);
 
     int x() const { return frameRect().x(); }
@@ -142,8 +139,7 @@ public:
 
     WEBCORE_EXPORT void removeFromParent();
     WEBCORE_EXPORT virtual void setParent(ScrollView* view);
-    WEBCORE_EXPORT ScrollView* parent() const;
-    WEBCORE_EXPORT RefPtr<ScrollView> protectedParent() const;
+    WEBCORE_EXPORT ScrollView* NODELETE parent() const;
     FrameView* root() const;
 
     virtual void handleEvent(Event&) { }
@@ -191,8 +187,7 @@ public:
 #if PLATFORM(COCOA)
     virtual id accessibilityHitTest(const IntPoint&) const { return nil; }
     virtual id accessibilityObject() const { return nil; }
-    NSView* outerView() const;
-    RetainPtr<NSView> protectedOuterView() const;
+    RetainPtr<NSView> outerView() const;
 
     void removeFromSuperview();
 #endif

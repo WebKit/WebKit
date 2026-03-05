@@ -105,10 +105,10 @@ WEBCORE_EXPORT @interface WAKWindow : WAKResponder
 - (void)close;
 - (WAKView *)firstResponder;
 
-- (NSPoint)convertBaseToScreen:(NSPoint)point;
-- (NSPoint)convertScreenToBase:(NSPoint)point;
-- (NSRect)convertRectToScreen:(NSRect)rect;
-- (NSRect)convertRectFromScreen:(NSRect)rect;
+- (CGPoint)convertBaseToScreen:(CGPoint)point;
+- (CGPoint)convertScreenToBase:(CGPoint)point;
+- (CGRect)convertRectToScreen:(CGRect)rect;
+- (CGRect)convertRectFromScreen:(CGRect)rect;
 - (BOOL)isKeyWindow;
 - (void)makeKeyWindow;
 - (BOOL)isVisible;
@@ -116,7 +116,7 @@ WEBCORE_EXPORT @interface WAKWindow : WAKResponder
 - (NSSelectionDirection)keyViewSelectionDirection;
 - (BOOL)makeFirstResponder:(WAKResponder *)responder;
 - (WAKView *)_newFirstResponderAfterResigning NS_RETURNS_NOT_RETAINED;
-- (void)setFrame:(NSRect)frameRect display:(BOOL)flag;
+- (void)setFrame:(CGRect)frameRect display:(BOOL)flag;
 - (CGRect)frame;
 - (void)setContentRect:(CGRect)rect;
 - (void)setScreenSize:(CGSize)size;
@@ -160,7 +160,7 @@ WEBCORE_EXPORT @interface WAKWindow : WAKResponder
 - (WAKWindowTilingMode)tilingMode;
 - (void)setTilingDirection:(WAKTilingDirection)tilingDirection;
 - (WAKTilingDirection)tilingDirection;
-- (void)displayRect:(NSRect)rect;
+- (void)displayRect:(CGRect)rect;
 - (void)setZoomedOutTileScale:(float)scale;
 - (float)zoomedOutTileScale;
 - (void)setCurrentTileScale:(float)scale;

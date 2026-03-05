@@ -29,13 +29,12 @@
 		CD1DAFB01D709E3600017CF0 /* MobileMiniBrowserUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */; };
 		CD498B421D76348000681FA7 /* MobileMiniBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */; };
 		CD498B431D76348000681FA7 /* MobileMiniBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CD498B4A1D763D4800681FA7 /* MobileMiniBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = CD498B481D7634C700681FA7 /* MobileMiniBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD498B4B1D763D7100681FA7 /* TabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFBB1D709EF200017CF0 /* TabViewController.m */; };
 		CD498B4C1D763D7100681FA7 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFBD1D709EF200017CF0 /* WebViewController.m */; };
-		CD498B4D1D763D7100681FA7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF991D709E3600017CF0 /* AppDelegate.m */; };
+		CD498B4D1D763D7100681FA7 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF991D709E3600017CF0 /* SceneDelegate.m */; };
 		CD498B4E1D763D7600681FA7 /* TabViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1DAFBA1D709EF200017CF0 /* TabViewController.h */; };
 		CD498B4F1D763D7600681FA7 /* WebViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1DAFBC1D709EF200017CF0 /* WebViewController.h */; };
-		CD498B501D763D7600681FA7 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1DAF981D709E3600017CF0 /* AppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD498B501D763D7600681FA7 /* SceneDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1DAF981D709E3600017CF0 /* SceneDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD498B511D763D7F00681FA7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAF9E1D709E3600017CF0 /* Main.storyboard */; };
 		CD498B521D763D8800681FA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA11D709E3600017CF0 /* Assets.xcassets */; };
 		CDC2792A2935418400151088 /* looping.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279272935417100151088 /* looping.html */; };
@@ -123,8 +122,8 @@
 		457D0F7829088D4000AE5914 /* SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		CD1DAF921D709E3600017CF0 /* MobileMiniBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileMiniBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD1DAF961D709E3600017CF0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CD1DAF981D709E3600017CF0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		CD1DAF991D709E3600017CF0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		CD1DAF981D709E3600017CF0 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		CD1DAF991D709E3600017CF0 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		CD1DAF9F1D709E3600017CF0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CD1DAFA11D709E3600017CF0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD1DAFA41D709E3600017CF0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -139,7 +138,6 @@
 		CD1DAFC11D70E12D00017CF0 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MobileMiniBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD498B471D7634C700681FA7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CD498B481D7634C700681FA7 /* MobileMiniBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileMiniBrowser.h; sourceTree = "<group>"; };
 		CD4DEEE21D78C6FF00625986 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = Configurations/Base.xcconfig; sourceTree = "<group>"; };
 		CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
 		CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MobileMiniBrowser.xcconfig; path = Configurations/MobileMiniBrowser.xcconfig; sourceTree = "<group>"; };
@@ -244,12 +242,11 @@
 		CD498B3C1D76348000681FA7 /* MobileMiniBrowser Framework */ = {
 			isa = PBXGroup;
 			children = (
-				CD1DAF981D709E3600017CF0 /* AppDelegate.h */,
-				CD1DAF991D709E3600017CF0 /* AppDelegate.m */,
 				CD1DAFA11D709E3600017CF0 /* Assets.xcassets */,
 				CD498B471D7634C700681FA7 /* Info.plist */,
 				CD1DAF9E1D709E3600017CF0 /* Main.storyboard */,
-				CD498B481D7634C700681FA7 /* MobileMiniBrowser.h */,
+				CD1DAF981D709E3600017CF0 /* SceneDelegate.h */,
+				CD1DAF991D709E3600017CF0 /* SceneDelegate.m */,
 				457D0F7729088C9500AE5914 /* SettingsViewController.h */,
 				457D0F7829088D4000AE5914 /* SettingsViewController.m */,
 				CD1DAFBA1D709EF200017CF0 /* TabViewController.h */,
@@ -290,8 +287,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD498B4A1D763D4800681FA7 /* MobileMiniBrowser.h in Headers */,
-				CD498B501D763D7600681FA7 /* AppDelegate.h in Headers */,
+				CD498B501D763D7600681FA7 /* SceneDelegate.h in Headers */,
 				457D0F7A29088D9000AE5914 /* SettingsViewController.h in Headers */,
 				CD498B4E1D763D7600681FA7 /* TabViewController.h in Headers */,
 				CD498B4F1D763D7600681FA7 /* WebViewController.h in Headers */,
@@ -457,7 +453,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD498B4D1D763D7100681FA7 /* AppDelegate.m in Sources */,
+				CD498B4D1D763D7100681FA7 /* SceneDelegate.m in Sources */,
 				45BE567C2908C74600FD7A95 /* SettingsViewController.m in Sources */,
 				CD498B4B1D763D7100681FA7 /* TabViewController.m in Sources */,
 				CD498B4C1D763D7100681FA7 /* WebViewController.m in Sources */,

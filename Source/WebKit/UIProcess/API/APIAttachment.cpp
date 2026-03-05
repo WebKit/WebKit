@@ -64,7 +64,7 @@ void Attachment::updateAttributes(CompletionHandler<void()>&& callback)
         return;
     }
 
-    webPage->updateAttachmentAttributes(*this, WTFMove(callback));
+    webPage->updateAttachmentAttributes(*this, WTF::move(callback));
 }
 
 void Attachment::invalidate()

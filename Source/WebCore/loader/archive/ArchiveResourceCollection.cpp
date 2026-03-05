@@ -36,7 +36,7 @@ namespace WebCore {
 void ArchiveResourceCollection::addAllResources(Archive& archive)
 {
     for (auto& subresource : archive.subresources())
-        m_subresources.set(subresource->url().string(), subresource.ptr());
+        m_subresources.set(subresource->url().string(), subresource);
 
     for (auto& subframeArchive : archive.subframeArchives()) {
         ASSERT(subframeArchive->mainResource());
@@ -45,7 +45,7 @@ void ArchiveResourceCollection::addAllResources(Archive& archive)
             // In the MHTML case, frames don't have a name, so we use the URL instead.
             frameName = subframeArchive->mainResource()->url().string();
         }
-        m_subframes.set(frameName, subframeArchive.ptr());
+        m_subframes.set(frameName, subframeArchive);
     }
 }
 
@@ -54,13 +54,13 @@ void ArchiveResourceCollection::addAllResources(Archive& archive)
 void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 {
     auto& url = resource->url();
-    m_subresources.set(url.string(), WTFMove(resource));
+    m_subresources.set(url.string(), WTF::move(resource));
 }
 
 ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)
 {
-    if (RefPtr resource = m_subresources.get(url.string()))
-        return resource.unsafeGet();
+    if (auto* resource = m_subresources.get(url.string()))
+        return resource;
     if (!url.protocolIs("https"_s))
         return nullptr;
     URL httpURL = url;

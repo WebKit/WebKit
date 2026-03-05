@@ -41,8 +41,8 @@
 
 namespace WebKit {
 
-XPCServiceInitializerDelegate::XPCServiceInitializerDelegate(XPCObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
-    : m_connection(WTFMove(connection))
+XPCServiceInitializerDelegate::XPCServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+    : m_connection(WTF::move(connection))
     , m_initializerMessage(initializerMessage)
 {
 }
@@ -125,7 +125,7 @@ bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessNa
 
 bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>& extraInitializationData)
 {
-    XPCObjectPtr<xpc_object_t> extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage.get(), "extra-initialization-data");
+    OSObjectPtr<xpc_object_t> extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage.get(), "extra-initialization-data");
 
     auto inspectorProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "inspector-process"_s);
     if (!inspectorProcess.isEmpty())
@@ -133,10 +133,10 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 
     auto serviceWorkerProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "service-worker-process"_s);
     if (!serviceWorkerProcess.isEmpty())
-        extraInitializationData.add("service-worker-process"_s, WTFMove(serviceWorkerProcess));
+        extraInitializationData.add("service-worker-process"_s, WTF::move(serviceWorkerProcess));
     auto registrableDomain = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "registrable-domain"_s);
     if (!registrableDomain.isEmpty())
-        extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
+        extraInitializationData.add("registrable-domain"_s, WTF::move(registrableDomain));
 
     auto isPrewarmedProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "is-prewarmed"_s);
     if (!isPrewarmedProcess.isEmpty())
@@ -195,7 +195,7 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     }();
     UNUSED_PARAM(globalSource);
 
-    globalTransaction.get() = WTFMove(transaction);
+    globalTransaction.get() = WTF::move(transaction);
 }
 #endif
 

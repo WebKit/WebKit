@@ -139,7 +139,7 @@ protected:
     VM* m_vm;
     CodeBlock* m_codeBlock;
     CheckedPtr<JITWorklistThread> m_thread;
-    Vector<RefPtr<SharedTask<void()>>> m_mainThreadFinalizationTasks;
+    Vector<Ref<SharedTask<void()>>> m_mainThreadFinalizationTasks;
     CString m_signpostMessage; // Non-null iff Options::useCompilerSignpost()
 };
 

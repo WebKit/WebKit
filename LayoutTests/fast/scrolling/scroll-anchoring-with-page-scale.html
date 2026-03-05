@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .changer {
+            width: 50px;
+            height: 300px;
+            background-color: cyan;
+        }
+        body.changed .changer {
+            height: 350px;
+        }
+
+        .anchor {
+            width: 200px;
+            height: 300px;
+            background-color: green;
+        }
+        .spacer {
+            width: 50px;
+            height: 3000px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        window.addEventListener('load', async () => {
+            if (window.testRunner)
+                await testRunner.setPageScaleFactor(1.5, 0, 0);
+            
+            window.scrollTo(0, 350);
+            await UIHelper.renderingUpdate();
+            
+            document.body.classList.add('changed');
+            
+            shouldBe('window.pageYOffset', '400');
+            finishJSTest()
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="changer"></div>
+    <div class="anchor"></div>
+    <div class="spacer"></div>
+    <div id="console"></div>
+</body>
+</html>

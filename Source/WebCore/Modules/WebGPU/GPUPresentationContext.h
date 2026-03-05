@@ -46,10 +46,10 @@ class GPUPresentationContext : public RefCounted<GPUPresentationContext> {
 public:
     static Ref<GPUPresentationContext> create(Ref<WebGPU::PresentationContext>&& backing)
     {
-        return adoptRef(*new GPUPresentationContext(WTFMove(backing)));
+        return adoptRef(*new GPUPresentationContext(WTF::move(backing)));
     }
 
-    WARN_UNUSED_RETURN bool configure(const GPUCanvasConfiguration&, GPUIntegerCoordinate, GPUIntegerCoordinate, bool);
+    [[nodiscard]] bool configure(const GPUCanvasConfiguration&, GPUIntegerCoordinate, GPUIntegerCoordinate, bool);
     void unconfigure();
 
     RefPtr<GPUTexture> getCurrentTexture(uint32_t);
@@ -60,7 +60,7 @@ public:
 
 private:
     GPUPresentationContext(Ref<WebGPU::PresentationContext>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

@@ -31,6 +31,7 @@
 #include <WebCore/DOMHighResTimeStamp.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PerformanceEventTimingCandidate.h>
 #include <WebCore/PushSubscriptionOwner.h>
 #include <WebCore/Supplementable.h>
@@ -53,7 +54,6 @@ template <typename, ShouldStrongDestructorGrabLock> class Strong;
 namespace WebCore {
 
 class CloseWatcherManager;
-class LocalFrame;
 class SecurityOriginData;
 struct ScrollToOptions;
 struct WindowPostMessageOptions;
@@ -83,7 +83,7 @@ class LocalDOMWindow final
     , public PushSubscriptionOwner
 #endif
     {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LocalDOMWindow);
+    WTF_MAKE_TZONE_ALLOCATED(LocalDOMWindow);
 public:
 
     static Ref<LocalDOMWindow> create(Document& document) { return adoptRef(*new LocalDOMWindow(document)); }
@@ -110,9 +110,7 @@ public:
     void suspendForBackForwardCache();
     void resumeFromBackForwardCache();
 
-    WEBCORE_EXPORT Frame* frame() const final;
-    WEBCORE_EXPORT LocalFrame* localFrame() const;
-    RefPtr<LocalFrame> protectedFrame() const;
+    WEBCORE_EXPORT LocalFrame* NODELETE frame() const final;
 
     RefPtr<WebCore::MediaQueryList> matchMedia(const String&);
 
@@ -126,7 +124,7 @@ public:
     bool allowPopUp(); // Call on first window, not target window.
     static bool allowPopUp(LocalFrame& firstFrame);
     static bool canShowModalDialog(const LocalFrame&);
-    WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
+    WEBCORE_EXPORT void NODELETE setCanShowModalDialogOverride(bool);
 
     Screen& screen();
     WEBCORE_EXPORT History& history();
@@ -138,10 +136,9 @@ public:
     BarProp& statusbar();
     BarProp& toolbar();
     WEBCORE_EXPORT Navigator& navigator();
-    WEBCORE_EXPORT Ref<Navigator> protectedNavigator();
     Navigator* optionalNavigator() const { return m_navigator.get(); }
 
-    WEBCORE_EXPORT static void overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
+    WEBCORE_EXPORT static void NODELETE overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     void setLastActivationTimestamp(MonotonicTime lastActivationTimestamp) { m_lastActivationTimestamp = lastActivationTimestamp; }
     void consumeLastActivationIfNecessary();
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
@@ -151,19 +148,18 @@ public:
     WEBCORE_EXPORT bool consumeTransientActivation();
     WEBCORE_EXPORT bool hasHistoryActionActivation() const;
     WEBCORE_EXPORT bool consumeHistoryActionUserActivation();
-    WEBCORE_EXPORT static Seconds transientActivationDuration();
+    WEBCORE_EXPORT static Seconds NODELETE transientActivationDuration();
 
     struct ClickEventData {
         MonotonicTime time;
         OptionSet<PlatformEventModifier> modifiers;
     };
     void updateLastUserClickEvent(OptionSet<PlatformEventModifier>);
-    WEBCORE_EXPORT std::optional<ClickEventData> consumeLastUserClickEvent();
+    WEBCORE_EXPORT std::optional<ClickEventData> NODELETE consumeLastUserClickEvent();
 
     DOMSelection* getSelection();
 
     HTMLFrameOwnerElement* frameElement() const;
-    RefPtr<HTMLFrameOwnerElement> protectedFrameElement() const;
 
     WEBCORE_EXPORT void focus(bool allowFocus = false);
     void focus(LocalDOMWindow& incumbentWindow);
@@ -184,7 +180,7 @@ public:
 
     bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
 
-    bool offscreenBuffering() const;
+    bool NODELETE offscreenBuffering() const;
 
     int outerHeight() const;
     int outerWidth() const;
@@ -212,8 +208,7 @@ public:
 
     // DOM Level 2 AbstractView Interface
 
-    WEBCORE_EXPORT Document* document() const;
-    WEBCORE_EXPORT RefPtr<Document> protectedDocument() const;
+    WEBCORE_EXPORT Document* NODELETE document() const;
 
     // CSSOM View Module
 
@@ -232,7 +227,7 @@ public:
     RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
-    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, RefPtr<WindowProxy>&& source, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
+    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, RefPtr<WindowProxy>&& source, const SecurityOriginData& sourceOrigin, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
 
     void languagesChanged();
 
@@ -274,6 +269,7 @@ public:
     // Events
     // EventTarget API
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    using EventTarget::addEventListener;
     WEBCORE_EXPORT bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
     void removeAllEventListeners() final;
 
@@ -282,8 +278,8 @@ public:
 
     void dispatchLoadEvent();
 
-    void captureEvents();
-    void releaseEvents();
+    void NODELETE captureEvents();
+    void NODELETE releaseEvents();
 
     void finishedLoading();
 
@@ -316,11 +312,10 @@ public:
 #endif
 
     Performance& performance() const;
-    Ref<Performance> protectedPerformance() const;
 
     WEBCORE_EXPORT ReducedResolutionSeconds nowTimestamp() const;
     void freezeNowTimestamp();
-    void unfreezeNowTimestamp();
+    void NODELETE unfreezeNowTimestamp();
     ReducedResolutionSeconds frozenNowTimestamp() const;
 
 #if PLATFORM(IOS_FAMILY)
@@ -355,7 +350,6 @@ public:
 
     // Navigation API
     WEBCORE_EXPORT Navigation& navigation();
-    Ref<Navigation> protectedNavigation();
 
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
@@ -372,8 +366,7 @@ public:
     void setMayReuseForNavigation(bool mayReuseForNavigation) { m_mayReuseForNavigation = mayReuseForNavigation; }
     bool mayReuseForNavigation() const { return m_mayReuseForNavigation; }
 
-    Page* page() const;
-    RefPtr<Page> protectedPage() const;
+    Page* NODELETE page() const;
 
     WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(NOESCAPE const Function<void(LocalDOMWindow&)>&);
 
@@ -388,8 +381,7 @@ public:
 private:
     explicit LocalDOMWindow(Document&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ContextDestructionObserver::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void closePage() final;
     void eventListenersDidChange() final;
@@ -410,6 +402,7 @@ private:
     EventTimingInteractionID& ensureUserInteractionValue();
     EventTimingInteractionID generateInteractionID();
     EventTimingInteractionID generateInteractionIDWithoutIncreasingInteractionCount();
+    void queueEventTimingCandidateForDispatch(PerformanceEventTimingCandidate&);
 
     bool isSameSecurityOriginAsMainFrame() const;
 
@@ -418,7 +411,7 @@ private:
     void decrementGamepadEventListenerCount();
 #endif
 
-    void processPostMessage(JSC::JSGlobalObject&, const String& origin, const MessageWithMessagePorts&, RefPtr<WindowProxy>&&, RefPtr<SecurityOrigin>&&);
+    void processPostMessage(JSC::JSGlobalObject&, Ref<SecurityOrigin>&&, const MessageWithMessagePorts&, RefPtr<WindowProxy>&&, RefPtr<SecurityOrigin>&&);
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isActive() const final { return true; }
@@ -530,5 +523,5 @@ inline String LocalDOMWindow::status() const
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalDOMWindow)
     static bool isType(const WebCore::DOMWindow& window) { return window.isLocalDOMWindow(); }
-    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::EventTargetInterfaceType::DOMWindow; }
+    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::DOMWindow>(target) && is<WebCore::LocalDOMWindow>(downcast<WebCore::DOMWindow>(target)); }
 SPECIALIZE_TYPE_TRAITS_END()

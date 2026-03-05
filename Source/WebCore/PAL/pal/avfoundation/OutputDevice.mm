@@ -35,7 +35,7 @@
 namespace PAL {
 
 OutputDevice::OutputDevice(RetainPtr<AVOutputDevice>&& device)
-    : m_device(WTFMove(device))
+    : m_device(WTF::move(device))
 {
 }
 

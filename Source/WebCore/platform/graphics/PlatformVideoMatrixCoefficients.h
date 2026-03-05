@@ -46,4 +46,6 @@ enum class PlatformVideoMatrixCoefficients : uint8_t {
     Bt2020Cl = Bt2020ConstantLuminance,
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformVideoMatrixCoefficients);
+
 } // namespace WebCore

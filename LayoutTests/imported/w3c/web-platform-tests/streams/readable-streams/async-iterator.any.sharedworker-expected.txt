@@ -1,43 +1,43 @@
 
-FAIL Async iterator instances should have the correct list of properties s.values is not a function. (In 's.values()', 's.values' is undefined)
-FAIL Async-iterating a push source promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Async-iterating a pull source promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Async-iterating a push source with undefined values promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Async-iterating a pull source with undefined values promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Async-iterating a pull source manually promise_test: Unhandled rejection with value: object "TypeError: s.values is not a function. (In 's.values()', 's.values' is undefined)"
-FAIL Async-iterating an errored stream throws assert_equals: expected (string) "e" but got (object) object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Async-iterating a closed stream never executes the loop body, but works fine promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Async-iterating an empty but not closed/errored stream never executes the loop body and stalls the async function promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Async-iterating a partially consumed stream promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Cancellation behavior when throwing inside loop body; preventCancel = false assert_array_equals: cancel() should be called lengths differ, expected array ["pull", "cancel", undefined] length 3, got [] length 0
-FAIL Cancellation behavior when throwing inside loop body; preventCancel = true assert_array_equals: cancel() should not be called lengths differ, expected array ["pull"] length 1, got [] length 0
-FAIL Cancellation behavior when breaking inside loop body; preventCancel = false assert_array_equals: cancel() should be called lengths differ, expected array ["pull", "cancel", undefined] length 3, got [] length 0
-FAIL Cancellation behavior when breaking inside loop body; preventCancel = true assert_array_equals: cancel() should not be called lengths differ, expected array ["pull"] length 1, got [] length 0
-FAIL Cancellation behavior when returning inside loop body; preventCancel = false assert_array_equals: cancel() should be called lengths differ, expected array ["pull", "cancel", undefined] length 3, got [] length 0
-FAIL Cancellation behavior when returning inside loop body; preventCancel = true assert_array_equals: cancel() should not be called lengths differ, expected array ["pull"] length 1, got [] length 0
-FAIL Cancellation behavior when manually calling return(); preventCancel = false promise_test: Unhandled rejection with value: object "TypeError: s.values is not a function. (In 's.values({ preventCancel })', 's.values' is undefined)"
-FAIL Cancellation behavior when manually calling return(); preventCancel = true promise_test: Unhandled rejection with value: object "TypeError: s.values is not a function. (In 's.values({ preventCancel })', 's.values' is undefined)"
-FAIL next() rejects if the stream errors promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL return() does not rejects if the stream has not errored yet promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL return() rejects if the stream has errored promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL next() that succeeds; next() that reports an error; next() promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL next() that succeeds; next() that reports an error(); next() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL next() that succeeds; next() that reports an error(); return() promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL next() that succeeds; next() that reports an error(); return() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL next() that succeeds; return() promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL next() that succeeds; return() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
-FAIL return(); next() promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
-FAIL return(); next() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
-FAIL return(); next() with delayed cancel() promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
-FAIL return(); next() with delayed cancel() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
-FAIL return(); return() promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
-FAIL return(); return() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
-FAIL values() throws if there's already a lock s.values is not a function. (In 's.values()', 's.values' is undefined)
-FAIL Acquiring a reader after exhaustively async-iterating a stream promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Acquiring a reader after return()ing from a stream that errors promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]({ preventCancel: true })', 's[Symbol.asyncIterator]' is undefined)"
-FAIL Acquiring a reader after partially async-iterating a stream promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of s...')"
-FAIL Acquiring a reader and reading the remaining chunks after partially async-iterating a stream with preventCancel = true promise_test: Unhandled rejection with value: object "TypeError: s.values is not a function. (In 's.values({preventCancel: true})', 's.values' is undefined)"
-FAIL return() should unlock the stream synchronously when preventCancel = false rs.values is not a function. (In 'rs.values({ preventCancel })', 'rs.values' is undefined)
-FAIL return() should unlock the stream synchronously when preventCancel = true rs.values is not a function. (In 'rs.values({ preventCancel })', 'rs.values' is undefined)
-FAIL close() while next() is pending promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of rs...')"
+PASS Async iterator instances should have the correct list of properties
+PASS Async-iterating a push source
+PASS Async-iterating a pull source
+PASS Async-iterating a push source with undefined values
+PASS Async-iterating a pull source with undefined values
+PASS Async-iterating a pull source manually
+PASS Async-iterating an errored stream throws
+PASS Async-iterating a closed stream never executes the loop body, but works fine
+PASS Async-iterating an empty but not closed/errored stream never executes the loop body and stalls the async function
+PASS Async-iterating a partially consumed stream
+PASS Cancellation behavior when throwing inside loop body; preventCancel = false
+PASS Cancellation behavior when throwing inside loop body; preventCancel = true
+PASS Cancellation behavior when breaking inside loop body; preventCancel = false
+PASS Cancellation behavior when breaking inside loop body; preventCancel = true
+PASS Cancellation behavior when returning inside loop body; preventCancel = false
+PASS Cancellation behavior when returning inside loop body; preventCancel = true
+PASS Cancellation behavior when manually calling return(); preventCancel = false
+PASS Cancellation behavior when manually calling return(); preventCancel = true
+PASS next() rejects if the stream errors
+PASS return() does not rejects if the stream has not errored yet
+PASS return() rejects if the stream has errored
+PASS next() that succeeds; next() that reports an error; next()
+PASS next() that succeeds; next() that reports an error(); next() [no awaiting]
+PASS next() that succeeds; next() that reports an error(); return()
+PASS next() that succeeds; next() that reports an error(); return() [no awaiting]
+PASS next() that succeeds; return()
+PASS next() that succeeds; return() [no awaiting]
+PASS return(); next()
+PASS return(); next() [no awaiting]
+PASS return(); next() with delayed cancel()
+PASS return(); next() with delayed cancel() [no awaiting]
+PASS return(); return()
+PASS return(); return() [no awaiting]
+PASS values() throws if there's already a lock
+PASS Acquiring a reader after exhaustively async-iterating a stream
+PASS Acquiring a reader after return()ing from a stream that errors
+PASS Acquiring a reader after partially async-iterating a stream
+PASS Acquiring a reader and reading the remaining chunks after partially async-iterating a stream with preventCancel = true
+PASS return() should unlock the stream synchronously when preventCancel = false
+PASS return() should unlock the stream synchronously when preventCancel = true
+PASS close() while next() is pending
 

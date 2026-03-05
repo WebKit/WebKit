@@ -150,7 +150,10 @@ class PortFactory(object):
         for cls in classes:
             if port_name.startswith(cls.port_name):
                 port_name = cls.determine_full_port_name(self._host, options, port_name)
-                return cls(self._host, port_name, options=options, **kwargs)
+                try:
+                    return cls(self._host, port_name, options=options, **kwargs)
+                except ValueError:
+                    continue
         raise NotImplementedError('unsupported platform: "%s"' % port_name)
 
     def all_port_names(self, platform=None):

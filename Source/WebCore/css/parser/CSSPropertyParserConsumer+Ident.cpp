@@ -77,7 +77,7 @@ RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool sh
     auto identifier = consumeCustomIdentRaw(range, shouldLowercase);
     if (identifier.isNull())
         return nullptr;
-    return CSSPrimitiveValue::createCustomIdent(WTFMove(identifier));
+    return CSSPrimitiveValue::createCustomIdent(WTF::move(identifier));
 }
 
 // MARK: <dashed-ident>
@@ -99,7 +99,7 @@ RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool sh
     auto identifier = consumeDashedIdentRaw(range, shouldLowercase);
     if (identifier.isNull())
         return nullptr;
-    return CSSPrimitiveValue::createCustomIdent(WTFMove(identifier));
+    return CSSPrimitiveValue::createCustomIdent(WTF::move(identifier));
 }
 
 } // namespace CSSPropertyParserHelpers

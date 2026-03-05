@@ -28,7 +28,8 @@
 #include <WebCore/CSSNumericValue.h>
 #include <WebCore/CSSPrimitiveValue.h>
 #include <WebCore/ScrollTimeline.h>
-#include <WebCore/StyleViewTimelineInsets.h>
+#include <WebCore/StyleViewFunction.h>
+#include <WebCore/StyleViewTimelineInsetItem.h>
 #include <WebCore/Styleable.h>
 #include <WebCore/ViewTimelineOptions.h>
 #include <wtf/Ref.h>
@@ -57,8 +58,8 @@ struct StickinessAdjustmentData {
 
     float entryDistanceAdjustment() const;
     float exitDistanceAdjustment() const;
-    float rangeStartAdjustment() const;
-    float rangeEndAdjustment() const;
+    float NODELETE rangeStartAdjustment() const;
+    float NODELETE rangeEndAdjustment() const;
 
     static StickinessAdjustmentData computeStickinessAdjustmentData(const StickyPositionViewportConstraints&, ScrollTimeline::ResolvedScrollDirection, float scrollContainerSize, float subjectSize, float subjectOffset);
 
@@ -73,7 +74,7 @@ public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&& = { });
     static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&);
 
-    const Element* subject() const;
+    const Element* NODELETE subject() const;
     const WeakStyleable subjectStyleable() const { return m_subject; }
     void setSubject(Element*);
     void setSubject(const Styleable&);
@@ -89,16 +90,19 @@ public:
 
     const RenderBox* sourceScrollerRenderer() const;
     CheckedPtr<const RenderElement> stickyContainer() const;
-    Element* bindingsSource() const override;
-    Element* source() const override;
+    RefPtr<Element> bindingsSource() const override;
+    RefPtr<Element> source() const override;
     Style::SingleAnimationRange defaultRange() const final;
 
     std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const Style::SingleAnimationRange&) const final;
     std::pair<double, double> offsetIntervalForAttachmentRange(const Style::SingleAnimationRange&) const;
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
+    bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Styleable&) const;
+    WebAnimationTime epsilon() const;
+
 private:
-    ScrollTimeline::Data computeTimelineData() const final;
+    ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;
     std::pair<double, double> intervalForTimelineRangeName(const ScrollTimeline::Data&, Style::SingleAnimationRangeName) const;
     template<typename F> double mapOffsetToTimelineRange(const ScrollTimeline::Data&, Style::SingleAnimationRangeName, F&&) const;
 
@@ -109,6 +113,7 @@ private:
 
     struct CurrentTimeData {
         float scrollOffset { 0 };
+        float maxScrollOffset { 0 };
         float scrollContainerSize { 0 };
         float subjectOffset { 0 };
         float subjectSize { 0 };

@@ -72,8 +72,6 @@ void JITDivGenerator::generateFastPath(CCallHelpers& jit)
 #endif
 
     ASSERT(!m_didEmitFastPath);
-    if (!jit.supportsFloatingPoint())
-        return;
     if (!m_leftOperand.mightBeNumber() || !m_rightOperand.mightBeNumber())
         return;
 

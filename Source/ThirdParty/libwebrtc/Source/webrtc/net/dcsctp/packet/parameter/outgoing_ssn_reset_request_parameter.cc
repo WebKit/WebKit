@@ -44,7 +44,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |  Stream Number N-1 (optional) |    Stream Number N (optional) |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int OutgoingSSNResetRequestParameter::kType;
 
 std::optional<OutgoingSSNResetRequestParameter>
 OutgoingSSNResetRequestParameter::Parse(webrtc::ArrayView<const uint8_t> data) {

@@ -33,7 +33,7 @@ class SplitElementCommand : public SimpleEditCommand {
 public:
     static Ref<SplitElementCommand> create(Ref<Element>&& element, Ref<Node>&& splitPointChild)
     {
-        return adoptRef(*new SplitElementCommand(WTFMove(element), WTFMove(splitPointChild)));
+        return adoptRef(*new SplitElementCommand(WTF::move(element), WTF::move(splitPointChild)));
     }
 
 private:
@@ -47,8 +47,6 @@ private:
 #ifndef NDEBUG
     void getNodesInCommand(NodeSet&) override;
 #endif
-
-    RefPtr<Element> protectedElement1() const { return m_element1; }
 
     RefPtr<Element> m_element1;
     const Ref<Element> m_element2;

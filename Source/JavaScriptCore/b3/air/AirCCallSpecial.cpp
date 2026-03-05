@@ -38,7 +38,7 @@ WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(CCallSpecial);
 CCallSpecial::CCallSpecial(bool isSIMDContext)
     : m_isSIMDContext(isSIMDContext)
 {
-    m_clobberedRegs = RegisterSetBuilder::registersToSaveForCCall(m_isSIMDContext ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
+    m_clobberedRegs = RegisterSet::registersToSaveForCCall(m_isSIMDContext ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
     m_clobberedRegs.remove(GPRInfo::returnValueGPR);
     m_clobberedRegs.remove(GPRInfo::returnValueGPR2);
     m_clobberedRegs.remove(FPRInfo::returnValueFPR);
@@ -125,7 +125,7 @@ bool CCallSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
     return admitsStack(inst, argIndex);
 }
 
-void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSetBuilder&)
+void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 {
 }
 
@@ -151,12 +151,12 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     return CCallHelpers::Jump();
 }
 
-RegisterSetBuilder CCallSpecial::extraEarlyClobberedRegs(Inst&)
+RegisterSet CCallSpecial::extraEarlyClobberedRegs(Inst&)
 {
     return { };
 }
 
-RegisterSetBuilder CCallSpecial::extraClobberedRegs(Inst&)
+RegisterSet CCallSpecial::extraClobberedRegs(Inst&)
 {
     return m_clobberedRegs;
 }

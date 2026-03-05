@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamAudioDestinationNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamAudioDestinationNode);
 
 ExceptionOr<Ref<MediaStreamAudioDestinationNode>> MediaStreamAudioDestinationNode::create(BaseAudioContext& context, const AudioNodeOptions& options)
 {
@@ -71,6 +71,13 @@ MediaStreamAudioDestinationNode::~MediaStreamAudioDestinationNode()
 void MediaStreamAudioDestinationNode::process(size_t numberOfFrames)
 {
     m_source->consumeAudio(input(0)->bus(), numberOfFrames);
+}
+
+void MediaStreamAudioDestinationNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
+{
+    ASSERT(context().isAudioThread() && context().isGraphOwner());
+    m_source->setNumberOfChannels(input->numberOfChannels());
+    AudioBasicInspectorNode::checkNumberOfChannelsForInput(input);
 }
 
 } // namespace WebCore

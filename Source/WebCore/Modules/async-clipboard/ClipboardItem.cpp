@@ -47,7 +47,7 @@ Ref<Blob> ClipboardItem::blobFromString(ScriptExecutionContext* context, const S
     return Blob::create(context, Vector(byteCast<uint8_t>(stringData.utf8().span())), Blob::normalizedContentType(type));
 }
 
-static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const PasteboardItemInfo& info)
+static ClipboardItem::PresentationStyle NODELETE clipboardItemPresentationStyle(const PasteboardItemInfo& info)
 {
     switch (info.preferredPresentationStyle) {
     case PasteboardItemPresentationStyle::Unspecified:
@@ -66,7 +66,7 @@ static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const Pas
 // https://w3c.github.io/clipboard-apis/#optional-data-types
 // https://webkit.org/b/280664
 ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& items, const Options& options)
-    : m_dataSource(makeUniqueRef<ClipboardItemBindingsDataSource>(*this, WTFMove(items)))
+    : m_dataSource(makeUniqueRef<ClipboardItemBindingsDataSource>(*this, WTF::move(items)))
     , m_presentationStyle(options.presentationStyle)
 {
 }
@@ -83,7 +83,7 @@ ExceptionOr<Ref<ClipboardItem>> ClipboardItem::create(Vector<KeyValuePair<String
 {
     if (data.isEmpty())
         return Exception { ExceptionCode::TypeError, "ClipboardItem() can not be an empty array: {}"_s };
-    return adoptRef(*new ClipboardItem(WTFMove(data), options));
+    return adoptRef(*new ClipboardItem(WTF::move(data), options));
 }
 
 Ref<ClipboardItem> ClipboardItem::create(Clipboard& clipboard, const PasteboardItemInfo& info)
@@ -98,7 +98,7 @@ Vector<String> ClipboardItem::types() const
 
 void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
-    m_dataSource->getType(type, WTFMove(promise));
+    m_dataSource->getType(type, WTF::move(promise));
 }
 
 bool ClipboardItem::supports(const String& type)
@@ -119,7 +119,7 @@ bool ClipboardItem::supports(const String& type)
 
 void ClipboardItem::collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)
 {
-    m_dataSource->collectDataForWriting(destination, WTFMove(completion));
+    m_dataSource->collectDataForWriting(destination, WTF::move(completion));
 }
 
 Navigator* ClipboardItem::navigator()

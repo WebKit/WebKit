@@ -78,8 +78,7 @@ public:
 
     virtual ~PaymentAuthorizationPresenter() = default;
 
-    Client* client() { return m_client.get(); }
-    RefPtr<Client> protectedClient() { return m_client.get(); }
+    Client* client() { return m_client; }
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
@@ -95,8 +94,8 @@ public:
     virtual void present(UIViewController *, CompletionHandler<void(bool)>&&) = 0;
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     virtual void presentInScene(const String& sceneIdentifier, const String& bundleIdentifier, CompletionHandler<void(bool)>&&) = 0;
-    const String& sceneIdentifier() const { return m_sceneIdentifier; }
-    const String& bundleIdentifier() const { return m_bundleIdentifier; }
+    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
+    const String& bundleIdentifier() const LIFETIME_BOUND { return m_bundleIdentifier; }
 #endif
 #endif
 
@@ -107,7 +106,6 @@ protected:
     }
 
     virtual WKPaymentAuthorizationDelegate *platformDelegate() = 0;
-    RetainPtr<WKPaymentAuthorizationDelegate> protectedPlatformDelegate();
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     String m_sceneIdentifier;

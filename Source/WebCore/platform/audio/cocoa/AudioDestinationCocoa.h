@@ -28,9 +28,9 @@
 #include <wtf/Platform.h>
 #if ENABLE(WEB_AUDIO)
 
+#include "AudioDestinationResampler.h"
+#include "AudioOutputUnitAdaptor.h"
 #include <AudioUnit/AudioUnit.h>
-#include <WebCore/AudioDestinationResampler.h>
-#include <WebCore/AudioOutputUnitAdaptor.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>

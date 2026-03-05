@@ -62,8 +62,7 @@ public:
     explicit ScrollAnimator(ScrollableArea&);
     virtual ~ScrollAnimator();
 
-    ScrollableArea& scrollableArea() const { return m_scrollableArea.get(); }
-    CheckedRef<ScrollableArea> checkedScrollableArea() const { return scrollableArea(); }
+    ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
     KeyboardScrollingAnimator *keyboardScrollingAnimator() const final { return m_keyboardScrollingAnimator.ptr(); }
 
@@ -127,6 +126,9 @@ public:
 
 protected:
     bool handleSteppedScrolling(const PlatformWheelEvent&);
+#if HAVE(RUBBER_BANDING)
+    IntSize stretchAmount() const final;
+#endif
 
 private:
     void notifyPositionChanged(const FloatSize& delta);
@@ -157,7 +159,6 @@ private:
     void adjustScrollPositionToBoundsIfNecessary() final;
 
 #if HAVE(RUBBER_BANDING)
-    IntSize stretchAmount() const final;
     RectEdges<bool> edgePinnedState() const final;
     bool isPinnedOnSide(BoxSide) const final;
 #endif

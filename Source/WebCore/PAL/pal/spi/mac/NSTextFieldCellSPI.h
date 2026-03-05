@@ -25,7 +25,12 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
+
+#if USE(APPKIT)
 
 #import <AppKit/NSTextFieldCell.h>
 
@@ -33,3 +38,5 @@ DECLARE_SYSTEM_HEADER
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus maskOnly:(BOOL)maskOnly;
 @end
+
+#endif // USE(APPKIT)

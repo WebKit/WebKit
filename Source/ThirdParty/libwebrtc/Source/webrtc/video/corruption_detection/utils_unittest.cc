@@ -10,6 +10,7 @@
 
 #include "video/corruption_detection/utils.h"
 
+#include "api/video/encoded_image.h"
 #include "api/video/video_codec_type.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -33,6 +34,34 @@ TEST(UtilsTest, IfCodecDoesNotExistRaiseError) {
   EXPECT_DEATH(GetVideoCodecType(/*codec_name=*/"Not_a_codec"), _);
 }
 #endif  // GTEST_HAS_DEATH_TEST
+
+TEST(UtilsTest, GetLayerIdReturnsZeroForEmptyIndices) {
+  EncodedImage encoded_image;
+  EXPECT_EQ(GetSpatialLayerId(encoded_image), 0);
+}
+
+TEST(UtilsTest, GetLayerIdReturnsSpatialIndexWhenSet) {
+  EncodedImage encoded_image;
+  encoded_image.SetSpatialIndex(2);
+  EXPECT_EQ(GetSpatialLayerId(encoded_image), 2);
+}
+
+TEST(UtilsTest, GetLayerIdReturnsSimulcastIndexWhenSet) {
+  EncodedImage encoded_image;
+  encoded_image.SetSimulcastIndex(1);
+  EXPECT_EQ(GetSpatialLayerId(encoded_image), 1);
+}
+
+TEST(UtilsTest, GetLayerIdReturnsMaxOfSpatialAndSimulcastIndex) {
+  EncodedImage encoded_image;
+  encoded_image.SetSpatialIndex(1);
+  encoded_image.SetSimulcastIndex(2);
+  EXPECT_EQ(GetSpatialLayerId(encoded_image), 2);
+
+  encoded_image.SetSpatialIndex(3);
+  encoded_image.SetSimulcastIndex(1);
+  EXPECT_EQ(GetSpatialLayerId(encoded_image), 3);
+}
 
 }  // namespace
 }  // namespace webrtc

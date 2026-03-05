@@ -30,6 +30,7 @@ namespace WebCore {
 class GStreamerQuirkBcmNexus final : public GStreamerQuirkBroadcomBase {
 public:
     GStreamerQuirkBcmNexus();
+    bool isPlatformSupported() const final;
     const ASCIILiteral identifier() const final { return "BcmNexus"_s; }
 
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;

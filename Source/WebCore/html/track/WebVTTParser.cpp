@@ -105,24 +105,24 @@ WebVTTParser::WebVTTParser(WebVTTParserClient& client, Document& document)
 
 Vector<Ref<WebVTTCueData>> WebVTTParser::takeCues()
 {
-    return WTFMove(m_cuelist);
+    return WTF::move(m_cuelist);
 }
 
 Vector<Ref<VTTRegion>> WebVTTParser::takeRegions()
 {
-    return WTFMove(m_regionList);
+    return WTF::move(m_regionList);
 }
 
 Vector<String> WebVTTParser::takeStyleSheets()
 {
-    return WTFMove(m_styleSheets);
+    return WTF::move(m_styleSheets);
 }
 
 void WebVTTParser::parseFileHeader(String&& data)
 {
     m_state = Initial;
     m_lineReader.reset();
-    m_lineReader.append(WTFMove(data));
+    m_lineReader.append(WTF::move(data));
     parse();
     if (!m_regionList.isEmpty())
         m_client.newRegionsParsed();
@@ -152,7 +152,7 @@ void WebVTTParser::parseCueData(const ISOWebVTTCue& data)
     if (WebVTTParser::collectTimeStamp(data.originalStartTime(), originalStartTime))
         cue->setOriginalStartTime(originalStartTime);
 
-    m_cuelist.append(WTFMove(cue));
+    m_cuelist.append(WTF::move(cue));
     m_client.newCuesParsed();
 }
 
@@ -332,7 +332,7 @@ bool WebVTTParser::checkAndCreateRegion(StringView line)
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these characters it is invalid.
     if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).containsOnly<isASCIIWhitespace>()) {
-        m_currentRegion = VTTRegion::create(protectedDocument().get());
+        m_currentRegion = VTTRegion::create(protect(m_document).get());
         return true;
     }
     return false;
@@ -399,10 +399,10 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
             return true;
 
         const auto& selectorList = styleRule->selectorList();
-        if (selectorList.listSize() != 1)
+        if (selectorList.size() != 1)
             return true;
-        auto selector = selectorList.selectorAt(0);
-        auto selectorText = selector->selectorText();
+        auto& selector = selectorList.selectorAt(0);
+        auto selectorText = selector.selectorText();
         
         bool isCue = selectorText == "::cue"_s || selectorText.startsWith("::cue("_s);
         if (!isCue)
@@ -411,7 +411,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         if (styleRule->properties().isEmpty())
             continue;
 
-        sanitizedStyleSheetBuilder.append(selectorText, " { "_s, styleRule->protectedProperties()->asText(CSS::defaultSerializationContext()), "  }\n"_s);
+        sanitizedStyleSheetBuilder.append(selectorText, " { "_s, protect(styleRule->properties())->asText(CSS::defaultSerializationContext()), "  }\n"_s);
     }
 
     // It would be more stylish to parse the stylesheet only once instead of serializing a sanitized version.
@@ -419,11 +419,6 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         m_styleSheets.append(sanitizedStyleSheetBuilder.toString());
 
     return true;
-}
-
-Ref<Document> WebVTTParser::protectedDocument() const
-{
-    return m_document.get();
 }
 
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
@@ -519,8 +514,7 @@ public:
 private:
     void constructTreeFromToken(Document&);
 
-    WebVTTNodeType currentType() const { return m_typeStack.isEmpty() ? WebVTTNodeTypeNone : m_typeStack.last(); }
-    RefPtr<ContainerNode> protectedCurrentNode() const { return m_currentNode.get(); }
+    WebVTTNodeType NODELETE currentType() const { return m_typeStack.isEmpty() ? WebVTTNodeType::None : m_typeStack.last(); }
 
     WebVTTToken m_token;
     Vector<WebVTTNodeType> m_typeStack;
@@ -567,7 +561,7 @@ void WebVTTParser::createNewCue()
     cue->setId(m_currentId);
     cue->setSettings(m_currentSettings);
 
-    m_cuelist.append(WTFMove(cue));
+    m_cuelist.append(WTF::move(cue));
     m_client.newCuesParsed();
 }
 
@@ -633,33 +627,33 @@ bool WebVTTParser::collectTimeStamp(VTTScanner& input, MediaTime& timeStamp)
     return true;
 }
 
-static WebVTTNodeType tokenToNodeType(WebVTTToken& token)
+static WebVTTNodeType NODELETE tokenToNodeType(WebVTTToken& token)
 {
     switch (token.name().length()) {
     case 1:
         if (token.name()[0] == 'c')
-            return WebVTTNodeTypeClass;
+            return WebVTTNodeType::Class;
         if (token.name()[0] == 'v')
-            return WebVTTNodeTypeVoice;
+            return WebVTTNodeType::Voice;
         if (token.name()[0] == 'b')
-            return WebVTTNodeTypeBold;
+            return WebVTTNodeType::Bold;
         if (token.name()[0] == 'i')
-            return WebVTTNodeTypeItalic;
+            return WebVTTNodeType::Italic;
         if (token.name()[0] == 'u')
-            return WebVTTNodeTypeUnderline;
+            return WebVTTNodeType::Underline;
         break;
     case 2:
         if (token.name()[0] == 'r' && token.name()[1] == 't')
-            return WebVTTNodeTypeRubyText;
+            return WebVTTNodeType::RubyText;
         break;
     case 4:
         if (token.name()[0] == 'r' && token.name()[1] == 'u' && token.name()[2] == 'b' && token.name()[3] == 'y')
-            return WebVTTNodeTypeRuby;
+            return WebVTTNodeType::Ruby;
         if (token.name()[0] == 'l' && token.name()[1] == 'a' && token.name()[2] == 'n' && token.name()[3] == 'g')
-            return WebVTTNodeTypeLanguage;
+            return WebVTTNodeType::Language;
         break;
     }
-    return WebVTTNodeTypeNone;
+    return WebVTTNodeType::None;
 }
 
 template<int width>
@@ -700,16 +694,16 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
-        protectedCurrentNode()->parserAppendChild(Text::create(document, String { m_token.characters() }));
+        protect(m_currentNode)->parserAppendChild(Text::create(document, String { m_token.characters() }));
         break;
     }
     case WebVTTTokenTypes::StartTag: {
         WebVTTNodeType nodeType = tokenToNodeType(m_token);
-        if (nodeType == WebVTTNodeTypeNone)
+        if (nodeType == WebVTTNodeType::None)
             break;
 
         // <rt> is only allowed if the current node is <ruby>.
-        if (nodeType == WebVTTNodeTypeRubyText && currentType() != WebVTTNodeTypeRuby)
+        if (nodeType == WebVTTNodeType::RubyText && currentType() != WebVTTNodeType::Ruby)
             break;
 
         auto language = !m_languageStack.isEmpty() ? m_languageStack.last() : emptyAtom();
@@ -717,31 +711,31 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         if (!m_token.classes().isEmpty())
             child->setAttributeWithoutSynchronization(classAttr, m_token.classes());
 
-        if (nodeType == WebVTTNodeTypeVoice)
+        if (nodeType == WebVTTNodeType::Voice)
             child->setAttributeWithoutSynchronization(WebVTTElement::voiceAttributeName(), m_token.annotation());
-        else if (nodeType == WebVTTNodeTypeLanguage) {
+        else if (nodeType == WebVTTNodeType::Language) {
             m_languageStack.append(m_token.annotation());
             child->setAttributeWithoutSynchronization(WebVTTElement::langAttributeName(), m_languageStack.last());
         }
-        protectedCurrentNode()->parserAppendChild(child);
-        m_currentNode = WTFMove(child);
+        protect(m_currentNode)->parserAppendChild(child);
+        m_currentNode = WTF::move(child);
         m_typeStack.append(nodeType);
         break;
     }
     case WebVTTTokenTypes::EndTag: {
         WebVTTNodeType nodeType = tokenToNodeType(m_token);
-        if (nodeType == WebVTTNodeTypeNone)
+        if (nodeType == WebVTTNodeType::None)
             break;
-        
+
         // The only non-VTTElement would be the DocumentFragment root. (Text
         // nodes and PIs will never appear as m_currentNode.)
-        if (currentType() == WebVTTNodeTypeNone)
+        if (currentType() == WebVTTNodeType::None)
             break;
 
         bool matchesCurrent = nodeType == currentType();
         if (!matchesCurrent) {
             // </ruby> auto-closes <rt>
-            if (currentType() == WebVTTNodeTypeRubyText && nodeType == WebVTTNodeTypeRuby) {
+            if (currentType() == WebVTTNodeType::RubyText && nodeType == WebVTTNodeType::Ruby) {
                 if (m_currentNode->parentNode()) {
                     m_currentNode = m_currentNode->parentNode();
                     m_typeStack.removeLast();
@@ -749,7 +743,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
             } else
                 break;
         }
-        if (nodeType == WebVTTNodeTypeLanguage)
+        if (nodeType == WebVTTNodeType::Language)
             m_languageStack.removeLast();
         if (m_currentNode->parentNode()) {
             m_currentNode = m_currentNode->parentNode();
@@ -760,7 +754,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
     case WebVTTTokenTypes::TimestampTag: {
         MediaTime parsedTimeStamp;
         if (WebVTTParser::collectTimeStamp(m_token.characters(), parsedTimeStamp))
-            protectedCurrentNode()->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, serializeTimestamp(parsedTimeStamp.toDouble())));
+            protect(m_currentNode)->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, serializeTimestamp(parsedTimeStamp.toDouble())));
         break;
     }
     default:

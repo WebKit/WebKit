@@ -61,7 +61,7 @@ JSValueRef JSEvaluateScriptInternal(const JSLockHolder&, JSContextRef ctx, JSObj
         // Debugger path is currently ignored by inspector.
         // NOTE: If we don't have a debugger, this SourceCode will be forever lost to the inspector.
         // We could stash it in the inspector in case an inspector is ever opened.
-        globalObject->inspectorController().reportAPIException(globalObject, evaluationException);
+        protect(globalObject->inspectorController())->reportAPIException(globalObject, evaluationException);
 #endif
         return nullptr;
     }
@@ -114,7 +114,7 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
             *exception = toRef(globalObject, syntaxException);
 #if ENABLE(REMOTE_INSPECTOR)
         Exception* exception = Exception::create(vm, syntaxException);
-        globalObject->inspectorController().reportAPIException(globalObject, exception);
+        protect(globalObject->inspectorController())->reportAPIException(globalObject, exception);
 #endif
         return false;
     }

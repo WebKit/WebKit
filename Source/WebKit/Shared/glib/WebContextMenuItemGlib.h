@@ -29,7 +29,6 @@
 #include "WebContextMenuItemData.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/GUniquePtr.h>
 
 #if PLATFORM(GTK) && !USE(GTK4)
 typedef struct _GtkAction GtkAction;
@@ -61,7 +60,6 @@ public:
 #endif
 
 private:
-    GUniquePtr<char> buildActionName() const;
     void createActionIfNeeded();
 
     GRefPtr<GAction> m_gAction;

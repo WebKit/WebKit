@@ -9,7 +9,7 @@ info: |
   1. Let O be the this value.
   2. If Type(O) is not Object, return undefined.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, Symbol.toStringTag, TypedArray]
 ---*/
 

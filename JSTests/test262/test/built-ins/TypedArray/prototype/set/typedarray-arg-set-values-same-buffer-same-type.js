@@ -30,22 +30,22 @@ includes: [testTypedArray.js, compareArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample, src, result;
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   src = new TA(sample.buffer, 0, 2);
   result = sample.set(src, 0);
   assert(compareArray(sample, [1, 2, 3, 4]), "offset: 0, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   src = new TA(sample.buffer, 0, 2);
   result = sample.set(src, 1);
   assert(compareArray(sample, [1, 1, 2, 4]), "offset: 1, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   src = new TA(sample.buffer, 0, 2);
   result = sample.set(src, 2);
   assert(compareArray(sample, [1, 2, 1, 2]), "offset: 2, result: " + sample);

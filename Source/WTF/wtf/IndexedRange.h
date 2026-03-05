@@ -25,6 +25,13 @@
 
 #pragma once
 
+#include <concepts>
+#include <iterator>
+#include <utility>
+#include <wtf/Assertions.h>
+#include <wtf/Compiler.h>
+#include <wtf/StdLibExtras.h>
+
 namespace WTF {
 
 template<typename Iterator> class BoundsCheckedIterator {
@@ -54,7 +61,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return *this;
     }
 
-    auto&& operator*() const
+    decltype(auto) operator*() const
     {
         RELEASE_ASSERT(m_iterator != m_end);
         return *m_iterator;
@@ -68,7 +75,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 private:
     template<typename Collection>
     BoundsCheckedIterator(Collection&& collection, Iterator&& iterator)
-        : m_iterator(WTFMove(iterator))
+        : m_iterator(WTF::move(iterator))
         , m_end(std::end(collection))
     {
     }
@@ -90,7 +97,7 @@ template<typename Collection> auto boundsCheckedEnd(Collection&& collection)
 template<typename Iterator> class IndexedRangeIterator {
 public:
     IndexedRangeIterator(Iterator&& iterator)
-        : m_iterator(WTFMove(iterator))
+        : m_iterator(WTF::move(iterator))
     {
     }
 

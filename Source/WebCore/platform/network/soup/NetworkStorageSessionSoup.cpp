@@ -154,7 +154,7 @@ void NetworkStorageSession::setCookieStorage(GRefPtr<SoupCookieJar>&& jar)
 
     g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(m_cookieStorage.get()));
-    m_cookieStorage = WTFMove(jar);
+    m_cookieStorage = WTF::move(jar);
     g_signal_connect_swapped(m_cookieStorage.get(), "changed", G_CALLBACK(cookiesDidChange), this);
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
@@ -173,7 +173,7 @@ void NetworkStorageSession::setCookieStorage(GRefPtr<SoupCookieJar>&& jar)
 
 void NetworkStorageSession::setCookieObserverHandler(Function<void ()>&& handler)
 {
-    m_cookieObserverHandler = WTFMove(handler);
+    m_cookieObserverHandler = WTF::move(handler);
 }
 
 #if USE(LIBSECRET)
@@ -228,7 +228,7 @@ struct SecretServiceSearchData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SecretServiceSearchData);
     SecretServiceSearchData(GCancellable* cancellable, Function<void (Credential&&)>&& completionHandler)
         : cancellable(cancellable)
-        , completionHandler(WTFMove(completionHandler))
+        , completionHandler(WTF::move(completionHandler))
     {
     }
 
@@ -267,7 +267,7 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
         return;
     }
 
-    auto data = makeUnique<SecretServiceSearchData>(cancellable, WTFMove(completionHandler));
+    auto data = makeUnique<SecretServiceSearchData>(cancellable, WTF::move(completionHandler));
     secret_service_search(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(),
         static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS), cancellable,
         [](GObject* source, GAsyncResult* result, gpointer userData) {
@@ -584,7 +584,7 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime timestamp, Co
 {
     // FIXME: Add support for deleting cookies modified since the given timestamp. It should probably be added to libsoup.
     if (timestamp == WallTime::fromRawSeconds(0))
-        deleteAllCookies(WTFMove(completionHandler));
+        deleteAllCookies(WTF::move(completionHandler));
     else {
         g_warning("Deleting cookies modified since a given time span is not supported yet");
         completionHandler();
@@ -770,6 +770,8 @@ Vector<Cookie> NetworkStorageSession::domCookiesForHost(const URL& url)
     Vector<Cookie> cookies;
     for (GSList* iter = soupCookies.get(); iter; iter = g_slist_next(iter)) {
         auto* soupCookie = static_cast<SoupCookie*>(iter->data);
+        if (soup_cookie_get_http_only(soupCookie))
+            continue;
         if (soup_cookie_domain_matches(soupCookie, host.data())) {
             // soup_cookie_jar_all_cookies() always returns a reversed list.
             cookies.insert(0, Cookie(soupCookie));

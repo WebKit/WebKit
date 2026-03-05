@@ -118,7 +118,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
         if (!sinfData)
             return nullptr;
 
-        return SharedBuffer::create(WTFMove(*sinfData));
+        return SharedBuffer::create(WTF::move(*sinfData));
     });
 }
 
@@ -163,7 +163,7 @@ static SchemeAndKeyResult extractSchemeAndKeyIdFromSinf(const SharedBuffer& buff
             offset += boxSize;
         }
         if (scheme && keyID)
-            result.append(std::make_pair(scheme.value(), WTFMove(keyID.value())));
+            result.append(std::make_pair(scheme.value(), WTF::move(keyID.value())));
     }
 
     return result;
@@ -178,7 +178,7 @@ std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKey
 
     for (auto& result : results) {
         if (validFairPlayStreamingSchemes().contains(result.first))
-            keyIDs.append(SharedBuffer::create(WTFMove(result.second)));
+            keyIDs.append(SharedBuffer::create(WTF::move(result.second)));
     }
 
     return keyIDs;
@@ -424,7 +424,7 @@ bool CDMPrivateFairPlayStreaming::distinctiveIdentifiersAreUniquePerOriginAndCle
 RefPtr<CDMInstance> CDMPrivateFairPlayStreaming::createInstance()
 {
 #if HAVE(AVCONTENTKEYSESSION)
-    auto instance = adoptRef(new CDMInstanceFairPlayStreamingAVFObjC(*this));
+    auto instance = CDMInstanceFairPlayStreamingAVFObjC::create(*this);
 #if !RELEASE_LOG_DISABLED
     instance->setLogIdentifier(m_logIdentifier);
 #endif

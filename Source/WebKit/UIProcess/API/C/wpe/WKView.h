@@ -40,7 +40,9 @@ typedef struct _WPEView WPEView;
 #if ENABLE(WPE_PLATFORM)
 WK_EXPORT WKViewRef WKViewCreate(WPEDisplay*, WKPageConfigurationRef);
 #endif
+#if USE(LIBWPE)
 WK_EXPORT WKViewRef WKViewCreateDeprecated(struct wpe_view_backend*, WKPageConfigurationRef);
+#endif
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
 #if ENABLE(WPE_PLATFORM)

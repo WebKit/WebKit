@@ -147,7 +147,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     result->m_virtualMachine = vm;
     result->m_type = type;
     result->m_source = StringImpl::createWithoutCopying(byteCast<Latin1Character>(fileData->span()));
-    result->m_mappedSource = WTFMove(*fileData);
+    result->m_mappedSource = WTF::move(*fileData);
     result->m_sourceURL = sourceURL;
     result->m_cachePath = cachePath;
     [result readCache];
@@ -193,13 +193,13 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return;
     }
 
-    Ref cachedBytecode = JSC::CachedBytecode::create(WTFMove(*mappedFile));
+    Ref cachedBytecode = JSC::CachedBytecode::create(WTF::move(*mappedFile));
 
     JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
     JSC::SourceCode sourceCode = [self sourceCode];
     JSC::SourceCodeKey key = m_type == kJSScriptTypeProgram ? sourceCodeKeyForSerializedProgram(vm, sourceCode) : sourceCodeKeyForSerializedModule(vm, sourceCode);
     if (isCachedBytecodeStillValid(vm, cachedBytecode.copyRef(), key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
-        m_cachedBytecode = WTFMove(cachedBytecode);
+        m_cachedBytecode = WTF::move(cachedBytecode);
     else
         handle.truncate(0);
 }
@@ -271,8 +271,8 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     URL url = URL({ }, filename);
     auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
     JSC::SourceOrigin origin(url);
-    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, origin, WTFMove(filename), String(), JSC::SourceTaintedOrigin::Untainted, startPosition, type);
-    JSC::SourceCode sourceCode(WTFMove(sourceProvider), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, origin, WTF::move(filename), String(), JSC::SourceTaintedOrigin::Untainted, startPosition, type);
+    JSC::SourceCode sourceCode(WTF::move(sourceProvider), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
     return sourceCode;
 }
 

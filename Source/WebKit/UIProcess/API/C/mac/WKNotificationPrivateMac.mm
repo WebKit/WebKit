@@ -31,5 +31,5 @@
 
 NSDictionary *WKNotificationCopyDictionaryRepresentation(WKNotificationRef notification)
 {
-    return WebKit::toImpl(notification)->data().protectedDictionaryRepresentation().leakRef();
+    return protect(WebKit::toImpl(notification)->data().dictionaryRepresentation()).leakRef();
 }

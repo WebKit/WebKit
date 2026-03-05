@@ -7,12 +7,12 @@ description: >
 info: |
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(3);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(3));
 
   assert.throws(Test262Error, function() {
     sample.map(function() {

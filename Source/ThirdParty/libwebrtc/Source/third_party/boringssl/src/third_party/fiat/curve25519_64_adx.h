@@ -402,10 +402,10 @@ static void fe4_cswap(uint64_t out1[4], uint64_t out2[4], fiat_uint1 arg1, const
   out2[3] = x8;
 }
 
-// The following functions are adaped from crypto/curve25519/curve25519.c
+// The following functions are adapted from crypto/curve25519/curve25519.c
 // It would be desirable to share the code, but with the current field
 // implementations both 4-limb and 5-limb versions of the curve-level code need
-// to be included in builds targetting an unknown variant of x86_64.
+// to be included in builds targeting an unknown variant of x86_64.
 
 __attribute__((target("adx,bmi2")))
 static void fe4_invert(fe4 out, const fe4 z) {

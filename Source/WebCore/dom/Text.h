@@ -29,14 +29,14 @@ namespace WebCore {
 class RenderText;
 
 class Text : public CharacterData {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Text);
+    WTF_MAKE_TZONE_ALLOCATED(Text);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Text);
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
 
     static Ref<Text> create(Document& document, String&& data)
     {
-        return adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { }));
+        return adoptRef(*new Text(document, WTF::move(data), NodeType::Text, { }));
     }
     static Ref<Text> createEditingText(Document&, String&&);
 
@@ -54,7 +54,6 @@ public:
     bool canContainRangeEndPoint() const final { return true; }
 
     RenderText* renderer() const;
-    CheckedPtr<RenderText> checkedRenderer() const;
 
     void updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
@@ -63,7 +62,7 @@ public:
 
 protected:
     Text(Document& document, String&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
-        : CharacterData(document, WTFMove(data), type, typeFlags | TypeFlag::IsText)
+        : CharacterData(document, WTF::move(data), type, typeFlags | TypeFlag::IsText)
     {
         ASSERT(!isContainerNode());
     }

@@ -38,14 +38,13 @@ struct MaskerData {
 };
 
 class LegacyRenderSVGResourceMasker final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceMasker);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceMasker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceMasker);
 public:
     LegacyRenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGResourceMasker();
 
     inline SVGMaskElement& maskElement() const;
-    inline Ref<SVGMaskElement> protectedMaskElement() const;
 
     void removeAllClientsFromCache() override;
     void removeClientFromCache(RenderElement&) override;
@@ -73,4 +72,7 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(LegacyRenderSVGResourceMasker, MaskerResourceType)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceMasker)
+    static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::MaskerResourceType; }
+    static bool isType(const WebCore::LegacyRenderSVGResourceContainer& resource) { return resource.resourceType() == WebCore::MaskerResourceType; }
+SPECIALIZE_TYPE_TRAITS_END()

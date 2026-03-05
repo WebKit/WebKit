@@ -38,8 +38,8 @@ SurfaceImpl *DisplayVkHeadless::createWindowSurfaceVk(const egl::SurfaceState &s
 egl::ConfigSet DisplayVkHeadless::generateConfigs()
 {
     std::vector<GLenum> kColorFormats;
-    std::vector<GLenum> kDesiredColorFormats = {GL_RGBA8, GL_BGRA8_EXT, GL_RGB565, GL_RGB8,
-                                                GL_RGB10_A2};
+    std::vector<GLenum> kDesiredColorFormats = {GL_RGBA8, GL_BGRA8_EXT, GL_RGB565,
+                                                GL_RGB8,  GL_RGB10_A2,  GL_RGBA16F};
 
     for (GLenum glFormat : kDesiredColorFormats)
     {

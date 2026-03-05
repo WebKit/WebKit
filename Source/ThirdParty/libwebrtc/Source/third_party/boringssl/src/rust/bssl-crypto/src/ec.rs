@@ -108,7 +108,7 @@ impl Point {
         Self { group, point }
     }
 
-    /// Construct a point by multipling the curve's base point by the given
+    /// Construct a point by multiplying the curve's base point by the given
     /// scalar.
     ///
     /// Safety: `scalar` must be a valid pointer.

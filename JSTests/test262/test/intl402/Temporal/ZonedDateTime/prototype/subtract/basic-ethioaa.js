@@ -17,7 +17,10 @@ const years1 = new Temporal.Duration(-1);
 const years1n = new Temporal.Duration(1);
 const years5 = new Temporal.Duration(-5);
 const years5n = new Temporal.Duration(5);
+const years3months6days17 = new Temporal.Duration(-3, -6, 0, -17);
+const years3months6days17n = new Temporal.Duration(3, 6, 0, 17);
 
+const date748912 = Temporal.ZonedDateTime.from({ year: 7489, monthCode: "M12", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const date750302 = Temporal.ZonedDateTime.from({ year: 7503, monthCode: "M02", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const date750802 = Temporal.ZonedDateTime.from({ year: 7508, monthCode: "M02", day: 29, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 
@@ -61,13 +64,27 @@ TemporalHelpers.assertPlainDateTime(
   7503, 2, "M02", 29, 12, 34, 0, 0, 0, 0, "Subtracting 5 years from day 29 of a month", "aa", 7503
 );
 
+TemporalHelpers.assertPlainDateTime(
+  date748912.subtract(years3months6days17).toPlainDateTime(),
+  7493, 5, "M05", 18, 12, 34, 0, 0, 0, 0, "Adding 3 years, 6 months and 17 days to day 1 of a month", "aa", 7493
+);
+var calculatedStart = date748912.subtract(years3months6days17).subtract(years3months6days17n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart.toPlainDateTime(),
+  7489, 12, "M12", 1, 12, 34, 0, 0, 0, 0, "Subtracting 3 years, 6 months and 17 days from day 18 of a month", "aa", 7489
+);
+
+
 // Months
 
 const months1 = new Temporal.Duration(0, -1);
 const months1n = new Temporal.Duration(0, 1);
 const months4 = new Temporal.Duration(0, -4);
 const months4n = new Temporal.Duration(0, 4);
+const months6 = new Temporal.Duration(0, -6);
+const months6n = new Temporal.Duration(0, 6);
 
+const date749212 = Temporal.ZonedDateTime.from({ year: 7492, monthCode: "M12", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const date750401 = Temporal.ZonedDateTime.from({ year: 7504, monthCode: "M01", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const date750406 = Temporal.ZonedDateTime.from({ year: 7504, monthCode: "M06", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const date750411 = Temporal.ZonedDateTime.from({ year: 7504, monthCode: "M11", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
@@ -113,11 +130,24 @@ TemporalHelpers.assertPlainDateTime(
   7503, 10, "M10", 1, 12, 34, 0, 0, 0, 0, "Subtracting 4 months, with result in previous year", "aa", 7503
 );
 
+TemporalHelpers.assertPlainDateTime(
+  date749212.subtract(months6).toPlainDateTime(),
+  7493, 5, "M05", 1, 12, 34, 0, 0, 0, 0, "Adding 6 months, with result in next year", "aa", 7493
+);
+calculatedStart = date749212.subtract(months6).subtract(months6n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart.toPlainDateTime(),
+  7492, 12, "M12", 1, 12, 34, 0, 0, 0, 0, "Subtracting 6 months, with result in previous year", "aa", 7492
+);
+
 // Weeks
 
 const months2weeks3 = new Temporal.Duration(0, /* months = */ -2, /* weeks = */ -3);
 const months2weeks3n = new Temporal.Duration(0, 2, 3);
+const weeks40 = new Temporal.Duration(0, 0, -40);
+const weeks40n = new Temporal.Duration(0, 0, 40);
 
+const date749201 = Temporal.ZonedDateTime.from({ year: 7492, monthCode: "M01", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const date750601 = Temporal.ZonedDateTime.from({ year: 7506, monthCode: "M01", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 
 TemporalHelpers.assertPlainDateTime(
@@ -140,11 +170,22 @@ TemporalHelpers.assertPlainDateTime(
   7505, 11, "M11", 10, 12, 34, 0, 0, 0, 0, "subtract 2 months 3 weeks from beginning of year to previous year", "aa", 7505
 );
 
+TemporalHelpers.assertPlainDateTime(
+  date749201.subtract(weeks40).toPlainDateTime(),
+  7492, 10, "M10", 11, 12, 34, 0, 0, 0, 0, "Adding 40 weeks, with result in same year", "aa", 7492
+);
+calculatedStart = date749201.subtract(weeks40).subtract(weeks40n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart.toPlainDateTime(),
+  7492, 1, "M01", 1, 12, 34, 0, 0, 0, 0, "Subtracting 40 weeks, with result in same year", "aa", 7492
+);
 
 // Days
 
 const days10 = new Temporal.Duration(0, 0, 0, /* days = */ -10);
 const days10n = new Temporal.Duration(0, 0, 0, 10);
+const days280 = new Temporal.Duration(0, 0, 0, /* days = */ -280);
+const days280n = new Temporal.Duration(0, 0, 0, 280);
 
 const date75060129 = Temporal.ZonedDateTime.from({ year: 7506, monthCode: "M01", day: 30, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 
@@ -176,4 +217,14 @@ TemporalHelpers.assertPlainDateTime(
 TemporalHelpers.assertPlainDateTime(
   date750601.subtract(days10n).toPlainDateTime(),
   7505, 12, "M12", 26, 12, 34, 0, 0, 0, 0, "subtract 10 days, ending in previous year", "aa", 7505
+);
+
+TemporalHelpers.assertPlainDateTime(
+  date749201.subtract(days280).toPlainDateTime(),
+  7492, 10, "M10", 11, 12, 34, 0, 0, 0, 0, "Adding 280 days, with result in same year", "aa", 7492
+);
+calculatedStart = date749201.subtract(days280).subtract(weeks40n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart.toPlainDateTime(),
+  7492, 1, "M01", 1, 12, 34, 0, 0, 0, 0, "Subtracting 280 days, with result in same year", "aa", 7492
 );

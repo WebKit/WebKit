@@ -77,6 +77,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case KnownCellUse:
         out.print("KnownCell");
         return;
+    case KnownStorageUse:
+        out.print("KnownStorage");
+        return;
     case CellOrOtherUse:
         out.print("CellOrOther");
         return;

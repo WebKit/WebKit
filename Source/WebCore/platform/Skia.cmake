@@ -14,13 +14,17 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/skia/FontCascadeSkiaInlines.h
     platform/graphics/skia/GraphicsContextSkia.h
     platform/graphics/skia/ImageBufferSkiaBackend.h
+    platform/graphics/skia/PathSkia.h
+    platform/graphics/skia/SkiaGPUAtlas.h
     platform/graphics/skia/SkiaHarfBuzzFont.h
     platform/graphics/skia/SkiaHarfBuzzFontCache.h
+    platform/graphics/skia/SkiaImageAtlasLayout.h
     platform/graphics/skia/SkiaPaintingEngine.h
     platform/graphics/skia/SkiaRecordingResult.h
     platform/graphics/skia/SkiaReplayCanvas.h
     platform/graphics/skia/SkiaSpanExtras.h
     platform/graphics/skia/SkiaSystemFallbackFontCache.h
+    platform/graphics/skia/SkiaTextureAtlasPacker.h
 )
 
 list(APPEND WebCore_LIBRARIES

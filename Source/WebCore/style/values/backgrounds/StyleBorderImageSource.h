@@ -39,7 +39,7 @@ struct BorderImageSource {
     }
 
     BorderImageSource(ImageWrapper&& image)
-        : m_image { WTFMove(image.value) }
+        : m_image { WTF::move(image.value) }
     {
     }
 
@@ -47,7 +47,7 @@ struct BorderImageSource {
     bool isImage() const { return !!m_image; }
 
     std::optional<ImageWrapper> tryImage() const { return m_image ? std::make_optional(ImageWrapper { *m_image }) : std::nullopt; }
-    RefPtr<StyleImage> tryStyleImage() const { return m_image; }
+    RefPtr<Image> tryStyleImage() const { return m_image; }
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
@@ -64,7 +64,7 @@ struct BorderImageSource {
     }
 
 private:
-    RefPtr<StyleImage> m_image { };
+    RefPtr<Image> m_image { };
 };
 
 // MARK: - Conversion
@@ -75,7 +75,7 @@ template<> struct CSSValueConversion<BorderImageSource> { auto operator()(Builde
 
 template<> struct Blending<BorderImageSource> {
     auto canBlend(const BorderImageSource&, const BorderImageSource&) -> bool;
-    auto blend(const BorderImageSource&, const BorderImageSource&, const BlendingContext&) -> BorderImageSource;
+    auto blend(const BorderImageSource&, const BorderImageSource&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> BorderImageSource;
 };
 
 } // namespace Style

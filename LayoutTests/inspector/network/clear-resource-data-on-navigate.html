@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function loadSubresource() {
+    fetch("resources/data.json").then(() => {
+        TestPage.dispatchEventToFrontend("TestPage-loadComplete");
+    });
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Network.setClearResourceDataOnNavigate");
+
+    InspectorProtocol.sendCommand("Network.enable");
+
+    suite.addTestCase({
+        name: "Network.setClearResourceDataOnNavigate.DefaultBehavior",
+        description: "By default, network resource data should be cleared when the Network agent is disabled.",
+        async test() {
+            ProtocolTest.log("Loading subresource...");
+            let [loadingFinishedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.loadingFinished"}),
+                ProtocolTest.awaitEvent("TestPage-loadComplete"),
+                ProtocolTest.evaluateInPage("loadSubresource()"),
+            ]);
+
+            let requestId = loadingFinishedEvent.params.requestId;
+
+            let bodyResult = await InspectorProtocol.awaitCommand({
+                method: "Network.getResponseBody",
+                params: {requestId},
+            });
+            ProtocolTest.expectThat(bodyResult.body.length > 0, "Should be able to get response body before disable.");
+
+            ProtocolTest.log("Disabling and enabling Network agent...");
+            await InspectorProtocol.awaitCommand({method: "Network.disable"});
+            await InspectorProtocol.awaitCommand({method: "Network.enable"});
+
+            ProtocolTest.log("Requesting body for old resource...");
+            try {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.getResponseBody",
+                    params: {requestId},
+                });
+                ProtocolTest.fail("Should not be able to get response body after disable/enable cycle.");
+            } catch (e) {
+                ProtocolTest.pass("Should not be able to get response body after disable/enable cycle.");
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.setClearResourceDataOnNavigate.Disabled",
+        description: "When setClearResourceDataOnNavigate is false, network resource data should still be cleared when the Network agent is disabled.",
+        async test() {
+            await InspectorProtocol.awaitCommand({
+                method: "Network.setClearResourceDataOnNavigate",
+                params: {clearResourceDataOnNavigate: false},
+            });
+
+            ProtocolTest.log("Loading subresource...");
+            let [loadingFinishedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.loadingFinished"}),
+                ProtocolTest.awaitEvent("TestPage-loadComplete"),
+                ProtocolTest.evaluateInPage("loadSubresource()"),
+            ]);
+
+            let requestId = loadingFinishedEvent.params.requestId;
+
+            let bodyResult = await InspectorProtocol.awaitCommand({
+                method: "Network.getResponseBody",
+                params: {requestId},
+            });
+            ProtocolTest.expectThat(bodyResult.body.length > 0, "Should be able to get response body before disable.");
+
+            ProtocolTest.log("Disabling and enabling Network agent...");
+            await InspectorProtocol.awaitCommand({method: "Network.disable"});
+            await InspectorProtocol.awaitCommand({method: "Network.enable"});
+
+            ProtocolTest.log("Requesting body for old resource...");
+            try {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.getResponseBody",
+                    params: {requestId},
+                });
+                ProtocolTest.fail("Should not be able to get response body after disable/enable cycle.");
+            } catch (e) {
+                ProtocolTest.pass("Should not be able to get response body after disable/enable cycle.");
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.setClearResourceDataOnNavigate.ToggledBackOn",
+        description: "When setClearResourceDataOnNavigate is set back to true, resource data should be cleared on disable.",
+        async test() {
+            await InspectorProtocol.awaitCommand({
+                method: "Network.setClearResourceDataOnNavigate",
+                params: {clearResourceDataOnNavigate: false},
+            });
+
+            ProtocolTest.log("Loading subresource...");
+            let [loadingFinishedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.loadingFinished"}),
+                ProtocolTest.awaitEvent("TestPage-loadComplete"),
+                ProtocolTest.evaluateInPage("loadSubresource()"),
+            ]);
+
+            let requestId = loadingFinishedEvent.params.requestId;
+
+            ProtocolTest.log("Setting clearResourceDataOnNavigate back to true...");
+            await InspectorProtocol.awaitCommand({
+                method: "Network.setClearResourceDataOnNavigate",
+                params: {clearResourceDataOnNavigate: true},
+            });
+
+            ProtocolTest.log("Disabling and enabling Network agent...");
+            await InspectorProtocol.awaitCommand({method: "Network.disable"});
+            await InspectorProtocol.awaitCommand({method: "Network.enable"});
+
+            ProtocolTest.log("Requesting body for old resource...");
+            try {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.getResponseBody",
+                    params: {requestId},
+                });
+                ProtocolTest.fail("Should not be able to get response body after disable/enable cycle.");
+            } catch (e) {
+                ProtocolTest.pass("Should not be able to get response body after disable/enable cycle.");
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Network.setClearResourceDataOnNavigate.</p>
+</body>
+</html>

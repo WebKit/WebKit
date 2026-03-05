@@ -277,7 +277,7 @@ void WEBPImageDecoder::applyPostProcessing(size_t frameIndex, WebPIDecoder* deco
         for (int x = 0; x < decodedWidth; x++) {
             const int canvasX = left + x;
             auto& destinationPixel = buffer.backingStore()->pixelAt(canvasX, canvasY);
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
             uint8_t* sourcePixels = decoderBuffer.u.RGBA.rgba + (y * frameRect.width() + x) * sizeof(uint32_t);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             if (blend && (sourcePixels[3] < 255))

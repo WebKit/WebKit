@@ -1690,7 +1690,7 @@ TEST(DocumentEditingContext, RequestAnnotationsForTextChecking)
             String { dynamic_objc_cast<NSString>(context.selectedText) },
             String { dynamic_objc_cast<NSString>(context.contextAfter) }
         );
-        return std::pair { WTFMove(combinedContext), WTFMove(annotatedText) };
+        return std::pair { WTF::move(combinedContext), WTF::move(annotatedText) };
     };
     {
         [webView _setEditable:YES];

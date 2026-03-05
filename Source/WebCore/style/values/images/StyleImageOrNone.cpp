@@ -54,7 +54,7 @@ auto Blending<ImageOrNone>::canBlend(const ImageOrNone& a, const ImageOrNone& b)
     return !a.isNone() && !b.isNone();
 }
 
-auto Blending<ImageOrNone>::blend(const ImageOrNone& a, const ImageOrNone& b, const BlendingContext& context) -> ImageOrNone
+auto Blending<ImageOrNone>::blend(const ImageOrNone& a, const ImageOrNone& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> ImageOrNone
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1.0);
@@ -62,7 +62,7 @@ auto Blending<ImageOrNone>::blend(const ImageOrNone& a, const ImageOrNone& b, co
     }
 
     ASSERT(canBlend(a, b));
-    return Style::blend(*a.tryImage(), *b.tryImage(), context);
+    return Style::blend(*a.tryImage(), *b.tryImage(), aStyle, bStyle, context);
 }
 
 } // namespace Style

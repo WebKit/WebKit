@@ -38,7 +38,7 @@ class Document;
 class SpeechRecognitionResult;
 
 class SpeechRecognition final : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechRecognition);
+    WTF_MAKE_TZONE_ALLOCATED(SpeechRecognition);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -47,8 +47,8 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(SpeechRecognitionConnectionClient);
 
-    const String& lang() const { return m_lang; }
-    void setLang(String&& lang) { m_lang = WTFMove(lang); }
+    const String& lang() const LIFETIME_BOUND { return m_lang; }
+    void setLang(String&& lang) { m_lang = WTF::move(lang); }
 
     bool continuous() const { return m_continuous; }
     void setContinuous(bool continuous) { m_continuous = continuous; }
@@ -94,11 +94,11 @@ private:
     void stop() final;
 
     // EventTarget
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SpeechRecognition; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     String m_lang;
     bool m_continuous { false };
@@ -111,3 +111,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(SpeechRecognition)

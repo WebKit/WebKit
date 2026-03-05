@@ -91,9 +91,10 @@
     if (_touchActionsByTouchIdentifier.isEmpty())
         return NO;
 
-    auto mayPan = [_touchActionDelegate gestureRecognizerMayPanWebView:preventedGestureRecognizer];
-    auto mayPinchToZoom = [_touchActionDelegate gestureRecognizerMayPinchToZoomWebView:preventedGestureRecognizer];
-    auto mayDoubleTapToZoom = [_touchActionDelegate gestureRecognizerMayDoubleTapToZoomWebView:preventedGestureRecognizer];
+    RetainPtr touchActionDelegate = _touchActionDelegate;
+    auto mayPan = [touchActionDelegate gestureRecognizerMayPanWebView:preventedGestureRecognizer];
+    auto mayPinchToZoom = [touchActionDelegate gestureRecognizerMayPinchToZoomWebView:preventedGestureRecognizer];
+    auto mayDoubleTapToZoom = [touchActionDelegate gestureRecognizerMayDoubleTapToZoomWebView:preventedGestureRecognizer];
 
     if (!mayPan && !mayPinchToZoom && !mayDoubleTapToZoom)
         return NO;
@@ -102,7 +103,7 @@
     // CSS property we iterate over all active touches, check whether that touch matches the gesture recognizer, see if we have
     // any touch-action specified for it, and then check for each type of interaction whether the touch-action property has a
     // value that should prevent the interaction.
-    auto* activeTouches = [_touchActionDelegate touchActionActiveTouches];
+    auto* activeTouches = [touchActionDelegate touchActionActiveTouches];
     for (NSNumber *touchIdentifier in activeTouches) {
         auto iterator = _touchActionsByTouchIdentifier.find([touchIdentifier unsignedIntegerValue]);
         if (iterator != _touchActionsByTouchIdentifier.end() && [[activeTouches objectForKey:touchIdentifier].gestureRecognizers containsObject:preventedGestureRecognizer]) {

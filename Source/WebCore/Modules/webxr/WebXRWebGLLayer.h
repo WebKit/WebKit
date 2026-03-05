@@ -34,6 +34,7 @@
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -53,16 +54,16 @@ class WebXRViewport;
 struct XRWebGLLayerInit;
 template<typename> class ExceptionOr;
 
-class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRWebGLLayer);
+class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver, public CanMakeCheckedPtr<WebXRWebGLLayer> {
+    WTF_MAKE_TZONE_ALLOCATED(WebXRWebGLLayer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebXRWebGLLayer);
 public:
-
     using WebXRRenderingContext = Variant<
-        RefPtr<WebGLRenderingContext>,
-        RefPtr<WebGL2RenderingContext>
+        Ref<WebGLRenderingContext>,
+        Ref<WebGL2RenderingContext>
     >;
 
-    static ExceptionOr<Ref<WebXRWebGLLayer>> create(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    static ExceptionOr<Ref<WebXRWebGLLayer>> create(WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
     ~WebXRWebGLLayer();
 
     bool antialias() const;
@@ -71,6 +72,9 @@ public:
     const WebGLFramebuffer* framebuffer() const;
     unsigned framebufferWidth() const;
     unsigned framebufferHeight() const;
+
+    // CanvasObserver.
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
     ExceptionOr<RefPtr<WebXRViewport>> getViewport(WebXRView&);
 
@@ -89,11 +93,11 @@ public:
     PlatformXR::Device::Layer endFrame() final;
 
 private:
-    WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
+    WebXRWebGLLayer(WebXRSession&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
 
     bool isWebXRWebGLLayer() const final { return true; }
 
-    void computeViewports();
+    void updateViewports();
     static IntSize computeNativeWebGLFramebufferResolution();
     static IntSize computeRecommendedWebGLFramebufferResolution();
 
@@ -103,7 +107,7 @@ private:
 
     void addConsoleMessage(JSC::MessageLevel, String&&) const;
 
-    RefPtr<WebXRSession> m_session;
+    WeakPtr<WebXRSession> m_session;
     WebXRRenderingContext m_context;
 
     struct ViewportData {

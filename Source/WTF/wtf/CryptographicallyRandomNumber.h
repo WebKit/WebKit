@@ -26,7 +26,9 @@
 
 #pragma once
 
+#include <span>
 #include <stdint.h>
+#include <wtf/ExportMacros.h>
 
 namespace WTF {
 

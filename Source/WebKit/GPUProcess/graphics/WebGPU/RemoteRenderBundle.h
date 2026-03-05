@@ -54,7 +54,7 @@ class RemoteRenderBundle final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteRenderBundle> create(WebCore::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderBundle(renderBundle, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteRenderBundle(renderBundle, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteRenderBundle();
@@ -75,16 +75,14 @@ private:
 
     WebCore::WebGPU::RenderBundle& backing() { return m_backing; }
 
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
-
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<WebCore::WebGPU::RenderBundle> m_backing;
+    const Ref<WebCore::WebGPU::RenderBundle> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

@@ -315,6 +315,8 @@ public:
     AccessibilityTextMarker textMarkerForIndex(int);
     JSRetainPtr<JSStringRef> textMarkerDebugDescription(AccessibilityTextMarker*);
     JSRetainPtr<JSStringRef> textMarkerRangeDebugDescription(AccessibilityTextMarkerRange*);
+    JSRetainPtr<JSStringRef> textMarkerDescription(AccessibilityTextMarker*);
+    JSRetainPtr<JSStringRef> textMarkerRangeDescription(AccessibilityTextMarkerRange*);
 
     void scrollToMakeVisible();
     void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);

@@ -36,10 +36,39 @@ namespace Style {
 struct BorderImageRepeat {
     MinimallySerializingSpaceSeparatedSize<NinePieceImageRule> values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch };
 
-    NinePieceImageRule horizontalRule() const { return values.width(); }
-    NinePieceImageRule verticalRule() const  { return values.height(); }
+    constexpr BorderImageRepeat(MinimallySerializingSpaceSeparatedSize<NinePieceImageRule> values)
+        : values { values }
+    {
+    }
+    constexpr BorderImageRepeat(NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule)
+        : values { horizontalRule, verticalRule }
+    {
+    }
+    constexpr BorderImageRepeat(NinePieceImageRule rule)
+        : values { rule, rule }
+    {
+    }
+    constexpr BorderImageRepeat(CSS::Keyword::Stretch)
+        : BorderImageRepeat { NinePieceImageRule::Stretch }
+    {
+    }
+    constexpr BorderImageRepeat(CSS::Keyword::Repeat)
+        : BorderImageRepeat { NinePieceImageRule::Repeat }
+    {
+    }
+    constexpr BorderImageRepeat(CSS::Keyword::Round)
+        : BorderImageRepeat { NinePieceImageRule::Round }
+    {
+    }
+    constexpr BorderImageRepeat(CSS::Keyword::Space)
+        : BorderImageRepeat { NinePieceImageRule::Space }
+    {
+    }
 
-    bool operator==(const BorderImageRepeat&) const = default;
+    constexpr NinePieceImageRule horizontalRule() const { return values.width(); }
+    constexpr NinePieceImageRule verticalRule() const  { return values.height(); }
+
+    constexpr bool operator==(const BorderImageRepeat&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(BorderImageRepeat, values);
 

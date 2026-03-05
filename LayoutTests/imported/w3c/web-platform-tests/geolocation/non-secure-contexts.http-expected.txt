@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT When in a non-secure context, getCurrentPosition()'s errorCallback is asynchronously called. Test timed out
-NOTRUN When in a non-secure context, watchPosition()'s errorCallback is asynchronously called.
-NOTRUN When in a non-secure context, the getCurrentPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
-NOTRUN When in a non-secure context, the watchPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
+PASS When in a non-secure context, getCurrentPosition()'s errorCallback is asynchronously called.
+PASS When in a non-secure context, watchPosition()'s errorCallback is asynchronously called.
+PASS When in a non-secure context, the getCurrentPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
+PASS When in a non-secure context, the watchPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
 

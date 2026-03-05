@@ -29,7 +29,7 @@
 #include "Logging.h"
 #include "SuspendedPageProxy.h"
 #include "WebBackForwardCacheEntry.h"
-#include "WebBackForwardListItem.h"
+#include "WebBackForwardListFrameItem.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
@@ -80,6 +80,11 @@ void WebBackForwardCache::setCapacity(WebProcessPool& pool, unsigned capacity)
     pool.sendToAllProcesses(Messages::WebProcess::SetBackForwardCacheCapacity(m_capacity));
 }
 
+unsigned WebBackForwardCache::size() const
+{
+    return m_itemsWithCachedPage.computeSize();
+}
+
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<WebBackForwardCacheEntry>&& backForwardCacheEntry)
 {
     ASSERT(capacity());
@@ -89,7 +94,7 @@ void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<WebBackForw
         m_itemsWithCachedPage.remove(item);
     }
 
-    item.setBackForwardCacheEntry(WTFMove(backForwardCacheEntry));
+    item.setBackForwardCacheEntry(WTF::move(backForwardCacheEntry));
     m_itemsWithCachedPage.add(item);
 
     if (size() > capacity())
@@ -102,12 +107,12 @@ void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<WebBackForw
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<SuspendedPageProxy>&& suspendedPage)
 {
     auto coreProcessIdentifier = suspendedPage->process().coreProcessIdentifier();
-    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), coreProcessIdentifier, WTFMove(suspendedPage)));
+    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), item.mainFrameItem().identifier(), coreProcessIdentifier, WTF::move(suspendedPage)));
 }
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, WebCore::ProcessIdentifier processIdentifier)
 {
-    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), WTFMove(processIdentifier), nullptr));
+    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), item.mainFrameItem().identifier(), WTF::move(processIdentifier), nullptr));
 }
 
 void WebBackForwardCache::removeEntry(WebBackForwardListItem& item)
@@ -131,7 +136,7 @@ Ref<SuspendedPageProxy> WebBackForwardCache::takeSuspendedPage(WebBackForwardLis
 
     ASSERT(m_itemsWithCachedPage.contains(item));
     ASSERT(item.backForwardCacheEntry());
-    Ref suspendedPage = item.protectedBackForwardCacheEntry()->takeSuspendedPage();
+    Ref suspendedPage = protect(item.backForwardCacheEntry())->takeSuspendedPage();
     removeEntry(item);
     return suspendedPage;
 }
@@ -172,7 +177,7 @@ void WebBackForwardCache::removeEntriesMatching(NOESCAPE const Function<bool(Web
     Vector<Ref<WebBackForwardListItem>> itemsWithEntriesToClear;
     for (Ref item : m_itemsWithCachedPage) {
         if (matches(item))
-            itemsWithEntriesToClear.append(WTFMove(item));
+            itemsWithEntriesToClear.append(WTF::move(item));
     }
     for (Ref item : itemsWithEntriesToClear) {
         m_itemsWithCachedPage.remove(item.get());
@@ -183,7 +188,7 @@ void WebBackForwardCache::removeEntriesMatching(NOESCAPE const Function<bool(Web
 void WebBackForwardCache::clear()
 {
     RELEASE_LOG(BackForwardCache, "WebBackForwardCache::clear");
-    auto itemsWithCachedPage = WTFMove(m_itemsWithCachedPage);
+    auto itemsWithCachedPage = WTF::move(m_itemsWithCachedPage);
     for (Ref item : itemsWithCachedPage)
         item->setBackForwardCacheEntry(nullptr);
 }

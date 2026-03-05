@@ -18,7 +18,6 @@
 #include <string>
 #include <tuple>
 #include <utility>
-#include <variant>
 #include <vector>
 
 #include "absl/algorithm/container.h"
@@ -39,6 +38,8 @@
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
+#include "api/video/corruption_detection/frame_instrumentation_generator.h"
 #include "api/video/encoded_image.h"
 #include "api/video/render_resolution.h"
 #include "api/video/video_adaptation_counters.h"
@@ -65,7 +66,6 @@
 #include "call/adaptation/resource_adaptation_processor.h"
 #include "call/adaptation/video_source_restrictions.h"
 #include "call/adaptation/video_stream_adapter.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "media/base/media_channel.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/include/video_codec_initializer.h"
@@ -80,6 +80,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/trace_event.h"
@@ -88,7 +89,6 @@
 #include "video/alignment_adjuster.h"
 #include "video/config/encoder_stream_factory.h"
 #include "video/config/video_encoder_config.h"
-#include "video/corruption_detection/frame_instrumentation_generator.h"
 #include "video/encoder_bitrate_adjuster.h"
 #include "video/frame_cadence_adapter.h"
 #include "video/frame_dumping_encoder.h"
@@ -120,6 +120,8 @@ const size_t kDefaultPayloadSize = 1440;
 const int64_t kParameterUpdateIntervalMs = 1000;
 
 constexpr int kDefaultMinScreenSharebps = 1200000;
+
+constexpr int kMaxFramesInPreparation = 10;
 
 int GetNumSpatialLayers(const VideoCodec& codec) {
   if (codec.codecType == kVideoCodecVP9) {
@@ -601,6 +603,23 @@ std::optional<int> ParseEncoderThreadLimit(const FieldTrialsView& trials) {
 
 }  //  namespace
 
+VideoStreamEncoder::PreparedFramesProcessor::PreparedFramesProcessor(
+    VideoStreamEncoder* parent)
+    : parent_(parent) {}
+
+void VideoStreamEncoder::PreparedFramesProcessor::StopCallbacks() {
+  MutexLock lock(&lock_);
+  parent_ = nullptr;
+}
+
+void VideoStreamEncoder::PreparedFramesProcessor::OnFramePrepared(
+    size_t frame_identifier) {
+  MutexLock lock(&lock_);
+  if (parent_) {
+    parent_->OnFramePrepared(frame_identifier);
+  }
+}
+
 VideoStreamEncoder::EncoderRateSettings::EncoderRateSettings()
     : rate_control(), encoder_target(DataRate::Zero()) {}
 
@@ -628,9 +647,11 @@ class VideoStreamEncoder::DegradationPreferenceManager
  public:
   explicit DegradationPreferenceManager(
       VideoStreamAdapter* video_stream_adapter)
-      : degradation_preference_(DegradationPreference::DISABLED),
+      : degradation_preference_(
+            DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION),
         is_screenshare_(false),
-        effective_degradation_preference_(DegradationPreference::DISABLED),
+        effective_degradation_preference_(
+            DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION),
         video_stream_adapter_(video_stream_adapter) {
     RTC_DCHECK(video_stream_adapter_);
     sequence_checker_.Detach();
@@ -737,7 +758,10 @@ VideoStreamEncoder::VideoStreamEncoder(
           ParseVp9LowTierCoreCountThreshold(env_.field_trials())),
       experimental_encoder_thread_limit_(
           ParseEncoderThreadLimit(env_.field_trials())),
-      encoder_queue_(std::move(encoder_queue)) {
+      speed_experiment_(env_.field_trials()),
+      encoder_queue_(std::move(encoder_queue)),
+      prepared_frames_processor_(
+          make_ref_counted<PreparedFramesProcessor>(this)) {
   TRACE_EVENT0("webrtc", "VideoStreamEncoder::VideoStreamEncoder");
   RTC_DCHECK_RUN_ON(worker_queue_);
   RTC_DCHECK(encoder_stats_observer);
@@ -774,6 +798,10 @@ VideoStreamEncoder::~VideoStreamEncoder() {
   RTC_DCHECK(!video_source_sink_controller_.HasSource())
       << "Must call ::Stop() before destruction.";
 
+  // `StopCallbacks` must be called before the queue is destroyed, because
+  // ongoing notifications of prepared frames may post tasks or run on
+  // `encoder_queue_`.
+  prepared_frames_processor_->StopCallbacks();
   // The queue must be destroyed before its pointer is invalidated to avoid race
   // between destructor and running task that check if function is called on the
   // encoder_queue_.
@@ -988,8 +1016,24 @@ void VideoStreamEncoder::ConfigureEncoder(VideoEncoderConfig config,
       frame_cadence_adapter_->SetZeroHertzModeEnabled(std::nullopt);
     }
 
+    bool video_format_changed =
+        encoder_config_.video_format != config.video_format;
+    if (!video_format_changed && encoder_config_.simulcast_layers.size() !=
+                                     config.simulcast_layers.size()) {
+      video_format_changed = true;
+    }
+    if (!video_format_changed) {
+      for (size_t i = 0; i < encoder_config_.simulcast_layers.size(); i++) {
+        if (!encoder_config_.GetSimulcastVideoFormat(i).IsSameCodec(
+                config.GetSimulcastVideoFormat(i))) {
+          video_format_changed = true;
+          break;
+        }
+      }
+    }
+
     pending_encoder_creation_ =
-        (!encoder_ || encoder_config_.video_format != config.video_format ||
+        (!encoder_ || video_format_changed ||
          max_data_payload_length_ != max_data_payload_length);
     encoder_config_ = std::move(config);
     max_data_payload_length_ = max_data_payload_length;
@@ -1028,8 +1072,8 @@ void VideoStreamEncoder::ReconfigureEncoder() {
     encoder_.reset();
 
     encoder_ = MaybeCreateFrameDumpingEncoderWrapper(
-        settings_.encoder_factory->Create(env_, encoder_config_.video_format),
-        env_.field_trials());
+        env_,
+        settings_.encoder_factory->Create(env_, encoder_config_.video_format));
     if (!encoder_) {
       RTC_LOG(LS_ERROR) << "CreateVideoEncoder failed, failing encoder format: "
                         << encoder_config_.video_format.ToString();
@@ -1318,9 +1362,19 @@ void VideoStreamEncoder::ReconfigureEncoder() {
         send_codec_, codec, was_encode_called_since_last_initialization_);
   }
 
-  if (codec.codecType == VideoCodecType::kVideoCodecVP9 &&
-      number_of_cores_ <= vp9_low_tier_core_threshold_.value_or(0)) {
+  // GetComplexity() will return kComplexityNormal if nothing configured via
+  // field trials.
+  VideoCodecComplexity complexity = speed_experiment_.GetComplexity(
+      codec.codecType, codec.mode == VideoCodecMode::kScreensharing);
+  if (!speed_experiment_.IsDynamicSpeedEnabled() &&
+      codec.codecType == VideoCodecType::kVideoCodecVP9 &&
+      number_of_cores_ <= vp9_low_tier_core_threshold_.value_or(0) &&
+      complexity == VideoCodecComplexity::kComplexityNormal) {
+    // Default "normal" speed with no dynamic speed control, and the "low
+    // complexity vp9 on low tier" flag present => use low complexity.
     codec.SetVideoEncoderComplexity(VideoCodecComplexity::kComplexityLow);
+  } else {
+    codec.SetVideoEncoderComplexity(complexity);
   }
 
   quality_convergence_controller_.Initialize(
@@ -1359,8 +1413,7 @@ void VideoStreamEncoder::ReconfigureEncoder() {
           VideoFrameType::kVideoFrameKey);
       if (settings_.enable_frame_instrumentation_generator) {
         frame_instrumentation_generator_ =
-            std::make_unique<FrameInstrumentationGenerator>(
-                encoder_config_.codec_type);
+            FrameInstrumentationGenerator::Create(encoder_config_.codec_type);
       }
     }
 
@@ -1562,6 +1615,7 @@ void VideoStreamEncoder::OnFrame(Timestamp post_time,
                                  bool queue_overload,
                                  const VideoFrame& video_frame) {
   RTC_DCHECK_RUN_ON(encoder_queue_.get());
+
   VideoFrame incoming_frame = video_frame;
 
   // In some cases, e.g., when the frame from decoder is fed to encoder,
@@ -1618,7 +1672,7 @@ void VideoStreamEncoder::OnFrame(Timestamp post_time,
       cwnd_frame_drop_interval_ &&
       (cwnd_frame_counter_++ % cwnd_frame_drop_interval_.value() == 0);
   if (!queue_overload && !cwnd_frame_drop) {
-    MaybeEncodeVideoFrame(incoming_frame, post_time.us());
+    MaybePrepareVideoFrame(incoming_frame, post_time.us());
   } else {
     if (cwnd_frame_drop) {
       // Frame drop by congestion window pushback. Do not encode this
@@ -1805,6 +1859,62 @@ void VideoStreamEncoder::SetEncoderRates(
   }
 }
 
+void VideoStreamEncoder::MaybePrepareVideoFrame(const VideoFrame& video_frame,
+                                                int64_t time_when_posted_us) {
+  RTC_DCHECK_RUN_ON(encoder_queue_.get());
+  if (pending_mapped_frames_.size() > kMaxFramesInPreparation) {
+    RTC_LOG(LS_ERROR) << "To many frames are being prepared.";
+    ProcessDroppedFrame(video_frame,
+                        VideoStreamEncoderObserver::DropReason::kEncoderQueue);
+    return;
+  }
+
+  std::optional<VideoEncoder::Resolution> mapped_resolution;
+  if (encoder_) {
+    mapped_resolution = encoder_->GetEncoderInfo().mapped_resolution;
+  }
+
+  pending_mapped_frames_.push_back(
+      PreparingFrame{.frame = std::move(video_frame),
+                     .can_send = false,
+                     .frame_id = frame_counter_++,
+                     .time_when_posted_us = time_when_posted_us});
+
+  const PreparingFrame& last_frame = pending_mapped_frames_.back();
+  if (mapped_resolution.has_value()) {
+    if (mapped_resolution->width > video_frame.width() ||
+        mapped_resolution->height > video_frame.height()) {
+      mapped_resolution->width = video_frame.width();
+      mapped_resolution->height = video_frame.height();
+    }
+    last_frame.frame.video_frame_buffer()->PrepareMappedBufferAsync(
+        mapped_resolution->width, mapped_resolution->height,
+        prepared_frames_processor_, last_frame.frame_id);
+  } else {
+    OnFramePrepared(last_frame.frame_id);
+  }
+}
+
+void VideoStreamEncoder::OnFramePrepared(size_t frame_id) {
+  if (!encoder_queue_->IsCurrent()) {
+    encoder_queue_->PostTask([this, frame_id]() { OnFramePrepared(frame_id); });
+    return;
+  }
+
+  for (auto& frame : pending_mapped_frames_) {
+    if (frame.frame_id == frame_id) {
+      frame.can_send = true;
+      break;
+    }
+  }
+  while (!pending_mapped_frames_.empty() &&
+         pending_mapped_frames_.front().can_send) {
+    auto& front = pending_mapped_frames_.front();
+    MaybeEncodeVideoFrame(front.frame, front.time_when_posted_us);
+    pending_mapped_frames_.pop_front();
+  }
+}
+
 void VideoStreamEncoder::MaybeEncodeVideoFrame(const VideoFrame& video_frame,
                                                int64_t time_when_posted_us) {
   RTC_DCHECK_RUN_ON(encoder_queue_.get());
@@ -1832,7 +1942,10 @@ void VideoStreamEncoder::MaybeEncodeVideoFrame(const VideoFrame& video_frame,
                      << ", texture=" << last_frame_info_->is_texture << ".";
     // Force full frame update, since resolution has changed.
     accumulated_update_rect_ =
-        VideoFrame::UpdateRect{0, 0, video_frame.width(), video_frame.height()};
+        VideoFrame::UpdateRect{.offset_x = 0,
+                               .offset_y = 0,
+                               .width = video_frame.width(),
+                               .height = video_frame.height()};
   }
 
   // We have to create the encoder before the frame drop logic,
@@ -2022,8 +2135,10 @@ void VideoStreamEncoder::EncodeVideoFrame(const VideoFrame& video_frame,
           cropped_height);
       update_rect.offset_x -= offset_x;
       update_rect.offset_y -= offset_y;
-      update_rect.Intersect(
-          VideoFrame::UpdateRect{0, 0, cropped_width, cropped_height});
+      update_rect.Intersect(VideoFrame::UpdateRect{.offset_x = 0,
+                                                   .offset_y = 0,
+                                                   .width = cropped_width,
+                                                   .height = cropped_height});
 
     } else {
       // The difference is large, scale it.
@@ -2032,8 +2147,10 @@ void VideoStreamEncoder::EncodeVideoFrame(const VideoFrame& video_frame,
       if (!update_rect.IsEmpty()) {
         // Since we can't reason about pixels after scaling, we invalidate whole
         // picture, if anything changed.
-        update_rect =
-            VideoFrame::UpdateRect{0, 0, cropped_width, cropped_height};
+        update_rect = VideoFrame::UpdateRect{.offset_x = 0,
+                                             .offset_y = 0,
+                                             .width = cropped_width,
+                                             .height = cropped_height};
       }
     }
     if (!cropped_buffer) {
@@ -2050,7 +2167,10 @@ void VideoStreamEncoder::EncodeVideoFrame(const VideoFrame& video_frame,
     // frame here.
     if (!accumulated_update_rect_.IsEmpty()) {
       accumulated_update_rect_ =
-          VideoFrame::UpdateRect{0, 0, out_frame.width(), out_frame.height()};
+          VideoFrame::UpdateRect{.offset_x = 0,
+                                 .offset_y = 0,
+                                 .width = out_frame.width(),
+                                 .height = out_frame.height()};
       accumulated_update_rect_is_valid_ = false;
     }
   }
@@ -2061,7 +2181,10 @@ void VideoStreamEncoder::EncodeVideoFrame(const VideoFrame& video_frame,
              out_frame.has_update_rect()) {
     accumulated_update_rect_.Union(out_frame.update_rect());
     accumulated_update_rect_.Intersect(
-        VideoFrame::UpdateRect{0, 0, out_frame.width(), out_frame.height()});
+        VideoFrame::UpdateRect{.offset_x = 0,
+                               .offset_y = 0,
+                               .width = out_frame.width(),
+                               .height = out_frame.height()});
     out_frame.set_update_rect(accumulated_update_rect_);
     accumulated_update_rect_.MakeEmptyUpdate();
   }
@@ -2226,7 +2349,8 @@ EncodedImageCallback::Result VideoStreamEncoder::OnEncodedImage(
         // webrtc qp scaler (in the no-svc case or if only a single spatial
         // layer is encoded). It has to be explicitly detected and reported to
         // adaptation metrics.
-        if (codec_type == VideoCodecType::kVideoCodecVP9 &&
+        if (!send_codec_.IsMixedCodec() &&
+            codec_type == VideoCodecType::kVideoCodecVP9 &&
             send_codec_.VP9()->automaticResizeOn) {
           unsigned int expected_width = send_codec_.width;
           unsigned int expected_height = send_codec_.height;
@@ -2253,10 +2377,8 @@ EncodedImageCallback::Result VideoStreamEncoder::OnEncodedImage(
 
   std::unique_ptr<CodecSpecificInfo> codec_specific_info_copy;
   if (codec_specific_info && frame_instrumentation_generator_) {
-    std::optional<
-        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
-        frame_instrumentation_data =
-            frame_instrumentation_generator_->OnEncodedImage(image_copy);
+    std::optional<FrameInstrumentationData> frame_instrumentation_data =
+        frame_instrumentation_generator_->OnEncodedImage(image_copy);
     RTC_CHECK(!codec_specific_info->frame_instrumentation_data.has_value())
         << "CodecSpecificInfo must not have frame_instrumentation_data set.";
     if (frame_instrumentation_data.has_value()) {

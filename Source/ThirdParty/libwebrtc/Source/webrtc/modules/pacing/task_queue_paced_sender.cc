@@ -62,11 +62,6 @@ TaskQueuePacedSender::~TaskQueuePacedSender() {
   is_shutdown_ = true;
 }
 
-void TaskQueuePacedSender::SetSendBurstInterval(TimeDelta burst_interval) {
-  RTC_DCHECK_RUN_ON(task_queue_);
-  pacing_controller_.SetSendBurstInterval(burst_interval);
-}
-
 void TaskQueuePacedSender::SetAllowProbeWithoutMediaPacket(bool allow) {
   RTC_DCHECK_RUN_ON(task_queue_);
   pacing_controller_.SetAllowProbeWithoutMediaPacket(allow);
@@ -75,14 +70,20 @@ void TaskQueuePacedSender::SetAllowProbeWithoutMediaPacket(bool allow) {
 void TaskQueuePacedSender::EnsureStarted() {
   RTC_DCHECK_RUN_ON(task_queue_);
   is_started_ = true;
-  MaybeProcessPackets(Timestamp::MinusInfinity());
+  PostMaybeProcessPackets();
 }
 
 void TaskQueuePacedSender::CreateProbeClusters(
     std::vector<ProbeClusterConfig> probe_cluster_configs) {
   RTC_DCHECK_RUN_ON(task_queue_);
   pacing_controller_.CreateProbeClusters(probe_cluster_configs);
-  MaybeScheduleProcessPackets();
+
+  // Probing should be scheduled regardless of if the queue is empty or not in
+  // order to be able to BWE probe before media is sent.
+  task_queue_->PostTask(SafeTask(safety_.flag(), [this]() {
+    RTC_DCHECK_RUN_ON(task_queue_);
+    MaybeProcessPackets(Timestamp::MinusInfinity());
+  }));
 }
 
 void TaskQueuePacedSender::Pause() {
@@ -93,20 +94,19 @@ void TaskQueuePacedSender::Pause() {
 void TaskQueuePacedSender::Resume() {
   RTC_DCHECK_RUN_ON(task_queue_);
   pacing_controller_.Resume();
-  MaybeProcessPackets(Timestamp::MinusInfinity());
+  PostMaybeProcessPackets();
 }
 
 void TaskQueuePacedSender::SetCongested(bool congested) {
   RTC_DCHECK_RUN_ON(task_queue_);
   pacing_controller_.SetCongested(congested);
-  MaybeScheduleProcessPackets();
+  PostMaybeProcessPackets();
 }
 
-void TaskQueuePacedSender::SetPacingRates(DataRate pacing_rate,
-                                          DataRate padding_rate) {
+void TaskQueuePacedSender::SetConfig(const PacerConfig& pacer_config) {
   RTC_DCHECK_RUN_ON(task_queue_);
-  pacing_controller_.SetPacingRates(pacing_rate, padding_rate);
-  MaybeScheduleProcessPackets();
+  pacing_controller_.SetPacerConfig(pacer_config);
+  PostMaybeProcessPackets();
 }
 
 void TaskQueuePacedSender::EnqueuePackets(
@@ -145,26 +145,26 @@ void TaskQueuePacedSender::RemovePacketsForSsrc(uint32_t ssrc) {
 void TaskQueuePacedSender::SetAccountForAudioPackets(bool account_for_audio) {
   RTC_DCHECK_RUN_ON(task_queue_);
   pacing_controller_.SetAccountForAudioPackets(account_for_audio);
-  MaybeProcessPackets(Timestamp::MinusInfinity());
+  PostMaybeProcessPackets();
 }
 
 void TaskQueuePacedSender::SetIncludeOverhead() {
   RTC_DCHECK_RUN_ON(task_queue_);
   include_overhead_ = true;
   pacing_controller_.SetIncludeOverhead();
-  MaybeProcessPackets(Timestamp::MinusInfinity());
+  PostMaybeProcessPackets();
 }
 
 void TaskQueuePacedSender::SetTransportOverhead(DataSize overhead_per_packet) {
   RTC_DCHECK_RUN_ON(task_queue_);
   pacing_controller_.SetTransportOverhead(overhead_per_packet);
-  MaybeProcessPackets(Timestamp::MinusInfinity());
+  PostMaybeProcessPackets();
 }
 
 void TaskQueuePacedSender::SetQueueTimeLimit(TimeDelta limit) {
   RTC_DCHECK_RUN_ON(task_queue_);
   pacing_controller_.SetQueueTimeLimit(limit);
-  MaybeProcessPackets(Timestamp::MinusInfinity());
+  PostMaybeProcessPackets();
 }
 
 TimeDelta TaskQueuePacedSender::ExpectedQueueTime() const {
@@ -199,10 +199,14 @@ void TaskQueuePacedSender::OnStatsUpdated(const Stats& stats) {
   current_stats_ = stats;
 }
 
-// RTC_RUN_ON(task_queue_)
-void TaskQueuePacedSender::MaybeScheduleProcessPackets() {
-  if (!processing_packets_)
+void TaskQueuePacedSender::PostMaybeProcessPackets() {
+  if (pacing_controller_.QueueSizePackets() == 0) {
+    return;
+  }
+  task_queue_->PostTask(SafeTask(safety_.flag(), [this]() {
+    RTC_DCHECK_RUN_ON(task_queue_);
     MaybeProcessPackets(Timestamp::MinusInfinity());
+  }));
 }
 
 void TaskQueuePacedSender::MaybeProcessPackets(

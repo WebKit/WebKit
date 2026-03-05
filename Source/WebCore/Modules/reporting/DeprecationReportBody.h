@@ -36,15 +36,15 @@ namespace WebCore {
 class FormData;
 
 class DeprecationReportBody final : public ReportBody {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DeprecationReportBody);
+    WTF_MAKE_TZONE_ALLOCATED(DeprecationReportBody);
 public:
     WEBCORE_EXPORT static Ref<DeprecationReportBody> create(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
 
     const String& type() const final;
-    const String& id() const { return m_id; };
+    const String& id() const LIFETIME_BOUND { return m_id; };
     WallTime anticipatedRemoval() const { return m_anticipatedRemoval; }
-    const String& message() const { return m_message; }
-    const String& sourceFile() const { return m_sourceFile; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
+    const String& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
     std::optional<unsigned> lineNumber() const { return m_lineNumber; }
     std::optional<unsigned> columnNumber() const { return m_columnNumber; }
 

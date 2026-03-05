@@ -342,7 +342,7 @@ static ASCIILiteral viewportErrorMessageTemplate(ViewportErrorCode errorCode)
     return "Unknown viewport error."_s;
 }
 
-static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCode)
+static MessageLevel NODELETE viewportErrorMessageLevel(ViewportErrorCode errorCode)
 {
     switch (errorCode) {
     case ViewportErrorCode::TruncatedViewportArgumentValue:

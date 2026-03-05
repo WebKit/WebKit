@@ -28,8 +28,8 @@
 
 #if ENABLE(GEOLOCATION)
 
-#include <WebCore/PositionOptions.h>
-#include <WebCore/Timer.h>
+#include "PositionOptions.h"
+#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
@@ -45,11 +45,11 @@ class GeoNotifier : public RefCountedAndCanMakeWeakPtr<GeoNotifier> {
 public:
     static Ref<GeoNotifier> create(Geolocation& geolocation, Ref<PositionCallback>&& positionCallback, RefPtr<PositionErrorCallback>&& positionErrorCallback, PositionOptions&& options)
     {
-        return adoptRef(*new GeoNotifier(geolocation, WTFMove(positionCallback), WTFMove(positionErrorCallback), WTFMove(options)));
+        return adoptRef(*new GeoNotifier(geolocation, WTF::move(positionCallback), WTF::move(positionErrorCallback), WTF::move(options)));
     }
 
-    const PositionOptions& options() const { return m_options; }
-    void setFatalError(RefPtr<GeolocationPositionError>&&);
+    const PositionOptions& options() const LIFETIME_BOUND { return m_options; }
+    void setFatalError(Ref<GeolocationPositionError>&&);
 
     bool useCachedPosition() const { return m_useCachedPosition; }
     void setUseCachedPosition();
@@ -60,7 +60,7 @@ public:
     void startTimerIfNeeded();
     void stopTimer();
     void timerFired();
-    bool hasZeroTimeout() const;
+    bool NODELETE hasZeroTimeout() const;
 
 private:
     GeoNotifier(Geolocation&, Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
@@ -70,7 +70,7 @@ private:
     const RefPtr<PositionErrorCallback> m_errorCallback;
     PositionOptions m_options;
     Timer m_timer;
-    RefPtr<GeolocationPositionError> m_fatalError;
+    const RefPtr<GeolocationPositionError> m_fatalError;
     bool m_useCachedPosition;
 };
 

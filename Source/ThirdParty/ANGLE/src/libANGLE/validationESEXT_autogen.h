@@ -1994,6 +1994,8 @@ bool ValidateFramebufferFetchBarrierEXT(const Context *context, angle::EntryPoin
 
 // GL_EXT_shader_texture_lod
 
+// GL_EXT_shader_texture_samples
+
 // GL_EXT_shadow_samplers
 
 // GL_EXT_tessellation_shader
@@ -2902,7 +2904,8 @@ bool ValidateGenVertexArraysOES(const Context *context,
                                 angle::EntryPoint entryPoint,
                                 GLsizei n,
                                 const VertexArrayID *arraysPacked);
-bool ValidateIsVertexArrayOES(const Context *context,
+bool ValidateIsVertexArrayOES(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               VertexArrayID arrayPacked);
 
@@ -2921,6 +2924,17 @@ bool ValidateFramebufferTextureMultiviewOVR(const Context *context,
                                             GLsizei numViews);
 
 // GL_OVR_multiview2
+
+// GL_OVR_multiview_multisampled_render_to_texture
+bool ValidateFramebufferTextureMultisampleMultiviewOVR(const Context *context,
+                                                       angle::EntryPoint entryPoint,
+                                                       GLenum target,
+                                                       GLenum attachment,
+                                                       TextureID texturePacked,
+                                                       GLint level,
+                                                       GLsizei samples,
+                                                       GLint baseViewIndex,
+                                                       GLsizei numViews);
 
 // GL_QCOM_framebuffer_foveated
 bool ValidateFramebufferFoveationConfigQCOM(const Context *context,

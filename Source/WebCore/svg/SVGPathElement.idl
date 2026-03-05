@@ -98,7 +98,8 @@
     SVGPathSegCurvetoQuadraticSmoothRel createSVGPathSegCurvetoQuadraticSmoothRel(optional unrestricted float x = NaN,
                                                                                   optional unrestricted float y = NaN);
 
-    // FIXME: these are removed from SVG2
+    // Non-standard.
+    // FIXME: These have been removed from SVG2.
     readonly attribute SVGPathSegList pathSegList;
     readonly attribute SVGPathSegList animatedPathSegList;
 };

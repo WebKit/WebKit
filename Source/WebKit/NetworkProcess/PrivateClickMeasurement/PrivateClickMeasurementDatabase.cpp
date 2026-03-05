@@ -311,12 +311,12 @@ std::pair<std::optional<WebCore::PCM::AttributionSecondsUntilSendData>, DebugInf
     if (previouslyUnattributed) {
         // Always convert the pending attribution and remove it from the unattributed map.
         removeUnattributed(*previouslyUnattributed);
-        secondsUntilSend = previouslyUnattributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData), isRunningTest);
+        secondsUntilSend = previouslyUnattributed.value().attributeAndGetEarliestTimeToSend(WTF::move(attributionTriggerData), isRunningTest);
 
         // We should always have a valid secondsUntilSend value for a previouslyUnattributed value because there can be no previous attribution with a higher priority.
         if (!secondsUntilSend.hasValidSecondsUntilSendValues()) {
             ASSERT_NOT_REACHED();
-            return { std::nullopt, WTFMove(debugInfo) };
+            return { std::nullopt, WTF::move(debugInfo) };
         }
 
         RELEASE_LOG_INFO(PrivateClickMeasurement, "Converted a stored ad click with attribution trigger data: %u and priority: %u.", data, priority);
@@ -324,7 +324,7 @@ std::pair<std::optional<WebCore::PCM::AttributionSecondsUntilSendData>, DebugInf
 
         // If there is no previous attribution, or the new attribution has higher priority, insert/update the database.
         if (!previouslyAttributed || previouslyUnattributed.value().hasHigherPriorityThan(*previouslyAttributed)) {
-            insertPrivateClickMeasurement(WTFMove(*previouslyUnattributed), PrivateClickMeasurementAttributionType::Attributed);
+            insertPrivateClickMeasurement(WTF::move(*previouslyUnattributed), PrivateClickMeasurementAttributionType::Attributed);
 
             RELEASE_LOG_INFO(PrivateClickMeasurement, "Replaced a previously converted ad click with a new one with attribution data: %u and priority: %u because it had higher priority.", data, priority);
             debugInfo.messages.append({ MessageLevel::Info, makeString("[Private Click Measurement] Replaced a previously converted ad click with a new one with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "' because it had higher priority."_s) });
@@ -333,11 +333,11 @@ std::pair<std::optional<WebCore::PCM::AttributionSecondsUntilSendData>, DebugInf
         // If we have no new attribution, re-attribute the old one to respect the new priority, but only if this report has
         // not been sent to the source or destination site yet.
         if (!previouslyAttributed.value().hasPreviouslyBeenReported()) {
-            auto secondsUntilSend = previouslyAttributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData), isRunningTest);
+            auto secondsUntilSend = previouslyAttributed.value().attributeAndGetEarliestTimeToSend(WTF::move(attributionTriggerData), isRunningTest);
             if (!secondsUntilSend.hasValidSecondsUntilSendValues())
-                return { std::nullopt, WTFMove(debugInfo) };
+                return { std::nullopt, WTF::move(debugInfo) };
 
-            insertPrivateClickMeasurement(WTFMove(*previouslyAttributed), PrivateClickMeasurementAttributionType::Attributed);
+            insertPrivateClickMeasurement(WTF::move(*previouslyAttributed), PrivateClickMeasurementAttributionType::Attributed);
 
             RELEASE_LOG_INFO(PrivateClickMeasurement, "Re-converted an ad click with a new one with attribution trigger data: %u and priority: %u because it had higher priority.", data, priority);
             debugInfo.messages.append({ MessageLevel::Info, makeString("[Private Click Measurement] Re-converted an ad click with a new one with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "'' because it had higher priority."_s) });
@@ -345,9 +345,9 @@ std::pair<std::optional<WebCore::PCM::AttributionSecondsUntilSendData>, DebugInf
     }
 
     if (!secondsUntilSend.hasValidSecondsUntilSendValues())
-        return { std::nullopt, WTFMove(debugInfo) };
+        return { std::nullopt, WTF::move(debugInfo) };
 
-    return { secondsUntilSend, WTFMove(debugInfo) };
+    return { secondsUntilSend, WTF::move(debugInfo) };
 }
 
 void Database::removeUnattributed(WebCore::PrivateClickMeasurement& attribution)

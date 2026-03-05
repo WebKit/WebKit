@@ -44,7 +44,6 @@ if (skia_enable_tools) {
       "../../modules/svg/src/SkSVGUse.cpp",
       "../../modules/svg/src/SkSVGValue.cpp",
       "../../tools/viewer/SKPSlide.cpp",
-      "../../tools/viewer/SampleSlide.cpp",
       "../../tools/viewer/SvgSlide.cpp",
     ]
   }
@@ -358,7 +357,6 @@ skia_wasm_lib("canvaskit") {
   defines = [
     "SK_FORCE_8_BYTE_ALIGNMENT",
     "EMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0",
-    "SK_DISABLE_LEGACY_PARAGRAPH_UNICODE=1",
   ]
   if (is_debug) {
     defines += [ "SK_DEBUG" ]
@@ -387,10 +385,7 @@ skia_wasm_lib("canvaskit") {
     defines += [ "CK_SERIALIZE_SKP" ]
   }
   if (skia_enable_ganesh) {
-    defines += [
-      "SK_GANESH",
-      "SK_DISABLE_LEGACY_SHADERCONTEXT",
-    ]
+    defines += [ "SK_GANESH" ]
     if (skia_canvaskit_enable_webgl) {
       defines += [
         "SK_GL",

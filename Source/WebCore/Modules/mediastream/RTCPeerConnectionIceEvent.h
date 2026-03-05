@@ -26,32 +26,32 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <WebCore/Event.h>
+#include "Event.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 class RTCIceCandidate;
 
 class RTCPeerConnectionIceEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCPeerConnectionIceEvent);
+    WTF_MAKE_TZONE_ALLOCATED(RTCPeerConnectionIceEvent);
 public:
     virtual ~RTCPeerConnectionIceEvent();
 
     struct Init : EventInit {
-        RefPtr<RTCIceCandidate> candidate;
-        String url;
+        std::optional<RefPtr<RTCIceCandidate>> candidate;
+        std::optional<String> url;
     };
 
     static Ref<RTCPeerConnectionIceEvent> create(const AtomString& type, Init&&);
     static Ref<RTCPeerConnectionIceEvent> create(CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
 
-    RTCIceCandidate* candidate() const;
-    const String& url() const { return m_url; }
+    RTCIceCandidate* NODELETE candidate() const;
+    const String& url() const LIFETIME_BOUND { return m_url; }
 
 private:
     RTCPeerConnectionIceEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
 
-    RefPtr<RTCIceCandidate> m_candidate;
+    const RefPtr<RTCIceCandidate> m_candidate;
     String m_url;
 };
 

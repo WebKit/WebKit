@@ -79,7 +79,7 @@ void NfcService::didDetectMultipleTags() const
 #if HAVE(NEAR_FIELD)
 void NfcService::setConnection(Ref<NfcConnection>&& connection)
 {
-    m_connection = WTFMove(connection);
+    m_connection = WTF::move(connection);
 }
 #endif
 
@@ -111,7 +111,7 @@ void NfcService::platformStartDiscovery()
             return;
         }
 
-        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), session = retainPtr(session)] () mutable {
+        RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis), session = retainPtr(session)] () mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 [session endSession];
@@ -119,7 +119,7 @@ void NfcService::platformStartDiscovery()
             }
 
             // NfcConnection will take care of polling tags and connecting to them.
-            protectedThis->m_connection = NfcConnection::create(WTFMove(session), *protectedThis);
+            protectedThis->m_connection = NfcConnection::create(WTF::move(session), *protectedThis);
         });
     });
     [[getNFHardwareManagerClassSingleton() sharedHardwareManager] startReaderSession:callback.get()];

@@ -80,8 +80,8 @@ public:
 
     void rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double /* playbackRate */, double /* defaultPlaybackRate */) override
     {
-        if (auto *controller = m_parent.getAutoreleased())
-            controller.playing = playbackState.contains(WebCore::PlaybackSessionModel::PlaybackState::Playing);
+        if (RetainPtr controller = m_parent.getAutoreleased())
+            controller.get().playing = playbackState.contains(WebCore::PlaybackSessionModel::PlaybackState::Playing);
     }
 
     void isPictureInPictureSupportedChanged(bool) override
@@ -90,8 +90,8 @@ public:
 
     void pictureInPictureActiveChanged(bool active) override
     {
-        if (auto *controller = m_parent.getAutoreleased())
-            controller.pictureInPictureActive = active;
+        if (RetainPtr controller = m_parent.getAutoreleased())
+            controller.get().pictureInPictureActive = active;
     }
 
     void setInterface(WebCore::PlaybackSessionInterfaceIOS* interface)
@@ -99,14 +99,17 @@ public:
         if (m_interface == interface)
             return;
 
-        if (m_interface && m_interface->playbackSessionModel())
-            m_interface->playbackSessionModel()->removeClient(*this);
+        if (RefPtr currentInterface = m_interface; currentInterface) {
+            if (CheckedPtr playbackSessionModel = currentInterface->playbackSessionModel())
+                playbackSessionModel->removeClient(*this);
+        }
         m_interface = interface;
-        if (m_interface && m_interface->playbackSessionModel())
-            m_interface->playbackSessionModel()->addClient(*this);
+        if (RefPtr currentInterface = m_interface; currentInterface) {
+            if (CheckedPtr playbackSessionModel = currentInterface->playbackSessionModel())
+                playbackSessionModel->addClient(*this);
+        }
     }
 
-private:
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
@@ -114,6 +117,7 @@ private:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
+private:
     WeakObjCPtr<WKFullScreenViewController> m_parent;
     RefPtr<WebCore::PlaybackSessionInterfaceIOS> m_interface;
 };
@@ -166,7 +170,7 @@ private:
     RetainPtr<NSLayoutConstraint> _topConstraint;
     String _location;
     WebKit::FullscreenTouchSecheuristic _secheuristic;
-    WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
+    std::unique_ptr<WKFullScreenViewControllerPlaybackSessionModelClient> _playbackClient;
     CGFloat _nonZeroStatusBarHeight;
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
     BOOL _isShowingMenu;
@@ -181,12 +185,16 @@ private:
     RetainPtr<UIViewController> _environmentPickerButtonViewController;
     RetainPtr<UIStackView> _centeredStackView;
     RetainPtr<UIButton> _enterVideoFullscreenButton;
+    RetainPtr<NSLayoutConstraint> _centeredStackViewCenterXConstraint;
+    RetainPtr<NSLayoutConstraint> _centeredStackViewTrailingConstraint;
+    BOOL _isImmersiveVideo;
     enum ButtonState {
         EnvironmentPicker = 1 << 0,
         FullscreenVideo = 1 << 1
     };
     OptionSet<ButtonState> _buttonState;
     BOOL _viewDidAppear;
+    BOOL _isUsingCompactVideoButtonLayout;
 #endif
 }
 
@@ -214,10 +222,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didEndInteractionWithSystemChrome:) name:_MRUIWindowSceneDidEndRepositioningNotification object:windowScene];
 #endif
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
+#endif
     _secheuristic.setParameters(WebKit::FullscreenTouchSecheuristicParameters::iosParameters());
     self._webView = webView;
 
-    _playbackClient.setParent(self);
+    _playbackClient = makeUniqueWithoutFastMallocCheck<WKFullScreenViewControllerPlaybackSessionModelClient>();
+    protect(_playbackClient.get())->setParent(self);
     _valid = YES;
     _isShowingMenu = NO;
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
@@ -228,6 +240,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     _viewDidAppear = NO;
+    _isUsingCompactVideoButtonLayout = NO;
 #endif
 
     return self;
@@ -251,8 +264,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    _playbackClient.setParent(nullptr);
-    _playbackClient.setInterface(nullptr);
+    CheckedRef playbackClient = *_playbackClient;
+    playbackClient->setParent(nullptr);
+    playbackClient->setInterface(nullptr);
     [self.delegate fullScreenViewControllerDidInvalidate:self];
 }
 
@@ -264,7 +278,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id<WKFullScreenViewControllerDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<WKFullScreenViewControllerDelegate>)delegate
@@ -404,13 +418,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(_valid);
     RefPtr playbackSessionInterface = [self _playbackSessionInterface];
 
-    _playbackClient.setInterface(playbackSessionInterface.get());
+    protect(_playbackClient.get())->setInterface(playbackSessionInterface.get());
 
-    WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
+    CheckedPtr playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
     bool isPiPEnabled = false;
-    if (auto page = [self._webView _page])
-        isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
+    if (RefPtr page = [self._webView _page].get())
+        isPiPEnabled = protect(page->preferences())->pictureInPictureAPIEnabled() && protect(page->preferences())->allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     [_cancelButton setHidden:_shouldHideCustomControls];
@@ -452,12 +466,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!videoPresentationManager)
         return nullptr;
 
-    if (page->preferences().videoFullsceenPrefersMostVisibleHeuristic())
+    if (protect(page->preferences())->videoFullsceenPrefersMostVisibleHeuristic())
         return videoPresentationManager->bestVideoForElementFullscreen();
     return videoPresentationManager->controlsManagerInterface();
 }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
+- (void)_contentSizeCategoryDidChange:(NSNotification *)notification
+{
+    if (_buttonState.contains(FullscreenVideo) && [_enterVideoFullscreenButton superview])
+        [self configureEnvironmentPickerOrFullscreenVideoButtonView];
+}
+
 - (void)_setTopButtonLabel:(const String&)label
 {
     UIButtonConfiguration *fullscreenButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
@@ -465,9 +485,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     fullscreenButtonConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(12, 18, 12, 22);
     fullscreenButtonConfiguration.titleLineBreakMode = NSLineBreakByClipping;
 
-    RetainPtr imageConfiguration = [[UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithWeight:UIImageSymbolWeightMedium]];
+    RetainPtr dynamicImageConfiguration = [[UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithWeight:UIImageSymbolWeightMedium]];
+    RetainPtr fixedImageConfiguration = [[UIImageSymbolConfiguration configurationWithPointSize:17 weight:UIImageSymbolWeightMedium] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithWeight:UIImageSymbolWeightMedium]];
+    NSString *symbolName = _isImmersiveVideo ? @"pano" : @"cube";
+    fullscreenButtonConfiguration.image = [[UIImage systemImageNamed:symbolName withConfiguration:dynamicImageConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
-    fullscreenButtonConfiguration.image = [[UIImage systemImageNamed:@"cube" withConfiguration:imageConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    static constexpr CGFloat kMinimumSpacing = 24;
 
     RetainPtr descriptor = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleBody];
     descriptor = [descriptor fontDescriptorByAddingAttributes:@{
@@ -478,7 +501,49 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }]);
     fullscreenButtonConfiguration.attributedTitle = buttonTitle.get();
     [_enterVideoFullscreenButton setConfiguration:fullscreenButtonConfiguration];
+    [_enterVideoFullscreenButton invalidateIntrinsicContentSize];
+    CGSize fullButtonSize = [_enterVideoFullscreenButton intrinsicContentSize];
+
+    CGFloat availableWidth = self.view.bounds.size.width;
+    CGFloat centerX = availableWidth / 2;
+    CGFloat fullButtonLeadingEdge = centerX - (fullButtonSize.width / 2);
+
+    CGRect stackViewFrame = [_stackView convertRect:_stackView.get().bounds toView:self.view];
+    CGFloat leftStackTrailingEdge = CGRectGetMaxX(stackViewFrame);
+
+    CGFloat actualSpacing = fullButtonLeadingEdge - leftStackTrailingEdge;
+    BOOL shouldUseCompactLayout = actualSpacing < kMinimumSpacing;
+
+    if (shouldUseCompactLayout) {
+        fullscreenButtonConfiguration.image = [[UIImage systemImageNamed:symbolName withConfiguration:fixedImageConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        fullscreenButtonConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(12, 12, 12, 12);
+        fullscreenButtonConfiguration.attributedTitle = nil;
+
+        [_enterVideoFullscreenButton setConfiguration:fullscreenButtonConfiguration];
+        [_enterVideoFullscreenButton invalidateIntrinsicContentSize];
+    }
+
     [_enterVideoFullscreenButton sizeToFit];
+
+    _isUsingCompactVideoButtonLayout = shouldUseCompactLayout;
+    [self _updateVideoButtonLayout];
+}
+
+- (void)_updateVideoButtonLayout
+{
+    if (!self.view)
+        return;
+
+    if (!_centeredStackView)
+        return;
+
+    if (_isUsingCompactVideoButtonLayout) {
+        [_centeredStackViewCenterXConstraint setActive:NO];
+        [_centeredStackViewTrailingConstraint setActive:YES];
+    } else {
+        [_centeredStackViewTrailingConstraint setActive:NO];
+        [_centeredStackViewCenterXConstraint setActive:YES];
+    }
 }
 
 - (void)configureEnvironmentPickerOrFullscreenVideoButtonView
@@ -506,15 +571,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self.delegate fullScreenViewController:self bestVideoPresentationInterfaceDidChange:videoPresentationInterface.get()];
 
     if (RetainPtr mediaPlayer = playbackSessionInterface->linearMediaPlayer(); [mediaPlayer spatialVideoMetadata] || [mediaPlayer isImmersiveVideo]) {
-        [self _setTopButtonLabel:[mediaPlayer isImmersiveVideo] ? WebCore::fullscreenControllerViewImmersive() : WebCore::fullscreenControllerViewSpatial()];
+        _isImmersiveVideo = [mediaPlayer isImmersiveVideo];
+        [self _setTopButtonLabel:_isImmersiveVideo ? WebCore::fullscreenControllerViewImmersive() : WebCore::fullscreenControllerViewSpatial()];
         if (!_buttonState.contains(FullscreenVideo)) {
             [_centeredStackView addArrangedSubview:_enterVideoFullscreenButton.get()];
             _buttonState.add(FullscreenVideo);
         }
         [self _removeEnvironmentPickerButtonView];
         return;
-    } else
-        [self _removeEnvironmentFullscreenVideoButtonView];
+    }
+    [self _removeEnvironmentFullscreenVideoButtonView];
 
     WKSPlayableViewControllerHost *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.environmentPickerButtonViewController;
@@ -745,7 +811,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIImage *doneImage;
 
     // FIXME: Rename `alternateFullScreenControlDesignEnabled` to something that explains it is for visionOS.
-    auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
+    auto alternateFullScreenControlDesignEnabled = protect(protect(*self._webView._page)->preferences())->alternateFullScreenControlDesignEnabled();
     
     if (alternateFullScreenControlDesignEnabled) {
         buttonSize = CGSizeMake(44.0, 44.0);
@@ -817,7 +883,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
 #endif
-        _stackView = WTFMove(stackView);
+        _stackView = WTF::move(stackView);
     }
 
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -840,7 +906,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto banner = adoptNS([[WKFullscreenStackView alloc] init]);
     [banner addArrangedSubview:_bannerLabel.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
-    _banner = WTFMove(banner);
+    _banner = WTF::move(banner);
 
     _bannerTapToDismissRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_bannerDismissalRecognized:)]);
     [_bannerTapToDismissRecognizer setDelegate:self];
@@ -863,6 +929,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     else
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToAnchor:topAnchor];
     _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    _centeredStackViewCenterXConstraint = [[_centeredStackView centerXAnchor] constraintEqualToAnchor:[_animatingView centerXAnchor]];
+    _centeredStackViewTrailingConstraint = [[_centeredStackView trailingAnchor] constraintEqualToAnchor:margins.trailingAnchor];
+#endif
     [NSLayoutConstraint activateConstraints:@[
         _topConstraint.get(),
         stackViewToTopGuideConstraint,
@@ -874,7 +944,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(LINEAR_MEDIA_PLAYER)
         // Align stack view's top anchor to the other stack view and to the middle of its superview.
         [[_centeredStackView topAnchor] constraintEqualToAnchor:[_stackView topAnchor]],
-        [[_centeredStackView centerXAnchor] constraintEqualToAnchor:[_animatingView centerXAnchor]],
 #endif
     ]];
 
@@ -905,7 +974,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self._webView.frame = self.view.bounds;
     [_animatingView insertSubview:self._webView atIndex:0];
 
-    if (auto* manager = self._manager)
+    if (RefPtr<WebKit::WebFullScreenManagerProxy> manager = self._manager)
         manager->setFullscreenAutoHideDuration(Seconds(showHideAnimationDuration));
 
     [super viewWillAppear:animated];
@@ -999,7 +1068,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     if (auto page = [self._webView _page])
-        return page->fullScreenManager();
+        return protect(*page)->fullScreenManager();
     return nullptr;
 }
 
@@ -1018,11 +1087,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (RefPtr<WebCore::PlatformPlaybackSessionInterface>)_playbackSessionInterface
 {
-    auto page = [self._webView _page];
+    RefPtr page = [self._webView _page].get();
     if (!page)
         return nullptr;
 
-    WebKit::PlaybackSessionManagerProxy* playbackSessionManager = page->playbackSessionManager();
+    RefPtr playbackSessionManager = page->playbackSessionManager();
     if (!playbackSessionManager)
         return nullptr;
 
@@ -1035,7 +1104,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!page)
         return;
 
-    if (page->preferences().fullScreenEnabled())
+    if (protect(page->preferences())->fullScreenEnabled())
         return;
 
     // When only VideoFullscreenRequiresElementFullscreen is enabled,
@@ -1046,7 +1115,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!interface)
         return;
 
-    auto model = interface->playbackSessionModel();
+    CheckedPtr model = interface->playbackSessionModel();
     if (!model)
         return;
 
@@ -1067,7 +1136,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!playbackSessionInterface)
         return;
 
-    if (auto* playbackSessionModel = playbackSessionInterface->playbackSessionModel())
+    if (CheckedPtr playbackSessionModel = playbackSessionInterface->playbackSessionModel())
         playbackSessionModel->togglePictureInPicture();
 }
 
@@ -1118,7 +1187,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_updateWebViewFullscreenInsets
 {
     ASSERT(_valid);
-    if (auto* manager = self._manager)
+    if (RefPtr<WebKit::WebFullScreenManagerProxy> manager = self._manager)
         manager->setFullscreenInsets(self._effectiveFullscreenInsets);
 }
 
@@ -1127,7 +1196,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(_valid);
 
     RefPtr page = self._webView._page.get();
-    if (page && !page->preferences().fullScreenEnabled()) {
+    if (page && !protect(page->preferences())->fullScreenEnabled()) {
         ASSERT(page->preferences().videoFullscreenRequiresElementFullscreen());
         _secheuristic.reset();
         return;
@@ -1142,7 +1211,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         page->suspendActiveDOMObjectsAndAnimations();
     }
 
-    UIAlertAction* exitAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (Element Full Screen)", "Full Screen Deceptive Website Exit Action").createNSString().get() style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+    RetainPtr exitAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (Element Full Screen)", "Full Screen Deceptive Website Exit Action").createNSString().get() style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
         [self _cancelAction:action];
         if (RefPtr page = self._webView._page.get()) {
             page->resumeActiveDOMObjectsAndAnimations();
@@ -1150,7 +1219,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }];
 
-    UIAlertAction* stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Full Screen)", "Full Screen Deceptive Website Stay Action").createNSString().get() style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    RetainPtr stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Full Screen)", "Full Screen Deceptive Website Stay Action").createNSString().get() style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         if (RefPtr page = self._webView._page.get()) {
             page->resumeActiveDOMObjectsAndAnimations();
             page->resumeAllMediaPlayback([] { });
@@ -1158,8 +1227,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _secheuristic.reset();
     }];
 
-    [alert addAction:exitAction];
-    [alert addAction:stayAction];
+    [alert addAction:exitAction.get()];
+    [alert addAction:stayAction.get()];
     [self presentViewController:alert.get() animated:YES completion:nil];
 }
 

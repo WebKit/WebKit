@@ -31,6 +31,7 @@
 #import "WebUIDelegate.h"
 #import "WebView.h"
 #import <JavaScriptCore/JSObjectRef.h>
+#import <wtf/RetainPtr.h>
 
 static void jsPDFDocInitialize(JSContextRef ctx, JSObjectRef object)
 {
@@ -49,10 +50,10 @@ static JSValueRef jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSObject
     if (!JSValueIsObjectOfClass(ctx, thisObject, jsPDFDocClass()))
         return JSValueMakeUndefined(ctx);
 
-    WebDataSource *dataSource = (__bridge WebDataSource *)JSObjectGetPrivate(thisObject);
+    RetainPtr dataSource = (__bridge WebDataSource *)JSObjectGetPrivate(thisObject);
 
-    WebView *webView = [[dataSource webFrame] webView];
-    CallUIDelegate(webView, @selector(webView:printFrameView:), [[dataSource webFrame] frameView]);
+    WebView *webView = [[dataSource.get() webFrame] webView];
+    CallUIDelegate(webView, @selector(webView:printFrameView:), [[dataSource.get() webFrame] frameView]);
 
     return JSValueMakeUndefined(ctx);
 }

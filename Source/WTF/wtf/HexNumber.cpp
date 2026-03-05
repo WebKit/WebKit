@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "HexNumber.h"
+#include <wtf/HexNumber.h>
 
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
@@ -31,7 +31,7 @@ namespace WTF {
 
 namespace Internal {
 
-static const std::array<Latin1Character, 16>& hexDigitsForMode(HexConversionMode mode)
+static const std::array<Latin1Character, 16>& NODELETE hexDigitsForMode(HexConversionMode mode)
 {
     static constexpr std::array<Latin1Character, 16> lowercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
     static constexpr std::array<Latin1Character, 16> uppercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };

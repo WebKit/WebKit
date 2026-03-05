@@ -35,22 +35,23 @@ namespace WebCore::Style {
 struct PseudoElementIdentifier {
     PseudoElementType type;
 
-    // highlight name for ::highlight or view transition name for view transition pseudo elements.
-    AtomString nameArgument { nullAtom() };
+    // Highlight name for ::highlight, view transition name for view transition pseudo-elements,
+    // or user agent part name for UserAgentPartFallback (e.g., "file-selector-button", "picker(select)").
+    AtomString nameOrPart { nullAtom() };
 
     friend bool operator==(const PseudoElementIdentifier& a, const PseudoElementIdentifier& b) = default;
 };
 
 inline void add(Hasher& hasher, const PseudoElementIdentifier& pseudoElementIdentifier)
 {
-    add(hasher, pseudoElementIdentifier.type, pseudoElementIdentifier.nameArgument);
+    add(hasher, pseudoElementIdentifier.type, pseudoElementIdentifier.nameOrPart);
 }
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const PseudoElementIdentifier& pseudoElementIdentifier)
 {
     ts << "::"_s << pseudoElementIdentifier.type;
-    if (!pseudoElementIdentifier.nameArgument.isNull())
-        ts << '(' << pseudoElementIdentifier.nameArgument << ')';
+    if (!pseudoElementIdentifier.nameOrPart.isNull())
+        ts << '(' << pseudoElementIdentifier.nameOrPart << ')';
     return ts;
 }
 
@@ -81,8 +82,8 @@ struct HashTraits<WebCore::Style::PseudoElementIdentifier> : GenericHashTraits<W
     static constexpr bool emptyValueIsZero = false;
     static EmptyValueType emptyValue() { return WebCore::Style::PseudoElementIdentifier { { }, emptyAtom() }; }
 
-    static void constructDeletedValue(WebCore::Style::PseudoElementIdentifier& identifer) { new (NotNull, &identifer.nameArgument) AtomString { HashTableDeletedValue }; }
-    static bool isDeletedValue(const WebCore::Style::PseudoElementIdentifier& identifer) { return identifer.nameArgument.isHashTableDeletedValue(); }
+    static void constructDeletedValue(WebCore::Style::PseudoElementIdentifier& identifer) { new (NotNull, &identifer.nameOrPart) AtomString { HashTableDeletedValue }; }
+    static bool isDeletedValue(const WebCore::Style::PseudoElementIdentifier& identifer) { return identifer.nameOrPart.isHashTableDeletedValue(); }
 };
 
 template<>

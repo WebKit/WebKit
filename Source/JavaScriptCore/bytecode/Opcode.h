@@ -125,7 +125,6 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpIteratorNext) \
     macro(OpCallVarargs) \
     macro(OpTailCallVarargs) \
-    macro(OpTailCallForwardArguments) \
     macro(OpConstructVarargs) \
     macro(OpSuperConstructVarargs) \
     macro(OpCallIgnoreResult) \
@@ -256,7 +255,6 @@ inline bool isTerminal(OpcodeID opcodeID)
 {
     switch (opcodeID) {
     case op_ret:
-    case op_end:
     case op_unreachable:
         return true;
     default:

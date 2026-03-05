@@ -3,7 +3,7 @@ done
 
 Harness Error (FAIL), message = Unhandled rejection: assert_unreached: missing pointermove event Reached unreachable code
 
-FAIL Test pointer events in the main document assert_equals: Buttons attribute on pointerdown expected 2 but got 4
+PASS Test pointer events in the main document
 FAIL Test pointer events in an iframe assert_unreached: missing pointerover event Reached unreachable code
 PASS mouse pointerover event is a PointerEvent event
 PASS mouse pointerover.isTrusted value is true
@@ -26,6 +26,13 @@ PASS mouse pointermove.bubbles value is valid
 PASS mouse pointermove.cancelable value is valid
 PASS mouse pointermove.pressure value is valid
 PASS mouse pointermove properties for pointerType = mouse
+PASS mouse pointerdown event is a PointerEvent event
+PASS mouse pointerdown.isTrusted value is true
+PASS mouse pointerdown.composed value is valid
+PASS mouse pointerdown.bubbles value is valid
+PASS mouse pointerdown.cancelable value is valid
+PASS mouse pointerdown.pressure value is valid
+PASS mouse pointerdown properties for pointerType = mouse
 PASS mouse pointerup event is a PointerEvent event
 PASS mouse pointerup.isTrusted value is true
 PASS mouse pointerup.composed value is valid

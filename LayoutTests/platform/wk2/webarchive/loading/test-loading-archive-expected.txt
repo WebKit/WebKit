@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 test-loading-archive.html - didFinishLoading
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame

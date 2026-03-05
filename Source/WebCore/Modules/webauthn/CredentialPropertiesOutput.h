@@ -27,14 +27,12 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <WebCore/BasicCredential.h>
-#include <WebCore/IDLTypes.h>
-#include <wtf/Forward.h>
-
 namespace WebCore {
+
 struct CredentialPropertiesOutput {
     bool rk;
 };
+
 }
 
 #endif // ENABLE(WEB_AUTHN)

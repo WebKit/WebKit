@@ -57,8 +57,8 @@ private:
     void modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
 private:
-    bool numberOfCharactersCallback(Data*, const SVGTextFragment&) const;
-    bool textLengthCallback(Data*, const SVGTextFragment&) const;
+    bool NODELETE numberOfCharactersCallback(Data*, const SVGTextFragment&) const;
+    bool NODELETE textLengthCallback(Data*, const SVGTextFragment&) const;
     bool subStringLengthCallback(Data*, const SVGTextFragment&) const;
     bool startPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;
     bool endPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;

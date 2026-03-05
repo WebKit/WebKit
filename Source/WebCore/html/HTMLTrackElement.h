@@ -38,7 +38,7 @@ class HTMLMediaElement;
 class LoadableTextTrack;
 
 class HTMLTrackElement final : public HTMLElement, public ActiveDOMObject, public TextTrackClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTrackElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLTrackElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTrackElement);
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
@@ -55,17 +55,17 @@ public:
     bool isDefault() const;
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
-    ReadyState readyState() const;
+    ReadyState NODELETE readyState() const;
     void setReadyState(ReadyState);
 
-    TextTrack& track();
+    TextTrack& NODELETE track();
 
     void scheduleLoad();
 
     enum LoadStatus { Failure, Success };
     void didCompleteLoad(LoadStatus);
 
-    RefPtr<HTMLMediaElement> mediaElement() const;
+    RefPtr<HTMLMediaElement> NODELETE mediaElement() const;
     const AtomString& mediaElementCrossOriginAttribute() const;
 
     void scheduleTask(Function<void(HTMLTrackElement&)>&&);
@@ -83,7 +83,7 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 
     // EventTarget.
     void eventListenersDidChange() final;

@@ -23,12 +23,12 @@ info: |
     a. If the value of newTypedArray's [[ArrayLength]] internal slot <
     argumentList[0], throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.species, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
   var customCount, result;
 
   sample.constructor = {};

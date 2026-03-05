@@ -51,7 +51,7 @@ struct WebCodecsVideoEncoderConfig {
     LatencyMode latencyMode { LatencyMode::Quality };
     std::optional<AvcEncoderConfig> avc;
 
-    WebCodecsVideoEncoderConfig isolatedCopy() && { return { WTFMove(codec).isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTFMove(scalabilityMode).isolatedCopy(), bitrateMode, latencyMode, avc }; }
+    WebCodecsVideoEncoderConfig isolatedCopy() && { return { WTF::move(codec).isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTF::move(scalabilityMode).isolatedCopy(), bitrateMode, latencyMode, avc }; }
     WebCodecsVideoEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, scalabilityMode.isolatedCopy(), bitrateMode, latencyMode, avc }; }
 };
 

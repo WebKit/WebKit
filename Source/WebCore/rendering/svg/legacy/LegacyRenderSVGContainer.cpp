@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGContainer);
 
 static bool shouldSuspendRepaintForChildren(const LegacyRenderSVGContainer& container)
 {
@@ -64,7 +64,7 @@ static bool shouldSuspendRepaintForChildren(const LegacyRenderSVGContainer& cont
 }
 
 LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
-    : LegacyRenderSVGModelObject(type, element, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer | SVGModelObjectFlag::UsesBoundaryCaching)
+    : LegacyRenderSVGModelObject(type, element, WTF::move(style), svgFlags | SVGModelObjectFlag::IsContainer | SVGModelObjectFlag::UsesBoundaryCaching)
 {
 }
 
@@ -169,7 +169,7 @@ void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
     // outline rect into parent coords before drawing.
     // FIXME: This means our focus ring won't share our rotation like it should.
     // We should instead disable our clip during PaintPhase::Outline
-    if (paintInfo.phase == PaintPhase::SelfOutline && style().outlineWidth() && style().usedVisibility() == Visibility::Visible) {
+    if (paintInfo.phase == PaintPhase::SelfOutline && style().usedOutlineWidth() && style().usedVisibility() == Visibility::Visible) {
         IntRect paintRectInParent = enclosingIntRect(localToParentTransform().mapRect(repaintRect));
         paintOutline(paintInfo, paintRectInParent);
     }
@@ -208,6 +208,13 @@ FloatRect LegacyRenderSVGContainer::strokeBoundingBox() const
 
 FloatRect LegacyRenderSVGContainer::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
 {
+    if (hasNonScalingStrokeDescendant()) {
+        auto boundingBoxes = SVGRenderSupport::computeContainerBoundingBoxes(*this, repaintRectCalculation);
+        FloatRect repaintBoundingBox = boundingBoxes.repaintBoundingBox;
+        SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox, repaintRectCalculation);
+        return repaintBoundingBox;
+    }
+
     if (repaintRectCalculation == RepaintRectCalculation::Fast)
         return m_repaintBoundingBox;
 
@@ -219,6 +226,11 @@ FloatRect LegacyRenderSVGContainer::repaintRectInLocalCoordinates(RepaintRectCal
         m_accurateRepaintBoundingBox = boundingBoxes.repaintBoundingBox;
     }
     return *m_accurateRepaintBoundingBox;
+}
+
+FloatRect LegacyRenderSVGContainer::decoratedBoundingBox() const
+{
+    return SVGRenderSupport::computeContainerDecoratedBoundingBox(*this);
 }
 
 bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
@@ -242,7 +254,7 @@ bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, H
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
         if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
             updateHitTestResult(result, LayoutPoint(localPoint));
-            if (result.addNodeToListBasedTestResult(child->protectedNode().get(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
+            if (result.addNodeToListBasedTestResult(protect(child->node()).get(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
                 return true;
         }
     }
@@ -250,7 +262,7 @@ bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, H
     // Accessibility wants to return SVG containers, if appropriate.
     if (request.type() & HitTestRequest::Type::AccessibilityHitTest && objectBoundingBox().contains(localPoint)) {
         updateHitTestResult(result, LayoutPoint(localPoint));
-        if (result.addNodeToListBasedTestResult(protectedNodeForHitTest().get(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
+        if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
             return true;
     }
     

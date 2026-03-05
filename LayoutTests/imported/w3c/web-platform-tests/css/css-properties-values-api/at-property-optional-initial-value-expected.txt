@@ -1,0 +1,3 @@
+
+PASS @property with empty initial-value should use space character
+

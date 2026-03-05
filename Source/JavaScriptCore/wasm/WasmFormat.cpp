@@ -39,6 +39,7 @@
 
 namespace JSC { namespace Wasm {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlockSignature);
 
 bool WasmCallableFunction::isJS() const
 {
@@ -53,7 +54,7 @@ std::unique_ptr<Segment> Segment::tryCreate(std::optional<I32InitExpr> offset, u
         return nullptr;
 
     ASSERT(kind == Kind::Passive || !!offset);
-    return std::unique_ptr<Segment>(new (memory) Segment(sizeInBytes, kind, WTFMove(offset)));
+    return std::unique_ptr<Segment>(new (memory) Segment(sizeInBytes, kind, WTF::move(offset)));
 }
 
 String makeString(const Name& characters)
@@ -99,6 +100,25 @@ void validateWasmValue(uint64_t wasmValue, Type expectedType)
     }
 }
 #endif
+
+void BlockSignature::dump(PrintStream& out) const
+{
+    {
+        out.print("("_s);
+        CommaPrinter comma;
+        for (FunctionArgCount arg = 0; arg < argumentCount(); ++arg)
+            out.print(comma, makeString(argumentType(arg).kind));
+        out.print(")"_s);
+    }
+
+    {
+        CommaPrinter comma;
+        out.print(" -> ["_s);
+        for (FunctionArgCount ret = 0; ret < returnCount(); ++ret)
+            out.print(comma, makeString(returnType(ret).kind));
+        out.print("]"_s);
+    }
+}
 
 } } // namespace JSC::Wasm
 

@@ -37,5 +37,5 @@ WKTypeID WKJSHandleGetTypeID()
 
 WKFrameInfoRef WKJSHandleCopyFrameInfo(WKJSHandleRef handle)
 {
-    return WebKit::toAPILeakingRef(API::FrameInfo::create(WebKit::FrameInfoData { WebKit::toProtectedImpl(handle)->info().frameInfo }));
+    return WebKit::toAPILeakingRef(API::FrameInfo::create(WebKit::FrameInfoData { protect(WebKit::toImpl(handle))->info().frameInfo }));
 }

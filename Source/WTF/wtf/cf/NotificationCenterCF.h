@@ -26,6 +26,7 @@
 #pragma once
 
 #include <CoreFoundation/CFNotificationCenter.h>
+#include <wtf/Platform.h>
 
 namespace WTF {
 

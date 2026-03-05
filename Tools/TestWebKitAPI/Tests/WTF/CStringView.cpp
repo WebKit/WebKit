@@ -88,15 +88,37 @@ TEST(WTF, CStringViewFrom)
     EXPECT_EQ(string.lengthInBytes(), 4UZ);
     EXPECT_TRUE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
+    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
+    EXPECT_EQ(string.lengthInBytes(), 4UZ);
+    EXPECT_TRUE(string);
+    EXPECT_EQ(string.utf8(), stringPtr);
+
+    stringPtr = nullptr;
+    string = CStringView::unsafeFromUTF8(stringPtr);
+    EXPECT_EQ(string.lengthInBytes(), 0UZ);
+    EXPECT_FALSE(string);
+    EXPECT_EQ(string.utf8(), stringPtr);
+    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
+    EXPECT_EQ(string.lengthInBytes(), 0UZ);
+    EXPECT_FALSE(string);
+    EXPECT_EQ(string.utf8(), stringPtr);
 
     stringPtr = "";
     string = CStringView::unsafeFromUTF8(stringPtr);
     EXPECT_EQ(string.lengthInBytes(), 0UZ);
     EXPECT_FALSE(string);
     EXPECT_EQ(string.utf8(), stringPtr);
+    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
+    EXPECT_EQ(string.lengthInBytes(), 0UZ);
+    EXPECT_FALSE(string);
+    EXPECT_EQ(string.utf8(), stringPtr);
 
     stringPtr = "water🍉melon";
     string = CStringView::unsafeFromUTF8(stringPtr);
+    EXPECT_EQ(string.lengthInBytes(), 14UZ);
+    EXPECT_TRUE(string);
+    EXPECT_EQ(string.utf8(), stringPtr);
+    string = CStringView::fromUTF8(byteCast<char8_t>(unsafeSpanIncludingNullTerminator(stringPtr)));
     EXPECT_EQ(string.lengthInBytes(), 14UZ);
     EXPECT_TRUE(string);
     EXPECT_EQ(string.utf8(), stringPtr);

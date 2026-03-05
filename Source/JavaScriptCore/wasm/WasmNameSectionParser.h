@@ -41,7 +41,7 @@ public:
     {
     }
 
-    Result WARN_UNUSED_RETURN parse();
+    [[nodiscard]] Result parse();
     
 private:
     const ModuleInformation& m_info;

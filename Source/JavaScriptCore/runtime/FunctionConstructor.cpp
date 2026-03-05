@@ -200,8 +200,8 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
 
     if (!globalObject->evalEnabled()) [[unlikely]] {
         if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::EnforcedWithEvalEnabled) {
-            scope.clearException();
-            globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, !code.isNull() ? WTFMove(code) : nullString());
+            TRY_CLEAR_EXCEPTION(scope, nullptr);
+            globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, !code.isNull() ? WTF::move(code) : nullString());
             throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
             return nullptr;
         }
@@ -210,7 +210,7 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
         return nullptr;
 
     LexicallyScopedFeatures lexicallyScopedFeatures = globalObject->globalScopeExtension() ? TaintedByWithScopeLexicallyScopedFeature : NoLexicallyScopedFeatures;
-    RELEASE_AND_RETURN(scope, constructFunctionSkippingEvalEnabledCheck(globalObject, WTFMove(code), lexicallyScopedFeatures, functionName, sourceOrigin, sourceURL, taintedOrigin, position, -1, functionConstructorParametersEndPosition, functionConstructionMode, newTarget));
+    RELEASE_AND_RETURN(scope, constructFunctionSkippingEvalEnabledCheck(globalObject, WTF::move(code), lexicallyScopedFeatures, functionName, sourceOrigin, sourceURL, taintedOrigin, position, -1, functionConstructorParametersEndPosition, functionConstructionMode, newTarget));
 }
 
 JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject, String&& program, LexicallyScopedFeatures lexicallyScopedFeatures, const Identifier& functionName, const SourceOrigin& sourceOrigin, const String& sourceURL, SourceTaintedOrigin taintedOrigin, const TextPosition& position, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
@@ -219,7 +219,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* exception = nullptr;
-    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, globalObject, WTFMove(program), sourceOrigin, taintedOrigin, sourceURL, position, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition, functionConstructionMode);
+    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, globalObject, WTF::move(program), sourceOrigin, taintedOrigin, sourceURL, position, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition, functionConstructionMode);
     if (!function) [[unlikely]] {
         ASSERT(exception);
         throwException(globalObject, scope, exception);

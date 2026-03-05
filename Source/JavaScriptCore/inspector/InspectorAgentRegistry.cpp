@@ -43,7 +43,7 @@ AgentRegistry::~AgentRegistry()
 
 void AgentRegistry::append(UniqueRef<InspectorAgentBase>&& agent)
 {
-    m_agents.append(WTFMove(agent));
+    m_agents.append(WTF::move(agent));
 }
 
 void AgentRegistry::didCreateFrontendAndBackend()

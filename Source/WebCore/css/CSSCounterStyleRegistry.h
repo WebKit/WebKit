@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/CSSCounterStyle.h>
+#include "CSSCounterStyle.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomStringHash.h>
@@ -63,7 +63,7 @@ public:
     bool operator==(const CSSCounterStyleRegistry&) const;
 
 private:
-    static CounterStyleMap& userAgentCounterStyles();
+    static CounterStyleMap& NODELETE userAgentCounterStyles();
 
     // If no map is passed on, user-agent counter styles map will be used
     static void resolveFallbackReference(CSSCounterStyle&, CounterStyleMap* = nullptr);
@@ -72,7 +72,7 @@ private:
 
     static Ref<CSSCounterStyle> counterStyle(const AtomString&, CounterStyleMap* = nullptr);
 
-    void invalidate();
+    void NODELETE invalidate();
 
     CounterStyleMap m_authorCounterStyles;
     bool m_hasUnresolvedReferences { true };

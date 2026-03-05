@@ -33,7 +33,7 @@ namespace NodeTraversal {
 
 Node* previousIncludingPseudo(const Node& current, const Node* stayWithin)
 {
-    Node* previous;
+    Node* previous = nullptr;
     if (&current == stayWithin)
         return nullptr;
     if ((previous = current.pseudoAwarePreviousSibling())) {
@@ -47,7 +47,7 @@ Node* previousIncludingPseudo(const Node& current, const Node* stayWithin)
 
 Node* nextIncludingPseudo(const Node& current, const Node* stayWithin)
 {
-    Node* next;
+    Node* next = nullptr;
     if ((next = current.pseudoAwareFirstChild()))
         return next;
     if (&current == stayWithin)
@@ -67,7 +67,7 @@ Node* nextIncludingPseudo(const Node& current, const Node* stayWithin)
 
 Node* nextIncludingPseudoSkippingChildren(const Node& current, const Node* stayWithin)
 {
-    Node* next;
+    Node* next = nullptr;
     if (&current == stayWithin)
         return nullptr;
     if ((next = current.pseudoAwareNextSibling()))
@@ -151,7 +151,7 @@ Node* nextPostOrder(const Node& current, const Node* stayWithin)
     return next;
 }
 
-static Node* previousAncestorSiblingPostOrder(const Node& current, const Node* stayWithin)
+static Node* NODELETE previousAncestorSiblingPostOrder(const Node& current, const Node* stayWithin)
 {
     ASSERT(!current.previousSibling());
     for (auto* ancestor = current.parentNode(); ancestor; ancestor = ancestor->parentNode()) {

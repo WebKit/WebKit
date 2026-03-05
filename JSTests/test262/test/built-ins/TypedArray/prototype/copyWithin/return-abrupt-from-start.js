@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     sample.copyWithin(0, o, err);
   });
-});
+}, null, ["passthrough"]);

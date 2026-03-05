@@ -1,0 +1,5 @@
+Text that needs to be here to reproduce the issue.
+
+
+PASS Tests that intersection observer works when the visual viewport is zoomed (e.g from pinched zoom)
+

@@ -348,7 +348,12 @@ void PixelLocalStoragePlane::ensureBackingTextureIfMemoryless(Context *context, 
         ASSERT(mTextureID.value == 0);
 
         // Create a new texture that backs the memoryless plane.
-        mTextureID = context->createTexture();
+        if (!context->createTexture(&mTextureID))
+        {
+            context->handleExhaustionError(angle::EntryPoint::GLBeginPixelLocalStorageANGLE);
+            return;
+        }
+
         {
             ScopedBindTexture2D scopedBindTexture2D(context, mTextureID);
             context->bindTexture(TextureType::_2D, mTextureID);
@@ -438,12 +443,16 @@ void PixelLocalStoragePlane::issueClearCommand(ClearCommands *clearCommands,
             break;
         }
         case GL_RGBA8I:
+        case GL_R32I:
         {
             std::array<GLint, 4> clearValue = {0, 0, 0, 0};
             if (loadop == GL_LOAD_OP_CLEAR_ANGLE)
             {
                 clearValue = mClearValuei;
-                ClampArray(clearValue, -128, 127);
+                if (mInternalformat == GL_RGBA8I)
+                {
+                    ClampArray(clearValue, -128, 127);
+                }
             }
             clearCommands->cleariv(target, clearValue.data());
             break;
@@ -600,7 +609,6 @@ void PixelLocalStorage::end(Context *context, GLsizei n, const GLenum storeops[]
 
 void PixelLocalStorage::barrier(Context *context)
 {
-    ASSERT(!context->getExtensions().shaderPixelLocalStorageCoherentANGLE);
     onBarrier(context);
 }
 
@@ -683,7 +691,7 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         }
 
         Framebuffer *framebuffer = state.getDrawFramebuffer();
-        if (mPLSOptions.renderPassNeedsAMDRasterOrderGroupsWorkaround)
+        if (context->getLimitations().noRasterOrderGroupWithoutAttachmentZero)
         {
             // anglebug.com/42266263 -- Metal [[raster_order_group()]] does not work for read_write
             // textures on AMD when the render pass doesn't have a color attachment on slot 0. To
@@ -830,7 +838,7 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         }
         mSavedImageBindings.clear();
 
-        if (mPLSOptions.renderPassNeedsAMDRasterOrderGroupsWorkaround)
+        if (context->getLimitations().noRasterOrderGroupWithoutAttachmentZero)
         {
             if (!mHadColorAttachment0)
             {
@@ -961,12 +969,9 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
             }
         }
 
-        if (!context->getExtensions().shaderPixelLocalStorageCoherentANGLE)
-        {
-            // Insert a barrier if we aren't coherent, since the textures may have been rendered to
-            // previously.
-            barrier(context);
-        }
+        // Insert a barrier in case the app performs any noncoherent accesses, since the textures
+        // may have been accessed as attachments immediately before this call.
+        barrier(context);
     }
 
     void onEnd(Context *context, GLsizei n, const GLenum storeops[]) override
@@ -1009,9 +1014,24 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
         context->drawBuffers(static_cast<GLsizei>(mSavedDrawBuffers.size()),
                              mSavedDrawBuffers.data());
         mSavedDrawBuffers.clear();
+
+        // Insert a barrier in case the app performed any noncoherent accesses, since the textures
+        // may be accessed as attachments immediately after this call.
+        barrier(context);
     }
 
-    void onBarrier(Context *context) override { context->framebufferFetchBarrier(); }
+    void onBarrier(Context *context) override
+    {
+        if (context->getExtensions().shaderFramebufferFetchNonCoherentEXT)
+        {
+            context->framebufferFetchBarrier();
+        }
+        else
+        {
+            // Ignore barriers if we don't have EXT_shader_framebuffer_fetch_non_coherent.
+            ASSERT(context->getExtensions().shaderPixelLocalStorageCoherentANGLE);
+        }
+    }
 
   private:
     static GLuint GetDrawBufferIdx(const Caps &caps, GLuint plsPlaneIdx)

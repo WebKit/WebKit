@@ -1,3 +1,5 @@
 
-PASS Test H264 reordering
+PASS H264 reordering
+PASS H264 reordering with SPS containing emulation prevention byte
+FAIL H264 reordering should use pic order count assert_array_equals: timestamps are ordered expected property 1 to be 333333 but got 133333 (expected array [0, 333333, 666666, 100000, 133333, 166666, 200000, 233333, 266666] got [0, 133333, 100000, 266666, 200000, 166666, 233333, 333333, 666666])
 

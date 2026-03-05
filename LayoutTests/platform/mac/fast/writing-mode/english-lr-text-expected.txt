@@ -16,12 +16,12 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (22,381) size 22x1
         RenderInline {SPAN} at (44,0) size 22x418
           RenderText {#text} at (44,0) size 22x418
-            text run at (44,0) width 418: "This text should be rotated 90 degrees and struck through."
+            text run at (44,0) width 419: "This text should be rotated 90 degrees and struck through."
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (44,417) size 22x1
         RenderInline {SPAN} at (66,0) size 22x442
           RenderText {#text} at (66,0) size 22x442
-            text run at (66,0) width 442: "This text should have a red shadow that is offset horizontally."
+            text run at (66,0) width 443: "This text should have a red shadow that is offset horizontally."
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (66,441) size 22x1
         RenderBR {BR} at (88,0) size 22x0

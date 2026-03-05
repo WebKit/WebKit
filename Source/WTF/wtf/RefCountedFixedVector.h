@@ -65,7 +65,7 @@ public:
     template<size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename VectorMalloc>
     static Ref<RefCountedFixedVectorBase> createFromVector(Vector<T, inlineCapacity, OverflowHandler, minCapacity, VectorMalloc>&& other)
     {
-        auto container = WTFMove(other);
+        auto container = WTF::move(other);
         unsigned size = Checked<uint32_t> { container.size() }.value();
         return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) RefCountedFixedVectorBase(size, std::move_iterator { container.begin() }, std::move_iterator { container.end() }));
     }

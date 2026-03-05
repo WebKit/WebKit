@@ -260,6 +260,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassNameFrame.htm
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insert-adjacent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/mutationobservers.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/name-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/node-appendchild-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-hierarchy.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-notfound.js

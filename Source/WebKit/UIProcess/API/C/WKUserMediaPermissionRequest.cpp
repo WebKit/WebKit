@@ -36,7 +36,7 @@ WKTypeID WKUserMediaPermissionRequestGetTypeID()
 
 void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef, WKStringRef audioDeviceUID, WKStringRef videoDeviceUID)
 {
-    toProtectedImpl(userMediaPermissionRequestRef)->allow(toWTFString(audioDeviceUID), toWTFString(videoDeviceUID));
+    protect(toImpl(userMediaPermissionRequestRef))->allow(toWTFString(audioDeviceUID), toWTFString(videoDeviceUID));
 }
 
 static UserMediaPermissionRequestProxy::UserMediaAccessDenialReason toWK(UserMediaPermissionRequestDenialReason reason)
@@ -72,14 +72,14 @@ static UserMediaPermissionRequestProxy::UserMediaAccessDenialReason toWK(UserMed
 
 void WKUserMediaPermissionRequestDeny(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef, UserMediaPermissionRequestDenialReason reason)
 {
-    toProtectedImpl(userMediaPermissionRequestRef)->deny(toWK(reason));
+    protect(toImpl(userMediaPermissionRequestRef))->deny(toWK(reason));
 }
 
 WKArrayRef WKUserMediaPermissionRequestVideoDeviceUIDs(WKUserMediaPermissionRequestRef userMediaPermissionRef)
 {
     WKMutableArrayRef array = WKMutableArrayCreate();
 #if ENABLE(MEDIA_STREAM)
-    for (auto& deviceUID : toProtectedImpl(userMediaPermissionRef)->videoDeviceUIDs())
+    for (auto& deviceUID : protect(toImpl(userMediaPermissionRef))->videoDeviceUIDs())
         WKArrayAppendItem(array, toAPI(API::String::create(deviceUID).ptr()));
 #endif
     return array;
@@ -89,7 +89,7 @@ WKArrayRef WKUserMediaPermissionRequestAudioDeviceUIDs(WKUserMediaPermissionRequ
 {
     WKMutableArrayRef array = WKMutableArrayCreate();
 #if ENABLE(MEDIA_STREAM)
-    for (auto& deviceUID : toProtectedImpl(userMediaPermissionRef)->audioDeviceUIDs())
+    for (auto& deviceUID : protect(toImpl(userMediaPermissionRef))->audioDeviceUIDs())
         WKArrayAppendItem(array, toAPI(API::String::create(deviceUID).ptr()));
 #endif
     return array;
@@ -97,15 +97,15 @@ WKArrayRef WKUserMediaPermissionRequestAudioDeviceUIDs(WKUserMediaPermissionRequ
 
 bool WKUserMediaPermissionRequestRequiresCameraCapture(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
-    return toProtectedImpl(userMediaPermissionRequestRef)->requiresVideoCapture();
+    return protect(toImpl(userMediaPermissionRequestRef))->requiresVideoCapture();
 }
 
 bool WKUserMediaPermissionRequestRequiresDisplayCapture(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
-    return toProtectedImpl(userMediaPermissionRequestRef)->requiresDisplayCapture();
+    return protect(toImpl(userMediaPermissionRequestRef))->requiresDisplayCapture();
 }
 
 bool WKUserMediaPermissionRequestRequiresMicrophoneCapture(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
-    return toProtectedImpl(userMediaPermissionRequestRef)->requiresAudioCapture();
+    return protect(toImpl(userMediaPermissionRequestRef))->requiresAudioCapture();
 }

@@ -29,6 +29,7 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/InbandGenericCueIdentifier.h>
+#include <wtf/Markable.h>
 #include <wtf/MediaTime.h>
 
 namespace WebCore {
@@ -86,7 +87,7 @@ struct GenericCueData {
 class InbandGenericCue : public RefCounted<InbandGenericCue> {
 public:
     static Ref<InbandGenericCue> create() { return adoptRef(*new InbandGenericCue); }
-    static Ref<InbandGenericCue> create(GenericCueData&& cueData) { return adoptRef(*new InbandGenericCue(WTFMove(cueData))); }
+    static Ref<InbandGenericCue> create(GenericCueData&& cueData) { return adoptRef(*new InbandGenericCue(WTF::move(cueData))); }
 
     InbandGenericCueIdentifier uniqueId() const { return *m_cueData.m_uniqueId; }
 
@@ -147,7 +148,7 @@ public:
 private:
     InbandGenericCue();
     explicit InbandGenericCue(GenericCueData&& cueData)
-        : m_cueData(WTFMove(cueData))
+        : m_cueData(WTF::move(cueData))
     {
         ASSERT(m_cueData.isValid());
     }

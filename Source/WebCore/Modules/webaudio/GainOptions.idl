@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
 ] dictionary GainOptions : AudioNodeOptions {
     float gain = 1.0;
 };

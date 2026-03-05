@@ -28,7 +28,7 @@
 
 #include "AnimationUtilities.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveKeyword+CSSValueConversion.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"

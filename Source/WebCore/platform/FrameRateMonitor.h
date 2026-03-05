@@ -57,7 +57,7 @@ private:
 };
 
 inline FrameRateMonitor::FrameRateMonitor(LateFrameCallback&& callback)
-    : m_lateFrameCallback(WTFMove(callback))
+    : m_lateFrameCallback(WTF::move(callback))
 {
 }
 

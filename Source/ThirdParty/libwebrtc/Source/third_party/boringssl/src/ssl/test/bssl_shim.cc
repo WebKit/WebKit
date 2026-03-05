@@ -222,7 +222,8 @@ static int DoRead(SSL *ssl, uint8_t *out, size_t max_out) {
     // during a renegotiation.
     if (config->use_exporter_between_reads) {
       uint8_t buf;
-      if (!SSL_export_keying_material(ssl, &buf, 1, NULL, 0, NULL, 0, 0)) {
+      if (!SSL_export_keying_material(ssl, &buf, 1, nullptr, 0, nullptr, 0,
+                                      0)) {
         fprintf(stderr, "failed to export keying material\n");
         return -1;
       }
@@ -873,7 +874,7 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
       return false;
     }
 
-    // Before reseting, early state should still be available.
+    // Before resetting, early state should still be available.
     if (!SSL_in_early_data(ssl.get()) ||
         !CheckHandshakeProperties(ssl.get(), is_resume, config)) {
       fprintf(stderr, "SSL_in_early_data returned false before reset.\n");
@@ -881,8 +882,8 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
     }
 
     // Client pre- and post-0-RTT reject states are considered logically
-    // different connections with different test expections. Check that the test
-    // did not mistakenly configure reason expectations on the wrong one.
+    // different connections with different test expectations. Check that the
+    // test did not mistakenly configure reason expectations on the wrong one.
     if (!config->expect_early_data_reason.empty()) {
       fprintf(stderr,
               "Test error: client reject -expect-early-data-reason flags "
@@ -894,8 +895,8 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
     SSL_reset_early_data_reject(ssl.get());
     GetTestState(ssl.get())->cert_verified = false;
 
-    // After reseting, the socket should report it is no longer in an early data
-    // state.
+    // After resetting, the socket should report it is no longer in an early
+    // data state.
     if (SSL_in_early_data(ssl.get())) {
       fprintf(stderr, "SSL_in_early_data returned true after reset.\n");
       return false;
@@ -1065,7 +1066,7 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
     }
 
     // Reset the state to assert later that the callback isn't called in
-    // renegotations.
+    // renegotiations.
     test_state->got_new_session = false;
   }
 

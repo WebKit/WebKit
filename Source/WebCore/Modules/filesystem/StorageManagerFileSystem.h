@@ -33,7 +33,7 @@ class StorageManagerFileSystem {
 public:
     static void getDirectory(StorageManager& storageManager, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
     {
-        storageManager.fileSystemGetDirectory(WTFMove(promise));
+        storageManager.fileSystemGetDirectory(WTF::move(promise));
     }
 };
 

@@ -37,18 +37,21 @@
 
 namespace WebCore {
 
-using GPURenderPassColorAttachmentView = Variant<RefPtr<GPUTexture>, RefPtr<GPUTextureView>>;
-using GPURenderPassResolveAttachmentView = Variant<RefPtr<GPUTexture>, RefPtr<GPUTextureView>>;
+using GPURenderPassColorAttachmentView = Variant<Ref<GPUTexture>, Ref<GPUTextureView>>;
+using GPURenderPassResolveAttachmentView = Variant<Ref<GPUTexture>, Ref<GPUTextureView>>;
 
 struct GPURenderPassColorAttachment {
     std::optional<WebGPU::RenderPassResolveAttachmentView> parseResolveTarget() const
     {
         if (resolveTarget) {
-            return WTF::switchOn(*resolveTarget, [&](const RefPtr<GPUTexture>& texture) -> WebGPU::RenderPassResolveAttachmentView {
-                return texture ? &texture->backing() : nullptr;
-            }, [&](const RefPtr<GPUTextureView>& view) -> WebGPU::RenderPassResolveAttachmentView {
-                return view ? &view->backing() : nullptr;
-            });
+            return WTF::switchOn(*resolveTarget,
+                [](const Ref<GPUTexture>& texture) -> WebGPU::RenderPassResolveAttachmentView {
+                    return &texture->backing();
+                },
+                [](const Ref<GPUTextureView>& view) -> WebGPU::RenderPassResolveAttachmentView {
+                    return &view->backing();
+                }
+            );
         }
 
         return std::nullopt;
@@ -57,11 +60,14 @@ struct GPURenderPassColorAttachment {
     WebGPU::RenderPassColorAttachment convertToBacking() const
     {
         return {
-            .view = WTF::switchOn(view, [&](const RefPtr<GPUTexture>& texture) -> WebGPU::RenderPassColorAttachmentView {
-                return texture->backing();
-            }, [&](const RefPtr<GPUTextureView>& view) -> WebGPU::RenderPassColorAttachmentView {
-                return view->backing();
-            }),
+            .view = WTF::switchOn(view,
+                [&](const Ref<GPUTexture>& texture) -> WebGPU::RenderPassColorAttachmentView {
+                    return texture->backing();
+                },
+                [&](const Ref<GPUTextureView>& view) -> WebGPU::RenderPassColorAttachmentView {
+                    return view->backing();
+                }
+            ),
             .depthSlice = depthSlice,
             .resolveTarget = parseResolveTarget(),
             .clearValue = clearValue ? std::optional { WebCore::convertToBacking(*clearValue) } : std::nullopt,

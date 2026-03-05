@@ -24,10 +24,10 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample;
 
-  sample = new TA([42, 43]);
+  sample = new TA(makeCtorArg([42, 43]));
   assert.sameValue(sample.includes(42, -0), true, "-0 [0]");
   assert.sameValue(sample.includes(43, -0), true, "-0 [1]");
   assert.sameValue(sample.includes(44, -0), false, "-0 [2]");

@@ -53,7 +53,7 @@ static void append(Vector<uint8_t>& vector, const CString& string)
     vector.append(string.span());
 }
 
-static size_t deserializeLength(std::span<const uint8_t> span, size_t offset)
+static size_t NODELETE deserializeLength(std::span<const uint8_t> span, size_t offset)
 {
     return reinterpretCastSpanStartTo<const uint32_t>(span.subspan(offset));
 }
@@ -64,7 +64,7 @@ static String deserializeUTF8String(std::span<const uint8_t> span, size_t offset
     return String::fromUTF8(span.subspan(offset, length));
 }
 
-static void writeLengthToVectorAtOffset(Vector<uint8_t>& vector, size_t offset)
+static void NODELETE writeLengthToVectorAtOffset(Vector<uint8_t>& vector, size_t offset)
 {
     auto length = vector.size() - offset;
     RELEASE_ASSERT(length <= std::numeric_limits<uint32_t>::max());
@@ -88,7 +88,7 @@ Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const 
             auto info = ModifyHeaderInfo::parse(value.get());
             if (!info)
                 return makeUnexpected(info.error());
-            vector.append(WTFMove(*info));
+            vector.append(WTF::move(*info));
         }
         return vector;
     };
@@ -105,7 +105,7 @@ Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const 
     if (!priority || priority.value() < 0)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidPriority);
 
-    return ModifyHeadersAction { WTFMove(*requestHeaders), WTFMove(*responseHeaders), static_cast<uint32_t>(priority.value()) };
+    return ModifyHeadersAction { WTF::move(*requestHeaders), WTF::move(*responseHeaders), static_cast<uint32_t>(priority.value()) };
 }
 
 ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const &
@@ -115,7 +115,7 @@ ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const &
 
 ModifyHeadersAction ModifyHeadersAction::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)), crossThreadCopy(priority) };
+    return { crossThreadCopy(WTF::move(requestHeaders)), crossThreadCopy(WTF::move(responseHeaders)), crossThreadCopy(priority) };
 }
 
 void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
@@ -152,7 +152,7 @@ ModifyHeadersAction ModifyHeadersAction::deserialize(std::span<const uint8_t> sp
         progress += ModifyHeaderInfo::serializedLength(subspan);
         responseHeaders.append(ModifyHeaderInfo::deserialize(subspan));
     }
-    return { WTFMove(requestHeaders), WTFMove(responseHeaders), priority };
+    return { WTF::move(requestHeaders), WTF::move(responseHeaders), priority };
 }
 
 size_t ModifyHeadersAction::serializedLength(std::span<const uint8_t> span)
@@ -215,15 +215,15 @@ auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) 
     if (operation == "set"_s) {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
-        return ModifyHeaderInfo { SetOperation { WTFMove(header), WTFMove(value) } };
+        return ModifyHeaderInfo { SetOperation { WTF::move(header), WTF::move(value) } };
     }
     if (operation == "append"_s) {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
-        return ModifyHeaderInfo { AppendOperation { WTFMove(header), WTFMove(value) } };
+        return ModifyHeaderInfo { AppendOperation { WTF::move(header), WTF::move(value) } };
     }
     if (operation == "remove"_s)
-        return ModifyHeaderInfo { RemoveOperation { WTFMove(header) } };
+        return ModifyHeaderInfo { RemoveOperation { WTF::move(header) } };
     return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidOperation);
 }
 
@@ -234,7 +234,7 @@ auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() const & -> ModifyHead
 
 auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() && -> ModifyHeaderInfo
 {
-    return { crossThreadCopy(WTFMove(operation)) };
+    return { crossThreadCopy(WTF::move(operation)) };
 }
 
 void ModifyHeadersAction::ModifyHeaderInfo::serialize(Vector<uint8_t>& vector) const
@@ -269,8 +269,8 @@ auto ModifyHeadersAction::ModifyHeaderInfo::deserialize(std::span<const uint8_t>
             auto header = deserializeUTF8String(span, headerSize + sizeof(uint32_t), headerLength);
             auto value = deserializeUTF8String(span, headerSize + sizeof(uint32_t) + headerLength, valueLength);
             if (index == WTF::alternativeIndexV<AppendOperation, OperationVariant>)
-                return AppendOperation { WTFMove(header), WTFMove(value) };
-            return SetOperation { WTFMove(header), WTFMove(value) };
+                return AppendOperation { WTF::move(header), WTF::move(value) };
+            return SetOperation { WTF::move(header), WTF::move(value) };
         }
 
         }
@@ -292,17 +292,17 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
     if (auto extensionPath = redirect->getString("extension-path"_s); !!extensionPath) {
         if (!extensionPath.startsWith('/'))
             return makeUnexpected(ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash);
-        return RedirectAction { ExtensionPathAction { WTFMove(extensionPath) } };
+        return RedirectAction { ExtensionPathAction { WTF::move(extensionPath) } };
     }
 
     if (auto regexSubstitution = redirect->getString("regex-substitution"_s); !!regexSubstitution)
-        return RedirectAction { RegexSubstitutionAction { WTFMove(regexSubstitution), urlFilter } };
+        return RedirectAction { RegexSubstitutionAction { WTF::move(regexSubstitution), urlFilter } };
 
     if (auto transform = redirect->getObject("transform"_s)) {
         auto parsedTransform = URLTransformAction::parse(*transform);
         if (!parsedTransform)
             return makeUnexpected(parsedTransform.error());
-        return RedirectAction { WTFMove(*parsedTransform) };
+        return RedirectAction { WTF::move(*parsedTransform) };
     }
 
     if (auto urlString = redirect->getString("url"_s); !!urlString) {
@@ -311,7 +311,7 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
             return makeUnexpected(ContentExtensionError::JSONRedirectURLInvalid);
         if (url.protocolIsJavaScript())
             return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
-        return RedirectAction { URLAction { WTFMove(urlString) } };
+        return RedirectAction { URLAction { WTF::move(urlString) } };
     }
 
     return makeUnexpected(ContentExtensionError::JSONRedirectInvalidType);
@@ -324,7 +324,7 @@ RedirectAction RedirectAction::isolatedCopy() const &
 
 RedirectAction RedirectAction::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTFMove(action)) };
+    return { crossThreadCopy(WTF::move(action)) };
 }
 
 void RedirectAction::serialize(Vector<uint8_t>& vector) const
@@ -373,7 +373,7 @@ void RedirectAction::applyToRequest(ResourceRequest& request, const URL& extensi
 {
     auto url = request.url();
     modifyURL(url, extensionBaseURL);
-    request.setURL(WTFMove(url));
+    request.setURL(WTF::move(url));
 }
 
 void RedirectAction::modifyURL(URL& originalURL, const URL& extensionBaseURL)
@@ -413,7 +413,7 @@ auto RedirectAction::RegexSubstitutionAction::deserialize(std::span<const uint8_
     constexpr auto headerSize = sizeof(uint32_t) + sizeof(uint32_t);
     auto regexSubstitution = deserializeUTF8String(span, headerSize, regexSubstitutionLength);
     auto regexFilter = deserializeUTF8String(span, headerSize + regexSubstitutionLength, regexFilterLength);
-    return { WTFMove(regexSubstitution), WTFMove(regexFilter) };
+    return { WTF::move(regexSubstitution), WTF::move(regexFilter) };
 }
 
 static JSRetainPtr<JSStringRef> makeJSString(ASCIILiteral literal)
@@ -470,7 +470,7 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
 
     URL replacementURL(substitution);
     if (replacementURL.isValid())
-        url = WTFMove(replacementURL);
+        url = WTF::move(replacementURL);
 }
 
 auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> Expected<URLTransformAction, std::error_code>
@@ -479,7 +479,7 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
     if (auto fragment = transform.getString("fragment"_s); !!fragment) {
         if (!fragment.isEmpty() && !fragment.startsWith('#'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidFragment);
-        action.fragment = WTFMove(fragment);
+        action.fragment = WTF::move(fragment);
     }
     action.host = transform.getString("host"_s);
     action.password = transform.getString("password"_s);
@@ -502,7 +502,7 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
             return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeInvalid);
         if (scheme == "javascript"_s)
             return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
-        action.scheme = WTFMove(*scheme);
+        action.scheme = WTF::move(*scheme);
     }
     action.username = transform.getString("username"_s);
     if (auto queryTransform = transform.getObject("query-transform"_s)) {
@@ -514,7 +514,7 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
         auto query = transform.getString("query"_s);
         if (!query.isEmpty() && !query.startsWith('?'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidQuery);
-        action.queryTransform = WTFMove(query);
+        action.queryTransform = WTF::move(query);
     }
     return action;
 }
@@ -527,8 +527,8 @@ auto RedirectAction::URLTransformAction::isolatedCopy() const & -> URLTransformA
 
 auto RedirectAction::URLTransformAction::isolatedCopy() && -> URLTransformAction
 {
-    return { crossThreadCopy(WTFMove(fragment)), crossThreadCopy(WTFMove(host)), crossThreadCopy(WTFMove(password)), crossThreadCopy(WTFMove(path)), crossThreadCopy(WTFMove(port)),
-        crossThreadCopy(WTFMove(queryTransform)), crossThreadCopy(WTFMove(scheme)), crossThreadCopy(WTFMove(username)) };
+    return { crossThreadCopy(WTF::move(fragment)), crossThreadCopy(WTF::move(host)), crossThreadCopy(WTF::move(password)), crossThreadCopy(WTF::move(path)), crossThreadCopy(WTF::move(port)),
+        crossThreadCopy(WTF::move(queryTransform)), crossThreadCopy(WTF::move(scheme)), crossThreadCopy(WTF::move(username)) };
 }
 
 void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) const
@@ -658,14 +658,14 @@ auto RedirectAction::URLTransformAction::deserialize(std::span<const uint8_t> sp
     }
 
     return {
-        WTFMove(fragment),
-        WTFMove(host),
-        WTFMove(password),
-        WTFMove(path),
-        WTFMove(port),
-        WTFMove(queryTransform),
-        WTFMove(scheme),
-        WTFMove(username)
+        WTF::move(fragment),
+        WTF::move(host),
+        WTF::move(password),
+        WTF::move(path),
+        WTF::move(port),
+        WTF::move(queryTransform),
+        WTF::move(scheme),
+        WTF::move(username)
     };
 }
 
@@ -689,7 +689,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
                 return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
             removeParametersVector.append(parameter.get().asString());
         }
-        parsedQueryTransform.removeParams = WTFMove(removeParametersVector);
+        parsedQueryTransform.removeParams = WTF::move(removeParametersVector);
     }
 
     if (auto addOrReplaceParametersValue = queryTransform.getValue("add-or-replace-parameters"_s)) {
@@ -702,9 +702,9 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
             auto keyValue = QueryKeyValue::parse(queryKeyValue.get());
             if (!keyValue)
                 return makeUnexpected(keyValue.error());
-            keyValues.append(WTFMove(*keyValue));
+            keyValues.append(WTF::move(*keyValue));
         }
-        parsedQueryTransform.addOrReplaceParams = WTFMove(keyValues);
+        parsedQueryTransform.addOrReplaceParams = WTF::move(keyValues);
     }
 
     return parsedQueryTransform;
@@ -808,7 +808,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() const & 
 
 auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() && -> QueryTransform
 {
-    return { crossThreadCopy(WTFMove(addOrReplaceParams)), crossThreadCopy(WTFMove(removeParams)) };
+    return { crossThreadCopy(WTF::move(addOrReplaceParams)), crossThreadCopy(WTF::move(removeParams)) };
 }
 
 void RedirectAction::URLTransformAction::QueryTransform::serialize(Vector<uint8_t>& vector) const
@@ -848,7 +848,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::deserialize(std::span<c
         strings.append(deserializeUTF8String(span, stringsProgress + sizeof(uint32_t), stringLength));
         stringsProgress += sizeof(uint32_t) + stringLength;
     }
-    return { WTFMove(queryKeyValues), WTFMove(strings) };
+    return { WTF::move(queryKeyValues), WTF::move(strings) };
 }
 
 size_t RedirectAction::URLTransformAction::QueryTransform::serializedLength(std::span<const uint8_t> span)
@@ -874,7 +874,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(co
     if (auto boolean = keyValue->getBoolean("replace-only"_s))
         replaceOnly = *boolean;
 
-    return { { WTFMove(key), replaceOnly, WTFMove(value) } };
+    return { { WTF::move(key), replaceOnly, WTF::move(value) } };
 }
 
 void RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serialize(Vector<uint8_t>& vector) const
@@ -904,7 +904,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::deserial
     bool replaceOnly = span[sizeof(uint32_t) + sizeof(uint32_t)];
     auto key = deserializeUTF8String(span, headerLength, keyUTF8Length);
     auto value = deserializeUTF8String(span, headerLength + keyUTF8Length, serializedLength - headerLength - keyUTF8Length);
-    return { WTFMove(key), replaceOnly, WTFMove(value) };
+    return { WTF::move(key), replaceOnly, WTF::move(value) };
 }
 
 size_t RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serializedLength(std::span<const uint8_t> span)

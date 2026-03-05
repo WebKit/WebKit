@@ -6,7 +6,7 @@ PASS elemSimple.scrollWidth is its clientWidth
 PASS elemOverflow.clientHeight is the height of the padding edge
 PASS elemOverflow.scrollHeight is the height of its scrolled contents (including padding)
 PASS elemOverflow.clientWidth is the width of the padding edge
-FAIL elemOverflow.scrollHeight is the width of its scrolled contents (including padding) assert_equals: expected 290 but got 250
+PASS elemOverflow.scrollHeight is the width of its scrolled contents (including padding)
 PASS elemNestedOverflow.clientHeight is the height of the padding edge
 PASS elemNestedOverflow.scrollHeight is the height of its scrolled contents (ignoring padding)
 PASS elemNestedOverflow.clientWidth is the height of the padding edge

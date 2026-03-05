@@ -39,8 +39,8 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateFixedNode);
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, FixedPositionViewportConstraints&& constraints)
-    : ScrollingStateNode(ScrollingNodeType::Fixed, nodeID, WTFMove(children), changedProperties, layerID)
-    , m_constraints(WTFMove(constraints))
+    : ScrollingStateNode(ScrollingNodeType::Fixed, nodeID, WTF::move(children), changedProperties, layerID)
+    , m_constraints(WTF::move(constraints))
 {
 }
 

@@ -70,9 +70,9 @@ void WebExtensionSQLiteStore::close()
 
 void WebExtensionSQLiteStore::deleteDatabase(CompletionHandler<void(const String& errorMessage)>&& completionHandler)
 {
-    m_queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         auto deleteDatabaseErrorMessage = protectedThis->deleteDatabase();
-        WorkQueue::mainSingleton().dispatch([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(deleteDatabaseErrorMessage);
         });
     });
@@ -320,10 +320,10 @@ void WebExtensionSQLiteStore::createSavepoint(CompletionHandler<void(Markable<WT
 {
     auto savepointIdentifier = UUID::createVersion4();
 
-    m_queue->dispatch([protectedThis = Ref { *this }, savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([protectedThis = Ref { *this }, savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTF::move(completionHandler)]() mutable {
         String errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, false)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler({ }, errorMessage);
             });
 
@@ -341,7 +341,7 @@ void WebExtensionSQLiteStore::createSavepoint(CompletionHandler<void(Markable<WT
 
         protectedThis->m_savepointsAreValid = errorMessage.isEmpty();
 
-        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(errorMessage.isEmpty() ? std::optional(savepointIdentifier) : std::nullopt, errorMessage);
         });
     });
@@ -349,17 +349,17 @@ void WebExtensionSQLiteStore::createSavepoint(CompletionHandler<void(Markable<WT
 
 void WebExtensionSQLiteStore::commitSavepoint(WTF::UUID& savepointIdentifier, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
 {
-    m_queue->dispatch([protectedThis = Ref { *this }, savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([protectedThis = Ref { *this }, savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTF::move(completionHandler)]() mutable {
         String errorMessage;
         if (!protectedThis->m_savepointsAreValid) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
             });
             return;
         }
 
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, false)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
             });
 
@@ -375,7 +375,7 @@ void WebExtensionSQLiteStore::commitSavepoint(WTF::UUID& savepointIdentifier, Co
             errorMessage = "Failed to release savepoint."_s;
         }
 
-        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(errorMessage);
         });
     });
@@ -383,17 +383,17 @@ void WebExtensionSQLiteStore::commitSavepoint(WTF::UUID& savepointIdentifier, Co
 
 void WebExtensionSQLiteStore::rollbackToSavepoint(WTF::UUID& savepointIdentifier, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
 {
-    m_queue->dispatch([protectedThis = Ref { *this }, savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([protectedThis = Ref { *this }, savepointIdentifier = crossThreadCopy(savepointIdentifier), completionHandler = WTF::move(completionHandler)]() mutable {
         String errorMessage;
         if (!protectedThis->m_savepointsAreValid) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
             });
             return;
         }
 
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, false)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
             });
 
@@ -409,7 +409,7 @@ void WebExtensionSQLiteStore::rollbackToSavepoint(WTF::UUID& savepointIdentifier
             errorMessage = "Failed to rollback to savepoint."_s;
         }
 
-        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(errorMessage);
         });
     });

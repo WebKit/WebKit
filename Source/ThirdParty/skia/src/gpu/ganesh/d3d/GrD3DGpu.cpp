@@ -11,6 +11,7 @@
 #include "include/core/SkTextureCompressionType.h"
 #include "include/gpu/ganesh/GrBackendSurface.h"
 #include "include/gpu/ganesh/d3d/GrD3DBackendContext.h"
+#include "include/gpu/ganesh/d3d/GrD3DBackendSemaphore.h"
 #include "src/base/SkRectMemcpy.h"
 #include "src/core/SkCompressedDataUtils.h"
 #include "src/core/SkMipmap.h"
@@ -23,6 +24,7 @@
 #include "src/gpu/ganesh/GrThreadSafePipelineBuilder.h"
 #include "src/gpu/ganesh/d3d/GrD3DAMDMemoryAllocator.h"
 #include "src/gpu/ganesh/d3d/GrD3DAttachment.h"
+#include "src/gpu/ganesh/d3d/GrD3DBackendSurfacePriv.h"
 #include "src/gpu/ganesh/d3d/GrD3DBuffer.h"
 #include "src/gpu/ganesh/d3d/GrD3DCaps.h"
 #include "src/gpu/ganesh/d3d/GrD3DOpsRenderPass.h"
@@ -309,8 +311,7 @@ sk_sp<GrTexture> GrD3DGpu::onCreateTexture(SkISize dimensions,
                                            int mipLevelCount,
                                            uint32_t levelClearMask,
                                            std::string_view label) {
-    DXGI_FORMAT dxgiFormat;
-    SkAssertResult(format.asDxgiFormat(&dxgiFormat));
+    DXGI_FORMAT dxgiFormat = GrBackendFormats::AsDxgiFormat(format);
     SkASSERT(!GrDxgiFormatIsCompressed(dxgiFormat));
 
     GrMipmapStatus mipmapStatus = mipLevelCount > 1 ? GrMipmapStatus::kDirty
@@ -356,8 +357,7 @@ sk_sp<GrTexture> GrD3DGpu::onCreateCompressedTexture(SkISize dimensions,
                                                      GrProtected isProtected,
                                                      const void* data,
                                                      size_t dataSize) {
-    DXGI_FORMAT dxgiFormat;
-    SkAssertResult(format.asDxgiFormat(&dxgiFormat));
+    DXGI_FORMAT dxgiFormat = GrBackendFormats::AsDxgiFormat(format);
     SkASSERT(GrDxgiFormatIsCompressed(dxgiFormat));
 
     SkDEBUGCODE(SkTextureCompressionType compression = GrBackendFormatToCompressionType(format));
@@ -491,8 +491,7 @@ void GrD3DGpu::copySurfaceAsCopyTexture(GrSurface* dst, GrSurface* src,
     int dstSampleCnt = get_surface_sample_cnt(dst);
     int srcSampleCnt = get_surface_sample_cnt(src);
     DXGI_FORMAT dstFormat = dstResource->dxgiFormat();
-    DXGI_FORMAT srcFormat;
-    SkAssertResult(dst->backendFormat().asDxgiFormat(&srcFormat));
+    DXGI_FORMAT srcFormat = GrBackendFormats::AsDxgiFormat(dst->backendFormat());
     SkASSERT(this->d3dCaps().canCopyTexture(dstFormat, dstSampleCnt, srcFormat, srcSampleCnt));
 #endif
     if (src->isProtected() && !dst->isProtected()) {
@@ -982,10 +981,7 @@ sk_sp<GrTexture> GrD3DGpu::onWrapBackendTexture(const GrBackendTexture& tex,
                                                 GrWrapOwnership,
                                                 GrWrapCacheable wrapType,
                                                 GrIOType ioType) {
-    GrD3DTextureResourceInfo textureInfo;
-    if (!tex.getD3DTextureResourceInfo(&textureInfo)) {
-        return nullptr;
-    }
+    GrD3DTextureResourceInfo textureInfo = GrBackendTextures::GetD3DTextureResourceInfo(tex);
 
     if (!check_resource_info(textureInfo)) {
         return nullptr;
@@ -1000,7 +996,7 @@ sk_sp<GrTexture> GrD3DGpu::onWrapBackendTexture(const GrBackendTexture& tex,
         return nullptr;
     }
 
-    sk_sp<GrD3DResourceState> state = tex.getGrD3DResourceState();
+    sk_sp<GrD3DResourceState> state = GrBackendTextures::GetD3DResourceState(tex);
     SkASSERT(state);
     return GrD3DTexture::MakeWrappedTexture(this, tex.dimensions(), wrapType, ioType, textureInfo,
                                             std::move(state));
@@ -1016,10 +1012,7 @@ sk_sp<GrTexture> GrD3DGpu::onWrapRenderableBackendTexture(const GrBackendTexture
                                                           int sampleCnt,
                                                           GrWrapOwnership ownership,
                                                           GrWrapCacheable cacheable) {
-    GrD3DTextureResourceInfo textureInfo;
-    if (!tex.getD3DTextureResourceInfo(&textureInfo)) {
-        return nullptr;
-    }
+    GrD3DTextureResourceInfo textureInfo = GrBackendTextures::GetD3DTextureResourceInfo(tex);
 
     if (!check_resource_info(textureInfo)) {
         return nullptr;
@@ -1039,7 +1032,7 @@ sk_sp<GrTexture> GrD3DGpu::onWrapRenderableBackendTexture(const GrBackendTexture
 
     sampleCnt = this->d3dCaps().getRenderTargetSampleCount(sampleCnt, textureInfo.fFormat);
 
-    sk_sp<GrD3DResourceState> state = tex.getGrD3DResourceState();
+    sk_sp<GrD3DResourceState> state = GrBackendTextures::GetD3DResourceState(tex);
     SkASSERT(state);
 
     return GrD3DTextureRenderTarget::MakeWrappedTextureRenderTarget(this, tex.dimensions(),
@@ -1048,10 +1041,7 @@ sk_sp<GrTexture> GrD3DGpu::onWrapRenderableBackendTexture(const GrBackendTexture
 }
 
 sk_sp<GrRenderTarget> GrD3DGpu::onWrapBackendRenderTarget(const GrBackendRenderTarget& rt) {
-    GrD3DTextureResourceInfo info;
-    if (!rt.getD3DTextureResourceInfo(&info)) {
-        return nullptr;
-    }
+    GrD3DTextureResourceInfo info = GrBackendRenderTargets::GetD3DTextureResourceInfo(rt);
 
     if (!check_resource_info(info)) {
         return nullptr;
@@ -1066,7 +1056,7 @@ sk_sp<GrRenderTarget> GrD3DGpu::onWrapBackendRenderTarget(const GrBackendRenderT
         return nullptr;
     }
 
-    sk_sp<GrD3DResourceState> state = rt.getGrD3DResourceState();
+    sk_sp<GrD3DResourceState> state = GrBackendRenderTargets::GetD3DResourceState(rt);
 
     sk_sp<GrD3DRenderTarget> tgt = GrD3DRenderTarget::MakeWrappedRenderTarget(
             this, rt.dimensions(), rt.sampleCnt(), info, std::move(state));
@@ -1405,10 +1395,7 @@ GrBackendTexture GrD3DGpu::onCreateBackendTexture(SkISize dimensions,
         return {};
     }
 
-    DXGI_FORMAT dxgiFormat;
-    if (!format.asDxgiFormat(&dxgiFormat)) {
-        return {};
-    }
+    DXGI_FORMAT dxgiFormat = GrBackendFormats::AsDxgiFormat(format);
 
     // TODO: move the texturability check up to GrGpu::createBackendTexture and just assert here
     if (!caps.isFormatTexturable(dxgiFormat)) {
@@ -1422,7 +1409,7 @@ GrBackendTexture GrD3DGpu::onCreateBackendTexture(SkISize dimensions,
         return {};
     }
 
-    return GrBackendTexture(dimensions.width(), dimensions.height(), info);
+    return GrBackendTextures::MakeD3D(dimensions.width(), dimensions.height(), info);
 }
 
 static bool copy_color_data(const GrD3DCaps& caps,
@@ -1446,11 +1433,10 @@ static bool copy_color_data(const GrD3DCaps& caps,
 bool GrD3DGpu::onClearBackendTexture(const GrBackendTexture& backendTexture,
                                      sk_sp<skgpu::RefCntedCallback> finishedCallback,
                                      std::array<float, 4> color) {
-    GrD3DTextureResourceInfo info;
-    SkAssertResult(backendTexture.getD3DTextureResourceInfo(&info));
+    GrD3DTextureResourceInfo info = GrBackendTextures::GetD3DTextureResourceInfo(backendTexture);
     SkASSERT(!GrDxgiFormatIsCompressed(info.fFormat));
 
-    sk_sp<GrD3DResourceState> state = backendTexture.getGrD3DResourceState();
+    sk_sp<GrD3DResourceState> state = GrBackendTextures::GetD3DResourceState(backendTexture);
     SkASSERT(state);
     sk_sp<GrD3DTexture> texture =
             GrD3DTexture::MakeWrappedTexture(this, backendTexture.dimensions(),
@@ -1471,7 +1457,7 @@ bool GrD3DGpu::onClearBackendTexture(const GrBackendTexture& backendTexture,
     SkASSERT(d3dResource);
     D3D12_RESOURCE_DESC desc = d3dResource->GetDesc();
     unsigned int mipLevelCount = 1;
-    if (backendTexture.fMipmapped == skgpu::Mipmapped::kYes) {
+    if (backendTexture.hasMipmaps()) {
         mipLevelCount = SkMipmap::ComputeLevelCount(backendTexture.dimensions()) + 1;
     }
     SkASSERT(mipLevelCount == info.fLevelCount);
@@ -1553,10 +1539,8 @@ bool GrD3DGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendT
                                                 sk_sp<skgpu::RefCntedCallback> finishedCallback,
                                                 const void* data,
                                                 size_t size) {
-    GrD3DTextureResourceInfo info;
-    SkAssertResult(backendTexture.getD3DTextureResourceInfo(&info));
-
-    sk_sp<GrD3DResourceState> state = backendTexture.getGrD3DResourceState();
+    GrD3DTextureResourceInfo info = GrBackendTextures::GetD3DTextureResourceInfo(backendTexture);
+    sk_sp<GrD3DResourceState> state = GrBackendTextures::GetD3DResourceState(backendTexture);
     SkASSERT(state);
     sk_sp<GrD3DTexture> texture = GrD3DTexture::MakeWrappedTexture(this,
                                                                    backendTexture.dimensions(),
@@ -1636,7 +1620,7 @@ bool GrD3DGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendT
 }
 
 void GrD3DGpu::deleteBackendTexture(const GrBackendTexture& tex) {
-    SkASSERT(GrBackendApi::kDirect3D == tex.fBackend);
+    SkASSERT(GrBackendApi::kDirect3D == tex.backend());
     // Nothing to do here, will get cleaned up when the GrBackendTexture object goes away
 }
 
@@ -1648,10 +1632,7 @@ bool GrD3DGpu::compile(const GrProgramDesc&, const GrProgramInfo&) {
 bool GrD3DGpu::isTestingOnlyBackendTexture(const GrBackendTexture& tex) const {
     SkASSERT(GrBackendApi::kDirect3D == tex.backend());
 
-    GrD3DTextureResourceInfo info;
-    if (!tex.getD3DTextureResourceInfo(&info)) {
-        return false;
-    }
+    GrD3DTextureResourceInfo info = GrBackendTextures::GetD3DTextureResourceInfo(tex);
     ID3D12Resource* textureResource = info.fResource.get();
     if (!textureResource) {
         return false;
@@ -1682,21 +1663,19 @@ GrBackendRenderTarget GrD3DGpu::createTestingOnlyBackendRenderTarget(SkISize dim
         return {};
     }
 
-    return GrBackendRenderTarget(dimensions.width(), dimensions.height(), info);
+    return GrBackendRenderTargets::MakeD3D(dimensions.width(), dimensions.height(), info);
 }
 
 void GrD3DGpu::deleteTestingOnlyBackendRenderTarget(const GrBackendRenderTarget& rt) {
     SkASSERT(GrBackendApi::kDirect3D == rt.backend());
 
-    GrD3DTextureResourceInfo info;
-    if (rt.getD3DTextureResourceInfo(&info)) {
-        GrSubmitInfo submitInfo;
-        submitInfo.fSync = GrSyncCpu::kYes;
+    GrD3DTextureResourceInfo info = GrBackendRenderTargets::GetD3DTextureResourceInfo(rt);
+    GrSubmitInfo submitInfo;
+    submitInfo.fSync = GrSyncCpu::kYes;
 
-        this->submitToGpu(submitInfo);
-        // Nothing else to do here, will get cleaned up when the GrBackendRenderTarget
-        // is deleted.
-    }
+    this->submitToGpu(submitInfo);
+    // Nothing else to do here, will get cleaned up when the GrBackendRenderTarget
+    // is deleted.
 }
 
 void GrD3DGpu::testingOnly_startCapture() {
@@ -1772,11 +1751,9 @@ bool GrD3DGpu::onSubmitToGpu(const GrSubmitInfo& info) {
 std::unique_ptr<GrSemaphore> GrD3DGpu::wrapBackendSemaphore(const GrBackendSemaphore& semaphore,
                                                             GrSemaphoreWrapType /* wrapType */,
                                                             GrWrapOwnership /* ownership */) {
+    SkASSERT(semaphore.backend() == GrBackendApi::kDirect3D);
     SkASSERT(this->caps()->backendSemaphoreSupport());
-    GrD3DFenceInfo fenceInfo;
-    if (!semaphore.getD3DFenceInfo(&fenceInfo)) {
-        return nullptr;
-    }
+    GrD3DFenceInfo fenceInfo = GrBackendSemaphores::GetD3DFenceInfo(semaphore);
     return GrD3DSemaphore::MakeWrapped(fenceInfo);
 }
 

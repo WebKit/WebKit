@@ -46,6 +46,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-016-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-horizontal-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-horizontal-rtl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html

@@ -63,7 +63,7 @@ void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandle
     if (hostname.isEmpty())
         return completionHandler(makeUnexpected(DNSError::CannotResolve));
 
-    WebCore::DNSResolveQueue::singleton().resolve(hostname, identifier, WTFMove(completionHandler));
+    WebCore::DNSResolveQueue::singleton().resolve(hostname, identifier, WTF::move(completionHandler));
 }
 
 void stopResolveDNS(uint64_t identifier)

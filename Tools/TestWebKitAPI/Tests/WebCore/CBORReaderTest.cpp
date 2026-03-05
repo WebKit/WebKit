@@ -240,7 +240,7 @@ TEST(CBORReaderTest, TestReadArray)
 
     std::optional<CBORValue> cbor = CBORReader::read(kArrayTestCaseCBOR);
     ASSERT_TRUE(cbor.has_value());
-    const CBORValue cborArray = WTFMove(cbor.value());
+    const CBORValue cborArray = WTF::move(cbor.value());
     ASSERT_TRUE(cborArray.type() == CBORValue::Type::Array);
     ASSERT_EQ(cborArray.getArray().size(), 25u);
 
@@ -270,7 +270,7 @@ TEST(CBORReaderTest, TestReadMapWithMapValue)
 
     std::optional<CBORValue> cbor = CBORReader::read(kMapTestCaseCBOR);
     ASSERT_TRUE(cbor.has_value());
-    const CBORValue cborVal = WTFMove(cbor.value());
+    const CBORValue cborVal = WTF::move(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 4u);
 
@@ -314,7 +314,7 @@ TEST(CBORReaderTest, TestReadMapWithIntegerKeys)
 
     std::optional<CBORValue> cbor = CBORReader::read(kMapWithIntegerKeyCBOR);
     ASSERT_TRUE(cbor.has_value());
-    const CBORValue cborVal = WTFMove(cbor.value());
+    const CBORValue cborVal = WTF::move(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 4u);
 
@@ -354,7 +354,7 @@ TEST(CBORReaderTest, TestReadMapWithArray)
 
     std::optional<CBORValue> cbor = CBORReader::read(kMapArrayTestCaseCBOR);
     ASSERT_TRUE(cbor.has_value());
-    const CBORValue cborVal = WTFMove(cbor.value());
+    const CBORValue cborVal = WTF::move(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 2u);
 
@@ -393,7 +393,7 @@ TEST(CBORReaderTest, TestReadNestedMap)
 
     std::optional<CBORValue> cbor = CBORReader::read(kNestedMapTestCase);
     ASSERT_TRUE(cbor.has_value());
-    const CBORValue cborVal = WTFMove(cbor.value());
+    const CBORValue cborVal = WTF::move(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 2u);
 

@@ -16,8 +16,8 @@ includes: [testTypedArray.js, compareArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([41, 1, 42, 7]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([41, 1, 42, 7]));
   var result;
 
   result = sample.filter(function() { return true; });

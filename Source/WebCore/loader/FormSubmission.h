@@ -78,7 +78,7 @@ public:
         String m_acceptCharset;
     };
 
-    static Ref<FormSubmission> create(HTMLFormElement&, HTMLFormControlElement* overrideSubmitter, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
+    static RefPtr<FormSubmission> create(HTMLFormElement&, HTMLFormControlElement* overrideSubmitter, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
     URL requestURL() const;
@@ -87,8 +87,7 @@ public:
     const URL& action() const { return m_action; }
     const AtomString& target() const { return m_target; }
     const String& contentType() const { return m_contentType; }
-    FormState& state() const { return *m_formState; }
-    RefPtr<FormState> protectedState() const { return m_formState; }
+    FormState* state() const { return m_formState.get(); }
     FormData& data() const { return *m_formData; }
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
@@ -100,8 +99,8 @@ public:
 
     void clearTarget() { m_target = { }; }
     void setReferrer(const String& referrer) { m_referrer = referrer; }
-    void setReferrer(String&& referrer) { m_referrer = WTFMove(referrer); }
-    void setOrigin(String&& origin) { m_origin = WTFMove(origin); }
+    void setReferrer(String&& referrer) { m_referrer = WTF::move(referrer); }
+    void setOrigin(String&& origin) { m_origin = WTF::move(origin); }
 
     void cancel() { m_wasCancelled = true; }
     bool wasCancelled() const { return m_wasCancelled; }

@@ -16,11 +16,11 @@ info: |
       iii. If ! IsValidIntegerIndex(O, numericIndex) is false, return false.
       iv. Return true.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n]));
   assert.sameValue(Reflect.has(sample, 0), true, 'Reflect.has(sample, 0) must return true');
   assert.sameValue(Reflect.has(sample, 1), true, 'Reflect.has(sample, 1) must return true');
 });

@@ -10,6 +10,6 @@ PASS gzip empty data should be reinflated back to its origin
 PASS gzip small amount data should be reinflated back to its origin
 PASS gzip large amount data should be reinflated back to its origin
 PASS brotli empty data should be reinflated back to its origin
-FAIL brotli small amount data should be reinflated back to its origin assert_array_equals: value should match lengths differ, expected array object "45,62,32,48,48,58,48,48,58,48,53,46,48,48,48,10,70,111,111,10" length 42, got object "" length 0
-FAIL brotli large amount data should be reinflated back to its origin assert_array_equals: value should match lengths differ, expected array object "130,6,132,183,1,0,0,0,0,0,0,8,247,129,2,241,131,1,4,176" length 76501, got object "" length 0
+PASS brotli small amount data should be reinflated back to its origin
+PASS brotli large amount data should be reinflated back to its origin
 

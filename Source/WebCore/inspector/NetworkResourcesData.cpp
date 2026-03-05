@@ -103,7 +103,7 @@ void NetworkResourcesData::ResourceData::decodeDataToContent()
 {
     ASSERT(!hasContent());
 
-    auto buffer = m_dataBuffer.takeAsContiguous();
+    auto buffer = m_dataBuffer.takeBufferAsContiguous();
 
     if (m_decoder) {
         m_base64Encoded = false;
@@ -130,7 +130,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
 
     auto resourceData = makeUnique<ResourceData>(requestId, loaderId);
     resourceData->setType(type);
-    m_requestIdToResourceDataMap.set(requestId, WTFMove(resourceData));
+    m_requestIdToResourceDataMap.set(requestId, WTF::move(resourceData));
 }
 
 void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, CachedResource& cachedResource)
@@ -139,7 +139,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
 
     auto resourceData = makeUnique<ResourceData>(requestId, loaderId);
     resourceData->setCachedResource(&cachedResource);
-    m_requestIdToResourceDataMap.set(requestId, WTFMove(resourceData));
+    m_requestIdToResourceDataMap.set(requestId, WTF::move(resourceData));
 }
 
 void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response, Inspector::ResourceType type, bool forceBufferData)
@@ -281,7 +281,7 @@ void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, RefP
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
-    resourceData->setBuffer(WTFMove(buffer));
+    resourceData->setBuffer(WTF::move(buffer));
     resourceData->setTextEncodingName(textEncodingName);
 }
 

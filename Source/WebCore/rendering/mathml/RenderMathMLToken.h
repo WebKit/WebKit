@@ -36,14 +36,14 @@ namespace WebCore {
 class MathMLTokenElement;
 
 class RenderMathMLToken : public RenderMathMLBlock {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLToken);
+    WTF_MAKE_TZONE_ALLOCATED(RenderMathMLToken);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLToken);
 public:
     RenderMathMLToken(Type, MathMLTokenElement&, RenderStyle&&);
     RenderMathMLToken(Type, Document&, RenderStyle&&);
     virtual ~RenderMathMLToken();
 
-    MathMLTokenElement& element();
+    MathMLTokenElement& NODELETE element();
 
     virtual void updateTokenContent();
     void updateFromElement() override;
@@ -59,7 +59,7 @@ private:
     bool isRenderMathMLToken() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLToken"_s; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return true; };
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
     void updateMathVariantGlyph();
     void setMathVariantGlyphDirty();
 

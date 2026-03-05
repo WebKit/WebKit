@@ -1,5 +1,5 @@
 
-Harness Error (FAIL), message = Unhandled rejection: The object can not be cloned.
+Harness Error (TIMEOUT), message = null
 
 TIMEOUT a WritableStream deserialization failure should result in a DataCloneError Test timed out
 TIMEOUT a ReadableStream deserialization failure should result in a DataCloneError Test timed out

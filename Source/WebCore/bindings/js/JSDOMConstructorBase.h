@@ -44,7 +44,7 @@ public:
         return subspaceForImpl(vm);
     }
 
-    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
 
     JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(Base::globalObject()); }
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }

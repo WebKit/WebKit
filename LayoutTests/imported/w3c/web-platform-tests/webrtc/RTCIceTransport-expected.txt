@@ -17,4 +17,5 @@ PASS Remote ICE restart should not result in a different ICE transport (DataChan
 TIMEOUT RTCIceTransport should transition to "closed" if the underlying transport is closed because the answer used bundle Test timed out
 NOTRUN RTCIceTransport should synchronously transition to "closed" with no event if the underlying transport is closed due to PC.close()
 NOTRUN RTCIceTransport does not expose remote peer-reflexive candidates.
+FAIL Validate selected candidate pair assert_true: pc1 selected local candidate in pc1 candidates expected true got false
 

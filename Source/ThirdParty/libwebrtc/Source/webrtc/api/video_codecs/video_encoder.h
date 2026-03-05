@@ -152,6 +152,12 @@ class RTC_EXPORT VideoEncoder {
     }
   };
 
+  struct RTC_EXPORT Resolution {
+    Resolution(int width, int height) : width(width), height(height) {}
+    int width = 0;
+    int height = 0;
+  };
+
   // Struct containing metadata about the encoder implementing this interface.
   struct RTC_EXPORT EncoderInfo {
     static constexpr uint8_t kMaxFramerateFraction =
@@ -266,6 +272,14 @@ class RTC_EXPORT VideoEncoder {
     // configuration. This may be used to determine if the encoder has reached
     // its target video quality for static screenshare content.
     std::optional<int> min_qp;
+
+    // Maximum resolution accessed by software encoder,
+    // i.e. resolution needed for cpu readable image.
+    // This has to be set by software encoders.
+    // If it's not set, mapping will happen during the
+    // encode time, otherwise more optimal implementation
+    // specific path may be used.
+    std::optional<Resolution> mapped_resolution;
   };
 
   struct RTC_EXPORT RateControlParameters {

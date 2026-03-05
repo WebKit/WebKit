@@ -10,9 +10,12 @@
 
 #include "video/corruption_detection/utils.h"
 
+#include <algorithm>
+
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/scoped_refptr.h"
+#include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_buffer.h"
@@ -67,6 +70,11 @@ scoped_refptr<I420Buffer> GetAsI420Buffer(
       I420Buffer::Copy(*i420_buffer_interface);
   RTC_DCHECK_EQ(frame_as_i420_buffer->StrideY(), frame_as_i420_buffer->width());
   return frame_as_i420_buffer;
+}
+
+int GetSpatialLayerId(const EncodedImage& encoded_image) {
+  return std::max(encoded_image.SpatialIndex().value_or(0),
+                  encoded_image.SimulcastIndex().value_or(0));
 }
 
 }  // namespace webrtc

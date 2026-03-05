@@ -26,7 +26,7 @@
 #pragma once
 
 #include "LegacyRenderSVGShape.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGGraphicsElement.h"
 
 namespace WebCore {
@@ -39,11 +39,6 @@ inline bool LegacyRenderSVGShape::hasNonScalingStroke() const
 inline SVGGraphicsElement& LegacyRenderSVGShape::graphicsElement() const
 {
     return downcast<SVGGraphicsElement>(LegacyRenderSVGModelObject::element());
-}
-
-inline Ref<SVGGraphicsElement> LegacyRenderSVGShape::protectedGraphicsElement() const
-{
-    return graphicsElement();
 }
 
 } // namespace WebCore

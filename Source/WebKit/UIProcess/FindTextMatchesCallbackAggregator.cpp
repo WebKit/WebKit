@@ -27,27 +27,51 @@
 #include "FindTextMatchesCallbackAggregator.h"
 
 #include "WebFoundTextRange.h"
+#include "WebFrameProxy.h"
+#include "WebPageProxy.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
-Ref<FindTextMatchCallbackAggregator> FindTextMatchCallbackAggregator::create(CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
+Ref<FindTextMatchCallbackAggregator> FindTextMatchCallbackAggregator::create(WebPageProxy& page, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
 {
-    return adoptRef(*new FindTextMatchCallbackAggregator(WTFMove(completionHandler)));
+    return adoptRef(*new FindTextMatchCallbackAggregator(page, WTF::move(completionHandler)));
 }
 
-void FindTextMatchCallbackAggregator::foundMatches(Vector<WebFoundTextRange>&& range)
+void FindTextMatchCallbackAggregator::foundMatches(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&& matches)
 {
-    // FIXME: matches will be returned in amy order from frames. Matches need to be sorted in the order they appear in the frame tree.
-    m_range.appendVector(range);
+    for (auto& [frameId, match] : matches)
+        m_frameMatches.set(frameId, match);
 }
 
 FindTextMatchCallbackAggregator::~FindTextMatchCallbackAggregator()
 {
-    m_completionHandler(WTFMove(m_range));
+    Vector<WebFoundTextRange> ranges;
+    uint64_t frameOrder = 0;
+
+    RefPtr protectedPage = m_page.get();
+    if (!protectedPage) {
+        m_completionHandler(WTF::move(ranges));
+        return;
+    }
+
+    for (RefPtr frame = protectedPage->mainFrame(); frame; frame = frame->traverseNext().frame) {
+        const auto frameID = frame->frameID();
+        if (auto it = m_frameMatches.find(frameID); it != m_frameMatches.end()) {
+            for (auto& match : it->value) {
+                match.order = frameOrder;
+                ranges.append(match);
+            }
+        }
+        frameOrder++;
+    }
+
+    m_completionHandler(WTF::move(ranges));
 }
 
-FindTextMatchCallbackAggregator::FindTextMatchCallbackAggregator(CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
+FindTextMatchCallbackAggregator::FindTextMatchCallbackAggregator(WebPageProxy& page, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
+    : m_page(page)
+    , m_completionHandler(WTF::move(completionHandler))
 {
 }
 

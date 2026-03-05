@@ -31,4 +31,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.copyWithin(obj, obj);
   });
-});
+}, null, ["passthrough"]);

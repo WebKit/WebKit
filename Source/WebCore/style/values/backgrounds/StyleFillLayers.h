@@ -116,7 +116,7 @@ bool hasAnyBackgroundClipText(const CoordinatedValueList<T>& list)
 }
 
 template<FillLayer T>
-RefPtr<StyleImage> findLayerUsedImage(const CoordinatedValueList<T>& list, WrappedImagePtr image, bool& isNonEmpty)
+RefPtr<Image> findLayerUsedImage(const CoordinatedValueList<T>& list, WrappedImagePtr image, bool& isNonEmpty)
 {
     for (auto& layer : list.usedValues()) {
         RefPtr layerImage = layer.image().tryStyleImage();

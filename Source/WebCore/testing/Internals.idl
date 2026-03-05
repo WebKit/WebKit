@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,13 +146,13 @@ enum AutoplayPolicy {
     Conditional=VIDEO,
     JSGenerateToJSObject,
 ] dictionary NowPlayingState {
-    DOMString title;
-    unrestricted double duration;
-    unrestricted double elapsedTime;
-    unsigned long long uniqueIdentifier;
-    boolean hasActiveSession;
-    boolean registeredAsNowPlayingApplication;
-    boolean haveEverRegisteredAsNowPlayingApplication;
+    DOMString title = "";
+    unrestricted double duration = 0;
+    unrestricted double elapsedTime = 0;
+    unsigned long long uniqueIdentifier = 0;
+    boolean hasActiveSession = false;
+    boolean registeredAsNowPlayingApplication = false;
+    boolean haveEverRegisteredAsNowPlayingApplication = false;
 };
 
 [
@@ -173,7 +173,7 @@ enum AutoplayPolicy {
     DOMString artist;
     DOMString album;
     DOMString sourceApplicationIdentifier;
-    NowPlayingInfoArtwork? artwork;
+    NowPlayingInfoArtwork artwork;
 };
 
 [
@@ -217,10 +217,10 @@ enum AutoplayPolicy {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] dictionary FullscreenInsets {
-    double top;
-    double left;
-    double bottom;
-    double right;
+    float top = 0;
+    float left = 0;
+    float bottom = 0;
+    float right = 0;
 };
 
 enum HEVCParameterCodec {
@@ -231,15 +231,16 @@ enum HEVCParameterCodec {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary HEVCParameterSet {
-    HEVCParameterCodec codec;
-    unsigned short generalProfileSpace;
-    unsigned short generalProfileIDC;
-    unsigned long generalProfileCompatibilityFlags;
-    octet generalTierFlag;
+    HEVCParameterCodec codec = "hvc1";
+    unsigned short generalProfileSpace = 0;
+    unsigned short generalProfileIDC = 0;
+    unsigned long generalProfileCompatibilityFlags = 0;
+    octet generalTierFlag = 0;
     required FrozenArray<octet> generalConstraintIndicatorFlags;
-    unsigned short generalLevelIDC;
+    unsigned short generalLevelIDC = 0;
 };
 
 enum AV1ConfigurationProfile {
@@ -287,29 +288,31 @@ enum AV1ConfigurationRange {
 
 [
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary AV1CodecConfigurationRecord {
     DOMString codecName;
-    AV1ConfigurationProfile profile;
-    AV1ConfigurationLevel level;
-    AV1ConfigurationTier tier;
-    octet bitDepth;
-    octet monochrome;
-    octet chromaSubsampling;
-    octet colorPrimaries;
-    octet transferCharacteristics;
-    octet matrixCoefficients;
-    AV1ConfigurationRange videoFullRangeFlag;
+    AV1ConfigurationProfile profile = "Main";
+    AV1ConfigurationLevel level = "Level_2_0";
+    AV1ConfigurationTier tier = "Main";
+    octet bitDepth = 8;
+    octet monochrome = 0;
+    octet chromaSubsampling = 110;
+    octet colorPrimaries = 1;
+    octet transferCharacteristics = 1;
+    octet matrixCoefficients = 1;
+    AV1ConfigurationRange videoFullRangeFlag = "VideoRange";
+    unsigned long width = 0;
+    unsigned long height = 0;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary DoViParameterSet {
-    DOMString codecName;
-    unsigned short bitstreamProfileID;
-    unsigned short bitstreamLevelID;
+    required DOMString codecName;
+    required unsigned short bitstreamProfileID;
+    required unsigned short bitstreamLevelID;
 };
 
 [
@@ -317,29 +320,30 @@ enum AV1ConfigurationRange {
     JSGenerateToJSObject,
 ] dictionary VPCodecConfigurationRecord {
     DOMString codecName;
-    octet profile;
-    octet level;
-    octet bitDepth;
-    octet chromaSubsampling;
-    octet videoFullRangeFlag;
-    octet colorPrimaries;
-    octet transferCharacteristics;
-    octet matrixCoefficients;
+    octet profile = 0;
+    octet level = 10;
+    octet bitDepth = 8;
+    octet chromaSubsampling = 1;
+    octet videoFullRangeFlag = 0;
+    octet colorPrimaries = 1;
+    octet transferCharacteristics = 1;
+    octet matrixCoefficients = 1;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary AcceleratedAnimation {
-    DOMString property;
-    double speed;
-    boolean isThreaded;
+    required DOMString property;
+    required double speed;
+    required boolean isThreaded;
+    required boolean hasHighImpact;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary CookieData {
     DOMString name;
     DOMString value;
@@ -356,21 +360,23 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebDriverCookieData {
     DOMString name;
     DOMString value;
-    DOMString path;
+    DOMString path = "/";
     DOMString domain;
-    boolean secure;
-    boolean httpOnly;
-    double? expiry;
-    DOMString sameSite;
+    boolean secure = false;
+    boolean httpOnly = false;
+    double expiry;
+    DOMString sameSite = "none";
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary TextIndicatorInfo {
     DOMRectReadOnly textBoundingRectInRootViewCoordinates;
     DOMRectList textRectsInBoundingRectCoordinates;
@@ -411,7 +417,7 @@ enum AV1ConfigurationRange {
     required DOMPointReadOnly topRight;
     required DOMPointReadOnly bottomRight;
     required DOMPointReadOnly bottomLeft;
-    sequence<ImageOverlayText> children;
+    sequence<ImageOverlayText> children = [];
     boolean hasTrailingNewline = true;
     boolean isVertical = false;
 };
@@ -439,20 +445,20 @@ enum AV1ConfigurationRange {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary SelectorFilterHashCounts {
-    unsigned long ids;
-    unsigned long classes;
-    unsigned long tags;
-    unsigned long attributes;
+    unsigned long ids = 0;
+    unsigned long classes = 0;
+    unsigned long tags = 0;
+    unsigned long attributes = 0;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary PDFAnnotationRect {
-    double x;
-    double y;
-    double width;
-    double height; 
+    float x = 0;
+    float y = 0;
+    float width = 0;
+    float height = 0;
 };
 
 typedef (FetchRequest or FetchResponse) FetchObject;
@@ -461,14 +467,14 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary ImageBufferResourceLimits {
-    unsigned long long acceleratedImageBufferForCanvasCount;
-    unsigned long long acceleratedImageBufferForCanvasLimit;
-    unsigned long long globalAcceleratedImageBufferCount;
-    unsigned long long globalAcceleratedImageBufferLimit;
-    unsigned long long globalImageBufferForCanvasCount;
-    unsigned long long globalImageBufferForCanvasLimit;
-    unsigned long long imageBufferForCanvasCount;
-    unsigned long long imageBufferForCanvasLimit;
+    unsigned long long acceleratedImageBufferForCanvasCount = 0;
+    unsigned long long acceleratedImageBufferForCanvasLimit = 0;
+    unsigned long long globalAcceleratedImageBufferCount = 0;
+    unsigned long long globalAcceleratedImageBufferLimit = 0;
+    unsigned long long globalImageBufferForCanvasCount = 0;
+    unsigned long long globalImageBufferForCanvasLimit = 0;
+    unsigned long long imageBufferForCanvasCount = 0;
+    unsigned long long imageBufferForCanvasLimit = 0;
 };
 
 enum RenderingMode {
@@ -491,9 +497,17 @@ enum ContentsFormat {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary FrameDamage {
-    unsigned long sequenceId;
+    unsigned long sequenceId = 0;
     DOMRectReadOnly bounds;
-    sequence<DOMRectReadOnly> rects;
+    sequence<DOMRectReadOnly> rects = [];
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ScrollingNodeID {
+    required unsigned long long nodeIdentifier;
+    required unsigned long long processIdentifier;
 };
 
 [
@@ -508,6 +522,9 @@ enum ContentsFormat {
 
     // Animated image pausing testing.
     boolean hasPausedImageAnimations(Element element);
+
+    // lang attribute testing.
+    boolean effectiveLangKnownToMatchDocumentElement(Element element);
 
     undefined markFrontBufferVolatile(Element element);
     boolean isFullyActive(Document document);
@@ -542,13 +559,13 @@ enum ContentsFormat {
     CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
 
     Node ensureUserAgentShadowRoot(Element host);
-    Node shadowRoot(Element host);
+    Node? shadowRoot(Element host);
 
     DOMString shadowRootType(Node root);
     DOMString userAgentPart(Element element);
     undefined setUserAgentPart(Element element, [AtomString] DOMString part);
     Node treeScopeRootNode(Node node);
-    Node parentTreeScope(Node node);
+    Node? parentTreeScope(Node node);
 
     // Spatial Navigation testing
     unsigned long lastSpatialNavigationCandidateCount();
@@ -564,6 +581,8 @@ enum ContentsFormat {
     readonly attribute double animationsInterval;
 
     // Web Animations testing.
+    unsigned long long identifierForTimeline(AnimationTimeline timeline);
+    ScrollingNodeID scrollingNodeIDForTimeline(AnimationTimeline timeline);
     sequence<AcceleratedAnimation> acceleratedAnimationsForElement(Element element);
     unsigned long numberOfAnimationTimelineInvalidations();
     double timeToNextAnimationTick(WebAnimation animation);
@@ -602,7 +621,7 @@ enum ContentsFormat {
     DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
     DOMString dumpMarkerRects(DOMString markerType);
     undefined setMarkedTextMatchesAreHighlighted(boolean flag);
-    ImageData snapshotNode(Node node);
+    ImageData? snapshotNode(Node node);
 
     undefined invalidateFontCache();
 
@@ -644,7 +663,7 @@ enum ContentsFormat {
 
     undefined setCanShowPlaceholder(Element element, boolean canShowPlaceholder);
 
-    Element insertTextPlaceholder(long width, long height);
+    Element? insertTextPlaceholder(long width, long height);
     undefined removeTextPlaceholder(Element element);
 
     Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
@@ -757,7 +776,7 @@ enum ContentsFormat {
 
     undefined setGridMaxTracksLimit(unsigned long maxTracksLimit);
 
-    readonly attribute InternalSettings settings;
+    readonly attribute InternalSettings? settings;
     readonly attribute unsigned long workerThreadCount;
 
     readonly attribute boolean areSVGAnimationsPaused;
@@ -789,8 +808,10 @@ enum ContentsFormat {
     unsigned long long layerIDForElement(Element element);
     unsigned long long horizontalScrollbarLayerID(optional Node? node = null);
     unsigned long long verticalScrollbarLayerID(optional Node? node = null);
-    
-    sequence<unsigned long long> scrollingNodeIDForNode(optional Node? node = null);
+    DOMRect horizontalScrollbarFrameRect(optional Node? node = null);
+    DOMRect verticalScrollbarFrameRect(optional Node? node = null);
+
+    ScrollingNodeID scrollingNodeIDForNode(optional Node? node = null);
 
     // Flags for platformLayerTreeAsText.
     const unsigned short PLATFORM_LAYER_TREE_DEBUG = 1;
@@ -860,6 +881,8 @@ enum ContentsFormat {
     [Conditional=WEB_AUDIO] unsigned long long baseAudioContextIdentifier(BaseAudioContext context);
     [Conditional=WEB_AUDIO] boolean isBaseAudioContextAlive(unsigned long long contextID);
 
+    [Conditional=WEB_AUDIO] sequence<unrestricted float> waveShaperProcessCurveWithData(sequence<unrestricted float> source, sequence<unrestricted float> curve);
+
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
     sequence<DOMString> shortcutIconURLs();
@@ -911,7 +934,6 @@ enum ContentsFormat {
     undefined setCanvasNoiseInjectionSalt(HTMLCanvasElement element, unsigned long long salt);
     boolean doesCanvasHavePendingCanvasNoiseInjection(HTMLCanvasElement element);
 
-    long timerNestingLevel();
     // Query if a timer is currently throttled, to debug timer throttling.
     boolean isTimerThrottled(long timerHandle);
     boolean isTimerAligned(long timerHandle);
@@ -943,6 +965,8 @@ enum ContentsFormat {
 
     undefined startTrackingRenderingUpdates();
     unsigned long renderingUpdateCount();
+
+    double? timeToNextRenderingUpdate();
 
     attribute CompositingPolicy? compositingPolicyOverride;
 
@@ -1008,6 +1032,7 @@ enum ContentsFormat {
     [Conditional=SPEECH_SYNTHESIS] undefined enableMockSpeechSynthesizer();
     [Conditional=SPEECH_SYNTHESIS] undefined simulateSpeechSynthesizerVoiceListChange();
     [Conditional=SPEECH_SYNTHESIS] undefined enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement element);
+    [Conditional=SPEECH_SYNTHESIS] undefined setInitialVoiceListToEmpty();
     [Conditional=SPEECH_SYNTHESIS] undefined setSpeechUtteranceDuration(double duration);
     [Conditional=SPEECH_SYNTHESIS] readonly attribute unsigned long minimumExpectedVoiceCount;
 
@@ -1016,8 +1041,10 @@ enum ContentsFormat {
     [Conditional=VIDEO] DOMString captionsStyleSheetOverride();
     [Conditional=VIDEO] undefined setCaptionsStyleSheetOverride(DOMString override);
     [Conditional=VIDEO] undefined setPrimaryAudioTrackLanguageOverride(DOMString language);
+    [Conditional=VIDEO] undefined setPreferredAudioCharacteristicsForTesting(sequence<DOMString> characteristics);
     [Conditional=VIDEO] undefined setCaptionDisplayMode(DOMString mode);
-    [Conditional=VIDEO] TextTrackCueGeneric createGenericCue(double startTime, double endTime, DOMString text);
+    [Conditional=VIDEO] readonly attribute DOMString captionDisplayMode;
+    [Conditional=VIDEO] TextTrackCueGeneric? createGenericCue(double startTime, double endTime, DOMString text);
     [Conditional=VIDEO] DOMString textTrackBCP47Language(TextTrack track);
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
@@ -1027,6 +1054,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] undefined showCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement element);
     [Conditional=VIDEO] undefined hideCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement element);
     [Conditional=VIDEO] undefined setMockCaptionDisplaySettingsClientCallback(MockCaptionDisplaySettingsClientCallback? callback);
+    [Conditional=VIDEO] MediaControlsHost? controlsHostForMediaElement(HTMLMediaElement element);
 
     boolean isSelectPopupVisible(HTMLSelectElement element);
 
@@ -1072,13 +1100,13 @@ enum ContentsFormat {
 
     [Conditional=WEB_AUDIO] undefined useMockAudioDestinationCocoa();
 
-    [Conditional=WEB_RTC] undefined emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection connection, DOMString action);
     [Conditional=WEB_RTC] undefined useMockRTCPeerConnectionFactory(DOMString testCase);
     [Conditional=WEB_RTC] undefined setICECandidateFiltering(boolean enabled);
     [Conditional=WEB_RTC] undefined setEnumeratingAllNetworkInterfacesEnabled(boolean enabled);
     [Conditional=WEB_RTC] undefined stopPeerConnection(RTCPeerConnection connection);
     [Conditional=WEB_RTC] undefined clearPeerConnectionFactory();
     [Conditional=WEB_RTC] undefined setEnableWebRTCEncryption(boolean enabled);
+    [Conditional=WEB_RTC] boolean hasPeerConnectionEnabledServiceClass(RTCPeerConnection connection);
 
     [Conditional=VIDEO] undefined simulateSystemSleep();
     [Conditional=VIDEO] undefined simulateSystemWake();
@@ -1123,10 +1151,14 @@ enum ContentsFormat {
     float pageMediaVolume();
     undefined setPageMediaVolume(float volume);
 
+    [Conditional=BANNER_VIEW_OVERLAYS] undefined setPageHasBannerViewOverlayForTesting(boolean hasFakeBannerViewOverlay);
+
     undefined setShowAllPlugins(boolean showAll);
 
     [CallWith=CurrentGlobalObject] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
     boolean isReadableStreamDisturbed(ReadableStream stream);
+    undefined observeReadableStreamLifetime(ReadableStream stream);
+    unsigned long observedLiveReadableStreamCount();
 
     DOMString resourceLoadStatisticsForURL(DOMURL url);
     undefined setTrackingPreventionEnabled(boolean enable);
@@ -1292,8 +1324,9 @@ enum ContentsFormat {
     [Conditional=VIDEO] readonly attribute NowPlayingMetadata? nowPlayingMetadata;
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
     [Conditional=VIDEO] boolean elementIsActiveNowPlayingSession(HTMLMediaElement element);
+    [Conditional=VIDEO] attribute double nowPlayingUpdateInterval;
 
-    [Conditional=VIDEO] HTMLMediaElement bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);
+    [Conditional=VIDEO] HTMLMediaElement? bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);
     [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
 
     [Conditional=VIDEO] MediaUsageState mediaUsageState(HTMLMediaElement element);
@@ -1301,8 +1334,8 @@ enum ContentsFormat {
     [Conditional=VIDEO] readonly attribute unsigned long mediaElementCount;
     [Conditional=VIDEO] undefined setMediaElementVolumeLocked(HTMLMediaElement element, boolean volumeLocked);
 
-    [Conditional=SPEECH_SYNTHESIS] SpeechSynthesisUtterance speechSynthesisUtteranceForCue(VTTCue cue);
-    [Conditional=SPEECH_SYNTHESIS] VTTCue mediaElementCurrentlySpokenCue(HTMLMediaElement media);
+    [Conditional=SPEECH_SYNTHESIS] SpeechSynthesisUtterance? speechSynthesisUtteranceForCue(VTTCue cue);
+    [Conditional=SPEECH_SYNTHESIS] VTTCue? mediaElementCurrentlySpokenCue(HTMLMediaElement media);
 
     DOMString ongoingLoadsDescriptions();
     undefined setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
@@ -1404,6 +1437,7 @@ enum ContentsFormat {
     undefined setContentSizeCategory(ContentSizeCategory category);
 
     [Conditional=ATTACHMENT_ELEMENT, Conditional=SERVICE_CONTROLS] boolean hasImageControls(HTMLImageElement element);
+    [Conditional=ATTACHMENT_ELEMENT] DOMString attachmentElementShadowUserAgentStyleSheet();
 
     [Conditional=MEDIA_SESSION] double currentMediaSessionPosition(MediaSession session);
     [Conditional=MEDIA_SESSION] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);
@@ -1429,7 +1463,7 @@ enum ContentsFormat {
 
     undefined retainTextIteratorForDocumentContent();
 
-    PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
+    PushSubscription? createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
 
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] Promise<sequence<DOMString>> modelInlinePreviewUUIDs();
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] DOMString modelInlinePreviewUUIDForModelElement(HTMLModelElement modelElement);
@@ -1477,11 +1511,22 @@ enum ContentsFormat {
     attribute boolean shouldSkipResourceMonitorThrottling;
 #endif
 
+    [CallWith=CurrentGlobalObject] ReadableStream readableStreamFromMessagePort(MessagePort port);
+    [CallWith=CurrentGlobalObject] WritableStream writableStreamFromMessagePort(MessagePort port);
+
     [Conditional=MODEL_ELEMENT] undefined disableModelLoadDelaysForTesting();
     [Conditional=MODEL_ELEMENT] DOMString modelElementState(HTMLModelElement element);
     [Conditional=MODEL_ELEMENT] boolean isModelElementIntersectingViewport(HTMLModelElement element);
 
+    undefined copyImageAtLocation(long x, long y);
+
+    unsigned long fileConnectionHandleCount(FileSystemHandle handle);
+
+    [CallWith=CurrentGlobalObject] Promise<sequence<any>> testAsyncIterator(any value);
+
     // Navigation API rate limiter testing
     undefined setNavigationRateLimiterParameters(DOMWindow window, unsigned long maxNavigations, double windowDurationSeconds);
     undefined resetNavigationRateLimiter(DOMWindow window);
+
+    [Conditional=WIRELESS_PLAYBACK_MEDIA_PLAYER, EnabledBySetting=WirelessPlaybackMediaPlayerEnabled] readonly attribute MockMediaDeviceRouteController mockMediaDeviceRouteController;
 };

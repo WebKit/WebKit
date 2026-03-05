@@ -25,6 +25,12 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#import <wtf/Compiler.h>
+#import <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -77,3 +83,5 @@ typedef enum MCRestrictedBoolType {
 #endif
 
 #endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+
+#endif // !__has_feature(modules)

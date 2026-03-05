@@ -50,7 +50,7 @@ private:
         , m_middleName(middleName)
         , m_familyName(familyName)
         , m_nickname(nickname)
-        , m_phoneticRepresentation(WTFMove(phoneticRepresentation))
+        , m_phoneticRepresentation(WTF::move(phoneticRepresentation))
     {
     }
 

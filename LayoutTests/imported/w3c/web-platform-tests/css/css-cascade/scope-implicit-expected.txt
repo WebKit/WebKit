@@ -9,4 +9,5 @@ PASS Implicit @scope with inner nesting selector
 PASS Implicit @scope with limit
 PASS Proximity calculation of multiple implicit @scope
 PASS Implicit @scope sandwiched between non-implicit scopes
+PASS Implicit @scope sandwiched right under an explicit scope
 

@@ -1,4 +1,3 @@
-//@ requireOptions("--useMathSumPreciseMethod=1")
 (function () {
   var result = 0;
   var values = Array(10_000).fill([1e20, 0.1, -1e20]).flat();

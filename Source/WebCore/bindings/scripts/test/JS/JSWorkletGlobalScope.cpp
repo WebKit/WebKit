@@ -109,13 +109,8 @@ void JSWorkletGlobalScopePrototype::finishCreation(VM& vm)
 const ClassInfo JSWorkletGlobalScope::s_info = { "WorkletGlobalScope"_s, &Base::s_info, &JSWorkletGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScope) };
 
 JSWorkletGlobalScope::JSWorkletGlobalScope(VM& vm, Structure* structure, Ref<WorkletGlobalScope>&& impl)
-    : JSEventTarget(vm, structure, WTFMove(impl))
+    : JSEventTarget(vm, structure, WTF::move(impl))
 {
-}
-
-Ref<WorkletGlobalScope> JSWorkletGlobalScope::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, WorkletGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");

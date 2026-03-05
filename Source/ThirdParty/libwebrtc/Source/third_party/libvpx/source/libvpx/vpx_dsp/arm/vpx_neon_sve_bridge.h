@@ -48,4 +48,9 @@ static INLINE uint16x8_t vpx_tbl_u16(uint16x8_t data, uint16x8_t indices) {
                                    svset_neonq_u16(svundef_u16(), indices)));
 }
 
+static INLINE int16x8_t vpx_tbl_s16(int16x8_t data, uint16x8_t indices) {
+  return svget_neonq_s16(svtbl_s16(svset_neonq_s16(svundef_s16(), data),
+                                   svset_neonq_u16(svundef_u16(), indices)));
+}
+
 #endif  // VPX_VPX_DSP_ARM_VPX_NEON_SVE_BRIDGE_H_

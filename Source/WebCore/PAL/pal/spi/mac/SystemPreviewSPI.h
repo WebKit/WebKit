@@ -25,9 +25,13 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 #import <AssetViewer/ASVInlinePreview.h>
@@ -42,6 +46,7 @@ DECLARE_SYSTEM_HEADER
 NS_ASSUME_NONNULL_BEGIN
 
 @class ASVInlinePreview;
+@class CAFenceHandle;
 
 @interface ASVInlinePreview : NSObject
 @property (nonatomic, readonly) NSUUID *uuid;

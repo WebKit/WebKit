@@ -25,12 +25,12 @@
 namespace WebCore {
 
 class RenderSVGResourceContainer : public RenderSVGHiddenContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourceContainer);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceContainer);
 public:
     virtual ~RenderSVGResourceContainer();
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void idChanged();
     void repaintAllClients() const;
@@ -42,6 +42,7 @@ protected:
     RenderSVGResourceContainer(Type, SVGElement&, RenderStyle&&);
 
 private:
+    void layout() override;
     void willBeDestroyed() final;
     void registerResource();
 

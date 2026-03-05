@@ -15,9 +15,9 @@
 #include <optional>
 #include <utility>
 
+#include "api/environment/environment.h"
 #include "api/video/video_frame.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -39,8 +39,9 @@ uint32_t EnsureValidRenderDelay(uint32_t render_delay) {
 }
 }  // namespace
 
-VideoRenderFrames::VideoRenderFrames(uint32_t render_delay_ms)
-    : render_delay_ms_(EnsureValidRenderDelay(render_delay_ms)) {}
+VideoRenderFrames::VideoRenderFrames(const Environment& env,
+                                     uint32_t render_delay_ms)
+    : env_(env), render_delay_ms_(EnsureValidRenderDelay(render_delay_ms)) {}
 
 VideoRenderFrames::~VideoRenderFrames() {
   frames_dropped_ += incoming_frames_.size();
@@ -51,7 +52,7 @@ VideoRenderFrames::~VideoRenderFrames() {
 }
 
 int32_t VideoRenderFrames::AddFrame(VideoFrame&& new_frame) {
-  const int64_t time_now = TimeMillis();
+  const int64_t time_now = env_.clock().TimeInMilliseconds();
 
   // Drop old frames only when there are other frames in the queue, otherwise, a
   // really slow system never renders any frames.
@@ -108,7 +109,8 @@ uint32_t VideoRenderFrames::TimeToNextFrameRelease() {
     return kEventMaxWaitTimeMs;
   }
   const int64_t time_to_release = incoming_frames_.front().render_time_ms() -
-                                  render_delay_ms_ - TimeMillis();
+                                  render_delay_ms_ -
+                                  env_.clock().TimeInMilliseconds();
   return time_to_release < 0 ? 0u : static_cast<uint32_t>(time_to_release);
 }
 

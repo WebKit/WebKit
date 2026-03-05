@@ -35,7 +35,7 @@ class CompilationMessage {
     WTF_MAKE_TZONE_ALLOCATED(CompilationMessage);
 public:
     CompilationMessage(String&& message, SourceSpan span)
-        : m_message(WTFMove(message))
+        : m_message(WTF::move(message))
         , m_span(span)
     {
     }

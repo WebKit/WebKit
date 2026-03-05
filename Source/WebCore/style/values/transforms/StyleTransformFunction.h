@@ -48,10 +48,12 @@ struct TransformFunction : TransformFunctionWrapper<TransformFunctionBase> {
 
 template<> struct CSSValueConversion<TransformFunction> { auto operator()(BuilderState&, const CSSValue&) -> TransformFunction; };
 template<> struct CSSValueCreation<TransformFunction> { auto operator()(CSSValuePool&, const RenderStyle&, const TransformFunction&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<TransformationMatrix> { auto operator()(CSSValuePool&, const RenderStyle&, const TransformationMatrix&) -> Ref<CSSValue>; };
 
 // MARK: - Serialization
 
 template<> struct Serialize<TransformFunction> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const TransformFunction&); };
+template<> struct Serialize<TransformationMatrix> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const TransformationMatrix&); };
 
 // MARK: - Blending
 

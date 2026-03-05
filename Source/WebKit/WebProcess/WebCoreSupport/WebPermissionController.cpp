@@ -72,7 +72,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (WebCore::DeprecatedGlobalSettings::builtInNotificationsEnabled() && (descriptor.name == WebCore::PermissionName::Notifications || descriptor.name == WebCore::PermissionName::Push)) {
         Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-        auto notificationPermissionHandler = [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState pushPermissionState) mutable {
+        auto notificationPermissionHandler = [completionHandler = WTF::move(completionHandler)](WebCore::PushPermissionState pushPermissionState) mutable {
             auto state = [pushPermissionState]() -> WebCore::PermissionState {
                 switch (pushPermissionState) {
                 case WebCore::PushPermissionState::Granted: return WebCore::PermissionState::Granted;
@@ -83,7 +83,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
             }();
             completionHandler(state);
         };
-        connection->sendWithAsyncReply(Messages::NotificationManagerMessageHandler::GetPermissionState(origin.clientOrigin), WTFMove(notificationPermissionHandler), WebProcess::singleton().sessionID().toUInt64());
+        connection->sendWithAsyncReply(Messages::NotificationManagerMessageHandler::GetPermissionState(origin.clientOrigin), WTF::move(notificationPermissionHandler), WebProcess::singleton().sessionID().toUInt64());
         return;
     }
 #endif
@@ -96,11 +96,11 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
 
     if (descriptor.name == WebCore::PermissionName::StorageAccess) {
         Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-        networkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::QueryStorageAccessPermission(WebCore::RegistrableDomain { origin.clientOrigin }, WebCore::RegistrableDomain { origin.topOrigin }, proxyIdentifier), WTFMove(completionHandler));
+        networkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::QueryStorageAccessPermission(WebCore::RegistrableDomain { origin.clientOrigin }, WebCore::RegistrableDomain { origin.topOrigin }, proxyIdentifier), WTF::move(completionHandler));
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebPermissionControllerProxy::Query(origin, descriptor, proxyIdentifier, source), WTFMove(completionHandler));
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebPermissionControllerProxy::Query(origin, descriptor, proxyIdentifier, source), WTF::move(completionHandler));
 }
 
 void WebPermissionController::addObserver(WebCore::PermissionObserver& observer)

@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include <WebCore/AnimationUtilities.h>
-#include <WebCore/StyleCalculationValue.h>
-#include <WebCore/StyleLengthWrapper.h>
+#include "AnimationUtilities.h"
+#include "StyleCalculationValue.h"
+#include "StyleLengthWrapper.h"
 
 namespace WebCore {
 namespace Style {
@@ -45,7 +45,7 @@ template<typename T> struct LengthWrapperBlendingSupport {
             if (value.isPercent())
                 return Calculation::percentage(value.m_value.value());
             if (value.isCalculated())
-                return value.m_value.protectedCalculationValue()->copyRoot();
+                return protect(value.m_value.calculationValue())->copyRoot();
             ASSERT(value.isFixed());
             return Calculation::dimension(value.m_value.value());
         };
@@ -53,7 +53,7 @@ template<typename T> struct LengthWrapperBlendingSupport {
         auto isTooDeepToBlendWithNode = [](const T& value) {
             if (!value.isCalculated())
                 return false;
-            auto treeDepth = computeDepth(value.m_value.protectedCalculationValue()->tree());
+            auto treeDepth = computeDepth(protect(value.m_value.calculationValue())->tree());
             return treeDepth > maximumBlendTreeDepth;
         };
 

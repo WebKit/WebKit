@@ -64,7 +64,6 @@ constexpr auto EntityMaskInHTMLPCDATA = EntityMaskInPCDATA | EntityMask::Nbsp;
 constexpr OptionSet<EntityMask> EntityMaskInAttributeValue = { EntityMask::Amp, EntityMask::Lt, EntityMask::Gt,
     EntityMask::Quot, EntityMask::Tab, EntityMask::LineFeed, EntityMask::CarriageReturn };
 constexpr auto EntityMaskInHTMLAttributeValue = { EntityMask::Amp, EntityMask::Lt, EntityMask::Gt, EntityMask::Quot, EntityMask::Nbsp };
-constexpr auto EntityMaskInHTMLLegacyAttributeValue = { EntityMask::Amp, EntityMask::Quot, EntityMask::Nbsp };
 
 class MarkupAccumulator {
     WTF_MAKE_NONCOPYABLE(MarkupAccumulator);
@@ -121,7 +120,7 @@ private:
     LocalFrame* frameForAttributeReplacement(const Element&) const;
     Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
     bool appendURLAttributeForReplacementIfNecessary(StringBuilder&, const Element&, Namespaces*);
-    const ShadowRoot* suitableShadowRoot(const Node&);
+    RefPtr<const ShadowRoot> suitableShadowRoot(const Node&);
     bool shouldExcludeElement(const Element&);
     void appendStartTagWithURLReplacement(StringBuilder&, const Element&, Namespaces*);
 

@@ -16,12 +16,12 @@ info: |
       v. Let length be the value of O's [[ArrayLength]] internal slot.
       vi. If intIndex ≥ length, return false.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Reflect, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n]));
 
   assert.sameValue(
     Reflect.defineProperty(sample, "2", {
@@ -44,4 +44,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     false,
     "numericIndex > length"
   );
-});
+}, null, ["passthrough"]);

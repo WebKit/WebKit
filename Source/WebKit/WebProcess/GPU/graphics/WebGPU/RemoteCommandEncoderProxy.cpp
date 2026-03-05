@@ -66,7 +66,7 @@ RefPtr<WebCore::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRende
 
     auto result = RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
     if (convertedDescriptor)
-        result->setLabel(WTFMove(convertedDescriptor->label));
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -87,7 +87,7 @@ RefPtr<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComp
 
     auto result = RemoteComputePassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
     if (convertedDescriptor)
-        result->setLabel(WTFMove(convertedDescriptor->label));
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -172,7 +172,7 @@ void RemoteCommandEncoderProxy::clearBuffer(
 
 void RemoteCommandEncoderProxy::pushDebugGroup(String&& groupLabel)
 {
-    auto sendResult = send(Messages::RemoteCommandEncoder::PushDebugGroup(WTFMove(groupLabel)));
+    auto sendResult = send(Messages::RemoteCommandEncoder::PushDebugGroup(WTF::move(groupLabel)));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -184,7 +184,7 @@ void RemoteCommandEncoderProxy::popDebugGroup()
 
 void RemoteCommandEncoderProxy::insertDebugMarker(String&& markerLabel)
 {
-    auto sendResult = send(Messages::RemoteCommandEncoder::InsertDebugMarker(WTFMove(markerLabel)));
+    auto sendResult = send(Messages::RemoteCommandEncoder::InsertDebugMarker(WTF::move(markerLabel)));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -223,7 +223,7 @@ RefPtr<WebCore::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const W
         return nullptr;
 
     auto result = RemoteCommandBufferProxy::create(m_root, m_convertToBackingContext, identifier);
-    result->setLabel(WTFMove(convertedDescriptor->label));
+    result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 

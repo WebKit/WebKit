@@ -55,52 +55,52 @@ private:
 
     void willChangeIsLoading() override
     {
-        [m_object.get() willChangeValueForKey:@"loading"];
+        [protect(m_object) willChangeValueForKey:@"loading"];
     }
 
     void didChangeIsLoading() override
     {
-        [m_object.get() didChangeValueForKey:@"loading"];
+        [protect(m_object) didChangeValueForKey:@"loading"];
     }
 
     void willChangeTitle() override
     {
-        [m_object.get() willChangeValueForKey:@"title"];
+        [protect(m_object) willChangeValueForKey:@"title"];
     }
 
     void didChangeTitle() override
     {
-        [m_object.get() didChangeValueForKey:@"title"];
+        [protect(m_object) didChangeValueForKey:@"title"];
     }
 
     void willChangeActiveURL() override
     {
-        [m_object.get() willChangeValueForKey:m_activeURLKey.get()];
+        [protect(m_object) willChangeValueForKey:m_activeURLKey.get()];
     }
 
     void didChangeActiveURL() override
     {
-        [m_object.get() didChangeValueForKey:m_activeURLKey.get()];
+        [protect(m_object) didChangeValueForKey:m_activeURLKey.get()];
     }
 
     void willChangeHasOnlySecureContent() override
     {
-        [m_object.get() willChangeValueForKey:@"hasOnlySecureContent"];
+        [protect(m_object) willChangeValueForKey:@"hasOnlySecureContent"];
     }
 
     void didChangeHasOnlySecureContent() override
     {
-        [m_object.get() didChangeValueForKey:@"hasOnlySecureContent"];
+        [protect(m_object) didChangeValueForKey:@"hasOnlySecureContent"];
     }
 
     void willChangeEstimatedProgress() override
     {
-        [m_object.get() willChangeValueForKey:@"estimatedProgress"];
+        [protect(m_object) willChangeValueForKey:@"estimatedProgress"];
     }
 
     void didChangeEstimatedProgress() override
     {
-        [m_object.get() didChangeValueForKey:@"estimatedProgress"];
+        [protect(m_object) didChangeValueForKey:@"estimatedProgress"];
     }
 
     void willChangeCanGoBack() override { }
@@ -115,12 +115,12 @@ private:
 
     void willChangeWebProcessIsResponsive() override
     {
-        [m_object.get() willChangeValueForKey:@"_webProcessIsResponsive"];
+        [protect(m_object) willChangeValueForKey:@"_webProcessIsResponsive"];
     }
 
     void didChangeWebProcessIsResponsive() override
     {
-        [m_object.get() didChangeValueForKey:@"_webProcessIsResponsive"];
+        [protect(m_object) didChangeValueForKey:@"_webProcessIsResponsive"];
     }
 
     WeakObjCPtr<id> m_object;

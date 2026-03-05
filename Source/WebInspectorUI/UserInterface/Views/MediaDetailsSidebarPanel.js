@@ -342,11 +342,30 @@ WI.MediaDetailsSidebarPanel = class MediaDetailsSidebarPanel extends WI.DOMDetai
             this.#ui.fullRangeRow.pendingValue = WI.UIString("Video range", "Video range @ Media Sidebar", "Value string for Video Range color in the Media Sidebar");
         this.#ui.projectionRow.pendingValue = this.#localizedVideoProjectionMetadataKindString(video?.videoProjectionMetadata?.kind);
         this.#ui.projectionRow.element.classList.toggle("hidden", !video?.videoProjectionMetadata);
-        this.#ui.spatialSizeRow.pendingValue = WI.UIString("%dx%d").format(video?.spatialVideoMetadata?.width ?? 0, video?.spatialVideoMetadata?.height ?? 0);
-        this.#ui.fovRow.pendingValue = WI.UIString("%dº").format(video?.spatialVideoMetadata?.horizontalFOVDegrees ?? 0);
-        this.#ui.baselineRow.pendingValue = WI.UIString("%dmm").format((video?.spatialVideoMetadata?.baseline ?? 0) / 1000);
-        this.#ui.disparityRow.pendingValue = WI.UIString("%d%%").format((video?.spatialVideoMetadata?.disparityAdjustment ?? 0) * 100);
-        this.#ui.spatialSection.element.classList.toggle("hidden", !video?.spatialVideoMetadata);
+        this.#ui.spatialSizeRow.pendingValue = WI.UIString("%dx%d").format(video?.immersiveVideoMetadata?.width ?? 0, video?.immersiveVideoMetadata?.height ?? 0);
+        let horizontalFieldOfView = video?.immersiveVideoMetadata?.horizontalFieldOfView;
+        if (!isNaN(horizontalFieldOfView))
+            horizontalFieldOfView /= 1000;
+        else {
+            // COMPATIBLITY (macOS 26.2, iOS 26.2): `horizontalFOVDegrees` was renamed to `horizontalFieldOfView`.
+            horizontalFieldOfView = video?.spatialVideoMetadata?.horizontalFOVDegrees ?? 0;
+        }
+        this.#ui.fovRow.pendingValue = WI.UIString("%dº").format(horizontalFieldOfView);
+        let stereoCameraBaseline = video?.immersiveVideoMetadata?.stereoCameraBaseline;
+        if (isNaN(stereoCameraBaseline)) {
+            // COMPATIBLITY (macOS 26.2, iOS 26.2): `baseline` was renamed to `stereoCameraBaseline`.
+            stereoCameraBaseline = (video?.spatialVideoMetadata?.baseline ?? 0) / 1000;
+        }
+        this.#ui.baselineRow.pendingValue = WI.UIString("%dmm").format(stereoCameraBaseline);
+        let horizontalDisparityAdjustment = video?.immersiveVideoMetadata?.horizontalDisparityAdjustment;
+        if (!isNaN(horizontalDisparityAdjustment))
+            horizontalDisparityAdjustment /= 10;
+        else {
+            // COMPATIBLITY (macOS 26.2, iOS 26.2): `disparityAdjustment` was renamed to `horizontalDisparityAdjustment`.
+            horizontalDisparityAdjustment = (video?.spatialVideoMetadata?.disparityAdjustment ?? 0) * 100;
+        }
+        this.#ui.disparityRow.pendingValue = WI.UIString("%d%%").format(horizontalDisparityAdjustment);
+        this.#ui.spatialSection.element.classList.toggle("hidden", !video?.immersiveVideoMetadata && !video?.spatialVideoMetadata);
         this.needsLayout();
     }
 

@@ -62,7 +62,7 @@ public:
     const String& sceneIdentifier() const { return m_sceneIdentifier; }
 #endif
 
-    AudioDestinationCreationFunction takeEnsureFunction() { return WTFMove(m_ensureFunction); }
+    AudioDestinationCreationFunction takeEnsureFunction() { return WTF::move(m_ensureFunction); }
 
 private:
 #if PLATFORM(IOS_FAMILY)
@@ -124,9 +124,9 @@ Ref<SharedAudioDestinationAdapter> SharedAudioDestinationAdapter::ensureAdapter(
             return existingAdapter.releaseNonNull();
     }
 
-    Ref newAdapter = adoptRef(*new SharedAudioDestinationAdapter(options, WTFMove(ensureFunction)));
+    Ref newAdapter = adoptRef(*new SharedAudioDestinationAdapter(options, WTF::move(ensureFunction)));
     auto weakAdapter = ThreadSafeWeakPtr<SharedAudioDestinationAdapter> { newAdapter.get() };
-    sharedMap().set(key, WTFMove(weakAdapter));
+    sharedMap().set(key, WTF::move(weakAdapter));
     return newAdapter;
 }
 
@@ -139,7 +139,7 @@ SharedAudioDestinationAdapter::SharedAudioDestinationAdapter(const CreationOptio
 #endif
         }) }
     , m_workBus { AudioBus::create(options.numberOfOutputChannels, AudioUtilities::renderQuantumSize) }
-    , m_ensureFunction { WTFMove(ensureFunction) }
+    , m_ensureFunction { WTF::move(ensureFunction) }
 {
 }
 
@@ -159,7 +159,7 @@ void SharedAudioDestinationAdapter::addRenderer(SharedAudioDestination& renderer
     assertIsMainThread();
     if (!m_renderers.contains(&renderer))
         m_renderers.append(&renderer);
-    configureRenderThread(WTFMove(completionHandler));
+    configureRenderThread(WTF::move(completionHandler));
 }
 
 void SharedAudioDestinationAdapter::removeRenderer(SharedAudioDestination& renderer, CompletionHandler<void(bool)>&& completionHandler)
@@ -167,7 +167,7 @@ void SharedAudioDestinationAdapter::removeRenderer(SharedAudioDestination& rende
     assertIsMainThread();
     m_renderers.removeFirst(&renderer);
     ASSERT(!m_renderers.contains(&renderer));
-    configureRenderThread(WTFMove(completionHandler));
+    configureRenderThread(WTF::move(completionHandler));
 }
 
 void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void(bool)>&& completionHandler)
@@ -186,7 +186,7 @@ void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void
         if (onlyNeedsConfiguration) {
             // The destination is already running, but needs configuration. Assume
             // the configuration will succeed and call the completionHandler early.
-            callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable {
+            callOnMainThread([completionHandler = WTF::move(completionHandler)] () mutable {
                 completionHandler(true);
             });
             return;
@@ -195,13 +195,13 @@ void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void
 
     if (shouldStart) {
         m_started = true;
-        m_destination->start(nullptr, WTFMove(completionHandler));
+        m_destination->start(nullptr, WTF::move(completionHandler));
         return;
     }
 
     if (shouldStop) {
         m_started = false;
-        m_destination->stop(WTFMove(completionHandler));
+        m_destination->stop(WTF::move(completionHandler));
         return;
     }
 
@@ -209,7 +209,7 @@ void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void
     // renderers is empty, do not wait for the render thread to
     // finish configuration, as it will never run.
     if (shouldSkipRendering) {
-        callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable {
+        callOnMainThread([completionHandler = WTF::move(completionHandler)] () mutable {
             completionHandler(true);
         });
         return;
@@ -226,9 +226,9 @@ void SharedAudioDestinationAdapter::render(AudioBus& destinationBus, size_t numb
             // high priority audio thread by merely swapping the contents of the renderer
             // configuration vectors. After the swap, the previous contents of m_configuredRenderers
             // will be destroyed on the main thread.
-            RenderVector oldRenderers = std::exchange(m_configuredRenderers, WTFMove(m_newRenderers));
+            RenderVector oldRenderers = std::exchange(m_configuredRenderers, WTF::move(m_newRenderers));
             m_needsConfiguration = false;
-            callOnMainThread([oldRenderers = WTFMove(oldRenderers)] () { });
+            callOnMainThread([oldRenderers = WTF::move(oldRenderers)] () { });
         }
     }
 
@@ -248,12 +248,12 @@ void SharedAudioDestinationAdapter::render(AudioBus& destinationBus, size_t numb
 }
 Ref<SharedAudioDestination> SharedAudioDestination::create(const CreationOptions& options, AudioDestinationCreationFunction&& ensureFunction)
 {
-    return adoptRef(*new SharedAudioDestination(options, WTFMove(ensureFunction)));
+    return adoptRef(*new SharedAudioDestination(options, WTF::move(ensureFunction)));
 }
 
 SharedAudioDestination::SharedAudioDestination(const CreationOptions& options, AudioDestinationCreationFunction&& ensureFunction)
     : AudioDestination(options)
-    , m_outputAdapter(SharedAudioDestinationAdapter::ensureAdapter(options, WTFMove(ensureFunction)))
+    , m_outputAdapter(SharedAudioDestinationAdapter::ensureAdapter(options, WTF::move(ensureFunction)))
 {
 }
 
@@ -267,17 +267,17 @@ void SharedAudioDestination::start(Function<void(Function<void()>&&)>&& dispatch
 {
     {
         Locker locker { m_dispatchToRenderThreadLock };
-        m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
+        m_dispatchToRenderThread = WTF::move(dispatchToRenderThread);
     }
 
     setIsPlaying(true);
-    protectedOutputAdapter()->addRenderer(*this, WTFMove(completionHandler));
+    protect(m_outputAdapter)->addRenderer(*this, WTF::move(completionHandler));
 }
 
 void SharedAudioDestination::stop(CompletionHandler<void(bool)>&& completionHandler)
 {
     setIsPlaying(false);
-    protectedOutputAdapter()->removeRenderer(*this, WTFMove(completionHandler));
+    protect(m_outputAdapter)->removeRenderer(*this, WTF::move(completionHandler));
 
     {
         Locker locker { m_dispatchToRenderThreadLock };
@@ -292,7 +292,7 @@ unsigned SharedAudioDestination::framesPerBuffer() const
 
 MediaTime SharedAudioDestination::outputLatency() const
 {
-    return protectedOutputAdapter()->outputLatency();
+    return protect(m_outputAdapter)->outputLatency();
 }
 
 void SharedAudioDestination::setIsPlaying(bool isPlaying)
@@ -346,13 +346,13 @@ private:
 
 void SharedAudioDestination::setSceneIdentifier(const String& identifier)
 {
-    if (protectedOutputAdapter()->sceneIdentifier() == identifier)
+    if (protect(m_outputAdapter)->sceneIdentifier() == identifier)
         return;
 
     // We need to re-create the outputAdapter when the sceneIdentifier
     // changes, as the adapter may be shared with other destinations
     // whose sceneIdentifier is _not_ changing.
-    auto ensureFunction = protectedOutputAdapter()->takeEnsureFunction();
+    auto ensureFunction = protect(m_outputAdapter)->takeEnsureFunction();
     ASSERT(ensureFunction);
     if (!ensureFunction)
         return;
@@ -360,7 +360,7 @@ void SharedAudioDestination::setSceneIdentifier(const String& identifier)
     bool wasPlaying = isPlaying();
 
     if (wasPlaying)
-        protectedOutputAdapter()->removeRenderer(*this, [] (bool) { });
+        protect(m_outputAdapter)->removeRenderer(*this, [] (bool) { });
 
     m_outputAdapter = SharedAudioDestinationAdapter::ensureAdapter({
         NullAudioIOCallback::singleton(),
@@ -371,17 +371,13 @@ void SharedAudioDestination::setSceneIdentifier(const String& identifier)
 #if PLATFORM(IOS_FAMILY)
         identifier,
 #endif
-    }, WTFMove(ensureFunction));
+    }, WTF::move(ensureFunction));
 
     if (wasPlaying)
-        protectedOutputAdapter()->addRenderer(*this, [] (bool) { });
+        protect(m_outputAdapter)->addRenderer(*this, [] (bool) { });
 }
 #endif
 
-Ref<SharedAudioDestinationAdapter> SharedAudioDestination::protectedOutputAdapter() const
-{
-    return m_outputAdapter;
-}
 
 } // namespace WebCore
 

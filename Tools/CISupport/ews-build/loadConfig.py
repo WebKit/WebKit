@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@ from datetime import datetime, timezone
 from twisted.internet import defer
 
 from .factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
-                        GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
-                        StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPECairoLibWebRTCBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory, PlayStationBuildFactory,
+                        GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCBuildO3AndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
+                        StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, GTK3LibWebRTCBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory, PlayStationBuildFactory,
                         WinBuildFactory, WinTestsFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory,  visionOSBuildFactory, visionOSEmbeddedBuildFactory, visionOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
                         macOSWK1Factory, macOSWK2Factory, ServicesFactory, SaferCPPStaticAnalyzerFactory, UnsafeMergeQueueFactory, watchOSBuildFactory)
 
@@ -75,7 +75,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
         if 'icon' in builder:
             del builder['icon']
         factorykwargs = {}
-        for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'runTests', 'triggered_by']:
+        for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'runTests', 'triggered_by', 'rebuild_without_change_on_builder']:
             value = builder.pop(key, None)
             if value:
                 factorykwargs[key] = value
@@ -196,6 +196,9 @@ def checkValidBuilder(config, builder):
     for trigger in builder.get('triggers') or []:
         if not doesTriggerExist(config, trigger):
             raise Exception('Trigger: {} in builder {} does not exist in list of Trigerrable schedulers.'.format(trigger, builder['name']))
+
+    if builder.get('rebuild_without_change_on_builder') and not builder.get('triggers'):
+        raise Exception(f'rebuild_without_change_on_builder can only be set on builders with triggers. Builder: {builder["name"]}')
 
 
 def checkValidSchedulers(config, schedulers):

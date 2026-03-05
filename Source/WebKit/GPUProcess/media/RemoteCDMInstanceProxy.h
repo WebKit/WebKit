@@ -61,7 +61,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const RemoteCDMInstanceConfiguration& configuration() const { return m_configuration.get(); }
+    const RemoteCDMInstanceConfiguration& configuration() const LIFETIME_BOUND { return m_configuration.get(); }
     WebCore::CDMInstance& instance() { return m_instance; }
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
@@ -89,8 +89,6 @@ private:
     void setServerCertificate(Ref<WebCore::SharedBuffer>&&, CompletionHandler<void(SuccessValue)>&&);
     void setStorageDirectory(const String&);
     void createSession(uint64_t logIdentifier, CompletionHandler<void(std::optional<RemoteCDMInstanceSessionIdentifier>)>&&);
-
-    RefPtr<RemoteCDMProxy> protectedCdm() const;
 
     WeakPtr<RemoteCDMProxy> m_cdm;
     const Ref<WebCore::CDMInstance> m_instance;

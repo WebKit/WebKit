@@ -228,7 +228,7 @@ cl_int ValidateMemoryProperties(cl_context context,
             case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR:
             {
                 // just validate the basics for dma_buf and posix fd for now
-                uint32_t fdDmaBuf = *reinterpret_cast<uint32_t *>(propertiesIterator->value);
+                uint32_t fdDmaBuf = *reinterpret_cast<uint32_t *>(pMemoryHandle->value);
                 if (host_ptr != nullptr)
                 {
                     // CL_INVALID_HOST_PTR if properties includes a supported external memory handle
@@ -592,8 +592,8 @@ cl_int ValidateImageForDevice(const Image &image,
     // CL_INVALID_VALUE if the region being read or written
     // specified by origin and region is out of bounds.
 
-    if (!image.isRegionValid(cl::MemOffsets{origin[0], origin[1], origin[2]},
-                             cl::Coordinate{region[0], region[1], region[2]}))
+    if (!image.isRegionValid(cl::Offset{origin[0], origin[1], origin[2]},
+                             cl::Extents{region[0], region[1], region[2]}))
     {
         return CL_INVALID_VALUE;
     }
@@ -4263,6 +4263,63 @@ cl_int ValidateExternalMemObjectsKHR(cl_command_queue command_queue,
     return CL_SUCCESS;
 }
 
+// cl_arm_import_memory
+cl_int ValidateImportMemoryARM(cl_context context,
+                               MemFlags flags,
+                               const cl_import_properties_arm *properties,
+                               const void *memory,
+                               size_t size)
+{
+    // CL_INVALID_VALUE if memory is NULL.
+    if (memory == nullptr)
+    {
+        return CL_INVALID_VALUE;
+    }
+
+    // CL_INVALID_PROPERTY when invalid properties or combination of properties are passed.
+    const NameValueProperty *propertiesIterator =
+        reinterpret_cast<const NameValueProperty *>(properties);
+    bool foundImportType = false;
+    if (propertiesIterator != nullptr)
+    {
+        for (; propertiesIterator->name != 0; ++propertiesIterator)
+        {
+            if (propertiesIterator->name == CL_IMPORT_TYPE_ARM)
+            {
+                foundImportType = true;
+                if (propertiesIterator->value != CL_IMPORT_TYPE_HOST_ARM &&
+                    propertiesIterator->value != CL_IMPORT_TYPE_DMA_BUF_ARM &&
+                    propertiesIterator->value != CL_IMPORT_TYPE_ANDROID_HARDWARE_BUFFER_ARM)
+                {
+                    return CL_INVALID_PROPERTY;
+                }
+            }
+            else if (propertiesIterator->name == CL_IMPORT_TYPE_PROTECTED_ARM)
+            {
+                if (propertiesIterator->value == CL_TRUE)
+                {
+                    // we can allow non-protected memory, throw error otherwise
+                    // (until cl_khr_external_memory can support this in some way)
+                    WARN()
+                        << "CL_IMPORT_TYPE_PROTECTED_ARM not supported since cl_arm_import_memory "
+                           "is layered on cl_khr_external_memory (currently no equivalent)";
+                    return CL_INVALID_OPERATION;
+                }
+            }
+        }
+        if (!foundImportType)
+        {
+            return CL_INVALID_PROPERTY;
+        }
+    }
+
+    // Redirect to ValidateCreateBufferWithProperties as it is implemented on top of
+    // cl_khr_external_memory
+    Memory::PropArray convertedProperties = Context::ConvertArmMemPropToMemProp(properties, memory);
+    return ValidateCreateBufferWithProperties(context, convertedProperties.data(), flags, size,
+                                              nullptr);
+}
+
 cl_int ValidateEnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                                    cl_uint num_mem_objects,
                                                    const cl_mem *mem_objects,
@@ -4295,6 +4352,16 @@ cl_int ValidateIcdGetPlatformIDsKHR(cl_uint num_entries,
     {
         return CL_INVALID_VALUE;
     }
+    return CL_SUCCESS;
+}
+
+cl_int ValidateIcdGetFunctionAddressForPlatformKHR(cl_platform_id platform, const char *func_name)
+{
+    return CL_SUCCESS;
+}
+
+cl_int ValidateIcdSetPlatformDispatchDataKHR(cl_platform_id platform, const void *dispatch_data)
+{
     return CL_SUCCESS;
 }
 

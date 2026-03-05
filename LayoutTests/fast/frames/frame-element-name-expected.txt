@@ -15,7 +15,7 @@ PASS escape(window.name) is ""
 
 
 --------
-Frame: '<!--frame2-->'
+Frame: '_blank'
 --------
 PASS escape(window.frameElement.name) is "_blank"
 PASS escape(window.name) is "_blank"

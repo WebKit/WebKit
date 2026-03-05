@@ -13,9 +13,11 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "absl/memory/memory.h"
 #include "api/async_dns_resolver.h"
+#include "api/environment/environment.h"
 #include "api/packet_socket_factory.h"
 #include "p2p/base/async_stun_tcp_socket.h"
 #include "rtc_base/async_dns_resolver.h"
@@ -38,24 +40,27 @@ BasicPacketSocketFactory::BasicPacketSocketFactory(
 
 BasicPacketSocketFactory::~BasicPacketSocketFactory() {}
 
-AsyncPacketSocket* BasicPacketSocketFactory::CreateUdpSocket(
+std::unique_ptr<AsyncPacketSocket> BasicPacketSocketFactory::CreateUdpSocket(
+    const Environment& env,
     const SocketAddress& address,
     uint16_t min_port,
     uint16_t max_port) {
   // UDP sockets are simple.
-  Socket* socket = socket_factory_->CreateSocket(address.family(), SOCK_DGRAM);
+  std::unique_ptr<Socket> socket =
+      socket_factory_->Create(address.family(), SOCK_DGRAM);
   if (!socket) {
     return nullptr;
   }
-  if (BindSocket(socket, address, min_port, max_port) < 0) {
+  if (BindSocket(*socket, address, min_port, max_port) < 0) {
     RTC_LOG(LS_ERROR) << "UDP bind failed with error " << socket->GetError();
-    delete socket;
     return nullptr;
   }
-  return new AsyncUDPSocket(socket);
+  return std::make_unique<AsyncUDPSocket>(env, std::move(socket));
 }
 
-AsyncListenSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
+std::unique_ptr<AsyncListenSocket>
+BasicPacketSocketFactory::CreateServerTcpSocket(
+    const Environment& env,
     const SocketAddress& local_address,
     uint16_t min_port,
     uint16_t max_port,
@@ -70,34 +75,35 @@ AsyncListenSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
     RTC_LOG(LS_ERROR) << "Fake TLS not supported.";
     return nullptr;
   }
-  Socket* socket =
-      socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
+  std::unique_ptr<Socket> socket =
+      socket_factory_->Create(local_address.family(), SOCK_STREAM);
   if (!socket) {
     return nullptr;
   }
 
-  if (BindSocket(socket, local_address, min_port, max_port) < 0) {
+  if (BindSocket(*socket, local_address, min_port, max_port) < 0) {
     RTC_LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
-    delete socket;
     return nullptr;
   }
 
   RTC_CHECK(!(opts & PacketSocketFactory::OPT_STUN));
 
-  return new AsyncTcpListenSocket(absl::WrapUnique(socket));
+  return std::make_unique<AsyncTcpListenSocket>(env, std::move(socket));
 }
 
-AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
+std::unique_ptr<AsyncPacketSocket>
+BasicPacketSocketFactory::CreateClientTcpSocket(
+    const Environment& env,
     const SocketAddress& local_address,
     const SocketAddress& remote_address,
     const PacketSocketTcpOptions& tcp_options) {
-  Socket* socket =
-      socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
+  std::unique_ptr<Socket> socket =
+      socket_factory_->Create(local_address.family(), SOCK_STREAM);
   if (!socket) {
     return nullptr;
   }
 
-  if (BindSocket(socket, local_address, 0, 0) < 0) {
+  if (BindSocket(*socket, local_address, 0, 0) < 0) {
     // Allow BindSocket to fail if we're binding to the ANY address, since this
     // is mostly redundant in the first place. The socket will be bound when we
     // call Connect() instead.
@@ -106,7 +112,6 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
                           << "; ignoring since socket is using 'any' address.";
     } else {
       RTC_LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
-      delete socket;
       return nullptr;
     }
   }
@@ -130,7 +135,8 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   if ((tlsOpts & PacketSocketFactory::OPT_TLS) ||
       (tlsOpts & PacketSocketFactory::OPT_TLS_INSECURE)) {
     // Using TLS, wrap the socket in an SSL adapter.
-    SSLAdapter* ssl_adapter = SSLAdapter::Create(socket);
+    std::unique_ptr<SSLAdapter> ssl_adapter =
+        absl::WrapUnique(SSLAdapter::Create(socket.release()));
     if (!ssl_adapter) {
       return nullptr;
     }
@@ -143,33 +149,26 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
     ssl_adapter->SetEllipticCurves(tcp_options.tls_elliptic_curves);
     ssl_adapter->SetCertVerifier(tcp_options.tls_cert_verifier);
 
-    socket = ssl_adapter;
-
     if (ssl_adapter->StartSSL(remote_address.hostname().c_str()) != 0) {
-      delete ssl_adapter;
       return nullptr;
     }
-
+    socket = std::move(ssl_adapter);
   } else if (tlsOpts & PacketSocketFactory::OPT_TLS_FAKE) {
     // Using fake TLS, wrap the TCP socket in a pseudo-SSL socket.
-    socket = new AsyncSSLSocket(socket);
+    socket = std::make_unique<AsyncSSLSocket>(socket.release());
   }
 
   if (socket->Connect(remote_address) < 0) {
     RTC_LOG(LS_ERROR) << "TCP connect failed with error " << socket->GetError();
-    delete socket;
     return nullptr;
   }
 
   // Finally, wrap that socket in a TCP or STUN TCP packet socket.
-  AsyncPacketSocket* tcp_socket;
   if (tcp_options.opts & PacketSocketFactory::OPT_STUN) {
-    tcp_socket = new AsyncStunTCPSocket(socket);
+    return std::make_unique<AsyncStunTCPSocket>(env, std::move(socket));
   } else {
-    tcp_socket = new AsyncTCPSocket(socket);
+    return std::make_unique<AsyncTCPSocket>(env, std::move(socket));
   }
-
-  return tcp_socket;
 }
 
 std::unique_ptr<AsyncDnsResolverInterface>
@@ -177,18 +176,18 @@ BasicPacketSocketFactory::CreateAsyncDnsResolver() {
   return std::make_unique<AsyncDnsResolver>();
 }
 
-int BasicPacketSocketFactory::BindSocket(Socket* socket,
+int BasicPacketSocketFactory::BindSocket(Socket& socket,
                                          const SocketAddress& local_address,
                                          uint16_t min_port,
                                          uint16_t max_port) {
   int ret = -1;
   if (min_port == 0 && max_port == 0) {
     // If there's no port range, let the OS pick a port for us.
-    ret = socket->Bind(local_address);
+    ret = socket.Bind(local_address);
   } else {
     // Otherwise, try to find a port in the provided range.
     for (int port = min_port; ret < 0 && port <= max_port; ++port) {
-      ret = socket->Bind(SocketAddress(local_address.ipaddr(), port));
+      ret = socket.Bind(SocketAddress(local_address.ipaddr(), port));
     }
   }
   return ret;

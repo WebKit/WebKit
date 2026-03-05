@@ -42,14 +42,14 @@ JITNegIC* MathICHolder::addJITNegIC(UnaryArithProfile* arithProfile) { return m_
 
 void MathICHolder::adoptMathICs(MathICHolder& other)
 {
-    m_addICs = WTFMove(other.m_addICs);
-    m_mulICs = WTFMove(other.m_mulICs);
-    m_negICs = WTFMove(other.m_negICs);
-    m_subICs = WTFMove(other.m_subICs);
+    m_addICs = WTF::move(other.m_addICs);
+    m_mulICs = WTF::move(other.m_mulICs);
+    m_negICs = WTF::move(other.m_negICs);
+    m_subICs = WTF::move(other.m_subICs);
 }
 
 BaselineJITCode::BaselineJITCode(CodeRef<JSEntryPtrTag> code, CodePtr<JSEntryPtrTag> withArityCheck)
-    : DirectJITCode(WTFMove(code), withArityCheck, JITType::BaselineJIT)
+    : DirectJITCode(WTF::move(code), withArityCheck, JITType::BaselineJIT)
     , MathICHolder()
 { }
 

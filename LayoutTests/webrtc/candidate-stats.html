@@ -30,6 +30,12 @@ promise_test(async (test) => {
 
     stats = await getTypedStats(firstConnection, "remote-candidate");
 
+    if (stats.protocol === "tcp") {
+        assert_equals(stats.tcpType, "active");
+        // We delete the key so that we can check udp and tcp remote candidate stats in the same way.
+        delete stats.tcpType;
+    }
+
     // For now, we do not want to expose address or networkType.
     assert_true(!stats.address, "address is not exposed");
     assert_true(!stats.networkType, "networkType is not exposed");

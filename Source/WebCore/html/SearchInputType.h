@@ -32,6 +32,8 @@
 #pragma once
 
 #include "BaseTextInputType.h"
+#include "PopupMenuClient.h"
+#include "SearchPopupMenu.h"
 #include "Timer.h"
 #include <wtf/TZoneMalloc.h>
 
@@ -39,7 +41,7 @@ namespace WebCore {
 
 class SearchFieldResultsButtonElement;
 
-class SearchInputType final : public BaseTextInputType {
+class SearchInputType final : public BaseTextInputType, public PopupMenuClient {
     WTF_MAKE_TZONE_ALLOCATED(SearchInputType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SearchInputType);
 public:
@@ -47,6 +49,38 @@ public:
     {
         return adoptRef(*new SearchInputType(element));
     }
+
+    // PopupMenuClient ref-counting (disambiguating from InputType)
+    void ref() const final { BaseTextInputType::ref(); }
+    void deref() const final { BaseTextInputType::deref(); }
+
+    // PopupMenuClient methods
+    void valueChanged(unsigned listIndex, bool fireEvents = true) override;
+    String itemText(unsigned listIndex) const override;
+    String itemToolTip(unsigned) const override { return String(); }
+    String itemAccessibilityText(unsigned) const override { return String(); }
+    bool itemIsEnabled(unsigned listIndex) const override;
+    PopupMenuStyle itemStyle(unsigned listIndex) const override;
+    PopupMenuStyle menuStyle() const override;
+    int listSize() const override;
+    void popupDidHide() override;
+    bool itemIsSeparator(unsigned listIndex) const override;
+    bool itemIsLabel(unsigned listIndex) const override;
+    bool itemIsSelected(unsigned listIndex) const override;
+    bool shouldPopOver() const override { return false; }
+#if !PLATFORM(COCOA)
+    void setTextFromItem(unsigned listIndex) override;
+#endif
+#if PLATFORM(WIN)
+    int clientInsetLeft() const override;
+    int clientInsetRight() const override;
+    LayoutUnit clientPaddingLeft() const override;
+    LayoutUnit clientPaddingRight() const override;
+    FontSelector* fontSelector() const override;
+    HostWindow* hostWindow() const override;
+#endif
+
+    Vector<RecentSearch>& recentSearches() { return m_recentSearches; }
 
 private:
     explicit SearchInputType(HTMLInputElement&);
@@ -58,8 +92,8 @@ private:
     bool needsContainer() const final;
     void createShadowSubtree() final;
     void removeShadowSubtree() final;
-    HTMLElement* resultsButtonElement() const final;
-    HTMLElement* cancelButtonElement() const final;
+    HTMLElement* NODELETE resultsButtonElement() const final;
+    HTMLElement* NODELETE cancelButtonElement() const final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void didSetValueByUserEdit() final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
@@ -68,6 +102,8 @@ private:
 
     RefPtr<SearchFieldResultsButtonElement> m_resultsButton;
     RefPtr<HTMLElement> m_cancelButton;
+
+    Vector<RecentSearch> m_recentSearches;
 };
 
 } // namespace WebCore

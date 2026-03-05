@@ -1,3 +1,5 @@
+-- texttree
+
 root
     role='banner'
         aria-label='Main Page Title','Welcome to Test Page'
@@ -12,9 +14,12 @@ root
             button,aria-describedby='This button does nothing',aria-label='Test button','Click Me'
             'This button does nothing'
             input,'text',uid=…,placeholder='Enter text here'
-            role='button','Clickable Div'
+            role='button',title='Test action','Clickable Div'
         section,aria-label='Content with Roles'
-            article,role='article','Article Title\n\n\n                January 1, 2024\n            \n\n            \nThis is some article content with highlighted text.'
+            article,role='article'
+                'Article Title'
+                'January 1, 2024'
+                'This is some article content with highlighted text.'
             role='complementary',aria-label='Related information'
                 'Related Links'
                 list
@@ -29,9 +34,505 @@ root
             contentEditable,uid=…,role='textbox'
                 subscript
                     'WebKit home page:'
-                    link
+                    link,'webkit.org'
+            form,autocomplete='on',name='signup'
+                'Sign up for our newsletter'
+                input,'text',uid=…,placeholder='Username',name='username',minlength=3,maxlength=20,required
+                input,'text',uid=…,placeholder='Email',pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$',name='email',required
+                input,'text',uid=…,placeholder='Zip Code',pattern='[0-9]{5}',name='zipcode',minlength=5,maxlength=5
+            select,uid=…
+                option,value='one','Number 1'
+                option,value='two','Number 2'
+                option,selected,value='three','Number 3'
+            select,uid=…,multiple
+                option,selected,value='banana'
+                option,selected,value='pear'
+                option,value='apple'
     role='contentinfo'
         'Footer content with'
         role='img',aria-label='copyright symbol','©'
         '2024'
-version=2
+
+-- html
+
+<body>
+    <div role='banner'>
+        <h1 aria-label='Main Page Title'>Welcome to Test Page</h1>
+    </div>
+    <nav role='navigation' aria-label='Main navigation'>
+        <ul>
+            <li>
+                <a>Section 1</a>
+            </li>
+            <li>
+                <a>Section 2</a>
+            </li>
+        </ul>
+    </nav>
+    <main role='main'>
+        <section aria-label='Interactive Elements'>
+            <button aria-describedby='This button does nothing' aria-label='Test button'>Click Me</button>
+            This button does nothing
+            <input type='text' uid=… placeholder='Enter text here'>
+            <div role='button' title='Test action'>Clickable Div</div>
+        </section>
+        <section aria-label='Content with Roles'>
+            <article role='article'>
+                Article Title
+                January 1, 2024
+                This is some article content with highlighted text.
+            </article>
+            <aside role='complementary' aria-label='Related information'>
+                Related Links
+                <ul>
+                    <li>
+                        <a>Example Link</a>
+                    </li>
+                    <li>
+                        <a>Test Link</a>
+                    </li>
+                </ul>
+            </aside>
+            <div role='region'>
+                <div role='status'>Ready</div>
+                <button>Update Status</button>
+            </div>
+            <textarea uid=…>This is a text box</textarea>
+            <div uid=… role='textbox' contenteditable>
+                <sub>
+                    WebKit home page:
+                    <a>webkit.org</a>
+                </sub>
+            </div>
+            <form autocomplete='on' name='signup'>
+                Sign up for our newsletter
+                <input type='text' uid=… placeholder='Username' name='username' minlength=3 maxlength=20 required>
+                <input type='text' uid=… placeholder='Email' pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$' name='email' required>
+                <input type='text' uid=… placeholder='Zip Code' pattern='[0-9]{5}' name='zipcode' minlength=5 maxlength=5>
+            </form>
+            <select uid=…>
+                <option value='one'>Number 1</option>
+                <option value='two'>Number 2</option>
+                <option value='three' selected>Number 3</option>
+            </select>
+            <select uid=…>
+                <option value='banana' selected>Banana</option>
+                <option value='pear' selected>Pear</option>
+                <option value='apple'>Apple</option>
+            </select>
+        </section>
+    </main>
+    <footer role='contentinfo'>
+        Footer content with
+        <span role='img' aria-label='copyright symbol'>©</span>
+        2024
+    </footer>
+</body>
+
+-- json
+
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "container",
+      "nodeName": "div",
+      "role": "banner",
+      "children": [
+        {
+          "type": "container",
+          "nodeName": "h1",
+          "aria-label": "Main Page Title",
+          "children": [
+            {
+              "type": "text",
+              "content": "Welcome to Test Page"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "navigation",
+      "nodeName": "nav",
+      "role": "navigation",
+      "aria-label": "Main navigation",
+      "children": [
+        {
+          "type": "list",
+          "nodeName": "ul",
+          "children": [
+            {
+              "type": "list-item",
+              "nodeName": "li",
+              "children": [
+                {
+                  "type": "link",
+                  "nodeName": "a",
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Section 1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "nodeName": "li",
+              "children": [
+                {
+                  "type": "link",
+                  "nodeName": "a",
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Section 2"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "nodeName": "main",
+      "role": "main",
+      "children": [
+        {
+          "type": "section",
+          "nodeName": "section",
+          "aria-label": "Interactive Elements",
+          "children": [
+            {
+              "type": "button",
+              "nodeName": "button",
+              "aria-label": "Test button",
+              "aria-describedby": "This button does nothing",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Click Me"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "content": "This button does nothing"
+            },
+            {
+              "type": "input",
+              "nodeName": "input",
+              "uid": "…",
+              "controlType": "text",
+              "placeholder": "Enter text here",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Enter text here"
+                }
+              ]
+            },
+            {
+              "type": "container",
+              "nodeName": "div",
+              "role": "button",
+              "title": "Test action",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Clickable Div"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "nodeName": "section",
+          "aria-label": "Content with Roles",
+          "children": [
+            {
+              "type": "article",
+              "nodeName": "article",
+              "role": "article",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Article Title"
+                },
+                {
+                  "type": "text",
+                  "content": "January 1, 2024"
+                },
+                {
+                  "type": "text",
+                  "content": "This is some article content with highlighted text."
+                }
+              ]
+            },
+            {
+              "type": "container",
+              "nodeName": "aside",
+              "role": "complementary",
+              "aria-label": "Related information",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Related Links"
+                },
+                {
+                  "type": "list",
+                  "nodeName": "ul",
+                  "children": [
+                    {
+                      "type": "list-item",
+                      "nodeName": "li",
+                      "children": [
+                        {
+                          "type": "link",
+                          "nodeName": "a",
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Example Link"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "list-item",
+                      "nodeName": "li",
+                      "children": [
+                        {
+                          "type": "link",
+                          "nodeName": "a",
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Test Link"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "container",
+              "nodeName": "div",
+              "role": "region",
+              "children": [
+                {
+                  "type": "container",
+                  "nodeName": "div",
+                  "role": "status",
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Ready"
+                    }
+                  ]
+                },
+                {
+                  "type": "button",
+                  "nodeName": "button",
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Update Status"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "textarea",
+              "nodeName": "textarea",
+              "uid": "…",
+              "controlType": "textarea",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "This is a text box"
+                }
+              ]
+            },
+            {
+              "type": "contentEditable",
+              "nodeName": "div",
+              "uid": "…",
+              "role": "textbox",
+              "children": [
+                {
+                  "type": "subscript",
+                  "nodeName": "sub",
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "WebKit home page:"
+                    },
+                    {
+                      "type": "link",
+                      "nodeName": "a",
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "webkit.org"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "form",
+              "nodeName": "form",
+              "autocomplete": "on",
+              "name": "signup",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Sign up for our newsletter"
+                },
+                {
+                  "type": "input",
+                  "nodeName": "input",
+                  "uid": "…",
+                  "controlType": "text",
+                  "placeholder": "Username",
+                  "name": "username",
+                  "minLength": 3,
+                  "maxLength": 20,
+                  "required": true,
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Username"
+                    }
+                  ]
+                },
+                {
+                  "type": "input",
+                  "nodeName": "input",
+                  "uid": "…",
+                  "controlType": "text",
+                  "placeholder": "Email",
+                  "pattern": "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$",
+                  "name": "email",
+                  "required": true,
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Email"
+                    }
+                  ]
+                },
+                {
+                  "type": "input",
+                  "nodeName": "input",
+                  "uid": "…",
+                  "controlType": "text",
+                  "placeholder": "Zip Code",
+                  "pattern": "[0-9]{5}",
+                  "name": "zipcode",
+                  "minLength": 5,
+                  "maxLength": 5,
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Zip Code"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "select",
+              "nodeName": "select",
+              "uid": "…",
+              "options": [
+                {
+                  "value": "one",
+                  "label": "Number 1",
+                  "selected": false
+                },
+                {
+                  "value": "two",
+                  "label": "Number 2",
+                  "selected": false
+                },
+                {
+                  "value": "three",
+                  "label": "Number 3",
+                  "selected": true
+                }
+              ]
+            },
+            {
+              "type": "select",
+              "nodeName": "select",
+              "uid": "…",
+              "options": [
+                {
+                  "value": "banana",
+                  "label": "Banana",
+                  "selected": true
+                },
+                {
+                  "value": "pear",
+                  "label": "Pear",
+                  "selected": true
+                },
+                {
+                  "value": "apple",
+                  "label": "Apple",
+                  "selected": false
+                }
+              ],
+              "multiple": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "nodeName": "footer",
+      "role": "contentinfo",
+      "children": [
+        {
+          "type": "text",
+          "content": "Footer content with"
+        },
+        {
+          "type": "container",
+          "nodeName": "span",
+          "role": "img",
+          "aria-label": "copyright symbol",
+          "children": [
+            {
+              "type": "text",
+              "content": "©"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": "2024"
+        }
+      ]
+    }
+  ],
+  "version": 2
+}
+
+

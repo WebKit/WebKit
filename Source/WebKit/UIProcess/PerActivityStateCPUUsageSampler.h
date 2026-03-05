@@ -42,7 +42,7 @@ public:
     explicit PerActivityStateCPUUsageSampler(WebProcessPool&);
     ~PerActivityStateCPUUsageSampler();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     void reportWebContentCPUTime(Seconds cpuTime, WebCore::ActivityStateForCPUSampling);

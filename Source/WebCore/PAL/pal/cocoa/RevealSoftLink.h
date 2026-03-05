@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(REVEAL)
 
 #import <pal/spi/cocoa/RevealSPI.h>

@@ -1,6 +1,0 @@
-
-
-FAIL <input type=date> keyboard behavior for :user-valid/:user-invalid. assert_equals: Date input value should not be set after partially inputting the date. expected "" but got "1"
-FAIL <input type=time> keyboard behavior for :user-valid/:user-invalid. assert_equals: Time input value should not be set after partially inputting the time. expected "" but got "1"
-FAIL <input type=datetime-local> keyboard behavior for :user-valid/:user-invalid. assert_equals: Datetime input value should not be set after partially inputting the dateTimeLocal. expected "" but got "1"
-

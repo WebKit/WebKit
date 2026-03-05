@@ -38,10 +38,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RadioNodeList);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioNodeList);
 
 RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomString& name)
-    : CachedLiveNodeList(rootNode, NodeListInvalidationType::InvalidateForFormControls)
+    : CachedLiveNodeList(rootNode, LiveNodeListType::RadioNodeList, NodeListInvalidationType::InvalidateForFormControls)
     , m_name(name)
     , m_isRootedAtTreeScope(is<HTMLFormElement>(rootNode))
 {
@@ -72,7 +72,8 @@ String RadioNodeList::value() const
 {
     auto length = this->length();
     for (unsigned i = 0; i < length; ++i) {
-        if (auto button = nonEmptyRadioButton(*item(i))) {
+        Ref node = *item(i);
+        if (RefPtr button = nonEmptyRadioButton(node)) {
             if (button->checked())
                 return button->value();
         }
@@ -84,7 +85,8 @@ void RadioNodeList::setValue(const String& value)
 {
     auto length = this->length();
     for (unsigned i = 0; i < length; ++i) {
-        if (auto button = nonEmptyRadioButton(*item(i))) {
+        Ref node = *item(i);
+        if (RefPtr button = nonEmptyRadioButton(node)) {
             if (button->value() == value) {
                 button->setChecked(true);
                 return;

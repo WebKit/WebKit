@@ -795,10 +795,10 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
             // Now enable protections and ensure we can only retrieve the app-bound cookies.
             initializeInAppBrowserPrivacyTestSettings();
 
-            [globalCookieStore _getCookiesForURL:[NSURL URLWithString:@"https://webkit.org/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
+            [globalCookieStore getCookiesForURL:[NSURL URLWithString:@"https://webkit.org/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
                 EXPECT_EQ(cookies.count, 1ull);
                 EXPECT_WK_STREQ(cookies[0].name, "webKitName");
-                [globalCookieStore _getCookiesForURL:[NSURL URLWithString:@"https://nonAppBoundDomain.com/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
+                [globalCookieStore getCookiesForURL:[NSURL URLWithString:@"https://nonAppBoundDomain.com/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
                     EXPECT_EQ(cookies.count, 0u);
                     [globalCookieStore deleteCookie:nonAppBoundCookie completionHandler:^{
                         [globalCookieStore deleteCookie:appBoundCookie completionHandler:^{

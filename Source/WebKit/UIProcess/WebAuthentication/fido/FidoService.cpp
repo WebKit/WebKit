@@ -60,9 +60,9 @@ void FidoService::getInfo(Ref<CtapDriver>&& driver)
         RefPtr protectedThis = weakThis.get();
         RefPtr driver = weakDriver.get();
         if (protectedThis && driver)
-            protectedThis->continueAfterGetInfo(*driver, WTFMove(response));
+            protectedThis->continueAfterGetInfo(*driver, WTF::move(response));
     });
-    auto addResult = m_drivers.add(WTFMove(driver));
+    auto addResult = m_drivers.add(WTF::move(driver));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
@@ -84,7 +84,7 @@ void FidoService::continueAfterGetInfo(CtapDriver& inputDriver, Vector<uint8_t>&
     auto info = readCTAPGetInfoResponse(response);
     if (info && info->versions().find(ProtocolVersion::kCtap2) != info->versions().end()) {
         driver->setMaxMsgSize(info->maxMsgSize());
-        observer->authenticatorAdded(CtapAuthenticator::create(driver.releaseNonNull(), WTFMove(*info)));
+        observer->authenticatorAdded(CtapAuthenticator::create(driver.releaseNonNull(), WTF::move(*info)));
         return;
     }
     driver->setProtocol(ProtocolVersion::kU2f);

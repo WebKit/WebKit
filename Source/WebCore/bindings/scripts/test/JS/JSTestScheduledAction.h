@@ -32,7 +32,7 @@ public:
     static JSTestScheduledAction* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestScheduledAction>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestScheduledAction* ptr = new (NotNull, JSC::allocateCell<JSTestScheduledAction>(vm)) JSTestScheduledAction(structure, *globalObject, WTFMove(impl));
+        JSTestScheduledAction* ptr = new (NotNull, JSC::allocateCell<JSTestScheduledAction>(vm)) JSTestScheduledAction(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestScheduledAction* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestScheduledAction&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestScheduledAction* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestScheduledAction>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestScheduledAction& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestScheduledAction>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestScheduledAction> {
     using WrapperClass = JSTestScheduledAction;

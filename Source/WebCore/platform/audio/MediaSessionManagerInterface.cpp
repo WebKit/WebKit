@@ -130,6 +130,7 @@ void MediaSessionManagerInterface::resetRestrictions()
     m_restrictions[indexFromMediaType(PlatformMediaSession::MediaType::Audio)] = MediaSessionRestriction::NoRestrictions;
     m_restrictions[indexFromMediaType(PlatformMediaSession::MediaType::VideoAudio)] = MediaSessionRestriction::NoRestrictions;
     m_restrictions[indexFromMediaType(PlatformMediaSession::MediaType::WebAudio)] = MediaSessionRestriction::NoRestrictions;
+    m_restrictions[indexFromMediaType(PlatformMediaSession::MediaType::DOMMediaSession)] = MediaSessionRestriction::NoRestrictions;
 }
 
 bool MediaSessionManagerInterface::has(PlatformMediaSession::MediaType type) const
@@ -146,7 +147,7 @@ bool MediaSessionManagerInterface::activeAudioSessionRequired() const
         return true;
 
     return std::ranges::any_of(m_audioCaptureSources, [](auto& source) {
-        return source.isCapturingAudio();
+        return Ref { source }->isCapturingAudio();
     });
 #else
     return false;
@@ -172,6 +173,20 @@ bool MediaSessionManagerInterface::canProduceAudio() const
 void MediaSessionManagerInterface::updateNowPlayingInfoIfNecessary()
 {
     scheduleSessionStatusUpdate();
+}
+
+void MediaSessionManagerInterface::updateNowPlayingInfo()
+{
+    updateNowPlayingInfoIfNecessary();
+}
+
+void MediaSessionManagerInterface::setNowPlayingUpdateInterval(double)
+{
+}
+
+double MediaSessionManagerInterface::nowPlayingUpdateInterval()
+{
+    return 0;
 }
 
 void MediaSessionManagerInterface::updateAudioSessionCategoryIfNecessary()
@@ -216,7 +231,7 @@ bool MediaSessionManagerInterface::hasActiveNowPlayingSessionInGroup(std::option
 
 void MediaSessionManagerInterface::enqueueTaskOnMainThread(Function<void()>&& task)
 {
-    callOnMainThread(CancellableTask(m_taskGroup, [task = WTFMove(task)] () mutable {
+    callOnMainThread(CancellableTask(m_taskGroup, [task = WTF::move(task)] () mutable {
         task();
     }));
 }
@@ -425,7 +440,7 @@ MediaSessionRestrictions MediaSessionManagerInterface::restrictions(PlatformMedi
     return m_restrictions[indexFromMediaType(type)];
 }
 
-bool MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSessionInterface& session)
+void MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
 
@@ -436,12 +451,14 @@ bool MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSession
     auto restrictions = this->restrictions(sessionType);
     if (session.state() == PlatformMediaSession::State::Interrupted && restrictions & MediaSessionRestriction::InterruptedPlaybackNotPermitted) {
         ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false because session.state() is Interrupted, and InterruptedPlaybackNotPermitted");
-        return false;
+        completionHandler(false);
+        return;
     }
 
     if (!maybeActivateAudioSession()) {
         ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false, failed to activate AudioSession");
-        return false;
+        completionHandler(false);
+        return;
     }
 
     if (m_currentInterruption)
@@ -461,9 +478,9 @@ bool MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSession
         });
     }
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning true");
-    return true;
+    completionHandler(true);
 #else
-    return false;
+    completionHandler(false);
 #endif
 }
 
@@ -568,8 +585,8 @@ void MediaSessionManagerInterface::removeAudioCaptureSource(AudioCaptureSource& 
 int MediaSessionManagerInterface::countActiveAudioCaptureSources()
 {
     int count = 0;
-    for (const auto& source : m_audioCaptureSources) {
-        if (source.wantsToCaptureAudio())
+    for (Ref source : m_audioCaptureSources) {
+        if (source->wantsToCaptureAudio())
             ++count;
     }
     return count;
@@ -585,11 +602,11 @@ void MediaSessionManagerInterface::processDidReceiveRemoteControlCommand(Platfor
             continue;
 
         if (session->isNowPlayingEligible()) {
-            activeSession = WTFMove(session);
+            activeSession = WTF::move(session);
             break;
         }
         if (!activeSession)
-            activeSession = WTFMove(session);
+            activeSession = WTF::move(session);
     }
 
     if (activeSession)
@@ -627,7 +644,7 @@ void MediaSessionManagerInterface::processSystemDidWake()
 void MediaSessionManagerInterface::addSession(PlatformMediaSessionInterface& session)
 {
 #if !RELEASE_LOG_DISABLED && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
-    m_logger->addLogger(session.protectedLogger());
+    m_logger->addLogger(protect(session.logger()));
     MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(ADDSESSION, session.logIdentifier());
 #endif
 
@@ -651,7 +668,7 @@ void MediaSessionManagerInterface::removeSession(PlatformMediaSessionInterface& 
         maybeDeactivateAudioSession();
 
 #if !RELEASE_LOG_DISABLED && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
-    m_logger->removeLogger(session.protectedLogger());
+    m_logger->removeLogger(protect(session.logger()));
 #endif
 
     scheduleUpdateSessionState();

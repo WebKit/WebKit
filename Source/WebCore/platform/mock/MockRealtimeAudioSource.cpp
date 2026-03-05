@@ -62,18 +62,18 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
         return { "No mock microphone device"_s };
 #endif
 
-    auto source = adoptRef(*new MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts)));
+    auto source = adoptRef(*new MockRealtimeAudioSource(WTF::move(deviceID), WTF::move(name), WTF::move(hashSalts)));
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(error->invalidConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError({ WTF::move(error->invalidConstraint), MediaAccessDenialReason::InvalidConstraint });
     }
 
-    return CaptureSourceOrError(WTFMove(source));
+    return CaptureSourceOrError(WTF::move(source));
 }
 #endif
 
 MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
-    : RealtimeMediaSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
+    : RealtimeMediaSource(CaptureDevice { WTF::move(deviceID), CaptureDevice::DeviceType::Microphone, WTF::move(name) }, WTF::move(hashSalts), pageIdentifier)
     , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"_s))
     , m_timer(RunLoop::currentSingleton(), "MockRealtimeAudioSource::Timer"_s, this, &MockRealtimeAudioSource::tick)
 {
@@ -108,7 +108,7 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
         supportedConstraints.setSupportsSampleRate(true);
         settings.setSupportedConstraints(supportedConstraints);
 
-        m_currentSettings = WTFMove(settings);
+        m_currentSettings = WTF::move(settings);
     }
     return m_currentSettings.value();
 }
@@ -135,7 +135,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeAudioSource::capabilities()
         capabilities.setEchoCancellation(echoCancellation ? (*echoCancellation ? RealtimeMediaSourceCapabilities::EchoCancellation::On : RealtimeMediaSourceCapabilities::EchoCancellation::Off) : RealtimeMediaSourceCapabilities::EchoCancellation::OnOrOff);
         capabilities.setSampleRate({ 44100, 96000 });
 
-        m_capabilities = WTFMove(capabilities);
+        m_capabilities = WTF::move(capabilities);
     }
     return m_capabilities.value();
 }

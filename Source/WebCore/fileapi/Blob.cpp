@@ -58,7 +58,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobLoader);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Blob);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Blob);
 
 class BlobURLRegistry final : public URLRegistry {
 public:
@@ -79,7 +79,7 @@ void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const U
         Locker locker { m_urlsPerContextLock };
         m_urlsPerContext.add(context.identifier(), HashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
     }
-    ThreadableBlobRegistry::registerBlobURL(context.protectedSecurityOrigin().get(), context.policyContainer(), publicURL, downcast<Blob>(blob).url(), context.topOrigin().data());
+    ThreadableBlobRegistry::registerBlobURL(protect(context.securityOrigin()).get(), context.policyContainer(), publicURL, downcast<Blob>(blob).url(), context.topOrigin().data());
 }
 
 void BlobURLRegistry::unregisterURL(const URL& url, const SecurityOriginData& topOrigin)
@@ -121,8 +121,8 @@ URLRegistry& BlobURLRegistry::registry()
 
 Blob::Blob(UninitializedContructor, ScriptExecutionContext* context, URL&& url, String&& type)
     : ActiveDOMObject(context)
-    , m_type(WTFMove(type))
-    , m_internalURL(WTFMove(url))
+    , m_type(WTF::move(type))
+    , m_internalURL(WTF::move(url))
 {
 }
 
@@ -134,43 +134,52 @@ Blob::Blob(ScriptExecutionContext* context)
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { }, { });
 }
 
-static size_t computeMemoryCost(const Vector<BlobPartVariant>& blobPartVariants)
+static size_t computeMemoryCost(const std::optional<Vector<BlobPartVariant>>& blobPartVariants)
 {
     size_t memoryCost = 0;
-    for (auto& blobPartVariant : blobPartVariants) {
-        WTF::switchOn(blobPartVariant, [&](const RefPtr<Blob>& blob) {
-            memoryCost += blob->memoryCost();
-        }, [&](const RefPtr<JSC::ArrayBufferView>& view) {
-            memoryCost += view->byteLength();
-        }, [&](const RefPtr<JSC::ArrayBuffer>& array) {
-            memoryCost += array->byteLength();
-        }, [&](const String& string) {
-            memoryCost += string.sizeInBytes();
-        });
+    if (blobPartVariants) {
+        for (auto& blobPartVariant : *blobPartVariants) {
+            WTF::switchOn(blobPartVariant,
+                [&](const Ref<Blob>& blob) {
+                    memoryCost += blob->memoryCost();
+                },
+                [&](const Ref<JSC::ArrayBufferView>& view) {
+                    memoryCost += view->byteLength();
+                },
+                [&](const Ref<JSC::ArrayBuffer>& array) {
+                    memoryCost += array->byteLength();
+                },
+                [&](const String& string) {
+                    memoryCost += string.sizeInBytes();
+                }
+            );
+        }
     }
     return memoryCost;
 }
 
-static Vector<BlobPart> buildBlobData(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+static Vector<BlobPart> buildBlobData(std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
 {
     BlobBuilder builder(propertyBag.endings);
-    for (auto& blobPartVariant : blobPartVariants) {
-        WTF::switchOn(blobPartVariant,
-            [&] (auto& part) {
-                builder.append(WTFMove(part));
-            }
-        );
+    if (blobPartVariants) {
+        for (auto& blobPartVariant : *blobPartVariants) {
+            WTF::switchOn(WTF::move(blobPartVariant),
+                [&](auto&& part) {
+                    builder.append(WTF::move(part));
+                }
+            );
+        }
     }
     return builder.finalize();
 }
 
-Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+Blob::Blob(ScriptExecutionContext& context, std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     : ActiveDOMObject(&context)
     , m_type(normalizedContentType(propertyBag.type))
     , m_memoryCost(computeMemoryCost(blobPartVariants))
     , m_internalURL(BlobURL::createInternalURL())
 {
-    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, buildBlobData(WTFMove(blobPartVariants), propertyBag), m_type);
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, buildBlobData(WTF::move(blobPartVariants), propertyBag), m_type);
 }
 
 Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
@@ -180,7 +189,7 @@ Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String
     , m_memoryCost(data.size())
     , m_internalURL(BlobURL::createInternalURL())
 {
-    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { BlobPart(WTF::move(data)) }, contentType);
 }
 
 Blob::Blob(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType)
@@ -191,7 +200,7 @@ Blob::Blob(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer
     , m_internalURL(BlobURL::createInternalURL())
 {
     BlobBuilder builder(EndingType::Transparent);
-    builder.append(WTFMove(buffer));
+    builder.append(WTF::move(buffer));
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, builder.finalize(), contentType);
 }
 
@@ -232,7 +241,7 @@ Blob::~Blob()
 {
     ThreadableBlobRegistry::unregisterBlobURL(m_internalURL, std::nullopt);
     while (!m_blobLoaders.isEmpty())
-        RefPtr { (*m_blobLoaders.begin()).get() }->cancel();
+        protect(*m_blobLoaders.begin())->cancel();
 }
 
 Ref<Blob> Blob::slice(long long start, long long end, const String& contentType) const
@@ -282,20 +291,20 @@ String Blob::normalizedContentType(const String& contentType)
 
 void Blob::loadBlob(FileReaderLoader::ReadType readType, Function<void(BlobLoader&)>&& completionHandler)
 {
-    Ref blobLoader = BlobLoader::create([pendingActivity = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
+    Ref blobLoader = BlobLoader::create([pendingActivity = makePendingActivity(*this), completionHandler = WTF::move(completionHandler)](BlobLoader& blobLoader) mutable {
         completionHandler(blobLoader);
         pendingActivity->object().m_blobLoaders.take(&blobLoader);
     });
 
-    blobLoader->start(*this, protectedScriptExecutionContext().get(), readType);
+    blobLoader->start(*this, protect(scriptExecutionContext()).get(), readType);
 
     if (blobLoader->isLoading())
-        m_blobLoaders.add(WTFMove(blobLoader));
+        m_blobLoaders.add(WTF::move(blobLoader));
 }
 
 void Blob::text(Ref<DeferredPromise>&& promise)
 {
-    loadBlob(FileReaderLoader::ReadAsText, [promise = WTFMove(promise)](BlobLoader& blobLoader) mutable {
+    loadBlob(FileReaderLoader::ReadAsText, [promise = WTF::move(promise)](BlobLoader& blobLoader) mutable {
         if (auto optionalErrorCode = blobLoader.errorCode()) {
             promise->reject(Exception { *optionalErrorCode });
             return;
@@ -316,28 +325,28 @@ static ExceptionOr<Ref<JSC::ArrayBuffer>> arrayBufferFromBlobLoader(BlobLoader& 
 
 void Blob::arrayBuffer(DOMPromiseDeferred<IDLArrayBuffer>&& promise)
 {
-    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [promise = WTFMove(promise)](BlobLoader& blobLoader) mutable {
+    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [promise = WTF::move(promise)](BlobLoader& blobLoader) mutable {
         promise.settle(arrayBufferFromBlobLoader(blobLoader));
     });
 }
 
 void Blob::getArrayBuffer(CompletionHandler<void(ExceptionOr<Ref<JSC::ArrayBuffer>>)>&& completionHandler)
 {
-    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
+    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [completionHandler = WTF::move(completionHandler)](BlobLoader& blobLoader) mutable {
         completionHandler(arrayBufferFromBlobLoader(blobLoader));
     });
 }
 
 void Blob::bytes(Ref<DeferredPromise>&& promise)
 {
-    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [promise = WTFMove(promise)](BlobLoader& blobLoader) mutable {
+    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [promise = WTF::move(promise)](BlobLoader& blobLoader) mutable {
         auto arrayBuffer = arrayBufferFromBlobLoader(blobLoader);
         if (arrayBuffer.hasException()) {
             promise->reject(arrayBuffer.releaseException());
             return;
         }
         Ref view = Uint8Array::create(arrayBuffer.releaseReturnValue());
-        promise->resolve<IDLUint8Array>(WTFMove(view));
+        promise->resolve<IDLUint8Array>(WTF::move(view));
     });
 }
 
@@ -360,12 +369,12 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
                 return;
 
             if (m_queue.isEmpty()) {
-                m_promise = WTFMove(promise);
+                m_promise = WTF::move(promise);
                 m_controller = controller;
                 return;
             }
 
-            tryEnqueuing(m_queue.takeFirst().get(), controller, WTFMove(promise), &globalObject);
+            tryEnqueuing(m_queue.takeFirst().get(), controller, WTF::move(promise), &globalObject);
         }
 
         void cancel(Ref<DeferredPromise>&& promise)
@@ -426,7 +435,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
                 return;
 
             RefPtr controller = m_controller.get();
-            auto* globalObject = controller->protectedStream()->globalObject();
+            auto* globalObject = protect(controller->stream())->globalObject();
             if (!globalObject)
                 return;
 
@@ -456,12 +465,12 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
 
         void tryEnqueuing(const FragmentedSharedBuffer& sharedBuffer, ReadableByteStreamController& controller, Ref<DeferredPromise>&& promise, JSDOMGlobalObject* globalObject)
         {
-            auto scope = makeScopeExit([promise = WTFMove(promise)] {
+            auto scope = makeScopeExit([promise = WTF::move(promise)] {
                 promise->resolve();
             });
 
             if (!globalObject) {
-                globalObject = controller.protectedStream()->globalObject();
+                globalObject = protect(controller.stream())->globalObject();
                 if (!globalObject)
                     return;
             }
@@ -494,18 +503,18 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
     Ref source = BlobStreamSource::create(*context, *this);
     ReadableByteStreamController::PullAlgorithm pullAlgorithm = [source](auto& globalObject, auto&& controller) {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        source->pull(globalObject, controller, WTFMove(deferred));
+        source->pull(globalObject, controller, WTF::move(deferred));
         return promise;
     };
 
     ReadableByteStreamController::CancelAlgorithm cancelAlgorithm = [source](auto& globalObject, auto&&, auto&&) {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        source->cancel(WTFMove(deferred));
+        source->cancel(WTF::move(deferred));
         return promise;
     };
 
-    return ReadableStream::createReadableByteStream(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), WTFMove(pullAlgorithm), WTFMove(cancelAlgorithm), {
-        .isReachableFromOpaqueRootIfPulling = ReadableStream::IsReachableFromOpaqueRootIfPulling::Yes
+    return ReadableStream::createReadableByteStream(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), WTF::move(pullAlgorithm), WTF::move(cancelAlgorithm), {
+        .isSourceReachableFromOpaqueRoot = ReadableStream::IsSourceReachableFromOpaqueRoot::Yes
     });
 }
 

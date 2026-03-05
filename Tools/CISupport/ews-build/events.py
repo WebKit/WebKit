@@ -28,7 +28,6 @@ import re
 import time
 import twisted
 
-from base64 import b64encode
 from buildbot.process.results import SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
@@ -99,13 +98,11 @@ class Events(service.BuildbotService):
         if len(data['description']) > self.MAX_GITHUB_DESCRIPTION:
             data['description'] = '{}...'.format(data['description'][:self.MAX_GITHUB_DESCRIPTION - 3])
 
-        auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
-
         TwistedAdditions.request(
             url=GitHub.commit_status_url(sha, repository),
             type=b'POST',
             headers={
-                'Authorization': ['Basic {}'.format(auth_header)],
+                'Authorization': [f'Bearer {access_token}'],
                 'User-Agent': ['python-twisted/{}'.format(twisted.__version__)],
                 'Accept': ['application/vnd.github.v3+json'],
                 'Content-Type': ['application/json'],
@@ -461,7 +458,6 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             return defer.returnValue([])
 
         username, access_token = GitHub.credentials()
-        auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
 
         response = yield TwistedAdditions.request(
             url="{}/repos/{}/commits".format(self.github_api_endpoint, repo),
@@ -471,7 +467,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
                 per_page=100,
                 sha=head,
             ), headers=dict(
-                Authorization=['Basic {}'.format(auth_header)],
+                Authorization=[f'Bearer {access_token}'],
                 Accept=['application/vnd.github.v3+json'],
             ), logger=log.msg,
         )
@@ -493,7 +489,6 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         NUM_PAGE_LIMIT = 30  # GitHub stops returning files in a PR after 3000 files
 
         username, access_token = GitHub.credentials()
-        auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
 
         page = 1
         files = []
@@ -505,7 +500,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
                     per_page=PER_PAGE_LIMIT,
                     page=page,
                 ), headers=dict(
-                    Authorization=['Basic {}'.format(auth_header)],
+                    Authorization=[f'Bearer {access_token}'],
                     Accept=['application/vnd.github.v3+json'],
                 ), logger=log.msg,
             )

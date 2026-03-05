@@ -40,11 +40,11 @@ class AudioWorkletProcessorConstructionData {
     WTF_MAKE_TZONE_ALLOCATED(AudioWorkletProcessorConstructionData);
 public:
     AudioWorkletProcessorConstructionData(String&& name, Ref<MessagePort>&& port)
-        : m_name(WTFMove(name))
-        , m_port(WTFMove(port))
+        : m_name(WTF::move(name))
+        , m_port(WTF::move(port))
     { }
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     MessagePort& port() const { return m_port.get(); }
 
 private:

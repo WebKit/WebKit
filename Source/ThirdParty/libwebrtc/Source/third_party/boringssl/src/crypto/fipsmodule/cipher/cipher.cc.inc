@@ -41,7 +41,7 @@ EVP_CIPHER_CTX *EVP_CIPHER_CTX_new(void) {
 }
 
 int EVP_CIPHER_CTX_cleanup(EVP_CIPHER_CTX *c) {
-  if (c->cipher != NULL && c->cipher->cleanup) {
+  if (c->cipher != nullptr && c->cipher->cleanup) {
     c->cipher->cleanup(c);
   }
   OPENSSL_free(c->cipher_data);
@@ -58,7 +58,7 @@ void EVP_CIPHER_CTX_free(EVP_CIPHER_CTX *ctx) {
 }
 
 int EVP_CIPHER_CTX_copy(EVP_CIPHER_CTX *out, const EVP_CIPHER_CTX *in) {
-  if (in == NULL || in->cipher == NULL) {
+  if (in == nullptr || in->cipher == nullptr) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_INPUT_NOT_INITIALIZED);
     return 0;
   }
@@ -74,14 +74,14 @@ int EVP_CIPHER_CTX_copy(EVP_CIPHER_CTX *out, const EVP_CIPHER_CTX *in) {
   if (in->cipher_data && in->cipher->ctx_size) {
     out->cipher_data = OPENSSL_memdup(in->cipher_data, in->cipher->ctx_size);
     if (!out->cipher_data) {
-      out->cipher = NULL;
+      out->cipher = nullptr;
       return 0;
     }
   }
 
   if (in->cipher->flags & EVP_CIPH_CUSTOM_COPY) {
     if (!in->cipher->ctrl((EVP_CIPHER_CTX *)in, EVP_CTRL_COPY, 0, out)) {
-      out->cipher = NULL;
+      out->cipher = nullptr;
       return 0;
     }
   }
@@ -121,19 +121,19 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
     if (ctx->cipher->ctx_size) {
       ctx->cipher_data = OPENSSL_malloc(ctx->cipher->ctx_size);
       if (!ctx->cipher_data) {
-        ctx->cipher = NULL;
+        ctx->cipher = nullptr;
         return 0;
       }
     } else {
-      ctx->cipher_data = NULL;
+      ctx->cipher_data = nullptr;
     }
 
     ctx->key_len = cipher->key_len;
     ctx->flags = 0;
 
     if (ctx->cipher->flags & EVP_CIPH_CTRL_INIT) {
-      if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_INIT, 0, NULL)) {
-        ctx->cipher = NULL;
+      if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_INIT, 0, nullptr)) {
+        ctx->cipher = nullptr;
         OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_INITIALIZATION_ERROR);
         return 0;
       }
@@ -187,7 +187,7 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 
   ctx->buf_len = 0;
   ctx->final_used = 0;
-  // Clear the poisoned flag to permit re-use of a CTX that previously had a
+  // Clear the poisoned flag to permit reuse of a CTX that previously had a
   // failed operation.
   ctx->poisoned = 0;
   return 1;
@@ -316,7 +316,7 @@ int EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len) {
     // When EVP_CIPH_FLAG_CUSTOM_CIPHER is set, the return value of |cipher| is
     // the number of bytes written, or -1 on error. Otherwise the return value
     // is one on success and zero on error.
-    const int num_bytes = ctx->cipher->cipher(ctx, out, NULL, 0);
+    const int num_bytes = ctx->cipher->cipher(ctx, out, nullptr, 0);
     if (num_bytes < 0) {
       return 0;
     }
@@ -430,7 +430,7 @@ int EVP_DecryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len) {
   }
 
   if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {
-    i = ctx->cipher->cipher(ctx, out, NULL, 0);
+    i = ctx->cipher->cipher(ctx, out, nullptr, 0);
     if (i < 0) {
       return 0;
     } else {
@@ -642,7 +642,7 @@ int EVP_CipherInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
   if (cipher) {
     EVP_CIPHER_CTX_init(ctx);
   }
-  return EVP_CipherInit_ex(ctx, cipher, NULL, key, iv, enc);
+  return EVP_CipherInit_ex(ctx, cipher, nullptr, key, iv, enc);
 }
 
 int EVP_EncryptInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class CustomEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomEvent);
+    WTF_MAKE_TZONE_ALLOCATED(CustomEvent);
 public:
     virtual ~CustomEvent();
 
@@ -43,16 +43,16 @@ public:
         JSC::JSValue detail;
     };
 
-    WEBCORE_EXPORT static Ref<CustomEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    WEBCORE_EXPORT static Ref<CustomEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
     void initCustomEvent(const AtomString& type, bool canBubble, bool cancelable, JSC::JSValue detail = JSC::JSValue::JSUndefined);
 
-    const JSValueInWrappedObject& detail() const { return m_detail; }
-    JSValueInWrappedObject& cachedDetail() { return m_cachedDetail; }
+    const JSValueInWrappedObject& detail() const LIFETIME_BOUND { return m_detail; }
+    JSValueInWrappedObject& cachedDetail() LIFETIME_BOUND { return m_cachedDetail; }
 
 private:
     CustomEvent(IsTrusted);
-    CustomEvent(const AtomString& type, const Init& initializer, IsTrusted);
+    CustomEvent(const AtomString& type, Init&&, IsTrusted);
 
     JSValueInWrappedObject m_detail;
     JSValueInWrappedObject m_cachedDetail;

@@ -42,12 +42,12 @@ bool InspectorInstrumentationWebKit::shouldInterceptResponseInternal(const Local
 
 void InspectorInstrumentationWebKit::interceptRequestInternal(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
-    InspectorInstrumentation::interceptRequest(loader, WTFMove(handler));
+    InspectorInstrumentation::interceptRequest(loader, WTF::move(handler));
 }
 
 void InspectorInstrumentationWebKit::interceptResponseInternal(const LocalFrame& frame, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
 {
-    InspectorInstrumentation::interceptResponse(frame, response, identifier, WTFMove(handler));
+    InspectorInstrumentation::interceptResponse(frame, response, identifier, WTF::move(handler));
 }
 
 } // namespace WebCore

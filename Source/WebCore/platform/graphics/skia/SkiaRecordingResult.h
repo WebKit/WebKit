@@ -25,24 +25,71 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
-#include "GraphicsContextSkia.h"
+#if USE(SKIA)
+#include "GLFence.h"
+#include "IntRect.h"
+#include "RenderingMode.h"
+#include "SkiaGPUAtlas.h"
+#include "SkiaImageAtlasLayout.h"
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkImage.h>
 #include <skia/core/SkPicture.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
+#include <wtf/Condition.h>
+#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-class SkImage;
-
 namespace WebCore {
+
+using SkiaImageToFenceMap = HashMap<const SkImage*, std::unique_ptr<GLFence>>;
+
+class AtlasUploadCondition : public ThreadSafeRefCounted<AtlasUploadCondition> {
+public:
+    static Ref<AtlasUploadCondition> create() { return adoptRef(*new AtlasUploadCondition); }
+
+    void addPending()
+    {
+        Locker locker { m_lock };
+        ++m_pendingCount;
+    }
+
+    void signal()
+    {
+        Locker locker { m_lock };
+        ASSERT(m_pendingCount);
+        if (!--m_pendingCount)
+            m_condition.notifyAll();
+    }
+
+    void wait()
+    {
+        Locker locker { m_lock };
+        m_condition.wait(m_lock, [this]() WTF_REQUIRES_LOCK(m_lock) {
+            return !m_pendingCount;
+        });
+    }
+
+private:
+    AtlasUploadCondition() = default;
+
+    Lock m_lock;
+    Condition m_condition;
+    unsigned m_pendingCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+};
+
+struct SkiaRecordingData {
+    SkiaImageToFenceMap imageToFenceMap;
+    Vector<Ref<SkiaImageAtlasLayout>> atlasLayouts;
+    unsigned imageSetFingerprint { 0 };
+};
 
 class SkiaRecordingResult final : public ThreadSafeRefCounted<SkiaRecordingResult, WTF::DestructionThread::Main> {
 public:
     ~SkiaRecordingResult();
-    static Ref<SkiaRecordingResult> create(sk_sp<SkPicture>&&, SkiaImageToFenceMap&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
+    static Ref<SkiaRecordingResult> create(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
 
     void waitForFenceIfNeeded(const SkImage&);
     bool hasFences();
@@ -53,12 +100,44 @@ public:
     bool contentsOpaque() const { return m_contentsOpaque; }
     float contentsScale() const { return m_contentsScale; }
 
+    // Atlas layouts for batched raster image uploads.
+    bool hasAtlasLayouts() const { return !m_atlasLayouts.isEmpty(); }
+    const Vector<Ref<SkiaImageAtlasLayout>>& atlasLayouts() const { return m_atlasLayouts; }
+    unsigned imageSetFingerprint() const { return m_imageSetFingerprint; }
+
+    // GPU atlases prepared on main thread for worker threads to rewrap.
+    void setGPUAtlases(Vector<Ref<SkiaGPUAtlas>>&& atlases, RefPtr<AtlasUploadCondition>&& condition = nullptr)
+    {
+        m_gpuAtlases = WTF::move(atlases);
+        m_uploadCondition = WTF::move(condition);
+    }
+
+    // Set the upload fence for async GPU operations (created by SkiaPaintingEngine).
+    void setUploadFence(std::unique_ptr<GLFence>&& fence) { m_uploadFence = WTF::move(fence); }
+
+    // Check if GPU atlases are ready.
+    bool hasGPUAtlases() const { return !m_gpuAtlases.isEmpty(); }
+
+    // Get prepared GPU atlases (for worker threads to rewrap).
+    const Vector<Ref<SkiaGPUAtlas>>& gpuAtlases() const { return m_gpuAtlases; }
+
+    // Wait for GPU upload fence (call from worker threads before using atlases).
+    void waitForUploadFence();
+
+    // Wait for async DMA-buf atlas upload to complete.
+    void waitForUploadCondition();
+
 private:
-    SkiaRecordingResult(sk_sp<SkPicture>&&, SkiaImageToFenceMap&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
+    SkiaRecordingResult(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
 
     sk_sp<SkPicture> m_picture;
     SkiaImageToFenceMap m_imageToFenceMap WTF_GUARDED_BY_LOCK(m_imageToFenceMapLock);
     Lock m_imageToFenceMapLock;
+    Vector<Ref<SkiaImageAtlasLayout>> m_atlasLayouts;
+    unsigned m_imageSetFingerprint { 0 };
+    Vector<Ref<SkiaGPUAtlas>> m_gpuAtlases;
+    std::unique_ptr<GLFence> m_uploadFence; // Fence for async GPU upload
+    RefPtr<AtlasUploadCondition> m_uploadCondition;
     IntRect m_recordRect;
     RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
     bool m_contentsOpaque : 1 { true };
@@ -67,4 +146,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#endif // USE(SKIA)

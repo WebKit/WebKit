@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -532,14 +532,14 @@ static size_t trampolineReservedStackSize()
 static RegisterAtOffsetList usedCalleeSaveRegisters(const Wasm::FunctionSignature& signature)
 {
     // Pessimistically save callee saves in BoundsChecking mode since the IPInt always bounds checks
-    RegisterSetBuilder calleeSaves = RegisterSetBuilder::wasmPinnedRegisters();
+    RegisterSet calleeSaves = RegisterSet::wasmPinnedRegisters();
     // FIXME: Is it really worth considering functions that have void() signature? Are those actually common?
     if (signature.argumentCount() || !signature.returnsVoid()) {
-        RegisterSetBuilder tagCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisters();
-        tagCalleeSaves.filter(RegisterSetBuilder::runtimeTagRegisters());
+        RegisterSet tagCalleeSaves = RegisterSet::vmCalleeSaveRegisters();
+        tagCalleeSaves.filter(RegisterSet::runtimeTagRegisters());
         calleeSaves.merge(tagCalleeSaves);
     }
-    return RegisterAtOffsetList { calleeSaves.buildAndValidate(), RegisterAtOffsetList::OffsetBaseType::FramePointerBased };
+    return RegisterAtOffsetList { calleeSaves, RegisterAtOffsetList::OffsetBaseType::FramePointerBased };
 }
 
 CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
@@ -664,8 +664,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
             slowPath.append(jit.branchIfNotCell(scratchJSR));
             slowPath.append(jit.branchIfNotHeapBigInt(scratchJSR.payloadGPR()));
             if (isStack) {
-                // Since we're looping backwards we don't have to worry about the arguments being in registers yet so we can use them as scratches.
-                jit.toBigInt64(scratchJSR.payloadGPR(), stackLimitGPR, scratchGPR, Wasm::wasmCallingConvention().jsrArgs[1].payloadGPR());
+                jit.toBigInt64(scratchJSR.payloadGPR(), stackLimitGPR);
                 jit.store64(stackLimitGPR, calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()));
             } else {
                 static_assert(isX86() || noOverlap(GPRInfo::wasmBaseMemoryPointer, GPRInfo::numberTagRegister, GPRInfo::notCellMaskRegister));
@@ -675,7 +674,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
                     // FIXME: In theory this only needs to restore the numberTagRegister not both but this is rare.
                     haveTagRegisters = false;
                 }
-                jit.toBigInt64(scratchJSR.payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR(), stackLimitGPR, scratch);
+                jit.toBigInt64(scratchJSR.payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR());
             }
 #else
             UNUSED_PARAM(scratchGPR);
@@ -696,7 +695,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
                 slowPath.append(jit.branchIfNotCell(scratchJSR));
 
                 jit.emitLoadStructure(scratchJSR.payloadGPR(), scratchJSR.payloadGPR());
-                jit.loadCompactPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Structure::classInfoOffset()), scratchJSR.payloadGPR());
+                jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Structure::classInfoOffset()), scratchJSR.payloadGPR());
 
                 static_assert(std::is_final<WebAssemblyFunction>::value, "We do not check for subtypes below");
                 static_assert(std::is_final<WebAssemblyWrapperFunction>::value, "We do not check for subtypes below");
@@ -812,7 +811,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
     // FIXME: This assumes we don't have tag registers but we could just rematerialize them here since we already saved them.
     marshallJSResult(jit, *this, wasmCallInfo, savedResultRegisters, exceptionChecks);
 
-    ASSERT(!RegisterSetBuilder::runtimeTagRegisters().contains(GPRInfo::nonPreservedNonReturnGPR, IgnoreVectors));
+    ASSERT(!RegisterSet::runtimeTagRegisters().contains(GPRInfo::nonPreservedNonReturnGPR, IgnoreVectors));
 
     jit.emitRestore(registersToSpill, GPRInfo::callFrameRegister);
     jit.emitFunctionEpilogue();
@@ -850,9 +849,9 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
         return nullptr;
 
     auto code = FINALIZE_WASM_CODE(linkBuffer, JSEntryPtrTag, nullptr, "JS->Wasm IC %s", WTF::toCString(*this).data());
-    jsToWasmICCallee->setEntrypoint(WTFMove(code));
+    jsToWasmICCallee->setEntrypoint(WTF::move(code));
     WTF::storeStoreFence();
-    m_jsToWasmICCallee = WTFMove(jsToWasmICCallee);
+    m_jsToWasmICCallee = WTF::move(jsToWasmICCallee);
 
     return m_jsToWasmICCallee->jsToWasm();
 }

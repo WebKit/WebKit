@@ -16,15 +16,17 @@
 #include <optional>
 #include <vector>
 
+#include "api/transport/ecn_marking.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
+#include "test/wait_until.h"
 
 namespace webrtc {
 
@@ -39,11 +41,12 @@ class TestClient : public sigslot::has_slots<> {
 
     SocketAddress addr;
     Buffer buf;
+    EcnMarking ecn;
     std::optional<Timestamp> packet_time;
   };
 
   // Default timeout for NextPacket reads.
-  static const int kTimeoutMs = 5000;
+  static constexpr int kTimeoutMs = 5000;
 
   // Creates a client that will send and receive with the given socket and
   // will post itself messages with the given thread.
@@ -51,8 +54,7 @@ class TestClient : public sigslot::has_slots<> {
   // Create a test client that will use a fake clock. NextPacket needs to wait
   // for a packet to be received, and thus it needs to advance the fake clock
   // if the test is using one, rather than just sleeping.
-  TestClient(std::unique_ptr<AsyncPacketSocket> socket,
-             ThreadProcessingFakeClock* fake_clock);
+  TestClient(std::unique_ptr<AsyncPacketSocket> socket, ClockVariant clock);
   ~TestClient() override;
 
   TestClient(const TestClient&) = delete;
@@ -77,11 +79,11 @@ class TestClient : public sigslot::has_slots<> {
 
   // Returns the next packet received by the client or null if none is received
   // within the specified timeout.
-  std::unique_ptr<Packet> NextPacket(int timeout_ms);
+  std::unique_ptr<Packet> NextPacket(int timeout_ms = kTimeoutMs);
 
   // Checks that the next packet has the given contents. Returns the remote
   // address that the packet was sent from.
-  bool CheckNextPacket(const char* buf, size_t len, SocketAddress* addr);
+  bool CheckNextPacket(const char* buf, size_t size, SocketAddress* addr);
 
   // Checks that no packets have arrived or will arrive in the next second.
   bool CheckNoPacket();
@@ -96,7 +98,7 @@ class TestClient : public sigslot::has_slots<> {
 
  private:
   // Timeout for reads when no packet is expected.
-  static const int kNoPacketTimeoutMs = 1000;
+  static constexpr TimeDelta kNoPacketTimeout = TimeDelta::Seconds(1);
   // Workaround for the fact that AsyncPacketSocket::GetConnState doesn't exist.
   Socket::ConnState GetState();
 
@@ -104,9 +106,8 @@ class TestClient : public sigslot::has_slots<> {
                 const ReceivedIpPacket& received_packet);
   void OnReadyToSend(AsyncPacketSocket* socket);
   bool CheckTimestamp(std::optional<Timestamp> packet_timestamp);
-  void AdvanceTime(int ms);
 
-  ThreadProcessingFakeClock* fake_clock_ = nullptr;
+  ClockVariant clock_;
   Mutex mutex_;
   std::unique_ptr<AsyncPacketSocket> socket_;
   std::vector<std::unique_ptr<Packet>> packets_;
@@ -115,6 +116,5 @@ class TestClient : public sigslot::has_slots<> {
 };
 
 }  //  namespace webrtc
-
 
 #endif  // RTC_BASE_TEST_CLIENT_H_

@@ -33,8 +33,8 @@
 namespace WebCore::ContentExtensions {
 
 ContentExtensionRule::ContentExtensionRule(Trigger&& trigger, Action&& action)
-    : m_trigger(WTFMove(trigger))
-    , m_action(WTFMove(action))
+    : m_trigger(WTF::move(trigger))
+    , m_action(WTF::move(action))
 {
     ASSERT(!m_trigger.urlFilter.isEmpty());
 }
@@ -48,7 +48,7 @@ struct VariantDeserializerHelper {
             return VariantType::deserialize(span);
         return VariantDeserializerHelper<index - 1, Types...>::deserialize(span, i);
     }
-    static size_t serializedLength(std::span<const uint8_t> span, size_t i)
+    static size_t NODELETE serializedLength(std::span<const uint8_t> span, size_t i)
     {
         if (i == index)
             return VariantType::serializedLength(span);
@@ -64,7 +64,7 @@ struct VariantDeserializerHelper<0, Types...> {
         ASSERT_UNUSED(i, !i);
         return VariantType::deserialize(span);
     }
-    static size_t serializedLength(std::span<const uint8_t> span, size_t i)
+    static size_t NODELETE serializedLength(std::span<const uint8_t> span, size_t i)
     {
         ASSERT_UNUSED(i, !i);
         return VariantType::serializedLength(span);
@@ -105,7 +105,7 @@ Trigger Trigger::isolatedCopy() const &
 
 Trigger Trigger::isolatedCopy() &&
 {
-    return { WTFMove(urlFilter).isolatedCopy(), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(WTFMove(conditions)) };
+    return { WTF::move(urlFilter).isolatedCopy(), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(WTF::move(conditions)) };
 }
 
 Action Action::isolatedCopy() const &
@@ -115,7 +115,7 @@ Action Action::isolatedCopy() const &
 
 Action Action::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTFMove(m_data)) };
+    return { crossThreadCopy(WTF::move(m_data)) };
 }
 
 } // namespace WebCore::ContentExtensions

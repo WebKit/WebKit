@@ -26,6 +26,8 @@
 #pragma once
 
 #include <algorithm>
+#include <wtf/FastMalloc.h>
+#include <wtf/Platform.h>
 #include <wtf/VMTags.h>
 
 namespace WTF {
@@ -37,6 +39,7 @@ public:
         UnknownUsage = -1,
         FastMallocPages = VM_TAG_FOR_TCMALLOC_MEMORY,
         JSJITCodePages = VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY,
+        StructureAllocatorPages = VM_TAG_FOR_STRUCTUREALLOCATOR_MEMORY,
 #if OS(LINUX) || OS(HAIKU)
         UncommittedPages = -2,
 #endif

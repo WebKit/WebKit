@@ -76,7 +76,7 @@ auto WebResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy creat
     if (!host && createHostPolicy == CreateIfNotFound) {
         auto newHost = makeUnique<HostInformation>(hostName, maxRequestsInFlightPerHost);
         host = newHost.get();
-        m_hosts.add(hostName, WTFMove(newHost));
+        m_hosts.add(hostName, WTF::move(newHost));
     }
     return host;
 }
@@ -94,7 +94,7 @@ WebResourceLoadScheduler::~WebResourceLoadScheduler() = default;
 
 void WebResourceLoadScheduler::loadResource(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<WebCore::SubresourceLoader>&&)>&& completionHandler)
 {
-    SubresourceLoader::create(frame, resource, WTFMove(request), options, [this, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::SubresourceLoader>&& loader) mutable {
+    SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::SubresourceLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(loader.get());
 #if PLATFORM(IOS_FAMILY)
@@ -106,7 +106,7 @@ void WebResourceLoadScheduler::loadResource(LocalFrame& frame, CachedResource& r
         if (!loader || loader->reachedTerminalState())
             return completionHandler(nullptr);
 #endif
-        completionHandler(WTFMove(loader));
+        completionHandler(WTF::move(loader));
     });
 }
 
@@ -127,10 +127,10 @@ void WebResourceLoadScheduler::browsingContextRemoved(LocalFrame&)
 
 void WebResourceLoadScheduler::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
-    NetscapePlugInStreamLoader::create(frame, client, WTFMove(request), [this, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
+    NetscapePlugInStreamLoader::create(frame, client, WTF::move(request), [this, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(loader.get());
-        completionHandler(WTFMove(loader));
+        completionHandler(WTF::move(loader));
     });
 }
 
@@ -166,7 +166,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     if (ResourceRequest::resourcePrioritiesEnabled() && !isSuspendingPendingRequests()) {
         // Serve all requests at once to keep the pipeline full at the network layer.
         // FIXME: Does this code do anything useful, given that we also set maxRequestsInFlightPerHost to effectively unlimited on these platforms?
-        servePendingRequests(WTFMove(host), ResourceLoadPriority::VeryLow);
+        servePendingRequests(WTF::move(host), ResourceLoadPriority::VeryLow);
         return;
     }
 #endif
@@ -174,13 +174,13 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 #if PLATFORM(IOS_FAMILY)
     if ((priority > ResourceLoadPriority::Low || !resourceLoader->iOSOriginalRequest().url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriority::Low && !hadRequests)) && !isSuspendingPendingRequests()) {
         // Try to request important resources immediately.
-        servePendingRequests(WTFMove(host), priority);
+        servePendingRequests(WTF::move(host), priority);
         return;
     }
 #else
     if (priority > ResourceLoadPriority::Low || !resourceLoader->url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriority::Low && !hadRequests)) {
         // Try to request important resources immediately.
-        servePendingRequests(WTFMove(host), priority);
+        servePendingRequests(WTF::move(host), priority);
         return;
     }
 #endif
@@ -255,7 +255,7 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimum
     auto hosts = WTF::map(m_hosts.values(), [](auto&& host) {
         return WeakPtr { host.get() };
     });
-    for (auto&& host : WTFMove(hosts)) {
+    for (auto&& host : WTF::move(hosts)) {
         if (!host)
             continue;
         if (host->hasRequests())
@@ -400,7 +400,7 @@ bool WebResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriori
 void WebResourceLoadScheduler::startPingLoad(LocalFrame& frame, ResourceRequest& request, const HTTPHeaderMap&, const FetchOptions& options, ContentSecurityPolicyImposition, PingLoadCompletionHandler&& completionHandler)
 {
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    PingHandle::start(frame.loader().networkingContext(), request, options.credentials != FetchOptions::Credentials::Omit, options.redirect == FetchOptions::Redirect::Follow, WTFMove(completionHandler));
+    PingHandle::start(frame.loader().networkingContext(), request, options.credentials != FetchOptions::Credentials::Omit, options.redirect == FetchOptions::Redirect::Follow, WTF::move(completionHandler));
 }
 
 bool WebResourceLoadScheduler::isOnLine() const
@@ -410,7 +410,7 @@ bool WebResourceLoadScheduler::isOnLine() const
 
 void WebResourceLoadScheduler::addOnlineStateChangeListener(WTF::Function<void(bool)>&& listener)
 {
-    NetworkStateNotifier::singleton().addListener(WTFMove(listener));
+    NetworkStateNotifier::singleton().addListener(WTF::move(listener));
 }
 
 void WebResourceLoadScheduler::preconnectTo(FrameLoader&, ResourceRequest&&, StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&)

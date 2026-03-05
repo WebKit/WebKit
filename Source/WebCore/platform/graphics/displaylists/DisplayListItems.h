@@ -119,7 +119,7 @@ public:
     {
     }
 
-    const FloatSize& amount() const { return m_size; }
+    const FloatSize& amount() const LIFETIME_BOUND { return m_size; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -137,7 +137,7 @@ public:
     {
     }
 
-    const AffineTransform& transform() const { return m_transform; }
+    const AffineTransform& transform() const LIFETIME_BOUND { return m_transform; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -155,7 +155,7 @@ public:
     {
     }
 
-    const AffineTransform& transform() const { return m_transform; }
+    const AffineTransform& transform() const LIFETIME_BOUND { return m_transform; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -179,7 +179,7 @@ public:
     }
 
     Color color() const { return { asSRGBA(colorData()) }; }
-    const PackedColor::RGBA& colorData() const { return m_colorData; }
+    const PackedColor::RGBA& colorData() const LIFETIME_BOUND { return m_colorData; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -227,8 +227,8 @@ public:
 
     WEBCORE_EXPORT SetState(const GraphicsContextState&);
 
-    GraphicsContextState& state() { return m_state; }
-    const GraphicsContextState& state() const { return m_state; }
+    GraphicsContextState& state() LIFETIME_BOUND { return m_state; }
+    const GraphicsContextState& state() const LIFETIME_BOUND { return m_state; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -265,7 +265,7 @@ public:
     {
     }
 
-    const DashArray& dashArray() const { return m_dashArray; }
+    const DashArray& dashArray() const LIFETIME_BOUND { return m_dashArray; }
     float dashOffset() const { return m_dashOffset; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -321,7 +321,7 @@ public:
     {
     }
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -339,7 +339,7 @@ public:
     {
     }
 
-    const FloatRoundedRect& rect() const { return m_rect; }
+    const FloatRoundedRect& rect() const LIFETIME_BOUND { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -357,7 +357,7 @@ public:
     {
     }
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -375,7 +375,7 @@ public:
     {
     }
 
-    const FloatRoundedRect& rect() const { return m_rect; }
+    const FloatRoundedRect& rect() const LIFETIME_BOUND { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -388,8 +388,8 @@ class ClipToImageBuffer {
 public:
     static constexpr char name[] = "clip-to-image-buffer";
 
-    ClipToImageBuffer(Ref<ImageBuffer> imageBuffer, const FloatRect& destinationRect)
-        : m_imageBuffer(imageBuffer)
+    ClipToImageBuffer(Ref<ImageBuffer>&& imageBuffer, const FloatRect& destinationRect)
+        : m_imageBuffer(WTF::move(imageBuffer))
         , m_destinationRect(destinationRect)
     {
     }
@@ -410,7 +410,7 @@ public:
     static constexpr char name[] = "clip-out-to-path";
 
     ClipOutToPath(Path&& path)
-        : m_path(WTFMove(path))
+        : m_path(WTF::move(path))
     {
     }
 
@@ -419,7 +419,7 @@ public:
     {
     }
 
-    const Path& path() const { return m_path; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -433,7 +433,7 @@ public:
     static constexpr char name[] = "clip-path";
 
     ClipPath(Path&& path, WindRule windRule)
-        : m_path(WTFMove(path))
+        : m_path(WTF::move(path))
         , m_windRule(windRule)
     {
     }
@@ -444,7 +444,7 @@ public:
     {
     }
 
-    const Path& path() const { return m_path; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
     WindRule windRule() const { return m_windRule; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -472,7 +472,7 @@ public:
     static constexpr char name[] = "draw-filtered-image-buffer";
 
     DrawFilteredImageBuffer(RefPtr<ImageBuffer>&& sourceImage, const FloatRect& sourceImageRect, Filter& filter)
-        : m_sourceImage(WTFMove(sourceImage))
+        : m_sourceImage(WTF::move(sourceImage))
         , m_sourceImageRect(sourceImageRect)
         , m_filter(filter)
     {
@@ -496,17 +496,17 @@ public:
     static constexpr char name[] = "draw-glyphs";
 
     DrawGlyphs(Ref<const Font>&& font, Vector<GlyphBufferGlyph>&& glyphs, Vector<GlyphBufferAdvance>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
-        : m_font(WTFMove(font))
-        , m_glyphs(WTFMove(glyphs))
-        , m_advances(WTFMove(advances))
+        : m_font(WTF::move(font))
+        , m_glyphs(WTF::move(glyphs))
+        , m_advances(WTF::move(advances))
         , m_localAnchor(localAnchor)
         , m_fontSmoothingMode(smoothingMode)
     {
     }
 
     Ref<const Font> font() const { return m_font; }
-    const Vector<GlyphBufferGlyph>& glyphs() const { return m_glyphs; }
-    const Vector<GlyphBufferAdvance>& advances() const { return m_advances; }
+    const Vector<GlyphBufferGlyph>& glyphs() const LIFETIME_BOUND { return m_glyphs; }
+    const Vector<GlyphBufferAdvance>& advances() const LIFETIME_BOUND { return m_advances; }
     size_t length() const { return m_glyphs.size(); }
 
     FloatPoint localAnchor() const { return m_localAnchor; }
@@ -627,7 +627,7 @@ class DrawNativeImage {
 public:
     static constexpr char name[] = "draw-native-image";
 
-    DrawNativeImage(NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+    DrawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
         : m_image(image)
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
@@ -635,16 +635,16 @@ public:
     {
     }
 
-    NativeImage& nativeImage() const { return m_image; }
-    const FloatRect& destinationRect() const { return m_destinationRect; }
-    const FloatRect& source() const { return m_srcRect; }
+    const NativeImage& nativeImage() const { return m_image; }
+    const FloatRect& destinationRect() const LIFETIME_BOUND { return m_destinationRect; }
+    const FloatRect& source() const LIFETIME_BOUND { return m_srcRect; }
     ImagePaintingOptions options() const { return m_options; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<NativeImage> m_image;
+    const Ref<const NativeImage> m_image;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
@@ -661,7 +661,7 @@ public:
     }
 
     const SystemImage& systemImage() const { return m_systemImage; }
-    const FloatRect& destinationRect() const { return m_destinationRect; }
+    const FloatRect& destinationRect() const LIFETIME_BOUND { return m_destinationRect; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -675,7 +675,7 @@ class DrawPatternNativeImage {
 public:
     static constexpr char name[] = "draw-pattern-nativeimage";
 
-    DrawPatternNativeImage(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+    DrawPatternNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
         : m_image(image)
         , m_destination(destRect)
         , m_tileRect(tileRect)
@@ -685,10 +685,10 @@ public:
         , m_options(options)
     {
     }
-    NativeImage& nativeImage() const { return m_image; }
+    const NativeImage& nativeImage() const { return m_image; }
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
-    const AffineTransform& patternTransform() const { return m_patternTransform; }
+    const AffineTransform& patternTransform() const LIFETIME_BOUND { return m_patternTransform; }
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
     ImagePaintingOptions options() const { return m_options; }
@@ -697,7 +697,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<NativeImage> m_image;
+    const Ref<const NativeImage> m_image;
     FloatRect m_destination;
     FloatRect m_tileRect;
     AffineTransform m_patternTransform;
@@ -723,7 +723,7 @@ public:
     ImageBuffer& imageBuffer() const { return m_imageBuffer; }
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
-    const AffineTransform& patternTransform() const { return m_patternTransform; }
+    const AffineTransform& patternTransform() const LIFETIME_BOUND { return m_patternTransform; }
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
     ImagePaintingOptions options() const { return m_options; }
@@ -835,7 +835,7 @@ public:
 
     FloatPoint point() const { return m_point; }
     float thickness() const { return m_thickness; }
-    const Vector<FloatSegment>& lineSegments() const { return m_lineSegments; }
+    const Vector<FloatSegment>& lineSegments() const LIFETIME_BOUND { return m_lineSegments; }
     bool isPrinting() const { return m_printing; }
     bool doubleLines() const { return m_doubleLines; }
     StrokeStyle style() const { return m_style; }
@@ -901,11 +901,11 @@ public:
     }
 
     DrawPath(Path&& path)
-        : m_path(WTFMove(path))
+        : m_path(WTF::move(path))
     {
     }
 
-    const Path& path() const { return m_path; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -926,15 +926,15 @@ public:
     }
 
     DrawFocusRingPath(Path&& path, float outlineWidth, const Color& color)
-        : m_path(WTFMove(path))
+        : m_path(WTF::move(path))
         , m_outlineWidth(outlineWidth)
         , m_color(color)
     {
     }
 
-    const Path& path() const { return m_path; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
     float outlineWidth() const { return m_outlineWidth; }
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -958,17 +958,17 @@ public:
     }
 
     DrawFocusRingRects(Vector<FloatRect>&& rects, float outlineOffset, float outlineWidth, Color color)
-        : m_rects(WTFMove(rects))
+        : m_rects(WTF::move(rects))
         , m_outlineOffset(outlineOffset)
         , m_outlineWidth(outlineWidth)
         , m_color(color)
     {
     }
 
-    const Vector<FloatRect>& rects() const { return m_rects; }
+    const Vector<FloatRect>& rects() const LIFETIME_BOUND { return m_rects; }
     float outlineOffset() const { return m_outlineOffset; }
     float outlineWidth() const { return m_outlineWidth; }
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -990,7 +990,7 @@ public:
     {
     }
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
     GraphicsContext::RequiresClipToRect requiresClipToRect() const { return m_requiresClipToRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1012,7 +1012,7 @@ public:
     }
 
     FloatRect rect() const { return m_rect; }
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1029,7 +1029,7 @@ public:
     WEBCORE_EXPORT FillRectWithGradient(const FloatRect&, Gradient&);
     WEBCORE_EXPORT FillRectWithGradient(FloatRect&&, Ref<Gradient>&&);
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
     const Gradient& gradient() const { return m_gradient; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1047,9 +1047,9 @@ public:
     WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&, GraphicsContext::RequiresClipToRect);
     WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<Gradient>&&, AffineTransform&&, GraphicsContext::RequiresClipToRect);
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
     const Gradient& gradient() const { return m_gradient; }
-    const AffineTransform& gradientSpaceTransform() const { return m_gradientSpaceTransform; }
+    const AffineTransform& gradientSpaceTransform() const LIFETIME_BOUND { return m_gradientSpaceTransform; }
     GraphicsContext::RequiresClipToRect requiresClipToRect() const { return m_requiresClipToRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1075,7 +1075,7 @@ public:
     }
 
     FloatRect rect() const { return m_rect; }
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
     CompositeOperator compositeOperator() const { return m_op; }
     BlendMode blendMode() const { return m_blendMode; }
 
@@ -1100,8 +1100,8 @@ public:
     {
     }
 
-    const FloatRoundedRect& roundedRect() const { return m_rect; }
-    const Color& color() const { return m_color; }
+    const FloatRoundedRect& roundedRect() const LIFETIME_BOUND { return m_rect; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
     BlendMode blendMode() const { return m_blendMode; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1124,9 +1124,9 @@ public:
     {
     }
 
-    const FloatRect& rect() const { return m_rect; }
-    const FloatRoundedRect& roundedHoleRect() const { return m_roundedHoleRect; }
-    const Color& color() const { return m_color; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
+    const FloatRoundedRect& roundedHoleRect() const LIFETIME_BOUND { return m_roundedHoleRect; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1142,7 +1142,7 @@ public:
     static constexpr char name[] = "fill-path";
 
     FillPath(Path&& path)
-        : m_path(WTFMove(path))
+        : m_path(WTF::move(path))
     {
     }
 
@@ -1151,7 +1151,7 @@ public:
     {
     }
 
-    const Path& path() const { return m_path; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1204,7 +1204,7 @@ public:
     static constexpr char name[] = "stroke-path";
 
     StrokePath(Path&& path)
-        : m_path(WTFMove(path))
+        : m_path(WTF::move(path))
     {
     }
 
@@ -1213,7 +1213,7 @@ public:
     {
     }
 
-    const Path& path() const { return m_path; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1231,7 +1231,7 @@ public:
     {
     }
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1249,7 +1249,7 @@ public:
     {
     }
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1267,7 +1267,7 @@ public:
     ControlPart& part() const { return m_part; }
     FloatRoundedRect borderRect() const { return m_borderRect; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
-    const ControlStyle& style() const { return m_style; }
+    const ControlStyle& style() const LIFETIME_BOUND { return m_style; }
     StyleAppearance type() const { return m_part->type(); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ControlFactory&) const;
@@ -1327,7 +1327,7 @@ public:
     {
     }
 
-    const FloatRect& pageRect() const { return m_pageRect; }
+    const FloatRect& pageRect() const LIFETIME_BOUND { return m_pageRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1354,8 +1354,8 @@ public:
     {
     }
 
-    const URL& link() const { return m_link; }
-    const FloatRect& destRect() const { return m_destRect; }
+    const URL& link() const LIFETIME_BOUND { return m_link; }
+    const FloatRect& destRect() const LIFETIME_BOUND { return m_destRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;

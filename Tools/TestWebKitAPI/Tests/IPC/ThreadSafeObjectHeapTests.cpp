@@ -107,9 +107,9 @@ TEST_F(ThreadSafeObjectHeapTest, CompleteReadAfterRemoveWithPendingRead)
     auto read1 = newReadReference();
     auto remove = newWriteReference();
 
-    heap.remove(WTFMove(remove)); // Non-blocking remove.
+    heap.remove(WTF::move(remove)); // Non-blocking remove.
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(345, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(345, heap.read(WTF::move(read1), 0_s)->value());
     EXPECT_EQ(0u, heap.sizeForTesting());
     EXPECT_EQ(0u, TestedObject::instances());
 }
@@ -121,8 +121,8 @@ TEST_F(ThreadSafeObjectHeapTest, ReadWriteWorks)
     auto read1 = newReadReference();
     auto write1 = newWriteReference();
 
-    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
-    EXPECT_EQ(1, heap.take(WTFMove(write1), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read1), 0_s)->value());
+    EXPECT_EQ(1, heap.take(WTF::move(write1), 0_s)->value());
     EXPECT_EQ(0u, TestedObject::instances());
 }
 
@@ -134,7 +134,7 @@ TEST_F(ThreadSafeObjectHeapTest, RemoveWorks)
     auto write1 = newWriteReference();
 
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_TRUE(heap.remove(WTF::move(write1)));
     EXPECT_EQ(0u, heap.sizeForTesting());
     EXPECT_EQ(0u, TestedObject::instances());
 }
@@ -147,11 +147,11 @@ TEST_F(ThreadSafeObjectHeapTest, WriteBeforeRetireEarlierReadTimesOut)
     auto write1 = newWriteReference();
 
     // Test that take times out.
-    EXPECT_EQ(nullptr, heap.take(WTFMove(write1), 0_s));
+    EXPECT_EQ(nullptr, heap.take(WTF::move(write1), 0_s));
 
     // Ensure that write works after read.
-    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
-    EXPECT_EQ(1, heap.take(WTFMove(write1), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read1), 0_s)->value());
+    EXPECT_EQ(1, heap.take(WTF::move(write1), 0_s)->value());
     EXPECT_EQ(0u, TestedObject::instances());
     EXPECT_EQ(0u, heap.sizeForTesting());
 }
@@ -164,8 +164,8 @@ TEST_F(ThreadSafeObjectHeapTest, ReadBeforeRetireEarlierWriteTimesOut)
     auto read1 = newReadReference();
     auto newReference = write1.retiredReference();
 
-    EXPECT_EQ(nullptr, heap.read(WTFMove(read1), 0_s));
-    EXPECT_EQ(1, heap.take(WTFMove(write1), 0_s)->value());
+    EXPECT_EQ(nullptr, heap.read(WTF::move(read1), 0_s));
+    EXPECT_EQ(1, heap.take(WTF::move(write1), 0_s)->value());
     EXPECT_TRUE(heap.add(newReference, TestedObject::create(2)));
     EXPECT_EQ(2, heap.get(read1, 0_s)->value());
 }
@@ -176,7 +176,7 @@ TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeAdd)
     auto add1 = newAddReference();
     auto write1 = newWriteReference();
 
-    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_TRUE(heap.remove(WTF::move(write1)));
     EXPECT_EQ(1u, heap.sizeForTesting());
     EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
     EXPECT_EQ(0u, TestedObject::instances());
@@ -192,15 +192,15 @@ TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeAddAndReads)
     auto read3 = newReadReference();
     auto write1 = newWriteReference();
 
-    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_TRUE(heap.remove(WTF::move(write1)));
     EXPECT_EQ(1u, heap.sizeForTesting());
     EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read1), 0_s)->value());
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(1, heap.read(WTFMove(read2), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read2), 0_s)->value());
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(1, heap.read(WTFMove(read3), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read3), 0_s)->value());
     EXPECT_EQ(0u, TestedObject::instances());
     EXPECT_EQ(0u, heap.sizeForTesting());
 }
@@ -216,13 +216,13 @@ TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeReads)
 
     EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
     EXPECT_EQ(1u, heap.sizeForTesting());
-    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_TRUE(heap.remove(WTF::move(write1)));
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read1), 0_s)->value());
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(1, heap.read(WTFMove(read2), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read2), 0_s)->value());
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(1, heap.read(WTFMove(read3), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read3), 0_s)->value());
     EXPECT_EQ(0u, TestedObject::instances());
     EXPECT_EQ(0u, heap.sizeForTesting());
 }
@@ -239,9 +239,9 @@ TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeWritesAndReads)
     auto read3 = newReadReference();
     auto write3 = newWriteReference();
 
-    EXPECT_TRUE(heap.remove(WTFMove(write3)));
-    EXPECT_TRUE(heap.remove(WTFMove(write2)));
-    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_TRUE(heap.remove(WTF::move(write3)));
+    EXPECT_TRUE(heap.remove(WTF::move(write2)));
+    EXPECT_TRUE(heap.remove(WTF::move(write1)));
     EXPECT_EQ(3u, heap.sizeForTesting());
 
     EXPECT_EQ(0u, TestedObject::instances());
@@ -250,9 +250,9 @@ TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeWritesAndReads)
     EXPECT_TRUE(heap.add(add3, TestedObject::create(3)));
     EXPECT_EQ(2u, TestedObject::instances());
     EXPECT_EQ(2u, heap.sizeForTesting());
-    EXPECT_EQ(2, heap.read(WTFMove(read2), 0_s)->value());
+    EXPECT_EQ(2, heap.read(WTF::move(read2), 0_s)->value());
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(3, heap.read(WTFMove(read3), 0_s)->value());
+    EXPECT_EQ(3, heap.read(WTF::move(read3), 0_s)->value());
     EXPECT_EQ(0u, TestedObject::instances());
 }
 
@@ -263,9 +263,9 @@ TEST_F(ThreadSafeObjectHeapTest, InvalidRemoveTwice)
     TestedObjectWriteReference write2 { write1.reference(), 0 };
     TestedObjectWriteReference write3 { write1.reference(), 0 };
 
-    EXPECT_TRUE(heap.remove(WTFMove(write1)));
-    EXPECT_FALSE(heap.remove(WTFMove(write2)));
-    EXPECT_FALSE(heap.take(WTFMove(write3), 0_s));
+    EXPECT_TRUE(heap.remove(WTF::move(write1)));
+    EXPECT_FALSE(heap.remove(WTF::move(write2)));
+    EXPECT_FALSE(heap.take(WTF::move(write3), 0_s));
 }
 
 TEST_F(ThreadSafeObjectHeapTest, InvalidRemoveTooFewReads)
@@ -274,14 +274,14 @@ TEST_F(ThreadSafeObjectHeapTest, InvalidRemoveTooFewReads)
     auto add1 = newAddReference();
     auto read1 = newReadReference();
     EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
-    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(1, heap.read(WTF::move(read1), 0_s)->value());
 
     // Already read once, but trying to remove with 0 pending reads.
     TestedObjectWriteReference write1 { add1, 0 };
     TestedObjectWriteReference write2 { add1, 0 };
 
-    EXPECT_FALSE(heap.remove(WTFMove(write1)));
-    EXPECT_FALSE(heap.take(WTFMove(write2), 0_s));
+    EXPECT_FALSE(heap.remove(WTF::move(write1)));
+    EXPECT_FALSE(heap.take(WTF::move(write2), 0_s));
 }
 
 TEST_F(ThreadSafeObjectHeapTest, InvalidAddTwice)

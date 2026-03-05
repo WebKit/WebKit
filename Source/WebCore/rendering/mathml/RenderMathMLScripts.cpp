@@ -39,15 +39,15 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLScripts);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLScripts);
 
-static bool isPrescriptDelimiter(const RenderObject& renderObject)
+static bool NODELETE isPrescriptDelimiter(const RenderObject& renderObject)
 {
     return renderObject.node() && renderObject.node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
 RenderMathMLScripts::RenderMathMLScripts(Type type, MathMLScriptsElement& element, RenderStyle&& style)
-    : RenderMathMLRow(type, element, WTFMove(style))
+    : RenderMathMLRow(type, element, WTF::move(style))
 {
 }
 
@@ -168,7 +168,7 @@ LayoutUnit RenderMathMLScripts::spaceAfterScript()
 {
     Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData())
-        return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::SpaceAfterScript));
+        return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SpaceAfterScript));
     return LayoutUnit(style().fontCascade().size() / 5);
 }
 
@@ -247,14 +247,14 @@ auto RenderMathMLScripts::verticalParameters() const -> VerticalParameters
     VerticalParameters parameters;
     Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
-        parameters.subscriptShiftDown = mathData->getMathConstant(primaryFont, OpenTypeMathData::SubscriptShiftDown);
-        parameters.superscriptShiftUp = mathData->getMathConstant(primaryFont, style().mathShift() == MathShift::Compact ? OpenTypeMathData::SuperscriptShiftUpCramped : OpenTypeMathData::SuperscriptShiftUp);
-        parameters.subscriptBaselineDropMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::SubscriptBaselineDropMin);
-        parameters.superScriptBaselineDropMax = mathData->getMathConstant(primaryFont, OpenTypeMathData::SuperscriptBaselineDropMax);
-        parameters.subSuperscriptGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::SubSuperscriptGapMin);
-        parameters.superscriptBottomMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::SuperscriptBottomMin);
-        parameters.subscriptTopMax = mathData->getMathConstant(primaryFont, OpenTypeMathData::SubscriptTopMax);
-        parameters.superscriptBottomMaxWithSubscript = mathData->getMathConstant(primaryFont, OpenTypeMathData::SuperscriptBottomMaxWithSubscript);
+        parameters.subscriptShiftDown = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SubscriptShiftDown);
+        parameters.superscriptShiftUp = mathData->getMathConstant(primaryFont, style().mathShift() == MathShift::Compact ? OpenTypeMathData::MathConstant::SuperscriptShiftUpCramped : OpenTypeMathData::MathConstant::SuperscriptShiftUp);
+        parameters.subscriptBaselineDropMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SubscriptBaselineDropMin);
+        parameters.superScriptBaselineDropMax = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SuperscriptBaselineDropMax);
+        parameters.subSuperscriptGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SubSuperscriptGapMin);
+        parameters.superscriptBottomMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SuperscriptBottomMin);
+        parameters.subscriptTopMax = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SubscriptTopMax);
+        parameters.superscriptBottomMaxWithSubscript = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SuperscriptBottomMaxWithSubscript);
     } else {
         // Default heuristic values when you do not have a font.
         float xHeight = style().metricsOfPrimaryFont().xHeight().value_or(0);
@@ -467,6 +467,20 @@ void RenderMathMLScripts::layoutBlock(RelayoutChildren relayoutChildren, LayoutU
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + reference.base->marginStart(), *reference.base), ascent - baseAscent + reference.base->marginBefore());
         reference.base->setLocation(baseLocation);
         horizontalOffset += reference.base->logicalWidth() + reference.base->marginLogicalWidth();
+
+        // Position the prescriptDelimiter (mprescripts element) aligned with the base, vertically centered.
+        // In LTR, left edges align. In RTL, right edges align.
+        if (reference.prescriptDelimiter) {
+            LayoutUnit prescriptHeight = reference.prescriptDelimiter->logicalHeight();
+            LayoutUnit baseBorderBoxHeight = reference.base->logicalHeight();
+            LayoutUnit baseCenterY = baseLocation.y() + baseBorderBoxHeight / 2;
+            LayoutUnit prescriptX = baseLocation.x();
+            if (writingMode().isBidiRTL())
+                prescriptX += reference.base->logicalWidth() - reference.prescriptDelimiter->logicalWidth();
+            LayoutPoint prescriptLocation(prescriptX, baseCenterY - prescriptHeight / 2);
+            reference.prescriptDelimiter->setLocation(prescriptLocation);
+        }
+
         subScript = reference.firstPostScript;
         while (subScript && subScript != reference.prescriptDelimiter) {
             auto supScript = subScript->nextInFlowSiblingBox();
@@ -501,7 +515,8 @@ std::optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
         return RenderMathMLRow::firstLineBaseline();
 
     auto& base = *possibleReference.value().base;
-    return LayoutUnit { roundf(ascentForChild(base) + base.marginBefore() + base.logicalTop()) };
+    auto baseline = settings().subpixelInlineLayoutEnabled() ? base.marginBefore() + base.logicalTop() + ascentForChild(base) : LayoutUnit(roundf(base.marginBefore() + base.logicalTop() + ascentForChild(base)));
+    return { baseline };
 }
 
 }

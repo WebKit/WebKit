@@ -30,8 +30,8 @@ var desc = {
 
 Object.defineProperty(TypedArray.prototype, "length", desc);
 
-testWithTypedArrayConstructors(function(TA, N) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
 
   Object.defineProperty(TA.prototype, "length", desc);
   Object.defineProperty(sample, "length", desc);
@@ -39,4 +39,4 @@ testWithTypedArrayConstructors(function(TA, N) {
   sample.toLocaleString();
 
   assert.sameValue(getCalls, 0, "ignores length properties");
-});
+}, null, ["passthrough"]);

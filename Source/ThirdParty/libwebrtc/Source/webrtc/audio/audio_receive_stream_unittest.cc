@@ -74,41 +74,47 @@ constexpr double kTotalOutputEnergy = 0.25;
 constexpr double kTotalOutputDuration = 0.5;
 constexpr int64_t kPlayoutNtpTimestampMs = 5678;
 
-const CallReceiveStatistics kCallStats = {678, 234, -12, 567, 78, 890, 123};
+const ChannelReceiveStatistics kChannelStats = {
+    .packets_lost = 678,
+    .jitter_ms = 234,
+    .payload_bytes_received = -12,
+    .header_and_padding_bytes_received = 567,
+    .packets_received = 78,
+    .packets_received_with_ect1 = 890,
+    .packets_received_with_ce = 123};
 const std::pair<int, SdpAudioFormat> kReceiveCodec = {
     123,
     {"codec_name_recv", 96000, 0}};
-const NetworkStatistics kNetworkStats = {
-    /*currentBufferSize=*/123,
-    /*preferredBufferSize=*/456,
-    /*jitterPeaksFound=*/false,
-    /*totalSamplesReceived=*/789012,
-    /*concealedSamples=*/3456,
-    /*silentConcealedSamples=*/123,
-    /*concealmentEvents=*/456,
-    /*jitterBufferDelayMs=*/789,
-    /*jitterBufferEmittedCount=*/543,
-    /*jitterBufferTargetDelayMs=*/123,
-    /*jitterBufferMinimumDelayMs=*/222,
-    /*insertedSamplesForDeceleration=*/432,
-    /*removedSamplesForAcceleration=*/321,
-    /*fecPacketsReceived=*/123,
-    /*fecPacketsDiscarded=*/101,
-    /*totalProcessingDelayMs=*/154,
-    /*packetsDiscarded=*/989,
-    /*currentExpandRate=*/789,
-    /*currentSpeechExpandRate=*/12,
-    /*currentPreemptiveRate=*/345,
-    /*currentAccelerateRate =*/678,
-    /*currentSecondaryDecodedRate=*/901,
-    /*currentSecondaryDiscardedRate=*/0,
-    /*meanWaitingTimeMs=*/-1,
-    /*maxWaitingTimeMs=*/-1,
-    /*packetBufferFlushes=*/0,
-    /*delayedPacketOutageSamples=*/0,
-    /*relativePacketArrivalDelayMs=*/135,
-    /*interruptionCount=*/-1,
-    /*totalInterruptionDurationMs=*/-1};
+const NetworkStatistics kNetworkStats = {.currentBufferSize = 123,
+                                         .preferredBufferSize = 456,
+                                         .jitterPeaksFound = false,
+                                         .totalSamplesReceived = 789012,
+                                         .concealedSamples = 3456,
+                                         .silentConcealedSamples = 123,
+                                         .concealmentEvents = 456,
+                                         .jitterBufferDelayMs = 789,
+                                         .jitterBufferTargetDelayMs = 543,
+                                         .jitterBufferMinimumDelayMs = 123,
+                                         .jitterBufferEmittedCount = 222,
+                                         .insertedSamplesForDeceleration = 432,
+                                         .removedSamplesForAcceleration = 321,
+                                         .fecPacketsReceived = 123,
+                                         .fecPacketsDiscarded = 101,
+                                         .totalProcessingDelayUs = 154,
+                                         .packetsDiscarded = 989,
+                                         .currentExpandRate = 789,
+                                         .currentSpeechExpandRate = 12,
+                                         .currentPreemptiveRate = 345,
+                                         .currentAccelerateRate = 678,
+                                         .currentSecondaryDecodedRate = 901,
+                                         .currentSecondaryDiscardedRate = 0,
+                                         .meanWaitingTimeMs = -1,
+                                         .maxWaitingTimeMs = -1,
+                                         .packetBufferFlushes = 0,
+                                         .delayedPacketOutageSamples = 0,
+                                         .relativePacketArrivalDelayMs = 135,
+                                         .interruptionCount = -1,
+                                         .totalInterruptionDurationMs = -1};
 const AudioDecodingCallStats kAudioDecodeStats = MakeAudioDecodeStatsForTest();
 
 struct ConfigHelper {
@@ -119,8 +125,6 @@ struct ConfigHelper {
   ConfigHelper(scoped_refptr<MockAudioMixer> audio_mixer,
                bool use_null_audio_processing)
       : audio_mixer_(audio_mixer) {
-    using ::testing::Invoke;
-
     AudioState::Config config;
     config.audio_mixer = audio_mixer_;
     config.audio_processing =
@@ -140,9 +144,9 @@ struct ConfigHelper {
     EXPECT_CALL(*channel_receive_, ResetReceiverCongestionControlObjects())
         .Times(1);
     EXPECT_CALL(*channel_receive_, SetReceiveCodecs(_))
-        .WillRepeatedly(Invoke([](const std::map<int, SdpAudioFormat>& codecs) {
+        .WillRepeatedly([](const std::map<int, SdpAudioFormat>& codecs) {
           EXPECT_THAT(codecs, ::testing::IsEmpty());
-        }));
+        });
 
     stream_config_.rtp.local_ssrc = kLocalSsrc;
     stream_config_.rtp.remote_ssrc = kRemoteSsrc;
@@ -170,7 +174,7 @@ struct ConfigHelper {
 
     ASSERT_TRUE(channel_receive_);
     EXPECT_CALL(*channel_receive_, GetRTCPStatistics())
-        .WillOnce(Return(kCallStats));
+        .WillOnce(Return(kChannelStats));
     EXPECT_CALL(*channel_receive_, GetDelayEstimate())
         .WillOnce(Return(kJitterBufferDelay + kPlayoutBufferDelay));
     EXPECT_CALL(*channel_receive_, GetSpeechOutputLevelFullRange())
@@ -256,14 +260,15 @@ TEST(AudioReceiveStreamTest, GetStats) {
     AudioReceiveStreamInterface::Stats stats =
         recv_stream->GetStats(/*get_and_clear_legacy_stats=*/true);
     EXPECT_EQ(kRemoteSsrc, stats.remote_ssrc);
-    EXPECT_EQ(kCallStats.payload_bytes_received, stats.payload_bytes_received);
-    EXPECT_EQ(kCallStats.header_and_padding_bytes_received,
+    EXPECT_EQ(kChannelStats.payload_bytes_received,
+              stats.payload_bytes_received);
+    EXPECT_EQ(kChannelStats.header_and_padding_bytes_received,
               stats.header_and_padding_bytes_received);
-    EXPECT_EQ(static_cast<uint32_t>(kCallStats.packets_received),
+    EXPECT_EQ(static_cast<uint32_t>(kChannelStats.packets_received),
               stats.packets_received);
-    EXPECT_EQ(kCallStats.packets_lost, stats.packets_lost);
+    EXPECT_EQ(kChannelStats.packets_lost, stats.packets_lost);
     EXPECT_EQ(kReceiveCodec.second.name, stats.codec_name);
-    EXPECT_EQ(kCallStats.jitter_ms, stats.jitter_ms);
+    EXPECT_EQ(kChannelStats.jitter_ms, stats.jitter_ms);
     EXPECT_EQ(kNetworkStats.currentBufferSize, stats.jitter_buffer_ms);
     EXPECT_EQ(kNetworkStats.preferredBufferSize,
               stats.jitter_buffer_preferred_ms);
@@ -327,7 +332,7 @@ TEST(AudioReceiveStreamTest, GetStats) {
     EXPECT_EQ(kAudioDecodeStats.decoded_plc_cng, stats.decoding_plc_cng);
     EXPECT_EQ(kAudioDecodeStats.decoded_muted_output,
               stats.decoding_muted_output);
-    EXPECT_EQ(kCallStats.capture_start_ntp_time_ms,
+    EXPECT_EQ(kChannelStats.capture_start_ntp_time_ms,
               stats.capture_start_ntp_time_ms);
     EXPECT_EQ(kPlayoutNtpTimestampMs, stats.estimated_playout_ntp_timestamp_ms);
     recv_stream->UnregisterFromTransport();

@@ -33,7 +33,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |      Number of new streams    |         Reserved              |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int AddIncomingStreamsRequestParameter::kType;
 
 std::optional<AddIncomingStreamsRequestParameter>
 AddIncomingStreamsRequestParameter::Parse(

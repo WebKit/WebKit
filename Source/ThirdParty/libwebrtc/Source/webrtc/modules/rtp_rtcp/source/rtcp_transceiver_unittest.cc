@@ -31,19 +31,16 @@
 #include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/mock_transport.h"
 #include "test/rtcp_packet_parser.h"
 
 namespace {
 
 using ::testing::_;
 using ::testing::AtLeast;
-using ::testing::Invoke;
 using ::testing::InvokeWithoutArgs;
 using ::testing::IsNull;
 using ::testing::MockFunction;
 using ::testing::NiceMock;
-using ::webrtc::MockTransport;
 using ::webrtc::RtcpTransceiver;
 using ::webrtc::RtcpTransceiverConfig;
 using ::webrtc::SimulatedClock;

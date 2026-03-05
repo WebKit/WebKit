@@ -62,7 +62,7 @@ public:
     void removeTimeline(AnimationTimeline&);
     void detachFromDocument();
     void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
-    void runPostRenderingUpdateTasks();
+    void updateStaleScrollTimelines();
     void addPendingAnimation(WebAnimation&);
 
     std::optional<Seconds> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes);
@@ -76,6 +76,7 @@ public:
 #if ENABLE(THREADED_ANIMATIONS)
     AcceleratedEffectStackUpdater* existingAcceleratedEffectStackUpdater() const { return m_acceleratedEffectStackUpdater.get(); }
     void scheduleAcceleratedEffectStackUpdateForTarget(const Styleable&);
+    void runPostRenderingUpdateTasks();
 #endif
 
     WEBCORE_EXPORT Vector<GraphicsLayer::AcceleratedAnimationForTesting> acceleratedAnimationsForElement(const Element&) const;
@@ -88,7 +89,7 @@ private:
     void processPendingAnimations();
     bool isPendingTimelineAttachment(const WebAnimation&) const;
 
-    Ref<Document> protectedDocument() const { return m_document.get(); }
+    Document& document() const { return m_document; }
 
 #if ENABLE(THREADED_ANIMATIONS)
     std::unique_ptr<AcceleratedEffectStackUpdater> m_acceleratedEffectStackUpdater;

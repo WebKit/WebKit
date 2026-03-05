@@ -1,0 +1,4 @@
+abc
+
+PASS Scroll anchoring suppressed when scroll offset is zero.
+

@@ -93,7 +93,7 @@ template<Numeric N, PrimitiveKeyword... Ks> struct PrimitiveDataIndex {
 
     static constexpr Storage indexStorageForUnit(UnitType unit)
     {
-        return indexStorageForFirstRaw + enumToUnderlyingType(unit);
+        return indexStorageForFirstRaw + std::to_underlying(unit);
     }
 
     static consteval Storage indexStorageForKeyword(ValidKeywordForList<Keywords> auto keyword)
@@ -251,7 +251,7 @@ template<Numeric N, PrimitiveKeyword... Ks> struct PrimitiveData {
     }
 
     PrimitiveData(Calc calc)
-        : payload { &calc.protectedCalc().leakRef() }
+        : payload { &protect(calc.calcValue()).leakRef() }
         , index { calc }
     {
     }

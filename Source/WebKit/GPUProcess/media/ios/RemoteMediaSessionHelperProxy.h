@@ -50,6 +50,7 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
+    // WebCore::MediaSessionHelperClient, IPC::MessageReceiver.
     void ref() const final;
     void deref() const final;
 

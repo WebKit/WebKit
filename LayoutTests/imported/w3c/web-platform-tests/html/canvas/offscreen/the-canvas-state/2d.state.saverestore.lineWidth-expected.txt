@@ -1,7 +1,8 @@
 2d.state.saverestore.lineWidth
 
-save()/restore() works for lineWidth
 
-
-PASS save()/restore() works for lineWidth
+PASS save()/restore() restores lineWidth, for a canvas of size (300, 150).
+PASS save() does not modify lineWidth, for a canvas of size (300, 150).
+PASS save()/restore() restores lineWidth, for a canvas of size (0, 0).
+PASS save() does not modify lineWidth, for a canvas of size (0, 0).
 

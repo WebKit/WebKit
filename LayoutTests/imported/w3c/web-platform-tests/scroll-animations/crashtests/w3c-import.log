@@ -16,4 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/clip-path-with-view-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/invalid-animation-range.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-completion-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/scroll-timeline-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/viewport-100vh.html

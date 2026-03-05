@@ -23,6 +23,7 @@
 
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/RenderBoxModelObject.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/RenderText.h>
 #include <WebCore/TextFlags.h>
 #include <wtf/TZoneMalloc.h>
@@ -38,7 +39,7 @@ class LegacyRootInlineBox;
 // LegacyInlineBox represents a rectangle that occurs on a line. It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class LegacyInlineBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineBox);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyInlineBox);
 public:
     virtual ~LegacyInlineBox();
 
@@ -120,8 +121,8 @@ public:
         ASSERT(m_parent || !previous);
         m_previousOnLine = previous;
     }
-    bool nextOnLineExists() const;
-    bool previousOnLineExists() const;
+    bool NODELETE nextOnLineExists() const;
+    bool NODELETE previousOnLineExists() const;
 
     virtual bool isLeaf() const { return true; }
     
@@ -139,7 +140,7 @@ public:
     }
     void setParent(LegacyInlineFlowBox* par) { m_parent = par; }
 
-    const LegacyRootInlineBox& root() const;
+    const LegacyRootInlineBox& NODELETE root() const;
     LegacyRootInlineBox& root();
 
     // x() is the left side of the box in the containing block's coordinate system.
@@ -233,7 +234,7 @@ public:
     LayoutPoint flipForWritingMode(const LayoutPoint&) const;
 
     bool knownToHaveNoOverflow() const { return m_bitfields.knownToHaveNoOverflow(); }
-    void clearKnownToHaveNoOverflow();
+    void NODELETE clearKnownToHaveNoOverflow();
 
     // For LegacyInlineTextBox
     bool isInGlyphDisplayListCache() const { return m_bitfields.isInGlyphDisplayListCache(); }

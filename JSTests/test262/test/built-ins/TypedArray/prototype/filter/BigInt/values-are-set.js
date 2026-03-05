@@ -12,12 +12,12 @@ info: |
     a. Perform ! Set(A, ! ToString(n), e, true).
     b. Increment n by 1.
   13. Return A.
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([41n, 1n, 42n, 7n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([41n, 1n, 42n, 7n]));
   var result;
 
   result = sample.filter(function() { return true; });

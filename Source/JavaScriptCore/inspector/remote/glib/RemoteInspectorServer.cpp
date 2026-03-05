@@ -212,7 +212,7 @@ gboolean RemoteInspectorServer::incomingConnectionCallback(GSocketService*, GSoc
 void RemoteInspectorServer::incomingConnection(Ref<SocketConnection>&& connection)
 {
     ASSERT(!m_connections.contains(connection.ptr()));
-    m_connections.add(WTFMove(connection));
+    m_connections.add(WTF::move(connection));
 }
 
 void RemoteInspectorServer::setTargetList(SocketConnection& remoteInspectorConnection, GVariant* parameters)

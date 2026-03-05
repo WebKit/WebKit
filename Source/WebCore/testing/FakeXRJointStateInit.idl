@@ -27,6 +27,7 @@
 [
     EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
     Conditional=WEBXR_HANDS,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FakeXRJointStateInit {
     FakeXRRigidTransformInit pose;
     float radius = 0.0;

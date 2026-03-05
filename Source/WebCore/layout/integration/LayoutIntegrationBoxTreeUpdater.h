@@ -74,7 +74,7 @@ private:
     const Layout::ElementBox& rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
 
-    Layout::InitialContainingBlock& initialContainingBlock();
+    Layout::InitialContainingBlock& NODELETE initialContainingBlock();
 
     static UniqueRef<Layout::Box> createLayoutBox(RenderObject&);
     static void adjustStyleIfNeeded(const RenderElement&, RenderStyle&, RenderStyle* firstLineStyle);

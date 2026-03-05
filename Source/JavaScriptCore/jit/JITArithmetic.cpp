@@ -290,15 +290,19 @@ void JIT::emit_compareUnsignedAndJumpImpl(VirtualRegister op1, VirtualRegister o
 {
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegisterPayload(op1, regT0);
+        jitAssertIsJSInt32(regT0);
         int32_t op2imm = getOperandConstantInt(op2);
         addJump(branch32(condition, regT0, Imm32(op2imm)), target);
     } else if (isOperandConstantInt(op1)) {
         emitGetVirtualRegisterPayload(op2, regT1);
+        jitAssertIsJSInt32(regT1);
         int32_t op1imm = getOperandConstantInt(op1);
         addJump(branch32(commute(condition), regT1, Imm32(op1imm)), target);
     } else {
         emitGetVirtualRegisterPayload(op1, regT0);
         emitGetVirtualRegisterPayload(op2, regT1);
+        jitAssertIsJSInt32(regT0);
+        jitAssertIsJSInt32(regT1);
         addJump(branch32(condition, regT0, regT1), target);
     }
 }
@@ -367,8 +371,8 @@ void JIT::emit_compareAndJumpSlow(const JSInstruction* instruction, DoubleCondit
     emit_compareSlowImpl(op1, op2, instruction->size(), operation, iter, handleReturnValueGPR, emitCompareAndJump);
 }
 
-template<typename SlowOperation, typename HanldeReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
-void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, const HanldeReturnValueGPRFunctor& handleReturnValueGPR, const EmitDoubleCompareFunctor& emitDoubleCompare)
+template<typename SlowOperation, typename HandleReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
+void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, const HandleReturnValueGPRFunctor& handleReturnValueGPR, const EmitDoubleCompareFunctor& emitDoubleCompare)
 {
 
     // We generate inline code for the following cases in the slow path:
@@ -403,19 +407,17 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
             return false;
         linkAllSlowCases(iter);
 
-        if (supportsFloatingPoint()) {
-            Jump fail1 = branchIfNotNumber(jsReg2, regT4);
-            unboxDouble(jsReg2, fpReg2);
+        Jump fail1 = branchIfNotNumber(jsReg2, regT4);
+        unboxDouble(jsReg2, fpReg2);
 
-            move(Imm32(getConstantOperand(op).asInt32()), jsReg1.payloadGPR());
-            convertInt32ToDouble(jsReg1.payloadGPR(), fpReg1);
+        move(Imm32(getConstantOperand(op).asInt32()), jsReg1.payloadGPR());
+        convertInt32ToDouble(jsReg1.payloadGPR(), fpReg1);
 
-            emitDoubleCompare(fpRegT0, fpRegT1);
+        emitDoubleCompare(fpRegT0, fpRegT1);
 
-            emitJumpSlowToHot(jump(), instructionSize);
+        emitJumpSlowToHot(jump(), instructionSize);
 
-            fail1.link(this);
-        }
+        fail1.link(this);
 
         emitGetVirtualRegister(op, jsReg1);
         loadGlobalObject(regT4);
@@ -431,21 +433,19 @@ void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t 
 
     linkSlowCase(iter); // LHS is not Int.
 
-    if (supportsFloatingPoint()) {
-        Jump fail1 = branchIfNotNumber(jsRegT10, regT4);
-        Jump fail2 = branchIfNotNumber(jsRegT32, regT4);
-        Jump fail3 = branchIfInt32(jsRegT32);
-        unboxDouble(jsRegT10, fpRegT0);
-        unboxDouble(jsRegT32, fpRegT1);
+    Jump fail1 = branchIfNotNumber(jsRegT10, regT4);
+    Jump fail2 = branchIfNotNumber(jsRegT32, regT4);
+    Jump fail3 = branchIfInt32(jsRegT32);
+    unboxDouble(jsRegT10, fpRegT0);
+    unboxDouble(jsRegT32, fpRegT1);
 
-        emitDoubleCompare(fpRegT0, fpRegT1);
+    emitDoubleCompare(fpRegT0, fpRegT1);
 
-        emitJumpSlowToHot(jump(), instructionSize);
+    emitJumpSlowToHot(jump(), instructionSize);
 
-        fail1.link(this);
-        fail2.link(this);
-        fail3.link(this);
-    }
+    fail1.link(this);
+    fail2.link(this);
+    fail3.link(this);
 
     linkSlowCase(iter); // RHS is not Int.
     loadGlobalObject(regT4);
@@ -503,7 +503,7 @@ void JIT::emit_op_mod(const JSInstruction* currentInstruction)
     move(regT4, regT0);
     addSlowCase(branchTest32(Zero, ecx));
     Jump denominatorNotNeg1 = branch32(NotEqual, ecx, TrustedImm32(-1));
-    addSlowCase(branch32(Equal, regT0, TrustedImm32(-2147483647-1)));
+    addSlowCase(branch32(Equal, regT0, TrustedImm32(INT32_MIN)));
     denominatorNotNeg1.link(this);
     x86ConvertToDoubleWord32();
     x86Div32(ecx);
@@ -522,7 +522,56 @@ void JIT::emitSlow_op_mod(const JSInstruction*, Vector<SlowCaseEntry>::iterator&
     slowPathCall.call();
 }
 
-#else // CPU(X86_64)
+#elif CPU(ARM64)
+
+void JIT::emit_op_mod(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpMod>();
+    VirtualRegister result = bytecode.m_dst;
+    VirtualRegister op1 = bytecode.m_lhs;
+    VirtualRegister op2 = bytecode.m_rhs;
+
+    emitGetVirtualRegister(op1, jsRegT10);
+    emitGetVirtualRegister(op2, jsRegT32);
+
+    addSlowCase(branchIfNotInt32(jsRegT10));
+    addSlowCase(branchIfNotInt32(jsRegT32));
+
+    GPRReg dividendGPR = jsRegT10.payloadGPR();
+    GPRReg divisorGPR = jsRegT32.payloadGPR();
+    GPRReg quotientThenRemainderGPR = regT4;
+
+    addSlowCase(branchTest32(Zero, divisorGPR));
+
+    // This is doing: x - ((x / y) * y)
+    div32(dividendGPR, divisorGPR, quotientThenRemainderGPR);
+    // This should only overflow for INT32_MIN % -1 but that will end up with quotientThenRemainderGPR == 0 and finally yield -0.0 as expected.
+    multiplySub32(quotientThenRemainderGPR, divisorGPR, dividendGPR, quotientThenRemainderGPR);
+
+    // Make sure we're not accidentally producing a positive zero when it should be a negative zero.
+    Jump numeratorPositive = branch32(GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
+    Jump nonZeroRemainder = branchTest32(NonZero, quotientThenRemainderGPR);
+    moveValue(jsDoubleNumber(-0.0), jsRegT10);
+    Jump done = jump();
+
+    numeratorPositive.link(this);
+    nonZeroRemainder.link(this);
+
+    boxInt32(quotientThenRemainderGPR, jsRegT10);
+    done.link(this);
+
+    emitPutVirtualRegister(result, jsRegT10);
+}
+
+void JIT::emitSlow_op_mod(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    JITSlowPathCall slowPathCall(this, slow_path_mod);
+    slowPathCall.call();
+}
+
+#else // CPU(X86_64) || CPU(ARM64)
 
 void JIT::emit_op_mod(const JSInstruction*)
 {
@@ -535,7 +584,7 @@ void JIT::emitSlow_op_mod(const JSInstruction*, Vector<SlowCaseEntry>::iterator&
     UNREACHABLE_FOR_PLATFORM();
 }
 
-#endif // CPU(X86_64)
+#endif // CPU(X86_64) || CPU(ARM64)
 
 /* ------------------------------ END: OP_MOD ------------------------------ */
 

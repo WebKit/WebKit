@@ -27,6 +27,7 @@
 #include "SourceTaintedOrigin.h"
 
 #include "CodeBlock.h"
+#include "JSCellInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "StackVisitor.h"
 #include "VM.h"
@@ -78,7 +79,7 @@ std::pair<SourceTaintedOrigin, URL> sourceTaintedOriginFromStack(VM& vm, CallFra
         return IterationStatus::Done;
     });
 
-    return { result, WTFMove(sourceURL) };
+    return { result, WTF::move(sourceURL) };
 }
 
 SourceTaintedOrigin computeNewSourceTaintedOriginFromStack(VM& vm, CallFrame* callFrame)

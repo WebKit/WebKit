@@ -51,7 +51,7 @@ struct CoreIPCAuditToken {
     }
 
     CoreIPCAuditToken(std::array<unsigned, 8> token)
-        : token { WTFMove(token) }
+        : token { WTF::move(token) }
     {
     }
 

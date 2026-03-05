@@ -39,7 +39,7 @@ class FileSystemEntriesCallback;
 class ScriptExecutionContext;
 
 class FileSystemDirectoryReader final : public ScriptWrappable, public ActiveDOMObject, public RefCounted<FileSystemDirectoryReader> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemDirectoryReader);
+    WTF_MAKE_TZONE_ALLOCATED(FileSystemDirectoryReader);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -52,7 +52,7 @@ public:
 private:
     FileSystemDirectoryReader(ScriptExecutionContext&, FileSystemDirectoryEntry&);
 
-    Document* document() const;
+    Document* NODELETE document() const;
 
     const Ref<FileSystemDirectoryEntry> m_directory;
     std::optional<Exception> m_error;

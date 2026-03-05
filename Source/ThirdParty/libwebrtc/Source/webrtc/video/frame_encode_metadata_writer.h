@@ -17,6 +17,7 @@
 #include <optional>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/rtp_packet_infos.h"
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
@@ -33,7 +34,8 @@ namespace webrtc {
 
 class FrameEncodeMetadataWriter {
  public:
-  explicit FrameEncodeMetadataWriter(EncodedImageCallback* frame_drop_callback);
+  FrameEncodeMetadataWriter(const Environment& env,
+                            EncodedImageCallback* frame_drop_callback);
   ~FrameEncodeMetadataWriter();
 
   void OnEncoderInit(const VideoCodec& codec);
@@ -74,6 +76,7 @@ class FrameEncodeMetadataWriter {
     std::list<FrameMetadata> frames;
   };
 
+  const Environment env_;
   Mutex lock_;
   EncodedImageCallback* const frame_drop_callback_;
   VideoCodec codec_settings_ RTC_GUARDED_BY(&lock_);

@@ -128,7 +128,7 @@ void JSTestStringifierNamedOperationPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestStringifierNamedOperation::s_info = { "TestStringifierNamedOperation"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierNamedOperation) };
 
 JSTestStringifierNamedOperation::JSTestStringifierNamedOperation(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierNamedOperation>&& impl)
-    : JSDOMWrapper<TestStringifierNamedOperation>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestStringifierNamedOperation>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -228,7 +228,7 @@ void JSTestStringifierNamedOperationOwner::finalize(JSC::Handle<JSC::Unknown> ha
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifierNamedOperation = static_cast<JSTestStringifierNamedOperation*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestStringifierNamedOperation->protectedWrapped().ptr(), jsTestStringifierNamedOperation);
+    uncacheWrapper(world, protect(jsTestStringifierNamedOperation->wrapped()).ptr(), jsTestStringifierNamedOperation);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -266,7 +266,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestStringifierNamedOperation>(impl.ptr());
 #endif
-    return createWrapper<TestStringifierNamedOperation>(globalObject, WTFMove(impl));
+    return createWrapper<TestStringifierNamedOperation>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestStringifierNamedOperation& impl)

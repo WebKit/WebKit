@@ -48,14 +48,13 @@ class RemoteDeviceProxy final : public WebCore::WebGPU::Device {
 public:
     static Ref<RemoteDeviceProxy> create(Ref<WebCore::WebGPU::SupportedFeatures>&& features, Ref<WebCore::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
-        return adoptRef(*new RemoteDeviceProxy(WTFMove(features), WTFMove(limits), parent, convertToBackingContext, identifier, queueIdentifier));
+        return adoptRef(*new RemoteDeviceProxy(WTF::move(features), WTF::move(limits), parent, convertToBackingContext, identifier, queueIdentifier));
     }
 
     virtual ~RemoteDeviceProxy();
 
     RemoteAdapterProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
-    Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
     WebGPUIdentifier backing() const { return m_backing; }
 
 private:
@@ -69,17 +68,17 @@ private:
     RemoteDeviceProxy& operator=(RemoteDeviceProxy&&) = delete;
 
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Error send(T&& message)
+    [[nodiscard]] IPC::Error send(T&& message)
     {
-        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->send(WTF::move(message), backing());
     }
     template<typename T, typename C>
-    WARN_UNUSED_RETURN std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
+    [[nodiscard]] std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().protectedStreamClientConnection()->sendWithAsyncReply(WTFMove(message), completionHandler, backing());
+        return protect(root().streamClientConnection())->sendWithAsyncReply(WTF::move(message), completionHandler, backing());
     }
 
-    Ref<WebCore::WebGPU::Queue> queue() final;
+    Ref<WebCore::WebGPU::Queue> NODELETE queue() final;
 
     void destroy() final;
 
@@ -116,12 +115,12 @@ private:
     void setLabelInternal(const String&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
-    Ref<WebCore::WebGPU::BindGroupLayout> emptyBindGroupLayout() const final;
+    Ref<WebCore::WebGPU::BindGroupLayout> NODELETE emptyBindGroupLayout() const final;
 
-    Ref<WebCore::WebGPU::CommandEncoder> invalidCommandEncoder() final;
-    Ref<WebCore::WebGPU::CommandBuffer> invalidCommandBuffer() final;
-    Ref<WebCore::WebGPU::RenderPassEncoder> invalidRenderPassEncoder() final;
-    Ref<WebCore::WebGPU::ComputePassEncoder> invalidComputePassEncoder() final;
+    Ref<WebCore::WebGPU::CommandEncoder> NODELETE invalidCommandEncoder() final;
+    Ref<WebCore::WebGPU::CommandBuffer> NODELETE invalidCommandBuffer() final;
+    Ref<WebCore::WebGPU::RenderPassEncoder> NODELETE invalidRenderPassEncoder() final;
+    Ref<WebCore::WebGPU::ComputePassEncoder> NODELETE invalidComputePassEncoder() final;
     void pauseAllErrorReporting(bool pause) final;
 
     bool isRemoteDeviceProxy() const final { return true; }

@@ -28,6 +28,7 @@
 //
 extern angle::PoolAllocator *GetGlobalPoolAllocator();
 extern void SetGlobalPoolAllocator(angle::PoolAllocator *poolAllocator);
+extern bool IsGlobalPoolAllocatorInitialized();
 
 class [[nodiscard]] TScopedPoolAllocator
 {

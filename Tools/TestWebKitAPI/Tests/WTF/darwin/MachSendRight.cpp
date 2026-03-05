@@ -93,7 +93,7 @@ TEST(MachSendRight, Move)
 
     {
         MachSendRight right = MachSendRight::adopt(port);
-        MachSendRight move = WTFMove(right);
+        MachSendRight move = WTF::move(right);
 
         EXPECT_EQ(getSendRefs(port), 1u);
     }
@@ -129,7 +129,7 @@ TEST(MachSendRight, OverwriteMove)
         MachSendRight firstRight = MachSendRight::adopt(first);
         MachSendRight secondRight = MachSendRight::adopt(second);
 
-        secondRight = WTFMove(firstRight);
+        secondRight = WTF::move(firstRight);
 
         EXPECT_EQ(getSendRefs(first), 1u);
         EXPECT_EQ(getSendRefs(second), 0u);

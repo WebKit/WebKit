@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -459,42 +459,6 @@ TextStream& operator<<(TextStream& ts, CursorVisibility visibility)
 }
 #endif
 
-TextStream& operator<<(TextStream& ts, DisplayType display)
-{
-    switch (display) {
-    case DisplayType::Inline: ts << "inline"_s; break;
-    case DisplayType::Block: ts << "block"_s; break;
-    case DisplayType::ListItem: ts << "list-item"_s; break;
-    case DisplayType::InlineBlock: ts << "inline-block"_s; break;
-    case DisplayType::Table: ts << "table"_s; break;
-    case DisplayType::InlineTable: ts << "inline-table"_s; break;
-    case DisplayType::TableRowGroup: ts << "table-row-group"_s; break;
-    case DisplayType::TableHeaderGroup: ts << "table-header-group"_s; break;
-    case DisplayType::TableFooterGroup: ts << "table-footer-group"_s; break;
-    case DisplayType::TableRow: ts << "table-row"_s; break;
-    case DisplayType::TableColumnGroup: ts << "table-column-group"_s; break;
-    case DisplayType::TableColumn: ts << "table-column"_s; break;
-    case DisplayType::TableCell: ts << "table-cell"_s; break;
-    case DisplayType::TableCaption: ts << "table-caption"_s; break;
-    case DisplayType::Box: ts << "box"_s; break;
-    case DisplayType::InlineBox: ts << "inline-box"_s; break;
-    case DisplayType::Flex: ts << "flex"_s; break;
-    case DisplayType::InlineFlex: ts << "inline-flex"_s; break;
-    case DisplayType::Contents: ts << "contents"_s; break;
-    case DisplayType::Grid: ts << "grid"_s; break;
-    case DisplayType::InlineGrid: ts << "inline-grid"_s; break;
-    case DisplayType::GridLanes: ts << "grid-lanes"_s; break;
-    case DisplayType::InlineGridLanes: ts << "inline-grid-lanes"_s; break;
-    case DisplayType::FlowRoot: ts << "flow-root"_s; break;
-    case DisplayType::Ruby: ts << "ruby"_s; break;
-    case DisplayType::RubyBlock: ts << "block ruby"_s; break;
-    case DisplayType::RubyBase: ts << "ruby-base"_s; break;
-    case DisplayType::RubyAnnotation: ts << "ruby-text"_s; break;
-    case DisplayType::None: ts << "none"_s; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, Edge edge)
 {
     switch (edge) {
@@ -526,9 +490,10 @@ TextStream& operator<<(TextStream& ts, EventListenerRegionType listenerType)
     case EventListenerRegionType::TouchEnd: ts << "touch end"_s; break;
     case EventListenerRegionType::NonPassiveTouchEnd: ts << "active touch end"_s; break;
     case EventListenerRegionType::TouchCancel: ts << "touch cancel"_s; break;
-    case EventListenerRegionType::NonPassiveTouchCancel: ts << "active touch cancel"_s; break;
     case EventListenerRegionType::TouchMove: ts << "touch move"_s; break;
     case EventListenerRegionType::NonPassiveTouchMove: ts << "active touch move"_s; break;
+    case EventListenerRegionType::TouchForceChange: ts << "touch force change"_s; break;
+    case EventListenerRegionType::NonPassiveTouchForceChange: ts << "active touch force change"_s; break;
     case EventListenerRegionType::PointerDown: ts << "pointer down"_s; break;
     case EventListenerRegionType::NonPassivePointerDown: ts << "active pointer down"_s; break;
     case EventListenerRegionType::PointerEnter: ts << "pointer enter"_s; break;
@@ -942,6 +907,8 @@ TextStream& operator<<(TextStream& ts, PseudoElementType pseudoElementType)
     case PseudoElementType::Selection: ts << "selection"_s; break;
     case PseudoElementType::SpellingError: ts << "spelling-error"_s; break;
     case PseudoElementType::TargetText: ts << "target-text"_s; break;
+    case PseudoElementType::Checkmark: ts << "checkmark"_s; break;
+    case PseudoElementType::PickerIcon: ts << "picker-icon"_s; break;
     case PseudoElementType::ViewTransition: ts << "view-transition"_s; break;
     case PseudoElementType::ViewTransitionGroup: ts << "view-transition-group"_s; break;
     case PseudoElementType::ViewTransitionImagePair: ts << "view-transition-image-pair"_s; break;
@@ -1061,23 +1028,6 @@ TextStream& operator<<(TextStream& ts, Scroller scroller)
     case Scroller::Nearest: ts << "nearest"_s; break;
     case Scroller::Root: ts << "root"_s; break;
     case Scroller::Self: ts << "self"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, StyleDifference diff)
-{
-    switch (diff) {
-    case StyleDifference::Equal: ts << "equal"_s; break;
-    case StyleDifference::RecompositeLayer: ts << "recomposite layer"_s; break;
-    case StyleDifference::Repaint: ts << "repaint"_s; break;
-    case StyleDifference::RepaintIfText: ts << "repaint if text"_s; break;
-    case StyleDifference::RepaintLayer: ts << "repaint layer"_s; break;
-    case StyleDifference::LayoutOutOfFlowMovementOnly: ts << "layout positioned movement only"_s; break;
-    case StyleDifference::Overflow: ts << "overflow"_s; break;
-    case StyleDifference::OverflowAndOutOfFlowMovement: ts << "overflow and positioned movement"_s; break;
-    case StyleDifference::Layout: ts << "layout"_s; break;
-    case StyleDifference::NewStyle: ts << "new style"_s; break;
     }
     return ts;
 }
@@ -1404,19 +1354,6 @@ TextStream& operator<<(TextStream& ts, OverflowContinue overflowContinue)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, StyleDifferenceContextSensitiveProperty property)
-{
-    switch (property) {
-    case StyleDifferenceContextSensitiveProperty::Transform: ts << "transform"_s; break;
-    case StyleDifferenceContextSensitiveProperty::Opacity: ts << "opacity"_s; break;
-    case StyleDifferenceContextSensitiveProperty::Filter: ts << "filter"_s; break;
-    case StyleDifferenceContextSensitiveProperty::ClipRect: ts << "clipRect"_s; break;
-    case StyleDifferenceContextSensitiveProperty::ClipPath: ts << "clipPath"_s; break;
-    case StyleDifferenceContextSensitiveProperty::WillChange: ts << "willChange"_s; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
 {
     switch (value) {
@@ -1521,6 +1458,16 @@ TextStream& operator<<(TextStream& ts, VectorEffect value)
     switch (value) {
     case VectorEffect::None: ts << "none"_s; break;
     case VectorEffect::NonScalingStroke: ts << "non-scaling-stroke"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, VisualBox visualBox)
+{
+    switch (visualBox) {
+    case VisualBox::BorderBox: ts << "border-box"_s; break;
+    case VisualBox::ContentBox: ts << "content-box"_s; break;
+    case VisualBox::PaddingBox: ts << "padding-box"_s; break;
     }
     return ts;
 }

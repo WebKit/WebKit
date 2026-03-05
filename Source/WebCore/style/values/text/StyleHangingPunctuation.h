@@ -46,7 +46,7 @@ struct HangingPunctuation {
     using value_type = HangingPunctuationValueEnumSet::value_type;
 
     constexpr HangingPunctuation(CSS::Keyword::None) : m_value { } { }
-    constexpr HangingPunctuation(EnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr HangingPunctuation(EnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr HangingPunctuation(value_type value) : HangingPunctuation { EnumSet { value } } { }
     constexpr HangingPunctuation(std::initializer_list<value_type> initializerList) : HangingPunctuation { EnumSet { initializerList } } { }
 

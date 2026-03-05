@@ -161,7 +161,7 @@ public:
     void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
     void cancel();
 
-    bool isActive() const;
+    bool NODELETE isActive() const;
 
 private:
     SimulatedInputDispatcher(WebPageProxy&, SimulatedInputDispatcher::Client&);
@@ -177,8 +177,6 @@ private:
     bool isKeyFrameTransitionComplete() const;
 
     void resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&);
-
-    Ref<WebPageProxy> protectedPage() const;
 
     WeakRef<WebPageProxy> m_page;
     SimulatedInputDispatcher::Client& m_client;

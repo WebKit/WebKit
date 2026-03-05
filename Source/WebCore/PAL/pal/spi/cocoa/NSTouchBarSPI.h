@@ -25,9 +25,14 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(MAC) && HAVE(TOUCH_BAR)
+
+#import <AppKit/AppKit.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

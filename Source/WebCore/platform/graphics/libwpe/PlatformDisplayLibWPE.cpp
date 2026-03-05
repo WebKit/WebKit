@@ -97,7 +97,7 @@ std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create(int hostFd)
 }
 
 PlatformDisplayLibWPE::PlatformDisplayLibWPE(Ref<GLDisplay>&& glDisplay, struct wpe_renderer_backend_egl* backend)
-    : PlatformDisplay(WTFMove(glDisplay))
+    : PlatformDisplay(WTF::move(glDisplay))
     , m_backend(backend)
 {
 #if ENABLE(WEBGL)

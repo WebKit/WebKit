@@ -35,7 +35,7 @@ namespace WebCore {
 template <typename Visitor>
 void JSReportingObserver::visitAdditionalChildren(Visitor& visitor)
 {
-    // Do not ref `wrapped()` here since this function may get called on the GC thread.
+    // Do not ref `wrapped()` here since this function may get called on a GC thread.
     SUPPRESS_UNCOUNTED_ARG wrapped().callbackConcurrently().visitJSFunction(visitor);
 }
 

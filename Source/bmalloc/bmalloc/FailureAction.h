@@ -25,8 +25,12 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 namespace bmalloc {
 
 enum class FailureAction { Crash, ReturnNull };
 
 } // namespace bmalloc
+
+#endif // __cplusplus

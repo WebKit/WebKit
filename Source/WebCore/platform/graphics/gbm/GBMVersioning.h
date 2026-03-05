@@ -49,7 +49,7 @@ static inline int gbm_bo_get_fd_for_plane(struct gbm_bo* bo, int plane)
         return -1;
 
     int fd;
-    int ret = drmPrimeHandleToFD(gbm_device_get_fd(gbm_bo_get_device(bo)), handle.u32, DRM_CLOEXEC, &fd);
+    int ret = drmPrimeHandleToFD(gbm_device_get_fd(gbm_bo_get_device(bo)), handle.u32, DRM_CLOEXEC | DRM_RDWR, &fd);
     return ret < 0 ? -1 : fd;
 }
 #endif

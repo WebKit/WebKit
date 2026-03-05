@@ -66,6 +66,7 @@ public:
 
     MediaPlayer::ReadyState readyState() const override;
     void readyStateFromMediaSourceChanged() final;
+    void characteristicsFromMediaSourceChanged() final;
     void setNetworkState(MediaPlayer::NetworkState);
 
 #if !RELEASE_LOG_DISABLED
@@ -91,6 +92,7 @@ private:
     bool seeking() const final;
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;
+    void mediaSourceHasRetrievedAllData() final;
     MediaTime maxTimeSeekable() const override;
     const PlatformTimeRanges& buffered() const override;
     bool didLoadingProgress() const override;
@@ -99,7 +101,6 @@ private:
     MediaTime duration() const override;
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
     DestinationColorSpace colorSpace() override;
-    RefPtr<MockMediaSourcePrivate> protectedMediaSourcePrivate();
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;

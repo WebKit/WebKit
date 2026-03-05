@@ -150,7 +150,7 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
     if (inspectedPage) {
         if (RefPtr webExtensionController = inspectedPage->webExtensionController())
-            configuration.get().webExtensionController = webExtensionController->protectedWrapper().get();
+            configuration.get().webExtensionController = protect(webExtensionController->wrapper()).get();
     }
 #endif
 
@@ -196,7 +196,7 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (useDefaultProcessPool)
-        [configuration setProcessPool:protectedWrapper(Ref { WebKit::defaultInspectorProcessPool(inspectorLevel) }.get()).get()];
+        [configuration setProcessPool:wrapper(protect(WebKit::defaultInspectorProcessPool(inspectorLevel))).get()];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Ensure that a page group identifier is set. This is for computing inspection levels.
@@ -249,7 +249,7 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
         return nil;
 
     if (RefPtr inspectedPage = _inspectedPage.get())
-        return inspectedPage->cocoaView().unsafeGet();
+        return inspectedPage->cocoaView().autorelease();
 
     return nil;
 }

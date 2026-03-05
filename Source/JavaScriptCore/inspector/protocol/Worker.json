@@ -1,6 +1,6 @@
 {
     "domain": "Worker",
-    "debuggableTypes": ["page", "web-page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page", "worker"],
     "commands": [
         {

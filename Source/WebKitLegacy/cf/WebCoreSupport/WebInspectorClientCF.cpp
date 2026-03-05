@@ -29,6 +29,7 @@
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
+#include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/cf/TypeCastsCF.h>
 
@@ -43,8 +44,8 @@ static RetainPtr<CFStringRef> createKeyForPreferences(const String& key)
 static String loadSetting(const String& key)
 {
     auto value = adoptCF(CFPreferencesCopyAppValue(createKeyForPreferences(key).get(), kCFPreferencesCurrentApplication));
-    if (auto string = dynamic_cf_cast<CFStringRef>(value.get()))
-        return string;
+    if (RetainPtr string = dynamic_cf_cast<CFStringRef>(value.get()))
+        return string.get();
     if (value == kCFBooleanTrue)
         return "true"_s;
     if (value == kCFBooleanFalse)
@@ -64,6 +65,7 @@ static void deleteSetting(const String& key)
 
 void WebInspectorClient::sendMessageToFrontend(const String& message)
 {
+    ASSERT(m_frontendClient);
     m_frontendClient->frontendAPIDispatcher().dispatchMessageAsync(message);
 }
 

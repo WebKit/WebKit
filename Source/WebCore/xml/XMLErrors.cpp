@@ -100,7 +100,7 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, Stri
     fixed->parserSetAttributes(singleElementSpan(fixedAttribute));
     reportElement->parserAppendChild(fixed);
 
-    fixed->parserAppendChild(Text::create(document, WTFMove(errorMessages)));
+    fixed->parserAppendChild(Text::create(document, WTF::move(errorMessages)));
 
     h3 = HTMLHeadingElement::create(h3Tag, document);
     reportElement->parserAppendChild(h3);
@@ -122,8 +122,8 @@ void XMLErrors::insertErrorMessageBlock()
         Ref rootElement = HTMLHtmlElement::create(document);
         Ref body = HTMLBodyElement::create(document);
         rootElement->parserAppendChild(body);
-        document->parserAppendChild(WTFMove(rootElement));
-        documentElement = WTFMove(body);
+        document->parserAppendChild(WTF::move(rootElement));
+        documentElement = WTF::move(body);
     } else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
         Ref rootElement = HTMLHtmlElement::create(document);
         Ref head = HTMLHeadElement::create(document);
@@ -131,7 +131,7 @@ void XMLErrors::insertErrorMessageBlock()
         head->parserAppendChild(style);
         style->parserAppendChild(document->createTextNode("html, body { height: 100% } parsererror + svg { width: 100%; height: 100% }"_s));
         style->finishParsingChildren();
-        rootElement->parserAppendChild(WTFMove(head));
+        rootElement->parserAppendChild(WTF::move(head));
         Ref body = HTMLBodyElement::create(document);
         rootElement->parserAppendChild(body);
 
@@ -139,9 +139,9 @@ void XMLErrors::insertErrorMessageBlock()
         if (!documentElement->parentNode())
             body->parserAppendChild(*documentElement);
 
-        document->parserAppendChild(WTFMove(rootElement));
+        document->parserAppendChild(WTF::move(rootElement));
 
-        documentElement = WTFMove(body);
+        documentElement = WTF::move(body);
     }
 
     Ref reportElement = createXHTMLParserErrorHeader(document, String { m_errorMessages.toString() });
@@ -152,14 +152,14 @@ void XMLErrors::insertErrorMessageBlock()
         Ref paragraph = HTMLParagraphElement::create(document);
         paragraph->parserSetAttributes(singleElementSpan(attribute));
         paragraph->parserAppendChild(document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."_s));
-        reportElement->parserAppendChild(WTFMove(paragraph));
+        reportElement->parserAppendChild(WTF::move(paragraph));
     }
 #endif
 
     if (RefPtr firstChild = documentElement->firstChild())
-        documentElement->parserInsertBefore(WTFMove(reportElement), firstChild.releaseNonNull());
+        documentElement->parserInsertBefore(WTF::move(reportElement), firstChild.releaseNonNull());
     else
-        documentElement->parserAppendChild(WTFMove(reportElement));
+        documentElement->parserAppendChild(WTF::move(reportElement));
 
     document->updateStyleIfNeeded();
 }

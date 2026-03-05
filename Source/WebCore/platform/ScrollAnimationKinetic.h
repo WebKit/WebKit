@@ -36,6 +36,7 @@ class PlatformWheelEvent;
 
 class ScrollAnimationKinetic final : public ScrollAnimation {
     WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationKinetic);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollAnimationKinetic);
 private:
     class PerAxisData {
     public:

@@ -27,10 +27,6 @@ constexpr int kDefaultLowRateComplexity =
 
 }  // namespace
 
-constexpr int AudioEncoderOpusConfig::kDefaultFrameSizeMs;
-constexpr int AudioEncoderOpusConfig::kMinBitrateBps;
-constexpr int AudioEncoderOpusConfig::kMaxBitrateBps;
-
 AudioEncoderOpusConfig::AudioEncoderOpusConfig()
     : frame_size_ms(kDefaultFrameSizeMs),
       sample_rate_hz(48000),

@@ -50,7 +50,8 @@ static void entryAddMembersToOpaqueRoots(const WebGLFramebuffer::AttachmentEntry
         },
         [&](const WebGLFramebuffer::TextureLayerAttachment& layerAttachment) {
             addWebCoreOpaqueRoot(visitor, layerAttachment.texture.get());
-        });
+        }
+    );
 }
 
 static void entryDetachAndClear(WebGLFramebuffer::AttachmentEntry& entry, const AbstractLocker& locker, GraphicsContextGL* gl)
@@ -67,7 +68,8 @@ static void entryDetachAndClear(WebGLFramebuffer::AttachmentEntry& entry, const 
         [&](WebGLFramebuffer::TextureLayerAttachment& layerAttachment) {
             RefPtr { layerAttachment.texture }->onDetached(locker, gl);
             layerAttachment.texture = nullptr;
-        });
+        }
+    );
 }
 
 static void entryAttach(WebGLFramebuffer::AttachmentEntry& entry)
@@ -87,13 +89,13 @@ static void entryAttach(WebGLFramebuffer::AttachmentEntry& entry)
 static void entryContextSetAttachment(const WebGLFramebuffer::AttachmentEntry& entry, GraphicsContextGL* gl, GCGLenum target, GCGLenum attachment)
 {
     switchOn(entry,
-        [&] (RefPtr<WebGLRenderbuffer> renderbuffer) {
+        [&](RefPtr<WebGLRenderbuffer> renderbuffer) {
             gl->framebufferRenderbuffer(target, attachment, GraphicsContextGL::RENDERBUFFER, objectOrZero(renderbuffer));
         },
-        [&] (WebGLFramebuffer::TextureAttachment textureAttachment) {
+        [&](WebGLFramebuffer::TextureAttachment textureAttachment) {
             gl->framebufferTexture2D(target, attachment, textureAttachment.texTarget, objectOrZero(textureAttachment.texture), textureAttachment.level);
         },
-        [&] (WebGLFramebuffer::TextureLayerAttachment layerAttachment) {
+        [&](WebGLFramebuffer::TextureLayerAttachment layerAttachment) {
             gl->framebufferTextureLayer(target, attachment, objectOrZero(layerAttachment.texture), layerAttachment.level, layerAttachment.layer);
         });
 }
@@ -101,13 +103,13 @@ static void entryContextSetAttachment(const WebGLFramebuffer::AttachmentEntry& e
 static WebGLFramebuffer::AttachmentObject entryObject(const WebGLFramebuffer::AttachmentEntry& entry)
 {
     return switchOn(entry,
-        [&] (RefPtr<WebGLRenderbuffer> renderbuffer) -> WebGLFramebuffer::AttachmentObject {
+        [&](RefPtr<WebGLRenderbuffer> renderbuffer) -> WebGLFramebuffer::AttachmentObject {
             return renderbuffer;
         },
-        [&] (const WebGLFramebuffer::TextureAttachment& textureAttachment) -> WebGLFramebuffer::AttachmentObject {
+        [&](const WebGLFramebuffer::TextureAttachment& textureAttachment) -> WebGLFramebuffer::AttachmentObject {
             return textureAttachment.texture;
         },
-        [&] (const WebGLFramebuffer::TextureLayerAttachment& layerAttachment) -> WebGLFramebuffer::AttachmentObject {
+        [&](const WebGLFramebuffer::TextureLayerAttachment& layerAttachment) -> WebGLFramebuffer::AttachmentObject {
             return layerAttachment.texture;
         });
 }
@@ -120,18 +122,23 @@ static bool entryHasObject(const WebGLFramebuffer::AttachmentEntry& entry)
         });
 }
 
-RefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& context)
+Ref<WebGLFramebuffer> WebGLFramebuffer::createLost()
 {
-    auto object = context.graphicsContextGL()->createFramebuffer();
+    return adoptRef(*new WebGLFramebuffer { });
+}
+
+Ref<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& context)
+{
+    auto object = protect(context.graphicsContextGL())->createFramebuffer();
     if (!object)
-        return nullptr;
+        return createLost();
     return adoptRef(*new WebGLFramebuffer { context, object, Type::Plain });
 }
 
 #if ENABLE(WEBXR)
 RefPtr<WebGLFramebuffer> WebGLFramebuffer::createOpaque(WebGLRenderingContextBase& context)
 {
-    auto object = context.graphicsContextGL()->createFramebuffer();
+    auto object = protect(context.graphicsContextGL())->createFramebuffer();
     if (!object)
         return nullptr;
     return adoptRef(*new WebGLFramebuffer { context, object, Type::Opaque });
@@ -147,6 +154,13 @@ WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& context, PlatformG
     UNUSED_PARAM(type);
 }
 
+WebGLFramebuffer::WebGLFramebuffer()
+#if ENABLE(WEBXR)
+    : m_isOpaque(false)
+#endif
+{
+}
+
 WebGLFramebuffer::~WebGLFramebuffer()
 {
     if (!context())
@@ -159,7 +173,6 @@ void WebGLFramebuffer::setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenu
 {
     ASSERT(object());
     ASSERT(isBound(target));
-    auto attachmentCount = m_attachments.size();
     RefPtr gl = graphicsContextGL();
     if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT && context()->isWebGL2()) {
         setAttachmentInternal(GraphicsContextGL::STENCIL_ATTACHMENT, entry);
@@ -168,9 +181,6 @@ void WebGLFramebuffer::setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenu
     }
     setAttachmentInternal(attachment, entry);
     entryContextSetAttachment(entry, gl.get(), target, attachment);
-
-    if (attachmentCount != m_attachments.size())
-        drawBuffersIfNecessary(false);
 }
 
 std::optional<WebGLFramebuffer::AttachmentObject> WebGLFramebuffer::getAttachmentObject(GCGLenum attachment) const
@@ -188,7 +198,6 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(const AbstractLocker
     ASSERT(isBound(target));
     if (!object())
         return;
-    auto attachmentCount = m_attachments.size();
     bool checkMore = true;
     RefPtr gl = graphicsContextGL();
     do {
@@ -197,7 +206,7 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(const AbstractLocker
             if (entryObject(it->value) != removedObject)
                 continue;
             GCGLenum attachment = it->key;
-            auto entry = WTFMove(it->value);
+            auto entry = WTF::move(it->value);
             m_attachments.remove(it);
             checkMore = true;
             entryDetachAndClear(entry, locker, gl.get());
@@ -205,8 +214,6 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(const AbstractLocker
             break;
         }
     } while (checkMore);
-    if (attachmentCount != m_attachments.size())
-        drawBuffersIfNecessary(false);
 }
 
 void WebGLFramebuffer::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGL* context3d, PlatformGLObject object)
@@ -225,38 +232,13 @@ bool WebGLFramebuffer::isBound(GCGLenum target) const
 void WebGLFramebuffer::drawBuffers(const Vector<GCGLenum>& bufs)
 {
     m_drawBuffers = bufs;
-    m_filteredDrawBuffers.resize(m_drawBuffers.size());
-    for (auto& buffer : m_filteredDrawBuffers)
-        buffer = GraphicsContextGL::NONE;
-    drawBuffersIfNecessary(true);
-}
-
-void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
-{
+    // ANGLE handles filtering of draw buffers for unattached color attachments internally,
+    // so we pass the user-specified buffers directly.
     RefPtr context = this->context();
-    if (context->isWebGL2() || context->m_webglDrawBuffers) {
-        bool reset = force;
-        // This filtering works around graphics driver bugs on macOS.
-        for (size_t i = 0; i < m_drawBuffers.size(); ++i) {
-            if (m_drawBuffers[i] != GraphicsContextGL::NONE && m_attachments.contains(m_drawBuffers[i])) {
-                if (m_filteredDrawBuffers[i] != m_drawBuffers[i]) {
-                    m_filteredDrawBuffers[i] = m_drawBuffers[i];
-                    reset = true;
-                }
-            } else {
-                if (m_filteredDrawBuffers[i] != GraphicsContextGL::NONE) {
-                    m_filteredDrawBuffers[i] = GraphicsContextGL::NONE;
-                    reset = true;
-                }
-            }
-        }
-        if (reset) {
-            if (context->isWebGL2())
-                context->graphicsContextGL()->drawBuffers(m_filteredDrawBuffers);
-            else
-                context->graphicsContextGL()->drawBuffersEXT(m_filteredDrawBuffers);
-        }
-    }
+    if (context->isWebGL2())
+        protect(context->graphicsContextGL())->drawBuffers(m_drawBuffers);
+    else if (context->m_webglDrawBuffers)
+        protect(context->graphicsContextGL())->drawBuffersEXT(m_drawBuffers);
 }
 
 GCGLenum WebGLFramebuffer::getDrawBuffer(GCGLenum drawBuffer)
@@ -293,7 +275,7 @@ void WebGLFramebuffer::setAttachmentInternal(GCGLenum attachment, AttachmentEntr
     }
     if (!entryHasObject(entry))
         return;
-    auto result = m_attachments.add(attachment, WTFMove(entry));
+    auto result = m_attachments.add(attachment, WTF::move(entry));
     entryAttach(result.iterator->value);
 }
 

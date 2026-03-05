@@ -106,6 +106,10 @@ class CLContextVk : public CLContextImpl, public vk::Context
         DescriptorSetIndex index,
         angle::EnumIterator<DescriptorSetIndex> layoutIndex,
         vk::OutsideRenderPassCommandBufferHelper *computePassCommands);
+    angle::Result initializeDescriptorPools(CLKernelVk *kernelVk);
+
+    void addCommandBufferDiagnostics(const std::string &commandBufferDiagnostics);
+    void dumpCommandStreamDiagnostics();
 
   private:
     void handleDeviceLost() const;
@@ -129,6 +133,8 @@ class CLContextVk : public CLContextImpl, public vk::Context
     MutableData mAssociatedObjects;
 
     const cl::DevicePtrs mAssociatedDevices;
+
+    std::vector<std::string> mCommandBufferDiagnostics;
 
     // Table of minimum required image formats for OpenCL
     static constexpr cl_image_format kMinSupportedFormatsReadOrWrite[11] = {

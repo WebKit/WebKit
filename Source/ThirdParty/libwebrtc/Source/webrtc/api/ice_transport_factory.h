@@ -13,20 +13,9 @@
 
 #include "api/ice_transport_interface.h"
 #include "api/scoped_refptr.h"
-#include "p2p/base/port_allocator.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
-
-// Static factory for an IceTransport object that can be created
-// without using a PeerConnection.
-// The returned object must be accessed and destroyed on the thread that
-// created it.
-// The PortAllocator must outlive the created IceTransportInterface object.
-// TODO(steveanton): Remove in favor of the overload that takes
-// IceTransportInit.
-RTC_EXPORT scoped_refptr<IceTransportInterface> CreateIceTransport(
-    PortAllocator* port_allocator);
 
 // Static factory for an IceTransport object that can be created
 // without using a PeerConnection.

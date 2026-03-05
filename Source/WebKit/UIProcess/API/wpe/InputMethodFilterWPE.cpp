@@ -22,7 +22,10 @@
 
 #include "WebKitInputMethodContextPrivate.h"
 #include <WebCore/IntRect.h>
+
+#if USE(LIBWPE)
 #include <wpe/wpe.h>
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
@@ -40,12 +43,17 @@ bool InputMethodFilter::platformEventKeyIsKeyPress(PlatformEventKey* event) cons
 {
 #if ENABLE(WPE_PLATFORM)
     if (m_useWPEPlatformEvents) {
-        auto* wpe_platform_event = static_cast<WPEEvent*>(event);
-        return wpe_event_get_event_type(wpe_platform_event) == WPE_EVENT_KEYBOARD_KEY_DOWN;
+        auto* wpeEvent = static_cast<WPEEvent*>(event);
+        return wpe_event_get_event_type(wpeEvent) == WPE_EVENT_KEYBOARD_KEY_DOWN;
     }
 #endif
-    auto* wpe_event = static_cast<struct wpe_input_keyboard_event*>(event);
-    return wpe_event->pressed;
+
+#if USE(LIBWPE)
+    auto* wpeEvent = static_cast<struct wpe_input_keyboard_event*>(event);
+    return wpeEvent->pressed;
+#endif
+
+    return false;
 }
 
 } // namespace WebKit

@@ -55,13 +55,13 @@ void InspectorThreadableLoaderClient::didReceiveData(const SharedBuffer& buffer)
     if (buffer.isEmpty())
         return;
 
-    m_responseText.append(m_decoder->decode(buffer.span()));
+    m_responseText.append(Ref { *m_decoder }->decode(buffer.span()));
 }
 
 void InspectorThreadableLoaderClient::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
 {
-    if (m_decoder)
-        m_responseText.append(m_decoder->flush());
+    if (RefPtr decoder = m_decoder)
+        m_responseText.append(decoder->flush());
 
     m_callback->sendSuccess(m_responseText.toString(), m_mimeType, m_statusCode);
     dispose();
@@ -75,13 +75,16 @@ void InspectorThreadableLoaderClient::didFail(std::optional<ScriptExecutionConte
 
 void InspectorThreadableLoaderClient::setLoader(RefPtr<ThreadableLoader>&& loader)
 {
-    m_loader = WTFMove(loader);
+    m_loader = WTF::move(loader);
 }
 
 void InspectorThreadableLoaderClient::dispose()
 {
     m_loader = nullptr;
-    delete this;
+    if (!m_hasCalledDeref) {
+        m_hasCalledDeref = true;
+        deref();
+    }
 }
 
 } // namespace Inspector

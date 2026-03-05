@@ -47,7 +47,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool shouldAcceptInsecureCertificates) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTFMove(auditData), provider, shouldAcceptInsecureCertificates)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool shouldAcceptInsecureCertificates) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTF::move(auditData), provider, shouldAcceptInsecureCertificates)); }
 
     virtual ~SocketStreamHandleImpl();
 

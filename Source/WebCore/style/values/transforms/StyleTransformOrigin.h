@@ -32,7 +32,7 @@ namespace Style {
 
 using TransformOriginX = PositionX;
 using TransformOriginY = PositionY;
-using TransformOriginZ = Length<>;
+using TransformOriginZ = Length<CSS::AllUnzoomed>;
 using TransformOriginXY = Position;
 
 // https://www.w3.org/TR/css-transforms-1/#propdef-transform-origin

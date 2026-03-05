@@ -43,14 +43,14 @@ namespace WebCore {
 #define gmtime_r(x, y) gmtime_s((y), (x))
 #endif
 
-static inline FTPEntryType ParsingFailed(ListState& state)
+static inline FTPEntryType NODELETE ParsingFailed(ListState& state)
 {
     if (state.parsedOne || state.listStyle) /* junk if we fail to parse */
         return FTPJunkEntry; /* this time but had previously parsed sucessfully */
     return FTPMiscEntry; /* its part of a comment or error message */
 }
 
-static bool isSpaceOrTab(Latin1Character c)
+static bool NODELETE isSpaceOrTab(Latin1Character c)
 {
     return c == ' ' || c == '\t';
 }

@@ -13,14 +13,14 @@ Verifies Canvas 2D Context accelerated backing store behavior.
       (acceleratesDrawing 1)
       (children 7
         (GraphicsLayer
-          (position 112.00 96.00)
+          (position 112.00 95.50)
           (anchor 0.50 0.50)
           (bounds 100.00 56.50)
           (drawsContent 1)
           (acceleratesDrawing 1)
         )
         (GraphicsLayer
-          (position 216.00 96.00)
+          (position 216.00 95.50)
           (anchor 0.50 0.50)
           (bounds 100.00 56.50)
           (drawsContent 1)
@@ -34,25 +34,27 @@ Verifies Canvas 2D Context accelerated backing store behavior.
         )
         (GraphicsLayer
           (position 424.00 96.00)
+          (anchor 0.50 0.51)
           (bounds 100.00 56.00)
           (drawsContent 1)
           (acceleratesDrawing 1)
         )
         (GraphicsLayer
           (position 528.00 98.00)
+          (anchor 0.50 0.51)
           (bounds 100.00 54.00)
           (drawsContent 1)
           (acceleratesDrawing 1)
         )
         (GraphicsLayer
-          (position 632.00 114.00)
+          (position 632.00 113.50)
           (anchor 0.50 0.49)
           (bounds 100.00 38.50)
           (drawsContent 1)
           (acceleratesDrawing 1)
         )
         (GraphicsLayer
-          (position 8.00 157.00)
+          (position 8.00 156.50)
           (bounds 100.00 32.00)
           (drawsContent 1)
           (acceleratesDrawing 1)

@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGL.h"
-#include "WebGLObject.h"
+#include <WebCore/GraphicsContextGL.h>
+#include <WebCore/WebGLObject.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -49,8 +49,8 @@ class WebGLProgram;
 class WebGLTransformFeedback final : public WebGLObject {
 public:
     virtual ~WebGLTransformFeedback();
-
-    static RefPtr<WebGLTransformFeedback> create(WebGL2RenderingContext&);
+    static Ref<WebGLTransformFeedback> createLost();
+    static Ref<WebGLTransformFeedback> create(WebGL2RenderingContext&);
 
     bool isActive() const { return m_active; }
     bool isPaused() const { return m_paused; }
@@ -62,10 +62,10 @@ public:
     // Returns false if index is out of range and the caller should
     // synthesize a GL error.
     void setBoundIndexedTransformFeedbackBuffer(const AbstractLocker&, GCGLuint index, WebGLBuffer*);
-    bool getBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer** outBuffer);
+    bool NODELETE getBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer** outBuffer);
     bool hasBoundIndexedTransformFeedbackBuffer(const WebGLBuffer* buffer) { return m_boundIndexedTransformFeedbackBuffers.contains(buffer); }
 
-    bool validateProgramForResume(WebGLProgram*) const;
+    bool NODELETE validateProgramForResume(WebGLProgram*) const;
 
     void didBind() { m_hasEverBeenBound = true; }
 
@@ -74,7 +74,7 @@ public:
 
     void unbindBuffer(const AbstractLocker&, WebGLBuffer&);
 
-    bool hasEnoughBuffers(GCGLuint numRequired) const;
+    bool NODELETE hasEnoughBuffers(GCGLuint numRequired) const;
 
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
 
@@ -83,6 +83,7 @@ public:
 
 private:
     WebGLTransformFeedback(WebGL2RenderingContext&, PlatformGLObject);
+    WebGLTransformFeedback();
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 

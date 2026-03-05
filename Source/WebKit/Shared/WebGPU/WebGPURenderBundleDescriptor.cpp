@@ -40,7 +40,7 @@ std::optional<RenderBundleDescriptor> ConvertToBackingContext::convertToBacking(
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base) } };
+    return { { WTF::move(*base) } };
 }
 
 std::optional<WebCore::WebGPU::RenderBundleDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderBundleDescriptor& renderBundleDescriptor)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::RenderBundleDescriptor> ConvertFromBackingContext
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base) } };
+    return { { WTF::move(*base) } };
 }
 
 } // namespace WebKit

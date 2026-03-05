@@ -33,25 +33,27 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NotificationEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationEvent);
 
 Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto notification = init.notification;
-    ASSERT(notification);
-    auto action = init.action;
-    return adoptRef(*new NotificationEvent(type, WTFMove(init), notification.get(), action, isTrusted));
+    return adoptRef(*new NotificationEvent(type, WTF::move(init), isTrusted));
 }
 
-Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Notification* notification, const String& action, IsTrusted isTrusted)
+Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Ref<Notification>&& notification, const String& action, IsTrusted isTrusted)
 {
-    return adoptRef(*new NotificationEvent(type, { }, notification, action, isTrusted));
+    auto init = Init {
+        { false, false, false },
+        WTF::move(notification),
+        action
+    };
+    return adoptRef(*new NotificationEvent(type, WTF::move(init), isTrusted));
 }
 
-NotificationEvent::NotificationEvent(const AtomString& type, NotificationEventInit&& eventInit, Notification* notification, const String& action, IsTrusted isTrusted)
-    : ExtendableEvent(EventInterfaceType::NotificationEvent, type, WTFMove(eventInit), isTrusted)
-    , m_notification(notification)
-    , m_action(action)
+NotificationEvent::NotificationEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : ExtendableEvent(EventInterfaceType::NotificationEvent, type, WTF::move(init), isTrusted)
+    , m_notification(WTF::move(init.notification))
+    , m_action(WTF::move(init.action))
 {
 }
 

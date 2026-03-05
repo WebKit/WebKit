@@ -21,4 +21,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     TA.of.call(m, []);
   });
-});
+}, null, ["passthrough"]);

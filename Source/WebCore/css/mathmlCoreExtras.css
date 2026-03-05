@@ -25,6 +25,10 @@
 /* https://w3c.github.io/mathml-core/#user-agent-stylesheet */
 /* This file contains the styles that should be gated by the preference CoreMathMLEnabled */
 
+#if defined(ENABLE_MATHML) && ENABLE_MATHML
+
+@namespace "http://www.w3.org/1998/Math/MathML";
+
 /* <mrow>-like elements */
 semantics > :not(:first-child) {
   display: none;
@@ -33,3 +37,5 @@ semantics > :not(:first-child) {
 maction > :not(:first-child) {
   display: none;
 }
+
+#endif

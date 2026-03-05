@@ -78,7 +78,7 @@ RefPtr<CSSValue> consumePositionTryFallbacks(CSSParserTokenRange& range, CSS::Pr
         if (list.isEmpty())
             return nullptr;
 
-        return CSSValueList::createSpaceSeparated(WTFMove(list));
+        return CSSValueList::createSpaceSeparated(WTF::move(list));
     };
 
     return consumeListSeparatedBy<',', OneOrMore, ListOptimization::SingleValue>(range, consumeFallback);

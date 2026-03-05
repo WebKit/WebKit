@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if USE(GCRYPT)
+
 #include <gcrypt.h>
 
 namespace PAL {
@@ -44,3 +48,5 @@ static inline void initialize()
 
 } // namespace PAL
 } // namespace GCrypt
+
+#endif

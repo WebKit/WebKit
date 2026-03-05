@@ -36,24 +36,19 @@
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
-- (Ref<WebKit::WebBackForwardListItem>)_protectedItem
-{
-    return *_item;
-}
-
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBackForwardListItem.class, self))
         return;
 
-    self._protectedItem->~WebBackForwardListItem();
+    protect(*_item)->~WebBackForwardListItem();
 
     [super dealloc];
 }
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:self._protectedItem->url()];
+    return [NSURL _web_URLWithWTFString:protect(*_item)->url()];
 }
 
 - (NSString *)title
@@ -67,7 +62,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURL *)initialURL
 {
-    return [NSURL _web_URLWithWTFString:self._protectedItem->originalURL()];
+    return [NSURL _web_URLWithWTFString:protect(*_item)->originalURL()];
 }
 
 - (WebKit::WebBackForwardListItem&)_item
@@ -92,7 +87,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (BOOL)_wasCreatedByJSWithoutUserInteraction
 {
-    return self._protectedItem->wasCreatedByJSWithoutUserInteraction();
+    return protect(*_item)->wasCreatedByJSWithoutUserInteraction();
 }
 
 #pragma mark WKObject protocol implementation

@@ -199,6 +199,9 @@ String humanReadableStringFromCodecString(const String& codecString)
         case AV1ConfigurationLevel::Level_7_3:
             builder.append(WEB_UI_STRING_KEY("Level 7.3", "Level 7.3 (AV1 Codec Level)", "Codec Strings"));
             break;
+        case AV1ConfigurationLevel::Level_Maximum:
+            builder.append(WEB_UI_STRING_KEY("Level Maximum", "Level Maximum (AV1 Codec Level)", "Codec Strings"));
+            break;
         }
         builder.append(')');
         return builder.toString();

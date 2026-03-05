@@ -36,14 +36,14 @@ class WebXRFrame;
 class WebXRInputSource;
 
 class XRInputSourceEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRInputSourceEvent);
+    WTF_MAKE_TZONE_ALLOCATED(XRInputSourceEvent);
 public:
     struct Init : EventInit {
-        RefPtr<WebXRFrame> frame;
-        RefPtr<WebXRInputSource> inputSource;
+        Ref<WebXRFrame> frame;
+        Ref<WebXRInputSource> inputSource;
     };
 
-    static Ref<XRInputSourceEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<XRInputSourceEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRInputSourceEvent();
 
     const WebXRFrame& frame() const;
@@ -51,10 +51,10 @@ public:
     void setFrameActive(bool);
 
 private:
-    XRInputSourceEvent(const AtomString&, const Init&, IsTrusted);
+    XRInputSourceEvent(const AtomString&, Init&&, IsTrusted);
 
-    RefPtr<WebXRFrame> m_frame;
-    RefPtr<WebXRInputSource> m_inputSource;
+    const Ref<WebXRFrame> m_frame;
+    const Ref<WebXRInputSource> m_inputSource;
     std::optional<int> m_buttonIndex;
 };
 

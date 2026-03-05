@@ -26,7 +26,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "WidthIterator.h"
 #include <wtf/WeakPtr.h>
 
@@ -101,7 +101,7 @@ void SVGTextMetricsBuilder::advanceIterator(ComplexTextController& complexTextCo
     m_totalWidth = m_complexStartToCurrentMetrics.width();
 }
 
-static inline bool shouldUseComplexTextController(FontCascade::CodePath codePathToUse, const FontCascade& scaledFont)
+static inline bool NODELETE shouldUseComplexTextController(FontCascade::CodePath codePathToUse, const FontCascade& scaledFont)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     if (codePathToUse != FontCascade::CodePath::Complex && scaledFont.shouldUseComplexTextControllerForSimpleText())

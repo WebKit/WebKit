@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEPointLightElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEPointLightElement);
 
 inline SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagName, Document& document)
     : SVGFELightElement(tagName, document)

@@ -45,7 +45,7 @@ class ScriptExecutionContext;
 class QualifiedName;
 template<typename> class ExceptionOr;
 
-using TrustedTypeOrString = Variant<RefPtr<TrustedHTML>, RefPtr<TrustedScript>, RefPtr<TrustedScriptURL>, AtomString>;
+using TrustedTypeOrString = Variant<Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>, AtomString>;
 
 enum class TrustedType : int8_t {
     TrustedHTML,
@@ -68,11 +68,11 @@ WEBCORE_EXPORT ExceptionOr<String> trustedTypeCompliantString(TrustedType, Scrip
 
 WEBCORE_EXPORT ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext&, const String& urlString);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<RefPtr<TrustedHTML>, String>&&, const String& sink);
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedHTML>, String>&&, const String& sink);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<RefPtr<TrustedScript>, String>&&, const String& sink);
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedScript>, String>&&, const String& sink);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<RefPtr<TrustedScriptURL>, String>&&, const String& sink);
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedScriptURL>, String>&&, const String& sink);
 
 WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace);
 

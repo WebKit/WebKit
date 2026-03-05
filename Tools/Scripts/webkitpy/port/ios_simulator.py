@@ -22,26 +22,21 @@
 
 import logging
 
-from webkitcorepy import Version
-
-from webkitpy.common.memoized import memoized
 from webkitpy.port.config import apple_additions, Config
+from webkitpy.port.embedded_simulator import EmbeddedSimulatorPort
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
-
 _log = logging.getLogger(__name__)
 
 
-class IOSSimulatorPort(IOSPort):
+class IOSSimulatorPort(EmbeddedSimulatorPort, IOSPort):
     port_name = "ios-simulator"
 
     FUTURE_VERSION = 'future'
     ARCHITECTURES = ['x86_64', 'i386', 'arm64']
     DEFAULT_ARCHITECTURE = 'x86_64'
-
-    DEVICE_MANAGER = SimulatedDeviceManager
 
     DEFAULT_DEVICE_TYPES = [
         DeviceType(hardware_family='iPhone', hardware_type='12'),
@@ -55,56 +50,14 @@ class IOSSimulatorPort(IOSPort):
             return 'arm64'
         return result
 
-    @staticmethod
-    def _version_from_name(name):
-        if len(name.split('-')) > 2 and name.split('-')[2].isdigit():
-            return Version.from_string(name.split('-')[2])
-        return None
-
-    @memoized
-    def device_version(self):
-        if self.get_option('version'):
-            return Version.from_string(self.get_option('version'))
-        return IOSSimulatorPort._version_from_name(self._name) if IOSSimulatorPort._version_from_name(self._name) else self.host.platform.xcode_sdk_version('iphonesimulator')
-
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
         _log.debug("clean_up_test_run")
 
         SimulatedDeviceManager.tear_down(self.host)
 
-    def environment_for_api_tests(self):
-        no_prefix = super(IOSSimulatorPort, self).environment_for_api_tests()
-        result = {}
-        SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
-        for value in no_prefix:
-            if not value.startswith(SIMCTL_ENV_PREFIX):
-                result[SIMCTL_ENV_PREFIX + value] = no_prefix[value]
-            else:
-                result[value] = no_prefix[value]
-        return result
-
-    def setup_environ_for_server(self, server_name=None):
-        env = super(IOSSimulatorPort, self).setup_environ_for_server(server_name)
-        if server_name == self.driver_name():
-            if self.get_option('leaks'):
-                env['MallocStackLogging'] = '1'
-                env['__XPC_MallocStackLogging'] = '1'
-                env['MallocScribble'] = '1'
-                env['__XPC_MallocScribble'] = '1'
-        return env
-
     def operating_system(self):
         return 'ios-simulator'
-
-    def reset_preferences(self):
-        _log.debug("reset_preferences")
-        SimulatedDeviceManager.tear_down(self.host)
-
-    @property
-    @memoized
-    def developer_dir(self):
-        return self._executive.run_command(['xcode-select', '--print-path']).rstrip()
 
 
 class IPhoneSimulatorPort(IOSSimulatorPort):

@@ -10,7 +10,7 @@ info: |
   least one argument and the Type of the first argument is Object and that
   object has a [[TypedArrayName]] internal slot.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -25,4 +25,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.notSameValue(typedArray, sample);
   assert.sameValue(typedArray.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(typedArray), TA.prototype);
-});
+}, null, ["passthrough"]);

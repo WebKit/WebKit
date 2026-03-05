@@ -51,7 +51,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
     }
 
     PrimitiveNumericOrKeyword(Calc calc)
-        : m_data { WTFMove(calc) }
+        : m_data { WTF::move(calc) }
     {
     }
 
@@ -78,9 +78,9 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
     template<typename... U>
     constexpr PrimitiveNumericOrKeyword(Variant<U...>&& variant)
         : m_data {
-            WTF::switchOn(WTFMove(variant),
+            WTF::switchOn(WTF::move(variant),
                 [](NumericType&& numeric) {
-                    return Data { WTFMove(numeric.m_data) };
+                    return Data { WTF::move(numeric.m_data) };
                 },
                 [](ValidKeywordForList<Keywords> auto keyword) {
                     return Data { keyword };
@@ -98,7 +98,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
     }
 
     PrimitiveNumericOrKeyword(PrimitiveNumericOrKeyword&& other)
-        : m_data { WTFMove(other.m_data) }
+        : m_data { WTF::move(other.m_data) }
     {
     }
 
@@ -110,7 +110,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
 
     PrimitiveNumericOrKeyword& operator=(PrimitiveNumericOrKeyword&& other)
     {
-        m_data = WTFMove(other.m_data);
+        m_data = WTF::move(other.m_data);
         return *this;
     }
 
@@ -122,7 +122,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
     }
 
     PrimitiveNumericOrKeyword(NumericType&& other)
-        : m_data { WTFMove(other.m_data) }
+        : m_data { WTF::move(other.m_data) }
     {
     }
 
@@ -134,7 +134,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
 
     PrimitiveNumericOrKeyword& operator=(NumericType&& other)
     {
-        m_data = WTFMove(other);
+        m_data = WTF::move(other);
         return *this;
     }
 

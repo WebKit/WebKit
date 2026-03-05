@@ -53,6 +53,7 @@ def parse_args():
     parser_group_browser_version.add_argument('--query-browser-version', dest='query_browser_version', action='store_true', help='Try to automatically query the browser version.')
     # arguments shared with run-benchmark.
     parser.add_argument('--build-directory', dest='buildDir', help='Path to the browser executable (e.g. WebKitBuild/Release/).')
+    parser.add_argument('--build-log-url', help='Optional: A URL with the build logs of this test run to send to the dashboard.')
     parser.add_argument('--platform', dest='platform', default=None, choices=BrowserDriverFactory.available_platforms())
     parser.add_argument('--browser', dest='browser', default=None, choices=BrowserDriverFactory.available_browsers())
     parser.add_argument('--driver', default=None, choices=benchmark_runner_subclasses.keys(), help='Use the specified benchmark driver. Defaults to %s.' % WebServerBenchmarkRunner.name)
@@ -98,7 +99,8 @@ class BrowserPerfDashRunner(object):
         # - The bot_* data its obtained from the config file
         # - the browser_* data is given at startup time via command-line arguments
         # - The test_* data is generated after each test run.
-        self._result_data = {'bot_id': None,
+        self._result_data = {'build_log_url': args.build_log_url,
+                             'bot_id': None,
                              'bot_password': None,
                              'browser_id': None,
                              'browser_version': None,

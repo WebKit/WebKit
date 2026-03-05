@@ -36,7 +36,7 @@
 
 - (void)setColor:(UIColor *)color;
 - (void)setMinimumCornerRadius:(float)radius;
-- (void)setCornerRadii:(WebCore::FloatRoundedRect::Radii&&)radii;
+- (void)setCornerRadii:(WebCore::CornerRadii&&)radii;
 - (void)setFrames:(Vector<WebCore::FloatRect>&&)frames;
 - (void)setQuads:(Vector<WebCore::FloatQuad>&&)quads boundaryRect:(const WebCore::FloatRect&)rect;
 

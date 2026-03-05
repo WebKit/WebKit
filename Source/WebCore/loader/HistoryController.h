@@ -31,7 +31,7 @@
 
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/ProcessSwapDisposition.h>
+#include <WebCore/ShouldTreatAsContinuingLoad.h>
 
 namespace WebCore {
 
@@ -55,7 +55,7 @@ public:
     explicit HistoryController(LocalFrame&);
     ~HistoryController();
 
-    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     WEBCORE_EXPORT void saveScrollPositionAndViewStateToItem(HistoryItem*);
@@ -77,21 +77,18 @@ public:
     void updateForClientRedirect();
     void updateForCommit();
     void updateForSameDocumentNavigation();
-    void updateForFrameLoadCompleted();
+    void NODELETE updateForFrameLoadCompleted();
 
     HistoryItem* currentItem() const { return m_currentItem.get(); }
-    WEBCORE_EXPORT RefPtr<HistoryItem> protectedCurrentItem() const;
     WEBCORE_EXPORT void setCurrentItem(Ref<HistoryItem>&&);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
     WEBCORE_EXPORT void replaceCurrentItem(RefPtr<HistoryItem>&&);
 
     HistoryItem* previousItem() const { return m_previousItem.get(); }
-    RefPtr<HistoryItem> protectedPreviousItem() const;
     void clearPreviousItem();
 
     HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
-    RefPtr<HistoryItem> protectedProvisionalItem() const;
     void setProvisionalItem(RefPtr<HistoryItem>&&);
 
     void pushState(RefPtr<SerializedScriptValue>&&, const String& url);
@@ -108,9 +105,9 @@ public:
 private:
     friend class Page;
     bool shouldStopLoadingForHistoryItem(HistoryItem&) const;
-    void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad, ProcessSwapDisposition processSwapDisposition = ProcessSwapDisposition::None);
+    void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad);
     void goToItemForNavigationAPI(HistoryItem&, FrameLoadType, LocalFrame& triggeringFrame, NavigationAPIMethodTracker*);
-    void goToItemShared(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&, ProcessSwapDisposition processSwapDisposition = ProcessSwapDisposition::None);
+    void goToItemShared(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&, ShouldTreatAsContinuingLoad = ShouldTreatAsContinuingLoad::No);
 
     void initializeItem(HistoryItem&, RefPtr<DocumentLoader>);
     Ref<HistoryItem> createItem(HistoryItemClient&, BackForwardItemIdentifier);
@@ -119,8 +116,8 @@ private:
     enum class ForNavigationAPI : bool { No, Yes };
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*, ForNavigationAPI = ForNavigationAPI::No);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad);
-    bool isMultipartReplaceLoadTypeWithProvisionalItem(FrameLoadType);
-    bool isReloadTypeWithProvisionalItem(FrameLoadType);
+    bool NODELETE isMultipartReplaceLoadTypeWithProvisionalItem(FrameLoadType);
+    bool NODELETE isReloadTypeWithProvisionalItem(FrameLoadType);
     void recursiveUpdateForCommit();
     void recursiveUpdateForSameDocumentNavigation();
     static bool itemsAreClones(HistoryItem&, HistoryItem*);
@@ -130,7 +127,6 @@ private:
 
     struct FrameToNavigate;
     static void recursiveGatherFramesToNavigate(LocalFrame&, Vector<FrameToNavigate>&, HistoryItem& targetItem, HistoryItem* fromItem);
-    Ref<LocalFrame> protectedFrame() const;
 
     const WeakRef<LocalFrame> m_frame;
 

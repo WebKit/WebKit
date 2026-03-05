@@ -20,15 +20,18 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
+
+#include <wtf/Compiler.h>
 
 DECLARE_SYSTEM_HEADER
 
 #include <dispatch/dispatch.h>
 #include <os/object.h>
+#include <wtf/Platform.h>
 
 #if HAVE(XPC_API) || USE(APPLE_INTERNAL_SDK)
 #include <xpc/xpc.h>
@@ -69,13 +72,18 @@ enum {
 };
 typedef long xpc_activity_state_t;
 typedef const struct _xpc_type_s* xpc_type_t;
-extern "C" const xpc_object_t XPC_ACTIVITY_CHECK_IN;
-extern "C" const char * const XPC_ACTIVITY_INTERVAL;
-extern "C" const char * const XPC_ACTIVITY_GRACE_PERIOD;
-extern "C" const char * const XPC_ACTIVITY_PRIORITY;
-extern "C" const char * const XPC_ACTIVITY_PRIORITY_MAINTENANCE;
-extern "C" const char * const XPC_ACTIVITY_ALLOW_BATTERY;
-extern "C" const char * const XPC_ACTIVITY_REPEATING;
+
+WTF_EXTERN_C_BEGIN
+
+extern const xpc_object_t XPC_ACTIVITY_CHECK_IN;
+extern const char * const XPC_ACTIVITY_INTERVAL;
+extern const char * const XPC_ACTIVITY_GRACE_PERIOD;
+extern const char * const XPC_ACTIVITY_PRIORITY;
+extern const char * const XPC_ACTIVITY_PRIORITY_MAINTENANCE;
+extern const char * const XPC_ACTIVITY_ALLOW_BATTERY;
+extern const char * const XPC_ACTIVITY_REPEATING;
+
+WTF_EXTERN_C_END
 
 #if PLATFORM(IOS_FAMILY) && COMPILER_HAS_ATTRIBUTE(noescape)
 #define XPC_NOESCAPE __attribute__((__noescape__))
@@ -109,17 +117,21 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 
 extern const char * const _xpc_error_key_description;
 
-extern "C" void xpc_connection_activate(xpc_connection_t connection);
-extern "C" const void* xpc_dictionary_get_data(xpc_object_t xdict, const char* key, size_t* length);
-extern "C" xpc_object_t xpc_data_create_with_dispatch_data(dispatch_data_t ddata);
-extern "C" xpc_activity_state_t xpc_activity_get_state(xpc_activity_t activity);
-extern "C" XPC_RETURNS_RETAINED xpc_object_t xpc_activity_copy_criteria(xpc_activity_t activity);
-extern "C" void xpc_activity_set_criteria(xpc_activity_t activity, xpc_object_t criteria);
+WTF_EXTERN_C_BEGIN
+
+extern void xpc_connection_activate(xpc_connection_t connection);
+extern const void* xpc_dictionary_get_data(xpc_object_t xdict, const char* key, size_t* length);
+extern xpc_object_t xpc_data_create_with_dispatch_data(dispatch_data_t ddata);
+extern xpc_activity_state_t xpc_activity_get_state(xpc_activity_t activity);
+extern XPC_RETURNS_RETAINED xpc_object_t xpc_activity_copy_criteria(xpc_activity_t activity);
+extern void xpc_activity_set_criteria(xpc_activity_t activity, xpc_object_t criteria);
 #if COMPILER_SUPPORTS(BLOCKS)
 typedef void (^xpc_activity_handler_t)(xpc_activity_t activity);
-extern "C" void xpc_activity_register(const char *identifier, xpc_object_t criteria,
+extern void xpc_activity_register(const char *identifier, xpc_object_t criteria,
     xpc_activity_handler_t handler);
 #endif // COMPILER_SUPPORTS(BLOCKS)
+
+WTF_EXTERN_C_END
 
 #endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
@@ -128,12 +140,16 @@ extern "C" void xpc_activity_register(const char *identifier, xpc_object_t crite
 #include <xpc/private.h>
 #else // USE(APPLE_INTERNAL_SDK)
 
-extern "C" const char * const XPC_ACTIVITY_RANDOM_INITIAL_DELAY;
-extern "C" const char * const XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY;
+WTF_EXTERN_C_BEGIN
+
+extern const char * const XPC_ACTIVITY_RANDOM_INITIAL_DELAY;
+extern const char * const XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY;
 
 #if HAVE(XPC_CONNECTION_COPY_INVALIDATION_REASON)
-extern "C" char * xpc_connection_copy_invalidation_reason(xpc_connection_t connection);
+extern char * xpc_connection_copy_invalidation_reason(xpc_connection_t connection);
 #endif
+
+WTF_EXTERN_C_END
 
 #if OS_OBJECT_USE_OBJC
 OS_OBJECT_DECL(os_transaction);

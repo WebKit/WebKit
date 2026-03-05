@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
 
 IntSize ImageBufferIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
@@ -86,13 +86,13 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), creationContext.displayID, creationContext.surfacePool.get() } };
+    return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), creationContext.displayID, creationContext.surfacePool.get() } };
 }
 
 ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
     : ImageBufferCGBackend(parameters)
-    , m_surface(WTFMove(surface))
-    , m_platformContext(WTFMove(platformContext))
+    , m_surface(WTF::move(surface))
+    , m_platformContext(WTF::move(platformContext))
     , m_displayID(displayID)
     , m_ioSurfacePool(ioSurfacePool)
 {
@@ -104,7 +104,7 @@ ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
     ensureNativeImagesHaveCopiedBackingStore();
     releaseGraphicsContext();
-    IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
+    IOSurface::moveToPool(WTF::move(m_surface), m_ioSurfacePool.get());
 }
 
 
@@ -120,6 +120,16 @@ GraphicsContext& ImageBufferIOSurfaceBackend::context()
 void ImageBufferIOSurfaceBackend::flushContext()
 {
     flushContextDraws();
+}
+
+void ImageBufferIOSurfaceBackend::submitDrawingCommands()
+{
+    if (PAL::canLoad_CoreGraphics_CGIOSurfaceContextFlushQueue())
+        PAL::softLink_CoreGraphics_CGIOSurfaceContextFlushQueue(ensurePlatformContext());
+    else {
+        // Creating a snapshot image forces the rendering to commence
+        createImage();
+    }
 }
 
 bool ImageBufferIOSurfaceBackend::flushContextDraws()
@@ -185,7 +195,7 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::createNativeImageReference()
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 {
     ensurePlatformContext();
-    return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface), WTFMove(m_platformContext)));
+    return NativeImage::create(IOSurface::sinkIntoImage(WTF::move(m_surface), WTF::move(m_platformContext)));
 }
 
 void ImageBufferIOSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)

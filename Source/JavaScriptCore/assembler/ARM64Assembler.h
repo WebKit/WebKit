@@ -329,7 +329,7 @@ public:
         JumpCompareAndBranchFixedSize = JUMP_ENUM_WITH_SIZE(7, 2 * sizeof(uint32_t)),
         JumpTestBitFixedSize = JUMP_ENUM_WITH_SIZE(8, 2 * sizeof(uint32_t)),
     };
-    enum JumpLinkType {
+    enum JumpLinkType : uint8_t {
         LinkInvalid = JUMP_ENUM_WITH_SIZE(0, 0),
         LinkJumpNoCondition = JUMP_ENUM_WITH_SIZE(1, 1 * sizeof(uint32_t)),
         LinkJumpConditionDirect = JUMP_ENUM_WITH_SIZE(2, 1 * sizeof(uint32_t)),
@@ -465,9 +465,13 @@ public:
                 BranchType m_branchType : 2 { BranchType_JMP };
             } realTypes { };
             struct CopyTypes {
+#if OS(WINDOWS)
+                uint64_t content[5];
+#else
                 uint64_t content[3];
+#endif
             } copyTypes;
-            static_assert(sizeof(RealTypes) == sizeof(CopyTypes), "LinkRecord's CopyStruct size equals to RealStruct");
+            static_assert(sizeof(RealTypes) <= sizeof(CopyTypes), "LinkRecord's CopyStruct size must be <= CopyStruct");
         } data;
     };
 
@@ -2040,6 +2044,42 @@ public:
         insn(0b010'011110'0000'000'000001'00000'00000 | (immh << 19) | (immb << 16) | (vn << 5) | vd);
     }
 
+    ALWAYS_INLINE void ushr_vi(FPRegisterID vd, FPRegisterID vn, uint8_t shift, SIMDLane lane)
+    {
+        uint8_t maxShift = elementByteSize(lane) * 8;
+        ASSERT(shift <= maxShift && shift);
+        shift = maxShift - shift;
+        unsigned immh = elementByteSize(lane) | ((shift & 0b0111000) >> 3);
+        unsigned immb = shift & 0b0111;
+        ASSERT(immh);
+        ASSERT(!(immh & (~0b1111)));
+        insn(0b011'011110'0000'000'000001'00000'00000 | (immh << 19) | (immb << 16) | (vn << 5) | vd);
+    }
+
+    template<SIMDLane narrowedLane>
+    ALWAYS_INLINE void shrn(FPRegisterID vd, FPRegisterID vn, uint8_t shift)
+    {
+        static_assert(narrowedLane == SIMDLane::i8x16 || narrowedLane == SIMDLane::i16x8 || narrowedLane == SIMDLane::i32x4, "SHRN destination lane must be i8x16, i16x8, or i32x4");
+
+        // Calculate source element size in bits (2x destination)
+        constexpr uint8_t destBitSize = narrowedLane == SIMDLane::i8x16 ? 8 : (narrowedLane == SIMDLane::i16x8 ? 16 : 32);
+        constexpr uint8_t srcBitSize = destBitSize * 2;
+
+        ASSERT(shift > 0 && shift <= srcBitSize);
+
+        // immh:immb = (source_element_bits) - shift
+        unsigned immhb = srcBitSize - shift;
+        unsigned immh = immhb >> 3;
+        unsigned immb = immhb & 0b111;
+
+        insn(0b000'011110'0000'000'100001'00000'00000 | (immh << 19) | (immb << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void cmtst(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110'00'1'00000'10001'1'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
     ALWAYS_INLINE void sqadd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
     {
         insn(0b01001110001000000000110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
@@ -2256,11 +2296,142 @@ public:
         orr<datasize>(rd, ARM64Registers::zr, imm);
     }
 
-    template<int datasize>
+    // movi - SIMD modified immediate move
+    // Template parameters:
+    //   datasize: 64 or 128 (register size: D register or Q register)
+    //   lanewidth: 8, 16, 32, or 64 (lane element size in bits)
+    //
+    // Lane configurations:
+    //   <64, 8>:  Vd.8B  - 8 bytes, scalar replication
+    //   <128, 8>: Vd.16B - 16 bytes, scalar replication
+    //   <64, 16>: Vd.4H  - 4 halfwords with LSL shift
+    //   <128, 16>: Vd.8H - 8 halfwords with LSL shift
+    //   <64, 32>: Vd.2S  - 2 words with LSL shift
+    //   <128, 32>: Vd.4S - 4 words with LSL shift
+    //   <64, 64>: Dd     - 1 doubleword with byte-mask
+    //   <128, 64>: Vd.2D - 2 doublewords with byte-mask
+
+    // movi with scalar replication (Vd.8B/16B) - lane width 8
+    // Example: movi<64, 8>(v0, 0x42) → v0.8B = [0x42, 0x42, ...]
+    template<int datasize, int lanewidth>
     ALWAYS_INLINE void movi(FPRegisterID rd, uint8_t imm)
     {
         CHECK_DATASIZE_SIMD();
-        insn(simdMoveImmediate(datasize == 128, true, 0b1110, imm, rd));
+        static_assert(lanewidth == 8 || lanewidth == 64, "movi without shift requires lanewidth 8 or 64");
+
+        if constexpr (lanewidth == 8) {
+            // Vd.8B/16B - scalar replication, cmode=0b1110, op=0, op2=0
+            insn(simdMoveImmediate(datasize == 128, false, 0b1110, false, imm, rd));
+        } else if constexpr (lanewidth == 64) {
+            // Dd/Vd.2D - byte-mask, cmode=0b1110, op=1, op2=0
+            insn(simdMoveImmediate(datasize == 128, true, 0b1110, false, imm, rd));
+        }
+    }
+
+    // ShiftMode enum for movi/mvni instructions
+    enum class ShiftMode { LSL, MSL };
+
+    // movi with shifted immediate (Vd.4H/8H or Vd.2S/4S) - lane width 16 or 32
+    // Template parameter 'mode' defaults to LSL, can be explicitly set to MSL
+    // Example: movi<64, 32>(v0, 0x80, 24) → v0.2S = [0x80000000, 0x80000000] (LSL)
+    // Example: movi<64, 32, ShiftMode::MSL>(v0, 0x42, 16) → v0.2S = [0x0042FFFF, 0x0042FFFF] (MSL)
+    template<int datasize, int lanewidth, ShiftMode mode = ShiftMode::LSL>
+    ALWAYS_INLINE void movi(FPRegisterID rd, uint8_t imm, uint8_t shift)
+    {
+        CHECK_DATASIZE_SIMD();
+        static_assert(lanewidth == 16 || lanewidth == 32, "movi with shift requires lanewidth 16 or 32");
+        static_assert(mode == ShiftMode::LSL || lanewidth == 32, "movi with MSL requires lanewidth 32");
+
+        if constexpr (mode == ShiftMode::MSL) {
+            // MSL mode - only valid for 32-bit lanes
+            ASSERT(shift == 8 || shift == 16);
+            ASSERT(lanewidth == 32);
+            uint8_t cmode = 0b1100 | ((shift >> 4) & 1); // 8→0b1100, 16→0b1101
+            insn(simdMoveImmediate(datasize == 128, false, cmode, false, imm, rd));
+        } else if constexpr (lanewidth == 16) {
+            // Vd.4H/8H - 16-bit lanes with LSL
+            ASSERT(shift == 0 || shift == 8);
+            uint8_t cmode = 0b1000 | (shift >> 2); // 0→0b1000, 8→0b1010
+            insn(simdMoveImmediate(datasize == 128, false, cmode, false, imm, rd));
+        } else if constexpr (lanewidth == 32) {
+            // Vd.2S/4S - 32-bit lanes with LSL
+            ASSERT(shift == 0 || shift == 8 || shift == 16 || shift == 24);
+            uint8_t cmode = (shift >> 2); // 0→0b0000, 8→0b0010, 16→0b0100, 24→0b0110
+            insn(simdMoveImmediate(datasize == 128, false, cmode, false, imm, rd));
+        }
+    }
+
+    // mvni - SIMD modified immediate move with NOT
+    // Only supports lane widths 16 and 32 (no byte-mask variant exists for mvni)
+
+    // mvni with shifted immediate (Vd.4H/8H or Vd.2S/4S)
+    // Template parameter 'mode' defaults to LSL, can be explicitly set to MSL
+    // Example: mvni<64, 32>(v0, 0x80, 24) → v0.2S = [0x7FFFFFFF, 0x7FFFFFFF] (LSL)
+    // Example: mvni<64, 32, ShiftMode::MSL>(v0, 0x42, 16) → v0.2S = [0xFFBD0000, 0xFFBD0000] (MSL)
+    template<int datasize, int lanewidth, ShiftMode mode = ShiftMode::LSL>
+    ALWAYS_INLINE void mvni(FPRegisterID rd, uint8_t imm, uint8_t shift)
+    {
+        CHECK_DATASIZE_SIMD();
+        static_assert(lanewidth == 16 || lanewidth == 32, "mvni with shift requires lanewidth 16 or 32");
+        static_assert(mode == ShiftMode::LSL || lanewidth == 32, "mvni with MSL requires lanewidth 32");
+
+        if constexpr (mode == ShiftMode::MSL) {
+            // MSL mode - only valid for 32-bit lanes
+            ASSERT(shift == 8 || shift == 16);
+            ASSERT(lanewidth == 32);
+            uint8_t cmode = 0b1100 | ((shift >> 4) & 1); // 8→0b1100, 16→0b1101
+            insn(simdMoveImmediate(datasize == 128, true, cmode, false, imm, rd));
+        } else if constexpr (lanewidth == 16) {
+            // Vd.4H/8H - 16-bit lanes with LSL
+            ASSERT(shift == 0 || shift == 8);
+            uint8_t cmode = 0b1000 | (shift >> 2); // 0→0b1000, 8→0b1010
+            insn(simdMoveImmediate(datasize == 128, true, cmode, false, imm, rd));
+        } else if constexpr (lanewidth == 32) {
+            // Vd.2S/4S - 32-bit lanes with LSL
+            ASSERT(shift == 0 || shift == 8 || shift == 16 || shift == 24);
+            uint8_t cmode = (shift >> 2); // 0→0b0000, 8→0b0010, 16→0b0100, 24→0b0110
+            insn(simdMoveImmediate(datasize == 128, true, cmode, false, imm, rd));
+        }
+    }
+
+    // fmov_v - Vector FMOV with floating-point immediate (vector)
+    // Template parameters:
+    //   datasize: 64 or 128 (register size: D register or Q register)
+    //   lanewidth: 16, 32, or 64 (lane element size in bits)
+    //
+    // Lane configurations:
+    //   <64, 16>: Vd.4H  - 4 half-precision lanes
+    //   <128, 16>: Vd.8H - 8 half-precision lanes
+    //   <64, 32>: Vd.2S  - 2 single-precision lanes
+    //   <128, 32>: Vd.4S - 4 single-precision lanes
+    //   <128, 64>: Vd.2D - 2 double-precision lanes (64-bit datasize not valid)
+    //
+    // Example: fmov_v<128, 32>(v0, encodeValue) → FMOV v0.4S, #imm
+    template<int datasize, int lanewidth>
+    ALWAYS_INLINE void fmov_v(FPRegisterID rd, uint64_t value)
+    {
+        CHECK_DATASIZE_SIMD();
+        static_assert(lanewidth == 16 || lanewidth == 32 || lanewidth == 64,
+                      "fmov_v requires lanewidth 16, 32, or 64");
+        ASSERT((lanewidth != 64 || datasize == 128) && "64-bit lanes require 128-bit datasize");
+
+        // FMOV (vector, immediate) encoding:
+        //   16-bit: cmode=0b1111, op=0 op2=1 (Vd.4H or Vd.8H)
+        //   32-bit: cmode=0b1111, op=0 op2=0 (Vd.2S or Vd.4S)
+        //   64-bit: cmode=0b1111, op=1 op2=0 (Vd.2D)
+        if constexpr (lanewidth == 64) {
+            // FMOV Vd.2D, #imm → cmode=1111, op=1, op2=0
+            int imm8 = encodeFPImm<64>(value);
+            insn(simdMoveImmediate(true, true, 0b1111, false, imm8, rd));
+        } else if constexpr (lanewidth == 32) {
+            // FMOV Vd.2S or Vd.4S, #imm → cmode=1111, op=0, op2=0
+            int imm8 = encodeFPImm<32>(value);
+            insn(simdMoveImmediate(datasize == 128, false, 0b1111, false, imm8, rd));
+        } else if constexpr (lanewidth == 16) {
+            // FMOV Vd.4H or Vd.8H, #imm → cmode=1111, op=0, op2=1
+            int imm8 = encodeFPImm<16>(value);
+            insn(simdMoveImmediate(datasize == 128, false, 0b1111, true, imm8, rd));
+        }
     }
 
     template<int datasize>
@@ -3780,6 +3951,8 @@ public:
             linuxPageFlush(current, current + page);
 
         linuxPageFlush(current, end);
+#elif OS(WINDOWS)
+        FlushInstructionCache(GetCurrentProcess(), code, size);
 #else
 #error "The cacheFlush support is missing on this platform."
 #endif
@@ -4700,9 +4873,9 @@ protected:
         return insn;
     }
 
-    ALWAYS_INLINE static int simdMoveImmediate(bool Q, bool op, uint8_t cmode, uint8_t imm, FPRegisterID rd)
+    ALWAYS_INLINE static int simdMoveImmediate(bool Q, bool op, uint8_t cmode, bool op2, uint8_t imm, FPRegisterID rd)
     {
-        return 0b0'0'0'0111100000'000'0000'01'00000'00000 | (Q << 30) | (op << 29) | (static_cast<unsigned>(imm >> 5) << 16) | (static_cast<unsigned>(cmode) << 12) | (static_cast<unsigned>(imm & 0b11111) << 5) | rd;
+        return 0b0'0'0'0111100000'000'0000'01'00000'00000 | (Q << 30) | (op << 29) | (static_cast<unsigned>(imm >> 5) << 16) | (static_cast<unsigned>(cmode) << 12) | (op2 << 11) | (static_cast<unsigned>(imm & 0b11111) << 5) | rd;
     }
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow> m_jumpsToLink;

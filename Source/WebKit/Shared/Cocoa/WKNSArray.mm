@@ -38,7 +38,7 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNSArray.class, self))
         return;
 
-    _array->~Array();
+    SUPPRESS_UNCOUNTED_ARG _array->~Array();
 
     [super dealloc];
 }
@@ -52,13 +52,8 @@
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    RefPtr object = self._protectedArray->at(i);
+    RefPtr object = protect(*_array)->at(i);
     return object ? (id)object->wrapper() : [NSNull null];
-}
-
-- (RefPtr<API::Array>)_protectedArray
-{
-    return _array.get();
 }
 
 #pragma mark NSCopying protocol implementation

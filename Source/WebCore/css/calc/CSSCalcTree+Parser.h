@@ -67,7 +67,7 @@ struct ParserOptions {
 std::optional<Tree> parseAndSimplify(CSSParserTokenRange&, CSS::PropertyParserState&, const ParserOptions&, const SimplificationOptions&);
 
 // Returns whether the provided `CSSValueID` is one of the functions that should be parsed as a `calc()`.
-bool isCalcFunction(CSSValueID function);
+bool NODELETE isCalcFunction(CSSValueID function);
 
 } // namespace CSSCalc
 } // namespace WebCore

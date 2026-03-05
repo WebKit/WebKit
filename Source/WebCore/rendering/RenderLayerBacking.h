@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/BoxSides.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/GraphicsLayerClient.h>
@@ -48,6 +49,7 @@ class TiledBacking;
 class TransformationMatrix;
 
 #if ENABLE(THREADED_ANIMATIONS)
+class AcceleratedEffectStack;
 class AcceleratedTimeline;
 #endif
 
@@ -81,8 +83,8 @@ public:
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
     // Included layers are non-z-order descendant layers that are painted into this backing.
-    const SingleThreadWeakListHashSet<RenderLayer>& backingSharingLayers() const { return m_backingSharingLayers; }
-    void setBackingSharingLayers(SingleThreadWeakListHashSet<RenderLayer>&&);
+    const InlineWeakKeyListHashSet<RenderLayer>& backingSharingLayers() const { return m_backingSharingLayers; }
+    void setBackingSharingLayers(InlineWeakKeyListHashSet<RenderLayer>&&);
 
     bool hasBackingSharingLayers() const { return !m_backingSharingLayers.isEmptyIgnoringNullReferences(); }
 
@@ -129,7 +131,7 @@ public:
     bool needsRepaintOnCompositedScroll() const;
 
     bool requiresBackgroundLayer() const { return m_requiresBackgroundLayer; }
-    void setRequiresBackgroundLayer(bool);
+    void NODELETE setRequiresBackgroundLayer(bool);
 
     bool hasScrollingLayer() const { return m_scrollContainerLayer != nullptr; }
     GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
@@ -162,7 +164,7 @@ public:
 
     bool hasMaskLayer() const { return m_maskLayer; }
 
-    WEBCORE_EXPORT GraphicsLayer* parentForSublayers() const;
+    WEBCORE_EXPORT GraphicsLayer* NODELETE parentForSublayers() const;
     GraphicsLayer* childForSuperlayers() const;
     GraphicsLayer* childForSuperlayersExcludingViewTransitions() const;
 
@@ -196,12 +198,13 @@ public:
     void resumeAnimations();
 
 #if ENABLE(THREADED_ANIMATIONS)
+    const AcceleratedEffectStack* acceleratedEffectStack() const;
     void updateAcceleratedEffectsAndBaseValues(HashSet<Ref<AcceleratedTimeline>>&);
 #endif
 
-    WEBCORE_EXPORT LayoutRect compositedBounds() const;
+    WEBCORE_EXPORT LayoutRect NODELETE compositedBounds() const;
     // Returns true if changed.
-    bool setCompositedBounds(const LayoutRect&);
+    bool NODELETE setCompositedBounds(const LayoutRect&);
     // Returns true if changed.
     bool updateCompositedBounds();
     
@@ -212,7 +215,7 @@ public:
     void updateEventRegion();
     
     bool needsEventRegionUpdate() const { return m_needsEventRegionUpdate; }
-    void setNeedsEventRegionUpdate(bool needsUpdate = true);
+    void NODELETE setNeedsEventRegionUpdate(bool needsUpdate = true);
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -230,7 +233,7 @@ public:
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;
     void adjustTiledBackingCoverage();
-    void setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom);
+    void setTiledBackingHasMargins(BoxSideSet);
     
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
 
@@ -342,6 +345,7 @@ private:
     bool updateAncestorClipping(bool needsAncestorClip, const RenderLayer* compositingAncestor);
     bool updateDescendantClippingLayer(bool needsDescendantClip);
     bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
+    void clearOverflowControlsLayers();
     bool updateForegroundLayer(bool needsForegroundLayer);
     bool updateBackgroundLayer(bool needsBackgroundLayer);
     bool updateMaskingLayer(bool hasMask, bool hasClipPath);
@@ -362,7 +366,7 @@ private:
 
     void setBackgroundLayerPaintsFixedRootBackground(bool);
 
-    LayoutSize contentOffsetInCompositingLayer() const;
+    LayoutSize NODELETE contentOffsetInCompositingLayer() const;
     LayoutSize offsetRelativeToRendererOriginForDescendantLayers() const;
     
     void ensureClippingStackLayers(LayerAncestorClippingStack&);
@@ -432,8 +436,8 @@ private:
     
     void paintDebugOverlays(const GraphicsLayer*, GraphicsContext&);
 
-    static CSSPropertyID graphicsLayerToCSSProperty(AnimatedProperty);
-    static AnimatedProperty cssToGraphicsLayerProperty(CSSPropertyID);
+    static CSSPropertyID NODELETE graphicsLayerToCSSProperty(AnimatedProperty);
+    static AnimatedProperty NODELETE cssToGraphicsLayerProperty(CSSPropertyID);
 
     bool canIssueSetNeedsDisplay() const { return !paintsIntoWindow() && !paintsIntoCompositedAncestor(); }
     LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;
@@ -446,7 +450,7 @@ private:
     RenderLayer& m_owningLayer;
     
     // A list other layers that paint into this backing store, later than m_owningLayer in paint order.
-    SingleThreadWeakListHashSet<RenderLayer> m_backingSharingLayers;
+    InlineWeakKeyListHashSet<RenderLayer> m_backingSharingLayers;
 
     std::unique_ptr<LayerAncestorClippingStack> m_ancestorClippingStack; // Only used if we are clipped by an ancestor which is not a stacking context.
     std::unique_ptr<LayerAncestorClippingStack> m_overflowControlsHostLayerAncestorClippingStack; // Used when we have an overflow controls host layer which was reparented, and needs clipping by ancestors.

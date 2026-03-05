@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L.
+ * Copyright (C) 2024, 2025 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,11 @@
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "BitmapTexture.h"
+#include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayerBufferRGB.h"
 #include "NativeImage.h"
 #include "TextureMapper.h"
+#include <wtf/MainThread.h>
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -54,12 +55,12 @@ std::unique_ptr<CoordinatedPlatformLayerBufferNativeImage> CoordinatedPlatformLa
     OptionSet<TextureMapperFlags> flags;
     if (nativeImage->hasAlpha())
         flags.add(TextureMapperFlags::ShouldBlend);
-    return makeUnique<CoordinatedPlatformLayerBufferNativeImage>(WTFMove(nativeImage), flags, WTFMove(fence));
+    return makeUnique<CoordinatedPlatformLayerBufferNativeImage>(WTF::move(nativeImage), flags, WTF::move(fence));
 }
 
 CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeImage(Ref<NativeImage>&& nativeImage, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
-    : CoordinatedPlatformLayerBuffer(Type::NativeImage, nativeImage->size(), flags, WTFMove(fence))
-    , m_image(WTFMove(nativeImage))
+    : CoordinatedPlatformLayerBuffer(Type::NativeImage, nativeImage->size(), flags, WTF::move(fence))
+    , m_image(WTF::move(nativeImage))
 {
 #if USE(SKIA)
     const auto& image = m_image->platformImage();
@@ -70,7 +71,7 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
     if (!display.skiaGLContext()->makeContextCurrent())
         return;
 
-    auto* grContext = display.skiaGrContext();
+    auto* grContext = m_image->grContext();
     RELEASE_ASSERT(grContext);
     grContext->flushAndSubmit(GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
 
@@ -88,9 +89,21 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
 #endif
 }
 
-CoordinatedPlatformLayerBufferNativeImage::~CoordinatedPlatformLayerBufferNativeImage() = default;
+CoordinatedPlatformLayerBufferNativeImage::~CoordinatedPlatformLayerBufferNativeImage()
+{
+#if USE(SKIA)
+    // GPU-backed NativeImages must be destroyed on the main thread where the
+    // Skia GrDirectContext was created, not on the compositor thread. Releasing
+    // GPU resources on the wrong thread corrupts Skia's GrResourceCache.
+    if (m_image && m_image->platformImage() && m_image->platformImage()->isTextureBacked()) {
+        callOnMainThread([image = WTF::move(m_image)]() mutable {
+            image = nullptr;
+        });
+    }
+#endif
+}
 
-bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(TextureMapper& textureMapper)
+bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer()
 {
     if (m_buffer)
         return true;
@@ -103,7 +116,7 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(TextureMapper& t
     OptionSet<BitmapTexture::Flags> textureFlags;
     if (m_image->hasAlpha())
         textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-    auto texture = textureMapper.acquireTextureFromPool(m_size, textureFlags);
+    auto texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
 
 #if USE(CAIRO)
     auto* surface = m_image->platformImage().get();
@@ -116,7 +129,7 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(TextureMapper& t
         texture->updateContents(pixmap.addr(), IntRect(IntPoint(), m_size), IntPoint(), image->imageInfo().minRowBytes(), PixelFormat::BGRA8);
 #endif
 
-    m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTFMove(texture), m_flags, nullptr);
+    m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
     return true;
 }
 
@@ -124,7 +137,7 @@ void CoordinatedPlatformLayerBufferNativeImage::paintToTextureMapper(TextureMapp
 {
     waitForContentsIfNeeded();
 
-    if (!tryEnsureBuffer(textureMapper))
+    if (!tryEnsureBuffer())
         return;
 
     m_buffer->paintToTextureMapper(textureMapper, targetRect, modelViewMatrix, opacity);

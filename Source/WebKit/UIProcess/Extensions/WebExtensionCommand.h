@@ -82,14 +82,14 @@ public:
 
     WebExtensionCommandParameters parameters() const;
 
-    WebExtensionContext* extensionContext() const;
+    WebExtensionContext* NODELETE extensionContext() const;
 
     bool isActionCommand() const;
 
-    const String& identifier() const { return m_identifier; }
-    const String& description() const { return m_description; }
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const String& description() const LIFETIME_BOUND { return m_description; }
 
-    const String& activationKey() const { return m_modifierFlags ? m_activationKey : nullString(); }
+    const String& activationKey() const LIFETIME_BOUND { return m_modifierFlags ? m_activationKey : nullString(); }
     bool setActivationKey(String, SuppressEvents = SuppressEvents::No);
 
     OptionSet<ModifierFlags> modifierFlags() const { return !m_activationKey.isEmpty() ? m_modifierFlags : OptionSet<ModifierFlags> { }; }

@@ -44,8 +44,6 @@ template<> struct WrapperTraits<WebExtensionMatchPattern> {
 
 @property (nonatomic, readonly) WebKit::WebExtensionMatchPattern& _webExtensionMatchPattern;
 
-- (Ref<WebKit::WebExtensionMatchPattern>)_protectedWebExtensionMatchPattern;
-
 @end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -1,0 +1,4 @@
+Test that a user gesture is forwarded through fetch() promise chains, allowing popups to open when the async operation completes.
+
+Click Here
+PASSED: popup allowed

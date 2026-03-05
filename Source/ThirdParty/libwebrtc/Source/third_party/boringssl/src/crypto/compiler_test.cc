@@ -109,7 +109,7 @@ TEST(CompilerTest, IntegerRepresentation) {
 
   // Require that |int| be exactly 32 bits. OpenSSL historically mixed up
   // |unsigned| and |uint32_t|, so we require it be at least 32 bits. Requiring
-  // at most 32-bits is a bit more subtle. C promotes arithemetic operands to
+  // at most 32-bits is a bit more subtle. C promotes arithmetic operands to
   // |int| when they fit. But this means, if |int| is 2N bits wide, multiplying
   // two maximum-sized |uintN_t|s is undefined by integer overflow!
   //
@@ -220,7 +220,7 @@ TEST(CompilerTest, PointerRepresentation) {
 
 static uintptr_t aba(uintptr_t *a, void **b) {
   *a = (uintptr_t)1;
-  *b = NULL;
+  *b = nullptr;
   return *a;  // 0 if a == b, 1 if a and b are disjoint
 }
 

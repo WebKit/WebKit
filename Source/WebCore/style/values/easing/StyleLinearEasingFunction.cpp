@@ -153,7 +153,7 @@ template<typename Resolver> static Ref<TimingFunction> createTimingFunctionWithR
     ASSERT(resolvedPoints.size() == points.size());
 
     // 6. Return function.
-    return LinearTimingFunction::create(WTFMove(resolvedPoints));
+    return LinearTimingFunction::create(WTF::move(resolvedPoints));
 }
 
 Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::LinearEasingFunction& function)

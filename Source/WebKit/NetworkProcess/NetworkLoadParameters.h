@@ -57,7 +57,7 @@ struct NetworkLoadParameters {
     bool needsCertificateInfo { false };
     bool isMainFrameNavigation { false };
     std::optional<NavigationActionData> mainResourceNavigationDataForAnyFrame;
-    Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
+    Vector<Ref<WebCore::BlobDataFileReference>> blobFileReferences;
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
     std::optional<NetworkActivityTracker> networkActivityTracker;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
@@ -66,7 +66,6 @@ struct NetworkLoadParameters {
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     bool isInitiatedByDedicatedWorker { false };
 
-    RefPtr<WebCore::SecurityOrigin> protectedSourceOrigin() const { return sourceOrigin; }
     uint64_t requiredCookiesVersion { 0 };
 };
 

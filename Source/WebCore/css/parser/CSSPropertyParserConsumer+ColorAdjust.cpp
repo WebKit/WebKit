@@ -131,7 +131,7 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range, CSS::PropertyPar
     auto colorScheme = consumeUnresolvedColorScheme(range, state);
     if (!colorScheme)
         return { };
-    return CSSColorSchemeValue::create(WTFMove(*colorScheme));
+    return CSSColorSchemeValue::create(WTF::move(*colorScheme));
 }
 
 #endif // ENABLE(DARK_MODE_CSS)

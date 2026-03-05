@@ -28,25 +28,20 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ClipboardEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipboardEvent);
 
 ClipboardEvent::ClipboardEvent(const AtomString& type, Ref<DataTransfer>&& dataTransfer)
     : Event(EventInterfaceType::ClipboardEvent, type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes)
-    , m_clipboardData(WTFMove(dataTransfer))
+    , m_clipboardData(WTF::move(dataTransfer))
 {
 }
 
-ClipboardEvent::ClipboardEvent(const AtomString& type, const Init& init)
-    : Event(EventInterfaceType::ClipboardEvent, type, init, IsTrusted::No)
-    , m_clipboardData(init.clipboardData)
+ClipboardEvent::ClipboardEvent(const AtomString& type, Init&& init)
+    : Event(EventInterfaceType::ClipboardEvent, type, WTF::move(init), IsTrusted::No)
+    , m_clipboardData(WTF::move(init.clipboardData))
 {
 }
 
 ClipboardEvent::~ClipboardEvent() = default;
-
-bool ClipboardEvent::isClipboardEvent() const
-{
-    return true;
-}
 
 } // namespace WebCore

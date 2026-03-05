@@ -62,9 +62,9 @@ public:
         return matchesScheme(test) && matchesHost(test) && matchesPath(test);
     }
 
-    const String& scheme() const { return m_scheme; }
-    const String& host() const { return m_host; }
-    const String& path() const { return m_path; }
+    const String& scheme() const LIFETIME_BOUND { return m_scheme; }
+    const String& host() const LIFETIME_BOUND { return m_host; }
+    const String& path() const LIFETIME_BOUND { return m_path; }
 
     bool matchAllHosts() const { return m_matchSubdomains && m_host.isEmpty(); }
     bool matchSubdomains() const { return m_matchSubdomains; }

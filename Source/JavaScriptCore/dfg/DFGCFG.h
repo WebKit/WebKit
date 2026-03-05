@@ -100,7 +100,7 @@ template<typename> struct CFGSelection;
 
 template<>
 struct CFGSelection<CPSCFG> {
-    static CPSCFG& select(Graph& graph)
+    static CPSCFG& select(Graph& graph LIFETIME_BOUND)
     {
         return graph.ensureCPSCFG();
     }
@@ -108,7 +108,7 @@ struct CFGSelection<CPSCFG> {
 
 template<>
 struct CFGSelection<SSACFG> {
-    static SSACFG& select(Graph& graph)
+    static SSACFG& select(Graph& graph LIFETIME_BOUND)
     {
         RELEASE_ASSERT(graph.m_ssaCFG);
         return *graph.m_ssaCFG;
@@ -116,7 +116,7 @@ struct CFGSelection<SSACFG> {
 };
 
 template<typename T>
-auto& selectCFG(Graph& graph)
+auto& selectCFG(Graph& graph LIFETIME_BOUND)
 {
     return CFGSelection<T>::select(graph);
 }

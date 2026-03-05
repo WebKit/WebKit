@@ -57,4 +57,4 @@ testWithTypedArrayConstructors(function(TA) {
   } catch (_) {}
 
   assert.sameValue(array.byteLength, expected, "following shrink (out of bounds)");
-});
+}, null, ["passthrough"]);

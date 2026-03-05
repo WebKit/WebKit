@@ -57,7 +57,7 @@ private:
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     RemoteAudioHardwareListenerIdentifier m_identifier;
-    Ref<WebCore::AudioHardwareListener> m_listener;
+    const Ref<WebCore::AudioHardwareListener> m_listener;
 };
 
 }

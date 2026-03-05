@@ -41,7 +41,7 @@ public:
     template<typename... Arguments>
     SVGValuePropertyAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, Arguments&&... arguments)
         : Base(attributeName, std::forward<Arguments>(arguments)...)
-        , m_property(unsafeRefDowncast<PropertyType>(WTFMove(property)))
+        , m_property(unsafeRefDowncast<PropertyType>(WTF::move(property)))
     {
     }
 

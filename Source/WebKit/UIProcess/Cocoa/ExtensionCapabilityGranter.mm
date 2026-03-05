@@ -74,9 +74,9 @@ struct CapabilityGrantForAuxiliaryProcess {
     CapabilityGrantForAuxiliaryProcess isolatedCopy() &&
     {
         return {
-            crossThreadCopy(WTFMove(auxiliaryProcess)),
-            crossThreadCopy(WTFMove(extensionProcess)),
-            crossThreadCopy(WTFMove(grant))
+            crossThreadCopy(WTF::move(auxiliaryProcess)),
+            crossThreadCopy(WTF::move(extensionProcess)),
+            crossThreadCopy(WTF::move(grant))
         };
     }
 };
@@ -98,10 +98,10 @@ static Ref<ExtensionCapabilityGrantsPromise> grantCapabilityInternal(const Exten
     });
 
 #if USE(EXTENSIONKIT)
-    return invokeAsync(granterQueue(), [capability = capability.platformCapability(), capabilityGrants = crossThreadCopy(WTFMove(capabilityGrants))] mutable {
+    return invokeAsync(protect(granterQueue()), [capability = capability.platformCapability(), capabilityGrants = crossThreadCopy(WTF::move(capabilityGrants))] mutable {
         for (auto& capabilityGrant : capabilityGrants)
             capabilityGrant.grant.setPlatformGrant(grantCapability(capability, capabilityGrant.extensionProcess));
-        return ExtensionCapabilityGrantsPromise::createAndResolve(WTFMove(capabilityGrants));
+        return ExtensionCapabilityGrantsPromise::createAndResolve(WTF::move(capabilityGrants));
     });
 #else
     UNUSED_PARAM(capability);
@@ -114,7 +114,7 @@ static bool prepareGrant(const String& environmentIdentifier, AuxiliaryProcessPr
     ExtensionCapabilityGrant grant { environmentIdentifier };
     auto& existingGrants = auxiliaryProcess.extensionCapabilityGrants();
 
-    auto result = existingGrants.add(environmentIdentifier, WTFMove(grant));
+    auto result = existingGrants.add(environmentIdentifier, WTF::move(grant));
     if (result.isNewEntry)
         return true;
 
@@ -122,7 +122,7 @@ static bool prepareGrant(const String& environmentIdentifier, AuxiliaryProcessPr
     if (existingGrant.isEmpty() || existingGrant.isValid())
         return false;
 
-    existingGrants.set(environmentIdentifier, WTFMove(grant));
+    existingGrants.set(environmentIdentifier, WTF::move(grant));
     return true;
 }
 
@@ -133,9 +133,9 @@ static Vector<Ref<AuxiliaryProcessProxy>> auxiliaryProcessesForPage(WebPageProxy
     // FIXME: If we've made it this far we assume at least one process is playing media, but we
     // don't have the metadata to know that the main frame process is *not* one of those processes.
     // We should fix that, perhaps by storing mediaState on a per-frame basis.
-    auxiliaryProcesses.append(page.legacyMainFrameProcess());
+    auxiliaryProcesses.append(protect(page.legacyMainFrameProcess()));
 
-    page.protectedBrowsingContextGroup()->forEachRemotePage(page, [&](auto& remotePage) {
+    protect(page.browsingContextGroup())->forEachRemotePage(page, [&](auto& remotePage) {
         if (WebCore::MediaProducer::needsMediaCapability(remotePage.mediaState()))
             auxiliaryProcesses.append(remotePage.process());
     });
@@ -154,7 +154,7 @@ static Vector<Ref<AuxiliaryProcessProxy>> processesNeedingGrant(const String& en
 
     for (auto& auxiliaryProcess : auxiliaryProcessesForPage(page)) {
         if (prepareGrant(environmentIdentifier, auxiliaryProcess.get()))
-            processesNeedingGrant.append(WTFMove(auxiliaryProcess));
+            processesNeedingGrant.append(WTF::move(auxiliaryProcess));
     }
 
     return processesNeedingGrant;
@@ -175,9 +175,9 @@ static bool finalizeGrant(const String& environmentIdentifier, AuxiliaryProcessP
         ASSERT(!existingGrant.isValid());
         if (existingGrant.isValid()) {
             GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "grant not expected to be valid");
-            ExtensionCapabilityGranter::invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTFMove(existingGrant)));
+            ExtensionCapabilityGranter::invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTF::move(existingGrant)));
         }
-        existingGrant = WTFMove(grant);
+        existingGrant = WTF::move(grant);
         return true;
     }
 
@@ -205,22 +205,22 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability, We
     if (processes.isEmpty())
         return;
 
-    grantCapabilityInternal(capability, processes)->whenSettled(RunLoop::mainSingleton(), [environmentIdentifier, processes = WTFMove(processes)](auto&& result) {
+    grantCapabilityInternal(capability, processes)->whenSettled(RunLoop::mainSingleton(), [environmentIdentifier, processes = WTF::move(processes)](auto&& result) {
         if (!result)
             return;
 
         Vector<ExtensionCapabilityGrant> grantsToInvalidate;
 
         for (auto& capabilityGrant : *result) {
-            if (finalizeGrant(environmentIdentifier, capabilityGrant.auxiliaryProcess.get(), WTFMove(capabilityGrant.grant)))
+            if (finalizeGrant(environmentIdentifier, capabilityGrant.auxiliaryProcess.get(), WTF::move(capabilityGrant.grant)))
                 GRANTER_RELEASE_LOG(environmentIdentifier, "granted for auxiliary process %d", capabilityGrant.auxiliaryProcess->processID());
             else {
                 GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "failed to grant for auxiliary process %d", capabilityGrant.auxiliaryProcess->processID());
-                grantsToInvalidate.append(WTFMove(capabilityGrant.grant));
+                grantsToInvalidate.append(WTF::move(capabilityGrant.grant));
             }
         }
 
-        invalidateGrants(WTFMove(grantsToInvalidate));
+        invalidateGrants(WTF::move(grantsToInvalidate));
     });
 }
 
@@ -231,7 +231,7 @@ void ExtensionCapabilityGranter::revoke(const ExtensionCapability& capability, W
 
     grants.append(page.legacyMainFrameProcess().extensionCapabilityGrants().take(environmentIdentifier));
 
-    page.protectedBrowsingContextGroup()->forEachRemotePage(page, [&](auto& remotePage) {
+    protect(page.browsingContextGroup())->forEachRemotePage(page, [&](auto& remotePage) {
         grants.append(remotePage.process().extensionCapabilityGrants().take(environmentIdentifier));
     });
 
@@ -240,7 +240,7 @@ void ExtensionCapabilityGranter::revoke(const ExtensionCapability& capability, W
             grants.append(gpuProcess->extensionCapabilityGrants().take(environmentIdentifier));
     }
 
-    invalidateGrants(WTFMove(grants));
+    invalidateGrants(WTF::move(grants));
 }
 
 using ExtensionCapabilityActivationPromise = NativePromise<void, ExtensionCapabilityGrantError>;
@@ -264,7 +264,7 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
 
     GRANTER_RELEASE_LOG(capability.environmentIdentifier(), "%{public}s", isActive ? "activating" : "deactivating");
 
-    invokeAsync(granterQueue(), [platformCapability = capability.platformCapability(), platformMediaEnvironment = RetainPtr { capability.platformMediaEnvironment() }, isActive] {
+    invokeAsync(protect(granterQueue()), [platformCapability = capability.platformCapability(), platformMediaEnvironment = RetainPtr { capability.platformMediaEnvironment() }, isActive] {
 #if USE(EXTENSIONKIT)
         NSError *error = nil;
         if (isActive)
@@ -278,7 +278,7 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
 #endif
         return ExtensionCapabilityActivationPromise::createAndReject(ExtensionCapabilityGrantError::PlatformError);
     })->whenSettled(RunLoop::mainSingleton(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
-        auto capability = weakCapability.get();
+        RefPtr capability = weakCapability.get();
         if (!capability)
             return;
 
@@ -309,7 +309,7 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
 
 void ExtensionCapabilityGranter::invalidateGrants(Vector<ExtensionCapabilityGrant>&& grants)
 {
-    granterQueue().dispatch([grants = crossThreadCopy(WTFMove(grants))]() mutable {
+    protect(granterQueue())->dispatch([grants = crossThreadCopy(WTF::move(grants))]() mutable {
         for (auto& grant : grants)
             grant.setPlatformGrant({ });
     });

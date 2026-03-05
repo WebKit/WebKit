@@ -39,7 +39,7 @@ ExitValue ExitValue::materializeNewObject(ExitTimeObjectMaterialization* data)
     result.m_kind = ExitValueMaterializeNewObject;
     UnionType u;
     u.newObjectMaterializationData = data;
-    result.m_value = WTFMove(u);
+    result.m_value = WTF::move(u);
     return result;
 }
 

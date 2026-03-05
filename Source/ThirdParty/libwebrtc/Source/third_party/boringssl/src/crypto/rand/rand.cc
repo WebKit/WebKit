@@ -44,7 +44,7 @@ int RAND_load_file(const char *path, long num) {
   }
 }
 
-const char *RAND_file_name(char *buf, size_t num) { return NULL; }
+const char *RAND_file_name(char *buf, size_t num) { return nullptr; }
 
 void RAND_add(const void *buf, int num, double entropy) {}
 

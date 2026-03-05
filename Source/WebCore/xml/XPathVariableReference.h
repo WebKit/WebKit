@@ -29,19 +29,17 @@
 #include "XPathExpressionNode.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 // Variable references are not used with XPathEvaluator.
-class VariableReference : public Expression {
+class VariableReference final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(VariableReference);
 public:
     explicit VariableReference(const String& name);
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { ASSERT_NOT_REACHED(); return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { ASSERT_NOT_REACHED(); return Value::Type::Number; }
     String m_name;
 };
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

@@ -517,6 +517,10 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionShouldBeginResult) {
 
 // Start of UIKit IPI
 
+@interface UITextChecker (TestingSupport2)
+- (void)requestProofreadingReviewOfString:(NSString *)stringToCheck range:(NSRange)range language:(NSString *)language options:(NSDictionary<NSString *, id> *)options completionHandler:(void (^)(NSArray<NSTextCheckingResult *> *results))completionHandler;
+@end
+
 @class UITextInputArrowKeyHistory;
 
 @interface UITextAutofillSuggestion ()
@@ -607,6 +611,15 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @property (nonatomic, readwrite) UITextSearchMatchMethod wordMatchMethod;
 @property (nonatomic, readwrite) NSStringCompareOptions stringCompareOptions;
 @end
+
+#if !__has_include(<UIKit/_UITextSearching.h>)
+// Define SPI type when private header is not available (older SDKs)
+typedef NS_ENUM(NSUInteger, _UIFoundTextStyle) {
+    _UIFoundTextStyleNormal,
+    _UIFoundTextStyleFound,
+    _UIFoundTextStyleHighlighted,
+};
+#endif
 
 #endif
 

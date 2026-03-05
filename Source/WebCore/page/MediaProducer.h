@@ -25,18 +25,10 @@
 
 #pragma once
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class MediaProducer;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaProducer> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -90,7 +82,7 @@ enum class MediaProducerMutedState : uint8_t {
 };
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 
-class MediaProducer : public CanMakeWeakPtr<MediaProducer> {
+class MediaProducer : public AbstractRefCountedAndCanMakeWeakPtr<MediaProducer> {
 public:
     using MediaState = MediaProducerMediaState;
     using MutedState = MediaProducerMutedState;

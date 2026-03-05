@@ -5,10 +5,10 @@ layer at (10,10) size 780x302
 layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
   RenderBlock {channel} at (0,0) size 282x302 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
     RenderBlock {title} at (11,11) size 255x19
-      RenderText {#text} at (0,0) size 156x19
+      RenderText {#text} at (0,-1) size 156x21
         text run at (0,0) width 156: "scottandrew.com"
     RenderBlock {description} at (11,40) size 255x12
-      RenderText {#text} at (0,0) size 193x12
+      RenderText {#text} at (0,-1) size 193x14
         text run at (0,0) width 193: "DHTML, DOM and JavaScript News"
     RenderBlock {item} at (1,62) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
       RenderInline {title} at (10,11) size 234x15

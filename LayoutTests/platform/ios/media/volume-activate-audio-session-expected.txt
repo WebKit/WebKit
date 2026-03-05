@@ -1,0 +1,10 @@
+
+EXPECTED (internals.audioSessionActive() == 'false') OK
+RUN(video.volume = 0)
+RUN(video.src = findMediaFile("audio", "content/silence"))
+RUN(video.play())
+EXPECTED (internals.audioSessionActive() == 'false'), OBSERVED 'true' FAIL
+RUN(video.volume = 1)
+EXPECTED (internals.audioSessionActive() == 'true') OK
+END OF TEST
+

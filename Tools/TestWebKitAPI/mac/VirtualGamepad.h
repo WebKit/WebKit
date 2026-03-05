@@ -27,11 +27,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <dispatch/dispatch.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 OBJC_CLASS HIDDevice;
 OBJC_CLASS HIDUserDevice;

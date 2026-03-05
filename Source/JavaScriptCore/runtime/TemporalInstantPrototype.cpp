@@ -161,7 +161,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncUntil, (JSGlobalObject* glo
     ISO8601::Duration result = instant->difference(globalObject, other, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), WTFMove(result)));
+    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), WTF::move(result)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncSince, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -180,7 +180,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncSince, (JSGlobalObject* glo
     ISO8601::Duration result = other->difference(globalObject, instant, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), WTFMove(result)));
+    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), WTF::move(result)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncRound, (JSGlobalObject* globalObject, CallFrame* callFrame))

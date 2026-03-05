@@ -2223,44 +2223,44 @@ layer at (393,24) size 392x150
         RenderTableRow {TR} at (0,2) size 355x17
           RenderTableCell {TH} at (2,19) size 73x2 [r=0 c=0 rs=2 cs=2]
           RenderTableCell {TH} at (76,2) size 277x17 [r=0 c=2 rs=1 cs=9]
-            RenderText {#text} at (120,1) size 35x15
-              text run at (120,1) width 35: "Frame"
+            RenderText {#text} at (120,0) size 35x17
+              text run at (120,0) width 35: "Frame"
         RenderTableRow {TR} at (0,21) size 355x17
           RenderTableCell {TH} at (76,21) size 27x17 [r=1 c=2 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 24x15
-              text run at (1,1) width 24: "void"
+            RenderText {#text} at (1,0) size 24x17
+              text run at (1,0) width 24: "void"
           RenderTableCell {TH} at (104,21) size 35x17 [r=1 c=3 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 32x15
-              text run at (1,1) width 32: "above"
+            RenderText {#text} at (1,0) size 32x17
+              text run at (1,0) width 32: "above"
           RenderTableCell {TH} at (140,21) size 35x17 [r=1 c=4 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 33x15
-              text run at (1,1) width 33: "below"
+            RenderText {#text} at (1,0) size 33x17
+              text run at (1,0) width 33: "below"
           RenderTableCell {TH} at (176,21) size 37x17 [r=1 c=5 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 34x15
-              text run at (1,1) width 34: "hsides"
+            RenderText {#text} at (1,0) size 34x17
+              text run at (1,0) width 34: "hsides"
           RenderTableCell {TH} at (214,21) size 36x17 [r=1 c=6 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 34x15
-              text run at (1,1) width 34: "vsides"
+            RenderText {#text} at (1,0) size 34x17
+              text run at (1,0) width 34: "vsides"
           RenderTableCell {TH} at (251,21) size 19x17 [r=1 c=7 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 16x15
-              text run at (1,1) width 16: "lhs"
+            RenderText {#text} at (1,0) size 16x17
+              text run at (1,0) width 16: "lhs"
           RenderTableCell {TH} at (271,21) size 19x17 [r=1 c=8 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 17x15
-              text run at (1,1) width 17: "rhs"
+            RenderText {#text} at (1,0) size 17x17
+              text run at (1,0) width 17: "rhs"
           RenderTableCell {TH} at (291,21) size 23x17 [r=1 c=9 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 20x15
-              text run at (1,1) width 20: "box"
+            RenderText {#text} at (1,0) size 20x17
+              text run at (1,0) width 20: "box"
           RenderTableCell {TH} at (315,21) size 38x17 [r=1 c=10 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 35x15
-              text run at (1,1) width 35: "border"
+            RenderText {#text} at (1,0) size 35x17
+              text run at (1,0) width 35: "border"
       RenderTableSection {TBODY} at (0,58) size 355x95
         RenderTableRow {TR} at (0,0) size 355x17
           RenderTableCell {TH} at (2,38) size 33x17 [r=0 c=0 rs=5 cs=1]
-            RenderText {#text} at (1,39) size 31x15
-              text run at (1,1) width 31: "Rules"
+            RenderText {#text} at (1,38) size 31x17
+              text run at (1,0) width 31: "Rules"
           RenderTableCell {TH} at (36,0) size 39x17 [r=0 c=1 rs=1 cs=1]
-            RenderText {#text} at (11,1) size 27x15
-              text run at (11,1) width 27: "none"
+            RenderText {#text} at (11,0) size 27x17
+              text run at (11,0) width 27: "none"
           RenderTableCell {TD} at (76,0) size 27x17 [bgcolor=#CCCCCC] [r=0 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15
@@ -2299,8 +2299,8 @@ layer at (393,24) size 392x150
                 text run at (11,1) width 15: "Go"
         RenderTableRow {TR} at (0,19) size 355x17
           RenderTableCell {TH} at (36,19) size 39x17 [r=1 c=1 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 37x15
-              text run at (1,1) width 37: "groups"
+            RenderText {#text} at (1,0) size 37x17
+              text run at (1,0) width 37: "groups"
           RenderTableCell {TD} at (76,19) size 27x17 [bgcolor=#CCCCCC] [r=1 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15
@@ -2339,8 +2339,8 @@ layer at (393,24) size 392x150
                 text run at (11,1) width 15: "Go"
         RenderTableRow {TR} at (0,38) size 355x17
           RenderTableCell {TH} at (36,38) size 39x17 [r=2 c=1 rs=1 cs=1]
-            RenderText {#text} at (11,1) size 27x15
-              text run at (11,1) width 27: "rows"
+            RenderText {#text} at (11,0) size 27x17
+              text run at (11,0) width 27: "rows"
           RenderTableCell {TD} at (76,38) size 27x17 [bgcolor=#CCCCCC] [r=2 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15
@@ -2379,8 +2379,8 @@ layer at (393,24) size 392x150
                 text run at (11,1) width 15: "Go"
         RenderTableRow {TR} at (0,57) size 355x17
           RenderTableCell {TH} at (36,57) size 39x17 [r=3 c=1 rs=1 cs=1]
-            RenderText {#text} at (15,1) size 23x15
-              text run at (15,1) width 23: "cols"
+            RenderText {#text} at (15,0) size 23x17
+              text run at (15,0) width 23: "cols"
           RenderTableCell {TD} at (76,57) size 27x17 [bgcolor=#CCCCCC] [r=3 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15
@@ -2419,8 +2419,8 @@ layer at (393,24) size 392x150
                 text run at (11,1) width 15: "Go"
         RenderTableRow {TR} at (0,76) size 355x17
           RenderTableCell {TH} at (36,76) size 39x17 [r=4 c=1 rs=1 cs=1]
-            RenderText {#text} at (23,1) size 15x15
-              text run at (23,1) width 15: "all"
+            RenderText {#text} at (23,0) size 15x17
+              text run at (23,0) width 15: "all"
           RenderTableCell {TD} at (76,76) size 27x17 [bgcolor=#CCCCCC] [r=4 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15

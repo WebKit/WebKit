@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AccessibilityTableHeaderContainer.h"
 
+#include "AXLoggerBase.h"
 #include "AXObjectCache.h"
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityNodeObject.h"
@@ -63,7 +64,7 @@ bool AccessibilityTableHeaderContainer::computeIsIgnored() const
 
 void AccessibilityTableHeaderContainer::addChildren()
 {
-    ASSERT(!m_childrenInitialized);
+    AX_ASSERT(!m_childrenInitialized);
 
     m_childrenInitialized = true;
     RefPtr parentTable = dynamicDowncast<AccessibilityNodeObject>(m_parent.get());

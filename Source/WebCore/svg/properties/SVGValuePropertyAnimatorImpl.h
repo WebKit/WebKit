@@ -40,8 +40,11 @@ class SVGLengthAnimator final : public SVGValuePropertyAnimator<SVGLength, SVGAn
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return adoptRef(*new SVGLengthAnimator(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Other));
+        return adoptRef(*new SVGLengthAnimator(attributeName, WTF::move(property), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Other));
     }
+
+private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::CSSLength; }
 
     void start(SVGElement& targetElement) override
     {

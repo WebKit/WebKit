@@ -32,12 +32,10 @@
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <limits>
 #include <mutex>
+#include <skia/core/SkGraphics.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-
-#if USE(SKIA)
-#include <skia/core/SkGraphics.h>
-#endif
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(SYSPROF_CAPTURE)
 #include <wtf/SystemTracing.h>
@@ -60,28 +58,24 @@ static void initializeRemoteInspectorServer()
         if (!address || !address[0])
             return nullptr;
 
-        GUniquePtr<char> inspectorAddress(g_strdup(address));
+        auto inspectorAddress = StringView::fromLatin1(address);
+        auto hostLength = inspectorAddress.reverseFind(':');
+        if (!hostLength || hostLength == notFound)
+            return nullptr;
+        auto portString = inspectorAddress.substring(hostLength + 1);
+        auto port = parseInteger<uint16_t>(portString, 10, WTF::ParseIntegerWhitespacePolicy::Disallow);
 
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-        char* portPtr = g_strrstr(inspectorAddress.get(), ":");
-        if (!portPtr)
+        if (!port || !*port)
             return nullptr;
 
-        *portPtr = '\0';
-        portPtr++;
-        auto port = g_ascii_strtoull(portPtr, nullptr, 10);
-        if (!port || port > std::numeric_limits<uint16_t>::max())
-            return nullptr;
+        auto ipAddress = inspectorAddress.left(hostLength);
 
-        char* addressPtr = inspectorAddress.get();
-        if (addressPtr[0] == '[' && *(portPtr - 2) == ']') {
+        if (ipAddress[0] == '[' && ipAddress[hostLength - 1] == ']') {
             // Strip the square brackets.
-            addressPtr++;
-            *(portPtr - 2) = '\0';
+            ipAddress = ipAddress.substring(1, hostLength - 2);
         }
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-        return adoptGRef(g_inet_socket_address_new_from_string(addressPtr, port));
+        return adoptGRef(g_inet_socket_address_new_from_string(ipAddress.toString().utf8().data(), *port));
     };
 
     auto inspectorHTTPAddress = parseAddress(httpAddress);
@@ -95,11 +89,11 @@ static void initializeRemoteInspectorServer()
         return;
     }
 
-    if (!Inspector::RemoteInspectorServer::singleton().start(WTFMove(inspectorAddress)))
+    if (!Inspector::RemoteInspectorServer::singleton().start(WTF::move(inspectorAddress)))
         return;
 
     if (inspectorHTTPAddress) {
-        if (RemoteInspectorHTTPServer::singleton().start(WTFMove(inspectorHTTPAddress), Inspector::RemoteInspectorServer::singleton().port()))
+        if (RemoteInspectorHTTPServer::singleton().start(WTF::move(inspectorHTTPAddress), Inspector::RemoteInspectorServer::singleton().port()))
             Inspector::RemoteInspector::setInspectorServerAddress(RemoteInspectorHTTPServer::singleton().inspectorServerAddress().utf8());
     } else
         Inspector::RemoteInspector::setInspectorServerAddress(address);
@@ -115,9 +109,9 @@ void webkitInitialize()
         SysprofAnnotator::createIfNeeded("WebKit (UI)"_s);
 #endif
         InitializeWebKit2();
-#if USE(SKIA)
+
         SkGraphics::Init();
-#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
         initializeRemoteInspectorServer();
 #endif

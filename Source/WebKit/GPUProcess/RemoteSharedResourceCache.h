@@ -66,16 +66,16 @@ public:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
+    const WebCore::ProcessIdentity& resourceOwner() const LIFETIME_BOUND { return m_resourceOwner; }
 #if HAVE(IOSURFACE)
     WebCore::IOSurfacePool& ioSurfacePool() const { return m_ioSurfacePool; }
 #endif
 
-    void didCreateImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
-    void didReleaseImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
-    bool reachedAcceleratedImageBufferLimit(WebCore::RenderingPurpose) const;
-    bool reachedImageBufferForCanvasLimit() const;
-    WebCore::ImageBufferResourceLimits getResourceLimitsForTesting() const;
+    void NODELETE didCreateImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
+    void NODELETE didReleaseImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
+    bool NODELETE reachedAcceleratedImageBufferLimit(WebCore::RenderingPurpose) const;
+    bool NODELETE reachedImageBufferForCanvasLimit() const;
+    WebCore::ImageBufferResourceLimits NODELETE getResourceLimitsForTesting() const;
 
     void lowMemoryHandler();
 
@@ -90,7 +90,7 @@ private:
 
     WebCore::ProcessIdentity m_resourceOwner;
 #if HAVE(IOSURFACE)
-    Ref<WebCore::IOSurfacePool> m_ioSurfacePool;
+    const Ref<WebCore::IOSurfacePool> m_ioSurfacePool;
 #endif
     std::atomic<size_t> m_acceleratedImageBufferForCanvasCount;
     std::atomic<size_t> m_imageBufferForCanvasCount;

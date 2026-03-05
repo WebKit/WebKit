@@ -188,6 +188,9 @@
             },
             "/webkit/WebKitWebView/save": {
                 "expected": {"wpe": {"status": ["CRASH", "TIMEOUT"], "bug": "webkit.org/b/289436"}}
+            },
+            "/webkit/WebKitWebView/title-change": {
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/304368"}}
             }
         }
     },
@@ -202,24 +205,13 @@
         }
     },
     "TestInspector": {
-        "subtests": {
-           "/webkit/WebKitWebInspector/custom-container-destroyed": {
-              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/299598"}}
-           },
-           "/webkit/WebKitWebInspector/manual-attach-detach": {
-              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/299598"}}
-           }
-        },
         "expected": {"all": {"slow": true}}
     },
     "TestInspectorServer": {
         "subtests": {
            "/webkit/WebKitWebInspectorServer/test-page-list": {
               "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216646"}}
-           },
-           "/webkit/WebKitWebInspectorServer/http-test-page-list": {
-            "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/269586"}}
-          }
+           }
         },
         "expected": {"all": {"slow": true}}
     },
@@ -494,6 +486,13 @@
             }
         }
     },
+    "TestWebKitWebXR": {
+        "subtests": {
+            "/webkit/WebKitWebXR/leave-immersive-mode": {
+                "expected": {"wpe": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/308258"}}
+            }
+        }
+    },
     "TestWebProcessExtensions": {
         "subtests": {
             "/webkit/WebKitWebProcessExtension/page-id": {
@@ -512,11 +511,8 @@
             "/webkit/WebKitWebView/client-side-certificate": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264507"}}
             },
-            "/webkit/WebKitWebView/web-socket-tls-errors": {
-                "expected": {"all": {"status": ["TIMEOUT", "CRASH", "FAIL", "TIMEOUT"], "bug": "webkit.org/b/286063"}}
-            },
             "/webkit/WebKitWebView/web-socket-client-side-certificate": {
-                "expected": {"all": {"status": ["TIMEOUT", "CRASH", "TIMEOUT"], "bug": "webkit.org/b/286063"}}
+                "expected": {"all": {"status": ["CRASH", "TIMEOUT", "FAIL"], "bug": "webkit.org/b/307757"}}
             }
         }
     },

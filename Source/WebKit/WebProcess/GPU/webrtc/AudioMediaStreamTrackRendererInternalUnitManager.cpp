@@ -200,9 +200,9 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::start()
     m_numberOfFrames = m_description->sampleRate() * 2;
     auto result = ProducerSharedCARingBuffer::allocate(*m_description, m_numberOfFrames);
     RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
-    auto [ringBuffer, handle] = WTFMove(*result);
-    m_ringBuffer = WTFMove(ringBuffer);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { identifier(), WTFMove(handle), *m_semaphore }, 0);
+    auto [ringBuffer, handle] = WTF::move(*result);
+    m_ringBuffer = WTF::move(ringBuffer);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { identifier(), WTF::move(handle), *m_semaphore }, 0);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
@@ -219,7 +219,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stop()
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&& callback)
 {
     if (!m_description || !m_descriptionCallbacks.isEmpty()) {
-        m_descriptionCallbacks.append(WTFMove(callback));
+        m_descriptionCallbacks.append(WTF::move(callback));
         return;
     }
     callback(m_description);
@@ -274,7 +274,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::startThread()
             protectedThis->m_writeOffset += protectedThis->m_frameChunkSize;
         } while (!protectedThis->m_shouldStopThread);
     };
-    m_thread = Thread::create("AudioMediaStreamTrackRendererInternalUnit thread"_s, WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
+    m_thread = Thread::create("AudioMediaStreamTrackRendererInternalUnit thread"_s, WTF::move(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::reset(IsClosed isClosed)

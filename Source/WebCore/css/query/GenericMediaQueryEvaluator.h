@@ -41,7 +41,7 @@ EvaluationResult evaluateBooleanFeature(const Feature&, bool, const CSSToLengthC
 EvaluationResult evaluateIntegerFeature(const Feature&, int, const CSSToLengthConversionData&);
 EvaluationResult evaluateNumberFeature(const Feature&, double, const CSSToLengthConversionData&);
 EvaluationResult evaluateResolutionFeature(const Feature&, float, const CSSToLengthConversionData&);
-EvaluationResult evaluateIdentifierFeature(const Feature&, CSSValueID, const CSSToLengthConversionData&);
+EvaluationResult NODELETE evaluateIdentifierFeature(const Feature&, CSSValueID, const CSSToLengthConversionData&);
 
 template<typename ConcreteEvaluator>
 class GenericMediaQueryEvaluator {

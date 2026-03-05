@@ -47,7 +47,7 @@ public:
 
     CompactRefPtrTuple(RefPtr<T>&& pointer, Type type)
     {
-        setPointer(WTFMove(pointer));
+        setPointer(WTF::move(pointer));
         setType(type);
     }
 
@@ -74,7 +74,7 @@ public:
 
     CompactRefPtrTuple& operator=(CompactRefPtrTuple&& other)
     {
-        CompactRefPtrTuple moved(WTFMove(other));
+        CompactRefPtrTuple moved(WTF::move(other));
         swap(moved);
         return *this;
     }
@@ -84,7 +84,7 @@ public:
         WTF::DefaultRefDerefTraits<T>::derefIfNotNull(m_data.pointer());
     }
 
-    T* pointer() const
+    T* pointer() const LIFETIME_BOUND
     {
         return m_data.pointer();
     }
@@ -98,7 +98,7 @@ public:
 
     void setPointer(RefPtr<T>&& pointer)
     {
-        auto willRelease = WTFMove(pointer);
+        auto willRelease = WTF::move(pointer);
         auto* old = m_data.pointer();
         m_data.setPointer(willRelease.leakRef());
         WTF::DefaultRefDerefTraits<T>::derefIfNotNull(old);
@@ -106,7 +106,7 @@ public:
 
     void setPointer(Ref<T>&& pointer)
     {
-        auto willRelease = WTFMove(pointer);
+        auto willRelease = WTF::move(pointer);
         auto* old = m_data.pointer();
         m_data.setPointer(&willRelease.leakRef());
         WTF::DefaultRefDerefTraits<T>::derefIfNotNull(old);

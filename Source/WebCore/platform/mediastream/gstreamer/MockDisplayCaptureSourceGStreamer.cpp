@@ -38,13 +38,13 @@ CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevi
             return CaptureSourceOrError(CaptureSourceError { error->invalidConstraint });
     }
 
-    Ref<RealtimeMediaSource> source = adoptRef(*new MockDisplayCaptureSourceGStreamer(device, WTFMove(mockSource), WTFMove(hashSalts), pageIdentifier));
+    Ref<RealtimeMediaSource> source = adoptRef(*new MockDisplayCaptureSourceGStreamer(device, WTF::move(mockSource), WTF::move(hashSalts), pageIdentifier));
     return source;
 }
 
 MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(const CaptureDevice& device, Ref<MockRealtimeVideoSourceGStreamer>&& source, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
-    : RealtimeVideoCaptureSource(device, WTFMove(hashSalts), pageIdentifier)
-    , m_source(WTFMove(source))
+    : RealtimeVideoCaptureSource(device, WTF::move(hashSalts), pageIdentifier)
+    , m_source(WTF::move(source))
     , m_deviceType(device.type())
 {
     m_source->addVideoFrameObserver(*this);
@@ -92,7 +92,7 @@ const RealtimeMediaSourceCapabilities& MockDisplayCaptureSourceGStreamer::capabi
 
         capabilities.setDeviceId(hashedId());
 
-        m_capabilities = WTFMove(capabilities);
+        m_capabilities = WTF::move(capabilities);
     }
     return m_capabilities.value();
 }
@@ -121,7 +121,7 @@ const RealtimeMediaSourceSettings& MockDisplayCaptureSourceGStreamer::settings()
 
         settings.setSupportedConstraints(supportedConstraints);
 
-        m_currentSettings = WTFMove(settings);
+        m_currentSettings = WTF::move(settings);
     }
     return m_currentSettings.value();
 }

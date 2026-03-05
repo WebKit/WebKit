@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+.text-representation {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>Hello world</p>
+<select>
+    <option value="one">Number 1</option>
+    <option value="two">Number 2</option>
+    <option selected value="three">Number 3</option>
+</select>
+<select multiple>
+    <option selected value="banana">Banana</option>
+    <option selected value="pear">Pear</option>
+    <option value="apple">Apple</option>
+</select>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const results = [];
+    for (let includeSelectOptions of [true, false]) {
+        for (let outputFormat of ["texttree", "json"]) {
+            const heading = document.createElement("h1");
+            heading.textContent = `-- ${outputFormat} (includeSelectOptions: ${includeSelectOptions})`;
+
+            const container = document.createElement("pre");
+            container.classList.add("text-representation");
+            let textContent = await UIHelper.requestDebugText({
+                normalize: true,
+                includeRects: false,
+                includeURLs: false,
+                includeSelectOptions,
+                nodeIdentifierInclusion: "none",
+                eventListenerCategories: ["none"],
+                outputFormat,
+            });
+
+            if (outputFormat === "json")
+                textContent = JSON.stringify(JSON.parse(textContent), null, "  ");
+
+            container.textContent = textContent;
+            results.push(heading);
+            results.push(container);
+            results.push(document.createElement("br"));
+        }
+    }
+
+    document.body.replaceChildren(...results);
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

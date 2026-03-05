@@ -63,8 +63,10 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, StringView s, 
     for (unsigned i = 0; i <= regExp->numSubpatterns(); i++) {
         int subpatternBegin = ovector[i * 2];
         int subpatternEnd = ovector[i * 2 + 1];
-        if (subpatternBegin == -1)
+        if (subpatternBegin == -1 || subpatternEnd < subpatternBegin) {
+            subpatternBegin = -1;
             subpatternEnd = -1;
+        }
         fprintf(m_file, "%d, %d", subpatternBegin, subpatternEnd);
         if (i < regExp->numSubpatterns())
             fputs(", ", m_file);
@@ -164,7 +166,7 @@ void RegExp::finishCreation(VM& vm)
         return;
     }
 
-    m_atom = WTFMove(pattern.m_atom);
+    m_atom = WTF::move(pattern.m_atom);
     m_specificPattern = pattern.m_specificPattern;
 
     m_numSubpatterns = pattern.m_numSubpatterns;
@@ -174,6 +176,11 @@ void RegExp::finishCreation(VM& vm)
         m_rareData->m_captureGroupNames.swap(pattern.m_captureGroupNames);
         m_rareData->m_namedGroupToParenIndices.swap(pattern.m_namedGroupToParenIndices);
     }
+
+    unsigned offsetVectorSize = offsetVectorBaseForNamedCaptures();
+    if (hasNamedCaptures())
+        offsetVectorSize += m_rareData->m_numDuplicateNamedCaptureGroups;
+    m_ovector.resize(offsetVectorSize);
 }
 
 void RegExp::destroy(JSCell* cell)
@@ -193,6 +200,7 @@ size_t RegExp::estimatedSize(JSCell* cell, VM& vm)
     if (auto* jitCode = thisObject->m_regExpJITCode.get())
         regexDataSize += jitCode->size();
 #endif
+    regexDataSize += thisObject->m_ovector.capacity() * sizeof(int);
     return Base::estimatedSize(cell, vm) + regexDataSize;
 }
 
@@ -226,7 +234,7 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    m_atom = WTFMove(pattern.m_atom);
+    m_atom = WTF::move(pattern.m_atom);
     m_specificPattern = pattern.m_specificPattern;
 
     m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
@@ -247,7 +255,7 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    m_atom = WTFMove(pattern.m_atom);
+    m_atom = WTF::move(pattern.m_atom);
     m_specificPattern = pattern.m_specificPattern;
 
     if (!hasCode()) {
@@ -285,20 +293,20 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
     }
 }
 
-int RegExp::match(JSGlobalObject* globalObject, StringView s, unsigned startOffset, Vector<int>& ovector)
+int RegExp::match(JSGlobalObject* globalObject, StringView s, unsigned startOffset, std::span<int> ovector)
 {
     return matchInline(globalObject, globalObject->vm(), s, startOffset, ovector);
 }
 
 bool RegExp::matchConcurrently(
-    VM& vm, StringView s, unsigned startOffset, int& position, Vector<int>& ovector)
+    VM& vm, StringView s, unsigned startOffset, int& position, std::span<int> ovector)
 {
     Locker locker { cellLock() };
 
     if (!hasCodeFor(s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16))
         return false;
 
-    position = matchInline<Vector<int>&, Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset, ovector);
+    position = matchInline<Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset, ovector);
     if (m_state == ParseError)
         return false;
     return true;
@@ -315,7 +323,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    m_atom = WTFMove(pattern.m_atom);
+    m_atom = WTF::move(pattern.m_atom);
     m_specificPattern = pattern.m_specificPattern;
 
     if (!hasCode()) {

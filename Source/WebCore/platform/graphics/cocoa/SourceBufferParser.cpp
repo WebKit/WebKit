@@ -62,14 +62,14 @@ RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type, c
 static SourceBufferParser::CallOnClientThreadCallback callOnMainThreadCallback()
 {
     return [](Function<void()>&& function) {
-        callOnMainThread(WTFMove(function));
+        callOnMainThread(WTF::move(function));
     };
 }
 
 void SourceBufferParser::setCallOnClientThreadCallback(CallOnClientThreadCallback&& callback)
 {
     ASSERT(callback);
-    m_callOnClientThreadCallback = WTFMove(callback);
+    m_callOnClientThreadCallback = WTF::move(callback);
 }
 
 SourceBufferParser::SourceBufferParser()

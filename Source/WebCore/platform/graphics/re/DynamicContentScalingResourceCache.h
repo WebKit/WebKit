@@ -41,7 +41,7 @@ public:
     }
 
     DynamicContentScalingResourceCache(RetainPtr<id>&& object)
-        : RetainPtr<id>(WTFMove(object))
+        : RetainPtr<id>(WTF::move(object))
     {
     }
 };

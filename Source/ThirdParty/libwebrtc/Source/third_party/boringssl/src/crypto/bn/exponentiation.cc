@@ -31,17 +31,17 @@ int BN_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
   }
 
   BIGNUM *v = BN_CTX_get(ctx);
-  if (rr == NULL || v == NULL) {
+  if (rr == nullptr || v == nullptr) {
     return 0;
   }
 
-  if (BN_copy(v, a) == NULL) {
+  if (BN_copy(v, a) == nullptr) {
     return 0;
   }
   int bits = BN_num_bits(p);
 
   if (BN_is_odd(p)) {
-    if (BN_copy(rr, a) == NULL) {
+    if (BN_copy(rr, a) == nullptr) {
       return 0;
     }
   } else {
@@ -114,7 +114,7 @@ int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
   }
 
   if (BN_is_odd(m)) {
-    return BN_mod_exp_mont(r, a, p, m, ctx, NULL);
+    return BN_mod_exp_mont(r, a, p, m, ctx, nullptr);
   }
 
   return mod_exp_even(r, a, p, m, ctx);

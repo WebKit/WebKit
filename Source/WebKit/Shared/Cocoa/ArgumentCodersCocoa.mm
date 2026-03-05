@@ -380,6 +380,10 @@ NSType typeFromObject(id object)
         return NSType::NSValue;
     if ([object isKindOfClass:[NSString class]])
         return NSType::String;
+#if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+    if ([object isKindOfClass:[NSSet class]])
+        return NSType::Set;
+#endif
     if ([object isKindOfClass:[NSURL class]])
         return NSType::URL;
 #if USE(PASSKIT)
@@ -489,7 +493,8 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
     [archiver finishEncoding];
     [archiver setDelegate:nil];
 
-    encoder << (__bridge CFDataRef)[archiver encodedData];
+    RetainPtr<CFDataRef> archivedData = bridge_cast([archiver encodedData]);
+    encoder << archivedData;
 }
 
 static bool shouldEnableStrictMode(Decoder& decoder, const AllowedClassHashSet& allowedClasses)

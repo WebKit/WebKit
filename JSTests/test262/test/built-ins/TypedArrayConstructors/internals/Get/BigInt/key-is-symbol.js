@@ -11,15 +11,15 @@ info: |
   2. If Type(P) is String, then
     ...
   3. Return ? OrdinaryGet(O, P, Receiver).
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Symbol, TypedArray]
 ---*/
 
 var parentKey = Symbol("2");
 TypedArray.prototype[parentKey] = "test262";
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n]));
 
   var s1 = Symbol("1");
 
@@ -37,4 +37,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(sample[s1], "bar", "return value from get accessor");
 
   assert.sameValue(sample[parentKey], "test262", "value from parent key");
-});
+}, null, ["passthrough"]);

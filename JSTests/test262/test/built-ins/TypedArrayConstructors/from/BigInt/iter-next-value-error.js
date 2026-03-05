@@ -13,7 +13,7 @@ info: |
       ii. If next is not false, then
         1. Let nextValue be ? IteratorValue(next).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.iterator, TypedArray]
 ---*/
 
@@ -37,4 +37,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     TA.from(iter);
   });
-});
+}, null, ["passthrough"]);

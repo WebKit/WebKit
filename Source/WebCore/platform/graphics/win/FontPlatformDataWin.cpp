@@ -37,9 +37,9 @@
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold, bool oblique, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::AutoTextRendering, customPlatformData)
+    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, customPlatformData)
 {
-    m_hfont = SharedGDIObject<HFONT>::create(WTFMove(font));
+    m_hfont = SharedGDIObject<HFONT>::create(WTF::move(font));
     platformDataInit(m_hfont->get(), size);
 }
 
@@ -54,7 +54,7 @@ RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) con
         Vector<uint8_t> data(size);
         DWORD result = GetFontData(hdc, table, 0, (PVOID)data.data(), size);
         ASSERT_UNUSED(result, result == size);
-        buffer = SharedBuffer::create(WTFMove(data));
+        buffer = SharedBuffer::create(WTF::move(data));
     }
 
     SelectObject(hdc, oldFont);
@@ -68,7 +68,7 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
         wcscpy_s(logFont.lfFaceName, LF_FACESIZE, custom->name.wideCharacters().data());
 
     auto gdiFont = adoptGDIObject(CreateFontIndirect(&logFont));
-    return FontPlatformData(WTFMove(gdiFont), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, custom);
+    return FontPlatformData(WTF::move(gdiFont), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, custom);
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
@@ -84,14 +84,14 @@ std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, FontOr
     return WTF::switchOn(ipcData,
         [&] (const FontPlatformSerializedData& d) -> std::optional<FontPlatformData> {
             if (auto gdiFont = adoptGDIObject(CreateFontIndirect(&d.logFont)))
-                return FontPlatformData(WTFMove(gdiFont), size, syntheticBold, syntheticOblique);
+                return FontPlatformData(WTF::move(gdiFont), size, syntheticBold, syntheticOblique);
 
             return std::nullopt;
         },
         [&] (CustomFontCreationData& d) -> std::optional<FontPlatformData> {
-            auto fontFaceData = SharedBuffer::create(WTFMove(d.fontFaceData));
+            auto fontFaceData = SharedBuffer::create(WTF::move(d.fontFaceData));
             if (RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection))
-                return FontPlatformData(size, syntheticBold, syntheticOblique, WTFMove(orientation), WTFMove(widthVariant), WTFMove(textRenderingMode), fontCustomPlatformData.get());
+                return FontPlatformData(size, syntheticBold, syntheticOblique, WTF::move(orientation), WTF::move(widthVariant), WTF::move(textRenderingMode), fontCustomPlatformData.get());
 
             return std::nullopt;
         }
@@ -105,7 +105,7 @@ FontPlatformData::IPCData FontPlatformData::toIPCData() const
 
     LOGFONT logFont;
     GetObject(hfont(), sizeof logFont, &logFont);
-    return FontPlatformSerializedData { WTFMove(logFont) };
+    return FontPlatformSerializedData { WTF::move(logFont) };
 }
 
 }

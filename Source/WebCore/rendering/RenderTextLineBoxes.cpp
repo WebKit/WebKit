@@ -29,7 +29,7 @@
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderSVGInlineText.h"
 #include "RenderView.h"
 #include "VisiblePosition.h"

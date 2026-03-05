@@ -156,7 +156,7 @@ class DeltaSampler {
  private:
   bool initialized_ = false;
   T sub_sampler_;
-  uint64_t last_sample_;
+  uint64_t last_sample_ = 0;
 };
 
 template <typename U>

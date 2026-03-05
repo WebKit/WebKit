@@ -28,7 +28,7 @@ function loadedCrossOrigin()
 <body>
 <p>Child iframe</p>
 
-<!-- Navigate to a cross origin url (where 127.0.0.1 is cross origin from localhost)-->
+<!-- Navigate to a cross origin url (where 127.0.0.1 is cross origin from localhost. keep in mind the current document is opened located at localhost)-->
 <iframe id="grandchild" onload="loadedCrossOrigin()" src="http://127.0.0.1:8000/site-isolation/resources/green-background.html" style="border:5px solid blue;"></iframe>
 </body>
 </html>

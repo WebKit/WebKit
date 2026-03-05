@@ -6,10 +6,11 @@
 void SetupReplayContext3(void)
 {
     eglMakeCurrent(gEGLDisplay, gSurfaceMap2[0], gSurfaceMap2[0], gContextMap2[3]);
+    UpdateCurrentContext(3);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);
     glUseProgram(gShaderProgramMap[1]);
-    UpdateCurrentProgram(1);
+    UpdateCurrentProgramPerContext(1);
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, gTransformFeedbackMap[0]);
     glViewport(0, 0, 128, 128);
     glScissor(0, 0, 128, 128);

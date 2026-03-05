@@ -21,14 +21,14 @@ info: |
   ...
   3. Let relativeTarget be ? ToInteger(target).
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(undefined, 1),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(undefined, 1),
       [1n, 2n, 3n, 3n]
     ),
     'undefined value coerced to 0'
@@ -36,7 +36,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(false, 1),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(false, 1),
       [1n, 2n, 3n, 3n]
     ),
     'false value coerced to 0'
@@ -44,7 +44,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(NaN, 1),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(NaN, 1),
       [1n, 2n, 3n, 3n]
     ),
     'NaN value coerced to 0'
@@ -52,7 +52,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(null, 1),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(null, 1),
       [1n, 2n, 3n, 3n]
     ),
     'null value coerced to 0'
@@ -60,7 +60,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(true, 0),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(true, 0),
       [0n, 0n, 1n, 2n]
     ),
     'true value coerced to 1'
@@ -68,7 +68,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin('1', 0),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin('1', 0),
       [0n, 0n, 1n, 2n]
     ),
     'string "1" value coerced to 1'
@@ -76,7 +76,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(0.5, 1),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(0.5, 1),
       [1n, 2n, 3n, 3n]
     ),
     '0.5 float value coerced to integer 0'
@@ -84,7 +84,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(1.5, 0),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(1.5, 0),
       [0n, 0n, 1n, 2n]
     ),
     '1.5 float value coerced to integer 1'

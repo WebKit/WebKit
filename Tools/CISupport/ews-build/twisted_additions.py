@@ -32,7 +32,7 @@ import re
 import twisted
 
 from twisted.internet import defer, error, interfaces, protocol, reactor, task
-from twisted.web.client import Agent
+from twisted.web.client import Agent, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.web import iweb, http, _newclient
 
@@ -230,6 +230,7 @@ class TwistedAdditions(object):
         if not url:
             logger('No URL provided\n')
             defer.returnValue(None)
+        logger(f'Accessing {url} with timeout: {timeout}\n')
         hostname = '/'.join(url.split('/', 3)[:3])
         if params:
             url = '{}?{}'.format(url, '&'.join([f'{key}={value}' for key, value in params.items()]))
@@ -253,6 +254,10 @@ class TwistedAdditions(object):
             response = yield agent.request(typ, url.encode('utf-8'), Headers(headers), body)
             finished = defer.Deferred()
             response.deliverBody(cls.Printer(finished))
+
+            # Add timeout to response body delivery to prevent indefinite hanging
+            # This covers the entire response phase, not just connection establishment
+            finished.addTimeout(timeout, reactor, onTimeoutCancel=lambda _1, _2: None)
             data = yield finished
 
             headers = {}
@@ -269,8 +274,12 @@ class TwistedAdditions(object):
 
         except error.ConnectError as e:
             logger(f'Failed to connect to {hostname}\n')
+        except defer.TimeoutError:
+            logger(f'Request to {hostname} timed out after {timeout} seconds\n')
         except _newclient.ResponseFailed:
             logger(f'No response from {hostname}\n')
+        except ResponseFailed:
+            logger(f'Response failed from {hostname}\n')
         except ValueError as e:
             logger(f'{e}\n')
         except Exception as e:

@@ -50,7 +50,6 @@ static void grain_table_entry_read(FILE *file,
   if (num_read != 5) {
     aom_internal_error(error_info, AOM_CODEC_ERROR,
                        "Unable to read entry header. Read %d != 5", num_read);
-    return;
   }
   if (pars->update_parameters) {
     num_read = fscanf(file, "p %d %d %d %d %d %d %d %d %d %d %d %d\n",
@@ -63,83 +62,70 @@ static void grain_table_entry_read(FILE *file,
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read entry params. Read %d != 12",
                          num_read);
-      return;
     }
     if (!fscanf(file, "\tsY %d ", &pars->num_y_points)) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read num y points");
-      return;
     }
     for (int i = 0; i < pars->num_y_points; ++i) {
       if (2 != fscanf(file, "%d %d", &pars->scaling_points_y[i][0],
                       &pars->scaling_points_y[i][1])) {
         aom_internal_error(error_info, AOM_CODEC_ERROR,
                            "Unable to read y scaling points");
-        return;
       }
     }
     if (!fscanf(file, "\n\tsCb %d", &pars->num_cb_points)) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read num cb points");
-      return;
     }
     for (int i = 0; i < pars->num_cb_points; ++i) {
       if (2 != fscanf(file, "%d %d", &pars->scaling_points_cb[i][0],
                       &pars->scaling_points_cb[i][1])) {
         aom_internal_error(error_info, AOM_CODEC_ERROR,
                            "Unable to read cb scaling points");
-        return;
       }
     }
     if (!fscanf(file, "\n\tsCr %d", &pars->num_cr_points)) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read num cr points");
-      return;
     }
     for (int i = 0; i < pars->num_cr_points; ++i) {
       if (2 != fscanf(file, "%d %d", &pars->scaling_points_cr[i][0],
                       &pars->scaling_points_cr[i][1])) {
         aom_internal_error(error_info, AOM_CODEC_ERROR,
                            "Unable to read cr scaling points");
-        return;
       }
     }
 
     if (fscanf(file, "\n\tcY")) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read Y coeffs header (cY)");
-      return;
     }
     const int n = 2 * pars->ar_coeff_lag * (pars->ar_coeff_lag + 1);
     for (int i = 0; i < n; ++i) {
       if (1 != fscanf(file, "%d", &pars->ar_coeffs_y[i])) {
         aom_internal_error(error_info, AOM_CODEC_ERROR,
                            "Unable to read Y coeffs");
-        return;
       }
     }
     if (fscanf(file, "\n\tcCb")) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read Cb coeffs header (cCb)");
-      return;
     }
     for (int i = 0; i <= n; ++i) {
       if (1 != fscanf(file, "%d", &pars->ar_coeffs_cb[i])) {
         aom_internal_error(error_info, AOM_CODEC_ERROR,
                            "Unable to read Cb coeffs");
-        return;
       }
     }
     if (fscanf(file, "\n\tcCr")) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable read to Cr coeffs header (cCr)");
-      return;
     }
     for (int i = 0; i <= n; ++i) {
       if (1 != fscanf(file, "%d", &pars->ar_coeffs_cr[i])) {
         aom_internal_error(error_info, AOM_CODEC_ERROR,
                            "Unable to read Cr coeffs");
-        return;
       }
     }
     (void)fscanf(file, "\n");
@@ -276,74 +262,84 @@ int aom_film_grain_table_lookup(aom_film_grain_table_t *t, int64_t time_stamp,
 aom_codec_err_t aom_film_grain_table_read(
     aom_film_grain_table_t *t, const char *filename,
     struct aom_internal_error_info *error_info) {
-  FILE *file = fopen(filename, "rb");
-  if (!file) {
-    aom_internal_error(error_info, AOM_CODEC_ERROR, "Unable to open %s",
-                       filename);
-    return error_info->error_code;
-  }
+  FILE *const file = fopen(filename, "rb");
   error_info->error_code = AOM_CODEC_OK;
 
-  // Read in one extra character as there should be white space after
-  // the header.
-  char magic[9];
-  if (!fread(magic, 9, 1, file) || memcmp(magic, kFileMagic, 8)) {
-    aom_internal_error(error_info, AOM_CODEC_ERROR,
-                       "Unable to read (or invalid) file magic");
-    fclose(file);
-    return error_info->error_code;
+  if (!file) {
+    error_info->error_code = AOM_CODEC_ERROR;
+    return AOM_CODEC_ERROR;
   }
 
-  aom_film_grain_table_entry_t *prev_entry = NULL;
-  while (!feof(file)) {
-    aom_film_grain_table_entry_t *entry = aom_malloc(sizeof(*entry));
-    if (!entry) {
-      aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
-                         "Unable to allocate grain table entry");
-      break;
+  error_info->setjmp = 1;
+  if (setjmp(error_info->jmp) == 0) {
+    // Read in one extra character as there should be white space after
+    // the header.
+    char magic[9];
+    if (!fread(magic, 9, 1, file) || memcmp(magic, kFileMagic, 8)) {
+      aom_internal_error(error_info, AOM_CODEC_ERROR,
+                         "Unable to read (or invalid) file magic");
     }
-    memset(entry, 0, sizeof(*entry));
-    grain_table_entry_read(file, error_info, entry);
-    entry->next = NULL;
 
-    if (prev_entry) prev_entry->next = entry;
-    if (!t->head) t->head = entry;
-    t->tail = entry;
-    prev_entry = entry;
+    aom_film_grain_table_entry_t *prev_entry = NULL;
+    for (;;) {
+      // Check for end of file before attempting to read.
+      int c = fgetc(file);
+      if (c == EOF) {
+        break;
+      }
+      ungetc(c, file);
 
-    if (error_info->error_code != AOM_CODEC_OK) break;
+      aom_film_grain_table_entry_t *entry = aom_malloc(sizeof(*entry));
+      if (!entry) {
+        aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
+                           "Unable to allocate grain table entry");
+      }
+      memset(entry, 0, sizeof(*entry));
+      grain_table_entry_read(file, error_info, entry);
+      entry->next = NULL;
+
+      if (prev_entry) prev_entry->next = entry;
+      if (!t->head) t->head = entry;
+      t->tail = entry;
+      prev_entry = entry;
+    }
   }
 
   fclose(file);
+  error_info->setjmp = 0;
+
   return error_info->error_code;
 }
 
 aom_codec_err_t aom_film_grain_table_write(
     const aom_film_grain_table_t *t, const char *filename,
     struct aom_internal_error_info *error_info) {
+  FILE *const file = fopen(filename, "wb");
   error_info->error_code = AOM_CODEC_OK;
 
-  FILE *file = fopen(filename, "wb");
   if (!file) {
-    aom_internal_error(error_info, AOM_CODEC_ERROR, "Unable to open file %s",
-                       filename);
-    return error_info->error_code;
+    error_info->error_code = AOM_CODEC_ERROR;
+    return AOM_CODEC_ERROR;
   }
 
-  if (!fwrite(kFileMagic, 8, 1, file)) {
-    aom_internal_error(error_info, AOM_CODEC_ERROR,
-                       "Unable to write file magic");
-    fclose(file);
-    return error_info->error_code;
+  error_info->setjmp = 1;
+  if (setjmp(error_info->jmp) == 0) {
+    if (!fwrite(kFileMagic, 8, 1, file)) {
+      aom_internal_error(error_info, AOM_CODEC_ERROR,
+                         "Unable to write file magic");
+    }
+
+    fprintf(file, "\n");
+    aom_film_grain_table_entry_t *entry = t->head;
+    while (entry) {
+      grain_table_entry_write(file, entry);
+      entry = entry->next;
+    }
   }
 
-  fprintf(file, "\n");
-  aom_film_grain_table_entry_t *entry = t->head;
-  while (entry) {
-    grain_table_entry_write(file, entry);
-    entry = entry->next;
-  }
   fclose(file);
+  error_info->setjmp = 0;
+
   return error_info->error_code;
 }
 

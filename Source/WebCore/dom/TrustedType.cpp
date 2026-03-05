@@ -64,11 +64,11 @@ struct TrustedTypeVisitor {
     {
         return value->toString();
     }
-    String operator()(const Ref<TrustedScript>& value)
+    String NODELETE operator()(const Ref<TrustedScript>& value)
     {
         return value->toString();
     }
-    String operator()(const Ref<TrustedScriptURL>& value)
+    String NODELETE operator()(const Ref<TrustedScriptURL>& value)
     {
         return value->toString();
     }
@@ -131,11 +131,12 @@ Variant<std::monostate, Exception, Ref<TrustedHTML>, Ref<TrustedScript>, Ref<Tru
         return std::monostate();
 
     VM& vm = scriptExecutionContext.vm();
+    JSC::JSLockHolder locker(vm);
 
     auto jsExpectedType = JSC::jsString(vm, String(trustedTypeToString(expectedType)));
     auto jsSink = JSC::jsString(vm, sink);
     FixedVector<JSC::Strong<JSC::Unknown>> arguments({ { vm, jsExpectedType }, { vm, jsSink } });
-    auto policyValueHolder = protectedPolicy->getPolicyValue(expectedType, input, WTFMove(arguments), IfMissing::ReturnNull);
+    auto policyValueHolder = protectedPolicy->getPolicyValue(expectedType, input, WTF::move(arguments), IfMissing::ReturnNull);
     if (policyValueHolder.hasException())
         return { policyValueHolder.releaseException() };
 
@@ -179,7 +180,7 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
 
     auto convertedInput = processValueWithDefaultPolicy(scriptExecutionContext, expectedType, stringValue, sink);
     if (std::holds_alternative<Exception>(convertedInput))
-        return WTFMove(std::get<Exception>(convertedInput));
+        return WTF::move(std::get<Exception>(convertedInput));
 
     if (!std::holds_alternative<std::monostate>(convertedInput)) {
         stringValue = WTF::visit(TrustedTypeVisitor { }, convertedInput);
@@ -188,7 +189,7 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
     }
 
     if (std::holds_alternative<std::monostate>(convertedInput)) {
-        auto allowMissingTrustedTypes = scriptExecutionContext.checkedContentSecurityPolicy()->allowMissingTrustedTypesForSinkGroup(trustedTypeToString(expectedType), sink, "script"_s, stringValue);
+        auto allowMissingTrustedTypes = protect(scriptExecutionContext.contentSecurityPolicy())->allowMissingTrustedTypesForSinkGroup(trustedTypeToString(expectedType), sink, "script"_s, stringValue);
 
         if (!allowMissingTrustedTypes)
             return Exception { ExceptionCode::TypeError, makeString("This assignment requires a "_s, trustedTypeToString(expectedType)) };
@@ -197,40 +198,37 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
     return stringValue;
 }
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, Variant<RefPtr<TrustedHTML>, String>&& input, const String& sink)
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, Variant<Ref<TrustedHTML>, String>&& input, const String& sink)
 {
-    return WTF::switchOn(
-        WTFMove(input),
+    return WTF::switchOn(WTF::move(input),
         [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
             return trustedTypeCompliantString(TrustedType::TrustedHTML, scriptExecutionContext, string, sink);
         },
-        [](const RefPtr<TrustedHTML>& html) -> ExceptionOr<String> {
+        [](const Ref<TrustedHTML>& html) -> ExceptionOr<String> {
             return html->toString();
         }
     );
 }
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, Variant<RefPtr<TrustedScript>, String>&& input, const String& sink)
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, Variant<Ref<TrustedScript>, String>&& input, const String& sink)
 {
-    return WTF::switchOn(
-        WTFMove(input),
+    return WTF::switchOn(WTF::move(input),
         [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
             return trustedTypeCompliantString(TrustedType::TrustedScript, scriptExecutionContext, string, sink);
         },
-        [](const RefPtr<TrustedScript>& script) -> ExceptionOr<String> {
+        [](const Ref<TrustedScript>& script) -> ExceptionOr<String> {
             return script->toString();
         }
     );
 }
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, Variant<RefPtr<TrustedScriptURL>, String>&& input, const String& sink)
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, Variant<Ref<TrustedScriptURL>, String>&& input, const String& sink)
 {
-    return WTF::switchOn(
-        WTFMove(input),
+    return WTF::switchOn(WTF::move(input),
         [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
             return trustedTypeCompliantString(TrustedType::TrustedScriptURL, scriptExecutionContext, string, sink);
         },
-        [](const RefPtr<TrustedScriptURL>& scriptURL) -> ExceptionOr<String> {
+        [](const Ref<TrustedScriptURL>& scriptURL) -> ExceptionOr<String> {
             return scriptURL->toString();
         }
     );
@@ -294,7 +292,7 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
 
     auto convertedScriptSource = processValueWithDefaultPolicy(scriptExecutionContext, expectedType, scriptSource, sink);
     if (std::holds_alternative<Exception>(convertedScriptSource))
-        throwScope.clearException();
+        TRY_CLEAR_EXCEPTION(throwScope, WTF::move(std::get<Exception>(convertedScriptSource)));
     else if (!std::holds_alternative<std::monostate>(convertedScriptSource)) {
         auto stringifiedConvertedScriptSource = WTF::visit(TrustedTypeVisitor { }, convertedScriptSource);
 
@@ -378,17 +376,17 @@ ExceptionOr<AtomString> trustedTypesCompliantAttributeValue(ScriptExecutionConte
                 return String(string);
             return trustedTypeCompliantString(stringToTrustedType(attributeType), scriptExecutionContext, string, sink);
         },
-        [&](const RefPtr<TrustedHTML>& trustedHTML) -> ExceptionOr<String> {
+        [&](const Ref<TrustedHTML>& trustedHTML) -> ExceptionOr<String> {
             if (attributeType.isNull() || attributeType == "TrustedHTML"_s)
                 return trustedHTML->toString();
             return trustedTypeCompliantString(stringToTrustedType(attributeType), scriptExecutionContext, trustedHTML->toString(), sink);
         },
-        [&](const RefPtr<TrustedScript>& trustedScript) -> ExceptionOr<String> {
+        [&](const Ref<TrustedScript>& trustedScript) -> ExceptionOr<String> {
             if (attributeType.isNull() || attributeType == "TrustedScript"_s)
                 return trustedScript->toString();
             return trustedTypeCompliantString(stringToTrustedType(attributeType), scriptExecutionContext, trustedScript->toString(), sink);
         },
-        [&](const RefPtr<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+        [&](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
             if (attributeType.isNull() || attributeType == "TrustedScriptURL"_s)
                 return trustedScriptURL->toString();
             return trustedTypeCompliantString(stringToTrustedType(attributeType), scriptExecutionContext, trustedScriptURL->toString(), sink);

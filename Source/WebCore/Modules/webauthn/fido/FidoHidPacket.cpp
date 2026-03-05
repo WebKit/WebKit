@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoHidInitPacket);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoHidContinuationPacket);
 
 FidoHidPacket::FidoHidPacket(Vector<uint8_t>&& data, uint32_t channelId)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
     , m_channelId(channelId)
 {
 }
@@ -74,7 +74,7 @@ std::unique_ptr<FidoHidInitPacket> FidoHidInitPacket::createFromSerializedData(c
     *remainingSize = payloadSize - dataSize;
 
     auto data = serialized.subvector(index, dataSize);
-    return makeUnique<FidoHidInitPacket>(channelId, command, WTFMove(data), payloadSize);
+    return makeUnique<FidoHidInitPacket>(channelId, command, WTF::move(data), payloadSize);
 }
 
 // U2F Initialization packet is defined as:
@@ -85,7 +85,7 @@ std::unique_ptr<FidoHidInitPacket> FidoHidInitPacket::createFromSerializedData(c
 // 6      1       Low order packet payload size
 // 7      (s-7)   Payload data
 FidoHidInitPacket::FidoHidInitPacket(uint32_t channelId, FidoHidDeviceCommand cmd, Vector<uint8_t>&& data, uint16_t payloadLength)
-    : FidoHidPacket(WTFMove(data), channelId)
+    : FidoHidPacket(WTF::move(data), channelId)
     , m_command(cmd)
     , m_payloadLength(payloadLength)
 {
@@ -127,7 +127,7 @@ std::unique_ptr<FidoHidContinuationPacket> FidoHidContinuationPacket::createFrom
     size_t dataSize = std::min(*remainingSize, kHidPacketSize - index);
     *remainingSize -= dataSize;
     auto data = serialized.subvector(index, dataSize);
-    return makeUnique<FidoHidContinuationPacket>(channelId, sequence, WTFMove(data));
+    return makeUnique<FidoHidContinuationPacket>(channelId, sequence, WTF::move(data));
 }
 
 // U2F Continuation packet is defined as:
@@ -136,7 +136,7 @@ std::unique_ptr<FidoHidContinuationPacket> FidoHidContinuationPacket::createFrom
 // 4      1       Packet sequence 0x00..0x7f
 // 5      (s-5)   Payload data
 FidoHidContinuationPacket::FidoHidContinuationPacket(const uint32_t channelId, const uint8_t sequence, Vector<uint8_t>&& data)
-    : FidoHidPacket(WTFMove(data), channelId)
+    : FidoHidPacket(WTF::move(data), channelId)
     , m_sequence(sequence)
 {
 }

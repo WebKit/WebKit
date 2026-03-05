@@ -186,7 +186,12 @@ RTCRtpStreamStats::~RTCRtpStreamStats() {}
 WEBRTC_RTCSTATS_IMPL(
     RTCReceivedRtpStreamStats, RTCRtpStreamStats, "received-rtp",
     AttributeInit("jitter", &jitter),
-    AttributeInit("packetsLost", &packets_lost))
+    AttributeInit("packetsLost", &packets_lost),
+    AttributeInit("packetsReceivedWithEct1", &packets_received_with_ect1),
+    AttributeInit("packetsReceivedWithCe", &packets_received_with_ce),
+    AttributeInit("packetsReportedAsLost", &packets_reported_as_lost),
+    AttributeInit("packetsReportedAsLostButRecovered",
+                  &packets_reported_as_lost_but_recovered))
 // clang-format on
 
 RTCReceivedRtpStreamStats::RTCReceivedRtpStreamStats(std::string id,
@@ -321,10 +326,13 @@ WEBRTC_RTCSTATS_IMPL(
     AttributeInit("pliCount", &pli_count),
     AttributeInit("nackCount", &nack_count),
     AttributeInit("qpSum", &qp_sum),
+    AttributeInit("psnrSum", &psnr_sum),
+    AttributeInit("psnrMeasurements", &psnr_measurements),
     AttributeInit("active", &active),
     AttributeInit("powerEfficientEncoder", &power_efficient_encoder),
     AttributeInit("scalabilityMode", &scalability_mode),
-    AttributeInit("rtxSsrc", &rtx_ssrc))
+    AttributeInit("rtxSsrc", &rtx_ssrc),
+    AttributeInit("packetsSentWithEct1", &packets_sent_with_ect1))
 // clang-format on
 
 RTCOutboundRtpStreamStats::RTCOutboundRtpStreamStats(std::string id,
@@ -427,7 +435,8 @@ WEBRTC_RTCSTATS_IMPL(RTCTransportStats, RTCStats, "transport",
                   &selected_candidate_pair_changes),
     AttributeInit("iceRole", &ice_role),
     AttributeInit("iceLocalUsernameFragment", &ice_local_username_fragment),
-    AttributeInit("iceState", &ice_state))
+    AttributeInit("iceState", &ice_state),
+    AttributeInit("ccfbMessagesReceived", &ccfb_messages_received))
 // clang-format on
 
 RTCTransportStats::RTCTransportStats(std::string id, Timestamp timestamp)

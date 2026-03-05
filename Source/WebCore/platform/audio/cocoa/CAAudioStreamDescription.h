@@ -44,7 +44,7 @@ public:
     CAAudioStreamDescription(double sampleRate, uint32_t channels, PCMFormat, IsInterleaved);
     ~CAAudioStreamDescription();
 
-    const PlatformDescription& platformDescription() const final;
+    const PlatformDescription& platformDescription() const LIFETIME_BOUND final;
 
     PCMFormat format() const final;
 
@@ -67,8 +67,8 @@ public:
     bool operator==(const AudioStreamBasicDescription&) const;
     bool operator==(const AudioStreamDescription&) const;
 
-    const AudioStreamBasicDescription& streamDescription() const;
-    AudioStreamBasicDescription& streamDescription();
+    const AudioStreamBasicDescription& streamDescription() const LIFETIME_BOUND;
+    AudioStreamBasicDescription& streamDescription() LIFETIME_BOUND;
 
 private:
     AudioStreamBasicDescription m_streamDescription;

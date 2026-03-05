@@ -29,14 +29,14 @@
 namespace WebCore {
 
 SharedBuffer::SharedBuffer(sk_sp<SkData>&& data)
-    : FragmentedSharedBuffer(DataSegment::create(WTFMove(data)))
+    : FragmentedSharedBuffer(DataSegment::create(WTF::move(data)))
 {
 }
 
 Ref<SharedBuffer> SharedBuffer::create(sk_sp<SkData>&& data)
 {
     ASSERT(data);
-    return adoptRef(*new SharedBuffer(WTFMove(data)));
+    return adoptRef(*new SharedBuffer(WTF::move(data)));
 }
 
 sk_sp<SkData> SharedBuffer::createSkData() const

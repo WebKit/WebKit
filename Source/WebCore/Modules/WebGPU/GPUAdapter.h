@@ -44,18 +44,18 @@ class GPUAdapter : public RefCounted<GPUAdapter> {
 public:
     static Ref<GPUAdapter> create(Ref<WebGPU::Adapter>&& backing)
     {
-        return adoptRef(*new GPUAdapter(WTFMove(backing)));
+        return adoptRef(*new GPUAdapter(WTF::move(backing)));
     }
 
-    String name() const;
-    Ref<GPUSupportedFeatures> features() const;
-    Ref<GPUSupportedLimits> limits() const;
-    bool isFallbackAdapter() const;
+    String NODELETE name() const;
+    Ref<GPUSupportedFeatures> NODELETE features() const;
+    Ref<GPUSupportedLimits> NODELETE limits() const;
+    bool NODELETE isFallbackAdapter() const;
 
     using RequestDevicePromise = DOMPromiseDeferred<IDLInterface<GPUDevice>>;
     void requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&);
 
-    Ref<GPUAdapterInfo> info();
+    Ref<GPUAdapterInfo> NODELETE info();
 
     WebGPU::Adapter& backing() { return m_backing; }
     const WebGPU::Adapter& backing() const { return m_backing; }
@@ -64,9 +64,9 @@ private:
     GPUAdapter(Ref<WebGPU::Adapter>&& backing);
 
     const Ref<WebGPU::Adapter> m_backing;
-    Ref<GPUSupportedFeatures> m_features;
-    Ref<GPUSupportedLimits> m_limits;
-    Ref<GPUAdapterInfo> m_info;
+    const Ref<GPUSupportedFeatures> m_features;
+    const Ref<GPUSupportedLimits> m_limits;
+    const Ref<GPUAdapterInfo> m_info;
 };
 
 }

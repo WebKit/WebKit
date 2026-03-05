@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>& overlayMap()
+static HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>& NODELETE overlayMap()
 {
     static NeverDestroyed<HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>> map;
     return map;
@@ -45,12 +45,12 @@ static HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>& overlayMap()
 
 Ref<WebPageOverlay> WebPageOverlay::create(std::unique_ptr<WebPageOverlay::Client> client, PageOverlay::OverlayType overlayType)
 {
-    return adoptRef(*new WebPageOverlay(WTFMove(client), overlayType));
+    return adoptRef(*new WebPageOverlay(WTF::move(client), overlayType));
 }
 
 WebPageOverlay::WebPageOverlay(std::unique_ptr<WebPageOverlay::Client> client, PageOverlay::OverlayType overlayType)
     : m_overlay(PageOverlay::create(*this, overlayType))
-    , m_client(WTFMove(client))
+    , m_client(WTF::move(client))
 {
     ASSERT(m_client);
     overlayMap().add(*m_overlay, *this);
@@ -73,17 +73,17 @@ WebPageOverlay* WebPageOverlay::fromCoreOverlay(PageOverlay& overlay)
 
 void WebPageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
-    protectedCoreOverlay()->setNeedsDisplay(dirtyRect);
+    protect(coreOverlay())->setNeedsDisplay(dirtyRect);
 }
 
 void WebPageOverlay::setNeedsDisplay()
 {
-    protectedCoreOverlay()->setNeedsDisplay();
+    protect(coreOverlay())->setNeedsDisplay();
 }
 
 void WebPageOverlay::clear()
 {
-    protectedCoreOverlay()->clear();
+    protect(coreOverlay())->clear();
 }
 
 void WebPageOverlay::willMoveToPage(PageOverlay&, Page* page)

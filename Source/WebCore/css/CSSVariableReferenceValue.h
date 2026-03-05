@@ -57,7 +57,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
 
     RefPtr<CSSVariableData> resolveVariableReferences(Style::Builder&) const;
-    const CSSParserContext& context() const;
+    const CSSParserContext& NODELETE context() const;
 
     RefPtr<CSSValue> resolveSingleValue(Style::Builder&, CSSPropertyID) const;
 
@@ -74,6 +74,8 @@ private:
 
     std::optional<Vector<CSSParserToken>> resolveTokenRange(CSSParserTokenRange, Style::Builder&) const;
     bool resolveVariableReference(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, Style::Builder&) const;
+    bool evaluateDashedFunction(StringView functionName, CSSParserTokenRange, Vector<CSSParserToken>&, Style::Builder&) const;
+
     enum class FallbackResult : uint8_t { None, Valid, Invalid };
     std::pair<FallbackResult, Vector<CSSParserToken>> resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange, CSSValueID functionId, Style::Builder&) const;
 
@@ -104,7 +106,7 @@ bool CSSVariableReferenceValue::resolveAndCacheValue(Style::Builder& builder, NO
     if (auto data = tryResolveSimpleReference(builder)) {
         if (!arePointingToEqualData(m_cacheDependencyData, data))
             cacheFunction(data);
-        m_cacheDependencyData = WTFMove(data);
+        m_cacheDependencyData = WTF::move(data);
         return true;
     }
 

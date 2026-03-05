@@ -387,6 +387,8 @@ body {
     }
 
     &.mac-platform {
+        --system-accent-color: -apple-system-control-accent;
+
         --text-color: hsl(0, 0%, 15%);
         --text-color-transparent: hsla(0, 0%, 15%, 0.4);
 
@@ -406,11 +408,11 @@ body {
         --selected-background-color: -apple-system-selected-content-background;
         --selected-text-background-color: -apple-system-selected-text-background;
 
-        --breakpoint-color: -apple-system-control-accent;
+        --breakpoint-color: var(--system-accent-color);
         --breakpoint-color-disabled: -apple-system-selected-text-background;
 
-        --glyph-color-active: -apple-system-control-accent;
-        --glyph-color-active-pressed: -apple-system-control-accent;
+        --glyph-color-active: var(--system-accent-color);
+        --glyph-color-active-pressed: var(--system-accent-color);
 
         @media (prefers-color-scheme: dark) {
             --text-color: hsl(0, 0%, 85%);

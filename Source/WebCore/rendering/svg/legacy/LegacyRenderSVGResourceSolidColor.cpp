@@ -25,7 +25,7 @@
 #include "LocalFrameView.h"
 #include "RenderElement.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -45,12 +45,14 @@ auto LegacyRenderSVGResourceSolidColor::applyResource(RenderElement& renderer, c
 
     bool isRenderingMask = renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
 
+    Style::ColorResolver colorResolver { style };
+
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
         if (!isRenderingMask)
             context->setAlpha(style.fillOpacity().value.value);
         else
             context->setAlpha(1);
-        context->setFillColor(style.colorByApplyingColorFilter(m_color));
+        context->setFillColor(colorResolver.colorApplyingColorFilter(m_color));
         if (isRenderingMask)
             context->setFillRule(style.clipRule());
         else
@@ -62,7 +64,7 @@ auto LegacyRenderSVGResourceSolidColor::applyResource(RenderElement& renderer, c
         // When rendering the mask for a LegacyRenderSVGResourceClipper, the stroke code path is never hit.
         ASSERT(!isRenderingMask);
         context->setAlpha(style.strokeOpacity().value.value);
-        context->setStrokeColor(style.colorByApplyingColorFilter(m_color));
+        context->setStrokeColor(colorResolver.colorApplyingColorFilter(m_color));
 
         SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
 

@@ -30,17 +30,10 @@
 #include <WebCore/CDMInstance.h>
 #include <WebCore/CDMRequirement.h>
 #include <WebCore/CDMSessionType.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class CDMPrivate;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMPrivate> : std::true_type { };
-}
 
 #if !RELEASE_LOG_DISABLED
 namespace WTF {
@@ -69,7 +62,9 @@ public:
 #endif
 };
 
-class CDMPrivate : public CanMakeWeakPtr<CDMPrivate> {
+class CDMPrivate : public CanMakeWeakPtr<CDMPrivate>, public CanMakeCheckedPtr<CDMPrivate> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CDMPrivate, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivate);
 public:
     WEBCORE_EXPORT virtual ~CDMPrivate();
 

@@ -235,7 +235,7 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime() const
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
 
     if (!m_runtime) {
-        m_runtime = WebExtensionAPIRuntime::create(contentWorldType(), protectedExtensionContext());
+        m_runtime = WebExtensionAPIRuntime::create(contentWorldType(), protect(extensionContext()));
         m_runtime->setPropertyPath("runtime"_s, this);
     }
 

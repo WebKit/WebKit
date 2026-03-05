@@ -327,10 +327,10 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(::testing::Values(AOM_USAGE_ALL_INTRA),
                        ::testing::Values(AOM_Q), ::testing::Range(6, 10)));
 
-typedef struct {
+struct FrameSizeParam {
   unsigned int width;
   unsigned int height;
-} FrameSizeParam;
+};
 
 const FrameSizeParam FrameSizeTestParams[] = { { 96, 96 }, { 176, 144 } };
 

@@ -25,7 +25,6 @@ class TypeTrackingTest : public testing::Test
     {
         ShBuiltInResources resources;
         InitBuiltInResources(&resources);
-        resources.FragmentPrecisionHigh = 1;
 
         mTranslator = new TranslatorESSL(GL_FRAGMENT_SHADER, SH_GLES3_1_SPEC);
         ASSERT_TRUE(mTranslator->Init(resources));
@@ -39,7 +38,7 @@ class TypeTrackingTest : public testing::Test
         compileOptions.intermediateTree = true;
 
         const char *shaderStrings[] = {shaderString.c_str()};
-        bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, compileOptions);
+        bool compilationSuccess     = mTranslator->compile(shaderStrings, compileOptions);
         TInfoSink &infoSink         = mTranslator->getInfoSink();
         mInfoLog                    = RemoveSymbolIdsFromInfoLog(infoSink.info.c_str());
         if (!compilationSuccess)
@@ -678,8 +677,8 @@ void main()
 )";
     const char kExpected[] = R"(0:2: Code block
 0:6:   Declaration
-0:? :     '' (structure 's2' (specifier))
-0:? :       member: 'i' (mediump int)
+0:?:     '' (structure 's2' (specifier))
+0:?:       member: 'i' (mediump int)
 0:10:   Declaration
 0:10:     initialize first child with second child (const structure 's1' (specifier))
 0:10:       's11' (const structure 's1' (specifier))

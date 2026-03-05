@@ -61,7 +61,7 @@ template<typename T, typename U> struct Coder<std::pair<T, U>> {
         if (!second)
             return std::nullopt;
 
-        return {{ WTFMove(*first), WTFMove(*second) }};
+        return {{ WTF::move(*first), WTF::move(*second) }};
     }
 };
 
@@ -93,7 +93,7 @@ template<typename T> struct Coder<std::optional<T>> {
         if (!value)
             return std::nullopt;
         
-        return std::optional<std::optional<T>> { std::optional<T> { WTFMove(*value) } };
+        return std::optional<std::optional<T>> { std::optional<T> { WTF::move(*value) } };
     }
 };
 
@@ -117,7 +117,7 @@ template<typename KeyType, typename ValueType> struct Coder<WTF::KeyValuePair<Ke
         if (!value)
             return std::nullopt;
 
-        return {{ WTFMove(*key), WTFMove(*value) }};
+        return {{ WTF::move(*key), WTF::move(*value) }};
     }
 };
 
@@ -146,7 +146,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineC
             decoder >> element;
             if (!element)
                 return std::nullopt;
-            tmp.append(WTFMove(*element));
+            tmp.append(WTF::move(*element));
         }
 
         tmp.shrinkToFit();
@@ -224,7 +224,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             if (!value)
                 return std::nullopt;
 
-            if (!tempHashMap.add(WTFMove(*key), WTFMove(*value)).isNewEntry) {
+            if (!tempHashMap.add(WTF::move(*key), WTF::move(*value)).isNewEntry) {
                 // The hash map already has the specified key, bail.
                 return std::nullopt;
             }
@@ -260,13 +260,68 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
             if (!key)
                 return std::nullopt;
 
-            if (!tempHashSet.add(WTFMove(*key)).isNewEntry) {
+            if (!tempHashSet.add(WTF::move(*key)).isNewEntry) {
                 // The hash map already has the specified key, bail.
                 return std::nullopt;
             }
         }
 
         return tempHashSet;
+    }
+};
+
+template<typename... Types> struct Coder<Variant<Types...>> {
+    using PersistentEncodedVariantIndex = uint8_t;
+
+    template<typename Encoder, typename T>
+    static void encodeForPersistence(Encoder& encoder, T&& variant)
+    {
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, Variant<Types...>>);
+        static_assert(sizeof...(Types) <= static_cast<size_t>(std::numeric_limits<PersistentEncodedVariantIndex>::max()));
+
+        PersistentEncodedVariantIndex i = variant.index();
+        encoder << i;
+        encodeForPersistence(encoder, std::forward<T>(variant), std::index_sequence<> { }, i);
+    }
+
+    template<typename Encoder, typename T, size_t... Indices>
+    static void encodeForPersistence(Encoder& encoder, T&& variant, std::index_sequence<Indices...>, size_t i)
+    {
+        constexpr size_t index = sizeof...(Indices);
+        if constexpr (index < sizeof...(Types)) {
+            if (index == i) {
+                encoder << std::get<index>(std::forward<T>(variant));
+                return;
+            }
+            encodeForPersistence(encoder, std::forward<T>(variant), std::make_index_sequence<index + 1> { }, i);
+        }
+    }
+
+    template<typename Decoder>
+    static std::optional<Variant<Types...>> decodeForPersistence(Decoder& decoder)
+    {
+        std::optional<PersistentEncodedVariantIndex> i;
+        decoder >> i;
+        if (!i || *i >= sizeof...(Types))
+            return std::nullopt;
+        return decodeForPersistence(decoder, std::index_sequence<> { }, *i);
+    }
+
+    template<typename Decoder, size_t... Indices>
+    static std::optional<Variant<Types...>> decodeForPersistence(Decoder& decoder, std::index_sequence<Indices...>, size_t i)
+    {
+        constexpr size_t index = sizeof...(Indices);
+        if constexpr (index < sizeof...(Types)) {
+            if (index == i) {
+                std::optional<typename WTF::VariantAlternativeT<index, Variant<Types...>>> optional;
+                decoder >> optional;
+                if (!optional)
+                    return std::nullopt;
+                return std::make_optional<Variant<Types...>>(WTF::InPlaceIndex<index>, WTF::move(*optional));
+            }
+            return decodeForPersistence(decoder, std::make_index_sequence<index + 1> { }, i);
+        } else
+            return std::nullopt;
     }
 };
 

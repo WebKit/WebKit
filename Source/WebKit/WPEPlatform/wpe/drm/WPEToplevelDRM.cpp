@@ -67,16 +67,3 @@ static void wpe_toplevel_drm_class_init(WPEToplevelDRMClass* toplevelDRMClass)
     WPEToplevelClass* toplevelClass = WPE_TOPLEVEL_CLASS(toplevelDRMClass);
     toplevelClass->get_screen = wpeToplevelDRMGetScreen;
 }
-
-/**
- * wpe_toplevel_drm_new:
- * @display: a #WPEDisplayDRM
- *
- * Create a new #WPEToplevel on @display.
- *
- * Returns: (transfer full): a #WPEToplevel
- */
-WPEToplevel* wpe_toplevel_drm_new(WPEDisplayDRM* display)
-{
-    return WPE_TOPLEVEL(g_object_new(WPE_TYPE_TOPLEVEL_DRM, "display", display, nullptr));
-}

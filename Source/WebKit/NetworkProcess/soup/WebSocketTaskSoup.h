@@ -60,8 +60,6 @@ private:
 
     String acceptedExtensions() const;
 
-    RefPtr<NetworkSocketChannel> protectedChannel() const;
-
     static void didReceiveMessageCallback(WebSocketTask*, SoupWebsocketDataType, GBytes*);
     static void didReceiveErrorCallback(WebSocketTask*, GError*);
     static void didCloseCallback(WebSocketTask*);

@@ -82,7 +82,7 @@ class IDBConnectionProxy;
 }
 
 class WorkerGlobalScope : public Supplementable<WorkerGlobalScope>, public WindowOrWorkerGlobalScope, public WorkerOrWorkletGlobalScope, public ReportingClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkerGlobalScope);
+    WTF_MAKE_TZONE_ALLOCATED(WorkerGlobalScope);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerGlobalScope);
 public:
     virtual ~WorkerGlobalScope();
@@ -96,7 +96,7 @@ public:
     String origin() const;
     const String& inspectorIdentifier() const { return m_inspectorIdentifier; }
 
-    IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
+    IDBClient::IDBConnectionProxy* NODELETE idbConnectionProxy() final;
     void suspend() final;
     void resume() final;
     GraphicsClient* graphicsClient() final;
@@ -107,7 +107,7 @@ public:
     WorkerStorageConnection& storageConnection();
     static void postFileSystemStorageTask(Function<void()>&&);
     WorkerFileSystemStorageConnection& getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&&);
-    WEBCORE_EXPORT WorkerFileSystemStorageConnection* fileSystemStorageConnection();
+    WEBCORE_EXPORT WorkerFileSystemStorageConnection* NODELETE fileSystemStorageConnection();
     CacheStorageConnection& cacheStorageConnection();
     MessagePortChannelProvider& messagePortChannelProvider();
 
@@ -122,9 +122,8 @@ public:
     WorkerLocation& location() const;
     void close();
 
-    virtual ExceptionOr<void> importScripts(const FixedVector<Variant<RefPtr<TrustedScriptURL>, String>>& urls);
+    virtual ExceptionOr<void> importScripts(const FixedVector<Variant<Ref<TrustedScriptURL>, String>>& urls);
     WorkerNavigator& navigator();
-    Ref<WorkerNavigator> protectedNavigator();
 
     void setIsOnline(bool);
     bool isOnline() const { return m_isOnline; }
@@ -145,8 +144,7 @@ public:
     SecurityOrigin& topOrigin() const final { return m_topOrigin.get(); }
 
     Crypto& crypto();
-    Performance& performance() const;
-    Ref<Performance> protectedPerformance() const;
+    Performance& NODELETE performance() const;
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
 
     void prepareForDestruction() override;
@@ -159,7 +157,7 @@ public:
     CSSValuePool& cssValuePool() final;
     CSSFontSelector* cssFontSelector() final;
     Ref<FontFaceSet> fonts();
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
+    RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     const SettingsValues& settingsValues() const final { return m_settingsValues; }
@@ -204,8 +202,7 @@ private:
 
     EventTarget* errorEventTarget() final;
     String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
-    SocketProvider* socketProvider() final;
-    RefPtr<SocketProvider> protectedSocketProvider();
+    SocketProvider* NODELETE socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }

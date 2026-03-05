@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -34,7 +34,8 @@
 #include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "NodeDocument.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -78,10 +79,10 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     // content:attr() value depends on the element it is being applied to.
     if (style.hasAttrContent() || (style.pseudoElementType() && parentStyle.hasAttrContent()))
         return false;
-    if (style.zoom() != RenderStyle::initialZoom())
+    if (style.zoom() != Style::ComputedStyle::initialZoom())
         return false;
-    if (style.writingMode().computedWritingMode() != RenderStyle::initialWritingMode()
-        || style.writingMode().computedTextDirection() != RenderStyle::initialDirection())
+    if (style.writingMode().computedWritingMode() != Style::ComputedStyle::initialWritingMode()
+        || style.writingMode().computedTextDirection() != Style::ComputedStyle::initialDirection())
         return false;
     if (style.usesContainerUnits())
         return false;
@@ -92,10 +93,10 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
 
     // Getting computed style after a font environment change but before full style resolution may involve styles with non-current fonts.
     // Avoid caching them.
-    auto& fontSelector = element.document().fontSelector();
-    if (!style.fontCascade().isCurrent(fontSelector))
+    Ref fontSelector = element.document().fontSelector();
+    if (!style.fontCascade().isCurrent(fontSelector.get()))
         return false;
-    if (!parentStyle.fontCascade().isCurrent(fontSelector))
+    if (!parentStyle.fontCascade().isCurrent(fontSelector.get()))
         return false;
 
     if (element.hasRandomCachingKeyMap())
@@ -132,7 +133,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, c
         if (allNonCacheable)
             return 0;
     }
-    return WTF::computeHash(matchResult, &inheritedCustomProperties);
+    return AlreadyHashed::avoidDeletedValue(WTF::computeHash(matchResult, &inheritedCustomProperties));
 }
 
 std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult, const Style::CustomPropertyData& inheritedCustomProperties, const RenderStyle& parentStyle)

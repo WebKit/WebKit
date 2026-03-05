@@ -41,11 +41,11 @@ using namespace WebCore;
 
 Ref<PreconnectTask> PreconnectTask::create(NetworkSession& networkSession, NetworkLoadParameters&& parameters)
 {
-    return adoptRef(*new PreconnectTask(networkSession, WTFMove(parameters)));
+    return adoptRef(*new PreconnectTask(networkSession, WTF::move(parameters)));
 }
 
 PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParameters&& parameters)
-    : m_networkLoad(NetworkLoad::create(*this, WTFMove(parameters), networkSession))
+    : m_networkLoad(NetworkLoad::create(*this, WTF::move(parameters), networkSession))
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
@@ -54,14 +54,14 @@ PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParame
 
 void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
-    m_networkLoad->setH2PingCallback(url, WTFMove(completionHandler));
+    m_networkLoad->setH2PingCallback(url, WTF::move(completionHandler));
 }
 
 void PreconnectTask::start(CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&& completionHandler, Seconds timeout)
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::start() timeout=%g", this, timeout.value());
     // Keep `this` alive until completion of the network load.
-    m_completionHandler = [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& metrics) mutable {
+    m_completionHandler = [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& metrics) mutable {
         if (completionHandler)
             completionHandler(error, metrics);
     };
@@ -84,7 +84,7 @@ void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceReques
     url.setProtocol("https"_s);
     ASSERT(redirectRequest.url() == url);
 #endif
-    completionHandler(WTFMove(redirectRequest));
+    completionHandler(WTF::move(redirectRequest));
 }
 
 void PreconnectTask::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
@@ -115,6 +115,7 @@ void PreconnectTask::didFailLoading(const ResourceError& error)
 void PreconnectTask::didTimeout()
 {
     RELEASE_LOG_ERROR(Network, "%p - PreconnectTask::didTimeout", this);
+    m_networkLoad->cancel();
     m_completionHandler(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }, { }); // Deletes this.
 }
 

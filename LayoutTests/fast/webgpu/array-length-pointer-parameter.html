@@ -18,12 +18,10 @@ struct ad {
 
 fn y(t: ptr<storage, array<u32>, read_write>) {
     t[0] = 1;
-    ac.af[1] = 2;
 }
 
 fn x(t: ptr<storage, ad, read_write>) {
     t.af[2] = 3;
-    ac.af[3] = 4;
     y(&t.af);
 }
 
@@ -31,6 +29,24 @@ fn f()
 {
     ac.c = 13;
     x(&ac);
+}
+
+var<private> g: u32;
+fn z(t: ptr<storage, array<u32>, read_write>) {
+    g = t[0];
+    g = ac.af[1];
+}
+
+fn w(t: ptr<storage, ad, read_write>) {
+    g = t.af[2];
+    g = ac.af[3];
+    z(&t.af);
+}
+
+fn h()
+{
+    g = ac.c;
+    w(&ac);
 }
 
 @compute @workgroup_size(1)
@@ -70,9 +86,9 @@ fn main()
     output = [...new Uint32Array(outputBuffer0.getMappedRange())]
     shouldBe('output[0]', '13');
     shouldBe('output[1]', '1');
-    shouldBe('output[2]', '2');
+    shouldBe('output[2]', '0');
     shouldBe('output[3]', '3');
-    shouldBe('output[4]', '4');
+    shouldBe('output[4]', '0');
     outputBuffer0.unmap();
     let error = await device.popErrorScope();
     if (error) {

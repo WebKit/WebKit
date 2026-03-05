@@ -21,9 +21,11 @@ function performActions(frames) {
         if (index < frames.length)
             requestAnimationFrameId = requestAnimationFrame(executeFrameFunction);
         else {
-            setTimeout(() => {
-                TestPage.dispatchEventToFrontend("LastFrame");
-            }, 0);
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    TestPage.dispatchEventToFrontend("LastFrame");
+                }, 50);
+            });
         }
     };
     executeFrameFunction();
@@ -87,6 +89,11 @@ function test() {
 
                 InspectorTest.awaitEvent("LastFrame")
                 .then((event) => {
+                    return new Promise((resolveAfterDispatches) => {
+                        InspectorBackend.runAfterPendingDispatches(resolveAfterDispatches);
+                    });
+                })
+                .then(() => {
                     canvas.removeEventListener(WI.Canvas.Event.RecordingStarted, handleRecordingStartedWrapper);
                     canvas.removeEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStoppedWrapper);
 

@@ -43,7 +43,7 @@ typedef [EnforceRange] long long WebCodecsEncodedVideoChunkInitTimestamp;
 typedef [EnforceRange] unsigned long long WebCodecsEncodedVideoChunkInitDuration;
 
 [
-    Conditional=WEB_CODECS
+    Conditional=WEB_CODECS,
 ] dictionary WebCodecsEncodedVideoChunkInit {
   required WebCodecsEncodedVideoChunkType type;
   WebCodecsEncodedVideoChunkInitTimestamp timestamp;

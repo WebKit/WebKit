@@ -13,6 +13,10 @@
 #include <algorithm>
 #include <vector>
 
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+
 namespace webrtc {
 StreamsConfig::StreamsConfig() = default;
 StreamsConfig::StreamsConfig(const StreamsConfig&) = default;
@@ -102,6 +106,19 @@ bool PacedPacketInfo::operator==(const PacedPacketInfo& rhs) const {
          probe_cluster_id == rhs.probe_cluster_id &&
          probe_cluster_min_probes == rhs.probe_cluster_min_probes &&
          probe_cluster_min_bytes == rhs.probe_cluster_min_bytes;
+}
+
+PacerConfig PacerConfig::Create(Timestamp at_time,
+                                DataRate send_rate,
+                                DataRate pad_rate,
+                                TimeDelta time_window) {
+  PacerConfig pacer_config;
+  pacer_config.at_time = at_time;
+  pacer_config.time_window = time_window;
+  // Note that precision is lost here, since DataSize store number of bytes.
+  pacer_config.data_window = send_rate * pacer_config.rate_window();
+  pacer_config.pad_window = pad_rate * pacer_config.rate_window();
+  return pacer_config;
 }
 
 }  // namespace webrtc

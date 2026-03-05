@@ -26,8 +26,9 @@
 #include "config.h"
 #include "AV1Utilities.h"
 
-#include "MediaCapabilitiesInfo.h"
-#include "VideoConfiguration.h"
+#include "BitReader.h"
+#include "PlatformMediaCapabilitiesVideoConfiguration.h"
+#include "TrackInfo.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/NeverDestroyed.h>
@@ -39,9 +40,9 @@ namespace WTF {
 template<> bool isValidEnum<WebCore::AV1ConfigurationProfile>(std::underlying_type_t<WebCore::AV1ConfigurationProfile> value)
 {
     switch (value) {
-    case enumToUnderlyingType(WebCore::AV1ConfigurationProfile::Main):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationProfile::High):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationProfile::Professional):
+    case std::to_underlying(WebCore::AV1ConfigurationProfile::Main):
+    case std::to_underlying(WebCore::AV1ConfigurationProfile::High):
+    case std::to_underlying(WebCore::AV1ConfigurationProfile::Professional):
         return true;
     default:
         return false;
@@ -51,30 +52,31 @@ template<> bool isValidEnum<WebCore::AV1ConfigurationProfile>(std::underlying_ty
 template<> bool isValidEnum<WebCore::AV1ConfigurationLevel>(std::underlying_type_t<WebCore::AV1ConfigurationLevel> value)
 {
     switch (value) {
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_2_0):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_2_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_2_2):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_2_3):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_3_0):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_3_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_3_2):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_3_3):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_4_0):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_4_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_4_2):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_4_3):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_5_0):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_5_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_5_2):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_5_3):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_6_0):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_6_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_6_2):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_6_3):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_7_0):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_7_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_7_2):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_7_3):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_2_0):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_2_1):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_2_2):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_2_3):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_3_0):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_3_1):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_3_2):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_3_3):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_4_0):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_4_1):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_4_2):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_4_3):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_5_0):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_5_1):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_5_2):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_5_3):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_6_0):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_6_1):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_6_2):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_6_3):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_7_0):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_7_1):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_7_2):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_7_3):
+    case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_Maximum):
         return true;
     default:
         return false;
@@ -84,11 +86,11 @@ template<> bool isValidEnum<WebCore::AV1ConfigurationLevel>(std::underlying_type
 template<> bool isValidEnum<WebCore::AV1ConfigurationChromaSubsampling>(std::underlying_type_t<WebCore::AV1ConfigurationChromaSubsampling> value)
 {
     switch (value) {
-    case enumToUnderlyingType(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_444):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_422):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_420_Vertical):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_420_Colocated):
+    case std::to_underlying(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_444):
+    case std::to_underlying(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_422):
+    case std::to_underlying(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown):
+    case std::to_underlying(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_420_Vertical):
+    case std::to_underlying(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_420_Colocated):
         return true;
     default:
         return false;
@@ -98,8 +100,8 @@ template<> bool isValidEnum<WebCore::AV1ConfigurationChromaSubsampling>(std::und
 template<> bool isValidEnum<WebCore::AV1ConfigurationRange>(std::underlying_type_t<WebCore::AV1ConfigurationRange> value)
 {
     switch (value) {
-    case enumToUnderlyingType(WebCore::AV1ConfigurationRange::VideoRange):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationRange::FullRange):
+    case std::to_underlying(WebCore::AV1ConfigurationRange::VideoRange):
+    case std::to_underlying(WebCore::AV1ConfigurationRange::FullRange):
         return true;
     default:
         return false;
@@ -109,18 +111,18 @@ template<> bool isValidEnum<WebCore::AV1ConfigurationRange>(std::underlying_type
 template<> bool isValidEnum<WebCore::AV1ConfigurationColorPrimaries>(std::underlying_type_t<WebCore::AV1ConfigurationColorPrimaries> value)
 {
     switch (value) {
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::BT_709_6):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::Unspecified):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::BT_470_6_M):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::BT_470_7_BG):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::BT_601_7):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::SMPTE_ST_240):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::Film):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::SMPTE_ST_428_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::SMPTE_RP_431_2):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::SMPTE_EG_432_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationColorPrimaries::EBU_Tech_3213_E):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::BT_709_6):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::Unspecified):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::BT_470_6_M):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::BT_470_7_BG):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::BT_601_7):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::SMPTE_ST_240):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::Film):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::SMPTE_ST_428_1):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::SMPTE_RP_431_2):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::SMPTE_EG_432_1):
+    case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::EBU_Tech_3213_E):
         return true;
     default:
         return false;
@@ -130,23 +132,23 @@ template<> bool isValidEnum<WebCore::AV1ConfigurationColorPrimaries>(std::underl
 template<> bool isValidEnum<WebCore::AV1ConfigurationTransferCharacteristics>(std::underlying_type_t<WebCore::AV1ConfigurationTransferCharacteristics> value)
 {
     switch (value) {
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_709_6):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::Unspecified):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_470_6_M):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_470_7_BG):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_601_7):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::SMPTE_ST_240):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::Linear):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::Logrithmic):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::Logrithmic_Sqrt):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::IEC_61966_2_4):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_1361_0):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::IEC_61966_2_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_2020_10bit):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_2020_12bit):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::SMPTE_ST_2084):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::SMPTE_ST_428_1):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationTransferCharacteristics::BT_2100_HLG):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_709_6):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::Unspecified):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_470_6_M):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_470_7_BG):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_601_7):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::SMPTE_ST_240):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::Linear):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::Logrithmic):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::Logrithmic_Sqrt):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::IEC_61966_2_4):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_1361_0):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::IEC_61966_2_1):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_2020_10bit):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_2020_12bit):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::SMPTE_ST_2084):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::SMPTE_ST_428_1):
+    case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_2100_HLG):
         return true;
     default:
         return false;
@@ -156,20 +158,20 @@ template<> bool isValidEnum<WebCore::AV1ConfigurationTransferCharacteristics>(st
 template<> bool isValidEnum<WebCore::AV1ConfigurationMatrixCoefficients>(std::underlying_type_t<WebCore::AV1ConfigurationMatrixCoefficients> value)
 {
     switch (value) {
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::Identity):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::BT_709_6):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::Unspecified):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::FCC):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::BT_470_7_BG):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::BT_601_7):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::SMPTE_ST_240):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::YCgCo):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::BT_2020_Constant_Luminance):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::SMPTE_ST_2085):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::Chromacity_Nonconstant_Luminance):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::Chromacity_Constant_Luminance):
-    case enumToUnderlyingType(WebCore::AV1ConfigurationMatrixCoefficients::BT_2100_ICC):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::Identity):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::BT_709_6):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::Unspecified):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::FCC):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::BT_470_7_BG):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::BT_601_7):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::SMPTE_ST_240):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::YCgCo):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::BT_2020_Constant_Luminance):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::SMPTE_ST_2085):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::Chromacity_Nonconstant_Luminance):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::Chromacity_Constant_Luminance):
+    case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::BT_2100_ICC):
         return true;
     default:
         return false;
@@ -507,7 +509,7 @@ bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord& record)
     return true;
 }
 
-bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, const VideoConfiguration& configuration)
+bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
     // Check that VideoConfiguration is within the specified profile and level from the configuration record:
     auto findIter = perLevelConstraints().find(record.level);
@@ -523,8 +525,8 @@ bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, c
         && configuration.bitrate <= maxBitrate;
 }
 
-std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(const SharedBuffer& buffer)
-    {
+std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t> buffer)
+{
     // Ref: https://aomediacodec.github.io/av1-isobmff/
     // Section 2.3: AV1 Codec Configuration Box
 
@@ -533,6 +535,8 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(co
         return std::nullopt;
 
     AV1CodecConfigurationRecord record;
+    BitReader bitReader(buffer);
+    std::optional<size_t> value;
 
     // aligned(8) class AV1CodecConfigurationRecord
     // {
@@ -559,33 +563,46 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(co
     //   unsigned int(8) configOBUs[];
     // }
 
-    auto arrayBuffer = buffer.tryCreateArrayBuffer();
-    if (!arrayBuffer)
+    // marker f(1) - should be 1
+    value = bitReader.read(1);
+    if (!value || !*value)
         return std::nullopt;
 
-    bool status = true;
-    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
-
-    auto profileLevel = view->get<uint8_t>(1, false, &status);
-    if (!status)
+    // version f(7) - should be 1
+    value = bitReader.read(7);
+    if (!value || *value != 1)
         return std::nullopt;
 
-    if (!isValidEnum<AV1ConfigurationProfile>((profileLevel & 0b11100000) >> 5))
+    // seq_profile f(3)
+    value = bitReader.read(3);
+    if (!value || !isValidEnum<AV1ConfigurationProfile>(*value))
         return std::nullopt;
-    record.profile = static_cast<AV1ConfigurationProfile>((profileLevel & 0b11100000) >> 5);
+    record.profile = static_cast<AV1ConfigurationProfile>(*value);
 
-    if (!isValidEnum<AV1ConfigurationLevel>(profileLevel & 0b00011111))
+    // seq_level_idx_0 f(5)
+    value = bitReader.read(5);
+    if (!value || !isValidEnum<AV1ConfigurationLevel>(*value))
         return std::nullopt;
-    record.level = static_cast<AV1ConfigurationLevel>(profileLevel & 0b00011111);
+    record.level = static_cast<AV1ConfigurationLevel>(*value);
 
-
-    auto tierBitdepthAndColorFlags = view->get<uint8_t>(2, false, &status);
-    if (!status)
+    // seq_tier_0 f(1)
+    value = bitReader.read(1);
+    if (!value)
         return std::nullopt;
+    record.tier = *value ? AV1ConfigurationTier::High : AV1ConfigurationTier::Main;
 
-    record.tier = tierBitdepthAndColorFlags & 0b10000000 ? AV1ConfigurationTier::High : AV1ConfigurationTier::Main;
-    bool highBitDepth = tierBitdepthAndColorFlags & 0b01000000;
-    bool twelveBit = tierBitdepthAndColorFlags & 0b00100000;
+    // high_bitdepth f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool highBitDepth = *value;
+
+    // twelve_bit f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool twelveBit = *value;
+
     if (!highBitDepth && twelveBit)
         return std::nullopt;
 
@@ -596,16 +613,758 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(co
     else
         record.bitDepth = 8;
 
-    record.monochrome = tierBitdepthAndColorFlags & 0b00010000;
-    uint8_t chromaSubsamplingValue = 0;
-    if (tierBitdepthAndColorFlags & 0b00001000)
-        chromaSubsamplingValue += 100;
-    if (tierBitdepthAndColorFlags & 0b00000100)
-        chromaSubsamplingValue += 10;
-    chromaSubsamplingValue += tierBitdepthAndColorFlags & 0b00000010;
+    // monochrome f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    record.monochrome = *value;
+
+    // chroma_subsampling_x f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    uint8_t chromaSubsamplingX = *value;
+
+    // chroma_subsampling_y f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    uint8_t chromaSubsamplingY = *value;
+
+    // chroma_sample_position f(2)
+    value = bitReader.read(2);
+    if (!value)
+        return std::nullopt;
+    uint8_t chromaSamplePosition = static_cast<uint8_t>(*value);
+
+    // Compute chromaSubsampling value: first digit = subsampling_x, second = subsampling_y, third = chroma_sample_position (if 4:2:0) or 0
+    record.chromaSubsampling = chromaSubsamplingX * 100 + chromaSubsamplingY * 10 + ((chromaSubsamplingX && chromaSubsamplingY) ? chromaSamplePosition : 0);
+
+    // Initialize dimension fields to default values (decoder config doesn't contain dimensions)
+    record.width = AV1CodecConfigurationRecord::defaultWidth;
+    record.height = AV1CodecConfigurationRecord::defaultHeight;
+    record.codecName = "av01"_s;
+
+    return record;
+}
+
+std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t> data)
+{
+    AV1CodecConfigurationRecord record;
+    record.codecName = "av01"_s;
+
+    BitReader bitReader(data);
+    std::optional<size_t> value;
+
+    // seq_profile f(3)
+    value = bitReader.read(3);
+    if (!value)
+        return std::nullopt;
+    if (!isValidEnum<AV1ConfigurationProfile>(*value))
+        return std::nullopt;
+    record.profile = static_cast<AV1ConfigurationProfile>(*value);
+    uint8_t seqProfile = static_cast<uint8_t>(*value);
+
+    // still_picture f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool stillPicture = *value;
+
+    // reduced_still_picture_header f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool reducedStillPictureHeader = *value;
+
+    // Per spec: reduced_still_picture_header requires still_picture to be 1
+    if (reducedStillPictureHeader && !stillPicture)
+        return std::nullopt;
+
+    bool timingInfoPresentFlag = false;
+    bool decoderModelInfoPresentFlag = false;
+    bool initialDisplayDelayPresentFlag = false;
+    size_t operatingPointsCntMinus1 = 0;
+    size_t bufferDelayLengthMinus1 = 0;
+
+    if (reducedStillPictureHeader) {
+        // When reduced_still_picture_header is set:
+        // timing_info_present_flag = 0
+        // decoder_model_info_present_flag = 0
+        // initial_display_delay_present_flag = 0
+        // operating_points_cnt_minus_1 = 0
+        // operating_point_idc[0] = 0
+        // seq_level_idx[0] f(5)
+        value = bitReader.read(5);
+        if (!value)
+            return std::nullopt;
+        if (!isValidEnum<AV1ConfigurationLevel>(*value))
+            return std::nullopt;
+        record.level = static_cast<AV1ConfigurationLevel>(*value);
+        // seq_tier[0] = 0
+        record.tier = AV1ConfigurationTier::Main;
+        // decoder_model_present_for_this_op[0] = 0
+        // initial_display_delay_present_for_this_op[0] = 0
+    } else {
+        // timing_info_present_flag f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        timingInfoPresentFlag = *value;
+
+        if (timingInfoPresentFlag) {
+            // timing_info()
+            // num_units_in_display_tick f(32)
+            value = bitReader.read(32);
+            if (!value)
+                return std::nullopt;
+            // time_scale f(32)
+            value = bitReader.read(32);
+            if (!value)
+                return std::nullopt;
+            // equal_picture_interval f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            bool equalPictureInterval = *value;
+            if (equalPictureInterval) {
+                // num_ticks_per_picture_minus_1 uvlc()
+                // Parse uvlc: count leading zeros, then read that many bits
+                size_t leadingZeros = 0;
+                while (true) {
+                    value = bitReader.read(1);
+                    if (!value)
+                        return std::nullopt;
+                    if (*value)
+                        break;
+                    leadingZeros++;
+                    if (leadingZeros >= 32)
+                        break;
+                }
+                if (leadingZeros < 32 && leadingZeros > 0) {
+                    value = bitReader.read(leadingZeros);
+                    if (!value)
+                        return std::nullopt;
+                }
+            }
+
+            // decoder_model_info_present_flag f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            decoderModelInfoPresentFlag = *value;
+
+            if (decoderModelInfoPresentFlag) {
+                // decoder_model_info()
+                // buffer_delay_length_minus_1 f(5)
+                value = bitReader.read(5);
+                if (!value)
+                    return std::nullopt;
+                bufferDelayLengthMinus1 = *value;
+                // num_units_in_decoding_tick f(32)
+                value = bitReader.read(32);
+                if (!value)
+                    return std::nullopt;
+                // buffer_removal_time_length_minus_1 f(5)
+                value = bitReader.read(5);
+                if (!value)
+                    return std::nullopt;
+                // frame_presentation_time_length_minus_1 f(5)
+                value = bitReader.read(5);
+                if (!value)
+                    return std::nullopt;
+            }
+        } else
+            decoderModelInfoPresentFlag = false;
+
+        // initial_display_delay_present_flag f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        initialDisplayDelayPresentFlag = *value;
+
+        // operating_points_cnt_minus_1 f(5)
+        value = bitReader.read(5);
+        if (!value)
+            return std::nullopt;
+        operatingPointsCntMinus1 = *value;
+
+        // For each operating point
+        for (size_t i = 0; i <= operatingPointsCntMinus1; i++) {
+            // operating_point_idc[i] f(12)
+            value = bitReader.read(12);
+            if (!value)
+                return std::nullopt;
+
+            // seq_level_idx[i] f(5)
+            value = bitReader.read(5);
+            if (!value)
+                return std::nullopt;
+            // Use the first operating point's level
+            if (!i) {
+                if (!isValidEnum<AV1ConfigurationLevel>(*value))
+                    return std::nullopt;
+                record.level = static_cast<AV1ConfigurationLevel>(*value);
+            }
+            size_t seqLevelIdx = *value;
+
+            // seq_tier[i] - only present if seq_level_idx[i] > 7 (i.e., level > 3.3)
+            if (seqLevelIdx > 7) {
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                if (!i)
+                    record.tier = *value ? AV1ConfigurationTier::High : AV1ConfigurationTier::Main;
+            } else if (!i)
+                record.tier = AV1ConfigurationTier::Main;
+
+            if (decoderModelInfoPresentFlag) {
+                // decoder_model_present_for_this_op[i] f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                bool decoderModelPresentForThisOp = *value;
+                if (decoderModelPresentForThisOp) {
+                    // operating_parameters_info(i)
+                    // n = buffer_delay_length_minus_1 + 1
+                    size_t n = bufferDelayLengthMinus1 + 1;
+                    // decoder_buffer_delay[op] f(n)
+                    value = bitReader.read(n);
+                    if (!value)
+                        return std::nullopt;
+                    // encoder_buffer_delay[op] f(n)
+                    value = bitReader.read(n);
+                    if (!value)
+                        return std::nullopt;
+                    // low_delay_mode_flag[op] f(1)
+                    value = bitReader.read(1);
+                    if (!value)
+                        return std::nullopt;
+                }
+            }
+
+            if (initialDisplayDelayPresentFlag) {
+                // initial_display_delay_present_for_this_op[i] f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                bool initialDisplayDelayPresentForThisOp = *value;
+                if (initialDisplayDelayPresentForThisOp) {
+                    // initial_display_delay_minus_1[i] f(4)
+                    value = bitReader.read(4);
+                    if (!value)
+                        return std::nullopt;
+                }
+            }
+        }
+    }
+
+    // frame_width_bits_minus_1 f(4)
+    value = bitReader.read(4);
+    if (!value)
+        return std::nullopt;
+    size_t frameWidthBitsMinus1 = *value;
+
+    // frame_height_bits_minus_1 f(4)
+    value = bitReader.read(4);
+    if (!value)
+        return std::nullopt;
+    size_t frameHeightBitsMinus1 = *value;
+
+    // max_frame_width_minus_1 f(n) where n = frame_width_bits_minus_1 + 1
+    value = bitReader.read(frameWidthBitsMinus1 + 1);
+    if (!value)
+        return std::nullopt;
+    record.width = static_cast<uint32_t>(*value + 1);
+
+    // max_frame_height_minus_1 f(n) where n = frame_height_bits_minus_1 + 1
+    value = bitReader.read(frameHeightBitsMinus1 + 1);
+    if (!value)
+        return std::nullopt;
+    record.height = static_cast<uint32_t>(*value + 1);
+
+    bool frameIdNumbersPresentFlag = false;
+    if (!reducedStillPictureHeader) {
+        // frame_id_numbers_present_flag f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        frameIdNumbersPresentFlag = *value;
+    }
+
+    if (frameIdNumbersPresentFlag) {
+        // delta_frame_id_length_minus_2 f(4)
+        value = bitReader.read(4);
+        if (!value)
+            return std::nullopt;
+        // additional_frame_id_length_minus_1 f(3)
+        value = bitReader.read(3);
+        if (!value)
+            return std::nullopt;
+    }
+
+    // use_128x128_superblock f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_filter_intra f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_intra_edge_filter f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    if (!reducedStillPictureHeader) {
+        // enable_interintra_compound f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_masked_compound f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_warped_motion f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_dual_filter f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_order_hint f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        bool enableOrderHint = *value;
+
+        if (enableOrderHint) {
+            // enable_jnt_comp f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+
+            // enable_ref_frame_mvs f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+        }
+
+        // seq_choose_screen_content_tools f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        bool seqChooseScreenContentTools = *value;
+
+        size_t seqForceScreenContentTools = 2; // SELECT_SCREEN_CONTENT_TOOLS
+        if (!seqChooseScreenContentTools) {
+            // seq_force_screen_content_tools f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            seqForceScreenContentTools = *value;
+        }
+
+        if (seqForceScreenContentTools > 0) {
+            // seq_choose_integer_mv f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            bool seqChooseIntegerMv = *value;
+
+            if (!seqChooseIntegerMv) {
+                // seq_force_integer_mv f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+            }
+        }
+
+        if (enableOrderHint) {
+            // order_hint_bits_minus_1 f(3)
+            value = bitReader.read(3);
+            if (!value)
+                return std::nullopt;
+        }
+    }
+
+    // enable_superres f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_cdef f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_restoration f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // color_config()
+    // high_bitdepth f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool highBitdepth = *value;
+
+    bool twelveBit = false;
+    if (seqProfile == 2 && highBitdepth) {
+        // twelve_bit f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        twelveBit = *value;
+        record.bitDepth = twelveBit ? 12 : 10;
+    } else if (seqProfile <= 2)
+        record.bitDepth = highBitdepth ? 10 : 8;
+
+    uint8_t monochrome = 0;
+    if (seqProfile != 1) {
+        // mono_chrome f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        monochrome = *value;
+    }
+    record.monochrome = monochrome;
+
+    // color_description_present_flag f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool colorDescriptionPresentFlag = *value;
+
+    uint8_t colorPrimaries = static_cast<uint8_t>(AV1ConfigurationColorPrimaries::Unspecified);
+    uint8_t transferCharacteristics = static_cast<uint8_t>(AV1ConfigurationTransferCharacteristics::Unspecified);
+    uint8_t matrixCoefficients = static_cast<uint8_t>(AV1ConfigurationMatrixCoefficients::Unspecified);
+
+    if (colorDescriptionPresentFlag) {
+        // color_primaries f(8)
+        value = bitReader.read(8);
+        if (!value)
+            return std::nullopt;
+        colorPrimaries = static_cast<uint8_t>(*value);
+
+        // transfer_characteristics f(8)
+        value = bitReader.read(8);
+        if (!value)
+            return std::nullopt;
+        transferCharacteristics = static_cast<uint8_t>(*value);
+
+        // matrix_coefficients f(8)
+        value = bitReader.read(8);
+        if (!value)
+            return std::nullopt;
+        matrixCoefficients = static_cast<uint8_t>(*value);
+    }
+
+    record.colorPrimaries = colorPrimaries;
+    record.transferCharacteristics = transferCharacteristics;
+    record.matrixCoefficients = matrixCoefficients;
+
+    bool colorRange = false;
+    uint8_t subsamplingX = 1;
+    uint8_t subsamplingY = 1;
+    uint8_t chromaSamplePosition = 0; // CSP_UNKNOWN
+
+    constexpr uint8_t CP_BT_709 = static_cast<uint8_t>(AV1ConfigurationColorPrimaries::BT_709_6);
+    constexpr uint8_t TC_SRGB = static_cast<uint8_t>(AV1ConfigurationTransferCharacteristics::IEC_61966_2_1);
+    constexpr uint8_t MC_IDENTITY = static_cast<uint8_t>(AV1ConfigurationMatrixCoefficients::Identity);
+
+    if (monochrome) {
+        // color_range f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        colorRange = *value;
+        subsamplingX = 1;
+        subsamplingY = 1;
+        chromaSamplePosition = 0; // CSP_UNKNOWN
+    } else if (colorPrimaries == CP_BT_709 && transferCharacteristics == TC_SRGB && matrixCoefficients == MC_IDENTITY) {
+        colorRange = true;
+        subsamplingX = 0;
+        subsamplingY = 0;
+    } else {
+        // color_range f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        colorRange = *value;
+
+        if (!seqProfile) {
+            subsamplingX = 1;
+            subsamplingY = 1;
+        } else if (seqProfile == 1) {
+            subsamplingX = 0;
+            subsamplingY = 0;
+        } else {
+            // Profile 2
+            if (record.bitDepth == 12) {
+                // subsampling_x f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                subsamplingX = static_cast<uint8_t>(*value);
+
+                if (subsamplingX) {
+                    // subsampling_y f(1)
+                    value = bitReader.read(1);
+                    if (!value)
+                        return std::nullopt;
+                    subsamplingY = static_cast<uint8_t>(*value);
+                } else
+                    subsamplingY = 0;
+            } else {
+                subsamplingX = 1;
+                subsamplingY = 0;
+            }
+        }
+
+        if (subsamplingX && subsamplingY) {
+            // chroma_sample_position f(2)
+            value = bitReader.read(2);
+            if (!value)
+                return std::nullopt;
+            chromaSamplePosition = static_cast<uint8_t>(*value);
+        }
+    }
+
+    record.videoFullRangeFlag = colorRange ? AV1ConfigurationRange::FullRange : AV1ConfigurationRange::VideoRange;
+
+    // Compute chromaSubsampling value as per codec string spec:
+    // First digit = subsampling_x, second digit = subsampling_y, third digit = chroma_sample_position (if 4:2:0) or 0
+    uint8_t chromaSubsamplingValue = subsamplingX * 100 + subsamplingY * 10;
+    if (subsamplingX && subsamplingY)
+        chromaSubsamplingValue += chromaSamplePosition;
     record.chromaSubsampling = chromaSubsamplingValue;
 
     return record;
+}
+
+PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord& record)
+{
+    PlatformVideoColorSpace colorSpace;
+
+    // Convert AV1 color primaries to PlatformVideoColorPrimaries
+    // AV1 color primaries are defined in ISO/IEC 23091-2:2019 (same as ITU-T H.273)
+    colorSpace.primaries = [](uint8_t colorPrimaries) {
+        switch (static_cast<AV1ConfigurationColorPrimaries>(colorPrimaries)) {
+        case AV1ConfigurationColorPrimaries::BT_709_6:
+            return PlatformVideoColorPrimaries::Bt709;
+        case AV1ConfigurationColorPrimaries::BT_470_6_M:
+            return PlatformVideoColorPrimaries::Bt470m;
+        case AV1ConfigurationColorPrimaries::BT_470_7_BG:
+            return PlatformVideoColorPrimaries::Bt470bg;
+        case AV1ConfigurationColorPrimaries::BT_601_7:
+            return PlatformVideoColorPrimaries::Smpte170m;
+        case AV1ConfigurationColorPrimaries::SMPTE_ST_240:
+            return PlatformVideoColorPrimaries::Smpte240m;
+        case AV1ConfigurationColorPrimaries::Film:
+            return PlatformVideoColorPrimaries::Film;
+        case AV1ConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
+            return PlatformVideoColorPrimaries::Bt2020;
+        case AV1ConfigurationColorPrimaries::SMPTE_ST_428_1:
+            return PlatformVideoColorPrimaries::SmpteSt4281;
+        case AV1ConfigurationColorPrimaries::SMPTE_RP_431_2:
+            return PlatformVideoColorPrimaries::SmpteRp431;
+        case AV1ConfigurationColorPrimaries::SMPTE_EG_432_1:
+            return PlatformVideoColorPrimaries::SmpteEg432;
+        case AV1ConfigurationColorPrimaries::EBU_Tech_3213_E:
+            return PlatformVideoColorPrimaries::JedecP22Phosphors;
+        case AV1ConfigurationColorPrimaries::Unspecified:
+        default:
+            return PlatformVideoColorPrimaries::Unspecified;
+        }
+    }(record.colorPrimaries);
+
+    // Convert AV1 transfer characteristics to PlatformVideoTransferCharacteristics
+    colorSpace.transfer = [](uint8_t transferCharacteristics) {
+        switch (static_cast<AV1ConfigurationTransferCharacteristics>(transferCharacteristics)) {
+        case AV1ConfigurationTransferCharacteristics::BT_709_6:
+            return PlatformVideoTransferCharacteristics::Bt709;
+        case AV1ConfigurationTransferCharacteristics::BT_470_6_M:
+            return PlatformVideoTransferCharacteristics::Gamma22curve;
+        case AV1ConfigurationTransferCharacteristics::BT_470_7_BG:
+            return PlatformVideoTransferCharacteristics::Gamma28curve;
+        case AV1ConfigurationTransferCharacteristics::BT_601_7:
+            return PlatformVideoTransferCharacteristics::Smpte170m;
+        case AV1ConfigurationTransferCharacteristics::SMPTE_ST_240:
+            return PlatformVideoTransferCharacteristics::Smpte240m;
+        case AV1ConfigurationTransferCharacteristics::Linear:
+            return PlatformVideoTransferCharacteristics::Linear;
+        case AV1ConfigurationTransferCharacteristics::Logrithmic:
+            return PlatformVideoTransferCharacteristics::Log;
+        case AV1ConfigurationTransferCharacteristics::Logrithmic_Sqrt:
+            return PlatformVideoTransferCharacteristics::LogSqrt;
+        case AV1ConfigurationTransferCharacteristics::IEC_61966_2_4:
+            return PlatformVideoTransferCharacteristics::Iec6196624;
+        case AV1ConfigurationTransferCharacteristics::BT_1361_0:
+            return PlatformVideoTransferCharacteristics::Bt1361ExtendedColourGamut;
+        case AV1ConfigurationTransferCharacteristics::IEC_61966_2_1:
+            return PlatformVideoTransferCharacteristics::Iec6196621;
+        case AV1ConfigurationTransferCharacteristics::BT_2020_10bit:
+            return PlatformVideoTransferCharacteristics::Bt2020_10bit;
+        case AV1ConfigurationTransferCharacteristics::BT_2020_12bit:
+            return PlatformVideoTransferCharacteristics::Bt2020_12bit;
+        case AV1ConfigurationTransferCharacteristics::SMPTE_ST_2084:
+            return PlatformVideoTransferCharacteristics::SmpteSt2084;
+        case AV1ConfigurationTransferCharacteristics::SMPTE_ST_428_1:
+            return PlatformVideoTransferCharacteristics::SmpteSt4281;
+        case AV1ConfigurationTransferCharacteristics::BT_2100_HLG:
+            return PlatformVideoTransferCharacteristics::AribStdB67Hlg;
+        case AV1ConfigurationTransferCharacteristics::Unspecified:
+        default:
+            return PlatformVideoTransferCharacteristics::Unspecified;
+        }
+    }(record.transferCharacteristics);
+
+    // Convert AV1 matrix coefficients to PlatformVideoMatrixCoefficients
+    colorSpace.matrix = [](uint8_t matrixCoefficients) {
+        switch (static_cast<AV1ConfigurationMatrixCoefficients>(matrixCoefficients)) {
+        case AV1ConfigurationMatrixCoefficients::Identity:
+            return PlatformVideoMatrixCoefficients::Rgb;
+        case AV1ConfigurationMatrixCoefficients::BT_709_6:
+            return PlatformVideoMatrixCoefficients::Bt709;
+        case AV1ConfigurationMatrixCoefficients::FCC:
+            return PlatformVideoMatrixCoefficients::Fcc;
+        case AV1ConfigurationMatrixCoefficients::BT_470_7_BG:
+            return PlatformVideoMatrixCoefficients::Bt470bg;
+        case AV1ConfigurationMatrixCoefficients::BT_601_7:
+            return PlatformVideoMatrixCoefficients::Smpte170m;
+        case AV1ConfigurationMatrixCoefficients::SMPTE_ST_240:
+            return PlatformVideoMatrixCoefficients::Smpte240m;
+        case AV1ConfigurationMatrixCoefficients::YCgCo:
+            return PlatformVideoMatrixCoefficients::YCgCo;
+        case AV1ConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
+            return PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
+        case AV1ConfigurationMatrixCoefficients::BT_2020_Constant_Luminance:
+            return PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance;
+        case AV1ConfigurationMatrixCoefficients::Unspecified:
+        default:
+            return PlatformVideoMatrixCoefficients::Unspecified;
+        }
+    }(record.matrixCoefficients);
+
+    // Convert AV1 video full range flag
+    colorSpace.fullRange = record.videoFullRangeFlag == AV1ConfigurationRange::FullRange;
+
+    return colorSpace;
+}
+
+static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord& record, std::span<const uint8_t> fullOBUHeader, std::optional<FloatSize> displaySize)
+{
+    // Build AV1 codec configuration record (av1C) for extensionAtoms
+    // Format: marker(1) | version(7) | seq_profile(3) | seq_level_idx_0(5) |
+    //         seq_tier_0(1) | high_bitdepth(1) | twelve_bit(1) | monochrome(1) |
+    //         chroma_subsampling_x(1) | chroma_subsampling_y(1) | chroma_sample_position(2) |
+    //         reserved(3) | initial_presentation_delay_present(1) | reserved(4)
+
+    constexpr size_t VPCodecConfigurationContentsSize = 4;
+    size_t av1CodecConfigurationRecordSize = VPCodecConfigurationContentsSize + fullOBUHeader.size();
+    Vector<uint8_t> av1CBytes(av1CodecConfigurationRecordSize);
+
+    uint8_t highBitdepth = (record.bitDepth > 8) ? 1 : 0;
+    uint8_t twelveBit = (record.bitDepth == 12) ? 1 : 0;
+    uint8_t chromaSubsamplingX = (record.chromaSubsampling / 100) & 1;
+    uint8_t chromaSubsamplingY = ((record.chromaSubsampling / 10) % 10) & 1;
+    uint8_t chromaSamplePosition = record.chromaSubsampling % 10;
+
+    av1CBytes[0] = 0x81; // marker=1, version=1
+    av1CBytes[1] = (static_cast<uint8_t>(record.profile) << 5) | static_cast<uint8_t>(record.level);
+    av1CBytes[2] = (static_cast<uint8_t>(record.tier) << 7) | (highBitdepth << 6) | (twelveBit << 5) | (record.monochrome << 4) | (chromaSubsamplingX << 3) | (chromaSubsamplingY << 2) | chromaSamplePosition;
+    av1CBytes[3] = 0; // reserved(3) | initial_presentation_delay_present(1) | reserved(4)
+
+    // unsigned int(8) configOBUs[];
+    memcpySpan(av1CBytes.mutableSpan().subspan(4), fullOBUHeader);
+
+    return VideoInfo::create({
+        {
+            .codecName = { "av01" },
+            .codecString = createAV1CodecParametersString(record)
+        } , {
+            .size = FloatSize(record.width, record.height),
+            .displaySize = displaySize.value_or(FloatSize(record.width, record.height)),
+            .bitDepth = record.bitDepth,
+            .colorSpace = createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(record),
+            .extensionAtoms = { 1, TrackInfo::AtomData { { "av1C" }, SharedBuffer::create(WTF::move(av1CBytes)) } }
+        }
+    });
+}
+
+static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
+{
+    size_t value = 0;
+    for (size_t cptr = 0; cptr < 8; ++cptr) {
+        if (index >= data.size())
+            return 0;
+
+        uint8_t dataByte = data[index++];
+        uint8_t decodedByte = dataByte & 0x7f;
+        value |= decodedByte << (7 * cptr);
+        if (value >= std::numeric_limits<uint32_t>::max())
+            return 0;
+        if (!(dataByte & 0x80))
+            break;
+    }
+    return value;
+}
+
+static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> getSequenceHeaderOBU(std::span<const uint8_t> data)
+{
+    size_t index = 0;
+    do {
+        if (index >= data.size())
+            return std::nullopt;
+
+        auto startIndex = index;
+        auto value = data[index++];
+        if (value >> 7)
+            return std::nullopt;
+        auto headerType = value >> 3;
+        bool hasPayloadSize = value & 0x02;
+        if (!hasPayloadSize)
+            return std::nullopt;
+
+        bool hasExtension = value & 0x04;
+        if (hasExtension)
+            ++index;
+
+        Checked<size_t> payloadSize = readULEBSize(data, index);
+        if (index + payloadSize >= data.size())
+            return std::nullopt;
+
+        if (headerType == 1) {
+            auto fullObu = data.subspan(startIndex, payloadSize + index - startIndex);
+            auto obuData = data.subspan(index, payloadSize);
+            return std::make_pair(fullObu, obuData);
+        }
+
+        index += payloadSize;
+    } while (true);
+    return std::nullopt;
+}
+
+RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t> data, std::optional<FloatSize> displaySize)
+{
+    auto sequenceHeaderData = getSequenceHeaderOBU(data);
+    if (!sequenceHeaderData)
+        return { };
+
+    auto record = parseSequenceHeaderOBU(sequenceHeaderData->second);
+    if (!record)
+        return { };
+
+    return createVideoInfoFromAV1CodecConfigurationRecord(*record, sequenceHeaderData->first, displaySize);
 }
 
 }

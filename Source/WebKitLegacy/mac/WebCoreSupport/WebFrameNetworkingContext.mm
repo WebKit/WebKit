@@ -77,11 +77,11 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
     if (!frame() || !frame()->page())
         return nullptr;
     
-    WebView *webview = kit(frame()->page());
+    RetainPtr webview = kit(frame()->page());
     if (!webview)
         return nullptr;
 
-    return (__bridge CFDataRef)webview._sourceApplicationAuditData;
+    return (__bridge CFDataRef)webview.get()._sourceApplicationAuditData;
 }
 
 String WebFrameNetworkingContext::sourceApplicationIdentifier() const

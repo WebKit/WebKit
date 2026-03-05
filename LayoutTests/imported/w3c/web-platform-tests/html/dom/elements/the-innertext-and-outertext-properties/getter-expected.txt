@@ -136,9 +136,9 @@ PASS <optgroup> containing <optgroup> ("<select><optgroup class='poke-optgroup'>
 FAIL <optgroup> containing <option> ("<select><optgroup><option>abc</select>") assert_equals: innerText expected "abc" but got ""
 FAIL <div> in <option> ("<select><option class='poke-div'>123</select>") assert_equals: innerText expected "123\nabc" but got ""
 FAIL empty <optgroup> in <div> ("<div>a<optgroup></optgroup>bc") assert_equals: innerText expected "a\nbc" but got "abc"
-FAIL <optgroup> in <div> ("<div>a<optgroup>123</optgroup>bc") assert_equals: innerText expected "a\nbc" but got "abc"
+FAIL <optgroup> in <div> ("<div>a<optgroup>123</optgroup>bc") assert_equals: innerText expected "a\nbc" but got "a123bc"
 FAIL empty <option> in <div> ("<div>a<option></option>bc") assert_equals: innerText expected "a\nbc" but got "abc"
-FAIL <option> in <div> ("<div>a<option>123</option>bc") assert_equals: innerText expected "a\n123\nbc" but got "abc"
+FAIL <option> in <div> ("<div>a<option>123</option>bc") assert_equals: innerText expected "a\n123\nbc" but got "a123bc"
 PASS <button> contents preserved ("<div><button>abc")
 FAIL <fieldset> contents preserved ("<div><fieldset>abc") assert_equals: innerText expected "abc" but got "abc\n"
 FAIL <fieldset> <legend> contents preserved ("<div><fieldset><legend>abc") assert_equals: innerText expected "abc" but got "abc\n"

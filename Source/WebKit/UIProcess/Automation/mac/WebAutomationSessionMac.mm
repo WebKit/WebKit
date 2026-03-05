@@ -59,7 +59,7 @@ void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Aut
     if (auto pendingCallback = m_pendingInspectorCallbacksPerPage.take(page->identifier()))
         pendingCallback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout)));
 
-    m_pendingInspectorCallbacksPerPage.set(page->identifier(), WTFMove(callback));
+    m_pendingInspectorCallbacksPerPage.set(page->identifier(), WTF::move(callback));
 
     // Don't bring the inspector to front since this may be done automatically.
     // We just want it loaded so it can pause if a breakpoint is hit during a command.
@@ -85,12 +85,13 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
     // +[NSEvent pressedMouseButtons] does not account for the NSEvent objects created through eventSender JS in tests.
     // As such, that method always returns 0. To fix this, we swizzle out +[NSEvent pressedMouseButtons], keep track of
     // the mouse button currently being pressed down, and supply the appropriate return value as specified in documentation.
+
     auto methodToSwizzle = class_getClassMethod(RetainPtr { objc_getMetaClass(NSStringFromClass([NSEvent class]).UTF8String) }.get(), @selector(pressedMouseButtons));
     // FIXME: This looks like a safer cpp false positive. It wants me to retain the Objective C block passed to imp_implementationWithBlock(),
     // which gets implicitly constructed from a C++ lambda on this line.
     SUPPRESS_UNRETAINED_ARG auto originalImplementation = method_setImplementation(methodToSwizzle, imp_implementationWithBlock([&mouseButtonsCurrentlyDown = m_mouseButtonsCurrentlyDown] {
         NSUInteger mouseButtons = 0;
-        static constexpr std::array<MouseButton, 3> potentialMouseButtons { MouseButton::Left, MouseButton::Right, MouseButton::Middle };
+        static constexpr std::array<MouseButton, 5> potentialMouseButtons { MouseButton::Left, MouseButton::Right, MouseButton::Middle, MouseButton::Back, MouseButton::Forward };
         for (std::size_t idx = 0; idx < potentialMouseButtons.size(); ++idx) {
             if (mouseButtonsCurrentlyDown.getOptional(potentialMouseButtons[idx]).value_or(false))
                 mouseButtons += (1 << idx);
@@ -174,7 +175,23 @@ static WebCore::IntPoint viewportLocationToWindowLocation(WebCore::IntPoint loca
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
-static WebMouseEventButton automationMouseButtonToPlatformMouseButton(MouseButton button)
+static unsigned NODELETE nsEventButtonNumberFromAutomationMouseButton(MouseButton button)
+{
+    switch (button) {
+    case MouseButton::Right:
+        return 1;
+    case MouseButton::Middle:
+        return 2;
+    case MouseButton::Back:
+        return 3;
+    case MouseButton::Forward:
+        return 4;
+    default:
+        return 0;
+    }
+}
+
+static WebMouseEventButton NODELETE automationMouseButtonToPlatformMouseButton(MouseButton button)
 {
     switch (button) {
     case MouseButton::Left:   return WebMouseEventButton::Left;
@@ -183,6 +200,17 @@ static WebMouseEventButton automationMouseButtonToPlatformMouseButton(MouseButto
     case MouseButton::None:   return WebMouseEventButton::None;
     default: RELEASE_ASSERT_NOT_REACHED();
     }
+}
+
+static RetainPtr<NSEvent> simulatedMouseEvent(NSEventType type, WebCore::IntPoint locationInWindow, NSEventModifierFlags modifiers, NSTimeInterval timestamp, NSInteger windowNumber, unsigned clickCount, float pressure, MouseButton button)
+{
+    RetainPtr event = [NSEvent mouseEventWithType:type location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:synthesizedMouseEventMagicEventNumber clickCount:clickCount pressure:pressure];
+    if (type != NSEventTypeOtherMouseDown && type != NSEventTypeOtherMouseUp)
+        return event;
+
+    RetainPtr cgEvent = [event CGEvent];
+    CGEventSetIntegerValueField(cgEvent.get(), kCGMouseEventButtonNumber, nsEventButtonNumberFromAutomationMouseButton(button));
+    return [NSEvent eventWithCGEvent:cgEvent.get()];
 }
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
@@ -208,9 +236,11 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeLeftMouseUp;
         break;
+    case WebMouseEventButton::Back:
+    case WebMouseEventButton::Forward:
     case WebMouseEventButton::Middle:
         downEventType = NSEventTypeOtherMouseDown;
-        dragEventType = NSEventTypeLeftMouseDragged;
+        dragEventType = NSEventTypeOtherMouseDragged;
         upEventType = NSEventTypeOtherMouseUp;
         break;
     case WebMouseEventButton::Right:
@@ -222,12 +252,10 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 
     auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
 
-    NSInteger eventNumber = synthesizedMouseEventMagicEventNumber;
-
     switch (interaction) {
     case MouseInteraction::Move: {
         ASSERT(dragEventType);
-        RetainPtr event = [NSEvent mouseEventWithType:dragEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:0 pressure:0.0f];
+        RetainPtr event = simulatedMouseEvent(dragEventType, locationInWindow, modifiers, timestamp, windowNumber, 0, 0, button);
         RetainPtr<CGEventRef> cgEvent = event.get().CGEvent;
         if (!m_lastPosition)
             updateLastPosition(locationInWindow);
@@ -237,36 +265,51 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         [eventsToBeSent addObject:event.get()];
         break;
     }
-    case MouseInteraction::Down:
+    case MouseInteraction::Down: {
         ASSERT(downEventType);
         updateClickCount(button, locationInWindow);
         m_mouseButtonsCurrentlyDown.set(button, true);
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:m_clickCount pressure:WebCore::ForceAtClick]];
+        RetainPtr event = simulatedMouseEvent(downEventType, locationInWindow, modifiers, timestamp, windowNumber, m_clickCount, WebCore::ForceAtClick, button);
+        [eventsToBeSent addObject:event.get()];
         break;
-    case MouseInteraction::Up:
+    }
+    case MouseInteraction::Up: {
         ASSERT(upEventType);
         m_mouseButtonsCurrentlyDown.set(button, false);
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:m_clickCount pressure:0.0f]];
+        RetainPtr event = simulatedMouseEvent(upEventType, locationInWindow, modifiers, timestamp, windowNumber, m_clickCount, 0.f, button);
+        [eventsToBeSent addObject:event.get()];
         break;
-    case MouseInteraction::SingleClick:
+    }
+    case MouseInteraction::SingleClick: {
         ASSERT(upEventType);
         ASSERT(downEventType);
 
+        RetainPtr downEvent = simulatedMouseEvent(downEventType, locationInWindow, modifiers, timestamp, windowNumber, 1, WebCore::ForceAtClick, button);
+        RetainPtr upEvent = simulatedMouseEvent(downEventType, locationInWindow, modifiers, timestamp, windowNumber, 1, 0.f, button);
+
         // Send separate down and up events. WebCore will see this as a single-click event.
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:WebCore::ForceAtClick]];
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:0.0f]];
+        [eventsToBeSent addObject:downEvent.get()];
+        [eventsToBeSent addObject:upEvent.get()];
         break;
-    case MouseInteraction::DoubleClick:
+    }
+    case MouseInteraction::DoubleClick: {
         ASSERT(upEventType);
         ASSERT(downEventType);
+
+        RetainPtr downEventOne = simulatedMouseEvent(downEventType, locationInWindow, modifiers, timestamp, windowNumber, 1, WebCore::ForceAtClick, button);
+        RetainPtr upEventOne = simulatedMouseEvent(upEventType, locationInWindow, modifiers, timestamp, windowNumber, 1, 0.f, button);
+        RetainPtr downEventTwo = simulatedMouseEvent(downEventType, locationInWindow, modifiers, timestamp, windowNumber, 2, WebCore::ForceAtClick, button);
+        RetainPtr upEventTwo = simulatedMouseEvent(upEventType, locationInWindow, modifiers, timestamp, windowNumber, 2, 0.f, button);
 
         // Send multiple down and up events with proper click count.
         // WebCore will see this as a single-click event then double-click event.
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:WebCore::ForceAtClick]];
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:0.0f]];
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:2 pressure:WebCore::ForceAtClick]];
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:2 pressure:0.0f]];
+        [eventsToBeSent addObject:downEventOne.get()];
+        [eventsToBeSent addObject:upEventOne.get()];
+        [eventsToBeSent addObject:downEventTwo.get()];
+        [eventsToBeSent addObject:upEventTwo.get()];
     }
+    }
+
     updateLastPosition(locationInWindow);
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
@@ -280,7 +323,7 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-static bool virtualKeyHasStickyModifier(VirtualKey key)
+static bool NODELETE virtualKeyHasStickyModifier(VirtualKey key)
 {
     // Returns whether the key's modifier flags should affect other events while pressed down.
     switch (key) {
@@ -306,7 +349,7 @@ static bool virtualKeyHasStickyModifier(VirtualKey key)
 // PlatformEventFactoryMac::codeForKeyEvent.
 static constexpr unsigned short unknownKeyCode = USHRT_MAX;
 
-static int keyCodeForCharKey(CharKey charKey)
+static int NODELETE keyCodeForCharKey(CharKey charKey)
 {
     if (charKey.length() != 1)
         return unknownKeyCode;
@@ -593,7 +636,7 @@ static unsigned short keyCodeForVirtualKey(VirtualKey key)
     }
 }
 
-static NSEventModifierFlags eventModifierFlagsForVirtualKey(VirtualKey key)
+static NSEventModifierFlags NODELETE eventModifierFlagsForVirtualKey(VirtualKey key)
 {
     // Computes the modifiers changed by the virtual key when it is pressed or released.
     // The mapping from keys to modifiers is specified in the documentation for NSEvent.

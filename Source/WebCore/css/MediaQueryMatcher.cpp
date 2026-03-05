@@ -69,7 +69,7 @@ std::unique_ptr<RenderStyle> MediaQueryMatcher::documentElementUserAgentStyle() 
     if (!m_document || !m_document->frame())
         return nullptr;
 
-    auto* documentElement = m_document->documentElement();
+    CheckedPtr documentElement = m_document->documentElement();
     if (!documentElement)
         return nullptr;
 
@@ -102,7 +102,7 @@ RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
 
     auto queries = MQ::MediaQueryParser::parse(query, m_document->cssParserContext());
     bool matches = evaluate(queries);
-    return MediaQueryList::create(*m_document, *this, WTFMove(queries), matches);
+    return MediaQueryList::create(*m_document, *this, WTF::move(queries), matches);
 }
 
 void MediaQueryMatcher::evaluateAll(EventMode eventMode)

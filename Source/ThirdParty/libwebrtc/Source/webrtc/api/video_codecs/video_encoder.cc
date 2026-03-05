@@ -86,12 +86,6 @@ VideoEncoder::ScalingSettings::ScalingSettings(const ScalingSettings&) =
 
 VideoEncoder::ScalingSettings::~ScalingSettings() {}
 
-// static
-constexpr VideoEncoder::ScalingSettings::KOff
-    VideoEncoder::ScalingSettings::kOff;
-// static
-constexpr uint8_t VideoEncoder::EncoderInfo::kMaxFramerateFraction;
-
 bool VideoEncoder::ResolutionBitrateLimits::operator==(
     const ResolutionBitrateLimits& rhs) const {
   return frame_size_pixels == rhs.frame_size_pixels &&
@@ -194,6 +188,10 @@ std::string VideoEncoder::EncoderInfo::ToString() const {
   oss << "]";
   if (is_qp_trusted.has_value()) {
     oss << ", is_qp_trusted = " << is_qp_trusted.value();
+  }
+  if (mapped_resolution.has_value()) {
+    oss << ", mapped_resolution = " << mapped_resolution->width << " x "
+        << mapped_resolution->height;
   }
   oss << "}";
   return oss.str();

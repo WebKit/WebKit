@@ -63,7 +63,7 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<FontChanges>;
-    const String& platformFontFamilyNameForCSS() const;
+    const String& platformFontFamilyNameForCSS() const LIFETIME_BOUND;
 
     String m_fontName;
     String m_fontFamily;

@@ -38,10 +38,10 @@ template<typename> class ExceptionOr;
 
 bool isValidAudioDataInit(const WebCodecsAudioData::Init&);
 
-bool isAudioSampleFormatInterleaved(AudioSampleFormat);
-size_t computeBytesPerSample(AudioSampleFormat);
+bool NODELETE isAudioSampleFormatInterleaved(AudioSampleFormat);
+size_t NODELETE computeBytesPerSample(AudioSampleFormat);
 ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData&, const WebCodecsAudioData::CopyToOptions&);
-AudioSampleFormat audioSampleElementFormat(AudioSampleFormat);
+AudioSampleFormat NODELETE audioSampleElementFormat(AudioSampleFormat);
 using AudioSampleFormatSpan = Variant<std::span<uint8_t>, std::span<int16_t>, std::span<int32_t>, std::span<float>>;
 AudioSampleFormatSpan audioElementSpan(AudioSampleFormat, std::span<uint8_t>);
 

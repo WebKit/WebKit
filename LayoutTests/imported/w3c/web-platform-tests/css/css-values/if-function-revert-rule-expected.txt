@@ -1,0 +1,4 @@
+
+FAIL The revert-rule works as a branch in if() assert_true: expected true got false
+FAIL The revert-rule works as a branch in if(), earlier return assert_true: expected true got false
+

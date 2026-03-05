@@ -61,8 +61,8 @@ XXX X
 XXX X
 XXX X
 
-FAIL Check that min-height is honored when sizing auto rows. assert_equals: expected "40px" but got "50px"
-FAIL Check that min-height is honored when sizing auto rows and spanning grid items. assert_equals: expected "20px 30px" but got "0px 60px"
-FAIL Check the interactions between height and min-height and auto tracks. assert_equals: expected "25px 25px" but got "0px 50px"
+PASS Check that min-height is honored when sizing auto rows.
+PASS Check that min-height is honored when sizing auto rows and spanning grid items.
+PASS Check the interactions between height and min-height and auto tracks.
 PASS Check that borders and paddings are considering when computing min sizes.
 

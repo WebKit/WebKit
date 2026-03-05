@@ -33,22 +33,22 @@
 
 namespace WebCore {
 
-static inline bool isSliceNALU(uint8_t data)
+static inline bool NODELETE isSliceNALU(uint8_t data)
 {
     return (data & 0x1F) == 1;
 }
 
-static inline bool isSPSNALU(uint8_t data)
+static inline bool NODELETE isSPSNALU(uint8_t data)
 {
     return (data & 0x1F) == 7;
 }
 
-static inline bool isPPSNALU(uint8_t data)
+static inline bool NODELETE isPPSNALU(uint8_t data)
 {
     return (data & 0x1F) == 8;
 }
 
-static inline bool isIDRNALU(uint8_t data)
+static inline bool NODELETE isIDRNALU(uint8_t data)
 {
     return (data & 0x1F) == 5;
 }
@@ -110,7 +110,7 @@ Vector<uint8_t> fromRbsp(std::span<const uint8_t> frameData)
 SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(std::span<const uint8_t> frameData)
 {
     // Delta and key prefixes assume SPS/PPS with IDs equal to 0 have been transmitted.
-    static const uint8_t prefixDeltaFrame[6] = { 0x00, 0x00, 0x00, 0x01, 0x21, 0xe0 };
+    static constexpr std::array<uint8_t, 6> prefixDeltaFrame { 0x00, 0x00, 0x00, 0x01, 0x21, 0xe0 };
 
     if (frameData.size() < 5)
         return std::span<const uint8_t> { };
@@ -183,10 +183,10 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
         newFrame.append(data[position]);
     });
 
-    frame = WTFMove(newFrame);
+    frame = WTF::move(newFrame);
 }
 
-static inline bool isVP8KeyFrame(std::span<const uint8_t> frame)
+static inline bool NODELETE isVP8KeyFrame(std::span<const uint8_t> frame)
 {
     ASSERT(frame.size());
     return !(frame.front() & 0x01);

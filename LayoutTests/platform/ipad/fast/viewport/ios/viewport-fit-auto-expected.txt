@@ -1,8 +1,8 @@
 Viewport: initial-scale=1, viewport-fit=auto
 
-Window Size: 750 x 1050
+Window Size: 708 x 994
 
 scale	1.00000
 maxScale	5.00000
 minScale	1.00000
-visibleRect	{"left":"-40.00000","top":"-10.00000","width":"810.00000","height":"1060.00000"}
+visibleRect	{"left":"-40.00000","top":"-10.00000","width":"768.00000","height":"1004.00000"}

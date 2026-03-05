@@ -49,7 +49,7 @@ public:
     void removeStreamConnection(StreamServerConnection&);
     void stopAndWaitForCompletion(NOESCAPE WTF::Function<void()>&& cleanupFunction = nullptr);
     void wakeUp();
-    Semaphore& wakeUpSemaphore() { return m_wakeUpSemaphore; }
+    Semaphore& wakeUpSemaphore() LIFETIME_BOUND { return m_wakeUpSemaphore; }
 
     // SerialFunctionDispatcher
     void dispatch(WTF::Function<void()>&&) final;

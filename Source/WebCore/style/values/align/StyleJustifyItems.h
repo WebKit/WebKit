@@ -81,7 +81,7 @@ struct JustifyItems {
 
     constexpr bool operator==(const JustifyItems&) const = default;
 
-    StyleSelfAlignmentData resolve(std::optional<StyleSelfAlignmentData> = std::nullopt) const;
+    StyleSelfAlignmentData resolve() const;
 
 private:
     enum class PrimaryKind : uint8_t {

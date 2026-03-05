@@ -101,7 +101,7 @@ bool AdaptedVideoTrackSource::AdaptFrame(int width,
                                          int* crop_y) {
   {
     MutexLock lock(&stats_mutex_);
-    stats_ = Stats{width, height};
+    stats_ = Stats{.input_width = width, .input_height = height};
   }
 
   if (!broadcaster_.frame_wanted()) {

@@ -30,10 +30,10 @@ namespace {
 static const int kIterations = 1000;
 static const int kMaskMax = 64;
 
-typedef unsigned int (*ObmcVarF)(const uint8_t *pre, int pre_stride,
-                                 const int32_t *wsrc, const int32_t *mask,
-                                 unsigned int *sse);
-typedef libaom_test::FuncParam<ObmcVarF> TestFuncs;
+using ObmcVarF = unsigned int (*)(const uint8_t *pre, int pre_stride,
+                                  const int32_t *wsrc, const int32_t *mask,
+                                  unsigned int *sse);
+using TestFuncs = libaom_test::FuncParam<ObmcVarF>;
 
 ////////////////////////////////////////////////////////////////////////////////
 // 8 bit

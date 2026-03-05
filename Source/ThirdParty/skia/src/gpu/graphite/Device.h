@@ -257,6 +257,10 @@ public:
 
     bool drawBlurredRRect(const SkRRect&, const SkPaint&, float deviceSigma) override;
 
+#if defined(GPU_TEST_UTILS)
+    int testingOnly_pendingRenderSteps() const;
+#endif
+
 private:
     class IntersectionTreeSet;
 
@@ -294,6 +298,13 @@ private:
     // the transform, clip, and DrawOrder (although Device still tracks stencil buffer usage).
     void drawClipShape(const Transform&, const Shape&, const Clip&, DrawOrder);
 
+    std::pair<DrawParams*, Layer*> drawClipShapeImmediate(const Transform&,
+                                                          const Shape&,
+                                                          const Clip&,
+                                                          DrawOrder);
+
+    void updateNextDepthForClipping(PaintersDepth depth);
+
     sktext::gpu::AtlasDrawDelegate atlasDelegate();
     // Handles primitive processing for atlas-based text
     void drawAtlasSubRun(const sktext::gpu::AtlasSubRun*,
@@ -325,8 +336,13 @@ private:
     std::pair<const Renderer*, PathAtlas*> chooseRenderer(const Transform& localToDevice,
                                                           const Geometry&,
                                                           const SkStrokeRec&,
-                                                          const Rect& drawBounds,
-                                                          bool requireMSAA) const;
+                                                          const Rect& drawBounds) const;
+
+    // Ignoring specialized Shape renderers and the selected PathRendererStrategy, choose a
+    // MSAA-requiring tessellation-based renderer for the shape and style.
+    const Renderer* chooseMSAARenderer(const Shape&,
+                                       const SkStrokeRec&,
+                                       const Rect& drawBounds) const;
 
     bool needsFlushBeforeDraw(int numNewRenderSteps, DstReadStrategy);
 
@@ -344,6 +360,7 @@ private:
 
     ClipStack fClip;
 
+    // TODO (thomsmit): remove these when layering is added
     // Tracks accumulated intersections for ordering dependent use of the color and depth attachment
     // (i.e. depth-based clipping, and transparent blending)
     std::unique_ptr<BoundsManager> fColorDepthBoundsManager;
@@ -356,8 +373,6 @@ private:
     // The max depth value sent to the DrawContext, incremented so each draw has a unique value.
     PaintersDepth fCurrentDepth;
 
-    // The DrawContext's target supports MSAA
-    bool fMSAASupported = false;
     // Even when MSAA is supported, small paths may be sent to the atlas for higher quality and to
     // avoid triggering MSAA overhead on a render pass. However, the number of paths is capped
     // per Device flush.
@@ -368,12 +383,12 @@ private:
     // tracked devices for dependencies.
     bool fMustFlushDependencies = false;
 
-    // TODO(b/330864257): Clean up once flushPendingWorkToRecorder() doesn't have to be re-entrant
-    bool fIsFlushing = false;
-
     const sktext::gpu::SubRunControl fSubRunControl;
 
 #if defined(SK_DEBUG)
+    // Tracks the flushing state to ensure recursive flushing does not occur.
+    bool fIsFlushing = false;
+
     // When not 0, this Device is an unregistered scratch device that is intended to go out of
     // scope before the Recorder is snapped. Assuming controlling code is valid, that means the
     // Device's recorder's next recording ID should still be the the recording ID at the time the

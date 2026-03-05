@@ -37,16 +37,16 @@ class DeviceLostInfo final : public RefCounted<DeviceLostInfo> {
 public:
     static Ref<DeviceLostInfo> create(DeviceLostReason reason, String&& message)
     {
-        return adoptRef(*new DeviceLostInfo(reason, WTFMove(message)));
+        return adoptRef(*new DeviceLostInfo(reason, WTF::move(message)));
     }
 
     DeviceLostReason reason() const { return m_reason; }
-    const String& message() const { return m_message; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
 
 protected:
     DeviceLostInfo(DeviceLostReason reason, String&& message)
         : m_reason(reason)
-        , m_message(WTFMove(message))
+        , m_message(WTF::move(message))
     {
     }
 

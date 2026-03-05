@@ -37,6 +37,8 @@
 #import "TextureView.h"
 #if ENABLE(WEBGPU_SWIFT)
 #import "CxxBridging.h"
+#import <WebGPU/CxxBridgingPublic.h>
+#import <WebGPU/WGPUTextureImpl.h>
 #import "WebGPUSwift-Generated.h"
 #endif
 #import <simd/simd.h>
@@ -192,14 +194,14 @@ void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>
     finalizeBlitCommandEncoder();
 
     if (isIdle()) {
-        scheduleWork([callback = WTFMove(callback)]() mutable {
+        scheduleWork([callback = WTF::move(callback)]() mutable {
             callback(WGPUQueueWorkDoneStatus_Success);
         });
         return;
     }
 
     auto& callbacks = m_onSubmittedWorkDoneCallbacks.add(m_submittedCommandBufferCount, OnSubmittedWorkDoneCallbacks()).iterator->value;
-    callbacks.append(WTFMove(callback));
+    callbacks.append(WTF::move(callback));
 }
 
 void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
@@ -214,14 +216,14 @@ void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
     finalizeBlitCommandEncoder();
 
     if (isSchedulingIdle()) {
-        scheduleWork([completionHandler = WTFMove(completionHandler)]() mutable {
+        scheduleWork([completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler();
         });
         return;
     }
 
     auto& callbacks = m_onSubmittedWorkScheduledCallbacks.add(m_submittedCommandBufferCount, OnSubmittedWorkScheduledCallbacks()).iterator->value;
-    callbacks.append(WTFMove(completionHandler));
+    callbacks.append(WTF::move(completionHandler));
 }
 
 NSString* Queue::errorValidatingSubmit(const Vector<Ref<WebGPU::CommandBuffer>>& commands) const
@@ -357,7 +359,7 @@ void Queue::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands)
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
     if (NSString* error = errorValidatingSubmit(commands)) {
         device->generateAValidationError(error ?: @"Validation failure.");
-        return invalidateCommandBuffers(WTFMove(commands), ^(CommandBuffer& command) {
+        return invalidateCommandBuffers(WTF::move(commands), ^(CommandBuffer& command) {
             command.makeInvalid(command.lastError() ?: error);
         });
     }
@@ -365,19 +367,19 @@ void Queue::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands)
     finalizeBlitCommandEncoder();
 
     NSMutableOrderedSet<id<MTLCommandBuffer>> *commandBuffersToSubmit = [NSMutableOrderedSet orderedSetWithCapacity:commands.size()];
-    HashMap<void*, RefPtr<CommandBuffer>> metalCommandBuffersReverseMap;
+    HashMap<void*, Ref<CommandBuffer>> metalCommandBuffersReverseMap;
     NSString* validationError = nil;
     for (Ref command : commands) {
         if (id<MTLCommandBuffer> mtlBuffer = command->commandBuffer(); mtlBuffer && ![commandBuffersToSubmit containsObject:mtlBuffer]) {
             [commandBuffersToSubmit addObject:mtlBuffer];
-            metalCommandBuffersReverseMap.set((__bridge void*)mtlBuffer, RefPtr { command.ptr() });
+            metalCommandBuffersReverseMap.set((__bridge void*)mtlBuffer, WTF::move(command));
         } else {
             validationError = command->lastError() ?: @"Command buffer appears twice.";
             break;
         }
     }
 
-    invalidateCommandBuffers(WTFMove(commands), ^(CommandBuffer& command) {
+    invalidateCommandBuffers(WTF::move(commands), ^(CommandBuffer& command) {
         validationError ? command.makeInvalid(command.lastError() ?: validationError) : command.makeInvalidDueToCommit(@"command buffer was submitted");
     });
     if (validationError) {
@@ -386,9 +388,7 @@ void Queue::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands)
     }
 
     for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit) {
-        RefPtr<CommandBuffer> apiCommandBuffer;
-        if (auto it = metalCommandBuffersReverseMap.find((__bridge void*)commandBuffer); it != metalCommandBuffersReverseMap.end())
-            apiCommandBuffer = it->value;
+        RefPtr apiCommandBuffer = metalCommandBuffersReverseMap.get((__bridge void*)commandBuffer);
 #if ASSERT_ENABLED
         if (!apiCommandBuffer)
             ASSERT_NOT_REACHED("Always expect command buffer in the container");
@@ -1235,7 +1235,7 @@ void Queue::setLabel(String&& label)
 void Queue::scheduleWork(Instance::WorkItem&& workItem)
 {
     if (auto instance = m_instance.get())
-        instance->scheduleWork(WTFMove(workItem));
+        instance->scheduleWork(WTF::move(workItem));
 }
 
 void Queue::clearTextureViewIfNeeded(TextureView& textureView)
@@ -1293,14 +1293,14 @@ void wgpuQueueRelease(WGPUQueue queue)
 
 void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallback callback, void* userdata)
 {
-    WebGPU::protectedFromAPI(queue)->onSubmittedWorkDone([callback, userdata](WGPUQueueWorkDoneStatus status) {
+    protect(WebGPU::fromAPI(queue))->onSubmittedWorkDone([callback, userdata](WGPUQueueWorkDoneStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlockCallback callback)
 {
-    WebGPU::protectedFromAPI(queue)->onSubmittedWorkDone([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUQueueWorkDoneStatus status) {
+    protect(WebGPU::fromAPI(queue))->onSubmittedWorkDone([callback = WebGPU::fromAPI(WTF::move(callback))](WGPUQueueWorkDoneStatus status) {
         callback(status);
     });
 }
@@ -1309,21 +1309,21 @@ void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuff
 {
     Vector<Ref<WebGPU::CommandBuffer>> commandsToForward;
     for (auto& command : unsafeMakeSpan(commands, commandCount))
-        commandsToForward.append(WebGPU::protectedFromAPI(command));
-    WebGPU::protectedFromAPI(queue)->submit(WTFMove(commandsToForward));
+        commandsToForward.append(protect(WebGPU::fromAPI(command)));
+    protect(WebGPU::fromAPI(queue))->submit(WTF::move(commandsToForward));
 }
 
 void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, std::span<uint8_t> data)
 {
-    WebGPU::protectedFromAPI(queue)->writeBuffer(WebGPU::protectedFromAPI(buffer), bufferOffset, data);
+    protect(WebGPU::fromAPI(queue))->writeBuffer(protect(WebGPU::fromAPI(buffer)), bufferOffset, data);
 }
 
 void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUImageCopyTexture* destination, std::span<uint8_t> data, const WGPUTextureDataLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
-    WebGPU::protectedFromAPI(queue)->writeTexture(*destination, data, *dataLayout, *writeSize);
+    protect(WebGPU::fromAPI(queue))->writeTexture(*destination, data, *dataLayout, *writeSize);
 }
 
 void wgpuQueueSetLabel(WGPUQueue queue, const char* label)
 {
-    WebGPU::protectedFromAPI(queue)->setLabel(WebGPU::fromAPI(label));
+    protect(WebGPU::fromAPI(queue))->setLabel(WebGPU::fromAPI(label));
 }

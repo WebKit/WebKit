@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <wtf/CheckedPtr.h>
+#include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
@@ -36,7 +36,7 @@ class DeviceClient;
 
 namespace WebCore {
 
-class DeviceClient : public CanMakeWeakPtr<DeviceClient>, public CanMakeCheckedPtr<DeviceClient> {
+class DeviceClient : public CanMakeWeakPtr<DeviceClient>, public AbstractCanMakeCheckedPtr {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(DeviceClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceClient);
 public:

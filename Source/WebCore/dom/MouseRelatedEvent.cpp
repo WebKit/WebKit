@@ -28,6 +28,8 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "MouseEventInit.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
 #include "RenderObject.h"
@@ -35,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MouseRelatedEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MouseRelatedEvent);
 
 // FIXME: Remove this variant.
 MouseRelatedEvent::MouseRelatedEvent()
@@ -51,7 +53,7 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface)
 MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const DoublePoint& screenLocation, const DoublePoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, IsSimulated isSimulated, IsTrusted isTrusted)
-    : UIEventWithKeyState(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, modifiers, isTrusted)
+    : UIEventWithKeyState(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, WTF::move(view), detail, modifiers, isTrusted)
         , m_movementX(movementX)
         , m_movementY(movementY)
         , m_windowLocation(windowLocation)
@@ -63,11 +65,11 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
 
 MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
     : MouseRelatedEvent(eventInterface, type, CanBubble::Yes, isCancelable, IsComposed::Yes, timestamp,
-        WTFMove(view), 0, globalLocation, globalLocation /* Converted in init */, 0, 0, modifiers, IsSimulated::No)
+        WTF::move(view), 0, globalLocation, globalLocation /* Converted in init */, 0, 0, modifiers, IsSimulated::No)
 {
 }
 
-MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseEventInit& initializer, IsTrusted isTrusted)
     : UIEventWithKeyState(eventInterface, eventType, initializer, isTrusted)
         , m_movementX(initializer.movementX)
         , m_movementY(initializer.movementY)
@@ -86,6 +88,12 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
     init(false, DoublePoint::zero());
 }
 
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const EventModifierInit& initializer, IsTrusted isTrusted)
+    : UIEventWithKeyState(eventInterface, eventType, initializer, isTrusted)
+{
+    init(false, DoublePoint::zero());
+}
+
 static inline bool isMoveEventType(const AtomString& eventType)
 {
     auto& eventNames = WebCore::eventNames();
@@ -100,7 +108,7 @@ void MouseRelatedEvent::init(bool isSimulated, const DoublePoint& windowLocation
         if (RefPtr frameView = frameViewFromWindowProxy(view())) {
             DoublePoint absolutePoint = frameView->windowToContents(windowLocation);
             DoublePoint documentPoint = frameView->absoluteToDocumentPoint(absolutePoint);
-            m_pageLocation = WTFMove(documentPoint);
+            m_pageLocation = WTF::move(documentPoint);
             m_clientLocation = pagePointToClientPoint(m_pageLocation, frameView.get());
         }
     }
@@ -129,11 +137,11 @@ LocalFrameView* MouseRelatedEvent::frameViewFromWindowProxy(WindowProxy* windowP
     if (!windowProxy)
         return nullptr;
 
-    auto* window = dynamicDowncast<LocalDOMWindow>(windowProxy->window());
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(windowProxy->window());
     if (!window)
         return nullptr;
 
-    auto* frame = window->localFrame();
+    RefPtr frame = window->frame();
     return frame ? frame->view() : nullptr;
 }
 
@@ -198,16 +206,39 @@ void MouseRelatedEvent::computeRelativePosition()
     if (!targetNode)
         return;
 
+    // Find the target renderer, adjusting for SVG elements.
+    auto findTargetRendererAndAdjustedNode = [](const RefPtr<Node>& node) {
+        CheckedPtr renderer = node->renderer();
+        if (!renderer || !renderer->isSVGRenderer())
+            return std::pair { renderer, node };
+
+        // If this is an SVG node, compute the offset to the padding box of the
+        // outermost SVG root (== the closest ancestor that has a CSS layout box.).
+        while (!renderer->isRenderOrLegacyRenderSVGRoot())
+            renderer = renderer->parent();
+
+        // Update the target node to point to the SVG root.
+        return std::pair { renderer, protect(renderer->node()) };
+    };
+
     // Compute coordinates that are based on the target.
     m_layerLocation = LayoutPoint(m_pageLocation);
     m_offsetLocation = m_pageLocation;
 
     // Must have an updated render tree for this math to work correctly.
-    targetNode->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(targetNode->document())->updateLayoutIgnorePendingStylesheets();
 
-    // Adjust offsetLocation to be relative to the target's position.
-    if (CheckedPtr renderer = targetNode->renderer()) {
+    // Adjust offsetLocation to be relative to the target's padding box.
+    auto [renderer, adjustedNode] = findTargetRendererAndAdjustedNode(targetNode);
+    if (targetNode != adjustedNode)
+        targetNode = WTF::move(adjustedNode);
+
+    if (renderer) {
         m_offsetLocation = renderer->absoluteToLocal(absoluteLocation(), UseTransforms);
+
+        if (CheckedPtr boxModel = dynamicDowncast<RenderBoxModelObject>(renderer.get()))
+            m_offsetLocation.move(-boxModel->borderLeft(), -boxModel->borderTop());
+
         float scaleFactor = 1 / documentToAbsoluteScaleFactor();
         if (scaleFactor != 1.0f)
             m_offsetLocation.scale(scaleFactor);
@@ -217,20 +248,35 @@ void MouseRelatedEvent::computeRelativePosition()
     // FIXME: event.layerX and event.layerY are poorly defined,
     // and probably don't always correspond to RenderLayer offsets.
     // https://bugs.webkit.org/show_bug.cgi?id=21868
-    RefPtr node = WTFMove(targetNode);
+    RefPtr node = WTF::move(targetNode);
     while (node && !node->renderer())
         node = node->parentNode();
 
-    RenderLayer* layer;
-    if (node && (layer = node->renderer()->enclosingLayer())) {
-        for (; layer; layer = layer->parent()) {
-            m_layerLocation -= toLayoutSize(layer->location());
+    if (node) {
+        CheckedPtr layer = node->renderer()->enclosingLayer();
+        while (layer && !layer->isSelfPaintingLayer())
+            layer = layer->parent();
+
+        if (layer) {
+            // Start with absoluteLocation which is already in absolute coordinates
+            // (has zoom factor applied via documentToAbsoluteScaleFactor).
+            auto layerLocationInAbsoluteCoords = absoluteLocation();
+
+            // Convert layer position to absolute coordinates accounting for transforms.
+            auto layerAbsolutePosition = layer->renderer().localToAbsolute(FloatPoint(), UseTransforms);
+
+            // Subtract the layer's absolute position from the mouse absolute position.
+            layerLocationInAbsoluteCoords.moveBy(-layerAbsolutePosition);
+
+            // Scale back to page coordinates (remove zoom factor).
+            auto inverseScaleFactor = 1 / documentToAbsoluteScaleFactor();
+            m_layerLocation = LayoutPoint(layerLocationInAbsoluteCoords.scaled(inverseScaleFactor));
         }
     }
 
     m_hasCachedRelativePosition = true;
 }
-    
+
 DoublePoint MouseRelatedEvent::locationInRootViewCoordinates() const
 {
     if (RefPtr frameView = frameViewFromWindowProxy(view()))

@@ -32,6 +32,8 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/GraphicsLayerFactory.h>
+#include <WebCore/GraphicsLayerFloatAnimationValue.h>
+#include <WebCore/GraphicsLayerKeyframeValueList.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
@@ -103,7 +105,7 @@ void WebInspectorBackendClient::frontendCountChanged(unsigned count)
 Inspector::FrontendChannel* WebInspectorBackendClient::openLocalFrontend(PageInspectorController* controller)
 {
     if (RefPtr page = m_page.get())
-        page->protectedInspector()->openLocalInspectorFrontend();
+        protect(page->inspector())->openLocalInspectorFrontend();
     return nullptr;
 }
 
@@ -203,7 +205,7 @@ void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
     if (!m_paintIndicatorLayerClient)
         m_paintIndicatorLayerClient = makeUnique<RepaintIndicatorLayerClient>(*this);
 
-    Ref paintLayer = GraphicsLayer::create(page->protectedDrawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
+    Ref paintLayer = GraphicsLayer::create(protect(page->drawingArea())->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
 
     paintLayer->setName(MAKE_STATIC_STRING_IMPL("paint rect"));
     paintLayer->setAnchorPoint(FloatPoint3D());
@@ -211,10 +213,10 @@ void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
     paintLayer->setSize(rect.size());
     paintLayer->setBackgroundColor(Color::red.colorWithAlphaByte(51));
 
-    KeyframeValueList fadeKeyframes(AnimatedProperty::Opacity);
-    fadeKeyframes.insert(makeUnique<FloatAnimationValue>(0, 1));
+    GraphicsLayerKeyframeValueList fadeKeyframes(AnimatedProperty::Opacity);
+    fadeKeyframes.insert(makeUnique<GraphicsLayerFloatAnimationValue>(0, 1));
 
-    fadeKeyframes.insert(makeUnique<FloatAnimationValue>(0.25, 0));
+    fadeKeyframes.insert(makeUnique<GraphicsLayerFloatAnimationValue>(0.25, 0));
 
     Ref opacityAnimation = GraphicsLayerAnimation::create();
     opacityAnimation->setDuration(0.25);
@@ -222,7 +224,7 @@ void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
     paintLayer->addAnimation(fadeKeyframes, opacityAnimation.ptr(), "opacity"_s, 0);
 
     Ref rawLayer = paintLayer.get();
-    m_paintRectLayers.add(WTFMove(paintLayer));
+    m_paintRectLayers.add(WTF::move(paintLayer));
 
     Ref overlayRootLayer = paintRectOverlay->layer();
     overlayRootLayer->addChild(rawLayer.get());
@@ -297,7 +299,7 @@ bool WebInspectorBackendClient::setEmulatedConditions(std::optional<int64_t>&& b
 {
     RefPtr page = m_page.get();
     if (page && page->inspector()) {
-        page->inspector()->setEmulatedConditions(WTFMove(bytesPerSecondLimit));
+        page->inspector()->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
         return true;
     }
 

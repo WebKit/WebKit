@@ -75,7 +75,7 @@ class StdoutMetricsExporterTest : public ::testing::Test {
         .stats = Metric::Stats{
             .mean = 30.0, .stddev = 10.0, .min = 20.0, .max = 40.0}};
   }
-  ~StdoutMetricsExporterTest() {
+  ~StdoutMetricsExporterTest() override {
     absl::SetFlag(&FLAGS_isolated_script_test_perf_output,
                   original_isolated_script_test_perf_output_);
   }

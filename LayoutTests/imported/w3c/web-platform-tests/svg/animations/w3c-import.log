@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/accumulate-values-width-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/additive-from-to-width-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/additive-type-by-animation.html
@@ -62,10 +63,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-lL-vV-hH-inverse.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-mM-aA-Z-inverse.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-qQ-tT-inverse.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-accumulate-mismatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-accumulate.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-additive-mismatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-additive.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-mismatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-by-animation-mismatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-additive.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-mismatch-diff-seg-counts.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-mismatch-same-seg-count.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-to-animation.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-reset-freeze.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-rewind-freeze-indefinite-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-rewind-freeze-indefinite.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-stop-currentcolor-ci.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-stop-currentcolor-escaped.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-stop-currentcolor.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-base.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-circle.html
@@ -80,6 +93,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-mpath.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-rect.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-spline-invalid-keyTimes.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-still.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateTransform-pattern-transform.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animated-classname-crash.svg
@@ -115,6 +129,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/interval-restart-events.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/keysplines-x-limits.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/keysplines-y-limits.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/media-fragment-override-animation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/media-fragment-override-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/mpath-zero-radius-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/multiple-animations-ending.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/multiple-animations-fill-freeze.html

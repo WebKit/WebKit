@@ -125,7 +125,7 @@ TEST(WTF_VariantList, EmptyMove)
     WTF::VariantList<Variant<int, MoveOnly, float>> variantList;
     EXPECT_TRUE(variantList.isEmpty());
 
-    auto moved = WTFMove(variantList);
+    auto moved = WTF::move(variantList);
     EXPECT_TRUE(moved.isEmpty());
 }
 
@@ -146,7 +146,7 @@ TEST(WTF_VariantList, MoveWithItems)
     variantList.append(MoveOnly(1u));
     variantList.append(2.0f);
 
-    auto moved = WTFMove(variantList);
+    auto moved = WTF::move(variantList);
 
     unsigned iterations = 0;
 

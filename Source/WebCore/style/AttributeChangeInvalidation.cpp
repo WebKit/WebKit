@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Style {
 
-static bool mayBeAffectedByAttributeChange(const RuleFeatureSet& features, bool isHTML, const QualifiedName& attributeName)
+static bool NODELETE mayBeAffectedByAttributeChange(const RuleFeatureSet& features, bool isHTML, const QualifiedName& attributeName)
 {
     auto& nameSet = isHTML ? features.attributeLowercaseLocalNamesInRules : features.attributeLocalNamesInRules;
     return nameSet.contains(attributeName.localName());
@@ -93,7 +93,7 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
 
     collect(m_element->styleResolver().ruleSets());
 
-    if (auto* shadowRoot = m_element->shadowRoot())
+    if (RefPtr shadowRoot = m_element->shadowRoot())
         collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Host);
 }
 

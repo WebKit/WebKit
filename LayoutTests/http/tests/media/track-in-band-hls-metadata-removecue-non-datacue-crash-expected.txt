@@ -1,0 +1,25 @@
+
+Test that removing a non-DataCue (VTTCue) from an InbandDataTextTrack does not crash.
+
+
+Set video.src, wait for metadata track to be added.
+RUN(video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8')
+
+EVENT(addtrack)
+RUN(track = video.textTracks[0])
+EXPECTED (track.kind == 'metadata') OK
+RUN(track.mode = 'hidden')
+EVENT(cuechange)
+
+Create a VTTCue and add it to the InbandDataTextTrack.
+RUN(cueCountBefore = track.cues.length)
+RUN(vttCue = new VTTCue(0, 1, 'test'))
+RUN(track.addCue(vttCue))
+EXPECTED (track.cues.length == cueCountBefore + 1 == 'true') OK
+
+Remove the VTTCue from the InbandDataTextTrack, should not crash.
+RUN(track.removeCue(vttCue))
+EXPECTED (track.cues.length == cueCountBefore == 'true') OK
+
+END OF TEST
+

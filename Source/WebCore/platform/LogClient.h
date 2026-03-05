@@ -23,23 +23,4 @@
 
 #pragma once
 
-#include <os/log.h>
-#include <wtf/ThreadSafeRefCounted.h>
-
-namespace WebCore {
-
-class LogClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LogClient);
-public:
-    LogClient() = default;
-    virtual ~LogClient() { }
-
-    virtual void log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t) = 0;
-    virtual bool isWebKitLogClient() const { return false; }
-
 #include <WebCore/WebCoreVirtualLogFunctions.h>
-};
-
-WEBCORE_EXPORT std::unique_ptr<LogClient>& logClient();
-
-}

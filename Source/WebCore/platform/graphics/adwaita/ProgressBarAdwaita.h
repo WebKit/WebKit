@@ -39,7 +39,7 @@ public:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
 private:
-    const ProgressBarPart& owningProgressBarPart() const { return downcast<ProgressBarPart>(m_owningPart); }
+    Ref<const ProgressBarPart> owningProgressBarPart() const { return downcast<ProgressBarPart>(m_owningPart.get()); }
 };
 
 } // namespace WebCore

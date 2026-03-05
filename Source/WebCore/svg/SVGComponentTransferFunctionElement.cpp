@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGComponentTransferFunctionElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGComponentTransferFunctionElement);
 
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -55,7 +55,7 @@ void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr: {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(*this, newValue);
-        if (enumToUnderlyingType(propertyValue))
+        if (std::to_underlying(propertyValue))
             m_type->setBaseValInternal<ComponentTransferType>(propertyValue);
         break;
     }

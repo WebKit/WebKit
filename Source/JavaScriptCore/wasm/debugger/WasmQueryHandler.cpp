@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmQueryHandler.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -37,6 +37,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "Options.h"
 #include "StackVisitor.h"
 #include "VM.h"
+#include "VMManager.h"
 #include "WasmCallee.h"
 #include "WasmDebugServer.h"
 #include "WasmDebugServerUtilities.h"
@@ -209,17 +210,24 @@ bool QueryHandler::handleChunkedLibrariesResponse(size_t offset, size_t maxSize,
 
 String QueryHandler::buildWasmCallStackResponse()
 {
-    auto stopReason = m_debugServer.m_executionHandler->stopReason();
-    RELEASE_ASSERT(stopReason.isValid() && stopReason.callFrame);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] buildWasmCallStackResponse: starting manual stack walk from CallFrame ", RawPointer(stopReason.callFrame));
+    auto* state = m_debugServer.execution().debuggeeStateSafe();
+    if (!state->atBreakpoint()) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] buildWasmCallStackResponse: not stopped at breakpoint, returning empty");
+        return String();
+    }
+
+    auto& stopData = *state->stopData;
+    RELEASE_ASSERT(stopData.callFrame);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] buildWasmCallStackResponse: starting manual stack walk from CallFrame ", RawPointer(stopData.callFrame));
 
     Vector<VirtualAddress> frameAddresses;
-    frameAddresses.append(stopReason.address);
-    CallFrame* currentFrame = stopReason.callFrame;
+    frameAddresses.append(stopData.address);
+    CallFrame* currentFrame = stopData.callFrame;
     uint8_t* returnPC = nullptr;
     VirtualAddress virtualReturnPC;
     unsigned frameIndex = 0;
 
+    // FIXME: Only supports consecutive wasm->wasm calls. Need to support interleaved wasm<->js calls (skipping stubs, including JS frames).
     while (getWasmReturnPC(currentFrame, returnPC, virtualReturnPC) && frameIndex < 100) {
         frameAddresses.append(virtualReturnPC);
         currentFrame = currentFrame->callerFrame();
@@ -292,7 +300,7 @@ void QueryHandler::handleThreadStopInfo(StringView packet)
     // WebAssembly Context: Provide stop reason for WASM thread
     // Handled by execution handler for proper thread state management
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Handling qThreadStopInfo for frame variable support");
-    m_debugServer.m_executionHandler->handleThreadStopInfo(packet);
+    m_debugServer.execution().handleThreadStopInfo(packet);
 }
 
 void QueryHandler::handleLibrariesRead(StringView packet)
@@ -334,15 +342,17 @@ void QueryHandler::handleWasmCallStack(StringView packet)
     }
 
     StringView threadIdStr = strings[1];
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack thread ID: ", threadIdStr);
+    uint64_t requestedThreadId = parseHex(threadIdStr);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack thread ID: ", requestedThreadId);
 
-    uint64_t threadId = parseHex(threadIdStr);
-    uint64_t mutatorThreadId = m_debugServer.mutatorThreadId();
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Parsed qWasmCallStack thread ID: ", threadId, ", mutator ID: ", RawPointer((void*)mutatorThreadId));
-
-    RELEASE_ASSERT(threadId == mutatorThreadId);
-    String response = buildWasmCallStackResponse();
+    String response = m_debugServer.execution().callStackStringFor(requestedThreadId);
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack response: ", response);
+
+    if (response.isEmpty()) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+
     m_debugServer.sendReply(response);
 }
 
@@ -383,12 +393,18 @@ void QueryHandler::handleWasmLocal(StringView packet)
         return;
     }
 
-    auto stopReason = m_debugServer.m_executionHandler->stopReason();
-    auto functionIndex = stopReason.callee->functionIndex();
-    const auto& moduleInfo = stopReason.instance->module().moduleInformation();
+    auto* state = m_debugServer.execution().debuggeeStateSafe();
+    if (!state->atBreakpoint()) {
+        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
+        return;
+    }
+
+    auto& stopData = *state->stopData;
+    auto functionIndex = stopData.callee->functionIndex();
+    const auto& moduleInfo = stopData.instance->module().moduleInformation();
     const Vector<Type>& localTypes = moduleInfo.debugInfo->ensureFunctionDebugInfo(functionIndex).locals;
 
-    IPInt::IPIntLocal& local = stopReason.locals[localIndex];
+    IPInt::IPIntLocal& local = stopData.locals[localIndex];
     Type localType = localTypes[localIndex];
     logWasmLocalValue(localIndex, local, localType);
 
@@ -420,4 +436,4 @@ void QueryHandler::handleWasmLocal(StringView packet)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

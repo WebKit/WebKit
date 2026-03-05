@@ -49,7 +49,7 @@ namespace WebCore {
 Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source)
 {
     auto loggerCopy = logger.copyRef();
-    return MediaStreamPrivate::create(WTFMove(logger), MediaStreamTrackPrivateVector::from(MediaStreamTrackPrivate::create(WTFMove(loggerCopy), WTFMove(source))));
+    return MediaStreamPrivate::create(WTF::move(logger), MediaStreamTrackPrivateVector::from(MediaStreamTrackPrivate::create(WTF::move(loggerCopy), WTF::move(source))));
 }
 
 Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, RefPtr<RealtimeMediaSource>&& audioSource, RefPtr<RealtimeMediaSource>&& videoSource)
@@ -62,13 +62,13 @@ Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, R
     if (videoSource)
         tracks.append(MediaStreamTrackPrivate::create(logger.copyRef(), videoSource.releaseNonNull()));
 
-    return MediaStreamPrivate::create(WTFMove(logger), tracks);
+    return MediaStreamPrivate::create(WTF::move(logger), tracks);
 }
 
 MediaStreamPrivate::MediaStreamPrivate(Ref<const Logger>&& logger, const MediaStreamTrackPrivateVector& tracks, String&& id)
-    : m_id(WTFMove(id))
+    : m_id(WTF::move(id))
 #if !RELEASE_LOG_DISABLED
-    , m_logger(WTFMove(logger))
+    , m_logger(WTF::move(logger))
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
@@ -156,7 +156,7 @@ void MediaStreamPrivate::addTrack(Ref<MediaStreamTrackPrivate>&& track)
 
     Ref trackRef = track.get();
     track->addObserver(*this);
-    m_trackSet.add(track->id(), WTFMove(track));
+    m_trackSet.add(track->id(), WTF::move(track));
 
     forEachObserver([&trackRef](auto& observer) {
         observer.didAddTrack(trackRef);
@@ -314,7 +314,7 @@ void MediaStreamPrivate::monitorOrientation(OrientationNotifier& notifier)
 {
     for (Ref track : m_trackSet.values()) {
         if (track->isCaptureTrack() && track->deviceType() == CaptureDevice::DeviceType::Camera)
-            track->protectedSource()->monitorOrientation(notifier);
+            protect(track->source())->monitorOrientation(notifier);
     }
 }
 

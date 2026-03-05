@@ -1,1 +1,1 @@
-ERROR: Malformed domain specification: debuggableTypes for domain WebOnly is an unsupported string. Was: "['webb']", Allowed values: itml, javascript, page, service-worker, web-page, wasm-debugger
+ERROR: Malformed domain specification: debuggableTypes for domain WebOnly is an unsupported string. Was: "['webb']", Allowed values: itml, javascript, service-worker, web-page, wasm-debugger

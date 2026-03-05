@@ -54,7 +54,7 @@ using namespace HTMLNames;
 static const int timeDefaultStep = 60;
 static const int timeDefaultStepBase = 0;
 static const int timeStepScaleFactor = 1000;
-static const StepRange::StepDescription timeStepDescription { timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
+static const StepRange::StepDescription timeStepDescription { timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::StepValueShouldBe::ScaledInteger };
 
 TimeInputType::TimeInputType(HTMLInputElement& element)
     : BaseDateAndTimeInputType(Type::Time, element)
@@ -141,10 +141,10 @@ void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
     layoutParameters.shouldHaveMillisecondField = shouldHaveMillisecondField(date);
 
     if (layoutParameters.shouldHaveMillisecondField || shouldHaveSecondField(date)) {
-        layoutParameters.dateTimeFormat = layoutParameters.locale.timeFormat();
+        layoutParameters.dateTimeFormat = layoutParameters.locale->timeFormat();
         layoutParameters.fallbackDateTimeFormat = "HH:mm:ss"_s;
     } else {
-        layoutParameters.dateTimeFormat = layoutParameters.locale.shortTimeFormat();
+        layoutParameters.dateTimeFormat = layoutParameters.locale->shortTimeFormat();
         layoutParameters.fallbackDateTimeFormat = "HH:mm"_s;
     }
 }

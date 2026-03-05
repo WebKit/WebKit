@@ -35,6 +35,7 @@
 #include "WebProcessExtensionManager.h"
 #include "WebSystemSoundDelegate.h"
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/ProcessCapabilities.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/ScreenProperties.h>
 #include <WebCore/SystemSoundManager.h>
@@ -73,10 +74,6 @@
 #include <WebCore/PlatformDisplayDefault.h>
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-#include <WebCore/ScrollbarThemeGtk.h>
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include "UserMediaCaptureManager.h"
 #endif
@@ -91,14 +88,6 @@
 
 #if USE(ATSPI)
 #include <WebCore/AccessibilityAtspi.h>
-#endif
-
-#if USE(CAIRO)
-#include <WebCore/CairoUtilities.h>
-#endif
-
-#if USE(SKIA)
-#include <WebCore/ProcessCapabilities.h>
 #endif
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
@@ -166,19 +155,19 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
 
 #if OS(ANDROID)
     if (auto display = PlatformDisplayAndroid::create()) {
-        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        PlatformDisplay::setSharedDisplay(WTF::move(display));
         return;
     }
 #endif
 
     if (auto display = PlatformDisplaySurfaceless::create()) {
-        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        PlatformDisplay::setSharedDisplay(WTF::move(display));
         return;
     }
 
 #if PLATFORM(GTK) || OS(ANDROID)
     if (auto display = PlatformDisplayDefault::create()) {
-        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        PlatformDisplay::setSharedDisplay(WTF::move(display));
         return;
     }
 #endif
@@ -189,24 +178,23 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-#if USE(SKIA)
     const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
     IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     if (enableCPURendering && strcmp(enableCPURendering, "0"))
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
     IGNORE_CLANG_WARNINGS_END
-#endif
 
 #if ENABLE(MEDIA_STREAM)
     addSupplementWithoutRefCountedCheck<UserMediaCaptureManager>();
 #endif
 
 #if USE(GBM)
-    DRMDeviceManager::singleton().initializeMainDevice(WTFMove(parameters.drmDevice));
+    DRMDeviceManager::singleton().initializeMainDevice(WTF::move(parameters.drmDevice));
 #endif
 
     m_rendererBufferTransportMode = parameters.rendererBufferTransportMode;
 #if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     if (!parameters.isServiceWorkerProcess) {
         if (m_rendererBufferTransportMode.isEmpty()) {
             auto& implementationLibraryName = parameters.implementationLibraryName;
@@ -216,20 +204,19 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         } else
             initializePlatformDisplayIfNeeded();
     }
+#else
+    initializePlatformDisplayIfNeeded();
+#endif
 #endif
 
     m_availableInputDevices = parameters.availableInputDevices;
 
 #if USE(GSTREAMER)
-    WebCore::setGStreamerOptionsFromUIProcess(WTFMove(parameters.gstreamerOptions));
-#endif
-
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-    setUseSystemAppearanceForScrollbars(parameters.useSystemAppearanceForScrollbars);
+    WebCore::setGStreamerOptionsFromUIProcess(WTF::move(parameters.gstreamerOptions));
 #endif
 
     if (parameters.memoryPressureHandlerConfiguration)
-        MemoryPressureHandler::singleton().setConfiguration(WTFMove(*parameters.memoryPressureHandlerConfiguration));
+        MemoryPressureHandler::singleton().setConfiguration(WTF::move(*parameters.memoryPressureHandlerConfiguration));
 
     if (!parameters.applicationID.isEmpty())
         WebCore::setApplicationID(parameters.applicationID);
@@ -239,7 +226,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (!parameters.inspectorServerAddress.isNull())
-        Inspector::RemoteInspector::setInspectorServerAddress(WTFMove(parameters.inspectorServerAddress));
+        Inspector::RemoteInspector::setInspectorServerAddress(WTF::move(parameters.inspectorServerAddress));
 #endif
 
 #if USE(ATSPI)
@@ -272,15 +259,8 @@ void WebProcess::platformTerminate()
 void WebProcess::sendMessageToWebProcessExtension(UserMessage&& message)
 {
     if (auto* extension = WebProcessExtensionManager::singleton().extension())
-        webkitWebProcessExtensionDidReceiveUserMessage(extension, WTFMove(message));
+        webkitWebProcessExtensionDidReceiveUserMessage(extension, WTF::move(message));
 }
-
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-void WebProcess::setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
-{
-    static_cast<ScrollbarThemeGtk&>(ScrollbarTheme::theme()).setUseSystemAppearance(useSystemAppearanceForScrollbars);
-}
-#endif
 
 void WebProcess::grantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle>&&)
 {

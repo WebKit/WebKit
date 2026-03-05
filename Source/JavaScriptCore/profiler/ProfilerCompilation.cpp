@@ -120,31 +120,31 @@ Ref<JSON::Value> Compilation::toJSON(Dumper& dumper) const
     auto profiledBytecodes = JSON::Array::create();
     for (const auto& bytecode : m_profiledBytecodes)
         profiledBytecodes->pushValue(bytecode.toJSON(dumper));
-    result->setValue(dumper.keys().m_profiledBytecodes, WTFMove(profiledBytecodes));
+    result->setValue(dumper.keys().m_profiledBytecodes, WTF::move(profiledBytecodes));
 
     auto descriptions = JSON::Array::create();
     for (const auto& description : m_descriptions)
         descriptions->pushValue(description.toJSON(dumper));
-    result->setValue(dumper.keys().m_descriptions, WTFMove(descriptions));
+    result->setValue(dumper.keys().m_descriptions, WTF::move(descriptions));
 
     auto counters = JSON::Array::create();
     for (const auto& [key, value] : m_counters) {
         auto counterEntry = JSON::Object::create();
         counterEntry->setValue(dumper.keys().m_origin, key.toJSON(dumper));
         counterEntry->setDouble(dumper.keys().m_executionCount, value->count());
-        counters->pushValue(WTFMove(counterEntry));
+        counters->pushValue(WTF::move(counterEntry));
     }
-    result->setValue(dumper.keys().m_counters, WTFMove(counters));
+    result->setValue(dumper.keys().m_counters, WTF::move(counters));
 
     auto exitSites = JSON::Array::create();
     for (const auto& osrExitSite : m_osrExitSites)
         exitSites->pushValue(osrExitSite.toJSON(dumper));
-    result->setValue(dumper.keys().m_osrExitSites, WTFMove(exitSites));
+    result->setValue(dumper.keys().m_osrExitSites, WTF::move(exitSites));
 
     auto exits = JSON::Array::create();
     for (unsigned i = 0; i < m_osrExits.size(); ++i)
         exits->pushValue(m_osrExits[i].toJSON(dumper));
-    result->setValue(dumper.keys().m_osrExits, WTFMove(exits));
+    result->setValue(dumper.keys().m_osrExits, WTF::move(exits));
 
     result->setDouble(dumper.keys().m_numInlinedGetByIds, m_numInlinedGetByIds);
     result->setDouble(dumper.keys().m_numInlinedPutByIds, m_numInlinedPutByIds);

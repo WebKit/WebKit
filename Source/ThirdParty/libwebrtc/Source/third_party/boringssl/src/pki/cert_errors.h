@@ -121,7 +121,7 @@ class OPENSSL_EXPORT CertErrors {
                                  CertError::Severity severity) const;
 
   // Returns true if the error |id| was added to this CertErrors at
-  // high serverity.
+  // high severity.
   bool ContainsError(CertErrorId id) const;
 
   // Returns true if this contains any errors of the given severity level.

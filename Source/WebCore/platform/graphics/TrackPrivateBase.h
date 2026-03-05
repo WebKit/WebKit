@@ -97,12 +97,12 @@ protected:
     template <typename T>
     class Shared final : public ThreadSafeRefCounted<Shared<T>> {
     public:
-        static Ref<Shared> create(T&& obj) { return adoptRef(*new Shared(WTFMove(obj))); }
+        static Ref<Shared> create(T&& obj) { return adoptRef(*new Shared(WTF::move(obj))); }
 
         T& get() { return m_obj; };
     private:
         Shared(T&& obj)
-            : m_obj(WTFMove(obj))
+            : m_obj(WTF::move(obj))
         {
         }
         T m_obj;

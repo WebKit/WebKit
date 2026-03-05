@@ -33,11 +33,11 @@ using namespace WebCore;
 
 Ref<ViewSnapshot> ViewSnapshot::create(sk_sp<SkImage>&& image)
 {
-    return adoptRef(*new ViewSnapshot(WTFMove(image)));
+    return adoptRef(*new ViewSnapshot(WTF::move(image)));
 }
 
 ViewSnapshot::ViewSnapshot(sk_sp<SkImage>&& image)
-    : m_image(WTFMove(image))
+    : m_image(WTF::move(image))
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);

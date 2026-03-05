@@ -104,11 +104,11 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, Call
                 buf16Bit[i] = static_cast<char16_t>(callFrame->uncheckedArgument(i).toUInt32(globalObject));
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(impl16Bit))));
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(impl16Bit))));
         }
         buf8Bit[i] = static_cast<Latin1Character>(character);
     }
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(impl8Bit))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(impl8Bit))));
 }
 
 JSString* stringFromCharCode(JSGlobalObject* globalObject, int32_t arg)

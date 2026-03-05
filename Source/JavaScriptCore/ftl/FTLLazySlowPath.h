@@ -71,7 +71,7 @@ public:
 
     void initialize(
         CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSInternalPtrTag> done,
-        CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget, const RegisterSetBuilder& usedRegisters,
+        CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget, const RegisterSet& usedRegisters,
         CallSiteIndex, RefPtr<Generator>
         );
 

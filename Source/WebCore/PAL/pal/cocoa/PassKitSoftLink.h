@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: (rdar://167375656) Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 #if USE(PASSKIT)
 
 #import <pal/spi/cocoa/PassKitSPI.h>
@@ -164,3 +167,5 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIde
 #define PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication PAL::softLink_PassKitCore_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication
 
 #endif // USE(PASSKIT)
+
+#endif // !__has_feature(modules)

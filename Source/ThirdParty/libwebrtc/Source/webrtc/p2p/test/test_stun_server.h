@@ -13,7 +13,10 @@
 
 #include <functional>
 #include <memory>
+#include <utility>
 
+#include "absl/base/attributes.h"
+#include "api/environment/environment.h"
 #include "api/transport/stun.h"
 #include "p2p/test/stun_server.h"
 #include "rtc_base/async_udp_socket.h"
@@ -28,9 +31,11 @@ class TestStunServer : StunServer {
  public:
   using StunServerPtr =
       std::unique_ptr<TestStunServer, std::function<void(TestStunServer*)>>;
-  static StunServerPtr Create(SocketServer* ss,
+  static StunServerPtr Create(const Environment& env,
                               const SocketAddress& addr,
-                              Thread& network_thread);
+                              SocketServer& ss,
+                              Thread& network_thread
+                                  ABSL_ATTRIBUTE_LIFETIME_BOUND);
 
   // Set a fake STUN address to return to the client.
   void set_fake_stun_addr(const SocketAddress& addr) { fake_stun_addr_ = addr; }
@@ -38,8 +43,8 @@ class TestStunServer : StunServer {
  private:
   static void DeleteOnNetworkThread(TestStunServer* server);
 
-  TestStunServer(AsyncUDPSocket* socket, Thread& network_thread)
-      : StunServer(socket), network_thread_(network_thread) {}
+  TestStunServer(std::unique_ptr<AsyncUDPSocket> socket, Thread& network_thread)
+      : StunServer(std::move(socket)), network_thread_(network_thread) {}
 
   void OnBindingRequest(StunMessage* msg,
                         const SocketAddress& remote_addr) override;

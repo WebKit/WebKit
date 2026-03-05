@@ -46,6 +46,7 @@ namespace WebCore {
 class ContainerNode;
 class Document;
 class Element;
+class FrameView;
 class IntersectionObserverEntry;
 
 struct IntersectionObserverRegistration {
@@ -68,10 +69,10 @@ struct IntersectionObserverData {
 enum class IncludeObscuredInsets : bool { No, Yes };
 
 class IntersectionObserver : public RefCountedAndCanMakeWeakPtr<IntersectionObserver> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IntersectionObserver);
+    WTF_MAKE_TZONE_ALLOCATED(IntersectionObserver);
 public:
     struct Init {
-        std::optional<Variant<RefPtr<Element>, RefPtr<Document>>> root;
+        std::optional<Variant<Ref<Element>, Ref<Document>>> root;
         String rootMargin;
         String scrollMargin;
         Variant<double, Vector<double>> threshold;
@@ -81,15 +82,22 @@ public:
 
     ~IntersectionObserver();
 
-    Document* trackingDocument() const;
+    // Local: root is in the same process as the observer.
+    // Remote: root is in different process as the observer.
+    // Only situation where this applies is an observer created in a cross-site frame,
+    // where the top document and frame is of different origin.
+    enum class Type : bool { Local, Remote };
+    Type type() const { return m_type; }
+
+    Document* NODELETE trackingDocument() const;
 
     ContainerNode* root() const { return m_root.get(); }
     String rootMargin() const;
     String scrollMargin() const;
-    const IntersectionObserverMarginBox& rootMarginBox() const { return m_rootMargin; }
-    const IntersectionObserverMarginBox& scrollMarginBox() const { return m_scrollMargin; }
-    const Vector<double>& thresholds() const { return m_thresholds; }
-    const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& observationTargets() const { return m_observationTargets; }
+    const IntersectionObserverMarginBox& rootMarginBox() const LIFETIME_BOUND { return m_rootMargin; }
+    const IntersectionObserverMarginBox& scrollMarginBox() const LIFETIME_BOUND { return m_scrollMargin; }
+    const Vector<double>& thresholds() const LIFETIME_BOUND { return m_thresholds; }
+    const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& observationTargets() const LIFETIME_BOUND { return m_observationTargets; }
     bool hasObservationTargets() const { return m_observationTargets.size(); }
     bool isObserving(const Element&) const;
 
@@ -136,7 +144,9 @@ private:
     };
 
     enum class ApplyRootMargin : bool { No, Yes };
-    IntersectionObservationState computeIntersectionState(const IntersectionObserverRegistration&, LocalFrameView&, Element& target, ApplyRootMargin) const;
+    IntersectionObservationState computeIntersectionState(const IntersectionObserverRegistration&, FrameView&, Element& target, ApplyRootMargin) const;
+
+    Type m_type { Type::Local };
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_implicitRootDocument;
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_root;

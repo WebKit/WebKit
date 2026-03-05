@@ -38,18 +38,18 @@ class GPUDeviceLostInfo : public RefCounted<GPUDeviceLostInfo> {
 public:
     static Ref<GPUDeviceLostInfo> create(Ref<WebGPU::DeviceLostInfo>&& backing)
     {
-        return adoptRef(*new GPUDeviceLostInfo(WTFMove(backing)));
+        return adoptRef(*new GPUDeviceLostInfo(WTF::move(backing)));
     }
 
-    GPUDeviceLostReason reason() const;
-    const String& message() const;
+    GPUDeviceLostReason NODELETE reason() const;
+    const String& NODELETE message() const LIFETIME_BOUND;
 
     WebGPU::DeviceLostInfo& backing() { return m_backing; }
     const WebGPU::DeviceLostInfo& backing() const { return m_backing; }
 
 private:
     GPUDeviceLostInfo(Ref<WebGPU::DeviceLostInfo>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

@@ -13,7 +13,7 @@ info: |
   ...
   3. Let elementLength be ? ToIndex(length).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -50,4 +50,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
       name + " prototype"
     );
   });
-});
+}, null, ["passthrough"]);

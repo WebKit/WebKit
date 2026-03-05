@@ -45,4 +45,12 @@ protected:
 
 } // namespace WTF
 
+#define OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(BaseClass) \
+    uint32_t checkedPtrCount() const final { return BaseClass::checkedPtrCount(); } \
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return BaseClass::checkedPtrCountWithoutThreadCheck(); } \
+    void incrementCheckedPtrCount() const final { BaseClass::incrementCheckedPtrCount(); } \
+    void decrementCheckedPtrCount() const final { BaseClass::decrementCheckedPtrCount(); } \
+    void setDidBeginCheckedPtrDeletion() final { BaseClass::setDidBeginCheckedPtrDeletion(); } \
+    using __unused_for_semicolon_canmakecheckedptr = int
+
 using WTF::AbstractCanMakeCheckedPtr;

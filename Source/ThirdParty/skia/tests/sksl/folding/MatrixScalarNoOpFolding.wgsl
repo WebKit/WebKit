@@ -1,32 +1,33 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct _GlobalUniforms {
-  testMatrix2x2: mat2x2<f32>,
+  testMatrix2x2: _skMatrix22f,
   testMatrix3x3: mat3x3<f32>,
   testInputs: vec4<f32>,
-  colorRed: vec4<f32>,
-  colorGreen: vec4<f32>,
-  unknownInput: f32,
+  colorRed: vec4<f16>,
+  colorGreen: vec4<f16>,
+  unknownInput: f16,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
 fn test_no_op_scalar_X_mat2_b() -> bool {
   {
     var m: mat2x2<f32>;
     var mm: mat2x2<f32>;
     const z: mat2x2<f32> = mat2x2<f32>(0.0, 0.0, 0.0, 0.0);
-    m = _globalUniforms.testMatrix2x2;
-    m = _globalUniforms.testMatrix2x2;
-    if (any(m[0] != _globalUniforms.testMatrix2x2[0]) || any(m[1] != _globalUniforms.testMatrix2x2[1])) {
+    m = _skUnpacked__globalUniforms_testMatrix2x2;
+    m = _skUnpacked__globalUniforms_testMatrix2x2;
+    if (any(m[0] != _skUnpacked__globalUniforms_testMatrix2x2[0]) || any(m[1] != _skUnpacked__globalUniforms_testMatrix2x2[1])) {
       return false;
     }
-    if (any(m[0] != _globalUniforms.testMatrix2x2[0]) || any(m[1] != _globalUniforms.testMatrix2x2[1])) {
+    if (any(m[0] != _skUnpacked__globalUniforms_testMatrix2x2[0]) || any(m[1] != _skUnpacked__globalUniforms_testMatrix2x2[1])) {
       return false;
     }
-    if (any(m[0] != _globalUniforms.testMatrix2x2[0]) || any(m[1] != _globalUniforms.testMatrix2x2[1])) {
+    if (any(m[0] != _skUnpacked__globalUniforms_testMatrix2x2[0]) || any(m[1] != _skUnpacked__globalUniforms_testMatrix2x2[1])) {
       return false;
     }
     m = (-1.0 * m);
-    let _skTemp0 = (-1.0 * _globalUniforms.testMatrix2x2);
+    let _skTemp0 = (-1.0 * _skUnpacked__globalUniforms_testMatrix2x2);
     if (any(m[0] != _skTemp0[0]) || any(m[1] != _skTemp0[1])) {
       return false;
     }
@@ -195,42 +196,36 @@ fn test_no_op_mat4_X_scalar_b() -> bool {
     return (all(mm[0] == z[0]) && all(mm[1] == z[1]) && all(mm[2] == z[2]) && all(mm[3] == z[3]));
   }
 }
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
-    var _skTemp15: vec4<f32>;
+    var _skTemp15: vec4<f16>;
     var _skTemp16: bool;
     var _skTemp17: bool;
     var _skTemp18: bool;
     var _skTemp19: bool;
     var _skTemp20: bool;
-    let _skTemp21 = test_no_op_scalar_X_mat2_b();
-    if _skTemp21 {
-      let _skTemp22 = test_no_op_scalar_X_mat3_b();
-      _skTemp20 = _skTemp22;
+    if test_no_op_scalar_X_mat2_b() {
+      _skTemp20 = test_no_op_scalar_X_mat3_b();
     } else {
       _skTemp20 = false;
     }
     if _skTemp20 {
-      let _skTemp23 = test_no_op_scalar_X_mat4_b();
-      _skTemp19 = _skTemp23;
+      _skTemp19 = test_no_op_scalar_X_mat4_b();
     } else {
       _skTemp19 = false;
     }
     if _skTemp19 {
-      let _skTemp24 = test_no_op_mat2_X_scalar_b();
-      _skTemp18 = _skTemp24;
+      _skTemp18 = test_no_op_mat2_X_scalar_b();
     } else {
       _skTemp18 = false;
     }
     if _skTemp18 {
-      let _skTemp25 = test_no_op_mat3_X_scalar_b();
-      _skTemp17 = _skTemp25;
+      _skTemp17 = test_no_op_mat3_X_scalar_b();
     } else {
       _skTemp17 = false;
     }
     if _skTemp17 {
-      let _skTemp26 = test_no_op_mat4_X_scalar_b();
-      _skTemp16 = _skTemp26;
+      _skTemp16 = test_no_op_mat4_X_scalar_b();
     } else {
       _skTemp16 = false;
     }
@@ -242,6 +237,17 @@ fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
     return _skTemp15;
   }
 }
-@fragment fn main(@location(0) _coords: vec2<f32>) -> @location(0) vec4<f32> {
+@fragment fn main(@location(0) _coords: vec2<f32>) -> @location(0) vec4<f16> {
+  _skInitializePolyfilledUniforms();
   return _skslMain(_coords);
+}
+struct _skRow2f {
+  @align(16) r : vec2<f32>
+};
+struct _skMatrix22f {
+  c : array<_skRow2f, 2>
+};
+var<private> _skUnpacked__globalUniforms_testMatrix2x2: mat2x2<f32>;
+fn _skInitializePolyfilledUniforms() {
+  _skUnpacked__globalUniforms_testMatrix2x2 = mat2x2<f32>(_globalUniforms.testMatrix2x2.c[0].r, _globalUniforms.testMatrix2x2.c[1].r);
 }

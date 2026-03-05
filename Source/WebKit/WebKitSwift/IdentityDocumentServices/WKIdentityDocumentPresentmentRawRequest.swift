@@ -25,7 +25,9 @@
 
 import Foundation
 
-@objc @implementation extension WKIdentityDocumentPresentmentRawRequest {
+@objc
+@implementation
+extension WKIdentityDocumentPresentmentRawRequest {
     let requestProtocol: String
     let requestData: Data
 

@@ -63,6 +63,9 @@ struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper>, public CanMakeChe
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SessionWrapper);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(SessionWrapper);
 
+    SessionWrapper() = default;
+    ~SessionWrapper();
+
     void initialize(NSURLSessionConfiguration*, NetworkSessionCocoa&, WebCore::StoredCredentialsPolicy, NavigatingToAppBoundDomain);
 
     void recreateSessionWithUpdatedProxyConfigurations(NetworkSessionCocoa&);
@@ -81,8 +84,6 @@ public:
         : sessionWithCredentialStorage(makeUniqueRef<SessionWrapper>())
     { }
 
-    CheckedRef<SessionWrapper> checkedSessionWithCredentialStorage() { return sessionWithCredentialStorage.get(); }
-
     UniqueRef<SessionWrapper> sessionWithCredentialStorage;
     WallTime lastUsed;
 };
@@ -96,13 +97,10 @@ public:
 
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
 
-    SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
+    CheckedRef<SessionWrapper> isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> isolatedSessions;
 
     std::unique_ptr<IsolatedSession> appBoundSession;
-
-    CheckedRef<SessionWrapper> checkedSessionWithCredentialStorage() { return sessionWithCredentialStorage.get(); }
-    CheckedRef<SessionWrapper> checkedEphemeralStatelessSession() { return ephemeralStatelessSession.get(); }
 
     UniqueRef<SessionWrapper> sessionWithCredentialStorage;
     UniqueRef<SessionWrapper> ephemeralStatelessSession;
@@ -126,11 +124,11 @@ public:
 
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(std::optional<WebPageProxyIdentifier>, NavigatingToAppBoundDomain);
 
-    const String& boundInterfaceIdentifier() const;
-    const String& sourceApplicationBundleIdentifier() const;
-    const String& sourceApplicationSecondaryIdentifier() const;
+    const String& boundInterfaceIdentifier() const LIFETIME_BOUND { return m_boundInterfaceIdentifier; }
+    const String& sourceApplicationBundleIdentifier() const LIFETIME_BOUND { return m_sourceApplicationBundleIdentifier; }
+    const String& sourceApplicationSecondaryIdentifier() const LIFETIME_BOUND { return m_sourceApplicationSecondaryIdentifier; }
 #if PLATFORM(IOS_FAMILY)
-    const String& dataConnectionServiceType() const;
+    const String& dataConnectionServiceType() const LIFETIME_BOUND { return m_dataConnectionServiceType; }
 #endif
 
     void setClientAuditToken(const WebCore::AuthenticationChallenge&);
@@ -155,11 +153,10 @@ public:
     void clearAppBoundSession() override;
 #endif
 
-    SessionWrapper& sessionWrapperForTask(std::optional<WebPageProxyIdentifier>, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
+    CheckedRef<SessionWrapper> sessionWrapperForTask(std::optional<WebPageProxyIdentifier>, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
-    
+
     _NSHSTSStorage *hstsStorage() const;
-    RetainPtr<_NSHSTSStorage> protectedHSTSStorage() const;
 
     NSURLCredentialStorage *nsCredentialStorage() const;
 
@@ -185,7 +182,7 @@ private:
     void clearCredentials(WallTime) final;
 
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
-    SessionWrapper& isolatedSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain);
+    CheckedRef<SessionWrapper> isolatedSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain);
 
 #if ENABLE(APP_BOUND_DOMAINS)
     SessionWrapper& appBoundSession(std::optional<WebPageProxyIdentifier>, WebCore::StoredCredentialsPolicy);
@@ -220,8 +217,6 @@ private:
     void initializeNSURLSessionsInSet(SessionSet&, NSURLSessionConfiguration *);
     SessionSet& sessionSetForPage(std::optional<WebPageProxyIdentifier>);
     const SessionSet& sessionSetForPage(std::optional<WebPageProxyIdentifier>) const;
-    Ref<SessionSet> protectedSessionSetForPage(std::optional<WebPageProxyIdentifier> identifier) { return sessionSetForPage(identifier); }
-    Ref<const SessionSet> protectedSessionSetForPage(std::optional<WebPageProxyIdentifier> identifier) const { return sessionSetForPage(identifier); }
 
     void invalidateAndCancelSessionSet(SessionSet&);
     

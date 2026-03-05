@@ -30,7 +30,6 @@
 #include "CAAudioStreamDescription.h"
 #include "CMUtilities.h"
 #include "Logging.h"
-#include "SpanCoreAudio.h"
 #include "WebAudioBufferList.h"
 #include <AudioToolbox/AudioCodec.h>
 #include <AudioToolbox/AudioConverter.h>
@@ -39,6 +38,7 @@
 #include <Foundation/NSValue.h>
 #include <algorithm>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <pal/cf/CoreAudioExtras.h>
 #include <wtf/NativePromise.h>
 #include <wtf/Scope.h>
 #include <wtf/ZippedRange.h>
@@ -540,7 +540,7 @@ void AudioSampleBufferConverter::processSampleBuffers()
             m_lastError = sampleOrError.error();
             return;
         }
-        RetainPtr buffer = WTFMove(*sampleOrError);
+        RetainPtr buffer = WTF::move(*sampleOrError);
 
         // FIXME: "Test encoding Opus with additional parameters: Opus with frameDuration" will fail otherwise, it is more correct to set the priming trims at all time.
         if (!isPCM() && m_options.generateTimestamp)

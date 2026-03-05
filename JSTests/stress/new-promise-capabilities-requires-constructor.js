@@ -15,4 +15,4 @@ function shouldThrow(func, errorMessage) {
 
 shouldThrow(() => {
     Promise.race.call(() => { }, []);
-}, `TypeError: function is not a constructor`);
+}, `TypeError: argument is not a constructor`);

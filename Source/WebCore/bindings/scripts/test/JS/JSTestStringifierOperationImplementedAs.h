@@ -32,7 +32,7 @@ public:
     static JSTestStringifierOperationImplementedAs* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierOperationImplementedAs>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestStringifierOperationImplementedAs* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierOperationImplementedAs>(vm)) JSTestStringifierOperationImplementedAs(structure, *globalObject, WTFMove(impl));
+        JSTestStringifierOperationImplementedAs* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierOperationImplementedAs>(vm)) JSTestStringifierOperationImplementedAs(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestStringifierOperationImplementedAs* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestStringifierOperationImplementedAs&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestStringifierOperationImplementedAs* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestStringifierOperationImplementedAs>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestStringifierOperationImplementedAs& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestStringifierOperationImplementedAs>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestStringifierOperationImplementedAs> {
     using WrapperClass = JSTestStringifierOperationImplementedAs;

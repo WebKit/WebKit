@@ -57,8 +57,8 @@ WebNotificationClient::~WebNotificationClient()
 bool WebNotificationClient::show(ScriptExecutionContext& context, NotificationData&& notification, RefPtr<NotificationResources>&& resources, CompletionHandler<void()>&& callback)
 {
     bool result;
-    callOnMainRunLoopAndWait([&result, notification = WTFMove(notification).isolatedCopy(), resources = WTFMove(resources), page = m_page, contextIdentifier = context.identifier(), callbackIdentifier = context.addNotificationCallback(WTFMove(callback))]() mutable {
-        result = WebProcess::singleton().protectedSupplement<WebNotificationManager>()->show(WTFMove(notification), WTFMove(resources), RefPtr { page.get() }.get(), [contextIdentifier, callbackIdentifier] {
+    callOnMainRunLoopAndWait([&result, notification = WTF::move(notification).isolatedCopy(), resources = WTF::move(resources), page = m_page, contextIdentifier = context.identifier(), callbackIdentifier = context.addNotificationCallback(WTF::move(callback))]() mutable {
+        result = protect(WebProcess::singleton().notificationManager())->show(WTF::move(notification), WTF::move(resources), RefPtr { page.get() }.get(), [contextIdentifier, callbackIdentifier] {
             ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [callbackIdentifier](auto& context) {
                 if (auto callback = context.takeNotificationCallback(callbackIdentifier))
                     callback();
@@ -70,15 +70,15 @@ bool WebNotificationClient::show(ScriptExecutionContext& context, NotificationDa
 
 void WebNotificationClient::cancel(NotificationData&& notification)
 {
-    callOnMainRunLoopAndWait([notification = WTFMove(notification).isolatedCopy(), page = m_page]() mutable {
-        WebProcess::singleton().protectedSupplement<WebNotificationManager>()->cancel(WTFMove(notification), RefPtr { page.get() }.get());
+    callOnMainRunLoopAndWait([notification = WTF::move(notification).isolatedCopy(), page = m_page]() mutable {
+        protect(WebProcess::singleton().notificationManager())->cancel(WTF::move(notification), RefPtr { page.get() }.get());
     });
 }
 
 void WebNotificationClient::notificationObjectDestroyed(NotificationData&& notification)
 {
-    callOnMainRunLoopAndWait([notification = WTFMove(notification).isolatedCopy(), page = m_page]() mutable {
-        WebProcess::singleton().protectedSupplement<WebNotificationManager>()->didDestroyNotification(WTFMove(notification), RefPtr { page.get() }.get());
+    callOnMainRunLoopAndWait([notification = WTF::move(notification).isolatedCopy(), page = m_page]() mutable {
+        protect(WebProcess::singleton().notificationManager())->didDestroyNotification(WTF::move(notification), RefPtr { page.get() }.get());
     });
 }
 
@@ -107,15 +107,15 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
-        auto handler = [permissionHandler = WTFMove(permissionHandler)](bool granted) mutable {
+        auto handler = [permissionHandler = WTF::move(permissionHandler)](bool granted) mutable {
             permissionHandler(granted ? NotificationPermission::Granted : NotificationPermission::Denied);
         };
-        WebProcess::singleton().protectedSupplement<WebNotificationManager>()->requestPermission(WebCore::SecurityOriginData { securityOrigin->data() }, RefPtr { m_page.get() }, WTFMove(handler));
+        protect(WebProcess::singleton().notificationManager())->requestPermission(WebCore::SecurityOriginData { securityOrigin->data() }, RefPtr { m_page.get() }, WTF::move(handler));
         return;
     }
 #endif
 
-    Ref { *m_page }->protectedNotificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(permissionHandler));
+    protect(Ref { *m_page }->notificationPermissionRequestManager())->startRequest(securityOrigin->data(), WTF::move(permissionHandler));
 }
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
@@ -136,10 +136,10 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
         ASSERT(isMainRunLoop());
         RefPtr documentPage = document->page();
         RefPtr page = documentPage ? WebPage::fromCorePage(*documentPage) : nullptr;
-        resultPermission = WebProcess::singleton().protectedSupplement<WebNotificationManager>()->policyForOrigin(origin->data().toString(), page.get());
+        resultPermission = protect(WebProcess::singleton().notificationManager())->policyForOrigin(origin->data().toString(), page.get());
     } else {
         callOnMainRunLoopAndWait([&resultPermission, origin = origin->data().toString().isolatedCopy()] {
-            resultPermission = WebProcess::singleton().protectedSupplement<WebNotificationManager>()->policyForOrigin(origin);
+            resultPermission = protect(WebProcess::singleton().notificationManager())->policyForOrigin(origin);
         });
     }
 

@@ -68,8 +68,16 @@ class TestTrack(testing.PathTestCase):
             'security': 'git@github.example.com:WebKit/WebKit-security.git',
             'security-fork': 'git@github.example.com:Contributor/WebKit-security.git',
         }) as mocked, mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
-            mocked.remotes['security/hidden-branch'] = [mocked.commits[mocked.branch][-1]]
-            mocked.remotes['security-fork/hidden-branch'] = [mocked.commits[mocked.branch][-1]]
+            secret_commit = Commit(
+                hash='7da1053cf88b52d3768dedea733c023fcf0b6cff',
+                author={'name': 'Jonathan Bedard', 'emails': ['jbedard@apple.com']},
+                timestamp=1601669000,
+                branch='hidden-branch',
+                message='Secret commit\n',
+                identifier='1@hidden-branch',
+            )
+            mocked.remotes['security/hidden-branch'] = [mocked.commits[mocked.branch][-1], secret_commit]
+            mocked.remotes['security-fork/hidden-branch'] = [mocked.commits[mocked.branch][-1], secret_commit]
 
             project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
             os.mkdir(os.path.dirname(project_config))

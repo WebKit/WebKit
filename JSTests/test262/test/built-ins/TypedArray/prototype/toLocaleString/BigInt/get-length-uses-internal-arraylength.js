@@ -16,7 +16,7 @@ info: |
   1. Let array be ? ToObject(this value).
   2.Let len be ? ToLength(? Get(array, "length")).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -30,8 +30,8 @@ var desc = {
 
 Object.defineProperty(TypedArray.prototype, "length", desc);
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n]));
 
   Object.defineProperty(TA.prototype, "length", desc);
   Object.defineProperty(sample, "length", desc);
@@ -39,4 +39,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   sample.toLocaleString();
 
   assert.sameValue(getCalls, 0, "ignores length properties");
-});
+}, null, ["passthrough"]);

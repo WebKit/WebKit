@@ -55,7 +55,6 @@ public:
 
     RemoteGPUProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
-    Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
 
     void present(uint32_t frameIndex, bool = false) final;
 
@@ -76,9 +75,9 @@ private:
     RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t, bool& isIOSurfaceSupportedFormat) final;
 
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Error send(T&& message)
+    [[nodiscard]] IPC::Error send(T&& message)
     {
-        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->send(WTF::move(message), backing());
     }
 
     bool configure(const WebCore::WebGPU::CanvasConfiguration&) final;

@@ -21,6 +21,7 @@
 #include <openssl/mem.h>
 
 #include "../../internal.h"
+#include "../bn/internal.h"
 #include "internal.h"
 
 
@@ -38,17 +39,17 @@ static int bn_blinding_create_param(BN_BLINDING *b, const BIGNUM *e,
 BN_BLINDING *BN_BLINDING_new(void) {
   BN_BLINDING *ret =
       reinterpret_cast<BN_BLINDING *>(OPENSSL_zalloc(sizeof(BN_BLINDING)));
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   ret->A = BN_new();
-  if (ret->A == NULL) {
+  if (ret->A == nullptr) {
     goto err;
   }
 
   ret->Ai = BN_new();
-  if (ret->Ai == NULL) {
+  if (ret->Ai == nullptr) {
     goto err;
   }
 
@@ -59,7 +60,7 @@ BN_BLINDING *BN_BLINDING_new(void) {
 
 err:
   BN_BLINDING_free(ret);
-  return NULL;
+  return nullptr;
 }
 
 void BN_BLINDING_free(BN_BLINDING *r) {

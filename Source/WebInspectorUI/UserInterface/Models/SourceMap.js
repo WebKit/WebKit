@@ -36,8 +36,8 @@ WI.SourceMap = class SourceMap
         for (let [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn] of this._mappings) {
             if (!sourceURL)
                 continue;
-            let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInitialize(sourceURL, () => new Map);
-            generatedPositionForOriginalLine.getOrInitialize(originalLine, [generatedLine, generatedColumn]);
+            let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInsert(sourceURL, new Map);
+            generatedPositionForOriginalLine.getOrInsert(originalLine, [generatedLine, generatedColumn]);
         }
 
         this._sourceMapResourceForURL = new Map;
@@ -266,7 +266,7 @@ WI.SourceMap = class SourceMap
         if (!urlComponents.path)
             urlComponents.path = this._sourceMappingURL || "";
 
-        urlComponents.path = urlComponents.path.substr(0, urlComponents.path.lastIndexOf(urlComponents.lastPathComponent));
+        urlComponents.path = urlComponents.path.substring(0, urlComponents.path.lastIndexOf(urlComponents.lastPathComponent));
         urlComponents.lastPathComponent = null;
         this._sourceMappingURLBasePathComponents = urlComponents;
         return this._sourceMappingURLBasePathComponents;

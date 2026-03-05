@@ -1,0 +1,124 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+.text-representation {
+    white-space: pre-wrap;
+}
+
+.form-container {
+    border: solid 1px tomato;
+    padding: 1em;
+    margin: 1em;
+    display: inline-block;
+}
+
+.tall {
+    width: 1px;
+    height: 150vh;
+}
+
+form {
+    width: 390px;
+    height: 350px;
+    border-radius: 1em;
+    border: 1px solid black;
+    padding: 1em;
+}
+
+h4 {
+    margin: auto;
+}
+
+main {
+    position: fixed;
+    inset: 0;
+    overflow-y: scroll;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<main role="main">
+    <section id="section2" aria-label="Content with Roles">
+        <article role="article">
+            <header>
+                <h3>Article Title</h3>
+                <time datetime="2024-01-01">January 1, 2024</time>
+            </header>
+            <p>This is some article content with <mark>highlighted text</mark>.</p>
+        </article>
+        <div class="tall"></div>
+        <form name="signup" autocomplete="on">
+            <h4>Sign up for our newsletter</h4>
+            <label>
+                <input type="checkbox" name="4dbbd829694147d79fecb2e70f3109db">
+                Remember me
+            </label>
+            <div class="form-container">
+                <input name="username" placeholder="Username" minlength="3" maxlength="20" required />
+                <input name="password" placeholder="Password" minlength="3" maxlength="20" type="password" required />
+            </div>
+            <br>
+            <div class="form-container">
+                <input name="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required />
+                <input name="zipcode" placeholder="Zip Code" pattern="[0-9]{5}" minlength="5" maxlength="5" />
+            </div>
+        </form>
+        <select>
+            <option value="one">Number 1</option>
+            <option value="two">Number 2</option>
+            <option selected value="three">Number 3</option>
+        </select>
+        <select multiple>
+            <option selected value="banana">Banana</option>
+            <option selected value="pear">Pear</option>
+            <option value="apple">Apple</option>
+        </select>
+    </section>
+    <footer role="contentinfo">
+        <p>Footer content with <span role="img" aria-label="copyright symbol">©</span> 2024</p>
+    </footer>
+    <div role="dialog" aria-hidden="true" style="display: none;">
+        <p>This dialog is hidden and should not be extracted.</p>
+    </div>
+</main>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const results = [];
+    for (let outputFormat of ["texttree", "html"]) {
+        const heading = document.createElement("h1");
+        heading.textContent = `-- ${outputFormat}`;
+
+        const container = document.createElement("pre");
+        container.classList.add("text-representation");
+        let textContent = await UIHelper.requestDebugText({
+            normalize: true,
+            includeRects: false,
+            includeURLs: false,
+            includeOffscreenPasswordFields: true,
+            clipToBounds: true,
+            outputFormat,
+        });
+
+        container.textContent = textContent;
+        results.push(heading);
+        results.push(container);
+        results.push(document.createElement("br"));
+    }
+
+    document.body.replaceChildren(...results);
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,12 @@
 #endif
 
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DNSResolveQueue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DNSResolveQueue);
 
 // When resolve queue is empty, we fire async resolution requests immediately (which is important if the prefetch is triggered by hovering).
 // But during page parsing, we should coalesce identical requests to avoid stressing out the DNS resolver.

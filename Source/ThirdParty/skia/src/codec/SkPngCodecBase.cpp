@@ -58,13 +58,13 @@ skcms_PixelFormat ToPixelFormat(const SkEncodedInfo& info) {
 SkPngCodecBase::~SkPngCodecBase() = default;
 
 // static
-bool SkPngCodecBase::isCompatibleColorProfileAndType(const SkEncodedInfo::ICCProfile* profile,
+bool SkPngCodecBase::isCompatibleColorProfileAndType(const SkCodecs::ColorProfile* profile,
                                                      SkEncodedInfo::Color color) {
     if (profile) {
-        switch (profile->profile()->data_color_space) {
-            case skcms_Signature_CMYK:
+        switch (profile->dataSpace()) {
+            case SkCodecs::ColorProfile::DataSpace::kCMYK:
                 return false;
-            case skcms_Signature_Gray:
+            case SkCodecs::ColorProfile::DataSpace::kGray:
                 if (SkEncodedInfo::kGray_Color != color &&
                     SkEncodedInfo::kGrayAlpha_Color != color) {
                     return false;

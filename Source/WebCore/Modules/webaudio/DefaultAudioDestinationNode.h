@@ -38,7 +38,7 @@ class AudioContext;
 class AudioDestination;
     
 class DefaultAudioDestinationNode final : public AudioDestinationNode, public AudioIOCallback {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DefaultAudioDestinationNode);
+    WTF_MAKE_TZONE_ALLOCATED(DefaultAudioDestinationNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DefaultAudioDestinationNode);
 public:
     explicit DefaultAudioDestinationNode(AudioContext&, std::optional<float> sampleRate = std::nullopt);

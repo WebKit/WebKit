@@ -60,7 +60,7 @@ private:
     bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;
     Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
 
-    HashSet<RefPtr<MockPageOverlay>> m_overlays;
+    HashSet<Ref<MockPageOverlay>> m_overlays;
 };
 
 } // namespace WebCore

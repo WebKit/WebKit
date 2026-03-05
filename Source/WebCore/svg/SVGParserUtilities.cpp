@@ -172,7 +172,7 @@ std::optional<float> parseNumber(StringView string, SuffixSkippingPolicy skip)
 
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
 // and might not have any whitespace/comma after it
-template <typename CharacterType> std::optional<bool> genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
+template <typename CharacterType> std::optional<bool> NODELETE genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -299,7 +299,7 @@ std::optional<HashSet<String>> parseGlyphName(StringView string)
     });
 }
 
-template<typename CharacterType> static std::optional<UnicodeRange> parseUnicodeRange(std::span<const CharacterType> span)
+template<typename CharacterType> static std::optional<UnicodeRange> NODELETE parseUnicodeRange(std::span<const CharacterType> span)
 {
     StringParsingBuffer buffer { span };
     unsigned length = buffer.lengthRemaining();
@@ -390,7 +390,7 @@ std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeStri
 
             // Try to parse unicode range first
             if (auto range = parseUnicodeRange(std::span { inputStart, buffer.position() }))
-                rangeList.append(WTFMove(*range));
+                rangeList.append(WTF::move(*range));
             else
                 stringList.add(String({ inputStart, buffer.position() }));
 
@@ -400,7 +400,7 @@ std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeStri
             ++buffer;
         }
 
-        return std::make_pair(WTFMove(rangeList), WTFMove(stringList));
+        return std::make_pair(WTF::move(rangeList), WTF::move(stringList));
     });
 }
 

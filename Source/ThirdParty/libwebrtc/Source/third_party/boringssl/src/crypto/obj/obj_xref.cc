@@ -52,10 +52,10 @@ static const nid_triple kTriples[] = {
 int OBJ_find_sigid_algs(int sign_nid, int *out_digest_nid, int *out_pkey_nid) {
   for (const auto &triple : kTriples) {
     if (triple.sign_nid == sign_nid) {
-      if (out_digest_nid != NULL) {
+      if (out_digest_nid != nullptr) {
         *out_digest_nid = triple.digest_nid;
       }
-      if (out_pkey_nid != NULL) {
+      if (out_pkey_nid != nullptr) {
         *out_pkey_nid = triple.pkey_nid;
       }
       return 1;
@@ -69,7 +69,7 @@ int OBJ_find_sigid_by_algs(int *out_sign_nid, int digest_nid, int pkey_nid) {
   for (const auto &triple : kTriples) {
     if (triple.digest_nid == digest_nid &&
         triple.pkey_nid == pkey_nid) {
-      if (out_sign_nid != NULL) {
+      if (out_sign_nid != nullptr) {
         *out_sign_nid = triple.sign_nid;
       }
       return 1;

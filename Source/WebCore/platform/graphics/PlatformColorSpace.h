@@ -54,10 +54,11 @@ using PlatformColorSpaceValue = sk_sp<SkColorSpace>;
 class PlatformColorSpace {
 public:
     enum class Name : uint8_t {
-        SRGB
-        , LinearSRGB
+        SRGB,
+        LinearSRGB,
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        , DisplayP3
+        DisplayP3,
+        LinearDisplayP3,
 #endif
     };
 
@@ -70,7 +71,6 @@ public:
 
 private:
     Name m_name;
-
 };
 using PlatformColorSpaceValue = PlatformColorSpace::Name;
 

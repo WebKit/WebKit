@@ -63,20 +63,25 @@ namespace WebCore {
 
 #if ENABLE(DRAG_SUPPORT)
 
-class DragImageLoader final : public CachedImageClient {
+class DragImageLoader final : public CachedImageClient, public RefCounted<DragImageLoader> {
     WTF_MAKE_TZONE_ALLOCATED(DragImageLoader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DragImageLoader);
     WTF_MAKE_NONCOPYABLE(DragImageLoader);
 public:
-    explicit DragImageLoader(DataTransfer&, const Document&);
+    static Ref<DragImageLoader> create(DataTransfer&, const Document&);
     void startLoading(CachedResourceHandle<CachedImage>&);
     void stopLoading(CachedResourceHandle<CachedImage>&);
-    void moveToDataTransfer(DataTransfer&);
+    void NODELETE moveToDataTransfer(DataTransfer&);
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
+    DragImageLoader(DataTransfer&, const Document&);
+
     void imageChanged(CachedImage*, const IntRect*) override;
 
-    WeakRef<DataTransfer> m_dataTransfer;
+    WeakPtr<DataTransfer> m_dataTransfer;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
@@ -86,11 +91,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DragImageLoader);
 
 DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboard, Type type, String&& effectAllowed)
     : m_storeMode(mode)
-    , m_pasteboard(WTFMove(pasteboard))
+    , m_pasteboard(WTF::move(pasteboard))
 #if ENABLE(DRAG_SUPPORT)
     , m_type(type)
     , m_dropEffect("uninitialized"_s)
-    , m_effectAllowed(WTFMove(effectAllowed))
+    , m_effectAllowed(WTF::move(effectAllowed))
     , m_shouldUpdateDragImage(false)
 #endif
 {
@@ -102,7 +107,7 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
 
 Ref<DataTransfer> DataTransfer::createForCopyAndPaste(const Document& document, StoreMode storeMode, std::unique_ptr<Pasteboard>&& pasteboard)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(storeMode, WTFMove(pasteboard)));
+    auto dataTransfer = adoptRef(*new DataTransfer(storeMode, WTF::move(pasteboard)));
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
@@ -115,7 +120,7 @@ Ref<DataTransfer> DataTransfer::create()
 DataTransfer::~DataTransfer()
 {
 #if ENABLE(DRAG_SUPPORT)
-    if (CheckedPtr dragImageLoader = m_dragImageLoader.get(); dragImageLoader && m_dragImage)
+    if (RefPtr dragImageLoader = m_dragImageLoader; dragImageLoader && m_dragImage)
         dragImageLoader->stopLoading(m_dragImage);
 #endif
 }
@@ -227,13 +232,13 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == textHTMLContentTypeAtom()) {
         if (!document.frame())
             return { };
-        WebContentMarkupReader reader { document.protectedFrame().releaseNonNull() };
+        WebContentMarkupReader reader { protect(document.frame()).releaseNonNull() };
         m_pasteboard->read(reader, policy);
         return reader.takeMarkup();
     }
 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
-        return readURLsFromPasteboardAsString(document.protectedPage().get(), *m_pasteboard, [] (auto&) {
+        return readURLsFromPasteboardAsString(protect(document.page()).get(), *m_pasteboard, [] (auto&) {
             return true;
         });
     }
@@ -367,7 +372,7 @@ Vector<String> DataTransfer::types(Document& document, AddFilesType addFilesType
         }
 
         if (fileContentState != Pasteboard::FileContentState::MayContainFilePaths) {
-            types.appendVector(WTFMove(safeTypes));
+            types.appendVector(WTF::move(safeTypes));
             return types;
         }
 
@@ -389,14 +394,14 @@ Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList(ScriptExecutionCo
     if (allowsFileAccess() && m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData) {
         WebCorePasteboardFileReader reader(context);
         m_pasteboard->read(reader);
-        files = WTFMove(reader.files);
+        files = WTF::move(reader.files);
         addedFilesFromPasteboard = !files.isEmpty();
     }
 
     bool itemListContainsItems = false;
     if (m_itemList && m_itemList->hasItems()) {
         for (auto& item : m_itemList->items()) {
-            if (auto file = item->file())
+            if (RefPtr file = item->file())
                 files.append(file.releaseNonNull());
         }
         itemListContainsItems = true;
@@ -462,7 +467,7 @@ Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, con
     auto pasteboard = makeUnique<StaticPasteboard>();
     pasteboard->writeString(textPlainContentTypeAtom(), plainText);
     pasteboard->writeString(textHTMLContentTypeAtom(), htmlText);
-    return adoptRef(*new DataTransfer(StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
+    return adoptRef(*new DataTransfer(StoreMode::Readonly, WTF::move(pasteboard), Type::InputEvent));
 }
 
 void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
@@ -535,7 +540,7 @@ Ref<DataTransfer> DataTransfer::createForDragStartEvent(const Document& document
 
 Ref<DataTransfer> DataTransfer::createForDrop(const Document& document, std::unique_ptr<Pasteboard>&& pasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Readonly, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
+    auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Readonly, WTF::move(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
     dataTransfer->setSourceOperationMask(sourceOperationMask);
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
@@ -543,7 +548,7 @@ Ref<DataTransfer> DataTransfer::createForDrop(const Document& document, std::uni
 
 Ref<DataTransfer> DataTransfer::createForUpdatingDropTarget(const Document& document, std::unique_ptr<Pasteboard>&& pasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Protected, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
+    auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Protected, WTF::move(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
     dataTransfer->setSourceOperationMask(sourceOperationMask);
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
@@ -561,19 +566,19 @@ void DataTransfer::setDragImage(Ref<Element>&& element, int x, int y)
     m_dragLocation = IntPoint(x, y);
 
     Ref document = element->document();
-    if (CheckedPtr dragImageLoader = m_dragImageLoader.get(); dragImageLoader && m_dragImage)
+    if (RefPtr dragImageLoader = m_dragImageLoader; dragImageLoader && m_dragImage)
         dragImageLoader->stopLoading(m_dragImage);
     m_dragImage = image;
     if (m_dragImage) {
         if (!m_dragImageLoader)
-            m_dragImageLoader = makeUnique<DragImageLoader>(*this, document);
-        CheckedRef { *m_dragImageLoader }->startLoading(m_dragImage);
+            m_dragImageLoader = DragImageLoader::create(*this, document);
+        Ref { *m_dragImageLoader }->startLoading(m_dragImage);
     }
 
     if (image)
         m_dragImageElement = nullptr;
     else
-        m_dragImageElement = WTFMove(element);
+        m_dragImageElement = WTF::move(element);
 
     updateDragImage(document.ptr());
 }
@@ -590,7 +595,7 @@ void DataTransfer::updateDragImage(const Document* document)
     if (!computedImage)
         return;
 
-    m_pasteboard->setDragImage(WTFMove(computedImage), computedHotSpot);
+    m_pasteboard->setDragImage(WTF::move(computedImage), computedHotSpot);
 }
 
 RefPtr<Element> DataTransfer::dragImageElement() const
@@ -607,7 +612,7 @@ DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& l
     if (m_dragImage) {
         HostWindow* hostWindow = document && document->view() ? document->view()->hostWindow() : nullptr;
         auto deviceScaleFactor = document ? document->deviceScaleFactor() : 1.f;
-        return createDragImageFromImage(m_dragImage->protectedImage().get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
+        return createDragImageFromImage(protect(m_dragImage->image()).get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
     }
 
     if (m_dragImageElement) {
@@ -620,6 +625,11 @@ DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& l
 }
 
 #endif
+
+Ref<DragImageLoader> DragImageLoader::create(DataTransfer& dataTransfer, const Document& document)
+{
+    return adoptRef(*new DragImageLoader(dataTransfer, document));
+}
 
 DragImageLoader::DragImageLoader(DataTransfer& dataTransfer, const Document& document)
     : m_dataTransfer(dataTransfer)
@@ -646,7 +656,8 @@ void DragImageLoader::stopLoading(CachedResourceHandle<WebCore::CachedImage>& im
 void DragImageLoader::imageChanged(CachedImage*, const IntRect*)
 {
     RefPtr document = m_document.get();
-    m_dataTransfer->updateDragImage(document.get());
+    if (RefPtr dataTransfer = m_dataTransfer.get())
+        dataTransfer->updateDragImage(document.get());
 }
 
 static OptionSet<DragOperation> dragOpFromIEOp(const String& operation)
@@ -769,11 +780,11 @@ void DataTransfer::moveDragState(Ref<DataTransfer>&& other)
     m_effectAllowed = other->m_effectAllowed;
     m_dragLocation = other->m_dragLocation;
     m_dragImage = other->m_dragImage;
-    m_dragImageElement = WTFMove(other->m_dragImageElement);
-    m_dragImageLoader = WTFMove(other->m_dragImageLoader);
-    if (CheckedPtr dragImageLoader = m_dragImageLoader.get())
+    m_dragImageElement = WTF::move(other->m_dragImageElement);
+    m_dragImageLoader = WTF::move(other->m_dragImageLoader);
+    if (RefPtr dragImageLoader = m_dragImageLoader)
         dragImageLoader->moveToDataTransfer(*this);
-    m_fileList = WTFMove(other->m_fileList);
+    m_fileList = WTF::move(other->m_fileList);
 }
 
 bool DataTransfer::hasDragImage() const

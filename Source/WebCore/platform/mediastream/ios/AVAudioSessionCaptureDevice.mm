@@ -72,21 +72,21 @@ bool AVAudioSessionCaptureDevice::isHeadset() const
 
 AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId, bool isEnabled, bool isDefault, bool isMock, RetainPtr<AVAudioSessionPortDescription>&& description)
     : CaptureDevice(persistentId, type, label, groupId, isEnabled, isDefault, isMock)
-    , m_description(WTFMove(description))
+    , m_description(WTF::move(description))
 {
 }
 
 AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::isolatedCopy() &&
 {
     return {
-        WTFMove(m_persistentId).isolatedCopy(),
+        WTF::move(m_persistentId).isolatedCopy(),
         m_type,
-        WTFMove(m_label).isolatedCopy(),
-        WTFMove(m_groupId).isolatedCopy(),
+        WTF::move(m_label).isolatedCopy(),
+        WTF::move(m_groupId).isolatedCopy(),
         m_enabled,
         m_default,
         m_isMockDevice,
-        WTFMove(m_description)
+        WTF::move(m_description)
     };
 }
 

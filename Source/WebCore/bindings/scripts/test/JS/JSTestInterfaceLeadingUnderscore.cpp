@@ -123,7 +123,7 @@ void JSTestInterfaceLeadingUnderscorePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestInterfaceLeadingUnderscore::s_info = { "TestInterfaceLeadingUnderscore"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscore) };
 
 JSTestInterfaceLeadingUnderscore::JSTestInterfaceLeadingUnderscore(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestInterfaceLeadingUnderscore>&& impl)
-    : JSDOMWrapper<TestInterfaceLeadingUnderscore>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestInterfaceLeadingUnderscore>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -206,7 +206,7 @@ void JSTestInterfaceLeadingUnderscoreOwner::finalize(JSC::Handle<JSC::Unknown> h
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestInterfaceLeadingUnderscore = static_cast<JSTestInterfaceLeadingUnderscore*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestInterfaceLeadingUnderscore->protectedWrapped().ptr(), jsTestInterfaceLeadingUnderscore);
+    uncacheWrapper(world, protect(jsTestInterfaceLeadingUnderscore->wrapped()).ptr(), jsTestInterfaceLeadingUnderscore);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -244,7 +244,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestInterfaceLeadingUnderscore>(impl.ptr());
 #endif
-    return createWrapper<TestInterfaceLeadingUnderscore>(globalObject, WTFMove(impl));
+    return createWrapper<TestInterfaceLeadingUnderscore>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestInterfaceLeadingUnderscore& impl)

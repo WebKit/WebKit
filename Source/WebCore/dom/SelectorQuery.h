@@ -55,11 +55,11 @@ public:
     Element* queryFirst(ContainerNode& rootNode) const;
 
     bool shouldStoreInDocument() const { return m_matchType == MatchType::TagNameMatch || m_matchType == MatchType::ClassNameMatch; }
-    AtomString classNameToMatch() const;
+    AtomString NODELETE classNameToMatch() const;
 
 private:
     struct SelectorData {
-        const CSSSelector* selector;
+        const CSSSelector& selector;
 #if ENABLE(CSS_SELECTOR_JIT)
         mutable CompiledSelector compiledSelector { };
 #endif
@@ -82,7 +82,7 @@ private:
     static bool compileSelector(const SelectorData&);
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
-    Vector<SelectorData> m_selectors;
+    FixedVector<SelectorData> m_selectors;
     mutable enum MatchType {
         CompilableSingle,
         CompilableSingleWithRootFilter,
@@ -122,7 +122,7 @@ private:
 class SelectorQueryCache {
     WTF_MAKE_TZONE_ALLOCATED(SelectorQueryCache);
 public:
-    static SelectorQueryCache& singleton();
+    static SelectorQueryCache& NODELETE singleton();
 
     SelectorQuery* add(const String&, const Document&);
     void clear();

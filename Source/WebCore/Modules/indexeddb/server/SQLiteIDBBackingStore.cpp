@@ -816,7 +816,7 @@ Expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> SQLiteIDBBackingStore::extr
 
             bool autoIncrement = statement->columnInt(3);
 
-            databaseInfo->addExistingObjectStore({ objectStoreID, objectStoreName, WTFMove(objectStoreKeyPath), autoIncrement });
+            databaseInfo->addExistingObjectStore({ objectStoreID, objectStoreName, WTF::move(objectStoreKeyPath), autoIncrement });
 
             result = statement->step();
         }
@@ -863,8 +863,8 @@ Expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> SQLiteIDBBackingStore::extr
                     return makeUnexpected(IDBError { ExceptionCode::UnknownError, makeString("Index with the same ID already exists"_s) });
             }
 
-            auto indexInfo = IDBIndexInfo { indexID, objectStoreID, indexName, WTFMove(indexKeyPath.value()), unique, multiEntry };
-            objectStore->addExistingIndex(WTFMove(indexInfo));
+            auto indexInfo = IDBIndexInfo { indexID, objectStoreID, indexName, WTF::move(indexKeyPath.value()), unique, multiEntry };
+            objectStore->addExistingIndex(WTF::move(indexInfo));
             maxIndexID = maxIndexID < indexID.toRawValue() ? indexID.toRawValue() : maxIndexID;
 
             result = statement->step();
@@ -1017,7 +1017,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         return IDBError { ExceptionCode::UnknownError, "Unable to establish IDB database file"_s };
     }
 
-    m_databaseInfo = WTFMove(databaseInfo);
+    m_databaseInfo = WTF::move(databaseInfo);
     info = *m_databaseInfo;
     return IDBError { };
 }
@@ -1094,7 +1094,7 @@ IDBError SQLiteIDBBackingStore::abortTransaction(const IDBResourceIdentifier& id
     }
 
     if (transaction->mode() == IDBTransactionMode::Versionchange && m_originalDatabaseInfoBeforeVersionChange)
-        m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
+        m_databaseInfo = WTF::move(m_originalDatabaseInfoBeforeVersionChange);
 
     return transaction->abort();
 }
@@ -1117,7 +1117,7 @@ IDBError SQLiteIDBBackingStore::commitTransaction(const IDBResourceIdentifier& i
     if (!error.isNull()) {
         if (transaction->mode() == IDBTransactionMode::Versionchange) {
             ASSERT(m_originalDatabaseInfoBeforeVersionChange);
-            m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
+            m_databaseInfo = WTF::move(m_originalDatabaseInfoBeforeVersionChange);
         }
     } else {
         m_originalDatabaseInfoBeforeVersionChange = nullptr;
@@ -2145,7 +2145,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!error.isNull())
         return error;
 
-    resultValue = { keyData, { valueResultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreInfo->keyPath() };
+    resultValue = { keyData, { valueResultBuffer, WTF::move(blobURLs), WTF::move(blobFilePaths) }, objectStoreInfo->keyPath() };
     return IDBError { };
 }
 
@@ -2241,7 +2241,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
             LOG_ERROR("Unable to deserialize key data from database while getting all records");
             return IDBError { ExceptionCode::UnknownError, "Unable to deserialize key data while getting all records"_s };
         }
-        result.addKey(WTFMove(keyData));
+        result.addKey(WTF::move(keyData));
 
         if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values) {
             ThreadSafeDataBuffer valueResultBuffer = ThreadSafeDataBuffer::create(statement->columnBlob(1));
@@ -2256,7 +2256,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
             if (!error.isNull())
                 return error;
 
-            result.addValue({ valueResultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) });
+            result.addValue({ valueResultBuffer, WTF::move(blobURLs), WTF::move(blobFilePaths) });
         }
 
         ++returnedResults;
@@ -2308,7 +2308,7 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
         targetCount = std::numeric_limits<uint32_t>::max();
     while (!cursor->didComplete() && !cursor->didError() && currentCount < targetCount) {
         IDBKeyData keyCopy = cursor->currentPrimaryKey();
-        result.addKey(WTFMove(keyCopy));
+        result.addKey(WTF::move(keyCopy));
         if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values)
             result.addValue(IDBValue(cursor->currentValue()));
 
@@ -2418,7 +2418,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(IDBIndexIdentif
 
     auto* objectStoreInfo = infoForObjectStore(objectStoreID);
     ASSERT(objectStoreInfo);
-    getResult = { objectStoreKey, objectStoreKey, { ThreadSafeDataBuffer::create(WTFMove(valueVector)), WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreInfo->keyPath() };
+    getResult = { objectStoreKey, objectStoreKey, { ThreadSafeDataBuffer::create(WTF::move(valueVector)), WTF::move(blobURLs), WTF::move(blobFilePaths) }, objectStoreInfo->keyPath() };
     return IDBError { };
 }
 
@@ -2749,7 +2749,7 @@ SQLiteStatementAutoResetScope SQLiteIDBBackingStore::cachedStatement(SQLiteIDBBa
 
     if (CheckedPtr sqliteDB = m_sqliteDB.get()) {
         if (auto statement = sqliteDB->prepareStatement(query))
-            m_cachedStatements[static_cast<size_t>(sql)] = WTFMove(statement);
+            m_cachedStatements[static_cast<size_t>(sql)] = WTF::move(statement);
     }
 
     return SQLiteStatementAutoResetScope { m_cachedStatements[static_cast<size_t>(sql)].get() };
@@ -2768,6 +2768,16 @@ void SQLiteIDBBackingStore::closeSQLiteDB()
     if (CheckedPtr sqliteDB = m_sqliteDB.get())
         sqliteDB->close();
     m_sqliteDB = nullptr;
+}
+
+void SQLiteIDBBackingStore::setSqliteDB(std::unique_ptr<SQLiteDatabase>&& db)
+{
+    m_sqliteDB = WTF::move(db);
+}
+
+void SQLiteIDBBackingStore::setDatabaseInfo(std::unique_ptr<IDBDatabaseInfo>&& info)
+{
+    m_databaseInfo = WTF::move(info);
 }
 
 bool SQLiteIDBBackingStore::hasTransaction(const IDBResourceIdentifier& transactionIdentifier) const
@@ -2857,14 +2867,14 @@ void SQLiteIDBBackingStore::forEachObjectStoreRecord(const IDBResourceIdentifier
     CheckedPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         IDBError error { ExceptionCode::UnknownError, "Cannot iterate object store records without in-progress transaction"_s };
-        apply(makeUnexpected(WTFMove(error)));
+        apply(makeUnexpected(WTF::move(error)));
         return;
     }
 
     auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreIdentifier, std::nullopt, IDBKeyRangeData::allKeys());
     if (!cursor) {
         IDBError error { ExceptionCode::UnknownError, "Failed to create object store cursor"_s };
-        apply(makeUnexpected(WTFMove(error)));
+        apply(makeUnexpected(WTF::move(error)));
         return;
     }
 
@@ -2875,7 +2885,7 @@ void SQLiteIDBBackingStore::forEachObjectStoreRecord(const IDBResourceIdentifier
             continue;
 
         IDBError error { ExceptionCode::UnknownError, "Error advancing cursor when iterating object store records"_s };
-        apply(makeUnexpected(WTFMove(error)));
+        apply(makeUnexpected(WTF::move(error)));
         return;
     }
 }

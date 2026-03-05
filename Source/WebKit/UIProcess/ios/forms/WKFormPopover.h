@@ -37,7 +37,7 @@
 - (void)dismissPopoverAnimated:(BOOL)animated;
 - (UIPopoverArrowDirection)popoverArrowDirections;
 
-@property (nonatomic, readonly) WKContentView *view;
+@property (nonatomic, readonly) WKContentView *view SUPPRESS_UNRETAINED_MEMBER;
 
 @property (nonatomic, assign) CGPoint presentationPoint;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

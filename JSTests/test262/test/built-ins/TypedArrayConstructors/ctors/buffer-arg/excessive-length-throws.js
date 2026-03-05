@@ -28,4 +28,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(RangeError, function() {
     new TA(buffer, 0, bpe * 2);
   });
-});
+}, null, ["passthrough"]);

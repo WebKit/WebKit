@@ -22,6 +22,14 @@
 
 #if ENABLE(WEBXR)
 
+enum class PlatformXR::ReferenceSpaceType : uint8_t {
+    Viewer,
+    Local,
+    LocalFloor,
+    BoundedFloor,
+    Unbounded,
+};
+
 enum class PlatformXR::SessionFeature : uint8_t {
     ReferenceSpaceTypeViewer,
     ReferenceSpaceTypeLocal,
@@ -208,8 +216,20 @@ enum class WebCore::XRHitTestTrackableType : uint8_t {
     WebCore::FloatPoint3D direction;
 };
 
+enum class PlatformXR::InputSourceSpaceType : uint8_t {
+    TargetRay,
+    Grip,
+};
+
+[CustomHeader] struct PlatformXR::InputSourceSpaceInfo {
+    PlatformXR::InputSourceHandle handle;
+    PlatformXR::InputSourceSpaceType type;
+};
+
+using PlatformXR::NativeOriginInformation = Variant<PlatformXR::ReferenceSpaceType, PlatformXR::InputSourceSpaceInfo>;
+
 [CustomHeader] struct PlatformXR::HitTestOptions {
-    WebCore::TransformationMatrix nativeOrigin;
+    PlatformXR::NativeOriginInformation nativeOrigin;
     Vector<WebCore::XRHitTestTrackableType> entityTypes;
     PlatformXR::Ray offsetRay;
 };

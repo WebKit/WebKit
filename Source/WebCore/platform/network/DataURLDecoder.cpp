@@ -83,7 +83,7 @@ public:
         : url(url.isolatedCopy())
         , scheduleContext(scheduleContext)
         , shouldValidatePadding(shouldValidatePadding)
-        , completionHandler(WTFMove(completionHandler))
+        , completionHandler(WTF::move(completionHandler))
     {
     }
 
@@ -149,7 +149,7 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const Schedu
         url,
         scheduleContext,
         shouldValidatePadding,
-        WTFMove(completionHandler)
+        WTF::move(completionHandler)
     );
 }
 
@@ -165,33 +165,33 @@ static std::optional<Result> decodeSynchronously(DecodeTask& task)
         auto decodedData = base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), options);
         if (!decodedData)
             return std::nullopt;
-        task.result.data = WTFMove(*decodedData);
+        task.result.data = WTF::move(*decodedData);
     } else
         task.result.data = PAL::decodeURLEscapeSequencesAsData(task.encodedData);
 
     task.result.data.shrinkToFit();
-    return WTFMove(task.result);
+    return WTF::move(task.result);
 }
 
 void decode(const URL& url, const ScheduleContext& scheduleContext, ShouldValidatePadding shouldValidatePadding, DecodeCompletionHandler&& completionHandler)
 {
     ASSERT(url.protocolIsData());
 
-    decodeQueueSingleton().dispatch([decodeTask = createDecodeTask(url, scheduleContext, shouldValidatePadding, WTFMove(completionHandler))]() mutable {
+    decodeQueueSingleton().dispatch([decodeTask = createDecodeTask(url, scheduleContext, shouldValidatePadding, WTF::move(completionHandler))]() mutable {
         auto result = decodeSynchronously(*decodeTask);
 
 #if USE(COCOA_EVENT_LOOP)
         auto scheduledPairs = decodeTask->scheduleContext.scheduledPairs;
 #endif
 
-        auto callCompletionHandler = [result = WTFMove(result), completionHandler = WTFMove(decodeTask->completionHandler)]() mutable {
-            completionHandler(WTFMove(result));
+        auto callCompletionHandler = [result = WTF::move(result), completionHandler = WTF::move(decodeTask->completionHandler)]() mutable {
+            completionHandler(WTF::move(result));
         };
 
 #if USE(COCOA_EVENT_LOOP)
-        RunLoop::dispatch(scheduledPairs, WTFMove(callCompletionHandler));
+        RunLoop::dispatch(scheduledPairs, WTF::move(callCompletionHandler));
 #else
-        RunLoop::mainSingleton().dispatch(WTFMove(callCompletionHandler));
+        RunLoop::mainSingleton().dispatch(WTF::move(callCompletionHandler));
 #endif
     });
 }

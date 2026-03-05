@@ -29,12 +29,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-composite-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-composite-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-image-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-position-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-position-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-repeat-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-repeat-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-repeat-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-size-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-type-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-type-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-type-valid.html

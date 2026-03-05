@@ -49,7 +49,7 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connecti
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_clientRegistrationId = trackPrivate.addClient([](auto&& task) {
-        ensureOnMainThread(WTFMove(task));
+        ensureOnMainThread(WTF::move(task));
     }, *this);
     connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
 }

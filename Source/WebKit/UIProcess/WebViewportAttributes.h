@@ -40,7 +40,7 @@ public:
 
     virtual ~WebViewportAttributes();
 
-    const WebCore::ViewportAttributes& originalAttributes() const { return m_attributes; }
+    const WebCore::ViewportAttributes& originalAttributes() const LIFETIME_BOUND { return m_attributes; }
 
 private:
     explicit WebViewportAttributes(const WebCore::ViewportAttributes&);

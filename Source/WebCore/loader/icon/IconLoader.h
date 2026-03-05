@@ -30,6 +30,7 @@
 #include "LoaderMalloc.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/WeakRef.h>
 
@@ -39,19 +40,25 @@ class CachedRawResource;
 class DocumentLoader;
 class LocalFrame;
 
-class IconLoader final : private CachedRawResourceClient {
+class IconLoader final : public RefCounted<IconLoader>, private CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(IconLoader); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IconLoader, Loader);
 public:
-    IconLoader(DocumentLoader&, const URL&);
+    static Ref<IconLoader> create(DocumentLoader&, const URL&);
     virtual ~IconLoader();
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void startLoading();
     void stopLoading();
 
 private:
+    IconLoader(DocumentLoader&, const URL&);
+
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
-    SingleThreadWeakRef<DocumentLoader> m_documentLoader;
+    SingleThreadWeakPtr<DocumentLoader> m_documentLoader;
     URL m_url;
     CachedResourceHandle<CachedRawResource> m_resource;
 };

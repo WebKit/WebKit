@@ -105,12 +105,16 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 #define EVP_PKEY_X25519 NID_X25519
 #define EVP_PKEY_HKDF NID_hkdf
 #define EVP_PKEY_DH NID_dhKeyAgreement
+#define EVP_PKEY_ML_DSA_44 NID_ML_DSA_44
+#define EVP_PKEY_ML_DSA_65 NID_ML_DSA_65
+#define EVP_PKEY_ML_DSA_87 NID_ML_DSA_87
 
 // EVP_PKEY_id returns the type of |pkey|, which is one of the |EVP_PKEY_*|
-// values above. These type values generally corresond to the algorithm OID, but
-// not the parameters, of a SubjectPublicKeyInfo (RFC 5280) or PrivateKeyInfo
-// (RFC 5208) AlgorithmIdentifier. Algorithm parameters can be inspected with
-// algorithm-specific accessors, e.g. |EVP_PKEY_get_ec_curve_nid|.
+// values above. These type values generally correspond to the algorithm OID,
+// but not the parameters, of a SubjectPublicKeyInfo (RFC 5280) or
+// PrivateKeyInfo (RFC 5208) AlgorithmIdentifier. Algorithm parameters can be
+// inspected with algorithm-specific accessors, e.g.
+// |EVP_PKEY_get_ec_curve_nid|.
 OPENSSL_EXPORT int EVP_PKEY_id(const EVP_PKEY *pkey);
 
 
@@ -158,6 +162,20 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_x25519(void);
 // The |EVP_PKEY_id| value is |EVP_PKEY_ED25519|.
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ed25519(void);
 
+// EVP_pkey_ml_dsa_* implement ML-DSA keys, encoded as in
+// draft-ietf-lamps-dilithium-certificates. The |EVP_PKEY_id| values are
+// |EVP_PKEY_ML_DSA_*|. In the private key representation, only the "seed" form
+// is serialized or parsed.
+//
+// To configure OpenSSL to output the standard "seed" form, configure the
+// "ml-dsa.output_formats" provider parameter so that "seed-only" is first. This
+// can be done programmatically with OpenSSL's
+// |OSSL_PROVIDER_add_conf_parameter| function, or by passing "-provparam" to
+// the command-line tool.
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ml_dsa_44(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ml_dsa_65(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ml_dsa_87(void);
+
 // EVP_pkey_dsa implements DSA keys, encoded as in RFC 3279, Section 2.3.2. The
 // |EVP_PKEY_id| value is |EVP_PKEY_DSA|. This |EVP_PKEY_ALG| accepts all DSA
 // parameters supported by BoringSSL.
@@ -172,13 +190,13 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ed25519(void);
 // request |EVP_pkey_dsa|, we could change that.
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_dsa(void);
 
-// EVP_pkey_rsa_pss_sha256 implements RSASSA-PSS keys, encoded as id-RSASSA-PSS
-// (RFC 4055, Section 3.1). The |EVP_PKEY_id| value is |EVP_PKEY_RSA_PSS|. This
+// EVP_pkey_rsa_pss_* implements RSASSA-PSS keys, encoded as id-RSASSA-PSS
+// (RFC 4055, Section 3.1). The |EVP_PKEY_id| value is |EVP_PKEY_RSA_PSS|. Each
 // |EVP_PKEY_ALG| only accepts keys whose parameters specify:
 //
-//  - A hashAlgorithm of SHA-256
-//  - A maskGenAlgorithm of MGF1 with SHA-256
-//  - A minimum saltLength of 32
+//  - A hashAlgorithm of the specified hash
+//  - A maskGenAlgorithm of MGF1 with the specified hash
+//  - A minimum saltLength of the specified hash's digest length
 //  - A trailerField of one (must be omitted in the encoding)
 //
 // Keys of this type will only be usable with RSASSA-PSS with matching signature
@@ -208,6 +226,8 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_dsa(void);
 // these keys. Callers that require this functionality should contact the
 // BoringSSL team.
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha256(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha384(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha512(void);
 
 
 // Getting and setting concrete key types.
@@ -275,7 +295,7 @@ OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_subject_public_key_info(
 // Prefer |EVP_PKEY_from_subject_public_key_info| instead. This function has
 // several pitfalls:
 //
-// Callers are expected to handle trailing data retuned from |cbs|, making more
+// Callers are expected to handle trailing data returned from |cbs|, making more
 // common cases error-prone.
 //
 // There is also no way to pass in supported algorithms. This function instead
@@ -312,7 +332,7 @@ OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_private_key_info(
 // Prefer |EVP_PKEY_from_private_key_info| instead. This function has
 // several pitfalls:
 //
-// Callers are expected to handle trailing data retuned from |cbs|, making more
+// Callers are expected to handle trailing data returned from |cbs|, making more
 // common cases error-prone.
 //
 // There is also no way to pass in supported algorithms. This function instead
@@ -339,16 +359,35 @@ OPENSSL_EXPORT int EVP_marshal_private_key(CBB *cbb, const EVP_PKEY *key);
 
 // Raw keys
 //
-// Some keys types support a "raw" serialization. Currently the only supported
-// raw formats are X25519 and Ed25519, where the formats are those specified in
-// RFC 7748 and RFC 8032, respectively. Note the RFC 8032 private key format is
-// the 32-byte prefix of |ED25519_sign|'s 64-byte private key.
+// These functions give access to the "raw" type-specific public and private key
+// formats. Algorithms with such formats are:
+//
+// - X25519, using the formats in RFC 7748.
+//
+// - Ed25519, using the formats in RFC 8032. Note the RFC 8032 private key
+//   format is the 32-byte prefix of |ED25519_sign|'s 64-byte private key.
+//
+// - ML-DSA, using the formats in FIPS 204. The private key representation
+//   supported by BoringSSL is the 32-byte "seed", defined in FIPS 204 as 𝜉, not
+//   the larger expanded form. For OpenSSL compatibility, it is not used with
+//   the |EVP_PKEY_from_raw_private_key| and |EVP_PKEY_get_raw_private_key|
+//   APIs, but instead the |EVP_PKEY_from_private_seed| and
+//   |EVP_PKEY_get_private_seed| APIs.
+//
+// These formats are suitable if serializing a key in a context where the
+// algorithm is already known and there is no need to encode it.
 
 // EVP_PKEY_from_raw_private_key interprets |in| as a raw private key of type
 // |alg| and returns a newly-allocated |EVP_PKEY|, or nullptr on error.
 OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_raw_private_key(const EVP_PKEY_ALG *alg,
                                                        const uint8_t *in,
                                                        size_t len);
+
+// EVP_PKEY_from_private_seed interprets |in| as a private seed of type |alg|
+// and returns a newly-allocated |EVP_PKEY|, or nullptr on error.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_private_seed(const EVP_PKEY_ALG *alg,
+                                                    const uint8_t *in,
+                                                    size_t len);
 
 // EVP_PKEY_from_raw_public_key interprets |in| as a raw public key of type
 // |alg| and returns a newly-allocated |EVP_PKEY|, or nullptr on error.
@@ -362,9 +401,19 @@ OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_raw_public_key(const EVP_PKEY_ALG *alg,
 // the number of bytes written.
 //
 // It returns one on success and zero if |pkey| has no private key, the key
-// type does not support a raw format, or the buffer is too small.
+// type does not support this format, or the buffer is too small.
 OPENSSL_EXPORT int EVP_PKEY_get_raw_private_key(const EVP_PKEY *pkey,
                                                 uint8_t *out, size_t *out_len);
+
+// EVP_PKEY_get_private_seed outputs the private key for |pkey| as a private
+// seed. If |out| is NULL, it sets |*out_len| to the size of the seed.
+// Otherwise, it writes at most |*out_len| bytes to |out| and sets
+// |*out_len| to the number of bytes written.
+//
+// It returns one on success and zero if |pkey| has no private key, the key
+// type does not support this format, or the buffer is too small.
+OPENSSL_EXPORT int EVP_PKEY_get_private_seed(const EVP_PKEY *pkey, uint8_t *out,
+                                             size_t *out_len);
 
 // EVP_PKEY_get_raw_public_key outputs the public key for |pkey| in raw form.
 // If |out| is NULL, it sets |*out_len| to the size of the raw public key.
@@ -372,7 +421,7 @@ OPENSSL_EXPORT int EVP_PKEY_get_raw_private_key(const EVP_PKEY *pkey,
 // the number of bytes written.
 //
 // It returns one on success and zero if |pkey| has no public key, the key
-// type does not support a raw format, or the buffer is too small.
+// type does not support this format, or the buffer is too small.
 OPENSSL_EXPORT int EVP_PKEY_get_raw_public_key(const EVP_PKEY *pkey,
                                                uint8_t *out, size_t *out_len);
 

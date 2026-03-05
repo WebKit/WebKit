@@ -32,12 +32,7 @@
 #import "LocalConnection.h"
 #import <wtf/TZoneMallocInlines.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/LocalServiceAdditions.h>
-#else
-#define LOCAL_SERVICE_ADDITIONS
-#endif
-
+#import "AuthenticationServicesCoreSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
 
 namespace WebKit {
@@ -56,7 +51,8 @@ LocalService::LocalService(AuthenticatorTransportServiceObserver& observer)
 
 bool LocalService::isAvailable()
 {
-LOCAL_SERVICE_ADDITIONS
+    if ([WebKit::getASCWebKitSPISupportClassSingleton() shouldUseAlternateCredentialStore]) \
+        return YES;
 
     auto context = adoptNS([allocLAContextInstance() init]);
     NSError *error = nil;

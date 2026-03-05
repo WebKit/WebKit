@@ -57,10 +57,10 @@ bool WebDriverService::platformValidateCapability(const String& name, const Ref<
     if (browserOptions->isNull())
         return true;
 
-    // If browser options are provided, binary is required.
-    auto binary = browserOptions->getString("binary"_s);
-    if (!binary)
-        return false;
+    if (auto binaryValue = browserOptions->getValue("binary"_s)) {
+        if (!binaryValue->asString())
+            return false;
+    }
 
     if (auto browserArgumentsValue = browserOptions->getValue("args"_s)) {
         auto browserArguments = browserArgumentsValue->asArray();
@@ -127,7 +127,7 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
         for (unsigned i = 0; i < browserArgumentsLength; ++i) {
             auto argument = browserArguments->get(i)->asString();
             ASSERT(!argument.isNull());
-            capabilities.browserArguments->append(WTFMove(argument));
+            capabilities.browserArguments->append(WTF::move(argument));
         }
     }
 
@@ -146,7 +146,7 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
             auto certificateFile = certificate->getString("certificateFile"_s);
             ASSERT(!certificateFile.isNull());
 
-            capabilities.certificates->append({ WTFMove(host), WTFMove(certificateFile) });
+            capabilities.certificates->append({ WTF::move(host), WTF::move(certificateFile) });
         }
     }
 

@@ -38,6 +38,11 @@ PACKAGES+=(
     weston-devel
     xorg-x11-server-Xvfb
 
+    # Icon themes needed by the MiniBrowser (generate-bundle needs this as well)
+    adwaita-icon-theme
+    gnome-icon-theme
+    hicolor-icon-theme
+
     # These are dependencies necessary for building the jhbuild.
     bison
     cups-devel

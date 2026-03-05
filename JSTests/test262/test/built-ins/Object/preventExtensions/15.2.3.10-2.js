@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: The effect of preventExtentions must be testable by calling isExtensible
+info: The effect of preventExtensions must be testable by calling isExtensible
 es5id: 15.2.3.10-2
 description: >
     Object.preventExtensions returns its arguments after setting its

@@ -1,0 +1,10 @@
+
+PASS e.style['scroll-marker-group'] = "before before" should not set the property value
+PASS e.style['scroll-marker-group'] = "after before" should not set the property value
+PASS e.style['scroll-marker-group'] = "after tab" should not set the property value
+PASS e.style['scroll-marker-group'] = "after link" should not set the property value
+PASS e.style['scroll-marker-group'] = "links after" should not set the property value
+PASS e.style['scroll-marker-group'] = "tabs before" should not set the property value
+PASS e.style['scroll-marker-group'] = "after, tabs" should not set the property value
+PASS e.style['scroll-marker-group'] = "after, links" should not set the property value
+

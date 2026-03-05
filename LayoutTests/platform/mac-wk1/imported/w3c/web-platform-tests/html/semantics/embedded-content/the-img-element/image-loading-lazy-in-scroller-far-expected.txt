@@ -1,4 +1,0 @@
-
-
-FAIL Test that lazy-loaded images do not load when far from viewport. assert_unreached: Lazy-loading image far from viewport should not load. Reached unreachable code
-

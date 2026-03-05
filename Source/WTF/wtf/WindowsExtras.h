@@ -25,6 +25,8 @@
 #ifndef WindowsExtras_h
 #define WindowsExtras_h
 
+#include <wtf/Platform.h>
+
 #if OS(WINDOWS)
 
 #include <windows.h>

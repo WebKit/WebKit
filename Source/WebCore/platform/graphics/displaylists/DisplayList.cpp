@@ -40,7 +40,7 @@ namespace DisplayList {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayList);
 
 DisplayList::DisplayList(Vector<Item>&& items)
-    : m_items(WTFMove(items))
+    : m_items(WTF::move(items))
 {
 }
 

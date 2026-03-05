@@ -26,10 +26,11 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpushadermoduledescriptor
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUShaderModuleDescriptor : GPUObjectDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUShaderModuleDescriptor : GPUObjectDescriptorBase {
     required USVString code;
+    // FIXME: `sourceMap` is non-standard.
     object sourceMap;
-    record<USVString, GPUShaderModuleCompilationHint> hints;
+    // FIXME: `hints` should be of type `sequence<GPUShaderModuleCompilationHint>`.
+    record<USVString, GPUShaderModuleCompilationHint> hints = {};
 };

@@ -30,10 +30,10 @@
 #include <WebCore/PlatformContentFilter.h>
 #include <objc/NSObjCRuntime.h>
 #include <wtf/Compiler.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 enum NEFilterSourceStatus : NSInteger;
 

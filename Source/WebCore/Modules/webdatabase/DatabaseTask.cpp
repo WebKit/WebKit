@@ -75,7 +75,7 @@ void DatabaseTask::performTask()
 
     LOG(StorageAPI, "Performing %s %p\n", debugTaskName().characters(), this);
 
-    m_database.resetAuthorizer();
+    database()->resetAuthorizer();
 
     doPerformTask();
 
@@ -99,7 +99,7 @@ DatabaseOpenTask::DatabaseOpenTask(Database& database, bool setVersionInNewDatab
 
 void DatabaseOpenTask::doPerformTask()
 {
-    m_result = crossThreadCopy(database().performOpenAndVerify(m_setVersionInNewDatabase));
+    m_result = crossThreadCopy(database()->performOpenAndVerify(m_setVersionInNewDatabase));
 }
 
 #if !LOG_DISABLED
@@ -121,7 +121,7 @@ DatabaseCloseTask::DatabaseCloseTask(Database& database, DatabaseTaskSynchronize
 
 void DatabaseCloseTask::doPerformTask()
 {
-    database().performClose();
+    database()->performClose();
 }
 
 #if !LOG_DISABLED
@@ -138,7 +138,7 @@ ASCIILiteral DatabaseCloseTask::debugTaskName() const
 
 DatabaseTransactionTask::DatabaseTransactionTask(RefPtr<SQLTransaction>&& transaction)
     : DatabaseTask(transaction->database(), 0)
-    , m_transaction(WTFMove(transaction))
+    , m_transaction(WTF::move(transaction))
     , m_didPerformTask(false)
 {
 }
@@ -184,7 +184,7 @@ DatabaseTableNamesTask::DatabaseTableNamesTask(Database& database, DatabaseTaskS
 void DatabaseTableNamesTask::doPerformTask()
 {
     // FIXME: Why no need for an isolatedCopy here?
-    m_result = database().performGetTableNames();
+    m_result = database()->performGetTableNames();
 }
 
 #if !LOG_DISABLED

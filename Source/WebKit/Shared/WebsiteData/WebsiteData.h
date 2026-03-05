@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if !PLATFORM(COCOA) || !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
+
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/HashSet.h>
@@ -65,8 +69,10 @@ struct WebsiteData {
 
     HashSet<String> hostNamesWithHSTSCache;
     HashSet<WebCore::RegistrableDomain> registrableDomainsWithResourceLoadStatistics;
-    static WebsiteDataProcessType ownerProcess(WebsiteDataType);
+    static WebsiteDataProcessType NODELETE ownerProcess(WebsiteDataType);
     static OptionSet<WebsiteDataType> filter(OptionSet<WebsiteDataType>, WebsiteDataProcessType);
 };
 
 }
+
+#endif // !PLATFORM(COCOA) || !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)

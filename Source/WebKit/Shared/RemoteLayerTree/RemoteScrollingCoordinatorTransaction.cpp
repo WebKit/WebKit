@@ -50,7 +50,7 @@ using namespace WebCore;
 RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction() = default;
 
 RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&& scrollingStateTree, bool clearScrollLatching, std::optional<WebCore::FrameIdentifier> frameID, FromDeserialization fromDeserialization)
-    : m_scrollingStateTree(WTFMove(scrollingStateTree))
+    : m_scrollingStateTree(WTF::move(scrollingStateTree))
     , m_clearScrollLatching(clearScrollLatching)
     , m_rootFrameID(frameID)
 {
@@ -85,20 +85,8 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrollOrigin))
         ts.dumpProperty("scroll-origin"_s, node.scrollOrigin());
 
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
-        const auto& requestedScrollData = node.requestedScrollData();
-        ts.dumpProperty("requested-type"_s, requestedScrollData.requestType);
-        if (requestedScrollData.requestType != ScrollRequestType::CancelAnimatedScroll) {
-            if (requestedScrollData.requestType == ScrollRequestType::DeltaUpdate)
-                ts.dumpProperty("requested-scroll-delta"_s, std::get<FloatSize>(requestedScrollData.scrollPositionOrDelta));
-            else
-                ts.dumpProperty("requested-scroll-position"_s, std::get<FloatPoint>(requestedScrollData.scrollPositionOrDelta));
-
-            ts.dumpProperty("requested-scroll-position-is-programatic"_s, requestedScrollData.scrollType);
-            ts.dumpProperty("requested-scroll-position-clamping"_s, requestedScrollData.clamping);
-            ts.dumpProperty("requested-scroll-position-animated"_s, requestedScrollData.animated == ScrollIsAnimated::Yes);
-        }
-    }
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
+        ts.dumpProperty("requested-scroll"_s, node.requestedScrollData());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
         ts.dumpProperty("scroll-container-layer"_s, node.scrollContainerLayer().layerID());

@@ -58,18 +58,18 @@ static const AtomString& pointerEventType(PlatformTouchPoint::State state)
 Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
 {
     const auto& type = pointerEventType(event.touchPoints().at(index).state());
-    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTFMove(view), touchDelta));
+    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTF::move(view), touchDelta));
 }
 
 Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
 {
     const auto& type = pointerEventType(event.touchPoints().at(index).state());
-    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, canBubble, isCancelable, index, isPrimary, WTFMove(view), touchDelta));
+    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, canBubble, isCancelable, index, isPrimary, WTF::move(view), touchDelta));
 }
 
 Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
 {
-    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTFMove(view), touchDelta));
+    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTF::move(view), touchDelta));
 }
 
 // According to the PointerEvents spec all active pointer ids have to be unique.
@@ -78,7 +78,7 @@ Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTou
 static constexpr unsigned touchMinimumPointerId = WebCore::mousePointerID + 1;
 
 PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
-    : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), event.timestamp(), WTFMove(view), 0, event.touchPoints().at(index).pos(), event.touchPoints().at(index).pos(), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, { }, { }, IsSimulated::No, IsTrusted::Yes)
+    : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), event.timestamp(), WTF::move(view), 0, event.touchPoints().at(index).pos(), event.touchPoints().at(index).pos(), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, { }, { }, std::nullopt, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(touchMinimumPointerId + event.touchPoints().at(index).id())
     , m_width(2 * event.touchPoints().at(index).radius().width())
     , m_height(2 * event.touchPoints().at(index).radius().height())

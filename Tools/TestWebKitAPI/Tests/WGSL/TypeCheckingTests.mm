@@ -280,6 +280,9 @@ TEST(WGSLTypeCheckingTests, Constants)
 
     // Test invalid explicit u32 conversion
     expectTypeError(fn("let x = u32(37359285590000);"_s), "value 37359285590000 cannot be represented as 'u32'"_s);
+
+    // Test nested arrays
+    expectNoError(fn("const c = array<array<u32, 1>, 1>(array<u32, 1>(0));"_s));
 }
 
 TEST(WGSLTypeCheckingTests, Continue)

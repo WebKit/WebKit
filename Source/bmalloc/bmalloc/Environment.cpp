@@ -148,10 +148,23 @@ static bool isRunningOnValgrind()
     return false;
 }
 
+static bool isLibpasOrMimallocBuilt()
+{
+#if BUSE(SYSTEM_MALLOC)
+    return false;
+#else
+    return true;
+#endif
+}
+
 static bool isSystemHeapForceDisabled()
 {
+#if BUSE(SYSTEM_MALLOC)
+    return false;
+#else
     const char* value = getenv("WebKitSystemHeapOverrideEnablement");
     return value ? !atoi(value) : false;
+#endif
 }
 
 #if BUSE(CHECK_NANO_MALLOC)
@@ -186,6 +199,8 @@ bool Environment::computeIsSystemHeapEnabled()
 
 bool Environment::computeShouldBmallocAllocateThroughSystemHeap()
 {
+    if (!isLibpasOrMimallocBuilt())
+        return true;
     if (isSystemHeapForceDisabled())
         return false;
     if (isWebKitMallocForceEnabled())

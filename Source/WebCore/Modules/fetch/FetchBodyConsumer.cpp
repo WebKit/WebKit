@@ -49,11 +49,11 @@ namespace WebCore {
 
 static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
 {
-    return Blob::create(context, WTFMove(data), Blob::normalizedContentType(contentType));
+    return Blob::create(context, WTF::move(data), Blob::normalizedContentType(contentType));
 }
 
 // https://mimesniff.spec.whatwg.org/#http-quoted-string-token-code-point
-static bool isHTTPQuotedStringTokenCodePoint(char16_t c)
+static bool NODELETE isHTTPQuotedStringTokenCodePoint(char16_t c)
 {
     return c == 0x09
         || (c >= 0x20 && c <= 0x7E)
@@ -127,7 +127,7 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
     if (!subtype.length() || !isValidHTTPToken(subtype))
         return std::nullopt;
 
-    return {{ WTFMove(type), WTFMove(subtype), parseParameters(StringView(input), semicolonIndex + 1) }};
+    return {{ WTF::move(type), WTF::move(subtype), parseParameters(StringView(input), semicolonIndex + 1) }};
 }
 
 FetchBodyConsumer::FetchBodyConsumer(Type type)
@@ -231,7 +231,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
 
     switch (type) {
     case FetchBodyConsumer::Type::ArrayBuffer:
-        fulfillPromiseWithArrayBufferFromSpan(WTFMove(promise), data);
+        fulfillPromiseWithArrayBufferFromSpan(WTF::move(promise), data);
         return;
     case FetchBodyConsumer::Type::Blob:
         promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([data, &contentType](auto& context) {
@@ -239,10 +239,10 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         });
         return;
     case FetchBodyConsumer::Type::Bytes:
-        fulfillPromiseWithUint8ArrayFromSpan(WTFMove(promise), data);
+        fulfillPromiseWithUint8ArrayFromSpan(WTF::move(promise), data);
         return;
     case FetchBodyConsumer::Type::JSON:
-        fulfillPromiseWithJSON(WTFMove(promise), TextResourceDecoder::textFromUTF8(data));
+        fulfillPromiseWithJSON(WTF::move(promise), TextResourceDecoder::textFromUTF8(data));
         return;
     case FetchBodyConsumer::Type::Text:
         promise->resolve<IDLDOMString>(TextResourceDecoder::textFromUTF8(data));
@@ -273,38 +273,38 @@ void FetchBodyConsumer::clean()
 
 void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const String& contentType, std::span<const uint8_t> data)
 {
-    resolveWithTypeAndData(WTFMove(promise), m_type, contentType, data);
+    resolveWithTypeAndData(WTF::move(promise), m_type, contentType, data);
 }
 
 void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, const String& contentType, const FormData& formData, ScriptExecutionContext* context)
 {
     if (auto sharedBuffer = formData.asSharedBuffer()) {
-        resolveWithData(WTFMove(promise), contentType, sharedBuffer->makeContiguous()->span());
+        resolveWithData(WTF::move(promise), contentType, sharedBuffer->makeContiguous()->span());
         return;
     }
 
     if (!context)
         return;
 
-    m_formDataConsumer = FormDataConsumer::create(formData, *context, [promise = WTFMove(promise), type = m_type, contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
+    m_formDataConsumer = FormDataConsumer::create(formData, *context, [promise = WTF::move(promise), type = m_type, contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
         if (result.hasException()) {
-            auto protectedPromise = WTFMove(promise);
+            auto protectedPromise = WTF::move(promise);
             protectedPromise->reject(result.releaseException());
             return false;
         }
 
         auto& value = result.returnValue();
         if (value.empty()) {
-            auto protectedPromise = WTFMove(promise);
-            auto buffer = builder.takeAsContiguous();
-            resolveWithTypeAndData(WTFMove(protectedPromise), type, contentType, buffer->span());
+            auto protectedPromise = WTF::move(promise);
+            Ref buffer = builder.takeBufferAsContiguous();
+            resolveWithTypeAndData(WTF::move(protectedPromise), type, contentType, buffer->span());
             return false;
         }
 
         builder.append(value);
         return true;
     });
-    protectedFormDataConsumer()->start();
+    protect(m_formDataConsumer)->start();
 }
 
 void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchBodySource& source, ScriptExecutionContext* context)
@@ -333,52 +333,52 @@ void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchB
 
         return source->enqueue(ArrayBuffer::tryCreate(value));
     });
-    protectedFormDataConsumer()->start();
+    protect(m_formDataConsumer)->start();
 }
 
 void FetchBodyConsumer::extract(ReadableStream& stream, ReadableStreamToSharedBufferSink::Callback&& callback)
 {
     ASSERT(!m_sink);
-    m_sink = ReadableStreamToSharedBufferSink::create(WTFMove(callback));
-    protectedSink()->pipeFrom(stream);
+    m_sink = ReadableStreamToSharedBufferSink::create(WTF::move(callback));
+    protect(m_sink)->pipeFrom(stream);
 }
 
 void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& contentType, FetchBodyOwner* owner, ReadableStream* stream)
 {
     if (stream) {
         ASSERT(!m_sink);
-        m_sink = ReadableStreamToSharedBufferSink::create([promise = WTFMove(promise), data = SharedBufferBuilder(), type = m_type, contentType](auto&& result) mutable {
-            WTF::switchOn(WTFMove(result), [&](std::nullptr_t) {
-                auto protectedPromise = WTFMove(promise);
-                auto buffer = data.takeAsContiguous();
-                resolveWithTypeAndData(WTFMove(protectedPromise), type, contentType, buffer->span());
+        m_sink = ReadableStreamToSharedBufferSink::create([promise = WTF::move(promise), data = SharedBufferBuilder(), type = m_type, contentType](auto&& result) mutable {
+            WTF::switchOn(WTF::move(result), [&](std::nullptr_t) {
+                auto protectedPromise = WTF::move(promise);
+                Ref buffer = data.takeBufferAsContiguous();
+                resolveWithTypeAndData(WTF::move(protectedPromise), type, contentType, buffer->span());
             }, [&](std::span<const uint8_t>&& chunk) {
                 data.append(chunk);
             }, [&](JSC::JSValue reason) {
-                auto protectedPromise = WTFMove(promise);
+                auto protectedPromise = WTF::move(promise);
                 protectedPromise->rejectWithCallback([&](auto&) {
                     return reason;
                 });
             }, [&](Exception&& error) {
-                auto protectedPromise = WTFMove(promise);
-                protectedPromise->reject(WTFMove(error));
+                auto protectedPromise = WTF::move(promise);
+                protectedPromise->reject(WTF::move(error));
             });
         });
-        protectedSink()->pipeFrom(*stream);
+        protect(m_sink)->pipeFrom(*stream);
         return;
     }
 
     if (m_isLoading) {
         if (owner)
             owner->loadBody();
-        setConsumePromise(WTFMove(promise));
+        setConsumePromise(WTF::move(promise));
         return;
     }
 
     ASSERT(m_type != Type::None);
     switch (m_type) {
     case Type::ArrayBuffer:
-        fulfillPromiseWithArrayBuffer(WTFMove(promise), takeAsArrayBuffer().get());
+        fulfillPromiseWithArrayBuffer(WTF::move(promise), takeAsArrayBuffer().get());
         return;
     case Type::Blob:
         promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([this, &contentType](auto& context) {
@@ -388,18 +388,18 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
     case Type::Bytes: {
         RefPtr buffer = takeAsArrayBuffer();
         RefPtr view = buffer ? RefPtr { Uint8Array::create(buffer.releaseNonNull()) } : nullptr;
-        fulfillPromiseWithUint8Array(WTFMove(promise), view.get());
+        fulfillPromiseWithUint8Array(WTF::move(promise), view.get());
         return;
     }
     case Type::JSON:
-        fulfillPromiseWithJSON(WTFMove(promise), takeAsText());
+        fulfillPromiseWithJSON(WTF::move(promise), takeAsText());
         return;
     case Type::Text:
         promise->resolve<IDLDOMString>(takeAsText());
         return;
     case FetchBodyConsumer::Type::FormData: {
         auto buffer = takeData();
-        if (auto formData = packageFormData(promise->protectedScriptExecutionContext().get(), contentType, buffer ? buffer->makeContiguous()->span() : std::span<const uint8_t> { }))
+        if (auto formData = packageFormData(protect(promise->scriptExecutionContext()).get(), contentType, buffer ? buffer->makeContiguous()->span() : std::span<const uint8_t> { }))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(ExceptionCode::TypeError);
@@ -422,19 +422,20 @@ void FetchBodyConsumer::append(const SharedBuffer& buffer)
 
 void FetchBodyConsumer::setData(Ref<FragmentedSharedBuffer>&& data)
 {
-    m_buffer = WTFMove(data);
+    m_buffer.reset();
+    m_buffer.append(WTF::move(data));
 }
 
 RefPtr<FragmentedSharedBuffer> FetchBodyConsumer::takeData()
 {
     if (!m_buffer)
         return nullptr;
-    return m_buffer.take();
+    return m_buffer.takeBuffer();
 }
 
 RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::takeAsArrayBuffer()
 {
-    return m_buffer.takeAsArrayBuffer();
+    return m_buffer.takeBufferAsArrayBuffer();
 }
 
 RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::asArrayBuffer()
@@ -453,7 +454,7 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const S
     // We pack it in 8MiB minimum segment.
     static constexpr size_t MinimumBlobSize = 8 * 1024 * 1024;
 
-    RefPtr buffer = m_buffer.take();
+    RefPtr buffer = m_buffer.takeBuffer();
     if (buffer->size() <= MinimumBlobSize)
         return Blob::create(context, buffer->extractData(), normalizedContentType);
 
@@ -464,7 +465,7 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const S
     Vector<Ref<SharedBuffer>> segments;
     segments.reserveInitialCapacity(buffer->segmentsCount());
     buffer->forEachSegmentAsSharedBuffer([&](Ref<SharedBuffer>&& sharedBuffer) {
-        segments.append(WTFMove(sharedBuffer));
+        segments.append(WTF::move(sharedBuffer));
     });
     buffer = nullptr; // So that the segments above hold each a single refcount to allow extractData to move the content.
 
@@ -475,7 +476,7 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const S
                 bufferBuilder.append(std::exchange(packedBuffer, { }));
                 packedBuffer.reserveInitialCapacity(packedBufferSize);
             }
-            bufferBuilder.append(WTFMove(segment));
+            bufferBuilder.append(WTF::move(segment));
             continue;
         }
         if (packedBuffer.size() + segment->size() <= MinimumBlobSize) {
@@ -491,9 +492,9 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const S
         packedBuffer.appendVector(segmentData.subvector(leftInPacked));
     };
     if (!packedBuffer.isEmpty())
-        bufferBuilder.append(WTFMove(packedBuffer));
+        bufferBuilder.append(WTF::move(packedBuffer));
 
-    return Blob::create(context, bufferBuilder.take(), normalizedContentType);
+    return Blob::create(context, bufferBuilder.takeBuffer(), normalizedContentType);
 }
 
 String FetchBodyConsumer::takeAsText()
@@ -502,7 +503,7 @@ String FetchBodyConsumer::takeAsText()
     if (!m_buffer)
         return String();
 
-    auto buffer = m_buffer.takeAsContiguous();
+    auto buffer = m_buffer.takeBufferAsContiguous();
     auto text = TextResourceDecoder::textFromUTF8(buffer->span());
     return text;
 }
@@ -511,7 +512,7 @@ void FetchBodyConsumer::setConsumePromise(Ref<DeferredPromise>&& promise)
 {
     ASSERT(!m_consumePromise);
     m_userGestureToken = UserGestureIndicator::currentUserGesture();
-    m_consumePromise = WTFMove(promise);
+    m_consumePromise = WTF::move(promise);
 }
 
 void FetchBodyConsumer::resetConsumePromise()
@@ -524,7 +525,7 @@ void FetchBodyConsumer::setSource(Ref<FetchBodySource>&& source)
 {
     m_source = source.copyRef();
     if (m_buffer)
-        source->enqueue(m_buffer.takeAsArrayBuffer());
+        source->enqueue(m_buffer.takeBufferAsArrayBuffer());
 }
 
 void FetchBodyConsumer::loadingFailed(const Exception& exception)

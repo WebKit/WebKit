@@ -46,6 +46,7 @@
 #include "DocumentLoader.h"
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
+#include "DocumentSecurityPolicy.h"
 #include "DocumentSyncClient.h"
 #include "DocumentType.h"
 #include "DocumentView.h"
@@ -65,6 +66,7 @@
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "HTMLAreaElement.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
@@ -93,7 +95,8 @@
 #include "ProcessWarming.h"
 #include "RemoteFrame.h"
 #include "RenderLayerCompositor.h"
-#include "RenderStyleInlines.h"
+#include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -156,7 +159,7 @@ struct OverrideScreenSize {
     FloatSize size;
 };
 
-static inline float parentPageZoomFactor(LocalFrame* frame)
+static inline float NODELETE parentPageZoomFactor(LocalFrame* frame)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
@@ -164,7 +167,7 @@ static inline float parentPageZoomFactor(LocalFrame* frame)
     return parent->pageZoomFactor();
 }
 
-static inline float parentTextZoomFactor(LocalFrame* frame)
+static inline float NODELETE parentTextZoomFactor(LocalFrame* frame)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
@@ -172,7 +175,7 @@ static inline float parentTextZoomFactor(LocalFrame* frame)
     return parent->textZoomFactor();
 }
 
-static const LocalFrame& rootFrame(const LocalFrame& frame, Frame* parent)
+static const LocalFrame& NODELETE rootFrame(const LocalFrame& frame, Frame* parent)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* localParent = dynamicDowncast<LocalFrame>(parent);
     if (localParent)
@@ -182,8 +185,8 @@ static const LocalFrame& rootFrame(const LocalFrame& frame, Frame* parent)
 }
 
 LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, std::optional<ScrollbarMode> scrollingMode, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener, Ref<FrameTreeSyncData>&& frameTreeSyncData, AddToFrameTree addToFrameTree)
-    : Frame(page, identifier, FrameType::Local, ownerElement, parent, opener, WTFMove(frameTreeSyncData), addToFrameTree)
-    , m_loader(makeUniqueRefWithoutRefCountedCheck<FrameLoader>(*this, WTFMove(clientCreator)))
+    : Frame(page, identifier, FrameType::Local, ownerElement, parent, opener, WTF::move(frameTreeSyncData), addToFrameTree)
+    , m_loader(makeUniqueRefWithoutRefCountedCheck<FrameLoader>(*this, WTF::move(clientCreator)))
     , m_script(makeUniqueRef<ScriptController>(*this))
 #if PLATFORM(IOS_FAMILY)
     , m_viewportArguments(makeUniqueRef<ViewportArguments>())
@@ -196,7 +199,7 @@ LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifie
     , m_sandboxFlags(sandboxFlags)
     , m_parentFrameOrOpenerReferrerPolicy(referrerPolicy)
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
-    , m_inspectorController(makeUniqueRefWithoutRefCountedCheck<FrameInspectorController>(*this))
+    , m_inspectorController(makeUniqueRefWithoutRefCountedCheck<FrameInspectorController>(*this, page.inspectorController()))
     , m_consoleClient(makeUniqueRef<FrameConsoleClient>(*this))
 {
     ProcessWarming::initializeNames();
@@ -225,17 +228,17 @@ void LocalFrame::init()
 
 Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, ReferrerPolicy effectiveReferrerPolicy, Frame* opener, Ref<FrameTreeSyncData>&& frameTreeSyncData)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, effectiveReferrerPolicy, ScrollbarMode::Auto, nullptr, nullptr, opener, WTFMove(frameTreeSyncData)));
+    return adoptRef(*new LocalFrame(page, WTF::move(clientCreator), identifier, effectiveSandboxFlags, effectiveReferrerPolicy, ScrollbarMode::Auto, nullptr, nullptr, opener, WTF::move(frameTreeSyncData)));
 }
 
 Ref<LocalFrame> LocalFrame::createSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, ReferrerPolicy effectiveReferrerPolicy, HTMLFrameOwnerElement& ownerElement, Ref<FrameTreeSyncData>&& frameTreeSyncData)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, effectiveReferrerPolicy, std::nullopt, &ownerElement, ownerElement.document().frame(), nullptr, WTFMove(frameTreeSyncData)));
+    return adoptRef(*new LocalFrame(page, WTF::move(clientCreator), identifier, effectiveSandboxFlags, effectiveReferrerPolicy, std::nullopt, &ownerElement, ownerElement.document().frame(), nullptr, WTF::move(frameTreeSyncData)));
 }
 
 Ref<LocalFrame> LocalFrame::createProvisionalSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, ReferrerPolicy effectiveReferrerPolicy, ScrollbarMode scrollingMode, Frame& parent, Ref<FrameTreeSyncData>&& frameTreeSyncData)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, effectiveReferrerPolicy, scrollingMode, nullptr, &parent, nullptr, WTFMove(frameTreeSyncData), AddToFrameTree::No));
+    return adoptRef(*new LocalFrame(page, WTF::move(clientCreator), identifier, effectiveSandboxFlags, effectiveReferrerPolicy, scrollingMode, nullptr, &parent, nullptr, WTF::move(frameTreeSyncData), AddToFrameTree::No));
 }
 
 LocalFrame::~LocalFrame()
@@ -248,14 +251,14 @@ LocalFrame::~LocalFrame()
     if (!loader->isComplete())
         loader->closeURL();
 
-    loader->clear(protectedDocument(), false);
-    checkedScript()->updatePlatformScriptObjects();
+    loader->clear(protect(document()), false);
+    protect(script())->updatePlatformScriptObjects();
 
     // FIXME: We should not be doing all this work inside the destructor
 
     disconnectOwnerElement();
 
-    while (auto* destructionObserver = m_destructionObservers.takeAny())
+    while (RefPtr destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->frameDestroyed();
 
     RefPtr localMainFrame = this->localMainFrame();
@@ -297,16 +300,16 @@ void LocalFrame::setView(RefPtr<LocalFrameView>&& view)
     // notified. If we wait until the view is destroyed, then things won't be hooked up enough for
     // these calls to work.
     if (!view && m_doc && m_doc->backForwardCacheState() != Document::InBackForwardCache)
-        protectedDocument()->willBeRemovedFromFrame();
+        protect(document())->willBeRemovedFromFrame();
     
     if (RefPtr view = m_view)
-        view->checkedLayoutContext()->unscheduleLayout();
+        protect(view->layoutContext())->unscheduleLayout();
     
     m_eventHandler->clear();
 
     RELEASE_ASSERT(!m_doc || !m_doc->hasLivingRenderTree());
 
-    m_view = WTFMove(view);
+    m_view = WTF::move(view);
     
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
@@ -332,7 +335,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
     if (RefPtr previousDocument = m_doc) {
 #if ENABLE(ATTACHMENT_ELEMENT)
         for (Ref attachment : previousDocument->attachmentElementsByIdentifier().values())
-            protectedEditor()->didRemoveAttachmentElement(attachment);
+            protect(editor())->didRemoveAttachmentElement(attachment);
 #endif
 
         if (previousDocument->backForwardCacheState() != Document::InBackForwardCache)
@@ -383,12 +386,12 @@ bool LocalFrame::preventsParentFromBeingComplete() const
 
 void LocalFrame::changeLocation(FrameLoadRequest&& request)
 {
-    loader().changeLocation(WTFMove(request));
+    loader().changeLocation(WTF::move(request));
 }
 
 void LocalFrame::loadFrameRequest(FrameLoadRequest&& request, Event* event)
 {
-    loader().loadFrameRequest(WTFMove(request), event, { });
+    loader().loadFrameRequest(WTF::move(request), event, { });
 }
 
 void LocalFrame::didFinishLoadInAnotherProcess()
@@ -436,7 +439,7 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
         return;
 
     if (RefPtr ownerElement = this->ownerElement())
-        ownerElement->protectedDocument()->invalidateEventRegionsForFrame(*ownerElement);
+        protect(ownerElement->document())->invalidateEventRegionsForFrame(*ownerElement);
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
@@ -662,7 +665,7 @@ bool LocalFrame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategor
     case DOMPasteAccessPolicy::Denied:
         return false;
     case DOMPasteAccessPolicy::NotRequestedYet: {
-        auto* client = editor().client();
+        CheckedPtr client = editor().client();
         if (!client)
             return false;
 
@@ -694,8 +697,7 @@ void LocalFrame::setPrinting(bool printing, FloatSize pageSize, FloatSize origin
     // See https://bugs.webkit.org/show_bug.cgi?id=43704
     ResourceCacheValidationSuppressor validationSuppressor(document->cachedResourceLoader());
 
-    document->setPrinting(printing);
-    protectedView()->adjustMediaTypeForPrinting(printing);
+    protect(view())->adjustMediaTypeForPrinting(printing);
 
     // FIXME: Consider invoking Page::updateRendering or an equivalent.
     document->styleScope().didChangeStyleSheetEnvironment();
@@ -747,22 +749,24 @@ FloatSize LocalFrame::resizePageRectsKeepingRatio(const FloatSize& originalSize,
 const UserContentProvider* LocalFrame::userContentProvider() const
 {
     RefPtr document = this->document();
-    RefPtr documentLoader = document ? document->loader() : nullptr;
-    if (RefPtr userContentProvider = documentLoader ? documentLoader->preferences().userContentProvider : nullptr)
-        return userContentProvider.unsafeGet();
+    if (RefPtr documentLoader = document ? document->loader() : nullptr) {
+        if (auto* userContentProvider = documentLoader->preferences().userContentProvider.get())
+            return userContentProvider;
+    }
     if (RefPtr page = this->page())
-        return page->protectedUserContentProviderForFrame().unsafePtr();
+        return &page->userContentProviderForFrame();
     return nullptr;
 }
 
 UserContentProvider* LocalFrame::userContentProvider()
 {
     RefPtr document = this->document();
-    RefPtr documentLoader = document ? document->loader() : nullptr;
-    if (RefPtr userContentProvider = documentLoader ? documentLoader->preferences().userContentProvider : nullptr)
-        return userContentProvider.unsafeGet();
+    if (RefPtr documentLoader = document ? document->loader() : nullptr) {
+        if (auto* userContentProvider = documentLoader->preferences().userContentProvider.get())
+            return userContentProvider;
+    }
     if (RefPtr page = this->page())
-        return page->protectedUserContentProviderForFrame().unsafePtr();
+        return &page->userContentProviderForFrame();
     return nullptr;
 }
 
@@ -838,18 +842,13 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
     loader->client().willInjectUserScript(world);
 
     WTFBeginSignpost(this, UserScript, "injectUserScript: %" PRIVATE_LOG_STRING " (%u bytes, top frame only %d, doc start %d)", script.debugDescription().ascii().data(), script.source().length(), script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly, script.injectionTime() == UserScriptInjectionTime::DocumentStart);
-    checkedScript()->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), JSC::SourceTaintedOrigin::Untainted, URL(script.url())), world);
+    protect(this->script())->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), JSC::SourceTaintedOrigin::Untainted, URL(script.url())), world);
     WTFEndSignpost(this, UserScript);
 }
 
-RenderView* LocalFrame::contentRenderer() const
+RenderView* NODELETE LocalFrame::contentRenderer() const
 {
     return document() ? document()->renderView() : nullptr;
-}
-
-CheckedPtr<RenderView> LocalFrame::checkedContentRenderer() const
-{
-    return contentRenderer();
 }
 
 LocalFrame* LocalFrame::frameForWidget(const Widget& widget)
@@ -867,34 +866,21 @@ void LocalFrame::clearTimers(LocalFrameView *view, Document *document)
 {
     if (!view)
         return;
-    view->checkedLayoutContext()->unscheduleLayout();
+    protect(view->layoutContext())->unscheduleLayout();
     if (CheckedPtr timelines = document->timelinesController())
         timelines->suspendAnimations();
-    view->protectedFrame()->eventHandler().stopAutoscrollTimer();
+    protect(view->frame())->eventHandler().stopAutoscrollTimer();
 }
 
 void LocalFrame::clearTimers()
 {
-    clearTimers(protectedView().get(), protectedDocument().get());
-}
-
-CheckedRef<ScriptController> LocalFrame::checkedScript()
-{
-    return m_script.get();
-}
-
-CheckedRef<const ScriptController> LocalFrame::checkedScript() const
-{
-    return m_script.get();
+    clearTimers(protect(view()).get(), protect(document()).get());
 }
 
 void LocalFrame::willDetachPage()
 {
-    if (RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent()))
-        parent->loader().checkLoadComplete();
-
-    for (auto& observer : m_destructionObservers)
-        observer.willDetachPage();
+    for (Ref observer : m_destructionObservers)
+        observer->willDetachPage();
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
@@ -941,18 +927,28 @@ VisiblePosition LocalFrame::visiblePositionForPoint(const IntPoint& framePoint) 
     return visiblePos;
 }
 
+HitTestResult LocalFrame::hitTestResultAtPoint(IntPoint point, OptionSet<HitTestRequest::Type> hitType)
+{
+    IntPoint pointInContents = protect(view())->windowToContents(point);
+
+    if (hitType.isEmpty())
+        return HitTestResult { pointInContents };
+
+    return eventHandler().hitTestResultAtPoint(pointInContents, hitType);
+}
+
 Document* LocalFrame::documentAtPoint(const IntPoint& point)
 {
     if (!view())
         return nullptr;
 
-    IntPoint pt = protectedView()->windowToContents(point);
-    HitTestResult result = HitTestResult(pt);
-
+    OptionSet<HitTestRequest::Type> hitType;
     if (contentRenderer()) {
-        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-        result = eventHandler().hitTestResultAtPoint(pt, hitType);
+        hitType = { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     }
+
+    auto result = hitTestResultAtPoint(point, hitType);
+
     return result.innerNode() ? &result.innerNode()->document() : 0;
 }
 
@@ -965,12 +961,12 @@ std::optional<SimpleRange> LocalFrame::rangeForPoint(const IntPoint& framePoint)
         return std::nullopt;
 
     if (auto previousCharacterRange = makeSimpleRange(position.previous(), position)) {
-        if (protectedEditor()->firstRectForRange(*previousCharacterRange).contains(framePoint))
+        if (protect(editor())->firstRectForRange(*previousCharacterRange).contains(framePoint))
             return *previousCharacterRange;
     }
 
     if (auto nextCharacterRange = makeSimpleRange(position, position.next())) {
-        if (protectedEditor()->firstRectForRange(*nextCharacterRange).contains(framePoint))
+        if (protect(editor())->firstRectForRange(*nextCharacterRange).contains(framePoint))
             return *nextCharacterRange;
     }
 
@@ -984,7 +980,7 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
     bool isRootFrame = this->isRootFrame();
 
     if (isRootFrame && view())
-        protectedView()->setParentVisible(false);
+        protect(view())->setParentVisible(false);
 
     setView(nullptr);
 
@@ -1008,17 +1004,12 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
     if (CheckedPtr ownerRenderer = this->ownerRenderer())
         ownerRenderer->setWidget(frameView);
 
-    protectedView()->setCanHaveScrollbars(scrollingMode() != ScrollbarMode::AlwaysOff);
+    protect(view())->setCanHaveScrollbars(scrollingMode() != ScrollbarMode::AlwaysOff);
 }
 
 LocalDOMWindow* LocalFrame::window() const
 {
     return document() ? document()->window() : nullptr;
-}
-
-RefPtr<LocalDOMWindow> LocalFrame::protectedWindow() const
-{
-    return window();
 }
 
 DOMWindow* LocalFrame::virtualWindow() const
@@ -1059,7 +1050,7 @@ String LocalFrame::trackedRepaintRectsAsText() const
 {
     if (!m_view)
         return String();
-    return protectedView()->trackedRepaintRectsAsText();
+    return protect(view())->trackedRepaintRectsAsText();
 }
 
 void LocalFrame::setPageZoomFactor(float factor)
@@ -1085,7 +1076,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     if (!document)
         return;
 
-    protectedEditor()->dismissCorrectionPanelAsIgnored();
+    protect(editor())->dismissCorrectionPanelAsIgnored();
 
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
     // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
@@ -1112,7 +1103,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
 
     if (RefPtr view = this->view()) {
         if (document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
-            view->checkedLayoutContext()->layout();
+            protect(view->layoutContext())->layout();
 
         // Scrolling to the calculated position must be done after the layout.
         if (scrollPositionAfterZoomed)
@@ -1120,29 +1111,12 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     }
 }
 
-float LocalFrame::frameScaleFactor() const
+float LocalFrame::usedZoomForChild(const Frame& child) const
 {
-    RefPtr page = this->page();
+    if (CheckedPtr ownerRenderer = child.ownerRenderer())
+        return ownerRenderer->style().usedZoom();
 
-    if (!page)
-        return 1;
-
-    // https://github.com/w3c/csswg-drafts/issues/9644
-    // Check if this frame's owner element (iframe) has CSS zoom applied.
-    if (!isMainFrame()) {
-        auto rootZoom = rootFrame().pageZoomFactor();
-        if (RefPtr ownerElement = this->ownerElement()) {
-            if (auto* ownerRenderer = ownerElement->renderer())
-                return ownerRenderer->style().usedZoom() / rootZoom;
-        }
-        return rootZoom;
-    }
-
-    // Main frame is scaled with respect to the container.
-    if (page->delegatesScaling())
-        return 1;
-
-    return page->pageScaleFactor();
+    return 1.0;
 }
 
 void LocalFrame::suspendActiveDOMObjectsAndAnimations()
@@ -1182,7 +1156,7 @@ void LocalFrame::resumeActiveDOMObjectsAndAnimations()
     if (CheckedPtr timelines = document->timelinesController())
         timelines->resumeAnimations();
     if (RefPtr view = m_view)
-        view->checkedLayoutContext()->scheduleLayout();
+        protect(view->layoutContext())->scheduleLayout();
 }
 
 void LocalFrame::deviceOrPageScaleFactorChanged()
@@ -1208,7 +1182,7 @@ FloatSize LocalFrame::screenSize() const
     if (m_overrideScreenSize)
         return m_overrideScreenSize->size;
 
-    auto defaultSize = screenRect(protectedView().get()).size();
+    auto defaultSize = screenRect(protect(view()).get()).size();
     RefPtr document = this->document();
     if (!document)
         return defaultSize;
@@ -1228,7 +1202,7 @@ void LocalFrame::setOverrideScreenSize(FloatSize&& screenSize)
     if (m_overrideScreenSize && m_overrideScreenSize->size == screenSize)
         return;
 
-    m_overrideScreenSize = makeUnique<OverrideScreenSize>(OverrideScreenSize { WTFMove(screenSize) });
+    m_overrideScreenSize = makeUnique<OverrideScreenSize>(OverrideScreenSize { WTF::move(screenSize) });
     if (RefPtr document = this->document())
         document->updateViewportArguments();
 }
@@ -1320,7 +1294,7 @@ void LocalFrame::documentURLOrOriginDidChange()
     RefPtr page = this->page();
     RefPtr document = this->document();
     if (page && document)
-        page->setMainFrameURLAndOrigin(document->url(), document->protectedSecurityOrigin());
+        page->setMainFrameURLAndOrigin(document->url(), protect(document->securityOrigin()));
 }
 
 void LocalFrame::dispatchLoadEventToParent()
@@ -1347,10 +1321,7 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
     if (!m_doc)
         return;
 
-    if (RefPtr window = m_doc->window())
-        window->willDetachDocumentFromFrame();
-
-    protectedDocument()->detachFromFrame();
+    protect(document())->willBeRemovedFromFrame();
 }
 
 void LocalFrame::storageAccessExceptionReceivedForDomain(const RegistrableDomain& domain)
@@ -1402,7 +1373,7 @@ void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty prope
         return;
 
     m_accessedWindowProxyPropertiesViaOpener.add(property);
-    loader().client().didAccessWindowProxyPropertyViaOpener(WTFMove(openerMainFrameOrigin), property);
+    loader().client().didAccessWindowProxyPropertyViaOpener(WTF::move(openerMainFrameOrigin), property);
 }
 
 #endif
@@ -1587,7 +1558,7 @@ void LocalFrame::showResourceMonitoringError()
 
 #if ENABLE(DARK_MODE_CSS)
     if (CheckedPtr style = iframeElement->existingComputedStyle())
-        colorScheme = document->resolvedColorScheme(style.get());
+        colorScheme = document->resolvedColorScheme(&style->computedStyle());
 #endif
 
     iframeElement->setSrcdoc(generateResourceMonitorErrorHTML(colorScheme), SubstituteData::SessionHistoryVisibility::Hidden);
@@ -1659,7 +1630,7 @@ void LocalFrame::showMemoryMonitorError()
 
 #if ENABLE(DARK_MODE_CSS)
     if (CheckedPtr style = iframeElement->existingComputedStyle())
-        colorScheme = document->resolvedColorScheme(style.get());
+        colorScheme = document->resolvedColorScheme(&style->computedStyle());
 #endif
 
     iframeElement->setSrcdoc(generateFrameMemoryMonitorErrorHTML(colorScheme), SubstituteData::SessionHistoryVisibility::Hidden);
@@ -1668,7 +1639,7 @@ void LocalFrame::showMemoryMonitorError()
 bool LocalFrame::frameCanCreatePaymentSession() const
 {
 #if ENABLE(APPLE_PAY)
-    if (auto* documentLoader = loader().activeDocumentLoader())
+    if (RefPtr documentLoader = loader().activeDocumentLoader())
         return PaymentSession::isSecureForSession(documentLoader->response().url(), documentLoader->response().certificateInfo());
     return false;
 #else
@@ -1676,7 +1647,7 @@ bool LocalFrame::frameCanCreatePaymentSession() const
 #endif
 }
 
-RefPtr<SecurityOrigin> LocalFrame::frameDocumentSecurityOrigin() const
+SecurityOrigin* LocalFrame::frameDocumentSecurityOrigin() const
 {
     if (RefPtr document = this->document())
         return &document->securityOrigin();
@@ -1684,9 +1655,13 @@ RefPtr<SecurityOrigin> LocalFrame::frameDocumentSecurityOrigin() const
     return nullptr;
 }
 
-Ref<FrameInspectorController> LocalFrame::protectedInspectorController() const
+std::optional<DocumentSecurityPolicy> LocalFrame::frameDocumentSecurityPolicy() const
 {
-    return m_inspectorController.get();
+    RefPtr document = this->document();
+    if (!document)
+        return std::nullopt;
+
+    return DocumentSecurityPolicy { document->crossOriginEmbedderPolicy(), document->crossOriginOpenerPolicy() };
 }
 
 String LocalFrame::frameURLProtocol() const
@@ -1696,6 +1671,258 @@ String LocalFrame::frameURLProtocol() const
 
     return ""_s;
 }
+
+#if PLATFORM(COCOA)
+
+static bool nodeIsMouseFocusable(Node& node)
+{
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
+        return false;
+
+    if (element->isMouseFocusable())
+        return true;
+
+    if (RefPtr shadowRoot = element->shadowRoot()) {
+        if (shadowRoot->delegatesFocus()) {
+            for (Ref node : composedTreeDescendants(*element)) {
+                if (RefPtr element = dynamicDowncast<Element>(node); element && element->isMouseFocusable())
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool LocalFrame::nodeWillRespondToMouseEvents(Node& node)
+{
+    return node.willRespondToMouseClickEvents() || node.willRespondToMouseMoveEvents() || nodeIsMouseFocusable(node);
+}
+
+static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(SecurityOrigin* securityOrigin = nullptr)
+{
+    return [securityOrigin = RefPtr { securityOrigin }](const HitTestResult& hitTestResult, Node* terminationNode, IntRect* nodeBounds) -> RefPtr<Node> {
+        if (nodeBounds)
+            *nodeBounds = IntRect();
+
+        RefPtr node = hitTestResult.innerNode();
+        if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(protect(protect(node->document())->securityOrigin()))))
+            return nullptr;
+
+        for (; node && node.get() != terminationNode; node = node->parentInComposedTree()) {
+            if (LocalFrame::nodeWillRespondToMouseEvents(*node)) {
+                // If we are interested about the frame, use it.
+                if (nodeBounds) {
+                    // This is a check to see whether this node is an area element. The only way this can happen is if this is the first check.
+                    if (node == hitTestResult.innerNode() && node != hitTestResult.innerNonSharedNode() && is<HTMLAreaElement>(*node))
+                        *nodeBounds = snappedIntRect(downcast<HTMLAreaElement>(*node).computeRect(hitTestResult.innerNonSharedNode()->renderer()));
+                    else if (node && node->renderer())
+                        *nodeBounds = node->renderer()->absoluteBoundingBoxRect(true);
+                }
+
+                return node;
+            }
+        }
+
+        return nullptr;
+    };
+}
+
+RefPtr<Node> LocalFrame::betterApproximateNode(const IntPoint& testPoint, const NodeQualifier& nodeQualifierFunction, Node* best, Node* failedNode, IntPoint& bestPoint, IntRect& bestRect, const IntRect& testRect)
+{
+    IntRect candidateRect;
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    RefPtr candidate = nodeQualifierFunction(eventHandler().hitTestResultAtPoint(testPoint, hitType), failedNode, &candidateRect);
+
+    // Bail if we have no candidate, or the candidate is already equal to our current best node,
+    // or our candidate is the avoidedNode and there is a current best node.
+    if (!candidate || candidate == best)
+        return best;
+
+    // The document should never be considered the best alternative.
+    if (candidate->isDocumentNode())
+        return best;
+
+    if (best) {
+        IntRect bestIntersect = intersection(testRect, bestRect);
+        IntRect candidateIntersect = intersection(testRect, candidateRect);
+        // if the candidate intersection is smaller than the current best intersection, bail.
+        if (candidateIntersect.width() * candidateIntersect.height() <= bestIntersect.width() * bestIntersect.height())
+            return best;
+    }
+
+    // At this point we either don't have a previous best, or our current candidate has a better intersection.
+    bestPoint = testPoint;
+    bestRect = candidateRect;
+    return candidate;
+}
+
+RefPtr<Node> LocalFrame::nodeRespondingToInteraction(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation)
+{
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, ancestorRespondingToClickEventsNodeQualifier(), ShouldApproximate::Yes, ShouldFindRootEditableElement::No);
+}
+
+bool LocalFrame::hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, HitTestResult& hitTestResult, IntPoint& center)
+{
+    if (!m_doc || !m_doc->renderView())
+        return false;
+
+    RefPtr view = m_view.get();
+    if (!view)
+        return false;
+
+    center = view->windowToContents(roundedIntPoint(viewportLocation));
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    hitTestResult = eventHandler().hitTestResultAtPoint(center, hitType);
+    return true;
+}
+
+RefPtr<Node> LocalFrame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, const NodeQualifier& nodeQualifierFunction, ShouldApproximate shouldApproximate, ShouldFindRootEditableElement shouldFindRootEditableElement)
+{
+    adjustedViewportLocation = viewportLocation;
+
+    IntPoint testCenter;
+    HitTestResult candidateInfo;
+    if (!hitTestResultAtViewportLocation(viewportLocation, candidateInfo, testCenter))
+        return nullptr;
+
+    IntPoint bestPoint = testCenter;
+
+    // We have the candidate node at the location, check whether it or one of its ancestors passes
+    // the qualifier function, which typically checks if the node responds to a particular event type.
+    RefPtr approximateNode = nodeQualifierFunction(candidateInfo, nullptr, nullptr);
+
+    if (shouldFindRootEditableElement == ShouldFindRootEditableElement::Yes && approximateNode && approximateNode->isContentEditable()) {
+        // If we are in editable content, we look for the root editable element.
+        approximateNode = approximateNode->rootEditableElement();
+        // If we have a focusable node, there is no need to approximate.
+        if (approximateNode)
+            shouldApproximate = ShouldApproximate::No;
+    }
+
+    float scale = page() ? page()->pageScaleFactor() : 1;
+#if PLATFORM(IOS_FAMILY)
+    float ppiFactor = screenPPIFactor();
+#else
+    float ppiFactor = 1; // FIXME: Don't hard-code this, and use an accurate scale factor.
+#endif
+
+    static const float unscaledSearchRadius = 15;
+    int searchRadius = static_cast<int>(unscaledSearchRadius * ppiFactor / scale);
+
+    if (approximateNode && shouldApproximate == ShouldApproximate::Yes) {
+        constexpr std::array testOffsets {
+            -.3f, -.3f,
+            -.6f, -.6f,
+            +.3f, +.3f,
+            -.9f, -.9f,
+        };
+
+        RefPtr originalApproximateNode = approximateNode;
+        for (unsigned n = 0; n < std::size(testOffsets); n += 2) {
+            IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
+            IntPoint testPoint = testCenter + testOffset;
+
+            constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
+            auto candidateInfo = eventHandler().hitTestResultAtPoint(testPoint, hitType);
+            RefPtr candidateNode = nodeQualifierFunction(candidateInfo, 0, 0);
+            if (candidateNode && candidateNode->isDescendantOf(originalApproximateNode)) {
+                approximateNode = candidateNode;
+                bestPoint = testPoint;
+                break;
+            }
+        }
+    } else if (!approximateNode && shouldApproximate == ShouldApproximate::Yes) {
+        // Grab the closest parent element of our failed candidate node.
+        RefPtr candidate = candidateInfo.innerNode();
+        RefPtr failedNode = candidate;
+
+        while (candidate && !candidate->isElementNode())
+            candidate = candidate->parentInComposedTree();
+
+        if (candidate)
+            failedNode = candidate;
+
+        // The center point was tested earlier.
+        constexpr std::array testOffsets {
+            -.3f, -.3f,
+            +.3f, -.3f,
+            -.3f, +.3f,
+            +.3f, +.3f,
+            -.6f, -.6f,
+            +.6f, -.6f,
+            -.6f, +.6f,
+            +.6f, +.6f,
+            -1.f, 0.f,
+            +1.f, 0.f,
+            0.f, +1.f,
+            0.f, -1.f,
+        };
+        IntRect bestFrame;
+        IntRect testRect(testCenter, IntSize());
+        testRect.inflate(searchRadius);
+        int currentTestRadius = 0;
+        for (unsigned n = 0; n < std::size(testOffsets); n += 2) {
+            IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
+            IntPoint testPoint = testCenter + testOffset;
+            int testRadius = std::max(std::abs(testOffset.width()), std::abs(testOffset.height()));
+            if (testRadius > currentTestRadius) {
+                // Bail out with the best match within a radius
+                currentTestRadius = testRadius;
+                if (approximateNode)
+                    break;
+            }
+            approximateNode = betterApproximateNode(testPoint, nodeQualifierFunction, approximateNode.get(), failedNode, bestPoint, bestFrame, testRect);
+        }
+    }
+
+    if (approximateNode) {
+        IntPoint p = m_view->contentsToWindow(bestPoint);
+        adjustedViewportLocation = p;
+        if (shouldFindRootEditableElement == ShouldFindRootEditableElement::Yes && approximateNode->isContentEditable()) {
+            // When in editable content, look for the root editable node again,
+            // since this could be the node found with the approximation.
+            approximateNode = approximateNode->rootEditableElement();
+        }
+    }
+
+    return approximateNode;
+}
+
+RefPtr<Node> LocalFrame::nodeRespondingToClickEvents(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, SecurityOrigin* securityOrigin)
+{
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, ancestorRespondingToClickEventsNodeQualifier(securityOrigin), ShouldApproximate::Yes);
+}
+
+RefPtr<Node> LocalFrame::nodeRespondingToDoubleClickEvent(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation)
+{
+    auto&& ancestorRespondingToDoubleClickEvent = [](const HitTestResult& hitTestResult, Node* terminationNode, IntRect* nodeBounds) -> RefPtr<Node> {
+        if (nodeBounds)
+            *nodeBounds = IntRect();
+
+        RefPtr node = hitTestResult.innerNode();
+        if (!node)
+            return nullptr;
+
+        for (; node && node != terminationNode; node = node->parentInComposedTree()) {
+            if (!node->hasEventListeners(eventNames().dblclickEvent))
+                continue;
+#if ENABLE(TOUCH_EVENTS)
+            if (!node->allowsDoubleTapGesture())
+                continue;
+#endif
+            if (nodeBounds && node->renderer())
+                *nodeBounds = node->renderer()->absoluteBoundingBoxRect(true);
+            return node;
+        }
+        return nullptr;
+    };
+
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTF::move(ancestorRespondingToDoubleClickEvent), ShouldApproximate::Yes);
+}
+
+#endif // PLATFORM(COCOA)
 
 } // namespace WebCore
 

@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFilterElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFilterElement);
 
 inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -141,9 +141,9 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
 RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGResourceFilter>(*this, WTFMove(style));
+        return createRenderer<RenderSVGResourceFilter>(*this, WTF::move(style));
 
-    return createRenderer<LegacyRenderSVGResourceFilter>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceFilter>(*this, WTF::move(style));
 }
 
 bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const

@@ -39,7 +39,7 @@ namespace API {
 using namespace WebKit;
 
 TargetedElementInfo::TargetedElementInfo(WebPageProxy& page, WebCore::TargetedElementInfo&& info)
-    : m_info(WTFMove(info))
+    : m_info(WTF::move(info))
     , m_page(page)
 {
 }
@@ -69,9 +69,9 @@ void TargetedElementInfo::childFrames(CompletionHandler<void(Vector<Ref<FrameTre
         return completion({ });
 
     auto aggregateData = Box<Vector<FrameTreeNodeData>>::create();
-    auto aggregator = CallbackAggregator::create([page, aggregateData, completion = WTFMove(completion)]() mutable {
-        completion(WTF::map(WTFMove(*aggregateData), [&](auto&& data) {
-            return FrameTreeNode::create(WTFMove(data), *page);
+    auto aggregator = CallbackAggregator::create([page, aggregateData, completion = WTF::move(completion)]() mutable {
+        completion(WTF::map(WTF::move(*aggregateData), [&](auto&& data) {
+            return FrameTreeNode::create(WTF::move(data), *page);
         }));
     });
 
@@ -85,7 +85,7 @@ void TargetedElementInfo::childFrames(CompletionHandler<void(Vector<Ref<FrameTre
 
         frame->getFrameTree([aggregator, aggregateData](auto&& data) {
             if (data)
-                aggregateData->append(WTFMove(*data));
+                aggregateData->append(WTF::move(*data));
         });
     }
 }
@@ -96,7 +96,7 @@ void TargetedElementInfo::takeSnapshot(CompletionHandler<void(std::optional<WebC
     if (!page)
         return completion({ });
 
-    page->takeSnapshotForTargetedElement(*this, WTFMove(completion));
+    page->takeSnapshotForTargetedElement(*this, WTF::move(completion));
 }
 
 } // namespace API

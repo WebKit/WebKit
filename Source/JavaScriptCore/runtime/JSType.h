@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 // macro(JSType, DirectSpeculatedType)
@@ -60,6 +62,9 @@ namespace JSC {
     macro(JSScriptFetcherType, SpecCellOther) \
     macro(JSScriptFetchParametersType, SpecCellOther) \
     macro(JSPromiseReactionType, SpecCellOther) \
+    macro(JSPromiseCombinatorsContextType, SpecCellOther) \
+    macro(JSPromiseCombinatorsGlobalContextType, SpecCellOther) \
+    macro(JSMicrotaskDispatcherType, SpecCellOther) \
     \
     /* The ObjectType value must come before any JSType that is a subclass of JSObject. */ \
     macro(ObjectType, SpecObjectOther) \
@@ -134,8 +139,6 @@ namespace JSC {
     macro(JSRegExpStringIteratorType, SpecObjectOther) \
     macro(JSAsyncFromSyncIteratorType, SpecObjectOther) \
     macro(JSPromiseType, SpecPromiseObject) \
-    macro(JSPromiseAllContextType, SpecObjectOther) \
-    macro(JSPromiseAllGlobalContextType, SpecObjectOther) \
     macro(JSMapType, SpecMapObject) \
     macro(JSSetType, SpecSetObject) \
     macro(JSWeakMapType, SpecWeakMapObject) \

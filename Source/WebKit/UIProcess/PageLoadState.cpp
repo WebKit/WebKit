@@ -83,11 +83,6 @@ void PageLoadState::endTransaction()
         commitChanges();
 }
 
-Ref<WebPageProxy> PageLoadState::protectedPage() const
-{
-    return m_webPageProxy.get();
-}
-
 void PageLoadState::ref() const
 {
     m_webPageProxy->ref();
@@ -143,7 +138,7 @@ void PageLoadState::commitChanges()
 
     m_committedState = m_uncommittedState;
 
-    protectedPage()->isLoadingChanged();
+    protect(page())->isLoadingChanged();
 
     // The "did" ordering is the reverse of the "will". This is a requirement of Cocoa Key-Value Observing.
     if (certificateInfoChanged)
@@ -258,7 +253,7 @@ double PageLoadState::estimatedProgress() const
 void PageLoadState::setPendingAPIRequest(const Transaction::Token& token, PendingAPIRequest&& pendingAPIRequest, const URL& resourceDirectoryURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    m_uncommittedState.pendingAPIRequest = WTFMove(pendingAPIRequest);
+    m_uncommittedState.pendingAPIRequest = WTF::move(pendingAPIRequest);
     m_uncommittedState.resourceDirectoryURL = resourceDirectoryURL;
 }
 
@@ -266,6 +261,12 @@ void PageLoadState::clearPendingAPIRequest(const Transaction::Token& token)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.pendingAPIRequest = { };
+}
+
+void PageLoadState::setHadSafeBrowsingWarning(const Transaction::Token& token)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.hadSafeBrowsingWarning = true;
 }
 
 void PageLoadState::didExplicitOpen(const Transaction::Token& token, const String& url)
@@ -372,7 +373,7 @@ const String& PageLoadState::title() const
 void PageLoadState::setTitle(const Transaction::Token& token, String&& title)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    m_uncommittedState.title = WTFMove(title);
+    m_uncommittedState.title = WTF::move(title);
 }
 
 void PageLoadState::setTitleFromBrowsingWarning(const Transaction::Token& token, const String& title)

@@ -89,6 +89,10 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaAccessibility, MACaptionApp
 #define MACaptionAppearanceCopyActiveProfileID softLink_MediaAccessibility_MACaptionAppearanceCopyActiveProfileID
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaAccessibility, MACaptionAppearanceCopyProfileName, CFStringRef, (CFStringRef profileID), (profileID))
 #define MACaptionAppearanceCopyProfileName softLink_MediaAccessibility_MACaptionAppearanceCopyProfileName
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaAccessibility, MACaptionAppearanceCopyPreviewText, CFStringRef, (CFStringRef profileID, CFStringRef trackLanguage), (profileID, trackLanguage));
+#define MACaptionAppearanceCopyPreviewText softLink_MediaAccessibility_MACaptionAppearanceCopyPreviewText
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaAccessibility, MACaptionAppearanceExecuteBlockForProfileID, void, (CFStringRef profileID, void (^aBlock)(void)), (profileID, aBlock));
+#define MACaptionAppearanceExecuteBlockForProfileID softLink_MediaAccessibility_MACaptionAppearanceExecuteBlockForProfileID
 
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 

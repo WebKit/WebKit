@@ -22,12 +22,13 @@
 #include "include/core/SkPath.h"
 #include "include/core/SkPictureRecorder.h"
 #include "include/core/SkSpan.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/private/base/SkMutex.h"
 #include "include/private/base/SkTo.h"
 #include "src/base/SkEndian.h"
 #include "src/base/SkScopeExit.h"
 #include "src/base/SkSharedMutex.h"
+#include "src/codec/SkCodecPriv.h"
 #include "src/core/SkDraw.h"
 #include "src/core/SkGlyph.h"
 #include "src/core/SkMaskGamma.h"
@@ -788,16 +789,20 @@ bool SkScalerContext_DW::drawColorV1Paint(SkCanvas& canvas,
             skStops[i] = stops[i].position;
         }
 
-        sk_sp<SkShader> shader(SkGradientShader::MakeLinear(
+        sk_sp<SkShader> shader(SkShaders::LinearGradient(
             linePositions,
-            skColors.get(), SkColorSpace::MakeSRGB(), skStops.get(), stops.size(),
-            tileMode,
-            SkGradientShader::Interpolation{
-                SkGradientShader::Interpolation::InPremul::kNo,
-                SkGradientShader::Interpolation::ColorSpace::kSRGB,
-                SkGradientShader::Interpolation::HueMethod::kShorter
-            },
-            nullptr));
+            SkGradient(
+                SkGradient::Colors(
+                    SkSpan(skColors.get(), stops.size()),
+                    SkSpan(skStops.get(), stops.size()),
+                    tileMode),
+                SkGradient::Interpolation{
+                    SkGradient::Interpolation::InPremul::kNo,
+                    SkGradient::Interpolation::ColorSpace::kSRGB,
+                    SkGradient::Interpolation::HueMethod::kShorter
+                }
+            )
+        ));
 
         SkASSERT(shader);
         // An opaque color is needed to ensure the gradient is not modulated by alpha.
@@ -981,16 +986,20 @@ bool SkScalerContext_DW::drawColorV1Paint(SkCanvas& canvas,
 
         // An opaque color is needed to ensure the gradient is not modulated by alpha.
         skPaint.setColor(SK_ColorBLACK);
-        skPaint.setShader(SkGradientShader::MakeTwoPointConical(
+        skPaint.setShader(SkShaders::TwoPointConicalGradient(
             start, startRadius, end, endRadius,
-            skColors.get(), SkColorSpace::MakeSRGB(), skStops.get(), stops.size(),
-            tileMode,
-            SkGradientShader::Interpolation{
-                SkGradientShader::Interpolation::InPremul::kNo,
-                SkGradientShader::Interpolation::ColorSpace::kSRGB,
-                SkGradientShader::Interpolation::HueMethod::kShorter
-            },
-            nullptr));
+            SkGradient(
+                SkGradient::Colors(
+                    SkSpan(skColors.get(), stops.size()),
+                    SkSpan(skStops.get(), stops.size()),
+                    tileMode),
+                SkGradient::Interpolation{
+                    SkGradient::Interpolation::InPremul::kNo,
+                    SkGradient::Interpolation::ColorSpace::kSRGB,
+                    SkGradient::Interpolation::HueMethod::kShorter
+                }
+            )
+        ));
         canvas.drawPaint(skPaint);
         return true;
     }
@@ -1101,17 +1110,20 @@ bool SkScalerContext_DW::drawColorV1Paint(SkCanvas& canvas,
             skStops[i] = stops[i].position;
         }
 
-        skPaint.setShader(SkGradientShader::MakeSweep(
-            center.x(), center.y(),
-            skColors.get(), SkColorSpace::MakeSRGB(), skStops.get(), stops.size(),
-            tileMode,
-            startAngleScaled, endAngleScaled,
-            SkGradientShader::Interpolation{
-                SkGradientShader::Interpolation::InPremul::kNo,
-                SkGradientShader::Interpolation::ColorSpace::kSRGB,
-                SkGradientShader::Interpolation::HueMethod::kShorter
-            },
-            nullptr));
+        skPaint.setShader(SkShaders::SweepGradient(
+            center, startAngleScaled, endAngleScaled,
+            SkGradient(
+                SkGradient::Colors(
+                    SkSpan(skColors.get(), stops.size()),
+                    SkSpan(skStops.get(), stops.size()),
+                    tileMode),
+                SkGradient::Interpolation{
+                    SkGradient::Interpolation::InPremul::kNo,
+                    SkGradient::Interpolation::ColorSpace::kSRGB,
+                    SkGradient::Interpolation::HueMethod::kShorter
+                }
+            )
+        ));
         canvas.drawPaint(skPaint);
         return true;
     }
@@ -1255,10 +1267,10 @@ bool SkScalerContext_DW::generateColorV1Image(const SkGlyph& glyph, void* imageB
 
     SkBitmap dstBitmap;
     // TODO: mark this as sRGB when the blits will be sRGB.
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                      kN32_SkColorType, kPremul_SkAlphaType),
-                      glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     if constexpr (kSkShowTextBlitCoverage) {
@@ -1707,6 +1719,11 @@ static void ReleaseProc(const void* ptr, void* context) {
 }
 }
 
+static void check_png() {
+    SkASSERTF(SkCodecs::HasDecoder("png"),
+        "No PNG decoder registered. A call to SkCodecs::Register is necessary.");
+}
+
 bool SkScalerContext_DW::generatePngMetrics(const SkGlyph& glyph, SkRect* bounds) {
     IDWriteFontFace4* fontFace4 = this->getDWriteTypeface()->fDWriteFontFace4.get();
     if (!fontFace4) {
@@ -1737,6 +1754,7 @@ bool SkScalerContext_DW::generatePngMetrics(const SkGlyph& glyph, SkRect* bounds
 
     sk_sp<SkImage> image = SkImages::DeferredFromEncodedData(std::move(data));
     if (!image) {
+        check_png();
         return false;
     }
 
@@ -1834,17 +1852,18 @@ void SkScalerContext_DW::generateFontMetrics(SkFontMetrics* metrics) {
 
     sk_bzero(metrics, sizeof(*metrics));
 
+    IDWriteFontFace* fontFace = this->getDWriteTypeface()->fDWriteFontFace.get();
     DWRITE_FONT_METRICS dwfm;
     if (DWRITE_MEASURING_MODE_GDI_CLASSIC == fMeasuringMode ||
         DWRITE_MEASURING_MODE_GDI_NATURAL == fMeasuringMode)
     {
-        this->getDWriteTypeface()->fDWriteFontFace->GetGdiCompatibleMetrics(
+        fontFace->GetGdiCompatibleMetrics(
              fTextSizeRender,
              1.0f, // pixelsPerDip
              &fXform,
              &dwfm);
     } else {
-        this->getDWriteTypeface()->fDWriteFontFace->GetMetrics(&dwfm);
+        fontFace->GetMetrics(&dwfm);
     }
 
     SkScalar upem = SkIntToScalar(dwfm.designUnitsPerEm);
@@ -1864,17 +1883,16 @@ void SkScalerContext_DW::generateFontMetrics(SkFontMetrics* metrics) {
     metrics->fFlags |= SkFontMetrics::kStrikeoutThicknessIsValid_Flag;
     metrics->fFlags |= SkFontMetrics::kStrikeoutPositionIsValid_Flag;
 
-    SkTScopedComPtr<IDWriteFontFace5> fontFace5;
-    if (SUCCEEDED(this->getDWriteTypeface()->fDWriteFontFace->QueryInterface(&fontFace5))) {
-        if (fontFace5->HasVariations()) {
-            // The bounds are only valid for the default variation.
-            metrics->fFlags |= SkFontMetrics::kBoundsInvalid_Flag;
-        }
+    IDWriteFontFace5* fontFace5 = this->getDWriteTypeface()->fDWriteFontFace5.get();
+    if (fontFace5 && fontFace5->HasVariations()) {
+        // The bounds are only valid for the default variation.
+        metrics->fFlags |= SkFontMetrics::kBoundsInvalid_Flag;
     }
 
-    if (this->getDWriteTypeface()->fDWriteFontFace1.get()) {
+    IDWriteFontFace1* fontFace1 = this->getDWriteTypeface()->fDWriteFontFace1.get();
+    if (fontFace1) {
         DWRITE_FONT_METRICS1 dwfm1;
-        this->getDWriteTypeface()->fDWriteFontFace1->GetMetrics(&dwfm1);
+        fontFace1->GetMetrics(&dwfm1);
         metrics->fTop = -fTextSizeRender * SkIntToScalar(dwfm1.glyphBoxTop) / upem;
         metrics->fBottom = -fTextSizeRender * SkIntToScalar(dwfm1.glyphBoxBottom) / upem;
         metrics->fXMin = fTextSizeRender * SkIntToScalar(dwfm1.glyphBoxLeft) / upem;
@@ -1884,7 +1902,7 @@ void SkScalerContext_DW::generateFontMetrics(SkFontMetrics* metrics) {
         return;
     }
 
-    AutoTDWriteTable<SkOTTableHead> head(this->getDWriteTypeface()->fDWriteFontFace.get());
+    AutoTDWriteTable<SkOTTableHead> head(fontFace);
     if (head.fExists &&
         head.fSize >= sizeof(SkOTTableHead) &&
         head->version == SkOTTableHead::version1)
@@ -2238,10 +2256,10 @@ bool SkScalerContext_DW::generateColorImage(const SkGlyph& glyph, void* imageBuf
 
     SkBitmap dstBitmap;
     // TODO: mark this as sRGB when the blits will be sRGB.
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                                        kN32_SkColorType, kPremul_SkAlphaType),
-                                        glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     if constexpr (kSkShowTextBlitCoverage) {
@@ -2310,10 +2328,10 @@ bool SkScalerContext_DW::generateSVGImage(const SkGlyph& glyph, void* imageBuffe
 
     SkBitmap dstBitmap;
     // TODO: mark this as sRGB when the blits will be sRGB.
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                                        kN32_SkColorType, kPremul_SkAlphaType),
-                      glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     if constexpr (kSkShowTextBlitCoverage) {
@@ -2347,6 +2365,7 @@ bool SkScalerContext_DW::drawPngImage(const SkGlyph& glyph, SkCanvas& canvas) {
                                               context);
     sk_sp<SkImage> image = SkImages::DeferredFromEncodedData(std::move(data));
     if (!image) {
+        check_png();
         return false;
     }
 
@@ -2366,10 +2385,10 @@ bool SkScalerContext_DW::generatePngImage(const SkGlyph& glyph, void* imageBuffe
     SkASSERT(glyph.maskFormat() == SkMask::Format::kARGB32_Format);
 
     SkBitmap dstBitmap;
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                                        kN32_SkColorType, kPremul_SkAlphaType),
-                      glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     canvas.clear(SK_ColorTRANSPARENT);

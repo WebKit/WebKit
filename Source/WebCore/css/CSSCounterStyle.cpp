@@ -398,7 +398,7 @@ String CSSCounterStyle::fallbackText(int value, WritingMode writingMode)
         return CSSCounterStyleRegistry::decimalCounter()->text(value, writingMode);
     }
     m_isFallingBack = true;
-    auto fallbackText = fallback()->text(value, writingMode);
+    auto fallbackText = protect(fallback())->text(value, writingMode);
     m_isFallingBack = false;
     return fallbackText;
 }

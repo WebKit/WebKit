@@ -45,15 +45,15 @@ public:
     {
     }
 
-#define WASM_SECTION_DECLARE_PARSER(NAME, ID, ORDERING, DESCRIPTION) PartialResult WARN_UNUSED_RETURN parse ## NAME();
+#define WASM_SECTION_DECLARE_PARSER(NAME, ID, ORDERING, DESCRIPTION) [[nodiscard]] PartialResult parse ## NAME();
     FOR_EACH_KNOWN_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
 #undef WASM_SECTION_DECLARE_PARSER
 
-    PartialResult WARN_UNUSED_RETURN parseCustom();
+    [[nodiscard]] PartialResult parseCustom();
 
 private:
     template <typename ...Args>
-    NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
+    [[nodiscard]] NEVER_INLINE UnexpectedResult fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in namespace above.
         if (ASSERT_ENABLED && Options::crashOnFailedWasmValidate()) [[unlikely]]
@@ -62,33 +62,34 @@ private:
         return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset + m_offsetInSource), ": "_s, makeString(args)...));
     }
 
-    PartialResult WARN_UNUSED_RETURN parseGlobalType(GlobalInformation&);
-    PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
-    PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
+    [[nodiscard]] PartialResult parseGlobalType(GlobalInformation&);
+    [[nodiscard]] PartialResult parseMemoryHelper(bool isImport);
+    [[nodiscard]] PartialResult parseTableHelper(bool isImport);
     enum class LimitsType { Memory, Table };
-    PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum, bool& isShared, LimitsType);
-    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, bool&, uint64_t&, v128_t&, Type, Type& initExprType);
-    PartialResult WARN_UNUSED_RETURN parseI32InitExpr(std::optional<I32InitExpr>&, ASCIILiteral failMessage);
+    template <LimitsType T>
+    [[nodiscard]] PartialResult parseResizableLimits(uint64_t& initial, std::optional<uint64_t>& maximum, bool& isShared, bool& is64bit);
+    [[nodiscard]] PartialResult parseInitExpr(uint8_t&, bool&, uint64_t&, v128_t&, Type, Type& initExprType);
+    [[nodiscard]] PartialResult parseI32InitExpr(std::optional<I32InitExpr>&, ASCIILiteral failMessage);
 
-    PartialResult WARN_UNUSED_RETURN parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&);
-    PartialResult WARN_UNUSED_RETURN parsePackedType(PackedType&);
-    PartialResult WARN_UNUSED_RETURN parseStorageType(StorageType&);
-    PartialResult WARN_UNUSED_RETURN parseStructType(uint32_t position, RefPtr<TypeDefinition>&);
-    PartialResult WARN_UNUSED_RETURN parseArrayType(uint32_t position, RefPtr<TypeDefinition>&);
-    PartialResult WARN_UNUSED_RETURN parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>&);
-    PartialResult WARN_UNUSED_RETURN parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&, bool);
+    [[nodiscard]] PartialResult parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&);
+    [[nodiscard]] PartialResult parsePackedType(PackedType&);
+    [[nodiscard]] PartialResult parseStorageType(StorageType&);
+    [[nodiscard]] PartialResult parseStructType(uint32_t position, RefPtr<TypeDefinition>&);
+    [[nodiscard]] PartialResult parseArrayType(uint32_t position, RefPtr<TypeDefinition>&);
+    [[nodiscard]] PartialResult parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>&);
+    [[nodiscard]] PartialResult parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&, bool);
 
-    PartialResult WARN_UNUSED_RETURN validateElementTableIdx(uint32_t, Type);
-    PartialResult WARN_UNUSED_RETURN parseI32InitExprForElementSection(std::optional<I32InitExpr>&);
-    PartialResult WARN_UNUSED_RETURN parseElementKind(uint8_t& elementKind);
-    PartialResult WARN_UNUSED_RETURN parseIndexCountForElementSection(uint32_t&, const unsigned);
-    PartialResult WARN_UNUSED_RETURN parseElementSegmentVectorOfExpressions(Type, Vector<Element::InitializationType>&, Vector<uint64_t>&, const unsigned, const unsigned);
-    PartialResult WARN_UNUSED_RETURN parseElementSegmentVectorOfIndexes(Vector<Element::InitializationType>&, Vector<uint64_t>&, const unsigned, const unsigned);
+    [[nodiscard]] PartialResult validateElementTableIdx(uint32_t, Type);
+    [[nodiscard]] PartialResult parseI32InitExprForElementSection(std::optional<I32InitExpr>&);
+    [[nodiscard]] PartialResult parseElementKind(uint8_t& elementKind);
+    [[nodiscard]] PartialResult parseIndexCountForElementSection(uint32_t&, const unsigned);
+    [[nodiscard]] PartialResult parseElementSegmentVectorOfExpressions(Type, Vector<Element::InitializationType>&, Vector<uint64_t>&, const unsigned, const unsigned);
+    [[nodiscard]] PartialResult parseElementSegmentVectorOfIndexes(Vector<Element::InitializationType>&, Vector<uint64_t>&, const unsigned, const unsigned);
 
-    PartialResult WARN_UNUSED_RETURN parseI32InitExprForDataSection(std::optional<I32InitExpr>&);
+    [[nodiscard]] PartialResult parseI32InitExprForDataSection(std::optional<I32InitExpr>&);
 
     static bool checkStructuralSubtype(const TypeDefinition&, const TypeDefinition&);
-    PartialResult WARN_UNUSED_RETURN checkSubtypeValidity(const TypeDefinition&);
+    [[nodiscard]] PartialResult checkSubtypeValidity(const TypeDefinition&);
 
     size_t m_offsetInSource;
     const Ref<ModuleInformation> m_info;

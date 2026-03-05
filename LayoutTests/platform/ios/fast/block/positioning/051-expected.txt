@@ -88,14 +88,14 @@ layer at (0,0) size 800x5277 layerType: foreground only
         RenderText {#text} at (0,1) size 293x36
           text run at (0,1) width 293: "Layered Presentation"
       RenderBlock {P} at (0,59) size 784x21
-        RenderText {#text} at (0,0) size 750x19
+        RenderText {#text} at (0,0) size 750x20
           text run at (0,0) width 407: "Robert O'Callahan pointed out to me some mistakes in this test "
           text run at (406,0) width 344: "that I have not yet had the time to examine or correct."
       RenderBlock {P} at (0,95) size 784x21
-        RenderText {#text} at (0,0) size 472x19
+        RenderText {#text} at (0,0) size 472x20
           text run at (0,0) width 472: "In each of the following, 1 should be the top layer and 8 the bottom layer:"
       RenderBlock {P} at (0,4583) size 784x21
-        RenderText {#text} at (0,0) size 357x19
+        RenderText {#text} at (0,0) size 357x20
           text run at (0,0) width 357: "Using assumed default value of z-index (may not pass):"
 layer at (24,153) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,131) size 620x621 [border: (10px solid #000000)]

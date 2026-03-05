@@ -42,8 +42,6 @@ struct ImageCopyTexture {
     IntegerCoordinate mipLevel { 0 };
     std::optional<Origin3D> origin;
     TextureAspect aspect { TextureAspect::All };
-
-    Ref<Texture> protectedTexture() const { return texture.get(); }
 };
 
 } // namespace WebCore::WebGPU

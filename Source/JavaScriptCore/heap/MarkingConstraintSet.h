@@ -59,7 +59,7 @@ public:
         ConstraintVolatility volatility,
         ConstraintParallelism parallelism)
     {
-        add(abbreviatedName, name, WTFMove(executors), volatility, ConstraintConcurrency::Concurrent, parallelism);
+        add(abbreviatedName, name, WTF::move(executors), volatility, ConstraintConcurrency::Concurrent, parallelism);
     }
     
     void add(std::unique_ptr<MarkingConstraint>);

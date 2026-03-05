@@ -28,13 +28,6 @@
 
 #include "AnimationUtilities.h"
 #include "ColorBlending.h"
-#include "ColorConversion.h"
-#include "ColorMatrix.h"
-#include "ColorTypes.h"
-#include "FEDropShadow.h"
-#include "FEGaussianBlur.h"
-#include "FilterEffect.h"
-#include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -102,38 +95,6 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
     return BasicColorMatrixFilterOperation::create(blendedAmount, m_type);
 }
 
-bool BasicColorMatrixFilterOperation::isIdentity() const
-{
-    return m_type == Type::Saturate ? (m_amount == 1) : !m_amount;
-}
-
-bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
-{
-    switch (m_type) {
-    case Type::Grayscale: {
-        color = makeFromComponentsClamping<SRGBA<float>>(grayscaleColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
-        return true;
-    }
-    case Type::Sepia: {
-        color = makeFromComponentsClamping<SRGBA<float>>(sepiaColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
-        return true;
-    }
-    case Type::HueRotate: {
-        color = makeFromComponentsClamping<SRGBA<float>>(hueRotateColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
-        return true;
-    }
-    case Type::Saturate: {
-        color = makeFromComponentsClamping<SRGBA<float>>(saturationColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
-        return true;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    return false;
-}
-
 inline bool BasicColorMatrixFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -171,43 +132,6 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
     return BasicComponentTransferFilterOperation::create(blendedAmount, m_type);
 }
 
-bool BasicComponentTransferFilterOperation::isIdentity() const
-{
-    return m_type == Type::Invert ? !m_amount : (m_amount == 1);
-}
-
-bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) const
-{
-    switch (m_type) {
-    case Type::Opacity:
-        color = colorWithOverriddenAlpha(color, std::clamp<float>(color.resolved().alpha * m_amount, 0.0f, 1.0f));
-        return true;
-    case Type::Invert: {
-        float oneMinusAmount = 1.0f - m_amount;
-        color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
-            return 1.0f - (oneMinusAmount + component * (m_amount - oneMinusAmount));
-        });
-        return true;
-    }
-    case Type::Contrast: {
-        float intercept = -(0.5f * m_amount) + 0.5f;
-        color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
-            return std::clamp<float>(intercept + m_amount * component, 0.0f, 1.0f);
-        });
-        return true;
-    }
-    case Type::Brightness:
-        color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
-            return std::clamp<float>(m_amount * component, 0.0f, 1.0f);
-        });
-        return true;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    return false;
-}
-
 inline bool BasicComponentTransferFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -238,122 +162,6 @@ bool BasicComponentTransferFilterOperation::affectsOpacity() const
     return m_type == Type::Opacity;
 }
 
-bool InvertLightnessFilterOperation::operator==(const FilterOperation& operation) const
-{
-    if (!isSameType(operation))
-        return false;
-
-    return true;
-}
-    
-RefPtr<FilterOperation> InvertLightnessFilterOperation::blend(const FilterOperation* from, const BlendingContext&, bool)
-{
-    if (from && !from->isSameType(*this))
-        return this;
-
-    // This filter is not currently blendable.
-    return InvertLightnessFilterOperation::create();
-}
-
-// FIXME: This hueRotate code exists to allow InvertLightnessFilterOperation to perform hue rotation
-// on color values outside of the non-extended SRGB value range (0-1) to maintain the behavior of colors
-// prior to clamping being enforced. It should likely just use the existing hueRotateColorMatrix(amount)
-// in ColorMatrix.h
-static ColorComponents<float, 4> hueRotate(const ColorComponents<float, 4>& color, float amount)
-{
-    auto [r, g, b, alpha] = color;
-
-    auto [min, max] = std::minmax({ r, g, b });
-    float chroma = max - min;
-
-    float lightness = 0.5f * (max + min);
-    float saturation;
-    if (!chroma)
-        saturation = 0;
-    else if (lightness <= 0.5f)
-        saturation = (chroma / (max + min));
-    else
-        saturation = (chroma / (2.0f - (max + min)));
-
-    if (!saturation)
-        return { lightness, lightness, lightness, alpha };
-
-    float hue;
-    if (!chroma)
-        hue = 0;
-    else if (max == r)
-        hue = (60.0f * ((g - b) / chroma)) + 360.0f;
-    else if (max == g)
-        hue = (60.0f * ((b - r) / chroma)) + 120.0f;
-    else
-        hue = (60.0f * ((r - g) / chroma)) + 240.0f;
-
-    if (hue >= 360.0f)
-        hue -= 360.0f;
-
-    hue /= 360.0f;
-
-    // Perform rotation.
-    hue = std::fmod(hue + amount, 1.0f);
-
-    float temp2 = lightness <= 0.5f ? lightness * (1.0f + saturation) : lightness + saturation - lightness * saturation;
-    float temp1 = 2.0f * lightness - temp2;
-    
-    hue *= 6.0f; // calcHue() wants hue in the 0-6 range.
-
-    // Hue is in the range 0-6, other args in 0-1.
-    auto calcHue = [](float temp1, float temp2, float hueVal) {
-        if (hueVal < 0.0f)
-            hueVal += 6.0f;
-        else if (hueVal >= 6.0f)
-            hueVal -= 6.0f;
-        if (hueVal < 1.0f)
-            return temp1 + (temp2 - temp1) * hueVal;
-        if (hueVal < 3.0f)
-            return temp2;
-        if (hueVal < 4.0f)
-            return temp1 + (temp2 - temp1) * (4.0f - hueVal);
-        return temp1;
-    };
-
-    return {
-        calcHue(temp1, temp2, hue + 2.0f),
-        calcHue(temp1, temp2, hue),
-        calcHue(temp1, temp2, hue - 2.0f),
-        alpha
-    };
-}
-
-bool InvertLightnessFilterOperation::transformColor(SRGBA<float>& color) const
-{
-    auto hueRotatedSRGBAComponents = hueRotate(asColorComponents(color.resolved()), 0.5f);
-    
-    // Apply the matrix. See rdar://problem/41146650 for how this matrix was derived.
-    constexpr ColorMatrix<5, 3> toDarkModeMatrix {
-       -0.770f,  0.059f, -0.089f, 0.0f, 1.0f,
-        0.030f, -0.741f, -0.089f, 0.0f, 1.0f,
-        0.030f,  0.059f, -0.890f, 0.0f, 1.0f
-    };
-    color = makeFromComponentsClamping<SRGBA<float>>(toDarkModeMatrix.transformedColorComponents(hueRotatedSRGBAComponents));
-    return true;
-}
-
-bool InvertLightnessFilterOperation::inverseTransformColor(SRGBA<float>& color) const
-{
-    // Apply the matrix.
-    constexpr ColorMatrix<5, 3> toLightModeMatrix {
-        -1.300f, -0.097f,  0.147f, 0.0f, 1.25f,
-        -0.049f, -1.347f,  0.146f, 0.0f, 1.25f,
-        -0.049f, -0.097f, -1.104f, 0.0f, 1.25f
-    };
-    auto convertedToLightModeComponents = toLightModeMatrix.transformedColorComponents(asColorComponents(color.resolved()));
-
-    auto hueRotatedSRGBAComponents = hueRotate(convertedToLightModeComponents, 0.5f);
-
-    color = makeFromComponentsClamping<SRGBA<float>>(hueRotatedSRGBAComponents);
-    return true;
-}
-
 bool BlurFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -375,58 +183,44 @@ RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, 
     return BlurFilterOperation::create(std::max(0.0f, WebCore::blend(fromStdDeviation, m_stdDeviation, context)));
 }
 
-bool BlurFilterOperation::isIdentity() const
-{
-    return m_stdDeviation <= 0;
-}
-
-IntOutsets BlurFilterOperation::outsets() const
-{
-    return FEGaussianBlur::calculateOutsets({ m_stdDeviation, m_stdDeviation });
-}
-
-bool DropShadowFilterOperationBase::nonColorEqual(const DropShadowFilterOperationBase& other) const
-{
-    return m_location == other.m_location && m_stdDeviation == other.m_stdDeviation;
-}
-
-bool DropShadowFilterOperationBase::isIdentity() const
-{
-    return m_stdDeviation < 0 || (!m_stdDeviation && m_location.isZero());
-}
-
-IntOutsets DropShadowFilterOperationBase::outsets() const
-{
-    return FEDropShadow::calculateOutsets(FloatSize(x(), y()), FloatSize(m_stdDeviation, m_stdDeviation));
-}
-
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
         return false;
     const DropShadowFilterOperation& other = downcast<DropShadowFilterOperation>(operation);
-    return nonColorEqual(other) && m_color == other.m_color;
+    return m_color == other.m_color
+        && m_location == other.m_location
+        && m_stdDeviation == other.m_stdDeviation;
 }
 
-RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation*, const BlendingContext&, bool)
+RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
-    // Only DropShadowFilterOperationWithStyleColor gets blended.
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
+    // We should only ever be blending with null or similar operations.
+    ASSERT(!from || from->isSameType(*this));
 
-void DropShadowFilterOperation::dump(TextStream& ts) const
-{
-    ts << "drop-shadow("_s << x() << ' ' << y() << ' ' << location() << ' ';
-    ts << color() << ')';
+    if (blendToPassthrough) {
+        return DropShadowFilterOperation::create(
+            WebCore::blend(m_color, Color::transparentBlack, context),
+            WebCore::blend(m_location, IntPoint(), context),
+            WebCore::blend(m_stdDeviation, 0, context)
+        );
+    }
+
+    const DropShadowFilterOperation* fromOperation = downcast<DropShadowFilterOperation>(from);
+    Color fromColor = fromOperation ? fromOperation->color() : Color::transparentBlack;
+    IntPoint fromLocation = fromOperation ? fromOperation->location() : IntPoint();
+    int fromStdDeviation = fromOperation ? fromOperation->stdDeviation() : 0;
+
+    return DropShadowFilterOperation::create(
+        WebCore::blend(fromColor, m_color, context),
+        WebCore::blend(fromLocation, m_location, context),
+        std::max(WebCore::blend(fromStdDeviation, m_stdDeviation, context), 0)
+    );
 }
 
 TextStream& operator<<(TextStream& ts, const FilterOperation& filter)
 {
     switch (filter.type()) {
-    case FilterOperation::Type::Reference:
-        ts << "reference"_s;
-        break;
     case FilterOperation::Type::Grayscale: {
         const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
         ts << "grayscale("_s << colorMatrixFilter.amount() << ')';
@@ -452,10 +246,6 @@ TextStream& operator<<(TextStream& ts, const FilterOperation& filter)
         ts << "invert("_s << componentTransferFilter.amount() << ')';
         break;
     }
-    case FilterOperation::Type::AppleInvertLightness: {
-        ts << "apple-invert-lightness()"_s;
-        break;
-    }
     case FilterOperation::Type::Opacity: {
         const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
         ts << "opacity("_s << componentTransferFilter.amount() << ')';
@@ -476,10 +266,9 @@ TextStream& operator<<(TextStream& ts, const FilterOperation& filter)
         ts << "blur("_s << blurFilter.stdDeviation() << ')';
         break;
     }
-    case FilterOperation::Type::DropShadow:
-    case FilterOperation::Type::DropShadowWithStyleColor: {
-        const auto& dropShadowFilter = downcast<DropShadowFilterOperationBase>(filter);
-        dropShadowFilter.dump(ts);
+    case FilterOperation::Type::DropShadow: {
+        const auto& dropShadowFilter = downcast<DropShadowFilterOperation>(filter);
+        ts << "drop-shadow("_s << dropShadowFilter.x() << ' ' << dropShadowFilter.y() << ' ' << dropShadowFilter.location() << ' ' << dropShadowFilter.color() << ')';
         break;
     }
     case FilterOperation::Type::Passthrough:

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/absolute-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/absolute-tables-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/absolute-tables-002.html
@@ -168,6 +169,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-3.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-fixed-layout-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/iframe-display-table-content-insertion-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/iframe-display-table-content-insertion-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/iframe-display-table-content-insertion.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/internal-containing-block-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/internal-containing-block-001.html
@@ -224,6 +228,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/row-margin-border-padding-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/row-margin-border-padding-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/row-margin-border-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/rowspan-cell-border-after-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/rowspan-cell-border-after-color-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/rowspan-cell-border-after-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/rules-groups-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/rules-groups-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/rules-groups.html
@@ -253,6 +260,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-as-item-cell-percentage-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-as-item-cell-percentage-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-as-item-cell-percentage-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-caption-after-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-baseline-static-position-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-baseline-static-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-child-overflow-measure-expected.html
@@ -274,6 +282,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-overflow-explicit-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-scroll-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-writing-mode-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-collapsed-row-or-column-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-colspan-percent-auto-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-colspan-percent-auto-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-colspan-percent-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-has-box-sizing-border-box-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-has-box-sizing-border-box-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-has-box-sizing-border-box-002-expected.xht

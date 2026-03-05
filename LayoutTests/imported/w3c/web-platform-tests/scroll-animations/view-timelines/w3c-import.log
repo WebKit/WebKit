@@ -36,7 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/timeline-offset-in-keyframe.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/unattached-subject-inset.html
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-get-current-time-range-name.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-get-current-time-range-name.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-get-set-range.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-inset.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-missing-subject.html

@@ -38,9 +38,9 @@ public:
     virtual ~SpeechSynthesisVoice() = default;
     static Ref<SpeechSynthesisVoice> create(PlatformSpeechSynthesisVoice&);
 
-    const String& voiceURI() const { return m_platformVoice->voiceURI(); }
-    const String& name() const { return m_platformVoice->name(); }
-    const String& lang() const { return m_platformVoice->lang(); }
+    const String& voiceURI() const LIFETIME_BOUND { return m_platformVoice->voiceURI(); }
+    const String& name() const LIFETIME_BOUND { return m_platformVoice->name(); }
+    const String& lang() const LIFETIME_BOUND { return m_platformVoice->lang(); }
     bool localService() const { return m_platformVoice->localService(); }
     bool isDefault() const { return m_platformVoice->isDefault(); }
 

@@ -1,0 +1,145 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<h1 id="main-h1">Main Frame Heading</h1>
+<iframe id="outer-iframe" src="http://localhost:8000/site-isolation/accessibility/resources/nested-iframe-middle.html"></iframe>
+<h2 id="main-h2">Main Frame Heading After Iframe</h2>
+
+<script>
+var output = "Tests cross-process search through three-level nested iframes (A -> B -> C).\n";
+
+window.jsTestIsAsync = true;
+
+var iframeLoadCount = 0;
+var expectedLoads = 2; // outer iframe + inner iframe inside it
+
+function checkReady() {
+    iframeLoadCount++;
+    if (iframeLoadCount >= expectedLoads) {
+        // Wait a small delay for the nested iframes to fully load and be accessible.
+        setTimeout(runTest, 100);
+    }
+}
+
+async function performSearch(webArea, isForward, resultsLimit) {
+    var results;
+    await waitFor(() => {
+        results = webArea.uiElementsForSearchPredicate(
+            null,           // startElement
+            isForward,      // isDirectionNext
+            "AXHeadingSearchKey",
+            "",             // searchText
+            false,          // visibleOnly
+            false,          // immediateDescendantsOnly
+            resultsLimit
+        );
+        // Check that we have at least 4 results (headings from all 3 levels plus after)
+        // and at least one is a remote platform element.
+        if (!results || results.length < 4)
+            return false;
+        for (var i = 0; i < results.length; i++) {
+            if (results[i].isRemotePlatformElement)
+                return true;
+        }
+        return false;
+    });
+    return results;
+}
+
+function formatResults(results, direction) {
+    var formatted = `${direction} heading search found ${results.length} headings:\n`;
+    for (var i = 0; i < results.length; i++) {
+        var element = results[i];
+        if (element.isRemotePlatformElement)
+            formatted += `  ${i + 1}: (remote platform element)\n`;
+        else
+            formatted += `  ${i + 1}: domIdentifier=${element.domIdentifier || "(no id)"}, role=${element.role}\n`;
+    }
+    return formatted;
+}
+
+async function performSearchAndFormatResults(webArea, isForward) {
+    var searchResults = await performSearch(webArea, isForward, 10);
+
+    const directionString = isForward ? "Forward" : "Backward";
+    output += `\n=== ${directionString} Heading Search${isForward ? " (3 levels)" : ""} ===\n`;
+    if (!searchResults) {
+        output += `FAIL: ${directionString} heading search returned null\n`;
+        debug(output);
+        finishJSTest();
+        return null;
+    }
+    output += formatResults(searchResults, directionString);
+    return searchResults;
+}
+
+var forwardResults, backwardResults;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    var root = accessibilityController.rootElement;
+    touchAccessibilityTree(root);
+    var webArea = root.childAtIndex(0);
+
+    forwardResults = await performSearchAndFormatResults(webArea, /* isForward */ true);
+    if (!forwardResults)
+        return;
+
+    // Verify we found headings from all three levels
+    // Expected: main-h1 (local), remote elements from nested iframes, main-h2 (local)
+    output += expect("forwardResults.length >= 4", "true");
+    output += expect("forwardResults[0].domIdentifier", "'main-h1'");
+    output += expect("forwardResults[0].isRemotePlatformElement", "false");
+    // Middle elements should be remote (from nested iframes)
+    output += expect("forwardResults[1].isRemotePlatformElement", "true");
+    // Last element should be main-h2 (local, after the iframe)
+    output += expect("forwardResults[forwardResults.length - 1].domIdentifier", "'main-h2'");
+    output += expect("forwardResults[forwardResults.length - 1].isRemotePlatformElement", "false");
+
+    backwardResults = await performSearchAndFormatResults(webArea, /* isForward */ false);
+    if (!backwardResults)
+        return;
+
+    // Backward should have main-h2 first, then remote elements, then main-h1
+    output += expect("backwardResults.length >= 4", "true");
+    output += expect("backwardResults[0].domIdentifier", "'main-h2'");
+    output += expect("backwardResults[0].isRemotePlatformElement", "false");
+    // Middle elements should be remote (from nested iframes)
+    output += expect("backwardResults[1].isRemotePlatformElement", "true");
+    // Last element should be main-h1 (local, before the iframe)
+    output += expect("backwardResults[backwardResults.length - 1].domIdentifier", "'main-h1'");
+    output += expect("backwardResults[backwardResults.length - 1].isRemotePlatformElement", "false");
+
+    debug(output);
+    finishJSTest();
+}
+
+// The outer iframe will trigger this when loaded, and we also need to wait for nested iframe
+document.getElementById("outer-iframe").onload = function() {
+    checkReady();
+    // Also listen for the nested iframe load via message
+    var outerIframe = document.getElementById("outer-iframe");
+    try {
+        var innerIframe = outerIframe.contentDocument.getElementById("inner-iframe");
+        if (innerIframe) {
+            if (innerIframe.contentDocument && innerIframe.contentDocument.readyState === "complete")
+                checkReady();
+            else
+                innerIframe.onload = checkReady;
+        } else {
+            // Inner iframe might not be accessible due to cross-origin, use a timeout fallback.
+            setTimeout(checkReady, 200);
+        }
+    } catch (exception) {
+        // Cross-origin access denied, use hardcoded timeout.
+        setTimeout(checkReady, 200);
+    }
+};
+</script>
+</body>
+</html>

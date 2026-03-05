@@ -446,7 +446,7 @@ void InProcessIDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifi
     std::optional<WebCore::IDBResourceIdentifier> transactionIdentifierCopy;
     if (transactionIdentifier)
         transactionIdentifierCopy = transactionIdentifier->isolatedCopy();
-    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = WTFMove(transactionIdentifierCopy)] {
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = WTF::move(transactionIdentifierCopy)] {
         Locker locker { m_serverLock };
         m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
     });
@@ -486,8 +486,8 @@ void InProcessIDBServer::getAllDatabaseNamesAndVersions(const WebCore::IDBResour
 
 void InProcessIDBServer::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion>&& databases)
 {
-    dispatchTaskReply([this, protectedThis = Ref { *this }, requestIdentifier, databases = crossThreadCopy(WTFMove(databases))]() mutable {
-        m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
+    dispatchTaskReply([this, protectedThis = Ref { *this }, requestIdentifier, databases = crossThreadCopy(WTF::move(databases))]() mutable {
+        m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(databases));
     });
 }
 
@@ -502,11 +502,11 @@ void InProcessIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificat
 void InProcessIDBServer::dispatchTask(Function<void()>&& function)
 {
     ASSERT(isMainThread());
-    m_queue->dispatch(WTFMove(function));
+    m_queue->dispatch(WTF::move(function));
 }
 
 void InProcessIDBServer::dispatchTaskReply(Function<void()>&& function)
 {
     ASSERT(!isMainThread());
-    callOnMainThread(WTFMove(function));
+    callOnMainThread(WTF::move(function));
 }

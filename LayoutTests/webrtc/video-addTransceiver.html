@@ -29,6 +29,8 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getVideoTracks()[0].stop());
+
     var pc = new RTCPeerConnection();
     pc.addTransceiver("video", {direction:"recvonly"});
     pc.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
@@ -44,6 +46,7 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getVideoTracks()[0].stop());
     var pc = new RTCPeerConnection();
     pc.addTransceiver(stream.getVideoTracks()[0]);
     await pc.getSenders()[0].replaceTrack(null);
@@ -87,6 +90,7 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     const stream = await navigator.mediaDevices.getUserMedia({ video: true});
+    test.add_cleanup(() => stream.getVideoTracks()[0].stop());
     const track = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
             var track = stream.getVideoTracks()[0];
@@ -118,6 +122,8 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+    test.add_cleanup(() => stream.getAudioTracks()[0].stop());
+    test.add_cleanup(() => stream.getVideoTracks()[0].stop());
 
     const remoteStream = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {

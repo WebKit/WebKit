@@ -152,7 +152,7 @@ public:
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
     WEBCORE_EXPORT OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
-    const Region& eventListenerRegionForType(EventListenerRegionType) const;
+    const Region& NODELETE eventListenerRegionForType(EventListenerRegionType) const;
 #endif
 
 #if ENABLE(EDITABLE_REGION)

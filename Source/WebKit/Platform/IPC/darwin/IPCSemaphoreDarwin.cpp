@@ -37,13 +37,13 @@ Semaphore::Semaphore()
 }
 
 Semaphore::Semaphore(Semaphore&& other)
-    : m_sendRight(WTFMove(other.m_sendRight))
+    : m_sendRight(WTF::move(other.m_sendRight))
     , m_semaphore(std::exchange(other.m_semaphore, SEMAPHORE_NULL))
 {
 }
 
 Semaphore::Semaphore(MachSendRight&& sendRight)
-    : m_sendRight(WTFMove(sendRight))
+    : m_sendRight(WTF::move(sendRight))
     , m_semaphore(m_sendRight.sendRight())
 {
     ASSERT(m_sendRight);
@@ -58,7 +58,7 @@ Semaphore& Semaphore::operator=(Semaphore&& other)
 {
     if (this != &other) {
         destroy();
-        m_sendRight = WTFMove(other.m_sendRight);
+        m_sendRight = WTF::move(other.m_sendRight);
         m_semaphore = std::exchange(other.m_semaphore, SEMAPHORE_NULL);
     }
 

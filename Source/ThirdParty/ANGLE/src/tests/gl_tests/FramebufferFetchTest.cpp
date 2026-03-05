@@ -6621,6 +6621,86 @@ void main (void)
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
 }
 
+// Test that declaring inout variables but only ever writing to them works, using a format with
+// fewer than 4 channels.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableVec2)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec2 color;
+
+void main (void)
+{
+    color = vec2(1, 0);
+})";
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RG8, getWindowWidth(), getWindowHeight());
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 1, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
+}
+
+// Test that declaring inout variables but only ever writing to them works, using a format with
+// a single channel.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableFloat)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp float color;
+
+void main (void)
+{
+    color = 1.;
+})";
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R8, getWindowWidth(), getWindowHeight());
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
+}
+
 // Test that declaring inout variables but only ever writing to them works.  This test writes to
 // different channels of the variable separately.
 TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableSplit)
@@ -6707,7 +6787,47 @@ void main (void)
 {
     if (gl_FragCoord.x < 8.)
     {
-        color.yz = vec2(1, 0);
+        color.yzw = vec3(1, 0, 1);
+    }
+    color.x = 1.;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 8, getWindowHeight(), GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(8, 0, getWindowWidth() - 8, getWindowHeight(), GLColor::magenta);
+}
+
+// Verify that conditional writes to an |inout| variable don't make ANGLE consider it as an |out|
+// variable.  The write is done in a function and the condition is at call site.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableConditionalFunctionCall)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void f()
+{
+    color = vec4(0, 1, 0, 1);
+}
+
+void main (void)
+{
+    if (gl_FragCoord.x < 8.)
+    {
+        f();
     }
     color.x = 1.;
 })";
@@ -6793,6 +6913,115 @@ void main (void)
     drawQuad(program, "position", 0);
     EXPECT_PIXEL_RECT_EQ(0, 0, 8, getWindowHeight(), GLColor::blue);
     EXPECT_PIXEL_RECT_EQ(8, 0, getWindowWidth() - 8, getWindowHeight(), GLColor::magenta);
+}
+
+// Verify that passing an |inout| variable to an |in| parameter stops ANGLE from considering it as
+// an |out| variable.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableInArgument)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void f(highp vec4 c)
+{
+    c += vec4(0.1);
+}
+
+void main (void)
+{
+    f(color);
+    color.x = 1.;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+}
+
+// Verify that passing an |inout| variable to an |inout| parameter stops ANGLE from considering it
+// as an |out| variable.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableInOutArgument)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void f(inout highp vec4 c)
+{
+    highp vec4 readFromC = c + vec4(0.1);
+    readFromC += vec4(0.2);
+    c.w = 1.;
+}
+
+void main (void)
+{
+    f(color);
+    color.x = 1.;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+}
+
+// Test that declaring |inout| variables but only ever writing to them in a function |out| parameter
+// works.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableOutArgument)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void f(out highp vec4 c)
+{
+    c = vec4(0, 1, 0, 1);
+}
+
+void main (void)
+{
+    f(color);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);

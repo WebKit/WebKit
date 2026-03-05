@@ -62,15 +62,14 @@ public:
 
     ~RemoteVideoFrameProxy() final;
 
-    RemoteVideoFrameIdentifier identifier() const;
-    RemoteVideoFrameReadReference newReadReference() const;
+    RemoteVideoFrameIdentifier NODELETE identifier() const;
+    RemoteVideoFrameReadReference NODELETE newReadReference() const;
 
     WebCore::IntSize size() const { return m_size; }
 
     // WebCore::VideoFrame overrides.
     WebCore::IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final;
-    RefPtr<WebCore::NativeImage> copyNativeImage() const final;
     bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
@@ -91,7 +90,8 @@ private:
     std::optional<RemoteVideoFrameReferenceTracker> m_referenceTracker;
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
-    const Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+    // FIXME: Remove this.
+    mutable RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #if PLATFORM(COCOA)
     mutable Lock m_pixelBufferLock;
     mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer;

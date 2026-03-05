@@ -32,6 +32,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+#include "ScrollerImpAdwaita.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateScrollingNode);
@@ -57,7 +61,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> synchronousScrollingReasons,
 #endif
-    RequestedScrollData&& requestedScrollData,
+    ScrollRequestData&& requestedScrollData,
     FloatScrollSnapOffsetsInfo&& snapOffsetsInfo,
     std::optional<unsigned> currentHorizontalSnapPointIndex,
     std::optional<unsigned> currentVerticalSnapPointIndex,
@@ -75,26 +79,26 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     ScrollbarWidth scrollbarWidth,
     bool useDarkAppearanceForScrollbars,
     RequestedKeyboardScrollData&& keyboardScrollData
-) : ScrollingStateNode(nodeType, nodeID, WTFMove(children), changedProperties, layerID)
+) : ScrollingStateNode(nodeType, nodeID, WTF::move(children), changedProperties, layerID)
     , m_scrollableAreaSize(scrollableAreaSize)
     , m_totalContentsSize(totalContentsSize)
     , m_reachableContentsSize(reachableContentsSize)
     , m_scrollPosition(scrollPosition)
     , m_scrollOrigin(scrollOrigin)
-    , m_snapOffsetsInfo(WTFMove(snapOffsetsInfo))
+    , m_snapOffsetsInfo(WTF::move(snapOffsetsInfo))
     , m_currentHorizontalSnapPointIndex(currentHorizontalSnapPointIndex)
     , m_currentVerticalSnapPointIndex(currentVerticalSnapPointIndex)
     , m_scrollContainerLayer(scrollContainerLayer)
     , m_scrolledContentsLayer(scrolledContentsLayer)
     , m_horizontalScrollbarLayer(horizontalScrollbarLayer)
     , m_verticalScrollbarLayer(verticalScrollbarLayer)
-    , m_scrollbarHoverState(WTFMove(scrollbarHoverState))
-    , m_mouseLocationState(WTFMove(mouseLocationState))
-    , m_scrollbarEnabledState(WTFMove(scrollbarEnabledState))
-    , m_scrollbarColor(WTFMove(scrollbarColor))
-    , m_scrollableAreaParameters(WTFMove(scrollableAreaParameters))
-    , m_requestedScrollData(WTFMove(requestedScrollData))
-    , m_keyboardScrollData(WTFMove(keyboardScrollData))
+    , m_scrollbarHoverState(WTF::move(scrollbarHoverState))
+    , m_mouseLocationState(WTF::move(mouseLocationState))
+    , m_scrollbarEnabledState(WTF::move(scrollbarEnabledState))
+    , m_scrollbarColor(WTF::move(scrollbarColor))
+    , m_scrollableAreaParameters(WTF::move(scrollableAreaParameters))
+    , m_requestedScrollData(WTF::move(requestedScrollData))
+    , m_keyboardScrollData(WTF::move(keyboardScrollData))
 #if ENABLE(SCROLLING_THREAD)
     , m_synchronousScrollingReasons(synchronousScrollingReasons)
 #endif
@@ -115,9 +119,13 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_scrollPosition(stateNode.scrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
     , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     , m_scrollbarHoverState(stateNode.scrollbarHoverState())
+#endif
+#if PLATFORM(MAC)
     , m_mouseLocationState(stateNode.mouseLocationState())
+#endif
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     , m_scrollbarEnabledState(stateNode.scrollbarEnabledState())
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
@@ -136,6 +144,9 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_useDarkAppearanceForScrollbars(stateNode.useDarkAppearanceForScrollbars())
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
     , m_mouseIsOverContentArea(stateNode.mouseIsOverContentArea())
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    , m_scrollbarOpacity(stateNode.scrollbarOpacity())
+#endif
 {
     scrollingStateTree().scrollingNodeAdded();
 
@@ -286,21 +297,161 @@ void ScrollingStateScrollingNode::setKeyboardScrollData(const RequestedKeyboardS
     setPropertyChanged(Property::KeyboardScrollData);
 }
 
-void ScrollingStateScrollingNode::setRequestedScrollData(RequestedScrollData&& scrollData, CanMergeScrollData canMergeScrollData)
+void ScrollingStateScrollingNode::mergeOrAppendScrollRequest(RequestedScrollData&& scrollRequest)
 {
-    // Scroll position requests are imperative, not stateful, so we can't early return here.
-    if (hasChangedProperty(Property::RequestedScrollPosition) && canMergeScrollData == CanMergeScrollData::Yes) {
-        m_requestedScrollData.merge(WTFMove(scrollData));
+    // This logic is based on the follow invariants:
+    // * all ScrollRequestTypes other than ImplicitDeltaUpdate cancel ongoing animated scrolls
+    // * a CancelAnimatedScroll followed by a ImplicitDeltaUpdate will become a DeltaUpdate
+    // * thus, if a CancelAnimatedScroll is present, it will be the only item
+    // * the only valid two-entry combinations have an animated update as the second entry
+    // The logic needs to ensure that scrollData.identifier is always present in the new state (we must not lose the most recent identifier).
+
+    auto replaceExisting = [](ScrollRequestData& scrollRequests, RequestedScrollData&& newRequest) {
+        scrollRequests.resize(1);
+        scrollRequests[0] = WTF::move(newRequest);
+    };
+
+    auto replaceAnimation = [](ScrollRequestData& scrollRequests, const RequestedScrollData& newRequest) {
+        ASSERT(isAnimatedUpdate(newRequest.requestType));
+        if (scrollRequests.size() == 2) {
+            ASSERT(isAnimatedUpdate(scrollRequests[1].requestType));
+            scrollRequests[1] = newRequest;
+            return true;
+        }
+
+        return false;
+    };
+
+    auto accumulateDelta = [](ScrollRequestData& scrollRequests, RequestedScrollData&& newRequest) {
+        ASSERT(scrollRequests.size() == 1);
+        auto& request = scrollRequests[0];
+        switch (request.requestType) {
+        case ScrollRequestType::PositionUpdate:
+            request.scrollPositionOrDelta = std::get<FloatPoint>(request.scrollPositionOrDelta) + std::get<FloatSize>(newRequest.scrollPositionOrDelta);
+            if (request.identifier && newRequest.identifier)
+                request.identifier = std::max(*request.identifier, *newRequest.identifier);
+            break;
+        case ScrollRequestType::DeltaUpdate:
+        case ScrollRequestType::ImplicitDeltaUpdate:
+            std::get<FloatSize>(request.scrollPositionOrDelta) += std::get<FloatSize>(newRequest.scrollPositionOrDelta);
+            if (request.identifier && newRequest.identifier)
+                request.identifier = std::max(*request.identifier, *newRequest.identifier);
+            break;
+
+        case ScrollRequestType::AnimatedPositionUpdate:
+        case ScrollRequestType::AnimatedDeltaUpdate:
+        case ScrollRequestType::CancelAnimatedScroll:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    };
+
+    if (m_requestedScrollData.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        m_requestedScrollData.append(WTF::move(scrollRequest));
         return;
     }
 
-    m_requestedScrollData = WTFMove(scrollData);
+    switch (scrollRequest.requestType) {
+    case ScrollRequestType::PositionUpdate:
+        // A position update will automatically cancel any animated scroll, and overrule an existing position or delta scroll.
+        replaceExisting(m_requestedScrollData, WTF::move(scrollRequest));
+        break;
+
+    case ScrollRequestType::DeltaUpdate:
+    case ScrollRequestType::ImplicitDeltaUpdate:
+        ASSERT_IMPLIES(m_requestedScrollData.size() > 1, isAnimatedUpdate(m_requestedScrollData[1].requestType));
+        // The delta update removes any existing animation update.
+        m_requestedScrollData.resize(1);
+
+        switch (m_requestedScrollData[0].requestType) {
+        case ScrollRequestType::PositionUpdate:
+        case ScrollRequestType::DeltaUpdate:
+            accumulateDelta(m_requestedScrollData, WTF::move(scrollRequest));
+            break;
+        case ScrollRequestType::ImplicitDeltaUpdate:
+            m_requestedScrollData[0].requestType = ScrollRequestType::DeltaUpdate;
+            accumulateDelta(m_requestedScrollData, WTF::move(scrollRequest));
+            break;
+        case ScrollRequestType::AnimatedPositionUpdate:
+        case ScrollRequestType::AnimatedDeltaUpdate:
+            m_requestedScrollData[0] = WTF::move(scrollRequest);
+            break;
+        case ScrollRequestType::CancelAnimatedScroll:
+            m_requestedScrollData[0] = WTF::move(scrollRequest);
+            if (m_requestedScrollData[0].requestType == ScrollRequestType::ImplicitDeltaUpdate)
+                m_requestedScrollData[0].requestType = ScrollRequestType::DeltaUpdate;
+            break;
+        }
+        break;
+
+    case ScrollRequestType::AnimatedPositionUpdate:
+    case ScrollRequestType::AnimatedDeltaUpdate:
+        if (replaceAnimation(m_requestedScrollData, scrollRequest))
+            break;
+
+        switch (m_requestedScrollData[0].requestType) {
+        case ScrollRequestType::PositionUpdate:
+        case ScrollRequestType::DeltaUpdate:
+            m_requestedScrollData.append(WTF::move(scrollRequest));
+            break;
+        case ScrollRequestType::ImplicitDeltaUpdate:
+            m_requestedScrollData[0].requestType = ScrollRequestType::DeltaUpdate;
+            m_requestedScrollData.append(WTF::move(scrollRequest));
+            break;
+        case ScrollRequestType::AnimatedPositionUpdate:
+        case ScrollRequestType::AnimatedDeltaUpdate:
+        case ScrollRequestType::CancelAnimatedScroll:
+            m_requestedScrollData[0] = WTF::move(scrollRequest);
+            break;
+        }
+        break;
+
+    case ScrollRequestType::CancelAnimatedScroll:
+        if (m_requestedScrollData.size() == 2) {
+            ASSERT(isAnimatedUpdate(m_requestedScrollData[1].requestType));
+            m_requestedScrollData.resize(1);
+            m_requestedScrollData[0].identifier = scrollRequest.identifier;
+            break;
+        }
+
+        switch (m_requestedScrollData[0].requestType) {
+        case ScrollRequestType::PositionUpdate:
+        case ScrollRequestType::DeltaUpdate:
+        case ScrollRequestType::CancelAnimatedScroll:
+            m_requestedScrollData[0].identifier = scrollRequest.identifier;
+            break;
+        case ScrollRequestType::ImplicitDeltaUpdate:
+            m_requestedScrollData[0].requestType = ScrollRequestType::DeltaUpdate;
+            m_requestedScrollData[0].identifier = scrollRequest.identifier;
+            break;
+
+        case ScrollRequestType::AnimatedPositionUpdate:
+        case ScrollRequestType::AnimatedDeltaUpdate:
+            m_requestedScrollData[0] = WTF::move(scrollRequest);
+            break;
+        }
+        break;
+    }
+}
+
+void ScrollingStateScrollingNode::setRequestedScrollData(RequestedScrollData&& scrollData)
+{
+    if (hasChangedProperty(Property::RequestedScrollPosition)) {
+        ASSERT(m_requestedScrollData.size());
+        mergeOrAppendScrollRequest(WTF::move(scrollData));
+        return;
+    }
+
+    m_requestedScrollData.resize(1);
+    m_requestedScrollData[0] = WTF::move(scrollData);
+
     setPropertyChanged(Property::RequestedScrollPosition);
 }
 
 bool ScrollingStateScrollingNode::hasScrollPositionRequest() const
 {
-    return hasChangedProperty(Property::RequestedScrollPosition) && m_requestedScrollData.requestType != ScrollRequestType::CancelAnimatedScroll;
+    return hasChangedProperty(Property::RequestedScrollPosition) && m_requestedScrollData.size() && m_requestedScrollData[0].requestType != ScrollRequestType::CancelAnimatedScroll;
 }
 
 void ScrollingStateScrollingNode::setIsMonitoringWheelEvents(bool isMonitoringWheelEvents)
@@ -347,7 +498,7 @@ void ScrollingStateScrollingNode::setVerticalScrollbarLayer(const LayerRepresent
     setPropertyChanged(Property::VerticalScrollbarLayer);
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
 void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scrollbar*)
 {
 }
@@ -424,11 +575,21 @@ void ScrollingStateScrollingNode::setUseDarkAppearanceForScrollbars(bool useDark
     setPropertyChanged(Property::UseDarkAppearanceForScrollbars);
 }
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+void ScrollingStateScrollingNode::setScrollbarOpacity(float scrollbarOpacity)
+{
+    if (scrollbarOpacity == m_scrollbarOpacity)
+        return;
+    m_scrollbarOpacity = scrollbarOpacity;
+    setPropertyChanged(Property::ScrollbarOpacity);
+}
+#endif
+
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ScrollingStateNode::dumpProperties(ts, behavior);
     
-    if (m_scrollPosition != FloatPoint()) {
+    if (!m_scrollPosition.isZero()) {
         TextStream::GroupScope scope(ts);
         ts << "scroll position "_s
             << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.x()) << " "
@@ -452,34 +613,42 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scrol
     if (m_reachableContentsSize != m_totalContentsSize)
         ts.dumpProperty("reachable contents size"_s, m_reachableContentsSize);
 
-    if (m_requestedScrollData.requestType == ScrollRequestType::PositionUpdate) {
-        auto scrollPosition = std::get<FloatPoint>(m_requestedScrollData.scrollPositionOrDelta);
-        if (!scrollPosition.isZero()) {
-            TextStream::GroupScope scope(ts);
-            ts << "requested scroll position "_s
-            << TextStream::FormatNumberRespectingIntegers(scrollPosition.x()) << " "
-            << TextStream::FormatNumberRespectingIntegers(scrollPosition.y());
+    auto dumpRequest = [&](const RequestedScrollData& request) {
+        if (request.requestType == ScrollRequestType::PositionUpdate || request.requestType == ScrollRequestType::AnimatedPositionUpdate) {
+            auto scrollPosition = std::get<FloatPoint>(request.scrollPositionOrDelta);
+            if (!scrollPosition.isZero()) {
+                TextStream::GroupScope scope(ts);
+                ts << "requested scroll position "_s
+                << TextStream::FormatNumberRespectingIntegers(scrollPosition.x()) << " "
+                << TextStream::FormatNumberRespectingIntegers(scrollPosition.y());
+            }
+        } else if (request.requestType == ScrollRequestType::DeltaUpdate || request.requestType == ScrollRequestType::AnimatedDeltaUpdate || request.requestType == ScrollRequestType::ImplicitDeltaUpdate) {
+            auto scrollDelta = std::get<FloatSize>(request.scrollPositionOrDelta);
+            if (!scrollDelta.isZero()) {
+                TextStream::GroupScope scope(ts);
+                if (request.requestType == ScrollRequestType::DeltaUpdate || request.requestType == ScrollRequestType::AnimatedDeltaUpdate)
+                    ts << "requested scroll delta "_s;
+                else
+                    ts << "requested scroll implicit delta "_s;
+                ts << TextStream::FormatNumberRespectingIntegers(scrollDelta.width()) << " "
+                    << TextStream::FormatNumberRespectingIntegers(scrollDelta.height());
+            }
         }
-    } else if (m_requestedScrollData.requestType == ScrollRequestType::DeltaUpdate) {
-        auto scrollDelta = std::get<FloatSize>(m_requestedScrollData.scrollPositionOrDelta);
-        if (!scrollDelta.isZero()) {
-            TextStream::GroupScope scope(ts);
-            ts << "requested scroll delta "_s
-            << TextStream::FormatNumberRespectingIntegers(scrollDelta.width()) << " "
-            << TextStream::FormatNumberRespectingIntegers(scrollDelta.height());
-        }
-    }
 
-    if (m_requestedScrollData.scrollType == ScrollType::Programmatic)
-        ts.dumpProperty("requested scroll position represents programmatic scroll"_s, true);
+        if (request.scrollType == ScrollType::Programmatic)
+            ts.dumpProperty("requested scroll position represents programmatic scroll"_s, true);
 
-    if (m_requestedScrollData.clamping == ScrollClamping::Unclamped)
-        ts.dumpProperty("requested scroll position clamping"_s, m_requestedScrollData.clamping);
+        if (request.clamping == ScrollClamping::Unclamped)
+            ts.dumpProperty("requested scroll position clamping"_s, request.clamping);
 
-    if (m_requestedScrollData.animated == ScrollIsAnimated::Yes)
-        ts.dumpProperty("requested scroll position is animated"_s, true);
+        if (isAnimatedUpdate(request.requestType))
+            ts.dumpProperty("requested scroll position is animated"_s, true);
+    };
 
-    if (m_scrollOrigin != IntPoint())
+    for (auto& request : m_requestedScrollData)
+        dumpRequest(request);
+
+    if (!m_scrollOrigin.isZero())
         ts.dumpProperty("scroll origin"_s, m_scrollOrigin);
 
     if (m_snapOffsetsInfo.horizontalSnapOffsets.size())

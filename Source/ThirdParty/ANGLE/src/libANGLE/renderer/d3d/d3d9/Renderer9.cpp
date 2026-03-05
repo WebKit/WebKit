@@ -1169,6 +1169,8 @@ angle::Result Renderer9::updateState(const gl::Context *context, gl::PrimitiveMo
     if (firstColorAttachment)
     {
         ASSERT(firstColorAttachment->isAttached());
+        // GL_OVR_multiview_multisampled_render_to_texture is not supported on D3D backend
+        ASSERT(!(firstColorAttachment->isRenderToTexture() && firstColorAttachment->isMultiview()));
         RenderTarget9 *renderTarget = nullptr;
         ANGLE_TRY(firstColorAttachment->getRenderTarget(context, firstColorAttachment->getSamples(),
                                                         &renderTarget));
@@ -1208,6 +1210,8 @@ angle::Result Renderer9::setBlendDepthRasterStates(const gl::Context *context,
     if (firstColorAttachment)
     {
         ASSERT(firstColorAttachment->isAttached());
+        // GL_OVR_multiview_multisampled_render_to_texture is not supported on D3D backend
+        ASSERT(!(firstColorAttachment->isRenderToTexture() && firstColorAttachment->isMultiview()));
         RenderTarget9 *renderTarget = nullptr;
         ANGLE_TRY(firstColorAttachment->getRenderTarget(context, firstColorAttachment->getSamples(),
                                                         &renderTarget));
@@ -2609,7 +2613,7 @@ angle::Result Renderer9::createRenderTarget(const gl::Context *context,
     const d3d9::TextureFormat &d3d9FormatInfo = d3d9::GetTextureFormatInfo(format);
 
     const gl::TextureCaps &textureCaps = getNativeTextureCaps().get(format);
-    GLuint supportedSamples            = textureCaps.getNearestSamples(samples);
+    GLuint supportedSamples            = textureCaps.sampleCounts.getNearestSamples(samples);
 
     IDirect3DTexture9 *texture      = nullptr;
     IDirect3DSurface9 *renderTarget = nullptr;

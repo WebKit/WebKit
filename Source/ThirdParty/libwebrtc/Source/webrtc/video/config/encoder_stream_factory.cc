@@ -41,20 +41,26 @@
 
 namespace webrtc {
 namespace {
+constexpr int kMinLayerSize = 16;
 
-
-const int kMinLayerSize = 16;
-
-int ScaleDownResolution(int resolution,
-                        double scale_down_by,
-                        int min_resolution) {
-  // Resolution is never scalied down to smaller than min_resolution.
-  // If the input resolution is already smaller than min_resolution,
-  // no scaling should be done at all.
-  if (resolution <= min_resolution)
+Resolution ScaleResolutionDownBy(const Resolution& resolution,
+                                 double scale_down_by) {
+  if (resolution.width <= kMinLayerSize || resolution.height <= kMinLayerSize) {
     return resolution;
-  return std::max(static_cast<int>(resolution / scale_down_by + 0.5),
-                  min_resolution);
+  }
+  int short_side = std::min(resolution.width / scale_down_by,
+                            resolution.height / scale_down_by);
+  if (short_side < kMinLayerSize) {
+    // Adjust scale factor to make the short side equal to kMinLayerSize.
+    scale_down_by =
+        std::min(resolution.width / static_cast<double>(kMinLayerSize),
+                 resolution.height / static_cast<double>(kMinLayerSize));
+  }
+
+  return {
+      .width = static_cast<int>(std::round(resolution.width / scale_down_by)),
+      .height =
+          static_cast<int>(std::round(resolution.height / scale_down_by))};
 }
 
 bool PowerOfTwo(int value) {
@@ -120,20 +126,57 @@ int GetDefaultMaxQp(VideoCodecType codec_type) {
   }
 }
 
-// Round size to nearest simulcast-friendly size.
-// Simulcast stream width and height must both be dividable by
-// |2 ^ (simulcast_layers - 1)|.
-int NormalizeSimulcastSize(const FieldTrialsView& field_trials,
-                           int size,
-                           size_t simulcast_layers) {
-  int base2_exponent = static_cast<int>(simulcast_layers) - 1;
-  const std::optional<int> experimental_base2_exponent =
-      NormalizeSimulcastSizeExperiment::GetBase2Exponent(field_trials);
-  if (experimental_base2_exponent &&
-      (size > (1 << *experimental_base2_exponent))) {
-    base2_exponent = *experimental_base2_exponent;
+Resolution NormalizeResolution(const Resolution& resolution,
+                               const VideoEncoderConfig& encoder_config,
+                               int max_num_layers,
+                               const FieldTrialsView& trials) {
+  if (resolution.width < kMinLayerSize || resolution.height < kMinLayerSize) {
+    // Resolution is already too low. Avoid further adjustments.
+    return resolution;
   }
-  return ((size >> base2_exponent) << base2_exponent);
+
+  std::optional<int> log2_scale_factor =
+      NormalizeSimulcastSizeExperiment::GetBase2Exponent(trials);
+  if (log2_scale_factor && (resolution.width < (1 << *log2_scale_factor) ||
+                            resolution.height < (1 << *log2_scale_factor))) {
+    // The experimental scale factor is too large for the given input
+    // resolution. Fall back to the default logic.
+    log2_scale_factor = std::nullopt;
+  }
+
+  if (!log2_scale_factor) {
+    // If `scale_resolution_down_by` is not set, default to 1/2 scaling. If
+    // `scale_resolution_down_by` is set for one or more simulcast layers,
+    // normalize the resolution to be a multiple of the maximum scale factor if
+    // both of the following conditions are true:
+    // 1. All configured scale factors are power of two.
+    // 2. The maximum scale factor is greater than one.
+    // Otherwise, keep the resolution unchanged.
+    if (!encoder_config.HasScaleResolutionDownBy()) {
+      log2_scale_factor = max_num_layers - 1;
+    } else if (IsScaleFactorsPowerOfTwo(encoder_config)) {
+      auto smallest_layer = absl::c_max_element(
+          encoder_config.simulcast_layers, [](const auto& a, const auto& b) {
+            return a.scale_resolution_down_by < b.scale_resolution_down_by;
+          });
+
+      double max_scale_factor = smallest_layer->scale_resolution_down_by;
+      if (max_scale_factor > 1.0) {
+        log2_scale_factor = static_cast<int>(std::log2(max_scale_factor));
+      }
+    }
+  }
+
+  if (!log2_scale_factor || (resolution.width < (1 << *log2_scale_factor) ||
+                             resolution.height < (1 << *log2_scale_factor))) {
+    // Too large scale factor.
+    return resolution;
+  }
+
+  return {.width = (resolution.width >> *log2_scale_factor)
+                   << *log2_scale_factor,
+          .height = (resolution.height >> *log2_scale_factor)
+                    << *log2_scale_factor};
 }
 
 // Override bitrate limits and other stream settings with values from
@@ -160,6 +203,7 @@ void OverrideStreamSettings(
     layer.active = overrides.active;
     layer.scalability_mode = overrides.scalability_mode;
     layer.scale_resolution_down_to = overrides.scale_resolution_down_to;
+    layer.scale_resolution_down_by = overrides.scale_resolution_down_by;
     // Update with configured num temporal layers if supported by codec.
     if (overrides.num_temporal_layers > 0 && temporal_layers_supported) {
       layer.num_temporal_layers = *overrides.num_temporal_layers;
@@ -357,9 +401,9 @@ std::vector<VideoStream> EncoderStreamFactory::CreateDefaultVideoStreams(
                           : kDefaultVideoMaxFramerate;
 
   VideoStream layer;
-  layer.width = width;
-  layer.height = height;
   layer.max_framerate = max_framerate;
+  layer.scale_resolution_down_by =
+      encoder_config.simulcast_layers[0].scale_resolution_down_by;
   layer.scale_resolution_down_to =
       encoder_config.simulcast_layers[0].scale_resolution_down_to;
   // Note: VP9 seems to have be sending if any layer is active,
@@ -375,14 +419,14 @@ std::vector<VideoStream> EncoderStreamFactory::CreateDefaultVideoStreams(
     layer.width = res.width;
     layer.height = res.height;
   } else if (encoder_config.simulcast_layers[0].scale_resolution_down_by > 1.) {
-    layer.width = ScaleDownResolution(
-        layer.width,
-        encoder_config.simulcast_layers[0].scale_resolution_down_by,
-        kMinLayerSize);
-    layer.height = ScaleDownResolution(
-        layer.height,
-        encoder_config.simulcast_layers[0].scale_resolution_down_by,
-        kMinLayerSize);
+    Resolution res = ScaleResolutionDownBy(
+        {.width = width, .height = height},
+        encoder_config.simulcast_layers[0].scale_resolution_down_by);
+    layer.width = res.width;
+    layer.height = res.height;
+  } else {
+    layer.width = width;
+    layer.height = height;
   }
 
   if (encoder_config.codec_type == VideoCodecType::kVideoCodecVP9) {
@@ -534,9 +578,11 @@ std::vector<Resolution> EncoderStreamFactory::GetStreamResolutions(
       resolutions.push_back({.width = width, .height = height});
     }
   } else {
+    const bool has_scale_resolution_down_to =
+        encoder_config.HasScaleResolutionDownTo();
     size_t min_num_layers = FindRequiredActiveLayers(encoder_config);
     size_t max_num_layers =
-        !encoder_config.HasScaleResolutionDownTo()
+        !has_scale_resolution_down_to
             ? LimitSimulcastLayerCount(
                   min_num_layers, encoder_config.number_of_streams, width,
                   height, trials, encoder_config.codec_type)
@@ -550,8 +596,7 @@ std::vector<Resolution> EncoderStreamFactory::GetStreamResolutions(
     // adaptation (bitrate allocator disabling layers rather than downscaling)
     // and means we don't have to break power of two optimization paths (i.e.
     // S-modes based simulcast). Note that the lowest layer is never disabled.
-    if (encoder_config.HasScaleResolutionDownTo() &&
-        restrictions_.has_value() &&
+    if (has_scale_resolution_down_to && restrictions_.has_value() &&
         restrictions_->max_pixels_per_frame().has_value()) {
       int max_pixels =
           dchecked_cast<int>(restrictions_->max_pixels_per_frame().value());
@@ -578,47 +623,31 @@ std::vector<Resolution> EncoderStreamFactory::GetStreamResolutions(
       max_num_layers = restricted_num_layers.value_or(max_num_layers);
     }
 
-    const bool has_scale_resolution_down_by = absl::c_any_of(
-        encoder_config.simulcast_layers, [](const VideoStream& layer) {
-          return layer.scale_resolution_down_by != -1.;
-        });
+    Resolution norm_resolution =
+        NormalizeResolution({.width = width, .height = height}, encoder_config,
+                            max_num_layers, trials);
 
-    bool default_scale_factors_used = true;
-    if (has_scale_resolution_down_by) {
-      default_scale_factors_used = IsScaleFactorsPowerOfTwo(encoder_config);
-    }
-
-    const bool norm_size_configured =
-        NormalizeSimulcastSizeExperiment::GetBase2Exponent(trials).has_value();
-    const int normalized_width =
-        (default_scale_factors_used || norm_size_configured) &&
-                (width >= kMinLayerSize)
-            ? NormalizeSimulcastSize(trials, width, max_num_layers)
-            : width;
-    const int normalized_height =
-        (default_scale_factors_used || norm_size_configured) &&
-                (height >= kMinLayerSize)
-            ? NormalizeSimulcastSize(trials, height, max_num_layers)
-            : height;
+    const bool has_scale_resolution_down_by =
+        encoder_config.HasScaleResolutionDownBy();
 
     resolutions.resize(max_num_layers);
     for (size_t i = 0; i < max_num_layers; i++) {
       if (encoder_config.simulcast_layers[i]
               .scale_resolution_down_to.has_value()) {
         resolutions[i] = GetLayerResolutionFromScaleResolutionDownTo(
-            normalized_width, normalized_height,
+            norm_resolution.width, norm_resolution.height,
             *encoder_config.simulcast_layers[i].scale_resolution_down_to);
       } else if (has_scale_resolution_down_by) {
         const double scale_resolution_down_by = std::max(
             encoder_config.simulcast_layers[i].scale_resolution_down_by, 1.0);
-        resolutions[i].width = ScaleDownResolution(
-            normalized_width, scale_resolution_down_by, kMinLayerSize);
-        resolutions[i].height = ScaleDownResolution(
-            normalized_height, scale_resolution_down_by, kMinLayerSize);
+        resolutions[i] =
+            ScaleResolutionDownBy(norm_resolution, scale_resolution_down_by);
       } else {
         // Resolutions with default 1/2 scale factor, from low to high.
-        resolutions[i].width = normalized_width >> (max_num_layers - i - 1);
-        resolutions[i].height = normalized_height >> (max_num_layers - i - 1);
+        resolutions[i].width =
+            norm_resolution.width >> (max_num_layers - i - 1);
+        resolutions[i].height =
+            norm_resolution.height >> (max_num_layers - i - 1);
       }
     }
   }

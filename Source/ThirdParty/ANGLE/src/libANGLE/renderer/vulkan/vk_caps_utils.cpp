@@ -190,12 +190,12 @@ bool CanSupportYuvInternalFormat(const Renderer *renderer)
 
     const Format &twoPlane8bitYuvFormat = renderer->getFormat(GL_G8_B8R8_2PLANE_420_UNORM_ANGLE);
     bool twoPlane8bitYuvFormatSupported = renderer->hasImageFormatFeatureBits(
-        twoPlane8bitYuvFormat.getActualImageFormatID(vk::ImageAccess::SampleOnly),
+        twoPlane8bitYuvFormat.getActualImageFormatID(vk::ImageFormatSupport::SampleOnly),
         VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
 
     const Format &threePlane8bitYuvFormat = renderer->getFormat(GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE);
     bool threePlane8bitYuvFormatSupported = renderer->hasImageFormatFeatureBits(
-        threePlane8bitYuvFormat.getActualImageFormatID(vk::ImageAccess::SampleOnly),
+        threePlane8bitYuvFormat.getActualImageFormatID(vk::ImageFormatSupport::SampleOnly),
         VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
 
     return twoPlane8bitYuvFormatSupported && threePlane8bitYuvFormatSupported;
@@ -356,9 +356,6 @@ void Renderer::ensureCapsInitialized() const
         mNativeLimitations.emulatedAstc = true;
     }
 
-    // Vulkan doesn't support ASTC 3D block textures, which are required by
-    // GL_OES_texture_compression_astc.
-    mNativeExtensions.textureCompressionAstcOES = false;
     // Enable KHR_texture_compression_astc_sliced_3d
     mNativeExtensions.textureCompressionAstcSliced3dKHR =
         mNativeExtensions.textureCompressionAstcLdrKHR &&
@@ -367,6 +364,11 @@ void Renderer::ensureCapsInitialized() const
     // Enable KHR_texture_compression_astc_hdr
     mNativeExtensions.textureCompressionAstcHdrKHR =
         mNativeExtensions.textureCompressionAstcLdrKHR && supportsAstcHdr();
+
+    // Enable GL_OES_texture_compression_astc
+    mNativeExtensions.textureCompressionAstcOES = getFeatures().supportsAstc3d.enabled &&
+                                                  mNativeExtensions.textureCompressionAstcHdrKHR &&
+                                                  mNativeExtensions.textureCompressionAstcLdrKHR;
 
     // Enable EXT_compressed_ETC1_RGB8_sub_texture
     mNativeExtensions.compressedETC1RGB8SubTextureEXT =
@@ -388,6 +390,8 @@ void Renderer::ensureCapsInitialized() const
         getFeatures().enableMultisampledRenderToTexture.enabled;
     mNativeExtensions.multisampledRenderToTexture2EXT =
         getFeatures().enableMultisampledRenderToTexture.enabled;
+    mNativeExtensions.multiviewMultisampledRenderToTextureOVR =
+        getFeatures().supportsMultiviewMultisampleRenderToTexture.enabled;
     mNativeExtensions.textureStorageMultisample2dArrayOES =
         (limitsVk.standardSampleLocations == VK_TRUE);
     mNativeExtensions.copyTextureCHROMIUM           = true;
@@ -735,12 +739,9 @@ void Renderer::ensureCapsInitialized() const
         rx::LimitToInt(limitsVk.maxComputeWorkGroupInvocations);
     mNativeCaps.maxComputeSharedMemorySize = rx::LimitToInt(limitsVk.maxComputeSharedMemorySize);
 
-    GLuint maxUniformBlockSize =
-        rx::LimitToIntAnd(limitsVk.maxUniformBufferRange, mMaxBufferMemorySizeLimit);
-
-    // Clamp the maxUniformBlockSize to 64KB (majority of devices support up to this size
-    // currently), on AMD the maxUniformBufferRange is near uint32_t max.
-    maxUniformBlockSize = std::min(0x10000u, maxUniformBlockSize);
+    const GLuint maxUniformBlockSize = std::min<GLuint>(
+        rx::LimitToIntAnd(limitsVk.maxUniformBufferRange, mMaxBufferMemorySizeLimit),
+        gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE);
 
     const GLuint maxUniformVectors = maxUniformBlockSize / (sizeof(GLfloat) * kComponentsPerVector);
     const GLuint maxUniformComponents = maxUniformVectors * kComponentsPerVector;
@@ -900,9 +901,10 @@ void Renderer::ensureCapsInitialized() const
     mNativeCaps.maxAtomicCounterBufferSize     = maxStorageBufferRange;
 
     // There is no particular limit to how many atomic counters there can be, other than the size of
-    // a storage buffer.  We nevertheless limit this to something reasonable (4096 arbitrarily).
+    // a storage buffer.  We nevertheless limit this to something reasonable; 32 arbitrarily, which
+    // is more than what most GLES drivers support (8, the minimum required value).
     const int32_t maxAtomicCounters =
-        std::min<int32_t>(4096, maxStorageBufferRange / sizeof(uint32_t));
+        std::min<int32_t>(32, maxStorageBufferRange / sizeof(uint32_t));
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mNativeCaps.maxShaderAtomicCounters[shaderType] = maxAtomicCounters;
@@ -1118,8 +1120,24 @@ void Renderer::ensureCapsInitialized() const
     mNativeExtensions.textureBufferOES = true;
     mNativeExtensions.textureBufferEXT = true;
 
-    mNativeCaps.maxTextureBufferSize =
-        rx::LimitToIntAnd(limitsVk.maxTexelBufferElements, mMaxBufferMemorySizeLimit);
+    {
+        // GLES 3.2's limit for GL_MAX_TEXTURE_BUFFER_SIZE is 65536.  Note that this limit is about
+        // how many texels are addressable by the texture buffer.
+        //
+        // Aiming for 256MB of memory (see https://gitlab.freedesktop.org/mesa/mesa/-/issues/9862),
+        // a buffer of RGBA32 values would need 16 million elements, which is chosen by ANGLE.  This
+        // is far above the minimum requirement.  Note also that it could correspond to a 4k*4k 2D
+        // texture.
+        //
+        // Note additionally that mMaxBufferMemorySizeLimit is a value in bytes, so it's divided by
+        // 16 (for RGBA32) too to get to the maximum texel count that is allowed.  Vulkan's required
+        // limit for maxMemoryAllocationSize is 2^30 for this value, which divided by 16 is 64
+        // million, which is always higher than the desired value of 16 million.
+        constexpr uint32_t kTextureBufferLimit = 16 * 1024 * 1024;
+        ASSERT(kTextureBufferLimit < mMaxBufferMemorySizeLimit);
+        mNativeCaps.maxTextureBufferSize =
+            std::min(limitsVk.maxTexelBufferElements, kTextureBufferLimit);
+    }
 
     mNativeCaps.textureBufferOffsetAlignment =
         rx::LimitToInt(limitsVk.minTexelBufferOffsetAlignment);
@@ -1355,9 +1373,13 @@ void Renderer::ensureCapsInitialized() const
     // GL_QCOM_shading_rate
     mNativeExtensions.shadingRateQCOM = mFeatures.supportsFragmentShadingRate.enabled;
 
-    // GL_EXT_fragment_shading_rate, will enable after CTS fix patch merged.
-    mNativeExtensions.fragmentShadingRateEXT = false;
-    mNativeExtensions.fragmentShadingRatePrimitiveEXT = false;
+    // GL_EXT_fragment_shading_rate
+    if (mFeatures.supportFragmentShadingRateExtExtensions.enabled)
+    {
+        mNativeExtensions.fragmentShadingRateEXT = mFeatures.supportsFragmentShadingRate.enabled;
+        mNativeExtensions.fragmentShadingRatePrimitiveEXT =
+            mFeatures.supportsPrimitiveFragmentShadingRate.enabled;
+    }
 
     // GL_QCOM_framebuffer_foveated
     mNativeExtensions.framebufferFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
@@ -1370,25 +1392,21 @@ void Renderer::ensureCapsInitialized() const
     //   * The Vulkan backend limits the ES version to 2.0 when drawBuffersIndexed is not supported.
     //   * The frontend disables all ES 3.x extensions when the context version is too low for them.
     //   * This means it is impossible on Vulkan to have pixel local storage without DBI.
-    if (mNativeExtensions.drawBuffersIndexedAny())
+    if (mFeatures.supportShaderPixelLocalStorageAngle.enabled &&
+        mNativeExtensions.drawBuffersIndexedAny())
     {
-        // With drawBuffersIndexed, we can always at least support non-coherent PLS with input
-        // attachments.
         mNativeExtensions.shaderPixelLocalStorageANGLE = true;
 
-        if (!mIsColorFramebufferFetchCoherent &&
-            getFeatures().supportsFragmentShaderPixelInterlock.enabled)
-        {
-            // Use shader images with VK_EXT_fragment_shader_interlock, instead of input
-            // attachments, if they're our only option to be coherent.
-            mNativeExtensions.shaderPixelLocalStorageCoherentANGLE = true;
-            mNativePLSOptions.type = ShPixelLocalStorageType::ImageLoadStore;
-            // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock.
-            mNativePLSOptions.fragmentSyncType =
-                ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
-            mNativePLSOptions.supportsNativeRGBA8ImageFormats = true;
-        }
-        else
+        // Prefer framebuffer fetch in almost all cases if it's available, except if framebuffer
+        // fetch isn't coherent *and* fragment shader pixel interlock is available. This is the case
+        // on many desktop GPUs. Fall back to using shader images with interlock to provide coherent
+        // PLS in this case.
+        bool fetchIsNonCoherentButHasInterlock =
+            !mIsColorFramebufferFetchCoherent &&
+            getFeatures().supportsFragmentShaderPixelInterlock.enabled;
+
+        if (getFeatures().supportsShaderFramebufferFetch.enabled &&
+            !fetchIsNonCoherentButHasInterlock)
         {
             // Input attachments are the preferred implementation for PLS on Vulkan.
             mNativeExtensions.shaderPixelLocalStorageCoherentANGLE =
@@ -1397,6 +1415,27 @@ void Renderer::ensureCapsInitialized() const
             mNativePLSOptions.fragmentSyncType = mIsColorFramebufferFetchCoherent
                                                      ? ShFragmentSynchronizationType::Automatic
                                                      : ShFragmentSynchronizationType::NotSupported;
+        }
+        else
+        {
+            mNativePLSOptions.type = ShPixelLocalStorageType::ImageLoadStore;
+            mNativePLSOptions.supportsNativeRGBA8ImageFormats = true;
+
+            if (getFeatures().supportsFragmentShaderPixelInterlock.enabled)
+            {
+                // Use shader images with VK_EXT_fragment_shader_interlock, instead of input
+                // attachments, if they're our only option to be coherent.
+                mNativeExtensions.shaderPixelLocalStorageCoherentANGLE = true;
+                // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock.
+                mNativePLSOptions.fragmentSyncType =
+                    ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
+            }
+            else
+            {
+                // If fragment shader pixel interlock isn't supported, then only non-coherent PLS is
+                // supported.
+                mNativePLSOptions.fragmentSyncType = ShFragmentSynchronizationType::NotSupported;
+            }
         }
     }
 
@@ -1472,6 +1511,9 @@ void Renderer::ensureCapsInitialized() const
             .fragmentShadingRateWithShaderDepthStencilWritesSupport = static_cast<bool>(
             mFragmentShadingRateProperties.fragmentShadingRateNonTrivialCombinerOps);
     }
+
+    // GL_OES_compressed_paletted_texture
+    mNativeExtensions.compressedPalettedTextureOES = true;
 
     // Log any missing extensions required for GLES 3.2.
     LogMissingExtensionsForGLES32(mNativeExtensions);
@@ -1641,7 +1683,6 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
 
     gl::SupportedSampleSet colorSampleCounts;
     gl::SupportedSampleSet depthStencilSampleCounts;
-    gl::SupportedSampleSet sampleCounts;
 
     const VkPhysicalDeviceLimits &limits =
         display->getRenderer()->getPhysicalDeviceProperties().limits;
@@ -1657,9 +1698,7 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
     colorSampleCounts.insert(0);
     depthStencilSampleCounts.insert(0);
 
-    std::set_intersection(colorSampleCounts.begin(), colorSampleCounts.end(),
-                          depthStencilSampleCounts.begin(), depthStencilSampleCounts.end(),
-                          std::inserter(sampleCounts, sampleCounts.begin()));
+    gl::SupportedSampleSet sampleCounts = colorSampleCounts & depthStencilSampleCounts;
 
     egl::ConfigSet configSet;
 
@@ -1689,7 +1728,7 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
                 configSampleCounts = &depthStencilSampleCounts;
             }
 
-            for (EGLint sampleCount : *configSampleCounts)
+            for (EGLint sampleCount : configSampleCounts->sampleCounts())
             {
                 egl::Config config = GenerateDefaultConfig(display, colorFormatInfo,
                                                            depthStencilFormatInfo, sampleCount);

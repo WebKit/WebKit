@@ -54,7 +54,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     if (m_processPool->sandboxEnabled()) {
         // Prewarmed processes don't have a WebsiteDataStore yet, so use the primary WebsiteDataStore from the WebProcessPool.
         // The process won't be used if current WebsiteDataStore is different than the WebProcessPool primary one.
-        RefPtr dataStore = isPrewarmed() ? WebsiteDataStore::defaultDataStore().ptr() : websiteDataStore();
+        RefPtr dataStore = isPrewarmed() ? &WebsiteDataStore::defaultDataStore() : websiteDataStore();
 
         ASSERT(dataStore);
         launchOptions.extraInitializationData.set("mediaKeysDirectory"_s, dataStore->resolvedDirectories().mediaKeysStorageDirectory);
@@ -70,12 +70,12 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 void WebProcessProxy::sendMessageToWebContextWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     if (const auto& userMessageHandler = m_processPool->userMessageHandler())
-        userMessageHandler(WTFMove(message), WTFMove(completionHandler));
+        userMessageHandler(WTF::move(message), WTF::move(completionHandler));
 }
 
 void WebProcessProxy::sendMessageToWebContext(UserMessage&& message)
 {
-    sendMessageToWebContextWithReply(WTFMove(message), [](UserMessage&&) { });
+    sendMessageToWebContextWithReply(WTF::move(message), [](UserMessage&&) { });
 }
 
 void WebProcessProxy::platformSuspendProcess()

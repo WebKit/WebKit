@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
     WTF_MAKE_NONCOPYABLE(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 public:
     using Int32List = WebGLRenderingContextBase::TypedList<Int32Array, int32_t>;
@@ -55,3 +55,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLMultiDrawInstancedBaseVertexBaseInstance)

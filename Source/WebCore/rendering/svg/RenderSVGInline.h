@@ -28,7 +28,7 @@ namespace WebCore {
 class SVGGraphicsElement;
 
 class RenderSVGInline : public RenderInline {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGInline);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
 public:
     RenderSVGInline(Type, SVGGraphicsElement&, RenderStyle&&);
@@ -54,6 +54,7 @@ private:
     FloatRect objectBoundingBox() const final;
     FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
+    FloatRect decoratedBoundingBox() const final;
 
     LayoutPoint currentSVGLayoutLocation() const final { return { }; }
     void setCurrentSVGLayoutLocation(const LayoutPoint&) final { ASSERT_NOT_REACHED(); }
@@ -72,7 +73,7 @@ private:
     std::unique_ptr<LegacyInlineFlowBox> createInlineFlowBox() final;
 
     void willBeDestroyed() final;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
 };
 
 } // namespace WebCore

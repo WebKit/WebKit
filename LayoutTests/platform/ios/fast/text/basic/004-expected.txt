@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {P} at (0,16) size 652x24 [border: (2px solid #008000)]
-        RenderText {#text} at (2,2) size 648x19
+        RenderText {#text} at (2,2) size 648x20
           text run at (2,2) width 38: "There"
           text run at (69,2) width 47: " should"
           text run at (145,2) width 21: " be"
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 100x144
             RenderTableCell {TD} at (0,0) size 100x144 [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (0,0) size 100x144 [border: (2px solid #008000)]
-                RenderText {#text} at (2,2) size 86x139
+                RenderText {#text} at (2,2) size 86x140
                   text run at (2,2) width 38: "There"
                   text run at (2,22) width 43: "should"
                   text run at (59,22) width 20: " be"

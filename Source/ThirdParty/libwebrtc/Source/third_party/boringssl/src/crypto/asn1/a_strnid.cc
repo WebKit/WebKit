@@ -31,7 +31,7 @@
 
 DEFINE_LHASH_OF(ASN1_STRING_TABLE)
 
-static LHASH_OF(ASN1_STRING_TABLE) *string_tables = NULL;
+static LHASH_OF(ASN1_STRING_TABLE) *string_tables = nullptr;
 static CRYPTO_MUTEX string_tables_lock = CRYPTO_MUTEX_INIT;
 
 void ASN1_STRING_set_default_mask(unsigned long mask) {}
@@ -48,13 +48,13 @@ static const ASN1_STRING_TABLE *asn1_string_table_get(int nid);
 
 ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out, const unsigned char *in,
                                     ossl_ssize_t len, int inform, int nid) {
-  ASN1_STRING *str = NULL;
+  ASN1_STRING *str = nullptr;
   int ret;
   if (!out) {
     out = &str;
   }
   const ASN1_STRING_TABLE *tbl = asn1_string_table_get(nid);
-  if (tbl != NULL) {
+  if (tbl != nullptr) {
     unsigned long mask = tbl->mask;
     if (!(tbl->flags & STABLE_NO_MASK)) {
       mask &= B_ASN1_UTF8STRING;
@@ -65,7 +65,7 @@ ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out, const unsigned char *in,
     ret = ASN1_mbstring_copy(out, in, len, inform, B_ASN1_UTF8STRING);
   }
   if (ret <= 0) {
-    return NULL;
+    return nullptr;
   }
   return *out;
 }
@@ -133,12 +133,12 @@ static const ASN1_STRING_TABLE *asn1_string_table_get(int nid) {
   const ASN1_STRING_TABLE *tbl = reinterpret_cast<ASN1_STRING_TABLE *>(
       bsearch(&key, tbl_standard, std::size(tbl_standard),
               sizeof(ASN1_STRING_TABLE), table_cmp_void));
-  if (tbl != NULL) {
+  if (tbl != nullptr) {
     return tbl;
   }
 
   CRYPTO_MUTEX_lock_read(&string_tables_lock);
-  if (string_tables != NULL) {
+  if (string_tables != nullptr) {
     tbl = lh_ASN1_STRING_TABLE_retrieve(string_tables, &key);
   }
   CRYPTO_MUTEX_unlock_read(&string_tables_lock);
@@ -151,7 +151,7 @@ static const ASN1_STRING_TABLE *asn1_string_table_get(int nid) {
 int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
                           unsigned long mask, unsigned long flags) {
   // Existing entries cannot be overwritten.
-  if (asn1_string_table_get(nid) != NULL) {
+  if (asn1_string_table_get(nid) != nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }
@@ -159,10 +159,10 @@ int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
   int ret = 0;
   CRYPTO_MUTEX_lock_write(&string_tables_lock);
 
-  ASN1_STRING_TABLE *tbl = NULL;
-  if (string_tables == NULL) {
+  ASN1_STRING_TABLE *tbl = nullptr;
+  if (string_tables == nullptr) {
     string_tables = lh_ASN1_STRING_TABLE_new(table_hash, table_cmp);
-    if (string_tables == NULL) {
+    if (string_tables == nullptr) {
       goto err;
     }
   } else {
@@ -170,7 +170,7 @@ int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
     // unlocked.
     ASN1_STRING_TABLE key;
     key.nid = nid;
-    if (lh_ASN1_STRING_TABLE_retrieve(string_tables, &key) != NULL) {
+    if (lh_ASN1_STRING_TABLE_retrieve(string_tables, &key) != nullptr) {
       OPENSSL_PUT_ERROR(ASN1, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
       goto err;
     }
@@ -178,7 +178,7 @@ int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
 
   tbl = reinterpret_cast<ASN1_STRING_TABLE *>(
       OPENSSL_malloc(sizeof(ASN1_STRING_TABLE)));
-  if (tbl == NULL) {
+  if (tbl == nullptr) {
     goto err;
   }
   tbl->nid = nid;
@@ -191,7 +191,7 @@ int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
     OPENSSL_free(tbl);
     goto err;
   }
-  assert(old_tbl == NULL);
+  assert(old_tbl == nullptr);
   ret = 1;
 
 err:

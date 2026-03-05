@@ -14,7 +14,7 @@ set(WPEPlatform_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBuffer.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferAndroid.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferDMABuf.cpp
-    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferDMABufFormats.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferFormats.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferSHM.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEClipboard.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEColor.cpp
@@ -49,7 +49,7 @@ set(WPEPlatform_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBuffer.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferAndroid.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferDMABuf.h
-    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferDMABufFormats.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferFormats.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferSHM.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEClipboard.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEColor.h
@@ -110,6 +110,7 @@ set(WPEPlatform_LIBRARIES
     GLib::Gio
     WebKit::WTF
     XkbCommon::XkbCommon
+    bmalloc
 )
 
 if (USE_GBM)
@@ -129,17 +130,9 @@ if (ANDROID)
 endif ()
 
 if (USE_ATK)
-    list(APPEND WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES
-        ${ATK_INCLUDE_DIRS}
-    )
-
-    list(APPEND WPEPlatform_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBKIT_DIR}/WPEPlatform/wpe/atk"
-    )
-
     list(APPEND WPEPlatform_LIBRARIES
+        ATK::ATK
         ATK::Bridge
-        ${ATK_LIBRARIES}
     )
 
     list(APPEND WPEPlatform_SOURCES
@@ -161,10 +154,6 @@ if (USE_MANETTE)
     )
 endif ()
 
-if (NOT USE_SYSTEM_MALLOC)
-   list(APPEND WPEPlatform_LIBRARIES bmalloc)
-endif ()
-
 if (ENABLE_WPE_PLATFORM_DRM)
     add_subdirectory(${WEBKIT_DIR}/WPEPlatform/wpe/drm)
     list(APPEND WPEPlatform_LIBRARIES WPEPlatformDRM)
@@ -184,7 +173,7 @@ add_library(WPEPlatform OBJECT ${WPEPlatform_SOURCES})
 target_compile_options(WPEPlatform PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
 target_include_directories(WPEPlatform PRIVATE ${WPEPlatform_PRIVATE_INCLUDE_DIRECTORIES})
 target_include_directories(WPEPlatform SYSTEM PRIVATE ${WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES})
-target_link_libraries(WPEPlatform ${WPEPlatform_LIBRARIES})
+target_link_libraries(WPEPlatform PRIVATE ${WPEPlatform_LIBRARIES})
 add_dependencies(WPEPlatform WPEPlatformGeneratedEnumTypesHeader)
 
 GI_INTROSPECT(WPEPlatform ${WPE_API_VERSION} wpe/wpe-platform.h

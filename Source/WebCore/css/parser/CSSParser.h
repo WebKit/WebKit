@@ -116,7 +116,7 @@ public:
     static CSSSelectorList parsePageSelector(CSSParserTokenRange, StyleSheetContents*);
 
     bool supportsDeclaration(CSSParserTokenRange&);
-    const CSSParserContext& context() const { return m_context; }
+    const CSSParserContext& context() const LIFETIME_BOUND { return m_context; }
 
     // This function updates the range it's given.
     RefPtr<StyleRuleBase> consumeAtRule(CSSParserTokenRange&, AllowedRules);
@@ -128,7 +128,7 @@ public:
 
     static RefPtr<StyleRuleNestedDeclarations> parseNestedDeclarations(const CSSParserContext&, const String&);
 
-    CSSTokenizer* tokenizer() const { return m_tokenizer.get(); }
+    CSSTokenizer* tokenizer() const LIFETIME_BOUND { return m_tokenizer.get(); }
 
 private:
     struct NestingContext {
@@ -179,7 +179,6 @@ private:
     RefPtr<StyleRuleViewTransition> consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRulePositionTry> consumePositionTryRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleFunction> consumeFunctionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-    RefPtr<StyleRuleInternalBaseAppearance> consumeInternalBaseAppearanceRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
@@ -199,7 +198,7 @@ private:
     void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, IsImportant, StyleRuleType);
     void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, IsImportant);
 
-    RefPtr<StyleSheetContents> protectedStyleSheet() const;
+    StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 
     Ref<StyleRuleBase> createNestedDeclarationsRule();
     void runInNewNestingContext(auto&& run);

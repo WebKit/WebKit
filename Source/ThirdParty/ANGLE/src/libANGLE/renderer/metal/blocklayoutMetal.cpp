@@ -251,6 +251,7 @@ void MetalAlignmentVisitor::visitVariable(const sh::ShaderVariable &variable, bo
 BlockLayoutEncoderMTL::BlockLayoutEncoderMTL() : BlockLayoutEncoder() {}
 
 void BlockLayoutEncoderMTL::getBlockLayoutInfo(GLenum type,
+                                               const size_t bytesPerComponent,
                                                const std::vector<unsigned int> &arraySizes,
                                                bool isRowMajorMatrix,
                                                int *arrayStrideOut,
@@ -283,19 +284,21 @@ void BlockLayoutEncoderMTL::getBlockLayoutInfo(GLenum type,
     *arrayStrideOut  = arrayStride;
 }
 sh::BlockMemberInfo BlockLayoutEncoderMTL::encodeType(GLenum type,
+                                                      const size_t bytesPerComponent,
                                                       const std::vector<unsigned int> &arraySizes,
                                                       bool isRowMajorMatrix)
 {
     int arrayStride;
     int matrixStride;
 
-    getBlockLayoutInfo(type, arraySizes, isRowMajorMatrix, &arrayStride, &matrixStride);
+    getBlockLayoutInfo(type, bytesPerComponent, arraySizes, isRowMajorMatrix, &arrayStride,
+                       &matrixStride);
     const sh::BlockMemberInfo memberInfo(
         type, static_cast<int>(mCurrentOffset), static_cast<int>(arrayStride),
         static_cast<int>(matrixStride), gl::ArraySizeProduct(arraySizes), isRowMajorMatrix);
     assert(memberInfo.offset >= 0);
 
-    advanceOffset(type, arraySizes, isRowMajorMatrix, arrayStride, matrixStride);
+    advanceOffset(type, bytesPerComponent, arraySizes, isRowMajorMatrix, arrayStride, matrixStride);
 
     return memberInfo;
 }
@@ -353,6 +356,7 @@ size_t BlockLayoutEncoderMTL::getShaderVariableSize(const sh::ShaderVariable &st
 }
 
 void BlockLayoutEncoderMTL::advanceOffset(GLenum type,
+                                          const size_t bytesPerComponent,
                                           const std::vector<unsigned int> &arraySizes,
                                           bool isRowMajorMatrix,
                                           int arrayStride,

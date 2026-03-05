@@ -36,9 +36,12 @@
 #include "NotImplemented.h"
 #include "ParsedContentType.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivate);
 
 CDMPrivate::CDMPrivate() = default;
 CDMPrivate::~CDMPrivate() = default;
@@ -55,7 +58,7 @@ void CDMPrivate::getSupportedConfiguration(CDMKeySystemConfiguration&& candidate
     // 1. Let supported configuration be ConsentDenied.
     // 2. Initialize restrictions to indicate that no configurations have had user consent denied.
     CDMRestrictions restrictions { };
-    doSupportedConfigurationStep(WTFMove(candidateConfiguration), WTFMove(restrictions), access, WTFMove(callback));
+    doSupportedConfigurationStep(WTF::move(candidateConfiguration), WTF::move(restrictions), access, WTF::move(callback));
 }
 
 void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candidateConfiguration, CDMRestrictions&& restrictions, LocalStorageAccess access, SupportedConfigurationCallback&& callback)
@@ -74,7 +77,7 @@ void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candid
         return;
     }
 
-    auto consentCallback = [weakThis = WeakPtr { *this }, callback = WTFMove(callback), access] (ConsentStatus status, CDMKeySystemConfiguration&& configuration, CDMRestrictions&& restrictions) mutable {
+    auto consentCallback = [weakThis = WeakPtr { *this }, callback = WTF::move(callback), access] (ConsentStatus status, CDMKeySystemConfiguration&& configuration, CDMRestrictions&& restrictions) mutable {
         if (!weakThis) {
             callback(std::nullopt);
             return;
@@ -86,7 +89,7 @@ void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candid
         case ConsentStatus::ConsentDenied:
             // ↳ ConsentDenied:
             //    Return ConsentDenied and updated restrictions.
-            weakThis->doSupportedConfigurationStep(WTFMove(configuration), WTFMove(restrictions), access, WTFMove(callback));
+            CheckedRef { *weakThis }->doSupportedConfigurationStep(WTF::move(configuration), WTF::move(restrictions), access, WTF::move(callback));
             return;
 
         case ConsentStatus::InformUser:
@@ -103,9 +106,9 @@ void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candid
             break;
         }
         // 23. Return accumulated configuration.
-        callback(WTFMove(configuration));
+        callback(WTF::move(configuration));
     };
-    getConsentStatus(WTFMove(optionalConfiguration.value()), WTFMove(restrictions), access, WTFMove(consentCallback));
+    getConsentStatus(WTF::move(optionalConfiguration.value()), WTF::move(restrictions), access, WTF::move(consentCallback));
 }
 
 bool CDMPrivate::isPersistentType(CDMSessionType sessionType)
@@ -168,7 +171,7 @@ std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(c
             return std::nullopt;
 
         // 3.4. Set the initDataTypes member of accumulated configuration to supported types.
-        accumulatedConfiguration.initDataTypes = WTFMove(supportedTypes);
+        accumulatedConfiguration.initDataTypes = WTF::move(supportedTypes);
     }
 
     // 4. Let distinctive identifier requirement be the value of candidate configuration's distinctiveIdentifier member.
@@ -292,7 +295,7 @@ std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(c
             return std::nullopt;
 
         // 16.3 Set the videoCapabilities member of accumulated configuration to video capabilities.
-        accumulatedConfiguration.videoCapabilities = WTFMove(videoCapabilities.value());
+        accumulatedConfiguration.videoCapabilities = WTF::move(videoCapabilities.value());
     } else {
         // 16. ↳ Otherwise:
         //     Set the videoCapabilities member of accumulated configuration to an empty sequence.
@@ -310,7 +313,7 @@ std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(c
             return std::nullopt;
 
         // 17.3 Set the audioCapabilities member of accumulated configuration to audio capabilities.
-        accumulatedConfiguration.audioCapabilities = WTFMove(audioCapabilities.value());
+        accumulatedConfiguration.audioCapabilities = WTF::move(audioCapabilities.value());
     } else {
         // 17. ↳ Otherwise:
         //     Set the audioCapabilities member of accumulated configuration to an empty sequence.
@@ -464,7 +467,7 @@ void CDMPrivate::getConsentStatus(CDMKeySystemConfiguration&& accumulatedConfigu
     if (accumulatedConfiguration.distinctiveIdentifier == CDMRequirement::Required && !distinctiveIdentifiersAreUniquePerOriginAndClearable(accumulatedConfiguration)) {
         // 21.1. Update restrictions to reflect that all configurations described by accumulated configuration do not have user consent.
         restrictions.distinctiveIdentifierDenied = true;
-        callback(ConsentStatus::ConsentDenied, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
+        callback(ConsentStatus::ConsentDenied, WTF::move(accumulatedConfiguration), WTF::move(restrictions));
         return;
     }
 
@@ -498,13 +501,13 @@ void CDMPrivate::getConsentStatus(CDMKeySystemConfiguration&& accumulatedConfigu
     // NOTE: assume implied consent if the combination of origin and topOrigin allows it.
     if (accumulatedConfiguration.distinctiveIdentifier == CDMRequirement::Required && access == LocalStorageAccess::NotAllowed) {
         restrictions.distinctiveIdentifierDenied = true;
-        callback(ConsentStatus::ConsentDenied, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
+        callback(ConsentStatus::ConsentDenied, WTF::move(accumulatedConfiguration), WTF::move(restrictions));
         return;
     }
 
     // 4. If the distinctiveIdentifier member of accumulated configuration is not "not-allowed", return InformUser.
     if (accumulatedConfiguration.distinctiveIdentifier != CDMRequirement::NotAllowed) {
-        callback(ConsentStatus::InformUser, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
+        callback(ConsentStatus::InformUser, WTF::move(accumulatedConfiguration), WTF::move(restrictions));
         return;
     }
 
@@ -512,7 +515,7 @@ void CDMPrivate::getConsentStatus(CDMKeySystemConfiguration&& accumulatedConfigu
     // NOTE: assume the user agent does not require informing the user.
 
     // 6. Return Allowed.
-    callback(ConsentStatus::Allowed, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
+    callback(ConsentStatus::Allowed, WTF::move(accumulatedConfiguration), WTF::move(restrictions));
 }
 
 

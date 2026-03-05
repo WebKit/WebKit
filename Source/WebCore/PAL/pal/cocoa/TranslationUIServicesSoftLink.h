@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if HAVE(TRANSLATION_UI_SERVICES)
 
 #import <pal/spi/cocoa/TranslationUIServicesSPI.h>

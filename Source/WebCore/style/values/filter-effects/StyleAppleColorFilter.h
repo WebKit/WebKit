@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,36 +24,57 @@
 
 #pragma once
 
-#include <WebCore/FilterOperations.h>
-#include <WebCore/StyleValueTypes.h>
+#include <WebCore/StyleAppleInvertLightnessFunction.h>
+#include <WebCore/StyleBrightnessFunction.h>
+#include <WebCore/StyleContrastFunction.h>
+#include <WebCore/StyleGrayscaleFunction.h>
+#include <WebCore/StyleHueRotateFunction.h>
+#include <WebCore/StyleInvertFunction.h>
+#include <WebCore/StyleOpacityFunction.h>
+#include <WebCore/StyleSaturateFunction.h>
+#include <WebCore/StyleSepiaFunction.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 namespace CSS {
 struct AppleColorFilter;
 struct AppleColorFilterValue;
+using AppleColorFilterValueList = SpaceSeparatedVector<AppleColorFilterValue>;
 }
 
 namespace Style {
 
 // Any <apple-color-filter-function>.
 // (Equivalent of https://drafts.fxtf.org/filter-effects/#typedef-filter-function)
+using AppleColorFilterValueKind = Variant<
+    AppleInvertLightnessFunction,
+    BrightnessFunction,
+    ContrastFunction,
+    GrayscaleFunction,
+    HueRotateFunction,
+    InvertFunction,
+    OpacityFunction,
+    SaturateFunction,
+    SepiaFunction
+>;
 struct AppleColorFilterValue {
-    AppleColorFilterValue(Ref<FilterOperation> value) : value { WTFMove(value) } { }
+    AppleColorFilterValueKind value;
 
-    const FilterOperation& get() const { return value.get(); }
-    const FilterOperation& platform() const { return value.get(); }
-    const FilterOperation* operator->() const { return value.ptr(); }
-
-    bool operator==(const AppleColorFilterValue& other) const
+    template<typename T>
+        requires std::constructible_from<AppleColorFilterValueKind, T>
+    AppleColorFilterValue(T&& value)
+        : value(std::forward<T>(value))
     {
-        return arePointingToEqualData(value, other.value);
     }
 
-    Ref<FilterOperation> value;
-};
+    FORWARD_VARIANT_FUNCTIONS(AppleColorFilterValue, value)
 
-// <apple-color-filter-value-list> = [ <apple-color-filter-function> | <url> ]+
+    bool operator==(const AppleColorFilterValue&) const = default;
+};
+DEFINE_TYPE_MAPPING(CSS::AppleColorFilterValue, AppleColorFilterValue)
+
+// <apple-color-filter-value-list> = [ <apple-color-filter-function> ]+
 // (Equivalent of https://drafts.fxtf.org/filter-effects/#typedef-filter-value-list)
 using AppleColorFilterValueList = SpaceSeparatedFixedVector<AppleColorFilterValue>;
 
@@ -69,47 +90,34 @@ struct AppleColorFilter : ListOrNone<AppleColorFilterValueList> {
     bool transformColor(WebCore::Color&) const;
     bool inverseTransformColor(WebCore::Color&) const;
 
-    template<FilterOperation::Type Type>
+    template<typename>
     bool hasFilterOfType() const;
 };
+DEFINE_TYPE_MAPPING(CSS::AppleColorFilter, AppleColorFilter)
 
-template<FilterOperation::Type type> bool AppleColorFilter::hasFilterOfType() const
+template<typename T> bool AppleColorFilter::hasFilterOfType() const
 {
-    return std::ranges::any_of(*this, [](auto& op) { return op->type() == type; });
+    return std::ranges::any_of(*this, [](auto& filterValue) { return WTF::holdsAlternative<T>(filterValue); });
 }
 
 // MARK: - Conversion
 
-template<> struct ToCSS<AppleColorFilterValue> { auto operator()(const AppleColorFilterValue&, const RenderStyle&) -> CSS::AppleColorFilterValue; };
-template<> struct ToStyle<CSS::AppleColorFilterValue> { auto operator()(const CSS::AppleColorFilterValue&, const BuilderState&) -> AppleColorFilterValue; };
+template<> struct ToCSS<AppleColorFilterValueList> { auto operator()(const AppleColorFilterValueList&, const RenderStyle&) -> CSS::AppleColorFilterValueList; };
+template<> struct ToStyle<CSS::AppleColorFilterValueList> { auto operator()(const CSS::AppleColorFilterValueList&, const BuilderState&) -> AppleColorFilterValueList; };
 
-template<> struct ToCSS<AppleColorFilter> { auto operator()(const AppleColorFilter&, const RenderStyle&) -> CSS::AppleColorFilter; };
-template<> struct ToStyle<CSS::AppleColorFilter> { auto operator()(const CSS::AppleColorFilter&, const BuilderState&) -> AppleColorFilter; };
 template<> struct CSSValueConversion<AppleColorFilter> { auto operator()(BuilderState&, const CSSValue&) -> AppleColorFilter; };
 template<> struct CSSValueCreation<AppleColorFilter> { auto operator()(CSSValuePool&, const RenderStyle&, const AppleColorFilter&) -> Ref<CSSValue>; };
-
-// MARK: - Serialization
-
-template<> struct Serialize<AppleColorFilter> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const AppleColorFilter&); };
 
 // MARK: - Blending
 
 template<> struct Blending<AppleColorFilter> {
     auto canBlend(const AppleColorFilter&, const AppleColorFilter&, CompositeOperation) -> bool;
     constexpr auto requiresInterpolationForAccumulativeIteration(const AppleColorFilter&, const AppleColorFilter&) -> bool { return true; }
-    auto blend(const AppleColorFilter&, const AppleColorFilter&, const BlendingContext&) -> AppleColorFilter;
+    auto blend(const AppleColorFilter&, const AppleColorFilter&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> AppleColorFilter;
 };
-
-// MARK: - Platform
-
-template<> struct ToPlatform<AppleColorFilterValue> { auto operator()(const AppleColorFilterValue&) -> Ref<FilterOperation>; };
-template<> struct ToPlatform<AppleColorFilter> { auto operator()(const AppleColorFilter&) -> FilterOperations; };
-
-// MARK: - Logging
-
-TextStream& operator<<(TextStream&, const AppleColorFilterValue&);
 
 } // namespace Style
 } // namespace WebCore
 
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::AppleColorFilterValue)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::AppleColorFilter)

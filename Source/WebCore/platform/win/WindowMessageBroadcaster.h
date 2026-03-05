@@ -53,7 +53,7 @@ namespace WebCore {
 
         void addListener(WindowMessageListener*);
         void removeListener(WindowMessageListener*);
-        const ListenerSet& listeners() const { return m_listeners; }
+        const ListenerSet& listeners() const LIFETIME_BOUND { return m_listeners; }
 
         void destroy();
         void unsubclassWindow();

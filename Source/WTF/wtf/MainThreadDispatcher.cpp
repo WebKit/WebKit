@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MainThreadDispatcher.h"
+#include <wtf/MainThreadDispatcher.h>
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
@@ -44,7 +44,7 @@ bool MainThreadDispatcher::isCurrent() const
 
 void MainThreadDispatcher::dispatch(Function<void ()>&& function)
 {
-    callOnMainThread(WTFMove(function));
+    callOnMainThread(WTF::move(function));
 }
 
 } // namespace WTF

@@ -43,10 +43,10 @@ class RenderBoxFragmentInfo;
 class RenderFragmentedFlow;
 
 class RenderFragmentContainer : public RenderBlockFlow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderFragmentContainer);
+    WTF_MAKE_TZONE_ALLOCATED(RenderFragmentContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentContainer);
 public:
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void setFragmentedFlowPortionRect(const LayoutRect& rect) { m_fragmentedFlowPortionRect = rect; }
     LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
@@ -73,7 +73,7 @@ public:
 
     bool isFirstFragment() const;
     bool isLastFragment() const;
-    virtual bool shouldClipFragmentedFlowContent() const;
+    virtual bool NODELETE shouldClipFragmentedFlowContent() const;
 
     // These methods represent the width and height of a "page" and for a RenderFragmentContainer they are just the
     // content width and content height of a fragment. For RenderFragmentContainerSets, however, they will be the width and
@@ -81,8 +81,8 @@ public:
     virtual LayoutUnit pageLogicalWidth() const;
     virtual LayoutUnit pageLogicalHeight() const;
 
-    LayoutUnit logicalTopOfFragmentedFlowContentRect(const LayoutRect&) const;
-    LayoutUnit logicalBottomOfFragmentedFlowContentRect(const LayoutRect&) const;
+    LayoutUnit NODELETE logicalTopOfFragmentedFlowContentRect(const LayoutRect&) const;
+    LayoutUnit NODELETE logicalBottomOfFragmentedFlowContentRect(const LayoutRect&) const;
     LayoutUnit logicalTopForFragmentedFlowContent() const { return logicalTopOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
     LayoutUnit logicalBottomForFragmentedFlowContent() const { return logicalBottomOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
 
@@ -142,7 +142,7 @@ private:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    virtual void installFragmentedFlow();
+    virtual void NODELETE installFragmentedFlow();
 
     LayoutPoint mapFragmentPointIntoFragmentedFlowCoordinates(const LayoutPoint&);
     LayoutRect computedVisualOverflowRectForBox(const RenderBox&) const;

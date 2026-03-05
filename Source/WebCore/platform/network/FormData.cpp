@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FormData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormData);
 
 inline FormData::FormData(const FormData& data)
     : RefCounted<FormData>()
@@ -70,7 +70,7 @@ Ref<FormData> FormData::create(const CString& string)
 Ref<FormData> FormData::create(Vector<uint8_t>&& vector)
 {
     auto data = create();
-    data->m_elements.append(WTFMove(vector));
+    data->m_elements.append(WTF::move(vector));
     return data;
 }
 
@@ -90,8 +90,8 @@ Ref<FormData> FormData::create(Vector<WebCore::FormDataElement>&& elements, uint
 {
     auto result = create();
     result->setAlwaysStream(alwaysStream);
-    result->m_boundary = WTFMove(boundary);
-    result->m_elements = WTFMove(elements);
+    result->m_boundary = WTF::move(boundary);
+    result->m_elements = WTF::move(elements);
     result->setIdentifier(identifier);
     return result;
 }
@@ -249,10 +249,14 @@ void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData)
         Vector<uint8_t> header;
         FormDataBuilder::beginMultiPartHeader(header, m_boundary.span(), normalizedName);
 
-        if (auto* file = std::get_if<RefPtr<File>>(&item.data))
-            appendMultiPartFileValue(Ref { **file }, header, encoding);
-        else
-            appendMultiPartStringValue(std::get<String>(item.data), header, encoding);
+        WTF::switchOn(item.data,
+            [&](const Ref<File>& file) {
+                appendMultiPartFileValue(file, header, encoding);
+            },
+            [&](const String& string) {
+                appendMultiPartStringValue(string, header, encoding);
+            }
+        );
 
         constexpr std::array<uint8_t, 2> newline { '\r', '\n' };
         appendData(newline);
@@ -272,7 +276,8 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
         String stringValue = WTF::switchOn(item.data,
             [](const String& string) {
                 return string;
-            }, [](const RefPtr<File>& file) {
+            },
+            [](const Ref<File>& file) {
                 return file->name();
             }
         );
@@ -315,14 +320,16 @@ static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formDat
     }
 
     for (const auto& blobItem : blobData->items()) {
-        if (blobItem.type() == BlobDataItem::Type::Data) {
-            ASSERT(blobItem.data());
-            formData.appendData(blobItem.protectedData()->span().subspan(blobItem.offset(), blobItem.length()));
-        } else if (blobItem.type() == BlobDataItem::Type::File) {
-            RefPtr file = blobItem.file();
+        switch (blobItem.type()) {
+        case BlobDataItem::Type::Data:
+            formData.appendData(protect(blobItem.data())->span().subspan(blobItem.offset(), blobItem.length()));
+            break;
+        case BlobDataItem::Type::File: {
+            Ref file = blobItem.file();
             formData.appendFileRange(file->path(), blobItem.offset(), blobItem.length(), file->expectedModificationTime());
-        } else
-            ASSERT_NOT_REACHED();
+            break;
+        }
+        }
     }
 }
 
@@ -378,15 +385,15 @@ FormDataForUpload FormData::prepareForUpload()
         if (!generatedFilename)
             continue;
         fileData->filename = generatedFilename;
-        generatedFiles.append(WTFMove(generatedFilename));
+        generatedFiles.append(WTF::move(generatedFilename));
     }
     
-    return { *this, WTFMove(generatedFiles) };
+    return { *this, WTF::move(generatedFiles) };
 }
 
 FormDataForUpload::FormDataForUpload(FormData& data, Vector<String>&& temporaryZipFiles)
     : m_data(data)
-    , m_temporaryZipFiles(WTFMove(temporaryZipFiles))
+    , m_temporaryZipFiles(WTF::move(temporaryZipFiles))
 {
 }
 

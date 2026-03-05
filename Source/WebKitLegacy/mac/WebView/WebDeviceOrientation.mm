@@ -34,7 +34,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    m_orientation = WTFMove(coreDeviceOrientation);
+    m_orientation = WTF::move(coreDeviceOrientation);
     return self;
 }
 
@@ -47,7 +47,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:WTFMove(coreDeviceOrientation)];
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:WTF::move(coreDeviceOrientation)];
     return self;
 }
 

@@ -1,6 +1,6 @@
 
-FAIL Property masonry-direction value 'row' assert_true: masonry-direction doesn't seem to be supported in the computed style expected true got false
-FAIL Property masonry-direction value 'column' assert_true: masonry-direction doesn't seem to be supported in the computed style expected true got false
-FAIL Property masonry-direction value 'row-reverse' assert_true: masonry-direction doesn't seem to be supported in the computed style expected true got false
-FAIL Property masonry-direction value 'column-reverse' assert_true: masonry-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'row' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'column' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'row-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'column-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
 

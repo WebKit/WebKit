@@ -40,7 +40,7 @@ public:
 private:
     SizeAttribute(SourceSpan span, Expression::Ref&& size)
         : Attribute(span)
-        , m_size(WTFMove(size))
+        , m_size(WTF::move(size))
     { }
 
     Expression::Ref m_size;

@@ -46,7 +46,7 @@ static uint64_t nextLogIdentifier()
     return ++logIdentifier;
 }
 
-static RefPtr<Logger>& nullLogger()
+static RefPtr<Logger>& NODELETE nullLogger()
 {
     static NeverDestroyed<RefPtr<Logger>> logger;
     return logger;
@@ -57,9 +57,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionCaptureSourceImpl);
 
 SpeechRecognitionCaptureSourceImpl::SpeechRecognitionCaptureSourceImpl(SpeechRecognitionConnectionClientIdentifier identifier, DataCallback&& dataCallback, StateUpdateCallback&& stateUpdateCallback, Ref<RealtimeMediaSource>&& source)
     : m_clientIdentifier(identifier)
-    , m_dataCallback(WTFMove(dataCallback))
-    , m_stateUpdateCallback(WTFMove(stateUpdateCallback))
-    , m_source(WTFMove(source))
+    , m_dataCallback(WTF::move(dataCallback))
+    , m_stateUpdateCallback(WTF::move(stateUpdateCallback))
+    , m_source(WTF::move(source))
 {
 #if !RELEASE_LOG_DISABLED
     if (!nullLogger().get()) {
@@ -138,12 +138,12 @@ void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const WTF::MediaT
             return;
         }
 
-        dataSource = WTFMove(newDataSource);
+        dataSource = WTF::move(newDataSource);
         m_dataSource = dataSource.copyRef();
     }
 
     dataSource->pushSamples(time, data, sampleCount);
-    callOnMainThread([weakThis = WeakPtr { *this }, dataSource = WTFMove(dataSource), time, audioDescription, sampleCount] {
+    callOnMainThread([weakThis = WeakPtr { *this }, dataSource = WTF::move(dataSource), time, audioDescription, sampleCount] {
         if (CheckedPtr checkedThis = weakThis.get())
             checkedThis->pullSamplesAndCallDataCallback(dataSource.get(), time, audioDescription, sampleCount);
     });

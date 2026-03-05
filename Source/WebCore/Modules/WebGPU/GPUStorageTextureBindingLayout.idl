@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpustoragetexturebindinglayout
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUStorageTextureBindingLayout {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUStorageTextureBindingLayout {
     GPUStorageTextureAccess access = "write-only";
     required GPUTextureFormat format;
     GPUTextureViewDimension viewDimension = "2d";

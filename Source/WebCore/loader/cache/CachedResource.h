@@ -36,6 +36,7 @@
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <time.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
@@ -149,7 +150,6 @@ public:
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const CookieJar* cookieJar() const { return m_cookieJar.get(); }
-    RefPtr<const CookieJar> protectedCookieJar() const;
     Type type() const { return m_type; }
     String mimeType() const { return response().mimeType(); }
     long long expectedContentLength() const { return response().expectedContentLength(); }
@@ -190,15 +190,16 @@ public:
     }
 
     unsigned size() const { return encodedSize() + decodedSize() + overheadSize(); }
-    unsigned encodedSize() const;
-    unsigned decodedSize() const;
+    unsigned NODELETE encodedSize() const;
+    unsigned NODELETE decodedSize() const;
     unsigned overheadSize() const;
 
     bool isLoaded() const { return !m_loading; } // FIXME. Method name is inaccurate. Loading might not have started yet.
 
     bool isLoading() const { return m_loading; }
-    void setLoading(bool b) { m_loading = b; }
+    void setLoading(bool);
     virtual bool stillNeedsLoad() const { return false; }
+    void whenLoaded(CompletionHandler<void()>&&);
 
     SubresourceLoader* loader() const { return m_loader.get(); }
 
@@ -225,7 +226,7 @@ public:
 
     // Computes the status of an object after loading.
     // Updates the expire date on the cache entry file
-    void finish();
+    void NODELETE finish();
 
     // Called by the cache if the object has been removed from the cache
     // while still being referenced. This means the object should delete itself
@@ -237,7 +238,6 @@ public:
     void clearLoader();
 
     FragmentedSharedBuffer* resourceBuffer() const { return m_data.get(); }
-    RefPtr<FragmentedSharedBuffer> protectedResourceBuffer() const;
 
     virtual void redirectReceived(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     virtual void responseReceived(ResourceResponse&&);
@@ -246,9 +246,9 @@ public:
     WEBCORE_EXPORT const ResourceResponse& response() const;
     Box<NetworkLoadMetrics> takeNetworkLoadMetrics() { return mutableResponse().takeNetworkLoadMetrics(); }
 
-    void setCrossOrigin();
-    bool isCrossOrigin() const;
-    bool isCORSCrossOrigin() const;
+    void NODELETE setCrossOrigin();
+    bool NODELETE isCrossOrigin() const;
+    bool NODELETE isCORSCrossOrigin() const;
     bool isCORSSameOrigin() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 
@@ -256,7 +256,6 @@ public:
 
     const SecurityOrigin* origin() const { return m_origin.get(); }
     SecurityOrigin* origin() { return m_origin.get(); }
-    RefPtr<SecurityOrigin> protectedOrigin() const;
     AtomString initiatorType() const { return m_initiatorType; }
 
     bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
@@ -299,7 +298,6 @@ public:
 
     bool isCacheValidator() const { return !!m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate.get(); }
-    CachedResourceHandle<CachedResource> protectedResourceToRevalidate() const;
 
     // HTTP revalidation support methods for CachedResourceLoader.
     void setResourceToRevalidate(CachedResource*);
@@ -317,7 +315,7 @@ public:
 
     std::optional<ResourceLoaderIdentifier> identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
 
-    void setOriginalRequest(std::unique_ptr<ResourceRequest>&& originalRequest) { m_originalRequest = WTFMove(originalRequest); }
+    void setOriginalRequest(std::unique_ptr<ResourceRequest>&& originalRequest) { m_originalRequest = WTF::move(originalRequest); }
     const std::unique_ptr<ResourceRequest>& originalRequest() const { return m_originalRequest; }
 
 #if USE(QUICK_LOOK)
@@ -450,6 +448,7 @@ private:
     unsigned m_lruIndex { 0 };
 #endif
 
+    Vector<CompletionHandler<void()>> m_loadedCallbacks;
     mutable std::array<std::optional<ResourceCryptographicDigest>, ResourceCryptographicDigest::algorithmCount> m_cryptographicDigests;
 };
 

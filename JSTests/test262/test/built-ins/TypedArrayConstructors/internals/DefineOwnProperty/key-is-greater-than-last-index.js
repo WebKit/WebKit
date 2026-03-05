@@ -20,8 +20,8 @@ includes: [testTypedArray.js]
 features: [Reflect, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
 
   assert.sameValue(
     Reflect.defineProperty(sample, "2", {
@@ -44,4 +44,4 @@ testWithTypedArrayConstructors(function(TA) {
     false,
     "numericIndex > length"
   );
-});
+}, null, ["passthrough"]);

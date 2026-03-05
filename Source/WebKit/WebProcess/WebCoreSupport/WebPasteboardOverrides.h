@@ -39,7 +39,7 @@ namespace WebKit {
 class WebPasteboardOverrides {
     friend NeverDestroyed<WebPasteboardOverrides>;
 public:
-    static WebPasteboardOverrides& sharedPasteboardOverrides();
+    static WebPasteboardOverrides& NODELETE sharedPasteboardOverrides();
 
     void addOverride(const String& pasteboardName, const String& type, const Vector<uint8_t>&);
     void removeOverride(const String& pasteboardName, const String& type);

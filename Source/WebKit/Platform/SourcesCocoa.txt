@@ -14,6 +14,7 @@ Platform/foundation/LoggingFoundation.mm @nonARC
 Platform/IPC/cocoa/ConnectionCocoa.mm @nonARC
 Platform/IPC/cocoa/DaemonConnectionCocoa.mm @nonARC
 Platform/IPC/cocoa/MachMessage.cpp
+Platform/IPC/cocoa/TransferStringCocoa.mm @nonARC
 
 Platform/IPC/darwin/IPCEventDarwin.cpp
 Platform/IPC/darwin/IPCSemaphoreDarwin.cpp

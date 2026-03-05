@@ -128,24 +128,24 @@ static NSMapTable *wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheMutex)
     [super dealloc];
 }
 
-static id getInternalObjcObject(id object)
+static id getInternalObjcObject(id objectArg)
 {
-    if ([object isKindOfClass:[JSManagedValue class]]) {
-        JSValue* value = [static_cast<JSManagedValue *>(object) value];
+    if (auto object = dynamic_objc_cast<JSManagedValue>(objectArg)) {
+        JSValue* value = [object value];
         if (!value)
             return nil;
         id temp = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
         if (temp)
             return temp;
-        return object;
-    }
-    
-    if ([object isKindOfClass:[JSValue class]]) {
-        JSValue *value = static_cast<JSValue *>(object);
-        object = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
+        return objectArg;
     }
 
-    return object;
+    if (auto value = dynamic_objc_cast<JSValue>(objectArg)) {
+        RetainPtr object = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
+        return object.autorelease();
+    }
+
+    return objectArg;
 }
 
 - (bool)isOldExternalObject:(id)object
@@ -161,45 +161,45 @@ static id getInternalObjcObject(id object)
     [m_externalRememberedSet setObject:@YES forKey:object];
 }
 
-- (void)addManagedReference:(id)object withOwner:(id)owner
+- (void)addManagedReference:(id)objectArg withOwner:(id)ownerArg
 {
     @autoreleasepool {
-        if ([object isKindOfClass:[JSManagedValue class]])
-            [object didAddOwner:owner];
+        if ([objectArg isKindOfClass:[JSManagedValue class]])
+            [objectArg didAddOwner:ownerArg];
 
-        object = getInternalObjcObject(object);
-        owner = getInternalObjcObject(owner);
+        RetainPtr object = getInternalObjcObject(objectArg);
+        RetainPtr owner = getInternalObjcObject(ownerArg);
 
         if (!object || !owner)
             return;
 
         JSC::JSLockHolder locker(toJS(m_group));
-        if ([self isOldExternalObject:owner] && ![self isOldExternalObject:object])
-            [self addExternalRememberedObject:owner];
+        if ([self isOldExternalObject:owner.get()] && ![self isOldExternalObject:object.get()])
+            [self addExternalRememberedObject:owner.get()];
 
         Locker externalDataMutexLocker { m_externalDataMutex };
-        RetainPtr<NSMapTable> ownedObjects = [m_externalObjectGraph objectForKey:owner];
+        RetainPtr<NSMapTable> ownedObjects = [m_externalObjectGraph objectForKey:owner.get()];
         if (!ownedObjects) {
             NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
             NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
             ownedObjects = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1]);
 
-            [m_externalObjectGraph setObject:ownedObjects.get() forKey:owner];
+            [m_externalObjectGraph setObject:ownedObjects.get() forKey:owner.get()];
         }
 
-        size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects.get(), (__bridge void*)object));
-        NSMapInsert(ownedObjects.get(), (__bridge void*)object, reinterpret_cast<void*>(count + 1));
+        size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects.get(), (__bridge void*)object.get()));
+        NSMapInsert(ownedObjects.get(), (__bridge void*)object.get(), reinterpret_cast<void*>(count + 1));
     }
 }
 
-- (void)removeManagedReference:(id)object withOwner:(id)owner
+- (void)removeManagedReference:(id)objectArg withOwner:(id)ownerArg
 {
     @autoreleasepool {
-        if ([object isKindOfClass:[JSManagedValue class]])
-            [object didRemoveOwner:owner];
+        if ([objectArg isKindOfClass:[JSManagedValue class]])
+            [objectArg didRemoveOwner:ownerArg];
 
-        object = getInternalObjcObject(object);
-        owner = getInternalObjcObject(owner);
+        RetainPtr object = getInternalObjcObject(objectArg);
+        RetainPtr owner = getInternalObjcObject(ownerArg);
 
         if (!object || !owner)
             return;
@@ -207,22 +207,22 @@ static id getInternalObjcObject(id object)
         JSC::JSLockHolder locker(toJS(m_group));
 
         Locker externalDataMutexLocker { m_externalDataMutex };
-        NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
+        NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner.get()];
         if (!ownedObjects)
             return;
 
-        size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects, (__bridge void*)object));
+        size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects, (__bridge void*)object.get()));
         if (count > 1) {
-            NSMapInsert(ownedObjects, (__bridge void*)object, reinterpret_cast<void*>(count - 1));
+            NSMapInsert(ownedObjects, (__bridge void*)object.get(), reinterpret_cast<void*>(count - 1));
             return;
         }
 
         if (count == 1)
-            NSMapRemove(ownedObjects, (__bridge void*)object);
+            NSMapRemove(ownedObjects, (__bridge void*)object.get());
 
         if (![ownedObjects count]) {
-            [m_externalObjectGraph removeObjectForKey:owner];
-            [m_externalRememberedSet removeObjectForKey:owner];
+            [m_externalObjectGraph removeObjectForKey:owner.get()];
+            [m_externalRememberedSet removeObjectForKey:owner.get()];
         }
     }
 }

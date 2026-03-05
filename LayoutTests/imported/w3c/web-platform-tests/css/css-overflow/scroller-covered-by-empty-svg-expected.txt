@@ -1,3 +1,0 @@
-
-PASS Wheel-scroll in empty SVG covering scroller should not scroll the scroller
-

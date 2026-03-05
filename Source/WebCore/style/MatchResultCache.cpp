@@ -27,6 +27,7 @@
 #include "MatchResultCache.h"
 
 #include "MatchResult.h"
+#include "RenderStyle+SettersInlines.h"
 #include "ResolvedStyle.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
@@ -54,7 +55,7 @@ struct MatchResultCache::Entry : CanMakeCheckedPtr<MatchResultCache::Entry> {
     Vector<OriginalInlineProperty> originalInlineProperties;
 
     Entry(UnadjustedStyle&& unadjustedStyle, const MutableStyleProperties& inlineStyle)
-        : unadjustedStyle(WTFMove(unadjustedStyle))
+        : unadjustedStyle(WTF::move(unadjustedStyle))
         , inlineStyle(inlineStyle)
     {
         originalInlineProperties.reserveInitialCapacity(inlineStyle.size());
@@ -134,7 +135,7 @@ PropertyCascade::IncludedProperties MatchResultCache::computeAndUpdateChangedPro
         if (propertyID < firstLowPriorityProperty || propertyID == CSSPropertyLineHeight)
             return PropertyCascade::normalProperties();
 
-        result.ids.append(propertyID);
+        result.ids.append(cascadeAliasProperty(propertyID));
     }
 
     return result;
@@ -160,7 +161,7 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
 
     return CachedMatchResult {
         .unadjustedStyle = copy(entry->unadjustedStyle),
-        .changedProperties = WTFMove(changedProperties),
+        .changedProperties = WTF::move(changedProperties),
         .styleToUpdate = *entry->unadjustedStyle.style
     };
 }
@@ -172,7 +173,7 @@ void MatchResultCache::update(CachedMatchResult& result, const RenderStyle& styl
 
 void MatchResultCache::updateForFastPathInherit(const Element& element, const RenderStyle& parentStyle)
 {
-    auto entry = m_entries.get(element);
+    CheckedPtr entry = m_entries.get(element);
     if (!entry)
         return;
     entry->unadjustedStyle.style->fastPathInheritFrom(parentStyle);

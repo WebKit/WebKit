@@ -36,7 +36,7 @@
     // Methods
     // FIXME: Spec says this should return Promise<boolean>.
     Promise<undefined> isSessionSupported(XRSessionMode mode);
-    [NewObject, CallWith=CurrentDocument] Promise<WebXRSession> requestSession(XRSessionMode mode, optional XRSessionInit options);
+    [NewObject, CallWith=CurrentDocument] Promise<WebXRSession> requestSession(XRSessionMode mode, optional XRSessionInit options = {});
 
     // Events
     attribute EventHandler ondevicechange;

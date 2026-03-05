@@ -78,7 +78,7 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     CCCryptorRelease(cryptor);
 
     if (capacity >= numberOfBlocks)
-        return WTFMove(head);
+        return WTF::move(head);
 
     // second part: compute the remaining data and append them to the head.
     // reset counter
@@ -106,7 +106,7 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     CCCryptorRelease(cryptor);
 
     head.appendVector(tail);
-    return WTFMove(head);
+    return WTF::move(head);
 }
 
 CCStatus keyDerivationHMAC(CCDigestAlgorithm digest, std::span<const uint8_t> keyDerivationKey, std::span<const uint8_t> context, std::span<const uint8_t> salt, Vector<uint8_t>& derivedKey)
@@ -130,7 +130,7 @@ ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm digestAlgorithm, s
     if (keyDerivationHMAC(digestAlgorithm, key, info, salt, result) != kCCSuccess)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(result);
+    return WTF::move(result);
 }
 
 ExceptionOr<Vector<uint8_t>> deriveHDKFSHA256Bits(std::span<const uint8_t> key, std::span<const uint8_t> salt, std::span<const uint8_t> info, size_t length)

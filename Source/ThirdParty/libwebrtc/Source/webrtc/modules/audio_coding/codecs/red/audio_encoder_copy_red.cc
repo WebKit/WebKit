@@ -179,17 +179,19 @@ AudioEncoder::EncodedInfo AudioEncoderCopyRed::EncodeImpl(
   RTC_DCHECK_EQ(header_offset, header_length_bytes - 1);
   encoded->data()[header_offset] = info.payload_type;
 
-  // Shift the redundant encodings.
-  auto rit = redundant_encodings_.rbegin();
-  for (auto next = std::next(rit); next != redundant_encodings_.rend();
-       rit++, next = std::next(rit)) {
-    rit->first = next->first;
-    rit->second.SetData(next->second);
-  }
-  it = redundant_encodings_.begin();
-  if (it != redundant_encodings_.end()) {
-    it->first = info;
-    it->second.SetData(primary_encoded_);
+  // Shift the redundant encodings if speech.
+  if (info.speech) {
+    auto rit = redundant_encodings_.rbegin();
+    for (auto next = std::next(rit); next != redundant_encodings_.rend();
+         rit++, next = std::next(rit)) {
+      rit->first = next->first;
+      rit->second.SetData(next->second);
+    }
+    it = redundant_encodings_.begin();
+    if (it != redundant_encodings_.end()) {
+      it->first = info;
+      it->second.SetData(primary_encoded_);
+    }
   }
 
   // Update main EncodedInfo.
@@ -229,10 +231,8 @@ void AudioEncoderCopyRed::SetMaxPlaybackRate(int frequency_hz) {
   speech_encoder_->SetMaxPlaybackRate(frequency_hz);
 }
 
-bool AudioEncoderCopyRed::EnableAudioNetworkAdaptor(
-    const std::string& config_string,
-    RtcEventLog* event_log) {
-  return speech_encoder_->EnableAudioNetworkAdaptor(config_string, event_log);
+bool AudioEncoderCopyRed::EnableAudioNetworkAdaptor(absl::string_view config) {
+  return speech_encoder_->EnableAudioNetworkAdaptor(config);
 }
 
 void AudioEncoderCopyRed::DisableAudioNetworkAdaptor() {

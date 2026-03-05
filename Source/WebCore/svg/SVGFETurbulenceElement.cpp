@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFETurbulenceElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFETurbulenceElement);
 
 inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -89,7 +89,7 @@ void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const A
             Ref { m_numOctaves }->setBaseValInternal(*result);
 
             if (*result <= 0)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));
+                protect(protect(document())->svgExtensions())->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));
         }
         break;
     }

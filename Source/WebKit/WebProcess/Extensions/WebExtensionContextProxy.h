@@ -77,12 +77,12 @@ public:
     WebExtensionContextIdentifier unprivilegedIdentifier() const { return m_unprivilegedIdentifier; }
     Markable<WebExtensionContextIdentifier> privilegedIdentifier() const { return m_privilegedIdentifier; }
 
-    WebExtensionControllerProxy* extensionControllerProxy() const;
+    WebExtensionControllerProxy* NODELETE extensionControllerProxy() const;
 
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
 
-    const URL& baseURL() const { return m_baseURL; }
-    const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
+    const URL& baseURL() const LIFETIME_BOUND { return m_baseURL; }
+    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
 
 #if PLATFORM(COCOA)
     NSDictionary *manifest() const { return m_manifest.get(); }
@@ -94,7 +94,7 @@ public:
 
     bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
 
-    bool inTestingMode() const;
+    bool NODELETE inTestingMode() const;
 
     bool hasDOMWrapperWorld(WebExtensionContentWorldType contentWorldType) const { return contentWorldType != WebExtensionContentWorldType::ContentScript || hasContentScriptWorld(); }
     Ref<WebCore::DOMWrapperWorld> toDOMWrapperWorld(WebExtensionContentWorldType) const;
@@ -107,9 +107,9 @@ public:
 
     void addFrameWithExtensionContent(WebFrame&);
 
-    std::optional<WebExtensionTabIdentifier> tabIdentifier(WebPage&) const;
+    std::optional<WebExtensionTabIdentifier> NODELETE tabIdentifier(WebPage&) const;
 
-    RefPtr<WebPage> backgroundPage() const;
+    RefPtr<WebPage> NODELETE backgroundPage() const;
     void setBackgroundPage(WebPage&);
 
     bool isUnsupportedAPI(const String& propertyPath, const ASCIILiteral& propertyName) const;
@@ -120,7 +120,7 @@ public:
     void addInspectorPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
 
     void addInspectorBackgroundPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
-    bool isInspectorBackgroundPage(WebPage&) const;
+    bool NODELETE isInspectorBackgroundPage(WebPage&) const;
 
     Inspector::ExtensionAppearance inspectorAppearance() const { return m_inspectorAppearance; }
     void setInspectorAppearance(Inspector::ExtensionAppearance appearance) { m_inspectorAppearance = appearance; }
@@ -200,8 +200,8 @@ private:
     void dispatchRuntimeStartupEvent();
 
     // Storage
-    void setStorageAccessLevel(bool);
-    void dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionDataType, WebExtensionContentWorldType);
+    void NODELETE setStorageAccessLevel(bool);
+    void dispatchStorageChangedEvent(const Vector<String>& onChangedJSON, WebExtensionDataType, WebExtensionContentWorldType);
 
     // Tabs
     void dispatchTabsCreatedEvent(const WebExtensionTabParameters&);

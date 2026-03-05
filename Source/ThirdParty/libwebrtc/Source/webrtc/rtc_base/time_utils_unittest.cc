@@ -166,7 +166,6 @@ TEST(FakeClock, TimeFunctionsUseFakeClock) {
   SetClockForTesting(&clock);
 
   clock.SetTime(Timestamp::Micros(987654));
-  EXPECT_EQ(987u, Time32());
   EXPECT_EQ(987, TimeMillis());
   EXPECT_EQ(987654, TimeMicros());
   EXPECT_EQ(987654000, TimeNanos());

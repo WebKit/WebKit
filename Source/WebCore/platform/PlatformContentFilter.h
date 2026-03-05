@@ -31,17 +31,9 @@
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class PlatformContentFilter;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlatformContentFilter> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -86,8 +78,11 @@ public:
 #endif
 
     struct FilterParameters {
+#if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
         String webContentRestrictionsConfigurationPath { };
+#endif
+        URL mainDocumentURL;
 #endif
     };
 

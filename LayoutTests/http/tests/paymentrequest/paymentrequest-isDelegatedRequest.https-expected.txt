@@ -1,0 +1,5 @@
+
+PASS Should have a feature for `paymentRequestDelegation`.
+PASS Should not have a default value for `isDelegatedRequest`.
+PASS Should propagate `isDelegatedRequest` if provided.
+

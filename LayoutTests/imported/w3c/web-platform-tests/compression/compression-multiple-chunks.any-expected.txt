@@ -44,19 +44,19 @@ PASS compressing 13 chunks with gzip should work
 PASS compressing 14 chunks with gzip should work
 PASS compressing 15 chunks with gzip should work
 PASS compressing 16 chunks with gzip should work
-FAIL compressing 2 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111" length 10, got object "" length 0
-FAIL compressing 3 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 15, got object "" length 0
-FAIL compressing 4 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 20, got object "" length 0
-FAIL compressing 5 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 25, got object "" length 0
-FAIL compressing 6 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 30, got object "" length 0
-FAIL compressing 7 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 35, got object "" length 0
-FAIL compressing 8 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 40, got object "" length 0
-FAIL compressing 9 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 45, got object "" length 0
-FAIL compressing 10 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 50, got object "" length 0
-FAIL compressing 11 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 55, got object "" length 0
-FAIL compressing 12 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 60, got object "" length 0
-FAIL compressing 13 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 65, got object "" length 0
-FAIL compressing 14 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 70, got object "" length 0
-FAIL compressing 15 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 75, got object "" length 0
-FAIL compressing 16 chunks with brotli should work assert_array_equals: value should match lengths differ, expected array object "72,101,108,108,111,72,101,108,108,111,72,101,108,108,111,72,101,108,108,111" length 80, got object "" length 0
+PASS compressing 2 chunks with brotli should work
+PASS compressing 3 chunks with brotli should work
+PASS compressing 4 chunks with brotli should work
+PASS compressing 5 chunks with brotli should work
+PASS compressing 6 chunks with brotli should work
+PASS compressing 7 chunks with brotli should work
+PASS compressing 8 chunks with brotli should work
+PASS compressing 9 chunks with brotli should work
+PASS compressing 10 chunks with brotli should work
+PASS compressing 11 chunks with brotli should work
+PASS compressing 12 chunks with brotli should work
+PASS compressing 13 chunks with brotli should work
+PASS compressing 14 chunks with brotli should work
+PASS compressing 15 chunks with brotli should work
+PASS compressing 16 chunks with brotli should work
 

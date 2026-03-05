@@ -107,9 +107,12 @@ typedef (
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
-    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPIEnabled] readonly attribute WebKitMediaKeys webkitKeys;
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPIEnabled] readonly attribute WebKitMediaKeys? webkitKeys;
     [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPIEnabled] undefined webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
-    [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] readonly attribute MediaKeys mediaKeys;
+
+    // https://w3c.github.io/encrypted-media/#webidl-1869224078
+    // FIXME: Move these to their own IDL file HTMLMediaElement+EncryptedMedia.idl.
+    [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] readonly attribute MediaKeys? mediaKeys;
     [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onencrypted;
     [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
     [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<undefined> setMediaKeys(MediaKeys? mediaKeys);

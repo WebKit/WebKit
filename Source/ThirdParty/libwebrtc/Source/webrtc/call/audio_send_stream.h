@@ -48,6 +48,8 @@ class AudioSendStream : public AudioSender {
     // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-retransmittedbytessent
     uint64_t retransmitted_bytes_sent = 0;
     int32_t packets_sent = 0;
+    // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-packetssentwithect1
+    int32_t packets_sent_with_ect1 = 0;
     // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalpacketsenddelay
     TimeDelta total_packet_send_delay = TimeDelta::Zero();
     // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-retransmittedpacketssent
@@ -130,6 +132,9 @@ class AudioSendStream : public AudioSender {
 
     double bitrate_priority = 1.0;
     bool has_dscp = false;
+    // If true, the stream will allocate bandwidth from the bandwidth estimate
+    // created by the congestion controller.
+    bool include_in_congestion_control_allocation = false;
 
     // Defines whether to turn on audio network adaptor, and defines its config
     // string.

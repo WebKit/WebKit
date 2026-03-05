@@ -29,10 +29,11 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(IMAGE_ANALYSIS)
 
 #import "UIKitUtilities.h"
+#import <wtf/WeakObjCPtr.h>
 
 @implementation WKImageAnalysisGestureRecognizer {
     __weak UIView <WKImageAnalysisGestureRecognizerDelegate> *_imageAnalysisGestureRecognizerDelegate;
-    __weak UIScrollView *_lastTouchedScrollView;
+    WeakObjCPtr<UIScrollView> _lastTouchedScrollView;
 }
 
 - (instancetype)initWithImageAnalysisGestureDelegate:(UIView <WKImageAnalysisGestureRecognizerDelegate> *)delegate
@@ -55,12 +56,17 @@
     _lastTouchedScrollView = nil;
 }
 
+- (UIScrollView *)lastTouchedScrollView
+{
+    return _lastTouchedScrollView.getAutoreleased();
+}
+
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
 
-    if (auto scrollView = WebKit::scrollViewForTouches(touches))
-        _lastTouchedScrollView = scrollView;
+    if (RetainPtr scrollView = WebKit::scrollViewForTouches(touches))
+        _lastTouchedScrollView = scrollView.get();
 
     [self beginAfterExceedingForceThresholdIfNeeded:touches];
 }
@@ -97,9 +103,9 @@
         return;
 
     if (newState == UIGestureRecognizerStateBegan)
-        [_imageAnalysisGestureRecognizerDelegate imageAnalysisGestureDidBegin:self];
+        [protect(_imageAnalysisGestureRecognizerDelegate) imageAnalysisGestureDidBegin:self];
     else if (newState == UIGestureRecognizerStateFailed)
-        [_imageAnalysisGestureRecognizerDelegate imageAnalysisGestureDidFail:self];
+        [protect(_imageAnalysisGestureRecognizerDelegate) imageAnalysisGestureDidFail:self];
 }
 
 @end

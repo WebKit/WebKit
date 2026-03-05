@@ -37,6 +37,7 @@ TEST(TimestampTest, ConstExpr) {
   EXPECT_EQ(kTimestampSeconds.seconds(), kValue);
   EXPECT_EQ(kTimestampMs.ms(), kValue);
   EXPECT_EQ(kTimestampUs.us(), kValue);
+  EXPECT_EQ(kTimestampUs.ns(), kValue * 1000);
 }
 
 TEST(TimestampTest, GetBackSameValues) {

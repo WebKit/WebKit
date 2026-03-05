@@ -33,7 +33,7 @@
 namespace WebCore {
 
 SourceImage::SourceImage(ImageVariant&& imageVariant)
-    : m_imageVariant(WTFMove(imageVariant))
+    : m_imageVariant(WTF::move(imageVariant))
 {
 }
 

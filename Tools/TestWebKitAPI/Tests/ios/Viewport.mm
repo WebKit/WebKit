@@ -81,8 +81,8 @@ TEST(Viewport, RespectInitialScaleExceptOnWikipediaDomain)
         RetainPtr response = makeViewportMetaTag(viewportWidth, expectedViewportScale);
         [webView loadSimulatedRequest:request responseHTMLString:response.get()];
         [navigationDelegate waitForDidFinishNavigation];
-        [webView _doAfterNextPresentationUpdate:makeBlockPtr([&done, &webView, expectedViewportScale, scaleExpectation = WTFMove(scaleExpectation)]() mutable {
-            [webView evaluateJavaScript:@"visualViewport.scale" completionHandler:makeBlockPtr([&done, expectedViewportScale, scaleExpectation = WTFMove(scaleExpectation)] (NSNumber *value, NSError *error) mutable {
+        [webView _doAfterNextPresentationUpdate:makeBlockPtr([&done, &webView, expectedViewportScale, scaleExpectation = WTF::move(scaleExpectation)]() mutable {
+            [webView evaluateJavaScript:@"visualViewport.scale" completionHandler:makeBlockPtr([&done, expectedViewportScale, scaleExpectation = WTF::move(scaleExpectation)] (NSNumber *value, NSError *error) mutable {
                 auto actualViewportScale = value.floatValue;
                 scaleExpectation(actualViewportScale, expectedViewportScale);
                 done = true;

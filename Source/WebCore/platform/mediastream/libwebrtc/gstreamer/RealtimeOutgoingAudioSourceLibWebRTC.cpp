@@ -33,9 +33,16 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeOutgoingAudioSourceLibWebRTC);
 
+GST_DEBUG_CATEGORY(webkit_libwebrtc_outgoing_audio_debug);
+#define GST_CAT_DEFAULT webkit_libwebrtc_outgoing_audio_debug
+
 RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&& audioSource)
-    : RealtimeOutgoingAudioSource(WTFMove(audioSource))
+    : RealtimeOutgoingAudioSource(WTF::move(audioSource))
 {
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_outgoing_audio_debug, "webkitlibwebrtcaudiooutgoing", 0, "WebKit LibWebRTC outgoing audio source");
+    });
     m_adapter = adoptGRef(gst_adapter_new()),
     m_sampleConverter = nullptr;
 }
@@ -47,7 +54,7 @@ RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC()
 
 Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaStreamTrackPrivate>&& audioSource)
 {
-    return RealtimeOutgoingAudioSourceLibWebRTC::create(WTFMove(audioSource));
+    return RealtimeOutgoingAudioSourceLibWebRTC::create(WTF::move(audioSource));
 }
 
 static inline GstAudioInfo libwebrtcAudioFormat(int sampleRate, size_t channelCount)
@@ -72,13 +79,18 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
     auto desc = static_cast<const GStreamerAudioStreamDescription&>(streamDescription);
 
     if (m_sampleConverter && !gst_audio_info_is_equal(&m_inputStreamDescription, &desc.getInfo())) {
-        GST_ERROR_OBJECT(this, "FIXME - Audio format renegotiation is not possible yet!");
+        GST_ERROR("Audio format renegotiation is not possible yet.");
         m_sampleConverter = nullptr;
     }
 
     if (!m_sampleConverter) {
         m_inputStreamDescription = desc.getInfo();
         m_outputStreamDescription = libwebrtcAudioFormat(LibWebRTCAudioFormat::sampleRate, desc.numberOfChannels());
+#ifndef GST_DISABLE_GST_DEBUG
+        auto inputCaps = adoptGRef(gst_audio_info_to_caps(&m_inputStreamDescription));
+        auto outputCaps = adoptGRef(gst_audio_info_to_caps(&m_outputStreamDescription));
+        GST_TRACE("Converting from %" GST_PTR_FORMAT " to %" GST_PTR_FORMAT, inputCaps.get(), outputCaps.get());
+#endif
         m_sampleConverter.reset(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_IN_WRITABLE, &m_inputStreamDescription,
             &m_outputStreamDescription, nullptr));
     }
@@ -111,20 +123,21 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
     while (gst_adapter_available(m_adapter.get()) > inBufferSize) {
         auto inBuffer = adoptGRef(gst_adapter_take_buffer(m_adapter.get(), inBufferSize));
         m_audioBuffer.grow(outBufferSize);
-        if (isSilenced())
+        if (isSilenced()) {
+            GST_TRACE("Audio buffer will contain silence");
             webkitGstAudioFormatFillSilence(m_outputStreamDescription.finfo, m_audioBuffer.mutableSpan().data(), outBufferSize);
-        else {
+        } else {
             GstMappedBuffer inMap(inBuffer.get(), GST_MAP_READ);
 
             gpointer in[1] = { inMap.data() };
             gpointer out[1] = { m_audioBuffer.mutableSpan().data() };
             if (!gst_audio_converter_samples(m_sampleConverter.get(), static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
                 GST_ERROR("Could not convert samples.");
-
                 return;
             }
         }
 
+        GST_TRACE("Sending audio frames");
         sendAudioFrames(m_audioBuffer.span(), LibWebRTCAudioFormat::sampleSize, GST_AUDIO_INFO_RATE(&m_outputStreamDescription),
             GST_AUDIO_INFO_CHANNELS(&m_outputStreamDescription), outChunkSampleCount);
     }
@@ -148,6 +161,8 @@ bool RealtimeOutgoingAudioSourceLibWebRTC::hasBufferedEnoughData()
     return false;
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)

@@ -48,17 +48,17 @@ const X509V3_EXT_METHOD v3_cpols = {
     NID_certificate_policies,
     0,
     ASN1_ITEM_ref(CERTIFICATEPOLICIES),
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
     i2r_certpol,
     r2i_certpol,
-    NULL,
+    nullptr,
 };
 
 DECLARE_ASN1_ITEM(POLICYINFO)
@@ -113,13 +113,13 @@ IMPLEMENT_ASN1_ALLOC_FUNCTIONS(NOTICEREF)
 static void *r2i_certpol(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
                          const char *value) {
   STACK_OF(POLICYINFO) *pols = sk_POLICYINFO_new_null();
-  if (pols == NULL) {
-    return NULL;
+  if (pols == nullptr) {
+    return nullptr;
   }
   STACK_OF(CONF_VALUE) *vals = X509V3_parse_list(value);
 
   {
-    if (vals == NULL) {
+    if (vals == nullptr) {
       OPENSSL_PUT_ERROR(X509V3, ERR_R_X509V3_LIB);
       goto err;
     }
@@ -150,13 +150,13 @@ static void *r2i_certpol(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
         }
       } else {
         ASN1_OBJECT *pobj = OBJ_txt2obj(cnf->name, 0);
-        if (pobj == NULL) {
+        if (pobj == nullptr) {
           OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_OBJECT_IDENTIFIER);
           X509V3_conf_err(cnf);
           goto err;
         }
         pol = POLICYINFO_new();
-        if (pol == NULL) {
+        if (pol == nullptr) {
           ASN1_OBJECT_free(pobj);
           goto err;
         }
@@ -174,7 +174,7 @@ static void *r2i_certpol(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
 err:
   sk_CONF_VALUE_pop_free(vals, X509V3_conf_free);
   sk_POLICYINFO_pop_free(pols, POLICYINFO_free);
-  return NULL;
+  return nullptr;
 }
 
 static POLICYINFO *policy_section(const X509V3_CTX *ctx,
@@ -207,12 +207,12 @@ static POLICYINFO *policy_section(const X509V3_CTX *ctx,
         goto err;
       }
       qual->pqualid = OBJ_nid2obj(NID_id_qt_cps);
-      if (qual->pqualid == NULL) {
+      if (qual->pqualid == nullptr) {
         OPENSSL_PUT_ERROR(X509V3, ERR_R_INTERNAL_ERROR);
         goto err;
       }
       qual->d.cpsuri = ASN1_IA5STRING_new();
-      if (qual->d.cpsuri == NULL) {
+      if (qual->d.cpsuri == nullptr) {
         goto err;
       }
       if (!ASN1_STRING_set(qual->d.cpsuri, cnf->value, strlen(cnf->value))) {
@@ -257,7 +257,7 @@ static POLICYINFO *policy_section(const X509V3_CTX *ctx,
 
 err:
   POLICYINFO_free(pol);
-  return NULL;
+  return nullptr;
 }
 
 static POLICYQUALINFO *notice_section(const X509V3_CTX *ctx,
@@ -269,7 +269,7 @@ static POLICYQUALINFO *notice_section(const X509V3_CTX *ctx,
     goto err;
   }
   qual->pqualid = OBJ_nid2obj(NID_id_qt_unotice);
-  if (qual->pqualid == NULL) {
+  if (qual->pqualid == nullptr) {
     OPENSSL_PUT_ERROR(X509V3, ERR_R_INTERNAL_ERROR);
     goto err;
   }
@@ -281,7 +281,7 @@ static POLICYQUALINFO *notice_section(const X509V3_CTX *ctx,
     const CONF_VALUE *cnf = sk_CONF_VALUE_value(unot, i);
     if (!strcmp(cnf->name, "explicitText")) {
       notice->exptext = ASN1_VISIBLESTRING_new();
-      if (notice->exptext == NULL) {
+      if (notice->exptext == nullptr) {
         goto err;
       }
       if (!ASN1_STRING_set(notice->exptext, cnf->value, strlen(cnf->value))) {
@@ -346,15 +346,15 @@ static POLICYQUALINFO *notice_section(const X509V3_CTX *ctx,
 
 err:
   POLICYQUALINFO_free(qual);
-  return NULL;
+  return nullptr;
 }
 
 static int nref_nos(STACK_OF(ASN1_INTEGER) *nnums,
                     const STACK_OF(CONF_VALUE) *nos) {
   for (size_t i = 0; i < sk_CONF_VALUE_num(nos); i++) {
     const CONF_VALUE *cnf = sk_CONF_VALUE_value(nos, i);
-    ASN1_INTEGER *aint = s2i_ASN1_INTEGER(NULL, cnf->name);
-    if (aint == NULL) {
+    ASN1_INTEGER *aint = s2i_ASN1_INTEGER(nullptr, cnf->name);
+    if (aint == nullptr) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NUMBER);
       return 0;
     }
@@ -423,11 +423,11 @@ static void print_notice(BIO *out, const USERNOTICE *notice, int indent) {
       if (i) {
         BIO_puts(out, ", ");
       }
-      if (num == NULL) {
+      if (num == nullptr) {
         BIO_puts(out, "(null)");
       } else {
-        tmp = i2s_ASN1_INTEGER(NULL, num);
-        if (tmp == NULL) {
+        tmp = i2s_ASN1_INTEGER(nullptr, num);
+        if (tmp == nullptr) {
           return;
         }
         BIO_puts(out, tmp);

@@ -160,15 +160,15 @@ class VideoRtcpAndSyncObserver : public test::RtpRtcpObserver,
     if (stats.sync_offset_ms == std::numeric_limits<int>::max())
       return;
 
-    int64_t now_ms = clock_->TimeInMilliseconds();
-    int64_t time_since_creation = now_ms - creation_time_ms_;
+    Timestamp now = clock_->CurrentTime();
+    int64_t time_since_creation = now.ms() - creation_time_ms_;
     // During the first couple of seconds audio and video can falsely be
     // estimated as being synchronized. We don't want to trigger on those.
     if (time_since_creation < kStartupTimeMs)
       return;
     if (std::abs(stats.sync_offset_ms) < kInSyncThresholdMs) {
       if (first_time_in_sync_ == -1) {
-        first_time_in_sync_ = now_ms;
+        first_time_in_sync_ = now.ms();
         GetGlobalMetricsLogger()->LogSingleValueMetric(
             "sync_convergence_time" + test_label_, "synchronization",
             time_since_creation, Unit::kMilliseconds,
@@ -178,7 +178,8 @@ class VideoRtcpAndSyncObserver : public test::RtpRtcpObserver,
         observation_complete_.Set();
     }
     if (first_time_in_sync_ != -1)
-      sync_offset_ms_list_.AddSample(stats.sync_offset_ms);
+      sync_offset_ms_list_.AddSample(
+          {.value = static_cast<double>(stats.sync_offset_ms), .time = now});
   }
 
   void set_receive_stream(VideoReceiveStreamInterface* receive_stream) {
@@ -545,9 +546,11 @@ void CallPerfTest::TestMinTransmitBitrate(bool pad_to_min_bitrate) {
   static const int kAcceptableBitrateErrorMargin = 15;  // +- 7
   class BitrateObserver : public test::EndToEndTest {
    public:
-    explicit BitrateObserver(bool using_min_transmit_bitrate,
+    explicit BitrateObserver(const Environment& env,
+                             bool using_min_transmit_bitrate,
                              TaskQueueBase* task_queue)
         : EndToEndTest(test::VideoTestConstants::kLongTimeout),
+          env_(env),
           send_stream_(nullptr),
           converged_(false),
           pad_to_min_bitrate_(using_min_transmit_bitrate),
@@ -582,7 +585,9 @@ void CallPerfTest::TestMinTransmitBitrate(bool pad_to_min_bitrate) {
               observation_complete_.Set();
           }
           if (converged_)
-            bitrate_kbps_list_.AddSample(bitrate_kbps);
+            bitrate_kbps_list_.AddSample(
+                {.value = static_cast<double>(bitrate_kbps),
+                 .time = env_.clock().CurrentTime()});
         }
       }));
       return SEND_PACKET;
@@ -617,6 +622,7 @@ void CallPerfTest::TestMinTransmitBitrate(bool pad_to_min_bitrate) {
           ImprovementDirection::kNeitherIsBetter);
     }
 
+    Environment env_;
     VideoSendStream* send_stream_;
     bool converged_;
     const bool pad_to_min_bitrate_;
@@ -626,7 +632,7 @@ void CallPerfTest::TestMinTransmitBitrate(bool pad_to_min_bitrate) {
     SamplesStatsCounter bitrate_kbps_list_;
     TaskQueueBase* task_queue_;
     scoped_refptr<PendingTaskSafetyFlag> task_safety_flag_;
-  } test(pad_to_min_bitrate, task_queue());
+  } test(env(), pad_to_min_bitrate, task_queue());
 
   fake_encoder_max_bitrate_ = kMaxEncodeBitrateKbps;
   RunBaseTest(&test);
@@ -1025,7 +1031,7 @@ void CallPerfTest::TestEncodeFramerate(VideoEncoderFactory* encoder_factory,
           VideoSendStream::Stats stats = send_stream_->GetStats();
           for (const auto& stat : stats.substreams) {
             encode_frame_rate_lists_[stat.first].AddSample(
-                stat.second.encode_frame_rate);
+                {.value = stat.second.encode_frame_rate, .time = now});
           }
           if (now - start_time_ > kMinRunTime) {
             VerifyStats();

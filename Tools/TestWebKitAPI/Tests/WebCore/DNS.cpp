@@ -55,7 +55,7 @@ TEST(DNSTest, cancelResolveDNS)
     };
 
     done = false;
-    resolveDNS(hostname, identifier, WTFMove(completionHandler));
+    resolveDNS(hostname, identifier, WTF::move(completionHandler));
     stopResolveDNS(identifier);
     Util::run(&done);
 }
@@ -77,7 +77,7 @@ TEST(DNSTest, cannotResolveDNS)
     };
 
     done = false;
-    resolveDNS(hostname, identifier, WTFMove(completionHandler));
+    resolveDNS(hostname, identifier, WTF::move(completionHandler));
     Util::run(&done);
 }
 
@@ -97,7 +97,7 @@ TEST(DNSTest, resolveDNS)
     };
 
     done = false;
-    resolveDNS(hostname, identifier, WTFMove(completionHandler));
+    resolveDNS(hostname, identifier, WTF::move(completionHandler));
     Util::run(&done);
 }
 

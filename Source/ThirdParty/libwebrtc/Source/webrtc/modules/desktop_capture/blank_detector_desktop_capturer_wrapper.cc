@@ -119,6 +119,9 @@ void BlankDetectorDesktopCapturerWrapper::OnCaptureResult(
 
 bool BlankDetectorDesktopCapturerWrapper::IsBlankFrame(
     const DesktopFrame& frame) const {
+  // TODO(bugs.webrtc.org/436974448): Support other pixel formats.
+  RTC_CHECK_EQ(FOURCC_ARGB, frame.pixel_format());
+
   // We will check 7489 pixels for a frame with 1024 x 768 resolution.
   for (int i = 0; i < frame.size().width() * frame.size().height(); i += 105) {
     const int x = i % frame.size().width();

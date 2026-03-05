@@ -33,7 +33,7 @@
 #import "_WKResourceLoadInfoInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
-static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::ResourceLoadInfo::Type type)
+static _WKResourceLoadInfoResourceType NODELETE toWKResourceLoadInfoResourceType(WebKit::ResourceLoadInfo::Type type)
 {
     using namespace WebKit;
     switch (type) {
@@ -80,7 +80,7 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKResourceLoadInfo.class, self))
         return;
-    _info->API::ResourceLoadInfo::~ResourceLoadInfo();
+    SUPPRESS_UNRETAINED_ARG _info->API::ResourceLoadInfo::~ResourceLoadInfo();
     [super dealloc];
 }
 
@@ -210,7 +210,7 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
         static_cast<WebKit::ResourceLoadInfo::Type>(type.get().unsignedCharValue),
     };
 
-    API::Object::constructInWrapper<API::ResourceLoadInfo>(self, WTFMove(info));
+    API::Object::constructInWrapper<API::ResourceLoadInfo>(self, WTF::move(info));
 
     return self;
 }

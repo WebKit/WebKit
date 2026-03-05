@@ -56,22 +56,22 @@ GstDevice* webkitMockDeviceCreate(const CaptureDevice& captureDevice)
 {
     GST_DEBUG_CATEGORY_INIT(webkitGstMockDeviceDebug, "webkitmockdevice", 0, "Mock Device");
 
-    const char* deviceClass;
+    ASCIILiteral deviceClass;
     GRefPtr<GstCaps> caps;
 
     switch (captureDevice.type()) {
     case CaptureDevice::DeviceType::Camera:
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
-        deviceClass = "Video/Source";
+        deviceClass = "Video/Source"_s;
         caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
         break;
     case CaptureDevice::DeviceType::Microphone:
-        deviceClass = "Audio/Source";
+        deviceClass = "Audio/Source"_s;
         caps = adoptGRef(gst_caps_new_empty_simple("audio/x-raw"));
         break;
     default:
-        deviceClass = "unknown/unknown";
+        deviceClass = "unknown/unknown"_s;
         caps = adoptGRef(gst_caps_new_any());
         break;
     }
@@ -79,7 +79,8 @@ GstDevice* webkitMockDeviceCreate(const CaptureDevice& captureDevice)
     auto displayName = captureDevice.label();
     GUniquePtr<GstStructure> properties(gst_structure_new("webkit-mock-device", "persistent-id", G_TYPE_STRING, captureDevice.persistentId().ascii().data(), "is-default", G_TYPE_BOOLEAN, captureDevice.isDefault(), nullptr));
     GST_DEBUG("Creating mock device with name %s and properties %" GST_PTR_FORMAT, displayName.utf8().data(), properties.get());
-    auto* device = WEBKIT_MOCK_DEVICE_CAST(g_object_new(GST_TYPE_MOCK_DEVICE, "display-name", displayName.utf8().data(), "device-class", deviceClass, "caps", caps.get(), "properties", properties.get(), nullptr));
+    auto* device = WEBKIT_MOCK_DEVICE_CAST(g_object_new(GST_TYPE_MOCK_DEVICE, "display-name", displayName.utf8().data(),
+        "device-class", deviceClass.characters(), "caps", caps.get(), "properties", properties.get(), nullptr));
     gst_object_ref_sink(device);
     return GST_DEVICE_CAST(device);
 }

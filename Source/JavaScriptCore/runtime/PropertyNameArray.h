@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/EnumerationMode.h>
 #include <JavaScriptCore/Identifier.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -67,7 +68,7 @@ public:
     const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
 
     PropertyNameArray* data() { return m_data.get(); }
-    RefPtr<PropertyNameArray> releaseData() { return WTFMove(m_data); }
+    RefPtr<PropertyNameArray> releaseData() { return WTF::move(m_data); }
 
     // FIXME: Remove these functions.
     bool canAddKnownUniqueForStructure() const { return m_data->propertyNameVector().isEmpty(); }

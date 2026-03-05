@@ -39,7 +39,7 @@ namespace WebCore {
 inline FormState::FormState(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger, HTMLFormControlElement* submitter)
     : FrameDestructionObserver(sourceDocument.frame())
     , m_form(form)
-    , m_textFieldValues(WTFMove(textFieldValues))
+    , m_textFieldValues(WTF::move(textFieldValues))
     , m_sourceDocument(sourceDocument)
     , m_formSubmissionTrigger(formSubmissionTrigger)
     , m_submitter(submitter)
@@ -51,7 +51,7 @@ FormState::~FormState() = default;
 
 Ref<FormState> FormState::create(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger, HTMLFormControlElement* submitter)
 {
-    return adoptRef(*new FormState(form, WTFMove(textFieldValues), sourceDocument, formSubmissionTrigger, submitter));
+    return adoptRef(*new FormState(form, WTF::move(textFieldValues), sourceDocument, formSubmissionTrigger, submitter));
 }
 
 void FormState::willDetachPage()

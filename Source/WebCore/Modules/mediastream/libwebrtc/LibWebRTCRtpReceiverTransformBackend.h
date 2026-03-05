@@ -33,7 +33,7 @@ namespace WebCore {
 
 class LibWebRTCRtpReceiverTransformBackend final : public LibWebRTCRtpTransformBackend {
 public:
-    static Ref<LibWebRTCRtpReceiverTransformBackend> create(Ref<webrtc::RtpReceiverInterface>&& receiver) { return adoptRef(*new LibWebRTCRtpReceiverTransformBackend(WTFMove(receiver))); }
+    static Ref<LibWebRTCRtpReceiverTransformBackend> create(Ref<webrtc::RtpReceiverInterface>&& receiver) { return adoptRef(*new LibWebRTCRtpReceiverTransformBackend(WTF::move(receiver))); }
     ~LibWebRTCRtpReceiverTransformBackend();
 
 private:

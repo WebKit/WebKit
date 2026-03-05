@@ -132,8 +132,8 @@ public:
 void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab& tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResults&&)>&& completionHandler)
 {
     auto injectionResults = InjectionResultHolder::create();
-    auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(WTFMove(injectionResults->results));
+    auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTF::move(completionHandler)]() mutable {
+        completionHandler(WTF::move(injectionResults->results));
     });
 
     [webView _frames:makeBlockPtr([webView = RetainPtr { webView }, tab = Ref { tab }, context = Ref { context }, scriptPairs, executionWorld = Ref { executionWorld }, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {

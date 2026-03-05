@@ -110,153 +110,153 @@ template<> struct CSSValueConversion<PropertyIdentifier> {
 
 // Specialization for `TupleLike` (wrapper).
 template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) struct CSSValueConversion<StyleType> {
-    StyleType operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> StyleType operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
-        return { toStyleFromCSSValue<std::remove_cvref_t<std::tuple_element_t<0, StyleType>>>(state, value) };
+        return { toStyleFromCSSValue<std::remove_cvref_t<std::tuple_element_t<0, StyleType>>>(state, value, std::forward<Rest>(rest)...) };
     }
 };
 
 // Specialization for `SpaceSeparatedEnumSet`.
 template<typename T> struct CSSValueConversion<SpaceSeparatedEnumSet<T>> {
-    SpaceSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> SpaceSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::SpaceSeparator) {
             return SpaceSeparatedEnumSet<T>::map(*list, [&](const CSSValue& element) {
-                return toStyleFromCSSValue<T>(state, element);
+                return toStyleFromCSSValue<T>(state, element, rest...);
             });
         }
-        return { toStyleFromCSSValue<T>(state, value) };
+        return { toStyleFromCSSValue<T>(state, value, std::forward<Rest>(rest)...) };
     }
 };
 
 // Specialization for `CommaSeparatedEnumSet`.
 template<typename T> struct CSSValueConversion<CommaSeparatedEnumSet<T>> {
-    CommaSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> CommaSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
             return CommaSeparatedEnumSet<T>::map(*list, [&](const CSSValue& element) {
-                return toStyleFromCSSValue<T>(state, element);
+                return toStyleFromCSSValue<T>(state, element, rest...);
             });
         }
-        return { toStyleFromCSSValue<T>(state, value) };
+        return { toStyleFromCSSValue<T>(state, value, std::forward<Rest>(rest)...) };
     }
 };
 
 // Specialization for `SpaceSeparatedListHashSet`.
 template<typename T> struct CSSValueConversion<SpaceSeparatedListHashSet<T>> {
-    SpaceSeparatedListHashSet<T> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> SpaceSeparatedListHashSet<T> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto list = dynamicDowncast<CSSValueList>(value)) {
             return SpaceSeparatedListHashSet<T>::map(*list, [&](const CSSValue& element) {
-                return toStyleFromCSSValue<T>(state, element);
+                return toStyleFromCSSValue<T>(state, element, rest...);
             });
         }
-        return { toStyleFromCSSValue<T>(state, value) };
+        return { toStyleFromCSSValue<T>(state, value, std::forward<Rest>(rest)...) };
     }
 };
 
 // Specialization for `CommaSeparatedListHashSet`.
 template<typename T> struct CSSValueConversion<CommaSeparatedListHashSet<T>> {
-    CommaSeparatedListHashSet<T> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> CommaSeparatedListHashSet<T> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto list = dynamicDowncast<CSSValueList>(value)) {
             return CommaSeparatedListHashSet<T>::map(*list, [&](const CSSValue& element) {
-                return toStyleFromCSSValue<T>(state, element);
+                return toStyleFromCSSValue<T>(state, element, rest...);
             });
         }
-        return { toStyleFromCSSValue<T>(state, value) };
+        return { toStyleFromCSSValue<T>(state, value, std::forward<Rest>(rest)...) };
     }
 };
 
 // Specialization for `SpaceSeparatedFixedVector`.
 template<typename StyleType> struct CSSValueConversion<SpaceSeparatedFixedVector<StyleType>> {
-    SpaceSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> SpaceSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::SpaceSeparator) {
             return SpaceSeparatedFixedVector<StyleType>::map(*list, [&](const CSSValue& element) {
-                return toStyleFromCSSValue<StyleType>(state, element);
+                return toStyleFromCSSValue<StyleType>(state, element, rest...);
             });
         }
-        return { toStyleFromCSSValue<StyleType>(state, value) };
+        return { toStyleFromCSSValue<StyleType>(state, value, std::forward<Rest>(rest)...) };
     }
 };
 
 // Specialization for `CommaSeparatedFixedVector`.
 template<typename StyleType> struct CSSValueConversion<CommaSeparatedFixedVector<StyleType>> {
-    CommaSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> CommaSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
             return CommaSeparatedFixedVector<StyleType>::map(*list, [&](const CSSValue& element) {
-                return toStyleFromCSSValue<StyleType>(state, element);
+                return toStyleFromCSSValue<StyleType>(state, element, rest...);
             });
         }
-        return { toStyleFromCSSValue<StyleType>(state, value) };
+        return { toStyleFromCSSValue<StyleType>(state, value, std::forward<Rest>(rest)...) };
     }
 };
 
 // Specialization for `ValueOrKeyword`.
 template<typename StyleType, typename Keyword, typename StyleTypeMarkableTraits> struct CSSValueConversion<ValueOrKeyword<StyleType, Keyword, StyleTypeMarkableTraits>> {
-    ValueOrKeyword<StyleType, Keyword, StyleTypeMarkableTraits> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> ValueOrKeyword<StyleType, Keyword, StyleTypeMarkableTraits> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (value.valueID() == Keyword { }.value)
             return Keyword { };
-        return toStyleFromCSSValue<StyleType>(state, value);
+        return toStyleFromCSSValue<StyleType>(state, value, std::forward<Rest>(rest)...);
     }
 };
 
 // Specialization for types derived from `ValueOrKeyword`.
 template<ValueOrKeywordDerived T> struct CSSValueConversion<T> {
-    T operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> T operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (value.valueID() == typename T::Keyword { }.value)
             return typename T::Keyword { };
-        return toStyleFromCSSValue<typename T::Value>(state, value);
+        return toStyleFromCSSValue<typename T::Value>(state, value, std::forward<Rest>(rest)...);
     }
 };
 
 // Specialization for `ListOrNone`.
 template<typename ListType> struct CSSValueConversion<ListOrNone<ListType>> {
-    ListOrNone<ListType> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> ListOrNone<ListType> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (value.valueID() == CSSValueNone)
             return CSS::Keyword::None { };
-        return toStyleFromCSSValue<ListType>(state, value);
+        return toStyleFromCSSValue<ListType>(state, value, std::forward<Rest>(rest)...);
     }
 };
 
 // Specialization for types derived from `ListOrNone`.
 template<ListOrNoneDerived T> struct CSSValueConversion<T> {
-    T operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> T operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (value.valueID() == CSSValueNone)
             return CSS::Keyword::None { };
-        return toStyleFromCSSValue<typename T::List>(state, value);
+        return toStyleFromCSSValue<typename T::List>(state, value, std::forward<Rest>(rest)...);
     }
 };
 
 // Specialization for `ListOrDefault`.
 template<typename ListType, typename Defaulter> struct CSSValueConversion<ListOrDefault<ListType, Defaulter>> {
-    ListOrDefault<ListType, Defaulter> operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> ListOrDefault<ListType, Defaulter> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
-        return toStyleFromCSSValue<ListType>(state, value);
+        return toStyleFromCSSValue<ListType>(state, value, std::forward<Rest>(rest)...);
     }
 };
 
 // Specialization for types derived from `ListOrDefault`.
 template<ListOrDefaultDerived T> struct CSSValueConversion<T> {
-    T operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> T operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
-        return toStyleFromCSSValue<typename T::List>(state, value);
+        return toStyleFromCSSValue<typename T::List>(state, value, std::forward<Rest>(rest)...);
     }
 };
 
 // Specialization for types derived from `EnumSetOrKeywordBase`.
 template<EnumSetOrKeywordBaseDerived T> struct CSSValueConversion<T> {
-    T operator()(BuilderState& state, const CSSValue& value)
+    template<typename... Rest> T operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (value.valueID() == typename T::Keyword { }.value)
             return typename T::Keyword { };
-        return toStyleFromCSSValue<typename T::EnumSet>(state, value);
+        return toStyleFromCSSValue<typename T::EnumSet>(state, value, std::forward<Rest>(rest)...);
     }
 };
 

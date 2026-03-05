@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPU.h"
-#include "WebGPUExt.h"
 #include <Metal/Metal.h>
+#include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUExt.h>
 #include <optional>
 #include <wtf/Vector.h>
 

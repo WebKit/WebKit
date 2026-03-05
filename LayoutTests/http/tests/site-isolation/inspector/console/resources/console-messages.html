@@ -1,0 +1,9 @@
+<p>iframe</p>
+
+<script>
+    document.body.onload = function () {
+        console.log(`Hello from ${location.href}`);
+        console.warn(`Warning from ${location.href}`);
+        throw `Error from ${location.href}`;
+    };
+</script>

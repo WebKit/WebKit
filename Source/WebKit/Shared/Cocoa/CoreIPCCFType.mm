@@ -88,7 +88,7 @@ CoreIPCCFType::CoreIPCCFType(CFTypeRef cfType)
 CoreIPCCFType::CoreIPCCFType(CoreIPCCFType&&) = default;
 
 CoreIPCCFType::CoreIPCCFType(UniqueRef<CFObjectValue>&& object)
-    : m_object(WTFMove(object)) { }
+    : m_object(WTF::move(object)) { }
 
 CoreIPCCFType::~CoreIPCCFType() = default;
 
@@ -196,7 +196,7 @@ std::optional<UniqueRef<WebKit::CFObjectValue>> ArgumentCoder<UniqueRef<WebKit::
     auto object = decoder.decode<WebKit::CFObjectValue>();
     if (!object)
         return std::nullopt;
-    return makeUniqueRefWithoutFastMallocCheck<WebKit::CFObjectValue>(WTFMove(*object));
+    return makeUniqueRefWithoutFastMallocCheck<WebKit::CFObjectValue>(WTF::move(*object));
 }
 
 } // namespace IPC

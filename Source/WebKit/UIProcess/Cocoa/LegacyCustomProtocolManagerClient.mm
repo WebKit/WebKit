@@ -156,7 +156,7 @@ void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManager
     RetainPtr loader = adoptNS([[WKCustomProtocolLoader alloc] initWithLegacyCustomProtocolManagerProxy:manager customProtocolID:customProtocolID request:request.get()]);
     ASSERT(loader);
     ASSERT(!m_loaderMap.contains(customProtocolID));
-    m_loaderMap.add(customProtocolID, WTFMove(loader));
+    m_loaderMap.add(customProtocolID, WTF::move(loader));
 }
 
 void LegacyCustomProtocolManagerClient::stopLoading(LegacyCustomProtocolManagerProxy&, WebKit::LegacyCustomProtocolID customProtocolID)

@@ -23,22 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-// https://w3c.github.io/reporting/#reportingobserver
-
+// https://w3c.github.io/reporting/#typedefdef-reportlist
 typedef sequence<Report> ReportList;
 
+// https://w3c.github.io/reporting/#reportingobserver
 [
     Exposed=(Window,Worker),
     ActiveDOMObject,
     JSCustomMarkFunction
 ] interface ReportingObserver {
-    [CallWith=CurrentScriptExecutionContext] constructor(ReportingObserverCallback callback, optional ReportingObserverOptions options);
+    [CallWith=CurrentScriptExecutionContext] constructor(ReportingObserverCallback callback, optional ReportingObserverOptions options = {});
     undefined observe();
     undefined disconnect();
     ReportList takeRecords();
 };
 
+// https://w3c.github.io/reporting/#dictdef-reportingobserveroptions
 dictionary ReportingObserverOptions {
-    sequence<[AtomString] DOMString>? types;
+    sequence<[AtomString] DOMString> types;
     boolean buffered = false;
 };

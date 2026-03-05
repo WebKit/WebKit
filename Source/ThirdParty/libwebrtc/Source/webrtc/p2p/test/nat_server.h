@@ -13,8 +13,10 @@
 
 #include <cstddef>
 #include <map>
+#include <memory>
 #include <set>
 
+#include "api/environment/environment.h"
 #include "p2p/test/nat_types.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_udp_socket.h"
@@ -64,7 +66,8 @@ const int NAT_SERVER_TCP_PORT = 4238;
 
 class NATServer {
  public:
-  NATServer(NATType type,
+  NATServer(const Environment& env,
+            NATType type,
             Thread& internal_socket_thread,
             SocketFactory* internal,
             const SocketAddress& internal_udp_addr,
@@ -92,19 +95,18 @@ class NATServer {
                            const ReceivedIpPacket& packet);
 
  private:
-  typedef std::set<SocketAddress, AddrCmp> AddressSet;
-
   /* Records a translation and the associated external socket. */
   struct TransEntry {
-    TransEntry(const SocketAddressPair& r, AsyncUDPSocket* s, NAT* nat);
-    ~TransEntry();
+    TransEntry(const SocketAddressPair& r,
+               std::unique_ptr<AsyncUDPSocket> s,
+               NAT* nat);
 
     void AllowlistInsert(const SocketAddress& addr);
-    bool AllowlistContains(const SocketAddress& ext_addr);
+    bool ShouldFilterOut(const SocketAddress& ext_addr);
 
     SocketAddressPair route;
-    AsyncUDPSocket* socket;
-    AddressSet* allowlist;
+    std::unique_ptr<AsyncUDPSocket> socket;
+    std::set<SocketAddress, AddrCmp> allowlist;
     Mutex mutex_;
   };
 
@@ -117,12 +119,13 @@ class NATServer {
   /* Determines whether the NAT would filter out a packet from this address. */
   bool ShouldFilterOut(TransEntry* entry, const SocketAddress& ext_addr);
 
+  const Environment env_;
   NAT* nat_;
   Thread& internal_socket_thread_;
   Thread& external_socket_thread_;
   SocketFactory* external_;
   SocketAddress external_ip_;
-  AsyncUDPSocket* udp_server_socket_;
+  std::unique_ptr<AsyncUDPSocket> udp_server_socket_;
   ProxyServer* tcp_proxy_server_;
   InternalMap* int_map_;
   ExternalMap* ext_map_;

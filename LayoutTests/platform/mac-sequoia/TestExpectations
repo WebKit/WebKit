@@ -28,12 +28,12 @@ fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ Pass ]
 fast/scrolling/mac/scrollbars/scrollbar-color.html [ Skip ]
 fast/scrolling/mac/scrollbars/scrollbar-color-body.html [ Skip ]
 
-# List buttons only have tint color pre-Tahoe.
-fast/css/accent-color/datalist.html [ Pass ]
-
 imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import-data.https.html [ Skip ]
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html [ Skip ]
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html [ Skip ]
+imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
+http/tests/digital-credentials/ [ Skip ]
+http/wpt/identity/ [ Skip ]
 
 # -- The above has different, expected behavior on Tahoe than Sequoia --
 # -- New failure expectations for Sequoia below this point only!! --

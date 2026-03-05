@@ -1,7 +1,7 @@
 
-PASS receiver.getStats() via addTransceiver should return stats report containing inbound-rtp stats
-PASS receiver.getStats() via addTrack should return stats report containing inbound-rtp stats
-FAIL receiver.getStats() should work on a stopped transceiver but not have inbound-rtp objects assert_false: expected false got true
-PASS receiver.getStats() should work with a closed PeerConnection but not have inbound-rtp objects
-PASS receiver.getStats() should return stats report containing ICE candidate stats
+FAIL receiver.getStats() via addTransceiver should return stats report containing inbound-rtp stats assert_true: expected true got false
+FAIL receiver.getStats() via addTrack should return stats report containing inbound-rtp stats assert_true: expected true got false
+FAIL receiver.getStats() should work on a stopped transceiver but not have inbound-rtp objects assert_true: expected true got false
+FAIL receiver.getStats() should work with a closed PeerConnection but not have inbound-rtp objects assert_true: expected true got false
+FAIL receiver.getStats() should return stats report containing ICE candidate stats assert_true: expected true got false
 

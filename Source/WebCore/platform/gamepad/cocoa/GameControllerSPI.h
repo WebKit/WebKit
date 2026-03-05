@@ -51,9 +51,7 @@ typedef void (^GCPhysicalInputProfileThumbstickUserIntentHandler)(__kindof GCPhy
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 #if USE(APPLE_INTERNAL_SDK)
 
-WTF_EXTERN_C_BEGIN
 #import <GameController/GCUtility.h>
-WTF_EXTERN_C_END
 
 #else
 

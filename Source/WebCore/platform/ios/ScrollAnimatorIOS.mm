@@ -182,7 +182,7 @@ void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& s
         if (!enclosingArea)
             break;
 
-        scrollableArea = WTFMove(enclosingArea);
+        scrollableArea = WTF::move(enclosingArea);
     }
 
     ASSERT(scrollableArea);

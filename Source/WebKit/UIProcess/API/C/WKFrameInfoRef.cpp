@@ -39,7 +39,7 @@ WKTypeID WKFrameInfoGetTypeID()
 
 WKFrameHandleRef WKFrameInfoCreateFrameHandleRef(WKFrameInfoRef frameInfo)
 {
-    return WebKit::toAPILeakingRef(WebKit::toProtectedImpl(frameInfo)->handle());
+    return WebKit::toAPILeakingRef(protect(WebKit::toImpl(frameInfo))->handle());
 }
 
 WKSecurityOriginRef WKFrameInfoCopySecurityOrigin(WKFrameInfoRef frameInfo)
@@ -55,5 +55,5 @@ bool WKFrameInfoGetIsMainFrame(WKFrameInfoRef frameInfo)
 
 WKPageRef WKFrameInfoGetPage(WKFrameInfoRef frameInfo)
 {
-    return WebKit::toAPI(RefPtr { WebKit::toProtectedImpl(frameInfo)->page() }.get());
+    return WebKit::toAPI(RefPtr { protect(WebKit::toImpl(frameInfo))->page() }.get());
 }

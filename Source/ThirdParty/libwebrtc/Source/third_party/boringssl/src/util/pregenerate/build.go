@@ -46,7 +46,7 @@ type PerlasmSource struct {
 	// Src the path to the input perlasm file.
 	Src string `json:"src"`
 	// Dst, if not empty, is base name of the destination file. If empty, this
-	// is determined from Src by default. It should be overriden if a single
+	// is determined from Src by default. It should be overridden if a single
 	// source file generates multiple functions (e.g. SHA-256 vs SHA-512) or
 	// multiple architectures (e.g. the "armx" files).
 	Dst string `json:"dst,omitempty"`

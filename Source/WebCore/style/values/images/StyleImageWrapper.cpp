@@ -55,26 +55,26 @@ void Serialize<ImageWrapper>::operator()(StringBuilder& builder, const CSS::Seri
 
 // MARK: - Blending
 
-static ImageWrapper crossfadeBlend(Ref<StyleCachedImage>&& fromStyleImage, Ref<StyleCachedImage>&& toStyleImage, const BlendingContext& context)
+static ImageWrapper crossfadeBlend(Ref<CachedImage>&& fromImage, Ref<CachedImage>&& toImage, const BlendingContext& context)
 {
     // If progress is at one of the extremes, we want getComputedStyle to show the image,
     // not a completed cross-fade, so we hand back one of the existing images.
 
     if (!context.progress)
-        return ImageWrapper { WTFMove(fromStyleImage) };
+        return ImageWrapper { WTF::move(fromImage) };
     if (context.progress == 1)
-        return ImageWrapper { WTFMove(toStyleImage) };
-    if (!fromStyleImage->cachedImage() || !toStyleImage->cachedImage())
-        return ImageWrapper { WTFMove(toStyleImage) };
-    return ImageWrapper { StyleCrossfadeImage::create(WTFMove(fromStyleImage), WTFMove(toStyleImage), context.progress, false) };
+        return ImageWrapper { WTF::move(toImage) };
+    if (!fromImage->cachedImage() || !toImage->cachedImage())
+        return ImageWrapper { WTF::move(toImage) };
+    return ImageWrapper { CrossfadeImage::create(WTF::move(fromImage), WTF::move(toImage), context.progress, false) };
 }
 
-static ImageWrapper filterBlend(RefPtr<StyleImage> inputImage, const Style::Filter& from, const Style::Filter& to, const BlendingContext& context)
+static ImageWrapper filterBlend(RefPtr<Image> inputImage, const Filter& from, const Filter& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context)
 {
-    return ImageWrapper { StyleFilterImage::create(WTFMove(inputImage), Style::blend(from, to, context)) };
+    return ImageWrapper { FilterImage::create(WTF::move(inputImage), blend(from, to, fromStyle, toStyle, context)) };
 }
 
-auto Blending<ImageWrapper>::blend(const ImageWrapper& a, const ImageWrapper& b, const BlendingContext& context) -> ImageWrapper
+auto Blending<ImageWrapper>::blend(const ImageWrapper& a, const ImageWrapper& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> ImageWrapper
 {
     if (!context.progress)
         return a;
@@ -99,30 +99,30 @@ auto Blending<ImageWrapper>::blend(const ImageWrapper& a, const ImageWrapper& b,
     Ref bSelected = bSelectedUnchecked.releaseNonNull();
 
     // Interpolation between two generated images. Cross fade for all other cases.
-    if (auto [aFilter, bFilter] = std::tuple { dynamicDowncast<StyleFilterImage>(aSelected), dynamicDowncast<StyleFilterImage>(bSelected) }; aFilter && bFilter) {
+    if (auto [aFilter, bFilter] = std::tuple { dynamicDowncast<FilterImage>(aSelected), dynamicDowncast<FilterImage>(bSelected) }; aFilter && bFilter) {
         // Interpolation of generated images is only possible if the input images are equal.
         // Otherwise fall back to cross fade animation.
-        if (aFilter->equalInputImages(*bFilter) && is<StyleCachedImage>(aFilter->inputImage()))
-            return filterBlend(aFilter->inputImage(), aFilter->filter(), bFilter->filter(), context);
-    } else if (auto [aCrossfade, bCrossfade] = std::tuple { dynamicDowncast<StyleCrossfadeImage>(aSelected), dynamicDowncast<StyleCrossfadeImage>(bSelected) }; aCrossfade && bCrossfade) {
+        if (aFilter->equalInputImages(*bFilter) && is<CachedImage>(aFilter->inputImage()))
+            return filterBlend(aFilter->inputImage(), aFilter->filter(), bFilter->filter(), aStyle, bStyle, context);
+    } else if (auto [aCrossfade, bCrossfade] = std::tuple { dynamicDowncast<CrossfadeImage>(aSelected), dynamicDowncast<CrossfadeImage>(bSelected) }; aCrossfade && bCrossfade) {
         if (aCrossfade->equalInputImages(*bCrossfade)) {
             if (RefPtr crossfadeBlend = bCrossfade->blend(*aCrossfade, context))
                 return ImageWrapper { crossfadeBlend.releaseNonNull() };
         }
-    } else if (auto [aFilter, bCachedImage] = std::tuple { dynamicDowncast<StyleFilterImage>(aSelected), dynamicDowncast<StyleCachedImage>(bSelected) }; aFilter && bCachedImage) {
-        RefPtr aFilterInputImage = dynamicDowncast<StyleCachedImage>(aFilter->inputImage());
+    } else if (auto [aFilter, bCachedImage] = std::tuple { dynamicDowncast<FilterImage>(aSelected), dynamicDowncast<CachedImage>(bSelected) }; aFilter && bCachedImage) {
+        RefPtr aFilterInputImage = dynamicDowncast<CachedImage>(aFilter->inputImage());
 
         if (aFilterInputImage && bCachedImage->equals(*aFilterInputImage))
-            return filterBlend(WTFMove(aFilterInputImage), aFilter->filter(), Style::Filter { CSS::Keyword::None { } }, context);
-    } else if (auto [aCachedImage, bFilter] = std::tuple { dynamicDowncast<StyleCachedImage>(aSelected), dynamicDowncast<StyleFilterImage>(bSelected) }; aCachedImage && bFilter) {
-        RefPtr bFilterInputImage = dynamicDowncast<StyleCachedImage>(bFilter->inputImage());
+            return filterBlend(WTF::move(aFilterInputImage), aFilter->filter(), Filter { CSS::Keyword::None { } }, aStyle, bStyle, context);
+    } else if (auto [aCachedImage, bFilter] = std::tuple { dynamicDowncast<CachedImage>(aSelected), dynamicDowncast<FilterImage>(bSelected) }; aCachedImage && bFilter) {
+        RefPtr bFilterInputImage = dynamicDowncast<CachedImage>(bFilter->inputImage());
 
         if (bFilterInputImage && aCachedImage->equals(*bFilterInputImage))
-            return filterBlend(WTFMove(bFilterInputImage), Style::Filter { CSS::Keyword::None { } }, bFilter->filter(), context);
+            return filterBlend(WTF::move(bFilterInputImage), Filter { CSS::Keyword::None { } }, bFilter->filter(), aStyle, bStyle, context);
     }
 
-    RefPtr aCachedImage = dynamicDowncast<StyleCachedImage>(aSelected);
-    RefPtr bCachedImage = dynamicDowncast<StyleCachedImage>(bSelected);
+    RefPtr aCachedImage = dynamicDowncast<CachedImage>(aSelected);
+    RefPtr bCachedImage = dynamicDowncast<CachedImage>(bSelected);
     if (aCachedImage && bCachedImage)
         return crossfadeBlend(aCachedImage.releaseNonNull(), bCachedImage.releaseNonNull(), context);
 
@@ -132,7 +132,7 @@ auto Blending<ImageWrapper>::blend(const ImageWrapper& a, const ImageWrapper& b,
     // FIXME: Add support cross fade between cached and generated images.
     // https://bugs.webkit.org/show_bug.cgi?id=78293
 
-    return ImageWrapper { WTFMove(bSelected) };
+    return ImageWrapper { WTF::move(bSelected) };
 }
 
 // MARK: - Logging

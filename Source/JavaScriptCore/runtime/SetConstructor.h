@@ -57,6 +57,5 @@ JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetStorage);
 JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetIterationNext);
 JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetIterationEntry);
 JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetIterationEntryKey);
-JSC_DECLARE_HOST_FUNCTION(setPrivateFuncClone);
 
 } // namespace JSC

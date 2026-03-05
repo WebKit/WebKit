@@ -33,7 +33,7 @@ namespace WebCore {
 
 CSSBorderImageSliceValue::CSSBorderImageSliceValue(Quad slices, bool fill)
     : CSSValue(ClassType::BorderImageSlice)
-    , m_slices(WTFMove(slices))
+    , m_slices(WTF::move(slices))
     , m_fill(fill)
 {
 }
@@ -42,7 +42,7 @@ CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
 
 Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(Quad slices, bool fill)
 {
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slices), fill));
+    return adoptRef(*new CSSBorderImageSliceValue(WTF::move(slices), fill));
 }
 
 String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const

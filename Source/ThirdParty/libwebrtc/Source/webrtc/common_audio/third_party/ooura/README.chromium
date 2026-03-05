@@ -3,6 +3,7 @@ Short Name: fft4g
 URL: http://www.kurims.kyoto-u.ac.jp/~ooura/fft.html
 Version: N/A
 Date: 2018-06-19
+Update Mechanism: Static (https://crbug.com/419413343)
 License: LicenseRef-takuya-ooura
 License File: LICENSE
 Security Critical: yes

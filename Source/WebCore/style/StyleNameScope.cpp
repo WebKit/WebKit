@@ -56,7 +56,7 @@ auto CSSValueConversion<NameScope>::operator()(BuilderState& state, const CSSVal
     for (Ref item : *list)
         names.value.add({ AtomString { item->stringValue() } });
 
-    return { WTFMove(names), state.styleScopeOrdinal() };
+    return { WTF::move(names), state.styleScopeOrdinal() };
 }
 
 } // namespace Style

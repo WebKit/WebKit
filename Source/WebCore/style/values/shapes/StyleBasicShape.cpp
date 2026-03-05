@@ -116,9 +116,9 @@ auto Blending<BasicShape>::blend(const BasicShape& a, const BasicShape& b, const
 
 // MARK: - Path
 
-WebCore::Path PathComputation<BasicShape>::operator()(const BasicShape& shape, const FloatRect& rect)
+WebCore::Path PathComputation<BasicShape>::operator()(const BasicShape& shape, const FloatRect& rect, ZoomFactor zoom)
 {
-    return WTF::switchOn(shape, [&](const auto& shape) { return WebCore::Style::path(shape, rect); });
+    return WTF::switchOn(shape, [&](const auto& shape) { return WebCore::Style::path(shape, rect, zoom); });
 }
 
 // MARK: - Winding

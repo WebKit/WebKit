@@ -152,6 +152,7 @@ public:
     constexpr static float defaultHorizontalMargin { 2 };
     constexpr static float defaultVerticalMargin { 1 };
 
+    WEBCORE_EXPORT static Ref<TextIndicator> create();
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
     WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(LocalFrame&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
     WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const SimpleRange&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
@@ -159,28 +160,42 @@ public:
     WEBCORE_EXPORT ~TextIndicator();
 
     FloatRect selectionRectInRootViewCoordinates() const { return m_data.selectionRectInRootViewCoordinates; }
+    void setSelectionRectInRootViewCoordinates(FloatRect selectionRectInRootViewCoordinates) { m_data.selectionRectInRootViewCoordinates = selectionRectInRootViewCoordinates; }
+
     FloatRect textBoundingRectInRootViewCoordinates() const { return m_data.textBoundingRectInRootViewCoordinates; }
+    void setTextRectsInBoundingRectCoordinates(Vector<FloatRect>&& textRectsInBoundingRectCoordinates) { m_data.textRectsInBoundingRectCoordinates = WTF::move(textRectsInBoundingRectCoordinates); }
+
     void setTextBoundingRectInRootViewCoordinates(FloatRect textBoundingRectInRootViewCoordinates) { m_data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates; }
+
     FloatRect contentImageWithoutSelectionRectInRootViewCoordinates() const { return m_data.contentImageWithoutSelectionRectInRootViewCoordinates; }
-    const Vector<FloatRect>& textRectsInBoundingRectCoordinates() const { return m_data.textRectsInBoundingRectCoordinates; }
+    void setContentImageWithoutSelectionRectInRootViewCoordinates(FloatRect contentImageWithoutSelectionRectInRootViewCoordinates) { m_data.contentImageWithoutSelectionRectInRootViewCoordinates = contentImageWithoutSelectionRectInRootViewCoordinates; }
+
+    const Vector<FloatRect>& textRectsInBoundingRectCoordinates() const LIFETIME_BOUND { return m_data.textRectsInBoundingRectCoordinates; }
+
     float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
+    void setContentImageScaleFactor(float contentImageScaleFactor) { m_data.contentImageScaleFactor = contentImageScaleFactor; }
+
     Image* contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
     Image* contentImageWithoutSelection() const { return m_data.contentImageWithoutSelection.get(); }
+    void setContentImageWithoutSelection(Image* contentImageWithoutSelection) { m_data.contentImageWithoutSelection = contentImageWithoutSelection; }
+
     Image* contentImage() const { return m_data.contentImage.get(); }
-    RefPtr<Image> protectedContentImage() const { return contentImage(); }
+    void setContentImage(Image* contentImage) { m_data.contentImage = contentImage; }
 
     TextIndicatorPresentationTransition presentationTransition() const { return m_data.presentationTransition; }
     void setPresentationTransition(TextIndicatorPresentationTransition transition) { m_data.presentationTransition = transition; }
 
-    WEBCORE_EXPORT bool wantsBounce() const;
-    WEBCORE_EXPORT bool wantsManualAnimation() const;
+    WEBCORE_EXPORT bool NODELETE wantsBounce() const;
+    WEBCORE_EXPORT bool NODELETE wantsManualAnimation() const;
 
     Color estimatedBackgroundColor() const { return m_data.estimatedBackgroundColor; }
     OptionSet<TextIndicatorOption> options() const { return m_data.options; }
+    void setOptions(OptionSet<TextIndicatorOption> options) { m_data.options = options; }
 
     TextIndicatorData data() const { return m_data; }
 
 private:
+    TextIndicator();
     TextIndicator(const TextIndicatorData&);
 
     TextIndicatorData m_data;

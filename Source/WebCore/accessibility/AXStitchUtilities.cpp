@@ -27,15 +27,21 @@
 #include "AXStitchUtilities.h"
 
 #include "AXUtilities.h"
+#include "AccessibilityNodeObject.h"
 #include "Element.h"
 #include "HTMLLabelElement.h"
 #include "HTMLTableCellElement.h"
 #include "RenderElementInlines.h"
 #include "RenderStyle.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
-static bool hasEnclosingInputElement(Node* node)
+StitchingContext::StitchingContext(const AccessibilityNodeObject& containingBlockFlowObject)
+    : containingBlockFlowObject(containingBlockFlowObject)
+{ }
+
+static bool NODELETE hasEnclosingInputElement(Node* node)
 {
     return node && is<HTMLInputElement>(node->shadowHost());
 }
@@ -50,7 +56,7 @@ static bool hasStitchBreakingRole(Element& element)
     });
 }
 
-static bool hasStitchBreakingTag(Element& element)
+static bool NODELETE hasStitchBreakingTag(Element& element)
 {
     switch (element.elementName()) {
     case ElementName::HTML_ins:
@@ -65,14 +71,19 @@ static bool isStitchBreakingElement(Element& element)
 {
     return is<HTMLTableCellElement>(element)
     || is<HTMLLabelElement>(element)
+    || element.isLink()
     || hasStitchBreakingRole(element)
     || hasStitchBreakingTag(element);
 }
 
-bool shouldStopStitchingAt(const RenderObject& renderer, StitchingContext& context)
+bool shouldStopStitchingAt(const RenderObject& renderer, const AccessibilityObject& object, StitchingContext& context)
 {
-    if (renderer.style().insideLink() != InsideLink::NotInside) {
-        // Stop stitching when encountering a link.
+    auto isInsideLink = [] (const RenderObject& renderer) {
+        return renderer.style().insideLink() != InsideLink::NotInside;
+    };
+
+    if (context.lastRenderer && isInsideLink(renderer) && !isInsideLink(*context.lastRenderer)) {
+        // Stop the current stitch when entering a link.
         return true;
     }
 
@@ -106,11 +117,25 @@ bool shouldStopStitchingAt(const RenderObject& renderer, StitchingContext& conte
 
         if (RefPtr ancestorElement = dynamicDowncast<Element>(*ancestor)) {
             if (isStitchBreakingElement(*ancestorElement)) {
-                stitchBreakingAncestor = WTFMove(ancestor);
+                stitchBreakingAncestor = WTF::move(ancestor);
                 break;
             }
         }
-        node = WTFMove(ancestor);
+        node = WTF::move(ancestor);
+    }
+
+    RefPtr currentAncestor = object.parentObject();
+    while (currentAncestor) {
+        if (currentAncestor->owners().size()) {
+            stitchBreakingAncestor = nullptr;
+            return true;
+        }
+
+        if (currentAncestor == context.containingBlockFlowObject) {
+            // There are no re-ownerships on the way to our block flow, so we can stop.
+            break;
+        }
+        currentAncestor = currentAncestor->parentObject();
     }
 
     auto updateContext = makeScopeExit([&] {

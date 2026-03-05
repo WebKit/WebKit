@@ -52,10 +52,10 @@ public:
 private:
     SwitchStatement(SourceSpan span, AST::Expression::Ref&& value, AST::Attribute::List&& valueAttributes, Vector<SwitchClause>&& clauses, SwitchClause&& defaultClause)
         : Statement(span)
-        , m_value(WTFMove(value))
-        , m_valueAttributes(WTFMove(valueAttributes))
-        , m_clauses(WTFMove(clauses))
-        , m_defaultClause(WTFMove(defaultClause))
+        , m_value(WTF::move(value))
+        , m_valueAttributes(WTF::move(valueAttributes))
+        , m_clauses(WTF::move(clauses))
+        , m_defaultClause(WTF::move(defaultClause))
     { }
 
     bool m_isInsideLoop { false };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 #define WTF_NOEXPORT
 
-#if USE(SYSTEM_MALLOC) || !USE(TZONE_MALLOC)
+#if !USE(TZONE_MALLOC)
 
 #include <wtf/FastMalloc.h>
 
@@ -61,74 +61,6 @@
 #define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro)
 #endif
 
-#if USE(SYSTEM_MALLOC) || !USE(ISO_MALLOC)
-
-// class allocators with IsoHeap fallback if TZoneHeap and IsoHeap are disabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
-
-// template allocators with IsoHeap fallback if TZoneHeap and IsoHeap are disabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
-
-// class allocators with IsoHeap fallback if TZoneHeap and IsoHeap are disabled.
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
-
-// types which prefer to be compact-allocated, but for which it is not required for
-// program correctness -- generally they instead prefer such for performance reasons.
-// FastMalloc fallback for if TZoneHeap and IsoHeap are disabled.
-#if ENABLE(COMPACT_ALLOCATION_FOR_PREFERABLY_COMPACT_TYPES)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro)
-#else
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name, exportMacro)
-#endif
-
-// template implementation to go with WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE
-// if TZoneHeap and IsoHeap are disabled. This should be added immediately after the
-// template definition.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE_IMPL(_templateParameters, _type) \
-    using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
-
-#else // !USE(SYSTEM_MALLOC) && USE(ISO_MALLOC) && !USE(TZONE_MALLOC)
-
-#include <bmalloc/IsoHeap.h>
-
-// class allocators with IsoHeap fallback if TZoneHeap is disabled, but IsoHeap is enabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name) MAKE_BISO_MALLOCED(name, IsoHeap, WTF_NOEXPORT)
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) MAKE_BISO_MALLOCED(name, IsoHeap, exportMacro)
-
-// template allocators with IsoHeap fallback if TZoneHeap is disabled, but IsoHeap is enabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE(name) MAKE_BISO_MALLOCED(name, IsoHeap, WTF_NOEXPORT)
-
-// special class (e.g. those used with CompactPtr) allocators with IsoHeap fallback if TZoneHeap is disabled, but IsoHeap is enabled.
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name) \
-    WTF_ALLOW_COMPACT_POINTERS; \
-    MAKE_BISO_MALLOCED(name, CompactIsoHeap, WTF_NOEXPORT)
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) \
-    WTF_ALLOW_COMPACT_POINTERS; \
-    MAKE_BISO_MALLOCED(name, CompactIsoHeap, exportMacro)
-
-// types which prefer to be compact-allocated, but for which it is not required for
-// program correctness -- generally they instead prefer such for performance reasons.
-// IsoHeap fallback for if TZoneHeap is disabled, but IsoHeap is enabled.
-#if ENABLE(COMPACT_ALLOCATION_FOR_PREFERABLY_COMPACT_TYPES)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name, exportMacro)
-#else
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro)
-#endif
-
-// template implementation to go with WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE
-// if TZoneHeap is disabled, but IsoHeap is enabled. This should be added immediately
-// after the template definition.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE_IMPL(_templateParameters, _type) \
-    MAKE_BISO_MALLOCED_TEMPLATE_IMPL(_templateParameters, _type)
-
-#endif // USE(SYSTEM_MALLOC) || !USE(ISO_MALLOC)
-
 // template implementation to go with WTF_MAKE_TZONE_ALLOCATED_TEMPLATE and
 // WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT if TZoneHeap is disabled. This
 // should be added immediately after the template definition.
@@ -138,7 +70,10 @@
 #define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS() \
     using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
-#else // !USE(SYSTEM_MALLOC) && USE(TZONE_MALLOC)
+#define WTF_MAKE_INHERITED_TZONE_ALLOCATED(name) \
+    using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#else // USE(TZONE_MALLOC)
 
 #include <bmalloc/TZoneHeap.h>
 
@@ -178,44 +113,12 @@
 #define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro)
 #endif
 
-// IsoHeap fallback allocators
-
-// class allocators with IsoHeap fallback if TZoneHeap is enabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name) MAKE_BTZONE_MALLOCED(name, NonCompact, WTF_NOEXPORT)
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) MAKE_BTZONE_MALLOCED(name, NonCompact, exportMacro)
-
-// template allocators with IsoHeap fallback if TZoneHeap is enabled.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE(name) MAKE_BTZONE_MALLOCED_TEMPLATE(name, NonCompact, WTF_NOEXPORT)
-
-// special class (e.g. those used with CompactPtr) allocators with IsoHeap fallback if TZoneHeap is enabled.
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name) \
-    WTF_ALLOW_COMPACT_POINTERS; \
-    MAKE_BTZONE_MALLOCED(name, Compact, WTF_NOEXPORT)
-#define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) \
-    WTF_ALLOW_COMPACT_POINTERS; \
-    MAKE_BTZONE_MALLOCED(name, Compact, exportMacro)
-
-// types which prefer to be compact-allocated, but for which it is not required for
-// program correctness -- generally they instead prefer such for performance reasons.
-// IsoHeap fallback for if TZoneHeap is enabled.
-#if ENABLE(COMPACT_ALLOCATION_FOR_PREFERABLY_COMPACT_TYPES)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro)
-#else
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(name) WTF_MAKE_TZONE_OR_ISO_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(name, exportMacro)
-#endif
-
 // Template implementations for instantiating allocator template static / methods
 
 // template implementation to go with WTF_MAKE_TZONE_ALLOCATED_TEMPLATE and
 // WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT if TZoneHeap is enabled. This
 // should be added immediately after the template definition.
 #define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(_templateParameters, _type) MAKE_BTZONE_MALLOCED_TEMPLATE_IMPL(_templateParameters, _type)
-
-// template implementation to go with WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE
-// if TZoneHeap is enabled. This should be added immediately after the template definition.
-#define WTF_MAKE_TZONE_OR_ISO_ALLOCATED_TEMPLATE_IMPL(_templateParameters, _type) MAKE_BTZONE_MALLOCED_TEMPLATE_IMPL(_templateParameters, _type)
 
 // template implementation for to go with WTF_MAKE_TZONE_ALLOCATED_TEMPLATE and
 // WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT if TZoneHeap is ensabled. This
@@ -228,13 +131,20 @@
 #define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS() \
     MAKE_BTZONE_MALLOCED_TEMPLATE_IMPL_WITH_MULTIPLE_PARAMETERS()
 
+// Annotation to inherit TZone allocation without declaring own heapRef.
+// This is only allowed if the current class is the same size and alignment as the parent class.
+#define WTF_MAKE_INHERITED_TZONE_ALLOCATED(name) \
+    void verifyTZoneSizeClassAndAssignmentMatchesInheritedSizeClassAndAssignment() \
+    { \
+        static_assert(::bmalloc::TZone::usesTZoneHeap<name>() \
+            && ::bmalloc::TZone::inheritedSizeClass<name>() == ::bmalloc::TZone::sizeClass<name>() \
+            && ::bmalloc::TZone::inheritedAlignment<name>() == ::bmalloc::TZone::alignment<name>()); \
+    } \
+    using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
 #endif
 
 // Annotation to forbid use with dynamic allocation
 
 // class / struct which should not use dynamic allocation.
 #define WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION
-
-// class / struct which should not use dynamic allocation. These used to be ISO_ALLOCATED.
-// FIXME: we should remove this and use WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE instead.
-#define WTF_MAKE_TZONE_OR_ISO_NON_HEAP_ALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION

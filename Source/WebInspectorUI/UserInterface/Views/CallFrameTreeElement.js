@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,7 +115,7 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
     populateContextMenu(contextMenu, event)
     {
         if (this._callFrame.sourceCodeLocation)
-            WI.appendContextMenuItemsForSourceCode(contextMenu, this._callFrame.sourceCodeLocation);
+            WI.appendContextMenuItemsForNetworkResource(contextMenu, this._callFrame.sourceCodeLocation);
 
         super.populateContextMenu(contextMenu, event);
     }

@@ -26,10 +26,13 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
-#include <WPEToolingBackends/HeadlessViewBackend.h>
 #include <WebKit/WKPagePrivateWPE.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKView.h>
+
+#if USE(LIBWPE)
+#include <WPEToolingBackends/HeadlessViewBackend.h>
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/headless/wpe-headless.h>
@@ -75,7 +78,9 @@ PlatformWebView::~PlatformWebView()
     if (g_type_class_peek(WPE_TYPE_DISPLAY))
         return;
 #endif
+#if USE(LIBWPE)
     delete static_cast<WPEToolingBackends::HeadlessViewBackend*>(m_window);
+#endif
 }
 
 void PlatformWebView::initialize(WKPageConfigurationRef configuration)
@@ -92,8 +97,10 @@ void PlatformWebView::initialize(WKPageConfigurationRef configuration)
         return;
     }
 #endif
+#if USE(LIBWPE)
     m_window = new WPEToolingBackends::HeadlessViewBackend(800, 600);
     m_view = WKViewCreateDeprecated(static_cast<WPEToolingBackends::HeadlessViewBackend*>(m_window)->backend(), configuration);
+#endif
 }
 
 WKPageRef PlatformWebView::page() const

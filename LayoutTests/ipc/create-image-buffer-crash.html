@@ -23,11 +23,12 @@
 
     // The pixel formats to test
     const pixelFormats = [
-      0, // BGRX8
-      1, // BGRA8
-      2, // RGB10
-      3, // RGB10A8
-      4  // RGBA16F (if HDR_SUPPORT is enabled)
+      0, // RGBA8
+      1, // BGRX8
+      2, // BGRA8
+      3, // RGB10
+      4, // RGB10A8
+      5  // RGBA16F (if HDR_SUPPORT is enabled)
     ];
 
     // Iterate through each pixel format and create image buffer
@@ -41,10 +42,12 @@
           colorSpace: {
             serializableColorSpace: {
               alias: {
-                m_cgColorSpace: {
-                  alias: {
-                    variantType: 'RetainPtr<CFStringRef>',
-                    variant: 'A'
+                optionalValue: {
+                  m_cgColorSpace: {
+                    alias: {
+                      variantType: 'RetainPtr<CFStringRef>',
+                      variant: 'A'
+                    }
                   }
                 }
               }

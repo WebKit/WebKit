@@ -409,9 +409,7 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
       unsigned int pyramid_level = cm->current_frame.pyramid_level;
       if (pyramid_level > 1) {
         int filter_threshold;
-        if (pyramid_level >= 5)
-          filter_threshold = 32;
-        else if (pyramid_level >= 4)
+        if (pyramid_level >= 4)
           filter_threshold = 16;
         else
           filter_threshold = 8;

@@ -53,7 +53,7 @@ private:
     bool isContextThread() const;
     MicrotaskQueue& microtaskQueue() final;
 
-    std::unique_ptr<MicrotaskQueue> m_microtaskQueue;
+    RefPtr<MicrotaskQueue> m_microtaskQueue;
 };
 
 } // namespace WebCore

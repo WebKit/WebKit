@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "absl/base/nullability.h"
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/environment/environment.h"
@@ -33,6 +34,7 @@
 #include "rtc_base/network_constants.h"
 #include "rtc_base/network_monitor.h"
 #include "rtc_base/network_monitor_factory.h"
+#include "rtc_base/sigslot_trampoline.h"
 #include "rtc_base/socket_factory.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
@@ -127,6 +129,8 @@ class NetworkMask {
 class RTC_EXPORT NetworkManager : public DefaultLocalAddressProvider,
                                   public MdnsResponderProvider {
  public:
+  NetworkManager()
+      : networks_changed_trampoline_(this), error_trampoline_(this) {}
   // This enum indicates whether adapter enumeration is allowed.
   enum EnumerationPermission {
     ENUMERATION_ALLOWED,  // Adapter enumeration is allowed. Getting 0 network
@@ -191,6 +195,20 @@ class RTC_EXPORT NetworkManager : public DefaultLocalAddressProvider,
   MdnsResponderInterface* GetMdnsResponder() const override;
 
   virtual void set_vpn_list(const std::vector<NetworkMask>& /* vpn */) {}
+  void SubscribeNetworksChanged(absl::AnyInvocable<void()> callback) {
+    networks_changed_trampoline_.Subscribe(std::move(callback));
+  }
+  void NotifyNetworksChanged() { SignalNetworksChanged(); }
+  void SubscribeError(absl::AnyInvocable<void()> callback) {
+    error_trampoline_.Subscribe(std::move(callback));
+  }
+  void NotifyError() { SignalError(); }
+
+ private:
+  SignalTrampoline<NetworkManager, &NetworkManager::SignalNetworksChanged>
+      networks_changed_trampoline_;
+  SignalTrampoline<NetworkManager, &NetworkManager::SignalError>
+      error_trampoline_;
 };
 
 // Represents a Unix-type network interface, with a name and single address.
@@ -211,8 +229,9 @@ class RTC_EXPORT Network {
           const IPAddress& prefix,
           int prefix_length,
           AdapterType type);
-
-  Network(const Network&);
+  // Copying a Network only works if signal listeners have not been set.
+  Network(const Network& o);
+  Network(Network&&) = default;
   ~Network();
 
   // This signal is fired whenever type() or underlying_type_for_vpn() changes.

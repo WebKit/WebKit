@@ -23,8 +23,6 @@ namespace dcsctp {
 
 // https://tools.ietf.org/html/rfc4960#section-3.3.3.1
 
-constexpr int StateCookieParameter::kType;
-
 std::optional<StateCookieParameter> StateCookieParameter::Parse(
     webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);

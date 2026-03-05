@@ -27,7 +27,7 @@ void *ASN1_item_d2i_bio(const ASN1_ITEM *it, BIO *in, void *x) {
   // Historically, this function did not impose a limit in OpenSSL and is used
   // to read CRLs, so we leave this without an external bound.
   if (!BIO_read_asn1(in, &data, &len, INT_MAX)) {
-    return NULL;
+    return nullptr;
   }
   const uint8_t *ptr = data;
   void *ret = ASN1_item_d2i(reinterpret_cast<ASN1_VALUE **>(x), &ptr, len, it);
@@ -37,9 +37,9 @@ void *ASN1_item_d2i_bio(const ASN1_ITEM *it, BIO *in, void *x) {
 
 void *ASN1_item_d2i_fp(const ASN1_ITEM *it, FILE *in, void *x) {
   BIO *b = BIO_new_fp(in, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ERR_R_BUF_LIB);
-    return NULL;
+    return nullptr;
   }
   void *ret = ASN1_item_d2i_bio(it, b, x);
   BIO_free(b);

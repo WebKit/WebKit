@@ -165,9 +165,7 @@ void MtlCaps::initCaps(const id<MTLDevice> device) {
 
     fResourceBindingReqs.fIntrinsicBufferBinding =
             MtlGraphicsPipeline::kIntrinsicUniformBufferIndex;
-    fResourceBindingReqs.fRenderStepBufferBinding =
-            MtlGraphicsPipeline::kRenderStepUniformBufferIndex;
-    fResourceBindingReqs.fPaintParamsBufferBinding = MtlGraphicsPipeline::kPaintUniformBufferIndex;
+    fResourceBindingReqs.fCombinedUniformBufferBinding = MtlGraphicsPipeline::kCombinedUniformIndex;
     fResourceBindingReqs.fGradientBufferBinding = MtlGraphicsPipeline::kGradientBufferIndex;
 
     // Metal does not distinguish between uniform and storage buffers.
@@ -191,16 +189,20 @@ void MtlCaps::initCaps(const id<MTLDevice> device) {
         fClampToBorderSupport = false;
     }
 
-    // Init sample counts. All devices support 1 (i.e. 0 in skia).
-    fColorSampleCounts.push_back(1);
+    // Init sample counts. All devices support 1
+    fSupportedSampleCounts = SampleCount::k1;
     if (!this->isIntel()) {
         if (@available(macOS 10.11, iOS 9.0, tvOS 9.0, *)) {
-            for (auto sampleCnt : {2, 4, 8}) {
-                if ([device supportsTextureSampleCount:sampleCnt]) {
-                    fColorSampleCounts.push_back(sampleCnt);
+            for (auto sampleCnt : {SampleCount::k2, SampleCount::k4, SampleCount::k8}) {
+                if ([device supportsTextureSampleCount: (uint8_t) sampleCnt]) {
+                    fSupportedSampleCounts |= sampleCnt;
                 }
             }
         }
+    } else {
+        // All supported Intel Macs are of an old enough Intel generation that we can just assume
+        // MSAA should be avoided instead of checking its generation. (>gen 11 FIXME?)
+        fAvoidMSAA = true;
     }
 }
 
@@ -344,13 +346,6 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         info->fColorTypeInfoCount = 3;
         info->fColorTypeInfos = std::make_unique<ColorTypeInfo[]>(info->fColorTypeInfoCount);
         int ctIdx = 0;
-        // Format: R8Unorm, Surface: kR8_unorm
-        {
-            auto& ctInfo = info->fColorTypeInfos[ctIdx++];
-            ctInfo.fColorType = kR8_unorm_SkColorType;
-            ctInfo.fTransferColorType = kR8_unorm_SkColorType;
-            ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
-        }
         // Format: R8Unorm, Surface: kAlpha_8
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
@@ -359,6 +354,13 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle("000r");
             ctInfo.fWriteSwizzle = skgpu::Swizzle("a000");
+        }
+        // Format: R8Unorm, Surface: kR8_unorm
+        {
+            auto& ctInfo = info->fColorTypeInfos[ctIdx++];
+            ctInfo.fColorType = kR8_unorm_SkColorType;
+            ctInfo.fTransferColorType = kR8_unorm_SkColorType;
+            ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
         // Format: R8Unorm, Surface: kGray_8
         {
@@ -771,23 +773,18 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
 
 }
 
-bool MtlCaps::isSampleCountSupported(TextureFormat format, uint8_t requestedSampleCount) const {
+bool MtlCaps::isSampleCountSupported(TextureFormat format, SampleCount requestedSampleCount) const {
     const FormatInfo& formatInfo = this->getFormatInfo(TextureFormatToMTLPixelFormat(format));
     if (!SkToBool(formatInfo.fFlags & FormatInfo::kRenderable_Flag)) {
         return false;
     }
     if (SkToBool(formatInfo.fFlags & FormatInfo::kMSAA_Flag)) {
-        for (auto sampleCount : fColorSampleCounts) {
-            if (requestedSampleCount == sampleCount) {
-                return true;
-            }
-        }
-        return false;
+        return SkToBool(fSupportedSampleCounts & requestedSampleCount);
     } else {
         // Only single sampling is supported for the format, so 1 sample should be generally
         // available, too.
-        SkASSERT(fColorSampleCounts.size() >= 1 && fColorSampleCounts[0] == 1);
-        return 1 == requestedSampleCount;
+        SkASSERT(SkToBool(fSupportedSampleCounts & SampleCount::k1));
+        return requestedSampleCount == SampleCount::k1;
     }
 }
 
@@ -852,7 +849,7 @@ TextureInfo MtlCaps::getDefaultSampledTextureInfo(SkColorType colorType,
     }
 
     MtlTextureInfo info;
-    info.fSampleCount = 1;
+    info.fSampleCount = SampleCount::k1;
     info.fMipmapped = mipmapped;
     info.fFormat = format;
     info.fUsage = usage;
@@ -865,7 +862,7 @@ TextureInfo MtlCaps::getDefaultSampledTextureInfo(SkColorType colorType,
 TextureInfo MtlCaps::getTextureInfoForSampledCopy(const TextureInfo& textureInfo,
                                                   Mipmapped mipmapped) const {
     MtlTextureInfo info;
-    info.fSampleCount = 1;
+    info.fSampleCount = SampleCount::k1;
     info.fMipmapped = mipmapped;
     info.fFormat = TextureInfoPriv::Get<MtlTextureInfo>(textureInfo).fFormat;
     info.fUsage = MTLTextureUsageShaderRead;
@@ -909,7 +906,7 @@ TextureInfo MtlCaps::getDefaultCompressedTextureInfo(SkTextureCompressionType co
     }
 
     MtlTextureInfo info;
-    info.fSampleCount = 1;
+    info.fSampleCount = SampleCount::k1;
     info.fMipmapped = mipmapped;
     info.fFormat = format;
     info.fUsage = usage;
@@ -932,7 +929,7 @@ TextureInfo MtlCaps::getDefaultStorageTextureInfo(SkColorType colorType) const {
     }
 
     MtlTextureInfo info;
-    info.fSampleCount = 1;
+    info.fSampleCount = SampleCount::k1;
     info.fMipmapped = Mipmapped::kNo;
     info.fFormat = format;
     info.fUsage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
@@ -942,22 +939,14 @@ TextureInfo MtlCaps::getDefaultStorageTextureInfo(SkColorType colorType) const {
     return TextureInfos::MakeMetal(info);
 }
 
-const Caps::ColorTypeInfo* MtlCaps::getColorTypeInfo(
-        SkColorType ct, const TextureInfo& textureInfo) const {
+SkSpan<const Caps::ColorTypeInfo> MtlCaps::getColorTypeInfos(const TextureInfo& textureInfo) const {
     MTLPixelFormat mtlFormat = TextureInfoPriv::Get<MtlTextureInfo>(textureInfo).fFormat;
     if (mtlFormat == MTLPixelFormatInvalid) {
-        return nullptr;
+        return {};
     }
 
-    const FormatInfo& info = this->getFormatInfo(mtlFormat);
-    for (int i = 0; i < info.fColorTypeInfoCount; ++i) {
-        const ColorTypeInfo& ctInfo = info.fColorTypeInfos[i];
-        if (ctInfo.fColorType == ct) {
-            return &ctInfo;
-        }
-    }
-
-    return nullptr;
+    const FormatInfo& formatInfo = this->getFormatInfo(mtlFormat);
+    return {formatInfo.fColorTypeInfos.get(), formatInfo.fColorTypeInfoCount};
 }
 
 static constexpr int kMtlGraphicsPipelineKeyData32Count = 4;
@@ -994,10 +983,10 @@ bool MtlCaps::extractGraphicsDescs(const UniqueKey& key,
 
         // From the RenderPassDesc
         TextureFormat fColorFormat = TextureFormat::kUnsupported;
-        uint8_t fColorSampleCount = 1;
+        SampleCount fColorSampleCount = SampleCount::k1;
 
         TextureFormat fDSFormat = TextureFormat::kUnsupported;
-        uint8_t fDSSampleCount = 1;
+        SampleCount fDSSampleCount = SampleCount::k1;
 
         Swizzle fWriteSwizzle;
     } keyData;
@@ -1013,10 +1002,10 @@ bool MtlCaps::extractGraphicsDescs(const UniqueKey& key,
                                            : UniquePaintParamsID::Invalid();
 
     keyData.fDSFormat = static_cast<TextureFormat>((rawKeyData[2] >> 8) & 0xFF);
-    keyData.fDSSampleCount = static_cast<uint8_t>(rawKeyData[2] & 0xFF);
+    keyData.fDSSampleCount = static_cast<SampleCount>(rawKeyData[2] & 0xFF);
 
     keyData.fColorFormat = static_cast<TextureFormat>((rawKeyData[2] >> 24) & 0xFF);
-    keyData.fColorSampleCount = static_cast<uint8_t>((rawKeyData[2] >> 16) & 0xFF);
+    keyData.fColorSampleCount = static_cast<SampleCount>((rawKeyData[2] >> 16) & 0xFF);
 
     keyData.fWriteSwizzle = SwizzleCtorAccessor::Make(rawKeyData[3]);
 
@@ -1034,11 +1023,11 @@ bool MtlCaps::extractGraphicsDescs(const UniqueKey& key,
                                                LoadOp::kClear,
                                                StoreOp::kDiscard,
                                                keyData.fDSSampleCount};
-    if (keyData.fColorSampleCount > 1) {
+    if (keyData.fColorSampleCount > SampleCount::k1) {
         renderPassDesc->fColorResolveAttachment = {keyData.fColorFormat,
                                                    LoadOp::kClear,
                                                    StoreOp::kStore,
-                                                   /*fSampleCount=*/1};
+                                                   SampleCount::k1};
         renderPassDesc->fColorAttachment.fStoreOp = StoreOp::kDiscard;
     }
 
@@ -1062,8 +1051,10 @@ uint32_t MtlCaps::getRenderPassDescKey(const RenderPassDesc& renderPassDesc) con
 
     // Each attachment format + sample count fits in 16-bits. Load/store ops are ignored.
     auto attachmentKey = [](AttachmentDesc desc) {
-        SkASSERT(desc.fFormat != TextureFormat::kUnsupported || desc.fSampleCount == 1);
-        return (static_cast<uint32_t>(desc.fFormat) << 8) | desc.fSampleCount;
+        SkASSERT(desc.fFormat != TextureFormat::kUnsupported ||
+                 desc.fSampleCount == SampleCount::k1);
+        return (static_cast<uint32_t>(desc.fFormat) << 8) |
+                static_cast<uint32_t>(desc.fSampleCount);
     };
 
     // The MtlRenderPassDescriptor requires no information about the resolve attachment
@@ -1114,7 +1105,7 @@ bool MtlCaps::isRenderable(const TextureInfo& info) const {
     TextureFormat format = TextureInfoPriv::ViewFormat(info);
     const auto& mtlInfo = TextureInfoPriv::Get<MtlTextureInfo>(info);
     return (mtlInfo.fUsage & MTLTextureUsageRenderTarget) &&
-           this->isSampleCountSupported(format, info.numSamples());
+           this->isSampleCountSupported(format, info.sampleCount());
 }
 
 bool MtlCaps::isStorage(const TextureInfo& info) const {
@@ -1129,10 +1120,11 @@ bool MtlCaps::isStorage(const TextureInfo& info) const {
         return false;
     }
     const FormatInfo& formatInfo = this->getFormatInfo(mtlInfo.fFormat);
-    return mtlInfo.fSampleCount == 1 && SkToBool(FormatInfo::kStorage_Flag & formatInfo.fFlags);
+    return info.sampleCount() == SampleCount::k1 &&
+           SkToBool(FormatInfo::kStorage_Flag & formatInfo.fFlags);
 }
 
-bool MtlCaps::supportsWritePixels(const TextureInfo& texInfo) const {
+bool MtlCaps::isCopyableDst(const TextureInfo& texInfo) const {
     if (!texInfo.isValid()) {
         return false;
     }
@@ -1141,14 +1133,14 @@ bool MtlCaps::supportsWritePixels(const TextureInfo& texInfo) const {
         return false;
     }
 
-    if (mtlInfo.fSampleCount > 1) {
+    if (texInfo.sampleCount() > SampleCount::k1) {
         return false;
     }
 
     return true;
 }
 
-bool MtlCaps::supportsReadPixels(const TextureInfo& texInfo) const {
+bool MtlCaps::isCopyableSrc(const TextureInfo& texInfo) const {
     if (!texInfo.isValid()) {
         return false;
     }
@@ -1162,55 +1154,11 @@ bool MtlCaps::supportsReadPixels(const TextureInfo& texInfo) const {
         return false;
     }
 
-    if (mtlInfo.fSampleCount > 1) {
+    if (texInfo.sampleCount() > SampleCount::k1) {
         return false;
     }
 
     return true;
-}
-
-std::pair<SkColorType, bool /*isRGBFormat*/> MtlCaps::supportedWritePixelsColorType(
-        SkColorType dstColorType,
-        const TextureInfo& dstTextureInfo,
-        SkColorType srcColorType) const {
-    if (!dstTextureInfo.isValid()) {
-        return {kUnknown_SkColorType, false};
-    }
-    const auto& mtlInfo = TextureInfoPriv::Get<MtlTextureInfo>(dstTextureInfo);
-
-    const FormatInfo& info = this->getFormatInfo(mtlInfo.fFormat);
-    for (int i = 0; i < info.fColorTypeInfoCount; ++i) {
-        const auto& ctInfo = info.fColorTypeInfos[i];
-        if (ctInfo.fColorType == dstColorType) {
-            return {ctInfo.fTransferColorType, false};
-        }
-    }
-    return {kUnknown_SkColorType, false};
-}
-
-std::pair<SkColorType, bool /*isRGBFormat*/> MtlCaps::supportedReadPixelsColorType(
-        SkColorType srcColorType,
-        const TextureInfo& srcTextureInfo,
-        SkColorType dstColorType) const {
-    if (!srcTextureInfo.isValid()) {
-        return {kUnknown_SkColorType, false};
-    }
-    const auto& mtlInfo = TextureInfoPriv::Get<MtlTextureInfo>(srcTextureInfo);
-
-    // TODO: handle compressed formats
-    if (MtlFormatIsCompressed(mtlInfo.fFormat)) {
-        SkASSERT(this->isTexturable(mtlInfo.fFormat));
-        return {kUnknown_SkColorType, false};
-    }
-
-    const FormatInfo& info = this->getFormatInfo(mtlInfo.fFormat);
-    for (int i = 0; i < info.fColorTypeInfoCount; ++i) {
-        const auto& ctInfo = info.fColorTypeInfos[i];
-        if (ctInfo.fColorType == srcColorType) {
-            return {ctInfo.fTransferColorType, false};
-        }
-    }
-    return {kUnknown_SkColorType, false};
 }
 
 void MtlCaps::buildKeyForTexture(SkISize dimensions,
@@ -1228,7 +1176,7 @@ void MtlCaps::buildKeyForTexture(SkISize dimensions,
     SkASSERT(mtlInfo.fFormat != MTLPixelFormatInvalid);
     uint64_t formatKey = static_cast<uint64_t>(mtlInfo.fFormat);
 
-    uint32_t samplesKey = SamplesToKey(mtlInfo.fSampleCount);
+    uint32_t samplesKey = SamplesToKey(info.sampleCount());
     // We don't have to key the number of mip levels because it is inherit in the combination of
     // isMipped and dimensions.
     bool isMipped = mtlInfo.fMipmapped == Mipmapped::kYes;
@@ -1237,7 +1185,7 @@ void MtlCaps::buildKeyForTexture(SkISize dimensions,
 
     // Confirm all the below parts of the key can fit in a single uint32_t. The sum of the shift
     // amounts in the asserts must be less than or equal to 32.
-    SkASSERT(samplesKey                         < (1u << 3));
+    SkASSERT(samplesKey                         < (1u << kNumSampleKeyBits));
     SkASSERT(static_cast<uint32_t>(isMipped)    < (1u << 1));
     SkASSERT(static_cast<uint32_t>(isProtected) < (1u << 1));
     SkASSERT(mtlInfo.fUsage                     < (1u << 5));
@@ -1254,7 +1202,7 @@ void MtlCaps::buildKeyForTexture(SkISize dimensions,
     builder[2] = formatKey & 0xFFFFFFFF;
     builder[3] = (formatKey >> 32) & 0xFFFFFFFF;
     builder[4] = (samplesKey                                  << 0) |
-                 (static_cast<uint32_t>(isMipped)             << 3) |
+                 (static_cast<uint32_t>(isMipped)             << kNumSampleKeyBits) |
                  (static_cast<uint32_t>(isProtected)          << 4) |
                  (static_cast<uint32_t>(mtlInfo.fUsage)       << 5) |
                  (static_cast<uint32_t>(mtlInfo.fStorageMode) << 10)|

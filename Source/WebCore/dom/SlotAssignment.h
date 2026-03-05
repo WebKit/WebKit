@@ -50,10 +50,10 @@ public:
     virtual ~SlotAssignment() = default;
 
     // These functions are only useful for NamedSlotAssignment but it's here to avoid virtual function calls in perf critical code paths.
-    void resolveSlotsBeforeNodeInsertionOrRemoval();
-    void willRemoveAllChildren();
+    inline void resolveSlotsBeforeNodeInsertionOrRemoval();
+    inline void willRemoveAllChildren();
 
-    virtual HTMLSlotElement* findAssignedSlot(const Node&) = 0;
+    virtual HTMLSlotElement* NODELETE findAssignedSlot(const Node&) = 0;
     virtual const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&) = 0;
 
     virtual void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&) = 0;
@@ -90,7 +90,7 @@ protected:
     void didChangeSlot(const AtomString&, ShadowRoot&);
 
 private:
-    HTMLSlotElement* findAssignedSlot(const Node&) final;
+    HTMLSlotElement* NODELETE findAssignedSlot(const Node&) final;
 
     void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&) final;
     void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) final;
@@ -125,9 +125,9 @@ private:
     enum class SlotMutationType { Insertion, Removal };
     void resolveSlotsAfterSlotMutation(ShadowRoot&, SlotMutationType, ContainerNode* oldParentOfRemovedTree = nullptr);
 
-    virtual const AtomString& slotNameForHostChild(const Node&) const;
+    virtual const AtomString& NODELETE slotNameForHostChild(const Node&) const;
 
-    HTMLSlotElement* findFirstSlotElement(Slot&);
+    HTMLSlotElement* NODELETE findFirstSlotElement(Slot&);
 
     void assignSlots(ShadowRoot&);
     void assignToSlot(Node& child, const AtomString& slotName);
@@ -146,7 +146,7 @@ class ManualSlotAssignment : public SlotAssignment {
 public:
     ManualSlotAssignment() = default;
 
-    HTMLSlotElement* findAssignedSlot(const Node&) final;
+    HTMLSlotElement* NODELETE findAssignedSlot(const Node&) final;
 
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&) final;
     void renameSlotElement(HTMLSlotElement&, const AtomString&, const AtomString&, ShadowRoot&) final;
@@ -172,6 +172,14 @@ private:
     uint64_t m_slottableVersion { 0 };
     unsigned m_slotElementCount { 0 };
 };
+
+inline HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
+{
+    ASSERT(node.parentNode() == host());
+    if (m_slotAssignment) [[unlikely]]
+        return m_slotAssignment->findAssignedSlot(node);
+    return nullptr;
+}
 
 inline void SlotAssignment::resolveSlotsBeforeNodeInsertionOrRemoval()
 {

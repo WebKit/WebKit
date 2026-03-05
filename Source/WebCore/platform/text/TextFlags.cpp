@@ -38,7 +38,7 @@ namespace WebCore {
 WTF::TextStream& operator<<(WTF::TextStream& ts, TextRenderingMode mode)
 {
     switch (mode) {
-    case TextRenderingMode::AutoTextRendering: ts << "Auto"_s; break;
+    case TextRenderingMode::Auto: ts << "auto"_s; break;
     case TextRenderingMode::OptimizeSpeed: ts << "optimize-speed"_s; break;
     case TextRenderingMode::OptimizeLegibility: ts << "optimize-legibility"_s; break;
     case TextRenderingMode::GeometricPrecision: ts << "geometric-precision"_s; break;
@@ -49,8 +49,8 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, TextRenderingMode mode)
 WTF::TextStream& operator<<(TextStream& ts, FontSmoothingMode mode)
 {
     switch (mode) {
-    case FontSmoothingMode::AutoSmoothing: ts << "auto"_s; break;
-    case FontSmoothingMode::NoSmoothing: ts << "no-smoothing"_s; break;
+    case FontSmoothingMode::Auto: ts << "auto"_s; break;
+    case FontSmoothingMode::None: ts << "none"_s; break;
     case FontSmoothingMode::Antialiased: ts << "antialiased"_s; break;
     case FontSmoothingMode::SubpixelAntialiased: ts << "subpixel-antialiased"_s; break;
     }
@@ -88,8 +88,8 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
 WTF::TextStream& operator<<(TextStream& ts, FontOpticalSizing opticalSizing)
 {
     switch (opticalSizing) {
-    case FontOpticalSizing::Enabled: ts << "auto"_s; break;
-    case FontOpticalSizing::Disabled: ts << "none"_s; break;
+    case FontOpticalSizing::Auto: ts << "auto"_s; break;
+    case FontOpticalSizing::None: ts << "none"_s; break;
     }
     return ts;
 }

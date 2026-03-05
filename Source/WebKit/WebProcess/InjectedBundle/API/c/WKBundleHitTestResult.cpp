@@ -41,14 +41,14 @@ WKTypeID WKBundleHitTestResultGetTypeID()
 
 WKBundleNodeHandleRef WKBundleHitTestResultCopyNodeHandle(WKBundleHitTestResultRef hitTestResultRef)
 {
-    RefPtr<WebKit::InjectedBundleNodeHandle> nodeHandle = WebKit::toProtectedImpl(hitTestResultRef)->nodeHandle();
-    return toAPILeakingRef(WTFMove(nodeHandle));
+    RefPtr<WebKit::InjectedBundleNodeHandle> nodeHandle = protect(WebKit::toImpl(hitTestResultRef))->nodeHandle();
+    return toAPILeakingRef(WTF::move(nodeHandle));
 }
 
 WKBundleNodeHandleRef WKBundleHitTestResultCopyURLElementHandle(WKBundleHitTestResultRef hitTestResultRef)
 {
-    RefPtr<WebKit::InjectedBundleNodeHandle> urlElementNodeHandle = WebKit::toProtectedImpl(hitTestResultRef)->urlElementHandle();
-    return toAPILeakingRef(WTFMove(urlElementNodeHandle));
+    RefPtr<WebKit::InjectedBundleNodeHandle> urlElementNodeHandle = protect(WebKit::toImpl(hitTestResultRef))->urlElementHandle();
+    return toAPILeakingRef(WTF::move(urlElementNodeHandle));
 }
 
 WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef)
@@ -63,47 +63,47 @@ WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef)
 
 WKURLRef WKBundleHitTestResultCopyAbsoluteImageURL(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toProtectedImpl(hitTestResultRef)->absoluteImageURL());
+    return WebKit::toCopiedURLAPI(protect(WebKit::toImpl(hitTestResultRef))->absoluteImageURL());
 }
 
 WKURLRef WKBundleHitTestResultCopyAbsolutePDFURL(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toProtectedImpl(hitTestResultRef)->absolutePDFURL());
+    return WebKit::toCopiedURLAPI(protect(WebKit::toImpl(hitTestResultRef))->absolutePDFURL());
 }
 
 WKURLRef WKBundleHitTestResultCopyAbsoluteLinkURL(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toProtectedImpl(hitTestResultRef)->absoluteLinkURL());
+    return WebKit::toCopiedURLAPI(protect(WebKit::toImpl(hitTestResultRef))->absoluteLinkURL());
 }
 
 WKURLRef WKBundleHitTestResultCopyAbsoluteMediaURL(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toProtectedImpl(hitTestResultRef)->absoluteMediaURL());
+    return WebKit::toCopiedURLAPI(protect(WebKit::toImpl(hitTestResultRef))->absoluteMediaURL());
 }
 
 bool WKBundleHitTestResultMediaIsInFullscreen(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toProtectedImpl(hitTestResultRef)->mediaIsInFullscreen();
+    return protect(WebKit::toImpl(hitTestResultRef))->mediaIsInFullscreen();
 }
 
 bool WKBundleHitTestResultMediaHasAudio(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toProtectedImpl(hitTestResultRef)->mediaHasAudio();
+    return protect(WebKit::toImpl(hitTestResultRef))->mediaHasAudio();
 }
 
 bool WKBundleHitTestResultIsDownloadableMedia(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toProtectedImpl(hitTestResultRef)->isDownloadableMedia();
+    return protect(WebKit::toImpl(hitTestResultRef))->isDownloadableMedia();
 }
 
 WKBundleHitTestResultMediaType WKBundleHitTestResultGetMediaType(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return toAPI(WebKit::toProtectedImpl(hitTestResultRef)->mediaType());
+    return toAPI(protect(WebKit::toImpl(hitTestResultRef))->mediaType());
 }
 
 WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toAPI(WebKit::toProtectedImpl(hitTestResultRef)->imageRect());
+    return WebKit::toAPI(protect(WebKit::toImpl(hitTestResultRef))->imageRect());
 }
 
 WKImageRef WKBundleHitTestResultCopyImage(WKBundleHitTestResultRef)
@@ -113,20 +113,20 @@ WKImageRef WKBundleHitTestResultCopyImage(WKBundleHitTestResultRef)
 
 bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toProtectedImpl(hitTestResultRef)->isSelected();
+    return protect(WebKit::toImpl(hitTestResultRef))->isSelected();
 }
 
 WKStringRef WKBundleHitTestResultCopyLinkLabel(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toProtectedImpl(hitTestResultRef)->linkLabel());
+    return WebKit::toCopiedAPI(protect(WebKit::toImpl(hitTestResultRef))->linkLabel());
 }
 
 WKStringRef WKBundleHitTestResultCopyLinkTitle(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toProtectedImpl(hitTestResultRef)->linkTitle());
+    return WebKit::toCopiedAPI(protect(WebKit::toImpl(hitTestResultRef))->linkTitle());
 }
 
 WKStringRef WKBundleHitTestResultCopyLinkSuggestedFilename(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toProtectedImpl(hitTestResultRef)->linkSuggestedFilename());
+    return WebKit::toCopiedAPI(protect(WebKit::toImpl(hitTestResultRef))->linkSuggestedFilename());
 }

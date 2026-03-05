@@ -54,7 +54,7 @@ class RemoteComputePipeline final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteComputePipeline> create(WebCore::WebGPU::ComputePipeline& computePipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteComputePipeline(computePipeline, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteComputePipeline(computePipeline, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
@@ -74,12 +74,6 @@ private:
     RemoteComputePipeline& operator=(RemoteComputePipeline&&) = delete;
 
     WebCore::WebGPU::ComputePipeline& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::ComputePipeline> protectedBacking();
-
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
-
-    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap.get(); }
-    Ref<RemoteGPU> protectedGPU() const { return m_gpu.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -88,9 +82,9 @@ private:
     void setLabel(String&&);
     void destruct();
 
-    Ref<WebCore::WebGPU::ComputePipeline> m_backing;
+    const Ref<WebCore::WebGPU::ComputePipeline> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

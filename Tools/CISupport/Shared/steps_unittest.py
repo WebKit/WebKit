@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Apple Inc. All rights reserved.
+# Copyright (C) 2024-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,9 +38,10 @@ from .steps import *
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
 LLVM_DIR = 'llvm-project'
+SWIFT_DIR = 'swift-project/swift'
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
-FakeBuild.addStepsAfterLastStep = lambda FakeBuild, step_factories: None
+FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
 
@@ -438,6 +439,414 @@ class TestInstallNinja(BuildStepMixinAdditions, unittest.TestCase):
             .exit(1),
         )
         self.expect_outcome(result=FAILURE, state_string='Failed to install Ninja')
+        return self.run_step()
+
+
+class TestPrintSwiftVersion(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(PrintSwiftVersion())
+
+    def test_success_with_tag_and_toolchain(self):
+        self.configureStep()
+        toolchain_path = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git describe --tags'])
+            .log('stdio', stdout='swift-6.3-DEVELOPMENT-SNAPSHOT\n')
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'test -d {toolchain_path} && echo "Toolchain exists at {toolchain_path}" || echo "Toolchain does not exist"'])
+            .log('stdio', stdout=f'Toolchain exists at {toolchain_path}\n')
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'{toolchain_path}/usr/bin/swift --version'])
+            .log('stdio', stdout='Swift version 6.0.3 (swift-6.0.3-RELEASE)\nTarget: arm64-apple-macosx26.0\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Current Swift tag: swift-6.3-DEVELOPMENT-SNAPSHOT (toolchain installed)')
+        rc = self.run_step()
+        self.expect_property('current_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        self.expect_property('has_swift_toolchain', True)
+        return rc
+
+    def test_no_git_repository(self):
+        self.configureStep()
+        toolchain_path = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git describe --tags'])
+            .log('stdio', stdout='fatal: not a git repository\n')
+            .exit(1),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'test -d {toolchain_path} && echo "Toolchain exists at {toolchain_path}" || echo "Toolchain does not exist"'])
+            .log('stdio', stdout='Toolchain does not exist\n')
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'{toolchain_path}/usr/bin/swift --version'])
+            .log('stdio', stdout='No such file or directory\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Swift toolchain does not exist')
+        return self.run_step()
+
+    def test_no_swift_toolchain(self):
+        self.configureStep()
+        toolchain_path = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git describe --tags'])
+            .log('stdio', stdout='swift-6.3-DEVELOPMENT-SNAPSHOT\n')
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'test -d {toolchain_path} && echo "Toolchain exists at {toolchain_path}" || echo "Toolchain does not exist"'])
+            .log('stdio', stdout='Toolchain does not exist\n')
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'{toolchain_path}/usr/bin/swift --version'])
+            .log('stdio', stdout='No such file or directory\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Swift toolchain does not exist')
+        rc = self.run_step()
+        self.expect_property('current_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        return rc
+
+
+class TestGetSwiftTagName(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(GetSwiftTagName())
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cat Tools/CISupport/safer-cpp-swift-version'])
+            .log('stdio', stdout='swift-6.3-DEVELOPMENT-SNAPSHOT\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Canonical Swift tag name: swift-6.3-DEVELOPMENT-SNAPSHOT')
+        rc = self.run_step()
+        self.expect_property('canonical_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        return rc
+
+    def test_failure_empty_file(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cat Tools/CISupport/safer-cpp-swift-version'])
+            .log('stdio', stdout='')
+            .exit(0),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to find canonical Swift tag')
+        return self.run_step()
+
+
+class TestCheckOutSwiftProject(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(CheckOutSwiftProject())
+        self.setProperty('canonical_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+
+    def test_skipped_already_up_to_date(self):
+        self.configureStep()
+        self.setProperty('current_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        self.expect_outcome(result=SKIPPED, state_string='swift-project is already up to date')
+        return self.run_step()
+
+
+class TestUpdateSwiftCheckouts(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(UpdateSwiftCheckouts())
+        self.setProperty('canonical_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/update-checkout --tag swift-6.3-DEVELOPMENT-SNAPSHOT --clone --skip-repository boringssl'])
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Successfully updated swift checkout')
+        return self.run_step()
+
+    def test_skipped_already_up_to_date(self):
+        self.configureStep()
+        self.setProperty('current_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        self.expect_outcome(result=SKIPPED, state_string='Swift checkout is already up to date')
+        return self.run_step()
+
+    def test_failure_with_previous_checkout(self):
+        self.configureStep()
+        self.setProperty('current_swift_tag', 'swift-6.4-DEVELOPMENT-SNAPSHOT')
+        self.setProperty('has_swift_toolchain', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/update-checkout --tag swift-6.3-DEVELOPMENT-SNAPSHOT --clone --skip-repository boringssl'])
+            .exit(1),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Failed to update swift, using previous checkout')
+        return self.run_step()
+
+    def test_failure_without_previous_checkout(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/update-checkout --tag swift-6.3-DEVELOPMENT-SNAPSHOT --clone --skip-repository boringssl'])
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to update swift checkout')
+        return self.run_step()
+
+
+class TestWaitForDuration(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_default_duration(self):
+        step = WaitForDuration()
+        self.assertEqual(step.duration, WaitForDuration.DEFAULT_WAIT_DURATION)
+
+    def test_custom_duration(self):
+        step = WaitForDuration(duration=300)
+        self.assertEqual(step.duration, 300)
+
+    def test_success(self):
+        self.setup_step(WaitForDuration(duration=1))
+        self.expect_outcome(result=SUCCESS, state_string='Waited for 1s')
+        return self.run_step()
+
+
+class TestInstallSwiftToolchain(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(InstallSwiftToolchain())
+        self.setProperty('builddir', '/Volumes/Data/worker/test-builder')
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('swift_toolchain_rebuilt', True)
+        self.assertEqual(InstallSwiftToolchain.flunkOnFailure, True)
+        source = f'/Volumes/Data/worker/test-builder/{SWIFT_DIR}/swift-nightly-install/Library/Developer/Toolchains/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        dest = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'rm -rf {USER_TOOLCHAINS_DIR}'])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'mkdir -p {USER_TOOLCHAINS_DIR}'])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'cp -a {source} {dest}'])
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string=f'Installed {SWIFT_TOOLCHAIN_NAME} toolchain')
+        return self.run_step()
+
+    def test_skipped_when_not_rebuilt(self):
+        self.configureStep()
+        self.setProperty('swift_toolchain_rebuilt', False)
+        self.expect_outcome(result=SKIPPED, state_string='Swift toolchain installation skipped')
+        return self.run_step()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('swift_toolchain_rebuilt', True)
+        source = f'/Volumes/Data/worker/test-builder/{SWIFT_DIR}/swift-nightly-install/Library/Developer/Toolchains/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        dest = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'rm -rf {USER_TOOLCHAINS_DIR}'])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'mkdir -p {USER_TOOLCHAINS_DIR}'])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'cp -a {source} {dest}'])
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to install swift toolchain')
+        return self.run_step()
+
+
+class TestInstallMetalToolchain(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(InstallMetalToolchain())
+
+    def test_success_symlink_created(self):
+        self.configureStep()
+        self.setProperty('swift_toolchain_rebuilt', True)
+        toolchain_bin = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain/usr/bin'
+        self.assertEqual(InstallMetalToolchain.flunkOnFailure, True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
+                                 f'\nif [ -L {toolchain_bin}/metal ] && [ -x {toolchain_bin}/metal ]; then\n'
+                                 f'    echo "Metal symlink already exists and is valid"\n'
+                                 f'else\n'
+                                 f'    rm -f {toolchain_bin}/metal\n'
+                                 f'    xcrun -find metal > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain\n'
+                                 f'    ln -s $(xcrun -find metal) {toolchain_bin}/metal\n'
+                                 f'    echo "Created metal symlink"\n'
+                                 f'fi\n'])
+            .log('stdio', stdout='Created metal symlink\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Created metal symlink')
+        return self.run_step()
+
+    def test_success_symlink_already_exists(self):
+        self.configureStep()
+        self.setProperty('swift_toolchain_rebuilt', True)
+        toolchain_bin = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain/usr/bin'
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
+                                 f'\nif [ -L {toolchain_bin}/metal ] && [ -x {toolchain_bin}/metal ]; then\n'
+                                 f'    echo "Metal symlink already exists and is valid"\n'
+                                 f'else\n'
+                                 f'    rm -f {toolchain_bin}/metal\n'
+                                 f'    xcrun -find metal > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain\n'
+                                 f'    ln -s $(xcrun -find metal) {toolchain_bin}/metal\n'
+                                 f'    echo "Created metal symlink"\n'
+                                 f'fi\n'])
+            .log('stdio', stdout='Metal symlink already exists and is valid\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Metal symlink already exists and is valid')
+        return self.run_step()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('swift_toolchain_rebuilt', True)
+        toolchain_bin = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain/usr/bin'
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
+                                 f'\nif [ -L {toolchain_bin}/metal ] && [ -x {toolchain_bin}/metal ]; then\n'
+                                 f'    echo "Metal symlink already exists and is valid"\n'
+                                 f'else\n'
+                                 f'    rm -f {toolchain_bin}/metal\n'
+                                 f'    xcrun -find metal > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain\n'
+                                 f'    ln -s $(xcrun -find metal) {toolchain_bin}/metal\n'
+                                 f'    echo "Created metal symlink"\n'
+                                 f'fi\n'])
+            .log('stdio', stdout='Error: Unable to download MetalToolchain\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to install metal toolchain')
+        return self.run_step()
+
+    def test_success_installed(self):
+        self.configureStep()
+        self.setProperty('swift_toolchain_rebuilt', True)
+        toolchain_bin = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain/usr/bin'
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
+                                 f'\nif [ -L {toolchain_bin}/metal ] && [ -x {toolchain_bin}/metal ]; then\n'
+                                 f'    echo "Metal symlink already exists and is valid"\n'
+                                 f'else\n'
+                                 f'    rm -f {toolchain_bin}/metal\n'
+                                 f'    xcrun -find metal > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain\n'
+                                 f'    ln -s $(xcrun -find metal) {toolchain_bin}/metal\n'
+                                 f'    echo "Created metal symlink"\n'
+                                 f'fi\n'])
+            .log('stdio', stdout='Metal toolchain configured successfully\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Installed metal toolchain')
         return self.run_step()
 
 

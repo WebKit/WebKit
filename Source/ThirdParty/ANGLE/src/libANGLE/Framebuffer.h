@@ -249,6 +249,14 @@ class Framebuffer final : public angle::ObserverInterface,
                                 FramebufferAttachmentObject *resource,
                                 GLsizei numViews,
                                 GLint baseViewIndex);
+    void setAttachmentMultisampleMultiview(const Context *context,
+                                           GLenum type,
+                                           GLenum binding,
+                                           const ImageIndex &textureIndex,
+                                           FramebufferAttachmentObject *resource,
+                                           GLsizei samples,
+                                           GLsizei numViews,
+                                           GLint baseViewIndex);
     void resetAttachment(const Context *context, GLenum binding);
 
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED

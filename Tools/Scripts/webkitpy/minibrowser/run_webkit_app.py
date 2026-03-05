@@ -20,7 +20,6 @@ import argparse
 import sys
 import traceback
 import os
-from urllib.parse import urlparse
 
 from webkitpy.common.host import Host
 from webkitpy.port import configuration_options, platform_options, factory
@@ -51,7 +50,19 @@ def main(argv):
                                help='Website URL to load')
     option_parser.add_argument('--site-isolation', action=argparse.BooleanOptionalAction, default=None, help='Enable Site Isolation')
     option_parser.add_argument('--web-inspector', '-i', action="store_true", default=False, help='Open Web Inspector')
-    options, args = option_parser.parse_known_args(argv)
+
+    # Separate arguments for the script vs passthrough arguments for MiniBrowser.
+    # Use '--' separator: everything after '--' passes through to MiniBrowser.
+    # Example: run-minibrowser --release -- -WebKit2Logging RemoteLayerTree
+    script_args = argv
+    passthrough_args = []
+
+    if '--' in argv:
+        separator_index = argv.index('--')
+        script_args = argv[:separator_index]
+        passthrough_args = argv[separator_index + 1:]
+
+    options, remaining_args = option_parser.parse_known_args(script_args)
 
     if not options.platform:
         options.platform = "mac"
@@ -59,34 +70,24 @@ def main(argv):
     # Convert unregistered command-line arguments to utf-8 and append parsed
     # URL. convert_arg_line_to_args() returns a list containing a single
     # string, so it needs to be split again.
-    browser_args = [decode(s, "utf-8") for s in option_parser.convert_arg_line_to_args(' '.join(args))[0].split()]
+    browser_args = [decode(s, "utf-8") for s in option_parser.convert_arg_line_to_args(' '.join(remaining_args))[0].split()]
+
+    # Add passthrough arguments (from '--' separator)
+    browser_args.extend([decode(s, "utf-8") for s in passthrough_args])
+
+    # Add URL if provided, normalizing by adding a scheme if missing.
     if options.url:
-        # Check if this "URL" is actually the value for -WebCoreLogging
-        url_index = argv.index(options.url)
-        skip_normalization = url_index > 0 and argv[url_index - 1] == '-WebCoreLogging'
+        url = options.url
+        if '://' not in url:
+            if url.startswith(('/', './', '../', '~/')):
+                abs_path = os.path.abspath(os.path.expanduser(url))
+                url = f'file://{abs_path}'
+            elif url.startswith('localhost') or url.split(':')[0].replace('.', '').isdigit():
+                url = f'http://{url}'
+            else:
+                url = f'https://{url}'
+        browser_args.append(url)
 
-        if not skip_normalization:
-            # Normalize URL by adding scheme if missing.
-            url = options.url
-            parsed = urlparse(url)
-
-            # Only normalize if it actually looks like a URL (to not accidentally normalize a logging stream):
-            # - starts with a file path (/, ./, ../, ~/)
-            # - starts with localhost
-            # - looks like an IP address
-            # - contains a dot (likely a domain)
-            if not parsed.scheme:
-                if url.startswith(('/', './', '../', '~/')):
-                    abs_path = os.path.abspath(os.path.expanduser(url))
-                    url = f'file://{abs_path}'
-                elif url.startswith('localhost') or url.split(':')[0].replace('.', '').isdigit():
-                    url = f'http://{url}'
-                elif '.' in url:
-                    url = f'https://{url}'
-            browser_args.append(url)
-        else:
-            # It's the logging channel for -WebCoreLogging, pass through unchanged
-            browser_args.append(options.url)
     if options.platform == "mac" and options.site_isolation is not None:
         browser_args.append('--force-site-isolation')
         browser_args.append('YES' if options.site_isolation else 'NO')

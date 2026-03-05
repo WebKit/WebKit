@@ -10,15 +10,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 749x39
+        RenderText {#text} at (0,0) size 749x40
           text run at (0,0) width 749: "This test makes sure that content inside a Mail blockquote in an incoming fragment isn't pulled out of the blockquote"
           text run at (0,20) width 83: "during paste."
       RenderBlock {P} at (0,56) size 784x20
-        RenderInline {B} at (0,0) size 572x19
-          RenderText {#text} at (0,0) size 572x19
+        RenderInline {B} at (0,0) size 572x20
+          RenderText {#text} at (0,0) size 572x20
             text run at (0,0) width 572: "You should see 'bar' inside a blockquote (it will have a blue border around it if it is)."
       RenderBlock {DIV} at (0,92) size 784x22
         RenderBlock {BLOCKQUOTE} at (40,0) size 704x22 [border: (1px solid #0000FF)]
-          RenderText {#text} at (1,1) size 21x19
+          RenderText {#text} at (1,1) size 21x20
             text run at (1,1) width 21: "bar"
 caret: position 3 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 4 {DIV} of body

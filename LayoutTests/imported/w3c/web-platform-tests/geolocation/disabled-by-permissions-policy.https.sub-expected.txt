@@ -6,3 +6,9 @@ FAIL Permissions-Policy header geolocation=() disallows the top-level document. 
 TIMEOUT Permissions-Policy header geolocation=() disallows same-origin iframes. Test timed out
 NOTRUN Permissions-Policy header geolocation=() disallows cross-origin iframes.
 
+Harness Error (FAIL), message = Unhandled rejection
+
+FAIL Permissions-Policy header geolocation=() disallows the top-level document. promise_test: Unhandled rejection with value: object "[object GeolocationPosition]"
+TIMEOUT Permissions-Policy header geolocation=() disallows same-origin iframes. Test timed out
+NOTRUN Permissions-Policy header geolocation=() disallows cross-origin iframes.
+

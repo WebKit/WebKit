@@ -22,9 +22,6 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_REMOTE_INSPECTOR PRIVATE OFF)
 if (NOT WIN32)
     WEBKIT_OPTION_DEFINE(ENABLE_FUZZILLI "Whether to build JavaScriptCore with support for Fuzzilli." PUBLIC OFF)
 endif ()
-if (WIN32)
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSTEM_MALLOC PRIVATE OFF)
-endif ()
 WEBKIT_OPTION_DEFINE(ENABLE_JSC_GLIB_API "Whether to enable the JavaScriptCore GLib API." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE OFF)
 
@@ -76,6 +73,10 @@ if (WIN32)
     # FIXME: warning STL4042: std::float_denorm_style, std::numeric_limits::has_denorm, and std::numeric_limits::has_denorm_loss are deprecated in C++23.
     add_definitions(-D_SILENCE_CXX23_DENORM_DEPRECATION_WARNING)
 
+    # If <winsock2.h> is not included before <windows.h> redefinition errors occur
+    # unless _WINSOCKAPI_ is defined before <windows.h> is included
+    add_definitions(-D_WINSOCKAPI_=)
+
     if (DEFINED ENV{WEBKIT_IGNORE_PATH})
         set(CMAKE_IGNORE_PATH $ENV{WEBKIT_IGNORE_PATH})
     endif ()
@@ -87,7 +88,6 @@ if (WIN32)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-    set(CMAKE_DISABLE_PRECOMPILE_HEADERS OFF)
 endif ()
 
 if (ENABLE_JSC_GLIB_API)

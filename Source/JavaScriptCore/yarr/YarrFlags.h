@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
+#include <array>
 #include <optional>
 #include <wtf/Forward.h>
 

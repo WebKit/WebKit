@@ -1,0 +1,4 @@
+
+FAIL revert-rule in keyframes, reverted-to value changing (standard property) assert_true: expected true got false
+FAIL revert-rule in keyframes, reverted-to value changing (custom property) assert_true: expected true got false
+

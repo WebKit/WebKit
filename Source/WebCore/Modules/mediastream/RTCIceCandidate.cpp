@@ -42,13 +42,13 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCIceCandidate);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCIceCandidate);
 
 RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex, Fields&& fields)
     : m_candidate(candidate)
     , m_sdpMid(sdpMid)
     , m_sdpMLineIndex(sdpMLineIndex)
-    , m_fields(WTFMove(fields))
+    , m_fields(WTF::move(fields))
 {
     ASSERT(!sdpMid.isNull() || sdpMLineIndex);
 }
@@ -60,13 +60,13 @@ ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const RTCIceCandidateI
 
     auto fields = valueOrDefault(parseIceCandidateSDP(dictionary.candidate));
     fields.usernameFragment = dictionary.usernameFragment;
-    return adoptRef(*new RTCIceCandidate(dictionary.candidate, dictionary.sdpMid, dictionary.sdpMLineIndex, WTFMove(fields)));
+    return adoptRef(*new RTCIceCandidate(dictionary.candidate, dictionary.sdpMid, dictionary.sdpMLineIndex, WTF::move(fields)));
 }
 
 Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
 {
     auto fields = parseIceCandidateSDP(candidate);
-    return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex, WTFMove(*fields)));
+    return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex, WTF::move(*fields)));
 }
 
 RTCIceCandidateInit RTCIceCandidate::toJSON() const
@@ -75,6 +75,7 @@ RTCIceCandidateInit RTCIceCandidate::toJSON() const
     result.candidate = m_candidate;
     result.sdpMid = m_sdpMid;
     result.sdpMLineIndex = m_sdpMLineIndex;
+    result.usernameFragment = m_fields.usernameFragment;
     return result;
 }
 

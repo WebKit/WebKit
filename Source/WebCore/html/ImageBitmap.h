@@ -45,7 +45,6 @@ class CanvasBase;
 class CSSStyleImageValue;
 class DestinationColorSpace;
 class FloatSize;
-class GLFence;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -88,25 +87,25 @@ private:
 };
 
 class ImageBitmap final : public ScriptWrappable, public RefCounted<ImageBitmap> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBitmap);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBitmap);
 public:
     using Source = Variant<
-        RefPtr<HTMLImageElement>,
+        Ref<HTMLImageElement>,
 #if ENABLE(VIDEO)
-        RefPtr<HTMLVideoElement>,
+        Ref<HTMLVideoElement>,
 #endif
-        RefPtr<HTMLCanvasElement>,
-        RefPtr<SVGImageElement>,
-        RefPtr<ImageBitmap>,
+        Ref<HTMLCanvasElement>,
+        Ref<SVGImageElement>,
+        Ref<ImageBitmap>,
 #if ENABLE(OFFSCREEN_CANVAS)
-        RefPtr<OffscreenCanvas>,
+        Ref<OffscreenCanvas>,
 #endif
-        RefPtr<CSSStyleImageValue>,
+        Ref<CSSStyleImageValue>,
 #if ENABLE(WEB_CODECS)
-        RefPtr<WebCodecsVideoFrame>,
+        Ref<WebCodecsVideoFrame>,
 #endif
-        RefPtr<Blob>,
-        RefPtr<ImageData>
+        Ref<Blob>,
+        Ref<ImageData>
     >;
 
     using Promise = DOMPromiseDeferred<IDLInterface<ImageBitmap>>;
@@ -126,7 +125,7 @@ public:
 
     ~ImageBitmap();
 
-    ImageBuffer* buffer() const;
+    ImageBuffer* NODELETE buffer() const;
 
     RefPtr<ImageBuffer> takeImageBuffer();
 
@@ -141,36 +140,31 @@ public:
     bool isDetached() const { return !m_bitmap; }
     void close();
 
-#if USE(SKIA)
-    void prepareForCrossThreadTransfer();
-    void finalizeCrossThreadTransfer();
-#endif
-
-    size_t memoryCost() const;
+    size_t NODELETE memoryCost() const;
 private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
     ImageBitmap(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
     static Ref<ImageBitmap> createBlankImageBuffer(ScriptExecutionContext&, bool originClean);
 
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<HTMLImageElement>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<SVGImageElement>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<SVGImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createCompletionHandler(ScriptExecutionContext&, CachedImage*, RenderElement*, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #if ENABLE(VIDEO)
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<HTMLVideoElement>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLVideoElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #endif
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<ImageBitmap>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<ImageBitmap>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #if ENABLE(OFFSCREEN_CANVAS)
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<OffscreenCanvas>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<OffscreenCanvas>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #endif
 #if ENABLE(WEB_CODECS)
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<WebCodecsVideoFrame>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #endif
     static void createCompletionHandler(ScriptExecutionContext&, CanvasBase&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
-    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<Blob>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<ImageData>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, Ref<CSSStyleImageValue>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 
     RefPtr<ImageBuffer> m_bitmap;
@@ -178,9 +172,6 @@ private:
     const bool m_originClean : 1 { false };
     const bool m_premultiplyAlpha : 1 { false };
     const bool m_forciblyPremultiplyAlpha : 1 { false };
-#if USE(SKIA)
-    std::unique_ptr<GLFence> m_fence;
-#endif
 };
 
 }

@@ -25,6 +25,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
+#include "BCompiler.h"
+
 BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include "BInline.h"
@@ -193,3 +197,5 @@ template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDe
 } // namespace bmalloc
 
 BALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // __cplusplus

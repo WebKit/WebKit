@@ -268,7 +268,7 @@ int32_t AudioCodingModuleImpl::Encode(
       &encode_buffer_);
 
   bitrate_logger_.MaybeLog(encoder_stack_->GetTargetBitrate() / 1000);
-  if (encode_buffer_.size() == 0 && !encoded_info.send_even_if_empty) {
+  if (encode_buffer_.empty() && !encoded_info.send_even_if_empty) {
     // Not enough data.
     return 0;
   }
@@ -289,7 +289,7 @@ int32_t AudioCodingModuleImpl::Encode(
   }
 
   AudioFrameType frame_type;
-  if (encode_buffer_.size() == 0 && encoded_info.send_even_if_empty) {
+  if (encode_buffer_.empty() && encoded_info.send_even_if_empty) {
     frame_type = AudioFrameType::kEmptyFrame;
     encoded_info.payload_type = previous_pltype;
   } else {

@@ -68,7 +68,7 @@ class RemoteImageBufferProxyFlushFence : public ThreadSafeRefCounted<RemoteImage
 public:
     static Ref<RemoteImageBufferProxyFlushFence> create(IPC::Event event)
     {
-        return adoptRef(*new RemoteImageBufferProxyFlushFence { WTFMove(event) });
+        return adoptRef(*new RemoteImageBufferProxyFlushFence { WTF::move(event) });
     }
 
     bool waitFor(Seconds timeout)
@@ -85,12 +85,12 @@ public:
         if (!m_signaled)
             return std::nullopt;
         Locker locker { m_lock };
-        return WTFMove(m_event);
+        return WTF::move(m_event);
     }
 
 private:
     RemoteImageBufferProxyFlushFence(IPC::Event event)
-        : m_event(WTFMove(event))
+        : m_event(WTF::move(event))
     {
     }
     Lock m_lock;
@@ -106,7 +106,7 @@ class RemoteImageBufferProxyFlusher final : public ThreadSafeImageBufferFlusher 
     WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferProxyFlusher);
 public:
     RemoteImageBufferProxyFlusher(Ref<RemoteImageBufferProxyFlushFence> flushState)
-        : m_flushState(WTFMove(flushState))
+        : m_flushState(WTF::move(flushState))
     {
     }
 
@@ -209,9 +209,9 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
 #if HAVE(IOSURFACE)
         if (backendHandle && std::holds_alternative<MachSendRight>(*backendHandle)) {
             if (RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore())
-                backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
+                backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTF::move(*backendHandle));
             else
-                backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
+                backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTF::move(*backendHandle));
         }
 #endif
         [[fallthrough]];
@@ -219,9 +219,9 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
     case RenderingMode::Unaccelerated:
         if (backendHandle && std::holds_alternative<ShareableBitmap::Handle>(*backendHandle)) {
             m_backendInfo = ImageBuffer::populateBackendInfo<ImageBufferShareableBitmapBackend>(backendParameters);
-            auto handle = std::get<ShareableBitmap::Handle>(WTFMove(*backendHandle));
+            auto handle = std::get<ShareableBitmap::Handle>(WTF::move(*backendHandle));
             handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-            backend = ImageBufferShareableBitmapBackend::create(backendParameters, WTFMove(handle));
+            backend = ImageBufferShareableBitmapBackend::create(backendParameters, WTF::move(handle));
         }
         break;
 
@@ -243,7 +243,7 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
         }
         return;
     }
-    setBackend(WTFMove(backend));
+    setBackend(WTF::move(backend));
 }
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
@@ -330,7 +330,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::filteredNativeImage(Filter& filter)
     if (!handle)
         return nullptr;
     handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
-    auto bitmap = ShareableBitmap::create(WTFMove(*handle));
+    auto bitmap = ShareableBitmap::create(WTF::move(*handle));
     if (!bitmap)
         return nullptr;
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::No));
@@ -452,12 +452,12 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
             return false;
         }
 
-        event = WTFMove(pair->event);
-        send(Messages::RemoteImageBuffer::SetFlushSignal(WTFMove(pair->signal)));
+        event = WTF::move(pair->event);
+        send(Messages::RemoteImageBuffer::SetFlushSignal(WTF::move(pair->signal)));
     }
 
     send(Messages::RemoteImageBuffer::FlushContext());
-    m_pendingFlush = RemoteImageBufferProxyFlushFence::create(WTFMove(*event));
+    m_pendingFlush = RemoteImageBufferProxyFlushFence::create(WTF::move(*event));
     return true;
 }
 
@@ -499,7 +499,7 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     disconnect();
     m_renderingBackend = nullptr;
 
-    std::unique_ptr<SerializedImageBuffer> ret = WTFMove(result);
+    std::unique_ptr<SerializedImageBuffer> ret = WTF::move(result);
     return ret;
 }
 

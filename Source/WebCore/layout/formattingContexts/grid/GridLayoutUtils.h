@@ -32,13 +32,31 @@ class LayoutUnit;
 namespace Layout {
 
 class PlacedGridItem;
+struct GridItemSizingFunctions;
 
 namespace GridLayoutUtils {
 
-LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&);
-LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem&);
+LayoutUnit NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
+
+LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizingFunctionsList&, LayoutUnit columnsSize, const IntegrationUtils&);
+LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizingFunctionsList&, LayoutUnit rowsSize, const IntegrationUtils&);
+
+LayoutUnit usedInlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
+LayoutUnit usedBlockMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const IntegrationUtils&);
 
 LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
+LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);
+
+LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem&, LayoutUnit blockAxisConstraint, const IntegrationUtils&);
+LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit blockAxisConstraint, const IntegrationUtils&);
+GridItemSizingFunctions inlineAxisGridItemSizingFunctions(const IntegrationUtils&);
+
+LayoutUnit blockAxisMinContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);
+LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);
+GridItemSizingFunctions blockAxisGridItemSizingFunctions(const GridFormattingContext&);
+
+bool preferredSizeBehavesAsAuto(const Style::PreferredSize&);
+bool NODELETE preferredSizeDependsOnContainingBlockSize(const Style::PreferredSize&);
 
 } // namespace GridLayoutUtils
 } // namespace Layout

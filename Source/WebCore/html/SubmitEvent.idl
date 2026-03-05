@@ -23,14 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#submitevent
 [
     Exposed=Window
 ] interface SubmitEvent : Event {
-    constructor([AtomString] DOMString type, optional SubmitEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional SubmitEventInit eventInitDict = {});
 
     readonly attribute HTMLElement? submitter;
 };
 
+// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#submiteventinit
 dictionary SubmitEventInit : EventInit {
     HTMLElement? submitter = null;
 };

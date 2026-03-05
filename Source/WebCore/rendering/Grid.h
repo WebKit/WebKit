@@ -48,7 +48,7 @@ class Grid final {
 public:
     explicit Grid(RenderGrid&);
 
-    unsigned numTracks(Style::GridTrackSizingDirection) const;
+    unsigned NODELETE numTracks(Style::GridTrackSizingDirection) const;
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
     GridArea insert(RenderBox&, const GridArea&);
@@ -63,15 +63,15 @@ public:
     GridSpan gridItemSpan(const RenderBox&, Style::GridTrackSizingDirection) const;
     GridSpan gridItemSpanIgnoringCollapsedTracks(const RenderBox&, Style::GridTrackSizingDirection) const;
 
-    const GridCell& cell(unsigned row, unsigned column) const;
+    const GridCell& NODELETE cell(unsigned row, unsigned column) const;
 
-    unsigned explicitGridStart(Style::GridTrackSizingDirection) const;
-    void setExplicitGridStart(unsigned rowStart, unsigned columnStart);
+    unsigned NODELETE explicitGridStart(Style::GridTrackSizingDirection) const;
+    void NODELETE setExplicitGridStart(unsigned rowStart, unsigned columnStart);
 
-    unsigned autoRepeatTracks(Style::GridTrackSizingDirection) const;
-    void setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns);
+    unsigned NODELETE autoRepeatTracks(Style::GridTrackSizingDirection) const;
+    void NODELETE setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns);
 
-    void setClampingForSubgrid(unsigned maxRows, unsigned maxColumns);
+    void NODELETE setClampingForSubgrid(unsigned maxRows, unsigned maxColumns);
 
     void clampAreaToSubgridIfNeeded(GridArea&);
 
@@ -79,12 +79,13 @@ public:
     void setAutoRepeatEmptyRows(std::unique_ptr<OrderedTrackIndexSet>);
 
     unsigned autoRepeatEmptyTracksCount(Style::GridTrackSizingDirection) const;
-    bool hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
+    bool NODELETE hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
     bool isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
 
-    OrderedTrackIndexSet* autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
+    OrderedTrackIndexSet* NODELETE autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
 
     OrderIterator& orderIterator() { return m_orderIterator; }
+    const OrderIterator& orderIterator() const { return m_orderIterator; }
 
     void setNeedsItemsPlacement(bool);
     bool needsItemsPlacement() const { return m_needsItemsPlacement; };
@@ -125,7 +126,7 @@ public:
 
     static GridIterator createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
 
-    RenderBox* nextGridItem();
+    RenderBox* NODELETE nextGridItem();
     bool isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;
     std::optional<GridArea> nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan);
 

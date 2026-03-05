@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKJSSerializedNode.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-@interface _WKSerializedNode : NSObject
-
+@interface _WKSerializedNode : WKJSSerializedNode
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
-
 @end
 
 NS_ASSUME_NONNULL_END

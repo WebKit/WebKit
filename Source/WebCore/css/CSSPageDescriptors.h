@@ -32,7 +32,7 @@ class CSSPageRule;
 struct CSSParserContext;
 
 class CSSPageDescriptors final : public PropertySetCSSDescriptors {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSPageDescriptors);
+    WTF_MAKE_TZONE_ALLOCATED(CSSPageDescriptors);
 public:
     static Ref<CSSPageDescriptors> create(MutableStyleProperties& propertySet, CSSPageRule& parentRule)
     {
@@ -58,7 +58,7 @@ public:
 private:
     CSSPageDescriptors(MutableStyleProperties&, CSSPageRule&);
 
-    StyleRuleType ruleType() const final;
+    StyleRuleType NODELETE ruleType() const final;
 };
 
 } // namespace WebCore

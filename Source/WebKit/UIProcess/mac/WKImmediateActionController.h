@@ -33,6 +33,7 @@
 #import <wtf/CheckedPtr.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 class WebPageProxy;

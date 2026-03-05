@@ -137,7 +137,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return self._protectedWebExtensionControllerConfiguration->copy()->wrapper();
+    return protect(*_webExtensionControllerConfiguration)->copy()->wrapper();
 }
 
 - (BOOL)isEqual:(id)object
@@ -159,7 +159,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (NSUUID *)identifier
 {
-    if (auto identifier = self._protectedWebExtensionControllerConfiguration->identifier())
+    if (auto identifier = protect(*_webExtensionControllerConfiguration)->identifier())
         return identifier.value().createNSUUID().autorelease();
     return nil;
 }
@@ -171,23 +171,23 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (WKWebViewConfiguration *)webViewConfiguration
 {
-    return self._protectedWebExtensionControllerConfiguration->webViewConfiguration();
+    return protect(*_webExtensionControllerConfiguration)->webViewConfiguration();
 }
 
 - (void)setWebViewConfiguration:(WKWebViewConfiguration *)configuration
 {
-    self._protectedWebExtensionControllerConfiguration->setWebViewConfiguration(configuration);
+    protect(*_webExtensionControllerConfiguration)->setWebViewConfiguration(configuration);
 }
 
 - (WKWebsiteDataStore *)defaultWebsiteDataStore
 {
-    return wrapper(self._protectedWebExtensionControllerConfiguration->protectedDefaultWebsiteDataStore().get());
+    return wrapper(protect(protect(*_webExtensionControllerConfiguration)->defaultWebsiteDataStore()).get());
 }
 
 - (void)setDefaultWebsiteDataStore:(WKWebsiteDataStore *)dataStore
 {
     RefPtr websiteDataStore = dataStore ? dataStore->_websiteDataStore.get() : nullptr;
-    self._protectedWebExtensionControllerConfiguration->setDefaultWebsiteDataStore(websiteDataStore.get());
+    protect(*_webExtensionControllerConfiguration)->setDefaultWebsiteDataStore(websiteDataStore.get());
 }
 
 - (BOOL)_isTemporary
@@ -204,7 +204,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (void)_setStorageDirectoryPath:(NSString *)path
 {
-    _webExtensionControllerConfiguration->setStorageDirectory(path);
+    protect(*_webExtensionControllerConfiguration)->setStorageDirectory(path);
 }
 
 #pragma mark WKObject protocol implementation
@@ -215,11 +215,6 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 }
 
 - (WebKit::WebExtensionControllerConfiguration&)_webExtensionControllerConfiguration
-{
-    return *_webExtensionControllerConfiguration;
-}
-
-- (Ref<WebKit::WebExtensionControllerConfiguration>)_protectedWebExtensionControllerConfiguration
 {
     return *_webExtensionControllerConfiguration;
 }

@@ -94,7 +94,7 @@ public:
     void setOneFamily(const AtomString& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = family; }
     void setFamilies(const Vector<AtomString>& families) { m_families = RefCountedFixedVector<AtomString>::createFromVector(families); }
     void setFamilies(RefCountedFixedVector<AtomString>& families) { m_families = families; }
-    void setFamilies(Ref<RefCountedFixedVector<AtomString>>&& families) { m_families = WTFMove(families); }
+    void setFamilies(Ref<RefCountedFixedVector<AtomString>>&& families) { m_families = WTF::move(families); }
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setKerning(Kerning kerning) { m_kerning = static_cast<unsigned>(kerning); }

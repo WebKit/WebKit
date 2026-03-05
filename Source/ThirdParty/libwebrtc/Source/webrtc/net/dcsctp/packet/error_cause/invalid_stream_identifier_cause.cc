@@ -29,7 +29,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |        Stream Identifier      |         (Reserved)            |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int InvalidStreamIdentifierCause::kType;
 
 std::optional<InvalidStreamIdentifierCause> InvalidStreamIdentifierCause::Parse(
     webrtc::ArrayView<const uint8_t> data) {

@@ -20,6 +20,7 @@
 #    include "libANGLE/angletypes.h"
 
 #    include "common/PackedCLEnums_autogen.h"
+#    include "common/WorkerThread.h"
 #    include "common/angleutils.h"
 
 // Include frequently used standard headers
@@ -77,6 +78,7 @@ template <typename T>
 using EventStatusMap = std::array<T, 3>;
 
 using Extents = angle::Extents<size_t>;
+constexpr Extents kExtentsZero(0, 0, 0);
 using Offset  = angle::Offset<size_t>;
 constexpr Offset kOffsetZero(0, 0, 0);
 
@@ -119,12 +121,56 @@ struct BufferRect
         return ((mRowPitch * (mOrigin.y + row)) + (mOrigin.x * mElementSize)) +  // row offset
                (mSlicePitch * (mOrigin.z + slice));                              // slice offset
     }
+    // Calculates the offset of the starting position of the rectangle
+    size_t getBufferOffset() const { return getRowOffset(0, 0); }
 
     size_t getRowPitch() const { return mRowPitch; }
     size_t getSlicePitch() const { return mSlicePitch; }
+
     // Given the offset, row pitch, slice pitch, this returns the size of the buffer in which this
     // rect sits.
-    size_t getRectSize() const { return getRowOffset(mSize.depth, mSize.height); }
+    //
+    //            row_pitch
+    // +------------------------------+
+    // |   origin                     |
+    // |      +---------------+       |
+    // |      |               |height |
+    // |      |               |       |
+    // |      |   width       |       |
+    // +------+---------------+-------+
+    //   - size of the buffer is
+    //      - initial offset to start of rect
+    //      - + size of the rectangle
+    //      - - (extra regions for the last slice and row)
+    size_t getRectSize() const
+    {
+        // Treat:
+        //  S: mSlicePitch, R: mRowPitch, O: Offset(xyz_dim), D: mSize.depth, H: mSize.height,
+        //  W: mSize.width, E: mElementSize
+        //
+        //  strideHeightPadding == (S / R) - H
+        //  strideRowPadding    == R - (W * E)
+        //
+        // getRectSize() =
+        //    getBufferOffset()         // initial offset to the start of rect
+        //  + (S * D)                   // size of the rectangle
+        //  - (strideHeightPadding * R) // extraneous region for the last slice
+        //  - strideRowPadding          // extraneous region for the last row
+        //
+        // Where:
+        //  getBufferOffset()   == getRowOffset(0,0) == S(Oz) + R(Oy) + (Ox * E)
+        //  getRowOffset(s, r)  == S(Oz + s) + R(Oy + r) + (Ox * E)
+        //
+        // Simplifies to:
+        //  getRectSize() = S(Oz) + R(Oy) + (Ox * E) + (S * D) - R(S/R - H) - R - (W * E)
+        //  getRectSize() = S(Oz + (D - 1)) + R(Oy + (H - 1)) + (Ox * E) + (W * E)
+        //  ...
+        //  getRectSize() = getRowOffset((D - 1), (H - 1)) + (W * E)
+
+        // The end of the rect is the beginning of the last row + the length of the row.
+        // This logic excludes paddings for the last row / slice.
+        return getRowOffset(mSize.depth - 1, mSize.height - 1) + mSize.width * mElementSize;
+    }
     const Extents &getExtents() const { return mSize; }
     Offset mOrigin;
     Extents mSize;
@@ -180,18 +226,6 @@ struct ImageDescriptor
         }
     }
 };
-
-struct MemOffsets
-{
-    size_t x, y, z;
-};
-constexpr MemOffsets kMemOffsetsZero{0, 0, 0};
-
-struct Coordinate
-{
-    size_t x, y, z;
-};
-constexpr Coordinate kCoordinateZero{0, 0, 0};
 
 struct NDRange
 {
@@ -324,11 +358,24 @@ struct NDRange
     bool nullLocalWorkSize{false};
 };
 
-// Memory property element from cl_khr_external_memory
+// name-value pair for cl_properties lists
 struct NameValueProperty
 {
-    intptr_t name;
-    intptr_t value;
+    cl_properties name;
+    cl_properties value;
+};
+
+// this Defer class provides the user with a closure that executes on its destruction
+template <typename F>
+class Defer : public angle::Closure
+{
+  public:
+    Defer(F &&func) : mFunc(std::forward<F>(func)) {}
+    ~Defer() override { operator()(); }
+    void operator()() override { mFunc(); }
+
+  private:
+    F mFunc;
 };
 
 }  // namespace cl

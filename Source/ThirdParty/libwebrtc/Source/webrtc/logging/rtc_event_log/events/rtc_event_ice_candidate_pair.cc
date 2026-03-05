@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "absl/memory/memory.h"
-#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 
@@ -26,19 +25,11 @@ RtcEventIceCandidatePair::RtcEventIceCandidatePair(
       candidate_pair_id_(candidate_pair_id),
       transaction_id_(transaction_id) {}
 
-RtcEventIceCandidatePair::RtcEventIceCandidatePair(
-    const RtcEventIceCandidatePair& other)
-    : RtcEvent(other.timestamp_us_),
-      type_(other.type_),
-      candidate_pair_id_(other.candidate_pair_id_),
-      transaction_id_(other.transaction_id_) {}
-
 RtcEventIceCandidatePair::~RtcEventIceCandidatePair() = default;
 
 std::unique_ptr<RtcEventIceCandidatePair> RtcEventIceCandidatePair::Copy()
     const {
-  return absl::WrapUnique<RtcEventIceCandidatePair>(
-      new RtcEventIceCandidatePair(*this));
+  return absl::WrapUnique(new RtcEventIceCandidatePair(*this));
 }
 
 }  // namespace webrtc

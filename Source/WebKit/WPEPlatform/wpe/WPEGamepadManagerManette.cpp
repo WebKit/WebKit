@@ -42,7 +42,7 @@ WEBKIT_DEFINE_FINAL_TYPE(WPEGamepadManagerManette, wpe_gamepad_manager_manette, 
 static void wpeGamepadManagerManetteAddDevice(WPEGamepadManagerManette* manager, ManetteDevice* device)
 {
     GRefPtr<WPEGamepad> gamepad = adoptGRef(wpeGamepadManetteCreate(device));
-    auto addResult = manager->priv->devices.set(device, WTFMove(gamepad));
+    auto addResult = manager->priv->devices.set(device, WTF::move(gamepad));
     wpe_gamepad_manager_add_device(WPE_GAMEPAD_MANAGER(manager), addResult.iterator->value.get());
 }
 

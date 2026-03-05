@@ -170,7 +170,11 @@ public:
     ImplementationVisibility implementationVisibility() const { return m_implementationVisibility; }
     void resetImplementationVisibility()
     {
-        m_implementationVisibility = ImplementationVisibility::Public;
+        setImplementationVisibility(ImplementationVisibility::Public);
+    }
+    void setImplementationVisibility(ImplementationVisibility implementationVisibility)
+    {
+        m_implementationVisibility = implementationVisibility;
     }
 
     void startSwitch() { m_switchDepth++; }
@@ -331,8 +335,8 @@ public:
             computeLexicallyCapturedVariablesAndPurgeCandidates();
     }
 
-    VariableEnvironment takeLexicalEnvironment() { return WTFMove(m_lexicalVariables); }
-    VariableEnvironment takeDeclaredVariables() { return WTFMove(m_declaredVariables); }
+    VariableEnvironment takeLexicalEnvironment() { return WTF::move(m_lexicalVariables); }
+    VariableEnvironment takeDeclaredVariables() { return WTF::move(m_declaredVariables); }
 
     void computeLexicallyCapturedVariablesAndPurgeCandidates()
     {
@@ -443,7 +447,7 @@ public:
         ASSERT(node);
         m_functionDeclarations.append(node);
     }
-    DeclarationStacks::FunctionStack takeFunctionDeclarations() { return WTFMove(m_functionDeclarations); }
+    DeclarationStacks::FunctionStack takeFunctionDeclarations() { return WTF::move(m_functionDeclarations); }
     
 
     DeclarationResultMask declareLexicalVariable(const Identifier* ident, bool isConstant, DeclarationImportType importType = DeclarationImportType::NotImported)
@@ -501,6 +505,11 @@ public:
     bool hasLexicallyDeclaredVariable(const UniquedStringImpl* ident) const
     {
         return m_lexicalVariables.contains(ident);
+    }
+
+    bool hasVariableBeingHoisted(UniquedStringImpl* ident) const
+    {
+        return m_variablesBeingHoisted.contains(ident);
     }
 
     bool hasPrivateName(const Identifier& ident)
@@ -647,6 +656,12 @@ public:
     bool needsFullActivation() const { return m_needsFullActivation; }
     bool isArrowFunctionBoundary() { return m_isArrowFunctionBoundary; }
     bool isArrowFunction() { return m_isArrowFunction; }
+
+    void setAsyncFunctionBodyDoesNotUseAwait() { m_asyncFunctionBodyDoesNotUseAwait = true; }
+    bool asyncFunctionBodyDoesNotUseAwait() const { return m_asyncFunctionBodyDoesNotUseAwait; }
+
+    void setUsesAwait() { m_usesAwait = true; }
+    bool usesAwait() const { return m_usesAwait; }
 
     bool hasDirectSuper() const { return m_hasDirectSuper; }
     void setHasDirectSuper() { m_hasDirectSuper = true; }
@@ -845,6 +860,7 @@ public:
         m_usesImportMeta = info->usesImportMeta;
         m_lexicallyScopedFeatures = info->lexicallyScopedFeatures();
         m_innerArrowFunctionFeatures = info->innerArrowFunctionFeatures;
+        m_implementationVisibility = static_cast<ImplementationVisibility>(info->implementationVisibility);
         m_needsFullActivation = info->needsFullActivation;
         m_needsSuperBinding = info->needsSuperBinding;
         UniquedStringImplPtrSet& destSet = m_usedVariables.last();
@@ -979,6 +995,8 @@ private:
     bool m_isEvalContext : 1 { false };
     bool m_hasNonSimpleParameterList : 1 { false };
     bool m_isClassScope : 1 { false };
+    bool m_asyncFunctionBodyDoesNotUseAwait : 1 { false };
+    bool m_usesAwait : 1 { false };
     EvalContextType m_evalContextType { EvalContextType::None };
     ConstructorKind m_constructorKind { ConstructorKind::None };
     DerivedContextType m_derivedContextType { DerivedContextType::None };
@@ -1847,7 +1865,7 @@ private:
 
     template <class TreeBuilder> ALWAYS_INLINE bool isSimpleAssignmentTarget(TreeBuilder&, TreeExpression, bool ignoreStrictCheck = false);
 
-    ALWAYS_INLINE int isBinaryOperator(JSTokenType);
+    ALWAYS_INLINE int NODELETE isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();
     
     bool autoSemiColon()
@@ -2149,16 +2167,16 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     startColumn,
                                     endColumn,
                                     parseResult.value().sourceElements,
-                                    WTFMove(parseResult.value().varDeclarations),
-                                    WTFMove(parseResult.value().functionDeclarations),
-                                    WTFMove(parseResult.value().lexicalVariables),
+                                    WTF::move(parseResult.value().varDeclarations),
+                                    WTF::move(parseResult.value().functionDeclarations),
+                                    WTF::move(parseResult.value().lexicalVariables),
                                     parseResult.value().parameters,
                                     *m_source,
                                     parseResult.value().features,
                                     currentScope()->lexicallyScopedFeatures(),
                                     currentScope()->innerArrowFunctionFeatures(),
                                     parseResult.value().numConstants,
-                                    WTFMove(m_moduleScopeData));
+                                    WTF::move(m_moduleScopeData));
         result->setLoc(m_source->firstLine().oneBasedInt(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
         result->setEndOffset(m_lexer->currentOffset());
 

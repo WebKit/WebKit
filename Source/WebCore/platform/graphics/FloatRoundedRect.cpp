@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FloatRoundedRect.h"
 
+#include "CornerRadii.h"
 #include "Path.h"
 #include <algorithm>
 #include <numbers>
@@ -40,7 +41,6 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatRoundedRect);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatRoundedRect::Radii);
 
 FloatRoundedRect::FloatRoundedRect(const LayoutRoundedRect& rect)
     : m_rect(rect.rect())
@@ -53,7 +53,7 @@ FloatRoundedRect::FloatRoundedRect(float x, float y, float width, float height)
 {
 }
 
-FloatRoundedRect::FloatRoundedRect(const FloatRect& rect, const Radii& radii)
+FloatRoundedRect::FloatRoundedRect(const FloatRect& rect, const CornerRadii& radii)
     : m_rect(rect)
     , m_radii(radii)
 {
@@ -63,81 +63,6 @@ FloatRoundedRect::FloatRoundedRect(const FloatRect& rect, const FloatSize& topLe
     : m_rect(rect)
     , m_radii(topLeft, topRight, bottomLeft, bottomRight)
 {
-}
-
-bool FloatRoundedRect::Radii::isZero() const
-{
-    return m_topLeft.isZero() && m_topRight.isZero() && m_bottomLeft.isZero() && m_bottomRight.isZero();
-}
-
-bool FloatRoundedRect::Radii::hasEvenCorners() const
-{
-    return areEssentiallyEqual(m_topLeft, m_topRight)
-        && areEssentiallyEqual(m_topLeft, m_bottomLeft)
-        && areEssentiallyEqual(m_topLeft, m_bottomRight);
-}
-
-bool FloatRoundedRect::Radii::isUniformCornerRadius() const
-{
-    return WTF::areEssentiallyEqual(m_topLeft.width(), m_topLeft.height()) && hasEvenCorners();
-}
-
-void FloatRoundedRect::Radii::scale(float factor)
-{
-    scale(factor, factor);
-}
-
-void FloatRoundedRect::Radii::scale(float horizontalFactor, float verticalFactor)
-{
-    if (horizontalFactor == 1 && verticalFactor == 1)
-        return;
-
-    // If either radius on a corner becomes zero, reset both radii on that corner.
-    m_topLeft.scale(horizontalFactor, verticalFactor);
-    if (!m_topLeft.width() || !m_topLeft.height())
-        m_topLeft = FloatSize();
-    m_topRight.scale(horizontalFactor, verticalFactor);
-    if (!m_topRight.width() || !m_topRight.height())
-        m_topRight = FloatSize();
-    m_bottomLeft.scale(horizontalFactor, verticalFactor);
-    if (!m_bottomLeft.width() || !m_bottomLeft.height())
-        m_bottomLeft = FloatSize();
-    m_bottomRight.scale(horizontalFactor, verticalFactor);
-    if (!m_bottomRight.width() || !m_bottomRight.height())
-        m_bottomRight = FloatSize();
-}
-
-void FloatRoundedRect::Radii::expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth)
-{
-    if (m_topLeft.width() > 0 && m_topLeft.height() > 0) {
-        m_topLeft.setWidth(std::max<float>(0, m_topLeft.width() + leftWidth));
-        m_topLeft.setHeight(std::max<float>(0, m_topLeft.height() + topWidth));
-    }
-    if (m_topRight.width() > 0 && m_topRight.height() > 0) {
-        m_topRight.setWidth(std::max<float>(0, m_topRight.width() + rightWidth));
-        m_topRight.setHeight(std::max<float>(0, m_topRight.height() + topWidth));
-    }
-    if (m_bottomLeft.width() > 0 && m_bottomLeft.height() > 0) {
-        m_bottomLeft.setWidth(std::max<float>(0, m_bottomLeft.width() + leftWidth));
-        m_bottomLeft.setHeight(std::max<float>(0, m_bottomLeft.height() + bottomWidth));
-    }
-    if (m_bottomRight.width() > 0 && m_bottomRight.height() > 0) {
-        m_bottomRight.setWidth(std::max<float>(0, m_bottomRight.width() + rightWidth));
-        m_bottomRight.setHeight(std::max<float>(0, m_bottomRight.height() + bottomWidth));
-    }
-}
-
-void FloatRoundedRect::Radii::expandEvenIfZero(float size)
-{
-    auto expand = [&](auto& corner) {
-        corner.setWidth(std::max(0.f, corner.width() + size));
-        corner.setHeight(std::max(0.f, corner.height() + size));
-    };
-
-    expand(m_topLeft);
-    expand(m_topRight);
-    expand(m_bottomLeft);
-    expand(m_bottomRight);
 }
 
 static inline float cornerRectIntercept(float y, const FloatRect& cornerRect)
@@ -308,10 +233,7 @@ Region approximateAsRegion(const FloatRoundedRect& roundedRect, unsigned stepLen
 TextStream& operator<<(TextStream& ts, const FloatRoundedRect& roundedRect)
 {
     ts << roundedRect.rect();
-    ts.dumpProperty("top-left"_s, roundedRect.radii().topLeft());
-    ts.dumpProperty("top-right"_s, roundedRect.radii().topRight());
-    ts.dumpProperty("bottom-left"_s, roundedRect.radii().bottomLeft());
-    ts.dumpProperty("bottom-right"_s, roundedRect.radii().bottomRight());
+    ts << roundedRect.radii();
     return ts;
 }
 

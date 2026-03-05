@@ -29,6 +29,7 @@
 #include "APIPageConfiguration.h"
 #include "BrowsingContextGroup.h"
 #include "DrawingAreaProxy.h"
+#include "EnhancedSecurity.h"
 #include "HandleMessage.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
@@ -60,7 +61,7 @@ static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SuspendedPageProxy);
 
-RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, WebProcessProxy::EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
 {
     for (Ref suspendedPage : allSuspendedPages()) {
         Ref process = suspendedPage->process();
@@ -112,19 +113,19 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 
 Ref<SuspendedPageProxy> SuspendedPageProxy::create(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
 {
-    return adoptRef(*new SuspendedPageProxy(page, WTFMove(process), WTFMove(mainFrame), WTFMove(browsingContextGroup), shouldDelayClosingUntilFirstLayerFlush));
+    return adoptRef(*new SuspendedPageProxy(page, WTF::move(process), WTF::move(mainFrame), WTF::move(browsingContextGroup), shouldDelayClosingUntilFirstLayerFlush));
 }
 
 SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
     : m_page(page)
     , m_webPageID(page.webPageIDInMainFrameProcess())
-    , m_process(WTFMove(process))
-    , m_mainFrame(WTFMove(mainFrame))
-    , m_browsingContextGroup(WTFMove(browsingContextGroup))
+    , m_process(WTF::move(process))
+    , m_mainFrame(WTF::move(mainFrame))
+    , m_browsingContextGroup(WTF::move(browsingContextGroup))
     , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
     , m_suspensionTimeoutTimer(RunLoop::mainSingleton(), "SuspendedPageProxy::SuspensionTimeoutTimer"_s, this, &SuspendedPageProxy::suspensionTimedOut)
 #if USE(RUNNINGBOARD)
-    , m_suspensionActivity(m_process->protectedThrottler()->backgroundActivity("Page suspension for back/forward cache"_s))
+    , m_suspensionActivity(protect(m_process->throttler())->backgroundActivity("Page suspension for back/forward cache"_s))
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     , m_contextIDForVisibilityPropagationInWebProcess(page.contextIDForVisibilityPropagationInWebProcess())
@@ -162,7 +163,7 @@ SuspendedPageProxy::~SuspendedPageProxy()
     allSuspendedPages().remove(*this);
 
     if (m_readyToUnsuspendHandler) {
-        RunLoop::mainSingleton().dispatch([readyToUnsuspendHandler = WTFMove(m_readyToUnsuspendHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([readyToUnsuspendHandler = WTF::move(m_readyToUnsuspendHandler)]() mutable {
             readyToUnsuspendHandler(nullptr);
         });
     }
@@ -182,11 +183,6 @@ void SuspendedPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier navi
         page->didDestroyNavigationShared(m_process.copyRef(), navigationID);
 }
 
-Ref<WebBackForwardCache> SuspendedPageProxy::protectedBackForwardCache() const
-{
-    return backForwardCache();
-}
-
 WebBackForwardCache& SuspendedPageProxy::backForwardCache() const
 {
     return process().processPool().backForwardCache();
@@ -199,7 +195,7 @@ void SuspendedPageProxy::waitUntilReadyToUnsuspend(CompletionHandler<void(Suspen
 
     switch (m_suspensionState) {
     case SuspensionState::Suspending:
-        m_readyToUnsuspendHandler = WTFMove(completionHandler);
+        m_readyToUnsuspendHandler = WTF::move(completionHandler);
         break;
     case SuspensionState::FailedToSuspend:
     case SuspensionState::Suspended:
@@ -287,7 +283,7 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 void SuspendedPageProxy::suspensionTimedOut()
 {
     RELEASE_LOG_ERROR(ProcessSwapping, "%p - SuspendedPageProxy::suspensionTimedOut() destroying the suspended page because it failed to suspend in time", this);
-    protectedBackForwardCache()->removeEntry(*this); // Will destroy |this|.
+    protect(backForwardCache())->removeEntry(*this); // Will destroy |this|.
 }
 
 WebPageProxy* SuspendedPageProxy::page() const

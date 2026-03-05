@@ -203,7 +203,7 @@ TEST(RTCRtpSFrameTransformer, EncryptDecrypt)
     auto encryptedResult = encryptor->transform(frame.span());
     EXPECT_TRUE(encryptedResult.has_value());
 
-    auto encrypted = WTFMove(encryptedResult.value());
+    auto encrypted = WTF::move(encryptedResult.value());
     auto decryptedResult = decryptor->transform(encrypted.span());
     EXPECT_TRUE(decryptedResult.has_value());
 
@@ -223,7 +223,7 @@ TEST(RTCRtpSFrameTransformer, EncryptDecryptKeyID0)
     auto encryptedResult = encryptor->transform(frame.span());
     EXPECT_TRUE(encryptedResult.has_value());
 
-    auto encrypted = WTFMove(encryptedResult.value());
+    auto encrypted = WTF::move(encryptedResult.value());
     auto decryptedResult = decryptor->transform(encrypted.span());
     EXPECT_TRUE(decryptedResult.has_value());
 
@@ -245,7 +245,7 @@ TEST(RTCRtpSFrameTransformer, EncryptDecryptAudio)
     auto encryptedResult = encryptor->transform(frame.span());
     EXPECT_TRUE(encryptedResult.has_value());
 
-    auto encrypted = WTFMove(encryptedResult.value());
+    auto encrypted = WTF::move(encryptedResult.value());
     auto decryptedResult = decryptor->transform(encrypted.span());
     EXPECT_TRUE(decryptedResult.has_value());
 

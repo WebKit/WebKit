@@ -78,30 +78,30 @@ auto CSSValueConversion<BorderRadiusValue>::operator()(BuilderState& state, cons
         return { 0_css_px, 0_css_px };
 
     return {
-        toStyleFromCSSValue<LengthPercentage<CSS::Nonnegative>>(state, pair->first),
-        toStyleFromCSSValue<LengthPercentage<CSS::Nonnegative>>(state, pair->second)
+        toStyleFromCSSValue<LengthPercentage<CSS::NonnegativeUnzoomed>>(state, pair->first),
+        toStyleFromCSSValue<LengthPercentage<CSS::NonnegativeUnzoomed>>(state, pair->second)
     };
 }
 
 // MARK: - Evaluation
 
-auto Evaluation<BorderRadius, FloatRoundedRect::Radii>::operator()(const BorderRadius& value, FloatSize referenceSize, ZoomNeeded token) -> FloatRoundedRect::Radii
+auto Evaluation<BorderRadius, CornerRadii>::operator()(const BorderRadius& value, FloatSize referenceSize, ZoomFactor zoom) -> CornerRadii
 {
     return {
-        evaluate<FloatSize>(value.topLeft(), referenceSize, token),
-        evaluate<FloatSize>(value.topRight(), referenceSize, token),
-        evaluate<FloatSize>(value.bottomLeft(), referenceSize, token),
-        evaluate<FloatSize>(value.bottomRight(), referenceSize, token),
+        evaluate<FloatSize>(value.topLeft(), referenceSize, zoom),
+        evaluate<FloatSize>(value.topRight(), referenceSize, zoom),
+        evaluate<FloatSize>(value.bottomLeft(), referenceSize, zoom),
+        evaluate<FloatSize>(value.bottomRight(), referenceSize, zoom),
     };
 }
 
-auto Evaluation<BorderRadius, LayoutRoundedRect::Radii>::operator()(const BorderRadius& value, LayoutSize referenceSize, ZoomNeeded token) -> LayoutRoundedRect::Radii
+auto Evaluation<BorderRadius, LayoutRoundedRect::Radii>::operator()(const BorderRadius& value, LayoutSize referenceSize, ZoomFactor zoom) -> LayoutRoundedRect::Radii
 {
     return {
-        evaluate<LayoutSize>(value.topLeft(), referenceSize, token),
-        evaluate<LayoutSize>(value.topRight(), referenceSize, token),
-        evaluate<LayoutSize>(value.bottomLeft(), referenceSize, token),
-        evaluate<LayoutSize>(value.bottomRight(), referenceSize, token),
+        evaluate<LayoutSize>(value.topLeft(), referenceSize, zoom),
+        evaluate<LayoutSize>(value.topRight(), referenceSize, zoom),
+        evaluate<LayoutSize>(value.bottomLeft(), referenceSize, zoom),
+        evaluate<LayoutSize>(value.bottomRight(), referenceSize, zoom),
     };
 }
 

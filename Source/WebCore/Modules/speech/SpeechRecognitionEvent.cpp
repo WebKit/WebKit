@@ -31,29 +31,29 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognitionEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionEvent);
 
 Ref<SpeechRecognitionEvent> SpeechRecognitionEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    return adoptRef(*new SpeechRecognitionEvent(type, WTFMove(init), isTrusted));
+    return adoptRef(*new SpeechRecognitionEvent(type, WTF::move(init), isTrusted));
 }
 
-Ref<SpeechRecognitionEvent> SpeechRecognitionEvent::create(const AtomString& type, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&& results)
+Ref<SpeechRecognitionEvent> SpeechRecognitionEvent::create(const AtomString& type, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&& results)
 {
-    return adoptRef(*new SpeechRecognitionEvent(type, resultIndex, WTFMove(results)));
+    return adoptRef(*new SpeechRecognitionEvent(type, resultIndex, WTF::move(results)));
 }
 
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(EventInterfaceType::SpeechRecognitionEvent, type, init, isTrusted)
+    : Event(EventInterfaceType::SpeechRecognitionEvent, type, WTF::move(init), isTrusted)
     , m_resultIndex(init.resultIndex)
-    , m_results(WTFMove(init.results))
+    , m_results(WTF::move(init.results))
 {
 }
 
-SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&& results)
+SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&& results)
     : Event(EventInterfaceType::SpeechRecognitionEvent, type, Event::CanBubble::No, Event::IsCancelable::No)
     , m_resultIndex(resultIndex)
-    , m_results(WTFMove(results))
+    , m_results(WTF::move(results))
 {
 }
 

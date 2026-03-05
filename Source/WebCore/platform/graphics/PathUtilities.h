@@ -23,31 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PathUtilities_h
-#define PathUtilities_h
+#pragma once
 
 #include <WebCore/FloatRoundedRect.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-namespace Style {
-struct BorderRadius;
-}
-
 class Path;
-class WritingMode;
 
 class PathUtilities {
 public:
     WEBCORE_EXPORT static Path pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius);
-    WEBCORE_EXPORT static Path pathWithShrinkWrappedRects(const Vector<FloatRect>&, const FloatRoundedRect::Radii&);
+    WEBCORE_EXPORT static Path pathWithShrinkWrappedRects(const Vector<FloatRect>&, const CornerRadii&);
     WEBCORE_EXPORT static Vector<Path> pathsWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius);
-
-    // FIXME: This is a layering violation as it depends on types outside of `platform`.
-    static Path pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>&, const Style::BorderRadius&, float outlineOffset, WritingMode, float deviceScaleFactor);
 };
 
-}
-
-#endif
+} // namespace WebCore

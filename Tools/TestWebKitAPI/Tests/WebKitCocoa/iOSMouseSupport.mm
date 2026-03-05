@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 
+#import "AdditionalButtonMasksIOS.h"
 #import "HTTPServer.h"
 #import "IOSMouseEventTestHarness.h"
 #import "InstanceMethodSwizzler.h"
@@ -114,7 +115,7 @@ struct PointerInfo {
 {
     auto contentView = (UIView<UIPointerInteractionDelegate> *)[self textInputContentView];
     auto interaction = [self pointerInteraction];
-    auto request = adoptNS([[TestPointerRegionRequest alloc] initWithLocation:location]);
+    RetainPtr request = adoptNS([[TestPointerRegionRequest alloc] initWithLocation:location]);
 
     RetainPtr defaultRegion = [UIPointerRegion regionWithRect:contentView.bounds identifier:nil];
     [contentView pointerInteraction:interaction regionForRequest:request.get() defaultRegion:defaultRegion.get()];
@@ -220,7 +221,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    return { WTFMove(webView), WTFMove(navigationDelegate) };
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
 }
 
 static void testFractionalCoordinatesInIFrame(TestWKWebView *webView, double mouseX, double mouseY, NSString *expectedX, NSString *expectedY, NSString *jsTransform = nil, bool isCrossOrigin = false)
@@ -311,8 +312,8 @@ TEST_F(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
 
 TEST_F(iOSMouseSupport, TrackButtonMaskFromTouchStart)
 {
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
         "window.didReleaseRightButton = false;"
         "document.documentElement.addEventListener('mouseup', function (e) {"
@@ -339,8 +340,8 @@ TEST_F(iOSMouseSupport, TrackButtonMaskFromTouchStart)
 
 TEST_F(iOSMouseSupport, MouseTimestampTimebase)
 {
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
         "window.mouseDownTimestamp = -1;"
         "document.documentElement.addEventListener('mousedown', function (e) {"
@@ -371,8 +372,8 @@ TEST_F(iOSMouseSupport, MouseTimestampTimebase)
 
 TEST_F(iOSMouseSupport, EndedTouchesTriggerClick)
 {
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
         "window.wasClicked = false;"
         "document.documentElement.addEventListener('click', function (e) {"
@@ -393,8 +394,8 @@ TEST_F(iOSMouseSupport, EndedTouchesTriggerClick)
 
 TEST_F(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
 {
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
         "window.wasClicked = false;"
         "document.documentElement.addEventListener('click', function (e) {"
@@ -415,9 +416,9 @@ TEST_F(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
 
 TEST_F(iOSMouseSupport, MouseDidMoveOverElement)
 {
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    auto delegate = adoptNS([MouseSupportUIDelegate new]);
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([MouseSupportUIDelegate new]);
 
     __block bool mouseDidMoveOverElement = false;
     __block RetainPtr<_WKHitTestResult> hitTestResult;
@@ -497,8 +498,8 @@ TEST_F(iOSMouseSupport, SelectionUpdatesBeforeContextMenuAppears)
 {
     InstanceMethodSwizzler swizzler { UIWKTextInteractionAssistant.class, @selector(selectionChanged), reinterpret_cast<IMP>(handleUpdatedSelection) };
 
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView objectByEvaluatingJavaScript:@"document.body.setAttribute('contenteditable','');"];
 
@@ -516,10 +517,10 @@ constexpr auto largeResponsiveHelloMarkup = "<meta name='viewport' content='widt
 
 TEST_F(iOSMouseSupport, DisablingTextIteractionPreventsSelectionWhenShowingContextMenu)
 {
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration preferences].textInteractionEnabled = NO;
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
@@ -533,7 +534,7 @@ TEST_F(iOSMouseSupport, DisablingTextIteractionPreventsSelectionWhenShowingConte
 
 TEST_F(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView _setEditable:YES];
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
@@ -549,7 +550,7 @@ TEST_F(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
 
 TEST_F(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
@@ -573,7 +574,7 @@ static void simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint lo
 
 TEST_F(iOSMouseSupport, ContextClickAtEndOfSelection)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 400)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"try-text-select-with-disabled-text-interaction"];
 
     __auto_type setupSelection = ^(TestWKWebView* webView) {
@@ -622,7 +623,7 @@ TEST_F(iOSMouseSupport, ContextClickAtEndOfSelection)
 
 TEST_F(iOSMouseSupport, WebsiteMouseEventPolicies)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
 
     auto tapAndWait = [&] {
@@ -650,7 +651,7 @@ TEST_F(iOSMouseSupport, WebsiteMouseEventPolicies)
 
     // If loaded with _WKWebsiteMouseEventPolicySynthesizeTouchEvents, it should send touch events instead.
 
-    auto preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
     [preferences _setMouseEventPolicy:_WKWebsiteMouseEventPolicySynthesizeTouchEvents];
 
     [webView synchronouslyLoadHTMLString:@"two" preferences:preferences.get()];
@@ -673,7 +674,7 @@ TEST_F(iOSMouseSupport, MouseInitiallyDisconnected)
     [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView synchronouslyLoadHTMLString:@""];
 
@@ -703,7 +704,7 @@ TEST_F(iOSMouseSupport, MouseInitiallyConnected)
     [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView synchronouslyLoadHTMLString:@""];
 
@@ -733,7 +734,7 @@ TEST_F(iOSMouseSupport, MouseLaterDisconnected)
     [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView synchronouslyLoadHTMLString:@""];
 
@@ -765,7 +766,7 @@ TEST_F(iOSMouseSupport, MouseLaterConnected)
     [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView synchronouslyLoadHTMLString:@""];
 
@@ -796,7 +797,7 @@ TEST_F(iOSMouseSupport, MouseLaterConnected)
 
 TEST_F(iOSMouseSupport, MouseAlwaysConnected)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView synchronouslyLoadHTMLString:@""];
 
@@ -825,7 +826,7 @@ TEST_F(iOSMouseSupport, MouseAlwaysConnected)
 
 TEST_F(iOSMouseSupport, BasicPointerInteractionRegions)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"cursor-styles"];
 
     {
@@ -863,6 +864,124 @@ TEST_F(iOSMouseSupport, BasicPointerInteractionRegions)
         EXPECT_FALSE(info.isDefault);
         EXPECT_TRUE(CGRectContainsRect(elementRect, info.regionRect));
     }
+}
+
+TEST_F(iOSMouseSupport, LeftClickFiresPointerAndMouseEvents)
+{
+    // FIXME: It is not ideal that we have to wait for a static amount of time
+    // between sets of events if we want to test multiple pointerdowns.
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    static const char* page = R"PAGEDATA(
+        <script>
+            window.mousedownCount = 0;
+            window.mouseupCount = 0;
+            window.pointerdownCount = 0;
+            window.pointerupCount = 0;
+            window.clickCount = 0;
+
+            document.addEventListener('mousedown', () => { window.mousedownCount++ });
+            document.addEventListener('mouseup', () => { window.mouseupCount++ });
+            document.addEventListener('pointerdown', () => { window.pointerdownCount++ });
+            document.addEventListener('pointerup', () => { window.pointerupCount++ });
+            document.addEventListener('click', () => { window.clickCount++ });
+        </script>
+        )PAGEDATA";
+
+    [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:page]];
+
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown(UIEventButtonMaskPrimary);
+    testHarness.mouseUp();
+
+    TestWebKitAPI::Util::runFor(0.1_s);
+
+    testHarness.mouseDown(UIEventButtonMaskPrimary);
+    testHarness.mouseUp();
+    [webView waitForPendingMouseEvents];
+
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.mousedownCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.mouseupCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.pointerdownCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.pointerupCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.clickCount"]);
+}
+
+TEST_F(iOSMouseSupport, NonPrimaryMouseButtonsForEvents)
+{
+    // FIXME: It is not ideal that we have to wait for a static amount of time
+    // between sets of events if we want to test multiple pointerdowns.
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    static const char* page = R"PAGEDATA(
+        <script>
+            window.mousedownInfo = "none";
+            window.mouseupInfo = "none";
+            window.pointerdownInfo = "none";
+            window.pointerupInfo = "none";
+            window.auxclickInfo = "none";
+            window.clickInfo = "none";
+
+            document.addEventListener('mousedown', (e) => {
+                window.mousedownInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('mouseup', (e) => {
+                window.mouseupInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('pointerdown', (e) => {
+                window.pointerdownInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('pointerup', (e) => {
+                window.pointerupInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('auxclick', (e) => {
+                window.auxclickInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('click', (e) => {
+                window.clickInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+        </script>
+        )PAGEDATA";
+
+    [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:page]];
+
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+
+    auto performMouseClick = [&](UIEventButtonMask buttonMask) {
+        TestWebKitAPI::Util::runFor(0.1_s);
+        testHarness.mouseDown(buttonMask);
+        testHarness.mouseUp();
+        [webView waitForPendingMouseEvents];
+    };
+
+    auto assertResults = [&](int button, int downButtons, int upButtons) {
+        RetainPtr downString = [[NSString alloc] initWithFormat:@"button: %d buttons: %d which: %d", button, downButtons, button + 1];
+        RetainPtr upString = [[NSString alloc] initWithFormat:@"button: %d buttons: %d which: %d", button, upButtons, button + 1];
+
+        EXPECT_WK_STREQ(downString.get(), [webView stringByEvaluatingJavaScript:@"window.mousedownInfo"]);
+        EXPECT_WK_STREQ(downString.get(), [webView stringByEvaluatingJavaScript:@"window.pointerdownInfo"]);
+        EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.mouseupInfo"]);
+        EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.pointerupInfo"]);
+        if (button)
+            EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.auxclickInfo"]);
+        else
+            EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.clickInfo"]);
+    };
+
+    performMouseClick(UIEventButtonMaskPrimary);
+    assertResults(0, 1, 0);
+    performMouseClick(WebKit::UIEventButtonMaskTertiary);
+    assertResults(1, 4, 0);
+    performMouseClick(WebKit::UIEventButtonMaskQuaternary);
+    assertResults(3, 8, 0);
+    performMouseClick(WebKit::UIEventButtonMaskQuinary);
+    assertResults(4, 16, 0);
+    performMouseClick(UIEventButtonMaskSecondary);
+    assertResults(2, 2, 0);
 }
 
 #endif // HAVE(UI_POINTER_INTERACTION)

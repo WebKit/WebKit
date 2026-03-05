@@ -232,7 +232,7 @@ size_t PacketBuffer::NumSamplesInBuffer(size_t last_decoded_length) const {
 size_t PacketBuffer::GetSpanSamples(size_t last_decoded_length,
                                     size_t sample_rate,
                                     bool count_waiting_time) const {
-  if (buffer_.size() == 0) {
+  if (buffer_.empty()) {
     return 0;
   }
 

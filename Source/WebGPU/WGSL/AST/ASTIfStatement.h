@@ -43,10 +43,10 @@ public:
 private:
     IfStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement::Ref&& trueBody, Statement::Ptr falseBody, Attribute::List&& attributes)
         : Statement(span)
-        , m_test(WTFMove(test))
-        , m_trueBody(WTFMove(trueBody))
+        , m_test(WTF::move(test))
+        , m_trueBody(WTF::move(trueBody))
         , m_falseBody(falseBody)
-        , m_attributes(WTFMove(attributes))
+        , m_attributes(WTF::move(attributes))
     { }
 
     Expression::Ref m_test;

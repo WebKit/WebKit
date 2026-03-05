@@ -40,7 +40,7 @@ static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunction);
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunctionIncludingInvalidValues);
 
 WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* function, Wasm::WasmOrJSImportableFunction&& importableFunction, WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo)
-    : Base(vm, executable, globalObject, structure, WTFMove(importableFunction), callLinkInfo)
+    : Base(vm, executable, globalObject, structure, WTF::move(importableFunction), callLinkInfo)
     , m_function(function, WriteBarrierEarlyInit)
 { }
 

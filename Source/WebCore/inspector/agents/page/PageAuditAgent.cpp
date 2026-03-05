@@ -71,7 +71,7 @@ InjectedScript PageAuditAgent::injectedScriptForEval(std::optional<Inspector::Pr
 
 InjectedScript PageAuditAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
-    InjectedScript injectedScript = injectedScriptForEval(WTFMove(executionContextId));
+    InjectedScript injectedScript = injectedScriptForEval(WTF::move(executionContextId));
     if (injectedScript.hasNoValue()) {
         if (executionContextId)
             errorString = "Missing injected script for given executionContextId"_s;

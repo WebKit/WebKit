@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DeviceMotionEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceMotionEvent);
 
 DeviceMotionEvent::~DeviceMotionEvent() = default;
 
@@ -66,7 +66,7 @@ DeviceMotionEvent::DeviceMotionEvent(const AtomString& eventType, DeviceMotionDa
 {
 }
 
-static std::optional<DeviceMotionEvent::Acceleration> convert(const DeviceMotionData::Acceleration* acceleration)
+static std::optional<DeviceMotionEvent::Acceleration> NODELETE convert(const DeviceMotionData::Acceleration* acceleration)
 {
     if (!acceleration)
         return std::nullopt;
@@ -74,7 +74,7 @@ static std::optional<DeviceMotionEvent::Acceleration> convert(const DeviceMotion
     return DeviceMotionEvent::Acceleration { acceleration->x(), acceleration->y(), acceleration->z() };
 }
 
-static std::optional<DeviceMotionEvent::RotationRate> convert(const DeviceMotionData::RotationRate* rotationRate)
+static std::optional<DeviceMotionEvent::RotationRate> NODELETE convert(const DeviceMotionData::RotationRate* rotationRate)
 {
     if (!rotationRate)
         return std::nullopt;
@@ -133,7 +133,7 @@ void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbl
         return;
 
     initEvent(type, bubbles, cancelable);
-    m_deviceMotionData = DeviceMotionData::create(convert(WTFMove(acceleration)), convert(WTFMove(accelerationIncludingGravity)), convert(WTFMove(rotationRate)), interval);
+    m_deviceMotionData = DeviceMotionData::create(convert(WTF::move(acceleration)), convert(WTF::move(accelerationIncludingGravity)), convert(WTF::move(rotationRate)), interval);
 }
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -149,7 +149,7 @@ void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&
         return promise.resolve(PermissionState::Denied);
     }
 
-    document.checkedDeviceOrientationAndMotionAccessController()->shouldAllowAccess(document, [promise = WTFMove(promise)](auto permissionState) mutable {
+    protect(document.deviceOrientationAndMotionAccessController())->shouldAllowAccess(document, [promise = WTF::move(promise)](auto permissionState) mutable {
         if (permissionState == PermissionState::Prompt)
             return promise.reject(Exception { ExceptionCode::NotAllowedError, "Requesting device motion access requires a user gesture to prompt"_s });
         promise.resolve(permissionState);

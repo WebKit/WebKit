@@ -1,0 +1,41 @@
+This tests that FormatBlock preserves inline styles when converting between block elements.
+
+Before FormatBlock:
+| "\n"
+| <p>
+|   id="p1"
+|   style="color: blue"
+|   "Hello world"
+| "\n"
+| <p>
+|   id="p2"
+|   style="color: blue; font-size: 18px"
+|   "Styled text"
+| "\n"
+| <p>
+|   id="p3"
+|   "No style"
+| "\n"
+| <p>
+|   id="p4"
+|   style="color: red"
+|   "Cursor at end"
+| "\n"
+
+After FormatBlock:
+| "\n"
+| <div>
+|   style="color: blue;"
+|   "Hello world"
+| "\n"
+| <h1>
+|   style="color: blue; font-size: 18px;"
+|   "Styled text"
+| "\n"
+| <div>
+|   "No style"
+| "\n"
+| <div>
+|   style="color: red;"
+|   "Cursor at end<#selection-caret>"
+| "\n"

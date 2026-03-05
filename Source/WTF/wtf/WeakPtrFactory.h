@@ -30,13 +30,13 @@
 #include <wtf/Forward.h>
 #include <wtf/Packed.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/WeakRef.h>
 
 namespace WTF {
 
 #define USING_CAN_MAKE_WEAKPTR(BASE) \
     using BASE::weakImpl; \
-    using BASE::weakImplIfExists; \
     using BASE::weakCount; \
     using BASE::WeakValueType; \
     using BASE::WeakPtrImplType;
@@ -51,17 +51,23 @@ public:
     using WeakPtrImplType = WeakPtrImpl;
 
     WeakPtrFactory()
-#if ASSERT_ENABLED
-        : m_wasConstructedOnMainThread(isMainThread())
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        : m_thread(currentThreadLike)
 #endif
     {
     }
 
+    void prepareForUseOnlyOnMainThread()
+    {
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        m_thread = mainThreadLike;
+#endif
+    }
+
     void prepareForUseOnlyOnNonMainThread()
     {
-#if ASSERT_ENABLED
-        ASSERT(m_wasConstructedOnMainThread);
-        m_wasConstructedOnMainThread = false;
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        m_thread = anyThreadLike;
 #endif
     }
 
@@ -69,9 +75,12 @@ public:
     {
         if (m_impl)
             m_impl->clear();
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        m_thread = anyThreadLike;
+#endif
     }
 
-    WeakPtrImpl* impl() const
+    WeakPtrImpl* impl() const LIFETIME_BOUND
     {
         return m_impl.get();
     }
@@ -81,7 +90,9 @@ public:
         if (m_impl)
             return;
 
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        assertIsCurrent(m_thread);
+#endif
 
         static_assert(std::is_final_v<WeakPtrImpl>);
         m_impl = adoptRef(*new WeakPtrImpl(const_cast<T*>(&object)));
@@ -111,15 +122,12 @@ public:
 #endif
 
 private:
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
-    template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakRef;
 
     mutable RefPtr<WeakPtrImpl> m_impl;
-#if ASSERT_ENABLED
-    bool m_wasConstructedOnMainThread;
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_thread;
 #endif
 };
 
@@ -133,8 +141,8 @@ public:
     using WeakPtrImplType = WeakPtrImpl;
 
     WeakPtrFactoryWithBitField()
-#if ASSERT_ENABLED
-        : m_wasConstructedOnMainThread(isMainThread())
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        : m_thread(currentThreadLike)
 #endif
     {
     }
@@ -143,9 +151,12 @@ public:
     {
         if (auto* pointer = m_impl.pointer())
             pointer->clear();
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        m_thread = anyThreadLike;
+#endif
     }
 
-    WeakPtrImpl* impl() const
+    WeakPtrImpl* impl() const LIFETIME_BOUND
     {
         return m_impl.pointer();
     }
@@ -155,7 +166,9 @@ public:
         if (m_impl.pointer())
             return;
 
-        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        assertIsCurrent(m_thread);
+#endif
 
         static_assert(std::is_final_v<WeakPtrImpl>);
         m_impl.setPointer(adoptRef(*new WeakPtrImpl(const_cast<T*>(&object))));
@@ -192,15 +205,12 @@ public:
     void setBitfield(uint16_t value) const { return m_impl.setType(value); }
 
 private:
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
-    template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakRef;
 
     mutable CompactRefPtrTuple<WeakPtrImpl, uint16_t> m_impl;
-#if ASSERT_ENABLED
-    bool m_wasConstructedOnMainThread;
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_thread;
 #endif
 };
 

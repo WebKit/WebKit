@@ -21,6 +21,7 @@
 #include "call/audio_state.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_set.h"
+#include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -66,8 +67,10 @@ class AudioState : public webrtc::AudioState {
   void UpdateAudioTransportWithSendingStreams();
   void UpdateNullAudioPollerState() RTC_RUN_ON(&thread_checker_);
 
-  SequenceChecker thread_checker_;
-  SequenceChecker process_thread_checker_{SequenceChecker::kDetached};
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker thread_checker_{
+      SequenceChecker::kDetached};
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker process_thread_checker_{
+      SequenceChecker::kDetached};
   const webrtc::AudioState::Config config_;
   bool recording_enabled_ = true;
   bool playout_enabled_ = true;

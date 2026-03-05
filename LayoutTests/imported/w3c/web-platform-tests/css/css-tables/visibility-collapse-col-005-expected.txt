@@ -5,5 +5,5 @@ Setting a spanning column to visibility:collapse changes table width but not hei
 
 
 PASS col visibility:collapse doesn't change table height
-FAIL col visibility:collapse changes table width assert_equals: col visibility:collapse changes table width expected 100 but got 111
+PASS col visibility:collapse changes table width
 

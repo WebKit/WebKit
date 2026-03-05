@@ -13,11 +13,11 @@ info: |
   8. Else, set _value_ to ? ToNumber(_value_).
   ...
 features: [BigInt, TypedArray, change-array-by-copy]
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var arr = new TA([0n, 1n, 2n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var arr = new TA(makeCtorArg([0n, 1n, 2n]));
 
   var value = {
     valueOf() {

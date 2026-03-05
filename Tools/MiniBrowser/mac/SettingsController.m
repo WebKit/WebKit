@@ -47,6 +47,7 @@ static NSString * const ReserveSpaceForBannersPreferenceKey = @"ReserveSpaceForB
 static NSString * const WebViewFillsWindowKey = @"WebViewFillsWindow";
 
 static NSString * const ResourceUsageOverlayVisiblePreferenceKey = @"ResourceUsageOverlayVisible";
+static NSString * const ShowWebProcessIdentifierInTitlePreferenceKey = @"ShowWebProcessIdentifierInTitle";
 static NSString * const LoadsAllSiteIconsKey = @"LoadsAllSiteIcons";
 static NSString * const UsesGameControllerFrameworkKey = @"UsesGameControllerFramework";
 static NSString * const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
@@ -229,6 +230,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItemToMenu(debugOverlaysMenu, @"Interaction Region", @selector(toggleDebugOverlay:), NO, InteractionRegionOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Enhanced Security", @selector(toggleDebugOverlay:), NO, EnhancedSecurityOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Resource Usage", @selector(toggleShowResourceUsageOverlay:), NO, 0);
+    addItemToMenu(debugOverlaysMenu, @"Show Web Process ID in Window Title", @selector(toggleShowWebProcessIdentifierInTitle:), NO, 0);
 
     NSMenu *experimentalFeaturesMenu = addSubmenu(@"Experimental Features");
     for (_WKExperimentalFeature *feature in WKPreferences._experimentalFeatures) {
@@ -425,6 +427,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowResourceUsageOverlay:))
         [menuItem setState:[self resourceUsageOverlayVisible] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleShowWebProcessIdentifierInTitle:))
+        [menuItem setState:[self showWebProcessIdentifierInTitle] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleLoadsAllSiteIcons:))
         [menuItem setState:[self loadsAllSiteIcons] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUsesGameControllerFramework:))
@@ -616,6 +620,12 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     [self _toggleBooleanDefault:ResourceUsageOverlayVisiblePreferenceKey];
 }
 
+- (void)toggleShowWebProcessIdentifierInTitle:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults] setBool:![self showWebProcessIdentifierInTitle] forKey:ShowWebProcessIdentifierInTitlePreferenceKey];
+    [[[NSApplication sharedApplication] browserAppDelegate] didChangeSettings];
+}
+
 - (BOOL)loadsAllSiteIcons
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:LoadsAllSiteIconsKey];
@@ -669,6 +679,13 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)resourceUsageOverlayVisible
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:ResourceUsageOverlayVisiblePreferenceKey];
+}
+
+- (BOOL)showWebProcessIdentifierInTitle
+{
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:ShowWebProcessIdentifierInTitlePreferenceKey])
+        return YES;
+    return [[NSUserDefaults standardUserDefaults] boolForKey:ShowWebProcessIdentifierInTitlePreferenceKey];
 }
 
 - (void)toggleResourceLoadStatisticsEnabled:(id)sender

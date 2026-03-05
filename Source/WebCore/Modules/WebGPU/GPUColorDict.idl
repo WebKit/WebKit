@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#typedefdef-gpucolor
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUColorDict {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUColorDict {
     required double r;
     required double g;
     required double b;

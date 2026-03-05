@@ -244,7 +244,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) cons
     status = callBufferProducingFunction(uplrules_selectFormatted, m_pluralRules.get(), formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String(WTF::move(buffer)));
 }
 
 JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start, double end) const
@@ -270,7 +270,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
     status = callBufferProducingFunction(uplrules_selectForRange, m_pluralRules.get(), range.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String(WTF::move(buffer)));
 }
 
 } // namespace JSC

@@ -2,7 +2,11 @@
 <html>
 <body>
 <script>
+if (window.internals)
+    internals.setTrackingPreventionEnabled(false);
 parent.postMessage({ referrer: document.referrer }, "*");
+if (window.internals)
+    internals.setTrackingPreventionEnabled(true);
 </script>
 </body>
 </html>

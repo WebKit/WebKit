@@ -35,7 +35,7 @@ namespace WebCore {
 class Payment;
 
 class ApplePayPaymentAuthorizedEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ApplePayPaymentAuthorizedEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ApplePayPaymentAuthorizedEvent);
 public:
     static Ref<ApplePayPaymentAuthorizedEvent> create(const AtomString& type, unsigned version, const Payment& payment)
     {
@@ -44,7 +44,7 @@ public:
 
     virtual ~ApplePayPaymentAuthorizedEvent();
 
-    const ApplePayPayment& payment() const { return m_payment; }
+    const ApplePayPayment& payment() const LIFETIME_BOUND { return m_payment; }
 
 private:
     ApplePayPaymentAuthorizedEvent(const AtomString& type, unsigned version, const Payment&);

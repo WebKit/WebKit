@@ -63,6 +63,8 @@ public:
     void recordDrawImage(CGRenderingStateRef, CGGStateRef, CGRect, CGImageRef);
     void recordDrawPath(CGRenderingStateRef, CGGStateRef, CGPathDrawingMode, CGPathRef);
 
+    CGColorSpaceRef colorSpace() const;
+
 private:
     UniqueRef<GraphicsContext> createInternalContext();
 
@@ -98,7 +100,7 @@ private:
     RetainPtr<CGColorRef> m_initialFillColor;
     RetainPtr<CGColorRef> m_initialStrokeColor;
     const DeriveFontFromContext m_deriveFontFromContext;
-    FontSmoothingMode m_smoothingMode { FontSmoothingMode::AutoSmoothing };
+    FontSmoothingMode m_smoothingMode { FontSmoothingMode::Auto };
 };
 
 } // namespace WebCore

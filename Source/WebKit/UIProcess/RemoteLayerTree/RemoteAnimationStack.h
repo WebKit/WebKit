@@ -31,6 +31,7 @@
 #include <WebCore/AcceleratedEffectValues.h>
 #include <WebCore/PlatformCAFilters.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/ScrollingNodeID.h>
 #include <wtf/JSONValues.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -46,7 +47,7 @@ namespace WebKit {
 
 using RemoteAnimations = Vector<Ref<RemoteAnimation>>;
 
-class RemoteAnimationStack final : public RefCounted<RemoteAnimationStack> {
+class RemoteAnimationStack final : public ThreadSafeRefCounted<RemoteAnimationStack> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAnimationStack);
 public:
     static Ref<RemoteAnimationStack> create(RemoteAnimations&&, WebCore::AcceleratedEffectValues&&, WebCore::FloatRect);
@@ -58,10 +59,13 @@ public:
 
 #if PLATFORM(MAC)
     void initEffectsFromMainThread(PlatformLayer*);
-    void applyEffectsFromScrollingThread() const;
+    void applyEffects() const;
 #endif
 
     void applyEffectsFromMainThread(PlatformLayer*, bool backdropRootIsOpaque) const;
+
+    bool isDependentOnScrollingNodeWithID(WebCore::ScrollingNodeID) const;
+    bool isTimeDependent() const;
 
     void clear(PlatformLayer*);
 

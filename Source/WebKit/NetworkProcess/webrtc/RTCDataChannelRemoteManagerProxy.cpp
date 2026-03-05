@@ -44,7 +44,7 @@ void RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess(NetworkCon
     m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID(), sharedPreferences = connectionToWebProcess.sharedPreferencesForWebProcessValue()]() mutable {
         ASSERT(!m_webProcessConnections.contains(identifier));
         m_webProcessConnections.add(identifier, connectionID);
-        m_sharedPreferencesForConnections.add(connectionID, WTFMove(sharedPreferences));
+        m_sharedPreferencesForConnections.add(connectionID, WTF::move(sharedPreferences));
     });
     connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName(), m_queue, *this);
 }

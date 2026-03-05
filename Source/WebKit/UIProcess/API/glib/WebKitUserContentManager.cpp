@@ -284,7 +284,7 @@ void webkit_user_content_manager_remove_all_scripts(WebKitUserContentManager* ma
  */
 struct _WebKitScriptMessageReply {
     _WebKitScriptMessageReply(WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
-        : completionHandler(WTFMove(completionHandler))
+        : completionHandler(WTF::move(completionHandler))
         , referenceCount(1)
     {
     }
@@ -292,7 +292,7 @@ struct _WebKitScriptMessageReply {
     void sendValue(JSCValue* value)
     {
         if (auto result = JavaScriptEvaluationResult::extract(API::SerializedScriptValue::deserializationContext().get(), jscValueGetJSValue(value)))
-            return completionHandler(WTFMove(*result));
+            return completionHandler(WTF::move(*result));
         completionHandler(makeUnexpected(String()));
     }
 
@@ -357,7 +357,7 @@ void webkit_script_message_reply_unref(WebKitScriptMessageReply* scriptMessageRe
 WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
 {
     WebKitScriptMessageReply* scriptMessageReply = static_cast<WebKitScriptMessageReply*>(fastMalloc(sizeof(WebKitScriptMessageReply)));
-    new (scriptMessageReply) WebKitScriptMessageReply(WTFMove(completionHandler));
+    new (scriptMessageReply) WebKitScriptMessageReply(WTF::move(completionHandler));
     return scriptMessageReply;
 }
 
@@ -417,7 +417,7 @@ public:
         }
 
         if (m_supportsAsyncReply) {
-            WebKitScriptMessageReply* message = webKitScriptMessageReplyCreate(WTFMove(completionHandler));
+            WebKitScriptMessageReply* message = webKitScriptMessageReplyCreate(WTF::move(completionHandler));
             GRefPtr<JSCValue> value = jsMessage.toJSC();
             gboolean returnValue;
             g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, value.get(), message, &returnValue);
@@ -429,7 +429,7 @@ public:
         GRefPtr<JSCValue> value = jsMessage.toJSC();
         g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, value.get());
 #else
-        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(WTFMove(jsMessage));
+        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(WTF::move(jsMessage));
         g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
 #endif

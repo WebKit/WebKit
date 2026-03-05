@@ -50,4 +50,4 @@ testWithTypedArrayConstructors(function(TA) {
       name + " prototype"
     );
   });
-});
+}, null, ["passthrough"]);

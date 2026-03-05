@@ -46,6 +46,7 @@
 #include "ImageBitmapRenderingContext.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "ImageUtilities.h"
 #include "InspectorCanvas.h"
 #include "InspectorInstrumentation.h"
 #include "IntRect.h"
@@ -169,7 +170,7 @@ void FrameConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&&
 #if ENABLE(WEBDRIVER_BIDI)
     AutomationInstrumentation::addMessageToConsole(consoleMessage);
 #endif
-    InspectorInstrumentation::addMessageToConsole(frame.get(), WTFMove(consoleMessage));
+    InspectorInstrumentation::addMessageToConsole(frame.get(), WTF::move(consoleMessage));
 }
 
 void FrameConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
@@ -185,7 +186,7 @@ void FrameConsoleClient::addMessage(MessageSource source, MessageLevel level, co
 
 void FrameConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, Ref<ScriptCallStack>&& callStack)
 {
-    addMessage(source, level, message, String(), 0, 0, WTFMove(callStack), 0);
+    addMessage(source, level, message, String(), 0, 0, WTF::move(callStack), 0);
 }
 
 void FrameConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject* lexicalGlobalObject, unsigned long requestIdentifier)
@@ -200,7 +201,7 @@ void FrameConsoleClient::addMessage(MessageSource source, MessageLevel level, co
     else
         message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, lexicalGlobalObject, requestIdentifier);
 
-    addMessage(WTFMove(message));
+    addMessage(WTF::move(message));
 }
 
 void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* lexicalGlobalObject, Ref<Inspector::ScriptArguments>&& arguments)
@@ -223,7 +224,7 @@ void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel 
     AutomationInstrumentation::addMessageToConsole(message);
 #endif
     Ref frame = m_frame.get();
-    InspectorInstrumentation::addMessageToConsole(frame.get(), WTFMove(message));
+    InspectorInstrumentation::addMessageToConsole(frame.get(), WTF::move(message));
 
     RefPtr page = frame->page();
     if (!page)
@@ -240,7 +241,7 @@ void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel 
     }
 
     if (page->settings().logsPageMessagesToSystemConsoleEnabled() || FrameConsoleClient::shouldPrintExceptions())
-        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, lexicalGlobalObject, WTFMove(arguments));
+        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, lexicalGlobalObject, WTF::move(arguments));
 }
 
 void FrameConsoleClient::count(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
@@ -283,7 +284,7 @@ void FrameConsoleClient::time(JSC::JSGlobalObject* lexicalGlobalObject, const St
 void FrameConsoleClient::timeLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& label, Ref<ScriptArguments>&& arguments)
 {
     Ref frame = m_frame.get();
-    InspectorInstrumentation::logConsoleTiming(frame.get(), lexicalGlobalObject, label, WTFMove(arguments));
+    InspectorInstrumentation::logConsoleTiming(frame.get(), lexicalGlobalObject, label, WTF::move(arguments));
 }
 
 void FrameConsoleClient::timeEnd(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
@@ -295,7 +296,7 @@ void FrameConsoleClient::timeEnd(JSC::JSGlobalObject* lexicalGlobalObject, const
 void FrameConsoleClient::timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&& arguments)
 {
     Ref frame = m_frame.get();
-    InspectorInstrumentation::consoleTimeStamp(frame.get(), WTFMove(arguments));
+    InspectorInstrumentation::consoleTimeStamp(frame.get(), WTF::move(arguments));
 }
 
 static JSC::JSObject* objectArgumentAt(ScriptArguments& arguments, unsigned index)
@@ -405,7 +406,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                     }
 
                     if (snapshot)
-                        dataURL = snapshot->toDataURL("image/png"_s, /* quality */ std::nullopt, PreserveResolution::Yes);
+                        dataURL = encodeDataURL(WTF::move(snapshot), "image/png"_s);
                 }
             }
         } else if (RefPtr imageData = JSImageData::toWrapped(vm, possibleTarget)) {
@@ -413,14 +414,14 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
                 if (RefPtr imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
                     imageBuffer->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), IntRect(IntPoint(), imageData->size()));
-                    dataURL = imageBuffer->toDataURL("image/png"_s, /* quality */ std::nullopt, PreserveResolution::Yes);
+                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
                 }
             }
         } else if (RefPtr imageBitmap = JSImageBitmap::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
                 if (RefPtr imageBuffer = imageBitmap->buffer())
-                    dataURL = imageBuffer->toDataURL("image/png"_s, /* quality */ std::nullopt, PreserveResolution::Yes);
+                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
             }
         } else if (RefPtr context = canvasRenderingContext(vm, possibleTarget)) {
             target = possibleTarget;
@@ -434,7 +435,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                 Ref frame = m_frame.get();
                 if (RefPtr localMainFrame = frame->localMainFrame()) {
                     if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, enclosingIntRect(rect->toFloatRect()), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
-                        dataURL = snapshot->toDataURL("image/png"_s, /* quality */ std::nullopt, PreserveResolution::Yes);
+                        dataURL = encodeDataURL(WTF::move(snapshot), "image/png"_s);
                 }
             }
         } else {
@@ -451,14 +452,14 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
             Ref frame = m_frame.get();
             if (RefPtr localMainFrame = frame->localMainFrame()) {
                 // If no target is provided, capture an image of the viewport.
-                auto viewportRect = localMainFrame->protectedView()->unobscuredContentRect();
+                auto viewportRect = protect(localMainFrame->view())->unobscuredContentRect();
                 if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, viewportRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
-                    dataURL = snapshot->toDataURL("image/png"_s, /* quality */ std::nullopt, PreserveResolution::Yes);
+                    dataURL = encodeDataURL(WTF::move(snapshot), "image/png"_s);
             }
         }
 
         if (dataURL.isEmpty()) {
-            addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Error, "Could not capture screenshot"_s, WTFMove(arguments)));
+            addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Error, "Could not capture screenshot"_s, WTF::move(arguments)));
             return;
         }
     }
@@ -468,7 +469,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
     adjustedArguments.append({ vm, target ? target : JSC::jsNontrivialString(vm, "Viewport"_s) });
     for (size_t i = (!target ? 0 : 1); i < arguments->argumentCount(); ++i)
         adjustedArguments.append({ vm, arguments->argumentAt(i) });
-    addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, ScriptArguments::create(lexicalGlobalObject, WTFMove(adjustedArguments)), lexicalGlobalObject, /* requestIdentifier */ 0, timestamp));
+    addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, ScriptArguments::create(lexicalGlobalObject, WTF::move(adjustedArguments)), lexicalGlobalObject, /* requestIdentifier */ 0, timestamp));
 }
 
 } // namespace WebCore

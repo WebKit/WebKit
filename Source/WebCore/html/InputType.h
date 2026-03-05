@@ -196,7 +196,7 @@ public:
     bool isWeekField() const { return m_type == Type::Week; }
 
     bool isTextButton() const { return textButtonTypes.contains(m_type); }
-    bool isTextField() const { return textFieldTypes.contains(m_type); }
+    bool NODELETE isTextField() const { return textFieldTypes.contains(m_type); }
     bool isTextType() const { return textTypes.contains(m_type); }
 
     bool isCheckable() const { return checkableTypes.contains(m_type); }
@@ -205,9 +205,9 @@ public:
 
     Type type() const { return m_type; }
 
-    bool isInteractiveContent() const;
-    bool isLabelable() const;
-    bool isEnumeratable() const;
+    bool NODELETE isInteractiveContent() const;
+    bool NODELETE isLabelable() const;
+    bool NODELETE isEnumeratable() const;
     bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type) || isSwitch(); }
     bool hasCreatedShadowSubtree() const { return m_hasCreatedShadowSubtree; }
 
@@ -217,7 +217,7 @@ public:
 
     // Form value functions.
 
-    virtual bool shouldSaveAndRestoreFormControlState() const;
+    virtual bool NODELETE shouldSaveAndRestoreFormControlState() const;
     virtual FormControlState saveFormControlState() const;
     virtual void restoreFormControlState(const FormControlState&);
     virtual bool isFormDataAppendable() const;
@@ -238,7 +238,7 @@ public:
 
     virtual String validationMessage() const;
     virtual bool typeMismatchFor(const String&) const { return false; }
-    virtual bool supportsRequired() const;
+    virtual bool NODELETE supportsRequired() const;
     virtual bool valueMissing(const String&) const { return false; }
     virtual bool hasBadInput() const { return false; }
     virtual bool patternMismatch(const String&) const { return false; }
@@ -259,7 +259,7 @@ public:
     virtual String badInputText() const;
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
-    virtual bool canSetStringValue() const;
+    virtual bool NODELETE canSetStringValue() const;
     virtual String localizeValue(const String&) const;
     virtual String visibleValue() const;
     virtual bool isEmptyValue() const;
@@ -281,7 +281,7 @@ public:
     virtual void handleDOMActivateEvent(Event&) { }
     virtual void handleAccessibilityActivation() { }
 
-    virtual bool allowsShowPickerAcrossFrames();
+    virtual bool NODELETE allowsShowPickerAcrossFrames();
     virtual void showPicker();
 
     enum ShouldCallBaseEventHandler : bool { No, Yes };
@@ -299,14 +299,14 @@ public:
     // Helpers for event handlers.
 
     virtual bool shouldSubmitImplicitly(Event&);
-    virtual bool hasCustomFocusLogic() const;
+    virtual bool NODELETE hasCustomFocusLogic() const;
     virtual bool isKeyboardFocusable(const FocusEventData&) const;
     virtual bool isMouseFocusable() const;
-    virtual bool shouldUseInputMethod() const;
+    virtual bool NODELETE shouldUseInputMethod() const;
     virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection);
     virtual void handleBlurEvent();
     virtual bool accessKeyAction(bool sendMouseEvents);
-    virtual bool canBeSuccessfulSubmitButton();
+    virtual bool NODELETE canBeSuccessfulSubmitButton();
     virtual void subtreeHasChanged();
     virtual void blur();
 
@@ -327,27 +327,27 @@ public:
     virtual HTMLElement* cancelButtonElement() const { return nullptr; }
     virtual HTMLElement* sliderThumbElement() const { return nullptr; }
     virtual HTMLElement* sliderTrackElement() const { return nullptr; }
-    virtual HTMLElement* placeholderElement() const;
+    virtual HTMLElement* NODELETE placeholderElement() const;
     virtual HTMLElement* dataListButtonElement() const { return nullptr; }
     RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded();
 
     // Miscellaneous functions.
 
-    virtual bool rendererIsNeeded();
+    virtual bool NODELETE rendererIsNeeded();
     virtual RenderPtr<RenderElement> createInputRenderer(RenderStyle&&);
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();
-    virtual bool shouldRespectAlignAttribute();
-    virtual Icon* icon() const;
-    virtual bool shouldSendChangeEventAfterCheckedChanged();
-    virtual bool storesValueSeparateFromAttribute();
+    virtual bool NODELETE shouldRespectAlignAttribute();
+    virtual Icon* NODELETE icon() const;
+    virtual bool NODELETE shouldSendChangeEventAfterCheckedChanged();
+    virtual bool NODELETE storesValueSeparateFromAttribute();
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection);
-    virtual bool shouldResetOnDocumentActivation();
+    virtual bool NODELETE shouldResetOnDocumentActivation();
     virtual bool shouldRespectListAttribute() { return false; }
-    virtual bool shouldRespectHeightAndWidthAttributes();
-    virtual bool supportsPlaceholder() const;
-    virtual bool supportsReadOnly() const;
+    virtual bool NODELETE shouldRespectHeightAndWidthAttributes();
+    virtual bool NODELETE supportsPlaceholder() const;
+    virtual bool NODELETE supportsReadOnly() const;
     virtual void updateInnerTextValue();
     virtual void updatePlaceholderText();
     virtual void attributeChanged(const QualifiedName&) { }
@@ -358,9 +358,9 @@ public:
     virtual void updateAutoFillButton();
     virtual String defaultToolTip() const;
     virtual bool matchesIndeterminatePseudoClass() const;
-    virtual bool isPresentingAttachedView() const;
-    virtual bool supportsSelectionAPI() const;
-    virtual bool dirAutoUsesValue() const;
+    virtual bool NODELETE isPresentingAttachedView() const;
+    virtual bool NODELETE supportsSelectionAPI() const;
+    virtual bool NODELETE dirAutoUsesValue() const;
     virtual bool isFocusingWithDataListDropdown() const { return false; };
     virtual void willUpdateCheckedness(bool /*nowChecked*/, WasSetByJavaScript) { }
 
@@ -391,9 +391,9 @@ public:
     virtual bool receiveDroppedFiles(const DragData&);
 #endif
 
-    virtual DateComponentsType dateType() const;
+    virtual DateComponentsType NODELETE dateType() const;
 
-    virtual String displayString() const;
+    virtual String NODELETE displayString() const;
 
     virtual String resultForDialogSubmit() const;
 
@@ -404,9 +404,8 @@ protected:
     {
     }
 
-    HTMLInputElement* element() const { return m_element.get(); }
-    RefPtr<HTMLInputElement> protectedElement() const { return m_element.get(); }
-    Chrome* chrome() const;
+    HTMLInputElement* element() const { return m_element; }
+    Chrome* NODELETE chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
 
     // Derive the step base, following the HTML algorithm steps.

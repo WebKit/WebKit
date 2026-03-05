@@ -19,6 +19,7 @@ layer at (8,8) size 784x201
       RenderBlock (floating) {DIV} at (78,30) size 78x78 [bgcolor=#800080]
       RenderText {#text} at (168,33) size 216x24
         text run at (168,33) width 216: "X X X X X"
+      RenderText {#text} at (0,0) size 0x0
 layer at (181,308) size 300x30
   RenderBlock (positioned) {DIV} at (172,300) size 301x30 [bgcolor=#DDDDDD]
     RenderText {#text} at (19,3) size 121x24

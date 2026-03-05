@@ -249,7 +249,7 @@ static void triggerAttributionWithSubresourceRedirect(Connection& connection, co
     connection.receiveHTTPRequest([connection, location] (Vector<char>&& request1) {
         EXPECT_TRUE(contains(request1.span(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n"_span));
         auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: "_s, location, "\r\nContent-Length: 0\r\n\r\n"_s);
-        connection.send(WTFMove(redirect), [connection, location] {
+        connection.send(WTF::move(redirect), [connection, location] {
             connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
                 auto expectedHttpGetString = makeString("GET "_s, location, " HTTP/1.1\r\n"_s).utf8();
                 EXPECT_TRUE(contains(request2.span(), expectedHttpGetString.span()));
@@ -322,7 +322,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                     "Content-Type: application/json\r\n"
                     "Content-Length: "_s, 24 + keyData.length(), "\r\n\r\n"
                     "{\"token_public_key\": \""_s, keyData, "\"}"_s);
-                connection.send(WTFMove(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
+                connection.send(WTF::move(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
                     connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
                         EXPECT_TRUE(contains(request2.span(), "POST / HTTP/1.1\r\n"_span));
 
@@ -345,7 +345,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                             "Content-Type: application/json\r\n"
                             "Content-Length: "_s, 24 + unlinkableToken.length(), "\r\n\r\n"
                             "{\"unlinkable_token\": \""_s, unlinkableToken, "\"}"_s);
-                        connection.send(WTFMove(response), [signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] {
+                        connection.send(WTF::move(response), [signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] {
                             connection.receiveHTTPRequest([signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
                                 EXPECT_TRUE(contains(request3.span(), "GET / HTTP/1.1\r\n"_span));
 
@@ -354,7 +354,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                     "Content-Type: application/json\r\n"
                                     "Content-Length: "_s, 24 + keyData.length(), "\r\n\r\n"
                                     "{\"token_public_key\": \""_s, keyData, "\"}"_s);
-                                connection.send(WTFMove(response), [signingParty, connection, &done, unlinkableToken, token, &secKey] {
+                                connection.send(WTF::move(response), [signingParty, connection, &done, unlinkableToken, token, &secKey] {
                                     connection.receiveHTTPRequest([signingParty, connection, &done, unlinkableToken, token, &secKey] (Vector<char>&& request4) {
                                         EXPECT_TRUE(contains(request4.span(), "POST / HTTP/1.1\r\n"_span));
                                         EXPECT_TRUE(contains(request4.span(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3,"_span));
@@ -505,7 +505,10 @@ static NSDictionary<NSString *, id> *testDaemonPList(NSURL *storageLocation)
         @"Label" : @"org.webkit.pcmtestdaemon",
         @"LaunchOnlyOnce" : @YES,
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
-        @"EnvironmentVariables" : @{ @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path },
+        @"EnvironmentVariables" : @{
+            @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path,
+            @"DYLD_LIBRARY_PATH"   : currentExecutableDirectory().get().path
+        },
         @"MachServices" : @{ @"org.webkit.pcmtestdaemon.service" : @YES },
         @"ProgramArguments" : @[
             testPCMDaemonLocation().get().path,
@@ -552,14 +555,14 @@ static void attemptConnectionInProcessWithoutEntitlement()
 #if USE(APPLE_INTERNAL_SDK)
     __block bool done = false;
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptXPCObject(xpc_connection_create_mach_service("org.webkit.pcmtestdaemon.service", mainDispatchQueueSingleton(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.pcmtestdaemon.service", mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
         EXPECT_EQ(event, XPC_ERROR_CONNECTION_INTERRUPTED);
         done = true;
     });
     xpc_connection_activate(connection.get());
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_connection_send_message(connection.get(), dictionary.get());
     TestWebKitAPI::Util::run(&done);
 #endif
@@ -653,12 +656,7 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
 const char* expectedSKAdNetworkConsoleMessage = "Submitting potential install attribution for AdamId: 1234567890, adNetworkRegistrableDomain: destination, impressionId: MTIzNDU2Nzg5MDEyMzQ1Ng, sourceWebRegistrableDomain: example.com, version: 3";
 static NSString *linkToAppStoreHTML = @"<body><a href='https://apps.apple.com/app/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a></body>";
 
-// rdar://129248776
-#if defined(NDEBUG)
-TEST(PrivateClickMeasurement, DISABLED_SKAdNetwork)
-#else
 TEST(PrivateClickMeasurement, SKAdNetwork)
-#endif
 {
     __block Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -676,12 +674,7 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
     EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
 }
 
-// rdar://129248776
-#if defined(NDEBUG)
-TEST(PrivateClickMeasurement, DISABLED_SKAdNetworkAboutBlank)
-#else
 TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
-#endif
 {
     __block Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -708,12 +701,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
     EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
 }
 
-// rdar://129248776
-#if defined(NDEBUG)
-TEST(PrivateClickMeasurement, DISABLED_SKAdNetworkWithoutNavigatingToAppStoreLink)
-#else
 TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
-#endif
 {
     __block Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);

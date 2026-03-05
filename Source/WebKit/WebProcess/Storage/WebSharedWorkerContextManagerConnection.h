@@ -70,7 +70,7 @@ private:
     // IPC Messages.
     void launchSharedWorker(WebCore::ClientOrigin&&, WebCore::SharedWorkerIdentifier, WebCore::WorkerOptions&&, WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&);
     void updatePreferencesStore(const WebPreferencesStore&);
-    void setUserAgent(String&& userAgent) { m_userAgent = WTFMove(userAgent); }
+    void setUserAgent(String&& userAgent) { m_userAgent = WTF::move(userAgent); }
     void close();
 
     const Ref<IPC::Connection> m_connectionToNetworkProcess;

@@ -70,7 +70,7 @@ String serializeLonghandValue(const CSS::SerializationContext& context, CSSPrope
     if (auto* list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
         StringBuilder result;
         auto separator = ""_s;
-        for (auto& individualValue : *list)
+        for (Ref individualValue : *list)
             result.append(std::exchange(separator, ", "_s), serializeLonghandValue(context, property, individualValue));
         return result.toString();
     }
@@ -125,7 +125,7 @@ RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) 
     if (foundPropertyIndex == -1)
         return nullptr;
     auto property = propertyAt(foundPropertyIndex);
-    auto value = property.value();
+    RefPtr value = property.value();
     // System fonts are represented as CSSPrimitiveValue for various font subproperties, but these must serialize as the empty string.
     // It might be better to implement this as a special CSSValue type instead of turning them into null here.
     if (property.shorthandID() == CSSPropertyFont && CSSPropertyParserHelpers::isSystemFontShorthand(valueID(value)))
@@ -192,7 +192,7 @@ AtomString StyleProperties::asTextAtom(const CSS::SerializationContext& context)
     return asTextInternal(context).toAtomString();
 }
 
-static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSPropertyID longhandID)
+static constexpr bool NODELETE canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSPropertyID longhandID)
 {
     ASSERT(isShorthand(shorthandID));
     ASSERT(isLonghand(longhandID));
@@ -232,14 +232,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     // FIXME: If font-variant-ligatures is none, this depends on the value of the longhand.
     case CSSPropertyFontVariant:
     // FIXME: These shorthands are avoided for unknown legacy reasons, probably shouldn't be avoided.
-    case CSSPropertyBorderBlockEnd:
-    case CSSPropertyBorderBlockStart:
-    case CSSPropertyBorderBottom:
-    case CSSPropertyBorderInlineEnd:
-    case CSSPropertyBorderInlineStart:
-    case CSSPropertyBorderLeft:
-    case CSSPropertyBorderRight:
-    case CSSPropertyBorderTop:
     case CSSPropertyColumnRule:
     case CSSPropertyColumns:
     case CSSPropertyContainer:
@@ -272,7 +264,7 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
         ASSERT(isLonghand(propertyID) || propertyID == CSSPropertyCustom);
         Vector<CSSPropertyID, maxShorthandsForLonghand> shorthands;
 
-        if (auto* substitutionValue = dynamicDowncast<CSSPendingSubstitutionValue>(property.value()))
+        if (RefPtr substitutionValue = dynamicDowncast<CSSPendingSubstitutionValue>(property.value()))
             shorthands.append(substitutionValue->shorthandPropertyId());
         else {
             for (auto& shorthand : matchingShorthandsForLonghand(propertyID)) {
@@ -377,7 +369,7 @@ Ref<MutableStyleProperties> StyleProperties::copyProperties(std::span<const CSSP
             return CSSProperty(property, value.releaseNonNull());
         return std::nullopt;
     });
-    return MutableStyleProperties::create(WTFMove(vector));
+    return MutableStyleProperties::create(WTF::move(vector));
 }
 
 CSSStyleProperties* MutableStyleProperties::cssStyleProperties()

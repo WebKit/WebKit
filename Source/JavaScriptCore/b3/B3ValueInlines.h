@@ -52,6 +52,10 @@
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "B3WasmRefTypeCheckValue.h"
+#include "B3WasmStructGetValue.h"
+#include "B3WasmStructNewValue.h"
+#include "B3WasmStructSetValue.h"
 #include <wtf/GraphNodeWorklist.h>
 
 namespace JSC { namespace B3 {
@@ -166,6 +170,15 @@ namespace JSC { namespace B3 {
         return MACRO(WasmAddressValue); \
     case WasmBoundsCheck: \
         return MACRO(WasmBoundsCheckValue); \
+    case WasmStructGet: \
+        return MACRO(WasmStructGetValue); \
+    case WasmStructSet: \
+        return MACRO(WasmStructSetValue); \
+    case WasmStructNew: \
+        return MACRO(WasmStructNewValue); \
+    case WasmRefCast: \
+    case WasmRefTest: \
+        return MACRO(WasmRefTypeCheckValue); \
     case AtomicXchgAdd: \
     case AtomicXchgAnd: \
     case AtomicXchgOr: \
@@ -305,6 +318,11 @@ inline bool Value::isConstant() const
 inline bool Value::isInteger() const
 {
     return type() == Int32 || type() == Int64;
+}
+
+inline bool Value::isFP() const
+{
+    return type() == Float || type() == Double;
 }
 
 inline bool Value::hasInt32() const

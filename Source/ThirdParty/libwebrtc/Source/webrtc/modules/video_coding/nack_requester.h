@@ -88,7 +88,7 @@ class NackRequester final : public NackRequesterBase {
  private:
   // Which fields to consider when deciding which packet to nack in
   // GetNackBatch.
-  enum NackFilterOptions { kSeqNumOnly, kTimeOnly, kSeqNumAndTime };
+  enum NackFilterOptions { kSeqNumOnly, kTimeOnly };
 
   // This class holds the sequence number of the packet that is in the nack list
   // as well as the meta data about when it should be nacked and how many times

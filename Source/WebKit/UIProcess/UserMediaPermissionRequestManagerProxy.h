@@ -78,8 +78,7 @@ public:
     static Ref<UserMediaPermissionRequestManagerProxy> create(WebPageProxy&);
     ~UserMediaPermissionRequestManagerProxy();
 
-    WebPageProxy* page() const;
-    RefPtr<WebPageProxy> protectedPage() const;
+    WebPageProxy* NODELETE page() const;
 
     void disconnectFromPage();
 

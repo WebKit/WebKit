@@ -161,6 +161,7 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
         break;
     }
     case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA: {
+        // FIXME: Use luminanceToAlphaColorMatrix(), but the coefficients are slightly different. Have these been selected for integer math?
         const int16_t matrix[4 * 4] = {
             0,
             0,
@@ -259,15 +260,15 @@ void FEColorMatrixSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
 
 bool FEColorMatrixSoftwareApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
     RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
-    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage = input->imageBuffer();
     if (inputImage) {
-        auto inputImageRect = input.absoluteImageRectRelativeTo(result);
+        auto inputImageRect = input->absoluteImageRectRelativeTo(result);
         resultImage->context().drawImageBuffer(*inputImage, inputImageRect);
     }
 

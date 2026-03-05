@@ -33,7 +33,7 @@ InspectorBackend.registerDomain("Domain", ["page", "worker"]);
 InspectorBackend.registerCommand("Domain.Command", null, [], []);
 InspectorBackend.registerEvent("Domain.Event", null, []);
 InspectorBackend.registerDomainDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Domain");
-InspectorBackend.activateDomain("Domain", ["page"]);
+InspectorBackend.activateDomain("Domain", ["web-page"]);
 ### End File: InspectorBackendCommands.js.in
 
 ### Begin File: InspectorBackendCommands.js.out
@@ -71,7 +71,7 @@ InspectorBackend.registerDomain("Domain", ["page", "worker"]);
 InspectorBackend.registerCommand("Domain.Command", null, [], []);
 InspectorBackend.registerEvent("Domain.Event", null, []);
 InspectorBackend.registerDomainDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Domain");
-InspectorBackend.activateDomain("Domain", ["page"]);
+InspectorBackend.activateDomain("Domain", ["web-page"]);
 
 ### End File: InspectorBackendCommands.js.out
 
@@ -107,6 +107,8 @@ InspectorBackend.activateDomain("Domain", ["page"]);
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include "TestProtocolObjects.h"
@@ -117,7 +119,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -273,7 +275,7 @@ void DomainBackendDispatcher::dispatch(long protocol_requestId, const String& pr
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
     if (protocol_method == "Command"_s) {
-        Command(protocol_requestId, WTFMove(protocol_parameters));
+        Command(protocol_requestId, WTF::move(protocol_parameters));
         return;
     }
 
@@ -297,7 +299,7 @@ void DomainBackendDispatcher::Command(long protocol_requestId, RefPtr<JSON::Obje
     }
 
     auto protocol_jsonMessage = JSON::Object::create();
-    m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
+    m_backendDispatcher->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
 }
 
 } // namespace Inspector
@@ -448,6 +450,7 @@ void DomainFrontendDispatcher::Event()
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
@@ -620,7 +623,7 @@ void ObjCInspectorDomainBackendDispatcher::Command(long protocol_requestId)
 
     id successCallback = ^{
         auto protocol_jsonMessage = JSON::Object::create();
-        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
+        backendDispatcher()->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
     };
 
     [m_delegate CommandWithErrorCallback:errorCallback successCallback:successCallback];
@@ -737,8 +740,8 @@ using namespace Inspector;
     _domainHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorDomainBackendDispatcher>(handler);
-    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<DomainBackendDispatcher, AlternateDomainBackendDispatcher>>("Domain"_s, *_controller, WTFMove(alternateDispatcher));
-    _controller->registerAlternateAgent(WTFMove(alternateAgent));
+    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<DomainBackendDispatcher, AlternateDomainBackendDispatcher>>("Domain"_s, *_controller, WTF::move(alternateDispatcher));
+    _controller->registerAlternateAgent(WTF::move(alternateAgent));
 }
 
 - (id<TestProtocolDomainDomainHandler>)domainHandler

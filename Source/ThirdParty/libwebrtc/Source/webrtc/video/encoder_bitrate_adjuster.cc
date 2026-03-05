@@ -31,7 +31,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 #include "video/encoder_overshoot_detector.h"
 #include "video/rate_utilization_tracker.h"
@@ -57,9 +56,6 @@ struct LayerRateInfo {
   }
 };
 }  // namespace
-constexpr TimeDelta EncoderBitrateAdjuster::kWindowSize;
-constexpr size_t EncoderBitrateAdjuster::kMinFramesSinceLayoutChange;
-constexpr double EncoderBitrateAdjuster::kDefaultUtilizationFactor;
 
 EncoderBitrateAdjuster::EncoderBitrateAdjuster(
     const VideoCodec& codec_settings,
@@ -389,7 +385,12 @@ void EncoderBitrateAdjuster::OnEncodedFrame(DataSize size,
   // Detectors may not exist, for instance if ScreenshareLayers is used.
   auto& detector = overshoot_detectors_[stream_index][temporal_index];
   if (detector) {
-    detector->OnEncodedFrame(size.bytes(), TimeMillis());
+    // Due to http://bugs.webrtc.org/439515766, and sensitivity of some
+    // bandwidth estimation algorithms, this must round down to maintain
+    // behavior with TimeMillis. This may be removed either by migrating the
+    // whole algorithm to use Timestamp/TimeDelta, or when TimeMillis has been
+    // removed.
+    detector->OnEncodedFrame(size.bytes(), clock_.TimeInMicroseconds() / 1000);
   }
   if (media_rate_trackers_[stream_index]) {
     media_rate_trackers_[stream_index]->OnDataProduced(size,

@@ -1,0 +1,10 @@
+
+PASS <svg> should give correct screen CTM for transform:translate(...) on ancestor elem, combined with margin on <body>
+PASS <rect> should give correct screen CTM for transform:translate(...) on ancestor elem, combined with margin on <body>
+PASS <svg> should give correct screen CTM for transform:scale(2,1) on ancestor
+PASS <svg> should give correct screen CTM for transform:scale(0.5) on self
+PASS <svg> should give correct screen CTM with many forms of offsets on ancestor and self
+PASS <svg> should give identity screen CTM with friendly rotations on ancestor and self that add up to 360deg
+PASS <svg> should give correct screen CTM with many forms of offsets on self, and rotated self
+PASS <svg> should give correct screen CTM with many forms of offsets on self, and rotated ancestor
+

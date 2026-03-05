@@ -14,6 +14,7 @@
 #include <string>
 
 #include "api/numerics/samples_stats_counter.h"
+#include "api/units/timestamp.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/rtc_expect_death.h"
@@ -141,12 +142,14 @@ TEST_F(PerfTest, TestGetPerfResultsHistogramsWithStatsCounter) {
   ClearPerfResults();
   ::testing::internal::CaptureStdout();
 
+  Timestamp time = Timestamp::Zero();
+
   SamplesStatsCounter counter;
-  counter.AddSample(1);
-  counter.AddSample(2);
-  counter.AddSample(3);
-  counter.AddSample(4);
-  counter.AddSample(5);
+  counter.AddSample({.value = 1, .time = time});
+  counter.AddSample({.value = 2, .time = time});
+  counter.AddSample({.value = 3, .time = time});
+  counter.AddSample({.value = 4, .time = time});
+  counter.AddSample({.value = 5, .time = time});
   PrintResult("measurement", "_modifier", "story", counter, "ms", false);
 
   proto::HistogramSet histogram_set;

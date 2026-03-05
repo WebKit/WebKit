@@ -53,7 +53,7 @@ void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
         // not dispatched as a function.
         if (m_shouldQuit)
             return;
-        m_functions.append(WTFMove(function));
+        m_functions.append(WTF::move(function));
         if (!m_shouldQuit && !m_processingThread) {
             startProcessingThread();
             return;
@@ -93,7 +93,7 @@ void StreamConnectionWorkQueue::stopAndWaitForCompletion(NOESCAPE WTF::Function<
     RefPtr<Thread> processingThread;
     {
         Locker locker { m_lock };
-        m_cleanupFunction = WTFMove(cleanupFunction);
+        m_cleanupFunction = WTF::move(cleanupFunction);
         processingThread = m_processingThread;
         m_shouldQuit = true;
     }
@@ -123,7 +123,7 @@ void StreamConnectionWorkQueue::startProcessingThread()
                 WTF::Function<void()> cleanup = nullptr;
                 {
                     Locker locker { m_lock };
-                    cleanup = WTFMove(m_cleanupFunction);
+                    cleanup = WTF::move(m_cleanupFunction);
 
                 }
                 if (cleanup)
@@ -133,7 +133,7 @@ void StreamConnectionWorkQueue::startProcessingThread()
             m_wakeUpSemaphore.wait();
         }
     };
-    m_processingThread = Thread::create(m_name, WTFMove(task), ThreadType::Graphics, Thread::QOS::UserInteractive);
+    m_processingThread = Thread::create(m_name, WTF::move(task), ThreadType::Graphics, Thread::QOS::UserInteractive);
 }
 
 void StreamConnectionWorkQueue::processStreams()
@@ -152,7 +152,7 @@ void StreamConnectionWorkQueue::processStreams()
             connections = m_connections;
         }
         for (auto& function : functions)
-            WTFMove(function)();
+            WTF::move(function)();
 
         hasMoreToProcess = false;
         for (auto& connection : connections)

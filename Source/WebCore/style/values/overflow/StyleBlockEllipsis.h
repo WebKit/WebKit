@@ -46,7 +46,7 @@ struct BlockEllipsis {
 
     BlockEllipsis(AtomString&& string)
         : m_type { Type::String }
-        , m_string { WTFMove(string) }
+        , m_string { WTF::move(string) }
     {
     }
 

@@ -33,7 +33,7 @@ class MergeIdenticalElementsCommand : public SimpleEditCommand {
 public:
     static Ref<MergeIdenticalElementsCommand> create(Ref<Element>&& element1, Ref<Element>&& element2)
     {
-        return adoptRef(*new MergeIdenticalElementsCommand(WTFMove(element1), WTFMove(element2)));
+        return adoptRef(*new MergeIdenticalElementsCommand(WTF::move(element1), WTF::move(element2)));
     }
 
 private:

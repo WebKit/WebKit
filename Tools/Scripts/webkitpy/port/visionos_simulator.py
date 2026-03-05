@@ -22,26 +22,21 @@
 
 import logging
 
-from webkitcorepy import Version
-
-from webkitpy.common.memoized import memoized
 from webkitpy.port.config import apple_additions
+from webkitpy.port.embedded_simulator import EmbeddedSimulatorPort
 from webkitpy.port.visionos import VisionOSPort
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
 
 
-class VisionOSSimulatorPort(VisionOSPort):
+class VisionOSSimulatorPort(EmbeddedSimulatorPort, VisionOSPort):
     port_name = 'visionos-simulator'
 
     ARCHITECTURES = ['arm64']
     DEFAULT_ARCHITECTURE = 'arm64'
 
-    DEVICE_MANAGER = SimulatedDeviceManager
-
-    DEFAULT_DEVICE_TYPES = apple_additions().get_default_visionos_device_types() if apple_additions() else [
+    DEFAULT_DEVICE_TYPES = [
         DeviceType(software_variant='visionOS', hardware_family='Vision', hardware_type='Pro')
     ]
     SDK = apple_additions().get_sdk('xrsimulator') if apple_additions() else 'xrsimulator'
@@ -52,46 +47,5 @@ class VisionOSSimulatorPort(VisionOSPort):
             return 'arm64'
         return self.DEFAULT_ARCHITECTURE
 
-    @staticmethod
-    def _version_from_name(name):
-        if len(name.split('-')) > 2 and name.split('-')[2].isdigit():
-            return Version.from_string(name.split('-')[2])
-        return None
-
-    @memoized
-    def device_version(self):
-        if self.get_option('version'):
-            return Version.from_string(self.get_option('version'))
-        return VisionOSSimulatorPort._version_from_name(self._name) if VisionOSSimulatorPort._version_from_name(self._name) else self.host.platform.xcode_sdk_version('xrsimulator')
-
-    def environment_for_api_tests(self):
-        inherited_env = super(VisionOSSimulatorPort, self).environment_for_api_tests()
-        new_environment = {}
-        SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
-        for value in inherited_env:
-            if not value.startswith(SIMCTL_ENV_PREFIX):
-                new_environment[SIMCTL_ENV_PREFIX + value] = inherited_env[value]
-            else:
-                new_environment[value] = inherited_env[value]
-        return new_environment
-
     def operating_system(self):
         return 'visionos-simulator'
-
-    def setup_environ_for_server(self, server_name=None):
-        _log.debug('Setting up environment for server on {}'.format(self.operating_system()))
-        env = super(VisionOSSimulatorPort, self).setup_environ_for_server(server_name)
-        if server_name == self.driver_name() and self.get_option('leaks'):
-            env['MallocStackLogging'] = '1'
-            env['__XPC_MallocStackLogging'] = '1'
-            env['MallocScribble'] = '1'
-            env['__XPC_MallocScribble'] = '1'
-        return env
-
-    def reset_preferences(self):
-        SimulatedDeviceManager.tear_down(self.host)
-
-    @property
-    @memoized
-    def developer_dir(self):
-        return self._executive.run_command(['xcode-select', '--print-path']).rstrip()

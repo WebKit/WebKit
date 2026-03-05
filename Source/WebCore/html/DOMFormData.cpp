@@ -60,7 +60,7 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(ScriptExecutionContext& contex
         if (control->form() != form)
             return Exception { ExceptionCode::NotFoundError, "The specified element is not owned by this form element."_s };
     }
-    auto result = form->constructEntryList(control.get(), WTFMove(formData), nullptr);
+    auto result = form->constructEntryList(control.get(), WTF::move(formData), nullptr);
     
     if (!result)
         return Exception { ExceptionCode::InvalidStateError, "Already constructing Form entry list."_s };
@@ -97,10 +97,10 @@ static auto createFileEntry(const String& name, Blob& blob, const String& filena
 
     if (RefPtr file = dynamicDowncast<File>(blob)) {
         if (!filename.isNull())
-            return { usvName, File::create(blob.protectedScriptExecutionContext().get(), *file, filename) };
-        return { usvName, WTFMove(file) };
+            return { usvName, File::create(protect(blob.scriptExecutionContext()).get(), *file, filename) };
+        return { usvName, file.releaseNonNull() };
     }
-    return { usvName, File::create(blob.protectedScriptExecutionContext().get(), blob, filename.isNull() ? "blob"_s : filename) };
+    return { usvName, File::create(protect(blob.scriptExecutionContext()).get(), blob, filename.isNull() ? "blob"_s : filename) };
 }
 
 void DOMFormData::append(const String& name, const String& value)
@@ -175,7 +175,7 @@ void DOMFormData::set(const String& name, Item&& item)
     }
 
     if (initialMatchLocation) {
-        m_items[*initialMatchLocation] = WTFMove(item);
+        m_items[*initialMatchLocation] = WTF::move(item);
 
         m_items.removeAllMatching([&name] (const auto& item) {
             return item.name == name;
@@ -183,7 +183,7 @@ void DOMFormData::set(const String& name, Item&& item)
         return;
     }
 
-    m_items.append(WTFMove(item));
+    m_items.append(WTF::move(item));
 }
 
 DOMFormData::Iterator::Iterator(DOMFormData& target)

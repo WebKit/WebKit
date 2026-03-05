@@ -27,6 +27,7 @@
 #include "api/test/neteq_simulator.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -35,20 +36,19 @@ namespace test {
 class NetEqTestErrorCallback {
  public:
   virtual ~NetEqTestErrorCallback() = default;
-  virtual void OnInsertPacketError(const NetEqInput::PacketData& /* packet */) {
-  }
+  virtual void OnInsertPacketError(const RtpPacketReceived& /* packet */) {}
   virtual void OnGetAudioError() {}
 };
 
 class DefaultNetEqTestErrorCallback : public NetEqTestErrorCallback {
-  void OnInsertPacketError(const NetEqInput::PacketData& packet) override;
+  void OnInsertPacketError(const RtpPacketReceived& packet) override;
   void OnGetAudioError() override;
 };
 
 class NetEqPostInsertPacket {
  public:
   virtual ~NetEqPostInsertPacket() = default;
-  virtual void AfterInsertPacket(const NetEqInput::PacketData& packet,
+  virtual void AfterInsertPacket(const RtpPacketReceived& packet,
                                  NetEq* neteq) = 0;
 };
 

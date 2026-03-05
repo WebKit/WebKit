@@ -36,6 +36,7 @@ class DisplayList;
 }
 class Gradient;
 class NativeImage;
+class PathImpl;
 
 class RenderingResourceObserver : public AbstractCanMakeCheckedPtr {
 public:
@@ -44,6 +45,7 @@ public:
 
     virtual void willDestroyNativeImage(const NativeImage&) = 0;
     virtual void willDestroyGradient(const Gradient&) = 0;
+    virtual void willDestroyPathImpl(const PathImpl&) = 0;
     virtual void willDestroyFilter(RenderingResourceIdentifier) = 0;
     virtual void willDestroyDisplayList(const DisplayList::DisplayList&) = 0;
 
@@ -77,7 +79,7 @@ public:
     void addObserver(WeakRef<RenderingResourceObserver>&& observer)
     {
         ASSERT(hasValidRenderingResourceIdentifier());
-        m_observers.add(WTFMove(observer));
+        m_observers.add(WTF::move(observer));
     }
 
 protected:

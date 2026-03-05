@@ -49,6 +49,7 @@ typedef uint32_t RenderTreeExternalRepresentationBehavior;
 
 WK_EXPORT void WKBundlePageSetDefersLoading(WKBundlePageRef page, bool defersLoading) WK_C_API_DEPRECATED;
 WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);
+WK_EXPORT bool WKBundlePageIsClosed(WKBundlePageRef page);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page, RenderTreeExternalRepresentationBehavior);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundlePageRef page);
 

@@ -216,7 +216,7 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
     std::ostringstream stream;
     stream << "#line 2 \"" << sourcePath << "\"\n\n" << hlsl;
     std::string sourceText = stream.str();
-    writeFile(sourcePath.c_str(), sourceText.c_str(), sourceText.size());
+    writeFile(sourcePath.c_str(), sourceText.c_str());
 #endif
 
     auto *platform = ANGLEPlatformCurrent();

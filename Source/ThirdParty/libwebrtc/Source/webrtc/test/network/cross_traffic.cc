@@ -167,13 +167,14 @@ void TcpMessageRouteImpl::SendMessage(size_t size,
         int64_t data_left = static_cast<int64_t>(size);
         int64_t kMaxPacketSize = 1200;
         int64_t kMinPacketSize = 4;
-        Message message{std::move(handler)};
+        Message message{.handler = std::move(handler)};
         while (data_left > 0) {
           int64_t packet_size = std::min(data_left, kMaxPacketSize);
           int fragment_id = next_fragment_id_++;
           pending_.push_back(MessageFragment{
-              fragment_id,
-              static_cast<size_t>(std::max(kMinPacketSize, packet_size))});
+              .fragment_id = fragment_id,
+              .size =
+                  static_cast<size_t>(std::max(kMinPacketSize, packet_size))});
           message.pending_fragment_ids.insert(fragment_id);
           data_left -= packet_size;
         }

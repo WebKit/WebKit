@@ -67,7 +67,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     if (referrerURL.protocolIsAbout() && referrerURL.path() == "client"_s)
         return "client"_str;
 
-    if (!(context.securityOrigin() && context.protectedSecurityOrigin()->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
+    if (!(context.securityOrigin() && protect(context.securityOrigin())->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
         return "client"_str;
 
     return String { referrerURL.string() };
@@ -150,11 +150,11 @@ static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace currentAdd
 }
 
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
-    : FetchBodyOwner(&context, WTFMove(body), WTFMove(headers))
-    , m_request(WTFMove(request))
+    : FetchBodyOwner(&context, WTF::move(body), WTF::move(headers))
+    , m_request(WTF::move(request))
     , m_requestURL({ m_request.url(), context.topOrigin().data() })
-    , m_options(WTFMove(options))
-    , m_referrer(WTFMove(referrer))
+    , m_options(WTF::move(options))
+    , m_referrer(WTF::move(referrer))
     , m_signal(AbortSignal::create(&context))
 {
     m_request.setRequester(ResourceRequestRequester::Fetch);
@@ -164,9 +164,9 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 {
     ASSERT(scriptExecutionContext());
 
-    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, *protectedScriptExecutionContext(), init);
+    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, *protect(scriptExecutionContext()), init);
     if (exception)
-        return WTFMove(exception.value());
+        return WTF::move(exception.value());
 
     if (m_options.mode == FetchOptions::Mode::NoCors) {
         const String& method = m_request.httpMethod();
@@ -202,7 +202,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     m_options.mode = Mode::Cors;
     m_options.credentials = Credentials::SameOrigin;
     m_referrer = "client"_s;
-    m_request.setURL(WTFMove(requestURL));
+    m_request.setURL(WTF::move(requestURL));
     m_requestURL = { m_request.url(), context->topOrigin().data() };
     m_request.setInitiatorIdentifier(context->resourceRequestIdentifier());
 
@@ -218,7 +218,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
             m_signal->signalFollow(*signal);
         else if (!init.signal.isUndefinedOrNull())  {
             if (auto exception = processInvalidSignal(context.get()))
-                return WTFMove(*exception);
+                return WTF::move(*exception);
         }
     }
 
@@ -228,8 +228,8 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
             return fillResult.releaseException();
     }
 
-    if (init.body) {
-        auto setBodyResult = setBody(WTFMove(*init.body));
+    if (init.body && init.body.value()) {
+        auto setBodyResult = setBody(WTF::move(*init.body.value()));
         if (setBodyResult.hasException())
             return setBodyResult.releaseException();
     }
@@ -257,7 +257,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
             m_signal->signalFollow(*signal);
         else if (!init.signal.isNull()) {
             if (auto exception = processInvalidSignal(context.get()))
-                return WTFMove(*exception);
+                return WTF::move(*exception);
         }
 
     } else
@@ -273,22 +273,10 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         m_navigationPreloadIdentifier = input.m_navigationPreloadIdentifier;
     }
 
-    if (RefPtr executionContext = scriptExecutionContext()) {
-        if (RefPtr document = dynamicDowncast<Document>(*executionContext); document && document->settings().localNetworkAccessEnabled()) {
-            switch (init.targetAddressSpace) {
-            case IPAddressSpace::Public:
-                m_targetAddressSpace = IPAddressSpace::Public;
-                break;
-            case IPAddressSpace::Local:
-                m_targetAddressSpace = IPAddressSpace::Local;
-                break;
-            }
+    if (RefPtr document = dynamicDowncast<Document>(context); document && document->settings().localNetworkAccessEnabled())
+        m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(*init.targetAddressSpace, m_request.url());
 
-            m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(m_targetAddressSpace, m_request.url());
-        }
-    }
-
-    auto setBodyResult = init.body ? setBody(WTFMove(*init.body)) : setBody(input);
+    auto setBodyResult = init.body && init.body.value() ? setBody(WTF::move(*init.body.value())) : setBody(input);
     if (setBodyResult.hasException())
         return setBodyResult;
 
@@ -301,7 +289,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
         return Exception { ExceptionCode::TypeError, makeString("Request has method '"_s, m_request.httpMethod(), "' and cannot have a body"_s) };
 
     ASSERT(scriptExecutionContext());
-    auto result = extractBody(WTFMove(body));
+    auto result = extractBody(WTF::move(body));
     if (result.hasException())
         return result;
 
@@ -336,11 +324,11 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
     request->suspendIfNeeded();
 
     if (std::holds_alternative<String>(input)) {
-        auto result = request->initializeWith(std::get<String>(input), WTFMove(init));
+        auto result = request->initializeWith(std::get<String>(input), WTF::move(init));
         if (result.hasException())
             return result.releaseException();
     } else {
-        auto result = request->initializeWith(Ref { *std::get<RefPtr<FetchRequest>>(input) }.get(), WTFMove(init));
+        auto result = request->initializeWith(std::get<Ref<FetchRequest>>(input).get(), WTF::move(init));
         if (result.hasException())
             return result.releaseException();
     }
@@ -350,7 +338,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
 
 Ref<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
 {
-    auto result = adoptRef(*new FetchRequest(context, WTFMove(body), WTFMove(headers), WTFMove(request), WTFMove(options), WTFMove(referrer)));
+    auto result = adoptRef(*new FetchRequest(context, WTF::move(body), WTF::move(headers), WTF::move(request), WTF::move(options), WTF::move(referrer)));
     result->suspendIfNeeded();
     return result;
 }

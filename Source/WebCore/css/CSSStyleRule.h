@@ -56,7 +56,7 @@ public:
     unsigned length() const;
     CSSRule* item(unsigned index) const;
 
-    StylePropertyMap& styleMap();
+    StylePropertyMap& NODELETE styleMap();
 
 private:
     CSSStyleRule(StyleRule&, CSSStyleSheet*);
@@ -67,7 +67,7 @@ private:
     String cssText(const CSS::SerializationContext&) const final;
     String cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;
     void reattach(StyleRuleBase&) final;
-    void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&) final;
+    void getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>&) final;
 
     String generateSelectorText() const;
     Vector<Ref<StyleRuleBase>> nestedRules() const;

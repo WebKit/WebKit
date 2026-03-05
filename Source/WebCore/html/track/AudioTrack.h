@@ -46,7 +46,11 @@ public:
     {
         return adoptRef(*new AudioTrack(context, trackPrivate));
     }
-    virtual ~AudioTrack();
+    WEBCORE_EXPORT virtual ~AudioTrack();
+
+    // AudioTrackPrivateClient.
+    void ref() const final { MediaTrackBase::ref(); }
+    void deref() const final { MediaTrackBase::deref(); }
 
     static const AtomString& descriptionKeyword();
     static const AtomString& mainDescKeyword();
@@ -60,7 +64,6 @@ public:
 
     size_t inbandTrackIndex() const;
 
-    Ref<AudioTrackPrivate> protectedPrivate() const;
     const AudioTrackPrivate& privateTrack() const { return m_private; }
     void setPrivate(AudioTrackPrivate&);
 

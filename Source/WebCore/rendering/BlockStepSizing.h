@@ -34,13 +34,13 @@ class WritingMode;
 
 namespace BlockStepSizing {
 
-bool childHasSupportedStyle(const RenderStyle& childStyle);
+bool NODELETE childHasSupportedStyle(const RenderStyle& childStyle);
 
-LayoutUnit computeExtraSpace(LayoutUnit stepSize, LayoutUnit boxOuterSize);
+LayoutUnit NODELETE computeExtraSpace(LayoutUnit stepSize, LayoutUnit boxOuterSize);
 
 void distributeExtraSpaceToChildMargins(RenderBox& child, LayoutUnit extraSpace, WritingMode containingBlockWritingMode);
-void distributeExtraSpaceToChildPadding(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
-void distributeExtraSpaceToChildContentArea(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
+void NODELETE distributeExtraSpaceToChildPadding(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
+void NODELETE distributeExtraSpaceToChildContentArea(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
 
 } // namespace BlockStepSizing
 

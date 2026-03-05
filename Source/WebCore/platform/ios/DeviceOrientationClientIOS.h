@@ -32,6 +32,7 @@
 #include "DeviceOrientationData.h"
 #include "DeviceOrientationUpdateProvider.h"
 #include "MotionManagerClient.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -39,7 +40,7 @@ OBJC_CLASS WebCoreMotionManager;
 
 namespace WebCore {
 
-class DeviceOrientationClientIOS : public DeviceOrientationClient, public MotionManagerClient {
+class DeviceOrientationClientIOS : public DeviceOrientationClient, public MotionManagerClient, public CanMakeCheckedPtr<DeviceOrientationClientIOS> {
     WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationClientIOS);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationClientIOS);
 public:
@@ -52,6 +53,13 @@ public:
     void deviceOrientationControllerDestroyed() override;
 
     void orientationChanged(double, double, double, double, double) override;
+
+    // DeviceOrientationClient, MotionManagerClient.
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
 private:
     WebCoreMotionManager* m_motionManager  { nullptr };

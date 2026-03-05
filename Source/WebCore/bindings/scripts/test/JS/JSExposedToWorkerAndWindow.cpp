@@ -28,6 +28,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMGlobalObjectInlines.h"
@@ -43,13 +44,25 @@
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <JavaScriptCore/SlotVisitorMacros.h>
 #include <JavaScriptCore/SubspaceInlines.h>
+#include <type_traits>
 #include <wtf/GetPtr.h>
+#include <wtf/IsIncreasing.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;
+
+IGNORE_WARNINGS_BEGIN("invalid-offsetof")
+
+static_assert(std::is_aggregate_v<ExposedToWorkerAndWindow::Dict>);
+static_assert(IsIncreasing<
+      0
+    , offsetof(ExposedToWorkerAndWindow::Dict, obj)
+>);
+
+IGNORE_WARNINGS_END
 
 template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
@@ -61,7 +74,6 @@ template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> conve
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    ExposedToWorkerAndWindow::Dict result;
     JSValue objValue;
     if (isNullOrUndefined)
         objValue = jsUndefined();
@@ -69,13 +81,12 @@ template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> conve
         objValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "obj"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!objValue.isUndefined()) {
-        auto objConversionResult = convert<IDLInterface<TestObj>>(lexicalGlobalObject, objValue);
-        if (objConversionResult.hasException(throwScope)) [[unlikely]]
-            return ConversionResultException { };
-        result.obj = objConversionResult.releaseReturnValue();
-    }
-    return result;
+    auto objConversionResult = convert<IDLOptional<IDLInterface<TestObj>>>(lexicalGlobalObject, objValue);
+    if (objConversionResult.hasException(throwScope)) [[unlikely]]
+        return ConversionResultException { };
+    return ExposedToWorkerAndWindow::Dict {
+        objConversionResult.releaseReturnValue(),
+    };
 }
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ExposedToWorkerAndWindow::Dict& dictionary)
@@ -145,7 +156,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowDOM
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<ExposedToWorkerAndWindow>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    auto jsValue = toJSNewlyCreated<IDLInterface<ExposedToWorkerAndWindow>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTF::move(object));
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     setSubclassStructureIfNeeded<ExposedToWorkerAndWindow>(lexicalGlobalObject, callFrame, asObject(jsValue));
@@ -190,7 +201,7 @@ void JSExposedToWorkerAndWindowPrototype::finishCreation(VM& vm)
 const ClassInfo JSExposedToWorkerAndWindow::s_info = { "ExposedToWorkerAndWindow"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindow) };
 
 JSExposedToWorkerAndWindow::JSExposedToWorkerAndWindow(Structure* structure, JSDOMGlobalObject& globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
-    : JSDOMWrapper<ExposedToWorkerAndWindow>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<ExposedToWorkerAndWindow>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -275,7 +286,7 @@ void JSExposedToWorkerAndWindowOwner::finalize(JSC::Handle<JSC::Unknown> handle,
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsExposedToWorkerAndWindow = static_cast<JSExposedToWorkerAndWindow*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsExposedToWorkerAndWindow->protectedWrapped().ptr(), jsExposedToWorkerAndWindow);
+    uncacheWrapper(world, protect(jsExposedToWorkerAndWindow->wrapped()).ptr(), jsExposedToWorkerAndWindow);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -313,7 +324,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<ExposedToWorkerAndWindow>(impl.ptr());
 #endif
-    return createWrapper<ExposedToWorkerAndWindow>(globalObject, WTFMove(impl));
+    return createWrapper<ExposedToWorkerAndWindow>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ExposedToWorkerAndWindow& impl)

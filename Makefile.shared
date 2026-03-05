@@ -22,7 +22,7 @@ endif
 XCODE_OPTIONS = $(ARGS)
 XCODE_OPTIONS += $(if $(GCC_PREPROCESSOR_ADDITIONS),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
-	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
+	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=YES
 endif
 
 ifneq (,$(SDKROOT))
@@ -51,12 +51,6 @@ endif
 
 ifeq (iosmac,$(SDK_VARIANT))
 	BUILD_WEBKIT_BASE += --maccatalyst
-endif
-
-ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
-	ifneq (, $(shell which ccache))
-		XCODE_OPTIONS += WK_USE_CCACHE=YES
-	endif
 endif
 
 ifneq (,$(EXPORT_COMPILE_COMMANDS))
@@ -206,7 +200,7 @@ analyze:
 	@$(call invoke_xcode,analyze,$(ANALYZER_XCODE_SETTINGS)) || true
 	@for dir in $$(ls -d $(ANALYZER_OUTPUT)/StaticAnalyzer/*); do \
 		mkdir -p $$dir/StaticAnalyzerReports; \
-		find $$dir -name 'report-*.html' -exec mv {} $$dir/StaticAnalyzerReports/ \;; \
+		find $$dir -name 'report-*.html' -exec sh -c 'mv "$$@" "$$0"' $$dir/StaticAnalyzerReports/ {} +; \
 		$(PATH_TO_SCAN_BUILD) --generate-index-only $$dir; \
 	done
 

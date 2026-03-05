@@ -104,6 +104,9 @@ enum class NSType : uint8_t {
 #if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
     SecureCoding,
 #endif
+#if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+    Set,
+#endif
     String,
     URL,
     NSValue,
@@ -246,12 +249,23 @@ template<typename T> struct ArgumentCoder<RetainPtr<T>> {
     template<typename U = T, typename = IsObjCObject<U>>
     static void encode(Encoder& encoder, const RetainPtr<U>& object)
     {
+        if (!object) {
+            encoder << false;
+            return;
+        }
+
+        encoder << true;
         ArgumentCoder<U *>::encode(encoder, object.get());
     }
 
     template<typename U = T, typename = IsObjCObject<U>>
     static std::optional<RetainPtr<U>> decode(Decoder& decoder)
     {
+        auto isEngaged = decoder.template decode<bool>();
+        if (!isEngaged)
+            return std::nullopt;
+        if (!*isEngaged)
+            return { nullptr };
         return decoder.decodeWithAllowedClasses<U>();
     }
 };

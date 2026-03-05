@@ -54,7 +54,7 @@ function shouldBeOneOf(actual, expectedArray) {
 {
     let locale = new Intl.Locale("ar-SA")
     let calendars = JSON.stringify(locale.getCalendars());
-    shouldBe(calendars === `["islamic-umalqura","islamic-rgsa","islamic","gregory"]` || calendars === `["islamic-umalqura","gregory","islamic","islamic-rgsa"]`, true);
+    shouldBe(calendars === `["islamic-umalqura","islamic-rgsa","islamic","gregory"]` || calendars === `["islamic-umalqura","gregory","islamic","islamic-rgsa"]` || calendars === `["gregory","islamic-umalqura","islamic","islamic-rgsa"]`, true);
     shouldBe(JSON.stringify(locale.getCollations()), `["compat","emoji","eor"]`);
     shouldBe(locale.hourCycle, undefined);
     shouldBe(JSON.stringify(locale.getHourCycles()), `["h12"]`);

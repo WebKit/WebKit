@@ -800,15 +800,7 @@ private:
                         break;
 
                     ASSERT(node->origin.exitOK);
-                    ASSERT(node->child1().useKind() == Int32Use);
-                    insertionSet.insertNode(
-                        nodeIndex, SpecNone, Check, node->origin,
-                        node->child1()); 
-
                     node->setOpAndDefaultFlags(PhantomCreateRest);
-                    // We don't need this parameter for OSR exit, we can find out all the information
-                    // we need via the static parameter count and the dynamic argument count.
-                    node->child1() = Edge(); 
                     break;
                     
                 case CreateClonedArguments:

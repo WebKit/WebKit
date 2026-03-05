@@ -27,17 +27,17 @@
 
 void *PEM_ASN1_read_bio(d2i_of_void *d2i, const char *name, BIO *bp, void **x,
                         pem_password_cb *cb, void *u) {
-  const unsigned char *p = NULL;
-  unsigned char *data = NULL;
+  const unsigned char *p = nullptr;
+  unsigned char *data = nullptr;
   long len;
-  char *ret = NULL;
+  char *ret = nullptr;
 
-  if (!PEM_bytes_read_bio(&data, &len, NULL, name, bp, cb, u)) {
-    return NULL;
+  if (!PEM_bytes_read_bio(&data, &len, nullptr, name, bp, cb, u)) {
+    return nullptr;
   }
   p = data;
   ret = reinterpret_cast<char *>(d2i(x, &p, len));
-  if (ret == NULL) {
+  if (ret == nullptr) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_ASN1_LIB);
   }
   OPENSSL_free(data);

@@ -50,7 +50,7 @@ using OriginAccessAllowlist = Vector<OriginAccessEntry>;
 using OriginAccessMap = HashMap<SecurityOriginData, std::unique_ptr<OriginAccessAllowlist>>;
 
 static Lock originAccessMapLock;
-static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
+static OriginAccessMap& NODELETE originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
 {
     ASSERT(originAccessMapLock.isHeld());
     static NeverDestroyed<OriginAccessMap> originAccessMap;

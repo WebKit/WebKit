@@ -50,12 +50,12 @@ struct SingleAnimationTimeline {
     }
 
     SingleAnimationTimeline(ScrollFunction&& scrollFunction)
-        : m_value { WTFMove(scrollFunction) }
+        : m_value { WTF::move(scrollFunction) }
     {
     }
 
     SingleAnimationTimeline(ViewFunction&& viewFunction)
-        : m_value { WTFMove(viewFunction) }
+        : m_value { WTF::move(viewFunction) }
     {
     }
 

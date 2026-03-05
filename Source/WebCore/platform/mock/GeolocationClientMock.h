@@ -97,7 +97,7 @@ private:
         PermissionStateDenied,
     } m_permissionState { PermissionStateUnset };
 
-    using GeolocationSet = HashSet<RefPtr<Geolocation>>;
+    using GeolocationSet = HashSet<Ref<Geolocation>>;
     GeolocationSet m_pendingPermission;
 };
 

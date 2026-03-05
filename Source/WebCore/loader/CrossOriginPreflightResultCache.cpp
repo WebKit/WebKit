@@ -71,7 +71,7 @@ Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOriginPref
     } else
         expiryDelta = defaultPreflightCacheTimeout;
 
-    return makeUniqueRef<CrossOriginPreflightResultCacheItem>(MonotonicTime::now() + expiryDelta, policy, WTFMove(*methods), WTFMove(*headers));
+    return makeUniqueRef<CrossOriginPreflightResultCacheItem>(MonotonicTime::now() + expiryDelta, policy, WTF::move(*methods), WTF::move(*headers));
 }
 
 std::optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHeaders(const String& method, const HTTPHeaderMap& requestHeaders) const
@@ -125,7 +125,7 @@ CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::singleton()
 void CrossOriginPreflightResultCache::appendEntry(PAL::SessionID sessionID, const ClientOrigin& origin, const URL& url, std::unique_ptr<CrossOriginPreflightResultCacheItem> preflightResult)
 {
     ASSERT(isMainThread());
-    m_preflightHashMap.set(std::make_tuple(sessionID, origin, url), WTFMove(preflightResult));
+    m_preflightHashMap.set(std::make_tuple(sessionID, origin, url), WTF::move(preflightResult));
 }
 
 bool CrossOriginPreflightResultCache::canSkipPreflight(PAL::SessionID sessionID, const ClientOrigin& origin, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders)

@@ -149,9 +149,6 @@ angle::Result TransformFeedback::begin(const Context *context,
     mState.mPaused        = false;
     mState.mVerticesDrawn = 0;
     bindProgram(context, program);
-
-    // In one of the angle_unittests - "TransformFeedbackTest.SideEffectsOfStartAndStop"
-    // there is a code path where <context> is a nullptr, account for that possiblity.
     recomputeVertexCapacity(context);
     return angle::Result::Continue;
 }
@@ -239,6 +236,8 @@ void TransformFeedback::bindProgram(const Context *context, Program *program)
 
 void TransformFeedback::recomputeVertexCapacity(const Context *context)
 {
+    // In one of the angle_unittests - "TransformFeedbackTest.SideEffectsOfStartAndStop"
+    // there is a code path where <context> is a nullptr, account for that possibility.
     const ProgramExecutable *programExecutable =
         context ? context->getState().getLinkedProgramExecutable(context) : nullptr;
     if (programExecutable)
@@ -259,7 +258,6 @@ void TransformFeedback::recomputeVertexCapacity(const Context *context)
     {
         mState.mVertexCapacity = 0;
     }
-    mState.mVerticesDrawn = std::min(mState.mVerticesDrawn, mState.mVertexCapacity);
 }
 
 bool TransformFeedback::hasBoundProgram(ShaderProgramID program) const

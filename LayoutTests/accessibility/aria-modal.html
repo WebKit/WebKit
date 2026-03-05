@@ -48,7 +48,10 @@
             });
             debug("Dialog is displaying")
             shouldBeFalse("backgroundAccessible()");
-            window.okButton = accessibilityController.accessibleElementById("ok");
+            await waitFor(() => {
+                window.okButton = accessibilityController.accessibleElementById("ok");
+                return window.okButton && !window.okButton.isIgnored;
+            });
             shouldBeFalse("okButton.isIgnored");
 
             // Test the case that aria-modal=true when dialog is not displaying won't affect other objects.

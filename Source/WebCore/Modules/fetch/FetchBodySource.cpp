@@ -38,7 +38,7 @@ std::pair<Ref<FetchBodySource>, Ref<RefCountedReadableStreamSource>> FetchBodySo
 {
     Ref nonByteSource = NonByteSource::create(bodyOwner);
     Ref source = adoptRef(*new FetchBodySource(bodyOwner, nonByteSource.ptr()));
-    return { WTFMove(source), WTFMove(nonByteSource) };
+    return { WTF::move(source), WTF::move(nonByteSource) };
 }
 
 Ref<FetchBodySource> FetchBodySource::createByteSource(FetchBodyOwner& bodyOwner)
@@ -48,7 +48,7 @@ Ref<FetchBodySource> FetchBodySource::createByteSource(FetchBodyOwner& bodyOwner
 
 FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner, RefPtr<NonByteSource>&& nonByteSource)
     : m_bodyOwner(bodyOwner)
-    , m_nonByteSource(WTFMove(nonByteSource))
+    , m_nonByteSource(WTF::move(nonByteSource))
 {
 }
 
@@ -70,7 +70,7 @@ Ref<DOMPromise> FetchBodySource::pull(JSDOMGlobalObject& globalObject, ReadableB
 
     auto [promise, deferred] = createPromiseAndWrapper(globalObject);
     m_isPulling = true;
-    m_pullPromise = WTFMove(deferred);
+    m_pullPromise = WTF::move(deferred);
     return promise;
 }
 
@@ -97,7 +97,7 @@ static JSDOMGlobalObject* globalObjectFromBodyOwner(RefPtr<FetchBodyOwner>&& bod
 bool FetchBodySource::enqueue(RefPtr<JSC::ArrayBuffer>&& chunk)
 {
     if (m_nonByteSource)
-        return m_nonByteSource->enqueue(WTFMove(chunk));
+        return m_nonByteSource->enqueue(WTF::move(chunk));
 
     if (!chunk)
         return false;
@@ -219,8 +219,12 @@ void FetchBodySource::NonByteSource::doPull()
         bodyOwner->feedStream();
 }
 
-void FetchBodySource::NonByteSource::doCancel()
+void FetchBodySource::NonByteSource::doCancel(JSC::JSValue)
 {
+    auto scope = makeScopeExit([&] {
+        cancelFinished();
+    });
+
     m_isCancelling = true;
     RefPtr bodyOwner = m_bodyOwner.get();
     if (!bodyOwner)

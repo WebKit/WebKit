@@ -56,4 +56,4 @@ testWithTypedArrayConstructors(TA => {
     array.copyWithin(0, 0);
     throw new Test262Error('copyWithin completed successfully');
   });
-});
+}, null, ["passthrough"]);

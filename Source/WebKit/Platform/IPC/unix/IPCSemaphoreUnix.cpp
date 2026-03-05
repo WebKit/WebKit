@@ -45,7 +45,7 @@ Semaphore::Semaphore()
 }
 
 Semaphore::Semaphore(UnixFileDescriptor&& fd)
-    : m_fd(WTFMove(fd))
+    : m_fd(WTF::move(fd))
 { }
 
 Semaphore::Semaphore(Semaphore&&) = default;

@@ -36,20 +36,31 @@ class InternalReadableStream;
 class InternalTransformStream;
 class InternalWritableStream;
 class JSDOMGlobalObject;
+class MessagePort;
 class ReadableStream;
 class WritableStream;
 template<typename> class ExceptionOr;
 
+struct DetachedTransformStream {
+    Ref<MessagePort> readablePort;
+    Ref<MessagePort> writablePort;
+};
+
 class TransformStream : public RefCounted<TransformStream> {
 public:
-    static ExceptionOr<Ref<TransformStream>> create(JSC::JSGlobalObject&, std::optional<JSC::Strong<JSC::JSObject>>&&, std::optional<JSC::Strong<JSC::JSObject>>&&, std::optional<JSC::Strong<JSC::JSObject>>&&);
+    static ExceptionOr<Ref<TransformStream>> create(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&);
+    static Ref<TransformStream> create(Ref<ReadableStream>&&, Ref<WritableStream>&&);
 
     ~TransformStream();
 
     ReadableStream& readable() { return m_readable.get(); }
     WritableStream& writable() { return m_writable.get(); }
 
-    JSValueInWrappedObject& internalTransformStream() { return m_internalTransformStream; }
+    JSValueInWrappedObject& internalTransformStream() LIFETIME_BOUND { return m_internalTransformStream; }
+
+    bool canTransfer() const;
+    ExceptionOr<DetachedTransformStream> runTransferSteps(JSDOMGlobalObject&);
+    static ExceptionOr<Ref<TransformStream>> runTransferReceivingSteps(JSDOMGlobalObject&, DetachedTransformStream&&);
 
 private:
     TransformStream(JSC::JSValue, Ref<ReadableStream>&&, Ref<WritableStream>&&);

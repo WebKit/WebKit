@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <JavaScriptCore/CommonIdentifiers.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewPrototype.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 
 #include <JavaScriptCore/JSTypedArrays.h>
 

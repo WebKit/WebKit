@@ -22,7 +22,7 @@ includes: [testTypedArray.js, compareArray.js]
 features: [Symbol, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var obj = {
       length: 4,
       "0": 42,
@@ -31,7 +31,7 @@ testWithTypedArrayConstructors(function(TA) {
       "3": 44
   };
 
-  var sample = new TA([1, 2, 3, 4]);
+  var sample = new TA(makeCtorArg([1, 2, 3, 4]));
 
   assert.throws(TypeError, function() {
     sample.set(obj);

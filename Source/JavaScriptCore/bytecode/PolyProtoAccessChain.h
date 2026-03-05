@@ -73,7 +73,7 @@ public:
 
 private:
     explicit PolyProtoAccessChain(Vector<StructureID>&& chain)
-        : m_chain(WTFMove(chain))
+        : m_chain(WTF::move(chain))
     {
     }
 

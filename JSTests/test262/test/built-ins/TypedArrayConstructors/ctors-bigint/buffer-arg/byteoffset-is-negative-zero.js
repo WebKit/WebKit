@@ -13,11 +13,11 @@ info: |
   7. If offset < 0, throw a RangeError exception.
   8. If offset is -0, let offset be +0.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
 testWithBigIntTypedArrayConstructors(function(TAConstructor) {
   var typedArray = new TAConstructor(new ArrayBuffer(8), -0);
   assert.sameValue(typedArray.byteOffset, +0);
-});
+}, null, ["passthrough"]);

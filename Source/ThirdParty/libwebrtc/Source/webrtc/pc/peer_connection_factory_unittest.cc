@@ -25,6 +25,7 @@
 #include "api/data_channel_interface.h"
 #include "api/enable_media.h"
 #include "api/enable_media_with_defaults.h"
+#include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/field_trials_view.h"
@@ -123,6 +124,7 @@ class NullPeerConnectionObserver : public PeerConnectionObserver {
   void OnIceGatheringChange(
       PeerConnectionInterface::IceGatheringState new_state) override {}
   void OnIceCandidate(const IceCandidate* candidate) override {}
+  void OnIceCandidateRemoved(const IceCandidate* candidate) override {}
 };
 
 class MockNetworkManager : public NetworkManager {
@@ -291,10 +293,12 @@ CreatePeerConnectionFactoryWithRtxDisabled() {
           OpenH264DecoderTemplateAdapter, Dav1dDecoderTemplateAdapter>>(),
   EnableMedia(pcf_dependencies);
 
+  Environment env = CreateEnvironment();
   scoped_refptr<ConnectionContext> context =
-      ConnectionContext::Create(CreateEnvironment(), &pcf_dependencies);
+      ConnectionContext::Create(env, &pcf_dependencies);
   context->set_use_rtx(false);
-  return make_ref_counted<PeerConnectionFactory>(context, &pcf_dependencies);
+  return make_ref_counted<PeerConnectionFactory>(env, context,
+                                                 &pcf_dependencies);
 }
 
 // Verify creation of PeerConnection using internal ADM, video factory and
@@ -710,12 +714,12 @@ TEST(PeerConnectionFactoryDependenciesTest, UsesPacketSocketFactory) {
       std::make_unique<NiceMock<MockPacketSocketFactory>>();
 
   Event called;
-  EXPECT_CALL(*mock_socket_factory, CreateUdpSocket(_, _, _))
-      .WillOnce(InvokeWithoutArgs([&] {
+  EXPECT_CALL(*mock_socket_factory, CreateUdpSocket)
+      .WillOnce([&] {
         called.Set();
         return nullptr;
-      }))
-      .WillRepeatedly(Return(nullptr));
+      })
+      .WillRepeatedly([] { return nullptr; });
 
   PeerConnectionFactoryDependencies pcf_dependencies;
   pcf_dependencies.packet_socket_factory = std::move(mock_socket_factory);
@@ -757,6 +761,30 @@ TEST(PeerConnectionFactoryDependenciesTest,
   scoped_refptr<PeerConnectionFactoryInterface> pcf =
       CreateModularPeerConnectionFactory(std::move(pcf_dependencies));
   pcf->StartAecDump(nullptr, 24'242);
+}
+
+TEST(PeerConnectionFactoryDependenciesTest, RepeatMediaEngineInitialization) {
+  scoped_refptr<AudioDeviceModule> adm = FakeAudioCaptureModule::Create();
+  PeerConnectionFactoryDependencies pcf_dependencies;
+  pcf_dependencies.adm = adm;
+  pcf_dependencies.signaling_thread = Thread::Current();
+  pcf_dependencies.worker_thread = Thread::Current();
+  pcf_dependencies.network_thread = Thread::Current();
+  EnableMediaWithDefaults(pcf_dependencies);
+
+  scoped_refptr<PeerConnectionFactoryInterface> pcf =
+      CreateModularPeerConnectionFactory(std::move(pcf_dependencies));
+
+  for (int i = 0; i < 10; ++i) {
+    EXPECT_FALSE(adm->Initialized());
+    PeerConnectionInterface::RTCConfiguration config;
+    NullPeerConnectionObserver observer;
+    auto pc = pcf->CreatePeerConnectionOrError(
+        config, PeerConnectionDependencies(&observer));
+    ASSERT_TRUE(pc.ok());
+    EXPECT_TRUE(adm->Initialized());
+  }
+  EXPECT_FALSE(adm->Initialized());
 }
 
 }  // namespace

@@ -79,16 +79,17 @@ namespace WebCore {
 #pragma mark -
 #pragma mark SourceBufferPrivateAVFObjC
 
-Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePrivateAVFObjC& parent, Ref<SourceBufferParser>&& parser, Ref<AudioVideoRenderer>&& renderer)
+Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePrivateAVFObjC& parent, const MediaSourceConfiguration& configuration, Ref<SourceBufferParser>&& parser, Ref<AudioVideoRenderer>&& renderer)
 {
-    return adoptRef(*new SourceBufferPrivateAVFObjC(parent, WTFMove(parser), WTFMove(renderer)));
+    return adoptRef(*new SourceBufferPrivateAVFObjC(parent, configuration, WTF::move(parser), WTF::move(renderer)));
 }
 
-SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC& parent, Ref<SourceBufferParser>&& parser, Ref<AudioVideoRenderer>&& renderer)
+SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC& parent, const MediaSourceConfiguration& configuration, Ref<SourceBufferParser>&& parser, Ref<AudioVideoRenderer>&& renderer)
     : SourceBufferPrivate(parent, parent.queueSingleton())
-    , m_parser(WTFMove(parser))
+    , m_parser(WTF::move(parser))
     , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"_s))
-    , m_renderer(WTFMove(renderer))
+    , m_configuration(configuration)
+    , m_renderer(WTF::move(renderer))
 #if !RELEASE_LOG_DISABLED
     , m_logger(parent.logger())
     , m_logIdentifier(parent.nextSourceBufferLogIdentifier())
@@ -96,50 +97,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (isMainThread()) {
-        if (RefPtr webmParser = dynamicDowncast<SourceBufferParserWebM>(m_parser)) {
-            if (RefPtr player = this->player(); player && player->supportsLimitedMatroska())
-                webmParser->allowLimitedMatroska();
-        }
-    }
-
-    m_parser->setCallOnClientThreadCallback([dispatcher = m_dispatcher](auto&& function) {
-        dispatcher->dispatch(WTFMove(function));
-    });
-
-    m_parser->setDidParseInitializationDataCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (InitializationSegment&& segment) {
-        assertIsCurrent(dispatcher);
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->didReceiveInitializationSegment(WTFMove(segment));
-    });
-
-    m_parser->setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
-        assertIsCurrent(dispatcher);
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
-    });
-
-    m_parser->setDidUpdateFormatDescriptionForTrackIDCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<TrackInfo>&& formatDescription, TrackID trackId) {
-        assertIsCurrent(dispatcher);
-        if (RefPtr protectedThis = weakThis.get(); protectedThis)
-            protectedThis->didUpdateFormatDescriptionForTrackId(WTFMove(formatDescription), trackId);
-    });
-
-    m_parser->setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher](Ref<SharedBuffer>&& initData, TrackID trackID) {
-        assertIsCurrent(dispatcher);
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID);
-    });
-
-    m_parser->setDidProvideContentKeyRequestIdentifierForTrackIDCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<SharedBuffer>&& initData, TrackID trackID) {
-        assertIsCurrent(dispatcher);
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID);
-    });
-
-#if !RELEASE_LOG_DISABLED
-    m_parser->setLogger(m_logger.get(), m_logIdentifier);
-#endif
+    configureParser(m_parser);
 }
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
@@ -147,7 +105,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (m_renderer) {
-        ensureOnDispatcher([trackIdentifiers = std::exchange(m_trackIdentifiers, { }), renderer = WTFMove(m_renderer)] {
+        ensureOnDispatcher([trackIdentifiers = std::exchange(m_trackIdentifiers, { }), renderer = WTF::move(m_renderer)] {
             for (auto& pair : trackIdentifiers)
                 renderer->removeTrack(pair.second);
         });
@@ -191,7 +149,7 @@ void SourceBufferPrivateAVFObjC::setTrackChangeCallbacks(const InitializationSeg
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            protectedThis->ensureWeakOnDispatcher<SourceBufferPrivateAVFObjC>([trackId = track.id(), initialized, selected](auto& buffer) {
+            protectedThis->ensureWeakOnDispatcher([trackId = track.id(), initialized, selected](auto& buffer) {
                 assertIsCurrent(buffer.m_dispatcher.get());
 
                 if (initialized) {
@@ -211,7 +169,7 @@ void SourceBufferPrivateAVFObjC::setTrackChangeCallbacks(const InitializationSeg
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            protectedThis->ensureWeakOnDispatcher<SourceBufferPrivateAVFObjC>([trackId = track.id(), initialized, enabled](auto& buffer) {
+            protectedThis->ensureWeakOnDispatcher([trackId = track.id(), initialized, enabled](auto& buffer) {
                 if (initialized) {
                     buffer.audioTrackDidChangeEnabled(trackId, enabled);
                     return;
@@ -325,16 +283,13 @@ void SourceBufferPrivateAVFObjC::processInitializationSegment(std::optional<Init
 
         setTrackChangeCallbacks(*segment, true);
     }
-    callOnMainThreadWithPlayer([](auto& player) {
-        player.characteristicsChanged();
-    });
 
     ALWAYS_LOG(LOGIDENTIFIER, "initialization segment was processed");
 }
 
 void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, TrackID, const String&)
 {
-    didReceiveSample(WTFMove(mediaSample));
+    didReceiveSample(WTF::move(mediaSample));
 }
 
 bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample) const
@@ -360,7 +315,7 @@ bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample)
 void SourceBufferPrivateAVFObjC::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs)
 {
     // Called from SourceBuffer's thread.
-    ensureWeakOnDispatcher<SourceBufferPrivateAVFObjC>([trackIdPairs = WTFMove(trackIdPairs)](auto& buffer) mutable {
+    ensureWeakOnDispatcher([trackIdPairs = WTF::move(trackIdPairs)](auto& buffer) mutable {
         assertIsCurrent(buffer.m_dispatcher.get());
         for (auto& trackIdPair : trackIdPairs) {
             auto oldId = trackIdPair.first;
@@ -376,10 +331,10 @@ void SourceBufferPrivateAVFObjC::updateTrackIds(Vector<std::pair<TrackID, TrackI
             auto trackIdentifierNode = buffer.m_trackIdentifiers.extract(oldId);
             ASSERT(trackIdentifierNode);
             trackIdentifierNode.key() = newId;
-            buffer.m_trackIdentifiers.insert(WTFMove(trackIdentifierNode));
+            buffer.m_trackIdentifiers.insert(WTF::move(trackIdentifierNode));
         }
         buffer.maybeUpdateNeedsVideoLayer();
-        buffer.SourceBufferPrivate::updateTrackIds(WTFMove(trackIdPairs));
+        buffer.SourceBufferPrivate::updateTrackIds(WTF::move(trackIdPairs));
     });
 }
 
@@ -419,7 +374,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    protectedRenderer()->setInitData(initData)->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, initData = WTFMove(initData)](auto&& result) {
+    protect(renderer())->setInitData(initData)->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, initData = WTF::move(initData)](auto&& result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -478,13 +433,19 @@ Ref<MediaPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&&
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 
-    return invokeAsync(m_appendQueue, [data = WTFMove(data), parser = m_parser, weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher]() mutable {
-        Ref ensureDestroyedSharedBuffer = WTFMove(data);
-        return MediaPromise::createAndSettle(parser->appendData(WTFMove(ensureDestroyedSharedBuffer)));
-    })->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, parser = m_parser](auto&& result) {
+    return invokeAsync(m_dispatcher, [data = WTF::move(data), weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return MediaPromise::createAndReject(PlatformMediaError::SourceRemoved);
+        assertIsCurrent(protectedThis->m_dispatcher.get());
+        return invokeAsync(protectedThis->m_appendQueue, [data = WTF::move(data), parser = protectedThis->m_parser]() mutable {
+            Ref ensureDestroyedSharedBuffer = WTF::move(data);
+            return MediaPromise::createAndSettle(parser->appendData(WTF::move(ensureDestroyedSharedBuffer)));
+        });
+    })->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->appendCompleted(!!result);
-        return MediaPromise::createAndSettle(WTFMove(result));
+        return MediaPromise::createAndSettle(WTF::move(result));
     });
 }
 
@@ -503,8 +464,11 @@ void SourceBufferPrivateAVFObjC::resetParserStateInternal()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_appendQueue->dispatch([parser = m_parser] {
-        parser->resetParserState();
+    ensureWeakOnDispatcher([](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        buffer.m_appendQueue->dispatch([parser = buffer.m_parser] {
+            parser->resetParserState();
+        });
     });
 }
 
@@ -514,7 +478,7 @@ void SourceBufferPrivateAVFObjC::destroyRendererTracks()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     for (auto& pair : m_trackIdentifiers) {
-        protectedRenderer()->removeTrack(pair.second);
+        protect(renderer())->removeTrack(pair.second);
     }
     m_trackIdentifiers.clear();
 }
@@ -544,10 +508,17 @@ void SourceBufferPrivateAVFObjC::videoTrackDidChangeSelected(TrackID trackId, bo
     if (selected) {
         if (m_enabledVideoTrackID == trackId)
             return;
+        auto trackIdentifier = protect(renderer())->addTrack(TrackInfo::TrackType::Video);
+        if (!trackIdentifier) {
+            ERROR_LOG(LOGIDENTIFIER, "failed to add video track");
+            if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()))
+                mediaSource->failedToCreateRenderer(MediaSourcePrivateClient::RendererType::Video);
+            return;
+        }
         if (m_enabledVideoTrackID)
             removeTrackID(*m_enabledVideoTrackID);
         m_enabledVideoTrackID = trackId;
-        m_trackIdentifiers.emplace(trackId, protectedRenderer()->addTrack(TrackInfo::TrackType::Video));
+        m_trackIdentifiers.emplace(trackId, *trackIdentifier);
     }
 
     if (!selected && isEnabledVideoTrackID(trackId)) {
@@ -573,21 +544,26 @@ void SourceBufferPrivateAVFObjC::audioTrackDidChangeEnabled(TrackID trackId, boo
         return;
     }
 
-    if (auto trackIdentifier = trackIdentifierFor(trackId))
+    if (auto existingTrackIdentifier = trackIdentifierFor(trackId))
         return;
-    TrackIdentifier trackIdentifier = protectedRenderer()->addTrack(TrackInfo::TrackType::Audio);
-    // FIXME: check if error has been set here.
-    m_trackIdentifiers.emplace(trackId, trackIdentifier);
-    protectedRenderer()->notifyTrackNeedsReenqueuing(trackIdentifier, [weakThis = ThreadSafeWeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
+    auto trackIdentifier = protect(renderer())->addTrack(TrackInfo::TrackType::Audio);
+    if (!trackIdentifier) {
+        ERROR_LOG(LOGIDENTIFIER, "failed to add audio track");
+        if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()))
+            mediaSource->failedToCreateRenderer(MediaSourcePrivateClient::RendererType::Audio);
+        return;
+    }
+    m_trackIdentifiers.emplace(trackId, *trackIdentifier);
+    protect(renderer())->notifyTrackNeedsReenqueuing(*trackIdentifier, [weakThis = ThreadSafeWeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->ensureWeakOnDispatcher<SourceBufferPrivateAVFObjC>([trackId](auto& buffer) {
+        protectedThis->ensureWeakOnDispatcher([trackId](auto& buffer) {
             buffer.reenqueSamples(trackId);
         });
     });
 
-    callOnMainThreadWithPlayer([trackIdentifier](auto& player) {
+    callOnMainThreadWithPlayer([trackIdentifier = *trackIdentifier](auto& player) {
         player.addAudioTrack(trackIdentifier);
     });
 }
@@ -619,7 +595,7 @@ void SourceBufferPrivateAVFObjC::flush()
     assertIsCurrent(m_dispatcher.get());
 
     for (auto pair : m_trackIdentifiers)
-        protectedRenderer()->flushTrack(pair.second);
+        protect(renderer())->flushTrack(pair.second);
 }
 
 void SourceBufferPrivateAVFObjC::flush(TrackID trackId)
@@ -628,7 +604,7 @@ void SourceBufferPrivateAVFObjC::flush(TrackID trackId)
     DEBUG_LOG(LOGIDENTIFIER, trackId);
 
     if (auto trackIdentifier = trackIdentifierFor(trackId))
-        protectedRenderer()->flushTrack(*trackIdentifier);
+        protect(renderer())->flushTrack(*trackIdentifier);
 }
 
 void SourceBufferPrivateAVFObjC::flushAndReenqueueVideo()
@@ -658,7 +634,7 @@ void SourceBufferPrivateAVFObjC::removeTrackID(TrackID trackID)
     assertIsCurrent(m_dispatcher.get());
 
     if (auto trackIdentifier = trackIdentifierFor(trackID)) {
-        protectedRenderer()->removeTrack(*trackIdentifier);
+        protect(renderer())->removeTrack(*trackIdentifier);
         m_trackIdentifiers.erase(trackID);
 
         if (!m_audioTracks.contains(trackID))
@@ -685,7 +661,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, TrackI
         return;
 
     ASSERT(is<MediaSampleAVFObjC>(sample));
-    enqueueSample(downcast<MediaSampleAVFObjC>(WTFMove(sample)), trackId);
+    enqueueSample(downcast<MediaSampleAVFObjC>(WTF::move(sample)), trackId);
 }
 
 void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample, TrackID trackId)
@@ -704,13 +680,13 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
     auto mediaType = PAL::CMFormatDescriptionGetMediaType(formatDescription);
 
     if (auto trackIdentifier = trackIdentifierFor(trackId))
-        protectedRenderer()->enqueueSample(*trackIdentifier, sample, mediaType == kCMMediaType_Video ? minimumUpcomingPresentationTimeForTrackID(trackId) : std::optional<MediaTime> { });
+        protect(renderer())->enqueueSample(*trackIdentifier, sample, mediaType == kCMMediaType_Video ? minimumUpcomingPresentationTimeForTrackID(trackId) : std::optional<MediaTime> { });
 }
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(TrackID trackId)
 {
     if (auto trackIdentifier = trackIdentifierFor(trackId))
-        return protectedRenderer()->isReadyForMoreSamples(*trackIdentifier);
+        return protect(renderer())->isReadyForMoreSamples(*trackIdentifier);
 
     return false;
 }
@@ -739,7 +715,7 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(TrackID trackId)
 void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(TrackID trackId)
 {
     if (auto trackIdentifier = trackIdentifierFor(trackId)) {
-        protectedRenderer()->requestMediaDataWhenReady(*trackIdentifier)->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, trackId](auto&& result) {
+        protect(renderer())->requestMediaDataWhenReady(*trackIdentifier)->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, trackId](auto&& result) {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && result)
                 protectedThis->didBecomeReadyForMoreSamples(trackId);
         });
@@ -755,17 +731,72 @@ void SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime(TrackID trac
 {
     ASSERT_UNUSED(canSetMinimumUpcomingPresentationTime(trackId), trackId);
     if (auto trackIdentifier = trackIdentifierFor(trackId))
-        protectedRenderer()->expectMinimumUpcomingPresentationTime(presentationTime);
+        protect(renderer())->expectMinimumUpcomingPresentationTime(presentationTime);
 }
 
 bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
 {
+    ASSERT(isOnCreationThread());
     ALWAYS_LOG(LOGIDENTIFIER, contentType);
 
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = contentType;
-    return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
+    if (MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
+        return false;
+    RefPtr parser = SourceBufferParser::create(contentType, m_configuration);
+    if (!parser)
+        return false;
+    ensureWeakOnDispatcher([parser = parser.releaseNonNull()](auto& buffer) mutable {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        buffer.configureParser(parser);
+        buffer.m_parser = WTF::move(parser);
+    });
+    return true;
+}
+
+void SourceBufferPrivateAVFObjC::configureParser(SourceBufferParser& parser)
+{
+    parser.setCallOnClientThreadCallback([dispatcher = m_dispatcher](auto&& function) {
+        dispatcher->dispatch(WTF::move(function));
+    });
+
+    parser.setDidParseInitializationDataCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (InitializationSegment&& segment) {
+        assertIsCurrent(dispatcher);
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didReceiveInitializationSegment(WTF::move(segment));
+    });
+
+    parser.setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
+        assertIsCurrent(dispatcher);
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didProvideMediaDataForTrackId(WTF::move(sample), trackId, mediaType);
+    });
+
+    parser.setDidUpdateFormatDescriptionForTrackIDCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<TrackInfo>&& formatDescription, TrackID trackId) {
+        assertIsCurrent(dispatcher);
+        if (RefPtr protectedThis = weakThis.get(); protectedThis)
+            protectedThis->didUpdateFormatDescriptionForTrackId(WTF::move(formatDescription), trackId);
+    });
+
+    parser.setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher](Ref<SharedBuffer>&& initData, TrackID trackID) {
+        assertIsCurrent(dispatcher);
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didProvideContentKeyRequestInitializationDataForTrackID(WTF::move(initData), trackID);
+    });
+
+    parser.setDidProvideContentKeyRequestIdentifierForTrackIDCallback([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = m_dispatcher] (Ref<SharedBuffer>&& initData, TrackID trackID) {
+        assertIsCurrent(dispatcher);
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didProvideContentKeyRequestInitializationDataForTrackID(WTF::move(initData), trackID);
+    });
+
+    if (RefPtr webmParser = dynamicDowncast<SourceBufferParserWebM>(parser); webmParser && m_configuration.supportsLimitedMatroska)
+        webmParser->allowLimitedMatroska();
+
+#if !RELEASE_LOG_DISABLED
+    parser.setLogger(m_logger.get(), m_logIdentifier);
+#endif
 }
 
 RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> SourceBufferPrivateAVFObjC::player() const
@@ -782,10 +813,10 @@ bool SourceBufferPrivateAVFObjC::isEnabledVideoTrackID(TrackID trackID) const
     return m_enabledVideoTrackID && *m_enabledVideoTrackID == trackID;
 }
 
-RefPtr<AudioVideoRenderer> SourceBufferPrivateAVFObjC::protectedRenderer() const
+AudioVideoRenderer& SourceBufferPrivateAVFObjC::renderer() const
 {
     assertIsCurrent(m_dispatcher.get());
-    return m_renderer;
+    return *m_renderer;
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -795,19 +826,18 @@ WTFLogChannel& SourceBufferPrivateAVFObjC::logChannel() const
 }
 #endif
 
-template <>
 void SourceBufferPrivateAVFObjC::ensureWeakOnDispatcher(Function<void(SourceBufferPrivateAVFObjC&)>&& function)
 {
-    auto weakWrapper = [function = WTFMove(function), weakThis = ThreadSafeWeakPtr(*this)] mutable {
+    auto weakWrapper = [function = WTF::move(function), weakThis = ThreadSafeWeakPtr(*this)] mutable {
         if (RefPtr protectedThis = weakThis.get())
             function(*protectedThis);
     };
-    ensureOnDispatcher(WTFMove(weakWrapper));
+    ensureOnDispatcher(WTF::move(weakWrapper));
 }
 
 void SourceBufferPrivateAVFObjC::callOnMainThreadWithPlayer(Function<void(MediaPlayerPrivateMediaSourceAVFObjC&)>&& callback)
 {
-    ensureOnMainThread([callback = WTFMove(callback), weakThis = ThreadSafeWeakPtr { *this }] {
+    ensureOnMainThread([callback = WTF::move(callback), weakThis = ThreadSafeWeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

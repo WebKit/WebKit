@@ -73,7 +73,7 @@ class RtcEventAudioPlayout final : public RtcEvent {
   }
 
  private:
-  RtcEventAudioPlayout(const RtcEventAudioPlayout& other);
+  RtcEventAudioPlayout(const RtcEventAudioPlayout&) = default;
 
   const uint32_t ssrc_;
 

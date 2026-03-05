@@ -49,7 +49,7 @@ public:
         MarkingConstraintExecutorPair&& executors,
         ConstraintVolatility volatility,
         ConstraintParallelism parallelism)
-        : SimpleMarkingConstraint(abbreviatedName, name, WTFMove(executors), volatility, ConstraintConcurrency::Concurrent, parallelism)
+        : SimpleMarkingConstraint(abbreviatedName, name, WTF::move(executors), volatility, ConstraintConcurrency::Concurrent, parallelism)
     {
     }
     

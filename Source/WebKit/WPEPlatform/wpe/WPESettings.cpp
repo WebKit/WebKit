@@ -39,8 +39,8 @@ struct SettingEntry {
     SettingEntry() = default;
 
     SettingEntry(GRefPtr<GVariant>&& defaultValue, GUniquePtr<GVariantType>&& type)
-        : defaultValue(WTFMove(defaultValue))
-        , type(WTFMove(type))
+        : defaultValue(WTF::move(defaultValue))
+        , type(WTF::move(type))
     {
     }
 
@@ -245,7 +245,7 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
             if (iter->value.setValue && !g_variant_compare(iter->value.setValue.get(), parsedValue.get()))
                 continue;
 
-            iter->value.setValue = WTFMove(parsedValue);
+            iter->value.setValue = WTF::move(parsedValue);
             g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(path.data()), path.data(), iter->value.setValue.get());
         }
     }

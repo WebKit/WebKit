@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+CachedImageClient::CachedImageClient() = default;
+
 VisibleInViewportState CachedImageClient::imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect)
 {
     imageChanged(&image, changeRect);

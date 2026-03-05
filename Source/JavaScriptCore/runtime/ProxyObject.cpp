@@ -669,7 +669,7 @@ JSC_DEFINE_HOST_FUNCTION(performProxyConstruct, (JSGlobalObject* globalObject, C
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSObject* target = proxy->target();
     if (constructMethod.isUndefined()) {
-        auto constructData = JSC::getConstructData(target);
+        auto constructData = JSC::getConstructDataInline(target);
         RELEASE_ASSERT(constructData.type != CallData::Type::None);
         RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, target, constructData, ArgList(callFrame), callFrame->newTarget())));
     }

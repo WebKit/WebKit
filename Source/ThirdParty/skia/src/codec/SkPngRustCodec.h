@@ -126,6 +126,7 @@ private:
                        size_t rowBytes,
                        const Options&,
                        int* rowsDecoded) override;
+    bool onSupportsIncrementalDecode(const SkImageInfo&) override { return true; }
     Result onStartIncrementalDecode(const SkImageInfo& dstInfo,
                                     void* pixels,
                                     size_t rowBytes,
@@ -136,7 +137,7 @@ private:
     int onGetRepetitionCount() override;
     IsAnimated onIsAnimated() override;
     const SkFrameHolder* getFrameHolder() const override;
-    std::unique_ptr<SkStream> getEncodedData() const override;
+    sk_sp<const SkData> getEncodedData() const override;
     // Determines whether or not we can read from the rust decoder directly into dst.
     bool canReadRow();
 

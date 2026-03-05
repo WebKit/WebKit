@@ -46,12 +46,12 @@ void TargetedElementRequest::setPoint(WebCore::FloatPoint point)
 
 void TargetedElementRequest::setSelectors(WebCore::TargetedElementSelectors&& selectors)
 {
-    m_request.data = WTFMove(selectors);
+    m_request.data = WTF::move(selectors);
 }
 
 void TargetedElementRequest::setSearchText(WTF::String&& searchText)
 {
-    m_request.data = WTFMove(searchText);
+    m_request.data = WTF::move(searchText);
 }
 
 WebCore::TargetedElementRequest TargetedElementRequest::makeRequest(const WebKit::WebPageProxy& page) const

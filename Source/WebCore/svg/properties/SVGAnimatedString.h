@@ -36,7 +36,7 @@ enum class IsHrefProperty : bool {
     Yes,
 };
 
-using StringOrTrustedScriptURL = Variant<String, RefPtr<TrustedScriptURL>>;
+using StringOrTrustedScriptURL = Variant<String, Ref<TrustedScriptURL>>;
 
 class SVGAnimatedString : public SVGAnimatedPrimitiveProperty<String> {
 public:

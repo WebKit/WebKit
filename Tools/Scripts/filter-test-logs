@@ -51,7 +51,7 @@ def parser():
     parser = argparse.ArgumentParser(description='filter test output')
     parser.add_argument(
         'filter_type',
-        choices=['jsc', 'layout', 'scan-build', 'webdriver', 'test262', 'minibrowser'],
+        choices=['jsc', 'layout', 'scan-build', 'webdriver', 'test262', 'minibrowser', 'swift'],
         help='Choose which test logs to filter'
     )
     parser.add_argument(
@@ -162,6 +162,24 @@ def filter_minibrowser_tests(log_file_name):
                 keep_alive_stdout.maybe_update_progress()
 
 
+def filter_swift(log_file_name):
+    log_file = os.path.abspath(f'{log_file_name}')
+    keep_alive_stdout = KeepAliveStdoutProgress()
+    with open(log_file, 'w') as f:
+        print_all_lines = False
+        for line in sys.stdin:
+            f.write(line)
+            if print_all_lines:
+                print(line, end='')
+            elif line.startswith('ERROR:') or line.startswith('FAILURE:') or '--- Build Script Analyzer ---' in line:
+                print_all_lines = True
+                print(line, end='')
+            elif 'error:' in line.lower():
+                print(line, end='')
+            else:
+                keep_alive_stdout.maybe_update_progress()
+
+
 def main():
     args = parser()
     if args.filter_type == 'jsc':
@@ -176,6 +194,8 @@ def main():
         filter_test262(args.output)
     elif args.filter_type == 'minibrowser':
         filter_minibrowser_tests(args.output)
+    elif args.filter_type == 'swift':
+        filter_swift(args.output)
 
 
 if __name__ == '__main__':

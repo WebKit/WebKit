@@ -41,7 +41,7 @@ public:
         return create(WKSizeMake(width, height));
     }
 
-    const WKSize& size() const { return m_size; }
+    const WKSize& size() const LIFETIME_BOUND { return m_size; }
 
 private:
     explicit Size(const WKSize& size)
@@ -63,7 +63,7 @@ public:
         return adoptRef(*new Point(WKPointMake(x, y)));
     }
 
-    const WKPoint& point() const { return m_point; }
+    const WKPoint& point() const LIFETIME_BOUND { return m_point; }
 
 private:
     explicit Point(const WKPoint& point)
@@ -84,7 +84,7 @@ public:
         return create(WKRectMake(x, y, width, height));
     }
 
-    const WKRect& rect() const { return m_rect; }
+    const WKRect& rect() const LIFETIME_BOUND { return m_rect; }
 
 private:
     explicit Rect(const WKRect& rect)

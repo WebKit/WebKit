@@ -44,7 +44,7 @@ public:
     ContextMenu();
 
     void setItems(const Vector<ContextMenuItem>& items) { m_items = items; }
-    const Vector<ContextMenuItem>& items() const { return m_items; }
+    const Vector<ContextMenuItem>& items() const LIFETIME_BOUND { return m_items; }
 
     void appendItem(const ContextMenuItem& item) { m_items.append(item); } 
 

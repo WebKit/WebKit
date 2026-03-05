@@ -35,11 +35,11 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PromiseRejectionEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PromiseRejectionEvent);
 
-PromiseRejectionEvent::PromiseRejectionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+PromiseRejectionEvent::PromiseRejectionEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::PromiseRejectionEvent, type, initializer, isTrusted)
-    , m_promise(*(initializer.promise))
+    , m_promise(WTF::move(initializer.promise))
     , m_reason(initializer.reason)
 {
 }

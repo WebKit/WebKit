@@ -54,7 +54,7 @@ static const struct nid_to_digest nid_to_digest_mapping[] = {
     // consumers so we retain it there.
     {NID_undef, EVP_sha1, SN_dsaWithSHA, LN_dsaWithSHA},
     {NID_undef, EVP_sha1, SN_dsaWithSHA1, LN_dsaWithSHA1},
-    {NID_undef, EVP_sha1, SN_ecdsa_with_SHA1, NULL},
+    {NID_undef, EVP_sha1, SN_ecdsa_with_SHA1, nullptr},
     {NID_undef, EVP_md5, SN_md5WithRSAEncryption, LN_md5WithRSAEncryption},
     {NID_undef, EVP_sha1, SN_sha1WithRSAEncryption, LN_sha1WithRSAEncryption},
     {NID_undef, EVP_sha224, SN_sha224WithRSAEncryption,
@@ -70,7 +70,7 @@ static const struct nid_to_digest nid_to_digest_mapping[] = {
 const EVP_MD *EVP_get_digestbynid(int nid) {
   if (nid == NID_undef) {
     // Skip the |NID_undef| entries in |nid_to_digest_mapping|.
-    return NULL;
+    return nullptr;
   }
 
   for (const auto &mapping : nid_to_digest_mapping) {
@@ -79,7 +79,7 @@ const EVP_MD *EVP_get_digestbynid(int nid) {
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 static const struct {

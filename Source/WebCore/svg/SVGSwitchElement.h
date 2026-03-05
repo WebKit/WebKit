@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class SVGSwitchElement final : public SVGGraphicsElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGSwitchElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGSwitchElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSwitchElement);
 public:
     static Ref<SVGSwitchElement> create(const QualifiedName&, Document&);

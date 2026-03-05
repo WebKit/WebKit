@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/requestidlecallback/#window_extensions
+
 dictionary IdleRequestOptions {
-    unsigned long timeout;
+    [ImplementationDefaultValue=0] unsigned long timeout;
 };

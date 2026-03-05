@@ -45,7 +45,7 @@ struct PolicyContainer {
     friend bool operator==(const PolicyContainer&, const PolicyContainer&) = default;
 
     PolicyContainer isolatedCopy() const & { return { contentSecurityPolicyResponseHeaders.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy(), referrerPolicy, ipAddressSpace }; }
-    PolicyContainer isolatedCopy() && { return { WTFMove(contentSecurityPolicyResponseHeaders).isolatedCopy(), WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy, ipAddressSpace }; }
+    PolicyContainer isolatedCopy() && { return { WTF::move(contentSecurityPolicyResponseHeaders).isolatedCopy(), WTF::move(crossOriginEmbedderPolicy).isolatedCopy(), WTF::move(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy, ipAddressSpace }; }
 };
 
 WEBCORE_EXPORT void addPolicyContainerHeaders(ResourceResponse&, const PolicyContainer&);

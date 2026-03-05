@@ -59,8 +59,8 @@ public:
 
 
 private:
-    bool supportsDisplayMode(PDFDocumentLayout::DisplayMode) const override;
-    void willChangeDisplayMode(PDFDocumentLayout::DisplayMode) override;
+    bool supportsDisplayMode(PDFDisplayMode) const override;
+    void willChangeDisplayMode(PDFDisplayMode) override;
 
     void teardown() override;
 
@@ -92,7 +92,7 @@ private:
 
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
 
-    bool handleKeyboardCommand(const WebKeyboardEvent&);
+    bool NODELETE handleKeyboardCommand(const WebKeyboardEvent&);
     bool handleKeyboardEventForPageNavigation(const WebKeyboardEvent&);
 
     bool wantsWheelEvents() const override { return true; }
@@ -107,7 +107,7 @@ private:
 
     bool eventCanStartPageTransition(const PlatformWheelEvent&) const;
 
-    bool canTransitionOnSide(WebCore::BoxSide) const;
+    bool NODELETE canTransitionOnSide(WebCore::BoxSide) const;
 
     // Transition state
     enum class TransitionDirection : uint8_t {
@@ -127,7 +127,7 @@ private:
         return direction == TransitionDirection::NextHorizontal || direction == TransitionDirection::NextVertical;
     }
 
-    bool canTransitionInDirection(TransitionDirection) const;
+    bool NODELETE canTransitionInDirection(TransitionDirection) const;
 
     void startOrStopAnimationTimerIfNecessary();
     void animationTimerFired();
@@ -168,8 +168,8 @@ private:
 
     void buildRows();
 
-    bool canGoToNextRow() const;
-    bool canGoToPreviousRow() const;
+    bool NODELETE canGoToNextRow() const;
+    bool NODELETE canGoToPreviousRow() const;
 
     enum class Animated : bool { No, Yes };
     void goToNextRow(Animated);
@@ -179,7 +179,7 @@ private:
     void setVisibleRow(unsigned);
     void updateLayersAfterChangeInVisibleRow(std::optional<unsigned> additionalVisibleRowIndex = { });
 
-    std::optional<unsigned> additionalVisibleRowIndexForDirection(TransitionDirection) const;
+    std::optional<unsigned> NODELETE additionalVisibleRowIndexForDirection(TransitionDirection) const;
 
     // First index is layer, second index is start/end.
     static constexpr size_t topLayerIndex = 0;
@@ -188,7 +188,7 @@ private:
     static constexpr size_t endIndex = 1;
     std::array<std::array<float, 2>, 2> layerOpacitiesForStretchOffset(TransitionDirection, WebCore::FloatSize layerOffset, WebCore::FloatSize rowSize) const;
     WebCore::FloatSize layerOffsetForStretch(TransitionDirection, WebCore::FloatSize stretchDistance, WebCore::FloatSize rowSize) const;
-    static float relevantAxisForDirection(TransitionDirection, WebCore::FloatSize);
+    static float NODELETE relevantAxisForDirection(TransitionDirection, WebCore::FloatSize);
     static void setRelevantAxisForDirection(TransitionDirection, WebCore::FloatSize&, float value);
 
     struct RowData {
@@ -202,29 +202,21 @@ private:
 
         bool isPageBackgroundLayer(const GraphicsLayer*) const;
 
-        RefPtr<WebCore::GraphicsLayer> leftPageBackgroundLayer() const;
+        Ref<WebCore::GraphicsLayer> leftPageBackgroundLayer() const;
         RefPtr<WebCore::GraphicsLayer> rightPageBackgroundLayer() const;
 
         RefPtr<WebCore::GraphicsLayer> backgroundLayerForPageIndex(PDFDocumentLayout::PageIndex) const;
-
-        RefPtr<WebCore::GraphicsLayer> protectedContainerLayer() const { return containerLayer; }
-        RefPtr<WebCore::GraphicsLayer> protectedLeftPageContainerLayer() const { return leftPageContainerLayer; }
-        RefPtr<WebCore::GraphicsLayer> protectedRightPageContainerLayer() const { return rightPageContainerLayer; }
-        RefPtr<WebCore::GraphicsLayer> protectedContentsLayer() const { return contentsLayer; }
-        RefPtr<WebCore::GraphicsLayer> protectedSelectionLayer() const { return selectionLayer; }
     };
 
-    const RowData* rowDataForLayer(const WebCore::GraphicsLayer&) const;
+    const RowData* NODELETE rowDataForLayer(const WebCore::GraphicsLayer&) const;
     WebCore::FloatPoint positionForRowContainerLayer(const PDFLayoutRow&) const;
     WebCore::FloatSize rowContainerSize(const PDFLayoutRow&) const;
-
-    RefPtr<WebCore::GraphicsLayer> protectedRowsContainerLayer() const { return m_rowsContainerLayer; }
 
     RefPtr<WebCore::GraphicsLayer> m_rowsContainerLayer;
     Vector<RowData> m_rows;
 
     WeakHashMap<WebCore::GraphicsLayer, unsigned> m_layerToRowIndexMap;
-    std::optional<PDFDocumentLayout::DisplayMode> m_displayModeAtLastLayerSetup;
+    std::optional<PDFDisplayMode> m_displayModeAtLastLayerSetup;
 
     unsigned m_visibleRowIndex { 0 };
 

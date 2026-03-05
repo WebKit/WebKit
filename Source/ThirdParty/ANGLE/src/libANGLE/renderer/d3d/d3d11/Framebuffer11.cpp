@@ -334,8 +334,7 @@ angle::Result Framebuffer11::blitImpl(const gl::Context *context,
             if (drawBuffer.isAttached() && drawBufferStates[colorAttachment] != GL_NONE)
             {
                 RenderTargetD3D *drawRenderTarget = nullptr;
-                ANGLE_TRY(drawBuffer.getRenderTarget(
-                    context, drawBuffer.getRenderToTextureSamples(), &drawRenderTarget));
+                ANGLE_TRY(drawBuffer.getRenderTarget(context, 0, &drawRenderTarget));
                 ASSERT(drawRenderTarget);
 
                 const bool invertColorSource   = UsePresentPathFast(mRenderer, readBuffer);
@@ -391,8 +390,7 @@ angle::Result Framebuffer11::blitImpl(const gl::Context *context,
         const gl::FramebufferAttachment *drawBuffer = mState.getDepthOrStencilAttachment();
         ASSERT(drawBuffer);
         RenderTargetD3D *drawRenderTarget = nullptr;
-        ANGLE_TRY(drawBuffer->getRenderTarget(context, drawBuffer->getRenderToTextureSamples(),
-                                              &drawRenderTarget));
+        ANGLE_TRY(drawBuffer->getRenderTarget(context, 0, &drawRenderTarget));
         ASSERT(drawRenderTarget);
 
         bool invertDest              = UsePresentPathFast(mRenderer, drawBuffer);
@@ -450,6 +448,8 @@ angle::Result Framebuffer11::getSamplePosition(const gl::Context *context,
     const gl::FramebufferAttachment *attachment = mState.getFirstNonNullAttachment();
     ASSERT(attachment);
     GLsizei sampleCount = attachment->getSamples();
+    // GL_OVR_multiview_multisampled_render_to_texture is not supported on D3D backend
+    ASSERT(!(attachment->isRenderToTexture() && attachment->isMultiview()));
 
     rx::GetSamplePosition(sampleCount, index, xy);
     return angle::Result::Continue;

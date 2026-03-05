@@ -69,7 +69,7 @@ void disassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* c
 void registerLabel(void* thunkAddress, CString&& label)
 {
     Locker lock { Disassembler::labelMapLock };
-    Disassembler::ensureLabelMap().add(thunkAddress, WTFMove(label));
+    Disassembler::ensureLabelMap().add(thunkAddress, WTF::move(label));
 }
 
 void registerLabel(void* address, const char* label)

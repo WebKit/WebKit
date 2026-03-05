@@ -30,7 +30,7 @@ namespace WebCore {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), "PRIMARY"_s);
+    return makeUnique<Pasteboard>(WTF::move(context), "PRIMARY"_s);
 }
 
 

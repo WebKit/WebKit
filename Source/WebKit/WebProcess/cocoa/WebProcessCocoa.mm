@@ -144,7 +144,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "AccessibilityUtilitiesSPI.h"
 #import "UIKitSPI.h"
-#import <bmalloc/MemoryStatusSPI.h>
+#import <wtf/spi/darwin/MemoryStatusSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -238,7 +238,7 @@ id WebProcess::accessibilityFocusedUIElement()
             RefPtr page = WebProcess::singleton().focusedWebPage();
             if (!page || !page->accessibilityRemoteObject())
                 return nil;
-            return [page->protectedAccessibilityRemoteObject() accessibilityFocusedUIElement];
+            return [protect(page->accessibilityRemoteObject()) accessibilityFocusedUIElement];
         });
     };
 
@@ -283,14 +283,14 @@ id WebProcess::accessibilityFocusedUIElement()
         }
 
         RefPtr object = (*isolatedTree)->focusedNode();
-        RetainPtr objectWrapper = object ? object->wrapper() : nil;
-        if (objectWrapper) {
+        RetainPtr platformElement = object ? object->platformElement() : nil;
+        if (platformElement) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (RetainPtr associatedParent = [objectWrapper accessibilityAttributeValue:@"_AXAssociatedPluginParent"])
-                objectWrapper = WTFMove(associatedParent);
+            if (RetainPtr associatedParent = [platformElement accessibilityAttributeValue:@"_AXAssociatedPluginParent"])
+                platformElement = WTF::move(associatedParent);
             ALLOW_DEPRECATED_DECLARATIONS_END
         }
-        return objectWrapper.autorelease();
+        return platformElement.autorelease();
     }
 #endif
 
@@ -318,7 +318,7 @@ static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
     bool authenticated = false;
     // IPC must be done on the main runloop, so dispatch it to avoid crashes when the secondary AX thread handles this callback.
     callOnMainRunLoopAndWait([&authenticated, auditToken] {
-        auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), 0);
+        auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), 0);
         std::tie(authenticated) = sendResult.takeReplyOr(false);
     });
     return authenticated;
@@ -373,6 +373,15 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    // Set JSC options early, before any VM creation
+    if (parameters.shouldEnableWebAssemblyDebugger) [[unlikely]] {
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::enableWasmDebugger() = true;
+        JSC::Options::notifyOptionsChanged();
+    }
+#endif
+
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     initializeLogForwarding(parameters);
 #endif
@@ -389,7 +398,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     unsetenv("BSServiceDomains");
 #endif
 
-    applyProcessCreationParameters(WTFMove(parameters.auxiliaryProcessParameters));
+    applyProcessCreationParameters(WTF::move(parameters.auxiliaryProcessParameters));
 
     setQOS(parameters.latencyQOS, parameters.throughputQOS);
 
@@ -398,7 +407,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(static_cast<UIUserInterfaceIdiom>(overrideUserInterfaceIdiom), overrideScaleFactor);
 #endif
 
-    populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
+    populateMobileGestaltCache(WTF::move(parameters.mobileGestaltExtensionHandle));
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
@@ -501,7 +510,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
     if (parameters.launchServicesExtensionHandle) {
-        RefPtr sandboxExtension = SandboxExtension::create(WTFMove(*parameters.launchServicesExtensionHandle));
+        RefPtr sandboxExtension = SandboxExtension::create(WTF::move(*parameters.launchServicesExtensionHandle));
         m_launchServicesExtension = sandboxExtension;
         if (sandboxExtension) {
             bool ok = sandboxExtension->consume();
@@ -530,9 +539,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // App nap must be manually enabled when not running the NSApplication run loop.
     __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
 
+#if ENABLE(INITIALIZE_NSAPPLICATION_ON_DEMAND)
+    _RegisterApplication(nullptr, nullptr);
+#else
     // Initialize the shared application so method calls using `NSApp` are not no-ops.
     [NSApplication sharedApplication];
-#endif
+#endif // ENABLE(INITIALIZE_NSAPPLICATION_ON_DEMAND)
+#endif // PLATFORM(MAC)
 
 #if !ENABLE(CFPREFS_DIRECT_MODE)
     WTF::listenForLanguageChangeNotifications();
@@ -547,7 +560,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         setMediaMIMETypes(parameters.mediaMIMETypes);
     else {
         AVAssetMIMETypeCache::singleton().setCacheMIMETypesCallback([protectedThis = Ref { *this }](const Vector<String>& types) {
-            protectedThis->protectedParentProcessConnection()->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
+            protect(protectedThis->parentProcessConnection())->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
         });
     }
 
@@ -565,7 +578,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setSystemHasAC(parameters.systemHasAC);
 
 #if PLATFORM(IOS_FAMILY)
-    RenderThemeIOS::setCSSValueToSystemColorMap(WTFMove(parameters.cssValueToSystemColorMap));
+    RenderThemeIOS::setCSSValueToSystemColorMap(WTF::move(parameters.cssValueToSystemColorMap));
     RenderThemeIOS::setFocusRingColor(parameters.focusRingColor);
 #endif
 
@@ -600,7 +613,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     disableURLSchemeCheckInDataDetectors();
 
 #if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
-    if (auto auditToken = parentProcessConnection()->getAuditToken()) {
+    if (auto auditToken = protect(parentProcessConnection())->getAuditToken()) {
         bool parentCanSetStateFlags = WTF::hasEntitlementValueInArray(auditToken.value(), "com.apple.private.security.enable-state-flags"_s, "EnableQuickLookSandboxResources"_s);
         if (parentCanSetStateFlags) {
             auto auditToken = auditTokenForSelf();
@@ -620,8 +633,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if ENABLE(CLOSE_WEBCONTENT_XPC_CONNECTION_POST_LAUNCH)
-    xpc_connection_cancel(parentProcessConnection()->xpcConnection());
+    xpc_connection_cancel(protect(parentProcessConnection()->xpcConnection()));
 #endif
+
+    if (getenv("WEBKIT_PAUSE_WEB_PROCESS_ON_LAUNCH"))
+        WTF::sleep(5_s);
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -637,8 +653,15 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 #endif
 #endif
 #if PLATFORM(IOS_FAMILY)
-    grantAccessToContainerTempDirectory(parameters.containerTemporaryDirectoryExtensionHandle);
-#endif
+#if !USE(EXTENSIONKIT)
+    SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
+#endif // !USE(EXTENSIONKIT)
+#if ENABLE(LLVM_PROFILE_GENERATION)
+    WebKit::initializeLLVMProfiling();
+    WebCore::initializeLLVMProfiling();
+    JSC::initializeLLVMProfiling();
+#endif // ENABLE(LLVM_PROFILE_GENERATION)
+#endif // PLATFORM(IOS_FAMILY)
 
     if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
         auto javaScriptConfigFile = makeString(parameters.javaScriptConfigurationDirectory, "/JSC.config"_s);
@@ -707,7 +730,7 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
         return;
     }
 #if ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
-    m_pendingDisplayName = WTFMove(displayName);
+    m_pendingDisplayName = WTF::move(displayName);
     return;
 #endif
 #endif // ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
@@ -734,7 +757,7 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
 #if PLATFORM(IOS_FAMILY)
 static NSString *webProcessLoaderAccessibilityBundlePath()
 {
-    NSString *path = (__bridge NSString *)GSSystemRootDirectory();
+    RetainPtr path = (__bridge NSString *)GSSystemRootDirectory();
 #if PLATFORM(MACCATALYST)
     path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
 #endif
@@ -743,7 +766,7 @@ static NSString *webProcessLoaderAccessibilityBundlePath()
 
 static NSString *webProcessAccessibilityBundlePath()
 {
-    NSString *path = (__bridge NSString *)GSSystemRootDirectory();
+    RetainPtr path = (__bridge NSString *)GSSystemRootDirectory();
 #if PLATFORM(MACCATALYST)
     path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
 #endif
@@ -758,20 +781,20 @@ static void registerWithAccessibility()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    NSString *bundlePath = webProcessLoaderAccessibilityBundlePath();
+    RetainPtr bundlePath = webProcessLoaderAccessibilityBundlePath();
     NSError *error = nil;
-    if (![[NSBundle bundleWithPath:bundlePath] loadAndReturnError:&error])
-        LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath, error);
+    if (![[NSBundle bundleWithPath:bundlePath.get()] loadAndReturnError:&error])
+        LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath.get(), error);
 
     // This code will eagerly start the in-process AX server.
     // This enables us to revoke the Mach bootstrap sandbox extension.
-    NSString *webProcessAXBundlePath = webProcessAccessibilityBundlePath();
-    NSBundle *bundle = [NSBundle bundleWithPath:webProcessAXBundlePath];
+    RetainPtr webProcessAXBundlePath = webProcessAccessibilityBundlePath();
+    RetainPtr bundle = [NSBundle bundleWithPath:webProcessAXBundlePath.get()];
     error = nil;
     if ([bundle loadAndReturnError:&error])
         [[bundle principalClass] safeValueForKey:@"accessibilityInitializeBundle"];
     else
-        LOG_ERROR("Failed to load accessibility bundle at %@: %@", webProcessAXBundlePath, error);
+        LOG_ERROR("Failed to load accessibility bundle at %@: %@", webProcessAXBundlePath.get(), error);
 #endif
 }
 
@@ -854,7 +877,7 @@ static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogCli
 #endif
 
     RELEASE_ASSERT(!logClient());
-    logClient() = WTFMove(newLogClient);
+    logClient() = WTF::move(newLogClient);
 
     // OS_LOG_TYPE_DEFAULT implies default, fault, and error.
     // OS_LOG_TYPE_DEBUG implies debug, info, default, fault, and error.
@@ -920,17 +943,17 @@ void WebProcess::initializeLogForwarding(const WebProcessCreationParameters& par
     auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, 1_s);
     if (!connectionPair)
         CRASH();
-    auto [connection, handle] = WTFMove(*connectionPair);
-    connection->open(*this, RunLoop::currentSingleton());
+    auto [connection, handle] = WTF::move(*connectionPair);
+    protect(connection)->open(protect(*this), RunLoop::currentSingleton());
     std::unique_ptr newLogClient = makeUnique<LogClient>(Ref { connection });
-    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(WTFMove(handle), newLogClient->identifier()), [newLogClient = WTFMove(newLogClient), connection = WTFMove(connection), isDebugLoggingEnabled = parameters.isDebugLoggingEnabled] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) mutable {
-        connection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
-        registerLogClient(isDebugLoggingEnabled, WTFMove(newLogClient));
+    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(WTF::move(handle), newLogClient->identifier()), [newLogClient = WTF::move(newLogClient), connection = WTF::move(connection), isDebugLoggingEnabled = parameters.isDebugLoggingEnabled] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) mutable {
+        connection->setSemaphores(WTF::move(wakeUpSemaphore), WTF::move(clientWaitSemaphore));
+        registerLogClient(isDebugLoggingEnabled, WTF::move(newLogClient));
     });
 #else
     std::unique_ptr newLogClient = makeUnique<LogClient>(*parentConnection);
-    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(newLogClient->identifier()), [newLogClient = WTFMove(newLogClient), isDebugLoggingEnabled = parameters.isDebugLoggingEnabled] mutable {
-        registerLogClient(isDebugLoggingEnabled, WTFMove(newLogClient));
+    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(newLogClient->identifier()), [newLogClient = WTF::move(newLogClient), isDebugLoggingEnabled = parameters.isDebugLoggingEnabled] mutable {
+        registerLogClient(isDebugLoggingEnabled, WTF::move(newLogClient));
     });
 #endif
 
@@ -984,11 +1007,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 #if USE(APPKIT)
 void WebProcess::stopRunLoop()
 {
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
     AuxiliaryProcess::stopNSRunLoop();
-#else
-    AuxiliaryProcess::stopNSAppRunLoop();
-#endif
 }
 #endif
 
@@ -1003,7 +1022,7 @@ RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection())
         return nullptr;
-    std::optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
+    std::optional<audit_token_t> auditToken = protect(parentProcessConnection())->getAuditToken();
     if (!auditToken)
         return nullptr;
     return adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
@@ -1063,7 +1082,7 @@ void WebProcess::getProcessDisplayName(CompletionHandler<void(String&&)>&& compl
     auto auditToken = auditTokenForSelf();
     if (!auditToken)
         return completionHandler({ });
-    ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::GetProcessDisplayName(*auditToken), WTFMove(completionHandler));
+    ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::GetProcessDisplayName(*auditToken), WTF::move(completionHandler));
 #else
     completionHandler({ });
 #endif
@@ -1146,7 +1165,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
                 WEBPROCESS_RELEASE_LOG_ERROR_WITH_THIS(protectedThis.get(), ProcessSuspension, "updateCPUMonitorState: Service worker process exceeded CPU limit of %.1f%% (was using %.1f%%)", protectedThis->m_cpuLimit.value() * 100, cpuUsage * 100);
             else
                 WEBPROCESS_RELEASE_LOG_ERROR_WITH_THIS(protectedThis.get(), ProcessSuspension, "updateCPUMonitorState: WebProcess exceeded CPU limit of %.1f%% (was using %.1f%%) hasVisiblePages? %d", protectedThis->m_cpuLimit.value() * 100, cpuUsage * 100, protectedThis->hasVisibleWebPage());
-            protectedThis->protectedParentProcessConnection()->send(Messages::WebProcessProxy::DidExceedCPULimit(), 0);
+            protect(protectedThis->parentProcessConnection())->send(Messages::WebProcessProxy::DidExceedCPULimit(), 0);
         });
     } else if (reason == CPUMonitorUpdateReason::VisibilityHasChanged) {
         // If the visibility has changed, stop the CPU monitor before setting its limit. This is needed because the CPU usage can vary wildly based on visibility and we would
@@ -1427,7 +1446,7 @@ void WebProcess::grantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandl
     if (m_assetServicesExtensions.size())
         return;
     for (auto& handle : assetServicesHandles) {
-        auto extension = SandboxExtension::create(WTFMove(handle));
+        auto extension = SandboxExtension::create(WTF::move(handle));
         if (!extension)
             continue;
         extension->consume();
@@ -1503,8 +1522,8 @@ void WebProcess::updatePageScreenProperties()
 
 void WebProcess::unblockServicesRequiredByAccessibility(Vector<SandboxExtension::Handle>&& handles)
 {
-    auto extensions = WTF::compactMap(WTFMove(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
-        auto extension = SandboxExtension::create(WTFMove(handle));
+    auto extensions = WTF::compactMap(WTF::move(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
+        auto extension = SandboxExtension::create(WTF::move(handle));
         if (extension)
             extension->consume();
         return extension;
@@ -1534,7 +1553,7 @@ void WebProcess::didWriteToPasteboardAsynchronously(const String& pasteboardName
 void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboardName)
 {
     while (m_pendingPasteboardWriteCounts.contains(pasteboardName)) {
-        if (protectedParentProcessConnection()->waitForAndDispatchImmediately<Messages::WebProcess::DidWriteToPasteboardAsynchronously>(0, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) != IPC::Error::NoError) {
+        if (protect(parentProcessConnection())->waitForAndDispatchImmediately<Messages::WebProcess::DidWriteToPasteboardAsynchronously>(0, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) != IPC::Error::NoError) {
             m_pendingPasteboardWriteCounts.removeAll(pasteboardName);
             break;
         }
@@ -1563,19 +1582,19 @@ void WebProcess::systemDidWake()
 #if PLATFORM(MAC)
 void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle, SandboxExtension::Handle&& machBootstrapHandle)
 {
-    auto cacheInvalidationHandler = [handle = WTFMove(handle), machBootstrapHandle = WTFMove(machBootstrapHandle)] () mutable {
-        auto bootstrapExtension = SandboxExtension::create(WTFMove(machBootstrapHandle));
+    auto cacheInvalidationHandler = [handle = WTF::move(handle), machBootstrapHandle = WTF::move(machBootstrapHandle)] () mutable {
+        auto bootstrapExtension = SandboxExtension::create(WTF::move(machBootstrapHandle));
 
         if (bootstrapExtension)
             bootstrapExtension->consume();
 
-        AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
+        AuxiliaryProcess::openDirectoryCacheInvalidated(WTF::move(handle));
 
         if (bootstrapExtension)
             bootstrapExtension->revoke();
     };
 
-    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTF::move(cacheInvalidationHandler)).get());
 }
 #endif
 
@@ -1669,8 +1688,8 @@ void WebProcess::registerFontMap(HashMap<String, URL>&& fontMap, HashMap<String,
     RELEASE_LOG(Process, "WebProcess::registerFontMap");
     SandboxExtension::consumePermanently(sandboxExtensions);
     Locker locker(userInstalledFontMapLock());
-    userInstalledFontMap() = WTFMove(fontMap);
-    userInstalledFontFamilyMap() = WTFMove(fontFamilyMap);
+    userInstalledFontMap() = WTF::move(fontMap);
+    userInstalledFontFamilyMap() = WTF::move(fontFamilyMap);
 }
 
 #if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
@@ -1683,8 +1702,8 @@ void WebProcess::initializeAccessibility(Vector<SandboxExtension::Handle>&& hand
 #endif
 
     RELEASE_LOG(Process, "WebProcess::initializeAccessibility, pid = %d", getpid());
-    auto extensions = WTF::compactMap(WTFMove(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
-        auto extension = SandboxExtension::create(WTFMove(handle));
+    auto extensions = WTF::compactMap(WTF::move(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
+        auto extension = SandboxExtension::create(WTF::move(handle));
         if (extension)
             extension->consume();
         return extension;

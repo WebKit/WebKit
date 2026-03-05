@@ -124,6 +124,7 @@ class RTC_EXPORT VideoFrame {
     Builder& set_id(uint16_t id);
     Builder& set_update_rect(const std::optional<UpdateRect>& update_rect);
     Builder& set_packet_infos(RtpPacketInfos packet_infos);
+    Builder& set_is_repeat_frame(bool is_repeat_frame);
 
    private:
     uint16_t id_ = kNotSetId;
@@ -138,6 +139,7 @@ class RTC_EXPORT VideoFrame {
     RenderParameters render_parameters_;
     std::optional<UpdateRect> update_rect_;
     RtpPacketInfos packet_infos_;
+    bool is_repeat_frame_ = false;
   };
 
   // To be deprecated. Migrate all use to Builder.
@@ -283,6 +285,11 @@ class RTC_EXPORT VideoFrame {
     processing_time_ = processing_time;
   }
 
+  bool is_repeat_frame() const { return is_repeat_frame_; }
+  void set_is_repeat_frame(bool is_repeat_frame) {
+    is_repeat_frame_ = is_repeat_frame;
+  }
+
  private:
   VideoFrame(uint16_t id,
              const scoped_refptr<VideoFrameBuffer>& buffer,
@@ -295,7 +302,21 @@ class RTC_EXPORT VideoFrame {
              const std::optional<ColorSpace>& color_space,
              const RenderParameters& render_parameters,
              const std::optional<UpdateRect>& update_rect,
-             RtpPacketInfos packet_infos);
+             RtpPacketInfos packet_infos,
+             bool is_repeat_frame)
+      : id_(id),
+        video_frame_buffer_(buffer),
+        timestamp_rtp_(timestamp_rtp),
+        ntp_time_ms_(ntp_time_ms),
+        timestamp_us_(timestamp_us),
+        presentation_timestamp_(presentation_timestamp),
+        reference_time_(reference_time),
+        rotation_(rotation),
+        color_space_(color_space),
+        render_parameters_(render_parameters),
+        update_rect_(update_rect),
+        packet_infos_(std::move(packet_infos)),
+        is_repeat_frame_(is_repeat_frame) {}
 
   uint16_t id_;
   // An opaque reference counted handle that stores the pixel data.
@@ -328,6 +349,11 @@ class RTC_EXPORT VideoFrame {
   // returned from the decoder.
   // Currently, not set for locally captured video frames.
   std::optional<ProcessingTime> processing_time_;
+  // Indicates if this is a "repeat frame" - i.e. a copy a previous frame,
+  // inserted in order to make a video codec converge towards a stable quality
+  // in cases where a capturer is using a variable frame rate and stops
+  // producing frames when nothing has changed.
+  bool is_repeat_frame_;
 };
 
 }  // namespace webrtc

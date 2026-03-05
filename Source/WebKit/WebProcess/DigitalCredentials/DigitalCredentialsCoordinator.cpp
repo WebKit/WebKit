@@ -26,9 +26,10 @@
 #include "config.h"
 #include "DigitalCredentialsCoordinator.h"
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#if ENABLE(WEB_AUTHN)
 #include "DigitalCredentialsCoordinatorMessages.h"
 #include "DigitalCredentialsRequestValidatorBridge.h"
+#include "Logging.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/DigitalCredentialsProtocols.h>
@@ -60,18 +61,28 @@ Ref<DigitalCredentialsCoordinator> DigitalCredentialsCoordinator::create(WebPage
     return adoptRef(*new DigitalCredentialsCoordinator(webPage));
 }
 
-void DigitalCredentialsCoordinator::showDigitalCredentialsPicker(Vector<UnvalidatedDigitalCredentialRequest>&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+void DigitalCredentialsCoordinator::showDigitalCredentialsPicker(WebCore::DigitalCredentialsRawRequests&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    ASSERT(m_rawRequests.isEmpty());
-    m_rawRequests = WTFMove(rawRequests);
+    WTF::switchOn(m_rawRequests, [](auto& cachedRawRequests) {
+        ASSERT(cachedRawRequests.isEmpty());
+    });
+    m_rawRequests = WTF::move(rawRequests);
 
     if (RefPtr page = m_page.get()) {
-        page->showDigitalCredentialsPicker(request, [this, completionHandler = WTFMove(completionHandler)](Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&& responseOrException) mutable {
-            m_rawRequests.clear();
-            completionHandler(WTFMove(responseOrException));
+        page->showDigitalCredentialsPicker(request, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&& responseOrException) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "The coordinator is no longer available."_s }));
+
+            WTF::switchOn(protectedThis->m_rawRequests, [](auto& cachedRawRequests) {
+                cachedRawRequests.clear();
+            });
+            completionHandler(WTF::move(responseOrException));
         });
     } else {
-        m_rawRequests.clear();
+        WTF::switchOn(m_rawRequests, [](auto& cachedRawRequests) {
+            cachedRawRequests.clear();
+        });
         completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "The page is not available."_s }));
     }
 }
@@ -79,24 +90,27 @@ void DigitalCredentialsCoordinator::showDigitalCredentialsPicker(Vector<Unvalida
 ExceptionOr<Vector<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentialsCoordinator::validateAndParseDigitalCredentialRequests(const SecurityOrigin& topOrigin, const Document& document, const Vector<UnvalidatedDigitalCredentialRequest>& unvalidatedRequests)
 {
     auto results = DigitalCredentials::validateRequests(topOrigin, document, unvalidatedRequests);
-    return WTFMove(results);
+    return WTF::move(results);
 }
 
 void DigitalCredentialsCoordinator::dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_rawRequests.clear();
+    WTF::switchOn(m_rawRequests, [](auto& rawRequests) {
+        rawRequests.clear();
+    });
     if (RefPtr page = m_page.get())
-        page->dismissDigitalCredentialsPicker(WTFMove(completionHandler));
+        page->dismissDigitalCredentialsPicker(WTF::move(completionHandler));
     else
         completionHandler(false);
 }
 
-void DigitalCredentialsCoordinator::provideRawDigitalCredentialRequests(CompletionHandler<void(Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&)>&& completionHandler)
+void DigitalCredentialsCoordinator::provideRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests&&)>&& completionHandler)
 {
-    ASSERT(!m_rawRequests.isEmpty());
-    completionHandler(WTFMove(m_rawRequests));
-    m_rawRequests.clear();
+    WTF::switchOn(m_rawRequests, [](auto& rawRequests) {
+        ASSERT(!rawRequests.isEmpty());
+    });
+    completionHandler(std::exchange(m_rawRequests, { }));
 }
 
 } // namespace WebKit
-#endif // HAVE(DIGITAL_CREDENTIALS_UI)
+#endif // ENABLE(WEB_AUTHN)

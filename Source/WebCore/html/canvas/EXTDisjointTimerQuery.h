@@ -35,7 +35,7 @@ namespace WebCore {
 class WebGLTimerQueryEXT;
 
 class EXTDisjointTimerQuery final : public WebGLExtension<WebGLRenderingContext> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTDisjointTimerQuery);
+    WTF_MAKE_TZONE_ALLOCATED(EXTDisjointTimerQuery);
     WTF_MAKE_NONCOPYABLE(EXTDisjointTimerQuery);
 public:
     explicit EXTDisjointTimerQuery(WebGLRenderingContext&);
@@ -54,3 +54,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTDisjointTimerQuery)

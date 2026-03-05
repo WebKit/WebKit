@@ -30,16 +30,11 @@ namespace WebCore {
 
 class LocalFrameView;
 
-struct MouseRelatedEventInit : public EventModifierInit {
-    double screenX { 0 };
-    double screenY { 0 };
-    double movementX { 0 };
-    double movementY { 0 };
-};
+struct MouseEventInit;
 
 // Internal only: Helper class for what's common between mouse and wheel events.
 class MouseRelatedEvent : public UIEventWithKeyState {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MouseRelatedEvent);
+    WTF_MAKE_TZONE_ALLOCATED(MouseRelatedEvent);
 public:
     enum class IsSimulated : bool { No, Yes };
 
@@ -87,7 +82,8 @@ protected:
         const DoublePoint& screenLocation, const DoublePoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers,
         IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
     MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const DoublePoint& globalLocation, OptionSet<Modifier>);
-    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, const MouseEventInit&, IsTrusted = IsTrusted::No);
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, const EventModifierInit&, IsTrusted = IsTrusted::No);
 
     void initCoordinates();
     void initCoordinates(const DoublePoint& clientLocation);

@@ -1,0 +1,18 @@
+
+Test that audio description tracks correctly report kind='description' when Audio Descriptions is enabled.
+
+EVENT(addtrack)
+EVENT(addtrack) - 1 tracks
+EVENT(addtrack)
+EVENT(addtrack) - 2 tracks
+EXPECTED (video.audioTracks.length == '2') OK
+Track 0: label='Main Stereo', kind='main'
+Track 1: label='Audio Description Stereo', kind='description'
+EXPECTED (adTrack != null == 'true') OK
+EXPECTED (mainTrack != null == 'true') OK
+EXPECTED (adTrack.kind == 'description') OK
+EXPECTED (adTrack.label == 'Audio Description Stereo') OK
+EXPECTED (mainTrack.kind == 'main') OK
+EXPECTED (mainTrack.label == 'Main Stereo') OK
+END OF TEST
+

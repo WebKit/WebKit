@@ -11,6 +11,7 @@ FAIL Historical interface: RGBColor assert_false: expected false got true
 FAIL Historical interface: CSSValue assert_false: expected false got true
 FAIL Historical interface: CSSPrimitiveValue assert_false: expected false got true
 FAIL Historical interface: CSSValueList assert_false: expected false got true
+PASS Historical interface: CSS2Properties
 FAIL Historical CSSStyleDeclaration member: getPropertyCSSValue assert_false: expected false got true
 PASS Historical CSSStyleDeclaration member: setPropertyValue
 PASS Historical CSSStyleDeclaration member: setPropertyPriority

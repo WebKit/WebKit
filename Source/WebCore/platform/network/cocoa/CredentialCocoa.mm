@@ -73,7 +73,7 @@ Credential::Credential(const Credential& original, CredentialPersistence persist
     else {
         // It is not possible to set the persistence of server trust credentials.
         ASSERT_NOT_REACHED();
-        m_nsCredential = WTFMove(originalNSURLCredential);
+        m_nsCredential = WTF::move(originalNSURLCredential);
     }
 }
 
@@ -96,11 +96,6 @@ NSURLCredential *Credential::nsCredential() const
     return m_nsCredential.get();
 }
 
-RetainPtr<NSURLCredential> Credential::protectedNSCredential() const
-{
-    return nsCredential();
-}
-
 bool Credential::isEmpty() const
 {
     if (m_nsCredential)
@@ -119,7 +114,7 @@ bool Credential::platformCompare(const Credential& a, const Credential& b)
     if (!a.m_nsCredential && !b.m_nsCredential)
         return true;
 
-    return [a.protectedNSCredential() isEqual:b.protectedNSCredential().get()];
+    return [protect(a.nsCredential()) isEqual:protect(b.nsCredential()).get()];
 }
 
 bool Credential::encodingRequiresPlatformData(NSURLCredential *credential)
@@ -129,7 +124,7 @@ bool Credential::encodingRequiresPlatformData(NSURLCredential *credential)
 
 Credential Credential::fromIPCData(IPCData&& ipcData)
 {
-    return WTF::switchOn(WTFMove(ipcData), [](NonPlatformData&& data) {
+    return WTF::switchOn(WTF::move(ipcData), [](NonPlatformData&& data) {
         return Credential { data.user, data.password, data.persistence };
     }, [](RetainPtr<NSURLCredential>&& credential) {
         return Credential { credential.get() };

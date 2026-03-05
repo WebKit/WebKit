@@ -12,15 +12,11 @@
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
 #include "compiler/translator/tree_ops/hlsl/AddDefaultReturnStatements.h"
-#include "compiler/translator/tree_ops/hlsl/AggregateAssignArraysInSSBOs.h"
-#include "compiler/translator/tree_ops/hlsl/AggregateAssignStructsInSSBOs.h"
 #include "compiler/translator/tree_ops/hlsl/ArrayReturnValueToOutParameter.h"
 #include "compiler/translator/tree_ops/hlsl/BreakVariableAliasingInInnerLoops.h"
 #include "compiler/translator/tree_ops/hlsl/ExpandIntegerPowExpressions.h"
 #include "compiler/translator/tree_ops/hlsl/RecordUniformBlocksWithLargeArrayMember.h"
-#include "compiler/translator/tree_ops/hlsl/RewriteAtomicFunctionExpressions.h"
 #include "compiler/translator/tree_ops/hlsl/RewriteElseBlocks.h"
-#include "compiler/translator/tree_ops/hlsl/RewriteExpressionsWithShaderStorageBlock.h"
 #include "compiler/translator/tree_ops/hlsl/RewriteUnaryMinusOperatorInt.h"
 #include "compiler/translator/tree_ops/hlsl/SeparateArrayConstructorStatements.h"
 #include "compiler/translator/tree_ops/hlsl/SeparateArrayInitialization.h"
@@ -49,7 +45,7 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
     // the return value of the function is not propagated to its return expressions.  Additionally,
     // an expression such as
     //
-    //     cond ? gl_NumWorkGroups.x : gl_NumWorkGroups.y
+    //     cond ? gl_<SomeConstant>.x : gl_<SomeConstant>.y
     //
     // does not have a precision as the built-in does not specify a precision.
     //
@@ -98,24 +94,6 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
     if (!SeparateArrayConstructorStatements(this, root))
     {
         return false;
-    }
-
-    if (getShaderVersion() >= 310)
-    {
-        // Do element-by-element assignments of arrays in SSBOs. This allows the D3D backend to use
-        // RWByteAddressBuffer.Load() and .Store(), which only operate on values up to 16 bytes in
-        // size. Note that this must be done before SeparateExpressionsReturningArrays.
-        if (!sh::AggregateAssignArraysInSSBOs(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-        // Do field-by-field assignment of structs in SSBOs. This allows the D3D backend to use
-        // RWByteAddressBuffer.Load() and .Store(), which only operate on values up to 16 bytes in
-        // size.
-        if (!sh::AggregateAssignStructsInSSBOs(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
     }
 
     if (!SeparateExpressionsReturningArrays(this, root, &getSymbolTable()))
@@ -198,21 +176,6 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         }
     }
 
-    if (getShaderVersion() >= 310)
-    {
-        // Due to ssbo also can be used as the argument of atomic memory functions, we should put
-        // RewriteExpressionsWithShaderStorageBlock before RewriteAtomicFunctionExpressions.
-        if (!sh::RewriteExpressionsWithShaderStorageBlock(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-        if (!sh::RewriteAtomicFunctionExpressions(this, root, &getSymbolTable(),
-                                                  getShaderVersion()))
-        {
-            return false;
-        }
-    }
-
     mUniformBlockOptimizedMap.clear();
     mSlowCompilingUniformBlockSet.clear();
     // In order to get the exact maximum of slots are available for shader resources, which would
@@ -230,13 +193,11 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
     sh::OutputHLSL outputHLSL(
         getShaderType(), getShaderSpec(), getShaderVersion(), getExtensionBehavior(),
         getSourcePath(), getOutputType(), numRenderTargets, maxDualSourceDrawBuffers, getUniforms(),
-        compileOptions, getComputeShaderLocalSize(), &getSymbolTable(), perfDiagnostics,
-        mUniformBlockOptimizedMap, mShaderStorageBlocks, getClipDistanceArraySize(),
-        getCullDistanceArraySize(), isEarlyFragmentTestsSpecified());
+        compileOptions, &getSymbolTable(), perfDiagnostics, mUniformBlockOptimizedMap,
+        getClipDistanceArraySize(), getCullDistanceArraySize(), isEarlyFragmentTestsSpecified());
 
     outputHLSL.output(root, getInfoSink().obj);
 
-    mShaderStorageBlockRegisterMap      = outputHLSL.getShaderStorageBlockRegisterMap();
     mUniformBlockRegisterMap            = outputHLSL.getUniformBlockRegisterMap();
     mUniformBlockUseStructuredBufferMap = outputHLSL.getUniformBlockUseStructuredBufferMap();
     mUniformRegisterMap                 = outputHLSL.getUniformRegisterMap();
@@ -251,18 +212,6 @@ bool TranslatorHLSL::shouldFlattenPragmaStdglInvariantAll()
 {
     // Not necessary when translating to HLSL.
     return false;
-}
-
-bool TranslatorHLSL::hasShaderStorageBlock(const std::string &uniformBlockName) const
-{
-    return (mShaderStorageBlockRegisterMap.count(uniformBlockName) > 0);
-}
-
-unsigned int TranslatorHLSL::getShaderStorageBlockRegister(
-    const std::string &shaderStorageBlockName) const
-{
-    ASSERT(hasShaderStorageBlock(shaderStorageBlockName));
-    return mShaderStorageBlockRegisterMap.find(shaderStorageBlockName)->second;
 }
 
 bool TranslatorHLSL::hasUniformBlock(const std::string &uniformBlockName) const

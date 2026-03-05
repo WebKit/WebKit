@@ -113,6 +113,9 @@ struct MediaSessionOptions {
   // Default is true for backwards compatibility with clients that use
   // this internal interface.
   bool use_obsolete_sctp_sdp = true;
+
+  // Parse and serialize the draft-hancke-tsvwg-snap sctp-init.
+  bool use_sctp_snap = false;
 };
 
 }  //  namespace webrtc

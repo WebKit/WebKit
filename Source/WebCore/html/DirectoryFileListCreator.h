@@ -44,7 +44,7 @@ public:
 
     static Ref<DirectoryFileListCreator> create(CompletionHandler&& completionHandler)
     {
-        return adoptRef(*new DirectoryFileListCreator(WTFMove(completionHandler)));
+        return adoptRef(*new DirectoryFileListCreator(WTF::move(completionHandler)));
     }
 
     ~DirectoryFileListCreator();

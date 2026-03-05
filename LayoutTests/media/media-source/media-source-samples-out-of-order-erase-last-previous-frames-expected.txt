@@ -1,0 +1,124 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+Test 1: First segment has normal, monotonically increasing samples with decode timestamp equal
+to presentation timestamp.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '4') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+Test 1: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't
+cause any deletion if decoding order is corrected to avoid conflicts.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '5') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({40/10 = 4.000000}), DTS({3000100/1000000 = 3.000100}), duration({50/10 = 5.000000}), flags(1), generation(1)}
+RUN(sourceBuffer.remove(0, Infinity))
+EVENT(updateend)
+Test 2: First segment has normal, monotonically increasing samples with decode timestamp equal
+to presentation timestamp, and a last sync sample.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '5') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({100/10 = 10.000000}), DTS({100/10 = 10.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+Test 2: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't
+cause any deletion if decoding order is corrected to avoid conflicts.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '6') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({40/10 = 4.000000}), DTS({3000100/1000000 = 3.000100}), duration({50/10 = 5.000000}), flags(1), generation(1)}
+{PTS({100/10 = 10.000000}), DTS({100/10 = 10.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+RUN(sourceBuffer.remove(0, Infinity))
+EVENT(updateend)
+Test 3: First segment has normal, monotonically increasing samples with decode timestamp equal
+to presentation timestamp.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '4') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+Test 3: Segment with overlap in decoding order but no overlap in presentation order shouldn't
+cause any deletion if decoding order is corrected to avoid conflicts. This correction can't extend
+beyond the duration of the sample, to avoid conflicts with the hypothetical decode timestamp of a
+sample appended in the future (DTS 39/10), so some samples will be deleted to prevent that.
+Same duration samples.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '5') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({40/10 = 4.000000}), DTS({3000100/1000000 = 3.000100}), duration({10/10 = 1.000000}), flags(1), generation(1)}
+RUN(sourceBuffer.remove(0, Infinity))
+EVENT(updateend)
+Test 4: First segment has normal, monotonically increasing samples with decode timestamp equal
+to presentation timestamp, and a last sync sample.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '5') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({100/10 = 10.000000}), DTS({100/10 = 10.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+Test 4: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't
+cause any deletion if decoding order is corrected to avoid conflicts. This correction can't extend
+beyond the duration of the sample, to avoid conflicts with the hypothetical decode timestamp of a
+sample appended in the future (DTS 39/10), so some samples will be deleted to prevent that.
+Same duration samples.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '6') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({40/10 = 4.000000}), DTS({3000100/1000000 = 3.000100}), duration({10/10 = 1.000000}), flags(1), generation(1)}
+{PTS({100/10 = 10.000000}), DTS({100/10 = 10.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+RUN(sourceBuffer.remove(0, Infinity))
+EVENT(updateend)
+Test 5: First segment has normal, monotonically increasing samples with decode timestamp equal
+to presentation timestamp, and a last sync sample.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '5') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({20/10 = 2.000000}), DTS({20/10 = 2.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({30/10 = 3.000000}), DTS({30/10 = 3.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({100/10 = 10.000000}), DTS({100/10 = 10.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+Test 5: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't
+cause any deletion if decoding order is corrected to avoid conflicts. This correction can't extend
+beyond the duration of the sample, to avoid conflicts with the hypothetical decode timestamp of a
+sample appended in the future (DTS 29/10). This isn't met, so the whole correction algorithm bails out.
+and all the conflicting samples are deleted (old behaviour). Same duration samples.
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '4') OK
+{PTS({0/10 = 0.000000}), DTS({0/10 = 0.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+{PTS({10/10 = 1.000000}), DTS({10/10 = 1.000000}), duration({10/10 = 1.000000}), flags(0), generation(0)}
+{PTS({40/10 = 4.000000}), DTS({19/10 = 1.900000}), duration({10/10 = 1.000000}), flags(1), generation(1)}
+{PTS({100/10 = 10.000000}), DTS({100/10 = 10.000000}), duration({10/10 = 1.000000}), flags(1), generation(0)}
+RUN(sourceBuffer.remove(0, Infinity))
+EVENT(updateend)
+END OF TEST
+

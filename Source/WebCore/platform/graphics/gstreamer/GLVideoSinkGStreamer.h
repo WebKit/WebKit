@@ -21,6 +21,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #include <gst/gst.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 class MediaPlayerPrivateGStreamer;
@@ -41,7 +42,7 @@ typedef struct _WebKitGLVideoSinkPrivate WebKitGLVideoSinkPrivate;
 struct _WebKitGLVideoSink {
     GstBin parent;
 
-    WebKitGLVideoSinkPrivate *priv;
+    WebKitGLVideoSinkPrivate* priv;
 };
 
 struct _WebKitGLVideoSinkClass {
@@ -50,9 +51,9 @@ struct _WebKitGLVideoSinkClass {
 
 GType webkit_gl_video_sink_get_type(void);
 
-bool webKitGLVideoSinkProbePlatform();
-void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink*, WebCore::MediaPlayerPrivateGStreamer*);
-
 G_END_DECLS
+
+bool webKitGLVideoSinkProbePlatform();
+void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink*, const ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamer>&);
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)

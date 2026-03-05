@@ -53,10 +53,10 @@ public:
 
     void stop(CompletionHandler<void()>&&);
 
-    CHHapticEngine *leftHandleEngine() { return m_leftHandleEngine.get(); }
-    CHHapticEngine *rightHandleEngine() { return m_rightHandleEngine.get(); }
-    CHHapticEngine *leftTriggerEngine() { return m_leftTriggerEngine.get(); }
-    CHHapticEngine *rightTriggerEngine() { return m_rightTriggerEngine.get(); }
+    CHHapticEngine *leftHandleEngine() LIFETIME_BOUND { return m_leftHandleEngine.get(); }
+    CHHapticEngine *rightHandleEngine() LIFETIME_BOUND { return m_rightHandleEngine.get(); }
+    CHHapticEngine *leftTriggerEngine() LIFETIME_BOUND { return m_leftTriggerEngine.get(); }
+    CHHapticEngine *rightTriggerEngine() LIFETIME_BOUND { return m_rightTriggerEngine.get(); }
 
 private:
     explicit GameControllerHapticEngines(GCController *);

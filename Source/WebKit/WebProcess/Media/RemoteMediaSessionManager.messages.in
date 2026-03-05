@@ -25,13 +25,15 @@
 [
     DispatchedFrom=UI,
     DispatchedTo=WebContent,
-    EnabledBy=RemoteMediaSessionManagerEnabled
+    EnabledBy=RemoteMediaSessionManagerEnabled || SiteIsolationEnabled
 ]
 messages -> RemoteMediaSessionManager {
     void ClientShouldResumeAutoplaying(WebCore::MediaSessionIdentifier identifier)
     void ClientMayResumePlayback(WebCore::MediaSessionIdentifier identifier, bool shouldResume)
     void ClientShouldSuspendPlayback(WebCore::MediaSessionIdentifier identifier)
     void ClientSetShouldPlayToPlaybackTarget(WebCore::MediaSessionIdentifier identifier, bool shouldPlay)
+
+    void SetCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier> identifier);
 
 #if USE(AUDIO_SESSION)
     void SetAudioSessionCategory(enum:uint8_t WebCore::AudioSessionCategory type, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)

@@ -26,6 +26,8 @@
 #pragma once
 
 #include <array>
+#include <span>
+#include <wtf/ExportMacros.h>
 
 namespace WTF {
 
@@ -36,7 +38,7 @@ WTF_EXPORT_PRIVATE unsigned sixCharacterHashStringToInteger(std::span<const char
 
 // Takes a 32-bit integer and constructs a six-character string that contains
 // the character hash.
-WTF_EXPORT_PRIVATE std::array<char, 6> integerToSixCharacterHashString(unsigned);
+WTF_EXPORT_PRIVATE std::array<char, 6> NODELETE integerToSixCharacterHashString(unsigned);
 
 } // namespace WTF
 

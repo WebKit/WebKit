@@ -61,7 +61,7 @@ bool ContentExtensionStyleSheet::addDisplayNoneSelector(const String& selector, 
     css.append('{');
     css.append(ContentExtensionsBackend::displayNoneCSSRule());
     css.append('}');
-    m_styleSheet->contents().parseString(css.toString());
+    protect(m_styleSheet->contents())->parseString(css.toString());
     return true;
 }
 

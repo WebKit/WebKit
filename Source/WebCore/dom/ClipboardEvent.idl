@@ -24,14 +24,16 @@
  *
  */
 
+// https://w3c.github.io/clipboard-apis/#clipboardevent
 [
     Exposed=Window
 ] interface ClipboardEvent : Event {
-    constructor([AtomString] DOMString type, optional ClipboardEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional ClipboardEventInit eventInitDict = {});
 
     readonly attribute DataTransfer? clipboardData;
 };
 
+// https://w3c.github.io/clipboard-apis/#dictdef-clipboardeventinit
 dictionary ClipboardEventInit : EventInit {
     DataTransfer? clipboardData = null;
 };

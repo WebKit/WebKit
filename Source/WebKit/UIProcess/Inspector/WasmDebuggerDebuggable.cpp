@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmDebuggerDebuggable.h"
 
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
 
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
@@ -127,13 +127,13 @@ void WasmDebuggerDebuggable::disconnect(FrontendChannel& channel)
 
 void WasmDebuggerDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()]() mutable {
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTF::move(message).isolatedCopy()]() mutable {
         RefPtr process = m_process.get();
         if (!process)
             return;
 
         // Forward message to WebContent process via IPC
-        process->dispatchWasmDebuggerMessage(WTFMove(message));
+        process->dispatchWasmDebuggerMessage(WTF::move(message));
     });
 }
 
@@ -166,4 +166,4 @@ void WasmDebuggerDebuggable::sendResponseToFrontend(const String& response)
 
 } // namespace WebKit
 
-#endif // ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)

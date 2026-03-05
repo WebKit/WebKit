@@ -59,7 +59,7 @@
 #import "NodeName.h"
 #import "RenderImage.h"
 #import "RenderObjectStyle.h"
-#import "RenderStyleInlines.h"
+#import "RenderStyle+GettersInlines.h"
 #import "RenderText.h"
 #import "StyleExtractor.h"
 #import "StyleProperties.h"
@@ -140,8 +140,8 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& el
         }
     }
 
-    auto* renderer = element.renderer();
-    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer)) {
+    CheckedPtr renderer = element.renderer();
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer)) {
         CachedResourceHandle image = renderImage->cachedImage();
         if (image && !image->errorOccurred()) {
             RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)image->imageForRenderer(renderer)->adapter().tiffRepresentation()]);
@@ -215,7 +215,7 @@ static bool elementQualifiesForWritingToolsPreservation(Element* element)
         return false;
 
     // If the element has no renderer, it can't have `whitespace:pre` so it need not be preserved.
-    auto renderer = element->renderer();
+    CheckedPtr renderer = element->renderer();
     if (!renderer)
         return false;
 
@@ -236,7 +236,7 @@ static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, 
 
     auto entry = cache.find(*ancestor);
     if (entry == cache.end()) {
-        auto result = elementQualifiesForWritingToolsPreservation(ancestor) || hasAncestorQualifyingForWritingToolsPreservation(ancestor->protectedParentElement().get(), cache);
+        auto result = elementQualifiesForWritingToolsPreservation(ancestor) || hasAncestorQualifyingForWritingToolsPreservation(protect(ancestor->parentElement()).get(), cache);
 
         cache.set(*ancestor, result);
         return result;
@@ -336,7 +336,7 @@ static void updateAttributes(const Node* node, const RenderStyle& style, OptionS
 {
 #if ENABLE(WRITING_TOOLS)
     if (includedElements.contains(IncludedElement::PreservedContent)) {
-        if (hasAncestorQualifyingForWritingToolsPreservation(node->protectedParentElement().get(), elementQualifiesForWritingToolsPreservationCache))
+        if (hasAncestorQualifyingForWritingToolsPreservation(protect(node->parentElement()).get(), elementQualifiesForWritingToolsPreservationCache))
             [attributes setObject:@(1) forKey:WTWritingToolsPreservedAttributeName];
         else
             [attributes removeObjectForKey:WTWritingToolsPreservedAttributeName];
@@ -358,10 +358,10 @@ static void updateAttributes(const Node* node, const RenderStyle& style, OptionS
         [attributes removeObjectForKey:NSStrikethroughStyleAttributeName];
 
     CheckedRef fontCascade = style.fontCascade();
-    if (auto ctFont = fontCascade->primaryFont()->ctFont())
+    if (auto ctFont = fontCascade->primaryFont().ctFont())
         [attributes setObject:(__bridge PlatformFont *)ctFont forKey:NSFontAttributeName];
     else {
-        auto size = fontCascade->primaryFont()->platformData().size();
+        auto size = fontCascade->primaryFont().platformData().size();
 #if PLATFORM(IOS_FAMILY)
         PlatformFont *platformFont = [PlatformFontClass systemFontOfSize:size];
 #else
@@ -389,10 +389,10 @@ static void updateAttributes(const Node* node, const RenderStyle& style, OptionS
         break;
     case Style::TextAlign::Start:
         if (style.hasExplicitlySetDirection())
-            textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentLeft : NSTextAlignmentRight;
+            textAlignment = style.writingMode().deprecatedIsLeftToRightDirection() ? NSTextAlignmentLeft : NSTextAlignmentRight;
         break;
     case Style::TextAlign::End:
-        textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentRight : NSTextAlignmentLeft;
+        textAlignment = style.writingMode().deprecatedIsLeftToRightDirection() ? NSTextAlignmentRight : NSTextAlignmentLeft;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -405,13 +405,13 @@ static void updateAttributes(const Node* node, const RenderStyle& style, OptionS
         [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
     }
 
-    Color foregroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
+    auto foregroundColor = style.visitedDependentColorApplyingColorFilter();
     if (foregroundColor.isVisible())
         [attributes setObject:cocoaColor(foregroundColor).get() forKey:NSForegroundColorAttributeName];
     else
         [attributes removeObjectForKey:NSForegroundColorAttributeName];
 
-    Color backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    auto backgroundColor = style.visitedDependentBackgroundColorApplyingColorFilter();
     if (backgroundColor.isVisible())
         [attributes setObject:cocoaColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
     else
@@ -481,10 +481,10 @@ static AttributedString editingAttributedStringInternal(const SimpleRange& range
         // In those cases, base the style on the container.
         if (!node)
             node = it.range().start.container.ptr();
-        auto renderer = node->renderer();
+        CheckedPtr renderer = node->renderer();
 
         if (renderer)
-            updateAttributes(node.get(), renderer->checkedStyle(), includedElements, elementQualifiesForWritingToolsPreservationCache, enclosingLinkCache, enclosingListCache, attributes.get(), textListsForListElements);
+            updateAttributes(node.get(), protect(renderer->style()), includedElements, elementQualifiesForWritingToolsPreservationCache, enclosingLinkCache, enclosingListCache, attributes.get(), textListsForListElements);
         else if (!includedElements.contains(IncludedElement::NonRenderedContent))
             continue;
 
@@ -506,7 +506,7 @@ static AttributedString editingAttributedStringInternal(const SimpleRange& range
         stringLength += currentTextLength;
     }
 
-    return AttributedString::fromNSAttributedString(WTFMove(string));
+    return AttributedString::fromNSAttributedString(WTF::move(string));
 }
 
 AttributedString editingAttributedString(const SimpleRange& range, OptionSet<IncludedElement> includedElements)

@@ -43,7 +43,7 @@ class WebXRRigidTransform;
 class WebXRSession;
 
 class WebXRView : public RefCounted<WebXRView> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<WebXRView> create(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
     WEBCORE_EXPORT ~WebXRView();
@@ -60,7 +60,7 @@ public:
     bool isViewportModifiable() const { return m_viewportModifiable; }
     void setViewportModifiable(bool modifiable) { m_viewportModifiable = modifiable; }
 
-    JSValueInWrappedObject& cachedProjectionMatrix() { return m_cachedProjectionMatrix; }
+    JSValueInWrappedObject& cachedProjectionMatrix() LIFETIME_BOUND { return m_cachedProjectionMatrix; }
 
 private:
     WebXRView(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);

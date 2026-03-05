@@ -30,8 +30,6 @@
 #include <WebCore/SettingsBase.h>
 #include <wtf/RefCounted.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 class Page;
@@ -74,7 +72,8 @@ struct SettingsValues {
 };
 
 class Settings : public SettingsBase, public RefCounted<Settings> {
-    WTF_MAKE_NONCOPYABLE(Settings); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Settings);
+    WTF_MAKE_NONCOPYABLE(Settings);
+    WTF_MAKE_TZONE_ALLOCATED(Settings);
 public:
     WEBCORE_EXPORT static Ref<Settings> create(Page*);
     WEBCORE_EXPORT virtual ~Settings();
@@ -127,4 +126,3 @@ private:
 
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

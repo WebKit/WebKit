@@ -60,7 +60,7 @@ public:
     ExceptionOr<void> leave();
     void close();
 
-    String identifier() const { return m_privateCoordinator ? m_privateCoordinator->identifier() : String(); }
+    String identifier() const { return m_privateCoordinator ? protect(m_privateCoordinator)->identifier() : String(); }
     MediaSessionCoordinatorState state() const { return m_state; }
 
     void seekTo(double, DOMPromiseDeferred<void>&&);
@@ -76,7 +76,7 @@ public:
         std::optional<double> atTime;
         std::optional<MonotonicTime> hostTime;
     };
-    std::optional<PlaySessionCommand> takeCurrentPlaySessionCommand() { return WTFMove(m_currentPlaySessionCommand); }
+    std::optional<PlaySessionCommand> takeCurrentPlaySessionCommand() { return WTF::move(m_currentPlaySessionCommand); }
 
 private:
     MediaSessionCoordinator(ScriptExecutionContext*);
@@ -85,11 +85,11 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaSessionCoordinator; }
-        ScriptExecutionContext* scriptExecutionContext() const final;
+        ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void eventListenersDidChange() final;
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // MediaSessionObserver
     void metadataChanged(const RefPtr<MediaMetadata>&) final;
@@ -108,9 +108,9 @@ private:
 
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
-    static WTFLogChannel& logChannel();
+    static WTFLogChannel& NODELETE logChannel();
     static ASCIILiteral logClassName() { return "MediaSessionCoordinator"_s; }
-    bool shouldFireEvents() const;
+    bool NODELETE shouldFireEvents() const;
 
     WeakPtr<MediaSession> m_session;
     RefPtr<MediaSessionCoordinatorPrivate> m_privateCoordinator;
@@ -121,6 +121,8 @@ private:
     std::optional<PlaySessionCommand> m_currentPlaySessionCommand;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(MediaSessionCoordinator)
 
 #endif // ENABLE(MEDIA_SESSION_COORDINATOR)

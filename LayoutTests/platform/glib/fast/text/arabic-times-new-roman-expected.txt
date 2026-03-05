@@ -4,7 +4,7 @@ layer at (0,0) size 800x168
   RenderBlock {HTML} at (0,0) size 800x168
     RenderBody {BODY} at (8,8) size 784x152
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 783x35
+        RenderText {#text} at (0,0) size 783x36
           text run at (0,0) width 783: "This test makes sure that rendering Arabic with Georgia (which doesn't support Arabic) has a sensible result (e.g. not .notdef"
           text run at (0,18) width 42: "boxes)"
       RenderBlock {DIV} at (0,36) size 784x58

@@ -123,12 +123,17 @@ RefPtr<PlatformMediaSessionManager> PlatformMediaSessionManager::create(PageIden
         g_warning("Failed at parsing XML Interface definition: %s", error->message);
         return nullptr;
     }
-    return adoptRef(new MediaSessionManagerGLib(WTFMove(mprisInterface), pageIdentifier));
+    return MediaSessionManagerGLib::create(WTF::move(mprisInterface), pageIdentifier);
+}
+
+Ref<MediaSessionManagerGLib> MediaSessionManagerGLib::create(GRefPtr<GDBusNodeInfo>&& mprisInterface, PageIdentifier pageIdentifier)
+{
+    return adoptRef(*new MediaSessionManagerGLib(WTF::move(mprisInterface), pageIdentifier));
 }
 
 MediaSessionManagerGLib::MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&& mprisInterface, PageIdentifier pageIdentifier)
     : PlatformMediaSessionManager(pageIdentifier)
-    , m_mprisInterface(WTFMove(mprisInterface))
+    , m_mprisInterface(WTF::move(mprisInterface))
     , m_nowPlayingManager(platformStrategies()->mediaStrategy()->createNowPlayingManager())
 {
 }
@@ -158,13 +163,18 @@ void MediaSessionManagerGLib::scheduleSessionStatusUpdate()
     });
 }
 
-bool MediaSessionManagerGLib::sessionWillBeginPlayback(PlatformMediaSessionInterface& session)
+void MediaSessionManagerGLib::sessionWillBeginPlayback(PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
-        return false;
+    PlatformMediaSessionManager::sessionWillBeginPlayback(session, [weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool willBegin) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !willBegin) {
+            completionHandler(false);
+            return;
+        }
 
-    scheduleSessionStatusUpdate();
-    return true;
+        protectedThis->scheduleSessionStatusUpdate();
+        completionHandler(true);
+    });
 }
 
 void MediaSessionManagerGLib::sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&)
@@ -179,7 +189,8 @@ void MediaSessionManagerGLib::addSession(PlatformMediaSessionInterface& platform
     if (!session)
         return;
 
-    m_sessions.add(identifier, WTFMove(session));
+    session->setMprisRegistrationEligibility(MediaSessionGLib::MprisRegistrationEligiblilty::Eligible);
+    m_sessions.add(identifier, WTF::move(session));
     m_nowPlayingManager->addClient(*this);
 
     PlatformMediaSessionManager::addSession(platformSession);
@@ -271,12 +282,8 @@ void MediaSessionManagerGLib::setPrimarySessionIfNeeded(PlatformMediaSessionInte
     if (PlatformMediaSessionManager::currentSession().get() != &platformSession)
         return;
 
-    auto session = m_sessions.get(platformSession.mediaSessionIdentifier());
-    ASSERT(session);
-    if (!session)
-        return;
-
-    session->setMprisRegistrationEligibility(MediaSessionGLib::MprisRegistrationEligiblilty::Eligible);
+    if (auto session = m_sessions.get(platformSession.mediaSessionIdentifier()))
+        session->setMprisRegistrationEligibility(MediaSessionGLib::MprisRegistrationEligiblilty::Eligible);
     unregisterAllOtherSessions(platformSession);
 }
 

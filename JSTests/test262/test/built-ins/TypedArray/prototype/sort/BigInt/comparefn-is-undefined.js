@@ -9,12 +9,12 @@ info: |
 
   1. If comparefn is not undefined and IsCallable(comparefn) is false, throw a TypeError exception.
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray, BigInt]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  let sample = new TA([42n, 44n, 46n, 43n, 45n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  let sample = new TA(makeCtorArg([42n, 44n, 46n, 43n, 45n]));
   let explicit = sample.sort(undefined);
   let implicit = sample.sort();
 

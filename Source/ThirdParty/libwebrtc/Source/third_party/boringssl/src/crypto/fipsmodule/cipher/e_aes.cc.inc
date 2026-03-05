@@ -79,7 +79,7 @@ static int aes_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
     if (hwaes_capable()) {
       ret = aes_hw_set_decrypt_key(key, ctx->key_len * 8, &dat->ks.ks);
       dat->block = aes_hw_decrypt;
-      dat->stream.cbc = NULL;
+      dat->stream.cbc = nullptr;
       if (mode == EVP_CIPH_CBC_MODE) {
         dat->stream.cbc = aes_hw_cbc_encrypt;
       }
@@ -90,12 +90,12 @@ static int aes_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
         vpaes_decrypt_key_to_bsaes(&dat->ks.ks, &dat->ks.ks);
       }
       // If |dat->stream.cbc| is provided, |dat->block| is never used.
-      dat->block = NULL;
+      dat->block = nullptr;
       dat->stream.cbc = bsaes_cbc_encrypt;
     } else if (vpaes_capable()) {
       ret = vpaes_set_decrypt_key(key, ctx->key_len * 8, &dat->ks.ks);
       dat->block = vpaes_decrypt;
-      dat->stream.cbc = NULL;
+      dat->stream.cbc = nullptr;
 #if defined(VPAES_CBC)
       if (mode == EVP_CIPH_CBC_MODE) {
         dat->stream.cbc = vpaes_cbc_encrypt;
@@ -104,7 +104,7 @@ static int aes_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
     } else {
       ret = aes_nohw_set_decrypt_key(key, ctx->key_len * 8, &dat->ks.ks);
       dat->block = aes_nohw_decrypt;
-      dat->stream.cbc = NULL;
+      dat->stream.cbc = nullptr;
       if (mode == EVP_CIPH_CBC_MODE) {
         dat->stream.cbc = aes_nohw_cbc_encrypt;
       }
@@ -112,7 +112,7 @@ static int aes_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
   } else if (hwaes_capable()) {
     ret = aes_hw_set_encrypt_key(key, ctx->key_len * 8, &dat->ks.ks);
     dat->block = aes_hw_encrypt;
-    dat->stream.cbc = NULL;
+    dat->stream.cbc = nullptr;
     if (mode == EVP_CIPH_CBC_MODE) {
       dat->stream.cbc = aes_hw_cbc_encrypt;
     } else if (mode == EVP_CIPH_CTR_MODE) {
@@ -121,7 +121,7 @@ static int aes_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
   } else if (vpaes_capable()) {
     ret = vpaes_set_encrypt_key(key, ctx->key_len * 8, &dat->ks.ks);
     dat->block = vpaes_encrypt;
-    dat->stream.cbc = NULL;
+    dat->stream.cbc = nullptr;
 #if defined(VPAES_CBC)
     if (mode == EVP_CIPH_CBC_MODE) {
       dat->stream.cbc = vpaes_cbc_encrypt;
@@ -138,7 +138,7 @@ static int aes_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
   } else {
     ret = aes_nohw_set_encrypt_key(key, ctx->key_len * 8, &dat->ks.ks);
     dat->block = aes_nohw_encrypt;
-    dat->stream.cbc = NULL;
+    dat->stream.cbc = nullptr;
     if (mode == EVP_CIPH_CBC_MODE) {
       dat->stream.cbc = aes_nohw_cbc_encrypt;
     } else if (mode == EVP_CIPH_CTR_MODE) {
@@ -216,7 +216,7 @@ static int aes_gcm_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
     OPENSSL_memset(&gctx->gcm, 0, sizeof(gctx->gcm));
     CRYPTO_gcm128_init_aes_key(&gctx->key, key, ctx->key_len);
     // Use the IV if specified. Otherwise, use the saved IV, if any.
-    if (iv == NULL && gctx->iv_set) {
+    if (iv == nullptr && gctx->iv_set) {
       iv = gctx->iv;
     }
     if (iv) {
@@ -387,7 +387,7 @@ static int aes_gcm_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
   }
 
   if (in) {
-    if (out == NULL) {
+    if (out == nullptr) {
       if (!CRYPTO_gcm128_aad(&gctx->key, &gctx->gcm, in, len)) {
         return -1;
       }
@@ -728,7 +728,7 @@ static int aead_aes_gcm_init_impl(struct aead_aes_gcm_ctx *gcm_ctx,
   return 1;
 }
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_aes_gcm_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=
@@ -1031,7 +1031,7 @@ struct aead_aes_gcm_tls12_ctx {
 };
 }  // namespace
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_aes_gcm_tls12_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=
@@ -1126,7 +1126,7 @@ struct aead_aes_gcm_tls13_ctx {
 };
 }  // namespace
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_aes_gcm_tls13_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=

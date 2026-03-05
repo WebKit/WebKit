@@ -35,9 +35,4 @@ inline Document& Node::document() const
     return treeScope().documentScope();
 }
 
-inline Ref<Document> Node::protectedDocument() const
-{
-    return document();
-}
-
 }

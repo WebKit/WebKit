@@ -77,7 +77,7 @@ static gboolean wpeViewMockRenderBuffer(WPEView* view, WPEBuffer* buffer, const 
         auto* view = WPE_VIEW(userData);
         if (priv->committedBuffer)
             wpe_view_buffer_released(view, priv->committedBuffer.get());
-        priv->committedBuffer = WTFMove(priv->pendingBuffer);
+        priv->committedBuffer = WTF::move(priv->pendingBuffer);
         wpe_view_buffer_rendered(view, priv->committedBuffer.get());
 
         return G_SOURCE_REMOVE;

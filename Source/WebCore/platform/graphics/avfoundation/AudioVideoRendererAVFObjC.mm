@@ -29,12 +29,14 @@
 #import "AudioMediaStreamTrackRenderer.h"
 #import "CDMFairPlayStreaming.h"
 #import "CDMInstanceFairPlayStreamingAVFObjC.h"
+#import "CDMLogging.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "EffectiveRateChangedListener.h"
 #import "FormatDescriptionUtilities.h"
 #import "GraphicsContext.h"
 #import "LayoutRect.h"
 #import "Logging.h"
+#import "MediaPlayerPrivate.h"
 #import "MediaSampleAVFObjC.h"
 #import "MediaSessionManagerCocoa.h"
 #import "NativeImage.h"
@@ -57,7 +59,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/TZoneMallocInlines.h>
-#import <wtf/WeakPtr.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -86,7 +87,7 @@ AudioVideoRendererAVFObjC::AudioVideoRendererAVFObjC(const Logger& originalLogge
     : m_logger(originalLogger)
     , m_logIdentifier(logSiteIdentifier)
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(originalLogger, logSiteIdentifier))
-    , m_synchronizer([adoptNS(PAL::allocAVSampleBufferRenderSynchronizerInstance()) init])
+    , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
     , m_listener(WebAVSampleBufferListener::create(*this))
     , m_startupTime(MonotonicTime::now())
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
@@ -98,12 +99,13 @@ AudioVideoRendererAVFObjC::AudioVideoRendererAVFObjC(const Logger& originalLogge
 {
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
-    __block WeakPtr weakThis { *this };
+    __block ThreadSafeWeakPtr weakThis { *this };
     m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithDouble(3600)) queue:mainDispatchQueueSingleton() usingBlock:^(CMTime time) {
 #if LOG_DISABLED
         UNUSED_PARAM(time);
 #endif
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
@@ -122,12 +124,11 @@ AudioVideoRendererAVFObjC::~AudioVideoRendererAVFObjC()
     cancelSeekingPromiseIfNeeded();
     cancelTimeReachedAction();
     cancelTimeObserver();
+    cancelPerformTaskAtTimeObserverIfNeeded();
     if (m_timeJumpedObserver)
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
     if (m_videoFrameMetadataGatheringObserver)
         [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
-    if (m_performTaskObserver)
-        [m_synchronizer removeTimeObserver:m_performTaskObserver.get()];
 
     destroyVideoTrack();
     destroyAudioRenderers();
@@ -154,7 +155,7 @@ void AudioVideoRendererAVFObjC::setHasProtectedVideoContent(bool protectedConten
         updateDisplayLayerIfNeeded();
 }
 
-TracksRendererManager::TrackIdentifier AudioVideoRendererAVFObjC::addTrack(TrackType type)
+std::optional<TracksRendererManager::TrackIdentifier> AudioVideoRendererAVFObjC::addTrack(TrackType type)
 {
     auto identifier = TrackIdentifier::generate();
     m_trackTypes.add(identifier, type);
@@ -173,8 +174,7 @@ TracksRendererManager::TrackIdentifier AudioVideoRendererAVFObjC::addTrack(Track
         addAudioRenderer(identifier);
         break;
     default:
-        ASSERT_NOT_REACHED();
-        break;
+        return std::nullopt;
     }
     return identifier;
 }
@@ -276,7 +276,7 @@ bool AudioVideoRendererAVFObjC::isReadyForMoreSamples(TrackIdentifier trackId)
 
     switch (*type) {
     case TrackType::Video:
-        return m_readyToRequestVideoData && isEnabledVideoTrackId(trackId) && protectedVideoRenderer()->isReadyForMoreMediaData();
+        return m_readyToRequestVideoData && isEnabledVideoTrackId(trackId) && protect(m_videoRenderer)->isReadyForMoreMediaData();
     case TrackType::Audio:
         if (!m_readyToRequestAudioData)
             return false;
@@ -302,7 +302,7 @@ Ref<AudioVideoRenderer::RequestPromise> AudioVideoRendererAVFObjC::requestMediaD
         ASSERT(m_videoRenderer);
         if (RefPtr videoRenderer = m_videoRenderer) {
             m_requestVideoPromise.emplace(PlatformMediaError::Cancelled);
-            videoRenderer->requestMediaDataWhenReady([trackId, weakThis = WeakPtr { *this }] {
+            videoRenderer->requestMediaDataWhenReady([trackId, weakThis = ThreadSafeWeakPtr { *this }] {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -322,7 +322,7 @@ Ref<AudioVideoRenderer::RequestPromise> AudioVideoRendererAVFObjC::requestMediaD
         if (RetainPtr audioRenderer = audioRendererFor(trackId)) {
             auto& property = audioTrackPropertiesFor(trackId);
             property.requestPromise = makeUnique<RequestPromise::AutoRejectProducer>(PlatformMediaError::Cancelled);
-            auto handler = makeBlockPtr([trackId, weakThis = WeakPtr { *this }] {
+            auto handler = makeBlockPtr([trackId, weakThis = ThreadSafeWeakPtr { *this }] {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -362,7 +362,7 @@ void AudioVideoRendererAVFObjC::notifyTrackNeedsReenqueuing(TrackIdentifier trac
     case TrackType::Audio:
         ASSERT(m_audioTracksMap.contains(trackId));
         if (auto it = m_audioTracksMap.find(trackId); it != m_audioTracksMap.end())
-            it->value.callbackForReenqueuing = WTFMove(callback);
+            it->value.callbackForReenqueuing = WTF::move(callback);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -425,7 +425,7 @@ void AudioVideoRendererAVFObjC::applicationWillResignActive()
 
 void AudioVideoRendererAVFObjC::notifyWhenErrorOccurs(Function<void(PlatformMediaError)>&& callback)
 {
-    m_errorCallback = WTFMove(callback);
+    m_errorCallback = WTF::move(callback);
 }
 
 // Synchronizer interface
@@ -441,6 +441,13 @@ void AudioVideoRendererAVFObjC::pause(std::optional<MonotonicTime> hostTime)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "m_rate: ", m_rate);
     m_isPlaying = false;
+    // Capture current time to prevent time going backwards after resume.
+    // The AVSampleBufferRenderSynchronizer can briefly report earlier times
+    // during playback resumption due to timing jitter.
+    // False positive see webkit.org/b/298024
+    SUPPRESS_UNRETAINED_ARG MediaTime pauseTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
+    if (pauseTime.isFinite() && pauseTime > m_lastSeekTime)
+        m_lastSeekTime = pauseTime;
     setSynchronizerRate(0, hostTime);
 }
 
@@ -504,7 +511,7 @@ void AudioVideoRendererAVFObjC::notifyTimeReachedAndStall(const MediaTime& timeB
     DEBUG_LOG(logSiteIdentifier, timeBoundary);
     UNUSED_PARAM(logSiteIdentifier);
 
-    m_currentTimeObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, timeBoundary, logSiteIdentifier, callback = WTFMove(callback)]() mutable {
+    m_currentTimeObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, timeBoundary, logSiteIdentifier, callback = WTF::move(callback)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -527,8 +534,7 @@ void AudioVideoRendererAVFObjC::cancelTimeReachedAction()
 
 void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Function<void(const MediaTime&)>&& task)
 {
-    if (m_performTaskObserver)
-        [m_synchronizer removeTimeObserver:m_performTaskObserver.get()];
+    cancelPerformTaskAtTimeObserverIfNeeded();
 
     RetainPtr<NSArray> times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
 
@@ -536,7 +542,7 @@ void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Functio
     DEBUG_LOG(logSiteIdentifier, time);
     UNUSED_PARAM(logSiteIdentifier);
 
-    m_performTaskObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, task = WTFMove(task), logSiteIdentifier]() mutable {
+    m_performTaskObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, task = WTF::move(task), logSiteIdentifier]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -545,17 +551,19 @@ void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Functio
         ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "boundary time observer called, now: ", now);
 
         task(now);
+
+        protectedThis->cancelPerformTaskAtTimeObserverIfNeeded();
     }).get()];
 }
 
 void AudioVideoRendererAVFObjC::setTimeObserver(Seconds interval, Function<void(const MediaTime&)>&& callback)
 {
-    m_currentTimeDidChangeCallback = WTFMove(callback);
+    m_currentTimeDidChangeCallback = WTF::move(callback);
 
     cancelTimeObserver();
 
     if (m_currentTimeDidChangeCallback) {
-        __block WeakPtr weakThis = *this;
+        __block ThreadSafeWeakPtr weakThis = *this;
         m_timeChangedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithSeconds(interval)) queue:mainDispatchQueueSingleton() usingBlock:^(CMTime time) {
             if (RefPtr protectedThis = weakThis.get()) {
                 if (!protectedThis->m_currentTimeDidChangeCallback)
@@ -572,6 +580,12 @@ void AudioVideoRendererAVFObjC::cancelTimeObserver()
 {
     if (RetainPtr observer = std::exchange(m_timeChangedObserver, { }))
         [m_synchronizer removeTimeObserver:observer.get()];
+}
+
+void AudioVideoRendererAVFObjC::cancelPerformTaskAtTimeObserverIfNeeded()
+{
+    if (RetainPtr taskObserver = std::exchange(m_performTaskObserver, { }))
+        [m_synchronizer removeTimeObserver:taskObserver.get()];
 }
 
 void AudioVideoRendererAVFObjC::prepareToSeek()
@@ -628,7 +642,7 @@ Ref<MediaTimePromise> AudioVideoRendererAVFObjC::seekTo(const MediaTime& seekTim
 void AudioVideoRendererAVFObjC::notifyEffectiveRateChanged(Function<void(double)>&& callback)
 {
     // False positive see webkit.org/b/298024
-    SUPPRESS_UNRETAINED_ARG m_effectiveRateChangedListener = EffectiveRateChangedListener::create([callback = makeBlockPtr(WTFMove(callback))](double rate) mutable {
+    SUPPRESS_UNRETAINED_ARG m_effectiveRateChangedListener = EffectiveRateChangedListener::create([callback = makeBlockPtr(WTF::move(callback))](double rate) mutable {
         callOnMainThread([callback, rate] {
             callback.get()(rate);
         });
@@ -740,23 +754,23 @@ void AudioVideoRendererAVFObjC::contentBoxRectChanged(const LayoutRect& newRect)
 
 void AudioVideoRendererAVFObjC::notifyFirstFrameAvailable(Function<void()>&& callback)
 {
-    m_firstFrameAvailableCallback = WTFMove(callback);
+    m_firstFrameAvailableCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&& callback)
 {
-    m_hasAvailableVideoFrameCallback = WTFMove(callback);
+    m_hasAvailableVideoFrameCallback = WTF::move(callback);
     configureHasAvailableVideoFrameCallbackIfNeeded();
 }
 
 void AudioVideoRendererAVFObjC::notifyWhenRequiresFlushToResume(Function<void()>&& callback)
 {
-    m_notifyWhenRequiresFlushToResume = WTFMove(callback);
+    m_notifyWhenRequiresFlushToResume = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::notifyRenderingModeChanged(Function<void()>&& callback)
 {
-    m_renderingModeChangedCallback = WTFMove(callback);
+    m_renderingModeChangedCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::expectMinimumUpcomingPresentationTime(const MediaTime& presentationTime)
@@ -769,7 +783,7 @@ void AudioVideoRendererAVFObjC::expectMinimumUpcomingPresentationTime(const Medi
 
 void AudioVideoRendererAVFObjC::notifySizeChanged(Function<void(const MediaTime&, FloatSize)>&& callback)
 {
-    m_sizeChangedCallback = WTFMove(callback);
+    m_sizeChangedCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::setShouldDisableHDR(bool shouldDisable)
@@ -841,16 +855,21 @@ PlatformLayer* AudioVideoRendererAVFObjC::platformVideoLayer() const
     return m_videoLayerManager->videoInlineLayer();
 }
 
-void AudioVideoRendererAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize, WTF::MachSendRightAnnotated&&)
+void AudioVideoRendererAVFObjC::setVideoLayerSize(const FloatSize& newSize)
 {
     if (!layerOrVideoRenderer() && !newSize.isEmpty())
         updateDisplayLayerIfNeeded();
 }
 
+void AudioVideoRendererAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize, WTF::MachSendRightAnnotated&&)
+{
+    setVideoLayerSize(newSize);
+}
+
 void AudioVideoRendererAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     RefPtr currentImage = currentNativeImage();
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), currentImage ? currentImage->platformImage() : nullptr);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTF::move(completionHandler), currentImage ? currentImage->platformImage() : nullptr);
 }
 
 void AudioVideoRendererAVFObjC::setVideoFullscreenFrame(const FloatRect& frame)
@@ -913,7 +932,7 @@ void AudioVideoRendererAVFObjC::addAudioRenderer(TrackIdentifier trackId)
     if (!m_audioTracksMap.add(trackId, AudioTrackProperties()).isNewEntry)
         return;
 
-    RetainPtr renderer = [adoptNS(PAL::allocAVSampleBufferAudioRendererInstance()) init];
+    RetainPtr renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
 
     if (!renderer) {
         ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferAudioRenderer init] returned nil! bailing!");
@@ -1162,9 +1181,11 @@ void AudioVideoRendererAVFObjC::ensureLayer()
         return;
     }
 
-    m_sampleBufferDisplayLayer = [adoptNS(PAL::allocAVSampleBufferDisplayLayerInstance()) init];
+    m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
     if (!m_sampleBufferDisplayLayer) {
         ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferDisplayLayer init] returned nil! bailing!");
+        ASSERT_NOT_REACHED();
+        notifyError(PlatformMediaError::VideoDecodingError);
         return;
     }
     [m_sampleBufferDisplayLayer setName:@"AudioVideoRendererAVFObjC AVSampleBufferDisplayLayer"];
@@ -1205,9 +1226,11 @@ void AudioVideoRendererAVFObjC::ensureVideoRenderer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_sampleBufferVideoRenderer = [adoptNS(PAL::allocAVSampleBufferVideoRendererInstance()) init];
+    m_sampleBufferVideoRenderer = adoptNS([PAL::allocAVSampleBufferVideoRendererInstance() init]);
     if (!m_sampleBufferVideoRenderer) {
         ERROR_LOG(LOGIDENTIFIER, "-[VSampleBufferVideoRenderer init] returned nil! bailing!");
+        ASSERT_NOT_REACHED();
+        notifyError(PlatformMediaError::VideoDecodingError);
         return;
     }
 
@@ -1259,7 +1282,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoRenderer(WebSampleBufferV
     videoRenderer->setPreferences(m_preferences);
     // False positive see webkit.org/b/298024
     SUPPRESS_UNRETAINED_ARG videoRenderer->setTimebase([m_synchronizer timebase]);
-    videoRenderer->notifyWhenDecodingErrorOccurred([weakThis = WeakPtr { *this }](NSError *error) {
+    videoRenderer->notifyWhenDecodingErrorOccurred([weakThis = ThreadSafeWeakPtr { *this }](NSError *error) {
         if (RefPtr protectedThis = weakThis.get()) {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
             if ([error code] == 'HDCP') {
@@ -1274,12 +1297,12 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoRenderer(WebSampleBufferV
             protectedThis->notifyError(PlatformMediaError::VideoDecodingError);
         }
     });
-    videoRenderer->notifyFirstFrameAvailable([weakThis = WeakPtr { *this }](const MediaTime&, double) {
+    videoRenderer->notifyFirstFrameAvailable([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime&, double) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->setHasAvailableVideoFrame(true);
     });
     configureHasAvailableVideoFrameCallbackIfNeeded();
-    videoRenderer->notifyWhenVideoRendererRequiresFlushToResumeDecoding([weakThis = WeakPtr { *this }] {
+    videoRenderer->notifyWhenVideoRendererRequiresFlushToResumeDecoding([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->notifyRequiresFlushToResume();
     });
@@ -1298,7 +1321,7 @@ void AudioVideoRendererAVFObjC::configureHasAvailableVideoFrameCallbackIfNeeded(
 
     RefPtr videoRenderer = m_videoRenderer;
     if (videoRenderer) {
-        videoRenderer->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
+        videoRenderer->notifyWhenHasAvailableVideoFrame([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_hasAvailableVideoFrameCallback)
                 protectedThis->m_hasAvailableVideoFrameCallback(presentationTime, displayTime);
         });
@@ -1318,7 +1341,7 @@ void AudioVideoRendererAVFObjC::configureHasAvailableVideoFrameCallbackIfNeeded(
     if (willUseDecompressionSessionIfNeeded())
         return;
 
-    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:mainDispatchQueueSingleton() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentCMTime) {
+    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:mainDispatchQueueSingleton() usingBlock:[weakThis = ThreadSafeWeakPtr { *this }](CMTime currentCMTime) {
         ensureOnMainThread([weakThis, currentCMTime] {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_hasAvailableVideoFrameCallback)
                 protectedThis->m_hasAvailableVideoFrameCallback(PAL::toMediaTime(currentCMTime), (MonotonicTime::now() - protectedThis->m_startupTime).seconds());
@@ -1355,10 +1378,6 @@ void AudioVideoRendererAVFObjC::configureLayerOrVideoRenderer(WebSampleBufferVid
         m_sampleBufferDisplayLayerState = SampleBufferLayerState::AddedToSynchronizer;
 }
 
-RefPtr<VideoMediaSampleRenderer> AudioVideoRendererAVFObjC::protectedVideoRenderer() const
-{
-    return m_videoRenderer;
-}
 
 void AudioVideoRendererAVFObjC::sizeWillChangeAtTime(const MediaTime& time, const FloatSize& size)
 {
@@ -1366,7 +1385,7 @@ void AudioVideoRendererAVFObjC::sizeWillChangeAtTime(const MediaTime& time, cons
         return;
 
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
-    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, time, size] {
+    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, time, size] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -1379,7 +1398,7 @@ void AudioVideoRendererAVFObjC::sizeWillChangeAtTime(const MediaTime& time, cons
         if (protectedThis->m_sizeChangedCallback)
             protectedThis->m_sizeChangedCallback(time, size);
     }).get()];
-    m_sizeChangeObservers.append(WTFMove(observer));
+    m_sizeChangeObservers.append(WTF::move(observer));
 
     if (currentTime() >= time && m_sizeChangedCallback)
         m_sizeChangedCallback(currentTime(), size);
@@ -1456,7 +1475,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::stageVideoRenderer(WebSampleBuffe
     m_readyToRequestVideoData = !flushRequired;
     ALWAYS_LOG(LOGIDENTIFIER, "renderer: ", !!renderer, " videoTrackChangeOnly: ", videoTrackChangeOnly, " flushRequired: ", flushRequired);
 
-    return videoRenderer->changeRenderer(renderer)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, rendererToExpire = WTFMove(rendererToExpire), flushRequired]() {
+    return videoRenderer->changeRenderer(renderer)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, rendererToExpire = WTF::move(rendererToExpire), flushRequired]() {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndReject();
@@ -1651,7 +1670,7 @@ Ref<MediaPromise> AudioVideoRendererAVFObjC::setInitData(Ref<SharedBuffer> initD
             return MediaPromise::createAndResolve();
     }
 
-    m_keyIDs = WTFMove(keyIDs.value());
+    m_keyIDs = WTF::move(keyIDs.value());
     return MediaPromise::createAndReject(PlatformMediaError::CDMInstanceKeyNeeded);
 }
 
@@ -1684,7 +1703,7 @@ void AudioVideoRendererAVFObjC::tryToEnqueueBlockedSamples()
             return;
 
         auto firstPairTaken = m_blockedSamples.takeFirst();
-        enqueueSample(firstPairTaken.first, WTFMove(firstPairTaken.second), { });
+        enqueueSample(firstPairTaken.first, WTF::move(firstPairTaken.second), { });
     }
 }
 
@@ -1719,7 +1738,7 @@ bool AudioVideoRendererAVFObjC::canEnqueueSample(TrackIdentifier trackId, const 
         return true;
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER, "Can't enqueue sample: ", sample, " no suitable CDM");
+    ALWAYS_LOG(LOGIDENTIFIER, "Can't enqueue sample: ", sample, ", no CDM with usable keyIDs: ", sampleAVFObjC->keyIDs());
     return false;
 }
 
@@ -1788,6 +1807,16 @@ RefPtr<NativeImage> AudioVideoRendererAVFObjC::currentNativeImage() const
     return nullptr;
 }
 
+Ref<AudioVideoRenderer::BitmapImagePromise> AudioVideoRendererAVFObjC::currentBitmapImage() const
+{
+    RefPtr nativeImage = currentNativeImage();
+    if (!nativeImage)
+        return BitmapImagePromise::createAndReject();
+    if (RefPtr bitmapImage = MediaPlayerPrivateInterface::bitmapFromImage(*nativeImage))
+        return BitmapImagePromise::createAndResolve(bitmapImage.releaseNonNull());
+    return BitmapImagePromise::createAndReject();
+}
+
 bool AudioVideoRendererAVFObjC::updateLastPixelBuffer()
 {
     RefPtr videoRenderer = m_videoRenderer;
@@ -1798,7 +1827,7 @@ bool AudioVideoRendererAVFObjC::updateLastPixelBuffer()
         return false;
 
     INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time: ", entry.presentationTimeStamp);
-    m_lastPixelBuffer = WTFMove(entry.pixelBuffer);
+    m_lastPixelBuffer = WTF::move(entry.pixelBuffer);
     return true;
 }
 

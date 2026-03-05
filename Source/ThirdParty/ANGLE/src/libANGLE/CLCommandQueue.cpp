@@ -12,6 +12,8 @@
 
 #include "libANGLE/CLCommandQueue.h"
 
+#include "CL/cl.h"
+#include "common/angleutils.h"
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLDevice.h"
@@ -19,8 +21,28 @@
 #include "libANGLE/CLImage.h"
 #include "libANGLE/CLKernel.h"
 #include "libANGLE/CLMemory.h"
+#include "libANGLE/Error.h"
+#include "libANGLE/cl_types.h"
+#include "libANGLE/cl_utils.h"
 
 #include <cstring>
+
+#define ANGLE_CL_ENQUEUE_TRY(cmd, event)                  \
+    do                                                    \
+    {                                                     \
+        if (ANGLE_UNLIKELY(IsError(cmd)))                 \
+        {                                                 \
+            if (event != nullptr)                         \
+            {                                             \
+                Event &evt = (*event)->cast<cl::Event>(); \
+                if (evt.release())                        \
+                {                                         \
+                    delete &evt;                          \
+                }                                         \
+            }                                             \
+            return angle::Result::Stop;                   \
+        }                                                 \
+    } while (0)
 
 namespace cl
 {
@@ -28,26 +50,14 @@ namespace cl
 namespace
 {
 
-void InitializeOutputEvent(cl_event *event)
+angle::Result CreateEvent(cl_event *event, CommandQueue &queue, cl_command_type commandType)
 {
     if (event != nullptr)
     {
-        *event = nullptr;
-    }
-}
-
-angle::Result CheckCreateEvent(CommandQueue &queue,
-                               cl_command_type commandType,
-                               const rx::CLEventImpl::CreateFunc &createFunc,
-                               cl_event *event)
-{
-    if (event != nullptr)
-    {
-        ASSERT(createFunc);
         *event = Object::Create<Event>(queue, commandType);
-        if (IsError((*event)->cast<Event>().initBackend(createFunc)))
+        if (*event == nullptr)
         {
-            SafeDelete(*event);
+            ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
         }
     }
     return angle::Result::Continue;
@@ -160,15 +170,14 @@ angle::Result CommandQueue::enqueueReadBuffer(cl_mem buffer,
     const Buffer &buf          = buffer->cast<Buffer>();
     const bool blocking        = blockingRead != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(
-        mImpl->enqueueReadBuffer(buf, blocking, offset, size, ptr, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_READ_BUFFER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_READ_BUFFER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueReadBuffer(buf, blocking, offset, size, ptr, waitEvents, eventPtr), event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueWriteBuffer(cl_mem buffer,
@@ -183,22 +192,21 @@ angle::Result CommandQueue::enqueueWriteBuffer(cl_mem buffer,
     const Buffer &buf          = buffer->cast<Buffer>();
     const bool blocking        = blockingWrite != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueWriteBuffer(buf, blocking, offset, size, ptr, waitEvents,
-                                        eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_WRITE_BUFFER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_WRITE_BUFFER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueWriteBuffer(buf, blocking, offset, size, ptr, waitEvents, eventPtr), event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueReadBufferRect(cl_mem buffer,
                                                   cl_bool blockingRead,
-                                                  const cl::MemOffsets &bufferOrigin,
-                                                  const cl::MemOffsets &hostOrigin,
-                                                  const cl::Coordinate &region,
+                                                  const cl::Offset &bufferOrigin,
+                                                  const cl::Offset &hostOrigin,
+                                                  const cl::Extents &region,
                                                   size_t bufferRowPitch,
                                                   size_t bufferSlicePitch,
                                                   size_t hostRowPitch,
@@ -211,23 +219,24 @@ angle::Result CommandQueue::enqueueReadBufferRect(cl_mem buffer,
     const Buffer &buf          = buffer->cast<Buffer>();
     const bool blocking        = blockingRead != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueReadBufferRect(buf, blocking, bufferOrigin, hostOrigin, region,
-                                           bufferRowPitch, bufferSlicePitch, hostRowPitch,
-                                           hostSlicePitch, ptr, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_READ_BUFFER_RECT));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_READ_BUFFER_RECT, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueReadBufferRect(buf, blocking, bufferOrigin, hostOrigin, region,
+                                     bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch,
+                                     ptr, waitEvents, eventPtr),
+        event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueWriteBufferRect(cl_mem buffer,
                                                    cl_bool blockingWrite,
-                                                   const cl::MemOffsets &bufferOrigin,
-                                                   const cl::MemOffsets &hostOrigin,
-                                                   const cl::Coordinate &region,
+                                                   const cl::Offset &bufferOrigin,
+                                                   const cl::Offset &hostOrigin,
+                                                   const cl::Extents &region,
                                                    size_t bufferRowPitch,
                                                    size_t bufferSlicePitch,
                                                    size_t hostRowPitch,
@@ -240,16 +249,17 @@ angle::Result CommandQueue::enqueueWriteBufferRect(cl_mem buffer,
     const Buffer &buf          = buffer->cast<Buffer>();
     const bool blocking        = blockingWrite != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueWriteBufferRect(buf, blocking, bufferOrigin, hostOrigin, region,
-                                            bufferRowPitch, bufferSlicePitch, hostRowPitch,
-                                            hostSlicePitch, ptr, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_WRITE_BUFFER_RECT));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_WRITE_BUFFER_RECT, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueWriteBufferRect(buf, blocking, bufferOrigin, hostOrigin, region,
+                                      bufferRowPitch, bufferSlicePitch, hostRowPitch,
+                                      hostSlicePitch, ptr, waitEvents, eventPtr),
+        event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueCopyBuffer(cl_mem srcBuffer,
@@ -264,22 +274,22 @@ angle::Result CommandQueue::enqueueCopyBuffer(cl_mem srcBuffer,
     const Buffer &src          = srcBuffer->cast<Buffer>();
     const Buffer &dst          = dstBuffer->cast<Buffer>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueCopyBuffer(src, dst, srcOffset, dstOffset, size, waitEvents,
-                                       eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_COPY_BUFFER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_COPY_BUFFER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueCopyBuffer(src, dst, srcOffset, dstOffset, size, waitEvents, eventPtr),
+        event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueCopyBufferRect(cl_mem srcBuffer,
                                                   cl_mem dstBuffer,
-                                                  const cl::MemOffsets &srcOrigin,
-                                                  const cl::MemOffsets &dstOrigin,
-                                                  const cl::Coordinate &region,
+                                                  const cl::Offset &srcOrigin,
+                                                  const cl::Offset &dstOrigin,
+                                                  const cl::Extents &region,
                                                   size_t srcRowPitch,
                                                   size_t srcSlicePitch,
                                                   size_t dstRowPitch,
@@ -291,16 +301,16 @@ angle::Result CommandQueue::enqueueCopyBufferRect(cl_mem srcBuffer,
     const Buffer &src          = srcBuffer->cast<Buffer>();
     const Buffer &dst          = dstBuffer->cast<Buffer>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueCopyBufferRect(src, dst, srcOrigin, dstOrigin, region, srcRowPitch,
-                                           srcSlicePitch, dstRowPitch, dstSlicePitch, waitEvents,
-                                           eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_COPY_BUFFER_RECT));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_COPY_BUFFER_RECT, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueCopyBufferRect(src, dst, srcOrigin, dstOrigin, region,
+                                                      srcRowPitch, srcSlicePitch, dstRowPitch,
+                                                      dstSlicePitch, waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueFillBuffer(cl_mem buffer,
@@ -314,15 +324,15 @@ angle::Result CommandQueue::enqueueFillBuffer(cl_mem buffer,
 {
     const Buffer &buf          = buffer->cast<Buffer>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueFillBuffer(buf, pattern, patternSize, offset, size, waitEvents,
-                                       eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_FILL_BUFFER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_FILL_BUFFER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueFillBuffer(buf, pattern, patternSize, offset, size, waitEvents, eventPtr),
+        event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueMapBuffer(cl_mem buffer,
@@ -338,21 +348,21 @@ angle::Result CommandQueue::enqueueMapBuffer(cl_mem buffer,
     const Buffer &buf          = buffer->cast<Buffer>();
     const bool blocking        = blockingMap != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueMapBuffer(buf, blocking, mapFlags, offset, size, waitEvents,
-                                      eventCreateFuncPtr, mapPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_MAP_BUFFER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_MAP_BUFFER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueMapBuffer(buf, blocking, mapFlags, offset, size, waitEvents,
+                                                 eventPtr, mapPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueReadImage(cl_mem image,
                                              cl_bool blockingRead,
-                                             const cl::MemOffsets &origin,
-                                             const cl::Coordinate &region,
+                                             const cl::Offset &origin,
+                                             const cl::Extents &region,
                                              size_t rowPitch,
                                              size_t slicePitch,
                                              void *ptr,
@@ -363,21 +373,21 @@ angle::Result CommandQueue::enqueueReadImage(cl_mem image,
     const Image &img           = image->cast<Image>();
     const bool blocking        = blockingRead != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueReadImage(img, blocking, origin, region, rowPitch, slicePitch, ptr,
-                                      waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_READ_IMAGE));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_READ_IMAGE, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueReadImage(img, blocking, origin, region, rowPitch,
+                                                 slicePitch, ptr, waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueWriteImage(cl_mem image,
                                               cl_bool blockingWrite,
-                                              const cl::MemOffsets &origin,
-                                              const cl::Coordinate &region,
+                                              const cl::Offset &origin,
+                                              const cl::Extents &region,
                                               size_t inputRowPitch,
                                               size_t inputSlicePitch,
                                               const void *ptr,
@@ -388,22 +398,22 @@ angle::Result CommandQueue::enqueueWriteImage(cl_mem image,
     const Image &img           = image->cast<Image>();
     const bool blocking        = blockingWrite != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueWriteImage(img, blocking, origin, region, inputRowPitch,
-                                       inputSlicePitch, ptr, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_WRITE_IMAGE));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_WRITE_IMAGE, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueWriteImage(img, blocking, origin, region, inputRowPitch,
+                                                  inputSlicePitch, ptr, waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueCopyImage(cl_mem srcImage,
                                              cl_mem dstImage,
-                                             const cl::MemOffsets &srcOrigin,
-                                             const cl::MemOffsets &dstOrigin,
-                                             const cl::Coordinate &region,
+                                             const cl::Offset &srcOrigin,
+                                             const cl::Offset &dstOrigin,
+                                             const cl::Extents &region,
                                              cl_uint numEventsInWaitList,
                                              const cl_event *eventWaitList,
                                              cl_event *event)
@@ -411,42 +421,41 @@ angle::Result CommandQueue::enqueueCopyImage(cl_mem srcImage,
     const Image &src           = srcImage->cast<Image>();
     const Image &dst           = dstImage->cast<Image>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueCopyImage(src, dst, srcOrigin, dstOrigin, region, waitEvents,
-                                      eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_COPY_IMAGE));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_COPY_IMAGE, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueCopyImage(src, dst, srcOrigin, dstOrigin, region, waitEvents, eventPtr),
+        event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueFillImage(cl_mem image,
                                              const void *fillColor,
-                                             const cl::MemOffsets &origin,
-                                             const cl::Coordinate &region,
+                                             const cl::Offset &origin,
+                                             const cl::Extents &region,
                                              cl_uint numEventsInWaitList,
                                              const cl_event *eventWaitList,
                                              cl_event *event)
 {
     const Image &img           = image->cast<Image>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(
-        mImpl->enqueueFillImage(img, fillColor, origin, region, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_FILL_IMAGE));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_FILL_IMAGE, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueFillImage(img, fillColor, origin, region, waitEvents, eventPtr), event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueCopyImageToBuffer(cl_mem srcImage,
                                                      cl_mem dstBuffer,
-                                                     const cl::MemOffsets &srcOrigin,
-                                                     const cl::Coordinate &region,
+                                                     const cl::Offset &srcOrigin,
+                                                     const cl::Extents &region,
                                                      size_t dstOffset,
                                                      cl_uint numEventsInWaitList,
                                                      const cl_event *eventWaitList,
@@ -455,22 +464,22 @@ angle::Result CommandQueue::enqueueCopyImageToBuffer(cl_mem srcImage,
     const Image &src           = srcImage->cast<Image>();
     const Buffer &dst          = dstBuffer->cast<Buffer>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueCopyImageToBuffer(src, dst, srcOrigin, region, dstOffset, waitEvents,
-                                              eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_COPY_IMAGE_TO_BUFFER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_COPY_IMAGE_TO_BUFFER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueCopyImageToBuffer(src, dst, srcOrigin, region, dstOffset,
+                                                         waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueCopyBufferToImage(cl_mem srcBuffer,
                                                      cl_mem dstImage,
                                                      size_t srcOffset,
-                                                     const cl::MemOffsets &dstOrigin,
-                                                     const cl::Coordinate &region,
+                                                     const cl::Offset &dstOrigin,
+                                                     const cl::Extents &region,
                                                      cl_uint numEventsInWaitList,
                                                      const cl_event *eventWaitList,
                                                      cl_event *event)
@@ -478,22 +487,22 @@ angle::Result CommandQueue::enqueueCopyBufferToImage(cl_mem srcBuffer,
     const Buffer &src          = srcBuffer->cast<Buffer>();
     const Image &dst           = dstImage->cast<Image>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueCopyBufferToImage(src, dst, srcOffset, dstOrigin, region, waitEvents,
-                                              eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_COPY_BUFFER_TO_IMAGE));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_COPY_BUFFER_TO_IMAGE, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueCopyBufferToImage(src, dst, srcOffset, dstOrigin, region,
+                                                         waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueMapImage(cl_mem image,
                                             cl_bool blockingMap,
                                             MapFlags mapFlags,
-                                            const cl::MemOffsets &origin,
-                                            const cl::Coordinate &region,
+                                            const cl::Offset &origin,
+                                            const cl::Extents &region,
                                             size_t *imageRowPitch,
                                             size_t *imageSlicePitch,
                                             cl_uint numEventsInWaitList,
@@ -504,15 +513,16 @@ angle::Result CommandQueue::enqueueMapImage(cl_mem image,
     const Image &img           = image->cast<Image>();
     const bool blocking        = blockingMap != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueMapImage(img, blocking, mapFlags, origin, region, imageRowPitch,
-                                     imageSlicePitch, waitEvents, eventCreateFuncPtr, mapPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_MAP_IMAGE));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_MAP_IMAGE, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueMapImage(img, blocking, mapFlags, origin, region, imageRowPitch,
+                               imageSlicePitch, waitEvents, eventPtr, mapPtr),
+        event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueUnmapMemObject(cl_mem memobj,
@@ -523,14 +533,14 @@ angle::Result CommandQueue::enqueueUnmapMemObject(cl_mem memobj,
 {
     const Memory &memory       = memobj->cast<Memory>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueUnmapMemObject(memory, mappedPtr, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_UNMAP_MEM_OBJECT));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_UNMAP_MEM_OBJECT, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueUnmapMemObject(memory, mappedPtr, waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueMigrateMemObjects(cl_uint numMemObjects,
@@ -547,14 +557,14 @@ angle::Result CommandQueue::enqueueMigrateMemObjects(cl_uint numMemObjects,
         memories.emplace_back(&(*memObjects++)->cast<Memory>());
     }
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueMigrateMemObjects(memories, flags, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_MIGRATE_MEM_OBJECTS));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_MIGRATE_MEM_OBJECTS, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueMigrateMemObjects(memories, flags, waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueNDRangeKernel(cl_kernel kernel,
@@ -565,14 +575,13 @@ angle::Result CommandQueue::enqueueNDRangeKernel(cl_kernel kernel,
 {
     const Kernel &krnl         = kernel->cast<Kernel>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueNDRangeKernel(krnl, ndrange, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_NDRANGE_KERNEL));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_NDRANGE_KERNEL, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueNDRangeKernel(krnl, ndrange, waitEvents, eventPtr), event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueTask(cl_kernel kernel,
@@ -582,14 +591,13 @@ angle::Result CommandQueue::enqueueTask(cl_kernel kernel,
 {
     const Kernel &krnl         = kernel->cast<Kernel>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueTask(krnl, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_TASK));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_TASK, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueTask(krnl, waitEvents, eventPtr), event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueNativeKernel(UserFunc userFunc,
@@ -633,15 +641,15 @@ angle::Result CommandQueue::enqueueNativeKernel(UserFunc userFunc,
     }
 
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueNativeKernel(userFunc, args, cbArgs, buffers, offsets, waitEvents,
-                                         eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_NATIVE_KERNEL));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_NATIVE_KERNEL, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(
+        mImpl->enqueueNativeKernel(userFunc, args, cbArgs, buffers, offsets, waitEvents, eventPtr),
+        event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueMarkerWithWaitList(cl_uint numEventsInWaitList,
@@ -649,24 +657,23 @@ angle::Result CommandQueue::enqueueMarkerWithWaitList(cl_uint numEventsInWaitLis
                                                       cl_event *event)
 {
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueMarkerWithWaitList(waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_MARKER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_MARKER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueMarkerWithWaitList(waitEvents, eventPtr), event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueMarker(cl_event *event)
 {
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    InitializeOutputEvent(event);
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_MARKER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    ANGLE_TRY(mImpl->enqueueMarker(eventCreateFunc));
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueMarker(eventPtr), event);
 
-    return CheckCreateEvent(*this, CL_COMMAND_MARKER, eventCreateFunc, event);
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueWaitForEvents(cl_uint numEvents, const cl_event *eventList)
@@ -679,14 +686,13 @@ angle::Result CommandQueue::enqueueBarrierWithWaitList(cl_uint numEventsInWaitLi
                                                        cl_event *event)
 {
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
-    InitializeOutputEvent(event);
 
-    ANGLE_TRY(mImpl->enqueueBarrierWithWaitList(waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_BARRIER));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_BARRIER, eventCreateFunc, event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueBarrierWithWaitList(waitEvents, eventPtr), event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueBarrier()
@@ -717,14 +723,14 @@ angle::Result CommandQueue::enqueueAcquireExternalMemObjectsKHR(cl_uint numMemOb
         memories.emplace_back(&memObjects[index]->cast<Memory>());
     }
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
 
-    ANGLE_TRY(mImpl->enqueueAcquireExternalMemObjectsKHR(memories, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_ACQUIRE_EXTERNAL_MEM_OBJECTS_KHR));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_ACQUIRE_EXTERNAL_MEM_OBJECTS_KHR, eventCreateFunc,
-                            event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueAcquireExternalMemObjectsKHR(memories, waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 angle::Result CommandQueue::enqueueReleaseExternalMemObjectsKHR(cl_uint numMemObjects,
@@ -740,14 +746,14 @@ angle::Result CommandQueue::enqueueReleaseExternalMemObjectsKHR(cl_uint numMemOb
         memories.emplace_back(&memObjects[index]->cast<Memory>());
     }
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
-    rx::CLEventImpl::CreateFunc eventCreateFunc;
-    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
-        event != nullptr ? &eventCreateFunc : nullptr;
 
-    ANGLE_TRY(mImpl->enqueueReleaseExternalMemObjectsKHR(memories, waitEvents, eventCreateFuncPtr));
+    ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_RELEASE_EXTERNAL_MEM_OBJECTS_KHR));
+    EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    return CheckCreateEvent(*this, CL_COMMAND_RELEASE_EXTERNAL_MEM_OBJECTS_KHR, eventCreateFunc,
-                            event);
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueReleaseExternalMemObjectsKHR(memories, waitEvents, eventPtr),
+                         event);
+
+    return angle::Result::Continue;
 }
 
 CommandQueue::~CommandQueue()

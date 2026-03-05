@@ -45,7 +45,7 @@ class PlatformLayerDisplayDelegate final : public WebCore::GraphicsLayerContents
 public:
     static Ref<PlatformLayerDisplayDelegate> create(PlatformLayerContainer&& platformLayer)
     {
-        return adoptRef(*new PlatformLayerDisplayDelegate(WTFMove(platformLayer)));
+        return adoptRef(*new PlatformLayerDisplayDelegate(WTF::move(platformLayer)));
     }
 
     PlatformLayer* platformLayer() const final
@@ -55,7 +55,7 @@ public:
 
 private:
     PlatformLayerDisplayDelegate(PlatformLayerContainer&& platformLayer)
-        : m_platformLayer(WTFMove(platformLayer))
+        : m_platformLayer(WTF::move(platformLayer))
     {
     }
 

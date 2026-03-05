@@ -43,10 +43,6 @@ By default the cpu is detected and the most advanced form of SIMD is used.  But 
     LIBYUV_DISABLE_SVE2
     LIBYUV_DISABLE_SME
 
-## MIPS CPUs
-
-    LIBYUV_DISABLE_MSA
-
 ## LOONGARCH CPUs
 
     LIBYUV_DISABLE_LSX

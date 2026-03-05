@@ -126,10 +126,10 @@ void JSTestCallbackFunctionWithTypedefs::visitJSFunction(JSC::SlotVisitor& visit
 
 JSC::JSValue toJS(TestCallbackFunctionWithTypedefs& impl)
 {
-    if (!static_cast<JSTestCallbackFunctionWithTypedefs&>(impl).callbackData())
-        return jsNull();
+    if (auto* callbackData = downcast<JSTestCallbackFunctionWithTypedefs>(impl).callbackData())
+        return callbackData->callback();
+    return jsNull();
 
-    return static_cast<JSTestCallbackFunctionWithTypedefs&>(impl).callbackData()->callback();
 }
 
 ScriptExecutionContext* JSTestCallbackFunctionWithTypedefs::scriptExecutionContext() const

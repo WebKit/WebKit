@@ -345,8 +345,6 @@ TEST(SSLAEADContextTest, Lengths) {
   };
 
   struct CipherLengthTest {
-    // |SSL3_CK_*| and |TLS1_CK_*| constants include an extra byte at the front,
-    // so these constants must be masked with 0xffff.
     uint16_t cipher;
     uint16_t version;
     size_t enc_key_len, mac_key_len, fixed_iv_len;
@@ -357,7 +355,7 @@ TEST(SSLAEADContextTest, Lengths) {
   const CipherLengthTest kTests[] = {
       // 20-byte MAC, 8-byte CBC blocks with padding
       {
-          /*cipher=*/SSL3_CK_RSA_DES_192_CBC3_SHA & 0xffff,
+          /*cipher=*/SSL_CIPHER_RSA_WITH_3DES_EDE_CBC_SHA,
           /*version=*/TLS1_2_VERSION,
           /*enc_key_len=*/24,
           /*mac_key_len=*/20,
@@ -377,7 +375,7 @@ TEST(SSLAEADContextTest, Lengths) {
       },
       // 20-byte MAC, 16-byte CBC blocks with padding
       {
-          /*cipher=*/TLS1_CK_RSA_WITH_AES_128_SHA & 0xffff,
+          /*cipher=*/SSL_CIPHER_RSA_WITH_AES_128_CBC_SHA,
           /*version=*/TLS1_2_VERSION,
           /*enc_key_len=*/16,
           /*mac_key_len=*/20,
@@ -397,7 +395,7 @@ TEST(SSLAEADContextTest, Lengths) {
       },
       // 32-byte MAC, 16-byte CBC blocks with padding
       {
-          /*cipher=*/TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA256 & 0xffff,
+          /*cipher=*/SSL_CIPHER_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
           /*version=*/TLS1_2_VERSION,
           /*enc_key_len=*/16,
           /*mac_key_len=*/32,
@@ -417,7 +415,7 @@ TEST(SSLAEADContextTest, Lengths) {
       },
       // 8-byte explicit IV, 16-byte tag
       {
-          /*cipher=*/TLS1_CK_ECDHE_RSA_WITH_AES_128_GCM_SHA256 & 0xffff,
+          /*cipher=*/SSL_CIPHER_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
           /*version=*/TLS1_2_VERSION,
           /*enc_key_len=*/16,
           /*mac_key_len=*/0,
@@ -441,7 +439,7 @@ TEST(SSLAEADContextTest, Lengths) {
       // No explicit IV, 16-byte tag. TLS 1.3's padding and record type overhead
       // is added at another layer.
       {
-          /*cipher=*/TLS1_CK_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 & 0xffff,
+          /*cipher=*/SSL_CIPHER_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
           /*version=*/TLS1_2_VERSION,
           /*enc_key_len=*/32,
           /*mac_key_len=*/0,
@@ -463,7 +461,7 @@ TEST(SSLAEADContextTest, Lengths) {
           },
       },
       {
-          /*cipher=*/TLS1_CK_AES_128_GCM_SHA256 & 0xffff,
+          /*cipher=*/SSL_CIPHER_AES_128_GCM_SHA256,
           /*version=*/TLS1_3_VERSION,
           /*enc_key_len=*/16,
           /*mac_key_len=*/0,
@@ -485,7 +483,7 @@ TEST(SSLAEADContextTest, Lengths) {
           },
       },
       {
-          /*cipher=*/TLS1_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
+          /*cipher=*/SSL_CIPHER_CHACHA20_POLY1305_SHA256,
           /*version=*/TLS1_3_VERSION,
           /*enc_key_len=*/32,
           /*mac_key_len=*/0,

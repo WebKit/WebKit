@@ -35,7 +35,7 @@ namespace WebKit {
 class WebMessagePortChannelProvider final : public WebCore::MessagePortChannelProvider {
     WTF_MAKE_TZONE_ALLOCATED(WebMessagePortChannelProvider);
 public:
-    static WebMessagePortChannelProvider& singleton();
+    static WebMessagePortChannelProvider& NODELETE singleton();
 
     void messagePortSentToRemote(const WebCore::MessagePortIdentifier&);
 

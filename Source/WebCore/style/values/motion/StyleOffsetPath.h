@@ -36,16 +36,16 @@ namespace Style {
 // https://drafts.fxtf.org/motion-1/#propdef-offset-path
 struct OffsetPath {
     OffsetPath(CSS::Keyword::None) : operation { nullptr } { }
-    OffsetPath(RayPath&& ray) : operation { WTFMove(ray.operation) } { }
+    OffsetPath(RayPath&& ray) : operation { WTF::move(ray.operation) } { }
     OffsetPath(const RayPath& ray) : operation { ray.operation } { }
-    OffsetPath(ReferencePath&& reference) : operation { WTFMove(reference.operation) } { }
+    OffsetPath(ReferencePath&& reference) : operation { WTF::move(reference.operation) } { }
     OffsetPath(const ReferencePath& reference) : operation { reference.operation } { }
-    OffsetPath(BasicShapePath&& basicShape) : operation { WTFMove(basicShape.operation) } { }
+    OffsetPath(BasicShapePath&& basicShape) : operation { WTF::move(basicShape.operation) } { }
     OffsetPath(const BasicShapePath& basicShape) : operation { basicShape.operation } { }
-    OffsetPath(BoxPath&& box) : operation { WTFMove(box.operation) } { }
+    OffsetPath(BoxPath&& box) : operation { WTF::move(box.operation) } { }
     OffsetPath(const BoxPath& box) : operation { box.operation } { }
 
-    explicit OffsetPath(RefPtr<PathOperation>&& operation) : operation { WTFMove(operation) } { }
+    explicit OffsetPath(RefPtr<PathOperation>&& operation) : operation { WTF::move(operation) } { }
     explicit OffsetPath(const RefPtr<PathOperation>& operation) : operation { operation } { }
 
     bool isNone() const { return !operation; }
@@ -59,6 +59,8 @@ struct OffsetPath {
     std::optional<BasicShapePath> tryBasicShape() const;
     std::optional<BoxPath> tryBox() const;
 
+    bool affectedByTransformOrigin() const { return !isNone(); }
+
     template<typename> bool holdsAlternative() const;
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 
@@ -70,17 +72,17 @@ struct OffsetPath {
 private:
     friend struct Blending<OffsetPath>;
     friend struct ToPlatform<OffsetPath>;
-    friend std::optional<WebCore::Path> tryPath(const OffsetPath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const OffsetPath&, const TransformOperationData&, ZoomFactor);
 
     RefPtr<PathOperation> operation;
 };
 
-inline std::optional<WebCore::Path> tryPath(const OffsetPath& offsetPath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const OffsetPath& offsetPath, const TransformOperationData& data, ZoomFactor zoom)
 {
     RefPtr operation = offsetPath.operation;
     if (!operation)
         return { };
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
 template<typename T> bool OffsetPath::holdsAlternative() const

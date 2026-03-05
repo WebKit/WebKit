@@ -35,19 +35,26 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_libwebrtc_outgoing_video_debug);
+#define GST_CAT_DEFAULT webkit_libwebrtc_outgoing_video_debug
+
 Ref<RealtimeOutgoingVideoSource> RealtimeOutgoingVideoSource::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {
-    return RealtimeOutgoingVideoSourceLibWebRTC::create(WTFMove(videoSource));
+    return RealtimeOutgoingVideoSourceLibWebRTC::create(WTF::move(videoSource));
 }
 
 Ref<RealtimeOutgoingVideoSourceLibWebRTC> RealtimeOutgoingVideoSourceLibWebRTC::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {
-    return adoptRef(*new RealtimeOutgoingVideoSourceLibWebRTC(WTFMove(videoSource)));
+    return adoptRef(*new RealtimeOutgoingVideoSourceLibWebRTC(WTF::move(videoSource)));
 }
 
 RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&& videoSource)
-    : RealtimeOutgoingVideoSource(WTFMove(videoSource))
+    : RealtimeOutgoingVideoSource(WTF::move(videoSource))
 {
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_outgoing_video_debug, "webkitlibwebrtcvideooutgoing", 0, "WebKit LibWebRTC outgoing video source");
+    });
 }
 
 void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
@@ -67,15 +74,15 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
         break;
     }
 
-    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(static_cast<VideoFrameGStreamer&>(videoFrame).sample());
-
-    sendFrame(WTFMove(frameBuffer));
+    GST_TRACE("Sending video frame");
+    sendFrame(GStreamerVideoFrameLibWebRTC::create(static_cast<VideoFrameGStreamer&>(videoFrame).sample()));
 }
 
 webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame(size_t  width, size_t  height)
 {
-    GstVideoInfo info;
+    GST_TRACE("Creating black video frame");
 
+    GstVideoInfo info;
     gst_video_info_set_format(&info, GST_VIDEO_FORMAT_RGB, width, height);
 
     GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_allocate(nullptr, info.size, nullptr));
@@ -86,9 +93,11 @@ webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWe
         memsetSpan(map.mutableSpan<uint8_t>(), 0);
     }
 
-    return GStreamerVideoFrameLibWebRTC::create(gst_sample_new(buffer.get(), caps.get(), NULL, NULL));
+    return GStreamerVideoFrameLibWebRTC::create(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/StackAlignment.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <JavaScriptCore/VM.h>
 
 namespace JSC {
@@ -95,6 +95,19 @@ public:
         ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm.topEntryFrame));
         assertStackPointerIsAligned();
         vm.topCallFrame = callFrame;
+    }
+};
+
+// This class should be used instead of SlowPathFrameTracer *only* in contexts where the sole
+// reason the topCallFrame is accessed is to update ShadowChicken. In other words, in contexts
+// where a JS exception cannot be thrown.
+class WasmSlowPathWithoutCallFrameTracer {
+public:
+    ALWAYS_INLINE WasmSlowPathWithoutCallFrameTracer(VM& vm)
+    {
+        // Wasm frames don't participate in ShadowChicken.
+        if (vm.shadowChicken()) [[unlikely]]
+            vm.topCallFrame = nullptr;
     }
 };
 

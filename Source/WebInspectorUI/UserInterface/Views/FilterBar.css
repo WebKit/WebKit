@@ -54,6 +54,10 @@
     margin-inline-start: 6px;
 }
 
+.filter-bar > input[type="search"]:focus ~ * {
+    display: none;
+}
+
 :is(.filter-bar, .search-bar) > input[type="search"] {
     height: 22px;
     padding-top: 0;
@@ -79,10 +83,6 @@
     appearance: none;
 }
 
-:is(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button {
-    margin-inline-end: 4px;
-}
-
 /* FIXME: use a different image for ::-webkit-search-decoration when :not(:placeholder-shown) */
 
 :is(.filter-bar, .search-bar) > input[type="search"]::placeholder {
@@ -103,10 +103,6 @@
 
 :is(.filter-bar, .search-bar) > input[type="search"] + :empty {
     margin-inline-start: 6px;
-}
-
-:is(.filter-bar, .search-bar) > input[type="search"]:focus ~ * {
-    display: none;
 }
 
 :is(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {

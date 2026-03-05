@@ -54,7 +54,7 @@ private:
     DOMCacheStorage(ScriptExecutionContext&, Ref<CacheStorageConnection>&&);
 
     // ActiveDOMObject
-    void stop() final;
+    void NODELETE stop() final;
 
     void doOpen(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
     void doRemove(const String&, DOMPromiseDeferred<IDLBoolean>&&);

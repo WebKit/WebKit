@@ -17,11 +17,8 @@ set(WPEPlatformMock_LIBRARIES
     LibDRM::LibDRM
     WTF
     WebKit
+    bmalloc
 )
-
-if (NOT USE_SYSTEM_MALLOC)
-  list(APPEND WPEPlatformMock_LIBRARIES bmalloc)
-endif ()
 
 add_library(WPEPlatformMock STATIC ${WPEPlatformMock_SOURCES})
 target_include_directories(WPEPlatformMock PRIVATE ${WPEPlatformMock_PRIVATE_INCLUDE_DIRECTORIES})

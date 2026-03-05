@@ -1,0 +1,22 @@
+
+PASS Number: 0
+PASS Number: 1
+PASS Number: 5e-324
+PASS Number: 2147483647
+PASS Number: 2147483648
+PASS Number: 4294967295
+PASS Number: 1.7976931348623157e+308
+PASS Number: Infinity
+PASS BigInt: -12345678901234567890
+PASS BigInt: -1
+PASS BigInt: 0
+PASS BigInt: 1
+PASS BigInt: 12345678901234567890
+PASS String:
+PASS String: this is a sample string
+PASS String: null(\0)
+PASS Date: Sun Feb 09 1653 22:13:20 GMT-0800 (Pacific Standard Time)
+PASS Date: Sun Apr 24 1938 14:13:20 GMT-0800 (Pacific Standard Time)
+PASS Date: Sat Dec 20 1969 02:13:20 GMT-0800 (Pacific Standard Time)
+PASS Date: Wed Dec 31 1969 15:43:20 GMT-0800 (Pacific Standard Time)
+

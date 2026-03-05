@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/Element.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ReferrerPolicy.h>
@@ -33,6 +34,7 @@
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
@@ -78,6 +80,9 @@ public:
     bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
     void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
 
+    const std::optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
+    void setTargetBackForwardItemIdentifier(BackForwardItemIdentifier itemID) { m_targetBackForwardItemIdentifier = itemID; }
+
 protected:
     FrameLoadRequestBase() = default;
     FrameLoadRequestBase(const FrameLoadRequestBase&) = default;
@@ -98,6 +103,7 @@ private:
     AtomString m_downloadAttribute;
     RefPtr<Element> m_sourceElement;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
+    std::optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
     bool m_isRequestFromClientOrUserInput { false };
     bool m_isInitialFrameSrcLoad { false };
     bool m_isContentRuleListRedirect { false };
@@ -118,14 +124,16 @@ public:
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 
-    WEBCORE_EXPORT Document& requester();
-    Ref<Document> protectedRequester() const;
-    const SecurityOrigin& requesterSecurityOrigin() const;
-    Ref<SecurityOrigin> protectedRequesterSecurityOrigin() const;
+    WEBCORE_EXPORT Document& NODELETE requester() const;
+    const SecurityOrigin& NODELETE requesterSecurityOrigin() const;
 
     ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     ResourceRequest takeResourceRequest() { return std::exchange(m_resourceRequest, { }); }
+
+    void setOriginalResourceRequest(ResourceRequest originalResourceRequest) { m_originalResourceRequest = originalResourceRequest; }
+    bool hasOriginalResourceRequest() const { return !!m_originalResourceRequest; }
+    ResourceRequest takeOriginalResourceRequest() { return m_originalResourceRequest.value_or(ResourceRequest { }); }
 
     const AtomString& frameName() const { return m_frameName; }
     void setFrameName(const AtomString& frameName) { m_frameName = frameName; }
@@ -137,13 +145,13 @@ public:
     ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad() const { return m_shouldTreatAsContinuingLoad; }
 
     const SubstituteData& substituteData() const { return m_substituteData; }
-    void setSubstituteData(SubstituteData&& data) { m_substituteData = WTFMove(data); }
+    void setSubstituteData(SubstituteData&& data) { m_substituteData = WTF::move(data); }
     bool hasSubstituteData() { return m_substituteData.isValid(); }
     SubstituteData takeSubstituteData() { return std::exchange(m_substituteData, { }); }
 
 
     const String& clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; }
-    void setClientRedirectSourceForHistory(String&& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = WTFMove(clientRedirectSourceForHistory); }
+    void setClientRedirectSourceForHistory(String&& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = WTF::move(clientRedirectSourceForHistory); }
 
     ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
     void setReferrerPolicy(const ReferrerPolicy& referrerPolicy) { m_referrerPolicy = referrerPolicy; }
@@ -177,6 +185,7 @@ private:
     AtomString m_frameName;
     SubstituteData m_substituteData;
     String m_clientRedirectSourceForHistory;
+    Markable<ResourceRequest> m_originalResourceRequest;
 
     bool m_shouldCheckNewWindowPolicy { false };
     ShouldTreatAsContinuingLoad m_shouldTreatAsContinuingLoad { ShouldTreatAsContinuingLoad::No };

@@ -49,7 +49,7 @@ std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlob
 
     RetainPtr pkPaymentMerchantSession = adoptNS([PAL::allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary.get()]);
 
-    return PaymentMerchantSession(WTFMove(pkPaymentMerchantSession));
+    return PaymentMerchantSession(WTF::move(pkPaymentMerchantSession));
 }
 
 }

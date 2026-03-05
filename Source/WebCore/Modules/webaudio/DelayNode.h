@@ -31,13 +31,12 @@ namespace WebCore {
 struct DelayOptions;
 
 class DelayNode final : public AudioBasicProcessorNode {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DelayNode);
+    WTF_MAKE_TZONE_ALLOCATED(DelayNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DelayNode);
 public:
     static ExceptionOr<Ref<DelayNode>> create(BaseAudioContext&, const DelayOptions&);
 
-    AudioParam& delayTime();
-    CheckedRef<AudioParam> checkedDelayTime();
+    AudioParam& NODELETE delayTime();
 
 private:
     DelayNode(BaseAudioContext&, double maxDelayTime);

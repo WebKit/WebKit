@@ -34,7 +34,7 @@ namespace Calculation {
 
 class ValueMap {
 public:
-    static ValueMap& calculationValues();
+    static ValueMap& NODELETE calculationValues();
 
     unsigned insert(Ref<Value>&&);
     void ref(unsigned handle);
@@ -58,7 +58,7 @@ private:
 };
 
 inline ValueMap::Entry::Entry(Ref<Value>&& value)
-    : value(WTFMove(value))
+    : value(WTF::move(value))
 {
 }
 
@@ -66,7 +66,7 @@ inline unsigned ValueMap::insert(Ref<Value>&& value)
 {
     ASSERT(m_nextAvailableHandle);
 
-    Entry entry(WTFMove(value));
+    Entry entry(WTF::move(value));
 
     // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
     // of the handle space. Consider reusing empty handles. https://bugs.webkit.org/show_bug.cgi?id=80489

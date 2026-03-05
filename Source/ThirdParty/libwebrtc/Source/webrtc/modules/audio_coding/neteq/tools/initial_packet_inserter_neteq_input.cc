@@ -15,9 +15,8 @@
 #include <optional>
 #include <utility>
 
-#include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
-#include "rtc_base/buffer.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -45,7 +44,7 @@ InitialPacketInserterNetEqInput::NextSetMinimumDelayInfo() const {
   return source_->NextSetMinimumDelayInfo();
 }
 
-std::unique_ptr<InitialPacketInserterNetEqInput::PacketData>
+std::unique_ptr<RtpPacketReceived>
 InitialPacketInserterNetEqInput::PopPacket() {
   if (!first_packet_) {
     first_packet_ = source_->PopPacket();
@@ -56,15 +55,13 @@ InitialPacketInserterNetEqInput::PopPacket() {
   }
   if (packets_to_insert_ > 0) {
     RTC_CHECK(first_packet_);
-    auto dummy_packet = std::unique_ptr<PacketData>(new PacketData());
-    dummy_packet->header = first_packet_->header;
-    dummy_packet->payload =
-        Buffer(first_packet_->payload.data(), first_packet_->payload.size());
-    dummy_packet->time_ms = first_packet_->time_ms;
-    dummy_packet->header.sequenceNumber -= packets_to_insert_;
+    auto dummy_packet = std::make_unique<RtpPacketReceived>(*first_packet_);
+    dummy_packet->SetSequenceNumber(first_packet_->SequenceNumber() -
+                                    packets_to_insert_);
     // This assumes 20ms per packet.
-    dummy_packet->header.timestamp -=
-        20 * sample_rate_hz_ * packets_to_insert_ / 1000;
+    dummy_packet->SetTimestamp(first_packet_->Timestamp() -
+                               20 * sample_rate_hz_ * packets_to_insert_ /
+                                   1000);
     packets_to_insert_--;
     return dummy_packet;
   }
@@ -83,8 +80,8 @@ bool InitialPacketInserterNetEqInput::ended() const {
   return source_->ended();
 }
 
-std::optional<RTPHeader> InitialPacketInserterNetEqInput::NextHeader() const {
-  return source_->NextHeader();
+const RtpPacketReceived* InitialPacketInserterNetEqInput::NextPacket() const {
+  return source_->NextPacket();
 }
 
 }  // namespace test

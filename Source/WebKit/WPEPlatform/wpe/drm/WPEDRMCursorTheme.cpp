@@ -42,7 +42,7 @@ std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size
     if (!theme)
         return nullptr;
 
-    return makeUnique<CursorTheme>(WTFMove(theme));
+    return makeUnique<CursorTheme>(WTF::move(theme));
 }
 
 std::unique_ptr<CursorTheme> CursorTheme::create()
@@ -51,11 +51,11 @@ std::unique_ptr<CursorTheme> CursorTheme::create()
     if (!theme)
         return nullptr;
 
-    return makeUnique<CursorTheme>(WTFMove(theme));
+    return makeUnique<CursorTheme>(WTF::move(theme));
 }
 
 CursorTheme::CursorTheme(std::unique_ptr<WPE::CursorTheme>&& theme)
-    : m_theme(WTFMove(theme))
+    : m_theme(WTF::move(theme))
 {
 }
 
@@ -91,7 +91,7 @@ void CursorTheme::loadCursor(const char* name, double scale, std::optional<uint3
 
     for (auto& cursorImage : cursor) {
         images.append({ cursorImage.width * effectiveScale, cursorImage.height * effectiveScale,
-            cursorImage.hotspotX * effectiveScale, cursorImage.hotspotY * effectiveScale, WTFMove(cursorImage.pixels) });
+            cursorImage.hotspotX * effectiveScale, cursorImage.hotspotY * effectiveScale, WTF::move(cursorImage.pixels) });
     }
 }
 

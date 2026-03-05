@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RemoteMonotonicTimeline);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMonotonicTimeline);
 
 Ref<RemoteMonotonicTimeline> RemoteMonotonicTimeline::create(TimelineID identifier, const Seconds& originTime, MonotonicTime now)
 {

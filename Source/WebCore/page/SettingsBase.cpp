@@ -236,7 +236,7 @@ void SettingsBase::setAllowedMediaContainerTypes(const String& types)
     for (auto type : StringView(types).split(','))
         newTypes.append(type.toString());
 
-    m_allowedMediaContainerTypes = WTFMove(newTypes);
+    m_allowedMediaContainerTypes = WTF::move(newTypes);
 }
 
 void SettingsBase::setAllowedMediaCodecTypes(const String& types)
@@ -250,7 +250,7 @@ void SettingsBase::setAllowedMediaCodecTypes(const String& types)
     for (auto type : StringView(types).split(','))
         newTypes.append(type.toString());
 
-    m_allowedMediaCodecTypes = WTFMove(newTypes);
+    m_allowedMediaCodecTypes = WTF::move(newTypes);
 }
 
 void SettingsBase::setAllowedMediaVideoCodecIDs(const String& types)
@@ -263,10 +263,10 @@ void SettingsBase::setAllowedMediaVideoCodecIDs(const String& types)
     Vector<FourCC> newTypes;
     for (auto type : StringView(types).split(',')) {
         if (auto fourCC = FourCC::fromString(type))
-            newTypes.append(WTFMove(*fourCC));
+            newTypes.append(WTF::move(*fourCC));
     }
 
-    m_allowedMediaVideoCodecIDs = WTFMove(newTypes);
+    m_allowedMediaVideoCodecIDs = WTF::move(newTypes);
 }
 
 void SettingsBase::setAllowedMediaAudioCodecIDs(const String& types)
@@ -279,10 +279,10 @@ void SettingsBase::setAllowedMediaAudioCodecIDs(const String& types)
     Vector<FourCC> newTypes;
     for (auto type : StringView(types).split(',')) {
         if (auto fourCC = FourCC::fromString(type))
-            newTypes.append(WTFMove(*fourCC));
+            newTypes.append(WTF::move(*fourCC));
     }
 
-    m_allowedMediaAudioCodecIDs = WTFMove(newTypes);
+    m_allowedMediaAudioCodecIDs = WTF::move(newTypes);
 }
 
 void SettingsBase::setAllowedMediaCaptionFormatTypes(const String& types)
@@ -295,10 +295,10 @@ void SettingsBase::setAllowedMediaCaptionFormatTypes(const String& types)
     Vector<FourCC> newTypes;
     for (auto type : StringView(types).split(',')) {
         if (auto fourCC = FourCC::fromString(type))
-            newTypes.append(WTFMove(*fourCC));
+            newTypes.append(WTF::move(*fourCC));
     }
 
-    m_allowedMediaCaptionFormatTypes = WTFMove(newTypes);
+    m_allowedMediaCaptionFormatTypes = WTF::move(newTypes);
 }
 
 void SettingsBase::resetToConsistentState()
@@ -331,8 +331,8 @@ void SettingsBase::setNeedsRelayoutAllFrames()
     if (!m_page)
         return;
 
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         if (!localFrame->ownerRenderer())
@@ -389,8 +389,8 @@ void SettingsBase::imageLoadingSettingsTimerFired()
         RefPtr document = localFrame->document();
         if (!document)
             continue;
-        document->protectedCachedResourceLoader()->setImagesEnabled(m_page->settings().areImagesEnabled());
-        document->protectedCachedResourceLoader()->setAutoLoadImages(m_page->settings().loadsImagesAutomatically());
+        protect(document->cachedResourceLoader())->setImagesEnabled(m_page->settings().areImagesEnabled());
+        protect(document->cachedResourceLoader())->setAutoLoadImages(m_page->settings().loadsImagesAutomatically());
     }
 }
 
@@ -539,14 +539,9 @@ void SettingsBase::useSystemAppearanceChanged()
         m_page->useSystemAppearanceChanged();
 }
 
-RefPtr<Page> SettingsBase::protectedPage() const
-{
-    return m_page.get();
-}
-
 void SettingsBase::fontFallbackPrefersPictographsChanged()
 {
-    invalidateAfterGenericFamilyChange(protectedPage().get());
+    invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
 } // namespace WebCore

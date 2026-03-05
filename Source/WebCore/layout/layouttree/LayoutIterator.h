@@ -52,10 +52,6 @@ private:
     const T* m_current;
 };
 
-// Similar to WTF::is<>() but without the static_assert() making sure the check is necessary.
-template <typename T, typename U>
-inline bool isLayoutBoxOfType(const U& layoutBox) { return TypeCastTraits<const T, const U>::isOfType(layoutBox); }
-
 namespace LayoutBoxTraversal {
 
 template <typename U>
@@ -116,46 +112,66 @@ namespace Traversal {
 template <typename T, typename U>
 inline const T* firstChild(U& current)
 {
-    auto* object = LayoutBoxTraversal::firstChild(current);
-    while (object && !isLayoutBoxOfType<T>(*object))
-        object = object->nextSibling();
-    return static_cast<const T*>(object);
+    if constexpr(std::same_as<T, Box>)
+        return LayoutBoxTraversal::firstChild(current);
+    else {
+        auto* object = LayoutBoxTraversal::firstChild(current);
+        while (object && !is<T>(*object))
+            object = object->nextSibling();
+        return uncheckedDowncast<T>(object);
+    }
 }
 
 template <typename T>
 inline const T* nextSibling(const T& current)
 {
-    auto* object = current.nextSibling();
-    while (object && !isLayoutBoxOfType<T>(*object))
-        object = object->nextSibling();
-    return static_cast<const T*>(object);
+    if constexpr(std::same_as<T, Box>)
+        return current.nextSibling();
+    else {
+        auto* object = current.nextSibling();
+        while (object && !is<T>(*object))
+            object = object->nextSibling();
+        return uncheckedDowncast<T>(object);
+    }
 }
 
 template <typename T, typename U>
 inline const T* firstWithin(const U& stayWithin)
 {
-    auto* descendant = LayoutBoxTraversal::firstChild(stayWithin);
-    while (descendant && !isLayoutBoxOfType<T>(*descendant))
-        descendant = LayoutBoxTraversal::next(*descendant, stayWithin);
-    return static_cast<const T*>(descendant);
+    if constexpr(std::same_as<T, Box>)
+        return LayoutBoxTraversal::firstChild(stayWithin);
+    else {
+        auto* descendant = LayoutBoxTraversal::firstChild(stayWithin);
+        while (descendant && !is<T>(*descendant))
+            descendant = LayoutBoxTraversal::next(*descendant, stayWithin);
+        return uncheckedDowncast<T>(descendant);
+    }
 }
 
 template <typename T, typename U>
 inline const T* next(const U& current, const ElementBox& stayWithin)
 {
-    auto* descendant = LayoutBoxTraversal::next(current, stayWithin);
-    while (descendant && !isLayoutBoxOfType<T>(*descendant))
-        descendant = LayoutBoxTraversal::next(*descendant, stayWithin);
-    return static_cast<const T*>(descendant);
+    if constexpr(std::same_as<T, Box>)
+        return LayoutBoxTraversal::next(current, stayWithin);
+    else {
+        auto* descendant = LayoutBoxTraversal::next(current, stayWithin);
+        while (descendant && !is<T>(*descendant))
+            descendant = LayoutBoxTraversal::next(*descendant, stayWithin);
+        return uncheckedDowncast<T>(descendant);
+    }
 }
 
 template <typename T, typename U>
 inline const T* nextSkippingChildren(const U& current, const ElementBox& stayWithin)
 {
-    auto* descendant = LayoutBoxTraversal::nextSkippingChildren(current, stayWithin);
-    while (descendant && !isLayoutBoxOfType<T>(*descendant))
-        descendant = LayoutBoxTraversal::nextSkippingChildren(*descendant, stayWithin);
-    return static_cast<const T*>(descendant);
+    if constexpr(std::same_as<T, Box>)
+        return LayoutBoxTraversal::nextSkippingChildren(current, stayWithin);
+    else {
+        auto* descendant = LayoutBoxTraversal::nextSkippingChildren(current, stayWithin);
+        while (descendant && !is<T>(*descendant))
+            descendant = LayoutBoxTraversal::nextSkippingChildren(*descendant, stayWithin);
+        return uncheckedDowncast<T>(descendant);
+    }
 }
 
 }

@@ -22,7 +22,6 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/text/StringHasher.h>
-#include <wtf/text/SuperFastHash.h>
 #include <wtf/text/WYHash.h>
 
 namespace WTF {
@@ -30,32 +29,20 @@ namespace WTF {
 template<typename T, typename Converter>
 unsigned StringHasher::computeHashAndMaskTop8Bits(std::span<const T> data)
 {
-#if ENABLE(WYHASH_STRING_HASHER)
-    if (data.size() <= smallStringThreshold) [[likely]]
-        return SuperFastHash::computeHashAndMaskTop8Bits<T, Converter>(data);
     return WYHash::computeHashAndMaskTop8Bits<T, Converter>(data);
-#else
-    return SuperFastHash::computeHashAndMaskTop8Bits<T, Converter>(data);
-#endif
 }
 
 template<typename T, unsigned characterCount>
 constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount])
 {
     constexpr unsigned characterCountWithoutNull = characterCount - 1;
-#if ENABLE(WYHASH_STRING_HASHER)
-    if constexpr (characterCountWithoutNull <= smallStringThreshold)
-        return SuperFastHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
     return WYHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
-#else
-    return SuperFastHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
-#endif
 }
 
 inline void StringHasher::addCharacter(char16_t character)
 {
-#if ENABLE(WYHASH_STRING_HASHER)
-    if (m_bufferSize == smallStringThreshold) {
+    static constexpr unsigned bufferCapacity = numberOfCharactersInLargestBulkForWYHash * 2;
+    if (m_bufferSize == bufferCapacity) {
         // This algorithm must stay in sync with WYHash::hash function.
         if (!m_pendingHashValue) {
             m_seed = WYHash::initSeed();
@@ -72,23 +59,19 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         ASSERT(!m_bufferSize);
-        m_numberOfProcessedCharacters += smallStringThreshold;
+        m_numberOfProcessedCharacters += bufferCapacity;
     }
 
-    ASSERT(m_bufferSize < smallStringThreshold);
+    ASSERT(m_bufferSize < bufferCapacity);
     m_buffer[m_bufferSize++] = character;
-#else
-    SuperFastHash::addCharacterImpl(character, m_hasPendingCharacter, m_pendingCharacter, m_hash);
-#endif
 }
 
 inline unsigned StringHasher::hashWithTop8BitsMasked()
 {
-#if ENABLE(WYHASH_STRING_HASHER)
+    static constexpr unsigned bufferCapacity = numberOfCharactersInLargestBulkForWYHash * 2;
     unsigned hashValue;
     if (!m_pendingHashValue) {
-        ASSERT(m_bufferSize <= smallStringThreshold);
-        hashValue = SuperFastHash::computeHashAndMaskTop8Bits<char16_t>(std::span { m_buffer }.first(m_bufferSize));
+        hashValue = WYHash::computeHashAndMaskTop8Bits<char16_t>(std::span { m_buffer }.first(m_bufferSize));
     } else {
         // This algorithm must stay in sync with WYHash::hash function.
         auto wyr8 = WYHash::Reader16Bit<char16_t>::wyr8;
@@ -106,10 +89,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             b = wyr8(p + i - 4);
         } else {
             char16_t tmp[8];
-            unsigned bufferIndex = smallStringThreshold - (8 - i);
+            unsigned bufferIndex = bufferCapacity - (8 - i);
             for (unsigned tmpIndex = 0; tmpIndex < 8; tmpIndex++) {
                 tmp[tmpIndex] = m_buffer[bufferIndex];
-                bufferIndex = (bufferIndex + 1) % smallStringThreshold;
+                bufferIndex = (bufferIndex + 1) % bufferCapacity;
             }
 
             char16_t* tmpPtr = tmp;
@@ -126,13 +109,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     m_bufferSize = 0;
     return hashValue;
-#else
-    unsigned hashValue = SuperFastHash::hashWithTop8BitsMaskedImpl(m_hasPendingCharacter, m_pendingCharacter, m_hash);
-    m_hasPendingCharacter = false;
-    m_pendingCharacter = 0;
-    m_hash = stringHashingStartValue;
-    return hashValue;
-#endif
 }
 
 } // namespace WTF

@@ -42,27 +42,27 @@ public:
 
     static Ref<DOMStringList> create(Vector<String>&& strings)
     {
-        return adoptRef(*new DOMStringList(WTFMove(strings)));
+        return adoptRef(*new DOMStringList(WTF::move(strings)));
     }
 
     bool isEmpty() const { return m_strings.isEmpty(); }
     void clear() { m_strings.clear(); }
-    void append(String&& string) { m_strings.append(WTFMove(string)); }
+    void append(String&& string) { m_strings.append(WTF::move(string)); }
     void sort();
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_strings.size(); }
 
     // Implements the IDL.
     size_t length() const { return m_strings.size(); }
-    String item(unsigned index) const;
+    String NODELETE item(unsigned index) const;
     bool contains(const String& str) const;
 
-    operator const Vector<String>&() const { return m_strings; }
+    operator const Vector<String>&() const LIFETIME_BOUND { return m_strings; }
 
 private:
     DOMStringList() = default;
     explicit DOMStringList(Vector<String>&& strings)
-        : m_strings(WTFMove(strings))
+        : m_strings(WTF::move(strings))
     {
     }
 

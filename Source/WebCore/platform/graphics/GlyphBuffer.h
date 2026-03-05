@@ -37,15 +37,18 @@
 #include <limits>
 #include <wtf/CheckedRef.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 static const constexpr GlyphBufferGlyph deletedGlyph = 0xFFFF;
+static constexpr unsigned glyphBufferInlineCapacity = 64;
 
 class Font;
 
 class GlyphBuffer {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GlyphBuffer);
 public:
     bool isEmpty() const { return m_fonts.isEmpty(); }
     unsigned size() const { return m_fonts.size(); }
@@ -76,7 +79,6 @@ public:
         return *m_fonts[index];
     }
 
-    Ref<const Font> protectedFontAt(size_t index) const { return fontAt(index); }
 
     GlyphBufferGlyph glyphAt(size_t index) const { return m_glyphs[index]; }
     GlyphBufferAdvance& advanceAt(size_t index) LIFETIME_BOUND { return m_advances[index]; }
@@ -261,11 +263,11 @@ private:
         std::swap(m_offsetsInString[index1], m_offsetsInString[index2]);
     }
 
-    Vector<const Font*, 1024> m_fonts;
-    Vector<GlyphBufferGlyph, 1024> m_glyphs;
-    Vector<GlyphBufferAdvance, 1024> m_advances;
-    Vector<GlyphBufferOrigin, 1024> m_origins;
-    Vector<GlyphBufferStringOffset, 1024> m_offsetsInString;
+    Vector<const Font*, glyphBufferInlineCapacity> m_fonts;
+    Vector<GlyphBufferGlyph, glyphBufferInlineCapacity> m_glyphs;
+    Vector<GlyphBufferAdvance, glyphBufferInlineCapacity> m_advances;
+    Vector<GlyphBufferOrigin, glyphBufferInlineCapacity> m_origins;
+    Vector<GlyphBufferStringOffset, glyphBufferInlineCapacity> m_offsetsInString;
     GlyphBufferAdvance m_initialAdvance { makeGlyphBufferAdvance() };
 };
 

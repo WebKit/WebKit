@@ -44,7 +44,7 @@ GStreamerRtpReceiverTransformBackend::~GStreamerRtpReceiverTransformBackend()
 
 void GStreamerRtpReceiverTransformBackend::setTransformableFrameCallback(Callback&& callback)
 {
-    setInputCallback(WTFMove(callback));
+    setInputCallback(WTF::move(callback));
     notImplemented();
 }
 

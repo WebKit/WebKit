@@ -34,12 +34,41 @@ namespace Style {
 // <'mask-border-repeat'> = [ stretch | repeat | round | space ]{1,2}
 // https://drafts.fxtf.org/css-masking-1/#propdef-mask-border-repeat
 struct MaskBorderRepeat {
-    MinimallySerializingSpaceSeparatedSize<NinePieceImageRule> values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch };
+    MinimallySerializingSpaceSeparatedSize<NinePieceImageRule> values { NinePieceImageRule::Stretch };
 
-    NinePieceImageRule horizontalRule() const { return values.width(); }
-    NinePieceImageRule verticalRule() const { return values.height(); }
+    constexpr MaskBorderRepeat(MinimallySerializingSpaceSeparatedSize<NinePieceImageRule> values)
+        : values { values }
+    {
+    }
+    constexpr MaskBorderRepeat(NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule)
+        : values { horizontalRule, verticalRule }
+    {
+    }
+    constexpr MaskBorderRepeat(NinePieceImageRule rule)
+        : values { rule, rule }
+    {
+    }
+    constexpr MaskBorderRepeat(CSS::Keyword::Stretch)
+        : MaskBorderRepeat { NinePieceImageRule::Stretch }
+    {
+    }
+    constexpr MaskBorderRepeat(CSS::Keyword::Repeat)
+        : MaskBorderRepeat { NinePieceImageRule::Repeat }
+    {
+    }
+    constexpr MaskBorderRepeat(CSS::Keyword::Round)
+        : MaskBorderRepeat { NinePieceImageRule::Round }
+    {
+    }
+    constexpr MaskBorderRepeat(CSS::Keyword::Space)
+        : MaskBorderRepeat { NinePieceImageRule::Space }
+    {
+    }
 
-    bool operator==(const MaskBorderRepeat&) const = default;
+    constexpr NinePieceImageRule horizontalRule() const { return values.width(); }
+    constexpr NinePieceImageRule verticalRule() const { return values.height(); }
+
+    constexpr bool operator==(const MaskBorderRepeat&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(MaskBorderRepeat, values);
 

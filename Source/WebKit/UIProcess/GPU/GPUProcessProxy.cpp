@@ -92,7 +92,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(MEDIA_STREAM) && HAVE(AUDIT_TOKEN)
-static bool shouldCreateAppleCameraServiceSandboxExtension()
+static bool NODELETE shouldCreateAppleCameraServiceSandboxExtension()
 {
 #if !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
     return false;
@@ -104,13 +104,13 @@ static bool shouldCreateAppleCameraServiceSandboxExtension()
 }
 #endif
 
-static WeakPtr<GPUProcessProxy>& singleton()
+static WeakPtr<GPUProcessProxy>& NODELETE singleton()
 {
     static NeverDestroyed<WeakPtr<GPUProcessProxy>> singleton;
     return singleton;
 }
 
-static RefPtr<GPUProcessProxy>& keptAliveGPUProcessProxy()
+static RefPtr<GPUProcessProxy>& NODELETE keptAliveGPUProcessProxy()
 {
     static MainRunLoopNeverDestroyed<RefPtr<GPUProcessProxy>> keptAliveGPUProcessProxy;
     return keptAliveGPUProcessProxy.get();
@@ -181,7 +181,7 @@ GPUProcessProxy::GPUProcessProxy()
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
     if (WTF::MacApplication::isSafari()) {
         if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
-            parameters.microphoneSandboxExtensionHandle = WTFMove(*handle);
+            parameters.microphoneSandboxExtensionHandle = WTF::move(*handle);
         m_hasSentMicrophoneSandboxExtension = true;
     }
 #endif
@@ -193,13 +193,13 @@ GPUProcessProxy::GPUProcessProxy()
 
     if (!parameters.containerCachesDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.containerCachesDirectory, SandboxExtension::Type::ReadWrite))
-            parameters.containerCachesDirectoryExtensionHandle = WTFMove(*handle);
+            parameters.containerCachesDirectoryExtensionHandle = WTF::move(*handle);
     }
 
     if (!containerTemporaryDirectory.isEmpty()) {
         auto tempDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(FileSystem::pathByAppendingComponent(containerTemporaryDirectory, gpuServiceName));
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(tempDirectory, SandboxExtension::Type::ReadWrite))
-            parameters.containerTemporaryDirectoryExtensionHandle = WTFMove(*handle);
+            parameters.containerTemporaryDirectoryExtensionHandle = WTF::move(*handle);
     }
 #endif
 
@@ -227,12 +227,12 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 
     // Initialize the GPU process.
-    sendWithAsyncReply(Messages::GPUProcess::InitializeGPUProcess(WTFMove(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] { });
+    sendWithAsyncReply(Messages::GPUProcess::InitializeGPUProcess(WTF::move(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] { });
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS) && ENABLE(AUDIO_COMPONENT_SERVER_REGISTRATIONS_IN_GPU_PROCESS)
     auto registrations = fetchAudioComponentServerRegistrations();
     RELEASE_ASSERT(registrations);
-    send(Messages::GPUProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrations))), 0);
+    send(Messages::GPUProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTF::move(registrations))), 0);
 #endif
 
     updateProcessAssertion();
@@ -288,14 +288,14 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.applecamerad sandbox extension");
                 return false;
             }
-            extensions.append(WTFMove(*appleCameraServicePathSandboxExtensionHandle));
+            extensions.append(WTF::move(*appleCameraServicePathSandboxExtensionHandle));
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
             auto additionalAppleCameraServicePathSandboxExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.appleh13camerad"_s, std::nullopt);
             if (!additionalAppleCameraServicePathSandboxExtensionHandle) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.appleh13camerad sandbox extension");
                 return false;
             }
-            extensions.append(WTFMove(*additionalAppleCameraServicePathSandboxExtensionHandle));
+            extensions.append(WTF::move(*additionalAppleCameraServicePathSandboxExtensionHandle));
 #endif
 #if HAVE(APPLE_CAMERA_USER_CLIENT)
             // Needed for rdar://108282689:
@@ -304,34 +304,34 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientPath.characters());
                 return false;
             }
-            extensions.append(WTFMove(*appleCameraUserClientExtensionHandle));
+            extensions.append(WTF::move(*appleCameraUserClientExtensionHandle));
 
             auto appleCameraUserClientIOKitClientClassExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitClientClass, std::nullopt);
             if (!appleCameraUserClientIOKitClientClassExtensionHandle) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitClientClass.characters());
                 return false;
             }
-            extensions.append(WTFMove(*appleCameraUserClientIOKitClientClassExtensionHandle));
+            extensions.append(WTF::move(*appleCameraUserClientIOKitClientClassExtensionHandle));
 
             auto appleCameraUserClientIOKitServiceClassExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClass, std::nullopt);
             if (!appleCameraUserClientIOKitServiceClassExtensionHandle) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitServiceClass.characters());
                 return false;
             }
-            extensions.append(WTFMove(*appleCameraUserClientIOKitServiceClassExtensionHandle));
+            extensions.append(WTF::move(*appleCameraUserClientIOKitServiceClassExtensionHandle));
 
             auto appleCameraUserClientIOKitServiceClassLoadBalancerExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClassLoadBalancer, std::nullopt);
             if (!appleCameraUserClientIOKitServiceClassLoadBalancerExtensionHandle) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitServiceClassLoadBalancer.characters());
                 return false;
             }
-            extensions.append(WTFMove(*appleCameraUserClientIOKitServiceClassLoadBalancerExtensionHandle));
+            extensions.append(WTF::move(*appleCameraUserClientIOKitServiceClassLoadBalancerExtensionHandle));
 
 #endif
         }
 #endif // HAVE(AUDIT_TOKEN)
 
-    extensions.append(WTFMove(*sandboxExtensionHandle));
+    extensions.append(WTF::move(*sandboxExtensionHandle));
     return true;
 }
 
@@ -342,7 +342,7 @@ static inline bool addMicrophoneSandboxExtension(Vector<SandboxExtension::Handle
         RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.webkit.microphone sandbox extension");
         return false;
     }
-    extensions.append(WTFMove(*sandboxExtensionHandle));
+    extensions.append(WTF::move(*sandboxExtensionHandle));
     return true;
 }
 #endif // PLATFORM(COCOA)
@@ -358,22 +358,22 @@ static inline bool addDisplayCaptureSandboxExtension(std::optional<audit_token_t
     auto handle = SandboxExtension::createHandleForMachLookup("com.apple.replaykit.sharingsession.notification"_s, *auditToken);
     if (!handle)
         return false;
-    extensions.append(WTFMove(*handle));
+    extensions.append(WTF::move(*handle));
 
     handle = SandboxExtension::createHandleForMachLookup("com.apple.replaykit.sharingsession"_s, *auditToken);
     if (!handle)
         return false;
-    extensions.append(WTFMove(*handle));
+    extensions.append(WTF::move(*handle));
 
     handle = SandboxExtension::createHandleForMachLookup("com.apple.tccd.system"_s, *auditToken);
     if (!handle)
         return false;
-    extensions.append(WTFMove(*handle));
+    extensions.append(WTF::move(*handle));
 
     handle = SandboxExtension::createHandleForMachLookup("com.apple.replayd"_s, *auditToken);
     if (!handle)
         return false;
-    extensions.append(WTFMove(*handle));
+    extensions.append(WTF::move(*handle));
 
     return true;
 }
@@ -387,7 +387,7 @@ static inline bool addTCCDSandboxExtension(Vector<SandboxExtension::Handle>& ext
         RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.tccd sandbox extension");
         return false;
     }
-    extensions.append(WTFMove(*handle));
+    extensions.append(WTF::move(*handle));
     return true;
 }
 #endif
@@ -407,7 +407,7 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
         m_hasSentMicrophoneSandboxExtension = true;
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(protectedConnection()->getAuditToken(), extensions))
+    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(protect(connection())->getAuditToken(), extensions))
         m_hasSentDisplayCaptureSandboxExtension = true;
 #endif
 
@@ -417,7 +417,7 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
 
     if (!extensions.isEmpty())
-        send(Messages::GPUProcess::UpdateSandboxAccess { WTFMove(extensions) }, 0);
+        send(Messages::GPUProcess::UpdateSandboxAccess { WTF::move(extensions) }, 0);
 #endif // PLATFORM(COCOA)
 }
 
@@ -427,7 +427,7 @@ void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVide
         m_lastPageUsingMicrophone = pageIdentifier;
 
     updateSandboxAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
-    sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::updateCaptureOrigin(const WebCore::SecurityOriginData& originData, WebCore::ProcessIdentifier processID)
@@ -496,7 +496,7 @@ void GPUProcessProxy::setShouldListenToVoiceActivity(const WebPageProxy& proxy, 
 #if HAVE(SCREEN_CAPTURE_KIT)
 void GPUProcessProxy::promptForGetDisplayMedia(WebCore::DisplayCapturePromptType type, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::PromptForGetDisplayMedia { type }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::PromptForGetDisplayMedia { type }, WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::cancelGetDisplayMediaPrompt()
@@ -535,7 +535,7 @@ void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProx
 
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     startResponsivenessTimer(UseLazyStop::No);
-    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), WTFMove(connectionIdentifier), WTFMove(parameters) }, [weakThis = WeakPtr { *this }]() mutable {
+    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), WTF::move(connectionIdentifier), WTF::move(parameters) }, [weakThis = WeakPtr { *this }]() mutable {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->stopResponsivenessTimer();
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
@@ -543,7 +543,7 @@ void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProx
 
 void GPUProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTFMove(sharedPreferencesForWebProcess) }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
@@ -604,7 +604,7 @@ void GPUProcessProxy::terminateForTesting()
 
 void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::didClose(IPC::Connection&)
@@ -633,7 +633,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     bool didTerminate = !connectionIdentifier;
 
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIdentifier));
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTF::move(connectionIdentifier));
 
     if (didTerminate) {
         gpuProcessExited(ProcessTerminationReason::Crash);
@@ -654,7 +654,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
         if (!isPowerLoggingInTaskMode())
             return;
-        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis)] () {
+        RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis)] () {
             if (!weakThis)
                 return;
             weakThis->enablePowerLogging();
@@ -670,7 +670,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #if ENABLE(WEBXR)
 void GPUProcessProxy::webXRPromptAccepted(std::optional<WebCore::ProcessIdentity> processIdentity, CompletionHandler<void(bool)>&& completion)
 {
-    sendWithAsyncReply(Messages::GPUProcess::WebXRPromptAccepted(WTFMove(processIdentity)), WTFMove(completion));
+    sendWithAsyncReply(Messages::GPUProcess::WebXRPromptAccepted(WTF::move(processIdentity)), WTF::move(completion));
 }
 #endif
 
@@ -687,13 +687,13 @@ void GPUProcessProxy::updateProcessAssertion()
 
     if (hasAnyForegroundWebProcesses) {
         if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses.get())) {
-            m_activityFromWebProcesses = protectedThrottler()->foregroundActivity("GPU for foreground view(s)"_s);
+            m_activityFromWebProcesses = protect(throttler())->foregroundActivity("GPU for foreground view(s)"_s);
         }
         return;
     }
     if (hasAnyBackgroundWebProcesses) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses.get())) {
-            m_activityFromWebProcesses = protectedThrottler()->backgroundActivity("GPU for background view(s)"_s);
+            m_activityFromWebProcesses = protect(throttler())->backgroundActivity("GPU for background view(s)"_s);
         }
         return;
     }
@@ -713,7 +713,7 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     if (!parameters.mediaCacheDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite))
-            parameters.mediaCacheDirectorySandboxExtensionHandle = WTFMove(*handle);
+            parameters.mediaCacheDirectorySandboxExtensionHandle = WTF::move(*handle);
     }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
@@ -721,7 +721,7 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
     SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
     if (!parameters.mediaKeysStorageDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeysStorageDirectory, SandboxExtension::Type::ReadWrite))
-            parameters.mediaKeysStorageDirectorySandboxExtensionHandle = WTFMove(*handle);
+            parameters.mediaKeysStorageDirectorySandboxExtensionHandle = WTF::move(*handle);
     }
 #endif
 
@@ -752,7 +752,7 @@ void GPUProcessProxy::removeSession(PAL::SessionID sessionID)
 void GPUProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy::sendPrepareToSuspend:", this);
-    sendWithAsyncReply(Messages::GPUProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, MonotonicTime::now() + Seconds(remainingRunTime)), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+    sendWithAsyncReply(Messages::GPUProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, MonotonicTime::now() + Seconds(remainingRunTime)), WTF::move(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void GPUProcessProxy::sendProcessDidResume(ResumeReason)
@@ -773,7 +773,7 @@ void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessI
 void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, LayerHostingContextID contextID)
 {
     RELEASE_LOG(Process, "%p - GPUProcessProxy::didCreateContextForVisibilityPropagation: webPageProxyID: %" PRIu64 ", pagePID: %" PRIu64 ", contextID: %u", this, webPageProxyID.toUInt64(), pageID.toUInt64(), contextID);
-    auto page = WebProcessProxy::webPage(webPageProxyID);
+    RefPtr page = WebProcessProxy::webPage(webPageProxyID);
     if (!page) {
         RELEASE_LOG(Process, "%p - GPUProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier", this);
         return;
@@ -782,7 +782,7 @@ void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdent
         page->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
         return;
     }
-    auto* provisionalPage = page->provisionalPageProxy();
+    RefPtr provisionalPage = page->provisionalPageProxy();
     if (provisionalPage && provisionalPage->webPageID() == pageID) {
         provisionalPage->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
         return;
@@ -843,13 +843,6 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
 }
 #endif
 
-#if ENABLE(VIDEO)
-void GPUProcessProxy::requestBitmapImageForCurrentTime(ProcessIdentifier processIdentifier, MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completion)
-{
-    sendWithAsyncReply(Messages::GPUProcess::RequestBitmapImageForCurrentTime(processIdentifier, playerIdentifier), WTFMove(completion));
-}
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 void GPUProcessProxy::voiceActivityDetected()
 {
@@ -859,13 +852,13 @@ void GPUProcessProxy::voiceActivityDetected()
 
 void GPUProcessProxy::startMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId)
 {
-    if (auto page = WebProcessProxy::webPage(pageID))
+    if (RefPtr page = WebProcessProxy::webPage(pageID))
         page->startMonitoringCaptureDeviceRotation(persistentId);
 }
 
 void GPUProcessProxy::stopMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId)
 {
-    if (auto page = WebProcessProxy::webPage(pageID))
+    if (RefPtr page = WebProcessProxy::webPage(pageID))
         page->stopMonitoringCaptureDeviceRotation(persistentId);
 }
 
@@ -887,7 +880,7 @@ void GPUProcessProxy::microphoneMuteStatusChanged(bool isMuting)
 #if PLATFORM(IOS_FAMILY)
 void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionHandler)
 {
-    if (auto page = WebProcessProxy::audioCapturingWebPage())
+    if (RefPtr page = WebProcessProxy::audioCapturingWebPage())
         page->statusBarWasTapped();
     // Find the web page capturing audio and put focus on it.
     completionHandler();
@@ -905,25 +898,25 @@ void GPUProcessProxy::setPresentingApplicationAuditToken(WebCore::ProcessIdentif
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
 void GPUProcessProxy::requestSharedSimulationConnection(audit_token_t modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::RequestSharedSimulationConnection { modelProcessAuditToken }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::RequestSharedSimulationConnection { modelProcessAuditToken }, WTF::move(completionHandler));
 }
 
 #if HAVE(TASK_IDENTITY_TOKEN)
 void GPUProcessProxy::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<String>&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::CreateMemoryAttributionIDForTask { WTFMove(processIdentity) }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::CreateMemoryAttributionIDForTask { WTF::move(processIdentity) }, WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::unregisterMemoryAttributionID(const String& attributionID, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::UnregisterMemoryAttributionID { attributionID }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::UnregisterMemoryAttributionID { attributionID }, WTF::move(completionHandler));
 }
 #endif
 #endif
 
 void GPUProcessProxy::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const WebCore::FloatSize& size, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToBitmap(identifier, size, rootFrameIdentifier), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToBitmap(identifier, size, rootFrameIdentifier), WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::releaseSnapshot(RemoteSnapshotIdentifier identifier)

@@ -66,7 +66,9 @@ WebKitDOMHTMLCollection* wrapHTMLCollection(WebCore::HTMLCollection* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMHTMLCollection, webkit_dom_html_collection, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_HTML_COLLECTION_PROP_0,

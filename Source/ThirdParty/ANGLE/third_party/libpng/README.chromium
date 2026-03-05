@@ -1,8 +1,16 @@
 Name: libpng
-URL: http://libpng.org/
+URL: https://android.googlesource.com/platform/external/libpng
 Version: 1.6.44
+Revision: 8cc222cd3e79fa5190f3aa039a03a4cbea6cfbe7
+Update Mechanism: Manual
 Security Critical: yes
 Shipped: no
 License: Libpng-2.0, Libpng
 License File: LICENSE
 License Android Compatible: yes
+
+Description:
+Homepage is http://libpng.org/
+
+Local Modifications:
+None

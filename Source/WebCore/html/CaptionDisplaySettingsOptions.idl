@@ -25,7 +25,10 @@
 
 typedef USVString CSSOMString;
 
-[Conditional=VIDEO] dictionary CaptionDisplaySettingsOptions {
+[
+    Conditional=VIDEO,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
+] dictionary CaptionDisplaySettingsOptions {
     Node? anchorNode;
     CSSOMString? positionArea;
 };

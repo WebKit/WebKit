@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
+
 namespace WTF {
 
 class PrintStream;

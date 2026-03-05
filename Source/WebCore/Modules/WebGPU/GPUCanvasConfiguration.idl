@@ -31,9 +31,8 @@ typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
 [
     EnabledBySetting=WebGPUEnabled,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
-]
-dictionary GPUCanvasConfiguration {
+    JSGenerateToNativeObject,
+] dictionary GPUCanvasConfiguration {
     required GPUDevice device;
     required GPUTextureFormat format;
     GPUTextureUsageFlags usage = 0x10;  // GPUTextureUsage.RENDER_ATTACHMENT

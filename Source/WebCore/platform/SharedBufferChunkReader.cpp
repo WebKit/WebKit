@@ -74,7 +74,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
     while (true) {
         while (m_segmentIndex < m_iteratorCurrent->segment->size()) {
             // FIXME: The existing code to check for separators doesn't work correctly with arbitrary separator strings.
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Glib ports only.
             auto currentCharacter = m_segment[m_segmentIndex++];
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             if (currentCharacter != m_separator[m_separatorIndex]) {
@@ -97,7 +97,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         // Read the next segment.
         m_segmentIndex = 0;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Glib ports only.
         if (++m_iteratorCurrent == m_iteratorEnd) {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             m_segment = nullptr;
@@ -128,7 +128,7 @@ size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize
         return 0;
 
     size_t availableInSegment = std::min(m_iteratorCurrent->segment->size() - m_segmentIndex, requestedSize);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Glib ports only.
     data.append(unsafeMakeSpan(m_segment + m_segmentIndex, availableInSegment));
 
     size_t readBytesCount = availableInSegment;

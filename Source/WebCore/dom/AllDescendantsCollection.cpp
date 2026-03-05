@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AllDescendantsCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AllDescendantsCollection);
 
 AllDescendantsCollection::AllDescendantsCollection(ContainerNode& rootNode, CollectionType type)
     : CachedHTMLCollection(rootNode, type)

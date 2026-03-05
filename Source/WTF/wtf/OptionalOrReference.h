@@ -46,7 +46,7 @@ namespace WTF {
 template<typename T> class OptionalOrReference {
 public:
     OptionalOrReference(OptionalOrReference&& other)
-        : m_value(WTFMove(other.m_value))
+        : m_value(WTF::move(other.m_value))
         , m_reference(m_value.has_value() ? m_value.value() : other.m_reference)
     {
     }
@@ -57,7 +57,7 @@ public:
     }
 
     OptionalOrReference(T&& temporary)
-        : m_value(WTFMove(temporary))
+        : m_value(WTF::move(temporary))
         , m_reference(m_value.value())
     {
     }

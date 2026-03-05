@@ -1,15 +1,8 @@
-[ Mac ] accessibility/cocoa/AXCoreObjectCocoa.mm
 bridge/objc/WebScriptObject.h
-page/EventHandler.h
-platform/graphics/cg/CGSubimageCacheWithTimer.cpp
-platform/ios/WebAVPlayerController.h
-platform/ios/WebAVPlayerController.mm
-[ iOS ] platform/cocoa/WebAVPlayerLayer.h
 [ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
 [ iOS ] platform/ios/DeviceMotionClientIOS.h
 [ iOS ] platform/ios/LegacyTileCache.h
 [ iOS ] platform/ios/WebEvent.h
-[ iOS ] platform/ios/WebItemProviderPasteboard.h
 [ iOS ] platform/ios/wak/WAKClipView.h
 [ iOS ] platform/ios/wak/WAKScrollView.h
 [ iOS ] platform/ios/wak/WAKWindow.h

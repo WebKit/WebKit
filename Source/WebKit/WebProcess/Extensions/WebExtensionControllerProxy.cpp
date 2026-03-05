@@ -41,7 +41,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>& webExtensionControllerProxies()
+static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>& NODELETE webExtensionControllerProxies()
 {
     static MainRunLoopNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>> controllers;
     return controllers;
@@ -51,7 +51,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionControllerProxy);
 
 RefPtr<WebExtensionControllerProxy> WebExtensionControllerProxy::get(WebExtensionControllerIdentifier identifier)
 {
-    return webExtensionControllerProxies().get(identifier).get();
+    return webExtensionControllerProxies().get(identifier);
 }
 
 Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(const WebExtensionControllerParameters& parameters, WebPage* newPage)
@@ -67,8 +67,8 @@ Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(const 
         }
 
         controller.m_testingMode = parameters.testingMode;
-        controller.m_extensionContexts = WTFMove(contexts);
-        controller.m_extensionContextBaseURLMap = WTFMove(baseURLMap);
+        controller.m_extensionContexts = WTF::move(contexts);
+        controller.m_extensionContextBaseURLMap = WTF::move(baseURLMap);
     };
 
     if (RefPtr controller = get(parameters.identifier)) {

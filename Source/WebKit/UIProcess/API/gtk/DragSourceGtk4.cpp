@@ -45,6 +45,8 @@ DragSource::DragSource(GtkWidget* webView)
 
 DragSource::~DragSource()
 {
+    if (m_drag)
+        g_signal_handlers_disconnect_by_data(m_drag.get(), this);
 }
 
 static GRefPtr<GdkTexture> dragIconTexture(RefPtr<ShareableBitmap>&& iconImage)
@@ -61,11 +63,7 @@ static GRefPtr<GdkTexture> dragIconTexture(RefPtr<ShareableBitmap>&& iconImage)
         return nullptr;
 
     auto& platformImage = nativeImage->platformImage();
-#if USE(CAIRO)
-    return cairoSurfaceToGdkTexture(platformImage.get());
-#elif USE(SKIA)
     return skiaImageToGdkTexture(*platformImage.get());
-#endif
 }
 
 void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image, IntPoint&& imageHotspot)
@@ -75,7 +73,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         m_drag = nullptr;
     }
 
-    m_selectionData = WTFMove(selectionData);
+    m_selectionData = WTF::move(selectionData);
 
     Vector<GdkContentProvider*> providers;
     if (m_selectionData->hasMarkup()) {
@@ -151,7 +149,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     }), this);
 
     auto* dragIcon = gtk_drag_icon_get_for_drag(m_drag.get());
-    if (auto texture = dragIconTexture(WTFMove(image))) {
+    if (auto texture = dragIconTexture(WTF::move(image))) {
         gdk_drag_set_hotspot(m_drag.get(), -imageHotspot.x(), -imageHotspot.y());
         auto* picture = gtk_picture_new_for_paintable(GDK_PAINTABLE(texture.get()));
         gtk_drag_icon_set_child(GTK_DRAG_ICON(dragIcon), picture);

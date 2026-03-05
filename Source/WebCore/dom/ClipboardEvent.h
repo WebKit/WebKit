@@ -30,7 +30,7 @@ namespace WebCore {
 class DataTransfer;
 
 class ClipboardEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ClipboardEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ClipboardEvent);
 public:
     virtual ~ClipboardEvent();
 
@@ -40,23 +40,21 @@ public:
 
     static Ref<ClipboardEvent> create(const AtomString& type, Ref<DataTransfer>&& dataTransfer)
     {
-        return adoptRef(*new ClipboardEvent(type, WTFMove(dataTransfer)));
+        return adoptRef(*new ClipboardEvent(type, WTF::move(dataTransfer)));
     }
 
-    static Ref<ClipboardEvent> create(const AtomString& type, const Init& init)
+    static Ref<ClipboardEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new ClipboardEvent(type, init));
+        return adoptRef(*new ClipboardEvent(type, WTF::move(initializer)));
     }
 
     DataTransfer* clipboardData() const { return m_clipboardData.get(); }
 
 private:
     ClipboardEvent(const AtomString& type, Ref<DataTransfer>&&);
-    ClipboardEvent(const AtomString& type, const Init&);
+    ClipboardEvent(const AtomString& type, Init&&);
 
-    bool isClipboardEvent() const final;
-
-    RefPtr<DataTransfer> m_clipboardData;
+    const RefPtr<DataTransfer> m_clipboardData;
 };
 
 } // namespace WebCore

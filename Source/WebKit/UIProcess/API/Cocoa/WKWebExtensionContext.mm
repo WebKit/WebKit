@@ -89,19 +89,19 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtensionContext>(self, extension._protectedWebExtension.get());
+    API::Object::constructInWrapper<WebKit::WebExtensionContext>(self, protect(*extension->_webExtension).get());
 
     return self;
 }
 
 - (WKWebExtension *)webExtension
 {
-    return wrapper(Ref { *_webExtensionContext }->protectedExtension().get());
+    return wrapper(protect(Ref { *_webExtensionContext }->extension()).get());
 }
 
 - (WKWebExtensionController *)webExtensionController
 {
-    return wrapper(Ref { *_webExtensionContext }->protectedExtensionController().get());
+    return wrapper(protect(Ref { *_webExtensionContext }->extensionController()).get());
 }
 
 - (BOOL)isLoaded
@@ -379,7 +379,7 @@ static inline NSSet<WKWebExtensionMatchPattern *> *toAPI(const WebKit::WebExtens
     return extensionContext->hasPermission(url, toImplNullable(tab, extensionContext.get()).get());
 }
 
-static inline WKWebExtensionContextPermissionStatus toAPI(WebKit::WebExtensionContext::PermissionState status)
+static inline WKWebExtensionContextPermissionStatus NODELETE toAPI(WebKit::WebExtensionContext::PermissionState status)
 {
     switch (status) {
     case WebKit::WebExtensionContext::PermissionState::DeniedExplicitly:
@@ -496,7 +496,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
     NSParameterAssert([pattern isKindOfClass:WKWebExtensionMatchPattern.class]);
 
     Ref extensionContext { *_webExtensionContext };
-    return toAPI(extensionContext->permissionState(pattern._protectedWebExtensionMatchPattern, toImplNullable(tab, extensionContext.get()).get()));
+    return toAPI(extensionContext->permissionState(protect(*pattern->_webExtensionMatchPattern), toImplNullable(tab, extensionContext.get()).get()));
 }
 
 - (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forMatchPattern:(WKWebExtensionMatchPattern *)pattern
@@ -512,7 +512,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
     NSParameterAssert(status == WKWebExtensionContextPermissionStatusDeniedExplicitly || status == WKWebExtensionContextPermissionStatusUnknown || status == WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert([pattern isKindOfClass:WKWebExtensionMatchPattern.class]);
 
-    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), pattern._protectedWebExtensionMatchPattern, toImpl(expirationDate));
+    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), protect(*pattern->_webExtensionMatchPattern), toImpl(expirationDate));
 }
 
 - (BOOL)hasAccessToAllURLs
@@ -575,7 +575,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
 {
     NSParameterAssert([command isKindOfClass:WKWebExtensionCommand.class]);
 
-    Ref { *_webExtensionContext }->performCommand([command _protectedWebExtensionCommand].get(), WebKit::WebExtensionContext::UserTriggered::Yes);
+    Ref { *_webExtensionContext }->performCommand(protect(*command->_webExtensionCommand).get(), WebKit::WebExtensionContext::UserTriggered::Yes);
 }
 
 - (void)_resetCommands
@@ -642,7 +642,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
     extensionContext->clearUserGesture(toImpl(tab, extensionContext.get()));
 }
 
-static inline id<WKWebExtensionWindow> toAPI(const RefPtr<WebKit::WebExtensionWindow>& window)
+static inline id<WKWebExtensionWindow> NODELETE toAPI(const RefPtr<WebKit::WebExtensionWindow>& window)
 {
     return window ? window->delegate() : nil;
 }
@@ -844,29 +844,29 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 
 - (WKWebView *)_backgroundWebView
 {
-    return self._protectedWebExtensionContext->backgroundWebView();
+    return protect(*_webExtensionContext)->backgroundWebView();
 }
 
 - (NSURL *)_backgroundContentURL
 {
-    return self._protectedWebExtensionContext->backgroundContentURL().createNSURL().autorelease();
+    return protect(*_webExtensionContext)->backgroundContentURL().createNSURL().autorelease();
 }
 
 - (void)_sendTestMessage:(NSString *)message withArgument:(id)argument
 {
     NSParameterAssert([message isKindOfClass:NSString.class]);
 
-    self._protectedWebExtensionContext->sendTestMessage(message, argument);
+    protect(*_webExtensionContext)->sendTestMessage(message, argument);
 }
 
 - (void)_sendTestStartedWithArgument:(id)argument
 {
-    self._protectedWebExtensionContext->sendTestStarted(argument);
+    protect(*_webExtensionContext)->sendTestStarted(argument);
 }
 
 - (void)_sendTestFinishedWithArgument:(id)argument
 {
-    self._protectedWebExtensionContext->sendTestFinished(argument);
+    protect(*_webExtensionContext)->sendTestFinished(argument);
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
@@ -892,11 +892,6 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 }
 
 - (WebKit::WebExtensionContext&)_webExtensionContext
-{
-    return *_webExtensionContext;
-}
-
-- (Ref<WebKit::WebExtensionContext>)_protectedWebExtensionContext
 {
     return *_webExtensionContext;
 }

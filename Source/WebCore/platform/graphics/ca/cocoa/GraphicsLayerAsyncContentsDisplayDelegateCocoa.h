@@ -40,13 +40,17 @@ public:
     bool tryCopyToLayer(ImageBuffer&, bool opaque) final;
     void display(PlatformCALayer&) final { }
 
-    bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const final { return true; }
-
     void updateGraphicsLayerCA(GraphicsLayerCA&);
 
 private:
-    RetainPtr<CALayer> m_layer;
+    bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const final { return true; }
+
+    const RetainPtr<CALayer> m_layer;
     RefPtr<NativeImage> m_image;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::GraphicsLayerAsyncContentsDisplayDelegateCocoa)
+    static bool isType(const WebCore::GraphicsLayerAsyncContentsDisplayDelegate& delegate) { return delegate.isGraphicsLayerAsyncContentsDisplayDelegateCocoa(); }
+SPECIALIZE_TYPE_TRAITS_END()

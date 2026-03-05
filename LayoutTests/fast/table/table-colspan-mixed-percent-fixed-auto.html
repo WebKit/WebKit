@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Table layout with mixed percent, fixed, and auto columns with colspan</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid black;
+    padding: 0;
+}
+</style>
+</head>
+<body>
+<table id="testTable" border width="600" cellspacing="0" cellpadding="0">
+    <tr>
+        <td width="50%">
+            <div style="width: 50px; background-color: violet;">P</div>
+        </td>
+        <td>
+            <div style="width: 50px; background-color: orange;">A</div>
+        </td>
+        <td width="50px">
+            <div style="background-color: green;">F</div>
+        </td>
+        <td width="50px">
+            <div style="background-color: green;">F</div>
+        </td>
+        <td>
+            <div style="width: 100px; background-color: orange;">A</div>
+        </td>
+        <td width="50%">
+            <div style="width: 50px; background-color: violet;">P</div>
+        </td>
+    </tr>
+    <tr>
+        <td width="100%" colspan="6">
+            <div style="width: 600px; background-color: lightblue;">Lorem</div>
+        </td>
+    </tr>
+</table>
+
+<script>
+test(function() {
+    var table = document.getElementById('testTable');
+    var tableWidth = table.offsetWidth;
+    assert_equals(tableWidth, 602, 'Table width should be 602px');
+}, 'Table with mixed percent, fixed, and auto columns should respect width attribute');
+</script>
+</body>
+</html>

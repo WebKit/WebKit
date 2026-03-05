@@ -561,6 +561,66 @@ TEST_P(EGLBufferAgeTest, UncurrentContextBadSurface)
     context = EGL_NO_CONTEXT;
 }
 
+// Test if the content in damage region is defined
+TEST_P(EGLBufferAgeTest, ValidateDamageRegion)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_partial_update"));
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    EXPECT_TRUE(chooseConfig(&config));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLBufferAgeTest", 16, 16);
+    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+
+    EGLint age                               = 0;
+    EGLint rect[4]                           = {0, 0, 1, 1};
+    std::vector<std::vector<GLfloat>> colors = {{1.0f, 1.0f, 1.0f, 1.0f},
+                                                {1.0f, 0.0f, 0.0f, 1.0f},
+                                                {0.0f, 1.0f, 0.0f, 1.0f},
+                                                {0.0f, 0.0f, 1.0f, 1.0f}};
+
+    glDisable(GL_SCISSOR_TEST);
+    for (auto color : colors)
+    {
+
+        glClearColor(color[0], color[1], color[2], color[3]);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
+        EXPECT_EGL_SUCCESS();
+        ASSERT_GL_NO_ERROR();
+    }
+
+    EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, surface, EGL_BUFFER_AGE_KHR, &age));
+    EXPECT_EGL_SUCCESS();
+    EXPECT_GE(age, 0);
+
+    eglSetDamageRegionKHR(mDisplay, surface, rect, 1);
+    EXPECT_EGL_SUCCESS();
+
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_SCISSOR_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLfloat> expectColorf = colors[colors.size() - age];
+    GLColor expectColor(expectColorf[0] * 255, expectColorf[1] * 255, expectColorf[2] * 255,
+                        expectColorf[3] * 255);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(1, 1, expectColor);
+}
+
 // Expect age always == 1 when EGL_BUFFER_PRESERVED is chosen
 TEST_P(EGLBufferAgeTest, BufferPreserved)
 {

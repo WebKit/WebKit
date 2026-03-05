@@ -53,7 +53,8 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "changed", "none");
 
             await UIHelper.waitForEvent(scroller, 'scroll');
-            await UIHelper.animationFrame();
+            for (let n = 0; n < 3; ++n)
+                await UIHelper.ensurePresentationUpdate();
 
             beforeChangeScrollLeft = scroller.scrollLeft;
             shouldBeTrue('beforeChangeScrollLeft > 0');

@@ -17,14 +17,14 @@ info: |
   6. If n ≥ 0, then
     a. If n is -0, let k be +0; else let k be n.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample;
 
-  sample = new TA([42n, 43n]);
+  sample = new TA(makeCtorArg([42n, 43n]));
   assert.sameValue(sample.indexOf(42n, -0), 0, "-0 [0]");
   assert.sameValue(sample.indexOf(43n, -0), 1, "-0 [1]");
 });

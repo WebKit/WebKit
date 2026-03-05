@@ -115,14 +115,14 @@ auto CSSValueConversion<PositionTryFallback>::operator()(BuilderState& state, co
         if (tactics.isEmpty()) {
             return {
                 .ruleAndTactics = {
-                    .rule = WTFMove(rule),
+                    .rule = WTF::move(rule),
                 }
             };
         } else {
             return {
                 .ruleAndTactics = {
-                    .rule = WTFMove(rule),
-                    .tactics = WTFMove(tactics),
+                    .rule = WTF::move(rule),
+                    .tactics = WTF::move(tactics),
                 }
             };
         }

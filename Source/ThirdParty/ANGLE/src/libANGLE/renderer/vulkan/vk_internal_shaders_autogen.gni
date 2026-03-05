@@ -38,8 +38,6 @@ angle_vulkan_internal_shaders = [
   "shaders/gen/BlitResolve.frag.00000017.inc",
   "shaders/gen/BlitResolveStencilNoExport.comp.00000000.inc",
   "shaders/gen/BlitResolveStencilNoExport.comp.00000001.inc",
-  "shaders/gen/BlitResolveStencilNoExport.comp.00000002.inc",
-  "shaders/gen/BlitResolveStencilNoExport.comp.00000003.inc",
   "shaders/gen/ConvertIndex.comp.00000000.inc",
   "shaders/gen/ConvertIndex.comp.00000001.inc",
   "shaders/gen/ConvertIndex.comp.00000002.inc",

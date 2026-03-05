@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-// Almost all of the VM's code runs with "heap access". This means that the GC thread believes that
+// Almost all of the VM's code runs with "heap access". This means that the GC believes that
 // the VM is messing with the heap in a way that would be unsafe for certain phases of the collector,
 // like the weak reference fixpoint, stack scanning, and changing barrier modes. However, many long
 // running operations inside the VM don't require heap access. For example, memcpying a typed array

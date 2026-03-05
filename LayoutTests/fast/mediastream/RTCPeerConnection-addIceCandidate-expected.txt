@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 *** A remote description is needed before a candidate can be added
 PASS pc.remoteDescription is null
-PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'foo', sdpMid: 0})) rejected with OperationError: Expect line: candidate:<candidate-str>
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'foo', sdpMid: 0})) rejected with OperationError: Expected candidate got
 PASS Remote description set
 
 *** Define sdpMid, badSdpMid, sdpMLineIndex and badSdpMLineIndex for testing
@@ -18,9 +18,9 @@ PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, 
 *** A (bad) sdpMid takes precedesce over valid sdpMLineIndex
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid, sdpMLineIndex: sdpMLineIndex})) rejected with OperationError: Error processing ICE candidate
 *** Test bad candidate content with valid sdpMid
-PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMid: sdpMid})) rejected with OperationError: Expect line: candidate:<candidate-str>
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMid: sdpMid})) rejected with OperationError: Expected candidate got
 *** Test bad candidate content with valid sdpMLineIndex
-PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex})) rejected with OperationError: Expect line: candidate:<candidate-str>
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex})) rejected with OperationError: Expected candidate got
 *** Test valid candidate with no mid and mlineindex
 PASS promise pc.addIceCandidate({candidate: validCandidate}) rejected with TypeError: Candidate must not have both null sdpMid and sdpMLineIndex
 

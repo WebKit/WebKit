@@ -1,5 +1,0 @@
-Tiles when window is active:
-
-Tiles when window is not active:
-
-

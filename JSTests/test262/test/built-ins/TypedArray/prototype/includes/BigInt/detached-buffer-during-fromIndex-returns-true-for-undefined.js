@@ -30,7 +30,7 @@ info: |
     Set k to k + 1.
   Return false.
 
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
@@ -44,4 +44,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   };
 
   assert.sameValue(sample.includes(undefined, fromIndex), true);
-});
+}, null, ["passthrough"]);

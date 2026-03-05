@@ -23,10 +23,5 @@ PASS [aria-label][aria-labelledby] > circle
 PASS [aria-label][aria-labelledby] > rect
 PASS [aria-label][aria-labelledby] > polygon
 PASS [aria-label][aria-labelledby] > g
-FAIL [aria-labelledby="{[aria-label]} {[xlink:title]} {* > [title]}"] > g assert_equals: <a href="#" aria-labelledby="nolan gilliam kaufman villeneuve" data-expectedlabel="Nolan Gilliam Kaufman Villeneuve" xlink:title="group link label" data-testname="[aria-labelledby=&quot;{[aria-label]} {[xlink:title]} {* &gt; [title]}&quot;] &gt; g" class="ex">
-  <g fill="white" stroke="green" stroke-width="5">
-    <circle cx="40" cy="40" r="25"></circle>
-    <circle cx="60" cy="60" r="25"></circle>
-  </g>
-  </a> expected "Nolan Gilliam Kaufman Villeneuve" but got "Nolan Gilliam"
+PASS [aria-labelledby="{[aria-label]} {[xlink:title]} {* > [title]}"] > g
 

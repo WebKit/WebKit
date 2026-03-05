@@ -80,7 +80,7 @@ LocaleCocoa::LocaleCocoa(const AtomString& locale)
     NSString* language = [m_locale objectForKey:NSLocaleLanguageCode];
     if ([availableLanguages indexOfObject:language] == NSNotFound)
         m_locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage().createNSString().get()]);
-    [m_gregorianCalendar setLocale:m_locale.get()];
+    [m_gregorianCalendar setLocale:m_locale];
 }
 
 LocaleCocoa::~LocaleCocoa()
@@ -89,7 +89,7 @@ LocaleCocoa::~LocaleCocoa()
 
 RetainPtr<NSDateFormatter> LocaleCocoa::shortDateFormatter()
 {
-    return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);
+    return createDateTimeFormatter(m_locale, m_gregorianCalendar, NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
 
 String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatType)
@@ -113,7 +113,7 @@ String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatT
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:secondsSince1970];
 
     // Return a formatted string.
-    NSDateFormatter *dateFormatter = localizedDateCache().formatterForDateType(type);
+    RetainPtr dateFormatter = localizedDateCache().formatterForDateType(type);
     return [dateFormatter stringFromDate:date];
 }
 
@@ -121,9 +121,9 @@ const Vector<String>& LocaleCocoa::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
         return m_monthLabels;
-    NSArray *array = [shortDateFormatter().get() monthSymbols];
+    RetainPtr array = [shortDateFormatter() monthSymbols];
     if ([array count] == 12) {
-        m_monthLabels = makeVector<String>(array);
+        m_monthLabels = makeVector<String>(array.get());
         return m_monthLabels;
     }
     m_monthLabels = std::span { WTF::monthFullName };
@@ -132,22 +132,22 @@ const Vector<String>& LocaleCocoa::monthLabels()
 
 RetainPtr<NSDateFormatter> LocaleCocoa::timeFormatter()
 {
-    return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterNoStyle, NSDateFormatterMediumStyle);
+    return createDateTimeFormatter(m_locale, m_gregorianCalendar, NSDateFormatterNoStyle, NSDateFormatterMediumStyle);
 }
 
 RetainPtr<NSDateFormatter> LocaleCocoa::shortTimeFormatter()
 {
-    return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterNoStyle, NSDateFormatterShortStyle);
+    return createDateTimeFormatter(m_locale, m_gregorianCalendar, NSDateFormatterNoStyle, NSDateFormatterShortStyle);
 }
 
 RetainPtr<NSDateFormatter> LocaleCocoa::dateTimeFormatterWithSeconds()
 {
-    return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterMediumStyle);
+    return createDateTimeFormatter(m_locale, m_gregorianCalendar, NSDateFormatterShortStyle, NSDateFormatterMediumStyle);
 }
 
 RetainPtr<NSDateFormatter> LocaleCocoa::dateTimeFormatterWithoutSeconds()
 {
-    return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterShortStyle);
+    return createDateTimeFormatter(m_locale, m_gregorianCalendar, NSDateFormatterShortStyle, NSDateFormatterShortStyle);
 }
 
 Locale::WritingDirection LocaleCocoa::defaultWritingDirection() const
@@ -166,7 +166,7 @@ String LocaleCocoa::dateFormat()
 {
     if (!m_dateFormat.isNull())
         return m_dateFormat;
-    m_dateFormat = [shortDateFormatter().get() dateFormat];
+    m_dateFormat = [shortDateFormatter() dateFormat];
     return m_dateFormat;
 }
 
@@ -176,7 +176,7 @@ String LocaleCocoa::monthFormat()
         return m_monthFormat;
     // Gets a format for "MMMM" because Windows API always provides formats for
     // "MMMM" in some locales.
-    m_monthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMMM" options:0 locale:m_locale.get()];
+    m_monthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMMM" options:0 locale:m_locale];
     return m_monthFormat;
 }
 
@@ -184,7 +184,7 @@ String LocaleCocoa::shortMonthFormat()
 {
     if (!m_shortMonthFormat.isNull())
         return m_shortMonthFormat;
-    m_shortMonthFormat = [NSDateFormatter dateFormatFromTemplate:@"yM" options:0 locale:m_locale.get()];
+    m_shortMonthFormat = [NSDateFormatter dateFormatFromTemplate:@"yM" options:0 locale:m_locale];
     return m_shortMonthFormat;
 }
 
@@ -192,7 +192,7 @@ String LocaleCocoa::timeFormat()
 {
     if (!m_timeFormatWithSeconds.isNull())
         return m_timeFormatWithSeconds;
-    m_timeFormatWithSeconds = [timeFormatter().get() dateFormat];
+    m_timeFormatWithSeconds = [timeFormatter() dateFormat];
     return m_timeFormatWithSeconds;
 }
 
@@ -200,7 +200,7 @@ String LocaleCocoa::shortTimeFormat()
 {
     if (!m_timeFormatWithoutSeconds.isNull())
         return m_timeFormatWithoutSeconds;
-    m_timeFormatWithoutSeconds = [shortTimeFormatter().get() dateFormat];
+    m_timeFormatWithoutSeconds = [shortTimeFormatter() dateFormat];
     return m_timeFormatWithoutSeconds;
 }
 
@@ -208,7 +208,7 @@ String LocaleCocoa::dateTimeFormatWithSeconds()
 {
     if (!m_dateTimeFormatWithSeconds.isNull())
         return m_dateTimeFormatWithSeconds;
-    m_dateTimeFormatWithSeconds = [dateTimeFormatterWithSeconds().get() dateFormat];
+    m_dateTimeFormatWithSeconds = [dateTimeFormatterWithSeconds() dateFormat];
     return m_dateTimeFormatWithSeconds;
 }
 
@@ -216,7 +216,7 @@ String LocaleCocoa::dateTimeFormatWithoutSeconds()
 {
     if (!m_dateTimeFormatWithoutSeconds.isNull())
         return m_dateTimeFormatWithoutSeconds;
-    m_dateTimeFormatWithoutSeconds = [dateTimeFormatterWithoutSeconds().get() dateFormat];
+    m_dateTimeFormatWithoutSeconds = [dateTimeFormatterWithoutSeconds() dateFormat];
     return m_dateTimeFormatWithoutSeconds;
 }
 
@@ -224,9 +224,9 @@ const Vector<String>& LocaleCocoa::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
-    NSArray *array = [shortDateFormatter().get() shortMonthSymbols];
+    RetainPtr array = [shortDateFormatter() shortMonthSymbols];
     if ([array count] == 12) {
-        m_shortMonthLabels = makeVector<String>(array);
+        m_shortMonthLabels = makeVector<String>(array.get());
         return m_shortMonthLabels;
     }
     m_shortMonthLabels = std::span { WTF::monthName };
@@ -237,9 +237,9 @@ const Vector<String>& LocaleCocoa::standAloneMonthLabels()
 {
     if (!m_standAloneMonthLabels.isEmpty())
         return m_standAloneMonthLabels;
-    NSArray *array = [shortDateFormatter().get() standaloneMonthSymbols];
+    RetainPtr array = [shortDateFormatter() standaloneMonthSymbols];
     if ([array count] == 12) {
-        m_standAloneMonthLabels = makeVector<String>(array);
+        m_standAloneMonthLabels = makeVector<String>(array.get());
         return m_standAloneMonthLabels;
     }
     m_standAloneMonthLabels = shortMonthLabels();
@@ -251,9 +251,9 @@ const Vector<String>& LocaleCocoa::shortStandAloneMonthLabels()
     if (!m_shortStandAloneMonthLabels.isEmpty())
         return m_shortStandAloneMonthLabels;
 
-    NSArray *array = [shortDateFormatter().get() shortStandaloneMonthSymbols];
+    RetainPtr array = [shortDateFormatter() shortStandaloneMonthSymbols];
     if ([array count] == 12) {
-        m_shortStandAloneMonthLabels = makeVector<String>(array);
+        m_shortStandAloneMonthLabels = makeVector<String>(array.get());
         return m_shortStandAloneMonthLabels;
     }
     m_shortStandAloneMonthLabels = shortMonthLabels();
@@ -315,12 +315,12 @@ void LocaleCocoa::initializeLocaleData()
     m_didInitializeNumberData = true;
 
     RetainPtr<NSNumberFormatter> formatter = adoptNS([[NSNumberFormatter alloc] init]);
-    [formatter setLocale:m_locale.get()];
+    [formatter setLocale:m_locale];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setUsesGroupingSeparator:NO];
 
     RetainPtr<NSNumber> sampleNumber = adoptNS([[NSNumber alloc] initWithDouble:9876543210]);
-    String nineToZero([formatter stringFromNumber:sampleNumber.get()]);
+    String nineToZero([formatter stringFromNumber:sampleNumber]);
     if (nineToZero.length() != 10)
         return;
     Vector<String, DecimalSymbolsSize> symbols;

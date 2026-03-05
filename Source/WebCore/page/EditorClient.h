@@ -43,6 +43,7 @@ namespace WebCore {
 
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
+enum class MouseEventInputSource : uint8_t;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 enum class AttachmentAssociatedElementType : uint8_t;
@@ -167,6 +168,11 @@ public:
     virtual void uppercaseWord() = 0;
     virtual void lowercaseWord() = 0;
     virtual void capitalizeWord() = 0;
+    virtual bool canApplyCaseTransformations(const String&) = 0;
+    virtual bool canConvertToTraditionalChinese(const String&) = 0;
+    virtual bool canConvertToSimplifiedChinese(const String&) = 0;
+    virtual void convertToTraditionalChinese() = 0;
+    virtual void convertToSimplifiedChinese() = 0;
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
@@ -205,7 +211,7 @@ public:
 
     virtual bool performTwoStepDrop(DocumentFragment&, const SimpleRange& destination, bool isMove) = 0;
 
-    virtual bool shouldAllowSingleClickToChangeSelection(Node&, const VisibleSelection&) const { return true; }
+    virtual bool shouldAllowSingleClickToChangeSelection(Node&, const VisibleSelection&, MouseEventInputSource) const { return true; }
 
     virtual void willChangeSelectionForAccessibility() { }
     virtual void didChangeSelectionForAccessibility() { }

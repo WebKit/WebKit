@@ -56,10 +56,11 @@ enum class WebCore::LockBackForwardList : bool;
     std::optional<double> dataDetectionReferenceDate;
 #endif
     bool isRequestFromClientOrUserInput;
-    bool isPerformingHTTPFallback;
+    WebCore::NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior;
     bool isHandledByAboutSchemeHandler;
 
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
     uint64_t requiredCookiesVersion;
     std::optional<WebCore::NavigationRequester> requester;
+    std::optional<WebCore::ResourceRequest> originalRequest;
 };

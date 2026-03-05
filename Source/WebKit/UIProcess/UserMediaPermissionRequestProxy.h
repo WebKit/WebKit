@@ -57,15 +57,15 @@ public:
     void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 
     virtual void invalidate();
-    bool isPending() const;
+    bool NODELETE isPending() const;
 
     bool requiresAudioCapture() const { return m_eligibleAudioDevices.size(); }
     bool requiresVideoCapture() const { return !requiresDisplayCapture() && m_eligibleVideoDevices.size(); }
     bool requiresDisplayCapture() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMedia || m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio; }
     bool requiresDisplayCaptureWithAudio() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio; }
 
-    void setEligibleVideoDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleVideoDevices = WTFMove(devices); }
-    void setEligibleAudioDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleAudioDevices = WTFMove(devices); }
+    void setEligibleVideoDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleVideoDevices = WTF::move(devices); }
+    void setEligibleAudioDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleAudioDevices = WTF::move(devices); }
 
     Vector<String> videoDeviceUIDs() const;
     Vector<String> audioDeviceUIDs() const;
@@ -77,7 +77,7 @@ public:
 
     std::optional<WebCore::UserMediaRequestIdentifier> userMediaID() const { return m_userMediaID; }
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
-    const FrameInfoData& frameInfo() const { return m_frameInfo; }
+    const FrameInfoData& frameInfo() const LIFETIME_BOUND { return m_frameInfo; }
     WebCore::FrameIdentifier frameID() const { return m_frameInfo.frameID; }
 
     WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
@@ -85,12 +85,12 @@ public:
     const WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() const { return m_topLevelDocumentSecurityOrigin.get(); }
     const WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() const { return m_userMediaDocumentSecurityOrigin.get(); }
 
-    const WebCore::MediaStreamRequest& userRequest() const { return m_request; }
+    const WebCore::MediaStreamRequest& userRequest() const LIFETIME_BOUND { return m_request; }
 
     WebCore::MediaStreamRequest::Type requestType() const { return m_request.type; }
 
-    void setDeviceIdentifierHashSalts(WebCore::MediaDeviceHashSalts&& salts) { m_deviceIdentifierHashSalts = WTFMove(salts); }
-    const WebCore::MediaDeviceHashSalts& deviceIdentifierHashSalts() const { return m_deviceIdentifierHashSalts; }
+    void setDeviceIdentifierHashSalts(WebCore::MediaDeviceHashSalts&& salts) { m_deviceIdentifierHashSalts = WTF::move(salts); }
+    const WebCore::MediaDeviceHashSalts& deviceIdentifierHashSalts() const LIFETIME_BOUND { return m_deviceIdentifierHashSalts; }
 
     WebCore::CaptureDevice audioDevice() const { return m_eligibleAudioDevices.isEmpty() ? WebCore::CaptureDevice { } : m_eligibleAudioDevices[0]; }
     WebCore::CaptureDevice videoDevice() const { return m_eligibleVideoDevices.isEmpty() ? WebCore::CaptureDevice { } : m_eligibleVideoDevices[0]; }
@@ -100,14 +100,13 @@ public:
 #endif
 
     CompletionHandler<void(bool)> decisionCompletionHandler() { return std::exchange(m_decisionCompletionHandler, { }); }
-    void setBeforeStartingCaptureCallback(Function<void()>&& callback) { m_beforeStartingCaptureCallback = WTFMove(callback); }
+    void setBeforeStartingCaptureCallback(Function<void()>&& callback) { m_beforeStartingCaptureCallback = WTF::move(callback); }
     Function<void()> beforeStartingCaptureCallback() { return std::exchange(m_beforeStartingCaptureCallback, { }); }
 
 protected:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
 
-    UserMediaPermissionRequestManagerProxy* manager() const;
-    RefPtr<UserMediaPermissionRequestManagerProxy> protectedManager() const;
+    UserMediaPermissionRequestManagerProxy* NODELETE manager() const;
 
 private:
     WeakPtr<UserMediaPermissionRequestManagerProxy> m_manager;

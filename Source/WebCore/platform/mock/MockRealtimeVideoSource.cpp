@@ -35,7 +35,7 @@
 #include "CaptureDevice.h"
 #include "FillLightMode.h"
 #include "GraphicsContext.h"
-#include "ImageBuffer.h"
+#include "ImageUtilities.h"
 #include "IntRect.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
@@ -68,13 +68,13 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
         return { "No mock camera device"_s };
 #endif
 
-    auto source = adoptRef(*new MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier));
+    auto source = adoptRef(*new MockRealtimeVideoSource(WTF::move(deviceID), WTF::move(name), WTF::move(hashSalts), pageIdentifier));
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(error->invalidConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError({ WTF::move(error->invalidConstraint), MediaAccessDenialReason::InvalidConstraint });
     }
 
-    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
+    return CaptureSourceOrError(RealtimeVideoSource::create(WTF::move(source)));
 }
 #endif
 
@@ -139,7 +139,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
 }
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
-    : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
+    : RealtimeVideoCaptureSource(CaptureDevice { WTF::move(deviceID), CaptureDevice::DeviceType::Camera, WTF::move(name) }, WTF::move(hashSalts), pageIdentifier)
     , m_runLoop(RunLoop::create("WebKit::MockRealtimeVideoSource generateFrame runloop"_s))
     , m_emitFrameTimer(m_runLoop.get(), "MockRealtimeVideoSource::EmitFrameTimer"_s, [weakThis = ThreadSafeWeakPtr { *this }]() {
         if (RefPtr protectedThis = weakThis.get())
@@ -204,7 +204,7 @@ void MockRealtimeVideoSource::setSizeFrameRateAndZoom(const VideoPresetConstrain
 void MockRealtimeVideoSource::generatePresets()
 {
     ASSERT(mockCamera());
-    setSupportedPresets(WTFMove(std::get<MockCameraProperties>(m_device.properties).presets));
+    setSupportedPresets(WTF::move(std::get<MockCameraProperties>(m_device.properties).presets));
 }
 
 const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
@@ -231,7 +231,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
 
         auto whiteBalanceModes = std::get<MockCameraProperties>(m_device.properties).whiteBalanceMode;
         if (!whiteBalanceModes.isEmpty()) {
-            capabilities.setWhiteBalanceModes(WTFMove(whiteBalanceModes));
+            capabilities.setWhiteBalanceModes(WTF::move(whiteBalanceModes));
             supportedConstraints.setSupportsWhiteBalanceMode(true);
         }
 
@@ -257,7 +257,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         capabilities.setFrameRate({ .01, 60.0 });
     }
 
-    m_capabilities = WTFMove(capabilities);
+    m_capabilities = WTF::move(capabilities);
 
     return m_capabilities.value();
 }
@@ -271,7 +271,7 @@ auto MockRealtimeVideoSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhot
 
     return invokeAsync(m_runLoop, [this, protectedThis = Ref { *this }] () mutable {
         if (auto currentImage = generatePhoto())
-            return TakePhotoNativePromise::createAndResolve(std::make_pair(ImageBuffer::toData(*currentImage, "image/png"_s), "image/png"_s));
+            return TakePhotoNativePromise::createAndResolve(std::make_pair(encodeData(WTF::move(currentImage), "image/png"_s, std::nullopt), "image/png"_s));
         return TakePhotoNativePromise::createAndReject("Failed to capture photo"_s);
     });
 }
@@ -290,7 +290,7 @@ auto MockRealtimeVideoSource::getPhotoCapabilities() -> Ref<PhotoCapabilitiesNat
     auto width = capabilities.width();
     photoCapabilities.imageWidth = { width.max(), width.min(), 1 };
 
-    m_photoCapabilities = WTFMove(photoCapabilities);
+    m_photoCapabilities = WTF::move(photoCapabilities);
 
     return PhotoCapabilitiesNativePromise::createAndResolve(*m_photoCapabilities);
 }
@@ -379,7 +379,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     }
     settings.setSupportedConstraints(supportedConstraints);
 
-    m_currentSettings = WTFMove(settings);
+    m_currentSettings = WTF::move(settings);
 
     return m_currentSettings.value();
 }
@@ -388,7 +388,7 @@ void MockRealtimeVideoSource::applyFrameRateAndZoomWithPreset(double frameRate, 
 {
     UNUSED_PARAM(zoom);
     ASSERT(m_beingConfigured);
-    m_preset = WTFMove(preset);
+    m_preset = WTF::move(preset);
     if (m_preset)
         setIntrinsicSize(m_preset->size());
     if (isProducingData())
@@ -541,7 +541,7 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
 
     boxTop += boxSize + 2;
     boxLeft = boxSize;
-    constexpr SRGBA<uint8_t> boxColors[] = { Color::white, Color::yellow, Color::cyan, Color::darkGreen, Color::magenta, Color::red, Color::blue };
+    constexpr auto boxColors = std::to_array<SRGBA<uint8_t>>({ Color::white, Color::yellow, Color::cyan, Color::darkGreen, Color::magenta, Color::red, Color::blue });
     for (auto& boxColor : boxColors) {
         context.fillRect(FloatRect(boxLeft, boxTop, boxSize + 1, boxSize + 1), boxColor);
         boxLeft += boxSize + 1;
@@ -776,29 +776,29 @@ void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 
 void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
 {
-    for (auto& source : allMockRealtimeVideoSource()) {
-        if (!source.isProducingData())
+    for (Ref source : allMockRealtimeVideoSource()) {
+        if (!source->isProducingData())
             continue;
         if (isInterrupted)
-            source.m_emitFrameTimer.stop();
+            source->m_emitFrameTimer.stop();
         else
-            source.startCaptureTimer();
-        source.notifyMutedChange(isInterrupted);
+            source->startCaptureTimer();
+        source->notifyMutedChange(isInterrupted);
     }
 }
 
 void MockRealtimeVideoSource::triggerCameraConfigurationChange()
 {
-    for (auto& source : allMockRealtimeVideoSource()) {
-        if (!source.isProducingData() || source.deviceType() != CaptureDevice::DeviceType::Camera)
+    for (Ref source : allMockRealtimeVideoSource()) {
+        if (!source->isProducingData() || source->deviceType() != CaptureDevice::DeviceType::Camera)
             continue;
 
-        std::get<MockCameraProperties>(source.m_device.properties).hasBackgroundBlur = !std::get<MockCameraProperties>(source.m_device.properties).hasBackgroundBlur;
+        std::get<MockCameraProperties>(source->m_device.properties).hasBackgroundBlur = !std::get<MockCameraProperties>(source->m_device.properties).hasBackgroundBlur;
 
-        source.m_currentSettings = { };
-        source.m_capabilities = { };
+        source->m_currentSettings = { };
+        source->m_capabilities = { };
 
-        source.forEachObserver([](auto& observer) {
+        source->forEachObserver([](auto& observer) {
             observer.sourceConfigurationChanged();
         });
     }

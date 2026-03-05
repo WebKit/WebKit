@@ -37,18 +37,18 @@ struct TermCreatorInput {
     Vector<std::unique_ptr<Term>>& internedTermsStorage;
 };
 
-inline void add(Hasher& hasher, const TermCreatorInput& input)
+inline void NODELETE add(Hasher& hasher, const TermCreatorInput& input)
 {
     add(hasher, input.term);
 }
 
 struct TermCreatorTranslator {
-    static unsigned hash(const TermCreatorInput& input)
+    static unsigned NODELETE hash(const TermCreatorInput& input)
     {
         return computeHash(input);
     }
 
-    static inline bool equal(const Term* term, const TermCreatorInput& input)
+    static inline bool NODELETE equal(const Term* term, const TermCreatorInput& input)
     {
         return *term == input.term;
     }
@@ -57,7 +57,7 @@ struct TermCreatorTranslator {
     {
         std::unique_ptr<Term> newUniqueTerm(new Term(input.term));
         location = newUniqueTerm.get();
-        input.internedTermsStorage.append(WTFMove(newUniqueTerm));
+        input.internedTermsStorage.append(WTF::move(newUniqueTerm));
     }
 };
 

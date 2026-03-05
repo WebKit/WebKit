@@ -29,6 +29,7 @@
  */
 
 [
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=*,
     PrivateIdentifier,
     PublicIdentifier,

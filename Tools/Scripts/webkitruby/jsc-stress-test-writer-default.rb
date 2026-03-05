@@ -238,24 +238,8 @@ class Plan < BasePlan
         return script
     end
     
-    def reproScriptCommand
-        # We have to find our way back to the .runner directory since that's where all of the relative
-        # paths assume they start out from.
-        script = "CURRENT_DIR=\"$( cd \"$( dirname \"${BASH_SOURCE[0]}\" )\" && pwd )\"\n"
-        script += "cd $CURRENT_DIR\n"
-        Pathname.new(@name).dirname.each_filename {
-            | pathComponent |
-            script += "cd ..\n"
-        }
-        script += "cd .runner\n"
-
-        script += "export DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd)\n"
-        script += "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])}\n"
-        script += "export JSCTEST_hardTimeout=#{Shellwords.shellescape(ENV['JSCTEST_hardTimeout'])}\n"
-        script += "export JSCTEST_memoryLimit=#{Shellwords.shellescape(ENV['JSCTEST_memoryLimit'])}\n"
-        $envVars.each { |var| script += "export " << var << "\n" }
-        script += "#{shellCommand} || exit 1"
-        "echo #{Shellwords.shellescape(script)} > #{Shellwords.shellescape((Pathname.new("..") + @name).to_s)}"
+    def reproCommand
+        "echo \"Repro command: #{$envVars.join(" ")} jsc #{@arguments[1..-1].join(" ")}\" | " + redirectAndPrefixCommand(@name)
     end
 
     def statusCommand(status)
@@ -263,7 +247,7 @@ class Plan < BasePlan
     end
 
     def failCommand
-        "#{statusCommand(STATUS_FILE_FAIL)}; echo FAIL: #{Shellwords.shellescape(@name)}; " + reproScriptCommand
+        "#{statusCommand(STATUS_FILE_FAIL)}; echo FAIL: #{Shellwords.shellescape(@name)}; " + reproCommand
     end
     
     def successCommand

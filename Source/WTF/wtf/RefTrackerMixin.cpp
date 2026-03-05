@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "RefTrackerMixin.h"
+#include <wtf/RefTrackerMixin.h>
 
 #include <ranges>
 
@@ -36,7 +36,7 @@ void RefTracker::reportLive(void* id)
     std::unique_ptr<StackShot> stack = nullptr;
     if (!loggingDisabledDepth.load())
         stack = makeUnique<StackShot>(16);
-    RELEASE_ASSERT(map.add(id, WTFMove(stack)).isNewEntry);
+    RELEASE_ASSERT(map.add(id, WTF::move(stack)).isNewEntry);
 }
 
 void RefTracker::reportDead(void* id)

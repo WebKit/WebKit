@@ -14,6 +14,7 @@
   attribute EventHandler onclose;
 };
 
+// https://html.spec.whatwg.org/multipage/interaction.html#closewatcheroptions
 dictionary CloseWatcherOptions {
   AbortSignal signal;
 };

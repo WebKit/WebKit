@@ -95,8 +95,8 @@ public:
     size_t length() const;
 
     bool isNull() const { return !m_buffer; }
-    bool isEmpty() const { return isNull() || m_buffer->length() <= 1; }
-    bool isSafeToSendToAnotherThread() const;
+    bool isEmpty() const { return isNull() || !m_buffer->length(); }
+    bool NODELETE isSafeToSendToAnotherThread() const;
 
     CStringBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
 
@@ -138,19 +138,19 @@ inline CString::CString(const std::string& value)
 {
 }
 
-inline const char* CString::data() const
+inline const char* CString::data() const LIFETIME_BOUND
 {
     return m_buffer ? m_buffer->spanIncludingNullTerminator().data() : nullptr;
 }
 
-inline std::span<const char> CString::span() const
+inline std::span<const char> CString::span() const LIFETIME_BOUND
 {
     if (m_buffer)
         return m_buffer->span();
     return { };
 }
 
-inline std::span<const char> CString::spanIncludingNullTerminator() const
+inline std::span<const char> CString::spanIncludingNullTerminator() const LIFETIME_BOUND
 {
     if (m_buffer)
         return m_buffer->spanIncludingNullTerminator();

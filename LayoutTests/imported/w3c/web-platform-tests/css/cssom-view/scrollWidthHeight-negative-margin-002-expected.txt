@@ -1,64 +1,64 @@
 
-PASS scrollWidth with negative margins: display: block; overflow: visible; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: visible; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: hidden; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: hidden; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: auto; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: auto; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: clip; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: clip; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: scroll; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: scroll; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: visible; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: visible; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: hidden; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: hidden; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: auto; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: auto; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: clip; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: clip; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: scroll; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: scroll; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
-FAIL scrollWidth with negative margins: display: block; overflow: visible; direction: ltr; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 250
-PASS scrollHeight with negative margins: display: block; overflow: visible; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: hidden; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: hidden; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: auto; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: auto; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-FAIL scrollWidth with negative margins: display: block; overflow: clip; direction: ltr; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 250
-PASS scrollHeight with negative margins: display: block; overflow: clip; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: scroll; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: scroll; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: visible; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: visible; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: hidden; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: hidden; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: auto; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: auto; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: clip; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: clip; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: scroll; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: scroll; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
-FAIL scrollWidth with negative margins: display: block; overflow: visible; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollWidth expected 216 but got 184
-FAIL scrollHeight with negative margins: display: block; overflow: visible; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
-PASS scrollWidth with negative margins: display: block; overflow: hidden; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: hidden; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: auto; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: auto; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
-FAIL scrollWidth with negative margins: display: block; overflow: clip; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollWidth expected 216 but got 184
-FAIL scrollHeight with negative margins: display: block; overflow: clip; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
-PASS scrollWidth with negative margins: display: block; overflow: scroll; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: scroll; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
-FAIL scrollWidth with negative margins: display: block; overflow: visible; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 150
-FAIL scrollHeight with negative margins: display: block; overflow: visible; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
-PASS scrollWidth with negative margins: display: block; overflow: hidden; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: hidden; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollWidth with negative margins: display: block; overflow: auto; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: auto; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
-FAIL scrollWidth with negative margins: display: block; overflow: clip; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 150
-FAIL scrollHeight with negative margins: display: block; overflow: clip; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
-PASS scrollWidth with negative margins: display: block; overflow: scroll; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
-PASS scrollHeight with negative margins: display: block; overflow: scroll; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: visible; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: visible; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: hidden; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: hidden; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: auto; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: auto; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: clip; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: clip; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: scroll; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: scroll; direction: ltr; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: visible; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: visible; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: hidden; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: hidden; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: auto; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: auto; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: clip; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: clip; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: scroll; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: scroll; direction: ltr; writing-mode: vertical-lr; flex-direction: row;
+FAIL scrollWidth with negative margins: display: flow-root; overflow: visible; direction: ltr; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 250
+PASS scrollHeight with negative margins: display: flow-root; overflow: visible; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: hidden; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: hidden; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: auto; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: auto; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+FAIL scrollWidth with negative margins: display: flow-root; overflow: clip; direction: ltr; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 250
+PASS scrollHeight with negative margins: display: flow-root; overflow: clip; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: scroll; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: scroll; direction: ltr; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: visible; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: visible; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: hidden; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: hidden; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: auto; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: auto; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: clip; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: clip; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: scroll; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: scroll; direction: rtl; writing-mode: horizontal-tb; flex-direction: row;
+FAIL scrollWidth with negative margins: display: flow-root; overflow: visible; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollWidth expected 216 but got 184
+FAIL scrollHeight with negative margins: display: flow-root; overflow: visible; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
+PASS scrollWidth with negative margins: display: flow-root; overflow: hidden; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: hidden; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: auto; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: auto; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
+FAIL scrollWidth with negative margins: display: flow-root; overflow: clip; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollWidth expected 216 but got 184
+FAIL scrollHeight with negative margins: display: flow-root; overflow: clip; direction: rtl; writing-mode: vertical-lr; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
+PASS scrollWidth with negative margins: display: flow-root; overflow: scroll; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: scroll; direction: rtl; writing-mode: vertical-lr; flex-direction: row;
+FAIL scrollWidth with negative margins: display: flow-root; overflow: visible; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 150
+FAIL scrollHeight with negative margins: display: flow-root; overflow: visible; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
+PASS scrollWidth with negative margins: display: flow-root; overflow: hidden; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: hidden; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollWidth with negative margins: display: flow-root; overflow: auto; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: auto; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
+FAIL scrollWidth with negative margins: display: flow-root; overflow: clip; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollWidth expected 204 but got 150
+FAIL scrollHeight with negative margins: display: flow-root; overflow: clip; direction: rtl; writing-mode: vertical-rl; flex-direction: row; assert_equals: scrollHeight expected 208 but got 181
+PASS scrollWidth with negative margins: display: flow-root; overflow: scroll; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
+PASS scrollHeight with negative margins: display: flow-root; overflow: scroll; direction: rtl; writing-mode: vertical-rl; flex-direction: row;
 PASS scrollWidth with negative margins: display: flex; overflow: visible; direction: ltr; writing-mode: horizontal-tb; flex-direction: row; scrollbar-width: none;
 PASS scrollHeight with negative margins: display: flex; overflow: visible; direction: ltr; writing-mode: horizontal-tb; flex-direction: row; scrollbar-width: none;
 PASS scrollWidth with negative margins: display: flex; overflow: hidden; direction: ltr; writing-mode: horizontal-tb; flex-direction: row; scrollbar-width: none;

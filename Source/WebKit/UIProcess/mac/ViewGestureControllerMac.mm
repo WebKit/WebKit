@@ -25,6 +25,12 @@
 
 #import "config.h"
 #import "ViewGestureController.h"
+#import <optional>
+
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+#import "WebKit-Swift.h"
+#endif
 
 #if PLATFORM(MAC)
 
@@ -168,7 +174,7 @@ void ViewGestureController::handleSmartMagnificationGesture(FloatPoint gestureLo
     LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::handleSmartMagnificationGesture - gesture location " << gestureLocationInViewCoordinates);
 
     if (RefPtr page = m_webPageProxy.get())
-        page->protectedLegacyMainFrameProcess()->send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates), page->webPageIDInMainFrameProcess());
 }
 
 static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)
@@ -248,27 +254,27 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     m_lastMagnificationGestureWasSmartMagnification = true;
 }
 
-bool ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe(NSEvent *event)
+bool ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe(NativeWebWheelEvent event)
 {
-    return event.phase == NSEventPhaseBegan;
+    return event.phase() == WebWheelEvent::Phase::Began && event.nativeEvent();
 }
 
-bool ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe(NSEvent *event)
+bool ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe(NativeWebWheelEvent event)
 {
-    return event.phase == NSEventPhaseEnded;
+    return event.phase() == WebWheelEvent::Phase::Ended;
 }
 
-bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(NSEvent *event)
+bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(NativeWebWheelEvent event)
 {
-    return event.hasPreciseScrollingDeltas && [NSEvent isSwipeTrackingFromScrollEventsEnabled];
+    return event.hasPreciseScrollingDeltas() && [NSEvent isSwipeTrackingFromScrollEventsEnabled];
 }
 
-FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas(NSEvent *event)
+FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas(NativeWebWheelEvent event)
 {
-    return FloatSize(event.scrollingDeltaX, event.scrollingDeltaY);
+    return event.delta();
 }
 
-bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
+bool ViewGestureController::handleScrollWheelEvent(NativeWebWheelEvent event)
 {
     if (m_activeGestureType != ViewGestureType::None)
         return false;
@@ -288,7 +294,7 @@ void ViewGestureController::trackSwipeGesture(PlatformScrollEvent event, SwipeDi
     m_swipeCancellationTracker = swipeCancellationTracker;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [event trackSwipeEventWithOptions:NSEventSwipeTrackingConsumeMouseEvents dampenAmountThresholdMin:minProgress max:maxProgress usingHandler:^(CGFloat progress, NSEventPhase phase, BOOL isComplete, BOOL *stop) {
+    [protect(event.nativeEvent()) trackSwipeEventWithOptions:NSEventSwipeTrackingConsumeMouseEvents dampenAmountThresholdMin:minProgress max:maxProgress usingHandler:^(CGFloat progress, NSEventPhase phase, BOOL isComplete, BOOL *stop) {
         if ([swipeCancellationTracker isCancelled]) {
             *stop = YES;
             return;
@@ -440,7 +446,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     RetainPtr backgroundColor = CGColorGetConstantColor(kCGColorWhite);
     if (RefPtr snapshot = targetItem->snapshot()) {
         if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), obscuredContentInsets))
-            [m_swipeSnapshotLayer setContents:snapshot->asProtectedLayerContents().get()];
+            [m_swipeSnapshotLayer setContents:protect(snapshot->asLayerContents()).get()];
 
         Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
@@ -470,7 +476,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     [m_swipeLayer addSublayer:m_swipeSnapshotLayer.get()];
 
-    if (page->protectedPreferences()->viewGestureDebuggingEnabled())
+    if (protect(page->preferences())->viewGestureDebuggingEnabled())
         applyDebuggingPropertiesToSwipeViews();
 
     m_didCallEndSwipeGesture = false;
@@ -684,13 +690,24 @@ bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDir
     return true;
 }
 
-WebBackForwardList* ViewGestureController::backForwardListForNavigation() const
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+
+std::optional<WebBackForwardList> ViewGestureController::backForwardListForNavigation() const
 {
     if (RefPtr page = m_webPageProxy.get())
-        return &page->backForwardList();
+        return page->backForwardList();
 
-    return nullptr;
+    return std::nullopt;
 }
+
+#else
+
+WebBackForwardList* ViewGestureController::backForwardListForNavigation() const
+{
+    return m_webPageProxy ? &m_webPageProxy->backForwardList() : nullptr;
+}
+
+#endif
 
 } // namespace WebKit
 

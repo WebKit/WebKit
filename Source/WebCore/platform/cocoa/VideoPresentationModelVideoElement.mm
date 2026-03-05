@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-#import "AddEventListenerOptionsInlines.h"
 #import "DocumentFullscreen.h"
 #import "Event.h"
 #import "EventListener.h"
@@ -82,11 +81,11 @@ void VideoPresentationModelVideoElement::cleanVideoListeners()
     if (RefPtr videoElement = m_videoElement) {
         videoElement->removeClient(*this);
         for (auto& eventName : observedEventNames())
-            videoElement->removeEventListener(eventName, m_videoListener, false);
+            videoElement->removeEventListener(eventName, m_videoListener, { .capture = false });
     }
     if (RefPtr document = m_document.get()) {
         for (auto& eventName : documentObservedEventNames())
-            document->removeEventListener(eventName, m_videoListener, false);
+            document->removeEventListener(eventName, m_videoListener, { .capture = false });
     }
 }
 
@@ -110,10 +109,10 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
         videoElement->addClient(*this);
         m_document = videoElement->document();
         for (auto& eventName : observedEventNames())
-            videoElement->addEventListener(eventName, m_videoListener, false);
+            videoElement->addEventListener(eventName, m_videoListener);
         m_isListening = true;
         for (auto& eventName : documentObservedEventNames())
-            videoElement->document().addEventListener(eventName, m_videoListener, false);
+            videoElement->document().addEventListener(eventName, m_videoListener);
     }
 
     updateForEventName(eventNameAll());
@@ -263,7 +262,7 @@ void VideoPresentationModelVideoElement::setVideoFullscreenLayer(PlatformLayer* 
     [m_videoFullscreenLayer setFrame:m_videoFrame];
 
     if (RefPtr videoElement = m_videoElement) {
-        videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get(), WTFMove(completionHandler));
+        videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get(), WTF::move(completionHandler));
         return;
     }
 
@@ -274,7 +273,7 @@ void VideoPresentationModelVideoElement::waitForPreparedForInlineThen(WTF::Funct
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (RefPtr videoElement = m_videoElement) {
-        videoElement->waitForPreparedForInlineThen(WTFMove(completionHandler));
+        videoElement->waitForPreparedForInlineThen(WTF::move(completionHandler));
         return;
     }
 
@@ -316,7 +315,7 @@ void VideoPresentationModelVideoElement::setVideoSizeFenced(const FloatSize& siz
         return;
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, size);
-    videoElement->setVideoLayerSizeFenced(size, WTFMove(fence));
+    videoElement->setVideoLayerSizeFenced(size, WTF::move(fence));
     videoElement->setVideoFullscreenFrame({ { }, size });
 }
 

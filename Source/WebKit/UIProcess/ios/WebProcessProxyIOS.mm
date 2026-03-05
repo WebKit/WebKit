@@ -72,7 +72,7 @@ void WebProcessProxy::platformInitialize()
         });
     }
 
-    throttler().setAllowsActivities(!m_processPool->processesShouldSuspend());
+    protect(throttler())->setAllowsActivities(!m_processPool->processesShouldSuspend());
 }
 
 bool WebProcessProxy::fullKeyboardAccessEnabled()

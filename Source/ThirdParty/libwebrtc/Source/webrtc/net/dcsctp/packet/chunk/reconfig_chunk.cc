@@ -37,7 +37,6 @@ namespace dcsctp {
 //  /             Re-configuration Parameter (optional)             /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ReConfigChunk::kType;
 
 std::optional<ReConfigChunk> ReConfigChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

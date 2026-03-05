@@ -37,10 +37,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderReplica);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderReplica);
 
 RenderReplica::RenderReplica(Document& document, RenderStyle&& style)
-    : RenderBox(Type::Replica, document, WTFMove(style))
+    : RenderBox(Type::Replica, document, WTF::move(style))
 {
     // This is a hack. Replicas are synthetic, and don't pick up the attributes of the
     // renderers being replicated, so they always report that they are inline, non-replaced.
@@ -77,8 +77,8 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.phase == PaintPhase::Foreground) {
         // Turn around and paint the parent layer. Use temporary clipRects, so that the layer doesn't end up caching clip rects
         // computing using the wrong rootLayer
-        RenderLayer* rootPaintingLayer = layer()->transform() ? layer()->parent() : layer()->enclosingTransformedAncestor();
-        RenderLayer::LayerPaintingInfo paintingInfo(rootPaintingLayer, paintInfo.rect, PaintBehavior::Normal, LayoutSize(), 0);
+        CheckedPtr rootPaintingLayer = layer()->transform() ? layer()->parent() : layer()->enclosingTransformedAncestor();
+        RenderLayer::LayerPaintingInfo paintingInfo(rootPaintingLayer.get(), paintInfo.rect, PaintBehavior::Normal, LayoutSize(), 0);
         OptionSet<RenderLayer::PaintLayerFlag> flags { RenderLayer::PaintLayerFlag::HaveTransparency, RenderLayer::PaintLayerFlag::AppliedTransform, RenderLayer::PaintLayerFlag::TemporaryClipRects, RenderLayer::PaintLayerFlag::PaintingReflection };
         layer()->parent()->paintLayer(paintInfo.context(), paintingInfo, flags);
     } else if (paintInfo.phase == PaintPhase::Mask)

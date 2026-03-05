@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include <WebCore/FrameIdentifier.h>
+#include <wtf/Markable.h>
 #include <wtf/Ref.h>
 
 namespace API {

@@ -40,7 +40,7 @@ public:
     { }
 
     PCToOriginMap(PCToOriginMap&& other)
-        : m_ranges(WTFMove(other.m_ranges))
+        : m_ranges(WTF::move(other.m_ranges))
     { }
 
     struct OriginRange {

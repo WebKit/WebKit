@@ -179,7 +179,8 @@ sk_sp<SkPDFStrike> SkPDFStrike::Make(SkPDFDocument* doc, const SkFont& font, con
         canonFont.setSize(font.getSize());
     }
     SkScalar pathStrikeEM = canonFont.getSize();
-    SkStrikeSpec pathStrikeSpec = SkStrikeSpec::MakeWithNoDevice(canonFont, &pathPaint);
+    SkStrikeSpec pathStrikeSpec = SkStrikeSpec::MakeWithNoDevice(canonFont, &pathPaint,
+                                                                 SkScalerContextFlags::kNone);
 
     if (sk_sp<SkPDFStrike>* strike = doc->fStrikes.find(pathStrikeSpec.descriptor())) {
         return *strike;
@@ -201,7 +202,8 @@ sk_sp<SkPDFStrike> SkPDFStrike::Make(SkPDFDocument* doc, const SkFont& font, con
         canonFont.setSize(font.getSize());
     }
     SkScalar imageStrikeEM = canonFont.getSize();
-    SkStrikeSpec imageStrikeSpec = SkStrikeSpec::MakeWithNoDevice(canonFont, &imagePaint);
+    SkStrikeSpec imageStrikeSpec = SkStrikeSpec::MakeWithNoDevice(canonFont, &imagePaint,
+                                                                  SkScalerContextFlags::kNone);
 
     sk_sp<SkPDFStrike> strike(new SkPDFStrike(SkPDFStrikeSpec(pathStrikeSpec, pathStrikeEM),
                                               SkPDFStrikeSpec(imageStrikeSpec, imageStrikeEM),
@@ -779,8 +781,12 @@ static void emit_subset_type3(const SkPDFFont& pdfFont, SkPDFDocument* doc) {
             setGlyphWidthAndBoundingBox(pathGlyph->advanceX(), glyphBBox, &content);
             SkPaint::Style style = pathGlyph->pathIsHairline() ? SkPaint::kStroke_Style
                                                                : SkPaint::kFill_Style;
-            SkPDFUtils::EmitPath(*path, style, &content);
-            SkPDFUtils::PaintPath(style, path->getFillType(), &content);
+            using SkPDFUtils::EmptyPath, SkPDFUtils::EmptyVerb;
+            if (SkPDFUtils::EmitPath(*path, style, EmptyPath::Discard, EmptyVerb::Discard,
+                                     &content))
+            {
+                SkPDFUtils::PaintPath(style, path->getFillType(), &content);
+            }
         } else if (auto pimg = to_image(gID, &smallGlyphs); pimg.fImage) {
             using SkPDFUtils::AppendScalar;
             if (pimg.fImage->colorType() != kGray_8_SkColorType) {

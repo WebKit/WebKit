@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(C_LOOP)
 
 #define FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \

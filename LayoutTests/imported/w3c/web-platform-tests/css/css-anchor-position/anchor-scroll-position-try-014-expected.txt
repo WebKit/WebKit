@@ -1,5 +1,5 @@
 
 PASS anchor-scroll-position-try-014
-FAIL anchor-scroll-position-try-014 1 assert_equals: Anchored element should be at the top of anchor expected 9 but got 109
+PASS anchor-scroll-position-try-014 1
 PASS anchor-scroll-position-try-014 2
 

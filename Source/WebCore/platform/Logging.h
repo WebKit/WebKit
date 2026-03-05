@@ -96,6 +96,7 @@ namespace WebCore {
     M(DisplayLink) \
     M(DisplayLists) \
     M(DragAndDrop) \
+    M(DOMAPI) \
     M(DOMTimers) \
     M(Editing) \
     M(EME) \
@@ -109,7 +110,9 @@ namespace WebCore {
     M(Frames) \
     M(FTP) \
     M(Fullscreen) \
+    M(GLContext) \
     M(Gamepad) \
+    M(GraphicsBuffer) \
     M(HDR) \
     M(HID) \
     M(History) \

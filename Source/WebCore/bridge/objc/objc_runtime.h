@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KJS_BINDINGS_OBJC_RUNTIME_H
-#define KJS_BINDINGS_OBJC_RUNTIME_H
+#pragma once
 
 #include "BridgeJSC.h"
 #include "JSDOMBinding.h"
@@ -32,8 +31,7 @@
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/RetainPtr.h>
 
-namespace JSC {
-namespace Bindings {
+namespace JSC::Bindings {
 
 ClassStructPtr webScriptObjectClass();
 ClassStructPtr webUndefinedClass();
@@ -69,6 +67,8 @@ public:
     SELStructPtr selector() const { return _selector; }
 
 private:
+    bool isObjcMethod() const final { return true; }
+
     ClassStructPtr _objcClass;
     SELStructPtr _selector;
     RetainPtr<CFStringRef> _javaScriptName;
@@ -135,19 +135,20 @@ private:
     void finishCreation(JSGlobalObject*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
-    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool NODELETE put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static CallData getCallData(JSCell*);
-    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
+    static bool NODELETE deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
     bool toBoolean(JSGlobalObject*) const; // FIXME: Currently this is broken because none of the superclasses are marked virtual. We need to solve this in the longer term.
 
-    static GCClient::IsoSubspace* subspaceForImpl(VM&);
+    static GCClient::IsoSubspace* NODELETE subspaceForImpl(VM&);
 
     RefPtr<ObjcInstance> _instance;
     String m_item;
 };
 
-} // namespace Bindings
-} // namespace JSC
+} // namespace JSC::Bindings
 
-#endif
+SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Bindings::ObjcMethod)
+    static bool isType(const JSC::Bindings::Method& method) { return method.isObjcMethod(); }
+SPECIALIZE_TYPE_TRAITS_END()

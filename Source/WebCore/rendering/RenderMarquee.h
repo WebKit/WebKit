@@ -45,7 +45,8 @@
 
 #include "RenderStyleConstants.h"
 #include "Timer.h"
-#include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/InlineWeakRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -82,7 +83,9 @@ private:
 
     void timerFired();
 
-    const CheckedPtr<RenderLayer> m_layer;
+    RenderLayer& layer() { return m_layer.get(); }
+
+    InlineWeakRef<RenderLayer> m_layer;
     Timer m_timer;
     int m_currentLoop { 0 };
     int m_totalLoops { 0 };

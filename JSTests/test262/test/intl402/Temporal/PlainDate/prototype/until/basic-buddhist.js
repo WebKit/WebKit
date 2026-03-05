@@ -21,6 +21,11 @@ const date25400616 = Temporal.PlainDate.from({ year: 2540, monthCode: "M06", day
 const date25400716 = Temporal.PlainDate.from({ year: 2540, monthCode: "M07", day: 16, calendar });
 const date25401216 = Temporal.PlainDate.from({ year: 2540, monthCode: "M12", day: 16, calendar });
 const date25401230 = Temporal.PlainDate.from({ year: 2540, monthCode: "M12", day: 30, calendar });
+const date25550101 = Temporal.PlainDate.from({ year: 2555, monthCode: "M01", day: 1, calendar });
+const date25551007 = Temporal.PlainDate.from({ year: 2555, monthCode: "M10", day: 7, calendar });
+const date25551201 = Temporal.PlainDate.from({ year: 2555, monthCode: "M12", day: 1, calendar });
+const date25560601 = Temporal.PlainDate.from({ year: 2556, monthCode: "M06", day: 1, calendar });
+const date25590618 = Temporal.PlainDate.from({ year: 2559, monthCode: "M06", day: 18, calendar });
 const date25620101 = Temporal.PlainDate.from({ year: 2562, monthCode: "M01", day: 1, calendar });
 const date25620201 = Temporal.PlainDate.from({ year: 2562, monthCode: "M02", day: 1, calendar });
 const date25620724 = Temporal.PlainDate.from({ year: 2562, monthCode: "M07", day: 24, calendar });
@@ -188,8 +193,17 @@ const tests = [
     ["years", 1, 6, 0, 16],
   ],
   [
+    date25551201, date25560601, "6 months",
+    ["months", 0, 6, 0, 0],
+  ],
+  [
     date25631230, date25640716, "6 months and 16 days",
     ["years", 0, 6, 0, 16],
+  ],
+  [
+    date25550101, date25551007, "40 weeks",
+    ["weeks", 0, 0, 40, 0],
+    ["days", 0, 0, 0, 280],
   ],
   [
     date25401230, date25640716, "23 years, 6 months and 16 days",
@@ -198,6 +212,10 @@ const tests = [
   [
     date25621230, date25640305, "1 year, 2 months and 5 days",
     ["years", 1, 2, 0, 5],
+  ],
+  [
+    date25551201, date25590618, "3 years, 6 months, and 17 days",
+    ["years", 3, 6, 0, 17],
   ],
   [
     date25120724, date25620724, "crossing epoch",

@@ -45,19 +45,19 @@ public:
     }
 
     SourceCode(Ref<SourceProvider>&& provider)
-        : UnlinkedSourceCode(WTFMove(provider))
+        : UnlinkedSourceCode(WTF::move(provider))
     {
     }
 
     SourceCode(Ref<SourceProvider>&& provider, int firstLine, int startColumn)
-        : UnlinkedSourceCode(WTFMove(provider))
+        : UnlinkedSourceCode(WTF::move(provider))
         , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))
         , m_startColumn(OrdinalNumber::fromOneBasedInt(std::max(startColumn, 1)))
     {
     }
 
     SourceCode(RefPtr<SourceProvider>&& provider, int startOffset, int endOffset, int firstLine, int startColumn)
-        : UnlinkedSourceCode(WTFMove(provider), startOffset, endOffset)
+        : UnlinkedSourceCode(WTF::move(provider), startOffset, endOffset)
         , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))
         , m_startColumn(OrdinalNumber::fromOneBasedInt(std::max(startColumn, 1)))
     {
@@ -86,7 +86,7 @@ private:
 
 inline SourceCode makeSource(const String& source, const SourceOrigin& sourceOrigin, SourceTaintedOrigin sourceTaintedOrigin, String filename = String(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
 {
-    return SourceCode(StringSourceProvider::create(source, sourceOrigin, WTFMove(filename), sourceTaintedOrigin, startPosition, sourceType), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+    return SourceCode(StringSourceProvider::create(source, sourceOrigin, WTF::move(filename), sourceTaintedOrigin, startPosition, sourceType), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
 }
 
 inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const

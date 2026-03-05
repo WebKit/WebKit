@@ -74,6 +74,8 @@
 @property (nonatomic, readonly, getter=isInteractingWithFormControl) BOOL interactingWithFormControl;
 @property (nonatomic) _WKFocusStartsInputSessionPolicy focusStartsInputSessionPolicy;
 
+@property (nonatomic) NSTimeInterval showKeyboardAfterElementFocusDelay;
+
 @property (nonatomic, readonly) BOOL didCallEnsurePositionInformationIsUpToDateSinceLastCheck;
 - (void)clearEnsurePositionInformationIsUpToDateTracking;
 
@@ -94,6 +96,10 @@
 @property (nonatomic, copy) void (^didHideContactPickerCallback)(void);
 @property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+@property (nonatomic, assign) BOOL shouldAcceptImmersiveEnvironmentRequests;
+#endif
 
 - (void)dismissActiveMenu;
 - (void)resetInteractionCallbacks;

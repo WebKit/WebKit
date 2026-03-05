@@ -33,6 +33,7 @@
 #include "LoaderMalloc.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -40,13 +41,18 @@ namespace WebCore {
 class CachedApplicationManifest;
 class DocumentLoader;
 
-class ApplicationManifestLoader final : private CachedRawResourceClient {
-WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ApplicationManifestLoader, Loader);
+class ApplicationManifestLoader final : public RefCounted<ApplicationManifestLoader>, private CachedRawResourceClient {
+    WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ApplicationManifestLoader, Loader);
 public:
     typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 
-    ApplicationManifestLoader(DocumentLoader&, const URL&, bool);
+    static Ref<ApplicationManifestLoader> create(DocumentLoader&, const URL&, bool);
     virtual ~ApplicationManifestLoader();
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     bool startLoading();
     void stopLoading();
@@ -54,9 +60,11 @@ public:
     std::optional<ApplicationManifest>& processManifest();
 
 private:
+    ApplicationManifestLoader(DocumentLoader&, const URL&, bool);
+
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess);
 
-    SingleThreadWeakRef<DocumentLoader> m_documentLoader;
+    SingleThreadWeakPtr<DocumentLoader> m_documentLoader;
     std::optional<ApplicationManifest> m_processedManifest;
     URL m_url;
     bool m_useCredentials;

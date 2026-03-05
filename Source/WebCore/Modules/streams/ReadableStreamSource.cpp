@@ -37,8 +37,8 @@ ReadableStreamSource::~ReadableStreamSource() = default;
 void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_promise);
-    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
-    m_controller = WTFMove(controller);
+    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTF::move(promise));
+    m_controller = WTF::move(controller);
 
     setActive();
     doStart();
@@ -49,10 +49,20 @@ void ReadableStreamSource::pull(DOMPromiseDeferred<void>&& promise)
     ASSERT(!m_promise);
     ASSERT(m_controller);
 
-    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTF::move(promise));
 
     setActive();
     doPull();
+}
+
+void ReadableStreamSource::cancel(JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
+{
+    clean();
+
+    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTF::move(promise));
+
+    setActive();
+    doCancel(value);
 }
 
 void ReadableStreamSource::startFinished()
@@ -71,10 +81,39 @@ void ReadableStreamSource::pullFinished()
     setInactive();
 }
 
-void ReadableStreamSource::cancel(JSC::JSValue)
+void ReadableStreamSource::cancelFinished(std::optional<Exception>&& exception)
 {
+    ASSERT(m_promise);
+    if (exception)
+        m_promise->reject(WTF::move(*exception));
+    else
+        m_promise->resolve();
+    m_promise = nullptr;
+    setInactive();
+}
+
+void ReadableStreamSource::cancelFinishedWithError(JSC::JSValue error)
+{
+    ASSERT(m_promise);
+    m_promise->rejectWithCallback([&error](auto&) {
+        return error;
+    });
+    m_promise = nullptr;
+    setInactive();
+}
+
+void ReadableStreamSource::error(const Exception& exception)
+{
+    if (m_controller)
+        m_controller->error(exception);
     clean();
-    doCancel();
+}
+
+void ReadableStreamSource::error(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
+{
+    if (m_controller)
+        m_controller->error(globalObject, value);
+    clean();
 }
 
 void ReadableStreamSource::clean()
@@ -85,8 +124,12 @@ void ReadableStreamSource::clean()
     }
 }
 
-void SimpleReadableStreamSource::doCancel()
+void SimpleReadableStreamSource::doCancel(JSC::JSValue)
 {
+    auto scope = makeScopeExit([&] {
+        cancelFinished();
+    });
+
     m_isCancelled = true;
 }
 

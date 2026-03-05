@@ -35,7 +35,7 @@ WI.fileExtensionForFilename = function(filename)
     if (index === filename.length - 1)
         return null;
 
-    return filename.substr(index + 1);
+    return filename.substring(index + 1);
 };
 
 WI.fileExtensionForURL = function(url)

@@ -43,7 +43,6 @@ namespace WebGPU {
 
 class BindGroupLayout;
 class Device;
-class PipelineLayout;
 class TextureOrTextureView;
 class TextureView;
 
@@ -60,7 +59,7 @@ public:
 
     static Ref<RenderPipeline> create(MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode depthClipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, const WGPURenderPipelineDescriptor& descriptor, RequiredBufferIndicesContainer&& requiredBufferIndices, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, uint32_t vertexShaderBindingCount, Device& device)
     {
-        return adoptRef(*new RenderPipeline(primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, WTFMove(pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, renderPipelineDescriptor, colorAttachmentCount, descriptor, WTFMove(requiredBufferIndices), WTFMove(minimumBufferSizes), uniqueId, vertexShaderBindingCount, device));
+        return adoptRef(*new RenderPipeline(primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, WTF::move(pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, renderPipelineDescriptor, colorAttachmentCount, descriptor, WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), uniqueId, vertexShaderBindingCount, device));
     }
 
     static Ref<RenderPipeline> createInvalid(Device& device)

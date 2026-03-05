@@ -3,7 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,7 +31,7 @@
 #include "ImageQualityController.h"
 #include "LayoutRect.h"
 #include "RenderStyleConstants.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleImage.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/Vector.h>
@@ -55,31 +55,31 @@ enum ImagePiece {
 
 static ImagePiece& operator++(ImagePiece& piece)
 {
-    piece = static_cast<ImagePiece>(enumToUnderlyingType(piece) + 1);
+    piece = static_cast<ImagePiece>(std::to_underlying(piece) + 1);
     return piece;
 }
 
-static bool isCornerPiece(ImagePiece piece)
+static bool NODELETE isCornerPiece(ImagePiece piece)
 {
     return piece == TopLeftPiece || piece == TopRightPiece || piece == BottomLeftPiece || piece == BottomRightPiece;
 }
 
-static bool isHorizontalPiece(ImagePiece piece)
+static bool NODELETE isHorizontalPiece(ImagePiece piece)
 {
     return piece == TopPiece || piece == BottomPiece || piece == MiddlePiece;
 }
 
-static bool isVerticalPiece(ImagePiece piece)
+static bool NODELETE isVerticalPiece(ImagePiece piece)
 {
     return piece == LeftPiece || piece == RightPiece || piece == MiddlePiece;
 }
 
 template<typename WidthValue>
-static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent, const Style::ZoomFactor& zoom)
+static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent, const Style::ZoomFactor&)
 {
     return WTF::switchOn(length,
         [&](const typename WidthValue::LengthPercentage& value) {
-            return Style::evaluate<LayoutUnit>(value, extent, zoom);
+            return Style::evaluate<LayoutUnit>(value, extent, Style::ZoomNeeded { });
         },
         [&](const typename WidthValue::Number& value) {
             return LayoutUnit { value.value * width };
@@ -129,7 +129,7 @@ static void scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices,
     slices.left()   *= sliceScaleFactor;
 }
 
-static bool isEmptyPieceRect(ImagePiece piece, const Vector<FloatRect, MaxPiece>& destinationRects, const Vector<FloatRect, MaxPiece>& sourceRects)
+static bool NODELETE isEmptyPieceRect(ImagePiece piece, const Vector<FloatRect, MaxPiece>& destinationRects, const Vector<FloatRect, MaxPiece>& sourceRects)
 {
     return destinationRects[piece].isEmpty() || sourceRects[piece].isEmpty();
 }
@@ -230,7 +230,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     ASSERT(styleImage->isLoaded(renderer));
 
     auto sourceSlices      = computeSlices(source, ninePieceImage.slice(), styleImage->imageScaleFactor());
-    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), Style::evaluate<LayoutBoxExtent>(style.borderWidth(), style.usedZoomForLength()), sourceSlices, style.usedZoomForLength());
+    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), Style::evaluate<LayoutBoxExtent>(style.usedBorderWidths().to<Style::LineWidthBox>(), Style::ZoomNeeded { }), sourceSlices, style.usedZoomForLength());
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);
 

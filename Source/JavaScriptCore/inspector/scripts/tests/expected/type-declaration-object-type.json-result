@@ -107,6 +107,8 @@ InspectorBackend.activateDomain("Database", null);
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include "TestProtocolObjects.h"
@@ -117,7 +119,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -348,6 +350,7 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
@@ -424,7 +427,7 @@ public:
         }
 
         Builder(Ref<Error>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -511,7 +514,7 @@ public:
         }
 
         Builder(Ref<OptionalParameterBundle>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -543,12 +546,12 @@ public:
 
     void setColumnNames(Ref<JSON::ArrayOf<String>>&& in_opt_columnNames)
     {
-        JSON::ObjectBase::setArray("columnNames"_s, WTFMove(in_opt_columnNames));
+        JSON::ObjectBase::setArray("columnNames"_s, WTF::move(in_opt_columnNames));
     }
 
     void setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_opt_buttons)
     {
-        JSON::ObjectBase::setArray("buttons"_s, WTFMove(in_opt_buttons));
+        JSON::ObjectBase::setArray("buttons"_s, WTF::move(in_opt_buttons));
     }
 
     void setDirectionality(Directionality in_opt_directionality)
@@ -568,22 +571,22 @@ public:
 
     void setValues(Ref<JSON::Object>&& in_opt_values)
     {
-        JSON::ObjectBase::setObject("values"_s, WTFMove(in_opt_values));
+        JSON::ObjectBase::setObject("values"_s, WTF::move(in_opt_values));
     }
 
     void setPayload(Ref<JSON::Value>&& in_opt_payload)
     {
-        JSON::ObjectBase::setValue("payload"_s, WTFMove(in_opt_payload));
+        JSON::ObjectBase::setValue("payload"_s, WTF::move(in_opt_payload));
     }
 
     void setError(Ref<Protocol::Database::Error>&& in_opt_error)
     {
-        JSON::ObjectBase::setObject("error"_s, WTFMove(in_opt_error));
+        JSON::ObjectBase::setObject("error"_s, WTF::move(in_opt_error));
     }
 
     void setErrorList(Ref<Protocol::Database::ErrorList>&& in_opt_errorList)
     {
-        JSON::ObjectBase::setArray("errorList"_s, WTFMove(in_opt_errorList));
+        JSON::ObjectBase::setArray("errorList"_s, WTF::move(in_opt_errorList));
     }
 };
 
@@ -628,7 +631,7 @@ public:
         }
 
         Builder(Ref<ParameterBundle>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -638,14 +641,14 @@ public:
         Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
         {
             static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
-            Ref { *m_result }->setArray("columnNames"_s, WTFMove(in_columnNames));
+            Ref { *m_result }->setArray("columnNames"_s, WTF::move(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
             static_assert(!(STATE & ButtonsSet), "property buttons already set");
-            Ref { *m_result }->setArray("buttons"_s, WTFMove(in_buttons));
+            Ref { *m_result }->setArray("buttons"_s, WTF::move(in_buttons));
             return castState<ButtonsSet>();
         }
 
@@ -673,28 +676,28 @@ public:
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
             static_assert(!(STATE & ValuesSet), "property values already set");
-            Ref { *m_result }->setObject("values"_s, WTFMove(in_values));
+            Ref { *m_result }->setObject("values"_s, WTF::move(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
             static_assert(!(STATE & PayloadSet), "property payload already set");
-            Ref { *m_result }->setValue("payload"_s, WTFMove(in_payload));
+            Ref { *m_result }->setValue("payload"_s, WTF::move(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
             static_assert(!(STATE & ErrorSet), "property error already set");
-            Ref { *m_result }->setObject("error"_s, WTFMove(in_error));
+            Ref { *m_result }->setObject("error"_s, WTF::move(in_error));
             return castState<ErrorSet>();
         }
 
         Builder<STATE | ErrorListSet>& setErrorList(Ref<Protocol::Database::ErrorList>&& in_errorList)
         {
             static_assert(!(STATE & ErrorListSet), "property errorList already set");
-            Ref { *m_result }->setArray("errorList"_s, WTFMove(in_errorList));
+            Ref { *m_result }->setArray("errorList"_s, WTF::move(in_errorList));
             return castState<ErrorListSet>();
         }
 
@@ -763,7 +766,7 @@ public:
         }
 
         Builder(Ref<ObjectWithPropertyNameConflicts>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -861,7 +864,7 @@ public:
         }
 
         Builder(Ref<DummyObject>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -920,7 +923,7 @@ public:
         }
 
         Builder(Ref<ObjectWithNullableProperties>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -930,7 +933,7 @@ public:
         Builder<STATE | NullableObjectSet>& setNullableObject(Ref<Protocol::Database::DummyObject>&& in_nullableObject)
         {
             static_assert(!(STATE & NullableObjectSet), "property nullableObject already set");
-            Ref { *m_result }->setObject("nullableObject"_s, WTFMove(in_nullableObject));
+            Ref { *m_result }->setObject("nullableObject"_s, WTF::move(in_nullableObject));
             return castState<NullableObjectSet>();
         }
 
@@ -967,7 +970,7 @@ public:
 
     void setNullableObject(Ref<Protocol::Database::DummyObject>&& in_opt_nullableObject)
     {
-        JSON::ObjectBase::setObject("nullableObject"_s, WTFMove(in_opt_nullableObject));
+        JSON::ObjectBase::setObject("nullableObject"_s, WTF::move(in_opt_nullableObject));
     }
 
     void setNullableObjectIsNull()
@@ -977,7 +980,7 @@ public:
 
     void setNullableOptionalObject(Ref<Protocol::Database::DummyObject>&& in_opt_nullableOptionalObject)
     {
-        JSON::ObjectBase::setObject("nullableOptionalObject"_s, WTFMove(in_opt_nullableOptionalObject));
+        JSON::ObjectBase::setObject("nullableOptionalObject"_s, WTF::move(in_opt_nullableOptionalObject));
     }
 
     void setNullableOptionalObjectIsNull()
@@ -1030,7 +1033,7 @@ public:
         }
 
         Builder(Ref<ParameterBundle>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -1047,14 +1050,14 @@ public:
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
             static_assert(!(STATE & ButtonsSet), "property buttons already set");
-            Ref { *m_result }->setArray("buttons"_s, WTFMove(in_buttons));
+            Ref { *m_result }->setArray("buttons"_s, WTF::move(in_buttons));
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
         {
             static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
-            Ref { *m_result }->setArray("columnNames"_s, WTFMove(in_columnNames));
+            Ref { *m_result }->setArray("columnNames"_s, WTF::move(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
@@ -1075,21 +1078,21 @@ public:
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
             static_assert(!(STATE & ValuesSet), "property values already set");
-            Ref { *m_result }->setObject("values"_s, WTFMove(in_values));
+            Ref { *m_result }->setObject("values"_s, WTF::move(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
             static_assert(!(STATE & PayloadSet), "property payload already set");
-            Ref { *m_result }->setValue("payload"_s, WTFMove(in_payload));
+            Ref { *m_result }->setValue("payload"_s, WTF::move(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
             static_assert(!(STATE & ErrorSet), "property error already set");
-            Ref { *m_result }->setObject("error"_s, WTFMove(in_error));
+            Ref { *m_result }->setObject("error"_s, WTF::move(in_error));
             return castState<ErrorSet>();
         }
 
@@ -1758,13 +1761,12 @@ inline String toProtocolString(TestProtocolDatabaseMouseButton value)
 template<>
 inline std::optional<TestProtocolDatabaseMouseButton> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolDatabaseMouseButton> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, TestProtocolDatabaseMouseButton>>({
         { "Left"_s, TestProtocolDatabaseMouseButtonLeft },
         { "Middle"_s, TestProtocolDatabaseMouseButtonMiddle },
         { "None"_s, TestProtocolDatabaseMouseButtonNone },
         { "Right"_s, TestProtocolDatabaseMouseButtonRight },
-    };
-    static constexpr SortedArrayMap map { mappings };
+   }) };
     if (auto* result = map.tryGet(value))
         return *result;
     return std::nullopt;
@@ -1783,11 +1785,10 @@ inline String toProtocolString(TestProtocolDatabaseOptionalParameterBundleDirect
 template<>
 inline std::optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolDatabaseOptionalParameterBundleDirectionality> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, TestProtocolDatabaseOptionalParameterBundleDirectionality>>({
         { "LTR"_s, TestProtocolDatabaseOptionalParameterBundleDirectionalityLTR },
         { "RTL"_s, TestProtocolDatabaseOptionalParameterBundleDirectionalityRTL },
-    };
-    static constexpr SortedArrayMap map { mappings };
+   }) };
     if (auto* result = map.tryGet(value))
         return *result;
     return std::nullopt;
@@ -1806,11 +1807,10 @@ inline String toProtocolString(TestProtocolDatabaseParameterBundleDirectionality
 template<>
 inline std::optional<TestProtocolDatabaseParameterBundleDirectionality> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolDatabaseParameterBundleDirectionality> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, TestProtocolDatabaseParameterBundleDirectionality>>({
         { "LTR"_s, TestProtocolDatabaseParameterBundleDirectionalityLTR },
         { "RTL"_s, TestProtocolDatabaseParameterBundleDirectionalityRTL },
-    };
-    static constexpr SortedArrayMap map { mappings };
+   }) };
     if (auto* result = map.tryGet(value))
         return *result;
     return std::nullopt;
@@ -1829,11 +1829,10 @@ inline String toProtocolString(TestProtocolTestParameterBundleDirectionality val
 template<>
 inline std::optional<TestProtocolTestParameterBundleDirectionality> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestParameterBundleDirectionality> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, TestProtocolTestParameterBundleDirectionality>>({
         { "LTR"_s, TestProtocolTestParameterBundleDirectionalityLTR },
         { "RTL"_s, TestProtocolTestParameterBundleDirectionalityRTL },
-    };
-    static constexpr SortedArrayMap map { mappings };
+   }) };
     if (auto* result = map.tryGet(value))
         return *result;
     return std::nullopt;

@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebKitMediaKeySession);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitMediaKeySession);
 
 Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(Document& document, WebKitMediaKeys& keys, const String& keySystem)
 {
@@ -98,7 +98,7 @@ void WebKitMediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8
 {
     ALWAYS_LOG(LOGIDENTIFIER, "mimeType: ", mimeType);
     m_mediaKeysHashSalt = mediaKeysHashSalt;
-    m_pendingKeyRequests.append({ mimeType, WTFMove(initData) });
+    m_pendingKeyRequests.append({ mimeType, WTF::move(initData) });
     m_keyRequestTimer.startOneShot(0_s);
 }
 
@@ -159,7 +159,7 @@ ExceptionOr<void> WebKitMediaKeySession::update(Ref<Uint8Array>&& key)
 
     ALWAYS_LOG(LOGIDENTIFIER);
     // 2. Schedule a task to handle the call, providing key.
-    m_pendingKeys.append(WTFMove(key));
+    m_pendingKeys.append(WTF::move(key));
     m_addKeyTimer.startOneShot(0_s);
 
     return { };
@@ -200,7 +200,7 @@ void WebKitMediaKeySession::addKeyTimerFired()
         if (didStoreKey) {
             auto keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, Event::CanBubble::No, Event::IsCancelable::No);
             keyaddedEvent->setTarget(this);
-            queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(keyaddedEvent));
+            queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(keyaddedEvent));
 
             Ref { *m_keys }->keyAdded();
         }
@@ -224,7 +224,7 @@ void WebKitMediaKeySession::sendMessage(Uint8Array* message, String destinationU
     ALWAYS_LOG(LOGIDENTIFIER);
     auto event = WebKitMediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
     event->setTarget(this);
-    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(event));
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(event));
 }
 
 void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)
@@ -234,7 +234,7 @@ void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t syst
 
     auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, Event::CanBubble::No, Event::IsCancelable::No);
     keyerrorEvent->setTarget(this);
-    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(keyerrorEvent));
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(keyerrorEvent));
 }
 
 String WebKitMediaKeySession::mediaKeysStorageDirectory() const

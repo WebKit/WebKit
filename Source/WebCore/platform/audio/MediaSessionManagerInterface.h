@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,19 +45,8 @@ namespace WebCore {
 
 class Page;
 class PlatformMediaSessionInterface;
-struct MediaConfiguration;
 struct NowPlayingMetadata;
-
-enum class MediaSessionRestriction : uint32_t {
-    NoRestrictions = 0,
-    ConcurrentPlaybackNotPermitted = 1 << 0,
-    BackgroundProcessPlaybackRestricted = 1 << 1,
-    BackgroundTabPlaybackRestricted = 1 << 2,
-    InterruptedPlaybackNotPermitted = 1 << 3,
-    InactiveProcessPlaybackRestricted = 1 << 4,
-    SuspendedUnderLockPlaybackRestricted = 1 << 5,
-};
-using MediaSessionRestrictions = OptionSet<MediaSessionRestriction>;
+struct PlatformMediaConfiguration;
 
 class WEBCORE_EXPORT MediaSessionManagerInterface
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSessionManagerInterface>
@@ -88,6 +77,9 @@ public:
     virtual bool shouldDeactivateAudioSession() { return m_shouldDeactivateAudioSession; };
 
     virtual void updateNowPlayingInfoIfNecessary();
+    virtual void updateNowPlayingInfo();
+    virtual void setNowPlayingUpdateInterval(double);
+    virtual double nowPlayingUpdateInterval();
     virtual void updateAudioSessionCategoryIfNecessary();
 
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
@@ -129,7 +121,7 @@ public:
     virtual MediaSessionRestrictions restrictions(PlatformMediaSessionMediaType);
     virtual void resetRestrictions();
 
-    virtual bool sessionWillBeginPlayback(PlatformMediaSessionInterface&);
+    virtual void sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&);
     virtual void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying);
     virtual void sessionStateChanged(PlatformMediaSessionInterface&);
     virtual void sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&) { }
@@ -145,7 +137,7 @@ public:
     virtual bool isPlayingToAutomotiveHeadUnit() const { return m_isPlayingToAutomotiveHeadUnit; };
 
     virtual void setSupportsSpatialAudioPlayback(bool);
-    virtual std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&) { return m_supportsSpatialAudioPlayback; }
+    virtual std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration&) { return m_supportsSpatialAudioPlayback; }
 
     virtual void addAudioCaptureSource(AudioCaptureSource&);
     virtual void removeAudioCaptureSource(AudioCaptureSource&);
@@ -172,7 +164,7 @@ public:
 #endif
 
 protected:
-    MediaSessionManagerInterface(PageIdentifier);
+    explicit MediaSessionManagerInterface(PageIdentifier);
 
     virtual WeakListHashSet<PlatformMediaSessionInterface>& sessions() const = 0;
     virtual Vector<WeakPtr<PlatformMediaSessionInterface>> copySessionsToVector() const = 0;
@@ -212,10 +204,9 @@ protected:
     bool willLog(WTFLogLevel) const;
 
 private:
-
     bool has(PlatformMediaSessionMediaType) const;
 
-    std::array<MediaSessionRestrictions, static_cast<unsigned>(PlatformMediaSessionMediaType::WebAudio) + 1> m_restrictions;
+    std::array<MediaSessionRestrictions, static_cast<unsigned>(PlatformMediaSessionMediaType::DOMMediaSession) + 1> m_restrictions;
 
     std::optional<bool> m_supportsSpatialAudioPlayback;
     std::optional<PlatformMediaSessionInterruptionType> m_currentInterruption;

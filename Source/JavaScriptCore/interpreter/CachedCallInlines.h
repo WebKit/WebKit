@@ -57,7 +57,7 @@ ALWAYS_INLINE JSValue CachedCall::callWithArguments(JSGlobalObject* globalObject
 #if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
     ASSERT(sizeof...(args) == static_cast<size_t>(m_protoCallFrame.argumentCount()));
     constexpr unsigned argumentCountIncludingThis = 1 + sizeof...(args);
-    if constexpr (argumentCountIncludingThis <= 4) {
+    if constexpr (argumentCountIncludingThis <= 7) {
         if (m_numParameters <= argumentCountIncludingThis) [[likely]] {
             JSValue result = m_vm.interpreter.tryCallWithArguments(*this, thisValue, args...);
             RETURN_IF_EXCEPTION(scope, { });

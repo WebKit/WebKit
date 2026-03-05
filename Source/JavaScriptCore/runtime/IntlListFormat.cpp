@@ -27,6 +27,7 @@
 #include "IntlListFormat.h"
 
 #include "IntlObjectInlines.h"
+#include "IntlPartObject.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -168,14 +169,14 @@ JSValue IntlListFormat::format(JSGlobalObject* globalObject, JSValue list) const
     auto stringList = stringListFromIterable(globalObject, list);
     RETURN_IF_EXCEPTION(scope, { });
 
-    ListFormatInput input(WTFMove(stringList));
+    ListFormatInput input(WTF::move(stringList));
 
     Vector<char16_t, 32> result;
     auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
-    return jsString(vm, String(WTFMove(result)));
+    return jsString(vm, String(WTF::move(result)));
 }
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.prototype.formatToParts
@@ -187,7 +188,7 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
     auto stringList = stringListFromIterable(globalObject, list);
     RETURN_IF_EXCEPTION(scope, { });
 
-    ListFormatInput input(WTFMove(stringList));
+    ListFormatInput input(WTF::move(stringList));
 
     UErrorCode status = U_ZERO_ERROR;
 
@@ -226,10 +227,7 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
     auto elementString = jsNontrivialString(vm, "element"_s);
 
     auto createPart = [&] (JSString* type, JSString* value) {
-        JSObject* part = constructEmptyObject(globalObject);
-        part->putDirect(vm, vm.propertyNames->type, type);
-        part->putDirect(vm, vm.propertyNames->value, value);
-        return part;
+        return createIntlPartObject(globalObject, type, value);
     };
 
     int32_t resultLength = resultStringView.length();

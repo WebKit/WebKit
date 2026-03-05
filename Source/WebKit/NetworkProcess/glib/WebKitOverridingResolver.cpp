@@ -184,7 +184,7 @@ GResolver* webkitOverridingResolverNew(GRefPtr<GResolver>&& wrappedResolver, con
     auto* resolver = WEBKIT_OVERRIDING_RESOLVER(g_object_new(WEBKIT_TYPE_OVERRIDING_RESOLVER, nullptr));
     resolver->priv->ipv4LoopbackAddress = adoptGRef(g_inet_address_new_loopback(G_SOCKET_FAMILY_IPV4));
     resolver->priv->ipv6LoopbackAddress = adoptGRef(g_inet_address_new_loopback(G_SOCKET_FAMILY_IPV6));
-    resolver->priv->wrappedResolver = WTFMove(wrappedResolver);
+    resolver->priv->wrappedResolver = WTF::move(wrappedResolver);
     resolver->priv->localhostAliases = localhostAliases;
     return G_RESOLVER(resolver);
 }

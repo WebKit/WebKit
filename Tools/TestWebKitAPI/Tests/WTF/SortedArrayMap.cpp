@@ -28,7 +28,7 @@
 
 TEST(WTF, SortedArraySet)
 {
-    static constexpr ComparableCaseFoldingASCIILiteral caseFoldingArray[] = {
+    static constexpr SortedArraySet caseFoldingSet { std::to_array<ComparableCaseFoldingASCIILiteral>({
         "_"_s,
         "a"_s,
         "c"_s,
@@ -37,20 +37,18 @@ TEST(WTF, SortedArraySet)
         "q_"_s,
         "r/y"_s,
         "s-z"_s,
-    };
-    static constexpr SortedArraySet caseFoldingSet { caseFoldingArray };
+    }) };
 
-    static constexpr ComparableLettersLiteral lettersArray[] = {
+    static constexpr SortedArraySet lettersSet { std::to_array<ComparableLettersLiteral>({
         "a"_s,
         "c"_s,
         "delightful"_s,
         "q"_s,
         "r/y"_s,
         "s-z"_s,
-    };
-    static constexpr SortedArraySet lettersSet { lettersArray };
+    }) };
 
-    static constexpr ComparableLettersLiteral scriptTypesArray[] = {
+    static constexpr SortedArraySet scriptTypesSet { std::to_array<ComparableLettersLiteral>({
         "application/ecmascript"_s,
         "application/javascript"_s,
         "application/x-ecmascript"_s,
@@ -67,8 +65,7 @@ TEST(WTF, SortedArraySet)
         "text/livescript"_s,
         "text/x-ecmascript"_s,
         "text/x-javascript"_s,
-    };
-    static constexpr SortedArraySet scriptTypesSet { scriptTypesArray };
+    }) };
 
     EXPECT_FALSE(caseFoldingSet.contains(""_s));
     EXPECT_TRUE(caseFoldingSet.contains("_"_s));
@@ -95,4 +92,29 @@ TEST(WTF, SortedArraySet)
     ASSERT_FALSE(scriptTypesSet.contains("text/plain"_s));
     ASSERT_FALSE(scriptTypesSet.contains("application/json"_s));
     ASSERT_FALSE(scriptTypesSet.contains("foo/javascript"_s));
+}
+
+TEST(WTF, LessThanASCIICaseFoldingDirectComparison)
+{
+    // Direct comparison test.
+    StringView shorter = "ab"_s;
+    ASCIILiteral longer = "abc"_s;
+
+    WTF::ComparableStringView compShorter { shorter };
+    WTF::ComparableLettersLiteral compLonger { longer };
+
+    // "ab" should be less than "abc".
+    bool shorterLessThanLonger = compShorter < compLonger;
+    EXPECT_TRUE(shorterLessThanLonger) << "\"ab\" should be < \"abc\"";
+
+    // "abc" should NOT be less than "ab".
+    bool longerLessThanShorter = compLonger < compShorter;
+    EXPECT_FALSE(longerLessThanShorter) << "\"abc\" should NOT be < \"ab\"";
+
+    // Test with case differences.
+    StringView upperShorter = "AB"_s;
+    WTF::ComparableStringView compUpperShorter { upperShorter };
+
+    bool upperShorterLessThanLonger = compUpperShorter < compLonger;
+    EXPECT_TRUE(upperShorterLessThanLonger) << "\"AB\" should be < \"abc\" (case insensitive)";
 }

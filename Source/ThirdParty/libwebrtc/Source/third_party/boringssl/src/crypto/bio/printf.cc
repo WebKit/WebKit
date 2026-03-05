@@ -39,7 +39,7 @@ int BIO_printf(BIO *bio, const char *format, ...) {
     // include a trailing NUL, but the buffer must be sized for it.
     out = reinterpret_cast<char *>(OPENSSL_malloc(requested_len + 1));
     out_malloced = 1;
-    if (out == NULL) {
+    if (out == nullptr) {
       return -1;
     }
     va_start(args, format);

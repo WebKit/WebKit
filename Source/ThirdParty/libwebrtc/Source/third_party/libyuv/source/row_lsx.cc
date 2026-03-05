@@ -239,7 +239,7 @@ extern "C" {
 
 #define RGBTOUV(_tmpb, _tmpg, _tmpr, _nexb, _nexg, _nexr, _dst0) \
   {                                                              \
-    __m128i _tmp0, _tmp1, _tmp2, _tmp3;                          \
+    __m128i _tmp0, _tmp1, _tmp2, _tmp3, _tmp4, _tmp5;            \
     __m128i _reg0, _reg1;                                        \
     _tmp0 = __lsx_vaddwev_h_bu(_tmpb, _nexb);                    \
     _tmp1 = __lsx_vaddwod_h_bu(_tmpb, _nexb);                    \
@@ -247,11 +247,23 @@ extern "C" {
     _tmp3 = __lsx_vaddwod_h_bu(_tmpg, _nexg);                    \
     _reg0 = __lsx_vaddwev_h_bu(_tmpr, _nexr);                    \
     _reg1 = __lsx_vaddwod_h_bu(_tmpr, _nexr);                    \
-    _tmpb = __lsx_vavgr_hu(_tmp0, _tmp1);                        \
-    _tmpg = __lsx_vavgr_hu(_tmp2, _tmp3);                        \
-    _tmpr = __lsx_vavgr_hu(_reg0, _reg1);                        \
-    _reg0 = __lsx_vmadd_h(const_8080, const_112, _tmpb);         \
-    _reg1 = __lsx_vmadd_h(const_8080, const_112, _tmpr);         \
+    _tmp4 = __lsx_vaddwev_w_hu(_tmp0, _tmp1);                    \
+    _tmp5 = __lsx_vaddwod_w_hu(_tmp0, _tmp1);                    \
+    _tmp0 = __lsx_vilvl_w(_tmp5, _tmp4);                         \
+    _tmp1 = __lsx_vilvh_w(_tmp5, _tmp4);                         \
+    _tmpb = __lsx_vssrarni_hu_w(_tmp1, _tmp0, 2);                \
+    _tmp4 = __lsx_vaddwev_w_hu(_tmp2, _tmp3);                    \
+    _tmp5 = __lsx_vaddwod_w_hu(_tmp2, _tmp3);                    \
+    _tmp2 = __lsx_vilvl_w(_tmp5, _tmp4);                         \
+    _tmp3 = __lsx_vilvh_w(_tmp5, _tmp4);                         \
+    _tmpg = __lsx_vssrarni_hu_w(_tmp3, _tmp2, 2);                \
+    _tmp4 = __lsx_vaddwev_w_hu(_reg0, _reg1);                    \
+    _tmp5 = __lsx_vaddwod_w_hu(_reg0, _reg1);                    \
+    _tmp0 = __lsx_vilvl_w(_tmp5, _tmp4);                         \
+    _tmp1 = __lsx_vilvh_w(_tmp5, _tmp4);                         \
+    _tmpr = __lsx_vssrarni_hu_w(_tmp1, _tmp0, 2);                \
+    _reg0 = __lsx_vmadd_h(const_8000, const_112, _tmpb);         \
+    _reg1 = __lsx_vmadd_h(const_8000, const_112, _tmpr);         \
     _reg0 = __lsx_vmsub_h(_reg0, const_74, _tmpg);               \
     _reg1 = __lsx_vmsub_h(_reg1, const_94, _tmpg);               \
     _reg0 = __lsx_vmsub_h(_reg0, const_38, _tmpr);               \
@@ -787,12 +799,12 @@ void ARGBToUVRow_LSX(const uint8_t* src_argb0,
   __m128i src0, src1, src2, src3, src4, src5, src6, src7;
   __m128i vec0, vec1, vec2, vec3;
   __m128i tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, dst0, dst1;
-  __m128i const_0x70 = {0x0038003800380038, 0x0038003800380038};
-  __m128i const_0x4A = {0x0025002500250025, 0x0025002500250025};
-  __m128i const_0x26 = {0x0013001300130013, 0x0013001300130013};
-  __m128i const_0x5E = {0x002f002f002f002f, 0x002f002f002f002f};
-  __m128i const_0x12 = {0x0009000900090009, 0x0009000900090009};
-  __m128i const_0x8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_0x70 = __lsx_vldi(0x470);
+  __m128i const_0x4A = __lsx_vldi(0x44A);
+  __m128i const_0x26 = __lsx_vldi(0x426);
+  __m128i const_0x5E = __lsx_vldi(0x45E);
+  __m128i const_0x12 = __lsx_vldi(0x412);
+  __m128i const_0x8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_argb0, 0, src_argb0, 16, src_argb0, 32, src_argb0,
               48, src0, src1, src2, src3);
@@ -814,17 +826,20 @@ void ARGBToUVRow_LSX(const uint8_t* src_argb0,
     tmp5 = __lsx_vpickev_h(vec3, vec2);
     vec0 = __lsx_vpickev_h(tmp1, tmp0);
     vec1 = __lsx_vpickod_h(tmp1, tmp0);
-    src0 = __lsx_vavgr_h(vec0, vec1);
+    src0 = __lsx_vadd_h(vec0, vec1);
+    src0 = __lsx_vsrari_h(src0, 2);
     vec0 = __lsx_vpickev_h(tmp3, tmp2);
     vec1 = __lsx_vpickod_h(tmp3, tmp2);
-    src1 = __lsx_vavgr_h(vec0, vec1);
+    src1 = __lsx_vadd_h(vec0, vec1);
+    src1 = __lsx_vsrari_h(src1, 2);
     vec0 = __lsx_vpickev_h(tmp5, tmp4);
     vec1 = __lsx_vpickod_h(tmp5, tmp4);
-    src2 = __lsx_vavgr_h(vec0, vec1);
-    dst0 = __lsx_vmadd_h(const_0x8080, src0, const_0x70);
+    src2 = __lsx_vadd_h(vec0, vec1);
+    src2 = __lsx_vsrari_h(src2, 2);
+    dst0 = __lsx_vmadd_h(const_0x8000, src0, const_0x70);
     dst0 = __lsx_vmsub_h(dst0, src2, const_0x4A);
     dst0 = __lsx_vmsub_h(dst0, src1, const_0x26);
-    dst1 = __lsx_vmadd_h(const_0x8080, src1, const_0x70);
+    dst1 = __lsx_vmadd_h(const_0x8000, src1, const_0x70);
     dst1 = __lsx_vmsub_h(dst1, src2, const_0x5E);
     dst1 = __lsx_vmsub_h(dst1, src0, const_0x12);
     dst0 = __lsx_vsrai_h(dst0, 8);
@@ -991,7 +1006,7 @@ void ARGBToUV444Row_LSX(const uint8_t* src_argb,
   __m128i const_38 = __lsx_vldi(38);
   __m128i const_94 = __lsx_vldi(94);
   __m128i const_18 = __lsx_vldi(18);
-  __m128i const_0x8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_0x8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src_argb, 32, src_argb, 48,
               src0, src1, src2, src3);
@@ -999,8 +1014,8 @@ void ARGBToUV444Row_LSX(const uint8_t* src_argb,
     tmp1 = __lsx_vpickod_h(src1, src0);
     tmp2 = __lsx_vpickev_h(src3, src2);
     tmp3 = __lsx_vpickod_h(src3, src2);
-    reg0 = __lsx_vmaddwev_h_bu(const_0x8080, tmp0, const_112);
-    reg1 = __lsx_vmaddwev_h_bu(const_0x8080, tmp2, const_112);
+    reg0 = __lsx_vmaddwev_h_bu(const_0x8000, tmp0, const_112);
+    reg1 = __lsx_vmaddwev_h_bu(const_0x8000, tmp2, const_112);
     reg2 = __lsx_vmulwod_h_bu(tmp0, const_74);
     reg3 = __lsx_vmulwod_h_bu(tmp2, const_74);
     reg2 = __lsx_vmaddwev_h_bu(reg2, tmp1, const_38);
@@ -1011,8 +1026,8 @@ void ARGBToUV444Row_LSX(const uint8_t* src_argb,
     reg1 = __lsx_vsrai_h(reg1, 8);
     dst0 = __lsx_vpickev_b(reg1, reg0);
 
-    reg0 = __lsx_vmaddwev_h_bu(const_0x8080, tmp1, const_112);
-    reg1 = __lsx_vmaddwev_h_bu(const_0x8080, tmp3, const_112);
+    reg0 = __lsx_vmaddwev_h_bu(const_0x8000, tmp1, const_112);
+    reg1 = __lsx_vmaddwev_h_bu(const_0x8000, tmp3, const_112);
     reg2 = __lsx_vmulwev_h_bu(tmp0, const_18);
     reg3 = __lsx_vmulwev_h_bu(tmp2, const_18);
     reg2 = __lsx_vmaddwod_h_bu(reg2, tmp0, const_94);
@@ -1530,12 +1545,12 @@ void ARGB1555ToUVRow_LSX(const uint8_t* src_argb1555,
   __m128i tmp0, tmp1, tmp2, tmp3;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
   __m128i reg0, reg1, reg2, reg3, dst0;
-  __m128i const_112 = __lsx_vldi(0x438);
-  __m128i const_74 = __lsx_vldi(0x425);
-  __m128i const_38 = __lsx_vldi(0x413);
-  __m128i const_94 = __lsx_vldi(0x42F);
-  __m128i const_18 = __lsx_vldi(0x409);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_112 = __lsx_vldi(0x470);
+  __m128i const_74 = __lsx_vldi(0x44A);
+  __m128i const_38 = __lsx_vldi(0x426);
+  __m128i const_94 = __lsx_vldi(0x45E);
+  __m128i const_18 = __lsx_vldi(0x412);
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
 
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_argb1555, 0, src_argb1555, 16, next_argb1555, 0,
@@ -1639,12 +1654,12 @@ void RGB565ToUVRow_LSX(const uint8_t* src_rgb565,
   __m128i tmp0, tmp1, tmp2, tmp3;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
   __m128i reg0, reg1, reg2, reg3, dst0;
-  __m128i const_112 = __lsx_vldi(0x438);
-  __m128i const_74 = __lsx_vldi(0x425);
-  __m128i const_38 = __lsx_vldi(0x413);
-  __m128i const_94 = __lsx_vldi(0x42F);
-  __m128i const_18 = __lsx_vldi(0x409);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_112 = __lsx_vldi(0x470);
+  __m128i const_74 = __lsx_vldi(0x44A);
+  __m128i const_38 = __lsx_vldi(0x426);
+  __m128i const_94 = __lsx_vldi(0x45E);
+  __m128i const_18 = __lsx_vldi(0x412);
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
 
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_rgb565, 0, src_rgb565, 16, next_rgb565, 0,
@@ -1700,12 +1715,12 @@ void RGB24ToUVRow_LSX(const uint8_t* src_rgb24,
   __m128i src0, src1, src2;
   __m128i nex0, nex1, nex2, dst0;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
-  __m128i const_112 = __lsx_vldi(0x438);
-  __m128i const_74 = __lsx_vldi(0x425);
-  __m128i const_38 = __lsx_vldi(0x413);
-  __m128i const_94 = __lsx_vldi(0x42F);
-  __m128i const_18 = __lsx_vldi(0x409);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_112 = __lsx_vldi(0x470);
+  __m128i const_74 = __lsx_vldi(0x44A);
+  __m128i const_38 = __lsx_vldi(0x426);
+  __m128i const_94 = __lsx_vldi(0x45E);
+  __m128i const_18 = __lsx_vldi(0x412);
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
   __m128i shuff0_b = {0x15120F0C09060300, 0x00000000001E1B18};
   __m128i shuff1_b = {0x0706050403020100, 0x1D1A1714110A0908};
   __m128i shuff0_g = {0x1613100D0A070401, 0x00000000001F1C19};
@@ -1753,12 +1768,12 @@ void RAWToUVRow_LSX(const uint8_t* src_raw,
   __m128i src0, src1, src2;
   __m128i nex0, nex1, nex2, dst0;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
-  __m128i const_112 = __lsx_vldi(0x438);
-  __m128i const_74 = __lsx_vldi(0x425);
-  __m128i const_38 = __lsx_vldi(0x413);
-  __m128i const_94 = __lsx_vldi(0x42F);
-  __m128i const_18 = __lsx_vldi(0x409);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_112 = __lsx_vldi(0x470);
+  __m128i const_74 = __lsx_vldi(0x44A);
+  __m128i const_38 = __lsx_vldi(0x426);
+  __m128i const_94 = __lsx_vldi(0x45E);
+  __m128i const_18 = __lsx_vldi(0x412);
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
   __m128i shuff0_r = {0x15120F0C09060300, 0x00000000001E1B18};
   __m128i shuff1_r = {0x0706050403020100, 0x1D1A1714110A0908};
   __m128i shuff0_g = {0x1613100D0A070401, 0x00000000001F1C19};
@@ -1988,12 +2003,12 @@ void BGRAToUVRow_LSX(const uint8_t* src_bgra,
   __m128i nex0, nex1, nex2, nex3;
   __m128i tmp0, tmp1, tmp2, tmp3, dst0;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
-  __m128i const_112 = __lsx_vldi(0x438);
-  __m128i const_74 = __lsx_vldi(0x425);
-  __m128i const_38 = __lsx_vldi(0x413);
-  __m128i const_94 = __lsx_vldi(0x42F);
-  __m128i const_18 = __lsx_vldi(0x409);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_112 = __lsx_vldi(0x470);
+  __m128i const_74 = __lsx_vldi(0x44A);
+  __m128i const_38 = __lsx_vldi(0x426);
+  __m128i const_94 = __lsx_vldi(0x45E);
+  __m128i const_18 = __lsx_vldi(0x412);
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
 
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_bgra, 0, src_bgra, 16, src_bgra, 32, src_bgra, 48,
@@ -2036,12 +2051,12 @@ void ABGRToUVRow_LSX(const uint8_t* src_abgr,
   __m128i nex0, nex1, nex2, nex3;
   __m128i tmp0, tmp1, tmp2, tmp3, dst0;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
-  __m128i const_112 = __lsx_vldi(0x438);
-  __m128i const_74 = __lsx_vldi(0x425);
-  __m128i const_38 = __lsx_vldi(0x413);
-  __m128i const_94 = __lsx_vldi(0x42F);
-  __m128i const_18 = __lsx_vldi(0x409);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_112 = __lsx_vldi(0x470);
+  __m128i const_74 = __lsx_vldi(0x44A);
+  __m128i const_38 = __lsx_vldi(0x426);
+  __m128i const_94 = __lsx_vldi(0x45E);
+  __m128i const_18 = __lsx_vldi(0x412);
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
 
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_abgr, 0, src_abgr, 16, src_abgr, 32, src_abgr, 48,
@@ -2084,12 +2099,12 @@ void RGBAToUVRow_LSX(const uint8_t* src_rgba,
   __m128i nex0, nex1, nex2, nex3;
   __m128i tmp0, tmp1, tmp2, tmp3, dst0;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
-  __m128i const_112 = __lsx_vldi(0x438);
-  __m128i const_74 = __lsx_vldi(0x425);
-  __m128i const_38 = __lsx_vldi(0x413);
-  __m128i const_94 = __lsx_vldi(0x42F);
-  __m128i const_18 = __lsx_vldi(0x409);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_112 = __lsx_vldi(0x470);
+  __m128i const_74 = __lsx_vldi(0x44A);
+  __m128i const_38 = __lsx_vldi(0x426);
+  __m128i const_94 = __lsx_vldi(0x45E);
+  __m128i const_18 = __lsx_vldi(0x412);
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
 
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_rgba, 0, src_rgba, 16, src_rgba, 32, src_rgba, 48,
@@ -2130,15 +2145,15 @@ void ARGBToUVJRow_LSX(const uint8_t* src_argb,
   int len = width / 16;
   __m128i src0, src1, src2, src3;
   __m128i nex0, nex1, nex2, nex3;
-  __m128i tmp0, tmp1, tmp2, tmp3;
+  __m128i tmp0, tmp1, tmp2, tmp3, tmp4, tmp5;
   __m128i reg0, reg1, dst0;
   __m128i tmpb, tmpg, tmpr, nexb, nexg, nexr;
-  __m128i const_63 = __lsx_vldi(0x43F);
-  __m128i const_42 = __lsx_vldi(0x42A);
+  __m128i const_128 = __lsx_vldi(0x480);
+  __m128i const_85 = __lsx_vldi(0x455);
+  __m128i const_43 = __lsx_vldi(0x42B);
+  __m128i const_107 = __lsx_vldi(0x46B);
   __m128i const_21 = __lsx_vldi(0x415);
-  __m128i const_53 = __lsx_vldi(0x435);
-  __m128i const_10 = __lsx_vldi(0x40A);
-  __m128i const_8080 = (__m128i)v2u64{0x8080808080808080, 0x8080808080808080};
+  __m128i const_8000 = (__m128i)v2u64{0x8000800080008000, 0x8000800080008000};
 
   for (x = 0; x < len; x++) {
     DUP4_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src_argb, 32, src_argb, 48,
@@ -2165,15 +2180,27 @@ void ARGBToUVJRow_LSX(const uint8_t* src_argb,
     tmp3 = __lsx_vaddwod_h_bu(tmpg, nexg);
     reg0 = __lsx_vaddwev_h_bu(tmpr, nexr);
     reg1 = __lsx_vaddwod_h_bu(tmpr, nexr);
-    tmpb = __lsx_vavgr_hu(tmp0, tmp1);
-    tmpg = __lsx_vavgr_hu(tmp2, tmp3);
-    tmpr = __lsx_vavgr_hu(reg0, reg1);
-    reg0 = __lsx_vmadd_h(const_8080, const_63, tmpb);
-    reg1 = __lsx_vmadd_h(const_8080, const_63, tmpr);
-    reg0 = __lsx_vmsub_h(reg0, const_42, tmpg);
-    reg1 = __lsx_vmsub_h(reg1, const_53, tmpg);
-    reg0 = __lsx_vmsub_h(reg0, const_21, tmpr);
-    reg1 = __lsx_vmsub_h(reg1, const_10, tmpb);
+    tmp4 = __lsx_vaddwev_w_hu(tmp0, tmp1);
+    tmp5 = __lsx_vaddwod_w_hu(tmp0, tmp1);
+    tmp0 = __lsx_vilvl_w(tmp5, tmp4);
+    tmp1 = __lsx_vilvh_w(tmp5, tmp4);
+    tmpb = __lsx_vssrarni_hu_w(tmp1, tmp0, 2);
+    tmp4 = __lsx_vaddwev_w_hu(tmp2, tmp3);
+    tmp5 = __lsx_vaddwod_w_hu(tmp2, tmp3);
+    tmp2 = __lsx_vilvl_w(tmp5, tmp4);
+    tmp3 = __lsx_vilvh_w(tmp5, tmp4);
+    tmpg = __lsx_vssrarni_hu_w(tmp3, tmp2, 2);
+    tmp4 = __lsx_vaddwev_w_hu(reg0, reg1);
+    tmp5 = __lsx_vaddwod_w_hu(reg0, reg1);
+    tmp0 = __lsx_vilvl_w(tmp5, tmp4);
+    tmp1 = __lsx_vilvh_w(tmp5, tmp4);
+    tmpr = __lsx_vssrarni_hu_w(tmp1, tmp0, 2);
+    reg0 = __lsx_vmadd_h(const_8000, const_128, tmpb);
+    reg1 = __lsx_vmadd_h(const_8000, const_128, tmpr);
+    reg0 = __lsx_vmsub_h(reg0, const_85, tmpg);
+    reg1 = __lsx_vmsub_h(reg1, const_107, tmpg);
+    reg0 = __lsx_vmsub_h(reg0, const_43, tmpr);
+    reg1 = __lsx_vmsub_h(reg1, const_21, tmpb);
     dst0 = __lsx_vpickod_b(reg1, reg0);
     __lsx_vstelm_d(dst0, dst_u, 0, 0);
     __lsx_vstelm_d(dst0, dst_v, 0, 1);

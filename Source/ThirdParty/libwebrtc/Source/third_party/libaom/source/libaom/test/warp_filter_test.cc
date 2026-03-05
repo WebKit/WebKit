@@ -66,6 +66,12 @@ INSTANTIATE_TEST_SUITE_P(
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif  // HAVE_AVX2
 
+#if CONFIG_HIGHWAY && HAVE_AVX512
+INSTANTIATE_TEST_SUITE_P(
+    AVX512, AV1WarpFilterTest,
+    libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_avx512));
+#endif  // CONFIG_HIGHWAY && HAVE_AVX512
+
 #if HAVE_NEON
 INSTANTIATE_TEST_SUITE_P(
     NEON, AV1WarpFilterTest,

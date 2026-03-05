@@ -340,11 +340,13 @@ class SendProcessingUsage2 : public OveruseFrameDetector::ProcessingUsage {
 // Class used for manual testing of overuse, enabled via field trial flag.
 class OverdoseInjector : public OveruseFrameDetector::ProcessingUsage {
  public:
-  OverdoseInjector(std::unique_ptr<OveruseFrameDetector::ProcessingUsage> usage,
+  OverdoseInjector(const Environment& env,
+                   std::unique_ptr<OveruseFrameDetector::ProcessingUsage> usage,
                    int64_t normal_period_ms,
                    int64_t overuse_period_ms,
                    int64_t underuse_period_ms)
-      : usage_(std::move(usage)),
+      : env_(env),
+        usage_(std::move(usage)),
         normal_period_ms_(normal_period_ms),
         overuse_period_ms_(overuse_period_ms),
         underuse_period_ms_(underuse_period_ms),
@@ -383,7 +385,7 @@ class OverdoseInjector : public OveruseFrameDetector::ProcessingUsage {
   }
 
   int Value() override {
-    int64_t now_ms = TimeMillis();
+    int64_t now_ms = env_.clock().TimeInMilliseconds();
     if (last_toggling_ms_ == -1) {
       last_toggling_ms_ = now_ms;
     } else {
@@ -428,6 +430,7 @@ class OverdoseInjector : public OveruseFrameDetector::ProcessingUsage {
   }
 
  private:
+  const Environment env_;
   const std::unique_ptr<OveruseFrameDetector::ProcessingUsage> usage_;
   const int64_t normal_period_ms_;
   const int64_t overuse_period_ms_;
@@ -436,19 +439,17 @@ class OverdoseInjector : public OveruseFrameDetector::ProcessingUsage {
   int64_t last_toggling_ms_;
 };
 
-}  // namespace
-
-std::unique_ptr<OveruseFrameDetector::ProcessingUsage>
-OveruseFrameDetector::CreateProcessingUsage(const FieldTrialsView& field_trials,
-                                            const CpuOveruseOptions& options) {
-  std::unique_ptr<ProcessingUsage> instance;
+std::unique_ptr<OveruseFrameDetector::ProcessingUsage> CreateProcessingUsage(
+    const Environment& env,
+    const CpuOveruseOptions& options) {
+  std::unique_ptr<OveruseFrameDetector::ProcessingUsage> instance;
   if (options.filter_time_ms > 0) {
     instance = std::make_unique<SendProcessingUsage2>(options);
   } else {
     instance = std::make_unique<SendProcessingUsage1>(options);
   }
   std::string toggling_interval =
-      field_trials.Lookup("WebRTC-ForceSimulatedOveruseIntervalMs");
+      env.field_trials().Lookup("WebRTC-ForceSimulatedOveruseIntervalMs");
   if (!toggling_interval.empty()) {
     int normal_period_ms = 0;
     int overuse_period_ms = 0;
@@ -458,7 +459,7 @@ OveruseFrameDetector::CreateProcessingUsage(const FieldTrialsView& field_trials,
       if (normal_period_ms > 0 && overuse_period_ms > 0 &&
           underuse_period_ms > 0) {
         instance = std::make_unique<OverdoseInjector>(
-            std::move(instance), normal_period_ms, overuse_period_ms,
+            env, std::move(instance), normal_period_ms, overuse_period_ms,
             underuse_period_ms);
       } else {
         RTC_LOG(LS_WARNING)
@@ -473,6 +474,8 @@ OveruseFrameDetector::CreateProcessingUsage(const FieldTrialsView& field_trials,
   }
   return instance;
 }
+
+}  // namespace
 
 OveruseFrameDetector::OveruseFrameDetector(
     const Environment& env,
@@ -597,7 +600,7 @@ void OveruseFrameDetector::CheckForOveruse(
       !encode_usage_percent_)
     return;
 
-  int64_t now_ms = TimeMillis();
+  int64_t now_ms = env_.clock().TimeInMilliseconds();
   const char* action = "NoAction";
 
   if (IsOverusing(*encode_usage_percent_)) {
@@ -654,7 +657,7 @@ void OveruseFrameDetector::SetOptions(const CpuOveruseOptions& options) {
   }
   // Force reset with next frame.
   num_pixels_ = 0;
-  usage_ = CreateProcessingUsage(env_.field_trials(), options);
+  usage_ = CreateProcessingUsage(env_, options);
 }
 
 bool OveruseFrameDetector::IsOverusing(int usage_percent) {

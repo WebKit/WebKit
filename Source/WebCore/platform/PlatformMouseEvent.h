@@ -44,7 +44,7 @@ public:
     {
     }
 
-    PlatformMouseEvent(const DoublePoint& position, const DoublePoint& globalPosition, MouseButton button, PlatformEvent::Type type, int clickCount, OptionSet<PlatformEvent::Modifier> modifiers, MonotonicTime timestamp, double force, SyntheticClickType syntheticClickType, PointerID pointerId = mousePointerID)
+    PlatformMouseEvent(const DoublePoint& position, const DoublePoint& globalPosition, MouseButton button, PlatformEvent::Type type, int clickCount, OptionSet<PlatformEvent::Modifier> modifiers, MonotonicTime timestamp, double force, SyntheticClickType syntheticClickType, MouseEventInputSource inputSource, PointerID pointerId = mousePointerID)
         : PlatformEvent(type, modifiers, timestamp)
         , m_button(button)
         , m_syntheticClickType(syntheticClickType)
@@ -53,6 +53,7 @@ public:
         , m_force(force)
         , m_pointerId(pointerId)
         , m_clickCount(clickCount)
+        , m_inputSource(inputSource)
     {
     }
 
@@ -72,6 +73,7 @@ public:
     SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
     PointerID pointerId() const { return m_pointerId; }
     const String& pointerType() const { return m_pointerType; }
+    MouseEventInputSource inputSource() const { return m_inputSource; }
 
     Vector<PlatformMouseEvent> coalescedEvents() const { return m_coalescedEvents; }
     Vector<PlatformMouseEvent> predictedEvents() const { return m_predictedEvents; }
@@ -109,6 +111,7 @@ protected:
     unsigned short m_buttons { 0 };
     Vector<PlatformMouseEvent> m_coalescedEvents;
     Vector<PlatformMouseEvent> m_predictedEvents;
+    MouseEventInputSource m_inputSource { MouseEventInputSource::UserDriven };
 #if PLATFORM(MAC)
     int m_eventNumber { 0 };
     int m_menuTypeForEvent { 0 };

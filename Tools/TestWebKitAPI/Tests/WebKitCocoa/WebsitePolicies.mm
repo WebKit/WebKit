@@ -682,7 +682,7 @@ struct ParsedRange {
     if (!self)
         return nil;
     
-    videoData = WTFMove(data);
+    videoData = WTF::move(data);
     
     return self;
 }
@@ -722,7 +722,7 @@ TEST(WebpagePreferences, WebsitePoliciesDuringRedirect)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto videoData = adoptNS([[NSData alloc] initWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]]);
-    [configuration setURLSchemeHandler:adoptNS([[TestSchemeHandler alloc] initWithVideoData:WTFMove(videoData)]).get() forURLScheme:@"test"];
+    [configuration setURLSchemeHandler:adoptNS([[TestSchemeHandler alloc] initWithVideoData:WTF::move(videoData)]).get() forURLScheme:@"test"];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
@@ -1109,7 +1109,7 @@ static unsigned loadCount;
 
 - (void)setTaskHandler:(Function<void(id <WKURLSchemeTask>)>&&)handler
 {
-    _taskHandler = WTFMove(handler);
+    _taskHandler = WTF::move(handler);
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
@@ -1123,7 +1123,7 @@ static unsigned loadCount;
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
 
-    if (auto data = _dataMappings.get([finalURL absoluteString]))
+    if (RetainPtr data = _dataMappings.get([finalURL absoluteString]))
         [task didReceiveData:data.get()];
     else
         [task didReceiveData:[@"Hello" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1871,6 +1871,48 @@ TEST(WebpagePreferences, ToggleAdvancedPrivacyProtections)
     EXPECT_FALSE([preferences _networkConnectionIntegrityEnabled]);
     [preferences _setNetworkConnectionIntegrityEnabled:YES];
     EXPECT_TRUE([preferences _networkConnectionIntegrityEnabled]);
+}
+
+TEST(WebpagePreferences, AlternateRequestSPIToAPI)
+{
+    RetainPtr request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
+
+    auto preferences = adoptNS([WKWebpagePreferences new]);
+    EXPECT_NULL([preferences alternateRequest]);
+    EXPECT_NULL([preferences _alternateRequest]);
+
+    preferences.get()._alternateRequest = request.get();
+    EXPECT_EQ(preferences.get().alternateRequest, preferences.get()._alternateRequest);
+    EXPECT_EQ(preferences.get().alternateRequest, request.get());
+
+    [preferences setAlternateRequest:nil];
+    EXPECT_NULL([preferences alternateRequest]);
+    EXPECT_NULL([preferences _alternateRequest]);
+
+    [preferences setAlternateRequest:request.get()];
+    EXPECT_EQ(preferences.get().alternateRequest, preferences.get()._alternateRequest);
+    EXPECT_EQ(preferences.get().alternateRequest, request.get());
+}
+
+TEST(WebpagePreferences, OverrideReferrerSPIToAPI)
+{
+    NSString *referrer = @"hello";
+
+    auto preferences = adoptNS([WKWebpagePreferences new]);
+    EXPECT_NULL([preferences overrideReferrer]);
+    EXPECT_NULL([preferences _overrideReferrerForAllRequests]);
+
+    preferences.get()._overrideReferrerForAllRequests = referrer;
+    EXPECT_EQ(preferences.get().overrideReferrer, preferences.get()._overrideReferrerForAllRequests);
+    EXPECT_TRUE([preferences.get().overrideReferrer isEqual:referrer]);
+
+    [preferences setOverrideReferrer:nil];
+    EXPECT_NULL([preferences overrideReferrer]);
+    EXPECT_NULL([preferences _overrideReferrerForAllRequests]);
+
+    [preferences setOverrideReferrer:referrer];
+    EXPECT_EQ(preferences.get().overrideReferrer, preferences.get()._overrideReferrerForAllRequests);
+    EXPECT_TRUE([preferences.get().overrideReferrer isEqual:referrer]);
 }
 
 TEST(WebpagePreferences, HttpPageContentBlockers)

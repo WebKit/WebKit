@@ -59,6 +59,7 @@ void Page::platformInitialize()
     std::call_once(onceFlag, [] {
 #if ENABLE(TREE_DEBUGGING)
         PAL::registerNotifyCallback("com.apple.WebKit.dumpAccessibilityTreeToStderr"_s, printAccessibilityTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.dumpAccessibilityTreeToStderrAfterDelay"_s, printAccessibilityTreeForLiveDocumentsAfterDelay);
         PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree"_s, printRenderTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree"_s, printLayerTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
@@ -94,7 +95,7 @@ void Page::addSchedulePair(Ref<SchedulePair>&& pair)
 {
     if (!m_scheduledRunLoopPairs)
         m_scheduledRunLoopPairs = makeUnique<SchedulePairHashSet>();
-    m_scheduledRunLoopPairs->add(pair.ptr());
+    m_scheduledRunLoopPairs->add(pair.get());
 
     for (RefPtr frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
@@ -128,14 +129,14 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
     }
 }
 
-const String& Page::presentingApplicationBundleIdentifier() const
+const String& NODELETE Page::presentingApplicationBundleIdentifier() const
 {
     return m_presentingApplicationBundleIdentifier;
 }
 
 void Page::setPresentingApplicationBundleIdentifier(String&& bundleIdentifier)
 {
-    m_presentingApplicationBundleIdentifier = WTFMove(bundleIdentifier);
+    m_presentingApplicationBundleIdentifier = WTF::move(bundleIdentifier);
     if (RefPtr manager = mediaSessionManagerIfExists())
         manager->updateNowPlayingInfoIfNecessary();
 }

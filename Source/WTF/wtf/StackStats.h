@@ -27,7 +27,7 @@
 
 #include <mutex>
 #include <wtf/ExportMacros.h>
-
+#include <wtf/FastMalloc.h>
 
 // Define this flag to enable Stack stats collection. This feature is useful
 // for getting a sample of native stack usage sizes.

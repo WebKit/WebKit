@@ -30,7 +30,7 @@
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutElementBox.h"
 #include "LayoutUnit.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "TextBreakingPositionContext.h"
 #include "WritingMode.h"
 #include <wtf/Range.h>
@@ -39,7 +39,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineDamage);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineDamage);
 
 InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineItemList& inlineItemList, const InlineDisplay::Content& displayContent)
     : m_inlineDamage(inlineDamage)
@@ -56,23 +56,23 @@ bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContext
         return true;
 
     auto inlineItemListNeedsUpdate = [&] {
-        auto& oldStyle = formattingContextRoot.style();
+        CheckedRef oldStyle = formattingContextRoot.style();
 
         if (TextBreakingPositionContext { oldStyle } != TextBreakingPositionContext { newStyle })
             return true;
 
-        if (!oldStyle.fontCascadeEqual(newStyle))
+        if (!oldStyle->fontCascadeEqual(newStyle))
             return true;
 
-        auto* newFirstLineStyle = newStyle.getCachedPseudoStyle({ PseudoElementType::FirstLine });
-        auto* oldFirstLineStyle = oldStyle.getCachedPseudoStyle({ PseudoElementType::FirstLine });
+        CheckedPtr newFirstLineStyle = newStyle.getCachedPseudoStyle({ PseudoElementType::FirstLine });
+        CheckedPtr oldFirstLineStyle = oldStyle->getCachedPseudoStyle({ PseudoElementType::FirstLine });
         if (newFirstLineStyle && oldFirstLineStyle && !oldFirstLineStyle->fontCascadeEqual(*newFirstLineStyle))
             return true;
 
         if ((newFirstLineStyle && !newFirstLineStyle->fontCascadeEqual(oldStyle)) || (oldFirstLineStyle && !oldFirstLineStyle->fontCascadeEqual(newStyle)))
             return true;
 
-        if (oldStyle.writingMode().bidiDirection() != newStyle.writingMode().bidiDirection() || oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.tabSize() != newStyle.tabSize() || oldStyle.textSecurity() != newStyle.textSecurity())
+        if (oldStyle->writingMode().bidiDirection() != newStyle.writingMode().bidiDirection() || oldStyle->unicodeBidi() != newStyle.unicodeBidi() || oldStyle->tabSize() != newStyle.tabSize() || oldStyle->textSecurity() != newStyle.textSecurity())
             return true;
 
         return false;
@@ -84,9 +84,9 @@ bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContext
     return true;
 }
 
-bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle, StyleDifference diff)
+bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle, Style::Difference diff)
 {
-    if (diff == StyleDifference::Layout) {
+    if (diff == Style::DifferenceResult::Layout) {
         m_inlineDamage.resetLayoutPosition();
         m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
     }
@@ -100,20 +100,22 @@ bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle
     }
 
     auto inlineItemListNeedsUpdate = [&] {
-        auto& oldStyle = layoutBox.style();
+        CheckedRef oldStyle = layoutBox.style();
 
-        auto hasInlineItemTypeChanged = oldStyle.hasOutOfFlowPosition() != newStyle.hasOutOfFlowPosition() || oldStyle.isFloating() != newStyle.isFloating() || oldStyle.display() != newStyle.display();
+        auto hasInlineItemTypeChanged = oldStyle->hasOutOfFlowPosition() != newStyle.hasOutOfFlowPosition()
+            || (oldStyle->floating() != Float::None) != (newStyle.floating() != Float::None)
+            || oldStyle->display() != newStyle.display();
         if (hasInlineItemTypeChanged)
             return true;
 
         if (!layoutBox.isInlineBox())
             return false;
 
-        auto contentMayNeedNewBreakingPositionsAndMeasuring = TextBreakingPositionContext { oldStyle } != TextBreakingPositionContext { newStyle } || !oldStyle.fontCascadeEqual(newStyle);
+        auto contentMayNeedNewBreakingPositionsAndMeasuring = TextBreakingPositionContext { oldStyle } != TextBreakingPositionContext { newStyle } || !oldStyle->fontCascadeEqual(newStyle);
         if (contentMayNeedNewBreakingPositionsAndMeasuring)
             return true;
 
-        auto bidiContextChanged = oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.writingMode().bidiDirection() != newStyle.writingMode().bidiDirection();
+        auto bidiContextChanged = oldStyle->unicodeBidi() != newStyle.unicodeBidi() || oldStyle->writingMode().bidiDirection() != newStyle.writingMode().bidiDirection();
         if (bidiContextChanged)
             return true;
 
@@ -339,7 +341,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
     return { };
 }
 
-static bool isValidInlineItemPositionForLine(const InlineItemPosition& inlineItemPosition, size_t lineIndex)
+static bool NODELETE isValidInlineItemPositionForLine(const InlineItemPosition& inlineItemPosition, size_t lineIndex)
 {
     // It's clearly not correct when starting position is 0 while the damaged line is not the first one.
     if (!inlineItemPosition && lineIndex)
@@ -443,7 +445,7 @@ bool InlineInvalidation::updateInlineDamage(const InvalidatedLine& invalidatedLi
     };
 
     m_inlineDamage.setDamageReason(reason);
-    m_inlineDamage.setLayoutStartPosition(WTFMove(layoutStartPosition));
+    m_inlineDamage.setLayoutStartPosition(WTF::move(layoutStartPosition));
 
     if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes)
         m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesAfterDamagedLine(invalidatedLine.index, m_displayContent));
@@ -508,7 +510,7 @@ bool InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTex
     case InlineDamage::Reason::Insert: {
         invalidatedLine = InvalidatedLine { };
         // New text box got inserted. Let's damage existing content starting from the previous sibling.
-        if (auto* previousSibling = newOrDamagedInlineTextBox.previousInFlowSibling())
+        if (CheckedPtr previousSibling = newOrDamagedInlineTextBox.previousInFlowSibling())
             invalidatedLine = invalidatedLineByDamagedBox({ *previousSibling }, m_inlineItemList, displayBoxes);
         break;
         }
@@ -561,7 +563,7 @@ bool InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
     } else {
         invalidatedLine = InvalidatedLine { };
         // New box got inserted. Let's damage existing content starting from the previous sibling.
-        if (auto* previousSibling = layoutBox.previousInFlowSibling())
+        if (CheckedPtr previousSibling = layoutBox.previousInFlowSibling())
             invalidatedLine = invalidatedLineByDamagedBox({ *previousSibling }, m_inlineItemList, displayBoxes);
     }
     if (invalidatedLine)

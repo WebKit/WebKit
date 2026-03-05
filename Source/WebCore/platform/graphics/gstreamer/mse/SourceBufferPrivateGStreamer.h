@@ -68,6 +68,9 @@ public:
     void resetParserStateInternal() final;
     void removedFromMediaSource() final;
 
+    bool canSwitchToType(const ContentType &) final;
+    void startChangingType() final;
+
     void flush(TrackID) final;
     void enqueueSample(Ref<MediaSample>&&, TrackID) final;
     void allSamplesInTrackEnqueued(TrackID) final;
@@ -117,6 +120,8 @@ private:
     std::unique_ptr<AppendPipeline> m_appendPipeline;
     StdUnorderedMap<TrackID, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
     std::optional<MediaPromise::Producer> m_appendPromise;
+
+    bool m_pendingInitializationSegmentForChangeType { false };
 
     // Set while waiting for samples from the multiplatform layer after a seek has initiated.
     // Unset once the samples are ready for the platform-specific layer.

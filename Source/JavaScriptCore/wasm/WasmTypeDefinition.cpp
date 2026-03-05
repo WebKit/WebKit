@@ -611,41 +611,47 @@ bool TypeDefinition::isFinalType() const
     return true;
 }
 
-RTT::RTT(RTTKind kind)
-    : TrailingArrayType(1)
+RTT::RTT(RTTKind kind, bool isFinalType, StructFieldCount fieldCount)
+    : TrailingArrayType(std::max(1u, inlinedDisplaySize))
     , m_kind(kind)
-    , m_displaySizeExcludingThis(size() - 1)
+    , m_isFinalType(isFinalType)
+    , m_displaySizeExcludingThis(0)
+    , m_fieldCount(fieldCount)
 {
     at(0) = this;
 }
 
-RTT::RTT(RTTKind kind, const RTT& supertype)
-    : TrailingArrayType(supertype.size() + 1)
+RTT::RTT(RTTKind kind, const RTT& supertype, bool isFinalType, StructFieldCount fieldCount)
+    : TrailingArrayType(std::max(supertype.displaySizeExcludingThis() + 2, inlinedDisplaySize))
     , m_kind(kind)
-    , m_displaySizeExcludingThis(size() - 1)
+    , m_isFinalType(isFinalType)
+    , m_displaySizeExcludingThis(supertype.displaySizeExcludingThis() + 1)
+    , m_fieldCount(fieldCount)
 {
-    ASSERT(supertype.size() == (supertype.displaySizeExcludingThis() + 1));
-    for (size_t i = 0; i < supertype.span().size(); ++i)
+    unsigned actualDisplaySize = supertype.displaySizeExcludingThis() + 2;
+    ASSERT(actualDisplaySize == (m_displaySizeExcludingThis + 1));
+    for (size_t i = 0; i < actualDisplaySize - 1; ++i)
         span()[i] = supertype.span()[i];
-    at(supertype.size()) = this;
+    at(m_displaySizeExcludingThis) = this;
 }
 
-RefPtr<RTT> RTT::tryCreate(RTTKind kind)
+RefPtr<RTT> RTT::tryCreate(RTTKind kind, bool isFinalType, StructFieldCount fieldCount)
 {
-    auto result = tryFastMalloc(allocationSize(/* itself */ 1));
+    auto result = tryFastMalloc(allocationSize(std::max(/* itself */ 1u, inlinedDisplaySize)));
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    return adoptRef(new (NotNull, memory) RTT(kind));
+    return adoptRef(new (NotNull, memory) RTT(kind, isFinalType, fieldCount));
 }
 
-RefPtr<RTT> RTT::tryCreate(RTTKind kind, const RTT& supertype)
+RefPtr<RTT> RTT::tryCreate(RTTKind kind, const RTT& supertype, bool isFinalType, StructFieldCount fieldCount)
 {
-    auto result = tryFastMalloc(allocationSize(supertype.size() + 1));
+    unsigned allocationCount = std::max(supertype.displaySizeExcludingThis() + 2, inlinedDisplaySize);
+    auto result = tryFastMalloc(allocationSize(allocationCount));
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    return adoptRef(new (NotNull, memory) RTT(kind, supertype));
+    return adoptRef(new (NotNull, memory) RTT(kind, supertype, isFinalType, fieldCount));
 }
 
 bool RTT::isSubRTT(const RTT& parent) const
@@ -734,7 +740,7 @@ struct FunctionParameterTypes {
         signature->setArgumentsOrResultsIncludeV128(argumentsOrResultsIncludeV128);
         signature->setArgumentsOrResultsIncludeExnref(argumentsOrResultsIncludeExnref);
 
-        entry.key = WTFMove(signature);
+        entry.key = WTF::move(signature);
     }
 };
 
@@ -769,7 +775,7 @@ struct StructParameterTypes {
     {
         auto signature = StructType::tryCreate(params.fields.span());
         RELEASE_ASSERT(signature);
-        entry.key = WTFMove(signature);
+        entry.key = WTF::move(signature);
     }
 };
 
@@ -798,7 +804,7 @@ struct ArrayParameterTypes {
     {
         auto signature = ArrayType::tryCreate(params.elementType);
         RELEASE_ASSERT(signature);
-        entry.key = WTFMove(signature);
+        entry.key = WTF::move(signature);
     }
 };
 
@@ -831,7 +837,7 @@ struct RecursionGroupParameterTypes {
     {
         auto signature = RecursionGroup::tryCreate(params.types.span());
         RELEASE_ASSERT(signature);
-        entry.key = WTFMove(signature);
+        entry.key = WTF::move(signature);
     }
 };
 
@@ -860,7 +866,7 @@ struct ProjectionParameterTypes {
     {
         auto projection = Projection::tryCreate(params.recursionGroup, params.projectionIndex);
         RELEASE_ASSERT(projection);
-        entry.key = WTFMove(projection);
+        entry.key = WTF::move(projection);
     }
 };
 
@@ -901,7 +907,7 @@ struct SubtypeParameterTypes {
     {
         auto signature = Subtype::tryCreate(params.superTypes.span(), params.underlyingType, params.isFinal);
         RELEASE_ASSERT(signature);
-        entry.key = WTFMove(signature);
+        entry.key = WTF::move(signature);
     }
 };
 
@@ -1051,31 +1057,36 @@ void TypeInformation::registerCanonicalRTTForType(TypeIndex type)
             return;
         auto rtt = TypeInformation::createCanonicalRTTForType(locker, def);
         WTF::storeStoreFence(); // Make double-checked locking work.
-        def->m_rtt = WTFMove(rtt);
+        def->m_rtt = WTF::move(rtt);
     }
 }
 
 Ref<RTT> TypeInformation::createCanonicalRTTForType(const AbstractLocker&, const TypeDefinition& def)
 {
     const TypeDefinition& signature = def.unroll();
+    const TypeDefinition& expanded = signature.expand();
+    bool isFinalType = signature.isFinalType();
     RTTKind kind;
-    if (signature.expand().is<FunctionSignature>())
+    StructFieldCount fieldCount = 0;
+    if (expanded.is<FunctionSignature>())
         kind = RTTKind::Function;
-    else if (signature.expand().is<ArrayType>())
+    else if (expanded.is<ArrayType>())
         kind = RTTKind::Array;
-    else
+    else {
         kind = RTTKind::Struct;
+        fieldCount = expanded.as<StructType>()->fieldCount();
+    }
 
     if (signature.is<Subtype>() && signature.as<Subtype>()->supertypeCount() > 0) {
         Ref superTypeDef = TypeInformation::get(signature.as<Subtype>()->firstSuperType());
         auto superRTT = superTypeDef->m_rtt;
         ASSERT(superRTT);
-        auto protector = RTT::tryCreate(kind, *superRTT);
+        auto protector = RTT::tryCreate(kind, *superRTT, isFinalType, fieldCount);
         RELEASE_ASSERT(protector);
         return protector.releaseNonNull();
     }
 
-    auto protector = RTT::tryCreate(kind);
+    auto protector = RTT::tryCreate(kind, isFinalType, fieldCount);
     RELEASE_ASSERT(protector);
     return protector.releaseNonNull();
 }

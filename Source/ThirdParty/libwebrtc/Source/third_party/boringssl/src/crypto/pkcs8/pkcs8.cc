@@ -72,13 +72,13 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
   int ret = 0;
   EVP_MD_CTX ctx;
   EVP_MD_CTX_init(&ctx);
-  uint8_t *pass_raw = NULL, *I = NULL;
+  uint8_t *pass_raw = nullptr, *I = nullptr;
   size_t pass_raw_len = 0, I_len = 0;
 
   {
     // If |pass| is NULL, we use the empty string rather than {0, 0} as the raw
     // password.
-    if (pass != NULL &&
+    if (pass != nullptr &&
         !pkcs12_encode_password(pass, pass_len, &pass_raw, &pass_raw_len)) {
       goto err;
     }
@@ -115,7 +115,7 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
     }
 
     I = reinterpret_cast<uint8_t *>(OPENSSL_malloc(I_len));
-    if (I_len != 0 && I == NULL) {
+    if (I_len != 0 && I == nullptr) {
       goto err;
     }
 
@@ -131,14 +131,14 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
       // H(H(H(... H(D||I))))
       uint8_t A[EVP_MAX_MD_SIZE];
       unsigned A_len;
-      if (!EVP_DigestInit_ex(&ctx, md, NULL) ||
+      if (!EVP_DigestInit_ex(&ctx, md, nullptr) ||
           !EVP_DigestUpdate(&ctx, D, block_size) ||
           !EVP_DigestUpdate(&ctx, I, I_len) ||
           !EVP_DigestFinal_ex(&ctx, A, &A_len)) {
         goto err;
       }
       for (uint32_t iter = 1; iter < iterations; iter++) {
-        if (!EVP_DigestInit_ex(&ctx, md, NULL) ||
+        if (!EVP_DigestInit_ex(&ctx, md, nullptr) ||
             !EVP_DigestUpdate(&ctx, A, A_len) ||
             !EVP_DigestFinal_ex(&ctx, A, &A_len)) {
           goto err;
@@ -202,7 +202,7 @@ static int pkcs12_pbe_cipher_init(const struct pbe_suite *suite,
     return 0;
   }
 
-  int ret = EVP_CipherInit_ex(ctx, cipher, NULL, key, iv, is_encrypt);
+  int ret = EVP_CipherInit_ex(ctx, cipher, nullptr, key, iv, is_encrypt);
   OPENSSL_cleanse(key, EVP_MAX_KEY_LENGTH);
   OPENSSL_cleanse(iv, EVP_MAX_IV_LENGTH);
   return ret;
@@ -264,8 +264,8 @@ static const struct pbe_suite kBuiltinPBE[] = {
         // 1.2.840.113549.1.5.13
         {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x05, 0x0d},
         9,
-        NULL,
-        NULL,
+        nullptr,
+        nullptr,
         PKCS5_pbe2_decrypt_init,
     },
 };
@@ -296,7 +296,7 @@ int pkcs12_pbe_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx, int alg_nid,
   }
 
   const struct pbe_suite *suite = get_pkcs12_pbe_suite(alg_nid);
-  if (suite == NULL) {
+  if (suite == nullptr) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_UNKNOWN_ALGORITHM);
     return 0;
   }
@@ -323,11 +323,11 @@ int pkcs8_pbe_decrypt(uint8_t **out, size_t *out_len, CBS *algorithm,
                       const char *pass, size_t pass_len, const uint8_t *in,
                       size_t in_len) {
   int ret = 0;
-  uint8_t *buf = NULL;
+  uint8_t *buf = nullptr;
   bssl::ScopedEVP_CIPHER_CTX ctx;
 
   CBS obj;
-  const struct pbe_suite *suite = NULL;
+  const struct pbe_suite *suite = nullptr;
   if (!CBS_get_asn1(algorithm, &obj, CBS_ASN1_OBJECT)) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_DECODE_ERROR);
     goto err;
@@ -339,7 +339,7 @@ int pkcs8_pbe_decrypt(uint8_t **out, size_t *out_len, CBS *algorithm,
       break;
     }
   }
-  if (suite == NULL) {
+  if (suite == nullptr) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_UNKNOWN_ALGORITHM);
     goto err;
   }
@@ -350,7 +350,7 @@ int pkcs8_pbe_decrypt(uint8_t **out, size_t *out_len, CBS *algorithm,
   }
 
   buf = reinterpret_cast<uint8_t *>(OPENSSL_malloc(in_len));
-  if (buf == NULL) {
+  if (buf == nullptr) {
     goto err;
   }
 
@@ -368,7 +368,7 @@ int pkcs8_pbe_decrypt(uint8_t **out, size_t *out_len, CBS *algorithm,
   *out = buf;
   *out_len = n1 + n2;
   ret = 1;
-  buf = NULL;
+  buf = nullptr;
 
 err:
   OPENSSL_free(buf);
@@ -384,14 +384,14 @@ EVP_PKEY *PKCS8_parse_encrypted_private_key(CBS *cbs, const char *pass,
       !CBS_get_asn1(&epki, &ciphertext, CBS_ASN1_OCTETSTRING) ||
       CBS_len(&epki) != 0) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_DECODE_ERROR);
-    return 0;
+    return nullptr;
   }
 
   uint8_t *out;
   size_t out_len;
   if (!pkcs8_pbe_decrypt(&out, &out_len, &algorithm, pass, pass_len,
                          CBS_data(&ciphertext), CBS_len(&ciphertext))) {
-    return 0;
+    return nullptr;
   }
 
   CBS pki;
@@ -407,19 +407,19 @@ int PKCS8_marshal_encrypted_private_key(CBB *out, int pbe_nid,
                                         const uint8_t *salt, size_t salt_len,
                                         int iterations, const EVP_PKEY *pkey) {
   int ret = 0;
-  uint8_t *plaintext = NULL, *salt_buf = NULL;
+  uint8_t *plaintext = nullptr, *salt_buf = nullptr;
   size_t plaintext_len = 0;
   bssl::ScopedEVP_CIPHER_CTX ctx;
 
   {
     // Generate a random salt if necessary.
-    if (salt == NULL) {
+    if (salt == nullptr) {
       if (salt_len == 0) {
         salt_len = PKCS5_SALT_LEN;
       }
 
       salt_buf = reinterpret_cast<uint8_t *>(OPENSSL_malloc(salt_len));
-      if (salt_buf == NULL || !RAND_bytes(salt_buf, salt_len)) {
+      if (salt_buf == nullptr || !RAND_bytes(salt_buf, salt_len)) {
         goto err;
       }
 

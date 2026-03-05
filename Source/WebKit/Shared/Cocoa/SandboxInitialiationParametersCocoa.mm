@@ -67,7 +67,7 @@ void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, const 
 void SandboxInitializationParameters::addParameter(ASCIILiteral name, CString&& value)
 {
     m_parameterNames.append(name);
-    m_parameterValues.append(WTFMove(value));
+    m_parameterValues.append(WTF::move(value));
 }
 
 Vector<const char*> SandboxInitializationParameters::namedParameterVector() const

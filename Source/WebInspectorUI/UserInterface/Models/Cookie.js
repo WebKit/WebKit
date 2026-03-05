@@ -163,7 +163,7 @@ WI.Cookie = class Cookie
         let sameSite = WI.Cookie.SameSiteType.None;
 
         // Parse Attributes
-        let remaining = header.substr(nameValueMatch[0].length);
+        let remaining = header.substring(nameValueMatch[0].length);
         let attributes = remaining.split(/; ?/);
         for (let attribute of attributes) {
             if (!attribute)

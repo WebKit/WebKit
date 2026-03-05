@@ -27,6 +27,8 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
+#include <wtf/AbstractCanMakeCheckedPtr.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
@@ -34,21 +36,10 @@ OBJC_CLASS AVOutputContext;
 OBJC_CLASS NSView;
 
 namespace WebCore {
-class AVPlaybackTargetPicker;
-class AVPlaybackTargetPickerClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVPlaybackTargetPicker> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVPlaybackTargetPickerClient> : std::true_type { };
-}
-
-namespace WebCore {
 
 class FloatRect;
 
-class AVPlaybackTargetPickerClient : public CanMakeWeakPtr<AVPlaybackTargetPickerClient> {
+class AVPlaybackTargetPickerClient : public CanMakeWeakPtr<AVPlaybackTargetPickerClient>, public AbstractCanMakeCheckedPtr {
 protected:
     virtual ~AVPlaybackTargetPickerClient() = default;
 
@@ -58,9 +49,10 @@ public:
     virtual void currentDeviceChanged() = 0;
 };
 
-class AVPlaybackTargetPicker : public CanMakeWeakPtr<AVPlaybackTargetPicker> {
+class AVPlaybackTargetPicker : public CanMakeWeakPtr<AVPlaybackTargetPicker>, public CanMakeCheckedPtr<AVPlaybackTargetPicker> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(AVPlaybackTargetPicker);
     WTF_MAKE_NONCOPYABLE(AVPlaybackTargetPicker);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AVPlaybackTargetPicker);
 public:
     explicit AVPlaybackTargetPicker(AVPlaybackTargetPickerClient& client)
         : m_client(client)
@@ -76,7 +68,7 @@ public:
 
     virtual AVOutputContext* outputContext() = 0;
 
-    WeakPtr<AVPlaybackTargetPickerClient> client() const { return m_client; }
+    AVPlaybackTargetPickerClient* client() const { return m_client.get(); }
 
 private:
     WeakPtr<AVPlaybackTargetPickerClient> m_client;

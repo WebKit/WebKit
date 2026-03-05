@@ -32,7 +32,6 @@ namespace webrtc {
 
 namespace {
 
-using ::testing::_;
 using ::testing::Eq;
 using ::testing::Property;
 

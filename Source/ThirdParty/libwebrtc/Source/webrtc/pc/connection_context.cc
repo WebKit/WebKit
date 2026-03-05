@@ -86,10 +86,21 @@ scoped_refptr<ConnectionContext> ConnectionContext::Create(
       new ConnectionContext(env, dependencies));
 }
 
+// Access to the media engine operations is constrained to the worker thread.
+// This accessor via `MediaEngineReference` is provided to help ensure that a
+// reference is held and that the call is being issued on the worker thread.
+MediaEngineInterface* ConnectionContext::MediaEngineReference::media_engine()
+    const {
+  RTC_DCHECK_RUN_ON(c_->worker_thread());
+  RTC_DCHECK(c_->media_engine_w());
+  return c_->media_engine_w();
+}
+
 ConnectionContext::ConnectionContext(
     const Environment& env,
     PeerConnectionFactoryDependencies* dependencies)
-    : network_thread_(MaybeStartNetworkThread(dependencies->network_thread,
+    : is_configured_for_media_(dependencies->media_factory != nullptr),
+      network_thread_(MaybeStartNetworkThread(dependencies->network_thread,
                                               owned_socket_factory_,
                                               owned_network_thread_)),
       worker_thread_(dependencies->worker_thread,
@@ -101,10 +112,9 @@ ConnectionContext::ConnectionContext(
                      }),
       signaling_thread_(MaybeWrapThread(dependencies->signaling_thread,
                                         wraps_current_thread_)),
-      env_(env),
       media_engine_(
-          dependencies->media_factory != nullptr
-              ? dependencies->media_factory->CreateMediaEngine(env_,
+          is_configured_for_media_
+              ? dependencies->media_factory->CreateMediaEngine(env,
                                                                *dependencies)
               : nullptr),
       network_monitor_factory_(
@@ -170,17 +180,34 @@ ConnectionContext::ConnectionContext(
   worker_thread_->SetDispatchWarningMs(30);
   network_thread_->SetDispatchWarningMs(10);
 
-  if (media_engine_) {
-    // TODO(tommi): Change VoiceEngine to do ctor time initialization so that
-    // this isn't necessary.
-    worker_thread_->BlockingCall([&] { media_engine_->Init(); });
-  }
+  blocking_media_engine_destruction_ =
+      env.field_trials().IsEnabled("WebRTC-SynchronousDestructors");
 }
 
 ConnectionContext::~ConnectionContext() {
   RTC_DCHECK_RUN_ON(signaling_thread_);
+
+  // Now that the `media_engine_reference_count_` will be 0 when we get here,
+  // the blocking terminate operation that previously ran as part of the
+  // destructor of the media engine, has already run and there's not
+  // a need any longer to do the blocking call behind the
+  // `blocking_media_engine_destruction_` flag.
+  RTC_DCHECK_EQ(media_engine_reference_count_, 0);
+
   // `media_engine_` requires destruction to happen on the worker thread.
-  worker_thread_->PostTask([media_engine = std::move(media_engine_)] {});
+  if (blocking_media_engine_destruction_) {
+    // The media engine shares its Environment with objects that may outlive
+    // the ConnectionContext if this call is not blocking. If Environment is
+    // destroyed when ConnectionContext's destruction completes, this may
+    // cause Use-After-Free.
+    //
+    // The plan is to address the problem with a new Terminate(callback) method,
+    // which is referenced in webrtc:443588673, but pending this one can
+    // control this with field trial `WebRTC-SynchronousDestructors`.
+    worker_thread_->BlockingCall([&] { media_engine_ = nullptr; });
+  } else {
+    worker_thread_->PostTask([media_engine = std::move(media_engine_)] {});
+  }
 
   // Make sure `worker_thread()` and `signaling_thread()` outlive
   // `default_socket_factory_` and `default_network_manager_`.
@@ -189,6 +216,31 @@ ConnectionContext::~ConnectionContext() {
 
   if (wraps_current_thread_)
     ThreadManager::Instance()->UnwrapCurrentThread();
+}
+
+MediaEngineInterface* ConnectionContext::media_engine_w() {
+  RTC_DCHECK_RUN_ON(worker_thread());
+  return media_engine_.get();
+}
+
+void ConnectionContext::AddRefMediaEngine() {
+  RTC_DCHECK_RUN_ON(worker_thread());
+  RTC_DCHECK_GE(media_engine_reference_count_, 0);
+  RTC_DCHECK(media_engine_);
+  ++media_engine_reference_count_;
+  if (media_engine_reference_count_ == 1) {
+    media_engine_->Init();
+  }
+}
+
+void ConnectionContext::ReleaseMediaEngine() {
+  RTC_DCHECK_RUN_ON(worker_thread());
+  RTC_DCHECK_GT(media_engine_reference_count_, 0);
+  RTC_DCHECK(media_engine_);
+  --media_engine_reference_count_;
+  if (media_engine_reference_count_ == 0) {
+    media_engine_->Terminate();
+  }
 }
 
 }  // namespace webrtc

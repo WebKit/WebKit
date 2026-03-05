@@ -702,6 +702,7 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
         Optional<EGLAttrib> deviceType;
         Optional<EGLAttrib> eglHandle;
         Optional<EGLAttrib> dawnProcTable;
+        Optional<EGLAttrib> webgpuInstance;
         Optional<EGLAttrib> webgpuDevice;
 
         for (const auto &curAttrib : attribMap)
@@ -910,6 +911,20 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                     }
                     break;
 
+                case EGL_PLATFORM_ANGLE_WEBGPU_INSTANCE_ANGLE:
+                    if (!clientExtensions.platformANGLEWebgpu)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "EGL_ANGLE_platform_angle_webgpu is not supported");
+                        return false;
+                    }
+
+                    if (value != 0)
+                    {
+                        webgpuInstance = value;
+                    }
+                    break;
+
                 case EGL_PLATFORM_ANGLE_WEBGPU_DEVICE_ANGLE:
                     if (!clientExtensions.platformANGLEWebgpu)
                     {
@@ -1091,6 +1106,14 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
         {
             val->setError(EGL_BAD_ATTRIBUTE,
                           "EGL_PLATFORM_ANGLE_DAWN_PROC_TABLE_ANGLE requires a "
+                          "platform type of EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE.");
+            return false;
+        }
+
+        if (webgpuInstance.valid() && platformType != EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE)
+        {
+            val->setError(EGL_BAD_ATTRIBUTE,
+                          "EGL_PLATFORM_ANGLE_WEBGPU_INSTANCE_ANGLE requires a "
                           "platform type of EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE.");
             return false;
         }
@@ -1651,6 +1674,32 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             }
             break;
 
+        case EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE:
+            if (!attribs.isEmpty())
+            {
+                val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
+                return false;
+            }
+            if (!display->getExtensions().fenceSync)
+            {
+                val->setError(EGL_BAD_MATCH, "EGL_KHR_fence_sync extension is not available");
+                return false;
+            }
+            if (!display->getExtensions().mtlSyncCommandsScheduledANGLE)
+            {
+                val->setError(EGL_BAD_DISPLAY,
+                              "EGL_ANGLE_metal_shared_event_sync is not available");
+                return false;
+            }
+            if (display != currentDisplay)
+            {
+                val->setError(EGL_BAD_MATCH,
+                              "CreateSync can only be called on the current display");
+                return false;
+            }
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext->id()));
+            break;
+
         default:
             if (isExt)
             {
@@ -1685,6 +1734,7 @@ bool ValidateGetSyncAttribBase(const ValidationContext *val,
                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
                 case EGL_SYNC_GLOBAL_FENCE_ANGLE:
                 case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
+                case EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE:
                     break;
 
                 default:
@@ -1801,6 +1851,17 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "Attribute "
                               "EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE requires "
+                              "EGL_ANGLE_create_context_webgl_compatibility.");
+                return false;
+            }
+            break;
+
+        case EGL_CONTEXT_HARDENED_ANGLE:
+            if (!display->getExtensions().createContextWebGLCompatibility)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "Attribute "
+                              "EGL_CONTEXT_HARDENED_ANGLE requires "
                               "EGL_ANGLE_create_context_webgl_compatibility.");
                 return false;
             }
@@ -2041,6 +2102,16 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE must be "
+                              "EGL_TRUE or EGL_FALSE.");
+                return false;
+            }
+            break;
+
+        case EGL_CONTEXT_HARDENED_ANGLE:
+            if (value != EGL_TRUE && value != EGL_FALSE)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "EGL_CONTEXT_HARDENED_ANGLE must be "
                               "EGL_TRUE or EGL_FALSE.");
                 return false;
             }

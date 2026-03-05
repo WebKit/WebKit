@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-StyleSelfAlignmentData JustifyItems::resolve(std::optional<StyleSelfAlignmentData> valueForNormalOrLegacy) const
+StyleSelfAlignmentData JustifyItems::resolve() const
 {
     auto resolveOverflowPosition = [&](auto itemPosition) -> StyleSelfAlignmentData {
         switch (overflowPosition()) {
@@ -48,7 +48,7 @@ StyleSelfAlignmentData JustifyItems::resolve(std::optional<StyleSelfAlignmentDat
 
     switch (primary()) {
     case PrimaryKind::Normal:
-        return valueForNormalOrLegacy.value_or(ItemPosition::Normal);
+        return { ItemPosition::Normal };
     case PrimaryKind::Stretch:
         return { ItemPosition::Stretch };
     case PrimaryKind::Baseline:
@@ -78,7 +78,7 @@ StyleSelfAlignmentData JustifyItems::resolve(std::optional<StyleSelfAlignmentDat
     case PrimaryKind::Legacy:
         switch (legacyPosition()) {
         case LegacyPositionKind::None:
-            return valueForNormalOrLegacy.value_or(ItemPosition::Legacy);
+            return { ItemPosition::Normal, OverflowAlignment::Default, ItemPositionType::Legacy };
         case LegacyPositionKind::Left:
             return { ItemPosition::Left, OverflowAlignment::Default, ItemPositionType::Legacy };
         case LegacyPositionKind::Right:

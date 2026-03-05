@@ -60,7 +60,7 @@ public:
     RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono); // Returns nullptr on error
 
     size_t dataSize() const { return m_data.size(); }
-    std::span<const uint8_t> span() const { return m_data; }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_data; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

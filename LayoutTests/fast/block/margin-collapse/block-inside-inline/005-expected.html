@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+ <head>
+  <title>Margin Collapsing: in flow (relatively positioned, block-inside-inline version)</title>
+  <style type="text/css">
+   table { border-spacing: 0; font-size: 50px; border: solid; }
+   td { background: orange; padding: 0; }
+   div { margin: 1em 0; }
+   .a { background: yellow; }
+   .b { background: lime; }
+   .c { background: aqua; }
+   .d { background: blue; }
+  </style>
+ </head>
+ <body>
+  <p>The following two columns should be pixel perfect identical with no red visible.</p>
+  <table>
+   <tr>
+    <td class="control">
+     <div class="d">
+      <div class="a">A</div>
+      <div class="b">B</div>
+      <div class="c">C</div>
+     </div>
+    </td>
+    <td class="control">
+     <div class="d">
+      <div class="a">A</div>
+      <div class="b">B</div>
+      <div class="c">C</div>
+     </div>
+    </td>
+   </tr>
+  </table>
+  <p>This test is meaningless if you don't pass <a href="006.html#">test 006</a>.</p>
+ </body>
+</html>

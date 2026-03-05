@@ -23,6 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import argparse
 import copy
 import os
 import re
@@ -538,10 +539,7 @@ def one_argument_coder_declaration_cf(type):
     result.append('};')
     result.append(f'template<> struct ArgumentCoder<RetainPtr<{name_with_template}>> {{')
     for encoder in type.encoders:
-        result.append(f'    static void encode({encoder}& encoder, const RetainPtr<{name_with_template}>& retainPtr)')
-        result.append('    {')
-        result.append(f'        ArgumentCoder<{name_with_template}>::encode(encoder, retainPtr.get());')
-        result.append('    }')
+        result.append(f'    static void encode({encoder}&, const RetainPtr<{name_with_template}>&);')
     result.append(f'    static std::optional<RetainPtr<{name_with_template}>> decode(Decoder&);')
     result.append('};')
     if type.condition is not None:
@@ -784,7 +782,7 @@ def check_type_members(type, checking_parent_class):
                 result.append(f'        {member.dictionary_type()} {member.type};')
             result.append('    };')
             result.append(f'    static_assert(sizeof(ShouldBeSameSizeAs{type.name_as_identifier()}) == sizeof({type.namespace_and_name()}));')
-        result.append('    static_assert(MembersInCorrectOrder < 0')
+        result.append('    static_assert(IsIncreasing < 0')
         for member in type.members:
             if 'BitField' in member.attributes:
                 continue
@@ -795,7 +793,7 @@ def check_type_members(type, checking_parent_class):
                 result.append('#endif')
         for member in type.dictionary_members:
             result.append(f'        , offsetof({type.namespace_and_name()}, m_{member.type})')
-        result.append(f'    >::value);')
+        result.append(f'    >);')
     if type.has_optional_tuple_bits():
         serialized_members = type.serialized_members()
         optional_tuple_state = None
@@ -844,7 +842,7 @@ def encode_type(type):
             result.append(f'    if (auto* subclass = dynamicDowncast<{member.namespace}::{member.name}>(instance)) {{')
             result.append(f'        encoder << {type.subclass_enum_name()}::{member.name};')
             if type.rvalue:
-                result.append('        encoder << WTFMove(*subclass);')
+                result.append('        encoder << WTF::move(*subclass);')
             else:
                 result.append('        encoder << *subclass;')
             result.append('        return;')
@@ -861,9 +859,9 @@ def encode_type(type):
             if type.rvalue and '()' not in member.name:
                 if 'EncodeRequestBody' in member.attributes:
                     result.append(f'    RefPtr {member.name}Body = instance.{member.name}.httpBody();')
-                result.append(f'    encoder << WTFMove(instance.{member.name});')
+                result.append(f'    encoder << WTF::move(instance.{member.name});')
                 if 'EncodeRequestBody' in member.attributes:
-                    result.append(f'    encoder << IPC::FormDataReference {{ WTFMove({member.name}Body) }};')
+                    result.append(f'    encoder << IPC::FormDataReference {{ WTF::move({member.name}Body) }};')
             else:
                 result.append(f'    encoder << instance.{member.name};')
                 if 'EncodeRequestBody' in member.attributes:
@@ -878,6 +876,11 @@ def encode_type(type):
 
 def decode_cf_type(type):
     result = []
+    result.append('    auto isEngaged = decoder.template decode<bool>();')
+    result.append('    if (!isEngaged)')
+    result.append('        return std::nullopt;')
+    result.append('    if (!*isEngaged)')
+    result.append('        return { nullptr };')
     result.append(f'    auto result = decoder.decode<{type.cf_wrapper_type()}>();')
     result.append('    if (!decoder.isValid()) [[unlikely]]')
     result.append('        return std::nullopt;')
@@ -936,14 +939,14 @@ def decode_type(type, serialized_types):
                 else:
                     condition = re.search(r'Precondition', attribute)
                     assert not condition
-            result.append(f'    auto {sanitized_variable_name} = decoder.decodeWithAllowedClasses<{match.groups()[0]}>({{ {decodable_classes[0]} }});')
+            result.append(f'    auto {sanitized_variable_name} = decoder.decodeWithAllowedClasses<{member.type}>({{ {decodable_classes[0]} }});')
         elif member.is_subclass:
             result.append(f'    if (type == {type.subclass_enum_name()}::{member.name}) {{')
             typename = f'{member.namespace}::{member.name}'
             result.append(f'        auto result = decoder.decode<Ref<{typename}>>();')
             result.append('        if (!decoder.isValid()) [[unlikely]]')
             result.append('            return std::nullopt;')
-            result.append('        return WTFMove(*result);')
+            result.append('        return WTF::move(*result);')
             result.append('    }')
         elif member.optional_tuple_bits():
             bits_name = sanitized_variable_name
@@ -956,7 +959,7 @@ def decode_type(type, serialized_types):
             if type.populate_from_empty_constructor:
                 result.append(f'    if (*{bits_name} & {member.optional_tuple_bit()}) {{')
                 result.append(f'        if (auto deserialized = decoder.decode<{member.type}>())')
-                result.append(f'            result.{sanitized_variable_name} = WTFMove(*deserialized);')
+                result.append(f'            result.{sanitized_variable_name} = WTF::move(*deserialized);')
                 result.append('        else')
                 result.append('            return std::nullopt;')
                 result.append('    }')
@@ -965,7 +968,7 @@ def decode_type(type, serialized_types):
                 result.append(f'    {member.type} {sanitized_variable_name} {{ }};')
                 result.append(f'    if (*{bits_name} & {member.optional_tuple_bit()}) {{')
                 result.append(f'        if (auto deserialized = decoder.decode<{member.type}>())')
-                result.append(f'            {sanitized_variable_name} = WTFMove(*deserialized);')
+                result.append(f'            {sanitized_variable_name} = WTF::move(*deserialized);')
                 result.append('        else')
                 result.append('            return std::nullopt;')
                 result.append('    }')
@@ -1040,12 +1043,12 @@ def construct_type(type, specialization, indentation):
         member = serialized_members[i]
         if member.condition is not None:
             result.append(f'#if {member.condition}')
-        result.append(f'{indent(indentation + 1)}WTFMove({"" if member.optional_tuple_bit() else "*"}{sanitize_string_for_variable_name(member.name)}){"" if i == len(serialized_members) - 1 else ","}')
+        result.append(f'{indent(indentation + 1)}WTF::move({"" if member.optional_tuple_bit() else "*"}{sanitize_string_for_variable_name(member.name)}){"" if i == len(serialized_members) - 1 else ","}')
         if member.condition is not None:
             result.append('#endif')
     for i in range(len(type.dictionary_members)):
         member = type.dictionary_members[i]
-        result.append(f'{indent(indentation + 1)}WTFMove(*{member.type}){"," if i < len(type.dictionary_members) - 1 else ""}')
+        result.append(f'{indent(indentation + 1)}WTF::move(*{member.type}){"," if i < len(type.dictionary_members) - 1 else ""}')
     if type.create_using or type.return_ref:
         result.append(indent(indentation) + ')')
     else:
@@ -1090,7 +1093,7 @@ def generate_one_impl(type, template_argument, serialized_types):
         result.append('{')
         if type.generic_wrapper is not None:
             if type.rvalue:
-                result.append(f'    auto instance = {type.generic_wrapper}(WTFMove({instanceArgName}));')
+                result.append(f'    auto instance = {type.generic_wrapper}(WTF::move({instanceArgName}));')
             else:
                 result.append(f'    auto instance = {type.generic_wrapper}({instanceArgName});')
         if not type.members_are_subclasses and type.cf_type is None:
@@ -1102,6 +1105,18 @@ def generate_one_impl(type, template_argument, serialized_types):
         if type.members_are_subclasses:
             result.append('IGNORE_WARNINGS_END')
         result.append('')
+    if type.cf_type is not None:
+        for encoder in type.encoders:
+            result.append(f'void ArgumentCoder<RetainPtr<{name_with_template}>>::encode({encoder}& encoder, const RetainPtr<{name_with_template}>& retainPtr)')
+            result.append('{')
+            result.append('    if (!retainPtr) {')
+            result.append('        encoder << false;')
+            result.append('        return;')
+            result.append('    }')
+            result.append('    encoder << true;')
+            result.append(f'    ArgumentCoder<{name_with_template}>::encode(encoder, retainPtr.get());')
+            result.append('}')
+            result.append('')
     if type.cf_type is not None:
         result.append(f'std::optional<RetainPtr<{name_with_template}>> ArgumentCoder<RetainPtr<{name_with_template}>>::decode(Decoder& decoder)')
     elif type.return_ref:
@@ -1119,12 +1134,12 @@ def generate_one_impl(type, template_argument, serialized_types):
                 for member in type.serialized_members():
                     if member.condition is not None:
                         result.append(f'#if {member.condition}')
-                    result.append(f'    result.{member.name} = WTFMove(*{member.name});')
+                    result.append(f'    result.{member.name} = WTF::move(*{member.name});')
                     if member.condition is not None:
                         result.append('#endif')
-                result.append('    return { WTFMove(result) };')
+                result.append('    return { WTF::move(result) };')
             elif type.has_optional_tuple_bits() and type.populate_from_empty_constructor:
-                result.append('    return { WTFMove(result) };')
+                result.append('    return { WTF::move(result) };')
             else:
                 result.append('    return {')
                 if template_argument:
@@ -1149,6 +1164,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('#include "config.h"')
     result.append('#include "GeneratedSerializers.h"')
     result.append('#include "GeneratedWebKitSecureCoding.h"')
+    result.append('#include <wtf/IsIncreasing.h>')
     result.append('')
     for header in headers:
         if header.webkit_platform != generating_webkit_platform_impl:
@@ -1158,14 +1174,6 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         result.append(f'#include {header.header}')
         if header.condition is not None:
             result.append('#endif')
-    result.append('')
-    result.append('template<size_t...> struct MembersInCorrectOrder;')
-    result.append('template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> {')
-    result.append('    static constexpr bool value = true;')
-    result.append('};')
-    result.append('template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInCorrectOrder<firstOffset, secondOffset, remainingOffsets...> {')
-    result.append('    static constexpr bool value = firstOffset > secondOffset ? false : MembersInCorrectOrder<secondOffset, remainingOffsets...>::value;')
-    result.append('};')
     result.append('')
     result.append('template<uint64_t...> struct BitsInIncreasingOrder;')
     result.append('template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {')
@@ -1490,13 +1498,15 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
         if enum.condition is not None:
             result.append(f'#if {enum.condition}')
         result.append(f'        {{ "{enum.namespace_and_name()}"_s, sizeof({enum.namespace_and_name()}), {"true" if enum.is_option_set() else "false"}, {{')
+        # Generate valueMap with both values and names
         if enum.underlying_type == 'bool':
-            result.append('            0, 1')
+            result.append('            { 0, "false"_s },')
+            result.append('            { 1, "true"_s }')
         else:
             for valid_value in enum.valid_values:
                 if valid_value.condition is not None:
                     result.append(f'#if {valid_value.condition}')
-                result.append(f'            enumValueForIPCTestAPI({enum.namespace_and_name()}::{valid_value.name}),')
+                result.append(f'            {{ enumValueForIPCTestAPI({enum.namespace_and_name()}::{valid_value.name}), "{valid_value.name}"_s }},')
                 if valid_value.condition is not None:
                     result.append('#endif')
         result.append('        } },')
@@ -1886,7 +1896,7 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
         result.append(')')
         for i in range(len(type.dictionary_members)):
             member = type.dictionary_members[i]
-            result.append(f'    {":" if i == 0 else ","} m_{member.type}(WTFMove({member.type}))')
+            result.append(f'    {":" if i == 0 else ","} m_{member.type}(WTF::move({member.type}))')
         result.append('{')
         result.append('}')
         result.append('')
@@ -2017,6 +2027,13 @@ def generate_webkit_secure_coding_header(serialized_types):
 
 
 def main(argv):
+    parser = argparse.ArgumentParser(description='Generate serializers from input files')
+    parser.add_argument('file_extension', help='File extension for output files')
+    parser.add_argument('input_files', nargs='+', help='Input files to process')
+    parser.add_argument('--output-dir', help='Directory for output files')
+
+    args = parser.parse_args(argv[1:])
+
     serialized_types = []
     serialized_enums = []
     using_statements = []
@@ -2025,9 +2042,13 @@ def main(argv):
     header_set = set()
     header_set.add(ConditionalHeader('"FormDataReference.h"', None))
     additional_forward_declarations_list = []
-    file_extension = argv[1]
-    for i in range(2, len(argv)):
-        with open(argv[i]) as file:
+    file_extension = args.file_extension
+    output_dir = args.output_dir
+
+    input_files = args.input_files
+
+    for input_file in input_files:
+        with open(input_file) as file:
             new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations, new_objc_wrapped_types = parse_serialized_types(file)
             for type in new_types:
                 type.enforce_opaque_ipc_types_usage()
@@ -2047,17 +2068,25 @@ def main(argv):
 
     serialized_types = resolve_inheritance(serialized_types)
 
-    with open('GeneratedSerializers.h', "w+") as output:
+    if output_dir and not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    def output_path(filename):
+        if output_dir:
+            return os.path.join(output_dir, filename)
+        return filename
+
+    with open(output_path('GeneratedSerializers.h'), "w+") as output:
         output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
-    with open('GeneratedSerializers.%s' % file_extension, "w+") as output:
+    with open(output_path('GeneratedSerializers.%s' % file_extension), "w+") as output:
         output.write(generate_impl(serialized_types, serialized_enums, headers, False, []))
-    with open('WebKitPlatformGeneratedSerializers.%s' % file_extension, "w+") as output:
+    with open(output_path('WebKitPlatformGeneratedSerializers.%s' % file_extension), "w+") as output:
         output.write(generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types))
-    with open('SerializedTypeInfo.%s' % file_extension, "w+") as output:
+    with open(output_path('SerializedTypeInfo.%s' % file_extension), "w+") as output:
         output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types))
-    with open('GeneratedWebKitSecureCoding.h', "w+") as output:
+    with open(output_path('GeneratedWebKitSecureCoding.h'), "w+") as output:
         output.write(generate_webkit_secure_coding_header(serialized_types))
-    with open('GeneratedWebKitSecureCoding.%s' % file_extension, "w+") as output:
+    with open(output_path('GeneratedWebKitSecureCoding.%s' % file_extension), "w+") as output:
         output.write(generate_webkit_secure_coding_impl(serialized_types, headers))
     return 0
 

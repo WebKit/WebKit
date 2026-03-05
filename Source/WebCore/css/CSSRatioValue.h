@@ -31,10 +31,10 @@ namespace WebCore {
 
 class CSSRatioValue final : public CSSValue {
 public:
-    static Ref<CSSRatioValue> create(CSS::Ratio&&);
-    static Ref<CSSRatioValue> create(const CSS::Ratio&);
+    static Ref<CSSRatioValue> NODELETE create(CSS::Ratio&&);
+    static Ref<CSSRatioValue> NODELETE create(const CSS::Ratio&);
 
-    const CSS::Ratio& ratio() const { return m_ratio; }
+    const CSS::Ratio& ratio() const LIFETIME_BOUND { return m_ratio; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSRatioValue&) const;

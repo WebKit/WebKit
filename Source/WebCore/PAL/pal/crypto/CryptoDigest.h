@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/crypto/CryptoDigestHashFunction.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -38,13 +39,8 @@ class CryptoDigest {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoDigest, PAL_EXPORT);
     WTF_MAKE_NONCOPYABLE(CryptoDigest);
 public:
-    enum class Algorithm {
-        SHA_1,
-        DEPRECATED_SHA_224,
-        SHA_256,
-        SHA_384,
-        SHA_512,
-    };
+    using Algorithm = CryptoDigestHashFunction;
+
     PAL_EXPORT static std::unique_ptr<CryptoDigest> create(Algorithm);
     PAL_EXPORT ~CryptoDigest();
 

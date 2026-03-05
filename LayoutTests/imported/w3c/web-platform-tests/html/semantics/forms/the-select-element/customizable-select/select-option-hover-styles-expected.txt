@@ -1,4 +1,7 @@
 
+one
+two
+disabled
 
-FAIL Hover styles should be present for appearance:base-select options. assert_equals: appearance:base-select must be supported in order to run this test. expected "base-select" but got "auto"
+PASS Hover styles should be present for appearance:base-select options.
 

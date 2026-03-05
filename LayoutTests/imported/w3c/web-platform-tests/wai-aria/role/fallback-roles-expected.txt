@@ -10,6 +10,16 @@ x
 x
 x
 x
+x
+
+x
+x
+x
+x
+x
+x
+x
+x
 
 PASS fallback role w/ region with no label
 PASS fallback role w/ region with label
@@ -23,4 +33,14 @@ PASS div[role=button] ignoring invalid unicode diacritics etc on link and group 
 PASS div[role=button] ignoring tab char
 PASS div[role=button] ignoring line break
 PASS div[role=button] ignoring braille whitespace char
+PASS div[role='foo Link'][tabindex=0], illegal role and capitalized fallback role, has link role
+PASS button[role='foo Link'] with illegal role and capitalized fallback role, has link role
+PASS nav[role='foo GROUP'] with illegal role and all upper case fallback role, has group role
+PASS div[role='foo ReGiOn'][aria-label] with illegal role and alternating case fallback role, has region role
+PASS div[role='ReGiOn foo'][aria-label] with alternating case role and illegal fallback role, has region role
+PASS div[role='BUTTON LINK'] with tabindex=0, has button role
+PASS div[role='ReGiOn group'] without accname, has group role
+PASS div[role='ReGiOn group'][aria-label], has region role
+PASS div[role=buTtOn] ignoring line break, has button role
+PASS div[role='ReGiOn foo'] with alternating case role and illegal fallback role without accname, has generic role
 

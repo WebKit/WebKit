@@ -54,7 +54,7 @@ FloatPolygon3D::FloatPolygon3D(const FloatRect& rect, const TransformationMatrix
 }
 
 FloatPolygon3D::FloatPolygon3D(Vector<FloatPoint3D>&& vertices, const FloatPoint3D& normal)
-    : m_vertices(WTFMove(vertices))
+    : m_vertices(WTF::move(vertices))
     , m_normal(normal)
 {
 }
@@ -115,7 +115,7 @@ std::pair<FloatPolygon3D, FloatPolygon3D> FloatPolygon3D::split(const FloatPlane
     }
 
     // Create new polygons for each side
-    return { { WTFMove(negativeVertices), m_normal }, { WTFMove(positiveVertices), m_normal } };
+    return { { WTF::move(negativeVertices), m_normal }, { WTF::move(positiveVertices), m_normal } };
 }
 
 } // namespace WebCore

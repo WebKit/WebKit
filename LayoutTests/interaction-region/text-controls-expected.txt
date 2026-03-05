@@ -13,8 +13,8 @@
 
       (interaction regions [
         (interaction (9,9) width=211 height=204),
-        (interaction (225,177) width=332 height=57),
-        (interaction (8,234) width=350 height=75)])
+        (interaction (225,176.50) width=332 height=57),
+        (interaction (8,233.50) width=350 height=75)])
       )
     )
   )

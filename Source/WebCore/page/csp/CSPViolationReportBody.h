@@ -38,21 +38,21 @@ struct CSPInfo;
 struct SecurityPolicyViolationEventInit;
 
 class CSPViolationReportBody final : public ReportBody {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSPViolationReportBody);
+    WTF_MAKE_TZONE_ALLOCATED(CSPViolationReportBody);
 public:
     using Init = SecurityPolicyViolationEventInit;
 
     WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(Init&&);
     WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, uint64_t lineNumber, uint64_t columnNumber);
 
-    const String& type() const final;
-    const String& documentURL() const { return m_documentURL; }
-    const String& referrer() const { return m_referrer; }
-    const String& blockedURL() const { return m_blockedURL; }
-    const String& effectiveDirective() const { return m_effectiveDirective; }
-    const String& originalPolicy() const { return m_originalPolicy; }
-    const String& sourceFile() const { return m_sourceFile; }
-    const String& sample() const { return m_sample; }
+    const String& type() const LIFETIME_BOUND final;
+    const String& documentURL() const LIFETIME_BOUND { return m_documentURL; }
+    const String& referrer() const LIFETIME_BOUND { return m_referrer; }
+    const String& blockedURL() const LIFETIME_BOUND { return m_blockedURL; }
+    const String& effectiveDirective() const LIFETIME_BOUND { return m_effectiveDirective; }
+    const String& originalPolicy() const LIFETIME_BOUND { return m_originalPolicy; }
+    const String& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
+    const String& sample() const LIFETIME_BOUND { return m_sample; }
     SecurityPolicyViolationEventDisposition disposition() const { return m_disposition; }
     unsigned short statusCode() const { return m_statusCode; }
     uint64_t lineNumber() const { return m_lineNumber; }

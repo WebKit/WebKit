@@ -39,8 +39,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_TOPLEVEL_HEADLESS (wpe_toplevel_headless_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEToplevelHeadless, wpe_toplevel_headless, WPE, TOPLEVEL_HEADLESS, WPEToplevel)
 
-WPE_API WPEToplevel *wpe_toplevel_headless_new (WPEDisplayHeadless *display);
-
 G_END_DECLS
 
 #endif /* WPEToplevelHeadless_h */

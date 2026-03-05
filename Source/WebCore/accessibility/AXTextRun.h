@@ -25,9 +25,10 @@
 
 #pragma once
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #include <CoreText/CTFont.h>
+#include <WebCore/AXLoggerBase.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/TextAffinity.h>
 #include <WebCore/TextFlags.h>
@@ -93,8 +94,8 @@ struct AXTextRun {
 
     AXTextRun(size_t lineIndex, unsigned startIndex, unsigned endIndexInclusive, Vector<std::array<uint16_t, 2>>&& domOffsets, Vector<uint16_t>&& characterAdvances, float lineHeight, float distanceFromBoundsInDirection)
         : lineIndex(lineIndex)
-        , textRunDomOffsets(WTFMove(domOffsets))
-        , characterAdvances(WTFMove(characterAdvances))
+        , textRunDomOffsets(WTF::move(domOffsets))
+        , characterAdvances(WTF::move(characterAdvances))
         , lineHeight(lineHeight)
         , distanceFromBoundsInDirection(distanceFromBoundsInDirection)
         , startIndex(startIndex)
@@ -102,7 +103,7 @@ struct AXTextRun {
     {
         // Runs should have a non-zero length (i.e. endIndex should strictly be greater than startIndex).
         // This is important because several parts of AXTextMarker rely on this assumption.
-        ASSERT(endIndex > startIndex);
+        AX_ASSERT(endIndex > startIndex);
     }
 
     const FixedVector<std::array<uint16_t, 2>>& domOffsets() const { return textRunDomOffsets; }
@@ -126,9 +127,9 @@ public:
 
     AXTextRuns() = default;
     AXTextRuns(RenderBlock* containingBlock, Vector<AXTextRun>&& textRuns, String&& text, bool containsOnlyASCII = true)
-        : text(WTFMove(text))
+        : text(WTF::move(text))
         , containingBlock(containingBlock)
-        , runs(WTFMove(textRuns))
+        , runs(WTF::move(textRuns))
         , containsOnlyASCII(containsOnlyASCII)
     { }
 
@@ -151,10 +152,10 @@ public:
         unsigned size = runs.size();
         return size ? runLengthSumTo(size - 1) : 0;
     }
-    unsigned runLengthSumTo(size_t index) const;
-    unsigned domOffset(unsigned) const;
+    unsigned NODELETE runLengthSumTo(size_t index) const;
+    unsigned NODELETE domOffset(unsigned) const;
 
-    size_t indexForOffset(unsigned textOffset, Affinity) const;
+    size_t NODELETE indexForOffset(unsigned textOffset, Affinity) const;
     AXTextRunLineID lineID(size_t index) const { return { containingBlock, runs[index].lineIndex }; }
     String toString() const { return text; }
     StringView toStringView() const { return StringView(text); }
@@ -185,4 +186,4 @@ public:
 };
 
 } // namespace WebCore
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)

@@ -43,7 +43,7 @@ Ref<BitmapImage> BitmapImage::create(ImageObserver* observer, AlphaOption alphaO
 
 Ref<BitmapImage> BitmapImage::create(Ref<NativeImage>&& nativeImage)
 {
-    return adoptRef(*new BitmapImage(WTFMove(nativeImage)));
+    return adoptRef(*new BitmapImage(WTF::move(nativeImage)));
 }
 
 RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
@@ -55,7 +55,7 @@ RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
 
 RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
 {
-    return create(NativeImage::create(WTFMove(platformImage)));
+    return create(NativeImage::create(WTF::move(platformImage)));
 }
 
 BitmapImage::BitmapImage(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -65,13 +65,18 @@ BitmapImage::BitmapImage(ImageObserver* observer, AlphaOption alphaOption, Gamma
 }
 
 BitmapImage::BitmapImage(Ref<NativeImage>&& image)
-    : m_source(NativeImageSource::create(WTFMove(image)))
+    : m_source(NativeImageSource::create(WTF::move(image)))
 {
 }
 
 EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
 {
     return m_source->dataChanged(data(), allDataReceived);
+}
+
+void BitmapImage::dataReplaced()
+{
+    return m_source->dataReplaced(data());
 }
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
@@ -111,7 +116,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         return nativeImageOrError.error() == DecodingStatus::Decoding ? ImageDrawResult::DidRequestDecoding : ImageDrawResult::DidNothing;
     }
 
-    Ref nativeImage = WTFMove(nativeImageOrError.value());
+    Ref nativeImage = WTF::move(nativeImageOrError.value());
     if (auto color = nativeImage->singlePixelSolidColor())
         fillWithSolidColor(context, destinationRect, *color, options.compositeOperator());
     else {
@@ -177,7 +182,7 @@ void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const Float
     auto bufferRect = FloatRect { { }, buffer->logicalSize() };
     draw(buffer->context(), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
 
-    setImageObserver(WTFMove(observer));
+    setImageObserver(WTF::move(observer));
     buffer->convertToLuminanceMask();
 
     context.setDrawLuminanceMask(false);

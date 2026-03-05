@@ -38,7 +38,7 @@ namespace WebCore {
 
 FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
     : name(name)
-    , creationData(WTFMove(creationData))
+    , creationData(WTF::move(creationData))
     , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
 {
 }
@@ -64,7 +64,7 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
         return nullptr;
 
     FontPlatformData::CreationData creationData = { buffer, itemInCollection, fontResource.releaseNonNull() };
-    return adoptRef(new FontCustomPlatformData(fontName, WTFMove(creationData)));
+    return adoptRef(new FontCustomPlatformData(fontName, WTF::move(creationData)));
 }
 
 RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
@@ -99,7 +99,7 @@ bool FontCustomPlatformData::supportsTechnology(const FontTechnology& tech)
 
 std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data, bool)
 {
-    RefPtr fontCustomPlatformData = FontCustomPlatformData::create(WTFMove(data.fontFaceData), data.itemInCollection);
+    RefPtr fontCustomPlatformData = FontCustomPlatformData::create(WTF::move(data.fontFaceData), data.itemInCollection);
     if (!fontCustomPlatformData)
         return std::nullopt;
     fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;

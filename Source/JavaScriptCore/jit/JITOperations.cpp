@@ -248,22 +248,18 @@ JSC_DEFINE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, 
 
     // We should only be here when "rethrowing" an exception
     RELEASE_ASSERT(exception);
+    JSValue exceptionValue = exception->value();
 
-    if (vm.isTerminationException(exception)) [[unlikely]] {
+    if (!scope.tryClearException()) [[unlikely]] {
         scope.release();
         OPERATION_RETURN(scope, encodedJSValue());
     }
-
-    JSValue exceptionValue = exception->value();
-    scope.clearException();
 
     String exceptionString = exceptionValue.toWTFString(globalObject);
-    Exception* toStringException = scope.exception();
-    if (toStringException && vm.isTerminationException(toStringException)) [[unlikely]] {
+    if (!scope.tryClearException()) [[unlikely]] {
         scope.release();
         OPERATION_RETURN(scope, encodedJSValue());
     }
-    scope.clearException();
 
     if (exceptionString.length())
         OPERATION_RETURN(scope, throwVMTypeError(globalObject, scope, exceptionString));
@@ -3118,7 +3114,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, UGPRPair, (VM* vmPointer, uint32_t b
             OPERATION_RETURN(scope, encodeResult(nullptr, nullptr));
         }
 
-        dataLogLnIf(Options::verboseOSR(), "Triggering optimized compilation of ", *codeBlock);
+        dataLogLnIf(Options::verboseOSR(), "Triggering optimized compilation of ", *codeBlock, " quickDFGTierUpState=", codeBlock->unlinkedCodeBlock()->quickDFGTierUp(), " counter=", codeBlock->baselineExecuteCounter(), ", optimizationDelayCounter=", codeBlock->optimizationDelayCounter(), " bytecodeCost=", codeBlock->bytecodeCost(), " codeType=", codeBlock->codeType());
 
         unsigned numVarsWithValues = 0;
         if (bytecodeIndex)
@@ -3137,7 +3133,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, UGPRPair, (VM* vmPointer, uint32_t b
         CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
         CompilationResult result = DFG::compile(
             vm, replacementCodeBlock, nullptr, Options::forceUnlinkedDFG() ? JITCompilationMode::UnlinkedDFG : JITCompilationMode::DFG, bytecodeIndex,
-            WTFMove(mustHandleValues), JITToDFGDeferredCompilationCallback::create());
+            WTF::move(mustHandleValues), JITToDFGDeferredCompilationCallback::create());
         
         if (result != CompilationResult::CompilationSuccessful) {
             CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("compilation failed"));
@@ -5214,15 +5210,15 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationRetrieveAndClearExceptionIfCatchable,
     RELEASE_ASSERT(!!scope.exception());
 
     Exception* exception = scope.exception();
-    if (vm.isTerminationException(exception)) [[unlikely]] {
-        genericUnwind(vm, callFrame);
-        return nullptr;
-    }
 
     // We want to clear the exception here rather than in the catch prologue
     // JIT code because clearing it also entails clearing a bit in an Atomic
     // bit field in VMTraps.
-    scope.clearException();
+    if (!scope.tryClearException()) [[unlikely]] {
+        genericUnwind(vm, callFrame);
+        return nullptr;
+    }
+
     return exception;
 }
 

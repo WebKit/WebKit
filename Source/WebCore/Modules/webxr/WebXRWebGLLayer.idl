@@ -35,7 +35,7 @@ typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingCon
     JSGenerateToNativeObject,
     InterfaceName=XRWebGLLayer
 ] interface WebXRWebGLLayer : WebXRLayer {
-    constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit);
+    constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit = {});
 
     // Attributes
     readonly attribute boolean antialias;
@@ -43,7 +43,7 @@ typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingCon
     // FIXME: Support 'fixedFoveation'.
     // attribute float? fixedFoveation;
 
-    [SameObject] readonly attribute WebGLFramebuffer framebuffer;
+    [SameObject] readonly attribute WebGLFramebuffer? framebuffer;
     readonly attribute unsigned long framebufferWidth;
     readonly attribute unsigned long framebufferHeight;
 

@@ -43,13 +43,14 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
 
     // "A new GPUBindGroupLayout wrapper is returned each time"
     virtual Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) = 0;
     virtual bool isRemoteRenderPipelineProxy() const { return false; }
+    virtual bool isRenderPipelineImpl() const { return false; }
 
 protected:
     RenderPipeline() = default;

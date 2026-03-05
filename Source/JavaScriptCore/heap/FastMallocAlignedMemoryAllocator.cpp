@@ -54,7 +54,7 @@ void FastMallocAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.free(basePtr);
 #else
-    fastAlignedFree(basePtr);
+    fastFree(basePtr);
 #endif
 
 }

@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder start timeSlice option</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="200" height="200">
+</canvas>
+<script>
+    promise_test(async t => {
+        const audio = await navigator.mediaDevices.getUserMedia({ audio : true });
+        t.add_cleanup(() => audio.getTracks().forEach(track => track.stop()));
+        const recorder = new MediaRecorder(audio, { mimeType: 'audio/webm; codecs=opus' });
+
+        const dataAvailableEvents = [];
+        const expectedCallbackCount = 3;
+        
+        let dataAvailablePromise = new Promise(resolve => {
+            recorder.ondataavailable = event => {
+                dataAvailableEvents.push(event);
+                if (dataAvailableEvents.length >= expectedCallbackCount) {
+                    resolve();
+                }
+            };
+        });
+
+        recorder.start(50);
+        await dataAvailablePromise;
+        recorder.stop();
+
+        // Verify all ondataavailable callbacks received non-empty blobs
+        assert_equals(dataAvailableEvents.length, expectedCallbackCount, 'Should receive expected number of ondataavailable events');
+        for (let i = 0; i < dataAvailableEvents.length; i++) {
+            assert_true(dataAvailableEvents[i].data instanceof Blob, `Event ${i} data should be a Blob`);
+            assert_greater_than(dataAvailableEvents[i].data.size, 0, `Event ${i} blob should not be empty`);
+        }
+    }, 'Make sure that all ondataavailable callbacks contain non-empty blobs');
+
+    promise_test(async t => {
+        const audio = await navigator.mediaDevices.getUserMedia({ audio : true });
+        t.add_cleanup(() => audio.getTracks().forEach(track => track.stop()));
+        const recorder = new MediaRecorder(audio, { mimeType: 'audio/mp4' });
+
+        const dataAvailableEvents = [];
+        const expectedCallbackCount = 3;
+        
+        let dataAvailablePromise = new Promise(resolve => {
+            recorder.ondataavailable = event => {
+                dataAvailableEvents.push(event);
+                if (dataAvailableEvents.length >= expectedCallbackCount) {
+                    resolve();
+                }
+            };
+        });
+
+        recorder.start(50);
+        await dataAvailablePromise;
+        recorder.stop();
+
+        // Verify all ondataavailable callbacks received non-empty blobs
+        assert_equals(dataAvailableEvents.length, expectedCallbackCount, 'Should receive expected number of ondataavailable events');
+        for (let i = 0; i < dataAvailableEvents.length; i++) {
+            assert_true(dataAvailableEvents[i].data instanceof Blob, `Event ${i} data should be a Blob`);
+            assert_greater_than(dataAvailableEvents[i].data.size, 0, `Event ${i} blob should not be empty`);
+        }
+    }, 'Make sure that all ondataavailable callbacks with audio MP4 contain non-empty blobs');
+    </script>
+</body>
+</html>

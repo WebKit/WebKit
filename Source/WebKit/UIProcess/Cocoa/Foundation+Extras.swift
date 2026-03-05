@@ -21,8 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if compiler(>=6.0)
-
 import Foundation
 
 typealias String = Swift.String
@@ -32,4 +30,12 @@ struct UncheckedSendableKeyPathBox<Root, Value>: @unchecked Sendable {
     let keyPath: KeyPath<Root, Value>
 }
 
-#endif
+extension Comparable {
+    /// Returns this comparable value clamped to the given limiting range.
+    ///
+    /// - Parameter limits: The range to clamp the bounds of this value.
+    /// - Returns: A value guaranteed to be in the range `[limits.lowerBound, limits.upperBound]`
+    func clamped(to limits: ClosedRange<Self>) -> Self {
+        min(max(self, limits.lowerBound), limits.upperBound)
+    }
+}

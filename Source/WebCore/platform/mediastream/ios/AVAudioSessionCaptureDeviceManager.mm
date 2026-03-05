@@ -164,7 +164,7 @@ void AVAudioSessionCaptureDeviceManager::setPreferredMicrophoneID(const String& 
     auto previousMicrophoneID = m_preferredMicrophoneID;
     m_preferredMicrophoneID = microphoneID;
     if (!setPreferredAudioSessionDeviceIDs())
-        m_preferredMicrophoneID = WTFMove(previousMicrophoneID);
+        m_preferredMicrophoneID = WTF::move(previousMicrophoneID);
 }
 
 void AVAudioSessionCaptureDeviceManager::configurePreferredMicrophone()
@@ -179,7 +179,7 @@ void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(const String& spe
     auto previousSpeakerID = m_preferredSpeakerID;
     m_preferredSpeakerID = speakerID;
     if (!setPreferredAudioSessionDeviceIDs())
-        m_preferredSpeakerID = WTFMove(previousSpeakerID);
+        m_preferredSpeakerID = WTF::move(previousSpeakerID);
     else if (!m_preferredSpeakerID.isEmpty()) {
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/AVAudioSessionCaptureDeviceManagerAdditions-2.mm>
@@ -229,15 +229,15 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
     m_dispatchQueue->dispatchSync([&] {
         newAudioDevices = retrieveAudioSessionCaptureDevices();
     });
-    setAudioCaptureDevices(crossThreadCopy(WTFMove(newAudioDevices)));
+    setAudioCaptureDevices(crossThreadCopy(WTF::move(newAudioDevices)));
 }
 
 void AVAudioSessionCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& completion)
 {
-    m_dispatchQueue->dispatch([this, completion = WTFMove(completion)] () mutable {
+    m_dispatchQueue->dispatch([this, completion = WTF::move(completion)] () mutable {
         auto newAudioDevices = retrieveAudioSessionCaptureDevices();
-        callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTFMove(completion), newAudioDevices = crossThreadCopy(WTFMove(newAudioDevices))] () mutable {
-            setAudioCaptureDevices(WTFMove(newAudioDevices));
+        callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTF::move(completion), newAudioDevices = crossThreadCopy(WTF::move(newAudioDevices))] () mutable {
+            setAudioCaptureDevices(WTF::move(newAudioDevices));
             completion();
         }).get());
     });
@@ -249,7 +249,7 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
     if (currentInput) {
         if (currentInput != m_lastDefaultMicrophone.get()) {
             auto device = AVAudioSessionCaptureDevice::createInput(currentInput, currentInput);
-            callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([device = crossThreadCopy(WTFMove(device))] () mutable {
+            callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([device = crossThreadCopy(WTF::move(device))] () mutable {
                 CoreAudioCaptureUnit::forEach([&device](auto& unit) {
                     unit.handleNewCurrentMicrophoneDevice(device);
                 });
@@ -264,7 +264,7 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
     newAudioDevices.reserveInitialCapacity(availableInputs.count);
     for (AVAudioSessionPortDescription *portDescription in availableInputs) {
         auto device = AVAudioSessionCaptureDevice::createInput(portDescription, currentInput);
-        newAudioDevices.append(WTFMove(device));
+        newAudioDevices.append(WTF::move(device));
     }
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -310,7 +310,7 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
     if (!deviceListChanged && !firstTime)
         return;
 
-    m_audioSessionCaptureDevices = WTFMove(newAudioDevices);
+    m_audioSessionCaptureDevices = WTF::move(newAudioDevices);
 
     Vector<CaptureDevice> newCaptureDevices;
     Vector<CaptureDevice> newSpeakerDevices;
@@ -338,14 +338,14 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
     });
     if (m_captureDevices)
         deviceListChanged = isDifferentDeviceList(newCaptureDevices, *m_captureDevices);
-    m_captureDevices = WTFMove(newCaptureDevices);
+    m_captureDevices = WTF::move(newCaptureDevices);
 
     std::ranges::sort(newSpeakerDevices, [] (auto& first, auto& second) -> bool {
         return first.isDefault() && !second.isDefault();
     });
     if (!deviceListChanged)
         deviceListChanged = isDifferentDeviceList(newSpeakerDevices, m_speakerDevices);
-    m_speakerDevices = WTFMove(newSpeakerDevices);
+    m_speakerDevices = WTF::move(newSpeakerDevices);
 
     if (deviceListChanged && !firstTime)
         deviceChanged();

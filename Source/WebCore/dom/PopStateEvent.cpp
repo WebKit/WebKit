@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PopStateEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PopStateEvent);
 
 PopStateEvent::PopStateEvent()
     : Event(EventInterfaceType::PopStateEvent)
@@ -50,7 +50,7 @@ PopStateEvent::PopStateEvent(const AtomString& type, const Init& initializer, Is
 
 PopStateEvent::PopStateEvent(RefPtr<SerializedScriptValue>&& serializedState, History* history)
     : Event(EventInterfaceType::PopStateEvent, eventNames().popstateEvent, CanBubble::No, IsCancelable::No)
-    , m_serializedState(WTFMove(serializedState))
+    , m_serializedState(WTF::move(serializedState))
     , m_history(history)
 {
 }
@@ -59,7 +59,7 @@ PopStateEvent::~PopStateEvent() = default;
 
 Ref<PopStateEvent> PopStateEvent::create(RefPtr<SerializedScriptValue>&& serializedState, History* history)
 {
-    return adoptRef(*new PopStateEvent(WTFMove(serializedState), history));
+    return adoptRef(*new PopStateEvent(WTF::move(serializedState), history));
 }
 
 Ref<PopStateEvent> PopStateEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)

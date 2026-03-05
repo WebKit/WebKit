@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTDepthClamp);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTDepthClamp);
 
 EXTDepthClamp::EXTDepthClamp(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTDepthClamp)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::EXT_depth_clamp);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::EXT_depth_clamp);
 }
 
 EXTDepthClamp::~EXTDepthClamp() = default;

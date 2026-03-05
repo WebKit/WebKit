@@ -92,9 +92,9 @@ static inline Ref<BidiContext> copyContextAndRebaselineLevel(BidiContext& contex
 Ref<BidiContext> BidiContext::copyStackRemovingUnicodeEmbeddingContexts()
 {
     Vector<BidiContext*, 64> contexts;
-    for (auto* ancestor = this; ancestor; ancestor = ancestor->parent()) {
+    for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parent()) {
         if (ancestor->source() != FromUnicode)
-            contexts.append(ancestor);
+            contexts.append(ancestor.get());
     }
     ASSERT(contexts.size());
     auto topContext = copyContextAndRebaselineLevel(*contexts.last(), nullptr);

@@ -691,6 +691,7 @@ void ZeroHertzAdapterMode::ProcessRepeatedFrameOnDelayedCadence(int frame_id) {
 
   // Schedule another repeat before sending the frame off which could take time.
   ScheduleRepeat(frame_id, HasQualityConverged());
+  frame.set_is_repeat_frame(true);
   SendFrameNow(std::nullopt, frame);
 }
 

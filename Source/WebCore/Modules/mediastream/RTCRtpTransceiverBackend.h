@@ -46,6 +46,8 @@ public:
     virtual void stop() = 0;
     virtual bool stopped() const = 0;
     virtual ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodecCapability>&) = 0;
+
+    virtual bool isLibWebRTCRtpTransceiverBackend() const { return false; }
 };
 
 } // namespace WebCore

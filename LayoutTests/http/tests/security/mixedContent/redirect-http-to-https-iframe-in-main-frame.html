@@ -4,12 +4,12 @@
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpFrameLoadCallbacks();
 }
 
 window.addEventListener("message", function (e) {
-    if (e.data == "done")
-        alert("should not have loaded insecure content");
+    if (e.data !== 'blocked')
+        console.log('FAIL: Insecure iframe was NOT blocked');
+
     if (window.testRunner)
         testRunner.notifyDone();
 }, false);

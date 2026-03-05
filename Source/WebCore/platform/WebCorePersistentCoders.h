@@ -44,8 +44,11 @@ struct FetchOptions;
 struct ImageResource;
 struct ImportedScriptAttributes;
 struct NavigationPreloadState;
+struct RouterSourceDict;
 class SecurityOriginData;
-
+struct ServiceWorkerRoute;
+struct ServiceWorkerRouteCondition;
+struct ServiceWorkerRoutePattern;
 }
 
 namespace WTF::Persistence {
@@ -75,6 +78,10 @@ DECLARE_CODER(WebCore::ResourceResponse);
 DECLARE_CODER(WebCore::ResourceRequest);
 DECLARE_CODER(WebCore::SecurityOriginData);
 DECLARE_CODER(WebCore::NavigationPreloadState);
+DECLARE_CODER(WebCore::RouterSourceDict);
+DECLARE_CODER(WebCore::ServiceWorkerRoute);
+DECLARE_CODER(WebCore::ServiceWorkerRouteCondition);
+DECLARE_CODER(WebCore::ServiceWorkerRoutePattern);
 #undef DECLARE_CODER
 
 }

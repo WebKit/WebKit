@@ -29,6 +29,7 @@ from collections import OrderedDict
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models.test import Test
+from webkitpy.thirdparty.wpt.manifest.sourcefile import SourceFile
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
 
 supported_test_extensions = (
@@ -319,9 +320,9 @@ class LayoutTestFinder(object):
         it = self.fs.scandir(current_layout_tests_path)
         try:
             for entry in it:
-                if entry.is_dir(follow_symlinks=False):
+                if entry.is_dir():
                     dirs.add(entry.name)
-                elif entry.is_file(follow_symlinks=False):
+                elif entry.is_file():
                     if self.is_test_file(path, entry.name):
                         test_files.append(entry.name)
                     else:
@@ -337,7 +338,7 @@ class LayoutTestFinder(object):
             it = self.fs.scandir(search_path)
             try:
                 for entry in it:
-                    if entry.is_file(follow_symlinks=False):
+                    if entry.is_file():
                         non_test_files[search_path].add(entry.name)
             finally:
                 it.close()
@@ -602,10 +603,15 @@ class LayoutTestFinder(object):
 
     def is_wpt_crash_test(self, name):
         # This shouldn't exist, we should be reading the WPT manifest instead.
-        if "imported/w3c/web-platform-tests/" not in name and "http/wpt/" not in name:
+        if "imported/w3c/web-platform-tests/" in name:
+            base_dir = self.fs.join(self.layout_tests_base_dir, "imported/w3c/web-platform-tests/")
+            url_base = "/"
+        elif "http/wpt/" in name:
+            base_dir = self.fs.join(self.layout_tests_base_dir, "http/wpt/")
+            url_base = "/WebKit/"
+        else:
             return False
 
-        filename, _ = self.fs.splitext(name)
-        return (
-            filename.endswith(("-crash", "-crash.tentative")) or "/crashtests/" in name
-        )
+        sourcefile = SourceFile(base_dir, self.fs.relpath(name, base_dir), url_base)
+
+        return sourcefile.name_is_crashtest

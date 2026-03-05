@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WCBackingStore);
 WCBackingStore::WCBackingStore(std::optional<ImageBufferBackendHandle>&& handle)
 {
     if (auto* imageHandle = handle ? std::get_if<WebCore::ShareableBitmap::Handle>(&*handle) : nullptr)
-        m_bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle));
+        m_bitmap = WebCore::ShareableBitmap::create(WTF::move(*imageHandle));
 }
 
 std::optional<ImageBufferBackendHandle> WCBackingStore::handle() const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,10 +60,10 @@
 #include "SourceBuffer.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
-#include "VideoProjectionMetadata.h"
 #include "VideoTrack.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -130,9 +130,9 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
 
 static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& element)
 {
-    Document& document = element.document();
-    Page* page = document.page();
-    return document.isMediaDocument() && !document.ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
+    Ref document = element.document();
+    RefPtr page = document->page();
+    return document->isMediaDocument() && !document->ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
 }
 
 #if ENABLE(MEDIA_SESSION)
@@ -149,7 +149,7 @@ public:
         m_mediaSession->removeObserver(*this);
     }
 
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
     void metadataChanged(const RefPtr<MediaMetadata>& metadata) final
@@ -205,15 +205,10 @@ MediaElementSession::~MediaElementSession()
     if (!element)
         return;
 
-    auto page = element->document().page();
+    RefPtr page = element->document().page();
     if (page && m_haveAddedMediaUsageManagerSession)
         page->chrome().client().removeMediaUsageManagerSession(mediaSessionIdentifier());
 #endif
-}
-
-RefPtr<HTMLMediaElement> MediaElementSession::protectedElement() const
-{
-    return m_element.get();
 }
 
 void MediaElementSession::addMediaUsageManagerSessionIfNecessary()
@@ -226,7 +221,7 @@ void MediaElementSession::addMediaUsageManagerSessionIfNecessary()
     if (m_haveAddedMediaUsageManagerSession)
         return;
 
-    auto page = element->document().page();
+    RefPtr page = element->document().page();
     if (!page)
         return;
 
@@ -267,20 +262,25 @@ void MediaElementSession::clientWillBeginAutoplaying()
     updateClientDataBuffering();
 }
 
-bool MediaElementSession::clientWillBeginPlayback()
+void MediaElementSession::clientWillBeginPlayback(CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!PlatformMediaSession::clientWillBeginPlayback())
-        return false;
+    PlatformMediaSession::clientWillBeginPlayback([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool willBegin) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !willBegin) {
+            completionHandler(false);
+            return;
+        }
 
-    m_elementIsHiddenBecauseItWasRemovedFromDOM = false;
-    updateClientDataBuffering();
+        protectedThis->m_elementIsHiddenBecauseItWasRemovedFromDOM = false;
+        protectedThis->updateClientDataBuffering();
 
 #if ENABLE(MEDIA_SESSION)
-    if (auto* session = mediaSession())
-        session->willBeginPlayback();
+        if (RefPtr session = protectedThis->mediaSession())
+            session->willBeginPlayback();
 #endif
 
-    return true;
+        completionHandler(true);
+    });
 }
 
 bool MediaElementSession::clientWillPausePlayback()
@@ -291,7 +291,7 @@ bool MediaElementSession::clientWillPausePlayback()
     updateClientDataBuffering();
 
 #if ENABLE(MEDIA_SESSION)
-    if (auto* session = mediaSession())
+    if (RefPtr session = mediaSession())
         session->willPausePlayback();
 #endif
 
@@ -579,27 +579,37 @@ MediaPlayer::BufferingPolicy MediaElementSession::preferredBufferingPolicy() con
     if (!element)
         return MediaPlayer::BufferingPolicy::Default;
 
-    if (isSuspended())
-        return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
+    auto currentPolicy = element->bufferingPolicy();
+    auto isPlaying = state() == PlatformMediaSession::State::Playing;
+    MediaPlayer::BufferingPolicy newPolicy = [&] {
 
-    if (bufferingSuspended())
-        return MediaPlayer::BufferingPolicy::LimitReadAhead;
+        if (isSuspended())
+            return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
 
-    if (state() == PlatformMediaSession::State::Playing)
-        return MediaPlayer::BufferingPolicy::Default;
+        if (bufferingSuspended())
+            return MediaPlayer::BufferingPolicy::LimitReadAhead;
 
-    if (shouldOverrideBackgroundLoadingRestriction())
-        return MediaPlayer::BufferingPolicy::Default;
+        if (isPlaying)
+            return MediaPlayer::BufferingPolicy::Default;
+
+        if (shouldOverrideBackgroundLoadingRestriction())
+            return MediaPlayer::BufferingPolicy::Default;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (m_shouldPlayToPlaybackTarget)
-        return MediaPlayer::BufferingPolicy::Default;
+        if (m_shouldPlayToPlaybackTarget)
+            return MediaPlayer::BufferingPolicy::Default;
 #endif
 
-    if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || element->elementIsHidden())
-        return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
+        if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || element->elementIsHidden())
+            return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
 
-    return MediaPlayer::BufferingPolicy::Default;
+        return currentPolicy;
+    }();
+
+    if (currentPolicy == MediaPlayer::BufferingPolicy::PurgeResources && !isPlaying && newPolicy != MediaPlayer::BufferingPolicy::Default)
+        return MediaPlayer::BufferingPolicy::PurgeResources;
+
+    return newPolicy;
 }
 
 bool MediaElementSession::fullscreenPermitted() const
@@ -622,7 +632,7 @@ bool MediaElementSession::pageAllowsDataLoading() const
     if (!element)
         return false;
 
-    Page* page = element->document().page();
+    RefPtr page = element->document().page();
     if (m_restrictions & RequirePageConsentToLoadMedia && page && !page->canStartMedia()) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
@@ -637,7 +647,7 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming() const
     if (!element)
         return false;
 
-    Page* page = element->document().page();
+    RefPtr page = element->document().page();
     if (m_restrictions & RequirePageConsentToResumeMedia && page && !page->canStartMedia()) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
@@ -661,7 +671,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
     if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying
         && hasBehaviorRestriction(RequirePageVisibilityForVideoToBeNowPlaying)
         && element->isVideo()
-        && !element->protectedDocument()->protectedPage()->isVisibleAndActive()) {
+        && !protect(protect(element->document())->page())->isVisibleAndActive()) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE: NowPlaying restricted for video in a page that is not visible");
         return false;
     }
@@ -937,7 +947,7 @@ void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasList
 
 void MediaElementSession::setPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
-    m_playbackTarget = WTFMove(device);
+    m_playbackTarget = WTF::move(device);
     client().setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
 }
 
@@ -992,7 +1002,15 @@ void MediaElementSession::mediaStateDidChange(MediaProducerMediaStateFlags state
     if (RefPtr element = m_element.get())
         element->document().playbackTargetPickerClientStateDidChange(*this, state);
 }
-#endif
+
+MediaPlaybackTargetType MediaElementSession::playbackTargetType() const
+{
+    if (RefPtr playbackTarget = m_playbackTarget)
+        return playbackTarget->targetType();
+    return MediaPlaybackTargetType::None;
+}
+
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 MediaPlayer::Preload MediaElementSession::effectivePreloadForElement() const
 {
@@ -1091,8 +1109,7 @@ void MediaElementSession::mediaEngineUpdated()
         setWirelessVideoPlaybackDisabled(true);
     if (m_playbackTarget)
         client().setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
-    if (m_shouldPlayToPlaybackTarget)
-        client().setShouldPlayToPlaybackTarget(true);
+    client().setShouldPlayToPlaybackTarget(m_shouldPlayToPlaybackTarget);
 #endif
 
 }
@@ -1193,7 +1210,7 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
     OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent };
     HitTestResult result(rectRelativeToTopDocument.center());
 
-    localMainFrame->protectedDocument()->hitTest(hitType, result);
+    protect(localMainFrame->document())->hitTest(hitType, result);
     result.setToNonUserAgentShadowAncestor();
     return result.targetElement() == &element;
 }
@@ -1444,9 +1461,21 @@ bool MediaElementSession::hasNowPlayingInfo() const
         return false;
 
 #if ENABLE(MEDIA_STREAM)
-    RefPtr session = mediaSession();
-    if (element->hasMediaStreamSrcObject() && (!session || (!session->hasActiveActionHandlers() && !session->metadata())))
-        return false;
+    if (RefPtr session = mediaSession()) {
+        auto isActiveMediaElementPreventingNowPlayingInfo = [&] {
+            RefPtr activeMediaElement = session->activeMediaElement();
+            if (!activeMediaElement || activeMediaElement.get() == element.get())
+                return false;
+            return activeMediaElement->hasMediaStreamSrcObject() && (!session->hasActiveActionHandlers() && !session->metadata());
+        };
+        if (element->hasMediaStreamSrcObject()) {
+            if (!session->hasActiveActionHandlers() && !session->metadata())
+                return false;
+        } else if (isActiveMediaElementPreventingNowPlayingInfo()) {
+            ALWAYS_LOG(LOGIDENTIFIER, "MediaElementSession::hasNowPlayingInfo returning false due to active media element");
+            return false;
+        }
+    }
 #endif // ENABLE(MEDIA_STREAM)
 #endif // ENABLE(MEDIA_SESSION)
 
@@ -1470,11 +1499,11 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
     bool isPlaying = state() == PlatformMediaSession::State::Playing;
 
     bool supportsSeeking = element->supportsSeeking();
-    double rate = 1.0;
-    double duration = supportsSeeking ? element->duration() : MediaPlayer::invalidTime();
+    double rate = element->playbackRate();
+    double duration = supportsSeeking ? element->duration() : std::numeric_limits<double>::quiet_NaN();
     double currentTime = element->currentTime();
     if (!std::isfinite(currentTime) || !supportsSeeking)
-        currentTime = MediaPlayer::invalidTime();
+        currentTime = std::numeric_limits<double>::quiet_NaN();
     auto sourceApplicationIdentifier = element->sourceApplicationIdentifier();
 #if PLATFORM(COCOA)
     // FIXME: Eventually, this should be moved into HTMLMediaElement, so all clients
@@ -1492,6 +1521,7 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
             sourceApplicationIdentifier,
             { }
         },
+        cryptographicallyRandomNumber<uint64_t>(),
         duration,
         currentTime,
         rate,
@@ -1585,7 +1615,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     if (m_mediaUsageInfo && *m_mediaUsageInfo == usage)
         return;
 
-    m_mediaUsageInfo = WTFMove(usage);
+    m_mediaUsageInfo = WTF::move(usage);
 
 #if ENABLE(MEDIA_USAGE)
     addMediaUsageManagerSessionIfNecessary();
@@ -1616,10 +1646,10 @@ MediaSession* MediaElementSession::mediaSession() const
     if (!element)
         return nullptr;
 
-    auto* window = element->document().window();
+    RefPtr window = element->document().window();
     if (!window)
         return nullptr;
-    return &NavigatorMediaSession::mediaSession(window->protectedNavigator());
+    return &NavigatorMediaSession::mediaSession(protect(window->navigator()));
 #else
     return nullptr;
 #endif
@@ -1628,7 +1658,7 @@ MediaSession* MediaElementSession::mediaSession() const
 void MediaElementSession::ensureIsObservingMediaSession()
 {
 #if ENABLE(MEDIA_SESSION)
-    auto* session = mediaSession();
+    RefPtr session = mediaSession();
     if (!session || m_observer)
         return;
     m_observer = MediaElementSessionObserver::create(*this, *session);
@@ -1658,13 +1688,17 @@ void MediaElementSession::clientCharacteristicsChanged(bool positionChanged)
 {
 #if ENABLE(MEDIA_SESSION)
     RefPtr element = m_element.get();
-    auto* session = mediaSession();
+    RefPtr session = mediaSession();
     if (element && positionChanged && session) {
         auto positionState = session->positionState();
         if (positionState)
             session->setPositionState(MediaPositionState { positionState->duration, positionState->playbackRate, element->currentTime() });
     }
 #endif
+    if (positionChanged) {
+        if (RefPtr manager = sessionManager())
+            manager->updateNowPlayingInfo();
+    }
     PlatformMediaSession::clientCharacteristicsChanged(positionChanged);
 }
 
@@ -1685,10 +1719,11 @@ String MediaElementSession::descriptionForTrack(const VideoTrack& track)
         builder.append(' ', track.configuration().codec());
     if (track.configuration().isProtected())
         builder.append(" protected"_s);
-    if (track.configuration().spatialVideoMetadata())
-        builder.append(" spatial"_s);
-    if (auto metadata = track.configuration().videoProjectionMetadata())
+    if (auto metadata = track.configuration().immersiveVideoMetadata()) {
+        if (metadata->isSpatial())
+            builder.append(" spatial"_s);
         builder.append(' ', convertEnumerationToString(metadata->kind));
+    }
 
     return builder.toString();
 }

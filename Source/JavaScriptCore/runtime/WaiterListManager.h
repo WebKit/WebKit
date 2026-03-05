@@ -75,7 +75,7 @@ public:
     void setTimer(const AbstractLocker&, Ref<RunLoop::DispatchTimer>&& timer)
     {
         ASSERT(m_isAsync);
-        m_timer = WTFMove(timer);
+        m_timer = WTF::move(timer);
     }
 
     bool hasTimer(const AbstractLocker&)

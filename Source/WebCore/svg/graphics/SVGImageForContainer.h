@@ -50,7 +50,7 @@ public:
     bool hasRelativeHeight() const final { return m_image->hasRelativeHeight(); }
     void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final
     {
-        protectedImage()->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+        protect(m_image)->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, ImagePaintingOptions = { }) final;
@@ -65,7 +65,6 @@ public:
 
 private:
     WEBCORE_EXPORT SVGImageForContainer(SVGImage*, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL);
-    RefPtr<SVGImage> protectedImage() const;
 
     WeakPtr<SVGImage> m_image;
     const FloatSize m_containerSize;

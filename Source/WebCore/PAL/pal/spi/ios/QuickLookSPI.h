@@ -25,12 +25,20 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #import <Foundation/Foundation.h>
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS_FAMILY)
+
 #import <QuickLook/QuickLook.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://165510931) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #import <QuickLook/QuickLookPrivate.h>
 
@@ -95,3 +103,7 @@ NSString *QLTypeCopyBestMimeTypeForURLAndMimeType(NSURL *, NSString *mimeType);
 NSString *QLTypeCopyUTIForURLAndMimeType(NSURL *, NSString *mimeType);
 
 WTF_EXTERN_C_END
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#endif // !__has_feature(modules)

@@ -28,25 +28,14 @@
 #include "config.h"
 #include "BackingStore.h"
 
-#if USE(CAIRO) || PLATFORM(GTK)
+#if USE(CAIRO)
 
 #include "UpdateInfo.h"
+#include <WebCore/CairoUtilities.h>
+#include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ShareableBitmap.h>
 #include <cairo.h>
-
-#if USE(CAIRO)
-#include <WebCore/CairoUtilities.h>
-#include <WebCore/GraphicsContextCairo.h>
-#endif
-
-#if USE(SKIA)
-#include <WebCore/GraphicsContextSkia.h>
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/core/SkCanvas.h>
-#include <skia/core/SkSurface.h>
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -95,7 +84,7 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
     if (!updateInfo.bitmapHandle)
         return;
 
-    auto bitmap = ShareableBitmap::create(WTFMove(*updateInfo.bitmapHandle));
+    auto bitmap = ShareableBitmap::create(WTF::move(*updateInfo.bitmapHandle));
     if (!bitmap)
         return;
 
@@ -109,7 +98,6 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
     // Paint all update rects.
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
 
-#if USE(CAIRO)
     GraphicsContextCairo graphicsContext(m_surface.get());
 
     // When m_webPageProxy.drawsBackground() is false, bitmap contains transparent parts as a background of the webpage.
@@ -121,26 +109,6 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
         bitmap->paint(graphicsContext, m_deviceScaleFactor, updateRect.location(), srcRect);
     }
-#elif USE(SKIA)
-    cairo_surface_flush(m_surface.get());
-    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(m_surface.get()), cairo_image_surface_get_height(m_surface.get()) , SkColorSpace::MakeSRGB());
-    auto surface = SkSurfaces::WrapPixels(imageInfo, cairo_image_surface_get_data(m_surface.get()), cairo_image_surface_get_stride(m_surface.get()), nullptr);
-    SkCanvas* canvas = surface ? surface->getCanvas() : nullptr;
-    if (!canvas)
-        return;
-
-    GraphicsContextSkia graphicsContext(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::ShareableLocalSnapshot);
-    graphicsContext.setCompositeOperation(WebCore::CompositeOperator::Copy);
-    for (const auto& updateRect : updateInfo.updateRects) {
-        IntRect srcRect(updateRect);
-        srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
-        bitmap->paint(graphicsContext, m_deviceScaleFactor, updateRect.location(), srcRect);
-
-        IntRect damage(updateRect.location(), srcRect.size());
-        damage.scale(m_deviceScaleFactor);
-        cairo_surface_mark_dirty_rectangle(m_surface.get(), damage.x(), damage.y(), damage.width(), damage.height());
-    }
-#endif
 }
 
 void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
@@ -157,16 +125,6 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     if (!m_scrollSurface)
         m_scrollSurface = createCairoImageSurfaceWithFastMalloc(m_size, m_deviceScaleFactor);
 
-#if USE(SKIA)
-    auto copyRectFromOneSurfaceToAnother = [](cairo_surface_t* src, cairo_surface_t* dst, const IntSize& sourceOffset, const IntRect& rect) {
-        RefPtr<cairo_t> cr = adoptRef(cairo_create(dst));
-        cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
-        cairo_set_source_surface(cr.get(), src, sourceOffset.width(), sourceOffset.height());
-        cairo_rectangle(cr.get(), rect.x(), rect.y(), rect.width(), rect.height());
-        cairo_fill(cr.get());
-    };
-#endif
-
     copyRectFromOneSurfaceToAnother(m_surface.get(), m_scrollSurface.get(), scrollOffset, targetRect);
     copyRectFromOneSurfaceToAnother(m_scrollSurface.get(), m_surface.get(), { }, targetRect);
     m_scrolledHysteresis.impulse();
@@ -174,4 +132,4 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
 
 } // namespace WebKit
 
-#endif // USE(CAIRO) || PLATFORM(GTK)
+#endif // USE(CAIRO)

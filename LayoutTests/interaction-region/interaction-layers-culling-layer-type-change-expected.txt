@@ -2,6 +2,7 @@
 (CALayer tree root
   (layer bounds [x: 0 y: 0 width: 800 height: 700])
   (layer position [x: 400 y: 400])
+  (layer background color rgba(0, 0, 0, 0))
   (sublayers
     (
       (layer bounds [x: 0 y: 0 width: 0 height: 0])

@@ -28,8 +28,8 @@ var fromIndex = {
   }
 };
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([7]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([7]));
 
   assert.throws(Test262Error, function() {
     sample.includes(7, fromIndex);

@@ -7,7 +7,7 @@ layer at (0,0) size 800x106
         RenderTableSection (anonymous) at (1,1) size 782x88
           RenderTableRow {tr} at (0,2) size 782x84
             RenderTableCell {th} at (2,2) size 389x84 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 385x79
+              RenderText {#text} at (2,2) size 385x80
                 text run at (2,2) width 233: "This cell text should be justified "
                 text run at (234,2) width 153: "which means that the"
                 text run at (2,22) width 303: "right and left margins should line up, no "
@@ -15,6 +15,6 @@ layer at (0,0) size 800x106
                 text run at (2,42) width 385: "long the content becomes (except the last line which"
                 text run at (2,62) width 151: "should be left aligned)"
             RenderTableCell {th} at (392,32) size 389x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,32) size 243x19
+              RenderText {#text} at (2,32) size 243x20
                 text run at (2,2) width 187: "This cell text should be left "
                 text run at (188,2) width 57: "justified"

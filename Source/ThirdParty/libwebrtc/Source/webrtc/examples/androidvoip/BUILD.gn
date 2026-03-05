@@ -14,7 +14,7 @@ if (is_android) {
     testonly = true
     apk_name = "androidvoip"
     android_manifest = "AndroidManifest.xml"
-    min_sdk_version = 21
+    min_sdk_version = 23
     target_sdk_version = 31
 
     sources = [
@@ -56,14 +56,18 @@ if (is_android) {
     deps = [
       ":generated_jni",
       "../../api:array_view",
+      "../../api:sequence_checker",
       "../../api/audio:builtin_audio_processing_builder",
+      "../../api/environment",
       "../../api/environment:environment_factory",
       "../../rtc_base:async_packet_socket",
       "../../rtc_base:async_udp_socket",
       "../../rtc_base:checks",
+      "../../rtc_base:ip_address",
       "../../rtc_base:logging",
       "../../rtc_base:macromagic",
       "../../rtc_base:network",
+      "../../rtc_base:socket",
       "../../rtc_base:socket_address",
       "../../rtc_base:socket_server",
       "../../rtc_base:ssl_adapter",

@@ -36,9 +36,9 @@ PASS: compressed should be true.
 PASS: responseSource should be Symbol(network).
 size: 2955
 requestBodyTransferSize: 0
-responseBodyTransferSize: 1229
-estimatedNetworkEncodedSize: 1229
-networkEncodedSize: 1229
+responseBodyTransferSize: 1241
+estimatedNetworkEncodedSize: 1241
+networkEncodedSize: 1241
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
 PASS: networkTotalTransferSize should be >= (encoded body size + headers).
 PASS: requestHeadersTransferSize should be non-empty.
@@ -78,9 +78,9 @@ PASS: compressed should be false.
 PASS: responseSource should be Symbol(network).
 size: 512
 requestBodyTransferSize: 0
-responseBodyTransferSize: 512
-estimatedNetworkEncodedSize: 512
-networkEncodedSize: 512
+responseBodyTransferSize: 524
+estimatedNetworkEncodedSize: 524
+networkEncodedSize: 524
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
 PASS: networkTotalTransferSize should be >= (encoded body size + headers).
 PASS: requestHeadersTransferSize should be non-empty.

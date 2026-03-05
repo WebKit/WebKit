@@ -42,7 +42,7 @@ public:
     MallocSpan() = default;
 
     MallocSpan(MallocSpan&& other)
-        : AllocSpanMixin<T>(WTFMove(other))
+        : AllocSpanMixin<T>(WTF::move(other))
     {
     }
 
@@ -63,7 +63,7 @@ public:
 
     MallocSpan& operator=(MallocSpan&& other)
     {
-        MallocSpan ptr { WTFMove(other) };
+        MallocSpan ptr { WTF::move(other) };
         this->swap(ptr);
         return *this;
     }
@@ -137,7 +137,7 @@ public:
 
     MallocSpan& operator=(Base&& other)
     {
-        Base::operator=(WTFMove(other));
+        Base::operator=(WTF::move(other));
         return *this;
     }
 };

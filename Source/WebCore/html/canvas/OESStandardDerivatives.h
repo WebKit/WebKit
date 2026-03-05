@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class OESStandardDerivatives final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OESStandardDerivatives);
+    WTF_MAKE_TZONE_ALLOCATED(OESStandardDerivatives);
 public:
     explicit OESStandardDerivatives(WebGLRenderingContextBase&);
     ~OESStandardDerivatives();
@@ -42,3 +42,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(OESStandardDerivatives)

@@ -46,7 +46,7 @@ public:
         String stringValue;
         String treatNullAsEmptyStringValue;
         Vector<String> sequenceValue;
-        Variant<RefPtr<Node>, Vector<String>, OtherDictionary> unionValue;
+        Variant<Ref<Node>, Vector<String>, OtherDictionary> unionValue = OtherDictionary { };
         int clampLongValue;
         int enforceRangeLongValue;
     };
@@ -124,7 +124,7 @@ public:
     const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
     void setTestSequenceRecord(const Vector<KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
 
-    using TestUnion = Variant<String, int, bool, RefPtr<Node>, Vector<int>>;
+    using TestUnion = Variant<String, int, bool, Ref<Node>, Vector<int>>;
     const TestUnion& testUnion() const { return m_union; }
     void setTestUnion(TestUnion&& value) { m_union = value; }
 

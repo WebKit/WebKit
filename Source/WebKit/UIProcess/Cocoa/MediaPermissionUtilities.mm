@@ -203,7 +203,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
 
     RetainPtr allowButtonString = allowButtonText(reason);
     RetainPtr doNotAllowButtonString = doNotAllowButtonText(reason);
-    auto completionBlock = makeBlockPtr(WTFMove(completionHandler));
+    auto completionBlock = makeBlockPtr(WTF::move(completionHandler));
 
 #if PLATFORM(MAC)
     auto alert = adoptNS([NSAlert new]);
@@ -218,17 +218,20 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
     }];
 #else
     auto alert = WebKit::createUIAlertController(alertTitle.get(), nil);
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
         completionBlock(false);
     }];
 
-    [alert addAction:doNotAllowAction];
-    [alert addAction:allowAction];
+    [alert addAction:doNotAllowAction.get()];
+    [alert addAction:allowAction.get()];
 
+#if PLATFORM(VISION)
+    page.dispatchWillPresentModalUI();
+#endif
     [[webView _wk_viewControllerForFullScreenPresentation] presentViewController:alert.get() animated:YES completion:nil];
 #endif
 }
@@ -241,8 +244,8 @@ void requestAVCaptureAccessForType(MediaPermissionType type, CompletionHandler<v
 
 #if HAVE(AVCAPTUREDEVICE)
     RetainPtr mediaType = type == MediaPermissionType::Audio ? AVMediaTypeAudio : AVMediaTypeVideo;
-    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
-        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), authorized]() mutable {
+    auto decisionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL authorized) mutable {
+        callOnMainRunLoop([completionHandler = WTF::move(completionHandler), authorized]() mutable {
             completionHandler(authorized);
         });
     });
@@ -275,9 +278,9 @@ void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&& c
 {
     ASSERT(isMainRunLoop());
 
-    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](SFSpeechRecognizerAuthorizationStatus status) mutable {
+    auto decisionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler)](SFSpeechRecognizerAuthorizationStatus status) mutable {
         bool authorized = status == SFSpeechRecognizerAuthorizationStatusAuthorized;
-        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), authorized]() mutable {
+        callOnMainRunLoop([completionHandler = WTF::move(completionHandler), authorized]() mutable {
             completionHandler(authorized);
         });
     });

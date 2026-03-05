@@ -146,6 +146,8 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagMakeUpperCase();
     WEBCORE_EXPORT String contextMenuItemTagMakeLowerCase();
     WEBCORE_EXPORT String contextMenuItemTagCapitalize();
+    WEBCORE_EXPORT String contextMenuItemTagConvertToTraditionalChinese();
+    WEBCORE_EXPORT String contextMenuItemTagConvertToSimplifiedChinese();
     String contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     String contextMenuItemTagOpenVideoInNewWindow();
@@ -161,8 +163,8 @@ namespace WebCore {
     String contextMenuItemTagEnterVideoFullscreen();
     WEBCORE_EXPORT String contextMenuItemTagExitVideoFullscreen();
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    String contextMenuItemTagEnterVideoEnhancedFullscreen();
-    WEBCORE_EXPORT String contextMenuItemTagExitVideoEnhancedFullscreen();
+    String contextMenuItemTagEnterPictureInPicture();
+    WEBCORE_EXPORT String contextMenuItemTagExitPictureInPicture();
     String contextMenuItemTagEnterVideoViewer();
     WEBCORE_EXPORT String contextMenuItemTagExitVideoViewer();
 #endif
@@ -189,9 +191,7 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemPDFOpenWithDefaultViewer(const String& appName);
 #endif
 #if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
-    WEBCORE_EXPORT String contextMenuItemPDFSinglePage();
     WEBCORE_EXPORT String contextMenuItemPDFSinglePageContinuous();
-    WEBCORE_EXPORT String contextMenuItemPDFTwoPages();
     WEBCORE_EXPORT String contextMenuItemPDFTwoPagesContinuous();
     WEBCORE_EXPORT String contextMenuItemPDFZoomIn();
     WEBCORE_EXPORT String contextMenuItemPDFZoomOut();
@@ -201,6 +201,11 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemPDFAutoSize();
 #endif
 #endif // ENABLE(CONTEXT_MENU)
+
+#if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
+    WEBCORE_EXPORT String contextMenuItemPDFSinglePage();
+    WEBCORE_EXPORT String contextMenuItemPDFTwoPages();
+#endif
 
     WEBCORE_EXPORT String pdfDocumentTypeDescription();
 
@@ -231,7 +236,6 @@ namespace WebCore {
     String AXOutputText();
     String AXSearchFieldCancelButtonText();
     String AXAttachmentRoleText();
-    String AXRemovedText();
     String AXDetailsText();
     String AXSummaryText();
     String AXFeedText();
@@ -358,6 +362,8 @@ namespace WebCore {
     String textTrackOffMenuItemText();
     String textTrackOnMenuItemText();
     String textTrackAutomaticMenuItemText();
+    String captionStylePreview();
+    String captionStylePreviewWithProfileName(const String&);
 #if PLATFORM(COCOA)
     String addTrackLabelAsSuffix(const String&, const String&);
     String textTrackKindClosedCaptionsDisplayName();

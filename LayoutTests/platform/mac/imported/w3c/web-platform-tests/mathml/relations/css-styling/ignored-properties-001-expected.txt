@@ -4,7 +4,7 @@ FAIL maction layout is not affected by writing-mode: vertical-rl; assert_approx_
 PASS maction preferred width calculation is not affected by white-space: normal;
 FAIL maction layout is not affected by white-space: normal; assert_approx_equals: inline position (child 1) expected -84.875 +/- 1 but got -8
 PASS maction preferred width calculation is not affected by float: right;
-FAIL maction layout is not affected by float: right; assert_approx_equals: block position (child 1) expected -14 +/- 1 but got -22
+FAIL maction layout is not affected by float: right; assert_approx_equals: block position (child 1) expected -14.25 +/- 1 but got -22
 PASS maction preferred width calculation is not affected by align-content: end; justify-content: end;
 FAIL maction layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -84.875 +/- 1 but got -8
 PASS maction preferred width calculation is not affected by align-self: end; justify-self: end;
@@ -244,7 +244,7 @@ FAIL semantics layout is not affected by writing-mode: vertical-rl; assert_appro
 PASS semantics preferred width calculation is not affected by white-space: normal;
 FAIL semantics layout is not affected by white-space: normal; assert_approx_equals: inline position (child 1) expected -84.875 +/- 1 but got -8
 PASS semantics preferred width calculation is not affected by float: right;
-FAIL semantics layout is not affected by float: right; assert_approx_equals: block position (child 1) expected -14 +/- 1 but got -22
+FAIL semantics layout is not affected by float: right; assert_approx_equals: block position (child 1) expected -14.25 +/- 1 but got -22
 PASS semantics preferred width calculation is not affected by align-content: end; justify-content: end;
 FAIL semantics layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -84.875 +/- 1 but got -8
 PASS semantics preferred width calculation is not affected by align-self: end; justify-self: end;

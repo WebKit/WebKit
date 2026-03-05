@@ -144,7 +144,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
             }
         }
 
-        RELEASE_AND_RETURN(scope, ViewClass::create(globalObject, structure, WTFMove(buffer), offset, length));
+        RELEASE_AND_RETURN(scope, ViewClass::create(globalObject, structure, WTF::move(buffer), offset, length));
     }
     ASSERT(!offset && !lengthOpt);
 

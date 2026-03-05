@@ -49,7 +49,7 @@ TextStream& operator<<(TextStream& ts, Style::TextDecorationLine::Flag flag)
 }
 namespace Style {
 
-uint8_t TextDecorationLine::addOrReplaceIfNotNone(const TextDecorationLine& value)
+void TextDecorationLine::addOrReplaceIfNotNone(TextDecorationLine value)
 {
     value.switchOn(
         [&](CSS::Keyword::None) {
@@ -64,7 +64,6 @@ uint8_t TextDecorationLine::addOrReplaceIfNotNone(const TextDecorationLine& valu
             setFlags(newValue);
         }
     );
-    return m_packed;
 }
 
 // MARK: - Conversion
@@ -140,7 +139,7 @@ Ref<CSSValue> CSSValueCreation<OptionSet<TextDecorationLine::Flag>>::operator()(
         list.append(CSSPrimitiveValue::create(CSSValueLineThrough));
     if (value.contains(TextDecorationLine::Flag::Blink))
         list.append(CSSPrimitiveValue::create(CSSValueBlink));
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 // MARK: - Serialization

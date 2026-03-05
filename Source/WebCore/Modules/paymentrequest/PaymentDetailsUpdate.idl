@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=PAYMENT_REQUEST
+    Conditional=PAYMENT_REQUEST,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PaymentDetailsUpdate : PaymentDetailsBase {
     DOMString error;
     PaymentItem total;

@@ -99,6 +99,10 @@ static ObjectValue valueFromID(id object)
         return CoreIPCURL((NSURL *)object);
     case IPC::NSType::CF:
         return CoreIPCCFType((CFTypeRef)object);
+#if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+    case IPC::NSType::Set:
+        return nullptr; // Wrapped WKKeyedCoder serialization of PKPaymentSetupFeature
+#endif
     case IPC::NSType::Unknown:
         break;
     }
@@ -111,7 +115,7 @@ CoreIPCNSCFObject::CoreIPCNSCFObject(id object)
 }
 
 CoreIPCNSCFObject::CoreIPCNSCFObject(UniqueRef<ObjectValue>&& value)
-    : m_value(WTFMove(value))
+    : m_value(WTF::move(value))
 {
 }
 
@@ -164,7 +168,7 @@ std::optional<UniqueRef<WebKit::ObjectValue>> ArgumentCoder<UniqueRef<WebKit::Ob
     auto object = decoder.decode<WebKit::ObjectValue>();
     if (!object)
         return std::nullopt;
-    return makeUniqueRefWithoutFastMallocCheck<WebKit::ObjectValue>(WTFMove(*object));
+    return makeUniqueRefWithoutFastMallocCheck<WebKit::ObjectValue>(WTF::move(*object));
 }
 
 } // namespace IPC

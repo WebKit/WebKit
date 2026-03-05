@@ -39,7 +39,9 @@
 #endif
 
 #include "pas_all_heaps.h"
+#include "pas_basic_heap_runtime_config.h"
 #include "pas_heap.h"
+#include "pas_internal_config.h"
 #include "pas_mte.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_heap.h"
@@ -55,6 +57,13 @@ extern pas_basic_heap_runtime_config bmalloc_flex_runtime_config;
 extern pas_basic_heap_runtime_config bmalloc_intrinsic_runtime_config;
 extern pas_basic_heap_runtime_config bmalloc_typed_runtime_config;
 extern pas_basic_heap_runtime_config bmalloc_primitive_runtime_config;
+
+static pas_basic_heap_runtime_config* all_bmalloc_runtime_configs[] = {
+    &bmalloc_flex_runtime_config,
+    &bmalloc_intrinsic_runtime_config,
+    &bmalloc_typed_runtime_config,
+    &bmalloc_primitive_runtime_config,
+};
 #endif // PAS_ENABLE_BMALLOC
 #if PAS_ENABLE_JIT
 extern const pas_heap_config jit_heap_config;
@@ -163,6 +172,8 @@ static void pas_mte_do_initialization(void)
             *medium_byte = 1;
             *enabled_byte = 1;
             *hardened_byte = 1;
+
+            pas_mte_force_nontaggable_user_allocations_into_large_heap();
         } else {
             *medium_byte = 0;
 #if !PAS_USE_MTE_IN_WEBCONTENT
@@ -297,7 +308,7 @@ static void pas_report_config(void)
         pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
         mte_conf[0], mte_conf[1], mte_conf[2], mte_conf[3], mte_conf[4], mte_conf[5],
 #if PAS_ENABLE_BMALLOC
-        pas_system_heap_is_enabled(pas_heap_config_kind_bmalloc),
+        pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc),
         LOG_FMT_VARS_FOR_HEAP_CONFIG(bmalloc_heap_config),
         LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_flex_runtime_config),
         LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_intrinsic_runtime_config),
@@ -349,5 +360,16 @@ void pas_mte_ensure_initialized(void)
 #endif
 void pas_mte_ensure_initialized(void) { }
 #endif // PAS_OS(DARWIN)
+
+void pas_mte_force_nontaggable_user_allocations_into_large_heap(void)
+{
+#if PAS_ENABLE_BMALLOC
+    for (size_t i = 0; i < sizeof(all_bmalloc_runtime_configs) / sizeof(void*); i++) {
+        pas_basic_heap_runtime_config* cfg = all_bmalloc_runtime_configs[i];
+        cfg->base.max_segregated_object_size = (unsigned)PAS_MIN((size_t)cfg->base.max_segregated_object_size, PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE);
+        cfg->base.max_bitfit_object_size = (unsigned)PAS_MIN((size_t)cfg->base.max_bitfit_object_size, PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE);
+    }
+#endif
+}
 #endif // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #endif // LIBPAS_ENABLED

@@ -179,6 +179,26 @@ rtc_library("rtc_event_bwe") {
   ]
 }
 
+rtc_library("rtc_event_bwe_update_scream") {
+  sources = [
+    "rtc_event_log/events/rtc_event_bwe_update_scream.cc",
+    "rtc_event_log/events/rtc_event_bwe_update_scream.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_parse_status",
+    "../api:array_view",
+    "../api/rtc_event_log",
+    "../api/units:data_rate",
+    "../api/units:data_size",
+    "../api/units:time_delta",
+    "../api/units:timestamp",
+    "../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
 rtc_library("rtc_event_frame_events") {
   visibility = [ "*" ]
   sources = [
@@ -192,28 +212,6 @@ rtc_library("rtc_event_frame_events") {
     "../api/rtc_event_log",
     "../api/units:timestamp",
     "../api/video:video_frame",
-    "../rtc_base:timeutils",
-    "//third_party/abseil-cpp/absl/memory",
-    "//third_party/abseil-cpp/absl/strings:string_view",
-  ]
-}
-
-rtc_library("rtc_event_generic_packet_events") {
-  visibility = [ "*" ]
-  sources = [
-    "rtc_event_log/events/rtc_event_generic_ack_received.cc",
-    "rtc_event_log/events/rtc_event_generic_ack_received.h",
-    "rtc_event_log/events/rtc_event_generic_packet_received.cc",
-    "rtc_event_log/events/rtc_event_generic_packet_received.h",
-    "rtc_event_log/events/rtc_event_generic_packet_sent.cc",
-    "rtc_event_log/events/rtc_event_generic_packet_sent.h",
-  ]
-  deps = [
-    ":rtc_event_field",
-    ":rtc_event_log_parse_status",
-    "../api:array_view",
-    "../api/rtc_event_log",
-    "../api/units:timestamp",
     "../rtc_base:timeutils",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings:string_view",
@@ -362,9 +360,9 @@ rtc_library("rtc_event_log_impl_encoder") {
       ":rtc_event_audio",
       ":rtc_event_begin_end",
       ":rtc_event_bwe",
+      ":rtc_event_bwe_update_scream",
       ":rtc_event_field",
       ":rtc_event_frame_events",
-      ":rtc_event_generic_packet_events",
       ":rtc_event_log2_proto",
       ":rtc_event_log_api",
       ":rtc_event_log_blob_encoding",
@@ -446,6 +444,7 @@ if (rtc_enable_protobuf) {
       "../api/rtc_event_log",
       "../api/task_queue",
       "../api/units:time_delta",
+      "../api/units:timestamp",
       "../rtc_base:checks",
       "../rtc_base:logging",
       "../rtc_base:macromagic",
@@ -509,8 +508,8 @@ if (rtc_enable_protobuf) {
       ":rtc_event_audio",
       ":rtc_event_begin_end",
       ":rtc_event_bwe",
+      ":rtc_event_bwe_update_scream",
       ":rtc_event_frame_events",
-      ":rtc_event_generic_packet_events",
       ":rtc_event_log2_proto",
       ":rtc_event_log_blob_encoding",
       ":rtc_event_log_delta_encoding",
@@ -535,6 +534,7 @@ if (rtc_enable_protobuf) {
       "../api/video:video_frame",
       "../modules:module_api_public",
       "../modules/audio_coding:audio_network_adaptor",
+      "../modules/rtp_rtcp:ntp_time_util",
       "../modules/rtp_rtcp:rtp_rtcp_format",
       "../rtc_base:checks",
       "../rtc_base:copy_on_write_buffer",
@@ -579,9 +579,9 @@ if (rtc_enable_protobuf) {
         ":rtc_event_audio",
         ":rtc_event_begin_end",
         ":rtc_event_bwe",
+        ":rtc_event_bwe_update_scream",
         ":rtc_event_field",
         ":rtc_event_frame_events",
-        ":rtc_event_generic_packet_events",
         ":rtc_event_log2_proto",
         ":rtc_event_log2_proto_include",
         ":rtc_event_log_api",
@@ -607,11 +607,11 @@ if (rtc_enable_protobuf) {
         "../api:rtp_headers",
         "../api:rtp_parameters",
         "../api/environment",
-        "../api/environment:environment_factory",
         "../api/rtc_event_log",
         "../api/rtc_event_log:rtc_event_log_factory",
         "../api/transport:bandwidth_usage",
         "../api/units:data_rate",
+        "../api/units:data_size",
         "../api/units:time_delta",
         "../api/units:timestamp",
         "../api/video:video_frame",
@@ -627,13 +627,16 @@ if (rtc_enable_protobuf) {
         "../rtc_base:safe_conversions",
         "../rtc_base:timeutils",
         "../system_wrappers",
+        "../test:create_test_environment",
         "../test:create_test_field_trials",
         "../test:fileutils",
+        "../test:near_matcher",
         "../test:test_support",
         "../test/logging:log_writer",
         "../test/time_controller",
         "//testing/gtest",
         "//third_party/abseil-cpp/absl/algorithm:container",
+        "//third_party/abseil-cpp/absl/base:nullability",
         "//third_party/abseil-cpp/absl/memory",
         "//third_party/abseil-cpp/absl/strings:string_view",
       ]

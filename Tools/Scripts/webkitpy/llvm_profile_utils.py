@@ -131,6 +131,12 @@ class LLVMProfileData:
         return subprocess.run(['/usr/bin/compression_tool', '-encode', '-i', input_profile, '-o', output_file,
                                '-a', 'lzfse'], capture_output=True, check=True, text=True)
 
+    @classmethod
+    def decompress(cls, input_profile, output_file):
+        subprocess.run(['/usr/bin/touch', output_file], check=True)
+        return subprocess.run(['/usr/bin/compression_tool', '-decode', '-i', input_profile, '-o', output_file,
+                               '-a', 'lzfse'], capture_output=True, check=True, text=True)
+
 
 def merge_raw_profiles_in_directory_by_prefixes(prefix_list, input_directory, output_directory=None,
                                                 input_suffix='.profraw', output_suffix='.profdata'):

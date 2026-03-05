@@ -39,7 +39,7 @@ NativeExecutable* NativeExecutable::create(VM& vm, Ref<JSC::JITCode>&& callThunk
 {
     NativeExecutable* executable;
     executable = new (NotNull, allocateCell<NativeExecutable>(vm)) NativeExecutable(vm, function, constructor, implementationVisibility);
-    executable->finishCreation(vm, WTFMove(callThunk), WTFMove(constructThunk), name);
+    executable->finishCreation(vm, WTF::move(callThunk), WTF::move(constructThunk), name);
 
     vm.forEachDebugger([&] (Debugger& debugger) {
         debugger.didCreateNativeExecutable(*executable);
@@ -61,8 +61,8 @@ Structure* NativeExecutable::createStructure(VM& vm, JSGlobalObject* globalObjec
 void NativeExecutable::finishCreation(VM& vm, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, const String& name)
 {
     Base::finishCreation(vm);
-    m_jitCodeForCall = WTFMove(callThunk);
-    m_jitCodeForConstruct = WTFMove(constructThunk);
+    m_jitCodeForCall = WTF::move(callThunk);
+    m_jitCodeForConstruct = WTF::move(constructThunk);
     m_jitCodeForCallWithArityCheck = m_jitCodeForCall->addressForCall(ArityCheckMode::MustCheckArity);
     m_jitCodeForConstructWithArityCheck = m_jitCodeForConstruct->addressForCall(ArityCheckMode::MustCheckArity);
     m_name = name;

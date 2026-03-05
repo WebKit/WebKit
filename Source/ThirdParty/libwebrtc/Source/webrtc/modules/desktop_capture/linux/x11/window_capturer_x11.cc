@@ -166,13 +166,13 @@ void WindowCapturerX11::CaptureFrame() {
   if (GetWindowState(&atom_cache_, selected_window_) == IconicState) {
     // Window is in minimized. Return a 1x1 frame as same as OSX/Win does.
     std::unique_ptr<DesktopFrame> frame(
-        new BasicDesktopFrame(DesktopSize(1, 1)));
+        new BasicDesktopFrame(DesktopSize(1, 1), FOURCC_ARGB));
     callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
     return;
   }
 
   std::unique_ptr<DesktopFrame> frame(
-      new BasicDesktopFrame(x_server_pixel_buffer_.window_size()));
+      new BasicDesktopFrame(x_server_pixel_buffer_.window_size(), FOURCC_ARGB));
 
   x_server_pixel_buffer_.Synchronize();
   if (!x_server_pixel_buffer_.CaptureRect(DesktopRect::MakeSize(frame->size()),
@@ -247,6 +247,10 @@ std::unique_ptr<DesktopCapturer> WindowCapturerX11::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options) {
   if (!options.x_display())
     return nullptr;
+
+  RTC_LOG(LS_INFO)
+      << "video capture: WindowCapturerX11::CreateRawWindowCapturer creates "
+         "DesktopCapturer of type WindowCapturerX11";
   return std::unique_ptr<DesktopCapturer>(new WindowCapturerX11(options));
 }
 

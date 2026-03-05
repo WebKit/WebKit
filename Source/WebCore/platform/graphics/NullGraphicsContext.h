@@ -62,11 +62,11 @@ private:
 
     void didUpdateState(GraphicsContextState&) final { }
 
-    void drawNativeImage(NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final { }
+    void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final { }
 
     void drawSystemImage(SystemImage&, const FloatRect&) final { };
 
-    void drawPattern(NativeImage&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions) final { }
+    void drawPattern(const NativeImage&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions) final { }
 
     IntRect clipBounds() const final { return { }; }
 

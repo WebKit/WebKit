@@ -1,4 +1,6 @@
 
 PASS XRViewport attributes are valid - webgl
 PASS XRViewport attributes are valid - webgl2
+FAIL XRViewport attributes are valid with secondary views requested - webgl assert_equals: expected 3 but got 2
+FAIL XRViewport attributes are valid with secondary views requested - webgl2 assert_equals: expected 3 but got 2
 

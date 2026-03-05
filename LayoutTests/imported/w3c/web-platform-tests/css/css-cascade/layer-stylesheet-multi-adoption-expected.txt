@@ -1,0 +1,4 @@
+Test
+
+PASS layer-stylesheet-multi-adoption
+

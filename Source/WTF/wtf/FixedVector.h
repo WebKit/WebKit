@@ -82,7 +82,7 @@ public:
 
     FixedVector& operator=(FixedVector&& other)
     {
-        FixedVector tmp(WTFMove(other));
+        FixedVector tmp(WTF::move(other));
         swap(tmp);
         return *this;
     }
@@ -114,8 +114,8 @@ public:
     template<size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename VectorMalloc>
     explicit FixedVector(Vector<T, inlineCapacity, OverflowHandler, minCapacity, VectorMalloc>&& other)
     {
-        auto target = WTFMove(other);
-        m_storage = target.isEmpty() ? nullptr : Storage::createFromVector(WTFMove(target)).moveToUniquePtr();
+        auto target = WTF::move(other);
+        m_storage = target.isEmpty() ? nullptr : Storage::createFromVector(WTF::move(target)).moveToUniquePtr();
     }
 
     // FIXME: Should we remove this now that it's not required for HashTable::add? This assignment is non-trivial and
@@ -123,8 +123,8 @@ public:
     template<size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename VectorMalloc>
     FixedVector& operator=(Vector<T, inlineCapacity, OverflowHandler, minCapacity, VectorMalloc>&& other)
     {
-        auto target = WTFMove(other);
-        m_storage = target.isEmpty() ? nullptr : Storage::createFromVector(WTFMove(target)).moveToUniquePtr();
+        auto target = WTF::move(other);
+        m_storage = target.isEmpty() ? nullptr : Storage::createFromVector(WTF::move(target)).moveToUniquePtr();
         return *this;
     }
 
@@ -154,7 +154,7 @@ public:
     }
 
     size_t size() const { return m_storage ? m_storage->size() : 0; }
-    bool isEmpty() const { return m_storage ? m_storage->isEmpty() : true; }
+    bool isEmpty() const { return !m_storage || m_storage->isEmpty(); }
     size_t byteSize() const { return m_storage ? m_storage->byteSize() : 0; }
 
     iterator begin() LIFETIME_BOUND { return m_storage ? m_storage->begin() : nullptr; }
@@ -207,6 +207,13 @@ public:
     size_t reverseFind(const auto&) const;
     size_t reverseFindIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
 
+    size_t offsetFromStart(const T* value) const
+    {
+        ASSERT(value >= std::to_address(begin()));
+        ASSERT(value < std::to_address(end()));
+        return value - std::to_address(begin());
+    }
+
     void swap(Self& other)
     {
         using std::swap;
@@ -234,7 +241,7 @@ private:
     friend class JSC::LLIntOffsetsExtractor;
 
     FixedVector(std::unique_ptr<Storage>&& storage)
-        :  m_storage { WTFMove(storage) }
+        :  m_storage { WTF::move(storage) }
     { }
 
     std::unique_ptr<Storage> m_storage;

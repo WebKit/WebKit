@@ -52,8 +52,10 @@ public:
         while (m_index < size) {
             auto& next = m_clientVector[m_index++];
             if (next && m_resource->m_clients.contains(*next)) {
-                RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(T::expectedType() == CachedResourceClient::expectedType() || next->resourceClientType() == T::expectedType());
-                return static_cast<T*>(next.get());
+                if constexpr (std::same_as<T, CachedResourceClient>)
+                    return next.get();
+                else
+                    return downcast<T>(next.get());
             }
         }
         return nullptr;

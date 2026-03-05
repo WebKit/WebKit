@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,10 +153,20 @@ JS_EXPORT void JSGarbageCollect(JSContextRef ctx);
 #endif
 
 #if JSC_OBJC_API_ENABLED
+#if defined(__cplusplus)
+// In C++, avoid the forward declaration pattern from CF_ENUM
+// that triggers -Welaborated-enum-base warnings.
+#define JSC_CF_ENUM(enumName, ...) \
+    enum enumName : uint32_t { \
+        __VA_ARGS__                \
+    }
+#else
+// In Objective-C, use CF_ENUM for full Swift interop support.
 #define JSC_CF_ENUM(enumName, ...)       \
     typedef CF_ENUM(uint32_t, enumName) { \
         __VA_ARGS__                       \
     }
+#endif
 #else
 #define JSC_CF_ENUM(enumName, ...) \
     typedef enum {                  \

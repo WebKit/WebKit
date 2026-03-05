@@ -31,6 +31,7 @@
 #include <QuartzCore/CALayer.h>
 #include <WebCore/FloatRect.h>
 #include <pal/spi/cocoa/FoundationSPI.h>
+#include <wtf/RefPtr.h>
 
 OBJC_CLASS AVPlayerController;
 OBJC_CLASS NSDictionary;
@@ -43,14 +44,18 @@ class VideoPresentationModel;
 WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property (nonatomic, retain, nullable) NSString *videoGravity;
 @property (nonatomic, getter=isReadyForDisplay) BOOL readyForDisplay;
-@property (nonatomic, assign, nullable) WebCore::VideoPresentationModel* presentationModel;
+@property (nonatomic, assign) RefPtr<WebCore::VideoPresentationModel> presentationModel;
 @property (nonatomic, retain, nonnull) AVPlayerController *playerController;
-@property (nonatomic, retain, nonnull) CALayer *videoSublayer;
+@property (nonatomic, retain, nullable) CALayer *videoSublayer;
 @property (nonatomic, retain, nullable) CALayer *captionsLayer;
 @property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
 @property CGSize videoDimensions;
 @property (nonatomic) NSEdgeInsets legibleContentInsets;
+@property (nonatomic, readonly) BOOL showingCaptionPreview;
 - (WebCore::FloatRect)calculateTargetVideoFrame;
+
+- (void)setCaptionPreviewProfileID:(NSString * _Nonnull)profileID position:(CGPoint)position text:(nullable NSString *)text;
+- (void)stopShowingCaptionPreview;
 @end
 
 #endif // HAVE(AVKIT)

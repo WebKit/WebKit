@@ -54,8 +54,8 @@ public:
 #endif
     
     WEBCORE_EXPORT void addAnnotationHighlightWithRange(Ref<StaticRange>&&);
-    const HashMap<AtomString, Ref<Highlight>>& map() const { return m_map; }
-    const Vector<AtomString>& highlightNames() const { return m_highlightNames; }
+    const HashMap<AtomString, Ref<Highlight>>& map() const LIFETIME_BOUND { return m_map; }
+    const Vector<AtomString>& highlightNames() const LIFETIME_BOUND { return m_highlightNames; }
     
 private:
     HighlightRegistry() = default;

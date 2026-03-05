@@ -386,6 +386,48 @@ TEST(WKWebExtension, SymbolImageIcon)
 #endif
 }
 
+TEST(WKWebExtension, PrivateSymbolImageIcon)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+
+        @"icons": @{
+            @"16": @"symbol:moon.and.stars.artframe"
+        },
+
+        @"action": @{
+            @"default_icon": @"symbol:person.lanyardcard.fill"
+        }
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(16, 16)];
+    EXPECT_NOT_NULL(icon);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([icon isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(icon._isSymbolImage);
+#else
+    EXPECT_TRUE([icon isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(icon.isSymbolImage);
+#endif
+
+    auto *actionIcon = [testExtension actionIconForSize:CGSizeMake(16, 16)];
+    EXPECT_NOT_NULL(actionIcon);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([actionIcon isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(actionIcon._isSymbolImage);
+#else
+    EXPECT_TRUE([actionIcon isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(actionIcon.isSymbolImage);
+#endif
+}
+
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 TEST(WKWebExtension, MultipleIconVariants)
 {

@@ -61,6 +61,7 @@
     position: relative;
     top: auto;
     border: none;
+    margin-inline-end: 3px;
 }
 
 :not(.console-drawer) > .navigation-bar > .item.find-banner.console {
@@ -76,10 +77,6 @@
 .navigation-bar > .item.find-banner.console > :is(input[type="search"], button) {
     background-color: inherit;
     height: 22px;
-}
-
-.navigation-bar > .item.find-banner.console > input[type="search"]::-webkit-textfield-decoration-container {
-    margin-inline-start: 4px;
 }
 
 .navigation-bar > .item.find-banner.console > input[type="search"]:focus,

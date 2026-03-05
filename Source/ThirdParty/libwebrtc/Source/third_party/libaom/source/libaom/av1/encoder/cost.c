@@ -10,6 +10,7 @@
  */
 #include <assert.h>
 
+#include "aom_dsp/entcode.h"
 #include "av1/encoder/cost.h"
 #include "av1/common/entropy.h"
 

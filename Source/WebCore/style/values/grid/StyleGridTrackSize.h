@@ -123,7 +123,7 @@ struct GridTrackSize {
     GridTrackSize(Breadth&& breadth)
         : m_type(Type::Breadth)
         , m_minTrackBreadth(breadth)
-        , m_maxTrackBreadth(WTFMove(breadth))
+        , m_maxTrackBreadth(WTF::move(breadth))
     {
         cacheMinMaxTrackBreadthTypes();
     }
@@ -138,8 +138,8 @@ struct GridTrackSize {
 
     GridTrackSize(MinMax&& minMax)
         : m_type(Type::MinMax)
-        , m_minTrackBreadth(WTFMove(minMax->min))
-        , m_maxTrackBreadth(WTFMove(minMax->max))
+        , m_minTrackBreadth(WTF::move(minMax->min))
+        , m_maxTrackBreadth(WTF::move(minMax->max))
     {
         cacheMinMaxTrackBreadthTypes();
     }
@@ -153,7 +153,7 @@ struct GridTrackSize {
 
     GridTrackSize(FitContent&& fitContent)
         : m_type(Type::FitContent)
-        , m_fitContentTrackLength(WTFMove(*fitContent))
+        , m_fitContentTrackLength(WTF::move(*fitContent))
     {
         cacheMinMaxTrackBreadthTypes();
     }

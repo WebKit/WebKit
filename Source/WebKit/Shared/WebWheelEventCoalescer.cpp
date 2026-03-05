@@ -63,7 +63,7 @@ bool WebWheelEventCoalescer::canCoalesce(const WebWheelEvent& a, const WebWheelE
     if (a.momentumPhase() != b.momentumPhase())
         return false;
 #endif
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     if (a.hasPreciseScrollingDeltas() != b.hasPreciseScrollingDeltas())
         return false;
 #endif
@@ -85,7 +85,7 @@ WebWheelEvent WebWheelEventCoalescer::coalesce(const WebWheelEvent& a, const Web
         mergedRawPlatformScrollingDelta = a.rawPlatformDelta().value() + b.rawPlatformDelta().value();
 
     auto event = WebWheelEvent({ WebEventType::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.directionInvertedFromDevice(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.scrollCount(), mergedUnacceleratedScrollingDelta, b.ioHIDEventTimestamp(), mergedRawPlatformScrollingDelta, b.momentumEndType());
-#elif PLATFORM(GTK) || USE(LIBWPE)
+#elif PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     auto event = WebWheelEvent({ WebEventType::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas());
 #else
     auto event = WebWheelEvent({ WebEventType::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity());
@@ -136,7 +136,7 @@ std::optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
         LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::wheelEventWithCoalescing coalesced " << *coalescedSequence << " into " << platform(coalescedWebEvent));
 #endif
 
-    m_eventsBeingProcessed.append(WTFMove(coalescedSequence));
+    m_eventsBeingProcessed.append(WTF::move(coalescedSequence));
     return coalescedWebEvent;
 }
 

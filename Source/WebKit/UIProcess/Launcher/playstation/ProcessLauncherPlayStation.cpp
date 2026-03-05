@@ -96,8 +96,8 @@ void ProcessLauncher::launchProcess()
     }
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, appLocalPid, serverIdentifier = WTFMove(socketPair.server)] mutable {
-        protectedThis->didFinishLaunchingProcess(appLocalPid, IPC::Connection::Identifier { WTFMove(serverIdentifier) });
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, appLocalPid, serverIdentifier = WTF::move(socketPair.server)] mutable {
+        protectedThis->didFinishLaunchingProcess(appLocalPid, IPC::Connection::Identifier { WTF::move(serverIdentifier) });
     });
 }
 

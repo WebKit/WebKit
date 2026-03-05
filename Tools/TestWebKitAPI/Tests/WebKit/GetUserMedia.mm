@@ -217,14 +217,24 @@ void doCaptureMuteTest(NOESCAPE const Function<void(TestWKWebView*, _WKMediaMute
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_CaptureMute)
+#else
 TEST(WebKit2, CaptureMute)
+#endif
 {
     doCaptureMuteTest([](auto* webView, auto state) {
         [webView _setPageMuted: state];
     });
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_CaptureMute2)
+#else
 TEST(WebKit2, CaptureMute2)
+#endif
 {
     doCaptureMuteTest([](auto* webView, auto state) {
         WKPageSetMuted([webView _pageForTesting], state);
@@ -247,7 +257,12 @@ bool waitUntilMicrophoneState(WKWebView *webView, WKMediaCaptureState expectedSt
     return expectedState == microphoneCaptureState;
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_CaptureMuteAPI)
+#else
 TEST(WebKit2, CaptureMuteAPI)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -1948,7 +1963,12 @@ TEST(WebKit2, OrientationNotAffectedByCSSOrientation)
 
 #endif
 
+// FIXME when webkit.org/b/309014 is resolved.
+#if PLATFORM(MAC)
+TEST(GetUserMedia, DISABLED_ClearRemoteVideoFrameObjectHeapPixelConformerUnderMemoryPressure)
+#else
 TEST(GetUserMedia, ClearRemoteVideoFrameObjectHeapPixelConformerUnderMemoryPressure)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureAudioInGPUProcessEnabled"));
@@ -2054,7 +2074,12 @@ TEST(WebKit2, getUserMediaWithDeviceChangeWebPage)
     done = false;
 }
 
+// FIXME when rdar://169549045 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_GetUserMediaAfterMuting)
+#else
 TEST(WebKit2, GetUserMediaAfterMuting)
+#endif
 {
     [TestProtocol registerWithScheme:@"https"];
 
@@ -2137,6 +2162,87 @@ TEST(WebKit, GetUserMediaWithWebThread)
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveMicrophone));
 }
 #endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+
+#if ENABLE(WEB_ARCHIVE)
+TEST(GetUserMedia, OriginAndWebArchivePermission)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { "body"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+
+    RetainPtr navDelegate = adoptNS([TestNavigationDelegate new]);
+
+    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+    [webView addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+
+    [navDelegate allowAnyTLSCertificate];
+    [webView setUIDelegate:delegate.get()];
+    [webView setNavigationDelegate:navDelegate.get()];
+
+    [delegate setAudioDecision:WKPermissionDecisionGrant];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    [navDelegate waitForDidFinishNavigation];
+
+    cameraCaptureStateChange = false;
+    EXPECT_EQ([webView cameraCaptureState], WKMediaCaptureStateNone);
+    [webView evaluateJavaScript:@"navigator.mediaDevices.enumerateDevices().then(() => { return navigator.mediaDevices.getUserMedia({ audio: false, video: true }) });" completionHandler:nil];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+    EXPECT_EQ([webView cameraCaptureState], WKMediaCaptureStateActive);
+
+    [delegate waitUntilPrompted];
+    [delegate resetWasPrompted];
+
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"example" withExtension:@"webarchive"];
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [navDelegate waitForDidFinishNavigation];
+    __block bool doneEvaluatingJavaScript { false };
+    [webView callAsyncJavaScript:@"return (await navigator.permissions.query({ name: \"camera\" })).state" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"prompt", result);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    doneEvaluatingJavaScript = false;
+    [webView callAsyncJavaScript:@"return (await navigator.permissions.query({ name: \"microphone\" })).state" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"prompt", result);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    doneEvaluatingJavaScript = false;
+    [webView callAsyncJavaScript:@"try { await navigator.mediaDevices.getUserMedia({ audio: false, video: true }); return null; } catch (err) { return err.name; }" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"TypeError", result);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    EXPECT_EQ([delegate numberOfPrompts], 1);
+    [webView removeObserver:observer.get() forKeyPath:@"microphoneCaptureState"];
+    [webView removeObserver:observer.get() forKeyPath:@"cameraCaptureState"];
+}
+#endif
 
 } // namespace TestWebKitAPI
 

@@ -540,7 +540,7 @@ static void wpeViewDRMDidPageFlip(WPEViewDRM* view)
     if (updateFlags.contains(UpdateFlags::BufferUpdateRequested)) {
         if (priv->committedBuffer)
             wpe_view_buffer_released(WPE_VIEW(view), priv->committedBuffer.get());
-        priv->committedBuffer = WTFMove(priv->pendingBuffer);
+        priv->committedBuffer = WTF::move(priv->pendingBuffer);
         wpe_view_buffer_rendered(WPE_VIEW(view), priv->committedBuffer.get());
     }
 

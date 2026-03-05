@@ -65,7 +65,7 @@ public:
     long long totalPageAndResourceBytesToLoad() const { return m_totalPageAndResourceBytesToLoad; }
     long long totalBytesReceived() const { return m_totalBytesReceived; }
 
-    bool isMainLoadProgressing() const;
+    bool NODELETE isMainLoadProgressing() const;
 
 private:
     void reset();
@@ -73,7 +73,6 @@ private:
     void progressEstimateChanged(LocalFrame&);
 
     void progressHeartbeatTimerFired();
-    Ref<Page> protectedPage() const;
 
     WeakRef<Page> m_page;
     const UniqueRef<ProgressTrackerClient> m_client;

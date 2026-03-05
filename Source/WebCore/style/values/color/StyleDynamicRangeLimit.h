@@ -87,7 +87,7 @@ inline DynamicRangeLimit::DynamicRangeLimit(CSS::Keyword::NoLimit keyword)
 }
 
 inline DynamicRangeLimit::DynamicRangeLimit(DynamicRangeLimitMixFunction&& mix)
-    : value { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(WTFMove(mix)) }
+    : value { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(WTF::move(mix)) }
 {
 }
 

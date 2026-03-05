@@ -30,6 +30,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/WTFString.h>
 
@@ -61,7 +62,7 @@ static bool linkedBefore(dyld_build_version_t version, uint32_t fallbackIOSVersi
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RuntimeApplicationChecksCocoaAdditions.cpp>)
 #import <WebKitAdditions/RuntimeApplicationChecksCocoaAdditions.cpp>
 #else
-static void disableAdditionalSDKAlignedBehaviors(SDKAlignedBehaviors&)
+static void NODELETE disableAdditionalSDKAlignedBehaviors(SDKAlignedBehaviors&)
 {
 }
 #endif
@@ -238,17 +239,15 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
     if (linkedBefore(dyld_2024_SU_F_os_versions, DYLD_IOS_VERSION_18_5, DYLD_MACOSX_VERSION_15_5))
         disableBehavior(SDKAlignedBehavior::NavigationActionSourceFrameNonNull);
 
-    if (linkedBefore(dyld_2025_SU_B_os_versions, DYLD_IOS_VERSION_26_1, DYLD_MACOSX_VERSION_26_1)) {
-        disableBehavior(SDKAlignedBehavior::AllowBackgroundAudioPlayback);
+    if (linkedBefore(dyld_2025_SU_B_os_versions, DYLD_IOS_VERSION_26_1, DYLD_MACOSX_VERSION_26_1))
         disableBehavior(SDKAlignedBehavior::GetBoundingClientRectZoomed);
-    }
 
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;
 }
 
-static std::optional<SDKAlignedBehaviors>& sdkAlignedBehaviorsValue()
+static std::optional<SDKAlignedBehaviors>& NODELETE sdkAlignedBehaviorsValue()
 {
     static NeverDestroyed<std::optional<SDKAlignedBehaviors>> behaviors;
     return behaviors.get();
@@ -290,7 +289,7 @@ bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior behavior)
     return sdkAlignedBehaviors().get(static_cast<size_t>(behavior));
 }
 
-static bool& processIsExtensionValue()
+static bool& NODELETE processIsExtensionValue()
 {
     static bool processIsExtension;
     return processIsExtension;
@@ -312,7 +311,7 @@ static bool applicationBundleIdentifierOverrideWasQueried;
 
 // The application bundle identifier gets set to the UIProcess bundle identifier by the WebProcess and
 // the Networking upon initialization. It is unset otherwise.
-static String& bundleIdentifierOverride()
+static String& NODELETE bundleIdentifierOverride()
 {
     static NeverDestroyed<String> identifierOverride;
 #if !ASSERT_MSG_DISABLED
@@ -321,7 +320,7 @@ static String& bundleIdentifierOverride()
     return identifierOverride;
 }
 
-static String& bundleIdentifier()
+static String& NODELETE bundleIdentifier()
 {
     static NeverDestroyed<String> identifier;
     return identifier;
@@ -361,6 +360,22 @@ void clearApplicationBundleIdentifierTestingOverride()
 #endif
 }
 
+#if USE(SOURCE_APPLICATION_AUDIT_DATA)
+
+static std::optional<audit_token_t> applicationAuditTokenStorage;
+
+void setApplicationAuditToken(audit_token_t token)
+{
+    applicationAuditTokenStorage = token;
+}
+
+std::optional<audit_token_t> applicationAuditToken()
+{
+    return applicationAuditTokenStorage;
+}
+
+#endif
+
 static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
 {
     return applicationBundleIdentifier() == bundleIdentifierString;
@@ -397,6 +412,10 @@ bool CocoaApplication::isDumpRenderTree()
 
 bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
 {
+    static bool isInternalBuild = os_variant_allows_internal_security_policies("com.apple.WebKit");
+    if (!isInternalBuild)
+        return false;
+
     static bool bundleIdentifierShouldLog = [] {
         if (!isAppleApplication())
             return false;
@@ -487,6 +506,12 @@ bool MacApplication::isMimeoPhotoProject()
     return isMimeoPhotoProject;
 }
 
+bool MacApplication::isGridLegends()
+{
+    static bool isGridLegends = applicationBundleIsEqualTo("com.feralinteractive.gridlegends"_s);
+    return isGridLegends;
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
@@ -501,6 +526,12 @@ bool IOSApplication::isMobileMail()
 {
     static bool isMobileMail = applicationBundleIsEqualTo("com.apple.mobilemail"_s);
     return isMobileMail;
+}
+
+bool IOSApplication::isMaild()
+{
+    static bool isMaild = applicationBundleIsEqualTo("com.apple.email.maild"_s);
+    return isMaild;
 }
 
 bool IOSApplication::isMailCompositionService()
@@ -603,18 +634,6 @@ bool IOSApplication::isMyRideK12()
 {
     static bool isMyRideK12 = applicationBundleIsEqualTo("com.tylertech.myridek12"_s);
     return isMyRideK12;
-}
-
-bool IOSApplication::isFirefox()
-{
-    static bool isFirefox = applicationBundleIsEqualTo("org.mozilla.ios.Firefox"_s);
-    return isFirefox;
-}
-
-bool IOSApplication::isFirefoxFocus()
-{
-    static bool isFirefoxFocus = applicationBundleIsEqualTo("org.mozilla.ios.Focus"_s);
-    return isFirefoxFocus;
 }
 
 bool IOSApplication::isHimalaya()

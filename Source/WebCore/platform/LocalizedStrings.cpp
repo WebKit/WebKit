@@ -533,19 +533,9 @@ String contextMenuItemPDFOpenWithDefaultViewer(const String& appName)
 #endif
 
 #if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
-String contextMenuItemPDFSinglePage()
-{
-    return WEB_UI_STRING_WITH_MNEMONIC("Single Page", "_Single Page", "Single Page context menu item");
-}
-
 String contextMenuItemPDFSinglePageContinuous()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Single Page Continuous", "_Single Page Continuous", "Single Page Continuous context menu item");
-}
-
-String contextMenuItemPDFTwoPages()
-{
-    return WEB_UI_STRING_WITH_MNEMONIC("Two Pages", "_Two Pages", "Two Pages context menu item");
 }
 
 String contextMenuItemPDFTwoPagesContinuous()
@@ -585,6 +575,18 @@ String contextMenuItemPDFPreviousPage()
 #endif
 
 #endif // ENABLE(CONTEXT_MENUS)
+
+#if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
+String contextMenuItemPDFSinglePage()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Single Page", "_Single Page", "Single Page context menu item");
+}
+
+String contextMenuItemPDFTwoPages()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Two Pages", "_Two Pages", "Two Pages context menu item");
+}
+#endif
 
 #if !PLATFORM(COCOA)
 String pdfDocumentTypeDescription()
@@ -708,11 +710,6 @@ String AXOutputText()
 String AXAttachmentRoleText()
 {
     return WEB_UI_STRING("attachment", "accessibility role description for an attachment element");
-}
-
-String AXRemovedText()
-{
-    return WEB_UI_STRING("removed", "prefix for announcing removed content in live regions");
 }
 
 String AXSearchFieldCancelButtonText()
@@ -1358,6 +1355,16 @@ String textTrackOnMenuItemText()
 String textTrackAutomaticMenuItemText()
 {
     return WEB_UI_STRING_KEY("Auto (Recommended)", "Auto (Recommended) (text track)", "Menu item label for automatic track selection behavior.");
+}
+
+String captionStylePreviewWithProfileName(const String& profileName)
+{
+    return WEB_UI_FORMAT_STRING("This is the %s subtitle style", "This is the %s subtitle style (Caption User Preferences)", profileName.utf8().data());
+}
+
+String captionStylePreview()
+{
+    return WEB_UI_STRING_KEY("This is a preview style", "This is a preview style (Caption User Preferences)", "Caption Style Preview String");
 }
 
 #if PLATFORM(COCOA)

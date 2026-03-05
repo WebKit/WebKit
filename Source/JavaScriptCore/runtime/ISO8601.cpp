@@ -777,7 +777,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            return TimeZoneRecord { true, std::nullopt, WTFMove(timeZone.value()) };
+            return TimeZoneRecord { true, std::nullopt, WTF::move(timeZone.value()) };
         }
         return TimeZoneRecord { true, std::nullopt, { } };
     }
@@ -792,7 +792,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            return TimeZoneRecord { false, offset.value(), WTFMove(timeZone.value()) };
+            return TimeZoneRecord { false, offset.value(), WTF::move(timeZone.value()) };
         }
         return TimeZoneRecord { false, offset.value(), { } };
     }
@@ -802,7 +802,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
         auto timeZone = parseTimeZoneAnnotation(buffer);
         if (!timeZone)
             return std::nullopt;
-        return TimeZoneRecord { false, std::nullopt, WTFMove(timeZone.value()) };
+        return TimeZoneRecord { false, std::nullopt, WTF::move(timeZone.value()) };
     }
     default:
         return std::nullopt;
@@ -910,7 +910,7 @@ static std::optional<RFC9557Annotation> parseOneRFC9557Annotation(StringParsingB
     if (*buffer != ']')
         return std::nullopt;
     buffer.advance();
-    return RFC9557Annotation { flag, RFC9557Key::Calendar, WTFMove(result) };
+    return RFC9557Annotation { flag, RFC9557Key::Calendar, WTF::move(result) };
 }
 
 template<typename CharacterType>
@@ -961,14 +961,14 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parse
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
-        return std::tuple { WTFMove(plainTime.value()), std::nullopt };
+        return std::tuple { WTF::move(plainTime.value()), std::nullopt };
     if (canBeTimeZone(buffer, *buffer)) {
         auto timeZone = parseTimeZone(buffer);
         if (!timeZone)
             return std::nullopt;
-        return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZone) };
+        return std::tuple { WTF::move(plainTime.value()), WTF::move(timeZone) };
     }
-    return std::tuple { WTFMove(plainTime.value()), std::nullopt };
+    return std::tuple { WTF::move(plainTime.value()), std::nullopt };
 }
 
 template<typename CharacterType>
@@ -1106,8 +1106,11 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
     } else
         return std::nullopt;
 
-    if (format == TemporalDateFormat::YearMonth && buffer.atEnd())
+    if (format == TemporalDateFormat::YearMonth && buffer.atEnd()) {
+        if (!isYearWithinLimits(year)) [[unlikely]]
+            year = outOfRangeYear;
         return PlainDate(year, month, 1);
+    }
 
     if (*buffer == '-') {
         if (splitByHyphen || format != TemporalDateFormat::Date)
@@ -1160,21 +1163,21 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
     if (!plainDate)
         return std::nullopt;
     if (buffer.atEnd())
-        return std::tuple { WTFMove(plainDate.value()), std::nullopt, std::nullopt };
+        return std::tuple { WTF::move(plainDate.value()), std::nullopt, std::nullopt };
 
     if (*buffer == ' ' || *buffer == 'T' || *buffer == 't') {
         buffer.advance();
         auto plainTimeAndTimeZone = parseTime(buffer);
         if (!plainTimeAndTimeZone)
             return std::nullopt;
-        auto [plainTime, timeZone] = WTFMove(plainTimeAndTimeZone.value());
-        return std::tuple { WTFMove(plainDate.value()), WTFMove(plainTime), WTFMove(timeZone) };
+        auto [plainTime, timeZone] = WTF::move(plainTimeAndTimeZone.value());
+        return std::tuple { WTF::move(plainDate.value()), WTF::move(plainTime), WTF::move(timeZone) };
     }
 
     if (canBeTimeZone(buffer, *buffer))
         return std::nullopt;
 
-    return std::tuple { WTFMove(plainDate.value()), std::nullopt, std::nullopt };
+    return std::tuple { WTF::move(plainDate.value()), std::nullopt, std::nullopt };
 }
 
 template<typename CharacterType>
@@ -1196,18 +1199,18 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::o
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
-        return std::tuple { WTFMove(plainTime.value()), std::nullopt, std::nullopt };
+        return std::tuple { WTF::move(plainTime.value()), std::nullopt, std::nullopt };
 
     std::optional<TimeZoneRecord> timeZoneOptional;
     if (canBeTimeZone(buffer, *buffer)) {
         auto timeZone = parseTimeZone(buffer);
         if (!timeZone)
             return std::nullopt;
-        timeZoneOptional = WTFMove(timeZone);
+        timeZoneOptional = WTF::move(timeZone);
     }
 
     if (buffer.atEnd())
-        return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), std::nullopt };
+        return std::tuple { WTF::move(plainTime.value()), WTF::move(timeZoneOptional), std::nullopt };
 
     std::optional<CalendarID> calendarOptional;
     if (canBeRFC9557Annotation(buffer)) {
@@ -1215,10 +1218,10 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::o
         if (!calendars)
             return std::nullopt;
         if (calendars.value().size() > 0)
-            calendarOptional = WTFMove(calendars.value()[0]);
+            calendarOptional = WTF::move(calendars.value()[0]);
     }
 
-    return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), WTFMove(calendarOptional) };
+    return std::tuple { WTF::move(plainTime.value()), WTF::move(timeZoneOptional), WTF::move(calendarOptional) };
 }
 
 template<typename CharacterType>
@@ -1232,7 +1235,7 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
     if (!dateTime)
         return std::nullopt;
 
-    auto [plainDate, plainTimeOptional, timeZoneOptional] = WTFMove(dateTime.value());
+    auto [plainDate, plainTimeOptional, timeZoneOptional] = WTF::move(dateTime.value());
 
     std::optional<CalendarID> calendarOptional;
     if (!buffer.atEnd() && canBeRFC9557Annotation(buffer)) {
@@ -1240,10 +1243,10 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
         if (!calendars)
             return std::nullopt;
         if (calendars.value().size() > 0)
-            calendarOptional = WTFMove(calendars.value()[0]);
+            calendarOptional = WTF::move(calendars.value()[0]);
     }
 
-    return std::tuple { WTFMove(plainDate), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), WTFMove(calendarOptional) };
+    return std::tuple { WTF::move(plainDate), WTF::move(plainTimeOptional), WTF::move(timeZoneOptional), WTF::move(calendarOptional) };
 }
 
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView string)
@@ -1363,7 +1366,7 @@ std::optional<ExactTime> parseInstant(StringView string)
         auto datetime = parseCalendarDateTime(buffer, TemporalDateFormat::Date);
         if (!datetime)
             return std::nullopt;
-        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(datetime.value());
+        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTF::move(datetime.value());
         if (!timeZoneOptional || (!timeZoneOptional->m_z && !timeZoneOptional->m_offset))
             return std::nullopt;
         if (!buffer.atEnd())
@@ -1550,6 +1553,15 @@ String temporalDateTimeToString(PlainDate plainDate, PlainTime plainTime, std::t
 String temporalDateToString(PlainDate plainDate)
 {
     return temporalDateToString(plainDate.year(), plainDate.month(), plainDate.day());
+}
+
+String temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calendarName)
+{
+    if (calendarName == "always"_s) {
+        // FIXME: Include the correct calendar ID when calendars are fully implemented.
+        return makeString(temporalDateToString(plainYearMonth.isoPlainDate()), "[u-ca=iso8601]"_s);
+    }
+    return temporalDateToString(plainYearMonth.year(), plainYearMonth.month());
 }
 
 String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName)
@@ -1870,7 +1882,7 @@ InternalDuration InternalDuration::combineDateAndTimeDuration(Duration dateDurat
     int32_t timeSign = timeDuration < 0 ? -1 : timeDuration > 0 ? 1 : 0;
     bool signsDiffer = dateSign && timeSign && dateSign != timeSign;
     ASSERT_UNUSED(signsDiffer, !signsDiffer);
-    return InternalDuration { WTFMove(dateDuration), timeDuration };
+    return InternalDuration { WTF::move(dateDuration), timeDuration };
 }
 
 // DifferenceInstant ( ns1, ns2, roundingIncrement, smallestUnit, roundingMode )

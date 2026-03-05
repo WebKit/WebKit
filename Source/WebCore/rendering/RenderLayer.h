@@ -51,14 +51,15 @@
 #include <WebCore/PaintFrequencyTracker.h>
 #include <WebCore/PaintInfo.h>
 #include <WebCore/RenderBox.h>
+#include <WebCore/RenderObjectDocument.h>
 #include <WebCore/RenderPtr.h>
 #include <WebCore/RenderSVGModelObject.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/ScrollBehavior.h>
 #include <WebCore/TransformationMatrix.h>
-#include <memory>
-#include <wtf/CheckedRef.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/Markable.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/UniquelyOwned.h>
 
 namespace WTF {
 class TextStream;
@@ -67,6 +68,10 @@ class TextStream;
 void outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, unsigned, const WebCore::RenderLayer*);
 
 namespace WebCore {
+
+namespace Style {
+enum class TransformResolverOption : uint8_t;
+}
 
 class ClipRects;
 class ClipRectsCache;
@@ -158,9 +163,8 @@ enum class UpdateBackingSharingFlags {
 
 using ScrollingScope = uint64_t;
 
-class RenderLayer final : public CanMakeSingleThreadWeakPtr<RenderLayer>, public CanMakeCheckedPtr<RenderLayer> {
-    WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(RenderLayer);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayer);
+class RenderLayer final : public UniquelyOwned<RenderLayer> {
+    WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(RenderLayer, WEBCORE_EXPORT);
 public:
     friend class RenderReplica;
     friend class RenderLayerFilters;
@@ -169,26 +173,28 @@ public:
     friend class RenderLayerScrollableArea;
     friend void ::outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, unsigned, const WebCore::RenderLayer*);
 
-    explicit RenderLayer(RenderLayerModelObject&);
-    ~RenderLayer();
+    static UniquelyOwnedPtr<RenderLayer> create(RenderLayerModelObject& modelObject)
+    {
+        return adoptUniquelyOwned(new RenderLayer(modelObject));
+    }
 
-    WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
-    WEBCORE_EXPORT CheckedPtr<RenderLayerScrollableArea> checkedScrollableArea() const;
+    WEBCORE_EXPORT ~RenderLayer();
+
+    WEBCORE_EXPORT RenderLayerScrollableArea* NODELETE scrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
 
     String name() const;
 
     inline Page& page() const; // Defined in RenderLayerInlines.h
-    inline Ref<Page> protectedPage() const; // Defined in RenderLayerInlines.h
     RenderLayerModelObject& renderer() const { return m_renderer; }
     RenderBox* renderBox() const { return dynamicDowncast<RenderBox>(renderer()); }
 
-    RenderLayer* parent() const { return m_parent; }
-    RenderLayer* previousSibling() const { return m_previous; }
-    RenderLayer* nextSibling() const { return m_next; }
-    RenderLayer* firstChild() const { return m_first; }
-    RenderLayer* lastChild() const { return m_last; }
-    bool isDescendantOf(const RenderLayer&) const;
+    RenderLayer* parent() const { return m_parent.get(); }
+    RenderLayer* previousSibling() const { return m_previous.get(); }
+    RenderLayer* nextSibling() const { return m_next.get(); }
+    RenderLayer* firstChild() const { return m_first.get(); }
+    RenderLayer* lastChild() const { return m_last.get(); }
+    bool NODELETE isDescendantOf(const RenderLayer&) const;
     WEBCORE_EXPORT RenderLayer* commonAncestorWithLayer(const RenderLayer&) const;
 
     // This does an ancestor tree walk. Avoid it!
@@ -218,7 +224,7 @@ public:
     bool isCSSStackingContext() const { return m_isCSSStackingContext || m_forcedStackingContext; }
 
     // Gets the enclosing stacking context for this layer, excluding this layer itself.
-    RenderLayer* stackingContext() const;
+    RenderLayer* NODELETE stackingContext() const;
 
     // Gets the enclosing stacking container for this layer, possibly the layer
     // itself, if it is a stacking container.
@@ -228,7 +234,7 @@ public:
 
     RenderLayer* paintOrderParent() const;
 
-    std::optional<LayoutRect> cachedClippedOverflowRect() const;
+    std::optional<LayoutRect> NODELETE cachedClippedOverflowRect() const;
 
     void dirtyNormalFlowList();
     void dirtyZOrderLists();
@@ -248,7 +254,7 @@ public:
     // Convert a point in absolute coords into layer coords, taking transforms into account
     LayoutPoint absoluteToContents(const LayoutPoint&) const;
 
-    void setNeedsPositionUpdate();
+    void NODELETE setNeedsPositionUpdate();
     void setSelfAndChildrenNeedPositionUpdate();
     void setSelfAndDescendantsNeedPositionUpdate();
 
@@ -266,6 +272,7 @@ private:
     OptionSet<LayerPositionUpdates> m_layerPositionDirtyBits;
 
 protected:
+    explicit RenderLayer(RenderLayerModelObject&);
     void destroy();
 
 private:
@@ -311,7 +318,7 @@ private:
         };
     }
 
-    void setAncestorsHaveCompositingDirtyFlag(Compositing);
+    void NODELETE setAncestorsHaveCompositingDirtyFlag(Compositing);
 
 public:
     bool hasDescendantNeedingCompositingRequirementsTraversal() const { return m_compositingDirtyBits.contains(Compositing::HasDescendantNeedingRequirementsTraversal); }
@@ -459,7 +466,7 @@ public:
     void setBackingNeedsRepaintInRect(const LayoutRect&, GraphicsLayerShouldClipToLayer = GraphicsLayerShouldClipToLayer::Clip);
     void repaintIncludingNonCompositingDescendants(const RenderLayerModelObject* repaintContainer);
 
-    void styleChanged(StyleDifference, const RenderStyle* oldStyle);
+    void styleChanged(Style::Difference, const RenderStyle* oldStyle);
 
     bool isSelfPaintingLayer() const { return m_isSelfPaintingLayer; }
 
@@ -469,8 +476,8 @@ public:
 
     bool hasReflection() const { return renderer().hasReflection(); }
     bool isReflection() const { return renderer().isRenderReplica(); }
-    RenderLayer* reflectionLayer() const;
-    bool isReflectionLayer(const RenderLayer&) const;
+    RenderLayer* NODELETE reflectionLayer() const;
+    bool NODELETE isReflectionLayer(const RenderLayer&) const;
 
     inline const LayoutPoint& location() const;
     void setLocation(const LayoutPoint& p) { m_topLeft = p; }
@@ -490,9 +497,9 @@ public:
     WEBCORE_EXPORT RenderLayer* enclosingScrollableLayer(IncludeSelfOrNot, CrossFrameBoundaries) const;
 
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
-    bool canUseCompositedScrolling() const;
+    bool NODELETE canUseCompositedScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
-    bool hasCompositedScrollableOverflow() const;
+    bool NODELETE hasCompositedScrollableOverflow() const;
     void computeHasCompositedScrollableOverflow(LayoutUpToDate);
 
     bool hasOverlayScrollbars() const;
@@ -507,7 +514,7 @@ public:
     bool shouldTryToScrollForScrollIntoView(const ScrollRectToVisibleOptions&) const;
     void autoscroll(const IntPoint&);
 
-    bool canResize() const;
+    bool NODELETE canResize() const;
     LayoutSize minimumSizeForResizing(float zoomFactor) const;
     void resize(const PlatformMouseEvent&, const LayoutSize&);
     bool inResizeMode() const { return m_inResizeMode; }
@@ -517,7 +524,7 @@ public:
     bool isForcedStackingContext() const { return m_forcedStackingContext; }
     bool isOpportunisticStackingContext() const { return m_isOpportunisticStackingContext; }
 
-    WEBCORE_EXPORT RenderLayerCompositor& compositor() const;
+    RenderLayerCompositor& compositor() const { return protect(renderer().view())->compositor(); }
 
     // Notification from the renderer that its content changed (e.g. current frame of image changed).
     // Allows updates of layer content without repainting.
@@ -543,7 +550,7 @@ public:
     void updateTransform();
     
     void updateBlendMode();
-    void willRemoveChildWithBlendMode();
+    void NODELETE willRemoveChildWithBlendMode();
 
     const LayoutSize& offsetForInFlowPosition() const { return m_offsetForPosition; }
 
@@ -560,12 +567,12 @@ public:
     bool hasVisibleDescendant() const { return m_hasVisibleDescendant; }
 
     void setHasVisibleContent();
-    void dirtyVisibleContentStatus();
+    void NODELETE dirtyVisibleContentStatus();
 
     bool hasVisibleBoxDecorationsOrBackground() const;
     bool hasVisibleBoxDecorations() const;
     
-    void setBehavesAsFixed(bool);
+    void NODELETE setBehavesAsFixed(bool);
     bool behavesAsFixed() const { return m_behavesAsFixed; }
 
     struct PaintedContentRequest {
@@ -611,7 +618,7 @@ public:
     bool rendererHasHDRContent() const;
 #endif
 
-    bool isViewportConstrained() const { return renderer().isFixedPositioned() || renderer().isStickilyPositioned(); }
+    inline bool isViewportConstrained() const;
 
     // FIXME: We should ASSERT(!m_hasSelfPaintingLayerDescendantDirty); here but we hit the same bugs as visible content above.
     // Part of the issue is with subtree relayout: we don't check if our ancestors have some descendant flags dirty, missing some updates.
@@ -630,7 +637,7 @@ public:
     // The layer relative to which clipping rects for this layer are computed.
     RenderLayer* clippingRootForPainting() const;
 
-    RenderLayer* enclosingOverflowClipLayer(IncludeSelfOrNot) const;
+    RenderLayer* NODELETE enclosingOverflowClipLayer(IncludeSelfOrNot) const;
 
     // Enclosing compositing layer; if includeSelf is true, may return this.
     RenderLayer* enclosingCompositingLayer(IncludeSelfOrNot = IncludeSelf) const;
@@ -647,7 +654,7 @@ public:
     void setFilterBackendNeedsRepaintingInRect(const LayoutRect&);
     bool hasAncestorWithFilterOutsets() const;
 
-    inline bool canUseOffsetFromAncestor() const;
+    inline bool NODELETE canUseOffsetFromAncestor() const;
     bool canUseOffsetFromAncestor(const RenderLayer& ancestor) const;
 
     // FIXME: adjustForColumns allows us to position compositing layers in columns correctly, but eventually they need to be split across columns too.
@@ -788,7 +795,7 @@ public:
     
     LayoutRect repaintRectIncludingNonCompositingDescendants() const;
 
-    void setRepaintStatus(RepaintStatus);
+    void NODELETE setRepaintStatus(RepaintStatus);
     RepaintStatus repaintStatus() const { return m_repaintStatus; }
     bool needsFullRepaint() const { return m_repaintStatus == RepaintStatus::NeedsFullRepaint || m_repaintStatus == RepaintStatus::NeedsFullRepaintForOutOfFlowMovementLayout; }
 
@@ -802,11 +809,11 @@ public:
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const { return m_transform.get(); }
     // updateTransformFromStyle computes a transform according to the passed options (e.g. transform-origin baked in or excluded) and the given style.
-    void updateTransformFromStyle(TransformationMatrix&, const RenderStyle&, OptionSet<RenderStyle::TransformOperationOption>) const;
+    void updateTransformFromStyle(TransformationMatrix&, const RenderStyle&, OptionSet<Style::TransformResolverOption>) const;
     // currentTransform computes a transform which takes accelerated animations into account. The
     // resulting transform has transform-origin baked in, unless non-default options are given. If
     // the layer does not have a transform, the identity matrix is returned.
-    TransformationMatrix currentTransform(OptionSet<RenderStyle::TransformOperationOption>) const;
+    TransformationMatrix currentTransform(OptionSet<Style::TransformResolverOption>) const;
     TransformationMatrix currentTransform() const;
     TransformationMatrix renderableTransform(OptionSet<PaintBehavior>) const;
     
@@ -817,7 +824,6 @@ public:
     FloatPoint perspectiveOrigin() const;
     FloatPoint3D transformOriginPixelSnappedIfNeeded() const;
     inline bool preserves3D() const;
-    inline bool hasPerspective() const;
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
     bool participatesInPreserve3D() const;
@@ -864,11 +870,11 @@ public:
 
     bool isComposited() const { return m_backing != nullptr; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
-    bool hasCompositedMask() const;
+    bool NODELETE hasCompositedMask() const;
     bool hasCompositedNonContainedDescendants() const { return m_hasCompositedNonContainedDescendants; }
 
     bool hasDescendantNeedingEventRegionUpdate() const { return m_hasDescendantNeedingEventRegionUpdate; }
-    void setAncestorsHaveDescendantNeedingEventRegionUpdate();
+    void NODELETE setAncestorsHaveDescendantNeedingEventRegionUpdate();
     void clearHasDescendantNeedingEventRegionUpdate() { m_hasDescendantNeedingEventRegionUpdate = false; }
 
     // If non-null, a non-ancestor composited layer that this layer paints into (it is sharing its backing store with this layer).
@@ -915,11 +921,11 @@ public:
     bool shouldPaintWithFilters(OptionSet<PaintBehavior> = { }) const;
     bool requiresFullLayerImageForFilters() const;
 
-    Element* enclosingElement() const;
+    Element* NODELETE enclosingElement() const;
 
     static Vector<RenderLayer*> topLayerRenderLayers(const RenderView&);
 
-    bool establishesTopLayer() const;
+    bool NODELETE establishesTopLayer() const;
     void establishesTopLayerWillChange();
     void establishesTopLayerDidChange();
 
@@ -994,7 +1000,7 @@ private:
 
     bool setIsCSSStackingContext(bool);
 
-    bool setCanBeBackdropRoot(bool);
+    bool NODELETE setCanBeBackdropRoot(bool);
     void isStackingContextChanged();
 
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
@@ -1038,10 +1044,10 @@ private:
     // Compute and return the clip rects. If useCached is true, will used previously computed clip rects on ancestors
     // (rather than computing them all from scratch up the parent chain).
     void calculateClipRects(const ClipRectsContext&, ClipRects&) const;
-    ClipRects* clipRects(const ClipRectsContext&) const;
+    ClipRects* NODELETE clipRects(const ClipRectsContext&) const;
 
     void setAncestorChainHasSelfPaintingLayerDescendant();
-    void dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
+    void NODELETE dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
     std::optional<RenderObject::RepaintRects> repaintRects() const
     {
@@ -1056,8 +1062,8 @@ private:
 
     void compositingStatusChanged(LayoutUpToDate);
 
-    void setRepaintRects(const RenderObject::RepaintRects&);
-    void clearRepaintRects();
+    void NODELETE setRepaintRects(const RenderObject::RepaintRects&);
+    void NODELETE clearRepaintRects();
 
     LayoutRect clipRectRelativeToAncestor(const RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect, bool temporaryClipRects = false) const;
 
@@ -1106,7 +1112,7 @@ private:
 
     template<UpdateLayerPositionsMode = Write>
     void recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFlag>);
-    bool ancestorLayerPositionStateChanged(OptionSet<UpdateLayerPositionsFlag>);
+    bool NODELETE ancestorLayerPositionStateChanged(OptionSet<UpdateLayerPositionsFlag>);
 
     enum UpdateLayerPositionsAfterScrollFlag {
         IsOverflowScroll                        = 1 << 0,
@@ -1242,7 +1248,7 @@ private:
 
     bool shouldBeSelfPaintingLayer() const;
 
-    void dirtyAncestorChainVisibleDescendantStatus();
+    void NODELETE dirtyAncestorChainVisibleDescendantStatus();
     
     bool computeHasVisibleContent() const;
 
@@ -1255,7 +1261,7 @@ private:
     bool hasFixedAncestor() const { return m_hasFixedAncestor; }
     bool hasPaginatedAncestor() const { return m_hasPaginatedAncestor; }
 
-    void dirty3DTransformedDescendantStatus();
+    void NODELETE dirty3DTransformedDescendantStatus();
     // Both updates the status, and returns true if descendants of this have 3d.
     bool update3DTransformedDescendantStatus();
 
@@ -1268,14 +1274,14 @@ private:
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 
-    void updateFiltersAfterStyleChange(StyleDifference, const RenderStyle* oldStyle);
+    void updateFiltersAfterStyleChange(Style::Difference, const RenderStyle* oldStyle);
     void updateFilterPaintingStrategy();
 
     void updateAncestorChainHasBlendingDescendants();
-    void dirtyAncestorChainHasBlendingDescendants();
+    void NODELETE dirtyAncestorChainHasBlendingDescendants();
 
-    void updateAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
-    void dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
+    void NODELETE updateAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
+    void NODELETE dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
 
     bool alwaysIncludedInZOrderLists() const { return m_alwaysIncludedInZOrderLists; }
     bool hasAlwaysIncludedInZOrderListsDescendants() const { return m_hasAlwaysIncludedInZOrderListsDescendants; }
@@ -1288,7 +1294,7 @@ private:
     ClipRect calculateBackgroundRect(const ClipRectsContext&, const LayoutSize& offsetFromRoot) const;
     ClipRect calculateForegroundRect(const ClipRectsContext&, const LayoutSize& offsetFromRoot) const;
 
-    RenderLayer* enclosingTransformedAncestor() const;
+    RenderLayer* NODELETE enclosingTransformedAncestor() const;
 
     inline bool hasNonOpacityTransparency() const;
 
@@ -1299,8 +1305,8 @@ private:
     void removeSelfFromCompositor();
     void removeDescendantsFromCompositor();
 
-    void verifyClipRects();
-    void verifyClipRect(const ClipRectsContext&);
+    void NODELETE verifyClipRects();
+    void NODELETE verifyClipRect(const ClipRectsContext&);
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     void setHasCompositedNonContainedDescendants(bool value) { m_hasCompositedNonContainedDescendants = value; }
@@ -1318,6 +1324,16 @@ private:
         IntRect scrollCornerOrResizerRect() const
         {
             return !scrollCorner.isEmpty() ? scrollCorner : resizer;
+        }
+        IntRect scrollbarRect(ScrollbarOrientation orientation)
+        {
+            switch (orientation) {
+            case ScrollbarOrientation::Horizontal:
+                return horizontalScrollbar;
+            case ScrollbarOrientation::Vertical:
+                return verticalScrollbar;
+            }
+            return { };
         }
     };
     OverflowControlRects overflowControlsRects() const;
@@ -1410,14 +1426,14 @@ private:
 
     const CheckedRef<RenderLayerModelObject> m_renderer;
 
-    RenderLayer* m_parent { nullptr };
-    RenderLayer* m_previous { nullptr };
-    RenderLayer* m_next { nullptr };
-    RenderLayer* m_first { nullptr };
-    RenderLayer* m_last { nullptr };
+    InlineWeakPtr<RenderLayer> m_parent;
+    InlineWeakPtr<RenderLayer> m_previous;
+    InlineWeakPtr<RenderLayer> m_next;
+    InlineWeakPtr<RenderLayer> m_first;
+    InlineWeakPtr<RenderLayer> m_last;
 
-    SingleThreadWeakPtr<RenderLayer> m_backingProviderLayer;
-    SingleThreadWeakPtr<RenderLayer> m_backingProviderLayerAtEndOfCompositingUpdate;
+    InlineWeakPtr<RenderLayer> m_backingProviderLayer;
+    InlineWeakPtr<RenderLayer> m_backingProviderLayerAtEndOfCompositingUpdate;
     SingleThreadWeakPtr<RenderLayerModelObject> m_repaintContainer;
 
     // For layers that establish stacking contexts, m_posZOrderList holds a sorted list of all the
@@ -1458,14 +1474,14 @@ private:
     RenderPtr<RenderReplica> m_reflection;
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
-    SingleThreadWeakPtr<RenderLayer> m_enclosingPaginationLayer;
+    InlineWeakPtr<RenderLayer> m_enclosingPaginationLayer;
 
     // Pointer to the enclosing RenderSVGHiddenContainer or RenderSVGResourceContainer, if present.
     SingleThreadWeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenOrResourceContainer;
 
     IntRect m_blockSelectionGapsBounds;
 
-    std::unique_ptr<RenderLayerFilters> m_filters;
+    RefPtr<RenderLayerFilters> m_filters;
     std::unique_ptr<RenderLayerBacking> m_backing;
     std::unique_ptr<RenderLayerScrollableArea> m_scrollableArea;
 
@@ -1497,7 +1513,7 @@ inline void RenderLayer::updateZOrderLists()
 
 inline RenderLayer* RenderLayer::paintOrderParent() const
 {
-    return m_isNormalFlowOnly ? m_parent : stackingContext();
+    return m_isNormalFlowOnly ? m_parent.get() : stackingContext();
 }
 
 inline void RenderLayer::setIsHiddenByOverflowTruncation(bool isHidden)

@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 182x22
             RenderTableCell {TD} at (2,2) size 178x22 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 176x20
-                RenderText {#text} at (0,0) size 172x19
+                RenderText {#text} at (0,0) size 172x20
                   text run at (0,0) width 172: "This text should not break "
-                RenderInline (generated) at (171,0) size 5x19
-                  RenderText at (171,0) size 5x19
+                RenderInline (generated) at (171,0) size 5x20
+                  RenderText at (171,0) size 5x20
                     text run at (171,0) width 5: "."

@@ -27,9 +27,20 @@
 #include "JSInternalPromiseConstructor.h"
 
 #include "JSCBuiltins.h"
+#include "JSCInlines.h"
+#include "JSInternalPromise.h"
 #include "JSInternalPromisePrototype.h"
 #include "JSObjectInlines.h"
+#include "JSPromiseCombinatorsContext.h"
+#include "JSPromiseCombinatorsGlobalContext.h"
+#include "Microtask.h"
 #include "StructureInlines.h"
+
+namespace JSC {
+
+static JSC_DECLARE_HOST_FUNCTION(internalPromiseConstructorFuncInternalAll);
+
+}
 
 #include "JSInternalPromiseConstructor.lut.h"
 
@@ -41,7 +52,7 @@ const ClassInfo JSInternalPromiseConstructor::s_info = { "Function"_s, &Base::s_
 
 /* Source for JSInternalPromiseConstructor.lut.h
 @begin internalPromiseConstructorTable
-  internalAll  JSBuiltin DontEnum|Function 1
+  internalAll  internalPromiseConstructorFuncInternalAll  DontEnum|Function 1
 @end
 */
 
@@ -62,6 +73,67 @@ Structure* JSInternalPromiseConstructor::createStructure(VM& vm, JSGlobalObject*
 JSInternalPromiseConstructor::JSInternalPromiseConstructor(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, executable, globalObject, structure)
 {
+}
+
+// InternalPromise.internalAll(array)
+// This function is intended to be used in the JSC internals.
+// The implementation should take care not to perform the user observable / trappable operations.
+// 1. Don't use for-of and iterables. This function only accepts the dense array of the promises.
+// 2. Don't look up this.constructor / @@species. Always construct the plain InternalPromise object.
+JSC_DEFINE_HOST_FUNCTION(internalPromiseConstructorFuncInternalAll, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+
+    auto callReject = [&]() -> void {
+        Exception* exception = scope.exception();
+        ASSERT(exception);
+        TRY_CLEAR_EXCEPTION(scope, void());
+        scope.release();
+        promise->reject(vm, globalObject, exception);
+    };
+
+    JSValue arrayValue = callFrame->argument(0);
+    JSArray* array = jsDynamicCast<JSArray*>(arrayValue);
+    ASSERT(array);
+
+    uint64_t length = array->length();
+    if (!length) {
+        JSArray* values = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+        if (!values) [[unlikely]] {
+            throwOutOfMemoryError(globalObject, scope);
+            callReject();
+            return JSValue::encode(promise);
+        }
+        scope.release();
+        // Use fulfill instead of resolve to avoid looking up the then property.
+        promise->fulfill(vm, globalObject, values);
+        return JSValue::encode(promise);
+    }
+
+    JSArray* values = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), length);
+    if (!values) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        callReject();
+        return JSValue::encode(promise);
+    }
+
+    JSPromiseCombinatorsGlobalContext* globalContext = JSPromiseCombinatorsGlobalContext::create(vm, promise, values, jsNumber(length));
+    for (unsigned index = 0; index < length; ++index) {
+        JSValue value = array->getIndex(globalObject, index);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto* nextPromise = jsCast<JSInternalPromise*>(value);
+        ASSERT(nextPromise);
+        JSPromiseCombinatorsContext* context = JSPromiseCombinatorsContext::create(vm, globalContext, index);
+
+        nextPromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::InternalPromiseAllResolveJob, promise, context);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(promise);
 }
 
 } // namespace JSC

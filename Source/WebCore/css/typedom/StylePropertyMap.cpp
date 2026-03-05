@@ -56,26 +56,26 @@ static RefPtr<CSSValue> cssValueFromStyleValues(CSSPropertyID propertyID, Vector
     if (values.size() == 1)
         return toCSSValue(values[0]);
     CSSValueListBuilder list;
-    for (auto&& value : WTFMove(values)) {
+    for (auto&& value : WTF::move(values)) {
         if (auto cssValue = toCSSValue(value))
             list.append(cssValue.releaseNonNull());
     }
     auto separator = CSSProperty::listValuedPropertySeparator(propertyID);
-    return CSSValueList::create(separator, WTFMove(list));
+    return CSSValueList::create(separator, WTF::move(list));
 }
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-set
-ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& property, FixedVector<Variant<RefPtr<CSSStyleValue>, String>>&& values)
+ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&& values)
 {
     if (isCustomPropertyName(property)) {
-        auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(document, property, WTFMove(values));
+        auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(document, property, WTF::move(values));
         if (styleValuesOrException.hasException())
             return styleValuesOrException.releaseException();
         auto styleValues = styleValuesOrException.releaseReturnValue();
         if (styleValues.size() != 1 || !is<CSSUnparsedValue>(styleValues[0].get()))
             return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
-        auto value = styleValues[0]->toCSSValue();
+        auto value = protect(styleValues[0])->toCSSValue();
         if (!value)
             return Exception { ExceptionCode::TypeError, "Invalid values"_s };
         setCustomProperty(document, property, downcast<CSSVariableReferenceValue>(value.releaseNonNull()));
@@ -91,18 +91,20 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     if (isShorthand(propertyID)) {
         if (values.size() != 1)
             return Exception { ExceptionCode::TypeError, "Wrong number of values for shorthand CSS property"_s };
-        String value;
-        switchOn(values[0], [&](const RefPtr<CSSStyleValue>& styleValue) {
-            value = styleValue->toString();
-        }, [&](const String& string) {
-            value = string;
-        });
+        auto value = WTF::switchOn(values[0],
+            [](const Ref<CSSStyleValue>& styleValue) {
+                return styleValue->toString();
+            },
+            [](const String& string) {
+                return string;
+            }
+        );
         if (value.isEmpty() || !setShorthandProperty(propertyID, value))
             return Exception { ExceptionCode::TypeError, "Bad value for shorthand CSS property"_s };
         return { };
     }
 
-    auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(document, property, WTFMove(values));
+    auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(document, property, WTF::move(values));
     if (styleValuesOrException.hasException())
         return styleValuesOrException.releaseException();
     auto styleValues = styleValuesOrException.releaseReturnValue();
@@ -112,7 +114,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
                 return Exception { ExceptionCode::TypeError, "There is more than one value and one is either a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
         }
     }
-    auto value = cssValueFromStyleValues(propertyID, WTFMove(styleValues));
+    auto value = cssValueFromStyleValues(propertyID, WTF::move(styleValues));
     if (!value)
         return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
@@ -120,7 +122,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     // we do some pre-validation.
     // FIXME: Eventually, we should be able to generate most of the validation code and not rely on the CSS parser
     // at all.
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && primitiveValue->isNumberOrInteger()) {
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && primitiveValue->isNumberOrInteger()) {
         if (!CSSProperty::allowsNumberOrIntegerInput(propertyID))
             return Exception { ExceptionCode::TypeError, "Invalid value: This property doesn't allow <number> input"_s };
     }
@@ -144,7 +146,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
 }
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-append
-ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString& property, FixedVector<Variant<RefPtr<CSSStyleValue>, String>>&& values)
+ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&& values)
 {
     if (values.isEmpty())
         return { };
@@ -161,12 +163,12 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
 
     auto currentValue = propertyValue(propertyID);
     CSSValueListBuilder list;
-    if (auto* currentList = dynamicDowncast<CSSValueList>(currentValue.get()))
+    if (RefPtr currentList = dynamicDowncast<CSSValueList>(currentValue))
         list = currentList->copyValues();
     else if (currentValue)
         list.append(currentValue.releaseNonNull());
 
-    auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(document, property, WTFMove(values));
+    auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(document, property, WTF::move(values));
     if (styleValuesOrException.hasException())
         return styleValuesOrException.releaseException();
 
@@ -185,7 +187,7 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
         list.append(cssValue.releaseNonNull());
     }
 
-    if (!setProperty(propertyID, CSSValueList::create(CSSProperty::listValuedPropertySeparator(propertyID), WTFMove(list))))
+    if (!setProperty(propertyID, CSSValueList::create(CSSProperty::listValuedPropertySeparator(propertyID), WTF::move(list))))
         return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
     return { };

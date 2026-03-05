@@ -52,9 +52,9 @@ class RTCPeerConnectionHandler;
 template<typename> class ExceptionOr;
 
 class RTCDataChannel final : public RefCounted<RTCDataChannel>, public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDataChannel);
+    WTF_MAKE_TZONE_ALLOCATED(RTCDataChannel);
 public:
-    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
+    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState, std::optional<RTCDataChannelIdentifier> identifier = { });
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);
     WEBCORE_EXPORT virtual ~RTCDataChannel();
 
@@ -70,9 +70,9 @@ public:
     bool negotiated() const { return *m_options.negotiated; };
     std::optional<unsigned short> id() const;
     RTCPriorityType priority() const { return m_options.priority; };
-    const RTCDataChannelInit& options() const { return m_options; }
+    const RTCDataChannelInit& options() const LIFETIME_BOUND { return m_options; }
 
-    const String& label() const { return m_label; }
+    const String& label() const LIFETIME_BOUND { return m_label; }
     RTCDataChannelState readyState() const {return m_readyState; }
     size_t bufferedAmount() const final { return m_bufferedAmount; }
     size_t bufferedAmountLowThreshold() const { return m_bufferedAmountLowThreshold; }
@@ -80,7 +80,7 @@ public:
 
     enum class BinaryType : bool { Blob, Arraybuffer };
     BinaryType binaryType() const { return m_binaryType; }
-    void setBinaryType(BinaryType);
+    void NODELETE setBinaryType(BinaryType);
 
     ExceptionOr<void> send(const String&);
     ExceptionOr<void> send(JSC::ArrayBuffer&);
@@ -89,15 +89,15 @@ public:
 
     void close();
 
-    RTCDataChannelIdentifier identifier() const { return m_identifier; }
-    bool canDetach() const;
+    bool NODELETE canDetach() const;
     std::unique_ptr<DetachedRTCDataChannel> detach();
 
+    static void removeDetachedRTCDataChannel(RTCDataChannelIdentifier identifer) { handlerFromIdentifier(identifer.object()); }
     WEBCORE_EXPORT static std::unique_ptr<RTCDataChannelHandler> handlerFromIdentifier(RTCDataChannelLocalIdentifier);
     void fireOpenEventIfNeeded();
 
 private:
-    RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
+    RTCDataChannel(ScriptExecutionContext&, RTCDataChannelIdentifier, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
 
     static Ref<NetworkSendQueue> createMessageQueue(ScriptExecutionContext&, RTCDataChannel&);
 
@@ -105,15 +105,14 @@ private:
     void removeFromDataChannelLocalMapIfNeeded();
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDataChannel; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject.
     void stop() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;
@@ -121,9 +120,9 @@ private:
     void didReceiveRawData(std::span<const uint8_t>) final;
     void didDetectError(Ref<RTCError>&&) final;
     void bufferedAmountIsDecreasing(size_t) final;
+    void peerConnectionIsClosing() final { didChangeReadyState(RTCDataChannelState::Closed); }
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;
-    RTCDataChannelIdentifier m_identifier;
     Markable<ScriptExecutionContextIdentifier> m_contextIdentifier;
     // FIXME: m_stopped is probably redundant with m_readyState.
     bool m_stopped { false };
@@ -141,5 +140,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(RTCDataChannel)
 
 #endif // ENABLE(WEB_RTC)

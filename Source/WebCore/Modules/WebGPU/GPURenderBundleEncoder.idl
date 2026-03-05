@@ -31,7 +31,7 @@
     SecureContext
 ]
 interface GPURenderBundleEncoder {
-    GPURenderBundle finish(optional GPURenderBundleDescriptor descriptor);
+    GPURenderBundle finish(optional GPURenderBundleDescriptor descriptor = {});
 };
 GPURenderBundleEncoder includes GPUObjectBase;
 GPURenderBundleEncoder includes GPUCommandsMixin;

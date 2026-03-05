@@ -117,7 +117,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
     if (!length)
         return;
 
-    GRefPtr<GInputStream> stream = webkitFormDataInputStreamNew(WTFMove(resolvedFormData));
+    GRefPtr<GInputStream> stream = webkitFormDataInputStreamNew(WTF::move(resolvedFormData));
     soup_message_set_request_body(soupMessage, nullptr, stream.get(), length);
 }
 
@@ -130,7 +130,7 @@ GRefPtr<GInputStream> ResourceRequest::createBodyStream() const
     auto resolvedFormData = formData->resolveBlobReferences();
     for (auto& element : resolvedFormData->elements()) {
         if (element.lengthInBytes() > 0)
-            return webkitFormDataInputStreamNew(WTFMove(resolvedFormData));
+            return webkitFormDataInputStreamNew(WTF::move(resolvedFormData));
     }
     return nullptr;
 }
@@ -182,7 +182,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     *this = delegateProvidedRequest;
 
     setPriority(oldPriority);
-    setHTTPBody(WTFMove(oldHTTPBody));
+    setHTTPBody(WTF::move(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);
     setInitiatorIdentifier(oldInitiatorIdentifier);
@@ -193,8 +193,8 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
 ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData&& requestData)
 {
     if (std::holds_alternative<ResourceRequestBase::RequestData>(requestData))
-        return ResourceRequest(WTFMove(std::get<ResourceRequestBase::RequestData>(requestData)));
-    return ResourceRequest(WTFMove(std::get<ResourceRequestPlatformData>(requestData)));
+        return ResourceRequest(WTF::move(std::get<ResourceRequestBase::RequestData>(requestData)));
+    return ResourceRequest(WTF::move(std::get<ResourceRequestPlatformData>(requestData)));
 }
 
 ResourceRequestData ResourceRequest::getRequestDataToSerialize() const

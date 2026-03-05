@@ -52,7 +52,7 @@ public:
     bool hasSetType() const { return m_type.contains(Type::Set); }
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
-    RenderElement& owner() const;
+    RenderElement& NODELETE owner() const;
     void addRenderer(RenderCounter&);
     void removeRenderer(RenderCounter&);
 
@@ -64,8 +64,8 @@ public:
     CounterNode* nextSibling() const { return const_cast<CounterNode*>(m_nextSibling.get()); }
     CounterNode* firstChild() const { return const_cast<CounterNode*>(m_firstChild.get()); }
     CounterNode* lastChild() const { return const_cast<CounterNode*>(m_lastChild.get()); }
-    CounterNode* lastDescendant() const;
-    CounterNode* previousInPreOrder() const;
+    CounterNode* NODELETE lastDescendant() const;
+    CounterNode* NODELETE previousInPreOrder() const;
     CounterNode* nextInPreOrder(const CounterNode* stayWithin = nullptr) const;
     CounterNode* nextInPreOrderAfterChildren(const CounterNode* stayWithin = nullptr) const;
 
@@ -75,7 +75,7 @@ public:
 
 private:
     CounterNode(RenderElement&, OptionSet<Type>, int value);
-    int computeCountInParent() const;
+    int NODELETE computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
     void resetThisAndDescendantsRenderers();

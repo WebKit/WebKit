@@ -752,7 +752,8 @@ std::optional<H264Information> ComputeH264InfoFromAVC(const uint8_t* avcData, si
       return { };
     }
 
-    auto spsAndVui = SpsAndVuiParser::Parse({ avcData + offset + H264::kNaluTypeSize, avcData + offset + size });
+    auto unpackedBuffer = H264::ParseRbsp(avcData + offset + H264::kNaluTypeSize, size - H264::kNaluTypeSize);
+    auto spsAndVui = SpsAndVuiParser::Parse(unpackedBuffer);
     if (spsAndVui) {
       return H264Information {
         static_cast<uint16_t>(spsAndVui->width),

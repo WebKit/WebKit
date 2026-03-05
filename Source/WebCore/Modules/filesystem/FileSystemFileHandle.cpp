@@ -42,17 +42,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileSystemFileHandle);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemFileHandle);
 
 Ref<FileSystemFileHandle> FileSystemFileHandle::create(ScriptExecutionContext& context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {
-    auto result = adoptRef(*new FileSystemFileHandle(context, WTFMove(name), identifier, WTFMove(connection)));
+    auto result = adoptRef(*new FileSystemFileHandle(context, WTF::move(name), identifier, WTF::move(connection)));
     result->suspendIfNeeded();
     return result;
 }
 
 FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext& context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
-    : FileSystemHandle(context, FileSystemHandle::Kind::File, WTFMove(name), identifier, WTFMove(connection))
+    : FileSystemHandle(context, FileSystemHandle::Kind::File, WTF::move(name), identifier, WTF::move(connection))
 {
 }
 
@@ -61,7 +61,7 @@ void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& prom
     if (isClosed())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
 
-    connection().getFile(identifier(), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
+    connection().getFile(identifier(), [protectedThis = Ref { *this }, promise = WTF::move(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
@@ -78,7 +78,7 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
     if (isClosed())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
 
-    connection().createSyncAccessHandle(identifier(), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
+    connection().createSyncAccessHandle(identifier(), [protectedThis = Ref { *this }, promise = WTF::move(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
@@ -92,7 +92,7 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
         }
 
-        promise.resolve(FileSystemSyncAccessHandle::create(*context, protectedThis.get(), info.identifier, WTFMove(info.file), info.capacity));
+        promise.resolve(FileSystemSyncAccessHandle::create(*context, protectedThis.get(), info.identifier, WTF::move(info.file), info.capacity));
     });
 }
 
@@ -134,7 +134,7 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
     if (isClosed())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
 
-    connection().createWritable(scriptExecutionContext()->identifier(), identifier(), options.keepExistingData, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
+    connection().createWritable(scriptExecutionContext()->identifier(), identifier(), options.keepExistingData, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
@@ -166,7 +166,7 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
         if (!stream.hasException())
             connection().registerFileSystemWritable(streamIdentifier, stream.returnValue());
 
-        promise.settle(WTFMove(stream));
+        promise.settle(WTF::move(stream));
     });
 }
 
@@ -182,9 +182,9 @@ void FileSystemFileHandle::executeCommandForWritable(FileSystemWritableFileStrea
     if (isClosed())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
 
-    connection().executeCommandForWritable(identifier(), streamIdentifier, type, position, size, dataBytes, hasDataError, [promise = WTFMove(promise)](auto result) mutable {
+    connection().executeCommandForWritable(identifier(), streamIdentifier, type, position, size, dataBytes, hasDataError, [promise = WTF::move(promise)](auto result) mutable {
         // Writable should be closed when stream is closed or errored, and stream will be errored after a failed write.
-        promise.settle(WTFMove(result));
+        promise.settle(WTF::move(result));
     });
 }
 

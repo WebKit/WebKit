@@ -59,10 +59,10 @@ int BN_ucmp(const BIGNUM *a, const BIGNUM *b) {
 }
 
 int BN_cmp(const BIGNUM *a, const BIGNUM *b) {
-  if ((a == NULL) || (b == NULL)) {
-    if (a != NULL) {
+  if ((a == nullptr) || (b == nullptr)) {
+    if (a != nullptr) {
       return -1;
-    } else if (b != NULL) {
+    } else if (b != nullptr) {
       return 1;
     } else {
       return 0;

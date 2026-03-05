@@ -1,3 +1,10 @@
 
+PASS e.style['left'] = "calc(20px + calc(80px))" should set the property value
+PASS e.style['left'] = "calc(calc(100px))" should set the property value
+PASS e.style['left'] = "calc(calc(2) * calc(50px))" should set the property value
+PASS e.style['left'] = "calc(calc(150px*2/3))" should set the property value
+PASS e.style['left'] = "calc(calc(2 * calc(calc(3)) + 4) * 10px)" should set the property value
+PASS e.style['left'] = "calc(50px + calc(40%))" should set the property value
+PASS e.style['border'] = "calc(calc(10px)) solid pink" should set the property value
 PASS Nested calcs should work with layout
 

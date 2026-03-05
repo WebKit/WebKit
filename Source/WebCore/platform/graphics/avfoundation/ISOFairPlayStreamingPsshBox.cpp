@@ -187,7 +187,7 @@ bool ISOFairPlayStreamingKeyRequestBox::parse(JSC::DataView& view, unsigned& off
             if (!assetID.read(view, localOffset))
                 return false;
 
-            m_assetID = WTFMove(assetID);
+            m_assetID = WTF::move(assetID);
             continue;
         }
 
@@ -199,7 +199,7 @@ bool ISOFairPlayStreamingKeyRequestBox::parse(JSC::DataView& view, unsigned& off
             if (!context.read(view, localOffset))
                 return false;
 
-            m_context = WTFMove(context);
+            m_context = WTF::move(context);
             continue;
         }
 
@@ -211,7 +211,7 @@ bool ISOFairPlayStreamingKeyRequestBox::parse(JSC::DataView& view, unsigned& off
             if (!versionList.read(view, localOffset))
                 return false;
 
-            m_versionList = WTFMove(versionList);
+            m_versionList = WTF::move(versionList);
             continue;
         }
 
@@ -237,7 +237,7 @@ bool ISOFairPlayStreamingInitDataBox::parse(JSC::DataView& view, unsigned& offse
         if (!request.read(view, localOffset))
             return false;
 
-        m_requests.append(WTFMove(request));
+        m_requests.append(WTF::move(request));
     }
 
     offset = localOffset;

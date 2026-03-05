@@ -2,7 +2,7 @@
 
 
 PASS in-body: display
-FAIL in-body: unicodeBidi assert_equals: expected "isolate" but got "normal"
+PASS in-body: unicodeBidi
 PASS in-body: marginTop
 PASS in-body: marginRight
 PASS in-body: marginBottom
@@ -16,7 +16,7 @@ PASS in-body: height
 PASS in-body: box-sizing
 FAIL in-body: width assert_not_equals: got disallowed value "0px"
 PASS rendered-legend: display
-FAIL rendered-legend: unicodeBidi assert_equals: expected "isolate" but got "normal"
+PASS rendered-legend: unicodeBidi
 PASS rendered-legend: marginTop
 PASS rendered-legend: marginRight
 PASS rendered-legend: marginBottom
@@ -30,7 +30,7 @@ PASS rendered-legend: height
 PASS rendered-legend: box-sizing
 PASS rendered-legend: width
 PASS in-fieldset-second-child: display
-FAIL in-fieldset-second-child: unicodeBidi assert_equals: expected "isolate" but got "normal"
+PASS in-fieldset-second-child: unicodeBidi
 PASS in-fieldset-second-child: marginTop
 PASS in-fieldset-second-child: marginRight
 PASS in-fieldset-second-child: marginBottom
@@ -44,7 +44,7 @@ PASS in-fieldset-second-child: height
 PASS in-fieldset-second-child: box-sizing
 FAIL in-fieldset-second-child: width assert_not_equals: got disallowed value "0px"
 PASS in-fieldset-descendant: display
-FAIL in-fieldset-descendant: unicodeBidi assert_equals: expected "isolate" but got "normal"
+PASS in-fieldset-descendant: unicodeBidi
 PASS in-fieldset-descendant: marginTop
 PASS in-fieldset-descendant: marginRight
 PASS in-fieldset-descendant: marginBottom

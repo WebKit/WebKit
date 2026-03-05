@@ -124,6 +124,10 @@ WEBKIT_API WebKitFeature *
 webkit_feature_list_get          (WebKitFeatureList *feature_list,
                                   gsize              index);
 
+WEBKIT_API WebKitFeature *
+webkit_feature_list_find         (WebKitFeatureList *feature_list,
+                                  const gchar       *identifier);
+
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(WebKitFeatureList, webkit_feature_list_unref)
 
 G_END_DECLS

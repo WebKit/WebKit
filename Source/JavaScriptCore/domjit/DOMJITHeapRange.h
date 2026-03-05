@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 

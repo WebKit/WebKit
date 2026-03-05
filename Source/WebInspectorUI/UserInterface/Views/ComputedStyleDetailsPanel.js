@@ -209,6 +209,8 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this._computedStyleShowAllSetting.addEventListener(WI.Setting.Event.Changed, this._handleShowAllSettingChanged, this);
         this._computedStylePreferShorthandsSetting.addEventListener(WI.Setting.Event.Changed, this._handleUseShorthandsSettingChanged, this);
+
+        WI.settings.showUserAgentStyles.addEventListener(WI.Setting.Event.Changed, this._handleShowUserAgentStylesChanged, this);
     }
 
     layout()
@@ -339,6 +341,12 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     _handleShowAllSettingChanged(event)
     {
         this._computedStyleSection.showsImplicitProperties = this._computedStyleShowAllSetting.value;
+    }
+
+    _handleShowUserAgentStylesChanged(event)
+    {
+        const significantChange = true;
+        this.refresh(significantChange);
     }
 
     _handleUseShorthandsSettingChanged(event)

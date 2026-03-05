@@ -136,7 +136,7 @@ void ec_GFp_mont_mul_batch(const EC_GROUP *group, EC_JACOBIAN *r,
   EC_JACOBIAN precomp[3][17];
   ec_GFp_mont_batch_precomp(group, precomp[0], 17, p0);
   ec_GFp_mont_batch_precomp(group, precomp[1], 17, p1);
-  if (p2 != NULL) {
+  if (p2 != nullptr) {
     ec_GFp_mont_batch_precomp(group, precomp[2], 17, p2);
   }
 
@@ -160,7 +160,7 @@ void ec_GFp_mont_mul_batch(const EC_GROUP *group, EC_JACOBIAN *r,
       ec_GFp_mont_batch_get_window(group, &tmp, precomp[1], scalar1, i);
       ec_GFp_mont_add(group, r, r, &tmp);
 
-      if (p2 != NULL) {
+      if (p2 != nullptr) {
         ec_GFp_mont_batch_get_window(group, &tmp, precomp[2], scalar2, i);
         ec_GFp_mont_add(group, r, r, &tmp);
       }
@@ -256,12 +256,12 @@ void ec_GFp_mont_mul_precomp(const EC_GROUP *group, EC_JACOBIAN *r,
       ec_GFp_mont_add(group, r, r, &tmp);
     }
 
-    if (p1 != NULL) {
+    if (p1 != nullptr) {
       ec_GFp_mont_get_comb_window(group, &tmp, p1, scalar1, i);
       ec_GFp_mont_add(group, r, r, &tmp);
     }
 
-    if (p2 != NULL) {
+    if (p2 != nullptr) {
       ec_GFp_mont_get_comb_window(group, &tmp, p2, scalar2, i);
       ec_GFp_mont_add(group, r, r, &tmp);
     }

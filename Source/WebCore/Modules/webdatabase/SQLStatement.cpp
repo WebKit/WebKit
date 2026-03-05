@@ -48,13 +48,13 @@
 //
 //     At birth (in SQLTransactionBackend::executeSQL()):
 //     =================================================
-//     SQLTransactionBackend           // Deque<RefPtr<SQLStatement>> m_statementQueue points to ...
+//     SQLTransaction           // Deque<std::unique_ptr<SQLStatement>> m_statementQueue points to ...
 //     --> SQLStatement         // std::unique_ptr<SQLStatement> m_frontend points to ...
 //         --> SQLStatement
 //
 //     After grabbing the statement for execution (in SQLTransactionBackend::getNextStatement()):
 //     =========================================================================================
-//     SQLTransactionBackend           // RefPtr<SQLStatement> m_currentStatementBackend points to ...
+//     SQLTransactionBackend    // RefPtr<SQLStatement> m_currentStatementBackend points to ...
 //     --> SQLStatement         // std::unique_ptr<SQLStatement> m_frontend points to ...
 //         --> SQLStatement
 //
@@ -80,9 +80,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLStatement);
 
 SQLStatement::SQLStatement(Database& database, const String& statement, Vector<SQLValue>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
     : m_statement(statement.isolatedCopy())
-    , m_arguments(WTFMove(arguments))
-    , m_statementCallbackWrapper(WTFMove(callback), &database.document())
-    , m_statementErrorCallbackWrapper(WTFMove(errorCallback), &database.document())
+    , m_arguments(WTF::move(arguments))
+    , m_statementCallbackWrapper(WTF::move(callback), &database.document())
+    , m_statementErrorCallbackWrapper(WTF::move(errorCallback), &database.document())
     , m_permissions(permissions)
 {
 }
@@ -195,7 +195,7 @@ bool SQLStatement::execute(Database& db)
     if (!statement->isReadOnly())
         resultSet->setRowsAffected(database->lastChanges());
 
-    m_resultSet = WTFMove(resultSet);
+    m_resultSet = WTF::move(resultSet);
     return true;
 }
 
@@ -204,9 +204,9 @@ bool SQLStatement::performCallback(SQLTransaction& transaction)
     // Call the appropriate statement callback and track if it resulted in an error,
     // because then we need to jump to the transaction error callback.
 
-    if (m_error) {
+    if (RefPtr error = m_error) {
         if (auto errorCallback = m_statementErrorCallbackWrapper.unwrap()) {
-            auto result = errorCallback->invoke(transaction, *m_error);
+            auto result = errorCallback->invoke(transaction, *error);
 
             // The spec says:
             // "If the error callback returns false, then move on to the next statement..."
@@ -227,7 +227,7 @@ bool SQLStatement::performCallback(SQLTransaction& transaction)
     if (auto callback = m_statementCallbackWrapper.unwrap()) {
         ASSERT(m_resultSet);
 
-        auto result = callback->invoke(transaction, *m_resultSet);
+        auto result = callback->invoke(transaction, Ref { *m_resultSet }.get());
         return result.type() == CallbackResultType::ExceptionThrown;
     }
 

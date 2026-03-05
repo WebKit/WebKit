@@ -115,7 +115,7 @@ EchoEmulatingRenderer::EchoEmulatingRenderer(
 }
 
 bool EchoEmulatingRenderer::Render(ArrayView<const int16_t> data) {
-  if (data.size() > 0) {
+  if (!data.empty()) {
     echo_emulating_capturer_->OnAudioRendered(data);
   }
   return delegate_->Render(data);

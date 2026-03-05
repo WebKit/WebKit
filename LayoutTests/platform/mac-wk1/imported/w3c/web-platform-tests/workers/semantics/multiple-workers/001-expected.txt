@@ -1,4 +1,0 @@
-
-PASS dedicated
-FAIL shared Shared workers are not supported
-

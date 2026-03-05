@@ -26,6 +26,7 @@
 #include "TestHarness.h"
 #include "bmalloc_heap.h"
 #include "bmalloc_heap_config.h"
+#include "pas_internal_config.h"
 
 #include <array>
 #include <cstdlib>
@@ -78,8 +79,8 @@ void testBmallocAllocationAlignment()
         CHECK(!(buffAddr % alignment));
     };
 
-    auto sizes = std::array<size_t, 6> {
-        7, 100, 128, 2003, 4096, 1024 * 32
+    auto sizes = std::array<size_t, 7> {
+        7, 100, 128, 2003, 4096, 1024 * 32, 2 * PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE,
     };
     auto alignments = std::array<size_t, 5> {
         1, 8, 128, 1024, 4096
@@ -127,6 +128,36 @@ void testBmallocForceBitfitAfterAlloc()
     CHECK(mem2);
 }
 
+void testBmallocDisableAllocationsAboveMTETaggingCeiling()
+{
+    auto do_allocate_and_check = [](pas_allocation_mode mode) {
+        const std::array<size_t, 8> sizes = {
+            4096,
+            8,
+            743,
+            PAS_SMALL_PAGE_DEFAULT_SIZE,
+            PAS_SMALL_PAGE_DEFAULT_SIZE * 2,
+            PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE,
+            PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE + 1,
+            PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE * 4
+        };
+        for (auto size : sizes) {
+            void* mem = bmalloc_try_allocate(size, mode);
+            CHECK(mem);
+        }
+    };
+
+    do_allocate_and_check(pas_non_compact_allocation_mode);
+    do_allocate_and_check(pas_always_compact_allocation_mode);
+
+    // Simulate the effects of MTE enablement by forcing larger allocations
+    // into the large heap or system heap
+    pas_mte_force_nontaggable_user_allocations_into_large_heap();
+
+    do_allocate_and_check(pas_non_compact_allocation_mode);
+    do_allocate_and_check(pas_always_compact_allocation_mode);
+}
+
 void testBmallocSmallIndexOverlap()
 {
     // object_size = 16 * index for this heap.
@@ -152,5 +183,6 @@ void addBmallocTests()
     ADD_TEST(testBmallocAllocationZeroing());
     ADD_TEST(testBmallocAllocationAlignment());
     ADD_TEST(testBmallocForceBitfitAfterAlloc());
+    ADD_TEST(testBmallocDisableAllocationsAboveMTETaggingCeiling());
     ADD_TEST(testBmallocSmallIndexOverlap());
 }

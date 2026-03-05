@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEImageElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEImageElement);
 
 inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -90,7 +90,7 @@ void SVGFEImageElement::requestImageResource()
 
     CachedResourceRequest request(ResourceRequest(document().completeURL(href())), options);
     request.setInitiator(*this);
-    m_cachedImage = document().protectedCachedResourceLoader()->requestImage(WTFMove(request)).value_or(nullptr);
+    m_cachedImage = protect(document().cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
 
     if (CachedResourceHandle cachedImage = m_cachedImage)
         cachedImage->addClient(*this);
@@ -214,7 +214,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     auto& context = imageBuffer->context();
     SVGRenderingContext::renderSubtreeToContext(context, *renderer, AffineTransform());
 
-    return { WTFMove(imageBuffer), imageRect };
+    return { WTF::move(imageBuffer), imageRect };
 }
 
 RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const

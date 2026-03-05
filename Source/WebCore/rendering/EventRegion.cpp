@@ -34,7 +34,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderBox.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
 #include "WindRule.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -367,7 +367,7 @@ void EventRegionContext::shrinkWrapInteractionRegions()
                 continue;
             }
             extraRegion.contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
-            m_interactionRegions.insert(++i, WTFMove(extraRegion));
+            m_interactionRegions.insert(++i, WTF::move(extraRegion));
         }
     }
 }
@@ -443,22 +443,22 @@ EventRegion::EventRegion(Region&& region
     , Vector<WebCore::InteractionRegion> interactionRegions
 #endif
     )
-    : m_region(WTFMove(region))
+    : m_region(WTF::move(region))
 #if ENABLE(TOUCH_ACTION_REGIONS)
-    , m_touchActionRegions(WTFMove(touchActionRegions))
+    , m_touchActionRegions(WTF::move(touchActionRegions))
 #endif
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    , m_wheelEventListenerRegion(WTFMove(wheelEventListenerRegion))
-    , m_nonPassiveWheelEventListenerRegion(WTFMove(nonPassiveWheelEventListenerRegion))
+    , m_wheelEventListenerRegion(WTF::move(wheelEventListenerRegion))
+    , m_nonPassiveWheelEventListenerRegion(WTF::move(nonPassiveWheelEventListenerRegion))
 #endif
 #if ENABLE(TOUCH_EVENT_REGIONS)
-    , m_touchEventListenerRegion(WTFMove(touchEventListenerRegion))
+    , m_touchEventListenerRegion(WTF::move(touchEventListenerRegion))
 #endif
 #if ENABLE(EDITABLE_REGION)
-    , m_editableRegion(WTFMove(editableRegion))
+    , m_editableRegion(WTF::move(editableRegion))
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    , m_interactionRegions(WTFMove(interactionRegions))
+    , m_interactionRegions(WTF::move(interactionRegions))
 #endif
 {
 }
@@ -502,6 +502,10 @@ void EventRegion::translate(const IntSize& offset)
 #if ENABLE(WHEEL_EVENT_REGIONS)
     m_wheelEventListenerRegion.translate(offset);
     m_nonPassiveWheelEventListenerRegion.translate(offset);
+#endif
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    m_touchEventListenerRegion.translate(offset);
 #endif
 
 #if ENABLE(EDITABLE_REGION)
@@ -613,7 +617,8 @@ OptionSet<EventListenerRegionType> touchEventTypes =
     EventListenerRegionType::TouchStart, EventListenerRegionType::NonPassiveTouchStart
     , EventListenerRegionType::TouchEnd, EventListenerRegionType::NonPassiveTouchEnd
     , EventListenerRegionType::TouchMove, EventListenerRegionType::NonPassiveTouchMove
-    , EventListenerRegionType::TouchCancel, EventListenerRegionType::NonPassiveTouchCancel
+    , EventListenerRegionType::TouchCancel
+    , EventListenerRegionType::TouchForceChange, EventListenerRegionType::NonPassiveTouchForceChange
     , EventListenerRegionType::PointerDown, EventListenerRegionType::NonPassivePointerDown
     , EventListenerRegionType::PointerEnter, EventListenerRegionType::NonPassivePointerEnter
     , EventListenerRegionType::PointerLeave, EventListenerRegionType::NonPassivePointerLeave
@@ -634,7 +639,7 @@ OptionSet<EventListenerRegionType> touchEventNonPassiveTypes =
     EventListenerRegionType::NonPassiveTouchStart
     , EventListenerRegionType::NonPassiveTouchEnd
     , EventListenerRegionType::NonPassiveTouchMove
-    , EventListenerRegionType::NonPassiveTouchCancel
+    , EventListenerRegionType::NonPassiveTouchForceChange
     , EventListenerRegionType::NonPassivePointerDown
     , EventListenerRegionType::NonPassivePointerEnter
     , EventListenerRegionType::NonPassivePointerLeave
@@ -669,7 +674,7 @@ static EventTrackingRegionsEventType eventTypeForEventListenerType(EventListener
         return EventTrackingRegionsEventType::Touchend;
     case EventListenerRegionType::NonPassiveTouchMove:
         return EventTrackingRegionsEventType::Touchmove;
-    case EventListenerRegionType::NonPassiveTouchCancel:
+    case EventListenerRegionType::NonPassiveTouchForceChange:
         return EventTrackingRegionsEventType::Touchforcechange;
     case EventListenerRegionType::NonPassivePointerDown:
         return EventTrackingRegionsEventType::Pointerdown;

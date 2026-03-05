@@ -99,7 +99,7 @@ struct Content {
     }
 
     Content(Data&& data)
-        : m_value { WTFMove(data) }
+        : m_value { WTF::move(data) }
     {
     }
 
@@ -116,6 +116,8 @@ struct Content {
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
+
+    String altText() const;
 
     bool operator==(const Content&) const = default;
 

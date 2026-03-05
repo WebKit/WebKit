@@ -68,7 +68,7 @@ template<typename> class ExceptionOr;
 
 // https://github.com/immersive-web/WebXR-WebGPU-Binding/blob/main/explainer.md
 class XRGPUBinding : public RefCounted<XRGPUBinding> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRGPUBinding);
+    WTF_MAKE_TZONE_ALLOCATED(XRGPUBinding);
 public:
     static Ref<XRGPUBinding> create(WebXRSession& session, GPUDevice& device)
     {

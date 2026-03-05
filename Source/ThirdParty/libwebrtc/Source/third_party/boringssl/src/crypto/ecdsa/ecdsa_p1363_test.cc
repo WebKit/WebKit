@@ -34,10 +34,11 @@ static void RunWycheproofTest(const char *path) {
   FileTestGTest(path, [](FileTest *t) {
     t->IgnoreAllUnusedInstructions();
 
-    const EC_GROUP *group = GetWycheproofCurve(t, "key.curve", true);
+    const EC_GROUP *group = GetWycheproofCurve(t, "publicKey.curve", true);
     ASSERT_TRUE(group);
     std::vector<uint8_t> uncompressed;
-    ASSERT_TRUE(t->GetInstructionBytes(&uncompressed, "key.uncompressed"));
+    ASSERT_TRUE(
+        t->GetInstructionBytes(&uncompressed, "publicKey.uncompressed"));
     bssl::UniquePtr<EC_KEY> key(EC_KEY_new());
     ASSERT_TRUE(key);
     ASSERT_TRUE(EC_KEY_set_group(key.get(), group));
@@ -125,21 +126,13 @@ static void RunSignTest(const EC_GROUP *group) {
                                  key.get()));
 }
 
-TEST(ECDSAP1363Test, SignP224) {
-  RunSignTest(EC_group_p224());
-}
+TEST(ECDSAP1363Test, SignP224) { RunSignTest(EC_group_p224()); }
 
-TEST(ECDSAP1363Test, SignP256) {
-  RunSignTest(EC_group_p256());
-}
+TEST(ECDSAP1363Test, SignP256) { RunSignTest(EC_group_p256()); }
 
-TEST(ECDSAP1363Test, SignP384) {
-  RunSignTest(EC_group_p384());
-}
+TEST(ECDSAP1363Test, SignP384) { RunSignTest(EC_group_p384()); }
 
-TEST(ECDSAP1363Test, SignP521) {
-  RunSignTest(EC_group_p521());
-}
+TEST(ECDSAP1363Test, SignP521) { RunSignTest(EC_group_p521()); }
 
 TEST(ECDSAP1363Test, SignFailsWithSmallBuffer) {
   // Fill digest values with some random data.
@@ -175,8 +168,8 @@ TEST(ECDSAP1363Test, SignSucceedsWithLargeBuffer) {
   std::vector<uint8_t> sig(sig_len + 1, 'x');
 
   size_t out_sig_len;
-  ASSERT_TRUE(ECDSA_sign_p1363(digest, sizeof(digest), sig.data(),
-                                &out_sig_len, sig.size(), key.get()));
+  ASSERT_TRUE(ECDSA_sign_p1363(digest, sizeof(digest), sig.data(), &out_sig_len,
+                               sig.size(), key.get()));
   ASSERT_EQ(out_sig_len, sig_len);
   // The extra byte should be untouched.
   EXPECT_EQ(sig.back(), 'x');

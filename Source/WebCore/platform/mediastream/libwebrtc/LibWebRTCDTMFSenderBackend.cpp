@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -41,7 +42,7 @@ static inline String toWTFString(const std::string& value)
 }
 
 LibWebRTCDTMFSenderBackend::LibWebRTCDTMFSenderBackend(Ref<webrtc::DtmfSenderInterface>&& sender)
-    : m_sender(WTFMove(sender))
+    : m_sender(WTF::move(sender))
 {
     m_sender->RegisterObserver(this);
 }
@@ -91,7 +92,7 @@ void LibWebRTCDTMFSenderBackend::OnToneChange(const std::string& tone, const std
 
 void LibWebRTCDTMFSenderBackend::onTonePlayed(Function<void()>&& onTonePlayed)
 {
-    m_onTonePlayed = WTFMove(onTonePlayed);
+    m_onTonePlayed = WTF::move(onTonePlayed);
 }
 
 } // namespace WebCore

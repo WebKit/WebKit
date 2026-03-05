@@ -57,8 +57,8 @@ private:
     InspectorShaderProgram(WebGLProgram&, InspectorCanvas&);
 
     String m_identifier;
-    InspectorCanvas& m_canvas;
-    WebGLProgram& m_program;
+    WeakRef<InspectorCanvas> m_canvas;
+    WeakRef<WebGLProgram> m_program;
     bool m_disabled { false };
     bool m_highlighted { false };
 };

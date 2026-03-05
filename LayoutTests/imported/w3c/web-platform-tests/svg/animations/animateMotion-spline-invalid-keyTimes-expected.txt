@@ -1,0 +1,3 @@
+
+FAIL keyTimes does not end with one, calcMode=spline assert_equals: motion path not applied expected 0 but got -10
+

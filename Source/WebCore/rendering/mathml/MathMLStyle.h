@@ -43,7 +43,7 @@ public:
     static void resolveMathMLStyleTree(RenderObject*);
 
 private:
-    const MathMLStyle* getMathMLStyle(RenderObject* renderer);
+    const MathMLStyle* NODELETE getMathMLStyle(RenderObject* renderer);
     RenderObject* getMathMLParentNode(RenderObject*);
     void updateStyleIfNeeded(RenderObject*, MathVariant);
 

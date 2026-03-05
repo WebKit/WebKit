@@ -1,0 +1,19 @@
+Test that hit-testing correctly handles clipPath with objectBoundingBox units and a local transform. The clip should be at (50, 50) with size 100x100.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.elementFromPoint(75, 75).id is "target"
+PASS document.elementFromPoint(100, 100).id is "target"
+PASS document.elementFromPoint(140, 140).id is "target"
+PASS document.elementFromPoint(25, 25).id is ''
+PASS document.elementFromPoint(175, 175).id is ''
+PASS document.elementFromPoint(10, 100).id is ''
+PASS document.elementFromPoint(100, 10).id is ''
+PASS document.elementFromPoint(51, 51).id is "target"
+PASS document.elementFromPoint(149, 149).id is "target"
+PASS document.elementFromPoint(49, 49).id is ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

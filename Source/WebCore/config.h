@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -45,7 +45,6 @@
 #undef new
 #undef delete
 #include <wtf/FastMalloc.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
 #endif

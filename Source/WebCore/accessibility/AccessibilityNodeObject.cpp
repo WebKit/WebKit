@@ -90,6 +90,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "HTMLVideoElement.h"
 #include "HitTestSource.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBoxInlines.h"
 #include "KeyboardEvent.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -111,7 +112,10 @@
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RuleFeature.h"
+#include "SVGAElement.h"
 #include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGTitleElement.h"
 #include "ShadowRoot.h"
 #include "StyleListStyleType.h"
 #include "StyleResolver.h"
@@ -121,6 +125,7 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
+#include "XLinkNames.h"
 #include <numeric>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
@@ -133,7 +138,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static String accessibleNameForNode(Node&, Node* labelledbyNode = nullptr);
-static void appendNameToStringBuilder(StringBuilder&, String&&, bool prependSpace = true);
+static void appendNameToStringBuilder(StringBuilder&, String&&, bool prependSpace = true, bool prependNewline = false);
 
 AccessibilityNodeObject::AccessibilityNodeObject(AXID axID, Node* node, AXObjectCache& cache)
     : AccessibilityObject(axID, cache)
@@ -148,13 +153,13 @@ Ref<AccessibilityNodeObject> AccessibilityNodeObject::create(AXID axID, Node* no
 
 AccessibilityNodeObject::~AccessibilityNodeObject()
 {
-    ASSERT(isDetached());
+    AX_ASSERT(isDetached());
 }
 
 void AccessibilityNodeObject::init()
 {
 #ifndef NDEBUG
-    ASSERT(!m_initialized);
+    AX_ASSERT(!m_initialized);
     m_initialized = true;
 #endif
     m_ariaRole = determineAriaRoleAttribute();
@@ -177,7 +182,7 @@ AccessibilityObject* AccessibilityNodeObject::firstChild() const
     if (!currentChild)
         return nullptr;
 
-    auto* cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
@@ -198,7 +203,7 @@ AccessibilityObject* AccessibilityNodeObject::lastChild() const
     if (!lastChild)
         return nullptr;
 
-    auto objectCache = axObjectCache();
+    CheckedPtr objectCache = axObjectCache();
     return objectCache ? objectCache->getOrCreate(*lastChild) : nullptr;
 }
 
@@ -211,7 +216,7 @@ AccessibilityObject* AccessibilityNodeObject::previousSibling() const
     if (!previousSibling)
         return nullptr;
 
-    auto objectCache = axObjectCache();
+    CheckedPtr objectCache = axObjectCache();
     return objectCache ? objectCache->getOrCreate(*previousSibling) : nullptr;
 }
 
@@ -224,14 +229,14 @@ AccessibilityObject* AccessibilityNodeObject::nextSibling() const
     if (!nextSibling)
         return nullptr;
 
-    auto objectCache = axObjectCache();
+    CheckedPtr objectCache = axObjectCache();
     return objectCache ? objectCache->getOrCreate(*nextSibling) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::ownerParentObject() const
 {
     auto owners = this->owners();
-    AX_DEBUG_ASSERT(owners.size() <= 1);
+    AX_ASSERT(owners.size() <= 1);
     return owners.size() ? dynamicDowncast<AccessibilityObject>(owners.first().get()) : nullptr;
 }
 
@@ -289,7 +294,7 @@ LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
     if (labels.isEmpty())
         return boundingBoxRect();
 
-    auto* cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return boundingBoxRect();
 
@@ -383,7 +388,7 @@ AccessibilityRole AccessibilityNodeObject::determineListRoleWithCleanChildren()
     if (!isAccessibilityList())
         return AccessibilityRole::Unknown;
 
-    ASSERT(!needsToUpdateChildren() && childrenInitialized());
+    AX_ASSERT(!needsToUpdateChildren() && childrenInitialized());
 
     // Directory is mapped to list for now, but does not adhere to the same heuristics.
     if (ariaRoleAttribute() == AccessibilityRole::Directory)
@@ -501,8 +506,14 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
 
     if (element->isLink())
         return AccessibilityRole::Link;
-    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*element))
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*element)) {
+#if PLATFORM(IOS_FAMILY)
+        // On iOS, all select elements (including multiple) use popup menus, so use PopUpButton role.
+        return AccessibilityRole::PopUpButton;
+#else
         return selectElement->multiple() ? AccessibilityRole::ListBox : AccessibilityRole::PopUpButton;
+#endif
+    }
     if (is<HTMLImageElement>(*element) && element->hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
 
@@ -685,7 +696,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
 AccessibilityRole AccessibilityNodeObject::roleFromInputElement(const HTMLInputElement& input) const
 {
     AXTRACE("AccessibilityNodeObject::roleFromInputElement"_s);
-    ASSERT(dynamicDowncast<HTMLInputElement>(node()) == &input);
+    AX_ASSERT(dynamicDowncast<HTMLInputElement>(node()) == &input);
 
     if (input.isTextButton())
         return buttonRoleType();
@@ -788,7 +799,7 @@ void AccessibilityNodeObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises,
     // childrenChanged should have been called, leaving the object with no children.
-    ASSERT(!m_childrenInitialized);
+    AX_ASSERT(!m_childrenInitialized);
     m_childrenInitialized = true;
 
     auto clearDirtySubtree = makeScopeExit([&] {
@@ -821,6 +832,16 @@ void AccessibilityNodeObject::addChildren()
     for (auto* child = node->firstChild(); child; child = child->nextSibling())
         addChild(cache->getOrCreate(*child));
 #else
+    // For listbox selects, use listItems() to get option elements instead of
+    // composedTreeChildren which would return shadow DOM content.
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node); selectElement && !selectElement->usesMenuList()) {
+        for (const auto& listItem : selectElement->listItems()) {
+            if (listItem)
+                addChild(cache->getOrCreate(*listItem));
+        }
+        return;
+    }
+
     if (RefPtr containerNode = dynamicDowncast<ContainerNode>(*node)) {
         // Specify an InlineContextCapacity template parameter of 0 to avoid allocating ComposedTreeIterator's
         // internal vector on the stack. See comment in AccessibilityRenderObject::addChildren() for a full
@@ -882,8 +903,6 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildr
     // Only listboxes are asked for their visible children.
     CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(renderer());
     if (!renderListBox && ariaRoleAttribute() == AccessibilityRole::ListBox) {
-        if (!childrenInitialized())
-            addChildren();
         AccessibilityChildrenVector result;
         for (const auto& child : unignoredChildren()) {
             if (!child->isOffScreen())
@@ -892,13 +911,24 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildr
         return result;
     }
 
+    // For HTMLSelectElement with arbitrary renderer use the size attribute as approximation.
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && !selectElement->usesMenuList()) {
+        const auto& children = const_cast<AccessibilityNodeObject*>(this)->unignoredChildren();
+        AccessibilityChildrenVector result;
+        unsigned visibleCount = selectElement->size();
+        if (!visibleCount)
+            visibleCount = 4; // Default size for multiple select is 4
+        size_t count = std::min(static_cast<size_t>(visibleCount), children.size());
+        result.reserveInitialCapacity(count);
+        for (size_t i = 0; i < count; i++)
+            result.append(children[i]);
+        return result;
+    }
+
     // Handle native listboxes (RenderListBox).
     if (renderListBox && role() == AccessibilityRole::ListBox) {
-        if (!childrenInitialized())
-            addChildren();
-
         const auto& children = const_cast<AccessibilityNodeObject*>(this)->unignoredChildren();
-        AXCoreObject::AccessibilityChildrenVector result;
+        AccessibilityChildrenVector result;
         size_t size = children.size();
         for (size_t i = 0; i < size; i++) {
             if (renderListBox->listIndexIsVisible(i))
@@ -944,7 +974,7 @@ bool AccessibilityNodeObject::computeIsIgnored() const
 #ifndef NDEBUG
     // Double-check that an AccessibilityObject is never accessed before
     // it's been initialized.
-    ASSERT(m_initialized);
+    AX_ASSERT(m_initialized);
 #endif
     if (isTree())
         return isIgnoredByDefault();
@@ -1392,7 +1422,7 @@ AccessibilityButtonState AccessibilityNodeObject::checkboxOrRadioValue() const
     return AccessibilityObject::checkboxOrRadioValue();
 }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 TextEmissionBehavior AccessibilityNodeObject::textEmissionBehavior() const
 {
     RefPtr node = this->node();
@@ -1429,7 +1459,7 @@ TextEmissionBehavior AccessibilityNodeObject::textEmissionBehavior() const
     }
     return TextEmissionBehavior::None;
 }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 Element* AccessibilityNodeObject::anchorElement() const
 {
@@ -1440,7 +1470,7 @@ Element* AccessibilityNodeObject::anchorElement() const
     if (RefPtr areaElement = dynamicDowncast<HTMLAreaElement>(*node))
         return areaElement.unsafeGet();
 
-    AXObjectCache* cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
@@ -1519,11 +1549,18 @@ bool AccessibilityNodeObject::isHiddenUntilFoundContainer() const
     return element && element->isHiddenUntilFound();
 }
 
+static bool isDateFieldWithStandardFocus(HTMLInputElement& input)
+{
+    return (input.isDateField() || input.isDateTimeLocalField()) && !input.hasCustomFocusLogic();
+}
+
 static RefPtr<Element> nodeActionElement(Node& node)
 {
     auto elementName = WebCore::elementName(node);
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(node)) {
-        if (!input->isDisabledFormControl() && (input->isRadioButton() || input->isCheckbox() || input->isTextButton() || input->isFileUpload() || input->isImageButton() || input->isTextField() || input->isDateField() || input->isDateTimeLocalField()))
+        // We only allow date/datetime fields with standard (non-custom) focus here because calling showPicker(), which happens
+        // using the action element in AccessibilityObject::press(), on platforms with custom focus (e.g., iOS) is a no-op.
+        if (!input->isDisabledFormControl() && (input->isRadioButton() || input->isCheckbox() || input->isTextButton() || input->isFileUpload() || input->isImageButton() || input->isTextField() || isDateFieldWithStandardFocus(*input)))
             return input;
     } else if (elementName == ElementName::HTML_button || elementName == ElementName::HTML_select)
         return &downcast<Element>(node);
@@ -1628,7 +1665,7 @@ bool AccessibilityNodeObject::showsCursorOnHover() const
         return false;
     }
 
-    auto* box = dynamicDowncast<RenderBox>(*renderer);
+    CheckedPtr box = dynamicDowncast<RenderBox>(*renderer);
     if (box && (box->hasScrollableOverflowX() || box->hasScrollableOverflowY())) {
         // This heuristic is not valid for scrollable boxes.
         return false;
@@ -1820,7 +1857,7 @@ void AccessibilityNodeObject::setNodeValue(StepAction stepAction, float value)
     bool didSet = setValue(String::number(value));
 
     if (didSet) {
-        if (auto* cache = axObjectCache())
+        if (CheckedPtr cache = axObjectCache())
             cache->postNotification(this, document(), AXNotification::ValueChanged);
     } else
         postKeyboardKeysForValueChange(stepAction);
@@ -1896,7 +1933,7 @@ VisiblePositionRange AccessibilityNodeObject::visiblePositionRange() const
             endPos = startPos;
     }
 
-    return { WTFMove(startPos), WTFMove(endPos) };
+    return { WTF::move(startPos), WTF::move(endPos) };
 }
 
 VisiblePositionRange AccessibilityNodeObject::selectedVisiblePositionRange() const
@@ -1942,7 +1979,7 @@ VisiblePositionRange AccessibilityNodeObject::visiblePositionRangeForLine(unsign
         return { };
 
     RefPtr document = this->document();
-    auto* renderView = document ? document->renderView() : nullptr;
+    CheckedPtr renderView = document ? document->renderView() : nullptr;
     if (!renderView)
         return { };
 
@@ -2243,7 +2280,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleRows()
 void AccessibilityNodeObject::addTableChildrenAndCellSlots()
 {
     // isExposableTable() should've been checked before this method was even called.
-    ASSERT(isExposableTable());
+    AX_ASSERT(isExposableTable());
 
     if (!isExposableTable()) [[unlikely]]
         return;
@@ -2494,7 +2531,7 @@ unsigned AccessibilityNodeObject::computeCellSlots()
     };
 
     // Step 4: Let the table be the table represented by the table element.
-    RefPtr tableElement = this->node();
+    RefPtr tableElement = element();
     // `isAriaTable()` will return true for table-like ARIA structures (grid, treegrid, table).
     if (!is<HTMLTableElement>(tableElement.get()) && !isAriaTable())
         return 0;
@@ -2567,11 +2604,28 @@ unsigned AccessibilityNodeObject::computeCellSlots()
         if (descendantIsRowGroup)
             processRowGroup(*element);
     };
+    // Collect aria-owned children upfront. aria-owned elements are placed after natural DOM
+    // children, so skip them if we encounter them in the DOM traversal.
+    auto ownedChildren = ownedObjects();
+    HashSet<Node*> ownedChildNodes;
+    for (const auto& ownedChild : ownedChildren) {
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* node = ownedChild->node())
+            ownedChildNodes.add(node);
+    }
+
     // Step 7: Let the current element be the first element child of the table element.
-    for (RefPtr currentElement = tableElement->firstChild(); currentElement; currentElement = currentElement->nextSibling()) {
-        processTableDescendant(currentElement.get());
+    // Use composedTreeChildren to traverse shadow DOM children too.
+    for (Ref child : composedTreeChildren<0>(*tableElement)) {
+        // Skip children that are aria-owned; they'll be processed in aria-owns order below.
+        if (ownedChildNodes.contains(&child.get()))
+            continue;
+        processTableDescendant(&child.get());
         // Step 17 + 18: Advance the current element to the next child of the table.
     }
+
+    // Process any aria-owned children that may be rows or rowgroups.
+    for (const auto& ownedChild : ownedChildren)
+        processTableDescendant(ownedChild->node());
 
     // Step 19: For each tfoot element in the list of pending tfoot elements, in tree order,
     // run the algorithm for processing row groups.
@@ -2628,7 +2682,7 @@ AccessibilityObject* AccessibilityNodeObject::parentTable() const
         // https://bugs.webkit.org/show_bug.cgi?id=42652
         RefPtr<AccessibilityObject> tableFromRenderTree;
         if (CheckedPtr renderTableCell = dynamicDowncast<RenderTableCell>(renderer()))
-            tableFromRenderTree = cache->get(renderTableCell->checkedTable().get());
+            tableFromRenderTree = cache->get(protect(renderTableCell->table()).get());
 
         if (!tableFromRenderTree || !tableFromRenderTree->isTable()) {
             if (node()) {
@@ -3129,7 +3183,7 @@ AccessibilityObject* AccessibilityNodeObject::captionForFigure() const
     if (!isFigureElement())
         return nullptr;
 
-    AXObjectCache* cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
@@ -3232,13 +3286,13 @@ String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& 
 
         auto ariaLabeledBy = label->ariaLabeledByAttribute();
         if (!ariaLabeledBy.isEmpty())
-            appendNameToStringBuilder(result, WTFMove(ariaLabeledBy));
+            appendNameToStringBuilder(result, WTF::move(ariaLabeledBy));
 #if PLATFORM(COCOA)
         else if (RefPtr axLabel = dynamicDowncast<AccessibilityNodeObject>(*label); axLabel && axLabel->isNativeLabel())
             appendNameToStringBuilder(result, axLabel->textAsLabelFor(*this));
 #endif
         else
-            appendNameToStringBuilder(result, accessibleNameForNode(labelElement.get()));
+            appendNameToStringBuilder(result, accessibleNameForNode(labelElement.get(), /* labelledByNode */ node()));
     }
 
     return result.toString();
@@ -3277,15 +3331,15 @@ void AccessibilityNodeObject::labelText(Vector<AccessibilityText>& textOrder) co
     if (!elementLabels.size())
         elementLabels = Accessibility::labelsForElement(element.get());
 
-    String label = textForLabelElements(WTFMove(elementLabels));
+    String label = textForLabelElements(WTF::move(elementLabels));
     if (!label.isEmpty()) {
-        textOrder.append({ WTFMove(label), isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement });
+        textOrder.append({ WTF::move(label), isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement });
         return;
     }
 
     auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
     if (!ariaLabel.isEmpty()) {
-        textOrder.append({ WTFMove(ariaLabel), AccessibilityTextSource::LabelByElement });
+        textOrder.append({ WTF::move(ariaLabel), AccessibilityTextSource::LabelByElement });
         return;
     }
 }
@@ -3302,7 +3356,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     if (isWebArea()) {
         String webAreaText = alternativeTextForWebArea();
         if (!webAreaText.isEmpty())
-            textOrder.append(AccessibilityText(WTFMove(webAreaText), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(webAreaText), AccessibilityTextSource::Alternative));
         return;
     }
 
@@ -3314,7 +3368,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
         auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
         if (!ariaLabel.isEmpty()) {
             hasValidAriaLabel = true;
-            textOrder.append(AccessibilityText(WTFMove(ariaLabel), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(ariaLabel), AccessibilityTextSource::Alternative));
         }
     }
 
@@ -3324,21 +3378,21 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
 
             // RenderImage will return title as a fallback from altText, but we don't want title here because we consider that in helpText.
             if (!renderAltText.isEmpty() && renderAltText != getAttribute(titleAttr)) {
-                textOrder.append(AccessibilityText(WTFMove(renderAltText), AccessibilityTextSource::Alternative));
+                textOrder.append(AccessibilityText(WTF::move(renderAltText), AccessibilityTextSource::Alternative));
                 return;
             }
         }
         // Images should use alt as long as the attribute is present, even if empty.
         // Otherwise, it should fallback to other methods, like the title attribute.
         if (String alt = altTextFromAttributeOrStyle(); !alt.isNull())
-            textOrder.append(AccessibilityText(WTFMove(alt), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(alt), AccessibilityTextSource::Alternative));
     }
 
     RefPtr node = this->node();
     if (!node)
         return;
 
-    auto objectCache = axObjectCache();
+    CheckedPtr objectCache = axObjectCache();
     // The fieldset element derives its alternative text from the first associated legend element if one is available.
     if (RefPtr fieldset = dynamicDowncast<HTMLFieldSetElement>(*node); fieldset && objectCache) {
         RefPtr object = objectCache->getOrCreate(fieldset->legend());
@@ -3371,7 +3425,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
                         if (caption && !caption->isHidden()) {
                             RefPtr captionNode = caption->node();
                             if (String captionAccname = captionNode ? accessibleNameForNode(*captionNode) : emptyString(); !captionAccname.isEmpty())
-                                textOrder.append(AccessibilityText(WTFMove(captionAccname), AccessibilityTextSource::Alternative));
+                                textOrder.append(AccessibilityText(WTF::move(captionAccname), AccessibilityTextSource::Alternative));
                         }
                     }
                     break;
@@ -3407,9 +3461,9 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
 #endif
 
     if (CheckedPtr style = this->style()) {
-        String altText = style->altFromContent();
+        String altText = style->content().altText();
         if (!altText.isEmpty())
-            textOrder.append(AccessibilityText(WTFMove(altText), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(altText), AccessibilityTextSource::Alternative));
     }
 }
 
@@ -3435,9 +3489,14 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         if (isHeading())
             mode.includeFocusableContent = true;
 
+        // Track nodes referenced via aria-labelledby to avoid double-counting them
+        // when they're encountered again in the tree.
+        HashSet<const Node*> nodesReferencedViaLabeledby;
+        mode.nodesReferencedViaLabeledby = &nodesReferencedViaLabeledby;
+
         String text = textUnderElement(mode);
         if (!text.isEmpty())
-            textOrder.append(AccessibilityText(WTFMove(text), AccessibilityTextSource::Children));
+            textOrder.append(AccessibilityText(WTF::move(text), AccessibilityTextSource::Children));
     }
 }
 
@@ -3458,7 +3517,7 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
         auto matchFunc = [] (const AccessibilityObject& object) {
             return object.isFieldset() && !object.ariaDescribedByAttribute().isEmpty();
         };
-        if (RefPtr parent = Accessibility::findAncestor<AccessibilityObject>(*this, false, WTFMove(matchFunc)))
+        if (RefPtr parent = Accessibility::findAncestor<AccessibilityObject>(*this, false, WTF::move(matchFunc)))
             textOrder.append(AccessibilityText(parent->ariaDescribedByAttribute(), AccessibilityTextSource::Summary));
     }
 
@@ -3469,12 +3528,10 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
 
     // The title attribute should be used as help text unless it is already being used as descriptive text.
     // However, when the title attribute is the only text alternative provided, it may be exposed as the
-    // descriptive text. This is problematic in the case of meters because the HTML spec suggests authors
-    // can expose units through this attribute. Therefore, if the element is a meter, change its source
-    // type to AccessibilityTextSource::Help.
+    // descriptive text.
     const AtomString& title = getAttribute(titleAttr);
     if (!title.isEmpty()) {
-        if (!isMeter() && !roleIgnoresTitle())
+        if (!roleIgnoresTitle())
             textOrder.append(AccessibilityText(title, AccessibilityTextSource::TitleTag));
         else
             textOrder.append(AccessibilityText(title, AccessibilityTextSource::Help));
@@ -3502,14 +3559,14 @@ void AccessibilityNodeObject::accessibilityText(Vector<AccessibilityText>& textO
 
     String placeholder = placeholderValue();
     if (!placeholder.isEmpty())
-        textOrder.append(AccessibilityText(WTFMove(placeholder), AccessibilityTextSource::Placeholder));
+        textOrder.append(AccessibilityText(WTF::move(placeholder), AccessibilityTextSource::Placeholder));
 }
 
 void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textOrder) const
 {
     String ariaLabeledBy = ariaLabeledByAttribute();
     if (!ariaLabeledBy.isEmpty())
-        textOrder.append(AccessibilityText(WTFMove(ariaLabeledBy), AccessibilityTextSource::Alternative));
+        textOrder.append(AccessibilityText(WTF::move(ariaLabeledBy), AccessibilityTextSource::Alternative));
 }
 
 String AccessibilityNodeObject::alternativeTextForWebArea() const
@@ -3638,7 +3695,7 @@ String AccessibilityNodeObject::helpText() const
                 return title;
         }
 
-        auto* cache = axObjectCache();
+        CheckedPtr cache = axObjectCache();
         if (!cache)
             return { };
 
@@ -3729,15 +3786,11 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject& object, T
     if (object.canSetFocusAttribute() && !mode.includeFocusableContent)
         return false;
 
-    // Skip big container elements like lists, tables, etc.
-    if (object.isAccessibilityList())
-        return false;
-
-    if (object.isExposableTable())
-        return false;
-
-    if (object.isTree() || object.isCanvas())
-        return false;
+    if (mode.descendIntoContainers == DescendIntoContainers::No) {
+        // Skip big container elements like lists, tables, etc.
+        if (object.isAccessibilityList() || object.isExposableTable() || object.isTree() || object.isCanvas())
+            return false;
+    }
 
 #if ENABLE(MODEL_ELEMENT)
     if (object.isModel())
@@ -3747,26 +3800,34 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject& object, T
     return true;
 }
 
-static void appendNameToStringBuilder(StringBuilder& builder, String&& text, bool prependSpace)
+static void appendNameToStringBuilder(StringBuilder& builder, String&& text, bool prependSpace, bool prependNewline)
 {
     if (text.isEmpty())
         return;
 
     if (prependSpace && !isHTMLLineBreak(text[0]) && builder.length() && !isHTMLLineBreak(builder[builder.length() - 1]))
         builder.append(' ');
-    builder.append(WTFMove(text));
+    else if (prependNewline) {
+        // FIXME: This is in an else if so we don't break existing behavior of adding spaces for specific display
+        // types, even if they emit newlines.
+        // We should update prependSpace to also be based off of TextIterator's behavior, so that textUnderElement is
+        // more accurate in adding whitespace or newlines based on the node/renderer.
+        builder.append('\n');
+    }
+
+    builder.append(WTF::move(text));
 }
 
 
-static bool displayTypeNeedsSpace(DisplayType type)
+static bool NODELETE displayNeedsSpace(Style::Display display)
 {
-    return type == DisplayType::Block
-        || type == DisplayType::InlineBlock
-        || type == DisplayType::InlineFlex
-        || type == DisplayType::InlineGrid
-        || type == DisplayType::InlineGridLanes
-        || type == DisplayType::InlineTable
-        || type == DisplayType::TableCell;
+    return display == Style::DisplayType::BlockFlow
+        || display == Style::DisplayType::InlineFlowRoot
+        || display == Style::DisplayType::InlineFlex
+        || display == Style::DisplayType::InlineGrid
+        || display == Style::DisplayType::InlineGridLanes
+        || display == Style::DisplayType::InlineTable
+        || display == Style::DisplayType::TableCell;
 }
 
 static bool needsSpaceFromDisplay(AccessibilityObject& axObject)
@@ -3779,7 +3840,7 @@ static bool needsSpaceFromDisplay(AccessibilityObject& axObject)
     }
 
     if (auto* style = renderer ? &downcast<RenderElement>(*renderer).style() : axObject.style())
-        return displayTypeNeedsSpace(style->display());
+        return displayNeedsSpace(style->display());
     return false;
 }
 
@@ -3791,14 +3852,27 @@ static bool shouldPrependSpace(AccessibilityObject& object, AccessibilityObject*
         || (previousObject && previousObject->isControl());
 }
 
+static bool shouldPrependNewline(AccessibilityObject* previousObject)
+{
+    RefPtr node = previousObject ? previousObject->node() : nullptr;
+    return node && WebCore::shouldEmitNewlinesBeforeAndAfterNode(*node);
+}
+
 String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) const
 {
     RefPtr node = this->node();
     if (auto* text = dynamicDowncast<Text>(node.get()))
         return !mode.isHidden() ? text->data() : emptyString();
 
-    const auto* style = this->style();
-    mode.inHiddenSubtree = WebCore::isRenderHidden(style);
+    bool isDisplayNone = false;
+    if (CheckedPtr style = this->style()) {
+        isDisplayNone = style->display() == Style::DisplayType::None;
+        mode.inHiddenSubtree = WebCore::isRenderHidden(*style);
+    } else {
+        // If there is no style for something, assume it's hidden.
+        mode.inHiddenSubtree = true;
+    }
+
     // The Accname specification states that if the current node is hidden, and not directly
     // referenced by aria-labelledby or aria-describedby, and is not a host language text
     // alternative, the empty string should be returned.
@@ -3812,7 +3886,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             // agents MUST include all nodes in the subtree as part of the accessible name or accessible
             // description, when the node referenced by aria-labelledby or aria-describedby is hidden."
             mode.considerHiddenState = false;
-        } else if (style && style->display() == DisplayType::None) {
+        } else if (isDisplayNone) {
             // Unlike visibility:visible + visiblity:visible where the latter can override the former in a subtree,
             // display:none guarantees nothing within will be rendered, so we can exit early.
             return { };
@@ -3830,7 +3904,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
 
         auto childText = object.textUnderElement(mode);
         if (childText.length()) {
-            appendNameToStringBuilder(builder, WTFMove(childText), previousRequiresSpace || shouldPrependSpace(object, previous.get()));
+            appendNameToStringBuilder(builder, WTF::move(childText), previousRequiresSpace || shouldPrependSpace(object, previous.get()), shouldPrependNewline(previous.get()));
             previousRequiresSpace = false;
         }
     };
@@ -3851,13 +3925,18 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
         if (shouldDeriveNameFromAuthor) {
             auto nameForNode = accessibleNameForNode(*child->node());
             bool nameIsEmpty = nameForNode.isEmpty();
-            appendNameToStringBuilder(builder, WTFMove(nameForNode));
+            appendNameToStringBuilder(builder, WTF::move(nameForNode));
             // Separate author-provided text with a space.
             previousRequiresSpace = previousRequiresSpace || !nameIsEmpty;
             continue;
         }
 
         if (!shouldUseAccessibilityObjectInnerText(*child, mode))
+            continue;
+
+        // Skip this child if it was already referenced via aria-labelledby by a sibling.
+        // This prevents double-counting elements that were already included via labelledby.
+        if (mode.nodesReferencedViaLabeledby && child->node() && mode.nodesReferencedViaLabeledby->contains(child->node()))
             continue;
 
         if (RefPtr accessibilityNodeObject = dynamicDowncast<AccessibilityNodeObject>(*child)) {
@@ -3871,7 +3950,13 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             Vector<AccessibilityText> textOrder;
             accessibilityNodeObject->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
-                appendNameToStringBuilder(builder, WTFMove(textOrder[0].text));
+                // If this child has aria-labelledby, track the referenced elements so we can
+                // skip them if encountered later in the tree (to avoid double-counting).
+                if (mode.nodesReferencedViaLabeledby && !labeledByElements.isEmpty()) {
+                    for (auto& element : labeledByElements)
+                        mode.nodesReferencedViaLabeledby->add(element.ptr());
+                }
+                appendNameToStringBuilder(builder, WTF::move(textOrder[0].text));
                 // Alternative text (e.g. from aria-label, aria-labelledby, alt, etc) requires space separation.
                 previousRequiresSpace = true;
                 continue;
@@ -3933,7 +4018,7 @@ bool AccessibilityNodeObject::isBlockFlow() const
     return is<RenderBlockFlow>(renderer());
 }
 
-Vector<Vector<AXID>> AccessibilityNodeObject::stitchGroups() const
+Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
 {
     CheckedPtr renderBlockFlow = dynamicDowncast<RenderBlockFlow>(renderer());
     if (!renderBlockFlow)
@@ -3948,36 +4033,49 @@ Vector<Vector<AXID>> AccessibilityNodeObject::stitchGroups() const
         return { };
 
     bool shouldStop = false;
-    StitchingContext context;
-    Vector<Vector<AXID>> stitchGroups;
+    StitchingContext context { *this };
+    Vector<AXStitchGroup> stitchGroups;
     Vector<AXID> currentGroup;
+    std::optional<AXID> representativeID;
     for (auto lineBox = inlineLayout->firstLineBox(); lineBox && !shouldStop; lineBox.traverseNext()) {
         for (auto box = lineBox->logicalLeftmostLeafBox(); box; box.traverseLogicalRightwardOnLine()) {
+            auto updateLastRenderer = makeScopeExit([&] {
+                context.lastRenderer = box->renderer();
+            });
+
+            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(box->renderer()); renderListMarker && !renderListMarker->isDisclosureMarker()) {
+                if (RefPtr object = cache->getOrCreate(const_cast<RenderListMarker&>(*renderListMarker)))
+                    currentGroup.append(object->objectID());
+                continue;
+            }
+
             if (box->isAtomicInlineBox()) {
-                // Atomic inline boxes (like buttons) should break up stitch groups.
+                // Non-list-marker atomic inline boxes (like buttons) should break up stitch groups.
                 shouldStop = true;
                 break;
             }
 
             // FIXME: We should also be able to stitch ellipsis-type boxes.
             if (box->isText() || box->isLineBreak()) {
-                const auto& renderer = box->renderer();
-                RefPtr object = cache->getOrCreate(const_cast<RenderObject&>(renderer));
+                const CheckedRef renderer = box->renderer();
+                RefPtr object = cache->getOrCreate(const_cast<RenderObject&>(renderer.get()));
                 if (!object)
                     continue;
                 AXID axID = object->objectID();
 
-                if (shouldStopStitchingAt(renderer, context)) {
-                    if (currentGroup.size() > 1)
-                        stitchGroups.append(std::exchange(currentGroup, { }));
+                if (shouldStopStitchingAt(renderer, *object, context)) {
+                    if (currentGroup.size() > 1 && representativeID)
+                        stitchGroups.append(AXStitchGroup { std::exchange(currentGroup, { }), *representativeID });
                     else
                         currentGroup.clear();
+
+                    representativeID = std::nullopt;
                 } else {
                     CheckedPtr renderText = dynamicDowncast<RenderText>(renderer);
 
                     // Avoid doing the wrong thing when !renderText->hasRenderedText() is only true
                     // because it has dirty layout. We should not run this function when layout is dirty.
-                    ASSERT(!renderText || !renderText->needsLayout() || !renderText->text().length());
+                    AX_ASSERT(!renderText || !renderText->needsLayout() || !renderText->text().length());
 
                     if (!renderText || !renderText->hasRenderedText())
                         continue;
@@ -3988,21 +4086,24 @@ Vector<Vector<AXID>> AccessibilityNodeObject::stitchGroups() const
                             continue;
                         }
                     }
+
+                    if (!representativeID)
+                        representativeID = axID;
                     currentGroup.append(axID);
                 }
             }
         }
     }
 
-    if (currentGroup.size() > 1) {
+    if (currentGroup.size() > 1 && representativeID) {
         // Only do this for stitch-groups of multiple elements, since stitching a single element
         // doesn't make any sense.
-        stitchGroups.append(WTFMove(currentGroup));
+        stitchGroups.append(AXStitchGroup { WTF::move(currentGroup), *representativeID });
     }
     return stitchGroups;
 }
 
-AXCoreObject::StitchState AccessibilityNodeObject::stitchState(IncludeStitchGroup includeStitchGroup) const
+std::optional<AXStitchGroup> AccessibilityNodeObject::stitchGroup(IncludeGroupMembers includeGroupMembers) const
 {
     if (!AXObjectCache::isAXTextStitchingEnabled())
         return { };
@@ -4011,10 +4112,9 @@ AXCoreObject::StitchState AccessibilityNodeObject::stitchState(IncludeStitchGrou
     if (!blockFlowAncestor)
         return { };
 
-    CheckedPtr cache = axObjectCache();
-    if (!cache)
-        return { };
-    return stitchStateFromGroups(cache->stitchGroupsOwnedBy(*blockFlowAncestor), includeStitchGroup);
+    if (CheckedPtr cache = axObjectCache())
+        return stitchGroupFromGroups(cache->stitchGroupsOwnedBy(*blockFlowAncestor), includeGroupMembers);
+    return { };
 }
 
 String AccessibilityNodeObject::stringValue() const
@@ -4031,8 +4131,8 @@ String AccessibilityNodeObject::stringValue() const
     }
 
     if (node->isTextNode()) {
-        auto stitchState = this->stitchState();
-        if (!stitchState.stitchedIntoID || *stitchState.stitchedIntoID != objectID())
+        std::optional stitchGroup = stitchGroupIfRepresentative();
+        if (!stitchGroup)
             return textUnderElement();
 
         // |this| is the sum of several stitched text-like objects. Our string value should
@@ -4042,12 +4142,27 @@ String AccessibilityNodeObject::stringValue() const
         // See AccessibilityObject::shouldCacheStringValue.
         CheckedPtr cache = axObjectCache();
 
-        RefPtr endNode = !stitchState.group.isEmpty() && cache ? lastNode(stitchState.group, *cache) : nullptr;
-        if (!endNode || endNode == node)
+        RefPtr endNode = cache ? lastNode(stitchGroup->members(), *cache) : nullptr;
+        if (!endNode)
             return textUnderElement();
 
+        StringBuilder builder;
+        for (AXID axID : stitchGroup->members()) {
+            if (axID == objectID())
+                break;
+            if (RefPtr object = cache->objectForID(axID)) {
+                // The only objects preceeding the group representative in the accessibility tree are renderer-only
+                // objects like list markers and CSS generated content.
+                AX_ASSERT(!object->node());
+                if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(object->renderer()))
+                    builder.append(renderListMarker->textWithSuffix());
+            }
+        }
+
         std::optional range = makeSimpleRange(positionBeforeNode(node.get()), positionAfterNode(endNode.get()));
-        return range ? plainText(*range, textIteratorBehaviorForTextRange()) : emptyString();
+        builder.append(range ? plainText(*range, textIteratorBehaviorForTextRange()) : emptyString());
+
+        return builder.toString();
     }
 
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*node)) {
@@ -4130,9 +4245,15 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
     if (!alt.isEmpty())
         return alt;
 
+    if (RefPtr svgElement = dynamicDowncast<SVGElement>(element)) {
+        // For SVG elements, check for SVG-specific labeling mechanisms per SVG-AAM spec.
+        if (String title = svgElement->title(); !title.isEmpty())
+            return title;
+    }
+
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
-    auto* cache = node.document().axObjectCache();
+    CheckedPtr cache = node.document().axObjectCache();
     RefPtr axObject = cache ? cache->getOrCreate(node) : nullptr;
     if (axObject) {
         String valueDescription = axObject->valueDescription();
@@ -4163,23 +4284,57 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
     }
 
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
-        String inputValue = input->value();
-        if (input->isPasswordField()) {
-            StringBuilder passwordValue;
-            passwordValue.reserveCapacity(inputValue.length());
-            for (size_t i = 0; i < inputValue.length(); i++)
-                passwordValue.append(String::fromUTF8("•"));
-            return passwordValue.toString();
+        // Checkboxes and radio buttons derive their accessible name from labels, not their value attribute.
+        if (input->isCheckbox() || input->isRadioButton()) {
+            auto labels = Accessibility::labelsForElement(element);
+            if (!labels.isEmpty()) {
+                StringBuilder builder;
+                for (auto& label : labels)
+                    appendNameToStringBuilder(builder, accessibleNameForNode(label.get()));
+                String labelText = builder.toString();
+                if (!labelText.isEmpty())
+                    return labelText;
+            }
+            // Fall through to other name computation methods.
+        } else {
+            String inputValue = input->value();
+            if (input->isPasswordField()) {
+                StringBuilder passwordValue;
+                passwordValue.reserveCapacity(inputValue.length());
+                for (size_t i = 0; i < inputValue.length(); i++)
+                    passwordValue.append(String::fromUTF8("•"));
+                return passwordValue.toString();
+            }
+            return inputValue;
         }
-        return inputValue;
     }
     if (RefPtr option = dynamicDowncast<HTMLOptionElement>(element))
         return option->value();
 
+    if (auto* slotElement = dynamicDowncast<HTMLSlotElement>(node); slotElement && labelledbyNode) {
+        // Compute the accessible name for a slot's assigned nodes only if it's being used to label
+        // another node. If no assigned nodes exist, or all assigned nodes are hidden, fall through to
+        // textUnderElement, which will return the slot's fallback content.
+        if (auto* assignedNodes = slotElement->assignedNodes()) {
+            StringBuilder builder;
+            for (const auto& assignedNode : *assignedNodes) {
+                // Skip hidden assigned nodes, e.g. those with display:none.
+                RefPtr assignedElement = dynamicDowncast<Element>(assignedNode.get());
+                if (assignedElement && isRenderHidden(safeStyleFrom(*assignedElement)))
+                    continue;
+                appendNameToStringBuilder(builder, accessibleNameForNode(*assignedNode));
+            }
+
+            auto assignedNodesText = builder.toString();
+            if (!assignedNodesText.isEmpty())
+                return assignedNodesText;
+        }
+    }
+
     String text;
     if (axObject) {
         if (axObject->accessibleNameDerivesFromContent())
-            text = axObject->textUnderElement({ TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, true, false, TrimWhitespace::Yes, labelledbyNode });
+            text = axObject->textUnderElement({ TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, true, false, IncludeListMarkerText::No, DescendIntoContainers::No, TrimWhitespace::Yes, labelledbyNode });
     } else
         text = (element ? element->innerText() : node.textContent()).simplifyWhiteSpace(isASCIIWhitespace);
 
@@ -4190,16 +4345,20 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
     if (!title.isEmpty())
         return title;
 
-    auto* slotElement = dynamicDowncast<HTMLSlotElement>(node);
-    // Compute the accessible name for a slot's contents only if it's being used to label another node.
-    if (auto* assignedNodes = (slotElement && labelledbyNode) ? slotElement->assignedNodes() : nullptr) {
-        StringBuilder builder;
-        for (const auto& assignedNode : *assignedNodes)
-            appendNameToStringBuilder(builder, accessibleNameForNode(*assignedNode));
+    if (element && element->hasDisplayContents()) {
+        // For display:contents elements with shadow roots, the element doesn't have a renderer,
+        // so textUnderElement() won't find any children via the render tree. We need to explicitly
+        // traverse the shadow root content to compute the accessible name.
+        // https://bugs.webkit.org/show_bug.cgi?id=275222
+        if (RefPtr shadowRoot = shadowRootIgnoringUserAgentShadow(node)) {
+            StringBuilder builder;
+            for (RefPtr child = shadowRoot->firstChild(); child; child = child->nextSibling())
+                appendNameToStringBuilder(builder, accessibleNameForNode(*child));
 
-        auto assignedNodesText = builder.toString();
-        if (!assignedNodesText.isEmpty())
-            return assignedNodesText;
+            String shadowText = builder.toString();
+            if (!shadowText.isEmpty())
+                return shadowText;
+        }
     }
 
     return { };
@@ -4211,7 +4370,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
     if (!node)
         return String();
 
-    AXObjectCache* cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return String();
 
@@ -4224,7 +4383,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
             String description = axObject->ariaLabeledByAttribute();
             if (description.isEmpty())
                 description = accessibleNameForNode(*child);
-            appendNameToStringBuilder(builder, WTFMove(description));
+            appendNameToStringBuilder(builder, WTF::move(description));
         }
     }
 
@@ -4341,7 +4500,7 @@ void AccessibilityNodeObject::setFocused(bool on)
         document->setFocusedElement(nullptr);
 
     // If we return from setFocusedElement and our element has been removed from a tree, axObjectCache() may be null.
-    if (auto* cache = axObjectCache()) {
+    if (CheckedPtr cache = axObjectCache()) {
         cache->setIsSynchronizingSelection(true);
         downcast<Element>(*m_node).focus();
         cache->setIsSynchronizingSelection(false);
@@ -4460,7 +4619,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
         else
             role = AccessibilityRole::Unknown;
     }
-    if (enumToUnderlyingType(role))
+    if (std::to_underlying(role))
         return role;
 
     return AccessibilityRole::Unknown;
@@ -4578,7 +4737,7 @@ static bool childrenContainOnlyStaticText(const AccessibilityObject::Accessibili
 
 bool AccessibilityNodeObject::isLabelContainingOnlyStaticText() const
 {
-    ASSERT(isNativeLabel());
+    AX_ASSERT(isNativeLabel());
 
     // m_containsOnlyStaticTextDirty is set (if necessary) by addChildren(), so update our children before checking the flag.
     const_cast<AccessibilityNodeObject*>(this)->updateChildrenIfNecessary();

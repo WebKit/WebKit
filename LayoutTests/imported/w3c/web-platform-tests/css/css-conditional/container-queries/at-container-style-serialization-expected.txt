@@ -7,4 +7,11 @@ FAIL Unknown CSS property after 'or' assert_equals: expected "style((--FOO: BAR)
 PASS Not a style function with space before '('
 PASS Spaces preserved in custom property value
 PASS Original string number in custom property value
+PASS Single extra parens
+PASS Double extra parens
+PASS Multiple extra parens
+PASS Extra parens and Not
+PASS Subexpressions and extra parens
+PASS Multiple subexpressions and extra parens
+PASS Multiple subexpressions and unknowns
 

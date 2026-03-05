@@ -75,6 +75,10 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     FlushCookies(PAL::SessionID sessionID) -> ()
 
+#if PLATFORM(MAC)
+    systemDidWake()
+#endif
+
 #if !PLATFORM(COCOA)
     AllowSpecificHTTPSCertificateForHost(PAL::SessionID sessionID, WebCore::CertificateInfo certificate, String host)
 #endif
@@ -113,6 +117,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     HadUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> (bool hadUserInteraction)
     IsRelationshipOnlyInDatabaseOnce(PAL::SessionID sessionID, WebCore::RegistrableDomain subDomain, WebCore::RegistrableDomain topDomain) -> (bool hadUserInteraction)
     HasLocalStorage(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> (bool hadUserInteraction)
+    HasLocalStorageOrCookies(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> (bool hadUserInteraction)
     GetAllStorageAccessEntries(PAL::SessionID sessionID) -> (Vector<String> domains)
     IsRegisteredAsRedirectingTo(PAL::SessionID sessionID, WebCore::RegistrableDomain redirectedFromDomain, WebCore::RegistrableDomain redirectedToDomain) -> (bool isRedirectingTo)
     IsRegisteredAsSubFrameUnder(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> (bool isSubframeUnder)
@@ -289,5 +294,9 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     AllowEvaluatedURL(struct WebCore::ParentalControlsURLFilterParameters parameters) -> (bool allowed)
+#endif
+
+#if HAVE(ENHANCED_SECURITY_LINKS)
+    IsEnhancedSecurityLink(URL url) -> (bool isEnhancedSecurityLink)
 #endif
 }

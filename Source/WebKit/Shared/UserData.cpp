@@ -50,7 +50,7 @@ namespace WebKit {
 UserData::UserData() = default;
 
 UserData::UserData(RefPtr<API::Object>&& object)
-    : m_object(WTFMove(object))
+    : m_object(WTF::move(object))
 {
 }
 
@@ -91,7 +91,7 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
                 return nullptr;
             return transformGraph(*element, transformer);
         });
-        return API::Array::create(WTFMove(elements));
+        return API::Array::create(WTF::move(elements));
     }
 
     if (object.type() == API::Object::Type::Dictionary) {
@@ -105,7 +105,7 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
             else
                 map.add(keyValuePair.key, transformGraph(*value, transformer));
         }
-        return API::Dictionary::create(WTFMove(map));
+        return API::Dictionary::create(WTF::move(map));
     }
 
     return transformer.transformObject(object);

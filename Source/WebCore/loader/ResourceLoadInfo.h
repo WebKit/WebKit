@@ -115,7 +115,7 @@ struct ResourceLoadInfo {
     bool isThirdParty() const;
     ResourceFlags getResourceFlags() const;
     ResourceLoadInfo isolatedCopy() const & { return { resourceURL.isolatedCopy(), mainDocumentURL.isolatedCopy(), frameURL.isolatedCopy(), type, mainFrameContext, requestMethod }; }
-    ResourceLoadInfo isolatedCopy() && { return { WTFMove(resourceURL).isolatedCopy(), WTFMove(mainDocumentURL).isolatedCopy(), WTFMove(frameURL).isolatedCopy(), type, mainFrameContext, requestMethod }; }
+    ResourceLoadInfo isolatedCopy() && { return { WTF::move(resourceURL).isolatedCopy(), WTF::move(mainDocumentURL).isolatedCopy(), WTF::move(frameURL).isolatedCopy(), type, mainFrameContext, requestMethod }; }
 };
 
 } // namespace WebCore::ContentExtensions

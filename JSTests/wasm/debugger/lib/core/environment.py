@@ -3,6 +3,7 @@ WebKit build environment detection and setup for WebAssembly debugger tests
 """
 
 import os
+import subprocess
 from pathlib import Path
 from .utils import Logger
 
@@ -72,9 +73,13 @@ class WebKitEnvironment:
 
     def _find_lldb_path(self) -> str:
         """Find the best LLDB binary to use"""
-        hardcoded_lldb = "/Users/yijiahuang/Library/Developer/Toolchains/swift-REBRANCH-DEVELOPMENT-SNAPSHOT-2025-09-25-a.xctoolchain/usr/bin/lldb"
-        if Path(hardcoded_lldb).exists():
-            return hardcoded_lldb
+        try:
+            result = subprocess.run(["xcrun", "--find", "lldb"], capture_output=True, text=True, check=True, timeout=5)
+            lldb_path = result.stdout.strip()
+            if lldb_path and Path(lldb_path).exists():
+                return lldb_path
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError):
+            pass
         return "lldb"  # Fall back to system LLDB
 
     def validate(self) -> bool:

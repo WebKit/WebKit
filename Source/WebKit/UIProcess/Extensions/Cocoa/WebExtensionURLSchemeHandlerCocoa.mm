@@ -132,7 +132,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         }
 
         auto mimeType = extension->resourceMIMETypeForPath(requestURL.path().toString());
-        resourceData = extensionContext->localizedResourceData(WTFMove(resourceData), mimeType).releaseNonNull();
+        resourceData = extensionContext->localizedResourceData(WTF::move(resourceData), mimeType).releaseNonNull();
 
         auto *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL.createNSURL().get() statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",

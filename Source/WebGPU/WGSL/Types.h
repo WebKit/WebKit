@@ -30,11 +30,13 @@
 #include "WGSLEnums.h"
 #include <array>
 #include <functional>
+#include <variant>
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
@@ -172,12 +174,10 @@ public:
         static constexpr unsigned fract = 0;
         static constexpr unsigned exp = 1;
 
-        static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
+        static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, unsigned>>({
             { "exp"_s, exp },
             { "fract"_s, fract },
-        };
-
-        static constexpr SortedArrayMap map { mapEntries };
+        }) };
     };
 
     struct ModfResult {
@@ -185,12 +185,10 @@ public:
         static constexpr unsigned fract = 0;
         static constexpr unsigned whole = 1;
 
-        static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
+        static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, unsigned>>({
             { "fract"_s, fract },
             { "whole"_s, whole },
-        };
-
-        static constexpr SortedArrayMap map { mapEntries };
+        }) };
     };
 
     struct AtomicCompareExchangeResult {
@@ -198,15 +196,13 @@ public:
         static constexpr unsigned oldValue = 0;
         static constexpr unsigned exchanged = 1;
 
-        static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
+        static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, unsigned>>({
             { "exchanged"_s, exchanged },
             { "old_value"_s, oldValue },
-        };
-
-        static constexpr SortedArrayMap map { mapEntries };
+        }) };
     };
 
-    static constexpr auto keys = std::to_array<SortedArrayMap<std::pair<ComparableASCIILiteral, unsigned>[2]>>({
+    static constexpr auto keys = std::to_array<SortedArrayMap<std::pair<ComparableASCIILiteral, unsigned>, 2>>({
         FrexpResult::map,
         ModfResult::map,
         AtomicCompareExchangeResult::map,

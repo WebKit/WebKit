@@ -43,7 +43,7 @@ CoreIPCNSValue::CoreIPCNSValue(CoreIPCNSValue&&) = default;
 CoreIPCNSValue::~CoreIPCNSValue() = default;
 
 CoreIPCNSValue::CoreIPCNSValue(Value&& value)
-    : m_value(WTFMove(value)) { }
+    : m_value(WTF::move(value)) { }
 
 auto CoreIPCNSValue::valueFromNSValue(NSValue *nsValue) -> Value
 {

@@ -23,10 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://webaudio.github.io/web-speech-api/#ref-for-window
 [
     EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS,
     ImplementedBy=LocalDOMWindowSpeechSynthesis
 ] partial interface DOMWindow {
-    [SameObject] readonly attribute SpeechSynthesis speechSynthesis;
+    // FIXME: `speechSynthesis` should not be nullable.
+    [SameObject] readonly attribute SpeechSynthesis? speechSynthesis;
 };

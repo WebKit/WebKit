@@ -60,7 +60,8 @@ table.bz_buglist td, table.bz_buglist th {
     padding: 0.8rem;
 }
 td.bz_id_column,
-td.bz_changeddate_column {
+td.bz_changeddate_column,
+td.bz_opendate_column {
     font-family: "SF Mono", monospace;
     font-size-adjust: 0.53;
 }
@@ -269,7 +270,8 @@ tr.bz_secure td.first-child, a.bz_secure {
     white-space: normal;
 }
 
-.bz_buglist .bz_changeddate_column {
+.bz_buglist .bz_changeddate_column,
+.bz_buglist .bz_opendate_column {
     width: 10rem;
     text-align: right;
     padding-right: 0;

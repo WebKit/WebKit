@@ -159,7 +159,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
 
     // Modifiers end at commas.
     const char *comma = strchr(str, ',');
-    if (comma == NULL) {
+    if (comma == nullptr) {
       break;
     }
 
@@ -187,7 +187,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
       CBS_skip(&modifier, 1);  // Skip the colon.
     } else {
       name = modifier;
-      CBS_init(&modifier, NULL, 0);
+      CBS_init(&modifier, nullptr, 0);
     }
 
     if (cbs_str_equal(&name, "FORMAT") || cbs_str_equal(&name, "FORM")) {
@@ -251,7 +251,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
   const char *colon = strchr(str, ':');
   CBS name;
   const char *value;
-  int has_value = colon != NULL;
+  int has_value = colon != nullptr;
   if (has_value) {
     CBS_init(&name, (const uint8_t *)str, colon - str);
     value = colon + 1;
@@ -344,12 +344,12 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
         OPENSSL_PUT_ERROR(ASN1, ASN1_R_INTEGER_NOT_ASCII_FORMAT);
         return 0;
       }
-      ASN1_INTEGER *obj = s2i_ASN1_INTEGER(NULL, value);
-      if (obj == NULL) {
+      ASN1_INTEGER *obj = s2i_ASN1_INTEGER(nullptr, value);
+      if (obj == nullptr) {
         OPENSSL_PUT_ERROR(ASN1, ASN1_R_ILLEGAL_INTEGER);
         return 0;
       }
-      int len = i2c_ASN1_INTEGER(obj, NULL);
+      int len = i2c_ASN1_INTEGER(obj, nullptr);
       uint8_t *out;
       int ok = len > 0 &&  //
                CBB_add_space(&child, &out, len) &&
@@ -364,7 +364,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
         return 0;
       }
       ASN1_OBJECT *obj = OBJ_txt2obj(value, /*dont_search_names=*/0);
-      if (obj == NULL || obj->length == 0) {
+      if (obj == nullptr || obj->length == 0) {
         OPENSSL_PUT_ERROR(ASN1, ASN1_R_ILLEGAL_OBJECT);
         return 0;
       }
@@ -382,9 +382,9 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
       CBS value_cbs;
       CBS_init(&value_cbs, (const uint8_t *)value, strlen(value));
       int ok = type == CBS_ASN1_UTCTIME
-                   ? CBS_parse_utc_time(&value_cbs, NULL,
+                   ? CBS_parse_utc_time(&value_cbs, nullptr,
                                         /*allow_timezone_offset=*/0)
-                   : CBS_parse_generalized_time(&value_cbs, NULL,
+                   : CBS_parse_generalized_time(&value_cbs, nullptr,
                                                 /*allow_timezone_offset=*/0);
       if (!ok) {
         OPENSSL_PUT_ERROR(ASN1, ASN1_R_ILLEGAL_TIME_VALUE);
@@ -414,7 +414,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
       // as a loose cap so fuzzers can exit from excessively long inputs
       // earlier. This limit is not load-bearing because |ASN1_mbstring_ncopy|'s
       // output is already linear in the input.
-      ASN1_STRING *obj = NULL;
+      ASN1_STRING *obj = nullptr;
       if (ASN1_mbstring_ncopy(&obj, (const uint8_t *)value, -1, encoding,
                               ASN1_tag2bit(type), /*minsize=*/0,
                               /*maxsize=*/ASN1_GEN_MAX_OUTPUT) <= 0) {
@@ -428,7 +428,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
     case CBS_ASN1_BITSTRING:
       if (format == ASN1_GEN_FORMAT_BITLIST) {
         ASN1_BIT_STRING *obj = ASN1_BIT_STRING_new();
-        if (obj == NULL) {
+        if (obj == nullptr) {
           return 0;
         }
         if (!CONF_parse_list(value, ',', 1, bitstr_cb, obj)) {
@@ -436,7 +436,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
           ASN1_BIT_STRING_free(obj);
           return 0;
         }
-        int len = i2c_ASN1_BIT_STRING(obj, NULL);
+        int len = i2c_ASN1_BIT_STRING(obj, nullptr);
         uint8_t *out;
         int ok = len > 0 &&  //
                  CBB_add_space(&child, &out, len) &&
@@ -461,7 +461,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
       if (format == ASN1_GEN_FORMAT_HEX) {
         size_t len;
         uint8_t *data = x509v3_hex_to_bytes(value, &len);
-        if (data == NULL) {
+        if (data == nullptr) {
           OPENSSL_PUT_ERROR(ASN1, ASN1_R_ILLEGAL_HEX);
           return 0;
         }
@@ -476,12 +476,12 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
     case CBS_ASN1_SEQUENCE:
     case CBS_ASN1_SET:
       if (has_value) {
-        if (cnf == NULL) {
+        if (cnf == nullptr) {
           OPENSSL_PUT_ERROR(ASN1, ASN1_R_SEQUENCE_OR_SET_NEEDS_CONFIG);
           return 0;
         }
         const STACK_OF(CONF_VALUE) *section = X509V3_get_section(cnf, value);
-        if (section == NULL) {
+        if (section == nullptr) {
           OPENSSL_PUT_ERROR(ASN1, ASN1_R_SEQUENCE_OR_SET_NEEDS_CONFIG);
           return 0;
         }

@@ -35,11 +35,11 @@ namespace WebCore {
 typedef WindowProxy AbstractView;
 
 class UIEvent : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UIEvent);
+    WTF_MAKE_TZONE_ALLOCATED(UIEvent);
 public:
     static Ref<UIEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail)
     {
-        return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, canBubble, isCancelable, isComposed, WTFMove(view), detail));
+        return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, canBubble, isCancelable, isComposed, WTF::move(view), detail));
     }
     static Ref<UIEvent> createForBindings()
     {
@@ -78,7 +78,7 @@ protected:
     UIEvent(enum EventInterfaceType, const AtomString&, const UIEventInit&, IsTrusted = IsTrusted::No);
 
 private:
-    bool isUIEvent() const final;
+    bool isUIEvent() const final { return true; }
 
     RefPtr<WindowProxy> m_view;
     int m_detail;
@@ -87,4 +87,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_EVENT(UIEvent)
+SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(UIEvent)

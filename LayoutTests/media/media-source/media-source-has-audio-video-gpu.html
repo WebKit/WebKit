@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ MediaSourceUseRemoteAudioVideoRenderer=false ] -->
+<!DOCTYPE html>
+ <html>
+<head>
+    <title>media-source-has-audio-video</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    window.addEventListener('load', event => {
+        findMediaElement();
+
+        window.sourceBuffer = new MediaSource();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+        loader.onerror = mediaDataLoadingFailed;
+    });
+
+    function mediaDataLoadingFailed() {
+        failTest('Media data loading failed');
+    }
+
+    async function mediaDataLoaded() {
+        window.mediaSource = new MediaSource();
+        run('video.src = URL.createObjectURL(mediaSource)');
+        waitFor(video, 'error').then(failTest);
+        await waitFor(mediaSource, 'sourceopen');
+
+        run('mediaSource.duration = loader.duration()');
+        run('sourceBuffer = mediaSource.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        await testExpectedEventually('internals.mediaUsageState(video).hasVideo', true);
+        await testExpectedEventually('internals.mediaUsageState(video).hasAudio', true);
+        endTest();
+    }
+
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

@@ -33,7 +33,7 @@
 
 #if OS(WINDOWS)
 #include <wtf/win/Win32Handle.h>
-#elif OS(LINUX)
+#elif OS(UNIX)
 #include <sys/types.h>
 #endif
 

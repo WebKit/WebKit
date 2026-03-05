@@ -39,16 +39,15 @@ enum ImageSizeChangeType {
 };
 
 class RenderImage : public RenderReplaced {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderImage);
+    WTF_MAKE_TZONE_ALLOCATED(RenderImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderImage);
 public:
-    RenderImage(Type, Element&, RenderStyle&&, StyleImage* = nullptr, const float imageDevicePixelRatio = 1.0f);
-    RenderImage(Type, Document&, RenderStyle&&, StyleImage* = nullptr);
+    RenderImage(Type, Element&, RenderStyle&&, Style::Image* = nullptr, const float imageDevicePixelRatio = 1.0f);
+    RenderImage(Type, Document&, RenderStyle&&, Style::Image* = nullptr);
     virtual ~RenderImage();
 
     RenderImageResource& imageResource() { return *m_imageResource; }
     const RenderImageResource& imageResource() const { return *m_imageResource; }
-    CheckedRef<RenderImageResource> checkedImageResource() const;
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }
 
     ImageSizeChangeType setImageSizeForAltText(CachedImage* newImage = nullptr);
@@ -58,9 +57,7 @@ public:
     RefPtr<HTMLMapElement> imageMap() const;
     void areaElementFocusChanged(HTMLAreaElement*);
     
-#if PLATFORM(IOS_FAMILY)
     void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned, unsigned) override;
-#endif
 
     void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
 
@@ -88,7 +85,7 @@ public:
 #endif
 
 protected:
-    RenderImage(Type, Element&, RenderStyle&&, OptionSet<ReplacedFlag>, StyleImage* = nullptr, const float imageDevicePixelRatio = 1.0f);
+    RenderImage(Type, Element&, RenderStyle&&, OptionSet<ReplacedFlag>, Style::Image* = nullptr, const float imageDevicePixelRatio = 1.0f);
     void willBeDestroyed() override;
 
     bool shouldInvalidatePreferredWidths() const final;
@@ -97,8 +94,8 @@ protected:
     FloatSize preferredAspectRatio() const final;
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
-    void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
-    void styleDidChange(StyleDifference, const RenderStyle*) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle*) override;
 
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
@@ -135,6 +132,8 @@ private:
     void updateInnerContentRect();
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
+
+    bool isDimensionlessSVG() const;
 
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 

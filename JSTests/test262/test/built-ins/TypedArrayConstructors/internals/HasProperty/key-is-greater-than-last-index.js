@@ -20,8 +20,8 @@ features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray
 // Prevents false positives using OrdinaryHasProperty
 TypedArray.prototype[1] = "test262";
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(1);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(1));
 
   assert.sameValue(Reflect.has(sample, "1"), false, 'Reflect.has(sample, "1") must return false');
 });

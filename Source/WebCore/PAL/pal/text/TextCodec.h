@@ -32,6 +32,7 @@
 #include <span>
 #include <unicode/umachine.h>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 

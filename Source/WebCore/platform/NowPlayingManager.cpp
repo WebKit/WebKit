@@ -40,8 +40,8 @@ NowPlayingManager::~NowPlayingManager() = default;
 
 void NowPlayingManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    if (m_client)
-        m_client->didReceiveRemoteControlCommand(type, argument);
+    if (RefPtr client = m_client.get())
+        client->didReceiveRemoteControlCommand(type, argument);
 }
 
 void NowPlayingManager::addClient(NowPlayingManagerClient& client)

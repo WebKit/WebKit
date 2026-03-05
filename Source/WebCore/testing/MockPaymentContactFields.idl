@@ -26,6 +26,7 @@
 [
     Conditional=APPLE_PAY,
     JSGenerateToJSObject,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MockPaymentContactFields {
     boolean postalAddress = false;
     boolean phone = false;

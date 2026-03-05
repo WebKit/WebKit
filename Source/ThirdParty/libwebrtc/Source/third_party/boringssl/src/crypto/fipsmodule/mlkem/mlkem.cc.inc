@@ -26,7 +26,6 @@
 
 #include "../../internal.h"
 #include "../bcm_interface.h"
-#include "../delocate.h"
 #include "../keccak/internal.h"
 
 
@@ -56,14 +55,14 @@ void hash_g(uint8_t out[64], const uint8_t *in, size_t len) {
 }
 
 // This is called `J` in the spec.
-void kdf(uint8_t out[BCM_MLKEM_SHARED_SECRET_BYTES],
+void kdf(uint8_t out[MLKEM_SHARED_SECRET_BYTES],
          const uint8_t failure_secret[32], const uint8_t *ciphertext,
          size_t ciphertext_len) {
-  struct BORINGSSL_keccak_st st;
+  BORINGSSL_keccak_st st;
   BORINGSSL_keccak_init(&st, boringssl_shake256);
   BORINGSSL_keccak_absorb(&st, failure_secret, 32);
   BORINGSSL_keccak_absorb(&st, ciphertext, ciphertext_len);
-  BORINGSSL_keccak_squeeze(&st, out, BCM_MLKEM_SHARED_SECRET_BYTES);
+  BORINGSSL_keccak_squeeze(&st, out, MLKEM_SHARED_SECRET_BYTES);
 }
 
 // Constants that are common across all sizes.
@@ -93,10 +92,8 @@ constexpr size_t encoded_public_key_size(int rank) {
   return encoded_vector_size(rank) + /*sizeof(rho)=*/32;
 }
 
-static_assert(encoded_public_key_size(RANK768) ==
-              BCM_MLKEM768_PUBLIC_KEY_BYTES);
-static_assert(encoded_public_key_size(RANK1024) ==
-              BCM_MLKEM1024_PUBLIC_KEY_BYTES);
+static_assert(encoded_public_key_size(RANK768) == MLKEM768_PUBLIC_KEY_BYTES);
+static_assert(encoded_public_key_size(RANK1024) == MLKEM1024_PUBLIC_KEY_BYTES);
 
 constexpr size_t compressed_vector_size(int rank) {
   // `if constexpr` isn't available in C++17.
@@ -109,13 +106,13 @@ constexpr size_t ciphertext_size(int rank) {
          (rank == RANK768 ? kDV768 : kDV1024) * DEGREE / 8;
 }
 
-static_assert(ciphertext_size(RANK768) == BCM_MLKEM768_CIPHERTEXT_BYTES);
-static_assert(ciphertext_size(RANK1024) == BCM_MLKEM1024_CIPHERTEXT_BYTES);
+static_assert(ciphertext_size(RANK768) == MLKEM768_CIPHERTEXT_BYTES);
+static_assert(ciphertext_size(RANK1024) == MLKEM1024_CIPHERTEXT_BYTES);
 
-typedef struct scalar {
+struct scalar {
   // On every function entry and exit, 0 <= c < kPrime.
   uint16_t c[DEGREE];
-} scalar;
+};
 
 template <int RANK>
 struct vector {
@@ -304,7 +301,7 @@ void scalar_sub(scalar *lhs, const scalar *rhs) {
 // the 2*ith and (2*i+1)th entries of the scalar as elements of GF(3329)[X]/(X^2
 // - 17^(2*bitreverse(i)+1)) The value of 17^(2*bitreverse(i)+1) mod 3329 is
 // stored in the precomputed |kModRoots| table. Note that our Barrett transform
-// only allows us to multipy two reduced numbers together, so we need some
+// only allows us to multiply two reduced numbers together, so we need some
 // intermediate reduction steps, even if an uint64_t could hold 3 multiplied
 // numbers.
 void scalar_mult(scalar *out, const scalar *lhs, const scalar *rhs) {
@@ -367,7 +364,7 @@ void scalar_inner_product(scalar *out, const vector<RANK> *lhs,
 // uniformly distributed elements. This is used for matrix expansion and only
 // operates on public inputs.
 static void scalar_from_keccak_vartime(scalar *out,
-                                       struct BORINGSSL_keccak_st *keccak_ctx) {
+                                       BORINGSSL_keccak_st *keccak_ctx) {
   assert(keccak_ctx->squeeze_offset == 0);
   assert(keccak_ctx->rate_bytes == 168);
   static_assert(168 % 3 == 0, "block and coefficient boundaries do not align");
@@ -445,7 +442,7 @@ void matrix_expand(matrix<RANK> *out, const uint8_t rho[32]) {
     for (int j = 0; j < RANK; j++) {
       input[32] = i;
       input[33] = j;
-      struct BORINGSSL_keccak_st keccak_ctx;
+      BORINGSSL_keccak_st keccak_ctx;
       BORINGSSL_keccak_init(&keccak_ctx, boringssl_shake128);
       BORINGSSL_keccak_absorb(&keccak_ctx, input, sizeof(input));
       scalar_from_keccak_vartime(&out->v[i][j], &keccak_ctx);
@@ -654,15 +651,14 @@ struct public_key {
 
 template <int RANK>
 struct private_key {
-  struct public_key<RANK> pub;
+  public_key<RANK> pub;
   vector<RANK> s;
   uint8_t fo_failure_secret[32];
 };
 
 template <int RANK>
-static void decrypt_cpa(
-    uint8_t out[32], const struct private_key<RANK> *priv,
-    const uint8_t ciphertext[BCM_MLKEM768_CIPHERTEXT_BYTES]) {
+static void decrypt_cpa(uint8_t out[32], const private_key<RANK> *priv,
+                        const uint8_t ciphertext[MLKEM768_CIPHERTEXT_BYTES]) {
   constexpr int du = RANK == RANK768 ? kDU768 : kDU1024;
   constexpr int dv = RANK == RANK768 ? kDV768 : kDV1024;
 
@@ -683,7 +679,7 @@ static void decrypt_cpa(
 
 template <int RANK>
 static bcm_status mlkem_marshal_public_key(CBB *out,
-                                           const struct public_key<RANK> *pub) {
+                                           const public_key<RANK> *pub) {
   uint8_t *vector_output;
   if (!CBB_add_space(out, &vector_output, encoded_vector_size(RANK))) {
     return bcm_status::failure;
@@ -698,7 +694,7 @@ static bcm_status mlkem_marshal_public_key(CBB *out,
 template <int RANK>
 void mlkem_generate_key_external_seed_no_self_test(
     uint8_t *out_encoded_public_key, private_key<RANK> *priv,
-    const uint8_t seed[BCM_MLKEM_SEED_BYTES]) {
+    const uint8_t seed[MLKEM_SEED_BYTES]) {
   uint8_t augmented_seed[33];
   OPENSSL_memcpy(augmented_seed, seed, 32);
   augmented_seed[32] = RANK;
@@ -734,9 +730,9 @@ void mlkem_generate_key_external_seed_no_self_test(
 }
 
 template <int RANK>
-void mlkem_generate_key_external_seed(
-    uint8_t *out_encoded_public_key, private_key<RANK> *priv,
-    const uint8_t seed[BCM_MLKEM_SEED_BYTES]) {
+void mlkem_generate_key_external_seed(uint8_t *out_encoded_public_key,
+                                      private_key<RANK> *priv,
+                                      const uint8_t seed[MLKEM_SEED_BYTES]) {
   fips::ensure_keygen_self_test();
   mlkem_generate_key_external_seed_no_self_test(out_encoded_public_key, priv,
                                                 seed);
@@ -747,7 +743,7 @@ void mlkem_generate_key_external_seed(
 // would not result in a CCA secure scheme, since lattice schemes are vulnerable
 // to decryption failure oracles.
 template <int RANK>
-void encrypt_cpa(uint8_t *out, const struct mlkem::public_key<RANK> *pub,
+void encrypt_cpa(uint8_t *out, const mlkem::public_key<RANK> *pub,
                  const uint8_t message[32], const uint8_t randomness[32]) {
   constexpr int du = RANK == RANK768 ? mlkem::kDU768 : mlkem::kDU1024;
   constexpr int dv = RANK == RANK768 ? mlkem::kDV768 : mlkem::kDV1024;
@@ -784,8 +780,8 @@ void encrypt_cpa(uint8_t *out, const struct mlkem::public_key<RANK> *pub,
 // See section 6.3
 template <int RANK>
 void mlkem_decap_no_self_test(
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-    const uint8_t *ciphertext, const struct private_key<RANK> *priv) {
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+    const uint8_t *ciphertext, const private_key<RANK> *priv) {
   uint8_t decrypted[64];
   decrypt_cpa(decrypted, priv, ciphertext);
   OPENSSL_memcpy(decrypted + 32, priv->pub.public_key_hash,
@@ -793,7 +789,7 @@ void mlkem_decap_no_self_test(
   uint8_t key_and_randomness[64];
   hash_g(key_and_randomness, decrypted, sizeof(decrypted));
   constexpr size_t ciphertext_len = ciphertext_size(RANK);
-  uint8_t expected_ciphertext[BCM_MLKEM1024_CIPHERTEXT_BYTES];
+  uint8_t expected_ciphertext[MLKEM1024_CIPHERTEXT_BYTES];
   static_assert(ciphertext_len <= sizeof(expected_ciphertext));
   encrypt_cpa(expected_ciphertext, &priv->pub, decrypted,
               key_and_randomness + 32);
@@ -803,16 +799,15 @@ void mlkem_decap_no_self_test(
 
   uint8_t mask = constant_time_eq_int_8(
       CRYPTO_memcmp(ciphertext, expected_ciphertext, ciphertext_len), 0);
-  for (int i = 0; i < BCM_MLKEM_SHARED_SECRET_BYTES; i++) {
+  for (int i = 0; i < MLKEM_SHARED_SECRET_BYTES; i++) {
     out_shared_secret[i] =
         constant_time_select_8(mask, key_and_randomness[i], failure_key[i]);
   }
 }
 
 template <int RANK>
-void mlkem_decap(uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-                 const uint8_t *ciphertext,
-                 const struct private_key<RANK> *priv) {
+void mlkem_decap(uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+                 const uint8_t *ciphertext, const private_key<RANK> *priv) {
   fips::ensure_decap_self_test();
   mlkem_decap_no_self_test(out_shared_secret, ciphertext, priv);
 }
@@ -820,7 +815,7 @@ void mlkem_decap(uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
 // mlkem_parse_public_key_no_hash parses |in| into |pub| but doesn't calculate
 // the value of |pub->public_key_hash|.
 template <int RANK>
-int mlkem_parse_public_key_no_hash(struct public_key<RANK> *pub, CBS *in) {
+int mlkem_parse_public_key_no_hash(public_key<RANK> *pub, CBS *in) {
   CBS t_bytes;
   if (!CBS_get_bytes(in, &t_bytes, encoded_vector_size(RANK)) ||
       !vector_decode(&pub->t, CBS_data(&t_bytes), kLog2Prime) ||
@@ -832,7 +827,7 @@ int mlkem_parse_public_key_no_hash(struct public_key<RANK> *pub, CBS *in) {
 }
 
 template <int RANK>
-int mlkem_parse_public_key(struct public_key<RANK> *pub, CBS *in) {
+int mlkem_parse_public_key(public_key<RANK> *pub, CBS *in) {
   CBS orig_in = *in;
   if (!mlkem_parse_public_key_no_hash(pub, in) ||  //
       CBS_len(in) != 0) {
@@ -843,7 +838,7 @@ int mlkem_parse_public_key(struct public_key<RANK> *pub, CBS *in) {
 }
 
 template <int RANK>
-int mlkem_parse_private_key(struct private_key<RANK> *priv, CBS *in) {
+int mlkem_parse_private_key(private_key<RANK> *priv, CBS *in) {
   CBS s_bytes;
   if (!CBS_get_bytes(in, &s_bytes, encoded_vector_size(RANK)) ||
       !vector_decode(&priv->s, CBS_data(&s_bytes), kLog2Prime) ||
@@ -859,7 +854,7 @@ int mlkem_parse_private_key(struct private_key<RANK> *priv, CBS *in) {
 }
 
 template <int RANK>
-int mlkem_marshal_private_key(CBB *out, const struct private_key<RANK> *priv) {
+int mlkem_marshal_private_key(CBB *out, const private_key<RANK> *priv) {
   uint8_t *s_output;
   if (!CBB_add_space(out, &s_output, encoded_vector_size(RANK))) {
     return 0;
@@ -875,56 +870,60 @@ int mlkem_marshal_private_key(CBB *out, const struct private_key<RANK> *priv) {
   return 1;
 }
 
-struct public_key<RANK768> *public_key_768_from_external(
-    const struct BCM_mlkem768_public_key *external) {
-  static_assert(sizeof(struct BCM_mlkem768_public_key) >=
-                    sizeof(struct public_key<RANK768>),
-                "MLKEM public key is too small");
-  static_assert(alignof(struct BCM_mlkem768_public_key) >=
-                    alignof(struct public_key<RANK768>),
-                "MLKEM public key alignment incorrect");
-  return (struct public_key<RANK768> *)external;
+static_assert(sizeof(MLKEM768_public_key) >= sizeof(public_key<RANK768>));
+static_assert(alignof(MLKEM768_public_key) >= alignof(public_key<RANK768>));
+
+const public_key<RANK768> *public_key_768_from_external(
+    const MLKEM768_public_key *external) {
+  return reinterpret_cast<const public_key<RANK768> *>(external);
+}
+public_key<RANK768> *public_key_768_from_external(
+    MLKEM768_public_key *external) {
+  return reinterpret_cast<public_key<RANK768> *>(external);
 }
 
-static struct public_key<RANK1024> *public_key_1024_from_external(
-    const struct BCM_mlkem1024_public_key *external) {
-  static_assert(sizeof(struct BCM_mlkem1024_public_key) >=
-                    sizeof(struct public_key<RANK1024>),
-                "MLKEM1024 public key is too small");
-  static_assert(alignof(struct BCM_mlkem1024_public_key) >=
-                    alignof(struct public_key<RANK1024>),
-                "MLKEM1024 public key alignment incorrect");
-  return (struct public_key<RANK1024> *)external;
+static_assert(sizeof(MLKEM1024_public_key) >= sizeof(public_key<RANK1024>));
+static_assert(alignof(MLKEM1024_public_key) >= alignof(public_key<RANK1024>));
+
+const public_key<RANK1024> *public_key_1024_from_external(
+    const MLKEM1024_public_key *external) {
+  return reinterpret_cast<const public_key<RANK1024> *>(external);
+}
+public_key<RANK1024> *public_key_1024_from_external(
+    MLKEM1024_public_key *external) {
+  return reinterpret_cast<public_key<RANK1024> *>(external);
 }
 
-struct private_key<RANK768> *private_key_768_from_external(
-    const struct BCM_mlkem768_private_key *external) {
-  static_assert(sizeof(struct BCM_mlkem768_private_key) >=
-                    sizeof(struct private_key<RANK768>),
-                "MLKEM private key too small");
-  static_assert(alignof(struct BCM_mlkem768_private_key) >=
-                    alignof(struct private_key<RANK768>),
-                "MLKEM private key alignment incorrect");
-  return (struct private_key<RANK768> *)external;
+static_assert(sizeof(MLKEM768_private_key) >= sizeof(private_key<RANK768>));
+static_assert(alignof(MLKEM768_private_key) >= alignof(private_key<RANK768>));
+
+const private_key<RANK768> *private_key_768_from_external(
+    const MLKEM768_private_key *external) {
+  return reinterpret_cast<const private_key<RANK768> *>(external);
+}
+private_key<RANK768> *private_key_768_from_external(
+    MLKEM768_private_key *external) {
+  return reinterpret_cast<private_key<RANK768> *>(external);
 }
 
-struct private_key<RANK1024> *private_key_1024_from_external(
-    const struct BCM_mlkem1024_private_key *external) {
-  static_assert(sizeof(struct BCM_mlkem1024_private_key) >=
-                    sizeof(struct private_key<RANK1024>),
-                "MLKEM1024 private key too small");
-  static_assert(alignof(struct BCM_mlkem1024_private_key) >=
-                    alignof(struct private_key<RANK1024>),
-                "MLKEM1024 private key alignment incorrect");
-  return (struct private_key<RANK1024> *)external;
+static_assert(sizeof(MLKEM1024_private_key) >= sizeof(private_key<RANK1024>));
+static_assert(alignof(MLKEM1024_private_key) >= alignof(private_key<RANK1024>));
+
+const private_key<RANK1024> *private_key_1024_from_external(
+    const MLKEM1024_private_key *external) {
+  return reinterpret_cast<const private_key<RANK1024> *>(external);
+}
+private_key<RANK1024> *private_key_1024_from_external(
+    MLKEM1024_private_key *external) {
+  return reinterpret_cast<private_key<RANK1024> *>(external);
 }
 
 // See section 6.2.
 template <int RANK>
 void mlkem_encap_external_entropy_no_self_test(
     uint8_t *out_ciphertext,
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-    const struct mlkem::public_key<RANK> *pub,
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+    const mlkem::public_key<RANK> *pub,
     const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY]) {
   uint8_t input[64];
   OPENSSL_memcpy(input, entropy, BCM_MLKEM_ENCAP_ENTROPY);
@@ -935,15 +934,15 @@ void mlkem_encap_external_entropy_no_self_test(
   encrypt_cpa(out_ciphertext, pub, entropy, key_and_randomness + 32);
   // The ciphertext is public.
   CONSTTIME_DECLASSIFY(out_ciphertext, mlkem::ciphertext_size(RANK));
-  static_assert(BCM_MLKEM_SHARED_SECRET_BYTES == 32);
+  static_assert(MLKEM_SHARED_SECRET_BYTES == 32);
   memcpy(out_shared_secret, key_and_randomness, 32);
 }
 
 template <int RANK>
 void mlkem_encap_external_entropy(
     uint8_t *out_ciphertext,
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-    const struct mlkem::public_key<RANK> *pub,
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+    const mlkem::public_key<RANK> *pub,
     const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY]) {
   fips::ensure_encap_self_test();
   mlkem_encap_external_entropy_no_self_test(out_ciphertext, out_shared_secret,
@@ -955,9 +954,9 @@ namespace fips {
 #include "fips_known_values.inc"
 
 static int keygen_self_test() {
-  uint8_t pub_key[BCM_MLKEM768_PUBLIC_KEY_BYTES];
+  uint8_t pub_key[MLKEM768_PUBLIC_KEY_BYTES];
   private_key<RANK768> priv;
-  static_assert(sizeof(kTestEntropy) >= BCM_MLKEM_SEED_BYTES);
+  static_assert(sizeof(kTestEntropy) >= MLKEM_SEED_BYTES);
   mlkem_generate_key_external_seed_no_self_test(pub_key, &priv, kTestEntropy);
   CBB cbb;
   constexpr size_t kMarshaledPrivateKeySize = 2400;
@@ -982,8 +981,8 @@ static int encap_self_test() {
   if (!mlkem_parse_public_key(&pub, &cbs)) {
     return 0;
   }
-  uint8_t ciphertext[BCM_MLKEM768_CIPHERTEXT_BYTES];
-  uint8_t shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t ciphertext[MLKEM768_CIPHERTEXT_BYTES];
+  uint8_t shared_secret[MLKEM_SHARED_SECRET_BYTES];
   static_assert(sizeof(kTestEntropy) >= BCM_MLKEM_ENCAP_ENTROPY);
   mlkem_encap_external_entropy_no_self_test(ciphertext, shared_secret, &pub,
                                             kTestEntropy);
@@ -1004,7 +1003,7 @@ static int decap_self_test() {
   if (!mlkem_parse_private_key(&priv, &cbs)) {
     return 0;
   }
-  uint8_t shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t shared_secret[MLKEM_SHARED_SECRET_BYTES];
   mlkem_decap_no_self_test(shared_secret, kExpectedCiphertext, &priv);
   static_assert(sizeof(kExpectedSharedSecret) == sizeof(shared_secret));
   if (!BORINGSSL_check_test(kExpectedSharedSecret, shared_secret,
@@ -1013,7 +1012,7 @@ static int decap_self_test() {
     return 0;
   }
 
-  uint8_t implicit_rejection_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t implicit_rejection_shared_secret[MLKEM_SHARED_SECRET_BYTES];
   static_assert(sizeof(kExpectedPrivateKeyBytes) >=
                 sizeof(kExpectedCiphertext));
   mlkem_decap_no_self_test(implicit_rejection_shared_secret,
@@ -1073,14 +1072,13 @@ void ensure_decap_self_test(void) {}
 }  // namespace
 }  // namespace mlkem
 
-bcm_status BCM_mlkem768_check_fips(
-    const struct BCM_mlkem768_private_key *private_key) {
-  mlkem::private_key<RANK768> *priv =
+bcm_status BCM_mlkem768_check_fips(const MLKEM768_private_key *private_key) {
+  const mlkem::private_key<RANK768> *priv =
       mlkem::private_key_768_from_external(private_key);
 
   const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY] = {1, 2, 3, 4};
-  uint8_t ciphertext[BCM_MLKEM768_CIPHERTEXT_BYTES];
-  uint8_t shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t ciphertext[MLKEM768_CIPHERTEXT_BYTES];
+  uint8_t shared_secret[MLKEM_SHARED_SECRET_BYTES];
   mlkem_encap_external_entropy_no_self_test(ciphertext, shared_secret,
                                             &priv->pub, entropy);
 
@@ -1088,7 +1086,7 @@ bcm_status BCM_mlkem768_check_fips(
     shared_secret[0] ^= 1;
   }
 
-  uint8_t shared_secret2[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t shared_secret2[MLKEM_SHARED_SECRET_BYTES];
   mlkem::mlkem_decap_no_self_test(shared_secret2, ciphertext, priv);
   if (CRYPTO_memcmp(shared_secret, shared_secret2, sizeof(shared_secret)) !=
       0) {
@@ -1098,9 +1096,9 @@ bcm_status BCM_mlkem768_check_fips(
 }
 
 bcm_status BCM_mlkem768_generate_key_fips(
-    uint8_t out_encoded_public_key[BCM_MLKEM768_PUBLIC_KEY_BYTES],
-    uint8_t optional_out_seed[BCM_MLKEM_SEED_BYTES],
-    struct BCM_mlkem768_private_key *out_private_key) {
+    uint8_t out_encoded_public_key[MLKEM768_PUBLIC_KEY_BYTES],
+    uint8_t optional_out_seed[MLKEM_SEED_BYTES],
+    MLKEM768_private_key *out_private_key) {
   if (out_encoded_public_key == nullptr || out_private_key == nullptr) {
     return bcm_status::failure;
   }
@@ -1110,10 +1108,10 @@ bcm_status BCM_mlkem768_generate_key_fips(
 }
 
 bcm_infallible BCM_mlkem768_generate_key(
-    uint8_t out_encoded_public_key[BCM_MLKEM768_PUBLIC_KEY_BYTES],
-    uint8_t optional_out_seed[BCM_MLKEM_SEED_BYTES],
-    struct BCM_mlkem768_private_key *out_private_key) {
-  uint8_t seed[BCM_MLKEM_SEED_BYTES];
+    uint8_t out_encoded_public_key[MLKEM768_PUBLIC_KEY_BYTES],
+    uint8_t optional_out_seed[MLKEM_SEED_BYTES],
+    MLKEM768_private_key *out_private_key) {
+  uint8_t seed[MLKEM_SEED_BYTES];
   BCM_rand_bytes(seed, sizeof(seed));
   CONSTTIME_SECRET(seed, sizeof(seed));
   if (optional_out_seed) {
@@ -1125,26 +1123,25 @@ bcm_infallible BCM_mlkem768_generate_key(
 }
 
 bcm_status BCM_mlkem768_private_key_from_seed(
-    struct BCM_mlkem768_private_key *out_private_key, const uint8_t *seed,
+    MLKEM768_private_key *out_private_key, const uint8_t *seed,
     size_t seed_len) {
-  if (seed_len != BCM_MLKEM_SEED_BYTES) {
+  if (seed_len != MLKEM_SEED_BYTES) {
     return bcm_status::failure;
   }
 
-  uint8_t public_key_bytes[BCM_MLKEM768_PUBLIC_KEY_BYTES];
+  uint8_t public_key_bytes[MLKEM768_PUBLIC_KEY_BYTES];
   BCM_mlkem768_generate_key_external_seed(public_key_bytes, out_private_key,
                                           seed);
   return bcm_status::not_approved;
 }
 
-bcm_status BCM_mlkem1024_check_fips(
-    const struct BCM_mlkem1024_private_key *private_key) {
-  mlkem::private_key<RANK1024> *priv =
+bcm_status BCM_mlkem1024_check_fips(const MLKEM1024_private_key *private_key) {
+  const mlkem::private_key<RANK1024> *priv =
       mlkem::private_key_1024_from_external(private_key);
 
   const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY] = {1, 2, 3, 4};
-  uint8_t ciphertext[BCM_MLKEM1024_CIPHERTEXT_BYTES];
-  uint8_t shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t ciphertext[MLKEM1024_CIPHERTEXT_BYTES];
+  uint8_t shared_secret[MLKEM_SHARED_SECRET_BYTES];
   mlkem_encap_external_entropy_no_self_test(ciphertext, shared_secret,
                                             &priv->pub, entropy);
 
@@ -1152,7 +1149,7 @@ bcm_status BCM_mlkem1024_check_fips(
     shared_secret[0] ^= 1;
   }
 
-  uint8_t shared_secret2[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t shared_secret2[MLKEM_SHARED_SECRET_BYTES];
   mlkem::mlkem_decap_no_self_test(shared_secret2, ciphertext, priv);
   if (CRYPTO_memcmp(shared_secret, shared_secret2, sizeof(shared_secret)) !=
       0) {
@@ -1162,9 +1159,9 @@ bcm_status BCM_mlkem1024_check_fips(
 }
 
 bcm_status BCM_mlkem1024_generate_key_fips(
-    uint8_t out_encoded_public_key[BCM_MLKEM1024_PUBLIC_KEY_BYTES],
-    uint8_t optional_out_seed[BCM_MLKEM_SEED_BYTES],
-    struct BCM_mlkem1024_private_key *out_private_key) {
+    uint8_t out_encoded_public_key[MLKEM1024_PUBLIC_KEY_BYTES],
+    uint8_t optional_out_seed[MLKEM_SEED_BYTES],
+    MLKEM1024_private_key *out_private_key) {
   if (out_encoded_public_key == nullptr || out_private_key == nullptr) {
     return bcm_status::failure;
   }
@@ -1174,10 +1171,10 @@ bcm_status BCM_mlkem1024_generate_key_fips(
 }
 
 bcm_infallible BCM_mlkem1024_generate_key(
-    uint8_t out_encoded_public_key[BCM_MLKEM1024_PUBLIC_KEY_BYTES],
-    uint8_t optional_out_seed[BCM_MLKEM_SEED_BYTES],
-    struct BCM_mlkem1024_private_key *out_private_key) {
-  uint8_t seed[BCM_MLKEM_SEED_BYTES];
+    uint8_t out_encoded_public_key[MLKEM1024_PUBLIC_KEY_BYTES],
+    uint8_t optional_out_seed[MLKEM_SEED_BYTES],
+    MLKEM1024_private_key *out_private_key) {
+  uint8_t seed[MLKEM_SEED_BYTES];
   BCM_rand_bytes(seed, sizeof(seed));
   CONSTTIME_SECRET(seed, sizeof(seed));
   if (optional_out_seed) {
@@ -1189,21 +1186,21 @@ bcm_infallible BCM_mlkem1024_generate_key(
 }
 
 bcm_status BCM_mlkem1024_private_key_from_seed(
-    struct BCM_mlkem1024_private_key *out_private_key, const uint8_t *seed,
+    MLKEM1024_private_key *out_private_key, const uint8_t *seed,
     size_t seed_len) {
-  if (seed_len != BCM_MLKEM_SEED_BYTES) {
+  if (seed_len != MLKEM_SEED_BYTES) {
     return bcm_status::failure;
   }
-  uint8_t public_key_bytes[BCM_MLKEM1024_PUBLIC_KEY_BYTES];
+  uint8_t public_key_bytes[MLKEM1024_PUBLIC_KEY_BYTES];
   BCM_mlkem1024_generate_key_external_seed(public_key_bytes, out_private_key,
                                            seed);
   return bcm_status::not_approved;
 }
 
 bcm_infallible BCM_mlkem768_generate_key_external_seed(
-    uint8_t out_encoded_public_key[BCM_MLKEM768_PUBLIC_KEY_BYTES],
-    struct BCM_mlkem768_private_key *out_private_key,
-    const uint8_t seed[BCM_MLKEM_SEED_BYTES]) {
+    uint8_t out_encoded_public_key[MLKEM768_PUBLIC_KEY_BYTES],
+    MLKEM768_private_key *out_private_key,
+    const uint8_t seed[MLKEM_SEED_BYTES]) {
   mlkem::private_key<RANK768> *priv =
       mlkem::private_key_768_from_external(out_private_key);
   mlkem_generate_key_external_seed(out_encoded_public_key, priv, seed);
@@ -1211,9 +1208,9 @@ bcm_infallible BCM_mlkem768_generate_key_external_seed(
 }
 
 bcm_infallible BCM_mlkem1024_generate_key_external_seed(
-    uint8_t out_encoded_public_key[BCM_MLKEM1024_PUBLIC_KEY_BYTES],
-    struct BCM_mlkem1024_private_key *out_private_key,
-    const uint8_t seed[BCM_MLKEM_SEED_BYTES]) {
+    uint8_t out_encoded_public_key[MLKEM1024_PUBLIC_KEY_BYTES],
+    MLKEM1024_private_key *out_private_key,
+    const uint8_t seed[MLKEM_SEED_BYTES]) {
   mlkem::private_key<RANK1024> *priv =
       mlkem::private_key_1024_from_external(out_private_key);
   mlkem_generate_key_external_seed(out_encoded_public_key, priv, seed);
@@ -1221,22 +1218,22 @@ bcm_infallible BCM_mlkem1024_generate_key_external_seed(
 }
 
 bcm_infallible BCM_mlkem768_public_from_private(
-    struct BCM_mlkem768_public_key *out_public_key,
-    const struct BCM_mlkem768_private_key *private_key) {
-  struct mlkem::public_key<RANK768> *const pub =
+    MLKEM768_public_key *out_public_key,
+    const MLKEM768_private_key *private_key) {
+  mlkem::public_key<RANK768> *const pub =
       mlkem::public_key_768_from_external(out_public_key);
-  const struct mlkem::private_key<RANK768> *const priv =
+  const mlkem::private_key<RANK768> *const priv =
       mlkem::private_key_768_from_external(private_key);
   *pub = priv->pub;
   return bcm_infallible::approved;
 }
 
 bcm_infallible BCM_mlkem1024_public_from_private(
-    struct BCM_mlkem1024_public_key *out_public_key,
-    const struct BCM_mlkem1024_private_key *private_key) {
-  struct mlkem::public_key<RANK1024> *const pub =
+    MLKEM1024_public_key *out_public_key,
+    const MLKEM1024_private_key *private_key) {
+  mlkem::public_key<RANK1024> *const pub =
       mlkem::public_key_1024_from_external(out_public_key);
-  const struct mlkem::private_key<RANK1024> *const priv =
+  const mlkem::private_key<RANK1024> *const priv =
       mlkem::private_key_1024_from_external(private_key);
   *pub = priv->pub;
   return bcm_infallible::approved;
@@ -1245,9 +1242,9 @@ bcm_infallible BCM_mlkem1024_public_from_private(
 // Calls |MLKEM768_encap_external_entropy| with random bytes from
 // |BCM_rand_bytes|
 bcm_infallible BCM_mlkem768_encap(
-    uint8_t out_ciphertext[BCM_MLKEM768_CIPHERTEXT_BYTES],
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-    const struct BCM_mlkem768_public_key *public_key) {
+    uint8_t out_ciphertext[MLKEM768_CIPHERTEXT_BYTES],
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+    const MLKEM768_public_key *public_key) {
   uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY];
   BCM_rand_bytes(entropy, BCM_MLKEM_ENCAP_ENTROPY);
   CONSTTIME_SECRET(entropy, BCM_MLKEM_ENCAP_ENTROPY);
@@ -1257,9 +1254,9 @@ bcm_infallible BCM_mlkem768_encap(
 }
 
 bcm_infallible BCM_mlkem1024_encap(
-    uint8_t out_ciphertext[BCM_MLKEM1024_CIPHERTEXT_BYTES],
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-    const struct BCM_mlkem1024_public_key *public_key) {
+    uint8_t out_ciphertext[MLKEM1024_CIPHERTEXT_BYTES],
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+    const MLKEM1024_public_key *public_key) {
   uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY];
   BCM_rand_bytes(entropy, BCM_MLKEM_ENCAP_ENTROPY);
   CONSTTIME_SECRET(entropy, BCM_MLKEM_ENCAP_ENTROPY);
@@ -1269,70 +1266,70 @@ bcm_infallible BCM_mlkem1024_encap(
 }
 
 bcm_infallible BCM_mlkem768_encap_external_entropy(
-    uint8_t out_ciphertext[BCM_MLKEM768_CIPHERTEXT_BYTES],
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-    const struct BCM_mlkem768_public_key *public_key,
+    uint8_t out_ciphertext[MLKEM768_CIPHERTEXT_BYTES],
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+    const MLKEM768_public_key *public_key,
     const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY]) {
-  const struct mlkem::public_key<RANK768> *pub =
+  const mlkem::public_key<RANK768> *pub =
       mlkem::public_key_768_from_external(public_key);
   mlkem_encap_external_entropy(out_ciphertext, out_shared_secret, pub, entropy);
   return bcm_infallible::approved;
 }
 
 bcm_infallible BCM_mlkem1024_encap_external_entropy(
-    uint8_t out_ciphertext[BCM_MLKEM1024_CIPHERTEXT_BYTES],
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
-    const struct BCM_mlkem1024_public_key *public_key,
+    uint8_t out_ciphertext[MLKEM1024_CIPHERTEXT_BYTES],
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
+    const MLKEM1024_public_key *public_key,
     const uint8_t entropy[BCM_MLKEM_ENCAP_ENTROPY]) {
-  const struct mlkem::public_key<RANK1024> *pub =
+  const mlkem::public_key<RANK1024> *pub =
       mlkem::public_key_1024_from_external(public_key);
   mlkem_encap_external_entropy(out_ciphertext, out_shared_secret, pub, entropy);
   return bcm_infallible::approved;
 }
 
 bcm_status BCM_mlkem768_decap(
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
     const uint8_t *ciphertext, size_t ciphertext_len,
-    const struct BCM_mlkem768_private_key *private_key) {
-  if (ciphertext_len != BCM_MLKEM768_CIPHERTEXT_BYTES) {
-    BCM_rand_bytes(out_shared_secret, BCM_MLKEM_SHARED_SECRET_BYTES);
+    const MLKEM768_private_key *private_key) {
+  if (ciphertext_len != MLKEM768_CIPHERTEXT_BYTES) {
+    BCM_rand_bytes(out_shared_secret, MLKEM_SHARED_SECRET_BYTES);
     return bcm_status::failure;
   }
-  const struct mlkem::private_key<RANK768> *priv =
+  const mlkem::private_key<RANK768> *priv =
       mlkem::private_key_768_from_external(private_key);
   mlkem_decap(out_shared_secret, ciphertext, priv);
   return bcm_status::approved;
 }
 
 bcm_status BCM_mlkem1024_decap(
-    uint8_t out_shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES],
+    uint8_t out_shared_secret[MLKEM_SHARED_SECRET_BYTES],
     const uint8_t *ciphertext, size_t ciphertext_len,
-    const struct BCM_mlkem1024_private_key *private_key) {
-  if (ciphertext_len != BCM_MLKEM1024_CIPHERTEXT_BYTES) {
-    BCM_rand_bytes(out_shared_secret, BCM_MLKEM_SHARED_SECRET_BYTES);
+    const MLKEM1024_private_key *private_key) {
+  if (ciphertext_len != MLKEM1024_CIPHERTEXT_BYTES) {
+    BCM_rand_bytes(out_shared_secret, MLKEM_SHARED_SECRET_BYTES);
     return bcm_status::failure;
   }
-  const struct mlkem::private_key<RANK1024> *priv =
+  const mlkem::private_key<RANK1024> *priv =
       mlkem::private_key_1024_from_external(private_key);
   mlkem_decap(out_shared_secret, ciphertext, priv);
   return bcm_status::approved;
 }
 
 bcm_status BCM_mlkem768_marshal_public_key(
-    CBB *out, const struct BCM_mlkem768_public_key *public_key) {
+    CBB *out, const MLKEM768_public_key *public_key) {
   return mlkem_marshal_public_key(
       out, mlkem::public_key_768_from_external(public_key));
 }
 
 bcm_status BCM_mlkem1024_marshal_public_key(
-    CBB *out, const struct BCM_mlkem1024_public_key *public_key) {
+    CBB *out, const MLKEM1024_public_key *public_key) {
   return mlkem_marshal_public_key(
       out, mlkem::public_key_1024_from_external(public_key));
 }
 
-bcm_status BCM_mlkem768_parse_public_key(
-    struct BCM_mlkem768_public_key *public_key, CBS *in) {
-  struct mlkem::public_key<RANK768> *pub =
+bcm_status BCM_mlkem768_parse_public_key(MLKEM768_public_key *public_key,
+                                         CBS *in) {
+  mlkem::public_key<RANK768> *pub =
       mlkem::public_key_768_from_external(public_key);
   if (!mlkem_parse_public_key(pub, in)) {
     return bcm_status::failure;
@@ -1340,9 +1337,9 @@ bcm_status BCM_mlkem768_parse_public_key(
   return bcm_status::approved;
 }
 
-bcm_status BCM_mlkem1024_parse_public_key(
-    struct BCM_mlkem1024_public_key *public_key, CBS *in) {
-  struct mlkem::public_key<RANK1024> *pub =
+bcm_status BCM_mlkem1024_parse_public_key(MLKEM1024_public_key *public_key,
+                                          CBS *in) {
+  mlkem::public_key<RANK1024> *pub =
       mlkem::public_key_1024_from_external(public_key);
   if (!mlkem_parse_public_key(pub, in)) {
     return bcm_status::failure;
@@ -1351,8 +1348,8 @@ bcm_status BCM_mlkem1024_parse_public_key(
 }
 
 bcm_status BCM_mlkem768_marshal_private_key(
-    CBB *out, const struct BCM_mlkem768_private_key *private_key) {
-  const struct mlkem::private_key<RANK768> *const priv =
+    CBB *out, const MLKEM768_private_key *private_key) {
+  const mlkem::private_key<RANK768> *const priv =
       mlkem::private_key_768_from_external(private_key);
   if (!mlkem_marshal_private_key(out, priv)) {
     return bcm_status::failure;
@@ -1361,8 +1358,8 @@ bcm_status BCM_mlkem768_marshal_private_key(
 }
 
 bcm_status BCM_mlkem1024_marshal_private_key(
-    CBB *out, const struct BCM_mlkem1024_private_key *private_key) {
-  const struct mlkem::private_key<RANK1024> *const priv =
+    CBB *out, const MLKEM1024_private_key *private_key) {
+  const mlkem::private_key<RANK1024> *const priv =
       mlkem::private_key_1024_from_external(private_key);
   if (!mlkem_marshal_private_key(out, priv)) {
     return bcm_status::failure;
@@ -1370,9 +1367,9 @@ bcm_status BCM_mlkem1024_marshal_private_key(
   return bcm_status::approved;
 }
 
-bcm_status BCM_mlkem768_parse_private_key(
-    struct BCM_mlkem768_private_key *out_private_key, CBS *in) {
-  struct mlkem::private_key<RANK768> *const priv =
+bcm_status BCM_mlkem768_parse_private_key(MLKEM768_private_key *out_private_key,
+                                          CBS *in) {
+  mlkem::private_key<RANK768> *const priv =
       mlkem::private_key_768_from_external(out_private_key);
   if (!mlkem_parse_private_key(priv, in)) {
     return bcm_status::failure;
@@ -1381,8 +1378,8 @@ bcm_status BCM_mlkem768_parse_private_key(
 }
 
 bcm_status BCM_mlkem1024_parse_private_key(
-    struct BCM_mlkem1024_private_key *out_private_key, CBS *in) {
-  struct mlkem::private_key<RANK1024> *const priv =
+    MLKEM1024_private_key *out_private_key, CBS *in) {
+  mlkem::private_key<RANK1024> *const priv =
       mlkem::private_key_1024_from_external(out_private_key);
   if (!mlkem_parse_private_key(priv, in)) {
     return bcm_status::failure;

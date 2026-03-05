@@ -4,7 +4,7 @@ layer at (0,0) size 800x364
   RenderBlock {HTML} at (0,0) size 800x364
     RenderBody {BODY} at (8,16) size 784x340
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 268x19
+        RenderText {#text} at (0,0) size 268x20
           text run at (0,0) width 268: "Test passes if the four boxes are identical."
       RenderTable {TABLE} at (0,36) size 318x304
         RenderTableSection {TBODY} at (0,0) size 318x304

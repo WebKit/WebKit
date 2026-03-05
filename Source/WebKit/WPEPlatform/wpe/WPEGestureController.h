@@ -57,7 +57,7 @@ struct _WPEGestureControllerInterface
 {
     GTypeInterface parent_interface;
 
-    void        (* handle_event)         (WPEGestureController *controller,
+    gboolean    (* handle_event)         (WPEGestureController *controller,
                                           WPEEvent             *event );
     void        (* cancel)               (WPEGestureController *controller);
     WPEGesture  (* get_gesture)          (WPEGestureController *controller);
@@ -70,7 +70,7 @@ struct _WPEGestureControllerInterface
     gboolean    (* is_drag_begin)        (WPEGestureController *controller);
 };
 
-WPE_API void        wpe_gesture_controller_handle_event         (WPEGestureController *controller,
+WPE_API gboolean    wpe_gesture_controller_handle_event         (WPEGestureController *controller,
                                                                  WPEEvent             *event);
 WPE_API void        wpe_gesture_controller_cancel               (WPEGestureController *controller);
 WPE_API WPEGesture  wpe_gesture_controller_get_gesture          (WPEGestureController *controller);

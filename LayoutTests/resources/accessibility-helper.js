@@ -1,7 +1,15 @@
 function axDebug(msg)
 {
-    getOrCreate("console", "div").innerText += `${msg}\n`;
-};
+    var log = document.getElementById("log");
+    if (!log)
+        log = document.getElementById("console");
+    if (!log) {
+        log = document.createElement("div");
+        log.id = "console";
+        document.body.insertBefore(log, document.body.firstChild);
+    }
+    log.innerText += `${msg}\n`;
+}
 
 // This function is necessary when printing AX attributes that are stringified with angle brackets:
 //    AXChildren: <array of size 0>
@@ -75,8 +83,40 @@ function platformStaticTextValue(axElement) {
         return "";
 
     if (!axElement.role.toLowerCase().includes("statictext"))
-        return "FAIL: platformStaticTextValue called on a non-text object.\n";
+        return `FAIL: platformStaticTextValue called on a non-text object (role was ${axElement.role}).\n`;
     return accessibilityController.platformName === "ios" ? axElement.description : axElement.stringValue;
+}
+
+function stripAXPrefix(string) {
+    return string.replace(/^AX[A-Za-z]+:\s*/, "");
+}
+
+function expectStaticTextValue(axElement, expectedValue) {
+    if (!axElement)
+        return "";
+
+    if (!axElement.role.toLowerCase().includes("statictext"))
+        return `FAIL: platformStaticTextValue called on a non-text object (role was ${axElement.role}).\n`;
+
+    function pass(expected) {
+        return `PASS: Static text value was "${expected}"\n`;
+    }
+    function fail(expected, actual) {
+        return `FAIL: Static text value was not "${expected}" — was ${stripAXPrefix(actual)}`;
+    }
+
+    var textValue;
+    if (accessibilityController.platformName === "ios") {
+        textValue = axElement.description;
+        if (textValue === `AXLabel: ${expectedValue}`)
+            return pass(expectedValue);
+        return fail(expectedValue, textValue)
+    }
+
+    textValue = axElement.stringValue;
+    if (textValue === `AXValue: ${expectedValue}`)
+        return pass(expectedValue);
+    return fail(expectedValue, textValue)
 }
 
 // Dumps the accessibility tree hierarchy for the given accessibilityObject into
@@ -208,10 +248,17 @@ function waitFor(condition)
         // Schedule a timeout after 3 seconds if condition is never met.
         let timeoutID = setTimeout(() => {
             clearInterval(intervalID);
+
+            // Output a message to indicate that this call is timing out and avoid masking any possible failure.
+            let conditionString = condition.toString();
+            if (conditionString.length > 80)
+                conditionString = `${conditionString.substring(0, 80)}...`;
+            axDebug(`Condition '${conditionString}' was not satisfied in 3s, timing out.`);
+
             resolve(false);
         }, 3000);
 
-	// Repeatedly poll for the condition to be true.
+        // Repeatedly poll for the condition to be true.
         let intervalID = setInterval(() => {
             try {
                 if (condition()) {
@@ -238,21 +285,73 @@ async function waitForElementById(id) {
 }
 
 // Executes the operation and waits until an accessibility notification of the provided
-// `notificationName` is received. A notification listener is added to the AccessibilityUIElement
-// passed in; before the operation is executed. The `operation` is expected to be a function,
+// `notificationName` is received. A notification listener is added to the passed
+// AccessibilityUIElement if not null, or a global listener is installed, before
+// the operation is executed. The `operation` is expected to be a function,
 // which can optionally be async.
-async function waitForNotification(accessibilityElement, notificationName, operation) {
-    var reached = false;
-    function listener(receivedNotification) {
-        if (receivedNotification == notificationName) {
-            reached = true;
-            accessibilityElement.removeNotificationListener(listener);
-        }
+async function waitForNotification(axElement, notificationName, operation) {
+    var received = false;
+
+    function elementListener(notification) {
+        if (notification != notificationName)
+            return;
+        received = true;
+        axElement.removeNotificationListener(elementListener);
     }
 
-    accessibilityElement.addNotificationListener(listener);
+    function globalListener(element, notification) {
+        if (notification != notificationName)
+            return;
+        received = true;
+        accessibilityController.removeNotificationListener(globalListener);
+    }
+
+    if (axElement)
+        axElement.addNotificationListener(elementListener);
+    else
+        accessibilityController.addNotificationListener(globalListener);
+
     await operation();
-    await waitFor(() => { return reached; });
+    await waitFor(() => { return received; });
+}
+
+// Executes the passed operation function and waits for expectedCount number of
+// notifications of the given name. It takes a notificationHandler function to
+// be executed when the proper notifications are received. Similarly to
+// waitForNotification, the listener can be added to the given AccessibilityUIElement
+// or globally.
+async function waitForNotifications(axElement, notificationName, expectedCount, operation, notificationHandler) {
+    var receivedCount = 0;
+
+    function elementListener(notification) {
+        if (notification != notificationName)
+            return;
+        ++receivedCount;
+
+        notificationHandler(axElement, notification);
+
+        if (receivedCount == expectedCount)
+            axElement.removeNotificationListener(elementListener);
+    }
+
+    function globalListener(element, notification) {
+        if (notification != notificationName)
+            return;
+        ++receivedCount;
+
+        notificationHandler(element, notification);
+
+        if (receivedCount == expectedCount)
+            accessibilityController.removeNotificationListener(globalListener);
+    }
+
+    if (axElement)
+        axElement.addNotificationListener(elementListener);
+    else
+        accessibilityController.addNotificationListener(globalListener);
+
+    await operation();
+    await waitFor(() => { return receivedCount == expectedCount; });
 }
 
 // Expect an expression to equal a value and return the result as a string.
@@ -266,6 +365,16 @@ function expect(expression, expectedValue) {
     if (eval(evalExpression))
         return `PASS: ${evalExpression}\n`;
     return `FAIL: ${expression} !== ${expectedValue}, was ${eval(expression)}\n`;
+}
+
+function expectNumber(expression, expectedValue, allowedVariance = 0) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in expect() should be a string.");
+
+    const actualValue = eval(expression);
+    if (Math.abs(actualValue - expectedValue) <= allowedVariance)
+        return `PASS: ${expression} was ${allowedVariance === 0 ? "equal" : "equal or approximately equal"} to ${expectedValue}.\n`;
+    return `FAIL: ${expression} varied more than allowed variance ${allowedVariance}. Was: ${actualValue}, expected ${expectedValue}\n`;
 }
 
 function expectRectWithVariance(expression, x, y, width, height, allowedVariance) {
@@ -470,3 +579,75 @@ function formatAnnouncementUserInfo(userInfo) {
     return result;
 }
 
+// Checks that text alternatives include all expected values and exclude all unexpected values.
+// Returns a string with PASS/FAIL results for each check.
+function checkTextAlternatives(axElement, { expected = [], unexpected = [] }) {
+    var alternatives = platformTextAlternatives(axElement);
+    var result = "";
+    for (var i = 0; i < expected.length; i++) {
+        if (alternatives.includes(expected[i]))
+            result += `PASS: Text alternatives include '${expected[i]}'\n`;
+        else
+            result += `FAIL: Text alternatives should include '${expected[i]}' but got:\n${alternatives}\n`;
+    }
+    for (var i = 0; i < unexpected.length; i++) {
+        if (!alternatives.includes(unexpected[i]))
+            result += `PASS: Text alternatives do not include '${unexpected[i]}'\n`;
+        else
+            result += `FAIL: Text alternatives should NOT include '${unexpected[i]}' but got:\n${alternatives}\n`;
+    }
+    return result;
+}
+
+// Keep walking the tree, calling the given elementTests on each element, until each returns true on at least one element.
+function waitForElements(elementTests) {
+    // Recursively searches all elements from element returns true if elementTests each pass on
+    // at least one element. The passes array is used to keep track of which tests have passed
+    // so far and doesn't need to be passed in.
+    function checkElementTests(element, elementTests, passes) {
+        if (!element || !element.role) {
+            return false;
+        }
+
+        if (passes === undefined) {
+            passes = Array(elementTests.length).fill(false);
+        }
+
+        for (let i = 0; i < elementTests.length; i++) {
+            if (!passes[i] && elementTests[i](element)) {
+                passes[i] = true;
+            }
+        }
+        const childrenCount = element.childrenCount;
+        for (let i = 0; i < childrenCount; i++) {
+            checkElementTests(element.childAtIndex(i), elementTests, passes);
+        }
+
+        // Return if all tests passed
+        return passes.every(Boolean);
+    }
+
+    return new Promise((resolve, reject) => {
+        // Schedule a timeout after 3 seconds if condition is never met.
+        let timeoutID = setTimeout(() => {
+            clearInterval(intervalID);
+            reject("Timed out");
+        }, 3000);
+
+        // Repeatedly poll until all elementTests pass or we time out.
+        let intervalID = setInterval(() => {
+            try {
+                let root = accessibilityController.rootElement;
+                if (checkElementTests(root, elementTests)) {
+                    clearTimeout(timeoutID);
+                    clearInterval(intervalID);
+                    resolve(true);
+                }
+            } catch (error) {
+                clearTimeout(timeoutID);
+                clearInterval(intervalID);
+                reject(error);
+            }
+        }, 0);
+    });
+}

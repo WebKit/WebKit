@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicColorMatrixFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct HueRotate;
@@ -36,10 +38,43 @@ struct HueRotate;
 
 namespace Style {
 
-class BuilderState;
+// hue-rotate() = hue-rotate( [ <angle> | <zero> ]?@(default=0deg) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-hue-rotate
+struct HueRotate {
+    using Parameter = Angle<>;
 
-CSS::HueRotate toCSSHueRotate(Ref<BasicColorMatrixFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::HueRotate&, const BuilderState&);
+    Parameter value;
+
+    static HueRotate passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value.isZero(); }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const HueRotate&) const = default;
+};
+using HueRotateFunction = FunctionNotation<CSSValueHueRotate, HueRotate>;
+DEFINE_TYPE_WRAPPER_GET(HueRotate, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<HueRotate> { auto operator()(const HueRotate&, const RenderStyle&) -> CSS::HueRotate; };
+template<> struct ToStyle<CSS::HueRotate> { auto operator()(const CSS::HueRotate&, const BuilderState&) -> HueRotate; };
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<HueRotate, Ref<FilterEffect>> { auto operator()(const HueRotate&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<HueRotate> { auto operator()(const HueRotate&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::HueRotate, 1)

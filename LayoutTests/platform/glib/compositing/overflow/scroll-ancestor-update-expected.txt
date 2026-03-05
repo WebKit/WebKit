@@ -11,7 +11,7 @@ layer at (50,50) size 100x100
 layer at (50,50) size 200x200
   RenderBlock (positioned) {DIV} at (50,50) size 200x200
     RenderBlock {P} at (0,218) size 200x54
-      RenderText {#text} at (0,0) size 191x53
+      RenderText {#text} at (0,0) size 191x54
         text run at (0,0) width 191: "The green box should obscure"
         text run at (0,18) width 180: "the red box, and move when"
         text run at (0,36) width 141: "you drag the scrollbar."

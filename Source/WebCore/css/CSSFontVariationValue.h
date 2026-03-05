@@ -35,10 +35,10 @@ class CSSFontVariationValue final : public CSSValue {
 public:
     static Ref<CSSFontVariationValue> create(FontTag tag, Ref<CSSValue>&& value)
     {
-        return adoptRef(*new CSSFontVariationValue(tag, WTFMove(value)));
+        return adoptRef(*new CSSFontVariationValue(tag, WTF::move(value)));
     }
 
-    const FontTag& tag() const { return m_tag; }
+    const FontTag& tag() const LIFETIME_BOUND { return m_tag; }
     const CSSValue& value() const { return m_value; }
     String customCSSText(const CSS::SerializationContext&) const;
 

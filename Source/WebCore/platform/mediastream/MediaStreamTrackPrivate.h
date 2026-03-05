@@ -33,7 +33,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -61,9 +61,36 @@ public:
     virtual void dataFlowStarted(MediaStreamTrackPrivate&) { };
 };
 
+class MediaStreamTrackPrivateSourceObserverSourceProxy;
+class MediaStreamTrackPrivateSourceObserver : public ThreadSafeRefCounted<MediaStreamTrackPrivateSourceObserver, WTF::DestructionThread::Main> {
+public:
+    WEBCORE_EXPORT ~MediaStreamTrackPrivateSourceObserver();
+    static Ref<MediaStreamTrackPrivateSourceObserver> create(Ref<RealtimeMediaSource>&& source, std::function<void(Function<void()>&&)>&& postTask) { return adoptRef(*new MediaStreamTrackPrivateSourceObserver(WTF::move(source), WTF::move(postTask))); }
+
+    void initialize(MediaStreamTrackPrivate&);
+    std::function<void(Function<void()>&&)> getPostTask() { return m_postTask; }
+    RealtimeMediaSource& source() { return m_source.get(); }
+    void start();
+    void stop();
+    void requestToEnd();
+    void setMuted(bool);
+    void close();
+
+    using ApplyConstraintsHandler = CompletionHandler<void(std::optional<RealtimeMediaSource::ApplyConstraintsError>&&, RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&)>;
+    void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
+
+private:
+    MediaStreamTrackPrivateSourceObserver(Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&&);
+
+    const Ref<RealtimeMediaSource> m_source;
+    const std::unique_ptr<MediaStreamTrackPrivateSourceObserverSourceProxy> m_sourceProxy;
+    std::function<void(Function<void()>&&)> m_postTask;
+    HashMap<uint64_t, ApplyConstraintsHandler> m_applyConstraintsCallbacks;
+    uint64_t m_applyConstraintsCallbacksIdentifier { 0 };
+};
+
 class MediaStreamTrackPrivate final
-    : public RefCounted<MediaStreamTrackPrivate>
-    , public CanMakeWeakPtr<MediaStreamTrackPrivate>
+    : public RefCountedAndCanMakeWeakPtr<MediaStreamTrackPrivate>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif
@@ -75,8 +102,8 @@ public:
 
     WEBCORE_EXPORT virtual ~MediaStreamTrackPrivate();
 
-    const String& id() const { return m_id; }
-    const String& label() const { return m_label; }
+    const String& id() const LIFETIME_BOUND { return m_id; }
+    const String& label() const LIFETIME_BOUND { return m_label; }
 
     bool isActive() const { return enabled() && !ended() && !muted(); }
 
@@ -107,8 +134,6 @@ public:
 
     WEBCORE_EXPORT RealtimeMediaSource& source();
     const RealtimeMediaSource& source() const;
-    Ref<RealtimeMediaSource> protectedSource();
-    Ref<const RealtimeMediaSource> protectedSource() const;
     RealtimeMediaSource& sourceForProcessor();
     bool hasSource(const RealtimeMediaSource*) const;
 
@@ -123,8 +148,8 @@ public:
     void removeObserver(MediaStreamTrackPrivateObserver&);
     bool hasObserver(MediaStreamTrackPrivateObserver& observer) const { return m_observers.contains(observer); }
 
-    const RealtimeMediaSourceSettings& settings() const { return m_settings; }
-    const RealtimeMediaSourceCapabilities& capabilities() const { return m_capabilities; }
+    const RealtimeMediaSourceSettings& settings() const LIFETIME_BOUND { return m_settings; }
+    const RealtimeMediaSourceCapabilities& capabilities() const LIFETIME_BOUND { return m_capabilities; }
 
     Ref<RealtimeMediaSource::TakePhotoNativePromise> takePhoto(PhotoSettings&&);
     Ref<RealtimeMediaSource::PhotoCapabilitiesNativePromise> getPhotoCapabilities();
@@ -141,7 +166,7 @@ public:
     enum class ReadyState { None, Live, Ended };
     ReadyState readyState() const { return m_readyState; }
 
-    void setIdForTesting(String&& id) { m_id = WTFMove(id); }
+    void setIdForTesting(String&& id) { m_id = WTF::move(id); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -151,13 +176,15 @@ public:
     friend class MediaStreamTrackPrivateSourceObserver;
     friend class MediaStreamTrackPrivateSourceObserverSourceProxy;
 
-    void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTFMove(settings); }
-    void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTFMove(capabilities); }
+    void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTF::move(settings); }
+    void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTF::move(capabilities); }
 
     enum class ShouldClone : bool { No, Yes };
     UniqueRef<MediaStreamTrackDataHolder> toDataHolder(ShouldClone = ShouldClone::No);
 
     void updateLabelIfRemoteTrack();
+
+    MediaStreamTrackPrivateSourceObserver& sourceObserver() { return m_sourceObserver; }
 
 private:
     MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&&);

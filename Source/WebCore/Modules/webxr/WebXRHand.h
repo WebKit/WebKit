@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class WebXRHand : public RefCountedAndCanMakeWeakPtr<WebXRHand> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRHand);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRHand);
 public:
 
     static Ref<WebXRHand> create(const WebXRInputSource&);

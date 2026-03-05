@@ -33,7 +33,7 @@
 #include "OrderIterator.h"
 
 #include "RenderBox.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 

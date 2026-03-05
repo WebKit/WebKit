@@ -12,12 +12,12 @@ info: |
     b. If numericIndex is not undefined, then
       i. If IsInteger(numericIndex) is false, return false.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Reflect, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
 
   assert.sameValue(
     Reflect.defineProperty(sample, "0.1", {
@@ -121,4 +121,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     "'-Infinity' - does not define a value for ['-Infinity']"
   );
 
-});
+}, null, ["passthrough"]);

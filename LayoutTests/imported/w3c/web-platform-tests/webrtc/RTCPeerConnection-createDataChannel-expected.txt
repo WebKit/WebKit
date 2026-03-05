@@ -39,7 +39,7 @@ PASS createDataChannel with maximum length label and protocol should succeed
 PASS createDataChannel with negotiated false should succeed
 PASS createDataChannel with negotiated false and id 42 should ignore the id
 PASS createDataChannel with negotiated true and id not defined should throw TypeError
-PASS Channels created (after setRemoteDescription) should have id assigned
+PASS Channels created (after SCTP connected) should have id assigned
 PASS Reusing a data channel id that is in use should throw OperationError
 PASS Reusing a data channel id that is in use (after setRemoteDescription) should throw OperationError
 PASS Reusing a data channel id that is in use (after setRemoteDescription, negotiated via DCEP) should throw OperationError

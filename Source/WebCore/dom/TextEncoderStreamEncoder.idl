@@ -29,6 +29,6 @@
 ] interface TextEncoderStreamEncoder {
     constructor();
 
-    [PrivateIdentifier] Uint8Array encode(DOMString chunk);
-    [PrivateIdentifier] Uint8Array flush();
+    [PrivateIdentifier] Uint8Array? encode(DOMString chunk);
+    [PrivateIdentifier] Uint8Array? flush();
 };

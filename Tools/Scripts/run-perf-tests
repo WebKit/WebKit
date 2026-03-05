@@ -33,6 +33,8 @@ import logging
 import sys
 
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
+from webkitpy.port.linux_container_sdk_utils import maybe_use_container_sdk_root_dir
+maybe_use_container_sdk_root_dir()
 
 if '__main__' == __name__:
     logging.basicConfig(level=logging.INFO, format="%(message)s")

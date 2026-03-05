@@ -54,7 +54,7 @@ struct WebProcessDataStoreParameters {
     String modelElementCacheDirectory;
     SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !USE(EXTENSIONKIT)
     SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
 #endif
     bool trackingPreventionEnabled { false };

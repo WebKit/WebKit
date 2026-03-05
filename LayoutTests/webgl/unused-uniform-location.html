@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL test checking that unused uniforms are null</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="256" height="256"> </canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Unused uniform locations should return null, uniform block variables should not have location");
+var wtu = WebGLTestUtils;
+var vs = `#version 300 es
+precision highp float;
+in vec4 vPosition;
+uniform vec4 u0;
+uniform vec4 u1[2];
+uniform U {
+	vec4 u2;
+    vec4 u3[2];
+    vec4 u4[3];
+};
+uniform vec4 u5[3];
+void main() {
+    gl_Position = vPosition + u4[1] + u5[1];
+}`;
+var fs = `#version 300 es
+precision highp float;
+uniform vec4 c;
+out vec4 color;
+void main() {
+    color = c;
+}`;
+var gl;
+var program;
+function test() {
+    var canvas = document.getElementById("canvas");
+    gl = wtu.create3DContext(canvas, undefined, 2);
+    if (!gl) {
+        testFailed("no context");
+        finishTest();
+        return;
+    }
+
+    program = wtu.setupProgram(gl, [vs, fs], ["vPosition"]);
+    if (!program) {
+        testFailed("Failed to create program");
+        finishTest();
+        return;
+    }
+    shouldBeNonNull('gl.getUniformLocation(program, "c")');
+    shouldBeNull('gl.getUniformLocation(program, "u0")');
+    shouldBeNull('gl.getUniformLocation(program, "u1")');
+    shouldBeNull('gl.getUniformLocation(program, "u1[0]")');
+    shouldBeNull('gl.getUniformLocation(program, "u2")');
+    shouldBeNull('gl.getUniformLocation(program, "u3[0]")');
+    shouldBeNull('gl.getUniformLocation(program, "u3[1]")');
+    shouldBeNull('gl.getUniformLocation(program, "u4[0]")');
+    shouldBeNull('gl.getUniformLocation(program, "u4[1]")');
+    shouldBeNull('gl.getUniformLocation(program, "u4[2]")');
+    shouldBeNonNull('gl.getUniformLocation(program, "u5[0]")');
+    shouldBeNonNull('gl.getUniformLocation(program, "u5[1]")');
+    shouldBe('gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)', '5');
+    shouldBe('gl.getActiveUniform(program, 0).name', '"u5[0]"');
+    shouldBe('gl.getActiveUniform(program, 1).name', '"c"');
+    shouldBe('gl.getActiveUniform(program, 2).name', '"u2"');
+    shouldBe('gl.getActiveUniform(program, 3).name', '"u3[0]"');
+    shouldBe('gl.getActiveUniform(program, 4).name', '"u4[0]"');
+    finishTest();
+};
+test();
+var successfullyParsed = true;
+</script>
+</body>
+</html>

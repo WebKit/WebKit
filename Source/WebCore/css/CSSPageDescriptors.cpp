@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSPageDescriptors);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPageDescriptors);
 
 CSSPageDescriptors::CSSPageDescriptors(MutableStyleProperties& propertySet, CSSPageRule& parentRule)
     : PropertySetCSSDescriptors(propertySet, parentRule)

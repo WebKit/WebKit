@@ -53,7 +53,7 @@ static void initializePlatformDisplayIfNeeded()
         return;
     auto display = PlatformDisplaySurfaceless::create();
     RELEASE_ASSERT(display);
-    PlatformDisplay::setSharedDisplay(WTFMove(display));
+    PlatformDisplay::setSharedDisplay(WTF::move(display));
 }
 
 using TestedGraphicsContextGLTextureMapper = GraphicsContextGLTextureMapperANGLE;
@@ -61,7 +61,7 @@ using TestedGraphicsContextGLTextureMapper = GraphicsContextGLTextureMapperANGLE
 static RefPtr<TestedGraphicsContextGLTextureMapper> createTestedGraphicsContextGL(GraphicsContextGLAttributes attribute)
 {
     initializePlatformDisplayIfNeeded();
-    return TestedGraphicsContextGLTextureMapper::create(WTFMove(attribute));
+    return TestedGraphicsContextGLTextureMapper::create(WTF::move(attribute));
 }
 
 class MockGraphicsContextGLClient final : public GraphicsContextGL::Client {

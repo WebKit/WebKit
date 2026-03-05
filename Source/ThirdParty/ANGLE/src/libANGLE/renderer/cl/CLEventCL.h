@@ -23,8 +23,6 @@ class CLEventCL : public CLEventImpl
 
     cl_event getNative() const;
 
-    angle::Result onEventCreate() override;
-
     angle::Result getCommandExecutionStatus(cl_int &executionStatus) override;
 
     angle::Result setUserEventStatus(cl_int executionStatus) override;

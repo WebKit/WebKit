@@ -4,7 +4,7 @@ layer at (0,0) size 800x103
   RenderBlock {HTML} at (0,0) size 800x103
     RenderBody {BODY} at (8,16) size 784x79
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 138x17
+        RenderText {#text} at (0,0) size 138x18
           text run at (0,0) width 138: "There must be no red."
 layer at (8,50) size 45x45
   RenderBlock (relative positioned) {DIV} at (0,34) size 45x45

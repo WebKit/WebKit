@@ -76,7 +76,7 @@ static unsigned findNextEdgeVertexIndex(const FloatPolygon& polygon, unsigned ve
 }
 
 FloatPolygon::FloatPolygon(Vector<FloatPoint>&& vertices)
-    : m_vertices(WTFMove(vertices))
+    : m_vertices(WTF::move(vertices))
     , m_empty(m_vertices.size() < 3)
     , m_edges(m_vertices.size())
 {

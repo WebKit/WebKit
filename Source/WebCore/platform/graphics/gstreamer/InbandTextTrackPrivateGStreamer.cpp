@@ -47,7 +47,7 @@ static void ensureTextTrackDebugCategoryInitialized()
 
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
+    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTF::move(pad), shouldHandleStreamStartEvent)
     , m_kind(Kind::Subtitles)
 {
     ensureTextTrackDebugCategoryInitialized();
@@ -56,7 +56,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
 
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTFMove(pad), trackId)
+    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTF::move(pad), trackId)
     , m_kind(Kind::Subtitles)
 {
     ensureTextTrackDebugCategoryInitialized();
@@ -96,7 +96,7 @@ void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample>&& sample)
 {
     {
         Locker locker { m_sampleMutex };
-        m_pendingSamples.append(WTFMove(sample));
+        m_pendingSamples.append(WTF::move(sample));
     }
 
     RefPtr<InbandTextTrackPrivateGStreamer> protectedThis(this);

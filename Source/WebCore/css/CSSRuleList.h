@@ -54,7 +54,7 @@ public:
 
     static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 
-    Vector<RefPtr<CSSRule>>& rules() { return m_rules; }
+    Vector<RefPtr<CSSRule>>& rules() LIFETIME_BOUND { return m_rules; }
     
     CSSStyleSheet* styleSheet() const final { return nullptr; }
 

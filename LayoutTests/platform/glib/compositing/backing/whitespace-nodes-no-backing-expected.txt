@@ -1,0 +1,118 @@
+
+
+
+
+
+
+span
+inner span
+
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 9
+        (GraphicsLayer
+          (position 10.00 8.00)
+          (bounds 780.00 58.00)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 50.00 50.00)
+            )
+            (GraphicsLayer
+              (position 60.00 2.00)
+              (bounds 50.00 50.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 67.00)
+          (anchor 0.50 0.52)
+          (bounds 780.00 58.00)
+          (children 2
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (anchor 0.50 0.51)
+              (bounds 50.00 51.00)
+            )
+            (GraphicsLayer
+              (position 60.00 2.00)
+              (anchor 0.50 0.51)
+              (bounds 50.00 51.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 127.00)
+          (bounds 780.00 58.00)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 50.00 50.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 186.00)
+          (anchor 0.50 0.52)
+          (bounds 780.00 58.00)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (anchor 0.50 0.51)
+              (bounds 50.00 51.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 246.00)
+          (bounds 780.00 78.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 50.00 50.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 325.00)
+          (anchor 0.50 0.52)
+          (bounds 780.00 54.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 10.00 381.00)
+          (bounds 780.00 18.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 10.00 401.00)
+          (bounds 780.00 18.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 10.00 421.00)
+          (bounds 780.00 78.00)
+          (children 2
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 50.00 50.00)
+            )
+            (GraphicsLayer
+              (position 0.00 57.00)
+              (anchor 0.50 0.52)
+              (bounds 20.00 21.00)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

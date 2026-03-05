@@ -140,4 +140,9 @@ private:
 
 } // namespace WebCore
 
+#define SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(ExtensionClass) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ExtensionClass) \
+    static bool isType(const WebCore::WebGLExtensionBase& extension) { return extension.name() == WebCore::WebGLExtensionName::ExtensionClass; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

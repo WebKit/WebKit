@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class MathMLSelectElement final : public MathMLRowElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLSelectElement);
+    WTF_MAKE_TZONE_ALLOCATED(MathMLSelectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLSelectElement);
 public:
     static Ref<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
@@ -54,8 +54,8 @@ private:
 
     void toggle();
     int getSelectedActionChildAndIndex(Element*& selectedChild);
-    Element* getSelectedActionChild();
-    Element* getSelectedSemanticsChild();
+    RefPtr<Element> getSelectedActionChild();
+    RefPtr<Element> getSelectedSemanticsChild();
 
     void updateSelectedChild() final;
     RefPtr<Element> m_selectedChild;

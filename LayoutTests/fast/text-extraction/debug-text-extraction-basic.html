@@ -100,6 +100,7 @@ canvas {
         <textarea rows="15" cols="40">This is a text box</textarea>
         Price: $11<sup>99</sup>
         Link to <sub>WebKit home page:<a href="https://webkit.org">webkit.org</a></sub>
+        <strike>This <a href="https://www.apple.com/">link</a> was deleted</strike>
     </section>
 </main>
 <footer role="contentinfo">
@@ -155,7 +156,7 @@ addEventListener("load", async () => {
         includeRects: true,
         includeURLs: true,
         nodeIdentifierInclusion: "interactive",
-        includeEventListeners: true,
+        eventListenerCategories: ["click"],
         includeAccessibilityAttributes: true,
         includeTextInAutoFilledControls: true,
     });

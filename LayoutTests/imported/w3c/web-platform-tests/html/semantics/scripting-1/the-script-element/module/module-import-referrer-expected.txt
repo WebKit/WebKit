@@ -1,0 +1,6 @@
+
+PASS Static imports from inline modules in the HTML document
+PASS Dynamic imports from inline modules in the HTML document
+FAIL Static imports from external modules assert_equals: Referrer should be the importer module URL expected "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/module-import-referrer.js" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/module-import-referrer.html"
+FAIL Dynamic imports from external modules assert_equals: Referrer should be the document URL expected "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/module-import-referrer.js" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/module-import-referrer.html"
+

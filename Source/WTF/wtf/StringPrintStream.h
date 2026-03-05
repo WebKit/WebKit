@@ -44,7 +44,7 @@ public:
     WTF_EXPORT_PRIVATE Expected<String, UTF8ConversionError> tryToString() const;
     WTF_EXPORT_PRIVATE String toString() const;
     WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback() const;
-    WTF_EXPORT_PRIVATE void reset();
+    WTF_EXPORT_PRIVATE void NODELETE reset();
     
 private:
     void increaseSize(size_t);

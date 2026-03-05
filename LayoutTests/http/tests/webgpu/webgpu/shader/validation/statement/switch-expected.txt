@@ -77,6 +77,8 @@ PASS :parse:test="L_no_default"
 PASS :parse:test="L_default_default"
 PASS :parse:test="L_default_block_default_block"
 FAIL :parse:test="L_case_1_case_1_default" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -88,12 +90,15 @@ FAIL :parse:test="L_case_1_case_1_default" assert_unreached:
       const C2 = 2;
       switch L { case 1 {} case 1 {} default {} }
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/switch.spec.js:166:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 FAIL :parse:test="L_case_C1_case_C1_default" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -105,12 +110,15 @@ FAIL :parse:test="L_case_C1_case_C1_default" assert_unreached:
       const C2 = 2;
       switch L { case C1 {} case C1 {} default {} }
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/switch.spec.js:166:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 FAIL :parse:test="L_case_C2_case_expr_default" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -122,10 +130,11 @@ FAIL :parse:test="L_case_C2_case_expr_default" assert_unreached:
       const C2 = 2;
       switch L { case C2 {} case 1+1 {} default {} }
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/switch.spec.js:166:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :parse:test="L_default_1"
 PASS :parse:test="L_default_2_case_1"

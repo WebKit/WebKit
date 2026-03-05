@@ -33,14 +33,15 @@
 #include "StyleBuilderState.h"
 #include "StyleCalculationValue.h"
 #include "StylePrimitiveNumericTypes.h"
+#include "StylePrimitiveNumericTypes+Rounding.h"
 
 namespace WebCore {
 namespace Style {
 
-// Out of line to avoid inclusion of RenderStyleInlines.h
+// Out of line to avoid inclusion of RenderStyle+GettersInlines.h
 float adjustForZoom(float, const RenderStyle&);
-bool evaluationTimeZoomEnabled(const RenderStyle&);
-bool evaluationTimeZoomEnabled(const BuilderState&);
+bool NODELETE evaluationTimeZoomEnabled(const RenderStyle&);
+bool NODELETE evaluationTimeZoomEnabled(const BuilderState&);
 
 // MARK: Conversion Data specialization
 
@@ -52,6 +53,24 @@ template<typename T> struct ConversionDataSpecializer {
 };
 
 template<auto R, typename V> struct ConversionDataSpecializer<CSS::LengthRaw<R, V>> {
+    CSSToLengthConversionData operator()(const BuilderState& state)
+    {
+        if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Default) {
+            return state.useSVGZoomRulesForLength()
+                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+                : state.cssToLengthConversionData();
+        } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
+            if (evaluationTimeZoomEnabled(state))
+                return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
+
+            return state.useSVGZoomRulesForLength()
+                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+                : state.cssToLengthConversionData();
+        }
+    }
+};
+
+template<auto R, typename V> struct ConversionDataSpecializer<CSS::LengthPercentageRaw<R, V>> {
     CSSToLengthConversionData operator()(const BuilderState& state)
     {
         if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Default) {
@@ -264,14 +283,14 @@ template<auto R, typename V> struct ToCSS<Length<R, V>> {
 template<auto R, typename V> struct ToCSS<UnevaluatedCalculation<CSS::AnglePercentage<R, V>>> {
     auto operator()(const UnevaluatedCalculation<CSS::AnglePercentage<R, V>>& value, const RenderStyle& style) -> typename CSS::AnglePercentage<R, V>::Calc
     {
-        return typename CSS::AnglePercentage<R, V>::Calc { CSSCalc::Value::create(value.protectedCalculation(), style) };
+        return typename CSS::AnglePercentage<R, V>::Calc { CSSCalc::Value::create(protect(value.calculation()), style) };
     }
 };
 
 template<auto R, typename V> struct ToCSS<UnevaluatedCalculation<CSS::LengthPercentage<R, V>>> {
     auto operator()(const UnevaluatedCalculation<CSS::LengthPercentage<R, V>>& value, const RenderStyle& style) -> typename CSS::LengthPercentage<R, V>::Calc
     {
-        return typename CSS::LengthPercentage<R, V>::Calc { CSSCalc::Value::create(value.protectedCalculation(), style) };
+        return typename CSS::LengthPercentage<R, V>::Calc { CSSCalc::Value::create(protect(value.calculation()), style) };
     }
 };
 
@@ -287,7 +306,7 @@ template<auto R, typename V> struct ToCSS<AnglePercentage<R, V>> {
                 return typename CSS::AnglePercentage<R, V>::Raw { percentage.unit, percentage.value };
             },
             [&](const typename AnglePercentage<R, V>::Calc& calculation) -> CSS::AnglePercentage<R> {
-                return typename CSS::AnglePercentage<R, V>::Calc { CSSCalc::Value::create(calculation.protectedCalculation(), style) };
+                return typename CSS::AnglePercentage<R, V>::Calc { CSSCalc::Value::create(protect(calculation.calculation()), style) };
             }
         );
     }
@@ -308,7 +327,7 @@ template<auto R, typename V> struct ToCSS<LengthPercentage<R, V>> {
                 return typename CSS::LengthPercentage<R, V>::Raw { percentage.unit, percentage.value };
             },
             [&](const typename LengthPercentage<R, V>::Calc& calculation) -> CSS::LengthPercentage<R> {
-                return typename CSS::LengthPercentage<R, V>::Calc { CSSCalc::Value::create(calculation.protectedCalculation(), style) };
+                return typename CSS::LengthPercentage<R, V>::Calc { CSSCalc::Value::create(protect(calculation.calculation()), style) };
             }
         );
     }
@@ -343,7 +362,7 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::AnglePerce
         // NOTE: Simplification is needed here for the case of the user using the Typed CSSOM
         // to explicitly specify a CSSMath* value for a specified value.
 
-        Ref simplifiedCalc = value.protectedCalc()->copySimplified(rest...);
+        Ref simplifiedCalc = protect(value.calcValue())->copySimplified(rest...);
 
         // FIXME: This ASSERT and the following extra cases for Category::Angle and Category::Percentage
         // should go away once the typed CSSOM learns to set the correct category when creating internal
@@ -356,14 +375,14 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::AnglePerce
 
         if (simplifiedCalc->category() == CSS::Category::Percentage) {
             if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-                return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(std::forward<Rest>(rest)...) }, std::forward<Rest>(rest)...);
+                return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
             return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
         }
 
         if (!simplifiedCalc->tree().type.percentHint)
             return canonicalize(CSS::AngleRaw<R, V> { To::Dimension::unit, simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
         if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-            return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(std::forward<Rest>(rest)...) }, std::forward<Rest>(rest)...);
+            return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
         return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
     }
 };
@@ -377,7 +396,7 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::LengthPerc
         // NOTE: Simplification is needed here for the case of the user using the Typed CSSOM
         // to explicitly specify a CSSMath* value for a specified value.
 
-        Ref simplifiedCalc = value.protectedCalc()->copySimplified(rest...);
+        Ref simplifiedCalc = protect(value.calcValue())->copySimplified(rest...);
 
         // FIXME: This ASSERT and the following extra cases for Category::Length and Category::Percentage
         // should go away once the typed CSSOM learns to set the correct category when creating internal
@@ -390,14 +409,14 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::LengthPerc
 
         if (simplifiedCalc->category() == CSS::Category::Percentage) {
             if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-                return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(std::forward<Rest>(rest)...) }, std::forward<Rest>(rest)...);
+                return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
             return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
         }
 
         if (!simplifiedCalc->tree().type.percentHint)
             return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
         if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-            return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(std::forward<Rest>(rest)...) }, std::forward<Rest>(rest)...);
+            return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
         return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
     }
 };

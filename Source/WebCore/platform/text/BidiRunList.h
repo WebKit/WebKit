@@ -41,7 +41,7 @@ public:
     // FIXME: Once BidiResolver no longer owns the BidiRunList,
     // then ~BidiRunList should call deleteRuns() automatically.
 
-    Run* firstRun() const { return m_firstRun.get(); }
+    Run* firstRun() const LIFETIME_BOUND { return m_firstRun.get(); }
     Run* lastRun() const { return m_lastRun; }
     Run* logicallyLastRun() const { return m_logicallyLastRun; }
     unsigned runCount() const { return m_runCount; }
@@ -74,10 +74,10 @@ template <class Run>
 inline void BidiRunList<Run>::appendRun(std::unique_ptr<Run>&& run)
 {
     if (!m_firstRun) {
-        m_firstRun = WTFMove(run);
+        m_firstRun = WTF::move(run);
         m_lastRun = m_firstRun.get();
     } else {
-        m_lastRun->setNext(WTFMove(run));
+        m_lastRun->setNext(WTF::move(run));
         m_lastRun = m_lastRun->next();
     }
     m_runCount++;
@@ -91,8 +91,8 @@ inline void BidiRunList<Run>::prependRun(std::unique_ptr<Run>&& run)
     if (!m_lastRun)
         m_lastRun = run.get();
     else
-        run->setNext(WTFMove(m_firstRun));
-    m_firstRun = WTFMove(run);
+        run->setNext(WTF::move(m_firstRun));
+    m_firstRun = WTF::move(run);
     m_runCount++;
 }
 
@@ -112,13 +112,13 @@ inline void BidiRunList<Run>::moveRunToEnd(Run* run)
 
     if (!previous) {
         ASSERT(m_firstRun.get() == run);
-        std::unique_ptr<Run> originalFirstRun = WTFMove(m_firstRun);
+        std::unique_ptr<Run> originalFirstRun = WTF::move(m_firstRun);
         m_firstRun = originalFirstRun->takeNext();
-        m_lastRun->setNext(WTFMove(originalFirstRun));
+        m_lastRun->setNext(WTF::move(originalFirstRun));
     } else {
         std::unique_ptr<Run> target = previous->takeNext();
         previous->setNext(current->takeNext());
-        m_lastRun->setNext(WTFMove(target));
+        m_lastRun->setNext(WTF::move(target));
     }
 }
 
@@ -141,8 +141,8 @@ inline void BidiRunList<Run>::moveRunToBeginning(Run* run)
     if (run == m_lastRun)
         m_lastRun = previous;
 
-    target->setNext(WTFMove(m_firstRun));
-    m_firstRun = WTFMove(target);
+    target->setNext(WTF::move(m_firstRun));
+    m_firstRun = WTF::move(target);
 }
 
 template <class Run>
@@ -162,7 +162,7 @@ void BidiRunList<Run>::replaceRunWithRuns(Run* toReplace, BidiRunList<Run>& newR
 
     if (m_firstRun.get() == toReplace) {
         newRuns.m_lastRun->setNext(m_firstRun->takeNext());
-        m_firstRun = WTFMove(newRuns.m_firstRun);
+        m_firstRun = WTF::move(newRuns.m_firstRun);
     } else {
         // Find the run just before "toReplace" in the list of runs.
         Run* previousRun = m_firstRun.get();
@@ -171,7 +171,7 @@ void BidiRunList<Run>::replaceRunWithRuns(Run* toReplace, BidiRunList<Run>& newR
         ASSERT(previousRun);
 
         std::unique_ptr<Run> target = previousRun->takeNext();
-        previousRun->setNext(WTFMove(newRuns.m_firstRun));
+        previousRun->setNext(WTF::move(newRuns.m_firstRun));
         newRuns.m_lastRun->setNext(target->takeNext());
     }
 
@@ -214,18 +214,18 @@ void BidiRunList<Run>::reverseRuns(unsigned start, unsigned end)
 
     // Standard "sliding window" of 3 pointers
     std::unique_ptr<Run> previous = curr->takeNext();
-    std::unique_ptr<Run> current = beforeStart ? beforeStart->takeNext() : WTFMove(m_firstRun);
+    std::unique_ptr<Run> current = beforeStart ? beforeStart->takeNext() : WTF::move(m_firstRun);
     while (current) {
         std::unique_ptr<Run> next = current->takeNext();
-        current->setNext(WTFMove(previous));
-        previous = WTFMove(current);
-        current = WTFMove(next);
+        current->setNext(WTF::move(previous));
+        previous = WTF::move(current);
+        current = WTF::move(next);
     }
 
     if (beforeStart)
-        beforeStart->setNext(WTFMove(previous));
+        beforeStart->setNext(WTF::move(previous));
     else
-        m_firstRun = WTFMove(previous);
+        m_firstRun = WTF::move(previous);
 }
 
 } // namespace WebCore

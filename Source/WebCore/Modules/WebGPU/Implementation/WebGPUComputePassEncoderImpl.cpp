@@ -41,7 +41,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePassEncoderImpl);
 
 ComputePassEncoderImpl::ComputePassEncoderImpl(WebGPUPtr<WGPUComputePassEncoder>&& computePassEncoder, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(computePassEncoder))
+    : m_backing(WTF::move(computePassEncoder))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
@@ -71,7 +71,7 @@ void ComputePassEncoderImpl::end()
 void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup* bindGroup,
     std::optional<Vector<BufferDynamicOffset>>&& offsets)
 {
-    wgpuComputePassEncoderSetBindGroup(m_backing.get(), index, bindGroup ? m_convertToBackingContext->convertToBacking(*bindGroup) : nullptr, WTFMove(offsets));
+    wgpuComputePassEncoderSetBindGroup(m_backing.get(), index, bindGroup ? m_convertToBackingContext->convertToBacking(*bindGroup) : nullptr, WTF::move(offsets));
 }
 
 void ComputePassEncoderImpl::setBindGroup(Index32, const BindGroup*, std::span<const uint32_t>, Size64, Size32)

@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/SpeculatedType.h>
+#include <cstdint>
 #include <wtf/LockAlgorithm.h>
 #include <wtf/StdLibExtras.h>
 

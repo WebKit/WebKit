@@ -38,10 +38,10 @@ WKTypeID WKGeolocationPermissionRequestGetTypeID()
 
 void WKGeolocationPermissionRequestAllow(WKGeolocationPermissionRequestRef geolocationPermissionRequestRef)
 {
-    return toProtectedImpl(geolocationPermissionRequestRef)->allow();
+    return protect(toImpl(geolocationPermissionRequestRef))->allow();
 }
 
 void WKGeolocationPermissionRequestDeny(WKGeolocationPermissionRequestRef geolocationPermissionRequestRef)
 {
-    return toProtectedImpl(geolocationPermissionRequestRef)->deny();
+    return protect(toImpl(geolocationPermissionRequestRef))->deny();
 }

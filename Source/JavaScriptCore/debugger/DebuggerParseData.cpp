@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DebuggerParseData.h"
 
+#include "JSCJSValueInlines.h"
 #include "Parser.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

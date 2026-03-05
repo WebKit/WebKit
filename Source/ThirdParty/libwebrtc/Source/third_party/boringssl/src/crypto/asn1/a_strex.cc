@@ -36,7 +36,7 @@
 
 static int maybe_write(BIO *out, const void *buf, int len) {
   // If |out| is NULL, ignore the output but report the length.
-  return out == NULL || BIO_write(out, buf, len) == len;
+  return out == nullptr || BIO_write(out, buf, len) == len;
 }
 
 static int is_control_character(unsigned char c) { return c < 32 || c == 127; }
@@ -65,7 +65,7 @@ static int do_esc_char(uint32_t c, unsigned long flags, char *do_quotes,
                (is_last && (c == ' '))) {
       if (flags & ASN1_STRFLGS_ESC_QUOTE) {
         // No need to escape, just tell the caller to quote.
-        if (do_quotes != NULL) {
+        if (do_quotes != nullptr) {
           *do_quotes = 1;
         }
         return maybe_write(out, &u8, 1) ? 1 : -1;
@@ -199,7 +199,7 @@ static int do_dump(unsigned long flags, BIO *out, const ASN1_STRING *str) {
   ASN1_TYPE t;
   OPENSSL_memset(&t, 0, sizeof(ASN1_TYPE));
   asn1_type_set0_string(&t, (ASN1_STRING *)str);
-  unsigned char *der_buf = NULL;
+  unsigned char *der_buf = nullptr;
   int der_len = i2d_ASN1_TYPE(&t, &der_buf);
   if (der_len < 0) {
     return -1;
@@ -281,7 +281,7 @@ int ASN1_STRING_print_ex(BIO *out, const ASN1_STRING *str,
 
   // Measure the length.
   char quotes = 0;
-  int len = do_buf(str->data, str->length, encoding, flags, &quotes, NULL);
+  int len = do_buf(str->data, str->length, encoding, flags, &quotes, nullptr);
   if (len < 0) {
     return -1;
   }
@@ -295,7 +295,7 @@ int ASN1_STRING_print_ex(BIO *out, const ASN1_STRING *str,
 
   // Encode the value.
   if ((quotes && !maybe_write(out, "\"", 1)) ||
-      do_buf(str->data, str->length, encoding, flags, NULL, out) < 0 ||
+      do_buf(str->data, str->length, encoding, flags, nullptr, out) < 0 ||
       (quotes && !maybe_write(out, "\"", 1))) {
     return -1;
   }
@@ -304,12 +304,12 @@ int ASN1_STRING_print_ex(BIO *out, const ASN1_STRING *str,
 
 int ASN1_STRING_print_ex_fp(FILE *fp, const ASN1_STRING *str,
                             unsigned long flags) {
-  BIO *bio = NULL;
-  if (fp != NULL) {
+  BIO *bio = nullptr;
+  if (fp != nullptr) {
     // If |fp| is NULL, this function returns the number of bytes without
     // writing.
     bio = BIO_new_fp(fp, BIO_NOCLOSE);
-    if (bio == NULL) {
+    if (bio == nullptr) {
       return -1;
     }
   }
@@ -328,7 +328,7 @@ int ASN1_STRING_to_UTF8(unsigned char **out, const ASN1_STRING *in) {
     return -1;
   }
   ASN1_STRING stmp, *str = &stmp;
-  stmp.data = NULL;
+  stmp.data = nullptr;
   stmp.length = 0;
   stmp.flags = 0;
   int ret =
@@ -345,7 +345,7 @@ int ASN1_STRING_print(BIO *bp, const ASN1_STRING *v) {
   char buf[80];
   const char *p;
 
-  if (v == NULL) {
+  if (v == nullptr) {
     return 0;
   }
   n = 0;

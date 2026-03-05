@@ -14,6 +14,7 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/rtc_error.h"
 
 namespace webrtc {
 
@@ -28,7 +29,8 @@ class FileBasedDecoder {
 
   // Decodes the encoded file at `encoded_file_path` to a Y4M file. Returns the
   // path to the decoded file if successful.
-  virtual std::string Decode(absl::string_view encoded_file_path) = 0;
+  virtual RTCErrorOr<std::string> Decode(
+      absl::string_view encoded_file_path) = 0;
 };
 
 }  // namespace webrtc

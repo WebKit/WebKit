@@ -47,7 +47,7 @@ public:
 
     DECLARE_INFO;
 
-    static TemporalPlainMonthDay* from(JSGlobalObject*, JSValue, std::optional<JSValue>);
+    static TemporalPlainMonthDay* from(JSGlobalObject*, JSValue, JSValue);
     static TemporalPlainMonthDay* from(JSGlobalObject*, WTF::String);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }

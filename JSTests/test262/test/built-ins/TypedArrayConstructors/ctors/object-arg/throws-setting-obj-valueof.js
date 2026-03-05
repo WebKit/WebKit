@@ -75,7 +75,7 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample = new Int8Array(1);
   var valueOf = 0;
 
@@ -85,7 +85,7 @@ testWithTypedArrayConstructors(function(TA) {
   };
 
   assert.throws(Test262Error, function() {
-    new TA([8, sample]);
+    new TA(makeCtorArg([8, sample]));
   }, "abrupt completion from ToNumber(sample)");
 
   assert.sameValue(valueOf, 1, "valueOf called once");

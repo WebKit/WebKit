@@ -7,7 +7,7 @@
 	<key>EnableTransactions</key>
 	<true/>
 	<key>Label</key>
-	<string>com.apple.webkit.webpushd</string>
+	<string>com.apple.webkit.webpushd.relocatable</string>
 	<key>MachServices</key>
 	<dict>
 		<key>com.apple.webkit.webpushd.relocatable.service</key>

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "BAssert.h"
 #include <algorithm>
 #include <climits>
@@ -285,3 +287,5 @@ constexpr uint32_t roundUpToPowerOfTwo(uint32_t v)
 }
 
 } // namespace bmalloc
+
+#endif // __cplusplus

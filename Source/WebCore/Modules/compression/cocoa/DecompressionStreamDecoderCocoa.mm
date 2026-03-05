@@ -36,7 +36,7 @@ namespace WebCore {
 //
 // When src_size is empty we can normally exit performing compression, but during the flush
 // step we may have data buffered and will need to continue to keep flushing out the rest.
-bool DecompressionStreamDecoder::didInflateFinishAppleCompressionFramework(int result)
+bool NODELETE DecompressionStreamDecoder::didInflateFinishAppleCompressionFramework(int result)
 {
     return !m_compressionStream.getPlatformStream().src_size && (!m_didFinish || (m_didFinish && result == COMPRESSION_STATUS_END));
 }
@@ -76,9 +76,14 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
         if (result == COMPRESSION_STATUS_ERROR)
             return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_s };
 
-        if ((result == COMPRESSION_STATUS_END && m_compressionStream.getPlatformStream().src_size)
-            || (m_didFinish && m_compressionStream.getPlatformStream().src_size))
-            return Exception { ExceptionCode::TypeError, "Extra bytes past the end."_s };
+        // Extra bytes: stream ended but there's unconsumed input
+        if (result == COMPRESSION_STATUS_END && m_compressionStream.getPlatformStream().src_size) {
+            m_didDetectExtraBytes = true;
+            shouldDecompress = false;
+            output.shrink(allocateSize - m_compressionStream.getPlatformStream().dst_size);
+            storage.append(output);
+            break;
+        }
 
         if (didInflateFinishAppleCompressionFramework(result)) {
             shouldDecompress = false;
@@ -91,7 +96,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
         storage.append(output);
     }
 
-    RefPtr decompressedData = storage.takeAsArrayBuffer();
+    RefPtr decompressedData = storage.takeBufferAsArrayBuffer();
     if (!decompressedData)
         return Exception { ExceptionCode::OutOfMemoryError };
 

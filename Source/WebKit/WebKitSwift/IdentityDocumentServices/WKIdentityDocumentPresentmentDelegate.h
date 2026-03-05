@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #import <wtf/Compiler.h>
 #import "WKIdentityDocumentPresentmentRawRequest.h"
 
@@ -47,3 +49,5 @@ NS_SWIFT_UI_ACTOR
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(WEB_AUTHN)

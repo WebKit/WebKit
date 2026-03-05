@@ -27,6 +27,7 @@
 #import <dlfcn.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
+#import <wtf/Platform.h>
 
 #ifndef NS_RETURNS_RETAINED
 #if __has_feature(attribute_ns_returns_retained)
@@ -297,7 +298,7 @@ static void* lib##Library() \
         RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
         pointer##name = static_cast<type>(*pointer); \
         get##name = name##Function; \
-        return pointer##name; \
+        SUPPRESS_UNRETAINED_ARG return pointer##name; \
     }
 
 #define SOFT_LINK_POINTER_OPTIONAL(framework, name, type) \
@@ -688,11 +689,11 @@ static void* lib##Library() \
     namespace functionNamespace { \
     static variableType init##framework##variableName(); \
     variableType (*get_##framework##_##variableName)() = init##framework##variableName; \
-    static variableType pointer##framework##variableName; \
+    SUPPRESS_UNRETAINED_LOCAL static variableType pointer##framework##variableName; \
     \
     static variableType pointer##framework##variableName##Function() \
     { \
-        return pointer##framework##variableName; \
+        SUPPRESS_UNRETAINED_ARG return pointer##framework##variableName; \
     } \
     \
     static variableType init##framework##variableName() \
@@ -702,10 +703,10 @@ static void* lib##Library() \
             _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
             void** pointer = static_cast<void**>(dlsym(framework##Library(), auditedName)); \
             RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
-            pointer##framework##variableName = static_cast<variableType>(*pointer); \
+            SUPPRESS_UNRETAINED_LOCAL pointer##framework##variableName = static_cast<variableType>(*pointer); \
             get_##framework##_##variableName = pointer##framework##variableName##Function; \
         }); \
-        return pointer##framework##variableName; \
+        SUPPRESS_UNRETAINED_ARG return pointer##framework##variableName; \
     } \
     }
 

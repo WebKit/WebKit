@@ -22,6 +22,7 @@
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "api/audio/neural_residual_echo_estimator.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -726,10 +727,6 @@ void EchoCanceller3::RenderWriter::Insert(const AudioBuffer& input) {
   RTC_DCHECK_EQ(num_bands_, input.num_bands());
   RTC_DCHECK_EQ(num_channels_, input.num_channels());
 
-  // TODO(bugs.webrtc.org/8759) Temporary work-around.
-  if (num_bands_ != input.num_bands())
-    return;
-
   data_dumper_->DumpWav("aec3_render_input", AudioBuffer::kSplitBandSize,
                         &input.split_bands_const(0)[0][0], 16000, 1);
 
@@ -748,6 +745,7 @@ EchoCanceller3::EchoCanceller3(
     const Environment& env,
     const EchoCanceller3Config& config,
     const std::optional<EchoCanceller3Config>& multichannel_config,
+    NeuralResidualEchoEstimator* neural_residual_echo_estimator,
     int sample_rate_hz,
     size_t num_render_channels,
     size_t num_capture_channels)
@@ -770,6 +768,7 @@ EchoCanceller3::EchoCanceller3(
               .multi_channel.stereo_detection_timeout_threshold_seconds,
           config_selector_.active_config()
               .multi_channel.stereo_detection_hysteresis_seconds),
+      neural_residual_echo_estimator_(neural_residual_echo_estimator),
       output_framer_(num_bands_, num_capture_channels_),
       capture_blocker_(num_bands_, num_capture_channels_),
       render_transfer_queue_(
@@ -811,7 +810,7 @@ EchoCanceller3::EchoCanceller3(
     linear_output_framer_.reset(
         new BlockFramer(/*num_bands=*/1, num_capture_channels_));
     linear_output_block_ =
-        std::make_unique<Block>(/*num_bands=*/1, num_capture_channels_),
+        std::make_unique<Block>(/*num_bands=*/1, num_capture_channels_);
     linear_output_sub_frame_view_ = std::vector<std::vector<ArrayView<float>>>(
         1, std::vector<ArrayView<float>>(num_capture_channels_));
   }
@@ -843,7 +842,8 @@ void EchoCanceller3::Initialize() {
 
   block_processor_ = BlockProcessor::Create(
       env_, config_selector_.active_config(), sample_rate_hz_,
-      num_render_channels_to_aec_, num_capture_channels_);
+      num_render_channels_to_aec_, num_capture_channels_,
+      neural_residual_echo_estimator_);
 
   render_sub_frame_view_ = std::vector<std::vector<ArrayView<float>>>(
       num_bands_, std::vector<ArrayView<float>>(num_render_channels_to_aec_));

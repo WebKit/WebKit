@@ -66,16 +66,16 @@ void AudioDestinationResampler::start(Function<void(Function<void()>&&)>&& dispa
     LOG(Media, "AudioDestinationResampler::start");
     {
         Locker locker { m_dispatchToRenderThreadLock };
-        m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
+        m_dispatchToRenderThread = WTF::move(dispatchToRenderThread);
     }
-    startRendering(WTFMove(completionHandler));
+    startRendering(WTF::move(completionHandler));
 }
 
 void AudioDestinationResampler::stop(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainThread());
     LOG(Media, "AudioDestinationResampler::stop");
-    stopRendering(WTFMove(completionHandler));
+    stopRendering(WTF::move(completionHandler));
     {
         Locker locker { m_dispatchToRenderThreadLock };
         m_dispatchToRenderThread = nullptr;

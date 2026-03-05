@@ -17,9 +17,11 @@ class CWasmTestCase(BaseTestCase):
                 self.inspectionTest()
                 self.stepTest()
                 self.memoryTest()
+                self.detachTest()
+                self.quitTest()
 
         except Exception as e:
-            raise Exception(f"Breakpoint test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def continueInterruptTest(self):
         cycles = 10
@@ -247,6 +249,16 @@ class CWasmTestCase(BaseTestCase):
             patterns=["[0x0000000000000000-0x0000000001010000) rw- wasm_memory_0_0"],
         )
 
+    def detachTest(self):
+        self.send_lldb_command_or_raise(
+            "detach",
+            patterns=[
+                "Process 1 detached",
+            ],
+        )
+
+    def quitTest(self):
+        self.send_lldb_command_or_raise("quit", patterns=[])
 
 class SwiftWasmTestCase(BaseTestCase):
 
@@ -265,7 +277,7 @@ class SwiftWasmTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Breakpoint test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def continueInterruptTest(self):
         cycles = 10
@@ -357,7 +369,7 @@ class SwiftWasmTestCase(BaseTestCase):
     def stepTest(self):
         self.send_lldb_command_or_raise("b processNumber")
 
-        # TODO: Step over - Current Swift LLDB is problematic with step over
+        # FIXME: Step over - Current Swift LLDB is problematic with step over
 
         # Step Into
         self.send_lldb_command_or_raise(
@@ -497,7 +509,7 @@ class NopDropSelectEndTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Breakpoint test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x4000000000000021")
@@ -542,7 +554,7 @@ class CallTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Breakpoint test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x4000000000000036")
@@ -581,7 +593,7 @@ class CallIndirectTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Breakpoint test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x4000000000000046")
@@ -622,7 +634,7 @@ class CallRefTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Breakpoint test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x4000000000000043")
@@ -663,7 +675,7 @@ class ReturnCallTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Tail call test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x4000000000000035")
@@ -705,7 +717,7 @@ class ReturnCallIndirectTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Tail call indirect test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x4000000000000045")
@@ -749,7 +761,7 @@ class ReturnCallRefTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Tail call ref test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         for _ in range(10):
@@ -793,7 +805,7 @@ class ThrowCatchTestCase(BaseTestCase):
                 self.stepTest()
 
         except Exception as e:
-            raise Exception(f"Tail call ref test failed: {e}")
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x4000000000000071")
@@ -854,13 +866,11 @@ class ThrowCatchAllTestCase(BaseTestCase):
     def execute(self):
         self.setup_debugging_session_or_raise("resources/wasm/throw-catch-all.js")
 
-        # FIXME: LLDB crashes on this test.
-        # try:
-        #     for _ in range(1):
-        #         self.stepTest()
+        try:
+            self.stepTest()
 
-        # except Exception as e:
-        #     raise Exception(f"Throw catch_all test failed: {e}")
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x400000000000006e")
@@ -921,13 +931,11 @@ class DelegateTestCase(BaseTestCase):
     def execute(self):
         self.setup_debugging_session_or_raise("resources/wasm/delegate.js")
 
-        # FIXME: LLDB crashes on this test.
-        # try:
-        #     for _ in range(1):
-        #         self.stepTest()
+        try:
+            self.stepTest()
 
-        # except Exception as e:
-        #     raise Exception(f"Delegate test failed: {e}")
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x40000000000000c6")
@@ -1034,13 +1042,11 @@ class RethrowTestCase(BaseTestCase):
     def execute(self):
         self.setup_debugging_session_or_raise("resources/wasm/rethrow.js")
 
-        # FIXME: LLDB crashes on this test.
-        # try:
-        #     for _ in range(1):
-        #         self.stepTest()
+        try:
+            self.stepTest()
 
-        # except Exception as e:
-        #     raise Exception(f"Rethrow test failed: {e}")
+        except Exception as e:
+            raise Exception(f"Rethrow test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x40000000000000b8")
@@ -1353,13 +1359,11 @@ class TryTableTestCase(BaseTestCase):
     def execute(self):
         self.setup_debugging_session_or_raise("resources/wasm/try-table.js")
 
-        # FIXME: LLDB crashes on this test.
-        # try:
-        #     for _ in range(1):
-        #         self.stepTest()
+        try:
+            self.stepTest()
 
-        # except Exception as e:
-        #     raise Exception(f"Try table test failed: {e}")
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
 
     def stepTest(self):
         self.send_lldb_command_or_raise("b 0x40000000000000aa")
@@ -1427,3 +1431,122 @@ class TryTableTestCase(BaseTestCase):
         self.send_lldb_command_or_raise(
             "br del -f", patterns=["All breakpoints removed. (1 breakpoint)"]
         )
+
+
+class SystemCallTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise("resources/wasm/system-call.js")
+
+        try:
+            for _ in range(1):
+                self.continueInterruptTest()
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
+
+    def continueInterruptTest(self):
+        cycles = 5
+        for cycle in range(1, cycles + 1):
+            try:
+                self.send_lldb_command_or_raise("c")
+                self.send_lldb_command_or_raise("process interrupt")
+            except Exception as e:
+                raise Exception(f"Cycle {cycle} failed: {e}")
+
+    def stepTest(self):
+        self.send_lldb_command_or_raise("si", patterns=[])
+        self.send_lldb_command_or_raise("process interrupt")
+
+        self.send_lldb_command_or_raise("s", patterns=[])
+        self.send_lldb_command_or_raise("process interrupt")
+
+        self.send_lldb_command_or_raise("n", patterns=[])
+        self.send_lldb_command_or_raise("process interrupt")
+
+        # FIXME: `dis` hangs LLDB when stop in the system call.
+
+
+class MultiVMSameModuleSameFunctionTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise(
+            "resources/wasm/multi-vm-same-module-same-func.js"
+        )
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
+
+    def stepTest(self):
+        # FIXME: Add tests when thread select is full supported
+        return
+
+
+class MultiVMSameModuleDifferentFunctionsTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise(
+            "resources/wasm/multi-vm-same-module-different-funcs.js"
+        )
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
+
+    def stepTest(self):
+        # FIXME: Add tests when thread select is full supported
+        return
+
+
+class DoCatchThrowTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise("resources/swift-wasm/do-catch-throw/main.js")
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
+
+    def stepTest(self):
+        self.send_lldb_command_or_raise("b testDoThrowCatch")
+        self.send_lldb_command_or_raise("c", patterns=["-> 14"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 15"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 18"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 19"])
+        self.send_lldb_command_or_raise("br del -f", patterns=["All breakpoints removed. (1 breakpoint)"])
+
+        self.send_lldb_command_or_raise("b testDoThrowCatchNested")
+        self.send_lldb_command_or_raise("c", patterns=["-> 26"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 31"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 32"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 37"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 42"])
+        self.send_lldb_command_or_raise("br del -f", patterns=["All breakpoints removed. (1 breakpoint)"])
+
+        # FIXME: Swift WASM Compiler Bug Incorrect DWARF Line Numbers rdar://169306069
+        # self.send_lldb_command_or_raise("b testDoThrowCatch")
+        # self.send_lldb_command_or_raise("b testDoThrowFuncCatchNested")
+        return

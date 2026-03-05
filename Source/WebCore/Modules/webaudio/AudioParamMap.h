@@ -48,7 +48,7 @@ public:
     void initializeMapLike(DOMMapAdapter&);
     void add(const String&, Ref<AudioParam>&&);
 
-    const HashMap<String, Ref<AudioParam>>& map() const { return m_map; }
+    const HashMap<String, Ref<AudioParam>>& map() const LIFETIME_BOUND { return m_map; }
 
 private:
     AudioParamMap();

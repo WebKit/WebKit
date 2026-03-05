@@ -148,8 +148,8 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(Do
         // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
         if (CSSProperty::isListValuedProperty(propertyID)) {
             if (auto* values = dynamicDowncast<CSSValueContainingVector>(*cssValue)) {
-                for (auto& value : *values)
-                    cssValues.append(Ref { const_cast<CSSValue&>(value) });
+                for (Ref value : *values)
+                    cssValues.append(Ref { const_cast<CSSValue&>(value.get()) });
             }
         }
         if (cssValues.isEmpty())
@@ -159,7 +159,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(Do
     Vector<Ref<CSSStyleValue>> results;
 
     for (auto& cssValue : cssValues) {
-        auto reifiedValue = reifyValue(document, WTFMove(cssValue), propertyID);
+        auto reifiedValue = reifyValue(document, WTF::move(cssValue), propertyID);
         if (reifiedValue.hasException())
             return reifiedValue.releaseException();
 
@@ -172,7 +172,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(Do
     return results;
 }
 
-static bool mayConvertCSSValueListToSingleValue(std::optional<CSSPropertyID> propertyID)
+static bool NODELETE mayConvertCSSValueListToSingleValue(std::optional<CSSPropertyID> propertyID)
 {
     if (!propertyID)
         return true;
@@ -296,7 +296,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Document& docum
     } else if (auto* substitutionValue = dynamicDowncast<CSSPendingSubstitutionValue>(cssValue)) {
         return Ref<CSSStyleValue> { CSSUnparsedValue::create(substitutionValue->shorthandValue().data().tokenRange()) };
     } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
-        // FIXME: remove CSSStyleValue::create(WTFMove(cssValue)), add reification control flow
+        // FIXME: remove CSSStyleValue::create(WTF::move(cssValue)), add reification control flow
         return WTF::switchOn(customPropertyValue->value(),
             [&](const Ref<CSSVariableReferenceValue>& value) {
                 return reifyValue(document, value, propertyID);
@@ -365,33 +365,34 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Document& docum
         if (!valueList->length())
             return Exception { ExceptionCode::TypeError, "The CSSValueList should not be empty."_s };
         if ((valueList->length() == 1 && mayConvertCSSValueListToSingleValue(propertyID)) || (propertyID && CSSProperty::isListValuedProperty(*propertyID)))
-            return reifyValue(document, (*valueList)[0], propertyID);
+            return reifyValue(document, protect((*valueList)[0]), propertyID);
     }
 
     return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
 }
 
-ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::vectorFromStyleValuesOrStrings(Document& document, const AtomString& property, FixedVector<Variant<RefPtr<CSSStyleValue>, String>>&& values)
+ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::vectorFromStyleValuesOrStrings(Document& document, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&& values)
 {
     Vector<Ref<CSSStyleValue>> styleValues;
-    for (auto&& value : WTFMove(values)) {
-        std::optional<Exception> exception;
-        switchOn(WTFMove(value), [&](RefPtr<CSSStyleValue>&& styleValue) {
-            ASSERT(styleValue);
-            styleValues.append(styleValue.releaseNonNull());
-        }, [&](String&& string) {
-            constexpr bool parseMultiple = true;
-            auto result = CSSStyleValueFactory::parseStyleValue(document, property, string, parseMultiple);
-            if (result.hasException()) {
-                exception = result.releaseException();
-                return;
+    for (auto&& value : WTF::move(values)) {
+        auto exception = switchOn(WTF::move(value),
+            [&](Ref<CSSStyleValue>&& styleValue) -> std::optional<Exception> {
+                styleValues.append(WTF::move(styleValue));
+                return std::nullopt;
+            },
+            [&](String&& string) -> std::optional<Exception> {
+                constexpr bool parseMultiple = true;
+                auto result = CSSStyleValueFactory::parseStyleValue(document, property, string, parseMultiple);
+                if (result.hasException())
+                    return result.releaseException();
+                styleValues.appendVector(result.releaseReturnValue());
+                return std::nullopt;
             }
-            styleValues.appendVector(result.releaseReturnValue());
-        });
+        );
         if (exception)
-            return { WTFMove(*exception) };
+            return { WTF::move(*exception) };
     }
-    return { WTFMove(styleValues) };
+    return { WTF::move(styleValues) };
 }
 
 CSSStyleValueFactory::~CSSStyleValueFactory() = default;

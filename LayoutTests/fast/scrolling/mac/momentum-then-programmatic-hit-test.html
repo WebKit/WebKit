@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .spacer {
+            height: 4000px;
+            width: 10px;
+            background-color: silver;
+        }
+        
+        .target {
+            margin-top: 120px;
+            height: 50px;
+            width: 300px;
+            background-color: green;
+        }
+        
+        .target:active {
+            background-color: orange;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        let clickCount = 0;
+        async function scrollTest()
+        {
+            const scroller = document.getElementById("scroller");
+
+            await UIHelper.startMonitoringWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -2, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -15, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "begin");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+
+            window.scrollTo(0, 100);
+
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+
+            await UIHelper.waitForScrollCompletion();
+            await doClick();
+            
+            shouldBe('clickCount', '1');
+
+            finishJSTest();
+        }
+        
+        async function doClick()
+        {
+            if (!window.eventSender)
+                return;
+
+            eventSender.mouseMoveTo(100, 25);
+            eventSender.mouseDown();
+            await UIHelper.delayFor(20);
+            eventSender.mouseUp();
+        }
+        
+        function targetClicked()
+        {
+            ++clickCount;
+        }
+
+        window.addEventListener('load', () => {
+            const scroller = document.getElementById("scroller");
+
+            if (!window.eventSender) {
+                setTimeout(scrollTest, 0);
+                return;
+            }
+
+            testRunner.waitUntilDone();
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="target" onclick="targetClicked()"></div>
+    <div id="console"></div>
+    <div class="spacer"></div>
+</body>
+</html>

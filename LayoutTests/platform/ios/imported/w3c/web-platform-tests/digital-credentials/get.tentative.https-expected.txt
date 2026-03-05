@@ -1,7 +1,5 @@
 
 
-Harness Error (TIMEOUT), message = null
-
 PASS Type conversion happens on the data member of the DigitalCredentialGetRequest object.
 PASS Calling navigator.credentials.get() without a digital member same origin.
 PASS navigator.credentials.get() API rejects if there are no credential request.
@@ -13,7 +11,8 @@ PASS navigator.credentials.get() promise is rejected if called with an aborted c
 PASS navigator.credentials.get() promise is rejected if called with an aborted controller in same-origin iframe.
 PASS navigator.credentials.get() promise is rejected if called with an aborted signal in cross-origin iframe.
 PASS navigator.credentials.get() promise is rejected if abort controller is aborted after call to get().
-TIMEOUT navigator.credentials.get() promise is rejected if abort controller is aborted after call to get() in cross-origin iframe. Test timed out
-NOTRUN Mediation is required to get a DigitalCredential.
-NOTRUN Throws TypeError when request data is not JSON stringifiable.
+PASS navigator.credentials.get() promise is rejected if abort controller is aborted after call to get() in cross-origin iframe.
+PASS Mediation is implicitly required and hence ignored. Request is aborted regardless.
+PASS Throws TypeError when request data is not JSON stringifiable.
+PASS `requests` field is required in the options object.
 

@@ -876,7 +876,7 @@ static int ec_GFp_nistp224_point_get_affine_coordinates(
   p224_felem_square(tmp, z2);
   p224_felem_reduce(z1, tmp);
 
-  if (x != NULL) {
+  if (x != nullptr) {
     p224_felem x_in, x_out;
     p224_generic_to_felem(x_in, &point->X);
     p224_felem_mul(tmp, x_in, z1);
@@ -884,7 +884,7 @@ static int ec_GFp_nistp224_point_get_affine_coordinates(
     p224_felem_to_generic(x, x_out);
   }
 
-  if (y != NULL) {
+  if (y != nullptr) {
     p224_felem y_in, y_out;
     p224_generic_to_felem(y_in, &point->Y);
     p224_felem_mul(tmp, z1, z2);

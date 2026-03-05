@@ -1,0 +1,5 @@
+
+SIBLING
+
+FAIL UA styles of base appearance <input type=text>. assert_equals: background-color expected "rgba(0, 0, 0, 0)" but got "rgb(255, 255, 255)"
+

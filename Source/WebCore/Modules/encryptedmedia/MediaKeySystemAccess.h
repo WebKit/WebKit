@@ -51,8 +51,8 @@ public:
     static Ref<MediaKeySystemAccess> create(Document&, const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
     ~MediaKeySystemAccess();
 
-    const String& keySystem() const { return m_keySystem; }
-    const MediaKeySystemConfiguration& getConfiguration() const { return *m_configuration; }
+    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    const MediaKeySystemConfiguration& getConfiguration() const LIFETIME_BOUND { return *m_configuration; }
     void createMediaKeys(Document&, Ref<DeferredPromise>&&);
 
 private:

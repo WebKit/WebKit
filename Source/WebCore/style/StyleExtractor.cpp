@@ -34,6 +34,7 @@
 #include "ContainerNodeInlines.h"
 #include "FontCascade.h"
 #include "HTMLFrameOwnerElement.h"
+#include "KeyframeEffectStack.h"
 #include "NodeRenderStyle.h"
 #include "PseudoElementIdentifier.h"
 #include "RenderBoxInlines.h"
@@ -49,6 +50,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleZoomPrimitivesInlines.h"
 #include "Styleable.h"
 
 namespace WebCore {
@@ -102,7 +104,7 @@ RefPtr<CSSPrimitiveValue> Extractor::getFontSizeCSSValuePreferringKeyword() cons
     if (!element)
         return nullptr;
 
-    element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(element->document())->updateLayoutIgnorePendingStylesheets();
 
     auto* style = element->computedStyle(m_pseudoElementIdentifier);
     if (!style)
@@ -162,17 +164,17 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
         return false;
 
     const auto* currentElement = &element;
-    for (auto& ancestor : composedTreeAncestors(element)) {
-        if (ancestor.styleValidity() != Style::Validity::Valid)
+    for (Ref ancestor : composedTreeAncestors(element)) {
+        if (ancestor->styleValidity() != Style::Validity::Valid)
             return false;
 
-        if (isQueryContainer(ancestor))
+        if (isQueryContainer(ancestor.get()))
             return false;
 
-        if (ancestor.directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
+        if (ancestor->directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
             return false;
 
-        currentElement = &ancestor;
+        currentElement = ancestor.ptr();
     }
 
     return true;
@@ -426,7 +428,7 @@ const RenderStyle* Extractor::computeStyle(CSSPropertyID propertyID, UpdateLayou
             document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.get());
         else if (forcedLayout == ForcedLayout::ParentDocument) {
             if (RefPtr owner = document->ownerElement())
-                owner->protectedDocument()->updateLayout();
+                protect(owner->document())->updateLayout();
             else
                 forcedLayout = ForcedLayout::No;
         }
@@ -544,7 +546,7 @@ bool Extractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value)
         return false;
     if (propertyID == CSSPropertyFontSize) {
         if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value)) {
-            m_element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+            protect(m_element->document())->updateLayoutIgnorePendingStylesheets();
             if (auto* style = m_element->computedStyle(m_pseudoElementIdentifier)) {
                 if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
                     if (primitiveValue->isValueID() && primitiveValue->valueID() == sizeIdentifier)
@@ -564,7 +566,7 @@ Ref<MutableStyleProperties> Extractor::copyProperties(std::span<const CSSPropert
             return CSSProperty(property, value.releaseNonNull());
         return std::nullopt;
     });
-    return MutableStyleProperties::create(WTFMove(vector));
+    return MutableStyleProperties::create(WTF::move(vector));
 }
 
 Ref<MutableStyleProperties> Extractor::copyProperties() const

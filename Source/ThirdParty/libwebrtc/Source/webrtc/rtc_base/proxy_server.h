@@ -12,10 +12,13 @@
 #define RTC_BASE_PROXY_SERVER_H_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "rtc_base/memory/fifo_buffer.h"
 #include "rtc_base/server_socket_adapters.h"
+#include "rtc_base/sigslot_trampoline.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_factory.h"
@@ -39,6 +42,11 @@ class ProxyBinding : public sigslot::has_slots<> {
   ProxyBinding& operator=(const ProxyBinding&) = delete;
 
   sigslot::signal1<ProxyBinding*> SignalDestroyed;
+  void SubscribeDestroyed(
+      absl::AnyInvocable<void(ProxyBinding* proxy)> callback) {
+    destroyed_trampoline_.Subscribe(std::move(callback));
+  }
+  void NotifyDestroyed(ProxyBinding* proxy) { SignalDestroyed(proxy); }
 
  private:
   void OnConnectRequest(AsyncProxyServerSocket* socket,
@@ -61,6 +69,9 @@ class ProxyBinding : public sigslot::has_slots<> {
   bool connected_;
   FifoBuffer out_buffer_;
   FifoBuffer in_buffer_;
+
+  SignalTrampoline<ProxyBinding, &ProxyBinding::SignalDestroyed>
+      destroyed_trampoline_;
 };
 
 class ProxyServer : public sigslot::has_slots<> {

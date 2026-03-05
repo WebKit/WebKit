@@ -65,7 +65,7 @@ struct WebLockManager::LockRequest {
     RefPtr<WebLockGrantedCallback> grantedCallback;
     RefPtr<AbortSignal> signal;
 
-    bool isValid() const { return !!lockIdentifier; }
+    bool NODELETE isValid() const { return !!lockIdentifier; }
 };
 
 class WebLockManager::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
@@ -80,7 +80,7 @@ public:
         if (!sessionID)
             return nullptr;
 
-        return adoptRef(*new MainThreadBridge(*context, *sessionID, WTFMove(*clientOrigin)));
+        return adoptRef(*new MainThreadBridge(*context, *sessionID, WTF::move(*clientOrigin)));
     }
 
     void requestLock(WebLockIdentifier, const String& name, const Options&, Function<void(bool)>&&, Function<void()>&& lockStolenHandler);
@@ -100,19 +100,19 @@ private:
 WebLockManager::MainThreadBridge::MainThreadBridge(ScriptExecutionContext& context, PAL::SessionID sessionID, ClientOrigin&& clientOrigin)
     : m_clientID(context.identifier())
     , m_sessionID(sessionID)
-    , m_clientOrigin(WTFMove(clientOrigin).isolatedCopy())
+    , m_clientOrigin(WTF::move(clientOrigin).isolatedCopy())
 {
 }
 
 void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentifier, const String& name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTFMove(grantedHandler), lockStolenHandler = WTFMove(lockStolenHandler)]() mutable {
-        WebLockRegistry::singleton().requestLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, mode, steal, ifAvailable, [clientID = m_clientID, grantedHandler = WTFMove(grantedHandler)] (bool success) mutable {
-            ScriptExecutionContext::ensureOnContextThread(clientID, [grantedHandler = WTFMove(grantedHandler), success](auto&) mutable {
+    callOnMainThread([this, protectedThis = Ref { *this }, name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTF::move(grantedHandler), lockStolenHandler = WTF::move(lockStolenHandler)]() mutable {
+        WebLockRegistry::singleton().requestLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, mode, steal, ifAvailable, [clientID = m_clientID, grantedHandler = WTF::move(grantedHandler)] (bool success) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [grantedHandler = WTF::move(grantedHandler), success](auto&) mutable {
                 grantedHandler(success);
             });
-        }, [clientID = m_clientID, lockStolenHandler = WTFMove(lockStolenHandler)]() mutable {
-            ScriptExecutionContext::ensureOnContextThread(clientID, [lockStolenHandler = WTFMove(lockStolenHandler)](auto&) mutable {
+        }, [clientID = m_clientID, lockStolenHandler = WTF::move(lockStolenHandler)]() mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [lockStolenHandler = WTF::move(lockStolenHandler)](auto&) mutable {
                 lockStolenHandler();
             });
         });
@@ -128,9 +128,9 @@ void WebLockManager::MainThreadBridge::releaseLock(WebLockIdentifier lockIdentif
 
 void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), completionHandler = WTFMove(completionHandler)]() mutable {
-        WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, completionHandler = WTFMove(completionHandler)](bool wasAborted) mutable {
-            ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTFMove(completionHandler), wasAborted](auto&) mutable {
+    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), completionHandler = WTF::move(completionHandler)]() mutable {
+        WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, completionHandler = WTF::move(completionHandler)](bool wasAborted) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTF::move(completionHandler), wasAborted](auto&) mutable {
                 completionHandler(wasAborted);
             });
         });
@@ -139,10 +139,10 @@ void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockId
 
 void WebLockManager::MainThreadBridge::query(CompletionHandler<void(Snapshot&&)>&& completionHandler)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
-        WebLockRegistry::singleton().snapshot(m_sessionID, m_clientOrigin, [clientID = m_clientID, completionHandler = WTFMove(completionHandler)](Snapshot&& snapshot) mutable {
-            ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTFMove(completionHandler), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
-                completionHandler(WTFMove(snapshot));
+    callOnMainThread([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+        WebLockRegistry::singleton().snapshot(m_sessionID, m_clientOrigin, [clientID = m_clientID, completionHandler = WTF::move(completionHandler)](Snapshot&& snapshot) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTF::move(completionHandler), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
+                completionHandler(WTF::move(snapshot));
             });
         });
     });
@@ -164,7 +164,7 @@ Ref<WebLockManager> WebLockManager::create(NavigatorBase& navigator)
 
 WebLockManager::WebLockManager(NavigatorBase& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
-    , m_mainThreadBridge(MainThreadBridge::create(navigator.protectedScriptExecutionContext().get()))
+    , m_mainThreadBridge(MainThreadBridge::create(protect(navigator.scriptExecutionContext()).get()))
 {
 }
 
@@ -175,7 +175,7 @@ WebLockManager::~WebLockManager()
 
 void WebLockManager::request(const String& name, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& promise)
 {
-    request(name, { }, WTFMove(grantedCallback), WTFMove(promise));
+    request(name, { }, WTF::move(grantedCallback), WTF::move(promise));
 }
 
 void WebLockManager::request(const String& name, Options&& options, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& releasePromise)
@@ -228,7 +228,7 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
     }
 
     WebLockIdentifier lockIdentifier = WebLockIdentifier::generate();
-    m_releasePromises.add(lockIdentifier, WTFMove(releasePromise));
+    m_releasePromises.add(lockIdentifier, WTF::move(releasePromise));
 
     if (RefPtr signal = options.signal) {
         signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
@@ -237,7 +237,7 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
         });
     }
 
-    m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, name, options.mode, WTFMove(grantedCallback), WTFMove(options.signal) });
+    m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, name, options.mode, WTF::move(grantedCallback), WTF::move(options.signal) });
 
     m_mainThreadBridge->requestLock(lockIdentifier, name, options, [weakThis = WeakPtr { *this }, lockIdentifier](bool success) mutable {
         if (weakThis)
@@ -263,27 +263,28 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
 
             Ref lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
             auto result = request.grantedCallback->invoke(lock.ptr());
-            RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
-            if (!waitingPromise || waitingPromise->isSuspended()) {
+            if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
                 manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
                 manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
 
-            DOMPromise::whenPromiseIsSettled(waitingPromise->globalObject(), waitingPromise->promise(), [weakThis = WeakPtr { manager }, lockIdentifier = *request.lockIdentifier, name = request.name, waitingPromise] {
+            Ref waitingPromise = result.releaseReturnValue();
+            waitingPromise->whenSettled([weakThis = WeakPtr { manager }, lockIdentifier = *request.lockIdentifier, name = request.name, waitingPromise] {
                 RefPtr protectedThis = weakThis.get();
-                if (!protectedThis)
+                if (!protectedThis || waitingPromise->isSuspended())
                     return;
                 protectedThis->m_mainThreadBridge->releaseLock(lockIdentifier, name);
                 protectedThis->settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
             });
         } else {
             auto result = request.grantedCallback->invoke(nullptr);
-            RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
-            if (!waitingPromise || waitingPromise->isSuspended()) {
+            if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
                 manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
+
+            Ref waitingPromise = result.releaseReturnValue();
             manager.settleReleasePromise(*request.lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
         }
     });
@@ -307,13 +308,13 @@ void WebLockManager::query(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    m_mainThreadBridge->query([weakThis = WeakPtr { *this }, promise = WTFMove(promise)](Snapshot&& snapshot) mutable {
+    m_mainThreadBridge->query([weakThis = WeakPtr { *this }, promise = WTF::move(promise)](Snapshot&& snapshot) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
-        queueTaskKeepingObjectAlive(*protectedThis, TaskSource::DOMManipulation, [promise = WTFMove(promise), snapshot = WTFMove(snapshot)](auto&) mutable {
-            promise->resolve<IDLDictionary<Snapshot>>(WTFMove(snapshot));
+        queueTaskKeepingObjectAlive(*protectedThis, TaskSource::DOMManipulation, [promise = WTF::move(promise), snapshot = WTF::move(snapshot)](auto&) mutable {
+            promise->resolve<IDLDictionary<Snapshot>>(WTF::move(snapshot));
         });
     });
 }
@@ -333,13 +334,13 @@ void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier, J
         if (wasAborted && weakThis)
             weakThis->m_pendingRequests.remove(lockIdentifier);
     });
-    if (auto releasePromise = m_releasePromises.take(lockIdentifier))
+    if (RefPtr releasePromise = m_releasePromises.take(lockIdentifier))
         releasePromise->reject<IDLAny>(reason);
 }
 
 void WebLockManager::settleReleasePromise(WebLockIdentifier lockIdentifier, ExceptionOr<JSC::JSValue>&& result)
 {
-    auto releasePromise = m_releasePromises.take(lockIdentifier);
+    RefPtr releasePromise = m_releasePromises.take(lockIdentifier);
     if (!releasePromise)
         return;
 
@@ -360,8 +361,8 @@ void WebLockManager::clientIsGoingAway()
         return;
 
     // Reject all pending promises before clearing
-    for (auto& pair : m_releasePromises)
-        RefPtr { pair.value }->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
+    for (Ref promise : m_releasePromises.values())
+        promise->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
 
     m_pendingRequests.clear();
     m_releasePromises.clear();

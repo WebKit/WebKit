@@ -123,10 +123,10 @@ const std::string& GetOutFilenamePath(absl::string_view file_name) {
 
 }  // namespace
 
-const uint8_t kPayloadType = 95;
-const int kOutputSizeMs = 10;
-const int kInitSeed = 0x12345678;
-const int kPacketLossTimeUnitMs = 10;
+constexpr uint8_t kPayloadType = 95;
+constexpr int kOutputSizeMs = 10;
+constexpr int kInitSeed = 0x12345678;
+constexpr int kPacketLossTimeUnitMs = 10;
 
 // Common validator for file names.
 static bool ValidateFilename(absl::string_view value, bool is_output) {

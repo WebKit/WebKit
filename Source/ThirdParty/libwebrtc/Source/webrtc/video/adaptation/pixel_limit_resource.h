@@ -15,8 +15,11 @@
 #include <string>
 
 #include "api/adaptation/resource.h"
+#include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/video/video_adaptation_reason.h"
 #include "call/adaptation/video_stream_input_state_provider.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
@@ -34,24 +37,35 @@ namespace webrtc {
 // purposes.
 class PixelLimitResource : public Resource {
  public:
-  static scoped_refptr<PixelLimitResource> Create(
+  static scoped_refptr<PixelLimitResource> CreateIfFieldTrialEnabled(
+      const FieldTrialsView& field_trials,
       TaskQueueBase* task_queue,
       VideoStreamInputStateProvider* input_state_provider);
 
   PixelLimitResource(TaskQueueBase* task_queue,
-                     VideoStreamInputStateProvider* input_state_provider);
+                     VideoStreamInputStateProvider* input_state_provider,
+                     int target_pixels,
+                     TimeDelta interval,
+                     VideoAdaptationReason reason,
+                     std::optional<TimeDelta> duration);
   ~PixelLimitResource() override;
-
-  void SetMaxPixels(int max_pixels);
 
   // Resource implementation.
   std::string Name() const override { return "PixelLimitResource"; }
   void SetResourceListener(ResourceListener* listener) override;
 
+  VideoAdaptationReason adaptation_reason() const { return reason_; }
+
  private:
   TaskQueueBase* const task_queue_;
   VideoStreamInputStateProvider* const input_state_provider_;
-  std::optional<int> max_pixels_ RTC_GUARDED_BY(task_queue_);
+  const int target_pixels_;
+  const TimeDelta interval_;
+  const VideoAdaptationReason reason_;
+  const std::optional<TimeDelta> toggle_interval_;
+  // If `toggle_interval_` was specified, we cyclically toggle "on" or "off".
+  bool is_enabled_ RTC_GUARDED_BY(task_queue_);
+  TimeDelta time_since_last_toggle_ RTC_GUARDED_BY(task_queue_);
   ResourceListener* listener_ RTC_GUARDED_BY(task_queue_);
   RepeatingTaskHandle repeating_task_ RTC_GUARDED_BY(task_queue_);
 };

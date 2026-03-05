@@ -38,8 +38,8 @@ public:
 
     bool initializeIfNecessary(Algorithm, Operation);
 
-    z_stream& getPlatformStream() { return m_stream; }
-    const z_stream& getPlatformStream() const { return m_stream; }
+    z_stream& getPlatformStream() LIFETIME_BOUND { return m_stream; }
+    const z_stream& getPlatformStream() const LIFETIME_BOUND { return m_stream; }
 
 private:
     z_stream m_stream;

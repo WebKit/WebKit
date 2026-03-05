@@ -29,7 +29,6 @@
 #include <JavaScriptCore/Forward.h>
 #include <span>
 #include <utility>
-#include <variant>
 #include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -121,27 +120,27 @@ private:
 #endif
 
     explicit DataSegment(Vector<uint8_t>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #if USE(CF)
     explicit DataSegment(RetainPtr<CFDataRef>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
 #if USE(GLIB)
     explicit DataSegment(GRefPtr<GBytes>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
 #if USE(GSTREAMER)
     explicit DataSegment(RefPtr<GstMappedOwnedBuffer>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
 #if USE(SKIA)
     explicit DataSegment(sk_sp<SkData>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
     explicit DataSegment(FileSystem::MappedFileData&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
     explicit DataSegment(Provider&& provider)
-        : m_immutableData(WTFMove(provider)) { }
+        : m_immutableData(WTF::move(provider)) { }
 
     Variant<Vector<uint8_t>,
 #if USE(CF)
@@ -261,11 +260,11 @@ private:
 class SharedBuffer : public FragmentedSharedBuffer {
 public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer()); }
-    static Ref<SharedBuffer> create(Vector<uint8_t>&& vector) { return adoptRef(*new SharedBuffer(WTFMove(vector))); }
+    static Ref<SharedBuffer> create(Vector<uint8_t>&& vector) { return adoptRef(*new SharedBuffer(WTF::move(vector))); }
     static Ref<SharedBuffer> create(std::span<const uint8_t> data) { return adoptRef(*new SharedBuffer(data)); }
-    static Ref<SharedBuffer> create(Ref<const DataSegment>&& segment) { return adoptRef(*new SharedBuffer(WTFMove(segment))); }
-    static Ref<SharedBuffer> create(FileSystem::MappedFileData&& mappedFileData) { return adoptRef(*new SharedBuffer(WTFMove(mappedFileData))); }
-    static Ref<SharedBuffer> create(DataSegment::Provider&& provider) { return adoptRef(*new SharedBuffer(WTFMove(provider))); }
+    static Ref<SharedBuffer> create(Ref<const DataSegment>&& segment) { return adoptRef(*new SharedBuffer(WTF::move(segment))); }
+    static Ref<SharedBuffer> create(FileSystem::MappedFileData&& mappedFileData) { return adoptRef(*new SharedBuffer(WTF::move(mappedFileData))); }
+    static Ref<SharedBuffer> create(DataSegment::Provider&& provider) { return adoptRef(*new SharedBuffer(WTF::move(provider))); }
     static Ref<SharedBuffer> create(Ref<FragmentedSharedBuffer>&& fragmentedBuffer) { return fragmentedBuffer->makeContiguous(); }
 
 #if USE(FOUNDATION)
@@ -306,6 +305,9 @@ public:
 
     Ref<FragmentedSharedBuffer> asFragmentedSharedBuffer() const { return const_cast<SharedBuffer&>(*this); }
 
+    template<typename T>
+    bool isSpanWithinBounds(std::span<T> otherSpan) const;
+
 private:
     friend class SharedBufferBuilder;
 
@@ -339,11 +341,7 @@ class SharedBufferBuilder {
 public:
     SharedBufferBuilder() = default;
     SharedBufferBuilder(SharedBufferBuilder&&) = default;
-    WEBCORE_EXPORT explicit SharedBufferBuilder(RefPtr<FragmentedSharedBuffer>&&);
-    explicit SharedBufferBuilder(Ref<FragmentedSharedBuffer>&& buffer) { initialize(WTFMove(buffer)); }
-    explicit SharedBufferBuilder(RefPtr<SharedBuffer>&& buffer)
-        : SharedBufferBuilder(RefPtr<FragmentedSharedBuffer>{ WTFMove(buffer) }) { }
-    explicit SharedBufferBuilder(Ref<SharedBuffer>&& buffer) { initialize(WTFMove(buffer)); }
+    SharedBufferBuilder(const FragmentedSharedBuffer& buffer) { append(buffer); }
 
     template <typename... Args>
     SharedBufferBuilder(std::in_place_t, Args&&... arg)
@@ -353,7 +351,6 @@ public:
     }
 
     SharedBufferBuilder& operator=(SharedBufferBuilder&&) = default;
-    WEBCORE_EXPORT SharedBufferBuilder& operator=(RefPtr<FragmentedSharedBuffer>&&);
 
     WEBCORE_EXPORT void append(const FragmentedSharedBuffer&);
     WEBCORE_EXPORT void append(std::span<const uint8_t>);
@@ -388,18 +385,18 @@ public:
         m_buffer = nullptr;
     }
 
-    RefPtr<FragmentedSharedBuffer> get() const
+    FragmentedSharedBuffer* buffer() const LIFETIME_BOUND
     {
         updateBufferIfNeeded();
-        return m_buffer;
+        return m_buffer.get();
     }
-    Ref<FragmentedSharedBuffer> copy() const { return createBuffer(); }
+    Ref<FragmentedSharedBuffer> copyBuffer() const { return createBuffer(); }
 
     WEBCORE_EXPORT RefPtr<ArrayBuffer> tryCreateArrayBuffer() const;
 
-    WEBCORE_EXPORT Ref<FragmentedSharedBuffer> take();
-    WEBCORE_EXPORT Ref<SharedBuffer> takeAsContiguous();
-    WEBCORE_EXPORT RefPtr<ArrayBuffer> takeAsArrayBuffer();
+    WEBCORE_EXPORT Ref<FragmentedSharedBuffer> takeBuffer();
+    WEBCORE_EXPORT Ref<SharedBuffer> takeBufferAsContiguous();
+    WEBCORE_EXPORT RefPtr<ArrayBuffer> takeBufferAsArrayBuffer();
 
     WEBCORE_EXPORT bool operator==(const SharedBufferBuilder&) const;
 
@@ -451,6 +448,17 @@ private:
 };
 
 RefPtr<SharedBuffer> utf8Buffer(const String&);
+
+template<typename T>
+inline bool SharedBuffer::isSpanWithinBounds(std::span<T> otherSpan) const
+{
+    auto thisSpan = this->span();
+    auto otherByteSpan = asByteSpan(otherSpan);
+    if (std::to_address(otherByteSpan.end()) < std::to_address(thisSpan.begin()))
+        return false;
+    size_t offset = std::to_address(otherByteSpan.end()) - std::to_address(thisSpan.begin());
+    return offset <= size(); // "<=" because end is included as valid.
+}
 
 } // namespace WebCore
 

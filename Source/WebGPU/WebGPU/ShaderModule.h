@@ -59,11 +59,11 @@ class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule
 public:
     static Ref<ShaderModule> create(Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     {
-        return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library, device));
+        return adoptRef(*new ShaderModule(WTF::move(checkResult), WTF::move(pipelineLayoutHints), WTF::move(entryPointInformation), library, device));
     }
     static Ref<ShaderModule> createInvalid(Device& device, CheckResult&& checkResult = std::monostate { })
     {
-        return adoptRef(*new ShaderModule(device, WTFMove(checkResult)));
+        return adoptRef(*new ShaderModule(device, WTF::move(checkResult)));
     }
 
     ~ShaderModule();

@@ -39,18 +39,18 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMResourceClient);
 
 RefPtr<WebMResourceClient> WebMResourceClient::create(WebMResourceClientParent& parent, PlatformMediaResourceLoader& loader, ResourceRequest&& request)
 {
-    auto resource = loader.requestResource(WTFMove(request), PlatformMediaResourceLoader::LoadOption::DisallowCaching);
+    auto resource = loader.requestResource(WTF::move(request), PlatformMediaResourceLoader::LoadOption::DisallowCaching);
     if (!resource)
         return nullptr;
     auto client = adoptRef(*new WebMResourceClient { parent, Ref { *resource } });
     auto result = client.copyRef();
-    resource->setClient(WTFMove(client));
+    resource->setClient(WTF::move(client));
     return result;
 }
 
 WebMResourceClient::WebMResourceClient(WebMResourceClientParent& parent, Ref<PlatformMediaResource>&& resource)
     : m_parent(parent)
-    , m_resource(WTFMove(resource))
+    , m_resource(WTF::move(resource))
 {
 }
 
@@ -59,7 +59,7 @@ void WebMResourceClient::stop()
     if (!m_resource)
         return;
 
-    auto resource = WTFMove(m_resource);
+    auto resource = WTF::move(m_resource);
     resource->shutdown();
 }
 

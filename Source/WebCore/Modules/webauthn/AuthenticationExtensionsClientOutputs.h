@@ -45,7 +45,7 @@ struct AuthenticationExtensionsClientOutputs {
     };
 
     struct PRFValues {
-        RefPtr<ArrayBuffer> first;
+        Ref<ArrayBuffer> first;
         RefPtr<ArrayBuffer> second;
     };
 

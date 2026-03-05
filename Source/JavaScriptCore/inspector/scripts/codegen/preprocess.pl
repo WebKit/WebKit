@@ -39,7 +39,7 @@ GetOptions('input=s' => \$inputPath,
 
 my @args = ();
 if (!$preprocessor) {
-    if ($Config::Config{"osname"} eq "MSWin32") {
+    if ($Config::Config{"osname"} eq "MSWin32" || $Config::Config{"osname"} eq "msys") {
         $preprocessor = $ENV{CC} || "cl";
         push(@args, qw(/nologo /EP /TP /C));
     } else {
@@ -85,7 +85,7 @@ if ($Config{osname} eq "cygwin") {
             sleep 1;
         }
     }
-} elsif ($Config::Config{"osname"} eq "MSWin32") {
+} elsif ($Config::Config{"osname"} eq "MSWin32" || $Config::Config{"osname"} eq "msys") {
     # Suppress STDERR so that if we're using cl.exe, the output
     # name isn't needlessly echoed.
     use Symbol 'gensym'; my $err = gensym;

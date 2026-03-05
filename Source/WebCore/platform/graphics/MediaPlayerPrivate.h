@@ -47,6 +47,8 @@ namespace WebCore {
 class MessageClientForTesting;
 class VideoFrame;
 
+enum class MediaPlaybackTargetType : uint8_t;
+
 // MediaPlayerPrivateInterface subclasses should be ref-counted, but each subclass may choose whether
 // to be RefCounted or ThreadSafeRefCounted. Therefore, each subclass must implement a pair of
 // virtual ref()/deref() methods. See NullMediaPlayerPrivate for an example.
@@ -64,6 +66,7 @@ public:
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) = 0;
     virtual void readyStateFromMediaSourceChanged() { }
+    virtual void characteristicsFromMediaSourceChanged() { }
 #endif
 #if ENABLE(MEDIA_STREAM)
     virtual void load(MediaStreamPrivate&) = 0;
@@ -179,6 +182,10 @@ public:
     virtual MediaPlayer::NetworkState networkState() const = 0;
     virtual MediaPlayer::ReadyState readyState() const = 0;
 
+#if ENABLE(MEDIA_SOURCE)
+    virtual void mediaSourceHasRetrievedAllData() { };
+#endif
+
     WEBCORE_EXPORT virtual const PlatformTimeRanges& seekable() const;
     virtual MediaTime maxTimeSeekable() const { return MediaTime::zeroTime(); }
     virtual MediaTime minTimeSeekable() const { return MediaTime::zeroTime(); }
@@ -201,6 +208,9 @@ public:
 
     virtual RefPtr<VideoFrame> videoFrameForCurrentTime();
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
+    WEBCORE_EXPORT virtual RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync();
+    using BitmapImagePromise = MediaPlayer::BitmapImagePromise;
+    WEBCORE_EXPORT virtual Ref<BitmapImagePromise> bitmapImageForCurrentTime();
     virtual DestinationColorSpace colorSpace() = 0;
     virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 
@@ -218,7 +228,7 @@ public:
     virtual bool wirelessVideoPlaybackDisabled() const { return true; }
     virtual void setWirelessVideoPlaybackDisabled(bool) { }
 
-    virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
+    virtual OptionSet<MediaPlaybackTargetType> supportedPlaybackTargetTypes() const;
     virtual bool isCurrentPlaybackTargetWireless() const { return false; }
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
 
@@ -382,6 +392,8 @@ public:
     virtual void setMessageClientForTesting(WeakPtr<MessageClientForTesting>) { }
 
     virtual void elementIdChanged(const String&) const { }
+
+    static WEBCORE_EXPORT RefPtr<ShareableBitmap> bitmapFromImage(NativeImage&);
 
 protected:
     mutable PlatformTimeRanges m_seekable;

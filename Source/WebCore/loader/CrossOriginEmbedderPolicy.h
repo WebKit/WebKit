@@ -67,7 +67,7 @@ struct CrossOriginEmbedderPolicy {
     String reportOnlyReportingEndpoint;
 
     CrossOriginEmbedderPolicy isolatedCopy() const &;
-    CrossOriginEmbedderPolicy isolatedCopy() &&;
+    WEBCORE_EXPORT CrossOriginEmbedderPolicy isolatedCopy() &&;
     void encode(WTF::Persistence::Encoder&) const;
     static std::optional<CrossOriginEmbedderPolicy> decode(WTF::Persistence::Decoder &);
 

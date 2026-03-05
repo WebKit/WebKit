@@ -40,11 +40,11 @@ public:
     }
 
     // Getter/Setter for the value.
-    const PropertyType& value() const { return m_value; }
+    const PropertyType& value() const LIFETIME_BOUND { return m_value; }
     void setValue(const PropertyType& value) { m_value = value; }
 
     // Used by the SVGAnimatedPropertyAnimator to pass m_value to SVGAnimationFunction.
-    PropertyType& value() { return m_value; }
+    PropertyType& value() LIFETIME_BOUND { return m_value; }
 
 protected:
     // Create an initialized property, e.g creating an item to be appended in an SVGList.
@@ -55,7 +55,7 @@ protected:
 
     // Needed when value should not be copied, e.g. SVGTransformValue.
     SVGValueProperty(PropertyType&& value)
-        : m_value(WTFMove(value))
+        : m_value(WTF::move(value))
     {
     }
 

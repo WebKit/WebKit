@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SVG transform attribute synchronization with empty lists</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<svg>
+  <rect id="rect1" transform="matrix(1,0,0,1,0,0)"/>
+  <rect id="rect2" transform="translate(10, 20)"/>
+  <rect id="rect3" transform="rotate(45)"/>
+</svg>
+<script>
+test(function() {
+  var elem = document.getElementById('rect1');
+  
+  // Empty the transform list by removing its only item
+  elem.transform.baseVal.removeItem(0);
+  
+  // Explicitly delete the transform attribute
+  elem.removeAttribute('transform');
+  
+  // The attribute should not exist
+  assert_equals(elem.getAttribute('transform'), null, 
+    'Transform attribute should be null after removal');
+  
+}, 'Transform attribute should remain removed after emptying list via removeItem()');
+
+test(function() {
+  var elem = document.getElementById('rect2');
+  
+  // Empty the transform list completely
+  while (elem.transform.baseVal.numberOfItems > 0) {
+    elem.transform.baseVal.removeItem(0);
+  }
+  
+  // Explicitly delete the transform attribute
+  elem.removeAttribute('transform');
+  
+  // The attribute should not exist
+  assert_equals(elem.getAttribute('transform'), null,
+    'Transform attribute should be null after removal');
+    
+}, 'Transform attribute should remain removed after emptying list iteratively');
+
+test(function() {
+  var elem = document.getElementById('rect3');
+  
+  // Empty the transform list WITHOUT removing the attribute
+  elem.transform.baseVal.removeItem(0);
+  
+  // The attribute should still exist but be empty
+  assert_equals(elem.getAttribute('transform'), '',
+    'Transform attribute should be empty string when list is emptied but attribute not removed');
+    
+}, 'Transform attribute should serialize to empty string when list is emptied without removal');
+
+test(function() {
+  var elem = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  elem.setAttribute('transform', 'scale(2)');
+  document.querySelector('svg').appendChild(elem);
+  
+  // Remove the only transform
+  elem.transform.baseVal.removeItem(0);
+  
+  // Delete the attribute
+  elem.removeAttribute('transform');
+  
+  // Verify attribute is gone
+  assert_equals(elem.getAttribute('transform'), null,
+    'Transform attribute should be null after removal on dynamically created element');
+    
+}, 'Transform attribute removal should work on dynamically created elements');
+</script>
+</body>
+</html>

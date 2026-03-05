@@ -13,6 +13,5 @@ ocl_cts_source_set("workgroups") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/workgroups/test_wg_any.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/workgroups/test_wg_broadcast.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/workgroups/test_wg_scan_reduce.cpp",
-    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/workgroups/test_wg_suggested_local_work_size.cpp",
   ]
 }

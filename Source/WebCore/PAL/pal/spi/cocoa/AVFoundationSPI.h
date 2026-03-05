@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #import <objc/runtime.h>
@@ -181,8 +184,7 @@ NS_ASSUME_NONNULL_END
 #pragma mark -
 #pragma mark AVStreamDataParser
 
-@protocol AVStreamDataParserOutputHandling <NSObject>
-@end
+@protocol AVStreamDataParserOutputHandling;
 
 typedef int32_t CMPersistentTrackID;
 
@@ -492,3 +494,5 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)_initWithWebKitPropertyListData:(NSDictionary *)plist;
 @end
 NS_ASSUME_NONNULL_END
+
+#endif // !__has_feature(modules)

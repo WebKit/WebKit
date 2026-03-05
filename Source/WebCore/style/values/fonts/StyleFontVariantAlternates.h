@@ -53,7 +53,7 @@ struct FontVariantAlternates {
     }
 
     const Platform& platform() const { return m_platform; }
-    Platform takePlatform() { return WTFMove(m_platform); }
+    Platform takePlatform() { return WTF::move(m_platform); }
 
     bool isNormal() const { return m_platform.isNormal(); }
 

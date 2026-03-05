@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>on-item-enables-subtitles</title>
+	<script src=video-test.js></script>
+	<script src=media-file.js></script>
+	<script>
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	});
+
+	async function runTest() {
+		findMediaElement();
+
+		run('internals.settings.setShouldDisplayTrackKind("Captions", true)')
+		run('video.src = findMediaFile("video", "content/test")');
+		await waitFor(video, 'canplay');
+
+		run ('host = internals.controlsHostForMediaElement(video)');
+		run('host.setSelectedTextTrack(host.captionMenuOffItem)');
+
+		run('track = document.createElement("track")');
+
+		run('track.kind = "subtitles"');
+		run('track.srclang = "en"');
+		run('track.src = "content/lorem-ipsum.vtt"');
+		run('video.appendChild(track)');
+
+		run('host.setSelectedTextTrack(host.captionMenuOnItem)');
+		await waitFor(video.textTracks, 'change');
+		await testExpectedEventually('video.textTracks[0].mode', 'showing');
+	}
+	</script>
+</head>
+<body>
+	<video controls>
+	</video>
+</body>
+</html>

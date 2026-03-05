@@ -32,7 +32,7 @@ namespace WebCore {
 class AudioContext;
     
 class ChannelSplitterNode final : public AudioNode {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ChannelSplitterNode);
+    WTF_MAKE_TZONE_ALLOCATED(ChannelSplitterNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ChannelSplitterNode);
 public:
     static ExceptionOr<Ref<ChannelSplitterNode>> create(BaseAudioContext&, const ChannelSplitterOptions& = { });

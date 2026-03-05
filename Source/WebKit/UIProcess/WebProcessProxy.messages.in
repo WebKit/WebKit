@@ -110,7 +110,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
     [EnabledBy=ServiceWorkersEnabled] SendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String message)
 #endif
 
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
     SendWasmDebuggerResponse(String response)
 #endif
 

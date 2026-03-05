@@ -56,7 +56,6 @@ promise_test((test) => {
                     assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
                     assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
                     assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
-                    assert_equals(trackEvent.track.id, stream.getVideoTracks()[0].id);
                     assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
                     resolve(trackEvent.streams[0]);
                 };

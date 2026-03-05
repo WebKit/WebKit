@@ -321,7 +321,8 @@ bool TransportSequenceNumberV2::Parse(
 
     // If `sequence_count` is zero no feedback is requested.
     if (sequence_count != 0) {
-      *feedback_request = {include_timestamps, sequence_count};
+      *feedback_request = {.include_timestamps = include_timestamps,
+                           .sequence_count = sequence_count};
     }
   }
   return true;

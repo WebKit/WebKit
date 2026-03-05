@@ -1,5 +1,5 @@
 XXX
 
 FAIL @container anchored() without applied fallback at initial scroll position assert_equals: expected "no" but got ""
-FAIL @container anchored() applies fallback after scrolling down assert_equals: expected 200 but got 0
+FAIL @container anchored() applies fallback after scrolling down assert_equals: expected "yes" but got ""
 

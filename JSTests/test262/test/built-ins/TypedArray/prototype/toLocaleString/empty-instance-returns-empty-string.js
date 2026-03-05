@@ -23,4 +23,4 @@ features: [TypedArray]
 testWithTypedArrayConstructors(function(TA) {
   var sample = new TA();
   assert.sameValue(sample.toLocaleString(), "");
-});
+}, null, ["passthrough"]);

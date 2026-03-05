@@ -83,8 +83,6 @@ constexpr Frequency kMaxFramerateEstimate = Frequency::Hertz(200);
 
 }  // namespace
 
-constexpr char JitterEstimator::Config::kFieldTrialsKey[];
-
 JitterEstimator::Config JitterEstimator::Config::ParseAndValidate(
     absl::string_view field_trial) {
   Config config;

@@ -14,12 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/cancel-mousedown-in-subframe.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/layer-coords-transform.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/layout_change_should_fire_mouseover.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_reappending_last_over_target.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_modifier_no_mouse_movement.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_on_image_map.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_buttons_back_forward.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseenter-mouseleave-on-drag.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html

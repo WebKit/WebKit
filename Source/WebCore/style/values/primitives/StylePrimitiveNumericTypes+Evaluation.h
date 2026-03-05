@@ -99,25 +99,34 @@ template<typename Result> struct Evaluation<Ref<Calculation::Value>, Result> {
         return Result(calculation->evaluate(referenceLength, usedZoom));
     }
 
-
     auto operator()(Ref<Calculation::Value> calculation, Result referenceLength, ZoomNeeded token) -> Result
     {
         return Result(calculation->evaluate(referenceLength, token));
+    }
+
+    auto operator()(Ref<Calculation::Value> calculation, Result referenceLength) -> Result
+    {
+        return Result(calculation->evaluate(referenceLength));
     }
 };
 
 template<Calc Calculation, typename Result> struct Evaluation<Calculation, Result> {
     template<typename... Rest> auto operator()(const Calculation& calculation, Result referenceLength, ZoomNeeded token, Rest&&... rest) -> Result
-        requires (Calculation::range.zoomOptions == CSS::RangeZoomOptions::Default)
+        requires (Calculation::range.zoomOptions == CSS::RangeZoomOptions::Default && (Calculation::category == CSS::Category::Length || Calculation::category == CSS::Category::LengthPercentage))
     {
-        return evaluate<Result>(calculation.protectedCalculation(), referenceLength, token, std::forward<Rest>(rest)...);
+        return evaluate<Result>(protect(calculation.calculation()), referenceLength, token, std::forward<Rest>(rest)...);
     }
 
-
     template<typename... Rest> auto operator()(const Calculation& calculation, Result referenceLength, ZoomFactor usedZoom, Rest&&... rest) -> Result
-        requires (Calculation::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
+        requires (Calculation::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed && (Calculation::category == CSS::Category::Length || Calculation::category == CSS::Category::LengthPercentage))
     {
-        return evaluate<Result>(calculation.protectedCalculation(), referenceLength, usedZoom, std::forward<Rest>(rest)...);
+        return evaluate<Result>(protect(calculation.calculation()), referenceLength, usedZoom, std::forward<Rest>(rest)...);
+    }
+
+    template<typename... Rest> auto operator()(const Calculation& calculation, Result referenceLength, Rest&&... rest) -> Result
+        requires (Calculation::category != CSS::Category::Length && Calculation::category != CSS::Category::LengthPercentage)
+    {
+        return evaluate<Result>(protect(calculation.calculation()), referenceLength, ZoomNeeded { }, std::forward<Rest>(rest)...);
     }
 };
 
@@ -153,6 +162,19 @@ template<auto R, typename V, typename Result> struct Evaluation<LengthPercentage
                 return evaluate<Result>(calculation, referenceLength, zoom);
             }
         );
+    }
+};
+
+// MARK: - NumberOrPercentageResolvedToNumber
+
+template<CSS::Range nR, CSS::Range pR, typename V, typename Result> struct Evaluation<NumberOrPercentageResolvedToNumber<nR, pR, V>, Result> {
+    constexpr auto operator()(const NumberOrPercentageResolvedToNumber<nR, pR, V>& value) -> Result
+    {
+        return evaluate<Result>(value.value);
+    }
+    constexpr auto operator()(const NumberOrPercentageResolvedToNumber<nR, pR, V>& value, Result) -> Result
+    {
+        return evaluate<Result>(value.value);
     }
 };
 
@@ -354,7 +376,7 @@ template<auto R, typename V> auto reflect(const LengthPercentage<R, V>& value) -
 // Merges the two ranges, `aR` and `bR`, creating a union of their ranges.
 consteval CSS::Range mergeRanges(CSS::Range aR, CSS::Range bR)
 {
-    return CSS::Range { std::min(aR.min, bR.min), std::max(aR.max, bR.max) };
+    return CSS::Range { std::min(aR.min, bR.min), std::max(aR.max, bR.max), aR.clampOptions, aR.zoomOptions };
 }
 
 // Convert to `calc(100% - (a + b))`.
@@ -362,6 +384,9 @@ consteval CSS::Range mergeRanges(CSS::Range aR, CSS::Range bR)
 // Returns a LengthPercentage with range, `resultR`, equal to union of the two input ranges `aR` and `bR`.
 template<auto aR, auto bR, typename V> auto reflectSum(const LengthPercentage<aR, V>& a, const LengthPercentage<bR, V>& b) -> LengthPercentage<mergeRanges(aR, bR), V>
 {
+    static_assert(aR.clampOptions == bR.clampOptions);
+    static_assert(aR.zoomOptions == bR.zoomOptions);
+
     constexpr auto resultR = mergeRanges(aR, bR);
 
     using Result = LengthPercentage<resultR, V>;

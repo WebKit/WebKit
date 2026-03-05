@@ -11,4 +11,15 @@ PASS e.style['letter-spacing'] = "clamp(1px, 1px, )" should not set the property
 PASS e.style['letter-spacing'] = "clamp(1px, 1px, 1px, )" should not set the property value
 PASS e.style['letter-spacing'] = "clamp(1px 1px 1px)" should not set the property value
 PASS e.style['letter-spacing'] = "clamp(0, 10rem, 100%)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(none, none, none)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(none, none + none, none)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(none, none + 1, none)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(-none, 1px, 1px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(10px, none * none, 20px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(10px, 2px * none, 20px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(10px, 2px + none, 20px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(10px + none, 10px / 2px + none, 20px / none)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(10px, -none, 20px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(10px, 15px, abs(none) * 1px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(10px, 15px, abs(none * 1px))" should not set the property value
 

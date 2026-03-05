@@ -4,12 +4,12 @@ layer at (0,0) size 800x158
   RenderBlock {HTML} at (0,0) size 800x158
     RenderBody {BODY} at (8,16) size 784x134
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 106x17
+        RenderText {#text} at (0,0) size 106x18
           text run at (0,0) width 106: "There should be "
-        RenderInline {B} at (106,0) size 25x17
-          RenderText {#text} at (106,0) size 25x17
+        RenderInline {B} at (106,0) size 25x18
+          RenderText {#text} at (106,0) size 25x18
             text run at (106,0) width 25: "two"
-        RenderText {#text} at (131,0) size 135x17
+        RenderText {#text} at (131,0) size 135x18
           text run at (131,0) width 135: " black squares below."
 layer at (8,50) size 784x100 scrollX 200 scrollWidth 2572
   RenderBlock {DIV} at (0,34) size 784x100

@@ -64,7 +64,6 @@ using ::testing::AtLeast;
 using ::testing::DoAll;
 using ::testing::ElementsAre;
 using ::testing::InSequence;
-using ::testing::Invoke;
 using ::testing::IsEmpty;
 using ::testing::IsNull;
 using ::testing::Pointee;
@@ -1665,10 +1664,10 @@ TEST_F(NetEqImplTest, NoCrashWithMaxChannels) {
   EXPECT_CALL(*mock_decoder_database_, GetActiveDecoder())
       .WillRepeatedly(Return(decoder));
   EXPECT_CALL(*mock_decoder_database_, SetActiveDecoder(_, _))
-      .WillOnce(Invoke([](uint8_t /* rtp_payload_type */, bool* new_decoder) {
+      .WillOnce([](uint8_t /* rtp_payload_type */, bool* new_decoder) {
         *new_decoder = true;
         return 0;
-      }));
+      });
 
   // Insert first packet.
   neteq_->InsertPacket(rtp_header, payload);

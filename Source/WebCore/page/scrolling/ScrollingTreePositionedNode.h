@@ -39,7 +39,7 @@ class ScrollingTreePositionedNode : public ScrollingTreeNode {
 public:
     virtual ~ScrollingTreePositionedNode();
 
-    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
+    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const LIFETIME_BOUND { return m_relatedOverflowScrollingNodes; }
 
     FloatSize scrollDeltaSinceLastCommit() const;
 

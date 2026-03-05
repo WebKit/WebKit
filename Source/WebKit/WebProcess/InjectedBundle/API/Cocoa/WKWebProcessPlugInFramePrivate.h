@@ -28,12 +28,14 @@
 @class JSContext;
 @class JSValue;
 @class WKWebProcessPlugInBrowserContextController;
+@class _WKJSHandle;
 
 @interface WKWebProcessPlugInFrame (WKPrivate)
 
 + (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle;
 + (instancetype)lookUpFrameFromJSContext:(JSContext *)context;
 + (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value;
++ (_WKJSHandle *)jsHandleFromValue:(JSValue *)value withContext:(JSContext *)context;
 
 @property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
 

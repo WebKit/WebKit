@@ -56,7 +56,7 @@ public:
         requires (std::is_rvalue_reference_v<CallableType&&>)
     CompletionHandler(CallableType&& callable, ThreadLikeAssertion callThread = CompletionHandlerCallThread::ConstructionThread)
         : m_function(std::forward<CallableType>(callable))
-        , m_callThread(WTFMove(callThread))
+        , m_callThread(WTF::move(callThread))
     {
     }
 
@@ -68,7 +68,7 @@ public:
 #else
     CompletionHandler(Out (^block)(In... args), ThreadLikeAssertion callThread = CompletionHandlerCallThread::ConstructionThread)
         : m_function(block)
-        , m_callThread(WTFMove(callThread))
+        , m_callThread(WTF::move(callThread))
     {
     }
 #endif
@@ -85,7 +85,7 @@ public:
 
     explicit operator bool() const { return !!m_function; }
 
-    Impl* leak() { return m_function.leak(); }
+    [[nodiscard]] Impl* leak() { return m_function.leak(); }
 
     Out operator()(In... in)
     {
@@ -114,7 +114,7 @@ public:
         requires (std::is_rvalue_reference_v<CallableType&&>)
     CompletionHandlerWithFinalizer(CallableType&& callable, Function<void(Function<Out(In...)>&)>&& finalizer, ThreadLikeAssertion callThread = CompletionHandlerCallThread::ConstructionThread)
         : m_function(std::forward<CallableType>(callable))
-        , m_finalizer(WTFMove(finalizer))
+        , m_finalizer(WTF::move(finalizer))
         , m_callThread(callThread)
     {
     }
@@ -152,7 +152,7 @@ class CallableWrapper<CompletionHandler<Out(In...)>, Out, In...> : public Callab
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallableWrapper);
 public:
     explicit CallableWrapper(CompletionHandler<Out(In...)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
     {
         RELEASE_ASSERT(m_completionHandler);
     }
@@ -169,7 +169,7 @@ public:
     CompletionHandlerCallingScope() = default;
 
     CompletionHandlerCallingScope(CompletionHandler<void()>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
     { }
 
     ~CompletionHandlerCallingScope()
@@ -181,7 +181,7 @@ public:
     CompletionHandlerCallingScope(CompletionHandlerCallingScope&&) = default;
     CompletionHandlerCallingScope& operator=(CompletionHandlerCallingScope&&) = default;
 
-    CompletionHandler<void()> release() { return WTFMove(m_completionHandler); }
+    CompletionHandler<void()> release() { return WTF::move(m_completionHandler); }
 
 private:
     CompletionHandler<void()> m_completionHandler;

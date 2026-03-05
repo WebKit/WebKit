@@ -92,7 +92,7 @@ void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uin
 
     // Stash the completion handler away and look it up by id so that we can ensure it gets destructed on the main thread. If we move the handler and capture it in the Obj-C block, it might get destructed on a secondary thread since this completion block moves between different dispatch queues in the APS implementation.
     auto identifier = ++m_handlerIdentifier;
-    m_subscribeHandlers.add(identifier, WTFMove(subscribeHandler));
+    m_subscribeHandlers.add(identifier, WTF::move(subscribeHandler));
 
     [m_connection requestURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (APSURLToken *token, NSError *error) {
         RefPtr protectedThis = weakThis.get();
@@ -110,7 +110,7 @@ void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<u
 
     // See subscribe for why we stash the handler into a map.
     auto identifier = ++m_handlerIdentifier;
-    m_unsubscribeHandlers.add(identifier, WTFMove(unsubscribeHandler));
+    m_unsubscribeHandlers.add(identifier, WTF::move(unsubscribeHandler));
 
     [m_connection invalidateURLTokenForInfo:makeTokenInfo(topic, vapidPublicKey).get() completion:makeBlockPtr([weakThis = WeakPtr { *this }, identifier] (BOOL success, NSError *error) {
         RefPtr protectedThis = weakThis.get();
@@ -144,27 +144,27 @@ Vector<String> ApplePushServiceConnection::nonWakingTopics()
 
 void ApplePushServiceConnection::setEnabledTopics(Vector<String>&& topics)
 {
-    [m_connection _setEnabledTopics:createNSArray(WTFMove(topics)).get()];
+    [m_connection _setEnabledTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setIgnoredTopics(Vector<String>&& topics)
 {
-    [m_connection _setIgnoredTopics:createNSArray(WTFMove(topics)).get()];
+    [m_connection _setIgnoredTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setOpportunisticTopics(Vector<String>&& topics)
 {
-    [m_connection _setOpportunisticTopics:createNSArray(WTFMove(topics)).get()];
+    [m_connection _setOpportunisticTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setNonWakingTopics(Vector<String>&& topics)
 {
-    [m_connection _setNonWakingTopics:createNSArray(WTFMove(topics)).get()];
+    [m_connection _setNonWakingTopics:createNSArray(WTF::move(topics)).get()];
 }
 
 void ApplePushServiceConnection::setTopicLists(TopicLists&& topicLists)
 {
-    [m_connection setEnabledTopics:createNSArray(WTFMove(topicLists.enabledTopics)).get() ignoredTopics:createNSArray(WTFMove(topicLists.ignoredTopics)).get() opportunisticTopics:createNSArray(WTFMove(topicLists.opportunisticTopics)).get() nonWakingTopics:createNSArray(WTFMove(topicLists.nonWakingTopics)).get()];
+    [m_connection setEnabledTopics:createNSArray(WTF::move(topicLists.enabledTopics)).get() ignoredTopics:createNSArray(WTF::move(topicLists.ignoredTopics)).get() opportunisticTopics:createNSArray(WTF::move(topicLists.opportunisticTopics)).get() nonWakingTopics:createNSArray(WTF::move(topicLists.nonWakingTopics)).get()];
 }
 
 } // namespace WebPushD

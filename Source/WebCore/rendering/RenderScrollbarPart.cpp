@@ -31,17 +31,17 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderScrollbarPart);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderScrollbarPart);
 
 RenderScrollbarPart::RenderScrollbarPart(Document& document, RenderStyle&& style, RenderScrollbar* scrollbar, ScrollbarPart part)
-    : RenderBlock(Type::ScrollbarPart, document, WTFMove(style), { })
+    : RenderBlock(Type::ScrollbarPart, document, WTF::move(style), { })
     , m_scrollbar(scrollbar)
     , m_part(part)
 {
@@ -135,14 +135,14 @@ void RenderScrollbarPart::computeScrollbarHeight()
     m_marginBox.setBottom(Style::evaluateMinimum<LayoutUnit>(style().marginBottom(), 0_lu, style().usedZoomForLength()));
 }
 
-void RenderScrollbarPart::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderScrollbarPart::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     setInline(false);
     clearPositionedState();
     setFloating(false);
     setHasNonVisibleOverflow(false);
-    if (oldStyle && m_scrollbar && m_part != NoPart && diff >= StyleDifference::Repaint)
+    if (oldStyle && m_scrollbar && m_part != NoPart && diff >= Style::DifferenceResult::Repaint)
         m_scrollbar->theme().invalidatePart(*m_scrollbar, m_part);
 }
 

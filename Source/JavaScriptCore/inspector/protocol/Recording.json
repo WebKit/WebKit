@@ -1,7 +1,7 @@
 {
     "domain": "Recording",
     "description": "General types used for recordings of actions performed in the inspected page.",
-    "debuggableTypes": ["page", "web-page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page", "worker"],
     "version": 2,
     "types": [

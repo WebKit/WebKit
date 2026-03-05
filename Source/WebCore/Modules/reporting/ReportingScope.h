@@ -45,7 +45,7 @@ class ReportingObserver;
 class ScriptExecutionContext;
 
 class ReportingScope final : public RefCounted<ReportingScope>, public ContextDestructionObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ReportingScope, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ReportingScope, WEBCORE_EXPORT);
 public:
     static Ref<ReportingScope> create(ScriptExecutionContext&);
     WEBCORE_EXPORT virtual ~ReportingScope();

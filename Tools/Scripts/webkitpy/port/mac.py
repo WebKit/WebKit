@@ -49,15 +49,13 @@ class MacPort(DarwinPort):
     port_name = "mac"
 
     LAST_MACOSX = Version(10, 15)
-
     SDK = 'macosx'
-
     ARCHITECTURES = ['x86_64', 'x86', 'arm64']
-
     DEFAULT_ARCHITECTURE = 'x86_64'
+    DRIVER_NAMES = ('WebKitTestRunner', 'DumpRenderTree')
 
     def __init__(self, host, port_name, **kwargs):
-        DarwinPort.__init__(self, host, port_name, **kwargs)
+        super(MacPort, self).__init__(host, port_name, **kwargs)
         version_name_map = VersionNameMap.map(host.platform)
         self._os_version = None
         split_port_name = port_name.split('-')
@@ -117,7 +115,7 @@ class MacPort(DarwinPort):
                     temp_version = Version(temp_version.major - 1)
 
         wk_string = 'wk1'
-        if self.get_option('webkit_test_runner'):
+        if not self.is_webkitlegacy():
             wk_string = 'wk2'
 
         expectations = []
@@ -149,7 +147,7 @@ class MacPort(DarwinPort):
             expectations.append(self._apple_baseline_path('{}'.format(self.port_name)))
         expectations.append(self._webkit_baseline_path(self.port_name))
 
-        if self.get_option('webkit_test_runner'):
+        if not self.is_webkitlegacy():
             expectations.append(self._webkit_baseline_path('wk2'))
         return expectations
 
@@ -236,12 +234,9 @@ class MacPort(DarwinPort):
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=95906  With too many WebProcess WK2 tests get stuck in resource contention.
         # To alleviate the issue reduce the number of running processes
         # Anecdotal evidence suggests that a 4 core/8 core logical machine may run into this, but that a 2 core/4 core logical machine does not.
-        should_throttle_for_wk2 = self.get_option('webkit_test_runner') and default_count > 4
-        # We also want to throttle for leaks bots.
-        if should_throttle_for_wk2 or self.get_option('leaks'):
-            default_count = int(.75 * default_count)
+        default_count = int(.75 * default_count) if default_count > 4 else default_count
 
-        if should_throttle_for_wk2 and self.get_option('guard_malloc'):
+        if self.get_option('guard_malloc'):
             # Some 12 core Macs get a lot of tests time out when running 18 WebKitTestRunner processes (it's not clear what this depends on).
             # <rdar://problem/25750302>
             default_count = min(default_count, 12)

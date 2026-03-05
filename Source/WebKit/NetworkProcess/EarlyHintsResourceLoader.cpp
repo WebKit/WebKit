@@ -130,7 +130,7 @@ void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const Lin
     if (!contentSecurityPolicy.allowConnectToSource(url, ContentSecurityPolicy::RedirectResponseReceived::No, originalRequest.url()))
         return;
 
-    CheckedPtr networkSession = loader->protectedConnectionToWebProcess()->networkSession();
+    CheckedPtr networkSession = protect(loader->connectionToWebProcess())->networkSession();
     if (!networkSession)
         return;
 
@@ -145,7 +145,7 @@ void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const Lin
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.request = constructPreconnectRequest(originalRequest, url);
     parameters.isNavigatingToAppBoundDomain = m_loader->parameters().isNavigatingToAppBoundDomain;
-    Ref preconnectTask = PreconnectTask::create(*networkSession, WTFMove(parameters));
+    Ref preconnectTask = PreconnectTask::create(*networkSession, WTF::move(parameters));
     preconnectTask->start();
 
     addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString("Preconnecting to "_s, url.string(), " due to early hint"_s));

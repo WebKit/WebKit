@@ -262,8 +262,11 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     if (std::holds_alternative<TemporalOverflow>(optionsOrOverflow))
         overflow = std::get<TemporalOverflow>(optionsOrOverflow);
     else {
-        overflow = toTemporalOverflow(globalObject, std::get<JSObject*>(optionsOrOverflow));
-        RETURN_IF_EXCEPTION(scope, { });
+        JSObject* options = std::get<JSObject*>(optionsOrOverflow);
+        if (options) {
+            overflow = toTemporalOverflow(globalObject, options);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
     }
 
     // Check month code if applicable
@@ -330,14 +333,32 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
         day = std::min<unsigned>(day, ISO8601::daysInMonth(year, month));
     }
 
-    auto plainDate = ISO8601::PlainDate(year, month, day);
-    bool valid = ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0);
+    auto plainDate = TemporalPlainDate::toPlainDate(globalObject, ISO8601::Duration(year, month, 0, day, 0, 0, 0, 0, 0, 0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    bool valid = true;
+    switch (format) {
+    case TemporalDateFormat::YearMonth:
+        valid = ISO8601::isYearMonthWithinLimits(plainDate.year(), plainDate.month());
+        break;
+    default:
+        valid = ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0);
+        break;
+    }
+
     if (!valid) [[unlikely]] {
         throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
         return { };
     }
 
     return plainDate;
+}
+
+
+// https://tc39.es/proposal-temporal/#sec-temporal-calendaryearmonthfromfields
+ISO8601::PlainDate TemporalCalendar::yearMonthFromFields(JSGlobalObject* globalObject, int32_t year, int32_t month, std::optional<ParsedMonthCode> monthCode, TemporalOverflow overflow)
+{
+    return isoDateFromFields(globalObject, TemporalDateFormat::YearMonth, year, month, 1, monthCode, overflow);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-calendarmonthdayfromfields
@@ -348,9 +369,9 @@ ISO8601::PlainDate TemporalCalendar::monthDayFromFields(JSGlobalObject* globalOb
 
     calendarResolveFields(globalObject, referenceYear, month, monthCode, TemporalDateFormat::MonthDay);
     RETURN_IF_EXCEPTION(scope, { });
-    double year = referenceYear.value_or(1972);
+    int32_t year = referenceYear.value_or(1972);
     auto result = TemporalDuration::regulateISODate(year, month, day, overflow);
-    if (!result || !ISO8601::isValidISODate(result->year(), result->month(), result->day())) [[unlikely]] {
+    if (!result || !ISO8601::isDateTimeWithinLimits(result->year(), result->month(), result->day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
         throwRangeError(globalObject, scope, "monthDayFromFields: date is out of range of ECMAScript representation"_s);
         return { };
     }
@@ -399,9 +420,9 @@ ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, co
 
     double years = plainDate.year() + duration.years();
     double months = plainDate.month() + duration.months();
-    double days = plainDate.day();
+    uint8_t days = plainDate.day();
     ISO8601::PlainYearMonth intermediate = balanceISOYearMonth(years, months);
-    std::optional<ISO8601::PlainDate> intermediate1 = TemporalDuration::regulateISODate(intermediate.year, intermediate.month, days, overflow);
+    std::optional<ISO8601::PlainDate> intermediate1 = TemporalDuration::regulateISODate(intermediate.year(), intermediate.month(), days, overflow);
     if (!intermediate1) {
         throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
         return { };
@@ -415,7 +436,29 @@ ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, co
     return result;
 }
 
+static ISO8601::Duration dateDuration(double y, double m, double w, double d)
+{
+    return ISO8601::Duration { y, m, w, d, 0, 0, 0, 0, 0, 0 };
+}
+
+static bool isoDateSurpasses(int32_t sign, double y1, double m1, double d1, const ISO8601::PlainDate& isoDate2)
+{
+    if (y1 != isoDate2.year()) {
+        if (sign * (y1 - isoDate2.year()) > 0)
+            return true;
+    } else if (m1 != isoDate2.month()) {
+        if (sign * (m1 - isoDate2.month()) > 0)
+            return true;
+    } else if (d1 != isoDate2.day()) {
+        if (sign * (d1 - isoDate2.day()) > 0)
+            return true;
+    }
+    return false;
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisoyearmonth
+// This must take `double` arguments because it's what validates the year and month
+// values and converts to an appropriate int32 or unsigned value.
 ISO8601::PlainYearMonth TemporalCalendar::balanceISOYearMonth(double year, double month)
 {
     year += std::floor((month - 1) / 12);
@@ -425,8 +468,110 @@ ISO8601::PlainYearMonth TemporalCalendar::balanceISOYearMonth(double year, doubl
         month += 12;
     if (!ISO8601::isYearWithinLimits(year)) [[unlikely]]
         year = ISO8601::outOfRangeYear;
-    return ISO8601::PlainYearMonth(year, static_cast<int32_t>(month));
+    return ISO8601::PlainYearMonth(static_cast<int32_t>(year), static_cast<unsigned>(month));
 }
+
+// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil
+// CalendarDateUntil ( calendar, one, two, largestUnit )
+ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
+{
+    auto sign = -1 * isoDateCompare(one, two);
+    if (!sign)
+        return { };
+
+// Follows reference implementation rather than spec, for practicality reasons (avoiding the loop
+// in step 1(n)).
+    auto years = 0;
+    auto months = 0;
+
+    if (largestUnit == TemporalUnit::Year || largestUnit == TemporalUnit::Month) {
+        auto candidateYears = two.year() - one.year();
+        if (candidateYears)
+            candidateYears -= sign;
+        while (!isoDateSurpasses(sign, one.year() + candidateYears, one.month(), one.day(), two)) {
+            years = candidateYears;
+            candidateYears += sign;
+        }
+
+        auto candidateMonths = sign;
+        auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + candidateMonths);
+        while (!isoDateSurpasses(sign, intermediate.year(), intermediate.month(), one.day(), two)) {
+            months = candidateMonths;
+            candidateMonths += sign;
+            intermediate = balanceISOYearMonth(intermediate.year(), intermediate.month() + sign);
+        }
+
+        if (largestUnit == TemporalUnit::Month) {
+            months += years * 12;
+            years = 0;
+        }
+    }
+
+    auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + months);
+    auto constrained = TemporalDuration::regulateISODate(intermediate.year(), intermediate.month(), one.day(), TemporalOverflow::Constrain);
+    ASSERT(constrained); // regulateISODate() should succeed, because the overflow mode is Constrain
+
+    double weeks = 0;
+    double days = makeDay(two.year(), two.month() - 1, two.day()) -
+        makeDay(constrained->year(), constrained->month() - 1, constrained->day());
+
+    if (largestUnit == TemporalUnit::Week) {
+        weeks = std::trunc(std::abs(days) / 7.0);
+        days = std::trunc((double) (((Int128) std::trunc(days)) % 7));
+        if (weeks)
+            weeks *= sign; // Avoid -0
+    }
+
+    return dateDuration(years, months, weeks, days);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplainyearmonth
+template<DifferenceOperation op>
+ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObject* globalObject, const ISO8601::PlainYearMonth& yearMonth, const ISO8601::PlainYearMonth& other, unsigned increment, TemporalUnit smallestUnit, TemporalUnit largestUnit, RoundingMode roundingMode)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (largestUnit == TemporalUnit::Week || largestUnit == TemporalUnit::Day) [[unlikely]] {
+        throwRangeError(globalObject, scope, "largestUnit must be one of year, years, month, months"_s);
+        return { };
+    }
+
+    if (smallestUnit == TemporalUnit::Week || smallestUnit == TemporalUnit::Day) [[unlikely]] {
+        throwRangeError(globalObject, scope, "smallestUnit must be one of year, years, month, months"_s);
+        return { };
+    }
+
+    auto sign = isoDateCompare(yearMonth.isoPlainDate(), other.isoPlainDate());
+    if (!sign)
+        return { };
+
+    auto thisDate = yearMonth.isoPlainDate();
+    auto otherDate = other.isoPlainDate();
+
+    auto thisWithinLimits = ISO8601::isDateTimeWithinLimits(thisDate.year(), thisDate.month(), thisDate.day(), 12, 0, 0, 0, 0, 0);
+    auto otherWithinLimits = ISO8601::isDateTimeWithinLimits(otherDate.year(), otherDate.month(), otherDate.day(), 12, 0, 0, 0, 0, 0);
+    if (!thisWithinLimits || !otherWithinLimits) [[unlikely]] {
+        throwRangeError(globalObject, scope, "date/time value is outside of supported range"_s);
+        return { };
+    }
+    auto dateDifference = calendarDateUntil(thisDate, otherDate, largestUnit);
+    auto duration = ISO8601::InternalDuration::combineDateAndTimeDuration(ISO8601::Duration { dateDifference.years(), dateDifference.months(), 0, 0, 0, 0, 0, 0, 0, 0 }, 0);
+
+    if (smallestUnit != TemporalUnit::Month || increment != 1) {
+        auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
+        auto destEpochNs = getUTCEpochNanoseconds(isoDateTimeOther);
+        TemporalDuration::roundRelativeDuration(globalObject, duration, destEpochNs, thisDate, largestUnit, increment, smallestUnit, roundingMode);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);
+    if (op == DifferenceOperation::Since)
+        result = -result;
+    return result;
+}
+
+template ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth<DifferenceOperation::Since>(JSGlobalObject*, const ISO8601::PlainYearMonth&, const ISO8601::PlainYearMonth&, unsigned, TemporalUnit, TemporalUnit, RoundingMode);
+template ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth<DifferenceOperation::Until>(JSGlobalObject*, const ISO8601::PlainYearMonth&, const ISO8601::PlainYearMonth&, unsigned, TemporalUnit, TemporalUnit, RoundingMode);
 
 // https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
 int32_t TemporalCalendar::isoDateCompare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
@@ -460,80 +605,6 @@ bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* ot
     RETURN_IF_EXCEPTION(scope, false);
 
     RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
-}
-
-static ISO8601::Duration dateDuration(double y, double m, double w, double d)
-{
-    return ISO8601::Duration { y, m, w, d, 0, 0, 0, 0, 0, 0 };
-}
-
-static bool isoDateSurpasses(int32_t sign, double y1, double m1, double d1, const ISO8601::PlainDate& isoDate2)
-{
-    if (y1 != isoDate2.year()) {
-        if (sign * (y1 - isoDate2.year()) > 0)
-            return true;
-    } else if (m1 != isoDate2.month()) {
-        if (sign * (m1 - isoDate2.month()) > 0)
-            return true;
-    } else if (d1 != isoDate2.day()) {
-        if (sign * (d1 - isoDate2.day()) > 0)
-            return true;
-    }
-    return false;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil
-// CalendarDateUntil ( calendar, one, two, largestUnit )
-ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
-{
-    auto sign = -1 * isoDateCompare(one, two);
-    if (!sign)
-        return { };
-
-// Follows polyfill rather than spec, for practicality reasons (avoiding the loop
-// in step 1(n)).
-    auto years = 0;
-    auto months = 0;
-
-    if (largestUnit == TemporalUnit::Year || largestUnit == TemporalUnit::Month) {
-        auto candidateYears = two.year() - one.year();
-        if (candidateYears)
-            candidateYears -= sign;
-        while (!isoDateSurpasses(sign, one.year() + candidateYears, one.month(), one.day(), two)) {
-            years = candidateYears;
-            candidateYears += sign;
-        }
-
-        auto candidateMonths = sign;
-        auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + candidateMonths);
-        while (!isoDateSurpasses(sign, intermediate.year, intermediate.month, one.day(), two)) {
-            months = candidateMonths;
-            candidateMonths += sign;
-            intermediate = balanceISOYearMonth(intermediate.year, intermediate.month + sign);
-        }
-
-        if (largestUnit == TemporalUnit::Month) {
-            months += years * 12;
-            years = 0;
-        }
-    }
-
-    auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + months);
-    auto constrained = TemporalDuration::regulateISODate(intermediate.year, intermediate.month, one.day(), TemporalOverflow::Constrain);
-    ASSERT(constrained); // regulateISODate() should succeed, because the overflow mode is Constrain
-
-    double weeks = 0;
-    double days = makeDay(two.year(), two.month() - 1, two.day()) -
-        makeDay(constrained->year(), constrained->month() - 1, constrained->day());
-
-    if (largestUnit == TemporalUnit::Week) {
-        weeks = std::trunc(std::abs(days) / 7.0);
-        days = std::trunc((double) (((Int128) std::trunc(days)) % 7));
-        if (weeks)
-            weeks *= sign; // Avoid -0
-    }
-
-    return dateDuration(years, months, weeks, days);
 }
 
 } // namespace JSC

@@ -150,7 +150,7 @@ public:
     virtual void copyTimingFunctionsFrom(const PlatformCAAnimation&) = 0;
 
     // Animation group properties.
-    virtual void setAnimations(const Vector<RefPtr<PlatformCAAnimation>>&) = 0;
+    virtual void setAnimations(const Vector<Ref<PlatformCAAnimation>>&) = 0;
     virtual void copyAnimationsFrom(const PlatformCAAnimation&) = 0;
 
     void setActualStartTimeIfNeeded(CFTimeInterval t)

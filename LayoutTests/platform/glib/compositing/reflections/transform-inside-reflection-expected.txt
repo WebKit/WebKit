@@ -4,7 +4,7 @@ layer at (0,0) size 800x324
   RenderBlock {HTML} at (0,0) size 800x324
     RenderBody {BODY} at (8,16) size 784x288
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 783x35
+        RenderText {#text} at (0,0) size 783x36
           text run at (0,0) width 783: "Transform inside nested reflections should be applied correctly. You should see four rotated green boxes, as mirror images of"
           text run at (0,18) width 69: "each other."
 layer at (28,72) size 122x232

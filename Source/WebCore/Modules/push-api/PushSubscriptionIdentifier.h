@@ -27,6 +27,7 @@
 
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
+#include <wtf/Markable.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
@@ -90,7 +91,7 @@ inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy
 
 inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy() &&
 {
-    return { WTFMove(bundleIdentifier).isolatedCopy(), WTFMove(pushPartition).isolatedCopy(), dataStoreIdentifier };
+    return { WTF::move(bundleIdentifier).isolatedCopy(), WTF::move(pushPartition).isolatedCopy(), dataStoreIdentifier };
 }
 
 } // namespace WebCore

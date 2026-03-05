@@ -1,0 +1,3 @@
+
+PASS canIntercept should be false for cross-port navigations
+

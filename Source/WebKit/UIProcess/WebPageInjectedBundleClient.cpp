@@ -58,6 +58,6 @@ void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle
         return completionHandler(adoptRef(toImpl(returnDataRef)));
     }
 
-    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
+    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
 }
 } // namespace WebKit

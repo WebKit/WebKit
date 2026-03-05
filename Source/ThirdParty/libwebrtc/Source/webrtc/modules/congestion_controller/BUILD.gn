@@ -29,6 +29,7 @@ rtc_library("congestion_controller") {
     "../../api/units:timestamp",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
+    "../../rtc_base/containers:flat_map",
     "../../rtc_base/experiments:field_trial_parser",
     "../../rtc_base/synchronization:mutex",
     "../../system_wrappers",
@@ -37,12 +38,13 @@ rtc_library("congestion_controller") {
     "../remote_bitrate_estimator:congestion_control_feedback_generator",
     "../remote_bitrate_estimator:transport_sequence_number_feedback_generator",
     "../rtp_rtcp:rtp_rtcp_format",
+    "rtp:congestion_controller_feedback_stats",
     "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/base:nullability",
   ]
 }
 
-if (rtc_include_tests && !build_with_chromium) {
+if (rtc_include_tests) {
   rtc_library("congestion_controller_unittests") {
     testonly = true
 
@@ -72,6 +74,8 @@ if (rtc_include_tests && !build_with_chromium) {
       "goog_cc:goog_cc_unittests",
       "pcc:pcc_unittests",
       "rtp:congestion_controller_unittests",
+      "scream:scream_unittests",
+      "scream/test:cc_feedback_generator_unittests",
     ]
   }
 }

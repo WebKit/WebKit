@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/videoframe-utilities.js"></script>
+<style>
+body { margin: 0 }
+canvas { image-rendering: pixelated }
+</style>
+<canvas style="display: none" id="referenceCanvas"></canvas>
+<canvas style="display: none" id="resultCanvas"></canvas>
+<script>
+
+function getRGBImageData(fullRange, frameFormat, frameData)
+{
+  const init = {
+    format: frameFormat,
+    timestamp: 1234,
+    codedWidth: 2,
+    codedHeight: 2,
+    colorSpace: { "primaries":"smpte170m", "transfer":"smpte170m", "matrix":"smpte170m", fullRange }
+  };
+
+  frame = new VideoFrame(frameData, init);
+  referenceCanvas.getContext('2d').drawImage(frame, 0, 0);
+  frame.close();
+  return referenceCanvas.getContext('2d').getImageData(0, 0, 1, 1).data;
+}
+
+const testData = [
+{
+    format: "NV12",
+    fullRange: new Uint8Array([93, 93, 93, 93, 159, 101 ]),
+    videoRange: new Uint8Array([94, 94, 94, 94, 157, 102 ]),
+    rgba: [50, 100, 150, 255],
+    threshold: 20
+},
+{
+    format: "NV12",
+    fullRange: new Uint8Array([255, 255, 255, 255, 128, 128 ]),
+    videoRange: new Uint8Array([235, 235, 235, 235, 128, 128 ]),
+    rgba: [255, 255, 255, 255],
+    threshold: 2
+},
+{
+    format: "NV12",
+    fullRange: new Uint8Array([0, 0, 0, 0, 128, 128 ]),
+    videoRange: new Uint8Array([16, 16, 16, 16, 128, 128 ]),
+    rgba: [0, 0, 0, 255],
+    threshold: 2
+},
+{
+    format: "I420",
+    fullRange: new Uint8Array([93, 93, 93, 93, 159, 101 ]),
+    videoRange: new Uint8Array([94, 94, 94, 94, 157, 102 ]),
+    rgba: [50, 100, 150, 255],
+    threshold: 20
+},
+{
+    format: "I420",
+    fullRange: new Uint8Array([255, 255, 255, 255, 128, 128 ]),
+    videoRange: new Uint8Array([235, 235, 235, 235, 128, 128 ]),
+    rgba: [255, 255, 255, 255],
+    threshold: 2
+},
+{
+    format: "I420",
+    fullRange: new Uint8Array([0, 0, 0, 0, 128, 128 ]),
+    videoRange: new Uint8Array([16, 16, 16, 16, 128, 128 ]),
+    rgba: [0, 0, 0, 255],
+    threshold: 2
+},
+];
+
+async function checkSMPTE170Frame(fullRange)
+{
+  test(t => {
+    testData.forEach((item, index) => {
+      const result = getRGBImageData(fullRange, item.format, fullRange ? item.fullRange : item.videoRange);
+      assert_array_approx_equals(result, item.rgba, item.threshold, "test " + index);
+    });
+  }, `Test SMTPE170m video frame rendering, full range=${fullRange}`);
+}
+
+checkSMPTE170Frame(true);
+checkSMPTE170Frame(false);
+</script>
+</html>

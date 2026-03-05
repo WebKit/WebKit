@@ -35,7 +35,7 @@ class MediaSource;
 
 class MediaSourceInterfaceMainThread : public MediaSourceInterfaceProxy {
 public:
-    static Ref<MediaSourceInterfaceMainThread> create(Ref<MediaSource>&& mediaSource) { return adoptRef(*new MediaSourceInterfaceMainThread(WTFMove(mediaSource))); }
+    static Ref<MediaSourceInterfaceMainThread> create(Ref<MediaSource>&& mediaSource) { return adoptRef(*new MediaSourceInterfaceMainThread(WTF::move(mediaSource))); }
 
 private:
     RefPtr<MediaSourcePrivateClient> client() const final;
@@ -45,14 +45,14 @@ private:
     PlatformTimeRanges buffered() const final;
     PlatformTimeRanges seekable() const final;
     bool isStreamingContent() const final;
-    bool attachToElement(WeakPtr<HTMLMediaElement>&&) final;
+    bool NODELETE attachToElement(WeakPtr<HTMLMediaElement>&&) final;
     void detachFromElement() final;
     void elementIsShuttingDown() final;
     void openIfDeferredOpen() final;
     bool isManaged() const final;
-    void setAsSrcObject(bool) final;
+    void NODELETE setAsSrcObject(bool) final;
     void memoryPressure() final;
-    bool detachable() const final;
+    bool NODELETE detachable() const final;
     void setLogIdentifier(uint64_t) final;
 
     explicit MediaSourceInterfaceMainThread(Ref<MediaSource>&&);

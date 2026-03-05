@@ -5,6 +5,6 @@ install-name: /System/Library/Frameworks/CoreImage.framework/CoreImage
 current-version: 7
 exports:
 -       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
-        symbols: [_kCIContextWorkingColorSpace, _kCIInputImageKey]
-        objc-classes: [CIContext, CIFilter, CIImage, CIVector]
+        symbols: [_kCIContextWorkingColorSpace, _kCIInputBackgroundImageKey, _kCIInputImageKey, _kCIInputTransformKey]
+        objc-classes: [CIBlendKernel, CIColor, CIContext, CIFilter, CIImage, CIKernel, CIRenderDestination, CIVector]
 ...

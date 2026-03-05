@@ -9,6 +9,7 @@
 import("../../webrtc.gni")
 
 rtc_library("sent_packet") {
+  visibility = [ "*" ]
   sources = [
     "sent_packet.cc",
     "sent_packet.h",

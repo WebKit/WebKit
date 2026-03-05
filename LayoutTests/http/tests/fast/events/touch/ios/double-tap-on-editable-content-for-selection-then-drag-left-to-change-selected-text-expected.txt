@@ -1,0 +1,13 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: Has Caret Selection
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+

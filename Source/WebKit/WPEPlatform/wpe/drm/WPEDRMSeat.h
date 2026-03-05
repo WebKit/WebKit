@@ -52,7 +52,7 @@ public:
     ~Seat();
 
     WPEAvailableInputDevices availableInputDevices() const;
-    void setAvailableInputDevicesChangedCallback(Function<void(WPEAvailableInputDevices)>&& callback) { m_capabilitiesChangedCallback = WTFMove(callback); }
+    void setAvailableInputDevicesChangedCallback(Function<void(WPEAvailableInputDevices)>&& callback) { m_capabilitiesChangedCallback = WTF::move(callback); }
 
     void setView(WPEView* view);
 

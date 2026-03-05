@@ -54,16 +54,16 @@ info: |
     Argument Type: Symbol
     Result: Throw a TypeError exception.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray, Symbol]
 ---*/
 
 var s = Symbol()
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
 
   assert.throws(TypeError, function() {
-    new TA([s]);
+    new TA(makeCtorArg([s]));
   }, "abrupt completion from Symbol");
 
 });

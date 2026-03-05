@@ -86,7 +86,7 @@ const struct wl_output_listener WaylandOutput::s_listener = {
 
 void WaylandOutput::addScaleObserver(WPEViewWayland* view, Function<void(WPEViewWayland*)>&& observer)
 {
-    m_scaleObservers.set(view, WTFMove(observer));
+    m_scaleObservers.set(view, WTF::move(observer));
 }
 
 void WaylandOutput::removeScaleObserver(WPEViewWayland* view)

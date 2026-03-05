@@ -37,7 +37,7 @@ Light DOM text
 Light DOM text
 
 Misspelling
-
+ Second option First option
 
 PASS aria-activedescendant element reflection
 PASS If the content attribute is set directly, the IDL attribute getter always returns the first element whose ID matches the content attribute.

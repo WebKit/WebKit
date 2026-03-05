@@ -821,6 +821,7 @@ MoveFloat U:F:32, D:F:32
     Index, Tmp as loadFloat
     Tmp, Addr as storeFloat
     Tmp, Index as storeFloat
+    64: FPImm32, Tmp as move32ToFloat
 
 MoveFloat U:F:32, D:F:32, S:F:32
     Addr, Addr, Tmp
@@ -831,6 +832,7 @@ MoveDouble U:F:64, D:F:64
     Index, Tmp as loadDouble
     Tmp, Addr as storeDouble
     Tmp, Index as storeDouble
+    64: FPImm64, Tmp as move64ToDouble
 
 MoveDouble U:F:64, D:F:64, S:F:64
     Addr, Addr, Tmp
@@ -853,20 +855,14 @@ arm64: StorePairDouble U:F:64, U:F:64, D:F:128
     Index, Tmp as loadVector
     Tmp, Addr as storeVector
     Tmp, Index as storeVector
+    FPImm128, Tmp as move128ToVector
 
 64: MoveVector U:F:128, D:F:128, S:F:128
     Addr, Addr, Tmp
 
-MoveZeroToDouble D:F:64
-    Tmp
-
-MoveZeroToFloat D:F:32
-    Tmp
-
 64: Move64ToDouble U:G:64, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp as loadDouble
-    arm64: FPImm64, Tmp
     Index, Tmp as loadDouble
 
 32: Move64ToDouble U:G:32, U:G:32, D:F:64
@@ -878,7 +874,6 @@ MoveZeroToFloat D:F:32
 Move32ToFloat U:G:32, D:F:32
     Tmp, Tmp
     x86: Addr, Tmp as loadFloat
-    arm64: FPImm32, Tmp
     Index, Tmp as loadFloat
 
 64: MoveDoubleTo64 U:F:64, D:G:64
@@ -1557,6 +1552,45 @@ arm64: CompareDoubleWithZero U:G:32, U:F:64, ZD:G:32
 arm64: CompareFloatWithZero U:G:32, U:F:32, ZD:G:32
     DoubleCond, Tmp, Tmp
 
+# Compare instructions that only set flags (for use with ccmp chains)
+# These perform comparison and set NZCV flags without storing result to register
+# IMPORTANT: /effects prevents Air from reordering or inserting flag-clobbering instructions.
+
+arm64: CompareOnFlags32 U:G:32, U:G:32 /effects
+    Tmp, Tmp
+    Tmp, Imm
+
+arm64: CompareOnFlags64 U:G:64, U:G:64 /effects
+    Tmp, Tmp
+    Tmp, Imm
+
+arm64: CompareOnFlagsFloat U:F:32, U:F:32 /effects
+    Tmp, Tmp
+
+arm64: CompareOnFlagsDouble U:F:64, U:F:64 /effects
+    Tmp, Tmp
+
+# Conditional compare instructions (ARM64 ccmp/fccmp).
+# These instructions conditionally update the NZCV flags based on a condition.
+# Operands: LHS, RHS, NZCV default flags (4-bit immediate), condition code
+# If the condition is true, performs the comparison and sets flags normally.
+# If the condition is false, sets flags to the NZCV default value.
+# /effects prevents Air from reordering or inserting flag-clobbering instructions.
+
+arm64: CompareConditionallyOnFlags32 U:G:32, U:G:32, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+    Tmp, Imm, Imm, RelCond
+
+arm64: CompareConditionallyOnFlags64 U:G:64, U:G:64, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+    Tmp, Imm, Imm, RelCond
+
+arm64: CompareConditionallyOnFlagsFloat U:F:32, U:F:32, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+
+arm64: CompareConditionallyOnFlagsDouble U:F:64, U:F:64, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+
 # Note that branches have some logic in AirOptimizeBlockOrder.cpp. If you add new branches, please make sure
 # you opt them into the block order optimizations.
 
@@ -1622,6 +1656,11 @@ arm64: BranchDoubleWithZero U:G:32, U:F:64 /branch
 
 arm64: BranchFloatWithZero U:G:32, U:F:32 /branch
     DoubleCond, Tmp
+
+# Branch on already-set condition flags (for use after ccmp)
+# /effects ensures this stays adjacent to the preceding ccmp instruction
+arm64: BranchOnFlags U:G:32 /branch /effects
+    RelCond
 
 BranchAdd32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
     ResCond, Tmp, Tmp, Tmp
@@ -1937,9 +1976,6 @@ arm64: VectorNot U:G:Ptr, U:F:128, D:F:128
 
 64: VectorXor U:G:Ptr, U:F:128, U:F:128, D:F:128
     SIMDInfo, Tmp, Tmp, Tmp
-
-64: MoveZeroToVector D:F:128
-    Tmp
 
 64: VectorUshl U:G:Ptr, U:F:128, U:F:128, D:F:128
     SIMDInfo, Tmp, Tmp, Tmp

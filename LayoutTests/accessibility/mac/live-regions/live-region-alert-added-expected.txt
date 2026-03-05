@@ -1,7 +1,9 @@
 This tests alerts that are added to the page dynamically are announced.
 
 Received announcement request:
-AnnouncementKey: This is an alert!!
+AnnouncementKey: This is an alert!!{
+    AXLanguage = en;
+}
 AXPriorityKey: 90
 AXAnnouncementIsLiveRegionKey: true
 

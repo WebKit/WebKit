@@ -50,7 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRenderer);
 RefPtr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::create(Init&& init)
 {
 #if PLATFORM(COCOA)
-    return AudioMediaStreamTrackRendererCocoa::create(WTFMove(init));
+    return AudioMediaStreamTrackRendererCocoa::create(WTF::move(init));
 #else
     UNUSED_PARAM(init);
     return nullptr;
@@ -64,12 +64,12 @@ String AudioMediaStreamTrackRenderer::defaultDeviceID()
 }
 
 AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Init&& init)
-    : m_crashCallback(WTFMove(init.crashCallback))
+    : m_crashCallback(WTF::move(init.crashCallback))
 #if USE(LIBWEBRTC)
-    , m_audioModule(WTFMove(init.audioModule))
+    , m_audioModule(WTF::move(init.audioModule))
 #endif
 #if !RELEASE_LOG_DISABLED
-    , m_logger(init.logger)
+    , m_logger(WTF::move(init.logger))
     , m_logIdentifier(init.logIdentifier)
 #endif
 {

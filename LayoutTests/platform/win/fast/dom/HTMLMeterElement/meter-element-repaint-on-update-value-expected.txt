@@ -13,5 +13,6 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 80x16
           RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 40x16
+        RenderBlock {DIV} at (0,16) size 80x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

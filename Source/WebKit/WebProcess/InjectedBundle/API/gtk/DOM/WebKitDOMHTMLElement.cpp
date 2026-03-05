@@ -95,7 +95,9 @@ static void webkit_dom_html_element_dom_event_target_init(WebKitDOMEventTargetIf
     iface->remove_event_listener = webkit_dom_html_element_remove_event_listener;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLElement, webkit_dom_html_element, WEBKIT_DOM_TYPE_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_element_dom_event_target_init))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_HTML_ELEMENT_PROP_0,
@@ -554,7 +556,7 @@ void webkit_dom_html_element_set_inner_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setInnerText(WTFMove(convertedValue));
+    auto result = item->setInnerText(WTF::move(convertedValue));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -578,7 +580,7 @@ void webkit_dom_html_element_set_outer_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setOuterText(WTFMove(convertedValue));
+    auto result = item->setOuterText(WTF::move(convertedValue));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);

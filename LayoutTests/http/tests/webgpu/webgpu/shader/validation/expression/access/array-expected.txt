@@ -50,109 +50,29 @@ PASS :early_eval_errors:case="const_func_in_bounds"
 PASS :early_eval_errors:case="const_func_oob_neg"
 PASS :early_eval_errors:case="const_func_oob_pos"
 PASS :early_eval_errors:case="override_in_bounds"
-FAIL :early_eval_errors:case="override_oob_neg" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
-FAIL :early_eval_errors:case="override_oob_pos" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
+PASS :early_eval_errors:case="override_oob_neg"
+PASS :early_eval_errors:case="override_oob_pos"
 PASS :early_eval_errors:case="runtime_in_bounds"
 PASS :early_eval_errors:case="runtime_oob_neg"
 PASS :early_eval_errors:case="runtime_oob_pos"
-FAIL :early_eval_errors:case="runtime_array_const_oob_neg" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-    @group(0) @binding(0) var<storage> x : array<u32>;
-        fn y() -> u32 {
-          let tmp = x[-1];
-          return 0;
-        }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:436:26
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-FAIL :early_eval_errors:case="runtime_array_override_oob_neg" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
-FAIL :early_eval_errors:case="runtime_nested_array_override_oob_neg" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
-FAIL :early_eval_errors:case="runtime_nested_array_override_oob_pos" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
+PASS :early_eval_errors:case="runtime_array_const_oob_neg"
+PASS :early_eval_errors:case="runtime_array_override_oob_neg"
+PASS :early_eval_errors:case="runtime_nested_array_override_oob_neg"
+PASS :early_eval_errors:case="runtime_nested_array_override_oob_pos"
 PASS :early_eval_errors:case="runtime_nested_array_override_pos"
-FAIL :early_eval_errors:case="runtime_deep_nested_array_override_oob_pos" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
+PASS :early_eval_errors:case="runtime_deep_nested_array_override_oob_pos"
 PASS :early_eval_errors:case="runtime_deep_nested_array_override_pos"
-FAIL :early_eval_errors:case="runtime_structure_array_override_oob_neg" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
+PASS :early_eval_errors:case="runtime_structure_array_override_oob_neg"
 PASS :early_eval_errors:case="runtime_structure_array_override_pos"
-FAIL :early_eval_errors:case="runtime_structure_array_override_oob_pos" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
-FAIL :early_eval_errors:case="runtime_nested_structure_array_override_oob_pos" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
+PASS :early_eval_errors:case="runtime_structure_array_override_oob_pos"
+PASS :early_eval_errors:case="runtime_nested_structure_array_override_oob_pos"
 PASS :early_eval_errors:case="runtime_nested_structure_array_override_pos"
 PASS :early_eval_errors:case="override_array_cnt_size_zero_unsigned"
 PASS :early_eval_errors:case="override_array_cnt_size_zero_signed"
 PASS :early_eval_errors:case="override_array_cnt_size_neg"
 PASS :early_eval_errors:case="override_array_cnt_size_one"
-FAIL :early_eval_errors:case="override_array_dynamic_type_checked_oob_pos" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
-FAIL :early_eval_errors:case="override_array_dynamic_type_checked_oob_neg" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:429:27
- Reached unreachable code
+PASS :early_eval_errors:case="override_array_dynamic_type_checked_oob_pos"
+PASS :early_eval_errors:case="override_array_dynamic_type_checked_oob_neg"
 PASS :early_eval_errors:case="override_array_dynamic_type_checked_bounds"
 PASS :abstract_array_concrete_index:
 

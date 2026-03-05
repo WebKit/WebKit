@@ -16,6 +16,7 @@
 #include "include/core/SkStream.h"
 #include "include/core/SkTypes.h"
 #include "modules/skcms/skcms.h"
+#include "src/codec/SkCodecPriv.h"
 #include "src/core/SkStreamPriv.h"
 
 #include <cstdint>
@@ -68,7 +69,7 @@ std::unique_ptr<SkCodec> SkAvifCodec::MakeFromStream(std::unique_ptr<SkStream> s
         // It is safe to make without copy because we'll hold onto the stream.
         data = SkData::MakeWithoutCopy(stream->getMemoryBase(), stream->getLength());
     } else {
-        data = SkCopyStreamToData(stream.get());
+        data = SkStreamPriv::CopyStreamToData(stream.get());
         // If we are forced to copy the stream to a data, we can go ahead and
         // delete the stream.
         stream.reset(nullptr);
@@ -86,7 +87,7 @@ std::unique_ptr<SkCodec> SkAvifCodec::MakeFromStream(std::unique_ptr<SkStream> s
         return nullptr;
     }
 
-    std::unique_ptr<SkEncodedInfo::ICCProfile> profile = nullptr;
+    std::unique_ptr<SkCodecs::ColorProfile> profile;
     // TODO(vigneshv): Get ICC Profile from the avif decoder.
 
     const int bitsPerComponent = avifDecoder->image->depth > 8 ? 16 : 8;
@@ -118,7 +119,7 @@ std::unique_ptr<SkCodec> SkAvifCodec::MakeFromStream(std::unique_ptr<SkStream> s
 
 SkAvifCodec::SkAvifCodec(SkEncodedInfo&& info,
                          std::unique_ptr<SkStream> stream,
-                         sk_sp<SkData> data,
+                         sk_sp<const SkData> data,
                          AvifDecoder avifDecoder,
                          SkEncodedOrigin origin,
                          bool useAnimation)
@@ -270,7 +271,7 @@ std::unique_ptr<SkCodec> Decode(std::unique_ptr<SkStream> stream,
     return SkAvifCodec::MakeFromStream(std::move(stream), outResult);
 }
 
-std::unique_ptr<SkCodec> Decode(sk_sp<SkData> data,
+std::unique_ptr<SkCodec> Decode(sk_sp<const SkData> data,
                                 SkCodec::Result* outResult,
                                 SkCodecs::DecodeContext) {
     if (!data) {

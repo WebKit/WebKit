@@ -40,26 +40,27 @@ using SuperellipseFunction = FunctionNotation<CSSValueSuperellipse, Number<CSS::
 struct CornerShapeValue {
     SuperellipseFunction superellipse;
 
-    static constexpr CornerShapeValue round() { return { SuperellipseFunction { 2.0 } }; }
-    static constexpr CornerShapeValue scoop() { return { SuperellipseFunction { 0.5 } }; }
-    static constexpr CornerShapeValue bevel() { return { SuperellipseFunction { 1.0 } }; }
-    static constexpr CornerShapeValue notch() { return { SuperellipseFunction { 0.0 } }; }
-    static constexpr CornerShapeValue straight() { return { SuperellipseFunction { std::numeric_limits<double>::infinity() } }; }
-    static constexpr CornerShapeValue squircle() { return { SuperellipseFunction { 4.0 } }; }
+    constexpr CornerShapeValue(CSS::Keyword::Round) : superellipse { 2.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Scoop) : superellipse { 0.5 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Bevel) : superellipse { 1.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Notch) : superellipse { 0.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Straight) : superellipse { std::numeric_limits<double>::infinity() } { }
+    constexpr CornerShapeValue(CSS::Keyword::Squircle) : superellipse { 4.0 } { }
+    constexpr CornerShapeValue(SuperellipseFunction value) : superellipse { value } { }
 
     template<typename F> decltype(auto) switchOn(F&& functor) const
     {
-        if (*this == CornerShapeValue::round())
+        if (*this == CornerShapeValue(CSS::Keyword::Round { }))
             return functor(CSS::Keyword::Round { });
-        if (*this == CornerShapeValue::scoop())
+        if (*this == CornerShapeValue(CSS::Keyword::Scoop { }))
             return functor(CSS::Keyword::Scoop { });
-        if (*this == CornerShapeValue::bevel())
+        if (*this == CornerShapeValue(CSS::Keyword::Bevel { }))
             return functor(CSS::Keyword::Bevel { });
-        if (*this == CornerShapeValue::notch())
+        if (*this == CornerShapeValue(CSS::Keyword::Notch { }))
             return functor(CSS::Keyword::Notch { });
-        if (*this == CornerShapeValue::straight())
+        if (*this == CornerShapeValue(CSS::Keyword::Straight { }))
             return functor(CSS::Keyword::Straight { });
-        if (*this == CornerShapeValue::squircle())
+        if (*this == CornerShapeValue(CSS::Keyword::Squircle { }))
             return functor(CSS::Keyword::Squircle { });
         return functor(superellipse);
     }

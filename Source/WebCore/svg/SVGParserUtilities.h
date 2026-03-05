@@ -43,8 +43,8 @@ std::optional<float> parseNumber(StringView, SuffixSkippingPolicy = SuffixSkippi
 
 std::optional<std::pair<float, float>> parseNumberOptionalNumber(StringView);
 
-std::optional<bool> parseArcFlag(StringParsingBuffer<Latin1Character>&);
-std::optional<bool> parseArcFlag(StringParsingBuffer<char16_t>&);
+std::optional<bool> NODELETE parseArcFlag(StringParsingBuffer<Latin1Character>&);
+std::optional<bool> NODELETE parseArcFlag(StringParsingBuffer<char16_t>&);
 
 std::optional<FloatPoint> parsePoint(StringView);
 std::optional<FloatRect> parseRect(StringView);

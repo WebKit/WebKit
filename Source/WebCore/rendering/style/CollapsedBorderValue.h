@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/BorderValue.h>
-#include <WebCore/LayoutUnit.h>
+#include "BorderValue.h"
+#include "LayoutUnit.h"
 
 namespace WebCore {
 
@@ -38,16 +39,16 @@ public:
     {
     }
 
-    CollapsedBorderValue(const BorderValue& border, const Color& color, BorderPrecedence precedence, const Style::ZoomFactor& zoom)
-        : m_width(border.nonZero() ? Style::evaluate<LayoutUnit>(border.width(), zoom) : 0_lu)
+    CollapsedBorderValue(const BorderValue& border, const Color& color, BorderPrecedence precedence, const Style::ZoomFactor)
+        : m_width(border.nonZero() ? Style::evaluate<LayoutUnit>(border.width, Style::ZoomNeeded { }) : 0_lu)
         , m_color(color)
-        , m_style(static_cast<unsigned>(border.style()))
+        , m_style(static_cast<unsigned>(border.style))
         , m_precedence(static_cast<unsigned>(precedence))
-        , m_transparent(border.isTransparent())
+        , m_transparent(border.color.isKnownTransparent())
     {
     }
 
-    LayoutUnit width() const { return style() > BorderStyle::Hidden ? m_width : 0_lu; }
+    LayoutUnit width() const { return isVisibleBorderStyle(style()) ? m_width : 0_lu; }
     BorderStyle style() const { return static_cast<BorderStyle>(m_style); }
     bool exists() const { return precedence() != BorderPrecedence::Off; }
     const Color& color() const { return m_color; }
@@ -64,9 +65,9 @@ public:
 private:
     LayoutUnit m_width;
     Color m_color;
-    unsigned m_style : 4; // BorderStyle
-    unsigned m_precedence : 3; // BorderPrecedence
-    unsigned m_transparent : 1;
+    PREFERRED_TYPE(BorderStyle) unsigned m_style : 4;
+    PREFERRED_TYPE(BorderPrecedence) unsigned m_precedence : 3;
+    PREFERRED_TYPE(bool) unsigned m_transparent : 1;
 };
 
 inline LayoutUnit CollapsedBorderValue::adjustedCollapsedBorderWidth(float borderWidth, float deviceScaleFactor, bool roundUp)

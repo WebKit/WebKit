@@ -47,7 +47,7 @@ public:
     void willDeleteForm(HTMLFormElement&);
     void restoreControlStateFor(ValidatedFormListedElement&);
     void restoreControlStateIn(HTMLFormElement&);
-    bool hasFormStateToRestore() const;
+    bool NODELETE hasFormStateToRestore() const;
 
     WEBCORE_EXPORT static Vector<String> referencedFilePaths(const Vector<AtomString>& stateVector);
     static HTMLFormElement* ownerForm(const FormListedElement&);

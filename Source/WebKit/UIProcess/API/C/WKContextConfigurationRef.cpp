@@ -68,7 +68,7 @@ WKStringRef WKContextConfigurationCopyInjectedBundlePath(WKContextConfigurationR
 
 void WKContextConfigurationSetInjectedBundlePath(WKContextConfigurationRef configuration, WKStringRef injectedBundlePath)
 {
-    toImpl(configuration)->setInjectedBundlePath(toProtectedImpl(injectedBundlePath)->string());
+    protect(toImpl(configuration))->setInjectedBundlePath(protect(toImpl(injectedBundlePath))->string());
 }
 
 WKArrayRef WKContextConfigurationCopyCustomClassesForParameterCoder(WKContextConfigurationRef configuration)
@@ -147,7 +147,7 @@ void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef, WKArr
     // FIXME: This is an SPI function, and is only (supposed to be) used for testing.
     // However, playwright automation tests rely on it.
     // See https://bugs.webkit.org/show_bug.cgi?id=242827 for details.
-    WebKit::setOverrideLanguages(toProtectedImpl(overrideLanguages)->toStringVector());
+    WebKit::setOverrideLanguages(protect(toImpl(overrideLanguages))->toStringVector());
 }
 
 bool WKContextConfigurationProcessSwapsOnNavigation(WKContextConfigurationRef configuration)
@@ -215,5 +215,5 @@ WKStringRef WKContextConfigurationCopyTimeZoneOverride(WKContextConfigurationRef
 
 void WKContextConfigurationSetTimeZoneOverride(WKContextConfigurationRef configuration, WKStringRef timeZoneOverride)
 {
-    toImpl(configuration)->setTimeZoneOverride(toProtectedImpl(timeZoneOverride)->string());
+    protect(toImpl(configuration))->setTimeZoneOverride(protect(toImpl(timeZoneOverride))->string());
 }

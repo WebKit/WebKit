@@ -23,8 +23,8 @@ features: [TypedArray, change-array-by-copy]
 includes: [testTypedArray.js]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var ta = new TA(1);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var ta = new TA(makeCtorArg(1));
   var result = ta.with(-0.5, 123);
   assert.sameValue(result[0], 123);
 });

@@ -26,12 +26,6 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,250) size 341x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 341x13
             chunk 1 text run 1 at (10.00,260.00) startOffset 0 endOffset 65 width 340.75: ".getBBox() for 'blueCircle': .x=-50,.y=-50,.width=100,.height=100"
-        RenderSVGText {text} at (10,270) size 255x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 255x13
-            chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 47 width 254.42: ".farthestViewportElement of blueCircle=svg-root"
-        RenderSVGText {text} at (10,290) size 273x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 273x13
-            chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 47 width 272.45: ".nearestViewportElement of blueCircle=nestedSVG"
     RenderSVGContainer {g} at (10,314) size 230x33
       RenderSVGText {text} at (10,314) size 230x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 230x33

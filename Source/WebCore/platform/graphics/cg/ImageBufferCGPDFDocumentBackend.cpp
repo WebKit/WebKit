@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferCGPDFDocumentBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferCGPDFDocumentBackend);
 
 size_t ImageBufferCGPDFDocumentBackend::calculateMemoryCost(const Parameters& parameters)
 {
@@ -65,12 +65,12 @@ std::unique_ptr<ImageBufferCGPDFDocumentBackend> ImageBufferCGPDFDocumentBackend
 
     auto context = makeUnique<GraphicsContextCG>(pdfContext.get());
 
-    return std::unique_ptr<ImageBufferCGPDFDocumentBackend>(new ImageBufferCGPDFDocumentBackend(parameters, WTFMove(data), WTFMove(context)));
+    return std::unique_ptr<ImageBufferCGPDFDocumentBackend>(new ImageBufferCGPDFDocumentBackend(parameters, WTF::move(data), WTF::move(context)));
 }
 
 ImageBufferCGPDFDocumentBackend::ImageBufferCGPDFDocumentBackend(const Parameters& parameters, RetainPtr<CFDataRef>&& data, std::unique_ptr<GraphicsContextCG>&& context)
-    : ImageBufferCGBackend(parameters, WTFMove(context))
-    , m_data(WTFMove(data))
+    : ImageBufferCGBackend(parameters, WTF::move(context))
+    , m_data(WTF::move(data))
 {
     ASSERT(m_data);
     ASSERT(m_context);

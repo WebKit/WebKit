@@ -27,6 +27,7 @@
 
 #if ENABLE(WPE_PLATFORM)
 #include "DisplayVBlankMonitor.h"
+#include <wtf/Lock.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _WPEScreenSyncObserver WPEScreenSyncObserver;
@@ -39,7 +40,7 @@ public:
     DisplayVBlankMonitorWPE(unsigned, GRefPtr<WPEScreenSyncObserver>&&);
     virtual ~DisplayVBlankMonitorWPE();
 
-    WPEScreenSyncObserver* observer() const { return m_observer.get(); }
+    WPEScreenSyncObserver* observer() const;
 
 private:
     Type type() const override { return Type::Wpe; }
@@ -49,7 +50,12 @@ private:
     bool isActive() final;
     void invalidate() final;
 
-    GRefPtr<WPEScreenSyncObserver> m_observer;
+    void addCallbackIfNeeded();
+    void removeCallbackIfNeeded();
+
+    mutable Lock m_lock;
+    GRefPtr<WPEScreenSyncObserver> m_observer WTF_GUARDED_BY_LOCK(m_lock);
+    unsigned m_callbackID { 0 };
 };
 
 } // namespace WebKit

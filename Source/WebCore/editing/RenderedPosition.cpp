@@ -208,9 +208,9 @@ Position RenderedPosition::positionAtLeftBoundaryOfBiDiRun() const
     ASSERT(atLeftBoundaryOfBidiRun());
 
     if (atLeftmostOffsetInBox())
-        return makeDeprecatedLegacyPosition(m_renderer->protectedNode().get(), m_offset);
+        return makeDeprecatedLegacyPosition(protect(m_renderer->node()).get(), m_offset);
 
-    return makeDeprecatedLegacyPosition(nextLeafOnLine()->renderer().protectedNode().get(), nextLeafOnLine()->leftmostCaretOffset());
+    return makeDeprecatedLegacyPosition(protect(nextLeafOnLine()->renderer().node()).get(), nextLeafOnLine()->leftmostCaretOffset());
 }
 
 Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
@@ -218,9 +218,9 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
     ASSERT(atRightBoundaryOfBidiRun());
 
     if (atRightmostOffsetInBox())
-        return makeDeprecatedLegacyPosition(m_renderer->protectedNode().get(), m_offset);
+        return makeDeprecatedLegacyPosition(protect(m_renderer->node()).get(), m_offset);
 
-    return makeDeprecatedLegacyPosition(previousLeafOnLine()->renderer().protectedNode().get(), previousLeafOnLine()->rightmostCaretOffset());
+    return makeDeprecatedLegacyPosition(protect(previousLeafOnLine()->renderer().node()).get(), previousLeafOnLine()->rightmostCaretOffset());
 }
 
 IntRect RenderedPosition::absoluteRect(CaretRectMode caretRectMode) const
@@ -246,7 +246,7 @@ std::optional<BoundaryPoint> RenderedPosition::boundaryPoint() const
 
 bool renderObjectContainsPosition(const RenderObject* target, const Position& position)
 {
-    for (auto* renderer = rendererFromPosition(position); renderer && renderer->node(); renderer = renderer->parent()) {
+    for (CheckedPtr renderer = rendererFromPosition(position); renderer && renderer->node(); renderer = renderer->parent()) {
         if (renderer == target)
             return true;
     }

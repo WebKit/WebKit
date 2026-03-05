@@ -9,6 +9,8 @@
 #ifndef COMPILER_TRANSLATOR_INTERMNODEUTIL_H_
 #define COMPILER_TRANSLATOR_INTERMNODEUTIL_H_
 
+#include <optional>
+
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/Name.h"
 #include "compiler/translator/tree_util/FindFunction.h"
@@ -34,6 +36,7 @@ TIntermConstantUnion *CreateUVecNode(const unsigned int values[],
 TIntermConstantUnion *CreateIndexNode(int index);
 TIntermConstantUnion *CreateUIntNode(unsigned int value);
 TIntermConstantUnion *CreateBoolNode(bool value);
+TIntermConstantUnion *CreateYuvCscNode(TYuvCscStandardEXT value);
 
 // Create temporary variable of known type |type|.
 TVariable *CreateTempVariable(TSymbolTable *symbolTable, const TType *type);
@@ -78,6 +81,10 @@ const TVariable *DeclareInterfaceBlockVariable(TIntermBlock *root,
                                                const TMemoryQualifier &memoryQualifier,
                                                uint32_t arraySize,
                                                const ImmutableString &blockVariableName);
+
+// `expr` must be an lvalue. This will return the root variable, e.g. the root variable of
+// `a[0].b[0].xy` is `a`,
+const TVariable *FindRootVariable(TIntermNode *expr);
 
 // Creates a variable for a struct type.
 const TVariable &CreateStructTypeVariable(TSymbolTable &symbolTable, const TStructure &structure);
@@ -161,6 +168,9 @@ TIntermSwizzle *CreateSwizzle(TIntermTyped *reference, ArgsT... args)
 // i.e. a block can only end in a branch if its last statement is a branch or is a block ending in
 // branch.
 bool EndsInBranch(TIntermBlock *block);
+
+// Cast a scalar to the basic type of type. No-ops if scalar is already the right type.
+TIntermNode *CastScalar(const TType &type, TIntermTyped *scalar);
 
 }  // namespace sh
 

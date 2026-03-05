@@ -691,6 +691,123 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "WI.Color.prototype.relativeLuminance",
+        description: "Test relative luminance calculation per WCAG 2.0.",
+        test() {
+            let black = WI.Color.fromString("black");
+            InspectorTest.expectEqual(black.relativeLuminance(), 0, "Black should have luminance of 0.");
+
+            let white = WI.Color.fromString("white");
+            InspectorTest.expectThat(Math.abs(white.relativeLuminance() - 1) < 0.001, "White should have luminance of ~1.");
+
+            let red = WI.Color.fromString("red");
+            InspectorTest.expectThat(Math.abs(red.relativeLuminance() - 0.2126) < 0.001, "Red should have luminance of ~0.2126.");
+
+            let midGray = WI.Color.fromString("rgb(128, 128, 128)");
+            let grayLuminance = midGray.relativeLuminance();
+            InspectorTest.expectThat(grayLuminance > 0.2 && grayLuminance < 0.25, "Mid-gray should have luminance between 0.2 and 0.25.");
+
+            let steelBlue = WI.Color.fromString("rgb(70, 130, 180)");
+            let steelBlueLuminance = steelBlue.relativeLuminance();
+            InspectorTest.expectThat(steelBlueLuminance > 0.15 && steelBlueLuminance < 0.25, "Steel blue should have luminance between 0.15 and 0.25.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.prototype.contrastRatio",
+        description: "Test contrast ratio calculation.",
+        test() {
+            let black = WI.Color.fromString("black");
+            let white = WI.Color.fromString("white");
+            InspectorTest.expectThat(Math.abs(black.contrastRatio(white) - 21) < 0.01, "Black vs white should have contrast ratio of ~21.");
+            InspectorTest.expectThat(Math.abs(white.contrastRatio(black) - 21) < 0.01, "White vs black should also be ~21 (order independent).");
+            InspectorTest.expectEqual(white.contrastRatio(white), 1, "Same color should have contrast ratio of 1.");
+
+            let gray = WI.Color.fromString("rgb(128, 128, 128)");
+            let ratio = gray.contrastRatio(white);
+            InspectorTest.expectThat(ratio > 3 && ratio < 5, "Gray vs white should have moderate contrast ratio.");
+
+            let darkBlue = WI.Color.fromString("rgb(0, 0, 128)");
+            let yellow = WI.Color.fromString("rgb(255, 255, 0)");
+            let darkBlueYellowRatio = darkBlue.contrastRatio(yellow);
+            InspectorTest.expectThat(darkBlueYellowRatio > 10, "Dark blue vs yellow should have high contrast ratio.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.contrastComplianceForRatio",
+        description: "Test WCAG compliance classification from contrast ratios.",
+        test() {
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(21), WI.Color.ContrastCompliance.AAA, "Ratio 21 should be AAA for normal text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(7), WI.Color.ContrastCompliance.AAA, "Ratio 7 should be AAA for normal text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(5), WI.Color.ContrastCompliance.AA, "Ratio 5 should be AA for normal text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(4.5), WI.Color.ContrastCompliance.AA, "Ratio 4.5 should be AA for normal text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(3), WI.Color.ContrastCompliance.Fail, "Ratio 3 should be Fail for normal text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(1), WI.Color.ContrastCompliance.Fail, "Ratio 1 should be Fail for normal text.");
+
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(7, {isLargeText: true}), WI.Color.ContrastCompliance.AAA, "Ratio 7 should be AAA for large text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(4.5, {isLargeText: true}), WI.Color.ContrastCompliance.AAA, "Ratio 4.5 should be AAA for large text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(4, {isLargeText: true}), WI.Color.ContrastCompliance.AA, "Ratio 4 should be AA for large text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(3, {isLargeText: true}), WI.Color.ContrastCompliance.AA, "Ratio 3 should be AA for large text.");
+            InspectorTest.expectEqual(WI.Color.contrastComplianceForRatio(2, {isLargeText: true}), WI.Color.ContrastCompliance.Fail, "Ratio 2 should be Fail for large text.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.prototype.contrastCompliance",
+        description: "Test the instance method wrapper for compliance.",
+        test() {
+            let black = WI.Color.fromString("black");
+            let white = WI.Color.fromString("white");
+            InspectorTest.expectEqual(black.contrastCompliance(white), WI.Color.ContrastCompliance.AAA, "Black vs white should be AAA.");
+            InspectorTest.expectEqual(white.contrastCompliance(white), WI.Color.ContrastCompliance.Fail, "White vs white should be Fail.");
+
+            let green = WI.Color.fromString("rgb(0, 130, 0)");
+            InspectorTest.expectEqual(green.contrastCompliance(white), WI.Color.ContrastCompliance.AA, "rgb(0,130,0) vs white should be AA.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.prototype.blendOverBackground",
+        description: "Test alpha blending over a background color.",
+        test() {
+            let white = WI.Color.fromString("white");
+            let red = WI.Color.fromString("red");
+            let blended = red.blendOverBackground(white);
+            InspectorTest.expectShallowEqual(blended.normalizedRGB.map((v) => v.toFixed(2)), ["1.00", "0.00", "0.00"], "Opaque red over white should remain red.");
+            InspectorTest.expectEqual(blended.alpha, 1, "Blended opaque color should have alpha of 1.");
+
+            let halfBlack = WI.Color.fromString("rgba(0, 0, 0, 0.5)");
+            blended = halfBlack.blendOverBackground(white);
+            InspectorTest.expectShallowEqual(blended.normalizedRGB.map((v) => v.toFixed(1)), ["0.5", "0.5", "0.5"], "50% black over white should be mid-gray.");
+
+            let transparent = WI.Color.fromString("rgba(255, 0, 0, 0)");
+            blended = transparent.blendOverBackground(white);
+            InspectorTest.expectShallowEqual(blended.normalizedRGB.map((v) => v.toFixed(1)), ["1.0", "1.0", "1.0"], "Transparent red over white should be white.");
+
+            let semiBlue = WI.Color.fromString("rgba(100, 150, 200, 0.7)");
+            let darkTeal = WI.Color.fromString("rgb(50, 100, 80)");
+            blended = semiBlue.blendOverBackground(darkTeal);
+            InspectorTest.expectShallowEqual(blended.normalizedRGB.map((v) => v.toFixed(2)), ["0.33", "0.53", "0.64"], "70% rgb(100,150,200) over rgb(50,100,80) should blend correctly.");
+
+            let semiOrange = WI.Color.fromString("rgba(255, 165, 0, 0.4)");
+            let navy = WI.Color.fromString("rgb(0, 0, 128)");
+            blended = semiOrange.blendOverBackground(navy);
+            InspectorTest.expectShallowEqual(blended.normalizedRGB.map((v) => v.toFixed(2)), ["0.40", "0.26", "0.30"], "40% orange over navy should blend correctly.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

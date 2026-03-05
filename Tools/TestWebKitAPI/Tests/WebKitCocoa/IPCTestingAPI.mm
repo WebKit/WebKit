@@ -32,6 +32,7 @@
 #import "Utilities.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
@@ -660,14 +661,16 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     NSDictionary *expectedDictionary = @{
         @"isOptionSet" : @1,
         @"size" : @1,
-        @"validValues" : @[@1, @2]
+        @"validValues" : @[@1, @2],
+        @"valueMap" : @[@{@"value": @1, @"name": @"ComputeSizes"}, @{@"value": @2, @"name": @"DoNotCreateProcesses"}]
     };
     NSDictionary *enumInfo = [webView objectByEvaluatingJavaScript:@"IPC.serializedEnumInfo"];
     EXPECT_TRUE([enumInfo[@"WebKit::WebsiteDataFetchOption"] isEqualToDictionary:expectedDictionary]);
     NSDictionary *expectedMouseEventButtonDictionary = @{
         @"isOptionSet" : @NO,
         @"size" : @1,
-        @"validValues" : @[@0, @1, @2, @254]
+        @"validValues" : @[@0, @1, @2, @3, @4, @254],
+        @"valueMap" : @[@{@"value": @0, @"name": @"Left"}, @{@"value": @1, @"name": @"Middle"}, @{@"value": @2, @"name": @"Right"}, @{@"value": @3, @"name": @"Back"}, @{@"value": @4, @"name": @"Forward"}, @{@"value": @254, @"name": @"None"}]
     };
     EXPECT_TRUE([enumInfo[@"WebKit::WebMouseEventButton"] isEqualToDictionary:expectedMouseEventButtonDictionary]);
 

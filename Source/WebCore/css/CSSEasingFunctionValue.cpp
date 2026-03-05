@@ -32,12 +32,12 @@ namespace WebCore {
 
 Ref<CSSEasingFunctionValue> CSSEasingFunctionValue::create(CSS::EasingFunction easingFunction)
 {
-    return adoptRef(*new CSSEasingFunctionValue(WTFMove(easingFunction)));
+    return adoptRef(*new CSSEasingFunctionValue(WTF::move(easingFunction)));
 }
 
 CSSEasingFunctionValue::CSSEasingFunctionValue(CSS::EasingFunction easingFunction)
     : CSSValue(ClassType::EasingFunction)
-    , m_easingFunction(WTFMove(easingFunction))
+    , m_easingFunction(WTF::move(easingFunction))
 {
 }
 

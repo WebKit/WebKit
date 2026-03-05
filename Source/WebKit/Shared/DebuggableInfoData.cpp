@@ -33,7 +33,7 @@ namespace WebKit {
 DebuggableInfoData DebuggableInfoData::empty()
 {
     return {
-        Inspector::DebuggableType::Page,
+        Inspector::DebuggableType::WebPage,
         "Unknown"_s,
         "Unknown"_s,
         "Unknown"_s,

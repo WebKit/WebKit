@@ -65,7 +65,7 @@ public:
 
     bool hasValues(size_t startFrame, double sampleRate) const;
 
-    WEBCORE_EXPORT static float exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
+    WEBCORE_EXPORT static float NODELETE exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
 private:
     class ParamEvent {
         WTF_MAKE_TZONE_ALLOCATED(ParamEvent);
@@ -99,10 +99,10 @@ private:
             , m_time(time)
             , m_timeConstant(timeConstant)
             , m_duration(duration)
-            , m_curve(WTFMove(curve))
+            , m_curve(WTF::move(curve))
             , m_curvePointsPerSecond(curvePointsPerSecond)
             , m_curveEndValue(curveEndValue)
-            , m_savedEvent(WTFMove(savedEvent))
+            , m_savedEvent(WTF::move(savedEvent))
         {
         }
 
@@ -111,7 +111,7 @@ private:
         Seconds time() const { return m_time; }
         float timeConstant() const { return m_timeConstant; }
         Seconds duration() const { return m_duration; }
-        const Vector<float>& curve() const { return m_curve; }
+        const Vector<float>& curve() const LIFETIME_BOUND { return m_curve; }
         SavedEvent* savedEvent() { return m_savedEvent ? &m_savedEvent.value() : nullptr; }
 
         void setCancelledValue(float cancelledValue)

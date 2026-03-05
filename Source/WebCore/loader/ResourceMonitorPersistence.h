@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/SQLiteDatabase.h>
+#include "SQLiteDatabase.h"
 #include <wtf/ContinuousApproximateTime.h>
 #include <wtf/text/WTFString.h>
 

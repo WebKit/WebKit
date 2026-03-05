@@ -113,7 +113,7 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
     m_parser->resumeParsingAfterYield();
 }
 
-static bool parsingProgressedSinceLastYield(PumpSession& session)
+static bool NODELETE parsingProgressedSinceLastYield(PumpSession& session)
 {
     // Only yield if there has been progress since last yield.
     if (session.processedTokens > session.processedTokensOnLastYieldBeforeScript) {

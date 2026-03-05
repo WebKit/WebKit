@@ -5,12 +5,6 @@ PASS Property border-spacing value 'inherit' no zoom
 PASS Property border-spacing value '1px' zoom: 2
 PASS Property border-spacing value '1px 2px' zoom: 2
 PASS Property border-spacing value 'inherit' zoom: 2
-PASS Property border-width value '5px 10px' no zoom
-PASS Property border-width value '2px 4px 6px 8px' no zoom
-PASS Property border-width value 'inherit' no zoom
-PASS Property border-width value '5px 10px' zoom: 2
-PASS Property border-width value '2px 4px 6px 8px' zoom: 2
-PASS Property border-width value 'inherit' zoom: 2
 PASS Property box-shadow value 'rgb(0, 0, 0) 10px 10px 10px 0px' no zoom
 PASS Property box-shadow value 'inherit' no zoom
 PASS Property box-shadow value 'rgb(0, 0, 0) 10px 10px 10px 0px' zoom: 2
@@ -55,6 +49,14 @@ PASS Property padding value '20px 40px 60px 80px' no zoom
 PASS Property padding value 'inherit' no zoom
 PASS Property padding value '20px 40px 60px 80px' zoom: 2
 PASS Property padding value 'inherit' zoom: 2
+PASS Property scroll-padding value '20px 40px 60px 80px' no zoom
+PASS Property scroll-padding value 'inherit' no zoom
+PASS Property scroll-padding value '20px 40px 60px 80px' zoom: 2
+PASS Property scroll-padding value 'inherit' zoom: 2
+PASS Property scroll-margin value '20px 40px 60px 80px' no zoom
+PASS Property scroll-margin value 'inherit' no zoom
+PASS Property scroll-margin value '20px 40px 60px 80px' zoom: 2
+PASS Property scroll-margin value 'inherit' zoom: 2
 PASS Property text-decoration-thickness value '4px' no zoom
 PASS Property text-decoration-thickness value 'inherit' no zoom
 PASS Property text-decoration-thickness value '4px' zoom: 2
@@ -71,6 +73,10 @@ PASS Property -webkit-text-stroke-width value '4px' no zoom
 PASS Property -webkit-text-stroke-width value 'inherit' no zoom
 PASS Property -webkit-text-stroke-width value '4px' zoom: 2
 PASS Property -webkit-text-stroke-width value 'inherit' zoom: 2
+PASS Property stroke-width value '4px' no zoom
+PASS Property stroke-width value 'inherit' no zoom
+PASS Property stroke-width value '4px' zoom: 2
+PASS Property stroke-width value 'inherit' zoom: 2
 PASS Property width value '19px' no zoom
 PASS Property width value 'inherit' no zoom
 PASS Property width value '19px' zoom: 2

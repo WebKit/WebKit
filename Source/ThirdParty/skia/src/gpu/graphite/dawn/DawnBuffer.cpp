@@ -23,7 +23,7 @@ bool is_map_succeeded(WGPUBufferMapAsyncStatus status) {
 [[maybe_unused]]
 void log_map_error(WGPUBufferMapAsyncStatus status, const char*) {
     const char* statusStr;
-    LogPriority priority = LogPriority::kError;
+    SkLogPriority priority = SkLogPriority::kError;
     switch (status) {
         case WGPUBufferMapAsyncStatus_ValidationError:
             statusStr = "ValidationError";
@@ -36,11 +36,11 @@ void log_map_error(WGPUBufferMapAsyncStatus status, const char*) {
             break;
         case WGPUBufferMapAsyncStatus_DestroyedBeforeCallback:
             statusStr = "DestroyedBeforeCallback";
-            priority = LogPriority::kDebug;
+            priority = SkLogPriority::kDebug;
             break;
         case WGPUBufferMapAsyncStatus_UnmappedBeforeCallback:
             statusStr = "UnmappedBeforeCallback";
-            priority = LogPriority::kDebug;
+            priority = SkLogPriority::kDebug;
             break;
         case WGPUBufferMapAsyncStatus_MappingAlreadyPending:
             statusStr = "MappingAlreadyPending";
@@ -80,7 +80,7 @@ void log_map_error(wgpu::MapAsyncStatus status, wgpu::StringView message) {
             SkDEBUGFAIL("This status is not an error");
             return;
     }
-    SKGPU_LOG(LogPriority::kError,
+    SKGPU_LOG(SkLogPriority::kError,
               "Buffer async map failed with status %s, message '%.*s'.",
               statusStr,
               static_cast<int>(message.length),
@@ -197,7 +197,7 @@ DawnBuffer::DawnBuffer(const DawnSharedContext* sharedContext,
 }
 
 #if defined(__EMSCRIPTEN__)
-bool DawnBuffer::prepareForReturnToCache(const std::function<void()>& takeRef) {
+bool DawnBuffer::prepareForReturnToCache(Resource::TakeRefFunc takeRef, void* takeRefCtx) {
     // This function is only useful for Emscripten where we have to pre-map the buffer
     // once it is returned to the cache.
     SkASSERT(this->sharedContext()->caps()->bufferMapsAreAsync());
@@ -216,7 +216,7 @@ bool DawnBuffer::prepareForReturnToCache(const std::function<void()>& takeRef) {
     if (this->isMapped()) {
         return false;
     }
-    takeRef();
+    takeRef(takeRefCtx);
     this->asyncMap([](void* ctx, skgpu::CallbackResult result) {
                        sk_sp<DawnBuffer> buffer(static_cast<DawnBuffer*>(ctx));
                        if (result != skgpu::CallbackResult::kSuccess) {
@@ -237,7 +237,7 @@ void DawnBuffer::onAsyncMap(GpuFinishedProc proc, GpuFinishedContext ctx) {
             proc(ctx, CallbackResult::kSuccess);
             return;
         }
-        fAsyncMapCallbacks.push_back(RefCntedCallback::Make(proc, ctx));
+        fAsyncMapCallbacks.emplace_back(proc, ctx);
     }
     if (this->isUnmappable()) {
         return;
@@ -337,7 +337,7 @@ void DawnBuffer::mapCallback(StatusT status, MessageT message) {
     } else {
         log_map_error(status, message);
         for (auto& cb : this->fAsyncMapCallbacks) {
-            cb->setFailureResult();
+            cb.setFailureResult();
         }
     }
     this->fAsyncMapCallbacks.clear();

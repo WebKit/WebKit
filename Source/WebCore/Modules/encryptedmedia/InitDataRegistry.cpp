@@ -28,10 +28,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMKeyID.h"
 #include "ISOProtectionSystemSpecificHeaderBox.h"
-#include <JavaScriptCore/DataView.h>
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
+#include <JavaScriptCore/DataView.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
@@ -63,7 +64,7 @@ namespace {
     const uint32_t kKeyIdsMaxKeyIdSizeInBytes = 512;
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffer& buffer)
+static std::optional<CDMKeyIDs> extractKeyIDsKeyids(const SharedBuffer& buffer)
 {
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
@@ -83,7 +84,7 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const Shared
     if (!kidsArray)
         return std::nullopt;
 
-    Vector<Ref<SharedBuffer>> keyIDs;
+    CDMKeyIDs keyIDs;
     for (auto& value : *kidsArray) {
         auto keyID = value->asString();
         if (!keyID)
@@ -96,7 +97,7 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const Shared
         if (keyIDData->size() < kKeyIdsMinKeyIdSizeInBytes || keyIDData->size() > kKeyIdsMaxKeyIdSizeInBytes)
             return std::nullopt;
 
-        keyIDs.append(SharedBuffer::create(WTFMove(*keyIDData)));
+        keyIDs.append(SharedBuffer::create(WTF::move(*keyIDData)));
     }
 
     return keyIDs;
@@ -114,7 +115,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer.value())
         kidsArray->pushString(base64URLEncodeToString(buffer->span()));
-    object->setArray("kids"_s, WTFMove(kidsArray));
+    object->setArray("kids"_s, WTF::move(kidsArray));
 
     return SharedBuffer::create(object->toJSONString().utf8().span());
 }
@@ -143,7 +144,7 @@ std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> Ini
             auto fpsPssh = makeUnique<ISOFairPlayStreamingPsshBox>();
             if (!fpsPssh->read(view, offset))
                 return std::nullopt;
-            psshBoxes.append(WTFMove(fpsPssh));
+            psshBoxes.append(WTF::move(fpsPssh));
             continue;
         }
 #else
@@ -153,15 +154,15 @@ std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> Ini
         if (!psshBox->read(view, offset))
             return std::nullopt;
 
-        psshBoxes.append(WTFMove(psshBox));
+        psshBoxes.append(WTF::move(psshBox));
     }
 
     return psshBoxes;
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer& buffer)
+std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer& buffer)
 {
-    Vector<Ref<SharedBuffer>> keyIDs;
+    CDMKeyIDs keyIDs;
 
     auto psshBoxes = extractPsshBoxesFromCenc(buffer);
     if (!psshBoxes)
@@ -203,7 +204,9 @@ bool isPlayReadySanitizedInitializationData(const SharedBuffer& buffer)
         return false;
 
     auto xmlPayload = buffer.span().subspan(startTag);
-    xmlDocPtr protectionDataXML = xmlReadMemory(reinterpret_cast<const char*>(xmlPayload.data()), xmlPayload.size_bytes(), "protectionData", "utf-16", 0);
+    if (xmlPayload.size_bytes() > std::numeric_limits<int>::max())
+        return false;
+    xmlDocPtr protectionDataXML = xmlReadMemory(reinterpret_cast<const char*>(xmlPayload.data()), static_cast<int>(xmlPayload.size_bytes()), "protectionData", "utf-16", 0);
     if (!protectionDataXML)
         return false;
 
@@ -275,9 +278,9 @@ static RefPtr<SharedBuffer> sanitizeWebM(const SharedBuffer& buffer)
     return buffer.makeContiguous();
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer& buffer)
+static std::optional<CDMKeyIDs> extractKeyIDsWebM(const SharedBuffer& buffer)
 {
-    Vector<Ref<SharedBuffer>> keyIDs;
+    CDMKeyIDs keyIDs;
     RefPtr<SharedBuffer> sanitizedBuffer = sanitizeWebM(buffer);
     if (!sanitizedBuffer)
         return std::nullopt;
@@ -311,7 +314,7 @@ RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const String& initDataTy
     return iter->value.sanitizeInitData(buffer);
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const String& initDataType, const SharedBuffer& buffer)
+std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDs(const String& initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)
@@ -322,7 +325,7 @@ std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const S
 void InitDataRegistry::registerInitDataType(const String& initDataType, InitDataTypeCallbacks&& callbacks)
 {
     ASSERT(!m_types.contains(initDataType));
-    m_types.set(initDataType, WTFMove(callbacks));
+    m_types.set(initDataType, WTF::move(callbacks));
 }
 
 const String& InitDataRegistry::cencName()

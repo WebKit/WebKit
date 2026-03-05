@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <utility>
 #include <wtf/IterationStatus.h>
 
@@ -47,6 +48,8 @@ enum class StopTheWorldEvent : uint8_t {
     VMCreated,
     VMActivated,
     VMStopped,
+    BreakpointHit,
+    StepIntoSiteReached,
 };
 
 // The VMManager Stop the World (STW) mechanism will call handlers of this shape once the world
@@ -73,5 +76,6 @@ enum class StopTheWorldEvent : uint8_t {
 // RunAll or RunOne mode).
 
 using StopTheWorldCallback = StopTheWorldStatus (*)(VM&, StopTheWorldEvent);
+using PostResumeCallback = void (*)();
 
 } // namespace JSC

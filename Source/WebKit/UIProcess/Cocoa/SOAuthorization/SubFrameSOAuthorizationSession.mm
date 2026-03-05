@@ -50,16 +50,17 @@ namespace {
 
 constexpr auto soAuthorizationPostDidStartMessageToParent = "<script>parent.postMessage('SOAuthorizationDidStart', '*');</script>"_s;
 constexpr auto soAuthorizationPostDidCancelMessageToParent = "<script>parent.postMessage('SOAuthorizationDidCancel', '*');</script>"_s;
+constexpr auto soAuthorizationPostDidUserCancelMessageToParent = "<script>parent.postMessage('SOAuthorizationDidUserCancel', '*');</script>"_s;
 
 } // namespace
 
 Ref<SOAuthorizationSession> SubFrameSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
-    return adoptRef(*new SubFrameSOAuthorizationSession(delegate, WTFMove(navigationAction), page, WTFMove(completionHandler), frameID));
+    return adoptRef(*new SubFrameSOAuthorizationSession(delegate, WTF::move(navigationAction), page, WTF::move(completionHandler), frameID));
 }
 
 SubFrameSOAuthorizationSession::SubFrameSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, std::optional<FrameIdentifier> frameID)
-    : NavigationSOAuthorizationSession(delegate, WTFMove(navigationAction), page, InitiatingAction::SubFrame, WTFMove(completionHandler))
+    : NavigationSOAuthorizationSession(delegate, WTF::move(navigationAction), page, InitiatingAction::SubFrame, WTF::move(completionHandler))
     , m_frameID(frameID)
 {
     if (RefPtr frame = WebFrameProxy::webFrame(m_frameID))
@@ -77,6 +78,14 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
     AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal: navigationAction=%p", navigationAction());
     ASSERT(navigationAction());
     appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(soAuthorizationPostDidCancelMessageToParent.span8()));
+    appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
+}
+
+void SubFrameSOAuthorizationSession::userCancel()
+{
+    AUTHORIZATIONSESSION_RELEASE_LOG("userCancel: navigationAction=%p", navigationAction());
+    ASSERT(navigationAction());
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(soAuthorizationPostDidUserCancelMessageToParent.span8()));
     appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
 }
 
@@ -118,7 +127,7 @@ void SubFrameSOAuthorizationSession::didFinishLoad(IsMainFrame, const URL&)
 
 void SubFrameSOAuthorizationSession::appendRequestToLoad(URL&& url, Supplement&& supplement)
 {
-    m_requestsToLoad.append({ WTFMove(url), WTFMove(supplement) });
+    m_requestsToLoad.append({ WTF::move(url), WTF::move(supplement) });
     if (m_requestsToLoad.size() == 1)
         loadRequestToFrame();
 }
@@ -174,7 +183,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
 
 bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse& response)
 {
-    if (RefPtr page = this->page(); page && page->protectedPreferences()->ignoreIframeEmbeddingProtectionsEnabled())
+    if (RefPtr page = this->page(); page && protect(page->preferences())->ignoreIframeEmbeddingProtectionsEnabled())
         return false;
 
     Vector<Ref<SecurityOrigin>> frameAncestorOrigins;
@@ -195,7 +204,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXF
 
     if (!contentSecurityPolicy.overridesXFrameOptions()) {
         String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
-        if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTFMove(frameAncestorOrigins), xFrameOptions, response.url())) {
+        if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTF::move(frameAncestorOrigins), xFrameOptions, response.url())) {
             String errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, xFrameOptions, "'."_s);
             AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", errorMessage.utf8().data());
 

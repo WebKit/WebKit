@@ -29,8 +29,7 @@
 #include "XPathExpressionNode.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 class Step;
 
@@ -40,8 +39,8 @@ public:
     Filter(std::unique_ptr<Expression>, Vector<std::unique_ptr<Expression>> predicates);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::NodeSet; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::NodeSet; }
 
     std::unique_ptr<Expression> m_expression;
     Vector<std::unique_ptr<Expression>> m_predicates;
@@ -60,8 +59,8 @@ public:
     void prependStep(std::unique_ptr<Step>);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::NodeSet; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::NodeSet; }
 
     Vector<std::unique_ptr<Step>> m_steps;
     bool m_isAbsolute;
@@ -73,12 +72,11 @@ public:
     Path(std::unique_ptr<Expression> filter, std::unique_ptr<LocationPath>);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::NodeSet; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::NodeSet; }
 
     std::unique_ptr<Expression> m_filter;
     std::unique_ptr<LocationPath> m_path;
 };
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

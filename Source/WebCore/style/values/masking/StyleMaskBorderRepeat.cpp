@@ -38,21 +38,13 @@ auto CSSValueConversion<MaskBorderRepeat>::operator()(BuilderState& state, const
 {
     if (RefPtr pairValue = dynamicDowncast<CSSValuePair>(value)) {
         return MaskBorderRepeat {
-            .values {
-                toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->first()),
-                toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->second()),
-            }
+            toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->first()),
+            toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->second()),
         };
     }
 
     // Values coming from CSS Typed OM may not have been converted to a CSSValuePair.
-    auto repeatValue = toStyleFromCSSValue<NinePieceImageRule>(state, value);
-    return MaskBorderRepeat {
-        .values {
-            repeatValue,
-            repeatValue,
-        }
-    };
+    return toStyleFromCSSValue<NinePieceImageRule>(state, value);
 }
 
 } // namespace Style

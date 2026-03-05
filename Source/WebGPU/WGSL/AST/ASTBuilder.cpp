@@ -32,7 +32,7 @@ namespace WGSL::AST {
 
 Builder::Builder(Builder&& other)
 {
-    m_nodes = WTFMove(other.m_nodes);
+    m_nodes = WTF::move(other.m_nodes);
 }
 
 auto Builder::saveCurrentState() -> State

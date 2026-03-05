@@ -1,0 +1,14 @@
+
+
+
+
+
+
+PASS .test 1
+PASS .test 2
+FAIL .test 3 assert_equals:
+<input type="password" value="X" class="test" data-expected-scroll-height="120">
+scrollHeight expected 120 but got 143
+PASS .test 4
+PASS .test 5
+

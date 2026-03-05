@@ -67,8 +67,12 @@ def _rebaseline_test(test_file, baseline_target, baseline_move_to, test_config, 
     filesystem = test_config.filesystem
     scm = test_config.scm
     layout_tests_directory = test_config.layout_tests_directory
-    target_expectations_directory = filesystem.join(
-        layout_tests_directory, 'platform', baseline_target, test_directory)
+    target_expectations_directory = ''
+    if baseline_target == 'base':
+        target_expectations_directory = filesystem.join(layout_tests_directory, test_directory)
+    else:
+        target_expectations_directory = filesystem.join(
+            layout_tests_directory, 'platform', baseline_target, test_directory)
     test_results_directory = test_config.filesystem.join(
         test_config.results_directory, test_directory)
 

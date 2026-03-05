@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SWServerToContextConnection);
 
 SWServerToContextConnection::SWServerToContextConnection(SWServer& server, Site&& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
     : m_server(server)
-    , m_site(WTFMove(site))
+    , m_site(WTF::move(site))
     , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)
 {
 }
@@ -48,11 +48,6 @@ SWServerToContextConnection::~SWServerToContextConnection()
 }
 
 SWServer* SWServerToContextConnection::server() const
-{
-    return m_server.get();
-}
-
-RefPtr<SWServer> SWServerToContextConnection::protectedServer() const
 {
     return m_server.get();
 }
@@ -101,13 +96,13 @@ void SWServerToContextConnection::matchAll(ServiceWorkerIdentifier serviceWorker
         return;
     }
 
-    worker->matchAll(options, WTFMove(callback));
+    worker->matchAll(options, WTF::move(callback));
 }
 
 void SWServerToContextConnection::findClientByVisibleIdentifier(ServiceWorkerIdentifier serviceWorkerIdentifier, const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
 {
     if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->findClientByVisibleIdentifier(clientIdentifier, WTFMove(callback));
+        worker->findClientByVisibleIdentifier(clientIdentifier, WTF::move(callback));
     else
         callback({ });
 }
@@ -122,7 +117,7 @@ void SWServerToContextConnection::claim(ServiceWorkerIdentifier serviceWorkerIde
 void SWServerToContextConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, URL&& scriptURL, ServiceWorkerContextData::ImportedScript&& script)
 {
     if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->setScriptResource(WTFMove(scriptURL), WTFMove(script));
+        worker->setScriptResource(WTF::move(scriptURL), WTF::move(script));
 }
 
 void SWServerToContextConnection::didFailHeartBeatCheck(ServiceWorkerIdentifier identifier)
@@ -142,7 +137,7 @@ bool SWServerToContextConnection::terminateWhenPossible()
     m_shouldTerminateWhenPossible = true;
 
     bool hasServiceWorkerWithPendingEvents = false;
-    protectedServer()->forEachServiceWorker([&](auto& worker) {
+    protect(server())->forEachServiceWorker([&](auto& worker) {
         if (worker.isRunning() && worker.topRegistrableDomain() == m_site.domain() && worker.hasPendingEvents()) {
             hasServiceWorkerWithPendingEvents = true;
             return false;

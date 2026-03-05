@@ -44,12 +44,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerNavigationPreloader);
 
 Ref<ServiceWorkerNavigationPreloader> ServiceWorkerNavigationPreloader::create(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetrics)
 {
-    return adoptRef(*new ServiceWorkerNavigationPreloader(session, WTFMove(parameters), state, shouldCaptureExtraNetworkLoadMetrics));
+    return adoptRef(*new ServiceWorkerNavigationPreloader(session, WTF::move(parameters), state, shouldCaptureExtraNetworkLoadMetrics));
 }
 
 ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetric)
     : m_session(session)
-    , m_parameters(WTFMove(parameters))
+    , m_parameters(WTF::move(parameters))
     , m_state(state)
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics())
     , m_startTime(MonotonicTime::now())
@@ -85,7 +85,7 @@ void ServiceWorkerNavigationPreloader::start()
 
             protectedThis->m_parameters.request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
             if (entry) {
-                protectedThis->m_cacheEntry = WTFMove(entry);
+                protectedThis->m_cacheEntry = WTF::move(entry);
 
                 auto eTag = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
                 if (!eTag.isEmpty())
@@ -139,7 +139,7 @@ void ServiceWorkerNavigationPreloader::loadWithCacheEntry(NetworkCache::Entry& e
             additionalMetrics->requestHeaderBytesSent = 0;
             additionalMetrics->requestBodyBytesSent = 0;
             additionalMetrics->responseHeaderBytesReceived = 0;
-            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTF::move(additionalMetrics);
         }
         weakThis->didFinishLoading(networkLoadMetrics);
     });
@@ -154,14 +154,14 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     if (m_state.enabled)
         m_parameters.request.addHTTPHeaderField(HTTPHeaderName::ServiceWorkerNavigationPreload, m_state.headerValue);
 
-    Ref networkLoad = NetworkLoad::create(*this, WTFMove(m_parameters), CheckedRef { *m_session });
+    Ref networkLoad = NetworkLoad::create(*this, WTF::move(m_parameters), CheckedRef { *m_session });
     m_networkLoad = networkLoad.copyRef();
     networkLoad->start();
 }
 
 void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](auto) mutable {
+    didReceiveResponse(WTF::move(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](auto) mutable {
         completionHandler({ });
         if (weakThis)
             weakThis->didComplete();
@@ -178,15 +178,15 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
         response.setTainting(ResourceResponse::Tainting::Opaqueredirect);
 
     if (response.httpStatusCode() == httpStatus304NotModified && m_cacheEntry) {
-        auto cacheEntry = WTFMove(m_cacheEntry);
+        auto cacheEntry = WTF::move(m_cacheEntry);
         loadWithCacheEntry(*cacheEntry);
         completionHandler(PolicyAction::Ignore);
         return;
     }
 
-    m_response = WTFMove(response);
+    m_response = WTF::move(response);
     m_response.setRedirected(false);
-    m_responseCompletionHandler = WTFMove(completionHandler);
+    m_responseCompletionHandler = WTF::move(completionHandler);
 
     if (auto callback = std::exchange(m_responseCallback, { }))
         callback();
@@ -242,7 +242,7 @@ void ServiceWorkerNavigationPreloader::waitForResponse(ResponseCallback&& callba
         return;
     }
 
-    m_responseCallback = WTFMove(callback);
+    m_responseCallback = WTF::move(callback);
 }
 
 void ServiceWorkerNavigationPreloader::waitForBody(BodyCallback&& callback)
@@ -253,7 +253,7 @@ void ServiceWorkerNavigationPreloader::waitForBody(BodyCallback&& callback)
     }
 
     ASSERT(!m_response.isNull());
-    m_bodyCallback = WTFMove(callback);
+    m_bodyCallback = WTF::move(callback);
     m_responseCompletionHandler(PolicyAction::Use);
 }
 
@@ -263,7 +263,7 @@ bool ServiceWorkerNavigationPreloader::convertToDownload(DownloadManager& manage
         return false;
 
     auto networkLoad = std::exchange(m_networkLoad, nullptr);
-    manager.convertNetworkLoadToDownload(downloadID, networkLoad.releaseNonNull(), WTFMove(m_responseCompletionHandler), { }, request, response);
+    manager.convertNetworkLoadToDownload(downloadID, networkLoad.releaseNonNull(), WTF::move(m_responseCompletionHandler), { }, request, response);
     return true;
 }
 

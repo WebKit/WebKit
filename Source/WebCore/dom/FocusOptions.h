@@ -38,13 +38,15 @@ enum class FocusTrigger : uint8_t { Other, Click, Bindings };
 enum class FocusVisibility : uint8_t { Invisible, Visible, ForceInvisible };
 
 struct FocusOptions {
+    bool preventScroll { false };
+    std::optional<bool> focusVisible { std::nullopt };
+
+    // Non-IDL members.
     SelectionRestorationMode selectionRestorationMode { SelectionRestorationMode::RestoreOrSelectAll };
     FocusDirection direction { FocusDirection::None };
     FocusRemovalEventsMode removalEventsMode { FocusRemovalEventsMode::Dispatch };
     FocusTrigger trigger { FocusTrigger::Other };
     FocusVisibility visibility { FocusVisibility::Invisible };
-    bool preventScroll { false };
-    std::optional<bool> focusVisible { std::nullopt };
 };
 
 } // namespace WebCore

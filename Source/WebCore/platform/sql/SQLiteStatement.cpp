@@ -289,7 +289,7 @@ Vector<uint8_t> SQLiteStatement::columnBlob(int col)
     return { columnBlobAsSpan(col) };
 }
 
-std::span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)
+std::span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col) LIFETIME_BOUND
 {
     ASSERT(col >= 0);
 

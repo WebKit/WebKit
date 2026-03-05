@@ -34,6 +34,8 @@
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "PseudoClassChangeInvalidation.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "ShouldNotFireMutationEventsScope.h"
 #include "SlotAssignment.h"
@@ -49,7 +51,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLDetailsElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDetailsElement);
 
 using namespace HTMLNames;
 
@@ -62,7 +64,7 @@ static const AtomString& summarySlotName()
 class DetailsSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) override;
-    const AtomString& slotNameForHostChild(const Node&) const override;
+    const AtomString& NODELETE slotNameForHostChild(const Node&) const override;
 };
 
 void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
@@ -73,14 +75,14 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
         didChangeSlot(summarySlotName(), shadowRoot);
 
         if (RefPtr associatedDetails = dynamicDowncast<HTMLDetailsElement>(shadowRoot.host())) {
-            if (CheckedPtr cache = associatedDetails->protectedDocument()->existingAXObjectCache())
+            if (CheckedPtr cache = protect(associatedDetails->document())->existingAXObjectCache())
                 cache->onDetailsSummarySlotChange(*associatedDetails);
         }
     } else
         didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
 }
 
-const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
+SUPPRESS_NODELETE const AtomString& NODELETE DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
 {
     Ref details = downcast<HTMLDetailsElement>(*child.parentNode());
 
@@ -111,28 +113,33 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     Ref document = this->document();
     Ref summarySlot = HTMLSlotElement::create(slotTag, document);
+    ScriptDisallowedScope::EventAllowedScope summarySlotScope { summarySlot };
     summarySlot->setAttributeWithoutSynchronization(nameAttr, summarySlotName());
 
     Ref defaultSummary = HTMLSummaryElement::create(summaryTag, document);
+    ScriptDisallowedScope::EventAllowedScope defaultSummaryScope { defaultSummary };
     defaultSummary->appendChild(Text::create(document, defaultDetailsSummaryText()));
     m_defaultSummary = defaultSummary.get();
 
     summarySlot->appendChild(defaultSummary);
+    ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(summarySlot);
-    m_summarySlot = WTFMove(summarySlot);
+    m_summarySlot = WTF::move(summarySlot);
 
     Ref defaultSlot = HTMLSlotElement::create(slotTag, document);
+    ScriptDisallowedScope::EventAllowedScope defaultSlotScope { defaultSlot };
     defaultSlot->setUserAgentPart(UserAgentParts::detailsContent());
     ASSERT(!hasAttributeWithoutSynchronization(openAttr));
     defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
     defaultSlot->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock);
     root.appendChild(defaultSlot);
-    m_defaultSlot = WTFMove(defaultSlot);
+    m_defaultSlot = WTF::move(defaultSlot);
 
     static MainThreadNeverDestroyed<const String> stylesheet(StringImpl::createWithoutCopying(detailsElementShadowUserAgentStyleSheet));
-    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document, false);
+    Ref style = HTMLStyleElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope styleScope { style };
     style->setTextContent(String { stylesheet });
-    root.appendChild(WTFMove(style));
+    root.appendChild(WTF::move(style));
 }
 
 bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) const
@@ -144,7 +151,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     if (summary.parentNode() != this)
         return false;
 
-    RefPtr slot = protectedShadowRoot()->findAssignedSlot(summary);
+    RefPtr slot = protect(shadowRoot())->findAssignedSlot(summary);
     return slot && slot == summarySlot.get();
 }
 
@@ -153,7 +160,7 @@ void HTMLDetailsElement::queueDetailsToggleEventTask(ToggleState oldState, Toggl
     if (!m_toggleEventTask)
         m_toggleEventTask = ToggleEventTask::create(*this);
 
-    RefPtr { m_toggleEventTask }->queue(oldState, newState);
+    RefPtr { m_toggleEventTask }->queue(oldState, newState, nullptr);
 }
 
 void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -164,6 +171,9 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
             RefPtr root = shadowRoot();
             RefPtr defaultSlot = m_defaultSlot;
             ASSERT(root);
+            auto isOpen = !newValue.isNull();
+            Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Open, isOpen);
+            m_isOpen = isOpen;
             if (!newValue.isNull()) {
                 defaultSlot->removeInlineStyleProperty(CSSPropertyContentVisibility);
                 queueDetailsToggleEventTask(ToggleState::Closed, ToggleState::Open);
@@ -194,13 +204,13 @@ void HTMLDetailsElement::didFinishInsertingNode()
     ensureDetailsExclusivityAfterMutation();
 }
 
-Vector<RefPtr<HTMLDetailsElement>> HTMLDetailsElement::otherElementsInNameGroup()
+Vector<Ref<HTMLDetailsElement>> HTMLDetailsElement::otherElementsInNameGroup()
 {
-    Vector<RefPtr<HTMLDetailsElement>> otherElementsInNameGroup;
+    Vector<Ref<HTMLDetailsElement>> otherElementsInNameGroup;
     const auto& detailElementName = attributeWithoutSynchronization(nameAttr);
     for (Ref element : descendantsOfType<HTMLDetailsElement>(rootNode())) {
         if (element.ptr() != this && element->attributeWithoutSynchronization(nameAttr) == detailElementName)
-            otherElementsInNameGroup.append(WTFMove(element));
+            otherElementsInNameGroup.append(WTF::move(element));
     }
     return otherElementsInNameGroup;
 }
@@ -221,6 +231,11 @@ void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
 void HTMLDetailsElement::toggleOpen()
 {
     setBooleanAttribute(HTMLNames::openAttr, !hasAttributeWithoutSynchronization(HTMLNames::openAttr));
+}
+
+bool HTMLDetailsElement::isOpen() const
+{
+    return m_isOpen;
 }
 
 } // namespace WebCore

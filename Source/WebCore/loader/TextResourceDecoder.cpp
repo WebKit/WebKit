@@ -44,7 +44,7 @@ using namespace HTMLNames;
 // similar functions that operate on char16_t, but arguably only the decoder has
 // a reason to process strings of char rather than char16_t.
 
-static size_t find(std::span<const uint8_t> subject, std::span<const uint8_t> target)
+static size_t NODELETE find(std::span<const uint8_t> subject, std::span<const uint8_t> target)
 {
     if (target.size() > subject.size())
         return notFound;
@@ -75,13 +75,13 @@ public:
     static enum Type judge(std::span<const uint8_t>);
     static constexpr int ESC = 0x1b;
     static const std::array<uint8_t, 256> sjisMap;
-    static int ISkanji(int code)
+    static int NODELETE ISkanji(int code)
     {
         if (code >= 0x100)
             return 0;
         return sjisMap[code & 0xff] & 1;
     }
-    static int ISkana(int code)
+    static int NODELETE ISkana(int code)
     {
         if (code >= 0x100)
             return 0;
@@ -343,7 +343,7 @@ bool TextResourceDecoder::hasEqualEncodingForCharset(const String& charset) cons
 }
 
 // Returns the position of the encoding string.
-static size_t findXMLEncoding(std::span<const uint8_t> string, size_t& encodingLength)
+static size_t NODELETE findXMLEncoding(std::span<const uint8_t> string, size_t& encodingLength)
 {
     size_t position = find(string, byteCast<uint8_t>("encoding"_span));
     if (position == notFound)

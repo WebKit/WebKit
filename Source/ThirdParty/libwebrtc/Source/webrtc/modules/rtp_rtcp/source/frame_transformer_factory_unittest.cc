@@ -29,7 +29,6 @@ using testing::Each;
 using testing::ElementsAreArray;
 using testing::NiceMock;
 using testing::Return;
-using testing::ReturnRef;
 
 TEST(FrameTransformerFactory, CloneAudioFrame) {
   NiceMock<MockTransformableAudioFrame> original_frame;

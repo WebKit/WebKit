@@ -44,14 +44,14 @@ static constexpr bool verbose = false;
 }
 
 Plan::Plan(VM& vm, Ref<ModuleInformation> info, CompletionTask&& task)
-    : m_moduleInformation(WTFMove(info))
+    : m_moduleInformation(WTF::move(info))
 {
-    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(&vm, WTF::move(task)));
 }
 Plan::Plan(VM& vm, CompletionTask&& task)
     : m_moduleInformation(ModuleInformation::create())
 {
-    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(&vm, WTF::move(task)));
 }
 
 void Plan::runCompletionTasks()
@@ -68,7 +68,7 @@ bool Plan::addCompletionTaskIfNecessary(VM& vm, CompletionTask&& task)
 {
     Locker locker { m_lock };
     if (!isComplete()) {
-        m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
+        m_completionTasks.append(std::make_pair(&vm, WTF::move(task)));
         return true;
     }
     return false;
@@ -122,7 +122,7 @@ void Plan::fail(String&& errorMessage, CompilationError error)
         return;
     ASSERT(errorMessage);
     dataLogLnIf(WasmPlanInternal::verbose, "failing with message: ", errorMessage);
-    m_errorMessage = WTFMove(errorMessage);
+    m_errorMessage = WTF::move(errorMessage);
     m_error = error;
     complete();
 }

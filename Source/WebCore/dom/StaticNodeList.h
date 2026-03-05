@@ -35,13 +35,13 @@
 namespace WebCore {
 
 class StaticNodeList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~StaticNodeList() = default;
 
     static Ref<StaticNodeList> create(Vector<Ref<Node>>&& nodes = { })
     {
-        return adoptRef(*new StaticNodeList(WTFMove(nodes)));
+        return adoptRef(*new StaticNodeList(WTF::move(nodes)));
     }
 
     WEBCORE_EXPORT unsigned length() const override;
@@ -53,7 +53,7 @@ private:
 };
 
 class StaticWrapperNodeList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StaticWrapperNodeList);
+    WTF_MAKE_TZONE_ALLOCATED(StaticWrapperNodeList);
 public:
     static Ref<StaticWrapperNodeList> create(NodeList& nodeList)
     {
@@ -72,11 +72,11 @@ private:
 };
 
 class StaticElementList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StaticElementList);
+    WTF_MAKE_TZONE_ALLOCATED(StaticElementList);
 public:
     static Ref<StaticElementList> create(Vector<Ref<Element>>&& elements = { })
     {
-        return adoptRef(*new StaticElementList(WTFMove(elements)));
+        return adoptRef(*new StaticElementList(WTF::move(elements)));
     }
 
     unsigned length() const override;
@@ -84,7 +84,7 @@ public:
 
 private:
     StaticElementList(Vector<Ref<Element>>&& elements)
-        : m_elements(WTFMove(elements))
+        : m_elements(WTF::move(elements))
     { }
 
     const Vector<Ref<Element>> m_elements;

@@ -9,7 +9,8 @@
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])
-          (layer anchorPoint [x: 0 y: 0]))))
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(128, 0, 128)))))
     (
       (layer bounds [x: 0 y: 0 width: 200 height: 200])
       (layer position [x: 100 y: 100])
@@ -17,7 +18,8 @@
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])
-          (layer anchorPoint [x: 0 y: 0]))))
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(128, 0, 128)))))
     (
       (layer bounds [x: 0 y: 0 width: 200 height: 200])
       (layer position [x: 100 y: 100])
@@ -25,7 +27,8 @@
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])
-          (layer anchorPoint [x: 0 y: 0]))))
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(128, 0, 128)))))
     (
       (layer bounds [x: 0 y: 0 width: 200 height: 200])
       (layer position [x: 100 y: 100])
@@ -33,4 +36,5 @@
       (sublayers
         (
           (layer bounds [x: 0 y: 0 width: 200 height: 200])
-          (layer anchorPoint [x: 0 y: 0]))))))
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(128, 0, 128)))))))

@@ -71,7 +71,7 @@ public:
 #endif
     virtual void legacyDidCancel(WebKit::DownloadProxy&) { }
     virtual void processDidCrash(WebKit::DownloadProxy&) { }
-    virtual void willSendRequest(WebKit::DownloadProxy&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
+    virtual void willSendRequest(WebKit::DownloadProxy&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) { completionHandler(WTF::move(request)); }
 };
 
 } // namespace API

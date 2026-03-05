@@ -163,7 +163,7 @@ private:
     inline Identifier(VM&, StringImpl*);
 
     Identifier(VM&, Ref<AtomStringImpl>&& impl)
-        : m_string(WTFMove(impl))
+        : m_string(WTF::move(impl))
     { }
 
     Identifier(SymbolImpl& uid)
@@ -232,7 +232,6 @@ JSValue identifierToSafePublicJSValue(VM&, const Identifier&);
 // crashes in code that somehow dangled a StringImpl.
 // https://bugs.webkit.org/show_bug.cgi?id=150137
 struct IdentifierRepHash : PtrHash<RefPtr<UniquedStringImpl>> {
-    static unsigned hash(const RefPtr<UniquedStringImpl>& key) { return key->existingSymbolAwareHash(); }
     static unsigned hash(const UniquedStringImpl* key) { return key->existingSymbolAwareHash(); }
     static constexpr bool hasHashInValue = true;
 };

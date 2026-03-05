@@ -50,10 +50,10 @@ struct ResizeObserverData {
 };
 
 using NativeResizeObserverCallback = void (*)(const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&);
-using JSOrNativeResizeObserverCallback = Variant<RefPtr<ResizeObserverCallback>, NativeResizeObserverCallback>;
+using JSOrNativeResizeObserverCallback = Variant<Ref<ResizeObserverCallback>, NativeResizeObserverCallback>;
 
 class ResizeObserver : public RefCountedAndCanMakeWeakPtr<ResizeObserver> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ResizeObserver);
+    WTF_MAKE_TZONE_ALLOCATED(ResizeObserver);
 public:
     static Ref<ResizeObserver> create(Document&, Ref<ResizeObserverCallback>&&);
     static Ref<ResizeObserver> createNativeObserver(Document&, NativeResizeObserverCallback&&);
@@ -76,9 +76,9 @@ public:
 
     void resetObservationSize(Element&);
 
-    const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& activeObservationTargets() const WTF_REQUIRES_LOCK(m_observationTargetsLock) { return m_activeObservationTargets; }
-    const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& targetsWaitingForFirstObservation() const WTF_REQUIRES_LOCK(m_observationTargetsLock) { return m_targetsWaitingForFirstObservation; }
-    Lock& observationTargetsLock() WTF_RETURNS_LOCK(m_observationTargetsLock) { return m_observationTargetsLock; }
+    const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& activeObservationTargets() const LIFETIME_BOUND WTF_REQUIRES_LOCK(m_observationTargetsLock) { return m_activeObservationTargets; }
+    const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& targetsWaitingForFirstObservation() const LIFETIME_BOUND WTF_REQUIRES_LOCK(m_observationTargetsLock) { return m_targetsWaitingForFirstObservation; }
+    Lock& observationTargetsLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_observationTargetsLock) { return m_observationTargetsLock; }
 
     ResizeObserverCallback* callbackConcurrently();
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
@@ -90,8 +90,8 @@ private:
     void removeAllTargets();
     bool removeObservation(const Element&);
     void observeInternal(Element&, const ResizeObserverBoxOptions);
-    bool isNativeCallback();
-    bool isJSCallback();
+    bool NODELETE isNativeCallback();
+    bool NODELETE isJSCallback();
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     JSOrNativeResizeObserverCallback m_JSOrNativeCallback;

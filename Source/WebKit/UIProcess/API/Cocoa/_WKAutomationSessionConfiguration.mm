@@ -26,6 +26,8 @@
 #import "config.h"
 #import "_WKAutomationSessionConfiguration.h"
 
+#import <wtf/RetainPtr.h>
+
 @implementation _WKAutomationSessionConfiguration
 
 - (instancetype)init

@@ -53,21 +53,21 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
 
     virtual void setPipeline(const RenderPipeline&) = 0;
 
-    virtual void setIndexBuffer(const Buffer&, IndexFormat, std::optional<Size64> offset, std::optional<Size64>) = 0;
-    virtual void setVertexBuffer(Index32 slot, const Buffer*, std::optional<Size64> offset, std::optional<Size64>) = 0;
+    virtual void setIndexBuffer(const Buffer&, IndexFormat, Size64 offset, std::optional<Size64>) = 0;
+    virtual void setVertexBuffer(Index32 slot, const Buffer*, Size64 offset, std::optional<Size64>) = 0;
 
-    virtual void draw(Size32 vertexCount, std::optional<Size32> instanceCount,
-        std::optional<Size32> firstVertex, std::optional<Size32> firstInstance) = 0;
-    virtual void drawIndexed(Size32 indexCount, std::optional<Size32> instanceCount,
-        std::optional<Size32> firstIndex,
-        std::optional<SignedOffset32> baseVertex,
-        std::optional<Size32> firstInstance) = 0;
+    virtual void draw(Size32 vertexCount, Size32 instanceCount,
+        Size32 firstVertex, Size32 firstInstance) = 0;
+    virtual void drawIndexed(Size32 indexCount, Size32 instanceCount,
+        Size32 firstIndex,
+        SignedOffset32 baseVertex,
+        Size32 firstInstance) = 0;
 
     virtual void drawIndirect(const Buffer& indirectBuffer, Size64 indirectOffset) = 0;
     virtual void drawIndexedIndirect(const Buffer& indirectBuffer, Size64 indirectOffset) = 0;
@@ -101,6 +101,7 @@ public:
     virtual void end() = 0;
 
     virtual bool isRemoteRenderPassEncoderProxy() const { return false; }
+    virtual bool isRenderPassEncoderImpl() const { return false; }
 
 protected:
     RenderPassEncoder() = default;

@@ -11,7 +11,7 @@ info: |
   ...
     c. Let testResult be ! ToBoolean(? Call(predicate, thisArg, « kValue, 𝔽(k), O »)).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray, array-find-from-last]
 ---*/
 
@@ -34,4 +34,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     undefined,
     "findLast returns undefined when predicate is not called"
   );
-});
+}, null, ["passthrough"]);

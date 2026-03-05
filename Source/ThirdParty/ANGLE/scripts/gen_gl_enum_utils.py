@@ -32,11 +32,6 @@ enum class GLESEnum
 {{
     {gles_enum_groups}
 }};
-
-enum class BigGLEnum
-{{
-    {gl_enum_groups}
-}};
 }}  // namespace gl
 
 # endif  // COMMON_GL_ENUM_UTILS_AUTOGEN_H_
@@ -78,16 +73,6 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
     switch (enumGroup)
     {{
         {gles_enums_value_to_string_table}
-        default:
-            return UnknownEnumToString(value);
-    }}
-}}
-
-const char *GLenumToString(BigGLEnum enumGroup, unsigned int value)
-{{
-    switch (enumGroup)
-    {{
-        {gl_enums_value_to_string_table}
         default:
             return UnknownEnumToString(value);
     }}
@@ -199,16 +184,12 @@ def main(header_output_path, source_output_path):
 
     # Compute a list of all GLES enums.
     gles_enums = set()
-    bigl_enums = set()
     for feature in xml.root.findall('feature'):
         for require in feature.findall('require'):
             assert 'api' not in require.attrib
             if 'gles' in feature.attrib['api']:
                 for enum in require.findall('enum'):
                     gles_enums.add(enum.attrib['name'])
-            if feature.attrib['api'] == 'gl':
-                for enum in require.findall('enum'):
-                    bigl_enums.add(enum.attrib['name'])
 
     for extensions in xml.root.findall('extensions'):
         for extension in extensions.findall('extension'):
@@ -219,19 +200,12 @@ def main(header_output_path, source_output_path):
                             'gles' in extension.attrib['supported']):
                         for enum in require.findall('enum'):
                             gles_enums.add(enum.attrib['name'])
-                    if ('api' not in require.attrib or
-                            feature.attrib['api'] == 'gl') and ('gl' in ext_apis):
-                        for enum in require.findall('enum'):
-                            bigl_enums.add(enum.attrib['name'])
 
     # Build a map from GLenum name to its value
-    gl_enum_groups = dict()
     gles_enum_groups = dict()
 
     # Add all enums to default groups
-    gl_default_enums = dict()
     gles_default_enums = dict()
-    gl_enum_groups[registry_xml.default_enum_group_name] = gl_default_enums
     gles_enum_groups[registry_xml.default_enum_group_name] = gles_default_enums
     enums_and_values = []
 
@@ -243,8 +217,6 @@ def main(header_output_path, source_output_path):
 
             if enum_name in gles_enums:
                 gles_default_enums[enum_name] = enum_value
-            if enum_name in bigl_enums:
-                gl_default_enums[enum_name] = enum_value
 
             if 'group' in enum.attrib:
                 for enum_group in enum.attrib['group'].split(','):
@@ -254,24 +226,17 @@ def main(header_output_path, source_output_path):
                         if enum_group not in gles_enum_groups:
                             gles_enum_groups[enum_group] = dict()
                         gles_enum_groups[enum_group][enum_name] = enum_value
-                    if enum_name in bigl_enums:
-                        if enum_group not in gl_enum_groups:
-                            gl_enum_groups[enum_group] = dict()
-                        gl_enum_groups[enum_group][enum_name] = enum_value
 
     for empty_group in empty_enum_groups:
-        assert not empty_group in gles_enum_groups or not empty_group in gl_enum_groups, 'Remove %s from the empty groups list, it has enums now.' % empty_group
+        assert empty_group not in gles_enum_groups, 'Remove %s from the empty groups list, it has enums now.' % empty_group
         if empty_group not in gles_enum_groups:
             gles_enum_groups[empty_group] = dict()
-        if empty_group not in gl_enum_groups:
-            gl_enum_groups[empty_group] = dict()
 
     # Write GLenum groups into the header file.
     header_content = template_gl_enums_header.format(
         script_name=os.path.basename(sys.argv[0]),
         data_source_name="gl.xml and gl_angle_ext.xml",
-        gles_enum_groups=',\n'.join(sorted(gles_enum_groups.keys())),
-        gl_enum_groups=',\n'.join(sorted(gl_enum_groups.keys())))
+        gles_enum_groups=',\n'.join(sorted(gles_enum_groups.keys())))
 
     header_output_path = registry_xml.script_relative(header_output_path)
     with open(header_output_path, 'w') as f:
@@ -279,13 +244,11 @@ def main(header_output_path, source_output_path):
 
     # Write mapping to source file
     gles_enums_value_to_string_table = dump_value_to_string_mapping(gles_enum_groups, 'GLESEnum')
-    gl_enums_value_to_string_table = dump_value_to_string_mapping(gl_enum_groups, 'BigGLEnum')
     string_to_enum_table = dump_string_to_value_mapping(enums_and_values)
     source_content = template_gl_enums_source.format(
         script_name=os.path.basename(sys.argv[0]),
         data_source_name="gl.xml and gl_angle_ext.xml",
         gles_enums_value_to_string_table=gles_enums_value_to_string_table,
-        gl_enums_value_to_string_table=gl_enums_value_to_string_table,
         string_to_enum_table=string_to_enum_table,
     )
 

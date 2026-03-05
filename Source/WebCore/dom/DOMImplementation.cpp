@@ -69,12 +69,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMImplementation);
-
-Ref<Document> DOMImplementation::protectedDocument()
-{
-    return m_document.get();
-}
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMImplementation);
 
 DOMImplementation::DOMImplementation(Document& document)
     : m_document(document)
@@ -86,7 +81,7 @@ ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const AtomS
     auto parseResult = Document::parseQualifiedName(qualifiedName);
     if (parseResult.hasException())
         return parseResult.releaseException();
-    return DocumentType::create(protectedDocument(), qualifiedName, publicId, systemId);
+    return DocumentType::create(protect(document()), qualifiedName, publicId, systemId);
 }
 
 static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, const Settings& settings)
@@ -145,9 +140,9 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     document->write(nullptr, FixedVector<String> { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
         auto titleElement = HTMLTitleElement::create(titleTag, document);
-        titleElement->appendChild(document->createTextNode(WTFMove(title)));
+        titleElement->appendChild(document->createTextNode(WTF::move(title)));
         ASSERT(document->head());
-        document->protectedHead()->appendChild(titleElement);
+        protect(document->head())->appendChild(titleElement);
     }
     document->setContextDocument(thisDocument->contextDocument());
     document->setSecurityOriginPolicy(thisDocument->securityOriginPolicy());
@@ -201,7 +196,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
 
     // The following is the relatively costly lookup that requires initializing the plug-in database.
     if (frame && frame->page()) {
-        if (frame->page()->protectedPluginData()->supportsWebVisibleMimeType(contentType, PluginData::OnlyApplicationPlugins))
+        if (protect(protect(frame->page())->pluginData())->supportsWebVisibleMimeType(contentType, PluginData::OnlyApplicationPlugins))
             return PluginDocument::create(*frame, url);
     }
 

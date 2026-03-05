@@ -33,6 +33,7 @@ namespace WebKit {
 class WebPage;
 
 class WebHistoryItemClient final : public WebCore::HistoryItemClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebHistoryItemClient);
 public:
     static Ref<WebHistoryItemClient> create(WebPage& page) { return adoptRef(*new WebHistoryItemClient(page)); }
 

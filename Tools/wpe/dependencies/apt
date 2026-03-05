@@ -14,9 +14,7 @@ PACKAGES+=(
     libicu-dev
     libxml2-dev
     pkg-config
-    qtbase5-dev
-    qtbase5-private-dev
-    qtdeclarative5-dev
+    qt6-declarative-private-dev
     unifdef
     wayland-protocols
     zlib1g-dev

@@ -2,6 +2,7 @@ Name: StackWalker
 URL: https://github.com/JochenKalmbach/StackWalker
 Version: N/A
 Revision: 42e7a6e056a9e7aca911a7e9e54e2e4f90bc2652
+Update Mechanism: Static (https://crbug.com/422917292)
 License: BSD-3-Clause
 License File: LICENSE
 Security Critical: no

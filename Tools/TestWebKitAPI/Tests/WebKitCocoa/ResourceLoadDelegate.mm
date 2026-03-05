@@ -349,8 +349,6 @@ TEST(ResourceLoadDelegate, LoadInfo)
     EXPECT_EQ(deserialized.eventTimestamp.timeIntervalSince1970, original.eventTimestamp.timeIntervalSince1970);
 }
 
-// FIXME: Add a test for loadedFromCache.
-
 TEST(ResourceLoadDelegate, Challenge)
 {
     using namespace TestWebKitAPI;
@@ -380,4 +378,39 @@ TEST(ResourceLoadDelegate, Challenge)
     [webView loadRequest:server.request()];
     TestWebKitAPI::Util::run(&receivedErrorNotification);
     EXPECT_TRUE(receivedChallengeNotificiation);
+}
+
+TEST(ResourceLoadDelegate, LoadTopResourceFromCache)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/hello.html"_s, { {{ "Content-Type"_s, "text/plain"_s }, { "Cache-Control"_s, "private, max-age=1000000, immutable"_s }}, "Hello world!"_s } },
+    });
+
+    __block bool loadedFromCache = false;
+    __block bool done = false;
+
+    auto delegate = adoptNS([TestResourceLoadDelegate new]);
+    [delegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *loadInfo, NSError *, NSURLResponse *) {
+        EXPECT_WK_STREQ(loadInfo.originalURL.path, "/hello.html");
+        EXPECT_WK_STREQ(loadInfo.originalHTTPMethod, "GET");
+        loadedFromCache = loadInfo.loadedFromCache;
+        done = true;
+    }];
+
+    auto webView1 = adoptNS([WKWebView new]);
+    [webView1 _setResourceLoadDelegate:delegate.get()];
+    [webView1 loadRequest:server.request("/hello.html"_s)];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(loadedFromCache);
+    done = false;
+    loadedFromCache = false;
+
+    // Second load of same resource in a separate web view should come from network cache.
+    auto webView2 = adoptNS([WKWebView new]);
+    [webView2 _setResourceLoadDelegate:delegate.get()];
+    [webView2 loadRequest:server.request("/hello.html"_s)];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(loadedFromCache);
 }

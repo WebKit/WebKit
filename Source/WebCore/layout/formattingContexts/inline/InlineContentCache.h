@@ -36,7 +36,7 @@ namespace Layout {
 
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineContentCache);
+    WTF_MAKE_TZONE_ALLOCATED(InlineContentCache);
 public:
     struct InlineItems {
         InlineItemList& content() { return m_inlineItemList; }
@@ -72,7 +72,7 @@ public:
     const InlineItems& inlineItems() const { return m_inlineItems; }
     InlineItems& inlineItems() { return m_inlineItems; }
 
-    void setMaximumIntrinsicWidthLineContent(LineLayoutResult&& lineContent) { m_maximumIntrinsicWidthLineContent = WTFMove(lineContent); }
+    void setMaximumIntrinsicWidthLineContent(LineLayoutResult&& lineContent) { m_maximumIntrinsicWidthLineContent = WTF::move(lineContent); }
     void clearMaximumIntrinsicWidthLineContent() { m_maximumIntrinsicWidthLineContent = { }; }
     std::optional<LineLayoutResult>& maximumIntrinsicWidthLineContent() { return m_maximumIntrinsicWidthLineContent; }
 
@@ -83,9 +83,9 @@ public:
     void resetMinimumMaximumContentSizes();
 
     const InlineBoxBoundaryTextSpacings& inlineBoxBoundaryTextSpacings() const { return m_textSpacingContext.inlineBoxBoundaryTextSpacings; }
-    void setInlineBoxBoundaryTextSpacings(InlineBoxBoundaryTextSpacings&& spacings) { m_textSpacingContext.inlineBoxBoundaryTextSpacings = WTFMove(spacings); }
+    void setInlineBoxBoundaryTextSpacings(InlineBoxBoundaryTextSpacings&& spacings) { m_textSpacingContext.inlineBoxBoundaryTextSpacings = WTF::move(spacings); }
     const TrimmableTextSpacings& trimmableTextSpacings() const { return m_textSpacingContext.trimmableTextSpacings; }
-    void setTrimmableTextSpacings(TrimmableTextSpacings&& spacings) { m_textSpacingContext.trimmableTextSpacings = WTFMove(spacings); }
+    void setTrimmableTextSpacings(TrimmableTextSpacings&& spacings) { m_textSpacingContext.trimmableTextSpacings = WTF::move(spacings); }
 
     const TextSpacingContext& textSpacingContext() const { return m_textSpacingContext; }
 
@@ -107,7 +107,7 @@ inline void InlineContentCache::resetMinimumMaximumContentSizes()
 
 inline void InlineContentCache::InlineItems::set(InlineItemList&& inlineItemList, ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache)
 {
-    m_inlineItemList = WTFMove(inlineItemList);
+    m_inlineItemList = WTF::move(inlineItemList);
     m_contentAttributes = contentAttributes;
     m_isPopulatedFromCache = isPopulatedFromCache == IsPopulatedFromCache::Yes;
 }
@@ -115,7 +115,7 @@ inline void InlineContentCache::InlineItems::set(InlineItemList&& inlineItemList
 inline void InlineContentCache::InlineItems::replace(size_t insertionPosition, InlineItemList&& inlineItemList, ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache)
 {
     m_inlineItemList.removeAt(insertionPosition, m_inlineItemList.size() - insertionPosition);
-    m_inlineItemList.appendVector(WTFMove(inlineItemList));
+    m_inlineItemList.appendVector(WTF::move(inlineItemList));
     m_contentAttributes = contentAttributes;
     if (isPopulatedFromCache == IsPopulatedFromCache::No)
         m_isPopulatedFromCache = false;

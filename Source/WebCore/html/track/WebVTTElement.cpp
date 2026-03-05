@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebVTTElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebVTTElement);
 
 static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 {
@@ -49,27 +49,27 @@ static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
     static NeverDestroyed<QualifiedName> rubyTag(nullAtom(), "ruby"_s, nullAtom());
     static NeverDestroyed<QualifiedName> rtTag(nullAtom(), "rt"_s, nullAtom());
     switch (nodeType) {
-    case WebVTTNodeTypeClass:
+    case WebVTTNodeType::Class:
         return cTag;
-    case WebVTTNodeTypeItalic:
+    case WebVTTNodeType::Italic:
         return iTag;
-    case WebVTTNodeTypeLanguage:
+    case WebVTTNodeType::Language:
         return langTag;
-    case WebVTTNodeTypeBold:
+    case WebVTTNodeType::Bold:
         return bTag;
-    case WebVTTNodeTypeUnderline:
+    case WebVTTNodeType::Underline:
         return uTag;
-    case WebVTTNodeTypeRuby:
+    case WebVTTNodeType::Ruby:
         return rubyTag;
-    case WebVTTNodeTypeRubyText:
+    case WebVTTNodeType::RubyText:
         return rtTag;
-    case WebVTTNodeTypeVoice:
+    case WebVTTNodeType::Voice:
         return vTag;
-    case WebVTTNodeTypeNone:
-    default:
-        ASSERT_NOT_REACHED();
-        return cTag; // Make the compiler happy.
+    case WebVTTNodeType::None:
+        break;
     }
+    ASSERT_NOT_REACHED();
+    return cTag; // Make the compiler happy.
 }
 
 WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, AtomString language, Document& document)
@@ -94,29 +94,29 @@ Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
     RefPtr<HTMLElement> htmlElement;
 
     switch (m_webVTTNodeType) {
-    case WebVTTNodeTypeClass:
-    case WebVTTNodeTypeLanguage:
-    case WebVTTNodeTypeVoice:
+    case WebVTTNodeType::Class:
+    case WebVTTNodeType::Language:
+    case WebVTTNodeType::Voice:
         htmlElement = HTMLSpanElement::create(document);
         htmlElement->setAttributeWithoutSynchronization(HTMLNames::titleAttr, attributeWithoutSynchronization(voiceAttributeName()));
         htmlElement->setAttributeWithoutSynchronization(HTMLNames::langAttr, attributeWithoutSynchronization(langAttributeName()));
         break;
-    case WebVTTNodeTypeItalic:
+    case WebVTTNodeType::Italic:
         htmlElement = HTMLElement::create(HTMLNames::iTag, document);
         break;
-    case WebVTTNodeTypeBold:
+    case WebVTTNodeType::Bold:
         htmlElement = HTMLElement::create(HTMLNames::bTag, document);
         break;
-    case WebVTTNodeTypeUnderline:
+    case WebVTTNodeType::Underline:
         htmlElement = HTMLElement::create(HTMLNames::uTag, document);
         break;
-    case WebVTTNodeTypeRuby:
+    case WebVTTNodeType::Ruby:
         htmlElement = HTMLElement::create(HTMLNames::rubyTag, document);
         break;
-    case WebVTTNodeTypeRubyText:
+    case WebVTTNodeType::RubyText:
         htmlElement = HTMLElement::create(HTMLNames::rtTag, document);
         break;
-    case WebVTTNodeTypeNone:
+    case WebVTTNodeType::None:
         ASSERT_NOT_REACHED();
         break;
     }

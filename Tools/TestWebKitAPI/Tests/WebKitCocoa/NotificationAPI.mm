@@ -28,6 +28,7 @@
 #if ENABLE(NOTIFICATIONS) && !(PLATFORM(IOS) || PLATFORM(VISION))
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/Function.h>
@@ -62,7 +63,7 @@ Function<bool()> _decisionHandler;
 - (instancetype)initWithHandler:(Function<bool()>&&)decisionHandler
 {
     self = [super init];
-    _decisionHandler = WTFMove(decisionHandler);
+    _decisionHandler = WTF::move(decisionHandler);
     return self;
 }
 
@@ -168,6 +169,40 @@ TEST(Notification, ParallelPermissionRequestsGranted)
 {
     runParallelPermissionRequestsTest(ShouldGrantPermission::Yes);
 }
+
+#if ENABLE(WEB_ARCHIVE)
+TEST(Notification, WebArchiveNotificationNotSupported)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[NotificationPermissionMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr uiDelegate = adoptNS([[NotificationPermissionUIDelegate alloc] initWithHandler:[] {
+        return true;
+    }]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [navigationDelegate allowAnyTLSCertificate];
+
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"example" withExtension:@"webarchive"];
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+
+    [navigationDelegate waitForDidFinishNavigation];
+
+    didReceiveMessage = false;
+    clientPermissionRequestCount = 0;
+    [receivedMessages removeAllObjects];
+
+    [webView evaluateJavaScript:@"Notification.requestPermission((permission) => { webkit.messageHandlers.testHandler.postMessage(permission) });" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+
+    EXPECT_EQ(clientPermissionRequestCount, 0U);
+    EXPECT_WK_STREQ(@"denied", receivedMessages.get()[0]);
+}
+#endif
 
 } // namespace TestWebKitAPI
 

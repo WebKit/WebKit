@@ -1,3 +1,0 @@
-
-FAIL Window geometry is available in opener context immediately assert_equals: expected 980 but got 800
-

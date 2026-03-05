@@ -29,6 +29,7 @@
 #include "DateComponents.h"
 #include "DateTimeFieldElement.h"
 
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -59,27 +60,24 @@ public:
 };
 
 class DateTimeEditElement final : public HTMLDivElement, public DateTimeFieldElementFieldOwner {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeEditElement);
+    WTF_MAKE_TZONE_ALLOCATED(DateTimeEditElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeEditElement);
 public:
     struct LayoutParameters {
         String dateTimeFormat;
         String fallbackDateTimeFormat;
-        Locale& locale;
+        const CheckedRef<Locale> locale;
         bool shouldHaveMillisecondField { false };
 
-        LayoutParameters(Locale& locale)
-            : locale(locale)
-        {
-        }
+        explicit LayoutParameters(Locale&);
+        ~LayoutParameters();
     };
 
     static Ref<DateTimeEditElement> create(Document&, DateTimeEditElementEditControlOwner&);
 
     virtual ~DateTimeEditElement();
     void addField(Ref<DateTimeFieldElement>);
-    Element& fieldsWrapperElement() const;
-    Ref<Element> protectedFieldsWrapperElement() const;
+    Element& NODELETE fieldsWrapperElement() const;
     void focusByOwner();
     void resetFields();
     void setEmptyValue(const LayoutParameters&);

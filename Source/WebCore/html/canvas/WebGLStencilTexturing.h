@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLStencilTexturing final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLStencilTexturing);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLStencilTexturing);
     WTF_MAKE_NONCOPYABLE(WebGLStencilTexturing);
 public:
     explicit WebGLStencilTexturing(WebGLRenderingContextBase&);
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLStencilTexturing)

@@ -28,9 +28,9 @@
 #include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
+#include "CAAudioStreamDescription.h"
+#include "TrackInfo.h"
 #include <CoreAudio/CoreAudioTypes.h>
-#include <WebCore/CAAudioStreamDescription.h>
-#include <WebCore/TrackInfo.h>
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -64,6 +64,8 @@ WEBCORE_EXPORT Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(
 WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef, const TrackInfo* = nullptr);
 
 WEBCORE_EXPORT void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace&, CVPixelBufferRef);
+
+PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef);
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
 WEBCORE_EXPORT Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef);

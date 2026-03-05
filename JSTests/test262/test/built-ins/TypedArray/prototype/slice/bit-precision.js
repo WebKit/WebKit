@@ -24,7 +24,7 @@ includes: [nans.js, compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-function body(FloatArray) {
+testWithTypedArrayConstructors(function body(FloatArray) {
   var subject = new FloatArray(NaNs);
   var sliced, subjectBytes, slicedBytes;
 
@@ -34,6 +34,4 @@ function body(FloatArray) {
   slicedBytes = new Uint8Array(sliced.buffer);
 
   assert(compareArray(subjectBytes, slicedBytes));
-}
-
-testWithTypedArrayConstructors(body, floatArrayConstructors);
+}, floatArrayConstructors);

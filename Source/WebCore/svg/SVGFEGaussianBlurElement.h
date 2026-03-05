@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class SVGFEGaussianBlurElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEGaussianBlurElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGFEGaussianBlurElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEGaussianBlurElement);
 public:
     static Ref<SVGFEGaussianBlurElement> create(const QualifiedName&, Document&);
@@ -60,10 +60,10 @@ private:
     IntOutsets outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
-    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this) };
-    Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this) };
-    Ref<SVGAnimatedEnumeration> m_edgeMode { SVGAnimatedEnumeration::create(this, EdgeModeType::None) };
+    const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedEnumeration> m_edgeMode { SVGAnimatedEnumeration::create(this, EdgeModeType::None) };
 };
 
 } // namespace WebCore

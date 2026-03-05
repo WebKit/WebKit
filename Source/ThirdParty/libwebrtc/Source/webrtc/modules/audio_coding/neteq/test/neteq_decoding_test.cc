@@ -70,12 +70,6 @@ void LoadDecoders(NetEq* neteq) {
 
 }  // namespace
 
-const int NetEqDecodingTest::kTimeStepMs;
-const size_t NetEqDecodingTest::kBlockSize8kHz;
-const size_t NetEqDecodingTest::kBlockSize16kHz;
-const size_t NetEqDecodingTest::kBlockSize32kHz;
-const int NetEqDecodingTest::kInitSampleRateHz;
-
 NetEqDecodingTest::NetEqDecodingTest()
     : clock_(0),
       env_(CreateEnvironment(&clock_)),

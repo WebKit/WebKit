@@ -575,7 +575,7 @@ public:
         iterator() = default;
 
         iterator(Path&& path)
-            : m_path(WTFMove(path)) { }
+            : m_path(WTF::move(path)) { }
 
         const Interval& interval() const
         {
@@ -637,7 +637,7 @@ public:
         ASSERT(nodeRef->size());
         path.append({ nodeRef, 0 });
         ASSERT(path.size() == m_height + 1);
-        return iterator(WTFMove(path));
+        return iterator(WTF::move(path));
     }
 
     iterator end() const
@@ -858,14 +858,15 @@ private:
     NodeType* allocNode()
     {
         ASSERT(++assertOnlyNumNodes);
-        return static_cast<NodeType*>(fastAlignedMalloc(cpuCacheLineSize, sizeof(NodeType)));
+        static_assert(sizeof(NodeType) <= targetNodeSize);
+        return static_cast<NodeType*>(fastAlignedMalloc(cpuCacheLineSize, targetNodeSize));
     }
 
     template<typename NodeType>
     void freeNode(NodeType* node)
     {
         ASSERT(assertOnlyNumNodes--);
-        fastAlignedFree(node);
+        fastFree(node);
     }
 
     void freeAllNodes()

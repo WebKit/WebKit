@@ -209,7 +209,7 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
         name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Setter "_s, "set "_s, name);
         RETURN_IF_EXCEPTION(scope, { });
     }
-    return jsString(vm, WTFMove(name));
+    return jsString(vm, WTF::move(name));
 }
 
 inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
@@ -294,6 +294,36 @@ inline CallData JSFunction::getCallDataInline(JSCell* cell)
     }
 
     return callData;
+}
+
+inline CallData JSFunction::getConstructDataInline(JSCell* cell)
+{
+    // Keep this function OK for invocation from concurrent compilers.
+    CallData constructData;
+
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
+    if (thisObject->isHostFunction()) {
+        if (thisObject->inherits<JSBoundFunction>()) {
+            if (jsCast<JSBoundFunction*>(thisObject)->canConstruct()) {
+                constructData.type = CallData::Type::Native;
+                constructData.native.function = thisObject->nativeConstructor();
+                constructData.native.isBoundFunction = true;
+                constructData.native.isWasm = false;
+            }
+        } else if (thisObject->nativeConstructor() != callHostFunctionAsConstructor) {
+            constructData.type = CallData::Type::Native;
+            constructData.native.function = thisObject->nativeConstructor();
+        }
+    } else {
+        FunctionExecutable* functionExecutable = thisObject->jsExecutable();
+        if (functionExecutable->constructAbility() != ConstructAbility::CannotConstruct) {
+            constructData.type = CallData::Type::JS;
+            constructData.js.functionExecutable = functionExecutable;
+            constructData.js.scope = thisObject->scope();
+        }
+    }
+
+    return constructData;
 }
 
 } // namespace JSC

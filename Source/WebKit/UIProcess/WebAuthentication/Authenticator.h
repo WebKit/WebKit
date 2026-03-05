@@ -64,7 +64,7 @@ public:
 
 class Authenticator : public RefCountedAndCanMakeWeakPtr<Authenticator> {
 public:
-    virtual ~Authenticator() = default;
+    virtual ~Authenticator();
 
     void setObserver(AuthenticatorObserver& observer) { m_observer = observer; }
 
@@ -72,11 +72,10 @@ public:
     void handleRequest(const WebAuthenticationRequestData&);
 
 protected:
-    Authenticator() = default;
+    Authenticator();
 
     AuthenticatorObserver* observer() const { return m_observer.get(); }
-    RefPtr<AuthenticatorObserver> protectedObserver() const { return m_observer.get(); }
-    const WebAuthenticationRequestData& requestData() const { return m_pendingRequestData; }
+    const WebAuthenticationRequestData& requestData() const LIFETIME_BOUND { return *m_pendingRequestData; }
 
     void receiveRespond(AuthenticatorObserverRespond&&) const;
 
@@ -85,7 +84,8 @@ private:
     virtual void getAssertion() = 0;
 
     WeakPtr<AuthenticatorObserver> m_observer;
-    WebAuthenticationRequestData m_pendingRequestData;
+    // FIXME: Is it ok for this to be optional?
+    std::optional<WebAuthenticationRequestData> m_pendingRequestData;
 };
 
 } // namespace WebKit

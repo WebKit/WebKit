@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,12 +24,14 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include <WebCore/CachedSVGDocumentReference.h>
+#include <WebCore/StyleURL.h>
 
 namespace WebCore {
 
+class CachedResourceLoader;
 class FilterOperation;
-class RenderStyle;
+struct ResourceLoaderOptions;
 
 namespace CSS {
 struct FilterReference;
@@ -37,11 +39,48 @@ struct FilterReference;
 
 namespace Style {
 
-class BuilderState;
-class ReferenceFilterOperation;
+// https://drafts.fxtf.org/filter-effects/#typedef-filter-url
+struct FilterReference {
+    URL url;
 
-CSS::FilterReference toCSSFilterReference(Ref<ReferenceFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::FilterReference&, const BuilderState&);
+    AtomString cachedFragment;
+    RefPtr<CachedSVGDocumentReference> cachedSVGDocumentReference;
+
+    // `FilterReference` is never interpolated. This only exists to allow the generic blending code to compile.
+    static FilterReference passthroughForInterpolation() { RELEASE_ASSERT_NOT_REACHED(); }
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return true; }
+    constexpr bool movesPixels() const { return true; }
+    // FIXME: This only needs to return true for graphs that include ConvolveMatrix, DisplacementMap, Morphology and possibly Lighting. https://bugs.webkit.org/show_bug.cgi?id=171753
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return true; }
+
+    void loadExternalDocumentIfNeeded(CachedResourceLoader&, const ResourceLoaderOptions&);
+
+    // Override's operator-> to allow it to be used in generic contexts with filter functions.
+    const FilterReference* operator->() const { return this; }
+    FilterReference* operator->() { return this; }
+
+    bool operator==(const FilterReference& other) const
+    {
+        return url == other.url;
+    }
+};
+DEFINE_TYPE_WRAPPER_GET(FilterReference, url);
+
+// MARK: - Blending
+
+// `FilterReference` is never interpolated. This only exists to allow the generic blending code to compile.
+template<> struct Blending<FilterReference> {
+    auto blend(const FilterReference&, const FilterReference&, const BlendingContext&) -> FilterReference { RELEASE_ASSERT_NOT_REACHED(); }
+};
+
+// MARK: - Conversion
+
+template<> struct ToCSS<FilterReference> { auto operator()(const FilterReference&, const RenderStyle&) -> CSS::FilterReference; };
+template<> struct ToStyle<CSS::FilterReference> { auto operator()(const CSS::FilterReference&, const BuilderState&) -> FilterReference; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::FilterReference, 1)

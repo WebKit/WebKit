@@ -36,8 +36,8 @@ class SVGFilterEffectGraph final : public SVGFilterGraph<FilterEffect> {
 public:
     SVGFilterEffectGraph(Ref<FilterEffect>&& sourceGraphic, Ref<FilterEffect>&& sourceAlpha)
     {
-        m_sourceNodes.add(SourceGraphic::effectName(), WTFMove(sourceGraphic));
-        m_sourceNodes.add(SourceAlpha::effectName(), WTFMove(sourceAlpha));
+        m_sourceNodes.add(SourceGraphic::effectName(), WTF::move(sourceGraphic));
+        m_sourceNodes.add(SourceAlpha::effectName(), WTF::move(sourceAlpha));
 
         setNodeInputs(Ref { *this->sourceGraphic() }, NodeVector { });
         setNodeInputs(Ref { *this->sourceAlpha() }, NodeVector { *this->sourceGraphic() });
@@ -46,14 +46,14 @@ public:
     void addNamedNode(const AtomString& name, Ref<FilterEffect>&& node) override
     {
         if (name.isEmpty()) {
-            m_lastNode = WTFMove(node);
+            m_lastNode = WTF::move(node);
             return;
         }
 
         if (m_sourceNodes.contains(name))
             return;
 
-        m_lastNode = WTFMove(node);
+        m_lastNode = WTF::move(node);
         m_namedNodes.set(name, Ref { *m_lastNode });
     }
 

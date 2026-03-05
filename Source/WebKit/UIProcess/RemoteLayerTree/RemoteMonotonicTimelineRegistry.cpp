@@ -36,33 +36,58 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMonotonicTimelineRegistry);
 
-void RemoteMonotonicTimelineRegistry::update(WebCore::ProcessIdentifier processIdentifier, const HashSet<Ref<WebCore::AcceleratedTimeline>>& timelineRepresentations, MonotonicTime now)
+void RemoteMonotonicTimelineRegistry::update(WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate, MonotonicTime now)
 {
-    // If there are no active timelines for this process identifier, simply remove that entry.
-    if (timelineRepresentations.isEmpty()) {
-        m_timelines.remove(processIdentifier);
-        return;
-    }
+#if ASSERT_ENABLED
+    // Monotonic timelines are immutable, we should never see an updated monotonic timeline.
+    for (auto& changedTimelineRepresentation : timelinesUpdate.modified)
+        ASSERT(!changedTimelineRepresentation->isMonotonic());
+#endif
 
-    // Populate the list of active timelines, creating new timelines as necessary.
-    HashSet<Ref<RemoteMonotonicTimeline>> activeTimelines;
-    for (auto& timelineRepresentation : timelineRepresentations) {
-        if (!timelineRepresentation->isMonotonic())
-            continue;
+    auto addCreatedTimelines = [&] {
+        if (timelinesUpdate.created.isEmpty())
+            return;
+        auto& timelines = m_timelines.ensure(processIdentifier, [] {
+            return HashSet<Ref<RemoteMonotonicTimeline>>();
+        }).iterator->value;
+        for (auto& createdTimelineRepresentation : timelinesUpdate.created) {
+            if (!createdTimelineRepresentation->isMonotonic())
+                continue;
+            TimelineID timelineID { createdTimelineRepresentation->identifier(), processIdentifier };
+            // There should not be a pre-existing timeline for this identifier since we're creating it.
+            ASSERT([&] {
+                for (auto& existingTimeline : timelines) {
+                    if (existingTimeline->identifier() == timelineID)
+                        return false;
+                }
+                return true;
+            }());
+            ASSERT(createdTimelineRepresentation->originTime());
+            timelines.add(RemoteMonotonicTimeline::create(timelineID, *createdTimelineRepresentation->originTime(), now));
+        }
+        if (timelines.isEmpty())
+            m_timelines.remove(processIdentifier);
+    };
 
-        TimelineID timelineID { timelineRepresentation->identifier(), processIdentifier };
-        ASSERT(timelineRepresentation->originTime());
-        if (RefPtr existingTimeline = get(timelineID))
-            activeTimelines.add(existingTimeline.releaseNonNull());
-        else
-            activeTimelines.add(RemoteMonotonicTimeline::create(timelineID, *timelineRepresentation->originTime(), now));
-    }
+    auto removeDestroyedTimelines = [&] {
+        if (timelinesUpdate.destroyed.isEmpty())
+            return;
+        auto iterator = m_timelines.find(processIdentifier);
+        if (iterator == m_timelines.end())
+            return;
+        auto& existingTimelines = iterator->value;
+        for (auto& destroyedTimelineIdentifier : timelinesUpdate.destroyed) {
+            TimelineID destroyedTimelineID { destroyedTimelineIdentifier, processIdentifier };
+            existingTimelines.removeIf([destroyedTimelineID](auto& existingTimeline) {
+                return existingTimeline->identifier() == destroyedTimelineID;
+            });
+        }
+        if (existingTimelines.isEmpty())
+            m_timelines.remove(processIdentifier);
+    };
 
-    // Replace the timelines, which will clear any remaining timeline.
-    if (activeTimelines.isEmpty())
-        m_timelines.remove(processIdentifier);
-    else
-        m_timelines.set(processIdentifier, WTFMove(activeTimelines));
+    addCreatedTimelines();
+    removeDestroyedTimelines();
 }
 
 RemoteMonotonicTimeline* RemoteMonotonicTimelineRegistry::get(const TimelineID& timelineID) const

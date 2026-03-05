@@ -33,7 +33,7 @@ class BreakBlockquoteCommand : public CompositeEditCommand {
 public:
     static Ref<BreakBlockquoteCommand> create(Ref<Document>&& document)
     {
-        return adoptRef(*new BreakBlockquoteCommand(WTFMove(document)));
+        return adoptRef(*new BreakBlockquoteCommand(WTF::move(document)));
     }
 
 private:

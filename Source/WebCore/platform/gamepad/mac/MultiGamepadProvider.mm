@@ -33,8 +33,11 @@
 #import "Logging.h"
 #import "PlatformGamepad.h"
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MultiGamepadProvider::PlatformGamepadWrapper);
 
 static size_t numberOfGamepadProviders = 2;
 
@@ -114,8 +117,9 @@ void MultiGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Ev
     ASSERT(addResult.isNewEntry);
     m_gamepadVector[index] = addResult.iterator->value.get();
 
+    CheckedRef gamepadRef = *m_gamepadVector[index];
     for (Ref client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
+        client->platformGamepadConnected(gamepadRef, eventVisibility);
 }
 
 void MultiGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)

@@ -35,12 +35,12 @@ String GPUCommandBuffer::label() const
 
 void GPUCommandBuffer::setLabel(String&& label)
 {
-    Ref { m_backing }->setLabel(WTFMove(label));
+    Ref { m_backing }->setLabel(WTF::move(label));
 }
 
 void GPUCommandBuffer::setOverrideLabel(String&& label)
 {
-    m_overrideLabel = WTFMove(label);
+    m_overrideLabel = WTF::move(label);
 }
 
 void GPUCommandBuffer::setBacking(WebGPU::CommandEncoder& commandEncoder, WebGPU::CommandBuffer& commandBuffer)

@@ -37,6 +37,7 @@
 #include "pas_deallocator.h"
 #include "pas_fast_megapage_table.h"
 #include "pas_heap_config_kind.h"
+#include "pas_heap_lock.h"
 #include "pas_heap_ref.h"
 #include "pas_heap_ref_kind.h"
 #include "pas_mmap_capability.h"
@@ -202,7 +203,30 @@ struct pas_heap_config {
 
     /* Configure whether probabilistic guard malloc may be called or not during allocation. */
     bool pgm_enabled;
+
+    /* If true, user allocations too large to be MTE-tagged will instead be
+     * allocated through the system allocator, which provides additional
+     * memory protection guarantees. */
+    bool delegate_large_user_allocations;
 };
+
+/*
+ * This is called on every heap_config at activation time,
+ * always after activate_callback is called (if present).
+ *
+ * Must be called with the heap lock held.
+ */
+static PAS_ALWAYS_INLINE void
+pas_heap_config_assert_global_invariants(pas_heap_config config)
+{
+    pas_heap_lock_assert_held();
+
+    /*
+     * Heaps that want special attributes on their memory cannot
+     * be delegated to the system allocator.
+     */
+    PAS_ASSERT(config.mmap_capability == pas_may_mmap || !config.delegate_large_user_allocations);
+}
 
 #define PAS_HEAP_CONFIG_SPECIALIZATIONS(lower_case_heap_config_name) \
     .specialized_local_allocator_try_allocate_small_segregated_slow = \

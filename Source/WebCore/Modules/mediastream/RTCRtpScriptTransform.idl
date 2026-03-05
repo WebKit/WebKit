@@ -30,5 +30,5 @@
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface RTCRtpScriptTransform {
-    [CallWith=CurrentGlobalObject] constructor(Worker worker, optional any options, optional sequence<object> transfer);
+    [CallWith=CurrentGlobalObject] constructor(Worker worker, optional any options, optional sequence<object> transfer = []);
 };

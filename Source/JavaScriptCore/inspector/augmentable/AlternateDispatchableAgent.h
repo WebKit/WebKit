@@ -25,22 +25,25 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include <JavaScriptCore/AugmentableInspectorController.h>
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorAlternateBackendDispatchers.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 
 template<typename TBackendDispatcher, typename TAlternateDispatcher>
 class AlternateDispatchableAgent final : public InspectorAgentBase {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AlternateDispatchableAgent);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(AlternateDispatchableAgent);
 public:
     AlternateDispatchableAgent(const String& domainName, AugmentableInspectorController& controller, std::unique_ptr<TAlternateDispatcher> alternateDispatcher)
         : InspectorAgentBase(domainName)
-        , m_alternateDispatcher(WTFMove(alternateDispatcher))
+        , m_alternateDispatcher(WTF::move(alternateDispatcher))
         , m_backendDispatcher(TBackendDispatcher::create(controller.backendDispatcher(), nullptr))
     {
         m_backendDispatcher->setAlternateDispatcher(m_alternateDispatcher.get());
@@ -64,6 +67,14 @@ private:
     std::unique_ptr<TAlternateDispatcher> m_alternateDispatcher;
     const Ref<TBackendDispatcher> m_backendDispatcher;
 };
+
+#define TZONE_TEMPLATE_PARAMS template<typename TBackendDispatcher, typename TAlternateDispatcher>
+#define TZONE_TYPE AlternateDispatchableAgent<TBackendDispatcher, TAlternateDispatcher>
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
 
 } // namespace Inspector
 

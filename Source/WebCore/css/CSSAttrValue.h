@@ -44,13 +44,13 @@ public:
 private:
     explicit CSSAttrValue(String&& attributeName, RefPtr<CSSValue>&& fallback)
         : CSSValue(ClassType::Attr)
-        , m_attributeName(WTFMove(attributeName))
-        , m_fallback(WTFMove(fallback))
+        , m_attributeName(WTF::move(attributeName))
+        , m_fallback(WTF::move(fallback))
     {
     }
 
     String m_attributeName;
-    RefPtr<CSSValue> m_fallback;
+    const RefPtr<CSSValue> m_fallback;
 };
 
 } // namespace WebCore

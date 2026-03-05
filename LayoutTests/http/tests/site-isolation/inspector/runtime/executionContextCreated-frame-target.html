@@ -1,0 +1,88 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/runtime/resources/frame-with-passphrase.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.ExecutionContextCreated");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.OnFrameTargetAdded",
+        description: "A new frame target should receive an executionContextCreated event with correct structure.",
+        async test() {
+            let contextPromise = new Promise((resolve) => {
+                WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (targetEvent) => {
+                    let target = targetEvent.data.target;
+                    if (!(target instanceof WI.FrameTarget))
+                        return;
+
+                    target.singleFireEventListener(WI.FrameTarget.Event.ExecutionContextAdded, (contextEvent) => {
+                        resolve({target, context: contextEvent.data.context});
+                    });
+                });
+            });
+
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+
+            let {target, context} = await contextPromise;
+
+            InspectorTest.expectNotNull(context, "Should receive an ExecutionContext from the event.");
+            InspectorTest.expectThat(typeof context.id === "number" && context.id > 0, "ExecutionContext should have a positive numeric id.");
+            InspectorTest.expectThat(typeof context.name === "string", "ExecutionContext should have a name string.");
+            InspectorTest.log(`ExecutionContext type: ${String(context.type)}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.ContextIsUsable",
+        description: "The execution context from the event should be usable for evaluation.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+            let crossOriginTarget = frameTargets[frameTargets.length - 1];
+            InspectorTest.assert(crossOriginTarget, "Should have a cross-origin frame target.");
+
+            InspectorTest.expectNotNull(crossOriginTarget.executionContext, "Frame target should have a page execution context.");
+
+            let response = await crossOriginTarget.RuntimeAgent.evaluate.invoke({
+                expression: "document.location.hostname",
+                objectGroup: "test",
+                returnByValue: true,
+            });
+
+            InspectorTest.expectThat(!response.wasThrown, "Evaluation using context should not throw.");
+            InspectorTest.expectThat(response.result.value && response.result.value.length > 0, "Should get a non-empty hostname from the cross-origin frame.");
+            InspectorTest.log(`Frame hostname: ${response.result.value}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.UniqueIds",
+        description: "Each frame target should have unique execution context ids.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+            InspectorTest.expectThat(frameTargets.length >= 2, "Should have at least 2 frame targets (main frame + cross-origin iframe).");
+
+            let contextIds = new Set;
+            for (let target of frameTargets) {
+                let context = target.executionContext;
+                if (context) {
+                    InspectorTest.expectThat(!contextIds.has(context.id), "Execution context id should be unique.");
+                    contextIds.add(context.id);
+                }
+            }
+
+            InspectorTest.expectThat(contextIds.size >= 2, "Should have at least 2 unique context ids.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Runtime.executionContextCreated events are correctly dispatched for frame targets under site isolation.</p>
+</body>

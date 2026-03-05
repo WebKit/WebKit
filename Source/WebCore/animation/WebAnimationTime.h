@@ -42,11 +42,11 @@ public:
     WEBCORE_EXPORT static WebAnimationTime fromPercentage(double);
 
     WEBCORE_EXPORT std::optional<Seconds> time() const;
-    WEBCORE_EXPORT std::optional<double> percentage() const;
+    WEBCORE_EXPORT std::optional<double> NODELETE percentage() const;
 
-    bool isValid() const;
+    bool NODELETE isValid() const;
     bool isInfinity() const;
-    bool isZero() const;
+    bool NODELETE isZero() const;
     bool isNaN() const;
 
     WebAnimationTime matchingZero() const;
@@ -59,17 +59,17 @@ public:
 
     WebAnimationTime operator+(const WebAnimationTime&) const;
     WebAnimationTime operator-(const WebAnimationTime&) const;
-    double operator/(const WebAnimationTime&) const;
-    WebAnimationTime& operator+=(const WebAnimationTime&);
-    WebAnimationTime& operator-=(const WebAnimationTime&);
+    double NODELETE operator/(const WebAnimationTime&) const;
+    WebAnimationTime& NODELETE operator+=(const WebAnimationTime&);
+    WebAnimationTime& NODELETE operator-=(const WebAnimationTime&);
 
     friend bool operator==(const WebAnimationTime&, const WebAnimationTime&) = default;
-    friend std::partial_ordering operator<=>(const WebAnimationTime&, const WebAnimationTime&);
-    friend std::partial_ordering operator<=>(const WebAnimationTime&, Seconds);
+    friend std::partial_ordering NODELETE operator<=>(const WebAnimationTime&, const WebAnimationTime&);
+    friend std::partial_ordering NODELETE operator<=>(const WebAnimationTime&, Seconds);
 
     WebAnimationTime operator+(const Seconds&) const;
     WebAnimationTime operator-(const Seconds&) const;
-    bool operator==(const Seconds&) const;
+    bool NODELETE operator==(const Seconds&) const;
 
     WebAnimationTime operator*(double) const;
     WebAnimationTime operator/(double) const;

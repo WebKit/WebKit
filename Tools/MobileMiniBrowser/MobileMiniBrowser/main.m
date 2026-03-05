@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <MobileMiniBrowser/MobileMiniBrowser.h>
+#import <UIKit/UIKit.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 
 int main(int argc, char * argv[])
@@ -34,6 +34,6 @@ int main(int argc, char * argv[])
 #pragma clang diagnostic pop
 
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+        return UIApplicationMain(argc, argv, nil, nil);
     }
 }

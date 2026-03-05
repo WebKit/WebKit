@@ -29,16 +29,16 @@
 #include "LegacyRenderSVGRect.h"
 
 #include "LegacyRenderSVGShapeInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGRect);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGRect);
 
 LegacyRenderSVGRect::LegacyRenderSVGRect(SVGRectElement& element, RenderStyle&& style)
-    : LegacyRenderSVGShape(Type::LegacySVGRect, element, WTFMove(style))
+    : LegacyRenderSVGShape(Type::LegacySVGRect, element, WTF::move(style))
 {
 }
 
@@ -86,7 +86,7 @@ void LegacyRenderSVGRect::updateShapeFromElement()
         boundingBoxSize);
 
     auto strokeBoundingBox = m_fillBoundingBox;
-    if (style->hasStroke())
+    if (!style->stroke().isNone())
         strokeBoundingBox.inflate(this->strokeWidth() / 2);
 
 #if USE(CG)
@@ -123,7 +123,7 @@ void LegacyRenderSVGRect::fillShape(GraphicsContext& context) const
 
 void LegacyRenderSVGRect::strokeShape(GraphicsContext& context) const
 {
-    if (!style().hasStroke() || !style().strokeWidth().isPossiblyPositive())
+    if (style().stroke().isNone() || !style().strokeWidth().isPossiblyPositive())
         return;
 
     if (hasPath()) {

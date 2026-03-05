@@ -4,7 +4,7 @@ layer at (0,0) size 800x103
   RenderBlock {HTML} at (0,0) size 800x103
     RenderBody {BODY} at (8,16) size 784x79
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 413x17
+        RenderText {#text} at (0,0) size 413x18
           text run at (0,0) width 413: "There should be a single small column of blue below with no red:"
       RenderBlock {DIV} at (0,34) size 784x15
         RenderImage {IMG} at (384,0) size 16x15

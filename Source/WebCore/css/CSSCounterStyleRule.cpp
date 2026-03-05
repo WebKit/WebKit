@@ -43,13 +43,13 @@ namespace WebCore {
 StyleRuleCounterStyle::StyleRuleCounterStyle(const AtomString& name, CSSCounterStyleDescriptors&& descriptors)
     : StyleRuleBase(StyleRuleType::CounterStyle)
     , m_name(name)
-    , m_descriptors(WTFMove(descriptors))
+    , m_descriptors(WTF::move(descriptors))
 {
 }
 
 Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(const AtomString& name, CSSCounterStyleDescriptors&& descriptors)
 {
-    return adoptRef(*new StyleRuleCounterStyle(name, WTFMove(descriptors)));
+    return adoptRef(*new StyleRuleCounterStyle(name, WTF::move(descriptors)));
 }
 
 CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* system)
@@ -190,7 +190,7 @@ void CSSCounterStyleRule::setName(const String& text)
     if (!name)
         return;
     CSSStyleSheet::RuleMutationScope mutationScope(this);
-    mutableDescriptors().setName(WTFMove(name));
+    mutableDescriptors().setName(WTF::move(name));
 }
 
 void CSSCounterStyleRule::setSystem(const String& text)
@@ -203,9 +203,9 @@ void CSSCounterStyleRule::setSystem(const String& text)
     // and abort these steps.
     // (It's okay to change an aspect of the algorithm, like the first symbol value of a `fixed` system.)
     // https://www.w3.org/TR/css-counter-styles-3/#the-csscounterstylerule-interface
-    auto systemData = extractSystemDataFromCSSValue(WTFMove(systemValue), system);
+    auto systemData = extractSystemDataFromCSSValue(WTF::move(systemValue), system);
     CSSStyleSheet::RuleMutationScope mutationScope(this);
-    mutableDescriptors().setSystemData(WTFMove(systemData));
+    mutableDescriptors().setSystemData(WTF::move(systemData));
 }
 
 void CSSCounterStyleRule::setNegative(const String& text)
@@ -223,7 +223,7 @@ void CSSCounterStyleRule::setPrefix(const String& text)
     if (!newValue)
         return;
     CSSStyleSheet::RuleMutationScope mutationScope(this);
-    mutableDescriptors().setPrefix(symbolFromCSSValue(WTFMove(newValue)));
+    mutableDescriptors().setPrefix(symbolFromCSSValue(WTF::move(newValue)));
 }
 
 void CSSCounterStyleRule::setSuffix(const String& text)
@@ -232,7 +232,7 @@ void CSSCounterStyleRule::setSuffix(const String& text)
     if (!newValue)
         return;
     CSSStyleSheet::RuleMutationScope mutationScope(this);
-    mutableDescriptors().setSuffix(symbolFromCSSValue(WTFMove(newValue)));
+    mutableDescriptors().setSuffix(symbolFromCSSValue(WTF::move(newValue)));
 }
 
 void CSSCounterStyleRule::setRange(const String& text)

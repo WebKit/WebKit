@@ -23,6 +23,7 @@
 
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/CSSValue.h>
+#include <WebCore/CSSValueKeywords.h>
 #include <WebCore/IsImportant.h>
 #include <WebCore/WritingMode.h>
 #include <wtf/BitSet.h>
@@ -32,6 +33,7 @@ namespace WebCore {
 
 class CSSValueList;
 class Settings;
+struct CSSParserContext;
 
 enum class IsImplicit : bool { No, Yes };
 
@@ -63,7 +65,13 @@ class CSSProperty {
 public:
     CSSProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, IsImplicit implicit = IsImplicit::No)
         : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit)
-        , m_value(WTFMove(value))
+        , m_value(WTF::move(value))
+    {
+    }
+
+    CSSProperty(const StylePropertyMetadata& metadata, Ref<CSSValue>&& value)
+        : m_metadata(metadata)
+        , m_value(WTF::move(value))
     {
     }
 
@@ -73,7 +81,6 @@ public:
     bool isImportant() const { return m_metadata.m_important; }
 
     CSSValue* value() const { return m_value.ptr(); }
-    Ref<CSSValue> protectedValue() const { return m_value; }
 
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, WritingMode);
     static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, WritingMode);
@@ -134,7 +141,16 @@ public:
 
     static bool disablesNativeAppearance(CSSPropertyID);
 
-    const StylePropertyMetadata& metadata() const { return m_metadata; }
+    // Returns the valid keyword values for a property from CSSProperties.json.
+    // This is used by the Inspector to provide completions for properties
+    // that aren't keyword-fast-path eligible but still have enumerated values.
+    static std::span<const CSSValueID> validKeywordsForProperty(CSSPropertyID);
+
+    // Checks if a keyword is valid for a property, taking settings flags into account.
+    // This is used by the Inspector to filter keywords based on enabled settings.
+    static bool isKeywordValidForPropertyValues(CSSPropertyID, CSSValueID, const CSSParserContext&);
+
+    const StylePropertyMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
     static bool isColorProperty(CSSPropertyID propertyId)
     {
         return colorProperties.get(propertyId);

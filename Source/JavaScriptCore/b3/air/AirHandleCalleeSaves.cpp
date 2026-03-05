@@ -36,7 +36,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void handleCalleeSaves(Code& code)
 {
-    RegisterSetBuilder usedCalleeSaves;
+    RegisterSet usedCalleeSaves;
 
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
@@ -53,15 +53,15 @@ void handleCalleeSaves(Code& code)
         }
     }
 
-    handleCalleeSaves(code, WTFMove(usedCalleeSaves));
+    handleCalleeSaves(code, WTF::move(usedCalleeSaves));
 }
 
-void handleCalleeSaves(Code& code, RegisterSetBuilder usedCalleeSaves)
+void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
 {
     // We filter to really get the callee saves.
-    usedCalleeSaves.filter(RegisterSetBuilder::calleeSaveRegisters());
+    usedCalleeSaves.filter(RegisterSet::calleeSaveRegisters());
     usedCalleeSaves.filter(code.mutableRegs());
-    usedCalleeSaves.exclude(RegisterSetBuilder::stackRegisters()); // We don't need to save FP here.
+    usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
 
 #if CPU(ARM)
     // See AirCode for a similar comment about why ARMv7 acts weird here.
@@ -70,7 +70,7 @@ void handleCalleeSaves(Code& code, RegisterSetBuilder usedCalleeSaves)
     usedCalleeSaves.add(MacroAssembler::addressTempRegister, IgnoreVectors);
 #endif
 
-    auto calleSavesToSave = usedCalleeSaves.buildAndValidate();
+    auto calleSavesToSave = usedCalleeSaves;
 
     if (!calleSavesToSave.numberOfSetRegisters())
         return;
@@ -83,7 +83,7 @@ void handleCalleeSaves(Code& code, RegisterSetBuilder usedCalleeSaves)
     ASSERT(calleeSaveRegisters.sizeOfAreaInBytes() == byteSize);
 
     code.setCalleeSaveRegisterAtOffsetList(
-        WTFMove(calleeSaveRegisters),
+        WTF::move(calleeSaveRegisters),
         code.addStackSlot(byteSize, StackSlotKind::Locked));
 }
 

@@ -32,7 +32,7 @@ class PlatformRawAudioDataGStreamer final : public PlatformRawAudioData {
 public:
     static Ref<PlatformRawAudioData> create(GRefPtr<GstSample>&& sample)
     {
-        return adoptRef(*new PlatformRawAudioDataGStreamer(WTFMove(sample)));
+        return adoptRef(*new PlatformRawAudioDataGStreamer(WTF::move(sample)));
     }
 
     AudioSampleFormat format() const final;
@@ -47,7 +47,7 @@ public:
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
 
     const GRefPtr<GstSample>& sample() const { return m_sample; }
-    const GstAudioInfo* info() const { return &m_info; }
+    const GstAudioInfo* info() const LIFETIME_BOUND { return &m_info; }
 
     bool isInterleaved() const;
     std::optional<Variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> planesOfSamples(size_t);

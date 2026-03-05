@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.foreach
 description: Return abrupt when "this" value fails buffer boundary checks
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [ArrayBuffer, BigInt, TypedArray, arrow-function, resizable-arraybuffer]
 ---*/
 
@@ -56,4 +56,4 @@ testWithBigIntTypedArrayConstructors(TA => {
     array.forEach(() => {});
     throw new Test262Error('forEach completed successfully');
   });
-});
+}, null, ["passthrough"]);

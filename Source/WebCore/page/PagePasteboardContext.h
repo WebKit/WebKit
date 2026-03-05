@@ -37,7 +37,7 @@ class PagePasteboardContext final : public PasteboardContext {
 public:
     PagePasteboardContext(std::optional<PageIdentifier>&& pageID = std::nullopt)
         : PasteboardContext()
-        , m_pageID(WTFMove(pageID))
+        , m_pageID(WTF::move(pageID))
     {
     }
 
@@ -45,7 +45,7 @@ public:
 
     static std::unique_ptr<PasteboardContext> create(std::optional<PageIdentifier>&& pageID = std::nullopt)
     {
-        return makeUnique<PagePasteboardContext>(WTFMove(pageID));
+        return makeUnique<PagePasteboardContext>(WTF::move(pageID));
     }
 
     std::optional<PageIdentifier> pageID() const { return m_pageID; }

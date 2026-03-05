@@ -22,12 +22,14 @@ namespace webrtc {
 
 class FakeCodecLookupHelper : public CodecLookupHelper {
  public:
-  explicit FakeCodecLookupHelper(ConnectionContext* context)
+  explicit FakeCodecLookupHelper(ConnectionContext* context,
+                                 const FieldTrialsView& field_trials)
       : context_(context),
-        codec_vendor_(std::make_unique<::webrtc::CodecVendor>(
-            context->media_engine(),
-            context->use_rtx(),
-            context->env().field_trials())) {}
+        field_trials_(&field_trials),
+        codec_vendor_(
+            std::make_unique<::webrtc::CodecVendor>(context->media_engine(),
+                                                    context->use_rtx(),
+                                                    *field_trials_)) {}
   webrtc::PayloadTypeSuggester* PayloadTypeSuggester() override {
     // Not used in this test.
     RTC_CHECK_NOTREACHED();
@@ -40,12 +42,12 @@ class FakeCodecLookupHelper : public CodecLookupHelper {
   // result to show up in the codec vendor's output.
   void Reset() {
     codec_vendor_ = std::make_unique<::webrtc::CodecVendor>(
-        context_->media_engine(), context_->use_rtx(),
-        context_->env().field_trials());
+        context_->media_engine(), context_->use_rtx(), *field_trials_);
   }
 
  private:
-  ConnectionContext* context_;
+  ConnectionContext* const context_;
+  const FieldTrialsView* absl_nonnull field_trials_;
   std::unique_ptr<::webrtc::CodecVendor> codec_vendor_;
 };
 

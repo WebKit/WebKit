@@ -80,7 +80,7 @@ static bool readSimpleValue(WTF::Persistence::Decoder& decoder, KeyedDecoderGene
     decoder >> value;
     if (!value)
         return false;
-    dictionary.add(key.value(), WTFMove(value.value()));
+    dictionary.add(key.value(), WTF::move(value.value()));
     return true;
 }
 
@@ -123,7 +123,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
             ok = decoder.decodeFixedLengthData(buffer.mutableSpan());
             if (!ok)
                 break;
-            m_dictionaryStack.last()->add(*key, WTFMove(buffer));
+            m_dictionaryStack.last()->add(*key, WTF::move(buffer));
             break;
         }
         case KeyedEncoderGeneric::Type::Bool:
@@ -158,7 +158,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
                 ok = false;
             if (!ok)
                 break;
-            m_dictionaryStack.last()->add(*key, WTFMove(*value));
+            m_dictionaryStack.last()->add(*key, WTF::move(*value));
             break;
         }
         case KeyedEncoderGeneric::Type::BeginObject: {
@@ -170,7 +170,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
             auto* currentDictinary = m_dictionaryStack.last();
             auto newDictionary = makeUnique<Dictionary>();
             m_dictionaryStack.append(newDictionary.get());
-            currentDictinary->add(*key, WTFMove(newDictionary));
+            currentDictinary->add(*key, WTF::move(newDictionary));
             break;
         }
         case KeyedEncoderGeneric::Type::EndObject:
@@ -186,7 +186,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
                 break;
             auto newArray = makeUnique<Array>();
             m_arrayStack.append(newArray.get());
-            m_dictionaryStack.last()->add(*key, WTFMove(newArray));
+            m_dictionaryStack.last()->add(*key, WTF::move(newArray));
             break;
         }
         case KeyedEncoderGeneric::Type::BeginArrayElement: {
@@ -195,7 +195,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
                 break;
             auto newDictionary = makeUnique<Dictionary>();
             m_dictionaryStack.append(newDictionary.get());
-            m_arrayStack.last()->append(WTFMove(newDictionary));
+            m_arrayStack.last()->append(WTF::move(newDictionary));
             break;
         }
         case KeyedEncoderGeneric::Type::EndArrayElement:

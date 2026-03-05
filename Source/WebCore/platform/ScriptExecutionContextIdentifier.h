@@ -37,7 +37,7 @@ public:
     static ProcessQualified generate() { return { WTF::UUID::createVersion4Weak(), Process::identifier() }; }
 
     ProcessQualified(WTF::UUID object, ProcessIdentifier processIdentifier)
-        : m_object(WTFMove(object))
+        : m_object(WTF::move(object))
         , m_processIdentifier(processIdentifier)
     {
     }

@@ -26,7 +26,6 @@
 [
     Conditional=APPLE_PAY_COUPON_CODE,
 ] dictionary ApplePayCouponCodeUpdate : ApplePayDetailsUpdateBase {
-    sequence<ApplePayError> errors;
-
-    sequence<ApplePayShippingMethod> newShippingMethods;
+    sequence<ApplePayError> errors = [];
+    sequence<ApplePayShippingMethod> newShippingMethods = [];
 };

@@ -80,7 +80,7 @@ void HeapSnapshotBuilder::buildSnapshot()
         m_appendedCells.clear();
         m_snapshot->finalize();
     }
-    m_profiler.appendSnapshot(WTFMove(m_snapshot));
+    m_profiler.appendSnapshot(WTF::move(m_snapshot));
 }
 
 void HeapSnapshotBuilder::analyzeNode(JSCell* cell)

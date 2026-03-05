@@ -63,7 +63,8 @@ for name, classes in types.items():
     ranges.sort();
     
     if emitTables and classes["UseTable"] and (not "Inverse" in classes):
-        array = ("static constinit const char _%sData[65536] = {\n" % name);
+        array = ("static constinit const char _%sData[CharacterClass::tableSize] = {\n" % name);
+        tableSize = 65536
         i = 0
         for (min,max) in ranges:
             while i < min:
@@ -73,7 +74,7 @@ for name, classes in types.items():
                     array += ('\n')
             while i <= max:
                 i = i + 1
-                if (i == 65536):
+                if (i == tableSize):
                     array += ("1")
                 else:
                     array += ('1,')
@@ -134,4 +135,3 @@ if (len(sys.argv) > 1):
 else:
     print(arrays)
     print(functions)
-

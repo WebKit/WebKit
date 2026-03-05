@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLCocoa.h" // NOLINT
+#import "GraphicsLayer.h"
 #import "GraphicsLayerContentsDisplayDelegate.h"
 #import "PlatformCALayer.h"
 #import "PlatformCALayerDelegatedContents.h"
@@ -44,7 +45,7 @@ constexpr Seconds frameFinishedTimeout = 5_s;
 namespace {
 
 class DisplayBufferFence final : public PlatformCALayerDelegatedContentsFence {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(DisplayBufferFence);
+    WTF_MAKE_TZONE_ALLOCATED(DisplayBufferFence);
     WTF_MAKE_NONCOPYABLE(DisplayBufferFence);
 public:
     static RefPtr<DisplayBufferFence> create()
@@ -77,6 +78,8 @@ private:
     bool m_isSet WTF_GUARDED_BY_LOCK(m_lock) { false };
     Condition m_condition;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayBufferFence);
 
 class DisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
 public:
@@ -113,8 +116,8 @@ public:
         }
         if (m_displayBuffer && displayBuffer->surface() == m_displayBuffer->surface())
             return;
-        m_displayBuffer = IOSurface::createFromSurface(displayBuffer->protectedSurface().get(), { });
-        m_finishedFence = WTFMove(finishedFence);
+        m_displayBuffer = IOSurface::createFromSurface(protect(displayBuffer->surface()).get(), { });
+        m_finishedFence = WTF::move(finishedFence);
     }
 
 private:
@@ -131,7 +134,7 @@ private:
 // GraphicsContextGL type that is used when WebGL is run in-process in WebContent process.
 class WebProcessGraphicsContextGLCocoa final : public GraphicsContextGLCocoa
 {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebProcessGraphicsContextGLCocoa);
+    WTF_MAKE_TZONE_ALLOCATED(WebProcessGraphicsContextGLCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebProcessGraphicsContextGLCocoa);
 public:
     ~WebProcessGraphicsContextGLCocoa();
@@ -147,8 +150,10 @@ private:
     friend class GraphicsContextGLOpenGL;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcessGraphicsContextGLCocoa);
+
 WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes)
-    : GraphicsContextGLCocoa(WTFMove(attributes), { })
+    : GraphicsContextGLCocoa(WTF::move(attributes), { })
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
 {
 }
@@ -165,7 +170,7 @@ void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
     // Currently there's no mechanism to detect if scheduled commands were lost, so we
     // assume that scheduled fence will always be signalled. 
     // Here we trust that compositor does not advance too far with multiple frames.
-    m_layerContentsDisplayDelegate->setDisplayBuffer(displayBufferSurface(), WTFMove(finishedFence));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(displayBufferSurface(), WTF::move(finishedFence));
 }
 
 }

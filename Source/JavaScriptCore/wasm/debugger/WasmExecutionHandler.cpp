@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmExecutionHandler.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -35,6 +35,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "Options.h"
 #include "SubspaceInlines.h"
 #include "VM.h"
+#include "VMManager.h"
 #include "WasmBreakpointManager.h"
 #include "WasmCallee.h"
 #include "WasmDebugServer.h"
@@ -54,6 +55,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/WTFString.h>
 
@@ -62,55 +64,25 @@ namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExecutionHandler);
 
-// FIXME: This current implementation only stops a single VM. In real-world browser debugging,
-// when ANY VM hits a WASM breakpoint, we should stop ALL execution across ALL VMs in the process.
-//
-// COMPREHENSIVE STOP-THE-WORLD APPROACH:
-// - Single VM with WASM: Current implementation works (but should be consistent)
-// - TODO: Multiple VMs, only one running WASM: Stop ALL VMs (WASM + non-WASM mutators)
-// - TODO: Multiple VMs, multiple running WASM: Stop ALL VMs (all WASM + all non-WASM mutators)
-class StopWorld {
-public:
-    explicit StopWorld(VM& vm)
-        : m_vm(vm)
-    {
-    }
-
-    ~StopWorld()
-    {
-        if (m_vm.isWasmStopWorldActive())
-            deactivateStopWorld();
-    }
-
-    void activateStopWorld()
-    {
-        m_vm.traps().requestStop();
-        m_vm.setIsWasmStopWorldActive(true);
-    }
-
-    void deactivateStopWorld()
-    {
-        m_vm.traps().cancelStop();
-        m_vm.setIsWasmStopWorldActive(false);
-    }
-
-private:
-    VM& m_vm;
-};
-
 struct StopReasonInfo {
     String reasonString;
     StringView reasonSuffix;
 };
 
-static inline StopReasonInfo stopReasonCodeToInfo(ExecutionHandler::StopReason::Code code)
+static inline StopReasonInfo stopReasonCodeToInfo(StopData::Code code)
 {
     switch (code) {
-    case ExecutionHandler::StopReason::Code::Signal:
-        return { "T02"_s, "signal"_s }; // SIGINT - Interrupt signal
-    case ExecutionHandler::StopReason::Code::Trace:
+    case StopData::Code::Stop:
+#if OS(DARWIN)
+        return { "T11"_s, "signal"_s }; // SIGSTOP on macOS (17 decimal = 0x11 hex)
+#elif OS(LINUX)
+        return { "T13"_s, "signal"_s }; // SIGSTOP on Linux (19 decimal = 0x13 hex)
+#else
+        return { "T11"_s, "signal"_s }; // Default: SIGSTOP (most common value)
+#endif
+    case StopData::Code::Trace:
         return { "T05"_s, "trace"_s }; // SIGTRAP - Trace/single step
-    case ExecutionHandler::StopReason::Code::Breakpoint:
+    case StopData::Code::Breakpoint:
         return { "T05"_s, "breakpoint"_s }; // SIGTRAP - Breakpoint hit
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -118,77 +90,262 @@ static inline StopReasonInfo stopReasonCodeToInfo(ExecutionHandler::StopReason::
     }
 }
 
-ExecutionHandler::ExecutionHandler(DebugServer& debugServer, ModuleManager& moduleManager, BreakpointManager& breakpointManager)
+ExecutionHandler::ExecutionHandler(DebugServer& debugServer, ModuleManager& instanceManager)
     : m_debugServer(debugServer)
-    , m_moduleManager(moduleManager)
-    , m_breakpointManager(breakpointManager)
+    , m_moduleManager(instanceManager)
+    , m_breakpointManager(makeUnique<BreakpointManager>())
 {
 }
 
-void ExecutionHandler::stopImpl(StopReason&& stopReason)
+void ExecutionHandler::stopTheWorld(VM& debuggee, StopTheWorldEvent event)
 {
-    RELEASE_ASSERT(Thread::currentSingleton().uid() == m_debugServer.mutatorThreadId());
+    auto info = VMManager::info();
+    dataLogLnIf(Options::verboseWasmDebugger(), "[stopTheWorld] debuggee:", RawPointer(&debuggee), " event:", event, " ", info);
 
-    Locker locker { m_lock };
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop][Breakpoint] Start");
+    {
+        Locker locker { m_lock };
 
-    m_stopReason = stopReason;
-    m_mutatorState = MutatorState::Stopped;
-    m_breakpointManager.clearAllOneTimeBreakpoints();
+        switch (event) {
+        case StopTheWorldEvent::StepIntoSiteReached:
+            RELEASE_ASSERT(Thread::currentSingleton().uid() == threadId(*m_debuggee));
+            RELEASE_ASSERT(m_debuggee == info.targetVM && info.worldMode == VMManager::Mode::RunOne);
+            break;
+        case StopTheWorldEvent::BreakpointHit:
+            RELEASE_ASSERT(info.worldMode != VMManager::Mode::Stopped);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
 
-    if (m_debuggerState == DebuggerState::ContinueRequested) {
-        sendStopReply(locker);
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop][Breakpoint] Currently in continue. Sent a stop reply and waiting...");
-    } else {
-        RELEASE_ASSERT(m_debuggerState == DebuggerState::StopRequested);
-        m_debuggerContinue.notifyOne();
+        // Wait for previous resume all to prevent reenter notifyVMStop.
+        while (m_awaitingResumeNotification)
+            m_debuggeeContinue.wait(m_lock);
+        m_debuggee = &debuggee;
     }
 
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop][Breakpoint] Updated stop reason and waiting...");
-    m_mutatorContinue.wait(locker);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop][Breakpoint] Unblocked and running...");
-
-    m_stopReason.reset();
-    m_mutatorState = MutatorState::Running;
-    if (m_debuggerState == DebuggerState::ContinueRequested)
-        m_debuggerContinue.notifyOne();
+    VMManager::requestStopAll(VMManager::StopReason::WasmDebugger);
+    VMManager::singleton().notifyVMStop(debuggee, event);
 }
 
-bool ExecutionHandler::stopCode(CallFrame* callFrame, JSWebAssemblyInstance* instance, IPIntCallee* callee, uint8_t* pc, uint8_t* mc, IPInt::IPIntLocal* locals, IPInt::IPIntStackEntry* stack)
+bool ExecutionHandler::hitBreakpoint(CallFrame* callFrame, JSWebAssemblyInstance* instance, IPIntCallee* callee, uint8_t* pc, uint8_t* mc, IPInt::IPIntLocal* locals, IPInt::IPIntStackEntry* stack)
 {
-    RELEASE_ASSERT(Thread::currentSingleton().uid() == m_debugServer.mutatorThreadId());
-
     VirtualAddress address = VirtualAddress::toVirtual(instance, callee->functionIndex(), pc);
-    if (auto* breakpoint = m_breakpointManager.findBreakpoint(address)) {
-        StopReason stopReason(breakpoint->type, address, breakpoint->originalBytecode, pc, mc, locals, stack, callee, instance, callFrame);
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop] Going to stop at ", *breakpoint, " with ", stopReason);
-        stopImpl(WTFMove(stopReason));
+    if (auto* breakpoint = m_breakpointManager->findBreakpoint(address)) {
+        VM& debuggee = instance->vm();
+        debuggee.debugState()->setBreakpointStopData(breakpoint->type, address, breakpoint->originalBytecode, pc, mc, locals, stack, callee, instance, callFrame);
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Code][hitBreakpoint] Going to stop at ", *breakpoint, " with ", *debuggee.debugState()->stopData);
+        stopTheWorld(debuggee, StopTheWorldEvent::BreakpointHit);
         return true;
     }
     return false;
 }
 
-void ExecutionHandler::resume()
+ExecutionHandler::ResumeMode ExecutionHandler::stopCode(Locker<Lock>& locker, StopTheWorldEvent event)
+{
+    RELEASE_ASSERT(Thread::currentSingleton().uid() == threadId(*m_debuggee));
+
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop] Start with event:", event);
+
+    auto notifyDebuggerOfStop = [&]() WTF_REQUIRES_LOCK(m_lock) {
+        if (m_debuggerState == DebuggerState::ContinueRequested) {
+            sendStopReply(locker);
+            dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop] Sent a stop reply and waiting...");
+        } else {
+            RELEASE_ASSERT(requiresStopConfirmation());
+            m_debuggerContinue.notifyOne(); // Notify debugger that code stopped.
+        }
+    };
+
+    // Handle stop event and notify debugger
+    switch (event) {
+    case StopTheWorldEvent::VMStopped:
+    case StopTheWorldEvent::VMCreated:
+    case StopTheWorldEvent::VMActivated:
+        RELEASE_ASSERT(m_debuggerState == DebuggerState::InterruptRequested || m_debuggerState == DebuggerState::SwitchRequested);
+        notifyDebuggerOfStop();
+        break;
+    case StopTheWorldEvent::BreakpointHit:
+        RELEASE_ASSERT(m_debuggerState == DebuggerState::StepRequested || m_debuggerState == DebuggerState::ContinueRequested || m_debuggerState == DebuggerState::SwitchRequested);
+        m_breakpointManager->clearAllOneTimeBreakpoints();
+        notifyDebuggerOfStop();
+        break;
+    case StopTheWorldEvent::StepIntoSiteReached:
+        RELEASE_ASSERT(m_debuggerState == DebuggerState::StepRequested);
+        m_debuggerContinue.notifyOne(); // Notify that breakpoint is set.
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    // Wait for debugger command
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop] Waiting for debugger command...");
+    m_debuggeeContinue.wait(locker); // Wait for resume mode to be set.
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop] Unblocked and running...");
+
+    // Determine resume mode
+    if (m_debuggerState == DebuggerState::SwitchRequested)
+        return ResumeMode::Switch;
+
+    // Defer debugger notification until after VMs resume to prevent interrupt() race.
+    if (m_debuggerState == DebuggerState::ContinueRequested)
+        m_awaitingResumeNotification = true;
+
+    return (m_debuggerState == DebuggerState::StepRequested) ? ResumeMode::One : ResumeMode::All;
+}
+
+StopTheWorldStatus ExecutionHandler::handleStopTheWorld(VM& debuggee, StopTheWorldEvent event)
+{
+    dataLogLnIf(Options::verboseWasmDebugger(), "[STW] handleStopTheWorld() begin with event:", event, " debuggee:", RawPointer(&debuggee));
+    Locker locker { m_lock };
+
+    selectDebuggeeIfNeeded(debuggee);
+    RELEASE_ASSERT(m_debuggee);
+
+    // If debuggee differs from candidate, switch to debuggee.
+    if (m_debuggee != &debuggee) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[STW] Context switch to debuggee VM");
+        return STW_CONTEXT_SWITCH(m_debuggee);
+    }
+
+    // Stop the code and let debugger decide resume mode.
+    ExecutionHandler::ResumeMode mode = stopCode(locker, event);
+    switch (mode) {
+    case ExecutionHandler::ResumeMode::One:
+        return STW_RESUME_ONE(m_debuggee);
+    case ExecutionHandler::ResumeMode::All:
+        m_debuggee = nullptr;
+        return STW_RESUME_ALL();
+    case ExecutionHandler::ResumeMode::Switch:
+        RELEASE_ASSERT(m_debuggee != &debuggee);
+        RELEASE_ASSERT(debuggee.debugState()->isStopped());
+        RELEASE_ASSERT(m_debuggee->debugState()->isStopped());
+        return STW_CONTEXT_SWITCH(m_debuggee);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return STW_RESUME_ALL();
+}
+
+void ExecutionHandler::selectDebuggeeIfNeeded(VM& fallbackVM) WTF_REQUIRES_LOCK(m_lock)
+{
+    if (m_debuggee) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[STW] Already have debuggee VM:", RawPointer(m_debuggee));
+        return;
+    }
+
+    // Prefer VM at prologue, otherwise use the triggered VM
+    VM* selectedVM = nullptr;
+    VMManager::forEachVM([&](VM& vm) {
+        auto* debugState = vm.debugState();
+        if (vm.debugState()->isStopped() && debugState->atPrologue()) {
+            selectedVM = &vm;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+
+    m_debuggee = selectedVM ? selectedVM : &fallbackVM;
+    dataLogLnIf(Options::verboseWasmDebugger(), "[STW] Selected debuggee VM:", RawPointer(m_debuggee));
+}
+
+// Called by VMManager when ALL VMs are stopped at safe points.
+// Returns resume mode (ResumeOne/ResumeAll/ContextSwitch) to coordinate execution.
+StopTheWorldStatus wasmDebuggerOnStopCallback(VM& debuggee, StopTheWorldEvent event)
+{
+    dataLogLnIf(Options::verboseWasmDebugger(), "[STW] Callback invoked with event:", event);
+    auto& server = DebugServer::singleton();
+    if (!server.isConnected()) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[STW] Not connected, resuming all");
+        return STW_RESUME_ALL();
+    }
+
+    return server.execution().handleStopTheWorld(debuggee, event);
+}
+
+void ExecutionHandler::handlePostResume()
 {
     Locker locker { m_lock };
 
+    if (takeAwaitingResumeNotification()) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[PostResume] Notify debugger to continue");
+        m_debuggerContinue.notifyOne(); // Notify that resume is complete.
+        m_debuggeeContinue.notifyAll(); // Release resume barrier for VMs blocked in stopTheWorld().
+    }
+}
+
+// Called by VMManager after ALL VMs have resumed (when m_numberOfStoppedVMs reaches 0).
+// This is the safe point to notify debugger that resume is complete and release barriers in stopTheWorld().
+void wasmDebuggerOnResumeCallback()
+{
+    auto& server = DebugServer::singleton();
+    if (!server.isConnected()) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[STW][PostResume] Not connected, resuming all");
+        return;
+    }
+
+    server.execution().handlePostResume();
+}
+
+void ExecutionHandler::resume()
+{
+    Locker locker { m_lock };
+    resumeImpl(locker);
+}
+
+void ExecutionHandler::resumeImpl(Locker<Lock>& locker)
+{
+    RELEASE_ASSERT(Thread::currentSingleton().uid() == debugServerThreadId());
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Continue] Start");
 
-    RELEASE_ASSERT(Thread::currentSingleton().uid() == m_debugServer.debugServerThreadId());
-    RELEASE_ASSERT(m_debuggerState == DebuggerState::Replied && m_mutatorState == MutatorState::Stopped);
-    m_mutatorContinue.notifyOne();
-
-    // This is to simplify implementation. If we don't wait here, we may have a race condition that
-    // after above notification, interrupt() may acquire the locker first.
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Continue] Notified code to continue and waiting...");
+    RELEASE_ASSERT(debuggeeState()->isStopped());
     m_debuggerState = DebuggerState::ContinueRequested;
-    m_debuggerContinue.wait(m_lock);
+    m_debuggeeContinue.notifyOne(); // Notify debuggee VM with resume all command.
+
+    // Wait for resume to complete to prevent interrupt() from acquiring lock before VMs resume.
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Continue] Notified code to continue and waiting...");
+    m_debuggerContinue.wait(locker); // Wait for resume to complete.
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Continue] Confirmed that code is running...");
+}
+
+static inline VM* findVM(uint64_t threadId)
+{
+    VM* result = nullptr;
+    VMManager::forEachVM([&](VM& vm) {
+        if (vm.debugState()->isStopped() && threadId == ExecutionHandler::threadId(vm)) {
+            result = &vm;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    return result;
+}
+
+void ExecutionHandler::switchTarget(uint64_t threadId)
+{
+    RELEASE_ASSERT(Thread::currentSingleton().uid() == debugServerThreadId());
+
+    Locker locker { m_lock };
+
+    VM* newDebuggee = findVM(threadId);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][SwitchVM] current debuggee=", RawPointer(m_debuggee), " new debuggee=", RawPointer(newDebuggee));
+
+    if (m_debuggee == newDebuggee)
+        return;
+
+    RELEASE_ASSERT(debuggeeState()->isStopped());
+    m_debuggee = newDebuggee;
+    m_debuggerState = DebuggerState::SwitchRequested;
+    m_debuggeeContinue.notifyOne(); // Notify to switch VM context.
+
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][SwitchVM] Notified code to continue and switch VM, waiting...");
+    m_debuggerContinue.wait(locker); // Wait for new debuggee VM to stop.
+    RELEASE_ASSERT(debuggeeState()->isStopped());
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][SwitchVM] Code is stopped");
 }
 
 void ExecutionHandler::interrupt()
 {
-    RELEASE_ASSERT(Thread::currentSingleton().uid() == m_debugServer.debugServerThreadId());
+    RELEASE_ASSERT(Thread::currentSingleton().uid() == debugServerThreadId());
 
     Locker locker { m_lock };
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] Start");
@@ -197,67 +354,97 @@ void ExecutionHandler::interrupt()
     // no matter how many Ctrl+C the user types, LLDB will not send additional interrupt packets
     // until it receives a stop reply. This prevents packet flooding and ensures clean protocol behavior.
     // Our WebKit implementation handles each interrupt request by activating StopWorld via VM traps.
-    StopWorld stopWorld(*m_debugServer.vm());
 
     {
-        RELEASE_ASSERT(m_mutatorState == MutatorState::Running);
-        m_debuggerState = DebuggerState::StopRequested;
-        stopWorld.activateStopWorld();
+        RELEASE_ASSERT(!m_debuggee || debuggeeState()->isRunning());
+        m_debuggerState = DebuggerState::InterruptRequested;
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] Calling VMManager::requestStopAll()...");
+        VMManager::singleton().requestStopAll(VMManager::StopReason::WasmDebugger);
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] VMManager::requestStopAll() returned");
     }
 
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] Notified code to stop and waiting...");
-    m_debuggerContinue.wait(m_lock);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] Confirmed that code is stoped");
-
-    {
-        stopWorld.deactivateStopWorld();
-        sendStopReply(locker);
-    }
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] Notified code to stop, waiting...");
+    m_debuggerContinue.wait(locker); // Wait for debuggee VM to stop.
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] Wait completed, sending stop reply...");
+    sendStopReply(locker);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Interrupt] Code is stopped and debugger replied");
 }
 
 void ExecutionHandler::step()
 {
-    RELEASE_ASSERT(Thread::currentSingleton().uid() == m_debugServer.debugServerThreadId());
+    RELEASE_ASSERT(Thread::currentSingleton().uid() == debugServerThreadId());
 
     Locker locker { m_lock };
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Start with ", m_stopReason);
+    auto* state = debuggeeState();
+    RELEASE_ASSERT(m_debuggerState == DebuggerState::Replied && state->isStopped());
 
-    uint8_t* currentPC = m_stopReason.pc;
+    bool resumeAll = false;
+    if (state->atSystemCall())
+        resumeAll = true;
+    else if (state->atBreakpoint())
+        resumeAll = stepAtBreakpoint(locker, state);
+    else {
+        RELEASE_ASSERT(state->atPrologue());
+        setBreakpointAtEntry(state->stopData->instance, state->stopData->callee.get(), Breakpoint::Type::Step);
+    }
+
+    if (resumeAll) {
+        resumeImpl(locker);
+        return;
+    }
+
+    RELEASE_ASSERT(m_breakpointManager->hasOneTimeBreakpoints());
+    m_debuggerState = DebuggerState::StepRequested;
+    m_debuggeeContinue.notifyOne(); // Notify to resume until next breakpoint.
+
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Notified code to continue and expected a stop, waiting...");
+    m_debuggerContinue.wait(locker); // Wait for one-time breakpoint hit.
+    sendStopReply(locker);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Code is stopped and debugger replied");
+}
+
+bool ExecutionHandler::stepAtBreakpoint(Locker<Lock>& locker, DebugState* state)
+{
+    RELEASE_ASSERT(state->atBreakpoint());
+    auto& stopData = *state->stopData;
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Start with ", stopData);
+
+    uint8_t* currentPC = stopData.pc;
 
     auto setStepBreakpoint = [&](const uint8_t* nextPC) WTF_REQUIRES_LOCK(m_lock) {
-        VirtualAddress nextAddress = VirtualAddress(m_stopReason.address.value() + (nextPC - currentPC));
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step][SetOneTimeBreakpoint] current PC=", RawPointer(currentPC), "(", m_stopReason.address, "), next PC=", RawPointer(nextPC), "(", nextAddress, ")");
-        if (m_breakpointManager.findBreakpoint(nextAddress))
+        VirtualAddress nextAddress = VirtualAddress(stopData.address.value() + (nextPC - currentPC));
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step][SetOneTimeBreakpoint] current PC=", RawPointer(currentPC), "(", stopData.address, "), next PC=", RawPointer(nextPC), "(", nextAddress, ")");
+        if (m_breakpointManager->findBreakpoint(nextAddress))
             return;
-        m_breakpointManager.setBreakpoint(nextAddress, Breakpoint(const_cast<uint8_t*>(nextPC), Breakpoint::Type::Step));
+        m_breakpointManager->setBreakpoint(nextAddress, Breakpoint(const_cast<uint8_t*>(nextPC), Breakpoint::Type::Step));
     };
 
     auto setStepBreakpointAtCaller = [&]() WTF_REQUIRES_LOCK(m_lock) {
         uint8_t* returnPC = nullptr;
         VirtualAddress virtualReturnPC;
-        if (getWasmReturnPC(m_stopReason.callFrame, returnPC, virtualReturnPC))
-            m_breakpointManager.setBreakpoint(virtualReturnPC, Breakpoint(const_cast<uint8_t*>(returnPC), Breakpoint::Type::Step));
+        if (getWasmReturnPC(stopData.callFrame, returnPC, virtualReturnPC))
+            m_breakpointManager->setBreakpoint(virtualReturnPC, Breakpoint(const_cast<uint8_t*>(returnPC), Breakpoint::Type::Step));
     };
 
     auto setStepBreakpointsFromDebugInfo = [&]() WTF_REQUIRES_LOCK(m_lock) {
-        const auto& moduleInfo = m_stopReason.instance->moduleInformation();
-        auto functionIndex = m_stopReason.callee->functionIndex();
-        uint32_t offset = m_stopReason.address.offset();
+        const auto& moduleInfo = stopData.instance->moduleInformation();
+        auto functionIndex = stopData.callee->functionIndex();
+        uint32_t offset = stopData.address.offset();
         const auto* nextInstructions = moduleInfo.debugInfo->ensureFunctionDebugInfo(functionIndex).findNextInstructions(offset);
         RELEASE_ASSERT(nextInstructions, "Didn't find nextInstructions");
-        uint8_t* const basePC = m_stopReason.pc - offset;
+        uint8_t* const basePC = stopData.pc - offset;
         for (uint32_t nextOffset : *nextInstructions)
             setStepBreakpoint(basePC + nextOffset);
     };
 
-    switch (m_stopReason.originalBytecode) {
+    switch (stopData.originalBytecode) {
     case Nop:
     case Drop:
     case Select:
         setStepBreakpoint(currentPC + 1);
         break;
     case End:
-        if (currentPC != m_stopReason.callee->bytecodeEnd()) {
+        if (currentPC != stopData.callee->bytecodeEnd()) {
             setStepBreakpoint(currentPC + 1);
             break;
         }
@@ -265,28 +452,29 @@ void ExecutionHandler::step()
     case Return:
         setStepBreakpointAtCaller();
         break;
+    // Step-into design: Set event flag and let runtime resolve callee/handler naturally to avoid duplicating
+    // complex resolution logic. Runtime calls setStepIntoBreakpointForCall/Throw() with resolved target.
+    // FIXME: Resolve target once in step() and cache for runtime reuse to eliminate two-phase protocol.
     case Throw:
     case Rethrow:
     case ThrowRef:
     case Delegate:
-        m_debugServer.vm()->setStepIntoWasmThrow();
+        state->setStepIntoThrow();
         break;
     case TailCall:
     case TailCallIndirect:
     case TailCallRef:
-        // The tail calls have two debugging behaviors:
-        // 2. Step-into: If the callee is a Wasm call.
-        // 1. Back to caller: If the callee is a non-Wasm call.
-        m_debugServer.vm()->setStepIntoWasmCall();
+        // Tail calls: Set step-into event for Wasm callees, then set breakpoint at caller
+        // (for non-Wasm callees or as fallback, since tail calls don't return to next instruction).
+        state->setStepIntoCall();
         setStepBreakpointAtCaller();
         break;
     case Call:
     case CallIndirect:
     case CallRef:
-        // The calls have two debugging behaviors:
-        // 2. Step-into: If the callee is a Wasm call.
-        // 1. Step-over: If the callee is a non-Wasm call.
-        m_debugServer.vm()->setStepIntoWasmCall();
+        // Regular calls: Set step-into event for Wasm callees, then fallthrough to
+        // set step-over breakpoint at next instruction (for non-Wasm callees or as fallback).
+        state->setStepIntoCall();
         [[fallthrough]];
     default: {
         setStepBreakpointsFromDebugInfo();
@@ -294,13 +482,87 @@ void ExecutionHandler::step()
     }
     }
 
-    RELEASE_ASSERT(m_debuggerState == DebuggerState::Replied && m_mutatorState == MutatorState::Stopped);
-    m_mutatorContinue.notifyOne();
+    if (state->hasStepIntoEvent()) {
+        m_debuggerState = DebuggerState::StepRequested;
+        m_debuggeeContinue.notifyOne(); // Notify to run and set breakpoints if possible.
+        m_debuggerContinue.wait(locker); // Wait for call/throw one-time breakpoint to be registered.
+    }
 
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Notified code to continue and waiting...");
-    m_debuggerState = DebuggerState::ContinueRequested;
-    m_debuggerContinue.wait(m_lock);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Confirmed that code is running...");
+    // If no one-time breakpoints registered, then resume all.
+    return !m_breakpointManager->hasOneTimeBreakpoints();
+}
+
+void ExecutionHandler::setStepIntoBreakpointForCall(VM& callerVM, CalleeBits boxedCallee, JSWebAssemblyInstance* calleeInstance)
+{
+    if (!callerVM.debugState()->takeStepIntoCall())
+        return;
+
+    [&]() {
+        Locker locker { m_lock };
+
+        RELEASE_ASSERT(Thread::currentSingleton().uid() == threadId(*m_debuggee));
+        RELEASE_ASSERT(m_debuggee == &callerVM);
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Code][StepIntoEvent] Start for call");
+        RELEASE_ASSERT(m_debuggerState == DebuggerState::StepRequested);
+
+        if (!calleeInstance)
+            return;
+        if (!boxedCallee.isNativeCallee())
+            return;
+        RefPtr wasmCallee = downcast<Wasm::Callee>(boxedCallee.asNativeCallee());
+        if (wasmCallee->compilationMode() != Wasm::CompilationMode::IPIntMode)
+            return;
+
+        // Set breakpoint at the callee's entry point.
+        // Use calleeInstance (not caller's instance) because callee may be in a different Wasm module instance.
+        RELEASE_ASSERT(&calleeInstance->vm() == &callerVM);
+        setBreakpointAtEntry(calleeInstance, downcast<IPIntCallee>(wasmCallee.get()), Breakpoint::Type::Step);
+    }();
+
+    stopTheWorld(callerVM, StopTheWorldEvent::StepIntoSiteReached);
+}
+
+void ExecutionHandler::setStepIntoBreakpointForThrow(VM& throwVM)
+{
+    if (!throwVM.debugState()->takeStepIntoThrow())
+        return;
+
+    [&]() {
+        Locker locker { m_lock };
+
+        RELEASE_ASSERT(Thread::currentSingleton().uid() == threadId(*m_debuggee));
+        RELEASE_ASSERT(m_debuggee == &throwVM);
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Code][StepIntoEvent] Start for throw");
+        RELEASE_ASSERT(m_debuggerState == DebuggerState::StepRequested);
+
+        if (!throwVM.callFrameForCatch)
+            return;
+        if (!throwVM.callFrameForCatch->callee().isNativeCallee())
+            return;
+        RefPtr wasmCallee = downcast<Wasm::Callee>(throwVM.callFrameForCatch->callee().asNativeCallee());
+        if (wasmCallee->compilationMode() != Wasm::CompilationMode::IPIntMode)
+            return;
+
+        RefPtr catchCallee = downcast<IPIntCallee>(wasmCallee.get());
+        ASSERT(std::holds_alternative<uintptr_t>(throwVM.targetInterpreterPCForThrow));
+        uintptr_t handlerOffset = std::get<uintptr_t>(throwVM.targetInterpreterPCForThrow);
+        const uint8_t* handlerPC = catchCallee->bytecode() + handlerOffset;
+
+        if (*handlerPC == static_cast<uint8_t>(Wasm::OpType::TryTable) && throwVM.targetInterpreterMetadataPCForThrow) {
+            const uint8_t* metadataPtr = catchCallee->metadata() + throwVM.targetInterpreterMetadataPCForThrow;
+            metadataPtr += sizeof(IPInt::CatchMetadata);
+            const IPInt::BlockMetadata* blockMetadata = reinterpret_cast<const IPInt::BlockMetadata*>(metadataPtr);
+            handlerPC = handlerPC + blockMetadata->deltaPC;
+        }
+
+        // Set breakpoint at the exception handler.
+        // Use catchInstance (not thrower's instance) because exception may be caught in a different Wasm module instance.
+        JSWebAssemblyInstance* catchInstance = throwVM.callFrameForCatch->wasmInstance();
+        RELEASE_ASSERT(&catchInstance->vm() == &throwVM);
+        setBreakpointAtPC(catchInstance, catchCallee->functionIndex(), Breakpoint::Type::Step, handlerPC);
+    }();
+
+    stopTheWorld(throwVM, StopTheWorldEvent::StepIntoSiteReached);
 }
 
 void ExecutionHandler::setBreakpointAtEntry(JSWebAssemblyInstance* instance, IPIntCallee* callee, Breakpoint::Type type)
@@ -312,9 +574,9 @@ void ExecutionHandler::setBreakpointAtPC(JSWebAssemblyInstance* instance, Functi
 {
     RELEASE_ASSERT(pc);
     VirtualAddress address = VirtualAddress::toVirtual(instance, functionIndex, pc);
-    if (m_breakpointManager.findBreakpoint(address))
+    if (m_breakpointManager->findBreakpoint(address))
         return;
-    m_breakpointManager.setBreakpoint(address, Breakpoint(const_cast<uint8_t*>(pc), type));
+    m_breakpointManager->setBreakpoint(address, Breakpoint(const_cast<uint8_t*>(pc), type));
 }
 
 void ExecutionHandler::setBreakpoint(StringView packet)
@@ -341,8 +603,7 @@ void ExecutionHandler::setBreakpoint(StringView packet)
 
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][SetBreakpoint] Setting breakpoint: type=", static_cast<int>(type), ", address=", address, ", length=", length);
 
-    // Only support software breakpoints for now
-    // 0 = Software breakpoint
+    // Only support type 0 (software breakpoint)
     if (type) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][SetBreakpoint] Unsupported breakpoint type: ", static_cast<int>(type));
         sendErrorReply(ProtocolError::UnknownCommand);
@@ -356,7 +617,7 @@ void ExecutionHandler::setBreakpoint(StringView packet)
         return;
     }
 
-    if (m_breakpointManager.findBreakpoint(address)) {
+    if (m_breakpointManager->findBreakpoint(address)) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[ExecutionHandler] Breakpoint already exists at address: ", address);
         sendErrorReply(ProtocolError::InvalidAddress);
         return;
@@ -369,7 +630,7 @@ void ExecutionHandler::setBreakpoint(StringView packet)
         return;
     }
 
-    m_breakpointManager.setBreakpoint(address, Breakpoint(pc, Breakpoint::Type::Regular));
+    m_breakpointManager->setBreakpoint(address, Breakpoint(pc, Breakpoint::Type::Regular));
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][SetBreakpoint] Successfully set breakpoint at ", address, " (physical: ", RawPointer(pc), ", original: 0x", hex(*pc, 2, Lowercase), ")");
     sendReplyOK();
 }
@@ -397,8 +658,7 @@ void ExecutionHandler::removeBreakpoint(StringView packet)
 
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Removing breakpoint: type=", static_cast<int>(type), ", address=", address);
 
-    // Only support software breakpoints for now
-    // 0 = Software breakpoint
+    // Only support type 0 (software breakpoint)
     if (type) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Unsupported breakpoint type for removal: ", static_cast<int>(type));
         sendErrorReply(ProtocolError::UnknownCommand);
@@ -406,7 +666,7 @@ void ExecutionHandler::removeBreakpoint(StringView packet)
     }
 
     // Delegate to breakpoint manager
-    if (m_breakpointManager.removeBreakpoint(address)) {
+    if (m_breakpointManager->removeBreakpoint(address)) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Breakpoint removed successfully from ", address);
         sendReplyOK();
     } else {
@@ -417,35 +677,114 @@ void ExecutionHandler::removeBreakpoint(StringView packet)
 
 void ExecutionHandler::handleThreadStopInfo(StringView packet)
 {
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Handling qThreadStopInfo: ", packet);
+    // Format: qThreadStopInfo<thread-id-in-hex>
+    // Parse the thread ID
+    StringView threadIdStr = packet.substring(strlen("qThreadStopInfo"));
+    uint64_t threadId = parseHex(threadIdStr);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Handling qThreadStopInfo for thread: ", threadId);
+
     Locker locker { m_lock };
-    sendStopReply(locker);
+    sendStopReplyForThread(locker, threadId);
+}
+
+static uint64_t getStopPC(const DebugState& state)
+{
+    if (state.atBreakpoint() || state.atPrologue())
+        return state.stopData->address;
+    return VirtualAddress(VirtualAddress::INVALID_BASE).value();
+}
+
+static String getThreadName(const DebugState& state, uint64_t threadId)
+{
+    StringView stateName;
+    if (state.atBreakpoint())
+        stateName = "wasm-call"_s;
+    else if (state.atPrologue())
+        stateName = "wasm-prologue"_s;
+    else {
+        RELEASE_ASSERT(state.atSystemCall());
+        stateName = "system-call"_s;
+    }
+    return makeString(stateName, " tid:0x"_s, hex(threadId, Lowercase));
+}
+
+struct ThreadInfo {
+    uint64_t threadId;
+    uint64_t pc;
+    String name;
+    StringView stopReason;
+};
+
+static Vector<ThreadInfo> collectAllStoppedThreads()
+{
+    Vector<ThreadInfo> threads;
+    VMManager::forEachVM([&](VM& vm) {
+        auto* state = vm.debugState();
+        if (!state->isStopped())
+            return IterationStatus::Continue;
+
+        uint64_t threadId = ExecutionHandler::threadId(vm);
+        StopData::Code code = state->atSystemCall() ? StopData::Code::Stop : state->stopData->code;
+        auto stopInfo = stopReasonCodeToInfo(code);
+        threads.append({ threadId, getStopPC(*state), getThreadName(*state, threadId), stopInfo.reasonSuffix });
+        return IterationStatus::Continue;
+    });
+    return threads;
 }
 
 void ExecutionHandler::sendStopReply(AbstractLocker& locker) WTF_REQUIRES_LOCK(m_lock)
 {
-    RELEASE_ASSERT(m_mutatorState == MutatorState::Stopped && m_stopReason.isValid());
-    uint64_t pc = m_stopReason.address;
+    sendStopReplyForThread(locker, threadId(*m_debuggee));
+}
 
-    auto stopInfo = stopReasonCodeToInfo(m_stopReason.code);
-    String reasonString = stopInfo.reasonString;
-    StringView reasonSuffix = stopInfo.reasonSuffix;
-    String pcBytes = toNativeEndianHex(pc);
-    uint64_t mutatorThreadId = m_debugServer.mutatorThreadId();
+void ExecutionHandler::sendStopReplyForThread(AbstractLocker& locker, uint64_t threadId) WTF_REQUIRES_LOCK(m_lock)
+{
+    VM* vm = findVM(threadId);
+    DebugState* state = vm->debugState();
+    if (!vm || !state) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] sendStopReplyForThread: thread ", threadId, " not found");
+        sendErrorReply(ProtocolError::InvalidAddress);
+        return;
+    }
 
-    String stopReplyStr = makeString(
-        reasonString,
-        "thread:"_s, hex(mutatorThreadId, Lowercase),
-        ";name:JSC-mutator;threads:"_s, hex(mutatorThreadId, Lowercase),
-        ";thread-pcs:"_s, hex(pc, 16, Lowercase),
-        ";00:"_s,
-        pcBytes,
-        ";reason:"_s,
-        reasonSuffix,
-        ";"_s);
+    RELEASE_ASSERT(state->isStopped());
 
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sending stop reply: ", stopReplyStr);
-    sendReplyImpl(locker, stopReplyStr);
+    // Gather information for the target thread
+    Vector<ThreadInfo> allThreads = collectAllStoppedThreads();
+
+    // FIXME: Report different stop reasons for active vs passive threads (currently all use same code).
+    StopData::Code code = state->atBreakpoint() ? state->stopData->code : StopData::Code::Stop;
+    auto stopInfo = stopReasonCodeToInfo(code);
+
+    // Build packet with target thread
+    StringBuilder reply;
+    reply.append(stopInfo.reasonString);
+    reply.append("thread:"_s, hex(threadId, Lowercase), ';');
+    reply.append("name:"_s, getThreadName(*state, threadId), ';');
+
+    // All thread IDs
+    reply.append("threads:"_s);
+    for (size_t i = 0; i < allThreads.size(); ++i) {
+        if (i > 0)
+            reply.append(',');
+        reply.append(hex(allThreads[i].threadId, Lowercase));
+    }
+    reply.append(';');
+
+    // All thread PCs
+    reply.append("thread-pcs:"_s);
+    for (size_t i = 0; i < allThreads.size(); ++i) {
+        if (i > 0)
+            reply.append(',');
+        reply.append(hex(allThreads[i].pc, 16, Lowercase));
+    }
+    reply.append(';');
+
+    reply.append("00:"_s, toNativeEndianHex(getStopPC(*state)), ';');
+    reply.append("reason:"_s, stopInfo.reasonSuffix, ';');
+
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sending stop reply: target thread="_s, hex(threadId), ", total threads="_s, allThreads.size(), ", packet="_s, reply.toString());
+    sendReplyImpl(locker, reply.toString());
 }
 
 void ExecutionHandler::sendReply(StringView reply)
@@ -466,7 +805,7 @@ void ExecutionHandler::sendReplyImpl(AbstractLocker&, StringView reply) WTF_REQU
     if (m_debugServer.isRWIMode()) {
         RELEASE_ASSERT(!!m_debugServer.m_rwiResponseHandler);
         if (m_debugServer.m_rwiResponseHandler(packet)) {
-            m_debuggerState = ExecutionHandler::DebuggerState::Replied;
+            m_debuggerState = DebuggerState::Replied;
             dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sent reply via RWI: ", packet);
         } else
             dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Failed to send packet via RWI: ", packet);
@@ -479,7 +818,7 @@ void ExecutionHandler::sendReplyImpl(AbstractLocker&, StringView reply) WTF_REQU
     if (sent < 0)
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Failed to send packet: ", packetData.data(), " sent: ", sent);
     else {
-        m_debuggerState = ExecutionHandler::DebuggerState::Replied;
+        m_debuggerState = DebuggerState::Replied;
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sent reply: ", packetData.data());
     }
 }
@@ -489,22 +828,84 @@ void ExecutionHandler::reset()
     Locker locker { m_lock };
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Handling client disconnection in ExecutionHandler");
 
-    m_debuggerState = DebuggerState::Replied;
+    if (m_debuggee && debuggeeState()->isStopped())
+        resumeImpl(locker);
 
-    if (m_mutatorState == MutatorState::Stopped) {
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Resuming stopped WebAssembly execution due to client disconnection");
-        m_mutatorState = MutatorState::Running;
-        m_stopReason.reset();
-        m_mutatorContinue.notifyAll();
-    }
+    m_breakpointManager->clearAllBreakpoints();
+    m_debuggerState = DebuggerState::Replied;
+    takeAwaitingResumeNotification();
+    m_debuggee = nullptr;
 }
 
 void ExecutionHandler::sendReplyOK() { m_debugServer.sendReplyOK(); }
 void ExecutionHandler::sendErrorReply(ProtocolError error) { m_debugServer.sendErrorReply(error); }
-ExecutionHandler::StopReason ExecutionHandler::stopReason() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+
+uint64_t ExecutionHandler::threadId(const VM& vm)
 {
-    RELEASE_ASSERT(m_stopReason.isValid());
-    return m_stopReason;
+    auto uid = vm.ownerThreadUID();
+    RELEASE_ASSERT(uid.has_value());
+    return *uid;
+}
+
+DebugState* ExecutionHandler::debuggeeState() const { return m_debuggee->debugState(); }
+
+DebugState* ExecutionHandler::debuggeeStateSafe() const
+{
+    Locker locker { m_lock };
+    RELEASE_ASSERT(m_debuggee);
+    return m_debuggee->debugState();
+}
+
+bool ExecutionHandler::hasBreakpoints() const
+{
+    return m_breakpointManager && m_breakpointManager->hasBreakpoints();
+}
+
+String ExecutionHandler::callStackStringFor(uint64_t threadId)
+{
+    Locker locker { m_lock };
+
+    VM* targetVM = m_debuggee;
+    if (this->threadId(*targetVM) != threadId)
+        targetVM = findVM(threadId);
+
+    if (!targetVM) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[ExecutionHandler] callStackStringFor: thread ", threadId, " not found");
+        return String();
+    }
+
+    auto* state = targetVM->debugState();
+    RELEASE_ASSERT(state->isStopped());
+
+    // For threads stopped at breakpoint with full call stack, walk the stack
+    if (state->atBreakpoint()) {
+        auto& stopData = *state->stopData;
+        RELEASE_ASSERT(stopData.callFrame);
+
+        Vector<VirtualAddress> frameAddresses;
+        frameAddresses.append(stopData.address);
+        CallFrame* currentFrame = stopData.callFrame;
+        uint8_t* returnPC = nullptr;
+        VirtualAddress virtualReturnPC;
+        unsigned frameIndex = 0;
+
+        // FIXME: Only supports consecutive wasm->wasm calls. Need to support interleaved wasm<->js calls.
+        while (getWasmReturnPC(currentFrame, returnPC, virtualReturnPC) && frameIndex < 100) {
+            frameAddresses.append(virtualReturnPC);
+            currentFrame = currentFrame->callerFrame();
+            frameIndex++;
+        }
+
+        StringBuilder result;
+        for (VirtualAddress address : frameAddresses)
+            result.append(toNativeEndianHex(address));
+
+        dataLogLnIf(Options::verboseWasmDebugger(), "[ExecutionHandler] callStackStringFor: collected ", frameAddresses.size(), " frames");
+        return result.toString();
+    }
+
+    uint64_t pc = getStopPC(*state);
+    return toNativeEndianHex(pc);
 }
 
 } // namespace Wasm
@@ -512,4 +913,4 @@ ExecutionHandler::StopReason ExecutionHandler::stopReason() const WTF_IGNORES_TH
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

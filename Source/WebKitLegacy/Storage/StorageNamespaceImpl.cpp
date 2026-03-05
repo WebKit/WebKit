@@ -99,7 +99,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page&)
     for (auto& iter : m_storageAreaMap)
         newNamespace->m_storageAreaMap.set(iter.key, iter.value->copy());
 
-    return WTFMove(newNamespace);
+    return WTF::move(newNamespace);
 }
 
 Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOrigin& origin)

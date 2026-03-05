@@ -14,7 +14,7 @@
 namespace skgpu::graphite {
 
 sk_sp<PrecompileShader> PrecompileShaders::VulkanYCbCrImage(
-        skgpu::VulkanYcbcrConversionInfo& YCbCrConversionInfo,
+        const skgpu::VulkanYcbcrConversionInfo& YCbCrConversionInfo,
         ImageShaderFlags shaderFlags,
         SkSpan<const SkColorInfo> colorInfos,
         SkSpan<const SkTileMode> tileModes) {
@@ -29,7 +29,7 @@ sk_sp<PrecompileShader> PrecompileShaders::VulkanYCbCrImage(
 
     shader->setImmutableSamplerInfo(
             VulkanYcbcrConversion::ToImmutableSamplerInfo(YCbCrConversionInfo));
-    return PrecompileShaders::LocalMatrix({ std::move(shader) });
+    return PrecompileShaders::LocalMatrix({{ std::move(shader) }});
 }
 
 

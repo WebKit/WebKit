@@ -41,7 +41,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |                  Receiver's Next TSN (optional)               |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ReconfigurationResponseParameter::kType;
 
 absl::string_view ToString(ReconfigurationResponseParameter::Result result) {
   switch (result) {

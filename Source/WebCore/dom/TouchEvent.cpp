@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TouchEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TouchEvent);
 
 TouchEvent::TouchEvent()
     : MouseRelatedEvent(EventInterfaceType::TouchEvent)
@@ -44,7 +44,7 @@ TouchEvent::TouchEvent()
 
 TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomString& type,
     RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
-    : MouseRelatedEvent(EventInterfaceType::TouchEvent, type, IsCancelable::Yes, MonotonicTime::now(), WTFMove(view), globalLocation, modifiers)
+    : MouseRelatedEvent(EventInterfaceType::TouchEvent, type, IsCancelable::Yes, MonotonicTime::now(), WTF::move(view), globalLocation, modifiers)
     , m_touches(touches)
     , m_targetTouches(targetTouches)
     , m_changedTouches(changedTouches)
@@ -60,11 +60,6 @@ TouchEvent::TouchEvent(const AtomString& type, const Init& initializer, IsTruste
 }
 
 TouchEvent::~TouchEvent() = default;
-
-bool TouchEvent::isTouchEvent() const
-{
-    return true;
-}
 
 } // namespace WebCore
 

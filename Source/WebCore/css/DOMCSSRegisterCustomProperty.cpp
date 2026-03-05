@@ -84,12 +84,12 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         descriptor.name,
         *syntax,
         descriptor.inherits,
-        WTFMove(initialValue),
-        WTFMove(initialValueTokensForViewportUnits)
+        WTF::move(initialValue),
+        WTF::move(initialValueTokensForViewportUnits)
     };
 
     auto& registry = document.styleScope().customPropertyRegistry();
-    if (!registry.registerFromAPI(WTFMove(property)))
+    if (!registry.registerFromAPI(WTF::move(property)))
         return Exception { ExceptionCode::InvalidModificationError, "This property has already been registered."_s };
 
     return { };
@@ -101,7 +101,7 @@ DOMCSSRegisterCustomProperty* DOMCSSRegisterCustomProperty::from(DOMCSSNamespace
     if (!supplement) {
         auto newSupplement = makeUnique<DOMCSSRegisterCustomProperty>(css);
         supplement = newSupplement.get();
-        provideTo(&css, supplementName(), WTFMove(newSupplement));
+        provideTo(&css, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

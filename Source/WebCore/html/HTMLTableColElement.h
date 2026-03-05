@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class HTMLTableColElement final : public HTMLTablePartElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTableColElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLTableColElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTableColElement);
 public:
     static Ref<HTMLTableColElement> create(const QualifiedName& tagName, Document&);
@@ -51,4 +51,13 @@ private:
     unsigned m_span;
 };
 
-} //namespace
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTableColElement)
+    static bool isType(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::colTag) || element.hasTagName(WebCore::HTMLNames::colgroupTag); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);
+        return htmlElement && isType(*htmlElement);
+    }
+SPECIALIZE_TYPE_TRAITS_END()

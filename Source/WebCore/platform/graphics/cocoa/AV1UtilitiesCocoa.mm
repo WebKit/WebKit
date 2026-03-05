@@ -29,13 +29,17 @@
 #if PLATFORM(COCOA) && ENABLE(AV1)
 
 #import "AV1Utilities.h"
-#import "MediaCapabilitiesInfo.h"
+#import "BitReader.h"
+#import "CMUtilities.h"
+#import "PlatformMediaCapabilitiesInfo.h"
+#import "PlatformMediaCapabilitiesVideoConfiguration.h"
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import "VideoToolboxSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
@@ -61,7 +65,7 @@ static bool isConfigurationRecordHDR(const AV1CodecConfigurationRecord& record)
     return true;
 }
 
-std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord& record, const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord& record, const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
     if (!validateAV1ConfigurationRecord(record))
         return std::nullopt;
@@ -83,42 +87,42 @@ std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigu
     if (!capabilities)
         return std::nullopt;
 
-    auto supportedProfiles = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(capabilities.get(), kVTDecoderCodecCapability_SupportedProfiles));
+    RetainPtr supportedProfiles = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(capabilities.get(), kVTDecoderCodecCapability_SupportedProfiles));
     if (!supportedProfiles)
         return std::nullopt;
 
     int16_t profile = static_cast<int16_t>(record.profile);
     auto cfProfile = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt16Type, &profile));
-    auto searchRange = CFRangeMake(0, CFArrayGetCount(supportedProfiles));
-    if (!CFArrayContainsValue(supportedProfiles, searchRange, cfProfile.get()))
+    auto searchRange = CFRangeMake(0, CFArrayGetCount(supportedProfiles.get()));
+    if (!CFArrayContainsValue(supportedProfiles.get(), searchRange, cfProfile.get()))
         return std::nullopt;
 
-    auto perProfileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(capabilities.get(), kVTDecoderCodecCapability_PerProfileSupport));
+    RetainPtr perProfileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(capabilities.get(), kVTDecoderCodecCapability_PerProfileSupport));
     if (!perProfileSupport)
         return std::nullopt;
 
     auto profileString = String::number(profile).createCFString();
-    auto profileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(perProfileSupport, profileString.get()));
+    RetainPtr profileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(perProfileSupport.get(), profileString.get()));
     if (!profileSupport)
         return std::nullopt;
 
-    MediaCapabilitiesInfo info;
+    PlatformMediaCapabilitiesInfo info;
 
     info.supported = true;
 
-    info.powerEfficient = CFDictionaryGetValue(profileSupport, kVTDecoderProfileCapability_IsHardwareAccelerated) == kCFBooleanTrue;
+    info.powerEfficient = CFDictionaryGetValue(profileSupport.get(), kVTDecoderProfileCapability_IsHardwareAccelerated) == kCFBooleanTrue;
 
-    if (auto cfMaxDecodeLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport, kVTDecoderProfileCapability_MaxDecodeLevel))) {
+    if (RetainPtr cfMaxDecodeLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport.get(), kVTDecoderProfileCapability_MaxDecodeLevel))) {
         int16_t maxDecodeLevel = 0;
-        if (!CFNumberGetValue(cfMaxDecodeLevel, kCFNumberSInt16Type, &maxDecodeLevel))
+        if (!CFNumberGetValue(cfMaxDecodeLevel.get(), kCFNumberSInt16Type, &maxDecodeLevel))
             return std::nullopt;
 
         if (static_cast<int16_t>(record.level) > maxDecodeLevel)
             return std::nullopt;
     }
 
-    if (auto cfSupportedChromaSubsampling = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(profileSupport, kVTDecoderCapability_ChromaSubsampling))) {
-        auto supportedChromaSubsampling = makeVector(cfSupportedChromaSubsampling, [](CFStringRef chromaSubsamplingString) {
+    if (RetainPtr cfSupportedChromaSubsampling = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(profileSupport.get(), kVTDecoderCapability_ChromaSubsampling))) {
+        auto supportedChromaSubsampling = makeVector(cfSupportedChromaSubsampling.get(), [](CFStringRef chromaSubsamplingString) {
             return parseInteger<uint8_t>(String(chromaSubsamplingString));
         });
 
@@ -143,26 +147,26 @@ std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigu
             return std::nullopt;
     }
 
-    if (auto cfSupportedColorDepths = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(profileSupport, kVTDecoderCapability_ColorDepth))) {
-        auto supportedColorDepths = makeVector(cfSupportedColorDepths, [](CFStringRef colorDepthString) {
+    if (RetainPtr cfSupportedColorDepths = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(profileSupport.get(), kVTDecoderCapability_ColorDepth))) {
+        auto supportedColorDepths = makeVector(cfSupportedColorDepths.get(), [](CFStringRef colorDepthString) {
             return parseInteger<uint8_t>(String(colorDepthString));
         });
         if (!supportedColorDepths.contains(static_cast<uint8_t>(record.bitDepth)))
             return std::nullopt;
     }
 
-    if (auto cfMaxPlaybackLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport, kVTDecoderProfileCapability_MaxPlaybackLevel))) {
+    if (RetainPtr cfMaxPlaybackLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport.get(), kVTDecoderProfileCapability_MaxPlaybackLevel))) {
         int16_t maxPlaybackLevel = 0;
-        if (!CFNumberGetValue(cfMaxPlaybackLevel, kCFNumberSInt16Type, &maxPlaybackLevel))
+        if (!CFNumberGetValue(cfMaxPlaybackLevel.get(), kCFNumberSInt16Type, &maxPlaybackLevel))
             return std::nullopt;
 
         info.smooth = static_cast<int16_t>(record.level) <= maxPlaybackLevel;
     }
 
     if (canLoad_VideoToolbox_kVTDecoderProfileCapability_MaxHDRPlaybackLevel() && isConfigurationRecordHDR(record)) {
-        if (auto cfMaxHDRPlaybackLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport, kVTDecoderProfileCapability_MaxHDRPlaybackLevel))) {
+        if (RetainPtr cfMaxHDRPlaybackLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport.get(), kVTDecoderProfileCapability_MaxHDRPlaybackLevel))) {
             int16_t maxHDRPlaybackLevel = 0;
-            if (!CFNumberGetValue(cfMaxHDRPlaybackLevel, kCFNumberSInt16Type, &maxHDRPlaybackLevel))
+            if (!CFNumberGetValue(cfMaxHDRPlaybackLevel.get(), kCFNumberSInt16Type, &maxHDRPlaybackLevel))
                 return std::nullopt;
 
             info.smooth = static_cast<int16_t>(record.level) <= maxHDRPlaybackLevel;
@@ -185,10 +189,19 @@ bool av1HardwareDecoderAvailable()
 {
     ASSERT(isMainThread() || !!s_av1HardwareDecoderAvailable);
 
-    if (!s_av1HardwareDecoderAvailable)
-        s_av1HardwareDecoderAvailable = canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported('av01');
+    if (s_av1HardwareDecoderAvailable)
+        return *s_av1HardwareDecoderAvailable;
+    return av1HardwareDecoderAvailableInProcess();
+}
 
-    return *s_av1HardwareDecoderAvailable;
+static std::optional<bool> s_av1HardwareDecoderAvailableInProcess = { };
+bool av1HardwareDecoderAvailableInProcess()
+{
+    ASSERT(isMainThread() || !!s_av1HardwareDecoderAvailableInProcess);
+
+    if (!s_av1HardwareDecoderAvailableInProcess)
+        s_av1HardwareDecoderAvailableInProcess = canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported('av01');
+    return *s_av1HardwareDecoderAvailableInProcess;
 }
 
 }

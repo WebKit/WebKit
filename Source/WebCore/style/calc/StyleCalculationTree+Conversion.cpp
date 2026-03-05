@@ -35,10 +35,11 @@
 #include "CSSCalcTree.h"
 #include "CSSPrimitiveNumericCategory.h"
 #include "CSSUnevaluatedCalc.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderState.h"
 #include "StyleCalculationTree.h"
 #include "StyleLengthResolution.h"
+#include "StyleZoomPrimitivesInlines.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
@@ -85,7 +86,7 @@ static auto toStyle(const CSSCalc::IndirectNode<CSSCalc::Anchor>&, const ToStyle
 static auto toStyle(const CSSCalc::IndirectNode<CSSCalc::AnchorSize>&, const ToStyleConversionOptions&) -> Child;
 template<typename Op> auto toStyle(const CSSCalc::IndirectNode<Op>&, const ToStyleConversionOptions&) -> Child;
 
-static CSSCalc::CanonicalDimension::Dimension determineCanonicalDimension(CSS::Category category)
+static CSSCalc::CanonicalDimension::Dimension NODELETE determineCanonicalDimension(CSS::Category category)
 {
     switch (category) {
     case CSS::Category::LengthPercentage:
@@ -117,7 +118,7 @@ CSSCalc::Random::Sharing toCSS(const Random::Fixed& randomFixed, const ToCSSConv
     return CSSCalc::Random::SharingFixed { randomFixed.baseValue };
 }
 
-CSS::Keyword::None toCSS(const CSS::Keyword::None& none, const ToCSSConversionOptions&)
+CSS::Keyword::None NODELETE toCSS(const CSS::Keyword::None& none, const ToCSSConversionOptions&)
 {
     return none;
 }
@@ -158,7 +159,7 @@ CSSCalc::Child toCSS(const Dimension& root, const ToCSSConversionOptions& option
 {
     switch (options.canonicalDimension) {
     case CSSCalc::CanonicalDimension::Dimension::Length:
-        return CSSCalc::makeChild(CSSCalc::CanonicalDimension { .value = adjustFloatForAbsoluteZoom(root.value, options.style), .dimension = options.canonicalDimension });
+        return CSSCalc::makeChild(CSSCalc::CanonicalDimension { .value = Style::adjustFloatForAbsoluteZoom(root.value, options.style), .dimension = options.canonicalDimension });
 
     case CSSCalc::CanonicalDimension::Dimension::Angle:
     case CSSCalc::CanonicalDimension::Dimension::Time:
@@ -182,10 +183,10 @@ CSSCalc::Child toCSS(const IndirectNode<Blend>& root, const ToCSSConversionOptio
         );
 
         if (auto replacement = CSSCalc::simplify(product, options.simplification))
-            return WTFMove(*replacement);
+            return WTF::move(*replacement);
 
         auto type = toType(product);
-        return CSSCalc::makeChild(WTFMove(product), *type);
+        return CSSCalc::makeChild(WTF::move(product), *type);
     };
 
     auto sum = add(
@@ -194,10 +195,10 @@ CSSCalc::Child toCSS(const IndirectNode<Blend>& root, const ToCSSConversionOptio
     );
 
     if (auto replacement = simplify(sum, options.simplification))
-        return WTFMove(*replacement);
+        return WTF::move(*replacement);
 
     auto type = CSSCalc::toType(sum);
-    return CSSCalc::makeChild(WTFMove(sum), *type);
+    return CSSCalc::makeChild(WTF::move(sum), *type);
 }
 
 template<typename CalculationOp> CSSCalc::Child toCSS(const IndirectNode<CalculationOp>& root, const ToCSSConversionOptions& options)
@@ -207,10 +208,10 @@ template<typename CalculationOp> CSSCalc::Child toCSS(const IndirectNode<Calcula
     auto op = WTF::apply([&](const auto& ...x) { return CalcOp { toCSS(x, options)... }; } , *root);
 
     if (auto replacement = CSSCalc::simplify(op, options.simplification))
-        return WTFMove(*replacement);
+        return WTF::move(*replacement);
 
     auto type = toType(op);
-    return CSSCalc::makeChild(WTFMove(op), *type);
+    return CSSCalc::makeChild(WTF::move(op), *type);
 }
 
 // MARK: - To.
@@ -226,7 +227,7 @@ auto toStyle(const CSSCalc::Random::Sharing& randomSharing, const ToStyleConvers
                 ASSERT(options.evaluation.conversionData->styleBuilderState()->element());
             }
 
-            auto baseValue = options.evaluation.conversionData->protectedStyleBuilderState()->lookupCSSRandomBaseValue(
+            auto baseValue = protect(options.evaluation.conversionData->styleBuilderState())->lookupCSSRandomBaseValue(
                 sharingOptions.identifier,
                 sharingOptions.elementShared
             );
@@ -239,7 +240,7 @@ auto toStyle(const CSSCalc::Random::Sharing& randomSharing, const ToStyleConvers
                     return Random::Fixed { raw.value };
                 },
                 [&](const CSS::Number<CSS::ClosedUnitRange>::Calc& calc) -> Random::Fixed {
-                    return Random::Fixed { calc.evaluate(CSS::Category::Number, *options.evaluation.conversionData->protectedStyleBuilderState()) };
+                    return Random::Fixed { calc.evaluate(CSS::Category::Number, *protect(options.evaluation.conversionData->styleBuilderState())) };
                 }
             );
         }
@@ -253,7 +254,7 @@ std::optional<Child> toStyle(const std::optional<CSSCalc::Child>& optionalChild,
     return std::nullopt;
 }
 
-CSS::Keyword::None toStyle(const CSS::Keyword::None& none, const ToStyleConversionOptions&)
+CSS::Keyword::None NODELETE toStyle(const CSS::Keyword::None& none, const ToStyleConversionOptions&)
 {
     return none;
 }
@@ -365,7 +366,7 @@ CSSCalc::Tree toCSS(const Tree& tree, const ToCSSOptions& toCSSOptions)
     auto type = CSSCalc::getType(root);
 
     return CSSCalc::Tree {
-        .root = WTFMove(root),
+        .root = WTF::move(root),
         .type = type,
         .stage = CSSCalc::Stage::Computed,
     };

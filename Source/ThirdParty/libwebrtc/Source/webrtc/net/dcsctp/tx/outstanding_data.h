@@ -356,8 +356,6 @@ class OutstandingData {
 
   bool IsConsistent() const;
 
-  static Item& enqueueItem(std::deque<Item>&, const Item&);
-
   // The size of the data chunk (DATA/I-DATA) header that is used.
   const size_t data_chunk_header_size_;
   // The last cumulative TSN ack number.

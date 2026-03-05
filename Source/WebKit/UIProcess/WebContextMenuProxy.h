@@ -28,8 +28,10 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "ContextMenuContextData.h"
+#include "FrameInfoData.h"
 #include "UserData.h"
 #include "WebContextMenuListenerProxy.h"
+#include "WebPageProxy.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -51,7 +53,8 @@ public:
     virtual void show();
 
     WebPageProxy* page() const { return m_page.get(); }
-    RefPtr<WebPageProxy> protectedPage() const;
+    const FrameInfoData& frameInfo() const { return m_frameInfo; }
+    const WebCore::IntPoint& menuLocation() const { return m_context.menuLocation(); }
 
 #if PLATFORM(COCOA)
     virtual NSMenu *platformMenu() const = 0;
@@ -63,13 +66,14 @@ public:
 #endif
 
 protected:
-    WebContextMenuProxy(WebPageProxy&, ContextMenuContextData&&, const UserData&);
+    WebContextMenuProxy(WebPageProxy&, FrameInfoData&&, ContextMenuContextData&&, const UserData&);
 
     // WebContextMenuListenerProxyClient
     void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) override;
 
     ContextMenuContextData m_context;
     const UserData m_userData;
+    const FrameInfoData m_frameInfo;
 
 private:
     virtual Vector<Ref<WebContextMenuItem>> proposedItems() const;

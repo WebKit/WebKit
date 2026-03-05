@@ -115,17 +115,6 @@ class AudioFrame {
 
   void CopyFrom(const AudioFrame& src);
 
-  // Sets a wall-time clock timestamp in milliseconds to be used for profiling
-  // of time between two points in the audio chain.
-  // Example:
-  //   t0: UpdateProfileTimeStamp()
-  //   t1: ElapsedProfileTimeMs() => t1 - t0 [msec]
-  void UpdateProfileTimeStamp();
-  // Returns the time difference between now and when UpdateProfileTimeStamp()
-  // was last called. Returns -1 if UpdateProfileTimeStamp() has not yet been
-  // called.
-  int64_t ElapsedProfileTimeMs() const;
-
   // data() returns a zeroed static buffer if the frame is muted.
   // TODO: b/335805780 - Return InterleavedView.
   const int16_t* data() const;
@@ -189,12 +178,6 @@ class AudioFrame {
   size_t num_channels_ = 0;
   SpeechType speech_type_ = kUndefined;
   VADActivity vad_activity_ = kVadUnknown;
-  // Monotonically increasing timestamp intended for profiling of audio frames.
-  // Typically used for measuring elapsed time between two different points in
-  // the audio path. No lock is used to save resources and we are thread safe
-  // by design.
-  // TODO(nisse@webrtc.org): consider using std::optional.
-  int64_t profile_timestamp_ms_ = 0;
 
   // Information about packets used to assemble this audio frame. This is needed
   // by `SourceTracker` when the frame is delivered to the RTCRtpReceiver's

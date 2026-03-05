@@ -15,8 +15,7 @@
 #ifndef OPENSSL_HEADER_SHA2_H
 #define OPENSSL_HEADER_SHA2_H
 
-#include <openssl/base.h>        // IWYU pragma: export
-#include <openssl/bcm_public.h>  // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -90,6 +89,13 @@ OPENSSL_EXPORT void SHA256_TransformBlocks(uint32_t state[8],
                                            const uint8_t *data,
                                            size_t num_blocks);
 
+struct sha256_state_st {
+  uint32_t h[8];
+  uint32_t Nl, Nh;
+  uint8_t data[SHA256_CBLOCK];
+  unsigned num, md_len;
+} /* SHA256_CTX */;
+
 
 // SHA-384.
 
@@ -149,6 +155,14 @@ OPENSSL_EXPORT uint8_t *SHA512(const uint8_t *data, size_t len,
 // from |block|.
 OPENSSL_EXPORT void SHA512_Transform(SHA512_CTX *sha,
                                      const uint8_t block[SHA512_CBLOCK]);
+
+struct sha512_state_st {
+  uint64_t h[8];
+  uint16_t num, md_len;
+  uint32_t bytes_so_far_high;
+  uint64_t bytes_so_far_low;
+  uint8_t p[SHA512_CBLOCK];
+} /* SHA512_CTX */;
 
 
 // SHA-512-256

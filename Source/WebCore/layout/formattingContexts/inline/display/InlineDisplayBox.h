@@ -30,7 +30,7 @@
 #include <WebCore/LayoutBox.h>
 #include <WebCore/TextFlags.h>
 #include <unicode/ubidi.h>
-#include <wtf/OptionSet.h>
+#include <wtf/EnumSet.h>
 
 namespace WebCore {
 namespace InlineDisplay {
@@ -52,7 +52,7 @@ struct Box {
         StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
         bool isAtShapingBoundaryStart() const { return m_shapingBoundary == ShapingBoundary::Start; }
         bool isAtShapingBoundaryEnd() const { return m_shapingBoundary == ShapingBoundary::End; }
-        bool isBetweenShapingBoundaries() const { return m_shapingBoundary == ShapingBoundary::Inside; }
+        bool isInsideShapingBoundary() const { return m_shapingBoundary == ShapingBoundary::Inside; }
         bool hasHyphen() const { return m_hasHyphen; }
         std::optional<size_t> partiallyVisibleContentLength() const;
         void setPartiallyVisibleContentLength(size_t truncatedLength);
@@ -85,11 +85,11 @@ struct Box {
         BlockLevelBox,
     };
     struct Expansion;
-    enum class PositionWithinInlineLevelBox : uint8_t {
-        First = 1 << 0,
-        Last  = 1 << 1
+    enum class PositionWithinInlineLevelBox : bool {
+        First,
+        Last
     };
-    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, bool isFirstFormattedLine, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isFullyTruncated = false, OptionSet<PositionWithinInlineLevelBox> = { });
+    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, bool isFirstFormattedLine, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isFullyTruncated = false, EnumSet<PositionWithinInlineLevelBox> = { });
     ~Box();
 
     bool isText() const { return m_type == Type::Text || isWordSeparator(); }
@@ -196,7 +196,7 @@ private:
     Text m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, bool isFirstFormattedLine, Expansion expansion, std::optional<Text> text, bool hasContent, bool isFullyTruncated, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, bool isFirstFormattedLine, Expansion expansion, std::optional<Text> text, bool hasContent, bool isFullyTruncated, EnumSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_layoutBox(layoutBox)
     , m_unflippedVisualRect(physicalRect)
     , m_inkOverflow(inkOverflow)
@@ -210,7 +210,7 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_isLastForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
     , m_isFullyTruncated(isFullyTruncated)
     , m_isFirstFormattedLine(isFirstFormattedLine)
-    , m_text(text ? WTFMove(*text) : Text { })
+    , m_text(text ? WTF::move(*text) : Text { })
 {
 }
 

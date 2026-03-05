@@ -40,8 +40,8 @@ public:
 private:
     WhileStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement::Ref&& body)
         : Statement(span)
-        , m_test(WTFMove(test))
-        , m_body(WTFMove(body))
+        , m_test(WTF::move(test))
+        , m_body(WTF::move(body))
     { }
 
     Expression::Ref m_test;

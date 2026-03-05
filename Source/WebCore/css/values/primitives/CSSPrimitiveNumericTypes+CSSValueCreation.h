@@ -44,7 +44,7 @@ template<NumericRaw CSSType> struct CSSValueCreation<CSSType> {
 template<Calc CSSType> struct CSSValueCreation<CSSType> {
     Ref<CSSValue> operator()(CSSValuePool&, const CSSType& calc)
     {
-        return CSSPrimitiveValue::create(calc.protectedCalc());
+        return CSSPrimitiveValue::create(protect(calc.calcValue()));
     }
 };
 

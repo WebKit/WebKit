@@ -14,7 +14,7 @@
 #include "include/core/SkImage.h"
 #include "include/core/SkPictureRecorder.h"
 #include "include/core/SkStream.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/private/base/SkMutex.h"
 #include "src/base/SkScopeExit.h"
 #include "src/codec/SkCodecPriv.h"
@@ -29,12 +29,9 @@ template <typename T> rust::Slice<T> toSlice(SkSpan<T> span) {
     return rust::Slice<T>(span.data(), span.size());
 }
 
-void CheckPng() {
-#if defined(SK_DEBUG)
-    if (!SkCodecs::HasDecoder("png")) {
-        SkDebugf("No PNG decoder registered. A call to SkCodecs::Register is necessary.\n");
-    }
-#endif
+static void check_png() {
+    SkASSERTF(SkCodecs::HasDecoder("png"),
+        "No PNG decoder registered. A call to SkCodecs::Register is necessary.");
 }
 
 [[maybe_unused]] static inline const constexpr bool kSkShowTextBlitCoverage = false;
@@ -628,7 +625,7 @@ protected:
             sk_sp<SkImage> img = SkImages::DeferredFromEncodedData(
                     SkData::MakeWithoutCopy(png_data.data(), png_data.size()));
             if (!img) {
-                CheckPng();
+                check_png();
                 return mx;
             }
 
@@ -678,11 +675,11 @@ protected:
     void generatePngImage(const SkGlyph& glyph, void* imageBuffer) {
         SkASSERT(glyph.maskFormat() == SkMask::kARGB32_Format);
         SkBitmap dstBitmap;
-        dstBitmap.setInfo(
+        dstBitmap.installPixels(
                 SkImageInfo::Make(
                         glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+                imageBuffer,
                 glyph.rowBytes());
-        dstBitmap.setPixels(imageBuffer);
 
         SkCanvas canvas(dstBitmap);
 
@@ -696,7 +693,7 @@ protected:
         sk_sp<SkImage> glyph_image = SkImages::DeferredFromEncodedData(
                 SkData::MakeWithoutCopy(png_data.data(), png_data.size()));
         if (!glyph_image) {
-            CheckPng();
+            check_png();
             return;
         }
 
@@ -737,11 +734,11 @@ protected:
         } else if (format == ScalerContextBits::COLRv1 || format == ScalerContextBits::COLRv0) {
             SkASSERT(glyph.maskFormat() == SkMask::kARGB32_Format);
             SkBitmap dstBitmap;
-            dstBitmap.setInfo(
+            dstBitmap.installPixels(
                     SkImageInfo::Make(
                             glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+                    imageBuffer,
                     glyph.rowBytes());
-            dstBitmap.setPixels(imageBuffer);
 
             SkCanvas canvas(dstBitmap);
             if constexpr (kSkShowTextBlitCoverage) {
@@ -1030,11 +1027,6 @@ std::unique_ptr<SkAdvancedTypefaceMetrics> SkTypeface_Fontations::onGetAdvancedM
     // Style information.
     if (fontations_ffi::is_fixed_pitch(*fBridgeFontRef)) {
         info->fStyle |= SkAdvancedTypefaceMetrics::kFixedPitch_Style;
-    }
-
-    rust::String readPsName;
-    if (fontations_ffi::postscript_name(*fBridgeFontRef, readPsName)) {
-        info->fPostScriptName = SkString(readPsName.data(), readPsName.size());
     }
 
     fontations_ffi::BridgeFontStyle fontStyle;
@@ -1363,16 +1355,12 @@ void ColorPainter::configure_linear_paint(const fontations_ffi::FillLinearParams
             SkPoint::Make(SkFloatToScalar(linear_params.x1), -SkFloatToScalar(linear_params.y1))};
     SkTileMode tileMode = ToSkTileMode(extend_mode);
 
-    sk_sp<SkShader> shader(SkGradientShader::MakeLinear(
+    sk_sp<SkShader> shader(SkShaders::LinearGradient(
             linePositions,
-            colors.data(),
-            SkColorSpace::MakeSRGB(),
-            stops.data(),
-            stops.size(),
-            tileMode,
-            SkGradientShader::Interpolation{SkGradientShader::Interpolation::InPremul::kNo,
-                                            SkGradientShader::Interpolation::ColorSpace::kSRGB,
-                                            SkGradientShader::Interpolation::HueMethod::kShorter},
+            {{colors, stops, tileMode},
+            SkGradient::Interpolation{SkGradient::Interpolation::InPremul::kNo,
+                                      SkGradient::Interpolation::ColorSpace::kSRGB,
+                                      SkGradient::Interpolation::HueMethod::kShorter}},
             paintTransform));
 
     SkASSERT(shader);
@@ -1524,19 +1512,12 @@ void ColorPainter::configure_radial_paint(
     // An opaque color is needed to ensure the gradient is not modulated by alpha.
     paint.setColor(SK_ColorBLACK);
 
-    paint.setShader(SkGradientShader::MakeTwoPointConical(
-            start,
-            startRadius,
-            end,
-            endRadius,
-            colors.data(),
-            SkColorSpace::MakeSRGB(),
-            stops.data(),
-            stops.size(),
-            tileMode,
-            SkGradientShader::Interpolation{SkGradientShader::Interpolation::InPremul::kNo,
-                                            SkGradientShader::Interpolation::ColorSpace::kSRGB,
-                                            SkGradientShader::Interpolation::HueMethod::kShorter},
+    paint.setShader(SkShaders::TwoPointConicalGradient(
+            start, startRadius, end, endRadius,
+            {{colors, stops, tileMode},
+            SkGradient::Interpolation{SkGradient::Interpolation::InPremul::kNo,
+                                      SkGradient::Interpolation::ColorSpace::kSRGB,
+                                      SkGradient::Interpolation::HueMethod::kShorter}},
             paintTransform));
 }
 
@@ -1591,19 +1572,12 @@ void ColorPainter::configure_sweep_paint(const fontations_ffi::FillSweepParams& 
     SkTileMode tileMode = ToSkTileMode(extend_mode);
 
     paint.setColor(SK_ColorBLACK);
-    paint.setShader(SkGradientShader::MakeSweep(
-            center.x(),
-            center.y(),
-            colors.data(),
-            SkColorSpace::MakeSRGB(),
-            stops.data(),
-            stops.size(),
-            tileMode,
-            sweep_params.start_angle,
-            sweep_params.end_angle,
-            SkGradientShader::Interpolation{SkGradientShader::Interpolation::InPremul::kNo,
-                                            SkGradientShader::Interpolation::ColorSpace::kSRGB,
-                                            SkGradientShader::Interpolation::HueMethod::kShorter},
+    paint.setShader(SkShaders::SweepGradient(
+            center, sweep_params.start_angle, sweep_params.end_angle,
+            {{colors, stops, tileMode},
+            SkGradient::Interpolation{SkGradient::Interpolation::InPremul::kNo,
+                                      SkGradient::Interpolation::ColorSpace::kSRGB,
+                                      SkGradient::Interpolation::HueMethod::kShorter}},
             paintTransform));
 }
 

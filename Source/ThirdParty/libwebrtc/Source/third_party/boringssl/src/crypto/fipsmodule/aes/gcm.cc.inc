@@ -589,7 +589,7 @@ int CRYPTO_gcm128_finish(const GCM128_KEY *key, GCM128_CONTEXT *ctx,
 
 void CRYPTO_gcm128_tag(const GCM128_KEY *key, GCM128_CONTEXT *ctx, uint8_t *tag,
                        size_t len) {
-  CRYPTO_gcm128_finish(key, ctx, NULL, 0);
+  CRYPTO_gcm128_finish(key, ctx, nullptr, 0);
   OPENSSL_memcpy(tag, ctx->Xi, len <= sizeof(ctx->Xi) ? len : sizeof(ctx->Xi));
 }
 

@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "DataTaskIdentifier.h"
 #include <pal/SessionID.h>
+#include <wtf/Markable.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -57,10 +58,8 @@ public:
     void cancel();
 
     WebKit::WebPageProxy* page() { return m_page.get(); }
-    RefPtr<WebKit::WebPageProxy> protectedPage() const { return m_page.get(); }
-    const WTF::URL& originalURL() const { return m_originalURL; }
+    const WTF::URL& originalURL() const LIFETIME_BOUND { return m_originalURL; }
     const DataTaskClient& client() const { return m_client.get(); }
-    Ref<DataTaskClient> protectedClient() const;
     void setClient(Ref<DataTaskClient>&&);
     void networkProcessCrashed();
     void didCompleteWithError(WebCore::ResourceError&&);

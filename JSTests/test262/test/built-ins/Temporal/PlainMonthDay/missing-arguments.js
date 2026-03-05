@@ -19,3 +19,5 @@ const args = [
 
 assert.throws(RangeError, () => new Temporal.PlainMonthDay(...args));
 assert.compareArray(actual, expected, "order of operations");
+
+assert.throws(RangeError, () => new Temporal.PlainMonthDay(), "no arguments");

@@ -64,7 +64,7 @@ public:
     size_t lineIndex() const
     {
         size_t precedingLines = 0;
-        for (auto* rootBox = rootInlineBox().prevRootBox(); rootBox; rootBox = rootBox->prevRootBox())
+        for (CheckedPtr rootBox = rootInlineBox().prevRootBox(); rootBox; rootBox = rootBox->prevRootBox())
             ++precedingLines;
         return precedingLines;
     }
@@ -171,6 +171,30 @@ public:
             parent = parent->parent();
 
         m_inlineBox = parent ? parent->nextOnLine() : nullptr;
+    }
+
+    void traversePreviousBoxOnLine()
+    {
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(m_inlineBox); flowBox && flowBox->lastChild()) {
+            m_inlineBox = flowBox->lastChild();
+            return;
+        }
+
+        traversePreviousBoxOnLineSkippingChildren();
+    }
+
+    void traversePreviousBoxOnLineSkippingChildren()
+    {
+        if (m_inlineBox->previousOnLine()) {
+            m_inlineBox = m_inlineBox->previousOnLine();
+            return;
+        }
+
+        auto* parent = m_inlineBox->parent();
+        while (parent && !parent->previousOnLine())
+            parent = parent->parent();
+
+        m_inlineBox = parent ? parent->previousOnLine() : nullptr;
     }
 
     const Vector<SVGTextFragment>& svgTextFragments() const

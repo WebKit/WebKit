@@ -19,7 +19,7 @@
 #include <string>
 
 #include "absl/functional/any_invocable.h"
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
 #include "api/jsep.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
@@ -56,7 +56,7 @@ class WebRtcSessionDescriptionFactory {
       std::function<void(const scoped_refptr<RTCCertificate>&)>
           on_certificate_ready,
       CodecLookupHelper* codec_lookup_helper,
-      const FieldTrialsView& field_trials);
+      const Environment& env);
   ~WebRtcSessionDescriptionFactory();
 
   WebRtcSessionDescriptionFactory(const WebRtcSessionDescriptionFactory&) =

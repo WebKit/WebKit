@@ -26,10 +26,10 @@ includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(1, 0, null),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(1, 0, null),
       [0, 1, 2, 3]
     ),
     'null value coerced to 0'
@@ -37,7 +37,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(1, 0, NaN),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(1, 0, NaN),
       [0, 1, 2, 3]
     ),
     'NaN value coerced to 0'
@@ -45,7 +45,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(1, 0, false),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(1, 0, false),
       [0, 1, 2, 3]
     ),
     'false value coerced to 0'
@@ -53,7 +53,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(1, 0, true),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(1, 0, true),
       [0, 0, 2, 3]
     ),
     'true value coerced to 1'
@@ -61,7 +61,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(1, 0, '-2'),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(1, 0, '-2'),
       [0, 0, 1, 3]
     ),
     'string "-2" value coerced to integer -2'
@@ -69,7 +69,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(1, 0, -2.5),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(1, 0, -2.5),
       [0, 0, 1, 3]
     ),
     'float -2.5 value coerced to integer -2'

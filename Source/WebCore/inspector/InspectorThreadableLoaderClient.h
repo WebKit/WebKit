@@ -28,6 +28,7 @@
 #include "ThreadableLoaderClient.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h> // for LoadResourceCallback.
 #include <wtf/Forward.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 // FIXME: remove dependency on legacy callbacks in InspectorThreadableLoaderClient.
 using LoadResourceCallback = Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback;
@@ -41,32 +42,44 @@ namespace Inspector {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient);
 
-class InspectorThreadableLoaderClient final : public WebCore::ThreadableLoaderClient {
+class InspectorThreadableLoaderClient final : public ThreadSafeRefCounted<InspectorThreadableLoaderClient, WTF::DestructionThread::Main>, public WebCore::ThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(InspectorThreadableLoaderClient);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient, InspectorThreadableLoaderClient);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorThreadableLoaderClient);
 public:
-    InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
-        : m_callback(WTFMove(callback))
+    static Ref<InspectorThreadableLoaderClient> create(RefPtr<LoadResourceCallback>&& callback)
     {
+        return adoptRef(*new InspectorThreadableLoaderClient(WTF::move(callback)));
     }
 
-    ~InspectorThreadableLoaderClient() override = default;
+    ~InspectorThreadableLoaderClient() final = default;
+
+    // WebCore::ThreadableLoaderClient.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     void didReceiveResponse(WebCore::ScriptExecutionContextIdentifier, std::optional<WebCore::ResourceLoaderIdentifier>, const WebCore::ResourceResponse&) override;
     void didReceiveData(const WebCore::SharedBuffer&) override;
     void didFinishLoading(WebCore::ScriptExecutionContextIdentifier, std::optional<WebCore::ResourceLoaderIdentifier>, const WebCore::NetworkLoadMetrics&) override;
     void didFail(std::optional<WebCore::ScriptExecutionContextIdentifier>, const WebCore::ResourceError&) override;
     void setLoader(RefPtr<WebCore::ThreadableLoader>&&);
+
 private:
+    explicit InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
+        : m_callback(WTF::move(callback))
+    {
+        // FIXME: This is error-prone, we should avoid explicit calls to ref() / deref().
+        ref(); // dispose() is in charge of calling deref();
+    }
+
     void dispose();
 
-    RefPtr<LoadResourceCallback> m_callback;
+    const RefPtr<LoadResourceCallback> m_callback;
     RefPtr<WebCore::ThreadableLoader> m_loader;
     RefPtr<WebCore::TextResourceDecoder> m_decoder;
     String m_mimeType;
     StringBuilder m_responseText;
     int m_statusCode;
+    bool m_hasCalledDeref { false };
 };
 
 } // namespace Inspector

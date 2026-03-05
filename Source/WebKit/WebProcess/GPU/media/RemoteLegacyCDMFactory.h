@@ -76,7 +76,7 @@ public:
 
     RemoteLegacyCDM* findCDM(WebCore::CDMPrivateInterface*) const;
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
 private:

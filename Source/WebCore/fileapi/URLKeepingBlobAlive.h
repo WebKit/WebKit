@@ -52,7 +52,7 @@ public:
     void clear();
 
     // We do not introduce a && version since it might break the register/unregister balance.
-    WEBCORE_EXPORT URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() const;
+    [[nodiscard]] WEBCORE_EXPORT URLKeepingBlobAlive isolatedCopy() const;
 
 private:
     void registerBlobURLHandleIfNecessary();

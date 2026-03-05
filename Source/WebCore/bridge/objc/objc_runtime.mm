@@ -103,7 +103,7 @@ JSValue ObjcField::valueFromInstance(JSGlobalObject* lexicalGlobalObject, const 
 
     JSValue result = jsUndefined();
     
-    id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
+    id targetObject = (downcast<ObjcInstance>(instance))->getObject();
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
 
@@ -136,7 +136,7 @@ bool ObjcField::setValueToInstance(JSGlobalObject* lexicalGlobalObject, const In
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
+    id targetObject = (downcast<ObjcInstance>(instance))->getObject();
     id value = convertValueToObjcObject(lexicalGlobalObject, aValue);
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
@@ -158,7 +158,7 @@ bool ObjcField::setValueToInstance(JSGlobalObject* lexicalGlobalObject, const In
 // ---------------------- ObjcArray ----------------------
 
 ObjcArray::ObjcArray(ObjectStructPtr a, RefPtr<RootObject>&& rootObject)
-    : Array(WTFMove(rootObject))
+    : Array(WTF::move(rootObject))
     , _array(a)
 {
 }
@@ -224,7 +224,8 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Struc
 
 void ObjcFallbackObjectImp::destroy(JSCell* cell)
 {
-    static_cast<ObjcFallbackObjectImp*>(cell)->ObjcFallbackObjectImp::~ObjcFallbackObjectImp();
+    // Cannot call jsCast() during destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<ObjcFallbackObjectImp*>(cell)->ObjcFallbackObjectImp::~ObjcFallbackObjectImp();
 }
 
 void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
@@ -259,14 +260,13 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = callFrame->thisValue();
-    if (!thisValue.inherits<ObjCRuntimeObject>())
+    auto* runtimeObject = jsDynamicCast<ObjCRuntimeObject*>(callFrame->thisValue());
+    if (!runtimeObject)
         return throwVMTypeError(lexicalGlobalObject, scope);
 
     JSValue result = jsUndefined();
 
-    ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(asObject(thisValue));
-    ObjcInstance* objcInstance = runtimeObject->getInternalObjCInstance();
+    RefPtr objcInstance = runtimeObject->getInternalObjCInstance();
 
     if (!objcInstance)
         return JSValue::encode(throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope));
@@ -276,9 +276,9 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
     id targetObject = objcInstance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
-        ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
+        auto* objcClass = downcast<ObjcClass>(objcInstance->getClass());
         std::unique_ptr<ObjcMethod> fallbackMethod(makeUnique<ObjcMethod>(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
-        const String& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(callFrame->jsCallee())->propertyName();
+        auto& nameIdentifier = jsCast<ObjcFallbackObjectImp*>(callFrame->jsCallee())->propertyName();
         fallbackMethod->setJavaScriptName(nameIdentifier.createCFString().get());
         result = objcInstance->invokeObjcMethod(lexicalGlobalObject, callFrame, fallbackMethod.get());
     }

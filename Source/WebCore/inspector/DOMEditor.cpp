@@ -84,7 +84,7 @@ public:
     InsertBeforeAction(ContainerNode& parentNode, Ref<Node>&& node, Node* anchorNode)
         : InspectorHistory::Action()
         , m_parentNode(parentNode)
-        , m_node(WTFMove(node))
+        , m_node(WTF::move(node))
         , m_anchorNode(anchorNode)
     {
     }
@@ -322,7 +322,7 @@ public:
     ReplaceChildNodeAction(ContainerNode& parentNode, Ref<Node>&& newNode, Node& oldNode)
         : InspectorHistory::Action()
         , m_parentNode(parentNode)
-        , m_newNode(WTFMove(newNode))
+        , m_newNode(WTF::move(newNode))
         , m_oldNode(oldNode)
     {
     }
@@ -391,7 +391,7 @@ DOMEditor::~DOMEditor() = default;
 
 ExceptionOr<void> DOMEditor::insertBefore(ContainerNode& parentNode, Ref<Node>&& node, Node* anchorNode)
 {
-    return m_history.perform(makeUnique<InsertBeforeAction>(parentNode, WTFMove(node), anchorNode));
+    return m_history.perform(makeUnique<InsertBeforeAction>(parentNode, WTF::move(node), anchorNode));
 }
 
 ExceptionOr<void> DOMEditor::removeChild(ContainerNode& parentNode, Node& node)
@@ -413,7 +413,7 @@ ExceptionOr<void> DOMEditor::setOuterHTML(Node& node, const String& html, Node*&
 {
     auto action = makeUnique<SetOuterHTMLAction>(node, html);
     auto& rawAction = *action;
-    auto result = m_history.perform(WTFMove(action));
+    auto result = m_history.perform(WTF::move(action));
     if (!result.hasException())
         newNode = rawAction.newNode();
     return result;
@@ -431,7 +431,7 @@ ExceptionOr<void> DOMEditor::replaceWholeText(Text& textNode, const String& text
 
 ExceptionOr<void> DOMEditor::replaceChild(ContainerNode& parentNode, Ref<Node>&& newNode, Node& oldNode)
 {
-    return m_history.perform(makeUnique<ReplaceChildNodeAction>(parentNode, WTFMove(newNode), oldNode));
+    return m_history.perform(makeUnique<ReplaceChildNodeAction>(parentNode, WTF::move(newNode), oldNode));
 }
 
 ExceptionOr<void> DOMEditor::setNodeValue(Node& node, const String& value)
@@ -449,7 +449,7 @@ static bool populateErrorString(ExceptionOr<void>&& result, ErrorString& errorSt
 
 bool DOMEditor::insertBefore(ContainerNode& parentNode, Ref<Node>&& node, Node* anchorNode, ErrorString& errorString)
 {
-    return populateErrorString(insertBefore(parentNode, WTFMove(node), anchorNode), errorString);
+    return populateErrorString(insertBefore(parentNode, WTF::move(node), anchorNode), errorString);
 }
 
 bool DOMEditor::removeChild(ContainerNode& parentNode, Node& node, ErrorString& errorString)

@@ -65,7 +65,7 @@ static std::optional<CSS::TextShadow> consumeSingleUnresolvedTextShadow(CSSParse
         auto maybeColor = consumeUnresolvedColor(rangeCopy, state);
         if (!maybeColor)
             return false;
-        color = CSS::Color(WTFMove(*maybeColor));
+        color = CSS::Color(WTF::move(*maybeColor));
         return !!color;
     };
 
@@ -95,9 +95,9 @@ static std::optional<CSS::TextShadow> consumeSingleUnresolvedTextShadow(CSSParse
     range = rangeCopy;
 
     return CSS::TextShadow {
-        .color = WTFMove(color),
-        .location = { WTFMove(*x), WTFMove(*y) },
-        .blur = WTFMove(blur)
+        .color = WTF::move(color),
+        .location = { WTF::move(*x), WTF::move(*y) },
+        .blur = WTF::move(blur)
     };
 }
 
@@ -111,7 +111,7 @@ static std::optional<CSS::TextShadowProperty::List> consumeUnresolvedTextShadowL
         auto shadow = consumeSingleUnresolvedTextShadow(rangeCopy, state);
         if (!shadow)
             return { };
-        list.value.append(WTFMove(*shadow));
+        list.value.append(WTF::move(*shadow));
     } while (consumeCommaIncludingWhitespace(rangeCopy));
 
     range = rangeCopy;
@@ -126,7 +126,7 @@ static std::optional<CSS::TextShadowProperty> consumeUnresolvedTextShadow(CSSPar
         return CSS::TextShadowProperty { CSS::Keyword::None { } };
     }
     if (auto textShadowList = consumeUnresolvedTextShadowList(range, state))
-        return CSS::TextShadowProperty { WTFMove(*textShadowList) };
+        return CSS::TextShadowProperty { WTF::move(*textShadowList) };
     return { };
 }
 
@@ -136,7 +136,7 @@ RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange& range, CSS::PropertyPars
     // https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
 
     if (auto property = consumeUnresolvedTextShadow(range, state))
-        return CSSTextShadowPropertyValue::create({ WTFMove(*property) });
+        return CSSTextShadowPropertyValue::create({ WTF::move(*property) });
     return nullptr;
 }
 

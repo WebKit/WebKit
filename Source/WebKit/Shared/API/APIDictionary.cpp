@@ -45,11 +45,11 @@ Ref<Dictionary> Dictionary::createWithCapacity(size_t capacity)
 
 Ref<Dictionary> Dictionary::create(MapType&& map)
 {
-    return adoptRef(*new Dictionary(WTFMove(map)));
+    return adoptRef(*new Dictionary(WTF::move(map)));
 }
 
 Dictionary::Dictionary(MapType&& map)
-    : m_map(WTFMove(map))
+    : m_map(WTF::move(map))
 {
 }
 
@@ -63,18 +63,18 @@ Ref<Array> Dictionary::keys() const
     auto keys = WTF::map(m_map, [](auto& entry) -> RefPtr<API::Object> {
         return API::String::create(entry.key);
     });
-    return API::Array::create(WTFMove(keys));
+    return API::Array::create(WTF::move(keys));
 }
 
 bool Dictionary::add(const WTF::String& key, RefPtr<API::Object>&& item)
 {
-    MapType::AddResult result = m_map.add(key, WTFMove(item));
+    MapType::AddResult result = m_map.add(key, WTF::move(item));
     return result.isNewEntry;
 }
 
 bool Dictionary::set(const WTF::String& key, RefPtr<API::Object>&& item)
 {
-    MapType::AddResult result = m_map.set(key, WTFMove(item));
+    MapType::AddResult result = m_map.set(key, WTF::move(item));
     return result.isNewEntry;
 }
 

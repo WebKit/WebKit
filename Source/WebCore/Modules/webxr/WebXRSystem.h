@@ -58,7 +58,7 @@ class SecurityOriginData;
 struct XRSessionInit;
 
 class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSystem);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRSystem);
 public:
     using IsSessionSupportedPromise = DOMPromiseDeferred<IDLBoolean>;
     using RequestSessionPromise = DOMPromiseDeferred<IDLInterface<WebXRSession>>;
@@ -85,7 +85,7 @@ public:
     WEBCORE_EXPORT void registerSimulatedXRDeviceForTesting(PlatformXR::Device&);
     WEBCORE_EXPORT void unregisterSimulatedXRDeviceForTesting(PlatformXR::Device&);
 
-    Navigator* navigator();
+    Navigator* NODELETE navigator();
 
 protected:
     // EventTarget
@@ -98,7 +98,7 @@ protected:
     void stop() override;
 
 private:
-    WebXRSystem(Navigator&);
+    explicit WebXRSystem(Navigator&);
 
     using FeatureList = PlatformXR::Device::FeatureList;
     using JSFeatureList = Vector<JSC::JSValue>;
@@ -161,5 +161,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebXRSystem)
 
 #endif // ENABLE(WEBXR)

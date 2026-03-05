@@ -22,7 +22,7 @@ includes: [testTypedArray.js, compareArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var src = [42, 43];
   var srcObj = {
     length: 2,
@@ -31,32 +31,32 @@ testWithTypedArrayConstructors(function(TA) {
   };
   var sample, result;
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(src, 0);
   assert(compareArray(sample, [42, 43, 3, 4]), "offset: 0, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(src, 1);
   assert(compareArray(sample, [1, 42, 43, 4]), "offset: 1, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(src, 2);
   assert(compareArray(sample, [1, 2, 42, 43]), "offset: 2, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(srcObj, 0);
   assert(compareArray(sample, [7, 17, 3, 4]), "offset: 0, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(srcObj, 1);
   assert(compareArray(sample, [1, 7, 17, 4]), "offset: 1, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1, 2, 3, 4]);
+  sample = new TA(makeCtorArg([1, 2, 3, 4]));
   result = sample.set(srcObj, 2);
   assert(compareArray(sample, [1, 2, 7, 17]), "offset: 2, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");

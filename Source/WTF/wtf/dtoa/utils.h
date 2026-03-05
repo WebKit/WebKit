@@ -286,6 +286,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     position_ += n;
   }
 
+  void AddSubstring(std::span<const char> s) {
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ + s.size() < buffer_.length());
+    ASSERT_WITH_SECURITY_IMPLICATION(std::ranges::find(s, '\0') == s.end());
+    memmoveSpan(buffer_.start().subspan(position_), s);
+    position_ += s.size();
+  }
 
   // Add character padding to the builder. If count is non-positive,
   // nothing is added to the builder.

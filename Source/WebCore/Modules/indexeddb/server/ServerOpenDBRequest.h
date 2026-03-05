@@ -45,10 +45,10 @@ public:
     static Ref<ServerOpenDBRequest> create(IDBConnectionToClient&, const IDBOpenRequestData&);
 
     IDBConnectionToClient& connection() { return m_connection; }
-    const IDBOpenRequestData& requestData() const { return m_requestData; }
+    const IDBOpenRequestData& requestData() const LIFETIME_BOUND { return m_requestData; }
 
-    bool isOpenRequest() const;
-    bool isDeleteRequest() const;
+    bool NODELETE isOpenRequest() const;
+    bool NODELETE isDeleteRequest() const;
 
     void maybeNotifyRequestBlocked(uint64_t currentVersion);
 

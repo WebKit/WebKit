@@ -98,8 +98,6 @@ void UpdateEventLogStreamConfig(RtcEventLog& event_log,
 
 }  // namespace
 
-constexpr char AudioAllocationConfig::kKey[];
-
 std::unique_ptr<StructParametersParser> AudioAllocationConfig::Parser() {
   return StructParametersParser::Create(       //
       "min", &min_bitrate,                     //
@@ -363,7 +361,8 @@ void AudioSendStream::Start() {
   RTC_LOG(LS_INFO) << "AudioSendStream::Start: " << config_.rtp.ssrc;
   if (!config_.has_dscp && config_.min_bitrate_bps != -1 &&
       config_.max_bitrate_bps != -1 &&
-      (allocate_audio_without_feedback_ || TransportSeqNumId(config_) != 0)) {
+      (allocate_audio_without_feedback_ ||
+       config_.include_in_congestion_control_allocation)) {
     rtp_transport_->AccountForAudioPacketsInPacedSender(true);
     rtp_transport_->IncludeOverheadInPacedSender();
     rtp_rtcp_module_->SetAsPartOfAllocation(true);
@@ -436,18 +435,20 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats(
   stats.local_ssrc = config_.rtp.ssrc;
   stats.target_bitrate_bps = channel_send_->GetTargetBitrate();
 
-  webrtc::CallSendStatistics call_stats = channel_send_->GetRTCPStatistics();
-  stats.payload_bytes_sent = call_stats.payload_bytes_sent;
+  webrtc::ChannelSendStatistics channel_stats =
+      channel_send_->GetRTCPStatistics();
+  stats.payload_bytes_sent = channel_stats.payload_bytes_sent;
   stats.header_and_padding_bytes_sent =
-      call_stats.header_and_padding_bytes_sent;
-  stats.retransmitted_bytes_sent = call_stats.retransmitted_bytes_sent;
-  stats.packets_sent = call_stats.packetsSent;
-  stats.total_packet_send_delay = call_stats.total_packet_send_delay;
-  stats.retransmitted_packets_sent = call_stats.retransmitted_packets_sent;
+      channel_stats.header_and_padding_bytes_sent;
+  stats.retransmitted_bytes_sent = channel_stats.retransmitted_bytes_sent;
+  stats.packets_sent = channel_stats.packets_sent;
+  stats.packets_sent_with_ect1 = channel_stats.packets_sent_with_ect1;
+  stats.total_packet_send_delay = channel_stats.total_packet_send_delay;
+  stats.retransmitted_packets_sent = channel_stats.retransmitted_packets_sent;
   // RTT isn't known until a RTCP report is received. Until then, VoiceEngine
   // returns 0 to indicate an error value.
-  if (call_stats.rttMs > 0) {
-    stats.rtt_ms = call_stats.rttMs;
+  if (channel_stats.round_trip_time.ms() > 0) {
+    stats.rtt_ms = channel_stats.round_trip_time.ms();
   }
   if (config_.send_codec_spec) {
     const auto& spec = *config_.send_codec_spec;
@@ -483,9 +484,9 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats(
     stats.apm_statistics = ap->GetStatistics(has_remote_tracks);
   }
 
-  stats.report_block_datas = std::move(call_stats.report_block_datas);
+  stats.report_block_datas = std::move(channel_stats.report_block_datas);
 
-  stats.nacks_received = call_stats.nacks_received;
+  stats.nacks_received = channel_stats.nacks_received;
 
   return stats;
 }
@@ -606,7 +607,7 @@ bool AudioSendStream::SetupSendCodec(const Config& new_config) {
   // Enable ANA if configured (currently only used by Opus).
   if (new_config.audio_network_adaptor_config) {
     if (encoder->EnableAudioNetworkAdaptor(
-            *new_config.audio_network_adaptor_config, &env_.event_log())) {
+            *new_config.audio_network_adaptor_config)) {
       RTC_LOG(LS_INFO) << "Audio network adaptor enabled on SSRC "
                        << new_config.rtp.ssrc;
     } else {
@@ -707,7 +708,7 @@ void AudioSendStream::ReconfigureANA(const Config& new_config) {
     channel_send_->CallEncoder([&](AudioEncoder* encoder) {
       RTC_DCHECK_RUN_ON(&worker_thread_checker_);
       if (encoder->EnableAudioNetworkAdaptor(
-              *new_config.audio_network_adaptor_config, &env_.event_log())) {
+              *new_config.audio_network_adaptor_config)) {
         RTC_LOG(LS_INFO) << "Audio network adaptor enabled on SSRC "
                          << new_config.rtp.ssrc;
         if (overhead_per_packet_ > 0) {
@@ -781,7 +782,8 @@ void AudioSendStream::ReconfigureBitrateObserver(
   }
 
   if (!new_config.has_dscp && new_config.min_bitrate_bps != -1 &&
-      new_config.max_bitrate_bps != -1 && TransportSeqNumId(new_config) != 0) {
+      new_config.max_bitrate_bps != -1 &&
+      new_config.include_in_congestion_control_allocation) {
     rtp_transport_->AccountForAudioPacketsInPacedSender(true);
     rtp_transport_->IncludeOverheadInPacedSender();
     // We may get a callback immediately as the observer is registered, so
@@ -832,11 +834,14 @@ void AudioSendStream::ConfigureBitrateObserver() {
   bitrate_allocator_->AddObserver(
       this,
       MediaStreamAllocationConfig{
-          constraints->min.bps<uint32_t>(), constraints->max.bps<uint32_t>(), 0,
-          priority_bitrate.bps(), true,
-          allocation_settings_.bitrate_priority.value_or(
+          .min_bitrate_bps = constraints->min.bps<uint32_t>(),
+          .max_bitrate_bps = constraints->max.bps<uint32_t>(),
+          .pad_up_bitrate_bps = 0,
+          .priority_bitrate_bps = priority_bitrate.bps(),
+          .enforce_min_bitrate = true,
+          .bitrate_priority = allocation_settings_.bitrate_priority.value_or(
               config_.bitrate_priority),
-          TrackRateElasticity::kCanContributeUnusedRate});
+          .rate_elasticity = TrackRateElasticity::kCanContributeUnusedRate});
 
   registered_with_allocator_ = true;
 }
@@ -856,8 +861,8 @@ AudioSendStream::GetMinMaxBitrateConstraints() const {
     return std::nullopt;
   }
   TargetAudioBitrateConstraints constraints{
-      DataRate::BitsPerSec(config_.min_bitrate_bps),
-      DataRate::BitsPerSec(config_.max_bitrate_bps)};
+      .min = DataRate::BitsPerSec(config_.min_bitrate_bps),
+      .max = DataRate::BitsPerSec(config_.max_bitrate_bps)};
 
   // If bitrates were explicitly overriden via field trial, use those values.
   if (allocation_settings_.min_bitrate)

@@ -44,10 +44,6 @@ include_rules = [
 specific_include_rules = {
   # Some internal headers are allowed even in API headers:
 
-  "call_factory_interface\.h": [
-    "+call/rtp_transport_controller_send_factory_interface.h",
-  ],
-
   ".*\.h": [
     "+rtc_base/checks.h",
     "+rtc_base/system/rtc_export.h",
@@ -99,6 +95,19 @@ specific_include_rules = {
     "+rtc_base/copy_on_write_buffer.h",
   ],
 
+  "datagram_connection\.h": [
+    "+p2p/base/transport_description.h",
+  ],
+
+  "mock_datagram_connection\.h": [
+    "+p2p/base/transport_description.h",
+  ],
+
+  "datagram_connection_factory\.h": [
+    "+p2p/base/port_allocator.h",
+    "+rtc_base/rtc_certificate.h",
+  ],
+
   "dtls_transport_interface\.h": [
     "+rtc_base/ssl_certificate.h",
   ],
@@ -107,9 +116,16 @@ specific_include_rules = {
     "+modules/include/module_fec_types.h",
   ],
 
+  "ice_server_parsing\.h": [
+    "+p2p/base/port_allocator.h",
+    "+rtc_base/socket_address.h",
+  ],
+
   "jsep\.h": [
     "+absl/strings/has_absl_stringify.h",
     "+absl/strings/str_format.h",
+    "+rtc_base/system/no_unique_address.h",
+    "+rtc_base/thread_annotations.h",
   ],
 
   "local_network_access_permission\.h": [
@@ -127,7 +143,6 @@ specific_include_rules = {
   ],
 
   "peer_connection_interface\.h": [
-    "+call/rtp_transport_controller_send_factory_interface.h",
     "+media/base/media_config.h",
     "+media/base/media_engine.h",
     "+p2p/base/port.h",

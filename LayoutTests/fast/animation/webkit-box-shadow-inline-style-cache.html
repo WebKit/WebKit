@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .transitioning {
+    width: 400px;
+    height: 400px;
+    background-color: red;
+    transition: all 2s;
+  }
+</style>
+</head>
+<body>
+<div id="target" class="transitioning"></div>
+<pre id="log"></pre>
+<script>
+  window.testRunner?.dumpAsText();
+
+  function log(msg) {
+    document.getElementById('log').append(new Text(msg + "\n"));
+  }
+
+  function test_property(property, start, end) {
+    try {
+      log(`START: Testing ${property}`);
+
+      var div = document.getElementById("target");
+      document.body.appendChild(div);
+
+      div.style = `${property}: ${start}`;
+
+      getComputedStyle(div).marginLeft;
+
+      div.style = `${property}: ${end}`;
+
+      log("CHECKING FOR element.getAnimations()")
+      if (div.getAnimations().length == 0)
+        log("NO ANIMATIONS FOUND");
+      else
+        log(`${div.getAnimations().length} ANIMATIONS FOUND: ${div.getAnimations()}`);
+
+      log(``)
+
+    } catch (exception) {
+      log(`EXCEPTION: ${property} -- ${exception}\n`);
+    }
+  }
+
+  window.addEventListener("load", function(event) {
+    test_property("-webkit-box-shadow", "0 0 0 rgba(0, 0, 0, 0)", "10px 5px 5px blue");
+  });
+</script>
+</body>
+</html>

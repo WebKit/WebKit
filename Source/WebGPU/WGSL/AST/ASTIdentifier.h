@@ -36,9 +36,9 @@ class Identifier : public Node {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
     static Identifier make(const String& id) { return { SourceSpan::empty(), String(id) }; }
-    static Identifier make(String&& id) { return { SourceSpan::empty(), WTFMove(id) }; }
-    static Identifier makeWithSpan(SourceSpan span, String&& id) { return { WTFMove(span), WTFMove(id) }; }
-    static Identifier makeWithSpan(SourceSpan span, StringView id) { return { WTFMove(span), id }; }
+    static Identifier make(String&& id) { return { SourceSpan::empty(), WTF::move(id) }; }
+    static Identifier makeWithSpan(SourceSpan span, String&& id) { return { WTF::move(span), WTF::move(id) }; }
+    static Identifier makeWithSpan(SourceSpan span, StringView id) { return { WTF::move(span), id }; }
 
     NodeKind kind() const override;
     operator String&() { return m_id; }
@@ -51,7 +51,7 @@ public:
 private:
     Identifier(const SourceSpan& span, String&& id)
         : Node(span)
-        , m_id(WTFMove(id))
+        , m_id(WTF::move(id))
     { }
 
     Identifier(const SourceSpan& span, StringView id)

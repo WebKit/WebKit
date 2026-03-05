@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Field);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Method);
 
 Array::Array(RefPtr<RootObject>&& rootObject)
-    : m_rootObject(WTFMove(rootObject))
+    : m_rootObject(WTF::move(rootObject))
 {
     ASSERT(m_rootObject);
 }
@@ -53,7 +53,7 @@ Array::Array(RefPtr<RootObject>&& rootObject)
 Array::~Array() = default;
 
 Instance::Instance(RefPtr<RootObject>&& rootObject)
-    : m_rootObject(WTFMove(rootObject))
+    : m_rootObject(WTF::move(rootObject))
 {
     ASSERT(m_rootObject);
 }

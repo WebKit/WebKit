@@ -28,7 +28,7 @@
 
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceFilter.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
 #include "SVGFEDropShadowElement.h"
@@ -40,10 +40,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceFilterPrimitive);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceFilterPrimitive);
 
 RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& element, RenderStyle&& style)
-    : RenderSVGHiddenContainer(Type::SVGResourceFilterPrimitive, element, WTFMove(style))
+    : RenderSVGHiddenContainer(Type::SVGResourceFilterPrimitive, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourceFilterPrimitive());
 }
@@ -74,23 +74,23 @@ SVGFilterPrimitiveStandardAttributes& RenderSVGResourceFilterPrimitive::filterPr
     return static_cast<SVGFilterPrimitiveStandardAttributes&>(RenderSVGHiddenContainer::element());
 }
 
-void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderSVGResourceFilterPrimitive::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
-    if (diff == StyleDifference::Equal || !oldStyle)
+    if (diff == Style::DifferenceResult::Equal || !oldStyle)
         return;
 
-    auto& newStyle = style();
+    CheckedRef newStyle = style();
     if (is<SVGFEFloodElement>(filterPrimitiveElement()) || is<SVGFEDropShadowElement>(filterPrimitiveElement())) {
-        if (newStyle.floodColor() != oldStyle->floodColor())
+        if (newStyle->floodColor() != oldStyle->floodColor())
             filterPrimitiveElement().primitiveAttributeChanged(SVGNames::flood_colorAttr);
-        if (newStyle.floodOpacity() != oldStyle->floodOpacity())
+        if (newStyle->floodOpacity() != oldStyle->floodOpacity())
             filterPrimitiveElement().primitiveAttributeChanged(SVGNames::flood_opacityAttr);
         return;
     }
     if (is<SVGFEDiffuseLightingElement>(filterPrimitiveElement()) || is<SVGFESpecularLightingElement>(filterPrimitiveElement())) {
-        if (newStyle.lightingColor() != oldStyle->lightingColor())
+        if (newStyle->lightingColor() != oldStyle->lightingColor())
             filterPrimitiveElement().primitiveAttributeChanged(SVGNames::lighting_colorAttr);
     }
 }

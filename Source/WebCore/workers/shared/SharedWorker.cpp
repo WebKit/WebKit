@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SharedWorker);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorker);
 
 #define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)
 #define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)
@@ -77,9 +77,9 @@ static inline SharedWorkerObjectConnection* mainThreadConnection()
     return SharedWorkerProvider::singleton().sharedWorkerConnection();
 }
 
-ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<RefPtr<TrustedScriptURL>, String>&& scriptURLString, std::optional<Variant<String, WorkerOptions>>&& maybeOptions)
+ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<Ref<TrustedScriptURL>, String>&& scriptURLString, std::optional<Variant<String, WorkerOptions>>&& maybeOptions)
 {
-    auto compliantScriptURLString = trustedTypeCompliantString(document.protectedContextDocument(), WTFMove(scriptURLString), "SharedWorker constructor"_s);
+    auto compliantScriptURLString = trustedTypeCompliantString(protect(document.contextDocument()), WTF::move(scriptURLString), "SharedWorker constructor"_s);
     if (compliantScriptURLString.hasException())
         return compliantScriptURLString.releaseException();
 
@@ -123,14 +123,14 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
         return sharedWorker;
     }
 
-    mainThreadConnection()->requestSharedWorker(key, sharedWorker->identifier(), WTFMove(transferredPort), options);
+    mainThreadConnection()->requestSharedWorker(key, sharedWorker->identifier(), WTF::move(transferredPort), options);
     return sharedWorker;
 }
 
 SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<MessagePort>&& port)
     : ActiveDOMObject(&document)
     , m_key(key)
-    , m_port(WTFMove(port))
+    , m_port(WTF::move(port))
     , m_identifierForInspector(makeString("SharedWorker:"_s, Inspector::IdentifiersFactory::createIdentifier()))
     , m_blobURLExtension({ m_key.url.protocolIsBlob() ? m_key.url : URL(), document.topOrigin().data() }) // Keep blob URL alive until the worker has finished loading.
 #if ENABLE(CONTENT_EXTENSIONS)

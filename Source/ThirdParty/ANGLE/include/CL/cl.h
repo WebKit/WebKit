@@ -112,9 +112,9 @@ typedef cl_uint             cl_kernel_exec_info;
 typedef cl_bitfield         cl_device_atomic_capabilities;
 typedef cl_bitfield         cl_device_device_enqueue_capabilities;
 typedef cl_uint             cl_khronos_vendor_id;
-typedef cl_properties       cl_mem_properties;
-typedef cl_uint             cl_version;
+typedef cl_properties cl_mem_properties;
 #endif
+typedef cl_uint cl_version;
 
 typedef struct _cl_image_format {
     cl_channel_order        image_channel_order;
@@ -914,8 +914,6 @@ typedef struct _cl_name_version {
 /* cl_khronos_vendor_id */
 #define CL_KHRONOS_VENDOR_ID_CODEPLAY               0x10004
 
-#ifdef CL_VERSION_3_0
-
 /* cl_version */
 #define CL_VERSION_MAJOR_BITS (10)
 #define CL_VERSION_MINOR_BITS (10)
@@ -938,8 +936,6 @@ typedef struct _cl_name_version {
        << (CL_VERSION_MINOR_BITS + CL_VERSION_PATCH_BITS)) |      \
    (((minor) & CL_VERSION_MINOR_MASK) << CL_VERSION_PATCH_BITS) | \
    ((patch) & CL_VERSION_PATCH_MASK))
-
-#endif
 
 /********************************************************************************************************/
 

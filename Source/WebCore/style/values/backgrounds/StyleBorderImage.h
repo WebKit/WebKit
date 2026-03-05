@@ -29,7 +29,6 @@
 #include <WebCore/StyleBorderImageSlice.h>
 #include <WebCore/StyleBorderImageSource.h>
 #include <WebCore/StyleBorderImageWidth.h>
-#include <wtf/DataRef.h>
 
 namespace WebCore {
 namespace Style {
@@ -37,78 +36,23 @@ namespace Style {
 // <'border-image'> = <'border-image-source'> || <'border-image-slice'> [ / <'border-image-width'> | / <'border-image-width'>? / <'border-image-outset'> ]? || <'border-image-repeat'>
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-image
 struct BorderImage {
-    using Source = BorderImageSource;
-    using Slice = BorderImageSlice;
-    using Width = BorderImageWidth;
-    using Outset = BorderImageOutset;
-    using Repeat = BorderImageRepeat;
-
     BorderImage();
     BorderImage(BorderImageSource&&, BorderImageSlice&&, BorderImageWidth&&, BorderImageOutset&&, BorderImageRepeat&&);
 
-    bool hasSource() const { return !m_data->source.isNone(); }
-    const BorderImageSource& source() const { return m_data->source; }
-    void setSource(BorderImageSource&& source) { m_data.access().source = WTFMove(source); }
+    BorderImageSource borderImageSource;
+    BorderImageSlice borderImageSlice;
+    BorderImageWidth borderImageWidth;
+    BorderImageOutset borderImageOutset;
+    BorderImageRepeat borderImageRepeat;
 
-    const BorderImageSlice& slice() const { return m_data->slice; }
-    void setSlice(BorderImageSlice&& slice) { m_data.access().slice = WTFMove(slice); }
-
-    const BorderImageWidth& width() const { return m_data->width; }
-    void setWidth(BorderImageWidth&& width) { m_data.access().width = WTFMove(width); }
-
-    const BorderImageOutset& outset() const { return m_data->outset; }
-    void setOutset(BorderImageOutset&& outset) { m_data.access().outset = WTFMove(outset); }
-
-    const BorderImageRepeat& repeat() const { return m_data->repeat; }
-    void setRepeat(BorderImageRepeat&& repeat) { m_data.access().repeat = WTFMove(repeat); }
-
-    void copySliceFrom(const BorderImage& other)
-    {
-        m_data.access().slice = other.m_data->slice;
-    }
-
-    void copyWidthFrom(const BorderImage& other)
-    {
-        m_data.access().width = other.m_data->width;
-    }
-
-    void copyOutsetFrom(const BorderImage& other)
-    {
-        m_data.access().outset = other.m_data->outset;
-    }
-
-    void copyRepeatFrom(const BorderImage& other)
-    {
-        m_data.access().repeat = other.m_data->repeat;
-    }
-
-    bool overridesBorderWidths() const { return width().legacyWebkitBorderImage; }
+    // Alias accessors for using in generic contexts with `MaskBorder`.
+    const BorderImageSource& source() const { return borderImageSource; }
+    const BorderImageSlice& slice() const { return borderImageSlice; }
+    const BorderImageWidth& width() const { return borderImageWidth; }
+    const BorderImageOutset& outset() const { return borderImageOutset; }
+    const BorderImageRepeat& repeat() const { return borderImageRepeat; }
 
     bool operator==(const BorderImage&) const = default;
-
-private:
-    struct Data : RefCounted<Data> {
-        static Ref<Data> create();
-        static Ref<Data> create(BorderImageSource&&, BorderImageSlice&&, BorderImageWidth&&, BorderImageOutset&&, BorderImageRepeat&&);
-        Ref<Data> copy() const;
-
-        bool operator==(const Data&) const;
-
-        BorderImageSource source { CSS::Keyword::None { } };
-        BorderImageSlice slice { .values = { BorderImageSliceValue::Percentage { 100 } }, .fill = { std::nullopt } };
-        BorderImageWidth width { .values = { BorderImageWidthValue::Number { 1 } }, .legacyWebkitBorderImage = false };
-        BorderImageOutset outset { .values = { BorderImageOutsetValue::Number { 0 } } };
-        BorderImageRepeat repeat { .values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch } };
-
-    private:
-        Data();
-        Data(BorderImageSource&&, BorderImageSlice&&, BorderImageWidth&&, BorderImageOutset&&, BorderImageRepeat&&);
-        Data(const Data&);
-    };
-
-    static DataRef<Data>& defaultData();
-
-    DataRef<Data> m_data;
 };
 
 // MARK: - Conversion

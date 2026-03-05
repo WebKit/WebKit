@@ -66,9 +66,9 @@ TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
   std::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
-    std::unique_ptr<EchoRemover> remover =
-        EchoRemover::Create(env, EchoCanceller3Config(), rate,
-                            num_render_channels, num_capture_channels);
+    std::unique_ptr<EchoRemover> remover = EchoRemover::Create(
+        env, EchoCanceller3Config(), rate, num_render_channels,
+        num_capture_channels, /*neural_residual_echo_estimator=*/nullptr);
     std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
         EchoCanceller3Config(), rate, num_render_channels));
 
@@ -96,9 +96,10 @@ TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
 TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
-  EXPECT_DEATH(EchoRemover::Create(CreateEnvironment(), EchoCanceller3Config(),
-                                   8001, 1, 1),
-               "");
+  EXPECT_DEATH(
+      EchoRemover::Create(CreateEnvironment(), EchoCanceller3Config(), 8001, 1,
+                          1, /*neural_residual_echo_estimator=*/nullptr),
+      "");
 }
 
 // Verifies the check for the number of capture bands.
@@ -110,7 +111,8 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<EchoRemover> remover =
-        EchoRemover::Create(env, EchoCanceller3Config(), rate, 1, 1);
+        EchoRemover::Create(env, EchoCanceller3Config(), rate, 1, 1,
+                            /*neural_residual_echo_estimator=*/nullptr);
     std::unique_ptr<RenderDelayBuffer> render_buffer(
         RenderDelayBuffer::Create(EchoCanceller3Config(), rate, 1));
     Block capture(NumBandsForRate(rate == 48000 ? 16000 : rate + 16000), 1);
@@ -126,8 +128,9 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
 // Verifies the check for non-null capture block.
 TEST(EchoRemoverDeathTest, NullCapture) {
   std::optional<DelayEstimate> delay_estimate;
-  std::unique_ptr<EchoRemover> remover = EchoRemover::Create(
-      CreateEnvironment(), EchoCanceller3Config(), 16000, 1, 1);
+  std::unique_ptr<EchoRemover> remover =
+      EchoRemover::Create(CreateEnvironment(), EchoCanceller3Config(), 16000, 1,
+                          1, /*neural_residual_echo_estimator=*/nullptr);
   std::unique_ptr<RenderDelayBuffer> render_buffer(
       RenderDelayBuffer::Create(EchoCanceller3Config(), 16000, 1));
   EchoPathVariability echo_path_variability(
@@ -157,7 +160,8 @@ TEST(EchoRemover, BasicEchoRemoval) {
         SCOPED_TRACE(ProduceDebugText(rate, delay_samples));
         EchoCanceller3Config config;
         std::unique_ptr<EchoRemover> remover =
-            EchoRemover::Create(env, config, rate, num_channels, num_channels);
+            EchoRemover::Create(env, config, rate, num_channels, num_channels,
+                                /*neural_residual_echo_estimator=*/nullptr);
         std::unique_ptr<RenderDelayBuffer> render_buffer(
             RenderDelayBuffer::Create(config, rate, num_channels));
         render_buffer->AlignFromDelay(delay_samples / kBlockSize);

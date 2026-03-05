@@ -97,7 +97,7 @@ static constexpr std::array<char, decodeMapSize> base64URLDecMap {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-static inline simdutf::base64_options toSIMDUTFEncodeOptions(OptionSet<Base64EncodeOption> options)
+static inline simdutf::base64_options NODELETE toSIMDUTFEncodeOptions(OptionSet<Base64EncodeOption> options)
 {
     if (options.contains(Base64EncodeOption::URL)) {
         if (options.contains(Base64EncodeOption::OmitPadding))
@@ -305,7 +305,7 @@ String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> opti
     auto toString = [&] (auto optionalBuffer) {
         if (!optionalBuffer)
             return nullString();
-        return String::adopt(WTFMove(*optionalBuffer));
+        return String::adopt(WTF::move(*optionalBuffer));
     };
 
     if (input.is8Bit())
@@ -313,7 +313,7 @@ String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> opti
     return toString(base64DecodeInternal<char16_t, StringImplMalloc>(input.span16(), options));
 }
 
-static inline simdutf::base64_options toSIMDUTFDecodeOptions(Alphabet alphabet)
+static inline simdutf::base64_options NODELETE toSIMDUTFDecodeOptions(Alphabet alphabet)
 {
     switch (alphabet) {
     case Alphabet::Base64:
@@ -324,7 +324,7 @@ static inline simdutf::base64_options toSIMDUTFDecodeOptions(Alphabet alphabet)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline simdutf::last_chunk_handling_options toSIMDUTFLastChunkHandling(LastChunkHandling lastChunkHandling)
+static inline simdutf::last_chunk_handling_options NODELETE toSIMDUTFLastChunkHandling(LastChunkHandling lastChunkHandling)
 {
     switch (lastChunkHandling) {
     case LastChunkHandling::Loose:

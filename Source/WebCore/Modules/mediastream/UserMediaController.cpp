@@ -46,13 +46,13 @@ ASCIILiteral UserMediaController::supplementName()
 }
 
 UserMediaController::UserMediaController(Ref<UserMediaClient>&& client)
-    : m_client(WTFMove(client))
+    : m_client(WTF::move(client))
 {
 }
 
 void provideUserMediaTo(Page* page, Ref<UserMediaClient>&& client)
 {
-    UserMediaController::provideTo(page, UserMediaController::supplementName(), makeUnique<UserMediaController>(WTFMove(client)));
+    UserMediaController::provideTo(page, UserMediaController::supplementName(), makeUnique<UserMediaController>(WTF::move(client)));
 }
 
 void UserMediaController::logGetUserMediaDenial(Document& document)

@@ -1,10 +1,8 @@
 
 
+one
+two
 
-FAIL topofdocument: Arrow keys on options should not scroll the document. assert_equals: First option should be focused when opening the select. expected Element node <option>one</option> but got Element node <select id="topofdocument">
-  <option>one</option>
-  <opt...
-FAIL bottomofdocument: Arrow keys on options should not scroll the document. assert_equals: First option should be focused when opening the select. expected Element node <option>one</option> but got Element node <select id="bottomofdocument">
-  <option>one</option>
-  <...
+PASS topofdocument: Arrow keys on options should not scroll the document.
+PASS bottomofdocument: Arrow keys on options should not scroll the document.
 

@@ -43,17 +43,17 @@ ServiceWorkerJobData::ServiceWorkerJobData(Identifier identifier, const ServiceW
 }
 
 ServiceWorkerJobData::ServiceWorkerJobData(WebCore::ServiceWorkerJobDataIdentifier&& identifier, URL&& scriptURL, URL&& clientCreationURL, WebCore::SecurityOriginData&& topOrigin, URL&& scopeURL, WebCore::ServiceWorkerOrClientIdentifier&& sourceContext, WebCore::WorkerType workerType, WebCore::ServiceWorkerJobType type, String&& domainForCachePartition, bool isFromServiceWorkerPage, std::optional<WebCore::ServiceWorkerRegistrationOptions>&& registrationOptions)
-    : scriptURL(WTFMove(scriptURL))
-    , clientCreationURL(WTFMove(clientCreationURL))
-    , topOrigin(WTFMove(topOrigin))
-    , scopeURL(WTFMove(scopeURL))
-    , sourceContext(WTFMove(sourceContext))
+    : scriptURL(WTF::move(scriptURL))
+    , clientCreationURL(WTF::move(clientCreationURL))
+    , topOrigin(WTF::move(topOrigin))
+    , scopeURL(WTF::move(scopeURL))
+    , sourceContext(WTF::move(sourceContext))
     , workerType(workerType)
     , type(type)
-    , domainForCachePartition(WTFMove(domainForCachePartition))
+    , domainForCachePartition(WTF::move(domainForCachePartition))
     , isFromServiceWorkerPage(isFromServiceWorkerPage)
-    , registrationOptions(WTFMove(registrationOptions))
-    , m_identifier(WTFMove(identifier))
+    , registrationOptions(WTF::move(registrationOptions))
+    , m_identifier(WTF::move(identifier))
 {
 }
 
@@ -61,7 +61,7 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 {
     URL scope = scopeURL;
     scope.removeFragmentIdentifier();
-    return { SecurityOriginData { topOrigin }, WTFMove(scope) };
+    return { SecurityOriginData { topOrigin }, WTF::move(scope) };
 }
 
 std::optional<ScriptExecutionContextIdentifier> ServiceWorkerJobData::serviceWorkerPageIdentifier() const

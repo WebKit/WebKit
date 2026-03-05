@@ -15,6 +15,8 @@
 namespace cl
 {
 cl_int IcdGetPlatformIDsKHR(cl_uint num_entries, cl_platform_id *platforms, cl_uint *num_platforms);
+void *IcdGetFunctionAddressForPlatformKHR(cl_platform_id platform, const char *func_name);
+cl_int IcdSetPlatformDispatchDataKHR(cl_platform_id platform, void *dispatch_data);
 cl_int EnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                            cl_uint num_mem_objects,
                                            const cl_mem *mem_objects,
@@ -27,6 +29,11 @@ cl_int EnqueueReleaseExternalMemObjectsKHR(cl_command_queue command_queue,
                                            cl_uint num_events_in_wait_list,
                                            const cl_event *event_wait_list,
                                            cl_event *event);
+cl_mem ImportMemoryARM(cl_context context,
+                       MemFlags flagsPacked,
+                       const cl_import_properties_arm *properties,
+                       void *memory,
+                       size_t size);
 cl_int GetPlatformIDs(cl_uint num_entries, cl_platform_id *platforms, cl_uint *num_platforms);
 cl_int GetPlatformInfo(cl_platform_id platform,
                        PlatformInfo param_namePacked,

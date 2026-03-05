@@ -21,6 +21,7 @@
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
@@ -32,7 +33,6 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/exp_filter.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 #include "third_party/libvpx/source/libvpx/vpx/vp8.h"
 #include "third_party/libvpx/source/libvpx/vpx/vp8dx.h"
@@ -96,7 +96,10 @@ std::unique_ptr<VideoDecoder> CreateVp8Decoder(const Environment& env) {
 
 class LibvpxVp8Decoder::QpSmoother {
  public:
-  QpSmoother() : last_sample_ms_(TimeMillis()), smoother_(kAlpha) {}
+  explicit QpSmoother(const Environment& env)
+      : env_(env),
+        last_sample_(env_.clock().CurrentTime()),
+        smoother_(kAlpha) {}
 
   int GetAvg() const {
     float value = smoother_.filtered();
@@ -104,16 +107,18 @@ class LibvpxVp8Decoder::QpSmoother {
   }
 
   void Add(float sample) {
-    int64_t now_ms = TimeMillis();
-    smoother_.Apply(static_cast<float>(now_ms - last_sample_ms_), sample);
-    last_sample_ms_ = now_ms;
+    Timestamp now = env_.clock().CurrentTime();
+    smoother_.Apply((now - last_sample_).ms<float>(), sample);
+    last_sample_ = now;
   }
 
   void Reset() { smoother_.Reset(kAlpha); }
 
  private:
-  const float kAlpha = 0.95f;
-  int64_t last_sample_ms_;
+  static constexpr float kAlpha = 0.95f;
+
+  const Environment env_;
+  Timestamp last_sample_;
   ExpFilter smoother_;
 };
 
@@ -131,7 +136,8 @@ LibvpxVp8Decoder::LibvpxVp8Decoder(const Environment& env)
       deblock_params_(use_postproc_ ? GetPostProcParamsFromFieldTrialGroup(
                                           env.field_trials())
                                     : std::nullopt),
-      qp_smoother_(use_postproc_ ? new QpSmoother() : nullptr) {}
+      qp_smoother_(use_postproc_ ? std::make_unique<QpSmoother>(env)
+                                 : nullptr) {}
 
 LibvpxVp8Decoder::~LibvpxVp8Decoder() {
   inited_ = true;  // in order to do the actual release

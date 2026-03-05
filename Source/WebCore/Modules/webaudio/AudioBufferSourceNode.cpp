@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioBufferSourceNode);
 
 constexpr double DefaultGrainDuration = 0.020; // 20ms
 
@@ -70,7 +70,7 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioC
     auto node = adoptRef(*new AudioBufferSourceNode(context));
     node->suspendIfNeeded();
 
-    node->setBufferForBindings(WTFMove(options.buffer));
+    node->setBufferForBindings(WTF::move(options.buffer));
     node->detune().setValue(options.detune);
     node->setLoopForBindings(options.loop);
     node->setLoopEndForBindings(options.loopEnd);
@@ -460,7 +460,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
         unsigned numberOfChannels = buffer->numberOfChannels();
         ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels);
 
-        checkedOutput(0)->setNumberOfChannels(numberOfChannels);
+        protect(output(0))->setNumberOfChannels(numberOfChannels);
 
         m_sourceChannels = FixedVector<std::span<const float>>(numberOfChannels);
         m_destinationChannels = FixedVector<std::span<float>>(numberOfChannels);
@@ -470,7 +470,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     }
 
     m_virtualReadIndex = 0;
-    m_buffer = WTFMove(buffer);
+    m_buffer = WTF::move(buffer);
 
     // In case the buffer gets set after playback has started, we need to clamp the grain parameters now.
     if (m_isGrain)

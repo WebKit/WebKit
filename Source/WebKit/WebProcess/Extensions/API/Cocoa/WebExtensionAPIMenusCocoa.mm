@@ -178,12 +178,13 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
                 continue;
             }
 
-            if ([context isEqualToString:@"action"] && !extensionContext().supportsManifestVersion(3)) {
+            RefPtr extensionContext = this->extensionContext();
+            if ([context isEqualToString:@"action"] && !extensionContext->supportsManifestVersion(3)) {
                 *outExceptionString = toErrorString(nullString(), contextsKey, @"'%@' is not a valid context", context).createNSString().autorelease();
                 return false;
             }
 
-            if (([context isEqualToString:@"browser_action"] || [context isEqualToString:@"page_action"]) && extensionContext().supportsManifestVersion(3)) {
+            if (([context isEqualToString:@"browser_action"] || [context isEqualToString:@"page_action"]) && extensionContext->supportsManifestVersion(3)) {
                 *outExceptionString = toErrorString(nullString(), contextsKey, @"'%@' is not a valid context", context).createNSString().autorelease();
                 return false;
             }
@@ -253,7 +254,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
             return false;
         }
 
-        outClickCallback = WebExtensionCallbackHandler::create(clickCallback.context.JSGlobalContextRef, JSValueToObject(clickCallback.context.JSGlobalContextRef, clickCallback.JSValueRef, nullptr), protectedRuntime());
+        outClickCallback = WebExtensionCallbackHandler::create(clickCallback.context.JSGlobalContextRef, JSValueToObject(clickCallback.context.JSGlobalContextRef, clickCallback.JSValueRef, nullptr), protect(runtime()));
     }
 
     NSDictionary *iconDictionary;
@@ -330,7 +331,7 @@ id WebExtensionAPIMenus::createMenu(WebPage& page, WebFrame& frame, NSDictionary
     if (parameters.value().identifier.isEmpty())
         parameters.value().identifier = createVersion4UUIDString();
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusCreate(parameters.value()), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), clickCallback = WTFMove(clickCallback), identifier = parameters.value().identifier](Expected<void, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusCreate(parameters.value()), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), clickCallback = WTF::move(clickCallback), identifier = parameters.value().identifier](Expected<void, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -369,7 +370,7 @@ void WebExtensionAPIMenus::update(WebPage& page, WebFrame& frame, id identifier,
     else
         identifierString = dynamic_objc_cast<NSString>(identifier);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusUpdate(identifierString, parameters.value()), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), clickCallback = WTFMove(clickCallback), newIdentifier = parameters.value().identifier, oldIdentifier = String(identifierString)](Expected<void, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusUpdate(identifierString, parameters.value()), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), clickCallback = WTF::move(clickCallback), newIdentifier = parameters.value().identifier, oldIdentifier = String(identifierString)](Expected<void, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -409,7 +410,7 @@ void WebExtensionAPIMenus::remove(id identifier, Ref<WebExtensionCallbackHandler
     else
         identifierString = dynamic_objc_cast<NSString>(identifier);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemove(identifierString), [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier = String(identifierString)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemove(identifierString), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), identifier = String(identifierString)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -428,7 +429,7 @@ void WebExtensionAPIMenus::removeAll(Ref<WebExtensionCallbackHandler>&& callback
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/removeAll
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemoveAll(), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemoveAll(), [this, protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;

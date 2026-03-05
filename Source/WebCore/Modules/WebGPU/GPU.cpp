@@ -39,7 +39,7 @@
 namespace WebCore {
 
 GPU::GPU(Ref<WebGPU::GPU>&& backing)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
     , m_wgslLanguageFeatures(WGSLLanguageFeatures::create())
 {
 }
@@ -61,7 +61,7 @@ struct GPU::PendingRequestAdapterArguments {
 
 void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
 {
-    m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)](RefPtr<WebGPU::Adapter>&& adapter) mutable {
+    m_backing->requestAdapter(convertToBacking(options), [promise = WTF::move(promise)](RefPtr<WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             promise.resolve(nullptr);
             return;

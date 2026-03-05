@@ -49,12 +49,12 @@ static RefPtr<ArrayBuffer> convertToArrayBuffer(RefPtr<const SharedBuffer>&& buf
 
 static RefPtr<Uint8Array> convertToUint8Array(RefPtr<const SharedBuffer>&& buffer)
 {
-    auto arrayBuffer = convertToArrayBuffer(WTFMove(buffer));
+    auto arrayBuffer = convertToArrayBuffer(WTF::move(buffer));
     if (!arrayBuffer)
         return nullptr;
 
     size_t sizeInBytes = arrayBuffer->byteLength();
-    return Uint8Array::create(WTFMove(arrayBuffer), 0, sizeInBytes);
+    return Uint8Array::create(WTF::move(arrayBuffer), 0, sizeInBytes);
 }
 
 template <typename T>
@@ -67,15 +67,15 @@ static RefPtr<SharedBuffer> convertToSharedBuffer(T array)
 
 RefPtr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(RemoteLegacyCDMFactory& factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
 {
-    RefPtr session = adoptRef(new RemoteLegacyCDMSession(factory, WTFMove(identifier), client));
+    RefPtr session = adoptRef(new RemoteLegacyCDMSession(factory, WTF::move(identifier), client));
     if (RefPtr factory = session->m_factory.get())
         factory->addSession(identifier, *session);
     return session;
 }
 
 RemoteLegacyCDMSession::RemoteLegacyCDMSession(RemoteLegacyCDMFactory& factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
-    : m_factory(WTFMove(factory))
-    , m_identifier(WTFMove(identifier))
+    : m_factory(WTF::move(factory))
+    , m_identifier(WTF::move(identifier))
     , m_client(client)
 {
 }
@@ -95,7 +95,11 @@ void RemoteLegacyCDMSession::invalidate()
 
 RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
-    if (!initData || !m_client)
+    if (!initData)
+        return nullptr;
+
+    RefPtr client = m_client.get();
+    if (!client)
         return nullptr;
 
     RefPtr factory = m_factory.get();
@@ -103,7 +107,7 @@ RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mime
         return nullptr;
 
     auto ipcInitData = convertToSharedBuffer(initData);
-    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData, m_client->mediaKeysHashSalt()), m_identifier);
+    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData, client->mediaKeysHashSalt()), m_identifier);
 
     RefPtr<SharedBuffer> ipcNextMessage;
     if (sendResult.succeeded())
@@ -112,7 +116,7 @@ RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mime
     if (!ipcNextMessage)
         return nullptr;
 
-    return convertToUint8Array(WTFMove(ipcNextMessage));
+    return convertToUint8Array(WTF::move(ipcNextMessage));
 }
 
 void RemoteLegacyCDMSession::releaseKeys()
@@ -143,7 +147,7 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
         std::tie(succeeded, ipcNextMessage, errorCode, systemCode) = sendResult.takeReply();
 
     if (ipcNextMessage)
-        nextMessage = convertToUint8Array(WTFMove(ipcNextMessage));
+        nextMessage = convertToUint8Array(WTF::move(ipcNextMessage));
 
     return succeeded;
 }
@@ -164,28 +168,29 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     if (!ipcKey)
         return nullptr;
 
-    auto ipcKeyBuffer = convertToArrayBuffer(WTFMove(ipcKey));
+    auto ipcKeyBuffer = convertToArrayBuffer(WTF::move(ipcKey));
     m_cachedKeyCache.set(keyId, ipcKeyBuffer);
     return ipcKeyBuffer;
 }
 
 void RemoteLegacyCDMSession::sendMessage(RefPtr<SharedBuffer>&& message, const String& destinationURL)
 {
-    if (!m_client)
+    RefPtr client = m_client.get();
+    if (!client)
         return;
 
     if (!message) {
-        m_client->sendMessage(nullptr, destinationURL);
+        client->sendMessage(nullptr, destinationURL);
         return;
     }
 
-    m_client->sendMessage(convertToUint8Array(WTFMove(message)).get(), destinationURL);
+    client->sendMessage(convertToUint8Array(WTF::move(message)).get(), destinationURL);
 }
 
 void RemoteLegacyCDMSession::sendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
 {
-    if (m_client)
-        m_client->sendError(errorCode, systemCode);
+    if (RefPtr client = m_client.get())
+        client->sendError(errorCode, systemCode);
 }
 
 }

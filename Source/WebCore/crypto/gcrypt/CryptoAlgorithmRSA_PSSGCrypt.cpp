@@ -140,7 +140,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(const CryptoAl
     auto output = gcryptSign(key.platformKey(), data, key.hashAlgorithmIdentifier(), parameters.saltLength, key.keySizeInBits() / 8);
     if (!output)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(const CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
@@ -148,7 +148,7 @@ ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(const CryptoAlgorithmRs
     auto output = gcryptVerify(key.platformKey(), signature, data, key.hashAlgorithmIdentifier(), parameters.saltLength);
     if (!output)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 

@@ -26,7 +26,7 @@
 ]
 messages -> WebResourceLoader {
     WillSendRequest(WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse) -> (WebCore::ResourceRequest newRequest, bool isAllowedToAskUserForCredentials)
-    SetWorkerStart(MonotonicTime value)
+    SetServiceWorkerTimingInfo(struct WebKit::ServiceWorkerTimingInfo info)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponse(WebCore::ResourceResponse response, enum:bool WebKit::PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics> optionalNetworkLoadMetrics)
     DidReceiveData(IPC::SharedBufferReference data, uint64_t bytesTransferredOverNetwork)

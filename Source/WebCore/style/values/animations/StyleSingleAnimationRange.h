@@ -52,7 +52,7 @@ struct SingleAnimationRangeEdge {
     using Offset = SingleAnimationRangeLength;
 
     SingleAnimationRangeEdge(Offset&& offset)
-        : SingleAnimationRangeEdge { Name::Omitted, WTFMove(offset) }
+        : SingleAnimationRangeEdge { Name::Omitted, WTF::move(offset) }
     {
     }
     SingleAnimationRangeEdge(CSS::Keyword::Normal)
@@ -60,27 +60,31 @@ struct SingleAnimationRangeEdge {
     {
     }
     SingleAnimationRangeEdge(CSS::Keyword::Cover, std::optional<Offset>&& offset = std::nullopt)
-        : SingleAnimationRangeEdge { Name::Cover, WTFMove(offset) }
+        : SingleAnimationRangeEdge { Name::Cover, WTF::move(offset) }
     {
     }
     SingleAnimationRangeEdge(CSS::Keyword::Contain, std::optional<Offset>&& offset = std::nullopt)
-        : SingleAnimationRangeEdge { Name::Contain, WTFMove(offset) }
+        : SingleAnimationRangeEdge { Name::Contain, WTF::move(offset) }
     {
     }
     SingleAnimationRangeEdge(CSS::Keyword::Entry, std::optional<Offset>&& offset = std::nullopt)
-        : SingleAnimationRangeEdge { Name::Entry, WTFMove(offset) }
+        : SingleAnimationRangeEdge { Name::Entry, WTF::move(offset) }
     {
     }
     SingleAnimationRangeEdge(CSS::Keyword::Exit, std::optional<Offset>&& offset = std::nullopt)
-        : SingleAnimationRangeEdge { Name::Exit, WTFMove(offset) }
+        : SingleAnimationRangeEdge { Name::Exit, WTF::move(offset) }
     {
     }
     SingleAnimationRangeEdge(CSS::Keyword::EntryCrossing, std::optional<Offset>&& offset = std::nullopt)
-        : SingleAnimationRangeEdge { Name::EntryCrossing, WTFMove(offset) }
+        : SingleAnimationRangeEdge { Name::EntryCrossing, WTF::move(offset) }
     {
     }
     SingleAnimationRangeEdge(CSS::Keyword::ExitCrossing, std::optional<Offset>&& offset = std::nullopt)
-        : SingleAnimationRangeEdge { Name::ExitCrossing, WTFMove(offset) }
+        : SingleAnimationRangeEdge { Name::ExitCrossing, WTF::move(offset) }
+    {
+    }
+    SingleAnimationRangeEdge(CSS::Keyword::Scroll, std::optional<Offset>&& offset = std::nullopt)
+        : SingleAnimationRangeEdge { Name::Scroll, WTF::move(offset) }
     {
     }
 
@@ -113,6 +117,8 @@ struct SingleAnimationRangeEdge {
             return visitPredefinedNamedRange(CSS::Keyword::EntryCrossing { });
         case Name::ExitCrossing:
             return visitPredefinedNamedRange(CSS::Keyword::ExitCrossing { });
+        case Name::Scroll:
+            return visitPredefinedNamedRange(CSS::Keyword::Scroll { });
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -127,7 +133,7 @@ struct SingleAnimationRangeEdge {
 protected:
     SingleAnimationRangeEdge(Name name, Offset&& offset)
         : m_name { name }
-        , m_offset { WTFMove(offset) }
+        , m_offset { WTF::move(offset) }
     {
     }
 

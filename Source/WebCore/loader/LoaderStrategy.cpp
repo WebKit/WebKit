@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LoaderStrategy);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LoaderStrategy);
 
 LoaderStrategy::~LoaderStrategy() = default;
 
@@ -40,7 +40,7 @@ void LoaderStrategy::setResourceLoadSchedulingMode(Page&, LoadSchedulingMode)
 {
 }
 
-void LoaderStrategy::prioritizeResourceLoads(const Vector<RefPtr<SubresourceLoader>>&)
+void LoaderStrategy::prioritizeResourceLoads(const Vector<Ref<SubresourceLoader>>&)
 {
 }
 

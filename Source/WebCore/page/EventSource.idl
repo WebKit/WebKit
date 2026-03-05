@@ -35,7 +35,7 @@
     Exposed=(Window,Worker),
     ActiveDOMObject,
 ] interface EventSource : EventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional EventSourceInit eventSourceInitDict);
+    [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional EventSourceInit eventSourceInitDict = {});
 
     readonly attribute USVString url;
     readonly attribute boolean withCredentials;
@@ -53,6 +53,7 @@
     undefined close();
 };
 
+// https://html.spec.whatwg.org/multipage/server-sent-events.html#eventsourceinit
 dictionary EventSourceInit {
     boolean withCredentials = false;
 };

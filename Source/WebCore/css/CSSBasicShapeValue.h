@@ -39,10 +39,10 @@ class CSSBasicShapeValue final : public CSSValue {
 public:
     static Ref<CSSBasicShapeValue> create(CSS::BasicShape shape)
     {
-        return adoptRef(*new CSSBasicShapeValue(WTFMove(shape)));
+        return adoptRef(*new CSSBasicShapeValue(WTF::move(shape)));
     }
 
-    const CSS::BasicShape& shape() const { return m_shape; }
+    const CSS::BasicShape& shape() const LIFETIME_BOUND { return m_shape; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBasicShapeValue&) const;
@@ -52,7 +52,7 @@ public:
 private:
     CSSBasicShapeValue(CSS::BasicShape&& shape)
         : CSSValue(ClassType::BasicShape)
-        , m_shape { WTFMove(shape) }
+        , m_shape { WTF::move(shape) }
     {
     }
 

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-              RenderText {#text} at (0,0) size 278x71
+              RenderText {#text} at (0,0) size 278x72
                 text run at (0,0) width 278: "This frame will try to replace the contents of"
                 text run at (0,18) width 275: "the frame to the right. If the bug still occurs,"
                 text run at (0,36) width 269: "pop-up blocking will prevent it from doing"
@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-              RenderText {#text} at (0,0) size 267x35
+              RenderText {#text} at (0,0) size 267x36
                 text run at (0,0) width 267: "This text successfully replaced the original"
                 text run at (0,18) width 210: "text in the frame. Test succeeded!"
       RenderText {#text} at (0,0) size 0x0

@@ -39,6 +39,7 @@ enum class BroadcastFocusedElement : bool { No, Yes };
 enum class ContinuedSearchInRemoteFrame : bool { No, Yes };
 enum class FoundElementInRemoteFrame : bool { No, Yes };
 enum class RelinquishedFocusToChrome : bool { No, Yes };
+enum class ShouldFocusElement : bool { No, Yes };
 
 struct FocusableElementSearchResult {
     RefPtr<Element> element;

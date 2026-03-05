@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #transparent {
+            display: block;
+            width:400px;
+            height:400px;
+            opacity: 0;
+        }
+    </style>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</head>
+<body>
+
+<div id="transparent" ontouchstart="(void)0">
+</div>
+
+</body>
+</html>

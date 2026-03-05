@@ -26,23 +26,23 @@ namespace {
 // frequency 100 Hz.
 constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 1>
     kHighPassFilterCoefficients = {{
-        {{0.97261f, -1.94523f, 0.97261f}, {-1.94448f, 0.94598f}},
+        {.b = {0.97261f, -1.94523f, 0.97261f}, .a = {-1.94448f, 0.94598f}},
     }};
 
 constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 1>
     kTransparentCoefficients = {{
-        {{1.f, 0.f, 0.f}, {0.f, 0.f}},
+        {.b = {1.f, 0.f, 0.f}, .a = {0.f, 0.f}},
     }};
 
 constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 1>
     kBlockingCoefficients = {{
-        {{0.f, 0.f, 0.f}, {0.f, 0.f}},
+        {.b = {0.f, 0.f, 0.f}, .a = {0.f, 0.f}},
     }};
 
 constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 2>
     kCascadedCoefficients = {{
-        {{-1.f, 0.f, 0.f}, {0.f, 0.f}},
-        {{0.f, 0.f, -1.f}, {0.f, 0.f}},
+        {.b = {-1.f, 0.f, 0.f}, .a = {0.f, 0.f}},
+        {.b = {0.f, 0.f, -1.f}, .a = {0.f, 0.f}},
     }};
 
 std::vector<float> CreateInputWithIncreasingValues(size_t vector_length) {

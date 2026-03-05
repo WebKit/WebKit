@@ -56,7 +56,7 @@ public:
 
     static Ref<Sampler> create(UniqueSamplerIdentifier&& samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new Sampler(WTFMove(samplerIdentifier), descriptor, device));
+        return adoptRef(*new Sampler(WTF::move(samplerIdentifier), descriptor, device));
     }
     static Ref<Sampler> createInvalid(Device& device)
     {

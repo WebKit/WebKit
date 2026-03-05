@@ -138,9 +138,9 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     Vector<const char*, 1> bcp47;
     if (isEmoji)
         bcp47.append("und-Zsye");
-    auto typeface = fontManager().matchFamilyStyleCharacter(nullptr, skiaFontStyle(description), bcp47.mutableSpan().data(), bcp47.size(), baseCharacter);
+    auto typeface = fontManager().matchFamilyStyleCharacter(nullptr, { }, bcp47.mutableSpan().data(), bcp47.size(), baseCharacter);
 #else
-    auto typeface = m_skiaSystemFallbackFontCache.fontForCharacterCluster(skiaFontStyle(description), isEmoji ? "und-Zsye"_s : description.computedLocale(), stringView);
+    auto typeface = m_skiaSystemFallbackFontCache.fontForCharacterCluster(isEmoji ? "und-Zsye"_s : description.computedLocale(), stringView);
 #endif
     if (!typeface)
         return nullptr;
@@ -151,7 +151,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     // @font-face size-adjust does not affect fallback font sizes, but font-size-adjust does.
     // We initialize FontPlatformData with the computed size, then apply font-size-adjust if required.
     auto size = description.computedSize();
-    FontPlatformData alternateFontData(WTFMove(typeface), size, syntheticBold, syntheticOblique, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTFMove(features));
+    FontPlatformData alternateFontData(WTF::move(typeface), size, syntheticBold, syntheticOblique, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTF::move(features));
     alternateFontData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), size);
 
     return fontForPlatformData(alternateFontData);
@@ -194,7 +194,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     }
 
     auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, fontDescription, { });
-    FontPlatformData platformData(WTFMove(typeface), fontDescription.computedSize(), syntheticBold, syntheticOblique,
+    FontPlatformData platformData(WTF::move(typeface), fontDescription.computedSize(), syntheticBold, syntheticOblique,
         fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), computeFeatures(fontDescription, { }));
     return fontForPlatformData(platformData);
 }
@@ -401,7 +401,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto features = computeFeatures(fontDescription, fontCreationContext);
     auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, fontDescription, options);
-    FontPlatformData platformData(WTFMove(typeface), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), WTFMove(features));
+    FontPlatformData platformData(WTF::move(typeface), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), WTF::move(features));
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);

@@ -55,6 +55,9 @@ class Exception;
 class JSGlobalObject;
 class JSPromise;
 class VM;
+template<typename> struct WeakGCSetHash;
+template<typename> struct WeakGCSetHashTraits;
+template<typename, typename, typename> class WeakGCSet;
 enum class MessageLevel : uint8_t;
 enum class MessageSource : uint8_t;
 enum class MessageType : uint8_t;
@@ -102,7 +105,6 @@ class ServiceWorkerContainer;
 class SocketProvider;
 class WeakPtrImplWithEventTargetData;
 class WebCoreOpaqueRoot;
-class WebTransport;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class CrossOriginMode : bool;
 enum class LoadedFromOpaqueSource : bool;
@@ -148,7 +150,6 @@ public:
     virtual bool isJSExecutionForbidden() const = 0;
 
     virtual EventLoopTaskGroup& eventLoop() = 0;
-    inline CheckedRef<EventLoopTaskGroup> checkedEventLoop();
 
     virtual const URL& url() const = 0;
     enum class ForceUTF8 : bool { No, Yes };
@@ -170,7 +171,6 @@ public:
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
     virtual SocketProvider* socketProvider() = 0;
-    RefPtr<SocketProvider> protectedSocketProvider();
 
     virtual GraphicsClient* graphicsClient() { return nullptr; }
 
@@ -194,12 +194,10 @@ public:
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
 
     virtual SecurityOrigin& topOrigin() const = 0;
-    Ref<SecurityOrigin> protectedTopOrigin() const;
 
     virtual bool shouldBypassMainWorldContentSecurityPolicy() const { return false; }
 
     PublicURLManager& publicURLManager();
-    Ref<PublicURLManager> protectedPublicURLManager();
 
     virtual void suspendActiveDOMObjects(ReasonForSuspension);
     virtual void resumeActiveDOMObjects(ReasonForSuspension);
@@ -208,7 +206,7 @@ public:
     bool activeDOMObjectsAreSuspended() const { return m_activeDOMObjectsAreSuspended; }
     bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
 
-    JSC::ScriptExecutionStatus jscScriptExecutionStatus() const;
+    JSC::ScriptExecutionStatus NODELETE jscScriptExecutionStatus() const;
 
     enum class CallStackPosition : bool { BottomMost, TopMost };
     URL currentSourceURL(CallStackPosition = CallStackPosition::BottomMost) const;
@@ -232,14 +230,20 @@ public:
 
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
     virtual CSSValuePool& cssValuePool();
-    virtual std::unique_ptr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
+    virtual RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
     WEBCORE_EXPORT static void setCrossOriginMode(CrossOriginMode);
-    static CrossOriginMode crossOriginMode();
+    static CrossOriginMode NODELETE crossOriginMode();
 
-    WEBCORE_EXPORT void ref();
+    WEBCORE_EXPORT void NODELETE ref();
     WEBCORE_EXPORT void deref();
+
+    uint32_t checkedPtrCount() const final { return CanMakeThreadSafeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() override { CanMakeThreadSafeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     enum class IncludeConsoleLog : bool { No, Yes };
     WEBCORE_EXPORT bool requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory, IncludeConsoleLog = IncludeConsoleLog::Yes);
@@ -252,13 +256,13 @@ public:
         template<typename T>
             requires (!std::derived_from<T, Task> && std::convertible_to<T, Function<void(ScriptExecutionContext&)>>)
         Task(T task)
-            : m_task(WTFMove(task))
+            : m_task(WTF::move(task))
             , m_isCleanupTask(false)
         {
         }
 
         Task(Function<void()>&& task)
-            : m_task([task = WTFMove(task)](ScriptExecutionContext&) { task(); })
+            : m_task([task = WTF::move(task)](ScriptExecutionContext&) { task(); })
             , m_isCleanupTask(false)
         {
         }
@@ -266,7 +270,7 @@ public:
         template<typename T>
             requires std::convertible_to<T, Function<void(ScriptExecutionContext&)>>
         Task(CleanupTaskTag, T task)
-            : m_task(WTFMove(task))
+            : m_task(WTF::move(task))
             , m_isCleanupTask(true)
         {
         }
@@ -287,14 +291,13 @@ public:
     void postTaskToResponsibleDocument(Function<void(Document&)>&&);
 
     // Gets the next id in a circular sequence from 1 to 2^31-1.
-    int circularSequentialID();
+    int NODELETE circularSequentialID();
 
     inline bool addTimeout(int timeoutId, DOMTimer&); // Defined in ScriptExecutionContextInlines.h
     inline RefPtr<DOMTimer> takeTimeout(int timeoutId); // Defined in ScriptExecutionContextInlines.h
     inline DOMTimer* findTimeout(int timeoutId); // Defined in ScriptExecutionContextInlines.h
 
     virtual JSC::VM& vm() = 0;
-    virtual Ref<JSC::VM> protectedVM();
     virtual JSC::VM* vmIfExists() const = 0;
 
     void adjustMinimumDOMTimerInterval(Seconds oldMinimumTimerInterval);
@@ -335,7 +338,7 @@ public:
     WEBCORE_EXPORT JSC::JSGlobalObject* globalObject() const;
 
     WEBCORE_EXPORT String domainForCachePartition() const;
-    void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTFMove(domain); }
+    void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTF::move(domain); }
 
     bool allowsMediaDevices() const;
     ServiceWorker* activeServiceWorker() const { return m_activeServiceWorker.get(); }
@@ -387,7 +390,11 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
-    void createdWebTransport(WebTransport&);
+    void addMicrotaskGlobalObject(JSC::JSGlobalObject*);
+    template<typename Functor>
+    void forEachMicrotaskGlobalObject(const Functor&);
+    void clearMicrotaskGlobalObjects();
+    virtual bool isEventLoopGroupStoppedPermanently() const { return false; }
 
 protected:
     class AddConsoleMessageTask : public Task {
@@ -422,14 +429,14 @@ private:
 
     RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
-    void checkConsistency() const;
+    void NODELETE checkConsistency() const;
     WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
 
     WeakHashSet<MessagePort, WeakPtrImplWithEventTargetData> m_messagePorts;
     WeakHashSet<ContextDestructionObserver> m_destructionObservers;
     WeakHashSet<ActiveDOMObject> m_activeDOMObjects;
 
-    HashMap<int, RefPtr<DOMTimer>> m_timeouts;
+    HashMap<int, Ref<DOMTimer>> m_timeouts;
 
     struct PendingException;
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;
@@ -467,11 +474,11 @@ private:
     bool m_willprocessMessageWithMessagePortsSoon { false };
     bool m_hasLoggedAuthenticatedEncryptionWarning { false };
 
-    RefPtr<GuaranteedSerialFunctionDispatcher> m_nativePromiseDispatcher;
+    const RefPtr<GuaranteedSerialFunctionDispatcher> m_nativePromiseDispatcher;
     WeakHashSet<NativePromiseRequest> m_nativePromiseRequests;
-    ThreadSafeWeakHashSet<WebTransport> m_activeWebTransports;
+    std::unique_ptr<JSC::WeakGCSet<JSC::JSGlobalObject, JSC::WeakGCSetHash<JSC::JSGlobalObject>, JSC::WeakGCSetHashTraits<JSC::JSGlobalObject>>> m_microtaskGlobalObjects;
 };
 
-WebCoreOpaqueRoot root(ScriptExecutionContext*);
+WebCoreOpaqueRoot NODELETE root(ScriptExecutionContext*);
 
 } // namespace WebCore

@@ -73,11 +73,6 @@ class RtpRtcpInterface : public RtcpFeedbackSenderInterface {
 
     NetworkStateEstimateObserver* network_state_estimate_observer = nullptr;
 
-    // DEPRECATED, transport_feedback_callback is no longer invoked by the RTP
-    // module except from DEPRECATED_RtpSenderEgress.
-    // TODO: bugs.webrtc.org/15368 - Delete once DEPRECATED_RtpSenderEgress is
-    // deleted.
-    TransportFeedbackObserver* transport_feedback_callback = nullptr;
     VideoBitrateAllocationObserver* bitrate_allocation_observer = nullptr;
     RtcpRttStats* rtt_stats = nullptr;
     RtcpPacketTypeCounterObserver* rtcp_packet_type_counter_observer = nullptr;

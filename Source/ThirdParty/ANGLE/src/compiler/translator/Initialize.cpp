@@ -81,10 +81,6 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::EXT_shader_framebuffer_fetch_non_coherent] = EBhUndefined;
     }
-    if (resources.NV_shader_framebuffer_fetch)
-    {
-        extBehavior[TExtension::NV_shader_framebuffer_fetch] = EBhUndefined;
-    }
     if (resources.NV_shader_noperspective_interpolation)
     {
         extBehavior[TExtension::NV_shader_noperspective_interpolation] = EBhUndefined;

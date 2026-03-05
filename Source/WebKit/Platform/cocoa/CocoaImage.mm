@@ -52,7 +52,7 @@ std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMET
     auto preferredTypeIdentifier = RetainPtr { (__bridge CFStringRef)[UTType typeWithMIMEType:bridge_cast(preferredMIMEType) conformingToType:UTTypeImage].identifier };
     if (WebCore::isSupportedImageType(preferredTypeIdentifier.get())) {
         if (auto data = transcode(image, preferredTypeIdentifier.get()); [data length])
-            return { WTFMove(data), WTFMove(preferredTypeIdentifier) };
+            return { WTF::move(data), WTF::move(preferredTypeIdentifier) };
     }
 
     return { nil, nil };

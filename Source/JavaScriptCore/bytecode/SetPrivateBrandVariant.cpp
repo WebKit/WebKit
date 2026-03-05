@@ -34,7 +34,7 @@ namespace JSC {
 SetPrivateBrandVariant::SetPrivateBrandVariant(CacheableIdentifier identifier, Structure* oldStructure, Structure* newStructure)
     : m_oldStructure(oldStructure)
     , m_newStructure(newStructure)
-    , m_identifier(WTFMove(identifier))
+    , m_identifier(WTF::move(identifier))
 { }
 
 SetPrivateBrandVariant::~SetPrivateBrandVariant() = default;

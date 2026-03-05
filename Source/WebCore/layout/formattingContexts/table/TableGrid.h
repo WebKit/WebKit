@@ -37,23 +37,13 @@
 
 namespace WebCore {
 namespace Layout {
-class TableGridCell;
-}
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::Layout::TableGridCell> : std::true_type { };
-}
-
-namespace WebCore {
-namespace Layout {
 class Box;
 class ElementBox;
 
 // Cell represents a <td> or <th>. It can span multiple slots in the grid.
-class TableGridCell : public CanMakeWeakPtr<TableGridCell> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableGridCell);
+class TableGridCell final : public CanMakeWeakPtr<TableGridCell>, public CanMakeCheckedPtr<TableGridCell> {
+    WTF_MAKE_TZONE_ALLOCATED(TableGridCell);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TableGridCell);
 public:
     TableGridCell(const ElementBox&, SlotPosition, CellSpan);
 
@@ -82,13 +72,13 @@ private:
 };
 
 class TableGrid {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableGrid);
+    WTF_MAKE_TZONE_ALLOCATED(TableGrid);
 public:
     TableGrid();
 
     void appendCell(const ElementBox&);
-    void insertCell(const ElementBox&, const ElementBox& before);
-    void removeCell(const ElementBox&);
+    void NODELETE insertCell(const ElementBox&, const ElementBox& before);
+    void NODELETE removeCell(const ElementBox&);
 
     void setHorizontalSpacing(LayoutUnit horizontalSpacing) { m_horizontalSpacing = horizontalSpacing; }
     LayoutUnit horizontalSpacing() const { return m_horizontalSpacing; }
@@ -245,7 +235,7 @@ private:
 
 inline void TableGrid::Column::setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidth&& computedLogicalWidth)
 {
-    m_computedLogicalWidth = WTFMove(computedLogicalWidth);
+    m_computedLogicalWidth = WTF::move(computedLogicalWidth);
 }
 
 inline void TableGrid::Column::setUsedLogicalWidth(LayoutUnit usedLogicalWidth)

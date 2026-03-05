@@ -283,7 +283,8 @@ TEST(WTF_RunLoop, Create)
     Util::runFor(.2_s);
 
     // Expect that RunLoop Thread does not leak.
-    EXPECT_FALSE(Thread::allThreads().contains(*runLoopThread));
+    // Don't use Thread::allThreads().contains(*runLoopThread) here since ASan complains runLoopThread is already freed.
+    EXPECT_FALSE(Thread::allThreads().values().containsIf([&](auto& thread) { return thread.ptr() == runLoopThread; }));
 }
 
 // FIXME(https://bugs.webkit.org/show_bug.cgi?id=246569): glib and Windows runloop does not match Cocoa.

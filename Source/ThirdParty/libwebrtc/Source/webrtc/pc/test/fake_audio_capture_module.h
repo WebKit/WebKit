@@ -224,6 +224,9 @@ class FakeAudioCaptureModule : public webrtc::AudioDeviceModule {
   // (e.g. by a jitter buffer).
   int frames_received_;
 
+  // Set to true when Init() is called.
+  bool initialized_ = false;
+
   // Protects variables that are accessed from process_thread_ and
   // the main thread.
   mutable webrtc::Mutex mutex_;

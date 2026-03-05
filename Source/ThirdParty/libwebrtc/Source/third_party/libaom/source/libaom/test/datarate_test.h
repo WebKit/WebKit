@@ -30,6 +30,17 @@ class DatarateTest : public ::libaom_test::EncoderTest {
  protected:
   ~DatarateTest() override = default;
 
+  virtual void SetUpCBR() {
+    cfg_.rc_buf_initial_sz = 500;
+    cfg_.rc_buf_optimal_sz = 500;
+    cfg_.rc_buf_sz = 1000;
+    cfg_.rc_dropframe_thresh = 1;
+    cfg_.rc_min_quantizer = 0;
+    cfg_.rc_max_quantizer = 63;
+    cfg_.rc_end_usage = AOM_CBR;
+    cfg_.g_lag_in_frames = 0;
+  }
+
   virtual void ResetModel() {
     last_pts_ = 0;
     bits_in_buffer_model_ = cfg_.rc_target_bitrate * cfg_.rc_buf_initial_sz;
@@ -209,6 +220,34 @@ class DatarateTest : public ::libaom_test::EncoderTest {
         effective_datarate_dynamic_[i] =
             30 * (bits_total_dynamic_[i] / 1000.0) / frame_number_dynamic_[i];
     }
+  }
+
+  void RunBasicRateTargetingTest(::libaom_test::VideoSource *video,
+                                 const int bitrate, double low_rate_err_limit,
+                                 double high_rate_err_limit) {
+    cfg_.rc_target_bitrate = bitrate;
+    ResetModel();
+    ASSERT_NO_FATAL_FAILURE(RunLoop(video));
+    ASSERT_GE(effective_datarate_, cfg_.rc_target_bitrate * low_rate_err_limit)
+        << " The datarate for the file is lower than target by too much!";
+    ASSERT_LE(effective_datarate_, cfg_.rc_target_bitrate * high_rate_err_limit)
+        << " The datarate for the file is greater than target by too much!";
+  }
+
+  void RunBasicRateTargetingTestReversed(::libaom_test::VideoSource *video,
+                                         const int bitrate,
+                                         double low_rate_err_limit,
+                                         double high_rate_err_limit) {
+    cfg_.rc_target_bitrate = bitrate;
+    ResetModel();
+    ASSERT_NO_FATAL_FAILURE(RunLoop(video));
+    ASSERT_GE(static_cast<double>(cfg_.rc_target_bitrate),
+              effective_datarate_ * low_rate_err_limit)
+        << " The datarate for the file exceeds the target by too much!";
+    ASSERT_LE(static_cast<double>(cfg_.rc_target_bitrate),
+              effective_datarate_ * high_rate_err_limit)
+        << " The datarate for the file missed the target!"
+        << cfg_.rc_target_bitrate << " " << effective_datarate_;
   }
 
   aom_codec_pts_t last_pts_;

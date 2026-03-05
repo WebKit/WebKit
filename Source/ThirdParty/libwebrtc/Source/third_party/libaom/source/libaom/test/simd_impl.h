@@ -35,9 +35,9 @@ class TestIntrinsic : public ::testing::TestWithParam<param_signature> {
 };
 
 // Create one typedef for each function signature
-#define TYPEDEF_SIMD(name)                                             \
-  typedef TestIntrinsic<std::tuple<uint32_t, uint32_t, const char *> > \
-  ARCH_POSTFIX(name)
+#define TYPEDEF_SIMD(name)   \
+  using ARCH_POSTFIX(name) = \
+      TestIntrinsic<std::tuple<uint32_t, uint32_t, const char *> >
 
 TYPEDEF_SIMD(V64_U8);
 TYPEDEF_SIMD(V64_U16);
@@ -87,17 +87,17 @@ TYPEDEF_SIMD(U32_V256);
 TYPEDEF_SIMD(V64_V256);
 
 // Google Test allows up to 50 tests per case, so split the largest
-typedef ARCH_POSTFIX(V64_V64) ARCH_POSTFIX(V64_V64_Part2);
-typedef ARCH_POSTFIX(V64_V64V64) ARCH_POSTFIX(V64_V64V64_Part2);
-typedef ARCH_POSTFIX(V128_V128) ARCH_POSTFIX(V128_V128_Part2);
-typedef ARCH_POSTFIX(V128_V128) ARCH_POSTFIX(V128_V128_Part3);
-typedef ARCH_POSTFIX(V128_V128) ARCH_POSTFIX(V128_V128_Part4);
-typedef ARCH_POSTFIX(V128_V128V128) ARCH_POSTFIX(V128_V128V128_Part2);
-typedef ARCH_POSTFIX(V256_V256) ARCH_POSTFIX(V256_V256_Part2);
-typedef ARCH_POSTFIX(V256_V256) ARCH_POSTFIX(V256_V256_Part3);
-typedef ARCH_POSTFIX(V256_V256) ARCH_POSTFIX(V256_V256_Part4);
-typedef ARCH_POSTFIX(V256_V256) ARCH_POSTFIX(V256_V256_Part5);
-typedef ARCH_POSTFIX(V256_V256V256) ARCH_POSTFIX(V256_V256V256_Part2);
+using ARCH_POSTFIX(V64_V64_Part2) = ARCH_POSTFIX(V64_V64);
+using ARCH_POSTFIX(V64_V64V64_Part2) = ARCH_POSTFIX(V64_V64V64);
+using ARCH_POSTFIX(V128_V128_Part2) = ARCH_POSTFIX(V128_V128);
+using ARCH_POSTFIX(V128_V128_Part3) = ARCH_POSTFIX(V128_V128);
+using ARCH_POSTFIX(V128_V128_Part4) = ARCH_POSTFIX(V128_V128);
+using ARCH_POSTFIX(V128_V128V128_Part2) = ARCH_POSTFIX(V128_V128V128);
+using ARCH_POSTFIX(V256_V256_Part2) = ARCH_POSTFIX(V256_V256);
+using ARCH_POSTFIX(V256_V256_Part3) = ARCH_POSTFIX(V256_V256);
+using ARCH_POSTFIX(V256_V256_Part4) = ARCH_POSTFIX(V256_V256);
+using ARCH_POSTFIX(V256_V256_Part5) = ARCH_POSTFIX(V256_V256);
+using ARCH_POSTFIX(V256_V256V256_Part2) = ARCH_POSTFIX(V256_V256V256);
 
 // These functions are machine tuned located elsewhere
 template <typename c_ret, typename c_arg>

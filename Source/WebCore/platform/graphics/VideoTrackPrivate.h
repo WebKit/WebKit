@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-struct VideoInfo;
+class VideoInfo;
 
 class VideoTrackPrivate : public TrackPrivateBase {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(VideoTrackPrivate);
@@ -61,14 +61,14 @@ public:
 #endif
 
     using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;
-    void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTFMove(callback); }
+    void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTF::move(callback); }
 
     const PlatformVideoTrackConfiguration& configuration() const { return m_configuration; }
     void setConfiguration(PlatformVideoTrackConfiguration&& configuration)
     {
         if (configuration == m_configuration)
             return;
-        m_configuration = WTFMove(configuration);
+        m_configuration = WTF::move(configuration);
         notifyClients([configuration = m_configuration](auto& client) {
             downcast<VideoTrackPrivateClient>(client).configurationChanged(configuration);
         });

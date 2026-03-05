@@ -1368,9 +1368,9 @@ static void do_int_pro_motion_estimation(AV1_COMP *cpi, MACROBLOCK *x,
       x->sb_me_mv.as_int = mi->mv[0].as_int;
       if (cpi->svc.temporal_layer_id == 0) {
         if (abs(mi->mv[0].as_mv.col) > 16 && abs(mi->mv[0].as_mv.row) == 0)
-          x->sb_col_scroll = 1;
+          x->sb_col_scroll++;
         else if (abs(mi->mv[0].as_mv.row) > 16 && abs(mi->mv[0].as_mv.col) == 0)
-          x->sb_row_scroll = 1;
+          x->sb_row_scroll++;
       }
     } else {
       x->sb_me_partition = 0;

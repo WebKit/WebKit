@@ -114,7 +114,7 @@ void JITByIdGenerator::generateFastCommon(CCallHelpers& jit, size_t inlineICSize
 }
 
 JITGetByIdGenerator::JITGetByIdGenerator(
-    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters,
+    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
     CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, AccessType accessType, CacheType cacheType)
     : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, accessType, base, value)
     , m_isLengthAccess(codeBlock && propertyName.uid() == codeBlock->vm().propertyNames->length.impl())
@@ -197,7 +197,7 @@ void JITGetByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 }
 
 JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
-    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters,
+    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
     CacheableIdentifier propertyName, JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, GPRReg stubInfoGPR)
     : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, AccessType::GetByIdWithThis, base, value)
 {
@@ -229,7 +229,7 @@ void JITGetByIdWithThisGenerator::generateDataICFastPath(CCallHelpers& jit)
 }
 
 JITPutByIdGenerator::JITPutByIdGenerator(
-    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters, CacheableIdentifier propertyName,
+    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters, CacheableIdentifier propertyName,
     JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch,
     AccessType accessType)
         : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, accessType, base, value)
@@ -278,7 +278,7 @@ void JITPutByIdGenerator::generateFastPath(CCallHelpers& jit)
     generateFastCommon(jit, InlineAccess::sizeForPropertyReplace());
 }
 
-JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR)
+JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
 {
     WTF::visit([&](auto* stubInfo) {
@@ -308,7 +308,7 @@ void JITDelByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
     ASSERT(!m_stubInfo->useDataIC);
 }
 
-JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR)
+JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
 {
     WTF::visit([&](auto* stubInfo) {
@@ -338,7 +338,7 @@ void JITDelByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
     ASSERT(!m_stubInfo->useDataIC);
 }
 
-JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
+JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
 {
     WTF::visit([&](auto* stubInfo) {
@@ -371,7 +371,7 @@ void JITInByValGenerator::finalize(
 }
 
 JITInByIdGenerator::JITInByIdGenerator(
-    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters,
+    CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
     CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR)
     : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, AccessType::InById, base, value)
 {
@@ -419,7 +419,7 @@ void JITInByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 
 JITInstanceOfGenerator::JITInstanceOfGenerator(
     CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex,
-    const RegisterSetBuilder& usedRegisters, GPRReg result, GPRReg value, GPRReg prototype, GPRReg stubInfoGPR,
+    const RegisterSet& usedRegisters, GPRReg result, GPRReg value, GPRReg prototype, GPRReg stubInfoGPR,
     bool prototypeIsKnownObject)
     : JITInlineCacheGenerator(codeBlock, stubInfo, jitType, codeOrigin, AccessType::InstanceOf)
 {
@@ -450,7 +450,7 @@ void JITInstanceOfGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath
     ASSERT(!m_stubInfo->useDataIC);
 }
 
-JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
+JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
     , m_base(base)
     , m_result(result)
@@ -488,7 +488,7 @@ void JITGetByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
     ASSERT(!m_stubInfo->useDataIC);
 }
 
-JITGetByValWithThisGenerator::JITGetByValWithThisGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs thisRegs, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
+JITGetByValWithThisGenerator::JITGetByValWithThisGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs thisRegs, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
     , m_base(base)
     , m_result(result)
@@ -528,7 +528,7 @@ void JITGetByValWithThisGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& sl
     ASSERT(!m_stubInfo->useDataIC);
 }
 
-JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs value, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
+JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs value, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
     , m_base(base)
     , m_value(value)
@@ -560,7 +560,7 @@ void JITPutByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
     ASSERT(!m_stubInfo->useDataIC);
 }
 
-JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs brand, GPRReg stubInfoGPR)
+JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs brand, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
 {
     ASSERT(accessType == AccessType::CheckPrivateBrand || accessType == AccessType::SetPrivateBrand);

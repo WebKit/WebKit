@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
 ] dictionary IIRFilterOptions : AudioNodeOptions {
     required sequence<double> feedforward;
     required sequence<double> feedback;

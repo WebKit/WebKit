@@ -36,8 +36,8 @@ namespace WebKit {
 
 class GPUServiceInitializerDelegate : public XPCServiceInitializerDelegate {
 public:
-    GPUServiceInitializerDelegate(XPCObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
-        : XPCServiceInitializerDelegate(WTFMove(connection), initializerMessage)
+    GPUServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+        : XPCServiceInitializerDelegate(WTF::move(connection), initializerMessage)
     {
     }
 };

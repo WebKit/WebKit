@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static inline RTCDtlsTransportState toRTCDtlsTransportState(webrtc::DtlsTransportState state)
+static inline RTCDtlsTransportState NODELETE toRTCDtlsTransportState(webrtc::DtlsTransportState state)
 {
     switch (state) {
     case webrtc::DtlsTransportState::kNew:
@@ -57,7 +57,7 @@ static inline RTCDtlsTransportState toRTCDtlsTransportState(webrtc::DtlsTranspor
 
 class LibWebRTCDtlsTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCDtlsTransportBackendObserver>, public webrtc::DtlsTransportObserverInterface {
 public:
-    static Ref<LibWebRTCDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, Ref<webrtc::DtlsTransportInterface>&& backend) { return adoptRef(*new LibWebRTCDtlsTransportBackendObserver(client, WTFMove(backend))); }
+    static Ref<LibWebRTCDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, Ref<webrtc::DtlsTransportInterface>&& backend) { return adoptRef(*new LibWebRTCDtlsTransportBackendObserver(client, WTF::move(backend))); }
 
     void start();
     void stop();
@@ -75,7 +75,7 @@ private:
 };
 
 LibWebRTCDtlsTransportBackendObserver::LibWebRTCDtlsTransportBackendObserver(RTCDtlsTransportBackendClient& client, Ref<webrtc::DtlsTransportInterface>&& backend)
-    : m_backend(WTFMove(backend))
+    : m_backend(WTF::move(backend))
     , m_client(client)
 {
 }
@@ -91,7 +91,7 @@ void LibWebRTCDtlsTransportBackendObserver::updateState(webrtc::DtlsTransportInf
         for (size_t i = 0; i < remoteCertificates->GetSize(); ++i) {
             webrtc::Buffer certificate;
             remoteCertificates->Get(i).ToDER(&certificate);
-            certificates.append(WTFMove(certificate));
+            certificates.append(WTF::move(certificate));
         }
     }
     client->onStateChanged(toRTCDtlsTransportState(info.state()), map(certificates, [](auto& certificate) -> Ref<JSC::ArrayBuffer> {
@@ -103,8 +103,8 @@ void LibWebRTCDtlsTransportBackendObserver::start()
 {
     LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }]() mutable {
         m_backend->RegisterObserver(this);
-        callOnMainThread([protectedThis = WTFMove(protectedThis), info = m_backend->Information()]() mutable {
-            protectedThis->updateState(WTFMove(info));
+        callOnMainThread([protectedThis = WTF::move(protectedThis), info = m_backend->Information()]() mutable {
+            protectedThis->updateState(WTF::move(info));
         });
     });
 }
@@ -119,8 +119,8 @@ void LibWebRTCDtlsTransportBackendObserver::stop()
 
 void LibWebRTCDtlsTransportBackendObserver::OnStateChange(webrtc::DtlsTransportInformation info)
 {
-    callOnMainThread([protectedThis = Ref { *this }, info = WTFMove(info)]() mutable {
-        protectedThis->updateState(WTFMove(info));
+    callOnMainThread([protectedThis = Ref { *this }, info = WTF::move(info)]() mutable {
+        protectedThis->updateState(WTF::move(info));
     });
 }
 
@@ -135,7 +135,7 @@ void LibWebRTCDtlsTransportBackendObserver::OnError(webrtc::RTCError)
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDtlsTransportBackend);
 
 LibWebRTCDtlsTransportBackend::LibWebRTCDtlsTransportBackend(Ref<webrtc::DtlsTransportInterface>&& backend)
-    : m_backend(WTFMove(backend))
+    : m_backend(WTF::move(backend))
 {
 }
 

@@ -49,11 +49,11 @@ namespace WebCore {
 #define LOGIDENTIFIER_RECEIVER
 #endif
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpReceiver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpReceiver);
 
 RTCRtpReceiver::RTCRtpReceiver(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
-    : m_track(WTFMove(track))
-    , m_backend(WTFMove(backend))
+    : m_track(WTF::move(track))
+    , m_backend(WTF::move(backend))
     , m_connection(connection)
 #if !RELEASE_LOG_DISABLED
     , m_logger(connection.logger())
@@ -86,7 +86,7 @@ void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
-    m_connection->getStats(*this, WTFMove(promise));
+    protect(m_connection)->getStats(*this, WTF::move(promise));
 }
 
 std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
@@ -112,7 +112,7 @@ ExceptionOr<void> RTCRtpReceiver::setTransform(std::unique_ptr<RTCRtpTransform>&
         return Exception { ExceptionCode::InvalidStateError, "transform is already in use"_s };
 
     transform->attachToReceiver(*this, m_transform.get());
-    m_transform = WTFMove(transform);
+    m_transform = WTF::move(transform);
 
     return { };
 }

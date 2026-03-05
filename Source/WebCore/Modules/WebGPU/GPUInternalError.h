@@ -36,15 +36,15 @@ class GPUInternalError : public RefCounted<GPUInternalError> {
 public:
     static Ref<GPUInternalError> create(String&& message)
     {
-        return adoptRef(*new GPUInternalError(WTFMove(message)));
+        return adoptRef(*new GPUInternalError(WTF::move(message)));
     }
 
     static Ref<GPUInternalError> create(Ref<WebGPU::InternalError>&& backing)
     {
-        return adoptRef(*new GPUInternalError(WTFMove(backing)));
+        return adoptRef(*new GPUInternalError(WTF::move(backing)));
     }
 
-    const String& message() const;
+    const String& NODELETE message() const LIFETIME_BOUND;
 
     WebGPU::InternalError* backing() { return m_backing.get(); }
     const WebGPU::InternalError* backing() const { return m_backing.get(); }
@@ -52,12 +52,12 @@ public:
 
 private:
     GPUInternalError(String&& message)
-        : m_message(WTFMove(message))
+        : m_message(WTF::move(message))
     {
     }
 
     GPUInternalError(Ref<WebGPU::InternalError>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

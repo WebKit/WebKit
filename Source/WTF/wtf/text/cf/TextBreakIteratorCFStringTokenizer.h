@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
 #include <CoreFoundation/CoreFoundation.h>
 #endif

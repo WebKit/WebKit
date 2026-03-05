@@ -97,7 +97,6 @@ private:
     ImageDecoderAVFObjC(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
 
     AVAssetTrack *firstEnabledTrack();
-    RetainPtr<AVAssetTrack> protectedFirstEnabledTrack();
     void readSamples();
     void readTrackMetadata();
     bool storeSampleBuffer(CMSampleBufferRef);

@@ -45,7 +45,7 @@ MediaKeySystemController* MediaKeySystemController::from(Page* page)
 }
 
 MediaKeySystemController::MediaKeySystemController(Ref<MediaKeySystemClient>&& client)
-    : m_client(WTFMove(client))
+    : m_client(WTF::move(client))
 {
 }
 
@@ -53,7 +53,7 @@ MediaKeySystemController::~MediaKeySystemController() = default;
 
 void provideMediaKeySystemTo(Page& page, Ref<MediaKeySystemClient>&& client)
 {
-    Supplement<Page>::provideTo(&page, MediaKeySystemController::supplementName(), makeUnique<MediaKeySystemController>(WTFMove(client)));
+    Supplement<Page>::provideTo(&page, MediaKeySystemController::supplementName(), makeUnique<MediaKeySystemController>(WTF::move(client)));
 }
 
 void MediaKeySystemController::logRequestMediaKeySystemDenial(Document& document)

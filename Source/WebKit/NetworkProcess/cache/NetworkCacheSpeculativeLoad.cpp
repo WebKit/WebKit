@@ -46,21 +46,21 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculativeLoad);
 
 Ref<SpeculativeLoad> SpeculativeLoad::create(Cache& cache, const GlobalFrameID& globalFrameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, RevalidationCompletionHandler&& completionHandler)
 {
-    return adoptRef(*new SpeculativeLoad(cache, globalFrameID, request, WTFMove(cacheEntryForValidation), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTFMove(completionHandler)));
+    return adoptRef(*new SpeculativeLoad(cache, globalFrameID, request, WTF::move(cacheEntryForValidation), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTF::move(completionHandler)));
 }
 
 SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, RevalidationCompletionHandler&& completionHandler)
     : m_cache(cache)
-    , m_completionHandler(WTFMove(completionHandler))
+    , m_completionHandler(WTF::move(completionHandler))
     , m_originalRequest(request)
     , m_bufferedDataForCache(SharedBuffer::create())
-    , m_cacheEntry(WTFMove(cacheEntryForValidation))
+    , m_cacheEntry(WTF::move(cacheEntryForValidation))
 {
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
     CheckedPtr networkSession = m_cache->networkProcess().networkSession(m_cache->sessionID());
     if (!networkSession) {
-        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(m_completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(m_completionHandler)]() mutable {
             completionHandler(nullptr);
         });
         return;
@@ -77,7 +77,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     parameters.allowPrivacyProxy = allowPrivacyProxy;
     parameters.advancedPrivacyProtections = advancedPrivacyProtections;
-    Ref networkLoad = NetworkLoad::create(*this, WTFMove(parameters), *networkSession);
+    Ref networkLoad = NetworkLoad::create(*this, WTF::move(parameters), *networkSession);
     m_networkLoad = networkLoad.copyRef();
     networkLoad->startWithScheduling();
 }
@@ -148,10 +148,10 @@ void SpeculativeLoad::didFinishLoading(const WebCore::NetworkLoadMetrics&)
     if (m_didComplete)
         return;
     if (!m_cacheEntry && m_bufferedDataForCache) {
-        m_cacheEntry = m_cache->store(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.get(), [](auto&& mappedBody) { });
+        m_cacheEntry = m_cache->store(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.buffer(), [](auto&& mappedBody) { });
         // Create a synthetic cache entry if we can't store.
         if (!m_cacheEntry && isStatusCodeCacheableByDefault(m_response.httpStatusCode()))
-            m_cacheEntry = m_cache->makeEntry(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.take());
+            m_cacheEntry = m_cache->makeEntry(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.takeBuffer());
     }
 
     didComplete();
@@ -179,7 +179,7 @@ void SpeculativeLoad::didComplete()
     if (m_cacheEntry)
         m_cacheEntry->setNeedsValidation(false);
 
-    m_completionHandler(WTFMove(m_cacheEntry));
+    m_completionHandler(WTF::move(m_cacheEntry));
 }
 
 #if !LOG_DISABLED

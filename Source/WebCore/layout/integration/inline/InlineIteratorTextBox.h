@@ -95,7 +95,7 @@ inline bool TextBox::hasHyphen() const
 }
 
 inline TextBox::TextBox(PathVariant&& path)
-    : Box(WTFMove(path))
+    : Box(WTF::move(path))
 {
 }
 

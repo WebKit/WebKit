@@ -36,8 +36,8 @@
 namespace WebCore {
 
 ServiceWorkerRegistrationKey::ServiceWorkerRegistrationKey(SecurityOriginData&& topOrigin, URL&& scope)
-    : m_topOrigin(WTFMove(topOrigin))
-    , m_scope(WTFMove(scope))
+    : m_topOrigin(WTF::move(topOrigin))
+    , m_scope(WTF::move(scope))
 {
     ASSERT(!m_scope.hasFragmentIdentifier());
 }
@@ -54,7 +54,7 @@ ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const 
 
 ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() &&
 {
-    return { WTFMove(m_topOrigin).isolatedCopy(), WTFMove(m_scope).isolatedCopy() };
+    return { WTF::move(m_topOrigin).isolatedCopy(), WTF::move(m_scope).isolatedCopy() };
 }
 
 bool ServiceWorkerRegistrationKey::isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
@@ -127,7 +127,7 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
         return std::nullopt;
 
     SecurityOriginData topOrigin { scheme.toString(), host.toString(), shortPort };
-    return ServiceWorkerRegistrationKey { WTFMove(topOrigin), WTFMove(scope) };
+    return ServiceWorkerRegistrationKey { WTF::move(topOrigin), WTF::move(scope) };
 }
 
 ClientOrigin ServiceWorkerRegistrationKey::clientOrigin() const

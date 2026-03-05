@@ -52,7 +52,7 @@ class BaseAudioContext;
 // All of these effects follow the OpenAL specification very closely.
 
 class PannerNode final : public AudioNode {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PannerNode);
+    WTF_MAKE_TZONE_ALLOCATED(PannerNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PannerNode);
 public:
     static ExceptionOr<Ref<PannerNode>> create(BaseAudioContext&, const PannerOptions& = { });
@@ -83,7 +83,7 @@ public:
     AudioParam& orientationZ() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_orientationZ.get(); }
 
     // Distance parameters
-    DistanceModelType distanceModelForBindings() const;
+    DistanceModelType NODELETE distanceModelForBindings() const;
     void setDistanceModelForBindings(DistanceModelType);
 
     double refDistanceForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_distanceEffect.refDistance(); }
@@ -131,7 +131,7 @@ private:
     const AzimuthElevation& azimuthElevation() WTF_REQUIRES_LOCK(m_processLock);
     void processSampleAccurateValues(AudioBus& destination, const AudioBus& source, size_t framesToProcess) WTF_REQUIRES_LOCK(m_processLock);
     bool hasSampleAccurateValues() const WTF_REQUIRES_LOCK(m_processLock);
-    bool shouldUseARate() const WTF_REQUIRES_LOCK(m_processLock);
+    bool NODELETE shouldUseARate() const WTF_REQUIRES_LOCK(m_processLock);
 
     FloatPoint3D position() const WTF_REQUIRES_LOCK(m_processLock);
     FloatPoint3D orientation() const WTF_REQUIRES_LOCK(m_processLock);

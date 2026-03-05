@@ -92,7 +92,7 @@ void InputMethodFilter::setState(std::optional<InputMethodState>&& state)
     if (focusChanged && !state)
         notifyFocusedOut();
 
-    m_state = WTFMove(state);
+    m_state = WTF::move(state);
     notifyContentType();
 
     if (focusChanged && isEnabled() && isViewFocused())
@@ -118,7 +118,7 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
 
     // Simple input methods work such that even normal keystrokes fire the commit signal without any preedit change.
     if (!m_filteringContext.preeditChanged && m_compositionResult.length() == 1)
-        return { false, WTFMove(m_compositionResult) };
+        return { false, WTF::move(m_compositionResult) };
 
     if (!platformEventKeyIsKeyPress(keyEvent))
         return { };

@@ -58,23 +58,23 @@ public:
 
     WEBCORE_EXPORT IDBTransactionInfo isolatedCopy() const;
 
-    const IDBResourceIdentifier& identifier() const { return m_identifier; }
+    const IDBResourceIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     IDBTransactionMode mode() const { return m_mode; }
     IDBTransactionDurability durability() const { return m_durability; }
     uint64_t newVersion() const { return m_newVersion; }
 
-    const Vector<String>& objectStores() const { return m_objectStores; }
+    const Vector<String>& objectStores() const LIFETIME_BOUND { return m_objectStores; }
 
-    const std::unique_ptr<IDBDatabaseInfo>& originalDatabaseInfo() const { return m_originalDatabaseInfo; }
+    const std::unique_ptr<IDBDatabaseInfo>& originalDatabaseInfo() const LIFETIME_BOUND { return m_originalDatabaseInfo; }
 
     IDBTransactionInfo(IDBResourceIdentifier identifier, IDBTransactionMode mode, IDBTransactionDurability durability, uint64_t newVersion, Vector<String>&& objectStores, std::unique_ptr<IDBDatabaseInfo> originalDatabaseInfo)
         : m_identifier(identifier)
         , m_mode(mode)
         , m_durability(durability)
         , m_newVersion(newVersion)
-        , m_objectStores(WTFMove(objectStores))
-        , m_originalDatabaseInfo(WTFMove(originalDatabaseInfo)) { }
+        , m_objectStores(WTF::move(objectStores))
+        , m_originalDatabaseInfo(WTF::move(originalDatabaseInfo)) { }
 
 #if !LOG_DISABLED
     String loggingString() const;

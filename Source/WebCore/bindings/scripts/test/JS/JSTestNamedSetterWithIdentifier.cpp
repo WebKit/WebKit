@@ -130,7 +130,7 @@ void JSTestNamedSetterWithIdentifierPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestNamedSetterWithIdentifier::s_info = { "TestNamedSetterWithIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIdentifier) };
 
 JSTestNamedSetterWithIdentifier::JSTestNamedSetterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithIdentifier>&& impl)
-    : JSDOMWrapper<TestNamedSetterWithIdentifier>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestNamedSetterWithIdentifier>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -170,7 +170,7 @@ bool JSTestNamedSetterWithIdentifier::legacyPlatformObjectGetOwnProperty(JSObjec
             return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -197,7 +197,7 @@ bool JSTestNamedSetterWithIdentifier::getOwnPropertySlotByIndex(JSObject* object
         return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
         slot.setValue(thisObject, 0, value);
         return true;
@@ -249,7 +249,7 @@ bool JSTestNamedSetterWithIdentifier::put(JSCell* cell, JSGlobalObject* lexicalG
         ownDescriptor.setPropertySlot(lexicalGlobalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(throwScope, false);
     }
-    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTFMove(ownDescriptor), putPropertySlot.isStrictMode()));
+    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTF::move(ownDescriptor), putPropertySlot.isStrictMode()));
 }
 
 bool JSTestNamedSetterWithIdentifier::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
@@ -414,7 +414,7 @@ void JSTestNamedSetterWithIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> ha
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterWithIdentifier = static_cast<JSTestNamedSetterWithIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestNamedSetterWithIdentifier->protectedWrapped().ptr(), jsTestNamedSetterWithIdentifier);
+    uncacheWrapper(world, protect(jsTestNamedSetterWithIdentifier->wrapped()).ptr(), jsTestNamedSetterWithIdentifier);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -452,7 +452,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestNamedSetterWithIdentifier>(impl.ptr());
 #endif
-    return createWrapper<TestNamedSetterWithIdentifier>(globalObject, WTFMove(impl));
+    return createWrapper<TestNamedSetterWithIdentifier>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedSetterWithIdentifier& impl)

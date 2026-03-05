@@ -31,12 +31,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x109 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (14,14) size 201x80
-          RenderText {#text} at (14,14) size 15x26
+        RenderInline {SPAN} at (14,14) size 201x81
+          RenderText {#text} at (14,14) size 15x27
             text run at (14,14) width 15: "s "
-          RenderBR {BR} at (29,14) size 0x26
-          RenderBR {BR} at (14,41) size 0x26
-          RenderText {#text} at (14,68) size 201x26
+          RenderBR {BR} at (29,14) size 0x27
+          RenderBR {BR} at (14,41) size 0x27
+          RenderText {#text} at (14,68) size 201x27
             text run at (14,68) width 6: " "
             text run at (20,68) width 85: "war. We "
             text run at (104,68) width 111: "of that war."

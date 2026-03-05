@@ -34,11 +34,13 @@
 #include <WebCore/GraphicsContextGLState.h>
 #include <memory>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Base class for GraphicsContextGL contexts that use ANGLE.
 class WEBCORE_EXPORT GraphicsContextGLANGLE : public GraphicsContextGL {
+    WTF_FORBID_HEAP_ALLOCATION_FOR_ABSTRACT_CLASS(GraphicsContextGLANGLE);
 public:
     ~GraphicsContextGLANGLE();
 
@@ -360,7 +362,7 @@ protected:
     bool updateErrors();
 
     // Called once by all the public entry points that eventually call OpenGL.
-    bool makeContextCurrent() WARN_UNUSED_RETURN;
+    [[nodiscard]] bool makeContextCurrent();
 
     // Initializes the instance. Returns false if the instance should not be used.
     bool initialize();
@@ -404,7 +406,7 @@ protected:
     virtual void invalidateKnownTextureContent(GCGLuint);
     bool supportsExtensionImpl(ASCIILiteral) const;
     // Enables extensions only if all are supported, returns true if all the extensions are supported. No changes if false is returned.
-    bool enableExtensionsImpl(std::initializer_list<ASCIILiteral>) WARN_UNUSED_RETURN;
+    [[nodiscard]] bool enableExtensionsImpl(std::initializer_list<ASCIILiteral>);
     bool isExtensionEnabledImpl(ASCIILiteral) const;
 
     // Only for non-WebGL 2.0 contexts.

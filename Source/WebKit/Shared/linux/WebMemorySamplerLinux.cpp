@@ -55,9 +55,7 @@ static inline String nextToken(FILE* file)
     if (!file)
         return String();
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Linux port
-    char buffer[maxBuffer] = {0, };
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    std::array<char, maxBuffer> buffer = { 0, };
     unsigned int index = 0;
     while (index < maxBuffer) {
         int ch = fgetc(file);
@@ -69,7 +67,7 @@ static inline String nextToken(FILE* file)
         }
     }
 
-    return String::fromLatin1(buffer);
+    return String::fromLatin1(buffer.data());
 }
 
 static inline void appendKeyValuePair(WebMemoryStatistics& stats, const String& key, size_t value)

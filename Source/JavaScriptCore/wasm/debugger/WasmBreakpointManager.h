@@ -25,48 +25,45 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include "WasmDebugServerUtilities.h"
 #include "WasmVirtualAddress.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
-
-class CallFrame;
-class JSWebAssemblyInstance;
-class JSWebAssemblyModule;
-
 namespace Wasm {
 
-class IPIntCallee;
-class ModuleManager;
-
-class BreakpointManager {
+class JS_EXPORT_PRIVATE BreakpointManager {
     WTF_MAKE_TZONE_ALLOCATED(BreakpointManager);
 
 public:
-    JS_EXPORT_PRIVATE BreakpointManager() = default;
-    JS_EXPORT_PRIVATE ~BreakpointManager();
+    BreakpointManager() = default;
+    ~BreakpointManager();
 
-    bool hasBreakpoints() { return !m_breakpoints.isEmpty(); };
+    bool hasBreakpoints();
+    bool hasOneTimeBreakpoints();
 
-    JS_EXPORT_PRIVATE Breakpoint* findBreakpoint(VirtualAddress);
-    JS_EXPORT_PRIVATE void setBreakpoint(VirtualAddress, Breakpoint&&);
-    JS_EXPORT_PRIVATE bool removeBreakpoint(VirtualAddress);
-    JS_EXPORT_PRIVATE void clearAllOneTimeBreakpoints();
-    JS_EXPORT_PRIVATE void clearAllBreakpoints();
+    Breakpoint* findBreakpoint(VirtualAddress);
+    void setBreakpoint(VirtualAddress, Breakpoint&&);
+    bool removeBreakpoint(VirtualAddress);
+    void clearAllOneTimeBreakpoints();
+    void clearAllBreakpoints();
 
 private:
-    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints;
-    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints;
+    bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
+
+    mutable Lock m_lock;
+    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace Wasm
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

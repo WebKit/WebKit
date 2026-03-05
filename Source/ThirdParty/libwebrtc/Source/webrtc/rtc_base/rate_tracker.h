@@ -14,6 +14,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+
 namespace webrtc {
 
 // Computes units per second over a given interval by tracking the units over
@@ -22,40 +25,29 @@ namespace webrtc {
 class RateTracker {
  public:
   RateTracker(int64_t bucket_milliseconds, size_t bucket_count);
-  virtual ~RateTracker();
+  ~RateTracker();
 
   // Computes the average rate over the most recent interval_milliseconds,
   // or if the first sample was added within this period, computes the rate
   // since the first sample was added.
-  double ComputeRateForInterval(int64_t interval_milliseconds) const;
+  double ComputeRateForInterval(Timestamp current_time,
+                                TimeDelta interval) const;
 
   // Computes the average rate over the rate tracker's recording interval
   // of bucket_milliseconds * bucket_count.
-  double ComputeRate() const {
-    return ComputeRateForInterval(bucket_milliseconds_ *
-                                  static_cast<int64_t>(bucket_count_));
+  double Rate(Timestamp current_time) const {
+    return ComputeRateForInterval(
+        current_time, TimeDelta::Millis(bucket_milliseconds_) * bucket_count_);
   }
-
-  // Computes the average rate since the first sample was added to the
-  // rate tracker.
-  double ComputeTotalRate() const;
 
   // The total number of samples added.
   int64_t TotalSampleCount() const;
 
-  // Reads the current time in order to determine the appropriate bucket for
-  // these samples, and increments the count for that bucket by sample_count.
-  void AddSamples(int64_t sample_count);
-
-  // Increment count for bucket at `current_time_ms`.
-  void AddSamplesAtTime(int64_t current_time_ms, int64_t sample_count);
-
- protected:
-  // overrideable for tests
-  virtual int64_t Time() const;
+  // Increment count for bucket at `current_time`.
+  void Update(int64_t sample_count, Timestamp now);
 
  private:
-  void EnsureInitialized();
+  void EnsureInitialized(int64_t current_time_ms);
   size_t NextBucketIndex(size_t bucket_index) const;
 
   const int64_t bucket_milliseconds_;

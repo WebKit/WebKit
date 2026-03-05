@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "LayoutSize.h"
 #import "LocalFrameView.h"
@@ -66,6 +66,16 @@ ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac() = defa
 ScrollingTreeScrollingNodeDelegateMac& ScrollingTreeFrameScrollingNodeMac::delegate() const
 {
     return *static_cast<ScrollingTreeScrollingNodeDelegateMac*>(m_delegate.get());
+}
+
+void ScrollingTreeFrameScrollingNodeMac::startRubberBandSnapBack()
+{
+    delegate().startRubberBandSnapBack();
+}
+
+void ScrollingTreeFrameScrollingNodeMac::rubberBandTargetOffsetDidChange()
+{
+    delegate().rubberBandTargetOffsetDidChange();
 }
 
 void ScrollingTreeFrameScrollingNodeMac::willBeDestroyed()
@@ -287,4 +297,4 @@ unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

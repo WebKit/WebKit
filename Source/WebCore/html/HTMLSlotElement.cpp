@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSlotElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSlotElement);
 
 using namespace HTMLNames;
 
@@ -66,7 +66,7 @@ HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncesto
     ASSERT_UNUSED(insertionResult, insertionResult == InsertedIntoAncestorResult::Done);
 
     if (insertionType.treeScopeChanged && isInShadowTree()) {
-        if (auto* shadowRoot = containingShadowRoot())
+        if (RefPtr shadowRoot = containingShadowRoot())
             shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
@@ -76,7 +76,7 @@ HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncesto
 void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.treeScopeChanged && oldParentOfRemovedTree.isInShadowTree()) {
-        auto* oldShadowRoot = oldParentOfRemovedTree.containingShadowRoot();
+        RefPtr oldShadowRoot = oldParentOfRemovedTree.containingShadowRoot();
         ASSERT(oldShadowRoot);
         oldShadowRoot->removeSlotElementByName(attributeWithoutSynchronization(nameAttr), *this, oldParentOfRemovedTree);
     }
@@ -89,7 +89,7 @@ void HTMLSlotElement::childrenChanged(const ChildChange& childChange)
     HTMLElement::childrenChanged(childChange);
 
     if (isInShadowTree()) {
-        if (auto* shadowRoot = containingShadowRoot())
+        if (RefPtr shadowRoot = containingShadowRoot())
             shadowRoot->slotFallbackDidChange(*this);
     }
 }
@@ -169,7 +169,7 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
 Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOptions& options) const
 {
     return compactMap(assignedNodes(options), [](Ref<Node>&& node) -> RefPtr<Element> {
-        return dynamicDowncast<Element>(WTFMove(node));
+        return dynamicDowncast<Element>(WTF::move(node));
     });
 }
 
@@ -177,24 +177,21 @@ void HTMLSlotElement::assign(FixedVector<ElementOrText>&& nodes)
 {
     RefPtr shadowRoot = containingShadowRoot();
     RefPtr host = shadowRoot ? shadowRoot->host() : nullptr;
-    for (auto& node : m_manuallyAssignedNodes) {
-        if (RefPtr protectedNode = node.get())
-            protectedNode->setManuallyAssignedSlot(nullptr);
+    for (auto& weakNode : m_manuallyAssignedNodes) {
+        if (RefPtr node = weakNode.get())
+            node->setManuallyAssignedSlot(nullptr);
     }
 
     auto previous = std::exchange(m_manuallyAssignedNodes, { });
-    HashSet<RefPtr<Node>> seenNodes;
+    HashSet<Ref<Node>> seenNodes;
     m_manuallyAssignedNodes = WTF::compactMap(nodes, [&seenNodes](ElementOrText& node) -> std::optional<WeakPtr<Node, WeakPtrImplWithEventTargetData>> {
-        auto mapper = [&seenNodes]<typename T>(RefPtr<T>& node) -> std::optional<WeakPtr<Node, WeakPtrImplWithEventTargetData>> {
-            if (seenNodes.contains(node))
-                return std::nullopt;
-            seenNodes.add(node);
-            return WeakPtr { node };
-        };
-
         return WTF::switchOn(node,
-            [&mapper](RefPtr<Element>& node) { return mapper(node); },
-            [&mapper](RefPtr<Text>& node) { return mapper(node); }
+            [&seenNodes]<typename T>(Ref<T>& node) -> std::optional<WeakPtr<Node, WeakPtrImplWithEventTargetData>> {
+                if (seenNodes.contains(node))
+                    return std::nullopt;
+                seenNodes.add(node);
+                return WeakPtr { node };
+            }
         );
     });
 
@@ -202,7 +199,7 @@ void HTMLSlotElement::assign(FixedVector<ElementOrText>&& nodes)
         shadowRoot->slotManualAssignmentDidChange(*this, previous, m_manuallyAssignedNodes);
     else {
         for (auto& node : m_manuallyAssignedNodes) {
-            if (auto previousSlot = node->manuallyAssignedSlot()) {
+            if (RefPtr previousSlot = node->manuallyAssignedSlot()) {
                 previousSlot->removeManuallyAssignedNode(*node);
                 if (RefPtr shadowRootOfPreviousSlot = previousSlot->containingShadowRoot(); shadowRootOfPreviousSlot && node->parentNode() == shadowRootOfPreviousSlot->host())
                     shadowRootOfPreviousSlot->didRemoveManuallyAssignedNode(*previousSlot, *node);
@@ -239,7 +236,7 @@ void HTMLSlotElement::dispatchSlotChangeEvent()
 
 void HTMLSlotElement::updateAccessibilityOnSlotChange() const
 {
-    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->onSlottedContentChange(*this);
 }
 

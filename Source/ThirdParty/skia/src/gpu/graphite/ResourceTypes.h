@@ -24,6 +24,33 @@ class Buffer;
 // DepthStencilFlags as bit fields but, externally (i.e., from the GraphiteTypes view), we want
 // it to appear as just an enum class.
 SK_MAKE_BITMASK_OPS(DepthStencilFlags)
+// The same goes for SampleCount
+SK_MAKE_BITMASK_OPS(SampleCount)
+
+/**
+ * There are only a few possible valid sample counts (1, 2, 4, 8, 16). So we can key on those 5
+ * options instead of the actual sample value. The resulting key value only requires 3 bits of space
+ */
+static constexpr uint32_t SamplesToKey(SampleCount numSamples) {
+    switch (numSamples) {
+        case SampleCount::k1:
+            return 0;
+        case SampleCount::k2:
+            return 1;
+        case SampleCount::k4:
+            return 2;
+        case SampleCount::k8:
+            return 3;
+        case SampleCount::k16:
+            return 4;
+    }
+    SkUNREACHABLE;
+}
+static constexpr SampleCount KeyToSamples(uint32_t keyBits) {
+    SkASSERT(keyBits <= 4);
+    return static_cast<SampleCount>(1 << keyBits);
+}
+static constexpr int kNumSampleKeyBits = 3;
 
 /**
  * The strategy that a renderpass and/or pipeline use to access the current dst pixel when blending.
@@ -89,16 +116,20 @@ static const int kBufferTypeCount = static_cast<int>(BufferType::kLast) + 1;
 enum class Layout : uint8_t {
     kInvalid = 0,
     kStd140,
+    kStd140_F16,
     kStd430,
+    kStd430_F16,
     kMetal,
 };
 
 static constexpr const char* LayoutString(Layout layout) {
     switch(layout) {
-        case Layout::kStd140:  return "std140";
-        case Layout::kStd430:  return "std430";
-        case Layout::kMetal:   return "metal";
-        case Layout::kInvalid: return "invalid";
+        case Layout::kStd140:     return "std140";
+        case Layout::kStd140_F16: return "std140-f16";
+        case Layout::kStd430:     return "std430";
+        case Layout::kStd430_F16: return "std430-f16";
+        case Layout::kMetal:      return "metal";
+        case Layout::kInvalid:    return "invalid";
     }
     SkUNREACHABLE;
 }
@@ -272,9 +303,9 @@ struct SamplerDesc {
 
     // These are public such that backends can bitshift data in order to determine whatever
     // sampler qualities they need from fDesc.
-    static constexpr int kNumTileModeBits   = SkNextLog2_portable(int(SkTileMode::kLastTileMode)+1);
-    static constexpr int kNumFilterModeBits = SkNextLog2_portable(int(SkFilterMode::kLast)+1);
-    static constexpr int kNumMipmapModeBits = SkNextLog2_portable(int(SkMipmapMode::kLast)+1);
+    static constexpr int kNumTileModeBits   = SkNextLog2(int(SkTileMode::kLastTileMode)+1);
+    static constexpr int kNumFilterModeBits = SkNextLog2(int(SkFilterMode::kLast)+1);
+    static constexpr int kNumMipmapModeBits = SkNextLog2(int(SkMipmapMode::kLast)+1);
     static constexpr int kMaxNumConversionInfoBits =
             32 - kNumFilterModeBits - kNumMipmapModeBits - kNumTileModeBits;
 

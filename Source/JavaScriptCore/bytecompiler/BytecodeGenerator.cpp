@@ -37,7 +37,6 @@
 #include "BytecodeGeneratorBaseInlines.h"
 #include "BytecodeGeneratorification.h"
 #include "BytecodeUseDef.h"
-#include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
 #include "Interpreter.h"
 #include "JSAsyncGenerator.h"
@@ -49,6 +48,7 @@
 #include "PrivateFieldPutKind.h"
 #include "StrongInlines.h"
 #include "SuperSampler.h"
+#include "TopExceptionScope.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedFunctionCodeBlock.h"
@@ -299,7 +299,7 @@ ParserError BytecodeGenerator::generate(unsigned& size)
 
 
         emitJump(tryData->target.get());
-        tryData->target = WTFMove(realCatchTarget);
+        tryData->target = WTF::move(realCatchTarget);
     }
 
     if (m_asyncFuncParametersTryCatchInfo) {
@@ -489,11 +489,16 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         //            }
         //        }
         //    }
-        if (m_needsArguments)
-            shouldCaptureSomeOfTheThings = true;
-        if (parameters.size()) {
-            shouldCaptureSomeOfTheThings = true;
-            shouldCaptureAllOfTheThings = true;
+        //
+        // For async functions without await, the body is inlined directly - no body function exists.
+        // So we don't need to capture parameters for the body function to access them.
+        if (!(isAsyncFunctionWrapperParseMode(parseMode) && functionNode->isAsyncFunctionWithoutAwait())) {
+            if (m_needsArguments)
+                shouldCaptureSomeOfTheThings = true;
+            if (parameters.size()) {
+                shouldCaptureSomeOfTheThings = true;
+                shouldCaptureAllOfTheThings = true;
+            }
         }
     }
 
@@ -774,6 +779,26 @@ IGNORE_GCC_WARNINGS_END
     if (functionNode->needsNewTargetRegisterForThisScope() || isNewTargetUsedInInnerArrowFunction() || usesEval())
         m_newTargetRegister = addVar();
 
+    auto shouldEmitToThis = [&] {
+        if (functionNode->usesThis() || usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
+            return true;
+        if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !ecmaMode.isStrict()) {
+            // We must emit to_this when we're not in strict mode because we
+            // will convert |this| to an object, and that object may be passed
+            // to a strict function as |this|. This is observable because that
+            // strict function's to_this will just return the object.
+            //
+            // We don't need to emit this for strict-mode code because
+            // strict-mode code may call another strict function, which will
+            // to_this if it directly uses this; this is OK, because we defer
+            // to_this until |this| is used directly. Strict-mode code might
+            // also call a sloppy mode function, and that will to_this, which
+            // will defer the conversion, again, until necessary.
+            return true;
+        }
+        return false;
+    };
+
     switch (parseMode) {
     case SourceParseMode::GeneratorWrapperFunctionMode:
     case SourceParseMode::GeneratorWrapperMethodMode:
@@ -793,21 +818,35 @@ IGNORE_GCC_WARNINGS_END
     case SourceParseMode::AsyncFunctionMode: {
         ASSERT(!isConstructor());
         ASSERT(constructorKind() == ConstructorKind::None);
-        m_generatorRegister = addVar();
+
+        bool isAsyncFunctionWithoutAwait = m_scopeNode->isAsyncFunctionWithoutAwait();
+        // Check if this async function body doesn't use await.
+        // If so, we can skip generator creation entirely.
+        if (!isAsyncFunctionWithoutAwait)
+            m_generatorRegister = addVar();
         m_promiseRegister = addVar();
 
+        bool willEmitToThis = false;
         if (parseMode != SourceParseMode::AsyncArrowFunctionMode) {
             // FIXME: Emit to_this only when AsyncFunctionBody uses it.
             // https://bugs.webkit.org/show_bug.cgi?id=151586
-            emitToThis();
+            if (isAsyncFunctionWithoutAwait)
+                willEmitToThis = shouldEmitToThis();
+            else
+                willEmitToThis = true;
         }
+        if (willEmitToThis)
+            emitToThis();
 
-        emitNewGenerator(m_generatorRegister);
         bool isInternalPromise = false;
         if (m_isBuiltinFunction)
             isInternalPromise = !functionNode->ident().string().startsWith("defaultAsync"_s);
         emitNewPromise(promiseRegister(), isInternalPromise);
-        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Context), promiseRegister());
+
+        if (!isAsyncFunctionWithoutAwait) {
+            emitNewGenerator(m_generatorRegister);
+            emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Context), promiseRegister());
+        }
         break;
     }
 
@@ -847,25 +886,7 @@ IGNORE_GCC_WARNINGS_END
         } else {
             switch (constructorKind()) {
             case ConstructorKind::None: {
-                bool shouldEmitToThis = false;
-                if (functionNode->usesThis() || usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
-                    shouldEmitToThis = true;
-                else if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !ecmaMode.isStrict()) {
-                    // We must emit to_this when we're not in strict mode because we
-                    // will convert |this| to an object, and that object may be passed
-                    // to a strict function as |this|. This is observable because that
-                    // strict function's to_this will just return the object.
-                    //
-                    // We don't need to emit this for strict-mode code because
-                    // strict-mode code may call another strict function, which will
-                    // to_this if it directly uses this; this is OK, because we defer
-                    // to_this until |this| is used directly. Strict-mode code might
-                    // also call a sloppy mode function, and that will to_this, which
-                    // will defer the conversion, again, until necessary.
-                    shouldEmitToThis = true;
-                }
-
-                if (shouldEmitToThis)
+                if (shouldEmitToThis())
                     emitToThis();
                 break;
             }
@@ -990,8 +1011,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
         else if (!entry.value.isFunction())
             variables.append(Identifier::fromUid(m_vm, entry.key.get()));
     }
-    codeBlock->adoptVariables(WTFMove(variables));
-    codeBlock->adoptFunctionHoistingCandidates(WTFMove(hoistedFunctions));
+    codeBlock->adoptVariables(WTF::move(variables));
+    codeBlock->adoptFunctionHoistingCandidates(WTF::move(hoistedFunctions));
     
     if (evalNode->needsNewTargetRegisterForThisScope())
         m_newTargetRegister = addVar();
@@ -2033,7 +2054,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRe
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet&& set)
 {
-    unsigned setIndex = m_codeBlock->addSetConstant(WTFMove(set));
+    unsigned setIndex = m_codeBlock->addSetConstant(WTF::move(set));
     return emitLoad(dst, jsNumber(setIndex));
 }
 
@@ -2612,12 +2633,6 @@ std::optional<Variable> BytecodeGenerator::tryResolveVariable(ExpressionNode* ex
     }
 
     return std::nullopt;
-}
-
-RegisterID* BytecodeGenerator::emitOverridesHasInstance(RegisterID* dst, RegisterID* constructor, RegisterID* hasInstanceValue)
-{
-    OpOverridesHasInstance::emit(this, dst, constructor, hasInstanceValue);
-    return dst;
 }
 
 // Indicates the least upper bound of resolve type based on local scope. The bytecode linker
@@ -3292,7 +3307,7 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
     for (const auto& entry : environment)
         map.add(entry.key, entry.value.isFunction() ? TDZNecessityLevel::NotNeeded : level);
 
-    m_TDZStack.append(TDZStackEntry { WTFMove(map), nullptr });
+    m_TDZStack.append(TDZStackEntry { WTF::move(map), nullptr });
 }
 
 Vector<Identifier> BytecodeGenerator::getParameterNames() const
@@ -3386,7 +3401,7 @@ JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8
     return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix, sign), [&] {
         VM& vm = this->vm();
         DeferTermination deferScope(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto parseIntSign = sign ? JSBigInt::ParseIntSign::Signed : JSBigInt::ParseIntSign::Unsigned;
         JSValue bigIntInMap = JSBigInt::parseInt(nullptr, vm, identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
         scope.assertNoException();
@@ -3408,7 +3423,7 @@ JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
 
 RegisterID* BytecodeGenerator::addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&& descriptor, int endOffset)
 {
-    auto result = m_templateObjectDescriptorSet.add(WTFMove(descriptor));
+    auto result = m_templateObjectDescriptorSet.add(WTF::move(descriptor));
     JSTemplateObjectDescriptor* descriptorValue = m_templateDescriptorMap.ensure(endOffset, [&] {
         return JSTemplateObjectDescriptor::create(vm(), result.iterator->copyRef(), endOffset);
     }).iterator->value;
@@ -3472,7 +3487,7 @@ RegisterID* BytecodeGenerator::emitNewArrayWithSpread(RegisterID* dst, ElementNo
         }
     }
 
-    unsigned bitVectorIndex = m_codeBlock->addBitVector(WTFMove(bitVector));
+    unsigned bitVectorIndex = m_codeBlock->addBitVector(WTF::move(bitVector));
     OpNewArrayWithSpread::emit(this, dst, argv[0].get(), argv.size(), bitVectorIndex);
     return dst;
 }
@@ -3571,8 +3586,8 @@ RegisterID* BytecodeGenerator::emitNewClassFieldInitializerFunction(RegisterID* 
 
     FunctionMetadataNode metadata(parserArena(), JSTokenLocation(), JSTokenLocation(), 0, 0, 0, 0, 0, ImplementationVisibility::Private, StrictModeLexicallyScopedFeature, ConstructorKind::None, superBinding, 0, parseMode, false);
     metadata.finishParsing(m_scopeNode->source(), Identifier(), FunctionMode::MethodDefinition);
-    auto initializer = UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), &metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, InlineAttribute::Always, scriptMode(), WTFMove(variablesUnderTDZ), { }, WTFMove(parentPrivateNameEnvironment), newDerivedContextType, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
-    initializer->setClassElementDefinitions(WTFMove(classElementDefinitions));
+    auto initializer = UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), &metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, InlineAttribute::Always, scriptMode(), WTF::move(variablesUnderTDZ), { }, WTF::move(parentPrivateNameEnvironment), newDerivedContextType, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
+    initializer->setClassElementDefinitions(WTF::move(classElementDefinitions));
 
     unsigned index = m_codeBlock->addFunctionExpr(initializer);
     OpNewFuncExp::emit(this, dst, scopeRegister(), index);
@@ -3817,13 +3832,6 @@ RegisterID* BytecodeGenerator::emitSuperConstructVarargs(RegisterID* dst, Regist
     return emitCallVarargs<OpSuperConstructVarargs>(dst, func, thisRegister, arguments, firstFreeRegister, firstVarArgOffset, divot, divotStart, divotEnd, debuggableCall);
 }
 
-RegisterID* BytecodeGenerator::emitCallForwardArgumentsInTailPosition(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
-{
-    // We must emit a tail call here because we did not allocate an arguments object thus we would otherwise have no way to correctly make this call.
-    ASSERT(m_allowTailCallOptimization || !Options::useTailCalls());
-    return emitCallVarargs<OpTailCallForwardArguments>(dst, func, thisRegister, nullptr, firstFreeRegister, firstVarArgOffset, divot, divotStart, divotEnd, debuggableCall);
-}
-    
 template<typename VarargsOp>
 RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
 {
@@ -3837,12 +3845,11 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     
     // Emit call.
     ASSERT(dst != ignoredResult());
-    if constexpr (VarargsOp::opcodeID == op_tail_call_varargs || VarargsOp::opcodeID == op_tail_call_forward_arguments)
+    if constexpr (VarargsOp::opcodeID == op_tail_call_varargs)
         VarargsOp::emit(this, dst, func, thisRegister, arguments ? arguments : VirtualRegister(0), firstFreeRegister, firstVarArgOffset);
     else
         VarargsOp::emit(this, dst, func, thisRegister, arguments ? arguments : VirtualRegister(0), firstFreeRegister, firstVarArgOffset, nextValueProfileIndex());
-    if (VarargsOp::opcodeID != op_tail_call_forward_arguments)
-        ASSERT(m_codeBlock->hasCheckpoints());
+    ASSERT(m_codeBlock->hasCheckpoints());
     return dst;
 }
 
@@ -3945,12 +3952,6 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
     }
 
     OpRet::emit(this, src);
-    return src;
-}
-
-RegisterID* BytecodeGenerator::emitEnd(RegisterID* src)
-{
-    OpEnd::emit(this, src);
     return src;
 }
 
@@ -4111,7 +4112,7 @@ void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
 void BytecodeGenerator::pushFinallyControlFlowScope(FinallyContext& finallyContext)
 {
     ControlFlowScope scope(ControlFlowScope::Finally, currentLexicalScopeIndex(), &finallyContext);
-    m_controlFlowScopeStack.append(WTFMove(scope));
+    m_controlFlowScopeStack.append(WTF::move(scope));
 
     m_finallyDepth++;
     m_currentFinallyContext = &finallyContext;
@@ -4369,7 +4370,7 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
 void BytecodeGenerator::pushLocalControlFlowScope()
 {
     ControlFlowScope scope(ControlFlowScope::Label, currentLexicalScopeIndex());
-    m_controlFlowScopeStack.append(WTFMove(scope));
+    m_controlFlowScopeStack.append(WTF::move(scope));
     m_localScopeDepth++;
     m_localScopeCount++;
 }
@@ -4493,7 +4494,7 @@ void BytecodeGenerator::endSwitch(const Vector<Ref<Label>, 8>& labels, Expressio
         }
 
         ASSERT(!defaultLabel.isForward());
-        jumpTable.m_branchOffsets = WTFMove(branchOffsets);
+        jumpTable.m_branchOffsets = WTF::move(branchOffsets);
         jumpTable.m_defaultOffset = defaultLabel.bind(switchInfo.bytecodeOffset);
     };
 
@@ -4639,7 +4640,7 @@ void BytecodeGenerator::emitTryWithFinallyThatDoesNotShadowException(FinallyCont
 
 void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
 {
-    bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
+    bool isForAwait = forLoopNode && forLoopNode->isForAwait();
     auto shouldEmitAwait = isForAwait ? EmitAwait::Yes : EmitAwait::No;
     ASSERT(!isForAwait || (isAsyncFunctionParseMode(parseMode()) || isModuleParseMode(parseMode())));
 
@@ -4786,7 +4787,7 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         else
             cookedStrings.append(string->cooked()->impl());
     }
-    RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTFMove(rawStrings), WTFMove(cookedStrings)), taggedTemplate->endOffset());
+    RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTF::move(rawStrings), WTF::move(cookedStrings)), taggedTemplate->endOffset());
     if (!dst)
         return constant.unsafeGet();
     return move(dst, constant.get());
@@ -4986,10 +4987,7 @@ void BytecodeGenerator::popForInScope(RegisterID* localRegister)
 
 RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned numParametersToSkip)
 {
-    RefPtr<RegisterID> restArrayLength = newTemporary();
-    OpGetRestLength::emit(this, restArrayLength.get(), numParametersToSkip);
-
-    OpCreateRest::emit(this, result, restArrayLength.get(), numParametersToSkip);
+    OpCreateRest::emit(this, result, numParametersToSkip);
 
     return result;
 }
@@ -5023,12 +5021,11 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::A
 {
     Ref<Label> mergePoint = newLabel();
     unsigned yieldPointIndex = m_yieldPoints++;
-    emitGeneratorStateChange(yieldPointIndex + 1);
+    auto state = Checked<int32_t>(yieldPointIndex) + 1;
+    if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
+        state = (state << JSAsyncGenerator::reasonShift) | static_cast<unsigned>(result);
 
-    if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode) {
-        int suspendReason = static_cast<int32_t>(result);
-        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSAsyncGenerator::Field::SuspendReason), emitLoad(nullptr, jsNumber(suspendReason)));
-    }
+    emitGeneratorStateChange(state.value());
 
     // Split the try range here.
     Ref<Label> savePoint = newEmittedLabel();

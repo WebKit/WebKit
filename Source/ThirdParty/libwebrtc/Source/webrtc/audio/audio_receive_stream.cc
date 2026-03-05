@@ -33,6 +33,8 @@
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/transport/rtp/rtp_source.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "audio/audio_send_stream.h"
 #include "audio/audio_state.h"
 #include "audio/channel_receive.h"
@@ -45,6 +47,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/time_utils.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 
@@ -110,12 +113,13 @@ AudioReceiveStreamImpl::AudioReceiveStreamImpl(
 }
 
 AudioReceiveStreamImpl::AudioReceiveStreamImpl(
-    const Environment& /* env */,
+    const Environment& env,
     PacketRouter* packet_router,
     const AudioReceiveStreamInterface::Config& config,
     const scoped_refptr<AudioState>& audio_state,
     std::unique_ptr<voe::ChannelReceiveInterface> channel_receive)
-    : config_(config),
+    : env_(env),
+      config_(config),
       audio_state_(audio_state),
       channel_receive_(std::move(channel_receive)) {
   RTC_LOG(LS_INFO) << "AudioReceiveStreamImpl: " << config.rtp.remote_ssrc;
@@ -275,34 +279,41 @@ AudioReceiveStreamInterface::Stats AudioReceiveStreamImpl::GetStats(
     stats.codec_payload_type = receive_codec->first;
   }
 
-  CallReceiveStatistics call_stats = channel_receive_->GetRTCPStatistics();
-  stats.payload_bytes_received = call_stats.payload_bytes_received;
+  ChannelReceiveStatistics channel_stats =
+      channel_receive_->GetRTCPStatistics();
+  stats.payload_bytes_received = channel_stats.payload_bytes_received;
   stats.header_and_padding_bytes_received =
-      call_stats.header_and_padding_bytes_received;
-  stats.packets_received = call_stats.packets_received;
-  stats.packets_lost = call_stats.packets_lost;
-  stats.jitter_ms = call_stats.jitter_ms;
-  stats.nacks_sent = call_stats.nacks_sent;
-  stats.capture_start_ntp_time_ms = call_stats.capture_start_ntp_time_ms;
-  stats.last_packet_received = call_stats.last_packet_received;
-  stats.last_sender_report_timestamp = call_stats.last_sender_report_timestamp;
+      channel_stats.header_and_padding_bytes_received;
+  stats.packets_received = channel_stats.packets_received;
+  stats.packets_received_with_ect1 = channel_stats.packets_received_with_ect1;
+  stats.packets_received_with_ce = channel_stats.packets_received_with_ce;
+  stats.packets_lost = channel_stats.packets_lost;
+  stats.jitter_ms = channel_stats.jitter_ms;
+  stats.nacks_sent = channel_stats.nacks_sent;
+  stats.capture_start_ntp_time_ms = channel_stats.capture_start_ntp_time_ms;
+  stats.last_packet_received = channel_stats.last_packet_received;
+  stats.last_sender_report_timestamp =
+      channel_stats.last_sender_report_timestamp;
   stats.last_sender_report_utc_timestamp =
-      call_stats.last_sender_report_utc_timestamp;
+      channel_stats.last_sender_report_utc_timestamp;
   stats.last_sender_report_remote_utc_timestamp =
-      call_stats.last_sender_report_remote_utc_timestamp;
-  stats.sender_reports_packets_sent = call_stats.sender_reports_packets_sent;
-  stats.sender_reports_bytes_sent = call_stats.sender_reports_bytes_sent;
-  stats.sender_reports_reports_count = call_stats.sender_reports_reports_count;
-  stats.round_trip_time = call_stats.round_trip_time;
-  stats.round_trip_time_measurements = call_stats.round_trip_time_measurements;
-  stats.total_round_trip_time = call_stats.total_round_trip_time;
+      channel_stats.last_sender_report_remote_utc_timestamp;
+  stats.sender_reports_packets_sent = channel_stats.sender_reports_packets_sent;
+  stats.sender_reports_bytes_sent = channel_stats.sender_reports_bytes_sent;
+  stats.sender_reports_reports_count =
+      channel_stats.sender_reports_reports_count;
+  stats.round_trip_time = channel_stats.round_trip_time;
+  stats.round_trip_time_measurements =
+      channel_stats.round_trip_time_measurements;
+  stats.total_round_trip_time = channel_stats.total_round_trip_time;
 
   stats.delay_estimate_ms = channel_receive_->GetDelayEstimate();
   stats.audio_level = channel_receive_->GetSpeechOutputLevelFullRange();
   stats.total_output_energy = channel_receive_->GetTotalOutputEnergy();
   stats.total_output_duration = channel_receive_->GetTotalOutputDuration();
   stats.estimated_playout_ntp_timestamp_ms =
-      channel_receive_->GetCurrentEstimatedPlayoutNtpTimestampMs(TimeMillis());
+      channel_receive_->GetCurrentEstimatedPlayoutNtpTimestampMs(
+          env_.clock().TimeInMilliseconds());
 
   // Get jitter buffer and total delay (alg + jitter + playout) stats.
   auto ns = channel_receive_->GetNetworkStatistics(get_and_clear_legacy_stats);
@@ -408,25 +419,23 @@ std::optional<Syncable::Info> AudioReceiveStreamImpl::GetInfo() const {
   return channel_receive_->GetSyncInfo();
 }
 
-bool AudioReceiveStreamImpl::GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
-                                                    int64_t* time_ms) const {
+std::optional<Syncable::PlayoutInfo>
+AudioReceiveStreamImpl::GetPlayoutRtpTimestamp() const {
   // Called on video capture thread.
-  return channel_receive_->GetPlayoutRtpTimestamp(rtp_timestamp, time_ms);
+  return channel_receive_->GetPlayoutRtpTimestamp();
 }
 
-void AudioReceiveStreamImpl::SetEstimatedPlayoutNtpTimestampMs(
-    int64_t ntp_timestamp_ms,
-    int64_t time_ms) {
+void AudioReceiveStreamImpl::SetEstimatedPlayoutNtpTimestamp(NtpTime ntp_time,
+                                                             Timestamp time) {
   // Called on video capture thread.
-  channel_receive_->SetEstimatedPlayoutNtpTimestampMs(ntp_timestamp_ms,
-                                                      time_ms);
+  channel_receive_->SetEstimatedPlayoutNtpTimestamp(ntp_time, time);
 }
 
-bool AudioReceiveStreamImpl::SetMinimumPlayoutDelay(int delay_ms) {
+bool AudioReceiveStreamImpl::SetMinimumPlayoutDelay(TimeDelta delay) {
   // TODO(bugs.webrtc.org/11993): This is called via RtpStreamsSynchronizer,
   // expect to be called on the network thread.
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  return channel_receive_->SetMinimumPlayoutDelay(delay_ms);
+  return channel_receive_->SetMinimumPlayoutDelay(delay);
 }
 
 void AudioReceiveStreamImpl::DeliverRtcp(ArrayView<const uint8_t> packet) {

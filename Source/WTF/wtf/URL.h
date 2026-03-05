@@ -77,7 +77,7 @@ public:
     URL& operator=(const URL&) = default;
 
     URL(URL&& other)
-        : m_string(WTFMove(other.m_string))
+        : m_string(WTF::move(other.m_string))
         , m_isValid(other.m_isValid)
         , m_protocolIsInHTTPFamily(other.m_protocolIsInHTTPFamily)
         , m_hasOpaquePath(other.m_hasOpaquePath)
@@ -96,7 +96,7 @@ public:
 
     URL& operator=(URL&& other)
     {
-        m_string = WTFMove(other.m_string);
+        m_string = WTF::move(other.m_string);
         m_isValid = other.m_isValid;
         other.m_isValid = false;
         m_protocolIsInHTTPFamily = other.m_protocolIsInHTTPFamily;
@@ -179,7 +179,7 @@ public:
 
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
-    WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
+    WTF_EXPORT_PRIVATE bool NODELETE protocolIs(StringView) const;
     bool protocolIsAbout() const { return protocolIs("about"_s); }
     bool protocolIsBlob() const { return protocolIs("blob"_s); }
     bool protocolIsData() const { return protocolIs("data"_s); }
@@ -224,7 +224,7 @@ public:
     WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
     WTF_EXPORT_PRIVATE static bool isIPv6Address(StringView);
 
-    WTF_EXPORT_PRIVATE unsigned pathStart() const;
+    WTF_EXPORT_PRIVATE unsigned NODELETE pathStart() const;
     unsigned pathEnd() const;
     unsigned pathAfterLastSlash() const;
 
@@ -258,9 +258,9 @@ public:
 private:
     friend class URLParser;
 
-    WTF_EXPORT_PRIVATE void invalidate();
-    unsigned hostStart() const;
-    unsigned credentialsEnd() const;
+    WTF_EXPORT_PRIVATE void NODELETE invalidate();
+    unsigned NODELETE hostStart() const;
+    unsigned NODELETE credentialsEnd() const;
     void remove(unsigned start, unsigned length);
     void parse(String&&);
     void parseAllowingC0AtEnd(String&&);
@@ -317,7 +317,7 @@ WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 
 WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
 WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
-WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);
+WTF_EXPORT_PRIVATE bool NODELETE protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
 WTF_EXPORT_PRIVATE bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
@@ -338,8 +338,6 @@ WTF_EXPORT_PRIVATE RetainPtr<id> makeNSArrayElement(const URL&);
 WTF_EXPORT_PRIVATE std::optional<URL> makeVectorElement(const URL*, id);
 
 #endif
-
-WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const URL&);
 
 template<> struct DefaultHash<URL>;
 template<> struct HashTraits<URL>;

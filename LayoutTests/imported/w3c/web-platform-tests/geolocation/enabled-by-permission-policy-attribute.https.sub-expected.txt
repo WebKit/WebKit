@@ -1,7 +1,5 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Permissions policy "geolocation" can be enabled in same-origin iframe using allow="geolocation" attribute Test timed out
-TIMEOUT Permissions policy "geolocation" can be enabled in cross-origin iframe using allow="geolocation" attribute Test timed out
+PASS Permissions policy "geolocation" can be enabled in same-origin iframe using allow="geolocation" attribute
+PASS Permissions policy "geolocation" can be enabled in cross-origin iframe using allow="geolocation" attribute
 

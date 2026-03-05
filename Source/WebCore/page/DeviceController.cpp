@@ -56,7 +56,7 @@ void DeviceController::addDeviceEventListener(LocalDOMWindow& window)
     }
 
     if (wasEmpty)
-        checkedClient()->startUpdating();
+        protect(client())->startUpdating();
 }
 
 void DeviceController::removeDeviceEventListener(LocalDOMWindow& window)
@@ -64,7 +64,7 @@ void DeviceController::removeDeviceEventListener(LocalDOMWindow& window)
     m_listeners.remove(&window);
     m_lastEventListeners.remove(&window);
     if (m_listeners.isEmpty())
-        checkedClient()->stopUpdating();
+        protect(client())->stopUpdating();
 }
 
 void DeviceController::removeAllDeviceEventListeners(LocalDOMWindow& window)
@@ -72,7 +72,7 @@ void DeviceController::removeAllDeviceEventListeners(LocalDOMWindow& window)
     m_listeners.removeAll(&window);
     m_lastEventListeners.removeAll(&window);
     if (m_listeners.isEmpty())
-        checkedClient()->stopUpdating();
+        protect(client())->stopUpdating();
 }
 
 bool DeviceController::hasDeviceEventListener(LocalDOMWindow& window) const
@@ -103,11 +103,6 @@ void DeviceController::fireDeviceEvent()
                 listener->dispatchEvent(*lastEvent);
         }
     }
-}
-
-CheckedRef<DeviceClient> DeviceController::checkedClient()
-{
-    return client();
 }
 
 } // namespace WebCore

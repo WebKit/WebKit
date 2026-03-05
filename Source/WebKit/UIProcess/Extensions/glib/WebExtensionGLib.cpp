@@ -65,7 +65,7 @@ WebExtension::WebExtension(GFile* resourcesFile, RefPtr<API::Error>& outError)
 
 WebExtension::WebExtension(const JSON::Value& manifest, Resources&& resources)
     : m_manifestJSON(manifest)
-    , m_resources(WTFMove(resources))
+    , m_resources(WTF::move(resources))
 {
     auto manifestString = manifest.toJSONString();
     RELEASE_ASSERT(manifestString);

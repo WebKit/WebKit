@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "EnhancedSecurity.h"
 #include "FrameInfoData.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
@@ -43,6 +44,7 @@
 #include <pal/SessionID.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -56,6 +58,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include "EnhancedSecuritySitesHolder.h"
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
@@ -125,8 +128,8 @@ using RemoveDataTaskCounter = RefCounter<RemoveDataTaskCounterType>;
 
 class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore> {
 public:
-    static Ref<WebsiteDataStore> defaultDataStore();
-    static bool defaultDataStoreExists();
+    static WebsiteDataStore& defaultDataStore();
+    static bool NODELETE defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
     static RefPtr<WebsiteDataStore> existingDataStoreForIdentifier(const WTF::UUID&);
     
@@ -143,17 +146,16 @@ public:
     
     NetworkProcessProxy& networkProcess() const;
     NetworkProcessProxy& networkProcess();
-    Ref<NetworkProcessProxy> protectedNetworkProcess() const;
     NetworkProcessProxy* networkProcessIfExists() { return m_networkProcess.get(); }
     void setNetworkProcess(NetworkProcessProxy&);
     
-    static WebsiteDataStore* existingDataStoreForSessionID(PAL::SessionID);
+    static WebsiteDataStore* NODELETE existingDataStoreForSessionID(PAL::SessionID);
 
     bool isPersistent() const { return !m_sessionID.isEphemeral(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     enum class ProcessAccessType : uint8_t { None, OnlyIfLaunched, Launch };
-    static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool /* isNonPersistentStore */);
+    static ProcessAccessType NODELETE computeWebProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool /* isNonPersistentStore */);
     
     void registerProcess(WebProcessProxy&);
     void unregisterProcess(WebProcessProxy&);
@@ -167,12 +169,12 @@ public:
     void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();
     void networkProcessDidTerminate(NetworkProcessProxy&);
-    static void makeNextNetworkProcessLaunchFailForTesting();
-    static bool shouldMakeNextNetworkProcessLaunchFailForTesting();
+    static void NODELETE makeNextNetworkProcessLaunchFailForTesting();
+    static bool NODELETE shouldMakeNextNetworkProcessLaunchFailForTesting();
 
     bool trackingPreventionEnabled() const;
     void setTrackingPreventionEnabled(bool);
-    bool resourceLoadStatisticsDebugMode() const;
+    bool NODELETE resourceLoadStatisticsDebugMode() const;
     void setResourceLoadStatisticsDebugMode(bool);
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
     void isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&&) const;
@@ -190,8 +192,10 @@ public:
     void didAllowPrivateTokenUsageByThirdPartyForTesting(bool wasAllowed, URL&& resourceURL);
 
     bool isBlobRegistryPartitioningEnabled() const;
-    bool isOptInCookiePartitioningEnabled() const;
-    void propagateSettingUpdates();
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    bool computeIsOptInCookiePartitioningEnabled() const;
+#endif
+    void NODELETE propagateSettingUpdates();
 
 #if PLATFORM(IOS_FAMILY)
     String resolvedCookieStorageDirectory();
@@ -269,6 +273,7 @@ public:
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(CompletionHandler<void()>&&);
     void deleteCookiesForTesting(const URL&, bool includeHttpOnlyCookies, CompletionHandler<void()>&&);
+    void hasLocalStorageOrCookies(const URL&, CompletionHandler<void(bool)>&&) const;
     void hasLocalStorageForTesting(const URL&, CompletionHandler<void(bool)>&&) const;
     void hasIsolatedSessionForTesting(const URL&, CompletionHandler<void(bool)>&&) const;
     void setResourceLoadStatisticsShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
@@ -300,11 +305,9 @@ public:
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
     DeviceIdHashSaltStorage& ensureDeviceIdHashSaltStorage();
-    Ref<DeviceIdHashSaltStorage> ensureProtectedDeviceIdHashSaltStorage();
 
 #if ENABLE(ENCRYPTED_MEDIA)
     DeviceIdHashSaltStorage& ensureMediaKeysHashSaltStorage();
-    Ref<DeviceIdHashSaltStorage> ensureProtectedMediaKeysHashSaltStorage();
 #endif
 
     WebsiteDataStoreParameters parameters();
@@ -334,7 +337,7 @@ public:
     void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy);
 #endif
 
-    static void allowWebsiteDataRecordsForAllOrigins();
+    static void NODELETE allowWebsiteDataRecordsForAllOrigins();
 
 #if HAVE(SEC_KEY_PROXY)
     void addSecKeyProxyStore(Ref<SecKeyProxyStore>&&);
@@ -342,19 +345,16 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
-    Ref<AuthenticatorManager> protectedAuthenticatorManager();
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
     VirtualAuthenticatorManager& virtualAuthenticatorManager();
-    Ref<VirtualAuthenticatorManager> protectedVirtualAuthenticatorManager();
 #endif
 
     const WebsiteDataStoreConfiguration& configuration() const { return m_configuration.get(); }
 
     WebsiteDataStoreClient& client() { return m_client.get(); }
-    void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }
+    void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTF::move(client); }
 
     API::HTTPCookieStore& cookieStore();
-    Ref<API::HTTPCookieStore> protectedCookieStore();
     WebCore::LocalWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
 
     void renameOriginInWebsiteData(WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
@@ -364,7 +364,6 @@ public:
 
 #if ENABLE(DEVICE_ORIENTATION)
     WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
-    Ref<WebDeviceOrientationAndMotionAccessController> protectedDeviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
 #endif
 
 #if HAVE(APP_SSO)
@@ -378,6 +377,7 @@ public:
     static String defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier);
     static String defaultCookieStorageFile(const String& baseDataDirectory = nullString());
     static String defaultSearchFieldHistoryDirectory(const String& baseDataDirectory = nullString());
+    static String defaultEnhancedSecurityDirectory(const String& baseDataDirectory = nullString());
 #endif
     static String defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory = nullString());
     static String defaultLocalStorageDirectory(const String& baseDataDirectory = nullString());
@@ -525,6 +525,9 @@ public:
     void clearStorageAccessForTesting(CompletionHandler<void()>&&);
     void isStorageSuspendedForTesting(CompletionHandler<void(bool)>&&) const;
 
+    void trackEnhancedSecurityForDomain(WebCore::RegistrableDomain&&, EnhancedSecurity);
+    void fetchEnhancedSecurityOnlyDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -586,6 +589,14 @@ private:
     void removeDataInNetworkProcess(WebsiteDataStore::ProcessAccessType, OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
 
     HashSet<WebCore::RegistrableDomain> platformAdditionalDomainsWithUserInteraction() const;
+
+#if PLATFORM(COCOA)
+    EnhancedSecuritySitesHolder& enhancedSecuritySitesHolder();
+#endif
+
+    void removeEnhancedSecuritySites(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
+    void removeAllEnhancedSecuritySites(CompletionHandler<void()>&&);
+    void fetchAllEnhancedSecuritySites(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
 
     const PAL::SessionID m_sessionID;
 
@@ -667,10 +678,14 @@ private:
     bool m_inspectionForServiceWorkersAllowed { true };
     bool m_isBlobRegistryPartitioningEnabled { false };
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-    bool m_isOptInCookiePartitioningEnabled { false };
+    std::optional<bool> m_cachedIsOptInCookiePartitioningEnabled;
 #endif
 
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypesForTesting;
+
+#if PLATFORM(COCOA)
+    const RefPtr<EnhancedSecuritySitesHolder> m_enhancedSecuritySites;
+#endif
 
 #if HAVE(NW_PROXY_CONFIG)
     std::optional<Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>> m_proxyConfigData;

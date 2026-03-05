@@ -309,7 +309,7 @@ ArgumentValueList computeCCallArguments(Procedure& procedure, B3::BasicBlock* bl
         marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, type);
     }
 
-    return ArgumentValueList { procedure, block, types, WTFMove(underlyingArgs), WTFMove(argUnderlyingCounts) };
+    return ArgumentValueList { procedure, block, types, WTF::move(underlyingArgs), WTF::move(argUnderlyingCounts) };
 }
 
 } } } // namespace JSC::B3::Air

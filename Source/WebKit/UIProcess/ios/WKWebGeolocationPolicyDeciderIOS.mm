@@ -30,17 +30,20 @@
 
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
+#import "WKWebViewInternal.h"
 #import "WKWebViewPrivateForTesting.h"
+#import "WebPageProxy.h"
 #import <CoreLocation/CoreLocation.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SecurityOrigin.h>
 #import <pal/spi/cocoa/NSFileManagerSPI.h>
 #import <wtf/Deque.h>
-#import <wtf/OSObjectPtr.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cf/NotificationCenterCF.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/darwin/DispatchOSObject.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 
 SOFT_LINK_FRAMEWORK(CoreLocation)
@@ -117,10 +120,10 @@ struct PermissionRequest {
 
 + (instancetype)sharedPolicyDecider
 {
-    static WKWebGeolocationPolicyDecider *policyDecider = nil;
-    if (!policyDecider)
-        policyDecider = [[WKWebGeolocationPolicyDecider alloc] init];
-    return policyDecider;
+    static NeverDestroyed<RetainPtr<WKWebGeolocationPolicyDecider>> policyDecider;
+    if (!policyDecider.get())
+        policyDecider.get() = adoptNS([[WKWebGeolocationPolicyDecider alloc] init]);
+    return policyDecider.get().get();
 }
 
 - (id)init
@@ -131,21 +134,21 @@ struct PermissionRequest {
 
     _diskDispatchQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", DISPATCH_QUEUE_SERIAL));
 
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, clearGeolocationCache, CLAppResetChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, clearGeolocationCache, protect(CLAppResetChangedNotification), NULL, CFNotificationSuspensionBehaviorCoalesce);
 
     return self;
 }
 
 - (void)dealloc
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, CLAppResetChangedNotification, NULL);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, protect(CLAppResetChangedNotification), NULL);
     [super dealloc];
 }
 
 - (void)decidePolicyForGeolocationRequestFromOrigin:(const WebCore::SecurityOriginData&)securityOrigin requestingURL:(NSURL *)requestingURL view:(WKWebView *)view listener:(id<WKWebAllowDenyPolicyListener>)listener
 {
     auto permissionRequest = PermissionRequest::create(securityOrigin, requestingURL, view, listener);
-    _challenges.append(WTFMove(permissionRequest));
+    _challenges.append(WTF::move(permissionRequest));
     [self _executeNextChallenge];
 }
 
@@ -172,33 +175,36 @@ struct PermissionRequest {
             return;
         }
 
-        NSString *applicationName = appDisplayName();
+        RetainPtr applicationName = appDisplayName();
         RetainPtr<NSString> message;
 
     IGNORE_WARNINGS_BEGIN("format-nonliteral")
         RetainPtr title = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("“%@” would like to use your current location.", "Prompt for a webpage to request location access. The parameter is the domain for the webpage.").createNSString().get(), _activeChallenge->token.get()]);
         if (appHasPreciseLocationPermission())
-            message = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("This website will use your precise location because “%@” currently has access to your precise location.", "Message informing the user that the website will have precise location data").createNSString().get(), applicationName]);
+            message = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("This website will use your precise location because “%@” currently has access to your precise location.", "Message informing the user that the website will have precise location data").createNSString().get(), applicationName.get()]);
         else
-            message = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("This website will use your approximate location because “%@” currently has access to your approximate location.", "Message informing the user that the website will have approximate location data").createNSString().get(), applicationName]);
+            message = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("This website will use your approximate location because “%@” currently has access to your approximate location.", "Message informing the user that the website will have approximate location data").createNSString().get(), applicationName.get()]);
     IGNORE_WARNINGS_END
 
         RetainPtr allowActionTitle = WEB_UI_STRING("Allow", "Action authorizing a webpage to access the user’s location.").createNSString();
         RetainPtr denyActionTitle = WEB_UI_STRING_KEY("Don’t Allow", "Don’t Allow (website location dialog)", "Action denying a webpage access to the user’s location.").createNSString();
 
         RetainPtr alert = WebKit::createUIAlertController(title.get(), message.get());
-        UIAlertAction *denyAction = [UIAlertAction actionWithTitle:denyActionTitle.get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKWebGeolocationPolicyDecider>(self)](UIAlertAction *) mutable {
+        RetainPtr denyAction = [UIAlertAction actionWithTitle:denyActionTitle.get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKWebGeolocationPolicyDecider>(self)](UIAlertAction *) mutable {
             if (auto strongSelf = weakSelf.get())
                 [strongSelf _finishActiveChallenge:NO];
         }];
-        UIAlertAction *allowAction = [UIAlertAction actionWithTitle:allowActionTitle.get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKWebGeolocationPolicyDecider>(self)](UIAlertAction *) mutable {
+        RetainPtr allowAction = [UIAlertAction actionWithTitle:allowActionTitle.get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKWebGeolocationPolicyDecider>(self)](UIAlertAction *) mutable {
             if (auto strongSelf = weakSelf.get())
                 [strongSelf _finishActiveChallenge:YES];
         }];
 
-        [alert addAction:denyAction];
-        [alert addAction:allowAction];
+        [alert addAction:denyAction.get()];
+        [alert addAction:allowAction.get()];
 
+#if PLATFORM(VISION)
+        [_activeChallenge->view _page]->dispatchWillPresentModalUI();
+#endif
         [[_activeChallenge->view _wk_viewControllerForFullScreenPresentation] presentViewController:alert.get() animated:YES completion:nil];
     }];
 }
@@ -238,7 +244,7 @@ struct PermissionRequest {
 {
     static NSString *sSiteFile = nil;
     if (!sSiteFile)
-        sSiteFile = [[self _siteFileInContainerDirectory:NSHomeDirectory() creatingIntermediateDirectoriesIfNecessary:YES] retain];
+        sSiteFile = [[self _siteFileInContainerDirectory:protect(NSHomeDirectory()).get() creatingIntermediateDirectoriesIfNecessary:YES] retain];
     return sSiteFile;
 }
 

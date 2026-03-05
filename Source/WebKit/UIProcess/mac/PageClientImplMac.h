@@ -56,7 +56,7 @@ class PageClientImpl final : public PageClientImplCocoa
     , public WebFullScreenManagerProxyClient
 #endif
     {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PageClientImpl);
+    WTF_MAKE_TZONE_ALLOCATED(PageClientImpl);
 #if ENABLE(FULLSCREEN_API)
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageClientImpl);
 #endif
@@ -65,7 +65,7 @@ public:
     virtual ~PageClientImpl();
 
     // FIXME: Eventually WebViewImpl should become the PageClient.
-    void setImpl(WebViewImpl&);
+    void NODELETE setImpl(WebViewImpl&);
 
     void viewWillMoveToAnotherWindow();
 
@@ -73,7 +73,7 @@ private:
     // PageClient
     Ref<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) override;
     void setViewNeedsDisplay(const WebCore::Region&) override;
-    void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated) override;
+    void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated, WebCore::InterruptScrollAnimation) override;
     WebCore::FloatPoint viewScrollPosition() override;
 
     WebCore::IntSize viewSize() override;
@@ -82,6 +82,7 @@ private:
     bool isActiveViewVisible() override;
     bool isMainViewVisible() override;
     bool canTakeForegroundAssertions() override { return true; };
+    void scrollingCoordinatorWasCreated() override;
     bool isViewVisibleOrOccluded() override;
     bool isViewInWindow() override;
     bool isVisuallyIdle() override;
@@ -108,7 +109,7 @@ private:
     bool canUndoRedo(UndoOrRedo) override;
     void executeUndoRedo(UndoOrRedo) override;
     bool executeSavedCommandBySelector(const String& selector) override;
-    void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image, const std::optional<WebCore::NodeIdentifier>&) override;
+    void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image, const std::optional<WebCore::NodeIdentifier>&, const std::optional<WebCore::FrameIdentifier>& = std::nullopt) override;
     void setPromisedDataForImage(const String& pasteboardName, Ref<WebCore::FragmentedSharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title,
         const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String& originIdentifier) override;
     void updateSecureInputState() override;
@@ -124,7 +125,7 @@ private:
 
     bool showShareSheet(WebCore::ShareDataWithParsedURL&&, WTF::CompletionHandler<void(bool)>&&) override;
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#if ENABLE(WEB_AUTHN)
     void showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&) override;
     void dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&&) override;
 #endif
@@ -206,6 +207,8 @@ private:
 
     void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) override;
 
+    void didCommitMainFrameData(const MainFrameData&) override;
+
     void registerInsertionUndoGrouping() override;
 
     void createPDFHUD(PDFPluginIdentifier, WebCore::FrameIdentifier, const WebCore::IntRect&) override;
@@ -214,7 +217,7 @@ private:
     void removeAllPDFHUDs() override;
 
 #if ENABLE(FULLSCREEN_API)
-    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() final;
+    WebFullScreenManagerProxyClient& NODELETE fullScreenManagerProxyClient() final;
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -330,7 +333,7 @@ private:
     void showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&&) final;
 #endif
 
-    CheckedPtr<WebViewImpl> checkedImpl() const { return m_impl.get(); }
+    void positionInformationDidChange(const InteractionInformationAtPosition&) override;
 
     bool isViewVisible(NSView *, NSWindow *);
 

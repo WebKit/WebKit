@@ -32,6 +32,8 @@ namespace webrtc {
 
 // C++ version of: https://www.w3.org/TR/webrtc/#idl-def-rtcdatachannelinit
 // TODO(deadbeef): Use std::optional for the "-1 if unset" things.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 struct DataChannelInit {
   // Deprecated. Reliability is assumed, and channel will be unreliable if
   // maxRetransmitTime or MaxRetransmits is set.
@@ -69,6 +71,7 @@ struct DataChannelInit {
   // https://w3c.github.io/webrtc-priority/#new-rtcdatachannelinit-member
   std::optional<PriorityValue> priority;
 };
+#pragma clang diagnostic pop
 
 // At the JavaScript level, data can be passed in as a string or a blob, so
 // this structure's `binary` flag tells whether the data should be interpreted

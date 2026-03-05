@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OESVertexArrayObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OESVertexArrayObject);
 
 OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContext& context)
     : WebGLExtension(context, WebGLExtensionName::OESVertexArrayObject)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::OES_vertex_array_object);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::OES_vertex_array_object);
 }
 
 OESVertexArrayObject::~OESVertexArrayObject() = default;
@@ -49,10 +49,10 @@ bool OESVertexArrayObject::supported(GraphicsContextGL& context)
     return context.supportsExtension(GCGLExtension::OES_vertex_array_object);
 }
 
-RefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
+Ref<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
 {
     if (isContextLost())
-        return nullptr;
+        return WebGLVertexArrayObjectOES::createLost();
     return WebGLVertexArrayObjectOES::createUser(context().get());
 }
 
@@ -78,7 +78,7 @@ void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* array
     if (!arrayObject->isDefaultObject() && arrayObject == context->m_boundVertexArrayObject)
         context->setBoundVertexArrayObject(locker, nullptr);
 
-    arrayObject->deleteObject(locker, context->graphicsContextGL().get());
+    arrayObject->deleteObject(locker, protect(context->graphicsContextGL()));
 }
 
 GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
@@ -88,7 +88,7 @@ GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* ar
     Ref context = this->context();
     if (!context->validateIsWebGLObject(arrayObject))
         return false;
-    return context->graphicsContextGL()->isVertexArray(arrayObject->object());
+    return protect(context->graphicsContextGL())->isVertexArray(arrayObject->object());
 }
 
 void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)

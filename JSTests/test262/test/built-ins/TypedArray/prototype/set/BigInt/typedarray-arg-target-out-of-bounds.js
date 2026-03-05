@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.set-typedarray-offset
 description: Error when target TypedArray fails boundary checks
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray, resizable-arraybuffer]
 ---*/
 
@@ -40,4 +40,4 @@ testWithBigIntTypedArrayConstructors(TA => {
     target.set(source, 0);
     throw new Test262Error('The `set` operation completed successfully.');
   });
-});
+}, null, ["passthrough"]);

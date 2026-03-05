@@ -53,11 +53,11 @@ RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 
 void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<WebCore::WebGPU::CompilationInfo>&&)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), [callback = WTFMove(callback)](auto messages) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), [callback = WTF::move(callback)](auto messages) mutable {
         auto backingMessages = messages.map([](CompilationMessage compilationMessage) {
-            return WebCore::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
+            return WebCore::WebGPU::CompilationMessage::create(WTF::move(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
         });
-        callback(WebCore::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));
+        callback(WebCore::WebGPU::CompilationInfo::create(WTF::move(backingMessages)));
     });
 
     UNUSED_PARAM(sendResult);

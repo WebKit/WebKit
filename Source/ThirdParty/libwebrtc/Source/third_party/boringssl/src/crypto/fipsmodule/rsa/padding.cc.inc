@@ -166,12 +166,12 @@ static const uint8_t kPSSZeroes[] = {0, 0, 0, 0, 0, 0, 0, 0};
 int RSA_verify_PKCS1_PSS_mgf1(const RSA *rsa, const uint8_t *mHash,
                               const EVP_MD *Hash, const EVP_MD *mgf1Hash,
                               const uint8_t *EM, int sLen) {
-  if (mgf1Hash == NULL) {
+  if (mgf1Hash == nullptr) {
     mgf1Hash = Hash;
   }
 
   int ret = 0;
-  uint8_t *DB = NULL;
+  uint8_t *DB = nullptr;
   const uint8_t *H;
   bssl::ScopedEVP_MD_CTX ctx;
   unsigned MSBits;
@@ -242,11 +242,11 @@ int RSA_verify_PKCS1_PSS_mgf1(const RSA *rsa, const uint8_t *mHash,
     goto err;
   }
   uint8_t H_[EVP_MAX_MD_SIZE];
-  if (!EVP_DigestInit_ex(ctx.get(), Hash, NULL) ||
+  if (!EVP_DigestInit_ex(ctx.get(), Hash, nullptr) ||
       !EVP_DigestUpdate(ctx.get(), kPSSZeroes, sizeof(kPSSZeroes)) ||
       !EVP_DigestUpdate(ctx.get(), mHash, hLen) ||
       !EVP_DigestUpdate(ctx.get(), DB + salt_start, maskedDBLen - salt_start) ||
-      !EVP_DigestFinal_ex(ctx.get(), H_, NULL)) {
+      !EVP_DigestFinal_ex(ctx.get(), H_, nullptr)) {
     goto err;
   }
   if (OPENSSL_memcmp(H_, H, hLen) != 0) {
@@ -270,9 +270,9 @@ int RSA_padding_add_PKCS1_PSS_mgf1(const RSA *rsa, unsigned char *EM,
   bssl::ScopedEVP_MD_CTX ctx;
   size_t maskedDBLen, MSBits, emLen;
   size_t hLen;
-  unsigned char *H, *salt = NULL, *p;
+  unsigned char *H, *salt = nullptr, *p;
 
-  if (mgf1Hash == NULL) {
+  if (mgf1Hash == nullptr) {
     mgf1Hash = Hash;
   }
 
@@ -326,11 +326,11 @@ int RSA_padding_add_PKCS1_PSS_mgf1(const RSA *rsa, unsigned char *EM,
   maskedDBLen = emLen - hLen - 1;
   H = EM + maskedDBLen;
 
-  if (!EVP_DigestInit_ex(ctx.get(), Hash, NULL) ||
+  if (!EVP_DigestInit_ex(ctx.get(), Hash, nullptr) ||
       !EVP_DigestUpdate(ctx.get(), kPSSZeroes, sizeof(kPSSZeroes)) ||
       !EVP_DigestUpdate(ctx.get(), mHash, hLen) ||
       !EVP_DigestUpdate(ctx.get(), salt, sLen) ||
-      !EVP_DigestFinal_ex(ctx.get(), H, NULL)) {
+      !EVP_DigestFinal_ex(ctx.get(), H, nullptr)) {
     goto err;
   }
 

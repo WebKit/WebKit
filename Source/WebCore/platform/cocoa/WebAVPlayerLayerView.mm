@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
 #import "WebAVPlayerLayer.h"
+#import <WebCore/VideoPresentationModel.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
 
@@ -148,9 +149,9 @@ static WebAVPictureInPicturePlayerLayerView *WebAVPlayerLayerView_pictureInPictu
     if (WebAVPictureInPicturePlayerLayerView *pipView = [playerLayerView valueForKey:pictureInPicturePlayerLayerViewKey])
         return pipView;
 
-    auto pipView = adoptNS([allocWebAVPictureInPicturePlayerLayerViewInstance() initWithFrame:CGRectZero]);
+    RetainPtr pipView = adoptNS([allocWebAVPictureInPicturePlayerLayerViewInstance() initWithFrame:CGRectZero]);
     [playerLayerView setValue:pipView.get() forKey:pictureInPicturePlayerLayerViewKey];
-    return pipView.unsafeGet();
+    return pipView.autorelease();
 }
 #endif // HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
 
@@ -207,10 +208,26 @@ static Class WebAVPictureInPicturePlayerLayerView_layerClass(id, SEL)
     return [WebAVPlayerLayer class];
 }
 
+static void WebAVPictureInPicturePlayerLayerView_dealloc(id aSelf, SEL)
+{
+    WebAVPictureInPicturePlayerLayerView *pipView = aSelf;
+    WebAVPlayerLayer *pipPlayerLayer = dynamic_objc_cast<WebAVPlayerLayer>([pipView layer]);
+
+    // Clear layer references before [super dealloc] to avoid crashes
+    // during view hierarchy teardown.
+    [pipPlayerLayer setVideoSublayer:nil];
+    [pipPlayerLayer setCaptionsLayer:nil];
+
+    objc_super superClass { pipView, PAL::getUIViewClassSingleton() };
+    auto super_dealloc = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
+    super_dealloc(&superClass, @selector(dealloc));
+}
+
 WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstance()
 {
     static Class theClass = [] {
         auto theClass = objc_allocateClassPair(PAL::getUIViewClassSingleton(), "WebAVPictureInPicturePlayerLayerView", 0);
+        class_addMethod(theClass, @selector(dealloc), (IMP)WebAVPictureInPicturePlayerLayerView_dealloc, "v@:");
         objc_registerClassPair(theClass);
         Class metaClass = objc_getMetaClass("WebAVPictureInPicturePlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPictureInPicturePlayerLayerView_layerClass, "@@:");

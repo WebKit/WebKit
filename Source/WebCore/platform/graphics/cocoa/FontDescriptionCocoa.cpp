@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "FontCascadeDescription.h"
-
+#include "Logging.h"
 #include "SystemFontDatabaseCoreText.h"
 
 namespace WebCore {
@@ -80,19 +80,41 @@ AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, con
     if (script == USCRIPT_COMMON)
         return nullAtom();
 
+    String result;
     // FIXME: Use the system font database to handle standardFamily
     if (familyName == serifFamily)
-        return AtomString { SystemFontDatabaseCoreText::forCurrentThread().serifFamily(locale.string()) };
-    if (familyName == sansSerifFamily)
-        return AtomString { SystemFontDatabaseCoreText::forCurrentThread().sansSerifFamily(locale.string()) };
-    if (familyName == cursiveFamily)
-        return AtomString { SystemFontDatabaseCoreText::forCurrentThread().cursiveFamily(locale.string()) };
-    if (familyName == fantasyFamily)
-        return AtomString { SystemFontDatabaseCoreText::forCurrentThread().fantasyFamily(locale.string()) };
-    if (familyName == monospaceFamily)
-        return AtomString { SystemFontDatabaseCoreText::forCurrentThread().monospaceFamily(locale.string()) };
+        result = SystemFontDatabaseCoreText::forCurrentThread().serifFamily(locale.string());
+    else if (familyName == sansSerifFamily)
+        result = SystemFontDatabaseCoreText::forCurrentThread().sansSerifFamily(locale.string());
+    else if (familyName == cursiveFamily)
+        result = SystemFontDatabaseCoreText::forCurrentThread().cursiveFamily(locale.string());
+    else if (familyName == fantasyFamily)
+        result = SystemFontDatabaseCoreText::forCurrentThread().fantasyFamily(locale.string());
+    else if (familyName == monospaceFamily)
+        result = SystemFontDatabaseCoreText::forCurrentThread().monospaceFamily(locale.string());
+    else
+        return nullAtom();
 
-    return nullAtom();
+    // Per CTFont.h: "Any font name beginning with a '.' is reserved for the system" and should be
+    // created using CTFontCreateUIFontForLanguage() or similar APIs, not through standard font lookup.
+    // CoreText sometimes returns these system-internal font names (e.g., ".Times Fallback") when
+    // resolving CSS generic families for certain locales (rdar://139338599). Since WebKit's font
+    // lookup cannot properly handle these reserved names, we reject them and fall back to
+    // settings-based resolution instead.
+    auto isValidFontName = [](const String& fontName) {
+        if (fontName.isEmpty())
+            return false;
+        if (fontName.startsWith('.')) {
+            LOG(Fonts, "CoreText returned reserved font name '%s'; using settings-based font resolution instead", fontName.utf8().data());
+            return false;
+        }
+        return true;
+    };
+
+    if (!isValidFontName(result))
+        return nullAtom();
+
+    return AtomString { result };
 }
 
 }

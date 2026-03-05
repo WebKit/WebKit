@@ -55,13 +55,14 @@ class RTC_EXPORT DtlsTransportInformation {
       std::optional<int> srtp_cipher_suite,
       std::unique_ptr<SSLCertChain> remote_ssl_certificates,
       std::optional<int> ssl_group_id);
-  ABSL_DEPRECATED("Use version with role parameter")
-  DtlsTransportInformation(
-      DtlsTransportState state,
-      std::optional<int> tls_version,
-      std::optional<int> ssl_cipher_suite,
-      std::optional<int> srtp_cipher_suite,
-      std::unique_ptr<SSLCertChain> remote_ssl_certificates);
+  [[deprecated("Use version with role parameter")]] ABSL_DEPRECATED(
+      "Use version with role parameter")
+      DtlsTransportInformation(
+          DtlsTransportState state,
+          std::optional<int> tls_version,
+          std::optional<int> ssl_cipher_suite,
+          std::optional<int> srtp_cipher_suite,
+          std::unique_ptr<SSLCertChain> remote_ssl_certificates);
 
   // Copy and assign
   DtlsTransportInformation(const DtlsTransportInformation& c);

@@ -47,11 +47,11 @@ using ArgumentMap = HashMap<String, Function<JSC::JSValue(JSC::JSGlobalObject&)>
 
 struct RunJavaScriptParameters {
     RunJavaScriptParameters(String&& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
-        : source(WTFMove(source))
+        : source(WTF::move(source))
         , taintedness(taintedness)
-        , sourceURL(WTFMove(sourceURL))
+        , sourceURL(WTF::move(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction)
-        , arguments(WTFMove(arguments))
+        , arguments(WTF::move(arguments))
         , forceUserGesture(forceUserGesture)
         , removeTransientActivation(removeTransientActivation)
     {
@@ -60,20 +60,20 @@ struct RunJavaScriptParameters {
     RunJavaScriptParameters(const String& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
         : source(source)
         , taintedness(taintedness)
-        , sourceURL(WTFMove(sourceURL))
+        , sourceURL(WTF::move(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction ? RunAsAsyncFunction::Yes : RunAsAsyncFunction::No)
-        , arguments(WTFMove(arguments))
+        , arguments(WTF::move(arguments))
         , forceUserGesture(forceUserGesture ? ForceUserGesture::Yes : ForceUserGesture::No)
         , removeTransientActivation(removeTransientActivation)
     {
     }
 
     RunJavaScriptParameters(String&& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
-        : source(WTFMove(source))
+        : source(WTF::move(source))
         , taintedness(taintedness)
-        , sourceURL(WTFMove(sourceURL))
+        , sourceURL(WTF::move(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction ? RunAsAsyncFunction::Yes : RunAsAsyncFunction::No)
-        , arguments(WTFMove(arguments))
+        , arguments(WTF::move(arguments))
         , forceUserGesture(forceUserGesture ? ForceUserGesture::Yes : ForceUserGesture::No)
         , removeTransientActivation(removeTransientActivation)
     {

@@ -66,7 +66,7 @@ bool isMainRunLoop()
 
 void callOnMainRunLoop(Function<void()>&& function)
 {
-    RunLoop::mainSingleton().dispatch(WTFMove(function));
+    RunLoop::mainSingleton().dispatch(WTF::move(function));
 }
 
 void ensureOnMainRunLoop(Function<void()>&& function)
@@ -74,19 +74,19 @@ void ensureOnMainRunLoop(Function<void()>&& function)
     if (RunLoop::isMain())
         function();
     else
-        RunLoop::mainSingleton().dispatch(WTFMove(function));
+        RunLoop::mainSingleton().dispatch(WTF::move(function));
 }
 
 void callOnMainThread(Function<void()>&& function)
 {
 #if USE(WEB_THREAD)
-    if (auto* webRunLoop = RunLoop::webIfExists()) {
-        webRunLoop->dispatch(WTFMove(function));
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* webRunLoop = RunLoop::webIfExists()) { // WebRunLoop is a singleton.
+        webRunLoop->dispatch(WTF::move(function));
         return;
     }
 #endif
 
-    RunLoop::mainSingleton().dispatch(WTFMove(function));
+    RunLoop::mainSingleton().dispatch(WTF::move(function));
 }
 
 void ensureOnMainThread(Function<void()>&& function)
@@ -94,7 +94,7 @@ void ensureOnMainThread(Function<void()>&& function)
     if (isMainThread())
         function();
     else
-        callOnMainThread(WTFMove(function));
+        callOnMainThread(WTF::move(function));
 }
 
 bool isMainThreadOrGCThread()
@@ -120,29 +120,29 @@ static void callOnMainAndWait(NOESCAPE Function<void()>&& function)
     }
 
     BinarySemaphore semaphore;
-    auto functionImpl = [&semaphore, function = WTFMove(function)] {
+    auto functionImpl = [&semaphore, function = WTF::move(function)] {
         function();
         semaphore.signal();
     };
 
     switch (mainStyle) {
     case MainStyle::Thread:
-        callOnMainThread(WTFMove(functionImpl));
+        callOnMainThread(WTF::move(functionImpl));
         break;
     case MainStyle::RunLoop:
-        callOnMainRunLoop(WTFMove(functionImpl));
+        callOnMainRunLoop(WTF::move(functionImpl));
     };
     semaphore.wait();
 }
 
 void callOnMainRunLoopAndWait(NOESCAPE Function<void()>&& function)
 {
-    callOnMainAndWait<MainStyle::RunLoop>(WTFMove(function));
+    callOnMainAndWait<MainStyle::RunLoop>(WTF::move(function));
 }
 
 void callOnMainThreadAndWait(NOESCAPE Function<void()>&& function)
 {
-    callOnMainAndWait<MainStyle::Thread>(WTFMove(function));
+    callOnMainAndWait<MainStyle::Thread>(WTF::move(function));
 }
 
 } // namespace WTF

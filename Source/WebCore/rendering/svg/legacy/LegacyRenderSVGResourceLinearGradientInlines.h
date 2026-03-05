@@ -36,9 +36,4 @@ inline SVGLinearGradientElement& LegacyRenderSVGResourceLinearGradient::linearGr
     return downcast<SVGLinearGradientElement>(LegacyRenderSVGResourceGradient::gradientElement());
 }
 
-inline Ref<SVGLinearGradientElement> LegacyRenderSVGResourceLinearGradient::protectedLinearGradientElement() const
-{
-    return linearGradientElement();
-}
-
 } // namespace WebCore

@@ -66,7 +66,7 @@ public:
     void didReceiveHeaderFromMultipart(Vector<String>&& headers) final
     {
         for (auto header : headers)
-            m_headers.append(WTFMove(header));
+            m_headers.append(WTF::move(header));
     }
 
     void didReceiveDataFromMultipart(std::span<const uint8_t> receivedData) final

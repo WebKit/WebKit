@@ -55,7 +55,9 @@ WebKitDOMKeyboardEvent* wrapKeyboardEvent(WebCore::KeyboardEvent* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMKeyboardEvent, webkit_dom_keyboard_event, WEBKIT_DOM_TYPE_UI_EVENT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_KEYBOARD_EVENT_PROP_0,

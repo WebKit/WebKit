@@ -65,7 +65,9 @@ WebKitDOMCSSValue* wrapCSSValue(WebCore::DeprecatedCSSOMValue* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMCSSValue, webkit_dom_css_value, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_CSS_VALUE_PROP_0,

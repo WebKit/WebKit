@@ -85,8 +85,8 @@ public:
     static double remainingRunTimeInSeconds(ProcessID);
     virtual ~ProcessAssertion();
 
-    void setPrepareForInvalidationHandler(Function<void()>&& handler) { m_prepareForInvalidationHandler = WTFMove(handler); }
-    void setInvalidationHandler(Function<void()>&& handler) { m_invalidationHandler = WTFMove(handler); }
+    void setPrepareForInvalidationHandler(Function<void()>&& handler) { m_prepareForInvalidationHandler = WTF::move(handler); }
+    void setInvalidationHandler(Function<void()>&& handler) { m_invalidationHandler = WTF::move(handler); }
 
     ProcessAssertionType type() const { return m_assertionType; }
     ProcessID pid() const { return m_pid; }
@@ -149,7 +149,7 @@ public:
 
     void uiAssertionWillExpireImminently();
 
-    void setUIAssertionExpirationHandler(Function<void()>&& handler) { m_uiAssertionExpirationHandler = WTFMove(handler); }
+    void setUIAssertionExpirationHandler(Function<void()>&& handler) { m_uiAssertionExpirationHandler = WTF::move(handler); }
 #if PLATFORM(IOS_FAMILY)
     static void setProcessStateMonitorEnabled(bool);
 #endif

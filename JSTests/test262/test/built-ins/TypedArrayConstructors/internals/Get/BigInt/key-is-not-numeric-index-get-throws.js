@@ -19,12 +19,12 @@ info: |
   ...
   8. Return ? Call(getter, Receiver).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(1);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(1));
 
   Object.defineProperty(sample, "test262", {
     get: function() {
@@ -35,4 +35,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     sample.test262;
   });
-});
+}, null, ["passthrough"]);

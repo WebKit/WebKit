@@ -81,6 +81,9 @@ enum class ApplePayFeature : uint8_t {
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
     PaymentRequestDisbursements,
 #endif
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    PaymentRequestDelegation,
+#endif
 };
 
 } // namespace WebCore

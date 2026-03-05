@@ -47,10 +47,12 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, ReceiveExtensionReturnsExtension) {
   constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9020),
-                                           std::nullopt};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9020),
+      .estimated_capture_clock_offset = std::nullopt};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -91,8 +93,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, InterpolateLaterPacketArrivingLater) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -127,8 +130,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest,
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 - 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 - 2560;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -163,8 +167,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest,
   constexpr uint32_t kRtpTimestamp0 = uint32_t{0} - 80;
   constexpr uint32_t kRtpTimestamp1 = 1280 - 80;
   constexpr uint32_t kRtpTimestamp2 = 2560 - 80;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -199,8 +204,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest,
   constexpr uint32_t kRtpTimestamp0 = 799;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 - 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 - 2560;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -234,8 +240,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, SkipInterpolateIfTooLate) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp1 + 1280;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -265,8 +272,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, SkipInterpolateIfSourceChanged) {
   constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -288,8 +296,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest,
   constexpr int kRtpClockFrequency1 = 32'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 640;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -309,8 +318,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest,
   constexpr uint32_t kSource = 1337;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 640;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -333,8 +343,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, SkipInterpolateIsSticky) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp1 + 1280;
-  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
-                                          Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -372,7 +383,8 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, MetricsAreUpdated) {
   clock.AdvanceTimeMilliseconds(10);
   interpolator.OnReceivePacket(
       kSource, kRtpTimestamp0 + 10, kFrequency,
-      AbsoluteCaptureTime{Int64MsToUQ32x32(5000), std::nullopt});
+      AbsoluteCaptureTime{.absolute_capture_timestamp = Int64MsToUQ32x32(5000),
+                          .estimated_capture_clock_offset = std::nullopt});
   EXPECT_METRIC_EQ(metrics::NumSamples("WebRTC.Call.AbsCapture.ExtensionWait"),
                    1);
 
@@ -380,7 +392,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, MetricsAreUpdated) {
   clock.AdvanceTimeMilliseconds(10);
   interpolator.OnReceivePacket(
       kSource, kRtpTimestamp0 + 20, kFrequency,
-      AbsoluteCaptureTime{Int64MsToUQ32x32(20), Int64MsToUQ32x32(0)});
+      AbsoluteCaptureTime{
+          .absolute_capture_timestamp = Int64MsToUQ32x32(20),
+          .estimated_capture_clock_offset = Int64MsToUQ32x32(0)});
   EXPECT_METRIC_EQ(metrics::NumSamples("WebRTC.Call.AbsCapture.Delta"), 2);
   EXPECT_METRIC_EQ(metrics::NumSamples("WebRTC.Call.AbsCapture.DeltaDeviation"),
                    1);
@@ -399,8 +413,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, DeltaRecordedCorrectly) {
   interpolator.OnReceivePacket(
       kSource, kRtpTimestamp0 + 10, kFrequency,
       AbsoluteCaptureTime{
-          uint64_t{clock.ConvertTimestampToNtpTime(Timestamp::Millis(5))},
-          std::nullopt});
+          .absolute_capture_timestamp =
+              uint64_t{clock.ConvertTimestampToNtpTime(Timestamp::Millis(5))},
+          .estimated_capture_clock_offset = std::nullopt});
 
   EXPECT_METRIC_EQ(metrics::NumSamples("WebRTC.Call.AbsCapture.ExtensionWait"),
                    1);
@@ -412,8 +427,9 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, DeltaRecordedCorrectly) {
   interpolator.OnReceivePacket(
       kSource, kRtpTimestamp0 + 15, kFrequency,
       AbsoluteCaptureTime{
-          uint64_t{clock.ConvertTimestampToNtpTime(Timestamp::Millis(16))},
-          std::nullopt});
+          .absolute_capture_timestamp =
+              uint64_t{clock.ConvertTimestampToNtpTime(Timestamp::Millis(16))},
+          .estimated_capture_clock_offset = std::nullopt});
 
   sample = metrics::MinSample("WebRTC.Call.AbsCapture.Delta");
   // Since we capture with abs(), this should also be recorded as 6 ms

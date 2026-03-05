@@ -28,7 +28,7 @@ info: |
       i. Let R be the empty String.
     d. Else,
       i. Let R be ? ToString(? Invoke(nextElement, "toLocaleString")).
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -55,4 +55,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   calls = 0;
   assert.sameValue(sample.toLocaleString(), expected, "returns expected value");
   assert.sameValue(calls, 2, "toString called once for each item");
-});
+}, null, ["passthrough"]);

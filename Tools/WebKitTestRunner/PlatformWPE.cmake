@@ -33,12 +33,15 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 
 list(APPEND WebKitTestRunner_PRIVATE_LIBRARIES
     GLib::GLib
-    WebKit::WPEToolingBackends
 )
 
 list(APPEND TestRunnerInjectedBundle_LIBRARIES
     GLib::GLib
 )
+
+if (ENABLE_WPE_LEGACY_API)
+    list(APPEND WebKitTestRunner_PRIVATE_LIBRARIES WebKit::WPEToolingBackends)
+endif ()
 
 list(APPEND TestRunnerInjectedBundle_SOURCES
     InjectedBundle/atspi/AccessibilityControllerAtspi.cpp

@@ -85,7 +85,7 @@ void LogClient::send(T&& message)
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     Locker locker { m_lock };
 #endif
-    m_connection->send(WTFMove(message), identifier());
+    m_connection->send(WTF::move(message), identifier());
 }
 
 }

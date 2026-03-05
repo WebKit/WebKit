@@ -51,14 +51,14 @@ enum class IsSchemaUpgraded : bool { No, Yes };
 
 class SQLiteIDBCursor;
 
-class SQLiteIDBBackingStore final : public IDBBackingStore {
+class SQLiteIDBBackingStore : public IDBBackingStore {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteIDBBackingStore, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteIDBBackingStore);
 public:
     WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory);
-    WEBCORE_EXPORT ~SQLiteIDBBackingStore() final;
+    WEBCORE_EXPORT ~SQLiteIDBBackingStore() override;
 
-    IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
+    IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) override;
     uint64_t databaseVersion() final;
 
     IDBError beginTransaction(const IDBTransactionInfo&) final;
@@ -84,11 +84,11 @@ public:
     IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
 
     IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) final;
-    void deleteBackingStore() final;
+    void deleteBackingStore() override;
 
-    bool supportsSimultaneousReadWriteTransactions() final { return false; }
-    bool isEphemeral() final { return false; }
-    String fullDatabasePath() const final;
+    bool supportsSimultaneousReadWriteTransactions() override { return false; }
+    bool isEphemeral() override { return false; }
+    String fullDatabasePath() const override;
 
     bool hasTransaction(const IDBResourceIdentifier&) const final;
 
@@ -102,7 +102,7 @@ public:
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
 
     WEBCORE_EXPORT static uint64_t databasesSizeForDirectory(const String& directory);
-    String databaseDirectory() const { return m_databaseDirectory; };
+    const String& databaseDirectory() const LIFETIME_BOUND { return m_databaseDirectory; };
     WEBCORE_EXPORT static String fullDatabasePathForDirectory(const String&);
     WEBCORE_EXPORT static String encodeDatabaseName(const String& databaseName);
     WEBCORE_EXPORT static String decodeDatabaseName(const String& encodedDatabaseName);
@@ -110,7 +110,8 @@ public:
     WEBCORE_EXPORT static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
     void handleLowMemoryWarning() final;
 
-private:
+protected:
+    // Protected methods for use by subclasses (e.g., SQLiteMemoryIDBBackingStore)
     IDBError ensureValidRecordsTable();
     IDBError ensureValidIndexRecordsTable();
     IDBError ensureValidIndexRecordsIndex();
@@ -120,6 +121,18 @@ private:
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     Expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> extractExistingDatabaseInfo();
 
+    void closeSQLiteDB();
+
+    // Protected accessors for subclasses
+    const IDBDatabaseIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
+
+    SQLiteDatabase* sqliteDB() const { return m_sqliteDB.get(); }
+    void setSqliteDB(std::unique_ptr<SQLiteDatabase>&&);
+
+    IDBDatabaseInfo* databaseInfo() const { return m_databaseInfo.get(); }
+    void setDatabaseInfo(std::unique_ptr<IDBDatabaseInfo>&&);
+
+private:
     IDBError deleteRecord(SQLiteIDBTransaction&, IDBObjectStoreIdentifier, const IDBKeyData&);
     IDBError uncheckedGetKeyGeneratorValue(IDBObjectStoreIdentifier, uint64_t& outValue);
     IDBError uncheckedSetKeyGeneratorValue(IDBObjectStoreIdentifier, uint64_t value);
@@ -135,7 +148,6 @@ private:
     IDBError getAllObjectStoreRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
     IDBError getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
 
-    void closeSQLiteDB();
     void close() final;
 
     bool migrateIndexInfoTableForIDUpdate(const HashMap<std::pair<IDBObjectStoreIdentifier, IDBIndexIdentifier>, IDBIndexIdentifier>& indexIDMap);

@@ -52,13 +52,13 @@ bool ScrollingThread::isCurrentThread()
 
 void ScrollingThread::dispatch(Function<void ()>&& function)
 {
-    ScrollingThread::singleton().m_runLoop->dispatch(WTFMove(function));
+    ScrollingThread::singleton().m_runLoop->dispatch(WTF::move(function));
 }
 
 void ScrollingThread::dispatchBarrier(Function<void ()>&& function)
 {
-    dispatch([function = WTFMove(function)]() mutable {
-        callOnMainThread(WTFMove(function));
+    dispatch([function = WTF::move(function)]() mutable {
+        callOnMainThread(WTF::move(function));
     });
 }
 

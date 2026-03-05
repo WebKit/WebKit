@@ -10,4 +10,4 @@ features: [TypedArray]
 
 testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(TA.prototype.hasOwnProperty("length"), false);
-});
+}, null, ["passthrough"]);

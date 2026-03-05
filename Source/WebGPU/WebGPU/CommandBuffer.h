@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <Metal/Metal.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -47,7 +48,7 @@ class CommandBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Com
 public:
     static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, Device& device, id<MTLSharedEvent> sharedEvent, uint64_t sharedEventSignalValue, Vector<Function<bool(CommandBuffer&, CommandEncoder&)>>&& onCommitHandlers, CommandEncoder& commandEncoder)
     {
-        return adoptRef(*new CommandBuffer(commandBuffer, device, sharedEvent, sharedEventSignalValue, WTFMove(onCommitHandlers), commandEncoder));
+        return adoptRef(*new CommandBuffer(commandBuffer, device, sharedEvent, sharedEventSignalValue, WTF::move(onCommitHandlers), commandEncoder));
     }
     static Ref<CommandBuffer> createInvalid(Device& device)
     {

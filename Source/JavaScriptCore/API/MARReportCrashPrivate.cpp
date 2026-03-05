@@ -25,17 +25,15 @@
 
 #include "config.h"
 #include "MARReportCrashPrivate.h"
+#include <bmalloc/BPlatform.h>
 
 #ifdef __APPLE__
 
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/BPlatform.h>
 #if BENABLE(LIBPAS)
 #include <bmalloc/pas_mar_report_crash.h>
 #endif
-#endif
 
-#if !USE(SYSTEM_MALLOC) && BENABLE(LIBPAS)
+#if BENABLE(LIBPAS)
 
 ALWAYS_INLINE pas_mar_backtrace* toInternalRepresentation(PASMARCrashReportBacktraceRef backtrace)
 {
@@ -47,14 +45,12 @@ ALWAYS_INLINE pas_mar_crash_report* toInternalRepresentation(PASMARCrashReportRe
     return reinterpret_cast<pas_mar_crash_report*>(report);
 }
 
-#endif /* !USE(SYSTEM_MALLOC) && BENABLE(LIBPAS) */
+#endif /* BENABLE(LIBPAS) */
 
 kern_return_t MARReportCrashExtractResults(vm_address_t faultAddress, mach_vm_address_t marGlobalRegistry, unsigned version, task_t task, PASMARCrashReportRef report, crash_reporter_memory_reader_t crmReader)
 {
-#if !USE(SYSTEM_MALLOC)
 #if BENABLE(LIBPAS)
     return pas_mar_extract_crash_report(faultAddress, marGlobalRegistry, version, task, toInternalRepresentation(report), crmReader);
-#endif
 #endif
     UNUSED_PARAM(faultAddress);
     UNUSED_PARAM(marGlobalRegistry);
@@ -65,7 +61,7 @@ kern_return_t MARReportCrashExtractResults(vm_address_t faultAddress, mach_vm_ad
     return KERN_FAILURE;
 }
 
-#if !USE(SYSTEM_MALLOC) && BENABLE(LIBPAS)
+#if BENABLE(LIBPAS)
 
 PASMARCrashReportRef MARCrashReportCreate()
 {
@@ -194,7 +190,7 @@ void** MARCrashReportBacktraceGetBacktraceBuffer(PASMARCrashReportBacktraceRef)
 
 IGNORE_CLANG_WARNINGS_END // "missing-noreturn"
 
-#endif /* !USE(SYSTEM_MALLOC) && BENABLE(LIBPAS) */
+#endif /* BENABLE(LIBPAS) */
 
 #endif /* __APPLE__ */
 

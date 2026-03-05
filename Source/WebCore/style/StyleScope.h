@@ -84,10 +84,10 @@ public:
 
     ~Scope();
 
-    const Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets() const { return m_activeStyleSheets; }
+    const Vector<Ref<CSSStyleSheet>>& activeStyleSheets() const { return m_activeStyleSheets; }
 
-    const Vector<RefPtr<StyleSheet>>& styleSheetsForStyleSheetList();
-    const Vector<RefPtr<CSSStyleSheet>> activeStyleSheetsForInspector();
+    const Vector<Ref<StyleSheet>>& styleSheetsForStyleSheetList();
+    const Vector<Ref<CSSStyleSheet>> activeStyleSheetsForInspector();
 
     void addStyleSheetCandidateNode(Node&, bool createdByParser);
     void removeStyleSheetCandidateNode(Node&);
@@ -98,12 +98,12 @@ public:
     void removePendingSheet(const Element&);
     void addPendingSheet(const ProcessingInstruction&);
     void removePendingSheet(const ProcessingInstruction&);
-    bool hasPendingSheets() const;
-    bool hasPendingSheetsBeforeBody() const;
-    bool hasPendingSheetsInBody() const;
-    bool hasPendingSheet(const Element&) const;
-    bool hasPendingSheetInBody(const Element&) const;
-    bool hasPendingSheet(const ProcessingInstruction&) const;
+    bool NODELETE hasPendingSheets() const;
+    bool NODELETE hasPendingSheetsBeforeBody() const;
+    bool NODELETE hasPendingSheetsInBody() const;
+    bool NODELETE hasPendingSheet(const Element&) const;
+    bool NODELETE hasPendingSheetInBody(const Element&) const;
+    bool NODELETE hasPendingSheet(const ProcessingInstruction&) const;
 
     bool usesStyleBasedEditability() const { return m_usesStyleBasedEditability; }
     bool usesHasPseudoClass() const { return m_usesHasPseudoClass; }
@@ -137,7 +137,6 @@ public:
 #endif
 
     WEBCORE_EXPORT Resolver& resolver();
-    Ref<Resolver> protectedResolver();
     Resolver* resolverIfExists() { return m_resolver.get(); }
     const Resolver* resolverIfExists() const { return m_resolver.get(); }
     void clearResolver();
@@ -184,8 +183,8 @@ public:
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
 
 private:
-    Scope& documentScope();
-    bool isForUserAgentShadowTree() const;
+    Scope& NODELETE documentScope();
+    bool NODELETE isForUserAgentShadowTree() const;
 
     void didRemovePendingStylesheet();
 
@@ -201,8 +200,8 @@ private:
     WEBCORE_EXPORT void flushPendingDescendantUpdates();
 
     struct ActiveStyleSheetCollection {
-        Vector<RefPtr<StyleSheet>> activeStyleSheets;
-        Vector<RefPtr<StyleSheet>> styleSheetsForStyleSheetList;
+        Vector<Ref<StyleSheet>> activeStyleSheets;
+        Vector<Ref<StyleSheet>> styleSheetsForStyleSheetList;
     };
 
     ActiveStyleSheetCollection collectActiveStyleSheets();
@@ -216,10 +215,10 @@ private:
         ResolverUpdateType resolverUpdateType;
         Vector<Ref<StyleSheetContents>> addedSheets { };
     };
-    StyleSheetChange analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets);
+    StyleSheetChange analyzeStyleSheetChange(const Vector<Ref<CSSStyleSheet>>& newStylesheets);
     void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
 
-    void updateResolver(std::span<const RefPtr<CSSStyleSheet>>, ResolverUpdateType);
+    void updateResolver(std::span<const Ref<CSSStyleSheet>>, ResolverUpdateType);
     void createDocumentResolver();
     void createOrFindSharedShadowTreeResolver();
     void unshareShadowTreeResolverBeforeMutation();
@@ -230,7 +229,7 @@ private:
     void pendingUpdateTimerFired();
     void clearPendingUpdate();
 
-    TreeScope& treeScope();
+    TreeScope& NODELETE treeScope();
 
     using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
     static MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
@@ -243,8 +242,8 @@ private:
 
     RefPtr<Resolver> m_resolver;
 
-    Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
-    Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
+    Vector<Ref<StyleSheet>> m_styleSheetsForStyleSheetList;
+    Vector<Ref<CSSStyleSheet>> m_activeStyleSheets;
 
     mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
 
@@ -296,8 +295,8 @@ private:
     AnchorPositionedToAnchorMap m_anchorPositionedToAnchorMap;
 };
 
-HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
-Element* hostForScopeOrdinal(const Element&, ScopeOrdinal);
+RefPtr<HTMLSlotElement> assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
+RefPtr<Element> hostForScopeOrdinal(const Element&, ScopeOrdinal);
 
 inline void Scope::flushPendingUpdate()
 {

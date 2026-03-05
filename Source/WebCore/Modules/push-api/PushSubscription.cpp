@@ -39,11 +39,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushSubscription);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushSubscription);
 
 PushSubscription::PushSubscription(PushSubscriptionData&& data, RefPtr<PushSubscriptionOwner>&& owner)
-    : m_data(WTFMove(data))
-    , m_pushSubscriptionOwner(WTFMove(owner))
+    : m_data(WTF::move(data))
+    , m_pushSubscriptionOwner(WTF::move(owner))
 {
 }
 
@@ -68,7 +68,7 @@ PushSubscriptionOptions& PushSubscription::options() const
 {
     if (!m_options) {
         auto key = m_data.serverVAPIDPublicKey;
-        m_options = PushSubscriptionOptions::create(WTFMove(key));
+        m_options = PushSubscriptionOptions::create(WTF::move(key));
     }
 
     return *m_options;
@@ -103,13 +103,13 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKey
 
 void PushSubscription::unsubscribe(ScriptExecutionContext& scriptExecutionContext, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, pushSubscriptionIdentifier = m_data.identifier, promise = WTFMove(promise)]() mutable {
+    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, pushSubscriptionIdentifier = m_data.identifier, promise = WTF::move(promise)]() mutable {
         if (!m_pushSubscriptionOwner) {
             promise.resolve(false);
             return;
         }
 
-        m_pushSubscriptionOwner->unsubscribeFromPushService(pushSubscriptionIdentifier, WTFMove(promise));
+        protect(m_pushSubscriptionOwner)->unsubscribeFromPushService(pushSubscriptionIdentifier, WTF::move(promise));
     });
 }
 

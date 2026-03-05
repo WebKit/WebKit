@@ -14,7 +14,7 @@ info: |
     ...
   4. Return ? OrdinaryHasProperty(O, P).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Reflect, TypedArray]
 ---*/
 
@@ -25,9 +25,9 @@ var keys = [
   "0.0000001"
 ];
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   keys.forEach(function(key) {
-    var sample = new TA(1);
+    var sample = new TA(makeCtorArg(1));
 
     assert.sameValue(
       Reflect.has(sample, key), false,
@@ -50,4 +50,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
       "returns true with own key [" + key + "]"
     );
   });
-});
+}, null, ["passthrough"]);

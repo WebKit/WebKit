@@ -47,5 +47,5 @@ WKURLResponseRef WKNavigationResponseCopyResponse(WKNavigationResponseRef respon
 WKFrameInfoRef WKNavigationResponseCopyFrameInfo(WKNavigationResponseRef response)
 {
     Ref frame = WebKit::toImpl(response)->frame();
-    return WebKit::toAPILeakingRef(WTFMove(frame));
+    return WebKit::toAPILeakingRef(WTF::move(frame));
 }

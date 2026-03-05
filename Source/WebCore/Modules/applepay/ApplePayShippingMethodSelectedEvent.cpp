@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePayShippingMethodSelectedEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayShippingMethodSelectedEvent);
 
 ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePayShippingMethod& shippingMethod)
     : Event(EventInterfaceType::ApplePayShippingMethodSelectedEvent, type, CanBubble::No, IsCancelable::No)

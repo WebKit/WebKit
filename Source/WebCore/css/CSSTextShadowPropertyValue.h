@@ -33,7 +33,7 @@ class CSSTextShadowPropertyValue final : public CSSValue {
 public:
     static Ref<CSSTextShadowPropertyValue> create(CSS::TextShadowProperty);
 
-    const CSS::TextShadowProperty& shadow() const { return m_shadow; }
+    const CSS::TextShadowProperty& shadow() const LIFETIME_BOUND { return m_shadow; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSTextShadowPropertyValue&) const;

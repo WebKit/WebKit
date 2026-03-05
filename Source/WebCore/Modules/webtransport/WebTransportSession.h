@@ -38,7 +38,6 @@ class ScriptExecutionContext;
 class WebTransportBidirectionalStream;
 class WebTransportSendStream;
 class WebTransportSessionClient;
-class WebTransportSendStreamSink;
 
 struct WebTransportConnectionStats;
 struct WebTransportReceiveStreamStats;
@@ -48,8 +47,7 @@ struct WebTransportStreamIdentifierType;
 
 using WebTransportSendGroupIdentifier = ObjectIdentifier<WebTransportSendGroupIdentifierType>;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
-using WritableStreamPromise = NativePromise<Ref<WebTransportSendStreamSink>, void>;
-using BidirectionalStreamPromise = NativePromise<Ref<WebTransportSendStreamSink>, void>;
+using WebTransportStreamPromise = NativePromise<WebTransportStreamIdentifier, void>;
 using WebTransportSendPromise = NativePromise<std::optional<Exception>, void>;
 using WebTransportConnectionStatsPromise = NativePromise<WebTransportConnectionStats, void>;
 using WebTransportSendStreamStatsPromise = NativePromise<WebTransportSendStreamStats, void>;
@@ -63,8 +61,8 @@ public:
     virtual ~WebTransportSession();
 
     virtual Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) = 0;
-    virtual Ref<WritableStreamPromise> createOutgoingUnidirectionalStream() = 0;
-    virtual Ref<BidirectionalStreamPromise> createBidirectionalStream() = 0;
+    virtual Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() = 0;
+    virtual Ref<WebTransportStreamPromise> createBidirectionalStream() = 0;
     virtual Ref<WebTransportSendPromise> streamSendBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin) = 0;
     virtual Ref<WebTransportConnectionStatsPromise> getStats() = 0;
     virtual Ref<WebTransportSendStreamStatsPromise> getSendStreamStats(WebTransportStreamIdentifier) = 0;

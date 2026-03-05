@@ -71,7 +71,7 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const
     if (end.isPositiveInfinite())
         m_incompleteCues.append(IncompleteMetaDataCue { cueData.ptr(), start });
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).addDataCue(start, end, WTFMove(cueData), type);
+        downcast<InbandTextTrackPrivateClient>(client).addDataCue(start, end, WTF::move(cueData), type);
     });
 }
 

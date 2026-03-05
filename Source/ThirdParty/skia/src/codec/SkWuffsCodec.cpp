@@ -247,13 +247,12 @@ public:
 
     const SkWuffsFrame* frame(int i) const;
 
-    std::unique_ptr<SkStream> getEncodedData() const override;
-
 private:
     // SkCodec overrides.
     SkEncodedImageFormat onGetEncodedFormat() const override;
     Result onGetPixels(const SkImageInfo&, void*, size_t, const Options&, int*) override;
     const SkFrameHolder* getFrameHolder() const override;
+    bool                 onSupportsIncrementalDecode(const SkImageInfo&) override { return true; }
     Result               onStartIncrementalDecode(const SkImageInfo&      dstInfo,
                                                   void*                   dst,
                                                   size_t                  rowBytes,
@@ -263,6 +262,7 @@ private:
     bool                 onGetFrameInfo(int, FrameInfo*) const override;
     int                  onGetRepetitionCount() override;
     IsAnimated           onIsAnimated() override;
+    sk_sp<const SkData>  getEncodedData() const override;
 
     // Two separate implementations of onStartIncrementalDecode and
     // onIncrementalDecode, named "one pass" and "two pass" decoding. One pass
@@ -501,7 +501,7 @@ SkCodec::Result SkWuffsCodec::onStartIncrementalDecode(const SkImageInfo&      d
     // supports...
     fIncrDecOnePass = (pixelFormat != WUFFS_BASE__PIXEL_FORMAT__INVALID) &&
                       // ...and no color profile (as Wuffs does not support them)...
-                      (!getEncodedInfo().profile()) &&
+                      (!getEncodedInfo().colorProfile()) &&
                       // ...and we use the identity transform (as Wuffs does
                       // not support scaling).
                       (this->dimensions() == dstInfo.dimensions());
@@ -723,7 +723,7 @@ SkCodec::Result SkWuffsCodec::onIncrementalDecodeTwoPass() {
         // Currently, this is only used for GIF, which will never have an ICC profile. When it is
         // used for other formats that might have one, we will need to transform from profiles that
         // do not have corresponding SkColorSpaces.
-        SkASSERT(!getEncodedInfo().profile());
+        SkASSERT(!getEncodedInfo().colorProfile());
 
         auto srcInfo =
             getInfo().makeWH(dirty_rect.width(), dirty_rect.height()).makeAlphaType(alphaType);
@@ -984,9 +984,17 @@ void SkWuffsCodec::updateNumFullyReceivedFrames() {
 //
 // TODO(https://crbug.com/370522089): See if `SkCodec` can be tweaked to avoid
 // the need to hide the stream from it.
-std::unique_ptr<SkStream> SkWuffsCodec::getEncodedData() const {
-    SkASSERT(fPrivStream);
-    return fPrivStream->duplicate();
+sk_sp<const SkData> SkWuffsCodec::getEncodedData() const {
+    SkASSERT_RELEASE(fPrivStream);
+    sk_sp<const SkData> data = fPrivStream->getData();
+    if (data) {
+        return data;
+    }
+    auto dStream = fPrivStream->duplicate();
+    if (!dStream->hasLength()) {
+        return nullptr;
+    }
+    return SkData::MakeFromStream(dStream.get(), dStream->getLength());
 }
 
 namespace SkGifDecoder {
@@ -1012,7 +1020,7 @@ std::unique_ptr<SkCodec> MakeFromStream(std::unique_ptr<SkStream> stream,
         // Some clients (e.g. Android) need to be able to seek the stream, but may
         // not provide a seekable stream. Copy the stream to one that can seek.
         if (!canSeek) {
-            auto data = SkCopyStreamToData(stream.get());
+            auto data = SkStreamPriv::CopyStreamToData(stream.get());
             stream = std::make_unique<SkMemoryStream>(std::move(data));
             canSeek = true;
         }
@@ -1110,7 +1118,7 @@ std::unique_ptr<SkCodec> Decode(std::unique_ptr<SkStream> stream,
     return MakeFromStream(std::move(stream), policy, outResult);
 }
 
-std::unique_ptr<SkCodec> Decode(sk_sp<SkData> data,
+std::unique_ptr<SkCodec> Decode(sk_sp<const SkData> data,
                                 SkCodec::Result* outResult,
                                 SkCodecs::DecodeContext ctx) {
     if (!data) {

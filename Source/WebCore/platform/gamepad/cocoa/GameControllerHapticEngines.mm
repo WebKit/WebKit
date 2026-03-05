@@ -90,8 +90,8 @@ void GameControllerHapticEngines::playEffect(GamepadHapticEffectType type, const
     if (RefPtr effect = currentEffect)
         effect->stop();
 
-    currentEffect = WTFMove(newEffect);
-    currentEffect->start([weakThis = WeakPtr { *this }, effect = WeakPtr { *currentEffect }, type, completionHandler = WTFMove(completionHandler)](bool success) mutable {
+    currentEffect = WTF::move(newEffect);
+    currentEffect->start([weakThis = WeakPtr { *this }, effect = WeakPtr { *currentEffect }, type, completionHandler = WTF::move(completionHandler)](bool success) mutable {
         ASSERT(isMainThread());
 
         completionHandler(success);
@@ -116,7 +116,7 @@ void GameControllerHapticEngines::stopEffects()
 
 void GameControllerHapticEngines::stop(CompletionHandler<void()>&& completionHandler)
 {
-    auto callbackAggregator = MainRunLoopCallbackAggregator::create(WTFMove(completionHandler));
+    auto callbackAggregator = MainRunLoopCallbackAggregator::create(WTF::move(completionHandler));
     [m_leftHandleEngine stopWithCompletionHandler:makeBlockPtr([callbackAggregator](NSError *error) {
         if (error)
             RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEngines::stop: Failed to stop the left handle haptic engine");

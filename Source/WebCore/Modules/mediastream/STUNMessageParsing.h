@@ -38,7 +38,7 @@ struct STUNMessageLengths {
     size_t messageLengthWithPadding { 0 };
 };
 
-WEBCORE_EXPORT std::optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(std::span<const uint8_t>);
+WEBCORE_EXPORT std::optional<STUNMessageLengths> NODELETE getSTUNOrTURNMessageLengths(std::span<const uint8_t>);
 
 enum class MessageType { STUN, Data };
 WEBCORE_EXPORT Vector<uint8_t> extractMessages(Vector<uint8_t>&&, MessageType, NOESCAPE const Function<void(std::span<const uint8_t> data)>&);

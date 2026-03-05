@@ -44,7 +44,7 @@ class Bignum {
   Bignum();
   void AssignUInt16(uint16_t value);
   void AssignUInt64(uint64_t value);
-  void AssignBignum(const Bignum& other);
+  void NODELETE AssignBignum(const Bignum& other);
 
   void AssignDecimalString(BufferReference<const char> value);
   void AssignHexString(BufferReference<const char> value);
@@ -68,13 +68,13 @@ class Bignum {
   // In the worst case this function is in O(this/other).
   uint16_t DivideModuloIntBignum(const Bignum& other);
 
-  bool ToHexString(std::span<char> buffer) const;
+  bool NODELETE ToHexString(std::span<char> buffer) const;
 
   // Returns
   //  -1 if a < b,
   //   0 if a == b, and
   //  +1 if a > b.
-  static int Compare(const Bignum& a, const Bignum& b);
+  static int NODELETE Compare(const Bignum& a, const Bignum& b);
   static bool Equal(const Bignum& a, const Bignum& b) {
     return Compare(a, b) == 0;
   }
@@ -85,7 +85,7 @@ class Bignum {
     return Compare(a, b) < 0;
   }
   // Returns Compare(a + b, c);
-  static int PlusCompare(const Bignum& a, const Bignum& b, const Bignum& c);
+  static int NODELETE PlusCompare(const Bignum& a, const Bignum& b, const Bignum& c);
   // Returns a + b == c
   static bool PlusEqual(const Bignum& a, const Bignum& b, const Bignum& c) {
     return PlusCompare(a, b, c) == 0;
@@ -118,16 +118,16 @@ class Bignum {
     }
   }
   void Align(const Bignum& other);
-  void Clamp();
-  bool IsClamped() const;
-  void Zero();
+  void NODELETE Clamp();
+  bool NODELETE IsClamped() const;
+  void NODELETE Zero();
   // Requires this to have enough capacity (no tests done).
   // Updates used_digits_ if necessary.
   // shift_amount must be < kBigitSize.
-  void BigitsShiftLeft(int shift_amount);
+  void NODELETE BigitsShiftLeft(int shift_amount);
   // BigitLength includes the "hidden" digits encoded in the exponent.
   int BigitLength() const { return used_digits_ + exponent_; }
-  Chunk BigitAt(int index) const;
+  Chunk NODELETE BigitAt(int index) const;
   void SubtractTimes(const Bignum& other, int factor);
 
   std::array<Chunk, kBigitCapacity> bigits_buffer_;

@@ -37,6 +37,7 @@
 #include "StringFunctions.h"
 #include "TestController.h"
 #include <WebKit/GtkVersioning.h>
+#include <WebKit/WKPagePrivate.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <webkit/WebKitWebViewBaseInternal.h>
@@ -78,14 +79,20 @@ EventSenderProxy::~EventSenderProxy() = default;
 
 static unsigned eventSenderButtonToGDKButton(unsigned button)
 {
-    int mouseButton = 3;
-    if (button <= 2)
-        mouseButton = button + 1;
-    // fast/events/mouse-click-events expects the 4th button to be treated as the middle button.
-    else if (button == 3)
-        mouseButton = 2;
-
-    return mouseButton;
+    switch (button) {
+    case 0:
+        return 1;
+    case 1:
+        return 2;
+    case 2:
+        return 3;
+    case 3:
+        return 8;
+    case 4:
+        return 9;
+    default:
+        return 1;
+    }
 }
 
 static guint webkitModifiersToGDKModifiers(WKEventModifiers wkModifiers)
@@ -258,6 +265,10 @@ void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers wkModifiers, u
 
 static inline unsigned stateModifierForGdkButton(unsigned button)
 {
+    // Store the state of the back and forward buttons (GDK buttons 8 & 9)
+    // as bit 11 and 12, respectively.
+    button = button == 8 ? 4 : button;
+    button = button == 9 ? 5 : button;
     return 1 << (8 + button - 1);
 }
 
@@ -421,8 +432,30 @@ void EventSenderProxy::setTouchModifier(WKEventModifiers, bool)
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
+struct DoAfterProcessingAllPendingMouseEventsCallbackContext {
+    bool done { false };
+    bool timedOut { false };
+};
+
+static void doAfterProcessingAllPendingMouseEventsCallback(void* userData)
+{
+    auto* context = static_cast<DoAfterProcessingAllPendingMouseEventsCallbackContext*>(userData);
+    if (context->timedOut) {
+        delete context;
+        return;
+    }
+    context->done = true;
+}
+
 void EventSenderProxy::waitForPendingMouseEvents()
 {
+    auto* context = new DoAfterProcessingAllPendingMouseEventsCallbackContext;
+    WKPageDoAfterProcessingAllPendingMouseEvents(m_testController->mainWebView()->page(), context, doAfterProcessingAllPendingMouseEventsCallback);
+    m_testController->runUntil(context->done, 100_ms);
+    if (context->done)
+        delete context;
+    else
+        context->timedOut = true;
 }
 
 } // namespace WTR

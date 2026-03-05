@@ -947,7 +947,7 @@ angle::Result Image9::copyFromTexStorage(const gl::Context *context,
                                          TextureStorage *source)
 {
     RenderTargetD3D *renderTarget = nullptr;
-    ANGLE_TRY(source->getRenderTarget(context, imageIndex, 0, &renderTarget));
+    ANGLE_TRY(source->getRenderTarget(context, imageIndex, &renderTarget));
 
     gl::Rectangle sourceArea(0, 0, mWidth, mHeight);
     return copyFromRTInternal(GetImplAs<Context9>(context), gl::Offset(), sourceArea, renderTarget);

@@ -576,13 +576,8 @@ void JSTestDOMJITPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestDOMJIT::s_info = { "TestDOMJIT"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJIT) };
 
 JSTestDOMJIT::JSTestDOMJIT(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDOMJIT>&& impl)
-    : JSNode(structure, globalObject, WTFMove(impl))
+    : JSNode(structure, globalObject, WTF::move(impl))
 {
-}
-
-Ref<TestDOMJIT> JSTestDOMJIT::protectedWrapped() const
-{
-    return wrapped();
 }
 
 JSObject* JSTestDOMJIT::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -1101,7 +1096,7 @@ JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getAttributeWithoutTypeCh
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     auto name = DOMJIT::DirectConverter<IDLDOMString>::directConvert(*lexicalGlobalObject, encodedName);
     OPERATION_RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, throwScope, impl.getAttribute(WTFMove(name)))));
+    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, throwScope, impl.getAttribute(WTF::move(name)))));
 }
 
 static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_itemBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDOMJIT>::ClassParameter castedThis)
@@ -1144,7 +1139,7 @@ JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_itemWithoutTypeCheck, JSC
     OPERATION_RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto y = DOMJIT::DirectConverter<IDLUnsignedShort>::directConvert(*lexicalGlobalObject, encodedY);
     OPERATION_RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.item(WTFMove(x), WTFMove(y)))));
+    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.item(WTF::move(x), WTF::move(y)))));
 }
 
 static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_hasAttributeBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDOMJIT>::ClassParameter castedThis)
@@ -1210,7 +1205,7 @@ JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementByIdWithoutType
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     auto elementId = DOMJIT::DirectConverter<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>::directConvert(*lexicalGlobalObject, encodedElementId);
     OPERATION_RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Element>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.getElementById(WTFMove(elementId)))));
+    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Element>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.getElementById(WTF::move(elementId)))));
 }
 
 static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunction_getElementsByNameBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDOMJIT>::ClassParameter castedThis)
@@ -1247,7 +1242,7 @@ JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementsByNameWithoutT
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     auto elementName = DOMJIT::DirectConverter<IDLAtomStringAdaptor<IDLDOMString>>::directConvert(*lexicalGlobalObject, encodedElementName);
     OPERATION_RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<NodeList>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.getElementsByName(WTFMove(elementName)))));
+    OPERATION_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<NodeList>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.getElementsByName(WTF::move(elementName)))));
 }
 
 JSC::GCClient::IsoSubspace* JSTestDOMJIT::subspaceForImpl(JSC::VM& vm)
@@ -1304,7 +1299,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestDOMJIT>(impl.ptr());
 #endif
-    return createWrapper<TestDOMJIT>(globalObject, WTFMove(impl));
+    return createWrapper<TestDOMJIT>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDOMJIT& impl)

@@ -65,13 +65,16 @@ public:
 #elif PLATFORM(GTK)
     NativeWebWheelEvent(const NativeWebWheelEvent&);
     NativeWebWheelEvent(GdkEvent*, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas = false);
-#elif USE(LIBWPE)
+#elif PLATFORM(WPE)
+#if USE(LIBWPE)
     NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#endif
+#if ENABLE(WPE_PLATFORM)
     explicit NativeWebWheelEvent(WPEEvent*);
     NativeWebWheelEvent(WPEEvent*, WebWheelEvent::Phase);
 #endif
-
+#elif PLATFORM(PLAYSTATION)
+    NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #elif PLATFORM(WIN)
     NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM, float deviceScaleFactor);
 #endif

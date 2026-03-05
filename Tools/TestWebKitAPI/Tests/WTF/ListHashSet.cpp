@@ -27,9 +27,25 @@
 
 #include "Counters.h"
 #include "MoveOnly.h"
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefCountedWithInlineWeakPtr.h>
+#include <wtf/WeakPtr.h>
+
+namespace {
+
+class InlineWeakPtrObject : public RefCountedWithInlineWeakPtr<InlineWeakPtrObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InlineWeakPtrObject);
+public:
+    static Ref<InlineWeakPtrObject> create()
+    {
+        return adoptRef(*new InlineWeakPtrObject);
+    }
+};
+
+}
 
 namespace TestWebKitAPI {
 
@@ -328,7 +344,7 @@ TEST(WTF_ListHashSet, MoveConstructor)
     ASSERT_EQ(3, *iterator);
     ++iterator;
 
-    ListHashSet<int> list2(WTFMove(list));
+    ListHashSet<int> list2(WTF::move(list));
     ASSERT_EQ(3U, list2.size());
     auto iterator2 = list2.begin();
     ASSERT_EQ(1, *iterator2);
@@ -370,7 +386,7 @@ TEST(WTF_ListHashSet, MoveAssignment)
 
     ListHashSet<int> list2;
     list2.add(10);
-    list2 = (WTFMove(list));
+    list2 = (WTF::move(list));
     ASSERT_EQ(3U, list2.size());
     auto iterator2 = list2.begin();
     ASSERT_EQ(1, *iterator2);
@@ -426,7 +442,7 @@ TEST(WTF_ListHashSet, UniquePtrKey)
     ListHashSet<std::unique_ptr<ConstructorDestructorCounter>> list;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -443,7 +459,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_FindUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     auto ptr = uniquePtr.get();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     auto it = list.find(ptr);
     ASSERT_TRUE(it != list.end());
@@ -457,7 +473,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_ContainsUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     auto ptr = uniquePtr.get();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(true, list.contains(ptr));
 }
@@ -471,8 +487,8 @@ TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
     auto uniquePtrWith4 = makeUniqueWithoutFastMallocCheck<int>(4);
     auto ptrWith4 = uniquePtrWith4.get();
 
-    list.add(WTFMove(uniquePtrWith2));
-    list.add(WTFMove(uniquePtrWith4));
+    list.add(WTF::move(uniquePtrWith2));
+    list.add(WTF::move(uniquePtrWith4));
 
     // { 2, 4 }
     ASSERT_EQ(ptrWith2, list.first().get());
@@ -483,7 +499,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
     auto uniquePtrWith3 = makeUniqueWithoutFastMallocCheck<int>(3);
     auto ptrWith3 = uniquePtrWith3.get();
 
-    list.insertBefore(ptrWith4, WTFMove(uniquePtrWith3));
+    list.insertBefore(ptrWith4, WTF::move(uniquePtrWith3));
     
     // { 2, 3, 4 }
     auto firstWith2 = list.takeFirst();
@@ -509,7 +525,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_RemoveUsingRawPointer)
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     auto* ptr = uniquePtr.get();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -557,7 +573,7 @@ public:
     ~FakeElementAnimationRareData() = default;
 
     Collection& collection() { return m_collection; }
-    void setCollection(Collection&& collection) { m_collection = WTFMove(collection); }
+    void setCollection(Collection&& collection) { m_collection = WTF::move(collection); }
 
 private:
     Collection m_collection;
@@ -570,14 +586,98 @@ TEST(WTF_ListHashSet, ClearsItemUponAssignment)
     EXPECT_EQ(0u, ListHashSetReferencedItem::instances().size());
 
     Collection firstCollection({ ListHashSetReferencedItem::create() });
-    data->setCollection(WTFMove(firstCollection));
+    data->setCollection(WTF::move(firstCollection));
 
     EXPECT_EQ(1u, ListHashSetReferencedItem::instances().size());
 
     Collection secondCollection;
-    data->setCollection(WTFMove(secondCollection));
+    data->setCollection(WTF::move(secondCollection));
 
     EXPECT_EQ(0u, ListHashSetReferencedItem::instances().size());
+}
+
+class Object : public WTF::RefCountedAndCanMakeWeakPtr<Object> {
+public:
+    static Ref<Object> create() { return adoptRef(*new Object); }
+
+private:
+    Object() = default;
+};
+
+TEST(WTF_ListHashSet, WeakPtr)
+{
+    ListHashSet<WeakPtr<Object>> set;
+
+    RefPtr object1 = Object::create();
+    set.add(object1.get());
+
+    Ref object2 = Object::create();
+
+    // Present when live
+    EXPECT_TRUE(set.contains(object1.get()));
+    EXPECT_EQ(set.find(object1.get())->get(), object1.get());
+    EXPECT_EQ(1u, set.size());
+    for (auto& entry : set)
+        EXPECT_EQ(entry, object1.get());
+
+    EXPECT_FALSE(set.contains(&object2.get()));
+    EXPECT_EQ(set.find(&object2.get()), set.end());
+
+    Object* rawObject1 = object1.get();
+    object1 = nullptr;
+
+    // Absent when dead
+    EXPECT_FALSE(set.contains(rawObject1));
+    EXPECT_EQ(set.find(rawObject1), set.end());
+    EXPECT_EQ(set.begin(), set.end());
+
+    // Accurate size after removing weak nulls
+    EXPECT_EQ(1u, set.size());
+    set.removeWeakNullEntries();
+    EXPECT_EQ(0u, set.size());
+
+    // Bounded growth as added objects die
+    for (size_t i = 0; i < 128; ++i)
+        set.add(&Object::create().get());
+    EXPECT_LT(set.size(), 16u);
+}
+
+TEST(WTF_ListHashSet, InlineWeakPtr)
+{
+    ListHashSet<InlineWeakPtr<InlineWeakPtrObject>> set;
+
+    RefPtr object1 = InlineWeakPtrObject::create();
+    set.add(object1.get());
+
+    Ref object2 = InlineWeakPtrObject::create();
+
+    // Present when live
+    EXPECT_TRUE(set.contains(object1.get()));
+    EXPECT_EQ(set.find(object1.get())->get(), object1.get());
+    EXPECT_EQ(1u, set.size());
+    for (auto& entry : set)
+        EXPECT_EQ(entry, object1.get());
+
+    EXPECT_FALSE(set.contains(&object2.get()));
+    EXPECT_EQ(set.find(&object2.get()), set.end());
+
+    InlineWeakPtrObject* rawObject1 = object1.get();
+    object1 = nullptr;
+
+    // Absent when dead
+    EXPECT_FALSE(set.contains(rawObject1));
+    EXPECT_EQ(set.find(rawObject1), set.end());
+    EXPECT_EQ(set.begin(), set.end());
+
+    // Accurate size after removing weak nulls
+    EXPECT_EQ(1u, set.size());
+    set.removeWeakNullEntries();
+    EXPECT_EQ(0u, set.size());
+
+    // Bounded growth as added objects die
+    for (size_t i = 0; i < 128; ++i)
+        set.add(&InlineWeakPtrObject::create().get());
+    EXPECT_LT(set.size(), 16u);
 }
 
 } // namespace TestWebKitAPI

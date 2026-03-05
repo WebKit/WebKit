@@ -32,12 +32,12 @@ info: |
   3. If argumentList is a List of a single Number, then
     ...
   4. Return newTypedArray.
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, Symbol.species, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([40n, 41n, 42n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([40n, 41n, 42n]));
   var calls = 0;
   var other, result;
 

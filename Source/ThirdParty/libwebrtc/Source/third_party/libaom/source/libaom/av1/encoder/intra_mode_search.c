@@ -1424,7 +1424,6 @@ int av1_search_intra_uv_modes_in_interframe(
   const int try_palette =
       cpi->oxcf.tool_cfg.enable_palette &&
       av1_allow_palette(cm->features.allow_screen_content_tools, mbmi->bsize);
-
   assert(intra_search_state->rate_uv_intra == INT_MAX);
   if (intra_search_state->rate_uv_intra == INT_MAX) {
     // If no good uv-predictor had been found, search for it.

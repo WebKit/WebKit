@@ -33,9 +33,8 @@ class WatchTest(darwin_testcase.DarwinTest):
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=WatchPort.CURRENT_VERSION, **kwargs):
         if options:
             options.architecture = 'x86'
-            options.webkit_test_runner = True
         else:
-            options = MockOptions(architecture='x86', webkit_test_runner=True, configuration='Release')
+            options = MockOptions(architecture='x86', configuration='Release')
         port = super(WatchTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, os_version=None, kwargs=kwargs)
         port.set_option('version', str(os_version))
         return port

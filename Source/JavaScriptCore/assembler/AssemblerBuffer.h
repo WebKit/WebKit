@@ -395,13 +395,13 @@ namespace JSC {
 
         AssemblerData&& releaseAssemblerData()
         {
-            return WTFMove(m_storage);
+            return WTF::move(m_storage);
         }
 
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
         AssemblerHashes&& releaseAssemblerHashes()
         {
-            return WTFMove(m_hashes);
+            return WTF::move(m_hashes);
         }
 #endif
 

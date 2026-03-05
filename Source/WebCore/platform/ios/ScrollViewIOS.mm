@@ -50,22 +50,12 @@ inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
     return static_cast<NSScrollView<WebCoreFrameScrollView> *>(platformWidget());
 }
 
-RetainPtr<PlatformScrollView> ScrollView::protectedScrollView() const
-{
-    return scrollView();
-}
-
 NSView *ScrollView::documentView() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     return [scrollView() documentView];
     END_BLOCK_OBJC_EXCEPTIONS
     return nil;
-}
-
-RetainPtr<NSView> ScrollView::protectedDocumentView() const
-{
-    return documentView();
 }
 
 void ScrollView::platformAddChild(Widget* child)

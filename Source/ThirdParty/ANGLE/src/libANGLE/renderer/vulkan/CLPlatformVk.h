@@ -62,6 +62,7 @@ class CLPlatformVk : public CLPlatformImpl, public vk::ErrorContext, public vk::
     std::shared_ptr<angle::WaitableEvent> postMultiThreadWorkerTask(
         const std::shared_ptr<angle::Closure> &task) override;
     void notifyDeviceLost() override;
+    GlobalOps::Api getFrontendApi() const override { return GlobalOps::Api::OpenCL; }
 
   private:
     explicit CLPlatformVk(const cl::Platform &platform);

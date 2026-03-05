@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_SERIAL_UTILS_H_
 #define LIBANGLE_RENDERER_SERIAL_UTILS_H_
 
+#include <algorithm>
 #include <array>
 #include <atomic>
 #include <limits>

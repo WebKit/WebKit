@@ -46,14 +46,14 @@
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKContextMenuElementInfo.class, self))
         return;
-    _contextMenuElementInfoMac->API::ContextMenuElementInfoMac::~ContextMenuElementInfoMac();
+    SUPPRESS_UNCOUNTED_ARG _contextMenuElementInfoMac->API::ContextMenuElementInfoMac::~ContextMenuElementInfoMac();
     [super dealloc];
 }
 
 - (_WKHitTestResult *)hitTestResult
 {
     auto& hitTestResultData = _contextMenuElementInfoMac->hitTestResultData();
-    auto apiHitTestResult = API::HitTestResult::create(hitTestResultData, _contextMenuElementInfoMac->protectedPage().get());
+    auto apiHitTestResult = API::HitTestResult::create(hitTestResultData, protect(_contextMenuElementInfoMac->page()).get());
     return retainPtr(wrapper(apiHitTestResult)).autorelease();
 }
 

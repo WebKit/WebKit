@@ -4,7 +4,7 @@ layer at (0,0) size 800x538
   RenderBlock {html} at (0,0) size 800x538
     RenderBody {body} at (8,16) size 784x472 [bgcolor=#FFFFFF]
       RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 555x19
+        RenderText {#text} at (0,0) size 555x20
           text run at (0,0) width 320: "CSS Transformed HTML div with SVG inside it. "
           text run at (319,0) width 236: "objectBoundingBox patterns on text."
 layer at (58,86) size 402x402

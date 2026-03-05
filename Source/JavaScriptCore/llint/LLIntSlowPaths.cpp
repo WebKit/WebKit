@@ -60,6 +60,7 @@
 #include "LLIntExceptions.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "LLIntThunks.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "ObjectConstructor.h"
 #include "ObjectPropertyConditionSet.h"
 #include "ProtoCallFrameInlines.h"
@@ -406,7 +407,7 @@ static inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock)
 
     if (worklistState == JITWorklist::NotKnown) {
         Ref<BaselineJITPlan> plan = adoptRef(*new BaselineJITPlan(codeBlock));
-        JITWorklist::ensureGlobalWorklist().enqueue(WTFMove(plan));
+        JITWorklist::ensureGlobalWorklist().enqueue(WTF::move(plan));
         return codeBlock->jitType() == JITType::BaselineJIT;
     }
 
@@ -883,7 +884,7 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
     }
 
     ASSERT((offset == invalidOffset) == slot.isUnset());
-    auto result = watchpointMap.add(std::make_tuple(structure->id(), bytecodeIndex), WTFMove(watchpoints));
+    auto result = watchpointMap.add(std::make_tuple(structure->id(), bytecodeIndex), WTF::move(watchpoints));
     ASSERT_UNUSED(result, result.isNewEntry);
 
     {
@@ -2084,7 +2085,7 @@ static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpeci
 
     ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
 
-    auto constructData = JSC::getConstructData(callee);
+    auto constructData = JSC::getConstructDataInline(callee);
     ASSERT(constructData.type != CallData::Type::JS);
 
     if (constructData.type == CallData::Type::Native) {
@@ -2211,26 +2212,6 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     LLINT_RETURN_CALLEE_FRAME(calleeFrame);
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_forward_arguments)
-{
-    LLINT_BEGIN();
-    // This needs to:
-    // - Set up a call frame with the same arguments as the current frame.
-
-    auto bytecode = pc->as<OpTailCallForwardArguments>();
-    unsigned numUsedStackSlots = -bytecode.m_firstFree.offset();
-
-    unsigned arguments = sizeFrameForForwardArguments(globalObject, callFrame, vm, numUsedStackSlots);
-    LLINT_CALL_CHECK_EXCEPTION(globalObject);
-
-    CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, arguments + 1);
-
-    vm.varargsLength = arguments;
-    vm.newCallFrameReturnValue = calleeFrame;
-
-    LLINT_RETURN_CALLEE_FRAME(calleeFrame);
-}
-
 enum class SetArgumentsWith {
     Object,
     CurrentArguments
@@ -2275,11 +2256,6 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
 LLINT_SLOW_PATH_DECL(slow_path_tail_call_varargs)
 {
     return varargsSetup<OpTailCallVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeSpecializationKind::CodeForCall);
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_tail_call_forward_arguments)
-{
-    return varargsSetup<OpTailCallForwardArguments, SetArgumentsWith::CurrentArguments>(callFrame, pc, CodeSpecializationKind::CodeForCall);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
@@ -2468,13 +2444,12 @@ LLINT_SLOW_PATH_DECL(slow_path_retrieve_and_clear_exception_if_catchable)
     RELEASE_ASSERT(!!throwScope.exception());
 
     Exception* exception = throwScope.exception();
-    if (vm.isTerminationException(exception))
-        LLINT_RETURN_TWO(pc, nullptr);
-
     // We want to clear the exception here rather than in the catch prologue
     // JIT code because clearing it also entails clearing a bit in an Atomic
     // bit field in VMTraps.
-    throwScope.clearException();
+    if (!throwScope.tryClearException())
+        LLINT_RETURN_TWO(pc, nullptr);
+
     LLINT_RETURN_TWO(pc, exception);
 }
 
@@ -2556,13 +2531,11 @@ static ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* code
 static ALWAYS_INLINE int arityCheckFor(VM& vm, CallFrame* callFrame, CodeBlock* newCodeBlock)
 {
     ASSERT(callFrame->argumentCountIncludingThis() < static_cast<unsigned>(newCodeBlock->numParameters()));
-    int padding = numberOfStackPaddingSlotsWithExtraSlots(newCodeBlock, callFrame->argumentCountIncludingThis());
-
-    Register* newStack = callFrame->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), padding);
-
-    if (!vm.ensureJSStackCapacityFor(newStack)) [[unlikely]]
+    int slotsToAdd = numberOfStackPaddingSlotsWithExtraSlots(newCodeBlock, callFrame->argumentCountIncludingThis());
+    Register* newStackPointer = callFrame->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), slotsToAdd) - newCodeBlock->numCalleeLocals() - maxFrameExtentForSlowPathCallInRegisters;
+    if (!vm.ensureJSStackCapacityFor(newStackPointer)) [[unlikely]]
         return -1;
-    return padding;
+    return slotsToAdd;
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_arityCheck)
@@ -2862,7 +2835,7 @@ extern "C" void SYSV_ABI llint_write_barrier_slow(CallFrame* callFrame, JSCell* 
 
 extern "C" UGPRPair SYSV_ABI llint_check_vm_entry_permission(VM*, ProtoCallFrame*)
 {
-    Interpreter::checkVMEntryPermission();
+    VM::checkVMEntryPermission();
     return encodeResult(nullptr, nullptr);
 }
 

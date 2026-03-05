@@ -127,9 +127,9 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
     const auto& blendingKeyframes = keyframeEffect.blendingKeyframes();
     const auto& parsedKeyframes = keyframeEffect.parsedKeyframes();
 
-    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(keyframeEffect.animation())) {
-        auto* target = keyframeEffect.target();
-        auto* renderer = keyframeEffect.renderer();
+    if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(keyframeEffect.animation())) {
+        RefPtr target = keyframeEffect.target();
+        CheckedPtr renderer = keyframeEffect.renderer();
 
         // Synthesize CSS style declarations for each keyframe so the frontend can display them.
 
@@ -140,7 +140,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
             auto& blendingKeyframe = blendingKeyframes[i];
 
             ASSERT(blendingKeyframe.style());
-            auto& style = *blendingKeyframe.style();
+            CheckedRef style = *blendingKeyframe.style();
 
             auto keyframePayload = Inspector::Protocol::Animation::Keyframe::create()
                 .setOffset(blendingKeyframe.offset())
@@ -184,7 +184,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
             if (!stylePayloadBuilder.isEmpty())
                 keyframePayload->setStyle(stylePayloadBuilder.toString());
 
-            keyframesPayload->addItem(WTFMove(keyframePayload));
+            keyframesPayload->addItem(WTF::move(keyframePayload));
         }
     } else {
         for (const auto& parsedKeyframe : parsedKeyframes) {
@@ -200,7 +200,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
             if (!parsedKeyframe.style->isEmpty())
                 keyframePayload->setStyle(parsedKeyframe.style->asText(CSS::defaultSerializationContext()));
 
-            keyframesPayload->addItem(WTFMove(keyframePayload));
+            keyframesPayload->addItem(WTF::move(keyframePayload));
         }
     }
 
@@ -270,8 +270,8 @@ void InspectorAnimationAgent::didCreateFrontendAndBackend()
 
 void InspectorAnimationAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    stopTracking();
-    disable();
+    std::ignore = stopTracking();
+    std::ignore = disable();
 
     Ref agents = m_instrumentingAgents.get();
     ASSERT(agents->persistentAnimationAgent() == this);
@@ -295,7 +295,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
     {
         for (auto& animation : WebAnimation::instances()) {
             if (existsInCurrentPage(animation->scriptExecutionContext()))
-                bindAnimation(*animation, nullptr);
+                bindAnimation(animation, nullptr);
         }
     }
 
@@ -339,7 +339,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> Ins
     m_animationsIgnoringTargetChanges.remove(*animation);
 
     Ref agents = m_instrumentingAgents.get();
-    auto* domAgent = agents->persistentDOMAgent();
+    CheckedPtr domAgent = agents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -367,7 +367,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
         return makeUnexpected("Animation is detached from context"_s);
 
     auto* state = scriptExecutionContext->globalObject();
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(state);
     ASSERT(!injectedScript.hasNoValue());
 
     JSC::JSValue value;
@@ -375,7 +375,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
         JSC::JSLockHolder lock(state);
 
         auto* globalObject = deprecatedGlobalObjectForPrototype(state);
-        value = toJS(state, globalObject, animation.get());
+        value = toJS(state, globalObject, *animation);
     }
 
     if (!value) {
@@ -400,7 +400,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::startTracking(
 
     ASSERT(m_trackedStyleOriginatedAnimationData.isEmpty());
 
-    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingStart(protect(environment())->executionStopwatch().elapsedTime().seconds());
 
     return { };
 }
@@ -415,7 +415,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::stopTracking()
 
     m_trackedStyleOriginatedAnimationData.clear();
 
-    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingComplete(protect(environment())->executionStopwatch().elapsedTime().seconds());
 
     return { };
 }
@@ -429,8 +429,8 @@ static bool isDelayed(const ComputedEffectTiming& computedTiming)
 
 void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& keyframeEffect, const ComputedEffectTiming& computedTiming)
 {
-    auto* animation = keyframeEffect.animation();
-    RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation);
+    RefPtr animation = keyframeEffect.animation();
+    RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.get());
     if (!styleOriginatedAnimation)
         return;
 
@@ -477,20 +477,20 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
         .release();
 
     if (ensureResult.isNewEntry) {
-        if (auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
+        if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
             if (auto nodeId = domAgent->pushStyleableElementToFrontend(target))
                 event->setNodeId(nodeId);
         }
 
-        if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation))
+        if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get()))
             event->setAnimationName(cssAnimation->animationName());
-        else if (auto* cssTransition = dynamicDowncast<CSSTransition>(animation))
+        else if (RefPtr cssTransition = dynamicDowncast<CSSTransition>(animation.get()))
             event->setTransitionProperty(cssTransition->transitionProperty());
         else
             ASSERT_NOT_REACHED();
     }
 
-    m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch().elapsedTime().seconds(), WTFMove(event));
+    m_frontendDispatcher->trackingUpdate(protect(environment())->executionStopwatch().elapsedTime().seconds(), WTF::move(event));
 }
 
 void InspectorAnimationAgent::didChangeWebAnimationName(WebAnimation& animation)
@@ -559,7 +559,7 @@ void InspectorAnimationAgent::didCreateWebAnimation(WebAnimation& animation)
 void InspectorAnimationAgent::animationBindingTimerFired()
 {
     for (auto&& [animation, backtrace] : std::exchange(m_animationsPendingBinding, { }))
-        bindAnimation(Ref { animation }, WTFMove(backtrace));
+        bindAnimation(Ref { animation }, WTF::move(backtrace));
 }
 
 void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
@@ -581,8 +581,13 @@ void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
     }
 
     Vector<String> animationIdsToRemove;
-    for (auto& [animationId, animation] : m_animationIdMap) {
-        if (RefPtr document = dynamicDowncast<Document>(Ref { animation.get() }->scriptExecutionContext()); document && document->frame() == &frame)
+    for (auto& [animationId, weakAnimation] : m_animationIdMap) {
+        RefPtr animation = weakAnimation.get();
+        if (!animation) {
+            // FIXME <https://webkit.org/b/303593>: Animation should not be destroyed before notifying this agent to unbind it.
+            continue;
+        }
+        if (RefPtr document = dynamicDowncast<Document>(animation->scriptExecutionContext()); document && document->frame() == &frame)
             animationIdsToRemove.append(animationId);
     }
     for (const auto& animationId : animationIdsToRemove)
@@ -592,7 +597,11 @@ void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
 String InspectorAnimationAgent::findAnimationId(WebAnimation& animation)
 {
     for (auto& [animationId, existingAnimation] : m_animationIdMap) {
-        if (existingAnimation.ptr() == &animation)
+        if (!existingAnimation) {
+            // FIXME <https://webkit.org/b/303593>: Animation should not be destroyed before notifying this agent to unbind it.
+            continue;
+        }
+        if (existingAnimation.get() == &animation)
             return animationId;
     }
     return nullString();
@@ -600,16 +609,16 @@ String InspectorAnimationAgent::findAnimationId(WebAnimation& animation)
 
 WebAnimation* InspectorAnimationAgent::assertAnimation(Inspector::Protocol::ErrorString& errorString, const String& animationId)
 {
-    auto* animation = m_animationIdMap.get(animationId);
+    RefPtr animation = m_animationIdMap.get(animationId);
     if (!animation)
         errorString = "Missing animation for given animationId"_s;
-    return animation;
+    return animation.unsafeGet();
 }
 
 void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace)
 {
     auto animationId = makeString("animation:"_s, IdentifiersFactory::createIdentifier());
-    m_animationIdMap.set(animationId, animation);
+    m_animationIdMap.set(animationId, &animation);
 
     auto animationPayload = Inspector::Protocol::Animation::Animation::create()
         .setAnimationId(animationId)
@@ -630,7 +639,7 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Insp
     m_animationsIgnoringEffectChanges.add(animation);
     m_animationsIgnoringTargetChanges.add(animation);
 
-    m_frontendDispatcher->animationCreated(WTFMove(animationPayload));
+    m_frontendDispatcher->animationCreated(WTF::move(animationPayload));
 }
 
 void InspectorAnimationAgent::unbindAnimation(const String& animationId)
@@ -681,7 +690,7 @@ void InspectorAnimationAgent::stopTrackingStyleOriginatedAnimation(StyleOriginat
             .setTrackingAnimationId(data->trackingAnimationId)
             .setAnimationState(Inspector::Protocol::Animation::AnimationState::Canceled)
             .release();
-        m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch().elapsedTime().seconds(), WTFMove(event));
+        m_frontendDispatcher->trackingUpdate(protect(environment())->executionStopwatch().elapsedTime().seconds(), WTF::move(event));
     }
 }
 

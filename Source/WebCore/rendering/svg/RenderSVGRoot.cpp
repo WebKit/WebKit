@@ -57,13 +57,13 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGRoot);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGRoot);
 
 const int defaultWidth = 300;
 const int defaultHeight = 150;
 
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
-    : RenderReplaced(Type::SVGRoot, element, WTFMove(style))
+    : RenderReplaced(Type::SVGRoot, element, WTF::move(style))
 {
     ASSERT(isRenderSVGRoot());
     LayoutSize intrinsicSize(computeIntrinsicSize());
@@ -87,11 +87,6 @@ RenderSVGViewportContainer* RenderSVGRoot::viewportContainer() const
     if (!child || !child->isAnonymous())
         return nullptr;
     return dynamicDowncast<RenderSVGViewportContainer>(child);
-}
-
-CheckedPtr<RenderSVGViewportContainer> RenderSVGRoot::checkedViewportContainer() const
-{
-    return viewportContainer();
 }
 
 bool RenderSVGRoot::hasIntrinsicAspectRatio() const
@@ -170,7 +165,8 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
 
     // Percentage units are not scaled, Length(100, %) resolves to 100% of the unzoomed RenderView content size.
     // However for SVGs purposes we need to always include zoom in the RenderSVGRoot boundaries.
-    result *= style().usedZoom();
+    if (isDocumentElementRenderer())
+        result *= style().usedZoom();
     return result;
 }
 
@@ -190,7 +186,8 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit>
 
     // Percentage units are not scaled, Length(100, %) resolves to 100% of the unzoomed RenderView content size.
     // However for SVGs purposes we need to always include zoom in the RenderSVGRoot boundaries.
-    result *= style().usedZoom();
+    if (isDocumentElementRenderer())
+        result *= style().usedZoom();
     return result;
 }
 
@@ -246,6 +243,7 @@ void RenderSVGRoot::layoutChildren()
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
     m_strokeBoundingBox = std::nullopt;
+    m_cachedVisualOverflowRect = std::nullopt;
 
     constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
     m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
@@ -472,7 +470,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
         LayoutRect boundsRect(adjustedLocation, size());
         if (locationInContainer.intersects(boundsRect)) {
             updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(adjustedLocation)));
-            if (result.addNodeToListBasedTestResult(protectedNodeForHitTest().get(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
+            if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
                 return true;
         }
     }
@@ -495,7 +493,7 @@ FloatSize RenderSVGRoot::computeViewportSize() const
 
 void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
-    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
+    ASSERT(!isInLayout() || !view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
     if (repaintContainer == this)
         return;

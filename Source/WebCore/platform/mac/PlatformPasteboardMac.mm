@@ -606,7 +606,7 @@ std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(
         if (webSafeType.isEmpty())
             continue;
 
-        webSafeTypes.add(WTFMove(webSafeType));
+        webSafeTypes.add(WTF::move(webSafeType));
     }
     info.containsFileURLAndFileUploadContent = containsFileURL == ContainsFileURL::Yes;
     info.webSafeTypesByFidelity = copyToVector(webSafeTypes);

@@ -70,7 +70,7 @@ public:
         // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
         Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
         debuggableInfo->setDebuggableType(debuggableType);
-        m_proxy->initialize(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
+        m_proxy->initialize(WTF::move(debuggableInfo), m_inspectorClient.backendCommandsURL());
     }
 
     void show()
@@ -156,7 +156,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
                 if (!g_strcmp0(type, "JavaScript") || !g_strcmp0(type, "ServiceWorker") || !g_strcmp0(type, "WebPage"))
                     targetList.append({ targetID, type, name, url });
             }
-            client.setTargetList(connectionID, WTFMove(targetList));
+            client.setTargetList(connectionID, WTF::move(targetList));
         }}
     },
     { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
@@ -173,7 +173,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
 }
 
 RemoteInspectorClient::RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver& observer)
-    : m_hostAndPort(WTFMove(hostAndPort))
+    : m_hostAndPort(WTF::move(hostAndPort))
     , m_observer(observer)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
@@ -186,7 +186,7 @@ RemoteInspectorClient::RemoteInspectorClient(String&& hostAndPort, RemoteInspect
                 return;
             auto* client = static_cast<RemoteInspectorClient*>(userData);
             if (connection)
-                client->setupConnection(SocketConnection::create(WTFMove(connection), messageHandlers(), client));
+                client->setupConnection(SocketConnection::create(WTF::move(connection), messageHandlers(), client));
             else {
                 WTFLogAlways("RemoteInspectorClient failed to connect to inspector server: %s", error->message);
                 client->m_observer.connectionClosed(*client);
@@ -203,7 +203,7 @@ RemoteInspectorClient::~RemoteInspectorClient()
 
 void RemoteInspectorClient::setupConnection(Ref<SocketConnection>&& connection)
 {
-    m_socketConnection = WTFMove(connection);
+    m_socketConnection = WTF::move(connection);
     m_socketConnection->sendMessage("SetupInspectorClient", g_variant_new("(@ay)", g_variant_new_bytestring(Inspector::backendCommandsHash().data())));
 }
 
@@ -284,7 +284,7 @@ void RemoteInspectorClient::setTargetList(uint64_t connectionID, Vector<Target>&
     for (auto targetID : targetsToRemove)
         m_inspectorProxyMap.remove(std::make_pair(connectionID, targetID));
 
-    m_targets.set(connectionID, WTFMove(targetList));
+    m_targets.set(connectionID, WTF::move(targetList));
     m_observer.targetListChanged(*this);
 }
 
@@ -297,53 +297,49 @@ void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_
     proxy->sendMessageToFrontend(String::fromUTF8(message));
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-
-void RemoteInspectorClient::appendTargertList(GString* html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
+void RemoteInspectorClient::appendTargetList(StringBuilder& html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
 {
     if (m_targets.isEmpty())
-        g_string_append(html, "<p>No targets found</p>");
+        html.append("<p>No targets found</p>"_s);
     else {
-        g_string_append(html, "<table>");
+        html.append("<table>"_s);
         for (auto connectionID : m_targets.keys()) {
             for (auto& target : m_targets.get(connectionID)) {
-                g_string_append_printf(html,
-                    "<tbody><tr>"
-                    "<td class=\"data\"><div class=\"targetname\">%s</div><div class=\"targeturl\">%s</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=",
-                    target.name.data(), target.url.data());
+                html.append("<tbody><tr>"_s,
+                    "<td class=\"data\"><div class=\"targetname\">"_s, String::fromUTF8(target.name.span()), "</div><div class=\"targeturl\">"_s,
+                    target.url, "</div></td>"_s,
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick="_s);
 
                 switch (inspectorType) {
                 case InspectorType::UI:
-                    g_string_append(html, "\"window.webkit.messageHandlers.inspector.postMessage(");
+                    html.append("\"window.webkit.messageHandlers.inspector.postMessage("_s);
                     if (escapeSingleQuote == ShouldEscapeSingleQuote::Yes)
-                        g_string_append(html, "\\'");
+                        html.append("\\'"_s);
                     else
-                        g_string_append_c(html, '\'');
-                    g_string_append_printf(html, "%" G_GUINT64_FORMAT ":%" G_GUINT64_FORMAT ":%s", connectionID, target.id, target.type.data());
+                        html.append('\'');
+                    html.append(connectionID, ':', target.id, ':', target.type);
                     if (escapeSingleQuote == ShouldEscapeSingleQuote::Yes)
-                        g_string_append(html, "\\')\"");
+                        html.append("\\')\""_s);
                     else
-                        g_string_append(html, "')\"");
+                        html.append("')\""_s);
                     break;
                 case InspectorType::HTTP:
-                    g_string_append_printf(html,
-                        "\"window.open('Main.html?ws=' + window.location.host + '/socket/%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT "/%s', "
-                        "'_blank', 'location=no,menubar=no,status=no,toolbar=no');\"",
-                        connectionID, target.id, target.type.data());
+                    html.append("\"window.open('Main.html?ws=' + window.location.host + '/socket/"_s, connectionID, '/', target.id, '/',
+                        target.type, "', '_blank', 'location=no,menubar=no,status=no,toolbar=no');\""_s);
                     break;
                 }
 
-                g_string_append(html, "></td></tr></tbody>");
+                html.append("></td></tr></tbody>"_s);
             }
         }
-        g_string_append(html, "</table>");
+        html.append("</table>"_s);
     }
 }
 
-GString* RemoteInspectorClient::buildTargetListPage(InspectorType inspectorType) const
+StringBuilder RemoteInspectorClient::buildTargetListPage(InspectorType inspectorType) const
 {
-    GString* html = g_string_new(
+    StringBuilder html;
+    html.append(
         "<html><head><title>Remote inspector</title>"
         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
         "<style>"
@@ -362,14 +358,12 @@ GString* RemoteInspectorClient::buildTargetListPage(InspectorType inspectorType)
         "  input { width: 100%; padding: 8px; }"
         "</style>"
         "</head><body><h1>Inspectable targets</h1>"
-        "<div id='targetlist'>");
-    appendTargertList(html, inspectorType, ShouldEscapeSingleQuote::No);
-    g_string_append(html, "</div></body></html>");
+        "<div id='targetlist'>"_s);
+    appendTargetList(html, inspectorType, ShouldEscapeSingleQuote::No);
+    html.append("</div></body></html>"_s);
 
     return html;
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebKit
 

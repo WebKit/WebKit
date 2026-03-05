@@ -80,8 +80,8 @@ void DNSCache::update(const CString& host, Vector<GRefPtr<GInetAddress>>&& addre
 {
     Locker locker { m_lock };
     auto& map = mapForType(type);
-    CachedResponse response = { WTFMove(addressList), MonotonicTime::now() + expireInterval };
-    auto addResult = map.set(host, WTFMove(response));
+    CachedResponse response = { WTF::move(addressList), MonotonicTime::now() + expireInterval };
+    auto addResult = map.set(host, WTF::move(response));
     if (addResult.isNewEntry)
         pruneResponsesInMap(map);
     m_expiredTimer.startOneShot(expireInterval);

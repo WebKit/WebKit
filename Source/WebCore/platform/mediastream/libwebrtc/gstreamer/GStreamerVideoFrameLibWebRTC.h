@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WARN_UNUSED_RETURN GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::VideoFrame&);
+[[nodiscard]] GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::VideoFrame&);
 
 webrtc::VideoFrame convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&&, uint32_t rtpTimestamp);
 
@@ -39,7 +39,7 @@ class GStreamerVideoFrameLibWebRTC : public webrtc::RefCountedObject<webrtc::Vid
 public:
     static webrtc::scoped_refptr<webrtc::VideoFrameBuffer> create(GRefPtr<GstSample>&&);
 
-    GRefPtr<GstSample>& sample() { return m_sample; }
+    const GRefPtr<GstSample>& sample() const { return m_sample; }
 
     // webrtc::VideoFrameBuffer interface.
     webrtc::scoped_refptr<webrtc::I420BufferInterface> ToI420() final;
@@ -47,9 +47,9 @@ public:
     int height() const final { return GST_VIDEO_INFO_HEIGHT(&m_info); }
 
 private:
-    GStreamerVideoFrameLibWebRTC(GRefPtr<GstSample>&& sample, GstVideoInfo info)
-        : m_sample(WTFMove(sample))
-        , m_info(info)
+    GStreamerVideoFrameLibWebRTC(GRefPtr<GstSample>&& sample, GstVideoInfo&& info)
+        : m_sample(WTF::move(sample))
+        , m_info(WTF::move(info))
     {
     }
     webrtc::VideoFrameBuffer::Type type() const final { return Type::kNative; }
@@ -58,6 +58,6 @@ private:
     GstVideoInfo m_info;
 };
 
-}
+} // namespace WebCore
 
 #endif // USE(GSTREAMER) && USE(LIBWEBRTC)

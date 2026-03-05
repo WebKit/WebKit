@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-static uint64_t nextClientResourceNumber()
+static uint64_t NODELETE nextClientResourceNumber()
 {
     static std::atomic<uint64_t> currentNumber(1);
     return currentNumber += 2;
 }
 
-static uint64_t nextServerResourceNumber()
+static uint64_t NODELETE nextServerResourceNumber()
 {
     static uint64_t currentNumber = 0;
     return currentNumber += 2;

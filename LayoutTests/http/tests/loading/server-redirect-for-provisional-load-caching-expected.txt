@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 http://127.0.0.1:8000/loading/resources/server-redirect.py - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/server-redirect.py, main document URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame

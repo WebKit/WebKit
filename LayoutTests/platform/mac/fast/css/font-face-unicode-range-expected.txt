@@ -38,35 +38,35 @@ layer at (0,0) size 800x600
               text run at (11,1) width 49: "BCD"
           RenderText {#text} at (59,0) size 234x18
             text run at (59,0) width 234: "EFGHIJKLMNOPQRSTUVWXYZ"
-      RenderBlock {DIV} at (0,316) size 784x86 [border: (1px solid #000000)]
-        RenderBlock {P} at (9,17) size 766x18
-          RenderText {#text} at (0,0) size 308x18
+      RenderBlock {DIV} at (0,316) size 784x87 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x19
+          RenderText {#text} at (0,0) size 308x19
             text run at (0,0) width 308: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        RenderBlock {P} at (9,51) size 766x18
-          RenderText {#text} at (0,0) size 145x18
+        RenderBlock {P} at (9,51) size 766x19
+          RenderText {#text} at (0,0) size 145x19
             text run at (0,0) width 145: "ABCDEFGHIJKLMN"
           RenderInline {SPAN} at (144,0) size 30x18
             RenderText {#text} at (144,0) size 30x18
               text run at (144,0) width 30: "OPQ"
-          RenderInline {SPAN} at (173,1) size 113x16
-            RenderText {#text} at (173,1) size 113x16
+          RenderInline {SPAN} at (173,1) size 113x17
+            RenderText {#text} at (173,1) size 113x17
               text run at (173,1) width 113: "RSTUVWX"
-          RenderText {#text} at (285,0) size 23x18
+          RenderText {#text} at (285,0) size 23x19
             text run at (285,0) width 23: "YZ"
-      RenderBlock {DIV} at (0,410) size 784x86 [border: (1px solid #000000)]
-        RenderBlock {P} at (9,17) size 766x18
-          RenderText {#text} at (0,0) size 297x18
+      RenderBlock {DIV} at (0,410) size 784x87 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x19
+          RenderText {#text} at (0,0) size 297x19
             text run at (0,0) width 297: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        RenderBlock {P} at (9,51) size 766x18
-          RenderText {#text} at (0,0) size 157x18
+        RenderBlock {P} at (9,51) size 766x19
+          RenderText {#text} at (0,0) size 157x19
             text run at (0,0) width 157: "ABCDEFGHIJKLMNO"
-          RenderInline {SPAN} at (156,1) size 119x16
-            RenderText {#text} at (156,1) size 33x16
+          RenderInline {SPAN} at (156,1) size 119x17
+            RenderText {#text} at (156,1) size 33x17
               text run at (156,1) width 33: "PQ"
             RenderInline {SPAN} at (188,0) size 39x18
               RenderText {#text} at (188,0) size 39x18
                 text run at (188,0) width 39: "RSTU"
-            RenderText {#text} at (226,1) size 49x16
+            RenderText {#text} at (226,1) size 49x17
               text run at (226,1) width 49: "VWX"
-          RenderText {#text} at (274,0) size 23x18
+          RenderText {#text} at (274,0) size 23x19
             text run at (274,0) width 23: "YZ"

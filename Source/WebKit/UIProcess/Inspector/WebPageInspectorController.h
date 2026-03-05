@@ -27,6 +27,7 @@
 
 #include "InspectorTargetProxy.h"
 #include "ProvisionalPageProxy.h"
+#include "UIProcess/WebFrameProxy.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
 #include <WebCore/FrameIdentifier.h>
@@ -71,9 +72,6 @@ public:
     void setIndicating(bool);
 #endif
 
-    void createWebPageInspectorTarget(const String& targetId, Inspector::InspectorTargetType);
-    void createWebFrameInspectorTarget(WebFrameProxy&, const String& targetId);
-    void destroyInspectorTarget(const String& targetId);
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
     bool shouldPauseLoading(const ProvisionalPageProxy&) const;
@@ -82,20 +80,26 @@ public:
     void didCreateProvisionalPage(ProvisionalPageProxy&);
     void willDestroyProvisionalPage(const ProvisionalPageProxy&);
     void didCommitProvisionalPage(WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID);
+    void didCreateFrame(WebFrameProxy&);
+    void willDestroyFrame(const WebFrameProxy&);
+    void didCreateProvisionalFrame(ProvisionalFrameProxy&);
+    void willDestroyProvisionalFrame(const ProvisionalFrameProxy&);
+    void didCommitProvisionalFrame(WebFrameProxy&, WebCore::ProcessIdentifier oldProcessID, WebCore::ProcessIdentifier newProcessID);
 
-    InspectorBrowserAgent* enabledBrowserAgent() const;
+    InspectorBrowserAgent* NODELETE enabledBrowserAgent() const;
     void setEnabledBrowserAgent(InspectorBrowserAgent*);
 
     void browserExtensionsEnabled(HashMap<String, String>&&);
     void browserExtensionsDisabled(HashSet<String>&&);
 
 private:
-    Ref<WebPageProxy> protectedInspectedPage();
-    CheckedPtr<Inspector::InspectorTargetAgent> checkedTargetAgent() { return m_targetAgent; }
-    WebPageAgentContext webPageAgentContext();
+    WebPageAgentContext NODELETE webPageAgentContext();
     void createLazyAgents();
 
     void addTarget(std::unique_ptr<InspectorTargetProxy>&&);
+    void removeTarget(const String& targetId);
+
+    bool shouldManageFrameTargets() const;
 
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;

@@ -103,6 +103,18 @@ void LayoutRect::unite(const LayoutRect& other)
     uniteEvenIfEmpty(other);
 }
 
+void LayoutRect::uniteXEvenIfEmpty(const LayoutRect& other)
+{
+    setX(std::min(x(), other.x()));
+    setWidth(std::max(maxX(), other.maxX()) - x());
+}
+
+void LayoutRect::uniteYEvenIfEmpty(const LayoutRect& other)
+{
+    setY(std::min(y(), other.y()));
+    setHeight(std::max(maxY(), other.maxY()) - y());
+}
+
 void LayoutRect::uniteEvenIfEmpty(const LayoutRect& other)
 {
     auto minX = std::min(x(), other.x());

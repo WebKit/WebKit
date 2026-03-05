@@ -32,39 +32,25 @@
 
 </style>
 <script src="../resources/compositing-test-utils.js"></script>
+<script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
-function dumpLayerTree()
-{
-    if (!window.internals)
-        return;
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
 
-    var out = document.getElementById('out');
-    out.innerText = layerTreeWithoutTransforms(internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
-}
-
-function dumpLayersSoon()
-{
-    setTimeout(function() {
-        dumpLayerTree();
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 0);
-}
-
-function runTest()
-{
+window.addEventListener('load', async () => {
     makeDots(5, 5, 60);
-    let box = document.getElementById('box');
-    box.addEventListener('animationstart', dumpLayersSoon, false);
-    box.classList.add('animating');
-}
 
-window.addEventListener('load', runTest, false);
+    const box = document.getElementById('box');
+    box.classList.add('animating');
+
+    await new Promise(resolve => box.addEventListener('animationstart', resolve));
+    await animationAcceleration(box.getAnimations()[0]);
+
+    document.getElementById('out').innerText = layerTreeWithoutTransforms(window.internals?.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+
+    window.testRunner?.notifyDone();
+});
 
 </script>
 </head>

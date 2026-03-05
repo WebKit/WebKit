@@ -47,7 +47,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |                       Message Identifier                      |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int IForwardTsnChunk::kType;
 
 std::optional<IForwardTsnChunk> IForwardTsnChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

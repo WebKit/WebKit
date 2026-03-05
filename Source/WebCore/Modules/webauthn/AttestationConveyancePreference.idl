@@ -25,7 +25,6 @@
 
 [
     Conditional=WEB_AUTHN,
-    ExportMacro=WEBCORE_EXPORT,
 ] enum AttestationConveyancePreference {
     "none",
     "indirect",

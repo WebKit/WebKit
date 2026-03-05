@@ -104,7 +104,8 @@ void PerActivityStateCPUUsageSampler::loggingTimerFired()
 
 RefPtr<WebPageProxy> PerActivityStateCPUUsageSampler::pageForLogging() const
 {
-    for (Ref webProcess : Ref { m_processPool.get() }->processes()) {
+    Ref processPool = m_processPool;
+    for (Ref webProcess : processPool->processes()) {
         if (!webProcess->pageCount())
             continue;
         return webProcess->pages()[0].ptr();

@@ -59,11 +59,12 @@ using JSPaintWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable
 
 /* Hash table */
 
-static const struct CompactHashIndex JSPaintWorkletGlobalScopeTableIndex[4] = {
+static const struct CompactHashIndex JSPaintWorkletGlobalScopeTableIndex[5] = {
+    { -1, -1 },
+    { 0, 4 },
+    { -1, -1 },
     { -1, -1 },
     { 1, -1 },
-    { -1, -1 },
-    { 0, -1 },
 };
 
 
@@ -114,13 +115,8 @@ void JSPaintWorkletGlobalScopePrototype::finishCreation(VM& vm)
 const ClassInfo JSPaintWorkletGlobalScope::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, &JSPaintWorkletGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScope) };
 
 JSPaintWorkletGlobalScope::JSPaintWorkletGlobalScope(VM& vm, Structure* structure, Ref<PaintWorkletGlobalScope>&& impl)
-    : JSWorkletGlobalScope(vm, structure, WTFMove(impl))
+    : JSWorkletGlobalScope(vm, structure, WTF::move(impl))
 {
-}
-
-Ref<PaintWorkletGlobalScope> JSPaintWorkletGlobalScope::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, PaintWorkletGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");

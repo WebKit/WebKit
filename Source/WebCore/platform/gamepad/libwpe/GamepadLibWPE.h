@@ -30,18 +30,21 @@
 
 #include "PlatformGamepad.h"
 #include <wpe/wpe.h>
+#include <wtf/TZoneMalloc.h>
 
 #if WPE_CHECK_VERSION(1, 13, 90)
 
 namespace WebCore {
 
 class GamepadLibWPE final : public PlatformGamepad {
+    WTF_MAKE_TZONE_ALLOCATED(GamepadLibWPE);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GamepadLibWPE);
 public:
     GamepadLibWPE(struct wpe_gamepad_provider*, uintptr_t, unsigned);
     virtual ~GamepadLibWPE();
 
-    const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
-    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
+    const Vector<SharedGamepadValue>& axisValues() const LIFETIME_BOUND final { return m_axisValues; }
+    const Vector<SharedGamepadValue>& buttonValues() const LIFETIME_BOUND final { return m_buttonValues; }
 
     const struct wpe_gamepad* wpeGamepad() const { return m_gamepad.get(); }
 

@@ -52,13 +52,13 @@ public:
     virtual Type type() const = 0;
     virtual AuthenticatorResponseData data() const;
 
-    ArrayBuffer* rawId() const { return m_rawId.ptr(); }
+    ArrayBuffer& rawId() const { return m_rawId; }
 
     WEBCORE_EXPORT void setExtensions(AuthenticationExtensionsClientOutputs&&);
     WEBCORE_EXPORT AuthenticationExtensionsClientOutputs extensions() const;
     WEBCORE_EXPORT void setClientDataJSON(Ref<ArrayBuffer>&&);
-    ArrayBuffer* clientDataJSON() const;
-    WEBCORE_EXPORT AuthenticatorAttachment attachment() const;
+    ArrayBuffer* NODELETE clientDataJSON() const;
+    WEBCORE_EXPORT AuthenticatorAttachment NODELETE attachment() const;
 
 protected:
     AuthenticatorResponse(Ref<ArrayBuffer>&&, AuthenticatorAttachment);

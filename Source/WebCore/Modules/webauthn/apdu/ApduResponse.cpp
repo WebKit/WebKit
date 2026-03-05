@@ -45,11 +45,11 @@ std::optional<ApduResponse> ApduResponse::createFromMessage(Vector<uint8_t>&& da
     statusBytes |= data[data.size() - 1];
 
     data.shrink(data.size() - 2);
-    return ApduResponse(WTFMove(data), static_cast<Status>(statusBytes));
+    return ApduResponse(WTF::move(data), static_cast<Status>(statusBytes));
 }
 
 ApduResponse::ApduResponse(Vector<uint8_t>&& data, Status responseStatus)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
     , m_responseStatus(responseStatus)
 {
 }

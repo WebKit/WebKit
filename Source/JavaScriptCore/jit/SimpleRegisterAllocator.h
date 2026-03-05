@@ -56,6 +56,7 @@ public:
     using RegisterBinding = JITBackend::RegisterBinding;
     using RegisterBindings = std::array<RegisterBinding, RegisterBank::numberOfRegisters>;
     using SpillHint = JITBackend::SpillHint;
+
     static_assert(std::unsigned_integral<SpillHint>);
     static constexpr SpillHint invalidRegisterHint = std::numeric_limits<SpillHint>::max();
 
@@ -63,24 +64,24 @@ public:
 
     SimpleRegisterAllocator() = default;
 
-    Register allocate(JITBackend& backend, RegisterBinding&& binding, std::optional<SpillHint> hint, Register hintReg = invalidRegister)
+    Register allocate(JITBackend& backend, RegisterBinding binding, std::optional<SpillHint> hint, Register hintReg = invalidRegister)
     {
         Register result = hintReg;
         if (result == invalidRegister || !m_freeRegisters.contains(result, registerWidth))
             result = m_freeRegisters.isEmpty() ? evictRegister(backend) : nextFreeRegister();
-        bind(result, WTFMove(binding), hint);
+        bind(result, WTF::move(binding), hint);
         return result;
     }
 
     // Pass nullopt as the hint if you don't want to touch the spill order.
-    void bind(Register reg, RegisterBinding&& binding, std::optional<SpillHint> hint)
+    void bind(Register reg, RegisterBinding binding, std::optional<SpillHint> hint)
     {
         ASSERT(m_validRegisters.contains(reg, registerWidth));
         ASSERT(m_freeRegisters.contains(reg, registerWidth));
         ASSERT(m_bindings[reg] == RegisterBinding());
         dataLogLnIf(!m_logPrefix.isNull(), m_logPrefix, "\tBinding ", reg, " to ", binding);
         m_freeRegisters.remove(reg);
-        m_bindings[reg] = WTFMove(binding);
+        m_bindings[reg] = WTF::move(binding);
         if (hint)
             m_spiller.setHint(reg, hint.value());
     }
@@ -94,7 +95,7 @@ public:
         m_bindings[reg] = RegisterBinding();
     }
 
-    void flushIf(JITBackend& backend, const Invocable<bool(const RegisterBinding&)> auto& functor)
+    void flushIf(JITBackend& backend, const Invocable<bool(Register, const RegisterBinding&)> auto& functor)
     {
         for (Reg r : m_validRegisters) {
             Register reg = fromJSCReg(r);
@@ -103,7 +104,7 @@ public:
                 continue;
             }
 
-            if (!functor(m_bindings[reg]))
+            if (!functor(reg, m_bindings[reg]))
                 continue;
 
             backend.flush(reg, m_bindings[reg]);
@@ -111,9 +112,16 @@ public:
         }
     }
 
+    void flush(JITBackend& backend, const RegisterBinding& binding)
+    {
+        flushIf(backend, [&](Register, const RegisterBinding& b) ALWAYS_INLINE_LAMBDA {
+            return b == binding;
+        });
+    }
+
     void flushAllRegisters(JITBackend& backend)
     {
-        flushIf(backend, [&](const RegisterBinding&) ALWAYS_INLINE_LAMBDA { return true; });
+        flushIf(backend, [&](Register, const RegisterBinding&) ALWAYS_INLINE_LAMBDA { return true; });
     }
 
     void clobber(JITBackend& backend, Register reg)
@@ -126,9 +134,11 @@ public:
 
     RegisterSet validRegisters() const { return m_validRegisters; }
     RegisterSet freeRegisters() const { return m_freeRegisters; }
-    const RegisterBinding& bindingFor(Register reg) { return m_bindings[reg]; }
+    RegisterSet allocatedRegisters() const { return RegisterSet(m_validRegisters).exclude(m_freeRegisters); }
+    const RegisterBinding& bindingFor(Register reg) const { return m_bindings[reg]; }
     // FIXME: We should really compress this since it's copied by slow paths to know how to restore the correct state.
     RegisterBindings copyBindings() const { return m_bindings; }
+
     void assertAllValidRegistersAreUnlocked() const
     {
 #if ASSERT_ENABLED
@@ -156,6 +166,30 @@ public:
         m_spiller.initialize(registers);
         m_logPrefix = logPrefix;
         dataLogLnIf(!m_logPrefix.isNull(), m_logPrefix, "\tUsing ", enumTypeName<Register>(), "s ", m_validRegisters);
+    }
+
+    void reset()
+    {
+        m_freeRegisters = m_validRegisters;
+        m_spiller = Spiller();
+        m_spiller.initialize(m_validRegisters);
+        m_bindings.fill(RegisterBinding());
+    }
+
+    void dump(PrintStream& out) const { dumpInContext(out, nullptr); }
+    void dumpInContext(PrintStream& out, const JITBackend* context) const
+    {
+        CommaPrinter comma(", "_s, "["_s);
+        for (Reg r : allocatedRegisters()) {
+            Register reg = fromJSCReg(r);
+            RegisterBinding binding = m_bindings[reg];
+            out.print(comma, binding);
+            if (context && binding.isValid())
+                out.print(inContext(context->locationOf(m_bindings[reg]), this));
+            out.print(": "_s, reg, ConditionalDump(isLocked(reg), "*("_s, m_spiller.m_lockCounts[reg], ")"_s));
+        }
+        if (comma.didPrint())
+            out.print("]"_s);
     }
 
 private:

@@ -110,7 +110,7 @@ TEST(WTF_EnumeratedArray, Construction)
     EnumeratedArray<Foo, int, Foo::Three> array2(array1);
     EXPECT_EQ(array2.front(), 3);
     EXPECT_EQ(array2.back(), 17);
-    EnumeratedArray<Foo, int, Foo::Three> array3(WTFMove(array1));
+    EnumeratedArray<Foo, int, Foo::Three> array3(WTF::move(array1));
     EXPECT_EQ(array3.front(), 3);
     EXPECT_EQ(array3.back(), 17);
     EnumeratedArray<Foo, int, Foo::Three> array4;
@@ -118,7 +118,7 @@ TEST(WTF_EnumeratedArray, Construction)
     EXPECT_EQ(array4.front(), 3);
     EXPECT_EQ(array4.back(), 17);
     EnumeratedArray<Foo, int, Foo::Three> array5;
-    array5 = WTFMove(array2);
+    array5 = WTF::move(array2);
     EXPECT_EQ(array5.front(), 3);
     EXPECT_EQ(array5.back(), 17);
 }

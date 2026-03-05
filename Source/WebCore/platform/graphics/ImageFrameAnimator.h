@@ -72,7 +72,7 @@ private:
 
     CString sourceUTF8() const;
 
-    ThreadSafeWeakPtr<BitmapImageSource> m_source; // Cannot be null.
+    ThreadSafeWeakRef<BitmapImageSource> m_source;
     unsigned m_frameCount { 0 };
     RepetitionCount m_repetitionCount { RepetitionCountNone };
 

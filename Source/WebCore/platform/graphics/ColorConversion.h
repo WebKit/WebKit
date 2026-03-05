@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ColorTypes.h>
+#include <WebCore/PlatformExportMacros.h>
 #include <numeric>
 #include <wtf/MathExtras.h>
 
@@ -45,7 +46,6 @@ template<typename Output, typename Input> Output convertColorCarryingForwardMiss
 // Conversion functions for raw color components with associated color spaces.
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
-
 
 // All color types, other than XYZA or those inheriting from RGBType, must implement
 // the following conversions to and from their "Reference" color.
@@ -82,11 +82,8 @@ constexpr std::optional<unsigned> analogousComponentIndex()
 {
     if constexpr (IndexInInput == 3)
         return 3; // Special case alpha, it always should carry forward.
-    else {
-        constexpr auto inputCategory = Input::Model::componentInfo[IndexInInput].category;
-        if constexpr (!inputCategory)
-            return std::nullopt;
-        else if constexpr (*inputCategory == Output::Model::componentInfo[0].category)
+    else if constexpr (constexpr auto inputCategory = Input::Model::componentInfo[IndexInInput].category) {
+        if constexpr (*inputCategory == Output::Model::componentInfo[0].category)
             return 0;
         else if constexpr (*inputCategory == Output::Model::componentInfo[1].category)
             return 1;
@@ -94,7 +91,8 @@ constexpr std::optional<unsigned> analogousComponentIndex()
             return 2;
         else
             return std::nullopt;
-    }
+    } else
+        return std::nullopt;
 }
 
 // Utility to update appropriate component in `output` if an analogous component
@@ -102,8 +100,7 @@ constexpr std::optional<unsigned> analogousComponentIndex()
 template<typename Output, typename Input, unsigned IndexInInput>
 constexpr void tryToCarryForwardComponentIfMissing(const ColorComponents<float, 4>& input, ColorComponents<float, 4>& output)
 {
-    constexpr auto analogousComponentIndexInOutput = analogousComponentIndex<Output, Input, IndexInInput>();
-    if constexpr (analogousComponentIndexInOutput) {
+    if constexpr (constexpr auto analogousComponentIndexInOutput = analogousComponentIndex<Output, Input, IndexInInput>()) {
         if (std::isnan(input[IndexInInput]))
             output[*analogousComponentIndexInOutput] = std::numeric_limits<float>::quiet_NaN();
     }

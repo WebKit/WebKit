@@ -365,6 +365,8 @@
 		0F99999C26AAAA0000213121 /* pas_mte_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F99999A26AAAA0000213121 /* pas_mte_config.c */; };
 		0F99999D26AAAA0000213121 /* pas_mte_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99999B26AAAA0000213121 /* pas_mte_config.h */; };
 		0F99999D26AAAA0000111111 /* pas_mte.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99999B26AAAA0000111111 /* pas_zero_memory.h */; };
+		0F99999C26AAAA0000999999 /* pas_stats.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F99999A26AAAA0000999999 /* pas_stats.c */; };
+		0F99999D26AAAA0000999999 /* pas_stats.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99999B26AAAA0000999999 /* pas_stats.h */; };
 		0FC4EC3E234A91E300B710A3 /* pas_compute_summary_object_callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC4EC35234A91E300B710A3 /* pas_compute_summary_object_callbacks.c */; };
 		0FC4EC3F234A91E300B710A3 /* pas_fd_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4EC36234A91E300B710A3 /* pas_fd_stream.h */; };
 		0FC4EC792351707B00B710A3 /* pas_segregated_page_emptiness_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4EC782351707B00B710A3 /* pas_segregated_page_emptiness_kind.h */; };
@@ -1089,6 +1091,8 @@
 		0F99999A26AAAA0000213121 /* pas_mte_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_mte_config.c; sourceTree = "<group>"; };
 		0F99999B26AAAA0000213121 /* pas_mte_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_mte_config.h; sourceTree = "<group>"; };
 		0F99999B26AAAA0000111111 /* pas_zero_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_zero_memory.h; sourceTree = "<group>"; };
+		0F99999A26AAAA0000999999 /* pas_stats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_stats.c; sourceTree = "<group>"; };
+		0F99999B26AAAA0000999999 /* pas_stats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_stats.h; sourceTree = "<group>"; };
 		0FC4EC35234A91E300B710A3 /* pas_compute_summary_object_callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_compute_summary_object_callbacks.c; sourceTree = "<group>"; };
 		0FC4EC36234A91E300B710A3 /* pas_fd_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_fd_stream.h; sourceTree = "<group>"; };
 		0FC4EC782351707B00B710A3 /* pas_segregated_page_emptiness_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_emptiness_kind.h; sourceTree = "<group>"; };
@@ -1960,6 +1964,8 @@
 				2BE4B7CA2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.c */,
 				2BE4B7C92D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.h */,
 				0FC6821721253627003C6A13 /* pas_snprintf.h */,
+				0F99999A26AAAA0000999999 /* pas_stats.c */,
+				0F99999B26AAAA0000999999 /* pas_stats.h */,
 				0FC4EC32234A91E200B710A3 /* pas_status_reporter.c */,
 				0FC4EC34234A91E200B710A3 /* pas_status_reporter.h */,
 				0FC6821621253626003C6A13 /* pas_stream.c */,
@@ -2437,6 +2443,7 @@
 				2BE4B7CB2D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.h in Headers */,
 				2BE4B7CC2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.h in Headers */,
 				0FE7EE3222960142004F4166 /* pas_snprintf.h in Headers */,
+				0F99999D26AAAA0000999999 /* pas_stats.h in Headers */,
 				0FC4EC3D234A91E300B710A3 /* pas_status_reporter.h in Headers */,
 				0FE7EE3322960142004F4166 /* pas_stream.h in Headers */,
 				0FC4EC3C234A91E300B710A3 /* pas_string_stream.h in Headers */,
@@ -2907,6 +2914,7 @@
 				2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */,
 				2BE4B7CE2D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.c in Sources */,
 				2BE4B7CD2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.c in Sources */,
+				0F99999C26AAAA0000999999 /* pas_stats.c in Sources */,
 				0FC4EC3B234A91E300B710A3 /* pas_status_reporter.c in Sources */,
 				0FE7EDD322960142004F4166 /* pas_stream.c in Sources */,
 				0FC4EC37234A91E300B710A3 /* pas_string_stream.c in Sources */,

@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TransparencyLayerContextSwitcher);
 
 TransparencyLayerContextSwitcher::TransparencyLayerContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, RefPtr<Filter>&& filter)
-    : GraphicsContextSwitcher(WTFMove(filter))
+    : GraphicsContextSwitcher(WTF::move(filter))
 {
     if (m_filter)
         m_filterStyles = m_filter->createFilterStyles(destinationContext, sourceImageRect);
@@ -44,9 +44,6 @@ TransparencyLayerContextSwitcher::TransparencyLayerContextSwitcher(GraphicsConte
 
 void TransparencyLayerContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&, const FloatRect& clipRect)
 {
-    destinationContext.save();
-    destinationContext.beginTransparencyLayer(1);
-
     for (auto& filterStyle : m_filterStyles) {
         destinationContext.save();
         destinationContext.clip(intersection(filterStyle.imageRect, clipRect));
@@ -57,8 +54,10 @@ void TransparencyLayerContextSwitcher::beginClipAndDrawSourceImage(GraphicsConte
 
 void TransparencyLayerContextSwitcher::beginDrawSourceImage(GraphicsContext& destinationContext, float opacity)
 {
-    destinationContext.save();
-    destinationContext.beginTransparencyLayer(opacity);
+    if (opacity != 1) {
+        destinationContext.beginTransparencyLayer(opacity);
+        m_beganOpacityLayer = true;
+    }
 
     for (auto& filterStyle : m_filterStyles) {
         destinationContext.save();
@@ -75,8 +74,10 @@ void TransparencyLayerContextSwitcher::endDrawSourceImage(GraphicsContext& desti
         destinationContext.restore();
     }
 
-    destinationContext.endTransparencyLayer();
-    destinationContext.restore();
+    if (m_beganOpacityLayer) {
+        destinationContext.endTransparencyLayer();
+        m_beganOpacityLayer = false;
+    }
 }
 
 } // namespace WebCore

@@ -84,11 +84,11 @@ bool annotationCheckerInternal(PDFAnnotation *annotation, Type type, AnnotationT
 template <typename Type>
 bool annotationCheckerInternal(PDFAnnotation *annotation, std::initializer_list<Type>&& types, AnnotationToTypeConverter<Type> converter)
 {
-    auto checker = [annotation = RetainPtr { annotation }, converter = WTFMove(converter)](auto&& type) {
+    auto checker = [annotation = RetainPtr { annotation }, converter = WTF::move(converter)](auto&& type) {
         return annotationCheckerInternal(annotation.get(), std::forward<decltype(type)>(type), converter);
     };
     ASSERT(std::ranges::count_if(types, checker) <= 1);
-    return std::ranges::any_of(WTFMove(types), WTFMove(checker));
+    return std::ranges::any_of(WTF::move(types), WTF::move(checker));
 }
 
 bool annotationIsOfType(PDFAnnotation *annotation, AnnotationType type)
@@ -98,7 +98,7 @@ bool annotationIsOfType(PDFAnnotation *annotation, AnnotationType type)
 
 bool annotationIsOfType(PDFAnnotation *annotation, std::initializer_list<AnnotationType>&& types)
 {
-    return annotationCheckerInternal(annotation, WTFMove(types), annotationType);
+    return annotationCheckerInternal(annotation, WTF::move(types), annotationType);
 }
 
 bool annotationIsWidgetOfType(PDFAnnotation *annotation, WidgetType type)
@@ -108,7 +108,7 @@ bool annotationIsWidgetOfType(PDFAnnotation *annotation, WidgetType type)
 
 bool annotationIsWidgetOfType(PDFAnnotation *annotation, std::initializer_list<WidgetType>&& types)
 {
-    return annotationCheckerInternal(annotation, WTFMove(types), widgetType);
+    return annotationCheckerInternal(annotation, WTF::move(types), widgetType);
 }
 
 } // namespace WebKit::PDFAnnotationTypeHelpers

@@ -25,31 +25,36 @@
 
 #pragma once
 
-#include <WebCore/WritableStreamSink.h>
+#include "WritableStreamSink.h"
 
 namespace WebCore {
 
 struct WebTransportStreamIdentifierType;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
-class WebTransportSession;
+class WebTransport;
+class WritableStream;
 
 class WebTransportSendStreamSink : public WritableStreamSink {
 public:
-    static Ref<WebTransportSendStreamSink> create(WebTransportSession& session, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportSendStreamSink(session, identifier)); }
+    static Ref<WebTransportSendStreamSink> create(WebTransport& transport, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportSendStreamSink(transport, identifier)); }
     ~WebTransportSendStreamSink();
 
     WebTransportStreamIdentifier identifier() const { return m_identifier; }
+    void setStream(WritableStream& stream) { m_stream = stream; }
+    RefPtr<WritableStream> NODELETE stream() const;
+    void sendError(JSDOMGlobalObject&, JSC::JSValue error);
 
 private:
-    WEBCORE_EXPORT WebTransportSendStreamSink(WebTransportSession&, WebTransportStreamIdentifier);
+    WEBCORE_EXPORT WebTransportSendStreamSink(WebTransport&, WebTransportStreamIdentifier);
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close() final;
-    void error(String&&) final;
+    void close(JSDOMGlobalObject&) final;
+    void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
 
-    const ThreadSafeWeakPtr<WebTransportSession> m_session;
+    const ThreadSafeWeakPtr<WebTransport> m_transport;
     const WebTransportStreamIdentifier m_identifier;
+    WeakPtr<WritableStream> m_stream;
     bool m_isClosed { false };
     bool m_isCancelled { false };
 };

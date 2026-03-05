@@ -35,6 +35,12 @@ class FilterEffect;
 class FilterImage;
 class FilterResults;
 
+struct FilterGeometry {
+    FloatRect referenceBox;
+    FloatRect filterRegion;
+    FloatSize scale;
+};
+
 class Filter : public FilterFunction {
     using FilterFunction::apply;
     using FilterFunction::createFilterStyles;
@@ -45,11 +51,18 @@ public:
     OptionSet<FilterRenderingMode> filterRenderingModes() const { return m_filterRenderingModes; }
     WEBCORE_EXPORT void setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes);
 
-    FloatSize filterScale() const { return m_filterScale; }
-    void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
+    void setIsShowingDebugOverlay(bool showOverlay) { m_isShowingDebugOverlay = showOverlay; }
+    bool isShowingDebugOverlay() const { return m_isShowingDebugOverlay; }
 
-    FloatRect filterRegion() const { return m_filterRegion; }
-    void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
+    const FilterGeometry& geometry() const { return m_geometry; }
+
+    FloatSize filterScale() const { return m_geometry.scale; }
+    void setFilterScale(const FloatSize& filterScale) { m_geometry.scale = filterScale; }
+
+    FloatRect filterRegion() const { return m_geometry.filterRegion; }
+    void setFilterRegion(const FloatRect& filterRegion) { m_geometry.filterRegion = filterRegion; }
+
+    FloatRect referenceBox() const { return m_geometry.referenceBox; }
 
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
     virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }
@@ -61,6 +74,17 @@ public:
     FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const;
     FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
 
+#if USE(CORE_IMAGE)
+    // When CSS filter has a mixture of CSS and SVG filters, we need to compute CI filter geometry
+    // against a consistent enclosing rect, which we compute as the union of the filter regions
+    // of all the filters in the chain.
+    FloatRect enclosingFilterRegion() const { return m_enclosingFilterRegion; }
+    void setEnclosingFilterRegion(const FloatRect& rect) { m_enclosingFilterRegion = rect; }
+
+    FloatRect absoluteEnclosingFilterRegion() const;
+    FloatRect flippedRectRelativeToAbsoluteEnclosingFilterRegion(const FloatRect&) const;
+#endif
+
     virtual FilterEffectVector effectsOfType(FilterFunction::Type) const = 0;
 
     bool clampFilterRegionIfNeeded();
@@ -68,17 +92,22 @@ public:
     WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults&);
     WEBCORE_EXPORT FilterStyleVector createFilterStyles(GraphicsContext&, const FloatRect& sourceImageRect) const;
 
+    ImageBuffer* filterResultBuffer(FilterImage&) const;
+
 protected:
     Filter(Filter::Type, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    Filter(Filter::Type, const FloatSize& filterScale, const FloatRect& filterRegion = { }, std::optional<RenderingResourceIdentifier> = std::nullopt);
+    Filter(Filter::Type, const FilterGeometry&, std::optional<RenderingResourceIdentifier> = std::nullopt);
 
     virtual RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) = 0;
     virtual FilterStyleVector createFilterStyles(GraphicsContext&, const FilterStyle& sourceStyle) const = 0;
 
 private:
+    FilterGeometry m_geometry;
+#if USE(CORE_IMAGE)
+    FloatRect m_enclosingFilterRegion;
+#endif
     OptionSet<FilterRenderingMode> m_filterRenderingModes { FilterRenderingMode::Software };
-    FloatSize m_filterScale;
-    FloatRect m_filterRegion;
+    bool m_isShowingDebugOverlay { false };
 };
 
 } // namespace WebCore

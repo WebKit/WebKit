@@ -183,6 +183,9 @@ public:
 
     virtual ~AsyncPDFRenderer();
 
+    // WebCore::TiledBackingClient.
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
+
     void startTrackingLayer(WebCore::GraphicsLayer&);
     void stopTrackingLayer(WebCore::GraphicsLayer&);
     void teardown();
@@ -192,9 +195,6 @@ public:
     bool paintTilesForPage(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, float documentScale, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& clipRectInPageCoordinates, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
     void paintPagePreview(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
 
-    // Throws away existing tiles. Can result in flashing.
-    void invalidateTilesForPaintingRect(float pageScaleFactor, const WebCore::FloatRect& paintingRect);
-
     // Updates existing tiles. Can result in temporarily stale content.
     void setNeedsRenderForRect(WebCore::GraphicsLayer&, const WebCore::FloatRect& bounds);
 
@@ -202,7 +202,7 @@ public:
     void removePreviewForPage(PDFDocumentLayout::PageIndex);
     void invalidatePreviewsForPageCoverage(const PDFPageCoverage&);
 
-    void setShowDebugBorders(bool);
+    void NODELETE setShowDebugBorders(bool);
 
 private:
     AsyncPDFRenderer(PDFPresentationController&);

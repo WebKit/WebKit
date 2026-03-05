@@ -23,24 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "_WKTextExtractionInternal.h"
+#import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKTextExtraction.h>
+#import <pal/spi/cocoa/WritingToolsSPI.h>
 
-#ifdef __cplusplus
-#if !__has_feature(modules)
+#if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
+#import "IdentifierTypes.h"
 #import "PDFPluginIdentifier.h"
+#import "VisibleContentRectUpdateInfo.h"
 #import <WebCore/CocoaView.h>
 #import <WebCore/CocoaWritingToolsTypes.h>
 #import <WebCore/ColorCocoa.h>
+#import <WebCore/CornerRadii.h>
+#import <WebCore/DigitalCredentialsRequestData.h>
 #import <WebCore/FixedContainerEdges.h>
-#import <WebKit/WKShareSheet.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebCore/LayerHostingContextIdentifier.h>
+#import <WebCore/TextExtractionTypes.h>
 #import "_WKAttachmentInternal.h"
-#import "_WKTextExtractionInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
-#import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HashMap.h>
@@ -66,10 +71,17 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntDegrees.h>
 #import <WebCore/PlatformLayerIdentifier.h>
+#import <WebCore/VelocityData.h>
 #import <WebCore/ViewportArguments.h>
 #endif
 
+#endif // !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
 #if PLATFORM(IOS_FAMILY)
+
+@protocol BEScrollViewDelegate;
 
 #if ENABLE(WRITING_TOOLS)
 #define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate, WTWritingToolsDelegate, UITextInputTraits>
@@ -93,6 +105,8 @@
 #define WK_WEB_VIEW_PROTOCOLS
 #endif
 
+#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
 #if USE(APPKIT)
 using CocoaEdgeInsets = NSEdgeInsets;
 #endif
@@ -108,6 +122,10 @@ class Attachment;
 }
 
 namespace WebCore {
+class FloatQuad;
+class FloatRect;
+class IntPoint;
+class IntSize;
 struct AppHighlight;
 struct ExceptionData;
 struct ExceptionDetails;
@@ -119,11 +137,9 @@ namespace WritingTools {
 enum class TextSuggestionState : uint8_t;
 }
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
-struct DigitalCredentialsRequestData;
+#if ENABLE(WEB_AUTHN)
 struct DigitalCredentialsResponseData;
 struct MobileDocumentRequest;
-struct OpenID4VPRequest;
 #endif
 
 struct NodeIdentifierType;
@@ -137,6 +153,7 @@ class IconLoadingDelegate;
 class NavigationState;
 class PointerTouchCompatibilitySimulator;
 class ResourceLoadDelegate;
+class TextExtractionURLCache;
 class UIDelegate;
 class ViewSnapshot;
 class WebPageProxy;
@@ -166,11 +183,12 @@ enum class PreferSolidColorHardPocketReason : uint8_t {
 @class WKScrollGeometry;
 @class WKScrollView;
 @class WKTextExtractionInteraction;
+@class WKTextExtractionItem;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 @class _WKWarningView;
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#if ENABLE(WEB_AUTHN)
 @class WKDigitalCredentialsPicker;
 #endif
 
@@ -200,6 +218,10 @@ enum class PreferSolidColorHardPocketReason : uint8_t {
 @protocol _WKTextManipulationDelegate;
 @protocol _WKInputDelegate;
 @protocol _WKAppHighlightDelegate;
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+@protocol _WKImmersiveEnvironmentDelegate;
+#endif
 
 enum class SimilarToOriginalTextTag : uint8_t { Value };
 using TextValidationMapValue = Variant<String, SimilarToOriginalTextTag>;
@@ -278,6 +300,10 @@ struct PerWebProcessState {
 
 #endif // PLATFORM(IOS_FAMILY)
 
+#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
+#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 
 @package
@@ -292,6 +318,10 @@ struct PerWebProcessState {
     WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
     WeakObjCPtr<id <_WKAppHighlightDelegate>> _appHighlightDelegate;
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    WeakObjCPtr<id <_WKImmersiveEnvironmentDelegate>> _immersiveEnvironmentDelegate;
+#endif
 
     RetainPtr<_WKWarningView> _warningView;
 
@@ -319,6 +349,7 @@ struct PerWebProcessState {
 
     NSUInteger _partialIntelligenceTextAnimationCount;
     BOOL _writingToolsTextReplacementsFinished;
+    BOOL _activeWritingToolsSessionIsForProofreadingReview;
 #endif
 
 #if ENABLE(SCREEN_TIME)
@@ -337,6 +368,10 @@ struct PerWebProcessState {
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
     BlockPtr<void()> _windowSnapshotReadinessHandler;
 #endif
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    WebCore::CornerRadii _lastViewCornerRadii;
+#endif
+    NSSize _lastContentSize;
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
@@ -423,6 +458,10 @@ struct PerWebProcessState {
     BOOL _didScrollSinceLastTimerFire;
     BOOL _needsScrollend;
 
+#if PLATFORM(IOS_FAMILY)
+    RefPtr<RunLoop::DispatchTimer> _pendingInteractiveObscuredInsetsChangeTimer;
+#endif
+
     // This value tracks the current adjustment added to the bottom inset due to the keyboard sliding out from the bottom
     // when computing obscured content insets. This is used when updating the visible content rects where we should not
     // include this adjustment.
@@ -455,6 +494,8 @@ struct PerWebProcessState {
 
     RetainPtr<NSArray<NSNumber *>> _scrollViewDefaultAllowedTouchTypes;
     std::unique_ptr<WebKit::PointerTouchCompatibilitySimulator> _pointerTouchCompatibilitySimulator;
+
+    WebCore::HistoricalVelocityData _historicalKinematicData;
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(VISION)
@@ -500,6 +541,12 @@ struct PerWebProcessState {
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     HashMap<unsigned /* string hash */, TextValidationMapValue> _textValidationCache;
+    std::optional<HashSet<String>> _textExtractionRecognizedWords;
+#endif
+    RefPtr<WebKit::TextExtractionURLCache> _textExtractionURLCache;
+
+#if ENABLE(SYSTEM_TEXT_EXTRACTION)
+    std::optional<WTF::UUID> _textExtractionIdentifier;
 #endif
 }
 
@@ -512,6 +559,12 @@ struct PerWebProcessState {
 
 #if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
 - (void)_spatialBackdropSourceDidChange;
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+- (void)_allowImmersiveElementFromURL:(const URL&)url completion:(CompletionHandler<void(bool)>&&)completion;
+- (void)_presentImmersiveElement:(const WebCore::LayerHostingContextIdentifier)contextID completion:(CompletionHandler<void(bool)>&&)completion;
+- (void)_dismissImmersiveElement:(CompletionHandler<void()>&&)completion;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -564,7 +617,7 @@ struct PerWebProcessState {
 
 - (void)_didAccessBackForwardList NS_DIRECT;
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#if ENABLE(WEB_AUTHN)
 - (void)_showDigitalCredentialsPicker:(const WebCore::DigitalCredentialsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&)completionHandler;
 - (void)_dismissDigitalCredentialsPicker:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 #endif
@@ -582,7 +635,7 @@ struct PerWebProcessState {
 #endif
 
 #if PLATFORM(MAC) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-- (NSColor *)_adjustedColorForTopContentInsetColorFromUIDelegate:(NSColor *)proposedColor;
+- (nullable NSColor *)_adjustedColorForTopContentInsetColorFromUIDelegate:(nullable NSColor *)proposedColor;
 @property (nonatomic, readonly) RetainPtr<NSScrollPocket> _copyTopScrollPocket;
 - (void)_addReasonToPreferSolidColorHardPocket:(WebKit::PreferSolidColorHardPocketReason)reason;
 - (void)_removeReasonToPreferSolidColorHardPocket:(WebKit::PreferSolidColorHardPocketReason)reason;
@@ -602,16 +655,15 @@ struct PerWebProcessState {
 - (void)_updateFixedContainerEdges:(const WebCore::FixedContainerEdges&)edges;
 - (void)_updateScrollGeometryWithContentOffset:(CGPoint)contentOffset contentSize:(CGSize)contentSize;
 
+#if ENABLE(SCROLL_STRETCH_NOTIFICATIONS)
+- (void)_topScrollStretchDidChange:(NSUInteger)topScrollStretch;
+#endif
+
 - (WKPageRef)_pageForTesting;
 - (NakedPtr<WebKit::WebPageProxy>)_page;
 - (RefPtr<WebKit::WebPageProxy>)_protectedPage;
-#if ENABLE(SCREEN_TIME)
-- (STWebpageController *)_screenTimeWebpageController;
 #if PLATFORM(MAC)
-- (NSVisualEffectView *)_screenTimeBlurredSnapshot;
-#else
-- (UIVisualEffectView *)_screenTimeBlurredSnapshot;
-#endif
+- (nullable WebKit::WebViewImpl *)_impl;
 #endif
 
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
@@ -630,6 +682,54 @@ struct PerWebProcessState {
 @property (nonatomic, readonly) RetainPtr<WKWebView> _horizontallyAttachedInspectorWebView;
 
 @end
+
+#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
+@interface WKWebView ()
+
+#if PLATFORM(MAC)
+@property (nonatomic, setter=_setAlwaysBounceVertical:) BOOL _alwaysBounceVertical;
+@property (nonatomic, setter=_setAlwaysBounceHorizontal:) BOOL _alwaysBounceHorizontal;
+
+- (void)_setContentOffsetX:(nullable NSNumber *)x y:(nullable NSNumber *)y animated:(BOOL)animated NS_SWIFT_NAME(_setContentOffset(x:y:animated:));
+
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+@property (nonatomic, readonly) CGFloat _bannerViewOverlayHeight;
+#endif
+#endif // PLATFORM(MAC)
+
+@property (nonatomic, readonly) NSString *_nameForVisualIdentificationOverlay;
+
+- (void)_setNeedsScrollGeometryUpdates:(BOOL)needsScrollGeometryUpdates;
+
+- (void)_scrollToEdge:(_WKRectEdge)edge animated:(BOOL)animated;
+
+@end
+
+@interface WKWebView (WKTextExtraction)
+
+#if ENABLE(SYSTEM_TEXT_EXTRACTION)
+@property (nonatomic, readonly, copy, nullable) NSUUID *_textExtractionIdentifier;
+#endif
+
+- (void)_requestJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
+
+#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
+- (void)_requestTextExtractionInternal:(nullable _WKTextExtractionConfiguration *)configuration completion:(CompletionHandler<void(std::optional<WebCore::TextExtraction::Result>&&)>&&)completion;
+
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+- (void)_validateText:(const String&)text inFrame:(std::optional<WebCore::FrameIdentifier>&&)frameIdentifier inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(const String&)>&&)completionHandler;
+#endif
+
+#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
+- (void)_requestTextExtraction:(nullable _WKTextExtractionConfiguration *)configuration completionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKTextExtractionItem * _Nullable))completionHandler;
+- (void)_describeInteraction:(nullable _WKTextExtractionInteraction *)interaction completionHandler:(NS_SWIFT_UI_ACTOR void (^)(NSString * _Nullable_result, NSError * _Nullable))completionHandler;
+
+@end
+
+#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 
 RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::ExceptionDetails>&);
 
@@ -650,6 +750,32 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::Exce
 
 WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContainerEdges&, WebCore::BoxSide);
 
+#if ENABLE(TWO_PHASE_CLICKS)
+
+@interface WKWebView (TwoPhaseClicks)
+- (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
+- (void)_didHandleTapAsHover;
+- (void)_didCompleteSyntheticClick;
+- (void)_commitPotentialTapFailed;
+- (void)_didGetTapHighlightGeometries:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
+- (BOOL)_isPotentialTapInProgress;
+- (void)_disableDoubleTapGesturesDuringTapIfNecessary:(WebKit::TapIdentifier)requestID;
+- (void)_handleSmartMagnificationInformationForPotentialTap:(WebKit::TapIdentifier)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale nodeIsRootLevel:(BOOL)nodeIsRootLevel nodeIsPluginElement:(BOOL)nodeIsPluginElement;
+@end
+
+#endif
+
+#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
+
+#if ENABLE(SYSTEM_TEXT_EXTRACTION)
+
+@interface WKWebView (SystemTextExtraction)
+- (void)_addTextExtractionAnnotation;
+- (void)_removeTextExtractionAnnotation;
+@end
+
+#endif
+
 #if ENABLE(TEXT_EXTRACTION_FILTER)
 
 @interface WKWebView (TextExtractionFilter)
@@ -657,37 +783,5 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 @end
 
 #endif
-
-#endif // !__has_feature(modules)
-#endif // __cplusplus
-
-@class WKTextExtractionItem;
-
-NS_HEADER_AUDIT_BEGIN(nullability, sendability)
-
-@interface WKWebView (NonCpp)
-
-#if PLATFORM(MAC)
-@property (nonatomic, setter=_setAlwaysBounceVertical:) BOOL _alwaysBounceVertical;
-@property (nonatomic, setter=_setAlwaysBounceHorizontal:) BOOL _alwaysBounceHorizontal;
-
-- (void)_setContentOffsetX:(nullable NSNumber *)x y:(nullable NSNumber *)y animated:(BOOL)animated NS_SWIFT_NAME(_setContentOffset(x:y:animated:));
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-@property (nonatomic, setter=_setAllowsMagnification:) BOOL _allowsMagnification;
-#endif
-
-@property (nonatomic, readonly) NSString *_nameForVisualIdentificationOverlay;
-
-- (void)_setNeedsScrollGeometryUpdates:(BOOL)needsScrollGeometryUpdates;
-
-- (void)_scrollToEdge:(_WKRectEdge)edge animated:(BOOL)animated;
-
-- (void)_requestTextExtraction:(_WKTextExtractionConfiguration *)configuration completionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKTextExtractionItem * _Nullable))completionHandler;
-
-- (void)_describeInteraction:(_WKTextExtractionInteraction *)interaction completionHandler:(NS_SWIFT_UI_ACTOR void (^)(NSString * NS_NULLABLE_RESULT, NSError * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(_describe(interaction:));
-
-@end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

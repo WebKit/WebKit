@@ -32,6 +32,7 @@
 #include "SelectorChecker.h"
 #include "SelectorMatchingState.h"
 #include "StyleChange.h"
+#include "StyleDisplay.h"
 #include "StylePositionTryFallback.h"
 #include "StyleUpdate.h"
 #include "Styleable.h"
@@ -110,7 +111,7 @@ private:
     void resetStyleForNonRenderedDescendants(Element&);
 
     struct Scope : RefCounted<Scope> {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TreeResolverScope, TreeResolverScope);
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Scope, TreeResolverScope);
         Ref<Resolver> resolver;
         SelectorMatchingState selectorMatchingState;
         RefPtr<ShadowRoot> shadowRoot;
@@ -169,7 +170,7 @@ private:
     const Parent* boxGeneratingParent() const;
     const RenderStyle* parentBoxStyle() const;
     const RenderStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const;
-    const RenderStyle* documentElementStyle() const;
+    const RenderStyle* NODELETE documentElementStyle() const;
 
     LayoutInterleavingAction updateAnchorPositioningState(Element&, const RenderStyle*);
 
@@ -184,12 +185,17 @@ private:
     // This returns the style that was in effect (applied to the render tree) before we started the style resolution.
     // Layout interleaving may cause different styles to be applied during the style resolution.
     const RenderStyle* beforeResolutionStyle(const Element&, std::optional<PseudoElementIdentifier>);
-    void saveBeforeResolutionStyleForInterleaving(const Element&);
+    void saveBeforeResolutionStyleForInterleaving(const Element&, const RenderStyle*);
 
     bool hasUnresolvedAnchorPosition(const Styleable&) const;
     bool hasResolvedAnchorPosition(const Styleable&) const;
+    // Returns true if (1) the styleable specifies position fallbacks and
+    // (2) we're in the middle of trying position options.
+    bool isTryingPositionOption(const Styleable&) const;
 
     void collectChangedAnchorNames(const RenderStyle&, const RenderStyle* currentStyle);
+
+    static unsigned maximumRenderTreeDepth();
 
     const CheckedRef<Document> m_document;
     std::unique_ptr<RenderStyle> m_computedDocumentElementStyle;
@@ -238,7 +244,7 @@ private:
         bool chosen { false };
         bool isFirstTry { true };
 
-        const RenderStyle& originalStyle() const;
+        const RenderStyle& NODELETE originalStyle() const;
         std::unique_ptr<RenderStyle> currentOption() const;
     };
     HashMap<AnchorPositionedKey, PositionOptions> m_positionOptions;
@@ -251,17 +257,17 @@ private:
 
 // Integrate with the HTML5 event loop instead, see EventLoop.cpp and consumers.
 void deprecatedQueuePostResolutionCallback(Function<void()>&&);
-bool postResolutionCallbacksAreSuspended();
+bool NODELETE postResolutionCallbacksAreSuspended();
 
 inline bool supportsFirstLineAndLetterPseudoElement(const RenderStyle& style)
 {
     auto display = style.display();
-    return display == DisplayType::Block
-        || display == DisplayType::ListItem
-        || display == DisplayType::InlineBlock
+    return display == DisplayType::BlockFlow
+        || display == DisplayType::BlockFlowRoot
+        || display == DisplayType::BlockFlowListItem
+        || display == DisplayType::InlineFlowRoot
         || display == DisplayType::TableCell
-        || display == DisplayType::TableCaption
-        || display == DisplayType::FlowRoot;
+        || display == DisplayType::TableCaption;
 }
 
 class PostResolutionCallbackDisabler {
@@ -269,10 +275,10 @@ public:
     enum class DrainCallbacks : bool { No, Yes };
     explicit PostResolutionCallbackDisabler(Document&, DrainCallbacks = DrainCallbacks::Yes);
     ~PostResolutionCallbackDisabler();
+
 private:
     DrainCallbacks m_drainCallbacks;
 };
 
-}
-
-}
+} // namespace Style
+} // namespace WebCore

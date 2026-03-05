@@ -25,7 +25,6 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_decoder_factory.h"
@@ -50,6 +49,7 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -277,7 +277,7 @@ class VideoCodecTesterTest : public ::testing::Test {
   }
 
  protected:
-  const Environment env_ = CreateEnvironment();
+  const Environment env_ = CreateTestEnvironment();
   std::vector<std::unique_ptr<TestVideoDecoder>> decoders_;
 };
 
@@ -649,13 +649,13 @@ class VideoCodecTesterTestPacing
   void TearDown() override { remove(source_yuv_file_path_.c_str()); }
 
  protected:
-  const Environment env_ = CreateEnvironment();
+  const Environment env_ = CreateTestEnvironment();
   std::string source_yuv_file_path_;
 };
 
 TEST_P(VideoCodecTesterTestPacing, PaceEncode) {
   auto [pacing_settings, expected_delta_ms] = GetParam();
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   VideoSourceSettings video_source{
       .file_path = source_yuv_file_path_,
       .resolution = {.width = kSourceWidth, .height = kSourceHeight},
@@ -734,7 +734,8 @@ class VideoCodecTesterTestEncodingSettings
 TEST_P(VideoCodecTesterTestEncodingSettings, CreateEncodingSettings) {
   EncodingSettingsTestParameters test_params = GetParam();
   EncodingSettings encoding_settings = VideoCodecTester::CreateEncodingSettings(
-      CreateEnvironment(), test_params.codec_type, test_params.scalability_mode,
+      CreateTestEnvironment(), test_params.codec_type,
+      test_params.scalability_mode,
       /*width=*/1280,
       /*height=*/720, test_params.bitrate, kFramerate);
   const std::map<LayerId, LayerSettings>& layers_settings =
@@ -920,7 +921,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 // TODO(webrtc:42225151): Add an IVF test stream and enable the test.
 TEST(VideoCodecTester, DISABLED_CompressedVideoSource) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   std::unique_ptr<VideoEncoderFactory> encoder_factory =
       CreateBuiltinVideoEncoderFactory();
   std::unique_ptr<VideoDecoderFactory> decoder_factory =

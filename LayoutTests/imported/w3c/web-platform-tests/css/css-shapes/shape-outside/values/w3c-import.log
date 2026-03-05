@@ -51,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-gradient-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-0010-expected.html

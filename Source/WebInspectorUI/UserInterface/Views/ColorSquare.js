@@ -34,6 +34,7 @@ WI.ColorSquare = class ColorSquare
         this._y = 0;
         this._gamut = null;
         this._crosshairPosition = null;
+        this._contrastColor = null;
 
         this._element = document.createElement("div");
         this._element.className = "color-square";
@@ -46,8 +47,16 @@ WI.ColorSquare = class ColorSquare
         lightnessGradientElement.className = "lightness-gradient fill";
 
         this._srgbLabelElement = null;
-        this._svgElement = null;
-        this._polylineElement = null;
+        this._sRGBSVGElement = null;
+        this._sRGBPolylineElement = null;
+
+        this._contrastSVGElement = null;
+        this._contrastAAPolylineElement = null;
+        this._contrastAAAPolylineElement = null;
+        this._contrastAALabelElement = null;
+        this._contrastAAALabelElement = null;
+        this._opacity = 1;
+        this._isLargeText = false;
 
         this._element.addEventListener("mousedown", this);
         this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
@@ -82,6 +91,46 @@ WI.ColorSquare = class ColorSquare
     {
         this._hue = hue;
         this._updateBaseColor();
+    }
+
+    get contrastColor()
+    {
+        return this._contrastColor;
+    }
+
+    set contrastColor(color)
+    {
+        console.assert(!color || color instanceof WI.Color, color);
+        this._contrastColor = color || null;
+        this._drawContrastLines();
+    }
+
+    get opacity()
+    {
+        return this._opacity;
+    }
+
+    set opacity(value)
+    {
+        if (this._opacity === value)
+            return;
+
+        this._opacity = value;
+        this._drawContrastLines();
+    }
+
+    get isLargeText()
+    {
+        return this._isLargeText;
+    }
+
+    set isLargeText(value)
+    {
+        if (this._isLargeText === value)
+            return;
+
+        this._isLargeText = value;
+        this._drawContrastLines();
     }
 
     get tintedColor()
@@ -237,6 +286,9 @@ WI.ColorSquare = class ColorSquare
 
         if (this._gamut === WI.Color.Gamut.DisplayP3)
             this._drawSRGBOutline();
+
+        if (this._contrastColor)
+            this._drawContrastLines();
     }
 
     _updateCrosshairBackground()
@@ -246,18 +298,17 @@ WI.ColorSquare = class ColorSquare
 
     _drawSRGBOutline()
     {
-        if (!this._svgElement) {
+        if (!this._sRGBSVGElement) {
             this._srgbLabelElement = this._element.appendChild(document.createElement("span"));
             this._srgbLabelElement.className = "srgb-label";
             this._srgbLabelElement.textContent = WI.unlocalizedString("sRGB");
             this._srgbLabelElement.title = WI.UIString("Edge of sRGB color space", "Label for a guide within the color picker");
 
-            const svgNamespace = "http://www.w3.org/2000/svg";
-            this._svgElement = this._element.appendChild(document.createElementNS(svgNamespace, "svg"));
-            this._svgElement.classList.add("svg-root");
+            this._sRGBSVGElement = this._element.appendChild(createSVGElement("svg"));
+            this._sRGBSVGElement.classList.add("svg-root");
 
-            this._polylineElement = this._svgElement.appendChild(document.createElementNS(svgNamespace, "polyline"));
-            this._polylineElement.classList.add("srgb-edge");
+            this._sRGBPolylineElement = this._sRGBSVGElement.appendChild(createSVGElement("polyline"));
+            this._sRGBPolylineElement.classList.add("srgb-edge");
         }
 
         let points = [];
@@ -293,12 +344,171 @@ WI.ColorSquare = class ColorSquare
 
         this._srgbLabelElement.style.right = `${this._dimension - points.lastValue.x}px`;
 
-        this._polylineElement.points.clear();
+        this._sRGBPolylineElement.points.clear();
         for (let {x, y} of points) {
-            let svgPoint = this._svgElement.createSVGPoint();
+            let svgPoint = this._sRGBSVGElement.createSVGPoint();
             svgPoint.x = x;
             svgPoint.y = y;
-            this._polylineElement.points.appendItem(svgPoint);
+            this._sRGBPolylineElement.points.appendItem(svgPoint);
         }
+    }
+
+    _drawContrastLines()
+    {
+        if (!this._contrastColor) {
+            if (this._contrastSVGElement) {
+                this._contrastSVGElement.hidden = true;
+                this._contrastAALabelElement.hidden = true;
+                this._contrastAAALabelElement.hidden = true;
+            }
+            return;
+        }
+
+        if (!this._contrastSVGElement) {
+            this._contrastSVGElement = this._element.appendChild(createSVGElement("svg"));
+            this._contrastSVGElement.classList.add("contrast-lines-svg");
+
+            this._contrastAAPolylineElement = this._contrastSVGElement.appendChild(createSVGElement("polyline"));
+            this._contrastAAPolylineElement.classList.add("contrast-line", "contrast-aa-threshold");
+
+            this._contrastAAAPolylineElement = this._contrastSVGElement.appendChild(createSVGElement("polyline"));
+            this._contrastAAAPolylineElement.classList.add("contrast-line", "contrast-aaa-threshold");
+
+            this._contrastAALabelElement = this._element.appendChild(document.createElement("span"));
+            this._contrastAALabelElement.className = "contrast-label contrast-aa-label";
+            this._contrastAALabelElement.textContent = "AA";
+
+            this._contrastAAALabelElement = this._element.appendChild(document.createElement("span"));
+            this._contrastAAALabelElement.className = "contrast-label contrast-aaa-label";
+            this._contrastAAALabelElement.textContent = "AAA";
+        }
+
+        this._contrastSVGElement.hidden = false;
+
+        let aaThreshold = this._isLargeText ? WI.Color.ContrastThreshold.AALargeText : WI.Color.ContrastThreshold.AA;
+        let aaaThreshold = this._isLargeText ? WI.Color.ContrastThreshold.AA : WI.Color.ContrastThreshold.AAA;
+
+        this._contrastAALabelElement.title = this._isLargeText
+            ? WI.UIString("WCAG AA minimum contrast for large text (3:1)", "WCAG AA minimum contrast for large text (3:1) @ Tooltip for AA contrast line in color picker", "Tooltip for AA contrast line in color picker for large text")
+            : WI.UIString("WCAG AA minimum contrast (4.5:1)", "WCAG AA minimum contrast (4.5:1) @ Tooltip for AA contrast line in color picker", "Tooltip for AA contrast line in color picker");
+
+        this._contrastAAALabelElement.title = this._isLargeText
+            ? WI.UIString("WCAG AAA enhanced contrast for large text (4.5:1)", "WCAG AAA enhanced contrast for large text (4.5:1) @ Tooltip for AAA contrast line in color picker", "Tooltip for AAA contrast line in color picker for large text")
+            : WI.UIString("WCAG AAA enhanced contrast (7:1)", "WCAG AAA enhanced contrast (7:1) @ Tooltip for AAA contrast line in color picker", "Tooltip for AAA contrast line in color picker");
+
+        let referenceLuminance = this._contrastColor.relativeLuminance();
+
+        let aaPoints = this._calculateContrastLinePoints(aaThreshold, referenceLuminance);
+        this._updatePolylinePoints(this._contrastAAPolylineElement, aaPoints);
+        this._updateContrastLabel(this._contrastAALabelElement, aaPoints, referenceLuminance);
+
+        let aaaPoints = this._calculateContrastLinePoints(aaaThreshold, referenceLuminance);
+        this._updatePolylinePoints(this._contrastAAAPolylineElement, aaaPoints);
+        this._updateContrastLabel(this._contrastAAALabelElement, aaaPoints, referenceLuminance);
+    }
+
+    _calculateContrastLinePoints(targetRatio, referenceLuminance)
+    {
+        if (referenceLuminance >= 0.5)
+            targetRatio = 1 / targetRatio;
+
+        let targetLuminance = ((referenceLuminance + 0.05) * targetRatio) - 0.05;
+
+        if (targetLuminance < 0 || targetLuminance > 1)
+            return [];
+
+        let points = [];
+        for (let x = 0; x <= this._dimension; ++x) {
+            let saturation = (x / this._dimension) * 100;
+            let y = this._findBrightnessForLuminance(saturation, targetLuminance);
+
+            if (y <= 0 || y >= this._dimension)
+                break;
+
+            points.push({x, y});
+        }
+
+        return points;
+    }
+
+    _findBrightnessForLuminance(saturation, targetLuminance)
+    {
+        let low = 0;
+        let high = 100;
+        const epsilon = 0.001;
+        const maxIterations = 20;
+
+        for (let i = 0; i < maxIterations; ++i) {
+            let mid = (low + high) / 2;
+            let rgb = WI.Color.hsv2rgb(this._hue, saturation, mid);
+            let color = new WI.Color(WI.Color.Format.ColorFunction, rgb.concat(this._opacity));
+
+            let effectiveColor = color;
+            if (this._opacity < 1 && this._contrastColor)
+                effectiveColor = color.blendOverBackground(this._contrastColor);
+
+            let luminance = effectiveColor.relativeLuminance();
+
+            if (Math.abs(luminance - targetLuminance) < epsilon)
+                return (1 - (mid / 100)) * this._dimension;
+
+            if (luminance < targetLuminance)
+                low = mid;
+            else
+                high = mid;
+        }
+
+        let mid = (low + high) / 2;
+        if (mid >= 99 || mid <= 1)
+            return Infinity;
+
+        return (1 - (mid / 100)) * this._dimension;
+    }
+
+    _updatePolylinePoints(polylineElement, points)
+    {
+        polylineElement.points.clear();
+
+        if (points.length === 0) {
+            polylineElement.hidden = true;
+            return;
+        }
+
+        polylineElement.hidden = false;
+
+        for (let {x, y} of points) {
+            let svgPoint = this._contrastSVGElement.createSVGPoint();
+            svgPoint.x = x;
+            svgPoint.y = y;
+            polylineElement.points.appendItem(svgPoint);
+        }
+    }
+
+    _updateContrastLabel(labelElement, points, referenceLuminance)
+    {
+        if (points.length === 0) {
+            labelElement.hidden = true;
+            return;
+        }
+
+        labelElement.hidden = false;
+
+        let lastPoint = points[points.length - 1];
+        let firstPoint = points[0];
+
+        let useLastPoint = lastPoint.x >= this._dimension - 10;
+        let point = useLastPoint ? lastPoint : firstPoint;
+
+        if (useLastPoint) {
+            labelElement.style.right = "2px";
+            labelElement.style.removeProperty("left");
+        } else {
+            labelElement.style.left = `${point.x + 4}px`;
+            labelElement.style.removeProperty("right");
+        }
+
+        let labelHeight = 16;
+        let yOffset = referenceLuminance < 0.5 ? -labelHeight : 4;
+        labelElement.style.top = `${Math.max(0, Math.min(this._dimension - labelHeight, point.y + yOffset))}px`;
     }
 };

@@ -1,10 +1,10 @@
 
-FAIL window.postMessage should be able to transfer a WritableStream The object can not be cloned.
+PASS window.postMessage should be able to transfer a WritableStream
 PASS a locked WritableStream should not be transferable
-FAIL window.postMessage should be able to transfer a {readable, writable} pair The object can not be cloned.
-FAIL desiredSize for a newly-transferred stream should be 1 promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL effective queue size of a transferred writable should be 2 promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL second write should wait for first underlying write to complete promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL abort() should work promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL writing a unclonable object should error the stream promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS window.postMessage should be able to transfer a {readable, writable} pair
+PASS desiredSize for a newly-transferred stream should be 1
+PASS effective queue size of a transferred writable should be 2
+PASS second write should wait for first underlying write to complete
+PASS abort() should work
+PASS writing a unclonable object should error the stream
 

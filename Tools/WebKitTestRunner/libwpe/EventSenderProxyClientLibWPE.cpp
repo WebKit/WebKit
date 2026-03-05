@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventSenderProxyClientLibWPE.h"
 
+#if USE(LIBWPE)
 #include "PlatformWebView.h"
 #include "PlatformWebViewClientLibWPE.h"
 #include "TestController.h"
@@ -438,3 +439,5 @@ void EventSenderProxyClientLibWPE::prepareAndDispatchTouchEvent(uint32_t eventTy
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WTR
+
+#endif // USE(LIBWPE)

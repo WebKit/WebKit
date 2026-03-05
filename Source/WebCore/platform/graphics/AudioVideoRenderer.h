@@ -29,6 +29,7 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/TrackInfo.h>
 #include <WebCore/VideoPlaybackQualityMetrics.h>
 #include <WebCore/VideoTarget.h>
@@ -86,6 +87,8 @@ public:
     virtual RefPtr<VideoFrame> currentVideoFrame() const = 0;
     virtual void paintCurrentVideoFrameInContext(GraphicsContext&, const FloatRect&) { }
     virtual RefPtr<NativeImage> currentNativeImage() const { return nullptr; }
+    using BitmapImagePromise = NativePromise<Ref<ShareableBitmap>, void>;
+    virtual Ref<BitmapImagePromise> currentBitmapImage() const { return BitmapImagePromise::createAndReject(); }
 #if ENABLE(VIDEO)
     virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() = 0;
 #endif
@@ -96,6 +99,7 @@ public:
     virtual HostingContext hostingContext() const { return { }; }
     virtual WebCore::FloatSize videoLayerSize() const { return { }; }
     virtual void notifyVideoLayerSizeChanged(Function<void(const MediaTime&, FloatSize)>&&) { }
+    virtual void setVideoLayerSize(const FloatSize&) { }
     virtual void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&) { }
 };
 
@@ -139,7 +143,7 @@ public:
     virtual void setPreferences(VideoRendererPreferences) { }
     virtual void setHasProtectedVideoContent(bool) { }
 
-    virtual TrackIdentifier addTrack(TrackType) = 0;
+    virtual std::optional<TrackIdentifier> addTrack(TrackType) = 0;
     virtual void removeTrack(TrackIdentifier) = 0;
 
     virtual void enqueueSample(TrackIdentifier, Ref<MediaSample>&&, std::optional<MediaTime> = std::nullopt) = 0;

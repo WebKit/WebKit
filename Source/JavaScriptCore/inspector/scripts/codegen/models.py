@@ -47,13 +47,10 @@ def validate_target_types(debuggable_types, target_types):
         elif target_type == 'javascript':
             if 'javascript' not in debuggable_types:
                 return False
-        elif target_type == 'page' or target_type == 'worker':
-            if 'page' not in debuggable_types:
-                return False
         elif target_type == 'service-worker':
             if 'service-worker' not in debuggable_types:
                 return False
-        elif target_type == 'web-page' or target_type == 'frame':
+        elif target_type in ('web-page', 'page', 'frame', 'worker'):
             if 'web-page' not in debuggable_types:
                 return False
         elif target_type == 'wasm-debugger':
@@ -97,7 +94,7 @@ _FRAMEWORK_CONFIG_MAP = {
     }
 }
 
-_ALLOWED_DEBUGGABLE_TYPE_STRINGS = ['itml', 'javascript', 'page', 'service-worker', 'web-page', 'wasm-debugger']
+_ALLOWED_DEBUGGABLE_TYPE_STRINGS = ['itml', 'javascript', 'service-worker', 'web-page', 'wasm-debugger']
 _ALLOWED_TARGET_TYPE_STRINGS = ['itml', 'javascript', 'page', 'service-worker', 'web-page', 'wasm-debugger', 'frame', 'worker']
 
 

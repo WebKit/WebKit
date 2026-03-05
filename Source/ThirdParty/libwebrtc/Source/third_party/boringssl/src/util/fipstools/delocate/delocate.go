@@ -526,7 +526,7 @@ func (d *delocation) processAarch64Instruction(statement, instruction *node32) (
 		assertNodeType(argNodes[0], ruleRegisterOrConstant)
 		targetReg := d.contents(argNodes[0])
 		if !strings.HasPrefix(targetReg, "x") {
-			panic("adrp targetting register " + targetReg + ", which has the wrong size")
+			panic("adrp targeting register " + targetReg + ", which has the wrong size")
 		}
 
 		var symbol, offset string
@@ -772,7 +772,7 @@ const (
 	// instrCombine merges the source and destination in some fashion, for example
 	// a 2-operand bitwise operation.
 	instrCombine
-	// instrMemoryVectorCombine is similer to instrCombine, but the source
+	// instrMemoryVectorCombine is similar to instrCombine, but the source
 	// register must be a memory reference and the destination register
 	// must be a vector register.
 	instrMemoryVectorCombine

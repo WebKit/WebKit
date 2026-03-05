@@ -260,7 +260,7 @@ void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentif
 #endif
 
     Locker locker { m_accelerationCurvesLock };
-    m_accelerationCurves.set(pageIdentifier, WTFMove(curve));
+    m_accelerationCurves.set(pageIdentifier, WTF::move(curve));
 }
 
 std::optional<ScrollingAccelerationCurve> MomentumEventDispatcher::scrollingAccelerationCurveForPage(WebCore::PageIdentifier pageIdentifier) const
@@ -322,7 +322,7 @@ void MomentumEventDispatcher::pageScreenDidChange(WebCore::PageIdentifier pageID
     DisplayProperties properties;
     properties.displayID = displayID;
     properties.nominalFrameRate = nominalFramesPerSecond.value_or(WebCore::FullSpeedFramesPerSecond);
-    m_displayProperties.set(pageID, WTFMove(properties));
+    m_displayProperties.set(pageID, WTF::move(properties));
 
     if (affectsCurrentGesture)
         startDisplayLink();

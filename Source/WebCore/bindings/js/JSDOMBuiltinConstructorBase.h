@@ -48,7 +48,7 @@ protected:
     void setInitializeFunction(JSC::VM&, JSC::JSFunction&);
 
 private:
-    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
 
     JSC::WriteBarrier<JSC::JSFunction> m_initializeFunction;
 };

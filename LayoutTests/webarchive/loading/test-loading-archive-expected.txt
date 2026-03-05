@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 resources/helloworld.webarchive - willSendRequest <NSURLRequest URL resources/helloworld.webarchive, main document URL test-loading-archive.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame

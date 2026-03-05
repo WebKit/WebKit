@@ -15,6 +15,7 @@ ocl_cts_source_set("kernel_image_methods") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_image_methods/main.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_image_methods/test_1D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_image_methods/test_1D_array.cpp",
+    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_image_methods/test_1D_buffer.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_image_methods/test_2D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_image_methods/test_2D_array.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_image_methods/test_3D.cpp",

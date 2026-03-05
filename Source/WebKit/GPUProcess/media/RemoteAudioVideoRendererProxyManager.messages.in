@@ -40,6 +40,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
     AddTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, enum:uint8_t WebCore::TrackInfoTrackType type) -> (Expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result) Synchronous
     RemoveTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
 
+    NewTrackInfoForTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier, Ref<WebCore::TrackInfo> info);
     EnqueueSample(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock block, std::optional<MediaTime> upcomingMinimumTime) -> (bool readyForMoreData);
     RequestMediaDataWhenReady(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
 
@@ -79,6 +80,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
     SetResourceOwner(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::ProcessIdentity resourceOwner)
     FlushAndRemoveImage(WebKit::RemoteAudioVideoRendererIdentifier identifier)
     CurrentVideoFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame) Synchronous
+    CurrentBitmapImage(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> image)
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     SetVideoFullscreenFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::FloatRect frame)
@@ -89,6 +91,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
     RequestHostingContext(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (struct WebCore::HostingContext layerHostingContext)
 
 #if PLATFORM(COCOA)
+    SetVideoLayerSize(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::FloatSize size)
     SetVideoLayerSizeFenced(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::FloatSize size, struct MachSendRightAnnotated sendRightAnnotated)
 #endif
 

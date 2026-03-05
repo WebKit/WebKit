@@ -40,7 +40,7 @@ protected:
     void finish() override
     {
         if (!isStopped())
-            protectedDocument()->finishedParsing();
+            protect(document())->finishedParsing();
     }
 
 private:

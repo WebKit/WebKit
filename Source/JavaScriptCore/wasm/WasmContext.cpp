@@ -30,7 +30,7 @@
 
 namespace JSC { namespace Wasm {
 
-uint64_t* Context::scratchBufferForSize(size_t size)
+Context::ScratchBufferEntry* Context::scratchBufferForSize(size_t size)
 {
     if (!size)
         return nullptr;
@@ -39,9 +39,9 @@ uint64_t* Context::scratchBufferForSize(size_t size)
     if (size > m_sizeOfLastScratchBuffer) {
         m_sizeOfLastScratchBuffer = size * 2;
 
-        auto newBuffer = makeUniqueArray<uint64_t>(m_sizeOfLastScratchBuffer);
+        auto newBuffer = makeUniqueArray<ScratchBufferEntry>(m_sizeOfLastScratchBuffer);
         RELEASE_ASSERT(newBuffer);
-        m_scratchBuffers.append(WTFMove(newBuffer));
+        m_scratchBuffers.append(WTF::move(newBuffer));
     }
     // Scanning scratch buffers for GC is not necessary since while performing OSR entry, we do not perform GC.
     return m_scratchBuffers.last().get();

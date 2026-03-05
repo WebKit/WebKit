@@ -57,8 +57,8 @@ struct KeypressCommand {
     KeypressCommand(const String& commandName, const String& text, Vector<CompositionUnderline>&& underlines, Vector<CompositionHighlight>&& highlights, const CharacterRange& selectedRange, const CharacterRange& replacementRange)
         : commandName(commandName)
         , text(text)
-        , underlines(WTFMove(underlines))
-        , highlights(WTFMove(highlights))
+        , underlines(WTF::move(underlines))
+        , highlights(WTF::move(highlights))
         , selectedRange(selectedRange)
         , replacementRange(replacementRange)
     {

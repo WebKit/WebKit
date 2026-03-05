@@ -43,6 +43,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS WKAVContentSource;
 OBJC_CLASS WKSLinearMediaPlayer;
 OBJC_CLASS WebAVPlayerController;
 
@@ -66,6 +67,9 @@ public:
 
     virtual WebAVPlayerController *playerController() const = 0;
     virtual WKSLinearMediaPlayer *linearMediaPlayer() const = 0;
+#if HAVE(AVEXPERIENCECONTROLLER)
+    virtual WKAVContentSource *contentSource() const;
+#endif
     PlaybackSessionModel* playbackSessionModel() const;
     void durationChanged(double) override = 0;
     void currentTimeChanged(double currentTime, double anchorTime) override = 0;

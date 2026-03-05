@@ -78,6 +78,8 @@ State::State(Graph& graph)
         });
 
     proc->setFrontendData(&graph);
+    if (RefPtr passes = graph.ionGraphPasses())
+        proc->setIonGraphPasses(passes.releaseNonNull());
 }
 
 void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback)

@@ -31,15 +31,14 @@
 
 namespace WebCore {
 
-class StyleImage;
-
 namespace Style {
 class BuilderState;
+class Image;
 }
 
 class CSSCrossfadeValue final : public CSSValue {
 public:
-    static Ref<CSSCrossfadeValue> create(Ref<CSSValue>&& fromValueOrNone, Ref<CSSValue>&& toValueOrNone, Ref<CSSPrimitiveValue>&& percentageValue, bool isPrefixed = false);
+    static Ref<CSSCrossfadeValue> NODELETE create(Ref<CSSValue>&& fromValueOrNone, Ref<CSSValue>&& toValueOrNone, Ref<CSSPrimitiveValue>&& percentageValue, bool isPrefixed = false);
 
     ~CSSCrossfadeValue();
 
@@ -49,7 +48,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool isPrefixed() const { return m_isPrefixed; }
 
-    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
+    RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {

@@ -31,14 +31,40 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// Staging protocols for Safari's category to use
+@protocol _WKAuthenticationPRFInputValuesStaging
+@property (nullable, nonatomic, copy) NSData *prfSalt1;
+@property (nullable, nonatomic, copy) NSData *prfSalt2;
+@end
+
+@protocol _WKAuthenticationExtensionsLargeBlobInputsStaging
+@property (nullable, nonatomic, copy) NSString *support;
+@property (nonatomic) BOOL read;
+@property (nullable, nonatomic, copy) NSData *write;
+@end
+
+// Concrete classes that conform to staging protocols
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKAuthenticationPRFInputValues : NSObject <_WKAuthenticationPRFInputValuesStaging>
+@property (nullable, nonatomic, copy) NSData *prfSalt1;
+@property (nullable, nonatomic, copy) NSData *prfSalt2;
+@end
+
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKAuthenticationExtensionsLargeBlobInputs : NSObject <_WKAuthenticationExtensionsLargeBlobInputsStaging>
+@property (nullable, nonatomic, copy) NSString *support;
+@property (nonatomic) BOOL read;
+@property (nullable, nonatomic, copy) NSData *write;
+@end
+
 WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKAuthenticationExtensionsClientInputs : NSObject
 
 @property (nullable, nonatomic, copy) NSString *appid;
 @property (nonatomic) BOOL prf;
-@property (nonatomic) BOOL credProps;
-@property (nullable, nonatomic, copy) NSData *prfSalt1;
-@property (nullable, nonatomic, copy) NSData *prfSalt2;
+@property (nonatomic, nullable, copy) NSDictionary<NSData *, id <_WKAuthenticationPRFInputValuesStaging>> *evalByCredential;
+@property (nullable, nonatomic, copy) id <_WKAuthenticationPRFInputValuesStaging> eval;
+@property (nullable, nonatomic, copy) id <_WKAuthenticationExtensionsLargeBlobInputsStaging> largeBlob;
 
 @end
 

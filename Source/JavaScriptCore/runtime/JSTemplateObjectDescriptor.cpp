@@ -38,14 +38,14 @@ const ClassInfo JSTemplateObjectDescriptor::s_info = { "TemplateObjectDescriptor
 
 JSTemplateObjectDescriptor::JSTemplateObjectDescriptor(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor, int endOffset)
     : Base(vm, vm.templateObjectDescriptorStructure.get())
-    , m_descriptor(WTFMove(descriptor))
+    , m_descriptor(WTF::move(descriptor))
     , m_endOffset(endOffset)
 {
 }
 
 JSTemplateObjectDescriptor* JSTemplateObjectDescriptor::create(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor, int endOffset)
 {
-    JSTemplateObjectDescriptor* result = new (NotNull, allocateCell<JSTemplateObjectDescriptor>(vm)) JSTemplateObjectDescriptor(vm, WTFMove(descriptor), endOffset);
+    JSTemplateObjectDescriptor* result = new (NotNull, allocateCell<JSTemplateObjectDescriptor>(vm)) JSTemplateObjectDescriptor(vm, WTF::move(descriptor), endOffset);
     result->finishCreation(vm);
     return result;
 }

@@ -116,9 +116,8 @@ class RTC_EXPORT RtpReceiverInterface : public RefCountInterface,
   // Sets a frame transformer between the depacketizer and the decoder to enable
   // client code to transform received frames according to their own processing
   // logic.
-  // TODO: bugs.webrtc.org/15929 - add [[deprecated("Use SetFrameTransformer")]]
-  // when usage in Chrome is removed
-  virtual void SetDepacketizerToDecoderFrameTransformer(
+  [[deprecated("Use SetFrameTransformer")]] virtual void
+  SetDepacketizerToDecoderFrameTransformer(
       scoped_refptr<FrameTransformerInterface> frame_transformer) {
     SetFrameTransformer(std::move(frame_transformer));
   }

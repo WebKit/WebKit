@@ -4,7 +4,7 @@ layer at (0,0) size 800x506
   RenderBlock {HTML} at (0,0) size 800x506
     RenderBody {BODY} at (8,16) size 784x482
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 753x19
+        RenderText {#text} at (0,0) size 753x20
           text run at (0,0) width 753: "Test passes if the boxes have rounded corners and show a smooth transition between the thicker and the thinner sides."
       RenderTable {TABLE} at (0,36) size 700x446
         RenderTableSection {TBODY} at (0,0) size 700x446

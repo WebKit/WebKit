@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.addEventListener("load", async () => {
+    let doc = document;
+    
+    for (let i = 0; i < 4; i++) {
+        const iframe = doc.createElement("iframe");
+        iframe.style.border = 'none';
+        iframe.srcdoc = '<style>html, body { margin: 0px; padding: 0px; overflow: hidden; }</style>';
+        doc.body.appendChild(iframe);
+        
+        // Wait for srcdoc to load
+        await new Promise(resolve => {
+            iframe.addEventListener('load', resolve, { once: true });
+        });
+        
+        doc = iframe.contentDocument;
+        const div = doc.createElement("div");
+        div.textContent = `frame ${i}`;
+        doc.body.appendChild(div);
+    }
+});
+</script>
+</body>
+</html>

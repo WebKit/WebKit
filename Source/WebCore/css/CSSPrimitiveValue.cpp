@@ -43,6 +43,7 @@
 #include "RenderView.h"
 #include "StyleCalculationValue.h"
 #include "StyleLengthResolution.h"
+#include "StylePrimitiveNumericTypes+Rounding.h"
 #include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -51,7 +52,7 @@
 
 namespace WebCore {
 
-static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
+static inline bool NODELETE isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
 {
     switch (unitType) {
     case CSSUnitType::CSS_CALC:
@@ -234,7 +235,7 @@ static inline bool isStringType(CSSUnitType type)
 
 #endif // ASSERT_ENABLED
 
-static HashMap<const CSSPrimitiveValue*, String>& serializedPrimitiveValues()
+static HashMap<const CSSPrimitiveValue*, String>& NODELETE serializedPrimitiveValues()
 {
     static NeverDestroyed<HashMap<const CSSPrimitiveValue*, String>> map;
     return map;
@@ -463,27 +464,27 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(double value, CSSUnitType type)
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(String value)
 {
-    return adoptRef(*new CSSPrimitiveValue(WTFMove(value), CSSUnitType::CSS_STRING));
+    return adoptRef(*new CSSPrimitiveValue(WTF::move(value), CSSUnitType::CSS_STRING));
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSCalc::Value> value)
 {
-    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+    return adoptRef(*new CSSPrimitiveValue(WTF::move(value)));
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSAttrValue> value)
 {
-    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+    return adoptRef(*new CSSPrimitiveValue(WTF::move(value)));
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createCustomIdent(String value)
 {
-    return adoptRef(*new CSSPrimitiveValue(WTFMove(value), CSSUnitType::CustomIdent));
+    return adoptRef(*new CSSPrimitiveValue(WTF::move(value), CSSUnitType::CustomIdent));
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createFontFamily(String value)
 {
-    return adoptRef(*new CSSPrimitiveValue(WTFMove(value), CSSUnitType::CSS_FONT_FAMILY));
+    return adoptRef(*new CSSPrimitiveValue(WTF::move(value), CSSUnitType::CSS_FONT_FAMILY));
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createInteger(double value)
@@ -500,12 +501,12 @@ bool CSSPrimitiveValue::conversionToCanonicalUnitRequiresConversionData() const
 
 template<> int CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<int>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<int>(resolveAsLengthDouble(conversionData));
 }
 
 template<> unsigned CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<unsigned>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<unsigned>(resolveAsLengthDouble(conversionData));
 }
 
 template<> float CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
@@ -520,12 +521,12 @@ template<> double CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversion
 
 template<> short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<short>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<short>(resolveAsLengthDouble(conversionData));
 }
 
 template<> unsigned short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<unsigned short>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<unsigned short>(resolveAsLengthDouble(conversionData));
 }
 
 template<> LayoutUnit CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
@@ -832,7 +833,7 @@ String CSSPrimitiveValue::stringValue() const
     case CSSUnitType::CSS_PROPERTY_ID:
         return nameString(m_value.propertyID);
     case CSSUnitType::CSS_ATTR:
-        return protectedCssAttrValue()->cssText(CSS::defaultSerializationContext());
+        return protect(cssAttrValue())->cssText(CSS::defaultSerializationContext());
     default:
         return String();
     }
@@ -1008,9 +1009,9 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::Serializati
     case CSSUnitType::CSS_X:
         return formatNumberValue(unitTypeString(type));
     case CSSUnitType::CSS_ATTR:
-        return protectedCssAttrValue()->cssText(context);
+        return protect(cssAttrValue())->cssText(context);
     case CSSUnitType::CSS_CALC:
-        return protectedCssCalcValue()->cssText(context);
+        return protect(cssCalcValue())->cssText(context);
     case CSSUnitType::CSS_DIMENSION:
         // FIXME: This isn't correct.
         return formatNumberValue(""_s);
@@ -1146,9 +1147,9 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_FONT_FAMILY:
         return equal(m_value.string, other.m_value.string);
     case CSSUnitType::CSS_ATTR:
-        return protectedCssAttrValue()->equals(*other.protectedCssAttrValue());
+        return protect(cssAttrValue())->equals(*protect(other.cssAttrValue()));
     case CSSUnitType::CSS_CALC:
-        return protectedCssCalcValue()->equals(*other.protectedCssCalcValue());
+        return protect(cssCalcValue())->equals(*protect(other.cssCalcValue()));
     case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:

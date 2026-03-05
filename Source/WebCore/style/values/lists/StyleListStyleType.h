@@ -45,13 +45,13 @@ struct ListStyleType {
 
     ListStyleType(AtomString&& string)
         : m_type { Type::String }
-        , m_identifier { WTFMove(string) }
+        , m_identifier { WTF::move(string) }
     {
     }
 
     ListStyleType(CounterStyle&& counterStyle)
         : m_type { Type::CounterStyle }
-        , m_identifier { WTFMove(counterStyle.identifier.value) }
+        , m_identifier { WTF::move(counterStyle.identifier.value) }
     {
     }
 
@@ -131,7 +131,7 @@ private:
         None
     };
 
-    static Type type(const IPCData&);
+    static Type NODELETE type(const IPCData&);
     static AtomString identifier(const IPCData&);
 
     Type m_type { Type::None };

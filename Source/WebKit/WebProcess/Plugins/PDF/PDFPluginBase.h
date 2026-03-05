@@ -33,6 +33,7 @@
 #include "WebFoundTextRange.h"
 #include "WebMouseEvent.h"
 #include <WebCore/AffineTransform.h>
+#include <WebCore/EventTarget.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/PageIdentifier.h>
@@ -63,6 +64,7 @@ OBJC_CLASS PDFSelection;
 OBJC_CLASS WKAccessibilityPDFDocumentObject;
 
 namespace WebCore {
+class AXObjectCache;
 class Color;
 class FragmentedSharedBuffer;
 class GraphicsContext;
@@ -89,6 +91,7 @@ class WebMouseEvent;
 class WebWheelEvent;
 enum class SelectionEndpoint : bool;
 enum class SelectionWasFlipped : bool;
+enum class PDFDisplayMode : uint8_t;
 struct DocumentEditingContextRequest;
 struct DocumentEditingContext;
 struct EditorState;
@@ -138,7 +141,6 @@ public:
     virtual WebCore::PluginLayerHostingStrategy layerHostingStrategy() const = 0;
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual WebCore::GraphicsLayer* graphicsLayer() const { return nullptr; }
-    RefPtr<WebCore::GraphicsLayer> protectedGraphicsLayer() const;
 
     virtual void setView(PluginView&);
 
@@ -153,6 +155,8 @@ public:
     virtual double scaleFactor() const = 0;
     virtual void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin) = 0;
     virtual void mainFramePageScaleFactorDidChange() { }
+
+    virtual void setDisplayModeAndUpdateLayout(PDFDisplayMode) { }
 
     virtual double minScaleFactor() const { return 0.25; }
     virtual double maxScaleFactor() const { return 5; }
@@ -250,8 +254,6 @@ public:
     WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
     WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
-    RefPtr<WebCore::Scrollbar> protectedHorizontalScrollbar() const { return horizontalScrollbar(); }
-    RefPtr<WebCore::Scrollbar> protectedVerticalScrollbar() const { return verticalScrollbar(); }
     void setScrollOffset(const WebCore::ScrollOffset&) final;
 
     virtual void willAttachScrollingNode() { }
@@ -273,7 +275,6 @@ public:
 
 #if PLATFORM(MAC)
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
-    RefPtr<PDFPluginAnnotation> protectedActiveAnnotation() const;
 #endif
 
     enum class IsInPluginCleanup : bool { No, Yes };
@@ -321,17 +322,22 @@ public:
     uint64_t streamedBytes() const;
     std::optional<WebCore::FrameIdentifier> rootFrameID() const final;
 
-#if PLATFORM(IOS_FAMILY)
-    virtual void setSelectionRange(WebCore::FloatPoint /* pointInRootView */, WebCore::TextGranularity) { }
-    virtual void clearSelection() { }
+#if ENABLE(TWO_PHASE_CLICKS)
     virtual std::pair<URL, WebCore::FloatRect> linkURLAndBoundsAtPoint(WebCore::FloatPoint /* pointInRootView */) const { return { }; }
     virtual std::tuple<URL, WebCore::FloatRect, RefPtr<WebCore::TextIndicator>> linkDataAtPoint(WebCore::FloatPoint /* pointInRootView */) { return { }; }
     virtual std::optional<WebCore::FloatRect> highlightRectForTapAtPoint(WebCore::FloatPoint /* pointInRootView */) const { return std::nullopt; }
-    virtual void handleSyntheticClick(WebCore::PlatformMouseEvent&&) { }
+    virtual CursorContext cursorContext(WebCore::FloatPoint /* pointInRootView */) const { return { }; }
+    virtual void setSelectionRange(WebCore::FloatPoint /* pointInRootView */, WebCore::TextGranularity) { }
     virtual SelectionWasFlipped moveSelectionEndpoint(WebCore::FloatPoint /* pointInRootView */, SelectionEndpoint);
     virtual SelectionEndpoint extendInitialSelection(WebCore::FloatPoint /* pointInRootView */, WebCore::TextGranularity);
-    virtual CursorContext cursorContext(WebCore::FloatPoint /* pointInRootView */) const { return { }; }
+#if PLATFORM(IOS_FAMILY)
     virtual DocumentEditingContext documentEditingContext(DocumentEditingContextRequest&&) const;
+#endif
+#endif // ENABLE(TWO_PHASE_CLICKS)
+
+#if ENABLE(TWO_PHASE_CLICKS)
+    virtual void handleSyntheticClick(WebCore::PlatformMouseEvent&&) { }
+    virtual void clearSelection() { }
 #endif
 
     bool populateEditorStateIfNeeded(EditorState&) const;
@@ -344,6 +350,8 @@ public:
 
     virtual bool delegatesScrollingToMainFrame() const { return false; }
 
+    virtual void effectiveAppearanceDidChange() { }
+
 protected:
     virtual double contentScaleFactor() const = 0;
     virtual bool platformPopulateEditorStateIfNeeded(EditorState&) const { return false; }
@@ -352,7 +360,7 @@ private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
     void ensureDataBufferLength(uint64_t) WTF_REQUIRES_LOCK(m_streamedDataLock);
 
-    bool haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
+    bool NODELETE haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
     // This just checks whether the CFData is large enough; it doesn't know if we filled this range with data.
 
     void insertRangeRequestData(uint64_t offset, const Vector<uint8_t>&);
@@ -469,10 +477,7 @@ protected:
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
-    static WebCore::Color pluginBackgroundColor();
-
-    RefPtr<PluginView> protectedView() const;
-    RefPtr<WebFrame> protectedFrame() const;
+    WebCore::Color pluginBackgroundColor() const;
 
     SingleThreadWeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;

@@ -17,6 +17,7 @@
 #include <optional>
 
 #include "api/audio/audio_device_defines.h"
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
@@ -47,9 +48,10 @@ static const size_t kMinValidCallTimeTimeInMilliseconds =
 static const double k2Pi = 6.28318530717959;
 #endif
 
-AudioDeviceBuffer::AudioDeviceBuffer(TaskQueueFactory* task_queue_factory,
+AudioDeviceBuffer::AudioDeviceBuffer(const Environment& env,
                                      bool create_detached)
-    : task_queue_(task_queue_factory->CreateTaskQueue(
+    : env_(env),
+      task_queue_(env_.task_queue_factory().CreateTaskQueue(
           kTimerQueueName,
           TaskQueueFactory::Priority::NORMAL)),
       audio_transport_cb_(nullptr),
@@ -125,7 +127,7 @@ void AudioDeviceBuffer::StartPlayout() {
   if (!recording_) {
     StartPeriodicLogging();
   }
-  const int64_t now_time = TimeMillis();
+  const int64_t now_time = env_.clock().TimeInMilliseconds();
   // Clear members that are only touched on the main (creating) thread.
   play_start_time_ = now_time;
   playing_ = true;
@@ -145,7 +147,7 @@ void AudioDeviceBuffer::StartRecording() {
     StartPeriodicLogging();
   }
   // Clear members that will be touched on the main (creating) thread.
-  rec_start_time_ = TimeMillis();
+  rec_start_time_ = env_.clock().TimeInMilliseconds();
   recording_ = true;
   // And finally a member which can be modified on the native audio thread.
   // It is safe to do so since we know by design that the owning ADM has not
@@ -164,7 +166,8 @@ void AudioDeviceBuffer::StopPlayout() {
   if (!recording_) {
     StopPeriodicLogging();
   }
-  RTC_LOG(LS_INFO) << "total playout time: " << TimeSince(play_start_time_);
+  RTC_LOG(LS_INFO) << "total playout time: "
+                   << (env_.clock().TimeInMilliseconds() - play_start_time_);
 }
 
 void AudioDeviceBuffer::StopRecording() {
@@ -188,7 +191,8 @@ void AudioDeviceBuffer::StopRecording() {
   // the fact that `only_silence_recorded_` can be affected during the complete
   // call makes chances of conflicts with potentially one last callback very
   // small.
-  const size_t time_since_start = TimeSince(rec_start_time_);
+  const size_t time_since_start =
+      env_.clock().TimeInMilliseconds() - rec_start_time_;
   if (time_since_start > kMinValidCallTimeTimeInMilliseconds) {
     const int only_zeros = static_cast<int>(only_silence_recorded_);
     RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.RecordedOnlyZeros", only_zeros);
@@ -268,7 +272,7 @@ int32_t AudioDeviceBuffer::SetRecordedBuffer(
   }
 
   if (capture_timestamp_ns) {
-    int64_t align_offsync_estimation_time = TimeMicros();
+    int64_t align_offsync_estimation_time = env_.clock().TimeInMicroseconds();
     if (align_offsync_estimation_time - TimestampAligner::kMinFrameIntervalUs >
         align_offsync_estimation_time_) {
       align_offsync_estimation_time_ = align_offsync_estimation_time;
@@ -412,7 +416,7 @@ void AudioDeviceBuffer::StopPeriodicLogging() {
 
 void AudioDeviceBuffer::LogStats(LogState state) {
   RTC_DCHECK_RUN_ON(task_queue_.get());
-  int64_t now_time = TimeMillis();
+  int64_t now_time = env_.clock().TimeInMilliseconds();
 
   if (state == AudioDeviceBuffer::LOG_START) {
     // Reset counters at start. We will not add any logging in this state but
@@ -508,7 +512,8 @@ void AudioDeviceBuffer::LogStats(LogState state) {
   }
   last_stats_ = stats;
 
-  int64_t time_to_wait_ms = next_callback_time - TimeMillis();
+  int64_t time_to_wait_ms =
+      next_callback_time - env_.clock().TimeInMilliseconds();
   RTC_DCHECK_GT(time_to_wait_ms, 0) << "Invalid timer interval";
 
   // Keep posting new (delayed) tasks until state is changed to kLogStop.

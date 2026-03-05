@@ -30,15 +30,19 @@
 #include "FocusController.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
+#include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLMeterElement.h"
 #include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
 #include "InspectorInstrumentation.h"
 #include "LocalFrameInlines.h"
 #include "Page.h"
+#include "SelectPopoverElement.h"
 #include "SelectorChecker.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -589,6 +593,20 @@ ALWAYS_INLINE bool matchesPopoverOpenPseudoClass(const Element& element)
     return element.isPopoverShowing();
 }
 
+ALWAYS_INLINE bool matchesOpenPseudoClass(const Element& element)
+{
+    if (auto* dialog = dynamicDowncast<HTMLDialogElement>(element))
+        return dialog->isOpen();
+    if (auto* details = dynamicDowncast<HTMLDetailsElement>(element))
+        return details->isOpen();
+    if (auto* select = dynamicDowncast<HTMLSelectElement>(element))
+        return select->isOpen();
+    if (auto* input = dynamicDowncast<HTMLInputElement>(element))
+        return input->isPresentingAttachedView();
+
+    return false;
+}
+
 ALWAYS_INLINE bool matchesUserInvalidPseudoClass(const Element& element)
 {
     return element.matchesUserInvalidPseudoClass();
@@ -604,6 +622,39 @@ ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element
     if (&element != element.document().documentElement())
         return false;
     return !!element.document().activeViewTransition();
+}
+
+ALWAYS_INLINE bool matchesEvenLessGoodPseudoClass(const Element& element)
+{
+    if (RefPtr meterElement = dynamicDowncast<HTMLMeterElement>(element))
+        return meterElement->gaugeRegion() == HTMLMeterElement::GaugeRegion::EvenLessGood;
+    return false;
+}
+
+ALWAYS_INLINE bool matchesOptimumPseudoClass(const Element& element)
+{
+    if (RefPtr meterElement = dynamicDowncast<HTMLMeterElement>(element))
+        return meterElement->gaugeRegion() == HTMLMeterElement::GaugeRegion::Optimum;
+    return false;
+}
+
+ALWAYS_INLINE bool matchesSuboptimumPseudoClass(const Element& element)
+{
+    if (RefPtr meterElement = dynamicDowncast<HTMLMeterElement>(element))
+        return meterElement->gaugeRegion() == HTMLMeterElement::GaugeRegion::Suboptimal;
+    return false;
+}
+
+ALWAYS_INLINE bool matchesUsesMenulistPseudoClass(const Element& element)
+{
+    if (auto* select = dynamicDowncast<HTMLSelectElement>(element))
+        return select->usesMenuList();
+    return false;
+}
+
+ALWAYS_INLINE bool matchesSelectPopoverPseudoClass(const Element& element)
+{
+    return is<SelectPopoverElement>(element);
 }
 
 } // namespace WebCore

@@ -40,7 +40,7 @@ public:
 
     static Ref<String> create(WTF::String&& string)
     {
-        return adoptRef(*new String(string.isNull() ? WTF::String(StringImpl::empty()) : WTFMove(string).isolatedCopy()));
+        return adoptRef(*new String(string.isNull() ? WTF::String(StringImpl::empty()) : WTF::move(string).isolatedCopy()));
     }
 
     static Ref<String> create(const WTF::String& string)
@@ -62,7 +62,7 @@ private:
     }
 
     String(WTF::String&& string)
-        : m_string(WTFMove(string))
+        : m_string(WTF::move(string))
     {
         ASSERT(!m_string.isNull());
         ASSERT(m_string.isSafeToSendToAnotherThread());

@@ -21,10 +21,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI && compiler(>=6.0)
+#if ENABLE_SWIFTUI
 
 import Foundation
-internal import WebKit_Internal
 
 extension WebPage {
     /// A type that specifies the behaviors to use when loading and rendering page content.
@@ -129,6 +128,18 @@ extension WebPage {
             get { backingSecurityRestrictionMode ?? .none }
             set { backingSecurityRestrictionMode = newValue }
         }
+
+        /// Used to make changes to the network request that will be used for this navigation's main resource load.
+        @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+        @available(watchOS, unavailable)
+        @available(tvOS, unavailable)
+        public var alternateRequest: URLRequest? = nil
+
+        /// Used to apply a custom `referer` header to all resource loads in the frame of this navigation.
+        @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+        @available(watchOS, unavailable)
+        @available(tvOS, unavailable)
+        public var overrideReferrer: Swift.String? = nil
     }
 }
 
@@ -186,6 +197,9 @@ extension WebPage.NavigationPreferences {
         self.allowsContentJavaScript = wrapped.allowsContentJavaScript
         self.isLockdownModeEnabled = wrapped.isLockdownModeEnabled
         self.securityRestrictionMode = .init(wrapped.securityRestrictionMode)
+
+        self.alternateRequest = wrapped.alternateRequest
+        self.overrideReferrer = wrapped.overrideReferrer
     }
 }
 

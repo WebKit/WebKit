@@ -14,6 +14,7 @@
 #include <optional>
 
 #include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -41,6 +42,10 @@ struct RTC_EXPORT SimulcastStream {
   unsigned int minBitrate = 0;     // kilobits/sec.
   unsigned int qpMax = 0;          // minimum quality
   bool active = false;             // encoded and sent.
+  // The video format for this stream.
+  // This should be set for mixed-codec simulcast, while for other cases,
+  // it is optional and can be unset.
+  std::optional<SdpVideoFormat> format;
 };
 
 }  // namespace webrtc

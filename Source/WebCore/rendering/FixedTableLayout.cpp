@@ -161,7 +161,7 @@ float FixedTableLayout::calcWidthArray()
             if (m_width[currentColumn].isAuto() && !logicalWidth.isAuto()) {
                 if (auto fixedLogicalWidth = logicalWidth.tryFixed()) {
                     // Zoom was applied when we called adjustBorderBoxLogicalWidthForBoxSizing
-                    m_width[currentColumn] = Style::PreferredSize::Fixed { fixedLogicalWidth->resolveZoom(Style::ZoomFactor { 1.0f, 1.0f }) * eSpan / span };
+                    m_width[currentColumn] = Style::PreferredSize::Fixed { fixedLogicalWidth->resolveZoom(Style::ZoomFactor { 1.0f }) * eSpan / span };
                 }
                 else if (auto percentageLogicalWidth = logicalWidth.tryPercentage())
                     m_width[currentColumn] = Style::PreferredSize::Percentage { percentageLogicalWidth->value * eSpan / span };
@@ -237,7 +237,7 @@ void FixedTableLayout::layout()
         if (auto fixedWidth = m_width[i].tryFixed()) {
             // We zoomed the widths inside of calcWidthArray so here we pass in a zoom
             // factor of 1.0f to avoid double zooming.
-            calcWidth[i] = Style::evaluate<float>(*fixedWidth, Style::ZoomFactor { 1.0f, 1.0f });
+            calcWidth[i] = Style::evaluate<float>(*fixedWidth, Style::ZoomFactor { 1.0f });
             totalFixedWidth += calcWidth[i];
         } else if (auto percentageWidth = m_width[i].tryPercentage()) {
             calcWidth[i] = Style::evaluate<float>(*percentageWidth, tableLogicalWidth);

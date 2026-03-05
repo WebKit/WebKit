@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,14 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicComponentTransferFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Brightness;
@@ -36,10 +39,49 @@ struct Brightness;
 
 namespace Style {
 
-class BuilderState;
+// brightness() = brightness( [ <number [0,∞]> | <percentage [0,∞]> ]?@(default=1) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-brightness
+struct Brightness {
+    using Parameter = Number<CSS::Nonnegative>;
 
-CSS::Brightness toCSSBrightness(Ref<BasicComponentTransferFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Brightness&, const BuilderState&);
+    Parameter value;
+
+    static Brightness passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value == 1; }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const Brightness&) const = default;
+};
+using BrightnessFunction = FunctionNotation<CSSValueBrightness, Brightness>;
+DEFINE_TYPE_WRAPPER_GET(Brightness, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<Brightness> { auto operator()(const Brightness&, const RenderStyle&) -> CSS::Brightness; };
+template<> struct ToStyle<CSS::Brightness> { auto operator()(const CSS::Brightness&, const BuilderState&) -> Brightness; };
+
+// MARK: - Blending
+
+template<> struct Blending<Brightness> {
+    auto blend(const Brightness&, const Brightness&, const BlendingContext&) -> Brightness;
+};
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<Brightness, Ref<FilterEffect>> { auto operator()(const Brightness&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<Brightness> { auto operator()(const Brightness&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Brightness, 1)

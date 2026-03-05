@@ -10,7 +10,7 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkData.h"
 #include "include/core/SkPaint.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/gpu/graphite/Context.h"
 #include "include/gpu/graphite/ContextOptions.h"
 #include "include/gpu/graphite/PrecompileContext.h"
@@ -35,12 +35,8 @@ namespace {
 bool draw(Context* context) {
     SkPaint paint;
     const SkPoint pts[] = {{0, 0}, {64, 64}};
-    const SkColor colors[] = {SK_ColorWHITE, SK_ColorBLACK};
-    paint.setShader(SkGradientShader::MakeLinear(pts,
-                                                 colors,
-                                                 nullptr,
-                                                 /* count= */ 2,
-                                                 SkTileMode::kClamp));
+    const SkColor4f colors[] = {SkColors::kWhite, SkColors::kBlack};
+    paint.setShader(SkShaders::LinearGradient(pts, {{colors, {}, SkTileMode::kClamp}, {}}));
 
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 
@@ -130,12 +126,12 @@ void run_precompile_test(skiatest::Reporter* reporter,
     std::unique_ptr<PrecompileContext> precompileContext = newContext->makePrecompileContext();
 
     PaintOptions paintOptions;
-    paintOptions.setShaders({ PrecompileShaders::LinearGradient(
-                                      PrecompileShaders::GradientShaderFlags::kSmall) });
+    paintOptions.setShaders({{ PrecompileShaders::LinearGradient(
+                                      PrecompileShaders::GradientShaderFlags::kSmall) }});
 
     Precompile(precompileContext.get(), paintOptions,
                DrawTypeFlags::kNonAAFillRect,
-               { { DepthStencilFlags::kDepth, kRGBA_8888_SkColorType} });
+               {{ { DepthStencilFlags::kDepth, kRGBA_8888_SkColorType} }});
 
     REPORTER_ASSERT(reporter, !data.empty());    // some Pipeline should've been reported
 }

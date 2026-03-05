@@ -272,7 +272,7 @@ static HashSet<CFTypeRef>& classesForSelectorArgument(_WKRemoteObjectInterface *
     for (Class allowedClass in classes)
         allowedClasses.add((__bridge CFTypeRef)allowedClass);
 
-    classesForSelectorArgument(self, selector, argumentIndex, ofReply) = WTFMove(allowedClasses);
+    classesForSelectorArgument(self, selector, argumentIndex, ofReply) = WTF::move(allowedClasses);
 }
 
 - (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex

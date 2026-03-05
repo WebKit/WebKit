@@ -35,27 +35,39 @@ struct MaskBorderOutsetValue {
     using Length = Style::Length<CSS::Nonnegative, float>;
     using Number = Style::Number<CSS::Nonnegative, float>;
 
-    MaskBorderOutsetValue(Length length)
+    constexpr MaskBorderOutsetValue(Length length)
         : m_value { length }
     {
     }
-
-    MaskBorderOutsetValue(Number number)
+    constexpr MaskBorderOutsetValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : m_value { Length { literal } }
+    {
+    }
+    constexpr MaskBorderOutsetValue(Number number)
         : m_value { number }
     {
     }
+    constexpr MaskBorderOutsetValue(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : m_value { Number { literal } }
+    {
+    }
 
-    bool isLength() const { return WTF::holdsAlternative<Length>(m_value); }
-    bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
+    constexpr bool isLength() const { return WTF::holdsAlternative<Length>(m_value); }
+    constexpr bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
 
-    bool operator==(const MaskBorderOutsetValue&) const = default;
+    constexpr bool isZero() const
+    {
+        return switchOn([&](auto& value) { return value == 0; });
+    }
 
-    bool hasSameType(const MaskBorderOutsetValue& other) const { return m_value.index() == other.m_value.index(); }
+    constexpr bool operator==(const MaskBorderOutsetValue&) const = default;
+
+    constexpr bool hasSameType(const MaskBorderOutsetValue& other) const { return m_value.index() == other.m_value.index(); }
 
 private:
     friend struct Blending<MaskBorderOutsetValue>;
@@ -66,13 +78,43 @@ private:
 // <'mask-border-outset'> = [ <length [0,∞]> | <number [0,∞]> ]{1,4}
 // https://drafts.fxtf.org/css-masking-1/#propdef-mask-border-outset
 struct MaskBorderOutset {
-    MinimallySerializingSpaceSeparatedRectEdges<MaskBorderOutsetValue> values { MaskBorderOutsetValue { MaskBorderOutsetValue::Number { 0 } } };
+    using Value = MaskBorderOutsetValue;
+    using Edges = MinimallySerializingSpaceSeparatedRectEdges<Value>;
+
+    Edges values { Value { Value::Number { 0 } } };
+
+    MaskBorderOutset(Edges values)
+        : values { WTF::move(values) }
+    {
+    }
+    MaskBorderOutset(Value top, Value right, Value bottom, Value left)
+        : values { top, right, bottom, left }
+    {
+    }
+    MaskBorderOutset(Value value)
+        : values { WTF::move(value) }
+    {
+    }
+    MaskBorderOutset(Value::Length length)
+        : values { length }
+    {
+    }
+    MaskBorderOutset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : values { Value::Length { literal } }
+    {
+    }
+    MaskBorderOutset(Value::Number number)
+        : values { number }
+    {
+    }
+    MaskBorderOutset(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : values { Value::Number { literal } }
+    {
+    }
 
     bool isZero() const
     {
-        return values.allOf([](auto& edge) {
-            return WTF::switchOn(edge, [&](auto& value) { return value == 0; });
-        });
+        return values.allOf([](auto& edge) { return edge.isZero(); });
     }
 
     bool operator==(const MaskBorderOutset&) const = default;

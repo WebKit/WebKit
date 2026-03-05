@@ -1362,8 +1362,7 @@ TEST_F(RtpSenderTest, MarksPacketsWithKeyframeStatus) {
   RTPSenderVideo rtp_sender_video(video_config);
 
   const uint8_t kPayloadType = 127;
-  const std::optional<VideoCodecType> kCodecType =
-      VideoCodecType::kVideoCodecGeneric;
+  const VideoCodecType kCodecType = VideoCodecType::kVideoCodecGeneric;
 
   const uint32_t kCaptureTimeMsToRtpTimestamp = 90;  // 90 kHz clock
 

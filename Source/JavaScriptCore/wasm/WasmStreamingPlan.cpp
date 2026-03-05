@@ -43,8 +43,8 @@ static constexpr bool verbose = false;
 }
 
 StreamingPlan::StreamingPlan(VM& vm, Ref<ModuleInformation>&& info, Ref<EntryPlan>&& plan, FunctionCodeIndex functionIndex, CompletionTask&& task)
-    : Base(vm, WTFMove(info), WTFMove(task))
-    , m_plan(WTFMove(plan))
+    : Base(vm, WTF::move(info), WTF::move(task))
+    , m_plan(WTF::move(plan))
     , m_functionIndex(functionIndex)
 {
     dataLogLnIf(WasmStreamingPlanInternal::verbose, "Starting Streaming plan for ", functionIndex, " of module info: ", RawPointer(&m_moduleInformation.get()));

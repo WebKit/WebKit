@@ -318,8 +318,8 @@ void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescri
             opticalSizingValue = iterator->value();
         }
 #endif
-        m_opticalSizingType = OpticalSizingTypes::Everything { WTFMove(opticalSizingValue) };
-    } else if (fontDescription.opticalSizing() == FontOpticalSizing::Disabled)
+        m_opticalSizingType = OpticalSizingTypes::Everything { WTF::move(opticalSizingValue) };
+    } else if (fontDescription.opticalSizing() == FontOpticalSizing::None)
         m_opticalSizingType = OpticalSizingTypes::None { };
     else
         m_opticalSizingType = OpticalSizingTypes::JustVariation { };
@@ -427,7 +427,7 @@ RetainPtr<CTFontRef> UnrealizedCoreTextFont::realize() const
 
     if (auto rebuildReason = this->rebuildReason(font.get()); rebuildReason.hasEffect()) {
         VariationsMap variationsToBeApplied;
-        std::optional<VariationDefaultsMap> variationDefaults = WTFMove(rebuildReason.variationDefaults);
+        std::optional<VariationDefaultsMap> variationDefaults = WTF::move(rebuildReason.variationDefaults);
 #if USE(CORE_TEXT_VARIATIONS_CLAMPING_WORKAROUND)
         // Even if everything was in-bounds, we still have to clamp,
         // because normalization might put us out-of-bounds.

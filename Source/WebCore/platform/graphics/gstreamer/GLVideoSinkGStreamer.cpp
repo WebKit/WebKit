@@ -23,10 +23,12 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #include "GStreamerCommon.h"
+#include "GStreamerQuirks.h"
 #include "GStreamerVideoSinkCommon.h"
 #include "GUniquePtrGStreamer.h"
 #include "PlatformDisplay.h"
 #include <gst/gl/gl.h>
+#include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 
 #if USE(GBM)
@@ -48,13 +50,20 @@ enum {
     WEBKIT_GL_VIDEO_SINK_PROP_LAST
 };
 
-struct _WebKitGLVideoSinkPrivate {
-    GRefPtr<GstElement> appSink;
-    MediaPlayerPrivateGStreamer* mediaPlayerPrivate;
-};
-
 GST_DEBUG_CATEGORY_STATIC(webkit_gl_video_sink_debug);
 #define GST_CAT_DEFAULT webkit_gl_video_sink_debug
+
+struct _WebKitGLVideoSinkPrivate {
+    ~_WebKitGLVideoSinkPrivate()
+    {
+        ASSERT(isMainThread());
+        webKitVideoSinkDisconnectSignalHandlers(appSink.get(), signalIdentifiers);
+        GST_DEBUG_OBJECT(appSink.get(), "WebKitGLVideoSink finalized.");
+    }
+
+    GRefPtr<GstElement> appSink;
+    WebKitVideoSinkSignalIdentifiers signalIdentifiers;
+};
 
 #define GST_GL_CAPS_FORMAT "{ A420, RGBx, RGBA, I420, Y444, YV12, Y41B, Y42B, NV12, NV21, VUYA }"
 static GstStaticPadTemplate glVideoSinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS_ANY);
@@ -72,13 +81,77 @@ static void initializeDMABufAvailability()
         if (!gst_check_version(1, 20, 0))
             return;
 
-        auto value = unsafeSpan(g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED"));
-        s_isDMABufDisabled = value.data() && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
+        auto value = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED"));
+        s_isDMABufDisabled = !value.isEmpty() && (equalLettersIgnoringASCIICase(value.span(), "true"_s) || equalLettersIgnoringASCIICase(value.span(), "1"_s));
         if (!s_isDMABufDisabled && !DRMDeviceManager::singleton().mainGBMDevice(DRMDeviceManager::NodeType::Render))
             s_isDMABufDisabled = true;
     });
 }
 #endif
+
+struct GLSinkHolder {
+    GThreadSafeWeakPtr<GstElement> sink;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GLSinkHolder);
+
+static GstPadProbeReturn sinkPadProbeCallback(GstPad*, GstPadProbeInfo* info, gpointer userData)
+{
+    auto query = GST_PAD_PROBE_INFO_QUERY(info);
+    if (GST_QUERY_TYPE(query) != GST_QUERY_ACCEPT_CAPS)
+        return GST_PAD_PROBE_OK;
+
+    GstCaps* caps;
+    gst_query_parse_accept_caps(query, &caps);
+    if (!caps)
+        return GST_PAD_PROBE_OK;
+
+    if (gst_caps_features_contains(gst_caps_get_features(caps, 0), GST_CAPS_FEATURE_MEMORY_GL_MEMORY))
+        return GST_PAD_PROBE_OK;
+
+    auto holder = reinterpret_cast<GLSinkHolder*>(userData);
+    auto sink = holder->sink.get();
+    if (!sink) [[unlikely]]
+        return GST_PAD_PROBE_REMOVE;
+
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+    auto isVideoCapsGLCompatible = quirksManager.isVideoCapsGLCompatible(GRefPtr(caps));
+    GST_DEBUG_OBJECT(sink.get(), "Accept caps query for caps %" GST_PTR_FORMAT " isVideoCapsGLCompatible=%d", caps, isVideoCapsGLCompatible);
+    if (!isVideoCapsGLCompatible)
+        return GST_PAD_PROBE_OK;
+
+    GST_DEBUG_OBJECT(sink.get(), "Inserting GL converters before appsink");
+    auto priv = WEBKIT_GL_VIDEO_SINK(sink.get())->priv;
+    auto upload = makeGStreamerElement("glupload"_s);
+    auto colorconvert = makeGStreamerElement("glcolorconvert"_s);
+    RELEASE_ASSERT(upload);
+    RELEASE_ASSERT(colorconvert);
+
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(sink.get(), "sink"));
+    gst_ghost_pad_set_target(GST_GHOST_PAD_CAST(sinkPad.get()), nullptr);
+
+    gst_bin_add_many(GST_BIN_CAST(sink.get()), upload, colorconvert, nullptr);
+    gst_element_link_many(upload, colorconvert, priv->appSink.get(), nullptr);
+    auto target = adoptGRef(gst_element_get_static_pad(upload, "sink"));
+
+    GstElement* imxVideoConvert = nullptr;
+    if (auto imxVideoConvertFactory = adoptGRef(gst_element_factory_find("imxvideoconvert_g2d"))) {
+        imxVideoConvert = gst_element_factory_create(imxVideoConvertFactory.get(), nullptr);
+        gst_bin_add(GST_BIN_CAST(sink.get()), imxVideoConvert);
+        gst_element_link(imxVideoConvert, upload);
+        target = adoptGRef(gst_element_get_static_pad(imxVideoConvert, "sink"));
+    }
+
+    gst_ghost_pad_set_target(GST_GHOST_PAD_CAST(sinkPad.get()), target.get());
+
+    if (imxVideoConvert)
+        gst_element_sync_state_with_parent(imxVideoConvert);
+    gst_element_sync_state_with_parent(upload);
+    gst_element_sync_state_with_parent(colorconvert);
+
+    gst_query_set_accept_caps_result(query, TRUE);
+    GST_PAD_PROBE_INFO_FLOW_RETURN(info) = GST_FLOW_OK;
+    return GST_PAD_PROBE_HANDLED;
+}
 
 static void webKitGLVideoSinkConstructed(GObject* object)
 {
@@ -95,65 +168,52 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     ASSERT(sink->priv->appSink);
     g_object_set(sink->priv->appSink.get(), "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
-
-    auto* imxVideoConvertG2D =
-        []() -> GstElement*
-        {
-            auto elementFactor = adoptGRef(gst_element_factory_find("imxvideoconvert_g2d"));
-            if (elementFactor)
-                return gst_element_factory_create(elementFactor.get(), nullptr);
-            return nullptr;
-        }();
-    if (imxVideoConvertG2D)
-        gst_bin_add(GST_BIN_CAST(sink), imxVideoConvertG2D);
-
-    GstElement* upload = makeGStreamerElement("glupload"_s);
-    GstElement* colorconvert = makeGStreamerElement("glcolorconvert"_s);
-
-    ASSERT(upload);
-    ASSERT(colorconvert);
-    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, sink->priv->appSink.get(), nullptr);
+    gst_bin_add(GST_BIN_CAST(sink), sink->priv->appSink.get());
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty());
+
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+    auto quirkGLCaps = quirksManager.videoSinkGLCapsFormat();
+    if (quirkGLCaps)
+        gst_caps_append(caps.get(), quirkGLCaps.ref());
+
 #if USE(GBM)
     if (!s_isDMABufDisabled)
         gst_caps_append(caps.get(), buildDMABufCaps().leakRef());
 #endif
-    GRefPtr<GstCaps> glCaps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
+
+    auto glCaps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
     gst_caps_set_features(glCaps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
     gst_caps_append(caps.get(), glCaps.leakRef());
 
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(sink->priv->appSink.get(), "sink"));
+
+    if (!quirkGLCaps) {
+        auto upload = makeGStreamerElement("glupload"_s);
+        auto colorconvert = makeGStreamerElement("glcolorconvert"_s);
+        RELEASE_ASSERT(upload);
+        RELEASE_ASSERT(colorconvert);
+
+        gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, nullptr);
+        gst_element_link_many(upload, colorconvert, sink->priv->appSink.get(), nullptr);
+        sinkPad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
+
+        GstElement* imxVideoConvert = nullptr;
+        if (auto imxVideoConvertFactory = adoptGRef(gst_element_factory_find("imxvideoconvert_g2d"))) {
+            imxVideoConvert = gst_element_factory_create(imxVideoConvertFactory.get(), nullptr);
+            gst_bin_add(GST_BIN_CAST(sink), imxVideoConvert);
+            gst_element_link(imxVideoConvert, upload);
+            sinkPad = adoptGRef(gst_element_get_static_pad(imxVideoConvert, "sink"));
+        }
+    } else {
+        auto data = createGLSinkHolder();
+        data->sink.reset(GST_ELEMENT_CAST(sink));
+        gst_pad_add_probe(sinkPad.get(), GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM, sinkPadProbeCallback, data,
+            reinterpret_cast<GDestroyNotify>(destroyGLSinkHolder));
+    }
+
     g_object_set(sink->priv->appSink.get(), "caps", caps.get(), nullptr);
-
-    if (imxVideoConvertG2D)
-        gst_element_link(imxVideoConvertG2D, upload);
-    gst_element_link(upload, colorconvert);
-
-    gst_element_link(colorconvert, sink->priv->appSink.get());
-
-    GstElement* sinkElement =
-        [&] {
-            if (imxVideoConvertG2D)
-                return imxVideoConvertG2D;
-            return upload;
-        }();
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(sinkElement, "sink"));
-    gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", pad.get()));
-}
-
-void webKitGLVideoSinkFinalize(GObject* object)
-{
-    ASSERT(isMainThread());
-
-    WebKitGLVideoSink* sink = WEBKIT_GL_VIDEO_SINK(object);
-    WebKitGLVideoSinkPrivate* priv = sink->priv;
-
-    if (priv->mediaPlayerPrivate)
-        g_signal_handlers_disconnect_by_data(priv->appSink.get(), priv->mediaPlayerPrivate);
-
-    GST_DEBUG_OBJECT(object, "WebKitGLVideoSink finalized.");
-
-    G_OBJECT_CLASS(webkit_gl_video_sink_parent_class)->finalize(object);
+    gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", sinkPad.get()));
 }
 
 static GstStateChangeReturn webKitGLVideoSinkChangeState(GstElement* element, GstStateChange transition)
@@ -202,7 +262,6 @@ static void webkit_gl_video_sink_class_init(WebKitGLVideoSinkClass* klass)
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
 
     objectClass->constructed = webKitGLVideoSinkConstructed;
-    objectClass->finalize = webKitGLVideoSinkFinalize;
     objectClass->get_property = webKitGLVideoSinkGetProperty;
 
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&glVideoSinkTemplate));
@@ -214,12 +273,11 @@ static void webkit_gl_video_sink_class_init(WebKitGLVideoSinkClass* klass)
     elementClass->change_state = GST_DEBUG_FUNCPTR(webKitGLVideoSinkChangeState);
 }
 
-void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, MediaPlayerPrivateGStreamer* player)
+void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, const ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>& player)
 {
     WebKitGLVideoSinkPrivate* priv = sink->priv;
 
-    priv->mediaPlayerPrivate = player;
-    webKitVideoSinkSetMediaPlayerPrivate(priv->appSink.get(), priv->mediaPlayerPrivate);
+    priv->signalIdentifiers = webKitVideoSinkSetMediaPlayerPrivate(priv->appSink.get(), player);
 }
 
 bool webKitGLVideoSinkProbePlatform()

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-using ViewTimelineIndividualInset = Variant<RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
+using ViewTimelineIndividualInset = Variant<Ref<CSSNumericValue>, String, Ref<CSSKeywordValue>>;
 using ViewTimelineInsetValue = Variant<String, Vector<ViewTimelineIndividualInset>>;
 
 struct ViewTimelineOptions {

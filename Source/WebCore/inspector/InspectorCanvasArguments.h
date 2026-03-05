@@ -48,7 +48,6 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -171,63 +170,63 @@ template<> struct InspectorCanvasArgumentProcessor<IDLArrayBufferView> {
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLFloat32Array> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<JSC::Float32Array>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<JSC::Float32Array>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInt32Array> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<JSC::Int32Array>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<JSC::Int32Array>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLUint32Array> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<JSC::Uint32Array>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<JSC::Uint32Array>&);
 };
 
 // MARK: - Interfaces
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<Element>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<Element>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<Element>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<HTMLImageElement>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<HTMLImageElement>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<HTMLImageElement>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<SVGImageElement>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<SVGImageElement>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<SVGImageElement>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<HTMLCanvasElement>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<HTMLCanvasElement>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<HTMLCanvasElement>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<CSSStyleImageValue>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<CSSStyleImageValue>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<CSSStyleImageValue>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<CanvasGradient>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<CanvasGradient>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<CanvasGradient>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<CanvasPattern>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<CanvasPattern>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<CanvasPattern>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<Path2D>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<Path2D>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<Path2D>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<ImageBitmap>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<ImageBitmap>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<ImageBitmap>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<ImageData>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<ImageData>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<ImageData>&);
 };
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<OffscreenCanvas>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<OffscreenCanvas>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<OffscreenCanvas>&);
 };
 
 #endif // ENABLE(OFFSCREEN_CANVAS)
@@ -235,7 +234,7 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInterface<OffscreenCanvas>
 #if ENABLE(VIDEO)
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<HTMLVideoElement>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<HTMLVideoElement>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<HTMLVideoElement>&);
 };
 
 #endif // ENABLE(VIDEO)
@@ -243,7 +242,7 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInterface<HTMLVideoElement
 #if ENABLE(WEB_CODECS)
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebCodecsVideoFrame>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebCodecsVideoFrame>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebCodecsVideoFrame>&);
 };
 
 #endif // ENABLE(WEB_CODECS)
@@ -251,51 +250,51 @@ template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebCodecsVideoFr
 #if ENABLE(WEBGL)
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLBuffer>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLBuffer>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLBuffer>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLFramebuffer>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLFramebuffer>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLFramebuffer>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLProgram>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLProgram>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLProgram>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLQuery>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLQuery>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLQuery>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLRenderbuffer>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLRenderbuffer>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLRenderbuffer>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLSampler>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLSampler>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLSampler>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLShader>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLShader>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLShader>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLSync>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLSync>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLSync>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTexture>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLTexture>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLTexture>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLUniformLocation>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLUniformLocation>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLUniformLocation>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLVertexArrayObject>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLVertexArrayObject>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLVertexArrayObject>&);
 };
 
 template<> struct InspectorCanvasArgumentProcessor<IDLInterface<WebGLTransformFeedback>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const RefPtr<WebGLTransformFeedback>&);
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Ref<WebGLTransformFeedback>&);
 };
 
 #endif // ENABLE(WEBGL)

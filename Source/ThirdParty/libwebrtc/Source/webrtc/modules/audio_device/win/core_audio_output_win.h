@@ -11,9 +11,12 @@
 #ifndef MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_OUTPUT_WIN_H_
 #define MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_OUTPUT_WIN_H_
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
+#include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
 #include "modules/audio_device/win/audio_device_module_win.h"
 #include "modules/audio_device/win/core_audio_base_win.h"
 
@@ -30,7 +33,7 @@ namespace webrtc_win {
 // layer.
 class CoreAudioOutput final : public CoreAudioBase, public AudioOutput {
  public:
-  CoreAudioOutput(bool automatic_restart);
+  CoreAudioOutput(const Environment& env, bool automatic_restart);
   ~CoreAudioOutput() override;
 
   // AudioOutput implementation.

@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 resources/subresource-null-mimetype.webarchive - willSendRequest <NSURLRequest URL resources/subresource-null-mimetype.webarchive, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame

@@ -34,21 +34,19 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathInvert);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMathInvert);
 
 Ref<CSSMathInvert> CSSMathInvert::create(CSSNumberish&& numberish)
 {
-    return adoptRef(*new CSSMathInvert(WTFMove(numberish)));
+    return adoptRef(*new CSSMathInvert(WTF::move(numberish)));
 }
 
 static CSSNumericType negatedType(const CSSNumberish& numberish)
 {
     // https://drafts.css-houdini.org/css-typed-om/#type-of-a-cssmathvalue
     return WTF::switchOn(numberish,
-        [] (double) { return CSSNumericType(); },
-        [] (const RefPtr<CSSNumericValue>& value) {
-            if (!value)
-                return CSSNumericType();
+        [](double) { return CSSNumericType(); },
+        [](const Ref<CSSNumericValue>& value) {
             CSSNumericType type = value->type();
             auto negate = [] (auto& optional) {
                 if (optional)
@@ -68,7 +66,7 @@ static CSSNumericType negatedType(const CSSNumberish& numberish)
 
 CSSMathInvert::CSSMathInvert(CSSNumberish&& numberish)
     : CSSMathValue(negatedType(numberish))
-    , m_value(rectifyNumberish(WTFMove(numberish)))
+    , m_value(rectifyNumberish(WTF::move(numberish)))
 {
 }
 
@@ -99,7 +97,7 @@ auto CSSMathInvert::toSumValue() const -> std::optional<SumValue>
     UnitMap negatedExponents;
     for (auto& pair : value.units)
         negatedExponents.add(pair.key, -1 * pair.value);
-    value.units = WTFMove(negatedExponents);
+    value.units = WTF::move(negatedExponents);
 
     return values;
 }
@@ -119,12 +117,12 @@ std::optional<CSSCalc::Child> CSSMathInvert::toCalcTreeNode() const
     if (!child)
         return std::nullopt;
 
-    auto invert = CSSCalc::Invert { .a = WTFMove(*child) };
+    auto invert = CSSCalc::Invert { .a = WTF::move(*child) };
     auto type = CSSCalc::toType(invert);
     if (!type)
         return std::nullopt;
 
-    return CSSCalc::makeChild(WTFMove(invert), *type);
+    return CSSCalc::makeChild(WTF::move(invert), *type);
 }
 
 } // namespace WebCore

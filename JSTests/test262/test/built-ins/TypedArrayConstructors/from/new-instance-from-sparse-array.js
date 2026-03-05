@@ -10,7 +10,7 @@ features: [Array.prototype.values, TypedArray]
 
 var source = [,,42,,44,,];
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var result = TA.from(source);
 
   assert.sameValue(result.length, 6);
@@ -25,7 +25,7 @@ testWithTypedArrayConstructors(function(TA) {
 },
 floatArrayConstructors);
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var result = TA.from(source);
 
   assert.sameValue(result.length, 6);

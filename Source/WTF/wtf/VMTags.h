@@ -25,15 +25,5 @@
 
 #pragma once
 
-#if USE(SYSTEM_MALLOC)
-
-#define VM_TAG_FOR_TCMALLOC_MEMORY -1
-#define VM_TAG_FOR_WEBASSEMBLY_MEMORY -1
-#define VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY -1
-#define VM_TAG_FOR_ISOHEAP_MEMORY -1
-
-#else
-
+#include <wtf/Platform.h>
 #include <bmalloc/BVMTags.h>
-
-#endif

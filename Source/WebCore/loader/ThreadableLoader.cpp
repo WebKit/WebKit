@@ -54,14 +54,14 @@ ThreadableLoaderOptions::ThreadableLoaderOptions()
 ThreadableLoaderOptions::~ThreadableLoaderOptions() = default;
 
 ThreadableLoaderOptions::ThreadableLoaderOptions(FetchOptions&& baseOptions)
-    : ResourceLoaderOptions { WTFMove(baseOptions) }
+    : ResourceLoaderOptions { WTF::move(baseOptions) }
 {
 }
 
 ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiatorType, ResponseFilteringPolicy filteringPolicy)
     : ResourceLoaderOptions(baseOptions)
     , contentSecurityPolicyEnforcement(contentSecurityPolicyEnforcement)
-    , initiatorType(WTFMove(initiatorType))
+    , initiatorType(WTF::move(initiatorType))
     , filteringPolicy(filteringPolicy)
 {
 }
@@ -124,18 +124,18 @@ RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& contex
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
     
     if (is<WorkerGlobalScope>(context) || (is<WorkletGlobalScope>(context) && downcast<WorkletGlobalScope>(context).workerOrWorkletThread()))
-        return WorkerThreadableLoader::create(downcast<WorkerOrWorkletGlobalScope>(context), client, WTFMove(taskMode), WTFMove(request), options, WTFMove(referrer));
+        return WorkerThreadableLoader::create(downcast<WorkerOrWorkletGlobalScope>(context), client, WTF::move(taskMode), WTF::move(request), options, WTF::move(referrer));
 
-    return DocumentThreadableLoader::create(*document, client, WTFMove(request), options, WTFMove(referrer));
+    return DocumentThreadableLoader::create(*document, client, WTF::move(request), options, WTF::move(referrer));
 }
 
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext& context, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
     auto resourceURL = request.url();
     if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context))
-        WorkerThreadableLoader::loadResourceSynchronously(*globalScope, WTFMove(request), client, options);
+        WorkerThreadableLoader::loadResourceSynchronously(*globalScope, WTF::move(request), client, options);
     else
-        DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(context), WTFMove(request), client, options);
+        DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(context), WTF::move(request), client, options);
     context.didLoadResourceSynchronously(resourceURL);
 }
 
@@ -164,7 +164,7 @@ void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceE
         messageStart = "Cannot load "_s;
 
     String messageEnd = error.isAccessControl() ? " due to access control checks."_s : "."_s;
-    context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString(messageStart, error.failingURL().string(), messageEnd));
+    context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString(messageStart, error.failingURL().stringCenterEllipsizedToLength(), messageEnd));
 }
 
 } // namespace WebCore

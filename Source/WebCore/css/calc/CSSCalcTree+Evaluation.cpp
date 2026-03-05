@@ -87,7 +87,7 @@ template<typename Op> static std::optional<double> executeVariadicMathOperationA
     return result;
 }
 
-std::optional<CSS::Keyword::None> evaluate(const CSS::Keyword::None& none, const EvaluationOptions&)
+std::optional<CSS::Keyword::None> NODELETE evaluate(const CSS::Keyword::None& none, const EvaluationOptions&)
 {
     return none;
 }
@@ -115,17 +115,17 @@ std::optional<std::optional<double>> evaluate(const std::optional<Child>& root, 
     return std::optional<double> { std::nullopt };
 }
 
-std::optional<double> evaluate(const Number& number, const EvaluationOptions&)
+std::optional<double> NODELETE evaluate(const Number& number, const EvaluationOptions&)
 {
     return number.value;
 }
 
-std::optional<double> evaluate(const Percentage& percentage, const EvaluationOptions&)
+std::optional<double> NODELETE evaluate(const Percentage& percentage, const EvaluationOptions&)
 {
     return percentage.value;
 }
 
-std::optional<double> evaluate(const CanonicalDimension& root, const EvaluationOptions&)
+std::optional<double> NODELETE evaluate(const CanonicalDimension& root, const EvaluationOptions&)
 {
     return root.value;
 }
@@ -154,7 +154,7 @@ std::optional<double> evaluate(const SiblingCount&, const EvaluationOptions& opt
     if (!options.conversionData->styleBuilderState()->element())
         return { };
 
-    return options.conversionData->protectedStyleBuilderState()->siblingCount();
+    return protect(options.conversionData->styleBuilderState())->siblingCount();
 }
 
 std::optional<double> evaluate(const SiblingIndex&, const EvaluationOptions& options)
@@ -164,7 +164,7 @@ std::optional<double> evaluate(const SiblingIndex&, const EvaluationOptions& opt
     if (!options.conversionData->styleBuilderState()->element())
         return { };
 
-    return options.conversionData->protectedStyleBuilderState()->siblingIndex();
+    return protect(options.conversionData->styleBuilderState())->siblingIndex();
 }
 
 std::optional<double> evaluate(const IndirectNode<Sum>& root, const EvaluationOptions& options)
@@ -214,7 +214,7 @@ std::optional<double> evaluate(const IndirectNode<Random>& root, const Evaluatio
             if (!sharingOptions.elementShared.has_value() && !options.conversionData->styleBuilderState()->element())
                 return { };
 
-            return options.conversionData->protectedStyleBuilderState()->lookupCSSRandomBaseValue(
+            return protect(options.conversionData->styleBuilderState())->lookupCSSRandomBaseValue(
                 sharingOptions.identifier,
                 sharingOptions.elementShared
             );
@@ -225,7 +225,7 @@ std::optional<double> evaluate(const IndirectNode<Random>& root, const Evaluatio
                     return raw.value;
                 },
                 [&](const CSS::Number<CSS::ClosedUnitRange>::Calc& calc) -> std::optional<double> {
-                    return calc.evaluate(CSS::Category::Number, *options.conversionData->protectedStyleBuilderState());
+                    return calc.evaluate(CSS::Category::Number, *protect(options.conversionData->styleBuilderState()));
                 }
             );
         }
@@ -250,7 +250,7 @@ std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const Evaluat
         result = evaluate(*anchor->fallback, options);
 
     if (!result)
-        options.conversionData->protectedStyleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
+        protect(options.conversionData->styleBuilderState())->setCurrentPropertyInvalidAtComputedValueTime();
 
     return result;
 }
@@ -276,7 +276,7 @@ std::optional<double> evaluate(const IndirectNode<AnchorSize>& anchorSize, const
         result = evaluate(*anchorSize->fallback, options);
 
     if (!result)
-        options.conversionData->protectedStyleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
+        protect(options.conversionData->styleBuilderState())->setCurrentPropertyInvalidAtComputedValueTime();
 
     return result;
 }

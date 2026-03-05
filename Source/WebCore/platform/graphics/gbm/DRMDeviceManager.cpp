@@ -48,7 +48,7 @@ void DRMDeviceManager::initializeMainDevice(DRMDevice&& device)
     RELEASE_ASSERT(isMainThread());
     RELEASE_ASSERT(!m_mainDevice.isInitialized);
     m_mainDevice.isInitialized = true;
-    m_mainDevice.device = WTFMove(device);
+    m_mainDevice.device = WTF::move(device);
 }
 
 RefPtr<GBMDevice> DRMDeviceManager::mainGBMDevice(NodeType nodeType) const

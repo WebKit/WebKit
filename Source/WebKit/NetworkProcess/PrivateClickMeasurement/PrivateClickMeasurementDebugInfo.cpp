@@ -37,7 +37,7 @@ DebugInfo DebugInfo::isolatedCopy() const &
 
 DebugInfo DebugInfo::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTFMove(messages)) };
+    return { crossThreadCopy(WTF::move(messages)) };
 }
 
 DebugInfo::Message DebugInfo::Message::isolatedCopy() const &
@@ -47,7 +47,7 @@ DebugInfo::Message DebugInfo::Message::isolatedCopy() const &
 
 DebugInfo::Message DebugInfo::Message::isolatedCopy() &&
 {
-    return { messageLevel, WTFMove(message).isolatedCopy() };
+    return { messageLevel, WTF::move(message).isolatedCopy() };
 }
 
 } // namespace WebKit::PCM

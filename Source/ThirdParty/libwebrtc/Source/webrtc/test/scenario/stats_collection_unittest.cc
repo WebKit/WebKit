@@ -30,7 +30,8 @@ void CreateAnalyzedStream(Scenario* s,
   config.encoder.codec = VideoStreamConfig::Encoder::Codec::kVideoCodecVP8;
   config.encoder.implementation =
       VideoStreamConfig::Encoder::Implementation::kSoftware;
-  config.hooks.frame_pair_handlers = {analyzer->Handler()};
+  config.hooks.frame_pair_handlers = {
+      analyzer->Handler(s->net()->time_controller()->GetClock())};
   auto* caller = s->CreateClient("caller", CallClientConfig());
   auto* callee = s->CreateClient("callee", CallClientConfig());
   auto route =
@@ -39,7 +40,7 @@ void CreateAnalyzedStream(Scenario* s,
   VideoStreamPair* video = s->CreateVideoStream(route->forward(), config);
   auto* audio = s->CreateAudioStream(route->forward(), AudioStreamConfig());
   s->Every(TimeDelta::Seconds(1), [=] {
-    collectors->call.AddStats(caller->GetStats());
+    collectors->call.AddStats(caller->GetStats(), s->Now());
 
     VideoSendStream::Stats send_stats;
     caller->SendTask([&]() { send_stats = video->send()->GetStats(); });
@@ -47,7 +48,7 @@ void CreateAnalyzedStream(Scenario* s,
 
     AudioReceiveStreamInterface::Stats receive_stats;
     caller->SendTask([&]() { receive_stats = audio->receive()->GetStats(); });
-    collectors->audio_receive.AddStats(receive_stats);
+    collectors->audio_receive.AddStats(receive_stats, s->Now());
 
     // Querying the video stats from within the expected runtime environment
     // (i.e. the TQ that belongs to the CallClient, not the Scenario TQ that
@@ -57,7 +58,7 @@ void CreateAnalyzedStream(Scenario* s,
     callee->SendTask([&video_stream, &video_receive_stats]() {
       video_receive_stats = video_stream->GetStats();
     });
-    collectors->video_receive.AddStats(video_receive_stats);
+    collectors->video_receive.AddStats(video_receive_stats, s->Now());
   });
 }
 }  // namespace

@@ -148,6 +148,7 @@ private:
 
     bool m_waitUntilDone { false };
     bool m_dumpFrameLoadCallbacks { false };
+    bool m_globalFlag { false };
     bool m_dumpPixels { false };
     bool m_forceDumpPixels { false };
     bool m_pixelResultIsPending { false };

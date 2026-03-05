@@ -48,6 +48,14 @@ PASS list-style-position: "inside" onto "outside"
 PASS list-style-type (type: discrete) has testAddition function
 PASS list-style-type: "square" onto "circle"
 PASS list-style-type: "circle" onto "square"
+PASS math-depth (type: integer) has testAddition function
+PASS math-depth: integer
+PASS math-shift (type: discrete) has testAddition function
+PASS math-shift: "compact" onto "normal"
+PASS math-shift: "normal" onto "compact"
+PASS math-style (type: discrete) has testAddition function
+PASS math-style: "compact" onto "normal"
+PASS math-style: "normal" onto "compact"
 PASS marker-end (type: discrete) has testAddition function
 PASS marker-end: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS marker-end: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"

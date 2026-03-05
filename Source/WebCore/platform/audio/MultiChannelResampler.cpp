@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MultiChannelResampler);
 
 MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, unsigned requestFrames, Function<void(AudioBus&, size_t framesToProcess)>&& provideInput)
     : m_numberOfChannels(numberOfChannels)
-    , m_provideInput(WTFMove(provideInput))
+    , m_provideInput(WTF::move(provideInput))
     , m_multiChannelBus(AudioBus::create(numberOfChannels, requestFrames))
 {
     // Create each channel's resampler.

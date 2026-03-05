@@ -36,8 +36,8 @@ struct MarkingConstraintExecutorPair {
     MarkingConstraintExecutorPair(
         ::Function<void(AbstractSlotVisitor&)> abstractSlotVisitorFunc,
         ::Function<void(SlotVisitor&)> slotVisitorFunc)
-        : abstractSlotVisitorFunc(WTFMove(abstractSlotVisitorFunc))
-        , slotVisitorFunc(WTFMove(slotVisitorFunc))
+        : abstractSlotVisitorFunc(WTF::move(abstractSlotVisitorFunc))
+        , slotVisitorFunc(WTF::move(slotVisitorFunc))
     { }
     MarkingConstraintExecutorPair(MarkingConstraintExecutorPair&&) = default;
 

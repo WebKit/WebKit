@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(ASSEMBLER) && CPU(X86_64)
 
 #include <JavaScriptCore/AbstractMacroAssembler.h>
@@ -1209,9 +1211,15 @@ public:
         xor32(imm, dest);
     }
 
+    void not32(RegisterID src, RegisterID dest)
+    {
+        move32IfNeeded(src, dest);
+        m_assembler.notl_r(dest);
+    }
+
     void not32(RegisterID srcDest)
     {
-        m_assembler.notl_r(srcDest);
+        not32(srcDest, srcDest);
     }
 
     void not32(Address dest)
@@ -1302,24 +1310,30 @@ public:
 
     void negateDouble(FPRegisterID src, FPRegisterID dst)
     {
-        ASSERT(src != dst);
-        static constexpr double negativeZeroConstant = -0.0;
-        loadDouble(TrustedImmPtr(&negativeZeroConstant), dst);
+        alignas(16) static constexpr double negativeZeroConstants[] = { -0.0, -0.0 };
+        static_assert(sizeof(negativeZeroConstants) == 16);
+        move(TrustedImmPtr(negativeZeroConstants), scratchRegister());
         if (supportsAVX())
-            m_assembler.vxorpd_rrr(src, dst, dst);
-        else
-            m_assembler.xorpd_rr(src, dst);
+            m_assembler.vxorpd_mrr(0, scratchRegister(), src, dst);
+        else {
+            if (src != dst)
+                moveDouble(src, dst);
+            m_assembler.xorpd_mr(0, scratchRegister(), dst);
+        }
     }
 
     void negateFloat(FPRegisterID src, FPRegisterID dst)
     {
-        ASSERT(src != dst);
-        static constexpr float negativeZeroConstant = -0.0f;
-        loadFloat(TrustedImmPtr(&negativeZeroConstant), dst);
+        alignas(16) static constexpr float negativeZeroConstants[] = { -0.0f, -0.0f, -0.0f, -0.0f };
+        static_assert(sizeof(negativeZeroConstants) == 16);
+        move(TrustedImmPtr(negativeZeroConstants), scratchRegister());
         if (supportsAVX())
-            m_assembler.vxorps_rrr(src, dst, dst);
-        else
-            m_assembler.xorps_rr(src, dst);
+            m_assembler.vxorps_mrr(0, scratchRegister(), src, dst);
+        else {
+            if (src != dst)
+                moveDouble(src, dst);
+            m_assembler.xorps_mr(0, scratchRegister(), dst);
+        }
     }
 
     void ceilDouble(FPRegisterID src, FPRegisterID dst)
@@ -2569,6 +2583,16 @@ public:
             m_assembler.xorps_rr(reg, reg);
     }
 
+    void moveAllOnesToVector(FPRegisterID dest)
+    {
+        // Create all-ones pattern (0xFFFFFFFF in all lanes) using pcmpeqd
+        // This is the base pattern for synthesizing many constants via shifts
+        if (supportsAVX())
+            m_assembler.vpcmpeqd_rrr(dest, dest, dest);
+        else
+            m_assembler.pcmpeqd_rr(dest, dest);
+    }
+
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
         if (supportsAVX())
@@ -2893,6 +2917,26 @@ public:
             cmov(x86Condition(invert(cond)), elseCase, dest);
     }
 
+    void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, TrustedImm32 thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        if (!right.m_value) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond)) {
+                moveConditionallyTest32(*resultCondition, left, left, thenCase, elseCase, dest);
+                return;
+            }
+        }
+
+        m_assembler.cmpl_ir(right.m_value, left);
+
+        if (elseCase == dest) {
+            move(thenCase, scratchRegister());
+            cmov(x86Condition(cond), scratchRegister(), dest);
+        } else {
+            move(thenCase, dest);
+            cmov(x86Condition(invert(cond)), elseCase, dest);
+        }
+    }
+
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
     {
         m_assembler.testl_rr(testReg, mask);
@@ -2917,6 +2961,22 @@ public:
             cmov(x86Condition(invert(cond)), elseCase, dest);
     }
 
+    void moveConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, TrustedImm32 thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        ASSERT(isInvertible(cond));
+        ASSERT_WITH_MESSAGE(cond != Overflow, "TEST does not set the Overflow Flag.");
+
+        m_assembler.testl_rr(right, left);
+
+        if (elseCase == dest) {
+            move(thenCase, scratchRegister());
+            cmov(x86Condition(cond), scratchRegister(), dest);
+        } else {
+            move(thenCase, dest);
+            cmov(x86Condition(invert(cond)), elseCase, dest);
+        }
+    }
+
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, TrustedImm32 mask, RegisterID src, RegisterID dest)
     {
         test32(testReg, mask);
@@ -2939,6 +2999,22 @@ public:
             cmov(x86Condition(cond), thenCase, dest);
         else
             cmov(x86Condition(invert(cond)), elseCase, dest);
+    }
+
+    void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, TrustedImm32 mask, TrustedImm32 thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        ASSERT(isInvertible(cond));
+        ASSERT_WITH_MESSAGE(cond != Overflow, "TEST does not set the Overflow Flag.");
+
+        test32(testReg, mask);
+
+        if (elseCase == dest) {
+            move(thenCase, scratchRegister());
+            cmov(x86Condition(cond), scratchRegister(), dest);
+        } else {
+            move(thenCase, dest);
+            cmov(x86Condition(invert(cond)), elseCase, dest);
+        }
     }
 
     template<typename LeftType, typename RightType>
@@ -4663,10 +4739,6 @@ protected:
     }
 
 private:
-    // Only MacroAssemblerX86 should be using the following method; SSE2 is always available on
-    // x86_64, and clients & subclasses of MacroAssembler should be using 'supportsFloatingPoint()'.
-    friend class MacroAssemblerX86;
-
     ALWAYS_INLINE void generateTest32(Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         if (mask.m_value == -1)
@@ -6114,10 +6186,40 @@ public:
 
     void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
     {
-        if (!imm.m_value) {
+        uint32_t value = static_cast<uint32_t>(imm.m_value);
+
+        // 1. Zero
+        if (!value) {
             moveZeroToFloat(dest);
             return;
         }
+
+        // 2. All ones (0xFFFFFFFF)
+        if (value == 0xFFFFFFFFU) {
+            moveAllOnesToVector(dest);
+            return;
+        }
+
+        // 3. Contiguous bit pattern (pcmpeqd + shifts)
+        auto pattern = X86ContiguousBitPattern32::create(value);
+        if (pattern.isValid()) {
+            moveAllOnesToVector(dest);
+            if (pattern.leftShift()) {
+                if (supportsAVX())
+                    m_assembler.vpslld_i8rr(pattern.leftShift(), dest, dest);
+                else
+                    m_assembler.pslld_i8r(pattern.leftShift(), dest);
+            }
+            if (pattern.rightShift()) {
+                if (supportsAVX())
+                    m_assembler.vpsrld_i8rr(pattern.rightShift(), dest, dest);
+                else
+                    m_assembler.psrld_i8r(pattern.rightShift(), dest);
+            }
+            return;
+        }
+
+        // 4. Fallback: Load to GPR, transfer to XMM
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovd_rr(scratchRegister(), dest);
@@ -6135,10 +6237,75 @@ public:
 
     void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
     {
-        if (!imm.m_value) {
+        uint64_t value = static_cast<uint64_t>(imm.m_value);
+
+        // 1. Zero
+        if (!value) {
             moveZeroToDouble(dest);
             return;
         }
+
+        // 2. All ones
+        if (value == 0xFFFFFFFFFFFFFFFFULL) {
+            moveAllOnesToVector(dest);
+            return;
+        }
+
+        // 3. Contiguous bit pattern (pcmpeqd + shifts)
+        {
+            auto pattern = X86ContiguousBitPattern64::create(value);
+            if (pattern.isValid()) {
+                moveAllOnesToVector(dest);
+
+                if (pattern.leftShift()) {
+                    if (supportsAVX())
+                        m_assembler.vpsllq_i8rr(pattern.leftShift(), dest, dest);
+                    else
+                        m_assembler.psllq_i8r(pattern.leftShift(), dest);
+                }
+                if (pattern.rightShift()) {
+                    if (supportsAVX())
+                        m_assembler.vpsrlq_i8rr(pattern.rightShift(), dest, dest);
+                    else
+                        m_assembler.psrlq_i8r(pattern.rightShift(), dest);
+                }
+                return;
+            }
+        }
+
+        // 4. Contiguous 32-bit pattern (pcmpeqd + shifts)
+        uint64_t u64 = static_cast<uint64_t>(value);
+        {
+            uint32_t low32 = static_cast<uint32_t>(u64);
+            uint32_t high32 = static_cast<uint32_t>(u64 >> 32);
+            if (low32 == high32) {
+                auto pattern = X86ContiguousBitPattern32::create(low32);
+                if (pattern.isValid()) {
+                    moveAllOnesToVector(dest);
+                    if (pattern.leftShift()) {
+                        if (supportsAVX())
+                            m_assembler.vpslld_i8rr(pattern.leftShift(), dest, dest);
+                        else
+                            m_assembler.pslld_i8r(pattern.leftShift(), dest);
+                    }
+                    if (pattern.rightShift()) {
+                        if (supportsAVX())
+                            m_assembler.vpsrld_i8rr(pattern.rightShift(), dest, dest);
+                        else
+                            m_assembler.psrld_i8r(pattern.rightShift(), dest);
+                    }
+                    if (supportsAVX2())
+                        m_assembler.vbroadcastss_rr(dest, dest);
+                    else if (supportsAVX())
+                        m_assembler.vshufps_i8rrr(0, dest, dest, dest);
+                    else
+                        m_assembler.shufps_i8rr(0, dest, dest);
+                    return;
+                }
+            }
+        }
+
+        // 5. Fallback: Load to GPR, transfer to XMM
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovq_rr(scratchRegister(), dest);
@@ -6162,16 +6329,196 @@ public:
             m_assembler.movaps_rr(src, dest);
     }
 
-    void materializeVector(v128_t value, FPRegisterID dest)
+    void move128ToVector(v128_t value, FPRegisterID dest)
     {
+        // 1. All zeros
+        // Scratch registers used: none
         if (bitEquals(value, vectorAllZeros())) {
             moveZeroToVector(dest);
             return;
         }
+
+        // 2. All ones
+        // Scratch registers used: none
+        if (value.u64x2[0] == 0xFFFFFFFFFFFFFFFFULL && value.u64x2[1] == 0xFFFFFFFFFFFFFFFFULL) {
+            moveAllOnesToVector(dest);
+            return;
+        }
+
+        bool all8Same = true;
+        {
+            auto v0 = value.u8x16[0];
+            for (int i = 1; i < 16; ++i) {
+                if (value.u8x16[i] != v0) {
+                    all8Same = false;
+                    break;
+                }
+            }
+        }
+
+        bool all16Same = true;
+        {
+            auto v0 = value.u16x8[0];
+            for (int i = 1; i < 8; ++i) {
+                if (value.u16x8[i] != v0) {
+                    all16Same = false;
+                    break;
+                }
+            }
+        }
+
+        bool all32Same = true;
+        {
+            auto v0 = value.u32x4[0];
+            for (int i = 1; i < 4; ++i) {
+                if (value.u32x4[i] != v0) {
+                    all32Same = false;
+                    break;
+                }
+            }
+        }
+
+        bool all64Same = true;
+        {
+            auto v0 = value.u64x2[0];
+            for (int i = 1; i < 2; ++i) {
+                if (value.u64x2[i] != v0) {
+                    all64Same = false;
+                    break;
+                }
+            }
+        }
+
+        if (all32Same) {
+            auto pattern32 = X86ContiguousBitPattern32::create(value.u32x4[0]);
+            if (pattern32.isValid()) {
+                moveAllOnesToVector(dest);
+                if (pattern32.leftShift()) {
+                    if (supportsAVX())
+                        m_assembler.vpslld_i8rr(pattern32.leftShift(), dest, dest);
+                    else
+                        m_assembler.pslld_i8r(pattern32.leftShift(), dest);
+                }
+                if (pattern32.rightShift()) {
+                    if (supportsAVX())
+                        m_assembler.vpsrld_i8rr(pattern32.rightShift(), dest, dest);
+                    else
+                        m_assembler.psrld_i8r(pattern32.rightShift(), dest);
+                }
+                if (supportsAVX2())
+                    m_assembler.vbroadcastss_rr(dest, dest);
+                else if (supportsAVX())
+                    m_assembler.vshufps_i8rrr(0, dest, dest, dest);
+                else
+                    m_assembler.shufps_i8rr(0, dest, dest);
+                return;
+            }
+        }
+
+        if (all64Same) {
+            auto pattern64 = X86ContiguousBitPattern64::create(value.u64x2[0]);
+            if (pattern64.isValid()) {
+                moveAllOnesToVector(dest);
+                if (pattern64.leftShift()) {
+                    if (supportsAVX())
+                        m_assembler.vpsllq_i8rr(pattern64.leftShift(), dest, dest);
+                    else
+                        m_assembler.psllq_i8r(pattern64.leftShift(), dest);
+                }
+                if (pattern64.rightShift()) {
+                    if (supportsAVX())
+                        m_assembler.vpsrlq_i8rr(pattern64.rightShift(), dest, dest);
+                    else
+                        m_assembler.psrlq_i8r(pattern64.rightShift(), dest);
+                }
+                if (supportsAVX())
+                    m_assembler.vmovddup_rr(dest, dest);
+                else
+                    m_assembler.punpcklqdq_rr(dest, dest);
+                return;
+            }
+        }
+
+        // After this, we need scratch registers.
+
+        // 3. Upper 64-bit zero - movq/vmovq zeros upper 64 bits automatically
+        // Scratch registers used: scratchRegister() (GPR)
+        if (!value.u64x2[1]) {
+            move(TrustedImm64(value.u64x2[0]), scratchRegister());
+            if (supportsAVX())
+                m_assembler.vmovq_rr(scratchRegister(), dest);
+            else
+                m_assembler.movq_rr(scratchRegister(), dest);
+            return;
+        }
+
+        // 4. All 16 bytes identical (AVX2)
+        // Scratch registers used: scratchRegister() (GPR)
+        if (all8Same) {
+            if (supportsAVX2()) {
+                move(TrustedImm32(value.u8x16[0]), scratchRegister());
+                m_assembler.vmovd_rr(scratchRegister(), dest);
+                m_assembler.vpbroadcastb_rr(dest, dest);
+                return;
+            }
+        }
+
+        // 5. All eight 16-bit lanes identical (AVX2)
+        // Scratch registers used: scratchRegister() (GPR)
+        if (all16Same) {
+            if (supportsAVX2()) {
+                move(TrustedImm32(value.u16x8[0]), scratchRegister());
+                m_assembler.vmovd_rr(scratchRegister(), dest);
+                m_assembler.vpbroadcastw_rr(dest, dest);
+                return;
+            }
+        }
+
+        // 6. All four 32-bit lanes identical
+        // Note: Zero and all-ones cases already handled above, so we use simple GPR path.
+        // Scratch registers used: scratchRegister() (GPR)
+        if (all32Same) {
+            move(TrustedImm32(value.u32x4[0]), scratchRegister());
+            move32ToFloat(scratchRegister(), dest);
+            if (supportsAVX2())
+                m_assembler.vbroadcastss_rr(dest, dest);
+            else if (supportsAVX())
+                m_assembler.vshufps_i8rrr(0, dest, dest, dest);
+            else
+                m_assembler.shufps_i8rr(0, dest, dest);
+            return;
+        }
+
+        // 7. Upper and lower 64-bit halves identical
+        // Note: Zero and all-ones cases already handled above, so we use simple GPR path.
+        // Scratch registers used: scratchRegister() (GPR)
+        if (all64Same) {
+            move(TrustedImm64(value.u64x2[0]), scratchRegister());
+            if (supportsAVX()) {
+                m_assembler.vmovq_rr(scratchRegister(), dest);
+                m_assembler.vmovddup_rr(dest, dest);
+            } else {
+                m_assembler.movq_rr(scratchRegister(), dest);
+                m_assembler.punpcklqdq_rr(dest, dest);
+            }
+            return;
+        }
+
+        // 8. Fallback: Load via GPR + lane insertion
+        // Scratch registers used: scratchRegister() (GPR), fpTempRegister (FPR, non-AVX only)
         move(TrustedImm64(value.u64x2[0]), scratchRegister());
-        vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
+        if (supportsAVX())
+            m_assembler.vmovq_rr(scratchRegister(), dest);
+        else
+            m_assembler.movq_rr(scratchRegister(), dest);
+
         move(TrustedImm64(value.u64x2[1]), scratchRegister());
-        vectorReplaceLaneInt64(TrustedImm32(1), scratchRegister(), dest);
+        if (supportsAVX())
+            m_assembler.vpinsrq_i8rrr(1, scratchRegister(), dest, dest);
+        else {
+            m_assembler.movq_rr(scratchRegister(), fpTempRegister);
+            m_assembler.movlhps_rr(fpTempRegister, dest);
+        }
     }
 
     void loadVector(TrustedImmPtr address, FPRegisterID dest)
@@ -7532,6 +7879,12 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+    }
+
+    void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        compareIntegerVector(cond, simdInfo, left, right, dest, fpTempRegister);
     }
 
     void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID scratch)
@@ -8997,6 +9350,13 @@ public:
         m_assembler.vpextrq_i8rm(imm.m_value, src, address.base, address.offset);
     }
 
+    Jump branchTest128(ResultCondition cond, FPRegisterID vec)
+    {
+        RELEASE_ASSERT(supportsAVX());
+        m_assembler.vptest_rr(vec, vec);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     void vectorAnyTrue(FPRegisterID vec, RegisterID dest)
     {
         RELEASE_ASSERT(supportsAVX());
@@ -9228,10 +9588,6 @@ public:
 
     // Misc helper functions.
 
-    static bool supportsFloatingPoint() { return true; }
-    static bool supportsFloatingPointTruncate() { return true; }
-    static bool supportsFloatingPointSqrt() { return true; }
-    static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloat16() { return false; }
 
     template<PtrTag resultTag, PtrTag locationTag>

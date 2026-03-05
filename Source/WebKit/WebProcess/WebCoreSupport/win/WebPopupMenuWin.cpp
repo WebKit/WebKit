@@ -65,7 +65,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
         if (m_popupClient->itemIsLabel(i)) {
             auto d = itemFontCascade.fontDescription();
             d.setWeight(boldWeightValue());
-            itemFontCascade = FontCascade(WTFMove(d), itemFontCascade);
+            itemFontCascade = FontCascade(WTF::move(d), itemFontCascade);
             itemFontCascade.update(m_popupClient->fontSelector());
         }
 
@@ -131,7 +131,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
         if (m_popupClient->itemIsLabel(index)) {
             auto d = itemFontCascade.fontDescription();
             d.setWeight(boldWeightValue());
-            itemFontCascade = FontCascade(WTFMove(d), itemFontCascade);
+            itemFontCascade = FontCascade(WTF::move(d), itemFontCascade);
             itemFontCascade.update(m_popupClient->fontSelector());
         }
 

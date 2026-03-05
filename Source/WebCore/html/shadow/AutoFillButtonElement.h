@@ -32,7 +32,7 @@ namespace WebCore {
 class TextFieldInputType;
 
 class AutoFillButtonElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AutoFillButtonElement);
+    WTF_MAKE_TZONE_ALLOCATED(AutoFillButtonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AutoFillButtonElement);
 public:
     class AutoFillButtonOwner {
@@ -46,7 +46,7 @@ public:
 private:
     explicit AutoFillButtonElement(Document&, AutoFillButtonOwner&);
 
-    void defaultEventHandler(Event&) override;
+    void defaultEventHandler(Event&) final;
 
     AutoFillButtonOwner& m_owner;
 };

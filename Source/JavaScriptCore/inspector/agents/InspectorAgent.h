@@ -32,6 +32,7 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -41,9 +42,10 @@ namespace Inspector {
 class BackendDispatcher;
 class InspectorEnvironment;
 
-class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public InspectorBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public InspectorBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAgent);
 public:
     InspectorAgent(AgentContext&);
     ~InspectorAgent() final;
@@ -63,7 +65,7 @@ public:
     void evaluateForTestInFrontend(const String& script);
 
 private:
-    InspectorEnvironment& m_environment;
+    WeakRef<InspectorEnvironment> m_environment;
     const UniqueRef<InspectorFrontendDispatcher> m_frontendDispatcher;
     const Ref<InspectorBackendDispatcher> m_backendDispatcher;
 

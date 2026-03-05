@@ -36,6 +36,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-iteration-count-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-iteration-count-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-name-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-name-edge-cases-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-name-edge-cases-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-name-edge-cases.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-name-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-name-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-play-state-computed.html

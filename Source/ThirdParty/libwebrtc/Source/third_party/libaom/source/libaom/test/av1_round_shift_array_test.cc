@@ -25,7 +25,7 @@
 
 namespace AV1CompRoundShift {
 
-typedef void (*comp_round_shift_array_func)(int32_t *arr, int size, int bit);
+using comp_round_shift_array_func = void (*)(int32_t *arr, int size, int bit);
 
 #if HAVE_SSE4_1 || HAVE_NEON
 const int kValidBitCheck[] = {
@@ -33,8 +33,8 @@ const int kValidBitCheck[] = {
 };
 #endif  // HAVE_SSE4_1 || HAVE_NEON
 
-typedef std::tuple<comp_round_shift_array_func, BLOCK_SIZE, int>
-    CompRoundShiftParam;
+using CompRoundShiftParam =
+    std::tuple<comp_round_shift_array_func, BLOCK_SIZE, int>;
 
 class AV1CompRoundShiftTest
     : public ::testing::TestWithParam<CompRoundShiftParam> {

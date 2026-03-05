@@ -42,6 +42,7 @@ public:
     virtual RefPtr<Texture> depthStencilTexture() = 0;
     virtual RefPtr<Texture> motionVectorTexture() = 0;
     virtual bool isRemoteXRSubImageProxy() const { return false; }
+    virtual bool isXRSubImageImpl() const { return false; }
 
 protected:
     XRSubImage() = default;

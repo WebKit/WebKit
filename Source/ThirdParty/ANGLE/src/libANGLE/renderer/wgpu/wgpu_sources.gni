@@ -46,6 +46,8 @@ wgpu_backend_sources = [
   "TextureWgpu.h",
   "TransformFeedbackWgpu.cpp",
   "TransformFeedbackWgpu.h",
+  "UtilsWgpu.cpp",
+  "UtilsWgpu.h",
   "VertexArrayWgpu.cpp",
   "VertexArrayWgpu.h",
   "wgpu_command_buffer.cpp",

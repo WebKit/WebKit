@@ -27,9 +27,11 @@
 
 #include "ContextMenuContextData.h"
 #include "EditorState.h"
+#include "EnhancedSecurityTracking.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "LayerTreeContext.h"
+#include "PDFDisplayMode.h"
 #include "PageLoadState.h"
 #include "ProcessThrottler.h"
 #include "ScrollingAccelerationCurve.h"
@@ -44,10 +46,12 @@
 #include "WebPopupMenuProxy.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WindowKind.h"
+#include <WebCore/CornerRadii.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SpatialBackdropSource.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/UUID.h>
@@ -133,7 +137,7 @@ public:
             didVisitDomain(WebCore::RegistrableDomain(url));
     }
 
-    const ListHashSet<WebCore::RegistrableDomain>& visitedDomains() const
+    const ListHashSet<WebCore::RegistrableDomain>& visitedDomains() const LIFETIME_BOUND
     {
         return m_visitedDomains;
     }
@@ -146,7 +150,7 @@ private:
         if (domain.isEmpty())
             return;
 
-        m_visitedDomains.prependOrMoveToFirst(WTFMove(domain));
+        m_visitedDomains.prependOrMoveToFirst(WTF::move(domain));
 
         if (m_visitedDomains.size() > maxVisitedDomainsSize)
             m_visitedDomains.removeLast();
@@ -172,7 +176,6 @@ struct SpeechSynthesisData {
     CompletionHandler<void()> speakingPausedCompletionHandler;
     CompletionHandler<void()> speakingResumedCompletionHandler;
 
-    Ref<WebCore::PlatformSpeechSynthesizer> protectedSynthesizer() { return synthesizer; }
 };
 #endif
 
@@ -221,7 +224,6 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     , EndowmentStateTrackerClient
 #endif
 #if ENABLE(SPEECH_SYNTHESIS)
-    , WebCore::PlatformSpeechSynthesisUtteranceClient
     , WebCore::PlatformSpeechSynthesizerClient
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
@@ -300,6 +302,9 @@ public:
     WebCore::IntSize sizeToContentAutoSizeMaximumSize;
     WebCore::Color themeColor;
     WebCore::FloatBoxExtent obscuredContentInsets;
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    bool hasBannerViewOverlay { false };
+#endif
 #if PLATFORM(MAC)
     std::optional<WebCore::FloatBoxExtent> pendingObscuredContentInsets;
 #endif
@@ -389,9 +394,9 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> textIndicatorDataForAnimationID;
+    HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> textIndicatorForAnimationID;
     HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
-    HashMap<WTF::UUID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>> completionHandlerForDestinationTextIndicatorForSourceID;
+    HashMap<WTF::UUID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>)>> completionHandlerForDestinationTextIndicatorForSourceID;
     HashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;
 #endif
 
@@ -406,7 +411,6 @@ public:
     bool needsFixedContainerEdgesUpdateAfterNextCommit { false };
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    RunLoop::Timer fullscreenVideoTextRecognitionTimer;
     std::optional<PlaybackSessionContextIdentifier> currentFullscreenVideoSessionIdentifier;
 #endif
 
@@ -416,6 +420,7 @@ public:
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     RefPtr<MediaCapability> mediaCapability;
+    RefPtr<MediaCapability> displayCaptureCapability;
 #endif
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
@@ -443,18 +448,30 @@ public:
 
     std::optional<TextManipulationParameters> textManipulationParameters;
 
-    explicit Internals(WebPageProxy&);
+    EnhancedSecurityTracking enhancedSecurityTracker;
 
-    Ref<WebPageProxy> protectedPage() const;
+#if PLATFORM(IOS_FAMILY) && ENABLE(UNIFIED_PDF)
+    PDFDisplayMode pdfDisplayMode { PDFDisplayMode::SinglePageContinuous };
+#endif
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
+#endif
+
+    explicit Internals(WebPageProxy&, std::optional<WebCore::SecurityOriginData>);
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    SpeechSynthesisData& speechSynthesisData();
+    SpeechSynthesisData& speechSynthesisData() LIFETIME_BOUND;
 #endif
 
     // WebPopupMenuProxy::Client
+#if !PLATFORM(IOS_FAMILY)
     void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) final;
-    void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) final;
     NativeWebMouseEvent* currentlyProcessedMouseDownEvent() final;
+#endif
+#if !PLATFORM(COCOA)
+    void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) final;
+#endif
 #if PLATFORM(GTK)
     void failedToShowPopupMenu() final;
 #endif
@@ -477,6 +494,7 @@ public:
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
+    void notifyWillPresentPaymentUI(WebPageProxyIdentifier) final;
 #endif
 #if ENABLE(APPLE_PAY)
     CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const final;
@@ -510,16 +528,11 @@ public:
     void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
-    bool alwaysOnLoggingAllowed() const final { return protectedPage()->isAlwaysOnLoggingAllowed(); }
+    bool alwaysOnLoggingAllowed() const final { return protect(page)->isAlwaysOnLoggingAllowed(); }
     RetainPtr<CocoaView> platformView() const final;
 #endif
 
-    Ref<PageLoadState> protectedPageLoadState() { return pageLoadState; }
-    Ref<WebNotificationManagerMessageHandler> protectedNotificationManagerMessageHandler() { return notificationManagerMessageHandler; }
-#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
-    RefPtr<WebPageProxyFrameLoadStateObserver> protectedFrameLoadStateObserver() { return frameLoadStateObserver; }
-#endif
-    Ref<GeolocationPermissionRequestManagerProxy> protectedGeolocationPermissionRequestManager() { return geolocationPermissionRequestManager; }
+    std::optional<WebCore::SecurityOriginData> openerOrigin;
 };
 
 } // namespace WebKit

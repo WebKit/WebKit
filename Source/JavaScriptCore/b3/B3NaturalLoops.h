@@ -44,6 +44,11 @@ public:
         : WTF::NaturalLoops<CFG>(proc.cfg(), proc.dominators())
     {
     }
+
+    NaturalLoops(Procedure& proc, Dominators& dominators)
+        : WTF::NaturalLoops<CFG>(proc.cfg(), dominators)
+    {
+    }
 };
 
 } } // namespace JSC::B3

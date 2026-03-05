@@ -38,7 +38,7 @@ struct CSSParserContext;
 enum class StyleRuleType : uint8_t;
 
 class PropertySetCSSDescriptors : public CSSStyleDeclaration, public RefCounted<PropertySetCSSDescriptors> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PropertySetCSSDescriptors);
+    WTF_MAKE_TZONE_ALLOCATED(PropertySetCSSDescriptors);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -46,7 +46,7 @@ public:
     virtual ~PropertySetCSSDescriptors();
 
     void clearParentRule() { m_parentRule = nullptr; }
-    void reattach(MutableStyleProperties&);
+    void NODELETE reattach(MutableStyleProperties&);
 
     virtual StyleRuleType ruleType() const = 0;
 
@@ -54,9 +54,9 @@ protected:
     PropertySetCSSDescriptors(MutableStyleProperties&, CSSRule&);
 
     CSSStyleSheet* parentStyleSheet() const final;
-    CSSRule* parentRule() const final;
+    CSSRule* NODELETE parentRule() const final;
     // FIXME: To implement.
-    CSSRule* cssRules() const override { return nullptr; }
+    CSSRuleList* cssRules() const override { return nullptr; }
     unsigned length() const final;
     String item(unsigned index) const final;
     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
@@ -73,7 +73,7 @@ protected:
     RefPtr<DeprecatedCSSOMValue> wrapForDeprecatedCSSOM(CSSValue*);
 
     enum class MutationType : uint8_t { NoChanges, StyleAttributeChanged, PropertyChanged };
-    bool willMutate() WARN_UNUSED_RETURN;
+    [[nodiscard]] bool willMutate();
     void didMutate(MutationType);
 
     // CSSPropertyID versions of the CSSOM functions to support bindings.
@@ -81,7 +81,7 @@ protected:
     virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant);
 
     CSSParserContext cssParserContext() const;
-    Ref<MutableStyleProperties> protectedPropertySet() const;
+    MutableStyleProperties& propertySet() const { return m_propertySet; }
 
     WeakPtr<CSSRule> m_parentRule;
     HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;

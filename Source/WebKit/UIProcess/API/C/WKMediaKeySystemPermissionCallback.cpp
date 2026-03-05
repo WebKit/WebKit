@@ -39,5 +39,5 @@ WKTypeID WKMediaKeySystemPermissionCallbackGetTypeID()
 
 void WKMediaKeySystemPermissionCallbackComplete(WKMediaKeySystemPermissionCallbackRef permissionCallback, bool granted)
 {
-    return toProtectedImpl(permissionCallback)->complete(granted);
+    return protect(toImpl(permissionCallback))->complete(granted);
 }

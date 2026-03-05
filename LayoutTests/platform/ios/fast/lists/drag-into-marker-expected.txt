@@ -5,14 +5,14 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {UL} at (16,0) size 752x59 [border: (1px solid #000000)]
         RenderListItem {LI} at (41,1) size 710x57
-          RenderListMarker at (-36,1) size 16x54: black square
-          RenderText {#text} at (0,1) size 108x54
+          RenderListMarker at (-36,1) size 16x55: black square
+          RenderText {#text} at (0,1) size 108x55
             text run at (0,1) width 108: "hello "
-          RenderInline {SPAN} at (107,1) size 113x54
-            RenderText {#text} at (107,1) size 113x54
+          RenderInline {SPAN} at (107,1) size 113x55
+            RenderText {#text} at (107,1) size 113x55
               text run at (107,1) width 113: "world"
       RenderBlock {P} at (0,75) size 784x80
-        RenderText {#text} at (0,0) size 783x79
+        RenderText {#text} at (0,0) size 783x80
           text run at (0,0) width 578: "This is an automated test for elementAtPoint for points over position:outside list markers. "
           text run at (577,0) width 176: "The dictionary returned by "
           text run at (0,20) width 766: "elementAtPoint should contain the list item as the DOMNode, not the list, for points over position:outside list markers. "

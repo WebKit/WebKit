@@ -200,7 +200,7 @@ void DtlsStunPiggybackController::ReportDataPiggybacked(
     return;
   }
 
-  if (!data.has_value() || data->size() == 0) {
+  if (!data.has_value() || data->empty()) {
     return;
   }
 

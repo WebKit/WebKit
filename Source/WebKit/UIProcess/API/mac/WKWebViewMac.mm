@@ -26,9 +26,15 @@
 #import "config.h"
 #import "WKWebViewMac.h"
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+#include "WebKit-Swift.h"
+#endif
+
 #if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
+#import "WKAPICast.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKTextFinderClient.h"
 #import "WKWebViewConfigurationPrivate.h"
@@ -42,6 +48,7 @@
 #import "_WKHitTestResultInternal.h"
 #import "_WKWarningView.h"
 #import <WebCore/CGWindowUtilities.h>
+#import <WebCore/CornerRadii.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
@@ -49,6 +56,10 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewMacAdditionsBefore.mm>)
+#import <WebKitAdditions/WKWebViewMacAdditionsBefore.mm>
+#endif
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
@@ -82,7 +93,7 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     return std::nullopt;
 }
 
-static WebCore::FloatBoxExtent coreBoxExtentsFromEdgeInsets(NSEdgeInsets insets)
+static WebCore::FloatBoxExtent NODELETE coreBoxExtentsFromEdgeInsets(NSEdgeInsets insets)
 {
     return {
         static_cast<float>(insets.top),
@@ -162,7 +173,7 @@ static WebCore::FloatBoxExtent coreBoxExtentsFromEdgeInsets(NSEdgeInsets insets)
     if (!page)
         return NO;
 
-    if (!page->protectedLegacyMainFrameProcess()->isResponsive())
+    if (!protect(page->legacyMainFrameProcess())->isResponsive())
         return NO;
 
     if (page->isSuspended())
@@ -222,7 +233,7 @@ static WebCore::FloatBoxExtent coreBoxExtentsFromEdgeInsets(NSEdgeInsets insets)
 
 - (void)_setSemanticContext:(NSViewSemanticContext)semanticContext
 {
-    auto wasUsingFormSemanticContext = _impl ? _impl->useFormSemanticContext() : false;
+    auto wasUsingFormSemanticContext = _impl && _impl->useFormSemanticContext();
 
     [super _setSemanticContext:semanticContext];
 
@@ -546,12 +557,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
 - (void)mouseDown:(NSEvent *)event
 {
-    _impl->mouseDown(event);
+    _impl->mouseDown(event, WebKit::WebMouseEventInputSource::UserDriven);
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
-    _impl->mouseUp(event);
+    _impl->mouseUp(event, WebKit::WebMouseEventInputSource::UserDriven);
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -733,6 +744,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->removeTextPlaceholder(placeholder, willInsertText, completionHandler);
 }
 
+- (NSRect)unionRectInVisibleSelectedRange
+{
+    return _impl->unionRectInVisibleSelectedRangeInScreen();
+}
+
+- (NSRect)documentVisibleRect
+{
+    return _impl->documentVisibleRectInScreen();
+}
+
 - (void)showContextMenuForSelection:(id)sender
 {
     _page->handleContextMenuKeyEvent();
@@ -834,6 +855,40 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _impl->viewDidChangeBackingProperties();
 }
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+
+- (void)_viewDidChangeEffectiveCornerRadii
+{
+    if (!_impl)
+        return;
+
+    WebCore::CornerRadii newRadii;
+    if (RetainPtr<NSViewCornerRadii> radii = self._effectiveCornerRadii) {
+        newRadii = WebCore::CornerRadii {
+            static_cast<float>([radii topLeft]),
+            static_cast<float>([radii topRight]),
+            static_cast<float>([radii bottomLeft]),
+            static_cast<float>([radii bottomRight])
+        };
+    }
+
+    if (_lastViewCornerRadii == newRadii)
+        return;
+
+    _lastViewCornerRadii = newRadii;
+    _page->setScrollbarAvoidanceCornerRadii(WTF::move(newRadii));
+}
+
+- (NSViewCornerConfiguration *)_cornerConfiguration
+{
+    if (self.enclosingScrollView)
+        return [super _cornerConfiguration];
+
+    return [NSViewCornerConfiguration configurationWithRadius:_NSCornerRadius.containerConcentricRadius];
+}
+
+#endif
 
 - (void)_activeSpaceDidChange:(NSNotification *)notification
 {
@@ -991,24 +1046,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _textFinderClient.get();
 }
 
-- (RetainPtr<WKTextFinderClient>)_protectedTextFinderClient
-{
-    return [self _ensureTextFinderClient];
-}
 
 - (void)findMatchesForString:(NSString *)targetString relativeToMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector
 {
-    [[self _protectedTextFinderClient] findMatchesForString:targetString relativeToMatch:relativeMatch findOptions:findOptions maxResults:maxResults resultCollector:resultCollector];
+    [protect([self _ensureTextFinderClient]) findMatchesForString:targetString relativeToMatch:relativeMatch findOptions:findOptions maxResults:maxResults resultCollector:resultCollector];
 }
 
 - (void)replaceMatches:(NSArray *)matches withString:(NSString *)replacementString inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector
 {
-    [[self _protectedTextFinderClient] replaceMatches:matches withString:replacementString inSelectionOnly:selectionOnly resultCollector:resultCollector];
+    [protect([self _ensureTextFinderClient]) replaceMatches:matches withString:replacementString inSelectionOnly:selectionOnly resultCollector:resultCollector];
 }
 
 - (void)scrollFindMatchToVisible:(id<NSTextFinderAsynchronousDocumentFindMatch>)match
 {
-    [[self _protectedTextFinderClient] scrollFindMatchToVisible:match];
+    [protect([self _ensureTextFinderClient]) scrollFindMatchToVisible:match];
 }
 
 - (NSView *)documentContainerView
@@ -1018,12 +1069,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)getSelectedText:(void (^)(NSString *selectedTextString))completionHandler
 {
-    [[self _protectedTextFinderClient] getSelectedText:completionHandler];
+    [protect([self _ensureTextFinderClient]) getSelectedText:completionHandler];
 }
 
 - (void)selectFindMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)findMatch completionHandler:(void (^)(void))completionHandler
 {
-    [[self _protectedTextFinderClient] selectFindMatch:findMatch completionHandler:completionHandler];
+    [protect([self _ensureTextFinderClient]) selectFindMatch:findMatch completionHandler:completionHandler];
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1174,7 +1225,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
+- (void)viewDidChangeEffectiveAppearance
+{
+    // This can be called during [super initWithCoder:] and [super initWithFrame:].
+    // That is before _impl is ready to be used, so check. <rdar://problem/39611236>
+    if (!_impl)
+        return;
+
+    _impl->effectiveAppearanceDidChange();
+}
+
 @end
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewMacAdditionsAfter.mm>)
+#import <WebKitAdditions/WKWebViewMacAdditionsAfter.mm>
+#endif
 
 #pragma mark -
 
@@ -1294,7 +1359,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData
 {
     RetainPtr data = userData ? static_cast<id<NSSecureCoding>>(userData->wrapper()) : nil;
-    return [self _immediateActionAnimationControllerForHitTestResult:protectedWrapper(*hitTestResult).get() withType:(_WKImmediateActionType)type userData:data.get()];
+    return [self _immediateActionAnimationControllerForHitTestResult:protect(wrapper(*hitTestResult)).get() withType:(_WKImmediateActionType)type userData:data.get()];
 }
 
 - (void)_web_prepareForImmediateActionAnimation
@@ -1326,6 +1391,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_web_didChangeContentSize:(NSSize)newSize
 {
+    _lastContentSize = newSize;
 }
 
 - (BOOL)_web_hasActiveIntelligenceTextEffects
@@ -1414,19 +1480,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (_impl)
         _impl->resetSecureInputState();
-}
-
-- (void)_setContentOffsetX:(NSNumber *)x y:(NSNumber *)y animated:(BOOL)animated
-{
-    std::optional<int> optionalX = std::nullopt;
-    if (x)
-        optionalX = static_cast<int>([x doubleValue]);
-
-    std::optional<int> optionalY = std::nullopt;
-    if (y)
-        optionalY = static_cast<int>([y doubleValue]);
-
-    _page->setContentOffset(optionalX, optionalY, animated ? WebCore::ScrollIsAnimated::Yes : WebCore::ScrollIsAnimated::No);
 }
 
 #pragma mark - QLPreviewPanelController
@@ -1548,26 +1601,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setRubberBandingEnabled:(_WKRectEdge)state
 {
     _impl->setRubberBandingEnabled(state);
-}
-
-- (BOOL)_alwaysBounceVertical
-{
-    return _impl->alwaysBounceVertical();
-}
-
-- (void)_setAlwaysBounceVertical:(BOOL)value
-{
-    _impl->setAlwaysBounceVertical(value);
-}
-
-- (BOOL)_alwaysBounceHorizontal
-{
-    return _impl->alwaysBounceHorizontal();
-}
-
-- (void)_setAlwaysBounceHorizontal:(BOOL)value
-{
-    _impl->setAlwaysBounceHorizontal(value);
 }
 
 - (NSColor *)_backgroundColor
@@ -1998,7 +2031,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     auto insets = _impl->customSwipeViewsObscuredContentInsets();
     insets.setTop(topContentInset);
-    _impl->setCustomSwipeViewsObscuredContentInsets(WTFMove(insets));
+    _impl->setCustomSwipeViewsObscuredContentInsets(WTF::move(insets));
 }
 
 - (void)_setCustomSwipeViewsObscuredContentInsets:(NSEdgeInsets)insets
@@ -2091,6 +2124,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->mouseEntered(event);
 }
 
+- (void)_simulateMouseExit:(NSEvent *)event
+{
+    _impl->mouseExited(event);
+}
+
 - (void)_setFont:(NSFont *)font sender:(id)sender
 {
     _impl->setFontForWebView(font, sender);
@@ -2128,7 +2166,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         WallTime::now(),
         WebCore::PCM::AttributionEphemeral::No
     );
-    _page->setPrivateClickMeasurementImmediately(WTFMove(measurement));
+    _page->setPrivateClickMeasurementImmediately(WTF::move(measurement));
 }
 
 - (void)_storeSimulatedPrivateClickMeasurementConversionWithPriority:(uint8_t)priority triggerData:(uint8_t)triggerData sourceURL:(NSURL *)sourceURL destinationURL:(NSURL *)destinationURL

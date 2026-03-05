@@ -38,10 +38,14 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMInstanceProxy);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMProxyDecryptionClient);
 
 Vector<CDMProxyFactory*>& CDMProxyFactory::registeredFactories()
 {
@@ -87,7 +91,7 @@ Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
 bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
 {
     if (m_value != value) {
-        m_value = WTFMove(value);
+        m_value = WTF::move(value);
         return true;
     }
     return false;
@@ -123,8 +127,7 @@ void ReferenceAwareKeyStore::unrefAllKeysFrom(const KeyStore& otherStore)
         auto findingResult = m_keys.find(otherKey->id());
         if (findingResult == m_keys.end())
             continue;
-        const RefPtr<ReferenceAwareKeyHandle>& key = findingResult->value;
-        RELEASE_ASSERT(key);
+        Ref key = findingResult->value;
         key->removeReference(otherStore.id());
         if (!key->hasReferences())
             remove(key);
@@ -135,12 +138,12 @@ void ReferenceAwareKeyStore::merge(const KeyStore& otherStore)
 {
     ASSERT(isMainThread());
     for (const auto& otherKey : otherStore.values()) {
-        RefPtr<ReferenceAwareKeyHandle> key = keyHandle(otherKey->id());
-        auto otherReferenceAwareKey = ReferenceAwareKeyHandle::createFrom(otherKey, otherStore.id());
+        RefPtr key = keyHandle(otherKey->id());
+        Ref otherReferenceAwareKey = ReferenceAwareKeyHandle::create(otherKey, otherStore.id());
         if (key)
-            key->updateKeyFrom(WTFMove(otherReferenceAwareKey));
+            key->updateKeyFrom(WTF::move(otherReferenceAwareKey));
         else
-            add(WTFMove(otherReferenceAwareKey));
+            add(WTF::move(otherReferenceAwareKey));
     }
 }
 
@@ -155,7 +158,7 @@ void CDMProxy::updateKeyStore(const KeyStore& newKeyStore)
 const CDMInstanceProxy* CDMProxy::instance() const
 {
     Locker locker { m_instanceLock };
-    return m_instance;
+    return m_instance.get();
 }
 
 void CDMProxy::unrefAllKeysFrom(const KeyStore& keyStore)
@@ -184,7 +187,7 @@ void CDMProxy::startedWaitingForKey() const
     Locker locker { m_instanceLock };
     LOG(EME, "EME - CDMProxy - started waiting for a key");
     ASSERT(m_instance);
-    m_instance->startedWaitingForKey();
+    CheckedPtr { m_instance.get() }->startedWaitingForKey();
 }
 
 void CDMProxy::stoppedWaitingForKey() const
@@ -192,7 +195,7 @@ void CDMProxy::stoppedWaitingForKey() const
     Locker locker { m_instanceLock };
     LOG(EME, "EME - CDMProxy - stopped waiting for a key");
     ASSERT(m_instance);
-    m_instance->stoppedWaitingForKey();
+    CheckedPtr { m_instance.get() }->stoppedWaitingForKey();
 }
 
 void CDMProxy::abortWaitingForKey() const
@@ -207,7 +210,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
     // Unconditionally saying we have stopped waiting for a key means that decryptors only get
     // one shot at fetching a key. If MaxKeyWaitTimeSeconds expires, that's it, no more clear bytes
     // for you.
-    auto stopWaitingForKeyOnReturn = makeScopeExit([this] {
+    auto stopWaitingForKeyOnReturn = makeScopeExit([this, protectedThis = Ref { *this }] {
         stoppedWaitingForKey();
     });
     LOG(EME, "EME - CDMProxy - trying to wait for key ID %s", vectorToHexString(keyID).ascii().data());
@@ -215,8 +218,9 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
     {
         Locker locker { m_keysLock };
 
-        m_keysCondition.waitFor(m_keysLock, CDMProxy::MaxKeyWaitTimeSeconds, [this, keyID, client = WTFMove(client), &wasKeyAvailable]() {
+        m_keysCondition.waitFor(m_keysLock, CDMProxy::MaxKeyWaitTimeSeconds, [this, protectedThis = Ref { *this }, keyID, weakClient = WTF::move(client), &wasKeyAvailable]() {
             assertIsHeld(m_keysLock);
+            CheckedPtr client = weakClient.get();
             if (!client || client->isAborting())
                 return true;
             wasKeyAvailable = isKeyAvailableUnlocked(keyID);
@@ -249,7 +253,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& k
 {
     if (!isKeyAvailable(keyID)) {
         LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).ascii().data());
-        return tryWaitForKeyHandle(keyID, WTFMove(client));
+        return tryWaitForKeyHandle(keyID, WTF::move(client));
     }
 
     RefPtr<KeyHandle> handle = keyHandle(keyID);
@@ -258,7 +262,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& k
 
 std::optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
-    if (auto keyHandle = getOrWaitForKeyHandle(keyID, WTFMove(client)))
+    if (auto keyHandle = getOrWaitForKeyHandle(keyID, WTF::move(client)))
         return std::make_optional((*keyHandle)->value());
     return std::nullopt;
 }
@@ -300,18 +304,18 @@ void CDMInstanceProxy::mergeKeysFrom(const KeyStore& keyStore)
 {
     // FIXME: Notify JS when appropriate.
     ASSERT(isMainThread());
-    if (m_cdmProxy) {
+    if (RefPtr proxy = m_cdmProxy) {
         LOG(EME, "EME - CDMInstanceProxy - merging keys into proxy instance and notifying CDMProxy of changes");
-        m_cdmProxy->updateKeyStore(keyStore);
+        proxy->updateKeyStore(keyStore);
     }
 }
 
 void CDMInstanceProxy::unrefAllKeysFrom(const KeyStore& keyStore)
 {
     ASSERT(isMainThread());
-    if (m_cdmProxy) {
+    if (RefPtr proxy = m_cdmProxy) {
         LOG(EME, "EME - CDMInstanceProxy - removing keys from proxy instance and notifying CDMProxy of changes");
-        m_cdmProxy->unrefAllKeysFrom(keyStore);
+        proxy->unrefAllKeysFrom(keyStore);
     }
 }
 

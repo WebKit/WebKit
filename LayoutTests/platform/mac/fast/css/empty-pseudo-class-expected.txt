@@ -4,22 +4,22 @@ layer at (0,0) size 785x1616
   RenderBlock {HTML} at (0,0) size 785x1616
     RenderBody {BODY} at (8,16) size 769x1552 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 168x17
+        RenderText {#text} at (0,0) size 168x18
           text run at (0,0) width 168: "This page is part of the "
-        RenderInline {A} at (167,0) size 73x17 [color=#0000EE]
-          RenderText {#text} at (167,0) size 73x17
+        RenderInline {A} at (167,0) size 73x18 [color=#0000EE]
+          RenderText {#text} at (167,0) size 73x18
             text run at (167,0) width 73: "CSS3.info"
-        RenderText {#text} at (239,0) size 5x17
+        RenderText {#text} at (239,0) size 5x18
           text run at (239,0) width 5: " "
-        RenderInline {A} at (243,0) size 133x17 [color=#0000EE]
-          RenderText {#text} at (243,0) size 133x17
+        RenderInline {A} at (243,0) size 133x18 [color=#0000EE]
+          RenderText {#text} at (243,0) size 133x18
             text run at (243,0) width 133: "CSS selectors test"
-        RenderText {#text} at (375,0) size 136x17
+        RenderText {#text} at (375,0) size 136x18
           text run at (375,0) width 136: ". See more info on "
-        RenderInline {A} at (510,0) size 111x17 [color=#0000EE]
-          RenderText {#text} at (510,0) size 111x17
+        RenderInline {A} at (510,0) size 111x18 [color=#0000EE]
+          RenderText {#text} at (510,0) size 111x18
             text run at (510,0) width 111: "CSS3 selectors"
-        RenderText {#text} at (620,0) size 6x17
+        RenderText {#text} at (620,0) size 6x18
           text run at (620,0) width 6: "."
       RenderBlock {DIV} at (0,34) size 769x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 769x1518
@@ -28,51 +28,51 @@ layer at (0,0) size 785x1616
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "1"
-            RenderText {#text} at (6,8) size 87x62
-              text run at (6,8) width 63: ":empty {"
-              text run at (68,8) width 1: " "
+            RenderText {#text} at (6,9) size 87x61
+              text run at (6,9) width 63: ":empty {"
+              text run at (68,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
               text run at (6,54) width 87: "<div></div>"
           RenderBlock {P} at (16,145) size 584x18
-            RenderText {#text} at (0,0) size 484x17
+            RenderText {#text} at (0,0) size 484x18
               text run at (0,0) width 484: "The CSS selector should match the div element, because it is empty"
         RenderListItem {LI} at (40,243) size 616x195 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "2"
-            RenderText {#text} at (6,8) size 266x62
-              text run at (6,8) width 63: ":empty {"
-              text run at (68,8) width 1: " "
+            RenderText {#text} at (6,9) size 266x61
+              text run at (6,9) width 63: ":empty {"
+              text run at (68,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
               text run at (6,54) width 266: "<div><!-- Just a comment --></div>"
           RenderBlock {P} at (16,145) size 584x18
-            RenderText {#text} at (0,0) size 484x17
+            RenderText {#text} at (0,0) size 484x18
               text run at (0,0) width 484: "The CSS selector should match the div element, because it is empty"
         RenderListItem {LI} at (40,486) size 616x195 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "3"
-            RenderText {#text} at (6,8) size 95x62
-              text run at (6,8) width 63: ":empty {"
-              text run at (68,8) width 1: " "
+            RenderText {#text} at (6,9) size 95x61
+              text run at (6,9) width 63: ":empty {"
+              text run at (68,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
               text run at (6,54) width 95: "<div> </div>"
           RenderBlock {P} at (16,145) size 584x18
-            RenderText {#text} at (0,0) size 538x17
+            RenderText {#text} at (0,0) size 538x18
               text run at (0,0) width 538: "The CSS selector should not match the div element, because it is not empty"
         RenderListItem {LI} at (40,729) size 616x240 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x42 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x42
-              RenderListMarker at (-38,12) size 18x17: "4"
-              RenderText {#text} at (12,12) size 5x17
+              RenderListMarker at (-38,12) size 18x18: "4"
+              RenderText {#text} at (12,12) size 5x18
                 text run at (12,12) width 5: "."
           RenderBlock {PRE} at (16,71) size 584x103 [bgcolor=#FFFFFF]
             RenderText {#text} at (6,6) size 219x91
@@ -87,7 +87,7 @@ layer at (0,0) size 785x1616
               text run at (224,66) width 1: " "
               text run at (6,81) width 48: "</div>"
           RenderBlock {P} at (16,190) size 584x18
-            RenderText {#text} at (0,0) size 538x17
+            RenderText {#text} at (0,0) size 538x18
               text run at (0,0) width 538: "The CSS selector should not match the div element, because it is not empty"
         RenderListItem {LI} at (40,1017) size 616x195 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
@@ -95,15 +95,15 @@ layer at (0,0) size 785x1616
               RenderBlock {BLOCKQUOTE} at (12,12) size 560x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "5"
-            RenderText {#text} at (6,8) size 282x62
-              text run at (6,8) width 63: ":empty {"
-              text run at (68,8) width 1: " "
+            RenderText {#text} at (6,9) size 282x61
+              text run at (6,9) width 63: ":empty {"
+              text run at (68,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
               text run at (6,54) width 282: "<div><blockquote></blockquote></div>"
           RenderBlock {P} at (16,145) size 584x18
-            RenderText {#text} at (0,0) size 538x17
+            RenderText {#text} at (0,0) size 538x18
               text run at (0,0) width 538: "The CSS selector should not match the div element, because it is not empty"
         RenderListItem {LI} at (40,1260) size 616x258 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
@@ -111,9 +111,9 @@ layer at (0,0) size 785x1616
               RenderBlock {DIV} at (12,12) size 560x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x121 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "6"
-            RenderText {#text} at (6,8) size 375x107
-              text run at (6,8) width 63: ":empty {"
-              text run at (68,8) width 1: " "
+            RenderText {#text} at (6,9) size 375x106
+              text run at (6,9) width 63: ":empty {"
+              text run at (68,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
@@ -124,7 +124,7 @@ layer at (0,0) size 785x1616
               text run at (380,84) width 1: " "
               text run at (6,99) width 360: "ib.appendChild(document.createElement(\"div\"));"
           RenderBlock {P} at (16,190) size 584x36
-            RenderText {#text} at (0,0) size 575x35
+            RenderText {#text} at (0,0) size 575x36
               text run at (0,0) width 575: "The CSS selector should not match the orignal div element, because it will not be"
               text run at (0,18) width 49: "empty "
               text run at (48,18) width 454: "anymore after the Javascript code appends a child element to it."

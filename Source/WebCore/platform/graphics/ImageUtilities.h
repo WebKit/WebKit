@@ -26,15 +26,35 @@
 #pragma once
 
 #include <WebCore/IntSize.h>
-
+#include <WebCore/PlatformImage.h>
+#include <optional>
 #include <wtf/Forward.h>
+
+#if USE(CG)
+#include <CoreFoundation/CoreFoundation.h>
+#include <span>
 #include <wtf/WorkQueue.h>
+#endif
 
 namespace WebCore {
 
+class ImageBuffer;
+class NativeImage;
+class PixelBuffer;
 class ShareableBitmap;
 class SharedBuffer;
 
+Vector<uint8_t> encodeData(const PixelBuffer&, const String& mimeType, std::optional<double> quality = std::nullopt);
+Vector<uint8_t> encodeData(const NativeImage&, const String& mimeType, std::optional<double> quality = std::nullopt);
+Vector<uint8_t> encodeData(const RefPtr<NativeImage>&, const String& mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT Vector<uint8_t> encodeData(RefPtr<ImageBuffer>&&, const String& mimeType, std::optional<double> quality = std::nullopt);
+
+String encodeDataURL(const PixelBuffer&, const String& mimeType, std::optional<double> quality = std::nullopt);
+String encodeDataURL(const NativeImage&, const String& mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT String encodeDataURL(const RefPtr<NativeImage>&, const String& mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT String encodeDataURL(RefPtr<ImageBuffer>&&, const String& mimeType, std::optional<double> quality = std::nullopt);
+
+#if USE(CG)
 WEBCORE_EXPORT WorkQueue& sharedImageTranscodingQueueSingleton();
 
 // Given a list of files' 'paths' and 'allowedMIMETypes', the function returns a list
@@ -59,6 +79,16 @@ WEBCORE_EXPORT Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> 
 WEBCORE_EXPORT void createBitmapsFromImageData(std::span<const uint8_t> data, std::span<const unsigned> lengths, CompletionHandler<void(Vector<Ref<ShareableBitmap>>&&)>&&);
 WEBCORE_EXPORT RefPtr<SharedBuffer> createIconDataFromBitmaps(Vector<Ref<ShareableBitmap>>&&);
 WEBCORE_EXPORT void decodeImageWithSize(std::span<const uint8_t> data, std::optional<FloatSize>, CompletionHandler<void(RefPtr<ShareableBitmap>&&)>&&);
+
+Vector<uint8_t> encodeData(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT String encodeDataURL(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
+WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer);
+RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType);
+CFStringRef jpegUTI();
+#endif
+
+// For the implementations, not to be called directly.
+Vector<uint8_t> platformEncodeData(const NativeImage&, const String& mimeType, std::optional<double> quality);
 
 } // namespace WebCore
 

@@ -71,7 +71,7 @@ void ResourceUsageOverlay::initialize()
     RefPtr page = m_page.get();
     if (!page)
         return;
-    auto* frameView = page->mainFrame().virtualView();
+    RefPtr frameView = page->mainFrame().virtualView();
     if (!frameView)
         return;
     IntRect initialRect(frameView->width() / 2 - normalWidth / 2, frameView->height() - normalHeight - 20, normalWidth, normalHeight);
@@ -121,11 +121,11 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
             auto obscuredContentInsets = page->obscuredContentInsets();
             newFrame.setX(static_cast<int>(std::max<float>(obscuredContentInsets.left(), newFrame.x())));
             newFrame.setY(static_cast<int>(std::max<float>(obscuredContentInsets.top(), newFrame.y())));
-            auto& frameView = *page->mainFrame().virtualView();
-            if (newFrame.maxX() > frameView.width())
-                newFrame.setX(frameView.width() - newFrame.width());
-            if (newFrame.maxY() > frameView.height())
-                newFrame.setY(frameView.height() - newFrame.height());
+            Ref frameView = *page->mainFrame().virtualView();
+            if (newFrame.maxX() > frameView->width())
+                newFrame.setX(frameView->width() - newFrame.width());
+            if (newFrame.maxY() > frameView->height())
+                newFrame.setY(frameView->height() - newFrame.height());
 
             m_overlay->setFrame(newFrame);
             m_overlay->setNeedsDisplay();

@@ -27,7 +27,7 @@
 // |FIPS_service_indicator_before_call| is intended to be called immediately
 // before an approved service, while |FIPS_service_indicator_after_call| should
 // be called immediately after. If the values returned from these two functions
-// are not equal, this means that the service called inbetween is deemed to be
+// are not equal, this means that the service called in between is deemed to be
 // approved. If the values are still the same, this means the counter has not
 // been incremented, and the service called is not approved for FIPS.
 //

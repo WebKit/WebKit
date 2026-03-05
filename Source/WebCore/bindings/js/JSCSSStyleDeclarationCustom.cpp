@@ -56,7 +56,7 @@ WebCoreOpaqueRoot root(CSSStyleDeclaration* style)
         return root(parentRule);
     if (auto* styleSheet = style->parentStyleSheet())
         return root(styleSheet);
-    if (auto* parentElement = style->parentElement())
+    if (SUPPRESS_UNCHECKED_LOCAL auto* parentElement = style->parentElement())
         return root(parentElement);
     return WebCoreOpaqueRoot { style };
 }

@@ -39,15 +39,6 @@
 #include <WebCore/ReferrerPolicy.h>
 
 namespace WebCore {
-class LinkLoader;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LinkLoader> : std::true_type { };
-}
-
-namespace WebCore {
 
 class Document;
 class LinkPreloadResourceClient;
@@ -66,9 +57,9 @@ struct LinkLoadParameters {
     RequestPriority fetchPriority { RequestPriority::Auto };
 };
 
-class LinkLoader : public CachedResourceClient {
+class LinkLoader : public CachedResourceClient, public RefCounted<LinkLoader> {
 public:
-    explicit LinkLoader(LinkLoaderClient&);
+    static Ref<LinkLoader> create(LinkLoaderClient&);
     virtual ~LinkLoader();
 
     void loadLink(const LinkLoadParameters&, Document&);
@@ -83,15 +74,21 @@ public:
     void triggerError();
     void cancelLoad();
 
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 private:
+    explicit LinkLoader(LinkLoaderClient&);
+
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
     static void preconnectIfNeeded(const LinkLoadParameters&, Document&);
-    static std::unique_ptr<LinkPreloadResourceClient> preloadIfNeeded(const LinkLoadParameters&, Document&, LinkLoader*);
+    static RefPtr<LinkPreloadResourceClient> preloadIfNeeded(const LinkLoadParameters&, Document&, LinkLoader*);
     void prefetchIfNeeded(const LinkLoadParameters&, Document&);
 
-    const CheckedRef<LinkLoaderClient> m_client;
+    WeakPtr<LinkLoaderClient> m_client;
     CachedResourceHandle<CachedResource> m_cachedLinkResource;
-    std::unique_ptr<LinkPreloadResourceClient> m_preloadResourceClient;
+    RefPtr<LinkPreloadResourceClient> m_preloadResourceClient;
 };
 
 }

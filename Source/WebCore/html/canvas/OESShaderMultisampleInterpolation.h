@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class OESShaderMultisampleInterpolation final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OESShaderMultisampleInterpolation);
+    WTF_MAKE_TZONE_ALLOCATED(OESShaderMultisampleInterpolation);
 public:
     explicit OESShaderMultisampleInterpolation(WebGLRenderingContextBase&);
     ~OESShaderMultisampleInterpolation();
@@ -42,3 +42,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(OESShaderMultisampleInterpolation)

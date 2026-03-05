@@ -458,7 +458,7 @@ auto ScriptExecutable::ensureTemplateObjectMapImpl(std::unique_ptr<TemplateObjec
         return *dest;
     auto result = makeUnique<TemplateObjectMap>();
     WTF::storeStoreFence();
-    dest = WTFMove(result);
+    dest = WTF::move(result);
     return *dest;
 }
 

@@ -318,12 +318,7 @@ TEST(IndexedDB, OpenDatabaseAfterDatabaseNameUpgrade)
     EXPECT_WK_STREQ(@"Success", string.get());
 }
 
-// FIXME: rdar://163819252 (New-Test(302373@main)[ Debug ]: TestWebKitAPI.IndexedDB.OpenDatabaseWithMismatchedMetadataVersionAndName is a constant failure (301776))
-#if !defined(NDEBUG)
-TEST(IndexedDB, DISABLED_OpenDatabaseWithMismatchedMetadataVersionAndName)
-#else
 TEST(IndexedDB, OpenDatabaseWithMismatchedMetadataVersionAndName)
-#endif
 {
     RetainPtr handler = adoptNS([[IndexedDBFileNameMessageHandler alloc] init]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

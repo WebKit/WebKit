@@ -150,4 +150,15 @@ TEST(FixedVector, Full)
     vec.push_back(1);
     EXPECT_TRUE(vec.full());
 }
+
+// Test the `std::erase_if` overload.
+TEST(FixedVector, StdEraseIf)
+{
+    FixedVector<int, 5> vec = {0, 1, 2, 3, 4};
+    EXPECT_EQ(3u, std::erase_if(vec, [](int value) { return (value % 2) == 0; }));
+    EXPECT_EQ(2u, vec.size());
+    EXPECT_EQ(1, vec[0]);
+    EXPECT_EQ(3, vec[1]);
+}
+
 }  // namespace angle

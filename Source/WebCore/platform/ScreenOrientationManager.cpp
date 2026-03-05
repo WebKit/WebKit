@@ -37,7 +37,7 @@ ScreenOrientationManager::~ScreenOrientationManager() = default;
 
 void ScreenOrientationManager::setLockPromise(ScreenOrientation& requester, Ref<DeferredPromise>&& lockPromise)
 {
-    m_lockPromise = WTFMove(lockPromise);
+    m_lockPromise = WTF::move(lockPromise);
     m_lockRequester = requester;
 }
 

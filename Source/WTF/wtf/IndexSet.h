@@ -125,8 +125,8 @@ public:
             BitVector::iterator m_iter;
         };
 
-        iterator begin() const { return iterator(m_collection, m_set.begin()); }
-        iterator end() const { return iterator(m_collection, m_set.end()); }
+        iterator begin() const LIFETIME_BOUND { return iterator(m_collection, m_set.begin()); }
+        iterator end() const LIFETIME_BOUND { return iterator(m_collection, m_set.end()); }
 
     private:
         const CollectionType& m_collection;
@@ -144,7 +144,7 @@ public:
         return Iterable<CollectionType>(collection, indices());
     }
 
-    const BitVector& indices() const { return m_set; }
+    const BitVector& indices() const LIFETIME_BOUND { return m_set; }
 
     void dump(PrintStream& out) const
     {

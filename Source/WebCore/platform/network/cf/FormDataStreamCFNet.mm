@@ -96,7 +96,7 @@ struct FormCreationContext {
 
 struct FormStreamFields {
     FormStreamFields(FormDataForUpload&& data)
-        : data(WTFMove(data)) { }
+        : data(WTF::move(data)) { }
 
     RetainPtr<CFReadStreamRef> cfFormStream()
     {
@@ -146,7 +146,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
             auto data = bytes.releaseBuffer();
             auto span = data.span();
             form->currentStream = adoptCF(CFReadStreamCreateWithBytesNoCopy(0, span.data(), span.size_bytes(), kCFAllocatorNull));
-            form->currentData = WTFMove(data);
+            form->currentData = WTF::move(data);
             return true;
         }, [form] (const FormDataElement::EncodedFileData& fileData) {
             // Check if the file has been changed.
@@ -210,7 +210,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
 {
     FormCreationContext* formContext = static_cast<FormCreationContext*>(context);
 
-    FormStreamFields* newInfo = new FormStreamFields(WTFMove(formContext->data));
+    FormStreamFields* newInfo = new FormStreamFields(WTF::move(formContext->data));
     newInfo->formStream = bridge_cast(stream); // Don't retain. That would create a reference cycle.
     newInfo->streamLength = formContext->streamLength;
 
@@ -385,7 +385,7 @@ RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
         });
     }
     ASSERT(isMainThread());
-    FormCreationContext* formContext = new FormCreationContext { WTFMove(dataForUpload), length };
+    FormCreationContext* formContext = new FormCreationContext { WTF::move(dataForUpload), length };
     CFReadStreamCallBacksV1 callBacks = { 1, formCreate, formFinalize, nullptr, formOpen, nullptr, formRead, nullptr, formCanRead, formClose, formCopyProperty, nullptr, nullptr, formSchedule, formUnschedule };
     return adoptCF(CFReadStreamCreate(nullptr, static_cast<const void*>(&callBacks), formContext));
 }

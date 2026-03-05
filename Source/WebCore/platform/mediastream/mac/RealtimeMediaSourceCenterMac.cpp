@@ -50,7 +50,7 @@ public:
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
 #if HAVE(AVCAPTUREDEVICE)
-        return AVVideoCaptureSource::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
+        return AVVideoCaptureSource::create(device, WTF::move(hashSalts), constraints, pageIdentifier);
 #else
         UNUSED_PARAM(device);
         UNUSED_PARAM(hashSalts);
@@ -68,7 +68,7 @@ class DisplayCaptureSourceFactoryMac final : public DisplayCaptureFactory {
 public:
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {
-        return DisplayCaptureSourceCocoa::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
+        return DisplayCaptureSourceCocoa::create(device, WTF::move(hashSalts), constraints, pageIdentifier);
     }
 private:
     DisplayCaptureManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }

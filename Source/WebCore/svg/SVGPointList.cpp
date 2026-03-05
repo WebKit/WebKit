@@ -35,7 +35,7 @@ bool SVGPointList::parse(StringView value)
 {
     clearItems();
 
-    return readCharactersForParsing(value, [&](auto buffer) {
+    bool parsingSucceeded = readCharactersForParsing(value, [&](auto buffer) {
         skipOptionalSVGSpaces(buffer);
 
         bool delimParsed = false;
@@ -60,10 +60,11 @@ bool SVGPointList::parse(StringView value)
             append(SVGPoint::create({ *xPos, *yPos }));
         }
 
-        // FIXME: Should this clearItems() on failure like SVGTransformList does?
-
         return !delimParsed;
     });
+    if (!parsingSucceeded)
+        clearItems();
+    return parsingSucceeded;
 }
 
 String SVGPointList::valueAsString() const

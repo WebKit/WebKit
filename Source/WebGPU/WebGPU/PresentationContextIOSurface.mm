@@ -46,7 +46,7 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGP
     descriptor.compositorIntegrationRegister([presentationContext = presentationContextIOSurface.copyRef()](CFArrayRef ioSurfaces) {
         presentationContext->renderBuffersWereRecreated(bridge_cast(ioSurfaces));
     }, [presentationContext = presentationContextIOSurface.copyRef()](WGPUWorkItem workItem) {
-        presentationContext->onSubmittedWorkScheduled(makeBlockPtr(WTFMove(workItem)));
+        presentationContext->onSubmittedWorkScheduled(makeBlockPtr(WTF::move(workItem)));
     });
 
     return presentationContextIOSurface;
@@ -66,7 +66,7 @@ PresentationContextIOSurface::~PresentationContextIOSurface() = default;
 
 void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface *> *ioSurfaces)
 {
-    m_existingRenderBuffers = WTFMove(m_renderBuffers);
+    m_existingRenderBuffers = WTF::move(m_renderBuffers);
     m_ioSurfaces = ioSurfaces;
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     if (m_webProcessID) {
@@ -83,7 +83,7 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
 void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 {
     if (m_device)
-        m_device->protectedQueue()->onSubmittedWorkScheduled(WTFMove(completionHandler));
+        m_device->getQueue()->onSubmittedWorkScheduled(WTF::move(completionHandler));
     else
         completionHandler();
 }
@@ -322,7 +322,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
             id<MTLTexture> luminanceClampTexture = device.newTextureWithDescriptor(textureDescriptor);
             luminanceClampTexture.label = fromAPI(descriptor.label).createNSString().get();
             auto viewFormats = descriptor.viewFormats;
-            parentLuminanceClampTexture = Texture::create(luminanceClampTexture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
+            parentLuminanceClampTexture = Texture::create(luminanceClampTexture, wgpuTextureDescriptor, WTF::move(viewFormats), device);
             parentLuminanceClampTexture->makeCanvasBacking();
             textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
             wgpuTextureDescriptor.format = WGPUTextureFormat_BGRA8Unorm;
@@ -332,7 +332,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         id<MTLTexture> texture = device.newTextureWithDescriptor(textureDescriptor, bridge_cast(iosurface));
         texture.label = fromAPI(descriptor.label).createNSString().get();
         auto viewFormats = descriptor.viewFormats;
-        auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
+        auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTF::move(viewFormats), device);
         parentTexture->makeCanvasBacking();
         m_renderBuffers.append({ parentTexture, parentLuminanceClampTexture });
         if (m_existingRenderBuffers.size() >= m_renderBuffers.size()) {

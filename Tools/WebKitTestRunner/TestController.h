@@ -46,7 +46,7 @@
 #include "InstanceMethodSwizzler.h"
 #if !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 #include <pal/spi/cocoa/NetworkSPI.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/NetworkOSObject.h>
 #endif // !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 #endif // PLATFORM(COCOA)
 
@@ -70,7 +70,7 @@ struct TestCommand;
 class AsyncTask {
 public:
     AsyncTask(WTF::Function<void ()>&& task, WTF::Seconds timeout)
-        : m_task(WTFMove(task))
+        : m_task(WTF::move(task))
         , m_timeout(timeout)
     {
         ASSERT(!currentTask());
@@ -472,7 +472,16 @@ public:
 
     void setHasMouseDeviceForTesting(bool);
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    void exitImmersive();
+#endif
+
     void uiScriptDidComplete(const String& result, unsigned scriptCallbackID);
+
+#if PLATFORM(MAC)
+    // Client accessibility testing support
+    void initializeWebProcessAccessibility();
+#endif
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
@@ -562,6 +571,22 @@ private:
     void didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
     void didReceiveRawKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
     void didReceiveRawKeyUpMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
+
+#if PLATFORM(MAC)
+    // Client accessibility testing support
+    uint64_t storeAXElement(CFTypeRef);
+    CFTypeRef getAXElement(uint64_t token);
+    CFDataRef getRemoteAccessibilityToken();
+    WKRetainPtr<WKTypeRef> handleAXGetRoot();
+    RetainPtr<CFTypeRef> axCopyAttributeValue(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsString(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsElement(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsElementArray(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsNumber(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsBoolean(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsPoint(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsSize(WKDictionaryRef);
+#endif
 
     // WKContextClient
     static void networkProcessDidCrashWithDetails(WKContextRef, WKProcessID, WKProcessTerminationReason, const void*);
@@ -854,6 +879,12 @@ private:
     bool m_waitBeforeFinishingFullscreenExit { false };
     bool m_scrollDuringEnterFullscreen { false };
     bool m_useWorkQueue { false };
+
+#if PLATFORM(MAC)
+    // Client accessibility testing support
+    std::atomic<uint64_t> m_nextAXElementToken { 1 };
+    HashMap<uint64_t, RetainPtr<CFTypeRef>> m_axElementTokens;
+#endif
 
 #if ENABLE(WPE_PLATFORM)
     bool m_useWPELegacyAPI { false };

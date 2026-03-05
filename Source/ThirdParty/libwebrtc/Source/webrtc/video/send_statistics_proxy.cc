@@ -734,7 +734,6 @@ void SendStatisticsProxy::OnEncodedFrameTimeMeasured(int encode_time_ms,
                                                      int encode_usage_percent) {
   RTC_DCHECK_GE(encode_time_ms, 0);
   MutexLock lock(&mutex_);
-  uma_container_->encode_time_counter_.Add(encode_time_ms);
   encode_time_.Apply(1.0f, encode_time_ms);
   stats_.avg_encode_time_ms = std::round(encode_time_.filtered());
   stats_.total_encode_time_ms += encode_time_ms;
@@ -780,22 +779,22 @@ void SendStatisticsProxy::OnSuspendChange(bool is_suspended) {
 
 VideoSendStream::Stats SendStatisticsProxy::GetStats() {
   MutexLock lock(&mutex_);
-  PurgeOldStats();
-  stats_.input_frame_rate =
-      uma_container_->input_frame_rate_tracker_.ComputeRate();
+  Timestamp now = clock_->CurrentTime();
+  PurgeOldStats(now);
+  stats_.input_frame_rate = uma_container_->input_frame_rate_tracker_.Rate(now);
   stats_.frames = uma_container_->input_frame_rate_tracker_.TotalSampleCount();
   stats_.content_type =
       content_type_ == VideoEncoderConfig::ContentType::kRealtimeVideo
           ? VideoContentType::UNSPECIFIED
           : VideoContentType::SCREENSHARE;
-  stats_.encode_frame_rate = round(encoded_frame_rate_tracker_.ComputeRate());
-  stats_.media_bitrate_bps = media_byte_rate_tracker_.ComputeRate() * 8;
+  stats_.encode_frame_rate = round(encoded_frame_rate_tracker_.Rate(now));
+  stats_.media_bitrate_bps = media_byte_rate_tracker_.Rate(now) * 8;
   stats_.quality_limitation_durations_ms =
       quality_limitation_reason_tracker_.DurationsMs();
 
   for (auto& [ssrc, substream] : stats_.substreams) {
     if (auto it = trackers_.find(ssrc); it != trackers_.end()) {
-      substream.encode_frame_rate = it->second.encoded_frame_rate.ComputeRate();
+      substream.encode_frame_rate = it->second.encoded_frame_rate.Rate(now);
     }
   }
   return stats_;
@@ -804,10 +803,12 @@ VideoSendStream::Stats SendStatisticsProxy::GetStats() {
 void SendStatisticsProxy::SetStats(const VideoSendStream::Stats& stats) {
   MutexLock lock(&mutex_);
   stats_ = stats;
+  quality_limitation_reason_tracker_.SetReason(stats.quality_limitation_reason);
+  quality_limitation_reason_tracker_.SetDurationMs(
+      stats.quality_limitation_durations_ms);
 }
 
-void SendStatisticsProxy::PurgeOldStats() {
-  Timestamp now = clock_->CurrentTime();
+void SendStatisticsProxy::PurgeOldStats(Timestamp now) {
   for (auto& [ssrc, substream] : stats_.substreams) {
     if (now - trackers_[ssrc].resolution_update >= kStatsTimeout) {
       substream.width = 0;
@@ -978,9 +979,10 @@ void SendStatisticsProxy::OnSendEncodedImage(
     const CodecSpecificInfo* codec_info) {
   int simulcast_idx = encoded_image.SimulcastIndex().value_or(0);
   MutexLock lock(&mutex_);
+  Timestamp now = clock_->CurrentTime();
   ++stats_.frames_encoded;
   // The current encode frame rate is based on previously encoded frames.
-  double encode_frame_rate = encoded_frame_rate_tracker_.ComputeRate();
+  double encode_frame_rate = encoded_frame_rate_tracker_.Rate(now);
   // We assume that less than 1 FPS is not a trustworthy estimate - perhaps we
   // just started encoding for the first time or after a pause. Assuming frame
   // rate is at least 1 FPS is conservative to avoid too large increments.
@@ -1012,8 +1014,10 @@ void SendStatisticsProxy::OnSendEncodedImage(
   Trackers& track = trackers_[ssrc];
 
   stats->frames_encoded++;
-  stats->total_encode_time_ms += encoded_image.timing_.encode_finish_ms -
-                                 encoded_image.timing_.encode_start_ms;
+  int64_t encode_time_ms = encoded_image.timing_.encode_finish_ms -
+                           encoded_image.timing_.encode_start_ms;
+  stats->total_encode_time_ms += encode_time_ms;
+  uma_container_->encode_time_counter_.Add(encode_time_ms);
   stats->scalability_mode =
       codec_info ? codec_info->scalability_mode : std::nullopt;
   // Report resolution of the top spatial layer.
@@ -1023,7 +1027,7 @@ void SendStatisticsProxy::OnSendEncodedImage(
   if (!stats->width || !stats->height || is_top_spatial_layer) {
     stats->width = encoded_image._encodedWidth;
     stats->height = encoded_image._encodedHeight;
-    track.resolution_update = clock_->CurrentTime();
+    track.resolution_update = now;
   }
 
   uma_container_->key_frame_counter_.Add(encoded_image._frameType ==
@@ -1053,6 +1057,14 @@ void SendStatisticsProxy::OnSendEncodedImage(
     }
   }
 
+  std::optional<EncodedImage::Psnr> psnr = encoded_image.psnr();
+  if (psnr.has_value()) {
+    stats->psnr_sum.y += psnr->y;
+    stats->psnr_sum.u += psnr->u;
+    stats->psnr_sum.v += psnr->v;
+    stats->psnr_measurements += 1;
+  }
+
   // If any of the simulcast streams have a huge frame, it should be counted
   // as a single difficult input frame.
   // https://w3c.github.io/webrtc-stats/#dom-rtcvideosenderstats-hugeframessent
@@ -1065,16 +1077,16 @@ void SendStatisticsProxy::OnSendEncodedImage(
     }
   }
 
-  media_byte_rate_tracker_.AddSamples(encoded_image.size());
+  media_byte_rate_tracker_.Update(encoded_image.size(), now);
 
   if (uma_container_->InsertEncodedFrame(encoded_image, simulcast_idx)) {
     // First frame seen with this timestamp, track overall fps.
-    encoded_frame_rate_tracker_.AddSamples(1);
+    encoded_frame_rate_tracker_.Update(1, now);
   }
   // is_top_spatial_layer pertains only to SVC, will always be true for
   // simulcast.
   if (is_top_spatial_layer) {
-    track.encoded_frame_rate.AddSamples(1);
+    track.encoded_frame_rate.Update(1, now);
   }
 
   std::optional<int> downscales =
@@ -1092,9 +1104,10 @@ void SendStatisticsProxy::OnSendEncodedImage(
 void SendStatisticsProxy::OnEncoderImplementationChanged(
     EncoderImplementation implementation) {
   MutexLock lock(&mutex_);
-  encoder_changed_ =
-      EncoderChangeEvent{stats_.encoder_implementation_name.value_or("unknown"),
-                         implementation.name};
+  encoder_changed_ = EncoderChangeEvent{
+      .previous_encoder_implementation =
+          stats_.encoder_implementation_name.value_or("unknown"),
+      .new_encoder_implementation = implementation.name};
   stats_.encoder_implementation_name = implementation.name;
   stats_.power_efficient_encoder = implementation.is_hardware_accelerated;
   // Clear cached scalability mode values, they may no longer be accurate.
@@ -1106,17 +1119,19 @@ void SendStatisticsProxy::OnEncoderImplementationChanged(
 
 int SendStatisticsProxy::GetInputFrameRate() const {
   MutexLock lock(&mutex_);
-  return round(uma_container_->input_frame_rate_tracker_.ComputeRate());
+  return round(
+      uma_container_->input_frame_rate_tracker_.Rate(clock_->CurrentTime()));
 }
 
 int SendStatisticsProxy::GetSendFrameRate() const {
   MutexLock lock(&mutex_);
-  return round(encoded_frame_rate_tracker_.ComputeRate());
+  return round(encoded_frame_rate_tracker_.Rate(clock_->CurrentTime()));
 }
 
 void SendStatisticsProxy::OnIncomingFrame(int width, int height) {
   MutexLock lock(&mutex_);
-  uma_container_->input_frame_rate_tracker_.AddSamples(1);
+  Timestamp now = clock_->CurrentTime();
+  uma_container_->input_frame_rate_tracker_.Update(1, now);
   uma_container_->input_fps_counter_.Add(1);
   uma_container_->input_width_counter_.Add(width);
   uma_container_->input_height_counter_.Add(height);
@@ -1128,7 +1143,7 @@ void SendStatisticsProxy::OnIncomingFrame(int width, int height) {
   if (encoded_frame_rate_tracker_.TotalSampleCount() == 0) {
     // Set start time now instead of when first key frame is encoded to avoid a
     // too high initial estimate.
-    encoded_frame_rate_tracker_.AddSamples(0);
+    encoded_frame_rate_tracker_.Update(0, now);
   }
 }
 

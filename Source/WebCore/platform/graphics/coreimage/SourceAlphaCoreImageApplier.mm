@@ -28,9 +28,11 @@
 
 #if USE(CORE_IMAGE)
 
+#import "Filter.h"
 #import "FilterImage.h"
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -39,6 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceAlphaCoreImageApplier);
 
 bool SourceAlphaCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(inputs.size() == 1);
     Ref input = inputs[0].get();
 
@@ -49,15 +52,17 @@ bool SourceAlphaCoreImageApplier::apply(const Filter&, std::span<const Ref<Filte
     RetainPtr alphaFilter = [CIFilter filterWithName:@"CIColorMatrix"];
     [alphaFilter setValue:inputImage.get() forKey:kCIInputImageKey];
 
-    [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputRVector"];
-    [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputGVector"];
-    [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputBVector"];
+    [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputRVector"];
+    [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputGVector"];
+    [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBVector"];
     [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
     [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
 
-    result.setCIImage(alphaFilter.get().outputImage);
-
+    result.setCIImage([alphaFilter outputImage]);
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore

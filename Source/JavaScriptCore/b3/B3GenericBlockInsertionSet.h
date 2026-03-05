@@ -49,7 +49,7 @@ public:
     
     void insert(BlockInsertion&& insertion)
     {
-        m_insertions.append(WTFMove(insertion));
+        m_insertions.append(WTF::move(insertion));
     }
 
     // Insert a new block at a given index.
@@ -57,7 +57,7 @@ public:
     {
         std::unique_ptr<BasicBlock> block(new BasicBlock(BasicBlock::uninsertedIndex, frequency));
         BasicBlock* result = block.get();
-        insert(BlockInsertion(index, WTFMove(block)));
+        insert(BlockInsertion(index, WTF::move(block)));
         return result;
     }
 

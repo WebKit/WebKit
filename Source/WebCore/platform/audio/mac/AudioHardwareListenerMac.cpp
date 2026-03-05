@@ -29,12 +29,9 @@
 #if PLATFORM(MAC)
 
 #include <algorithm>
+#include <pal/spi/cf/CoreAudioSPI.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/darwin/DispatchExtras.h>
-
-enum {
-    kAudioHardwarePropertyProcessIsRunning = 'prun'
-};
 
 namespace WebCore {
     

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IIRFilterNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IIRFilterNode);
 
 // Determine if filter is stable based on the feedback coefficients.
 // We compute the reflection coefficients for the filter. If, at any

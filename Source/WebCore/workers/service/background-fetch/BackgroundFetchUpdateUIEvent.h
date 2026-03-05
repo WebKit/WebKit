@@ -33,7 +33,7 @@ namespace WebCore {
 struct BackgroundFetchUIOptions;
 
 class BackgroundFetchUpdateUIEvent final : public BackgroundFetchEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BackgroundFetchUpdateUIEvent);
+    WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchUpdateUIEvent);
 public:
     using Init = BackgroundFetchEventInit;
     static Ref<BackgroundFetchUpdateUIEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
@@ -43,13 +43,9 @@ public:
     void updateUI(BackgroundFetchUIOptions&&, DOMPromiseDeferred<void>&&);
 
 private:
-    BackgroundFetchUpdateUIEvent(const AtomString&, ExtendableEventInit&&, RefPtr<BackgroundFetchRegistration>&&, IsTrusted);
-
-    bool isBackgroundFetchUpdateUIEvent() const final { return true; }
+    BackgroundFetchUpdateUIEvent(const AtomString&, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::BackgroundFetchUpdateUIEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isBackgroundFetchUpdateUIEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(BackgroundFetchUpdateUIEvent)

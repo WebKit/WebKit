@@ -65,7 +65,7 @@ static WPEScreenSyncObserver* wpeScreenDRMGetSyncObserver(WPEScreen* screen)
         if (auto* device = wpeDisplayDRMGetDisplayDevice(WPE_DISPLAY_DRM(wpe_display_get_primary()))) {
             const char* filename = wpe_drm_device_get_primary_node(device);
             if (auto fd = UnixFileDescriptor(open(filename, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt)) {
-                priv->syncObserver = adoptGRef(wpeScreenSyncObserverDRMCreate(WTFMove(fd), priv->crtc->index()));
+                priv->syncObserver = adoptGRef(wpeScreenSyncObserverDRMCreate(WTF::move(fd), priv->crtc->index()));
                 if (priv->syncObserver)
                     g_debug("WPEScreenDRM: Created WPEScreenSyncObserverDRM for device %s with CRTC index %u", filename, priv->crtc->index());
                 else
@@ -97,7 +97,7 @@ WPEScreen* wpeScreenDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&& crtc, const WPE:
 {
     auto* screen = WPE_SCREEN(g_object_new(WPE_TYPE_SCREEN_DRM, "id", crtc->id(), nullptr));
     auto* priv = WPE_SCREEN_DRM(screen)->priv;
-    priv->crtc = WTFMove(crtc);
+    priv->crtc = WTF::move(crtc);
 
     wpe_screen_set_physical_size(screen, connector.widthMM(), connector.heightMM());
 

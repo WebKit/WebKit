@@ -99,7 +99,7 @@ template<typename WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::VM& v
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuffer*)
 {
-    return static_cast<WebCoreTypedArrayController*>(world.vm().m_typedArrayController.get())->wrapperOwner();
+    return downcast<WebCoreTypedArrayController>(*world.vm().m_typedArrayController).wrapperOwner();
 }
 
 inline void* wrapperKey(JSC::ArrayBuffer* domObject)
@@ -186,12 +186,12 @@ template<typename DOMClass, typename T> inline auto createWrapper(JSDOMGlobalObj
 
         ASSERT(!getCachedWrapper(globalObject->world(), domObject));
         auto* domObjectPtr = domObject.ptr();
-        auto* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), *globalObject), globalObject, WTFMove(domObject));
+        auto* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), *globalObject), globalObject, WTF::move(domObject));
         cacheWrapper(globalObject->world(), domObjectPtr, wrapper);
         return wrapper;
     } else {
         // FIXME: Use downcast<>() once all the casted types support it.
-        return createWrapper<DOMClass>(globalObject, unsafeRefDowncast<DOMClass>(WTFMove(domObject)));
+        return createWrapper<DOMClass>(globalObject, unsafeRefDowncast<DOMClass>(WTF::move(domObject)));
     }
 }
 

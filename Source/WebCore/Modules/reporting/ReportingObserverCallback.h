@@ -47,6 +47,7 @@ public:
     virtual CallbackResult<void> invokeRethrowingException(const Vector<Ref<Report>>&, ReportingObserver&) = 0;
 
     virtual bool hasCallback() const = 0;
+    virtual bool isJSReportingObserverCallback() const { return false; }
 };
 
 } // namespace WebCore

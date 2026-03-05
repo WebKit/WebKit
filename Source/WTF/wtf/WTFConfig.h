@@ -29,6 +29,7 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#include <bmalloc/GigacageConfig.h>
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/ExportMacros.h>
@@ -36,16 +37,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/PtrTag.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/threads/Signals.h>
-
-#if USE(SYSTEM_MALLOC)
-namespace Gigacage {
-// The first 6 slots are reserved for use by system allocators
-constexpr size_t reservedSlotsForGigacageConfig = 6;
-constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig * sizeof(uint64_t);
-}
-#else
-#include <bmalloc/GigacageConfig.h>
-#endif
 
 namespace WebConfig {
 
@@ -80,7 +71,7 @@ struct Config {
     WTF_EXPORT_PRIVATE static void permanentlyFreeze();
     WTF_EXPORT_PRIVATE static void initialize();
     WTF_EXPORT_PRIVATE static void finalize();
-    WTF_EXPORT_PRIVATE static void disableFreezingForTesting();
+    WTF_EXPORT_PRIVATE static void NODELETE disableFreezingForTesting();
 
     struct AssertNotFrozenScope {
         AssertNotFrozenScope();

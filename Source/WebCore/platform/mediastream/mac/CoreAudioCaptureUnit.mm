@@ -227,7 +227,7 @@ void CoreAudioCaptureUnit::setMuteStatusChangedCallback(Function<void(bool)>&& c
         return;
 
     ASSERT(!!m_muteStatusChangedCallback != !!callback);
-    m_muteStatusChangedCallback = WTFMove(callback);
+    m_muteStatusChangedCallback = WTF::move(callback);
 
 #if HAVE(AVAUDIOAPPLICATION)
     if (!m_muteStatusChangedCallback) {

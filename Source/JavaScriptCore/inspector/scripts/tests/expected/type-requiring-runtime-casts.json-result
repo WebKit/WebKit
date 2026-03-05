@@ -105,6 +105,8 @@ InspectorBackend.activateDomain("Test", null);
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include "TestProtocolObjects.h"
@@ -115,7 +117,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -346,6 +348,7 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
@@ -420,7 +423,7 @@ public:
         }
 
         Builder(Ref<TypeNeedingCast>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -458,7 +461,7 @@ public:
         Builder<STATE | TreeSet>& setTree(Ref<Protocol::Test::RecursiveObject1>&& in_tree)
         {
             static_assert(!(STATE & TreeSet), "property tree already set");
-            Ref { *m_result }->setObject("tree"_s, WTFMove(in_tree));
+            Ref { *m_result }->setObject("tree"_s, WTF::move(in_tree));
             return castState<TreeSet>();
         }
 
@@ -531,7 +534,7 @@ public:
         }
 
         Builder(Ref<RecursiveObject1>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -563,7 +566,7 @@ public:
 
     void setObj(Ref<Protocol::Test::RecursiveObject2>&& in_opt_obj)
     {
-        JSON::ObjectBase::setObject("obj"_s, WTFMove(in_opt_obj));
+        JSON::ObjectBase::setObject("obj"_s, WTF::move(in_opt_obj));
     }
 };
 
@@ -593,7 +596,7 @@ public:
         }
 
         Builder(Ref<RecursiveObject2>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -625,7 +628,7 @@ public:
 
     void setObj(Ref<Protocol::Test::RecursiveObject1>&& in_opt_obj)
     {
-        JSON::ObjectBase::setObject("obj"_s, WTFMove(in_opt_obj));
+        JSON::ObjectBase::setObject("obj"_s, WTF::move(in_opt_obj));
     }
 };
 
@@ -1276,13 +1279,12 @@ inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestUncastedAnimals> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, TestProtocolTestUncastedAnimals>>({
         { "Cats"_s, TestProtocolTestUncastedAnimalsCats },
         { "Cows"_s, TestProtocolTestUncastedAnimalsCows },
         { "Hens"_s, TestProtocolTestUncastedAnimalsHens },
         { "Pigs"_s, TestProtocolTestUncastedAnimalsPigs },
-    };
-    static constexpr SortedArrayMap map { mappings };
+   }) };
     if (auto* result = map.tryGet(value))
         return *result;
     return std::nullopt;
@@ -1305,13 +1307,12 @@ inline String toProtocolString(TestProtocolTestCastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestCastedAnimals> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, TestProtocolTestCastedAnimals>>({
         { "Crows"_s, TestProtocolTestCastedAnimalsCrows },
         { "Ducks"_s, TestProtocolTestCastedAnimalsDucks },
         { "Flamingos"_s, TestProtocolTestCastedAnimalsFlamingos },
         { "Hens"_s, TestProtocolTestCastedAnimalsHens },
-    };
-    static constexpr SortedArrayMap map { mappings };
+   }) };
     if (auto* result = map.tryGet(value))
         return *result;
     return std::nullopt;

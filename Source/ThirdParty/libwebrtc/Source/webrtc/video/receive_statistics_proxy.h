@@ -23,6 +23,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/corruption_detection/frame_instrumentation_evaluation.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
@@ -38,10 +39,8 @@
 #include "rtc_base/numerics/running_statistics.h"
 #include "rtc_base/numerics/sample_counter.h"
 #include "rtc_base/rate_statistics.h"
-#include "rtc_base/rate_tracker.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
-#include "video/corruption_detection/frame_instrumentation_evaluation.h"
 #include "video/stats_counter.h"
 #include "video/video_quality_observer2.h"
 #include "video/video_stream_buffer_controller.h"
@@ -177,8 +176,8 @@ class ReceiveStatisticsProxy : public VideoStreamBufferControllerStatsObserver,
   const uint32_t remote_ssrc_;
   RateStatistics decode_fps_estimator_ RTC_GUARDED_BY(main_thread_);
   RateStatistics renders_fps_estimator_ RTC_GUARDED_BY(main_thread_);
-  RateTracker render_fps_tracker_ RTC_GUARDED_BY(main_thread_);
-  RateTracker render_pixel_tracker_ RTC_GUARDED_BY(main_thread_);
+  Timestamp first_frame_rendered_ RTC_GUARDED_BY(main_thread_);
+  int64_t total_render_sqrt_pixels_ RTC_GUARDED_BY(main_thread_);
   SampleCounter sync_offset_counter_ RTC_GUARDED_BY(main_thread_);
   SampleCounter decode_time_counter_ RTC_GUARDED_BY(main_thread_);
   SampleCounter jitter_delay_counter_ RTC_GUARDED_BY(main_thread_);

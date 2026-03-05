@@ -3,6 +3,7 @@ Short Name: turbine
 URL: https://github.com/google/turbine
 Version: N/A
 Revision: 3c31e67ae25b5e43713fd868e3a9b535ff6298af
+Update Mechanism: Manual
 License: Apache-2.0
 License File: LICENSE
 Security Critical: no

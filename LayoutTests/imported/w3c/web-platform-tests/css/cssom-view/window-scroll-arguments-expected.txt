@@ -1,0 +1,15 @@
+Scrollable area to test.
+
+PASS scrollTo with 0 arguments
+FAIL scrollTo with 1 non-dictionary argument promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS scrollTo with a valid ScrollToOptions argument
+FAIL scrollTo with an invalid ScrollToOptions argument promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS scroll with 0 arguments
+FAIL scroll with 1 non-dictionary argument promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS scroll with a valid ScrollToOptions argument
+FAIL scroll with an invalid ScrollToOptions argument promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS scrollBy with 0 arguments
+FAIL scrollBy with 1 non-dictionary argument promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS scrollBy with a valid ScrollToOptions argument
+FAIL scrollBy with an invalid ScrollToOptions argument promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           RenderSVGResourceFilter {filter} [id="lighting"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feBlend mode="multiply"]
               [feColorMatrix type="MATRIX" values="0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 0.00 1.00"]
-                [feSpecularLighting surfaceScale="1.00" specualConstant="1.00" specularExponent="1.00"]
+                [feSpecularLighting surfaceScale="1.00" specularConstant="1.00" specularExponent="1.00"]
                   [SourceGraphic]
               [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="offset"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]

@@ -69,7 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSCCallbackFunction, (JSGlobalObject* globalOb
 JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     Structure* structure = globalObject->glibCallbackFunctionStructure();
-    JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm)) JSCCallbackFunction(vm, structure, type, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
+    JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm)) JSCCallbackFunction(vm, structure, type, jscClass, WTF::move(closure), returnType, WTF::move(parameters));
     function->finishCreation(vm, 0, name);
     return function;
 }
@@ -80,16 +80,15 @@ JSCCallbackFunction::JSCCallbackFunction(VM& vm, Structure* structure, Type type
     , m_constructCallback(callAsConstructor)
     , m_type(type)
     , m_class(jscClass)
-    , m_closure(WTFMove(closure))
+    , m_closure(WTF::move(closure))
     , m_returnType(returnType)
-    , m_parameters(WTFMove(parameters))
+    , m_parameters(WTF::move(parameters))
 {
     ASSERT(type != Type::Constructor || jscClass);
     if (G_CLOSURE_NEEDS_MARSHAL(m_closure.get()))
         g_closure_set_marshal(m_closure.get(), g_cclosure_marshal_generic);
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSLockHolder locker(toJS(callerContext));
@@ -118,25 +117,26 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     auto parameterCount = m_parameters ? m_parameters->size() : 1;
     if (addInstance)
         parameterCount++;
-    auto* values = static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount));
-    memset(values, 0, sizeof(GValue) * parameterCount);
+    auto values = unsafeMakeSpan(static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount)), parameterCount);
+    zeroSpan(values);
 
     size_t firstParameter = 0;
     if (addInstance) {
-        g_value_init(&values[0], G_TYPE_POINTER);
-        g_value_set_pointer(&values[0], instance);
+        g_value_init(values.data(), G_TYPE_POINTER);
+        g_value_set_pointer(values.data(), instance);
         firstParameter = 1;
     }
     if (m_parameters) {
+        auto argumentsSpan = unsafeMakeSpan(arguments, argumentCount);
         for (size_t i = firstParameter; i < parameterCount && !*exception; ++i) {
             auto argumentIndex = i - firstParameter;
-            jscContextJSValueToGValue(context.get(), argumentIndex < argumentCount ? arguments[argumentIndex] : JSValueMakeUndefined(jsContext),
+            jscContextJSValueToGValue(context.get(), argumentIndex < argumentCount ? argumentsSpan[argumentIndex] : JSValueMakeUndefined(jsContext),
                 m_parameters.value()[argumentIndex], &values[i], exception);
         }
     } else {
         auto* parameters = g_ptr_array_new_full(argumentCount, g_object_unref);
-        for (size_t i = 0; i < argumentCount; ++i)
-            g_ptr_array_add(parameters, jscContextGetOrCreateValue(context.get(), arguments[i]).leakRef());
+        for (auto argument : unsafeMakeSpan(arguments, argumentCount))
+            g_ptr_array_add(parameters, jscContextGetOrCreateValue(context.get(), argument).leakRef());
         g_value_init(&values[firstParameter], G_TYPE_PTR_ARRAY);
         g_value_take_boxed(&values[firstParameter], parameters);
     }
@@ -146,7 +146,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
         g_value_init(&returnValue, m_returnType);
 
     if (!*exception)
-        g_closure_invoke(m_closure.get(), m_returnType != G_TYPE_NONE ? &returnValue : nullptr, parameterCount, values, nullptr);
+        g_closure_invoke(m_closure.get(), m_returnType != G_TYPE_NONE ? &returnValue : nullptr, parameterCount, values.data(), nullptr);
 
     for (size_t i = 0; i < parameterCount; ++i)
         g_value_unset(&values[i]);
@@ -154,7 +154,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     if (auto* jscException = jsc_context_get_exception(context.get()))
         *exception = jscExceptionGetJSValue(jscException);
 
-    jscContextPopCallback(context.get(), WTFMove(callbackData));
+    jscContextPopCallback(context.get(), WTF::move(callbackData));
 
     if (m_returnType == G_TYPE_NONE)
         return JSValueMakeUndefined(jsContext);
@@ -188,22 +188,23 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
         g_value_unset(&dummyValue);
     } else {
         auto parameterCount = m_parameters ? m_parameters->size() : 1;
-        auto* values = static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount));
-        memset(values, 0, sizeof(GValue) * parameterCount);
+        auto values = unsafeMakeSpan(static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount)), parameterCount);
+        zeroSpan(values);
 
         if (m_parameters) {
+            auto argumentsSpan = unsafeMakeSpan(arguments, parameterCount);
             for (size_t i = 0; i < parameterCount && !*exception; ++i)
-                jscContextJSValueToGValue(context.get(), i < argumentCount ? arguments[i] : JSValueMakeUndefined(jsContext), m_parameters.value()[i], &values[i], exception);
+                jscContextJSValueToGValue(context.get(), i < argumentCount ? argumentsSpan[i] : JSValueMakeUndefined(jsContext), m_parameters.value()[i], &values[i], exception);
         } else {
             auto* parameters = g_ptr_array_new_full(argumentCount, g_object_unref);
-            for (size_t i = 0; i < argumentCount; ++i)
-                g_ptr_array_add(parameters, jscContextGetOrCreateValue(context.get(), arguments[i]).leakRef());
-            g_value_init(&values[0], G_TYPE_PTR_ARRAY);
-            g_value_take_boxed(&values[0], parameters);
+            for (auto& argument : unsafeMakeSpan(arguments, argumentCount))
+                g_ptr_array_add(parameters, jscContextGetOrCreateValue(context.get(), argument).leakRef());
+            g_value_init(values.data(), G_TYPE_PTR_ARRAY);
+            g_value_take_boxed(values.data(), parameters);
         }
 
         if (!*exception)
-            g_closure_invoke(m_closure.get(), &returnValue, parameterCount, values, nullptr);
+            g_closure_invoke(m_closure.get(), &returnValue, parameterCount, values.data(), nullptr);
 
         for (size_t i = 0; i < parameterCount; ++i)
             g_value_unset(&values[i]);
@@ -212,7 +213,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     if (auto* jscException = jsc_context_get_exception(context.get()))
         *exception = jscExceptionGetJSValue(jscException);
 
-    jscContextPopCallback(context.get(), WTFMove(callbackData));
+    jscContextPopCallback(context.get(), WTF::move(callbackData));
 
     if (*exception) {
         g_value_unset(&returnValue);
@@ -234,7 +235,6 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     g_value_unset(&returnValue);
     return nullptr;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void JSCCallbackFunction::destroy(JSCell* cell)
 {

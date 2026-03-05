@@ -53,12 +53,5 @@ PASS table 9
 PASS table 10
 PASS table 11
 PASS table 12
-FAIL table 13 assert_equals:
-<table>
-  <caption style="writing-mode:vertical-rl;height:min-content;font:10px Ahem;color:rgba(0,0,0,0.3)" data-expected-height="100"><div style="height:100px;">vertical</div> caption bigger than table</caption>
-  <tbody data-offset-y="100">
-    <tr><td>vertical!</td>
-  </tr></tbody>
-</table>
-offsetTop expected 100 but got 40
+PASS table 13
 

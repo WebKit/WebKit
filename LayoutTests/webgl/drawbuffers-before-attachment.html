@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test that draw buffers work when drawBuffersWEBGL is called before texture attachment</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that framebuffer rendering works correctly when drawBuffersWEBGL is called before texture attachment.");
+
+var wtu = WebGLTestUtils;
+
+function runTest()
+{
+    var canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+    document.body.appendChild(canvas);
+
+    var gl = wtu.create3DContext(canvas, undefined, 1);
+
+    if (!gl) {
+        testFailed("WebGL1 context does not exist");
+        finishTest();
+        return;
+    }
+
+    // Enable extension first
+    var ext = gl.getExtension("WEBGL_draw_buffers");
+    if (!ext) {
+        testPassed("WEBGL_draw_buffers extension not available - skipping test");
+        finishTest();
+        return;
+    }
+    testPassed("WEBGL_draw_buffers extension enabled");
+
+    var vertexShaderSource = `
+        attribute vec4 vPosition;
+        void main() {
+            gl_Position = vPosition;
+        }`;
+
+    var fragmentShaderSource = `
+        #extension GL_EXT_draw_buffers : require
+        precision mediump float;
+        void main() {
+            gl_FragData[0] = vec4(1.0, 0.0, 0.0, 1.0);
+        }`;
+
+    var program = wtu.setupProgram(gl, [vertexShaderSource, fragmentShaderSource], ["vPosition"]);
+    if (!program) {
+        testFailed("Failed to create program");
+        finishTest();
+        return;
+    }
+    wtu.setupUnitQuad(gl);
+
+    // Create framebuffer and call drawBuffersWEBGL BEFORE attaching texture
+    var fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    ext.drawBuffersWEBGL([ext.COLOR_ATTACHMENT0_WEBGL]);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawBuffersWEBGL should succeed");
+    testPassed("drawBuffersWEBGL called BEFORE texture attachment");
+
+    // Attach texture after drawBuffersWEBGL
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 16, 16, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        testFailed("Framebuffer is not complete");
+        finishTest();
+        return;
+    }
+    testPassed("Texture attached AFTER drawBuffersWEBGL");
+
+    // Draw and verify red pixels
+    gl.viewport(0, 0, 16, 16);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    wtu.drawUnitQuad(gl);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "draw should succeed");
+    wtu.checkCanvas(gl, [255, 0, 0, 255], "framebuffer should contain red pixels after draw", 1);
+
+    // Cleanup
+    gl.deleteFramebuffer(fb);
+    gl.deleteTexture(texture);
+    gl.deleteProgram(program);
+    finishTest();
+}
+</script>
+</body>
+</html>

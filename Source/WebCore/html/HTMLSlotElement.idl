@@ -23,16 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/scripting.html#htmlslotelement
 [
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface HTMLSlotElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
-    sequence<Node> assignedNodes(optional AssignedNodesOptions options);
-    sequence<Element> assignedElements(optional AssignedNodesOptions options);
+    sequence<Node> assignedNodes(optional AssignedNodesOptions options = {});
+    sequence<Element> assignedElements(optional AssignedNodesOptions options = {});
     undefined assign((Element or Text)... nodes);
 };
 
+// https://html.spec.whatwg.org/multipage/scripting.html#assignednodesoptions
 dictionary AssignedNodesOptions {
     boolean flatten = false;
 };

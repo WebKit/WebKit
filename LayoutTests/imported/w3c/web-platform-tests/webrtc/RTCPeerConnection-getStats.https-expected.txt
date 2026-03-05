@@ -13,6 +13,7 @@ PASS getStats() video contains outbound-rtp stats
 PASS getStats() on track associated with RTCRtpSender should return stats report containing outbound-rtp stats
 PASS getStats() on track associated with RTCRtpReceiver should return stats report containing inbound-rtp stats
 PASS getStats() audio contains inbound-rtp stats
+PASS getStats() audio contains candidate-pair stats
 FAIL getStats(track) should not work if multiple senders have the same track assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS RTCStats.timestamp increases with time passing
 PASS getStats succeeds on a closed peerconnection

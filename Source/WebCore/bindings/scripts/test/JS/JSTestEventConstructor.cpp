@@ -42,13 +42,28 @@
 #include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
 #include <JavaScriptCore/SlotVisitorMacros.h>
 #include <JavaScriptCore/SubspaceInlines.h>
+#include <type_traits>
 #include <wtf/GetPtr.h>
+#include <wtf/IsIncreasing.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;
+
+IGNORE_WARNINGS_BEGIN("invalid-offsetof")
+
+static_assert(std::is_aggregate_v<TestEventConstructor::Init>);
+static_assert(IsIncreasing<
+      0
+    , offsetof(TestEventConstructor::Init, attr2)
+#if ENABLE(SPECIAL_EVENT)
+    , offsetof(TestEventConstructor::Init, attr3)
+#endif
+>);
+
+IGNORE_WARNINGS_END
 
 template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDictionary<TestEventConstructor::Init>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
@@ -60,7 +75,6 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestEventConstructor::Init result;
     JSValue bubblesValue;
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();
@@ -68,10 +82,9 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto bubblesConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, bubblesValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto bubblesConversionResult = convert<IDLBoolean>(lexicalGlobalObject, bubblesValue);
     if (bubblesConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
-    result.bubbles = bubblesConversionResult.releaseReturnValue();
     JSValue cancelableValue;
     if (isNullOrUndefined)
         cancelableValue = jsUndefined();
@@ -79,10 +92,9 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto cancelableConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, cancelableValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto cancelableConversionResult = convert<IDLBoolean>(lexicalGlobalObject, cancelableValue);
     if (cancelableConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
-    result.cancelable = cancelableConversionResult.releaseReturnValue();
     JSValue composedValue;
     if (isNullOrUndefined)
         composedValue = jsUndefined();
@@ -90,10 +102,9 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto composedConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, composedValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto composedConversionResult = convert<IDLBoolean>(lexicalGlobalObject, composedValue);
     if (composedConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
-    result.composed = composedConversionResult.releaseReturnValue();
     JSValue attr2Value;
     if (isNullOrUndefined)
         attr2Value = jsUndefined();
@@ -101,10 +112,9 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         attr2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr2"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto attr2ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr2Value, [&]() -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
+    auto attr2ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr2Value, [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
     if (attr2ConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
-    result.attr2 = attr2ConversionResult.releaseReturnValue();
 #if ENABLE(SPECIAL_EVENT)
     JSValue attr3Value;
     if (isNullOrUndefined)
@@ -113,12 +123,21 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         attr3Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr3"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto attr3ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr3Value, [&]() -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
+    auto attr3ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr3Value, [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
     if (attr3ConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
-    result.attr3 = attr3ConversionResult.releaseReturnValue();
 #endif
-    return result;
+    return TestEventConstructor::Init {
+        EventInit {
+            bubblesConversionResult.releaseReturnValue(),
+            cancelableConversionResult.releaseReturnValue(),
+            composedConversionResult.releaseReturnValue(),
+        },
+        attr2ConversionResult.releaseReturnValue(),
+#if ENABLE(SPECIAL_EVENT)
+        attr3ConversionResult.releaseReturnValue(),
+#endif
+    };
 }
 
 // Attributes
@@ -184,7 +203,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorDOMCons
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTF::move(object));
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     setSubclassStructureIfNeeded<TestEventConstructor>(lexicalGlobalObject, callFrame, asObject(jsValue));
@@ -234,13 +253,8 @@ void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventConstructor) };
 
 JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventConstructor>&& impl)
-    : JSEvent(structure, globalObject, WTFMove(impl))
+    : JSEvent(structure, globalObject, WTF::move(impl))
 {
-}
-
-Ref<TestEventConstructor> JSTestEventConstructor::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, TestEventConstructor>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
@@ -368,7 +382,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestEventConstructor>(impl.ptr());
 #endif
-    return createWrapper<TestEventConstructor>(globalObject, WTFMove(impl));
+    return createWrapper<TestEventConstructor>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestEventConstructor& impl)

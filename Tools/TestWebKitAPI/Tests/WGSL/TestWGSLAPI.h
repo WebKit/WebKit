@@ -113,6 +113,8 @@ inline Check check(const String& pattern)
     return [&](const String& msl, unsigned offset) -> unsigned {
         JSC::Yarr::RegularExpression test(pattern);
         auto result = test.match(msl, offset);
+        if (result == -1)
+            __builtin_trap();
         EXPECT_NE(result, -1);
         return result;
     };
@@ -136,16 +138,6 @@ inline Variant<String, WGSL::Error> generate(const WGSL::SuccessfulCheck& static
 {
     auto& shaderModule = staticCheckResult.ast;
     HashMap<String, WGSL::ConstantValue> constantValues;
-    for (auto& entryPoint : shaderModule->callGraph().entrypoints()) {
-        const auto& entryPointInformation = prepareResult.entryPoints.get(entryPoint.originalName);
-        for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
-            EXPECT_TRUE(constant.defaultValue);
-            auto defaultValue = WGSL::evaluate(*constant.defaultValue, constantValues);
-            EXPECT_TRUE(defaultValue.has_value());
-            constantValues.add(constant.mangledName, *defaultValue);
-        }
-    }
-
     return WGSL::generate(shaderModule, prepareResult, constantValues, { });
 }
 
@@ -156,10 +148,10 @@ inline Variant<id<MTLLibrary>, NSError *> metalCompile(const String& msl)
     auto options = [MTLCompileOptions new];
     options.preprocessorMacros = @{ @"__wgslMetalAppleGPUFamily" : [NSString stringWithFormat:@"%u", 8] };
     NSError *error = nil;
-    id<MTLLibrary> library = [device newLibraryWithSource:msl.createNSString().get() options:options error:&error];
+    RetainPtr library = [device newLibraryWithSource:msl.createNSString().get() options:options error:&error];
     if (error != nil)
         return { error };
-    return { library };
+    return { library.get() };
 }
 #endif
 

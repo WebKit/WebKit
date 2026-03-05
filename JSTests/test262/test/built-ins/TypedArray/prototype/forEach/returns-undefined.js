@@ -15,8 +15,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample1 = new TA(42);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample1 = new TA(makeCtorArg(42));
 
   var result1 = sample1.forEach(function() {
     return 42;
@@ -24,7 +24,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(result1, undefined, "result1");
 
-  var sample2 = new TA(1);
+  var sample2 = new TA(makeCtorArg(1));
   var result2 = sample2.forEach(function() {
     return null;
   });

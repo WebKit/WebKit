@@ -67,7 +67,7 @@ public:
 };
 
 class LegacyRenderSVGResourceGradient : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceGradient);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceGradient);
 public:
     virtual ~LegacyRenderSVGResourceGradient();
@@ -86,7 +86,8 @@ protected:
     LegacyRenderSVGResourceGradient(Type, SVGGradientElement&, RenderStyle&&);
 
     static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&);
-    static GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType);
+    static GradientSpreadMethod NODELETE platformSpreadMethodFromSVGType(SVGSpreadMethodType);
+    ColorInterpolationMethod gradientColorInterpolationMethod() const;
 
 private:
     void element() const = delete;

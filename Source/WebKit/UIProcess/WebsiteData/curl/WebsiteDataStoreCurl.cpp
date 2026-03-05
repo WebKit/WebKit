@@ -39,15 +39,15 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
     createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
 
-    parameters.networkSessionParameters.alternativeServiceDirectory = WTFMove(alternativeServiceStorageDirectory);
-    parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTFMove(alternativeServiceStorageDirectoryExtensionHandle);
+    parameters.networkSessionParameters.alternativeServiceDirectory = WTF::move(alternativeServiceStorageDirectory);
+    parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTF::move(alternativeServiceStorageDirectoryExtensionHandle);
     parameters.networkSessionParameters.cookiePersistentStorageFile = directories.cookieStorageFile;
     parameters.networkSessionParameters.proxySettings = m_proxySettings;
 }
 
 void WebsiteDataStore::setNetworkProxySettings(WebCore::CurlProxySettings&& proxySettings)
 {
-    m_proxySettings = WTFMove(proxySettings);
+    m_proxySettings = WTF::move(proxySettings);
 
     networkProcess().send(Messages::NetworkProcess::SetNetworkProxySettings(m_sessionID, m_proxySettings), 0);
 }

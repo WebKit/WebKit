@@ -84,7 +84,7 @@ public:
         return otherLinear && m_points == otherLinear->m_points;
     }
 
-    const Vector<Point>& points() const { return m_points; }
+    const Vector<Point>& points() const LIFETIME_BOUND { return m_points; }
 
     static const LinearTimingFunction& identity()
     {

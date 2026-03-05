@@ -76,7 +76,7 @@ void PaintingEngineThreaded::paint(GraphicsLayer& layer, CoordinatedTileBuffer& 
         paintLayer(context, layer, sourceRect, mappedSourceRect, targetRect, contentsScale, buffer.supportsAlpha());
     });
 
-    m_workerPool->postTask([paintingOperations = WTFMove(paintingOperations), buffer = Ref { buffer }] {
+    m_workerPool->postTask([paintingOperations = WTF::move(paintingOperations), buffer = Ref { buffer }] {
         PaintingContext::replay(buffer.get(), paintingOperations);
         buffer->completePainting();
     });

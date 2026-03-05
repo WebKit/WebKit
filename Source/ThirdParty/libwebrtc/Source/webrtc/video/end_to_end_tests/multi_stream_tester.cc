@@ -48,9 +48,9 @@ namespace webrtc {
 
 MultiStreamTester::MultiStreamTester() {
   // TODO(sprang): Cleanup when msvc supports explicit initializers for array.
-  codec_settings[0] = {1, 640, 480};
-  codec_settings[1] = {2, 320, 240};
-  codec_settings[2] = {3, 240, 160};
+  codec_settings[0] = {.ssrc = 1, .width = 640, .height = 480};
+  codec_settings[1] = {.ssrc = 2, .width = 320, .height = 240};
+  codec_settings[2] = {.ssrc = 3, .width = 240, .height = 160};
 }
 
 MultiStreamTester::~MultiStreamTester() = default;

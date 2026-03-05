@@ -27,6 +27,8 @@ import logging
 import sys
 
 from webkitpy.browserperfdash.browserperfdash_runner import main, format_logger
+from webkitpy.port.linux_container_sdk_utils import maybe_use_container_sdk_root_dir
+maybe_use_container_sdk_root_dir()
 
 _log = logging.getLogger()
 

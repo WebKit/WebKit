@@ -40,7 +40,7 @@ void registerNotifyCallback(ASCIILiteral notifyID, Function<void()>&& callback)
 {
 #if PLATFORM(COCOA)
     int token;
-    notify_register_dispatch(notifyID.characters(), &token, mainDispatchQueueSingleton(), makeBlockPtr([callback = WTFMove(callback)](int) {
+    notify_register_dispatch(notifyID.characters(), &token, mainDispatchQueueSingleton(), makeBlockPtr([callback = WTF::move(callback)](int) {
         callback();
     }).get());
 #else

@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!-- Similar to pagehide-event.html, but tests that event is fired in iframe. -->
+
+<!DOCTYPE html>
+<title>Tests that pagehide is fired in iframe when site isolation is enabled</title>
+
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that pagehide is fired in iframe when site isolation is enabled.");
+jsTestIsAsync = true;
+
+const chan = new BroadcastChannel("channel");
+chan.addEventListener("message", (e) => {
+  caughtEvent = e.data;
+  shouldBeEqualToString("caughtEvent.name", "pagehide");
+  shouldBe("caughtEvent.params.persisted", "false");
+  finishJSTest();
+})
+
+</script>
+
+<iframe src="/site-isolation/page-lifecycle/resources/navigating-away-subpage.html?event=pagehide&param=persisted"></iframe>

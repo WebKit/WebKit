@@ -23,6 +23,11 @@ namespace webrtc {
 class MockLocalNetworkAccessPermission
     : public LocalNetworkAccessPermissionInterface {
  public:
+  MOCK_METHOD(bool,
+              ShouldRequestPermission,
+              (const SocketAddress& addr),
+              (override));
+
   MOCK_METHOD(
       void,
       RequestPermission,
@@ -45,8 +50,18 @@ class MockLocalNetworkAccessPermissionFactory
 class FakeLocalNetworkAccessPermissionFactory
     : public MockLocalNetworkAccessPermissionFactory {
  public:
-  explicit FakeLocalNetworkAccessPermissionFactory(
-      LocalNetworkAccessPermissionStatus status);
+  enum class Result {
+    // Use when the permission is not needed i.e. ShouldRequestPermission will
+    // return false.
+    kPermissionNotNeeded,
+    // Use when the permission is needed i.e. ShouldRequestPermission will
+    // return true, and RequestPermission will return kGranted/kDenied
+    // respectively.
+    kPermissionGranted,
+    kPermissionDenied,
+  };
+
+  explicit FakeLocalNetworkAccessPermissionFactory(Result result);
   ~FakeLocalNetworkAccessPermissionFactory() override;
 };
 

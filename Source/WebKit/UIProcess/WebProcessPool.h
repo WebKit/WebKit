@@ -28,6 +28,7 @@
 #include "APIDictionary.h"
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
+#include "EnhancedSecurity.h"
 #include "GPUProcessProxy.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "MessageReceiver.h"
@@ -183,12 +184,6 @@ public:
     }
 
     template <typename T>
-    RefPtr<T> protectedSupplement()
-    {
-        return supplement<T>();
-    }
-
-    template <typename T>
     void addSupplement()
     {
         m_supplements.add(T::supplementName(), T::create(this));
@@ -222,11 +217,11 @@ public:
     void setLegacyDownloadClient(RefPtr<API::DownloadClient>&&);
     void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
 
-    const Vector<Ref<WebProcessProxy>>& processes() const { return m_processes; }
+    const Vector<Ref<WebProcessProxy>>& processes() const LIFETIME_BOUND { return m_processes; }
 
     // WebProcessProxy object which does not have a running process which is used for convenience, to avoid
     // null checks in WebPageProxy.
-    WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID).get(); }
+    WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID); }
 
     void forEachProcessForSession(PAL::SessionID, NOESCAPE const Function<void(WebProcessProxy&)>&);
     template<typename T> void sendToAllProcesses(const T& message);
@@ -252,7 +247,7 @@ public:
     Ref<DownloadProxy> download(WebsiteDataStore&, WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, const String& suggestedFilename = { });
     Ref<DownloadProxy> resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart);
 
-    void setInjectedBundleInitializationUserData(RefPtr<API::Object>&& userData) { m_injectedBundleInitializationUserData = WTFMove(userData); }
+    void setInjectedBundleInitializationUserData(RefPtr<API::Object>&& userData) { m_injectedBundleInitializationUserData = WTF::move(userData); }
 
     void postMessageToInjectedBundle(const String&, API::Object*);
 
@@ -275,11 +270,11 @@ public:
 #endif
 
 #if HAVE(DISPLAY_LINK)
-    DisplayLinkCollection& displayLinks() { return m_displayLinks; }
+    DisplayLinkCollection& displayLinks() LIFETIME_BOUND { return m_displayLinks; }
 #endif
 
-    void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
-    void clearSupportedPlugins();
+    void NODELETE addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
+    void NODELETE clearSupportedPlugins();
 
     HashSet<ProcessID> prewarmedProcessIdentifiers();
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
@@ -322,8 +317,8 @@ public:
     // Downloads.
     Ref<DownloadProxy> createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage, const std::optional<FrameInfoData>&);
 
-    API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }
-    WebContextClient& client() { return m_client; }
+    API::LegacyContextHistoryClient& historyClient() LIFETIME_BOUND { return *m_historyClient; }
+    WebContextClient& client() LIFETIME_BOUND { return m_client; }
 
     struct Statistics {
         unsigned wkViewCount;
@@ -344,13 +339,12 @@ public:
 
     void reportWebContentCPUTime(Seconds cpuTime, uint64_t activityState);
 
-    enum class IsSharedProcess : bool { No, Yes };
-    Ref<WebProcessProxy> processForSite(WebsiteDataStore&, IsSharedProcess, const std::optional<WebCore::Site>&, const std::optional<WebCore::Site>& mainFrameSite, const HashSet<WebCore::RegistrableDomain>& isolatedDomains,
-        WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, const API::PageConfiguration&, WebCore::ProcessSwapDisposition); // Will return an existing one if limit is met or due to caching.
+    Ref<WebProcessProxy> processForSite(WebsiteDataStore&, WebProcessProxy::IsolatedProcessType, const std::optional<WebCore::Site>&, const std::optional<WebCore::Site>& mainFrameSite, const HashSet<WebCore::RegistrableDomain>& isolatedDomains,
+        WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, WebCore::ProcessSwapDisposition); // Will return an existing one if limit is met or due to caching.
 
     void prewarmProcess();
 
-    bool shouldTerminate(WebProcessProxy&);
+    bool NODELETE shouldTerminate(WebProcessProxy&);
 
     void disableProcessTermination();
     void enableProcessTermination();
@@ -366,7 +360,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 
     bool javaScriptConfigurationFileEnabled() { return m_javaScriptConfigurationFileEnabled; }
-    void setJavaScriptConfigurationFileEnabled(bool flag);
+    void NODELETE setJavaScriptConfigurationFileEnabled(bool flag);
 #if PLATFORM(IOS_FAMILY)
     void setJavaScriptConfigurationFileEnabledFromDefaults();
 #endif
@@ -399,9 +393,7 @@ public:
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
 
     GPUProcessProxy& ensureGPUProcess();
-    Ref<GPUProcessProxy> ensureProtectedGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
-    RefPtr<GPUProcessProxy> protectedGPUProcess() const { return gpuProcess(); }
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -410,7 +402,6 @@ public:
 
     void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, WebKit::ModelProcessConnectionParameters&&);
 
-    Ref<ModelProcessProxy> ensureProtectedModelProcess(WebProcessProxy& requestingWebProcess);
     ModelProcessProxy* modelProcess() const { return m_modelProcess.get(); }
 #endif
 
@@ -435,7 +426,7 @@ public:
 
     void windowServerConnectionStateChanged();
 
-    static void setInvalidMessageCallback(void (*)(WKStringRef));
+    static void NODELETE setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(IPC::MessageName);
 
     bool isURLKnownHSTSHost(const String& urlString) const;
@@ -449,9 +440,7 @@ public:
     void updateProcessSuppressionState();
 
     NSMutableDictionary *ensureBundleParameters();
-    RetainPtr<NSMutableDictionary> ensureProtectedBundleParameters();
     NSMutableDictionary *bundleParameters() { return m_bundleParameters.get(); }
-    RetainPtr<NSMutableDictionary> protectedBundleParameters();
 #else
     void updateProcessSuppressionState() const { }
 #endif
@@ -504,7 +493,7 @@ public:
     bool hasBackgroundWebProcessesWithModels() const;
 #endif
 
-    void processForNavigation(WebPageProxy&, WebFrameProxy&, const API::Navigation&, const URL& sourceURL, BrowsingContextGroup&, IsSharedProcess, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, LoadedWebArchive, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
+    void processForNavigation(WebPageProxy&, WebFrameProxy&, const API::Navigation&, const URL& sourceURL, BrowsingContextGroup&, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
 
     void didReachGoodTimeToPrewarm();
 
@@ -526,11 +515,11 @@ public:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setSandboxEnabled(bool);
     void addSandboxPath(const CString& path, SandboxPermission permission) { m_extraSandboxPaths.add(path, permission); };
-    const HashMap<CString, SandboxPermission>& sandboxPaths() const { return m_extraSandboxPaths; };
+    const HashMap<CString, SandboxPermission>& sandboxPaths() const LIFETIME_BOUND { return m_extraSandboxPaths; };
     bool sandboxEnabled() const { return m_sandboxEnabled; };
 
-    void setUserMessageHandler(Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>&& handler) { m_userMessageHandler = WTFMove(handler); }
-    const Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>& userMessageHandler() const { return m_userMessageHandler; }
+    void setUserMessageHandler(Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>&& handler) { m_userMessageHandler = WTF::move(handler); }
+    const Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>& userMessageHandler() const LIFETIME_BOUND { return m_userMessageHandler; }
 
 #if USE(ATSPI)
     const String& accessibilityBusAddress() const;
@@ -544,12 +533,12 @@ public:
     WebProcessWithAudibleMediaToken webProcessWithAudibleMediaToken() const;
     WebProcessWithMediaStreamingToken webProcessWithMediaStreamingToken() const;
 
-    static bool globalDelaysWebProcessLaunchDefaultValue();
+    static bool NODELETE globalDelaysWebProcessLaunchDefaultValue();
     bool delaysWebProcessLaunchDefaultValue() const { return m_delaysWebProcessLaunchDefaultValue; }
     void setDelaysWebProcessLaunchDefaultValue(bool delaysWebProcessLaunchDefaultValue) { m_delaysWebProcessLaunchDefaultValue = delaysWebProcessLaunchDefaultValue; }
 
     void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = directory; }
-    const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
+    const String& javaScriptConfigurationDirectory() const LIFETIME_BOUND { return m_javaScriptConfigurationDirectory; }
 
     void setOverrideLanguages(Vector<String>&&);
 
@@ -580,7 +569,7 @@ public:
     static void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
     static Vector<String> urlSchemesWithCustomProtocolHandlers();
 
-    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
+    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
 
     bool hasAudibleMediaActivity() const { return !!m_audibleMediaActivity; }
 #if PLATFORM(IOS_FAMILY)
@@ -608,6 +597,7 @@ public:
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     void observeScriptTrackingPrivacyUpdatesIfNeeded();
+    void observeConsistentQueryParameterFilteringQuirkUpdatesIfNeeded();
 #endif
 
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
@@ -646,6 +636,10 @@ public:
     void setPLTResourceDelayInterval(Seconds interval) { m_pltResourceDelayInterval = interval; }
     Seconds pltResourceDelayInterval() const { return m_pltResourceDelayInterval; }
 
+    bool hasUsedSiteIsolation() const { return m_hasUsedSiteIsolation; }
+
+    unsigned prewarmedProcessCountLimit() const;
+
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
     void platformInitialize(NeedsGlobalStaticInitialization);
@@ -655,11 +649,10 @@ private:
     void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, IsSharedProcess, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, const FrameInfoData&, Ref<WebsiteDataStore>&&);
-    void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, IsSharedProcess, const WebCore::Site&, const WebCore::Site& mainFrameSite, const API::Navigation&, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, LoadedWebArchive, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
+    std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, const FrameInfoData&, Ref<WebsiteDataStore>&&);
+    void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, WebProcessProxy::IsolatedProcessType, const WebCore::Site&, const WebCore::Site& mainFrameSite, const API::Navigation&, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
 
-    RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, const API::PageConfiguration&);
-    unsigned prewarmedProcessCountLimit() const;
+    RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
 
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
 
@@ -768,7 +761,7 @@ private:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    ModelProcessProxy& ensureModelProcess();
+    ModelProcessProxy& NODELETE ensureModelProcess();
     void updateModelProcessAssertion();
     void terminateAllWebContentProcessesWithModelPlayers();
 #endif
@@ -841,7 +834,7 @@ private:
     bool m_memorySamplerEnabled { false };
     double m_memorySamplerInterval { 1400.0 };
 
-    using WebContextSupplementMap = HashMap<ASCIILiteral, RefPtr<WebContextSupplement>>;
+    using WebContextSupplementMap = HashMap<ASCIILiteral, Ref<WebContextSupplement>>;
     WebContextSupplementMap m_supplements;
 
 #if USE(SOUP)
@@ -944,7 +937,7 @@ private:
     const UniqueRef<WebBackForwardCache> m_backForwardCache;
 
     const UniqueRef<WebProcessCache> m_webProcessCache;
-    HashMap<WebCore::RegistrableDomain, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
+    HashMap<WebCore::RegistrableDomain, Ref<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
 
@@ -1012,8 +1005,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
     bool m_processesShouldSuspend { false };
     HardwareKeyboardState m_hardwareKeyboardState;
+#if !USE(EXTENSIONKIT)
     String m_cachedWebContentTempDirectory;
 #endif
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     RefPtr<ListDataObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
@@ -1082,11 +1077,6 @@ inline WebProcessPool& WebProcessProxy::processPool() const
 {
     ASSERT(m_processPool);
     return *m_processPool.get();
-}
-
-inline Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
-{
-    return processPool();
 }
 
 } // namespace WebKit

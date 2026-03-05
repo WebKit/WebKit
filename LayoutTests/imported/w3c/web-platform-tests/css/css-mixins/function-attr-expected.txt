@@ -1,8 +1,8 @@
 
-FAIL Return untyped url() from function assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
-FAIL Return untyped url() from function, quoted assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
-FAIL Return typed url() from function assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
-FAIL Return typed url() from function, quoted assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
+PASS Return untyped url() from function
+PASS Return untyped url() from function, quoted
+PASS Return typed url() from function
+PASS Return typed url() from function, quoted
 FAIL Return attr(type(<length>)) from untyped function assert_equals: expected "42px" but got "784px"
 FAIL Return attr(type(<length>)) from typed function assert_equals: expected "42px" but got "784px"
 FAIL Return attr(type(*)) from typed function assert_equals: expected "42px" but got "784px"

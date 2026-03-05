@@ -28,6 +28,10 @@
 #include <gst/video/video-info.h>
 #include <wtf/glib/GRefPtr.h>
 
+#if USE(GBM)
+#include "DMABufBuffer.h"
+#endif
+
 typedef struct _GstSample GstSample;
 
 namespace WebCore {
@@ -49,8 +53,8 @@ public:
     struct CreateOptions {
         CreateOptions() = default;
         CreateOptions(IntSize&& presentationSize, std::optional<Info>&& info = { })
-            : presentationSize(WTFMove(presentationSize))
-            , info(WTFMove(info))
+            : presentationSize(WTF::move(presentationSize))
+            , info(WTF::move(info))
         { }
         IntSize presentationSize;
         std::optional<Info> info;
@@ -63,10 +67,9 @@ public:
 
     static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, const CreateOptions&, PlatformVideoColorSpace&& = { });
 
-    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None);
+    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, std::optional<CreateOptions> = std::nullopt);
 
     static RefPtr<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, const IntSize& destinationSize, double frameRate, const CreateOptions&, PlatformVideoColorSpace&& = { });
-    ~VideoFrameGStreamer();
 
     void setFrameRate(double);
     void setMaxFrameRate(double);
@@ -86,7 +89,6 @@ public:
 
     IntSize presentationSize() const final { return m_presentationSize; }
     uint32_t pixelFormat() const final { return GST_VIDEO_INFO_FORMAT(&m_info.info); }
-    RefPtr<NativeImage> copyNativeImage() const final;
 
     enum class MemoryType : uint8_t {
         Unsupported,
@@ -100,6 +102,9 @@ public:
     };
     MemoryType memoryType() const { return m_memoryType; }
 
+#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+    RefPtr<DMABufBuffer> getDMABuf();
+#endif
     const GstVideoInfo& info() const { return m_info.info; }
     std::optional<DMABufFormat> dmaBufFormat() const { return m_info.dmaBufFormat; }
 

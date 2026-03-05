@@ -110,7 +110,7 @@ Ref<MediaPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>
             static_cast<SharedBuffer*>(data)->deref();
         }));
 
-    m_appendPipeline->pushNewBuffer(WTFMove(buffer));
+    m_appendPipeline->pushNewBuffer(WTF::move(buffer));
     return *m_appendPromise;
 }
 
@@ -142,6 +142,29 @@ void SourceBufferPrivateGStreamer::removedFromMediaSource()
     m_appendPipeline = nullptr;
 
     SourceBufferPrivate::removedFromMediaSource();
+}
+
+bool SourceBufferPrivateGStreamer::canSwitchToType(const ContentType& type)
+{
+    RefPtr player = this->player();
+
+    if (isContentTypeSupported(type)) {
+        if (player)
+            GST_INFO_OBJECT(player->pipeline(), "type change %s -> %s", m_type.raw().utf8().data(), type.raw().utf8().data());
+        m_type = type;
+
+        return true;
+    }
+
+    return false;
+}
+
+void SourceBufferPrivateGStreamer::startChangingType()
+{
+    ASSERT(isMainThread());
+
+    m_appendPipeline->startChangingType();
+    m_pendingInitializationSegmentForChangeType = true;
 }
 
 void SourceBufferPrivateGStreamer::flush(TrackID trackId)
@@ -228,7 +251,7 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(TrackID t
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
     track->notifyWhenReadyForMoreSamples([weakPtr = WeakPtr { *this }, this, trackId]() mutable {
-        RunLoop::mainSingleton().dispatch([weakPtr = WTFMove(weakPtr), this, trackId]() {
+        RunLoop::mainSingleton().dispatch([weakPtr = WTF::move(weakPtr), this, trackId]() {
             if (!weakPtr)
                 return;
             if (!m_hasBeenRemovedFromMediaSource)
@@ -254,21 +277,21 @@ bool SourceBufferPrivateGStreamer::precheckInitializationSegment(const Initializ
         GRefPtr<GstCaps> initialCaps = videoTrackInfo->initialCaps();
         ASSERT(initialCaps);
         if (!m_tracks.contains(videoTrackInfo->id()))
-            m_tracks.try_emplace(videoTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, videoTrackInfo->id(), WTFMove(initialCaps)));
+            m_tracks.try_emplace(videoTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, videoTrackInfo->id(), WTF::move(initialCaps)));
     }
     for (auto& trackInfo : segment.audioTracks) {
         auto* audioTrackInfo = static_cast<AudioTrackPrivateGStreamer*>(trackInfo.track.get());
         GRefPtr<GstCaps> initialCaps = audioTrackInfo->initialCaps();
         ASSERT(initialCaps);
         if (!m_tracks.contains(audioTrackInfo->id()))
-            m_tracks.try_emplace(audioTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, audioTrackInfo->id(), WTFMove(initialCaps)));
+            m_tracks.try_emplace(audioTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, audioTrackInfo->id(), WTF::move(initialCaps)));
     }
     for (auto& trackInfo : segment.textTracks) {
         auto* textTrackInfo = static_cast<InbandTextTrackPrivateGStreamer*>(trackInfo.track.get());
         GRefPtr<GstCaps> initialCaps = textTrackInfo->initialCaps();
         ASSERT(initialCaps);
         if (!m_tracks.contains(textTrackInfo->id()))
-            m_tracks.try_emplace(textTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, textTrackInfo->id(), WTFMove(initialCaps)));
+            m_tracks.try_emplace(textTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, textTrackInfo->id(), WTF::move(initialCaps)));
     }
 
     return true;
@@ -276,8 +299,10 @@ bool SourceBufferPrivateGStreamer::precheckInitializationSegment(const Initializ
 
 void SourceBufferPrivateGStreamer::processInitializationSegment(std::optional<InitializationSegment>&& segment)
 {
-    if (RefPtr mediaSource = m_mediaSource.get(); mediaSource && segment)
+    if (RefPtr mediaSource = m_mediaSource.get(); mediaSource && segment) {
         downcast<MediaSourcePrivateGStreamer>(mediaSource)->startPlaybackIfHasAllTracks();
+        m_pendingInitializationSegmentForChangeType = false;
+    }
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()

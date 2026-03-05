@@ -18,7 +18,7 @@ assert.sameValue(
   'The value of `typeof TypedArray.prototype.at` is "function"'
 );
 
-testWithTypedArrayConstructors(TA => {
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
   assert.sameValue(typeof TA.prototype.at, 'function', 'The value of `typeof TA.prototype.at` is "function"');
   let valueOfCallCount = 0;
   let index = {
@@ -28,7 +28,7 @@ testWithTypedArrayConstructors(TA => {
     }
   };
 
-  let a = new TA([0,1,2,3]);
+  let a = new TA(makeCtorArg([0,1,2,3]));
 
   assert.sameValue(a.at(index), 1, 'a.at({valueOf() {valueOfCallCount++; return 1;}}) must return 1');
   assert.sameValue(valueOfCallCount, 1, 'The value of `valueOfCallCount` is 1');

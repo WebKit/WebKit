@@ -62,7 +62,7 @@ struct _WPEDisplayPrivate {
     EGLDisplay eglDisplay;
     GUniqueOutPtr<GError> eglDisplayError;
     HashMap<String, bool> extensionsMap;
-    GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
+    GRefPtr<WPEBufferFormats> preferredBufferFormats;
     GRefPtr<WPEKeymap> keymap;
     GRefPtr<WPEClipboard> clipboard;
     GRefPtr<WPESettings> settings;
@@ -228,14 +228,19 @@ static void wpe_display_class_init(WPEDisplayClass* displayClass)
 WPEView* wpeDisplayCreateView(WPEDisplay* display)
 {
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    return wpeDisplayClass->create_view(display);
+    auto* view = wpeDisplayClass->create_view(display);
+    if (view && wpeDisplayClass->create_toplevel && wpe_settings_get_boolean(wpe_display_get_settings(display), WPE_SETTING_CREATE_VIEWS_WITH_A_TOPLEVEL, nullptr)) {
+        if (GRefPtr<WPEToplevel> toplevel = adoptGRef(wpeDisplayClass->create_toplevel(display, 1)))
+            wpe_view_set_toplevel(view, toplevel.get());
+    }
+    return view;
 }
 
 bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
 {
     auto addResult = display->priv->extensionsMap.ensure(ASCIILiteral::fromLiteralUnsafe(extensionName), [&] {
         auto* eglDisplay = wpe_display_get_egl_display(display, nullptr);
-        return eglDisplay ? epoxy_has_egl_extension(eglDisplay, extensionName) : false;
+        return eglDisplay && epoxy_has_egl_extension(eglDisplay, extensionName);
     });
     return addResult.iterator->value;
 }
@@ -271,7 +276,7 @@ WPEDisplay* wpe_display_get_default(void)
                 GUniqueOutPtr<GError> error;
                 GRefPtr<WPEDisplay> display = adoptGRef(WPE_DISPLAY(g_object_new(g_io_extension_get_type(extension), nullptr)));
                 if (wpe_display_connect(display.get(), &error.outPtr())) {
-                    s_defaultDisplay = WTFMove(display);
+                    s_defaultDisplay = WTF::move(display);
                     return;
                 }
                 g_error("Failed to connect to display of type %s: %s", extensionName, error->message);
@@ -285,7 +290,7 @@ WPEDisplay* wpe_display_get_default(void)
             auto* extension = static_cast<GIOExtension*>(i->data);
             GRefPtr<WPEDisplay> display = adoptGRef(WPE_DISPLAY(g_object_new(g_io_extension_get_type(extension), nullptr)));
             if (wpe_display_connect(display.get(), nullptr)) {
-                s_defaultDisplay = WTFMove(display);
+                s_defaultDisplay = WTF::move(display);
                 return;
             }
         }
@@ -475,7 +480,7 @@ WPESettings* wpe_display_get_settings(WPEDisplay* display)
 }
 
 #if USE(LIBDRM)
-static GRefPtr<WPEBufferDMABufFormats> wpeDisplayPreferredDMABufFormats(WPEDisplay* display)
+static GRefPtr<WPEBufferFormats> wpeDisplayPreferredBufferFormats(WPEDisplay* display)
 {
     auto eglDisplay = static_cast<EGLDisplay>(wpe_display_get_egl_display(display, nullptr));
     if (!eglDisplay)
@@ -515,42 +520,42 @@ static GRefPtr<WPEBufferDMABufFormats> wpeDisplayPreferredDMABufFormats(WPEDispl
         return modifiers;
     };
 
-    auto* builder = wpe_buffer_dma_buf_formats_builder_new(wpe_display_get_drm_device(display));
-    wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING);
+    auto* builder = wpe_buffer_formats_builder_new(wpe_display_get_drm_device(display));
+    wpe_buffer_formats_builder_append_group(builder, nullptr, WPE_BUFFER_FORMAT_USAGE_RENDERING);
     for (auto format : formats) {
         auto modifiers = modifiersForFormat(format);
         for (auto modifier : modifiers)
-            wpe_buffer_dma_buf_formats_builder_append_format(builder, format, modifier);
+            wpe_buffer_formats_builder_append_format(builder, format, modifier);
     }
-    return adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
+    return adoptGRef(wpe_buffer_formats_builder_end(builder));
 }
 #endif
 
 /**
- * wpe_display_get_preferred_dma_buf_formats:
+ * wpe_display_get_preferred_buffer_formats:
  * @display: a #WPEDisplay
  *
- * Get the list of preferred DMA-BUF buffer formats for @display.
+ * Get the list of preferred buffer formats for @display.
  *
- * Returns: (transfer none) (nullable): a #WPEBufferDMABufFormats
+ * Returns: (transfer none) (nullable): a #WPEBufferFormats
  */
-WPEBufferDMABufFormats* wpe_display_get_preferred_dma_buf_formats(WPEDisplay* display)
+WPEBufferFormats* wpe_display_get_preferred_buffer_formats(WPEDisplay* display)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
 
     auto* priv = display->priv;
-    if (!priv->preferredDMABufFormats) {
+    if (!priv->preferredBufferFormats) {
         auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-        if (wpeDisplayClass->get_preferred_dma_buf_formats)
-            priv->preferredDMABufFormats = adoptGRef(wpeDisplayClass->get_preferred_dma_buf_formats(display));
+        if (wpeDisplayClass->get_preferred_buffer_formats)
+            priv->preferredBufferFormats = adoptGRef(wpeDisplayClass->get_preferred_buffer_formats(display));
 
 #if USE(LIBDRM)
-        if (!priv->preferredDMABufFormats)
-            priv->preferredDMABufFormats = wpeDisplayPreferredDMABufFormats(display);
+        if (!priv->preferredBufferFormats)
+            priv->preferredBufferFormats = wpeDisplayPreferredBufferFormats(display);
 #endif
     }
 
-    return display->priv->preferredDMABufFormats.get();
+    return display->priv->preferredBufferFormats.get();
 }
 
 /**
@@ -650,7 +655,7 @@ static bool isSotfwareRast()
  * will be used to initialize the EGL display and allocate GBM
  * buffers by default. The DRM device required to allocate GBM
  * buffers for direct scanout will be set as main or group device
- * in #WPEBufferDMABufFormats.
+ * in #WPEBufferFormats.
  *
  * Returns: (transfer none) (nullable): a #WPEDRMDevice or %NULL
  */
@@ -752,4 +757,25 @@ WPEGamepadManager* wpe_display_create_gamepad_manager(WPEDisplay* display)
         manager = wpeGamepadManagerManetteCreate();
 #endif
     return manager;
+}
+
+/**
+ * wpe_display_create_toplevel:
+ * @display: a #WPEDisplay
+ * @max_views: the maximum number of views allowed, or 0 for no limit
+ *
+ * Create a new #WPEToplevel on @display with @max_views allowed.
+ * The parameter @max_views will be ignored if @display doesn't support
+ * multiple views per toplevel.
+ * This function returns %NULL if the platform implementation doesn't
+ * support explicit creation of #WPEToplevel.
+ *
+ * Returns: (transfer full) (nullable): a new #WPEToplevel or %NULL if not supported
+ */
+WPEToplevel* wpe_display_create_toplevel(WPEDisplay* display, guint maxViews)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
+
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->create_toplevel ? wpeDisplayClass->create_toplevel(display, maxViews) : nullptr;
 }

@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(symbolConstructorFor, (JSGlobalObject* globalObject, Ca
     auto string = stringKey->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(Symbol::create(vm, vm.checkedSymbolRegistry()->symbolForKey(string)));
+    return JSValue::encode(Symbol::create(vm, protect(vm.symbolRegistry())->symbolForKey(string)));
 }
 
 const ASCIILiteral SymbolKeyForTypeError { "Symbol.keyFor requires that the first argument be a symbol"_s };

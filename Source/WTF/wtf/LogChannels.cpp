@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LogChannels.h"
+#include <wtf/LogChannels.h>
 
 #include <wtf/LoggingAccumulator.h>
 

@@ -34,11 +34,11 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var calls, result;
 
   calls = 0;
-  result = new TA([1, 2, 3]).reduce(function() {
+  result = new TA(makeCtorArg([1, 2, 3])).reduce(function() {
     calls++;
 
     if (calls == 2) {
@@ -48,7 +48,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(result, 42, "using default accumulator");
 
   calls = 0;
-  result = new TA([1, 2, 3]).reduce(function() {
+  result = new TA(makeCtorArg([1, 2, 3])).reduce(function() {
     calls++;
 
     if (calls == 3) {

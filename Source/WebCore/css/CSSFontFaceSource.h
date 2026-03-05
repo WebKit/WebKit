@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FontLoadRequest.h"
+#include "TrustedFonts.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -46,14 +47,17 @@ struct FontCustomPlatformData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFaceSource);
 class CSSFontFaceSource final : public FontLoadRequestClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSFontFaceSource, CSSFontFaceSource);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFontFaceSource);
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceSource);
 public:
     CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName);
     CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement&);
-    CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector&, UniqueRef<FontLoadRequest>);
+    CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector&, Ref<FontLoadRequest>&&);
     CSSFontFaceSource(CSSFontFace& owner, Ref<JSC::ArrayBufferView>&&);
     virtual ~CSSFontFaceSource();
+
+    // FontLoadRequestClient.
+    void NODELETE ref() const final;
+    void deref() const final;
 
     //                      => Success
     //                    //
@@ -68,29 +72,31 @@ public:
     };
     Status status() const { return m_status; }
 
-    void opportunisticallyStartFontDataURLLoading();
+    void opportunisticallyStartFontDataURLLoading(DownloadableBinaryFontTrustedTypes);
 
-    void load(Document* = nullptr);
+    void load(DownloadableBinaryFontTrustedTypes, Document* = nullptr);
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&);
 
     FontLoadRequest* fontLoadRequest() const { return m_fontRequest.get(); }
     bool requiresExternalResource() const { return m_fontRequest.get(); }
 
-    bool isSVGFontFaceSource() const;
+    bool NODELETE isSVGFontFaceSource() const;
 
 private:
     bool shouldIgnoreFontLoadCompletions() const;
 
     void fontLoaded(FontLoadRequest&) override;
 
-    void setStatus(Status);
+    void NODELETE setStatus(Status);
 
-    Ref<CSSFontFace> protectedCSSFontFace() const;
+    CSSFontFace& cssFontFace() const { return m_owningCSSFontFace.get(); }
+
+    RefPtr<FontCustomPlatformData> loadCustomFont(SharedBuffer&, DownloadableBinaryFontTrustedTypes);
 
     AtomString m_fontFaceName; // Font name for local fonts
     WeakRef<CSSFontFace> m_owningCSSFontFace; // Our owning font face.
     WeakPtr<CSSFontSelector> m_fontSelector; // For remote fonts, to orchestrate loading.
-    const std::unique_ptr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
+    const RefPtr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
 
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;

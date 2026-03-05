@@ -47,7 +47,7 @@ WebCore::Color createColor(const ColorLayers& value, PlatformColorResolutionStat
         })
     };
 
-    return blendSourceOver(WTFMove(resolver));
+    return blendSourceOver(WTF::move(resolver));
 }
 
 bool containsCurrentColor(const ColorLayers& value)

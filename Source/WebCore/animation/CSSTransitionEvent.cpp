@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransitionEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTransitionEvent);
 
 CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String propertyName)
     : StyleOriginatedAnimationEvent(EventInterfaceType::CSSTransitionEvent, type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier)
@@ -39,9 +39,9 @@ CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* ani
 {
 }
 
-CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSTransitionEvent, type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)
-    , m_propertyName(initializer.propertyName)
+CSSTransitionEvent::CSSTransitionEvent(Document& document, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSTransitionEvent, type, WTF::move(initializer), isTrusted, initializer.elapsedTime, WTF::move(initializer.pseudoElement), document)
+    , m_propertyName(WTF::move(initializer.propertyName))
 {
 }
 

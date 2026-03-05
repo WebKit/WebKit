@@ -137,16 +137,17 @@ class CLKernelVk : public CLKernelImpl
     cl::MemoryPtr getPodBuffer() { return mPodBuffer; }
 
     bool usesPrintf() const;
+    bool usesPrintfBufferPointerPushConstant() const;
 
     angle::Result allocateDescriptorSet(
         DescriptorSetIndex index,
         angle::EnumIterator<DescriptorSetIndex> layoutIndex,
         vk::OutsideRenderPassCommandBufferHelper *computePassCommands);
 
-  private:
     // Initialize the descriptor pools for this kernel resources
     angle::Result initializeDescriptorPools();
 
+  private:
     CLProgramVk *mProgram;
     CLContextVk *mContext;
     std::string mName;

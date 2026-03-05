@@ -44,7 +44,7 @@ public:
 
 #define SPECIALIZE_TYPE_TRAITS_WEB_EXTENSION(ImplClass, ScriptClass) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ImplClass) \
-static bool isType(const WebKit::JSWebExtensionWrappable& wrappable) { return wrappable.wrapperClass() == WebKit::JS##ImplClass::ScriptClass##Class(); } \
+static bool isType(const WebKit::JSWebExtensionWrappable& wrappable) { return wrappable.wrapperClass() == WebKit::JS##ImplClass::ScriptClass##ClassSingleton(); } \
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

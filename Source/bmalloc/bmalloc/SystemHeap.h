@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "Environment.h"
 #include "FailureAction.h"
 #include "Mutex.h"
@@ -121,3 +123,5 @@ BINLINE SystemHeap* SystemHeap::getExisting()
 }
 
 } // namespace bmalloc
+
+#endif // __cplusplus

@@ -33,6 +33,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebViewAdditionsBefore.h>
+#endif
+
 #if TARGET_OS_IOS
 @class UIFindInteraction;
 @class UIConversationContext;
@@ -121,6 +125,12 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  @result A new navigation for the given request.
  */
 - (nullable WKNavigation *)loadRequest:(NSURLRequest *)request;
+
+/*! @abstract Navigates to a requested URL.
+ @param url The URL to which to navigate.
+ @result A new navigation for the given request.
+ */
+- (nullable WKNavigation *)loadURL:(NSURL *)url NS_SWIFT_NAME(load(_:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract Navigates to the requested file URL on the filesystem.
  @param URL The file URL to which to navigate.
@@ -714,6 +724,10 @@ typedef NS_OPTIONS(NSUInteger, WKWebViewDataType) {
 @property (nonatomic) NSEdgeInsets obscuredContentInsets WK_API_AVAILABLE(macos(26.0));
 #else
 @property (nonatomic) UIEdgeInsets obscuredContentInsets WK_API_AVAILABLE(ios(26.0), visionos(26.0));
+#endif
+
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebViewAdditions.h>
 #endif
 
 @end

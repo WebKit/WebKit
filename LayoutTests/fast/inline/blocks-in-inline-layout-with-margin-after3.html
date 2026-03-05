@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.middle-block {
+  background: green;
+  height: 100px;
+}
+</style>
+<div>
+  PASS if there's 100px gap between the 2 green boxes.
+  <span>
+    <div class=middle-block style="margin-bottom: 100px;"></div>
+  </span>
+  <span>
+    <div class=middle-block></div>
+  </span>
+</div>

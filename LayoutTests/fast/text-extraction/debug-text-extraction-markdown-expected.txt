@@ -6,4 +6,10 @@ This is a list:
 - foo
 - bar
 - baz
-<!-- version=2 -->
+On [sale](https://webkit.org/) for
+£10.99 This ~~text~~ has a ~~line through it~~. The price ~~was \~\~$50~~
+~~CSS linethrough~~ normal text
+~~Linethrough also linethrough~~
+~~both semantic and CSS~~
+~~[A link](https://www.apple.com/)~~
+![A linked image](file:///fake/linked-image.png) [](https://www.example.com/)

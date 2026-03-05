@@ -64,13 +64,13 @@ void TypeSet::addTypeInformation(RuntimeType type, RefPtr<StructureShape>&& pass
                 if (seenShape->propertyHash() == hash)
                     return;
                 if (seenShape->hasSamePrototypeChain(newShape.get())) {
-                    seenShape = StructureShape::merge(seenShape.copyRef(), WTFMove(newShape));
+                    seenShape = StructureShape::merge(seenShape.copyRef(), WTF::move(newShape));
                     return;
                 }
             }
 
             if (m_structureHistory.size() < 100) {
-                m_structureHistory.append(WTFMove(newShape));
+                m_structureHistory.append(WTF::move(newShape));
                 return;
             }
             if (!m_isOverflown)
@@ -488,15 +488,15 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
         for (const auto& field : currentShape->m_optionalFields)
             optionalFields->addItem(field.get());
 
-        currentObject->setFields(WTFMove(fields));
-        currentObject->setOptionalFields(WTFMove(optionalFields));
+        currentObject->setFields(WTF::move(fields));
+        currentObject->setOptionalFields(WTF::move(optionalFields));
         currentObject->setConstructorName(currentShape->m_constructorName);
         currentObject->setIsImprecise(currentShape->m_isInDictionaryMode);
 
         if (currentShape->m_proto) {
             auto nextObject = Inspector::Protocol::Runtime::StructureDescription::create().release();
             currentObject->setPrototypeStructure(nextObject.copyRef());
-            currentObject = WTFMove(nextObject);
+            currentObject = WTF::move(nextObject);
         }
 
         currentShape = currentShape->m_proto;

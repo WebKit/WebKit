@@ -11,12 +11,12 @@ info: |
   3. If O.[[TypedArrayName]] is "BigUint64Array" or "BigInt64Array",
      let value be ? ToBigInt(value).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
 
   var n = 1n;
   sample.fill({ valueOf() { return n++; } });

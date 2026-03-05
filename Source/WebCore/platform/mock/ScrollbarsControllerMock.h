@@ -33,6 +33,7 @@
 
 #include <WebCore/ScrollbarsController.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -63,8 +64,8 @@ private:
     ASCIILiteral scrollbarPrefix(Scrollbar*) const;
 
     Function<void(const String&)> m_logger;
-    Scrollbar* m_verticalScrollbar { nullptr };
-    Scrollbar* m_horizontalScrollbar { nullptr };
+    SingleThreadWeakPtr<Scrollbar> m_verticalScrollbar;
+    SingleThreadWeakPtr<Scrollbar> m_horizontalScrollbar;
 };
 
 } // namespace WebCore

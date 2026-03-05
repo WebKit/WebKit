@@ -16,6 +16,7 @@
 #include <optional>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/vp8_frame_buffer_controller.h"
@@ -27,7 +28,6 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -51,14 +51,14 @@ constexpr auto kSwitch = DecodeTargetIndication::kSwitch;
 const double ScreenshareLayers::kMaxTL0FpsReduction = 2.5;
 const double ScreenshareLayers::kAcceptableTargetOvershoot = 2.0;
 
-constexpr int ScreenshareLayers::kMaxNumTemporalLayers;
-
 // Always emit a frame with certain interval, even if bitrate targets have
 // been exceeded. This prevents needless keyframe requests.
 const int ScreenshareLayers::kMaxFrameIntervalMs = 2750;
 
-ScreenshareLayers::ScreenshareLayers(int num_temporal_layers)
-    : number_of_temporal_layers_(
+ScreenshareLayers::ScreenshareLayers(const Environment& env,
+                                     int num_temporal_layers)
+    : env_(env),
+      number_of_temporal_layers_(
           std::min(kMaxNumTemporalLayers, num_temporal_layers)),
       active_layer_(-1),
       last_timestamp_(-1),
@@ -127,7 +127,7 @@ Vp8FrameConfig ScreenshareLayers::NextFrameConfig(size_t stream_index,
     return dependency_info.frame_config;
   }
 
-  const int64_t now_ms = TimeMillis();
+  const int64_t now_ms = env_.clock().TimeInMilliseconds();
 
   int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
   int64_t ts_diff;
@@ -392,7 +392,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
     }
   }
 
-  encode_framerate_.Update(1, TimeMillis());
+  encode_framerate_.Update(1, env_.clock().TimeInMilliseconds());
 
   if (number_of_temporal_layers_ == 1)
     return;
@@ -595,7 +595,8 @@ void ScreenshareLayers::UpdateHistograms() {
   if (stats_.first_frame_time_ms_ == -1)
     return;
   int64_t duration_sec =
-      (TimeMillis() - stats_.first_frame_time_ms_ + 500) / 1000;
+      (env_.clock().TimeInMilliseconds() - stats_.first_frame_time_ms_ + 500) /
+      1000;
   if (duration_sec >= metrics::kMinRunTime.seconds()) {
     RTC_HISTOGRAM_COUNTS_10000(
         "WebRTC.Video.Screenshare.Layer0.FrameRate",

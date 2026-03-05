@@ -68,10 +68,10 @@ ExceptionOr<Ref<ViewTimeline>> ViewTimeline::create(Document& document, ViewTime
     if (!isValidInset(specifiedInsets.start) || !isValidInset(specifiedInsets.end))
         return Exception { ExceptionCode::TypeError };
 
-    viewTimeline->m_specifiedInsets = WTFMove(specifiedInsets);
+    viewTimeline->m_specifiedInsets = WTF::move(specifiedInsets);
     viewTimeline->setSubject(options.subject.get());
     if (auto subject = options.subject)
-        subject->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        protect(subject->document())->updateLayoutIgnorePendingStylesheets();
     viewTimeline->cacheCurrentTime();
 
     return viewTimeline;
@@ -118,25 +118,25 @@ ExceptionOr<ViewTimeline::SpecifiedViewTimelineInsets> ViewTimeline::validateSpe
             return { { dynamicDowncast<CSSPrimitiveValue>(consumedInset), nullptr } };
     }
 
-    auto cssPrimitiveValueForCSSNumericValue = [&](RefPtr<CSSNumericValue> numericValue) -> ExceptionOr<RefPtr<CSSPrimitiveValue>> {
-        if (RefPtr insetValue = dynamicDowncast<CSSUnitValue>(*numericValue))
+    auto cssPrimitiveValueForCSSNumericValue = [&](Ref<CSSNumericValue> numericValue) -> ExceptionOr<RefPtr<CSSPrimitiveValue>> {
+        if (RefPtr insetValue = dynamicDowncast<CSSUnitValue>(numericValue))
             return dynamicDowncast<CSSPrimitiveValue>(insetValue->toCSSValue());
         return nullptr;
     };
 
-    auto cssPrimitiveValueForCSSKeywordValue = [&](RefPtr<CSSKeywordValue> keywordValue) -> ExceptionOr<RefPtr<CSSPrimitiveValue>> {
+    auto cssPrimitiveValueForCSSKeywordValue = [&](Ref<CSSKeywordValue> keywordValue) -> ExceptionOr<RefPtr<CSSPrimitiveValue>> {
         if (keywordValue->value() != "auto"_s)
             return Exception { ExceptionCode::TypeError };
         return nullptr;
     };
 
     auto cssPrimitiveValueForIndividualInset = [&](ViewTimelineIndividualInset individualInset) -> ExceptionOr<RefPtr<CSSPrimitiveValue>> {
-        if (auto* numericInset = std::get_if<RefPtr<CSSNumericValue>>(&individualInset))
+        if (auto* numericInset = std::get_if<Ref<CSSNumericValue>>(&individualInset))
             return cssPrimitiveValueForCSSNumericValue(*numericInset);
         if (auto* stringInset = std::get_if<String>(&individualInset))
             return cssPrimitiveValueForCSSKeywordValue(CSSKeywordValue::rectifyKeywordish(*stringInset));
-        ASSERT(std::holds_alternative<RefPtr<CSSKeywordValue>>(individualInset));
-        return cssPrimitiveValueForCSSKeywordValue(CSSKeywordValue::rectifyKeywordish(std::get<RefPtr<CSSKeywordValue>>(individualInset)));
+        ASSERT(std::holds_alternative<Ref<CSSKeywordValue>>(individualInset));
+        return cssPrimitiveValueForCSSKeywordValue(CSSKeywordValue::rectifyKeywordish(std::get<Ref<CSSKeywordValue>>(individualInset)));
     };
 
     // if a sequence is provided, the first value represents the start inset and the second value represents the end inset.
@@ -193,7 +193,7 @@ void ViewTimeline::setSubject(const Styleable& styleable)
 
     removeTimelineFromDocument(previousSubject.get());
 
-    styleable.element.protectedDocument()->ensureTimelinesController().addTimeline(*this);
+    protect(styleable.element.document())->ensureTimelinesController().addTimeline(*this);
 }
 
 AnimationTimelinesController* ViewTimeline::controller() const
@@ -314,6 +314,7 @@ void ViewTimeline::cacheCurrentTime()
 
         auto scrollDirection = resolvedScrollDirection();
         float scrollOffset = scrollDirection.isVertical ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
+        float maxScrollOffset = scrollDirection.isVertical ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
         float scrollContainerSize = scrollDirection.isVertical ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
 
         // https://drafts.csswg.org/scroll-animations-1/#view-timelines-ranges
@@ -369,27 +370,28 @@ void ViewTimeline::cacheCurrentTime()
 
         enum class PaddingEdge : bool { Start, End };
         auto scrollPadding = [&](PaddingEdge edge) {
-            auto& style = sourceRenderer->style();
+            CheckedRef style = sourceRenderer->style();
             if (edge == PaddingEdge::Start)
-                return scrollDirection.isVertical ? style.scrollPaddingTop() : style.scrollPaddingLeft();
-            return scrollDirection.isVertical ? style.scrollPaddingBottom() : style.scrollPaddingRight();
+                return scrollDirection.isVertical ? style->scrollPaddingTop() : style->scrollPaddingLeft();
+            return scrollDirection.isVertical ? style->scrollPaddingBottom() : style->scrollPaddingRight();
         };
+        auto zoom = sourceRenderer->style().usedZoomForLength();
 
         float insetStart = 0;
         float insetEnd = 0;
 
         if (m_insets.start().isAuto())
-            insetStart = Style::evaluate<float>(scrollPadding(PaddingEdge::Start), scrollContainerSize, Style::ZoomNeeded { });
+            insetStart = Style::evaluate<float>(scrollPadding(PaddingEdge::Start), scrollContainerSize, zoom);
         else
             insetStart = Style::evaluate<float>(m_insets.start(), scrollContainerSize, Style::ZoomNeeded { });
 
         if (m_insets.end().isAuto())
-            insetEnd = Style::evaluate<float>(scrollPadding(PaddingEdge::End), scrollContainerSize, Style::ZoomNeeded { });
+            insetEnd = Style::evaluate<float>(scrollPadding(PaddingEdge::End), scrollContainerSize, zoom);
         else
             insetEnd = Style::evaluate<float>(m_insets.end(), scrollContainerSize, Style::ZoomNeeded { });
 
         StickinessAdjustmentData stickyData;
-        if (auto stickyContainer = dynamicDowncast<RenderBoxModelObject>(this->stickyContainer().get())) {
+        if (CheckedPtr stickyContainer = dynamicDowncast<RenderBoxModelObject>(this->stickyContainer().get())) {
             FloatRect constrainingRect = stickyContainer->constrainingRectForStickyPosition();
             StickyPositionViewportConstraints constraints;
             stickyContainer->computeStickyPositionConstraints(constraints, constrainingRect);
@@ -398,6 +400,7 @@ void ViewTimeline::cacheCurrentTime()
 
         return {
             scrollOffset,
+            maxScrollOffset,
             scrollContainerSize,
             subjectOffset,
             subjectSize,
@@ -414,10 +417,19 @@ void ViewTimeline::cacheCurrentTime()
         || previousCurrentTimeData.insetEnd != m_cachedCurrentTimeData.insetEnd
         || previousCurrentTimeData.stickinessData != m_cachedCurrentTimeData.stickinessData;
 
-    if (metricsChanged) {
-        for (auto& animation : m_animations)
-            animation->progressBasedTimelineSourceDidChangeMetrics();
-    }
+    if (metricsChanged)
+        sourceMetricsDidChange();
+}
+
+WebAnimationTime ViewTimeline::epsilon() const
+{
+    if (!m_cachedCurrentTimeData.subjectSize)
+        return WebAnimationTime::fromPercentage(0);
+    // The metrics reported for the subject and scroll container can be the subject of multiple conversions
+    // along the way, so we compute a percentage value that can be used in WebAnimation::currentTime() to round
+    // values around the 0% and 100% thresholds. To that end, we'll allow for a 0.1pt tolerance.
+    float pointTolerance = 0.1;
+    return WebAnimationTime::fromPercentage(pointTolerance / m_cachedCurrentTimeData.subjectSize * 100);
 }
 
 AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWillUpdateAnimationsAndSendEvents()
@@ -433,14 +445,14 @@ Style::SingleAnimationRange ViewTimeline::defaultRange() const
     return Style::SingleAnimationRange::defaultForViewTimeline();
 }
 
-Element* ViewTimeline::bindingsSource() const
+RefPtr<Element> ViewTimeline::bindingsSource() const
 {
     if (auto subject = m_subject.styleable())
-        subject->element.protectedDocument()->updateStyleIfNeeded();
+        protect(subject->element.document())->updateStyleIfNeeded();
     return ScrollTimeline::bindingsSource();
 }
 
-Element* ViewTimeline::source() const
+RefPtr<Element> ViewTimeline::source() const
 {
     if (CheckedPtr sourceRender = sourceScrollerRenderer())
         return sourceRender->element();
@@ -470,7 +482,7 @@ CheckedPtr<const RenderElement> ViewTimeline::stickyContainer() const
 
     CheckedPtr renderer = subject->renderer();
 
-    auto scrollerRenderer = sourceScrollerRenderer();
+    CheckedPtr scrollerRenderer = sourceScrollerRenderer();
     while (renderer && renderer.get() != scrollerRenderer) {
         if (renderer->isStickilyPositioned())
             return renderer;
@@ -479,8 +491,9 @@ CheckedPtr<const RenderElement> ViewTimeline::stickyContainer() const
     return nullptr;
 }
 
-ScrollTimeline::Data ViewTimeline::computeTimelineData() const
+ScrollTimeline::Data ViewTimeline::computeTimelineData(UseCachedCurrentTime) const
 {
+    // FIXME: account for UseCachedCurrentTime parameter.
     if (!m_cachedCurrentTimeData.scrollOffset && !m_cachedCurrentTimeData.scrollContainerSize)
         return { };
 
@@ -504,6 +517,8 @@ std::pair<double, double> ViewTimeline::intervalForTimelineRangeName(const Scrol
         case Style::SingleAnimationRangeName::Cover:
         case Style::SingleAnimationRangeName::EntryCrossing:
             return data.rangeStart;
+        case Style::SingleAnimationRangeName::Scroll:
+            return 0.0;
         case Style::SingleAnimationRangeName::Entry:
             // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-entry
             // 0% is equivalent to 0% of the cover range.
@@ -530,6 +545,8 @@ std::pair<double, double> ViewTimeline::intervalForTimelineRangeName(const Scrol
         case Style::SingleAnimationRangeName::Cover:
         case Style::SingleAnimationRangeName::ExitCrossing:
             return data.rangeEnd;
+        case Style::SingleAnimationRangeName::Scroll:
+            return m_cachedCurrentTimeData.maxScrollOffset;
         case Style::SingleAnimationRangeName::Exit:
             // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-exit
             // 100% is equivalent to 100% of the cover range.
@@ -627,6 +644,11 @@ Ref<CSSNumericValue> ViewTimeline::startOffset() const
 Ref<CSSNumericValue> ViewTimeline::endOffset() const
 {
     return CSSNumericFactory::px(computeTimelineData().rangeEnd);
+}
+
+bool ViewTimeline::matchesAnonymousViewFunctionForSubject(const Style::ViewFunction& viewFunction, const Styleable& subject) const
+{
+    return isStyleOriginated() && name().isEmpty() && m_insets == viewFunction->insets && axis() == viewFunction->axis && m_subject.styleable() == subject;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData& stickiness)

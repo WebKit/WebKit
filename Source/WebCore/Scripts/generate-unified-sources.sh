@@ -12,7 +12,7 @@ fi
 
 UnifiedSourceCppFileCount=530
 UnifiedSourceCFileCount=0
-UnifiedSourceMmFileCount=0
+UnifiedSourceMmFileCount=1
 UnifiedSourceNonARCMmFileCount=62
 
 if [ $# -eq 0 ]; then

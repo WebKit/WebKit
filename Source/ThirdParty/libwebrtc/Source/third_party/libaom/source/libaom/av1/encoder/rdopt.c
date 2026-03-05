@@ -5742,6 +5742,8 @@ static inline void search_intra_modes_in_interframe(
     if (bh > 4 || bw > 4) return;
   }
 
+  mbmi->skip_txfm = 0;
+
   for (int mode_idx = 0; mode_idx < LUMA_MODE_COUNT; ++mode_idx) {
     if (sf->intra_sf.skip_intra_in_interframe &&
         search_state->intra_search_state.skip_intra_modes)

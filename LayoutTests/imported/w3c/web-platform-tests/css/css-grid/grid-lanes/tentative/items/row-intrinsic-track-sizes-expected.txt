@@ -2,35 +2,35 @@ XXX XX
 XX
 XX
 
-FAIL 'masonry' with: grid-template-rows: auto; assert_in_array: gridTemplateRows value "30px" not in array ["120px"]
-PASS 'masonry' with: grid-template-rows: min-content;
-PASS 'masonry' with: grid-template-rows: max-content;
-FAIL 'masonry' with: grid-template-rows: minmax(0, auto); assert_in_array: gridTemplateRows value "30px" not in array ["120px"]
-PASS 'masonry' with: grid-template-rows: minmax(0, min-content);
-PASS 'masonry' with: grid-template-rows: minmax(0, max-content);
-FAIL 'masonry' with: grid-template-rows: minmax(auto, 10px); assert_in_array: gridTemplateRows value "30px" not in array ["12px"]
-PASS 'masonry' with: grid-template-rows: minmax(min-content, 10px);
-PASS 'masonry' with: grid-template-rows: minmax(max-content, 10px);
-FAIL 'masonry' with: grid-template-rows: auto auto; assert_in_array: gridTemplateRows value "0px 30px" not in array ["60px 60px"]
-FAIL 'masonry' with: grid-template-rows: min-content min-content; assert_in_array: gridTemplateRows value "0px 30px" not in array ["15px 15px"]
-FAIL 'masonry' with: grid-template-rows: max-content max-content; assert_in_array: gridTemplateRows value "0px 30px" not in array ["15px 15px"]
-FAIL 'masonry' with: grid-template-rows: minmax(0, auto) minmax(0, auto); assert_in_array: gridTemplateRows value "0px 30px" not in array ["60px 60px"]
-FAIL 'masonry' with: grid-template-rows: minmax(0, min-content) minmax(0, min-content); assert_in_array: gridTemplateRows value "0px 30px" not in array ["15px 15px"]
-FAIL 'masonry' with: grid-template-rows: minmax(0, max-content) minmax(0, max-content); assert_in_array: gridTemplateRows value "0px 30px" not in array ["15px 15px"]
-FAIL 'masonry' with: grid-template-rows: minmax(auto, 4px) minmax(auto, 4px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["6px 6px"]
-FAIL 'masonry' with: grid-template-rows: minmax(auto, 10px) minmax(auto, 10px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["10px 10px"]
-FAIL 'masonry' with: grid-template-rows: minmax(min-content, 10px) minmax(min-content, 10px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["15px 15px"]
-FAIL 'masonry' with: grid-template-rows: minmax(max-content, 10px) minmax(max-content, 10px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["15px 15px"]
-FAIL 'masonry' with: grid-template-rows: 20px auto; assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 100px"]
-FAIL 'masonry' with: grid-template-rows: 20px min-content; assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 10px"]
-FAIL 'masonry' with: grid-template-rows: 20px max-content; assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 10px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(0, auto); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 100px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(0, min-content); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 10px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(0, max-content); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 10px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(auto, 30px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 30px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(min-content, 6px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 10px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(min-content, 40px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 40px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(max-content, 6px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 10px"]
-FAIL 'masonry' with: grid-template-rows: 20px minmax(max-content, 30px); assert_in_array: gridTemplateRows value "0px 30px" not in array ["20px 30px"]
-FAIL 'masonry' with: grid-template-rows: max-content min-content; assert_in_array: gridTemplateRows value "0px 30px" not in array ["15px 15px"]
+PASS 'grid-lanes' with: grid-template-rows: auto;
+PASS 'grid-lanes' with: grid-template-rows: min-content;
+PASS 'grid-lanes' with: grid-template-rows: max-content;
+PASS 'grid-lanes' with: grid-template-rows: minmax(0, auto);
+PASS 'grid-lanes' with: grid-template-rows: minmax(0, min-content);
+PASS 'grid-lanes' with: grid-template-rows: minmax(0, max-content);
+PASS 'grid-lanes' with: grid-template-rows: minmax(auto, 10px);
+PASS 'grid-lanes' with: grid-template-rows: minmax(min-content, 10px);
+PASS 'grid-lanes' with: grid-template-rows: minmax(max-content, 10px);
+PASS 'grid-lanes' with: grid-template-rows: auto auto;
+PASS 'grid-lanes' with: grid-template-rows: min-content min-content;
+PASS 'grid-lanes' with: grid-template-rows: max-content max-content;
+PASS 'grid-lanes' with: grid-template-rows: minmax(0, auto) minmax(0, auto);
+PASS 'grid-lanes' with: grid-template-rows: minmax(0, min-content) minmax(0, min-content);
+PASS 'grid-lanes' with: grid-template-rows: minmax(0, max-content) minmax(0, max-content);
+PASS 'grid-lanes' with: grid-template-rows: minmax(auto, 4px) minmax(auto, 4px);
+PASS 'grid-lanes' with: grid-template-rows: minmax(auto, 10px) minmax(auto, 10px);
+PASS 'grid-lanes' with: grid-template-rows: minmax(min-content, 10px) minmax(min-content, 10px);
+PASS 'grid-lanes' with: grid-template-rows: minmax(max-content, 10px) minmax(max-content, 10px);
+PASS 'grid-lanes' with: grid-template-rows: 20px auto;
+PASS 'grid-lanes' with: grid-template-rows: 20px min-content;
+PASS 'grid-lanes' with: grid-template-rows: 20px max-content;
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(0, auto);
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(0, min-content);
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(0, max-content);
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(auto, 30px);
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(min-content, 6px);
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(min-content, 40px);
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(max-content, 6px);
+PASS 'grid-lanes' with: grid-template-rows: 20px minmax(max-content, 30px);
+PASS 'grid-lanes' with: grid-template-rows: max-content min-content;
 

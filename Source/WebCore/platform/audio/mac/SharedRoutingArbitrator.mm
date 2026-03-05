@@ -75,7 +75,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutin
 
     if (m_setupArbitrationOngoing) {
         ALWAYS_LOG_IF(m_logger, identifier, "enqueing callback, arbitration ongoing");
-        m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTFMove(callback), identifier = WTFMove(identifier)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
+        m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTF::move(callback), identifier = WTF::move(identifier)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
             CheckedPtr token = weakToken.get();
             if (error == RoutingArbitrationError::None && token)
                 m_tokens.add(*token);
@@ -117,7 +117,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutin
     }
 
     m_setupArbitrationOngoing = true;
-    m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
+    m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTF::move(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
         CheckedPtr token = weakToken.get();
         if (error == RoutingArbitrationError::None && token)
             m_tokens.add(*token);
@@ -125,8 +125,8 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutin
         callback(error, routeChanged);
     });
 
-    [[PAL::getAVAudioRoutingArbiterClassSingleton() sharedRoutingArbiter] beginArbitrationWithCategory:arbitrationCategory completionHandler:[this, identifier = WTFMove(identifier)](BOOL defaultDeviceChanged, NSError * _Nullable error) mutable {
-        callOnMainRunLoop([this, defaultDeviceChanged, error = retainPtr(error), identifier = WTFMove(identifier)] {
+    [[PAL::getAVAudioRoutingArbiterClassSingleton() sharedRoutingArbiter] beginArbitrationWithCategory:arbitrationCategory completionHandler:[this, identifier = WTF::move(identifier)](BOOL defaultDeviceChanged, NSError * _Nullable error) mutable {
+        callOnMainRunLoop([this, defaultDeviceChanged, error = retainPtr(error), identifier = WTF::move(identifier)] {
             if (error)
                 ERROR_LOG(identifier, error.get(), ", routeChanged = ", !!defaultDeviceChanged);
 
@@ -134,7 +134,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutin
 
             ALWAYS_LOG_IF(m_logger, identifier, "arbitration completed, category = ", m_currentCategory ? *m_currentCategory : AudioSession::CategoryType::None, ", default device changed = ", !!defaultDeviceChanged);
 
-            Vector<ArbitrationCallback> callbacks = WTFMove(m_enqueuedCallbacks);
+            Vector<ArbitrationCallback> callbacks = WTF::move(m_enqueuedCallbacks);
             for (auto& callback : callbacks)
                 callback(error ? RoutingArbitrationError::Failed : RoutingArbitrationError::None, defaultDeviceChanged ? DefaultRouteChanged::Yes : DefaultRouteChanged::No);
 

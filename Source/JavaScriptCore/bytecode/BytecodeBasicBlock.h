@@ -29,6 +29,7 @@
 #include <JavaScriptCore/Opcode.h>
 #include <limits.h>
 #include <wtf/FastBitVector.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

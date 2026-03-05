@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 727x19
+        RenderText {#text} at (0,0) size 727x20
           text run at (0,0) width 727: "The bug causes the nested table containing the textarea to be positioned away from the left edge of the outer table"
-        RenderBR {BR} at (726,0) size 1x19
+        RenderBR {BR} at (726,0) size 1x20
       RenderTable {TABLE} at (242,20) size 300x54 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 298x52
           RenderTableRow {TR} at (0,2) size 298x48

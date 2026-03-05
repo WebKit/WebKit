@@ -237,6 +237,11 @@ struct RTC_EXPORT EchoCanceller3Config {
       float anti_howling_gain = 1.f;
     } high_bands_suppression;
 
+    struct HighFrequencySuppression {
+      int limiting_gain_band = 16;
+      int bands_in_limiting_gain = 1;
+    } high_frequency_suppression;
+
     float floor_first_increase = 0.00001f;
     bool conservative_hf_suppression = false;
   } suppressor;

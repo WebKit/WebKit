@@ -13,7 +13,6 @@ LOCAL_OBJ_FILES := \
 	source/compare.o           \
 	source/compare_common.o    \
 	source/compare_gcc.o       \
-	source/compare_msa.o       \
 	source/compare_neon.o      \
 	source/compare_neon64.o    \
 	source/compare_win.o       \
@@ -34,7 +33,6 @@ LOCAL_OBJ_FILES := \
 	source/rotate_common.o     \
 	source/rotate_gcc.o        \
 	source/rotate_lsx.o        \
-	source/rotate_msa.o        \
 	source/rotate_neon.o       \
 	source/rotate_neon64.o     \
 	source/rotate_win.o        \
@@ -43,7 +41,6 @@ LOCAL_OBJ_FILES := \
 	source/row_gcc.o           \
 	source/row_lasx.o          \
 	source/row_lsx.o           \
-	source/row_msa.o           \
 	source/row_neon.o          \
 	source/row_neon64.o        \
 	source/row_rvv.o           \
@@ -54,7 +51,6 @@ LOCAL_OBJ_FILES := \
 	source/scale_common.o      \
 	source/scale_gcc.o         \
 	source/scale_lsx.o         \
-	source/scale_msa.o         \
 	source/scale_neon.o        \
 	source/scale_neon64.o      \
 	source/scale_rgb.o         \

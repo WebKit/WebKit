@@ -46,13 +46,13 @@ public:
 
     virtual ~ContentSecurityPolicyDirective() = 0;
 
-    const String& name() const { return m_name; }
-    const String& text() const { return m_text; }
-    virtual const String& nameForReporting() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
+    virtual const String& nameForReporting() const LIFETIME_BOUND { return m_name; }
 
-    const ContentSecurityPolicyDirectiveList& directiveList() const { return m_directiveList; }
+    const ContentSecurityPolicyDirectiveList& directiveList() const LIFETIME_BOUND { return m_directiveList; }
 
-    bool isDefaultSrc() const;
+    bool NODELETE isDefaultSrc() const;
 
 private:
     String m_name;

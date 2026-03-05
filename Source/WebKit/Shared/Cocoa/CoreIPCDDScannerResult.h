@@ -46,15 +46,15 @@ struct CoreIPCDDScannerResultData {
     RetainPtr<NSNumber> P;
     RetainPtr<NSNumber> VN;
     std::optional<Vector<RetainPtr<DDScannerResult>>> SR; // Recursive
-    std::optional<RetainPtr<NSString>> V;
-    std::optional<RetainPtr<NSNumber>> CF;
+    RetainPtr<NSString> V;
+    RetainPtr<NSNumber> CF;
 
     // "C" dictionary values
-    std::optional<RetainPtr<NSString>> AddressBookUID;
-    std::optional<RetainPtr<NSString>> Domain;
-    std::optional<RetainPtr<NSString>> UUID;
-    std::optional<RetainPtr<NSNumber>> UrlificationBegin;
-    std::optional<RetainPtr<NSNumber>> UrlificationLength;
+    RetainPtr<NSString> AddressBookUID;
+    RetainPtr<NSString> Domain;
+    RetainPtr<NSString> UUID;
+    RetainPtr<NSNumber> UrlificationBegin;
+    RetainPtr<NSNumber> UrlificationLength;
 };
 
 class CoreIPCDDScannerResult {

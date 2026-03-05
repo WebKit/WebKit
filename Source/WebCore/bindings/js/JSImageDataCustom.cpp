@@ -42,7 +42,7 @@ JSValue toJSNewlyCreated(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*
     VM& vm = lexicalGlobalObject->vm();
     auto& imageDataArray = imageData->data();
     Ref arrayBufferView = imageDataArray.arrayBufferView();
-    auto* wrapper = createWrapper<ImageData>(globalObject, WTFMove(imageData));
+    auto* wrapper = createWrapper<ImageData>(globalObject, WTF::move(imageData));
     Identifier dataName = Identifier::fromString(vm, "data"_s);
     wrapper->putDirect(vm, dataName, toJS(lexicalGlobalObject, globalObject, arrayBufferView), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.

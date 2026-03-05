@@ -56,7 +56,7 @@ static WorldMap& allWorlds()
         return nil;
 
     _private = [[WebScriptWorldPrivate alloc] init];
-    _private->world = WTFMove(world);
+    _private->world = WTF::move(world);
 
     ASSERT_ARG(world, !allWorlds().contains(*_private->world));
     allWorlds().add(*_private->world, self);
@@ -86,8 +86,8 @@ static WorldMap& allWorlds()
 
 + (WebScriptWorld *)standardWorld
 {
-    static WebScriptWorld *world = [[WebScriptWorld alloc] initWithWorld:WebCore::mainThreadNormalWorldSingleton()];
-    return world;
+    static NeverDestroyed<RetainPtr<WebScriptWorld>> world = adoptNS([[WebScriptWorld alloc] initWithWorld:WebCore::mainThreadNormalWorldSingleton()]);
+    return world->get();
 }
 
 + (WebScriptWorld *)world

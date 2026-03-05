@@ -47,8 +47,8 @@ namespace IPInt {
 extern "C" [[noreturn]] void SYSV_ABI wasm_log_crash(CallFrame*, JSWebAssemblyInstance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame*, JSWebAssemblyInstance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UCPURegister SYSV_ABI slow_path_wasm_unwind_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance);
-extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcount(const void* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcountll(const void* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI NODELETE slow_path_wasm_popcount(const void* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI NODELETE slow_path_wasm_popcountll(const void* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #if USE(JSVALUE64)
 static constexpr uintptr_t SlowPathExceptionTag = 1;
@@ -87,11 +87,11 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, unsigned index
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_init, IPIntStackEntry* sp, TableInitMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_fill, IPIntStackEntry* sp, TableFillMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* metadata);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_grow, int32_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_grow, int64_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_init, int32_t, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(data_drop, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_copy, int32_t, int32_t, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_fill, int32_t, int32_t, int32_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_copy, int64_t, int64_t, int64_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_fill, int64_t, int32_t, int64_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(elem_drop, int32_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_copy, IPIntStackEntry* sp, TableCopyMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_size, int32_t);
@@ -122,6 +122,8 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_test, int32_t, bool, EncodedJSValue);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_cast, int32_t, bool, EncodedJSValue);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call);
+
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(trace, CallFrame*, uint8_t*, uint8_t*);
 
 // We can't use FunctionSpaceIndex here since ARMv7 ABI always passes structs on th stack...
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_function_body, CallFrame*);

@@ -1,0 +1,11 @@
+
+Test that a 'error' event is dispatched when a MediaDeviceRoute encounters a playback error after becoming ready to play a URL.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+EVENT(canplaythrough)
+RUN(route.hasPlaybackError = true)
+EVENT(error)
+END OF TEST
+

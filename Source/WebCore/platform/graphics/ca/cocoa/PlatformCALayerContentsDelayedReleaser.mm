@@ -52,7 +52,7 @@ void PlatformCALayerContentsDelayedReleaser::takeLayerContents(PlatformCALayer& 
 
     auto retainedContents = RetainPtr { layer.contents() };
     if (retainedContents)
-        m_retainedContents.append(WTFMove(retainedContents));
+        m_retainedContents.append(WTF::move(retainedContents));
     layer.setContents(nullptr);
 }
 

@@ -65,7 +65,7 @@ auto CSSValueConversion<FontFeatureSettings>::operator()(BuilderState& state, co
         });
     }
 
-    return { WTFMove(platformSettings) };
+    return { WTF::move(platformSettings) };
 }
 
 Ref<CSSValue> CSSValueCreation<FontFeatureSettings>::operator()(CSSValuePool& pool, const RenderStyle& style, const FontFeatureSettings& value)
@@ -80,7 +80,7 @@ Ref<CSSValue> CSSValueCreation<FontFeatureSettings>::operator()(CSSValuePool& po
             createCSSValue(pool, style, FontFeatureSettings::Value { setting.value() })
         ));
     }
-    return CSSValueList::createCommaSeparated(WTFMove(list));
+    return CSSValueList::createCommaSeparated(WTF::move(list));
 }
 
 // MARK: - Serialization

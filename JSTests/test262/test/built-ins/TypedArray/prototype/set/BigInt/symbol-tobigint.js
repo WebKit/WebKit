@@ -34,14 +34,14 @@ info: |
     Argument Type: Symbol
     Result: Throw a TypeError exception.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray, Symbol]
 ---*/
 
 var s = Symbol()
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(1)
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(1))
 
   assert.throws(TypeError, function() {
     typedArray.set([s]);

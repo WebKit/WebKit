@@ -31,8 +31,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebContextMenuProxyWPE::WebContextMenuProxyWPE(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
-    : WebContextMenuProxy(page, WTFMove(context), userData)
+WebContextMenuProxyWPE::WebContextMenuProxyWPE(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
+    : WebContextMenuProxy(page, WTF::move(frameInfo), WTF::move(context), userData)
 {
 }
 

@@ -53,7 +53,7 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
     if (!(platformEvent->type() == PlatformEvent::Type::RawKeyDown || platformEvent->type() == PlatformEvent::Type::Char))
         return { };
 
-    static constexpr std::pair<PackedASCIILiteral<uint64_t>, KeyboardScrollingKey> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<PackedASCIILiteral<uint64_t>, KeyboardScrollingKey>>({
         { "Down"_s, KeyboardScrollingKey::DownArrow },
         { "End"_s, KeyboardScrollingKey::End },
         { "Home"_s, KeyboardScrollingKey::Home },
@@ -62,8 +62,7 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
         { "PageUp"_s, KeyboardScrollingKey::PageUp },
         { "Right"_s, KeyboardScrollingKey::RightArrow },
         { "Up"_s, KeyboardScrollingKey::UpArrow },
-    };
-    static constexpr SortedArrayMap map { mappings };
+    }) };
 
     auto identifier = platformEvent->keyIdentifier();
     if (auto* result = map.tryGet(identifier))
@@ -148,7 +147,7 @@ const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const K
 float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, ScrollGranularity granularity) const
 {
     CheckedRef scrollableArea = m_scrollableArea.get();
-    auto scrollbar = scrollableArea->scrollbarForDirection(direction);
+    RefPtr scrollbar = scrollableArea->scrollbarForDirection(direction);
     if (!scrollbar)
         return false;
 
@@ -246,18 +245,13 @@ void KeyboardScrollingAnimator::handleKeyUpEvent()
 
     m_scrollTriggeringKeyIsPressed = false;
 
-    checkedScrollableArea()->endKeyboardScroll(false);
+    protect(m_scrollableArea)->endKeyboardScroll(false);
 }
 
 void KeyboardScrollingAnimator::stopScrollingImmediately()
 {
     m_scrollTriggeringKeyIsPressed = false;
-    checkedScrollableArea()->endKeyboardScroll(true);
-}
-
-CheckedRef<ScrollableArea> KeyboardScrollingAnimator::checkedScrollableArea() const
-{
-    return m_scrollableArea.get();
+    protect(m_scrollableArea)->endKeyboardScroll(true);
 }
 
 } // namespace WebCore

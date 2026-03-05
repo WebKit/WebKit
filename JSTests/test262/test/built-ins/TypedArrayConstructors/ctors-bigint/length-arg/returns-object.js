@@ -19,12 +19,12 @@ info: |
 
   ...
   7. Return obj
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(4);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(4));
   var length = typedArray.length;
 
   assert.sameValue(length, 4, "length");

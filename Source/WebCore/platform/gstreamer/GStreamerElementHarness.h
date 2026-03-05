@@ -41,7 +41,7 @@ public:
     public:
         static Ref<Stream> create(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness, GRefPtr<GstCaps>&& allowedOutputCaps = nullptr)
         {
-            return adoptRef(*new Stream(WTFMove(pad), WTFMove(downstreamHarness), WTFMove(allowedOutputCaps)));
+            return adoptRef(*new Stream(WTF::move(pad), WTF::move(downstreamHarness), WTF::move(allowedOutputCaps)));
         }
 
         ~Stream();
@@ -82,7 +82,7 @@ public:
     using ProcessSampleCallback = Function<void(Stream&, GRefPtr<GstSample>&&)>;
     static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessSampleCallback&& processOutputSampleCallback, std::optional<PadLinkCallback>&& padLinkCallback = std::nullopt, GRefPtr<GstCaps>&& allowedOutputCaps = nullptr)
     {
-        return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputSampleCallback), WTFMove(padLinkCallback), WTFMove(allowedOutputCaps)));
+        return adoptRef(*new GStreamerElementHarness(WTF::move(element), WTF::move(processOutputSampleCallback), WTF::move(padLinkCallback), WTF::move(allowedOutputCaps)));
     }
     ~GStreamerElementHarness();
 
@@ -93,6 +93,8 @@ public:
     bool pushSample(GRefPtr<GstSample>&&);
     bool pushBuffer(GRefPtr<GstBuffer>&&);
     bool pushEvent(GRefPtr<GstEvent>&&);
+
+    void storeStickyEvent(const GRefPtr<GstEvent>&);
 
     GstPad* inputPad() const { return m_srcPad.get(); }
     const GRefPtr<GstCaps>& inputCaps() const { return m_inputCaps; }

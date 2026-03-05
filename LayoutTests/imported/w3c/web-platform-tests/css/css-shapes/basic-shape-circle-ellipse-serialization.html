@@ -14,15 +14,15 @@ function checkEquals(input, expected) {
     });
 }
 
-// Keywords get serialized as keywords 
-checkEquals("circle(at left bottom)", "circle(at left bottom)");
-checkEquals("circle(at bottom left)", "circle(at left bottom)");
+// Keywords get replaced by percentages in 2-value form
+checkEquals("circle(at left bottom)", "circle(at 0% 100%)");
+checkEquals("circle(at bottom left)", "circle(at 0% 100%)");
 checkEquals("circle(at right calc(10% + 5px))",
-            "circle(at right calc(10% + 5px))");
-checkEquals("ellipse(at left bottom)", "ellipse(at left bottom)");
-checkEquals("ellipse(at bottom left)", "ellipse(at left bottom)");
+            "circle(at 100% calc(10% + 5px))");
+checkEquals("ellipse(at left bottom)", "ellipse(at 0% 100%)");
+checkEquals("ellipse(at bottom left)", "ellipse(at 0% 100%)");
 checkEquals("ellipse(at right calc(10% + 5px))",
-            "ellipse(at right calc(10% + 5px))");
+            "ellipse(at 100% calc(10% + 5px))");
 
 // Only 2 or 4 value form allowed
 checkEquals("circle()", "circle()");
@@ -35,21 +35,21 @@ checkEquals("ellipse(closest-side farthest-side)",
             "ellipse(closest-side farthest-side)");
 
 
-checkEquals("circle(at top 0% right 5px)", "circle(at right 5px top 0%)");
-checkEquals("ellipse(at top 0% right 10px)", "ellipse(at right 10px top 0%)");
+checkEquals("circle(at top 0% right 5px)", "circle(at calc(100% - 5px) 0%)");
+checkEquals("ellipse(at top 0% right 10px)", "ellipse(at calc(100% - 10px) 0%)");
 // Remove defaults like closest-side
 checkEquals("circle(closest-side at center)",
-            "circle(at center center)");
+            "circle(at 50% 50%)");
 checkEquals("ellipse(closest-side closest-side at center)",
-            "ellipse(at center center)");
+            "ellipse(at 50% 50%)");
 
 // don't remove non defaults
 checkEquals("circle(farthest-side at center)",
-            "circle(farthest-side at center center)");
+            "circle(farthest-side at 50% 50%)");
 checkEquals("circle(10px at center)",
-            "circle(10px at center center)");
+            "circle(10px at 50% 50%)");
 checkEquals("ellipse(farthest-side 10px at center)",
-            "ellipse(farthest-side 10px at center center)");
+            "ellipse(farthest-side 10px at 50% 50%)");
 // Ellipse can have 0 radii or two, not one. We cannot
 // eliminate a single closest-side if the other is different
 checkEquals("ellipse(closest-side farthest-side at 50% 50%)",
@@ -57,19 +57,19 @@ checkEquals("ellipse(closest-side farthest-side at 50% 50%)",
 checkEquals("ellipse(closest-side 10% at 50% 50%)",
             "ellipse(closest-side 10% at 50% 50%)");
 
-// Keywords and offsets are both serialized for 4 component position
+  // Transform to <length-percentage>.
 checkEquals("circle(at right 5px bottom 10px)",
-            "circle(at right 5px bottom 10px)");
+            "circle(at calc(100% - 5px) calc(100% - 10px))");
 checkEquals("ellipse(at right 5px bottom 10px)",
-            "ellipse(at right 5px bottom 10px)");
+            "ellipse(at calc(100% - 5px) calc(100% - 10px))");
 
 // Don't convert zero lengths to 0%
-checkEquals("circle(at right 5% top 0px)", "circle(at right 5% top 0px)");
-checkEquals("ellipse(at right 5% top 0px)", "ellipse(at right 5% top 0px)");
+checkEquals("circle(at right 5% top 0px)", "circle(at calc(95%) 0px)");
+checkEquals("ellipse(at right 5% top 0px)", "ellipse(at calc(95%) 0px)");
 
-// Maintain calcs
+// Transform calcs
 checkEquals("circle(at right calc(10% + 5px) bottom calc(10% + 5px))",
-            "circle(at right calc(10% + 5px) bottom calc(10% + 5px))");
+            "circle(at calc(90% - 5px) calc(90% - 5px))");
 checkEquals("ellipse(at right calc(10% + 5px) bottom calc(10% + 5px))",
-            "ellipse(at right calc(10% + 5px) bottom calc(10% + 5px))");
+            "ellipse(at calc(90% - 5px) calc(90% - 5px))");
 </script>

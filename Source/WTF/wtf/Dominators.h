@@ -28,6 +28,7 @@
 #include <ranges>
 #include <wtf/BitSet.h>
 #include <wtf/CommaPrinter.h>
+#include <wtf/DataLog.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/Vector.h>

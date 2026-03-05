@@ -155,7 +155,7 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
     if (!fileHandle)
         return { nullString(), FileHandle() };
 
-    return { String::fromUTF8(temporaryFilePath.span().data()), WTFMove(fileHandle) };
+    return { String::fromUTF8(temporaryFilePath.span().data()), WTF::move(fileHandle) };
 }
 
 NSString *createTemporaryDirectory(NSString *directoryPrefix)
@@ -192,11 +192,11 @@ std::pair<FileHandle, CString> createTemporaryFileInDirectory(const String& dire
     auto templatePath = pathByAppendingComponents(directory, { { makeString("XXXXXX"_s, suffix) } });
     auto fsTemplatePath = fileSystemRepresentation(templatePath);
     auto fileHandle = FileHandle::adopt(mkstemps(fsTemplatePath.mutableSpanIncludingNullTerminator().data(), fsSuffix.length()));
-    return { WTFMove(fileHandle), WTFMove(fsTemplatePath) };
+    return { WTF::move(fileHandle), WTF::move(fsTemplatePath) };
 }
 
 #ifdef IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES
-static int toIOPolicyScope(PolicyScope scope)
+static int NODELETE toIOPolicyScope(PolicyScope scope)
 {
     switch (scope) {
     case PolicyScope::Process:

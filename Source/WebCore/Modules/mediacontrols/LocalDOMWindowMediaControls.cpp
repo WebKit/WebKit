@@ -53,7 +53,7 @@ LocalDOMWindowMediaControls* LocalDOMWindowMediaControls::from(DOMWindow& window
     if (!supplement) {
         auto newSupplement = makeUnique<LocalDOMWindowMediaControls>(window);
         supplement = newSupplement.get();
-        provideTo(localWindow.get(), supplementName(), WTFMove(newSupplement));
+        provideTo(localWindow.get(), supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

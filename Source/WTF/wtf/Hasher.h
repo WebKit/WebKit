@@ -36,6 +36,17 @@ namespace WTF {
 template<typename... Types> uint32_t computeHash(const Types&...);
 template<typename T, typename... OtherTypes> uint32_t computeHash(std::initializer_list<T>, std::initializer_list<OtherTypes>...);
 
+template<typename... Bools>
+constexpr auto packBools(Bools... bools)
+{
+    static_assert(sizeof...(bools) <= 64, "Cannot pack more than 64 bools!");
+    using ResultType = std::conditional_t<sizeof...(bools) <= 32, uint32_t, uint64_t>;
+    ResultType result = 0;
+    ResultType bit = 1;
+    ((result |= bools ? bit : 0, bit <<= 1), ...);
+    return result;
+}
+
 class Hasher {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Hasher);
 public:

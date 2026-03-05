@@ -77,7 +77,7 @@ CDM::CDM(Document& document, const String& keySystem, const String& mediaKeysHas
     for (auto& weakFactory : CDMFactory::registeredFactories()) {
         Ref factory = weakFactory.get();
         if (factory->supportsKeySystem(keySystem)) {
-            m_private = factory->createCDM(keySystem, m_mediaKeysHashSalt, *this);
+            lazyInitialize(m_private, factory->createCDM(keySystem, m_mediaKeysHashSalt, *this));
 #if !RELEASE_LOG_DISABLED
             m_private->setLogIdentifier(m_logIdentifier);
 #endif
@@ -105,7 +105,7 @@ void CDM::getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfi
     bool isEphemeral = !page || page->sessionID().isEphemeral();
     if (isEphemeral || document->canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::No)
         access = CDMPrivate::LocalStorageAccess::NotAllowed;
-    m_private->getSupportedConfiguration(WTFMove(candidateConfiguration), access, WTFMove(callback));
+    m_private->getSupportedConfiguration(WTF::move(candidateConfiguration), access, WTF::move(callback));
 }
 
 void CDM::loadAndInitialize()

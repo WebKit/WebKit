@@ -28,6 +28,26 @@ import subprocess
 import sys
 
 
+WEBKIT_CHECKERS = [
+    'alpha.webkit.ForwardDeclChecker',
+    'alpha.webkit.MemoryUnsafeCastChecker',
+    'alpha.webkit.NoDeleteChecker',
+    'alpha.webkit.NoUncheckedPtrMemberChecker',
+    'alpha.webkit.NoUnretainedMemberChecker',
+    'alpha.webkit.RetainPtrCtorAdoptChecker',
+    'alpha.webkit.UncheckedCallArgsChecker',
+    'alpha.webkit.UncheckedLocalVarsChecker',
+    'alpha.webkit.UncountedCallArgsChecker',
+    'alpha.webkit.UncountedLocalVarsChecker',
+    'alpha.webkit.UnretainedCallArgsChecker',
+    'alpha.webkit.UnretainedLambdaCapturesChecker',
+    'alpha.webkit.UnretainedLocalVarsChecker',
+    'webkit.NoUncountedMemberChecker',
+    'webkit.RefCntblBaseVirtualDtor',
+    'webkit.UncountedLambdaCapturesChecker',
+]
+
+
 def args_for_additional_checkers(checker_names):
     if not len(checker_names):
         return []
@@ -79,14 +99,7 @@ def make_analyzer_flags(output_dir, args):
         ])
 
     if args.enable_webkit_checkers:
-        additional_checkers.extend([
-            'webkit.NoUncountedMemberChecker',
-            'webkit.RefCntblBaseVirtualDtor',
-            'webkit.UncountedLambdaCapturesChecker',
-            'alpha.webkit.NoUncheckedPtrMemberChecker',
-            'alpha.webkit.UncountedCallArgsChecker',
-            'alpha.webkit.UncountedLocalVarsChecker'
-        ])
+        additional_checkers.extend(WEBKIT_CHECKERS)
 
     if args.enable_checkers:
         delimiters = re.compile(r'[\s,]+')
@@ -94,23 +107,7 @@ def make_analyzer_flags(output_dir, args):
         additional_checkers.extend(checkers)
 
     if args.only_smart_pointers:
-        additional_checkers.extend([
-            'alpha.webkit.ForwardDeclChecker',
-            'alpha.webkit.MemoryUnsafeCastChecker',
-            'alpha.webkit.NoUncheckedPtrMemberChecker',
-            'alpha.webkit.NoUnretainedMemberChecker',
-            'alpha.webkit.RetainPtrCtorAdoptChecker',
-            'alpha.webkit.UncheckedCallArgsChecker',
-            'alpha.webkit.UncheckedLocalVarsChecker',
-            'alpha.webkit.UncountedCallArgsChecker',
-            'alpha.webkit.UncountedLocalVarsChecker',
-            'alpha.webkit.UnretainedCallArgsChecker',
-            'alpha.webkit.UnretainedLambdaCapturesChecker',
-            'alpha.webkit.UnretainedLocalVarsChecker',
-            'webkit.NoUncountedMemberChecker',
-            'webkit.RefCntblBaseVirtualDtor',
-            'webkit.UncountedLambdaCapturesChecker',
-        ])
+        additional_checkers.extend(WEBKIT_CHECKERS)
 
     if additional_checkers:
         analyzer_flags.extend(args_for_additional_checkers(additional_checkers))
@@ -178,8 +175,13 @@ def main(args):
         make_command.extend(['GCC_PREPROCESSOR_ADDITIONS={}'.format(args.preprocessor_additions)])
     if args.scheme:
         make_command.extend(['SCHEME={}'.format(args.scheme)])
+    xcodebuild_args = {}
     if args.toolchains:
-        make_command.extend(["""ARGS='TOOLCHAINS="{}"'""".format(args.toolchains)])
+        xcodebuild_args['TOOLCHAINS'] = args.toolchains
+    if args.swift_conditions:
+        xcodebuild_args['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = args.swift_conditions
+    if len(xcodebuild_args):
+        make_command.extend(['ARGS={}'.format(' '.join(["{}=\"{}\"".format(key, xcodebuild_args[key]) for key in xcodebuild_args]))])
 
     commands = [
         [set_webkit_config_path, '--{}'.format(args.configuration)],
@@ -238,6 +240,8 @@ def parse_args():
                         help='Xcode scheme to use when performing Build and Analyze.')
     parser.add_argument('--preprocessor-additions', default=None,
                         help='Additional preprocessor macros.')
+    parser.add_argument('--swift-conditions', default=None,
+                        help='Additional Swift active compilation conditions.')
     parser.add_argument('--dry-run', default=False,
                         action='store_true', help='Output the command instead of executing it.')
     parser.add_argument('--configuration', default='debug', choices=['debug', 'release'], dest='configuration', help='Set the build configuration (default: debug).')

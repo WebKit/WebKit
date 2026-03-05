@@ -43,4 +43,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(called, sample.length, "callbackfn called for each index");
   assert.sameValue(result, true, "return is true");
-});
+}, null, ["passthrough"]);

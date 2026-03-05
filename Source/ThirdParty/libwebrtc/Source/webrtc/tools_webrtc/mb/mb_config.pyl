@@ -62,6 +62,7 @@
         'openssl': 'openssl_x64',
         'libstdcpp': 'libstdcpp_x64',
         'no_lld': 'no_lld_x64',
+        'no_psnr': 'no_psnr_x64',
       },
       'Linux Asan': 'asan_lsan_clang_release_bot_x64',
       'Linux MSan': 'msan_clang_release_bot_x64',
@@ -101,7 +102,7 @@
       'Win64 Release (Clang)': 'win_clang_release_bot_x64',
 
       # iOS
-      'iOS Debug (simulator)': 'ios_debug_bot_x64',
+      'iOS Debug (simulator)': 'ios_debug_bot_arm64',
       'iOS64 Debug': 'ios_debug_bot_arm64',
       'iOS64 Release': 'ios_release_bot_arm64',
     },
@@ -165,7 +166,7 @@
       # iOS
       'ios_compile_arm64_dbg': 'ios_debug_bot_arm64',
       'ios_compile_arm64_rel': 'ios_release_bot_arm64',
-      'ios_dbg_simulator': 'ios_debug_bot_x64',
+      'ios_dbg_simulator': 'ios_debug_bot_arm64',
 
       # Include What You Use
       'iwyu_verifier': 'release_bot_x64',
@@ -192,6 +193,7 @@
         'openssl': 'openssl_x64',
         'libstdcpp': 'libstdcpp_x64',
         'no_lld': 'no_lld_x64',
+        'no_psnr': 'no_psnr_x64',
       },
       'linux_msan': 'msan_clang_release_bot_x64',
       'linux_rel': 'release_bot_x64',
@@ -345,14 +347,6 @@
       'ios_simulator',
       'debug_bot',
       'arm64',
-      'no_ios_code_signing',
-      'xctest',
-    ],
-    'ios_debug_bot_x64': [
-      'ios',
-      'ios_simulator',
-      'debug_bot',
-      'x64',
       'xctest',
     ],
     'ios_internal_debug_bot_arm64': [
@@ -410,6 +404,7 @@
     ['msan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
     'no_h264_debug_bot_x86': ['debug_bot', 'x86'],
     'no_lld_x64': ['debug_bot', 'x64', 'no_lld'],
+    'no_psnr_x64': ['debug_bot', 'x64', 'no_psnr'],
     'openssl_x64': ['debug_bot', 'x64', 'no_build_ssl'],
     'perfetto_android_arm': [
       'android',
@@ -493,7 +488,7 @@
   # mb should use. See //tools/mb/docs/user_guide.md for more information.
   'mixins': {
     'android': {
-      'gn_args': 'target_os="android" android_static_analysis="off"',
+      'gn_args': 'target_os="android" android_static_analysis="on"',
     },
     'arm': {
       'gn_args': 'target_cpu="arm"',
@@ -589,6 +584,9 @@
     },
     'no_protobuf': {
       'gn_args': 'rtc_enable_protobuf=false',
+    },
+    'no_psnr': {
+      'gn_args': 'rtc_video_psnr=false',
     },
     'no_sctp': {
       'gn_args': 'rtc_enable_sctp=false',

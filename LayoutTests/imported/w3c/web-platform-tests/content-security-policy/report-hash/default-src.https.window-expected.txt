@@ -1,4 +1,5 @@
 
+PASS Warm-up script load
 PASS Reporting endpoints received hash for same-origin CORS script.
 PASS Reporting endpoints received hash for same-origin no-CORS script.
 PASS Reporting endpoints received hash for cross-origin CORS script.
@@ -7,4 +8,5 @@ PASS Reporting endpoints received the right hash for same-origin CORS script wit
 PASS Reporting endpoints received no report for failed integrity check with sha256.
 PASS Reporting endpoints received no report for failed integrity check with sha512.
 PASS Reporting endpoints received no report for CORS stylesheet.
+PASS Reporting endpoints received no report for CORS stylesheet with integrity.
 

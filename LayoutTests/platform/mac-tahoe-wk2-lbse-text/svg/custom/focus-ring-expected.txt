@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (15,10) size 100x100
+  RenderSVGEllipse {circle} at (15,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [cx=65.00] [cy=60.00] [r=50.00]
+layer at (140,10) size 100x100
+  RenderSVGPath {path} at (140,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M 140 10 L 190 110 L 240 60 L 220 60 L 200 30 Z"]
+layer at (270,10) size 100x100
+  RenderSVGTransformableContainer {g} at (270,10) size 100x100
+layer at (270,10) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [x=270.00] [y=10.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (10,306) size 78x18
+  RenderSVGText {text} at (10,306) size 78x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 78x18
+      chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 12 width 77.75: "focused text"
+layer at (0,-14) size 78x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,-14) size 78x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 78x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 77.75: "focused text"
+layer at (0,-14) size 78x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-14) size 77.75x18
+layer at (0,-14) size 78x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 78x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 78x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 77.75: "focused text"
+layer at (0,0) size 100x100
+  RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (10,400) size 530x410 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGImage {image} at (10,400) size 530x410
+layer at (0,0) size 530x410
+  RenderSVGImage {image} at (0,0) size 530x410
+layer at (0,0) size 530x410
+  RenderSVGTransformableContainer {g} at (0,0) size 530x410
+layer at (0,0) size 530x410
+  RenderSVGImage {image} at (0,0) size 530x410

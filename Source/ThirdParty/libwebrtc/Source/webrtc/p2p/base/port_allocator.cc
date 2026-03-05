@@ -17,15 +17,18 @@
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/candidate.h"
 #include "api/transport/enums.h"
+#include "api/units/time_delta.h"
 #include "p2p/base/ice_credentials_iterator.h"
 #include "p2p/base/port.h"
 #include "p2p/base/port_interface.h"
 #include "p2p/base/transport_description.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crypto_random.h"
+#include "rtc_base/net_helper.h"
 #include "rtc_base/socket_address.h"
 
 namespace webrtc {
@@ -77,7 +80,14 @@ PortAllocatorSession::PortAllocatorSession(absl::string_view content_name,
       content_name_(content_name),
       component_(component),
       ice_ufrag_(ice_ufrag),
-      ice_pwd_(ice_pwd) {
+      ice_pwd_(ice_pwd),
+      port_ready_trampoline_(this),
+      ports_pruned_trampoline_(this),
+      candidates_ready_trampoline_(this),
+      candidate_error_trampoline_(this),
+      candidates_removed_trampoline_(this),
+      candidates_allocation_done_trampoline_(this),
+      ice_regathering_trampoline_(this) {
   // Pooled sessions are allowed to be created with empty content name,
   // component, ufrag and password.
   RTC_DCHECK(ice_ufrag.empty() == ice_pwd.empty());
@@ -183,7 +193,10 @@ bool PortAllocator::SetConfiguration(
   // in future sessions. We also update the ready ports in the pooled sessions.
   // Ports in sessions that are taken and owned by P2PTransportChannel will be
   // updated there via IceConfig.
-  stun_candidate_keepalive_interval_ = stun_candidate_keepalive_interval;
+  stun_candidate_keepalive_interval_ =
+      stun_candidate_keepalive_interval.has_value()
+          ? std::optional(TimeDelta::Millis(*stun_candidate_keepalive_interval))
+          : std::nullopt;
   for (const auto& session : pooled_sessions_) {
     session->SetStunKeepaliveIntervalForReadyPorts(
         stun_candidate_keepalive_interval_);
@@ -241,6 +254,7 @@ std::unique_ptr<PortAllocatorSession> PortAllocator::TakePooledSession(
   auto it =
       pooled_sessions_.begin() + std::distance(pooled_sessions_.cbegin(), cit);
   std::unique_ptr<PortAllocatorSession> ret = std::move(*it);
+  RTC_DCHECK(ret->pooled());
   ret->SetIceParameters(content_name, component, ice_ufrag, ice_pwd);
   ret->set_pooled(false);
   // According to JSEP, a pooled session should filter candidates only
@@ -256,9 +270,8 @@ const PortAllocatorSession* PortAllocator::GetPooledSession(
   auto it = FindPooledSession(ice_credentials);
   if (it == pooled_sessions_.end()) {
     return nullptr;
-  } else {
-    return it->get();
   }
+  return it->get();
 }
 
 std::vector<std::unique_ptr<PortAllocatorSession>>::const_iterator
@@ -329,6 +342,11 @@ Candidate PortAllocator::SanitizeCandidate(const Candidate& c) const {
        (c.is_prflx() && filter_prflx_related_address));
   return c.ToSanitizedCopy(use_hostname_address, filter_related_address,
                            /*filter_ufrag=*/false);
+}
+
+void PortAllocatorSession::SubscribePortReady(
+    absl::AnyInvocable<void(PortAllocatorSession*, PortInterface*)> callback) {
+  port_ready_trampoline_.Subscribe(std::move(callback));
 }
 
 }  // namespace webrtc

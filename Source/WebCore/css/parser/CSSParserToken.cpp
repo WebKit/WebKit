@@ -40,7 +40,7 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSParserToken);
 
 template<typename CharacterType>
-CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
+CSSUnitType NODELETE cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
 {
     ASSERT(data.data());
     switch (data.size()) {
@@ -400,7 +400,7 @@ CSSParserToken::CSSParserToken(HashTokenType type, StringView value)
     initValueFromStringView(value);
 }
 
-static StringView mergeIfAdjacent(StringView a, StringView b)
+static StringView NODELETE mergeIfAdjacent(StringView a, StringView b)
 {
     if (a.is8Bit() && b.is8Bit()) {
         auto characters = a.span8();

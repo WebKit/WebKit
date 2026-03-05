@@ -11,14 +11,9 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "libANGLE/renderer/vulkan/CLContextVk.h"
-#include "libANGLE/renderer/vulkan/cl_types.h"
-#include "libANGLE/renderer/vulkan/vk_resource.h"
-
 #include "libANGLE/renderer/CLEventImpl.h"
+#include "libANGLE/renderer/serial_utils.h"
 
-#include "libANGLE/CLCommandQueue.h"
-#include "libANGLE/CLContext.h"
 #include "libANGLE/CLEvent.h"
 
 namespace rx
@@ -27,22 +22,14 @@ namespace rx
 class CLEventVk : public CLEventImpl
 {
   public:
-    CLEventVk(const cl::Event &event,
-              const cl::ExecutionStatus initialStatus,
-              const QueueSerial eventSerial);
+    CLEventVk(const cl::Event &event, const cl::ExecutionStatus initialStatus);
     ~CLEventVk() override;
 
     cl_int getCommandType() const { return mEvent.getCommandType(); }
     bool isUserEvent() const { return mEvent.isUserEvent(); }
     cl::Event &getFrontendObject() { return const_cast<cl::Event &>(mEvent); }
     const QueueSerial &getQueueSerial() { return mQueueSerial; }
-    bool usedByCommandBuffer(const QueueSerial &commandBufferQueueSerial) const
-    {
-        ASSERT(commandBufferQueueSerial.valid());
-        return mQueueSerial == commandBufferQueueSerial;
-    }
-
-    angle::Result onEventCreate() override;
+    void setQueueSerial(QueueSerial queueSerial);
 
     angle::Result getCommandExecutionStatus(cl_int &executionStatus) override;
 
@@ -75,7 +62,7 @@ class CLEventVk : public CLEventImpl
         cl_ulong commandCompleteTS;
     };
     angle::SynchronizedValue<ProfilingTimestamps> mProfilingTimestamps;
-    const QueueSerial mQueueSerial;
+    QueueSerial mQueueSerial;
 };
 
 }  // namespace rx

@@ -27,9 +27,9 @@ assert.sameValue(
   'The value of `typeof TypedArray.prototype.at` is "function"'
 );
 
-testWithTypedArrayConstructors(TA => {
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
   assert.sameValue(typeof TA.prototype.at, 'function', 'The value of `typeof TA.prototype.at` is "function"');
-  let a = new TA([1, 2, 3, 4]);
+  let a = new TA(makeCtorArg([1, 2, 3, 4]));
 
   assert.sameValue(a.at(0), 1, 'a.at(0) must return 1');
   assert.sameValue(a.at(1), 2, 'a.at(1) must return 2');

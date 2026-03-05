@@ -31,6 +31,7 @@
 #pragma once
 
 #include <WebCore/ResourceLoaderOptions.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomString.h>
@@ -70,7 +71,7 @@ namespace WebCore {
 
     // Useful for doing loader operations from any thread (not threadsafe,
     // just able to run on threads other than the main thread).
-    class ThreadableLoader {
+    class ThreadableLoader : public AbstractRefCounted {
         WTF_MAKE_NONCOPYABLE(ThreadableLoader);
     public:
         static void loadResourceSynchronously(ScriptExecutionContext&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
@@ -78,16 +79,12 @@ namespace WebCore {
 
         virtual void computeIsDone() = 0;
         virtual void cancel() = 0;
-        void ref() { refThreadableLoader(); }
-        void deref() { derefThreadableLoader(); }
 
         static void logError(ScriptExecutionContext&, const ResourceError&, const String&);
 
     protected:
         ThreadableLoader() = default;
         virtual ~ThreadableLoader() = default;
-        virtual void refThreadableLoader() = 0;
-        virtual void derefThreadableLoader() = 0;
     };
 
 } // namespace WebCore

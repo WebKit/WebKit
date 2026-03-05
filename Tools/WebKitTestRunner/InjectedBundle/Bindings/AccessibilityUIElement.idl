@@ -126,6 +126,7 @@ interface AccessibilityUIElement {
     readonly attribute boolean isFirstItemInSuggestion;
     readonly attribute boolean isLastItemInSuggestion;
     readonly attribute boolean isRemoteFrame;
+    readonly attribute boolean isRemotePlatformElement;
 
     readonly attribute long pageX;
     readonly attribute long pageY;
@@ -153,6 +154,7 @@ interface AccessibilityUIElement {
     undefined syncPress();
     undefined showMenu();
     boolean dismiss();
+    boolean invokeCustomActionAtIndex(unsigned long index);
 
     // Attribute info.
     DOMString allAttributes();
@@ -194,6 +196,7 @@ interface AccessibilityUIElement {
     object selectedCells();
 
     // Relationships.
+    AccessibilityUIElement ariaActionsElementAtIndex(unsigned long index);
     AccessibilityUIElement controllerElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaControlsElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaDescribedByElementAtIndex(unsigned long index);
@@ -224,6 +227,7 @@ interface AccessibilityUIElement {
     boolean attributedStringRangeIsMisspelled(unsigned long location, unsigned long length);
     unsigned long uiElementCountForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly);
     AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly);
+    object uiElementsForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly, unsigned long resultsLimit);
     DOMString selectTextWithCriteria(DOMString ambiguityResolution, object searchStrings, DOMString replacementString, DOMString activity);
     object searchTextWithCriteria(object searchStrings, DOMString startFrom, DOMString direction);
     object performTextOperation(DOMString operationType, object markerRanges, object replacementStrings, boolean shouldSmartReplace);
@@ -256,6 +260,7 @@ interface AccessibilityUIElement {
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
     AccessibilityTextMarkerRange textMarkerRangeForUnorderedMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
+    AccessibilityTextMarkerRange intersectTextMarkerRanges(AccessibilityTextMarkerRange range1, AccessibilityTextMarkerRange range2);
     AccessibilityTextMarkerRange textMarkerRangeForRange(unsigned long location, unsigned long length);
     AccessibilityTextMarkerRange selectedTextMarkerRange();
     undefined resetSelectedTextMarkerRange();
@@ -299,6 +304,8 @@ interface AccessibilityUIElement {
     AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(DOMString text, AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
     DOMString textMarkerDebugDescription(AccessibilityTextMarker marker);
     DOMString textMarkerRangeDebugDescription(AccessibilityTextMarkerRange range);
+    DOMString textMarkerDescription(AccessibilityTextMarker marker);
+    DOMString textMarkerRangeDescription(AccessibilityTextMarkerRange range);
 
     // Returns an ordered list of supported actions for an element.
     readonly attribute DOMString supportedActions;

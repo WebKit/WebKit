@@ -62,9 +62,9 @@
     [menuItem setTarget:target]; // can be nil
     [menuItem setRepresentedObject:representedObject];
     
-    NSString *title = nil;
+    RetainPtr<NSString> title;
     SEL action = NULL;
-    
+
     switch(tag) {
         case WebMenuItemTagCopy:
             title = UI_STRING_INTERNAL("Copy", "Copy context menu item");
@@ -106,7 +106,7 @@
     }
 
     if (title)
-        [menuItem setTitle:title];
+        [menuItem setTitle:title.get()];
 
     [menuItem setAction:action];
     

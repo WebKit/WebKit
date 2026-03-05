@@ -139,7 +139,7 @@ static String getTagName(Node* n)
 {
     if (n->isDocumentNode())
         return ""_s;
-    if (n->nodeType() == Node::COMMENT_NODE)
+    if (n->nodeType() == NodeType::Comment)
         return "COMMENT"_s;
     return n->nodeName();
 }
@@ -156,7 +156,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     if (!node->hasChildNodes())
         return true;
 
-    const StyleProperties* inlineStyleDecl = element->inlineStyle();
+    SUPPRESS_UNCOUNTED_LOCAL const StyleProperties* inlineStyleDecl = element->inlineStyle();
     return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 
@@ -183,7 +183,7 @@ String quoteAndEscapeNonPrintables(StringView s)
     return result.toString();
 }
 
-inline bool shouldEnableSubpixelPrecisionForTextDump(const Document& document)
+inline bool NODELETE shouldEnableSubpixelPrecisionForTextDump(const Document& document)
 {
     // If LBSE is activated and the document contains outermost <svg> elements, generate the text
     // representation with subpixel precision. It would be awkward to only see the SVG part of a
@@ -256,23 +256,23 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             ts << ' ' << quoteAndEscapeNonPrintables(control->fileTextValue());
 
         if (renderElement->parent()) {
-            Color color = renderElement->style().visitedDependentColor(CSSPropertyColor);
-            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentColor(CSSPropertyColor), color))
+            auto color = renderElement->style().visitedDependentColor();
+            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentColor(), color))
                 ts << " [color="_s << serializationForRenderTreeAsText(color) << ']';
 
             // Do not dump invalid or transparent backgrounds, since that is the default.
-            Color backgroundColor = renderElement->style().visitedDependentColor(CSSPropertyBackgroundColor);
-            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentColor(CSSPropertyBackgroundColor), backgroundColor)
+            auto backgroundColor = renderElement->style().visitedDependentBackgroundColor();
+            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentBackgroundColor(), backgroundColor)
                 && backgroundColor != Color::transparentBlack)
                 ts << " [bgcolor="_s << serializationForRenderTreeAsText(backgroundColor) << ']';
             
-            Color textFillColor = renderElement->style().visitedDependentColor(CSSPropertyWebkitTextFillColor);
-            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentColor(CSSPropertyWebkitTextFillColor), textFillColor)
+            auto textFillColor = renderElement->style().visitedDependentTextFillColor();
+            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentTextFillColor(), textFillColor)
                 && textFillColor != color && textFillColor != Color::transparentBlack)
                 ts << " [textFillColor="_s << serializationForRenderTreeAsText(textFillColor) << ']';
 
-            Color textStrokeColor = renderElement->style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
-            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor), textStrokeColor)
+            auto textStrokeColor = renderElement->style().visitedDependentTextStrokeColor();
+            if (!equalIgnoringSemanticColor(renderElement->parent()->style().visitedDependentTextStrokeColor(), textStrokeColor)
                 && textStrokeColor != color && textStrokeColor != Color::transparentBlack)
                 ts << " [textStrokeColor="_s << serializationForRenderTreeAsText(textStrokeColor) << ']';
 
@@ -288,7 +288,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         LayoutUnit borderRight = box->borderRight();
         LayoutUnit borderBottom = box->borderBottom();
         LayoutUnit borderLeft = box->borderLeft();
-        bool overridden = renderElement->style().borderImage().overridesBorderWidths();
+        bool overridden = renderElement->style().borderImageWidth().overridesBorderWidths();
         if (box->isFieldset()) {
             const auto& block = downcast<RenderBlock>(*box);
             switch (renderElement->writingMode().blockDirection()) {
@@ -308,34 +308,33 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (borderTop || borderRight || borderBottom || borderLeft) {
             ts << " [border:"_s;
 
-            auto printBorder = [&] (const LayoutUnit& width, const BorderStyle& style, const Style::Color& color) {
+            auto printBorder = [&] (const LayoutUnit& width, const BorderStyle& style, const Color& resolvedColor) {
                 if (!width)
                     ts << " none"_s;
                 else {
                     ts << " ("_s << width << "px "_s;
                     printBorderStyle(ts, style);
-                    auto resolvedColor = renderElement->style().colorResolvingCurrentColor(color);
                     ts << serializationForRenderTreeAsText(resolvedColor) << ')';
                 }
 
             };
 
             BorderValue prevBorder = renderElement->style().borderTop();
-            printBorder(borderTop, renderElement->style().borderTopStyle(), renderElement->style().borderTopColor());
+            printBorder(borderTop, renderElement->style().borderTopStyle(), renderElement->style().borderTopColorResolvingCurrentColor());
 
             if (renderElement->style().borderRight() != prevBorder || (overridden && borderRight != borderTop)) {
                 prevBorder = renderElement->style().borderRight();
-                printBorder(borderRight, renderElement->style().borderRightStyle(), renderElement->style().borderRightColor());
+                printBorder(borderRight, renderElement->style().borderRightStyle(), renderElement->style().borderRightColorResolvingCurrentColor());
             }
 
             if (renderElement->style().borderBottom() != prevBorder || (overridden && borderBottom != borderRight)) {
                 prevBorder = renderElement->style().borderBottom();
-                printBorder(borderBottom, renderElement->style().borderBottomStyle(), renderElement->style().borderBottomColor());
+                printBorder(borderBottom, renderElement->style().borderBottomStyle(), renderElement->style().borderBottomColorResolvingCurrentColor());
             }
 
             if (renderElement->style().borderLeft() != prevBorder || (overridden && borderLeft != borderBottom)) {
                 prevBorder = renderElement->style().borderLeft();
-                printBorder(borderLeft, renderElement->style().borderLeftStyle(), renderElement->style().borderLeftColor());
+                printBorder(borderLeft, renderElement->style().borderLeftStyle(), renderElement->style().borderLeftColorResolvingCurrentColor());
             }
             ts << ']';
         }
@@ -391,7 +390,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<RenderAsTextFlag> behavior)
 {
     if (behavior.contains(RenderAsTextFlag::ShowIDAndClass)) {
-        if (auto* element = dynamicDowncast<Element>(object.node())) {
+        if (RefPtr element = dynamicDowncast<Element>(object.node())) {
             if (element->hasID())
                 ts << " id=\"" << element->getIdAttribute() << '"';
 
@@ -691,7 +690,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
             ts.increaseIndent();
         }
         
-        for (auto* currLayer : negativeZOrderLayers)
+        for (CheckedPtr currLayer : negativeZOrderLayers)
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
         if (behavior.contains(RenderAsTextFlag::ShowLayerNesting))
@@ -724,7 +723,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
             ts.increaseIndent();
         }
         
-        for (auto* currLayer : normalFlowLayers)
+        for (CheckedPtr currLayer : normalFlowLayers)
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
         if (behavior.contains(RenderAsTextFlag::ShowLayerNesting))
@@ -741,7 +740,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
                 ts.increaseIndent();
             }
 
-            for (auto* currLayer : positiveZOrderLayers)
+            for (CheckedPtr currLayer : positiveZOrderLayers)
                 writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
             if (behavior.contains(RenderAsTextFlag::ShowLayerNesting))
@@ -754,9 +753,9 @@ static String nodePosition(Node* node)
 {
     StringBuilder result;
 
-    auto* body = node->document().bodyOrFrameset();
-    Node* parent;
-    for (Node* n = node; n; n = parent) {
+    RefPtr body = node->document().bodyOrFrameset();
+    RefPtr<Node> parent;
+    for (RefPtr n = node; n; n = parent) {
         parent = n->parentOrShadowHostNode();
         if (n != node)
             result.append(" of "_s);
@@ -782,7 +781,7 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
     if (!renderer.isRenderView())
         return;
 
-    auto* frame = renderer.document().frame();
+    RefPtr frame = renderer.document().frame();
     if (!frame)
         return;
 
@@ -822,8 +821,8 @@ static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsText
     LOG(Layout, "externalRepresentation: dumping layer tree");
 
     ScriptDisallowedScope scriptDisallowedScope;
-    RenderLayer& layer = *renderer.layer();
-    writeLayers(ts, layer, layer, layer.rect(), behavior);
+    CheckedRef layer = *renderer.layer();
+    writeLayers(ts, layer, layer, layer->rect(), behavior);
     writeSelection(ts, renderer);
     return ts.release();
 }
@@ -840,9 +839,9 @@ String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> beh
     if (!renderer)
         return String();
 
-    PrintContext printContext(frame);
+    Ref printContext = PrintContext::create(frame);
     if (behavior.contains(RenderAsTextFlag::PrintingMode))
-        printContext.begin(renderer->width());
+        printContext->begin(renderer->width());
 
     return externalRepresentation(*renderer, behavior);
 }
@@ -895,9 +894,9 @@ String counterValueForElement(Element* element)
     auto stream = createTextStream(element->document());
     bool isFirstCounter = true;
     // The counter renderers should be children of :before or :after pseudo-elements.
-    if (PseudoElement* before = element->beforePseudoElement())
+    if (RefPtr before = element->beforePseudoElement())
         writeCounterValuesFromChildren(stream, before->renderer(), isFirstCounter);
-    if (PseudoElement* after = element->afterPseudoElement())
+    if (RefPtr after = element->afterPseudoElement())
         writeCounterValuesFromChildren(stream, after->renderer(), isFirstCounter);
     return stream.release();
 }

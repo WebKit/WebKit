@@ -63,7 +63,9 @@ typedef struct _WebKitDOMNativeXPathNSResolverPrivate {
 
 static void webkitDOMXPathNSResolverIfaceInit(WebKitDOMXPathNSResolverIface*);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMNativeXPathNSResolver, webkit_dom_native_xpath_ns_resolver, WEBKIT_DOM_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_XPATH_NS_RESOLVER, webkitDOMXPathNSResolverIfaceInit))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkitDOMNativeXPathNSResolverFinalize(GObject* object)
 {

@@ -34,13 +34,15 @@
 namespace WebCore {
 
 struct ComputedEffectTiming : EffectTiming {
-    AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    std::optional<WebAnimationTime> localTime;
-    Markable<double> simpleIterationProgress;
-    Markable<double> progress;
-    Markable<double> currentIteration;
     WebAnimationTime endTime;
     WebAnimationTime activeDuration;
+    std::optional<WebAnimationTime> localTime;
+    Markable<double> progress;
+    Markable<double> currentIteration;
+
+    // FIXME: These are not part of the IDL.
+    AnimationEffectPhase phase { AnimationEffectPhase::Idle };
+    Markable<double> simpleIterationProgress;
     TimingFunction::Before before { TimingFunction::Before::No };
 };
 

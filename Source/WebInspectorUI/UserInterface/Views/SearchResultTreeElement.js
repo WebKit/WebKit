@@ -50,25 +50,29 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
 
         // Show some characters before the matching text (if there are enough) for context. TreeOutline takes care of the truncating
         // at the end of the string.
-        var modifiedTitle = null;
+        let trimStartIndex = 0;
+        let trimEndIndex = searchTermIndex + searchTermLength + charactersToShowAfterSearchMatch;
+        let highlightedTitle = document.createDocumentFragment();
+
         if (searchTermIndex > charactersToShowBeforeSearchMatch) {
-            modifiedTitle = ellipsis + title.substring(searchTermIndex - charactersToShowBeforeSearchMatch);
-            searchTermIndex = charactersToShowBeforeSearchMatch + 1;
-        } else
-            modifiedTitle = title;
+            trimStartIndex = searchTermIndex - charactersToShowBeforeSearchMatch;
+            searchTermIndex = charactersToShowBeforeSearchMatch;
 
-        modifiedTitle = modifiedTitle.truncateEnd(searchTermIndex + searchTermLength + charactersToShowAfterSearchMatch);
+            highlightedTitle.append(ellipsis);
+        }
 
-        var highlightedTitle = document.createDocumentFragment();
+        let modifiedTitle = title.substring(trimStartIndex, trimEndIndex);
 
         highlightedTitle.append(modifiedTitle.substring(0, searchTermIndex));
 
-        var highlightSpan = document.createElement("span");
+        let highlightSpan = highlightedTitle.appendChild(document.createElement("span"))
         highlightSpan.className = "highlighted";
         highlightSpan.append(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTermLength));
-        highlightedTitle.appendChild(highlightSpan);
 
         highlightedTitle.append(modifiedTitle.substring(searchTermIndex + searchTermLength));
+
+        if (trimEndIndex < title.length)
+            highlightedTitle.append(ellipsis);
 
         return highlightedTitle;
     }
@@ -77,12 +81,13 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
 
     get filterableData()
     {
-        return {text: [this.representedObject.title]};
+        // Intentionally not using this.representedObject.title because it could be the entire contents of a file for a minified file.
+        return {text: [this.mainTitle]};
     }
 
     get synthesizedTextValue()
     {
-        return this.representedObject.sourceCodeTextRange.synthesizedTextValue + ":" + this.representedObject.title;
+        return this.representedObject.sourceCodeTextRange.synthesizedTextValue + ":" + this.mainTitle;
     }
 
     // Protected

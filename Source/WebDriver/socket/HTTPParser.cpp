@@ -33,7 +33,7 @@ namespace WebDriver {
 HTTPParser::Phase HTTPParser::parse(Vector<uint8_t>&& data)
 {
     if (!data.isEmpty()) {
-        m_buffer.appendVector(WTFMove(data));
+        m_buffer.appendVector(WTF::move(data));
 
         while (true) {
             if (handlePhase() == Process::Suspend)
@@ -52,7 +52,7 @@ HTTPParser::Process HTTPParser::handlePhase()
         if (!readLine(line))
             return Process::Suspend;
 
-        if (!parseFirstLine(WTFMove(line)))
+        if (!parseFirstLine(WTF::move(line)))
             return abortProcess("Client error: invalid request line.");
 
         ASSERT(!m_message.method.isEmpty());
@@ -69,7 +69,7 @@ HTTPParser::Process HTTPParser::handlePhase()
             return Process::Suspend;
 
         if (!line.isEmpty())
-            m_message.requestHeaders.append(WTFMove(line));
+            m_message.requestHeaders.append(WTF::move(line));
         else {
             m_bodyLength = expectedBodyLength();
             m_phase = Phase::Body;
@@ -85,7 +85,7 @@ HTTPParser::Process HTTPParser::handlePhase()
         if (m_buffer.size() < m_bodyLength)
             return Process::Suspend;
 
-        m_message.requestBody = WTFMove(m_buffer);
+        m_message.requestBody = WTF::move(m_buffer);
         m_phase = Phase::Complete;
 
         return Process::Suspend;
@@ -116,9 +116,9 @@ bool HTTPParser::parseFirstLine(String&& line)
     if (components.size() != 3)
         return false;
 
-    m_message.method = WTFMove(components[0]);
-    m_message.path = WTFMove(components[1]);
-    m_message.version = WTFMove(components[2]);
+    m_message.method = WTF::move(components[0]);
+    m_message.path = WTF::move(components[1]);
+    m_message.version = WTF::move(components[2]);
     return true;
 }
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSBoundFunction.h"
+#include "JSCellButterfly.h"
 
 namespace JSC {
 
@@ -33,6 +34,24 @@ inline Structure* JSBoundFunction::createStructure(VM& vm, JSGlobalObject* globa
 {
     ASSERT(globalObject);
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
+inline void JSBoundFunction::forEachBoundArg(const Invocable<IterationStatus(JSValue)> auto& func)
+{
+    unsigned length = boundArgsLength();
+    if (!length)
+        return;
+    if (length <= m_boundArgs.size()) {
+        for (unsigned index = 0; index < length; ++index) {
+            if (func(m_boundArgs[index].get()) == IterationStatus::Done)
+                return;
+        }
+        return;
+    }
+    for (unsigned index = 0; index < length; ++index) {
+        if (func(jsCast<JSCellButterfly*>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
+            return;
+    }
 }
 
 } // namespace JSC

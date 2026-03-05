@@ -67,6 +67,7 @@ using FramerateFractions =
     absl::InlinedVector<uint8_t, webrtc::kMaxTemporalStreams>;
 
 namespace webrtc {
+
 namespace test {
 
 namespace {
@@ -95,6 +96,7 @@ std::unique_ptr<SimulcastTestFixture> CreateSpecificSimulcastTestFixture(
                                     std::move(decoder_factory),
                                     SdpVideoFormat::VP8());
 }
+
 }  // namespace
 
 TEST(SimulcastEncoderAdapterSimulcastTest, TestKeyFrameRequestsOnAllStreams) {
@@ -485,6 +487,7 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
   }
 
   void SetUp() override {
+    env_ = CreateEnvironment(field_trials_.CreateCopy());
     helper_ = std::make_unique<TestSimulcastEncoderAdapterFakeHelper>(
         env_, use_fallback_factory_,
         SdpVideoFormat("VP8", sdp_video_parameters_));
@@ -538,9 +541,37 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
          ++stream_idx) {
       if (stream_idx >= codec_.numberOfSimulcastStreams) {
         // Reset parameters of unspecified stream.
-        codec_.simulcastStream[stream_idx] = {0};
+        codec_.simulcastStream[stream_idx] = {};
       } else {
         codec_.simulcastStream[stream_idx].active = active_streams[stream_idx];
+      }
+    }
+    rate_allocator_ = std::make_unique<SimulcastRateAllocator>(env_, codec_);
+    EXPECT_EQ(0, adapter_->InitEncode(&codec_, kSettings));
+    adapter_->RegisterEncodeCompleteCallback(this);
+  }
+
+  struct StreamDescription {
+    bool active;
+    SdpVideoFormat format;
+  };
+
+  void SetupMixedCodec(std::vector<StreamDescription> stream_descriptions) {
+    SimulcastTestFixtureImpl::DefaultSettings(
+        &codec_, static_cast<const int*>(kTestTemporalLayerProfile),
+        kVideoCodecVP8);
+    ASSERT_LE(stream_descriptions.size(), codec_.numberOfSimulcastStreams);
+    codec_.numberOfSimulcastStreams = stream_descriptions.size();
+    for (size_t stream_idx = 0; stream_idx < kMaxSimulcastStreams;
+         ++stream_idx) {
+      if (stream_idx >= codec_.numberOfSimulcastStreams) {
+        // Reset parameters of unspecified stream.
+        codec_.simulcastStream[stream_idx] = {0};
+      } else {
+        codec_.simulcastStream[stream_idx].active =
+            stream_descriptions[stream_idx].active;
+        codec_.simulcastStream[stream_idx].format =
+            stream_descriptions[stream_idx].format;
       }
     }
     rate_allocator_ = std::make_unique<SimulcastRateAllocator>(env_, codec_);
@@ -559,7 +590,7 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
          ++stream_idx) {
       if (stream_idx >= codec_.numberOfSimulcastStreams) {
         // Reset parameters of unspecified stream.
-        codec_.simulcastStream[stream_idx] = {0};
+        codec_.simulcastStream[stream_idx] = {};
       } else {
         codec_.simulcastStream[stream_idx].active = active_streams[stream_idx];
       }
@@ -642,7 +673,7 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
 
  protected:
   FieldTrials field_trials_ = CreateTestFieldTrials();
-  const Environment env_ = CreateEnvironment(&field_trials_);
+  Environment env_ = CreateEnvironment(field_trials_.CreateCopy());
   std::unique_ptr<TestSimulcastEncoderAdapterFakeHelper> helper_;
   std::unique_ptr<VideoEncoder> adapter_;
   VideoCodec codec_;
@@ -2116,6 +2147,91 @@ TEST_F(TestSimulcastEncoderAdapterFake, PopulatesScalabilityModeOfSubcodecs) {
             ScalabilityMode::kL1T2);
   EXPECT_EQ(helper_->factory()->encoders()[2]->codec().GetScalabilityMode(),
             ScalabilityMode::kL1T3);
+}
+
+// In the case of mixed-codec simulcast, verify whether each encoder is created
+// with the specified video format.
+TEST_F(TestSimulcastEncoderAdapterFake, InitEncodeForMixedCodec) {
+  std::vector<SdpVideoFormat> codecs = {SdpVideoFormat::VP8(),
+                                        SdpVideoFormat::VP9Profile0(),
+                                        SdpVideoFormat::VP9Profile1()};
+  SetupMixedCodec({{true, SdpVideoFormat::VP8()},
+                   {true, SdpVideoFormat::VP9Profile0()},
+                   {true, SdpVideoFormat::VP9Profile1()}});
+  std::vector<MockVideoEncoder*> encoders = helper_->factory()->encoders();
+  ASSERT_EQ(3u, helper_->factory()->encoders().size());
+  EXPECT_EQ(encoders[0]->video_format(), SdpVideoFormat::VP8());
+  EXPECT_EQ(encoders[1]->video_format(), SdpVideoFormat::VP9Profile0());
+  EXPECT_EQ(encoders[2]->video_format(), SdpVideoFormat::VP9Profile1());
+  EXPECT_EQ(encoders[0]->codec().codecType, webrtc::kVideoCodecVP8);
+  EXPECT_EQ(encoders[1]->codec().codecType, webrtc::kVideoCodecVP9);
+  EXPECT_EQ(encoders[2]->codec().codecType, webrtc::kVideoCodecVP9);
+
+  SetupMixedCodec({{false, SdpVideoFormat::VP8()},
+                   {true, SdpVideoFormat::VP9Profile0()},
+                   {true, SdpVideoFormat::VP9Profile1()}});
+  encoders = helper_->factory()->encoders();
+  ASSERT_EQ(2u, helper_->factory()->encoders().size());
+  EXPECT_EQ(encoders[0]->video_format(), SdpVideoFormat::VP9Profile0());
+  EXPECT_EQ(encoders[1]->video_format(), SdpVideoFormat::VP9Profile1());
+  EXPECT_EQ(encoders[0]->codec().codecType, webrtc::kVideoCodecVP9);
+  EXPECT_EQ(encoders[1]->codec().codecType, webrtc::kVideoCodecVP9);
+}
+
+TEST_F(TestSimulcastEncoderAdapterFake,
+       CodecSpecificSettingsIsInitializedDefaultValueForMixedCodec) {
+  std::vector<SdpVideoFormat> codecs = {SdpVideoFormat::VP8(),
+                                        SdpVideoFormat::VP9Profile0(),
+                                        SdpVideoFormat::VP9Profile1()};
+  SetupMixedCodec({{true, SdpVideoFormat::VP8()},
+                   {true, SdpVideoFormat::VP9Profile0()},
+                   {true, SdpVideoFormat::VP9Profile1()}});
+  std::vector<MockVideoEncoder*> encoders = helper_->factory()->encoders();
+  ASSERT_EQ(3u, helper_->factory()->encoders().size());
+  EXPECT_EQ(encoders[0]->codec().codecType, webrtc::kVideoCodecVP8);
+  EXPECT_EQ(encoders[1]->codec().codecType, webrtc::kVideoCodecVP9);
+  EXPECT_EQ(encoders[2]->codec().codecType, webrtc::kVideoCodecVP9);
+
+  // Fields in the codec specific settings that are not set in
+  // SimulcastEncoderAdapter should be initialized with default values.
+  auto vp8_defaults = VideoEncoder::GetDefaultVp8Settings();
+  auto vp9_defaults = VideoEncoder::GetDefaultVp9Settings();
+  EXPECT_EQ(encoders[0]->codec().VP8().automaticResizeOn,
+            vp8_defaults.automaticResizeOn);
+  EXPECT_EQ(encoders[0]->codec().VP8().keyFrameInterval,
+            vp8_defaults.keyFrameInterval);
+  for (int i = 1; i <= 2; i++) {
+    EXPECT_EQ(encoders[i]->codec().VP9().denoisingOn, vp9_defaults.denoisingOn);
+    EXPECT_EQ(encoders[i]->codec().VP9().keyFrameInterval,
+              vp9_defaults.keyFrameInterval);
+    EXPECT_EQ(encoders[i]->codec().VP9().adaptiveQpMode,
+              vp9_defaults.adaptiveQpMode);
+    EXPECT_EQ(encoders[i]->codec().VP9().automaticResizeOn,
+              vp9_defaults.automaticResizeOn);
+    EXPECT_EQ(encoders[i]->codec().VP9().flexibleMode,
+              vp9_defaults.flexibleMode);
+  }
+}
+
+// In the case of mixed-codec simulcast, multiple encoders are used even if
+// supports_simulcast() == true.
+TEST_F(TestSimulcastEncoderAdapterFake,
+       CreateMultipleEncodersEvenIfSimulcastIsSupportedForMixedCodec) {
+  std::vector<SdpVideoFormat> codecs = {SdpVideoFormat::VP8(),
+                                        SdpVideoFormat::VP9Profile0(),
+                                        SdpVideoFormat::VP9Profile1()};
+  helper_->factory()->set_supports_simulcast(true);
+  SetupMixedCodec({{true, SdpVideoFormat::VP8()},
+                   {true, SdpVideoFormat::VP9Profile0()},
+                   {true, SdpVideoFormat::VP9Profile1()}});
+  std::vector<MockVideoEncoder*> encoders = helper_->factory()->encoders();
+  ASSERT_EQ(3u, helper_->factory()->encoders().size());
+  EXPECT_EQ(encoders[0]->video_format(), SdpVideoFormat::VP8());
+  EXPECT_EQ(encoders[1]->video_format(), SdpVideoFormat::VP9Profile0());
+  EXPECT_EQ(encoders[2]->video_format(), SdpVideoFormat::VP9Profile1());
+  EXPECT_EQ(encoders[0]->codec().codecType, webrtc::kVideoCodecVP8);
+  EXPECT_EQ(encoders[1]->codec().codecType, webrtc::kVideoCodecVP9);
+  EXPECT_EQ(encoders[2]->codec().codecType, webrtc::kVideoCodecVP9);
 }
 
 TEST_F(TestSimulcastEncoderAdapterFake,

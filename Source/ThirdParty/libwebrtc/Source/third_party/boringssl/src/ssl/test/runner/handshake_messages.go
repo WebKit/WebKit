@@ -690,7 +690,7 @@ func (m *clientHelloMsg) marshalBody(hello *cryptobyte.Builder, typ clientHelloT
 				for _, extID := range m.outerExtensions {
 					// m.outerExtensions may intentionally contain duplicates to test the
 					// server's reaction. If m.reorderOuterExtensionsWithoutCompressing
-					// is set, we are targetting the second ClientHello and wish to send a
+					// is set, we are targeting the second ClientHello and wish to send a
 					// valid first ClientHello. In that case, deduplicate so the error
 					// only appears later.
 					if _, written := extsWritten[extID]; m.reorderOuterExtensionsWithoutCompressing && written {
@@ -2228,6 +2228,7 @@ func (m *certificateMsg) unmarshal(data []byte) bool {
 					if !body.ReadUint8(&statusType) ||
 						statusType != statusTypeOCSP ||
 						!readUint24LengthPrefixedBytes(&body, &cert.ocspResponse) ||
+						len(cert.ocspResponse) == 0 ||
 						len(body) != 0 {
 						return false
 					}
@@ -2377,6 +2378,7 @@ func (m *certificateStatusMsg) unmarshal(data []byte) bool {
 	if !reader.ReadUint8(&m.statusType) ||
 		m.statusType != statusTypeOCSP ||
 		!readUint24LengthPrefixedBytes(&reader, &m.response) ||
+		len(m.response) == 0 ||
 		len(reader) != 0 {
 		return false
 	}

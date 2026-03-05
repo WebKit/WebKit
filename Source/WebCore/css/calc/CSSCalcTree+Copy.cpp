@@ -49,12 +49,12 @@ Random::Sharing copy(const Random::Sharing& root)
     return root;
 }
 
-CSSValueID copy(const CSSValueID& root)
+CSSValueID NODELETE copy(const CSSValueID& root)
 {
     return root;
 }
 
-CSS::Keyword::None copy(const CSS::Keyword::None& root)
+CSS::Keyword::None NODELETE copy(const CSS::Keyword::None& root)
 {
     return root;
 }
@@ -81,7 +81,7 @@ Child copy(const Child& root)
     return WTF::switchOn(root, [&](const auto& root) { return copy(root); });
 }
 
-template<Leaf Op> Child copy(const Op& root)
+template<Leaf Op> Child NODELETE copy(const Op& root)
 {
     return { root };
 }
@@ -109,7 +109,7 @@ Child copy(const IndirectNode<AnchorSize>& anchorSize)
         .fallback = copy(anchorSize->fallback)
     };
 
-    return makeChild(WTFMove(copyAnchorSize), anchorSize.type);
+    return makeChild(WTF::move(copyAnchorSize), anchorSize.type);
 }
 
 // MARK: Exposed functions

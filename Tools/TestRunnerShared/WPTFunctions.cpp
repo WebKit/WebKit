@@ -61,8 +61,8 @@ bool isWebPlatformTestURL(const URL& url)
     if (!url.isValid())
         return false;
 
-    auto contains = [] (const auto& collection, const auto& value) {
-        return std::find(collection.cbegin(), collection.cend(), value) != collection.cend();
+    auto contains = [](const auto& collection, const auto& value) {
+        return std::ranges::find(collection, value) != collection.cend();
     };
 
     // Sourced from imported/w3c/resources/config.json

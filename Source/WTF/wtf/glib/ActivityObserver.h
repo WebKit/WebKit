@@ -35,7 +35,7 @@ public:
 
     static Ref<ActivityObserver> create(Ref<RunLoop>&& runLoop, bool isRepeating, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
     {
-        return adoptRef(*new ActivityObserver(WTFMove(runLoop), isRepeating, order, activities, WTFMove(callback)));
+        return adoptRef(*new ActivityObserver(WTF::move(runLoop), isRepeating, order, activities, WTF::move(callback)));
     }
 
     ~ActivityObserver()
@@ -83,11 +83,11 @@ public:
 
 private:
     ActivityObserver(Ref<RunLoop>&& runLoop, bool isRepeating, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
-        : m_runLoop(WTFMove(runLoop))
+        : m_runLoop(WTF::move(runLoop))
         , m_isRepeating(isRepeating)
         , m_order(order)
         , m_activities(activities)
-        , m_callback(WTFMove(callback))
+        , m_callback(WTF::move(callback))
     {
         ASSERT(m_callback);
     }

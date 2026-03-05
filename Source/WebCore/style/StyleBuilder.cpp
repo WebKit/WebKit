@@ -32,6 +32,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"
+#include "CSSFunctionValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
@@ -42,11 +43,15 @@
 #include "ComputedStyleDependencies.h"
 #include "Document.h"
 #include "HTMLElement.h"
+#include "HTMLSelectElement.h"
 #include "PaintWorkletGlobalScope.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
+#include "SelectPopoverElement.h"
 #include "Settings.h"
 #include "StyleAdjuster.h"
 #include "StyleBuilderGenerated.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -62,7 +67,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Builder);
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
-inline bool isValidVisitedLinkProperty(CSSPropertyID id)
+inline bool NODELETE isValidVisitedLinkProperty(CSSPropertyID id)
 {
     switch (id) {
     case CSSPropertyBackgroundColor:
@@ -95,8 +100,8 @@ static auto positionTryFallbackProperties(const BuilderContext& context)
 }
 
 Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties, const HashSet<AnimatableCSSProperty>* animatedPropertes)
-    : m_cascade(matchResult, WTFMove(includedProperties), animatedPropertes, positionTryFallbackProperties(context))
-    , m_state(BuilderState::create(style, WTFMove(context)))
+    : m_cascade(matchResult, WTF::move(includedProperties), animatedPropertes, positionTryFallbackProperties(context))
+    , m_state(BuilderState::create(style, WTF::move(context)))
 {
 }
 
@@ -150,7 +155,7 @@ void Builder::applyNonHighPriorityProperties()
 
 void Builder::adjustAfterApplying()
 {
-    Adjuster::adjustFromBuilder(m_state->style());
+    Adjuster::adjustFromBuilder(m_state->renderStyle());
 }
 
 void Builder::applyLogicalGroupProperties()
@@ -254,18 +259,19 @@ void Builder::applyCustomPropertyImpl(const AtomString& name, const PropertyCasc
         return CSSWideKeyword::Unset;
     };
 
+    SetForScope levelScope(m_state->m_currentProperty, &property);
+    SetForScope scopedLinkMatchMutation(m_state->m_linkMatch, SelectorChecker::MatchDefault);
+
     auto resolvedValue = resolveCustomPropertyValue(customPropertyValue.get());
 
     if (!resolvedValue || m_state->m_inCycleCustomProperties.contains(name))
         resolvedValue = createInvalidOrUnset();
 
-    SetForScope levelScope(m_state->m_currentProperty, &property);
-    SetForScope scopedLinkMatchMutation(m_state->m_linkMatch, SelectorChecker::MatchDefault);
-    applyCustomProperty(name, WTFMove(*resolvedValue));
+    applyCustomProperty(name, WTF::move(*resolvedValue));
 
     AtomString takenName = m_state->m_inProgressCustomProperties.take(name);
-    m_state->m_appliedCustomProperties.add(WTFMove(takenName));
-    m_state->m_inCycleCustomProperties.addAll(WTFMove(savedInCycleProperties));
+    m_state->m_appliedCustomProperties.add(WTF::move(takenName));
+    m_state->m_inCycleCustomProperties.addAll(WTF::move(savedInCycleProperties));
 }
 
 inline void Builder::applyCascadeProperty(const PropertyCascade::Property& property)
@@ -328,7 +334,7 @@ bool Builder::applyRollbackCascadeCustomProperty(const PropertyCascade& rollback
         if (!resolvedValue)
             resolvedValue = CustomProperty::createForGuaranteedInvalid(name);
 
-        applyCustomProperty(name, WTFMove(*resolvedValue));
+        applyCustomProperty(name, WTF::move(*resolvedValue));
     }
     return true;
 }
@@ -338,7 +344,8 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     ASSERT_WITH_MESSAGE(!isShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
     ASSERT_WITH_MESSAGE(id != CSSPropertyCustom, "Custom property should be handled by applyCustomProperty");
 
-    auto valueToApply = resolveVariableReferences(id, value);
+    auto valueToApply = resolveInternalAutoBaseFunction(value);
+    valueToApply = resolveVariableReferences(id, valueToApply);
     auto& style = m_state->style();
 
     if (CSSProperty::isDirectionAwareProperty(id)) {
@@ -440,7 +447,7 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
 
     auto applyValue = [&](Ref<const CustomProperty>&& valueToApply) {
         bool isInherited = !registeredCustomProperty || registeredCustomProperty->inherits;
-        state().style().setCustomPropertyValue(WTFMove(valueToApply), isInherited);
+        state().style().setCustomPropertyValue(WTF::move(valueToApply), isInherited);
     };
 
     auto applyInitial = [&] {
@@ -464,7 +471,7 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
         applyInitial();
     };
 
-    return WTF::switchOn(WTFMove(parsedCustomProperty),
+    return WTF::switchOn(WTF::move(parsedCustomProperty),
         [&](CSSWideKeyword&& keyword) {
             ApplyValueType valueType = ApplyValueType::Value;
             bool isRevert = false;
@@ -541,9 +548,34 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
                 // Limit the properties that can be applied to only the ones honored by :visited.
                 return;
             }
-            applyValue(WTFMove(resolved));
+            applyValue(WTF::move(resolved));
         }
     );
+}
+
+Ref<CSSValue> Builder::resolveInternalAutoBaseFunction(CSSValue& value)
+{
+    RefPtr functionValue = dynamicDowncast<CSSFunctionValue>(value);
+    if (!functionValue)
+        return value;
+
+    if (functionValue->name() != CSSValueInternalAutoBase)
+        return value;
+
+    // usedAppearance() is inaccurate at this stage of style resolution, check against both `appearance: base-select` & `appearance: base`.
+    bool isAppearanceBase = [&] {
+        if (m_state->style().appearance() == StyleAppearance::Base)
+            return true;
+        if (m_state->style().appearance() != StyleAppearance::BaseSelect)
+            return false;
+        return is<HTMLSelectElement>(m_state->element()) || is<SelectPopoverElement>(m_state->element());
+    }();
+    RefPtr result = const_cast<CSSValue*>(isAppearanceBase ? functionValue->item(1) : functionValue->item(0));
+
+    if (!result)
+        return value;
+
+    return result.releaseNonNull();
 }
 
 Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSValue& value)
@@ -701,14 +733,14 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> Builder
 
 void Builder::applyPageSizeDescriptor(CSSValue& value)
 {
-    m_state->style().resetPageSize();
+    m_state->style().setPageSize(Style::ComputedStyle::initialPageSize());
 
     auto convertedPageSize = toStyleFromCSSValue<PageSize>(m_state, value);
 
     if (m_state->isCurrentPropertyInvalidAtComputedValueTime())
         return;
 
-    m_state->style().setPageSize(WTFMove(convertedPageSize));
+    m_state->style().setPageSize(WTF::move(convertedPageSize));
 }
 
 const PropertyCascade* Builder::ensureRollbackCascadeForRevert()

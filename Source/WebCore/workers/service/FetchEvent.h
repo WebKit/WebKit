@@ -44,10 +44,10 @@ class FetchResponse;
 class ResourceResponse;
 
 class FetchEvent final : public ExtendableEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FetchEvent);
+    WTF_MAKE_TZONE_ALLOCATED(FetchEvent);
 public:
     struct Init : ExtendableEventInit {
-        RefPtr<FetchRequest> request;
+        Ref<FetchRequest> request;
         String clientId;
         String resultingClientId;
         RefPtr<DOMPromise> handled;
@@ -57,7 +57,7 @@ public:
 
     static Ref<FetchEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new FetchEvent(globalObject, type, WTFMove(initializer), isTrusted));
+        return adoptRef(*new FetchEvent(globalObject, type, WTF::move(initializer), isTrusted));
     }
     ~FetchEvent();
 
@@ -89,8 +89,6 @@ private:
     void processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&&);
     void respondWithError(ResourceError&&);
 
-    bool isFetchEvent() const final { return true; }
-
     const Ref<FetchRequest> m_request;
     String m_clientId;
     String m_resultingClientId;
@@ -115,6 +113,4 @@ inline void FetchEvent::setNavigationPreloadIdentifier(FetchIdentifier identifie
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FetchEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isFetchEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(FetchEvent)

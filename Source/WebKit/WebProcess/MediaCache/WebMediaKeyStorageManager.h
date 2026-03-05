@@ -48,7 +48,7 @@ public:
 
     static ASCIILiteral supplementName();
 
-    const String& mediaKeyStorageDirectory() const { return m_mediaKeyStorageDirectory; }
+    const String& mediaKeyStorageDirectory() const LIFETIME_BOUND { return m_mediaKeyStorageDirectory; }
     String mediaKeyStorageDirectoryForOrigin(const WebCore::SecurityOriginData&);
 
     Vector<WebCore::SecurityOriginData> getMediaKeyOrigins();

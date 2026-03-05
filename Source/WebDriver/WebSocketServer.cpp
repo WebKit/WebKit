@@ -47,12 +47,12 @@ WebSocketServer::WebSocketServer(WebSocketMessageHandler& messageHandler)
 
 void WebSocketServer::addStaticConnection(WebSocketMessageHandler::Connection&& connection)
 {
-    m_staticConnections.push_back(WTFMove(connection));
+    m_staticConnections.push_back(WTF::move(connection));
 }
 
 void WebSocketServer::addConnection(WebSocketMessageHandler::Connection&& connection, const String& sessionId)
 {
-    m_connectionToSession.add(WTFMove(connection), sessionId);
+    m_connectionToSession.add(WTF::move(connection), sessionId);
 }
 
 bool WebSocketServer::isStaticConnection(const WebSocketMessageHandler::Connection& connection)

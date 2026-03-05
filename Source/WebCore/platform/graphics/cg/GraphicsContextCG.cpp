@@ -43,6 +43,7 @@
 #include "Pattern.h"
 #include "ShadowBlur.h"
 #include "Timer.h"
+#include <pal/cg/CoreGraphicsSoftLink.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
@@ -56,7 +57,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
 
 static void setCGFillColor(CGContextRef context, const Color& color, const DestinationColorSpace& colorSpace)
 {
-    CGContextSetFillColorWithColor(context, cachedSDRCGColorForColorspace(color, colorSpace).get());
+    CGContextSetFillColorWithColor(context, cachedCGColorInDestinationStandardRange(color, colorSpace).get());
 }
 
 inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
@@ -236,12 +237,13 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
     RetainPtr<CGColorSpaceRef> colorSpace;
 
     // FIXME: Need to handle kCGContextTypePDF.
-    if (CGContextGetType(context) == kCGContextTypeIOSurface)
+    auto contextType = CGContextGetType(context);
+    if (contextType == kCGContextTypeIOSurface)
         colorSpace = CGIOSurfaceContextGetColorSpace(context);
-    else if (CGContextGetType(context) == kCGContextTypeBitmap)
+    else if (contextType == kCGContextTypeBitmap)
         colorSpace = CGBitmapContextGetColorSpace(context);
     else
-        colorSpace = adoptCF(CGContextCopyDeviceColorSpace(context));
+        colorSpace = CGContextGetColorSpace(context);
 
     // FIXME: Need to ASSERT(colorSpace). For now fall back to sRGB if colorSpace is nil.
     m_colorSpace = colorSpace ? DestinationColorSpace(colorSpace) : DestinationColorSpace::SRGB();
@@ -264,7 +266,7 @@ void GraphicsContextCG::restore(GraphicsContextState::Purpose purpose)
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     auto image = nativeImage.platformImage();
     if (!image)
@@ -443,7 +445,7 @@ static void patternReleaseCallback(void* info)
     callOnMainThread([image = adoptCF(static_cast<CGImageRef>(info))] { });
 }
 
-void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void GraphicsContextCG::drawPattern(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     if (!patternTransform.isInvertible())
         return;
@@ -494,11 +496,22 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
         matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
         // The top of a partially-decoded image is drawn at the bottom of the tile. Map it to the top.
         matrix = CGAffineTransformTranslate(matrix, 0, imageSize.height() - h);
-        CGImageRef platformImage = CGImageRetain(subImage.get());
-        RetainPtr<CGPatternRef> pattern = adoptCF(CGPatternCreate(platformImage, CGRectMake(0, 0, tileRect.width(), tileRect.height()), matrix,
-            tileRect.width() + spacing.width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
-            tileRect.height() + spacing.height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
-            kCGPatternTilingConstantSpacing, true, &patternCallbacks));
+        RetainPtr<CGPatternRef> pattern;
+#if HAVE(CGPATTERN_CREATE_WITH_IMAGE_TRANSFORM_STEP)
+        if (PAL::canLoad_CoreGraphics_CGPatternCreateWithImageTransformStep()) {
+            pattern = adoptCF(PAL::softLink_CoreGraphics_CGPatternCreateWithImageTransformStep(subImage.get(), matrix,
+                tileRect.width() + spacing.width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
+                tileRect.height() + spacing.height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
+                kCGPatternTilingConstantSpacing));
+        } else
+#endif
+        {
+            CGImageRef platformImage = CGImageRetain(subImage.get());
+            pattern = adoptCF(CGPatternCreate(platformImage, CGRectMake(0, 0, tileRect.width(), tileRect.height()), matrix,
+                tileRect.width() + spacing.width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
+                tileRect.height() + spacing.height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
+                kCGPatternTilingConstantSpacing, true, &patternCallbacks));
+        }
 
         if (!pattern)
             return;
@@ -919,7 +932,7 @@ void GraphicsContextCG::fillRoundedRectImpl(const FloatRoundedRect& rect, const 
     }
 
     const FloatRect& r = rect.rect();
-    const FloatRoundedRect::Radii& radii = rect.radii();
+    const CornerRadii& radii = rect.radii();
     bool equalWidths = (radii.topLeft().width() == radii.topRight().width() && radii.topRight().width() == radii.bottomLeft().width() && radii.bottomLeft().width() == radii.bottomRight().width());
     bool equalHeights = (radii.topLeft().height() == radii.bottomLeft().height() && radii.bottomLeft().height() == radii.topRight().height() && radii.topRight().height() == radii.bottomRight().height());
     bool hasCustomFill = fillGradient() || fillPattern();
@@ -1112,7 +1125,7 @@ void GraphicsContextCG::setCGDropShadow(const std::optional<GraphicsDropShadow>&
 
     CGContextSetAlpha(context, shadow->opacity);
 
-    auto style = adoptCF(CGStyleCreateShadow2(offset, blurRadius, cachedSDRCGColorForColorspace(shadow->color, colorSpace()).get()));
+    auto style = adoptCF(CGStyleCreateShadow2(offset, blurRadius, cachedCGColorInDestinationStandardRange(shadow->color, colorSpace()).get()));
     CGContextSetStyle(context, style.get());
 }
 
@@ -1198,7 +1211,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::StrokeBrush:
-            CGContextSetStrokeColorWithColor(context, cachedSDRCGColorForColorspace(state.strokeBrush().color(), colorSpace()).get());
+            CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(state.strokeBrush().color(), colorSpace()).get());
             break;
 
         case GraphicsContextState::Change::CompositeMode:
@@ -1309,6 +1322,16 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
 
     CGContextAddRect(context, rect);
     CGContextStrokePath(context);
+}
+
+void GraphicsContextCG::strokeArc(const PathArc& arc)
+{
+#if HAVE(CGCONTEXT_STROKE_ARC)
+    CGContextRef context = platformContext();
+    CGContextStrokeArc(context, arc.center.x(), arc.center.y(), arc.radius, arc.startAngle, arc.endAngle, arc.direction == RotationDirection::Counterclockwise);
+#else
+    GraphicsContext::strokeArc(arc);
+#endif
 }
 
 void GraphicsContextCG::setLineCap(LineCap cap)

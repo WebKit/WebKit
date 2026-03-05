@@ -45,10 +45,10 @@ public:
     DOMHighResTimeStamp processingStart() const { return m_processingStart.milliseconds(); }
     DOMHighResTimeStamp processingEnd() const { return m_processingEnd.milliseconds(); }
     bool cancelable() const { return m_cancelable; }
-    Node* target() const;
-    uint64_t interactionId() const;
+    RefPtr<Node> target() const;
+    uint64_t NODELETE interactionId() const;
 
-    Type performanceEntryType() const final;
+    Type NODELETE performanceEntryType() const final;
     ASCIILiteral entryType() const final;
 
     static constexpr DOMHighResTimeStamp durationResolutionInMilliseconds = 8;

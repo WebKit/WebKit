@@ -45,7 +45,7 @@ class UniquePaintParamsID;
 class PaintParams {
 public:
     // Stores just the parameters of the implicit image shading model used by drawImageRect and
-    // other image-drawing APIs, e.g. to apply SkModifyPaintAndDstForDrawImageRect without the
+    // other image-drawing APIs, e.g. to apply SkImageShader::MakeForDrawRect without the
     // overhead of creating additional SkShader objects. Assumes clamp tiling; if no clamping is
     // required, set to the image's bounds.
     struct SimpleImage {
@@ -128,7 +128,6 @@ public:
                   Coverage coverage,
                   TextureFormat targetFormat);
 
-    Coverage rendererCoverage()  const { return fRendererCoverage; }
     bool dstReadRequired() const { return SkToBool(fDstUsage & DstUsage::kDstReadRequired); }
 
     using Result = std::tuple<UniquePaintParamsID, SkEnumBitMask<DstUsage>>;
@@ -143,13 +142,16 @@ private:
     bool handleDstRead(const KeyContext&) const;
     void handleClipping(const KeyContext&) const;
 
-    const PaintParams&      fPaint;
-    const NonMSAAClip&      fNonMSAAClip;
-    const SkShader*         fClipShader;
+    const PaintParams& fPaint;
+    const NonMSAAClip& fNonMSAAClip;
+    const SkShader*    fClipShader;
 
-    Coverage                fRendererCoverage;
-    TextureFormat           fTargetFormat;
-    SkEnumBitMask<DstUsage> fDstUsage;
+    // Base (incomplete) dst usage that will be augmented by opacity analysis calculated in toKey()
+    const SkEnumBitMask<DstUsage> fDstUsage;
+
+    // Used for asserts
+    SkDEBUGCODE(const SkEnumBitMask<DstUsage> fDstUsageNoCoverage;)
+    SkDEBUGCODE(const Coverage fRendererCoverage;)
 };
 
 } // namespace skgpu::graphite

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace WTF {
 
 enum class TriState : uint8_t {

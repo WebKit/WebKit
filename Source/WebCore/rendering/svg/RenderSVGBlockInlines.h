@@ -35,10 +35,5 @@ inline SVGGraphicsElement& RenderSVGBlock::graphicsElement() const
     return downcast<SVGGraphicsElement>(nodeForNonAnonymous());
 }
 
-inline Ref<SVGGraphicsElement> RenderSVGBlock::protectedGraphicsElement() const
-{
-    return graphicsElement();
-}
-
 } // namespace WebCore
 

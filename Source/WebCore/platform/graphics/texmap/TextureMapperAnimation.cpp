@@ -23,6 +23,10 @@
 #if USE(TEXTURE_MAPPER)
 
 #include "AnimationUtilities.h"
+#include "GraphicsLayerAnimationValue.h"
+#include "GraphicsLayerFilterAnimationValue.h"
+#include "GraphicsLayerFloatAnimationValue.h"
+#include "GraphicsLayerTransformAnimationValue.h"
 #include "LayoutSize.h"
 #include "TranslateTransformOperation.h"
 #include <wtf/Scope.h>
@@ -75,7 +79,7 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
         }
     }
 
-    return FilterOperations { WTFMove(operations) };
+    return FilterOperations { WTF::move(operations) };
 }
 
 static bool shouldReverseAnimationValue(GraphicsLayerAnimation::Direction direction, int loopCount)
@@ -140,7 +144,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     return matrix;
 }
 
-static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const TextureMapperAnimation& animation)
+static const TimingFunction& timingFunctionForAnimationValue(const GraphicsLayerAnimationValue& animationValue, const TextureMapperAnimation& animation)
 {
     if (auto* function = animationValue.timingFunction())
         return *function;
@@ -149,7 +153,7 @@ static const TimingFunction& timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const GraphicsLayerAnimation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
+TextureMapperAnimation::TextureMapperAnimation(const String& name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
     , m_keyframes(keyframes)
     , m_timingFunction(animation.defaultTimingFunctionForKeyframes() ? animation.defaultTimingFunctionForKeyframes()->clone() : animation.timingFunction()->clone())
@@ -242,8 +246,8 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
     }
 
     for (size_t i = 0; i < m_keyframes.size() - 1; ++i) {
-        const AnimationValue& from = m_keyframes.at(i);
-        const AnimationValue& to = m_keyframes.at(i + 1);
+        const auto& from = m_keyframes.at(i);
+        const auto& to = m_keyframes.at(i + 1);
         if (from.keyTime() > normalizedValue || to.keyTime() < normalizedValue)
             continue;
 
@@ -282,7 +286,7 @@ Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
     return m_totalRunningTime;
 }
 
-void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
+void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults, const GraphicsLayerAnimationValue& from, const GraphicsLayerAnimationValue& to, float progress)
 {
     switch (m_keyframes.property()) {
     case AnimatedProperty::Translate:
@@ -290,16 +294,16 @@ void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults
     case AnimatedProperty::Scale:
     case AnimatedProperty::Transform: {
         ASSERT(applicationResults.transform);
-        auto transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress);
+        auto transform = applyTransformAnimation(static_cast<const GraphicsLayerTransformAnimationValue&>(from).value(), static_cast<const GraphicsLayerTransformAnimationValue&>(to).value(), progress);
         applicationResults.transform->multiply(transform);
         return;
     }
     case AnimatedProperty::Opacity:
-        applicationResults.opacity = applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress);
+        applicationResults.opacity = applyOpacityAnimation((static_cast<const GraphicsLayerFloatAnimationValue&>(from).value()), (static_cast<const GraphicsLayerFloatAnimationValue&>(to).value()), progress);
         return;
     case AnimatedProperty::Filter:
     case AnimatedProperty::WebkitBackdropFilter:
-        applicationResults.filters = applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress);
+        applicationResults.filters = applyFilterAnimation(static_cast<const GraphicsLayerFilterAnimationValue&>(from).value(), static_cast<const GraphicsLayerFilterAnimationValue&>(to).value(), progress);
         return;
     default:
         ASSERT_NOT_REACHED();

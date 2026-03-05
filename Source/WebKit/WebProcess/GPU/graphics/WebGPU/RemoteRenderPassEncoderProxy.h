@@ -63,22 +63,22 @@ private:
     WebGPUIdentifier backing() const { return m_backing; }
     
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Error send(T&& message)
+    [[nodiscard]] IPC::Error send(T&& message)
     {
-        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->send(WTF::move(message), backing());
     }
 
     void setPipeline(const WebCore::WebGPU::RenderPipeline&) final;
 
-    void setIndexBuffer(const WebCore::WebGPU::Buffer&, WebCore::WebGPU::IndexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64>) final;
-    void setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer*, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64>) final;
+    void setIndexBuffer(const WebCore::WebGPU::Buffer&, WebCore::WebGPU::IndexFormat, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>) final;
+    void setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer*, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>) final;
 
-    void draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
-        std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance) final;
-    void drawIndexed(WebCore::WebGPU::Size32 indexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
-        std::optional<WebCore::WebGPU::Size32> firstIndex,
-        std::optional<WebCore::WebGPU::SignedOffset32> baseVertex,
-        std::optional<WebCore::WebGPU::Size32> firstInstance) final;
+    void draw(WebCore::WebGPU::Size32 vertexCount, WebCore::WebGPU::Size32 instanceCount,
+        WebCore::WebGPU::Size32 firstVertex, WebCore::WebGPU::Size32 firstInstance) final;
+    void drawIndexed(WebCore::WebGPU::Size32 indexCount, WebCore::WebGPU::Size32 instanceCount,
+        WebCore::WebGPU::Size32 firstIndex,
+        WebCore::WebGPU::SignedOffset32 baseVertex,
+        WebCore::WebGPU::Size32 firstInstance) final;
 
     void drawIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset) final;
     void drawIndexedIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset) final;

@@ -41,7 +41,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(QueueImpl);
 
 QueueImpl::QueueImpl(WebGPUPtr<WGPUQueue>&& queue, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(queue))
+    : m_backing(WTF::move(queue))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
@@ -66,7 +66,7 @@ static void onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus status, void* us
 
 void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
+    auto blockPtr = makeBlockPtr([callback = WTF::move(callback)](WGPUQueueWorkDoneStatus) mutable {
         callback();
     });
     wgpuQueueOnSubmittedWorkDone(m_backing.get(), &onSubmittedWorkDoneCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in onSubmittedWorkDoneCallback().
@@ -110,7 +110,7 @@ void QueueImpl::writeTexture(
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUImageCopyTexture backingDestination {
-        .texture = convertToBackingContext->convertToBacking(destination.protectedTexture().get()),
+        .texture = convertToBackingContext->convertToBacking(protect(destination.texture).get()),
         .mipLevel = destination.mipLevel,
         .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(destination.aspect),
@@ -140,6 +140,11 @@ void QueueImpl::copyExternalImageToTexture(
 void QueueImpl::setLabelInternal(const String& label)
 {
     wgpuQueueSetLabel(m_backing.get(), label.utf8().data());
+}
+
+RefPtr<WebCore::NativeImage> QueueImpl::getNativeImage(WebCore::VideoFrame&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore::WebGPU

@@ -87,7 +87,7 @@ public:
     bool isFirst() const;
     bool isFirstAfterPageBreak() const;
 
-    bool hasBlockLevelContent() const;
+    bool hasBlockContent() const;
     LeafBoxIterator blockLevelBox() const;
 
     // Text-relative left/right
@@ -146,7 +146,7 @@ inline float contentStartInBlockDirection(const LineBox&);
 // -----------------------------------------------
 
 inline LineBox::LineBox(PathVariant&& path)
-    : m_pathVariant(WTFMove(path))
+    : m_pathVariant(WTF::move(path))
 {
 }
 
@@ -322,10 +322,10 @@ inline bool LineBox::isFirst() const
     return !previous();
 }
 
-inline bool LineBox::hasBlockLevelContent() const
+inline bool LineBox::hasBlockContent() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.hasBlockLevelContent();
+        return path.hasBlockLevelBox();
     });
 }
 

@@ -29,12 +29,19 @@
 #include <WebCore/AXCoreObject.h>
 #include <WebCore/IntRectHash.h>
 #include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class AXObjectCache;
+
+struct HitTestCacheEntry {
+    IntPoint hitPoint;
+    AXID resultID;
+    MonotonicTime expirationTime;
+};
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXGeometryManager);
 class AXGeometryManager final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXGeometryManager> {
@@ -59,6 +66,12 @@ public:
 
     void remove(AXID axID) { m_cachedRects.remove(axID); }
 
+    std::optional<AXID> cachedHitTestResult(const IntPoint& screenPoint);
+    void cacheHitTestResult(AXID resultID, const IntPoint& hitPoint);
+    void expandHitTestCacheAroundPoint(const IntPoint& center, AXTreeID);
+    void invalidateHitTestCacheForID(AXID);
+    void clearHitTestCache();
+
 #if PLATFORM(MAC)
     void initializePrimaryScreenRect();
     FloatRect primaryScreenRect();
@@ -73,9 +86,17 @@ private:
     HashMap<AXID, IntRect> m_cachedRects;
     Timer m_updateObjectRegionsTimer;
 
+    Lock m_hitTestCacheLock;
+    static constexpr size_t HitTestCacheSize = 32;
+    Vector<HitTestCacheEntry, HitTestCacheSize> m_hitTestCache WTF_GUARDED_BY_LOCK(m_hitTestCacheLock);
+
+    std::atomic<uint64_t> m_probeGeneration { 0 };
+    void incrementProbeGeneration() { m_probeGeneration++; }
+    uint64_t currentProbeGeneration() const { return m_probeGeneration.load(); }
+
 #if PLATFORM(MAC)
-    FloatRect m_primaryScreenRect WTF_GUARDED_BY_LOCK(m_lock);
-    Lock m_lock;
+    FloatRect m_primaryScreenRect WTF_GUARDED_BY_LOCK(m_primaryScreenRectLock);
+    Lock m_primaryScreenRectLock;
 #endif
 };
 

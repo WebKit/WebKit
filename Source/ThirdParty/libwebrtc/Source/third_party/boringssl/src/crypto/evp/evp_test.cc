@@ -14,8 +14,8 @@
 
 #include <openssl/evp.h>
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,26 +31,27 @@
 #include <openssl/bn.h>
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
-#include <openssl/digest.h>
 #include <openssl/dh.h>
+#include <openssl/digest.h>
 #include <openssl/dsa.h>
 #include <openssl/ec.h>
 #include <openssl/err.h>
 #include <openssl/obj.h>
 #include <openssl/rsa.h>
 
+#include "../test/der_trailing_data.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
 #include "../test/wycheproof_util.h"
 
-
+namespace {
 // evp_test dispatches between multiple test types. PublicKey and PrivateKey
 // tests take a key name parameter and key information. If the test is
 // successful, the key is saved under that key name. Decrypt, Sign, and Verify
 // tests take a previously imported key name as parameter and test their
 // respective operations.
 
-static const EVP_MD *GetDigest(std::string_view name) {
+const EVP_MD *GetDigest(std::string_view name) {
   if (name == "MD5") {
     return EVP_md5();
   } else if (name == "SHA1") {
@@ -68,7 +69,7 @@ static const EVP_MD *GetDigest(std::string_view name) {
   return nullptr;
 }
 
-static std::optional<int> GetRSAPadding(std::string_view name) {
+std::optional<int> GetRSAPadding(std::string_view name) {
   if (name == "PKCS1") {
     return RSA_PKCS1_PADDING;
   }
@@ -91,9 +92,11 @@ struct AlgorithmInfo {
   bool is_default;
 };
 
-static const std::map<std::string, AlgorithmInfo> kAllAlgorithms = {
+const std::map<std::string, AlgorithmInfo> kAllAlgorithms = {
     {"RSA", {EVP_pkey_rsa(), EVP_PKEY_RSA, true}},
     {"RSA-PSS-SHA-256", {EVP_pkey_rsa_pss_sha256(), EVP_PKEY_RSA_PSS, false}},
+    {"RSA-PSS-SHA-384", {EVP_pkey_rsa_pss_sha384(), EVP_PKEY_RSA_PSS, false}},
+    {"RSA-PSS-SHA-512", {EVP_pkey_rsa_pss_sha512(), EVP_PKEY_RSA_PSS, false}},
     {"EC-P-224", {EVP_pkey_ec_p224(), EVP_PKEY_EC, true}},
     {"EC-P-256", {EVP_pkey_ec_p256(), EVP_PKEY_EC, true}},
     {"EC-P-384", {EVP_pkey_ec_p384(), EVP_PKEY_EC, true}},
@@ -101,15 +104,18 @@ static const std::map<std::string, AlgorithmInfo> kAllAlgorithms = {
     {"X25519", {EVP_pkey_x25519(), EVP_PKEY_X25519, true}},
     {"Ed25519", {EVP_pkey_ed25519(), EVP_PKEY_ED25519, true}},
     {"DSA", {EVP_pkey_dsa(), EVP_PKEY_DSA, true}},
+    {"ML-DSA-44", {EVP_pkey_ml_dsa_44(), EVP_PKEY_ML_DSA_44, false}},
+    {"ML-DSA-65", {EVP_pkey_ml_dsa_65(), EVP_PKEY_ML_DSA_65, false}},
+    {"ML-DSA-87", {EVP_pkey_ml_dsa_87(), EVP_PKEY_ML_DSA_87, false}},
 };
 
 using KeyMap = std::map<std::string, bssl::UniquePtr<EVP_PKEY>>;
 
 enum class KeyRole { kPublic, kPrivate };
 
-static void CheckRSAParam(FileTest *t, std::string_view attr_name,
-                          const EVP_PKEY *pkey,
-                          const BIGNUM *(*rsa_getter)(const RSA *)) {
+void CheckRSAParam(FileTest *t, std::string_view attr_name,
+                   const EVP_PKEY *pkey,
+                   const BIGNUM *(*rsa_getter)(const RSA *)) {
   SCOPED_TRACE(attr_name);
   if (t->HasAttribute(attr_name)) {
     bssl::UniquePtr<BIGNUM> want =
@@ -129,13 +135,47 @@ static void CheckRSAParam(FileTest *t, std::string_view attr_name,
   // not currently assert that we omit them.
 }
 
-static bool ImportKey(FileTest *t, KeyMap *key_map, KeyRole key_role) {
+bool CheckRawKey(FileTest *t, std::string_view attr_name, const EVP_PKEY *pkey,
+                 int (*getter)(const EVP_PKEY *pkey, uint8_t *out,
+                               size_t *out_len)) {
+  if (!t->HasAttribute(attr_name)) {
+    size_t len;
+    EXPECT_FALSE(getter(pkey, nullptr, &len));
+    return true;
+  }
+
+  std::vector<uint8_t> expected;
+  if (!t->GetBytes(&expected, attr_name)) {
+    return false;
+  }
+
+  std::vector<uint8_t> raw;
+  size_t len;
+  if (!getter(pkey, nullptr, &len)) {
+    return false;
+  }
+  raw.resize(len);
+  if (!getter(pkey, raw.data(), &len)) {
+    return false;
+  }
+  raw.resize(len);
+  EXPECT_EQ(Bytes(raw), Bytes(expected));
+
+  // Short buffers should be rejected.
+  raw.resize(len - 1);
+  len = raw.size();
+  EXPECT_FALSE(getter(pkey, raw.data(), &len));
+  return true;
+}
+
+bool ImportKey(FileTest *t, KeyMap *key_map, KeyRole key_role) {
   std::string format_name = key_role == KeyRole::kPublic ? "spki" : "pkcs8";
   auto parse_func = key_role == KeyRole::kPublic
                         ? &EVP_PKEY_from_subject_public_key_info
                         : &EVP_PKEY_from_private_key_info;
-  auto parse_default_func = key_role == KeyRole::kPublic ? &EVP_parse_public_key
-                                                 : &EVP_parse_private_key;
+  auto parse_default_func = key_role == KeyRole::kPublic
+                                ? &EVP_parse_public_key
+                                : &EVP_parse_private_key;
   auto marshal_func = key_role == KeyRole::kPublic ? &EVP_marshal_public_key
                                                    : &EVP_marshal_private_key;
 
@@ -162,6 +202,21 @@ static bool ImportKey(FileTest *t, KeyMap *key_map, KeyRole key_role) {
     return false;
   }
   keys.emplace_back(format_name + " - all algs", std::move(new_key));
+
+  // Test that the parsers reject trailing data.
+  bool ok = TestDERTrailingData(
+      input, [&](bssl::Span<const uint8_t> rewritten, size_t n) {
+        // We currently intentionally ignore trailing data in the outermost
+        // PKCS#8 PrivateKeyInfo element because we don't parse the attributes.
+        if (n == 0 && key_role == KeyRole::kPrivate) {
+          return;
+        }
+        SCOPED_TRACE(n);
+        bssl::UniquePtr<EVP_PKEY> parsed(parse_func(
+            rewritten.data(), rewritten.size(), algs.data(), algs.size()));
+        EXPECT_FALSE(parsed);
+      });
+  EXPECT_TRUE(ok);
 
   // Parse with just the specific algorithm.
   std::string alg_name;
@@ -233,6 +288,18 @@ static bool ImportKey(FileTest *t, KeyMap *key_map, KeyRole key_role) {
       return false;
     }
     keys.emplace_back("raw private", std::move(new_key));
+  }
+  if (key_role == KeyRole::kPrivate && t->HasAttribute("PrivateSeed")) {
+    std::vector<uint8_t> raw;
+    if (!t->GetBytes(&raw, "PrivateSeed")) {
+      return false;
+    }
+    new_key.reset(
+        EVP_PKEY_from_private_seed(alg_info.alg, raw.data(), raw.size()));
+    if (new_key == nullptr) {
+      return false;
+    }
+    keys.emplace_back("private seed", std::move(new_key));
   }
 
   // Import RSA key from parameters.
@@ -332,58 +399,11 @@ static bool ImportKey(FileTest *t, KeyMap *key_map, KeyRole key_role) {
     EXPECT_EQ(Bytes(output), Bytes(CBB_data(cbb.get()), CBB_len(cbb.get())))
         << "Re-encoding the key did not match.";
 
-    if (t->HasAttribute("RawPrivate")) {
-      std::vector<uint8_t> expected;
-      if (!t->GetBytes(&expected, "RawPrivate")) {
-        return false;
-      }
-
-      std::vector<uint8_t> raw;
-      size_t len;
-      if (!EVP_PKEY_get_raw_private_key(pkey.get(), nullptr, &len)) {
-        return false;
-      }
-      raw.resize(len);
-      if (!EVP_PKEY_get_raw_private_key(pkey.get(), raw.data(), &len)) {
-        return false;
-      }
-      raw.resize(len);
-      EXPECT_EQ(Bytes(raw), Bytes(expected));
-
-      // Short buffers should be rejected.
-      raw.resize(len - 1);
-      len = raw.size();
-      EXPECT_FALSE(EVP_PKEY_get_raw_private_key(pkey.get(), raw.data(), &len));
-    } else {
-      size_t len;
-      EXPECT_FALSE(EVP_PKEY_get_raw_private_key(pkey.get(), nullptr, &len));
-    }
-
-    if (t->HasAttribute("RawPublic")) {
-      std::vector<uint8_t> expected;
-      if (!t->GetBytes(&expected, "RawPublic")) {
-        return false;
-      }
-
-      std::vector<uint8_t> raw;
-      size_t len;
-      if (!EVP_PKEY_get_raw_public_key(pkey.get(), nullptr, &len)) {
-        return false;
-      }
-      raw.resize(len);
-      if (!EVP_PKEY_get_raw_public_key(pkey.get(), raw.data(), &len)) {
-        return false;
-      }
-      raw.resize(len);
-      EXPECT_EQ(Bytes(raw), Bytes(expected));
-
-      // Short buffers should be rejected.
-      raw.resize(len - 1);
-      len = raw.size();
-      EXPECT_FALSE(EVP_PKEY_get_raw_public_key(pkey.get(), raw.data(), &len));
-    } else {
-      size_t len;
-      EXPECT_FALSE(EVP_PKEY_get_raw_public_key(pkey.get(), nullptr, &len));
+    if (!CheckRawKey(t, "RawPrivate", pkey.get(),
+                     EVP_PKEY_get_raw_private_key) ||
+        !CheckRawKey(t, "RawPublic", pkey.get(), EVP_PKEY_get_raw_public_key) ||
+        !CheckRawKey(t, "PrivateSeed", pkey.get(), EVP_PKEY_get_private_seed)) {
+      return false;
     }
   }
 
@@ -394,8 +414,8 @@ static bool ImportKey(FileTest *t, KeyMap *key_map, KeyRole key_role) {
   return true;
 }
 
-static bool GetOptionalBignum(FileTest *t, bssl::UniquePtr<BIGNUM> *out,
-                              const std::string &key) {
+bool GetOptionalBignum(FileTest *t, bssl::UniquePtr<BIGNUM> *out,
+                       const std::string &key) {
   if (!t->HasAttribute(key)) {
     *out = nullptr;
     return true;
@@ -410,7 +430,7 @@ static bool GetOptionalBignum(FileTest *t, bssl::UniquePtr<BIGNUM> *out,
   return *out != nullptr;
 }
 
-static bool ImportDHKey(FileTest *t, KeyMap *key_map) {
+bool ImportDHKey(FileTest *t, KeyMap *key_map) {
   bssl::UniquePtr<BIGNUM> p, q, g, pub_key, priv_key;
   if (!GetOptionalBignum(t, &p, "P") ||  //
       !GetOptionalBignum(t, &q, "Q") ||  //
@@ -450,8 +470,7 @@ static bool ImportDHKey(FileTest *t, KeyMap *key_map) {
 
 // SetupContext configures |ctx| based on attributes in |t|, with the exception
 // of the signing digest which must be configured externally.
-static bool SetupContext(FileTest *t, const KeyMap *key_map,
-                         EVP_PKEY_CTX *ctx) {
+bool SetupContext(FileTest *t, const KeyMap *key_map, EVP_PKEY_CTX *ctx) {
   if (t->HasAttribute("RSAPadding")) {
     auto padding = GetRSAPadding(t->GetAttributeOrDie("RSAPadding"));
     if (!padding || !EVP_PKEY_CTX_set_rsa_padding(ctx, *padding)) {
@@ -508,8 +527,7 @@ static bool SetupContext(FileTest *t, const KeyMap *key_map,
   return true;
 }
 
-static bool MaybeReplaceWithCopy(bssl::UniquePtr<EVP_PKEY_CTX> *ctx,
-                                 bool copy_ctx) {
+bool MaybeReplaceWithCopy(bssl::UniquePtr<EVP_PKEY_CTX> *ctx, bool copy_ctx) {
   if (!copy_ctx) {
     return true;
   }
@@ -521,8 +539,7 @@ static bool MaybeReplaceWithCopy(bssl::UniquePtr<EVP_PKEY_CTX> *ctx,
   return true;
 }
 
-static bool MaybeReplaceWithCopy(bssl::UniquePtr<EVP_MD_CTX> *ctx,
-                                 bool copy_ctx) {
+bool MaybeReplaceWithCopy(bssl::UniquePtr<EVP_MD_CTX> *ctx, bool copy_ctx) {
   if (!copy_ctx) {
     return true;
   }
@@ -534,8 +551,8 @@ static bool MaybeReplaceWithCopy(bssl::UniquePtr<EVP_MD_CTX> *ctx,
   return true;
 }
 
-static bool TestDerive(FileTest *t, const KeyMap *key_map, EVP_PKEY *key,
-                       bool copy_ctx) {
+bool TestDerive(FileTest *t, const KeyMap *key_map, EVP_PKEY *key,
+                bool copy_ctx) {
   bssl::UniquePtr<EVP_PKEY_CTX> ctx(EVP_PKEY_CTX_new(key, nullptr));
   if (!ctx ||  //
       !EVP_PKEY_derive_init(ctx.get()) ||
@@ -587,8 +604,7 @@ static bool TestDerive(FileTest *t, const KeyMap *key_map, EVP_PKEY *key,
   return true;
 }
 
-static bool TestEVPOperation(FileTest *t, const KeyMap *key_map,
-                             bool copy_ctx) {
+bool TestEVPOperation(FileTest *t, const KeyMap *key_map, bool copy_ctx) {
   SCOPED_TRACE(copy_ctx);
   // Load the key.
   const std::string &key_name = t->GetParameter();
@@ -602,7 +618,7 @@ static bool TestEVPOperation(FileTest *t, const KeyMap *key_map,
   int (*key_op_init)(EVP_PKEY_CTX *ctx) = nullptr;
   int (*key_op)(EVP_PKEY_CTX *ctx, uint8_t *out, size_t *out_len,
                 const uint8_t *in, size_t in_len) = nullptr;
-  int (*md_op_init)(EVP_MD_CTX * ctx, EVP_PKEY_CTX * *pctx, const EVP_MD *type,
+  int (*md_op_init)(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx, const EVP_MD *type,
                     ENGINE *e, EVP_PKEY *pkey) = nullptr;
   bool is_verify = false;
   if (t->GetType() == "Decrypt") {
@@ -668,18 +684,39 @@ static bool TestEVPOperation(FileTest *t, const KeyMap *key_map,
     }
     actual.resize(len);
     if (!EVP_DigestSign(ctx.get(), actual.data(), &len, input.data(),
-                        input.size()) ||
-        !t->GetBytes(&output, "Output")) {
+                        input.size())) {
       return false;
     }
     actual.resize(len);
+
+    if (t->HasAttribute("CheckVerify")) {
+      // Some signature schemes are non-deterministic, so we check by verifying.
+      bssl::UniquePtr<EVP_MD_CTX> verify_ctx(EVP_MD_CTX_new());
+      EVP_PKEY_CTX *verify_pctx;
+      if (verify_ctx == nullptr ||
+          !EVP_DigestVerifyInit(verify_ctx.get(), &verify_pctx, digest, nullptr,
+                                key) ||
+
+          !MaybeReplaceWithCopy(&verify_ctx, copy_ctx) ||
+          !SetupContext(t, key_map, verify_pctx) ||
+          !MaybeReplaceWithCopy(&verify_ctx, copy_ctx)) {
+        return false;
+      }
+      EXPECT_TRUE(EVP_DigestVerify(verify_ctx.get(), actual.data(),
+                                   actual.size(), input.data(), input.size()))
+          << "Could not verify result.";
+      return true;
+    }
+
+    if (!t->GetBytes(&output, "Output")) {
+      return false;
+    }
     EXPECT_EQ(Bytes(output), Bytes(actual));
     return true;
   }
 
   bssl::UniquePtr<EVP_PKEY_CTX> ctx(EVP_PKEY_CTX_new(key, nullptr));
-  if (!ctx ||
-      !key_op_init(ctx.get()) ||
+  if (!ctx || !key_op_init(ctx.get()) ||
       !MaybeReplaceWithCopy(&ctx, copy_ctx) ||
       (digest != nullptr &&
        !EVP_PKEY_CTX_set_signature_md(ctx.get(), digest)) ||
@@ -758,7 +795,7 @@ static bool TestEVPOperation(FileTest *t, const KeyMap *key_map,
   return true;
 }
 
-static bool TestEVP(FileTest *t, KeyMap *key_map) {
+bool TestEVP(FileTest *t, KeyMap *key_map) {
   if (t->GetType() == "PrivateKey") {
     return ImportKey(t, key_map, KeyRole::kPrivate);
   }
@@ -776,7 +813,7 @@ static bool TestEVP(FileTest *t, KeyMap *key_map) {
          TestEVPOperation(t, key_map, /*copy_ctx=*/true);
 }
 
-static void RunEVPTests(const char *path) {
+void RunEVPTests(const char *path) {
   KeyMap key_map;
   FileTestGTest(path, [&](FileTest *t) {
     bool result = TestEVP(t, &key_map);
@@ -802,23 +839,20 @@ TEST(EVPTest, Ed25519TestVectors) {
   RunEVPTests("crypto/evp/test/ed25519_tests.txt");
 }
 
+TEST(EVPTest, MLDSATestVectors) {
+  RunEVPTests("crypto/evp/test/mldsa_tests.txt");
+}
+
 TEST(EVPTest, RSATestVectors) { RunEVPTests("crypto/evp/test/rsa_tests.txt"); }
 
 TEST(EVPTest, X25519TestVectors) {
   RunEVPTests("crypto/evp/test/x25519_tests.txt");
 }
 
-static void RunWycheproofVerifyTest(const char *path) {
+void RunWycheproofVerifyTest(const char *path, const EVP_PKEY_ALG *alg) {
   SCOPED_TRACE(path);
-  FileTestGTest(path, [](FileTest *t) {
+  FileTestGTest(path, [&](FileTest *t) {
     t->IgnoreAllUnusedInstructions();
-
-    std::vector<uint8_t> der;
-    ASSERT_TRUE(t->GetInstructionBytes(&der, "keyDer"));
-    CBS cbs;
-    CBS_init(&cbs, der.data(), der.size());
-    bssl::UniquePtr<EVP_PKEY> key(EVP_parse_public_key(&cbs));
-    ASSERT_TRUE(key);
 
     const EVP_MD *md = nullptr;
     if (t->HasInstruction("sha")) {
@@ -842,8 +876,31 @@ static void RunWycheproofVerifyTest(const char *path) {
     ASSERT_TRUE(t->GetBytes(&msg, "msg"));
     std::vector<uint8_t> sig;
     ASSERT_TRUE(t->GetBytes(&sig, "sig"));
+    std::vector<uint8_t> sig_ctx;
+    if (t->HasAttribute("ctx")) {
+      ASSERT_TRUE(t->GetBytes(&sig_ctx, "ctx"));
+    }
     WycheproofResult result;
     ASSERT_TRUE(GetWycheproofResult(t, &result));
+    // BoringSSL does not enforce policies on weak keys and leaves it to the
+    // caller.
+    bool expect_valid =
+        result.IsValid({"SmallModulus", "SmallPublicKey", "WeakHash"});
+
+    std::vector<uint8_t> der;
+    ASSERT_TRUE(t->GetInstructionBytes(&der, "publicKeyDer"));
+    bssl::UniquePtr<EVP_PKEY> key(
+        EVP_PKEY_from_subject_public_key_info(der.data(), der.size(), &alg, 1));
+    if (!key) {
+      EXPECT_FALSE(expect_valid);
+      return;
+    }
+
+    // We do not currently support signature contexts.
+    // TODO(crbug.com/449751916): Support this.
+    if (!sig_ctx.empty()) {
+      return;
+    }
 
     if (EVP_PKEY_id(key.get()) == EVP_PKEY_DSA) {
       // DSA is deprecated and is not usable via EVP.
@@ -869,140 +926,206 @@ static void RunWycheproofVerifyTest(const char *path) {
       }
       int ret = EVP_DigestVerify(ctx.get(), sig.data(), sig.size(), msg.data(),
                                  msg.size());
-      // BoringSSL does not enforce policies on weak keys and leaves it to the
-      // caller.
-      EXPECT_EQ(ret,
-                result.IsValid({"SmallModulus", "SmallPublicKey", "WeakHash"})
-                    ? 1
-                    : 0);
+      EXPECT_EQ(ret, expect_valid ? 1 : 0);
     }
   });
 }
 
 TEST(EVPTest, WycheproofDSA) {
-  RunWycheproofVerifyTest("third_party/wycheproof_testvectors/dsa_test.txt");
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/dsa_2048_224_sha224_test.txt",
+      EVP_pkey_dsa());
 }
 
 TEST(EVPTest, WycheproofECDSAP224) {
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha224_test.txt");
+      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha224_test.txt",
+      EVP_pkey_ec_p224());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha256_test.txt");
+      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha256_test.txt",
+      EVP_pkey_ec_p224());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha512_test.txt");
+      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha512_test.txt",
+      EVP_pkey_ec_p224());
 }
 
 TEST(EVPTest, WycheproofECDSAP256) {
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp256r1_sha256_test.txt");
+      "third_party/wycheproof_testvectors/ecdsa_secp256r1_sha256_test.txt",
+      EVP_pkey_ec_p256());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp256r1_sha512_test.txt");
+      "third_party/wycheproof_testvectors/ecdsa_secp256r1_sha512_test.txt",
+      EVP_pkey_ec_p256());
 }
 
 TEST(EVPTest, WycheproofECDSAP384) {
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp384r1_sha384_test.txt");
+      "third_party/wycheproof_testvectors/ecdsa_secp384r1_sha384_test.txt",
+      EVP_pkey_ec_p384());
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt",
+      EVP_pkey_ec_p384());
 }
 
 TEST(EVPTest, WycheproofECDSAP521) {
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt");
-  RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt");
+      "third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt",
+      EVP_pkey_ec_p521());
 }
 
-TEST(EVPTest, WycheproofEdDSA) {
-  RunWycheproofVerifyTest("third_party/wycheproof_testvectors/eddsa_test.txt");
+TEST(EVPTest, WycheproofEd25519) {
+  RunWycheproofVerifyTest("third_party/wycheproof_testvectors/ed25519_test.txt",
+                          EVP_pkey_ed25519());
+}
+
+// TODO(crbug.com/449751916): We also test these in the low-level ML-DSA code.
+// The EVP-level tests are not yet redundant:
+//
+// * We can't yet run the tests with a context argument.
+// * We can't yet run the signing tests with external entropy.
+//
+// When/if we add |EVP_PKEY|-based APIs for those, we may be able to remove the
+// low-level copy.
+
+TEST(EVPTest, WycheproofMLDSA44) {
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/mldsa_44_verify_test.txt",
+      EVP_pkey_ml_dsa_44());
+}
+
+TEST(EVPTest, WycheproofMLDSA65) {
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/mldsa_65_verify_test.txt",
+      EVP_pkey_ml_dsa_65());
+}
+
+TEST(EVPTest, WycheproofMLDSA87) {
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/mldsa_87_verify_test.txt",
+      EVP_pkey_ml_dsa_87());
 }
 
 TEST(EVPTest, WycheproofRSAPKCS1) {
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_2048_sha224_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_2048_sha224_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_2048_sha256_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_2048_sha256_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_2048_sha384_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_2048_sha384_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_2048_sha512_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_2048_sha512_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_3072_sha256_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_3072_sha256_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_3072_sha384_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_3072_sha384_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_3072_sha512_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_3072_sha512_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_4096_sha384_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_4096_sha256_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_4096_sha512_test.txt");
-  // TODO(davidben): Is this file redundant with the tests above?
+      "third_party/wycheproof_testvectors/rsa_signature_4096_sha384_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_signature_test.txt");
+      "third_party/wycheproof_testvectors/rsa_signature_4096_sha512_test.txt",
+      EVP_pkey_rsa());
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/rsa_signature_8192_sha256_test.txt",
+      EVP_pkey_rsa());
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/rsa_signature_8192_sha384_test.txt",
+      EVP_pkey_rsa());
+  RunWycheproofVerifyTest(
+      "third_party/wycheproof_testvectors/rsa_signature_8192_sha512_test.txt",
+      EVP_pkey_rsa());
+}
+
+void RunWycheproofSignTest(FileTest *t) {
+  t->IgnoreAllUnusedInstructions();
+
+  std::vector<uint8_t> pkcs8;
+  ASSERT_TRUE(t->GetInstructionBytes(&pkcs8, "privateKeyPkcs8"));
+  CBS cbs;
+  CBS_init(&cbs, pkcs8.data(), pkcs8.size());
+  bssl::UniquePtr<EVP_PKEY> key(EVP_parse_private_key(&cbs));
+  ASSERT_TRUE(key);
+
+  const EVP_MD *md = GetWycheproofDigest(t, "sha", true);
+  ASSERT_TRUE(md);
+
+  std::vector<uint8_t> msg, sig;
+  ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+  ASSERT_TRUE(t->GetBytes(&sig, "sig"));
+  WycheproofResult result;
+  ASSERT_TRUE(GetWycheproofResult(t, &result));
+
+  bssl::ScopedEVP_MD_CTX ctx;
+  EVP_PKEY_CTX *pctx;
+  ASSERT_TRUE(EVP_DigestSignInit(ctx.get(), &pctx, md, nullptr, key.get()));
+  std::vector<uint8_t> out(EVP_PKEY_size(key.get()));
+  size_t len = out.size();
+  int ret = EVP_DigestSign(ctx.get(), out.data(), &len, msg.data(), msg.size());
+  // BoringSSL does not enforce policies on weak keys and leaves it to the
+  // caller.
+  bool is_valid =
+      result.IsValid({"SmallModulus", "SmallPublicKey", "WeakHash"});
+  EXPECT_EQ(ret, is_valid ? 1 : 0);
+  if (is_valid) {
+    out.resize(len);
+    EXPECT_EQ(Bytes(sig), Bytes(out));
+  }
 }
 
 TEST(EVPTest, WycheproofRSAPKCS1Sign) {
   FileTestGTest(
-      "third_party/wycheproof_testvectors/rsa_sig_gen_misc_test.txt",
-      [](FileTest *t) {
-        t->IgnoreAllUnusedInstructions();
-
-        std::vector<uint8_t> pkcs8;
-        ASSERT_TRUE(t->GetInstructionBytes(&pkcs8, "privateKeyPkcs8"));
-        CBS cbs;
-        CBS_init(&cbs, pkcs8.data(), pkcs8.size());
-        bssl::UniquePtr<EVP_PKEY> key(EVP_parse_private_key(&cbs));
-        ASSERT_TRUE(key);
-
-        const EVP_MD *md = GetWycheproofDigest(t, "sha", true);
-        ASSERT_TRUE(md);
-
-        std::vector<uint8_t> msg, sig;
-        ASSERT_TRUE(t->GetBytes(&msg, "msg"));
-        ASSERT_TRUE(t->GetBytes(&sig, "sig"));
-        WycheproofResult result;
-        ASSERT_TRUE(GetWycheproofResult(t, &result));
-
-        bssl::ScopedEVP_MD_CTX ctx;
-        EVP_PKEY_CTX *pctx;
-        ASSERT_TRUE(
-            EVP_DigestSignInit(ctx.get(), &pctx, md, nullptr, key.get()));
-        std::vector<uint8_t> out(EVP_PKEY_size(key.get()));
-        size_t len = out.size();
-        int ret =
-            EVP_DigestSign(ctx.get(), out.data(), &len, msg.data(), msg.size());
-        // BoringSSL does not enforce policies on weak keys and leaves it to the
-        // caller.
-        bool is_valid =
-            result.IsValid({"SmallModulus", "SmallPublicKey", "WeakHash"});
-        EXPECT_EQ(ret, is_valid ? 1 : 0);
-        if (is_valid) {
-          out.resize(len);
-          EXPECT_EQ(Bytes(sig), Bytes(out));
-        }
-      });
+      "third_party/wycheproof_testvectors/rsa_pkcs1_1024_sig_gen_test.txt",
+      RunWycheproofSignTest);
+  FileTestGTest(
+      "third_party/wycheproof_testvectors/rsa_pkcs1_1536_sig_gen_test.txt",
+      RunWycheproofSignTest);
+  FileTestGTest(
+      "third_party/wycheproof_testvectors/rsa_pkcs1_2048_sig_gen_test.txt",
+      RunWycheproofSignTest);
+  FileTestGTest(
+      "third_party/wycheproof_testvectors/rsa_pkcs1_3072_sig_gen_test.txt",
+      RunWycheproofSignTest);
+  FileTestGTest(
+      "third_party/wycheproof_testvectors/rsa_pkcs1_4096_sig_gen_test.txt",
+      RunWycheproofSignTest);
 }
 
 TEST(EVPTest, WycheproofRSAPSS) {
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt");
+      "third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt");
+      "third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/"
-      "rsa_pss_2048_sha256_mgf1_32_test.txt");
+      "third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_32_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/"
-      "rsa_pss_3072_sha256_mgf1_32_test.txt");
+      "third_party/wycheproof_testvectors/rsa_pss_3072_sha256_mgf1_32_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/"
-      "rsa_pss_4096_sha256_mgf1_32_test.txt");
+      "third_party/wycheproof_testvectors/rsa_pss_4096_sha256_mgf1_32_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/"
-      "rsa_pss_4096_sha512_mgf1_32_test.txt");
+      "third_party/wycheproof_testvectors/rsa_pss_4096_sha512_mgf1_32_test.txt",
+      EVP_pkey_rsa());
   RunWycheproofVerifyTest(
-      "third_party/wycheproof_testvectors/rsa_pss_misc_test.txt");
+      "third_party/wycheproof_testvectors/rsa_pss_misc_test.txt",
+      EVP_pkey_rsa());
 }
 
-static void RunWycheproofDecryptTest(
+void RunWycheproofDecryptTest(
     const char *path,
     std::function<void(FileTest *, EVP_PKEY_CTX *)> setup_cb) {
   FileTestGTest(path, [&](FileTest *t) {
@@ -1031,7 +1154,9 @@ static void RunWycheproofDecryptTest(
         EVP_PKEY_decrypt(ctx.get(), out.data(), &len, ct.data(), ct.size());
     // BoringSSL does not enforce policies on weak keys and leaves it to the
     // caller.
-    bool is_valid = result.IsValid({"SmallModulus"});
+    bool is_valid =
+        result.IsValid({"SmallModulus", "Constructed", "EncryptionWithLabel",
+                        "SmallIntegerCiphertext"});
     EXPECT_EQ(ret, is_valid ? 1 : 0);
     if (is_valid) {
       out.resize(len);
@@ -1040,7 +1165,7 @@ static void RunWycheproofDecryptTest(
   });
 }
 
-static void RunWycheproofOAEPTest(const char *path) {
+void RunWycheproofOAEPTest(const char *path) {
   RunWycheproofDecryptTest(path, [](FileTest *t, EVP_PKEY_CTX *ctx) {
     const EVP_MD *md = GetWycheproofDigest(t, "sha", true);
     ASSERT_TRUE(md);
@@ -1127,7 +1252,7 @@ TEST(EVPTest, WycheproofRSAOAEPMisc) {
       "third_party/wycheproof_testvectors/rsa_oaep_misc_test.txt");
 }
 
-static void RunWycheproofPKCS1DecryptTest(const char *path) {
+void RunWycheproofPKCS1DecryptTest(const char *path) {
   RunWycheproofDecryptTest(path, [](FileTest *t, EVP_PKEY_CTX *ctx) {
     // No setup needed. PKCS#1 is, sadly, the default.
   });
@@ -1141,3 +1266,4 @@ TEST(EVPTest, WycheproofRSAPKCS1Decrypt) {
   RunWycheproofPKCS1DecryptTest(
       "third_party/wycheproof_testvectors/rsa_pkcs1_4096_test.txt");
 }
+}  // namespace

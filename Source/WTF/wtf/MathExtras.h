@@ -377,6 +377,12 @@ constexpr bool isGreaterThanNonZeroPowerOfTwo(T value, unsigned power)
     return !!((value >> 1) >> (power - 1));
 }
 
+template<typename T>
+constexpr bool isMultipleOf(unsigned factor, T value)
+{
+    return factor && !(value % factor);
+}
+
 template<typename T> constexpr bool isLessThan(const T& a, const T& b) { return a < b; }
 template<typename T> constexpr bool isLessThanEqual(const T& a, const T& b) { return a <= b; }
 template<typename T> constexpr bool isGreaterThan(const T& a, const T& b) { return a > b; }

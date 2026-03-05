@@ -38,7 +38,7 @@
 namespace WebKit {
 
 DatabaseUtilities::DatabaseUtilities(String&& storageFilePath)
-    : m_storageFilePath(WTFMove(storageFilePath))
+    : m_storageFilePath(WTF::move(storageFilePath))
     , m_database(makeUniqueRef<WebCore::SQLiteDatabase>())
     , m_transaction(m_database.get())
 {
@@ -178,7 +178,7 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
         destinationSecretToken.signatureBase64URL = destinationSignature;
         destinationSecretToken.keyIDBase64URL = destinationKeyID;
 
-        attribution.setDestinationSecretToken(WTFMove(destinationSecretToken));
+        attribution.setDestinationSecretToken(WTF::move(destinationSecretToken));
 
         std::optional<WallTime> sourceEarliestTimeToSend;
         std::optional<WallTime> destinationEarliestTimeToSend;
@@ -198,7 +198,7 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
     sourceSecretToken.signatureBase64URL = signature;
     sourceSecretToken.keyIDBase64URL = keyID;
 
-    attribution.setSourceSecretToken(WTFMove(sourceSecretToken));
+    attribution.setSourceSecretToken(WTF::move(sourceSecretToken));
 
     return attribution;
 }
@@ -247,7 +247,7 @@ TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& t
             index = rawIndex;
     }
 
-    return std::make_pair<String, std::optional<String>>(WTFMove(createTableQuery), WTFMove(index));
+    return std::make_pair<String, std::optional<String>>(WTF::move(createTableQuery), WTF::move(index));
 }
 
 static std::unique_ptr<WebCore::SQLiteStatement> insertDistinctValuesInTableStatement(WebCore::SQLiteDatabase& database, const String& table)

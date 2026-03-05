@@ -41,12 +41,12 @@ NavigatorAudioSession::NavigatorAudioSession() = default;
 
 NavigatorAudioSession::~NavigatorAudioSession() = default;
 
-RefPtr<DOMAudioSession> NavigatorAudioSession::audioSession(Navigator& navigator)
+Ref<DOMAudioSession> NavigatorAudioSession::audioSession(Navigator& navigator)
 {
     auto* navigatorAudioSession = NavigatorAudioSession::from(navigator);
     if (!navigatorAudioSession->m_audioSession)
-        navigatorAudioSession->m_audioSession = DOMAudioSession::create(navigator.protectedScriptExecutionContext().get());
-    return navigatorAudioSession->m_audioSession;
+        lazyInitialize(navigatorAudioSession->m_audioSession, DOMAudioSession::create(protect(navigator.scriptExecutionContext()).get()));
+    return *navigatorAudioSession->m_audioSession;
 }
 
 NavigatorAudioSession* NavigatorAudioSession::from(Navigator& navigator)
@@ -55,7 +55,7 @@ NavigatorAudioSession* NavigatorAudioSession::from(Navigator& navigator)
     if (!supplement) {
         auto newSupplement = makeUnique<NavigatorAudioSession>();
         supplement = newSupplement.get();
-        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(FTL_JIT)
 
 #include <JavaScriptCore/FTLLocation.h>

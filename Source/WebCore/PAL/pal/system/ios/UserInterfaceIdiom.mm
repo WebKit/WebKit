@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Device.h"
+#import <atomic>
 #import <pal/spi/ios/UIKitSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)

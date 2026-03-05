@@ -1329,6 +1329,7 @@ static void adjust_arnr_filter(VP9_COMP *cpi, int distance, int group_boost,
   *arnr_strength = strength;
 }
 
+#if !CONFIG_REALTIME_ONLY // WEBRTC_WEBKIT_BUILD
 void vp9_temporal_filter(VP9_COMP *cpi, int distance) {
   VP9_COMMON *const cm = &cpi->common;
   RATE_CONTROL *const rc = &cpi->rc;
@@ -1437,3 +1438,4 @@ void vp9_temporal_filter(VP9_COMP *cpi, int distance) {
   else
     vp9_temporal_filter_row_mt(cpi);
 }
+#endif // !CONFIG_REALTIME_ONLY for WEBRTC_WEBKIT_BUILD

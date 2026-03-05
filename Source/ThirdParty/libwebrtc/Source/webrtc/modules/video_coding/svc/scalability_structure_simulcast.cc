@@ -39,9 +39,6 @@ Dti(int sid, int tid, const ScalableVideoController::LayerFrameConfig& config) {
 
 }  // namespace
 
-constexpr int ScalabilityStructureSimulcast::kMaxNumSpatialLayers;
-constexpr int ScalabilityStructureSimulcast::kMaxNumTemporalLayers;
-
 ScalabilityStructureSimulcast::ScalabilityStructureSimulcast(
     int num_spatial_layers,
     int num_temporal_layers,

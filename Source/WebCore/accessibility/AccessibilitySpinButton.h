@@ -34,18 +34,20 @@ namespace WebCore {
 // Currently only represents native spinbuttons (i.e. <input type="number">) and not role="spinbutton" elements.
 class AccessibilitySpinButton final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilitySpinButton> create(AXID, AXObjectCache&);
+    static Ref<AccessibilitySpinButton> create(AXID, SpinButtonElement&, AXObjectCache&);
     virtual ~AccessibilitySpinButton();
 
-    void setSpinButtonElement(SpinButtonElement* spinButton) { m_spinButtonElement = spinButton; }
+    bool computeIsIgnored() const final;
 
-    AccessibilitySpinButtonPart* incrementButton() final;
-    AccessibilitySpinButtonPart* decrementButton() final;
+    RefPtr<SpinButtonElement> spinButtonElement() const { return m_spinButtonElement.get(); }
+
+    AccessibilitySpinButtonPart* incrementButton() final { return m_incrementor.get(); }
+    AccessibilitySpinButtonPart* decrementButton() final { return m_decrementor.get(); }
 
     void step(int amount);
 
 private:
-    explicit AccessibilitySpinButton(AXID, AXObjectCache&);
+    explicit AccessibilitySpinButton(AXID, SpinButtonElement&, AXObjectCache&);
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButton; }
     bool isNativeSpinButton() const final { return true; }
@@ -53,10 +55,10 @@ private:
     void addChildren() final;
     LayoutRect elementRect() const final;
 
-    WeakPtr<SpinButtonElement, WeakPtrImplWithEventTargetData> m_spinButtonElement;
+    const WeakPtr<SpinButtonElement, WeakPtrImplWithEventTargetData> m_spinButtonElement;
     // FIXME: Nothing calls AXObjectCache::remove for m_incrementor and m_decrementor.
-    const Ref<AccessibilitySpinButtonPart> m_incrementor;
-    const Ref<AccessibilitySpinButtonPart> m_decrementor;
+    const RefPtr<AccessibilitySpinButtonPart> m_incrementor;
+    const RefPtr<AccessibilitySpinButtonPart> m_decrementor;
 };
 
 } // namespace WebCore

@@ -65,7 +65,7 @@ struct RemoteWorkerInitializationData;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<WebSWContextManagerConnection> create(Ref<IPC::Connection>&& connection, WebCore::Site&& site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData) { return adoptRef(*new WebSWContextManagerConnection(WTFMove(connection), WTFMove(site), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData))); }
+    static Ref<WebSWContextManagerConnection> create(Ref<IPC::Connection>&& connection, WebCore::Site&& site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData) { return adoptRef(*new WebSWContextManagerConnection(WTF::move(connection), WTF::move(site), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTF::move(initializationData))); }
     ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -80,7 +80,7 @@ private:
 
     // WebCore::SWContextManager::Connection.
     void establishConnection(CompletionHandler<void()>&&) final;
-    void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin) final;
+    void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const WebCore::SecurityOriginData&) final;
     void didFinishInstall(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, bool wasSuccessful) final;
     void didFinishActivation(WebCore::ServiceWorkerIdentifier) final;
     void setServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier, bool) final;

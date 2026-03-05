@@ -29,6 +29,14 @@ namespace sh
 // This type contains the pieces of information that differentiate SPIR-V types derived from the
 // same GLSL type.  This is referred to as "SPIR-V type specialization" henceforth.
 struct SpirvType;
+enum class SPIRVPrecisionChoice
+{
+    Unset       = 0,
+    UseFP16     = 1,
+    Default     = 2,
+    InvalidEnum = 3,
+    EnumCount   = 3,
+};
 class SpirvTypeSpec
 {
   public:
@@ -36,7 +44,7 @@ class SpirvTypeSpec
     // their fields or basic types.  When extracting fields, array elements, columns or basic types
     // from a type, the following helpers are used to remove any ineffective (and thus incorrect)
     // specialization.
-    void inferDefaults(const TType &type, TCompiler *compiler);
+    void inferDefaults(const TType &type, TCompiler *compiler, bool transformFloatUniformToFP16);
     void onArrayElementSelection(bool isElementTypeBlock, bool isElementTypeArray);
     void onBlockFieldSelection(const TType &fieldType);
     void onMatrixColumnSelection();
@@ -48,6 +56,10 @@ class SpirvTypeSpec
     // different ArrayStride decorations.  As such, the block storage is part of the SPIR-V type
     // except for non-block non-array types.
     TLayoutBlockStorage blockStorage = EbsUnspecified;
+
+    // The encoder ANGLE uses to calculate the member offsets within the default uniform block is
+    // different from encoder used to calculate the member offsets in other interface blocks.
+    bool isDefaultUniform = false;
 
     // If a structure is used in two I/O blocks or output varyings with and without the invariant
     // qualifier, it would also have to generate two SPIR-V types, as its fields' Invariant
@@ -72,6 +84,12 @@ class SpirvTypeSpec
     // it.  This is not recursively applied, and since each I/O block has a unique type, this
     // doesn't actually result in duplicated types even if it's specializing the type.
     bool isPatchIOBlock = false;
+
+    // The number of bits we use for the Spirv Data Type
+    // Unset: Initial value. Must change to UseFP16 or Default before saving to
+    // SPIRVBuilder.mTypeMap UseFP16: 16-bit Default: default bit size for various data types. e.g.
+    // 32 bit for FLoat
+    SPIRVPrecisionChoice precision = SPIRVPrecisionChoice::Unset;
 };
 
 struct SpirvType
@@ -160,17 +178,19 @@ struct SpirvTypeHash
                 type.primarySize != type.secondarySize &&
                 type.typeSpec.blockStorage != sh::EbsUnspecified));
 
+        // precision must be set to UseFP16 or Default when saving to hash map SPIRVBuilder.mTypeMap
+        ASSERT(type.typeSpec.precision != SPIRVPrecisionChoice::Unset);
+
         size_t result = 0;
 
         if (!type.arraySizes.empty())
         {
-            result = angle::ComputeGenericHash(type.arraySizes.data(),
-                                               type.arraySizes.size() * sizeof(type.arraySizes[0]));
+            result = angle::ComputeGenericHash(angle::as_byte_span(type.arraySizes));
         }
 
         if (type.block != nullptr)
         {
-            return result ^ angle::ComputeGenericHash(&type.block, sizeof(type.block)) ^
+            return result ^ angle::ComputeGenericHash(angle::byte_span_from_ref(type.block)) ^
                    static_cast<size_t>(type.typeSpec.isInvariantBlock) ^
                    (static_cast<size_t>(type.typeSpec.isRowMajorQualifiedBlock) << 1) ^
                    (static_cast<size_t>(type.typeSpec.isRowMajorQualifiedArray) << 2) ^
@@ -192,7 +212,7 @@ struct SpirvTypeHash
             // Padding because ComputeGenericHash expects a key size divisible by 4
         };
 
-        return result ^ angle::ComputeGenericHash(properties, sizeof(properties));
+        return result ^ angle::ComputeGenericHash(properties);
     }
 };
 
@@ -200,9 +220,7 @@ struct SpirvIdAndIdListHash
 {
     size_t operator()(const SpirvIdAndIdList &key) const
     {
-        return angle::ComputeGenericHash(key.idList.data(),
-                                         key.idList.size() * sizeof(key.idList[0])) ^
-               key.id;
+        return angle::ComputeGenericHash(angle::as_byte_span(key.idList)) ^ key.id;
     }
 };
 

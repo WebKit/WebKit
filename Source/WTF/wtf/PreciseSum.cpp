@@ -105,7 +105,7 @@ SmallAccumulator::SmallAccumulator()
 SmallAccumulator::SmallAccumulator(
     Vector<int64_t> &&chunk, const int addsUntilPropagate, const int64_t inf, const int64_t nan,
     const size_t sizeCount, const bool hasPosNumber)
-: chunk(WTFMove(chunk)), addsUntilPropagate { addsUntilPropagate }, inf { inf }, nan { nan },
+: chunk(WTF::move(chunk)), addsUntilPropagate { addsUntilPropagate }, inf { inf }, nan { nan },
     sizeCount { sizeCount }, hasPosNumber { hasPosNumber } { }
 
 /*
@@ -416,7 +416,7 @@ XsumSmall::XsumSmall()
 
 XsumSmall::XsumSmall(SmallAccumulator sacc)
     : m_smallAccumulator {
-        WTFMove(sacc.chunk), sacc.addsUntilPropagate, sacc.inf, sacc.nan, sacc.sizeCount, sacc.hasPosNumber
+        WTF::move(sacc.chunk), sacc.addsUntilPropagate, sacc.inf, sacc.nan, sacc.sizeCount, sacc.hasPosNumber
     } { }
 
 /*

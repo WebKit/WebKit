@@ -80,7 +80,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
         promise.reject(Exception { ExceptionCode::NetworkError });
         return;
     }
-    auto response = WTFMove(result.value());
+    auto response = WTF::move(result.value());
 
     auto loadingError = response->loadingError();
     if (!loadingError.isNull()) {
@@ -122,17 +122,17 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
         }
 
         if (!resourceResponse.certificateInfo())
-            resourceResponse.setCertificateInfo(WTFMove(certificateInfo));
+            resourceResponse.setCertificateInfo(WTF::move(certificateInfo));
     }
 
-    client->didReceiveResponse(WTFMove(resourceResponse));
+    client->didReceiveResponse(WTF::move(resourceResponse));
 
     if (response->isBodyReceivedByChunk()) {
         client->setCancelledCallback([response = WeakPtr { response.get() }] {
             if (RefPtr protectedResponse = response.get())
                 protectedResponse->cancelStream();
         });
-        response->consumeBodyReceivedByChunk([client = WTFMove(client), response = WeakPtr { response.get() }] (auto&& result) mutable {
+        response->consumeBodyReceivedByChunk([client = WTF::move(client), response = WeakPtr { response.get() }] (auto&& result) mutable {
             if (result.hasException()) {
                 auto error = FetchEvent::createResponseError(URL { }, result.exception().message(), ResourceError::IsSanitized::Yes);
                 client->didFail(error);
@@ -150,9 +150,9 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
 
     auto body = response->consumeBody();
     WTF::switchOn(body, [&] (Ref<FormData>& formData) {
-        client->didReceiveFormDataAndFinish(WTFMove(formData));
+        client->didReceiveFormDataAndFinish(WTF::move(formData));
     }, [&] (Ref<SharedBuffer>& buffer) {
-        client->didReceiveData(WTFMove(buffer));
+        client->didReceiveData(WTF::move(buffer));
         client->didFinish(response->networkLoadMetrics());
     }, [&] (std::nullptr_t&) {
         client->didFinish(response->networkLoadMetrics());
@@ -187,7 +187,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
         options.redirect = FetchOptions::Redirect::Manual;
 
     URL requestURL = request.url();
-    auto fetchRequest = FetchRequest::create(globalScope, WTFMove(body), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(referrer));
+    auto fetchRequest = FetchRequest::create(globalScope, WTF::move(body), WTF::move(requestHeaders),  WTF::move(request), WTF::move(options), WTF::move(referrer));
 
     // The request has already passed content extension checks, no need to reapply them if service worker does the fetch itself.
     fetchRequest->disableContentExtensionsCheck();
@@ -196,11 +196,6 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     if (!isServiceWorkerNavigationPreloadEnabled)
         fetchRequest->setNavigationPreloadIdentifier(fetchIdentifier);
 
-    FetchEvent::Init init;
-    init.request = WTFMove(fetchRequest);
-    init.resultingClientId = WTFMove(resultingClientIdentifier);
-    init.clientId = WTFMove(clientIdentifier);
-    init.cancelable = true;
 
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalScope.globalObject());
     JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
@@ -209,9 +204,15 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     ASSERT(promise);
 
     auto deferredPromise = DeferredPromise::create(jsDOMGlobalObject, *promise);
-    init.handled = DOMPromise::create(jsDOMGlobalObject, *promise);
 
-    auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
+    auto init = FetchEvent::Init {
+        ExtendableEventInit { EventInit { false, true, false } },
+        WTF::move(fetchRequest),
+        WTF::move(clientIdentifier),
+        WTF::move(resultingClientIdentifier),
+        DOMPromise::create(jsDOMGlobalObject, *promise),
+    };
+    auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, WTF::move(init), Event::IsTrusted::Yes);
     if (isServiceWorkerNavigationPreloadEnabled) {
         globalScope.addFetchEvent({ connectionIdentifier, fetchIdentifier }, event.get());
         event->setNavigationPreloadIdentifier(fetchIdentifier);
@@ -219,8 +220,8 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     CertificateInfo certificateInfo = globalScope.certificateInfo();
 
-    event->onResponse([client, mode, redirect, requestURL, certificateInfo = WTFMove(certificateInfo), deferredPromise]<typename Result> (Result&& result) mutable {
-        processResponse(WTFMove(client), std::forward<Result>(result), mode, redirect, requestURL, WTFMove(certificateInfo), deferredPromise.get());
+    event->onResponse([client, mode, redirect, requestURL, certificateInfo = WTF::move(certificateInfo), deferredPromise]<typename Result> (Result&& result) mutable {
+        processResponse(WTF::move(client), std::forward<Result>(result), mode, redirect, requestURL, WTF::move(certificateInfo), deferredPromise.get());
     });
 
     globalScope.dispatchEvent(event);

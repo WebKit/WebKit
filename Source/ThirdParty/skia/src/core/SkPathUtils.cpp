@@ -18,30 +18,10 @@
 
 namespace skpathutils {
 
-#ifdef SK_SUPPORT_MUTABLE_PATHEFFECT
-bool FillPathWithPaint(const SkPath& src, const SkPaint& paint, SkPath* dst) {
-    return skpathutils::FillPathWithPaint(src, paint, dst, nullptr, 1);
-}
-
-bool FillPathWithPaint(const SkPath& src, const SkPaint& paint, SkPath* dst,
-                       const SkRect* cullRect, SkScalar resScale) {
-    return skpathutils::FillPathWithPaint(src, paint, dst, cullRect,
-                                          SkMatrix::Scale(resScale, resScale));
-}
-
-bool FillPathWithPaint(const SkPath& src, const SkPaint& paint, SkPath* dst,
-                       const SkRect* cullRect, const SkMatrix& ctm) {
-    SkPathBuilder builder;
-    bool isFilled = FillPathWithPaint(src, paint, &builder, cullRect, ctm);
-    *dst = builder.detach();
-    return isFilled;
-}
-#endif
-
 bool FillPathWithPaint(const SkPath& origSrc, const SkPaint& paint, SkPathBuilder* builder,
                        const SkRect* cullRect, const SkMatrix& ctm) {
-    builder->reset();
     if (!origSrc.isFinite()) {
+        builder->reset();
         return false;
     }
 

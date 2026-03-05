@@ -87,7 +87,7 @@ OPENSSL_EXPORT const EC_POINT *EC_KEY_get0_public_key(const EC_KEY *key);
 // EC_KEY_set_public_key sets the public key of |key| to |pub|, by copying it.
 // It returns one on success and zero otherwise. |key| must already have had a
 // group configured (see |EC_KEY_set_group| and |EC_KEY_new_by_curve_name|), and
-// |pub| must also belong to that group.
+// |pub| must also belong to that group, and must not be the point at infinity.
 OPENSSL_EXPORT int EC_KEY_set_public_key(EC_KEY *key, const EC_POINT *pub);
 
 #define EC_PKEY_NO_PARAMETERS 0x001

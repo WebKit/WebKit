@@ -14,7 +14,7 @@
 #include "include/core/SkMatrix.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTemplates.h"
@@ -32,41 +32,19 @@ class SkWriteBuffer;
 enum class SkTileMode;
 struct SkStageRec;
 
+class SkGradientScope {
+public:
+    std::optional<SkGradient> unflatten(SkReadBuffer&, SkMatrix* legacyLocalMatrix);
+private:
+    skia_private::STArray<16, SkColor4f> fColorStorage;
+    skia_private::STArray<16, SkScalar> fPositionStorage;
+};
+
 class SkGradientBaseShader : public SkShaderBase {
 public:
-    using Interpolation = SkGradientShader::Interpolation;
+    using Interpolation = SkGradient::Interpolation;
 
-    struct Descriptor {
-        Descriptor();
-        ~Descriptor();
-
-        Descriptor(const SkColor4f colors[],
-                   sk_sp<SkColorSpace> colorSpace,
-                   const SkScalar positions[],
-                   int colorCount,
-                   SkTileMode mode,
-                   const Interpolation& interpolation);
-
-        const SkColor4f* fColors;
-        sk_sp<SkColorSpace> fColorSpace;
-        const SkScalar* fPositions;
-        int fColorCount;  // length of fColors (and fPositions, if not nullptr)
-        SkTileMode fTileMode;
-        Interpolation fInterpolation;
-    };
-
-    class DescriptorScope : public Descriptor {
-    public:
-        DescriptorScope() {}
-
-        bool unflatten(SkReadBuffer&, SkMatrix* legacyLocalMatrix);
-
-    private:
-        skia_private::STArray<16, SkColor4f> fColorStorage;
-        skia_private::STArray<16, SkScalar> fPositionStorage;
-    };
-
-    SkGradientBaseShader(const Descriptor& desc, const SkMatrix& ptsToUnit);
+    SkGradientBaseShader(const SkGradient&, const SkMatrix& ptsToUnit);
     ~SkGradientBaseShader() override;
 
     ShaderType type() const final { return ShaderType::kGradientBase; }
@@ -74,24 +52,20 @@ public:
     bool isOpaque() const override;
 
     bool interpolateInPremul() const {
-        return fInterpolation.fInPremul == SkGradientShader::Interpolation::InPremul::kYes;
+        return fInterpolation.fInPremul == Interpolation::InPremul::kYes;
     }
 
     const SkMatrix& getGradientMatrix() const { return fPtsToUnit; }
-    int getColorCount() const { return fColorCount; }
+    size_t getColorCount() const { return fColorCount; }
     const float* getPositions() const { return fPositions; }
+
     const Interpolation& getInterpolation() const { return fInterpolation; }
 
-    static bool ValidGradient(const SkColor4f colors[],
-                              int count,
+    static bool ValidGradient(SkSpan<const SkColor4f>,
                               SkTileMode tileMode,
                               const Interpolation& interpolation);
 
-    static sk_sp<SkShader> MakeDegenerateGradient(const SkColor4f colors[],
-                                                  const SkScalar pos[],
-                                                  int colorCount,
-                                                  sk_sp<SkColorSpace> colorSpace,
-                                                  SkTileMode mode);
+    static sk_sp<SkShader> MakeDegenerateGradient(const SkGradient::Colors&);
 
     // The default SkScalarNearlyZero threshold of .0024 is too big and causes regressions for svg
     // gradients defined in the wild.
@@ -127,24 +101,26 @@ public:
                                               const SkColorSpace* intermediateColorSpace,
                                               const SkColorSpace* dstColorSpace);
 
-    SkScalar getPos(int i) const {
+    float getPos(size_t i) const {
         SkASSERT(i < fColorCount);
         return fPositions ? fPositions[i] : SkIntToScalar(i) / (fColorCount - 1);
     }
 
-    SkColor getLegacyColor(int i) const {
+    SkColor getLegacyColor(size_t i) const {
         SkASSERT(i < fColorCount);
         return fColors[i].toSkColor();
     }
 
-    SkColor4f* fColors;               // points into fStorage
-    SkScalar* fPositions;             // points into fStorage, or nullptr
-    sk_sp<SkColorSpace> fColorSpace;  // color space of gradient stops
-    Interpolation fInterpolation;
+    SkSpan<const SkColor4f> colors() const { return {fColors, fColorCount}; }
+    SkSpan<const float> positions() const {
+        return {fPositions, fPositions ? fColorCount : 0};
+    }
 
-    int fColorCount;                  // length of fColors (and fPositions, if not nullptr)
-    bool fFirstStopIsImplicit;
-    bool fLastStopIsImplicit;
+    bool firstStopIsImplicit() const { return fFirstStopIsImplicit; }
+    bool lastStopIsImplicit() const { return fLastStopIsImplicit; }
+
+    const sk_sp<SkColorSpace>& colorSpace() const { return fColorSpace; }
+    const Interpolation& interpolation() const { return fInterpolation; }
 
     bool colorsAreOpaque() const { return fColorsAreOpaque; }
 
@@ -154,6 +130,14 @@ public:
     void setCachedBitmap(SkBitmap b) const { fColorsAndOffsetsBitmap = b; }
 
 private:
+    SkColor4f* fColors;               // points into fStorage
+    SkScalar* fPositions;             // points into fStorage, or nullptr
+    sk_sp<SkColorSpace> fColorSpace;  // color space of gradient stops
+    Interpolation fInterpolation;
+    size_t fColorCount;               // length of fColors (and fPositions, if not nullptr)
+    bool fFirstStopIsImplicit;
+    bool fLastStopIsImplicit;
+
     // When the number of stops exceeds Graphite's uniform-based limit the colors and offsets
     // are stored in this bitmap. It is stored in the shader so it can be cached with a stable
     // id and easily regenerated if purged.
@@ -181,19 +165,38 @@ struct SkColor4fXformer {
 
     ColorStorage fColors;
     PositionStorage fPositionStorage;
-    float* fPositions;
+    const float* fPositions;
     sk_sp<SkColorSpace> fIntermediateColorSpace;
-};
-
-struct SkColorConverter {
-    SkColorConverter(const SkColor* colors, int count);
-
-    skia_private::STArray<2, SkColor4f> fColors4f;
 };
 
 void SkRegisterConicalGradientShaderFlattenable();
 void SkRegisterLinearGradientShaderFlattenable();
 void SkRegisterRadialGradientShaderFlattenable();
 void SkRegisterSweepGradientShaderFlattenable();
+
+#define MAKE_COLORS_POS_SPANS(colorPtr, posPtr, count)      \
+    SkSpan<const SkColor4f> colors{colorPtr, (size_t)count};\
+    SkSpan<const float> pos{};                              \
+    do {                                                    \
+        if (posPtr) {                                       \
+            pos = {posPtr, (size_t)count};                  \
+        }                                                   \
+    } while (0)
+
+
+#define GRADIENT_FACTORY_EARLY_EXIT(grad, lm) \
+    do {                                                                                        \
+        const auto& colors = grad.colors();                                                     \
+        const auto& interp = grad.interpolation();                                              \
+        if (!SkGradientBaseShader::ValidGradient(colors.colors(), colors.tileMode(), interp)) { \
+            return nullptr;                                                                     \
+        }                                                                                       \
+        if (colors.colors().size() == 1) {                                                      \
+            return SkShaders::Color(colors.colors().front(), colors.colorSpace());              \
+        }                                                                                       \
+        if (lm && !lm->invert(nullptr)) {                                                       \
+            return nullptr;                                                                     \
+        }                                                                                       \
+    } while (0)
 
 #endif

@@ -54,7 +54,7 @@ class GStreamerInternalAudioDecoder : public ThreadSafeRefCountedAndCanMakeThrea
 public:
     static Ref<GStreamerInternalAudioDecoder> create(const String& codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     {
-        return adoptRef(*new GStreamerInternalAudioDecoder(codecName, config, WTFMove(outputCallback), WTFMove(element)));
+        return adoptRef(*new GStreamerInternalAudioDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     }
     ~GStreamerInternalAudioDecoder() = default;
 
@@ -92,7 +92,7 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
     }
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
 
-    Ref decoder = adoptRef(*new GStreamerAudioDecoder(codecName, config, WTFMove(outputCallback), WTFMove(element)));
+    Ref decoder = adoptRef(*new GStreamerAudioDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     Ref internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
         GST_WARNING("Internal audio decoder failed to configure for codec %s", codecName.utf8().data());
@@ -100,15 +100,15 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
         return;
     }
 
-    gstDecoderWorkQueue().dispatch([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
+    gstDecoderWorkQueue().dispatch([callback = WTF::move(callback), decoder = WTF::move(decoder)]() mutable {
         auto internalDecoder = decoder->m_internalDecoder;
         GST_DEBUG_OBJECT(decoder->m_internalDecoder->harnessedElement(), "Audio decoder created");
-        callback(Ref<AudioDecoder> { WTFMove(decoder) });
+        callback(Ref<AudioDecoder> { WTF::move(decoder) });
     });
 }
 
 GStreamerAudioDecoder::GStreamerAudioDecoder(const String& codecName, const Config& config, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
-    : m_internalDecoder(GStreamerInternalAudioDecoder::create(codecName, config, WTFMove(outputCallback), WTFMove(element)))
+    : m_internalDecoder(GStreamerInternalAudioDecoder::create(codecName, config, WTF::move(outputCallback), WTF::move(element)))
 {
 }
 
@@ -144,7 +144,7 @@ void GStreamerAudioDecoder::close()
 }
 
 GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
-    : m_outputCallback(WTFMove(outputCallback))
+    : m_outputCallback(WTF::move(outputCallback))
 {
     GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
 
@@ -246,7 +246,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     pad = adoptGRef(gst_element_get_static_pad(outputCapsFilter, "src"));
     gst_element_add_pad(harnessedElement.get(), gst_ghost_pad_new("src", pad.get()));
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
+    m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -267,8 +267,8 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
 
         GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer)));
 
-        auto data = PlatformRawAudioDataGStreamer::create(WTFMove(outputSample));
-        m_outputCallback(AudioDecoder::DecodedData { WTFMove(data) });
+        auto data = PlatformRawAudioDataGStreamer::create(WTF::move(outputSample));
+        m_outputCallback(AudioDecoder::DecodedData { WTF::move(data) });
     });
 }
 
@@ -288,7 +288,7 @@ Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(std::span
     if (m_header) {
         GST_DEBUG_OBJECT(m_harness->element(), "Pushing initial header");
         m_harness->start(GRefPtr<GstCaps>(m_inputCaps), &segment);
-        m_harness->pushBuffer(WTFMove(m_header));
+        m_harness->pushBuffer(WTF::move(m_header));
     }
 
     GST_BUFFER_PTS(encodedData.get()) = abs(timestamp) * 1000;
@@ -312,7 +312,7 @@ void GStreamerInternalAudioDecoder::flush()
 
     auto buffer = adoptGRef(gst_buffer_new());
     GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_DISCONT);
-    m_harness->pushBuffer(WTFMove(buffer));
+    m_harness->pushBuffer(WTF::move(buffer));
 
     m_harness->flushBuffers();
 }

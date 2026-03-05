@@ -35,7 +35,6 @@ namespace WebCore {
 
 // https://immersive-web.github.io/layers/#xrequirectlayerinit
 struct XREquirectLayerInit : public XRLayerInit {
-    XRTextureType textureType;
     RefPtr<WebXRRigidTransform> transform;
     float radius;
     float centralHorizontalAngle;

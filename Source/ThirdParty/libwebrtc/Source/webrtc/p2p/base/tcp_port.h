@@ -19,6 +19,7 @@
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "api/candidate.h"
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/transport/stun.h"
@@ -126,7 +127,8 @@ class TCPPort : public Port {
 class TCPConnection : public Connection, public sigslot::has_slots<> {
  public:
   // Connection is outgoing unless socket is specified
-  TCPConnection(WeakPtr<Port> tcp_port,
+  TCPConnection(const Environment& env,
+                WeakPtr<Port> tcp_port,
                 const Candidate& candidate,
                 AsyncPacketSocket* socket = nullptr);
   ~TCPConnection() override;

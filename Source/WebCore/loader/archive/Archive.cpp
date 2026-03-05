@@ -38,16 +38,16 @@ Archive::~Archive() = default;
 
 void Archive::clearAllSubframeArchives()
 {
-    HashSet<RefPtr<Archive>> clearedArchives;
-    clearedArchives.add(this);
+    HashSet<Ref<Archive>> clearedArchives;
+    clearedArchives.add(*this);
     clearAllSubframeArchives(clearedArchives);
 }
 
-void Archive::clearAllSubframeArchives(HashSet<RefPtr<Archive>>& clearedArchives)
+void Archive::clearAllSubframeArchives(HashSet<Ref<Archive>>& clearedArchives)
 {
-    ASSERT(clearedArchives.contains(this));
+    ASSERT(clearedArchives.contains(*this));
     for (auto& archive : m_subframeArchives) {
-        if (clearedArchives.add(archive.ptr()))
+        if (clearedArchives.add(archive).isNewEntry)
             archive->clearAllSubframeArchives(clearedArchives);
     }
     m_subframeArchives.clear();

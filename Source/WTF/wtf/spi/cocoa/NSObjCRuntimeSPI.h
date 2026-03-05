@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
+
+#include <wtf/Platform.h>
 
 #ifdef __OBJC__
 

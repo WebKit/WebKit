@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IPCTesterReceiver.h"
 
-#if ENABLE(IPC_TESTING_API)
+#if ENABLE(IPC_TESTING_API) && !ENABLE(IPC_TESTING_SWIFT)
 
 namespace WebKit {
 

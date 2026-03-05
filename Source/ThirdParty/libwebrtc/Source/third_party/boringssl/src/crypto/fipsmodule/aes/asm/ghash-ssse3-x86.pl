@@ -53,7 +53,7 @@
 #   113355
 #
 # Next we account for GCM's confusing bit order. The "first" bit is the least
-# significant coefficient, but GCM treats the most sigificant bit within a byte
+# significant coefficient, but GCM treats the most significant bit within a byte
 # as first. Bytes are little-endian, and bits are big-endian. We reverse the
 # bytes in XMM registers for a consistent bit and byte ordering, but this means
 # the least significant bit is the most significant coefficient and vice versa.

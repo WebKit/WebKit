@@ -4,17 +4,15 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "util/shader_utils.h"
 
+#include <array>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <vector>
 
+#include "common/span.h"
 #include "common/utilities.h"
 #include "util/test_utils.h"
 
@@ -250,17 +248,17 @@ GLuint CheckLinkStatusAndReturnProgram(GLuint program, bool outputErrorMessages)
 
 GLuint GetProgramShader(GLuint program, GLint requestedType)
 {
-    static constexpr GLsizei kMaxShaderCount = 16;
-    GLuint attachedShaders[kMaxShaderCount]  = {0u};
-    GLsizei count                            = 0;
-    glGetAttachedShaders(program, kMaxShaderCount, &count, attachedShaders);
-    for (int i = 0; i < count; ++i)
+    GLsizei count                           = 0;
+    std::array<GLuint, 16u> attachedShaders = {};
+    glGetAttachedShaders(program, attachedShaders.size(), &count, attachedShaders.data());
+
+    for (GLuint shader : angle::Span(attachedShaders).first(count))
     {
         GLint type = 0;
-        glGetShaderiv(attachedShaders[i], GL_SHADER_TYPE, &type);
+        glGetShaderiv(shader, GL_SHADER_TYPE, &type);
         if (type == requestedType)
         {
-            return attachedShaders[i];
+            return shader;
         }
     }
 

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLOperatorElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLOperatorElement);
 
 using namespace MathMLNames;
 using namespace MathMLOperatorDictionary;
@@ -46,6 +46,7 @@ using namespace MathMLOperatorDictionary;
 MathMLOperatorElement::MathMLOperatorElement(const QualifiedName& tagName, Document& document)
     : MathMLTokenElement(tagName, document)
 {
+    ASSERT(hasTagName(MathMLNames::moTag));
 }
 
 Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& tagName, Document& document)
@@ -84,20 +85,20 @@ Property MathMLOperatorElement::computeDictionaryProperty()
     const auto& value = attributeWithoutSynchronization(formAttr);
     bool explicitForm = true;
     if (value == "prefix"_s)
-        dictionaryProperty.form = Prefix;
+        dictionaryProperty.form = Form::Prefix;
     else if (value == "infix"_s)
-        dictionaryProperty.form = Infix;
+        dictionaryProperty.form = Form::Infix;
     else if (value == "postfix"_s)
-        dictionaryProperty.form = Postfix;
+        dictionaryProperty.form = Form::Postfix;
     else {
         // FIXME: We should use more advanced heuristics indicated in the specification to determine the operator form (https://bugs.webkit.org/show_bug.cgi?id=124829).
         explicitForm = false;
         if (!previousSibling() && nextSibling())
-            dictionaryProperty.form = Prefix;
+            dictionaryProperty.form = Form::Prefix;
         else if (previousSibling() && !nextSibling())
-            dictionaryProperty.form = Postfix;
+            dictionaryProperty.form = Form::Postfix;
         else
-            dictionaryProperty.form = Infix;
+            dictionaryProperty.form = Form::Infix;
     }
 
     // We then try and find an entry in the operator dictionary to override the default values.
@@ -215,54 +216,64 @@ void MathMLOperatorElement::childrenChanged(const ChildChange& change)
 
 void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    bool affectsLayout = false;
     switch (name.nodeName()) {
     case AttributeNames::formAttr:
         m_dictionaryProperty = std::nullopt;
         m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
+        affectsLayout = true;
         break;
     case AttributeNames::lspaceAttr:
         m_leadingSpace = std::nullopt;
-        if (renderer())
-            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        affectsLayout = true;
         break;
     case AttributeNames::rspaceAttr:
         m_trailingSpace = std::nullopt;
-        if (renderer())
-            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        affectsLayout = true;
         break;
     case AttributeNames::minsizeAttr:
         m_minSize = std::nullopt;
+        affectsLayout = true;
         break;
     case AttributeNames::maxsizeAttr:
         m_maxSize = std::nullopt;
+        affectsLayout = true;
         break;
     case AttributeNames::stretchyAttr:
         m_properties.dirtyFlags |= Stretchy;
-        if (renderer())
-            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        affectsLayout = true;
         break;
     case AttributeNames::movablelimitsAttr:
         m_properties.dirtyFlags |= MovableLimits;
-        if (renderer())
-            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        affectsLayout = true;
         break;
     case AttributeNames::accentAttr:
         m_properties.dirtyFlags |= Accent;
+        affectsLayout = true;
         break;
     case AttributeNames::fenceAttr:
         m_properties.dirtyFlags |= Fence;
         break;
     case AttributeNames::largeopAttr:
         m_properties.dirtyFlags |= LargeOp;
+        affectsLayout = true;
         break;
     case AttributeNames::separatorAttr:
         m_properties.dirtyFlags |= Separator;
         break;
     case AttributeNames::symmetricAttr:
         m_properties.dirtyFlags |= Symmetric;
+        affectsLayout = true;
         break;
     default:
         break;
+    }
+
+    if (affectsLayout) {
+        if (CheckedPtr renderOperator = dynamicDowncast<RenderMathMLOperator>(renderer())) {
+            renderOperator->updateFromElement();
+            renderOperator->setNeedsLayoutAndPreferredWidthsUpdate();
+        }
     }
 
     MathMLTokenElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -270,10 +281,9 @@ void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const At
 
 RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    ASSERT(hasTagName(MathMLNames::moTag));
-    return createRenderer<RenderMathMLOperator>(RenderObject::Type::MathMLOperator, *this, WTFMove(style));
+    return createRenderer<RenderMathMLOperator>(RenderObject::Type::MathMLOperator, *this, WTF::move(style));
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(MATHML)

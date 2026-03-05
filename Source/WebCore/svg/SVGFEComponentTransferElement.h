@@ -30,7 +30,7 @@ namespace WebCore {
 class SVGComponentTransferFunctionElement;
 
 class SVGFEComponentTransferElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEComponentTransferElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGFEComponentTransferElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEComponentTransferElement);
 public:
     static Ref<SVGFEComponentTransferElement> create(const QualifiedName&, Document&);
@@ -54,7 +54,7 @@ private:
     Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
-    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
 };
 
 } // namespace WebCore

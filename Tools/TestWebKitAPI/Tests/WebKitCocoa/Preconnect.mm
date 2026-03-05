@@ -153,7 +153,7 @@ static void pingPong(Ref<H2::Connection>&& connection, size_t* headersCount)
             ASSERT_NOT_REACHED();
             break;
         }
-        pingPong(WTFMove(connection), headersCount);
+        pingPong(WTF::move(connection), headersCount);
     });
 }
 

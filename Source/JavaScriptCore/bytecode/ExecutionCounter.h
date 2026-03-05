@@ -55,7 +55,7 @@ inline int32_t formattedTotalExecutionCount(float value)
 
 template<CountingVariant countingVariant>
 class ExecutionCounter {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(ExecutionCounter);
+    WTF_FORBID_HEAP_ALLOCATION_WITH_VALIDATION(ExecutionCounter);
     WTF_MAKE_NONMOVABLE(ExecutionCounter);
 public:
     ExecutionCounter();
@@ -102,8 +102,6 @@ public:
 
 extern template class ExecutionCounter<CountingForBaseline>;
 extern template class ExecutionCounter<CountingForUpperTiers>;
-
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<CountingVariant countingVariant>, ExecutionCounter<countingVariant>);
 
 typedef ExecutionCounter<CountingForBaseline> BaselineExecutionCounter;
 typedef ExecutionCounter<CountingForUpperTiers> UpperTierExecutionCounter;

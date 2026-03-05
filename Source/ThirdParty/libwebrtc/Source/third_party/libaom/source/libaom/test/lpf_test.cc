@@ -45,16 +45,16 @@ const int kSpeedTestNum = 500000;
       const uint8_t *thresh0, const uint8_t *blimit1, const uint8_t *limit1, \
       const uint8_t *thresh1
 
-typedef void (*loop_op_t)(uint8_t *s, LOOP_PARAM);
-typedef void (*dual_loop_op_t)(uint8_t *s, DUAL_LOOP_PARAM);
-typedef void (*hbdloop_op_t)(uint16_t *s, LOOP_PARAM, int bd);
-typedef void (*hbddual_loop_op_t)(uint16_t *s, DUAL_LOOP_PARAM, int bd);
+using loop_op_t = void (*)(uint8_t *s, LOOP_PARAM);
+using dual_loop_op_t = void (*)(uint8_t *s, DUAL_LOOP_PARAM);
+using hbdloop_op_t = void (*)(uint16_t *s, LOOP_PARAM, int bd);
+using hbddual_loop_op_t = void (*)(uint16_t *s, DUAL_LOOP_PARAM, int bd);
 
-typedef std::tuple<hbdloop_op_t, hbdloop_op_t, int> hbdloop_param_t;
-typedef std::tuple<hbddual_loop_op_t, hbddual_loop_op_t, int>
-    hbddual_loop_param_t;
-typedef std::tuple<loop_op_t, loop_op_t, int> loop_param_t;
-typedef std::tuple<dual_loop_op_t, dual_loop_op_t, int> dual_loop_param_t;
+using hbdloop_param_t = std::tuple<hbdloop_op_t, hbdloop_op_t, int>;
+using hbddual_loop_param_t =
+    std::tuple<hbddual_loop_op_t, hbddual_loop_op_t, int>;
+using loop_param_t = std::tuple<loop_op_t, loop_op_t, int>;
+using dual_loop_param_t = std::tuple<dual_loop_op_t, dual_loop_op_t, int>;
 
 template <typename Pixel_t, int PIXEL_WIDTH_t>
 void InitInput(Pixel_t *s, Pixel_t *ref_s, ACMRandom *rnd, const uint8_t limit,
@@ -161,15 +161,15 @@ void call_dualfilter(uint8_t *s, DUAL_LOOP_PARAM, int bd, dual_loop_op_t op) {
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-typedef LoopTestParam<hbdloop_op_t, hbdloop_param_t> Loop8Test6Param_hbd;
+using Loop8Test6Param_hbd = LoopTestParam<hbdloop_op_t, hbdloop_param_t>;
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Loop8Test6Param_hbd);
-typedef LoopTestParam<hbddual_loop_op_t, hbddual_loop_param_t>
-    Loop8Test9Param_hbd;
+using Loop8Test9Param_hbd =
+    LoopTestParam<hbddual_loop_op_t, hbddual_loop_param_t>;
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Loop8Test9Param_hbd);
 #endif
-typedef LoopTestParam<loop_op_t, loop_param_t> Loop8Test6Param_lbd;
+using Loop8Test6Param_lbd = LoopTestParam<loop_op_t, loop_param_t>;
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Loop8Test6Param_lbd);
-typedef LoopTestParam<dual_loop_op_t, dual_loop_param_t> Loop8Test9Param_lbd;
+using Loop8Test9Param_lbd = LoopTestParam<dual_loop_op_t, dual_loop_param_t>;
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Loop8Test9Param_lbd);
 
 #define OPCHECK(a, b)                                                          \

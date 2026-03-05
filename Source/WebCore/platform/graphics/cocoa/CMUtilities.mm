@@ -65,11 +65,11 @@ constexpr uint32_t kAudioFormatVorbis = 'vorb';
 
 CAAudioStreamDescription audioStreamDescriptionFromAudioInfo(const AudioInfo& info)
 {
-    ASSERT(info.codecName.value != kAudioFormatLinearPCM);
+    ASSERT(info.codecName().value != kAudioFormatLinearPCM);
     AudioStreamBasicDescription asbd { };
-    asbd.mFormatID = info.codecName.value;
+    asbd.mFormatID = info.codecName().value;
     std::span<const uint8_t> cookieDataSpan { };
-    RefPtr cookieData = info.cookieData;
+    RefPtr cookieData = info.cookieData();
     bool filled = false;
     if (cookieData && cookieData->size()) {
         cookieDataSpan = cookieData->span();
@@ -80,10 +80,10 @@ CAAudioStreamDescription audioStreamDescriptionFromAudioInfo(const AudioInfo& in
             filled = true;
     }
     if (!filled) {
-        asbd.mSampleRate = info.rate;
-        asbd.mFramesPerPacket = info.framesPerPacket;
-        asbd.mChannelsPerFrame = info.channels;
-        asbd.mBitsPerChannel = info.bitDepth;
+        asbd.mSampleRate = info.rate();
+        asbd.mFramesPerPacket = info.framesPerPacket();
+        asbd.mChannelsPerFrame = info.channels();
+        asbd.mBitsPerChannel = info.bitDepth();
     }
     return asbd;
 }
@@ -120,62 +120,135 @@ static RetainPtr<CFDictionaryRef> createExtensionAtomsDictionary(const Vector<st
 }
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-static void setEncryptionInfo(TrackInfo& info, CMFormatDescriptionRef description)
+static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFormatDescriptionRef description)
 {
-    RetainPtr encryptionOriginalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionOriginalFormat")));
-    if (!encryptionOriginalFormat)
-        return;
-    uint32_t plainTextCodecType;
-    CFNumberGetValue(encryptionOriginalFormat.get(), kCFNumberSInt32Type, &plainTextCodecType);
-    info.encryptionOriginalFormat = plainTextCodecType;
-
     RetainPtr extensions = PAL::CMFormatDescriptionGetExtensions(description);
-    if (RetainPtr trackEncryptionData = dynamic_cf_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionTrackEncryptionBox"))))
-        info.encryptionData = { EncryptionBoxType::CommonEncryptionTrackEncryptionBox, SharedBuffer::create(trackEncryptionData.get()) };
+    std::optional<TrackInfoEncryptionData> encryptionData = [](CMFormatDescriptionRef description) -> std::optional<TrackInfoEncryptionData> {
+        if (RetainPtr trackEncryptionData = dynamic_cf_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionTrackEncryptionBox"))))
+            return TrackInfoEncryptionData { EncryptionBoxType::CommonEncryptionTrackEncryptionBox, SharedBuffer::create(trackEncryptionData.get()) };
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
-    else if (RetainPtr trackEncryptionData = dynamic_cf_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("TransportStreamEncryptionInitData"))))
-        info.encryptionData = { EncryptionBoxType::CommonEncryptionTrackEncryptionBox, SharedBuffer::create(trackEncryptionData.get()) };
+        if (RetainPtr trackEncryptionData = dynamic_cf_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("TransportStreamEncryptionInitData"))))
+            return TrackInfoEncryptionData { EncryptionBoxType::TransportStreamEncryptionInitData, SharedBuffer::create(trackEncryptionData.get()) };
 #endif
+        return std::nullopt;
+    }(description);
 
-    if (!info.encryptionOriginalFormat)
-        return;
+    if (!encryptionData)
+        return { };
+
+    std::optional<FourCC> encryptionOriginalFormat;
+    RetainPtr cfEncryptionOriginalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionOriginalFormat")));
+    if (cfEncryptionOriginalFormat) {
+        uint32_t plainTextCodecType = 0;
+        CFNumberGetValue(cfEncryptionOriginalFormat.get(), kCFNumberSInt32Type, &plainTextCodecType);
+        encryptionOriginalFormat = plainTextCodecType;
+    }
 
     RetainPtr extensionAtoms = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
-    if (!extensionAtoms)
-        return;
+    if (!extensionAtoms) {
+        return EncryptionDataCollection {
+            .encryptionData = WTF::move(*encryptionData),
+            .encryptionOriginalFormat = encryptionOriginalFormat
+        };
+    }
 
     // For video content, the first element of the dictionary is always the video's atomData.
     size_t indexStart = PAL::CMFormatDescriptionGetMediaType(description) == kCMMediaType_Video;
     size_t extensionsCount = CFDictionaryGetCount(extensionAtoms.get());
-    if (extensionsCount <= indexStart)
-        return;
+    if (extensionsCount <= indexStart) {
+        return EncryptionDataCollection {
+            .encryptionData = WTF::move(*encryptionData),
+            .encryptionOriginalFormat = encryptionOriginalFormat
+        };
+    }
 
     Vector<const void*, 2> keys(extensionsCount);
     Vector<const void*, 2> values(extensionsCount);
     CFDictionaryGetKeysAndValues(extensionAtoms.get(), keys.mutableSpan().data(), values.mutableSpan().data());
-    info.encryptionInitDatas = { size_t(extensionsCount) - indexStart, [&](auto index) -> TrackInfo::EncryptionInitData {
+    Vector<TrackInfoEncryptionInitData> encryptionInitDatas = { size_t(extensionsCount) - indexStart, [&](auto index) -> TrackInfoEncryptionInitData {
         return { cfStringToFourCC(static_cast<CFStringRef>(keys[index + indexStart])), SharedBuffer::create(static_cast<CFDataRef>(values[index + indexStart])) };
     } };
+
+    return EncryptionDataCollection {
+        .encryptionData = WTF::move(*encryptionData),
+        .encryptionOriginalFormat = encryptionOriginalFormat,
+        .encryptionInitDatas = WTF::move(encryptionInitDatas)
+    };
 }
 #endif
+
+static RetainPtr<CFMutableDictionaryRef> createExtensionsDictionary(const TrackInfo& info)
+{
+    if (info.isAudio()) {
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (!info.encryptionDataCollection())
+            return nullptr;
+#else
+        return nullptr;
+#endif
+    }
+
+    size_t maxNumberOfElements = [&] {
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        return info.isAudio() ? 5 : 9;
+#else
+        return 5;
+#endif
+    }();
+    RetainPtr extensions = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, maxNumberOfElements, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    if (!extensions)
+        return nullptr;
+
+    Vector<std::pair<FourCC, Ref<SharedBuffer>>> configurations;
+    CFIndex configurationsNumKey = 0;
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    if (auto& encryptionCollection = info.encryptionDataCollection()) {
+        CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionProtected"), kCFBooleanTrue);
+        RetainPtr data = Ref { encryptionCollection->encryptionData.second }->createCFData();
+        switch (encryptionCollection->encryptionData.first) {
+        case EncryptionBoxType::CommonEncryptionTrackEncryptionBox:
+            CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionTrackEncryptionBox"), data.get());
+            break;
+        case EncryptionBoxType::TransportStreamEncryptionInitData:
+            CFDictionaryAddValue(extensions.get(), CFSTR("TransportStreamEncryptionInitData"), data.get());
+            break;
+        }
+        if (encryptionCollection->encryptionOriginalFormat) {
+            RetainPtr originalFormat = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &encryptionCollection->encryptionOriginalFormat->value));
+            CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionOriginalFormat"), originalFormat.get());
+        }
+        configurationsNumKey += encryptionCollection->encryptionInitDatas.size();
+    }
+#endif
+
+    if (info.isVideo())
+        configurationsNumKey += downcast<const VideoInfo>(info).extensionAtoms().size();
+
+    configurations.reserveInitialCapacity(configurationsNumKey);
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (auto& encryptionCollection = info.encryptionDataCollection())
+        configurations.appendVector(encryptionCollection->encryptionInitDatas);
+#endif
+
+    if (info.isVideo())
+        configurations.appendVector(downcast<const VideoInfo>(info).extensionAtoms());
+
+    if (configurations.size())
+        CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, createExtensionAtomsDictionary(configurations).get());
+
+    return extensions;
+}
 
 static RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioInfo& info)
 {
     auto streamDescription = audioStreamDescriptionFromAudioInfo(info);
     std::span<const uint8_t> cookie;
-    RefPtr cookieData = info.cookieData;
+    RefPtr cookieData = info.cookieData();
     if (cookieData)
         cookie = cookieData->span();
 
-    RetainPtr<CFDictionaryRef> extensions;
-#if ENABLE(ENCRYPTED_MEDIA)
-    if (info.encryptionOriginalFormat) {
-        RetainPtr dict = createExtensionAtomsDictionary(info.encryptionInitDatas);
-        CFTypeRef keys[] = { PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
-        CFTypeRef values[] = { dict.get() };
-        extensions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    }
-#endif
+    RetainPtr<CFDictionaryRef> extensions = createExtensionsDictionary(info);
 
     auto basicDescription = std::get<const AudioStreamBasicDescription*>(streamDescription.platformDescription().description);
     CMFormatDescriptionRef format = nullptr;
@@ -256,24 +329,25 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     ASSERT(info.isVideo() || info.isAudio());
 
     if (RefPtr audioInfo = dynamicDowncast<AudioInfo>(info)) {
-        switch (audioInfo->codecName.value) {
+        switch (audioInfo->codecName().value) {
 #if ENABLE(OPUS)
         case kAudioFormatOpus:
-            if (!isOpusDecoderAvailable() || (!audioInfo->cookieData || !audioInfo->cookieData->size()))
+            if (!isOpusDecoderAvailable() || (!audioInfo->cookieData() || !audioInfo->cookieData()->size()))
                 return nullptr;
             return createAudioFormatDescription(*audioInfo);
 #endif
 #if ENABLE(VORBIS)
         case kAudioFormatVorbis:
-            if (!isVorbisDecoderAvailable() || (!audioInfo->cookieData || !audioInfo->cookieData->size()))
+            if (!isVorbisDecoderAvailable() || (!audioInfo->cookieData() || !audioInfo->cookieData()->size()))
                 return nullptr;
             return createAudioFormatDescription(*audioInfo);
 #endif
         case kAudioFormatLinearPCM: {
-            auto absd = CAAudioStreamDescription { static_cast<double>(audioInfo->rate), audioInfo->channels, AudioStreamDescription::Float32, CAAudioStreamDescription::IsInterleaved::Yes }.streamDescription();
+            auto absd = CAAudioStreamDescription { static_cast<double>(audioInfo->rate()), audioInfo->channels(), AudioStreamDescription::Float32, CAAudioStreamDescription::IsInterleaved::Yes }.streamDescription();
 
+            RetainPtr extensions = createExtensionsDictionary(info);
             CMFormatDescriptionRef newFormat = nullptr;
-            if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &absd, 0, nullptr, 0, nullptr, nullptr, &newFormat)) {
+            if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &absd, 0, nullptr, 0, nullptr, extensions.get(), &newFormat)) {
                 RELEASE_LOG_ERROR(MediaStream, "createFormatDescriptionFromTrackInfo: CMAudioFormatDescriptionCreate failed with error %d", (int)error);
                 return nullptr;
             }
@@ -285,76 +359,46 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     }
 
     auto& videoInfo = downcast<const VideoInfo>(info);
+    RetainPtr extensions = createExtensionsDictionary(info);
 
-    size_t maxNumberOfElements = [] {
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        return 9;
-#else
-        return 5;
-#endif
-    }();
-    RetainPtr extensions = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, maxNumberOfElements, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    CFIndex numKeys = videoInfo.extensionAtoms.size();
-#if ENABLE(ENCRYPTED_MEDIA)
-    numKeys += videoInfo.encryptionInitDatas.size();
-#endif
-    Vector<std::pair<FourCC, Ref<SharedBuffer>>> configurations;
-    configurations.reserveInitialCapacity(numKeys);
-
-    configurations.appendVector(videoInfo.extensionAtoms);
-#if ENABLE(ENCRYPTED_MEDIA)
-    configurations.appendVector(videoInfo.encryptionInitDatas);
-#endif
-    CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, createExtensionAtomsDictionary(configurations).get());
-
-    if (videoInfo.colorSpace.fullRange && *videoInfo.colorSpace.fullRange)
+    if (videoInfo.colorSpace().fullRange.value_or(false))
         CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo, kCFBooleanTrue);
 
-    if (videoInfo.colorSpace.primaries) {
-        if (RetainPtr cmColorPrimaries = convertToCMColorPrimaries(*videoInfo.colorSpace.primaries))
+    if (videoInfo.colorSpace().primaries) {
+        if (RetainPtr cmColorPrimaries = convertToCMColorPrimaries(*videoInfo.colorSpace().primaries))
             CFDictionaryAddValue(extensions.get(), kCVImageBufferColorPrimariesKey, cmColorPrimaries.get());
     }
-    if (videoInfo.colorSpace.transfer) {
-        if (RetainPtr cmTransferFunction = convertToCMTransferFunction(*videoInfo.colorSpace.transfer))
+    if (videoInfo.colorSpace().transfer) {
+        if (RetainPtr cmTransferFunction = convertToCMTransferFunction(*videoInfo.colorSpace().transfer))
             CFDictionaryAddValue(extensions.get(), kCVImageBufferTransferFunctionKey, cmTransferFunction.get());
     }
 
-    if (videoInfo.colorSpace.matrix) {
-        if (RetainPtr cmMatrix = convertToCMYCbCRMatrix(*videoInfo.colorSpace.matrix))
+    if (videoInfo.colorSpace().matrix) {
+        if (RetainPtr cmMatrix = convertToCMYCbCRMatrix(*videoInfo.colorSpace().matrix))
             CFDictionaryAddValue(extensions.get(), kCVImageBufferYCbCrMatrixKey, cmMatrix.get());
     }
-    if (videoInfo.size != videoInfo.displaySize) {
-        double horizontalRatio = videoInfo.displaySize.width() / videoInfo.size.width();
-        double verticalRatio = videoInfo.displaySize.height() / videoInfo.size.height();
+    if (videoInfo.size() != videoInfo.displaySize()) {
+        double horizontalRatio = videoInfo.displaySize().width() / videoInfo.size().width();
+        double verticalRatio = videoInfo.displaySize().height() / videoInfo.size().height();
         CFDictionaryAddValue(extensions.get(), PAL::get_CoreMedia_kCMFormatDescriptionExtension_PixelAspectRatioSingleton(), @{
             (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioHorizontalSpacingSingleton() : @(horizontalRatio),
             (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioVerticalSpacingSingleton() : @(verticalRatio)
         });
     }
 
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (videoInfo.encryptionData || videoInfo.encryptionOriginalFormat)
-        CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionProtected"), kCFBooleanTrue);
-    if (videoInfo.encryptionData) {
-        RetainPtr data = Ref { videoInfo.encryptionData->second }->createCFData();
-        switch (videoInfo.encryptionData->first) {
-        case EncryptionBoxType::CommonEncryptionTrackEncryptionBox:
-            CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionTrackEncryptionBox"), data.get());
-            break;
-        case EncryptionBoxType::TransportStreamEncryptionInitData:
-            CFDictionaryAddValue(extensions.get(), CFSTR("TransportStreamEncryptionInitData"), data.get());
-            break;
+#if PLATFORM(VISION)
+    if (videoInfo.immersiveVideoMetadata()) {
+        if (RetainPtr dictionary = formatDescriptionDictionaryFromImmersiveVideoMetadata(*videoInfo.immersiveVideoMetadata())) {
+            CFDictionaryApplyFunction(dictionary.get(), [](CFTypeRef key, CFTypeRef value, void* context) {
+                CFMutableDictionaryRef dict = static_cast<CFMutableDictionaryRef>(context);
+                CFDictionarySetValue(dict, key, value);
+            }, extensions.get());
         }
-    }
-    if (videoInfo.encryptionOriginalFormat) {
-        RetainPtr value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &videoInfo.encryptionOriginalFormat->value));
-        CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionOriginalFormat"), value.get());
     }
 #endif
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
-    auto error = PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, videoInfo.codecName.value, videoInfo.size.width(), videoInfo.size.height(), extensions.get(), &formatDescription);
+    auto error = PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, videoInfo.codecName().value, videoInfo.size().width(), videoInfo.size().height(), extensions.get(), &formatDescription);
     if (error != noErr) {
         RELEASE_LOG_ERROR(Media, "CMVideoFormatDescriptionCreate failed with error %d (%.4s)", (int)error, (char*)&error);
         return nullptr;
@@ -373,22 +417,24 @@ RefPtr<AudioInfo> createAudioInfoFromFormatDescription(CMFormatDescriptionRef de
     ASSERT(asbd);
     if (!asbd)
         return nullptr;
-    Ref audioInfo = AudioInfo::create();
-    audioInfo->codecName = asbd->mFormatID;
-    audioInfo->rate = asbd->mSampleRate;
-    audioInfo->channels = asbd->mChannelsPerFrame;
-    audioInfo->framesPerPacket = asbd->mFramesPerPacket;
-    audioInfo->bitDepth = asbd->mBitsPerChannel;
     size_t cookieSize = 0;
     const void* cookie = PAL::CMAudioFormatDescriptionGetMagicCookie(description, &cookieSize);
-    if (cookieSize)
-        audioInfo->cookieData = SharedBuffer::create(unsafeMakeSpan(static_cast<const uint8_t*>(cookie), cookieSize));
+    RefPtr cookieData = cookieSize ? RefPtr { SharedBuffer::create(unsafeMakeSpan(static_cast<const uint8_t*>(cookie), cookieSize)) } : nullptr;
 
+    return AudioInfo::create({
+        {
+            .codecName = asbd->mFormatID,
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    setEncryptionInfo(audioInfo, description);
+            .encryptionData = getEncryptionDataCollection(description)
 #endif
-
-    return audioInfo;
+        }, {
+            .rate = static_cast<uint32_t>(asbd->mSampleRate),
+            .channels = asbd->mChannelsPerFrame,
+            .framesPerPacket = asbd->mFramesPerPacket,
+            .bitDepth = static_cast<uint8_t>(asbd->mBitsPerChannel),
+            .cookieData = WTF::move(cookieData),
+        }
+    });
 }
 
 RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef description)
@@ -398,14 +444,15 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
     if (mediaType != kCMMediaType_Video)
         return nullptr;
 
-    Ref videoInfo = VideoInfo::create();
-    videoInfo->codecName = PAL::CMFormatDescriptionGetMediaSubType(description);
     auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(description);
-    videoInfo->size = IntSize { dimensions.width, dimensions.height };
-    videoInfo->displaySize = presentationSizeFromFormatDescription(description);
 
-    RetainPtr extensionAtoms = PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms);
-    if (RetainPtr atomDictionary = dynamic_cf_cast<CFDictionaryRef>(extensionAtoms.get())) {
+    int bitDepth = 8;
+    if (RetainPtr bitsPerComponent = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_BitsPerComponent)))
+        CFNumberGetValue(bitsPerComponent.get(), kCFNumberIntType, &bitDepth);
+
+    RetainPtr cmExtensionAtoms = PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms);
+    Vector<TrackInfo::AtomData> extensionAtoms;
+    if (RetainPtr atomDictionary = dynamic_cf_cast<CFDictionaryRef>(cmExtensionAtoms.get())) {
         CFIndex extensionCount = CFDictionaryGetCount(atomDictionary.get());
         if (!extensionCount)
             RELEASE_LOG_INFO(Media, "kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms having %ld keys keys expected at least 1", extensionCount);
@@ -413,28 +460,30 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
             Vector<const void*, 1> keys(extensionCount);
             Vector<const void*, 1> values(extensionCount);
             CFDictionaryGetKeysAndValues(atomDictionary.get(), keys.mutableSpan().data(), values.mutableSpan().data());
-            videoInfo->extensionAtoms = { size_t(extensionCount), [&](auto index) -> TrackInfo::AtomData {
+            extensionAtoms = { size_t(extensionCount), [&](auto index) -> TrackInfo::AtomData {
                 return { cfStringToFourCC(checked_cf_cast<CFStringRef>(keys[index])), SharedBuffer::create(checked_cf_cast<CFDataRef>(values[index])) };
             } };
         }
     } else
         RELEASE_LOG_ERROR(Media, "Couldn't retrieve extensionAtoms from CMFormatDescription");
 
-    int bitDepth;
-    if (RetainPtr bitsPerComponent = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_BitsPerComponent))) {
-        CFNumberGetValue(bitsPerComponent.get(), kCFNumberIntType, &bitDepth);
-        videoInfo->bitDepth = bitDepth;
-    } else
-        videoInfo->bitDepth = 8;
-
-    if (auto colorSpace = colorSpaceFromFormatDescription(description))
-        videoInfo->colorSpace = *colorSpace;
-
+    return VideoInfo::create({
+        {
+            .codecName = PAL::CMFormatDescriptionGetMediaSubType(description),
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    setEncryptionInfo(videoInfo, description);
+            .encryptionData = getEncryptionDataCollection(description)
 #endif
-
-    return videoInfo;
+        }, {
+            .size = IntSize { dimensions.width, dimensions.height },
+            .displaySize = presentationSizeFromFormatDescription(description),
+            .bitDepth = static_cast<uint8_t>(bitDepth),
+            .colorSpace = colorSpaceFromFormatDescription(description).value_or(PlatformVideoColorSpace { }),
+            .extensionAtoms = WTF::move(extensionAtoms),
+#if PLATFORM(VISION)
+            .immersiveVideoMetadata = immersiveVideoMetadataFromFormatDescription(description)
+#endif
+        }
+    });
 }
 
 Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamplesBlock& samples, CMFormatDescriptionRef formatDescription)
@@ -442,7 +491,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
     if (!samples.info())
         return makeUnexpected("No TrackInfo found");
 
-    RetainPtr format = formatDescription ? retainPtr(formatDescription) : createFormatDescriptionFromTrackInfo(*samples.protectedInfo());
+    RetainPtr format = formatDescription ? retainPtr(formatDescription) : createFormatDescriptionFromTrackInfo(*protect(samples.info()));
     if (!format)
         return makeUnexpected("No CMFormatDescription available");
 
@@ -468,7 +517,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
             return makeUnexpected("Couldn't create CMBlockBuffer");
 
         if (!completeBlockBuffers)
-            completeBlockBuffers = WTFMove(blockBuffer);
+            completeBlockBuffers = WTF::move(blockBuffer);
         else {
             auto err = PAL::CMBlockBufferAppendBufferReference(completeBlockBuffers.get(), blockBuffer.get(), 0, 0, 0);
             if (err != kCMBlockBufferNoErr)
@@ -498,7 +547,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
 
             // Attach HDR10+ (aka SMPTE ST 2094-40) metadata, if present:
-            if (samples[i].hdrMetadataType == HdrMetadataType::SmpteSt209440 && samples[i].hdrMetadata)
+            if (samples[i].hdrMetadataType == PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209440 && samples[i].hdrMetadata)
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_HDR10PlusPerFrameData, Ref { *samples[i].hdrMetadata }->createCFData().get());
         }
     } else if (samples.isAudio() && samples.discontinuity())
@@ -510,7 +559,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
     }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (!samples.info() || !samples.info()->encryptionData)
+    if (!samples.info() || !samples.info()->encryptionDataCollection())
         return adoptCF(rawSampleBuffer);
 
     RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(rawSampleBuffer, true);
@@ -545,7 +594,6 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
     ASSERT(cmSample);
     RefPtr info = trackInfo;
     if (!trackInfo) {
-        // While this path is currently unused; we only support creating a TrackInfo from an Audio CMFormatDescription
         if (RetainPtr description = PAL::CMSampleBufferGetFormatDescription(cmSample)) {
             if (PAL::CMFormatDescriptionGetMediaType(description.get()) == kCMMediaType_Audio)
                 info = createAudioInfoFromFormatDescription(description.get());
@@ -591,24 +639,24 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
             .flags = sample->flags(),
 #if ENABLE(ENCRYPTED_MEDIA)
             .bytesOfClearDataCount = bytesOfClearDataCount,
-            .cryptorIV = WTFMove(cryptorIV),
-            .cryptorSubsampleAuxiliaryData = WTFMove(cryptorSubsampleAuxiliaryData),
+            .cryptorIV = WTF::move(cryptorIV),
+            .cryptorSubsampleAuxiliaryData = WTF::move(cryptorSubsampleAuxiliaryData),
 #endif
         };
     };
 
-    if (info && info->codecName == kAudioFormatLinearPCM) {
+    if (info && info->codecName() == kAudioFormatLinearPCM) {
         MediaSamplesBlock::SamplesVector sample;
         sample.reserveInitialCapacity(1);
-        sample.append(mediaSampleItemForSample(MediaSampleAVFObjC::create(cmSample, info->trackID)));
-        return makeUniqueRef<MediaSamplesBlock>(info.get(), WTFMove(sample));
+        sample.append(mediaSampleItemForSample(MediaSampleAVFObjC::create(cmSample, info->trackID())));
+        return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(sample));
     }
 
-    auto subSamples = MediaSampleAVFObjC::create(cmSample, info ? info->trackID : 0)->divide();
+    auto subSamples = MediaSampleAVFObjC::create(cmSample, info ? info->trackID() : 0)->divide();
     MediaSamplesBlock::SamplesVector samples(subSamples.size(), [&](auto index) {
         return mediaSampleItemForSample(subSamples[index]);
     });
-    return makeUniqueRef<MediaSamplesBlock>(info.get(), WTFMove(samples));
+    return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(samples));
 }
 
 void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CVPixelBufferRef pixelBuffer)
@@ -626,20 +674,71 @@ void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CV
         CVBufferSetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, convertToCMYCbCRMatrix(*colorSpace.matrix), kCVAttachmentMode_ShouldPropagate);
 }
 
+PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer)
+{
+    ASSERT(pixelBuffer);
+    if (!pixelBuffer)
+        return { };
+
+    std::optional<PlatformVideoColorPrimaries> primaries;
+    auto pixelPrimaries = CVBufferGetAttachment(pixelBuffer, kCVImageBufferColorPrimariesKey, nil);
+    if (safeCFEqual(pixelPrimaries, kCVImageBufferColorPrimaries_ITU_R_709_2))
+        primaries = PlatformVideoColorPrimaries::Bt709;
+    else if (safeCFEqual(pixelPrimaries, kCVImageBufferColorPrimaries_EBU_3213))
+        primaries = PlatformVideoColorPrimaries::JedecP22Phosphors;
+    else if (safeCFEqual(pixelPrimaries, PAL::kCMFormatDescriptionColorPrimaries_DCI_P3))
+        primaries = PlatformVideoColorPrimaries::SmpteRp431;
+    else if (safeCFEqual(pixelPrimaries, PAL::kCMFormatDescriptionColorPrimaries_P3_D65))
+        primaries = PlatformVideoColorPrimaries::SmpteEg432;
+    else if (safeCFEqual(pixelPrimaries, PAL::kCMFormatDescriptionColorPrimaries_ITU_R_2020))
+        primaries = PlatformVideoColorPrimaries::Bt2020;
+
+    std::optional<PlatformVideoTransferCharacteristics> transfer;
+    auto pixelTransfer = CVBufferGetAttachment(pixelBuffer, kCVImageBufferTransferFunctionKey, nil);
+    if (safeCFEqual(pixelTransfer, kCVImageBufferTransferFunction_ITU_R_709_2))
+        transfer = PlatformVideoTransferCharacteristics::Bt709;
+    else if (safeCFEqual(pixelTransfer, kCVImageBufferTransferFunction_SMPTE_240M_1995))
+        transfer = PlatformVideoTransferCharacteristics::Smpte240m;
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ))
+        transfer = PlatformVideoTransferCharacteristics::SmpteSt2084;
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1))
+        transfer = PlatformVideoTransferCharacteristics::SmpteSt4281;
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG))
+        transfer = PlatformVideoTransferCharacteristics::AribStdB67Hlg;
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_Linear))
+        transfer = PlatformVideoTransferCharacteristics::Linear;
+    else if (PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() && safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_sRGB))
+        transfer = PlatformVideoTransferCharacteristics::Iec6196621;
+
+    std::optional<PlatformVideoMatrixCoefficients> matrix;
+    auto pixelMatrix = CVBufferGetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, nil);
+    if (safeCFEqual(pixelMatrix, PAL::kCMFormatDescriptionYCbCrMatrix_ITU_R_2020))
+        matrix = PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
+    else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
+        matrix = PlatformVideoMatrixCoefficients::Bt709;
+    else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
+        matrix = PlatformVideoMatrixCoefficients::Smpte240m;
+
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+
+    return { primaries, transfer, matrix, isFullRange };
+}
+
 PacketDurationParser::PacketDurationParser(const AudioInfo& info)
 {
     AudioStreamBasicDescription asbd { };
-    asbd.mFormatID = info.codecName.value;
+    asbd.mFormatID = info.codecName().value;
     UInt32 size = sizeof(asbd);
-    RefPtr cookieData = info.cookieData;
+    RefPtr cookieData = info.cookieData();
     auto cookieDataSpan = cookieData->span();
     auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, cookieDataSpan.size(), cookieDataSpan.data(), &size, &asbd);
-    if (error || !info.rate) {
+    if (error || !info.rate()) {
         RELEASE_LOG_ERROR(Media, "createAudioFormatDescription failed with error %d (%.4s)", (int)error, (char*)&error);
         return;
     }
     m_audioFormatID = asbd.mFormatID;
-    m_sampleRate = info.rate;
+    m_sampleRate = info.rate();
     m_constantFramesPerPacket = asbd.mFramesPerPacket;
 #if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
     switch (m_audioFormatID) {
@@ -805,11 +904,11 @@ Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef description)
         // keyID.
         auto length = CFDataGetLength(trackEncryptionData.get());
         auto ptr = (void*)(CFDataGetBytePtr(trackEncryptionData.get()));
-        Ref destructorFunction = createSharedTask<void(void*)>([data = WTFMove(trackEncryptionData)] (void*) { UNUSED_PARAM(data); });
-        Ref trackEncryptionDataBuffer = ArrayBuffer::create(JSC::ArrayBufferContents(ptr, length, std::nullopt, WTFMove(destructorFunction)));
+        Ref destructorFunction = createSharedTask<void(void*)>([data = WTF::move(trackEncryptionData)] (void*) { UNUSED_PARAM(data); });
+        Ref trackEncryptionDataBuffer = ArrayBuffer::create(JSC::ArrayBufferContents(ptr, length, std::nullopt, WTF::move(destructorFunction)));
 
         ISOTrackEncryptionBox trackEncryptionBox;
-        auto trackEncryptionView = JSC::DataView::create(WTFMove(trackEncryptionDataBuffer), 0, length);
+        auto trackEncryptionView = JSC::DataView::create(WTF::move(trackEncryptionDataBuffer), 0, length);
         if (!trackEncryptionBox.parseWithoutTypeAndSize(trackEncryptionView))
             return { };
         return { SharedBuffer::create(trackEncryptionBox.defaultKID()) };

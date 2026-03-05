@@ -18,11 +18,11 @@ info: |
       Return false.
         ...
 flags: [noStrict]
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   let proto = TypedArray.prototype;
   let descriptorGetterThrows = {
     configurable: true,
@@ -35,7 +35,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     ["1"]: descriptorGetterThrows,
   });
 
-  let sample = new TA(2);
+  let sample = new TA(makeCtorArg(2));
 
   assert.sameValue(delete sample["0"], false, 'The value of `delete sample["0"]` is false');
   assert.sameValue(delete sample[0], false, 'The value of `delete sample[0]` is false');

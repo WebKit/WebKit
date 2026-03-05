@@ -93,12 +93,12 @@ struct CrossThreadRecord {
         : identifier(identifier)
         , updateResponseCounter(updateResponseCounter)
         , requestHeadersGuard(requestHeadersGuard)
-        , request(WTFMove(request))
+        , request(WTF::move(request))
         , options(options)
-        , referrer(WTFMove(referrer))
+        , referrer(WTF::move(referrer))
         , responseHeadersGuard(responseHeadersGuard)
-        , response(WTFMove(response))
-        , responseBody(WTFMove(responseBody))
+        , response(WTF::move(response))
+        , responseBody(WTF::move(responseBody))
         , responseBodySize(responseBodySize)
     {
     }
@@ -124,7 +124,7 @@ struct CacheInfo {
     String name;
 
     CacheInfo isolatedCopy() const & { return { identifier, name.isolatedCopy() }; }
-    CacheInfo isolatedCopy() && { return { identifier, WTFMove(name).isolatedCopy() }; }
+    CacheInfo isolatedCopy() && { return { identifier, WTF::move(name).isolatedCopy() }; }
 };
 
 struct CacheInfos {
@@ -132,7 +132,7 @@ struct CacheInfos {
     uint64_t updateCounter;
 
     CacheInfos isolatedCopy() const & { return { crossThreadCopy(infos), updateCounter }; }
-    CacheInfos isolatedCopy() && { return { crossThreadCopy(WTFMove(infos)), updateCounter }; }
+    CacheInfos isolatedCopy() && { return { crossThreadCopy(WTF::move(infos)), updateCounter }; }
 };
 
 struct CacheIdentifierOperationResult {

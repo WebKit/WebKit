@@ -123,7 +123,7 @@ void JSTestExceptionPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestException::s_info = { "TestException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestException) };
 
 JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestException>&& impl)
-    : JSDOMWrapper<TestException>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestException>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -206,7 +206,7 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestException = static_cast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestException->protectedWrapped().ptr(), jsTestException);
+    uncacheWrapper(world, protect(jsTestException->wrapped()).ptr(), jsTestException);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -244,7 +244,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestException>(impl.ptr());
 #endif
-    return createWrapper<TestException>(globalObject, WTFMove(impl));
+    return createWrapper<TestException>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestException& impl)

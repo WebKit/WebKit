@@ -35,11 +35,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathMax);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMathMax);
 
 ExceptionOr<Ref<CSSMathMax>> CSSMathMax::create(FixedVector<CSSNumberish>&& numberishes)
 {
-    return create(WTF::map(WTFMove(numberishes), rectifyNumberish));
+    return create(WTF::map(WTF::move(numberishes), rectifyNumberish));
 }
 
 ExceptionOr<Ref<CSSMathMax>> CSSMathMax::create(Vector<Ref<CSSNumericValue>>&& values)
@@ -51,12 +51,12 @@ ExceptionOr<Ref<CSSMathMax>> CSSMathMax::create(Vector<Ref<CSSNumericValue>>&& v
     if (!type)
         return Exception { ExceptionCode::TypeError };
 
-    return adoptRef(*new CSSMathMax(WTFMove(values), WTFMove(*type)));
+    return adoptRef(*new CSSMathMax(WTF::move(values), WTF::move(*type)));
 }
 
 CSSMathMax::CSSMathMax(Vector<Ref<CSSNumericValue>>&& values, CSSNumericType&& type)
-    : CSSMathValue(WTFMove(type))
-    , m_values(CSSNumericArray::create(WTFMove(values)))
+    : CSSMathValue(WTF::move(type))
+    , m_values(CSSNumericArray::create(WTF::move(values)))
 {
 }
 
@@ -93,7 +93,7 @@ auto CSSMathMax::toSumValue() const -> std::optional<SumValue>
             || (*currentValue)[0].units != (*currentMax)[0].units)
             return std::nullopt;
         if ((*currentValue)[0].value > (*currentMax)[0].value)
-            currentMax = WTFMove(currentValue);
+            currentMax = WTF::move(currentValue);
     }
     return currentMax;
 }
@@ -106,12 +106,12 @@ std::optional<CSSCalc::Child> CSSMathMax::toCalcTreeNode() const
     if (children.isEmpty())
         return std::nullopt;
 
-    auto max = CSSCalc::Max { .children = WTFMove(children) };
+    auto max = CSSCalc::Max { .children = WTF::move(children) };
     auto type = CSSCalc::toType(max);
     if (!type)
         return std::nullopt;
 
-    return CSSCalc::makeChild(WTFMove(max), *type);
+    return CSSCalc::makeChild(WTF::move(max), *type);
 }
 
 } // namespace WebCore

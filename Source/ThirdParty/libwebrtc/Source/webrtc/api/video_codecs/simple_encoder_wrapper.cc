@@ -75,10 +75,12 @@ std::vector<std::string> SimpleEncoderWrapper::SupportedWebrtcSvcModes(
       std::min(3, prediction_constraints.max_spatial_layers);
   const int max_temporal_layers =
       std::min(3, prediction_constraints.max_temporal_layers);
-  const bool scale_by_half = absl::c_linear_search(
-      prediction_constraints.scaling_factors, Rational{1, 2});
-  const bool scale_by_two_thirds = absl::c_linear_search(
-      prediction_constraints.scaling_factors, Rational{2, 3});
+  const bool scale_by_half =
+      absl::c_linear_search(prediction_constraints.scaling_factors,
+                            Rational{.numerator = 1, .denominator = 2});
+  const bool scale_by_two_thirds =
+      absl::c_linear_search(prediction_constraints.scaling_factors,
+                            Rational{.numerator = 2, .denominator = 3});
   const bool inter_layer =
       prediction_constraints.max_references > 1 &&
       prediction_constraints.buffer_space_type !=
@@ -170,8 +172,8 @@ void SimpleEncoderWrapper::Encode(scoped_refptr<VideoFrameBuffer> frame_buffer,
     settings.temporal_id = config.TemporalId();
     const int num = layer_configs_.scaling_factor_num[s];
     const int den = layer_configs_.scaling_factor_den[s];
-    settings.resolution = {(frame_buffer->width() * num / den),
-                           (frame_buffer->height() * num / den)};
+    settings.resolution = {.width = (frame_buffer->width() * num / den),
+                           .height = (frame_buffer->height() * num / den)};
 
     bool buffer_updated = false;
     for (const CodecBufferUsage& buffer : config.Buffers()) {

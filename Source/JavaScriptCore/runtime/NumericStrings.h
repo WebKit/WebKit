@@ -27,12 +27,14 @@
 
 #include <array>
 #include <wtf/HashFunctions.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 class JSString;
 class SmallStrings;
+class VM;
 
 class NumericStrings {
 public:

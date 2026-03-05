@@ -34,6 +34,10 @@
 #import <wtf/darwin/XPCExtras.h>
 #import <wtf/text/WTFString.h>
 
+@interface BEProcessCapability (Staging)
++ (id)screenCaptureWithEnvironment:(BEMediaEnvironment*)environment;
+@end
+
 namespace WebKit {
 
 static RetainPtr<BEMediaEnvironment> createMediaEnvironment(const URL& webPageURL)
@@ -43,16 +47,31 @@ static RetainPtr<BEMediaEnvironment> createMediaEnvironment(const URL& webPageUR
     return adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:protocolHostAndPortURL.get()]);
 }
 
-Ref<MediaCapability> MediaCapability::create(URL&& url)
+Ref<MediaCapability> MediaCapability::create(URL&& url, Kind kind)
 {
-    return adoptRef(*new MediaCapability(WTFMove(url)));
+    return adoptRef(*new MediaCapability(WTF::move(url), kind));
 }
 
-MediaCapability::MediaCapability(URL&& webPageURL)
-    : m_webPageURL { WTFMove(webPageURL) }
+static RetainPtr<BEProcessCapability> processCapabilityForKind(MediaCapability::Kind kind, BEMediaEnvironment *environment)
+{
+    switch (kind) {
+    case MediaCapability::Kind::MediaPlayback:
+    case MediaCapability::Kind::CameraAndMicCapture:
+        return [BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:environment];
+    case MediaCapability::Kind::DisplayCapture:
+        if ([BEProcessCapability respondsToSelector:@selector(screenCaptureWithEnvironment:)])
+            return [BEProcessCapability screenCaptureWithEnvironment:environment];
+    }
+
+    return nil;
+}
+
+MediaCapability::MediaCapability(URL&& webPageURL, Kind kind)
+    : m_webPageURL { WTF::move(webPageURL) }
+    , m_kind { kind }
     , m_mediaEnvironment { createMediaEnvironment(m_webPageURL) }
 {
-    setPlatformCapability([BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:m_mediaEnvironment.get()]);
+    setPlatformCapability(processCapabilityForKind(m_kind, m_mediaEnvironment.get()));
 }
 
 bool MediaCapability::isActivatingOrActive() const

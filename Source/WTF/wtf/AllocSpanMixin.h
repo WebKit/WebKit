@@ -49,7 +49,7 @@ public:
 
     std::span<const T> span() const LIFETIME_BOUND { return m_span; }
     std::span<T> mutableSpan() LIFETIME_BOUND { return m_span; }
-    std::span<T> leakSpan() WARN_UNUSED_RETURN { return std::exchange(m_span, std::span<T> { }); }
+    [[nodiscard]] std::span<T> leakSpan() { return std::exchange(m_span, std::span<T> { }); }
 
     T& operator[](size_t i) LIFETIME_BOUND { return m_span[i]; }
     const T& operator[](size_t i) const LIFETIME_BOUND { return m_span[i]; }

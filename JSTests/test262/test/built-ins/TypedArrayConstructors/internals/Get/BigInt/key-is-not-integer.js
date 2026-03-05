@@ -19,7 +19,7 @@ info: |
   ...
   5. If IsInteger(index) is false, return undefined.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -30,8 +30,8 @@ Object.defineProperty(proto, "1.1", {
   }
 });
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n]));
 
   assert.sameValue(sample["1.1"], undefined);
-});
+}, null, ["passthrough"]);

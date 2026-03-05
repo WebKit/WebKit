@@ -35,6 +35,12 @@ ignore_elf32_limitations = true
 perfetto_build_with_embedder = true
 enable_perfetto_trace_processor = true
 
+# Enables creating tflite and xnnpack targets without a dependency on //base.
+# TODO(crbug/445631332): The override is a temporary fix due to the
+# `build_with_internal_optimization` variable not being visible in the WebRTC
+# build context. A proper solution is to set a default in the .gn file.
+build_with_internal_optimization_guide = true
+
 # Use bundled hermetic Xcode installation maintainted by Chromium,
 # except for local iOS builds where it's unsupported.
 # Allow for mac cross compile on linux machines.

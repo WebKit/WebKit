@@ -19,6 +19,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/asn1"
 	"errors"
 	"fmt"
 	"os"
@@ -42,7 +43,7 @@ type object struct {
 	// corresponding SN_foo or LN_foo macro is not defined.
 	shortName, longName       string
 	hasShortName, hasLongName bool
-	oid                       []int
+	oid                       asn1.ObjectIdentifier
 	encoded                   []byte
 }
 
@@ -123,7 +124,7 @@ func readNumbers(path string) (nameToNID map[string]int, numNIDs int, err error)
 	return nameToNID, numNIDs, nil
 }
 
-func parseOID(aliases map[string][]int, in []string) (oid []int, err error) {
+func parseOID(aliases map[string]asn1.ObjectIdentifier, in []string) (oid asn1.ObjectIdentifier, err error) {
 	if len(in) == 0 {
 		return
 	}
@@ -212,7 +213,7 @@ func readObjects(numPath, objectsPath string) (*objects, error) {
 	var lineNo int
 	longNamesSeen := make(map[string]struct{})
 	shortNamesSeen := make(map[string]struct{})
-	aliases := make(map[string][]int)
+	aliases := make(map[string]asn1.ObjectIdentifier)
 	scanner := bufio.NewScanner(in)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -424,7 +425,18 @@ extern "C" {
 // should instead embed the encodings of the few consumed OIDs and compare
 // against those.
 //
-// These values should not be used outside of a single process; they are not
+// Constants are defined as follows:
+//
+// - NID_foo is the integer NID of foo.
+// - SN_foo is the "short name" of foo, omitted if there is no short name.
+// - LN_foo is the "long name" of foo, omitted if there is no long name.
+// - OBJ_foo expands to a comma-separated sequence of integers for foo's OID,
+//   omitted if foo has no OID.
+// - OBJ_ENC_foo expands to a comma-separated sequence of bytes for foo's OID
+//   encoded in DER, excluding the tag and length. This is omitted if foo has
+//   no OID.
+//
+// NID values should not be used outside of a single process; they are not
 // stable identifiers.
 
 
@@ -447,18 +459,29 @@ extern "C" {
 		// OBJ_undef as if it were zero.
 		oid := obj.oid
 		if nid == 0 {
-			oid = []int{0}
+			oid = asn1.ObjectIdentifier{0}
 		}
 		if len(oid) != 0 {
-			var oidStr string
+			var oidStr strings.Builder
 			for _, val := range oid {
-				if len(oidStr) != 0 {
-					oidStr += ","
+				if oidStr.Len() != 0 {
+					oidStr.WriteString(", ")
 				}
-				oidStr += fmt.Sprintf("%dL", val)
+				fmt.Fprintf(&oidStr, "%dL", val)
 			}
-
-			fmt.Fprintf(&b, "#define OBJ_%s %s\n", obj.name, oidStr)
+			fmt.Fprintf(&b, "#define OBJ_%s %s\n", obj.name, oidStr.String())
+		}
+		// Some NIDs refer to the top-level OID arcs, which cannot be encoded
+		// as OIDs. (The encoding can only represent two or more components.)
+		if len(oid) > 1 {
+			var oidEncStr strings.Builder
+			for _, val := range encodeOID(oid) {
+				if oidEncStr.Len() != 0 {
+					oidEncStr.WriteString(", ")
+				}
+				fmt.Fprintf(&oidEncStr, "0x%02x", val)
+			}
+			fmt.Fprintf(&b, "#define OBJ_ENC_%s %s\n", obj.name, oidEncStr.String())
 		}
 
 		fmt.Fprintf(&b, "\n")

@@ -20,7 +20,9 @@
 #include "api/test/video_quality_test_fixture.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/units/data_rate.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_codec.h"
+#include "modules/video_coding/svc/scalability_mode_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "test/gtest.h"
@@ -201,6 +203,11 @@ ABSL_FLAG(std::string,
           "",
           "Name of the clip to show. If empty, using chroma generator.");
 
+ABSL_FLAG(std::string,
+          scalability_mode,
+          "",
+          "Scalability mode to use (e.g. 'L1T3').");
+
 namespace webrtc {
 namespace {
 
@@ -349,6 +356,10 @@ std::string Clip() {
   return absl::GetFlag(FLAGS_clip);
 }
 
+std::optional<ScalabilityMode> GetScalabilityMode() {
+  return ScalabilityModeFromString(absl::GetFlag(FLAGS_scalability_mode));
+}
+
 }  // namespace
 
 void Loopback() {
@@ -408,6 +419,13 @@ void Loopback() {
   if (NumStreams() > 1 && Stream0().empty() && Stream1().empty()) {
     params.ss[0].infer_streams = true;
   }
+  std::optional<ScalabilityMode> scalability_mode = GetScalabilityMode();
+  if (scalability_mode.has_value()) {
+    // Either scalability mode OR spatial/temporal layer config, not both.
+    RTC_DCHECK_EQ(NumTemporalLayers(), 1);
+    RTC_DCHECK_EQ(NumSpatialLayers(), 1);
+    params.ss[0].scalability_mode = scalability_mode;
+  }
 
   std::vector<std::string> stream_descriptors;
   stream_descriptors.push_back(Stream0());
@@ -433,7 +451,12 @@ int RunLoopbackTest(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc, argv);
   absl::ParseCommandLine(argc, argv);
 
-  LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs));
+  if (absl::GetFlag(FLAGS_logs)) {
+    // Make sure log level is set, otherwise --logs does not work for release
+    // builds.
+    LogMessage::LogToDebug(LoggingSeverity::LS_INFO);
+    LogMessage::SetLogToStderr(true);
+  }
 
   test::RunTest(Loopback);
   return 0;

@@ -94,7 +94,7 @@ void WebExtensionAPIWebNavigation::getAllFrames(NSDictionary *details, Ref<WebEx
     if (!isValid(tabIdentifier, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionFrameParameters>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionFrameParameters>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -129,7 +129,7 @@ void WebExtensionAPIWebNavigation::getFrame(NSDictionary *details, Ref<WebExtens
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionFrameParameters>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<std::optional<WebExtensionFrameParameters>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;

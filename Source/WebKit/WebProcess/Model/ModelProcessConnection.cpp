@@ -50,9 +50,9 @@ RefPtr<ModelProcessConnection> ModelProcessConnection::create(IPC::Connection& p
     if (!connectionIdentifiers)
         return nullptr;
 
-    parentConnection.send(Messages::WebProcessProxy::CreateModelProcessConnection(WTFMove(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    parentConnection.send(Messages::WebProcessProxy::CreateModelProcessConnection(WTF::move(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
-    auto instance = adoptRef(*new ModelProcessConnection(WTFMove(connectionIdentifiers->server)));
+    auto instance = adoptRef(*new ModelProcessConnection(WTF::move(connectionIdentifiers->server)));
 #if ENABLE(IPC_TESTING_API)
     if (parentConnection.ignoreInvalidMessageForTesting())
         instance->connection().setIgnoreInvalidMessageForTesting();
@@ -61,7 +61,7 @@ RefPtr<ModelProcessConnection> ModelProcessConnection::create(IPC::Connection& p
 }
 
 ModelProcessConnection::ModelProcessConnection(IPC::Connection::Identifier&& connectionIdentifier)
-    : m_connection(IPC::Connection::createServerConnection(WTFMove(connectionIdentifier)))
+    : m_connection(IPC::Connection::createServerConnection(WTF::move(connectionIdentifier)))
 {
     m_connection->open(*this);
 }

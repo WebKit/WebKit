@@ -65,14 +65,12 @@ void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word)
     WebTextChecker::singleton()->changeSpellingToWord(toImpl(page), toWTFString(word));
 }
 
-void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages)
+void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages, const size_t length)
 {
 #if ENABLE(SPELLCHECK)
     Vector<String> spellCheckingLanguages;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    for (size_t i = 0; languages[i]; ++i)
-        spellCheckingLanguages.append(String::fromUTF8(languages[i]));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    for (auto language : unsafeMakeSpan(languages, length))
+        spellCheckingLanguages.append(String::fromUTF8(language));
     WebKit::TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }

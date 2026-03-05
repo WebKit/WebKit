@@ -60,7 +60,7 @@ public:
     static JSPropertyNameEnumerator* tryCreate(VM&, Structure*, uint32_t, uint32_t, PropertyNameArrayBuilder&&);
     static JSPropertyNameEnumerator* create(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, PropertyNameArrayBuilder&& propertyNames)
     {
-        auto* result = tryCreate(vm, structure, indexedLength, numberStructureProperties, WTFMove(propertyNames));
+        auto* result = tryCreate(vm, structure, indexedLength, numberStructureProperties, WTF::move(propertyNames));
         RELEASE_ASSERT_RESOURCE_AVAILABLE(result, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
         return result;
     }
@@ -161,7 +161,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
     if (!indexedLength && !propertyNames.size())
         enumerator = vm.emptyPropertyNameEnumerator();
     else {
-        enumerator = JSPropertyNameEnumerator::tryCreate(vm, structureAfterGettingPropertyNames, indexedLength, numberStructureProperties, WTFMove(propertyNames));
+        enumerator = JSPropertyNameEnumerator::tryCreate(vm, structureAfterGettingPropertyNames, indexedLength, numberStructureProperties, WTF::move(propertyNames));
         if (!enumerator) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
             return nullptr;

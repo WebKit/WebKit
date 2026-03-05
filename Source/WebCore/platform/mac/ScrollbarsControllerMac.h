@@ -28,9 +28,9 @@
 #include <wtf/Platform.h>
 #if PLATFORM(MAC)
 
-#include <WebCore/IntRect.h>
-#include <WebCore/ScrollbarsController.h>
-#include <WebCore/Timer.h>
+#include "IntRect.h"
+#include "ScrollbarsController.h"
+#include "Timer.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>

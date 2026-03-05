@@ -10,7 +10,11 @@
 
 #include "api/peer_connection_interface.h"
 
+#include <vector>
+
+#include "api/candidate.h"
 #include "pc/media_factory.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

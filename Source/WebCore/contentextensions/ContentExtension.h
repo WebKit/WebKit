@@ -47,7 +47,7 @@ public:
     const String& identifier() const { return m_identifier; }
     const URL& extensionBaseURL() const { return m_extensionBaseURL; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
-    StyleSheetContents* globalDisplayNoneStyleSheet();
+    StyleSheetContents* NODELETE globalDisplayNoneStyleSheet();
     const DFABytecodeInterpreter::Actions& topURLActions(const URL& topURL) const;
     const DFABytecodeInterpreter::Actions& frameURLActions(const URL& frameURL) const;
     const Vector<uint64_t>& universalActions() const { return m_universalActions; }

@@ -173,7 +173,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(std::span<cons
     if (!output)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(std::span<const uint8_t> data, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
@@ -182,7 +182,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(std::span<cons
     if (!output)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>& nonce, std::span<const uint8_t> header, std::span<const uint8_t> data, const Vector<uint8_t>& key)

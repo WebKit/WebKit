@@ -10,17 +10,20 @@
 
 #include "modules/audio_device/win/core_audio_base_win.h"
 
+#include <cstdint>
 #include <iterator>
-#include <memory>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "modules/audio_device/audio_device_buffer.h"
+#include "api/audio/audio_device_defines.h"
+#include "api/environment/environment.h"
+#include "api/sequence_checker.h"
+#include "modules/audio_device/audio_device_name.h"
+#include "modules/audio_device/win/core_audio_utility_win.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/time_utils.h"
 #include "rtc_base/win/scoped_com_initializer.h"
 #include "rtc_base/win/windows_version.h"
 
@@ -151,11 +154,13 @@ bool IsLowLatencySupported(IAudioClient3* client3,
 
 }  // namespace
 
-CoreAudioBase::CoreAudioBase(Direction direction,
+CoreAudioBase::CoreAudioBase(const Environment& env,
+                             Direction direction,
                              bool automatic_restart,
                              OnDataCallback data_callback,
                              OnErrorCallback error_callback)
-    : format_(),
+    : env_(env),
+      format_(),
       direction_(direction),
       automatic_restart_(automatic_restart),
       on_data_callback_(data_callback),
@@ -195,8 +200,8 @@ bool CoreAudioBase::IsRestarting() const {
   return is_restarting_;
 }
 
-int64_t CoreAudioBase::TimeSinceStart() const {
-  return webrtc::TimeSince(start_time_);
+int64_t CoreAudioBase::TimeSinceStartMs() const {
+  return env_.clock().TimeInMilliseconds() - start_time_;
 }
 
 int CoreAudioBase::NumberOfActiveDevices() const {
@@ -576,7 +581,7 @@ bool CoreAudioBase::Start() {
     return false;
   }
 
-  start_time_ = webrtc::TimeMillis();
+  start_time_ = env_.clock().TimeInMilliseconds();
   num_data_callbacks_ = 0;
 
   return true;
@@ -585,7 +590,7 @@ bool CoreAudioBase::Start() {
 bool CoreAudioBase::Stop() {
   RTC_DLOG(LS_INFO) << __FUNCTION__ << "[" << DirectionToString(direction())
                     << "]";
-  RTC_DLOG(LS_INFO) << "total activity time: " << TimeSinceStart();
+  RTC_DLOG(LS_INFO) << "total activity time: " << TimeSinceStartMs();
 
   // Stop audio streaming.
   _com_error error = audio_client_->Stop();

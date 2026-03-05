@@ -30,6 +30,7 @@
 SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKMarketplaceKit)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSExperienceController)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaContentMetadata)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
@@ -52,3 +53,21 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentMobileDocumentRe
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentRequest);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentRequestAuthenticationCertificate);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextAnimationManager)
+
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUSDConfiguration)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeReceiver)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeModelLoader)
+
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeMeshPart)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeVertexAttributeFormat)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeVertexLayout)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeMeshDescriptor)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeSkinningData)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeBlendShapeData)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeRenormalizationData)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeDeformationData)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeImageAsset)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUpdateMesh)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUpdateTexture)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUpdateMaterial)
+

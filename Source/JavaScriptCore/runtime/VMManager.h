@@ -235,7 +235,7 @@ public:
 
     ALWAYS_INLINE static bool isValidVM(VM* vm)
     {
-        return vm == s_recentVM ? true : isValidVMSlow(vm);
+        return vm == s_recentVM || isValidVMSlow(vm);
     }
 
     // StopTheWorld APIs ======================================================
@@ -252,12 +252,23 @@ public:
         unsigned numberOfActiveVMs;
         unsigned numberOfStoppedVMs;
         Mode worldMode;
+        VM* targetVM;
+
+        void dump(PrintStream& out) const
+        {
+            out.print("VMManager::Info(numberOfVMs:", numberOfVMs);
+            out.print(", numberOfActiveVMs:", numberOfActiveVMs);
+            out.print(", numberOfStoppedVMs:", numberOfStoppedVMs);
+            out.print(", worldMode:", worldMode);
+            out.print(", targetVM:", RawPointer(targetVM), ")");
+        }
     };
 
     JS_EXPORT_PRIVATE static Info info();
     static unsigned numberOfVMs() { return singleton().m_numberOfVMs; }
 
-    JS_EXPORT_PRIVATE static void setWasmDebuggerCallback(StopTheWorldCallback);
+    JS_EXPORT_PRIVATE static void setWasmDebuggerOnStop(StopTheWorldCallback);
+    JS_EXPORT_PRIVATE static void setWasmDebuggerOnResume(PostResumeCallback);
     JS_EXPORT_PRIVATE static void setMemoryDebuggerCallback(StopTheWorldCallback);
 
     ALWAYS_INLINE CONCURRENT_SAFE static void requestStopAll(StopReason reason)
@@ -311,6 +322,8 @@ private:
     void incrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     void decrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
 
+    void dispatchStopHandler(VM&);
+
     JS_EXPORT_PRIVATE static bool isValidVMSlow(VM*);
     JS_EXPORT_PRIVATE VM* findMatchingVMImpl(const ScopedLambda<TestCallback>&);
     JS_EXPORT_PRIVATE void forEachVMImpl(const ScopedLambda<IteratorCallback>&);
@@ -348,9 +361,13 @@ private:
     // Only notifyVMStop() may modify m_currentStopReason.
     StopReason m_currentStopReason { StopReason::None };
 
+    // Flags whether WasmDebugger post-resume callback is pending. Set when servicing WasmDebugger
+    // stop, atomically read-and-cleared by last VM exiting notifyVMStop().
+    Atomic<bool> m_needsWasmDebuggerOnResume { false };
+
     // Indicates the targetVM that will service the StopTheWorld request, or the targetVM that may
     // continue running in RunOne mode.
-    // Can obly be written to while holding the m_worldLock.
+    // Can only be written to while holding the m_worldLock.
     // Can be read without the m_worldLock under some restricted circumstances.
     VM* m_targetVM { nullptr };
 

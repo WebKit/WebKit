@@ -31,11 +31,11 @@
 namespace WebCore {
 
 class CompositionEvent final : public UIEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CompositionEvent);
+    WTF_MAKE_TZONE_ALLOCATED(CompositionEvent);
 public:
     static Ref<CompositionEvent> create(const AtomString& type, RefPtr<WindowProxy>&& view, const String& data)
     {
-        return adoptRef(*new CompositionEvent(type, WTFMove(view), data));
+        return adoptRef(*new CompositionEvent(type, WTF::move(view), data));
     }
 
     static Ref<CompositionEvent> createForBindings()
@@ -47,9 +47,9 @@ public:
         String data;
     };
 
-    static Ref<CompositionEvent> create(const AtomString& type, const Init& initializer)
+    static Ref<CompositionEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new CompositionEvent(type, initializer));
+        return adoptRef(*new CompositionEvent(type, WTF::move(initializer)));
     }
 
     virtual ~CompositionEvent();
@@ -61,9 +61,7 @@ public:
 private:
     CompositionEvent();
     CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&&, const String&);
-    CompositionEvent(const AtomString& type, const Init&);
-
-    bool isCompositionEvent() const override;
+    CompositionEvent(const AtomString& type, Init&&);
 
     String m_data;
 };

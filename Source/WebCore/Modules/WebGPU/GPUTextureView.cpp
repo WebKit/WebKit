@@ -35,7 +35,7 @@ String GPUTextureView::label() const
 
 void GPUTextureView::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    m_backing->setLabel(WTF::move(label));
 }
 
 }

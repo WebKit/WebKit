@@ -854,7 +854,18 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& trustedFontHas
         "tboC32G7FHmioWbF0ScsnhgR4SnPevGgAcN9oyBxyV4="_s /* NT9VJlUQ2j5.woff */,
         "toGCSrhxtzDo2US+GzyShOuyCBJSqfpLCfpuyuo3+Ig="_s /* F7ZcL-Lm2Os.woff */,
         "ugyD8SdndqzkOiSODDKB0PXx5gR72goGjJ8HtpLzoBc="_s /* FqiK19_SYWS.woff */,
-        "wkSmw8cD+LK683467qvTuPjr847yjaPsRdrfsajfIgc="_s /* tL12ldcgP15.woff2 */ });
+        "wkSmw8cD+LK683467qvTuPjr847yjaPsRdrfsajfIgc="_s /* tL12ldcgP15.woff2 */,
+        // Additional Facebook fonts (rdar://161923840)
+        "d7qRCdV5/RE4G2gD8lTw0lMBBgZoYbnZVaMdp6iV6pU="_s,
+        "OZi5uEsAf6Spp4aQ2syyt5RUkd9fT5ORRKYZwa119oA="_s,
+        "zYrzt0vfPKuP9hUDcU30SY3bbC+0LK6mILZVPKifsEU="_s,
+        "GmXuTu6TDvuSVHEjpr6eoEnG3s70BAmemj5bNPqPONs="_s,
+        "fiZ7T0ZTzGDKRTLwgOJG6x2/stxnqupP2KD8gRs7oC0="_s,
+        "f2uqA9Hhf6CfDS4QKA6URp31yuMrP0cwWOD4JZGmLRE="_s,
+        "4lwRbTGm3tahH1/N4+/Y2X4K+yngJLAUyDzhf4q8kOQ="_s,
+        "WY/G2MZa1/vsJr+lZc0AAsVBwuxuLxJEE0zdu5z5jSk="_s,
+        "OKhOTmvrlR2wFVV65RzWwZrDm01wTM76amx7a8yybyM="_s,
+        "mXkRKROZST2m7meFkdxZmUGDQ5Q5IxgaInsfPAAoAbY="_s });
 
     return trustedFontHashes;
 }

@@ -49,7 +49,7 @@ public:
     void invokeListenersWithArgument(id argument1, id argument2, id argument3);
 #endif
 
-    const ListenerVector& listeners() const { return m_listeners; }
+    const ListenerVector& listeners() const LIFETIME_BOUND { return m_listeners; }
 
     void addListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>);
     void removeListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>);

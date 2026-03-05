@@ -61,8 +61,7 @@ public:
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
     void supportsLinearMediaPlayerChanged(bool) final;
-    void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&) final;
-    void videoProjectionMetadataChanged(const std::optional<WebCore::VideoProjectionMetadata>&) final;
+    void immersiveVideoMetadataChanged(const std::optional<WebCore::ImmersiveVideoMetadata>&) final;
     void startObservingNowPlayingMetadata() final;
     void stopObservingNowPlayingMetadata() final;
 #if !RELEASE_LOG_DISABLED

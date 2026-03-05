@@ -71,6 +71,7 @@
 #include "pc/media_stream.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_factory.h"
+#include "pc/rtp_media_utils.h"
 #include "pc/rtp_sender.h"
 #include "pc/rtp_sender_proxy.h"
 #include "pc/session_description.h"
@@ -998,8 +999,18 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
 
   void CreateOfferReceiveAnswer() {
     CreateOfferAsLocalDescription();
+    std::unique_ptr<SessionDescriptionInterface> offer =
+        pc_->local_description()->Clone();
+    // Adapts the offer so that it can serve as an answer.
+    // This test does not use DTLS so direcetion does not have
+    // to be adapted in a similar way.
+    for (auto& content : offer->description()->contents()) {
+      MediaContentDescription* media_description = content.media_description();
+      media_description->set_direction(
+          RtpTransceiverDirectionReversed(media_description->direction()));
+    }
     std::string sdp;
-    EXPECT_TRUE(pc_->local_description()->ToString(&sdp));
+    EXPECT_TRUE(offer->ToString(&sdp));
     CreateAnswerAsRemoteDescription(sdp);
   }
 
@@ -3555,6 +3566,16 @@ TEST_P(PeerConnectionInterfaceTest, SetBitrateCurrentLessThanImplicitMin) {
   BitrateSettings bitrate;
   bitrate.start_bitrate_bps = 1;
   EXPECT_TRUE(pc_->SetBitrate(bitrate).ok());
+}
+
+TEST_P(PeerConnectionInterfaceTest, SetBitrateAfterCloseFails) {
+  CreatePeerConnection();
+  pc_->Close();
+  BitrateSettings bitrate;
+  bitrate.start_bitrate_bps = 1;
+  auto ret = pc_->SetBitrate(bitrate);
+  EXPECT_FALSE(ret.ok());
+  EXPECT_EQ(RTCErrorType::INVALID_STATE, ret.type());
 }
 
 // The following tests verify that the offer can be created correctly.

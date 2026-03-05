@@ -40,7 +40,7 @@ class GenericHashKey final {
 
 public:
     constexpr GenericHashKey(Key&& key)
-        : m_value(InPlaceTypeT<Key>(), WTFMove(key))
+        : m_value(InPlaceTypeT<Key>(), WTF::move(key))
     {
     }
 

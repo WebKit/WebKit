@@ -63,7 +63,7 @@ public:
     WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity);
 #if PLATFORM(COCOA)
     WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType);
-#elif PLATFORM(GTK) || USE(LIBWPE)
+#elif PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas);
 #endif
 
@@ -77,20 +77,20 @@ public:
     Phase phase() const { return m_phase; }
     Phase momentumPhase() const { return m_momentumPhase; }
     MomentumEndType momentumEndType() const { return m_momentumEndType; }
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
 #endif
 #if PLATFORM(COCOA)
     MonotonicTime ioHIDEventTimestamp() const { return m_ioHIDEventTimestamp; }
     std::optional<WebCore::FloatSize> rawPlatformDelta() const { return m_rawPlatformDelta; }
-    void setRawPlatformDelta(std::optional<WebCore::FloatSize>&& delta) { m_rawPlatformDelta = WTFMove(delta); }
+    void setRawPlatformDelta(std::optional<WebCore::FloatSize>&& delta) { m_rawPlatformDelta = WTF::move(delta); }
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
 
     bool isMomentumEvent() const { return momentumPhase() != Phase::None && momentumPhase() != Phase::WillBegin; }
 
-    static bool isWheelEventType(WebEventType);
+    static bool NODELETE isWheelEventType(WebEventType);
 
 private:
     WebCore::IntPoint m_position;
@@ -103,7 +103,7 @@ private:
 
     MomentumEndType m_momentumEndType { MomentumEndType::Unknown };
     bool m_directionInvertedFromDevice { false };
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     bool m_hasPreciseScrollingDeltas { false };
 #endif
 #if PLATFORM(COCOA)

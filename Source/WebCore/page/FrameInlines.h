@@ -36,9 +36,4 @@ inline HTMLFrameOwnerElement* Frame::ownerElement() const
     return m_ownerElement.get();
 }
 
-inline RefPtr<HTMLFrameOwnerElement> Frame::protectedOwnerElement() const
-{
-    return m_ownerElement.get();
-}
-
 } // namespace WebCore

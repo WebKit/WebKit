@@ -79,7 +79,7 @@ protected:
 
     virtual webrtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t width, size_t height) = 0;
 
-    bool m_shouldApplyRotation { false };
+    bool m_isApplyingRotation { false };
     webrtc::VideoRotation m_currentRotation { webrtc::kVideoRotation_0 };
 
 #if !RELEASE_LOG_DISABLED

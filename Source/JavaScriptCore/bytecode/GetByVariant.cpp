@@ -37,11 +37,11 @@ GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& s
     , m_conditionSet(conditionSet)
     , m_viaGlobalProxy(viaGlobalProxy)
     , m_offset(offset)
-    , m_callLinkStatus(WTFMove(callLinkStatus))
+    , m_callLinkStatus(WTF::move(callLinkStatus))
     , m_intrinsicFunction(intrinsicFunction)
     , m_customAccessorGetter(customAccessorGetter)
-    , m_domAttribute(WTFMove(domAttribute))
-    , m_identifier(WTFMove(identifier))
+    , m_domAttribute(WTF::move(domAttribute))
+    , m_identifier(WTF::move(identifier))
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);

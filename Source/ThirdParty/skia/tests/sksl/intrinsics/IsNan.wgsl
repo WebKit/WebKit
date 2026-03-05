@@ -4,34 +4,21 @@ error: Tint compilation failed.
 
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  testInputs: vec4<f32>,
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  testInputs: vec4<f16>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
-    let valueIsNaN: vec4<f32> = 0.0 / _globalUniforms.testInputs.yyyy;
-    let valueIsNumber: vec4<f32> = 1.0 / _globalUniforms.testInputs;
-    let _skTemp0 = isnan(valueIsNaN.x);
-    let _skTemp1 = isnan(valueIsNaN.xy);
-    let _skTemp2 = all(_skTemp1);
-    let _skTemp3 = isnan(valueIsNaN.xyz);
-    let _skTemp4 = all(_skTemp3);
-    let _skTemp5 = isnan(valueIsNaN);
-    let _skTemp6 = all(_skTemp5);
-    let _skTemp7 = isnan(valueIsNumber.x);
-    let _skTemp8 = isnan(valueIsNumber.xy);
-    let _skTemp9 = any(_skTemp8);
-    let _skTemp10 = isnan(valueIsNumber.xyz);
-    let _skTemp11 = any(_skTemp10);
-    let _skTemp12 = isnan(valueIsNumber);
-    let _skTemp13 = any(_skTemp12);
-    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>(((((((_skTemp0 && _skTemp2) && _skTemp4) && _skTemp6) && (!_skTemp7)) && (!_skTemp9)) && (!_skTemp11)) && (!_skTemp13)));
+    let valueIsNaN: vec4<f16> = 0.0h / _globalUniforms.testInputs.yyyy;
+    let valueIsNumber: vec4<f16> = 1.0h / _globalUniforms.testInputs;
+    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>(((((((isnan(valueIsNaN.x) && all(isnan(valueIsNaN.xy))) && all(isnan(valueIsNaN.xyz))) && all(isnan(valueIsNaN))) && (!isnan(valueIsNumber.x))) && (!any(isnan(valueIsNumber.xy)))) && (!any(isnan(valueIsNumber.xyz)))) && (!any(isnan(valueIsNumber)))));
   }
 }
 @fragment fn main() -> FSOut {

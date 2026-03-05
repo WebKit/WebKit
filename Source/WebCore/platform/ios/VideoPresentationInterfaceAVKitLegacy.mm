@@ -319,6 +319,7 @@ static void WebAVPictureInPictureContentViewController_viewWillLayoutSubviews(id
 static void WebAVPictureInPictureContentViewController_dealloc(id aSelf, SEL)
 {
     WebAVPictureInPictureContentViewController *pipController = aSelf;
+    [[pipController playerLayer] removeFromSuperlayer];
     [[pipController controller] release];
     [[pipController playerLayer] release];
     objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClassSingleton() };
@@ -883,12 +884,12 @@ void VideoPresentationInterfaceAVKitLegacy::invalidatePlayerViewController()
 
 void VideoPresentationInterfaceAVKitLegacy::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    [m_playerViewController enterFullScreenAnimated:animated completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    [m_playerViewController enterFullScreenAnimated:animated completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
 }
 
 void VideoPresentationInterfaceAVKitLegacy::dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    [m_playerViewController exitFullScreenAnimated:animated completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    [m_playerViewController exitFullScreenAnimated:animated completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
 }
 
 void VideoPresentationInterfaceAVKitLegacy::tryToStartPictureInPicture()
@@ -901,7 +902,7 @@ void VideoPresentationInterfaceAVKitLegacy::stopPictureInPicture()
     [m_playerViewController stopPictureInPicture];
 }
 
-bool VideoPresentationInterfaceAVKitLegacy::isPlayingVideoInEnhancedFullscreen() const
+bool VideoPresentationInterfaceAVKitLegacy::isPlayingVideoInPictureInPicture() const
 {
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [playerController() isPlaying];
 }

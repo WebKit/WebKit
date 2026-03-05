@@ -49,7 +49,7 @@ namespace WebCore {
 class RTCPeerConnection;
 
 class RTCIceTransport : public RefCounted<RTCIceTransport>, public ActiveDOMObject, public EventTarget, public RTCIceTransportBackendClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCIceTransport);
+    WTF_MAKE_TZONE_ALLOCATED(RTCIceTransport);
 public:
     static Ref<RTCIceTransport> create(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
     ~RTCIceTransport();
@@ -62,27 +62,27 @@ public:
     RTCIceTransportState state() const { return m_transportState; }
     RTCIceGatheringState gatheringState() const { return m_gatheringState; }
 
-    const RTCIceTransportBackend& backend() const { return m_backend.get(); }
-    RefPtr<RTCPeerConnection> connection() const { return m_connection.get(); }
+    const RTCIceTransportBackend& backend() const LIFETIME_BOUND { return m_backend.get(); }
+    RefPtr<RTCPeerConnection> connection() const { return m_connection; }
 
     struct CandidatePair {
         RefPtr<RTCIceCandidate> local;
         RefPtr<RTCIceCandidate> remote;
     };
-    std::optional<CandidatePair> getSelectedCandidatePair();
+    std::optional<CandidatePair> NODELETE getSelectedCandidatePair();
 
 private:
     RTCIceTransport(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCIceTransport; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject.
-    void stop() final;
-    bool virtualHasPendingActivity() const final;
+    void NODELETE stop() final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // RTCIceTransportBackendClient
     void onStateChanged(RTCIceTransportState) final;
@@ -98,5 +98,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(RTCIceTransport)
 
 #endif // ENABLE(WEB_RTC)

@@ -30,7 +30,10 @@
 
 #include "TestHarness.h"
 
+#if defined(PAS_BMALLOC)
 #include "bmalloc/BPlatform.h"
+#endif
+
 #include "bmalloc_heap.h"
 #include "iso_heap.h"
 #include "iso_heap_config.h"

@@ -36,19 +36,15 @@
 
 namespace WebKit {
 
-WebContextMenuProxy::WebContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
-    : m_context(WTFMove(context))
+WebContextMenuProxy::WebContextMenuProxy(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
+    : m_context(WTF::move(context))
     , m_userData(userData)
+    , m_frameInfo(WTF::move(frameInfo))
     , m_page(page)
 {
 }
 
 WebContextMenuProxy::~WebContextMenuProxy() = default;
-
-RefPtr<WebPageProxy> WebContextMenuProxy::protectedPage() const
-{
-    return page();
-}
 
 Vector<Ref<WebContextMenuItem>> WebContextMenuProxy::proposedItems() const
 {
@@ -68,7 +64,7 @@ void WebContextMenuProxy::show()
     Ref contextMenuListener = WebContextMenuListenerProxy::create(*this);
     m_contextMenuListener = contextMenuListener.copyRef();
     page->contextMenuClient().getContextMenuFromProposedMenu(*page, proposedItems(), contextMenuListener, m_context.webHitTestResultData().value(),
-        page->protectedLegacyMainFrameProcess()->transformHandlesToObjects(m_userData.protectedObject().get()).get());
+        protect(page->legacyMainFrameProcess())->transformHandlesToObjects(protect(m_userData.object()).get()).get());
 }
 
 void WebContextMenuProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& items)
@@ -80,11 +76,11 @@ void WebContextMenuProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& 
         return;
 
     // Since showContextMenuWithItems can spin a nested run loop we need to turn off the responsiveness timer.
-    page->protectedLegacyMainFrameProcess()->stopResponsivenessTimer();
+    protect(page->legacyMainFrameProcess())->stopResponsivenessTimer();
 
     // Protect |this| from being deallocated if WebPageProxy code is re-entered from the menu runloop or delegates.
     Ref protectedThis { *this };
-    showContextMenuWithItems(WTFMove(items));
+    showContextMenuWithItems(WTF::move(items));
     page->clearWaitingForContextMenuToShow();
 }
 

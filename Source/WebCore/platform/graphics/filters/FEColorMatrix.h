@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+template<size_t, size_t> class ColorMatrix;
+
 enum class ColorMatrixType : uint8_t {
     FECOLORMATRIX_TYPE_UNKNOWN          = 0,
     FECOLORMATRIX_TYPE_MATRIX           = 1,
@@ -40,6 +42,7 @@ class FEColorMatrix final : public FilterEffect {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEColorMatrix);
 public:
     WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&, DestinationColorSpace = DestinationColorSpace::SRGB());
+    static Ref<FEColorMatrix> create(ColorMatrixType, const ColorMatrix<5, 4>&, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEColorMatrix&) const;
 

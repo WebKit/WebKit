@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/StrongForward.h>
 #include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
+#include <cstdint>
 
 namespace JSC {
 class ArrayBuffer;

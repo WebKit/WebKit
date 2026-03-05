@@ -485,7 +485,7 @@ struct ec_method_st {
   //
   // TODO(davidben): This constrains |EC_FELEM|'s internal representation, adds
   // many indirect calls in the middle of the generic code, and a bunch of
-  // conversions. If p224-64.c were easily convertable to Montgomery form, we
+  // conversions. If p224-64.c were easily convertible to Montgomery form, we
   // could say |EC_FELEM| is always in Montgomery form. If we routed the rest of
   // simple.c to |EC_METHOD|, we could give |EC_POINT| an |EC_METHOD|-specific
   // representation and say |EC_FELEM| is purely a |EC_GFp_mont_method| type.
@@ -578,7 +578,7 @@ struct ec_group_st {
   // has_order is one if |generator| and |order| have been initialized.
   int has_order;
 
-  // field_greater_than_order is one if |field| is greate than |order| and zero
+  // field_greater_than_order is one if |field| is greater than |order| and zero
   // otherwise.
   int field_greater_than_order;
 

@@ -49,10 +49,10 @@ private:
     InlineLayoutUnit simplifiedMinimumWidth(const ElementBox& root) const;
     InlineLayoutUnit simplifiedMaximumWidth(MayCacheLayoutResult = MayCacheLayoutResult::No);
 
-    InlineFormattingContext& formattingContext();
-    const InlineFormattingContext& formattingContext() const;
+    InlineFormattingContext& NODELETE formattingContext();
+    const InlineFormattingContext& NODELETE formattingContext() const;
     const InlineContentCache& formattingState() const;
-    const ElementBox& formattingContextRoot() const;
+    const ElementBox& NODELETE formattingContextRoot() const;
     const ElementBox& lineBuilerRoot() const;
     const InlineItemList& inlineItemList() const { return m_inlineItems.content(); }
 

@@ -69,8 +69,7 @@ bool FeedbackParams::Remove(const FeedbackParam& param) {
   if (!Has(param)) {
     return false;
   }
-  params_.erase(std::remove(params_.begin(), params_.end(), param),
-                params_.end());
+  std::erase(params_, param);
   return true;
 }
 

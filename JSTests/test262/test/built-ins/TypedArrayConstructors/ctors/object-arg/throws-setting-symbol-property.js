@@ -31,4 +31,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     new TA(obj);
   });
-});
+}, null, ["passthrough"]);

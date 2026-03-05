@@ -186,8 +186,14 @@ const char *GetEntryPointName(EntryPoint ep)
             return "clGetSamplerInfo";
         case EntryPoint::CLGetSupportedImageFormats:
             return "clGetSupportedImageFormats";
+        case EntryPoint::CLIcdGetFunctionAddressForPlatformKHR:
+            return "clIcdGetFunctionAddressForPlatformKHR";
         case EntryPoint::CLIcdGetPlatformIDsKHR:
             return "clIcdGetPlatformIDsKHR";
+        case EntryPoint::CLIcdSetPlatformDispatchDataKHR:
+            return "clIcdSetPlatformDispatchDataKHR";
+        case EntryPoint::CLImportMemoryARM:
+            return "clImportMemoryARM";
         case EntryPoint::CLLinkProgram:
             return "clLinkProgram";
         case EntryPoint::CLReleaseCommandQueue:
@@ -974,6 +980,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glFramebufferTextureEXT";
         case EntryPoint::GLFramebufferTextureLayer:
             return "glFramebufferTextureLayer";
+        case EntryPoint::GLFramebufferTextureMultisampleMultiviewOVR:
+            return "glFramebufferTextureMultisampleMultiviewOVR";
         case EntryPoint::GLFramebufferTextureMultiviewOVR:
             return "glFramebufferTextureMultiviewOVR";
         case EntryPoint::GLFramebufferTextureOES:

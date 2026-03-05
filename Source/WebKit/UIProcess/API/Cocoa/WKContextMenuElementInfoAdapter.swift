@@ -21,10 +21,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI && compiler(>=6.0)
+#if ENABLE_SWIFTUI
 
 public import Foundation
-internal import WebKit_Internal
 
 // SPI for the cross-import overlay.
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation

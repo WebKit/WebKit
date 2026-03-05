@@ -65,8 +65,8 @@ public:
     void gcUnprotect(JSObject*);
     bool gcIsProtected(JSObject*);
 
-    const void* nativeHandle() const;
-    WEBCORE_EXPORT JSGlobalObject* globalObject() const;
+    const void* NODELETE nativeHandle() const;
+    WEBCORE_EXPORT JSGlobalObject* NODELETE globalObject() const;
     void updateGlobalObject(JSGlobalObject*);
 
     void addRuntimeObject(VM&, RuntimeObject*);

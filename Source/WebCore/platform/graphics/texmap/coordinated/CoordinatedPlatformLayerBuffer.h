@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CoordinatedPlatformLayerBuffer : public TextureMapperPlatformLayer {
     WTF_MAKE_NONCOPYABLE(CoordinatedPlatformLayerBuffer);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CoordinatedPlatformLayerBuffer);
 public:
     enum class Type : uint8_t {
         RGB,
@@ -55,7 +55,7 @@ public:
 
     void waitForContentsIfNeeded()
     {
-        if (auto fence = WTFMove(m_fence))
+        if (auto fence = WTF::move(m_fence))
             fence->serverWait();
     }
 
@@ -64,11 +64,9 @@ protected:
         : m_type(type)
         , m_size(size)
         , m_flags(flags)
-        , m_fence(WTFMove(fence))
+        , m_fence(WTF::move(fence))
     {
     }
-
-    bool isHolePunchBuffer() const final { return m_type == Type::HolePunch; }
 
     Type m_type;
     IntSize m_size;

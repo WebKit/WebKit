@@ -50,7 +50,8 @@
                           (sublayers
                             (
                               (layer bounds [x: 0 y: 0 width: 31 height: 31])
-                              (layer anchorPoint [x: 0 y: 0]))))
+                              (layer anchorPoint [x: 0 y: 0])
+                              (layer background color rgb(255, 255, 255)))))
                         (
                           (layer bounds [x: 0 y: 0 width: 0 height: 0])
                           (sublayers

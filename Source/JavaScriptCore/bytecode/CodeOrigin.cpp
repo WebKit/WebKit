@@ -135,7 +135,7 @@ int CodeOrigin::stackOffset() const
     return inlineCallFrame->stackOffset;
 }
 
-void CodeOrigin::dump(PrintStream& out) const
+void CodeOrigin::dump(PrintStream& out, bool inIonGraph) const
 {
     if (!isSet()) {
         out.print("<none>");
@@ -152,8 +152,7 @@ void CodeOrigin::dump(PrintStream& out) const
             if (frame->isClosureCall)
                 out.print("(closure) ");
         }
-        
-        out.print(stack[i].bytecodeIndex());
+        stack[i].bytecodeIndex().dump(out, inIonGraph);
     }
 }
 

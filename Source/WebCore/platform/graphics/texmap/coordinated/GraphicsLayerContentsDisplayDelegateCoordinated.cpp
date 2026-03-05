@@ -38,7 +38,7 @@ GraphicsLayerContentsDisplayDelegateCoordinated::~GraphicsLayerContentsDisplayDe
 
 void GraphicsLayerContentsDisplayDelegateCoordinated::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& displayBuffer)
 {
-    m_displayBuffer = WTFMove(displayBuffer);
+    m_displayBuffer = WTF::move(displayBuffer);
 }
 
 bool GraphicsLayerContentsDisplayDelegateCoordinated::display(CoordinatedPlatformLayer& layer, std::optional<Damage>&& dirtyRegion)
@@ -46,7 +46,7 @@ bool GraphicsLayerContentsDisplayDelegateCoordinated::display(CoordinatedPlatfor
     if (!m_displayBuffer)
         return false;
 
-    layer.setContentsBuffer(WTFMove(m_displayBuffer), WTFMove(dirtyRegion));
+    layer.setContentsBuffer(WTF::move(m_displayBuffer), WTF::move(dirtyRegion));
     return true;
 }
 

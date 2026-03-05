@@ -31,6 +31,7 @@
 #include "AudioDestinationNode.h"
 #include "AudioIOCallback.h"
 #include "EventTarget.h"
+#include "EventTargetInterfaces.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "NoiseInjectionPolicy.h"
 #include "OscillatorType.h"
@@ -95,7 +96,7 @@ class BaseAudioContext
     , public LoggerHelper
 #endif
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BaseAudioContext);
+    WTF_MAKE_TZONE_ALLOCATED(BaseAudioContext);
 public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
@@ -105,15 +106,12 @@ public:
     WEBCORE_EXPORT static bool isContextAlive(uint64_t contextID);
     uint64_t contextID() const { return m_contextID; }
 
-    Document* document() const;
-    RefPtr<Document> protectedDocument() const;
+    Document* NODELETE document() const;
     bool isInitialized() const { return m_isInitialized; }
     
     virtual bool isOfflineContext() const = 0;
     virtual AudioDestinationNode& destination() = 0;
-    Ref<AudioDestinationNode> protectedDestination() { return destination(); }
     virtual const AudioDestinationNode& destination() const = 0;
-    Ref<const AudioDestinationNode> protectedDestination() const { return destination(); }
 #if PLATFORM(IOS_FAMILY)
     virtual const String& sceneIdentifier() const { return nullString(); }
 #endif
@@ -216,17 +214,16 @@ public:
     void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     virtual void sourceNodeWillBeginPlayback(AudioNode&);
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
-    void sourceNodeDidFinishPlayback(AudioNode&);
+    void NODELETE sourceNodeDidFinishPlayback(AudioNode&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const override { return m_logger.get(); }
     uint64_t logIdentifier() const override { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
     uint64_t nextAudioNodeLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioNodeIdentifier); }
     uint64_t nextAudioParameterLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioParameterIdentifier); }
 #endif
@@ -243,7 +240,7 @@ public:
     PeriodicWave& periodicWave(OscillatorType);
 
     void addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&&);
-    const MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
+    const MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const LIFETIME_BOUND { return m_parameterDescriptorMap; }
 
     OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const { return m_noiseInjectionPolicies; }
 
@@ -266,7 +263,7 @@ protected:
 
 protected:
     // Only accessed when the graph lock is held.
-    const Vector<AudioConnectionRefPtr<AudioNode>>& referencedSourceNodes() const { return m_referencedSourceNodes; }
+    const Vector<AudioConnectionRef<AudioNode>>& referencedSourceNodes() const LIFETIME_BOUND { return m_referencedSourceNodes; }
 
 private:
     void scheduleNodeDeletion();
@@ -310,7 +307,7 @@ private:
     const Ref<AudioWorklet> m_worklet;
 
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
-    Vector<AudioConnectionRefPtr<AudioNode>> m_referencedSourceNodes;
+    Vector<AudioConnectionRef<AudioNode>> m_referencedSourceNodes;
 
     // Accumulate nodes which need to be deleted here.
     // This is copied to m_nodesToDelete at the end of a render cycle in handlePostRenderTasks(), where we're assured of a stable graph
@@ -320,13 +317,13 @@ private:
 
     class TailProcessingNode {
     public:
-        TailProcessingNode(AudioNode& node)
+        explicit TailProcessingNode(AudioNode& node)
             : m_node(&node)
         {
             ASSERT(!node.isTailProcessing());
             node.setIsTailProcessing(true);
         }
-        TailProcessingNode(TailProcessingNode&& other)
+        explicit TailProcessingNode(TailProcessingNode&& other)
             : m_node(std::exchange(other.m_node, nullptr))
         { }
         ~TailProcessingNode()
@@ -336,8 +333,8 @@ private:
         }
         TailProcessingNode& operator=(const TailProcessingNode&) = delete;
         TailProcessingNode& operator=(TailProcessingNode&&) = delete;
-        CheckedPtr<AudioNode> checkedNode() const { return m_node.get(); }
         AudioNode* operator->() const { return m_node.get(); }
+        AudioNode* node() const { return m_node.get(); }
         friend bool operator==(const TailProcessingNode&, const TailProcessingNode&) = default;
         bool operator==(const AudioNode& node) const { return m_node == &node; }
     private:
@@ -396,5 +393,7 @@ private:
 };
 
 } // WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(BaseAudioContext)
 
 #endif // ENABLE(WEB_AUDIO)

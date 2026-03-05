@@ -54,4 +54,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert(
     compareArray(sample, [42, 0, 1, 17])
   );
-});
+}, null, ["passthrough"]);

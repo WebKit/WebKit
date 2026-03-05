@@ -12,7 +12,7 @@ info: |
   If count > 0, then
     ...
   Return A
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Symbol.species, TypedArray]
 ---*/
 
@@ -46,4 +46,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   );
   assert.sameValue(result.constructor, TA, 'The value of result.constructor is expected to equal the value of TA');
   assert.sameValue(counter, 2, 'The value of `counter` is 2');
-});
+}, null, ["passthrough"]);

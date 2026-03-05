@@ -46,8 +46,8 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
     : m_identifier(identifier)
     , m_type(type)
     , m_rtcProvider(rtcProvider)
-    , m_socket(WTFMove(socket))
-    , m_connection(WTFMove(connection))
+    , m_socket(WTF::move(socket))
+    , m_connection(WTF::move(connection))
 {
     ASSERT(m_socket);
 

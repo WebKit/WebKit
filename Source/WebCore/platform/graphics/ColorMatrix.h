@@ -142,6 +142,17 @@ constexpr ColorMatrix<5, 4> opacityColorMatrix(float amount)
     };
 }
 
+constexpr ColorMatrix<5, 4> luminanceToAlphaColorMatrix()
+{
+    // https://drafts.csswg.org/filter-effects/#attr-valuedef-type-luminancetoalpha
+    return ColorMatrix<5, 4> {
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.2126f, 0.7152f, 0.0722f, 0.0f, 0.0f
+    };
+}
+
 constexpr ColorMatrix<3, 3> sepiaColorMatrix(float amount)
 {
     // Values from https://www.w3.org/TR/filter-effects-1/#sepiaEquivalent

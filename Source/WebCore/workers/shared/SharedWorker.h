@@ -27,6 +27,7 @@
 
 #include "AbstractWorker.h"
 #include "ActiveDOMObject.h"
+#include "EventTargetInterfaces.h"
 #include "SharedWorkerKey.h"
 #include "SharedWorkerObjectIdentifier.h"
 #include "URLKeepingBlobAlive.h"
@@ -43,9 +44,9 @@ class TrustedScriptURL;
 struct WorkerOptions;
 
 class SharedWorker final : public AbstractWorker, public ActiveDOMObject, public Identified<SharedWorkerObjectIdentifier> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SharedWorker);
+    WTF_MAKE_TZONE_ALLOCATED(SharedWorker);
 public:
-    static ExceptionOr<Ref<SharedWorker>> create(Document&, Variant<RefPtr<TrustedScriptURL>, String>&&, std::optional<Variant<String, WorkerOptions>>&&);
+    static ExceptionOr<Ref<SharedWorker>> create(Document&, Variant<Ref<TrustedScriptURL>, String>&&, std::optional<Variant<String, WorkerOptions>>&&);
     ~SharedWorker();
 
     // ContextDestructionObserver.
@@ -62,7 +63,6 @@ public:
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
 
     void reportNetworkUsage(size_t bytesTransferredOverNetworkDelta);
 
@@ -93,3 +93,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(SharedWorker)

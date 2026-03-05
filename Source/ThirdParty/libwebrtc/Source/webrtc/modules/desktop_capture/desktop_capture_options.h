@@ -213,6 +213,20 @@ class RTC_EXPORT DesktopCaptureOptions {
   // The flag has no effect if the allow_wgc_capturer flag is false.
   bool wgc_require_border() const { return wgc_require_border_; }
   void set_wgc_require_border(bool require) { wgc_require_border_ = require; }
+
+  // For window capture, set to true to include more application content like
+  // tool tips and drop downs. From the Microsoft developer docs:
+  //
+  // "Secondary Windows are considered to be windows that have either the
+  // WS_POPUP or WS_EX_TOOLWINDOW styles that intersect the main window. The
+  // windows are drawn into the texture the app receives and are clipped if they
+  // go outside the bounds of the main top level window."
+  bool wgc_include_secondary_windows() const {
+    return wgc_include_secondary_windows_;
+  }
+  void set_wgc_include_secondary_windows(bool include) {
+    wgc_include_secondary_windows_ = include;
+  }
 #endif  // defined(RTC_ENABLE_WIN_WGC)
 #endif  // defined(WEBRTC_WIN)
 
@@ -270,6 +284,7 @@ class RTC_EXPORT DesktopCaptureOptions {
   bool allow_wgc_capturer_fallback_ = false;
   bool allow_wgc_zero_hertz_ = false;
   bool wgc_require_border_ = false;
+  bool wgc_include_secondary_windows_ = false;
 #endif
 #endif
 #if defined(WEBRTC_USE_X11)

@@ -1,7 +1,0 @@
-
-PASS e.style['masonry-fill'] = "10" should not set the property value
-PASS e.style['masonry-fill'] = "true" should not set the property value
-PASS e.style['masonry-fill'] = "default" should not set the property value
-PASS e.style['masonry-fill'] = "set" should not set the property value
-PASS e.style['masonry-fill'] = "before, after" should not set the property value
-

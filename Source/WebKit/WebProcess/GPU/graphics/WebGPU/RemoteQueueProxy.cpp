@@ -33,6 +33,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebProcess.h"
 #include <WebCore/NativeImage.h>
+#include <WebCore/WebCodecsVideoFrame.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
@@ -44,6 +45,14 @@ RemoteQueueProxy::RemoteQueueProxy(RemoteAdapterProxy& parent, ConvertToBackingC
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
+#if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
+    RefPtr<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy;
+    callOnMainRunLoopAndWait([&videoFrameObjectHeapProxy] {
+        videoFrameObjectHeapProxy = protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy();
+    });
+
+    m_videoFrameObjectHeapProxy = videoFrameObjectHeapProxy;
+#endif
 }
 
 RemoteQueueProxy::~RemoteQueueProxy()
@@ -65,7 +74,7 @@ void RemoteQueueProxy::submit(Vector<Ref<WebCore::WebGPU::CommandBuffer>>&& comm
 
 void RemoteQueueProxy::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::OnSubmittedWorkDone(), [callback = WTFMove(callback)]() mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::OnSubmittedWorkDone(), [callback = WTF::move(callback)]() mutable {
         callback();
     });
     UNUSED_PARAM(sendResult);
@@ -83,7 +92,7 @@ void RemoteQueueProxy::writeBuffer(
     size_t actualSourceSize = static_cast<size_t>(size.value_or(source.size() - dataOffset));
     if (actualSourceSize > maxCrossProcessResourceCopySize) {
         auto handle = WebCore::SharedMemoryHandle::createCopy(source.subspan(dataOffset, actualSourceSize), WebCore::SharedMemoryProtection::ReadOnly);
-        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, WTFMove(handle)), [](auto) mutable {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, WTF::move(handle)), [](auto) mutable {
         });
         UNUSED_VARIABLE(sendResult);
     } else {
@@ -109,7 +118,7 @@ void RemoteQueueProxy::writeTexture(
 
     if (source.size() > maxCrossProcessResourceCopySize) {
         auto handle = WebCore::SharedMemoryHandle::createCopy(source, WebCore::SharedMemoryProtection::ReadOnly);
-        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTFMove(handle), *convertedDataLayout, *convertedSize), [](auto) mutable {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTF::move(handle), *convertedDataLayout, *convertedSize), [](auto) mutable {
         });
         UNUSED_VARIABLE(sendResult);
     } else {
@@ -161,6 +170,18 @@ void RemoteQueueProxy::setLabelInternal(const String& label)
     auto sendResult = send(Messages::RemoteQueue::SetLabel(label));
     UNUSED_VARIABLE(sendResult);
 }
+
+RefPtr<WebCore::NativeImage> RemoteQueueProxy::getNativeImage(WebCore::VideoFrame& videoFrame)
+{
+    RefPtr<WebCore::NativeImage> nativeImage;
+#if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
+    callOnMainRunLoopAndWait([&nativeImage, videoFrame = Ref { videoFrame }, videoFrameHeap = protect(m_videoFrameObjectHeapProxy)] {
+        nativeImage = videoFrameHeap->getNativeImage(videoFrame);
+    });
+#endif
+    return nativeImage;
+}
+
 
 } // namespace WebKit::WebGPU
 

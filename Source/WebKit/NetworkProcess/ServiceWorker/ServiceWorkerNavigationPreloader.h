@@ -62,9 +62,9 @@ public:
     using BodyCallback = Function<void(RefPtr<const WebCore::FragmentedSharedBuffer>&&)>;
     void waitForBody(BodyCallback&&);
 
-    const WebCore::ResourceError& error() const { return m_error; }
-    const WebCore::ResourceResponse& response() const { return m_response; }
-    const WebCore::NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
+    const WebCore::ResourceError& error() const LIFETIME_BOUND { return m_error; }
+    const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
+    const WebCore::NetworkLoadMetrics& networkLoadMetrics() const LIFETIME_BOUND { return m_networkLoadMetrics; }
     bool isServiceWorkerNavigationPreloadEnabled() const { return m_state.enabled; }
     bool didReceiveResponseOrError() const { return m_didReceiveResponseOrError; }
 

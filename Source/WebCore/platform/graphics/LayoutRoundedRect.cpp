@@ -292,7 +292,7 @@ FloatRoundedRect LayoutRoundedRect::pixelSnappedRoundedRectForPainting(float dev
         return FloatRoundedRect(pixelSnappedRect, radii());
 
     // Snapping usually does not alter size, but when it does, we need to make sure that the final rect is still renderable by distributing the size delta proportionally.
-    FloatRoundedRect::Radii adjustedRadii = radii();
+    CornerRadii adjustedRadii = radii();
     adjustedRadii.scale(pixelSnappedRect.width() / originalRect.width().toFloat(), pixelSnappedRect.height() / originalRect.height().toFloat());
     FloatRoundedRect snappedRoundedRect = FloatRoundedRect(pixelSnappedRect, adjustedRadii);
     if (!snappedRoundedRect.isRenderable()) {

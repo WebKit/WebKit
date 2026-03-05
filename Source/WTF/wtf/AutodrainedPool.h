@@ -30,6 +30,7 @@
 
 #if !(defined(__OBJC__) && !defined(__clang_tapi__))
 
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {

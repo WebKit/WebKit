@@ -235,7 +235,7 @@ public:
             g_main_loop_quit(data->mainLoop);
         }, &data);
         g_main_loop_run(m_mainLoop);
-        return WTFMove(data.dataList);
+        return WTF::move(data.dataList);
     }
 
     char** getDomains()

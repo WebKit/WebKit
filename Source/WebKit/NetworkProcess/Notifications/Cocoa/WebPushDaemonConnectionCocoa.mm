@@ -44,11 +44,11 @@ void Connection::newConnectionWasInitialized() const
     sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(m_configuration));
 }
 
-static XPCObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
+static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
 {
-    auto xpcData = encoderToXPCData(WTFMove(encoder));
+    auto xpcData = encoderToXPCData(WTF::move(encoder));
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(dictionary.get(), WebPushD::protocolVersionKey, WebPushD::protocolVersionValue);
     xpc_dictionary_set_value(dictionary.get(), WebPushD::protocolEncodedMessageKey, xpcData.get());
 
@@ -57,7 +57,7 @@ static XPCObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::En
 
 bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder) const
 {
-    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    auto dictionary = messageDictionaryFromEncoder(WTF::move(encoder));
     Daemon::Connection::send(dictionary.get());
 
     return true;
@@ -65,8 +65,8 @@ bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& 
 
 bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
-    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
-    Daemon::Connection::sendWithReply(dictionary.get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    auto dictionary = messageDictionaryFromEncoder(WTF::move(encoder));
+    Daemon::Connection::sendWithReply(dictionary.get(), [completionHandler = WTF::move(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY)
             return completionHandler(nullptr);
 

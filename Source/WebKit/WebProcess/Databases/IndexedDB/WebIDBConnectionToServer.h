@@ -42,7 +42,7 @@ public:
     static Ref<WebIDBConnectionToServer> create(PAL::SessionID);
     virtual ~WebIDBConnectionToServer();
 
-    WebCore::IDBClient::IDBConnectionToServer& coreConnectionToServer();
+    WebCore::IDBClient::IDBConnectionToServer& NODELETE coreConnectionToServer();
     std::optional<WebCore::IDBConnectionIdentifier> identifier() const final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

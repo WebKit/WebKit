@@ -38,14 +38,14 @@ public:
     using AnimatorAnimatedProperty = AnimatedProperty;
 
     template<typename... Arguments>
-    SVGAnimatedPropertyAnimator(const QualifiedName& attributeName, Ref<AnimatedProperty>& animated, Arguments&&... arguments)
+    SVGAnimatedPropertyAnimator(const QualifiedName& attributeName, const Ref<AnimatedProperty>& animated, Arguments&&... arguments)
         : SVGAttributeAnimator(attributeName)
         , m_animated(animated.copyRef())
         , m_function(std::forward<Arguments>(arguments)...)
     {
     }
 
-    void appendAnimatedInstance(Ref<AnimatedProperty>& animated)
+    void appendAnimatedInstance(const Ref<AnimatedProperty>& animated)
     {
         m_animatedInstances.append(animated.copyRef());
     }

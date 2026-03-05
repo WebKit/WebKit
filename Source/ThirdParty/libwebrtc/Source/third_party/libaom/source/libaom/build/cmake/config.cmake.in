@@ -9,6 +9,14 @@ endif()
 include("${CMAKE_CURRENT_LIST_DIR}/@AOM_TARGETS_EXPORT_NAME@.cmake")
 
 set_and_check(@PROJECT_NAME@_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
-set(@PROJECT_NAME@_LIBRARIES "@AOM_INSTALL_LIBS@")
+
+# @PROJECT_NAME@::aom_static is defined only if BUILD_SHARED_LIBS=1 when libaom
+# was configured. When it is false, @PROJECT_NAME@::aom is a static library.
+if(TARGET @PROJECT_NAME@::aom_static)
+  set(@PROJECT_NAME@_STATIC_LIBRARIES "@PROJECT_NAME@::aom_static")
+else()
+  set(@PROJECT_NAME@_STATIC_LIBRARIES "@PROJECT_NAME@::aom")
+endif()
+set(@PROJECT_NAME@_LIBRARIES "@PROJECT_NAME@::aom")
 
 check_required_components(@PROJECT_NAME@)

@@ -58,13 +58,13 @@ std::unique_ptr<OpenXRSwapchain> OpenXRSwapchain::create(XrSession session, cons
     // Get images from an XrSwapchain
     CHECK_XRCMD(xrEnumerateSwapchainImages(swapchain, imageCount, &imageCount, imageHeaders[0]));
 
-    return std::unique_ptr<OpenXRSwapchain>(new OpenXRSwapchain(swapchain, info, WTFMove(imageBuffers), hasAlpha));
+    return std::unique_ptr<OpenXRSwapchain>(new OpenXRSwapchain(swapchain, info, WTF::move(imageBuffers), hasAlpha));
 }
 
 OpenXRSwapchain::OpenXRSwapchain(XrSwapchain swapchain, const XrSwapchainCreateInfo& info, Vector<XrSwapchainImageOpenGLESKHR>&& imageBuffers, HasAlpha hasAlpha)
     : m_swapchain(swapchain)
     , m_createInfo(info)
-    , m_imageBuffers(WTFMove(imageBuffers))
+    , m_imageBuffers(WTF::move(imageBuffers))
     , m_hasAlpha(hasAlpha)
 {
 }

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static std::optional<ViewTransitionNavigation> toViewTransitionNavigationEnum(RefPtr<CSSValue> navigation)
+static std::optional<ViewTransitionNavigation> NODELETE toViewTransitionNavigationEnum(RefPtr<CSSValue> navigation)
 {
     if (!navigation || !navigation->isPrimitiveValue())
         return std::nullopt;
@@ -71,7 +71,7 @@ StyleRuleViewTransition::StyleRuleViewTransition(Ref<StyleProperties>&& properti
 
 Ref<StyleRuleViewTransition> StyleRuleViewTransition::create(Ref<StyleProperties>&& properties)
 {
-    return adoptRef(*new StyleRuleViewTransition(WTFMove(properties)));
+    return adoptRef(*new StyleRuleViewTransition(WTF::move(properties)));
 }
 
 StyleRuleViewTransition::~StyleRuleViewTransition() = default;

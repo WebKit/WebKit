@@ -47,8 +47,8 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (2,2) size 216x22 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
                               RenderImage {IMG} at (2,2) size 212x18 [bgcolor=#800080]
                               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,59) size 784x0
-      RenderTable {TABLE} at (0,59) size 784x43
+      RenderBlock {P} at (0,58) size 784x0
+      RenderTable {TABLE} at (0,58) size 784x43
         RenderTableSection {TBODY} at (0,0) size 784x43
           RenderTableRow {TR} at (0,0) size 784x43
             RenderTableCell {TD} at (0,8) size 220x27 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]

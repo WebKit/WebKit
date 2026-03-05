@@ -796,7 +796,8 @@ TEST_F(VideoStreamAdapterTest,
 
 TEST_F(VideoStreamAdapterTest,
        GetAdaptDownResolutionReturnsWithStatusInDisabledAndMaintainResolution) {
-  adapter_.SetDegradationPreference(DegradationPreference::DISABLED);
+  adapter_.SetDegradationPreference(
+      DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION);
   input_state_provider_.SetInputState(1280 * 720, 30,
                                       kDefaultMinPixelsPerFrame);
   EXPECT_EQ(Adaptation::Status::kAdaptationDisabled,
@@ -858,8 +859,9 @@ TEST_F(VideoStreamAdapterTest,
 }
 
 TEST_F(VideoStreamAdapterTest,
-       AdaptationDisabledStatusAlwaysWhenDegradationPreferenceDisabled) {
-  adapter_.SetDegradationPreference(DegradationPreference::DISABLED);
+       AdaptationDisabledStatusWhenPreferenceIsMaintainFramerateAndResolution) {
+  adapter_.SetDegradationPreference(
+      DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION);
   input_state_provider_.SetInputState(1280 * 720, 30,
                                       kDefaultMinPixelsPerFrame);
   EXPECT_EQ(Adaptation::Status::kAdaptationDisabled,

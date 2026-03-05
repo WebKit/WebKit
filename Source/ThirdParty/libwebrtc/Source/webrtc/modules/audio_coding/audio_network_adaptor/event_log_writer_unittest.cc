@@ -41,7 +41,13 @@ MATCHER_P(IsRtcEventAnaConfigEqualTo, config, "") {
     return false;
   }
   auto ana_event = static_cast<RtcEventAudioNetworkAdaptation*>(arg);
-  return ana_event->config() == config;
+  return ana_event->bitrate_bps() == config.bitrate_bps &&
+         ana_event->frame_length_ms() == config.frame_length_ms &&
+         ana_event->uplink_packet_loss_fraction() ==
+             config.uplink_packet_loss_fraction &&
+         ana_event->enable_fec() == config.enable_fec &&
+         ana_event->enable_dtx() == config.enable_dtx &&
+         ana_event->num_channels() == config.num_channels;
 }
 
 struct EventLogWriterStates {

@@ -127,9 +127,9 @@ std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmId
     if (EVP_PKEY_set1_EC_KEY(publicPKey.get(), publicECKey.get()) <= 0)
         return std::nullopt;
 
-    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, WTFMove(publicPKey), true, usages);
-    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, WTFMove(privatePKey), extractable, usages);
-    return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
+    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, WTF::move(publicPKey), true, usages);
+    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, WTF::move(privatePKey), extractable, usages);
+    return CryptoKeyPair { WTF::move(publicKey), WTF::move(privateKey) };
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -154,7 +154,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
     if (EVP_PKEY_set1_EC_KEY(pkey.get(), key.get()) <= 0)
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Public, WTFMove(pkey), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, WTF::move(pkey), extractable, usages);
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages)
@@ -180,7 +180,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
     if (EVP_PKEY_set1_EC_KEY(pkey.get(), key.get()) <= 0)
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Public, WTFMove(pkey), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, WTF::move(pkey), extractable, usages);
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages)
@@ -209,7 +209,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     if (EVP_PKEY_set1_EC_KEY(pkey.get(), key.get()) <= 0)
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Private, WTFMove(pkey), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Private, WTF::move(pkey), extractable, usages);
 }
 
 static const ASN1_OBJECT* ecPublicKeyIdentifier()
@@ -339,7 +339,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     if (EVP_PKEY_set1_EC_KEY(pkey.get(), key.get()) <= 0)
         return nullptr;
 
-    return adoptRef(new CryptoKeyEC(identifier, curve, CryptoKeyType::Public, WTFMove(pkey), extractable, usages));
+    return adoptRef(new CryptoKeyEC(identifier, curve, CryptoKeyType::Public, WTF::move(pkey), extractable, usages));
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -368,14 +368,14 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     if (!verifyCurve(EC_KEY_get0_group(ecKey), curve))
         return nullptr;
 
-    EC_KEY_set_asn1_flag(ecKey, OPENSSL_EC_NAMED_CURVE);
+    EC_KEY_set_asn1_flag(const_cast<EC_KEY*>(ecKey), OPENSSL_EC_NAMED_CURVE);
 
-    return adoptRef(new CryptoKeyEC(identifier, curve, CryptoKeyType::Private, WTFMove(pkey), extractable, usages));
+    return adoptRef(new CryptoKeyEC(identifier, curve, CryptoKeyType::Private, WTF::move(pkey), extractable, usages));
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 {
-    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
+    const EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
     if (!key)
         return { };
     
@@ -396,7 +396,7 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 {
     size_t keySizeInBytes = (keySizeInBits() + 7) / 8;
 
-    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
+    const EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
     if (!key)
         return false;
 

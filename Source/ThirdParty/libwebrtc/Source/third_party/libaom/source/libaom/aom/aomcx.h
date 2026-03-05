@@ -18,6 +18,7 @@
  */
 #include "aom/aom.h"
 #include "aom/aom_encoder.h"
+#include "aom/aom_ext_ratectrl.h"
 #include "aom/aom_external_partition.h"
 
 /*!\file
@@ -219,7 +220,7 @@ enum aome_enc_control_id {
    */
   AOME_SET_CPUUSED = 13,
 
-  /*!\brief Codec control function to enable automatic set and use alf frames,
+  /*!\brief Codec control function to enable automatic set and use arf frames,
    * unsigned int parameter
    *
    * - 0 = disable
@@ -1617,6 +1618,12 @@ enum aome_enc_control_id {
    */
   AV1E_SET_ENABLE_ADAPTIVE_SHARPNESS = 172,
 
+  /*!\brief Codec control function to enable external rate control library.
+   *
+   * args: a pointer to aom_rc_funcs_t that contains implementation of callbacks
+   */
+  AV1E_SET_EXTERNAL_RATE_CONTROL = 173,
+
   // Any new encoder control IDs should be added above.
   // Maximum allowed encoder control ID is 229.
   // No encoder control ID should be added below.
@@ -2359,6 +2366,9 @@ AOM_CTRL_USE_TYPE(AV1E_SET_SCREEN_CONTENT_DETECTION_MODE,
 
 AOM_CTRL_USE_TYPE(AV1E_SET_ENABLE_ADAPTIVE_SHARPNESS, unsigned int)
 #define AOM_CTRL_AV1E_SET_ENABLE_ADAPTIVE_SHARPNESS
+
+AOM_CTRL_USE_TYPE(AV1E_SET_EXTERNAL_RATE_CONTROL, aom_rc_funcs_t *)
+#define AOM_CTRL_AV1E_SET_EXTERNAL_RATE_CONTROL
 
 /*!\endcond */
 /*! @} - end defgroup aom_encoder */

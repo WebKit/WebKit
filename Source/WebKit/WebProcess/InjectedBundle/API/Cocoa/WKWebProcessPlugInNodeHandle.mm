@@ -40,11 +40,6 @@
     AlignedStorage<WebKit::InjectedBundleNodeHandle> _nodeHandle;
 }
 
-static Ref<WebKit::InjectedBundleNodeHandle> protectedNodeHandle(WKWebProcessPlugInNodeHandle *handle)
-{
-    return *handle->_nodeHandle;
-}
-
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInNodeHandle.class, self))
@@ -62,7 +57,7 @@ static Ref<WebKit::InjectedBundleNodeHandle> protectedNodeHandle(WKWebProcessPlu
 
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame
 {
-    return WebKit::wrapper(protectedNodeHandle(self)->htmlIFrameElementContentFrame()).autorelease();
+    return WebKit::wrapper(protect(*_nodeHandle)->htmlIFrameElementContentFrame()).autorelease();
 }
 
 - (CocoaImage *)renderedImageWithOptions:(WKSnapshotOptions)options
@@ -76,7 +71,7 @@ static Ref<WebKit::InjectedBundleNodeHandle> protectedNodeHandle(WKWebProcessPlu
     if (width)
         optionalWidth = width.floatValue;
 
-    auto image = protectedNodeHandle(self)->renderedImage(WebKit::toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
+    auto image = protect(*_nodeHandle)->renderedImage(WebKit::toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
     if (!image)
         return nil;
 
@@ -93,45 +88,45 @@ static Ref<WebKit::InjectedBundleNodeHandle> protectedNodeHandle(WKWebProcessPlu
 
 - (CGRect)elementBounds
 {
-    return protectedNodeHandle(self)->elementBounds();
+    return protect(*_nodeHandle)->elementBounds();
 }
 
 - (BOOL)HTMLInputElementIsAutoFilled
 {
-    return protectedNodeHandle(self)->isHTMLInputElementAutoFilled();
+    return protect(*_nodeHandle)->isHTMLInputElementAutoFilled();
 }
 
 - (BOOL)HTMLInputElementIsAutoFilledAndViewable
 {
-    return protectedNodeHandle(self)->isHTMLInputElementAutoFilledAndViewable();
+    return protect(*_nodeHandle)->isHTMLInputElementAutoFilledAndViewable();
 }
 
 - (BOOL)HTMLInputElementIsAutoFilledAndObscured
 {
-    return protectedNodeHandle(self)->isHTMLInputElementAutoFilledAndObscured();
+    return protect(*_nodeHandle)->isHTMLInputElementAutoFilledAndObscured();
 }
 
 - (void)setHTMLInputElementIsAutoFilled:(BOOL)isAutoFilled
 {
-    protectedNodeHandle(self)->setHTMLInputElementAutoFilled(isAutoFilled);
+    protect(*_nodeHandle)->setHTMLInputElementAutoFilled(isAutoFilled);
 }
 
 - (void)setHTMLInputElementIsAutoFilledAndViewable:(BOOL)isAutoFilledAndViewable
 {
-    protectedNodeHandle(self)->setHTMLInputElementAutoFilledAndViewable(isAutoFilledAndViewable);
+    protect(*_nodeHandle)->setHTMLInputElementAutoFilledAndViewable(isAutoFilledAndViewable);
 }
 
 - (void)setHTMLInputElementIsAutoFilledAndObscured:(BOOL)isAutoFilledAndObscured
 {
-    protectedNodeHandle(self)->setHTMLInputElementAutoFilledAndObscured(isAutoFilledAndObscured);
+    protect(*_nodeHandle)->setHTMLInputElementAutoFilledAndObscured(isAutoFilledAndObscured);
 }
 
 - (BOOL)isHTMLInputElementAutoFillButtonEnabled
 {
-    return protectedNodeHandle(self)->isHTMLInputElementAutoFillButtonEnabled();
+    return protect(*_nodeHandle)->isHTMLInputElementAutoFillButtonEnabled();
 }
 
-static WebCore::AutoFillButtonType toAutoFillButtonType(_WKAutoFillButtonType autoFillButtonType)
+static WebCore::AutoFillButtonType NODELETE toAutoFillButtonType(_WKAutoFillButtonType autoFillButtonType)
 {
     switch (autoFillButtonType) {
     case _WKAutoFillButtonTypeNone:
@@ -151,7 +146,7 @@ static WebCore::AutoFillButtonType toAutoFillButtonType(_WKAutoFillButtonType au
     return WebCore::AutoFillButtonType::None;
 }
 
-static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType autoFillButtonType)
+static _WKAutoFillButtonType NODELETE toWKAutoFillButtonType(WebCore::AutoFillButtonType autoFillButtonType)
 {
     switch (autoFillButtonType) {
     case WebCore::AutoFillButtonType::None:
@@ -174,52 +169,52 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
 
 - (void)setHTMLInputElementAutoFillButtonEnabledWithButtonType:(_WKAutoFillButtonType)autoFillButtonType
 {
-    protectedNodeHandle(self)->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
+    protect(*_nodeHandle)->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
 }
 
 - (_WKAutoFillButtonType)htmlInputElementAutoFillButtonType
 {
-    return toWKAutoFillButtonType(protectedNodeHandle(self)->htmlInputElementAutoFillButtonType());
+    return toWKAutoFillButtonType(protect(*_nodeHandle)->htmlInputElementAutoFillButtonType());
 }
 
 - (_WKAutoFillButtonType)htmlInputElementLastAutoFillButtonType
 {
-    return toWKAutoFillButtonType(protectedNodeHandle(self)->htmlInputElementLastAutoFillButtonType());
+    return toWKAutoFillButtonType(protect(*_nodeHandle)->htmlInputElementLastAutoFillButtonType());
 }
 
 - (BOOL)HTMLInputElementIsUserEdited
 {
-    return protectedNodeHandle(self)->htmlInputElementLastChangeWasUserEdit();
+    return protect(*_nodeHandle)->htmlInputElementLastChangeWasUserEdit();
 }
 
 - (BOOL)HTMLTextAreaElementIsUserEdited
 {
-    return protectedNodeHandle(self)->htmlTextAreaElementLastChangeWasUserEdit();
+    return protect(*_nodeHandle)->htmlTextAreaElementLastChangeWasUserEdit();
 }
 
 - (BOOL)isSelectElement
 {
-    return protectedNodeHandle(self)->isSelectElement();
+    return protect(*_nodeHandle)->isSelectElement();
 }
 
 - (BOOL)isSelectableTextNode
 {
-    return protectedNodeHandle(self)->isSelectableTextNode();
+    return protect(*_nodeHandle)->isSelectableTextNode();
 }
 
 - (BOOL)isTextField
 {
-    return protectedNodeHandle(self)->isTextField();
+    return protect(*_nodeHandle)->isTextField();
 }
 
 - (WKWebProcessPlugInNodeHandle *)HTMLTableCellElementCellAbove
 {
-    return WebKit::wrapper(protectedNodeHandle(self)->htmlTableCellElementCellAbove()).autorelease();
+    return WebKit::wrapper(protect(*_nodeHandle)->htmlTableCellElementCellAbove()).autorelease();
 }
 
 - (WKWebProcessPlugInFrame *)frame
 {
-    return WebKit::wrapper(protectedNodeHandle(self)->document()->documentFrame()).autorelease();
+    return WebKit::wrapper(protect(*_nodeHandle)->document()->documentFrame()).autorelease();
 }
 
 - (WebKit::InjectedBundleNodeHandle&)_nodeHandle

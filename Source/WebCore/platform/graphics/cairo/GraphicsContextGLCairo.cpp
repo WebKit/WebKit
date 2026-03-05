@@ -69,7 +69,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
             IntSize surfaceSize = cairoSurfaceSize(m_imageSurface.get());
             auto tmpSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, surfaceSize.width(), surfaceSize.height()));
             copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(IntPoint(), surfaceSize), IntSize());
-            m_imageSurface = WTFMove(tmpSurface);
+            m_imageSurface = WTF::move(tmpSurface);
         }
     }
 
@@ -129,7 +129,7 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
     cairo_surface_set_user_data(imageSurface.get(), &dataKey, &protectedPixelBuffer.leakRef(), [](void* buffer) {
         static_cast<PixelBuffer*>(buffer)->deref();
     });
-    return NativeImage::create(WTFMove(imageSurface));
+    return NativeImage::create(WTF::move(imageSurface));
 }
 
 } // namespace WebCore

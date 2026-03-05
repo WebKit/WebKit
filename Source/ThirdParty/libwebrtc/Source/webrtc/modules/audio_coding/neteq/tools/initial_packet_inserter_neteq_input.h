@@ -15,8 +15,8 @@
 #include <memory>
 #include <optional>
 
-#include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -31,17 +31,17 @@ class InitialPacketInserterNetEqInput final : public NetEqInput {
   std::optional<int64_t> NextPacketTime() const override;
   std::optional<int64_t> NextOutputEventTime() const override;
   std::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override;
-  std::unique_ptr<PacketData> PopPacket() override;
+  std::unique_ptr<RtpPacketReceived> PopPacket() override;
   void AdvanceOutputEvent() override;
   void AdvanceSetMinimumDelay() override;
   bool ended() const override;
-  std::optional<RTPHeader> NextHeader() const override;
+  const RtpPacketReceived* NextPacket() const override;
 
  private:
   const std::unique_ptr<NetEqInput> source_;
   int packets_to_insert_;
   const int sample_rate_hz_;
-  std::unique_ptr<PacketData> first_packet_;
+  std::unique_ptr<RtpPacketReceived> first_packet_;
 };
 
 }  // namespace test

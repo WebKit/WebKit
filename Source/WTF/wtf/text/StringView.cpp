@@ -211,7 +211,7 @@ class StringView::GraphemeClusters::Iterator::Impl {
 public:
     Impl(StringView stringView, std::optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
         : m_stringView(stringView)
-        , m_iterator(WTFMove(iterator))
+        , m_iterator(WTF::move(iterator))
         , m_index(index)
         , m_indexEnd(computeIndexEnd())
     {
@@ -254,7 +254,7 @@ private:
     unsigned m_indexEnd;
 };
 
-StringView::GraphemeClusters::Iterator::Iterator(StringView stringView, unsigned index)
+StringView::GraphemeClusters::Iterator::Iterator(StringView stringView LIFETIME_BOUND, unsigned index)
     : m_impl(makeUnique<Impl>(stringView, stringView.isNull() ? std::nullopt : std::optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
 {
 }
@@ -262,7 +262,7 @@ StringView::GraphemeClusters::Iterator::Iterator(StringView stringView, unsigned
 StringView::GraphemeClusters::Iterator::~Iterator() = default;
 
 StringView::GraphemeClusters::Iterator::Iterator(Iterator&& other)
-    : m_impl(WTFMove(other.m_impl))
+    : m_impl(WTF::move(other.m_impl))
 {
 }
 
@@ -394,7 +394,7 @@ StringViewWithUnderlyingString normalizedNFC(StringView string)
     ASSERT(U_SUCCESS(status));
 
     StringView view { result };
-    return { view, WTFMove(result) };
+    return { view, WTF::move(result) };
 }
 
 String normalizedNFC(const String& string)

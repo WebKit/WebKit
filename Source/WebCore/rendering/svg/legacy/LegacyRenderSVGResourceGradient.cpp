@@ -27,16 +27,16 @@
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
 #include "RenderSVGText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGRenderingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
 
 LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(type, node, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(type, node, WTF::move(style))
 {
 }
 
@@ -192,16 +192,14 @@ static inline std::tuple<FloatRect, FloatSize> calculateGradientGeometry(RenderE
     auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
     ASSERT(textRootBlock);
 
-    // FIXME: This needs to be bounding box and should not use repaint rect.
-    // https://bugs.webkit.org/show_bug.cgi?id=278551
-    FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+    FloatRect decoratedBounds = textRootBlock->decoratedBoundingBox();
 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
 
     // Ignore 2D rotation, as it doesn't affect the size of the target.
     FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
 
-    return { repaintRect, scale };
+    return { decoratedBounds, scale };
 }
 
 static inline AffineTransform calculateGradientUserspaceTransform(RenderElement& renderer, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform)
@@ -260,7 +258,7 @@ void TextGradientClipper::postApplyResource(RenderElement& renderer, GraphicsCon
 
     SVGRenderingContext::clipToImageBuffer(*context, targetRect, scale, m_imageBuffer, false);
 
-    context->setFillGradient(WTFMove(gradient), userspaceTransform);
+    context->setFillGradient(WTF::move(gradient), userspaceTransform);
     context->fillRect(targetRect);
 
     m_imageBuffer = nullptr;
@@ -298,7 +296,7 @@ void TextGradientCompositor::postApplyResource(RenderElement& renderer, Graphics
     Ref gradient = *gradientData.gradient;
     auto userspaceTransform = calculateGradientUserspaceTransform(renderer, gradientUnits, gradientTransform);
 
-    context->setFillGradient(WTFMove(gradient), userspaceTransform);
+    context->setFillGradient(WTF::move(gradient), userspaceTransform);
     context->fillRect(targetRect);
 
     context->endTransparencyLayer();
@@ -320,10 +318,10 @@ auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
 #if USE(CG)
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
         // PDF does not support some CompositeOperation
-        if (context->renderingMode() == RenderingMode::PDFDocument)
-            m_gradientApplier = makeUnique<TextGradientClipper>();
-        else
+        if (context->renderingMode() != RenderingMode::PDFDocument && style.paintOrder() == Style::SVGPaintOrder::Type::FillStrokeMarkers)
             m_gradientApplier = makeUnique<TextGradientCompositor>();
+        else
+            m_gradientApplier = makeUnique<TextGradientClipper>();
     }
 #endif
 
@@ -355,10 +353,13 @@ void LegacyRenderSVGResourceGradient::postApplyResource(RenderElement& renderer,
 
 GradientColorStops LegacyRenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const RenderStyle& style)
 {
-    if (!style.hasAppleColorFilter())
+    if (style.appleColorFilter().isNone())
         return stops;
 
-    return stops.mapColors([&] (auto& color) { return style.colorByApplyingColorFilter(color); });
+    Style::ColorResolver colorResolver { style };
+    return stops.mapColors([&](auto& color) {
+        return colorResolver.colorApplyingColorFilter(color);
+    });
 }
 
 GradientSpreadMethod LegacyRenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method)
@@ -375,6 +376,20 @@ GradientSpreadMethod LegacyRenderSVGResourceGradient::platformSpreadMethodFromSV
 
     ASSERT_NOT_REACHED();
     return GradientSpreadMethod::Pad;
+}
+
+ColorInterpolationMethod LegacyRenderSVGResourceGradient::gradientColorInterpolationMethod() const
+{
+    switch (style().colorInterpolation()) {
+    case ColorInterpolation::Auto:
+    case ColorInterpolation::SRGB:
+        return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
+    case ColorInterpolation::LinearRGB:
+        return { ColorInterpolationMethod::SRGBLinear { }, AlphaPremultiplication::Unpremultiplied };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
 }
 
 } // namespace WebCore

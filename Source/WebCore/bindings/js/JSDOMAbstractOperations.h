@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/JSDOMConvertStrings.h>
-#include <WebCore/JSDOMExceptionHandling.h>
+#include "JSDOMConvertStrings.h"
+#include "JSDOMExceptionHandling.h"
 
 namespace WebCore {
 
@@ -103,7 +103,7 @@ static decltype(auto) visibleNamedPropertyItemAccessorFunctor(InnerItemAccessor&
         using ReturnType = typename IDLType::ImplementationType;
 
         return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
-            auto result = innerItemAccessor(thisObject, propertyName);
+            SUPPRESS_UNCHECKED_LOCAL auto result = innerItemAccessor(thisObject, propertyName);
             if (!IDLType::isNullValue(result))
                 return ReturnType { IDLType::extractValueFromNullable(result) };
             return std::nullopt;

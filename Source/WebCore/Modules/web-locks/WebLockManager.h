@@ -73,13 +73,13 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
 
     class MainThreadBridge;
     const RefPtr<MainThreadBridge> m_mainThreadBridge;
 
-    HashMap<WebLockIdentifier, RefPtr<DeferredPromise>> m_releasePromises;
+    HashMap<WebLockIdentifier, Ref<DeferredPromise>> m_releasePromises;
 
     struct LockRequest;
     HashMap<WebLockIdentifier, LockRequest> m_pendingRequests;

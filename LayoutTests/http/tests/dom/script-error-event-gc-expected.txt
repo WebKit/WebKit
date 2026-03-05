@@ -1,0 +1,19 @@
+garbage collect HTML script elements before the error events are dispatched
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+onerror
+onerror
+onerror
+onerror
+onerror
+onerror
+onerror
+onerror
+onerror
+onerror
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

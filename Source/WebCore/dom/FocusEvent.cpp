@@ -32,12 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FocusEvent);
-
-bool FocusEvent::isFocusEvent() const
-{
-    return true;
-}
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FocusEvent);
 
 FocusEvent::FocusEvent()
     : UIEvent(EventInterfaceType::FocusEvent)
@@ -45,14 +40,14 @@ FocusEvent::FocusEvent()
 }
 
 FocusEvent::FocusEvent(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
-    : UIEvent(EventInterfaceType::FocusEvent, type, canBubble, isCancelable, IsComposed::Yes, WTFMove(view), detail)
-    , m_relatedTarget(WTFMove(relatedTarget))
+    : UIEvent(EventInterfaceType::FocusEvent, type, canBubble, isCancelable, IsComposed::Yes, WTF::move(view), detail)
+    , m_relatedTarget(WTF::move(relatedTarget))
 {
 }
 
-FocusEvent::FocusEvent(const AtomString& type, const Init& initializer)
-    : UIEvent(EventInterfaceType::FocusEvent, type, initializer)
-    , m_relatedTarget(initializer.relatedTarget)
+FocusEvent::FocusEvent(const AtomString& type, Init&& initializer)
+    : UIEvent(EventInterfaceType::FocusEvent, type, WTF::move(initializer))
+    , m_relatedTarget(WTF::move(initializer.relatedTarget))
 {
 }
 

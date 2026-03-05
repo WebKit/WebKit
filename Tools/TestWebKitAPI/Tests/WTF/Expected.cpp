@@ -440,7 +440,7 @@ TEST(WTF_Expected, unique_ptr)
 
     {
         auto s = makeUnexpected(makeUnique<snowflake>());
-        Unexpected<std::unique_ptr<snowflake>> c(WTFMove(s));
+        Unexpected<std::unique_ptr<snowflake>> c(WTF::move(s));
         EXPECT_EQ(snowflakes, 1);
         EXPECT_EQ(melted, 0);
     }
@@ -451,7 +451,7 @@ TEST(WTF_Expected, unique_ptr)
     auto plow = [] (std::unique_ptr<snowflake>&& s)
     {
         {
-            std::unique_ptr<snowflake> moved = WTFMove(s);
+            std::unique_ptr<snowflake> moved = WTF::move(s);
             EXPECT_EQ(snowflakes, 1);
             EXPECT_EQ(melted, 0);
         }
@@ -461,7 +461,7 @@ TEST(WTF_Expected, unique_ptr)
 
     {
         Expected<std::unique_ptr<snowflake>, int> s(makeUnique<snowflake>());
-        plow(WTFMove(s).value());
+        plow(WTF::move(s).value());
     }
     EXPECT_EQ(snowflakes, 1);
     EXPECT_EQ(melted, 1);
@@ -469,7 +469,7 @@ TEST(WTF_Expected, unique_ptr)
 
     {
         Expected<int, std::unique_ptr<snowflake>> s(makeUnexpected(makeUnique<snowflake>()));
-        plow(WTFMove(s).error());
+        plow(WTF::move(s).error());
     }
     EXPECT_EQ(snowflakes, 1);
     EXPECT_EQ(melted, 1);
@@ -477,7 +477,7 @@ TEST(WTF_Expected, unique_ptr)
 
     {
         Expected<void, std::unique_ptr<snowflake>> s(makeUnexpected(makeUnique<snowflake>()));
-        plow(WTFMove(s).error());
+        plow(WTF::move(s).error());
     }
     EXPECT_EQ(snowflakes, 1);
     EXPECT_EQ(melted, 1);
@@ -526,7 +526,7 @@ TEST(WTF_Expected, Ref)
 class NeedsStdAddress {
 public:
     NeedsStdAddress(NeedsStdAddress&& other)
-        : m_ptr(WTFMove(other.m_ptr)) { }
+        : m_ptr(WTF::move(other.m_ptr)) { }
     NeedsStdAddress(int& other)
         : m_ptr(&other) { }
     int* operator&() { ASSERT_NOT_REACHED(); return nullptr; }
@@ -537,8 +537,8 @@ private:
 TEST(WTF_Expected, Address)
 {
     NeedsStdAddress a(*new int(3));
-    Expected<NeedsStdAddress, float> b(WTFMove(a));
-    Expected<NeedsStdAddress, float> c(WTFMove(b));
+    Expected<NeedsStdAddress, float> b(WTF::move(a));
+    Expected<NeedsStdAddress, float> c(WTF::move(b));
     (void)c;
 }
 

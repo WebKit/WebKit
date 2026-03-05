@@ -1,13 +1,7 @@
 WebCoreSupport/SocketStreamHandleImplCFNet.cpp
 WebCoreSupport/WebCryptoClient.mm
 WebCoreSupport/WebResourceLoadScheduler.mm
-mac/DOM/DOMCSSRule.mm
-mac/DOM/DOMCSSValue.mm
 mac/DOM/DOMCustomXPathNSResolver.mm
-mac/DOM/DOMEvent.mm
-mac/DOM/DOMHTMLCollection.mm
-mac/DOM/DOMNode.mm
-mac/DOM/DOMStyleSheet.mm
 mac/DOM/ObjCEventListener.mm
 mac/DOM/ObjCNodeFilterCondition.mm
 [ Mac ] mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm

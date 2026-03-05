@@ -113,7 +113,7 @@ template<typename Op> static void serializeCalculationTree(StringBuilder&, const
 
 // MARK: Sorting
 
-static unsigned sortPriority(CSSUnitType unit)
+static unsigned NODELETE sortPriority(CSSUnitType unit)
 {
     // Sort order: number, percentage, dimension (by unit, ordered ASCII case-insensitively), other.
 

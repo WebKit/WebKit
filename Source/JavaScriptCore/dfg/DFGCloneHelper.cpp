@@ -146,7 +146,7 @@ Node* CloneHelper::cloneNodeImpl(BasicBlock* into, Node* node)
         switch (node->op()) {
         case Branch: {
             Node* clone = into->cloneAndAppend(m_graph, node);
-            clone->setOpInfo(OpInfo(m_graph.m_branchData.add(WTFMove(*node->branchData()))));
+            clone->setOpInfo(OpInfo(m_graph.m_branchData.add(WTF::move(*node->branchData()))));
             return cloneEdges(node, clone);
         }
         case Switch: {

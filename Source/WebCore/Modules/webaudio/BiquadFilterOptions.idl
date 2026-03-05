@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
 ] dictionary BiquadFilterOptions : AudioNodeOptions {
     BiquadFilterType type = "lowpass";
     float Q = 1;

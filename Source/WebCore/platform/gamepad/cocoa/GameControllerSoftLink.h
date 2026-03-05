@@ -95,7 +95,10 @@ SPECIALIZE_OBJC_TYPE_TRAITS(GCMouse, WebCore::getGCMouseClassSingleton())
 #endif
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.h>)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #import <WebKitAdditions/GameControllerSoftLinkAdditions.h>
+#pragma clang diagnostic pop
 #endif
 
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)

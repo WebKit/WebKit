@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OscillatorNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OscillatorNode);
 
 // Breakpoints where we deicde to do linear interoplation, 3-point interpolation or 5-point interpolation. See doInterpolation().
 constexpr float interpolate2Point = 0.3;

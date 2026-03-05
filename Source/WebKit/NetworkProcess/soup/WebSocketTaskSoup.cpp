@@ -63,27 +63,26 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
     , m_cancellable(adoptGRef(g_cancellable_new()))
     , m_delayFailTimer(RunLoop::mainSingleton(), "WebSocketTask::DelayFailTimer"_s, this, &WebSocketTask::delayFailTimerFired)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     auto protocolList = protocol.split(',');
     GUniquePtr<char*> protocols;
     if (!protocolList.isEmpty()) {
         protocols.reset(static_cast<char**>(g_new0(char*, protocolList.size() + 1)));
+        auto protocolsSpan = unsafeMakeSpan(protocols.get(), protocolList.size());
         unsigned i = 0;
         for (auto& subprotocol : protocolList)
-            protocols.get()[i++] = g_strdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<char16_t>).utf8().data());
+            protocolsSpan[i++] = g_strdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<char16_t>).utf8().data());
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     {
         // No need to subscribe to the "request-certificate" signal, just set the client certificate upfront.
         auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificate(WebCore::soupURIToURL(soup_message_get_uri(msg)));
-        auto certificate = channel.session()->checkedNetworkStorageSession()->credentialStorage().get(m_request.cachePartition(), protectionSpace).certificate();
+        auto certificate = protect(channel.session()->networkStorageSession())->credentialStorage().get(m_request.cachePartition(), protectionSpace).certificate();
         soup_message_set_tls_client_certificate(msg, certificate);
     }
 
     g_signal_connect(msg, "request-certificate-password", G_CALLBACK(+[](SoupMessage* msg, GTlsPassword* tlsPassword, WebSocketTask* task) -> gboolean {
         auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificatePassword(WebCore::soupURIToURL(soup_message_get_uri(msg)), tlsPassword);
-        auto password = task->protectedChannel()->session()->checkedNetworkStorageSession()->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password().utf8();
+        auto password = protect(protect(task->m_channel)->session()->networkStorageSession())->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password().utf8();
         g_tls_password_set_value(tlsPassword, reinterpret_cast<const unsigned char*>(password.data()), password.length());
         soup_message_tls_client_certificate_password_request_complete(msg);
         return TRUE;
@@ -102,14 +101,14 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
                 return;
             }
             if (connection)
-                task->didConnect(WTFMove(connection));
+                task->didConnect(WTF::move(connection));
             else
                 task->didFail(String::fromUTF8(error->message));
         }, this);
 
     g_signal_connect(msg, "starting", G_CALLBACK(+[](SoupMessage* msg, WebSocketTask* task) {
         task->m_request.updateFromSoupMessageHeaders(soup_message_get_request_headers(msg));
-        task->protectedChannel()->didSendHandshakeRequest(WTFMove(task->m_request));
+        protect(task->m_channel)->didSendHandshakeRequest(WTF::move(task->m_request));
     }), this);
 }
 
@@ -119,11 +118,6 @@ WebSocketTask::~WebSocketTask()
         g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
 
     cancel();
-}
-
-RefPtr<NetworkSocketChannel> WebSocketTask::protectedChannel() const
-{
-    return m_channel.get();
 }
 
 String WebSocketTask::acceptedExtensions() const
@@ -146,7 +140,7 @@ String WebSocketTask::acceptedExtensions() const
 
 void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
 {
-    m_connection = WTFMove(connection);
+    m_connection = WTF::move(connection);
 
     // Use the same maximum payload length as WebKit internal implementation for backwards compatibility.
     static const uint64_t maxPayloadLength = UINT64_C(0x7FFFFFFFFFFFFFFF);
@@ -172,10 +166,10 @@ void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocket
     std::span data = span(message);
     switch (dataType) {
     case SOUP_WEBSOCKET_DATA_TEXT:
-        task->protectedChannel()->didReceiveText(String::fromUTF8(data));
+        protect(task->m_channel)->didReceiveText(String::fromUTF8(data));
         break;
     case SOUP_WEBSOCKET_DATA_BINARY:
-        task->protectedChannel()->didReceiveBinaryData(data);
+        protect(task->m_channel)->didReceiveBinaryData(data);
         break;
     }
 }
@@ -203,7 +197,7 @@ void WebSocketTask::didFail(String&& errorMessage)
         g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
         m_handshakeMessage = nullptr;
     }
-    channel->didReceiveMessageError(WTFMove(errorMessage));
+    channel->didReceiveMessageError(WTF::move(errorMessage));
     if (!m_connection) {
         didClose(SOUP_WEBSOCKET_CLOSE_ABNORMAL, { });
         return;
@@ -229,7 +223,7 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
         return;
 
     m_receivedDidClose = true;
-    protectedChannel()->didClose(code, reason);
+    protect(m_channel)->didClose(code, reason);
 }
 
 void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void()>&& callback)
@@ -283,7 +277,7 @@ void WebSocketTask::resume()
 
 void WebSocketTask::delayFailTimerFired()
 {
-    didFail(WTFMove(m_delayErrorMessage));
+    didFail(WTF::move(m_delayErrorMessage));
 }
 
 } // namespace WebKit

@@ -428,3 +428,12 @@ shouldBe(Temporal.PlainDate.prototype.until.length, 1);
 {
     shouldBe(new Temporal.PlainDate(2000, 5, 2, "iso8601").calendarId, "iso8601");
 }
+
+shouldBe(Temporal.PlainDate.prototype.toPlainMonthDay.length, 0);
+shouldBe(Temporal.PlainDate.prototype.toPlainYearMonth.length, 0);
+{
+    const date = Temporal.PlainDate.from('2020-02-28');
+
+    shouldBe(date.toPlainMonthDay().toString(), '02-28');
+    shouldBe(date.toPlainYearMonth().toString(), '2020-02');
+}

@@ -73,9 +73,9 @@ public:
     void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
-    const String& protocol() const { return m_data.protocol(); }
-    const String& host() const { return m_data.host(); }
-    const String& domain() const { return m_domain; }
+    const String& protocol() const LIFETIME_BOUND { return m_data.protocol(); }
+    const String& host() const LIFETIME_BOUND { return m_data.host(); }
+    const String& domain() const LIFETIME_BOUND { return m_domain; }
     std::optional<uint16_t> port() const { return m_data.port(); }
 
     static bool shouldIgnoreHost(const URL&);
@@ -123,19 +123,19 @@ public:
     //
     // Note: This method exists only to support backwards compatibility
     //       with older versions of WebKit.
-    void grantLoadLocalResources();
+    void NODELETE grantLoadLocalResources();
 
     // Explicitly grant the ability to access very other SecurityOrigin.
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
-    WEBCORE_EXPORT void grantUniversalAccess();
+    WEBCORE_EXPORT void NODELETE grantUniversalAccess();
     bool hasUniversalAccess() const { return m_universalAccess; }
 
-    void grantStorageAccessFromFileURLsQuirk();
+    void NODELETE grantStorageAccessFromFileURLsQuirk();
     bool needsStorageAccessFromFileURLsQuirk() const { return m_needsStorageAccessFromFileURLsQuirk; }
 
     WEBCORE_EXPORT String domainForCachePartition() const;
-    Policy canShowNotifications() const;
+    Policy NODELETE canShowNotifications() const;
 
     // The local SecurityOrigin is the most privileged SecurityOrigin.
     // The local SecurityOrigin can script any document, navigate to local
@@ -153,7 +153,7 @@ public:
     // Marks a file:// origin as being in a domain defined by its path.
     // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
     // still can have other privileges that can be remembered, thereby not making them unique.
-    void setEnforcesFilePathSeparation();
+    void NODELETE setEnforcesFilePathSeparation();
     bool enforcesFilePathSeparation() const { return m_enforcesFilePathSeparation; }
 
     // Convert this SecurityOrigin into a string. The string
@@ -203,7 +203,7 @@ public:
     WEBCORE_EXPORT static bool isLocalHostOrLoopbackIPAddress(StringView);
     WEBCORE_EXPORT static bool isLocalhostAddress(StringView);
 
-    const SecurityOriginData& data() const { return m_data; }
+    const SecurityOriginData& data() const LIFETIME_BOUND { return m_data; }
 
     // This method checks that the scheme for this origin is an HTTP-family
     // scheme, e.g. HTTP and HTTPS.
@@ -217,7 +217,7 @@ private:
     explicit SecurityOrigin(SecurityOriginData&&);
     void initializeShared(const URL&);
 
-    bool hasLocalUnseparatedPath(const SecurityOrigin&) const;
+    bool NODELETE hasLocalUnseparatedPath(const SecurityOrigin&) const;
 
     enum class ShouldAllowFromThirdParty : uint8_t { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = ShouldAllowFromThirdParty::MaybeAllowFromThirdParty) const;

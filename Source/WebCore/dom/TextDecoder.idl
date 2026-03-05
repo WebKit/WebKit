@@ -35,10 +35,10 @@ dictionary TextDecodeOptions {
 [
     Exposed=*,
 ] interface TextDecoder {
-    constructor(optional DOMString label = "utf-8", optional TextDecoderOptions options);
+    constructor(optional DOMString label = "utf-8", optional TextDecoderOptions options = {});
 
     readonly attribute DOMString encoding;
     readonly attribute boolean fatal;
     readonly attribute boolean ignoreBOM;
-    USVString decode(optional [AllowShared] (ArrayBufferView or ArrayBuffer)? input, optional TextDecodeOptions options);
+    USVString decode(optional [AllowShared] (ArrayBufferView or ArrayBuffer)? input, optional TextDecodeOptions options = {});
 };

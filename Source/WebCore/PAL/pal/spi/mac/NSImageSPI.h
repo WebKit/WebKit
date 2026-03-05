@@ -25,9 +25,10 @@
 
 #pragma once
 
-DECLARE_SYSTEM_HEADER
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
 
-#import <wtf/Platform.h>
+DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(MAC)
 

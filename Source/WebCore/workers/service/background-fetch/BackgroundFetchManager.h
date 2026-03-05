@@ -45,8 +45,8 @@ public:
     static Ref<BackgroundFetchManager> create(ServiceWorkerRegistration& registration) { return adoptRef(*new BackgroundFetchManager(registration)); }
     ~BackgroundFetchManager();
 
-    using RequestInfo = Variant<RefPtr<FetchRequest>, String>;
-    using Requests = Variant<RefPtr<FetchRequest>, String, Vector<RequestInfo>>;
+    using RequestInfo = Variant<Ref<FetchRequest>, String>;
+    using Requests = Variant<Ref<FetchRequest>, String, Vector<RequestInfo>>;
     void fetch(ScriptExecutionContext&, const String&, Requests&&, BackgroundFetchOptions&&, DOMPromiseDeferred<IDLInterface<BackgroundFetchRegistration>>&&);
     void get(ScriptExecutionContext&, const String&, DOMPromiseDeferred<IDLNullable<IDLInterface<BackgroundFetchRegistration>>>&&);
     void getIds(ScriptExecutionContext&, DOMPromiseDeferred<IDLSequence<IDLDOMString>>&&);

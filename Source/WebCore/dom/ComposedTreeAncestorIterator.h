@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ElementRareData.h"
 #include "HTMLSlotElement.h"
 #include "PseudoElement.h"
 #include "ShadowRoot.h"
+#include "SlotAssignment.h"
 
 namespace WebCore {
 
@@ -55,7 +55,7 @@ public:
 
 private:
     void traverseParentInShadowTree();
-    static Element* traverseParent(Node*);
+    static Element* NODELETE traverseParent(Node*);
 
     CheckedPtr<Element> m_current;
 };
@@ -100,9 +100,9 @@ public:
 
     iterator begin()
     {
-        if (auto shadowRoot = dynamicDowncast<ShadowRoot>(m_node.get()))
+        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(m_node.get()))
             return iterator(*shadowRoot->host());
-        if (auto pseudoElement = dynamicDowncast<PseudoElement>(m_node.get()))
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(m_node.get()))
             return iterator(*pseudoElement->hostElement());
         return iterator(m_node);
     }

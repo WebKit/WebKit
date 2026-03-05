@@ -6,7 +6,7 @@ if (is_android) {
     testonly = true
     apk_name = "androidnativeapi"
     android_manifest = "AndroidManifest.xml"
-    min_sdk_version = 21
+    min_sdk_version = 23
     target_sdk_version = 31
 
     sources = [
@@ -61,6 +61,7 @@ if (is_android) {
       "../../rtc_base:ssl_adapter",
       "../../rtc_base:threading",
       "../../rtc_base/synchronization:mutex",
+      "//api:jsep",
       "//api:libjingle_peerconnection_api",
       "//api/rtc_event_log:rtc_event_log_factory",
       "//api/task_queue:default_task_queue_factory",
@@ -68,6 +69,7 @@ if (is_android) {
       "//media:rtc_internal_video_codecs",
       "//modules/utility",
       "//pc:libjingle_peerconnection",
+      "//pc:webrtc_sdp",
       "//sdk/android:native_api_base",
       "//sdk/android:native_api_jni",
       "//sdk/android:native_api_video",

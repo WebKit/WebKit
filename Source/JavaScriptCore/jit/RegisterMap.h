@@ -25,12 +25,15 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(ASSEMBLER)
 
 #include <JavaScriptCore/FPRInfo.h>
 #include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/MacroAssembler.h>
 #include <JavaScriptCore/Reg.h>
+#include <array>
 
 namespace JSC {
 

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This tests the `buttons` property for mouse events we send.");
+
+var div = document.createElement("div");
+div.style.width = "100px";
+div.style.height = "100px";
+div.style.backgroundColor = "blue";
+
+var eventLog = "";
+
+function appendEventLog() {
+    if (window.eventSender) {
+        eventLog += event.type + "(" + event.buttons + ") ";
+    } else {
+        debug(event.type + "(" + event.buttons + ")");
+    }
+}
+
+function clearEventLog() {
+    eventLog = "";
+}
+
+function dismissContextMenu() {
+    if (window.eventSender) {
+        // esc key to kill the context menu.
+        eventSender.keyDown(String.fromCharCode(0x001B), null);
+    }
+}
+
+async function sendEvents(button) {
+    if (!window.eventSender) {
+        debug("This test requires WebKitTestRunner. Click on the blue rect with different mouse buttons to log.")
+        return;
+    }
+    await eventSender.asyncMouseDown(button);
+    if (button == 2)
+        dismissContextMenu();
+    await eventSender.asyncMouseUp(button);
+    await eventSender.asyncMouseDown(button);
+    if (button == 2)
+        dismissContextMenu();
+    await eventSender.asyncMouseUp(button);
+    // could test dragging here too
+}
+
+async function sendChordedEvents(buttons) {
+    if (!window.eventSender) {
+        debug("This test requires WebKitTestRunner. Click on the blue rect with different mouse buttons to log.")
+        return;
+    }
+
+    for (const button of buttons) {
+        await eventSender.asyncMouseDown(button);
+        if (button == 2)
+            dismissContextMenu();
+    }
+
+    for (const button of [...buttons].reverse())
+        await eventSender.asyncMouseUp(button);
+}
+
+async function testEvents(description, button, expectedString) {
+    debug(description);
+    await sendEvents(button);
+    shouldBeEqualToString("eventLog", expectedString);
+    clearEventLog();
+}
+
+async function testChordedEvents(description, buttons, expectedString) {
+    debug(description);
+    await sendChordedEvents(buttons);
+    shouldBeEqualToString("eventLog", expectedString);
+    clearEventLog();
+}
+
+onload = async () => {
+    testRunner?.waitUntilDone();
+
+    div.addEventListener("auxclick", appendEventLog, false);
+    div.addEventListener("click", appendEventLog, false);
+    div.addEventListener("dblclick", appendEventLog, false);
+    div.addEventListener("mousedown", appendEventLog, false);
+    div.addEventListener("mouseup", appendEventLog, false);
+    document.body.insertBefore(div, document.body.firstChild);
+
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(10, 10);
+        await testEvents("Left Mouse Button", 0, "mousedown(1) mouseup(0) click(0) mousedown(1) mouseup(0) click(0) dblclick(0) ");
+        await testEvents("Middle Mouse Button", 1, "mousedown(4) mouseup(0) auxclick(0) mousedown(4) mouseup(0) auxclick(0) ");
+        await testEvents("Right Mouse Button", 2, "mousedown(2) mouseup(0) auxclick(0) mousedown(2) mouseup(0) auxclick(0) ");
+        await testEvents("Back Mouse Button", 3, "mousedown(8) mouseup(0) auxclick(0) mousedown(8) mouseup(0) auxclick(0) ");
+        await testEvents("Forward Mouse Button", 4, "mousedown(16) mouseup(0) auxclick(0) mousedown(16) mouseup(0) auxclick(0) ");
+        await testChordedEvents("Left and Right Mouse Buttons", [0, 2], "mousedown(1) mousedown(3) mouseup(1) auxclick(1) mouseup(0) ");
+        await testChordedEvents("Left, Right, and Middle Mouse Buttons", [0, 2, 1], "mousedown(1) mousedown(3) mousedown(7) mouseup(3) auxclick(3) mouseup(1) mouseup(0) ");
+        await testChordedEvents("Left, Right, Middle, Back, and Forward Mouse Buttons", [0, 2, 1, 3, 4], "mousedown(1) mousedown(3) mousedown(7) mousedown(15) mousedown(31) mouseup(15) auxclick(15) mouseup(7) mouseup(3) mouseup(1) mouseup(0) ");
+    }
+    testRunner?.notifyDone();
+}
+</script>
+</body>
+</html>

@@ -95,7 +95,7 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectConstruct, (JSGlobalObject* globalObject, 
     if (!target.isObject())
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the first argument be a constructor"_s));
 
-    auto constructData = JSC::getConstructData(target);
+    auto constructData = JSC::getConstructDataInline(target);
     if (constructData.type == CallData::Type::None)
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the first argument be a constructor"_s));
 

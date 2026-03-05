@@ -47,12 +47,12 @@ public:
     static RefPtr<DOMURL> parse(const String& url, const String& base);
     static bool canParse(const String& url, const String& base);
 
-    const URL& href() const { return m_url; }
+    const URL& href() const LIFETIME_BOUND { return m_url; }
     ExceptionOr<void> setHref(const String&);
 
     URLSearchParams& searchParams();
 
-    const String& toJSON() const { return m_url.string(); }
+    const String& toJSON() const LIFETIME_BOUND { return m_url.string(); }
 
     static String createObjectURL(ScriptExecutionContext&, Blob&);
     static void revokeObjectURL(ScriptExecutionContext&, const String&);

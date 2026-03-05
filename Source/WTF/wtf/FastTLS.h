@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if HAVE(FAST_TLS)
 
 #include <pthread.h>

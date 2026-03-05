@@ -64,11 +64,11 @@ static void webkitTextSinkHandleSample(WebKitTextSink* self, GRefPtr<GstSample>&
     // Player private methods that interact with WebCore must run from the main thread. Things can
     // be destroyed before that code runs, including the text sink and priv, so pass everything in a
     // safe way.
-    callOnMainThread([mediaPlayerPrivate = ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>(priv->mediaPlayerPrivate), streamId = priv->streamId.value(), sample = WTFMove(sample)]() mutable {
+    callOnMainThread([mediaPlayerPrivate = ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>(priv->mediaPlayerPrivate), streamId = priv->streamId.value(), sample = WTF::move(sample)]() mutable {
         RefPtr player = mediaPlayerPrivate.get();
         if (!player)
             return;
-        player->handleTextSample(WTFMove(sample), streamId);
+        player->handleTextSample(WTF::move(sample), streamId);
     });
 }
 
@@ -133,7 +133,7 @@ GstElement* webkitTextSinkNew(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& p
     auto* element = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_TEXT_SINK, nullptr));
     auto* sink = WEBKIT_TEXT_SINK(element);
     ASSERT(isMainThread());
-    sink->priv->mediaPlayerPrivate = WTFMove(player);
+    sink->priv->mediaPlayerPrivate = WTF::move(player);
     return element;
 }
 

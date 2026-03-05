@@ -68,7 +68,7 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Objec
 
     static long lastSequenceID = 0;
     long sequenceID = ++lastSequenceID;
-    m_commandRequests.add(sequenceID, WTFMove(responseHandler));
+    m_commandRequests.add(sequenceID, WTF::move(responseHandler));
     StringBuilder messageBuilder;
     messageBuilder.append("{\"id\":"_s, sequenceID, ",\"method\":\"Automation."_s, command, '"');
     if (parameters)
@@ -98,7 +98,7 @@ void SessionHost::dispatchMessage(const String& message)
 #if ENABLE(WEBDRIVER_BIDI)
         if (method != "Automation.bidiMessageSent"_s)
             return;
-        dispatchBidiMessage(WTFMove(messageObject));
+        dispatchBidiMessage(WTF::move(messageObject));
 #else
         RELEASE_LOG_ERROR(SessionHost, "Received from browser message without id: %s", message.utf8().data());
 #endif
@@ -110,14 +110,14 @@ void SessionHost::dispatchMessage(const String& message)
 
     CommandResponse response;
     if (auto errorObject = messageObject->getObject("error"_s)) {
-        response.responseObject = WTFMove(errorObject);
+        response.responseObject = WTF::move(errorObject);
         response.isError = true;
     } else if (auto resultObject = messageObject->getObject("result"_s)) {
         if (resultObject->size())
-            response.responseObject = WTFMove(resultObject);
+            response.responseObject = WTF::move(resultObject);
     }
 
-    responseHandler(WTFMove(response));
+    responseHandler(WTF::move(response));
 }
 
 bool SessionHost::isRemoteBrowser() const
@@ -141,7 +141,7 @@ void SessionHost::dispatchBidiMessage(RefPtr<JSON::Object>&& event)
 {
     LOG(WebDriverBiDi, "SessionHost::dispatchBidiMessage: %s", event->toJSONString().utf8().data());
     if (m_bidiHandler)
-        m_bidiHandler->dispatchBidiMessage(WTFMove(event));
+        m_bidiHandler->dispatchBidiMessage(WTF::move(event));
     else
         RELEASE_LOG(SessionHost, "No bidi message handler to dispatch message %s", event->toJSONString().utf8().data());
 }

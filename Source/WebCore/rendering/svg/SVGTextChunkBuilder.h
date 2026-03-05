@@ -42,7 +42,7 @@ public:
     SVGTextChunkBuilder(const SVGTextChunkBuilder&) = delete;
 
     const Vector<SVGTextChunk>& textChunks() const { return m_textChunks; }
-    unsigned totalCharacters() const;
+    unsigned NODELETE totalCharacters() const;
     float totalLength() const;
     float totalAnchorShift() const;
     AffineTransform transformationForTextBox(InlineIterator::SVGTextBoxIterator) const;

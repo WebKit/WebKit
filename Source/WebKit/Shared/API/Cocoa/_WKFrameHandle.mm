@@ -37,7 +37,7 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKFrameHandle.class, self))
         return;
 
-    _frameHandle->~FrameHandle();
+    SUPPRESS_UNCOUNTED_ARG _frameHandle->~FrameHandle();
 
     [super dealloc];
 }

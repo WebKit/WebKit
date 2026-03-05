@@ -1,114 +1,115 @@
 
+PASS Invariant behaviour for var
 PASS CSS Values and Units Test: attr
 PASS CSS Values and Units Test: attr 1
 FAIL CSS Values and Units Test: attr 2 assert_equals: Value 'attr(data-foo raw-string)', where 'data-foo=abc' should be valid for the property 'content'. expected "\"abc\"" but got "normal"
-PASS CSS Values and Units Test: attr 3
-FAIL CSS Values and Units Test: attr 4 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo="abc"' should be valid for the property 'content'. expected "\"abc\"" but got "normal"
-FAIL CSS Values and Units Test: attr 5 assert_equals: Value 'attr(data-foo type(<string>),)', where 'data-foo="abc"' should be valid for the property 'content'. expected "\"abc\"" but got "normal"
-FAIL CSS Values and Units Test: attr 6 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo="attr(data-foo)"' should be valid for the property 'content'. expected "\"attr(data-foo)\"" but got "normal"
-PASS CSS Values and Units Test: attr 7
-FAIL CSS Values and Units Test: attr 8 assert_equals: Value 'attr(non-existent)', where 'data-foo=' should be valid for the property 'font-family'. expected "\"\"" but got "-webkit-standard"
-PASS CSS Values and Units Test: attr 9
-PASS CSS Values and Units Test: attr 10
-FAIL CSS Values and Units Test: attr 11 assert_equals: Value 'attr(data-foo type(<custom-ident>))', where 'data-foo=anim' should be valid for the property 'animation-name'. expected "anim" but got "none"
-FAIL CSS Values and Units Test: attr 12 assert_equals: Value 'attr(data-foo type(<custom-ident>), anim-fallback)', where 'data-foo="anim"' should be valid for the property 'animation-name'. expected "anim-fallback" but got "none"
-FAIL CSS Values and Units Test: attr 13 assert_equals: Value 'attr(data-foo type(<custom-ident>), anim-fallback)', where 'data-foo=initial' should be valid for the property 'animation-name'. expected "anim-fallback" but got "none"
-FAIL CSS Values and Units Test: attr 14 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=red' should be valid for the property 'background-color'. expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL CSS Values and Units Test: attr 15 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=#ff0099aa' should be valid for the property 'background-color'. expected "rgba(255, 0, 153, 0.667)" but got "rgba(0, 0, 0, 0)"
-FAIL CSS Values and Units Test: attr 16 assert_equals: Value 'attr(data-foo type(<color>), red)', where 'data-foo=10' should be valid for the property 'background-color'. expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL CSS Values and Units Test: attr 17 assert_equals: Value 'attr(data-foo type(<color>), green)', where 'data-foo=1000px' should be valid for the property 'background-color'. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL CSS Values and Units Test: attr 18 assert_equals: Value 'attr(data-foo type(<color>), green)', where 'data-foo=rgb(255, 0, 0)' should be valid for the property 'background-color'. expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL CSS Values and Units Test: attr 19 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=color-mix(in lch, red, pink)' should be valid for the property 'background-color'. expected "lch(69.038895 65.780731 24.801809)" but got "rgba(0, 0, 0, 0)"
-FAIL CSS Values and Units Test: attr 20 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=light-dark(#333b3c, #efefec)' should be valid for the property 'background-color'. expected "rgb(51, 59, 60)" but got "rgba(0, 0, 0, 0)"
-FAIL CSS Values and Units Test: attr 21 assert_equals: Value 'attr(data-foo type(<number>))', where 'data-foo=10' should be valid for the property 'font-weight'. expected "10" but got "400"
-FAIL CSS Values and Units Test: attr 22 assert_equals: Value 'attr(data-foo type(<number>), 30)', where 'data-foo=10px' should be valid for the property 'font-weight'. expected "30" but got "400"
-FAIL CSS Values and Units Test: attr 23 assert_equals: Value 'attr(data-foo type(<number> | lighter | bold), bold)', where 'data-foo=lighter' should be valid for the property 'font-weight'. expected "100" but got "400"
-FAIL CSS Values and Units Test: attr 24 assert_equals: Value 'attr(data-foo type(<number> |  lighter | bold), lighter)', where 'data-foo=10px' should be valid for the property 'font-weight'. expected "100" but got "400"
-FAIL CSS Values and Units Test: attr 25 assert_equals: Value 'attr(data-foo type(<number>))', where 'data-foo=calc(3 + 3)' should be valid for the property 'font-weight'. expected "6" but got "400"
-FAIL CSS Values and Units Test: attr 26 assert_equals: Value 'attr(data-foo type(<number>), calc(10 + 20))', where 'data-foo=10px' should be valid for the property 'font-weight'. expected "30" but got "400"
-FAIL CSS Values and Units Test: attr 27 assert_equals: Value 'attr(data-foo type(<percentage>))', where 'data-foo=10%' should be valid for the property 'font-size'. expected "9px" but got "16px"
-FAIL CSS Values and Units Test: attr 28 assert_equals: Value 'attr(data-foo type(<percentage>), 10px)', where 'data-foo=abc' should be valid for the property 'font-size'. expected "10px" but got "16px"
-FAIL CSS Values and Units Test: attr 29 assert_equals: Value 'attr(data-foo type(<percentage> | <length>), 10)', where 'data-foo=10px' should be valid for the property 'font-size'. expected "10px" but got "16px"
-FAIL CSS Values and Units Test: attr 30 assert_equals: Value 'attr(data-foo type(<percentage>), abc)', where 'data-foo=10' should be valid for the property '--x'. expected "abc" but got "attr(data-foo type(<percentage>), abc)"
-FAIL CSS Values and Units Test: attr 31 assert_equals: Value 'attr(data-foo type(<url>))', where 'data-foo=url("https://does-not-exist.test/404.png")' should be valid for the property '--x'. expected "url(\"https://does-not-exist.test/404.png\")" but got "attr(data-foo type(<url>))"
-FAIL CSS Values and Units Test: attr 32 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=10px' should be valid for the property 'width'. expected "10px" but got "784px"
-FAIL CSS Values and Units Test: attr 33 assert_equals: Value 'attr(data-foo type(<length>), red)', where 'data-foo=10px' should be valid for the property 'width'. expected "10px" but got "784px"
-FAIL CSS Values and Units Test: attr 34 assert_equals: Value 'attr(data-foo type(<length>), 42px)', where 'data-foo=calc(1px + 3px)' should be valid for the property 'width'. expected "4px" but got "784px"
-PASS CSS Values and Units Test: attr 35
-PASS CSS Values and Units Test: attr 36
-FAIL CSS Values and Units Test: attr 37 assert_equals: Value 'attr(data-foo type(<angle>), italic)', where 'data-foo=30' should be valid for the property 'font-style'. expected "italic" but got "normal"
-PASS CSS Values and Units Test: attr 38
-FAIL CSS Values and Units Test: attr 39 assert_equals: Value 'attr(data-foo type(<angle> | italic), 3deg)', where 'data-foo=italic' should be valid for the property 'font-style'. expected "italic" but got "normal"
-FAIL CSS Values and Units Test: attr 40 assert_equals: Value 'attr(data-foo type(<time>))', where 'data-foo=10ms' should be valid for the property 'transition-duration'. expected "0.01s" but got "0s"
-FAIL CSS Values and Units Test: attr 41 assert_equals: Value 'attr(data-foo type(<time>), 30s)', where 'data-foo=10m' should be valid for the property 'transition-duration'. expected "30s" but got "0s"
-FAIL CSS Values and Units Test: attr 42 assert_equals: Value 'attr(data-foo type(<time>), calc(10s + 20s))', where 'data-foo=10m' should be valid for the property 'transition-duration'. expected "30s" but got "0s"
-FAIL CSS Values and Units Test: attr 43 assert_equals: Value 'attr(data-foo px)', where 'data-foo=10' should be valid for the property 'height'. expected "10px" but got "0px"
-FAIL CSS Values and Units Test: attr 44 assert_equals: Value 'calc(attr(data-foo px) + 1px)', where 'data-foo=10' should be valid for the property 'width'. expected "11px" but got "784px"
-FAIL CSS Values and Units Test: attr 45 assert_equals: Value 'attr(data-foo %)', where 'data-foo=10' should be valid for the property 'font-size'. expected "9px" but got "16px"
-FAIL CSS Values and Units Test: attr 46 assert_equals: Value 'attr(data-foo px) 11px', where 'data-foo=10' should be valid for the property '--x'. expected "10px 11px" but got "attr(data-foo px) 11px"
-FAIL CSS Values and Units Test: attr 47 assert_equals: Value 'attr(data-foo type(<number>)) 11', where 'data-foo=10' should be valid for the property '--x'. expected "10 11" but got "attr(data-foo type(<number>)) 11"
-FAIL CSS Values and Units Test: attr 48 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo="hello"' should be valid for the property '--string'. expected "\"hello\"" but got "\"none\""
-FAIL CSS Values and Units Test: attr 49 assert_equals: Value 'attr(data-foo type(<string>+))', where 'data-foo="hello" "hi"' should be valid for the property '--string-list'. expected "\"hello\" \"hi\"" but got "\"none\""
-FAIL CSS Values and Units Test: attr 50 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=var(--length, 3px)' should be valid for the property 'width'. expected "10px" but got "784px"
-FAIL CSS Values and Units Test: attr 51 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=var(--x, 3)' should be valid for the property '--y'. expected "3" but got "attr(data-foo type(*))"
-FAIL CSS Values and Units Test: attr 52 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar, 11)' should be valid for the property '--y'. expected "\"3\"" but got "attr(data-foo type(*))"
-FAIL CSS Values and Units Test: attr 53 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar type(<number>), 11)' should be valid for the property '--y'. expected "3" but got "attr(data-foo type(*))"
-PASS CSS Values and Units Test: attr 54
-FAIL CSS Values and Units Test: attr 55 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar type(<number>), 11) var(--length, 3px)' should be valid for the property '--y'. expected "3 10px" but got "attr(data-foo type(*))"
-FAIL CSS Values and Units Test: attr 56 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3em' should be valid for the property 'width'. expected "48px" but got "784px"
-FAIL CSS Values and Units Test: attr 57 assert_equals: Value 'attr(data-foo em)', where 'data-foo=3' should be valid for the property 'width'. expected "48px" but got "784px"
-FAIL CSS Values and Units Test: attr 58 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3ex' should be valid for the property 'width'. expected "21.53125px" but got "784px"
-FAIL CSS Values and Units Test: attr 59 assert_equals: Value 'attr(data-foo ex)', where 'data-foo=3' should be valid for the property 'width'. expected "21.53125px" but got "784px"
-FAIL CSS Values and Units Test: attr 60 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3cap' should be valid for the property 'width'. expected "31.75px" but got "784px"
-FAIL CSS Values and Units Test: attr 61 assert_equals: Value 'attr(data-foo cap)', where 'data-foo=3' should be valid for the property 'width'. expected "31.75px" but got "784px"
-FAIL CSS Values and Units Test: attr 62 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3ch' should be valid for the property 'width'. expected "24px" but got "784px"
-FAIL CSS Values and Units Test: attr 63 assert_equals: Value 'attr(data-foo ch)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
-FAIL CSS Values and Units Test: attr 64 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3ic' should be valid for the property 'width'. expected "48px" but got "784px"
-FAIL CSS Values and Units Test: attr 65 assert_equals: Value 'attr(data-foo ic)', where 'data-foo=3' should be valid for the property 'width'. expected "48px" but got "784px"
-FAIL CSS Values and Units Test: attr 66 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3rem' should be valid for the property 'width'. expected "48px" but got "784px"
-FAIL CSS Values and Units Test: attr 67 assert_equals: Value 'attr(data-foo rem)', where 'data-foo=3' should be valid for the property 'width'. expected "48px" but got "784px"
-FAIL CSS Values and Units Test: attr 68 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3lh' should be valid for the property 'width'. expected "54px" but got "784px"
-FAIL CSS Values and Units Test: attr 69 assert_equals: Value 'attr(data-foo lh)', where 'data-foo=3' should be valid for the property 'width'. expected "54px" but got "784px"
-FAIL CSS Values and Units Test: attr 70 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3rlh' should be valid for the property 'width'. expected "54px" but got "784px"
-FAIL CSS Values and Units Test: attr 71 assert_equals: Value 'attr(data-foo rlh)', where 'data-foo=3' should be valid for the property 'width'. expected "54px" but got "784px"
-FAIL CSS Values and Units Test: attr 72 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vw' should be valid for the property 'width'. expected "24px" but got "784px"
-FAIL CSS Values and Units Test: attr 73 assert_equals: Value 'attr(data-foo vw)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
-FAIL CSS Values and Units Test: attr 74 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vh' should be valid for the property 'width'. expected "18px" but got "784px"
-FAIL CSS Values and Units Test: attr 75 assert_equals: Value 'attr(data-foo vh)', where 'data-foo=3' should be valid for the property 'width'. expected "18px" but got "784px"
-FAIL CSS Values and Units Test: attr 76 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vi' should be valid for the property 'width'. expected "24px" but got "784px"
-FAIL CSS Values and Units Test: attr 77 assert_equals: Value 'attr(data-foo vi)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
-FAIL CSS Values and Units Test: attr 78 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vb' should be valid for the property 'width'. expected "18px" but got "784px"
-FAIL CSS Values and Units Test: attr 79 assert_equals: Value 'attr(data-foo vb)', where 'data-foo=3' should be valid for the property 'width'. expected "18px" but got "784px"
-FAIL CSS Values and Units Test: attr 80 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vmin' should be valid for the property 'width'. expected "18px" but got "784px"
-FAIL CSS Values and Units Test: attr 81 assert_equals: Value 'attr(data-foo vmin)', where 'data-foo=3' should be valid for the property 'width'. expected "18px" but got "784px"
-FAIL CSS Values and Units Test: attr 82 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vmax' should be valid for the property 'width'. expected "24px" but got "784px"
-FAIL CSS Values and Units Test: attr 83 assert_equals: Value 'attr(data-foo vmax)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
-PASS CSS Values and Units Test: attr 84
-PASS CSS Values and Units Test: attr 85
-PASS CSS Values and Units Test: attr 86
-PASS CSS Values and Units Test: attr 87
-PASS CSS Values and Units Test: attr 88
-PASS CSS Values and Units Test: attr 89
-PASS CSS Values and Units Test: attr 90
-PASS CSS Values and Units Test: attr 91
-FAIL CSS Values and Units Test: attr 92 assert_equals: Value 'attr(data-foo type(<time>))', where 'data-foo=3ms' should be valid for the property 'transition-duration'. expected "0.003s" but got "0s"
-FAIL CSS Values and Units Test: attr 93 assert_equals: Value 'attr(data-foo ms)', where 'data-foo=3' should be valid for the property 'transition-duration'. expected "0.003s" but got "0s"
-FAIL CSS Values and Units Test: attr 94 assert_equals: Value 'attr(data-foo type(<time>))', where 'data-foo=3ms' should be valid for the property 'transition-duration'. expected "0.003s" but got "0s"
-FAIL CSS Values and Units Test: attr 95 assert_equals: Value 'attr(data-foo ms)', where 'data-foo=3' should be valid for the property 'transition-duration'. expected "0.003s" but got "0s"
-PASS CSS Values and Units Test: attr 96
-PASS CSS Values and Units Test: attr 97
-PASS CSS Values and Units Test: attr 98
-PASS CSS Values and Units Test: attr 99
-PASS CSS Values and Units Test: attr 100
-PASS CSS Values and Units Test: attr 101
-PASS CSS Values and Units Test: attr 102
-PASS CSS Values and Units Test: attr 103
-PASS CSS Values and Units Test: attr 104
-PASS CSS Values and Units Test: attr 105
-PASS CSS Values and Units Test: attr 106
-PASS CSS Values and Units Test: attr 107
-PASS CSS Values and Units Test: attr 108
-PASS CSS Values and Units Test: attr 109
+FAIL CSS Values and Units Test: attr 3 assert_equals: Value 'attr(data-foo raw-string)', where 'data-foo=var(--number)' should be valid for the property 'content'. expected "\"var(--number)\"" but got "normal"
+PASS CSS Values and Units Test: attr 4
+FAIL CSS Values and Units Test: attr 5 assert_equals: Value 'attr(data-foo, 3)', where 'data-foo=attr(' should be valid for the property 'content'. expected "\"attr(\"" but got "normal"
+PASS CSS Values and Units Test: attr 6
+FAIL CSS Values and Units Test: attr 7 assert_equals: Value 'attr(data-foo raw-string)', where 'data-foo=attr(' should be valid for the property 'content'. expected "\"attr(\"" but got "normal"
+FAIL CSS Values and Units Test: attr 8 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo="abc"' should be valid for the property 'content'. expected "\"abc\"" but got "normal"
+FAIL CSS Values and Units Test: attr 9 assert_equals: Value 'attr(data-foo type(<string>),)', where 'data-foo="abc"' should be valid for the property 'content'. expected "\"abc\"" but got "normal"
+FAIL CSS Values and Units Test: attr 10 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo="attr(data-foo)"' should be valid for the property 'content'. expected "\"attr(data-foo)\"" but got "normal"
+PASS CSS Values and Units Test: attr 11
+FAIL CSS Values and Units Test: attr 12 assert_equals: Value 'attr(non-existent)', where 'data-foo=' should be valid for the property 'font-family'. expected "\"\"" but got "-webkit-standard"
+FAIL CSS Values and Units Test: attr 13 assert_equals: Value 'attr(non-existent, serif)', where 'data-foo=' should be valid for the property 'font-family'. expected "serif" but got "-webkit-standard"
+PASS CSS Values and Units Test: attr 14
+PASS CSS Values and Units Test: attr 15
+PASS CSS Values and Units Test: attr 16
+FAIL CSS Values and Units Test: attr 17 assert_equals: Value 'attr(data-foo type(<custom-ident>))', where 'data-foo=anim' should be valid for the property 'animation-name'. expected "anim" but got "none"
+FAIL CSS Values and Units Test: attr 18 assert_equals: Value 'attr(data-foo type(<custom-ident>), anim-fallback)', where 'data-foo="anim"' should be valid for the property 'animation-name'. expected "anim-fallback" but got "none"
+FAIL CSS Values and Units Test: attr 19 assert_equals: Value 'attr(data-foo type(<custom-ident>), anim-fallback)', where 'data-foo=initial' should be valid for the property 'animation-name'. expected "anim-fallback" but got "none"
+PASS CSS Values and Units Test: attr 20
+FAIL CSS Values and Units Test: attr 21 assert_equals: Value 'attr(data-foo type(<custom-ident>), anim)', where 'data-foo=var(' should be valid for the property 'animation-name'. expected "anim" but got "none"
+PASS CSS Values and Units Test: attr 22
+PASS CSS Values and Units Test: attr 23
+FAIL CSS Values and Units Test: attr 24 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=red' should be valid for the property 'background-color'. expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 25 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=#ff0099aa' should be valid for the property 'background-color'. expected "rgba(255, 0, 153, 0.667)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 26 assert_equals: Value 'attr(data-foo type(<color>), red)', where 'data-foo=10' should be valid for the property 'background-color'. expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 27 assert_equals: Value 'attr(data-foo type(<color>), green)', where 'data-foo=1000px' should be valid for the property 'background-color'. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 28 assert_equals: Value 'attr(data-foo type(<color>), green)', where 'data-foo=rgb(255, 0, 0)' should be valid for the property 'background-color'. expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 29 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=color-mix(in lch, red, pink)' should be valid for the property 'background-color'. expected "lch(69.038895 65.780731 24.801809)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 30 assert_equals: Value 'attr(data-foo type(<color>))', where 'data-foo=light-dark(#333b3c, #efefec)' should be valid for the property 'background-color'. expected "rgb(51, 59, 60)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 31 assert_equals: Value 'attr(data-foo type(<number>))', where 'data-foo=10' should be valid for the property 'font-weight'. expected "10" but got "400"
+FAIL CSS Values and Units Test: attr 32 assert_equals: Value 'attr(data-foo type(<number>), 30)', where 'data-foo=10px' should be valid for the property 'font-weight'. expected "30" but got "400"
+FAIL CSS Values and Units Test: attr 33 assert_equals: Value 'attr(data-foo type(<number> | lighter | bold), bold)', where 'data-foo=lighter' should be valid for the property 'font-weight'. expected "100" but got "400"
+FAIL CSS Values and Units Test: attr 34 assert_equals: Value 'attr(data-foo type(<number> |  lighter | bold), lighter)', where 'data-foo=10px' should be valid for the property 'font-weight'. expected "100" but got "400"
+FAIL CSS Values and Units Test: attr 35 assert_equals: Value 'attr(data-foo type(<number>))', where 'data-foo=calc(3 + 3)' should be valid for the property 'font-weight'. expected "6" but got "400"
+FAIL CSS Values and Units Test: attr 36 assert_equals: Value 'attr(data-foo type(<number>), calc(10 + 20))', where 'data-foo=10px' should be valid for the property 'font-weight'. expected "30" but got "400"
+PASS CSS Values and Units Test: attr 37
+FAIL CSS Values and Units Test: attr 38 assert_equals: Value 'attr(data-foo type(<number>), 10)', where 'data-foo=attr(' should be valid for the property 'font-weight'. expected "10" but got "400"
+PASS CSS Values and Units Test: attr 39
+PASS CSS Values and Units Test: attr 40
+FAIL CSS Values and Units Test: attr 41 assert_equals: Value 'attr(data-foo type(<percentage>))', where 'data-foo=10%' should be valid for the property 'font-size'. expected "9px" but got "16px"
+FAIL CSS Values and Units Test: attr 42 assert_equals: Value 'attr(data-foo type(<percentage>), 10px)', where 'data-foo=abc' should be valid for the property 'font-size'. expected "10px" but got "16px"
+FAIL CSS Values and Units Test: attr 43 assert_equals: Value 'attr(data-foo type(<percentage> | <length>), 10)', where 'data-foo=10px' should be valid for the property 'font-size'. expected "10px" but got "16px"
+FAIL CSS Values and Units Test: attr 44 assert_equals: Value 'attr(data-foo type(<percentage>), abc)', where 'data-foo=10' should be valid for the property '--x'. expected "abc" but got "attr(data-foo type(<percentage>), abc)"
+FAIL CSS Values and Units Test: attr 45 assert_equals: Value 'attr(data-foo type(<url>))', where 'data-foo=url("https://does-not-exist.test/404.png")' should be valid for the property '--x'. expected "url(\"https://does-not-exist.test/404.png\")" but got "attr(data-foo type(<url>))"
+FAIL CSS Values and Units Test: attr 46 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=10px' should be valid for the property 'width'. expected "10px" but got "784px"
+FAIL CSS Values and Units Test: attr 47 assert_equals: Value 'attr(data-foo type(<length>), red)', where 'data-foo=10px' should be valid for the property 'width'. expected "10px" but got "784px"
+FAIL CSS Values and Units Test: attr 48 assert_equals: Value 'attr(data-foo type(<length>), 42px)', where 'data-foo=calc(1px + 3px)' should be valid for the property 'width'. expected "4px" but got "784px"
+PASS CSS Values and Units Test: attr 49
+PASS CSS Values and Units Test: attr 50
+FAIL CSS Values and Units Test: attr 51 assert_equals: Value 'attr(data-foo type(<angle>), italic)', where 'data-foo=30' should be valid for the property 'font-style'. expected "italic" but got "normal"
+PASS CSS Values and Units Test: attr 52
+FAIL CSS Values and Units Test: attr 53 assert_equals: Value 'attr(data-foo type(<angle> | italic), 3deg)', where 'data-foo=italic' should be valid for the property 'font-style'. expected "italic" but got "normal"
+FAIL CSS Values and Units Test: attr 54 assert_equals: Value 'attr(data-foo type(<time>))', where 'data-foo=10ms' should be valid for the property 'transition-duration'. expected "0.01s" but got "0s"
+FAIL CSS Values and Units Test: attr 55 assert_equals: Value 'attr(data-foo type(<time>), 30s)', where 'data-foo=10m' should be valid for the property 'transition-duration'. expected "30s" but got "0s"
+FAIL CSS Values and Units Test: attr 56 assert_equals: Value 'attr(data-foo type(<time>), calc(10s + 20s))', where 'data-foo=10m' should be valid for the property 'transition-duration'. expected "30s" but got "0s"
+PASS CSS Values and Units Test: attr 57
+FAIL CSS Values and Units Test: attr 58 assert_equals: Value 'attr(data-foo type(invalid), 10px)', where 'data-foo=0px' should be valid for the property 'width'. expected "10px" but got "784px"
+PASS CSS Values and Units Test: attr 59
+FAIL CSS Values and Units Test: attr 60 assert_equals: Value 'attr(data-foo type("<color>")', where 'data-foo=#ff0099aa' should be valid for the property 'background-color'. expected "rgba(255, 0, 153, 0.667)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 61 assert_equals: Value 'attr(data-foo type("invalid | blue")', where 'data-foo=blue' should be valid for the property 'background-color'. expected "rgb(0, 0, 255)" but got "rgba(0, 0, 0, 0)"
+FAIL CSS Values and Units Test: attr 62 assert_equals: Value 'attr(data-foo type("<length> | <percentage>")', where 'data-foo=10%' should be valid for the property 'width'. expected "78.390625px" but got "784px"
+PASS CSS Values and Units Test: attr 63
+FAIL CSS Values and Units Test: attr 64 assert_equals: Value 'attr(data-foo px)', where 'data-foo=10' should be valid for the property 'height'. expected "10px" but got "0px"
+FAIL CSS Values and Units Test: attr 65 assert_equals: Value 'calc(attr(data-foo px) + 1px)', where 'data-foo=10' should be valid for the property 'width'. expected "11px" but got "784px"
+FAIL CSS Values and Units Test: attr 66 assert_equals: Value 'attr(data-foo %)', where 'data-foo=10' should be valid for the property 'font-size'. expected "9px" but got "16px"
+FAIL CSS Values and Units Test: attr 67 assert_equals: Value 'attr(data-foo px) 11px', where 'data-foo=10' should be valid for the property '--x'. expected "10px 11px" but got "attr(data-foo px) 11px"
+PASS CSS Values and Units Test: attr 68
+FAIL CSS Values and Units Test: attr 69 assert_equals: Value 'attr(non-existent px, 3px)', where 'data-foo=10' should be valid for the property 'width'. expected "3px" but got "784px"
+FAIL CSS Values and Units Test: attr 70 assert_equals: Value 'attr(data-foo number)', where 'data-foo=10' should be valid for the property 'font-weight'. expected "10" but got "400"
+FAIL CSS Values and Units Test: attr 71 assert_equals: Value 'attr(data-foo type(<number>)) 11', where 'data-foo=10' should be valid for the property '--x'. expected "10 11" but got "attr(data-foo type(<number>)) 11"
+FAIL CSS Values and Units Test: attr 72 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo="hello"' should be valid for the property '--string'. expected "\"hello\"" but got "\"none\""
+FAIL CSS Values and Units Test: attr 73 assert_equals: Value 'attr(data-foo type(<string>+))', where 'data-foo="hello" "hi"' should be valid for the property '--string-list'. expected "\"hello\" \"hi\"" but got "\"none\""
+FAIL CSS Values and Units Test: attr 74 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=var(--length, 3px)' should be valid for the property 'width'. expected "10px" but got "784px"
+FAIL CSS Values and Units Test: attr 75 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=var(--x, 3)' should be valid for the property '--y'. expected "3" but got "attr(data-foo type(*))"
+FAIL CSS Values and Units Test: attr 76 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar, 11)' should be valid for the property '--y'. expected "\"3\"" but got "attr(data-foo type(*))"
+FAIL CSS Values and Units Test: attr 77 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar type(<number>), 11)' should be valid for the property '--y'. expected "3" but got "attr(data-foo type(*))"
+PASS CSS Values and Units Test: attr 78
+FAIL CSS Values and Units Test: attr 79 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar type(<number>), 11) var(--length, 3px)' should be valid for the property '--y'. expected "3 10px" but got "attr(data-foo type(*))"
+PASS CSS Values and Units Test: attr 80
+FAIL CSS Values and Units Test: attr 81 assert_equals: Value 'attr(data-foo type(*), anim)', where 'data-foo=attr(' should be valid for the property 'animation-name'. expected "anim" but got "none"
+FAIL CSS Values and Units Test: attr 82 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3em' should be valid for the property 'width'. expected "48px" but got "784px"
+FAIL CSS Values and Units Test: attr 83 assert_equals: Value 'attr(data-foo em)', where 'data-foo=3' should be valid for the property 'width'. expected "48px" but got "784px"
+FAIL CSS Values and Units Test: attr 84 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3ex' should be valid for the property 'width'. expected "21.53125px" but got "784px"
+FAIL CSS Values and Units Test: attr 85 assert_equals: Value 'attr(data-foo ex)', where 'data-foo=3' should be valid for the property 'width'. expected "21.53125px" but got "784px"
+FAIL CSS Values and Units Test: attr 86 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3cap' should be valid for the property 'width'. expected "31.75px" but got "784px"
+FAIL CSS Values and Units Test: attr 87 assert_equals: Value 'attr(data-foo cap)', where 'data-foo=3' should be valid for the property 'width'. expected "31.75px" but got "784px"
+FAIL CSS Values and Units Test: attr 88 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3ch' should be valid for the property 'width'. expected "24px" but got "784px"
+FAIL CSS Values and Units Test: attr 89 assert_equals: Value 'attr(data-foo ch)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
+FAIL CSS Values and Units Test: attr 90 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3ic' should be valid for the property 'width'. expected "48px" but got "784px"
+FAIL CSS Values and Units Test: attr 91 assert_equals: Value 'attr(data-foo ic)', where 'data-foo=3' should be valid for the property 'width'. expected "48px" but got "784px"
+FAIL CSS Values and Units Test: attr 92 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3rem' should be valid for the property 'width'. expected "48px" but got "784px"
+FAIL CSS Values and Units Test: attr 93 assert_equals: Value 'attr(data-foo rem)', where 'data-foo=3' should be valid for the property 'width'. expected "48px" but got "784px"
+FAIL CSS Values and Units Test: attr 94 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3lh' should be valid for the property 'width'. expected "54px" but got "784px"
+FAIL CSS Values and Units Test: attr 95 assert_equals: Value 'attr(data-foo lh)', where 'data-foo=3' should be valid for the property 'width'. expected "54px" but got "784px"
+FAIL CSS Values and Units Test: attr 96 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3rlh' should be valid for the property 'width'. expected "54px" but got "784px"
+FAIL CSS Values and Units Test: attr 97 assert_equals: Value 'attr(data-foo rlh)', where 'data-foo=3' should be valid for the property 'width'. expected "54px" but got "784px"
+FAIL CSS Values and Units Test: attr 98 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vw' should be valid for the property 'width'. expected "24px" but got "784px"
+FAIL CSS Values and Units Test: attr 99 assert_equals: Value 'attr(data-foo vw)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
+FAIL CSS Values and Units Test: attr 100 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vh' should be valid for the property 'width'. expected "18px" but got "784px"
+FAIL CSS Values and Units Test: attr 101 assert_equals: Value 'attr(data-foo vh)', where 'data-foo=3' should be valid for the property 'width'. expected "18px" but got "784px"
+FAIL CSS Values and Units Test: attr 102 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vi' should be valid for the property 'width'. expected "24px" but got "784px"
+FAIL CSS Values and Units Test: attr 103 assert_equals: Value 'attr(data-foo vi)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
+FAIL CSS Values and Units Test: attr 104 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vb' should be valid for the property 'width'. expected "18px" but got "784px"
+FAIL CSS Values and Units Test: attr 105 assert_equals: Value 'attr(data-foo vb)', where 'data-foo=3' should be valid for the property 'width'. expected "18px" but got "784px"
+FAIL CSS Values and Units Test: attr 106 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vmin' should be valid for the property 'width'. expected "18px" but got "784px"
+FAIL CSS Values and Units Test: attr 107 assert_equals: Value 'attr(data-foo vmin)', where 'data-foo=3' should be valid for the property 'width'. expected "18px" but got "784px"
+FAIL CSS Values and Units Test: attr 108 assert_equals: Value 'attr(data-foo type(<length>))', where 'data-foo=3vmax' should be valid for the property 'width'. expected "24px" but got "784px"
+FAIL CSS Values and Units Test: attr 109 assert_equals: Value 'attr(data-foo vmax)', where 'data-foo=3' should be valid for the property 'width'. expected "24px" but got "784px"
 PASS CSS Values and Units Test: attr 110
 PASS CSS Values and Units Test: attr 111
 PASS CSS Values and Units Test: attr 112
@@ -117,10 +118,10 @@ PASS CSS Values and Units Test: attr 114
 PASS CSS Values and Units Test: attr 115
 PASS CSS Values and Units Test: attr 116
 PASS CSS Values and Units Test: attr 117
-PASS CSS Values and Units Test: attr 118
-PASS CSS Values and Units Test: attr 119
-PASS CSS Values and Units Test: attr 120
-PASS CSS Values and Units Test: attr 121
+FAIL CSS Values and Units Test: attr 118 assert_equals: Value 'attr(data-foo type(<time>))', where 'data-foo=3s' should be valid for the property 'transition-duration'. expected "3s" but got "0s"
+FAIL CSS Values and Units Test: attr 119 assert_equals: Value 'attr(data-foo s)', where 'data-foo=3' should be valid for the property 'transition-duration'. expected "3s" but got "0s"
+FAIL CSS Values and Units Test: attr 120 assert_equals: Value 'attr(data-foo type(<time>))', where 'data-foo=3ms' should be valid for the property 'transition-duration'. expected "0.003s" but got "0s"
+FAIL CSS Values and Units Test: attr 121 assert_equals: Value 'attr(data-foo ms)', where 'data-foo=3' should be valid for the property 'transition-duration'. expected "0.003s" but got "0s"
 PASS CSS Values and Units Test: attr 122
 PASS CSS Values and Units Test: attr 123
 PASS CSS Values and Units Test: attr 124
@@ -138,4 +139,36 @@ PASS CSS Values and Units Test: attr 135
 PASS CSS Values and Units Test: attr 136
 PASS CSS Values and Units Test: attr 137
 PASS CSS Values and Units Test: attr 138
+PASS CSS Values and Units Test: attr 139
+PASS CSS Values and Units Test: attr 140
+PASS CSS Values and Units Test: attr 141
+PASS CSS Values and Units Test: attr 142
+PASS CSS Values and Units Test: attr 143
+PASS CSS Values and Units Test: attr 144
+PASS CSS Values and Units Test: attr 145
+PASS CSS Values and Units Test: attr 146
+PASS CSS Values and Units Test: attr 147
+PASS CSS Values and Units Test: attr 148
+PASS CSS Values and Units Test: attr 149
+PASS CSS Values and Units Test: attr 150
+PASS CSS Values and Units Test: attr 151
+PASS CSS Values and Units Test: attr 152
+PASS CSS Values and Units Test: attr 153
+PASS CSS Values and Units Test: attr 154
+PASS CSS Values and Units Test: attr 155
+PASS CSS Values and Units Test: attr 156
+PASS CSS Values and Units Test: attr 157
+PASS CSS Values and Units Test: attr 158
+PASS CSS Values and Units Test: attr 159
+PASS CSS Values and Units Test: attr 160
+PASS CSS Values and Units Test: attr 161
+PASS CSS Values and Units Test: attr 162
+PASS CSS Values and Units Test: attr 163
+PASS CSS Values and Units Test: attr 164
+PASS CSS Values and Units Test: attr 165
+PASS CSS Values and Units Test: attr 166
+PASS CSS Values and Units Test: attr 167
+PASS CSS Values and Units Test: attr 168
+PASS CSS Values and Units Test: attr 169
+PASS CSS Values and Units Test: attr 170
 

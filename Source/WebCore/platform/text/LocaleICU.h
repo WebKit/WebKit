@@ -34,6 +34,7 @@
 #include <unicode/udat.h>
 #include <unicode/unum.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,31 +43,33 @@ namespace WebCore {
 // We should use this class only for LocalizedNumberICU.cpp, LocalizedDateICU.cpp,
 // and LocalizedNumberICUTest.cpp.
 class LocaleICU final : public Locale {
+    WTF_MAKE_TZONE_ALLOCATED(LocaleICU);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocaleICU);
 public:
     explicit LocaleICU(const char*);
     virtual ~LocaleICU();
 
-    Locale::WritingDirection defaultWritingDirection() const override;
+    Locale::WritingDirection defaultWritingDirection() const final;
 
-    String dateFormat() override;
-    String monthFormat() override;
-    String shortMonthFormat() override;
-    String timeFormat() override;
-    String shortTimeFormat() override;
-    String dateTimeFormatWithSeconds() override;
-    String dateTimeFormatWithoutSeconds() override;
-    const Vector<String>& monthLabels() override;
-    const Vector<String>& shortMonthLabels() override;
-    const Vector<String>& standAloneMonthLabels() override;
-    const Vector<String>& shortStandAloneMonthLabels() override;
-    const Vector<String>& timeAMPMLabels() override;
+    String dateFormat() final;
+    String monthFormat() final;
+    String shortMonthFormat() final;
+    String timeFormat() final;
+    String shortTimeFormat() final;
+    String dateTimeFormatWithSeconds() final;
+    String dateTimeFormatWithoutSeconds() final;
+    const Vector<String>& NODELETE monthLabels() final;
+    const Vector<String>& shortMonthLabels() final;
+    const Vector<String>& standAloneMonthLabels() final;
+    const Vector<String>& shortStandAloneMonthLabels() final;
+    const Vector<String>& timeAMPMLabels() final;
 
 private:
 #if !UCONFIG_NO_FORMATTING
     String decimalSymbol(UNumberFormatSymbol);
     String decimalTextAttribute(UNumberFormatTextAttribute);
 #endif
-    void initializeLocaleData() override;
+    void initializeLocaleData() final;
 
     bool initializeShortDateFormat();
     UDateFormat* openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const;

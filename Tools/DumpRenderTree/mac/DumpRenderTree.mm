@@ -795,9 +795,9 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
 #else
     // Initialize the global UIViews, and set the key UIWindow to be painted.
     if (!gWebBrowserView) {
-        gWebBrowserView = WTFMove(webBrowserView);
-        gWebScrollView = WTFMove(scrollView);
-        gDrtWindow = WTFMove(drtWindow);
+        gWebBrowserView = WTF::move(webBrowserView);
+        gWebScrollView = WTF::move(scrollView);
+        gDrtWindow = WTF::move(drtWindow);
         [uiWindow makeKeyAndVisible];
         [uiWindow retain];
     }
@@ -912,7 +912,7 @@ static void setDefaultsToConsistentValuesForTesting()
     static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
 
-    NSString *libraryPath = libraryPathForDumpRenderTree();
+    RetainPtr libraryPath = libraryPathForDumpRenderTree();
 
     NSDictionary *dict = @{
         @"AppleKeyboardUIMode": @1,
@@ -951,10 +951,10 @@ static void setDefaultsToConsistentValuesForTesting()
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
 
     NSDictionary *processInstanceDefaults = @{
-        WebDatabaseDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"Databases"],
-        WebStorageDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
-        WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"],
-        WebKitResourceLoadStatisticsDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
+        WebDatabaseDirectoryDefaultsKey: [libraryPath.get() stringByAppendingPathComponent:@"Databases"],
+        WebStorageDirectoryDefaultsKey: [libraryPath.get() stringByAppendingPathComponent:@"LocalStorage"],
+        WebKitLocalCacheDefaultsKey: [libraryPath.get() stringByAppendingPathComponent:@"LocalCache"],
+        WebKitResourceLoadStatisticsDirectoryDefaultsKey: [libraryPath.get() stringByAppendingPathComponent:@"LocalStorage"],
     };
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:processInstanceDefaults forName:NSArgumentDomain];
@@ -1421,7 +1421,7 @@ static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
     // a CFString via fromUTF8WithLatin1Fallback().createCFString() which can be appended to
     // the result without any conversion.
     if (auto utf8Result = WTF::String(innerText).tryGetUTF8()) {
-        auto string = WTFMove(utf8Result.value());
+        auto string = WTF::move(utf8Result.value());
         [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(string.span()).createCFString().get()];
     } else
         [result appendString:@"\n"];
@@ -1581,7 +1581,7 @@ void setWaitToDumpWatchdog(RetainPtr<CFRunLoopTimerRef>&& timer)
 {
     ASSERT(timer);
     ASSERT(shouldSetWaitToDumpWatchdog());
-    waitToDumpWatchdog = WTFMove(timer);
+    waitToDumpWatchdog = WTF::move(timer);
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), waitToDumpWatchdog.get(), kCFRunLoopCommonModes);
 }
 
@@ -1622,7 +1622,7 @@ void dump()
 
     if (dumpTree) {
         RetainPtr<NSString> resultString;
-        NSData *resultData = nil;
+        RetainPtr<NSData> resultData;
         NSString *resultMimeType = @"text/plain";
 
         if ([[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"]) {
@@ -1659,10 +1659,10 @@ void dump()
         printf("DumpMalloc: %li\n", mallocStats.committedVMBytes);
 
         if (gTestRunner->dumpAsAudio())
-            printf("Content-Length: %lu\n", static_cast<unsigned long>([resultData length]));
+            printf("Content-Length: %lu\n", static_cast<unsigned long>([resultData.get() length]));
 
         if (resultData) {
-            fwrite([resultData bytes], 1, [resultData length], stdout);
+            fwrite([resultData.get() bytes], 1, [resultData.get() length], stdout);
 
             if (!gTestRunner->dumpAsText() && !gTestRunner->dumpDOMAsWebArchive() && !gTestRunner->dumpSourceAsWebArchive() && !gTestRunner->dumpAsAudio())
                 dumpFrameScrollPosition(mainFrame);
@@ -1690,11 +1690,6 @@ void dump()
 
     done = YES;
     CFRunLoopStop(CFRunLoopGetMain());
-}
-
-static bool shouldLogFrameLoadDelegates(std::span<const char> pathOrURL)
-{
-    return contains(pathOrURL, "loading/"_span) && !contains(pathOrURL, "://localhost"_span);
 }
 
 static bool shouldLogHistoryDelegates(std::span<const char> pathOrURL)
@@ -1890,7 +1885,7 @@ static WTR::TestOptions testOptionsForTest(const WTR::TestCommand& command)
     WTR::merge(features, WTR::hardcodedFeaturesBasedOnPathForTest(command));
     WTR::merge(features, WTR::featureDefaultsFromTestHeaderForTest(command, WTR::TestOptions::keyTypeMapping()));
 
-    return WTR::TestOptions { WTFMove(features) };
+    return WTR::TestOptions { WTF::move(features) };
 }
 
 static void runTest(const std::string& inputLine)
@@ -1908,7 +1903,7 @@ static void runTest(const std::string& inputLine)
     }
 
     NSString *testPath;
-    NSURL *url = computeTestURL(pathOrURLString, &testPath);
+    RetainPtr url = computeTestURL(pathOrURLString, &testPath);
     if (!url) {
         fprintf(stderr, "Failed to parse \"%s\" as a URL\n", pathOrURL.c_str());
         return;
@@ -1918,16 +1913,16 @@ static void runTest(const std::string& inputLine)
     // so we can emit a cleaner error message than we can otherwise from the resource loader delegate.
     if (!gUsingServerMode) {
         NSError *error = nil;
-        if (url.fileURL && ![url checkResourceIsReachableAndReturnError:&error]) {
+        if (url.get().fileURL && ![url.get() checkResourceIsReachableAndReturnError:&error]) {
             fprintf(stderr, "Failed: %s\n", error.localizedDescription.UTF8String);
             return;
         }
 
-        resourceLoadDelegate().get().mainResourceURL = [url _webkit_canonicalize_with_wtf];
+        resourceLoadDelegate().get().mainResourceURL = [url.get() _webkit_canonicalize_with_wtf];
     }
 
     if (!testPath)
-        testPath = [url absoluteString];
+        testPath = [url.get() absoluteString];
 
     auto message = makeString("CRASHING TEST: "_s, testPath);
     WTF::setCrashLogMessage(message.utf8().data());
@@ -1939,7 +1934,7 @@ static void runTest(const std::string& inputLine)
 
     mainFrameTestOptions = options;
 
-    const char* testURL([[url absoluteString] UTF8String]);
+    const char* testURL([[url.get() absoluteString] UTF8String]);
     gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
     gTestRunner->setAllowAnyHTTPSCertificateForAllowedHosts(allowAnyHTTPSCertificateForAllowedHosts);
     gTestRunner->setAllowedHosts(allowedHosts);
@@ -1982,8 +1977,6 @@ static void runTest(const std::string& inputLine)
     std::span pathOrURLSpan { pathOrURL };
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs.get());
-    if (shouldLogFrameLoadDelegates(pathOrURLSpan))
-        gTestRunner->setDumpFrameLoadCallbacks(true);
 
     if (shouldLogHistoryDelegates(pathOrURLSpan))
         [[mainFrame webView] setHistoryDelegate:historyDelegate().get()];
@@ -2008,6 +2001,7 @@ static void runTest(const std::string& inputLine)
 
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
+    lastButtonDown = 0;
 
     prevTestBFItem() = [[[mainFrame webView] backForwardList] currentItem];
 
@@ -2016,7 +2010,7 @@ static void runTest(const std::string& inputLine)
     workQueue.setFrozen(false);
 
     @autoreleasepool {
-        [mainFrame loadRequest:[NSURLRequest requestWithURL:url]];
+        [mainFrame loadRequest:[NSURLRequest requestWithURL:url.get()]];
     }
 
     while (!done) {

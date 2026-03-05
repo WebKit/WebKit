@@ -132,7 +132,7 @@ public:
     inline Iterator begin() const;
     static constexpr std::nullptr_t end() { return nullptr; }
 
-    inline ElementType* first() const;
+    inline RefPtr<ElementType> first() const;
 
 private:
     CheckedRef<const ContainerNode> m_root;
@@ -162,14 +162,14 @@ template<typename ElementType> InclusiveElementDescendantRange<ElementType>::Inc
 // DoubleElementDescendantRange
 
 template<typename ElementType> DoubleElementDescendantRange<ElementType>::DoubleElementDescendantRange(SingleAdapter&& first, SingleAdapter&& second)
-    : m_pair(WTFMove(first), WTFMove(second))
+    : m_pair(WTF::move(first), WTF::move(second))
 {
 }
 
 // DoubleElementDescendantIterator
 
 template<typename ElementType> DoubleElementDescendantIterator<ElementType>::DoubleElementDescendantIterator(SingleIterator&& first, SingleIterator&& second)
-    : m_pair(WTFMove(first), WTFMove(second))
+    : m_pair(WTF::move(first), WTF::move(second))
 {
 }
 

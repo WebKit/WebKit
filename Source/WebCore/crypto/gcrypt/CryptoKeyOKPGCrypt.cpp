@@ -92,7 +92,7 @@ static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerate
     auto d = mpiData(dMpi);
     if (!q || !d) [[unlikely]]
         return std::nullopt;
-    return std::make_pair(WTFMove(*q), WTFMove(*d));
+    return std::make_pair(WTF::move(*q), WTF::move(*d));
 }
 
 static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerateX25519Keys()
@@ -109,7 +109,7 @@ static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerate
     if (!q) [[unlikely]]
         return std::nullopt;
 
-    return std::make_pair(WTFMove(*q), WTFMove(*d));
+    return std::make_pair(WTF::move(*q), WTF::move(*d));
 }
 
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
@@ -139,11 +139,11 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
         return std::nullopt;
 
     bool isPublicKeyExtractable = true;
-    auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, WTFMove(publicKeyData), isPublicKeyExtractable, usages);
+    auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, WTF::move(publicKeyData), isPublicKeyExtractable, usages);
     ASSERT(publicKey);
-    auto privateKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Private, WTFMove(privateKeyData), extractable, usages);
+    auto privateKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Private, WTF::move(privateKeyData), extractable, usages);
     ASSERT(privateKey);
-    return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
+    return CryptoKeyPair { WTF::move(publicKey), WTF::move(privateKey) };
 }
 
 bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
@@ -283,7 +283,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
     if (!result)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(result.value());
+    return WTF::move(result.value());
 }
 
 // Per https://www.ietf.org/rfc/rfc5280.txt
@@ -455,7 +455,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
     if (!result)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(result.value());
+    return WTF::move(result.value());
 }
 
 String CryptoKeyOKP::generateJwkD() const

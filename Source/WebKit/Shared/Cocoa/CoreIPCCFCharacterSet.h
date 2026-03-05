@@ -42,7 +42,7 @@ public:
     }
 
     CoreIPCCFCharacterSet(RetainPtr<CFDataRef> characterSetData)
-        : m_cfCharacterSetData(WTFMove(characterSetData))
+        : m_cfCharacterSetData(WTF::move(characterSetData))
     {
         ASSERT(m_cfCharacterSetData);
     }

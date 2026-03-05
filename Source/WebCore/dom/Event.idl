@@ -27,7 +27,7 @@ typedef double DOMHighResTimeStamp;
     Exposed=*,
     JSCustomHeader,
 ] interface Event {
-    constructor([AtomString] DOMString type, optional EventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional EventInit eventInitDict = {});
 
     readonly attribute DOMString type;
     readonly attribute EventTarget? target;
@@ -56,6 +56,6 @@ typedef double DOMHighResTimeStamp;
     undefined initEvent([AtomString] DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // Historical.
 
     // IE extensions that may get standardized (https://github.com/whatwg/dom/issues/334).
-    [ImplementedAs=target] readonly attribute EventTarget srcElement;
+    [ImplementedAs=target] readonly attribute EventTarget? srcElement;
     [ImplementedAs=legacyReturnValue] attribute boolean returnValue;
 };

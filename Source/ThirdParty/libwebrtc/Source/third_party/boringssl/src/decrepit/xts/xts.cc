@@ -193,8 +193,8 @@ static int aes_xts_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
     return -1;
   }
   // key1 and key2 are used as an indicator both key and IV are set
-  xctx->xts.key1 = NULL;
-  xctx->xts.key2 = NULL;
+  xctx->xts.key1 = nullptr;
+  xctx->xts.key2 = nullptr;
   return 1;
 }
 

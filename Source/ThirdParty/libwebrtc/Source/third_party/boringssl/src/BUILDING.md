@@ -14,7 +14,7 @@ Unless otherwise noted, build tools must at most five years old, matching
 [Abseil guidelines](https://abseil.io/about/compatibility). If in doubt, use the
 most recent stable version of each tool.
 
-  * [CMake](https://cmake.org/download/) 3.12 or later is required.
+  * [CMake](https://cmake.org/download/) 3.22 or later is required.
 
   * Building with [Ninja](https://ninja-build.org/) instead of Make is
     recommended, because it makes builds faster. On Windows, CMake's Visual
@@ -74,8 +74,8 @@ themselves automatically.
 ### Building for Android
 
 It's possible to build BoringSSL with the Android NDK using CMake. Recent
-versions of the NDK include a CMake toolchain file which works with CMake 3.6.0
-or later. This has been tested with version r16b of the NDK.
+versions of the NDK include a CMake toolchain file. This has been tested with
+version r16b of the NDK.
 
 Unpack the Android NDK somewhere and export `ANDROID_NDK` to point to the
 directory. Then run CMake like this:

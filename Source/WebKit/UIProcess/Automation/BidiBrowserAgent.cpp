@@ -69,9 +69,9 @@ struct BidiBrowserAgent::BidiUserContextDeletionRecord {
     WTF_MAKE_NONCOPYABLE(BidiUserContextDeletionRecord);
 public:
     BidiUserContextDeletionRecord(std::unique_ptr<BidiUserContext>&& userContext, size_t pageCount, CommandCallback<void>&& callback)
-        : userContext(WTFMove(userContext))
+        : userContext(WTF::move(userContext))
         , pageCount(pageCount)
-        , callback(WTFMove(callback)) { }
+        , callback(WTF::move(callback)) { }
 
     std::unique_ptr<BidiUserContext> userContext;
     size_t pageCount;
@@ -136,7 +136,7 @@ CommandResult<String> BidiBrowserAgent::createUserContext()
 
     PAL::SessionID sessionID = userContext->dataStore().sessionID();
     String userContextID = toUserContextIDProtocolString(sessionID);
-    m_userContexts.set(userContextID, WTFMove(userContext));
+    m_userContexts.set(userContextID, WTF::move(userContext));
 
     return userContextID;
 }
@@ -171,7 +171,7 @@ void BidiBrowserAgent::removeUserContext(const String& userContextID, CommandCal
         return;
     }
 
-    m_userContextsPendingDeletion.set(userContextID, makeUnique<BidiUserContextDeletionRecord>(WTFMove(userContext), pageCount, WTFMove(callback)));
+    m_userContextsPendingDeletion.set(userContextID, makeUnique<BidiUserContextDeletionRecord>(WTF::move(userContext), pageCount, WTF::move(callback)));
 }
 
 #if !USE(GLIB)

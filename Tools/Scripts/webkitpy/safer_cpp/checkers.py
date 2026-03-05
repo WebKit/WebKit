@@ -85,6 +85,7 @@ class Checker(object):
 CHECKERS = [
     Checker('ForwardDeclChecker', 'Forward declared member or local variable or parameter'),
     Checker('MemoryUnsafeCastChecker', 'Unsafe cast'),
+    Checker('NoDeleteChecker', 'Incorrect [[clang::annotate_type("webkit.nodelete")]] annotation'),
     Checker('NoUncheckedPtrMemberChecker', 'Member variable is a raw-pointer/reference to checked-pointer capable type'),
     Checker('NoUncountedMemberChecker', 'Member variable is a raw-pointer/reference to reference-countable type'),
     Checker('NoUnretainedMemberChecker', 'Member variable is a raw-pointer/reference to retainable type'),

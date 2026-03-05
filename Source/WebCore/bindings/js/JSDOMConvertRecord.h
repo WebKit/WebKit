@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,25 +78,6 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
     }
 
 private:
-    // As temporary measure, IDL interfaces need to have their conversion result adjusted
-    // to properly form an inner parameter type. Once all IDL types have full support for
-    // using Ref for interfaces, this adjustment can be removed.
-    template<typename IDL>
-    struct ValueAdjuster {
-        static ValueType adjust(ConversionResult<IDL>&& result)
-        {
-            return result.releaseReturnValue();
-        }
-    };
-
-    template<typename T>
-    struct ValueAdjuster<IDLInterface<T>> {
-        static ValueType adjust(ConversionResult<IDLInterface<T>>&& result)
-        {
-            return Ref { *result.releaseReturnValue() };
-        }
-    };
-
     template<class... Args>
     static Result convertRecord(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, Args&& ...args)
     {
@@ -159,7 +141,7 @@ private:
                         auto addResult = resultMap.add(typedKey, result.size());
                         if (!addResult.isNewEntry) {
                             ASSERT(result[addResult.iterator->value].key == typedKey);
-                            result[addResult.iterator->value].value = ValueAdjuster<V>::adjust(WTFMove(typedValue));
+                            result[addResult.iterator->value].value = typedValue.releaseReturnValue();
                             continue;
                         }
                     }
@@ -167,7 +149,7 @@ private:
                     UNUSED_VARIABLE(resultMap);
                 
                 // 5. Otherwise, append to result a mapping (typedKey, typedValue).
-                result.append({ WTFMove(typedKey), ValueAdjuster<V>::adjust(WTFMove(typedValue)) });
+                result.append({ WTF::move(typedKey), typedValue.releaseReturnValue() });
             }
         }
 

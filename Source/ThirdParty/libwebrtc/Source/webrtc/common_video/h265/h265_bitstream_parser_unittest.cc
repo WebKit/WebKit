@@ -165,10 +165,9 @@ TEST(H265BitstreamParserTest, ReportsLastSliceQpFromShortTermReferenceSlices) {
 }
 
 TEST(H265BitstreamParserTest, PpsIdFromSlice) {
-  H265BitstreamParser h265_parser;
   std::optional<uint32_t> pps_id =
-      h265_parser.ParsePpsIdFromSliceSegmentLayerRbsp(kH265SliceChunk,
-                                                      H265::NaluType::kTrailR);
+      H265BitstreamParser::ParsePpsIdFromSliceSegmentLayerRbsp(
+          kH265SliceChunk, H265::NaluType::kTrailR);
   ASSERT_TRUE(pps_id);
   EXPECT_EQ(1u, *pps_id);
 }

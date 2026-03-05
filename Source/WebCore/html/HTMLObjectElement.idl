@@ -19,28 +19,20 @@
  */
 
 // https://html.spec.whatwg.org/multipage/iframe-embed-object.html#htmlobjectelement
-
 [
     Plugin,
     Exposed=Window
 ] interface HTMLObjectElement : HTMLElement {
-    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement form;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString code;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString archive;
-    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
-    [CEReactions=NotNeeded, ReflectURL] attribute USVString codeBase;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString codeType;
     [CEReactions=NotNeeded, ReflectURL] attribute USVString data;
-    [CEReactions=NotNeeded, Reflect] attribute boolean declare;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString height;
-    [CEReactions=NotNeeded, Reflect] attribute unsigned long hspace;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString standby;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
-    [CEReactions=NotNeeded, Reflect] attribute unsigned long vspace;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
     [CEReactions=NotNeeded, Reflect] attribute DOMString width;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString height;
+    [CheckSecurityForNode] readonly attribute Document? contentDocument;
+    readonly attribute WindowProxy? contentWindow;
+    [CheckSecurityForNode] Document? getSVGDocument();
+
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
@@ -48,8 +40,17 @@
     [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 
-    [CheckSecurityForNode] readonly attribute Document contentDocument;
-    readonly attribute WindowProxy contentWindow;
-
-    [CheckSecurityForNode] Document? getSVGDocument();
+    // https://html.spec.whatwg.org/multipage/obsolete.html#HTMLObjectElement-partial
+    // FIXME: Move these to their own IDL file HTMLObjectElement+Obsolete.idl.
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString archive;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString code;
+    [CEReactions=NotNeeded, Reflect] attribute boolean declare;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long hspace;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString standby;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long vspace;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString codeBase;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString codeType;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
 };

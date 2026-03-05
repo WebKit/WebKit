@@ -31,8 +31,7 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(COCOA_EVENT_LOOP)
-#include <dispatch/dispatch.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 #endif
 
 #if USE(GLIB)

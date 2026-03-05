@@ -25,6 +25,19 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class EmptyHTMLCollection;
+
+template<>
+struct CollectionClassTraits<EmptyHTMLCollection> {
+    static constexpr CollectionType collectionType = CollectionType::DocEmpty;
+};
+
+} // namespace WebCore
+
 #include "HTMLCollection.h"
 
 namespace WebCore {
@@ -47,3 +60,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(EmptyHTMLCollection)

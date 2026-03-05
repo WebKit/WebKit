@@ -12,6 +12,7 @@
 
 #include <cstddef>
 #include <map>
+#include <tuple>
 #include <utility>
 
 #include "absl/strings/string_view.h"
@@ -55,8 +56,8 @@ class InterleavedReassemblyStreams : public ReassemblyStreams {
         : unordered(unordered), stream_id(stream_id) {}
 
     friend bool operator<(FullStreamId a, FullStreamId b) {
-      return a.unordered < b.unordered ||
-             (!(a.unordered < b.unordered) && (a.stream_id < b.stream_id));
+      return std::tie(a.unordered, a.stream_id) <
+             std::tie(b.unordered, b.stream_id);
     }
   };
 

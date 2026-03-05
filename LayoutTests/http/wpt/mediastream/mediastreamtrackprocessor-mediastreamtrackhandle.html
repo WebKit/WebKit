@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    const worker = await createWorker(`
+        let processor;
+        let reader;
+        self.onmessage = async (event) => {
+            if (!processor) {
+                processor = new MediaStreamTrackProcessor({ track:event.data });
+                reader = processor.readable.getReader();
+            }
+
+            let data = await reader.read();
+            data.value.close();
+
+            data = await reader.read();
+            self.postMessage(data.value);
+            data.value.close();
+        }
+    `);
+
+    const handle = new MediaStreamTrackHandle(stream.getVideoTracks()[0]);
+
+    worker.postMessage(handle, [handle]);
+
+    const videoFrame1 = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    test.add_cleanup(() => videoFrame1.close());
+    assert_equals(videoFrame1.codedWidth, 640);
+    assert_equals(videoFrame1.codedHeight, 480);
+
+    await stream.getVideoTracks()[0].applyConstraints({ width: 320, height: 240 });
+    worker.postMessage({});
+    
+    const videoFrame2 = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    test.add_cleanup(() => videoFrame2.close());
+    assert_equals(videoFrame2.codedWidth, 320);
+    assert_equals(videoFrame2.codedHeight, 240);
+}, "Use MediaStreamTrackHandle for MediaStreamTrackProcessor");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = stream.getVideoTracks()[0];
+    test.add_cleanup(() => track.stop());
+
+    const worker = await createWorker(`
+        let processor;
+        let reader;
+        self.onmessage = async (event) => {
+            const processor = new MediaStreamTrackProcessor({ track:event.data });
+            const reader = processor.readable.getReader();
+            reader.closed.then(() => self.postMessage("closed"), error => self.postMessage("errored"));
+        }
+    `);
+
+    const clone = track.clone();
+    const handle1 = new MediaStreamTrackHandle(clone);
+    clone.stop();
+    worker.postMessage(handle1, [handle1]);
+    const result1 = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    assert_equals(result1, "closed", "result1");
+}, "Stopped track with MediaStreamTrackHandle should close MediaStreamTrackProcessor stream");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+    const track = stream.getVideoTracks()[0];
+    test.add_cleanup(() => track.stop());
+
+    const worker = await createWorker(`
+        let processor;
+        let reader;
+        self.onmessage = async (event) => {
+            if (!processor) {
+                processor = new MediaStreamTrackProcessor({ track:event.data });
+                reader = processor.readable.getReader();
+            }
+
+            const data = await reader.read();
+            self.postMessage(data.value);
+            data.value.close();
+        }
+    `);
+
+    const handle = new MediaStreamTrackHandle(track);
+
+    worker.postMessage(handle, [handle]);
+
+    const videoFrame1 = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    test.add_cleanup(() => videoFrame1.close());
+    assert_equals(videoFrame1.codedWidth, 640);
+    assert_equals(videoFrame1.codedHeight, 480);
+
+    track.enabled = false;
+    await stream.getVideoTracks()[0].applyConstraints({ width: 320, height: 240 });
+    await new Promise(resolve => test.step_timeout(resolve, 100));
+
+    worker.postMessage({});
+    const videoFrame2Promise = new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    await new Promise(resolve => test.step_timeout(resolve, 100));
+
+    await stream.getVideoTracks()[0].applyConstraints({ width: 640, height: 480 });
+    await new Promise(resolve => test.step_timeout(resolve, 100));
+    track.enabled = true;
+
+    const videoFrame2 = await videoFrame2Promise;
+    test.add_cleanup(() => videoFrame2.close());
+    assert_equals(videoFrame2.codedWidth, 640);
+    assert_equals(videoFrame2.codedHeight, 480);
+}, "MediaStreamTrack.enabled should be respected");
+
+</script>
+</body>
+</html>

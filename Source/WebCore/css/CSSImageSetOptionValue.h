@@ -44,7 +44,6 @@ public:
     CSSValue& image() const { return m_image; }
 
     CSSPrimitiveValue& resolution() const { return m_resolution; }
-    Ref<CSSPrimitiveValue> protectedResolution() const { return m_resolution; }
     void setResolution(Ref<CSSPrimitiveValue>&&);
 
     String type() const { return m_mimeType; }

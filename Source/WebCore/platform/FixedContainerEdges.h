@@ -45,12 +45,12 @@ public:
     FixedContainerEdges() = default;
     FixedContainerEdges(const FixedContainerEdges&) = default;
     FixedContainerEdges(RectEdges<FixedContainerEdge>&& edgeColors)
-        : colors { WTFMove(edgeColors) }
+        : colors { WTF::move(edgeColors) }
     {
     }
 
     FixedContainerEdges(FixedContainerEdges&& other)
-        : colors { WTFMove(other.colors) }
+        : colors { WTF::move(other.colors) }
     {
     }
 

@@ -138,18 +138,18 @@ PayloadTypePicker::PayloadTypePicker() {
   // Default audio codecs. Duplicates media/engine/payload_type_mapper.cc
   const MapTableEntry default_audio_mappings[] = {
       // Static payload type assignments according to RFC 3551.
-      {{kPcmuCodecName, 8000, 1}, 0},
-      {{"GSM", 8000, 1}, 3},
-      {{"G723", 8000, 1}, 4},
-      {{"DVI4", 8000, 1}, 5},
-      {{"DVI4", 16000, 1}, 6},
-      {{"LPC", 8000, 1}, 7},
-      {{kPcmaCodecName, 8000, 1}, 8},
-      {{kG722CodecName, 8000, 1}, 9},
-      {{kL16CodecName, 44100, 2}, 10},
-      {{kL16CodecName, 44100, 1}, 11},
-      {{"QCELP", 8000, 1}, 12},
-      {{kCnCodecName, 8000, 1}, 13},
+      {.format = {kPcmuCodecName, 8000, 1}, .payload_type = 0},
+      {.format = {"GSM", 8000, 1}, .payload_type = 3},
+      {.format = {"G723", 8000, 1}, .payload_type = 4},
+      {.format = {"DVI4", 8000, 1}, .payload_type = 5},
+      {.format = {"DVI4", 16000, 1}, .payload_type = 6},
+      {.format = {"LPC", 8000, 1}, .payload_type = 7},
+      {.format = {kPcmaCodecName, 8000, 1}, .payload_type = 8},
+      {.format = {kG722CodecName, 8000, 1}, .payload_type = 9},
+      {.format = {kL16CodecName, 44100, 2}, .payload_type = 10},
+      {.format = {kL16CodecName, 44100, 1}, .payload_type = 11},
+      {.format = {"QCELP", 8000, 1}, .payload_type = 12},
+      {.format = {kCnCodecName, 8000, 1}, .payload_type = 13},
       // RFC 4566 is a bit ambiguous on the contents of the "encoding
       // parameters" field, which, for audio, encodes the number of
       // channels. It is "optional and may be omitted if the number of
@@ -158,39 +158,39 @@ PayloadTypePicker::PayloadTypePicker() {
       // specify a value for this parameter for MPA, I've included both 0
       // and 1 here, to increase the chances it will be correctly used if
       // someone implements an MPEG audio encoder/decoder.
-      {{"MPA", 90000, 0}, 14},
-      {{"MPA", 90000, 1}, 14},
-      {{"G728", 8000, 1}, 15},
-      {{"DVI4", 11025, 1}, 16},
-      {{"DVI4", 22050, 1}, 17},
-      {{"G729", 8000, 1}, 18},
+      {.format = {"MPA", 90000, 0}, .payload_type = 14},
+      {.format = {"MPA", 90000, 1}, .payload_type = 14},
+      {.format = {"G728", 8000, 1}, .payload_type = 15},
+      {.format = {"DVI4", 11025, 1}, .payload_type = 16},
+      {.format = {"DVI4", 22050, 1}, .payload_type = 17},
+      {.format = {"G729", 8000, 1}, .payload_type = 18},
 
       // Payload type assignments currently used by WebRTC.
       // Includes data to reduce collisions (and thus reassignments)
       // TODO(bugs.webrtc.org/400630582): Delete this, it's only for test
       // stability.
-      {{"reserved-do-not-use", 1, 0}, 102},
-      {{kCnCodecName, 16000, 1}, 105},
-      {{kCnCodecName, 32000, 1}, 106},
-      {{kOpusCodecName,
-        48000,
-        2,
-        {{kCodecParamMinPTime, "10"},
-         {kCodecParamUseInbandFec, kParamValueTrue}}},
-       111},
+      {.format = {"reserved-do-not-use", 1, 0}, .payload_type = 102},
+      {.format = {kCnCodecName, 16000, 1}, .payload_type = 105},
+      {.format = {kCnCodecName, 32000, 1}, .payload_type = 106},
+      {.format = {kOpusCodecName,
+                  48000,
+                  2,
+                  {{kCodecParamMinPTime, "10"},
+                   {kCodecParamUseInbandFec, kParamValueTrue}}},
+       .payload_type = 111},
       // RED for opus is assigned in the lower range, starting at the top.
       // Note that the FMTP refers to the opus payload type.
-      {{kRedCodecName,
-        48000,
-        2,
-        {{kCodecParamNotInNameValueFormat, "111/111"}}},
-       63},
+      {.format = {kRedCodecName,
+                  48000,
+                  2,
+                  {{kCodecParamNotInNameValueFormat, "111/111"}}},
+       .payload_type = 63},
       // TODO(solenberg): Remove the hard coded 16k,32k,48k DTMF once we
       // assign payload types dynamically for send side as well.
-      {{kDtmfCodecName, 48000, 1}, 110},
-      {{kDtmfCodecName, 32000, 1}, 112},
-      {{kDtmfCodecName, 16000, 1}, 113},
-      {{kDtmfCodecName, 8000, 1}, 126}};
+      {.format = {kDtmfCodecName, 48000, 1}, .payload_type = 110},
+      {.format = {kDtmfCodecName, 32000, 1}, .payload_type = 112},
+      {.format = {kDtmfCodecName, 16000, 1}, .payload_type = 113},
+      {.format = {kDtmfCodecName, 8000, 1}, .payload_type = 126}};
   for (const MapTableEntry& entry : default_audio_mappings) {
     AddMapping(PayloadType(entry.payload_type), CreateAudioCodec(entry.format));
   }

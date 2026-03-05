@@ -7,6 +7,6 @@ layer at (0,0) size 800x46
         RenderTableSection (anonymous) at (3,3) size 574x24
           RenderTableRow {tr} at (0,2) size 574x20
             RenderTableCell {td} at (2,2) size 570x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 568x17
+              RenderText {#text} at (1,1) size 568x18
                 text run at (1,1) width 369: "This tests the 'style' attribute of TABLE. This table should "
                 text run at (369,1) width 200: "have a solid medium red border"

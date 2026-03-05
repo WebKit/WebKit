@@ -822,7 +822,7 @@ internet 6		: snmpv2		: SNMPv2
 # Documents refer to "internet 7" as "mail". This however leads to ambiguities
 # with RFC 2798, Section 9.1.3, where "mail" is defined as the short name for
 # rfc822Mailbox. The short name is therefore here left out for a reason.
-# Subclasses of "mail", e.g. "MIME MHS" don't consitute a problem, as
+# Subclasses of "mail", e.g. "MIME MHS" don't constitute a problem, as
 # references are realized via long name "Mail" (with capital M).
 internet 7		:			: Mail
 
@@ -907,10 +907,16 @@ nist_hashalgs 3		: SHA512		: sha512
 nist_hashalgs 4		: SHA224		: sha224
 nist_hashalgs 6		: SHA512-256		: sha512-256
 
-# OIDs for dsa-with-sha224 and dsa-with-sha256
-!Alias dsa_with_sha2 nistAlgorithms 3
-dsa_with_sha2 1		: dsa_with_SHA224
-dsa_with_sha2 2		: dsa_with_SHA256
+!Alias sigAlgs nistAlgorithms 3
+sigAlgs 1		: dsa_with_SHA224
+sigAlgs 2		: dsa_with_SHA256
+sigAlgs 17		: id-ml-dsa-44		: ML-DSA-44
+sigAlgs 18		: id-ml-dsa-65		: ML-DSA-65
+sigAlgs 19		: id-ml-dsa-87		: ML-DSA-87
+
+!Alias nistKems nistAlgorithms 4
+nistKems 2 : id-alg-ml-kem-768  : ML-KEM-768
+nistKems 3 : id-alg-ml-kem-1024 : ML-KEM-1024
 
 # Hold instruction CRL entry extension
 !Cname hold-instruction-code
@@ -1335,9 +1341,6 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 # NIDs for post quantum hybrid KEMs in TLS (no corresponding OIDs).
  : X25519Kyber768Draft00
  : X25519MLKEM768
-
-# NIDs for post quantum (pure) KEMs in TLS (no corresponding OIDs).
- : MLKEM1024
 
 # See RFC 8410.
 1 3 101 110 : X25519

@@ -36,9 +36,9 @@ namespace WebCore {
 struct CaptureDeviceWithCapabilities;
 
 class InputDeviceInfo final : public MediaDeviceInfo {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InputDeviceInfo);
+    WTF_MAKE_TZONE_ALLOCATED(InputDeviceInfo);
 public:
-    static Ref<InputDeviceInfo> create(CaptureDeviceWithCapabilities&& device, String&& saltedDeviceId, String&& saltedGroupId) { return adoptRef(*new InputDeviceInfo(WTFMove(device), WTFMove(saltedDeviceId), WTFMove(saltedGroupId))); }
+    static Ref<InputDeviceInfo> create(CaptureDeviceWithCapabilities&& device, String&& saltedDeviceId, String&& saltedGroupId) { return adoptRef(*new InputDeviceInfo(WTF::move(device), WTF::move(saltedDeviceId), WTF::move(saltedGroupId))); }
 
     MediaTrackCapabilities getCapabilities() const;
 

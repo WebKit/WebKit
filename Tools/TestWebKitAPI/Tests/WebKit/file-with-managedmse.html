@@ -33,17 +33,21 @@
       function load(event)
       {
           source = new ManagedMediaSource();
-          source.addEventListener('sourceopen', sourceopen);
           video.src = URL.createObjectURL(source);
-      }
-
-      function sourceopen(event)
-      {
-          sourceBuffer = source.addSourceBuffer(isMP4Supported() ? 'video/mp4;codecs="avc1.4D4001,mp4a.40.2"' : isWebMVP9Supported() ? 'video/webm;codecs="vp9,opus"' : 'video/webm;codecs="opus"');
       }
 
       function startStreaming(event)
       {
+          if (source.readyState == "open") {
+              loadData();
+              return;
+          }
+          source.addEventListener('sourceopen', loadData);
+      }
+
+      function loadData()
+      {
+          sourceBuffer = source.addSourceBuffer(isMP4Supported() ? 'video/mp4;codecs="avc1.4D4001,mp4a.40.2"' : isWebMVP9Supported() ? 'video/webm;codecs="vp9,opus"' : 'video/webm;codecs="opus"');
           sourceBuffer.addEventListener('updateend', updateend);
           sourceBuffer.appendBuffer(request.response);
       }

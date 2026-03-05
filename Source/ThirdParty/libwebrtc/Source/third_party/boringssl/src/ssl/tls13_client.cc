@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <string.h>
 
+#include <algorithm>
 #include <utility>
 
 #include <openssl/bytestring.h>
@@ -252,7 +253,11 @@ static enum ssl_hs_wait_t do_read_hello_retry_request(SSL_HANDSHAKE *hs) {
   // The ECH extension, if present, was already parsed by
   // |check_ech_confirmation|.
   SSLExtension cookie(TLSEXT_TYPE_cookie),
-      key_share(TLSEXT_TYPE_key_share, !hs->key_share_bytes.empty()),
+      // If offering PAKE, we won't send key_share extensions and we should
+      // reject key_share from the peer. Otherwise, it is valid to have sent an
+      // empty key_share extension, and expect the HelloRetryRequest to contain
+      // a key_share.
+      key_share(TLSEXT_TYPE_key_share, !hs->pake_prover),
       supported_versions(TLSEXT_TYPE_supported_versions),
       ech_unused(TLSEXT_TYPE_encrypted_client_hello,
                  hs->selected_ech_config || hs->config->ech_grease_enabled);
@@ -285,8 +290,6 @@ static enum ssl_hs_wait_t do_read_hello_retry_request(SSL_HANDSHAKE *hs) {
   }
 
   if (key_share.present) {
-    // If offering PAKE, we won't send key_share extensions, in which case we
-    // would have rejected key_share from the peer.
     assert(!hs->pake_prover);
 
     uint16_t group_id;
@@ -306,8 +309,10 @@ static enum ssl_hs_wait_t do_read_hello_retry_request(SSL_HANDSHAKE *hs) {
 
     // Check that the HelloRetryRequest does not request a key share that was
     // provided in the initial ClientHello.
-    if (hs->key_shares[0]->GroupID() == group_id ||
-        (hs->key_shares[1] && hs->key_shares[1]->GroupID() == group_id)) {
+    if (std::find_if(hs->key_shares.begin(), hs->key_shares.end(),
+                     [group_id](const auto &hs_key_share) {
+                       return hs_key_share->GroupID() == group_id;
+                     }) != hs->key_shares.end()) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
       OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_CURVE);
       return ssl_hs_error;
@@ -426,7 +431,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
       ssl_session_get_type(ssl->session.get()) ==
           SSLSessionType::kPreSharedKey &&
       ssl->s3->ech_status != ssl_ech_rejected;
-  SSLExtension key_share(TLSEXT_TYPE_key_share, hs->key_shares[0] != nullptr),
+  SSLExtension key_share(TLSEXT_TYPE_key_share, !hs->key_shares.empty()),
       pake_share(TLSEXT_TYPE_pake, hs->pake_prover != nullptr),
       pre_shared_key(TLSEXT_TYPE_pre_shared_key, pre_shared_key_allowed),
       supported_versions(TLSEXT_TYPE_supported_versions);
@@ -519,7 +524,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
       return ssl_hs_error;
     }
-    ssl_set_session(ssl, NULL);
+    ssl_set_session(ssl, nullptr);
 
     // Resumption incorporates fresh key material, so refresh the timeout.
     ssl_session_renew_timeout(ssl, hs->new_session.get(),
@@ -1144,7 +1149,7 @@ bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg) {
   }
 
   if ((ssl->session_ctx->session_cache_mode & SSL_SESS_CACHE_CLIENT) &&
-      ssl->session_ctx->new_session_cb != NULL &&
+      ssl->session_ctx->new_session_cb != nullptr &&
       ssl->session_ctx->new_session_cb(ssl, session.get())) {
     // |new_session_cb|'s return value signals that it took ownership.
     session.release();

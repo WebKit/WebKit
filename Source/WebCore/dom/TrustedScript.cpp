@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TrustedScript);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TrustedScript);
 
 Ref<TrustedScript> TrustedScript::create(const String& data)
 {

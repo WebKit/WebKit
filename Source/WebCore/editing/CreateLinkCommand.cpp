@@ -33,7 +33,7 @@
 namespace WebCore {
 
 CreateLinkCommand::CreateLinkCommand(Ref<Document>&& document, const String& url)
-    : CompositeEditCommand(WTFMove(document))
+    : CompositeEditCommand(WTF::move(document))
     , m_url(url)
 {
 }
@@ -48,7 +48,7 @@ void CreateLinkCommand::doApply()
     anchorElement->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, AtomString { m_url });
 
     if (endingSelection().isRange())
-        applyStyledElement(WTFMove(anchorElement));
+        applyStyledElement(WTF::move(anchorElement));
     else {
         insertNodeAt(anchorElement.copyRef(), endingSelection().start());
         appendNode(Text::create(document, String { m_url }), anchorElement.copyRef());

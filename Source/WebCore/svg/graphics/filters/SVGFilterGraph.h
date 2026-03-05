@@ -61,7 +61,7 @@ public:
 
     void setNodeInputs(NodeType& node, NodeVector&& inputs)
     {
-        m_nodeInputs.set({ node }, WTFMove(inputs));
+        m_nodeInputs.set({ node }, WTF::move(inputs));
     }
 
     NodeVector getNodeInputs(NodeType& node) const

@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 507x17
+        RenderText {#text} at (0,0) size 507x18
           text run at (0,0) width 283: "This tests cut/paste inside an editable iframe. "
           text run at (283,0) width 224: "You should see 'foo bar baz' below."
       RenderBlock (anonymous) at (0,34) size 784x154
@@ -30,6 +30,6 @@ layer at (0,0) size 800x600
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
-                RenderText {#text} at (0,0) size 71x17
+                RenderText {#text} at (0,0) size 71x18
                   text run at (0,0) width 71: "foo bar baz"
         RenderText {#text} at (0,0) size 0x0

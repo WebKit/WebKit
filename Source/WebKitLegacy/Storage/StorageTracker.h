@@ -60,7 +60,7 @@ public:
     
     void cancelDeletingOrigin(const String& originIdentifier);
     
-    bool isActive();
+    bool isActive() const { return m_isActive; }
 
     Seconds storageDatabaseIdleInterval() { return m_StorageDatabaseIdleInterval; }
     void setStorageDatabaseIdleInterval(Seconds interval) { m_StorageDatabaseIdleInterval = interval; }

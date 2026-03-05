@@ -28,6 +28,24 @@
             }, 0);
         }
 
+        function seeked() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("seeked");
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        function seekTo(time) {
+            document.querySelector("video").currentTime = time;
+        }
+
+        function setLoop(loop) {
+            document.querySelector("video").loop = loop;
+        }
+
         function mousedown() {
             document.querySelector("video").muted = true;
         }
@@ -37,18 +55,42 @@
             return document.querySelector("video");
         }
 
+        function play() {
+            document.querySelector("video").play();
+        }
+
         function pause() {
             document.querySelector("video").pause();
         }
 
         function stopped() {
             setTimeout(function() {
-               try {
+                try {
                     window.webkit.messageHandlers.testHandler.postMessage("paused");
-               } catch(e) {
-                   console.debug(`error: ${e}`);
-               }
-           }, 0);
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        function handleEnded() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("ended");
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        function canplaythrough() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("canplaythrough");
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
         }
 
         function setMediaSessionMetadata() {
@@ -76,7 +118,9 @@
     </script>
 </head>
 <body>
-    <video autoplay title="foo" onmousedown=mousedown() onplaying=playing() onpause=stopped()><source src="large-video-with-audio.mp4"></video>
+    <video autoplay title="foo" onmousedown=mousedown() onplaying=playing() onpause=stopped() onseeked=seeked() onended=handleEnded() oncanplaythrough=canplaythrough()>
+        <source src="large-video-with-audio.mp4">
+    </video>
     <button onclick="console.log(removeVideoElement())">Stop!</button>
 </body>
 <html>

@@ -29,8 +29,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43, 42, 41]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43, 42, 41]));
   assert.sameValue(sample.includes(42), true, "includes(42)");
   assert.sameValue(sample.includes(43), true, "includes(43)");
   assert.sameValue(sample.includes(43, 1), true, "includes(43, 1)");

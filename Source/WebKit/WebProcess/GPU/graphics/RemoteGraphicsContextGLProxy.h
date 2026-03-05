@@ -86,6 +86,7 @@ public:
     GCGLErrorCodeSet getErrors() final;
 #if ENABLE(VIDEO)
     bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type , bool premultiplyAlpha, bool flipY) final;
+    RefPtr<WebCore::Image> videoFrameToImage(WebCore::VideoFrame&) final;
 #endif
 
     void simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting) final;
@@ -373,7 +374,7 @@ public:
 #endif
     // End of list used by generate-gpup-webgl script.
 
-    static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
+    static bool NODELETE handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
 
 protected:
     explicit RemoteGraphicsContextGLProxy(const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendProxy&);
@@ -382,14 +383,14 @@ protected:
     void markContextLost();
 
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Error send(T&& message)
+    [[nodiscard]] IPC::Error send(T&& message)
     {
-        return protectedStreamConnection()->send(std::forward<T>(message), m_identifier);
+        return protect(m_streamConnection)->send(std::forward<T>(message), m_identifier);
     }
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    [[nodiscard]] IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return protectedStreamConnection()->sendSync(std::forward<T>(message), m_identifier);
+        return protect(m_streamConnection)->sendSync(std::forward<T>(message), m_identifier);
     }
 
     RemoteGraphicsContextGLIdentifier m_identifier { RemoteGraphicsContextGLIdentifier::generate() };
@@ -403,16 +404,11 @@ private:
     void wasLost();
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, CString&&);
 
-    void initialize(const RemoteGraphicsContextGLInitializationState&);
+    void NODELETE initialize(const RemoteGraphicsContextGLInitializationState&);
     void waitUntilInitialized();
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
-    uint32_t createObjectName();
-
-#if ENABLE(VIDEO)
-    RefPtr<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy() const;
-#endif
-    RefPtr<IPC::StreamClientConnection> protectedStreamConnection() const { return m_streamConnection; }
+    uint32_t NODELETE createObjectName();
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only main thread use.
     RefPtr<IPC::StreamClientConnection> m_streamConnection;

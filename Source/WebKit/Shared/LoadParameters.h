@@ -90,12 +90,13 @@ struct LoadParameters {
     std::optional<double> dataDetectionReferenceDate;
 #endif
     bool isRequestFromClientOrUserInput { false };
-    bool isPerformingHTTPFallback { false };
+    WebCore::NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior { WebCore::NavigationUpgradeToHTTPSBehavior::BasedOnPolicy };
     bool isHandledByAboutSchemeHandler { false };
 
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
     uint64_t requiredCookiesVersion { 0 };
     std::optional<WebCore::NavigationRequester> requester;
+    std::optional<WebCore::ResourceRequest> originalRequest;
 };
 
 } // namespace WebKit

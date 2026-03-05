@@ -7,7 +7,7 @@ esid: sec-%typedarray%.prototype.set-typedarray-offset
 description: >
   Set values from different instances using the same buffer and same
   constructor. srcBuffer values are cached.
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, SharedArrayBuffer, TypedArray]
 ---*/
 
@@ -46,4 +46,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   result = sample.set(src, 2);
   assert(compareArray(sample, [1n, 2n, 1n, 2n]), "offset: 2, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
-});
+}, null, ["passthrough"]);

@@ -133,12 +133,12 @@ InspectorFrontendAPIDispatcher::EvaluationResult InspectorFrontendAPIDispatcher:
     if (m_suspended)
         return makeUnexpected(EvaluationError::ExecutionSuspended);
 
-    return evaluateExpression(expressionForEvaluatingCommand(command, WTFMove(arguments)));
+    return evaluateExpression(expressionForEvaluatingCommand(command, WTF::move(arguments)));
 }
 
 void InspectorFrontendAPIDispatcher::dispatchCommandWithResultAsync(const String& command, Vector<Ref<JSON::Value>>&& arguments, EvaluationResultHandler&& resultHandler)
 {
-    evaluateOrQueueExpression(expressionForEvaluatingCommand(command, WTFMove(arguments)), WTFMove(resultHandler));
+    evaluateOrQueueExpression(expressionForEvaluatingCommand(command, WTF::move(arguments)), WTF::move(resultHandler));
 }
 
 void InspectorFrontendAPIDispatcher::dispatchMessageAsync(const String& message)
@@ -163,7 +163,7 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
         suspend(UnsuspendSoon::Yes);
 
     if (!m_frontendLoaded || m_suspended) {
-        m_queuedEvaluations.append(std::make_pair(expression, WTFMove(optionalResultHandler)));
+        m_queuedEvaluations.append(std::make_pair(expression, WTF::move(optionalResultHandler)));
         return;
     }
 
@@ -193,7 +193,7 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
 
     // If the result is a promise, call the result handler when the promise settles.
     Ref<DOMPromise> promise = DOMPromise::create(*globalObject, *castedPromise);
-    m_pendingResponses.set(promise.copyRef(), WTFMove(optionalResultHandler));
+    m_pendingResponses.set(promise.copyRef(), WTF::move(optionalResultHandler));
     auto isRegistered = promise->whenSettled([promise = promise.copyRef(), weakThis = WeakPtr { *this }] {
         // If `this` is cleared or the responses map is empty, then the promise settled
         // beyond the time when we care about its result. Ignore late-settled promises.
@@ -225,7 +225,7 @@ void InspectorFrontendAPIDispatcher::invalidateQueuedExpressions()
 {
     auto queuedEvaluations = std::exchange(m_queuedEvaluations, { });
     for (auto& pair : queuedEvaluations) {
-        auto resultHandler = WTFMove(pair.second);
+        auto resultHandler = WTF::move(pair.second);
         if (resultHandler)
             resultHandler(makeUnexpected(EvaluationError::ContextDestroyed));
     }
@@ -253,7 +253,7 @@ void InspectorFrontendAPIDispatcher::evaluateQueuedExpressions()
     auto queuedEvaluations = std::exchange(m_queuedEvaluations, { });
     for (auto& pair : queuedEvaluations) {
         auto result = evaluateExpression(pair.first);
-        if (auto resultHandler = WTFMove(pair.second))
+        if (auto resultHandler = WTF::move(pair.second))
             resultHandler(result);
     }
 }

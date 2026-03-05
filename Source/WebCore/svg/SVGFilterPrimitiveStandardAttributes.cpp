@@ -37,10 +37,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFilterPrimitiveStandardAttributes);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFilterPrimitiveStandardAttributes);
 
 SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGElement(tagName, document, WTFMove(propertyRegistry))
+    : SVGElement(tagName, document, WTF::move(propertyRegistry))
 {
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
@@ -131,12 +131,12 @@ void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRepaint()
         return;
 
     if (auto* filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
-        filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect.get());
+        filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect);
         return;
     }
 
     if (auto* filterPrimitiveRenderer = dynamicDowncast<LegacyRenderSVGResourceFilterPrimitive>(renderer.get())) {
-        filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect.get());
+        filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect);
         return;
     }
 
@@ -187,9 +187,9 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
 RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTFMove(style));
+        return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTF::move(style));
 
-    return createRenderer<LegacyRenderSVGResourceFilterPrimitive>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceFilterPrimitive>(*this, WTF::move(style));
 }
 
 bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const RenderStyle& style)

@@ -72,6 +72,7 @@ class EmulatedNetworkOutgoingStatsBuilder {
 class EmulatedNetworkIncomingStatsBuilder {
  public:
   explicit EmulatedNetworkIncomingStatsBuilder(
+      Clock& clock,
       EmulatedNetworkStatsGatheringMode stats_gathering_mode);
 
   void OnPacketDropped(DataSize packet_size);
@@ -85,6 +86,7 @@ class EmulatedNetworkIncomingStatsBuilder {
   EmulatedNetworkIncomingStats Build() const;
 
  private:
+  Clock& clock_;
   const EmulatedNetworkStatsGatheringMode stats_gathering_mode_;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
@@ -96,8 +98,10 @@ class EmulatedNetworkIncomingStatsBuilder {
 class EmulatedNetworkStatsBuilder {
  public:
   explicit EmulatedNetworkStatsBuilder(
+      Clock& clock,
       EmulatedNetworkStatsGatheringMode stats_gathering_mode);
   explicit EmulatedNetworkStatsBuilder(
+      Clock& clock,
       IPAddress local_ip,
       EmulatedNetworkStatsGatheringMode stats_gathering_mode);
 
@@ -113,6 +117,7 @@ class EmulatedNetworkStatsBuilder {
   EmulatedNetworkStats Build() const;
 
  private:
+  Clock& clock_;
   const EmulatedNetworkStatsGatheringMode stats_gathering_mode_;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
@@ -129,6 +134,7 @@ class EmulatedNetworkStatsBuilder {
 class EmulatedNetworkNodeStatsBuilder {
  public:
   explicit EmulatedNetworkNodeStatsBuilder(
+      Clock& clock,
       EmulatedNetworkStatsGatheringMode stats_gathering_mode);
 
   void AddPacketTransportTime(TimeDelta time, size_t packet_size);
@@ -138,6 +144,7 @@ class EmulatedNetworkNodeStatsBuilder {
   EmulatedNetworkNodeStats Build() const;
 
  private:
+  Clock& clock_;
   const EmulatedNetworkStatsGatheringMode stats_gathering_mode_;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
@@ -379,7 +386,8 @@ class EmulatedRoute {
 // This object is immutable and so thread safe.
 class EndpointsContainer {
  public:
-  EndpointsContainer(const std::vector<EmulatedEndpointImpl*>& endpoints,
+  EndpointsContainer(Clock* clock,
+                     const std::vector<EmulatedEndpointImpl*>& endpoints,
                      EmulatedNetworkStatsGatheringMode stats_gathering_mode);
 
   EmulatedEndpointImpl* LookupByLocalAddress(const IPAddress& local_ip) const;
@@ -391,6 +399,7 @@ class EndpointsContainer {
   EmulatedNetworkStats GetStats() const;
 
  private:
+  Clock* const clock_;
   const std::vector<EmulatedEndpointImpl*> endpoints_;
   const EmulatedNetworkStatsGatheringMode stats_gathering_mode_;
 };

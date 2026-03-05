@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicComponentTransferFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Opacity;
@@ -36,10 +38,49 @@ struct Opacity;
 
 namespace Style {
 
-class BuilderState;
+// opacity() = opacity( [ <number [0,1(clamp upper)] > | <percentage [0,100(clamp upper)]> ]?@(default=1) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-opacity
+struct OpacityParameters {
+    using Parameter = Number<CSS::ClosedUnitRangeClampUpper>;
 
-CSS::Opacity toCSSOpacity(Ref<BasicComponentTransferFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Opacity&, const BuilderState&);
+    Parameter value;
+
+    static OpacityParameters passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return true; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value == 1; }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const OpacityParameters&) const = default;
+};
+using OpacityFunction = FunctionNotation<CSSValueOpacity, OpacityParameters>;
+DEFINE_TYPE_WRAPPER_GET(OpacityParameters, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<OpacityParameters> { auto operator()(const OpacityParameters&, const RenderStyle&) -> CSS::Opacity; };
+template<> struct ToStyle<CSS::Opacity> { auto operator()(const CSS::Opacity&, const BuilderState&) -> OpacityParameters; };
+
+// MARK: - Blending
+
+template<> struct Blending<OpacityParameters> {
+    auto blend(const OpacityParameters&, const OpacityParameters&, const BlendingContext&) -> OpacityParameters;
+};
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<OpacityParameters, Ref<FilterEffect>> { auto operator()(const OpacityParameters&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<OpacityParameters> { auto operator()(const OpacityParameters&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::OpacityParameters, 1)

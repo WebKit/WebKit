@@ -45,9 +45,4 @@ inline HTMLMediaElement& RenderMedia::mediaElement() const
     return downcast<HTMLMediaElement>(nodeForNonAnonymous());
 }
 
-inline Ref<HTMLMediaElement> RenderMedia::protectedMediaElement() const
-{
-    return mediaElement();
-}
-
 }

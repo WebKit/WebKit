@@ -30,8 +30,11 @@
 #include "ExceptionOr.h"
 #include "PlatformXR.h"
 #include <wtf/Forward.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -41,16 +44,17 @@ class WebXRPose;
 class WebXRSpace;
 
 class WebXRHitTestResult : public RefCounted<WebXRHitTestResult> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRHitTestResult);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRHitTestResult);
 public:
-    static Ref<WebXRHitTestResult> create(WebXRFrame&, const PlatformXR::FrameData::HitTestResult&);
+    static Ref<WebXRHitTestResult> create(WebXRFrame&, WebXRSpace&, const PlatformXR::FrameData::HitTestResult&);
     ~WebXRHitTestResult();
     ExceptionOr<RefPtr<WebXRPose>> getPose(Document&, const WebXRSpace& baseSpace);
 
 private:
-    WebXRHitTestResult(WebXRFrame&, const PlatformXR::FrameData::HitTestResult&);
+    WebXRHitTestResult(WebXRFrame&, WebXRSpace&, const PlatformXR::FrameData::HitTestResult&);
 
     const Ref<WebXRFrame> m_frame;
+    Ref<WebXRSpace> m_space;
     PlatformXR::FrameData::HitTestResult m_result;
 };
 

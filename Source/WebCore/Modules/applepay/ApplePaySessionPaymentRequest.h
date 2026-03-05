@@ -68,28 +68,28 @@ public:
     unsigned version() const { return m_version; }
     void setVersion(unsigned version) { m_version = version; }
 
-    const String& countryCode() const { return m_countryCode; }
+    const String& countryCode() const LIFETIME_BOUND { return m_countryCode; }
     void setCountryCode(const String& countryCode) { m_countryCode = countryCode; }
 
-    const String& currencyCode() const { return m_currencyCode; }
+    const String& currencyCode() const LIFETIME_BOUND { return m_currencyCode; }
     void setCurrencyCode(const String& currencyCode) { m_currencyCode = currencyCode; }
 
     using ContactFields = ApplePaySessionPaymentRequestContactFields;
 
-    const ContactFields& requiredBillingContactFields() const { return m_requiredBillingContactFields; }
+    const ContactFields& requiredBillingContactFields() const LIFETIME_BOUND { return m_requiredBillingContactFields; }
     void setRequiredBillingContactFields(const ContactFields& requiredBillingContactFields) { m_requiredBillingContactFields = requiredBillingContactFields; }
 
-    const PaymentContact& billingContact() const { return m_billingContact; }
+    const PaymentContact& billingContact() const LIFETIME_BOUND { return m_billingContact; }
     void setBillingContact(const PaymentContact& billingContact) { m_billingContact = billingContact; }
 
-    const ContactFields& requiredShippingContactFields() const { return m_requiredShippingContactFields; }
+    const ContactFields& requiredShippingContactFields() const LIFETIME_BOUND { return m_requiredShippingContactFields; }
     void setRequiredShippingContactFields(const ContactFields& requiredShippingContactFields) { m_requiredShippingContactFields = requiredShippingContactFields; }
 
-    const PaymentContact& shippingContact() const { return m_shippingContact; }
+    const PaymentContact& shippingContact() const LIFETIME_BOUND { return m_shippingContact; }
     void setShippingContact(const PaymentContact& shippingContact) { m_shippingContact = shippingContact; }
 
-    const Vector<String>& supportedNetworks() const { return m_supportedNetworks; }
-    void setSupportedNetworks(const Vector<String>& supportedNetworks) { m_supportedNetworks = supportedNetworks; }
+    const Vector<String>& supportedNetworks() const LIFETIME_BOUND { return m_supportedNetworks; }
+    void setSupportedNetworks(Vector<String>&& supportedNetworks) { m_supportedNetworks = WTF::move(supportedNetworks); }
 
     struct MerchantCapabilities {
         bool supports3DS { false };
@@ -101,27 +101,27 @@ public:
 #endif
     };
 
-    const MerchantCapabilities& merchantCapabilities() const { return m_merchantCapabilities; }
+    const MerchantCapabilities& merchantCapabilities() const LIFETIME_BOUND { return m_merchantCapabilities; }
     void setMerchantCapabilities(const MerchantCapabilities& merchantCapabilities) { m_merchantCapabilities = merchantCapabilities; }
 
     using ShippingType = ApplePaySessionPaymentRequestShippingType;
     ShippingType shippingType() const { return m_shippingType; }
     void setShippingType(ShippingType shippingType) { m_shippingType = shippingType; }
 
-    const Vector<ApplePayShippingMethod>& shippingMethods() const { return m_shippingMethods; }
+    const Vector<ApplePayShippingMethod>& shippingMethods() const LIFETIME_BOUND { return m_shippingMethods; }
     void setShippingMethods(const Vector<ApplePayShippingMethod>& shippingMethods) { m_shippingMethods = shippingMethods; }
 
-    const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
+    const Vector<ApplePayLineItem>& lineItems() const LIFETIME_BOUND { return m_lineItems; }
     void setLineItems(const Vector<ApplePayLineItem>& lineItems) { m_lineItems = lineItems; }
 
-    const ApplePayLineItem& total() const { return m_total; };
+    const ApplePayLineItem& total() const LIFETIME_BOUND { return m_total; };
     void setTotal(const ApplePayLineItem& total) { m_total = total; }
 
-    const String& applicationData() const { return m_applicationData; }
+    const String& applicationData() const LIFETIME_BOUND { return m_applicationData; }
     void setApplicationData(const String& applicationData) { m_applicationData = applicationData; }
 
-    const Vector<String>& supportedCountries() const { return m_supportedCountries; }
-    void setSupportedCountries(Vector<String>&& supportedCountries) { m_supportedCountries = WTFMove(supportedCountries); }
+    const Vector<String>& supportedCountries() const LIFETIME_BOUND { return m_supportedCountries; }
+    void setSupportedCountries(Vector<String>&& supportedCountries) { m_supportedCountries = WTF::move(supportedCountries); }
 
     enum class Requester : bool {
         ApplePayJS,
@@ -132,56 +132,61 @@ public:
     void setRequester(Requester requester) { m_requester = requester; }
 
 #if HAVE(PASSKIT_INSTALLMENTS)
-    const PaymentInstallmentConfiguration& installmentConfiguration() const { return m_installmentConfiguration; }
-    void setInstallmentConfiguration(PaymentInstallmentConfiguration&& installmentConfiguration) { m_installmentConfiguration = WTFMove(installmentConfiguration); }
+    const PaymentInstallmentConfiguration& installmentConfiguration() const LIFETIME_BOUND { return m_installmentConfiguration; }
+    void setInstallmentConfiguration(PaymentInstallmentConfiguration&& installmentConfiguration) { m_installmentConfiguration = WTF::move(installmentConfiguration); }
 #endif
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     std::optional<bool> supportsCouponCode() const { return m_supportsCouponCode; }
     void setSupportsCouponCode(std::optional<bool> supportsCouponCode) { m_supportsCouponCode = supportsCouponCode; }
 
-    const String& couponCode() const { return m_couponCode; }
+    const String& couponCode() const LIFETIME_BOUND { return m_couponCode; }
     void setCouponCode(const String& couponCode) { m_couponCode = couponCode; }
 #endif
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
-    const std::optional<ApplePayShippingContactEditingMode>& shippingContactEditingMode() const { return m_shippingContactEditingMode; }
+    const std::optional<ApplePayShippingContactEditingMode>& shippingContactEditingMode() const LIFETIME_BOUND { return m_shippingContactEditingMode; }
     void setShippingContactEditingMode(const std::optional<ApplePayShippingContactEditingMode>& shippingContactEditingMode) { m_shippingContactEditingMode = shippingContactEditingMode; }
 #endif
 
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
-    const std::optional<ApplePayRecurringPaymentRequest>& recurringPaymentRequest() const { return m_recurringPaymentRequest; }
-    void setRecurringPaymentRequest(std::optional<ApplePayRecurringPaymentRequest>&& recurringPaymentRequest) { m_recurringPaymentRequest = WTFMove(recurringPaymentRequest); }
+    const std::optional<ApplePayRecurringPaymentRequest>& recurringPaymentRequest() const LIFETIME_BOUND { return m_recurringPaymentRequest; }
+    void setRecurringPaymentRequest(std::optional<ApplePayRecurringPaymentRequest>&& recurringPaymentRequest) { m_recurringPaymentRequest = WTF::move(recurringPaymentRequest); }
 #endif
 
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
-    const std::optional<ApplePayAutomaticReloadPaymentRequest>& automaticReloadPaymentRequest() const { return m_automaticReloadPaymentRequest; }
-    void setAutomaticReloadPaymentRequest(std::optional<ApplePayAutomaticReloadPaymentRequest>&& automaticReloadPaymentRequest) { m_automaticReloadPaymentRequest = WTFMove(automaticReloadPaymentRequest); }
+    const std::optional<ApplePayAutomaticReloadPaymentRequest>& automaticReloadPaymentRequest() const LIFETIME_BOUND { return m_automaticReloadPaymentRequest; }
+    void setAutomaticReloadPaymentRequest(std::optional<ApplePayAutomaticReloadPaymentRequest>&& automaticReloadPaymentRequest) { m_automaticReloadPaymentRequest = WTF::move(automaticReloadPaymentRequest); }
 #endif
 
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
-    const std::optional<Vector<ApplePayPaymentTokenContext>>& multiTokenContexts() const { return m_multiTokenContexts; }
-    void setMultiTokenContexts(std::optional<Vector<ApplePayPaymentTokenContext>>&& multiTokenContexts) { m_multiTokenContexts = WTFMove(multiTokenContexts); }
+    const std::optional<Vector<ApplePayPaymentTokenContext>>& multiTokenContexts() const LIFETIME_BOUND { return m_multiTokenContexts; }
+    void setMultiTokenContexts(std::optional<Vector<ApplePayPaymentTokenContext>>&& multiTokenContexts) { m_multiTokenContexts = WTF::move(multiTokenContexts); }
 #endif
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
-    const std::optional<ApplePayDeferredPaymentRequest>& deferredPaymentRequest() const { return m_deferredPaymentRequest; }
-    void setDeferredPaymentRequest(std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest) { m_deferredPaymentRequest = WTFMove(deferredPaymentRequest); }
+    const std::optional<ApplePayDeferredPaymentRequest>& deferredPaymentRequest() const LIFETIME_BOUND { return m_deferredPaymentRequest; }
+    void setDeferredPaymentRequest(std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest) { m_deferredPaymentRequest = WTF::move(deferredPaymentRequest); }
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    const std::optional<ApplePayDisbursementRequest>& disbursementRequest() const { return m_disbursementRequest; }
-    void setDisbursementRequest(std::optional<ApplePayDisbursementRequest>&& disbursementRequest) { m_disbursementRequest = WTFMove(disbursementRequest); }
+    const std::optional<ApplePayDisbursementRequest>& disbursementRequest() const LIFETIME_BOUND { return m_disbursementRequest; }
+    void setDisbursementRequest(std::optional<ApplePayDisbursementRequest>&& disbursementRequest) { m_disbursementRequest = WTF::move(disbursementRequest); }
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
-    const std::optional<ApplePayLaterAvailability>& applePayLaterAvailability() const { return m_applePayLaterAvailability; }
+    const std::optional<ApplePayLaterAvailability>& applePayLaterAvailability() const LIFETIME_BOUND { return m_applePayLaterAvailability; }
     void setApplePayLaterAvailability(const std::optional<ApplePayLaterAvailability>& applePayLaterAvailability) { m_applePayLaterAvailability = applePayLaterAvailability; }
 #endif
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-    const String& merchantCategoryCode() const { return m_merchantCategoryCode; }
+    const String& merchantCategoryCode() const LIFETIME_BOUND { return m_merchantCategoryCode; }
     void setMerchantCategoryCode(const String& merchantCategoryCode) { m_merchantCategoryCode = merchantCategoryCode; }
+#endif
+
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    std::optional<bool> isDelegatedRequest() const { return m_isDelegatedRequest; }
+    void setIsDelegatedRequest(const std::optional<bool> isDelegatedRequest) { m_isDelegatedRequest = isDelegatedRequest; }
 #endif
 
     ApplePaySessionPaymentRequest(String&& countryCode
@@ -230,52 +235,58 @@ public:
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
         , String&& merchantCategoryCode
 #endif
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+        , std::optional<bool> isDelegatedRequest
+#endif
         )
-            : m_countryCode(WTFMove(countryCode))
-            , m_currencyCode(WTFMove(currencyCode))
-            , m_requiredBillingContactFields(WTFMove(requiredBillingContactFields))
-            , m_billingContact(WTFMove(billingContact))
-            , m_requiredShippingContactFields(WTFMove(requiredShippingContactFields))
-            , m_shippingContact(WTFMove(shippingContact))
-            , m_supportedNetworks(WTFMove(supportedNetworks))
-            , m_merchantCapabilities(WTFMove(merchantCapabilities))
-            , m_shippingType(WTFMove(shippingType))
-            , m_shippingMethods(WTFMove(shippingMethods))
-            , m_lineItems(WTFMove(lineItems))
-            , m_total(WTFMove(total))
-            , m_applicationData(WTFMove(applicationData))
-            , m_supportedCountries(WTFMove(supportedCountries))
-            , m_requester(WTFMove(requester))
+            : m_countryCode(WTF::move(countryCode))
+            , m_currencyCode(WTF::move(currencyCode))
+            , m_requiredBillingContactFields(WTF::move(requiredBillingContactFields))
+            , m_billingContact(WTF::move(billingContact))
+            , m_requiredShippingContactFields(WTF::move(requiredShippingContactFields))
+            , m_shippingContact(WTF::move(shippingContact))
+            , m_supportedNetworks(WTF::move(supportedNetworks))
+            , m_merchantCapabilities(WTF::move(merchantCapabilities))
+            , m_shippingType(WTF::move(shippingType))
+            , m_shippingMethods(WTF::move(shippingMethods))
+            , m_lineItems(WTF::move(lineItems))
+            , m_total(WTF::move(total))
+            , m_applicationData(WTF::move(applicationData))
+            , m_supportedCountries(WTF::move(supportedCountries))
+            , m_requester(WTF::move(requester))
 #if HAVE(PASSKIT_INSTALLMENTS)
-            , m_installmentConfiguration(WTFMove(installmentConfiguration))
+            , m_installmentConfiguration(WTF::move(installmentConfiguration))
 #endif
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
-            , m_shippingContactEditingMode(WTFMove(shippingContactEditingMode))
+            , m_shippingContactEditingMode(WTF::move(shippingContactEditingMode))
 #endif
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-            , m_supportsCouponCode(WTFMove(supportsCouponCode))
-            , m_couponCode(WTFMove(couponCode))
+            , m_supportsCouponCode(WTF::move(supportsCouponCode))
+            , m_couponCode(WTF::move(couponCode))
 #endif
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
-            , m_recurringPaymentRequest(WTFMove(recurringPaymentRequest))
+            , m_recurringPaymentRequest(WTF::move(recurringPaymentRequest))
 #endif
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
-            , m_automaticReloadPaymentRequest(WTFMove(automaticReloadPaymentRequest))
+            , m_automaticReloadPaymentRequest(WTF::move(automaticReloadPaymentRequest))
 #endif
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
-            , m_multiTokenContexts(WTFMove(multiTokenContexts))
+            , m_multiTokenContexts(WTF::move(multiTokenContexts))
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
-            , m_deferredPaymentRequest(WTFMove(deferredPaymentRequest))
+            , m_deferredPaymentRequest(WTF::move(deferredPaymentRequest))
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-            , m_disbursementRequest(WTFMove(disbursementRequest))
+            , m_disbursementRequest(WTF::move(disbursementRequest))
 #endif
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
-            , m_applePayLaterAvailability(WTFMove(applePayLaterAvailability))
+            , m_applePayLaterAvailability(WTF::move(applePayLaterAvailability))
 #endif
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-            , m_merchantCategoryCode(WTFMove(merchantCategoryCode))
+            , m_merchantCategoryCode(WTF::move(merchantCategoryCode))
+#endif
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+            , m_isDelegatedRequest(isDelegatedRequest)
 #endif
             { }
 
@@ -344,6 +355,10 @@ private:
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
     String m_merchantCategoryCode;
+#endif
+
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    std::optional<bool> m_isDelegatedRequest;
 #endif
 };
 

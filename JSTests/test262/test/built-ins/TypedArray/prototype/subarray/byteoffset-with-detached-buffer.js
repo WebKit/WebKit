@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA) {
   };
 
   assert.sameValue(ta.subarray(1, end), result);
-});
+}, null, ["passthrough"]);

@@ -47,4 +47,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(result, true);
   assert.sameValue(ta[0], undefined);
-});
+}, null, ["passthrough"]);

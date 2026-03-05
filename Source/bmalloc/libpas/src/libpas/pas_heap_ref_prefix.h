@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#pragma once
+
+#include "pas_utils_prefix.h"
+
 __PAS_BEGIN_EXTERN_C;
 
 struct __pas_heap_ref;

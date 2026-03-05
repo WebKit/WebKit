@@ -39,14 +39,12 @@ bool PageDebugger::platformShouldContinueRunningEventLoopWhilePaused()
     //  - <https://webkit.org/b/117596> <rdar://problem/14133001>
     //  - <https://webkit.org/b/210177> <rdar://problem/61485723>
 
-#if ENABLE(WEBPROCESS_NSRUNLOOP)
     if (![NSApp isRunning]) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
         return true;
     }
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-#endif
 
     [NSApp setWindowsNeedUpdate:YES];
 

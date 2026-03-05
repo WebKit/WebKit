@@ -18,13 +18,14 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/transport/stun.h"
 #include "p2p/base/basic_packet_socket_factory.h"
-#include "p2p/base/port_interface.h"
 #include "p2p/test/turn_server.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/net_helper.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
@@ -60,14 +61,15 @@ class TestTurnRedirector : public TurnRedirectInterface {
 
 class TestTurnServer : public TurnAuthInterface {
  public:
-  TestTurnServer(Thread* thread,
+  TestTurnServer(const Environment& env,
+                 Thread* thread,
                  SocketFactory* socket_factory,
                  const SocketAddress& int_addr,
                  const SocketAddress& udp_ext_addr,
                  ProtocolType int_protocol = PROTO_UDP,
                  bool ignore_bad_cert = true,
                  absl::string_view common_name = "test turn server")
-      : server_(thread), socket_factory_(socket_factory) {
+      : env_(env), server_(env, thread), socket_factory_(socket_factory) {
     AddInternalSocket(int_addr, int_protocol, ignore_bad_cert, common_name);
     server_.SetExternalSocketFactory(
         new BasicPacketSocketFactory(socket_factory), udp_ext_addr);
@@ -104,12 +106,15 @@ class TestTurnServer : public TurnAuthInterface {
                          absl::string_view common_name = "test turn server") {
     RTC_DCHECK(thread_checker_.IsCurrent());
     if (proto == PROTO_UDP) {
-      server_.AddInternalSocket(
-          AsyncUDPSocket::Create(socket_factory_, int_addr), proto);
+      std::unique_ptr<AsyncUDPSocket> socket =
+          AsyncUDPSocket::Create(env_, int_addr, *socket_factory_);
+      socket->SetOption(Socket::OPT_RECV_ECN, 1);
+      server_.AddInternalSocket(std::move(socket), proto);
     } else if (proto == PROTO_TCP || proto == PROTO_TLS) {
       // For TCP we need to create a server socket which can listen for incoming
       // new connections.
-      Socket* socket = socket_factory_->CreateSocket(AF_INET, SOCK_STREAM);
+      std::unique_ptr<Socket> socket =
+          socket_factory_->Create(AF_INET, SOCK_STREAM);
       socket->Bind(int_addr);
       socket->Listen(5);
       if (proto == PROTO_TLS) {
@@ -123,10 +128,10 @@ class TestTurnServer : public TurnAuthInterface {
         ssl_adapter_factory->SetIdentity(
             SSLIdentity::Create(common_name, KeyParams()));
         ssl_adapter_factory->SetIgnoreBadCert(ignore_bad_cert);
-        server_.AddInternalServerSocket(socket, proto,
+        server_.AddInternalServerSocket(std::move(socket), proto,
                                         std::move(ssl_adapter_factory));
       } else {
-        server_.AddInternalServerSocket(socket, proto);
+        server_.AddInternalServerSocket(std::move(socket), proto);
       }
     } else {
       RTC_DCHECK_NOTREACHED() << "Unknown protocol type: " << proto;
@@ -158,6 +163,7 @@ class TestTurnServer : public TurnAuthInterface {
                                      std::string(username), key);
   }
 
+  const Environment env_;
   TurnServer server_;
   SocketFactory* socket_factory_;
   SequenceChecker thread_checker_;

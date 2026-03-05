@@ -268,21 +268,21 @@ struct Children {
     Children& operator=(Children&&);
     Children& operator=(Vector<Child>&&);
 
-    iterator begin();
-    iterator end();
-    reverse_iterator rbegin();
-    reverse_iterator rend();
+    iterator begin() LIFETIME_BOUND;
+    iterator end() LIFETIME_BOUND;
+    reverse_iterator rbegin() LIFETIME_BOUND;
+    reverse_iterator rend() LIFETIME_BOUND;
 
-    const_iterator begin() const;
-    const_iterator end() const;
-    const_reverse_iterator rbegin() const;
-    const_reverse_iterator rend() const;
+    const_iterator begin() const LIFETIME_BOUND;
+    const_iterator end() const LIFETIME_BOUND;
+    const_reverse_iterator rbegin() const LIFETIME_BOUND;
+    const_reverse_iterator rend() const LIFETIME_BOUND;
 
     bool isEmpty() const;
     size_t size() const;
 
-    Child& operator[](size_t i);
-    const Child& operator[](size_t i) const;
+    Child& operator[](size_t i) LIFETIME_BOUND;
+    const Child& operator[](size_t i) const LIFETIME_BOUND;
 
     bool operator==(const Children&) const = default;
 };
@@ -856,23 +856,23 @@ TextStream& operator<<(TextStream&, Tree);
 
 // Default implementation of ChildConstruction used for all indirect nodes.
 template<typename Op> struct ChildConstruction {
-    static Child make(Op&& op, Type type) { return Child { IndirectNode<Op> { type, makeUniqueRef<Op>(WTFMove(op)) } }; }
+    static Child make(Op&& op, Type type) { return Child { IndirectNode<Op> { type, makeUniqueRef<Op>(WTF::move(op)) } }; }
 };
 
 // Specialized implementation of ChildConstruction for leaf nodes, needed to avoid `makeUniqueRef`.
 template<Leaf T> struct ChildConstruction<T> {
-    static Child make(T&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(T&& op) { return Child { WTFMove(op) }; }
+    static Child make(T&& op, Type) { return Child { WTF::move(op) }; }
+    static Child make(T&& op) { return Child { WTF::move(op) }; }
 };
 
 template<typename Op> Child makeChild(Op op)
 {
-    return ChildConstruction<Op>::make(WTFMove(op));
+    return ChildConstruction<Op>::make(WTF::move(op));
 }
 
 template<typename Op> Child makeChild(Op op, Type type)
 {
-    return ChildConstruction<Op>::make(WTFMove(op), type);
+    return ChildConstruction<Op>::make(WTF::move(op), type);
 }
 
 // MARK: CSSCalc::Type Evaluation
@@ -884,16 +884,16 @@ template<typename T> inline Type getType(const IndirectNode<T>& root)
 }
 
 // Gets the Type representing a CanonicalDimension::Dimension.
-Type getType(CanonicalDimension::Dimension);
+Type NODELETE getType(CanonicalDimension::Dimension);
 
 // Gets the Type of the leaf node.
-Type getType(const Number&);
-Type getType(const Percentage&);
-Type getType(const NonCanonicalDimension&);
-Type getType(const CanonicalDimension&);
-Type getType(const Symbol&);
-Type getType(const SiblingCount&);
-Type getType(const SiblingIndex&);
+Type NODELETE getType(const Number&);
+Type NODELETE getType(const Percentage&);
+Type NODELETE getType(const NonCanonicalDimension&);
+Type NODELETE getType(const CanonicalDimension&);
+Type NODELETE getType(const Symbol&);
+Type NODELETE getType(const SiblingCount&);
+Type NODELETE getType(const SiblingIndex&);
 
 // Gets the Type of the child node.
 Type getType(const Child&);
@@ -971,22 +971,22 @@ Child makeNumeric(double, CSSUnitType);
 inline Sum add(Child&& a, Child&& b)
 {
     Vector<Child> sumChildren;
-    sumChildren.append(WTFMove(a));
-    sumChildren.append(WTFMove(b));
-    return Sum { .children = WTFMove(sumChildren) };
+    sumChildren.append(WTF::move(a));
+    sumChildren.append(WTF::move(b));
+    return Sum { .children = WTF::move(sumChildren) };
 }
 
 inline Product multiply(Child&& a, Child&& b)
 {
     Vector<Child> productChildren;
-    productChildren.append(WTFMove(a));
-    productChildren.append(WTFMove(b));
-    return Product { .children = WTFMove(productChildren) };
+    productChildren.append(WTF::move(a));
+    productChildren.append(WTF::move(b));
+    return Product { .children = WTF::move(productChildren) };
 }
 
 inline Sum subtract(Child&& a, Child&& b)
 {
-    return add(WTFMove(a), makeChild(Negate { .a = WTFMove(b) }, getType(b)));
+    return add(WTF::move(a), makeChild(Negate { .a = WTF::move(b) }, getType(b)));
 }
 
 inline Child makeChildWithValueBasedOn(double value, const Number&)
@@ -1231,7 +1231,7 @@ Child::Child(T&& value)
 // MARK: ChildOrNone Definition
 
 inline ChildOrNone::ChildOrNone(Child&& child)
-    : value(WTFMove(child))
+    : value(WTF::move(child))
 {
 }
 
@@ -1243,63 +1243,63 @@ inline ChildOrNone::ChildOrNone(CSS::Keyword::None none)
 // MARK: Children Definition
 
 inline Children::Children(Children&& other)
-    : value(WTFMove(other.value))
+    : value(WTF::move(other.value))
 {
 }
 
 inline Children::Children(Vector<Child>&& other)
-    : value(WTFMove(other))
+    : value(WTF::move(other))
 {
 }
 
 inline Children& Children::operator=(Children&& other)
 {
-    value = WTFMove(other.value);
+    value = WTF::move(other.value);
     return *this;
 }
 
 inline Children& Children::operator=(Vector<Child>&& other)
 {
-    value = WTFMove(other);
+    value = WTF::move(other);
     return *this;
 }
 
-inline Children::iterator Children::begin()
+inline Children::iterator Children::begin() LIFETIME_BOUND
 {
     return value.begin();
 }
 
-inline Children::iterator Children::end()
+inline Children::iterator Children::end() LIFETIME_BOUND
 {
     return value.end();
 }
 
-inline Children::reverse_iterator Children::rbegin()
+inline Children::reverse_iterator Children::rbegin() LIFETIME_BOUND
 {
     return value.rbegin();
 }
 
-inline Children::reverse_iterator Children::rend()
+inline Children::reverse_iterator Children::rend() LIFETIME_BOUND
 {
     return value.rend();
 }
 
-inline Children::const_iterator Children::begin() const
+inline Children::const_iterator Children::begin() const LIFETIME_BOUND
 {
     return value.begin();
 }
 
-inline Children::const_iterator Children::end() const
+inline Children::const_iterator Children::end() const LIFETIME_BOUND
 {
     return value.end();
 }
 
-inline Children::const_reverse_iterator Children::rbegin() const
+inline Children::const_reverse_iterator Children::rbegin() const LIFETIME_BOUND
 {
     return value.rbegin();
 }
 
-inline Children::const_reverse_iterator Children::rend() const
+inline Children::const_reverse_iterator Children::rend() const LIFETIME_BOUND
 {
     return value.rend();
 }
@@ -1314,12 +1314,12 @@ inline size_t Children::size() const
     return value.size();
 }
 
-inline Child& Children::operator[](size_t i)
+inline Child& Children::operator[](size_t i) LIFETIME_BOUND
 {
     return value[i];
 }
 
-inline const Child& Children::operator[](size_t i) const
+inline const Child& Children::operator[](size_t i) const LIFETIME_BOUND
 {
     return value[i];
 }
@@ -1332,7 +1332,7 @@ inline AnchorSide::AnchorSide(CSSValueID valueID)
 }
 
 inline AnchorSide::AnchorSide(Child&& child)
-    : value(WTFMove(child))
+    : value(WTF::move(child))
 {
 }
 

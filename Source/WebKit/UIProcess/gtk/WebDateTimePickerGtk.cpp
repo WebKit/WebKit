@@ -125,7 +125,7 @@ void WebDateTimePickerGtk::didChooseDate()
 void WebDateTimePickerGtk::showDateTimePicker(WebCore::DateTimeChooserParameters&& params)
 {
     if (m_popover) {
-        update(WTFMove(params));
+        update(WTF::move(params));
         return;
     }
 
@@ -157,7 +157,7 @@ void WebDateTimePickerGtk::showDateTimePicker(WebCore::DateTimeChooserParameters
     gtk_widget_show(m_calendar);
 #endif
 
-    update(WTFMove(params));
+    update(WTF::move(params));
 
     gtk_popover_popup(GTK_POPOVER(m_popover));
 }

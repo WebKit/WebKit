@@ -81,9 +81,9 @@ void WebRTCMonitor::networksChanged(Vector<RTCNetwork>&& networkList, RTCNetwork
     WEBRTC_RELEASE_LOG("NetworksChanged");
 
     m_didReceiveNetworkList = true;
-    m_networkList = WTFMove(networkList);
-    m_ipv4 = WTFMove(ipv4);
-    m_ipv6 = WTFMove(ipv6);
+    m_networkList = WTF::move(networkList);
+    m_ipv4 = WTF::move(ipv4);
+    m_ipv6 = WTF::move(ipv6);
 
     for (Ref observer : m_observers)
         observer->networksChanged(m_networkList, m_ipv4, m_ipv6);

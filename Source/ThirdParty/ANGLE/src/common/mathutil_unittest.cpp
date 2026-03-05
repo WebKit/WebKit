@@ -253,6 +253,34 @@ TEST(MathUtilTest, CheckedRoundUpInvalid)
     ASSERT_FALSE(checkedLimit.IsValid());
 }
 
+// Test basic correctness of rx::CheckedRoundUpPow2
+TEST(MathUtilTest, CheckedRoundUpPow2)
+{
+    auto checkedValue = rx::CheckedRoundUpPow2(1u, 4u);
+    ASSERT_TRUE(checkedValue.IsValid());
+    EXPECT_EQ(4u, checkedValue.ValueOrDie());
+
+    checkedValue = rx::CheckedRoundUpPow2(4u, 4u);
+    ASSERT_TRUE(checkedValue.IsValid());
+    EXPECT_EQ(4u, checkedValue.ValueOrDie());
+}
+
+// Test that rounding up zero produces zero for rx::CheckedRoundUpPow2.
+TEST(MathUtilTest, CheckedRoundUpPow2Zero)
+{
+    auto checkedValue = rx::CheckedRoundUpPow2(0u, 4u);
+    ASSERT_TRUE(checkedValue.IsValid());
+    EXPECT_EQ(0u, checkedValue.ValueOrDie());
+}
+
+// Test out-of-bounds with rx::CheckedRoundUpPow2
+TEST(MathUtilTest, CheckedRoundUpPow2Invalid)
+{
+    auto limit        = std::numeric_limits<unsigned int>::max();
+    auto checkedValue = rx::CheckedRoundUpPow2(limit, 4u);
+    ASSERT_FALSE(checkedValue.IsValid());
+}
+
 // Test BitfieldReverse which reverses the order of the bits in an integer.
 TEST(MathUtilTest, BitfieldReverse)
 {

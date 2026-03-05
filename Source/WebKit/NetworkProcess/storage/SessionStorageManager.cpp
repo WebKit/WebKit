@@ -81,7 +81,7 @@ StorageAreaIdentifier SessionStorageManager::addStorageArea(Ref<MemoryStorageAre
     auto identifier = storageArea->identifier();
     m_registry->registerStorageArea(identifier, storageArea);
     m_storageAreasByNamespace.add(namespaceIdentifier, identifier);
-    m_storageAreas.add(identifier, WTFMove(storageArea));
+    m_storageAreas.add(identifier, WTF::move(storageArea));
 
     return identifier;
 }
@@ -155,7 +155,7 @@ bool SessionStorageManager::setStorageMap(StorageNamespaceIdentifier storageName
 
     bool succeeded = true;
     for (auto& [key, value] : storageMap) {
-        if (!storageArea->setItem({ }, { }, WTFMove(key), WTFMove(value), { }))
+        if (!storageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), { }))
             succeeded = false;
     }
 

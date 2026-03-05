@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<iframe id="testFrame" src="resources/empty-subframe.html"></iframe>
+<script>
+description("Validates that NavigateEvent.info remains valid, even after garbage collection");
+jsTestIsAsync = true;
+
+onload = () => {
+    testFrame.contentWindow.navigation.onnavigate = (_e) => {
+        e = _e;
+        gc();
+        shouldBeEqualToString("e.info.foo0", "bar0");
+    };
+    testFrame.contentWindow.navigation.navigate("#1", { state: { foo1: "bar1" }, info: { foo0: "bar0" } }).committed.then(() => {
+        shouldBeEqualToString("testFrame.contentWindow.navigation.currentEntry.getState().foo1", "bar1");
+        gc();
+        setTimeout(() => {
+            gc();
+            shouldBeEqualToString("testFrame.contentWindow.navigation.currentEntry.getState().foo1", "bar1");
+
+            testFrame.contentWindow.navigation.onnavigate = (_e) => {
+                e = _e;
+                e.intercept();
+                gc();
+                shouldBeEqualToString("e.info.foo2", "bar2");
+                gc();
+                setTimeout(() => {
+                    gc();
+                    shouldBeEqualToString("e.info.foo2", "bar2");
+                    testFrame.contentWindow.navigation.onnavigate = (_e) => {
+                        e = _e;
+                        gc();
+                        shouldBeEqualToString("e.info.foo3", "bar3");
+                        setTimeout(() => {
+                            gc();
+                            shouldBeEqualToString("e.info.foo3", "bar3");
+                            finishJSTest();
+                        }, 0);
+                    };
+                    testFrame.contentWindow.navigation.back({ info: { foo3: "bar3" }, state: undefined });
+                    gc();
+                }, 0);
+            };
+            testFrame.contentWindow.navigation.reload({ info: { foo2: "bar2" }, state: undefined });
+            gc();
+        }, 0);
+    });
+};
+</script>
+</body>
+</html>

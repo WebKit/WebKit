@@ -27,6 +27,20 @@
 
 namespace WebCore {
 
-enum class RouterSourceEnum : uint8_t { Cache, FetchEvent, Network };
+enum class RouterSourceEnum : uint8_t { Cache, FetchEvent, Network, RaceNetworkAndFetchHandler };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraitsForPersistence<WebCore::RouterSourceEnum> {
+    using values = EnumValues<
+        WebCore::RouterSourceEnum,
+        WebCore::RouterSourceEnum::Cache,
+        WebCore::RouterSourceEnum::FetchEvent,
+        WebCore::RouterSourceEnum::Network,
+        WebCore::RouterSourceEnum::RaceNetworkAndFetchHandler
+    >;
+};
+
+}

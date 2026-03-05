@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <cstdint>
+#include <wtf/ExportMacros.h>
+
 namespace WTF {
 
 WTF_EXPORT_PRIVATE size_t ramSize();

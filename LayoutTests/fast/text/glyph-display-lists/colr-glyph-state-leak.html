@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Test that COLR glyph display list replay doesn't leak state to subsequent text</title>
+<style>
+@font-face {
+    font-family: "Ahem COLR";
+    src: url("../resources/Ahem-COLR.ttf") format("truetype");
+}
+body {
+    font: 24px Ahem;
+    color: green;
+}
+h1 {
+    font: 48px Ahem COLR;
+}
+</style>
+<body>
+<h1>AAA</h1>
+<p>AAA</p>

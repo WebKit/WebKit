@@ -85,7 +85,7 @@ bool IndexValueEntry::contains(const IDBKeyData& key)
     return m_orderedKeys && m_orderedKeys->count(key);
 }
 
-const IDBKeyData* IndexValueEntry::getLowest() const
+const IDBKeyData* IndexValueEntry::getLowest() const LIFETIME_BOUND
 {
     if (m_unique)
         return m_key;
@@ -176,7 +176,7 @@ IndexValueEntry::Iterator& IndexValueEntry::Iterator::operator++()
     return *this;
 }
 
-IndexValueEntry::Iterator IndexValueEntry::begin()
+IndexValueEntry::Iterator IndexValueEntry::begin() LIFETIME_BOUND
 {
     if (m_unique) {
         ASSERT(m_key);
@@ -187,7 +187,7 @@ IndexValueEntry::Iterator IndexValueEntry::begin()
     return { *this, m_orderedKeys->begin() };
 }
 
-IndexValueEntry::Iterator IndexValueEntry::reverseBegin(CursorDuplicity duplicity)
+IndexValueEntry::Iterator IndexValueEntry::reverseBegin(CursorDuplicity duplicity) LIFETIME_BOUND
 {
     if (m_unique) {
         ASSERT(m_key);
@@ -204,7 +204,7 @@ IndexValueEntry::Iterator IndexValueEntry::reverseBegin(CursorDuplicity duplicit
     return { *this, iterator };
 }
 
-IndexValueEntry::Iterator IndexValueEntry::find(const IDBKeyData& key)
+IndexValueEntry::Iterator IndexValueEntry::find(const IDBKeyData& key) LIFETIME_BOUND
 {
     if (m_unique) {
         ASSERT(m_key);
@@ -219,7 +219,7 @@ IndexValueEntry::Iterator IndexValueEntry::find(const IDBKeyData& key)
     return { *this, iterator };
 }
 
-IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key, CursorDuplicity)
+IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key, CursorDuplicity) LIFETIME_BOUND
 {
     if (m_unique) {
         ASSERT(m_key);

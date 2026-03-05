@@ -44,7 +44,7 @@ typedef [EnforceRange] long long WebCodecsEncodedAudioChunkInitTimestamp;
 typedef [EnforceRange] unsigned long long WebCodecsEncodedAudioChunkInitDuration;
 
 [
-    Conditional=WEB_CODECS
+    Conditional=WEB_CODECS,
 ] dictionary WebCodecsEncodedAudioChunkInit {
   required WebCodecsEncodedAudioChunkType type;
   WebCodecsEncodedAudioChunkInitTimestamp timestamp;

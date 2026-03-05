@@ -38,14 +38,14 @@ Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type)
 
 Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition)
 {
-    return adoptRef(*new SliderTrackPart(type, thumbSize, trackBounds, WTFMove(tickRatios), thumbPosition));
+    return adoptRef(*new SliderTrackPart(type, thumbSize, trackBounds, WTF::move(tickRatios), thumbPosition));
 }
 
 SliderTrackPart::SliderTrackPart(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition)
     : ControlPart(type)
     , m_thumbSize(thumbSize)
     , m_trackBounds(trackBounds)
-    , m_tickRatios(WTFMove(tickRatios))
+    , m_tickRatios(WTF::move(tickRatios))
     , m_thumbPosition(thumbPosition)
 {
     ASSERT(type == StyleAppearance::SliderHorizontal || type == StyleAppearance::SliderVertical);

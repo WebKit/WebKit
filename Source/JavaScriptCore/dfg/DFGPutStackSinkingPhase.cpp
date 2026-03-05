@@ -485,6 +485,10 @@ public:
 
                         Node* incoming = mapping.operand(operand);
                         DFG_ASSERT(m_graph, node, incoming);
+                        // We shouldn't generate IR that would PutStack a storage operand. That would make it nearly impossible to
+                        // reason about the liveness of the base object. Additionally, bytecode has no notion of storage so such IR
+                        // is seemingly nonsensical anyway.
+                        DFG_ASSERT(m_graph, node, !incoming->hasStorageResult());
                     
                         // If we are sinking a PutStack to before an ExitOK, it
                         // should be ExitInvalid like the other preceding nodes.

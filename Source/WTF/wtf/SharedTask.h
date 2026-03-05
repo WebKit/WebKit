@@ -81,7 +81,7 @@ public:
     }
 
     SharedTaskFunctor(Functor&& functor)
-        : m_functor(WTFMove(functor))
+        : m_functor(WTF::move(functor))
     {
     }
 

@@ -19,8 +19,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([1, 2, 4]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([1, 2, 4]));
   var result = sample.map(function(v) {
     return v * 3;
   });

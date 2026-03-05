@@ -18,8 +18,8 @@ includes: [testTypedArray.js]
 features: [Reflect.set, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43, 44]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43, 44]));
   var newVal = 0;
 
   sample.reduceRight(function(acc, val, i) {

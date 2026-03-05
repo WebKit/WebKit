@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 582x18
+          text run at (0,0) width 428: "This test verifies that divs containing zero pixel fonts do not corrupt "
+          text run at (428,0) width 154: "the page rendering (bug "
+        RenderInline {A} at (582,0) size 40x18 [color=#0000EE]
+          RenderText {#text} at (582,0) size 40x18
+            text run at (582,0) width 40: "60917"
+        RenderText {#text} at (0,0) size 742x36
+          text run at (622,0) width 13: "). "
+          text run at (635,0) width 107: "There line below"
+          text run at (0,18) width 254: "should read \"GoldilocksBearBearBear\"."
+      RenderBlock {DIV} at (0,36) size 784x18
+        RenderBlock {DIV} at (0,0) size 69x18
+          RenderText {#text} at (0,0) size 69x18
+            text run at (0,0) width 69: "Goldilocks"
+        RenderText {#text} at (69,14) size 0x1
+          text run at (69,14) width 0: " "
+        RenderBlock {DIV} at (69,0) size 30x18
+          RenderText {#text} at (0,0) size 30x18
+            text run at (0,0) width 30: "Bear"
+        RenderText {#text} at (99,14) size 0x1
+          text run at (99,14) width 0: " "
+        RenderBlock {DIV} at (99,0) size 30x18
+          RenderText {#text} at (0,0) size 30x18
+            text run at (0,0) width 30: "Bear"
+        RenderText {#text} at (129,14) size 0x1
+          text run at (129,14) width 0: " "
+        RenderBlock {DIV} at (129,0) size 30x18
+          RenderText {#text} at (0,0) size 30x18
+            text run at (0,0) width 30: "Bear"
+        RenderText {#text} at (0,0) size 0x0

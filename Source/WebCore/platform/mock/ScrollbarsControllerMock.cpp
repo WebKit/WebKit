@@ -42,7 +42,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsControllerMock);
 
 ScrollbarsControllerMock::ScrollbarsControllerMock(ScrollableArea& scrollableArea, Function<void(const String&)>&& logger)
     : ScrollbarsController(scrollableArea)
-    , m_logger(WTFMove(logger))
+    , m_logger(WTF::move(logger))
 {
 }
 

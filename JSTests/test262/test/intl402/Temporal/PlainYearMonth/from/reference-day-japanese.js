@@ -18,7 +18,7 @@ const result1 = Temporal.PlainYearMonth.from({calendar: "japanese", era: "heisei
 TemporalHelpers.assertPlainYearMonth(
   result1,
   1989, 1, "M01",
-  "era is corrected based on reference day (Showa begins on January 8)",
+  "era is corrected based on reference day (Heisei begins on January 8)",
   "showa", 64
 );
 
@@ -26,7 +26,7 @@ const result2 = Temporal.PlainYearMonth.from({calendar: "japanese", era: "showa"
 TemporalHelpers.assertPlainYearMonth(
   result2,
   1926, 12, "M12",
-  "era is corrected based on reference day (Taishō begins on December 25)",
+  "era is corrected based on reference day (Showa begins on December 25)",
   "taisho", 15
 );
 
@@ -34,6 +34,6 @@ const result3 = Temporal.PlainYearMonth.from({calendar: "japanese", era: "taisho
 TemporalHelpers.assertPlainYearMonth(
   result3,
   1912, 7, "M07",
-  "era is corrected based on reference day (Meiji begins on July 30)",
+  "era is corrected based on reference day (Taishō begins on July 30)",
   "meiji", 45
 );

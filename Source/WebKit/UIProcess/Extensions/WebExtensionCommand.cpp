@@ -54,7 +54,7 @@ bool WebExtensionCommand::isActionCommand() const
     if (!context)
         return false;
 
-    if (context->protectedExtension()->supportsManifestVersion(3))
+    if (protect(context->extension())->supportsManifestVersion(3))
         return identifier() == "_execute_action"_s;
 
     return identifier() == "_execute_browser_action"_s || identifier() == "_execute_page_action"_s;

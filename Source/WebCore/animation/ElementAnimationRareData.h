@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <WebCore/KeyframeEffectStack.h>
-#include <WebCore/PseudoElementIdentifier.h>
-#include <WebCore/WebAnimationTypes.h>
+#include "KeyframeEffectStack.h"
+#include "PseudoElementIdentifier.h"
+#include "WebAnimationTypes.h"
 
 namespace WebCore {
 

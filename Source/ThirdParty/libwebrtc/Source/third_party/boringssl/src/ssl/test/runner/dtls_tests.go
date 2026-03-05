@@ -175,7 +175,7 @@ func addDTLSRetransmitTests() {
 			ackFlightBasic := handleNewSessionTicket(func(c *DTLSController, prev, received []DTLSMessage, records []DTLSRecordNumberInfo) {
 				if vers.version >= VersionTLS13 {
 					// In DTLS 1.3, final flights (either handshake or post-handshake)
-					// are retransmited until ACKed. Exercise every timeout but
+					// are retransmitted until ACKed. Exercise every timeout but
 					// the last one (which would fail the connection).
 					for _, t := range useTimeouts[:len(useTimeouts)-1] {
 						c.ExpectNextTimeout(t)

@@ -81,7 +81,7 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
         };
 
         for (let [target, [gcRecords, nonGCRecords]] of this._recordsForTarget) {
-            let rowElement = this._recordRowForTarget.getOrInitialize(target, () => {
+            let rowElement = this._recordRowForTarget.getOrInsertComputed(target, () => {
                 if (this._recordRows.length < 5) {
                     let rowElement = this.element.appendChild(document.createElement("div"));
                     rowElement.classList.add("graph-row");
@@ -90,7 +90,7 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
                 return this._recordRows[this._nextRecordRowIndex++ % this._recordRows.length];
             });
 
-            let recordBars = this._recordBarsForTarget.getOrInitialize(target, []);
+            let recordBars = this._recordBarsForTarget.getOrInsert(target, []);
             recordBarIndex = 0;
 
             let boundCreateBar = createBar.bind(this, rowElement, recordBars);
@@ -128,7 +128,7 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
         let {record} = event.data;
         console.assert(record instanceof WI.ScriptTimelineRecord);
 
-        let [gcRecords, nonGCRecords] = this._recordsForTarget.getOrInitialize(record.target, [[], []]);
+        let [gcRecords, nonGCRecords] = this._recordsForTarget.getOrInsert(record.target, [[], []]);
         let records = record.isGarbageCollection() ? gcRecords : nonGCRecords;
         records.push(record);
 

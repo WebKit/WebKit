@@ -47,11 +47,11 @@ public:
     virtual ~ScrollingStatePositionedNode();
 
     // These are the overflow scrolling nodes whose scroll position affects the layers in this node.
-    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
+    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const LIFETIME_BOUND { return m_relatedOverflowScrollingNodes; }
     WEBCORE_EXPORT void setRelatedOverflowScrollingNodes(Vector<ScrollingNodeID>&&);
 
     WEBCORE_EXPORT void updateConstraints(const AbsolutePositionConstraints&);
-    const AbsolutePositionConstraints& layoutConstraints() const { return m_constraints; }
+    const AbsolutePositionConstraints& layoutConstraints() const LIFETIME_BOUND { return m_constraints; }
 
 private:
     WEBCORE_EXPORT ScrollingStatePositionedNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, Vector<ScrollingNodeID>&&, AbsolutePositionConstraints&&);

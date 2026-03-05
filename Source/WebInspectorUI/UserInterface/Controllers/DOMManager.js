@@ -115,6 +115,7 @@ WI.DOMManager = class DOMManager extends WI.Object
                 showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
                 showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
                 showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
+                showOrderNumbers: WI.settings.gridOverlayShowOrderNumbers.value,
             };
         }
 

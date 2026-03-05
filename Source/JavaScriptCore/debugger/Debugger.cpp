@@ -117,19 +117,19 @@ Debugger::TemporarilyDisableExceptionBreakpoints::~TemporarilyDisableExceptionBr
 void Debugger::TemporarilyDisableExceptionBreakpoints::replace()
 {
     if (m_debugger.m_pauseOnAllExceptionsBreakpoint)
-        m_pauseOnAllExceptionsBreakpoint = WTFMove(m_debugger.m_pauseOnAllExceptionsBreakpoint);
+        m_pauseOnAllExceptionsBreakpoint = WTF::move(m_debugger.m_pauseOnAllExceptionsBreakpoint);
 
     if (m_debugger.m_pauseOnUncaughtExceptionsBreakpoint)
-        m_pauseOnUncaughtExceptionsBreakpoint = WTFMove(m_debugger.m_pauseOnUncaughtExceptionsBreakpoint);
+        m_pauseOnUncaughtExceptionsBreakpoint = WTF::move(m_debugger.m_pauseOnUncaughtExceptionsBreakpoint);
 }
 
 void Debugger::TemporarilyDisableExceptionBreakpoints::restore()
 {
     if (m_pauseOnAllExceptionsBreakpoint)
-        m_debugger.m_pauseOnAllExceptionsBreakpoint = WTFMove(m_pauseOnAllExceptionsBreakpoint);
+        m_debugger.m_pauseOnAllExceptionsBreakpoint = WTF::move(m_pauseOnAllExceptionsBreakpoint);
 
     if (m_pauseOnUncaughtExceptionsBreakpoint)
-        m_debugger.m_pauseOnUncaughtExceptionsBreakpoint = WTFMove(m_pauseOnUncaughtExceptionsBreakpoint);
+        m_debugger.m_pauseOnUncaughtExceptionsBreakpoint = WTF::move(m_pauseOnUncaughtExceptionsBreakpoint);
 }
 
 
@@ -516,7 +516,7 @@ void Debugger::forEachBreakpointLocation(SourceID sourceID, SourceProvider* sour
     }
 
     auto& parseData = debuggerParseData(sourceID, sourceProvider);
-    parseData.pausePositions.forEachBreakpointLocation(adjustedStartLine, adjustedStartColumn, adjustedEndLine, adjustedEndColumn, [&, callback = WTFMove(callback)] (const JSTextPosition& resolvedPosition) {
+    parseData.pausePositions.forEachBreakpointLocation(adjustedStartLine, adjustedStartColumn, adjustedEndLine, adjustedEndColumn, [&, callback = WTF::move(callback)] (const JSTextPosition& resolvedPosition) {
         auto resolvedLine = resolvedPosition.line;
         auto resolvedColumn = resolvedPosition.column();
 
@@ -862,7 +862,7 @@ void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
 
     if (specialBreakpoint) {
         ASSERT(!m_specialBreakpoint);
-        m_specialBreakpoint = WTFMove(specialBreakpoint);
+        m_specialBreakpoint = WTF::move(specialBreakpoint);
     } else
         m_pauseAtNextOpportunity = true;
 
@@ -1462,7 +1462,7 @@ void Debugger::setBlackboxConfiguration(SourceID sourceID, BlackboxConfiguration
     if (blackboxConfiguration.isEmpty())
         m_blackboxConfigurations.remove(sourceID);
     else
-        m_blackboxConfigurations.set(sourceID, WTFMove(blackboxConfiguration));
+        m_blackboxConfigurations.set(sourceID, WTF::move(blackboxConfiguration));
 }
 
 void Debugger::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluations)

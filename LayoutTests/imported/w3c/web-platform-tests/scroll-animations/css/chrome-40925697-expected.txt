@@ -1,0 +1,4 @@
+
+
+PASS Animation events triggered correctly
+

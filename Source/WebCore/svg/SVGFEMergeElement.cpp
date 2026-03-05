@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEMergeElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEMergeElement);
 
 inline SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -55,8 +55,8 @@ void SVGFEMergeElement::childrenChanged(const ChildChange& change)
 Vector<AtomString> SVGFEMergeElement::filterEffectInputsNames() const
 {
     Vector<AtomString> inputsNames;
-    for (auto& mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this))
-        inputsNames.append(mergeNode.in1());
+    for (Ref mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this))
+        inputsNames.append(mergeNode->in1());
     return inputsNames;
 }
 

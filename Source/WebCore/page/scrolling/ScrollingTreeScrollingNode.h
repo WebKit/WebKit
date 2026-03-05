@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include <WebCore/IntRect.h>
+#include <WebCore/RubberbandingState.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/ScrollingTree.h>
@@ -64,7 +65,7 @@ public:
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     bool commitStateAfterChildren(const ScrollingStateNode&) override;
-    void didCompleteCommitForNode() final;
+    void NODELETE didCompleteCommitForNode() final;
 
     virtual bool canHandleWheelEvent(const PlatformWheelEvent&, EventTargeting) const;
     virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting = EventTargeting::Propagate);
@@ -72,10 +73,11 @@ public:
     
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
     FloatPoint currentScrollOffset() const { return ScrollableArea::scrollOffsetFromPosition(m_currentScrollPosition, toFloatSize(m_scrollOrigin)); }
+    FloatPoint clampedCurrentScrollOffset() const;
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
     FloatSize scrollDeltaSinceLastCommit() const { return m_currentScrollPosition - m_lastCommittedScrollPosition; }
 
-    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    const IntPoint& scrollOrigin() const LIFETIME_BOUND { return m_scrollOrigin; }
 
     RectEdges<bool> edgePinnedState() const;
 
@@ -84,6 +86,12 @@ public:
 
     bool isScrollSnapInProgress() const;
     void setScrollSnapInProgress(bool);
+
+#if HAVE(RUBBER_BANDING)
+    std::optional<RubberbandingState> captureRubberbandingState() const;
+    void setRestoredRubberbandingInProgress(bool inProgress) { m_restoredRubberbandingInProgress = inProgress; }
+    bool restoredRubberbandingInProgress() const { return m_restoredRubberbandingInProgress; }
+#endif
 
     virtual bool startAnimatedScrollToPosition(FloatPoint);
     virtual void stopAnimatedScroll();
@@ -94,7 +102,7 @@ public:
     void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped);
     void scrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped);
 
-    void handleScrollPositionRequest(const RequestedScrollData&);
+    void handleScrollPositionRequests(const ScrollRequestData&);
 
     void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&);
     void requestKeyboardScroll(const RequestedKeyboardScrollData&);
@@ -108,8 +116,8 @@ public:
     bool hasNonRepaintSynchronousScrollingReasons() const { return !(m_synchronousScrollingReasons - SynchronousScrollingReason::HasSlowRepaintObjects).isEmpty(); }
 #endif
 
-    const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
-    const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
+    const FloatSize& scrollableAreaSize() const LIFETIME_BOUND { return m_scrollableAreaSize; }
+    const FloatSize& totalContentsSize() const LIFETIME_BOUND { return m_totalContentsSize; }
 
     NativeScrollbarVisibility horizontalNativeScrollbarVisibility() const { return m_scrollableAreaParameters.horizontalNativeScrollbarVisibility; }
     NativeScrollbarVisibility verticalNativeScrollbarVisibility() const { return m_scrollableAreaParameters.verticalNativeScrollbarVisibility; }
@@ -117,7 +125,7 @@ public:
     bool canHaveVerticalScrollbar() const { return m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarMode::AlwaysOff; }
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarMode::AlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarMode::AlwaysOff; }
 
-    const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const;
+    const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const LIFETIME_BOUND;
     std::optional<unsigned> currentHorizontalSnapPointIndex() const;
     std::optional<unsigned> currentVerticalSnapPointIndex() const;
     void setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
@@ -127,8 +135,8 @@ public:
     
     bool scrolledSinceLastCommit() const { return m_scrolledSinceLastCommit; }
 
-    const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
-    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
+    const LayerRepresentation& scrollContainerLayer() const LIFETIME_BOUND { return m_scrollContainerLayer; }
+    const LayerRepresentation& scrolledContentsLayer() const LIFETIME_BOUND { return m_scrolledContentsLayer; }
     
     OverscrollBehavior horizontalOverscrollBehavior() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior; }
     OverscrollBehavior verticalOverscrollBehavior() const { return m_scrollableAreaParameters.verticalOverscrollBehavior; }
@@ -140,6 +148,8 @@ public:
     
     void scrollbarVisibilityDidChange(ScrollbarOrientation, bool);
     void scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation, int);
+
+    ScrollbarRevealBehavior takeScrollbarRevealBehaviorForNextScrollbarUpdate();
 
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
@@ -170,14 +180,14 @@ protected:
 
     void applyLayerPositions() override;
 
-    const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
+    const FloatSize& reachableContentsSize() const LIFETIME_BOUND { return m_reachableContentsSize; }
     
     bool isLatchedNode() const;
 
     // If the totalContentsSize changes in the middle of a rubber-band, we still want to use the old totalContentsSize for the sake of
     // computing the stretchAmount(). Using the old value will keep the animation smooth. When there is no rubber-band in progress at
     // all, m_totalContentsSizeForRubberBand should be equivalent to m_totalContentsSize.
-    const FloatSize& totalContentsSizeForRubberBand() const { return m_totalContentsSizeForRubberBand; }
+    const FloatSize& totalContentsSizeForRubberBand() const LIFETIME_BOUND { return m_totalContentsSizeForRubberBand; }
     void setTotalContentsSizeForRubberBand(const FloatSize& totalContentsSizeForRubberBand) { m_totalContentsSizeForRubberBand = totalContentsSizeForRubberBand; }
 
     ScrollElasticity horizontalScrollElasticity() const { return m_scrollableAreaParameters.horizontalScrollElasticity; }
@@ -198,6 +208,8 @@ protected:
 
     bool shouldRubberBand(const PlatformWheelEvent&, EventTargeting) const;
     bool shouldRubberBandOnSide(BoxSide, RectEdges<bool> pinnedEdges) const;
+
+    void handleScrollPositionRequest(const RequestedScrollData&);
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
@@ -220,6 +232,10 @@ private:
 #endif
     bool m_isFirstCommit { true };
     bool m_scrolledSinceLastCommit { false };
+#if HAVE(RUBBER_BANDING)
+    bool m_restoredRubberbandingInProgress { false };
+#endif
+    ScrollbarRevealBehavior m_scrollbarRevealBehaviorForNextScrollbarUpdate { ScrollbarRevealBehavior::Default };
 
     LayerRepresentation m_scrollContainerLayer;
     LayerRepresentation m_scrolledContentsLayer;

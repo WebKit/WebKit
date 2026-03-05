@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "api/units/time_delta.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -55,65 +56,72 @@ extern const char CONNECTIONROLE_HOLDCONN_STR[];
 // RFC 6762, the .local pseudo-top-level domain used for mDNS names.
 extern const char LOCAL_TLD[];
 
-// Constants for time intervals are in milliseconds unless otherwise stated.
-//
 // Most of the following constants are the default values of IceConfig
 // paramters. See IceConfig for detailed definition.
 //
-// Default value of IceConfig.receiving_timeout.
-extern const int RECEIVING_TIMEOUT;
 // Default value IceConfig.ice_check_min_interval.
-extern const int MIN_CHECK_RECEIVING_INTERVAL;
+inline constexpr TimeDelta kMinCheckReceivingInterval = TimeDelta::Millis(50);
+// Default value of IceConfig.receiving_timeout.
+inline constexpr TimeDelta kReceivingTimeout = kMinCheckReceivingInterval * 50;
 // The next two ping intervals are at the ICE transport level.
 //
-// STRONG_PING_INTERVAL is applied when the selected connection is both
+// kStrongPingInterval is applied when the selected connection is both
 // writable and receiving.
 //
 // Default value of IceConfig.ice_check_interval_strong_connectivity.
-extern const int STRONG_PING_INTERVAL;
-// WEAK_PING_INTERVAL is applied when the selected connection is either
+inline constexpr TimeDelta kStrongPingInterval = TimeDelta::Millis(480);
+// kWeakPingInterval is applied when the selected connection is either
 // not writable or not receiving.
 //
 // Defaul value of IceConfig.ice_check_interval_weak_connectivity.
-extern const int WEAK_PING_INTERVAL;
+inline constexpr TimeDelta kWeakPingInterval = TimeDelta::Millis(48);
 // The next two ping intervals are at the candidate pair level.
 //
 // Writable candidate pairs are pinged at a slower rate once they are stabilized
 // and the channel is strongly connected.
-extern const int STRONG_AND_STABLE_WRITABLE_CONNECTION_PING_INTERVAL;
+inline constexpr TimeDelta kStrongAndStableWritableConnectionPingInterval =
+    TimeDelta::Millis(2'500);
 // Writable candidate pairs are pinged at a faster rate while the connections
 // are stabilizing or the channel is weak.
-extern const int WEAK_OR_STABILIZING_WRITABLE_CONNECTION_PING_INTERVAL;
+inline constexpr TimeDelta kWeakOrStabilizingWritableConnectionPingInterval =
+    TimeDelta::Millis(900);
 // Default value of IceConfig.backup_connection_ping_interval
-extern const int BACKUP_CONNECTION_PING_INTERVAL;
+inline constexpr TimeDelta kBackupConnectionPingInterval =
+    TimeDelta::Seconds(25);
 // Defualt value of IceConfig.receiving_switching_delay.
-extern const int RECEIVING_SWITCHING_DELAY;
+inline constexpr TimeDelta kReceivingSwitchingDelay = TimeDelta::Seconds(1);
 // Default value of IceConfig.regather_on_failed_networks_interval.
-extern const int REGATHER_ON_FAILED_NETWORKS_INTERVAL;
+inline constexpr TimeDelta kRegatherOnFailedNetworksInterval =
+    TimeDelta::Seconds(5 * 60);
 // Default vaule of IceConfig.ice_unwritable_timeout.
-extern const int CONNECTION_WRITE_CONNECT_TIMEOUT;
+inline constexpr TimeDelta kConnectionWriteConnectTimeout =
+    TimeDelta::Seconds(5);
 // Default vaule of IceConfig.ice_unwritable_min_checks.
-extern const uint32_t CONNECTION_WRITE_CONNECT_FAILURES;
+inline constexpr int kConnectionWriteConnectFailures = 5;  // 5 pings
 // Default value of IceConfig.ice_inactive_timeout;
-extern const int CONNECTION_WRITE_TIMEOUT;
+inline constexpr TimeDelta kConnectionWriteTimeout = TimeDelta::Seconds(15);
 // Default value of IceConfig.stun_keepalive_interval;
-extern const int STUN_KEEPALIVE_INTERVAL;
+inline constexpr TimeDelta kStunKeepaliveInterval = TimeDelta::Seconds(10);
 
-static const int MIN_PINGS_AT_WEAK_PING_INTERVAL = 3;
+inline constexpr int kMinPingsAtWeakPingInterval = 3;
 
 // The following constants are used at the candidate pair level to determine the
 // state of a candidate pair.
 //
 // The timeout duration when a connection does not receive anything.
-extern const int WEAK_CONNECTION_RECEIVE_TIMEOUT;
+inline constexpr TimeDelta kWeakConnectionReceiveTimeout =
+    TimeDelta::Millis(2'500);
 // A connection will be declared dead if it has not received anything for this
 // long.
-extern const int DEAD_CONNECTION_RECEIVE_TIMEOUT;
+inline constexpr TimeDelta kDeadConnectionReceiveTimeout =
+    TimeDelta::Seconds(30);
 // This is the length of time that we wait for a ping response to come back.
-extern const int CONNECTION_RESPONSE_TIMEOUT;
+// There is no harm to keep this value high other than a small amount
+// of increased memory, but in some networks (2G), we observe up to 60s RTTs.
+inline constexpr TimeDelta kConnectionResponseTimeout = TimeDelta::Seconds(60);
 // The minimum time we will wait before destroying a connection after creating
 // it.
-extern const int MIN_CONNECTION_LIFETIME;
+inline constexpr TimeDelta kMinConnectionLifetime = TimeDelta::Seconds(10);
 
 // The type preference MUST be an integer from 0 to 126 inclusive.
 // https://datatracker.ietf.org/doc/html/rfc5245#section-4.1.2.1

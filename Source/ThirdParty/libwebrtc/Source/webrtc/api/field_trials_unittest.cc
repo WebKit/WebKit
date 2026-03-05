@@ -10,7 +10,11 @@
 
 #include "api/field_trials.h"
 
+#include <memory>
+
 #include "absl/strings/str_cat.h"
+#include "api/field_trials_view.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_set.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -153,6 +157,35 @@ TEST(FieldTrialsTest, SettingEmptyValueRemovesFieldTrial) {
   f2.Merge(f);
   f2.RegisterKeysForTesting({"Audio"});
   EXPECT_EQ(f2.Lookup("Audio"), "Disabled");
+}
+
+TEST(FieldTrialsTest, CreateCopy) {
+  auto f = std::make_unique<FieldTrials>("Audio/Enabled/");
+  f->RegisterKeysForTesting({"Audio"});
+
+  FieldTrialsView* view = f.get();
+  auto copy = view->CreateCopy();
+  f.reset();
+  EXPECT_EQ(copy->Lookup("Audio"), "Enabled");
+}
+
+TEST(FieldTrials, Immutable) {
+  FieldTrials f("Audio/Enabled/");
+  f.RegisterKeysForTesting({"Audio"});
+
+  // Has never been read, modifyable
+  f.Set("Audio", "Disabled");
+  EXPECT_EQ(f.Lookup("Audio"), "Disabled");
+
+  // A copy can be modified.
+  FieldTrials c(f);
+  c.Set("Audio", "Enabled");
+
+#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+  // But FieldTrials that have been read from,
+  // must not be modified (as documented in FieldTrialsView).
+  EXPECT_DEATH(f.Set("Audio", "Enabled"), "");
+#endif
 }
 
 }  // namespace

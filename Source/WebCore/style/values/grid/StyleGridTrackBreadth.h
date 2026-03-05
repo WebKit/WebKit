@@ -73,7 +73,7 @@ public:
     }
 
     GridTrackBreadth(GridTrackBreadthLength&& length)
-        : m_length(WTFMove(length))
+        : m_length(WTF::move(length))
         , m_flex(0_css_fr)
         , m_type(GridTrackBreadthType::Length)
     {

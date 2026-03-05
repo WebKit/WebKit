@@ -416,18 +416,18 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(WTFMove(domainsToDeleteOrRestrictWebsiteDataFor)), completionHandler = WTFMove(completionHandler), weakThis = WeakPtr { *this }, workQueue = m_workQueue] () mutable {
-        store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToDeleteOrRestrictWebsiteDataFor), [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue](HashSet<RegistrableDomain>&& domainsWithDeletedWebsiteData) mutable {
-            workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(WTFMove(domainsWithDeletedWebsiteData)), completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis)] () mutable {
+    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(WTF::move(domainsToDeleteOrRestrictWebsiteDataFor)), completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }, workQueue = m_workQueue] () mutable {
+        store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTF::move(domainsToDeleteOrRestrictWebsiteDataFor), [completionHandler = WTF::move(completionHandler), weakThis = WTF::move(weakThis), workQueue](HashSet<RegistrableDomain>&& domainsWithDeletedWebsiteData) mutable {
+            workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(WTF::move(domainsWithDeletedWebsiteData)), completionHandler = WTF::move(completionHandler), weakThis = WTF::move(weakThis)] () mutable {
                 if (!weakThis) {
                     completionHandler();
                     return;
                 }
 
-                weakThis->incrementRecordsDeletedCountForDomains(WTFMove(domainsWithDeletedWebsiteData));
+                weakThis->incrementRecordsDeletedCountForDomains(WTF::move(domainsWithDeletedWebsiteData));
                 weakThis->setDataRecordsBeingRemoved(false);
 
-                auto dataRecordRemovalCompletionHandlers = WTFMove(weakThis->m_dataRecordRemovalCompletionHandlers);
+                auto dataRecordRemovalCompletionHandlers = WTF::move(weakThis->m_dataRecordRemovalCompletionHandlers);
                 completionHandler();
 
                 for (auto& dataRecordRemovalCompletionHandler : dataRecordRemovalCompletionHandlers)
@@ -449,7 +449,7 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords(CompletionHand
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval)
         classifyPrevalentResources();
     
-    removeDataRecords([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+    removeDataRecords([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] () mutable {
         ASSERT(!RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
@@ -483,9 +483,9 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback), workQueue = m_workQueue, store = Ref { m_store.get() }] () mutable {
-        store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), [weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
-            workQueue->dispatch([weakThis = WTFMove(weakThis), domainsWithWebsiteData = crossThreadCopy(WTFMove(domainsWithWebsiteData)), callback = WTFMove(callback)] () mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, callback = WTF::move(callback), workQueue = m_workQueue, store = Ref { m_store.get() }] () mutable {
+        store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), [weakThis = WTF::move(weakThis), callback = WTF::move(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
+            workQueue->dispatch([weakThis = WTF::move(weakThis), domainsWithWebsiteData = crossThreadCopy(WTF::move(domainsWithWebsiteData)), callback = WTF::move(callback)] () mutable {
                 if (!weakThis) {
                     callback();
                     return;
@@ -532,14 +532,14 @@ void ResourceLoadStatisticsStore::setPrevalentResourceForDebugMode(const Registr
 #if ENABLE(APP_BOUND_DOMAINS)
 void ResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomain>&& domains)
 {
-    m_appBoundDomains = WTFMove(domains);
+    m_appBoundDomains = WTF::move(domains);
 }
 #endif
 
 #if ENABLE(MANAGED_DOMAINS)
 void ResourceLoadStatisticsStore::setManagedDomains(HashSet<RegistrableDomain>&& domains)
 {
-    m_managedDomains = WTFMove(domains);
+    m_managedDomains = WTF::move(domains);
 }
 #endif
 
@@ -654,9 +654,9 @@ void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(RegistrableDoma
 {
     ASSERT(!RunLoop::isMain());
     
-    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, domainsToBlock = crossThreadCopy(WTFMove(domainsToBlock)), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [store, completionHandler = WTFMove(completionHandler)]() mutable {
-            store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, domainsToBlock = crossThreadCopy(WTF::move(domainsToBlock)), completionHandler = WTF::move(completionHandler)] () mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [store, completionHandler = WTF::move(completionHandler)]() mutable {
+            store->statisticsQueue().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler();
             });
         });
@@ -700,7 +700,7 @@ void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, event = WTFMove(event).isolatedCopy()] {
+    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, event = WTF::move(event).isolatedCopy()] {
         store->logTestingEvent(event);
     });
 }
@@ -708,9 +708,9 @@ void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
 void ResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, completionHandler = WTFMove(completionHandler)]() mutable {
-        store->removeAllStorageAccess([store, completionHandler = WTFMove(completionHandler)]() mutable {
-            store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, completionHandler = WTF::move(completionHandler)]() mutable {
+        store->removeAllStorageAccess([store, completionHandler = WTF::move(completionHandler)]() mutable {
+            store->statisticsQueue().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler();
             });
         });
@@ -943,16 +943,16 @@ void ResourceLoadStatisticsStore::migrateDataToPCMDatabaseIfNecessary()
     }
 
     if (!unattributed.isEmpty() || !attributed.isEmpty()) {
-        RunLoop::mainSingleton().dispatch([store = Ref { store() }, unattributed = crossThreadCopy(WTFMove(unattributed)), attributed = crossThreadCopy(WTFMove(attributed))] () mutable {
+        RunLoop::mainSingleton().dispatch([store = Ref { store() }, unattributed = crossThreadCopy(WTF::move(unattributed)), attributed = crossThreadCopy(WTF::move(attributed))] () mutable {
             CheckedPtr networkSession = store->networkSession();
             if (!networkSession)
                 return;
 
             Ref manager = networkSession->privateClickMeasurement();
-            for (auto&& pcm : WTFMove(attributed))
-                manager->migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Attributed);
-            for (auto&& pcm : WTFMove(unattributed))
-                manager->migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Unattributed);
+            for (auto&& pcm : WTF::move(attributed))
+                manager->migratePrivateClickMeasurementFromLegacyStorage(WTF::move(pcm), PrivateClickMeasurementAttributionType::Attributed);
+            for (auto&& pcm : WTF::move(unattributed))
+                manager->migratePrivateClickMeasurementFromLegacyStorage(WTF::move(pcm), PrivateClickMeasurementAttributionType::Unattributed);
         });
 
     }
@@ -1211,7 +1211,7 @@ bool ResourceLoadStatisticsStore::insertObservedDomain(const ResourceLoadStatist
     ASSERT(!RunLoop::isMain());
 
     if (domainID(loadStatistics.registrableDomain)) {
-        ITP_RELEASE_LOG_ERROR("insertObservedDomain: failed to find domain");
+        ITP_RELEASE_LOG_ERROR("insertObservedDomain: domain already exists");
         return false;
     }
     auto scopedStatement = this->scopedStatement(m_insertObservedDomainStatement, insertObservedDomainQuery, "insertObservedDomain"_s);
@@ -1446,7 +1446,7 @@ Vector<ITPThirdPartyDataForSpecificFirstParty> ResourceLoadStatisticsStore::getT
     return thirdPartyDataForSpecificFirstPartyDomains;
 }
 
-static bool hasBeenThirdParty(unsigned timesUnderFirstParty)
+static bool NODELETE hasBeenThirdParty(unsigned timesUnderFirstParty)
 {
     return timesUnderFirstParty > 0;
 }
@@ -1569,7 +1569,7 @@ HashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> Resour
                 continue;
             NotVeryPrevalentResources value({ RegistrableDomain::uncheckedCreateFromRegistrableDomainString(notVeryPrevalentResourcesStatement->columnText(1))
                 , notVeryPrevalentResourcesStatement->columnInt(2) ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low , 0, 0, 0, 0 });
-            results.add(key, WTFMove(value));
+            results.add(key, WTF::move(value));
         }
     }
 
@@ -1683,9 +1683,9 @@ void ResourceLoadStatisticsStore::hasStorageAccess(SubFrameDomain&& subFrameDoma
         completionHandler(false);
         return;
     case CookieAccess::BasedOnCookiePolicy:
-        RunLoop::mainSingleton().dispatch([store = Ref { store() }, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-            store->hasCookies(subFrameDomain, [store, completionHandler = WTFMove(completionHandler)](bool result) mutable {
-                store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
+        RunLoop::mainSingleton().dispatch([store = Ref { store() }, subFrameDomain = WTF::move(subFrameDomain).isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
+            store->hasCookies(subFrameDomain, [store, completionHandler = WTF::move(completionHandler)](bool result) mutable {
+                store->statisticsQueue().dispatch([completionHandler = WTF::move(completionHandler), result] () mutable {
                     completionHandler(result);
                 });
             });
@@ -1696,9 +1696,9 @@ void ResourceLoadStatisticsStore::hasStorageAccess(SubFrameDomain&& subFrameDoma
         break;
     };
 
-    RunLoop::mainSingleton().dispatch([store = Ref { store() }, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
-        store->callHasStorageAccessForFrameHandler(subFrameDomain, topFrameDomain, frameID.value(), pageID, [store, completionHandler = WTFMove(completionHandler)](bool result) mutable {
-            store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
+    RunLoop::mainSingleton().dispatch([store = Ref { store() }, subFrameDomain = WTF::move(subFrameDomain).isolatedCopy(), topFrameDomain = WTF::move(topFrameDomain).isolatedCopy(), frameID, pageID, completionHandler = WTF::move(completionHandler)]() mutable {
+        store->callHasStorageAccessForFrameHandler(subFrameDomain, topFrameDomain, frameID.value(), pageID, [store, completionHandler = WTF::move(completionHandler)](bool result) mutable {
+            store->statisticsQueue().dispatch([completionHandler = WTF::move(completionHandler), result] () mutable {
                 completionHandler(result);
             });
         });
@@ -1760,7 +1760,7 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
         return completionHandler(StorageAccessStatus::CannotRequestAccess);
     }
 
-    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedEarlier, scope, canRequestStorageAccessWithoutUserInteraction, [completionHandler = WTFMove(completionHandler)] (StorageAccessWasGranted wasGranted) mutable {
+    grantStorageAccessInternal(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frameID, pageID, userWasPromptedEarlier, scope, canRequestStorageAccessWithoutUserInteraction, [completionHandler = WTF::move(completionHandler)] (StorageAccessWasGranted wasGranted) mutable {
         completionHandler(wasGranted == StorageAccessWasGranted::Yes ? StorageAccessStatus::HasAccess : StorageAccessStatus::CannotRequestAccess);
     });
 }
@@ -1792,7 +1792,7 @@ void ResourceLoadStatisticsStore::requestStorageAccessUnderOpener(DomainInNeedOf
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted for '"_s, domainInNeedOfStorageAccess.string(), "' under opener page from '"_s, openerDomain.string(), "', with user interaction in the opened window."_s));
     }
 
-    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, canRequestStorageAccessWithoutUserInteraction, [](StorageAccessWasGranted) { });
+    grantStorageAccessInternal(WTF::move(domainInNeedOfStorageAccess), WTF::move(openerDomain), std::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, canRequestStorageAccessWithoutUserInteraction, [](StorageAccessWasGranted) { });
 }
 
 auto ResourceLoadStatisticsStore::grantStorageAccessPermission(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain) -> std::pair<AddedRecord, std::optional<unsigned>>
@@ -1847,10 +1847,10 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
 #endif
         }
 
-        protectedThis->grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, canRequestStorageAccessWithoutUserInteraction, WTFMove(completionHandler));
+        protectedThis->grantStorageAccessInternal(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frameID, pageID, promptWasShown, scope, canRequestStorageAccessWithoutUserInteraction, WTF::move(completionHandler));
     };
 
-    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), workQueue = m_workQueue, store = Ref { store() }, addGrant = WTFMove(addGrant), completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, subFrameDomain = WTF::move(subFrameDomain).isolatedCopy(), topFrameDomain = WTF::move(topFrameDomain).isolatedCopy(), workQueue = m_workQueue, store = Ref { store() }, addGrant = WTF::move(addGrant), completionHandler = WTF::move(completionHandler)]() mutable {
 
         std::optional<OrganizationStorageAccessPromptQuirk> additionalDomainGrants;
         CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction { CanRequestStorageAccessWithoutUserInteraction::No };
@@ -1861,7 +1861,7 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
                 canRequestStorageAccessWithoutUserInteraction = storageSession->canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain) ? CanRequestStorageAccessWithoutUserInteraction::Yes : CanRequestStorageAccessWithoutUserInteraction::No;
             }
         }
-        workQueue->dispatch([weakThis = WTFMove(weakThis), additionalDomainGrants = crossThreadCopy(WTFMove(additionalDomainGrants)), subFrameDomain = crossThreadCopy(WTFMove(subFrameDomain)), topFrameDomain = crossThreadCopy(WTFMove(topFrameDomain)), addGrant = WTFMove(addGrant), canRequestStorageAccessWithoutUserInteraction, completionHandler = WTFMove(completionHandler)] () mutable {
+        workQueue->dispatch([weakThis = WTF::move(weakThis), additionalDomainGrants = crossThreadCopy(WTF::move(additionalDomainGrants)), subFrameDomain = crossThreadCopy(WTF::move(subFrameDomain)), topFrameDomain = crossThreadCopy(WTF::move(topFrameDomain)), addGrant = WTF::move(addGrant), canRequestStorageAccessWithoutUserInteraction, completionHandler = WTF::move(completionHandler)] () mutable {
             if (!weakThis) {
                 completionHandler(StorageAccessWasGranted::No);
                 return;
@@ -1875,7 +1875,7 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
                     }
                 }
             }
-            addGrant(WTFMove(subFrameDomain), WTFMove(topFrameDomain), canRequestStorageAccessWithoutUserInteraction, WTFMove(completionHandler));
+            addGrant(WTF::move(subFrameDomain), WTF::move(topFrameDomain), canRequestStorageAccessWithoutUserInteraction, WTF::move(completionHandler));
         });
     });
 }
@@ -1906,9 +1906,9 @@ void ResourceLoadStatisticsStore::grantStorageAccessInternal(SubFrameDomain&& su
         setUserInteraction(subFrameDomain, true, nowTime(m_timeAdvanceForTesting));
     }
 
-    RunLoop::mainSingleton().dispatch([subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, store = Ref { store() }, scope, completionHandler = WTFMove(completionHandler)]() mutable {
-        store->callGrantStorageAccessHandler(subFrameDomain, topFrameDomain, frameID, pageID, scope, [completionHandler = WTFMove(completionHandler), store](StorageAccessWasGranted wasGranted) mutable {
-            store->statisticsQueue().dispatch([wasGranted, completionHandler = WTFMove(completionHandler)] () mutable {
+    RunLoop::mainSingleton().dispatch([subFrameDomain = WTF::move(subFrameDomain).isolatedCopy(), topFrameDomain = WTF::move(topFrameDomain).isolatedCopy(), frameID, pageID, store = Ref { store() }, scope, completionHandler = WTF::move(completionHandler)]() mutable {
+        store->callGrantStorageAccessHandler(subFrameDomain, topFrameDomain, frameID, pageID, scope, [completionHandler = WTF::move(completionHandler), store](StorageAccessWasGranted wasGranted) mutable {
+            store->statisticsQueue().dispatch([wasGranted, completionHandler = WTF::move(completionHandler)] () mutable {
                 completionHandler(wasGranted);
             });
         });
@@ -2097,7 +2097,7 @@ void ResourceLoadStatisticsStore::logUserInteraction(const TopFrameDomain& domai
         completionHandler();
         return;
     }
-    updateCookieBlocking(WTFMove(completionHandler));
+    updateCookieBlocking(WTF::move(completionHandler));
 }
 
 void ResourceLoadStatisticsStore::clearUserInteraction(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
@@ -2113,7 +2113,7 @@ void ResourceLoadStatisticsStore::clearUserInteraction(const RegistrableDomain& 
     // Update cookie blocking unconditionally since a call to hasHadUserInteraction()
     // to check the previous user interaction status could call clearUserInteraction(),
     // blowing the call stack.
-    updateCookieBlocking(WTFMove(completionHandler));
+    updateCookieBlocking(WTF::move(completionHandler));
 }
 
 bool ResourceLoadStatisticsStore::hasHadUserInteraction(const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
@@ -2192,7 +2192,7 @@ void ResourceLoadStatisticsStore::setPrevalentResource(const RegistrableDomain& 
 
     StdSet<unsigned> nonPrevalentRedirectionSources;
     recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(*registrableDomainID, nonPrevalentRedirectionSources, 0);
-    setDomainsAsPrevalent(WTFMove(nonPrevalentRedirectionSources));
+    setDomainsAsPrevalent(WTF::move(nonPrevalentRedirectionSources));
 }
 
 void ResourceLoadStatisticsStore::setDomainsAsPrevalent(StdSet<unsigned>&& domains)
@@ -2208,10 +2208,10 @@ void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<v
 {
     ASSERT(!RunLoop::isMain());
     if (m_dataRecordsBeingRemoved) {
-        m_dataRecordRemovalCompletionHandlers.append([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_dataRecordRemovalCompletionHandlers.append([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
             RefPtr protectedThis = weakThis.get();
             if (protectedThis)
-                protectedThis->dumpResourceLoadStatistics(WTFMove(completionHandler));
+                protectedThis->dumpResourceLoadStatistics(WTF::move(completionHandler));
             else
                 completionHandler({ });
         });
@@ -2528,7 +2528,12 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
         return { AddedRecord::No, std::nullopt };
     }
 
-    return { AddedRecord::Yes, domainID(domain).value() };
+    auto domainID = this->domainID(domain);
+    if (!domainID) {
+        ITP_RELEASE_LOG_ERROR("ensureResourceStatisticsForRegistrableDomain: reason %" PUBLIC_LOG_STRING ", failed to retrieve domain ID after successful insertion", reason.characters());
+        return { AddedRecord::No, std::nullopt };
+    }
+    return { AddedRecord::Yes, domainID.value() };
 }
 
 void ResourceLoadStatisticsStore::clearDatabaseContents()
@@ -2573,7 +2578,7 @@ HashMap<RegistrableDomain, WallTime> ResourceLoadStatisticsStore::allDomainsWith
     HashMap<RegistrableDomain, WallTime> result;
     for (auto& domainData : domains()) {
         auto lastAccessedTime = std::max(domainData.mostRecentUserInteractionTime, domainData.mostRecentWebPushInteractionTime);
-        result.add(WTFMove(domainData.registrableDomain), lastAccessedTime);
+        result.add(WTF::move(domainData.registrableDomain), lastAccessedTime);
     }
 
     return result;
@@ -2585,13 +2590,13 @@ void ResourceLoadStatisticsStore::clear(CompletionHandler<void()>&& completionHa
 
     clearDatabaseContents();
 
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
 
     removeAllStorageAccess([callbackAggregator] { });
 
     auto registrableDomainsToBlockAndDeleteCookiesFor = ensurePrevalentResourcesForDebugMode();
     RegistrableDomainsToBlockCookiesFor domainsToBlock { registrableDomainsToBlockAndDeleteCookiesFor, { }, { }, { } };
-    updateCookieBlockingForDomains(WTFMove(domainsToBlock), [callbackAggregator] { });
+    updateCookieBlockingForDomains(WTF::move(domainsToBlock), [callbackAggregator] { });
 }
 
 bool ResourceLoadStatisticsStore::areAllUnpartitionedThirdPartyCookiesBlockedUnder(const TopFrameDomain& topFrameDomain)
@@ -2731,9 +2736,9 @@ void ResourceLoadStatisticsStore::updateCookieBlocking(CompletionHandler<void()>
     if (debugLoggingEnabled() && (!domainsToBlockAndDeleteCookiesFor.isEmpty() || !domainsToBlockButKeepCookiesFor.isEmpty()))
         debugLogDomainsInBatches("Applying cross-site tracking restrictions"_s, domainsToBlock);
 
-    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, store = Ref { store() }, domainsToBlock = crossThreadCopy(WTFMove(domainsToBlock)), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store, completionHandler = WTFMove(completionHandler)]() mutable {
-            store->statisticsQueue().dispatch([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, store = Ref { store() }, domainsToBlock = crossThreadCopy(WTF::move(domainsToBlock)), completionHandler = WTF::move(completionHandler)] () mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTF::move(weakThis), store, completionHandler = WTF::move(completionHandler)]() mutable {
+            store->statisticsQueue().dispatch([weakThis = WTF::move(weakThis), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler();
 
                 if (!weakThis)
@@ -2912,7 +2917,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsStore::
     if (!parameters().isRunningTest && now - oldestUserInteraction < parameters().minimumTimeBetweenDataRecordsRemoval)
         toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.clear();
 
-    clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));
+    clearGrandfathering(WTF::move(domainIDsToClearGrandfathering));
 
     return toDeleteOrRestrictFor;
 }

@@ -12,7 +12,7 @@ info: |
   object does not have either a [[TypedArrayName]] or an [[ArrayBufferData]]
   internal slot.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -27,4 +27,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(typedArray[1], 42n);
   assert.sameValue(typedArray.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(typedArray), TA.prototype);
-});
+}, null, ["passthrough"]);

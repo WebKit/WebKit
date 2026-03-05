@@ -88,6 +88,11 @@ function main()
         }
     });
 
+    var baseTargetOption = document.createElement('option');
+    baseTargetOption.value = `base`;
+    baseTargetOption.textContent = 'base';
+    $('baseline-target').appendChild(baseTargetOption);
+
     loadText('/platforms.json', function(text) {
         var platforms = JSON.parse(text);
         platforms.platforms.forEach(function(platform) {

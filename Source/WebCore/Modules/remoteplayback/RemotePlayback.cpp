@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RemotePlayback);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePlayback);
 
 Ref<RemotePlayback> RemotePlayback::create(HTMLMediaElement& element)
 {
@@ -68,7 +68,8 @@ RemotePlayback::~RemotePlayback() = default;
 
 WebCoreOpaqueRoot RemotePlayback::opaqueRootConcurrently() const
 {
-    return root(m_mediaElement.get());
+    // Cannot ref m_mediaElement here since this may get called on a GC thread.
+    SUPPRESS_UNCOUNTED_ARG return root(m_mediaElement.get());
 }
 
 Node* RemotePlayback::ownerNode() const
@@ -88,7 +89,7 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [callback = WTFMove(callback), promise = WTFMove(promise), identifier = identifier](auto& playback) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [callback = WTF::move(callback), promise = WTF::move(promise), identifier = identifier](auto& playback) mutable {
         if (playback.isContextStopped())
             return;
 
@@ -112,7 +113,7 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
 
         // 7. Create a tuple (callbackId, callback) and add it to the set of availability callbacks for this media element.
         ASSERT(!playback.m_callbackMap.contains(callbackId));
-        playback.m_callbackMap.add(callbackId, WTFMove(callback));
+        playback.m_callbackMap.add(callbackId, WTF::move(callback));
 
         // 8. Fulfill promise with the callbackId and run the following steps in parallel:
         promise->whenSettled([protectedThis = Ref { playback }, callbackId] {
@@ -149,7 +150,7 @@ void RemotePlayback::cancelWatchAvailability(std::optional<int32_t> id, Ref<Defe
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [id = WTFMove(id), promise = WTFMove(promise), identifier = identifier](auto& playback) {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [id = WTF::move(id), promise = WTF::move(promise), identifier = identifier](auto& playback) {
         if (playback.isContextStopped())
             return;
         // 3. If the disableRemotePlayback attribute is present for the media element, reject promise with
@@ -199,7 +200,7 @@ void RemotePlayback::prompt(Ref<DeferredPromise>&& promise)
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [promise = WTFMove(promise), processingUserGesture = UserGestureIndicator::processingUserGesture(), identifier = identifier](auto& playback) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [promise = WTF::move(promise), processingUserGesture = UserGestureIndicator::processingUserGesture(), identifier = identifier](auto& playback) mutable {
         if (playback.isContextStopped())
             return;
 
@@ -251,7 +252,7 @@ void RemotePlayback::prompt(Ref<DeferredPromise>&& promise)
             return;
         }
 
-        playback.m_promptPromises.append(WTFMove(promise));
+        playback.m_promptPromises.append(WTF::move(promise));
         playback.availabilityChanged(playback.m_mediaElement->mediaSession().hasWirelessPlaybackTargets());
         playback.m_mediaElement->remoteHasAvailabilityCallbacksChanged();
         playback.m_mediaElement->webkitShowPlaybackTargetPicker();

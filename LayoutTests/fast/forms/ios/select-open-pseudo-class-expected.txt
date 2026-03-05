@@ -1,0 +1,17 @@
+This test verifies that the :open pseudo-class matches when a select element's picker is shown.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(select).color is "rgb(0, 0, 0)"
+PASS select.matches(':open') is false
+Opening select picker...
+PASS getComputedStyle(select).color is "rgb(0, 128, 0)"
+PASS select.matches(':open') is true
+Closing select picker...
+PASS getComputedStyle(select).color is "rgb(0, 0, 0)"
+PASS select.matches(':open') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

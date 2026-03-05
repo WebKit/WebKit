@@ -27,13 +27,13 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <WebCore/Event.h>
+#include "Event.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class RTCDTMFToneChangeEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDTMFToneChangeEvent);
+    WTF_MAKE_TZONE_ALLOCATED(RTCDTMFToneChangeEvent);
 public:
     virtual ~RTCDTMFToneChangeEvent();
 
@@ -43,13 +43,13 @@ public:
         String tone;
     };
 
-    static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
-    const String& tone() const;
+    const String& NODELETE tone() const;
 
 private:
-    explicit RTCDTMFToneChangeEvent(const String& tone);
-    RTCDTMFToneChangeEvent(const AtomString& type, const Init&, IsTrusted);
+    RTCDTMFToneChangeEvent(const String& tone);
+    RTCDTMFToneChangeEvent(const AtomString& type, Init&&, IsTrusted);
 
     String m_tone;
 };

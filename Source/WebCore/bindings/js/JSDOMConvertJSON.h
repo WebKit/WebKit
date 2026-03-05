@@ -44,7 +44,7 @@ template<> struct Converter<IDLJSON> : DefaultConverter<IDLJSON> {
 
         RETURN_IF_EXCEPTION(throwScope, Result::exception());
 
-        return Result { WTFMove(conversionResult) };
+        return Result { WTF::move(conversionResult) };
     }
 };
 

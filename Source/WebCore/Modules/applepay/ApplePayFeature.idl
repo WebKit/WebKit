@@ -77,4 +77,7 @@
 #if defined(ENABLE_APPLE_PAY_DISBURSEMENTS) && ENABLE_APPLE_PAY_DISBURSEMENTS
     , "paymentRequestDisbursements"
 #endif
+#if defined(ENABLE_APPLE_PAY_DELEGATED_REQUEST) && ENABLE_APPLE_PAY_DELEGATED_REQUEST
+    , "paymentRequestDelegation"
+#endif
 };

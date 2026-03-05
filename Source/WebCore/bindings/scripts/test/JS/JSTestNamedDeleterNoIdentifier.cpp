@@ -122,7 +122,7 @@ void JSTestNamedDeleterNoIdentifierPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestNamedDeleterNoIdentifier::s_info = { "TestNamedDeleterNoIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterNoIdentifier) };
 
 JSTestNamedDeleterNoIdentifier::JSTestNamedDeleterNoIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedDeleterNoIdentifier>&& impl)
-    : JSDOMWrapper<TestNamedDeleterNoIdentifier>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestNamedDeleterNoIdentifier>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -162,7 +162,7 @@ bool JSTestNamedDeleterNoIdentifier::legacyPlatformObjectGetOwnProperty(JSObject
             return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), value);
             return true;
@@ -189,7 +189,7 @@ bool JSTestNamedDeleterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object,
         return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
         slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), value);
         return true;
@@ -233,7 +233,7 @@ bool JSTestNamedDeleterNoIdentifier::put(JSCell* cell, JSGlobalObject* lexicalGl
         ownDescriptor.setPropertySlot(lexicalGlobalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(throwScope, false);
     }
-    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTFMove(ownDescriptor), putPropertySlot.isStrictMode()));
+    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTF::move(ownDescriptor), putPropertySlot.isStrictMode()));
 }
 
 bool JSTestNamedDeleterNoIdentifier::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
@@ -352,7 +352,7 @@ void JSTestNamedDeleterNoIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> han
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedDeleterNoIdentifier = static_cast<JSTestNamedDeleterNoIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestNamedDeleterNoIdentifier->protectedWrapped().ptr(), jsTestNamedDeleterNoIdentifier);
+    uncacheWrapper(world, protect(jsTestNamedDeleterNoIdentifier->wrapped()).ptr(), jsTestNamedDeleterNoIdentifier);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -390,7 +390,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestNamedDeleterNoIdentifier>(impl.ptr());
 #endif
-    return createWrapper<TestNamedDeleterNoIdentifier>(globalObject, WTFMove(impl));
+    return createWrapper<TestNamedDeleterNoIdentifier>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedDeleterNoIdentifier& impl)

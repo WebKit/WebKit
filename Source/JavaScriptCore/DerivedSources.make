@@ -69,6 +69,7 @@ JavaScriptCore_SCRIPTS_DIR = $(JavaScriptCore)/Scripts
 all : \
     Lexer.lut.h \
     KeywordLookup.h \
+    LexerUnicodePropertyTables.h \
     RegExpJitTables.h \
     UnicodePatternTables.h \
     yarr/YarrCanonicalizeUnicode.cpp \
@@ -112,7 +113,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/FunctionPrototype.js \
     $(JavaScriptCore)/builtins/GeneratorPrototype.js \
     $(JavaScriptCore)/builtins/GlobalOperations.js \
-    $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
     $(JavaScriptCore)/builtins/IteratorHelpers.js \
     $(JavaScriptCore)/builtins/JSIteratorConstructor.js \
     $(JavaScriptCore)/builtins/JSIteratorHelperPrototype.js \
@@ -124,7 +124,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/ObjectConstructor.js \
     $(JavaScriptCore)/builtins/PromiseConstructor.js \
     $(JavaScriptCore)/builtins/PromiseOperations.js \
-    $(JavaScriptCore)/builtins/PromisePrototype.js \
     $(JavaScriptCore)/builtins/ProxyHelpers.js \
     $(JavaScriptCore)/builtins/ReflectObject.js \
     $(JavaScriptCore)/builtins/RegExpPrototype.js \
@@ -223,6 +222,8 @@ OBJECT_LUT_HEADERS = \
     TemporalPlainMonthDayPrototype.lut.h \
     TemporalPlainTimeConstructor.lut.h \
     TemporalPlainTimePrototype.lut.h \
+    TemporalPlainYearMonthConstructor.lut.h \
+    TemporalPlainYearMonthPrototype.lut.h \
     TemporalTimeZoneConstructor.lut.h \
     TemporalTimeZonePrototype.lut.h \
     WebAssemblyArrayConstructor.lut.h \
@@ -243,6 +244,8 @@ OBJECT_LUT_HEADERS = \
     WebAssemblyModulePrototype.lut.h \
     WebAssemblyRuntimeErrorConstructor.lut.h \
     WebAssemblyRuntimeErrorPrototype.lut.h \
+    WebAssemblySuspendErrorConstructor.lut.h \
+    WebAssemblySuspendErrorPrototype.lut.h \
     WebAssemblyStructConstructor.lut.h \
     WebAssemblyStructPrototype.lut.h \
     WebAssemblyTableConstructor.lut.h \
@@ -378,6 +381,9 @@ all : $(AIR_OPCODE_FILES)
 
 $(AIR_OPCODE_FILES_PATTERNS) : $(JavaScriptCore)/b3/air/opcode_generator.rb $(JavaScriptCore)/b3/air/AirOpcode.opcodes
 	$(RUBY) $^
+
+LexerUnicodePropertyTables.h: $(JavaScriptCore)/parser/generateLexerUnicodePropertyTables.py $(JavaScriptCore)/ucd/UnicodeData.txt
+	$(PYTHON) $(JavaScriptCore)/parser/generateLexerUnicodePropertyTables.py $(JavaScriptCore)/ucd/UnicodeData.txt ./LexerUnicodePropertyTables.h
 
 UnicodePatternTables.h: $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables.py $(JavaScriptCore)/yarr/hasher.py $(JavaScriptCore)/ucd/DerivedBinaryProperties.txt $(JavaScriptCore)/ucd/DerivedCoreProperties.txt $(JavaScriptCore)/ucd/DerivedNormalizationProps.txt $(JavaScriptCore)/ucd/PropList.txt $(JavaScriptCore)/ucd/PropertyAliases.txt $(JavaScriptCore)/ucd/PropertyValueAliases.txt $(JavaScriptCore)/ucd/ScriptExtensions.txt $(JavaScriptCore)/ucd/Scripts.txt $(JavaScriptCore)/ucd/UnicodeData.txt $(JavaScriptCore)/ucd/emoji-data.txt
 	$(PYTHON) $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables.py $(JavaScriptCore)/ucd ./UnicodePatternTables.h

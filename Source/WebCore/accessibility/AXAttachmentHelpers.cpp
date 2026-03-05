@@ -56,7 +56,7 @@ void AXAttachmentHelpers::accessibilityText(const HTMLAttachmentElement& attachm
         textOrder.append(AccessibilityText(action, AccessibilityTextSource::Action));
 
     if (title.length())
-        textOrder.append(AccessibilityText(WTFMove(title), AccessibilityTextSource::Title));
+        textOrder.append(AccessibilityText(WTF::move(title), AccessibilityTextSource::Title));
 
     if (subtitle.length())
         textOrder.append(AccessibilityText(subtitle, AccessibilityTextSource::Subtitle));

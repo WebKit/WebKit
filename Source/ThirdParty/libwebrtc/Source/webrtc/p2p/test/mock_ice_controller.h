@@ -11,11 +11,11 @@
 #ifndef P2P_TEST_MOCK_ICE_CONTROLLER_H_
 #define P2P_TEST_MOCK_ICE_CONTROLLER_H_
 
-#include <cstdint>
 #include <memory>
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/units/timestamp.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_controller_factory_interface.h"
 #include "p2p/base/ice_controller_interface.h"
@@ -28,6 +28,7 @@ namespace webrtc {
 
 class MockIceController : public IceControllerInterface {
  public:
+  MockIceController() = default;
   explicit MockIceController(const IceControllerFactoryArgs& /* args */) {}
   ~MockIceController() override = default;
 
@@ -41,21 +42,18 @@ class MockIceController : public IceControllerInterface {
               (const, override));
   MOCK_METHOD(ArrayView<const Connection*>, connections, (), (const, override));
   MOCK_METHOD(bool, HasPingableConnection, (), (const, override));
-  MOCK_METHOD(IceControllerInterface::PingResult,
-              SelectConnectionToPing,
-              (int64_t),
-              (override));
+  MOCK_METHOD(PingResult, GetConnectionToPing, (Timestamp), (override));
   MOCK_METHOD(bool,
               GetUseCandidateAttr,
               (const Connection*, NominationMode, IceMode),
               (const, override));
   MOCK_METHOD(const Connection*, FindNextPingableConnection, (), (override));
   MOCK_METHOD(void, MarkConnectionPinged, (const Connection*), (override));
-  MOCK_METHOD(IceControllerInterface::SwitchResult,
+  MOCK_METHOD(SwitchResult,
               ShouldSwitchConnection,
               (IceSwitchReason, const Connection*),
               (override));
-  MOCK_METHOD(IceControllerInterface::SwitchResult,
+  MOCK_METHOD(SwitchResult,
               SortAndSwitchConnection,
               (IceSwitchReason),
               (override));
@@ -67,9 +65,9 @@ class MockIceControllerFactory : public IceControllerFactoryInterface {
   ~MockIceControllerFactory() override = default;
 
   std::unique_ptr<IceControllerInterface> Create(
-      const IceControllerFactoryArgs& args) override {
+      const IceControllerFactoryArgs& /*args*/) override {
     RecordIceControllerCreated();
-    return std::make_unique<MockIceController>(args);
+    return std::make_unique<MockIceController>();
   }
 
   MOCK_METHOD(void, RecordIceControllerCreated, ());

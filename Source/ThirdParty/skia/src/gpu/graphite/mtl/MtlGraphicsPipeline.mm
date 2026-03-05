@@ -445,7 +445,7 @@ sk_sp<MtlGraphicsPipeline> MtlGraphicsPipeline::Make(const MtlSharedContext* sha
             create_color_attachment(TextureFormatToMTLPixelFormat(colorFormat), blendInfo);
     (*psoDescriptor).colorAttachments[0] = mtlColorAttachment;
 
-    (*psoDescriptor).rasterSampleCount = renderPassDesc.fColorAttachment.fSampleCount;
+    (*psoDescriptor).rasterSampleCount = (uint8_t) renderPassDesc.fColorAttachment.fSampleCount;
 
     if (TextureFormatHasStencil(dsFormat)) {
         (*psoDescriptor).stencilAttachmentPixelFormat = TextureFormatToMTLPixelFormat(dsFormat);
@@ -484,7 +484,10 @@ MtlGraphicsPipeline::MtlGraphicsPipeline(const skgpu::graphite::SharedContext* s
         : GraphicsPipeline(sharedContext, pipelineInfo, pipelineLabel)
         , fPipelineState(std::move(pso))
         , fDepthStencilState(std::move(dss))
-        , fStencilReferenceValue(refValue) {}
+        , fStencilReferenceValue(refValue) {
+    // Update the newly-created underlying GPU object's label to match the Resource's
+    this->synchronizeBackendLabel();
+}
 
 void MtlGraphicsPipeline::freeGpuData() {
     fPipelineState.reset();

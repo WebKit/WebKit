@@ -21,7 +21,7 @@
 
 
 int X509_REQ_set_version(X509_REQ *x, long version) {
-  if (x == NULL) {
+  if (x == nullptr) {
     return 0;
   }
   if (version != X509_REQ_VERSION_1) {
@@ -32,28 +32,21 @@ int X509_REQ_set_version(X509_REQ *x, long version) {
 }
 
 int X509_REQ_set_subject_name(X509_REQ *x, X509_NAME *name) {
-  if ((x == NULL) || (x->req_info == NULL)) {
+  if ((x == nullptr) || (x->req_info == nullptr)) {
     return 0;
   }
   return (X509_NAME_set(&x->req_info->subject, name));
 }
 
 int X509_REQ_set_pubkey(X509_REQ *x, EVP_PKEY *pkey) {
-  if ((x == NULL) || (x->req_info == NULL)) {
+  if ((x == nullptr) || (x->req_info == nullptr)) {
     return 0;
   }
   return (X509_PUBKEY_set(&x->req_info->pubkey, pkey));
 }
 
 int X509_REQ_set1_signature_algo(X509_REQ *req, const X509_ALGOR *algo) {
-  X509_ALGOR *copy = X509_ALGOR_dup(algo);
-  if (copy == NULL) {
-    return 0;
-  }
-
-  X509_ALGOR_free(req->sig_alg);
-  req->sig_alg = copy;
-  return 1;
+  return X509_ALGOR_copy(req->sig_alg, algo);
 }
 
 int X509_REQ_set1_signature_value(X509_REQ *req, const uint8_t *sig,

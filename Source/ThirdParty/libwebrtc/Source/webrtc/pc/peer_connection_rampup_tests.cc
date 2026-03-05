@@ -17,6 +17,7 @@
 #include "api/audio_options.h"
 #include "api/create_modular_peer_connection_factory.h"
 #include "api/enable_media_with_defaults.h"
+#include "api/environment/environment.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
 #include "api/media_stream_interface.h"
@@ -57,6 +58,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/wait_until.h"
@@ -149,7 +151,7 @@ class PeerConnectionWrapperForRampUpTest : public PeerConnectionWrapper {
 class PeerConnectionRampUpTest : public ::testing::Test {
  public:
   PeerConnectionRampUpTest()
-      : clock_(Clock::GetRealTimeClock()),
+      : env_(CreateTestEnvironment()),
         firewall_socket_server_(&virtual_socket_server_),
         network_thread_(&firewall_socket_server_),
         worker_thread_(Thread::Create()) {
@@ -175,6 +177,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
   std::unique_ptr<PeerConnectionWrapperForRampUpTest>
   CreatePeerConnectionWrapper(const RTCConfiguration& config) {
     PeerConnectionFactoryDependencies pcf_deps;
+    pcf_deps.env = env_;
     pcf_deps.network_thread = network_thread();
     pcf_deps.worker_thread = worker_thread_.get();
     pcf_deps.signaling_thread = Thread::Current();
@@ -215,7 +218,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     ASSERT_TRUE(caller_);
     ASSERT_TRUE(callee_);
     FrameGeneratorCapturerVideoTrackSource::Config config;
-    caller_->AddTrack(caller_->CreateLocalVideoTrack(config, clock_));
+    caller_->AddTrack(caller_->CreateLocalVideoTrack(config, &env_.clock()));
     // Disable highpass filter so that we can get all the test audio frames.
     AudioOptions options;
     options.highpass_filter = false;
@@ -258,7 +261,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
       static const SocketAddress turn_server_external_address{
           kTurnExternalAddress, kTurnExternalPort};
       turn_server = std::make_unique<TestTurnServer>(
-          thread, factory, turn_server_internal_address,
+          env_, thread, factory, turn_server_internal_address,
           turn_server_external_address, type, true /*ignore_bad_certs=*/,
           common_name);
     });
@@ -324,7 +327,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     return 0;
   }
 
-  Clock* const clock_;
+  const Environment env_;
   // The turn servers should be accessed & deleted on the network thread to
   // avoid a race with the socket read/write which occurs on the network thread.
   std::vector<std::unique_ptr<TestTurnServer>> turn_servers_;

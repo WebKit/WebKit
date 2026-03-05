@@ -101,7 +101,7 @@ cbor::CBORValue convertToCBOR(const AuthenticatorSupportedOptions& options)
         break;
     }
 
-    return CBORValue(WTFMove(optionMap));
+    return CBORValue(WTF::move(optionMap));
 }
 
 } // namespace fido

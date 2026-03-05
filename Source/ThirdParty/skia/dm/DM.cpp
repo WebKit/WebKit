@@ -14,6 +14,7 @@
 #include "include/core/SkData.h"
 #include "include/core/SkDocument.h"
 #include "include/core/SkGraphics.h"
+#include "include/private/base/SkLog.h"
 #include "src/base/SkHalf.h"
 #include "src/base/SkLeanWindows.h"
 #include "src/base/SkNoDestructor.h"
@@ -29,6 +30,8 @@
 #include "src/core/SkTHash.h"
 #include "src/core/SkTaskGroup.h"
 #include "src/utils/SkOSPath.h"
+#include "tests/Test.h"
+#include "tests/TestHarness.h"
 #include "tools/AutoreleasePool.h"
 #include "tools/CodecUtils.h"
 #include "tools/HashAndEncode.h"
@@ -44,6 +47,8 @@
 #include "tools/trace/EventTracingPriv.h"
 #include "tools/trace/SkDebugfTracer.h"
 
+#include <algorithm>
+#include <cstring>
 #include <memory>
 #include <vector>
 
@@ -51,11 +56,6 @@
 
 #if defined(SK_GRAPHITE)
     #include "tools/flags/CommonFlagsGraphite.h"
-#endif
-
-#if !defined(SK_DISABLE_LEGACY_TESTS)
-    #include "tests/Test.h"
-    #include "tests/TestHarness.h"
 #endif
 
 #if defined(SK_BUILD_FOR_IOS)
@@ -73,6 +73,10 @@
 
 #if defined(SK_ENABLE_SVG)
     #include "modules/svg/include/SkSVGOpenTypeSVGDecoder.h"
+#endif
+
+#if defined(SK_USE_PARTITION_ALLOC)
+    #include "tools/partition_alloc/TestSupport.h"
 #endif
 
 using namespace skia_private;
@@ -158,6 +162,10 @@ static DEFINE_string2(match, m, nullptr,
                "If a name does not match any list entry,\n"
                "it is skipped unless some list entry starts with ~");
 
+static DEFINE_bool(list,
+                   false,
+                   "List all gathered sources and sinks after applying --match and quit.");
+
 static DEFINE_bool2(quiet, q, false, "if true, don't print status updates.");
 static DEFINE_bool2(verbose, v, false, "enable verbose output from the test driver.");
 
@@ -177,10 +185,8 @@ static DEFINE_string(properties, "",
 static DEFINE_bool(rasterize_pdf, false, "Rasterize PDFs when possible.");
 
 using namespace DM;
-
-#if !defined(SK_DISABLE_LEGACY_TESTS)
 using skiatest::TestType;
-#endif
+
 #if defined(SK_GANESH)
 using sk_gpu_test::GrContextFactory;
 using sk_gpu_test::ContextInfo;
@@ -1495,9 +1501,6 @@ struct Task {
 };
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#if defined(SK_DISABLE_LEGACY_TESTS)
-static int gather_tests() { return 0; }
-#else
 // Unit tests don't fit so well into the Src/Sink model, so we give them special treatment.
 
 static SkTDArray<skiatest::Test>* gCPUTests = new SkTDArray<skiatest::Test>;
@@ -1585,22 +1588,56 @@ static void run_graphite_test(skiatest::Test test,
 }
 #endif
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 TestHarness CurrentTestHarness() {
     return TestHarness::kDM;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#endif // !SK_DISABLE_LEGACY_TESTS
+static void print_srcs() {
+    struct {
+        bool operator()(const TaggedSrc& a, const TaggedSrc& b) const {
+            if (auto c = std::strcmp(a.tag.c_str(), b.tag.c_str())) {
+                return c < 0;
+            }
+            return std::strcmp(a->name().c_str(), b->name().c_str()) < 0;
+        }
+    } customLess;
+
+    std::sort(gSrcs->begin(), gSrcs->end(), customLess);
+    // Using kError to make sure we always display this and SkLog (instead of the macro)
+    // to avoid having the [skia] prefix, which looks odd. See b/469441457.
+    SkLog(SkLogPriority::kError, "Gathered Sources:\n");
+    for (TaggedSrc& src : *gSrcs) {
+        SkLog(SkLogPriority::kError, " - %s %s\n", src.tag.c_str(), src->name().c_str());
+    }
+}
+
+static void print_sinks() {
+    struct {
+        bool operator()(const TaggedSink& a, const TaggedSink& b) const {
+            return std::strcmp(a.tag.c_str(), b.tag.c_str()) < 0;
+        }
+    } customLess;
+
+    std::sort(gSinks->begin(), gSinks->end(), customLess);
+    SkLog(SkLogPriority::kError, "Gathered Sinks:\n");
+    for (TaggedSink& sink : *gSinks) {
+        SkLog(SkLogPriority::kError, " - %s\n", sink.tag.c_str());
+    }
+}
 
 int main(int argc, char** argv) {
+#if defined(SK_USE_PARTITION_ALLOC)
+    // If available, use PartitionAlloc as the memory allocator for DM. This allows catching
+    // additional memory errors in tests that would otherwise go unnoticed.
+    skiatest::InitializePartitionAllocForTesting();
+#endif
+
     CommandLineFlags::Parse(argc, argv);
 
     initializeEventTracingForTools();
 
-#if !defined(SK_BUILD_FOR_GOOGLE3) && defined(SK_BUILD_FOR_IOS)
+#if defined(SK_BUILD_FOR_IOS)
     cd_Documents();
 #endif
     setbuf(stdout, nullptr);
@@ -1641,6 +1678,7 @@ int main(int argc, char** argv) {
 #endif
     SkTaskGroup::Enabler enabled(FLAGS_threads);
     CodecUtils::RegisterAllAvailable();
+    ToolUtils::RegisterAvailableTypefaceFactories();
 
     if (nullptr == GetResourceAsData("images/color_wheel.png")) {
         info("Some resources are missing.  Do you need to set --resourcePath?\n");
@@ -1651,6 +1689,7 @@ int main(int argc, char** argv) {
     if (!gather_srcs()) {
         return 1;
     }
+
     bool defaultConfigs = true;
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "--config") == 0) {
@@ -1669,6 +1708,12 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    if (FLAGS_list) {
+        print_srcs();
+        print_sinks();
+        return 0;
+    }
+
     const int testCount = gather_tests();
     gPending = gSrcs->size() * gSinks->size() + testCount;
     gTotalCounts = gPending;
@@ -1677,11 +1722,9 @@ int main(int argc, char** argv) {
          gSrcs->size(), gSinks->size(), testCount,
          gPending);
 
-#if !defined(SK_DISABLE_LEGACY_TESTS)
     // Kick off as much parallel work as we can, making note of any serial work we'll need to do.
     // However, execute all CPU-serial tests first so that they don't have races with parallel tests
     for (skiatest::Test& test : *gCPUSerialTests) { run_cpu_test(test); }
-#endif
 
     SkTaskGroup parallel;
     TArray<Task> serial;
@@ -1705,16 +1748,13 @@ int main(int argc, char** argv) {
         }
     }
 
-#if !defined(SK_DISABLE_LEGACY_TESTS)
     for (skiatest::Test& test : *gCPUTests) {
         parallel.add([test] { run_cpu_test(test); });
     }
-#endif // !SK_DISABLE_LEGACY_TESTS
 
     // With the parallel work running, run serial tasks and tests here on main thread.
     for (Task& task : serial) { Task::Run(task); }
 
-#if !defined(SK_DISABLE_LEGACY_TESTS)
 #if defined(SK_GANESH)
     for (skiatest::Test& test : *gGaneshTests) { run_ganesh_test(test, grCtxOptions); }
 #endif
@@ -1722,7 +1762,6 @@ int main(int argc, char** argv) {
 #if defined(SK_GRAPHITE)
     for (skiatest::Test& test : *gGraphiteTests) { run_graphite_test(test, graphiteOptions); }
 #endif
-#endif // !SK_DISABLE_LEGACY_TESTS
 
     // Wait for any remaining parallel work to complete (including any spun off of serial tasks).
     parallel.wait();

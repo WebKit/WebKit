@@ -30,12 +30,14 @@
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_factory.h"
+#include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "api/test/neteq_simulator.h"
 #include "api/units/timestamp.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
 
@@ -70,9 +72,9 @@ std::unique_ptr<NetEq> CreateNetEq(
 }  // namespace
 
 void DefaultNetEqTestErrorCallback::OnInsertPacketError(
-    const NetEqInput::PacketData& packet) {
+    const RtpPacketReceived& packet) {
   std::cerr << "InsertPacket returned an error." << std::endl;
-  std::cerr << "Packet data: " << packet.ToString() << std::endl;
+  std::cerr << "Packet data: " << NetEqInput::ToString(packet) << std::endl;
   RTC_FATAL();
 }
 
@@ -133,14 +135,14 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
     time_now_ms = *input_->NextEventTime();
     // Check if it is time to insert packet.
     if (input_->NextPacketTime() && time_now_ms >= *input_->NextPacketTime()) {
-      std::unique_ptr<NetEqInput::PacketData> packet_data = input_->PopPacket();
+      std::unique_ptr<RtpPacketReceived> packet_data = input_->PopPacket();
       RTC_CHECK(packet_data);
-      const size_t payload_data_length =
-          packet_data->payload.size() - packet_data->header.paddingLength;
+      const size_t payload_data_length = packet_data->payload_size();
+      RTPHeader rtp_header;
+      packet_data->GetHeader(&rtp_header);
       if (payload_data_length != 0) {
-        int error = neteq_->InsertPacket(
-            packet_data->header, ArrayView<const uint8_t>(packet_data->payload),
-            Timestamp::Millis(time_now_ms));
+        int error = neteq_->InsertPacket(rtp_header, packet_data->payload(),
+                                         Timestamp::Millis(time_now_ms));
         if (error != NetEq::kOK && callbacks_.error_callback) {
           callbacks_.error_callback->OnInsertPacketError(*packet_data);
         }
@@ -149,7 +151,7 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
                                                            neteq_.get());
         }
       } else {
-        neteq_->InsertEmptyPacket(packet_data->header);
+        neteq_->InsertEmptyPacket(rtp_header);
       }
       if (last_packet_time_ms_) {
         current_state_.packet_iat_ms.push_back(time_now_ms -
@@ -161,30 +163,29 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
             last_packet_time_ms_ ? (time_now_ms - *last_packet_time_ms_) : -1;
         const auto delta_timestamp =
             last_packet_timestamp_
-                ? (static_cast<int64_t>(packet_data->header.timestamp) -
+                ? (static_cast<int64_t>(packet_data->Timestamp()) -
                    *last_packet_timestamp_) *
                       1000 / sample_rate_hz_
                 : -1;
         const auto packet_size_bytes =
-            packet_data->payload.size() == 12
+            packet_data->payload_size() == 12
                 ? ByteReader<uint32_t>::ReadLittleEndian(
-                      &packet_data->payload[8])
+                      &packet_data->payload()[8])
                 : -1;
         *text_log_ << "Packet   - wallclock: " << std::setw(5) << time_now_ms
                    << ", delta wc: " << std::setw(4) << delta_wallclock
-                   << ", seq_no: " << packet_data->header.sequenceNumber
+                   << ", seq_no: " << packet_data->SequenceNumber()
                    << ", timestamp: " << std::setw(10)
-                   << packet_data->header.timestamp
-                   << ", delta ts: " << std::setw(4) << delta_timestamp
-                   << ", size: " << std::setw(5) << packet_size_bytes
+                   << packet_data->Timestamp()                           //
+                   << ", delta ts: " << std::setw(4) << delta_timestamp  //
+                   << ", size: " << std::setw(5) << packet_size_bytes    //
                    << ", frame size: " << std::setw(3)
                    << ops_state.current_frame_size_ms
                    << ", buffer size: " << std::setw(4)
                    << ops_state.current_buffer_size_ms << std::endl;
       }
-      last_packet_time_ms_ = std::make_optional<int>(time_now_ms);
-      last_packet_timestamp_ =
-          std::make_optional<uint32_t>(packet_data->header.timestamp);
+      last_packet_time_ms_ = time_now_ms;
+      last_packet_timestamp_ = packet_data->Timestamp();
     }
 
     if (input_->NextSetMinimumDelayInfo().has_value() &&

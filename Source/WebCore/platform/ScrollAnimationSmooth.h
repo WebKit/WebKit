@@ -36,6 +36,7 @@ class TimingFunction;
 
 class ScrollAnimationSmooth final: public ScrollAnimation {
     WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationSmooth);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollAnimationSmooth);
 public:
     ScrollAnimationSmooth(ScrollAnimationClient&);
     virtual ~ScrollAnimationSmooth();

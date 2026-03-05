@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
+#include <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
 
 #include <wtf/Forward.h>

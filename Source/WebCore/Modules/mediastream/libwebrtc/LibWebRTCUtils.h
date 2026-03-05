@@ -28,10 +28,13 @@
 
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/RTCIceCandidateFields.h>
+// FIXME: Modularize WebRTC
+IGNORE_CLANG_WARNINGS_BEGIN("non-modular-include-in-module")
 #include <webrtc/api/media_types.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/stats/rtcstats_objects.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+IGNORE_CLANG_WARNINGS_END
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
@@ -72,13 +75,13 @@ RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDi
 webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiverDirection);
 webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit&, webrtc::MediaType);
 
-ExceptionCode toExceptionCode(webrtc::RTCErrorType);
+ExceptionCode NODELETE toExceptionCode(webrtc::RTCErrorType);
 Exception toException(const webrtc::RTCError&);
 RefPtr<RTCError> toRTCError(const webrtc::RTCError&);
 
 RTCPriorityType toRTCPriorityType(webrtc::PriorityValue);
 RTCPriorityType toRTCPriorityType(webrtc::Priority);
-webrtc::Priority fromRTCPriorityType(RTCPriorityType);
+webrtc::Priority NODELETE fromRTCPriorityType(RTCPriorityType);
 
 inline String fromStdString(const std::string& value)
 {

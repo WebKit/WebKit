@@ -30,6 +30,7 @@
 #import "Credential.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLProtectionSpace.h>
+#import <wtf/WeakPtr.h>
 
 using namespace WebCore;
 
@@ -156,16 +157,8 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
 {
     if (coreChallenge.nsURLAuthenticationChallenge())
         return coreChallenge.nsURLAuthenticationChallenge();
-        
-    return adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().protectedNSSpace().get() proposedCredential:coreChallenge.proposedCredential().protectedNSCredential().get() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:coreChallenge.failureResponse().protectedNSURLResponse().get() error:coreChallenge.error().protectedNSError().get() sender:coreChallenge.protectedSender().get()]).autorelease();
-}
 
-RetainPtr<NSURLAuthenticationChallenge> protectedMac(const AuthenticationChallenge& coreChallenge)
-{
-    if (coreChallenge.nsURLAuthenticationChallenge())
-        return coreChallenge.nsURLAuthenticationChallenge();
-
-    return adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().protectedNSSpace().get() proposedCredential:coreChallenge.proposedCredential().protectedNSCredential().get() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:coreChallenge.failureResponse().protectedNSURLResponse().get() error:coreChallenge.error().protectedNSError().get() sender:coreChallenge.protectedSender().get()]);
+    return adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:protect(coreChallenge.protectionSpace().nsSpace()).get() proposedCredential:protect(coreChallenge.proposedCredential().nsCredential()).get() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:protect(coreChallenge.failureResponse().nsURLResponse()).get() error:protect(coreChallenge.error().nsError()).get() sender:protect(coreChallenge.sender()).get()]).autorelease();
 }
 
 AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)

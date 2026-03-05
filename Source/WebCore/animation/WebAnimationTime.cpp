@@ -67,8 +67,8 @@ WebAnimationTime::WebAnimationTime(const CSSNumberish& value)
         return;
     }
 
-    ASSERT(std::holds_alternative<RefPtr<CSSNumericValue>>(value));
-    auto numericValue = std::get<RefPtr<CSSNumericValue>>(value);
+    ASSERT(std::holds_alternative<Ref<CSSNumericValue>>(value));
+    auto numericValue = std::get<Ref<CSSNumericValue>>(value);
     if (RefPtr unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
         if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
             m_type = Type::Time;

@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTClipControl);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTClipControl);
 
 EXTClipControl::EXTClipControl(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTClipControl)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::EXT_clip_control);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::EXT_clip_control);
 }
 
 EXTClipControl::~EXTClipControl() = default;
@@ -51,7 +51,7 @@ void EXTClipControl::clipControlEXT(GCGLenum origin, GCGLenum depth)
 {
     if (isContextLost())
         return;
-    context()->graphicsContextGL()->clipControlEXT(origin, depth);
+    protect(context()->graphicsContextGL())->clipControlEXT(origin, depth);
 }
 
 } // namespace WebCore

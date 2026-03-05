@@ -57,7 +57,7 @@ public:
         // create temp file.
         auto result = FileSystem::openTemporaryFile("tempTestFile"_s);
         m_tempFilePath = result.first;
-        auto handle = WTFMove(result.second);
+        auto handle = WTF::move(result.second);
         handle.write(byteCast<uint8_t>(FileSystemTestData.span()));
         handle = { };
 

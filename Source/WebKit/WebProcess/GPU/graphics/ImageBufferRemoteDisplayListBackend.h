@@ -33,7 +33,7 @@ namespace WebKit {
 class RemoteRenderingBackendProxy;
 
 class ImageBufferRemoteDisplayListBackend : public WebCore::NullImageBufferBackend {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferRemoteDisplayListBackend);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBufferRemoteDisplayListBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferRemoteDisplayListBackend);
 public:
     static std::unique_ptr<ImageBufferRemoteDisplayListBackend> create(const Parameters&);

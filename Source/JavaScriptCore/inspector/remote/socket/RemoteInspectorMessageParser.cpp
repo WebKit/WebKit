@@ -42,7 +42,7 @@ namespace Inspector {
 */
 
 MessageParser::MessageParser(Function<void(Vector<uint8_t>&&)>&& listener)
-    : m_listener(WTFMove(listener))
+    : m_listener(WTF::move(listener))
 {
 }
 
@@ -98,7 +98,7 @@ bool MessageParser::parse()
         auto dataBuffer = Vector<uint8_t>(dataSize);
         memcpy(&dataBuffer[0], &m_buffer[sizeof(uint32_t)], dataSize);
 
-        m_listener(WTFMove(dataBuffer));
+        m_listener(WTF::move(dataBuffer));
 
         m_buffer.removeAt(0, messageSize);
     }

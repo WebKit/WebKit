@@ -61,12 +61,22 @@ public:
 #endif
     }
 
+    void checkContextMenuPosition(WebKitContextMenu* contextMenu)
+    {
+        gint x, y;
+        gboolean hasPosition = webkit_context_menu_get_position(contextMenu, &x, &y);
+        g_assert_true(hasPosition);
+        g_assert_cmpint(x, ==, static_cast<gint>(m_menuPositionX));
+        g_assert_cmpint(y, ==, static_cast<gint>(m_menuPositionY));
+    }
+
     static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent* event, WebKitHitTestResult* hitTestResult, ContextMenuTest* test)
     {
         g_assert_true(WEBKIT_IS_CONTEXT_MENU(contextMenu));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(contextMenu));
         g_assert_true(webkit_context_menu_get_event(contextMenu) == event);
         test->checkContextMenuEvent(event);
+        test->checkContextMenuPosition(contextMenu);
         g_assert_true(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(hitTestResult));
 

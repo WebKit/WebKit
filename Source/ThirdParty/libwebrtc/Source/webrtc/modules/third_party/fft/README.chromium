@@ -2,8 +2,9 @@ Name: fft
 Short Name: fft
 URL: This is the canonical repository.
 Version: N/A
+Update Mechanism: Static (https://crbug.com/419412821)
 Date: 2018-07-26
-License: Custom license
+License: dtoa
 License File: LICENSE
 Security Critical: yes
 Shipped: yes

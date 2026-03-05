@@ -38,7 +38,7 @@
 namespace WebCore {
 
 CachedTextTrack::CachedTextTrack(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
-    : CachedResource(WTFMove(request), Type::TextTrackResource, sessionID, cookieJar)
+    : CachedResource(WTF::move(request), Type::TextTrackResource, sessionID, cookieJar)
 {
 }
 
@@ -49,7 +49,7 @@ void CachedTextTrack::doUpdateBuffer(const FragmentedSharedBuffer* data)
     setEncodedSize(data ? data->size() : 0);
 
     CachedResourceClientWalker<CachedResourceClient> walker(*this);
-    while (CachedResourceClient* client = walker.next())
+    while (RefPtr client = walker.next())
         client->deprecatedDidReceiveCachedResource(*this);
 }
 

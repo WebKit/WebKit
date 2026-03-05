@@ -59,10 +59,10 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
     return {
         notificationPayload->defaultActionURL,
         notificationPayload->title,
-        WTFMove(body),
-        WTFMove(iconURL),
-        WTFMove(tag),
-        WTFMove(language),
+        WTF::move(body),
+        WTF::move(iconURL),
+        WTF::move(tag),
+        WTF::move(language),
         direction,
         WebCore::SecurityOriginData::fromURL(registrationURL).toString(),
         registrationURL,
@@ -70,8 +70,8 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
         sharedScriptIdentifier,
         PAL::SessionID::defaultSessionID(),
         MonotonicTime::now(),
-        WTFMove(dataJSON),
-        WTFMove(silent)
+        WTF::move(dataJSON),
+        WTF::move(silent)
     };
 }
 

@@ -44,14 +44,4 @@ inline const DocumentMarkerController& Document::markers() const
     return *m_markers;
 }
 
-inline CheckedRef<DocumentMarkerController> Document::checkedMarkers()
-{
-    return markers();
-}
-
-inline CheckedRef<const DocumentMarkerController> Document::checkedMarkers() const
-{
-    return markers();
-}
-
 }

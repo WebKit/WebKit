@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 514x19
+        RenderText {#text} at (0,0) size 514x20
           text run at (0,0) width 440: "This tests that text autosizing is not applied to editable elements and "
           text run at (439,0) width 75: "documents."
       RenderBlock {DIV} at (0,36) size 600x80
-        RenderText {#text} at (0,0) size 595x39
+        RenderText {#text} at (0,0) size 595x40
           text run at (0,0) width 595: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu nisl leo, vel commodo "
           text run at (0,20) width 460: "nibh. Fusce suscipit arcu eu elit vulputate non hendrerit velit consequat."
-        RenderBR {BR} at (459,20) size 1x19
-        RenderText {#text} at (0,40) size 603x39
+        RenderBR {BR} at (459,20) size 1x20
+        RenderText {#text} at (0,40) size 603x40
           text run at (0,40) width 583: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt velit at sapien porta ornare. Morbi "
           text run at (0,60) width 603: "egestas, diam nec ultricies molestie, est velit ultricies leo, aliquet placerat justo libero id arcu. "
       RenderBlock (anonymous) at (0,116) size 784x154
@@ -23,11 +23,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134
                 RenderBlock {DIV} at (0,0) size 600x80
-                  RenderText {#text} at (0,0) size 595x39
+                  RenderText {#text} at (0,0) size 595x40
                     text run at (0,0) width 595: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu nisl leo, vel commodo "
                     text run at (0,20) width 460: "nibh. Fusce suscipit arcu eu elit vulputate non hendrerit velit consequat."
-                  RenderBR {BR} at (459,20) size 1x19
-                  RenderText {#text} at (0,40) size 603x39
+                  RenderBR {BR} at (459,20) size 1x20
+                  RenderText {#text} at (0,40) size 603x40
                     text run at (0,40) width 583: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt velit at sapien porta ornare. Morbi "
                     text run at (0,60) width 603: "egestas, diam nec ultricies molestie, est velit ultricies leo, aliquet placerat justo libero id arcu. "
         RenderText {#text} at (0,0) size 0x0

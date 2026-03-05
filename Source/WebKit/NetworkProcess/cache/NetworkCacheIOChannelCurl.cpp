@@ -58,7 +58,7 @@ IOChannel::~IOChannel()
 
 void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue, Function<void(Data&&, int error)>&& completionHandler)
 {
-    queue->dispatch([this, protectedThis = Ref { *this }, offset, size, completionHandler = WTFMove(completionHandler)] {
+    queue->dispatch([this, protectedThis = Ref { *this }, offset, size, completionHandler = WTF::move(completionHandler)] {
         m_lock.lock();
 
         auto fileSize = m_fileDescriptor.size();
@@ -74,14 +74,14 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
         auto bytesRead = m_fileDescriptor.read(buffer.mutableSpan());
         m_lock.unlock();
 
-        auto data = Data(WTFMove(buffer));
-        completionHandler(WTFMove(data), bytesRead ? 0 : -1);
+        auto data = Data(WTF::move(buffer));
+        completionHandler(WTF::move(data), bytesRead ? 0 : -1);
     });
 }
 
 void IOChannel::write(size_t offset, const Data& data, Ref<WTF::WorkQueueBase>&& queue, Function<void(int error)>&& completionHandler)
 {
-    queue->dispatch([this, protectedThis = Ref { *this }, offset, data, completionHandler = WTFMove(completionHandler)] {
+    queue->dispatch([this, protectedThis = Ref { *this }, offset, data, completionHandler = WTF::move(completionHandler)] {
         int err = 0;
         {
             Locker locker { m_lock };

@@ -172,7 +172,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , mediaIsInFullscreen(mediaIsInFullscreen)
         , isActivePDFAnnotation(isActivePDFAnnotation)
         , elementType(elementType)
-        , frameInfo(WTFMove(frameInfo))
+        , frameInfo(WTF::move(frameInfo))
         , targetFrame(targetFrame)
         , remoteUserInputEventData(remoteUserInputEventData)
         , lookupText(lookupText)
@@ -191,7 +191,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , linkTextIndicator(linkTextIndicator)
 {
     if (imageHandle)
-        imageSharedMemory = WebCore::SharedMemory::map(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+        imageSharedMemory = WebCore::SharedMemory::map(WTF::move(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
 }
 
 WebHitTestResultData::~WebHitTestResultData()
@@ -224,7 +224,7 @@ std::optional<WebCore::SharedMemory::Handle> WebHitTestResultData::getImageShare
     std::optional<WebCore::SharedMemory::Handle> imageHandle = std::nullopt;
     if (RefPtr memory = imageSharedMemory; memory && !memory->span().empty()) {
         if (auto handle = memory->createHandle(WebCore::SharedMemory::Protection::ReadOnly))
-            imageHandle = WTFMove(*handle);
+            imageHandle = WTF::move(*handle);
     }
     return imageHandle;
 }

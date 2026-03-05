@@ -251,7 +251,7 @@ typename std::enable_if<Index >= Count && IsTuple<typename std::tuple_element<In
         return false;
     }
 
-    if (!SQLiteStatementFetchColumnsInTuple(statement, WTFMove(std::get<Index>(tuple))))
+    if (!SQLiteStatementFetchColumnsInTuple(statement, WTF::move(std::get<Index>(tuple))))
         return false;
 
     resultCode = sqlite3_step(statement);
@@ -319,7 +319,7 @@ bool SQLiteDatabaseEnumerateRows(Ref<WebExtensionSQLiteDatabase> database, RefPt
     if (error)
         return false;
 
-    SQLiteStatementBind<0, std::tuple_size<std::tuple<Parameters...>>::value, typename std::tuple<Parameters...>>(database, statement->handle(), error, WTFMove(parameters));
+    SQLiteStatementBind<0, std::tuple_size<std::tuple<Parameters...>>::value, typename std::tuple<Parameters...>>(database, statement->handle(), error, WTF::move(parameters));
 
     bool result = statement->fetchWithEnumerationCallback(enumerationBlock, error);
     statement->invalidate();

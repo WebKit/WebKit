@@ -28,7 +28,7 @@ class ProgressValueElement;
 class RenderProgress;
 
 class HTMLProgressElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLProgressElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLProgressElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLProgressElement);
 public:
     static const double IndeterminatePosition;
@@ -65,8 +65,6 @@ private:
     bool isDeterminate() const { return m_isDeterminate; };
 
     bool canContainRangeEndPoint() const final { return false; }
-
-    RefPtr<ProgressValueElement> protectedValueElement();
 
     WeakPtr<ProgressValueElement, WeakPtrImplWithEventTargetData> m_valueElement;
     bool m_isDeterminate { false };

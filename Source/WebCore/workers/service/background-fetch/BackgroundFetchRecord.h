@@ -37,7 +37,7 @@ class ScriptExecutionContext;
 
 class BackgroundFetchRecord : public RefCounted<BackgroundFetchRecord> {
 public:
-    static Ref<BackgroundFetchRecord> create(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information) { return adoptRef(*new BackgroundFetchRecord(context, WTFMove(information))); }
+    static Ref<BackgroundFetchRecord> create(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information) { return adoptRef(*new BackgroundFetchRecord(context, WTF::move(information))); }
 
     ~BackgroundFetchRecord();
     

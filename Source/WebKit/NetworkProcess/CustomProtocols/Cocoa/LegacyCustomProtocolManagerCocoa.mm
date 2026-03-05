@@ -40,16 +40,12 @@
 
 using namespace WebKit;
 
-static RefPtr<NetworkProcess>& firstNetworkProcess()
+static RefPtr<NetworkProcess>& NODELETE firstNetworkProcess()
 {
     static NeverDestroyed<RefPtr<NetworkProcess>> networkProcess;
     return networkProcess.get();
 }
 
-static RefPtr<NetworkProcess> protectedFirstNetworkProcess()
-{
-    return firstNetworkProcess();
-}
 
 void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkProcess)
 {
@@ -60,7 +56,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
         return !legacyCustomProtocolManager->m_registeredSchemes.isEmpty();
     };
 
-    RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(RefPtr { protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>() }.get()));
+    RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(RefPtr { protect(firstNetworkProcess())->supplement<LegacyCustomProtocolManager>() }.get()));
     firstNetworkProcess() = networkProcess;
 }
 
@@ -82,7 +78,7 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
     // FIXME: This code runs in a dispatch queue so we can't ref NetworkProcess here.
-    if (SUPPRESS_UNCOUNTED_LOCAL auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* customProtocolManager = protect(firstNetworkProcess())->supplement<LegacyCustomProtocolManager>())
         SUPPRESS_UNCOUNTED_ARG return customProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
     return NO;
 }
@@ -103,7 +99,7 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
     if (!self)
         return nil;
 
-    if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+    if (RefPtr customProtocolManager = protect(firstNetworkProcess())->supplement<LegacyCustomProtocolManager>())
         _customProtocolID = customProtocolManager->addCustomProtocol(self);
     _initializationRunLoop = CFRunLoopGetCurrent();
 
@@ -118,7 +114,7 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
 - (void)startLoading
 {
     ensureOnMainRunLoop([customProtocolID = *self.customProtocolID, request = retainPtr([self request])] {
-        if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+        if (RefPtr customProtocolManager = protect(firstNetworkProcess())->supplement<LegacyCustomProtocolManager>())
             customProtocolManager->startLoading(customProtocolID, request.get());
     });
 }
@@ -126,7 +122,7 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
 - (void)stopLoading
 {
     ensureOnMainRunLoop([customProtocolID = *self.customProtocolID] {
-        if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
+        if (RefPtr customProtocolManager = protect(firstNetworkProcess())->supplement<LegacyCustomProtocolManager>()) {
             customProtocolManager->stopLoading(customProtocolID);
             customProtocolManager->removeCustomProtocol(customProtocolID);
         }

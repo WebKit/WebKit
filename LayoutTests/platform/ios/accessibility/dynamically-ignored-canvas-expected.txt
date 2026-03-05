@@ -9,7 +9,6 @@ Canvas
 Removing all children of #canvas.
 #canvas is ignored: true
 Dumping AX tree starting at #group.
-Canvas
 
 
 PASS successfullyParsed is true

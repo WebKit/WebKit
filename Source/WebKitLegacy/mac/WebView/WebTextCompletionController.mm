@@ -170,11 +170,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         // Get preceeding word stem
         WebFrame *frame = [_htmlView _frame];
-        DOMRange *selection = kit(core(frame)->selection().selection().toNormalizedRange());
+        RetainPtr selection = kit(core(frame)->selection().selection().toNormalizedRange());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::Alteration::Extend
             direction:SelectionDirection::Backward granularity:TextGranularity::WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
-        [prefix setEnd:[selection startContainer] offset:[selection startOffset]];
+        [prefix setEnd:[selection.get() startContainer] offset:[selection.get() startOffset]];
 
         // Reject some NOP cases
         if ([prefix collapsed]) {
@@ -200,7 +200,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [self _insertMatch:[_completions objectAtIndex:0]];
         } else {
             ASSERT(!_originalString);       // this should only be set IFF we have a popup window
-            _originalString = [[frame _stringForRange:selection] retain];
+            _originalString = [[frame _stringForRange:selection.get()] retain];
             [self _buildUI];
             NSRect wordRect = [frame _caretRectAtPosition:Position(core([wholeWord startContainer]), [wholeWord startOffset], Position::PositionIsOffsetInAnchor) affinity:NSSelectionAffinityDownstream];
             // +1 to be under the word, not the caret

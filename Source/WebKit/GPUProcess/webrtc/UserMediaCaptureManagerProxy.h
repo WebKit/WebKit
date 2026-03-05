@@ -65,12 +65,10 @@ public:
         virtual void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) = 0;
         virtual void removeMessageReceiver(IPC::ReceiverName) = 0;
         virtual IPC::Connection& connection() = 0;
-        Ref<IPC::Connection> protectedConnection() { return connection(); }
         virtual bool willStartCapture(WebCore::CaptureDevice::DeviceType, WebCore::PageIdentifier) const = 0;
         virtual Logger& logger() = 0;
-        Ref<Logger> protectedLogger() { return logger(); };
         virtual bool setCaptureAttributionString() { return true; }
-        virtual const WebCore::ProcessIdentity& resourceOwner() const = 0;
+        virtual WebCore::ProcessIdentity resourceOwner() const = 0;
 #if ENABLE(APP_PRIVACY_REPORT)
         virtual void setTCCIdentity() { }
 #endif
@@ -102,7 +100,7 @@ public:
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-    bool hasSourceProxies() const;
+    bool NODELETE hasSourceProxies() const;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 

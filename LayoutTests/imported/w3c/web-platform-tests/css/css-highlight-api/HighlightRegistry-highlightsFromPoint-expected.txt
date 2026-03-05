@@ -1,0 +1,6 @@
+0123456789
+
+PASS CSS.highlights.highlightsFromPoint() should throw when called with incorrect parameters.
+FAIL CSS.highlights.highlightsFromPoint() should return an empty array when called with a point outside the document. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(-1,-1)', 'CSS.highlights.highlightsFromPoint' is undefined)
+FAIL CSS.highlights.highlightsFromPoint() returns the Highlights with their corresponding ranges present at the given point in the right order. CSS.highlights.highlightsFromPoint is not a function. (In 'CSS.highlights.highlightsFromPoint(x, y)', 'CSS.highlights.highlightsFromPoint' is undefined)
+

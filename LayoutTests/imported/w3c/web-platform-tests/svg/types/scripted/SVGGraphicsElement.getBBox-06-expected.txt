@@ -1,0 +1,5 @@
+
+PASS Non-rendered symbol with rect
+PASS display:none <g> with rect
+FAIL display:none <rect> assert_approx_equals: none_rect.getBBox().x {} expected 90 +/- 0.1 but got 0
+

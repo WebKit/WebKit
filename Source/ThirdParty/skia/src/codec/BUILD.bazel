@@ -29,12 +29,14 @@ ANY_DECODER_HDRS = ["SkCodecImageGenerator.h"]
 
 ANY_DECODER_SRCS = [
     "SkCodec.cpp",
+    "SkCodecColorProfile.cpp",
     "SkCodecImageGenerator.cpp",
     "SkColorPalette.cpp",
     "SkEncodedInfo.cpp",
     "SkExif.cpp",
     "SkGainmapInfo.cpp",
     "SkHdrAgtm.cpp",
+    "SkHdrAgtmParse.cpp",
     "SkHdrMetadata.cpp",
     "SkImageGenerator_FromEncoded.cpp",
     "SkMaskSwizzler.cpp",
@@ -45,6 +47,22 @@ ANY_DECODER_SRCS = [
     "SkTiffUtility.cpp",
     "SkTiffUtility.h",
 ]
+
+skia_filegroup(
+    name = "rust_icc_codec_srcs",
+    srcs = [
+        "SkCodecColorProfileRust.cpp",
+    ],
+    visibility = ["//src/codec:__pkg__"],
+)
+
+skia_filegroup(
+    name = "rust_icc_codec_hdrs",
+    srcs = [
+        "SkCodecColorProfileRust.h",
+    ],
+    visibility = ["//src/codec:__pkg__"],
+)
 
 # We put any file that is used by more than one codec here to avoid potential issues if clients
 # depend on multiple codecs. This is not a problem for a statically linked binary, but could maybe
@@ -65,6 +83,21 @@ skia_cc_library(
         "//src/base",
         "//src/core",
         "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "rust_icc_support",
+    srcs = [":rust_icc_codec_srcs"],
+    hdrs = [":rust_icc_codec_hdrs"],
+    defines = ["SK_CODEC_COLOR_PROFILE_PARSE_WITH_RUST"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        ":any_decoder",
+        "//rust/icc:cxx_bridge",
+        "//rust/icc:ffi_cpp_lib",
+        "//rust/icc:ffi_rs",
+        "@crates//:cxx_cc",
     ],
 )
 
@@ -91,6 +124,8 @@ skia_cc_library(
         "//include/private:decode_srcs",
     ] + ANY_DECODER_HDRS + PRIVATE_CODEC_HEADERS,
     visibility = [
+        "//experimental/rust_bmp/decoder:__pkg__",
+        "//experimental/rust_bmp/decoder/impl:__pkg__",
         "//modules/skottie:__pkg__",
         "//modules/skottie/src:__pkg__",
         "//modules/skresources:__pkg__",
@@ -352,7 +387,7 @@ skia_cc_library(
     ],
     hdrs = [
         "//include/codec:any_codec_hdrs",
-        "//include/codec:png_public_hdrs",
+        "//include/codec:libpng_public_hdrs",
     ],
     defines = [
         "SK_CODEC_DECODES_PNG",

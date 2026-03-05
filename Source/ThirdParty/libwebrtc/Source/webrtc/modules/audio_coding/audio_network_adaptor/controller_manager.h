@@ -21,6 +21,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 
 namespace webrtc {
@@ -51,17 +52,7 @@ class ControllerManagerImpl final : public ControllerManager {
   };
 
   static std::unique_ptr<ControllerManager> Create(
-      absl::string_view config_string,
-      size_t num_encoder_channels,
-      ArrayView<const int> encoder_frame_lengths_ms,
-      int min_encoder_bitrate_bps,
-      size_t intial_channels_to_encode,
-      int initial_frame_length_ms,
-      int initial_bitrate_bps,
-      bool initial_fec_enabled,
-      bool initial_dtx_enabled);
-
-  static std::unique_ptr<ControllerManager> Create(
+      const Environment& env,
       absl::string_view config_string,
       size_t num_encoder_channels,
       ArrayView<const int> encoder_frame_lengths_ms,
@@ -71,12 +62,13 @@ class ControllerManagerImpl final : public ControllerManager {
       int initial_bitrate_bps,
       bool initial_fec_enabled,
       bool initial_dtx_enabled,
-      DebugDumpWriter* debug_dump_writer);
+      DebugDumpWriter* debug_dump_writer = nullptr);
 
-  explicit ControllerManagerImpl(const Config& config);
+  explicit ControllerManagerImpl(const Environment& env, const Config& config);
 
   // Dependency injection for testing.
   ControllerManagerImpl(
+      const Environment& env,
       const Config& config,
       std::vector<std::unique_ptr<Controller>> controllers,
       const std::map<const Controller*, std::pair<int, float>>&
@@ -107,6 +99,7 @@ class ControllerManagerImpl final : public ControllerManager {
     float uplink_packet_loss_fraction;
   };
 
+  const Environment env_;
   const Config config_;
 
   std::vector<std::unique_ptr<Controller>> controllers_;

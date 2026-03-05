@@ -144,7 +144,7 @@ static int ec_GFp_simple_oct2point(const EC_GROUP *group, EC_POINT *point,
 
 int EC_POINT_oct2point(const EC_GROUP *group, EC_POINT *point,
                        const uint8_t *buf, size_t len, BN_CTX *ctx) {
-  if (EC_GROUP_cmp(group, point->group, NULL) != 0) {
+  if (EC_GROUP_cmp(group, point->group, nullptr) != 0) {
     OPENSSL_PUT_ERROR(EC, EC_R_INCOMPATIBLE_OBJECTS);
     return 0;
   }
@@ -154,11 +154,11 @@ int EC_POINT_oct2point(const EC_GROUP *group, EC_POINT *point,
 size_t EC_POINT_point2oct(const EC_GROUP *group, const EC_POINT *point,
                           point_conversion_form_t form, uint8_t *buf,
                           size_t max_out, BN_CTX *ctx) {
-  if (EC_GROUP_cmp(group, point->group, NULL) != 0) {
+  if (EC_GROUP_cmp(group, point->group, nullptr) != 0) {
     OPENSSL_PUT_ERROR(EC, EC_R_INCOMPATIBLE_OBJECTS);
     return 0;
   }
-  if (buf == NULL) {
+  if (buf == nullptr) {
     // When |buf| is NULL, just return the number of bytes that would be
     // written, without doing an expensive Jacobian-to-affine conversion.
     if (ec_GFp_simple_is_at_infinity(group, &point->raw)) {
@@ -177,13 +177,13 @@ size_t EC_POINT_point2oct(const EC_GROUP *group, const EC_POINT *point,
 size_t EC_POINT_point2buf(const EC_GROUP *group, const EC_POINT *point,
                           point_conversion_form_t form, uint8_t **out_buf,
                           BN_CTX *ctx) {
-  *out_buf = NULL;
-  size_t len = EC_POINT_point2oct(group, point, form, NULL, 0, ctx);
+  *out_buf = nullptr;
+  size_t len = EC_POINT_point2oct(group, point, form, nullptr, 0, ctx);
   if (len == 0) {
     return 0;
   }
   uint8_t *buf = reinterpret_cast<uint8_t *>(OPENSSL_malloc(len));
-  if (buf == NULL) {
+  if (buf == nullptr) {
     return 0;
   }
   len = EC_POINT_point2oct(group, point, form, buf, len, ctx);
@@ -198,7 +198,7 @@ size_t EC_POINT_point2buf(const EC_GROUP *group, const EC_POINT *point,
 int EC_POINT_set_compressed_coordinates_GFp(const EC_GROUP *group,
                                             EC_POINT *point, const BIGNUM *x,
                                             int y_bit, BN_CTX *ctx) {
-  if (EC_GROUP_cmp(group, point->group, NULL) != 0) {
+  if (EC_GROUP_cmp(group, point->group, nullptr) != 0) {
     OPENSSL_PUT_ERROR(EC, EC_R_INCOMPATIBLE_OBJECTS);
     return 0;
   }
@@ -228,7 +228,7 @@ int EC_POINT_set_compressed_coordinates_GFp(const EC_GROUP *group,
   BIGNUM *a = BN_CTX_get(ctx);
   BIGNUM *b = BN_CTX_get(ctx);
   BIGNUM *y = BN_CTX_get(ctx);
-  if (y == NULL || !EC_GROUP_get_curve_GFp(group, NULL, a, b, ctx)) {
+  if (y == nullptr || !EC_GROUP_get_curve_GFp(group, nullptr, a, b, ctx)) {
     return 0;
   }
 

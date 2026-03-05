@@ -42,7 +42,7 @@ public:
     }
     
     ResourceResponse(ResourceResponseBase&& base)
-        : ResourceResponseBase(WTFMove(base))
+        : ResourceResponseBase(WTF::move(base))
     {
         m_initLevel = AllFields;
     }
@@ -55,14 +55,14 @@ public:
     }
 
     ResourceResponse(URL&& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
-        : ResourceResponseBase(WTFMove(url), WTFMove(mimeType), expectedLength, WTFMove(textEncodingName))
+        : ResourceResponseBase(WTF::move(url), WTF::move(mimeType), expectedLength, WTF::move(textEncodingName))
     {
         m_initLevel = AllFields;
     }
 
     // FIXME(rdar://149970210): Remove this constructor once the internal build is up-to-date
     ResourceResponse(const URL& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
-        : ResourceResponseBase(URL { url }, WTFMove(mimeType), expectedLength, WTFMove(textEncodingName))
+        : ResourceResponseBase(URL { url }, WTF::move(mimeType), expectedLength, WTF::move(textEncodingName))
     {
         m_initLevel = AllFields;
     }
@@ -82,7 +82,6 @@ public:
     }
 
     WEBCORE_EXPORT NSURLResponse *nsURLResponse() const;
-    WEBCORE_EXPORT RetainPtr<NSURLResponse> protectedNSURLResponse() const;
 
 #if USE(QUICK_LOOK)
     bool isQuickLook() const { return m_isQuickLook; }

@@ -31,6 +31,10 @@ namespace WebKit {
 class WebDatabaseManagerClient final : public WebCore::DatabaseManagerClient {
 public:
     static WebDatabaseManagerClient& sharedWebDatabaseManagerClient();
+
+    // Do nothing since this is a singleton.
+    void ref() const final { }
+    void deref() const final { }
     
     virtual ~WebDatabaseManagerClient();
     void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&) final;

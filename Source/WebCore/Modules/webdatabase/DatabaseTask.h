@@ -33,6 +33,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -74,7 +75,7 @@ public:
 
     void performTask();
 
-    Database& database() const { return m_database; }
+    Ref<Database> database() const { return m_database.get().releaseNonNull(); }
 
 #if ASSERT_ENABLED
     bool hasSynchronizer() const { return m_synchronizer; }
@@ -87,7 +88,7 @@ protected:
 private:
     virtual void doPerformTask() = 0;
 
-    Database& m_database;
+    ThreadSafeWeakPtr<Database> m_database;
     DatabaseTaskSynchronizer* m_synchronizer;
 
 #if !LOG_DISABLED
@@ -140,7 +141,7 @@ private:
     ASCIILiteral debugTaskName() const final;
 #endif
 
-    RefPtr<SQLTransaction> m_transaction;
+    const RefPtr<SQLTransaction> m_transaction;
     bool m_didPerformTask;
 };
 

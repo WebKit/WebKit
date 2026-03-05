@@ -1,6 +1,5 @@
 
+option
 
-FAIL Option initial focus should still work when a display animation is present. assert_equals: expected Element node <option>option</option> but got Element node <select>
-  <option>option</option>
-</select>
+PASS Option initial focus should still work when a display animation is present.
 

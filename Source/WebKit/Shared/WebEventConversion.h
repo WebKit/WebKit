@@ -48,6 +48,7 @@ class WebWheelEvent;
 class WebKeyboardEvent;
 enum class WebEventType : uint32_t;
 enum class WebMouseEventButton : int8_t;
+enum class WebMouseEventInputSource : uint8_t;
 
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
@@ -73,8 +74,11 @@ WebCore::PlatformTouchPoint platform(const WebTouchPoint&);
 WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
 #endif
 
+WebCore::MouseEventInputSource platform(WebMouseEventInputSource);
+WebMouseEventInputSource kit(WebCore::MouseEventInputSource);
+
 WebCore::MouseButton platform(WebMouseEventButton);
-WebMouseEventButton kit(WebCore::MouseButton);
+WebMouseEventButton NODELETE kit(WebCore::MouseButton);
 
 WebCore::PlatformEvent::Type platform(WebEventType);
 WebEventType kit(WebCore::PlatformEvent::Type);

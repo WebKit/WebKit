@@ -36,7 +36,7 @@ public:
     static Ref<WindowFeatures> create(const WebCore::WindowFeatures&);
     virtual ~WindowFeatures();
 
-    const WebCore::WindowFeatures& windowFeatures() const { return m_windowFeatures; }
+    const WebCore::WindowFeatures& windowFeatures() const LIFETIME_BOUND { return m_windowFeatures; }
 
 private:
     explicit WindowFeatures(const WebCore::WindowFeatures&);

@@ -71,7 +71,7 @@ struct WebPreferencesStore {
     ValueMap m_overriddenDefaults { };
 
     WebPreferencesStore isolatedCopy() const & { return { crossThreadCopy(m_values), crossThreadCopy(m_overriddenDefaults) }; }
-    WebPreferencesStore isolatedCopy() && { return { crossThreadCopy(WTFMove(m_values)), crossThreadCopy(WTFMove(m_overriddenDefaults)) }; }
+    WebPreferencesStore isolatedCopy() && { return { crossThreadCopy(WTF::move(m_values)), crossThreadCopy(WTF::move(m_overriddenDefaults)) }; }
 
     static ValueMap& defaults();
 };

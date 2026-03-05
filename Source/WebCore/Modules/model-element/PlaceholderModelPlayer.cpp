@@ -39,12 +39,12 @@ namespace WebCore {
 
 Ref<PlaceholderModelPlayer> PlaceholderModelPlayer::create(bool suspended, const ModelPlayerAnimationState& animationState, std::unique_ptr<ModelPlayerTransformState>&& transformState)
 {
-    return adoptRef(*new PlaceholderModelPlayer(suspended, animationState, WTFMove(transformState)));
+    return adoptRef(*new PlaceholderModelPlayer(suspended, animationState, WTF::move(transformState)));
 }
 
 PlaceholderModelPlayer::PlaceholderModelPlayer(bool suspended, const ModelPlayerAnimationState& animationState, std::unique_ptr<ModelPlayerTransformState>&& transformState)
     : m_animationState(animationState)
-    , m_transformState(WTFMove(transformState))
+    , m_transformState(WTF::move(transformState))
     , m_id(ModelPlayerIdentifier::generate())
 {
     ASSERT(m_transformState);
@@ -282,6 +282,22 @@ void PlaceholderModelPlayer::setIsMuted(bool, CompletionHandler<void(bool succes
 ModelPlayerAccessibilityChildren PlaceholderModelPlayer::accessibilityChildren()
 {
     return { };
+}
+
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+
+void PlaceholderModelPlayer::ensureImmersivePresentation(CompletionHandler<void(std::optional<LayerHostingContextIdentifier>)>&& completion)
+{
+    ASSERT_NOT_REACHED("PlaceholderModelPlayer cannot provide a layer context identifier");
+    completion(std::nullopt);
+}
+
+void PlaceholderModelPlayer::exitImmersivePresentation(CompletionHandler<void()>&& completion)
+{
+    m_transformState->invalidateTransform();
+    completion();
 }
 
 #endif

@@ -1562,6 +1562,101 @@ TEST(KeyboardInputTests, TestFrameInfoServerTrustDuringStrongPasswordAssistance)
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('input').focus()"];
 }
 
+static void sendKeyEventWithCharacters(TestWKWebView *webView, NSString *characters)
+{
+    RetainPtr keyDownEvent = adoptNS([[WebEvent alloc]
+        initWithKeyEventType:WebEventKeyDown
+        timeStamp:CFAbsoluteTimeGetCurrent()
+        characters:characters
+        charactersIgnoringModifiers:characters
+        modifiers:0
+        isRepeating:NO
+        withFlags:0
+        withInputManagerHint:nil
+        keyCode:0
+        isTabKey:NO]);
+
+    RetainPtr keyUpEvent = adoptNS([[WebEvent alloc]
+        initWithKeyEventType:WebEventKeyUp
+        timeStamp:CFAbsoluteTimeGetCurrent()
+        characters:characters
+        charactersIgnoringModifiers:characters
+        modifiers:0
+        isRepeating:NO
+        withFlags:0
+        withInputManagerHint:nil
+        keyCode:0
+        isTabKey:NO]);
+
+    __block bool doneWaiting = false;
+    [webView handleKeyEvent:keyDownEvent.get() completion:^(WebEvent *, BOOL) {
+        [(id<UITextInput>)[webView firstResponder] insertText:characters];
+        [webView handleKeyEvent:keyUpEvent.get() completion:^(WebEvent *, BOOL) {
+            doneWaiting = true;
+        }];
+    }];
+
+    Util::run(&doneWaiting);
+    [webView waitForNextPresentationUpdate];
+}
+
+static constexpr auto keyEventTrackingTestMarkup = @"<input id='test' autofocus><script>"
+    "window.events = [];"
+    "test.addEventListener('keydown', e => events.push('keydown'));"
+    "test.addEventListener('keypress', e => events.push('keypress'));"
+    "test.addEventListener('beforeinput', e => events.push('beforeinput'));"
+    "test.addEventListener('input', e => events.push('input'));"
+    "test.addEventListener('keyup', e => events.push('keyup'));"
+    "</script>";
+
+TEST(KeyboardInputTests, SuppressKeypressForSupplementaryCharacterEmoji)
+{
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
+    [webView synchronouslyLoadHTMLString:keyEventTrackingTestMarkup];
+
+    sendKeyEventWithCharacters(webView.get(), @"🥹");
+
+    NSArray *firedEvents = [webView objectByEvaluatingJavaScript:@"events"];
+
+    EXPECT_EQ(4U, firedEvents.count);
+    EXPECT_FALSE([firedEvents containsObject:@"keypress"]);
+    EXPECT_WK_STREQ("keydown", firedEvents[0]);
+    EXPECT_WK_STREQ("beforeinput", firedEvents[1]);
+    EXPECT_WK_STREQ("input", firedEvents[2]);
+    EXPECT_WK_STREQ("keyup", firedEvents[3]);
+
+    EXPECT_WK_STREQ("🥹", [webView stringByEvaluatingJavaScript:@"test.value"]);
+}
+
+static void expectStandardKeyEventSequenceForCharacter(NSString *character)
+{
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
+    [webView synchronouslyLoadHTMLString:keyEventTrackingTestMarkup];
+
+    sendKeyEventWithCharacters(webView.get(), character);
+
+    NSArray *firedEvents = [webView objectByEvaluatingJavaScript:@"events"];
+
+    EXPECT_EQ(5U, firedEvents.count);
+    EXPECT_WK_STREQ("keydown", firedEvents[0]);
+    EXPECT_WK_STREQ("keypress", firedEvents[1]);
+    EXPECT_WK_STREQ("beforeinput", firedEvents[2]);
+    EXPECT_WK_STREQ("input", firedEvents[3]);
+    EXPECT_WK_STREQ("keyup", firedEvents[4]);
+
+    EXPECT_WK_STREQ(character, [webView stringByEvaluatingJavaScript:@"test.value"]);
+}
+
+TEST(KeyboardInputTests, AllowKeypressForRegularCharacters)
+{
+    expectStandardKeyEventSequenceForCharacter(@"a");
+}
+
+TEST(KeyboardInputTests, AllowKeypressForBMPEmoji)
+{
+    expectStandardKeyEventSequenceForCharacter(@"❤");
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -39,7 +39,6 @@ namespace WebCore {
 
 class RenderBlockFlow;
 class RenderBox;
-class StyleImage;
 class FloatingObject;
 
 Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox&);

@@ -3,7 +3,7 @@
  *               1999 Waldo Bastian (bastian@kde.org)
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
@@ -36,6 +36,7 @@
 #include <memory>
 #include <queue>
 #include <wtf/Assertions.h>
+#include <wtf/Hasher.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
@@ -47,6 +48,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSelector);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSelector::RareData);
 
 using namespace HTMLNames;
 
@@ -61,8 +63,8 @@ static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
 
 CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
-    : m_relation(enumToUnderlyingType(Relation::DescendantSpace))
-    , m_match(enumToUnderlyingType(Match::Tag))
+    : m_relation(std::to_underlying(Relation::DescendantSpace))
+    , m_match(std::to_underlying(Match::Tag))
     , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
 {
     m_data.tagQName = tagQName.impl();
@@ -87,7 +89,7 @@ struct SelectorSpecificity {
     SelectorSpecificity(SelectorSpecificityIncrement);
     SelectorSpecificity& operator+=(SelectorSpecificity);
 
-    std::array<uint8_t, 3> specificityTuple() const
+    std::array<uint8_t, 3> NODELETE specificityTuple() const
     {
         uint8_t a = specificity >> 16;
         uint8_t b = specificity >> 8;
@@ -116,7 +118,7 @@ SelectorSpecificity::SelectorSpecificity(unsigned specificity)
 }
 
 SelectorSpecificity::SelectorSpecificity(SelectorSpecificityIncrement specificity)
-    : specificity(enumToUnderlyingType(specificity))
+    : specificity(std::to_underlying(specificity))
 {
 }
 
@@ -216,9 +218,9 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector,
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionNew:
         case CSSSelector::PseudoElement::ViewTransitionOld:
-            ASSERT(simpleSelector.argumentList() && simpleSelector.argumentList()->size());
+            ASSERT(simpleSelector.stringList() && simpleSelector.stringList()->size());
             // Standalone universal selector gets 0 specificity.
-            if (simpleSelector.argumentList()->first() == starAtom() && simpleSelector.argumentList()->size() == 1)
+            if (simpleSelector.stringList()->first() == starAtom() && simpleSelector.stringList()->size() == 1)
                 return 0;
             break;
         default:
@@ -300,6 +302,10 @@ std::optional<PseudoElementType> CSSSelector::stylePseudoElementTypeFor(PseudoEl
         return PseudoElementType::Before;
     case PseudoElement::After:
         return PseudoElementType::After;
+    case PseudoElement::Checkmark:
+        return PseudoElementType::Checkmark;
+    case PseudoElement::PickerIcon:
+        return PseudoElementType::PickerIcon;
     case PseudoElement::WebKitScrollbar:
         return PseudoElementType::WebKitScrollbar;
     case PseudoElement::WebKitScrollbarButton:
@@ -331,6 +337,7 @@ std::optional<PseudoElementType> CSSSelector::stylePseudoElementTypeFor(PseudoEl
 #endif
     case PseudoElement::Slotted:
     case PseudoElement::Part:
+    case PseudoElement::Picker:
     case PseudoElement::UserAgentPart:
     case PseudoElement::UserAgentPartLegacyAlias:
     case PseudoElement::WebKitUnknown:
@@ -348,6 +355,7 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElementName(St
 
     auto type = findPseudoElementName(name);
     if (!type) {
+        ASSERT_WITH_MESSAGE(!isUASheetBehavior(context.mode), "Unknown pseudo-element %s in user-agent stylesheet", name.toString().utf8().data());
         if (name.startsWithIgnoringASCIICase("-webkit-"_s))
             return PseudoElement::WebKitUnknown;
         return type;
@@ -550,11 +558,20 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 serializeIdentifier(selector->argument(), builder);
                 builder.append(')');
                 break;
+            case PseudoClass::Heading:
+                if (auto* integerList = selector->integerList(); integerList && !integerList->isEmpty()) {
+                    builder.append("("_s,
+                        interleave(*integerList, [&](auto& builder, auto number) {
+                            builder.append(number);
+                        }, ", "_s),
+                    ')');
+                }
+                break;
             case PseudoClass::ActiveViewTransitionType:
-                ASSERT_WITH_MESSAGE(selector->argumentList() && !selector->argumentList()->isEmpty(), "An empty :active-view-transition-type() is invalid and should never be generated by the parser.");
+                ASSERT_WITH_MESSAGE(selector->stringList() && !selector->stringList()->isEmpty(), "An empty :active-view-transition-type() is invalid and should never be generated by the parser.");
 
                 builder.append("("_s,
-                    interleave(*selector->argumentList(), [&](auto& builder, auto& partName) {
+                    interleave(*selector->stringList(), [&](auto& builder, auto& partName) {
                         serializeIdentifier(partName, builder);
                     }, ", "_s),
                 ')');
@@ -576,22 +593,26 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case PseudoElement::ViewTransitionOld:
             case PseudoElement::ViewTransitionNew:
                 // Name or universal selector always comes first, followed by classes.
-                ASSERT(selector->argumentList() && !selector->argumentList()->isEmpty());
+                ASSERT(selector->stringList() && !selector->stringList()->isEmpty());
 
                 builder.append("::"_s, selector->serializingValue(), '(',
-                    interleave(*selector->argumentList(), [&](auto& builder, auto& nameOrClass) {
+                    interleave(*selector->stringList(), [&](auto& builder, auto& nameOrClass) {
                         serializeIdentifierOrStar(nameOrClass, builder);
                     }, '.'),
                 ')');
                 break;
             case PseudoElement::Part:
-                ASSERT(selector->argumentList() && !selector->argumentList()->isEmpty());
+                ASSERT(selector->stringList() && !selector->stringList()->isEmpty());
 
                 builder.append("::part("_s,
-                    interleave(*selector->argumentList(), [&](auto& builder, auto& partName) {
+                    interleave(*selector->stringList(), [&](auto& builder, auto& partName) {
                         serializeIdentifier(partName, builder);
                     }, ' '),
                 ')');
+                break;
+            case PseudoElement::Picker:
+                ASSERT(selector->stringList() && !selector->stringList()->isEmpty());
+                builder.append("::picker("_s, selector->stringList()->at(0), ')');
                 break;
 #if ENABLE(VIDEO)
             case PseudoElement::Cue: {
@@ -729,22 +750,28 @@ void CSSSelector::setArgument(const AtomString& value)
     m_data.rareData->argument = value;
 }
 
-void CSSSelector::setArgumentList(FixedVector<AtomString> argumentList)
+void CSSSelector::setIntegerList(FixedVector<int> integerList)
 {
     createRareData();
-    m_data.rareData->argumentList = WTFMove(argumentList);
+    m_data.rareData->argumentList = WTF::move(integerList);
+}
+
+void CSSSelector::setStringList(FixedVector<AtomString> stringList)
+{
+    createRareData();
+    m_data.rareData->argumentList = WTF::move(stringList);
 }
 
 void CSSSelector::setLangList(FixedVector<PossiblyQuotedIdentifier> langList)
 {
     createRareData();
-    m_data.rareData->langList = WTFMove(langList);
+    m_data.rareData->argumentList = WTF::move(langList);
 }
 
 void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     createRareData();
-    m_data.rareData->selectorList = WTFMove(selectorList);
+    m_data.rareData->selectorList = WTF::move(selectorList);
 }
 
 void CSSSelector::setNth(int a, int b)
@@ -774,7 +801,7 @@ int CSSSelector::nthB() const
 
 CSSSelector::RareData::RareData(AtomString&& value)
     : matchingValue(value)
-    , serializingValue(WTFMove(value))
+    , serializingValue(WTF::move(value))
     , attribute(anyQName())
 {
 }
@@ -787,7 +814,6 @@ CSSSelector::RareData::RareData(const RareData& other)
     , attribute(other.attribute)
     , argument(other.argument)
     , argumentList(other.argumentList)
-    , langList(other.langList)
 {
     if (other.selectorList)
         this->selectorList = makeUnique<CSSSelectorList>(*other.selectorList);
@@ -802,7 +828,7 @@ CSSSelector::RareData::~RareData() = default;
 
 auto CSSSelector::RareData::create(AtomString value) -> Ref<RareData>
 {
-    return adoptRef(*new RareData(WTFMove(value)));
+    return adoptRef(*new RareData(WTF::move(value)));
 }
 
 bool CSSSelector::RareData::matchNth(int count)
@@ -826,16 +852,13 @@ bool CSSSelector::RareData::equals(const RareData& other) const
         && b == other.b
         && attribute == other.attribute
         && argument == other.argument
-        && argumentList == other.argumentList
-        && langList == other.langList
-        && serializingValue == other.serializingValue;
+        && argumentList == other.argumentList;
 }
 
 CSSSelector::CSSSelector(const CSSSelector& other)
     : m_relation(other.m_relation)
     , m_match(other.m_match)
     , m_pseudoType(other.m_pseudoType)
-    , m_isLastInSelectorList(other.m_isLastInSelectorList)
     , m_isFirstInComplexSelector(other.m_isFirstInComplexSelector)
     , m_isLastInComplexSelector(other.m_isLastInComplexSelector)
     , m_hasRareData(other.m_hasRareData)
@@ -860,7 +883,6 @@ CSSSelector::CSSSelector(const CSSSelector& other, MutableSelectorCopyTag)
     : CSSSelector(other)
 {
     // Restore the selector list bits to the initial state when copying to a MutableCSSSelector.
-    m_isLastInSelectorList = false;
     m_isFirstInComplexSelector = true;
     m_isLastInComplexSelector = true;
 }
@@ -962,6 +984,7 @@ bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector& complex
         switch (pseudoElement) {
         case CSSSelector::PseudoElement::Slotted:
         case CSSSelector::PseudoElement::Part:
+        case CSSSelector::PseudoElement::Picker:
         case CSSSelector::PseudoElement::UserAgentPart:
         case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
             return true;
@@ -1005,6 +1028,7 @@ bool isElementBackedPseudoElement(CSSSelector::PseudoElement pseudoElement)
 {
     switch (pseudoElement) {
     case CSSSelector::PseudoElement::Part:
+    case CSSSelector::PseudoElement::Picker:
     case CSSSelector::PseudoElement::Slotted:
     case CSSSelector::PseudoElement::UserAgentPart:
     case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
@@ -1017,26 +1041,26 @@ bool isElementBackedPseudoElement(CSSSelector::PseudoElement pseudoElement)
     }
 }
 
+static bool NODELETE shouldSkipForEqualMode(const CSSSelector& simpleSelector, ComplexSelectorsEqualMode mode)
+{
+    if (mode == ComplexSelectorsEqualMode::IgnoreNonElementBackedPseudoElements)
+        return simpleSelector.matchesPseudoElement() && !isElementBackedPseudoElement(simpleSelector.pseudoElement());
+    return false;
+};
+
 bool complexSelectorsEqual(const CSSSelector& complexA, const CSSSelector& complexB, ComplexSelectorsEqualMode mode)
 {
     auto aRelation = CSSSelector::Relation::Subselector;
     auto bRelation = CSSSelector::Relation::Subselector;
 
     for (auto a = &complexA, b = &complexB; a || b; a = a->precedingInComplexSelector(), b = b->precedingInComplexSelector()) {
-        if (mode == ComplexSelectorsEqualMode::IgnoreNonElementBackedPseudoElements) {
-            auto canSkipPseudoElement = [](const CSSSelector& simpleSelector) {
-                if (!simpleSelector.matchesPseudoElement())
-                    return false;
-                return !isElementBackedPseudoElement(simpleSelector.pseudoElement());
-            };
-            if (a && canSkipPseudoElement(*a)) {
-                aRelation = a->relation();
-                a = a->precedingInComplexSelector();
-            }
-            if (b && canSkipPseudoElement(*b)) {
-                bRelation = b->relation();
-                b = b->precedingInComplexSelector();
-            }
+        if (a && shouldSkipForEqualMode(*a, mode)) {
+            aRelation = a->relation();
+            a = a->precedingInComplexSelector();
+        }
+        if (b && shouldSkipForEqualMode(*b, mode)) {
+            bRelation = b->relation();
+            b = b->precedingInComplexSelector();
         }
         if (!a || !b)
             return a == b;
@@ -1048,6 +1072,53 @@ bool complexSelectorsEqual(const CSSSelector& complexA, const CSSSelector& compl
         bRelation = b->relation();
     }
     return true;
+}
+
+static void addSimpleSelector(Hasher& hasher, const CSSSelector& simpleSelector)
+{
+    // This hash does try to include every possible thing in a selector.
+    add(hasher, simpleSelector.match());
+
+    switch (simpleSelector.match()) {
+    case CSSSelector::Match::Tag:
+        add(hasher, simpleSelector.tagQName());
+        break;
+    case CSSSelector::Match::PseudoClass:
+        add(hasher, simpleSelector.pseudoClass());
+        break;
+    case CSSSelector::Match::PseudoElement:
+        add(hasher, simpleSelector.pseudoElement());
+        break;
+    case CSSSelector::Match::Exact:
+    case CSSSelector::Match::Set:
+    case CSSSelector::Match::List:
+    case CSSSelector::Match::Hyphen:
+    case CSSSelector::Match::Begin:
+    case CSSSelector::Match::End:
+    case CSSSelector::Match::Contain:
+        add(hasher, simpleSelector.attribute());
+        add(hasher, simpleSelector.value());
+        break;
+    default:
+        add(hasher, simpleSelector.value());
+        break;
+    }
+    if (simpleSelector.selectorList())
+        add(hasher, *simpleSelector.selectorList());
+}
+
+void addComplexSelector(Hasher& hasher, const CSSSelector& complexSelector, ComplexSelectorsEqualMode mode)
+{
+    auto relationToRight = CSSSelector::Relation::Subselector;
+    for (auto simpleSelector = &complexSelector; simpleSelector; simpleSelector = simpleSelector->precedingInComplexSelector()) {
+        if (shouldSkipForEqualMode(*simpleSelector, mode)) {
+            relationToRight = simpleSelector->relation();
+            continue;
+        }
+        add(hasher, relationToRight);
+        addSimpleSelector(hasher, *simpleSelector);
+        relationToRight = simpleSelector->relation();
+    }
 }
 
 } // namespace WebCore

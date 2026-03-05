@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/FetchOptions.h>
+#include "FetchOptions.h"
 
 namespace WebCore {
 

@@ -50,12 +50,12 @@ FileSystemFileEntry::FileSystemFileEntry(ScriptExecutionContext& context, DOMFil
 
 void FileSystemFileEntry::file(ScriptExecutionContext& context, Ref<FileCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    filesystem().getFile(context, *this, [pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
+    filesystem().getFile(context, *this, [pendingActivity = makePendingActivity(*this), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](auto&& result) mutable {
         RefPtr document = pendingActivity->object().document();
         if (!document)
             return;
 
-        document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), result = WTFMove(result), pendingActivity = WTFMove(pendingActivity)]() mutable {
+        document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), result = WTF::move(result), pendingActivity = WTF::move(pendingActivity)]() mutable {
             if (result.hasException()) {
                 if (errorCallback)
                     errorCallback->invoke(DOMException::create(result.releaseException()));

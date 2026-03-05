@@ -45,8 +45,8 @@
     readonly attribute long processIdentifier;
 
     Promise<boolean> lastNavigationWasAppInitiated();
-    
-    PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
+
+    PushSubscription? createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
 
     boolean fetchEventIsSameSite(FetchEvent event);
 

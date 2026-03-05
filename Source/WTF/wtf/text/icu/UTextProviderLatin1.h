@@ -26,6 +26,8 @@
 #pragma once
 
 #include <unicode/utext.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/text/Latin1Character.h>
 
 namespace WTF {

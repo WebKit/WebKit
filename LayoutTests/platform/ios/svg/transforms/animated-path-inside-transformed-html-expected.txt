@@ -4,7 +4,7 @@ layer at (0,0) size 800x538
   RenderBlock {html} at (0,0) size 800x538
     RenderBody {body} at (8,16) size 784x472 [bgcolor=#FFFFFF]
       RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 578x19
+        RenderText {#text} at (0,0) size 578x20
           text run at (0,0) width 578: "CSS Transformed HTML div with SVG inside it. Animated SVG should repaint correctly."
 layer at (58,86) size 402x402
   RenderBlock {div} at (50,70) size 402x402 [border: (1px solid #000000)]

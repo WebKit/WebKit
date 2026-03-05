@@ -27,6 +27,7 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "PDFDisplayMode.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntDegrees.h>
 #include <wtf/RetainPtr.h>
@@ -49,13 +50,6 @@ class PDFDocumentLayout {
 public:
     using PageIndex = size_t; // This is a zero-based index.
 
-    enum class DisplayMode : uint8_t {
-        SinglePageDiscrete,
-        SinglePageContinuous,
-        TwoUpDiscrete,
-        TwoUpContinuous,
-    };
-
     PDFDocumentLayout();
     ~PDFDocumentLayout();
 
@@ -67,16 +61,16 @@ public:
     size_t rowCount() const;
     PDFLayoutRow rowForPageIndex(PageIndex) const;
     Vector<PDFLayoutRow> rows() const;
-    unsigned rowIndexForPageIndex(PageIndex) const;
+    unsigned NODELETE rowIndexForPageIndex(PageIndex) const;
 
     static constexpr WebCore::FloatSize documentMargin { 16, 18 };
     static constexpr WebCore::FloatSize pageMargin { 14, 16 };
 
-    bool isLeftPageIndex(PageIndex) const;
-    bool isRightPageIndex(PageIndex) const;
+    bool NODELETE isLeftPageIndex(PageIndex) const;
+    bool NODELETE isRightPageIndex(PageIndex) const;
     bool isLastPageIndex(PageIndex) const;
     PageIndex lastPageIndex() const;
-    bool isFirstPageOfRow(PageIndex) const;
+    bool NODELETE isFirstPageOfRow(PageIndex) const;
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     std::optional<PageIndex> indexForPage(RetainPtr<PDFPage>) const;
@@ -94,7 +88,7 @@ public:
     WebCore::FloatRect layoutBoundsForRow(PDFLayoutRow) const;
 
     // Returns 0, 90, 180, 270.
-    WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
+    WebCore::IntDegrees NODELETE rotationForPageAtIndex(PageIndex) const;
 
     WebCore::FloatPoint documentToPDFPage(WebCore::FloatPoint documentPoint, PageIndex) const;
     WebCore::FloatRect documentToPDFPage(WebCore::FloatRect documentRect, PageIndex) const;
@@ -111,23 +105,17 @@ public:
     };
 
     OptionSet<LayoutUpdateChange> updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
-    WebCore::FloatSize contentsSize() const;
+    WebCore::FloatSize NODELETE contentsSize() const;
     WebCore::FloatSize scaledContentsSize() const;
 
-    void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
-    DisplayMode displayMode() const { return m_displayMode; }
+    void setDisplayMode(PDFDisplayMode displayMode) { m_displayMode = displayMode; }
+    PDFDisplayMode displayMode() const { return m_displayMode; }
 
-    constexpr static bool isSinglePageDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageDiscrete || mode == DisplayMode::SinglePageContinuous; }
-    constexpr static bool isTwoUpDisplayMode(DisplayMode mode) { return mode == DisplayMode::TwoUpDiscrete || mode == DisplayMode::TwoUpContinuous; }
+    bool isSinglePageDisplayMode() const { return isSinglePagePDFDisplayMode(m_displayMode); }
+    bool isTwoUpDisplayMode() const { return isTwoUpPDFDisplayMode(m_displayMode); }
 
-    constexpr static bool isScrollingDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageContinuous || mode == DisplayMode::TwoUpContinuous; }
-    constexpr static bool isDiscreteDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageDiscrete || mode == DisplayMode::TwoUpDiscrete; }
-
-    bool isSinglePageDisplayMode() const { return isSinglePageDisplayMode(m_displayMode); }
-    bool isTwoUpDisplayMode() const { return isTwoUpDisplayMode(m_displayMode); }
-
-    bool isScrollingDisplayMode() const { return isScrollingDisplayMode(m_displayMode); }
-    bool isDiscreteDisplayMode() const { return isDiscreteDisplayMode(m_displayMode); }
+    bool isScrollingDisplayMode() const { return isScrollingPDFDisplayMode(m_displayMode); }
+    bool isDiscreteDisplayMode() const { return isDiscretePDFDisplayMode(m_displayMode); }
 
     unsigned pagesPerRow() const { return isSinglePageDisplayMode() ? 1 : 2; }
 
@@ -157,7 +145,7 @@ private:
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };
-    DisplayMode m_displayMode { DisplayMode::SinglePageContinuous };
+    PDFDisplayMode m_displayMode { PDFDisplayMode::SinglePageContinuous };
 };
 
 struct PDFLayoutRow {

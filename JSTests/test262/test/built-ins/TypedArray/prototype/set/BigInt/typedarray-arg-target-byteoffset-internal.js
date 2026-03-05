@@ -12,7 +12,7 @@ info: |
   ...
   16. Let targetByteOffset be target.[[ByteOffset]].
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -26,9 +26,9 @@ var desc = {
 
 Object.defineProperty(TypedArray.prototype, "byteOffset", desc);
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
-  var src = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
+  var src = new TA(makeCtorArg([42n, 43n]));
   var other = TA === BigInt64Array ? BigUint64Array : BigInt64Array;
   var src2 = new other([42n, 43n]);
   var src3 = new other(sample.buffer, 0, 2);
@@ -41,4 +41,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   sample.set(src3);
 
   assert.sameValue(getCalls, 0, "ignores byteoffset properties");
-});
+}, null, ["passthrough"]);

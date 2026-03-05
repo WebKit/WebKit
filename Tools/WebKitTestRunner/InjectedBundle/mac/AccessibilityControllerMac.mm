@@ -28,14 +28,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
 #import "AccessibilityController.h"
 
 #import "AccessibilityCommonCocoa.h"
 #import "AccessibilityNotificationHandler.h"
+#import "AccessibilityUIElementClientMac.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
 #import "JSBasics.h"
+#import "WebCoreTestSupport.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WKBundle.h>
 #import <WebKit/WKBundleFramePrivate.h>
@@ -78,6 +79,10 @@ bool AccessibilityController::addNotificationListener(JSContextRef context, JSVa
 
     if (m_globalNotificationHandler)
         return false;
+
+    // Ensure the accessibility tree is built before we start observing
+    // notifications, otherwise notifications may never be posted.
+    _WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context));
 
     m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] initWithContext:context]);
     [m_globalNotificationHandler.get() setCallback:functionCallback];
@@ -123,6 +128,25 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     return nil;
 }
 
+static RefPtr<AccessibilityUIElement> findElementByIdRecursive(AccessibilityUIElement* element, const String& targetId)
+{
+    if (!element || !element->isValid())
+        return nullptr;
+
+    if (JSRetainPtr<JSStringRef> domId = element->domIdentifier()) {
+        if (toWTFString(domId.get()) == targetId)
+            return element;
+    }
+
+    unsigned count = element->childrenCount();
+    for (unsigned i = 0; i < count; i++) {
+        if (RefPtr<AccessibilityUIElement> found = findElementByIdRecursive(element->childAtIndex(i).get(), targetId))
+            return found;
+    }
+
+    return nullptr;
+}
+
 void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value)
 {
     auto page = InjectedBundle::singleton().page()->page();
@@ -134,6 +158,11 @@ void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, 
 
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef context, JSStringRef idAttribute)
 {
+    if (m_enableClientAccessibilityMode) {
+        auto root = AccessibilityUIElementClientMac::createForUIProcess();
+        return findElementByIdRecursive(root.ptr(), toWTFString(idAttribute));
+    }
+
     PlatformUIElement root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)));
 
     NSString *attributeName = [NSString stringWithJSStringRef:idAttribute];
@@ -155,6 +184,7 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AccessibilityController::updateIsolatedTreeMode()
 {
+    WebCoreTestSupport::setAccessibilityIsolatedTreeEnabled(m_accessibilityIsolatedTreeMode);
     _AXSSetIsolatedTreeMode(m_accessibilityIsolatedTreeMode ? AXSIsolatedTreeModeSecondaryThread : AXSIsolatedTreeModeOff);
 }
 #endif
@@ -212,6 +242,28 @@ void AXThread::threadRunLoopSourceCallback()
     @autoreleasepool {
         dispatchFunctionsFromAXThread();
     }
+}
+
+void AccessibilityController::platformInitializeClientAccessibility()
+{
+    setIsolatedTreeMode(true);
+
+    // This triggers WebKit's normal accessibility initialization flow via IPC
+    WTR::postSynchronousMessage("InitializeWebProcessAccessibility");
+
+    // The above IPC triggers async initialization. Force the isolated tree to be built
+    // now by accessing the root object ON THE AX THREAD, so it's ready before the first
+    // axGetRoot() call from the test.
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
+    if (!mainFrame)
+        return;
+
+    // Access the root object on the AX thread to trigger isolated tree creation with proper thread setup
+    RetainPtr<PlatformUIElement> root;
+    executeOnAXThreadAndWait([&mainFrame, &root] () {
+        root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(mainFrame));
+    });
 }
 
 } // namespace WTR

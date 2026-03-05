@@ -90,7 +90,7 @@ template<typename U, typename C>
 static bool sendNotificationMessageWithAsyncReply(U&& message, WebPage* page, C&& callback)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
-        return !!connection.sendWithAsyncReply(std::forward<U>(message), WTFMove(callback), destinationIdentifier);
+        return !!connection.sendWithAsyncReply(std::forward<U>(message), WTF::move(callback), destinationIdentifier);
     });
 }
 #endif // ENABLE(NOTIFICATIONS)
@@ -160,7 +160,7 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(const Str
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
         Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
         auto origin = SecurityOriginData::fromURL(URL { originString });
-        auto result = connection->sendSync(Messages::NotificationManagerMessageHandler::GetPermissionStateSync(WTFMove(origin)), WebProcess::singleton().sessionID().toUInt64());
+        auto result = connection->sendSync(Messages::NotificationManagerMessageHandler::GetPermissionStateSync(WTF::move(origin)), WebProcess::singleton().sessionID().toUInt64());
         if (!result.succeeded())
             RELEASE_LOG_ERROR(Notifications, "Could not look up notification permission for origin %" SENSITIVE_LOG_STRING": %u", originString.utf8().data(), static_cast<unsigned>(result.error()));
 
@@ -214,7 +214,7 @@ bool WebNotificationManager::show(NotificationData&& notification, RefPtr<Notifi
         return false;
     }
 
-    if (!sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::ShowNotification(notification, resources), page, WTFMove(callback)))
+    if (!sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::ShowNotification(notification, resources), page, WTF::move(callback)))
         return false;
 
     if (!notification.isPersistent()) {
@@ -240,7 +240,7 @@ void WebNotificationManager::cancel(NotificationData&& notification, WebPage* pa
     ASSERT(notification.isPersistent() || m_nonPersistentNotificationsContexts.contains(identifier));
 
     auto origin = WebCore::SecurityOriginData::fromURL(URL { notification.originString });
-    if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::CancelNotification(WTFMove(origin), identifier), page))
+    if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::CancelNotification(WTF::move(origin), identifier), page))
         return;
 #else
     UNUSED_PARAM(notification);
@@ -253,7 +253,7 @@ void WebNotificationManager::requestPermission(WebCore::SecurityOriginData&& ori
     ASSERT(isMainRunLoop());
 
 #if ENABLE(NOTIFICATIONS)
-    sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::RequestPermission(WTFMove(origin)), page.get(), WTFMove(callback));
+    sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::RequestPermission(WTF::move(origin)), page.get(), WTF::move(callback));
 #else
     UNUSED_PARAM(origin);
     callback(false);

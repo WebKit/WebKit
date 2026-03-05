@@ -1,0 +1,5 @@
+
+EVENT(loadedmetadata)
+EVENT(playing)
+EVENT(ended)
+

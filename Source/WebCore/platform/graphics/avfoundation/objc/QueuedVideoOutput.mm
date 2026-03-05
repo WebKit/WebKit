@@ -32,7 +32,7 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/spi/cocoa/AVFoundationSPI.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -76,15 +76,15 @@ SPECIALIZE_TYPE_TRAITS_END()
         if (!pixelBuffer)
             break;
 
-        videoFrameEntries.append({ WTFMove(pixelBuffer), PAL::toMediaTime(earliestTime) });
+        videoFrameEntries.append({ WTF::move(pixelBuffer), PAL::toMediaTime(earliestTime) });
     } while (true);
 
     if (videoFrameEntries.isEmpty())
         return;
 
-    callOnMainRunLoop([videoFrameEntries = WTFMove(videoFrameEntries), parent = _parent] () mutable {
+    callOnMainRunLoop([videoFrameEntries = WTF::move(videoFrameEntries), parent = _parent] () mutable {
         if (parent)
-            parent->addVideoFrameEntries(WTFMove(videoFrameEntries));
+            parent->addVideoFrameEntries(WTF::move(videoFrameEntries));
     });
 }
 
@@ -229,7 +229,7 @@ auto QueuedVideoOutput::takeVideoFrameEntryForTime(const MediaTime& time) -> Vid
     if (iter == m_videoFrames.end())
         return { nullptr, MediaTime::invalidTime() };
 
-    VideoFrameEntry entry = { WTFMove(iter->second), iter->first };
+    VideoFrameEntry entry = { WTF::move(iter->second), iter->first };
 
     // Purge all frames before `time`, so that repeated calls with the same time don't return
     // successively earlier images.
@@ -259,7 +259,7 @@ void QueuedVideoOutput::configureNextImageTimeObserver()
     auto nextImageTime = iter->first;
 
     m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(nextImageTime)]] queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput] () mutable {
-        callOnMainRunLoop([weakThis = WTFMove(weakThis)] {
+        callOnMainRunLoop([weakThis = WTF::move(weakThis)] {
             if (weakThis)
                 weakThis->nextImageTimeReached();
         });
@@ -291,7 +291,7 @@ void QueuedVideoOutput::addVideoFrameEntries(Vector<VideoFrameEntry>&& videoFram
     for (auto& entry : videoFrameEntries) {
         if (hasCurrentImageChangedObservers && entry.displayTime <= currentTime)
             needsImageForCurrentTimeChanged = true;
-        m_videoFrames.emplace(entry.displayTime, WTFMove(entry.pixelBuffer));
+        m_videoFrames.emplace(entry.displayTime, WTF::move(entry.pixelBuffer));
     }
 
     if (needsImageForCurrentTimeChanged)

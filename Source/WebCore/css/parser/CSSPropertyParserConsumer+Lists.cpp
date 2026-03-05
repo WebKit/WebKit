@@ -57,7 +57,7 @@ static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, CSS::Property
         else
             list.append(CSSValuePair::create(counterName.releaseNonNull(), CSSPrimitiveValue::createInteger(defaultValue)));
     } while (!range.atEnd());
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange& range, CSS::PropertyParserState& state)

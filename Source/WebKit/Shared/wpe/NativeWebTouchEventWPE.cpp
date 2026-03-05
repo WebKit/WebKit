@@ -33,7 +33,8 @@
 namespace WebKit {
 
 NativeWebTouchEvent::NativeWebTouchEvent(WPEEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTFMove(touchPoints)))
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)))
+    , m_nativeEvent(event)
 {
 }
 

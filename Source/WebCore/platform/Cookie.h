@@ -102,25 +102,25 @@ struct Cookie {
     SameSitePolicy sameSite { SameSitePolicy::None };
 
     Cookie(String&& name, String&& value, String&& domain, String&& path, String&& partitionKey, double created, std::optional<double> expires, bool httpOnly, bool secure, bool session, String&& comment, URL&& commentURL, Vector<uint16_t> ports, SameSitePolicy sameSite)
-        : name(WTFMove(name))
-        , value(WTFMove(value))
-        , domain(WTFMove(domain))
-        , path(WTFMove(path))
-        , partitionKey(WTFMove(partitionKey))
+        : name(WTF::move(name))
+        , value(WTF::move(value))
+        , domain(WTF::move(domain))
+        , path(WTF::move(path))
+        , partitionKey(WTF::move(partitionKey))
         , created(created)
         , expires(expires)
         , httpOnly(httpOnly)
         , secure(secure)
         , session(session)
-        , comment(WTFMove(comment))
-        , commentURL(WTFMove(commentURL))
-        , ports(WTFMove(ports))
+        , comment(WTF::move(comment))
+        , commentURL(WTF::move(commentURL))
+        , ports(WTF::move(ports))
         , sameSite(sameSite)
     {
     }
 
     Cookie isolatedCopy() const & { return { name.isolatedCopy(), value.isolatedCopy(), domain.isolatedCopy(), path.isolatedCopy(), partitionKey.isolatedCopy(), created, expires, httpOnly, secure, session, comment.isolatedCopy(), commentURL.isolatedCopy(), ports, sameSite }; }
-    Cookie isolatedCopy() && { return { WTFMove(name).isolatedCopy(), WTFMove(value).isolatedCopy(), WTFMove(domain).isolatedCopy(), WTFMove(path).isolatedCopy(), WTFMove(partitionKey).isolatedCopy(), created, expires, httpOnly, secure, session, WTFMove(comment).isolatedCopy(), WTFMove(commentURL).isolatedCopy(), WTFMove(ports), sameSite }; }
+    Cookie isolatedCopy() && { return { WTF::move(name).isolatedCopy(), WTF::move(value).isolatedCopy(), WTF::move(domain).isolatedCopy(), WTF::move(path).isolatedCopy(), WTF::move(partitionKey).isolatedCopy(), created, expires, httpOnly, secure, session, WTF::move(comment).isolatedCopy(), WTF::move(commentURL).isolatedCopy(), WTF::move(ports), sameSite }; }
 };
 
 namespace CookieUtil {

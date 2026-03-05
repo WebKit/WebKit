@@ -32,12 +32,12 @@ namespace WebCore {
 
 Ref<DeprecatedCSSOMFilterFunctionValue> DeprecatedCSSOMFilterFunctionValue::create(CSS::FilterFunction filter, CSSStyleDeclaration& owner)
 {
-    return adoptRef(*new DeprecatedCSSOMFilterFunctionValue(WTFMove(filter), owner));
+    return adoptRef(*new DeprecatedCSSOMFilterFunctionValue(WTF::move(filter), owner));
 }
 
 DeprecatedCSSOMFilterFunctionValue::DeprecatedCSSOMFilterFunctionValue(CSS::FilterFunction&& filter, CSSStyleDeclaration& owner)
     : DeprecatedCSSOMValue(ClassType::FilterFunction, owner)
-    , m_filter(WTFMove(filter))
+    , m_filter(WTF::move(filter))
 {
 }
 

@@ -30,6 +30,7 @@
 #include "NetworkCacheFileSystem.h"
 #include <fcntl.h>
 #include <wtf/FileSystem.h>
+#include <wtf/Locker.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SHA1.h>
 
@@ -41,10 +42,56 @@
 namespace WebKit {
 namespace NetworkCache {
 
-BlobStorage::BlobStorage(const String& blobDirectoryPath, Salt salt)
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobStorage::MemoryCache);
+
+static BlobStorage::Blob copyBlob(const BlobStorage::Blob& blob)
+{
+    return { blob.data.copyData(), blob.hash };
+}
+
+BlobStorage::MemoryCache::MemoryCache(unsigned fileLimit)
+    : m_limit(fileLimit)
+{ }
+
+std::optional<BlobStorage::Blob> BlobStorage::MemoryCache::get(const String& path)
+{
+    Locker locker { m_lock };
+    auto it = m_cache.find(path);
+    if (it == m_cache.end())
+        return std::nullopt;
+
+    const Blob& blob = it->value;
+    return copyBlob(blob);
+}
+
+void BlobStorage::MemoryCache::add(const String& path, const BlobStorage::Blob& blob)
+{
+    Locker locker { m_lock };
+    m_cache.set(path, copyBlob(blob));
+    if (m_cache.size() > m_limit)
+        m_cache.remove(m_cache.random());
+}
+
+void BlobStorage::MemoryCache::remove(const String& path)
+{
+    Locker locker { m_lock };
+    m_cache.remove(path);
+}
+#endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobStorage);
+
+BlobStorage::BlobStorage(const String& blobDirectoryPath, Salt salt, unsigned memoryCacheFileLimit)
     : m_blobDirectoryPath(crossThreadCopy(blobDirectoryPath))
     , m_salt(salt)
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    , m_memoryCache(memoryCacheFileLimit ? WTF::makeUnique<MemoryCache>(memoryCacheFileLimit) : nullptr)
+#endif
 {
+#if !ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    UNUSED_PARAM(memoryCacheFileLimit);
+#endif
 }
 
 String BlobStorage::blobDirectoryPathIsolatedCopy() const
@@ -67,8 +114,14 @@ void BlobStorage::synchronize()
         auto path = FileSystem::pathByAppendingComponent(blobDirectory, name);
         auto linkCount = FileSystem::hardLinkCount(path);
         // No clients left for this blob.
-        if (linkCount && *linkCount == 1)
+        if (linkCount && *linkCount == 1) {
             FileSystem::deleteFile(path);
+
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+            if (m_memoryCache)
+                m_memoryCache->remove(path);
+#endif
+        }
         else
             m_approximateSize += FileSystem::fileSize(path).value_or(0);
     });
@@ -82,8 +135,12 @@ String BlobStorage::blobPathForHash(const SHA1::Digest& hash) const
     return FileSystem::pathByAppendingComponent(blobDirectoryPathIsolatedCopy(), StringView::fromLatin1(byteCast<Latin1Character>(hashAsString.span())));
 }
 
-BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
+BlobStorage::Blob BlobStorage::add(const String& path, const Data& data, bool addToMemoryCache)
 {
+#if !ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    UNUSED_PARAM(addToMemoryCache);
+#endif
+
     ASSERT(!RunLoop::isMain());
 
     auto hash = computeSHA1(data, m_salt);
@@ -93,6 +150,10 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
     String blobPath = blobPathForHash(hash);
     
     FileSystem::deleteFile(path);
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    if (m_memoryCache)
+        m_memoryCache->remove(path);
+#endif
 
     bool blobExists = FileSystem::fileExists(blobPath);
     if (blobExists) {
@@ -101,7 +162,12 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
             if (bytesEqual(existingData, data)) {
                 if (!FileSystem::hardLink(blobPath, path))
                     WTFLogAlways("Failed to create hard link from %s to %s", blobPath.utf8().data(), path.utf8().data());
-                return { existingData, hash };
+                BlobStorage::Blob result { existingData, hash };
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+                if (addToMemoryCache && m_memoryCache)
+                    m_memoryCache->add(path, result);
+#endif
+                return result;
             }
         }
         FileSystem::deleteFile(blobPath);
@@ -116,15 +182,26 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
 
     m_approximateSize += mappedData.size();
 
-    return { mappedData, hash };
+    BlobStorage::Blob result { mappedData, hash };
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    if (addToMemoryCache && m_memoryCache)
+        m_memoryCache->add(path, result);
+#endif
+    return result;
 }
 
 BlobStorage::Blob BlobStorage::get(const String& path)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto data = mapFile(path);
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    if (m_memoryCache) {
+        if (auto blob = m_memoryCache->get(path))
+            return copyBlob(*blob);
+    }
+#endif
 
+    auto data = mapFile(path);
     return { data, computeSHA1(data, m_salt) };
 }
 
@@ -133,6 +210,10 @@ void BlobStorage::remove(const String& path)
     ASSERT(!RunLoop::isMain());
 
     FileSystem::deleteFile(path);
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    if (m_memoryCache)
+        m_memoryCache->remove(path);
+#endif
 }
 
 unsigned BlobStorage::shareCount(const String& path)

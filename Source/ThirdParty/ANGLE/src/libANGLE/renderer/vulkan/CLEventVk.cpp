@@ -11,47 +11,31 @@
 #endif
 
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
-#include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
+
+#include "libANGLE/CLCommandQueue.h"
 
 #include "libANGLE/cl_utils.h"
 
 namespace rx
 {
 
-CLEventVk::CLEventVk(const cl::Event &event,
-                     const cl::ExecutionStatus initialStatus,
-                     const QueueSerial eventSerial)
+CLEventVk::CLEventVk(const cl::Event &event, const cl::ExecutionStatus initialStatus)
     : CLEventImpl(event),
       mStatus(cl::ToCLenum(initialStatus)),
       mProfilingTimestamps(ProfilingTimestamps{}),
-      mQueueSerial(eventSerial)
+      mQueueSerial(QueueSerial())
 {
     ANGLE_CL_IMPL_TRY(setTimestamp(*mStatus));
 }
 
 CLEventVk::~CLEventVk() {}
 
-angle::Result CLEventVk::onEventCreate()
+void CLEventVk::setQueueSerial(QueueSerial queueSerial)
 {
-    ASSERT(!isUserEvent());
-    ASSERT(mQueueSerial.valid());
+    ASSERT(!isUserEvent() && "user-event should not hold a QueueSerial!");
+    ASSERT(!mQueueSerial.valid() && "we can only set event QueueSerial once!");
 
-    if (cl::FromCLenum<cl::ExecutionStatus>(*mStatus) == cl::ExecutionStatus::Complete)
-    {
-        // Submission finished at this point, just set event to complete
-        ANGLE_TRY(setStatusAndExecuteCallback(CL_COMPLETE));
-    }
-    else
-    {
-        getFrontendObject().getCommandQueue()->getImpl<CLCommandQueueVk>().addEventReference(*this);
-        if (getFrontendObject().getCommandQueue()->getProperties().intersects(
-                CL_QUEUE_PROFILING_ENABLE))
-        {
-            // Block for profiling so that we get timestamps per-command
-            ANGLE_TRY(getFrontendObject().getCommandQueue()->getImpl<CLCommandQueueVk>().finish());
-        }
-    }
-    return angle::Result::Continue;
+    mQueueSerial = queueSerial;
 }
 
 angle::Result CLEventVk::getCommandExecutionStatus(cl_int &executionStatus)
@@ -136,17 +120,18 @@ angle::Result CLEventVk::waitForUserEventStatus()
 {
     ASSERT(isUserEvent());
 
-    cl_int status = CL_QUEUED;
+    // User is responsible for setting the user-event object, we need to wait for that event
+    // (We dont care what the outcome is, just need to wait until that event triggers)
     std::unique_lock<std::mutex> ul(mUserEventMutex);
-    ANGLE_TRY(getCommandExecutionStatus(status));
-    if (status > CL_COMPLETE)
-    {
-        // User is responsible for setting the user-event object, we need to wait for that event
-        // (We dont care what the outcome is, just need to wait until that event triggers)
-        INFO() << "Waiting for user-event (" << &mEvent
-               << ") to be set! (aka clSetUserEventStatus)";
-        mUserEventCondition.wait(ul);
-    }
+    mUserEventCondition.wait(ul, [this]() {
+        cl_int status = *mStatus;
+        if (status > CL_COMPLETE)
+        {
+            INFO() << "waiting for user-event (" << &mEvent << ") to be set";
+            return false;
+        }
+        return true;
+    });
 
     return angle::Result::Continue;
 }

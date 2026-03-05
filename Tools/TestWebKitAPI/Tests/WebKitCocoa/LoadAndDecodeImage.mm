@@ -292,7 +292,7 @@ RetainPtr<NSData> tiffRepresentation(CocoaImage *image)
     if (!cgImage)
         return nullptr;
 
-    RefPtr nativeImage = WebCore::NativeImage::create(WTFMove(cgImage));
+    RefPtr nativeImage = WebCore::NativeImage::create(WTF::move(cgImage));
     if (!nativeImage)
         return nullptr;
 
@@ -383,6 +383,24 @@ TEST(WebKit, CreateIconDataFromImageDataSVGWithSubresource)
         done = true;
     }];
     Util::run(&done);
+}
+
+TEST(WebKit, LoadAndDecodeImageInvalidURL)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@""];
+    auto pid = [webView _webProcessIdentifier];
+    EXPECT_NE(pid, 0);
+
+    __block bool done { false };
+    [webView _loadAndDecodeImage:[NSURLRequest requestWithURL:[NSURL URLWithString:@""]] constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_NULL(image);
+        EXPECT_NOT_NULL(error);
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]);
 }
 
 }

@@ -192,7 +192,7 @@ void BaseAudioCaptureUnit::setCaptureDevice(String&& persistentID, uint32_t capt
     if (hasChanged)
         willChangeCaptureDeviceTo(persistentID);
 
-    m_capturingDevice = { WTFMove(persistentID), captureDeviceID };
+    m_capturingDevice = { WTF::move(persistentID), captureDeviceID };
     m_isCapturingWithDefaultMicrophone = isDefault;
 
     if (hasChanged)

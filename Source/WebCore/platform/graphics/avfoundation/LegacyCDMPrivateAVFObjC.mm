@@ -60,7 +60,7 @@ auto LegacyCDMPrivateAVFObjC::parseKeySystem(const String& keySystem) -> std::op
     Vector<int> protocolVersions;
     for (auto protocolVersionString : keySystemView.substring(16).split(','))
         protocolVersions.append(parseInteger<int>(protocolVersionString).value());
-    return { { cdmVersion, WTFMove(protocolVersions) } };
+    return { { cdmVersion, WTF::move(protocolVersions) } };
 }
 
 LegacyCDMPrivateAVFObjC::~LegacyCDMPrivateAVFObjC()
@@ -142,10 +142,10 @@ RefPtr<LegacyCDMSession> LegacyCDMPrivateAVFObjC::createSession(LegacyCDMSession
     if (!parameters)
         return nullptr;
 
-    RefPtr session = CDMSessionAVContentKeySession::create(WTFMove(parameters.value().protocols), parameters.value().version, *this, client);
+    RefPtr session = CDMSessionAVContentKeySession::create(WTF::move(parameters.value().protocols), parameters.value().version, *this, client);
 
     m_sessions.append(session.get());
-    return WTFMove(session);
+    return WTF::move(session);
 }
 
 void LegacyCDMPrivateAVFObjC::invalidateSession(CDMSessionAVContentKeySession* session)

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLBDIElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLBDIElement);
 
 Ref<HTMLBDIElement> HTMLBDIElement::create(const QualifiedName& name, Document& document)
 {

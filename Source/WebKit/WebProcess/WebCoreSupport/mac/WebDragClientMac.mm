@@ -32,6 +32,7 @@
 #import "PasteboardTypes.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import <CoreGraphics/CGContext.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/DocumentPage.h>
@@ -70,7 +71,7 @@ using DragImage = CGImageRef;
 
 static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
 {
-    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(frame.protectedMainFrame()->protectedVirtualView().get()) });
+    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(protect(protect(frame.mainFrame())->virtualView()).get()) });
     if (!bitmap)
         return nullptr;
 
@@ -82,7 +83,7 @@ static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const I
 #if USE(APPKIT)
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
 #else
-    CGContextDrawImage(graphicsContext->platformContext(), CGRectMake(0, 0, size.width(), size.height()), image);
+    CGContextDrawImage(protect(graphicsContext->platformContext()).get(), CGRectMake(0, 0, size.width(), size.height()), image);
 #endif
 
     return bitmap;
@@ -105,13 +106,13 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame, co
         return;
 
     m_page->willStartDrag();
-    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, WTFMove(*handle), nodeID));
+    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, WTF::move(*handle), nodeID, frame.frameID()));
 }
 
 void WebDragClient::didConcludeEditDrag()
 {
 #if PLATFORM(IOS_FAMILY)
-    m_page->didConcludeEditDrag();
+    protect(m_page)->didConcludeEditDrag();
 #endif
 }
 
@@ -136,7 +137,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
     String extension;
     if (image) {
-        extension = image->protectedImage()->filenameExtension();
+        extension = protect(image->image())->filenameExtension();
         if (extension.isEmpty())
             return;
     }
@@ -182,7 +183,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             filename = downloadFilename;
     }
 
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url.createNSURL().get()), WTFMove(*archiveHandle), element.protectedDocument()->originIdentifierForPasteboard()));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTF::move(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url.createNSURL().get()), WTF::move(*archiveHandle), protect(element.document())->originIdentifierForPasteboard()));
 }
 
 #else
@@ -190,7 +191,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
 {
     if (RefPtr frame = element.document().frame())
-        frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);
+        protect(frame->editor())->writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);
 }
 
 #endif // USE(APPKIT)

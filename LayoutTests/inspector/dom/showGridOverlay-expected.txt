@@ -46,11 +46,10 @@ PASS: Should have 0 grids displayed.
 Requesting to hide all grid overlays again, expecting none to be cleared. Hiding all grids is idempotent and should not throw an error.
 PASS: Should have 0 grids displayed.
 
--- Running test case: DOM.showGridOverlay.HideBeforeShowShouldError
+-- Running test case: DOM.showGridOverlay.HideBeforeShowShouldSucceed
 PASS: Should have 0 grids displayed.
-Requesting to hide grid overlay for .grid-container
-PASS: Should produce an exception.
-Error: No grid overlay exists for the node, so cannot clear.
+Requesting to hide grid overlay for .grid-container (should silently succeed)
+PASS: Should have 0 grids displayed.
 Requesting to hide all grid overlays. Hiding all grids is idempotent and should not throw an error.
 PASS: Should have 0 grids displayed.
 

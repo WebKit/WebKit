@@ -34,6 +34,10 @@ class RenderObject;
 class RenderStyle;
 class SVGResources;
 
+namespace Style {
+struct Difference;
+}
+
 class SVGResourcesCache {
     WTF_MAKE_TZONE_ALLOCATED(SVGResourcesCache);
     WTF_MAKE_NONCOPYABLE(SVGResourcesCache);
@@ -56,7 +60,7 @@ public:
     static void clientLayoutChanged(RenderElement&);
 
     // Called from all SVG renderers styleDidChange() methods.
-    static void clientStyleChanged(RenderElement&, StyleDifference, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    static void clientStyleChanged(RenderElement&, Style::Difference, const RenderStyle* oldStyle, const RenderStyle& newStyle);
 
     // Called from LegacyRenderSVGResourceContainer::willBeDestroyed().
     static void resourceDestroyed(LegacyRenderSVGResourceContainer&);

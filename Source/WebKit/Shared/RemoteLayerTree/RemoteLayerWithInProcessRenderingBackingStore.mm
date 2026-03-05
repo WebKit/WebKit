@@ -124,22 +124,22 @@ class ImageBufferBackingStoreFlusher final : public ThreadSafeImageBufferSetFlus
 public:
     static std::unique_ptr<ImageBufferBackingStoreFlusher> create(ImageBufferSetIdentifier identifier, std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> imageBufferFlusher, std::unique_ptr<BufferSetBackendHandle> handles)
     {
-        return std::unique_ptr<ImageBufferBackingStoreFlusher> { new ImageBufferBackingStoreFlusher(identifier, WTFMove(imageBufferFlusher), WTFMove(handles)) };
+        return std::unique_ptr<ImageBufferBackingStoreFlusher> { new ImageBufferBackingStoreFlusher(identifier, WTF::move(imageBufferFlusher), WTF::move(handles)) };
     }
 
     bool flushAndCollectHandles(HashMap<ImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
     {
         if (m_imageBufferFlusher)
             m_imageBufferFlusher->flush();
-        handlesMap.add(m_identifier, WTFMove(m_handles));
+        handlesMap.add(m_identifier, WTF::move(m_handles));
         return true;
     }
 
 private:
     ImageBufferBackingStoreFlusher(ImageBufferSetIdentifier identifier, std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> imageBufferFlusher, std::unique_ptr<BufferSetBackendHandle> handles)
         : m_identifier(identifier)
-        , m_imageBufferFlusher(WTFMove(imageBufferFlusher))
-        , m_handles(WTFMove(handles))
+        , m_imageBufferFlusher(WTF::move(imageBufferFlusher))
+        , m_handles(WTF::move(handles))
     {
     }
 
@@ -164,7 +164,7 @@ std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderi
         m_bufferSet.m_secondaryBackBuffer ? std::optional { BufferAndBackendInfo::fromImageBuffer(Ref { *m_bufferSet.m_secondaryBackBuffer }) } : std::nullopt,
     });
 
-    return ImageBufferBackingStoreFlusher::create(m_bufferSet.identifier(), WTFMove(flusher), WTFMove(handles));
+    return ImageBufferBackingStoreFlusher::create(m_bufferSet.identifier(), WTF::move(flusher), WTF::move(handles));
 }
 
 std::optional<ImageBufferSetIdentifier> RemoteLayerWithInProcessRenderingBackingStore::bufferSetIdentifier() const

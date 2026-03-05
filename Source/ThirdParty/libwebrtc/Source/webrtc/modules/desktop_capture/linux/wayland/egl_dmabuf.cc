@@ -20,7 +20,7 @@
 #include <fcntl.h>
 #include <gbm.h>
 #include <libdrm/drm_fourcc.h>
-#include <spa/param/video/format-utils.h>
+#include <spa/param/video/raw.h>
 #include <unistd.h>
 #include <xf86drm.h>
 
@@ -529,7 +529,7 @@ bool EglDmaBuf::ImageFromDmaBuf(const DesktopSize& size,
     return false;
   }
 
-  if (plane_datas.size() <= 0) {
+  if (plane_datas.empty()) {
     RTC_LOG(LS_ERROR) << "Failed to process buffer: invalid number of planes";
     return false;
   }
@@ -544,7 +544,7 @@ bool EglDmaBuf::ImageFromDmaBuf(const DesktopSize& size,
   attribs[atti++] = EGL_LINUX_DRM_FOURCC_EXT;
   attribs[atti++] = SpaPixelFormatToDrmFormat(format);
 
-  if (plane_datas.size() > 0) {
+  if (!plane_datas.empty()) {
     attribs[atti++] = EGL_DMA_BUF_PLANE0_FD_EXT;
     attribs[atti++] = plane_datas[0].fd;
     attribs[atti++] = EGL_DMA_BUF_PLANE0_OFFSET_EXT;

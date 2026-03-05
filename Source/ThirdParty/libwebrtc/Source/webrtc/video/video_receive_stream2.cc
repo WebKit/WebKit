@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
-#include <cstdlib>
 #include <initializer_list>
 #include <map>
 #include <memory>
@@ -42,6 +41,8 @@
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
+#include "api/video/corruption_detection/frame_instrumentation_evaluation.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/encoded_image.h"
 #include "api/video/recordable_encoded_frame.h"
@@ -64,7 +65,6 @@
 #include "call/rtx_receive_stream.h"
 #include "call/syncable.h"
 #include "call/video_receive_stream.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
@@ -78,14 +78,14 @@
 #include "rtc_base/event.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/race_checker.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/file_wrapper.h"
-#include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "video/call_stats2.h"
-#include "video/corruption_detection/frame_instrumentation_evaluation.h"
 #include "video/decode_synchronizer.h"
 #include "video/frame_decode_scheduler.h"
 #include "video/frame_dumping_decoder.h"
@@ -259,14 +259,14 @@ VideoReceiveStream2::VideoReceiveStream2(
                                  this,  // OnCompleteFrameCallback
                                  std::move(config_.frame_decryptor),
                                  std::move(config_.frame_transformer)),
-      rtp_stream_sync_(call->worker_thread(), this),
+      rtp_stream_sync_(env_, call->worker_thread(), this),
       max_wait_for_keyframe_(DetermineMaxWaitForFrame(
           TimeDelta::Millis(config_.rtp.nack.rtp_history_ms),
           true)),
       max_wait_for_frame_(DetermineMaxWaitForFrame(
           TimeDelta::Millis(config_.rtp.nack.rtp_history_ms),
           false)),
-      frame_evaluator_(&stats_proxy_),
+      frame_evaluator_(FrameInstrumentationEvaluation::Create(&stats_proxy_)),
       decode_queue_(env_.task_queue_factory().CreateTaskQueue(
           "DecodingQueue",
           TaskQueueFactory::Priority::HIGH)) {
@@ -387,8 +387,8 @@ void VideoReceiveStream2::Start() {
   transport_adapter_.Enable();
   VideoSinkInterface<VideoFrame>* renderer = nullptr;
   if (config_.enable_prerenderer_smoothing) {
-    incoming_video_stream_.reset(new IncomingVideoStream(
-        &env_.task_queue_factory(), config_.render_delay_ms, this));
+    incoming_video_stream_ = std::make_unique<IncomingVideoStream>(
+        env_, config_.render_delay_ms, this);
     renderer = incoming_video_stream_.get();
   } else {
     renderer = this;
@@ -586,7 +586,7 @@ void VideoReceiveStream2::CreateAndRegisterExternalDecoder(
     char filename_buffer[256];
     SimpleStringBuilder ssb(filename_buffer);
     ssb << decoded_output_file << "/webrtc_receive_stream_" << remote_ssrc()
-        << "-" << TimeMicros() << ".ivf";
+        << "-" << env_.clock().TimeInMicroseconds() << ".ivf";
     video_decoder = CreateFrameDumpingDecoderWrapper(
         std::move(video_decoder), FileWrapper::OpenWriteOnly(ssb.str()));
   }
@@ -656,9 +656,9 @@ void VideoReceiveStream2::CalculateCorruptionScore(
     const VideoFrame& frame,
     const FrameInstrumentationData& frame_instrumentation_data,
     VideoContentType content_type) {
-  RTC_DCHECK_RUN_ON(&decode_sequence_checker_);
-  frame_evaluator_.OnInstrumentedFrame(frame_instrumentation_data, frame,
-                                       content_type);
+  RTC_DCHECK_RUNS_SERIALIZED(&decode_callback_race_checker_);
+  frame_evaluator_->OnInstrumentedFrame(frame_instrumentation_data, frame,
+                                        content_type);
 }
 
 bool VideoReceiveStream2::SetBaseMinimumPlayoutDelayMs(int delay_ms) {
@@ -726,8 +726,8 @@ void VideoReceiveStream2::OnFrame(const VideoFrame& video_frame) {
           << video_frame.height();
     }
     pending_resolution_ = RecordableEncodedFrame::EncodedResolution{
-        static_cast<unsigned>(video_frame.width()),
-        static_cast<unsigned>(video_frame.height())};
+        .width = static_cast<unsigned>(video_frame.width()),
+        .height = static_cast<unsigned>(video_frame.height())};
   }
 }
 
@@ -790,25 +790,24 @@ std::optional<Syncable::Info> VideoReceiveStream2::GetInfo() const {
   if (!info)
     return std::nullopt;
 
-  info->current_delay_ms = timing_->TargetVideoDelay().ms();
+  info->current_delay = timing_->TargetVideoDelay();
   return info;
 }
 
-bool VideoReceiveStream2::GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
-                                                 int64_t* time_ms) const {
+std::optional<Syncable::PlayoutInfo>
+VideoReceiveStream2::GetPlayoutRtpTimestamp() const {
   RTC_DCHECK_NOTREACHED();
-  return false;
+  return std::nullopt;
 }
 
-void VideoReceiveStream2::SetEstimatedPlayoutNtpTimestampMs(
-    int64_t ntp_timestamp_ms,
-    int64_t time_ms) {
+void VideoReceiveStream2::SetEstimatedPlayoutNtpTimestamp(NtpTime ntp_time,
+                                                          Timestamp time) {
   RTC_DCHECK_NOTREACHED();
 }
 
-bool VideoReceiveStream2::SetMinimumPlayoutDelay(int delay_ms) {
+bool VideoReceiveStream2::SetMinimumPlayoutDelay(TimeDelta delay) {
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
-  syncable_minimum_playout_delay_ = TimeDelta::Millis(delay_ms);
+  syncable_minimum_playout_delay_ = delay;
   UpdatePlayoutDelays();
   return true;
 }
@@ -1012,8 +1011,8 @@ int VideoReceiveStream2::DecodeAndMaybeDispatchEncodedFrame(
       // Flush the buffered frames.
       for (const auto& buffered_frame : buffered_encoded_frames_) {
         RecordableEncodedFrame::EncodedResolution resolution{
-            buffered_frame->EncodedImage()._encodedWidth,
-            buffered_frame->EncodedImage()._encodedHeight};
+            .width = buffered_frame->EncodedImage()._encodedWidth,
+            .height = buffered_frame->EncodedImage()._encodedHeight};
         if (IsKeyFrameAndUnspecifiedResolution(*buffered_frame)) {
           RTC_DCHECK(!pending_resolution->empty());
           resolution = *pending_resolution;

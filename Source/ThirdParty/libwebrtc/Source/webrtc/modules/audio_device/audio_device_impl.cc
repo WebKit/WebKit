@@ -20,7 +20,6 @@
 #include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/audio_device_generic.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -87,8 +86,7 @@ AudioDeviceModuleImpl::Create(const Environment& env, AudioLayer audio_layer) {
   }
 
   // Create the generic reference counted (platform independent) implementation.
-  auto audio_device = make_ref_counted<AudioDeviceModuleImpl>(
-      audio_layer, &env.task_queue_factory());
+  auto audio_device = make_ref_counted<AudioDeviceModuleImpl>(env, audio_layer);
 
   // Ensure that the current platform is supported.
   if (audio_device->CheckPlatform() == -1) {
@@ -109,20 +107,19 @@ AudioDeviceModuleImpl::Create(const Environment& env, AudioLayer audio_layer) {
   return audio_device;
 }
 
-AudioDeviceModuleImpl::AudioDeviceModuleImpl(
-    AudioLayer audio_layer,
-    TaskQueueFactory* task_queue_factory)
-    : audio_layer_(audio_layer), audio_device_buffer_(task_queue_factory) {
+AudioDeviceModuleImpl::AudioDeviceModuleImpl(const Environment& env,
+                                             AudioLayer audio_layer)
+    : audio_layer_(audio_layer), audio_device_buffer_(env) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
 }
 
 AudioDeviceModuleImpl::AudioDeviceModuleImpl(
+    const Environment& env,
     AudioLayer audio_layer,
     std::unique_ptr<AudioDeviceGeneric> audio_device,
-    TaskQueueFactory* task_queue_factory,
     bool create_detached)
     : audio_layer_(audio_layer),
-      audio_device_buffer_(task_queue_factory, create_detached),
+      audio_device_buffer_(env, create_detached),
       audio_device_(std::move(audio_device)) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
 }

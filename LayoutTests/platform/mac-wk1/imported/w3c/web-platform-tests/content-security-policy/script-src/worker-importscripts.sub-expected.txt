@@ -1,4 +1,0 @@
-
-PASS Dedicated worker delivers its own CSP
-FAIL Shared worker delivers its own CSP Shared workers are not supported
-

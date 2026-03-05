@@ -44,10 +44,10 @@ var expected = {
   Uint8ClampedArray: [0, 42, 0, 66, 5, 6, 7, 8]
 };
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var other = TA === Float32Array ? Float64Array : Float32Array;
 
-  var sample = new TA([1, 2, 3, 4, 5, 6, 7, 8]);
+  var sample = new TA(makeCtorArg([1, 2, 3, 4, 5, 6, 7, 8]));
   var src = new other(sample.buffer, 0, 2);
 
   // Reflect changes on sample object

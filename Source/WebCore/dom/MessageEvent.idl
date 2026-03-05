@@ -26,14 +26,16 @@
  *
  */
 
+// https://html.spec.whatwg.org/multipage/comms.html#messageeventsource
 typedef (WindowProxy or MessagePort or ServiceWorker) MessageEventSource;
 
+// https://html.spec.whatwg.org/multipage/comms.html#messageevent
 [
     Exposed=(Window,Worker,AudioWorklet),
     JSCustomMarkFunction,
     ReportExtraMemoryCost,
 ] interface MessageEvent : Event {
-    constructor([AtomString] DOMString type, optional MessageEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional MessageEventInit eventInitDict = {});
 
     readonly attribute USVString origin;
     readonly attribute DOMString lastEventId;
@@ -46,6 +48,7 @@ typedef (WindowProxy or MessagePort or ServiceWorker) MessageEventSource;
         optional sequence<MessagePort> messagePorts = []);
 };
 
+// https://html.spec.whatwg.org/multipage/comms.html#messageeventinit
 dictionary MessageEventInit : EventInit {
     any data = null;
     USVString origin = "";

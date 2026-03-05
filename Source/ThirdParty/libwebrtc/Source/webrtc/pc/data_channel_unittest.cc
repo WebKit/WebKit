@@ -164,8 +164,11 @@ TEST_F(SctpDataChannelTest, VerifyConfigurationGetters) {
   // Note that the `init_.reliable` field is deprecated, so we directly set
   // it here to match spec behavior for purposes of checking the `reliable()`
   // getter.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   init_.reliable = (!init_.maxRetransmits && !init_.maxRetransmitTime);
   EXPECT_EQ(channel_->reliable(), init_.reliable);
+#pragma clang diagnostic pop
   EXPECT_EQ(channel_->ordered(), init_.ordered);
   EXPECT_EQ(channel_->negotiated(), init_.negotiated);
   EXPECT_EQ(channel_->priority(), PriorityValue(Priority::kLow));

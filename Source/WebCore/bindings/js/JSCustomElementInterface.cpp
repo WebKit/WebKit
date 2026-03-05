@@ -119,7 +119,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
 
     VM& vm = m_isolatedWorld->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (!m_constructor)
         return nullptr;
@@ -163,10 +163,10 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (parserConstructElementWithEmptyStack == ParserConstructElementWithEmptyStack::Yes)
-        document.eventLoop().performMicrotaskCheckpoint();
+        document.eventLoop().performMicrotaskCheckpoint(vm);
 
     ASSERT(!newElement.isEmpty());
-    HTMLElement* wrappedElement = JSHTMLElement::toWrapped(vm, newElement);
+    RefPtr wrappedElement = JSHTMLElement::toWrapped(vm, newElement);
     if (!wrappedElement) {
         throwTypeError(&lexicalGlobalObject, scope, "The result of constructing a custom element must be a HTMLElement"_s);
         return nullptr;
@@ -220,7 +220,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     if (!m_constructor)
         return;
 
-    auto* context = scriptExecutionContext();
+    CheckedPtr context = scriptExecutionContext();
     if (!context)
         return;
     auto* globalObject = toJSDOMWindow(downcast<Document>(*context).frame(), m_isolatedWorld);
@@ -259,9 +259,9 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
-    JSExecState::instrumentFunction(context, constructData);
+    JSExecState::instrumentFunction(context.get(), constructData);
     JSValue returnedElement = construct(lexicalGlobalObject, m_constructor.get(), constructData, args);
-    InspectorInstrumentation::didCallFunction(context);
+    InspectorInstrumentation::didCallFunction(context.get());
 
     document->setActiveCustomElementRegistry(oldRegistry);
 
@@ -273,7 +273,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     }
 
-    Element* wrappedElement = JSElement::toWrapped(vm, returnedElement);
+    CheckedPtr wrappedElement = JSElement::toWrapped(vm, returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
         element.clearReactionQueueFromFailedCustomElement();
         reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, ExceptionCode::TypeError, "Custom element constructor returned a wrong element"_s));
@@ -293,7 +293,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     if (!canInvokeCallback())
         return;
 
-    auto* context = scriptExecutionContext();
+    CheckedPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -315,12 +315,12 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     addArguments(lexicalGlobalObject, globalObject, args);
     RELEASE_ASSERT(!args.hasOverflowed());
 
-    JSExecState::instrumentFunction(context, callData);
+    JSExecState::instrumentFunction(context.get(), callData);
 
     NakedPtr<JSC::Exception> exception;
     JSExecState::call(lexicalGlobalObject, callback, callData, jsElement, args, exception);
 
-    InspectorInstrumentation::didCallFunction(context);
+    InspectorInstrumentation::didCallFunction(context.get());
 
     if (exception)
         reportException(callback->globalObject(), exception);
@@ -363,8 +363,8 @@ void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callba
 {
     m_attributeChangedCallback = callback;
     m_observedAttributes.clear();
-    for (auto&& name : WTFMove(observedAttributes))
-        m_observedAttributes.add(WTFMove(name));
+    for (auto&& name : WTF::move(observedAttributes))
+        m_observedAttributes.add(WTF::move(name));
 }
 
 void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
@@ -380,7 +380,7 @@ void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, 
 void JSCustomElementInterface::invokeFormAssociatedCallback(Element& element, HTMLFormElement* associatedForm)
 {
     invokeCallback(element, m_formAssociatedCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
-        args.append(toJS(lexicalGlobalObject, globalObject, associatedForm));
+        args.append(associatedForm ? toJS(lexicalGlobalObject, globalObject, *associatedForm) : jsNull());
     });
 }
 
@@ -401,15 +401,20 @@ void JSCustomElementInterface::invokeFormStateRestoreCallback(Element& element, 
     invokeCallback(element, m_formStateRestoreCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
         auto& vm = lexicalGlobalObject->vm();
 
-        WTF::switchOn(restoredState, [&](RefPtr<DOMFormData> state) {
-            args.append(toJS(lexicalGlobalObject, globalObject, *state));
-        }, [&](const String& state) {
-            args.append(jsString(vm, state));
-        }, [&](RefPtr<File>) {
-            ASSERT_NOT_REACHED();
-        }, [](std::nullptr_t) {
-            ASSERT_NOT_REACHED();
-        });
+        WTF::switchOn(WTF::move(restoredState),
+            [&](Ref<DOMFormData>&& state) {
+                args.append(toJS(lexicalGlobalObject, globalObject, WTF::move(state)));
+            },
+            [&](String&& state) {
+                args.append(jsString(vm, WTF::move(state)));
+            },
+            [&](Ref<File>&&) {
+                ASSERT_NOT_REACHED();
+            },
+            [](std::nullptr_t) {
+                ASSERT_NOT_REACHED();
+            }
+        );
 
         args.append(jsNontrivialString(vm, "restore"_s));
     });

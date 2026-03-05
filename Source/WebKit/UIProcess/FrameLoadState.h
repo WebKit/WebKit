@@ -76,12 +76,12 @@ public:
     void didSameDocumentNotification(URL&&);
 
     State state() const { return m_state; }
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     void setURL(URL&&);
-    const URL& provisionalURL() const { return m_provisionalURL; }
+    const URL& provisionalURL() const LIFETIME_BOUND { return m_provisionalURL; }
 
     void setUnreachableURL(const URL&);
-    const URL& unreachableURL() const { return m_unreachableURL; }
+    const URL& unreachableURL() const LIFETIME_BOUND { return m_unreachableURL; }
 
     IsMainFrame isMainFrame() const { return m_isMainFrame; }
 

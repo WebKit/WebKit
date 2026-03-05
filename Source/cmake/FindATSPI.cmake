@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Igalia S.L.
+# Copyright (c) 2013, 2026 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -23,29 +23,46 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-#
-# Try to find AT-SPI include and library directories.
-#
-# After successful discovery, this will set for inclusion where needed:
-# ATSPI_INCLUDE_DIRS - containg the AT-SPI headers
-# ATSPI_LIBRARIES - containg the AT-SPI library
+
+#[=======================================================================[.rst:
+FindATSPI
+---------
+
+Find the AT-SPI headers and library.
+
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+``ATSPI::ATSPI``
+The AT-SPI library, if found.
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+``ATSPI_FOUND``
+  true if (the requested version of) the AT-SPI library is available.
+``ATSPI_VERSION``
+  the version of the AT-SPI library.
+
+#]=======================================================================]
+
+if (DEFINED ATSPI_FIND_VERSION)
+    set(ATSPI_PKG_CONFIG_SPEC "atspi-2>=${ATSPI_FIND_VERSION}")
+else ()
+    set(ATSPI_PKG_CONFIG_SPEC "atspi-2")
+endif ()
 
 find_package(PkgConfig QUIET)
+pkg_check_modules(ATSPI QUIET IMPORTED_TARGET "${ATSPI_PKG_CONFIG_SPEC}")
 
-pkg_check_modules(ATSPI atspi-2)
-
-set(VERSION_OK TRUE)
-if (ATSPI_VERSION)
-    if (ATSPI_FIND_VERSION_EXACT)
-        if (NOT("${ATSPI_FIND_VERSION}" VERSION_EQUAL "${ATSPI_VERSION}"))
-            set(VERSION_OK FALSE)
-        endif ()
-    else ()
-        if ("${ATSPI_VERSION}" VERSION_LESS "${ATSPI_FIND_VERSION}")
-            set(VERSION_OK FALSE)
-        endif ()
-    endif ()
+if (TARGET PkgConfig::ATSPI AND NOT TARGET ATSPI::ATSPI)
+    add_library(ATSPI::ATSPI INTERFACE IMPORTED GLOBAL)
+    set_property(TARGET ATSPI::ATSPI PROPERTY
+        INTERFACE_LINK_LIBRARIES PkgConfig::ATSPI
+    )
 endif ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(ATSPI DEFAULT_MSG ATSPI_INCLUDE_DIRS ATSPI_LIBRARIES VERSION_OK)
+find_package_handle_standard_args(ATSPI
+    REQUIRED_VARS ATSPI_VERSION
+)

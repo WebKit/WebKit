@@ -4,6 +4,7 @@
 // found in the LICENSE file.
 //
 
+#include "compiler/translator/IntermNode.h"
 #ifdef UNSAFE_BUFFERS_BUILD
 #    pragma allow_unsafe_buffers
 #endif
@@ -15,8 +16,9 @@
 #include "common/span.h"
 #include "common/utilities.h"
 #include "compiler/preprocessor/numeric_lex.h"
+#include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
-#include "compiler/translator/SymbolTable.h"
+#include "compiler/translator/Symbol.h"
 
 bool atoi_clamp(const char *str, unsigned int *value)
 {
@@ -492,6 +494,34 @@ ImmutableString GetTypeName(const TType &type,
         return ImmutableString(type.getBuiltInTypeNameString());
 }
 
+bool IsParam(TQualifier qualifier)
+{
+    switch (qualifier)
+    {
+        case EvqParamOut:
+        case EvqParamInOut:
+        case EvqParamIn:
+        case EvqParamConst:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+bool IsParamOut(TQualifier qualifier)
+{
+    switch (qualifier)
+    {
+        case EvqParamOut:
+        case EvqParamInOut:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 bool IsVaryingOut(TQualifier qualifier)
 {
     switch (qualifier)
@@ -940,7 +970,8 @@ bool IsRedeclarableBuiltIn(const ImmutableString &name)
     return name == "gl_ClipDistance" || name == "gl_CullDistance" || name == "gl_FragDepth" ||
            name == "gl_LastFragData" || name == "gl_LastFragColorARM" ||
            name == "gl_LastFragDepthARM" || name == "gl_LastFragStencilARM" ||
-           name == "gl_PerVertex" || name == "gl_Position" || name == "gl_PointSize";
+           name == "gl_PerVertex" || name == "gl_in" || name == "gl_out" || name == "gl_Position" ||
+           name == "gl_PointSize";
 }
 
 size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)
@@ -974,6 +1005,20 @@ Declaration ViewDeclaration(TIntermDeclaration &declNode, uint32_t index)
         symbolNode = initNode->getLeft()->getAsSymbolNode();
         ASSERT(symbolNode);
         return {*symbolNode, initNode->getRight()};
+    }
+}
+
+bool IsIndexOp(TOperator op)
+{
+    switch (op)
+    {
+        case EOpIndexDirect:
+        case EOpIndexDirectStruct:
+        case EOpIndexDirectInterfaceBlock:
+        case EOpIndexIndirect:
+            return true;
+        default:
+            return false;
     }
 }
 

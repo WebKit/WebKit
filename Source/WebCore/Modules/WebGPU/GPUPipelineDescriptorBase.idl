@@ -26,8 +26,7 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpupipelinedescriptorbase
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUPipelineDescriptorBase : GPUObjectDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUPipelineDescriptorBase : GPUObjectDescriptorBase {
     required (GPUPipelineLayout or GPUAutoLayoutMode) layout;
 };

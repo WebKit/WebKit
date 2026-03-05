@@ -28,6 +28,10 @@
 #include "Test.h"
 #include <wtf/DateMath.h>
 
+#if PLATFORM(WIN)
+#include <windows.h>
+#endif
+
 namespace TestWebKitAPI {
 
 // Note: The results of these function look weird if you do not understand the following mappings:

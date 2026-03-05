@@ -44,7 +44,7 @@ public:
     void forEachMatchingSession(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>& predicate, NOESCAPE const Function<void(PlatformMediaSessionInterface&)>& matchingCallback) final;
 
 protected:
-    PlatformMediaSessionManager(PageIdentifier);
+    explicit PlatformMediaSessionManager(PageIdentifier);
 
     void addSession(PlatformMediaSessionInterface&) override;
     void removeSession(PlatformMediaSessionInterface&) override;
@@ -56,7 +56,6 @@ protected:
     WeakPtr<PlatformMediaSessionInterface> bestEligibleSessionForRemoteControls(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&, PlatformMediaSessionPlaybackControlsPurpose) final;
 
 private:
-
     mutable WeakListHashSet<PlatformMediaSessionInterface> m_sessions;
 };
 

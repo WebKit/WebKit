@@ -27,12 +27,12 @@ info: |
       searchElement === elementK.
       iii. If same is true, return k.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n, 43n, 41n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n, 43n, 41n]));
 
   assert.sameValue(sample.indexOf(43n, Infinity), -1, "indexOf(43, Infinity)");
   assert.sameValue(sample.indexOf(43n, -Infinity), 1, "indexOf(43, -Infinity)");

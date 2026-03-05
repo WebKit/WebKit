@@ -25,9 +25,14 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 #import <CoreML/CoreML.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreML)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, MLCPUComputeDevice)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, MLGPUComputeDevice)
+
+#endif // !__has_feature(modules)

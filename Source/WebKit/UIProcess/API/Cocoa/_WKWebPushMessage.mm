@@ -36,14 +36,14 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushMessage.class, self))
         return;
 
-    _message->API::WebPushMessage::~WebPushMessage();
+    SUPPRESS_UNRETAINED_ARG _message->API::WebPushMessage::~WebPushMessage();
     [super dealloc];
 }
 
 - (NSData *)data
 {
-    if (auto messageData = self._protectedMessage->data())
-        return toNSData(*messageData).unsafeGet();
+    if (auto messageData = protect(*_message)->data())
+        return toNSData(*messageData).autorelease();
 
     return nil;
 }
@@ -59,11 +59,6 @@
 }
 
 - (API::Object&)_apiObject
-{
-    return *_message;
-}
-
-- (Ref<API::WebPushMessage>)_protectedMessage
 {
     return *_message;
 }

@@ -1,10 +1,10 @@
 
 PASS Test noreferrer, expected interpretation is true
 PASS Test noopener, expected interpretation is true
-FAIL Test popup, expected interpretation is true assert_equals: expected true but got false
+PASS Test popup, expected interpretation is true
 PASS Test noreferrer=yes, expected interpretation is true
 PASS Test noopener=yes, expected interpretation is true
-FAIL Test popup=yes, expected interpretation is true assert_equals: expected true but got false
+PASS Test popup=yes, expected interpretation is true
 PASS Test noreferrer="yes", expected interpretation is false
 PASS Test noopener="yes", expected interpretation is false
 PASS Test popup="yes", expected interpretation is false
@@ -13,7 +13,7 @@ PASS Test noopener='yes', expected interpretation is false
 PASS Test popup='yes', expected interpretation is false
 PASS Test noreferrer=true, expected interpretation is true
 PASS Test noopener=true, expected interpretation is true
-FAIL Test popup=true, expected interpretation is true assert_equals: expected true but got false
+PASS Test popup=true, expected interpretation is true
 PASS Test noreferrer="true", expected interpretation is false
 PASS Test noopener="true", expected interpretation is false
 PASS Test popup="true", expected interpretation is false
@@ -49,7 +49,7 @@ PASS Test noopener='00', expected interpretation is false
 PASS Test popup='00', expected interpretation is false
 PASS Test noreferrer=1, expected interpretation is true
 PASS Test noopener=1, expected interpretation is true
-FAIL Test popup=1, expected interpretation is true assert_equals: expected true but got false
+PASS Test popup=1, expected interpretation is true
 PASS Test noreferrer="1", expected interpretation is false
 PASS Test noopener="1", expected interpretation is false
 PASS Test popup="1", expected interpretation is false
@@ -58,7 +58,7 @@ PASS Test noopener='1', expected interpretation is false
 PASS Test popup='1', expected interpretation is false
 PASS Test noreferrer=99999, expected interpretation is true
 PASS Test noopener=99999, expected interpretation is true
-FAIL Test popup=99999, expected interpretation is true assert_equals: expected true but got false
+PASS Test popup=99999, expected interpretation is true
 PASS Test noreferrer="99999", expected interpretation is false
 PASS Test noopener="99999", expected interpretation is false
 PASS Test popup="99999", expected interpretation is false
@@ -67,7 +67,7 @@ PASS Test noopener='99999', expected interpretation is false
 PASS Test popup='99999', expected interpretation is false
 PASS Test noreferrer=-1, expected interpretation is true
 PASS Test noopener=-1, expected interpretation is true
-FAIL Test popup=-1, expected interpretation is true assert_equals: expected true but got false
+PASS Test popup=-1, expected interpretation is true
 PASS Test noreferrer="-1", expected interpretation is false
 PASS Test noopener="-1", expected interpretation is false
 PASS Test popup="-1", expected interpretation is false
@@ -76,7 +76,7 @@ PASS Test noopener='-1', expected interpretation is false
 PASS Test popup='-1', expected interpretation is false
 PASS Test noreferrer=1foo, expected interpretation is true
 PASS Test noopener=1foo, expected interpretation is true
-FAIL Test popup=1foo, expected interpretation is true assert_equals: expected true but got false
+PASS Test popup=1foo, expected interpretation is true
 PASS Test noreferrer="1foo", expected interpretation is false
 PASS Test noopener="1foo", expected interpretation is false
 PASS Test popup="1foo", expected interpretation is false

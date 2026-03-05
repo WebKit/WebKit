@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGCircleElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGCircleElement);
 
 inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -55,7 +55,7 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
-SVGAnimatedProperty* SVGCircleElement::propertyForAttribute(const QualifiedName& name) const
+SVGAnimatedPropertyBase* SVGCircleElement::propertyForAttribute(const QualifiedName& name) const
 {
     if (name == SVGNames::cxAttr)
         return m_cx.ptr();
@@ -103,8 +103,8 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGEllipse>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGEllipse>(*this, WTFMove(style));
+        return createRenderer<RenderSVGEllipse>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGEllipse>(*this, WTF::move(style));
 }
 
 }

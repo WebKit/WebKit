@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
 
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/RemoteInspectionTarget.h>
@@ -56,7 +56,7 @@ public:
     void dispatchMessageFromRemote(String&& message) final;
     void setIndicating(bool) final;
 
-    const String& nameOverride() const final { return m_nameOverride; }
+    const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
     void setNameOverride(const String&);
 
     std::optional<ProcessID> webContentProcessPID() const override;
@@ -76,4 +76,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebKit::WasmDebuggerDebuggable, WasmDebugger);
 
-#endif // ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)

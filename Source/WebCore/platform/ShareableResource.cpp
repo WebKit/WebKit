@@ -34,7 +34,7 @@
 namespace WebCore {
 
 ShareableResourceHandle::ShareableResourceHandle(SharedMemory::Handle&& handle, unsigned offset, unsigned size)
-    : m_handle(WTFMove(handle))
+    : m_handle(WTF::move(handle))
     , m_offset(offset)
     , m_size(size)
 {
@@ -49,7 +49,7 @@ RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
 
 RefPtr<SharedBuffer> ShareableResourceHandle::tryWrapInSharedBuffer() &&
 {
-    RefPtr<ShareableResource> resource = ShareableResource::map(WTFMove(*this));
+    RefPtr<ShareableResource> resource = ShareableResource::map(WTF::move(*this));
     if (!resource) {
         LOG_ERROR("Failed to recreate ShareableResource from handle.");
         return nullptr;
@@ -69,12 +69,12 @@ RefPtr<ShareableResource> ShareableResource::create(Ref<SharedMemory>&& sharedMe
         LOG_ERROR("Failed to create ShareableResource from SharedMemory due to mismatched buffer size.");
         return nullptr;
     }
-    return adoptRef(*new ShareableResource(WTFMove(sharedMemory), offset, size));
+    return adoptRef(*new ShareableResource(WTF::move(sharedMemory), offset, size));
 }
 
 RefPtr<ShareableResource> ShareableResource::map(Handle&& handle)
 {
-    auto sharedMemory = SharedMemory::map(WTFMove(handle.m_handle), SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(WTF::move(handle.m_handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return nullptr;
 
@@ -82,7 +82,7 @@ RefPtr<ShareableResource> ShareableResource::map(Handle&& handle)
 }
 
 ShareableResource::ShareableResource(Ref<SharedMemory>&& sharedMemory, unsigned offset, unsigned size)
-    : m_sharedMemory(WTFMove(sharedMemory))
+    : m_sharedMemory(WTF::move(sharedMemory))
     , m_offset(offset)
     , m_size(size)
 {
@@ -96,10 +96,10 @@ auto ShareableResource::createHandle() -> std::optional<Handle>
     if (!memoryHandle)
         return std::nullopt;
 
-    return { Handle { WTFMove(*memoryHandle), m_offset, m_size } };
+    return { Handle { WTF::move(*memoryHandle), m_offset, m_size } };
 }
 
-std::span<const uint8_t> ShareableResource::span() const
+std::span<const uint8_t> ShareableResource::span() const LIFETIME_BOUND
 {
     return m_sharedMemory->span().subspan(m_offset, m_size);
 }

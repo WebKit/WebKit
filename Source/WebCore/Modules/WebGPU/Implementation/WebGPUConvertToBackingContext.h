@@ -108,7 +108,7 @@ class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
 public:
     virtual ~ConvertToBackingContext() = default;
 
-    WGPUAddressMode convertToBacking(AddressMode);
+    WGPUAddressMode NODELETE convertToBacking(AddressMode);
     WGPUBlendFactor convertToBacking(BlendFactor);
     WGPUBlendOperation convertToBacking(BlendOperation);
     WGPUBufferBindingType convertToBacking(BufferBindingType);
@@ -137,11 +137,11 @@ public:
     WGPUVertexFormat convertToBacking(VertexFormat);
     WGPUVertexStepMode convertToBacking(VertexStepMode);
 
-    WGPUBufferUsageFlags convertBufferUsageFlagsToBacking(BufferUsageFlags);
-    WGPUColorWriteMaskFlags convertColorWriteFlagsToBacking(ColorWriteFlags);
-    WGPUMapModeFlags convertMapModeFlagsToBacking(MapModeFlags);
-    WGPUShaderStageFlags convertShaderStageFlagsToBacking(ShaderStageFlags);
-    WGPUTextureUsageFlags convertTextureUsageFlagsToBacking(TextureUsageFlags);
+    WGPUBufferUsageFlags NODELETE convertBufferUsageFlagsToBacking(BufferUsageFlags);
+    WGPUColorWriteMaskFlags NODELETE convertColorWriteFlagsToBacking(ColorWriteFlags);
+    WGPUMapModeFlags NODELETE convertMapModeFlagsToBacking(MapModeFlags);
+    WGPUShaderStageFlags NODELETE convertShaderStageFlagsToBacking(ShaderStageFlags);
+    WGPUTextureUsageFlags NODELETE convertTextureUsageFlagsToBacking(TextureUsageFlags);
 
     WGPUColor convertToBacking(const Color&);
     WGPUExtent3D convertToBacking(const Extent3D&);

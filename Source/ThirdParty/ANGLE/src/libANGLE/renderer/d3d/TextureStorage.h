@@ -56,11 +56,9 @@ class TextureStorage : public angle::Subject
 
     virtual angle::Result findRenderTarget(const gl::Context *context,
                                            const gl::ImageIndex &index,
-                                           GLsizei samples,
                                            RenderTargetD3D **outRT) const = 0;
     virtual angle::Result getRenderTarget(const gl::Context *context,
                                           const gl::ImageIndex &index,
-                                          GLsizei samples,
                                           RenderTargetD3D **outRT)        = 0;
     virtual angle::Result generateMipmap(const gl::Context *context,
                                          const gl::ImageIndex &sourceIndex,
@@ -83,11 +81,6 @@ class TextureStorage : public angle::Subject
 
     virtual void invalidateTextures() {}
 
-    // RenderToTexture methods
-    virtual angle::Result releaseMultisampledTexStorageForLevel(size_t level);
-    virtual angle::Result resolveTexture(const gl::Context *context);
-    virtual GLsizei getRenderToTextureSamples() const;
-
     // Called by outer object when label has changed via KHR_debug extension
     void setLabel(const std::string &newLabel);
 
@@ -107,21 +100,6 @@ inline angle::Result TextureStorage::useLevelZeroWorkaroundTexture(const gl::Con
                                                                    bool useLevelZeroTexture)
 {
     return angle::Result::Continue;
-}
-
-inline angle::Result TextureStorage::releaseMultisampledTexStorageForLevel(size_t level)
-{
-    return angle::Result::Continue;
-}
-
-inline angle::Result TextureStorage::resolveTexture(const gl::Context *context)
-{
-    return angle::Result::Continue;
-}
-
-inline GLsizei TextureStorage::getRenderToTextureSamples() const
-{
-    return 0;
 }
 
 inline void TextureStorage::setLabel(const std::string &newLabel)

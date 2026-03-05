@@ -47,7 +47,7 @@ public:
 
 private:
     explicit SharedFileHandle(FileSystem::FileHandle&& handle)
-        : m_handle(WTFMove(handle))
+        : m_handle(WTF::move(handle))
     {
     }
 

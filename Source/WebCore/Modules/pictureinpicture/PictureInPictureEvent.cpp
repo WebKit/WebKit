@@ -34,16 +34,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PictureInPictureEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PictureInPictureEvent);
 
 Ref<PictureInPictureEvent> PictureInPictureEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    return adoptRef(*new PictureInPictureEvent(type, WTFMove(init), isTrusted));
+    return adoptRef(*new PictureInPictureEvent(type, WTF::move(init), isTrusted));
 }
 
 PictureInPictureEvent::PictureInPictureEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(EventInterfaceType::PictureInPictureEvent, type, init, isTrusted)
-    , m_pictureInPictureWindow(init.pictureInPictureWindow.releaseNonNull())
+    : Event(EventInterfaceType::PictureInPictureEvent, type, WTF::move(init), isTrusted)
+    , m_pictureInPictureWindow(WTF::move(init.pictureInPictureWindow))
 {
 }
 

@@ -1,0 +1,10 @@
+<script>
+  testRunner?.dumpAsText();
+  function runTest() {
+    form.requestSubmit();
+  }
+</script>
+<body onload=runTest()>
+  <form id="form" onformdata="navigation.navigate('http://foo/bar');">
+  PASS if no crash.
+</body>

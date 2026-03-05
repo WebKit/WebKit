@@ -43,21 +43,21 @@ namespace Style {
 
 // MARK: - Control Point Evaluation
 
-template<typename ControlPoint> static ControlPointAnchor evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)
+template<typename ControlPoint> static ControlPointAnchor NODELETE evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)
 {
     if (value.anchor)
         return *value.anchor;
     return defaultValue;
 }
 
-template<typename ControlPoint> static FloatPoint evaluateControlPointOffset(const ControlPoint& value, const FloatSize& boxSize)
+template<typename ControlPoint> static FloatPoint evaluateControlPointOffset(const ControlPoint& value, const FloatSize& boxSize, ZoomFactor zoom)
 {
-    return evaluate<FloatPoint>(value.offset, boxSize, Style::ZoomNeeded { });
+    return evaluate<FloatPoint>(value.offset, boxSize, zoom);
 }
 
-template<typename ControlPoint> static FloatPoint resolveControlPoint(CommandAffinity affinity, FloatPoint currentPosition, FloatPoint segmentOffset, const ControlPoint& controlPoint, const FloatSize& boxSize)
+template<typename ControlPoint> static FloatPoint resolveControlPoint(CommandAffinity affinity, FloatPoint currentPosition, FloatPoint segmentOffset, const ControlPoint& controlPoint, const FloatSize& boxSize, ZoomFactor zoom)
 {
-    auto controlPointOffset = evaluateControlPointOffset(controlPoint, boxSize);
+    auto controlPointOffset = evaluateControlPointOffset(controlPoint, boxSize, zoom);
 
     auto defaultAnchor = (std::holds_alternative<CSS::Keyword::By>(affinity)) ? RelativeControlPoint::defaultAnchor : AbsoluteControlPoint::defaultAnchor;
     auto controlPointAnchoring = evaluateControlPointAnchoring(controlPoint, defaultAnchor);
@@ -85,11 +85,12 @@ template<typename ControlPoint> static FloatPoint resolveControlPoint(CommandAff
 
 class ShapeSVGPathSource final : public SVGPathSource {
 public:
-    explicit ShapeSVGPathSource(const Position& startPoint, const Shape& shape, const FloatSize& boxSize)
+    explicit ShapeSVGPathSource(const Position& startPoint, const Shape& shape, const FloatSize& boxSize, ZoomFactor zoom)
         : m_start(startPoint)
         , m_shape(shape)
         , m_boxSize(boxSize)
         , m_endIndex(shape.commands.size())
+        , m_zoom(zoom)
     {
     }
 
@@ -118,32 +119,32 @@ private:
     std::optional<MoveToSegment> parseMoveToSegment(FloatPoint) override
     {
         if (!m_nextIndex)
-            return MoveToSegment { evaluate<FloatPoint>(m_start, m_boxSize, Style::ZoomNeeded { }) };
+            return MoveToSegment { evaluate<FloatPoint>(m_start, m_boxSize, m_zoom) };
 
         auto& moveCommand = currentValue<MoveCommand>();
 
-        return MoveToSegment { evaluate<FloatPoint>(moveCommand.toBy, m_boxSize, Style::ZoomNeeded { }) };
+        return MoveToSegment { evaluate<FloatPoint>(moveCommand.toBy, m_boxSize, m_zoom) };
     }
 
     std::optional<LineToSegment> parseLineToSegment(FloatPoint) override
     {
         auto& lineCommand = currentValue<LineCommand>();
 
-        return LineToSegment { evaluate<FloatPoint>(lineCommand.toBy, m_boxSize, Style::ZoomNeeded { }) };
+        return LineToSegment { evaluate<FloatPoint>(lineCommand.toBy, m_boxSize, m_zoom) };
     }
 
     std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment(FloatPoint) override
     {
         auto& lineCommand = currentValue<HLineCommand>();
 
-        return LineToHorizontalSegment { evaluate<float>(lineCommand.toBy, m_boxSize.width(), Style::ZoomNeeded { }) };
+        return LineToHorizontalSegment { evaluate<float>(lineCommand.toBy, m_boxSize.width(), m_zoom) };
     }
 
     std::optional<LineToVerticalSegment> parseLineToVerticalSegment(FloatPoint) override
     {
         auto& lineCommand = currentValue<VLineCommand>();
 
-        return LineToVerticalSegment { evaluate<float>(lineCommand.toBy, m_boxSize.height(), Style::ZoomNeeded { }) };
+        return LineToVerticalSegment { evaluate<float>(lineCommand.toBy, m_boxSize.height(), m_zoom) };
     }
 
     std::optional<CurveToCubicSegment> parseCurveToCubicSegment(FloatPoint currentPosition) override
@@ -152,10 +153,10 @@ private:
 
         return WTF::switchOn(curveCommand.toBy,
             [&](const auto& value) {
-                auto offset = evaluate<FloatPoint>(value.offset, m_boxSize, Style::ZoomNeeded { });
+                auto offset = evaluate<FloatPoint>(value.offset, m_boxSize, m_zoom);
                 return CurveToCubicSegment {
-                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint1, m_boxSize),
-                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint2.value(), m_boxSize),
+                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint1, m_boxSize, m_zoom),
+                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint2.value(), m_boxSize, m_zoom),
                     offset
                 };
             }
@@ -168,9 +169,9 @@ private:
 
         return WTF::switchOn(curveCommand.toBy,
             [&](const auto& value) {
-                auto offset = evaluate<FloatPoint>(value.offset, m_boxSize, Style::ZoomNeeded { });
+                auto offset = evaluate<FloatPoint>(value.offset, m_boxSize, m_zoom);
                 return CurveToQuadraticSegment {
-                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint1, m_boxSize),
+                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint1, m_boxSize, m_zoom),
                     offset
                 };
             }
@@ -184,9 +185,9 @@ private:
         return WTF::switchOn(smoothCommand.toBy,
             [&](const auto& value) {
                 ASSERT(value.controlPoint);
-                auto offset = evaluate<FloatPoint>(value.offset, m_boxSize, Style::ZoomNeeded { });
+                auto offset = evaluate<FloatPoint>(value.offset, m_boxSize, m_zoom);
                 return CurveToCubicSmoothSegment {
-                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint.value(), m_boxSize),
+                    resolveControlPoint(value.affinity, currentPosition, offset, value.controlPoint.value(), m_boxSize, m_zoom),
                     offset
                 };
             }
@@ -200,7 +201,7 @@ private:
         return WTF::switchOn(smoothCommand.toBy,
             [&](const auto& value) {
                 return CurveToQuadraticSmoothSegment {
-                    evaluate<FloatPoint>(value.offset, m_boxSize, Style::ZoomNeeded { })
+                    evaluate<FloatPoint>(value.offset, m_boxSize, m_zoom)
                 };
             }
         );
@@ -210,14 +211,14 @@ private:
     {
         auto& arcCommand = currentValue<ArcCommand>();
 
-        auto radius = evaluate<FloatSize>(arcCommand.size, m_boxSize, Style::ZoomNeeded { });
+        auto radius = evaluate<FloatSize>(arcCommand.size, m_boxSize, m_zoom);
         return ArcToSegment {
             .rx = radius.width(),
             .ry = radius.height(),
             .angle = narrowPrecisionToFloat(arcCommand.rotation.value),
             .largeArc = std::holds_alternative<CSS::Keyword::Large>(arcCommand.arcSize),
             .sweep = std::holds_alternative<CSS::Keyword::Cw>(arcCommand.arcSweep),
-            .targetPoint = evaluate<FloatPoint>(arcCommand.toBy, m_boxSize, Style::ZoomNeeded { })
+            .targetPoint = evaluate<FloatPoint>(arcCommand.toBy, m_boxSize, m_zoom)
         };
     }
 
@@ -279,6 +280,7 @@ private:
     FloatSize m_boxSize;
     size_t m_endIndex { 0 };
     size_t m_nextIndex { 0 };
+    ZoomFactor m_zoom;
 };
 
 // MARK: - ShapeConversionPathConsumer
@@ -290,7 +292,7 @@ public:
     {
     }
 
-    const std::optional<Position>& initialMove() const { return m_initialMove; }
+    const std::optional<Position>& NODELETE initialMove() const { return m_initialMove; }
 
 private:
     static Position toPosition(FloatPoint p)
@@ -300,7 +302,7 @@ private:
 
     static CoordinatePair toCoordinatePair(FloatPoint p)
     {
-        return { LengthPercentage<>::Dimension { p.x() }, LengthPercentage<>::Dimension { p.y() } };
+        return { CoordinatePair::value_type::Dimension { p.x() }, CoordinatePair::value_type::Dimension { p.y() } };
     }
 
     static Position absoluteOffsetPoint(FloatPoint p)
@@ -328,9 +330,9 @@ private:
     {
         switch (mode) {
         case AbsoluteCoordinates:
-            return typename Command::To { .offset = { LengthPercentage<>::Dimension { offset } } };
+            return typename Command::To { .offset = { LengthPercentage<CSS::AllUnzoomed>::Dimension { offset } } };
         case RelativeCoordinates:
-            return typename Command::By { .offset = LengthPercentage<>::Dimension { offset } };
+            return typename Command::By { .offset = LengthPercentage<CSS::AllUnzoomed>::Dimension { offset } };
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -508,7 +510,10 @@ private:
         m_commands.append(
             ArcCommand {
                 .toBy = fromOffsetPoint(offsetPoint, mode),
-                .size = { LengthPercentage<>::Dimension { r1 }, LengthPercentage<>::Dimension { r2 } },
+                .size = {
+                    LengthPercentage<CSS::AllUnzoomed>::Dimension { r1 },
+                    LengthPercentage<CSS::AllUnzoomed>::Dimension { r2 }
+                },
                 .arcSweep = sweepFlag ? ArcSweep { CSS::Keyword::Cw { } } : ArcSweep { CSS::Keyword::Ccw { } },
                 .arcSize = largeArcFlag ? ArcSize { CSS::Keyword::Large { } } : ArcSize { CSS::Keyword::Small { } },
                 .rotation = { angle },
@@ -591,10 +596,10 @@ auto Blending<ArcCommand>::blend(const ArcCommand& a, const ArcCommand& b, const
 
 // MARK: - Shape (path conversion)
 
-WebCore::Path PathComputation<Shape>::operator()(const Shape& value, const FloatRect& boundingBox)
+WebCore::Path PathComputation<Shape>::operator()(const Shape& value, const FloatRect& boundingBox, ZoomFactor zoom)
 {
     // FIXME: We should do some caching here.
-    auto pathSource = ShapeSVGPathSource(value.startingPoint, value, boundingBox.size());
+    auto pathSource = ShapeSVGPathSource(value.startingPoint, value, boundingBox.size(), zoom);
 
     WebCore::Path path;
     SVGPathBuilder builder(path);
@@ -647,6 +652,8 @@ bool canBlendShapeWithPath(const Shape& shape, const Path& path)
 
 std::optional<Shape> makeShapeFromPath(const Path& path)
 {
+    using namespace CSS::Literals;
+
     // FIXME: Not clear how to convert a initial Move command to the Shape's "from" parameter.
     // https://github.com/w3c/csswg-drafts/issues/10740
 
@@ -659,8 +666,8 @@ std::optional<Shape> makeShapeFromPath(const Path& path)
 
     return Shape {
         .fillRule = path.fillRule,
-        .startingPoint = converter.initialMove().value_or(Position { LengthPercentage<>::Dimension { 0 }, LengthPercentage<>::Dimension { 0 } }),
-        .commands = { WTFMove(shapeCommands) }
+        .startingPoint = converter.initialMove().value_or(Position { 0_css_px, 0_css_px }),
+        .commands = { WTF::move(shapeCommands) }
     };
 }
 

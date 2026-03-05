@@ -27,9 +27,8 @@
 
 [
     EnabledBySetting=ShapeDetection,
-    JSGenerateToJSObject
-]
-dictionary DetectedFace {
+    JSGenerateToJSObject,
+] dictionary DetectedFace {
     required DOMRectReadOnly boundingBox;
     required FrozenArray<Landmark>? landmarks;
 };

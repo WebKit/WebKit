@@ -36,7 +36,7 @@ class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
 public:
     static Ref<DeprecatedCSSOMCounter> create(String identifier, String separator, String listStyleType)
     {
-        return adoptRef(*new DeprecatedCSSOMCounter(WTFMove(identifier), WTFMove(separator), WTFMove(listStyleType)));
+        return adoptRef(*new DeprecatedCSSOMCounter(WTF::move(identifier), WTF::move(separator), WTF::move(listStyleType)));
     }
 
     String identifier() const { return m_identifier; }
@@ -45,8 +45,8 @@ public:
 
 private:
     DeprecatedCSSOMCounter(String identifier, String separator, String listStyleType)
-        : m_identifier(WTFMove(identifier))
-        , m_separator(WTFMove(separator))
+        : m_identifier(WTF::move(identifier))
+        , m_separator(WTF::move(separator))
         , m_listStyleType(listStyleType)
     {
     }

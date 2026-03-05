@@ -37,7 +37,7 @@ public:
     static Ref<ResourceLoadStatisticsThirdParty> create(WebKit::ITPThirdPartyData&& thirdPartyData)
     {
         RELEASE_ASSERT(RunLoop::isMain());
-        return adoptRef(*new ResourceLoadStatisticsThirdParty(WTFMove(thirdPartyData)));
+        return adoptRef(*new ResourceLoadStatisticsThirdParty(WTF::move(thirdPartyData)));
     }
 
     ~ResourceLoadStatisticsThirdParty()
@@ -45,12 +45,12 @@ public:
         RELEASE_ASSERT(RunLoop::isMain());
     }
 
-    const WTF::String& thirdPartyDomain() const { return m_thirdPartyData.thirdPartyDomain.string(); }
-    const Vector<WebKit::ITPThirdPartyDataForSpecificFirstParty>& underFirstParties() const { return m_thirdPartyData.underFirstParties; }
+    const WTF::String& thirdPartyDomain() const LIFETIME_BOUND { return m_thirdPartyData.thirdPartyDomain.string(); }
+    const Vector<WebKit::ITPThirdPartyDataForSpecificFirstParty>& underFirstParties() const LIFETIME_BOUND { return m_thirdPartyData.underFirstParties; }
 
 private:
     explicit ResourceLoadStatisticsThirdParty(WebKit::ITPThirdPartyData&& thirdPartyData)
-        : m_thirdPartyData(WTFMove(thirdPartyData))
+        : m_thirdPartyData(WTF::move(thirdPartyData))
     {
     }
 

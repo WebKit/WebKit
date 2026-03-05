@@ -150,6 +150,7 @@ struct ValueLiteral {
     inline namespace Literals { \
         consteval ValueLiteral<type> operator""_css_##name(long double value) { return ValueLiteral<type> { static_cast<double>(value) }; } \
         consteval ValueLiteral<type> operator""_css_##name(unsigned long long value) { return ValueLiteral<type> { static_cast<double>(value) }; } \
+        consteval ValueLiteral<type> name(double value) { return ValueLiteral<type> { value }; } \
     }
 
 // MARK: - Unit Cast
@@ -277,7 +278,7 @@ template<> struct UnitTraits<IntegerUnit> {
 
     static constexpr std::optional<IntegerUnit> validate(CSSUnitType cssUnit) { return toIntegerUnit(cssUnit); }
 };
-static_assert(UnitTraits<IntegerUnit>::count == enumToUnderlyingType(IntegerUnit::Integer) + 1);
+static_assert(UnitTraits<IntegerUnit>::count == std::to_underlying(IntegerUnit::Integer) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(IntegerUnit::Integer, integer)
 
@@ -317,7 +318,7 @@ template<> struct UnitTraits<NumberUnit> {
 
     static constexpr std::optional<NumberUnit> validate(CSSUnitType cssUnit) { return toNumberUnit(cssUnit); }
 };
-static_assert(UnitTraits<NumberUnit>::count == enumToUnderlyingType(NumberUnit::Number) + 1);
+static_assert(UnitTraits<NumberUnit>::count == std::to_underlying(NumberUnit::Number) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(NumberUnit::Number, number)
 
@@ -358,7 +359,7 @@ template<> struct UnitTraits<PercentageUnit> {
     static constexpr std::optional<PercentageUnit> validate(CSSUnitType cssUnit) { return toPercentageUnit(cssUnit); }
     static consteval bool isValidRangeForUnitType(Range) { return true; }
 };
-static_assert(UnitTraits<PercentageUnit>::count == enumToUnderlyingType(PercentageUnit::Percentage) + 1);
+static_assert(UnitTraits<PercentageUnit>::count == std::to_underlying(PercentageUnit::Percentage) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(PercentageUnit::Percentage, percentage)
 
@@ -475,7 +476,7 @@ template<> struct UnitTraits<AngleUnit> {
     static constexpr std::optional<AngleUnit> validate(CSSUnitType cssUnit) { return toAngleUnit(cssUnit); }
     template<AngleUnit To, typename T> static constexpr T convert(T value, AngleUnit unit) { return convertAngle<To, T>(value, unit); }
 };
-static_assert(UnitTraits<AngleUnit>::count == enumToUnderlyingType(AngleUnit::Turn) + 1);
+static_assert(UnitTraits<AngleUnit>::count == std::to_underlying(AngleUnit::Turn) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(AngleUnit::Deg, deg)
 CSS_DEFINE_UNIT_LITERAL(AngleUnit::Rad, rad)
@@ -831,7 +832,7 @@ template<> struct UnitTraits<LengthUnit> {
 
     static constexpr std::optional<LengthUnit> validate(CSSUnitType cssUnit) { return toLengthUnit(cssUnit); }
 };
-static_assert(UnitTraits<LengthUnit>::count == enumToUnderlyingType(LengthUnit::Cqmax) + 1);
+static_assert(UnitTraits<LengthUnit>::count == std::to_underlying(LengthUnit::Cqmax) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(LengthUnit::Px, px)
 CSS_DEFINE_UNIT_LITERAL(LengthUnit::Cm, cm)
@@ -958,7 +959,7 @@ template<> struct UnitTraits<TimeUnit> {
     static constexpr std::optional<TimeUnit> validate(CSSUnitType cssUnit) { return toTimeUnit(cssUnit); }
     template<TimeUnit To, typename T> static constexpr T convert(T value, TimeUnit unit) { return convertTime<To, T>(value, unit); }
 };
-static_assert(UnitTraits<TimeUnit>::count == enumToUnderlyingType(TimeUnit::Ms) + 1);
+static_assert(UnitTraits<TimeUnit>::count == std::to_underlying(TimeUnit::Ms) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(TimeUnit::S, s)
 CSS_DEFINE_UNIT_LITERAL(TimeUnit::Ms, ms)
@@ -1036,7 +1037,7 @@ template<> struct UnitTraits<FrequencyUnit> {
     static constexpr std::optional<FrequencyUnit> validate(CSSUnitType cssUnit) { return toFrequencyUnit(cssUnit); }
     template<FrequencyUnit To, typename T> static constexpr T convert(T value, FrequencyUnit unit) { return convertFrequency<To, T>(value, unit); }
 };
-static_assert(UnitTraits<FrequencyUnit>::count == enumToUnderlyingType(FrequencyUnit::Khz) + 1);
+static_assert(UnitTraits<FrequencyUnit>::count == std::to_underlying(FrequencyUnit::Khz) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(FrequencyUnit::Hz, hz)
 CSS_DEFINE_UNIT_LITERAL(FrequencyUnit::Khz, khz)
@@ -1154,7 +1155,7 @@ template<> struct UnitTraits<ResolutionUnit> {
     static constexpr std::optional<ResolutionUnit> validate(CSSUnitType cssUnit) { return toResolutionUnit(cssUnit); }
     template<ResolutionUnit To, typename T> static constexpr T convert(T value, ResolutionUnit unit) { return convertResolution<To, T>(value, unit); }
 };
-static_assert(UnitTraits<ResolutionUnit>::count == enumToUnderlyingType(ResolutionUnit::Dpcm) + 1);
+static_assert(UnitTraits<ResolutionUnit>::count == std::to_underlying(ResolutionUnit::Dpcm) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(ResolutionUnit::Dppx, dppx)
 CSS_DEFINE_UNIT_LITERAL(ResolutionUnit::X, x)
@@ -1197,7 +1198,7 @@ template<> struct UnitTraits<FlexUnit> {
 
     static constexpr std::optional<FlexUnit> validate(CSSUnitType cssUnit) { return toFlexUnit(cssUnit); }
 };
-static_assert(UnitTraits<FlexUnit>::count == enumToUnderlyingType(FlexUnit::Fr) + 1);
+static_assert(UnitTraits<FlexUnit>::count == std::to_underlying(FlexUnit::Fr) + 1);
 
 CSS_DEFINE_UNIT_LITERAL(FlexUnit::Fr, fr)
 
@@ -1216,7 +1217,7 @@ enum class AnglePercentageUnit : uint8_t {
 // Overload of `operator==` to allow comparing `AnglePercentageUnit` and `AngleUnit`.
 constexpr bool operator==(AnglePercentageUnit a, AngleUnit b)
 {
-    return enumToUnderlyingType(a) == enumToUnderlyingType(b);
+    return std::to_underlying(a) == std::to_underlying(b);
 }
 
 // Overload of `operator==` to allow comparing `AnglePercentageUnit` and `PercentageUnit`.
@@ -1304,7 +1305,7 @@ template<> struct UnitTraits<AnglePercentageUnit> {
         return f(downcast<AngleUnit>(unit));
     }
 };
-static_assert(UnitTraits<AnglePercentageUnit>::count == enumToUnderlyingType(AnglePercentageUnit::Percentage) + 1);
+static_assert(UnitTraits<AnglePercentageUnit>::count == std::to_underlying(AnglePercentageUnit::Percentage) + 1);
 
 // MARK: - <length-percentage>
 
@@ -1367,7 +1368,7 @@ enum class LengthPercentageUnit : uint8_t {
 // Overload of `operator==` to allow comparing `LengthPercentageUnit` and `LengthUnit`.
 constexpr bool operator==(LengthPercentageUnit a, LengthUnit b)
 {
-    return enumToUnderlyingType(a) == enumToUnderlyingType(b);
+    return std::to_underlying(a) == std::to_underlying(b);
 }
 
 // Overload of `operator==` to allow comparing `LengthPercentageUnit` and `PercentageUnit`.
@@ -1605,7 +1606,7 @@ template<> struct UnitTraits<LengthPercentageUnit> {
         return f(downcast<LengthUnit>(unit));
     }
 };
-static_assert(UnitTraits<LengthPercentageUnit>::count == enumToUnderlyingType(LengthPercentageUnit::Percentage) + 1);
+static_assert(UnitTraits<LengthPercentageUnit>::count == std::to_underlying(LengthPercentageUnit::Percentage) + 1);
 
 constexpr ASCIILiteral unitString(CompositeUnitEnum auto unit)
 {

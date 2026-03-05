@@ -1,16 +1,3 @@
 
-FAIL #theTable 1 assert_equals:
-<table id="theTable" style="height:100px">
-  <tbody data-expected-height="50">
-    <tr>
-      <td><div></div></td>
-    </tr>
-  </tbody>
-  <tbody data-expected-height="50">
-    <tr>
-      <td><div></div></td>
-    </tr>
-  </tbody>
-</table>
-height expected 50 but got 90
+PASS #theTable 1
 

@@ -15,6 +15,7 @@
 #include <optional>
 #include <utility>
 
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
@@ -28,12 +29,12 @@
 namespace webrtc {
 
 IncomingVideoStream::IncomingVideoStream(
-    TaskQueueFactory* task_queue_factory,
+    const Environment& env,
     int32_t delay_ms,
     VideoSinkInterface<VideoFrame>* callback)
-    : render_buffers_(delay_ms),
+    : render_buffers_(env, delay_ms),
       callback_(callback),
-      incoming_render_queue_(task_queue_factory->CreateTaskQueue(
+      incoming_render_queue_(env.task_queue_factory().CreateTaskQueue(
           "IncomingVideoStream",
           TaskQueueFactory::Priority::HIGH)) {}
 

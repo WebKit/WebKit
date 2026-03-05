@@ -55,27 +55,27 @@ namespace WebKit {
 
 #pragma mark - Conversions from web types to platform types.
 
-CocoaWritingToolsBehavior convertToCocoaWritingToolsBehavior(WebCore::WritingTools::Behavior);
+CocoaWritingToolsBehavior NODELETE convertToCocoaWritingToolsBehavior(WebCore::WritingTools::Behavior);
 
-WTRequestedTool convertToPlatformRequestedTool(WebCore::WritingTools::RequestedTool);
+WTRequestedTool NODELETE convertToPlatformRequestedTool(WebCore::WritingTools::RequestedTool);
 
-WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestionState);
+WTTextSuggestionState NODELETE convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestionState);
 
 RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Context&);
 
 #pragma mark - Conversions from platform types to web types.
 
-WebCore::WritingTools::Behavior convertToWebWritingToolsBehavior(CocoaWritingToolsBehavior);
+WebCore::WritingTools::Behavior NODELETE convertToWebWritingToolsBehavior(CocoaWritingToolsBehavior);
 
-WebCore::WritingTools::RequestedTool convertToWebRequestedTool(WTRequestedTool);
+WebCore::WritingTools::RequestedTool NODELETE convertToWebRequestedTool(WTRequestedTool);
 
-WebCore::WritingTools::TextSuggestionState convertToWebTextSuggestionState(WTTextSuggestionState);
+WebCore::WritingTools::TextSuggestionState NODELETE convertToWebTextSuggestionState(WTTextSuggestionState);
 
-WebCore::WritingTools::Action convertToWebAction(WTAction);
+WebCore::WritingTools::Action NODELETE convertToWebAction(WTAction);
 
-WebCore::WritingTools::SessionType convertToWebSessionType(WTSessionType);
+WebCore::WritingTools::SessionType NODELETE convertToWebSessionType(WTSessionType);
 
-WebCore::WritingTools::SessionCompositionType convertToWebCompositionSessionType(WTCompositionSessionType);
+WebCore::WritingTools::SessionCompositionType NODELETE convertToWebCompositionSessionType(WTCompositionSessionType);
 
 std::optional<WebCore::WritingTools::Context> convertToWebContext(WTContext *);
 

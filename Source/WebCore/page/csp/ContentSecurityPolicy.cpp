@@ -97,12 +97,12 @@ static String consoleMessageForViolation(const ContentSecurityPolicyDirective& v
 ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurityPolicyClient* client, ReportingClient* reportingClient)
     : m_client { client }
     , m_reportingClient { reportingClient }
-    , m_protectedURL { WTFMove(protectedURL) }
+    , m_protectedURL { WTF::move(protectedURL) }
 {
     updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
 }
 
-static ReportingClient* reportingClientForContext(ScriptExecutionContext& scriptExecutionContext)
+static ReportingClient* NODELETE reportingClientForContext(ScriptExecutionContext& scriptExecutionContext)
 {
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext))
         return document;
@@ -116,10 +116,10 @@ static ReportingClient* reportingClientForContext(ScriptExecutionContext& script
 ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecutionContext& scriptExecutionContext)
     : m_scriptExecutionContext(scriptExecutionContext)
     , m_reportingClient { reportingClientForContext(scriptExecutionContext) }
-    , m_protectedURL { WTFMove(protectedURL) }
+    , m_protectedURL { WTF::move(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());
-    updateSourceSelf(*scriptExecutionContext.protectedSecurityOrigin());
+    updateSourceSelf(*protect(scriptExecutionContext.securityOrigin()));
     // FIXME: handle the non-document case.
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext)) {
         if (auto* page = document->page())
@@ -211,7 +211,7 @@ ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() co
             return std::pair { makeValidHTTPHeaderIfNeeded(policy->header()), policy->headerType() };
         });
         result.m_httpStatusCode = m_httpStatusCode;
-        m_cachedResponseHeaders = WTFMove(result);
+        m_cachedResponseHeaders = WTF::move(result);
     }
     return *m_cachedResponseHeaders;
 }
@@ -221,7 +221,7 @@ void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyRespons
     SetForScope isReportingEnabled(m_isReportingEnabled, reportParsingErrors == ReportParsingErrors::Yes);
     for (auto& header : headers.m_headers)
         didReceiveHeader(header.first, header.second, ContentSecurityPolicy::PolicyFrom::HTTPHeader, String { });
-    m_referrer = WTFMove(referrer);
+    m_referrer = WTF::move(referrer);
     m_httpStatusCode = headers.m_httpStatusCode;
 }
 
@@ -241,7 +241,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
     if (m_hasAPIPolicy)
         return;
 
-    m_referrer = WTFMove(referrer);
+    m_referrer = WTF::move(referrer);
     m_httpStatusCode = httpStatusCode;
 
     if (policyFrom == PolicyFrom::API) {
@@ -256,7 +256,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
     // be combined with a comma. Walk the header string, and parse each comma
     // separated chunk as a separate header.
     readCharactersForParsing(header, [&](auto buffer) {
-        skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+        skipWhile<isASCIIWhitespace>(buffer);
         auto begin = buffer.position();
 
         while (buffer.hasCharactersRemaining()) {
@@ -358,7 +358,7 @@ bool ContentSecurityPolicy::allPoliciesWithDispositionAllow(Disposition disposit
     for (auto& policy : m_policies) {
         if (policy->isReportOnly() != isReportOnly)
             continue;
-        if ((policy.get()->*predicate)(std::forward<Args>(args)...))
+        if ((policy.get()->*predicate)(args...))
             return false;
     }
     return true;
@@ -372,7 +372,7 @@ bool ContentSecurityPolicy::allPoliciesWithDispositionAllow(Disposition disposit
     for (auto& policy : m_policies) {
         if (policy->isReportOnly() != isReportOnly)
             continue;
-        if (const ContentSecurityPolicyDirective* violatedDirective = (policy.get()->*predicate)(std::forward<Args>(args)...)) {
+        if (const ContentSecurityPolicyDirective* violatedDirective = (policy.get()->*predicate)(args...)) {
             isAllowed = false;
             callback(*violatedDirective);
         }
@@ -385,7 +385,7 @@ bool ContentSecurityPolicy::allPoliciesAllow(NOESCAPE const ViolatedDirectiveCal
 {
     bool isAllowed = true;
     for (auto& policy : m_policies) {
-        if (const ContentSecurityPolicyDirective* violatedDirective = (policy.get()->*predicate)(std::forward<Args>(args)...)) {
+        if (const ContentSecurityPolicyDirective* violatedDirective = (policy.get()->*predicate)(args...)) {
             if (!violatedDirective->directiveList().isReportOnly())
                 isAllowed = false;
             callback(*violatedDirective);
@@ -887,6 +887,21 @@ String ContentSecurityPolicy::createURLForReporting(const URL& url, const String
     return SecurityOrigin::create(url)->toString();
 }
 
+std::optional<CodePosition> ContentSecurityPolicy::getCurrentCodePosition()
+{
+    auto stack = createScriptCallStack(JSExecState::currentState(), 2);
+    if (auto* callFrame = stack->firstNonNativeCallFrame()) {
+        if (callFrame->lineNumber()) {
+            return CodePosition {
+                callFrame->preRedirectURL().isEmpty() ? callFrame->sourceURL() : callFrame->preRedirectURL(),
+                OrdinalNumber::fromOneBasedInt(callFrame->lineNumber()),
+                OrdinalNumber::fromOneBasedInt(callFrame->columnNumber())
+            };
+        }
+    }
+    return std::nullopt;
+}
+
 void ContentSecurityPolicy::reportViolation(const ContentSecurityPolicyDirective& violatedDirective, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state, StringView sourceContent) const
 {
     // FIXME: Extract source file, and position from JSC::ExecState.
@@ -991,13 +1006,13 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         endpointURIs = violatedDirectiveList.reportURIs();
 
     if (m_client)
-        m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
+        m_client->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
     else {
         Ref document = downcast<Document>(*m_scriptExecutionContext);
         if (element && &element->document() == document.ptr())
-            element->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
+            element->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
         else
-            document->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
+            document->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
     }
 
     // 2. Send violation report (if applicable).
@@ -1011,7 +1026,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     auto reportURL = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer().string : blockedURI;
 
     auto reportFormData = reportBody->createReportFormDataForViolation(usesReportTo, violatedDirectiveList.isReportOnly());
-    m_reportingClient->sendReportToEndpoints(m_protectedURL, endpointURIs, endpointTokens, WTFMove(reportFormData), ViolationReportType::ContentSecurityPolicy);
+    m_reportingClient->sendReportToEndpoints(m_protectedURL, endpointURIs, endpointTokens, WTF::move(reportFormData), ViolationReportType::ContentSecurityPolicy);
 }
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
@@ -1145,7 +1160,7 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& requ
 {
     URL url = request.url();
     upgradeInsecureRequestIfNeeded(url, requestType, alwaysUpgradeRequest);
-    request.setURL(WTFMove(url));
+    request.setURL(WTF::move(url));
 }
 
 void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureRequestType requestType, AlwaysUpgradeRequest alwaysUpgradeRequest) const
@@ -1166,7 +1181,7 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
     ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress = (upgradeRequest || shouldUpgradeLocalhostAndIPAddressInMixedContext) ? ShouldUpgradeLocalhostAndIPAddress::Yes : ShouldUpgradeLocalhostAndIPAddress::No;
     std::optional<uint16_t> upgradePort;
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext.get()); document && document->page()) {
-        auto portsForUpgradingInsecureScheme = document->protectedPage()->portsForUpgradingInsecureSchemeForTesting();
+        auto portsForUpgradingInsecureScheme = protect(document->page())->portsForUpgradingInsecureSchemeForTesting();
         if (portsForUpgradingInsecureScheme) {
             if (url.port() == portsForUpgradingInsecureScheme->first)
                 upgradePort = portsForUpgradingInsecureScheme->second;
@@ -1203,12 +1218,12 @@ void ContentSecurityPolicy::inheritInsecureNavigationRequestsToUpgradeFromOpener
 
 HashSet<SecurityOriginData> ContentSecurityPolicy::takeNavigationRequestsToUpgrade()
 {
-    return WTFMove(m_insecureNavigationRequestsToUpgrade);
+    return WTF::move(m_insecureNavigationRequestsToUpgrade);
 }
 
 void ContentSecurityPolicy::setInsecureNavigationRequestsToUpgrade(HashSet<SecurityOriginData>&& insecureNavigationRequests)
 {
-    m_insecureNavigationRequestsToUpgrade = WTFMove(insecureNavigationRequests);
+    m_insecureNavigationRequestsToUpgrade = WTF::move(insecureNavigationRequests);
 }
 
 const HashAlgorithmSetCollection& ContentSecurityPolicy::hashesToReport()
@@ -1219,7 +1234,7 @@ const HashAlgorithmSetCollection& ContentSecurityPolicy::hashesToReport()
             if (auto hash = policy->reportHash())
                 hashesToReport.append(std::make_pair(hash, policy->reportToTokens()));
         }
-        m_hashesToReport = WTFMove(hashesToReport);
+        m_hashesToReport = WTF::move(hashesToReport);
     }
     return m_hashesToReport;
 }

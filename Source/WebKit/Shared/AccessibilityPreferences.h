@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
-
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
 #include "AccessibilitySupportSPI.h"
 #endif

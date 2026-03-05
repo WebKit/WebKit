@@ -26,23 +26,22 @@
             to   { -webkit-transform: translateX(400px); }
         }
     </style>
+    <script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
 
-        function doTest()
+        async function doTest()
         {
             const animated = document.getElementById('animated');
             animated.classList.add('animating');
-            animated.getAnimations()[0].ready.then(() => {
-                if (window.internals)
-                    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
 
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            });
+            // Wait for the animation to be committed to the remote layer tree and then for its first frame to apply.
+            await animationAcceleration(animated.getAnimations()[0]);
+            await new Promise(requestAnimationFrame);
+
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document, window.internals?.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+            window.testRunner?.notifyDone();
         }
         window.addEventListener('load', doTest, false);
     </script>

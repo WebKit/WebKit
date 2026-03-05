@@ -98,7 +98,7 @@ void Widget::setFocus(bool focused)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
  
     // Call this even when there is no platformWidget(). WK2 will focus on the widget in the UIProcess.
-    RetainPtr view = [protectedPlatformWidget() _webcore_effectiveFirstResponder];
+    RetainPtr view = [protect(platformWidget()) _webcore_effectiveFirstResponder];
     if (RefPtr page = frame->page())
         page->chrome().focusNSView(view.get());
 
@@ -113,7 +113,7 @@ void Widget::show()
     setSelfVisible(true);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [protectedOuterView() setHidden:NO];
+    [outerView() setHidden:NO];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -125,7 +125,7 @@ void Widget::hide()
     setSelfVisible(false);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [protectedOuterView() setHidden:YES];
+    [outerView() setHidden:YES];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -135,7 +135,7 @@ IntRect Widget::frameRect() const
         return m_frame;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return enclosingIntRect([protectedOuterView() frame]);
+    return enclosingIntRect([outerView() frame]);
     END_BLOCK_OBJC_EXCEPTIONS
     
     return m_frame;
@@ -164,7 +164,7 @@ void Widget::setFrameRect(const IntRect& rect)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-NSView *Widget::outerView() const
+RetainPtr<NSView> Widget::outerView() const
 {
     RetainPtr view = platformWidget();
 
@@ -176,12 +176,7 @@ NSView *Widget::outerView() const
         ASSERT(view);
     }
 
-    return view.unsafeGet();
-}
-
-RetainPtr<NSView> Widget::protectedOuterView() const
-{
-    return outerView();
+    return view;
 }
 
 void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPolicy, RegionContext*)
@@ -271,7 +266,7 @@ void Widget::setIsSelected(bool isSelected)
 void Widget::removeFromSuperview()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    safeRemoveFromSuperview(protectedOuterView().get());
+    safeRemoveFromSuperview(outerView().get());
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -285,7 +280,7 @@ IntPoint Widget::convertFromRootToContainingWindow(const Widget* rootWidget, Int
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return IntPoint([rootWidget->protectedPlatformWidget() convertPoint:point toView:nil]);
+    return IntPoint([protect(rootWidget->platformWidget()) convertPoint:point toView:nil]);
     END_BLOCK_OBJC_EXCEPTIONS
     return point;
 }
@@ -296,7 +291,7 @@ FloatPoint Widget::convertFromRootToContainingWindow(const Widget* rootWidget, F
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return [rootWidget->protectedPlatformWidget() convertPoint:point toView:nil];
+    return [protect(rootWidget->platformWidget()) convertPoint:point toView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
     return point;
 }
@@ -307,7 +302,7 @@ IntRect Widget::convertFromRootToContainingWindow(const Widget* rootWidget, cons
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return enclosingIntRect([rootWidget->protectedPlatformWidget() convertRect:rect toView:nil]);
+    return enclosingIntRect([protect(rootWidget->platformWidget()) convertRect:rect toView:nil]);
     END_BLOCK_OBJC_EXCEPTIONS
 
     return rect;
@@ -319,7 +314,7 @@ FloatRect Widget::convertFromRootToContainingWindow(const Widget* rootWidget, co
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return [rootWidget->protectedPlatformWidget() convertRect:rect toView:nil];
+    return [protect(rootWidget->platformWidget()) convertRect:rect toView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 
     return rect;
@@ -333,7 +328,7 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, Int
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return IntPoint([rootWidget->protectedPlatformWidget() convertPoint:point fromView:nil]);
+    return IntPoint([protect(rootWidget->platformWidget()) convertPoint:point fromView:nil]);
     END_BLOCK_OBJC_EXCEPTIONS
 
     return point;
@@ -345,7 +340,7 @@ FloatPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, F
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return [rootWidget->protectedPlatformWidget() convertPoint:point fromView:nil];
+    return [protect(rootWidget->platformWidget()) convertPoint:point fromView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 
     return point;
@@ -357,7 +352,7 @@ DoublePoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, 
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return [rootWidget->protectedPlatformWidget() convertPoint:point fromView:nil];
+    return [protect(rootWidget->platformWidget()) convertPoint:point fromView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 
     return point;
@@ -369,7 +364,7 @@ IntRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, cons
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return enclosingIntRect([rootWidget->protectedPlatformWidget() convertRect:rect fromView:nil]);
+    return enclosingIntRect([protect(rootWidget->platformWidget()) convertRect:rect fromView:nil]);
     END_BLOCK_OBJC_EXCEPTIONS
 
     return rect;
@@ -381,7 +376,7 @@ FloatRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, co
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return [rootWidget->protectedPlatformWidget() convertRect:rect fromView:nil];
+    return [protect(rootWidget->platformWidget()) convertRect:rect fromView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 
     return rect;
@@ -392,11 +387,6 @@ FloatRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, co
 NSView *Widget::platformWidget() const
 {
     return m_widget.get();
-}
-
-RetainPtr<NSView> Widget::protectedPlatformWidget() const
-{
-    return platformWidget();
 }
 
 void Widget::setPlatformWidget(NSView *widget)

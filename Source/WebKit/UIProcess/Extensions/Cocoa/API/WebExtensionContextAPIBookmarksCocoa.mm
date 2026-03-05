@@ -66,7 +66,7 @@ static Vector<WebExtensionBookmarksParameters> createParametersFromProtocolObjec
     for (id<_WKWebExtensionBookmark> bookmark in bookmarkNodes) {
         auto parametersOptional = createParametersFromProtocolObject(bookmark, context);
         if (parametersOptional)
-            parameters.append(WTFMove(*parametersOptional));
+            parameters.append(WTF::move(*parametersOptional));
     }
 
     return parameters;
@@ -105,7 +105,7 @@ static Vector<WebExtensionBookmarksParameters> createShallowParametersFromProtoc
         node.title = [bookmark titleForWebExtensionContext:context];
         node.url = [bookmark urlStringForWebExtensionContext:context];
 
-        parameters.append(WTFMove(node));
+        parameters.append(WTF::move(node));
     }
 
     return parameters;
@@ -121,14 +121,14 @@ static Vector<WebExtensionBookmarksParameters> flattenAndConvertAllBookmarks(NSA
         auto parametersOptional = createParametersFromProtocolObject(node, context);
 
         if (parametersOptional.has_value()) {
-            WebExtensionBookmarksParameters params = WTFMove(parametersOptional.value());
-            flattened.append(WTFMove(params));
+            WebExtensionBookmarksParameters params = WTF::move(parametersOptional.value());
+            flattened.append(WTF::move(params));
         }
 
         if ([node bookmarkTypeForWebExtensionContext:context] == _WKWebExtensionBookmarkTypeFolder) {
             if (NSArray<id<_WKWebExtensionBookmark>> *children = [node childrenForWebExtensionContext:context]) {
                 Vector<WebExtensionBookmarksParameters> childFlattened = flattenAndConvertAllBookmarks(children, context);
-                flattened.appendVector(WTFMove(childFlattened));
+                flattened.appendVector(WTF::move(childFlattened));
             }
         }
     }
@@ -188,7 +188,7 @@ void WebExtensionContext::bookmarksCreate(const std::optional<String>& parentId,
             return;
         }
 
-        completionHandler(Expected<WebExtensionBookmarksParameters, WebExtensionError> { WTFMove(parametersOptional.value()) });
+        completionHandler(Expected<WebExtensionBookmarksParameters, WebExtensionError> { WTF::move(parametersOptional.value()) });
     }];
 }
 void WebExtensionContext::bookmarksGetTree(CompletionHandler<void(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -222,7 +222,7 @@ void WebExtensionContext::bookmarksGetTree(CompletionHandler<void(Expected<Vecto
             return;
         }
         Vector<WebExtensionBookmarksParameters> topLevelNodes = createParametersFromProtocolObjects(bookmarkNodes, contextWrapper);
-        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTFMove(topLevelNodes) });
+        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTF::move(topLevelNodes) });
     }];
 }
 void WebExtensionContext::bookmarksGetSubTree(const String& bookmarkId, CompletionHandler<void(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -266,9 +266,9 @@ void WebExtensionContext::bookmarksGetSubTree(const String& bookmarkId, Completi
         }
 
         Vector<WebExtensionBookmarksParameters> resultVector;
-        resultVector.append(WTFMove(singleNodeParameters.value()));
+        resultVector.append(WTF::move(singleNodeParameters.value()));
 
-        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTFMove(resultVector) });
+        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTF::move(resultVector) });
     }];
 }
 void WebExtensionContext::bookmarksGet(const Vector<String>& bookmarkId, CompletionHandler<void(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -317,7 +317,7 @@ void WebExtensionContext::bookmarksGet(const Vector<String>& bookmarkId, Complet
         }
 
         Vector<WebExtensionBookmarksParameters> foundNodeParameters = createShallowParametersFromProtocolObjects(foundNodes, contextWrapper);
-        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTFMove(foundNodeParameters) });
+        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTF::move(foundNodeParameters) });
     }];
 }
 void WebExtensionContext::bookmarksGetChildren(const String& bookmarkId, CompletionHandler<void(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -374,7 +374,7 @@ void WebExtensionContext::bookmarksGetChildren(const String& bookmarkId, Complet
         }
 
         Vector<WebExtensionBookmarksParameters> childrenParameters = createShallowParametersFromProtocolObjects(directChildren, contextWrapper);
-        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTFMove(childrenParameters) });
+        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTF::move(childrenParameters) });
     }];
 }
 void WebExtensionContext::bookmarksGetRecent(uint64_t count, CompletionHandler<void(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -427,7 +427,7 @@ void WebExtensionContext::bookmarksGetRecent(uint64_t count, CompletionHandler<v
                 recentBookmarks.append(bookmarkParams);
         }
 
-        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTFMove(recentBookmarks) });
+        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTF::move(recentBookmarks) });
     }];
 
 }
@@ -514,11 +514,11 @@ void WebExtensionContext::bookmarksSearch(const std::optional<String>& query, co
             if (matches) {
                 WebExtensionBookmarksParameters resultNode = bookmarkParams;
                 resultNode.children = std::nullopt;
-                matchingBookmarks.append(WTFMove(resultNode));
+                matchingBookmarks.append(WTF::move(resultNode));
             }
         }
 
-        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTFMove(matchingBookmarks) });
+        completionHandler(Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError> { WTF::move(matchingBookmarks) });
     }];
 
 }
@@ -564,7 +564,7 @@ void WebExtensionContext::bookmarksUpdate(const String& bookmarkId, const std::o
             return;
         }
 
-        completionHandler(Expected<WebExtensionBookmarksParameters, WebExtensionError> { WTFMove(updatedBookmarkParams.value()) });
+        completionHandler(Expected<WebExtensionBookmarksParameters, WebExtensionError> { WTF::move(updatedBookmarkParams.value()) });
     }];
 }
 void WebExtensionContext::bookmarksMove(const String& bookmarkId, const std::optional<String>& parentId, const std::optional<uint64_t>& index, CompletionHandler<void(Expected<WebExtensionBookmarksParameters, WebExtensionError>&&)>&& completionHandler)
@@ -608,7 +608,7 @@ void WebExtensionContext::bookmarksMove(const String& bookmarkId, const std::opt
             return;
         }
 
-        completionHandler(Expected<WebExtensionBookmarksParameters, WebExtensionError> { WTFMove(movedBookmarkParams.value()) });
+        completionHandler(Expected<WebExtensionBookmarksParameters, WebExtensionError> { WTF::move(movedBookmarkParams.value()) });
     }];
 }
 void WebExtensionContext::bookmarksRemove(const String& bookmarkId, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)

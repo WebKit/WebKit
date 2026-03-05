@@ -256,6 +256,7 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
           status_type != TLSEXT_STATUSTYPE_ocsp ||
           !CBS_get_u24_length_prefixed(&status_request.data, &ocsp_response) ||
           CBS_len(&ocsp_response) == 0 || CBS_len(&status_request.data) != 0) {
+        OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
         ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECODE_ERROR);
         return false;
       }
@@ -334,7 +335,7 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
 bool tls13_process_certificate_verify(SSL_HANDSHAKE *hs,
                                       const SSLMessage &msg) {
   SSL *const ssl = hs->ssl;
-  if (hs->peer_pubkey == NULL) {
+  if (hs->peer_pubkey == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
@@ -460,7 +461,7 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
     }
   }
 
-  if (hs->ocsp_stapling_requested && cred->ocsp_response != NULL) {
+  if (hs->ocsp_stapling_requested && cred->ocsp_response != nullptr) {
     CBB contents, ocsp_response;
     if (!CBB_add_u16(&extensions, TLSEXT_TYPE_status_request) ||
         !CBB_add_u16_length_prefixed(&extensions, &contents) ||

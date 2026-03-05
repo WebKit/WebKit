@@ -60,7 +60,7 @@ public:
 
     enum class InsertionState : uint8_t { NotInserted, Inserted };
 
-    const WTF::String& identifier() const { return m_identifier; }
+    const WTF::String& identifier() const LIFETIME_BOUND { return m_identifier; }
     void updateAttributes(CompletionHandler<void()>&&);
 
     void invalidate();
@@ -76,11 +76,11 @@ public:
 #endif
     WTF::String mimeType() const;
 
-    const WTF::String& filePath() const { return m_filePath; }
+    const WTF::String& filePath() const LIFETIME_BOUND { return m_filePath; }
     void setFilePath(const WTF::String& filePath) { m_filePath = filePath; }
     WTF::String fileName() const;
 
-    const WTF::String& contentType() const { return m_contentType; }
+    const WTF::String& contentType() const LIFETIME_BOUND { return m_contentType; }
     void setContentType(const WTF::String& contentType) { m_contentType = contentType; }
 
     InsertionState insertionState() const { return m_insertionState; }

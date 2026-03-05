@@ -16,6 +16,7 @@
 
 #include "absl/container/inlined_vector.h"
 #include "api/array_view.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 
 namespace webrtc {
 
@@ -41,6 +42,9 @@ class CorruptionDetectionMessage {
   ArrayView<const double> sample_values() const {
     return MakeArrayView(sample_values_.data(), sample_values_.size());
   }
+
+  static CorruptionDetectionMessage FromFrameInstrumentationData(
+      const FrameInstrumentationData& frame_instrumentation);
 
  private:
   friend class CorruptionDetectionExtension;
@@ -78,71 +82,20 @@ class CorruptionDetectionMessage {
 class CorruptionDetectionMessage::Builder {
  public:
   Builder() = default;
-
   Builder(const Builder&) = default;
   Builder& operator=(const Builder&) = default;
 
   ~Builder() = default;
 
-  std::optional<CorruptionDetectionMessage> Build() {
-    if (message_.sequence_index_ < 0 ||
-        message_.sequence_index_ > 0b0111'1111) {
-      return std::nullopt;
-    }
-    if (message_.std_dev_ < 0.0 || message_.std_dev_ > 40.0) {
-      return std::nullopt;
-    }
-    if (message_.luma_error_threshold_ < 0 ||
-        message_.luma_error_threshold_ > 15) {
-      return std::nullopt;
-    }
-    if (message_.chroma_error_threshold_ < 0 ||
-        message_.chroma_error_threshold_ > 15) {
-      return std::nullopt;
-    }
-    if (message_.sample_values_.size() > kMaxSampleSize) {
-      return std::nullopt;
-    }
-    for (double sample_value : message_.sample_values_) {
-      if (sample_value < 0.0 || sample_value > 255.0) {
-        return std::nullopt;
-      }
-    }
-    return message_;
-  }
+  std::optional<CorruptionDetectionMessage> Build();
 
-  Builder& WithSequenceIndex(int sequence_index) {
-    message_.sequence_index_ = sequence_index;
-    return *this;
-  }
-
+  Builder& WithSequenceIndex(int sequence_index);
   Builder& WithInterpretSequenceIndexAsMostSignificantBits(
-      bool interpret_sequence_index_as_most_significant_bits) {
-    message_.interpret_sequence_index_as_most_significant_bits_ =
-        interpret_sequence_index_as_most_significant_bits;
-    return *this;
-  }
-
-  Builder& WithStdDev(double std_dev) {
-    message_.std_dev_ = std_dev;
-    return *this;
-  }
-
-  Builder& WithLumaErrorThreshold(int luma_error_threshold) {
-    message_.luma_error_threshold_ = luma_error_threshold;
-    return *this;
-  }
-
-  Builder& WithChromaErrorThreshold(int chroma_error_threshold) {
-    message_.chroma_error_threshold_ = chroma_error_threshold;
-    return *this;
-  }
-
-  Builder& WithSampleValues(const ArrayView<const double>& sample_values) {
-    message_.sample_values_.assign(sample_values.cbegin(),
-                                   sample_values.cend());
-    return *this;
-  }
+      bool interpret_sequence_index_as_most_significant_bits);
+  Builder& WithStdDev(double std_dev);
+  Builder& WithLumaErrorThreshold(int luma_error_threshold);
+  Builder& WithChromaErrorThreshold(int chroma_error_threshold);
+  Builder& WithSampleValues(const ArrayView<const double>& sample_values);
 
  private:
   CorruptionDetectionMessage message_;

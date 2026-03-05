@@ -30,11 +30,20 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyGlobalSettings);
 
-LegacyGlobalSettings::LegacyGlobalSettings() = default;
+LegacyGlobalSettings::LegacyGlobalSettings()
+#if PLATFORM(COCOA)
+    : m_cacheModel { isFullWebBrowserOrRunningTest() ? CacheModel::PrimaryWebBrowser : CacheModel::DocumentBrowser }
+#endif
+{
+}
 
 LegacyGlobalSettings& LegacyGlobalSettings::singleton()
 {

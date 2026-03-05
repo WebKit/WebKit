@@ -24,13 +24,13 @@ namespace {
 
 const unsigned int kFrames = 20;
 const int kBitrate = 500;
-typedef struct {
+struct TestVideoParam {
   const char *filename;
   unsigned int input_bit_depth;
   aom_img_fmt fmt;
   aom_bit_depth_t bit_depth;
   unsigned int profile;
-} TestVideoParam;
+};
 
 std::ostream &operator<<(std::ostream &os, const TestVideoParam &test_arg) {
   return os << "TestVideoParam { filename:" << test_arg.filename

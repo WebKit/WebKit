@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AccessibleSetValueEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibleSetValueEvent);
 
 AccessibleSetValueEvent::AccessibleSetValueEvent(const AtomString& type, const AtomString& value)
     : Event(type, CanBubble::Yes, IsCancelable::Yes)

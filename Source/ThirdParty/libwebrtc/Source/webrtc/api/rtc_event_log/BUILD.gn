@@ -20,6 +20,7 @@ rtc_library("rtc_event_log") {
   deps = [
     "..:libjingle_logging_api",
     "../../rtc_base:timeutils",
+    "../units:timestamp",
   ]
 }
 

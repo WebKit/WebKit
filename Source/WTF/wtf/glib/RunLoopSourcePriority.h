@@ -57,9 +57,6 @@ enum RunLoopSourcePriority {
     // Used for timers that discard resources like backing store, buffers, etc.
     ReleaseUnusedResourcesTimer = 200,
 
-    // Rendering timer in the main thread when accelerated compositing is not used.
-    NonAcceleratedDrawingTimer = 100,
-
     // Async IO network callbacks.
     AsyncIONetwork = 100,
 };

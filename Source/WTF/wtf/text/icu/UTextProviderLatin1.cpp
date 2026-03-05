@@ -32,12 +32,12 @@
 
 namespace WTF {
 
-static std::span<const Latin1Character> latin1ContextSpan(UText* uText)
+static std::span<const Latin1Character> NODELETE latin1ContextSpan(UText* uText)
 {
     return unsafeMakeSpan(static_cast<const Latin1Character*>(uText->context), uText->a);
 }
 
-static std::span<char16_t> chunkSpan(UText* uText)
+static std::span<char16_t> NODELETE chunkSpan(UText* uText)
 {
     return unsafeMakeSpan(const_cast<char16_t*>(uText->chunkContents), uText->chunkLength);
 }
@@ -100,7 +100,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return result;
 }
 
-static int64_t uTextLatin1NativeLength(UText* uText)
+static int64_t NODELETE uTextLatin1NativeLength(UText* uText)
 {
     return uText->a;
 }
@@ -206,19 +206,19 @@ static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, ch
     return static_cast<int32_t>(length);
 }
 
-static int64_t uTextLatin1MapOffsetToNative(const UText* uText)
+static int64_t NODELETE uTextLatin1MapOffsetToNative(const UText* uText)
 {
     return uText->chunkNativeStart + uText->chunkOffset;
 }
 
-static int32_t uTextLatin1MapNativeIndexToUTF16(const UText* uText, int64_t nativeIndex)
+static int32_t NODELETE uTextLatin1MapNativeIndexToUTF16(const UText* uText, int64_t nativeIndex)
 {
     ASSERT_UNUSED(uText, uText->chunkNativeStart >= nativeIndex);
     ASSERT_UNUSED(uText, nativeIndex < uText->chunkNativeLimit);
     return static_cast<int32_t>(nativeIndex);
 }
 
-static void uTextLatin1Close(UText* uText)
+static void NODELETE uTextLatin1Close(UText* uText)
 {
     uText->context = nullptr;
 }
@@ -276,7 +276,7 @@ static const struct UTextFuncs textLatin1ContextAwareFuncs = {
     nullptr
 };
 
-static inline UTextProviderContext textLatin1ContextAwareGetCurrentContext(const UText* text)
+static inline UTextProviderContext NODELETE textLatin1ContextAwareGetCurrentContext(const UText* text)
 {
     if (!text->chunkContents)
         return UTextProviderContext::NoContext;
@@ -344,7 +344,7 @@ static UText* uTextLatin1ContextAwareClone(UText* destination, const UText* sour
     return uTextCloneImpl(destination, source, deep, status);
 }
 
-static int64_t uTextLatin1ContextAwareNativeLength(UText* text)
+static int64_t NODELETE uTextLatin1ContextAwareNativeLength(UText* text)
 {
     return text->a + text->b;
 }
@@ -375,7 +375,7 @@ static UBool uTextLatin1ContextAwareAccess(UText* text, int64_t nativeIndex, UBo
     return true;
 }
 
-static int32_t uTextLatin1ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode* errorCode)
+static int32_t NODELETE uTextLatin1ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode* errorCode)
 {
     // In the present context, this text provider is used only with ICU functions
     // that do not perform an extract operation.
@@ -384,7 +384,7 @@ static int32_t uTextLatin1ContextAwareExtract(UText*, int64_t, int64_t, char16_t
     return 0;
 }
 
-static void uTextLatin1ContextAwareClose(UText* text)
+static void NODELETE uTextLatin1ContextAwareClose(UText* text)
 {
     text->context = nullptr;
 }

@@ -39,6 +39,7 @@ modules_unittests_resources = [
   "audio_device/audio_short16.pcm",
   "audio_device/audio_short44.pcm",
   "audio_device/audio_short48.pcm",
+  "audio_processing/aec3/noop_ml_aec_model_for_testing.tflite",
   "audio_processing/agc/agc_audio.pcm",
   "audio_processing/agc/agc_no_circular_buffer.dat",
   "audio_processing/agc/agc_pitch_gain.dat",

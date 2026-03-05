@@ -47,7 +47,7 @@ using PlatformImage = RetainPtr<CGImageRef>;
 typedef struct _GtkWidget GtkWidget;
 typedef WKViewRef PlatformWKView;
 typedef GtkWidget* PlatformWindow;
-#elif USE(LIBWPE)
+#elif USE(LIBWPE) || ENABLE(WPE_PLATFORM)
 namespace WTR {
 class PlatformWebViewClient;
 }

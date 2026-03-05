@@ -10,12 +10,13 @@
 
 #include "modules/desktop_capture/desktop_capturer_differ_wrapper.h"
 
-#include <cstdint>
 #include <initializer_list>
 #include <memory>
 #include <utility>
 #include <vector>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_frame_generator.h"
@@ -25,7 +26,7 @@
 #include "modules/desktop_capture/fake_desktop_capturer.h"
 #include "modules/desktop_capture/mock_desktop_capturer_callback.h"
 #include "rtc_base/random.h"
-#include "rtc_base/time_utils.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -124,19 +125,18 @@ void ExecuteDifferWrapperCase(BlackWhiteDesktopFramePainter* frame_painter,
   EXPECT_CALL(*callback, OnCaptureResultPtr(DesktopCapturer::Result::SUCCESS,
                                             ::testing::_))
       .Times(1)
-      .WillOnce(
-          ::testing::Invoke([&updated_region, check_result, exactly_match](
-                                DesktopCapturer::Result result,
-                                std::unique_ptr<DesktopFrame>* frame) {
-            ASSERT_EQ(result, DesktopCapturer::Result::SUCCESS);
-            if (check_result) {
-              if (exactly_match) {
-                AssertUpdatedRegionIs(**frame, updated_region);
-              } else {
-                AssertUpdatedRegionCovers(**frame, updated_region);
-              }
-            }
-          }));
+      .WillOnce([&updated_region, check_result, exactly_match](
+                    DesktopCapturer::Result result,
+                    std::unique_ptr<DesktopFrame>* frame) {
+        ASSERT_EQ(result, DesktopCapturer::Result::SUCCESS);
+        if (check_result) {
+          if (exactly_match) {
+            AssertUpdatedRegionIs(**frame, updated_region);
+          } else {
+            AssertUpdatedRegionCovers(**frame, updated_region);
+          }
+        }
+      });
   for (const auto& rect : updated_region) {
     frame_painter->updated_region()->AddRect(rect);
   }
@@ -154,7 +154,8 @@ void ExecuteCapturer(DesktopCapturerDifferWrapper* capturer,
   capturer->CaptureFrame();
 }
 
-void ExecuteDifferWrapperTest(bool with_hints,
+void ExecuteDifferWrapperTest(Clock* clock,
+                              bool with_hints,
                               bool enlarge_updated_region,
                               bool random_updated_region,
                               bool check_result) {
@@ -176,12 +177,12 @@ void ExecuteDifferWrapperTest(bool with_hints,
   EXPECT_CALL(callback, OnCaptureResultPtr(DesktopCapturer::Result::SUCCESS,
                                            ::testing::_))
       .Times(1)
-      .WillOnce(::testing::Invoke([](DesktopCapturer::Result result,
-                                     std::unique_ptr<DesktopFrame>* frame) {
+      .WillOnce([](DesktopCapturer::Result result,
+                   std::unique_ptr<DesktopFrame>* frame) {
         ASSERT_EQ(result, DesktopCapturer::Result::SUCCESS);
         AssertUpdatedRegionIs(**frame,
                               {DesktopRect::MakeSize((*frame)->size())});
-      }));
+      });
   capturer.CaptureFrame();
 
   ExecuteDifferWrapperCase(&frame_painter, &capturer, &callback,
@@ -203,7 +204,7 @@ void ExecuteDifferWrapperTest(bool with_hints,
                              frame_generator.size()->height())},
       check_result, updated_region_should_exactly_match);
 
-  Random random(TimeMillis());
+  Random random(clock->TimeInMilliseconds());
   // Fuzzing tests.
   for (int i = 0; i < 1000; i++) {
     if (enlarge_updated_region) {
@@ -229,23 +230,28 @@ void ExecuteDifferWrapperTest(bool with_hints,
 }  // namespace
 
 TEST(DesktopCapturerDifferWrapperTest, CaptureWithoutHints) {
-  ExecuteDifferWrapperTest(false, false, false, true);
+  Clock* clock = Clock::GetRealTimeClock();
+  ExecuteDifferWrapperTest(clock, false, false, false, true);
 }
 
 TEST(DesktopCapturerDifferWrapperTest, CaptureWithHints) {
-  ExecuteDifferWrapperTest(true, false, false, true);
+  Clock* clock = Clock::GetRealTimeClock();
+  ExecuteDifferWrapperTest(clock, true, false, false, true);
 }
 
 TEST(DesktopCapturerDifferWrapperTest, CaptureWithEnlargedHints) {
-  ExecuteDifferWrapperTest(true, true, false, true);
+  Clock* clock = Clock::GetRealTimeClock();
+  ExecuteDifferWrapperTest(clock, true, true, false, true);
 }
 
 TEST(DesktopCapturerDifferWrapperTest, CaptureWithRandomHints) {
-  ExecuteDifferWrapperTest(true, false, true, true);
+  Clock* clock = Clock::GetRealTimeClock();
+  ExecuteDifferWrapperTest(clock, true, false, true, true);
 }
 
 TEST(DesktopCapturerDifferWrapperTest, CaptureWithEnlargedAndRandomHints) {
-  ExecuteDifferWrapperTest(true, true, true, true);
+  Clock* clock = Clock::GetRealTimeClock();
+  ExecuteDifferWrapperTest(clock, true, true, true, true);
 }
 
 // When hints are provided, DesktopCapturerDifferWrapper has a slightly better
@@ -262,34 +268,39 @@ TEST(DesktopCapturerDifferWrapperTest, CaptureWithEnlargedAndRandomHints) {
 // [ RUN      ] DISABLED_CaptureWithEnlargedAndRandomHintsPerf
 // [       OK ] DISABLED_CaptureWithEnlargedAndRandomHintsPerf (6347 ms)
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithoutHintsPerf) {
-  int64_t started = TimeMillis();
-  ExecuteDifferWrapperTest(false, false, false, false);
-  ASSERT_LE(TimeMillis() - started, 15000);
+  Clock* clock = Clock::GetRealTimeClock();
+  const Timestamp started = clock->CurrentTime();
+  ExecuteDifferWrapperTest(clock, false, false, false, false);
+  ASSERT_LE(clock->CurrentTime() - started, TimeDelta::Millis(15000));
 }
 
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithHintsPerf) {
-  int64_t started = TimeMillis();
-  ExecuteDifferWrapperTest(true, false, false, false);
-  ASSERT_LE(TimeMillis() - started, 15000);
+  Clock* clock = Clock::GetRealTimeClock();
+  const Timestamp started = clock->CurrentTime();
+  ExecuteDifferWrapperTest(clock, true, false, false, false);
+  ASSERT_LE(clock->CurrentTime() - started, TimeDelta::Millis(15000));
 }
 
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithEnlargedHintsPerf) {
-  int64_t started = TimeMillis();
-  ExecuteDifferWrapperTest(true, true, false, false);
-  ASSERT_LE(TimeMillis() - started, 15000);
+  Clock* clock = Clock::GetRealTimeClock();
+  const Timestamp started = clock->CurrentTime();
+  ExecuteDifferWrapperTest(clock, true, true, false, false);
+  ASSERT_LE(clock->CurrentTime() - started, TimeDelta::Millis(15000));
 }
 
 TEST(DesktopCapturerDifferWrapperTest, DISABLED_CaptureWithRandomHintsPerf) {
-  int64_t started = TimeMillis();
-  ExecuteDifferWrapperTest(true, false, true, false);
-  ASSERT_LE(TimeMillis() - started, 15000);
+  Clock* clock = Clock::GetRealTimeClock();
+  const Timestamp started = clock->CurrentTime();
+  ExecuteDifferWrapperTest(clock, true, false, true, false);
+  ASSERT_LE(clock->CurrentTime() - started, TimeDelta::Millis(15000));
 }
 
 TEST(DesktopCapturerDifferWrapperTest,
      DISABLED_CaptureWithEnlargedAndRandomHintsPerf) {
-  int64_t started = TimeMillis();
-  ExecuteDifferWrapperTest(true, true, true, false);
-  ASSERT_LE(TimeMillis() - started, 15000);
+  Clock* clock = Clock::GetRealTimeClock();
+  const Timestamp started = clock->CurrentTime();
+  ExecuteDifferWrapperTest(clock, true, true, true, false);
+  ASSERT_LE(clock->CurrentTime() - started, TimeDelta::Millis(15000));
 }
 
 }  // namespace webrtc

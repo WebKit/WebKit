@@ -1,0 +1,56 @@
+<style>
+.container {
+  direction: rtl;
+}
+
+.block {
+  width: 20px;
+  height: 20px;
+  background-color: green;
+}
+
+</style>
+<div class=container><span style="position: relative;"><div class=block></div></span></div>
+
+<div class=container>
+  <span style="position: relative;">
+    <div class=block></div>
+  </span>
+</div>
+
+<div class=container>
+  <span>
+    <span style="position: relative;">
+      <div class=block></div>
+    </span>
+  </span>
+</div>
+
+<div class=container>
+  <span style="position: relative;">
+    <span style="position: relative;">
+      <div class=block></div>
+    </span>
+  </span>
+</div>
+
+<div class=container>
+  <span style="position: relative;">
+    <span>
+      <div class=block></div>
+    </span>
+  </span>
+</div>
+
+<div class=container>
+  <span style="position: relative;">
+      before<div class=block></div>after
+  </span>
+</div>
+
+<div class=container>
+  before<span style="position: relative;">
+      <div class=block></div>
+  </span>
+  after
+</div>

@@ -80,7 +80,7 @@ void ResourceHandle::registerBuiltinSynchronousLoader(const AtomString& protocol
 }
 
 ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
-    : d(makeUnique<ResourceHandleInternal>(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation))
+    : d(makeUnique<ResourceHandleInternal>(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), contentEncodingSniffingPolicy, WTF::move(sourceOrigin), isMainFrameNavigation))
 {
     if (!request.url().isValid()) {
         scheduleFailure(InvalidURLFailure);
@@ -100,7 +100,7 @@ RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const 
             return constructor(request, client);
     }
 
-    auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff, contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation));
+    auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff, contentEncodingSniffingPolicy, WTF::move(sourceOrigin), isMainFrameNavigation));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)
         return newHandle;
@@ -174,7 +174,7 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response, CompletionH
             return;
         }
     }
-    client()->didReceiveResponseAsync(this, WTFMove(response), WTFMove(completionHandler));
+    client()->didReceiveResponseAsync(this, WTF::move(response), WTF::move(completionHandler));
 }
 
 ResourceRequest& ResourceHandle::firstRequest()
@@ -262,7 +262,7 @@ NetworkLoadMetrics* ResourceHandle::networkLoadMetrics()
 
 void ResourceHandle::setNetworkLoadMetrics(Box<NetworkLoadMetrics>&& metrics)
 {
-    d->m_networkLoadMetrics = WTFMove(metrics);
+    d->m_networkLoadMetrics = WTF::move(metrics);
 }
 
 bool ResourceHandle::shouldContentSniff() const

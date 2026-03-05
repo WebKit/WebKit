@@ -40,7 +40,7 @@ SystemSoundManager& SystemSoundManager::singleton()
     
 void SystemSoundManager::setSystemSoundDelegate(std::unique_ptr<SystemSoundDelegate>&& delegate)
 {
-    m_delegate = WTFMove(delegate);
+    m_delegate = WTF::move(delegate);
 }
     
 void SystemSoundManager::systemBeep()

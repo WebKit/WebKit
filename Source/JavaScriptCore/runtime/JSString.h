@@ -130,6 +130,9 @@ public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
     static_assert(MaxLength == String::MaxLength);
 
+    // Minimum rope length for rope-walk optimizations (tryFindOneChar, tryReplaceOneChar).
+    static constexpr unsigned minLengthForRopeWalk = 0x128;
+
     static constexpr uintptr_t isRopeInPointer = 0x1;
 
     static constexpr unsigned maxLengthForOnStackResolve = 2048;
@@ -158,7 +161,7 @@ private:
     JSString(VM& vm, Ref<StringImpl>&& value)
         : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), defaultTypeInfoBlob())
     {
-        new (&uninitializedValueInternal()) String(WTFMove(value));
+        new (&uninitializedValueInternal()) String(WTF::move(value));
     }
 
     JSString(VM& vm)
@@ -197,7 +200,7 @@ private:
         unsigned length = value->length();
         ASSERT(length > 0);
         size_t cost = value->cost();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm)) JSString(vm, WTFMove(value));
+        JSString* newString = new (NotNull, allocateCell<JSString>(vm)) JSString(vm, WTF::move(value));
         newString->finishCreation(vm, length, cost);
         return newString;
     }
@@ -207,14 +210,14 @@ private:
         unsigned length = value->length();
         ASSERT(length > 0);
         size_t cost = value->cost();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm, deferralContext)) JSString(vm, WTFMove(value));
+        JSString* newString = new (NotNull, allocateCell<JSString>(vm, deferralContext)) JSString(vm, WTF::move(value));
         newString->finishCreation(vm, deferralContext, length, cost);
         return newString;
     }
     static JSString* createHasOtherOwner(VM& vm, Ref<StringImpl>&& value)
     {
         unsigned length = value->length();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm)) JSString(vm, WTFMove(value));
+        JSString* newString = new (NotNull, allocateCell<JSString>(vm)) JSString(vm, WTF::move(value));
         newString->finishCreation(vm, length);
         return newString;
     }
@@ -278,6 +281,7 @@ public:
     bool is8Bit() const;
 
     ALWAYS_INLINE JSString* tryReplaceOneChar(JSGlobalObject*, char16_t, JSString* replacement);
+    inline std::optional<size_t> tryFindOneChar(JSGlobalObject*, char16_t character, unsigned& startPosition) const;
 
     bool isSubstring() const;
 protected:
@@ -312,8 +316,8 @@ private:
     friend JSString* jsNontrivialString(VM&, const String&);
     friend JSString* jsNontrivialString(VM&, String&&);
     friend JSString* jsSubstring(VM&, const String&, unsigned, unsigned);
-    friend JSString* jsSubstring(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
-    friend JSString* tryJSSubstringImpl(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
+    friend JSString* jsSubstring(JSGlobalObject*, VM&, JSString*, unsigned, unsigned);
+    friend JSString* tryJSSubstringImpl(VM&, JSString*, unsigned, unsigned);
     friend JSString* jsSubstringOfResolved(VM&, GCDeferralContext*, JSString*, unsigned, unsigned);
     friend JSString* jsOwnedString(VM&, const String&);
     friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*);
@@ -743,8 +747,8 @@ private:
     friend JSString* jsString(JSGlobalObject*, JSString*, JSString*, JSString*);
     friend JSString* jsString(JSGlobalObject*, const String&, const String&, const String&);
     friend JSString* jsSubstringOfResolved(VM&, GCDeferralContext*, JSString*, unsigned, unsigned);
-    friend JSString* jsSubstring(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
-    friend JSString* tryJSSubstringImpl(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
+    friend JSString* jsSubstring(JSGlobalObject*, VM&, JSString*, unsigned, unsigned);
+    friend JSString* tryJSSubstringImpl(VM&, JSString*, unsigned, unsigned);
     friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*);
     friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*, JSString*);
     friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*, JSString*, JSString*);
@@ -847,10 +851,10 @@ ALWAYS_INLINE void JSString::swapToAtomString(VM& vm, RefPtr<AtomStringImpl>&& a
     // This is OK since (1) when finishing GC concurrent compiler threads and GC threads are stopped, and (2) AtomString is already held in the atom table,
     // and we anyway keep this old string until this JSString* is GC-ed. So it does not increase any memory pressure, we release at the same timing.
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    String target(WTFMove(atom));
+    String target(WTF::move(atom));
     WTF::storeStoreFence(); // Ensure AtomStringImpl's string is fully initialized when it is exposed to concurrent threads.
     valueInternal().swap(target);
-    vm.heap.appendPossiblyAccessedStringFromConcurrentThreads(WTFMove(target));
+    vm.heap.appendPossiblyAccessedStringFromConcurrentThreads(WTF::move(target));
 }
 
 ALWAYS_INLINE Identifier JSString::toIdentifier(JSGlobalObject* globalObject) const
@@ -895,7 +899,7 @@ ALWAYS_INLINE GCOwnedDataScope<AtomStringImpl*> JSString::toExistingAtomString(J
     if (valueInternal().impl()->isAtom())
         return { this, static_cast<AtomStringImpl*>(valueInternal().impl()) };
     if (auto atom = AtomStringImpl::lookUp(valueInternal().impl())) {
-        swapToAtomString(getVM(globalObject), WTFMove(atom));
+        swapToAtomString(getVM(globalObject), WTF::move(atom));
         return { this, static_cast<AtomStringImpl*>(valueInternal().impl()) };
     }
     return { };
@@ -978,78 +982,91 @@ inline JSString* jsString(VM& vm, StringView s)
             return vm.smallStrings.singleCharacterString(c);
     }
     auto impl = s.is8Bit() ? StringImpl::create(s.span8()) : StringImpl::create(s.span16());
-    return JSString::create(vm, WTFMove(impl));
+    return JSString::create(vm, WTF::move(impl));
 }
 
 ALWAYS_INLINE JSString* jsString(VM& vm, RefPtr<AtomStringImpl>&& s)
 {
-    return jsString(vm, String { WTFMove(s) });
+    return jsString(vm, String { WTF::move(s) });
 }
 
 ALWAYS_INLINE JSString* jsString(VM& vm, Ref<AtomStringImpl>&& s)
 {
-    return jsString(vm, String { WTFMove(s) });
+    return jsString(vm, String { WTF::move(s) });
 }
 
 ALWAYS_INLINE JSString* jsString(VM& vm, Ref<StringImpl>&& s)
 {
-    return jsString(vm, String { WTFMove(s) });
+    return jsString(vm, String { WTF::move(s) });
 }
 
-inline JSString* tryJSSubstringImpl(VM& vm, JSGlobalObject* globalObject, JSString* base, unsigned offset, unsigned length)
+inline JSString* tryJSSubstringImpl(VM& vm, JSString* base, unsigned offset, unsigned length)
 {
-    ASSERT(offset <= base->length());
-    ASSERT(length <= base->length());
-    ASSERT(offset + length <= base->length());
-    if (!length)
-        return vm.smallStrings.emptyString();
-    if (!offset && length == base->length())
-        return base;
+    // Cap traversal depth to avoid O(n^2) slicing on deep ropes (e.g. repeated s += 'A').
+    // Exceeding the limit returns nullptr, letting jsSubstring flatten via resolveRope.
+    static constexpr unsigned maxTraversalDepth = 8;
 
-    // For now, let's not allow substrings with a rope base.
-    // Resolve non-substring rope bases so we don't have to deal with it.
-    // FIXME: Evaluate if this would be worth adding more branches.
-    if (base->isSubstring()) {
-        JSRopeString* baseRope = jsCast<JSRopeString*>(base);
-        ASSERT(!baseRope->substringBase()->isRope());
-        return jsSubstringOfResolved(vm, nullptr, baseRope->substringBase(), baseRope->substringOffset() + offset, length);
-    }
+    for (unsigned depth = 0; ; ++depth) {
+        ASSERT(offset <= base->length());
+        ASSERT(length <= base->length());
+        ASSERT(offset + length <= base->length());
+        if (!length)
+            return vm.smallStrings.emptyString();
+        if (!offset && length == base->length())
+            return base;
 
-    if (!base->isRope())
-        return jsSubstringOfResolved(vm, nullptr, base, offset, length);
+        // For now, let's not allow substrings with a rope base.
+        // Resolve non-substring rope bases so we don't have to deal with it.
+        // FIXME: Evaluate if this would be worth adding more branches.
+        if (base->isSubstring()) {
+            JSRopeString* baseRope = jsCast<JSRopeString*>(base);
+            ASSERT(!baseRope->substringBase()->isRope());
+            return jsSubstringOfResolved(vm, nullptr, baseRope->substringBase(), baseRope->substringOffset() + offset, length);
+        }
 
-    auto* rope = jsCast<JSRopeString*>(base);
-    auto* fiber0 = rope->fiber0();
-    ASSERT(fiber0);
-    if (offset < fiber0->length()) {
-        if ((offset + length) <= fiber0->length())
-            MUST_TAIL_CALL return tryJSSubstringImpl(vm, globalObject, fiber0, offset, length);
-        // Crossing multiple fibers. Giving up and resolving the rope.
-    } else {
+        if (!base->isRope())
+            return jsSubstringOfResolved(vm, nullptr, base, offset, length);
+
+        if (depth >= maxTraversalDepth)
+            return nullptr;
+
+        auto* rope = jsCast<JSRopeString*>(base);
+        auto* fiber0 = rope->fiber0();
+        ASSERT(fiber0);
+        if (offset < fiber0->length()) {
+            if ((offset + length) <= fiber0->length()) {
+                base = fiber0;
+                continue;
+            }
+            return nullptr; // Crossing multiple fibers.
+        }
+
         unsigned adjustedOffset = offset - fiber0->length();
         auto* fiber1 = rope->fiber1();
         ASSERT(fiber1);
         if (adjustedOffset < fiber1->length()) {
-            if ((adjustedOffset + length) <= fiber1->length())
-                MUST_TAIL_CALL return tryJSSubstringImpl(vm, globalObject, fiber1, adjustedOffset, length);
-            // Crossing multiple fibers. Giving up and resolving the rope.
-        } else {
-            adjustedOffset -= fiber1->length();
-            auto* fiber2 = rope->fiber2();
-            ASSERT(fiber2);
-            ASSERT(adjustedOffset < fiber2->length());
-            ASSERT((adjustedOffset + length) <= fiber2->length());
-            MUST_TAIL_CALL return tryJSSubstringImpl(vm, globalObject, fiber2, adjustedOffset, length);
+            if ((adjustedOffset + length) <= fiber1->length()) {
+                base = fiber1;
+                offset = adjustedOffset;
+                continue;
+            }
+            return nullptr; // Crossing multiple fibers.
         }
-    }
 
-    return nullptr;
+        adjustedOffset -= fiber1->length();
+        auto* fiber2 = rope->fiber2();
+        ASSERT(fiber2);
+        ASSERT(adjustedOffset < fiber2->length());
+        ASSERT((adjustedOffset + length) <= fiber2->length());
+        base = fiber2;
+        offset = adjustedOffset;
+    }
 }
 
-inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* base, unsigned offset, unsigned length)
+inline JSString* jsSubstring(JSGlobalObject* globalObject, VM& vm, JSString* base, unsigned offset, unsigned length)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSString* result = tryJSSubstringImpl(vm, globalObject, base, offset, length);
+    JSString* result = tryJSSubstringImpl(vm, base, offset, length);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (!result) {
@@ -1068,7 +1085,7 @@ inline JSString* jsSubstringOfResolved(VM& vm, JSString* s, unsigned offset, uns
 
 inline JSString* jsSubstring(JSGlobalObject* globalObject, JSString* s, unsigned offset, unsigned length)
 {
-    return jsSubstring(getVM(globalObject), globalObject, s, offset, length);
+    return jsSubstring(globalObject, getVM(globalObject), s, offset, length);
 }
 
 inline JSString* jsSubstring(VM& vm, const String& s, unsigned offset, unsigned length)
@@ -1084,8 +1101,8 @@ inline JSString* jsSubstring(VM& vm, const String& s, unsigned offset, unsigned 
     }
     auto impl = StringImpl::createSubstringSharingImpl(*s.impl(), offset, length);
     if (impl->isSubString())
-        return JSString::createHasOtherOwner(vm, WTFMove(impl));
-    return JSString::create(vm, WTFMove(impl));
+        return JSString::createHasOtherOwner(vm, WTF::move(impl));
+    return JSString::create(vm, WTF::move(impl));
 }
 
 inline JSString* jsOwnedString(VM& vm, const String& s)

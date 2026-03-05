@@ -46,25 +46,6 @@ template<typename> class ExceptionOr;
 constexpr float maxValueForCssLength = static_cast<float>(intMaxForLayoutUnit - 2);
 constexpr float minValueForCssLength = static_cast<float>(intMinForLayoutUnit + 2);
 
-// Dimension calculations are imprecise, often resulting in values of e.g.
-// 44.99998. We need to round if we're really close to the next integer value.
-template<typename T> inline T roundForImpreciseConversion(double value)
-{
-    value += (value < 0) ? -0.01 : +0.01;
-    return ((value > std::numeric_limits<T>::max()) || (value < std::numeric_limits<T>::min())) ? 0 : static_cast<T>(value);
-}
-
-template<> inline float roundForImpreciseConversion(double value)
-{
-    double ceiledValue = ceil(value);
-    double proximityToNextInt = ceiledValue - value;
-    if (proximityToNextInt <= 0.01 && value > 0)
-        return static_cast<float>(ceiledValue);
-    if (proximityToNextInt >= 0.99 && value < 0)
-        return static_cast<float>(floor(value));
-    return static_cast<float>(value);
-}
-
 class CSSPrimitiveValue final : public CSSValue {
 public:
     static constexpr bool isLength(CSSUnitType);
@@ -188,16 +169,14 @@ public:
     template<typename T = double> T valueDividingBy100IfPercentageDeprecated() const { return clampTo<T>(doubleValueDividingBy100IfPercentageDeprecated()); }
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
-    std::optional<bool> isZero() const;
-    std::optional<bool> isOne() const;
-    std::optional<bool> isPositive() const;
-    std::optional<bool> isNegative() const;
+    std::optional<bool> NODELETE isZero() const;
+    std::optional<bool> NODELETE isOne() const;
+    std::optional<bool> NODELETE isPositive() const;
+    std::optional<bool> NODELETE isNegative() const;
 
     WEBCORE_EXPORT String stringValue() const;
     const CSSCalc::Value* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
-    RefPtr<const CSSCalc::Value> protectedCssCalcValue() const { return cssCalcValue(); }
     const CSSAttrValue* cssAttrValue() const { return isAttr() ? m_value.attr : nullptr; }
-    RefPtr<const CSSAttrValue> protectedCssAttrValue() const { return cssAttrValue(); }
 
     String customCSSText(const CSS::SerializationContext&) const;
 
@@ -225,7 +204,7 @@ private:
     CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
 
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
-    void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = enumToUnderlyingType(type); }
+    void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = std::to_underlying(type); }
 
     // MARK: Length converting
     double resolveAsLengthDouble(const CSSToLengthConversionData&) const;
@@ -248,7 +227,7 @@ private:
     double doubleValueDividingBy100IfPercentageDeprecated() const;
     template<typename T = double> inline T valueDeprecated() const { return clampTo<T>(doubleValueDeprecated()); }
 
-    static std::optional<double> conversionToCanonicalUnitsScaleFactor(CSSUnitType);
+    static std::optional<double> NODELETE conversionToCanonicalUnitsScaleFactor(CSSUnitType);
 
     std::optional<double> doubleValueInternal(CSSUnitType targetUnit, const CSSToLengthConversionData&) const;
     std::optional<double> doubleValueInternalDeprecated(CSSUnitType targetUnit) const;

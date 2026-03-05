@@ -39,7 +39,7 @@ namespace WebKit {
 BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitWebContext>&& context)
     : m_dataStore(dataStore)
     , m_processPool(processPool)
-    , m_context(WTFMove(context))
+    , m_context(WTF::move(context))
 {
 };
 #else
@@ -58,7 +58,7 @@ Vector<Ref<WebPageProxy>> BidiUserContext::allPages() const
     for (Ref process : m_processPool->processes()) {
         for (Ref page : process->pages()) {
             if (page->websiteDataStore() == m_dataStore.get())
-                pages.append(WTFMove(page));
+                pages.append(WTF::move(page));
         }
     }
     return pages;

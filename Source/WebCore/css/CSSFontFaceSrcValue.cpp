@@ -43,13 +43,13 @@ namespace WebCore {
 
 CSSFontFaceSrcLocalValue::CSSFontFaceSrcLocalValue(AtomString&& fontFaceName)
     : CSSValue(ClassType::FontFaceSrcLocal)
-    , m_fontFaceName(WTFMove(fontFaceName))
+    , m_fontFaceName(WTF::move(fontFaceName))
 {
 }
 
 Ref<CSSFontFaceSrcLocalValue> CSSFontFaceSrcLocalValue::create(AtomString fontFaceName)
 {
-    return adoptRef(*new CSSFontFaceSrcLocalValue { WTFMove(fontFaceName) });
+    return adoptRef(*new CSSFontFaceSrcLocalValue { WTF::move(fontFaceName) });
 }
 
 CSSFontFaceSrcLocalValue::~CSSFontFaceSrcLocalValue() = default;
@@ -76,21 +76,21 @@ bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) con
 
 CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(CSS::URL&& location, String&& format, Vector<FontTechnology>&& technologies)
     : CSSValue(ClassType::FontFaceSrcResource)
-    , m_location(CSS::resolve(WTFMove(location)))
-    , m_format(WTFMove(format))
-    , m_technologies(WTFMove(technologies))
+    , m_location(CSS::resolve(WTF::move(location)))
+    , m_format(WTF::move(format))
+    , m_technologies(WTF::move(technologies))
 {
 }
 
 Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(CSS::URL location, String format, Vector<FontTechnology>&& technologies)
 {
-    return adoptRef(*new CSSFontFaceSrcResourceValue { WTFMove(location), WTFMove(format), WTFMove(technologies) });
+    return adoptRef(*new CSSFontFaceSrcResourceValue { WTF::move(location), WTF::move(format), WTF::move(technologies) });
 }
 
-std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecutionContext& context, bool isInitiatingElementInUserAgentShadowTree)
+RefPtr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecutionContext& context, bool isInitiatingElementInUserAgentShadowTree)
 {
     if (m_cachedFont)
-        return makeUnique<CachedFontLoadRequest>(*m_cachedFont, context);
+        return CachedFontLoadRequest::create(*m_cachedFont, context);
 
     bool isFormatSVG;
     if (m_format.isEmpty()) {
@@ -112,8 +112,8 @@ std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(Sc
         }
     }
 
-    auto request = context.fontLoadRequest(m_location.resolved.string(), isFormatSVG, isInitiatingElementInUserAgentShadowTree, m_location.modifiers.loadedFromOpaqueSource);
-    if (auto* cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
+    RefPtr request = context.fontLoadRequest(m_location.resolved.string(), isFormatSVG, isInitiatingElementInUserAgentShadowTree, m_location.modifiers.loadedFromOpaqueSource);
+    if (RefPtr cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
         m_cachedFont = &cachedRequest->cachedFont();
 
     return request;

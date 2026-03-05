@@ -189,22 +189,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return m_nsSpace.get();
 }
 
-RetainPtr<NSURLProtectionSpace> ProtectionSpace::protectedNSSpace() const
-{
-    return nsSpace();
-}
-
 bool ProtectionSpace::platformCompare(const ProtectionSpace& a, const ProtectionSpace& b)
 {
     if (!a.m_nsSpace && !b.m_nsSpace)
         return true;
 
-    return [a.protectedNSSpace() isEqual:b.protectedNSSpace().get()];
+    return [protect(a.nsSpace()) isEqual:protect(b.nsSpace()).get()];
 }
 
 bool ProtectionSpace::receivesCredentialSecurely() const
 {
-    return [protectedNSSpace() receivesCredentialSecurely];
+    return [protect(nsSpace()) receivesCredentialSecurely];
 }
 
 bool ProtectionSpace::encodingRequiresPlatformData(NSURLProtectionSpace *space)

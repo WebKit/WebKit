@@ -45,7 +45,7 @@ enum class WebCore::FontWidthVariant : uint8_t {
 };
 
 enum class WebCore::TextRenderingMode : uint8_t {
-    AutoTextRendering,
+    Auto,
     OptimizeSpeed,
     OptimizeLegibility,
     GeometricPrecision
@@ -77,7 +77,7 @@ header: <WebCore/FontPlatformData.h>
     LOGFONT m_font;
 #endif
 #if USE(CORE_TEXT)
-    RetainPtr<CFDictionaryRef> m_attributes;
+    std::optional<WebCore::FontPlatformSerializedAttributes> serializableAttributes();
     CTFontDescriptorOptions m_options;
     RetainPtr<CFStringRef> m_url;
     RetainPtr<CFStringRef> m_psName;
@@ -102,10 +102,10 @@ header: <WebCore/FontPlatformData.h>
 
 [CustomHeader] struct WebCore::FontPlatformSerializedTraits {
     String uiFontDesign;
-    std::optional<RetainPtr<CFNumberRef>> weight;
-    std::optional<RetainPtr<CFNumberRef>> width;
-    std::optional<RetainPtr<CFNumberRef>> symbolic;
-    std::optional<RetainPtr<CFNumberRef>> grade;
+    RetainPtr<CFNumberRef> weight;
+    RetainPtr<CFNumberRef> width;
+    RetainPtr<CFNumberRef> symbolic;
+    RetainPtr<CFNumberRef> grade;
 };
 
 [CustomHeader] struct WebCore::FontPlatformOpticalSize {
@@ -113,10 +113,10 @@ header: <WebCore/FontPlatformData.h>
 };
 
 [CustomHeader] struct WebCore::FontPlatformFeatureSetting {
-    std::optional<RetainPtr<CFNumberRef>> type;
-    std::optional<RetainPtr<CFNumberRef>> selector;
-    std::optional<RetainPtr<CFStringRef>> tag;
-    std::optional<RetainPtr<CFNumberRef>> value;
+    RetainPtr<CFNumberRef> type;
+    RetainPtr<CFNumberRef> selector;
+    RetainPtr<CFStringRef> tag;
+    RetainPtr<CFNumberRef> value;
 };
 
 [CustomHeader] struct WebCore::FontPlatformSerializedAttributes {
@@ -124,19 +124,19 @@ header: <WebCore/FontPlatformData.h>
     String descriptorLanguage;
     String descriptorTextStyle;
 
-    std::optional<RetainPtr<CFDataRef>> matrix;
+    RetainPtr<CFDataRef> matrix;
 
-    std::optional<RetainPtr<CFBooleanRef>> ignoreLegibilityWeight;
+    RetainPtr<CFBooleanRef> ignoreLegibilityWeight;
 
-    std::optional<RetainPtr<CFNumberRef>> baselineAdjust;
-    std::optional<RetainPtr<CFNumberRef>> fallbackOption;
-    std::optional<RetainPtr<CFNumberRef>> fixedAdvance;
-    std::optional<RetainPtr<CFNumberRef>> orientation;
-    std::optional<RetainPtr<CFNumberRef>> palette;
-    std::optional<RetainPtr<CFNumberRef>> size;
-    std::optional<RetainPtr<CFNumberRef>> sizeCategory;
-    std::optional<RetainPtr<CFNumberRef>> track;
-    std::optional<RetainPtr<CFNumberRef>> unscaledTracking;
+    RetainPtr<CFNumberRef> baselineAdjust;
+    RetainPtr<CFNumberRef> fallbackOption;
+    RetainPtr<CFNumberRef> fixedAdvance;
+    RetainPtr<CFNumberRef> orientation;
+    RetainPtr<CFNumberRef> palette;
+    RetainPtr<CFNumberRef> size;
+    RetainPtr<CFNumberRef> sizeCategory;
+    RetainPtr<CFNumberRef> track;
+    RetainPtr<CFNumberRef> unscaledTracking;
 
     std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CGColorRef>>>> paletteColors;
     std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CFNumberRef>>>> variations;
@@ -147,7 +147,7 @@ header: <WebCore/FontPlatformData.h>
     std::optional<Vector<WebCore::FontPlatformFeatureSetting>> featureSettings;
 
 #if HAVE(ADDITIONAL_FONT_PLATFORM_SERIALIZED_ATTRIBUTES)
-    std::optional<RetainPtr<CFNumberRef>> additionalNumber;
+    RetainPtr<CFNumberRef> additionalNumber;
 #endif
 };
 
@@ -167,6 +167,13 @@ header: <WebCore/FontPlatformData.h>
     bool syntheticOblique;
 }
 
+using WebCore::SystemUIFontType = uint32_t;
+
+[CustomHeader, Nested] struct WebCore::InstalledFont::SystemUIFont {
+    WebCore::SystemUIFontType systemUIFontType;
+    String language;
+}
+
 [CustomHeader, Nested] struct WebCore::InstalledFont::PostScriptFont {
     String postScriptName;
     CTFontDescriptorOptions fontDescriptorOptions;
@@ -174,7 +181,7 @@ header: <WebCore/FontPlatformData.h>
 }
 
 [CustomHeader] struct WebCore::InstalledFont {
-    Variant<WebCore::InstalledFont::PostScriptFont> font;
+    Variant<WebCore::InstalledFont::SystemUIFont, WebCore::InstalledFont::PostScriptFont> font;
     WebCore::FontMetadata metadata;
 }
 

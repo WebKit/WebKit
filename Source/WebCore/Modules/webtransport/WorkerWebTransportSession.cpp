@@ -30,7 +30,6 @@
 #include "WebTransport.h"
 #include "WebTransportConnectionStats.h"
 #include "WebTransportReceiveStreamStats.h"
-#include "WebTransportSendStreamSink.h"
 #include "WebTransportSendStreamStats.h"
 #include "WritableStreamSink.h"
 
@@ -54,28 +53,28 @@ WorkerWebTransportSession::WorkerWebTransportSession(ScriptExecutionContextIdent
 void WorkerWebTransportSession::attachSession(Ref<WebTransportSession>&& session)
 {
     ASSERT(!m_session);
-    m_session = WTFMove(session);
+    m_session = WTF::move(session);
 }
 
 void WorkerWebTransportSession::receiveDatagram(std::span<const uint8_t> span, bool withFin, std::optional<Exception>&& exception)
 {
     ASSERT(RunLoop::isMain());
-    ScriptExecutionContext::postTaskTo(m_contextID, [vector = Vector<uint8_t> { span }, withFin, exception = WTFMove(exception), weakClient = m_client] (auto&) mutable {
+    ScriptExecutionContext::postTaskTo(m_contextID, [vector = Vector<uint8_t> { span }, withFin, exception = WTF::move(exception), weakClient = m_client] (auto&) mutable {
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->receiveDatagram(vector.span(), withFin, WTFMove(exception));
+        client->receiveDatagram(vector.span(), withFin, WTF::move(exception));
     });
 }
 
-void WorkerWebTransportSession::didFail(std::optional<unsigned>&& code, String&& message)
+void WorkerWebTransportSession::didFail(std::optional<uint32_t>&& code, String&& message)
 {
     ASSERT(RunLoop::isMain());
-    ScriptExecutionContext::postTaskTo(m_contextID, [weakClient = m_client, code = WTFMove(code), message = WTFMove(message)] (auto&) mutable {
+    ScriptExecutionContext::postTaskTo(m_contextID, [weakClient = m_client, code = WTF::move(code), message = WTF::move(message)] (auto&) mutable {
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->didFail(WTFMove(code), WTFMove(message));
+        client->didFail(WTF::move(code), WTF::move(message));
     });
 }
 
@@ -101,25 +100,47 @@ void WorkerWebTransportSession::receiveIncomingUnidirectionalStream(WebTransport
     });
 }
 
-void WorkerWebTransportSession::receiveBidirectionalStream(Ref<WebTransportSendStreamSink>&& sink)
+void WorkerWebTransportSession::receiveBidirectionalStream(WebTransportStreamIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
-    ScriptExecutionContext::postTaskTo(m_contextID, [sink = WTFMove(sink), weakClient = m_client] (auto&) mutable {
+    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, weakClient = m_client] (auto&) mutable {
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->receiveBidirectionalStream(WTFMove(sink));
+        client->receiveBidirectionalStream(identifier);
     });
 }
 
 void WorkerWebTransportSession::streamReceiveBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> data, bool withFin, std::optional<Exception>&& exception)
 {
     ASSERT(RunLoop::isMain());
-    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, data = Vector<uint8_t> { data }, withFin, exception = WTFMove(exception),  weakClient = m_client] (auto&) mutable {
+    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, data = Vector<uint8_t> { data }, withFin, exception = WTF::move(exception),  weakClient = m_client] (auto&) mutable {
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->streamReceiveBytes(identifier, data.span(), withFin, WTFMove(exception));
+        client->streamReceiveBytes(identifier, data.span(), withFin, WTF::move(exception));
+    });
+}
+
+void WorkerWebTransportSession::streamReceiveError(WebTransportStreamIdentifier identifier, uint64_t errorCode)
+{
+    ASSERT(RunLoop::isMain());
+    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, errorCode, weakClient = m_client] (auto&) mutable {
+        RefPtr client = weakClient.get();
+        if (!client)
+            return;
+        client->streamReceiveError(identifier, errorCode);
+    });
+}
+
+void WorkerWebTransportSession::streamSendError(WebTransportStreamIdentifier identifier, uint64_t errorCode)
+{
+    ASSERT(RunLoop::isMain());
+    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, errorCode, weakClient = m_client] (auto&) mutable {
+        RefPtr client = weakClient.get();
+        if (!client)
+            return;
+        client->streamSendError(identifier, errorCode);
     });
 }
 
@@ -131,22 +152,22 @@ Ref<WebTransportSendPromise> WorkerWebTransportSession::sendDatagram(std::option
     return WebTransportSendPromise::createAndReject();
 }
 
-Ref<WritableStreamPromise> WorkerWebTransportSession::createOutgoingUnidirectionalStream()
+Ref<WebTransportStreamPromise> WorkerWebTransportSession::createOutgoingUnidirectionalStream()
 {
     ASSERT(!RunLoop::isMain());
     if (RefPtr session = m_session)
         return session->createOutgoingUnidirectionalStream();
     ASSERT_NOT_REACHED_WITH_MESSAGE("Session should be set up before use then never removed.");
-    return WritableStreamPromise::createAndReject();
+    return WebTransportStreamPromise::createAndReject();
 }
 
-Ref<BidirectionalStreamPromise> WorkerWebTransportSession::createBidirectionalStream()
+Ref<WebTransportStreamPromise> WorkerWebTransportSession::createBidirectionalStream()
 {
     ASSERT(!RunLoop::isMain());
     if (RefPtr session = m_session)
         return session->createBidirectionalStream();
     ASSERT_NOT_REACHED_WITH_MESSAGE("Session should be set up before use then never removed.");
-    return BidirectionalStreamPromise::createAndReject();
+    return WebTransportStreamPromise::createAndReject();
 }
 
 Ref<WebTransportSendPromise> WorkerWebTransportSession::streamSendBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
@@ -198,7 +219,7 @@ void WorkerWebTransportSession::terminate(WebTransportSessionErrorCode code, CSt
 {
     ASSERT(!RunLoop::isMain());
     if (RefPtr session = m_session)
-        session->terminate(code, WTFMove(reason));
+        session->terminate(code, WTF::move(reason));
     else
         ASSERT_NOT_REACHED_WITH_MESSAGE("Session should be set up before use then never removed.");
 }

@@ -205,7 +205,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObj
         return { };
     }
 
-    return JSValue::encode(jsString(vm, WTFMove(result)));
+    return JSValue::encode(jsString(vm, WTF::move(result)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -275,7 +275,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject
         }
     }
 
-    return JSValue::encode(jsNontrivialString(vm, WTFMove(result)));
+    return JSValue::encode(jsNontrivialString(vm, WTF::move(result)));
 }
 
 } // namespace JSC

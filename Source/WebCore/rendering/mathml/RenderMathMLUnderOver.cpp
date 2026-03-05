@@ -40,10 +40,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLUnderOver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLUnderOver);
 
 RenderMathMLUnderOver::RenderMathMLUnderOver(MathMLUnderOverElement& element, RenderStyle&& style)
-    : RenderMathMLScripts(Type::MathMLUnderOver, element, WTFMove(style))
+    : RenderMathMLScripts(Type::MathMLUnderOver, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLUnderOver());
 }
@@ -269,19 +269,19 @@ RenderMathMLUnderOver::VerticalParameters RenderMathMLUnderOver::verticalParamet
         if (auto* baseOperator = mathMLBlock->unembellishedOperator()) {
             if (baseOperator->hasOperatorFlag(MathMLOperatorDictionary::LargeOp)) {
                 // The base is a large operator so we read UpperLimit/LowerLimit constants from the MATH table.
-                parameters.underGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::LowerLimitGapMin);
-                parameters.overGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::UpperLimitGapMin);
-                parameters.underShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::LowerLimitBaselineDropMin);
-                parameters.overShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::UpperLimitBaselineRiseMin);
+                parameters.underGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::LowerLimitGapMin);
+                parameters.overGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::UpperLimitGapMin);
+                parameters.underShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::LowerLimitBaselineDropMin);
+                parameters.overShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::UpperLimitBaselineRiseMin);
                 parameters.useUnderOverBarFallBack = false;
                 return parameters;
             }
             if (baseOperator->isStretchy() && !baseOperator->isVertical()) {
                 // The base is a horizontal stretchy operator, so we read StretchStack constants from the MATH table.
-                parameters.underGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::StretchStackGapBelowMin);
-                parameters.overGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::StretchStackGapAboveMin);
-                parameters.underShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::StretchStackBottomShiftDown);
-                parameters.overShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::StretchStackTopShiftUp);
+                parameters.underGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::StretchStackGapBelowMin);
+                parameters.overGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::StretchStackGapAboveMin);
+                parameters.underShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::StretchStackBottomShiftDown);
+                parameters.overShiftMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::StretchStackTopShiftUp);
                 parameters.useUnderOverBarFallBack = false;
                 return parameters;
             }
@@ -289,11 +289,11 @@ RenderMathMLUnderOver::VerticalParameters RenderMathMLUnderOver::verticalParamet
     }
 
     // By default, we just use the underbar/overbar constants.
-    parameters.underGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::UnderbarVerticalGap);
-    parameters.overGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::OverbarVerticalGap);
-    parameters.underExtraDescender = mathData->getMathConstant(primaryFont, OpenTypeMathData::UnderbarExtraDescender);
-    parameters.overExtraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::OverbarExtraAscender);
-    parameters.accentBaseHeight = mathData->getMathConstant(primaryFont, OpenTypeMathData::AccentBaseHeight);
+    parameters.underGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::UnderbarVerticalGap);
+    parameters.overGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::OverbarVerticalGap);
+    parameters.underExtraDescender = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::UnderbarExtraDescender);
+    parameters.overExtraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::OverbarExtraAscender);
+    parameters.accentBaseHeight = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::AccentBaseHeight);
     parameters.useUnderOverBarFallBack = true;
     return parameters;
 }

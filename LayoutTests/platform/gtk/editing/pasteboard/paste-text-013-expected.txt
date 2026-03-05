@@ -19,12 +19,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 85x17
+        RenderText {#text} at (0,0) size 85x18
           text run at (0,0) width 85: "See this bug: "
-        RenderInline {A} at (85,0) size 167x17 [color=#0000EE]
-          RenderText {#text} at (85,0) size 167x17
+        RenderInline {A} at (85,0) size 167x18 [color=#0000EE]
+          RenderText {#text} at (85,0) size 167x18
             text run at (85,0) width 167: "<rdar://problem/3918712>"
-        RenderText {#text} at (0,0) size 781x53
+        RenderText {#text} at (0,0) size 781x54
           text run at (252,0) width 488: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost). "
           text run at (0,18) width 781: "Should see one box with blockquoted \"foo\" text, followed by another box with an \"x\" (not in a blockquote) and \"foo\" (in a "
           text run at (0,36) width 79: "blockquote)."
@@ -32,15 +32,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,78) size 784x103 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,38) size 756x27
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x27
-            RenderText {#text} at (0,0) size 32x26
+            RenderText {#text} at (0,0) size 32x27
               text run at (0,0) width 32: "foo"
       RenderBlock {DIV} at (0,181) size 784x55 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 12x26
+        RenderText {#text} at (14,14) size 12x27
           text run at (14,14) width 12: "x"
       RenderBlock {DIV} at (0,236) size 784x130 [border: (2px solid #FF0000)]
         RenderBlock {BLOCKQUOTE} at (54,38) size 676x27
-          RenderText {#text} at (0,0) size 32x26
+          RenderText {#text} at (0,0) size 32x27
             text run at (0,0) width 32: "foo"
         RenderBlock {DIV} at (14,89) size 756x27
-          RenderBR {BR} at (0,0) size 0x26
+          RenderBR {BR} at (0,0) size 0x27
 caret: position 0 of child 0 {BR} of child 1 {DIV} of child 8 {DIV} of body

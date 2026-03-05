@@ -183,7 +183,7 @@ MediaChannelUtil::TransportForMediaChannels::TranslatePacketOptions(
   rtc_options.info_signaled_after_sent.included_in_allocation =
       options.included_in_allocation;
   rtc_options.info_signaled_after_sent.is_media = options.is_media;
-  rtc_options.ecn_1 = options.send_as_ect1;
+  rtc_options.ect_1 = options.send_as_ect1;
   rtc_options.batchable = options.batchable;
   rtc_options.last_packet_in_batch = options.last_packet_in_batch;
   return rtc_options;

@@ -27,7 +27,7 @@
 #include "FESpecularLighting.h"
 #include "NodeName.h"
 #include "RenderElement.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFESpecularLightingElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFESpecularLightingElement);
 
 inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -95,11 +95,8 @@ bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect& filter
     };
 
     switch (attrName.nodeName()) {
-    case AttributeNames::lighting_colorAttr: {
-        auto& style = renderer()->style();
-        auto color = style.colorWithColorFilter(style.lightingColor());
-        return effect.setLightingColor(color);
-    }
+    case AttributeNames::lighting_colorAttr:
+        return effect.setLightingColor(protect(renderer()->style())->lightingColorResolvingCurrentColorApplyingColorFilter());
     case AttributeNames::surfaceScaleAttr:
         return effect.setSurfaceScale(surfaceScale());
     case AttributeNames::specularConstantAttr:
@@ -167,11 +164,7 @@ RefPtr<FilterEffect> SVGFESpecularLightingElement::createFilterEffect(const Filt
         return nullptr;
 
     Ref lightSource = lightElement->lightSource();
-    auto& style = renderer->style();
-
-    auto color = style.colorWithColorFilter(style.lightingColor());
-
-    return FESpecularLighting::create(color, surfaceScale(), specularConstant(), specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
+    return FESpecularLighting::create(protect(renderer->style())->lightingColorResolvingCurrentColorApplyingColorFilter(), surfaceScale(), specularConstant(), specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), WTF::move(lightSource));
 }
 
 } // namespace WebCore

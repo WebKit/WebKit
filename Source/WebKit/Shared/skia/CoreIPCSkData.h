@@ -34,7 +34,7 @@ namespace WebKit {
 class CoreIPCSkData {
 public:
     CoreIPCSkData(sk_sp<SkData> skData)
-        : m_skData(WTFMove(skData))
+        : m_skData(WTF::move(skData))
     {
     }
 

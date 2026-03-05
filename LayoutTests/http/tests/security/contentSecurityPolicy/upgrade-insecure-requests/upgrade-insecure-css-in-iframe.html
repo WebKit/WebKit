@@ -3,9 +3,17 @@
 <body>
 <script>
 if (window.testRunner) {
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpFrameLoadCallbacks();
 }
+
+window.addEventListener("message", function (e) {
+    if (e.data !== 'done')
+        console.log('FAIL: Insecure CSS was NOT upgraded');
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
 </script>
 <p>This test loads a secure iframe that loads an insecure style sheet.
 We should upgrade the CSS request to HTTPS, and thereby avoid triggering

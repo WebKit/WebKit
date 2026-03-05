@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/60x60-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/README
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/action-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/b-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/c-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/cat.png
@@ -38,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/ruler-v-100px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/ruler-v-50px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/scroll-behavior.js
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/scrollIntoView-iframes-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/square-purple.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/square-teal.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/square-white.png

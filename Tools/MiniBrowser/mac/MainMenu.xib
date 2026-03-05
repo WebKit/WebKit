@@ -87,13 +87,14 @@
                                     <action selector="newWindow:" target="-1" id="PS4-cQ-V4Q"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="New WebKit2 Private Window" tag="2" id="Zqs-AO-XAX">
-                                <modifierMask key="keyEquivalentModifierMask"/>
+                            <menuItem title="New WebKit2 Private Window" tag="2" keyEquivalent="N" id="Zqs-AO-XAX">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
                                 <connections>
                                     <action selector="newPrivateWindow:" target="-1" id="mf5-zi-a5R"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="New WebKit1 Editor" tag="3" keyEquivalent="N" id="jNR-Z3-YWi" userLabel="New WebKit1 Editor">
+                            <menuItem title="New WebKit1 Editor" tag="3" id="jNR-Z3-YWi" userLabel="New WebKit1 Editor">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="newEditorWindow:" target="-1" id="Nv5-c0-KRP"/>
                                 </connections>
@@ -102,6 +103,14 @@
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="newEditorWindow:" target="-1" id="kk6-R4-iec"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="mbt-ab-Cdt">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="New Tab" keyEquivalent="t" id="nTb-mn-ItM">
+                                <connections>
+                                    <action selector="newTab:" target="-1" id="nTb-ac-Tion"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="72">
@@ -121,6 +130,20 @@
                                 </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Clone Site Isolated Window" tag="4" keyEquivalent="i" id="ka5-QP-WgC">
+                                <connections>
+                                    <action selector="cloneSiteIsolatedWindow:" target="-1" id="fSF-Rg-NSY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clone Non-isolated Window" tag="4" keyEquivalent="i" id="TOF-K0-SlE">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="cloneNonIsolatedWindow:" target="-1" id="qDa-CW-kBR"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Rug-SG-b5b">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
                             <menuItem title="Close" keyEquivalent="w" id="73">

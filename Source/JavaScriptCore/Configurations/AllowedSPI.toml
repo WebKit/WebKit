@@ -5,9 +5,3 @@
 request = "rdar://157890653"
 symbols = ["dyld_program_sdk_at_least"]
 requires = ["USE_APPLE_INTERNAL_SDK"]
-
-[[not-web-essential]]
-request = "rdar://163506174"
-symbols = ["os_script_config_storage"]
-requires = ["HAVE_OS_SCRIPT_CONFIG_SPI"]
-allow-unused = true

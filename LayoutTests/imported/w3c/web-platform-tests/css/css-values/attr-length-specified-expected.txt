@@ -1,0 +1,5 @@
+
+FAIL type(<length>) lowercase assert_equals: expected "3em" but got "attr(data-foo type(<length>))"
+FAIL type(<length>) uppercase assert_equals: expected "3em" but got "attr(data-bar type(<length>))"
+FAIL Unit (em) number assert_equals: expected "3em" but got "attr(data-baz em)"
+

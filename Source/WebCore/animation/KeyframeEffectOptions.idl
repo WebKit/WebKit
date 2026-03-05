@@ -25,6 +25,9 @@
 
 typedef USVString CSSOMString;
 
+// https://drafts.csswg.org/web-animations-1/#dictdef-keyframeeffectoptions
+//   and then modified by
+// https://drafts.csswg.org/web-animations-2/#the-keyframeeffectoptions-dictionary
 dictionary KeyframeEffectOptions : EffectTiming {
     IterationCompositeOperation iterationComposite = "replace";
     CompositeOperation composite = "replace";

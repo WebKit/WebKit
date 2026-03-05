@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class ANGLEInstancedArrays final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ANGLEInstancedArrays);
+    WTF_MAKE_TZONE_ALLOCATED(ANGLEInstancedArrays);
     WTF_MAKE_NONCOPYABLE(ANGLEInstancedArrays);
 public:
     explicit ANGLEInstancedArrays(WebGLRenderingContextBase&);
@@ -47,3 +47,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(ANGLEInstancedArrays)

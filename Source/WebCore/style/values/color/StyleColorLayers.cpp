@@ -53,7 +53,7 @@ Color toStyleColor(const CSS::ColorLayers& unresolved, ColorResolutionState& sta
         return Color {
             ColorLayers {
                 .blendMode = unresolved.blendMode,
-                .colors = WTFMove(colors)
+                .colors = WTF::move(colors)
             }
         };
     }
@@ -66,7 +66,7 @@ Color toStyleColor(const CSS::ColorLayers& unresolved, ColorResolutionState& sta
         })
     };
 
-    return blendSourceOver(WTFMove(resolver));
+    return blendSourceOver(WTF::move(resolver));
 }
 
 // MARK: Resolve

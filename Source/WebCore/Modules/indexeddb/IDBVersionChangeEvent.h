@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class IDBVersionChangeEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBVersionChangeEvent);
+    WTF_MAKE_TZONE_ALLOCATED(IDBVersionChangeEvent);
 public:
     static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType)
     {
@@ -55,8 +55,6 @@ public:
 
     std::optional<IDBResourceIdentifier> requestIdentifier() const { return m_requestIdentifier; }
 
-    bool isVersionChangeEvent() const final { return true; }
-
     uint64_t oldVersion() const { return m_oldVersion; }
     std::optional<uint64_t> newVersion() const { return m_newVersion; }
 
@@ -71,6 +69,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IDBVersionChangeEvent)
-    static bool isType(const WebCore::Event& event) { return event.isVersionChangeEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EVENT(IDBVersionChangeEvent)

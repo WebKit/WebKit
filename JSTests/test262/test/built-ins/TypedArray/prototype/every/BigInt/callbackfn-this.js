@@ -23,15 +23,15 @@ info: |
       ...
       ii. Let testResult be ToBoolean(? Call(callbackfn, T, « kValue, k, O »)).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
 var expected = (function() { return this; })();
 var thisArg = {};
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(3);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(3));
 
   var results1 = [];
 

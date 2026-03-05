@@ -48,14 +48,14 @@ class RTCPeerConnection;
 struct RTCRtpCodecCapability;
 
 class RTCRtpTransceiver final : public RefCounted<RTCRtpTransceiver>, public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCRtpTransceiver);
+    WTF_MAKE_TZONE_ALLOCATED(RTCRtpTransceiver);
 public:
-    static Ref<RTCRtpTransceiver> create(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver, std::unique_ptr<RTCRtpTransceiverBackend>&& backend) { return adoptRef(*new RTCRtpTransceiver(WTFMove(sender), WTFMove(receiver), WTFMove(backend))); }
+    static Ref<RTCRtpTransceiver> create(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver, std::unique_ptr<RTCRtpTransceiverBackend>&& backend) { return adoptRef(*new RTCRtpTransceiver(WTF::move(sender), WTF::move(receiver), WTF::move(backend))); }
     ~RTCRtpTransceiver();
 
-    bool hasSendingDirection() const;
-    void enableSendingDirection();
-    void disableSendingDirection();
+    bool NODELETE hasSendingDirection() const;
+    void NODELETE enableSendingDirection();
+    void NODELETE disableSendingDirection();
 
     RTCRtpTransceiverDirection direction() const;
     std::optional<RTCRtpTransceiverDirection> currentDirection() const;
@@ -92,14 +92,14 @@ private:
 
 class RtpTransceiverSet {
 public:
-    const Vector<RefPtr<RTCRtpTransceiver>>& list() const { return m_transceivers; }
+    const Vector<Ref<RTCRtpTransceiver>>& list() const LIFETIME_BOUND { return m_transceivers; }
     void append(Ref<RTCRtpTransceiver>&&);
 
     Vector<std::reference_wrapper<RTCRtpSender>> senders() const;
     Vector<std::reference_wrapper<RTCRtpReceiver>> receivers() const;
 
 private:
-    Vector<RefPtr<RTCRtpTransceiver>> m_transceivers;
+    Vector<Ref<RTCRtpTransceiver>> m_transceivers;
 };
 
 } // namespace WebCore

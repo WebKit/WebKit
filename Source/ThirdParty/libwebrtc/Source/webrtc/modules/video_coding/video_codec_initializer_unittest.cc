@@ -111,7 +111,7 @@ class VideoCodecInitializerTest : public ::testing::Test {
       const VideoEncoder::Settings settings(VideoEncoder::Capabilities(false),
                                             1, 1000);
       frame_buffer_controller_ =
-          factory.Create(codec_out_, settings, &fec_controller_override_);
+          factory.Create(env_, codec_out_, settings, &fec_controller_override_);
     }
   }
 

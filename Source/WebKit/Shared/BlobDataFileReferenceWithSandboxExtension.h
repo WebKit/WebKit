@@ -36,7 +36,7 @@ class BlobDataFileReferenceWithSandboxExtension final : public WebCore::BlobData
 public:
     static Ref<BlobDataFileReference> create(const String& path, const String& replacementPath = { }, RefPtr<SandboxExtension>&& sandboxExtension = nullptr)
     {
-        return adoptRef(*new BlobDataFileReferenceWithSandboxExtension(path, replacementPath, WTFMove(sandboxExtension)));
+        return adoptRef(*new BlobDataFileReferenceWithSandboxExtension(path, replacementPath, WTF::move(sandboxExtension)));
     }
 
 private:

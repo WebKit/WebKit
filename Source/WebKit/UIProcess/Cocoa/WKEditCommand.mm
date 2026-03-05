@@ -36,7 +36,7 @@
     if (!self)
         return nil;
 
-    _command = WTFMove(command);
+    _command = WTF::move(command);
     return self;
 }
 

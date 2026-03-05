@@ -54,7 +54,7 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
 
@@ -103,6 +103,7 @@ public:
 
     virtual RefPtr<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
     virtual bool isRemoteCommandEncoderProxy() const { return false; }
+    virtual bool isCommandEncoderImpl() const { return false; }
 
 protected:
     CommandEncoder() = default;

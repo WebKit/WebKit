@@ -50,7 +50,7 @@ public:
 
     static const unsigned attributeNotFound = static_cast<unsigned>(-1);
 
-    void setClassNames(SpaceSplitString&& classNames) const { m_classNames = WTFMove(classNames); }
+    void setClassNames(SpaceSplitString&& classNames) const { m_classNames = WTF::move(classNames); }
     const SpaceSplitString& classNames() const { return m_classNames; }
     static constexpr ptrdiff_t classNamesMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_classNames); }
 
@@ -64,11 +64,11 @@ public:
     unsigned length() const;
     bool isEmpty() const { return !length(); }
 
-    std::span<const Attribute> attributes() const LIFETIME_BOUND;
-    const Attribute& attributeAt(unsigned index) const;
-    const Attribute* findAttributeByName(const QualifiedName&) const;
-    unsigned findAttributeIndexByName(const QualifiedName&) const;
-    unsigned findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
+    std::span<const Attribute> NODELETE attributes() const LIFETIME_BOUND;
+    const Attribute& NODELETE attributeAt(unsigned index) const;
+    const Attribute* NODELETE findAttributeByName(const QualifiedName&) const;
+    unsigned NODELETE findAttributeIndexByName(const QualifiedName&) const;
+    unsigned NODELETE findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isEmpty(); }
@@ -105,7 +105,7 @@ private:
         else
             m_arraySizeAndFlags &= ~flag;
     }
-    static inline uint32_t arraySizeAndFlagsFromOther(const ElementData& other, bool isUnique);
+    static inline uint32_t NODELETE arraySizeAndFlagsFromOther(const ElementData& other, bool isUnique);
 
 protected:
     ElementData();
@@ -158,8 +158,8 @@ public:
 
     static constexpr ptrdiff_t attributeArrayMemoryOffset() { return OBJECT_OFFSETOF(ShareableElementData, m_attributeArray); }
 
-    std::span<Attribute> attributes() { return unsafeMakeSpan(m_attributeArray, arraySize()); }
-    std::span<const Attribute> attributes() const { return unsafeMakeSpan(m_attributeArray, arraySize()); }
+    std::span<Attribute> NODELETE attributes() { return unsafeMakeSpan(m_attributeArray, arraySize()); }
+    std::span<const Attribute> NODELETE attributes() const { return unsafeMakeSpan(m_attributeArray, arraySize()); }
 
     Attribute m_attributeArray[0];
 };
@@ -173,10 +173,10 @@ public:
     void addAttribute(const QualifiedName&, const AtomString&);
     void removeAttributeAt(unsigned index);
 
-    Attribute& attributeAt(unsigned index);
-    Attribute* findAttributeByName(const QualifiedName&);
+    Attribute& NODELETE attributeAt(unsigned index);
+    Attribute* NODELETE findAttributeByName(const QualifiedName&);
 
-    std::span<const Attribute> attributes() const LIFETIME_BOUND { return m_attributeVector.span(); }
+    std::span<const Attribute> NODELETE attributes() const LIFETIME_BOUND { return m_attributeVector.span(); }
 
     UniqueElementData();
     explicit UniqueElementData(const ShareableElementData&);
@@ -217,14 +217,14 @@ inline const ImmutableStyleProperties* ElementData::presentationalHintStyle() co
     return nullptr;
 }
 
-inline std::span<const Attribute> ElementData::attributes() const
+inline std::span<const Attribute> ElementData::attributes() const LIFETIME_BOUND
 {
     if (isUnique())
         return uncheckedDowncast<UniqueElementData>(*this).attributes();
     return uncheckedDowncast<ShareableElementData>(*this).attributes();
 }
 
-ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
+ALWAYS_INLINE const Attribute* NODELETE ElementData::findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned index = findAttributeIndexByName(name, shouldIgnoreAttributeCase);
     if (index != attributeNotFound)
@@ -232,7 +232,7 @@ ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomString
     return nullptr;
 }
 
-ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName& name) const
+SUPPRESS_NODELETE ALWAYS_INLINE unsigned NODELETE ElementData::findAttributeIndexByName(const QualifiedName& name) const
 {
     auto attributes = attributeSpan();
     for (auto [i, attribute] : indexedRange(attributes)) {
@@ -244,7 +244,7 @@ ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
+SUPPRESS_NODELETE ALWAYS_INLINE unsigned NODELETE ElementData::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
 {
     auto attributes = attributeSpan();
     if (attributes.empty())
@@ -265,7 +265,7 @@ ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomString& n
     return attributeNotFound;
 }
 
-ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const QualifiedName& name) const
+SUPPRESS_NODELETE ALWAYS_INLINE const Attribute* NODELETE ElementData::findAttributeByName(const QualifiedName& name) const
 {
     for (auto& attribute : attributeSpan()) {
         if (attribute.name().matches(name))
@@ -274,7 +274,7 @@ ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const QualifiedN
     return nullptr;
 }
 
-inline const Attribute& ElementData::attributeAt(unsigned index) const
+inline const Attribute& NODELETE ElementData::attributeAt(unsigned index) const
 {
     return attributeSpan()[index];
 }
@@ -289,7 +289,7 @@ inline void UniqueElementData::removeAttributeAt(unsigned index)
     m_attributeVector.removeAt(index);
 }
 
-inline Attribute& UniqueElementData::attributeAt(unsigned index)
+inline Attribute& NODELETE UniqueElementData::attributeAt(unsigned index)
 {
     return m_attributeVector.at(index);
 }

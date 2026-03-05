@@ -19,12 +19,13 @@
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace videocapturemodule {
 class VideoCaptureModuleV4L2 : public VideoCaptureImpl {
  public:
-  VideoCaptureModuleV4L2();
+  explicit VideoCaptureModuleV4L2(Clock* clock);
   ~VideoCaptureModuleV4L2() override;
   int32_t Init(const char* deviceUniqueId);
   int32_t StartCapture(const VideoCaptureCapability& capability) override;

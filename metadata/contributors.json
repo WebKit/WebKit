@@ -655,6 +655,13 @@
    },
    {
       "emails" : [
+         "anand_srinivasan@apple.com"
+      ],
+      "github" : "asworkjsc",
+      "name" : "Anand Srinivasan"
+   },
+   {
+      "emails" : [
          "andersca@apple.com",
          "acarlsson@apple.com"
       ],
@@ -946,7 +953,8 @@
       "name" : "Anthony Tarbinian",
       "nicks" : [
          "atar"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -1037,9 +1045,21 @@
       "emails" : [
          "a_panta@apple.com"
       ],
-      "expertise" : "Web Inspector",
+      "expertise" : "Web Inspector, WebDriver, Developer Tools",
       "github" : "anujpanta1",
-      "name" : "Anuj Panta"
+      "name" : "Anuj Panta",
+      "nicks" : [
+         "anuj"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "sear-browser-bot@apple.com"
+      ],
+      "github" : "apple-security-bot",
+      "name" : "Apple (SEAR) Security Bot",
+      "status" : "bot"
    },
    {
       "emails" : [
@@ -1915,13 +1935,13 @@
       "emails" : [
          "csaavedra@igalia.com"
       ],
-      "expertise" : "WebKitGTK port, Epiphany developer, HTML Editing",
+      "expertise" : "WebKitGTK, WPE, security",
       "github" : "csaavedra",
       "name" : "Claudio Saavedra",
       "nicks" : [
-         "claudio___"
+         "claudio"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -1948,6 +1968,17 @@
       "github" : "webkit-commit-queue",
       "name" : "Commit Queue",
       "status" : "bot"
+   },
+   {
+      "emails" : [
+         "cobrien22@apple.com",
+         "connor.p.obrien@gmail.com"
+      ],
+      "github" : "connorpobrien",
+      "name" : "Connor O'Brien",
+      "nicks" : [
+         "connorpobrien"
+      ]
    },
    {
       "emails" : [
@@ -2368,6 +2399,14 @@
    },
    {
       "emails" : [
+         "stockley@apple.com",
+         "david@stockley.me"
+      ],
+      "github" : "WDUK",
+      "name" : "David Stockley"
+   },
+   {
+      "emails" : [
          "davidtranhq@gmail.com",
          "david_tran5@apple.com",
          "dtran253@uwo.ca"
@@ -2464,6 +2503,14 @@
       "nicks" : [
          "diorahman"
       ]
+   },
+   {
+      "emails" : [
+         "d_delatoba@apple.com"
+      ],
+      "github" : "diegodelatoba",
+      "name" : "Diego De La Toba",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -3602,6 +3649,13 @@
    },
    {
       "emails" : [
+         "helmut@januschka.com"
+      ],
+      "github" : "hjanuschka",
+      "name" : "Helmut Januschka"
+   },
+   {
+      "emails" : [
          "hhjalmarsson@apple.com"
       ],
       "github" : "HerculesH",
@@ -4090,6 +4144,18 @@
    },
    {
       "emails" : [
+         "m.jason.liu@outlook.com",
+         "m.jason.liu@gmail.com",
+         "cgqaq@chromium.org"
+      ],
+      "github" : "cgqaq",
+      "name" : "Jason Leo",
+      "nicks" : [
+         "cgqaq"
+      ]
+   },
+   {
+      "emails" : [
          "jasonliuwebkit@gmail.com"
       ],
       "name" : "Jason Liu",
@@ -4154,7 +4220,8 @@
          "jean.haberer@hotmail.fr"
       ],
       "github" : "jeanhbr",
-      "name" : "Jean Haberer"
+      "name" : "Jean Haberer",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -4399,6 +4466,18 @@
    },
    {
       "emails" : [
+         "joanne_pan2@apple.com",
+         "jpan0917@gmail.com"
+      ],
+      "github" : "j0pan",
+      "name" : "Joanne Pan",
+      "nicks" : [
+         "jopan",
+         "j0pan"
+      ]
+   },
+   {
+      "emails" : [
          "jturcotte@woboq.com",
          "jocelyn.turcotte@digia.com",
          "jocelyn.turcotte@nokia.com"
@@ -4436,6 +4515,16 @@
       "name" : "Johan K. Jensen",
       "nicks" : [
          "johankj"
+      ]
+   },
+   {
+      "emails" : [
+         "johannes.odland@gmail.com",
+         "johannes@odland.dev"
+      ],
+      "name" : "Johannes Odland",
+      "nicks" : [
+         "johannesodland"
       ]
    },
    {
@@ -4533,7 +4622,8 @@
          "jonbutler@apple.com"
       ],
       "github" : "jon-b-apple",
-      "name" : "Jon Butler"
+      "name" : "Jon Butler",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -4836,6 +4926,18 @@
       "name" : "Justin Schuh",
       "nicks" : [
          "jschuh"
+      ]
+   },
+   {
+      "emails" : [
+         "k_tamkun@apple.com",
+         "kai@tamkun.io"
+      ],
+      "github" : "heimskr",
+      "name" : "Kai Tamkun",
+      "nicks" : [
+         "kai",
+         "heimskr"
       ]
    },
    {
@@ -5968,8 +6070,8 @@
    },
    {
       "emails" : [
-         "mcatanzaro@redhat.com",
          "mcatanzaro@gnome.org",
+         "mcatanzaro@redhat.com",
          "mcatanzaro@igalia.com"
       ],
       "expertise" : "WebKitGTK, Epiphany",
@@ -6824,7 +6926,8 @@
          "pfuachie2@apple.com"
       ],
       "github" : "phinny01",
-      "name" : "Phinehas Fuachie"
+      "name" : "Phinehas Fuachie",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -7233,7 +7336,8 @@
       "name" : "Ronan Turner",
       "nicks" : [
          "ronan-apple"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -7713,6 +7817,7 @@
    },
    {
       "emails" : [
+         "sosuke@bun.com",
          "sosuke@bun.sh",
          "aosukeke@gmail.com"
       ],
@@ -8061,7 +8166,8 @@
       "name" : "Tim Chevalier",
       "nicks" : [
          "tim"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "aliases" : [

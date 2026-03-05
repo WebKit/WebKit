@@ -82,12 +82,6 @@ public:
 
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
-#if USE(CG)
-    RetainPtr<CGContextRef> protectedPlatformContext() const { return platformContext(); }
-#else
-    // On other platforms, the PlatformGraphicsContext type is not refcounted.
-    PlatformGraphicsContext* protectedPlatformContext() const { return platformContext(); }
-#endif
 
     virtual const DestinationColorSpace& colorSpace() const { return DestinationColorSpace::SRGB(); }
 
@@ -106,8 +100,8 @@ public:
     Pattern* fillPattern() const { return fillBrush().pattern(); }
     void setFillBrush(const SourceBrush& brush) { m_state.setFillBrush(brush); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
     void setFillColor(const Color& color) { m_state.setFillColor(color); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
-    void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setFillGradient(WTFMove(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
-    void setFillPattern(Ref<Pattern>&& pattern) { m_state.setFillPattern(WTFMove(pattern)); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
+    void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setFillGradient(WTF::move(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
+    void setFillPattern(Ref<Pattern>&& pattern) { m_state.setFillPattern(WTF::move(pattern)); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
 
     WindRule fillRule() const { return m_state.fillRule(); }
     void setFillRule(WindRule fillRule) { m_state.setFillRule(fillRule); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillRule)); }
@@ -119,8 +113,8 @@ public:
     Pattern* strokePattern() const { return strokeBrush().pattern(); }
     void setStrokeBrush(const SourceBrush& brush) { m_state.setStrokeBrush(brush); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
     void setStrokeColor(const Color& color) { m_state.setStrokeColor(color); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
-    void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setStrokeGradient(WTFMove(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
-    void setStrokePattern(Ref<Pattern>&& pattern) { m_state.setStrokePattern(WTFMove(pattern)); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
+    void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setStrokeGradient(WTF::move(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
+    void setStrokePattern(Ref<Pattern>&& pattern) { m_state.setStrokePattern(WTF::move(pattern)); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
 
     float strokeThickness() const { return m_state.strokeThickness(); }
     void setStrokeThickness(float thickness) { m_state.setStrokeThickness(thickness); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeThickness)); }
@@ -216,6 +210,7 @@ public:
     virtual void fillPath(const Path&) = 0;
     virtual void strokePath(const Path&) = 0;
     WEBCORE_EXPORT virtual void drawPath(const Path&);
+    WEBCORE_EXPORT virtual void strokeArc(const PathArc&);
 
     virtual void fillEllipse(const FloatRect& ellipse) { fillEllipseAsPath(ellipse); }
     virtual void strokeEllipse(const FloatRect& ellipse) { strokeEllipseAsPath(ellipse); }
@@ -258,7 +253,7 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatRect&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
 
-    WEBCORE_EXPORT virtual void drawNativeImage(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
+    WEBCORE_EXPORT virtual void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 
     WEBCORE_EXPORT virtual void drawSystemImage(SystemImage&, const FloatRect&);
 
@@ -283,7 +278,7 @@ public:
     ImageDrawResult drawMultiRepresentationHEIC(Image&, const Font&, const FloatRect& destination, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
 #endif
 
-    virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
+    virtual void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
     WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
     WEBCORE_EXPORT virtual void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);

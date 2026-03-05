@@ -77,11 +77,11 @@ CachedResourceHandle<CachedScript> LoadableSpeculationRules::requestSpeculationR
     options.fetchPriority = RequestPriority::Auto;
     options.destination = FetchOptionsDestination::Speculationrules;
 
-    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTFMove(options), document, ""_s);
+    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, ""_s);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setPriority(ResourceLoadPriority::Low);
 
-    return document.protectedCachedResourceLoader()->requestScript(WTFMove(request)).value_or(nullptr);
+    return protect(document.cachedResourceLoader())->requestScript(WTF::move(request)).value_or(nullptr);
 }
 
 bool LoadableSpeculationRules::load(Document& document, const URL& url)
@@ -100,7 +100,7 @@ bool LoadableSpeculationRules::load(Document& document, const URL& url)
     return true;
 }
 
-// https://html.spec.whatwg.org/C#the-speculation-rules-header
+// https://html.spec.whatwg.org/C#process-the-speculation-rules-header
 // 3.4.2.2. processResponseConsumeBody
 void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
@@ -124,12 +124,7 @@ void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const Ne
     }
 
     // 4. Let bodyText be the result of UTF-8 decoding bodyBytes.
-    if (resource.encoding() != "UTF-8"_s) {
-        document->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Invalid speculation rules encoding "_s, m_url.string()));
-        return;
-    }
-
-    String speculationRulesText = m_cachedScript->script().toString();
+    String speculationRulesText = m_cachedScript->script(CachedScript::ShouldDecodeAsUTF8Only::Yes).toString();
     if (speculationRulesText.isEmpty())
         return;
 
@@ -137,7 +132,8 @@ void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const Ne
         ScriptSourceCode sourceCode(speculationRulesText, JSC::SourceTaintedOrigin::Untainted, URL(m_url), TextPosition(), JSC::SourceProviderSourceType::Program);
         // 5. Let ruleSet be the result of parsing a speculation rule set string given bodyText, document, and response's URL. If this throws an exception, then abort these steps.
         // 6. Append ruleSet to document's speculation rule sets.
-        if (frame->checkedScript()->registerSpeculationRules(sourceCode, m_url)) {
+        // Header-based rules use the Document as the source node.
+        if (protect(frame->script())->registerSpeculationRules(*document, sourceCode, m_url)) {
             // 7. Consider speculative loads for document.
             document->considerSpeculationRules();
         }

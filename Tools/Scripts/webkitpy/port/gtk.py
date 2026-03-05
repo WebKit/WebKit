@@ -37,7 +37,6 @@ import webkitpy
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.glib import GLibPort
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.westondriver import WestonDriver
@@ -96,12 +95,6 @@ class GtkPort(GLibPort):
                 _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs")
 
         return environment
-
-    def _generate_all_test_configurations(self):
-        configurations = []
-        for build_type in self.ALL_BUILD_TYPES:
-            configurations.append(TestConfiguration(version=self.version_name(), architecture='x86', build_type=build_type))
-        return configurations
 
     def _path_to_driver(self):
         return self._built_executables_path(self.driver_name())
@@ -169,7 +162,10 @@ class GtkPort(GLibPort):
     def configuration_for_upload(self, host=None):
         configuration = super(GtkPort, self).configuration_for_upload(host=host)
         configuration['platform'] = 'GTK'
-        configuration['version_name'] = self._display_server.capitalize() if self._display_server else 'Xvfb'
+        # resultsdbpy frontend tends to group multiple versions in a single timeline
+        # when they share a version name. As we are using stable versions since 305707@main,
+        # let's avoid this grouping for now due to issues like https://webkit.org/b/306091.
+        configuration.pop('version_name', None)
         return configuration
 
     def get_browser_path(self, browser_name):

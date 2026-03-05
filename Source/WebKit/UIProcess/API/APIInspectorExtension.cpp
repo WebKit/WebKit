@@ -60,7 +60,7 @@ void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& t
         return;
     }
 
-    extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTFMove(completionHandler));
+    extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTF::move(completionHandler));
 }
 
 void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
@@ -71,7 +71,7 @@ void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const s
         return;
     }
 
-    extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTFMove(completionHandler));
+    extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTF::move(completionHandler));
 }
 
 void InspectorExtension::navigateTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& sourceURL, WTF::CompletionHandler<void(const std::optional<Inspector::ExtensionError>)>&& completionHandler)
@@ -82,7 +82,7 @@ void InspectorExtension::navigateTab(const Inspector::ExtensionTabID& extensionT
         return;
     }
 
-    extensionControllerProxy->navigateTabForExtension(extensionTabID, sourceURL, WTFMove(completionHandler));
+    extensionControllerProxy->navigateTabForExtension(extensionTabID, sourceURL, WTF::move(completionHandler));
 }
 
 void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&& completionHandler)
@@ -93,7 +93,7 @@ void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCa
         return;
     }
 
-    extensionControllerProxy->reloadForExtension(m_identifier, ignoreCache, userAgent, injectedScript, WTFMove(completionHandler));
+    extensionControllerProxy->reloadForExtension(m_identifier, ignoreCache, userAgent, injectedScript, WTF::move(completionHandler));
 }
 
 // For testing.
@@ -106,7 +106,7 @@ void InspectorExtension::evaluateScriptInExtensionTab(const Inspector::Extension
         return;
     }
 
-    extensionControllerProxy->evaluateScriptInExtensionTab(extensionTabID, scriptSource, WTFMove(completionHandler));
+    extensionControllerProxy->evaluateScriptInExtensionTab(extensionTabID, scriptSource, WTF::move(completionHandler));
 }
 
 } // namespace API

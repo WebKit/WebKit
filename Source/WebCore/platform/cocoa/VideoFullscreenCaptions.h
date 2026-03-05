@@ -42,7 +42,6 @@ public:
     WEBCORE_EXPORT void setTrackRepresentationHidden(bool);
 
     WEBCORE_EXPORT virtual CALayer* captionsLayer();
-    RetainPtr<CALayer> protectedCaptionsLayer();
     WEBCORE_EXPORT void setCaptionsFrame(const CGRect&);
     WEBCORE_EXPORT virtual void setupCaptionsLayer(CALayer *parent, const FloatSize&);
     WEBCORE_EXPORT void removeCaptionsLayer();

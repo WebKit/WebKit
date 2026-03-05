@@ -145,6 +145,11 @@ void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
     notImplemented();
 }
 
+void TextChecker::requestExtendedCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
+{
+    notImplemented();
+}
+
 #if USE(UNIFIED_TEXT_CHECKING)
 Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag, StringView, int32_t, OptionSet<TextCheckingType>, bool)
 {

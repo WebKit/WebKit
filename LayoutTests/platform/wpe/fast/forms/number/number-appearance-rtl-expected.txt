@@ -48,35 +48,35 @@ layer at (0,0) size 800x336
         RenderText {#text} at (0,0) size 0x0
 layer at (639,19) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
-    RenderText {#text} at (142,0) size 8x17
+    RenderText {#text} at (142,0) size 8x18
       text run at (142,0) width 8: "1"
 layer at (639,59) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
-    RenderText {#text} at (142,0) size 8x17
+    RenderText {#text} at (142,0) size 8x18
       text run at (142,0) width 8: "2"
 layer at (27,99) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
-    RenderText {#text} at (142,0) size 8x17
+    RenderText {#text} at (142,0) size 8x18
       text run at (142,0) width 8: "3"
 layer at (27,139) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
-    RenderText {#text} at (118,0) size 32x17
+    RenderText {#text} at (118,0) size 32x18
       text run at (118,0) width 32: "1234"
 layer at (11,179) size 151x18
   RenderBlock {DIV} at (0,0) size 151x18
-    RenderText {#text} at (0,0) size 8x17
+    RenderText {#text} at (0,0) size 8x18
       text run at (0,0) width 8: "5"
 layer at (11,219) size 151x18
   RenderBlock {DIV} at (0,0) size 151x18
-    RenderText {#text} at (0,0) size 8x17
+    RenderText {#text} at (0,0) size 8x18
       text run at (0,0) width 8: "6"
 layer at (27,259) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
-    RenderText {#text} at (142,0) size 8x17
+    RenderText {#text} at (142,0) size 8x18
       text run at (142,0) width 8: "7"
 layer at (27,299) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
-    RenderText {#text} at (142,0) size 8x17
+    RenderText {#text} at (142,0) size 8x18
       text run at (142,0) width 8: "8"
 layer at (623,16) size 16x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 16x24

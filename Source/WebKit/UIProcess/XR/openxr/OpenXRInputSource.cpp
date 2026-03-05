@@ -45,7 +45,7 @@ constexpr auto s_handInteractionPinchPressThreshold { 0.9f };
 std::unique_ptr<OpenXRInputSource> OpenXRInputSource::create(XrInstance instance, XrSession session, PlatformXR::XRHandedness handedness, PlatformXR::InputSourceHandle handle, OpenXRSystemProperties&& systemProperties)
 {
     auto input = std::unique_ptr<OpenXRInputSource>(new OpenXRInputSource(instance, session, handedness, handle));
-    if (XR_FAILED(input->initialize(WTFMove(systemProperties))))
+    if (XR_FAILED(input->initialize(WTF::move(systemProperties))))
         return nullptr;
     return input;
 }
@@ -64,8 +64,8 @@ OpenXRInputSource::~OpenXRInputSource()
         xrDestroyActionSet(m_actionSet);
     if (m_gripSpace != XR_NULL_HANDLE)
         xrDestroySpace(m_gripSpace);
-    if (m_pointerSpace != XR_NULL_HANDLE)
-        xrDestroySpace(m_pointerSpace);
+    if (m_aimSpace != XR_NULL_HANDLE)
+        xrDestroySpace(m_aimSpace);
 }
 
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
@@ -85,8 +85,8 @@ XrResult OpenXRInputSource::initialize(OpenXRSystemProperties&& systemProperties
 
     RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_POSE_INPUT, makeString(prefix, "_grip"_s), m_gripAction));
     RETURN_RESULT_IF_FAILED(createActionSpace(m_gripAction, m_gripSpace));
-    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_POSE_INPUT, makeString(prefix, "_pointer"_s), m_pointerAction));
-    RETURN_RESULT_IF_FAILED(createActionSpace(m_pointerAction, m_pointerSpace));
+    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_POSE_INPUT, makeString(prefix, "_aim"_s), m_aimAction));
+    RETURN_RESULT_IF_FAILED(createActionSpace(m_aimAction, m_aimSpace));
 
 #if defined(XR_EXT_hand_interaction)
     if (OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME ""_span)) {
@@ -159,7 +159,7 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
             continue;
 
         CHECK_XRCMD(createBinding(profile.path, m_gripAction, makeString(m_subactionPathName, s_inputGripPath), bindings));
-        CHECK_XRCMD(createBinding(profile.path, m_pointerAction, makeString(m_subactionPathName, s_inputAimPath), bindings));
+        CHECK_XRCMD(createBinding(profile.path, m_aimAction, makeString(m_subactionPathName, s_inputAimPath), bindings));
 
 #if defined(XR_EXT_hand_interaction)
         if (OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME ""_span)) {
@@ -251,7 +251,7 @@ std::optional<PlatformXR::FrameData::InputSource> OpenXRInputSource::collectInpu
     data.targetRayMode = PlatformXR::XRTargetRayMode::TrackedPointer;
     data.profiles = m_profiles;
 
-    getPose(m_pointerSpace, localSpace, frameState, data.pointerOrigin);
+    getPose(m_aimSpace, localSpace, frameState, data.pointerOrigin);
     PlatformXR::FrameData::InputSourcePose gripPose;
     if (XR_SUCCEEDED(getPose(m_gripSpace, localSpace, frameState, gripPose)))
         data.gripOrigin = gripPose;

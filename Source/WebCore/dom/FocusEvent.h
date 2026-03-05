@@ -34,11 +34,11 @@ namespace WebCore {
 class Node;
 
 class FocusEvent final : public UIEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FocusEvent);
+    WTF_MAKE_TZONE_ALLOCATED(FocusEvent);
 public:
     static Ref<FocusEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
     {
-        return adoptRef(*new FocusEvent(type, canBubble, cancelable, WTFMove(view), detail, WTFMove(relatedTarget)));
+        return adoptRef(*new FocusEvent(type, canBubble, cancelable, WTF::move(view), detail, WTF::move(relatedTarget)));
     }
 
     static Ref<FocusEvent> createForBindings()
@@ -52,9 +52,9 @@ public:
         RefPtr<EventTarget> relatedTarget;
     };
 
-    static Ref<FocusEvent> create(const AtomString& type, const Init& initializer)
+    static Ref<FocusEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new FocusEvent(type, initializer));
+        return adoptRef(*new FocusEvent(type, WTF::move(initializer)));
     }
 
     EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
@@ -63,11 +63,9 @@ public:
 private:
     FocusEvent();
     FocusEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&, int, RefPtr<EventTarget>&&);
-    FocusEvent(const AtomString& type, const Init&);
+    FocusEvent(const AtomString& type, Init&&);
 
-    bool isFocusEvent() const final;
-
-    void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) final { m_relatedTarget = WTFMove(relatedTarget); }
+    void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) final { m_relatedTarget = WTF::move(relatedTarget); }
 
     RefPtr<EventTarget> m_relatedTarget;
 };

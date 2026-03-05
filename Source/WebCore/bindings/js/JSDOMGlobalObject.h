@@ -28,6 +28,9 @@
 
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/WeakGCMap.h>
+#if ENABLE(WEBASSEMBLY)
+#include <JavaScriptCore/WebAssemblyCompileOptions.h>
+#endif
 #include <wtf/Compiler.h>
 #include <wtf/Forward.h>
 
@@ -68,7 +71,7 @@ public:
     DOMGuardedObjectSet& guardedObjects() WTF_REQUIRES_LOCK(m_gcLock) { return m_guardedObjects; }
     DOMConstructors& constructors() { return m_constructors; }
 
-    // No locking is necessary for call sites that do not mutate the containers and are not on the GC thread.
+    // No locking is necessary for call sites that do not mutate the containers and are not on a GC thread.
     const JSDOMStructureMap& structures() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
     const DOMGuardedObjectSet& guardedObjects() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
     const DOMConstructors& constructors() const { ASSERT(!Thread::mayBeGCThread()); return m_constructors; }
@@ -77,7 +80,6 @@ public:
     inline JSDOMStructureMap& structures(NoLockingNecessaryTag);
     inline DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag);
 
-    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
     ScriptExecutionContext* scriptExecutionContext() const;
 
     static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
@@ -127,8 +129,8 @@ protected:
     static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
 
 #if ENABLE(WEBASSEMBLY)
-    static JSC::JSPromise* compileStreaming(JSC::JSGlobalObject*, JSC::JSValue);
-    static JSC::JSPromise* instantiateStreaming(JSC::JSGlobalObject*, JSC::JSValue, JSC::JSObject*);
+    static JSC::JSPromise* compileStreaming(JSC::JSGlobalObject*, JSC::JSValue, std::optional<JSC::WebAssemblyCompileOptions>&&);
+    static JSC::JSPromise* instantiateStreaming(JSC::JSGlobalObject*, JSC::JSValue, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&&);
 #endif
 
     static JSC::Identifier moduleLoaderResolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);

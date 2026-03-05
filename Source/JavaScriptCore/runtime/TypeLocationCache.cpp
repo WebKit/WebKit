@@ -48,7 +48,7 @@ std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariable
         location->m_sourceID = sourceID;
         location->m_divotStart = start;
         location->m_divotEnd = end;
-        location->m_globalTypeSet = WTFMove(globalTypeSet);
+        location->m_globalTypeSet = WTF::move(globalTypeSet);
         return location;
     });
     return std::pair { result.iterator->value, result.isNewEntry };

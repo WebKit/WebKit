@@ -62,7 +62,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> sendMessageToWorker(const String& workerId, const String& message);
 
     // InspectorInstrumentation
-    bool shouldWaitForDebuggerOnStart() const;
+    bool shouldWaitForDebuggerOnStart() const { return m_enabled; }
     void workerStarted(WorkerInspectorProxy&);
     void workerTerminated(WorkerInspectorProxy&);
 

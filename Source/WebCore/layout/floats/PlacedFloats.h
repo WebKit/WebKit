@@ -28,7 +28,7 @@
 #include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutElementBox.h>
 #include <WebCore/LayoutShape.h>
-#include <wtf/OptionSet.h>
+#include <wtf/EnumSet.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class Rect;
 // they get converted as if they had the same inline direction as BFC. What it simply means that
 // PlacedFloats::Item::isStartPositioned is always relative to BFC, regardless of what it is relative to in its IFC.
 class PlacedFloats {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PlacedFloats);
+    WTF_MAKE_TZONE_ALLOCATED(PlacedFloats);
 public:
     PlacedFloats(const ElementBox& blockFormattingContextRoot);
 
@@ -102,11 +102,11 @@ public:
 private:
     CheckedRef<const ElementBox> m_blockFormattingContextRoot;
     List m_list;
-    enum class PositionType {
-        Start = 1 << 0,
-        End  = 1 << 1
+    enum class PositionType : bool {
+        Start,
+        End
     };
-    OptionSet<PositionType> m_positionTypes;
+    EnumSet<PositionType> m_positionTypes;
     WritingMode m_writingMode;
 };
 

@@ -42,8 +42,9 @@ void InterpolateFirstSubframe(float last_factor,
   const int n = dchecked_cast<int>(subframe.size());
   constexpr float p = kAttackFirstSubframeInterpolationPower;
   for (int i = 0; i < n; ++i) {
-    subframe[i] = std::pow(1.f - i / n, p) * (last_factor - current_factor) +
-                  current_factor;
+    float t = static_cast<float>(i) / n;
+    subframe[i] =
+        std::pow(1.f - t, p) * (last_factor - current_factor) + current_factor;
   }
 }
 

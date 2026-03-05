@@ -39,10 +39,10 @@ int CBB_finish_i2d(CBB *cbb, uint8_t **outp) {
     OPENSSL_free(der);
     return -1;
   }
-  if (outp != NULL) {
-    if (*outp == NULL) {
+  if (outp != nullptr) {
+    if (*outp == nullptr) {
       *outp = der;
-      der = NULL;
+      der = nullptr;
     } else {
       OPENSSL_memcpy(*outp, der, der_len);
       *outp += der_len;

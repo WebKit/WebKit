@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioHardwareListenerProxy);
 
 RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteAudioHardwareListenerIdentifier&& identifier)
     : m_gpuConnection(gpuConnection)
-    , m_identifier(WTFMove(identifier))
+    , m_identifier(WTF::move(identifier))
     , m_listener(WebCore::AudioHardwareListener::create(*this))
 {
     audioOutputDeviceChanged();

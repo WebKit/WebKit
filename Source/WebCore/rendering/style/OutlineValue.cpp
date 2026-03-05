@@ -4,7 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,22 +35,17 @@ namespace WebCore {
 
 bool OutlineValue::nonZero() const
 {
-    return width() && style() != OutlineStyle::None;
-}
-
-bool OutlineValue::isTransparent() const
-{
-    return m_color.isResolvedColor() && m_color.resolvedColor().isValid() && !m_color.resolvedColor().isVisible();
+    return outlineWidth && static_cast<OutlineStyle>(outlineStyle) != OutlineStyle::None;
 }
 
 bool OutlineValue::isVisible() const
 {
-    return nonZero() && !isTransparent();
+    return nonZero() && !outlineColor.isKnownTransparent();
 }
 
-TextStream& operator<<(TextStream& ts, const OutlineValue& outlineValue)
+TextStream& operator<<(TextStream& ts, const OutlineValue& value)
 {
-    return ts << outlineValue.width() << ' ' << outlineValue.style() << ' ' << outlineValue.color() << " [offset "_s << outlineValue.offset() << ']';
+    return ts << value.outlineWidth << ' ' << static_cast<OutlineStyle>(value.outlineStyle) << ' ' << value.outlineColor << " [offset "_s << value.outlineOffset << ']';
 }
 
 } // namespace WebCore

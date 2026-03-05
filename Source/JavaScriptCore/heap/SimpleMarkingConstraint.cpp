@@ -36,8 +36,8 @@ SimpleMarkingConstraint::SimpleMarkingConstraint(
     MarkingConstraintExecutorPair&& executors,
     ConstraintVolatility volatility, ConstraintConcurrency concurrency,
     ConstraintParallelism parallelism)
-    : MarkingConstraint(WTFMove(abbreviatedName), WTFMove(name), volatility, concurrency, parallelism)
-    , m_executors(WTFMove(executors))
+    : MarkingConstraint(WTF::move(abbreviatedName), WTF::move(name), volatility, concurrency, parallelism)
+    , m_executors(WTF::move(executors))
 {
 }
 

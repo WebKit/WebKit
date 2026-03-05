@@ -43,13 +43,13 @@ class AudioDSPKernel {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioDSPKernel);
     WTF_MAKE_NONCOPYABLE(AudioDSPKernel);
 public:
-    AudioDSPKernel(AudioDSPKernelProcessor* kernelProcessor)
+    explicit AudioDSPKernel(AudioDSPKernelProcessor* kernelProcessor)
         : m_kernelProcessor(kernelProcessor)
         , m_sampleRate(kernelProcessor->sampleRate())
     {
     }
 
-    AudioDSPKernel(float sampleRate)
+    explicit AudioDSPKernel(float sampleRate)
         : m_sampleRate(sampleRate)
     {
     }
@@ -73,6 +73,8 @@ public:
     virtual double tailTime() const = 0;
     virtual double latencyTime() const = 0;
     virtual bool requiresTailProcessing() const = 0;
+
+    virtual bool isWaveShaperDSPKernel() const { return false; }
 
 protected:
     CheckedPtr<AudioDSPKernelProcessor> m_kernelProcessor;

@@ -23,20 +23,6 @@
     ::webrtc::Thread::Current()->SleepMs(1);                              \
   }
 
-// This returns the result of the test in res, so that we don't re-evaluate
-// the expression in the XXXX_WAIT macros below, since that causes problems
-// when the expression is only true the first time you check it.
-#define WAIT_(ex, timeout, res)                                             \
-  do {                                                                      \
-    int64_t wait_start = ::webrtc::SystemTimeMillis();                      \
-    res = (ex) && true;                                                     \
-    while (!res && ::webrtc::SystemTimeMillis() < wait_start + (timeout)) { \
-      ::webrtc::Thread::Current()->ProcessMessages(0);                      \
-      ::webrtc::Thread::Current()->SleepMs(1);                              \
-      res = (ex) && true;                                                   \
-    }                                                                       \
-  } while (0)
-
 // Wait until "ex" is true, or "timeout" expires, using fake clock where
 // messages are processed every millisecond.
 // TODO(pthatcher): Allow tests to control how many milliseconds to advance.

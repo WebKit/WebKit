@@ -362,6 +362,12 @@ enum Opcode : uint8_t {
     // to be able to perform such optimizations.
     WasmBoundsCheck,
 
+    WasmStructGet,
+    WasmStructSet,
+    WasmStructNew,
+    WasmRefCast,
+    WasmRefTest,
+
     // SIMD instructions
     VectorExtractLane,
     VectorReplaceLane,

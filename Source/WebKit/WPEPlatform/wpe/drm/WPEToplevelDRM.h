@@ -39,8 +39,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_TOPLEVEL_DRM (wpe_toplevel_drm_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEToplevelDRM, wpe_toplevel_drm, WPE, TOPLEVEL_DRM, WPEToplevel)
 
-WPE_API WPEToplevel *wpe_toplevel_drm_new (WPEDisplayDRM *display);
-
 G_END_DECLS
 
 #endif /* WPEToplevelDRM_h */

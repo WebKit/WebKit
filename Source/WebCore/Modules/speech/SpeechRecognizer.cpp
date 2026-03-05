@@ -41,9 +41,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognizer);
 
-SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, UniqueRef<SpeechRecognitionRequest>&& request)
-    : m_delegateCallback(WTFMove(delegateCallback))
-    , m_request(WTFMove(request))
+SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, Ref<SpeechRecognitionRequest>&& request)
+    : m_delegateCallback(WTF::move(delegateCallback))
+    , m_request(WTF::move(request))
 #if HAVE(SPEECHRECOGNIZER)
     , m_currentAudioSampleTime(PAL::kCMTimeZero)
 #endif
@@ -96,13 +96,13 @@ void SpeechRecognizer::start(Ref<RealtimeMediaSource>&& source, bool mockSpeechR
 {
     if (!startRecognition(mockSpeechRecognitionEnabled, clientIdentifier(), m_request->lang(), m_request->continuous(), m_request->interimResults(), m_request->maxAlternatives())) {
         auto error = SpeechRecognitionError { SpeechRecognitionErrorType::ServiceNotAllowed, "Failed to start recognition"_s };
-        m_delegateCallback(SpeechRecognitionUpdate::createError(clientIdentifier(), WTFMove(error)));
+        m_delegateCallback(SpeechRecognitionUpdate::createError(clientIdentifier(), WTF::move(error)));
         return;
     }
 
     m_state = State::Running;
     m_delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::Start));
-    startCapture(WTFMove(source));
+    startCapture(WTF::move(source));
 }
 
 void SpeechRecognizer::startCapture(Ref<RealtimeMediaSource>&& source)
@@ -117,7 +117,7 @@ void SpeechRecognizer::startCapture(Ref<RealtimeMediaSource>&& source)
             checkedThis->m_delegateCallback(update);
     };
 
-    m_source = makeUnique<SpeechRecognitionCaptureSource>(clientIdentifier(), WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source));
+    m_source = makeUnique<SpeechRecognitionCaptureSource>(clientIdentifier(), WTF::move(dataCallback), WTF::move(stateUpdateCallback), WTF::move(source));
 }
 
 #endif

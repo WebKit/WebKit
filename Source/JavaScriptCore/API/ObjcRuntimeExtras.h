@@ -37,8 +37,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 inline bool protocolImplementsProtocol(Protocol *candidate, Protocol *target)
 {
     auto protocolProtocols = protocol_copyProtocolListSpan(candidate);
-    for (auto* protocolProtocol : protocolProtocols.span()) {
-        if (protocol_isEqual(protocolProtocol, target))
+    for (RetainPtr protocolProtocol : protocolProtocols.span()) {
+        if (protocol_isEqual(protocolProtocol.get(), target))
             return true;
     }
     return false;
@@ -60,22 +60,22 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
 
     bool stop = false;
     while (!worklist.isEmpty()) {
-        Protocol *protocol = worklist.last();
+        RetainPtr protocol = worklist.last();
         worklist.removeLast();
 
         // Are we encountering this Protocol for the first time?
-        if (!visited.add((__bridge void*)protocol).isNewEntry)
+        if (!visited.add((__bridge void*)protocol.get()).isNewEntry)
             continue;
 
         // If it implements the protocol, make the callback.
-        if (protocolImplementsProtocol(protocol, target)) {
-            callback(protocol, stop);
+        if (protocolImplementsProtocol(protocol.get(), target)) {
+            callback(protocol.get(), stop);
             if (stop)
                 break;
         }
 
         // Add incorporated protocols to the worklist.
-        worklist.append(protocol_copyProtocolListSpan(protocol).span());
+        worklist.append(protocol_copyProtocolListSpan(protocol.get()).span());
     }
 }
 
@@ -138,7 +138,7 @@ public:
         m_buffer = fastAlignedMalloc(alignment, size);
     }
 
-    ~StructBuffer() { fastAlignedFree(m_buffer); }
+    ~StructBuffer() { fastFree(m_buffer); }
     operator void*() const { return m_buffer; }
 
 private:

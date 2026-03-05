@@ -33,11 +33,12 @@
 #include "Path.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayerModelObject.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleOffsetAnchor.h"
 #include "StyleOffsetDistance.h"
 #include "StyleOffsetPath.h"
 #include "StyleOffsetPosition.h"
+#include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
 
 namespace WebCore {
@@ -61,21 +62,21 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
     auto clonedBackdropFilter = backdropFilter.clone();
 
     return {
-        WTFMove(clonedOpacity),
-        WTFMove(clonedTransformOperationData),
-        WTFMove(clonedTransformOrigin),
-        WTFMove(clonedTransformBox),
-        WTFMove(clonedTransform),
-        WTFMove(clonedTranslate),
-        WTFMove(clonedScale),
-        WTFMove(clonedRotate),
-        WTFMove(clonedOffsetPath),
-        WTFMove(clonedOffsetDistance),
-        WTFMove(clonedOffsetPosition),
-        WTFMove(clonedOffsetAnchor),
-        WTFMove(clonedOffsetRotate),
-        WTFMove(clonedFilter),
-        WTFMove(clonedBackdropFilter)
+        WTF::move(clonedOpacity),
+        WTF::move(clonedTransformOperationData),
+        WTF::move(clonedTransformOrigin),
+        WTF::move(clonedTransformBox),
+        WTF::move(clonedTransform),
+        WTF::move(clonedTranslate),
+        WTF::move(clonedScale),
+        WTF::move(clonedRotate),
+        WTF::move(clonedOffsetPath),
+        WTF::move(clonedOffsetDistance),
+        WTF::move(clonedOffsetPosition),
+        WTF::move(clonedOffsetAnchor),
+        WTF::move(clonedOffsetRotate),
+        WTF::move(clonedFilter),
+        WTF::move(clonedBackdropFilter)
     };
 }
 
@@ -112,6 +113,8 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
 
     // FIXME: RenderStyle::applyCSSTransform uses `transformOperationData.boundingBox` for all the reference boxes, but this uses a mixture of `transformOperationData.boundingBox` and the passed in `borderBoxSize`. Instead, probably `TransformOperationData` should be passed in directly and `borderBoxRect` removed.
 
+    auto zoom = style.usedZoomForLength();
+
     opacity = Style::evaluate<AcceleratedEffectOpacity>(style.opacity());
     transformBox = toAcceleratedEffectTransformBox(style.transformBox());
     transform = Style::toPlatform(style.transform(), borderBoxSize);
@@ -120,20 +123,22 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     rotate = Style::toPlatform(style.rotate(), borderBoxSize);
 
     if (!style.offsetPath().isNone() && transformOperationData) {
-        if (auto path = Style::tryPath(style.offsetPath(), *transformOperationData)) {
-            transformOrigin = { .value = style.computeTransformOrigin(transformOperationData->boundingBox).xy() };
+        if (auto path = Style::tryPath(style.offsetPath(), *transformOperationData, zoom)) {
+            transformOrigin = { .value = Style::TransformResolver::computeTransformOrigin(style, transformOperationData->boundingBox).xy() };
             offsetPath = Style::toPlatform(style.offsetPath());
-            offsetDistance = Style::evaluate<AcceleratedEffectOffsetDistance>(style.offsetDistance(), path->length(), Style::ZoomNeeded { });
+            offsetDistance = Style::evaluate<AcceleratedEffectOffsetDistance>(style.offsetDistance(), path->length(), zoom);
             offsetRotate = Style::evaluate<AcceleratedEffectOffsetRotate>(style.offsetRotate());
-            offsetAnchor = Style::evaluate<AcceleratedEffectOffsetAnchor>(style.offsetAnchor(), transformOperationData->boundingBox.size(), Style::ZoomNeeded { });
+            offsetAnchor = Style::evaluate<AcceleratedEffectOffsetAnchor>(style.offsetAnchor(), transformOperationData->boundingBox.size(), zoom);
 
             // FIXME: Its not clear if this is the right bounding box for this. MotionPath::motionPathDataForRenderer() uses MotionPathData::containingBlockBoundingRect and its not apparent that they are necessarily the same rect.
-            offsetPosition = Style::evaluate<AcceleratedEffectOffsetPosition>(style.offsetPosition(), transformOperationData->boundingBox.size(), Style::ZoomNeeded { });
+            offsetPosition = Style::evaluate<AcceleratedEffectOffsetPosition>(style.offsetPosition(), transformOperationData->boundingBox.size(), zoom);
         }
     }
 
-    filter = Style::toPlatform(style.filter());
-    backdropFilter = Style::toPlatform(style.backdropFilter());
+    if (!style.filter().hasReferenceFilter())
+        filter = Style::toPlatform(style.filter(), style);
+    if (!style.backdropFilter().hasReferenceFilter())
+        backdropFilter = Style::toPlatform(style.backdropFilter(), style);
 }
 
 TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const FloatRect& boundingBox) const
@@ -160,7 +165,8 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
 
     // 6. Translate and rotate by the transform specified by offset.
     if (transformOperationData && offsetPath) {
-        if (auto path = Style::tryPath(Style::OffsetPath { *offsetPath }, *transformOperationData)) {
+        // Passing the special `none` zoom factor is correct here as zoom was previously applied when `offsetPath` was initialized.
+        if (auto path = Style::tryPath(Style::OffsetPath { *offsetPath }, *transformOperationData, Style::ZoomFactor::none())) {
             // FIXME: This transform of `transformOrigin` is not present in the overload of MotionPath::applyMotionPathTransform() that takes a `RenderStyle`.
             auto computedTransformOrigin = boundingBox.location() + transformOrigin.value;
 

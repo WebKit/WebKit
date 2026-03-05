@@ -190,20 +190,20 @@ void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& 
 
 void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 {
-    BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
+    BidiResolver<TextRunIterator, SimpleBidiCharacterRun> bidiResolver;
     bidiResolver.setStatus(BidiStatus(run.direction(), run.directionalOverride()));
     bidiResolver.setPositionIgnoringNestedIsolates(TextRunIterator(&run, 0));
 
     // FIXME: This ownership should be reversed. We should pass BidiRunList
     // to BidiResolver in createBidiRunsForLine.
-    BidiRunList<BidiCharacterRun>& bidiRuns = bidiResolver.runs();
+    auto& bidiRuns = bidiResolver.runs();
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
 
     if (!bidiRuns.runCount())
         return;
 
     FloatPoint currPoint = point;
-    BidiCharacterRun* bidiRun = bidiRuns.firstRun();
+    auto* bidiRun = bidiRuns.firstRun();
     while (bidiRun) {
         TextRun subrun = run.subRun(bidiRun->start(), bidiRun->stop() - bidiRun->start());
         bool isRTL = bidiRun->level() % 2;
@@ -388,7 +388,7 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     if (!image)
         return;
     auto imageLogicalSize = image->logicalSize();
-    drawConsumingImageBuffer(WTFMove(image), FloatRect(destination, imageLogicalSize), FloatRect({ }, imageLogicalSize), imagePaintingOptions);
+    drawConsumingImageBuffer(WTF::move(image), FloatRect(destination, imageLogicalSize), FloatRect({ }, imageLogicalSize), imagePaintingOptions);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatRect& destination, ImagePaintingOptions imagePaintingOptions)
@@ -396,7 +396,7 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     if (!image)
         return;
     auto imageLogicalSize = image->logicalSize();
-    drawConsumingImageBuffer(WTFMove(image), destination, FloatRect({ }, imageLogicalSize), imagePaintingOptions);
+    drawConsumingImageBuffer(WTF::move(image), destination, FloatRect({ }, imageLogicalSize), imagePaintingOptions);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
@@ -407,7 +407,7 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     FloatRect scaledSource = source;
     scaledSource.scale(image->resolutionScale());
-    if (auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(image)))
+    if (auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(image)))
         drawNativeImage(*nativeImage, destination, scaledSource, options);
 }
 
@@ -416,8 +416,8 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const Fl
     auto result = filter.apply(sourceImage, sourceImageRect, results);
     if (!result)
         return;
-    
-    RefPtr imageBuffer = result->imageBuffer();
+
+    RefPtr imageBuffer = filter.filterResultBuffer(*result);
     if (!imageBuffer)
         return;
 
@@ -540,6 +540,11 @@ void GraphicsContext::drawPath(const Path& path)
 {
     fillPath(path);
     strokePath(path);
+}
+
+void GraphicsContext::strokeArc(const PathArc& arc)
+{
+    strokePath(Path({ PathSegment { arc } }));
 }
 
 void GraphicsContext::fillEllipseAsPath(const FloatRect& ellipse)

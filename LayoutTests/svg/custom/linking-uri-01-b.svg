@@ -17,7 +17,7 @@ if (window.testRunner)
 function linkClicked()
 {
     if (window.testRunner)
-        window.testRunner.notifyDone();
+        requestAnimationFrame(() => testRunner.notifyDone());
 }
 
 function clickLink() {

@@ -18,6 +18,36 @@ const crossorigin_subresource_url = `${REMOTE_ORIGIN}/reporting/resources/commen
 const subresource_hash = find_server_timing("hash");
 const subresource_hash2 = find_server_timing("hash2");
 let counter = 0;
+const REPORT_TIMEOUT = 5;
+const MAX_RETRIES = 3;
+
+function wait(ms) {
+  return new Promise(resolve => step_timeout(resolve, ms));
+}
+
+async function pollReportsWithTimeout(endpoint, id, min_count, timeout) {
+  // Use retain=true to keep reports in the stash for other tests that share the same UUID
+  const res = await fetch(`${endpoint}?reportID=${id}&min_count=${min_count}&timeout=${timeout}&retain`, { cache: 'no-store' });
+  const reports = [];
+  if (res.status === 200) {
+    for (const report of await res.json()) {
+      reports.push(report);
+    }
+  }
+  return reports;
+}
+
+async function pollReportsWithRetry(endpoint, id, min_count, timeout, retries) {
+  for (let i = 0; i < retries; i++) {
+    const reports = await pollReportsWithTimeout(endpoint, id, min_count, timeout);
+    if (reports.length >= min_count)
+      return reports;
+    // Wait a bit before retrying
+    await wait(500);
+  }
+  // Final attempt
+  return await pollReportsWithTimeout(endpoint, id, min_count, timeout);
+}
 
 function reporting_observer_setup(expected_url, expected_hash) {
   return new Promise(resolve => {
@@ -30,7 +60,9 @@ function reporting_observer_setup(expected_url, expected_hash) {
 }
 
 async function check_reports(uuid, expected_hash, url) {
-  const reports = await pollReports(endpoint, uuid);
+  // Give the browser time to send the report before polling.
+  await wait(100);
+  const reports = await pollReportsWithRetry(endpoint, uuid, 1, REPORT_TIMEOUT, MAX_RETRIES);
   checkReportExists(reports, 'csp-hash', location.href);
   const report = getReport(reports, 'csp-hash', location.href, url);
   assert_not_equals(report, null);
@@ -79,6 +111,23 @@ function no_report_test(create_element, description) {
 };
 
 function run_tests() {
+  // Warm-up test to ensure CSP hash reporting is properly initialized
+  // This addresses potential timing issues where the first script load
+  // might not trigger hash reporting correctly under stress conditions.
+  promise_test(async t => {
+    const warmup_url = `${subresource_url}?warmup`;
+    await new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = warmup_url;
+      script.crossOrigin = "anonymous";
+      script.addEventListener('load', resolve);
+      script.addEventListener('error', resolve);
+      document.head.appendChild(script);
+    });
+    // Wait for any pending operations to complete
+    await wait(200);
+  }, "Warm-up script load");
+
   report_hash_test(subresource_url, script => {
     script.crossOrigin = "anonymous";
   }, subresource_hash, subresource_hash2,
@@ -126,4 +175,13 @@ function run_tests() {
     link.rel = "stylesheet"
     return link;
     }, "Reporting endpoints received no report for CORS stylesheet.");
+
+  no_report_test(url => {
+    const link = document.createElement('link');
+    link.href = url;
+    link.crossOrigin = "anonymous"
+    link.rel = "stylesheet"
+    link.integrity = "sha256-1XF/E08XndkoxwN6eIa5J89hYn3OVZ/UyB8BrU5jgzk=";
+    return link;
+    }, "Reporting endpoints received no report for CORS stylesheet with integrity.");
 }

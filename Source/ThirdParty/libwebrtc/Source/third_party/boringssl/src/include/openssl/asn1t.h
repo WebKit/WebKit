@@ -491,8 +491,8 @@ typedef struct ASN1_AUX_st {
   ASN1_ITEM_start(itname) ASN1_ITYPE_MSTRING, mask, NULL, 0, NULL, \
       sizeof(ASN1_STRING), #itname ASN1_ITEM_end(itname)
 
-#define IMPLEMENT_EXTERN_ASN1(sname, tag, fptrs)                     \
-  ASN1_ITEM_start(sname) ASN1_ITYPE_EXTERN, tag, NULL, 0, &fptrs, 0, \
+#define IMPLEMENT_EXTERN_ASN1(sname, fptrs)                         \
+  ASN1_ITEM_start(sname) ASN1_ITYPE_EXTERN, -1, NULL, 0, &fptrs, 0, \
       #sname ASN1_ITEM_end(sname)
 
 /* Macro to implement standard functions in terms of ASN1_ITEM structures */

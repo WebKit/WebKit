@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,9 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#include "FloatSize.h"
-#include "InbandTextTrackPrivateAVF.h"
-#include "MediaPlayerPrivate.h"
-#include "Timer.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/MediaPlayerPrivate.h>
+#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
@@ -48,7 +47,7 @@ class MediaPlayerPrivateAVFoundation
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateAVFoundation, WTF::DestructionThread::Main>
     , public MediaPlayerPrivateInterface
 #if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
+    , protected LoggerHelper
 #endif
 {
 public:
@@ -66,7 +65,7 @@ public:
     virtual void seekableTimeRangesChanged();
     virtual void timeChanged(const MediaTime&);
     virtual void seekCompleted(bool);
-    virtual void didEnd();
+    virtual void didEnd(double);
     virtual void contentsNeedsDisplay() { }
     virtual void configureInbandTracks();
     virtual void setCurrentTextTrack(InbandTextTrackPrivateAVF*) { }
@@ -129,7 +128,7 @@ public:
         Notification(Function<void()>&& function)
             : m_type(FunctionType)
             , m_finished(false)
-            , m_function(WTFMove(function))
+            , m_function(WTF::move(function))
         {
         }
         
@@ -152,7 +151,6 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    Ref<const Logger> protectedLogger() const { return logger(); }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateAVFoundation"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
@@ -276,6 +274,8 @@ protected:
 
     virtual void updateVideoLayerGravity() = 0;
     virtual void resolvedURLChanged() = 0;
+
+    virtual void updateIsAudible() = 0;
 
     virtual bool isHLS() const { return false; }
 

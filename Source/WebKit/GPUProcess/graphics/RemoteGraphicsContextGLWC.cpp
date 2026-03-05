@@ -55,20 +55,20 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGLWC);
 
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, RemoteGraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
 {
-    auto instance = adoptRef(*new RemoteGraphicsContextGLWC(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(streamConnection)));
-    instance->initialize(WTFMove(attributes));
+    auto instance = adoptRef(*new RemoteGraphicsContextGLWC(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTF::move(streamConnection)));
+    instance->initialize(WTF::move(attributes));
     return instance;
 }
 
 RemoteGraphicsContextGLWC::RemoteGraphicsContextGLWC(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
-    : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(streamConnection))
+    : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTF::move(streamConnection))
     , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
 {
 }
 
 void RemoteGraphicsContextGLWC::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    m_context = GCGLContext::create(WTFMove(attributes));
+    m_context = GCGLContext::create(WTF::move(attributes));
 }
 
 void RemoteGraphicsContextGLWC::prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&& completionHandler)

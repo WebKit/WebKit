@@ -34,7 +34,7 @@ class SetNodeAttributeCommand : public SimpleEditCommand {
 public:
     static Ref<SetNodeAttributeCommand> create(Ref<Element>&& element, const QualifiedName& attribute, const AtomString& value)
     {
-        return adoptRef(*new SetNodeAttributeCommand(WTFMove(element), attribute, value));
+        return adoptRef(*new SetNodeAttributeCommand(WTF::move(element), attribute, value));
     }
 
 private:

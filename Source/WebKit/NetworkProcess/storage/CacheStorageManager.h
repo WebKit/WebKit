@@ -37,6 +37,7 @@ class CacheStorageManager;
 
 namespace WebCore {
 struct ClientOrigin;
+struct RetrieveRecordsOptions;
 }
 
 namespace WebKit {
@@ -68,14 +69,16 @@ public:
     void unlockStorage(IPC::Connection::UniqueID);
 
     void connectionClosed(IPC::Connection::UniqueID);
-    bool hasDataInMemory();
-    bool isActive();
+    bool NODELETE hasDataInMemory();
+    bool NODELETE isActive();
     String representationString();
     FileSystem::Salt salt() const { return m_salt; }
     void requestSpace(uint64_t size, CompletionHandler<void(bool)>&&);
     void sizeIncreased(uint64_t amount);
     void sizeDecreased(uint64_t amount);
     void reset();
+
+    void query(WebCore::RetrieveRecordsOptions&&, String&&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::CrossThreadRecord>&&)>&&);
 
 private:
     CacheStorageManager(const String& path, CacheStorageRegistry&, const std::optional<WebCore::ClientOrigin>&, QuotaCheckFunction&&, Ref<WorkQueue>&&);

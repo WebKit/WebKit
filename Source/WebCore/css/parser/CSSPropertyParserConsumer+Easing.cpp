@@ -77,10 +77,10 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedStepsEasingFunction(C
     if (consumeCommaIncludingWhitespace(args)) {
         switch (args.consumeIncludingWhitespace().id()) {
         case CSSValueJumpStart:
-            parameters = { CSS::StepsEasingParameters::JumpStart { WTFMove(*steps) } };
+            parameters = { CSS::StepsEasingParameters::JumpStart { WTF::move(*steps) } };
             break;
         case CSSValueJumpEnd:
-            parameters = { CSS::StepsEasingParameters::JumpEnd { WTFMove(*steps) } };
+            parameters = { CSS::StepsEasingParameters::JumpEnd { WTF::move(*steps) } };
             break;
         case CSSValueJumpNone: {
             // "The first parameter specifies the number of intervals in the function. It must be a
@@ -92,24 +92,24 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedStepsEasingFunction(C
             if (!stepsJumpNone)
                 return { };
 
-            parameters = { CSS::StepsEasingParameters::JumpNone { WTFMove(*stepsJumpNone) } };
+            parameters = { CSS::StepsEasingParameters::JumpNone { WTF::move(*stepsJumpNone) } };
             break;
         }
 
         case CSSValueJumpBoth:
-            parameters = { CSS::StepsEasingParameters::JumpBoth { WTFMove(*steps) } };
+            parameters = { CSS::StepsEasingParameters::JumpBoth { WTF::move(*steps) } };
             break;
         case CSSValueStart:
-            parameters = { CSS::StepsEasingParameters::Start { WTFMove(*steps) } };
+            parameters = { CSS::StepsEasingParameters::Start { WTF::move(*steps) } };
             break;
         case CSSValueEnd:
-            parameters = { CSS::StepsEasingParameters::End { WTFMove(*steps) } };
+            parameters = { CSS::StepsEasingParameters::End { WTF::move(*steps) } };
             break;
         default:
             return { };
         }
     } else
-        parameters = { CSS::StepsEasingParameters::End { WTFMove(*steps) } };
+        parameters = { CSS::StepsEasingParameters::End { WTF::move(*steps) } };
 
     if (!args.atEnd())
         return { };
@@ -118,7 +118,7 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedStepsEasingFunction(C
 
     return CSS::EasingFunction {
         CSS::StepsEasingFunction {
-            .parameters = WTFMove(*parameters)
+            .parameters = WTF::move(*parameters)
         }
     };
 }
@@ -135,8 +135,8 @@ static std::optional<CSS::LinearEasingParameters::Stop::Length> consumeUnresolve
     auto extra = MetaConsumer<CSS::Percentage<>>::consume(args, state);
 
     return CSS::LinearEasingParameters::Stop::Length {
-        .input = WTFMove(*input),
-        .extra = WTFMove(extra)
+        .input = WTF::move(*input),
+        .extra = WTF::move(extra)
     };
 }
 
@@ -150,8 +150,8 @@ static std::optional<CSS::LinearEasingParameters::Stop> consumeUnresolvedLinearE
     auto input = consumeUnresolvedLinearEasingFunctionStopLength(args, state);
 
     return CSS::LinearEasingParameters::Stop {
-        .output = WTFMove(*output),
-        .input = WTFMove(input)
+        .output = WTF::move(*output),
+        .input = WTF::move(input)
     };
 }
 
@@ -171,7 +171,7 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedLinearEasingFunction(
         if (!stop)
             break;
 
-        stops.append(WTFMove(*stop));
+        stops.append(WTF::move(*stop));
 
         if (!consumeCommaIncludingWhitespace(args))
             break;
@@ -185,7 +185,7 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedLinearEasingFunction(
     return CSS::EasingFunction {
         CSS::LinearEasingFunction {
             .parameters = {
-                .stops = { WTFMove(stops) }
+                .stops = { WTF::move(stops) }
             }
         }
     };
@@ -230,8 +230,8 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedCubicBezierEasingFunc
         CSS::CubicBezierEasingFunction {
             .parameters = {
                 .value = {
-                    CSS::CubicBezierEasingParameters::Coordinate { WTFMove(*x1), WTFMove(*y1) },
-                    CSS::CubicBezierEasingParameters::Coordinate { WTFMove(*x2), WTFMove(*y2) },
+                    CSS::CubicBezierEasingParameters::Coordinate { WTF::move(*x1), WTF::move(*y1) },
+                    CSS::CubicBezierEasingParameters::Coordinate { WTF::move(*x2), WTF::move(*y2) },
                 }
             }
         }
@@ -274,10 +274,10 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedSpringEasingFunction(
     return CSS::EasingFunction {
         CSS::SpringEasingFunction {
             .parameters = {
-                .mass = WTFMove(*mass),
-                .stiffness = WTFMove(*stiffness),
-                .damping = WTFMove(*damping),
-                .initialVelocity = WTFMove(*initialVelocity),
+                .mass = WTF::move(*mass),
+                .stiffness = WTF::move(*stiffness),
+                .damping = WTF::move(*damping),
+                .initialVelocity = WTF::move(*initialVelocity),
             }
         }
     };
@@ -363,7 +363,7 @@ RefPtr<CSSValue> consumeEasingFunction(CSSParserTokenRange& range, CSS::Property
     }
 
     if (auto value = consumeUnresolvedEasingFunction(range, state))
-        return CSSEasingFunctionValue::create(WTFMove(*value));
+        return CSSEasingFunctionValue::create(WTF::move(*value));
     return { };
 }
 

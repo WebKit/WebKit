@@ -77,7 +77,7 @@ private:
     // GPUProcessConnection::Client.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
-    uint32_t totalFrameCount() const;
+    uint32_t NODELETE totalFrameCount() const;
 
 #if PLATFORM(IOS_FAMILY)
     void setSceneIdentifier(const String&) final;

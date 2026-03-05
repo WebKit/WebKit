@@ -36,7 +36,7 @@ struct WebKitMediaThunderDecryptPrivate {
     GRefPtr<GstCaps> inputCaps;
 };
 
-static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt*);
+static ASCIILiteral protectionSystemId(WebKitMediaCommonEncryptionDecrypt*);
 static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt*, const RefPtr<CDMProxy>&);
 static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffer* keyid, GstBuffer* sample, unsigned subSamplesCount,
     GstBuffer* subSamples);
@@ -82,7 +82,7 @@ static GRefPtr<GstCaps> createSinkPadTemplateCaps()
     for (const auto& keySystem : supportedKeySystems) {
         for (const auto& mediaType : GStreamerEMEUtilities::s_cencEncryptionMediaTypes) {
             gst_caps_append_structure(caps.get(), gst_structure_new("application/x-cenc", "original-media-type", G_TYPE_STRING,
-                mediaType.characters(), "protection-system", G_TYPE_STRING, GStreamerEMEUtilities::keySystemToUuid(keySystem), nullptr));
+                mediaType.characters(), "protection-system", G_TYPE_STRING, GStreamerEMEUtilities::keySystemToUuid(keySystem).characters(), nullptr));
         }
     }
 
@@ -132,7 +132,7 @@ static void webkit_media_thunder_decrypt_class_init(WebKitMediaThunderDecryptCla
     commonClass->decrypt = GST_DEBUG_FUNCPTR(decrypt);
 }
 
-static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt* decryptor)
+static ASCIILiteral protectionSystemId(WebKitMediaCommonEncryptionDecrypt* decryptor)
 {
     auto* self = WEBKIT_MEDIA_THUNDER_DECRYPT(decryptor);
     ASSERT(self->priv->cdmProxy);

@@ -95,14 +95,14 @@ int GStreamerQuirkBroadcomBase::correctBufferingPercentage(MediaPlayerPrivateGSt
         state.m_streamBufferingLevelMovingAverage.reset(100);
     int averagedBufferingPercentage = state.m_streamBufferingLevelMovingAverage.accumulate(correctedBufferingPercentage2);
 
-    const char* extraElements = state.m_multiqueue ? "playpump and multiqueue" : "playpump";
+    ASCIILiteral extraElements = state.m_multiqueue ? "playpump and multiqueue"_s : "playpump"_s;
     if (!originalBufferingPercentage) {
         GST_DEBUG("[Buffering] Buffering: mode: GST_BUFFERING_STREAM, status: %d%% (corrected to %d%% with current-level-bytes, "
             "to %d%% with %s content, and to %d%% with moving average).", originalBufferingPercentage, correctedBufferingPercentage1,
-            correctedBufferingPercentage2, extraElements, averagedBufferingPercentage);
+            correctedBufferingPercentage2, extraElements.characters(), averagedBufferingPercentage);
     } else {
         GST_DEBUG("[Buffering] Buffering: mode: GST_BUFFERING_STREAM, status: %d%% (corrected to %d%% with %s content and "
-            "to %d%% with moving average).", originalBufferingPercentage, correctedBufferingPercentage2, extraElements,
+            "to %d%% with moving average).", originalBufferingPercentage, correctedBufferingPercentage2, extraElements.characters(),
             averagedBufferingPercentage);
     }
 
@@ -122,15 +122,16 @@ void GStreamerQuirkBroadcomBase::setupBufferingPercentageCorrection(MediaPlayerP
     // This code must support being run from different GStreamerQuirkBroadcomBase subclasses without breaking. Only the
     // first subclass instance should run.
 
+    auto elementTypeName = CStringView::unsafeFromUTF8(G_OBJECT_TYPE_NAME(element.get()));
     if (currentState == GST_STATE_NULL && newState == GST_STATE_READY) {
         bool alsoGetMultiqueue = false;
-        if (!g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstBrcmVidFilter")) {
+        if (elementTypeName == "GstBrcmVidFilter"_s) {
             state.m_vidfilter = element;
             alsoGetMultiqueue = true;
-        } else if (!g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstBrcmAudFilter")) {
+        } else if (elementTypeName == "GstBrcmAudFilter"_s) {
             state.m_audfilter = element;
             alsoGetMultiqueue = true;
-        } else if (!g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstQueue2"))
+        } else if (elementTypeName == "GstQueue2"_s)
             state.m_queue2 = element;
 
         // Might have been already retrieved by vidfilter or audfilter, whichever appeared first.
@@ -141,35 +142,35 @@ void GStreamerQuirkBroadcomBase::setupBufferingPercentageCorrection(MediaPlayerP
                 GRefPtr<GstPad> peerSrcPad = adoptGRef(gst_pad_get_peer(sinkPad));
                 if (!peerSrcPad)
                     continue; // And end the loop, because there's only one srcpad.
-                GRefPtr<GstElement> peerElement = adoptGRef(GST_ELEMENT(gst_pad_get_parent(peerSrcPad.get())));
+                GRefPtr<GstElement> peerElement = adoptGRef(gst_pad_get_parent_element(peerSrcPad.get()));
 
                 // If it's NOT a multiqueue, it's probably a parser like aacparse. We try to traverse before it.
-                if (peerElement && g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstMultiQueue")) {
+                if (peerElement && elementTypeName != "GstMultiQueue"_s) {
                     for (auto* peerElementSinkPad : GstIteratorAdaptor<GstPad>(gst_element_iterate_sink_pads(peerElement.get()))) {
                         peerSrcPad = adoptGRef(gst_pad_get_peer(peerElementSinkPad));
                         if (!peerSrcPad)
                             continue; // And end the loop.
                         // Now we hopefully have peerElement pointing to the multiqueue.
-                        peerElement = adoptGRef(GST_ELEMENT(gst_pad_get_parent(peerSrcPad.get())));
+                        peerElement = adoptGRef(gst_pad_get_parent_element(peerSrcPad.get()));
                         break;
                     }
                 }
 
                 // The multiqueue reference is useless if we can't access its stats (on older GStreamer versions).
-                if (peerElement && !g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstMultiQueue")
+                if (peerElement && elementTypeName == "GstMultiQueue_s"
                     && gstObjectHasProperty(peerElement.get(), "stats"_s))
                     state.m_multiqueue = peerElement;
                 break;
             }
         }
     } else if (currentState == GST_STATE_READY && newState == GST_STATE_NULL) {
-        if (!g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstBrcmVidFilter"))
+        if (elementTypeName == "GstBrcmVidFilter"_s)
             state.m_vidfilter = nullptr;
-        else if (!g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstBrcmAudFilter"))
+        else if (elementTypeName == "GstBrcmAudFilter"_s)
             state.m_audfilter = nullptr;
-        else if (!g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstMultiQueue") && element == state.m_multiqueue.get())
+        else if (elementTypeName == "GstMultiQueue"_s && element == state.m_multiqueue.get())
             state.m_multiqueue = nullptr;
-        else if (!g_strcmp0(G_OBJECT_TYPE_NAME(element.get()), "GstQueue2"))
+        else if (elementTypeName == "GstQueue2"_s)
             state.m_queue2 = nullptr;
     }
 }

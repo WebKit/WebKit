@@ -307,7 +307,7 @@ void DrawTextBlob::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 #endif // USE(SKIA)
 
 DrawDisplayList::DrawDisplayList(Ref<const DisplayList>&& displayList)
-    : m_displayList(WTFMove(displayList))
+    : m_displayList(WTF::move(displayList))
 {
 }
 
@@ -330,7 +330,7 @@ void DrawDisplayList::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 }
 
 DrawPlaceholder::DrawPlaceholder(Function<void(GraphicsContext&)>&& function)
-    : m_function(FunctionHolder::create(WTFMove(function)))
+    : m_function(FunctionHolder::create(WTF::move(function)))
 {
 }
 
@@ -545,8 +545,8 @@ FillRectWithGradient::FillRectWithGradient(const FloatRect& rect, Gradient& grad
 }
 
 FillRectWithGradient::FillRectWithGradient(FloatRect&& rect, Ref<Gradient>&& gradient)
-    : m_rect(WTFMove(rect))
-    , m_gradient(WTFMove(gradient))
+    : m_rect(WTF::move(rect))
+    , m_gradient(WTF::move(gradient))
 {
 }
 
@@ -570,9 +570,9 @@ FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(con
 }
 
 FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(FloatRect&& rect, Ref<Gradient>&& gradient, AffineTransform&& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
-    : m_rect(WTFMove(rect))
-    , m_gradient(WTFMove(gradient))
-    , m_gradientSpaceTransform(WTFMove(gradientSpaceTransform))
+    : m_rect(WTF::move(rect))
+    , m_gradient(WTF::move(gradient))
+    , m_gradientSpaceTransform(WTF::move(gradientSpaceTransform))
     , m_requiresClipToRect(requiresClipToRect)
 {
 }

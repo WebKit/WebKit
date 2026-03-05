@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,8 @@ class Text;
 
 class RenderTreeUpdater {
 public:
+    class GeneratedContent;
+
     RenderTreeUpdater(Document&, Style::PostResolutionCallbackDisabler&);
     ~RenderTreeUpdater();
 
@@ -54,7 +56,6 @@ public:
     static void tearDownRenderer(Text&);
 
 private:
-    class GeneratedContent;
     class ViewTransition;
 
     void updateRenderTree(ContainerNode& root);
@@ -62,13 +63,13 @@ private:
     void createTextRenderer(Text&, const Style::TextUpdate*);
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void updateSVGRenderer(Element&);
-    void updateRendererStyle(RenderElement&, RenderStyle&&, StyleDifference);
+    void updateRendererStyle(RenderElement&, RenderStyle&&, Style::DifferenceResult);
     void updateRenderViewStyle();
     void createRenderer(Element&, RenderStyle&&);
     void updateBeforeDescendants(Element&, const Style::ElementUpdate*);
     void updateAfterDescendants(Element&, const Style::ElementUpdate*);
     bool textRendererIsNeeded(const Text& textNode);
-    void storePreviousRenderer(Node&);
+    void NODELETE storePreviousRenderer(Node&);
 
     void destroyAndCancelAnimationsForSubtree(RenderElement&);
 
@@ -85,8 +86,8 @@ private:
         Parent(Element&, const Style::ElementUpdate*);
     };
     Parent& parent() { return m_parentStack.last(); }
-    Parent& renderingParent();
-    RenderTreePosition& renderTreePosition();
+    Parent& NODELETE renderingParent();
+    RenderTreePosition& NODELETE renderTreePosition();
 
     GeneratedContent& generatedContent() { return m_generatedContent; }
     ViewTransition& viewTransition() { return m_viewTransition; }
@@ -96,9 +97,12 @@ private:
     void popParentsToDepth(unsigned depth);
 
     // FIXME: Use OptionSet.
-    enum class TeardownType { Full, FullAfterSlotOrShadowRootChange, RendererUpdate, RendererUpdateCancelingAnimations };
+    enum class TeardownType { Full, FullAfterShadowRootInsertion, RendererUpdate, RendererUpdateCancelingAnimations };
     static void tearDownRenderers(Element&, TeardownType);
     static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
+    static void tearDownDescendantRenderers(Element&, TeardownType, RenderTreeBuilder&);
+    enum class TeardownScope { IncludingRoot, DescendantsOnly };
+    template<TeardownScope> static void tearDownRenderersInternal(Element&, TeardownType, RenderTreeBuilder&);
     enum class NeedsRepaintAndLayout : bool { No, Yes };
     static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&, NeedsRepaintAndLayout = NeedsRepaintAndLayout::Yes);
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);
@@ -106,7 +110,7 @@ private:
 
     void updateRebuildRoots();
 
-    RenderView& renderView();
+    RenderView& NODELETE renderView();
 
     const Ref<Document> m_document;
     std::unique_ptr<Style::Update> m_styleUpdate;

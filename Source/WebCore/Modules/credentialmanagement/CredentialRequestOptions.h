@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include <WebCore/DigitalCredentialRequestOptions.h>
 #include <WebCore/MediationRequirement.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
@@ -37,11 +39,14 @@ class AbortSignal;
 using CredentialMediationRequirement = MediationRequirement;
 
 struct CredentialRequestOptions {
-    String mediationString { "optional"_s };
-    WEBCORE_EXPORT MediationRequirement mediation() const;
+    MediationRequirement mediation;
     RefPtr<AbortSignal> signal;
     std::optional<PublicKeyCredentialRequestOptions> publicKey;
+#if ENABLE(WEB_AUTHN)
     std::optional<DigitalCredentialRequestOptions> digital;
+#endif
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

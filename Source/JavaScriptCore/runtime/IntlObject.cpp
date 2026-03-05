@@ -334,7 +334,7 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
     ASSERT(locale.is8Bit());
     size_t extensionIndex = locale.find("-u-"_s);
     if (extensionIndex == notFound)
-        return WTFMove(buffer);
+        return WTF::move(buffer);
 
     // Since ICU's canonicalization is incomplete, we need to perform some of canonicalization here.
     size_t extensionLength = locale.length() - extensionIndex;
@@ -405,7 +405,7 @@ String languageTagForLocaleID(const char* localeID, bool isImmortal)
         return buffer.span();
     };
 
-    return createResult(canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer)));
+    return createResult(canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTF::move(buffer)));
 }
 
 // Ensure we have xx-ZZ whenever we have xx-Yyyy-ZZ.
@@ -649,7 +649,7 @@ String intlStringOption(JSGlobalObject* globalObject, JSObject* options, Propert
         String stringValue = value.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, String());
 
-        if (values.size() && std::find(values.begin(), values.end(), stringValue) == values.end()) {
+        if (values.size() && std::ranges::find(values, stringValue) == values.end()) {
             throwException(globalObject, scope, createRangeError(globalObject, notFound));
             return { };
         }
@@ -729,6 +729,12 @@ String canonicalizeUnicodeLocaleID(const CString& tag)
     canonicalized->append('\0');
     ASSERT(canonicalized->contains('\0'));
     return languageTagForLocaleID(canonicalized->span().data());
+}
+
+String canonicalizeUnicodeLocaleID(const StringView tag)
+{
+    ASSERT(tag.containsOnlyASCII());
+    return canonicalizeUnicodeLocaleID(tag.utf8());
 }
 
 Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue locales)
@@ -1004,7 +1010,7 @@ ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const LocaleSet& avai
         foundLocale = makeString(foundLocaleView.left(matcherResult.extensionIndex), supportedExtension.toString(), foundLocaleView.substring(matcherResult.extensionIndex));
     }
 
-    resolved.locale = WTFMove(foundLocale);
+    resolved.locale = WTF::move(foundLocale);
     return resolved;
 }
 
@@ -1074,28 +1080,25 @@ Vector<String> numberingSystemsForLocale(const String& locale)
         availableNumberingSystems.construct();
         ASSERT(availableNumberingSystems->isEmpty());
         UErrorCode status = U_ZERO_ERROR;
-        UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);
+        auto numberingSystemNames = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(unumsys_openAvailableNames(&status));
         ASSERT(U_SUCCESS(status));
 
         int32_t resultLength;
         // Numbering system names are always ASCII, so use char[].
-        while (const char* result = uenum_next(numberingSystemNames, &resultLength, &status)) {
+        while (const char* result = uenum_next(numberingSystemNames.get(), &resultLength, &status)) {
             ASSERT(U_SUCCESS(status));
-            auto numsys = unumsys_openByName(result, &status);
+            auto numsys = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_openByName(result, &status));
             ASSERT(U_SUCCESS(status));
             // Only support algorithmic if it is the default fot the locale, handled below.
-            if (!unumsys_isAlgorithmic(numsys))
+            if (!unumsys_isAlgorithmic(numsys.get()))
                 availableNumberingSystems->append(String(StringImpl::createStaticStringImpl({ result, static_cast<size_t>(resultLength) })));
-            unumsys_close(numsys);
         }
-        uenum_close(numberingSystemNames);
     });
 
     UErrorCode status = U_ZERO_ERROR;
-    UNumberingSystem* defaultSystem = unumsys_open(locale.utf8().data(), &status);
+    auto defaultSystem = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_open(locale.utf8().data(), &status));
     ASSERT(U_SUCCESS(status));
-    auto defaultSystemName = String::fromLatin1(unumsys_getName(defaultSystem));
-    unumsys_close(defaultSystem);
+    auto defaultSystemName = String::fromLatin1(unumsys_getName(defaultSystem.get()));
 
     Vector<String> numberingSystems({ defaultSystemName });
     numberingSystems.appendVector(availableNumberingSystems.get());
@@ -1632,13 +1635,13 @@ const Vector<String>& intlAvailableCalendars()
             ASSERT(U_SUCCESS(status));
             String calendar(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
-                calendar = WTFMove(mapped.value());
+                calendar = WTF::move(mapped.value());
 
             // Skip if the obtained calendar code is not meeting Unicode Locale Identifier's `type` definition
             // as whole ECMAScript's i18n is relying on Unicode Local Identifiers.
             if (!isUnicodeLocaleIdentifierType(calendar))
                 continue;
-            availableCalendars->append(createImmortalThreadSafeString(WTFMove(calendar)));
+            availableCalendars->append(createImmortalThreadSafeString(WTF::move(calendar)));
         }
 
         // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
@@ -1710,9 +1713,9 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
         if (collation == "standard"_s || collation == "search"_s)
             continue;
         if (auto mapped = mapICUCollationKeywordToBCP47(collation))
-            elements.append(WTFMove(mapped.value()));
+            elements.append(WTF::move(mapped.value()));
         else
-            elements.append(WTFMove(collation));
+            elements.append(WTF::move(collation));
     }
 
     // The AvailableCollations abstract operation returns a List, ordered as if an Array of the same
@@ -1721,7 +1724,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
     auto end = std::unique(elements.begin(), elements.end());
     elements.shrink(elements.size() - (elements.end() - end));
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availablecurrencies
@@ -1765,7 +1768,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
             continue;
         if (currency == "LSM"_s)
             continue;
-        elements.append(WTFMove(currency));
+        elements.append(WTF::move(currency));
     }
 
     // The AvailableCurrencies abstract operation returns a List, ordered as if an Array of the same
@@ -1774,7 +1777,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
     auto end = std::unique(elements.begin(), elements.end());
     elements.shrink(elements.size() - (elements.end() - end));
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availablenumberingsystems
@@ -1819,7 +1822,7 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
     // values had been sorted using %Array.prototype.sort% using undefined as comprator
     std::ranges::sort(elements, WTF::codePointCompareLessThan);
 
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
 static bool isValidTimeZoneNameFromICUTimeZone(StringView timeZoneName)
@@ -1842,7 +1845,7 @@ static std::optional<String> canonicalizeTimeZoneNameFromICUTimeZone(String&& ti
 {
     if (isUTCEquivalent(timeZoneName))
         return "UTC"_s;
-    return std::make_optional(WTFMove(timeZoneName));
+    return std::make_optional(WTF::move(timeZoneName));
 }
 
 // https://tc39.es/ecma402/#sup-availablenamedtimezoneidentifiers
@@ -1865,8 +1868,8 @@ const Vector<String>& intlAvailableTimeZones()
             ASSERT(U_SUCCESS(status));
             String timeZone(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
             if (isValidTimeZoneNameFromICUTimeZone(timeZone)) {
-                if (auto mapped = canonicalizeTimeZoneNameFromICUTimeZone(WTFMove(timeZone)))
-                    temporary.append(WTFMove(mapped.value()));
+                if (auto mapped = canonicalizeTimeZoneNameFromICUTimeZone(WTF::move(timeZone)))
+                    temporary.append(WTF::move(mapped.value()));
             }
         }
 
@@ -1882,7 +1885,7 @@ const Vector<String>& intlAvailableTimeZones()
             return StringImpl::createStaticStringImpl(string.span16());
         };
         availableTimeZones.get() = WTF::map(std::span(temporary.begin(), end), [&](auto&& string) -> String {
-            return createImmortalThreadSafeString(WTFMove(string));
+            return createImmortalThreadSafeString(WTF::move(string));
         });
     });
     return availableTimeZones;

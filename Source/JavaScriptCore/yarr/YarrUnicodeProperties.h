@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/Yarr.h>
+#include <memory>
 #include <optional>
 #include <wtf/Forward.h>
 

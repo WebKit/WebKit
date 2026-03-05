@@ -45,7 +45,7 @@ struct MarginTrim {
     using EnumSet = MarginTrimSideEnumSet;
     using value_type = MarginTrimSideEnumSet::value_type;
 
-    constexpr MarginTrim(EnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr MarginTrim(EnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr MarginTrim(CSS::Keyword::None) : m_value { } { }
     constexpr MarginTrim(value_type value) : MarginTrim { EnumSet { value } } { }
     constexpr MarginTrim(std::initializer_list<value_type> initializerList) : MarginTrim { EnumSet { initializerList } } { }

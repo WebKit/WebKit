@@ -204,7 +204,7 @@ template<auto R, typename V> struct CSSValueConversion<LengthPercentage<R, V>> {
         if (protectedValue->isPercentage())
             return typename StyleType::Percentage { CSS::clampToRange<R, V>(protectedValue->resolveAsPercentage<V>(conversionData)) };
         if (protectedValue->isCalculatedPercentageWithLength())
-            return typename StyleType::Calc { protectedValue->protectedCssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
+            return typename StyleType::Calc { protect(protectedValue->cssCalcValue())->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
         return typename StyleType::Dimension { CSS::clampToRange<R, V>(protectedValue->resolveAsLength<V>(conversionData)) };
     }
     auto operator()(BuilderState& builderState, const CSSValue& value) -> StyleType
@@ -216,7 +216,7 @@ template<auto R, typename V> struct CSSValueConversion<LengthPercentage<R, V>> {
         if (protectedValue->isPercentage())
             return typename StyleType::Percentage { CSS::clampToRange<R, V>(protectedValue->resolveAsPercentage<V>(conversionData)) };
         if (protectedValue->isCalculatedPercentageWithLength())
-            return typename StyleType::Calc { protectedValue->protectedCssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
+            return typename StyleType::Calc { protect(protectedValue->cssCalcValue())->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
         return typename StyleType::Dimension { CSS::clampToRange<R, V>(protectedValue->resolveAsLength<V>(conversionData)) };
     }
 };

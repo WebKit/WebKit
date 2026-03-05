@@ -30,7 +30,7 @@ namespace WebCore {
 class RenderButton;
 
 class HTMLButtonElement final : public HTMLFormControlElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLButtonElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLButtonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLButtonElement);
 public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);
@@ -62,6 +62,8 @@ private:
     int defaultTabIndex() const final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) final;
+    void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void defaultEventHandler(Event&) final;
 
@@ -69,7 +71,7 @@ private:
 
     bool appendFormData(DOMFormData&) final;
 
-    bool isEnumeratable() const final { return true; }
+    bool NODELETE isEnumeratable() const final { return true; }
     bool isLabelable() const final { return true; }
     bool isInteractiveContent() const final { return true; }
 
@@ -78,11 +80,11 @@ private:
     bool isActivatedSubmit() const final;
     void setActivatedSubmit(bool flag) final;
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 
     bool canStartSelection() const final { return false; }
 
-    bool isOptionalFormControl() const final { return true; }
+    bool NODELETE isOptionalFormControl() const final { return true; }
     bool computeWillValidate() const final;
 
     bool isSubmitButton() const final;

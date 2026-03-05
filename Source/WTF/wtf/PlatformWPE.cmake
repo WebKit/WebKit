@@ -3,12 +3,12 @@ list(APPEND WTF_SOURCES
     android/RefPtrAndroid.cpp
 
     generic/MainThreadGeneric.cpp
-    generic/MemoryFootprintGeneric.cpp
     generic/WorkQueueGeneric.cpp
 
     glib/Application.cpp
     glib/ChassisType.cpp
     glib/FileSystemGlib.cpp
+    glib/GMallocString.cpp
     glib/GRefPtr.cpp
     glib/GResources.cpp
     glib/GSocketMonitor.cpp
@@ -19,6 +19,7 @@ list(APPEND WTF_SOURCES
     glib/URLGLib.cpp
 
     linux/CurrentProcessMemoryStatus.cpp
+    linux/MemoryFootprintLinux.cpp
     linux/RealTimeThreads.cpp
 
     posix/CPUTimePOSIX.cpp
@@ -42,6 +43,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/ActivityObserver.h
     glib/Application.h
     glib/ChassisType.h
+    glib/GMallocString.h
     glib/GMutexLocker.h
     glib/GRefPtr.h
     glib/GResources.h

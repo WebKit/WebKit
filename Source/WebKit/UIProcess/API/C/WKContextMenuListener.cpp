@@ -57,7 +57,7 @@ void WKContextMenuListenerUseContextMenuItems(WKContextMenuListenerRef listenerR
         items.append(item.releaseNonNull());
     }
 
-    toProtectedImpl(listenerRef)->useContextMenuItems(WTFMove(items));
+    protect(toImpl(listenerRef))->useContextMenuItems(WTF::move(items));
 #else
     UNUSED_PARAM(listenerRef);
     UNUSED_PARAM(arrayRef);

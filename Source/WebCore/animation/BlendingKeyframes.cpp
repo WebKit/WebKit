@@ -33,7 +33,7 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleInterpolation.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -98,14 +98,14 @@ void BlendingKeyframes::insert(BlendingKeyframe&& keyframe)
     for (; i < m_keyframes.size(); ++i) {
         if (m_keyframes[i].offset() > keyframe.offset()) {
             // insert before
-            m_keyframes.insert(i, WTFMove(keyframe));
+            m_keyframes.insert(i, WTF::move(keyframe));
             inserted = true;
             break;
         }
     }
 
     if (!inserted)
-        m_keyframes.append(WTFMove(keyframe));
+        m_keyframes.append(WTF::move(keyframe));
 
     auto& insertedKeyframe = m_keyframes[i];
     for (auto& property : insertedKeyframe.properties())
@@ -126,7 +126,7 @@ void BlendingKeyframes::copyKeyframes(const BlendingKeyframes& other)
 {
     for (auto& keyframe : other) {
         auto copy = keyframe;
-        insert(WTFMove(copy));
+        insert(WTF::move(copy));
     }
 }
 
@@ -217,7 +217,7 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
                 Style::Interpolation::interpolate(property, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace, effect);
                 existingImplicitBlendingKeyframe->addProperty(property);
             }
-            existingImplicitBlendingKeyframe->setStyle(WTFMove(keyframeStyle));
+            existingImplicitBlendingKeyframe->setStyle(WTF::move(keyframeStyle));
             return;
         }
 
@@ -230,7 +230,7 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
         // default composite property as "replace" for CSS Animations.
         if (is<CSSAnimation>(effect.animation()))
             blendingKeyframe.setCompositeOperation(CompositeOperation::Replace);
-        insert(WTFMove(blendingKeyframe));
+        insert(WTF::move(blendingKeyframe));
     };
 
     auto zeroKeyframeImplicitProperties = expectedExplicitProperties.differenceWith(zeroKeyframeExplicitProperties);
@@ -292,16 +292,6 @@ bool BlendingKeyframes::containsProperty(const AnimatableCSSProperty& property) 
     return m_properties.contains(property);
 }
 
-bool BlendingKeyframes::usesRelativeFontWeight() const
-{
-    return m_usesRelativeFontWeight;
-}
-
-bool BlendingKeyframes::hasCSSVariableReferences() const
-{
-    return m_containsCSSVariableReferences;
-}
-
 bool BlendingKeyframes::hasColorSetToCurrentColor() const
 {
     return m_propertiesSetToCurrentColor.contains(CSSPropertyColor);
@@ -354,7 +344,7 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
 
 void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
 {
-    auto* style = keyframe.style();
+    CheckedPtr style = keyframe.style();
     if (!style)
         return;
 
@@ -413,6 +403,15 @@ void BlendingKeyframes::updatedComputedOffsets(NOESCAPE const Function<double(co
     std::ranges::stable_sort(m_keyframes, { }, &BlendingKeyframe::offset);
 }
 
+bool BlendingKeyframes::hasKeyframeWithUnresolvedComputedOffset() const
+{
+    for (auto& keyframe : m_keyframes) {
+        if (std::isnan(keyframe.offset()))
+            return true;
+    }
+    return false;
+}
+
 uint64_t BlendingKeyframes::nextAnonymousIdentifier()
 {
     // Start from a random number so acceleratedAnimationName() won't ever collide with an author specified one.
@@ -421,8 +420,8 @@ uint64_t BlendingKeyframes::nextAnonymousIdentifier()
 }
 
 BlendingKeyframe::BlendingKeyframe(Offset&& offset, std::unique_ptr<RenderStyle>&& style)
-    : m_specifiedOffset(WTFMove(offset))
-    , m_style(WTFMove(style))
+    : m_specifiedOffset(WTF::move(offset))
+    , m_style(WTF::move(style))
 {
     if (!usesRangeOffset())
         m_computedOffset = m_specifiedOffset.value;

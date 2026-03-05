@@ -37,8 +37,8 @@ struct mode {
   uint8_t target_packet_loss_rate;
 };
 
-const int kOpusBlockDurationMs = 20;
-const int kOpusSamplingKhz = 48;
+constexpr int kOpusBlockDurationMs = 20;
+constexpr int kOpusSamplingKhz = 48;
 
 class OpusFecTest : public TestWithParam<coding_param> {
  protected:

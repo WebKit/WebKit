@@ -122,7 +122,7 @@ static int pkcs5_pbe2_cipher_init(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
   uint8_t key[EVP_MAX_KEY_LENGTH];
   int ret = PKCS5_PBKDF2_HMAC(pass, pass_len, salt, salt_len, iterations,
                               pbkdf2_md, EVP_CIPHER_key_length(cipher), key) &&
-            EVP_CipherInit_ex(ctx, cipher, NULL /* engine */, key, iv, enc);
+            EVP_CipherInit_ex(ctx, cipher, nullptr /* engine */, key, iv, enc);
   OPENSSL_cleanse(key, EVP_MAX_KEY_LENGTH);
   return ret;
 }
@@ -199,7 +199,7 @@ int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
 
   // See if we recognise the encryption algorithm.
   const EVP_CIPHER *cipher = cbs_to_cipher(&enc_obj);
-  if (cipher == NULL) {
+  if (cipher == nullptr) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_UNSUPPORTED_CIPHER);
     return 0;
   }

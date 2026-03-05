@@ -80,14 +80,11 @@ protected:
 
     bool isAlwaysOnLoggingAllowed() const { return m_isAlwaysOnLoggingAllowed; }
     virtual NSURLSessionTask* task() const = 0;
-    RetainPtr<NSURLSessionTask> protectedTask() const;
     virtual WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const = 0;
 
 private:
     void setCookieTransformForFirstPartyRequest(const WebCore::ResourceRequest&);
     void setCookieTransformForThirdPartyRequest(const WebCore::ResourceRequest&, IsRedirect);
-
-    CheckedPtr<NetworkSession> checkedNetworkSession() const;
 
     WeakPtr<NetworkSession> m_networkSession;
     bool m_hasBeenSetToUseStatelessCookieStorage { false };

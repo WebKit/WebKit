@@ -41,9 +41,8 @@ private:
         GRefPtr<GVariant> variant;
         if (userData) {
             CString userDataString = downcast<API::String>(userData)->string().utf8();
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-            variant = adoptGRef(g_variant_parse(nullptr, userDataString.data(), userDataString.data() + userDataString.length(), nullptr, nullptr));
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+            const auto userDataSpan = userDataString.spanIncludingNullTerminator();
+            variant = adoptGRef(g_variant_parse(nullptr, userDataSpan.data(), userDataSpan.last(1).data(), nullptr, nullptr));
         }
 
         auto menuItems = WTF::map(proposedMenu, [](auto& item) {

@@ -35,7 +35,7 @@ class SplitTextNodeCommand : public SimpleEditCommand {
 public:
     static Ref<SplitTextNodeCommand> create(Ref<Text>&& node, int offset)
     {
-        return adoptRef(*new SplitTextNodeCommand(WTFMove(node), offset));
+        return adoptRef(*new SplitTextNodeCommand(WTF::move(node), offset));
     }
 
 private:
@@ -49,8 +49,6 @@ private:
 #ifndef NDEBUG
     void getNodesInCommand(NodeSet&) override;
 #endif
-
-    RefPtr<Text> protectedText1() const { return m_text1; }
 
     RefPtr<Text> m_text1;
     const Ref<Text> m_text2;

@@ -95,6 +95,7 @@ public:
         MasqueradesAsUndefinedWatchpointSet,
         ArrayBufferDetachWatchpointSet,
         ArrayIteratorProtocolWatchpointSet,
+        SetIteratorProtocolWatchpointSet,
         NumberToStringWatchpointSet,
         StructureCacheClearedWatchpointSet,
         StringToStringWatchpointSet,
@@ -141,7 +142,7 @@ public:
     LinkerIR& operator=(LinkerIR&&) = default;
 
     LinkerIR(Vector<Value>&& constants)
-        : m_constants(WTFMove(constants))
+        : m_constants(WTF::move(constants))
     {
     }
 
@@ -165,7 +166,7 @@ public:
 
     void setExitCode(unsigned exitIndex, MacroAssemblerCodeRef<OSRExitPtrTag> code)
     {
-        m_exits[exitIndex] = WTFMove(code);
+        m_exits[exitIndex] = WTF::move(code);
     }
     const MacroAssemblerCodeRef<OSRExitPtrTag>& exitCode(unsigned exitIndex) const { return m_exits[exitIndex]; }
 
@@ -269,7 +270,7 @@ public:
     
     void shrinkToFit() final;
 
-    RegisterSetBuilder liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
+    RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
 #if ENABLE(FTL_JIT)
     CodeBlock* osrEntryBlock() { return m_osrEntryBlock.get(); }
     void setOSREntryBlock(VM&, const JSCell* owner, CodeBlock* osrEntryBlock);
@@ -330,7 +331,7 @@ public:
 
 inline std::unique_ptr<JITData> JITData::tryCreate(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitVector&& exits)
 {
-    auto result = std::unique_ptr<JITData> { createImpl(jitCode.m_unlinkedStubInfos.size(), jitCode.m_linkerIR.size(), jitCode, WTFMove(exits)) };
+    auto result = std::unique_ptr<JITData> { createImpl(jitCode.m_unlinkedStubInfos.size(), jitCode.m_linkerIR.size(), jitCode, WTF::move(exits)) };
     if (result->tryInitialize(vm, codeBlock, jitCode))
         return result;
     return nullptr;

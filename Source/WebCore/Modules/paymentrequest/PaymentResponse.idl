@@ -42,8 +42,8 @@
     readonly attribute DOMString? payerEmail;
     readonly attribute DOMString? payerPhone;
 
-    [CallWith=CurrentDocument, NewObject] Promise<undefined> complete(optional PaymentComplete result = "unknown", optional PaymentCompleteDetails details);
-    [NewObject] Promise<undefined> retry(optional PaymentValidationErrors errorFields);
+    [CallWith=CurrentDocument, NewObject] Promise<undefined> complete(optional PaymentComplete result = "unknown", optional PaymentCompleteDetails details = {});
+    [NewObject] Promise<undefined> retry(optional PaymentValidationErrors errorFields = {});
 
     attribute EventHandler onpayerdetailchange;
 };

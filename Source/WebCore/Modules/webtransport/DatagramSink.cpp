@@ -71,11 +71,11 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
     auto identifier = sendGroup ? std::optional(sendGroup->identifier()) : std::nullopt;
 
     WTF::switchOn(bufferSource.releaseReturnValue(), [&](auto&& arrayBufferOrView) {
-        context.enqueueTaskWhenSettled(session->sendDatagram(identifier, arrayBufferOrView->span()), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&& exception) mutable {
+        context.enqueueTaskWhenSettled(session->sendDatagram(identifier, arrayBufferOrView->span()), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& exception) mutable {
             if (!exception)
                 promise.settle(Exception { ExceptionCode::NetworkError });
             else if (*exception)
-                promise.settle(WTFMove(**exception));
+                promise.settle(WTF::move(**exception));
             else
                 promise.resolve();
         });

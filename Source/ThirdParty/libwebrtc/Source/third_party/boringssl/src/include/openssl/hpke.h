@@ -43,6 +43,8 @@ extern "C" {
 #define EVP_HPKE_DHKEM_P256_HKDF_SHA256 0x0010
 #define EVP_HPKE_DHKEM_X25519_HKDF_SHA256 0x0020
 #define EVP_HPKE_XWING 0x647a
+#define EVP_HPKE_MLKEM768 0x0041
+#define EVP_HPKE_MLKEM1024 0x0042
 
 // The following functions are KEM algorithms which may be used with HPKE. Note
 // that, while some HPKE KEMs use KDFs internally, this is separate from the
@@ -50,6 +52,8 @@ extern "C" {
 OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_x25519_hkdf_sha256(void);
 OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_p256_hkdf_sha256(void);
 OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_xwing(void);
+OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_mlkem768(void);
+OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_mlkem1024(void);
 
 // EVP_HPKE_KEM_id returns the HPKE KEM identifier for |kem|, which
 // will be one of the |EVP_HPKE_KEM_*| constants.
@@ -57,7 +61,7 @@ OPENSSL_EXPORT uint16_t EVP_HPKE_KEM_id(const EVP_HPKE_KEM *kem);
 
 // EVP_HPKE_MAX_PUBLIC_KEY_LENGTH is the maximum length of an encoded public key
 // for all KEMs currently supported by this library.
-#define EVP_HPKE_MAX_PUBLIC_KEY_LENGTH 1216
+#define EVP_HPKE_MAX_PUBLIC_KEY_LENGTH 1568
 
 // EVP_HPKE_KEM_public_key_len returns the length of a public key for |kem|.
 // This value will be at most |EVP_HPKE_MAX_PUBLIC_KEY_LENGTH|.
@@ -65,7 +69,7 @@ OPENSSL_EXPORT size_t EVP_HPKE_KEM_public_key_len(const EVP_HPKE_KEM *kem);
 
 // EVP_HPKE_MAX_PRIVATE_KEY_LENGTH is the maximum length of an encoded private
 // key for all KEMs currently supported by this library.
-#define EVP_HPKE_MAX_PRIVATE_KEY_LENGTH 32
+#define EVP_HPKE_MAX_PRIVATE_KEY_LENGTH 64
 
 // EVP_HPKE_KEM_private_key_len returns the length of a private key for |kem|.
 // This value will be at most |EVP_HPKE_MAX_PRIVATE_KEY_LENGTH|.
@@ -73,7 +77,7 @@ OPENSSL_EXPORT size_t EVP_HPKE_KEM_private_key_len(const EVP_HPKE_KEM *kem);
 
 // EVP_HPKE_MAX_ENC_LENGTH is the maximum length of "enc", the encapsulated
 // shared secret, for all KEMs currently supported by this library.
-#define EVP_HPKE_MAX_ENC_LENGTH 1120
+#define EVP_HPKE_MAX_ENC_LENGTH 1568
 
 // EVP_HPKE_KEM_enc_len returns the length of the "enc", the encapsulated shared
 // secret, for |kem|. This value will be at most |EVP_HPKE_MAX_ENC_LENGTH|.

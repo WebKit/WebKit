@@ -48,10 +48,10 @@ public:
     RenderBox* first();
     RenderBox* next();
     OrderIterator reverse();
-    bool shouldSkipChild(const RenderObject&) const;
+    bool NODELETE shouldSkipChild(const RenderObject&) const;
 
 private:
-    void reset();
+    void NODELETE reset();
 
     RenderBox& m_containerBox;
     RenderBox* m_currentChild;

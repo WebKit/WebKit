@@ -55,6 +55,9 @@ PhaseScope::~PhaseScope()
     m_procedure.setLastPhaseName(m_name);
     if (shouldValidateIRAtEachPhase())
         validate(m_procedure, m_dumpBefore.data());
+
+    if (Options::dumpIonGraph()) [[unlikely]]
+        m_procedure.appendIonGraphPass(m_name);
 }
 
 } } // namespace JSC::B3

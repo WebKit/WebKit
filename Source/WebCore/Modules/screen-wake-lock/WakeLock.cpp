@@ -72,8 +72,8 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
 
     // FIXME: The permission check can likely be dropped once the specification gets updated to only
     // require transient activation (https://github.com/w3c/screen-wake-lock/pull/326).
-    bool hasTransientActivation = document->window() && document->protectedWindow()->hasTransientActivation();
-    PermissionController::singleton().query(document->clientOrigin(), PermissionDescriptor { PermissionName::ScreenWakeLock }, *document->page(), PermissionQuerySource::Window, [this, protectedThis = Ref { *this }, document = Ref { *document }, hasTransientActivation, promise = WTFMove(promise), lockType](std::optional<PermissionState> permission) mutable {
+    bool hasTransientActivation = document->window() && protect(document->window())->hasTransientActivation();
+    PermissionController::singleton().query(document->clientOrigin(), PermissionDescriptor { PermissionName::ScreenWakeLock }, *document->page(), PermissionQuerySource::Window, [this, protectedThis = Ref { *this }, document = Ref { *document }, hasTransientActivation, promise = WTF::move(promise), lockType](std::optional<PermissionState> permission) mutable {
         if (!permission || *permission == PermissionState::Prompt) {
             if (hasTransientActivation || m_wasPreviouslyAuthorizedDueToTransientActivation) {
                 m_wasPreviouslyAuthorizedDueToTransientActivation = true;
@@ -82,7 +82,7 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
                 permission = PermissionState::Denied;
         } else if (*permission == PermissionState::Denied)
             m_wasPreviouslyAuthorizedDueToTransientActivation = false;
-        document->checkedEventLoop()->queueTask(TaskSource::ScreenWakelock, [protectedThis = WTFMove(protectedThis), document = WTFMove(document), promise = WTFMove(promise), lockType, permission]() mutable {
+        protect(document->eventLoop())->queueTask(TaskSource::ScreenWakelock, [protectedThis = WTF::move(protectedThis), document = WTF::move(document), promise = WTF::move(promise), lockType, permission]() mutable {
             if (permission == PermissionState::Denied) {
                 promise->reject(Exception { ExceptionCode::NotAllowedError, "Permission was denied"_s });
                 return;
@@ -97,7 +97,7 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
             }
             auto lock = WakeLockSentinel::create(document, lockType);
             promise->resolve<IDLInterface<WakeLockSentinel>>(lock.get());
-            document->protectedWakeLockManager()->addWakeLock(WTFMove(lock), document->pageID());
+            protect(document->wakeLockManager())->addWakeLock(WTF::move(lock), document->pageID());
         });
     });
 }

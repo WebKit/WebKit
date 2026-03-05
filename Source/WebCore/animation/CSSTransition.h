@@ -40,7 +40,7 @@ namespace WebCore {
 class RenderStyle;
 
 class CSSTransition final : public StyleOriginatedAnimation {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransition);
+    WTF_MAKE_TZONE_ALLOCATED(CSSTransition);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSTransition);
 public:
     static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);

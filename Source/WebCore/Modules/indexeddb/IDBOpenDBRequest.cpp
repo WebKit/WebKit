@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBOpenDBRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBOpenDBRequest);
 
 Ref<IDBOpenDBRequest> IDBOpenDBRequest::createDeleteRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBDatabaseIdentifier& databaseIdentifier)
 {
@@ -102,12 +102,12 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
-    protectedTransaction()->addRequest(*this);
+    protect(transaction())->addRequest(*this);
 
     Ref event = IDBRequestCompletionEvent::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No, *this);
     m_openDatabaseSuccessEvent = event.get();
 
-    enqueueEvent(WTFMove(event));
+    enqueueEvent(WTF::move(event));
 }
 
 void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
@@ -121,7 +121,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     m_domError = DOMException::create(ExceptionCode::AbortError);
     setResultToUndefined();
 
-    protectedTransaction()->addRequest(*this);
+    protect(transaction())->addRequest(*this);
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, *this));
 }
 
@@ -148,7 +148,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    setResult(IDBDatabase::create(*protectedScriptExecutionContext(), connectionProxy(), resultData));
+    setResult(IDBDatabase::create(*protect(scriptExecutionContext()), connectionProxy(), resultData));
     setReadyState(ReadyState::Done);
 
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No, *this));
@@ -158,7 +158,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    Ref database = IDBDatabase::create(*protectedScriptExecutionContext(), connectionProxy(), resultData);
+    Ref database = IDBDatabase::create(*protect(scriptExecutionContext()), connectionProxy(), resultData);
     Ref transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
 
     ASSERT(transaction->info().mode() == IDBTransactionMode::Versionchange);
@@ -169,7 +169,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 
     LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %" PRIu64 ", new is %" PRIu64, oldVersion, newVersion);
 
-    setResult(WTFMove(database));
+    setResult(WTF::move(database));
     setReadyState(ReadyState::Done);
     m_transaction = transaction.copyRef();
     transaction->addRequest(*this);

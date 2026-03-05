@@ -44,7 +44,7 @@ template<> struct Converter<IDLBoolean> : DefaultConverter<IDLBoolean> {
 
         RETURN_IF_EXCEPTION(throwScope, Result::exception());
 
-        return Result { WTFMove(conversionResult) };
+        return Result { WTF::move(conversionResult) };
     }
 };
 

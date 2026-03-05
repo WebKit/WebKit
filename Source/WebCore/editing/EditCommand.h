@@ -55,8 +55,8 @@ public:
 
     virtual EditAction editingAction() const;
 
-    const VisibleSelection& startingSelection() const { return m_startingSelection; }
-    const VisibleSelection& endingSelection() const { return m_endingSelection; }
+    const VisibleSelection& startingSelection() const LIFETIME_BOUND { return m_startingSelection; }
+    const VisibleSelection& endingSelection() const LIFETIME_BOUND { return m_endingSelection; }
 
     virtual bool isInsertTextCommand() const { return false; }    
     virtual bool isSimpleEditCommand() const { return false; }

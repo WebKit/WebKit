@@ -60,7 +60,7 @@ public:
 
     static Ref<MediaKeys> create(Document& document, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     {
-        return adoptRef(*new MediaKeys(document, useDistinctiveIdentifier, persistentStateAllowed, supportedSessionTypes, WTFMove(implementation), WTFMove(instance)));
+        return adoptRef(*new MediaKeys(document, useDistinctiveIdentifier, persistentStateAllowed, supportedSessionTypes, WTF::move(implementation), WTF::move(instance)));
     }
 
     WEBCORE_EXPORT ~MediaKeys();
@@ -80,7 +80,7 @@ public:
     const CDMInstance& cdmInstance() const { return m_instance; }
 
 #if !RELEASE_LOG_DISABLED
-    uint64_t nextChildIdentifier() const;
+    uint64_t NODELETE nextChildIdentifier() const;
 #endif
 
     unsigned internalInstanceObjectRefCount() const { return m_instance->refCount(); }

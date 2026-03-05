@@ -62,7 +62,6 @@ public:
     LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, bool isFirstFormattedLine, size_t nonSpanningInlineLevelBoxCount);
 
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
-    bool hasContent() const { return m_hasContent; }
     bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }
     bool hasNonInlineBox() const { return m_boxTypes.containsAny({ InlineLevelBox::Type::AtomicInlineBox, InlineLevelBox::Type::LineBreakBox, InlineLevelBox::Type::GenericInlineLevelBox }); }
     bool hasAtomicInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::AtomicInlineBox); }
@@ -81,6 +80,7 @@ public:
     using InlineLevelBoxList = Vector<InlineLevelBox>;
     const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
 
+    InlineLayoutUnit alignmentBaseline() const { return logicalRectForRootInlineBox().top() + rootInlineBox().ascent(); }
     FontBaseline baselineType() const { return m_baselineType; }
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
@@ -111,17 +111,15 @@ private:
     InlineRect logicalRectForInlineLevelBox(const Box& layoutBox) const;
 
     void setLogicalRect(const InlineRect& logicalRect) { m_logicalRect = logicalRect; }
-    void setHasContent(bool hasContent) { m_hasContent = hasContent; }
     void setBaselineType(FontBaseline baselineType) { m_baselineType = baselineType; }
 
     InlineLayoutUnit inlineLevelBoxAbsoluteTop(const InlineLevelBox&) const;
 
 private:
     size_t m_lineIndex { 0 };
-    bool m_hasContent { false };
     bool m_isFirstFormattedLine { true };
     InlineRect m_logicalRect;
-    OptionSet<InlineLevelBox::Type> m_boxTypes;
+    EnumSet<InlineLevelBox::Type> m_boxTypes;
 
     FontBaseline m_baselineType { FontBaseline::Alphabetic };
     InlineLevelBox m_rootInlineBox;

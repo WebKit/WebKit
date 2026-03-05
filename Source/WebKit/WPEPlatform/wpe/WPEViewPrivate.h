@@ -30,4 +30,4 @@
 void wpeViewToplevelStateChanged(WPEView*, WPEToplevelState);
 void wpeViewScaleChanged(WPEView*, double);
 void wpeViewScreenChanged(WPEView*);
-void wpeViewPreferredDMABufFormatsChanged(WPEView*);
+void wpeViewPreferredBufferFormatsChanged(WPEView*);

@@ -108,33 +108,33 @@ public:
 
     bool isEmpty() const { return !size(); }
 
-    T& at(size_t index)
+    T& at(size_t index) LIFETIME_BOUND
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < m_size);
         return segmentFor(index)->entries[subscriptFor(index)];
     }
 
-    const T& at(size_t index) const
+    const T& at(size_t index) const LIFETIME_BOUND
     {
         return const_cast<ConcurrentVector<T, SegmentSize>*>(this)->at(index);
     }
 
-    T& operator[](size_t index)
+    T& operator[](size_t index) LIFETIME_BOUND
     {
         return at(index);
     }
 
-    const T& operator[](size_t index) const
+    const T& operator[](size_t index) const LIFETIME_BOUND
     {
         return at(index);
     }
 
-    T& first()
+    T& first() LIFETIME_BOUND
     {
         ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
         return at(0);
     }
-    const T& first() const
+    const T& first() const LIFETIME_BOUND
     {
         ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
         return at(0);
@@ -142,12 +142,12 @@ public:
     
     // This may crash if run concurrently to append(). If you want to accurately track the size of
     // this vector, use appendConcurrently().
-    T& last()
+    T& last() LIFETIME_BOUND
     {
         ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
         return at(size() - 1);
     }
-    const T& last() const
+    const T& last() const LIFETIME_BOUND
     {
         ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
         return at(size() - 1);
@@ -156,7 +156,7 @@ public:
     T takeLast()
     {
         ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
-        T result = WTFMove(last());
+        T result = WTF::move(last());
         --m_size;
         return result;
     }
@@ -171,7 +171,7 @@ public:
     }
 
     template<typename... Args>
-    T& alloc(Args&&... args)
+    T& alloc(Args&&... args) LIFETIME_BOUND
     {
         append(std::forward<Args>(args)...);
         return last();

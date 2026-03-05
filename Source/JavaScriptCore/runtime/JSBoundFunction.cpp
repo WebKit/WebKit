@@ -29,6 +29,7 @@
 #include "DeferTermination.h"
 #include "ExecutableBaseInlines.h"
 #include "FunctionPrototype.h"
+#include "JSBoundFunctionInlines.h"
 #include "JSCInlines.h"
 #include "VMTrapsInlines.h"
 
@@ -107,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
     JSObject* targetFunction = boundFunction->targetFunction();
-    auto constructData = JSC::getConstructData(targetFunction);
+    auto constructData = JSC::getConstructDataInline(targetFunction);
     if (constructData.type == CallData::Type::None) [[unlikely]]
         return throwVMError(globalObject, scope, createNotAConstructorError(globalObject, boundFunction));
 
@@ -266,7 +267,7 @@ JSString* JSBoundFunction::nameSlow(VM& vm)
 {
     JSGlobalObject* globalObject = this->globalObject();
     DeferTerminationForAWhile deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     unsigned nestingCount = 0;
     JSObject* cursor = m_targetFunction.get();
@@ -345,7 +346,7 @@ String JSBoundFunction::nameStringWithoutGCSlow(VM& vm)
     StringBuilder builder(OverflowPolicy::RecordOverflow);
     for (unsigned i = 0; i < nestingCount; ++i)
         builder.append("bound "_s);
-    builder.append(WTFMove(terminal));
+    builder.append(WTF::move(terminal));
     if (builder.hasOverflowed())
         return emptyString();
     return builder.toString();

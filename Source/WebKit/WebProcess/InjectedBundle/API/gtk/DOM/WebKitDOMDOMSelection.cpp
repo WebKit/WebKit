@@ -67,7 +67,9 @@ WebKitDOMDOMSelection* wrapDOMSelection(WebCore::DOMSelection* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMDOMSelection, webkit_dom_dom_selection, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_DOM_SELECTION_PROP_0,

@@ -52,7 +52,7 @@ class RemoteXRProjectionLayerProxy final : public WebCore::WebGPU::XRProjectionL
 public:
     static Ref<RemoteXRProjectionLayerProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRProjectionLayerProxy(WTFMove(parent), convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRProjectionLayerProxy(WTF::move(parent), convertToBackingContext, identifier));
     }
 
     virtual ~RemoteXRProjectionLayerProxy();
@@ -88,14 +88,14 @@ private:
     void endFrame() final;
 
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Error send(T&& message)
+    [[nodiscard]] IPC::Error send(T&& message)
     {
-        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->send(WTF::move(message), backing());
     }
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    [[nodiscard]] IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->sendSync(WTF::move(message), backing());
     }
 
     bool isRemoteXRProjectionLayerProxy() const final { return true; }

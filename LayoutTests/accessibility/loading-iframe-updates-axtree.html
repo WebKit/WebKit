@@ -1,67 +1,62 @@
 <html>
 <head>
+<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
-
-  <script>
-    jsTestIsAsync = true;
-
-    function runTest()
-    {
-        description("This tests that if an iframe loads new content after its accessibility object has already been accessed, the iframe accessibility object's descendants are the new scroll area and web area, not the old deleted ones.");
-
-        if (window.accessibilityController) {
-            window.iframe = accessibilityController.accessibleElementById('iframeContainer');
-            window.scrollarea = iframe.childAtIndex(0);
-            window.subwebarea = scrollarea.childAtIndex(0);
-        }
-
-        window.iframeElement = document.getElementById("iframe");
-        iframeElement.addEventListener("load", function() {
-            if (window.accessibilityController) {
-                window.newIframe = accessibilityController.accessibleElementById('iframeContainer');
-                window.newScrollarea = newIframe.childAtIndex(0);
-                window.newSubwebarea = newScrollarea.childAtIndex(0);
-
-                // for WK1, the scroll area does not change
-                var iframeEqual = iframe.isEqual(newIframe);
-                var scrollareaEqual = scrollarea.isEqual(newScrollarea);
-                var subwebareaEqual = subwebarea.isEqual(newSubwebarea);
-                debug("iframe.isEqual(newIframe): " + iframeEqual);
-                debug("scrollarea.isEqual(newScrollarea): " + scrollareaEqual);
-                debug("subwebarea.isEqual(newSubwebarea): " + subwebareaEqual);
-                shouldBeTrue("newSubwebarea.childrenCount > 0");
-            }
-
-            finishJSTest();
-        }, false);
-
-        // Load content into the iframe. This will trigger the event
-        // handler above, which will check that the accessibility tree
-        // was updated with new content.
-        window.iframeElement.src = "data:text/html,<body><button>Click me</button></body>";
-
-    }
-
-    window.addEventListener('load', function() {
-        setTimeout(runTest, 10);
-    }, false);
-
-  </script>
 </head>
 <body>
 
 <p>Before</p>
 
 <div id="iframeContainer">
-<iframe id="iframe"></iframe>
+    <iframe id="iframe" src="data:text/html,<body>Foo text</body>"></iframe>
 </div>
 
 <p>After</p>
+<script>
+var output = "This tests that if an iframe that has already been accessed loads new content, that said new content is reflected in the accessibility tree.\n\n";
 
-<p>End of test</p>
+window.jsTestIsAsync = true;
 
-<p id="description"></p>
-<div id="console"></div>
+var scrollArea, webArea;
+async function runTest()
+{
+    if (!window.accessibilityController)
+        return;
 
+    // Access the iframe's accessibility objects before the reload to ensure
+    // they are cached. The original bug was that the cache wasn't updated.
+    scrollArea = accessibilityController.accessibleElementById("iframeContainer").childAtIndex(0);
+    webArea = scrollArea.childAtIndex(0);
+    output += expect("platformStaticTextValue(webArea.childAtIndex(0)).includes('Foo text')", "true");
+
+    window.iframeElement = document.getElementById("iframe");
+    iframeElement.addEventListener("load", async function() {
+        await waitFor(() => {
+            window.axContainer = accessibilityController.accessibleElementById("iframeContainer");
+            window.newScrollArea = axContainer ? axContainer.childAtIndex(0) : null;
+            window.newWebArea = newScrollArea ? newScrollArea.childAtIndex(0) : null;
+            if (!window.newWebArea)
+                return false;
+
+            return !newScrollArea.isEqual(scrollArea) && !newWebArea.isEqual(webArea);
+        })
+
+        output += await expectAsync("newWebArea.childrenCount > 0", "true");
+        output += await expectAsync("newWebArea.childAtIndex(0).role.toLowerCase().includes('button')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, false);
+
+    // Load content into the iframe. This will trigger the event
+    // handler above, which will check that the accessibility tree
+    // was updated with new content.
+    window.iframeElement.src = "data:text/html,<body><button>Click me</button></body>";
+}
+
+window.addEventListener("load", async function() {
+    setTimeout(runTest, 10);
+}, false);
+</script>
 </body>
 </html>

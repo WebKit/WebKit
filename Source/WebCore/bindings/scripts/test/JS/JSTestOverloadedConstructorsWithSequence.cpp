@@ -97,14 +97,14 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto sequenceOfStringsConversionResult = convertOptionalWithDefault<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&]() -> ConversionResult<IDLSequence<IDLDOMString>> { return Converter<IDLSequence<IDLDOMString>>::ReturnType { }; });
+    auto sequenceOfStringsConversionResult = convertOptionalWithDefault<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLSequence<IDLDOMString>> { return Converter<IDLSequence<IDLDOMString>>::ReturnType { }; });
     if (sequenceOfStringsConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     auto object = TestOverloadedConstructorsWithSequence::create(sequenceOfStringsConversionResult.releaseReturnValue());
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTF::move(object));
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     setSubclassStructureIfNeeded<TestOverloadedConstructorsWithSequence>(lexicalGlobalObject, callFrame, asObject(jsValue));
@@ -126,7 +126,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTF::move(object));
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     setSubclassStructureIfNeeded<TestOverloadedConstructorsWithSequence>(lexicalGlobalObject, callFrame, asObject(jsValue));
@@ -194,7 +194,7 @@ void JSTestOverloadedConstructorsWithSequencePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestOverloadedConstructorsWithSequence::s_info = { "TestOverloadedConstructorsWithSequence"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequence) };
 
 JSTestOverloadedConstructorsWithSequence::JSTestOverloadedConstructorsWithSequence(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverloadedConstructorsWithSequence>&& impl)
-    : JSDOMWrapper<TestOverloadedConstructorsWithSequence>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestOverloadedConstructorsWithSequence>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -264,7 +264,7 @@ void JSTestOverloadedConstructorsWithSequenceOwner::finalize(JSC::Handle<JSC::Un
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestOverloadedConstructorsWithSequence = static_cast<JSTestOverloadedConstructorsWithSequence*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestOverloadedConstructorsWithSequence->protectedWrapped().ptr(), jsTestOverloadedConstructorsWithSequence);
+    uncacheWrapper(world, protect(jsTestOverloadedConstructorsWithSequence->wrapped()).ptr(), jsTestOverloadedConstructorsWithSequence);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -302,7 +302,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestOverloadedConstructorsWithSequence>(impl.ptr());
 #endif
-    return createWrapper<TestOverloadedConstructorsWithSequence>(globalObject, WTFMove(impl));
+    return createWrapper<TestOverloadedConstructorsWithSequence>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestOverloadedConstructorsWithSequence& impl)

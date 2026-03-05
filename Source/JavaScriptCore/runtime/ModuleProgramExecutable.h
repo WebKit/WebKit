@@ -29,6 +29,7 @@
 
 namespace JSC {
 
+class SymbolTable;
 class UnlinkedModuleProgramCodeBlock;
 
 class ModuleProgramExecutable final : public GlobalExecutable {

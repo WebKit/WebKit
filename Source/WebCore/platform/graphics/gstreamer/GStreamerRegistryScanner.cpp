@@ -44,7 +44,11 @@
 #include "VideoEncoderPrivateGStreamer.h"
 #endif
 
-namespace {
+namespace WebCore {
+
+GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
+#define GST_CAT_DEFAULT webkit_media_gst_registry_scanner_debug
+
 struct VideoDecodingLimits {
     unsigned mediaMaxWidth = 0;
     unsigned mediaMaxHeight = 0;
@@ -56,22 +60,18 @@ struct VideoDecodingLimits {
     {
     }
 };
-}
 
-#ifdef VIDEO_DECODING_LIMIT
-static std::optional<VideoDecodingLimits> videoDecoderLimitsDefaults()
+// Parses a video decoding limit string in format WIDTHxHEIGHT@FRAMERATE.
+static std::optional<VideoDecodingLimits> parseVideoDecodingLimit(const StringView& videoDecodingLimit)
 {
-    // VIDEO_DECODING_LIMIT should be in format: WIDTHxHEIGHT@FRAMERATE.
-    String videoDecodingLimit(String::fromUTF8(VIDEO_DECODING_LIMIT));
-
     if (videoDecodingLimit.isEmpty())
         return { };
 
     Vector<String> entries;
 
-    // Extract frame rate part from the VIDEO_DECODING_LIMIT: WIDTHxHEIGHT@FRAMERATE.
-    videoDecodingLimit.split('@', [&entries](StringView item) {
-        entries.append(item.toString());
+    // Extract frame rate part: WIDTHxHEIGHT@FRAMERATE.
+    videoDecodingLimit.toStringWithoutCopying().split('@', [&entries](StringView item) {
+        entries.append(item.toStringWithoutCopying());
     });
 
     if (entries.size() != 2)
@@ -99,12 +99,39 @@ static std::optional<VideoDecodingLimits> videoDecoderLimitsDefaults()
 
     return { VideoDecodingLimits(width.value(), height.value(), frameRate.value()) };
 }
+
+// Returns the active VideoDecodingLimits, resolved once at first call.
+// WEBKIT_GST_VIDEO_DECODING_LIMIT env var takes precedence over the compile-time VIDEO_DECODING_LIMIT.
+// Format for both: WIDTHxHEIGHT@FRAMERATE (e.g. "1920x1080@30").
+static VideoDecodingLimits* resolveVideoDecodingLimits()
+{
+    static std::optional<VideoDecodingLimits> limits;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        if (const char* envLimit = g_getenv("WEBKIT_GST_VIDEO_DECODING_LIMIT")) {
+            GST_DEBUG("WEBKIT_GST_VIDEO_DECODING_LIMIT env var is set: %s", envLimit);
+            limits = parseVideoDecodingLimit(StringView::fromLatin1(envLimit));
+            if (!limits)
+                GST_WARNING("Parsing WEBKIT_GST_VIDEO_DECODING_LIMIT env var failed: %s", envLimit);
+        }
+#ifdef VIDEO_DECODING_LIMIT
+        if (!limits) {
+            GST_DEBUG("VIDEO_DECODING_LIMIT compile-time definition is set: %s", VIDEO_DECODING_LIMIT);
+            limits = parseVideoDecodingLimit(String::fromLatin1(VIDEO_DECODING_LIMIT));
+            if (!limits) {
+                GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed: %s", VIDEO_DECODING_LIMIT);
+                ASSERT_NOT_REACHED();
+                return;
+            }
+        }
 #endif
-
-namespace WebCore {
-
-GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
-#define GST_CAT_DEFAULT webkit_media_gst_registry_scanner_debug
+        if (limits) {
+            GST_DEBUG("Video decoding limits: max width=%u, max height=%u, max frame rate=%u",
+                limits->mediaMaxWidth, limits->mediaMaxHeight, limits->mediaMaxFrameRate);
+        }
+    });
+    return limits ? &*limits : nullptr;
+}
 
 // We shouldn't accept media that the player can't actually play.
 // AAC supports up to 96 channels.
@@ -187,39 +214,41 @@ GStreamerRegistryScanner::ElementFactories::~ElementFactories()
     gst_plugin_feature_list_free(captionEncoderFactories);
 }
 
-const char* GStreamerRegistryScanner::ElementFactories::elementFactoryTypeToString(GStreamerRegistryScanner::ElementFactories::Type factoryType)
+#ifndef GST_DISABLE_GST_DEBUG
+ASCIILiteral GStreamerRegistryScanner::ElementFactories::elementFactoryTypeToString(GStreamerRegistryScanner::ElementFactories::Type factoryType)
 {
     switch (factoryType) {
     case Type::AudioParser:
-        return "audio parser";
+        return "audio parser"_s;
     case Type::AudioDecoder:
-        return "audio decoder";
+        return "audio decoder"_s;
     case Type::VideoParser:
-        return "video parser";
+        return "video parser"_s;
     case Type::VideoDecoder:
-        return "video decoder";
+        return "video decoder"_s;
     case Type::Demuxer:
-        return "demuxer";
+        return "demuxer"_s;
     case Type::AudioEncoder:
-        return "audio encoder";
+        return "audio encoder"_s;
     case Type::VideoEncoder:
-        return "video encoder";
+        return "video encoder"_s;
     case Type::Muxer:
-        return "muxer";
+        return "muxer"_s;
     case Type::RtpPayloader:
-        return "RTP payloader";
+        return "RTP payloader"_s;
     case Type::RtpDepayloader:
-        return "RTP depayloader";
+        return "RTP depayloader"_s;
     case Type::Decryptor:
-        return "Decryptor";
+        return "Decryptor"_s;
     case Type::CaptionEncoder:
-        return "caption encoder";
+        return "caption encoder"_s;
     case Type::All:
         break;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif
 
 GList* GStreamerRegistryScanner::ElementFactories::factory(GStreamerRegistryScanner::ElementFactories::Type factoryType) const
 {
@@ -339,7 +368,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     if (!isSupported)
         selectedFactory.clear();
 
-    GST_LOG("Lookup result for %s matching caps %" GST_PTR_FORMAT " : isSupported=%s, isUsingHardware=%s, factory=%" GST_PTR_FORMAT, elementFactoryTypeToString(factoryType), caps.get(), boolForPrinting(isSupported), boolForPrinting(isUsingHardware), selectedFactory.get());
+    GST_LOG("Lookup result for %s matching caps %" GST_PTR_FORMAT " : isSupported=%s, isUsingHardware=%s, factory=%" GST_PTR_FORMAT, elementFactoryTypeToString(factoryType).characters(), caps.get(), boolForPrinting(isSupported), boolForPrinting(isUsingHardware), selectedFactory.get());
     return { isSupported, isUsingHardware, selectedFactory };
 }
 
@@ -351,7 +380,7 @@ GStreamerRegistryScanner::GStreamerRegistryScanner(bool isMediaSource)
     else {
         // This is still needed, mostly because of the webkit_web_view_can_show_mime_type() public API (so
         // running from UIProcess).
-        gst_init(nullptr, nullptr);
+        ensureGStreamerInitializedNonWebProcess();
     }
 
     GST_DEBUG_CATEGORY_INIT(webkit_media_gst_registry_scanner_debug, "webkitregistryscanner", 0, "WebKit GStreamer registry scanner");
@@ -571,13 +600,13 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         { ElementFactories::Type::Demuxer, "video/x-ms-asf"_s, { }, { } },
     };
 
-    if (const char* hlsSupport = g_getenv("WEBKIT_GST_ENABLE_HLS_SUPPORT")) {
-        if (!g_strcmp0(hlsSupport, "1"))
+    if (auto hlsSupport = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_HLS_SUPPORT"))) {
+        if (hlsSupport == "1"_s)
             mapping.append({ ElementFactories::Type::Demuxer, "application/x-hls"_s, { "application/vnd.apple.mpegurl"_s, "application/x-mpegurl"_s }, { } });
     }
 
-    if (const char* dashSupport = g_getenv("WEBKIT_GST_ENABLE_DASH_SUPPORT")) {
-        if (!g_strcmp0(dashSupport, "1"))
+    if (auto dashSupport = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_DASH_SUPPORT"))) {
+        if (dashSupport == "1"_s)
             mapping.append({ ElementFactories::Type::Demuxer, "application/dash+xml"_s, { }, { } });
     }
 
@@ -680,7 +709,7 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
     }
 
     Vector<String> av1EncodersDisallowedList { "av1enc"_s };
-    auto av1EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-av1"_s, ElementFactories::CheckHardwareClassifier::Yes, std::make_optional(WTFMove(av1EncodersDisallowedList)));
+    auto av1EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-av1"_s, ElementFactories::CheckHardwareClassifier::Yes, std::make_optional(WTF::move(av1EncodersDisallowedList)));
     if (av1EncoderAvailable) {
         m_encoderCodecMap.add("av01*"_s, av1EncoderAvailable);
         m_encoderCodecMap.add("av1"_s, av1EncoderAvailable);
@@ -805,22 +834,8 @@ bool GStreamerRegistryScanner::supportsFeatures(const String& features) const
 MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(Configuration configuration, const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport, CaseSensitiveCodecName caseSensitive) const
 {
     VideoDecodingLimits* videoDecodingLimits = nullptr;
-#ifdef VIDEO_DECODING_LIMIT
-    static std::optional<VideoDecodingLimits> videoDecodingLimitsDefaults;
-    static std::once_flag onceFlag;
-    if (configuration == Configuration::Decoding) {
-        std::call_once(onceFlag, [] {
-            videoDecodingLimitsDefaults = videoDecoderLimitsDefaults();
-            if (!videoDecodingLimitsDefaults) {
-                GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
-                ASSERT_NOT_REACHED();
-                return;
-            }
-        });
-        if (videoDecodingLimitsDefaults)
-            videoDecodingLimits = &*videoDecodingLimitsDefaults;
-    }
-#endif
+    if (configuration == Configuration::Decoding)
+        videoDecodingLimits = resolveVideoDecodingLimits();
 
     using SupportsType = MediaPlayerEnums::SupportsType;
 
@@ -971,33 +986,34 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1Code
         return { false, nullptr };
     }
 
-    if (const char* maxVideoResolution = g_getenv("WEBKIT_GST_MAX_AVC1_RESOLUTION")) {
-        uint8_t levelAsInteger = gst_codec_utils_h264_get_level_idc(level);
-        GST_DEBUG("Maximum video resolution requested: %s, supplied codec level IDC: %u", maxVideoResolution, levelAsInteger);
+    CString levelAsCString = level.ascii();
+    if (auto maxVideoResolution = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_MAX_AVC1_RESOLUTION"))) {
+        uint8_t levelAsInteger = gst_codec_utils_h264_get_level_idc(levelAsCString.data());
+        GST_DEBUG("Maximum video resolution requested: %s, supplied codec level IDC: %u", maxVideoResolution.utf8(), levelAsInteger);
         uint8_t maxLevel = 0;
-        const char* maxLevelString = "";
-        if (!g_strcmp0(maxVideoResolution, "1080P")) {
+        ASCIILiteral maxLevelString;
+        if (maxVideoResolution == "1080P"_s) {
             maxLevel = 40;
-            maxLevelString = "4";
-        } else if (!g_strcmp0(maxVideoResolution, "720P")) {
+            maxLevelString = "4"_s;
+        } else if (maxVideoResolution == "720P"_s) {
             maxLevel = 31;
-            maxLevelString = "3.1";
-        } else if (!g_strcmp0(maxVideoResolution, "480P")) {
+            maxLevelString = "3.1"_s;
+        } else if (maxVideoResolution == "480P"_s) {
             maxLevel = 30;
-            maxLevelString = "3";
+            maxLevelString = "3"_s;
         } else {
-            g_warning("Invalid value for WEBKIT_GST_MAX_AVC1_RESOLUTION. Currently supported, 1080P, 720P and 480P.");
+            g_warning("Invalid value %s for WEBKIT_GST_MAX_AVC1_RESOLUTION. Currently supported, 1080P, 720P and 480P.", maxVideoResolution.utf8());
             return { false, nullptr };
         }
         if (levelAsInteger > maxLevel)
             return { false, nullptr };
 
-        gst_caps_set_simple(h264Caps.get(), "level", G_TYPE_STRING, maxLevelString, nullptr);
+        gst_caps_set_simple(h264Caps.get(), "level", G_TYPE_STRING, maxLevelString.characters(), nullptr);
         return areCapsSupported(configuration, h264Caps, shouldCheckForHardwareUse);
     }
 
     GST_DEBUG("Checking video decoders for constrained caps");
-    gst_caps_set_simple(h264Caps.get(), "level", G_TYPE_STRING, level, "profile", G_TYPE_STRING, profile, nullptr);
+    gst_caps_set_simple(h264Caps.get(), "level", G_TYPE_STRING, levelAsCString.data(), "profile", G_TYPE_STRING, profile.utf8(), nullptr);
     return areCapsSupported(configuration, h264Caps, shouldCheckForHardwareUse);
 }
 
@@ -1012,7 +1028,7 @@ ASCIILiteral GStreamerRegistryScanner::configurationNameForLogging(Configuration
     return ""_s;
 }
 
-GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfigurationSupported(Configuration configuration, const MediaConfiguration& mediaConfiguration) const
+GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfigurationSupported(Configuration configuration, const PlatformMediaConfiguration& mediaConfiguration) const
 {
     bool isUsingHardware = false;
 #ifndef GST_DISABLE_GST_DEBUG
@@ -1038,7 +1054,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
             if (videoConfiguration.transferFunction.has_value()) {
                 auto tf = videoConfiguration.transferFunction.value();
                 // compare to your enum values for PQ/HLG; adjust names if different
-                if (tf == TransferFunction::PQ || tf == TransferFunction::HLG)
+                if (tf == PlatformMediaCapabilitiesTransferFunction::PQ || tf == PlatformMediaCapabilitiesTransferFunction::HLG)
                     return { false, false, nullptr };
             }
         }
@@ -1091,7 +1107,7 @@ static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExte
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> extensions;
     for (const auto& uri : candidates) {
         if (auto extension = adoptGRef(gst_rtp_header_extension_create_from_uri(uri.characters())))
-            extensions.append(makeString(unsafeSpan(uri)));
+            extensions.append(String(byteCast<char8_t>(unsafeSpan(uri))));
     }
     return extensions;
 }
@@ -1251,10 +1267,10 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isRtpPa
     return factories.hasElementForMediaType(ElementFactories::Type::RtpPayloader, *gstCapsName);
 }
 
-bool GStreamerRegistryScanner::isRtpHeaderExtensionSupported(StringView uri)
+bool GStreamerRegistryScanner::isRtpHeaderExtensionSupported(const String& uri)
 {
 #if GST_CHECK_VERSION(1, 20, 0)
-    return adoptGRef(gst_rtp_header_extension_create_from_uri(uri.toStringWithoutCopying().ascii().data()));
+    return adoptGRef(gst_rtp_header_extension_create_from_uri(uri.utf8().data()));
 #endif
 
     for (auto& u : m_commonRtpExtensions) {

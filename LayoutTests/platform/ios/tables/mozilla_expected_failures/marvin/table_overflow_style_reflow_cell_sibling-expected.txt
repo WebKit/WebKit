@@ -10,7 +10,7 @@ layer at (0,0) size 800x386
         RenderTableSection {TBODY} at (1,207) size 198x162
           RenderTableRow {TR} at (0,30) size 198x102
             RenderTableCell {TD} at (30,64) size 54x34 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,35) size 39x31
+              RenderText {#text} at (1,35) size 39x32
                 text run at (1,1) width 39: "foo bar"
                 text run at (1,17) width 19: "baz"
             RenderTableCell {TD} at (114,78) size 54x54 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]

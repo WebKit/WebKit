@@ -30,6 +30,7 @@
 messages -> RemoteImageBufferSet Stream {
     UpdateConfiguration(struct WebKit::RemoteImageBufferSetConfiguration configuration)
     EndPrepareForDisplay(WebKit::RenderingUpdateID renderingUpdateID) -> (struct WebKit::ImageBufferSetPrepareBufferForDisplayOutputData outputData, WebKit::RenderingUpdateID renderingUpdateID)
+    SubmitDrawingCommands()
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     DynamicContentScalingDisplayList() -> (std::optional<WebCore::DynamicContentScalingDisplayList> displayList) Synchronous NotStreamEncodableReply

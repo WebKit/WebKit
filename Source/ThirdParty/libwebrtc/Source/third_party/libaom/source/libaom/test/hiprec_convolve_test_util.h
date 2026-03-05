@@ -29,14 +29,14 @@ namespace libaom_test {
 
 namespace AV1HiprecConvolve {
 
-typedef void (*hiprec_convolve_func)(const uint8_t *src, ptrdiff_t src_stride,
-                                     uint8_t *dst, ptrdiff_t dst_stride,
-                                     const int16_t *filter_x, int x_step_q4,
-                                     const int16_t *filter_y, int y_step_q4,
-                                     int w, int h,
-                                     const WienerConvolveParams *conv_params);
+using hiprec_convolve_func = void (*)(const uint8_t *src, ptrdiff_t src_stride,
+                                      uint8_t *dst, ptrdiff_t dst_stride,
+                                      const int16_t *filter_x, int x_step_q4,
+                                      const int16_t *filter_y, int y_step_q4,
+                                      int w, int h,
+                                      const WienerConvolveParams *conv_params);
 
-typedef std::tuple<int, int, int, hiprec_convolve_func> HiprecConvolveParam;
+using HiprecConvolveParam = std::tuple<int, int, int, hiprec_convolve_func>;
 
 ::testing::internal::ParamGenerator<HiprecConvolveParam> BuildParams(
     hiprec_convolve_func filter);
@@ -58,14 +58,14 @@ class AV1HiprecConvolveTest
 
 #if CONFIG_AV1_HIGHBITDEPTH
 namespace AV1HighbdHiprecConvolve {
-typedef void (*highbd_hiprec_convolve_func)(
-    const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
-    ptrdiff_t dst_stride, const int16_t *filter_x, int x_step_q4,
-    const int16_t *filter_y, int y_step_q4, int w, int h,
-    const WienerConvolveParams *conv_params, int bps);
+using highbd_hiprec_convolve_func =
+    void (*)(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
+             ptrdiff_t dst_stride, const int16_t *filter_x, int x_step_q4,
+             const int16_t *filter_y, int y_step_q4, int w, int h,
+             const WienerConvolveParams *conv_params, int bps);
 
-typedef std::tuple<int, int, int, int, highbd_hiprec_convolve_func>
-    HighbdHiprecConvolveParam;
+using HighbdHiprecConvolveParam =
+    std::tuple<int, int, int, int, highbd_hiprec_convolve_func>;
 
 ::testing::internal::ParamGenerator<HighbdHiprecConvolveParam> BuildParams(
     highbd_hiprec_convolve_func filter);

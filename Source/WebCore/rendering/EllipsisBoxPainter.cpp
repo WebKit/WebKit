@@ -30,8 +30,10 @@
 #include "LineSelection.h"
 #include "PaintInfo.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "Settings.h"
+#include "StyleColorResolver.h"
 #include "StyleTextShadow.h"
 
 namespace WebCore {
@@ -49,8 +51,8 @@ void EllipsisBoxPainter::paint()
 {
     // FIXME: Transition it to TextPainter.
     auto& context = m_paintInfo.context();
-    auto& style = m_lineBox.style();
-    auto textColor = style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
+    CheckedRef style = m_lineBox.style();
+    auto textColor = style->visitedDependentTextFillColorApplyingColorFilter();
 
     if (m_paintInfo.forceTextColor())
         textColor = m_paintInfo.forcedTextColor();
@@ -67,21 +69,39 @@ void EllipsisBoxPainter::paint()
     if (textColor != context.fillColor())
         context.setFillColor(textColor);
 
-    bool setShadow = WTF::switchOn(style.textShadow(),
+    bool setShadow = WTF::switchOn(style->textShadow(),
         [&](const CSS::Keyword::None&) {
             return false;
         },
         [&](const auto& shadows) {
-            const auto& zoomFactor = style.usedZoomForLength();
-            context.setDropShadow({ LayoutSize(shadows[0].location.x().resolveZoom(zoomFactor), shadows[0].location.y().resolveZoom(zoomFactor)), shadows[0].blur.resolveZoom(zoomFactor), style.colorWithColorFilter(shadows[0].color), ShadowRadiusMode::Default });
+            const auto& zoomFactor = style->usedZoomForLength();
+
+            Style::ColorResolver colorResolver { style };
+
+            context.setDropShadow({
+                LayoutSize {
+                    shadows[0].location.x().resolveZoom(zoomFactor),
+                    shadows[0].location.y().resolveZoom(zoomFactor),
+                },
+                shadows[0].blur.resolveZoom(zoomFactor),
+                colorResolver.colorResolvingCurrentColorApplyingColorFilter(shadows[0].color),
+                ShadowRadiusMode::Default
+            });
             return true;
         }
     );
 
     auto visualRect = m_lineBox.ellipsisVisualRect();
     auto textOrigin = visualRect.location();
-    textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + style.metricsOfPrimaryFont().intAscent());
-    context.drawBidiText(style.fontCascade(), m_lineBox.ellipsisText(), textOrigin);
+    auto ascent = m_lineBox.formattingContextRoot().settings().subpixelInlineLayoutEnabled() ? LayoutUnit(style->metricsOfPrimaryFont().ascent()) : LayoutUnit(style->metricsOfPrimaryFont().intAscent());
+    textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + ascent);
+
+    if (style->writingMode().isHorizontal())
+        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor()));
+    else
+        textOrigin.setX(roundToDevicePixel(LayoutUnit { textOrigin.x() }, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor()));
+
+    context.drawBidiText(style->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
 
     if (textColor != context.fillColor())
         context.setFillColor(textColor);
@@ -93,9 +113,9 @@ void EllipsisBoxPainter::paint()
 void EllipsisBoxPainter::paintSelection()
 {
     auto& context = m_paintInfo.context();
-    auto& style = m_lineBox.style();
+    CheckedRef style = m_lineBox.style();
 
-    auto textColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
+    auto textColor = style->visitedDependentColorApplyingColorFilter();
     auto backgroundColor = m_selectionBackgroundColor;
     if (!backgroundColor.isVisible())
         return;
@@ -111,8 +131,8 @@ void EllipsisBoxPainter::paintSelection()
 
     auto ellipsisText = m_lineBox.ellipsisText();
     constexpr bool canUseSimplifiedTextMeasuring = false;
-    style.fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
+    style->fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, protect(m_lineBox.formattingContextRoot().document())->deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
 }
 
 }

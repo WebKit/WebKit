@@ -62,7 +62,7 @@ struct ResolutionContext;
 }
 
 class WebAnimation : public RefCounted<WebAnimation>, public EventTarget, public ActiveDOMObject, public CanMakeCheckedPtr<WebAnimation> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebAnimation);
+    WTF_MAKE_TZONE_ALLOCATED(WebAnimation);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebAnimation);
 public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*);
@@ -74,7 +74,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    WEBCORE_EXPORT static HashSet<CheckedPtr<WebAnimation>>& instances();
+    WEBCORE_EXPORT static HashSet<CheckedRef<WebAnimation>>& NODELETE instances();
 
     virtual bool isStyleOriginatedAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }
@@ -89,7 +89,7 @@ public:
     virtual void setBindingsEffect(RefPtr<AnimationEffect>&&);
     AnimationEffect* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffect>&&);
-    KeyframeEffect* keyframeEffect() const;
+    KeyframeEffect* NODELETE keyframeEffect() const;
 
     virtual AnimationTimeline* bindingsTimeline() const { return timeline(); }
     virtual void setBindingsTimeline(RefPtr<AnimationTimeline>&&);
@@ -167,10 +167,11 @@ public:
     void willChangeRenderer();
 
     bool isRelevant() const { return m_isRelevant; }
+    bool hasPendingFinishNotification() const { return m_finishNotificationStepsMicrotaskPending; }
     void updateRelevance();
     void effectTimingDidChange();
-    void suspendEffectInvalidation();
-    void unsuspendEffectInvalidation();
+    void NODELETE suspendEffectInvalidation();
+    void NODELETE unsuspendEffectInvalidation();
     bool isEffectInvalidationSuspended() const { return m_suspendCount; }
     void setSuspended(bool);
     bool isSuspended() const { return m_isSuspended; }
@@ -189,7 +190,6 @@ public:
 
     // ContextDestructionObserver.
     ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
     void contextDestroyed() final;
 
 protected:
@@ -200,24 +200,25 @@ protected:
     virtual void animationDidFinish();
     WebAnimationTime zeroTime() const;
 
+    enum class AutoRewind : bool { No, Yes };
+    ExceptionOr<void> play(AutoRewind);
+
 private:
     enum class DidSeek : bool { No, Yes };
     enum class SynchronouslyNotify : bool { No, Yes };
     enum class RespectHoldTime : bool { No, Yes };
-    enum class AutoRewind : bool { No, Yes };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
 
     void timingDidChange(DidSeek, SynchronouslyNotify, Silently = Silently::No);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
     WebAnimationTime effectEndTime() const;
-    WebAnimation& readyPromiseResolve();
-    WebAnimation& finishedPromiseResolve();
+    WebAnimation& NODELETE readyPromiseResolve();
+    WebAnimation& NODELETE finishedPromiseResolve();
     std::optional<WebAnimationTime> currentTime(RespectHoldTime, UseCachedCurrentTime = UseCachedCurrentTime::Yes) const;
     ExceptionOr<void> silentlySetCurrentTime(std::optional<WebAnimationTime>);
     void finishNotificationSteps();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
     bool hasPendingPlayTask() const { return m_timeToRunPendingPlayTask != TimeToRunPendingTask::NotScheduled; }
-    ExceptionOr<void> play(AutoRewind);
     void runPendingPauseTask();
     void runPendingPlayTask();
     void resetPendingTasks();
@@ -275,6 +276,8 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebAnimation)
 
 #define SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \

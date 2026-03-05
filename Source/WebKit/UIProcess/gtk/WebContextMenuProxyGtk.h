@@ -31,7 +31,7 @@
 #include "WebContextMenuItemGlib.h"
 #include "WebContextMenuProxy.h"
 #include <WebCore/IntPoint.h>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GMenu GMenu;
@@ -46,13 +46,12 @@ class WebContextMenuProxyGtk final : public WebContextMenuProxy {
 public:
     static auto create(GtkWidget* widget, WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
     {
-        return adoptRef(*new WebContextMenuProxyGtk(widget, page, WTFMove(frameInfo), WTFMove(context), userData));
+        return adoptRef(*new WebContextMenuProxyGtk(widget, page, WTF::move(frameInfo), WTF::move(context), userData));
     }
     ~WebContextMenuProxyGtk();
 
     void populate(const Vector<WebContextMenuItemGlib>&);
     GtkWidget* gtkWidget() const { return m_menu; }
-    const FrameInfoData& frameInfo() const { return m_frameInfo; }
     static const char* widgetDismissedSignal;
 
 private:
@@ -67,9 +66,8 @@ private:
 
     GtkWidget* m_webView;
     GtkWidget* m_menu;
-    HashMap<unsigned long, void*> m_signalHandlers;
+    HashSet<GRefPtr<GAction>> m_actions;
     GRefPtr<GSimpleActionGroup> m_actionGroup { adoptGRef(g_simple_action_group_new()) };
-    const FrameInfoData m_frameInfo;
 };
 
 

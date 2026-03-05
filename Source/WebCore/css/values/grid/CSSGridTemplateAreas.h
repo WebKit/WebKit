@@ -46,7 +46,7 @@ struct GridTemplateAreas {
     }
 
     GridTemplateAreas(GridNamedAreaMap&& map)
-        : map { WTFMove(map) }
+        : map { WTF::move(map) }
     {
     }
 

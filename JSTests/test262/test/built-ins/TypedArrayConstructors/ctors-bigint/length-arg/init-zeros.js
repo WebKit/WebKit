@@ -36,12 +36,12 @@ info: |
      impossible to create such a Data Block, throw a RangeError exception.
   3. Set all of the bytes of db to 0.
   4. Return db. 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var subject = new TA(9);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var subject = new TA(makeCtorArg(9));
 
   assert.sameValue(subject[0], 0n, 'index 0');
   assert.sameValue(subject[1], 0n, 'index 1');

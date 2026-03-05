@@ -60,15 +60,15 @@
 #include <wtf/text/StringToIntegerConversion.h>
 
 #ifndef GST_DISABLE_GST_DEBUG
-static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
+static ASCIILiteral dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
 {
     switch (readyState) {
-    case WebCore::MediaPlayer::ReadyState::HaveNothing: return "HaveNothing";
-    case WebCore::MediaPlayer::ReadyState::HaveMetadata: return "HaveMetadata";
-    case WebCore::MediaPlayer::ReadyState::HaveCurrentData: return "HaveCurrentData";
-    case WebCore::MediaPlayer::ReadyState::HaveFutureData: return "HaveFutureData";
-    case WebCore::MediaPlayer::ReadyState::HaveEnoughData: return "HaveEnoughData";
-    default: return "(unknown)";
+    case WebCore::MediaPlayer::ReadyState::HaveNothing: return "HaveNothing"_s;
+    case WebCore::MediaPlayer::ReadyState::HaveMetadata: return "HaveMetadata"_s;
+    case WebCore::MediaPlayer::ReadyState::HaveCurrentData: return "HaveCurrentData"_s;
+    case WebCore::MediaPlayer::ReadyState::HaveFutureData: return "HaveFutureData"_s;
+    case WebCore::MediaPlayer::ReadyState::HaveEnoughData: return "HaveEnoughData"_s;
+    default: return "(unknown)"_s;
     }
 }
 #endif // GST_DISABLE_GST_DEBUG
@@ -79,6 +79,8 @@ GST_DEBUG_CATEGORY_STATIC(webkit_mse_player_debug);
 namespace WebCore {
 
 class MediaPlayerFactoryGStreamerMSE final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryGStreamerMSE);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlayerFactoryGStreamerMSE);
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::GStreamerMSE; };
 
@@ -136,7 +138,7 @@ void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const LoadOptions&, Me
     GST_DEBUG("Loading %s", mseBlobURI.ascii().data());
     if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateGStreamer>(mediaSource.mediaSourcePrivate())) {
         mediaSourcePrivate->setPlayer(this);
-        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        m_mediaSourcePrivate = WTF::move(mediaSourcePrivate);
         mediaSource.reOpen();
     } else
         m_mediaSourcePrivate = MediaSourcePrivateGStreamer::open(mediaSource, *this);
@@ -199,7 +201,7 @@ void MediaPlayerPrivateGStreamerMSE::checkPlayingConsistency()
         return;
 
     if ((state == GST_STATE_PLAYING && m_playbackRatePausedState == PlaybackRatePausedState::Playing) || (state == GST_STATE_PAUSED && m_playbackRatePausedState == PlaybackRatePausedState::ManuallyPaused)) {
-        GST_DEBUG_OBJECT(pipeline(), "Notifying MediaPlayer of pipeline state change to %s", gst_element_state_get_name(state));
+        GST_DEBUG_OBJECT(pipeline(), "Notifying MediaPlayer of pipeline state change to %s", gst_state_get_name(state));
         player->playbackStateChanged();
     }
 }
@@ -385,8 +387,9 @@ void MediaPlayerPrivateGStreamerMSE::readyStateFromMediaSourceChanged()
     if (mediaSourceReadyState == m_mediaSourceReadyState)
         return;
 
-    GST_DEBUG("MediaSource called setReadyState(%p): %s -> %s Current player state: %s Waiting for preroll: %s", this,
-        dumpReadyState(m_mediaSourceReadyState), dumpReadyState(mediaSourceReadyState), dumpReadyState(m_readyState), boolForPrinting(m_isWaitingForPreroll));
+    GST_DEBUG("MediaSource called setReadyState(%p): %s -> %s Current player state: %s Waiting for preroll: %s", this
+        , dumpReadyState(m_mediaSourceReadyState).characters(), dumpReadyState(mediaSourceReadyState).characters()
+        , dumpReadyState(m_readyState).characters(), boolForPrinting(m_isWaitingForPreroll));
     m_mediaSourceReadyState = mediaSourceReadyState;
 
     if (mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !hasVideo() || !m_isWaitingForPreroll)
@@ -398,7 +401,8 @@ void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
     ASSERT(m_mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !hasVideo() || !m_isWaitingForPreroll);
     if (m_readyState == m_mediaSourceReadyState)
         return;
-    GST_DEBUG("Propagating MediaSource readyState %s to player ready state (currently %s)", dumpReadyState(m_mediaSourceReadyState), dumpReadyState(m_readyState));
+    GST_DEBUG("Propagating MediaSource readyState %s to player ready state (currently %s)",
+        dumpReadyState(m_mediaSourceReadyState).characters(), dumpReadyState(m_readyState).characters());
 
     m_readyState = m_mediaSourceReadyState;
     updateStates(); // Set the pipeline to PLAYING or PAUSED if necessary.
@@ -410,6 +414,11 @@ void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
     // should cause the video to be marked as ended. Let's have the player check that.
     if (player && (!m_isWaitingForPreroll || currentTime() == duration()))
         player->timeChanged();
+}
+
+void MediaPlayerPrivateGStreamerMSE::mediaSourceHasRetrievedAllData()
+{
+    setNetworkState(MediaPlayer::NetworkState::Loaded);
 }
 
 void MediaPlayerPrivateGStreamerMSE::didPreroll()
@@ -674,6 +683,13 @@ void MediaPlayerPrivateGStreamerMSE::notifyActiveSourceBuffersChanged()
 {
     if (auto player = m_player.get())
         player->activeSourceBuffersChanged();
+}
+
+void MediaPlayerPrivateGStreamerMSE::characteristicsFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->characteristicChanged();
 }
 
 #undef GST_CAT_DEFAULT

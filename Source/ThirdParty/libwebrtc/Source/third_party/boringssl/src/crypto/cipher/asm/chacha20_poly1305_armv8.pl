@@ -869,7 +869,7 @@ $code.=<<___;
         subs $adl, $adl, #1
         b.gt .Lseal_hash_extra_load
 
-    // Hash in the final padded extra_in blcok
+    // Hash in the final padded extra_in block
 ___
     &poly_add_vec($T0);
     &poly_mul();

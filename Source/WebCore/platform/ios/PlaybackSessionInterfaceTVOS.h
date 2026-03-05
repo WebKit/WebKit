@@ -29,11 +29,12 @@
 #if PLATFORM(APPLETV)
 
 #include <WebCore/PlaybackSessionInterfaceIOS.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PlaybackSessionInterfaceTVOS final : public PlaybackSessionInterfaceIOS {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlaybackSessionInterfaceTVOS);
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceTVOS);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceTVOS);
 public:
     WEBCORE_EXPORT static Ref<PlaybackSessionInterfaceTVOS> create(PlaybackSessionModel&);

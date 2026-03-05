@@ -50,7 +50,7 @@ IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>
         m_kind = Kind::Index;
     }
 #endif
-    m_nameSection = WTFMove(name.second);
+    m_nameSection = WTF::move(name.second);
 }
 
 void IndexOrName::dump(PrintStream& out) const

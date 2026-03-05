@@ -71,7 +71,7 @@ ALWAYS_INLINE std::optional<uint8_t> parseUInt7(const uint8_t* data, size_t& off
 }
 
 template <typename ...Args>
-NEVER_INLINE auto WARN_UNUSED_RETURN StreamingParser::fail(Args... args) -> State
+[[nodiscard]] NEVER_INLINE auto StreamingParser::fail(Args... args) -> State
 {
     using namespace FailureHelper; // See ADL comment in namespace above.
     m_errorMessage = makeString("WebAssembly.Module doesn't parse at byte "_s, m_offset, ": "_s, makeString(args)...);
@@ -181,7 +181,7 @@ auto StreamingParser::parseFunctionPayload(Vector<uint8_t>&& data) -> State
     auto& function = m_info->functions[m_functionIndex];
     function.start = m_offset;
     function.end = m_offset + m_functionSize;
-    function.data = WTFMove(data);
+    function.data = WTF::move(data);
     dataLogLnIf(WasmStreamingParserInternal::verbose, "Processing function starting at: ", function.start, " and ending at: ", function.end);
     if (!m_client.didReceiveFunctionData(FunctionCodeIndex(m_functionIndex), function))
         return State::FatalError;
@@ -231,7 +231,7 @@ auto StreamingParser::parseSectionPayload(Vector<uint8_t>&& data) -> State
 auto StreamingParser::consume(std::span<const uint8_t> bytes, size_t& offsetInBytes, size_t requiredSize) -> std::optional<Vector<uint8_t>>
 {
     if (m_remaining.size() == requiredSize) {
-        Vector<uint8_t> result = WTFMove(m_remaining);
+        Vector<uint8_t> result = WTF::move(m_remaining);
         m_nextOffset += requiredSize;
         return result;
     }
@@ -255,7 +255,7 @@ auto StreamingParser::consume(std::span<const uint8_t> bytes, size_t& offsetInBy
     size_t usedSize = requiredSize - m_remaining.size();
     m_remaining.append(bytes.subspan(offsetInBytes, usedSize));
     offsetInBytes += usedSize;
-    Vector<uint8_t> result = WTFMove(m_remaining);
+    Vector<uint8_t> result = WTF::move(m_remaining);
     m_nextOffset += requiredSize;
     return result;
 }
@@ -322,7 +322,7 @@ auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isE
             auto result = consume(bytes, offsetInBytes, moduleHeaderSize);
             if (!result)
                 return m_state;
-            m_state = parseModuleHeader(WTFMove(*result));
+            m_state = parseModuleHeader(WTF::move(*result));
             break;
         }
 
@@ -330,7 +330,7 @@ auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isE
             auto result = consume(bytes, offsetInBytes, sectionIDSize);
             if (!result)
                 return m_state;
-            m_state = parseSectionID(WTFMove(*result));
+            m_state = parseSectionID(WTF::move(*result));
             break;
         }
 
@@ -351,7 +351,7 @@ auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isE
             auto result = consume(bytes, offsetInBytes, m_sectionLength);
             if (!result)
                 return m_state;
-            m_state = parseSectionPayload(WTFMove(*result));
+            m_state = parseSectionPayload(WTF::move(*result));
             break;
         }
 
@@ -385,7 +385,7 @@ auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isE
             auto result = consume(bytes, offsetInBytes, m_functionSize);
             if (!result)
                 return m_state;
-            m_state = parseFunctionPayload(WTFMove(*result));
+            m_state = parseFunctionPayload(WTF::move(*result));
             break;
         }
 

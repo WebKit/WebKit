@@ -121,14 +121,14 @@ TEST(WTF_CompactUniquePtrTuple, Basic)
     EXPECT_EQ(movedA.get(), oldPointer);
     EXPECT_EQ(0xf2f2U, a.type());
 
-    a.setPointer(WTFMove(movedA));
+    a.setPointer(WTF::move(movedA));
     EXPECT_EQ(4U, A::s_constructorCallCount);
     EXPECT_EQ(3U, A::s_destructorCallCount);
     EXPECT_EQ(oldPointer, a.pointer());
     EXPECT_EQ(movedA.get(), nullptr);
     EXPECT_EQ(0xf2f2U, a.type());
 
-    CompactUniquePtrTuple<A, uint16_t> b = WTFMove(a);
+    CompactUniquePtrTuple<A, uint16_t> b = WTF::move(a);
     EXPECT_EQ(4U, A::s_constructorCallCount);
     EXPECT_EQ(3U, A::s_destructorCallCount);
     EXPECT_EQ(nullptr, a.pointer());
@@ -138,7 +138,7 @@ TEST(WTF_CompactUniquePtrTuple, Basic)
 
     CompactUniquePtrTuple<A, uint16_t>* bPtr = &b;
 
-    b = WTFMove(*bPtr);
+    b = WTF::move(*bPtr);
     EXPECT_EQ(4U, A::s_constructorCallCount);
     EXPECT_EQ(3U, A::s_destructorCallCount);
     EXPECT_EQ(nullptr, a.pointer());

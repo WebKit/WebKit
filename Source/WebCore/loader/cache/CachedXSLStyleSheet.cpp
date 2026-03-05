@@ -37,17 +37,12 @@ namespace WebCore {
 #if ENABLE(XSLT)
 
 CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
-    : CachedResource(WTFMove(request), Type::XSLStyleSheet, sessionID, cookieJar)
+    : CachedResource(WTF::move(request), Type::XSLStyleSheet, sessionID, cookieJar)
     , m_decoder(TextResourceDecoder::create("text/xsl"_s))
 {
 }
 
 CachedXSLStyleSheet::~CachedXSLStyleSheet() = default;
-
-RefPtr<TextResourceDecoder> CachedXSLStyleSheet::protectedDecoder() const
-{
-    return m_decoder;
-}
 
 void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 {
@@ -58,12 +53,12 @@ void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 
 void CachedXSLStyleSheet::setEncoding(const String& chs)
 {
-    protectedDecoder()->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 ASCIILiteral CachedXSLStyleSheet::encoding() const
 {
-    return protectedDecoder()->encoding().name();
+    return protect(m_decoder)->encoding().name();
 }
 
 void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
@@ -71,8 +66,8 @@ void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
     if (data) {
         Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
-        m_sheet = protectedDecoder()->decodeAndFlush(contiguousData->span());
-        m_data = WTFMove(contiguousData);
+        m_sheet = protect(m_decoder)->decodeAndFlush(contiguousData->span());
+        m_data = WTF::move(contiguousData);
     } else {
         m_data = nullptr;
         setEncodedSize(0);
@@ -87,8 +82,8 @@ void CachedXSLStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinu
         return;
     
     CachedResourceClientWalker<CachedStyleSheetClient> walker(*this);
-    while (CachedStyleSheetClient* c = walker.next())
-        c->setXSLStyleSheet(m_resourceRequest.url().string(), response().url(), m_sheet);
+    while (RefPtr client = walker.next())
+        client->setXSLStyleSheet(m_resourceRequest.url().string(), response().url(), m_sheet);
 }
 
 #endif

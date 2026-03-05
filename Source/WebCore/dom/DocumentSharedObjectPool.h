@@ -26,9 +26,9 @@
 
 #pragma once
 
+#include "SecurityOriginData.h"
 #include <memory>
 #include <wtf/HashSet.h>
-#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
@@ -40,12 +40,15 @@ class ShareableElementData;
 class DocumentSharedObjectPool {
     WTF_MAKE_TZONE_ALLOCATED(DocumentSharedObjectPool);
 public:
+    explicit DocumentSharedObjectPool(const SecurityOrigin&);
+    ~DocumentSharedObjectPool();
     Ref<ShareableElementData> cachedShareableElementDataWithAttributes(std::span<const Attribute>);
 
 private:
     struct ShareableElementDataHash;
     using ShareableElementDataCache = HashSet<Ref<ShareableElementData>, ShareableElementDataHash>;
     ShareableElementDataCache m_shareableElementDataCache;
+    SecurityOriginData m_domain;
 };
 
 } // namespace WebCore

@@ -25,6 +25,7 @@
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -82,7 +83,7 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std:
             g_ptr_array_add(request->priv->textFieldValues.get(), g_strdup(values[i].second.utf8().data()));
         }
     }
-    request->priv->listener = WTFMove(listener);
+    request->priv->listener = WTF::move(listener);
     return request;
 }
 
@@ -109,9 +110,11 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
 
     if (!request->priv->values && request->priv->textFieldNames->len) {
         request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
-        for (unsigned i = 0; i < request->priv->textFieldNames->len; i++) {
-            GUniquePtr<char> name(g_strdup(static_cast<char*>(request->priv->textFieldNames->pdata[i])));
-            GUniquePtr<char> value(g_strdup(static_cast<char*>(request->priv->textFieldValues->pdata[i])));
+        auto textFieldNames = span(request->priv->textFieldNames);
+        auto textFieldValues = span(request->priv->textFieldValues);
+        for (unsigned i = 0; i < textFieldNames.size(); i++) {
+            GUniquePtr<char> name(g_strdup(static_cast<char*>(textFieldNames[i])));
+            GUniquePtr<char> value(g_strdup(static_cast<char*>(textFieldValues[i])));
             g_hash_table_insert(request->priv->values.get(), name.release(), value.release());
         }
     }

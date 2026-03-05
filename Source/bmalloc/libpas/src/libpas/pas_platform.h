@@ -57,6 +57,17 @@
 #define PAS_COMPILER_MSVC 1
 #endif
 
+/* PAS_COMPILER_HAS_CLANG_FEATURE() - whether the compiler supports a particular language or library feature. */
+/* Adapted from BCompiler.h */
+/* http://clang.llvm.org/docs/LanguageExtensions.html#has-feature-and-has-extension */
+#ifdef __has_feature
+#define PAS_COMPILER_HAS_CLANG_FEATURE(x) __has_feature(x)
+#else
+#define PAS_COMPILER_HAS_CLANG_FEATURE(x) 0
+#endif
+
+#define PAS_ASAN_ENABLED PAS_COMPILER_HAS_CLANG_FEATURE(address_sanitizer)
+
 /* PAS_IGNORE_WARNINGS */
 
 /* Can't use WTF_CONCAT() and STRINGIZE() because they are defined in
@@ -221,10 +232,6 @@
 #define MTE_ENABLED_IN_BUILD 0
 #endif // MTE_ENABLED_IN_BUILD
 #endif // PAS_USE_OPENSOURCE_MTE
-
-#if PAS_CPU(ADDRESS64) && PAS_PLATFORM(IOS_FAMILY) && !PAS_PLATFORM(IOS_FAMILY_SIMULATOR) && !PAS_PLATFORM(MACCATALYST)
-#define PAS_HAVE_36BIT_ADDRESS 1
-#endif
 
 /* PAS_ALLOW_UNSAFE_BUFFER_USAGE */
 

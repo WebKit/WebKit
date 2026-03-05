@@ -48,13 +48,13 @@ def calculate_smart_workers(test_count, requested_workers=None):
 
 
 def create_test_runner(
-    verbose=False, build_config=None, parallel=False, workers=None, test_names=None
+    verbose=False, build_config=None, parallel=False, workers=None, test_names=None, verbose_wasm_debugger=False
 ):
     """Create test runner with auto-discovered test cases and smart worker calculation"""
     if parallel:
         # First create a temporary runner to get test count
         temp_runner = create_auto_registered_runner(
-            build_config=build_config, verbose_wasm_debugger=False
+            build_config=build_config, verbose_wasm_debugger=verbose_wasm_debugger
         )
 
         # Calculate test count
@@ -79,7 +79,7 @@ def create_test_runner(
 
         runner = ParallelWebAssemblyDebuggerTestRunner(
             build_config=build_config,
-            verbose_wasm_debugger=False,
+            verbose_wasm_debugger=verbose_wasm_debugger,
             max_workers=smart_workers,
             verbose_parallel=verbose,
         )
@@ -87,7 +87,7 @@ def create_test_runner(
         discovery.auto_register_tests(runner.registry)
     else:
         runner = create_auto_registered_runner(
-            build_config=build_config, verbose_wasm_debugger=False
+            build_config=build_config, verbose_wasm_debugger=verbose_wasm_debugger
         )
     return runner
 
@@ -97,6 +97,9 @@ def main():
     parser = argparse.ArgumentParser(description="WebAssembly Debugger Test Framework")
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose logging"
+    )
+    parser.add_argument(
+        "--verbose-wasm-debugger", action="store_true", help="Enable verbose WebAssembly debugger logging (--verboseWasmDebugger=1)"
     )
     parser.add_argument(
         "--pid-tid", action="store_true", help="Enable PID/TID prefixes"
@@ -128,6 +131,9 @@ def main():
     # Use -1 as sentinel for auto-detect, otherwise use specified value
     workers = None if args.parallel == -1 else args.parallel
 
+    if args.verbose_wasm_debugger:
+        args.verbose = True
+
     if args.verbose:
         Logger.set_verbose(True)
 
@@ -135,7 +141,7 @@ def main():
         Logger.set_pid_tid_logging(True)
 
     runner = create_test_runner(
-        args.verbose, build_config, parallel, workers, args.test
+        args.verbose, build_config, parallel, workers, args.test, args.verbose_wasm_debugger
     )
 
     if args.list:

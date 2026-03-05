@@ -58,7 +58,7 @@ WorkerNavigatorPermissions& WorkerNavigatorPermissions::from(WorkerNavigator& na
     if (!supplement) {
         auto newSupplement = makeUnique<WorkerNavigatorPermissions>(navigator);
         supplement = newSupplement.get();
-        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTF::move(newSupplement));
     }
 
     return *supplement;

@@ -11,12 +11,12 @@ layer at (0,0) size 800x736
                 RenderTableSection {THEAD} at (0,0) size 239x20
                   RenderTableRow {TR} at (0,0) size 239x20
                     RenderTableCell {TH} at (0,0) size 239x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (81,0) size 76x19
+                      RenderText {#text} at (81,0) size 76x20
                         text run at (81,0) width 76: "Header 1/1"
                 RenderTableSection {TBODY} at (0,20) size 239x340
                   RenderTableRow {TR} at (0,0) size 239x340
                     RenderTableCell {TD} at (0,0) size 239x340 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 239x339
+                      RenderText {#text} at (0,0) size 239x340
                         text run at (0,0) width 238: "1 2 3 - - - - - - - - - - - - - - - - - - - - - -"
                         text run at (0,20) width 239: "- - - - - - - - - - - - - - - - - - - - - - - - - -"
                         text run at (0,40) width 239: "- - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -40,12 +40,12 @@ layer at (0,0) size 800x736
                 RenderTableSection {THEAD} at (0,0) size 307x20
                   RenderTableRow {TR} at (0,0) size 307x20
                     RenderTableCell {TH} at (0,0) size 307x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (115,0) size 76x19
+                      RenderText {#text} at (115,0) size 76x20
                         text run at (115,0) width 76: "Header 2/1"
                 RenderTableSection {TBODY} at (0,20) size 307x340
                   RenderTableRow {TR} at (0,0) size 307x340
                     RenderTableCell {TD} at (0,0) size 307x340 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 296x339
+                      RenderText {#text} at (0,0) size 296x340
                         text run at (0,0) width 296: "1 2 3 # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,20) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,40) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
@@ -69,12 +69,12 @@ layer at (0,0) size 800x736
                 RenderTableSection {THEAD} at (0,0) size 239x20
                   RenderTableRow {TR} at (0,0) size 239x20
                     RenderTableCell {TH} at (0,0) size 239x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (81,0) size 76x19
+                      RenderText {#text} at (81,0) size 76x20
                         text run at (81,0) width 76: "Header 3/1"
                 RenderTableSection {TBODY} at (0,20) size 239x340
                   RenderTableRow {TR} at (0,0) size 239x340
                     RenderTableCell {TD} at (0,0) size 239x340 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 239x339
+                      RenderText {#text} at (0,0) size 239x340
                         text run at (0,0) width 238: "1 2 3 ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
                         text run at (0,20) width 239: "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
                         text run at (0,40) width 239: "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
@@ -100,12 +100,12 @@ layer at (0,0) size 800x736
                 RenderTableSection {THEAD} at (0,0) size 239x20
                   RenderTableRow {TR} at (0,0) size 239x20
                     RenderTableCell {TH} at (0,0) size 239x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (81,0) size 76x19
+                      RenderText {#text} at (81,0) size 76x20
                         text run at (81,0) width 76: "Header 1/2"
                 RenderTableSection {TBODY} at (0,20) size 239x340
                   RenderTableRow {TR} at (0,0) size 239x340
                     RenderTableCell {TD} at (0,0) size 239x340 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 239x339
+                      RenderText {#text} at (0,0) size 239x340
                         text run at (0,0) width 238: "1 2 3 - - - - - - - - - - - - - - - - - - - - - -"
                         text run at (0,20) width 239: "- - - - - - - - - - - - - - - - - - - - - - - - - -"
                         text run at (0,40) width 239: "- - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -129,12 +129,12 @@ layer at (0,0) size 800x736
                 RenderTableSection {THEAD} at (0,0) size 307x20
                   RenderTableRow {TR} at (0,0) size 307x20
                     RenderTableCell {TH} at (0,0) size 307x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (115,0) size 76x19
+                      RenderText {#text} at (115,0) size 76x20
                         text run at (115,0) width 76: "Header 2/2"
                 RenderTableSection {TBODY} at (0,20) size 307x340
                   RenderTableRow {TR} at (0,0) size 307x340
                     RenderTableCell {TD} at (0,0) size 307x340 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 296x339
+                      RenderText {#text} at (0,0) size 296x340
                         text run at (0,0) width 296: "1 2 3 # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,20) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,40) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
@@ -158,12 +158,12 @@ layer at (0,0) size 800x736
                 RenderTableSection {THEAD} at (0,0) size 239x20
                   RenderTableRow {TR} at (0,0) size 239x20
                     RenderTableCell {TH} at (0,0) size 239x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (81,0) size 76x19
+                      RenderText {#text} at (81,0) size 76x20
                         text run at (81,0) width 76: "Header 3/2"
                 RenderTableSection {TBODY} at (0,20) size 239x340
                   RenderTableRow {TR} at (0,0) size 239x340
                     RenderTableCell {TD} at (0,0) size 239x340 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 239x339
+                      RenderText {#text} at (0,0) size 239x340
                         text run at (0,0) width 238: "1 2 3 ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
                         text run at (0,20) width 239: "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
                         text run at (0,40) width 239: "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"

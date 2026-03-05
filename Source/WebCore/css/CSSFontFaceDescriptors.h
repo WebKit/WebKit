@@ -31,7 +31,7 @@ namespace WebCore {
 class CSSFontFaceRule;
 
 class CSSFontFaceDescriptors final : public PropertySetCSSDescriptors {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSFontFaceDescriptors);
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceDescriptors);
 public:
     static Ref<CSSFontFaceDescriptors> create(MutableStyleProperties& propertySet, CSSFontFaceRule& parentRule)
     {
@@ -65,7 +65,7 @@ public:
 private:
     CSSFontFaceDescriptors(MutableStyleProperties&, CSSFontFaceRule&);
 
-    StyleRuleType ruleType() const final;
+    StyleRuleType NODELETE ruleType() const final;
 };
 
 } // namespace WebCore

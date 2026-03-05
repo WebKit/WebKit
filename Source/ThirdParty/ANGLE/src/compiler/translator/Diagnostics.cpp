@@ -10,15 +10,25 @@
 #include "compiler/preprocessor/SourceLocation.h"
 #include "compiler/translator/Common.h"
 #include "compiler/translator/InfoSink.h"
+#include "compiler/translator/ir/src/builder.h"
 
 namespace sh
 {
 
 TDiagnostics::TDiagnostics(TInfoSinkBase &infoSink)
-    : mInfoSink(infoSink), mNumErrors(0), mNumWarnings(0)
+    : mInfoSink(infoSink), mNumErrors(0), mNumWarnings(0), mIRBuilder(nullptr)
 {}
 
 TDiagnostics::~TDiagnostics() {}
+
+void TDiagnostics::onError()
+{
+    ++mNumErrors;
+    if (mIRBuilder != nullptr)
+    {
+        mIRBuilder->onError();
+    }
+}
 
 void TDiagnostics::writeInfo(Severity severity,
                              const angle::pp::SourceLocation &loc,
@@ -28,7 +38,7 @@ void TDiagnostics::writeInfo(Severity severity,
     switch (severity)
     {
         case SH_ERROR:
-            ++mNumErrors;
+            onError();
             break;
         case SH_WARNING:
             ++mNumWarnings;
@@ -46,7 +56,7 @@ void TDiagnostics::writeInfo(Severity severity,
 
 void TDiagnostics::globalError(const char *message)
 {
-    ++mNumErrors;
+    onError();
     mInfoSink.prefix(SH_ERROR);
     mInfoSink << message << "\n";
 }

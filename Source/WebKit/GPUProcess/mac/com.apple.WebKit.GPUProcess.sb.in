@@ -68,6 +68,12 @@
     "IOAudioSelectorControl"
     "IOMobileFramebufferShim"))
 
+#if !RC_XBS
+;; Allow development dylibs to be loaded
+(allow file-read* file-map-executable
+    (literal (string-append (param "WEBKIT2_FRAMEWORK_DIR") "/libWebKitSwift.dylib")))
+#endif
+
 (allow file-map-executable (subpath
     "/System/Library/Components"
     "/System/Library/CoreServices"
@@ -948,7 +954,8 @@
 #endif
        (global-name "com.apple.mediaremoted.xpc")
        (global-name "com.apple.logd")
-       (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>
+       (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>. FIXME: We should be able to remove this one soon (rdar://171670496).
+       (global-name "com.apple.lskdd.xpc") ;; <rdar://169760920>
        (global-name "com.apple.tccd"))
 
 ;; <rdar://problem/47268166>

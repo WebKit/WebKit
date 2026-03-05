@@ -31,7 +31,7 @@ namespace WebCore {
 class GStreamerAudioStreamDescription final: public AudioStreamDescription {
 public:
     GStreamerAudioStreamDescription(GstAudioInfo&& info)
-        : m_info(WTFMove(info))
+        : m_info(WTF::move(info))
     {
     }
 
@@ -52,7 +52,7 @@ public:
 
     ~GStreamerAudioStreamDescription() = default;
 
-    const PlatformDescription& platformDescription() const
+    const PlatformDescription& platformDescription() const LIFETIME_BOUND
     {
         m_platformDescription = { PlatformDescription::GStreamerAudioStreamDescription, reinterpret_cast<const AudioStreamBasicDescription*>(&m_info) };
 
@@ -101,7 +101,7 @@ public:
             m_caps = adoptGRef(gst_audio_info_to_caps(&m_info));
         return m_caps;
     }
-    const GstAudioInfo& getInfo() const { return m_info; }
+    const GstAudioInfo& getInfo() const LIFETIME_BOUND { return m_info; }
 
 private:
     GstAudioInfo m_info;

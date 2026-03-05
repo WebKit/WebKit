@@ -94,6 +94,7 @@ public:
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual bool shouldUseQuickLookForFullscreen() const { return false; }
+    virtual bool isPanorama() const { return false; }
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)

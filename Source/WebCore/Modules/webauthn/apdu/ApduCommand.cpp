@@ -37,7 +37,7 @@ namespace apdu {
 namespace {
 
 // APDU command data length is 2 bytes encoded in big endian order.
-uint16_t parseMessageLength(const Vector<uint8_t>& message, size_t offset)
+uint16_t NODELETE parseMessageLength(const Vector<uint8_t>& message, size_t offset)
 {
     ASSERT(message.size() >= offset + 2);
     return (message[offset] << 8) | message[offset + 1];
@@ -100,7 +100,7 @@ std::optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>&
         break;
     }
 
-    return ApduCommand(cla, ins, p1, p2, responseLength, WTFMove(data));
+    return ApduCommand(cla, ins, p1, p2, responseLength, WTF::move(data));
 }
 
 ApduCommand::ApduCommand(uint8_t cla, uint8_t ins, uint8_t p1, uint8_t p2, size_t responseLength, Vector<uint8_t>&& data)
@@ -109,7 +109,7 @@ ApduCommand::ApduCommand(uint8_t cla, uint8_t ins, uint8_t p1, uint8_t p2, size_
     , m_p1(p1)
     , m_p2(p2)
     , m_responseLength(responseLength)
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
 {
 }
 

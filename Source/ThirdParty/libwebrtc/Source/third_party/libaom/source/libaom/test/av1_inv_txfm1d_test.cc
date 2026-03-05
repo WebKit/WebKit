@@ -16,8 +16,6 @@
 #include "av1/common/av1_inv_txfm1d.h"
 #include "av1/encoder/av1_fwd_txfm1d.h"
 
-typedef TX_SIZE TxSize;
-
 using libaom_test::ACMRandom;
 using libaom_test::input_base;
 
@@ -75,7 +73,7 @@ TEST(av1_inv_txfm1d, InvAccuracyCheck) {
   ASSERT_EQ(NELEMENTS(inv_txfm_func_ls), TX_SIZES);
   for (int i = 0; i < count_test_block; ++i) {
     // choose a random transform to test
-    const TxSize tx_size = static_cast<TxSize>(rnd.Rand8() % TX_SIZES);
+    const TX_SIZE tx_size = static_cast<TX_SIZE>(rnd.Rand8() % TX_SIZES);
     const int txfm_size = txfm_size_ls[tx_size];
     const TxfmFunc inv_txfm_func = inv_txfm_func_ls[tx_size][0];
 

@@ -41,7 +41,7 @@ class WorkletGlobalScopeProxy;
 class WorkletPendingTasks;
 
 class Worklet : public RefCounted<Worklet>, public ScriptWrappable, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Worklet);
+    WTF_MAKE_TZONE_ALLOCATED(Worklet);
 public:
     virtual ~Worklet();
 
@@ -52,7 +52,7 @@ public:
     virtual void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&);
 
     void finishPendingTasks(WorkletPendingTasks&);
-    Document* document();
+    Document* NODELETE document();
 
     const Vector<Ref<WorkletGlobalScopeProxy>>& proxies() const { return m_proxies; }
     const String& identifier() const { return m_identifier; }
@@ -67,7 +67,7 @@ private:
 
     String m_identifier;
     Vector<Ref<WorkletGlobalScopeProxy>> m_proxies;
-    HashSet<RefPtr<WorkletPendingTasks>> m_pendingTasksSet;
+    HashSet<Ref<WorkletPendingTasks>> m_pendingTasksSet;
 };
 
 } // namespace WebCore

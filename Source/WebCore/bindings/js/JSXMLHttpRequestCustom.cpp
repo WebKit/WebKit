@@ -48,7 +48,7 @@ void JSXMLHttpRequest::visitAdditionalChildren(Visitor& visitor)
     if (auto* upload = wrapped().optionalUpload())
         addWebCoreOpaqueRoot(visitor, *upload);
 
-    if (auto* responseDocument = wrapped().optionalResponseXML())
+    if (SUPPRESS_UNCHECKED_LOCAL auto* responseDocument = wrapped().optionalResponseXML())
         addWebCoreOpaqueRoot(visitor, *responseDocument);
 }
 
@@ -96,7 +96,7 @@ JSValue JSXMLHttpRequest::response(JSGlobalObject& lexicalGlobalObject) const
     case XMLHttpRequest::ResponseType::Document: {
         auto document = wrapped().responseXML();
         ASSERT(!document.hasException());
-        value = toJS<IDLInterface<Document>>(lexicalGlobalObject, *globalObject(), document.releaseReturnValue());
+        value = toJS<IDLNullable<IDLInterface<Document>>>(lexicalGlobalObject, *globalObject(), document.releaseReturnValue());
         break;
     }
 
@@ -105,7 +105,7 @@ JSValue JSXMLHttpRequest::response(JSGlobalObject& lexicalGlobalObject) const
         break;
 
     case XMLHttpRequest::ResponseType::Arraybuffer:
-        value = toJS<IDLInterface<ArrayBuffer>>(lexicalGlobalObject, *globalObject(), wrapped().createResponseArrayBuffer());
+        value = toJS<IDLNullable<IDLInterface<ArrayBuffer>>>(lexicalGlobalObject, *globalObject(), wrapped().createResponseArrayBuffer());
         break;
     }
 

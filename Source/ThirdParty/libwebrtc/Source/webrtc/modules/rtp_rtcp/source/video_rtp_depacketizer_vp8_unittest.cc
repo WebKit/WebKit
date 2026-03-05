@@ -197,7 +197,7 @@ TEST(VideoRtpDepacketizerVp8Test, TooShortHeader) {
 
 TEST(VideoRtpDepacketizerVp8Test, WithPacketizer) {
   uint8_t data[10] = {0};
-  RtpPacketToSend packet(/*extenions=*/nullptr);
+  RtpPacketToSend packet(/*extensions=*/nullptr);
   RTPVideoHeaderVP8 input_header;
   input_header.nonReference = true;
   input_header.pictureId = 300;

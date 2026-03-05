@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRInputSource);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRInputSource);
 
 Ref<WebXRInputSource> WebXRInputSource::create(Document& document, WebXRSession& session, double timestamp, const PlatformXR::FrameData::InputSource& source)
 {
@@ -49,10 +49,10 @@ Ref<WebXRInputSource> WebXRInputSource::create(Document& document, WebXRSession&
 
 WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, double timestamp, const PlatformXR::FrameData::InputSource& source)
     : m_session(session)
-    , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin))
+    , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin, source.handle))
     , m_connectTime(timestamp)
 #if ENABLE(GAMEPAD)
-    , m_gamepad(Gamepad::create(&document, WebXRGamepad(timestamp, timestamp, source)))
+    , m_gamepad(Gamepad::create(&document, makeUniqueRef<WebXRGamepad>(timestamp, timestamp, source)))
 #endif
 {
     update(timestamp, source);
@@ -79,12 +79,16 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::FrameData::Inp
     if (auto gripOrigin = source.gripOrigin) {
         if (m_gripSpace)
             m_gripSpace->setPose(*gripOrigin);
-        else if (RefPtr document = downcast<Document>(session->scriptExecutionContext()))
-            m_gripSpace = WebXRInputSpace::create(*document, *session, *gripOrigin);
+        else if (RefPtr document = downcast<Document>(session->scriptExecutionContext())) {
+            m_gripSpace = WebXRInputSpace::create(*document, *session, *gripOrigin, handle());
+#if ENABLE(WEBXR_HIT_TEST)
+            m_gripSpace->setType(PlatformXR::InputSourceSpaceType::Grip);
+#endif
+        }
     } else
         m_gripSpace = nullptr;
 #if ENABLE(GAMEPAD)
-    m_gamepad->updateFromPlatformGamepad(WebXRGamepad(timestamp, m_connectTime, source));
+    m_gamepad->updateFromPlatformGamepad(makeUniqueRef<WebXRGamepad>(timestamp, m_connectTime, source));
 #endif
 
 #if ENABLE(WEBXR_HANDS)
@@ -126,11 +130,12 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
         return;
 
     auto createEvent = [this, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
-        XRInputSourceEvent::Init init;
-        init.frame = WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No);
-        init.inputSource = RefPtr { this };
-
-        return XRInputSourceEvent::create(name, init);
+        auto init = XRInputSourceEvent::Init {
+            { false, false, false },
+            WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No),
+            Ref { *this }
+        };
+        return XRInputSourceEvent::create(name, WTF::move(init));
     };
 
     if (!m_connected) {

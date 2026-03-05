@@ -33,13 +33,13 @@ class RenderImageResource;
 class SVGImageElement;
 
 class LegacyRenderSVGImage final : public LegacyRenderSVGModelObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGImage);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGImage);
 public:
     LegacyRenderSVGImage(SVGImageElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGImage();
 
-    SVGImageElement& imageElement() const;
+    SVGImageElement& NODELETE imageElement() const;
 
     bool updateImageViewport();
     void setNeedsBoundariesUpdate() override { m_needsBoundariesUpdate = true; }
@@ -69,6 +69,7 @@ private:
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const override { return m_objectBoundingBox; }
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const override { return m_repaintBoundingBox; }
+    FloatRect decoratedBoundingBox() const override { return m_objectBoundingBox; }
 
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const override;
 

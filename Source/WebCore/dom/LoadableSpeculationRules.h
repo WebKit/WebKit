@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include <WebCore/CachedResourceClient.h>
-#include <WebCore/CachedResourceHandle.h>
-#include <WebCore/FetchOptionsDestination.h>
-#include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
+#include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
+#include "FetchOptionsDestination.h"
+#include "ResourceLoaderOptions.h"
+#include "ResourceRequest.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
@@ -47,6 +47,10 @@ class LoadableSpeculationRules final : public RefCounted<LoadableSpeculationRule
 public:
     static Ref<LoadableSpeculationRules> create(Document&, const URL&);
     ~LoadableSpeculationRules();
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     bool load(Document&, const URL&);
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;

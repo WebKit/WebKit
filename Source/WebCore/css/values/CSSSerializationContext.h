@@ -43,7 +43,7 @@ struct SerializationContext {
     bool shouldUseResolvedURLInCSSText = false;
 };
 
-WEBCORE_EXPORT const SerializationContext& defaultSerializationContext();
+WEBCORE_EXPORT const SerializationContext& NODELETE defaultSerializationContext();
 
 } // namespace CSS
 } // namespace WebCore

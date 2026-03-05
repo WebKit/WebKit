@@ -42,6 +42,9 @@ typedef CFStringRef WebLocalizedStringType;
 
 typedef struct {
     const char *identifier;
+#if defined(__has_attribute) && __has_attribute(suppress)
+    [[clang::suppress]]
+#endif
     __unsafe_unretained NSBundle *bundle;
 } WebLocalizableStringsBundle;
 

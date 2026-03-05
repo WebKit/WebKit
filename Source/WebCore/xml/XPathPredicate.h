@@ -29,8 +29,7 @@
 #include "XPathExpressionNode.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 class Number final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(Number);
@@ -38,8 +37,8 @@ public:
     explicit Number(double);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 
     Value m_value;
 };
@@ -50,8 +49,8 @@ public:
     explicit StringExpression(String&&);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 
     Value m_value;
 };
@@ -62,8 +61,8 @@ public:
     explicit Negative(std::unique_ptr<Expression>);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 };
 
 class NumericOp final : public Expression {
@@ -73,8 +72,8 @@ public:
     NumericOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 
     Opcode m_opcode;
 };
@@ -84,10 +83,10 @@ class EqTestOp final : public Expression {
 public:
     enum class Opcode : uint8_t { Eq, Ne, Gt, Lt, Ge, Le };
     EqTestOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
-    Value evaluate() const override;
+    Value evaluate() const final;
 
 private:
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value::Type resultType() const final { return Value::Type::Boolean; }
     bool compare(const Value&, const Value&) const;
 
     Opcode m_opcode;
@@ -100,9 +99,9 @@ public:
     LogicalOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
 private:
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value::Type resultType() const final { return Value::Type::Boolean; }
     bool shortCircuitOn() const;
-    Value evaluate() const override;
+    Value evaluate() const final;
 
     Opcode m_opcode;
 };
@@ -113,12 +112,11 @@ public:
     Union(std::unique_ptr<Expression>, std::unique_ptr<Expression>);
 
 private:
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::NodeSet; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::NodeSet; }
 };
 
 bool evaluatePredicate(const Expression&);
 bool predicateIsContextPositionSensitive(const Expression&);
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

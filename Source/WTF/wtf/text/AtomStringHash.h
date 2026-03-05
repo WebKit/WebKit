@@ -59,7 +59,7 @@ namespace WTF {
         {
             // See unique_ptr's customDeleteBucket() for an explanation.
             ASSERT(!isDeletedValue(value));
-            AtomString valueToBeDestroyed = WTFMove(value);
+            AtomString valueToBeDestroyed = WTF::move(value);
             constructDeletedValue(value);
         }
     };

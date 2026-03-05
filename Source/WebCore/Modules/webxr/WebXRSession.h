@@ -42,11 +42,13 @@
 #include "XRSessionMode.h"
 #include "XRVisibilityState.h"
 #include <numbers>
+#include <wtf/HashMap.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -54,7 +56,7 @@ class XRFrameRequestCallback;
 class WebCoreOpaqueRoot;
 class WebXRSystem;
 class WebXRView;
-class WebXRViewerSpace;
+class WebXRReferenceSpace;
 struct XRCanvasConfiguration;
 struct XRRenderStateInit;
 
@@ -64,7 +66,7 @@ struct XRTransientInputHitTestOptionsInit;
 #endif
 
 class WebXRSession final : public RefCounted<WebXRSession>, public EventTarget, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient, VisibilityChangeClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSession);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRSession);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -81,9 +83,9 @@ public:
     XREnvironmentBlendMode environmentBlendMode() const;
     XRInteractionMode interactionMode() const;
     XRVisibilityState visibilityState() const;
-    const WebXRRenderState& renderState() const;
-    const WebXRInputSourceArray& inputSources() const { return m_inputSources; }
-    RefPtr<PlatformXR::Device> device() const { return m_device.get(); }
+    const WebXRRenderState& NODELETE renderState() const;
+    const WebXRInputSourceArray& inputSources() const LIFETIME_BOUND { return m_inputSources; }
+    RefPtr<PlatformXR::Device> device() const { return m_device; }
 
     const Vector<String> enabledFeatures() const;
 
@@ -112,9 +114,9 @@ public:
 
     XRSessionMode mode() const { return m_mode; }
 
-    const Vector<PlatformXR::Device::ViewData>& views() const { return m_views; }
-    const PlatformXR::FrameData& frameData() const { return m_frameData; }
-    const WebXRViewerSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
+    const Vector<PlatformXR::Device::ViewData>& views() const LIFETIME_BOUND { return m_views; }
+    const PlatformXR::FrameData& frameData() const LIFETIME_BOUND { return m_frameData; }
+    const WebXRReferenceSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
     bool posesCanBeReported(const Document&) const;
     
 #if ENABLE(WEBXR_HANDS)
@@ -126,6 +128,8 @@ public:
     void requestHitTestSource(const XRHitTestOptionsInit&, RequestHitTestSourcePromise&&);
     using RequestHitTestSourceForTransientInputPromise = DOMPromiseDeferred<IDLInterface<WebXRTransientInputHitTestSource>>;
     void requestHitTestSourceForTransientInput(const XRTransientInputHitTestOptionsInit&, RequestHitTestSourceForTransientInputPromise&&);
+    ExceptionOr<void> cancelHitTestSource(PlatformXR::HitTestSource);
+    ExceptionOr<void> cancelTransientInputHitTestSource(PlatformXR::TransientInputHitTestSource);
 #endif
 
     void initializeTrackingAndRendering(std::optional<XRCanvasConfiguration>&&);
@@ -161,6 +165,10 @@ private:
     void applyPendingRenderState();
     void minimalUpdateRendering();
 
+#if ENABLE(WEBXR_HIT_TEST)
+    void cleanupInactiveHitTestSources();
+#endif
+
     XRInteractionMode m_interactionMode { XRInteractionMode::WorldSpace };
     XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
     const UniqueRef<WebXRInputSourceArray> m_inputSources;
@@ -174,7 +182,7 @@ private:
     FeatureList m_requestedFeatures;
     RefPtr<WebXRRenderState> m_activeRenderState;
     RefPtr<WebXRRenderState> m_pendingRenderState;
-    const Ref<WebXRViewerSpace> m_viewerReferenceSpace;
+    const Ref<WebXRReferenceSpace> m_viewerReferenceSpace;
     MonotonicTime m_timeOrigin;
 
     unsigned m_nextCallbackId { 1 };
@@ -194,10 +202,17 @@ private:
 
     // https://immersive-web.github.io/webxr/#xrsession-promise-resolved
     bool m_inputInitialized { false };
+
+#if ENABLE(WEBXR_HIT_TEST)
+    HashMap<PlatformXR::HitTestSource, WeakPtr<WebXRHitTestSource>> m_activeHitTestSources;
+    HashMap<PlatformXR::HitTestSource, WeakPtr<WebXRTransientInputHitTestSource>> m_activeTransientInputHitTestSources;
+#endif
 };
 
 WebCoreOpaqueRoot root(WebXRSession*);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebXRSession)
 
 #endif // ENABLE(WEBXR)

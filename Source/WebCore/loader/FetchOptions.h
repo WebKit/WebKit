@@ -51,10 +51,10 @@ struct FetchOptions {
     FetchOptions() = default;
     FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, Markable<WTF::UUID>, Markable<WTF::UUID>);
     FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
-    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTFMove(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTF::move(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
 
     template<class Encoder> void encodePersistent(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
+    template<class Decoder> [[nodiscard]] static bool decodePersistent(Decoder&, FetchOptions&);
 
     Destination destination { Destination::EmptyString };
     Mode mode { Mode::NoCors };
@@ -76,7 +76,7 @@ inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credential
     , redirect(redirect)
     , referrerPolicy(referrerPolicy)
     , keepAlive(keepAlive)
-    , integrity(WTFMove(integrity))
+    , integrity(WTF::move(integrity))
     , clientIdentifier(clientIdentifier)
     , resultingClientIdentifier(resultingClientIdentifier)
 {
@@ -259,7 +259,7 @@ inline bool FetchOptions::decodePersistent(Decoder& decoder, FetchOptions& optio
     options.cache = *cache;
     options.redirect = *redirect;
     options.referrerPolicy = *referrerPolicy;
-    options.integrity = WTFMove(*integrity);
+    options.integrity = WTF::move(*integrity);
     options.keepAlive = *keepAlive;
 
     return true;

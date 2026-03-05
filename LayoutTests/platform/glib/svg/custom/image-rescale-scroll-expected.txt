@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 542x17
+        RenderText {#text} at (0,0) size 542x18
           text run at (0,0) width 542: "This test verifies correct repaint of scrolled/re-painted-after-uncovering, scaled images."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 755x35
+        RenderText {#text} at (0,0) size 755x36
           text run at (0,0) width 560: "If successful, the image below extends past the bottom of the window, with no white bar "
           text run at (559,0) width 196: "occluding the part of the image"
           text run at (0,18) width 238: "adjacent to the bottom of the window."

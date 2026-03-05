@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <WebCore/LayoutBox.h>
-#include <WebCore/LayoutBoxGeometry.h>
-#include <WebCore/LayoutPoint.h>
-#include <WebCore/LayoutUnits.h>
+#include "LayoutBox.h"
+#include "LayoutBoxGeometry.h"
+#include "LayoutPoint.h"
+#include "LayoutUnits.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -36,13 +36,13 @@ namespace WebCore {
 namespace Layout {
 
 class FloatAvoider {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FloatAvoider);
+    WTF_MAKE_TZONE_ALLOCATED(FloatAvoider);
 public:
     FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
     virtual ~FloatAvoider() = default;
 
     void setInlineStart(LayoutUnit);
-    void setBlockStart(LayoutUnit);
+    void NODELETE setBlockStart(LayoutUnit);
     void resetInlineStart() { m_absoluteTopLeft.setX(initialInlineStart()); }
 
     bool overflowsContainingBlock() const;
@@ -55,7 +55,7 @@ public:
 
 private:
     LayoutUnit borderBoxWidth() const { return m_borderBoxWidth; }
-    LayoutUnit initialInlineStart() const;
+    LayoutUnit NODELETE initialInlineStart() const;
 
     LayoutUnit marginBefore() const { return m_margin.vertical.before; }
     LayoutUnit marginAfter() const { return m_margin.vertical.after; }

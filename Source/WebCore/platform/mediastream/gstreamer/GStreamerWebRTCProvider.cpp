@@ -24,12 +24,12 @@
 #include "GStreamerWebRTCProvider.h"
 
 #include "ContentType.h"
+#include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
-#include "MediaCapabilitiesDecodingInfo.h"
-#include "MediaCapabilitiesEncodingInfo.h"
-#include "MediaDecodingConfiguration.h"
-#include "MediaEncodingConfiguration.h"
-#include "NotImplemented.h"
+#include "PlatformMediaCapabilitiesDecodingInfo.h"
+#include "PlatformMediaCapabilitiesEncodingInfo.h"
+#include "PlatformMediaDecodingConfiguration.h"
+#include "PlatformMediaEncodingConfiguration.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -43,6 +43,10 @@ UniqueRef<WebRTCProvider> WebRTCProvider::create()
 
 bool WebRTCProvider::webRTCAvailable()
 {
+    if (!isGStreamerPluginAvailable("webrtc"_s)) {
+        g_printerr("GstWebRTC plugin not found. Make sure to install gst-plugins-bad >= 1.20 with the webrtc plugin enabled.\n");
+        return false;
+    }
     return true;
 }
 
@@ -63,6 +67,11 @@ std::optional<RTCRtpCapabilities> GStreamerWebRTCProvider::senderCapabilities(co
     if (kind == "video"_s)
         return videoEncodingCapabilities();
     return { };
+}
+
+bool GStreamerWebRTCProvider::isWebCoreGStreamerWebRTCProvider() const
+{
+    return true;
 }
 
 void GStreamerWebRTCProvider::initializeAudioEncodingCapabilities()
@@ -107,10 +116,10 @@ void GStreamerWebRTCProvider::initializeVideoDecodingCapabilities()
     });
 }
 
-std::optional<MediaCapabilitiesDecodingInfo> GStreamerWebRTCProvider::videoDecodingCapabilitiesOverride(const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesDecodingInfo> GStreamerWebRTCProvider::videoDecodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
-    MediaCapabilitiesDecodingInfo info;
-    info.configuration.type = MediaDecodingType::WebRTC;
+    PlatformMediaCapabilitiesDecodingInfo info;
+    info.configuration.type = PlatformMediaDecodingType::WebRTC;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {

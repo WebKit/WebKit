@@ -38,11 +38,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMPointReadOnly);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMPointReadOnly);
     
 ExceptionOr<Ref<DOMPoint>> DOMPointReadOnly::matrixTransform(DOMMatrixInit&& matrixInit) const
 {
-    auto matrixOrException = DOMMatrixReadOnly::fromMatrix(WTFMove(matrixInit));
+    auto matrixOrException = DOMMatrixReadOnly::fromMatrix(WTF::move(matrixInit));
     if (matrixOrException.hasException())
         return matrixOrException.releaseException();
 

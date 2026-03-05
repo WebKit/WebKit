@@ -1,0 +1,46 @@
+--- markdown
+
+ZeroWidthJoiner
+ZeroWidthSpace
+ZeroWidthNonJoiner
+WordJoinerTest
+BOMTest
+- First item
+- Second item
+- Third item
+Repeated text
+Different text
+
+--- text-tree
+
+root
+	'ZeroWidthJoiner'
+	'ZeroWidthSpace'
+	'ZeroWidthNonJoiner'
+	'WordJoinerTest'
+	'BOMTest'
+	list
+		list-item,'First item'
+		list-item,'Second item'
+		list-item,'Third item'
+	'Repeated text'
+	'Different text'
+
+--- html
+
+<body>
+	ZeroWidthJoiner
+	ZeroWidthSpace
+	ZeroWidthNonJoiner
+	WordJoinerTest
+	BOMTest
+	<ul>
+		<li>First item</li>
+		<li>Second item</li>
+		<li>Third item</li>
+	</ul>
+	Repeated text
+	Different text
+</body>
+
+

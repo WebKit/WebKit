@@ -36,6 +36,7 @@
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
@@ -118,7 +119,7 @@ void presentStorageAccessAlert(WKWebView *webView, const WebCore::RegistrableDom
 
     SUPPRESS_UNRETAINED_ARG RetainPtr informativeText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"This will allow “%@” to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), requestingDomain.get()]);
 
-    displayStorageAccessAlert(webView, alertTitle.get(), informativeText.get(), nil, nil, WTFMove(completionHandler));
+    displayStorageAccessAlert(webView, alertTitle.get(), informativeText.get(), nil, nil, WTF::move(completionHandler));
 }
 
 void presentStorageAccessAlertQuirk(WKWebView *webView, const WebCore::RegistrableDomain& firstRequesting, const WebCore::RegistrableDomain& secondRequesting, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&& completionHandler)
@@ -134,7 +135,7 @@ void presentStorageAccessAlertQuirk(WKWebView *webView, const WebCore::Registrab
 #endif
 
     SUPPRESS_UNRETAINED_ARG RetainPtr informativeText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"This will allow “%@” and “%@” to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), firstRequestingDomain.get(), secondRequestingDomain.get()]);
-    displayStorageAccessAlert(webView, alertTitle.get(), informativeText.get(), nil, nil, WTFMove(completionHandler));
+    displayStorageAccessAlert(webView, alertTitle.get(), informativeText.get(), nil, nil, WTF::move(completionHandler));
 }
 
 void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organizationName, const HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>>& domainPairings, CompletionHandler<void(bool)>&& completionHandler)
@@ -179,12 +180,12 @@ void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organiz
             [accessoryTextList addObject:domains.createNSString().get()];
     }
 
-    displayStorageAccessAlert(webView, alertTitle.get(), informativeText.get(), relatedWebsitesString.get(), accessoryTextList.get(), WTFMove(completionHandler));
+    displayStorageAccessAlert(webView, alertTitle.get(), informativeText.get(), relatedWebsitesString.get(), accessoryTextList.get(), WTF::move(completionHandler));
 }
 
 void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSString *informativeText, NSString *accessoryLabel, NSArray<NSString *> *accessoryTextList, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
+    auto completionBlock = makeBlockPtr([completionHandler = WTF::move(completionHandler)](bool shouldAllow) mutable {
         completionHandler(shouldAllow);
     });
 
@@ -237,17 +238,20 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
 #else
     auto alert = WebKit::createUIAlertController(alertTitle, informativeText);
 
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
         completionBlock(false);
     }];
 
-    [alert addAction:doNotAllowAction];
-    [alert addAction:allowAction];
+    [alert addAction:doNotAllowAction.get()];
+    [alert addAction:allowAction.get()];
 
+#if PLATFORM(VISION)
+    [webView _page]->dispatchWillPresentModalUI();
+#endif
     [webView._wk_viewControllerForFullScreenPresentation presentViewController:alert.get() animated:YES completion:nil];
 #endif
 }

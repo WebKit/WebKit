@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRInputSourceArray);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRInputSourceArray);
 
 WebXRInputSourceArray::WebXRInputSourceArray(WebXRSession& session)
     : m_session(session)
@@ -95,13 +95,14 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
 
     if (!added.isEmpty() || !removed.isEmpty()) {
         // A user agent MUST dispatch an inputsourceschange event on an XRSession when the session’s list of active XR input sources has changed.
-        XRInputSourcesChangeEvent::Init init;
-        init.session = &m_session;
-        init.added = WTFMove(added);
-        init.removed = WTFMove(removed);
-
-        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, init);
-        ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTFMove(event));
+        auto init = XRInputSourcesChangeEvent::Init {
+            { false, false, false },
+            m_session,
+            WTF::move(added),
+            WTF::move(removed),
+        };
+        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, WTF::move(init));
+        ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTF::move(event));
     }
 
     if (!inputEvents.isEmpty()) {
@@ -113,7 +114,7 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
         // 5. Set frame’s active boolean to false.
 
         for (auto& event : inputEvents) {
-            ActiveDOMObject::queueTaskKeepingObjectAlive(m_session, TaskSource::WebXR, [session = Ref { m_session }, event = WTFMove(event)](auto&) {
+            ActiveDOMObject::queueTaskKeepingObjectAlive(m_session, TaskSource::WebXR, [session = Ref { m_session }, event = WTF::move(event)](auto&) {
                 event->setFrameActive(true);
                 session->dispatchEvent(event.copyRef());
                 event->setFrameActive(false);
@@ -125,12 +126,14 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
     // make sure the inputsourceschange event for the removal happen after the input source events.
     if (!removedWithInputEvents.isEmpty()) {
         // A user agent MUST dispatch an inputsourceschange event on an XRSession when the session’s list of active XR input sources has changed.
-        XRInputSourcesChangeEvent::Init init;
-        init.session = &m_session;
-        init.removed = WTFMove(removedWithInputEvents);
-
-        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, init);
-        ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTFMove(event));
+        auto init = XRInputSourcesChangeEvent::Init {
+            { false, false, false },
+            m_session,
+            { },
+            WTF::move(removedWithInputEvents),
+        };
+        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, WTF::move(init));
+        ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTF::move(event));
     }
 }
 
@@ -179,7 +182,7 @@ void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, c
             auto input = WebXRInputSource::create(*document, m_session, timestamp, inputSource);
             added.append(input);
             input->pollEvents(inputEvents);
-            m_inputSources.append(WTFMove(input));
+            m_inputSources.append(WTF::move(input));
             continue;
         }
 
@@ -208,7 +211,7 @@ void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, c
             auto newInputSource = WebXRInputSource::create(*document, m_session, timestamp, inputSource);
             added.append(newInputSource);
             newInputSource->pollEvents(inputEvents);
-            m_inputSources.append(WTFMove(newInputSource));
+            m_inputSources.append(WTF::move(newInputSource));
         } else {
             input->update(timestamp, inputSource);
             input->pollEvents(inputEvents);

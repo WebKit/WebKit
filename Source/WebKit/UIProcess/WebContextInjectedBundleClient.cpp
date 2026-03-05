@@ -61,7 +61,7 @@ void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBun
         return completionHandler(adoptRef(toImpl(returnDataRef)));
     }
 
-    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
+    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
 }
 
 RefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebProcessPool& processPool)

@@ -90,15 +90,15 @@ public:
     DownloadID downloadID() const { return m_downloadID; }
     PAL::SessionID sessionID() const { return m_sessionID; }
 
-    void setSandboxExtension(RefPtr<SandboxExtension>&& sandboxExtension) { m_sandboxExtension = WTFMove(sandboxExtension); }
+    void setSandboxExtension(RefPtr<SandboxExtension>&& sandboxExtension) { m_sandboxExtension = WTF::move(sandboxExtension); }
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
     void didCreateDestination(const String& path);
     void didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite);
     void didFinish();
     void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
 
-    void applicationDidEnterBackground() { protectedMonitor()->applicationDidEnterBackground(); }
-    void applicationWillEnterForeground() { protectedMonitor()->applicationWillEnterForeground(); }
+    void applicationDidEnterBackground() { protect(m_monitor)->applicationDidEnterBackground(); }
+    void applicationWillEnterForeground() { protect(m_monitor)->applicationWillEnterForeground(); }
     DownloadManager* manager() const { return m_downloadManager.get(); }
     void clearManager() { m_downloadManager = nullptr; }
 
@@ -109,8 +109,6 @@ private:
 #if PLATFORM(COCOA)
     Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { });
 #endif
-
-    Ref<DownloadMonitor> protectedMonitor() { return m_monitor; }
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
@@ -130,7 +128,7 @@ private:
     DownloadID m_downloadID;
     const Ref<DownloadManager::Client> m_client;
 
-    Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFileReferences;
+    Vector<Ref<WebCore::BlobDataFileReference>> m_blobFileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
 
     const RefPtr<NetworkDataTask> m_download;

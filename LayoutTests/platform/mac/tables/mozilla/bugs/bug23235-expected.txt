@@ -38,8 +38,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,152) size 784x18
         RenderText {#text} at (0,0) size 188x18
           text run at (0,0) width 188: "Same as above, but removed "
-        RenderInline {CODE} at (187,2) size 134x15
-          RenderText {#text} at (187,2) size 134x15
+        RenderInline {CODE} at (187,2) size 134x16
+          RenderText {#text} at (187,2) size 134x16
             text run at (187,2) width 134: "<SCRIPT></SCRIPT>"
       RenderTable {TABLE} at (0,186) size 644x102 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 642x100

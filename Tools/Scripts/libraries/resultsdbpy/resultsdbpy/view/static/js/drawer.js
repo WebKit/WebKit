@@ -324,7 +324,7 @@ function ConfigurationSelectors(callback) {
 
                 let switches = {};
 
-                let isExpanded = false;
+                let isExpanded = modifier.current().length > 0;
                 let expander = REF.createRef({
                     onElementMount: (element) => {
                         element.onclick = () => {
@@ -356,7 +356,7 @@ function ConfigurationSelectors(callback) {
                 };
 
 
-                DOM.inject(element, `<a class="link-button text medium" ref="${expander}">+</a>
+                DOM.inject(element, `<a class="link-button text medium" ref="${expander}">${isExpanded ? '-' : '+'}</a>
                     ${details.name} <br>
                     ${options.map(option => {
                         let isChecked = false;

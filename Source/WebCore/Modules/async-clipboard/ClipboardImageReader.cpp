@@ -27,6 +27,7 @@
 #include "ClipboardImageReader.h"
 
 #include "Document.h"
+#include "DocumentPage.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {

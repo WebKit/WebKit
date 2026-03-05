@@ -10,8 +10,8 @@ layer at (0,0) size 785x615
           RenderText {#text} at (0,1) size 731x36
             text run at (108,1) width 623: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6014 Bidi algorithm: incorrect"
             text run at (0,20) width 410: "resolved levels for neutrals between R and ET ON L"
-        RenderText {#text} at (410,20) size 5x17
-          text run at (410,20) width 5: "."
+        RenderText {#text} at (409,20) size 6x17
+          text run at (409,20) width 6: "."
       RenderBlock {P} at (0,54) size 769x57
         RenderText {#text} at (0,1) size 747x55
           text run at (0,1) width 126: "The characters "

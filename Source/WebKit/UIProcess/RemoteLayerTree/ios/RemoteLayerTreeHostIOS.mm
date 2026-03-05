@@ -62,7 +62,7 @@ using namespace WebCore;
 RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithView = [&] (RetainPtr<UIView>&& view) {
-        return RemoteLayerTreeNode::create(*properties.layerID, properties.hostIdentifier(), WTFMove(view));
+        return RemoteLayerTreeNode::create(*properties.layerID, properties.hostIdentifier(), WTF::move(view));
     };
 
     switch (properties.type) {
@@ -92,7 +92,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
         if (![WKMaterialHostingSupport isMaterialHostingAvailable])
             return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
-        return makeWithView([[WKMaterialHostingView alloc] init]);
+        return makeWithView(adoptNS([[WKMaterialHostingView alloc] init]));
     }
 #endif
 
@@ -106,20 +106,22 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 
 #if HAVE(AVKIT)
         if (properties.videoElementData) {
-            if (auto videoManager = m_drawingArea->page() ? m_drawingArea->page()->videoPresentationManager() : nullptr) {
-                m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
+            if (RefPtr page = protect(m_drawingArea)->page()) {
+                if (RefPtr videoManager = page->videoPresentationManager()) {
+                    m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
                 WebCore::HostingContext hostingContext;
                 hostingContext.contextID = properties.hostingContextID();
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
                 if (auto sendRightAnnotated = properties.sendRightAnnotated())
-                    hostingContext.sendRightAnnotated = WTFMove(*sendRightAnnotated);
+                    hostingContext.sendRightAnnotated = WTF::move(*sendRightAnnotated);
 #endif
-                return makeWithView(videoManager->createViewWithID(properties.videoElementData->playerIdentifier, WTFMove(hostingContext), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
+                return makeWithView(videoManager->createViewWithID(properties.videoElementData->playerIdentifier, WTF::move(hostingContext), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
+                }
             }
         }
 #endif
 
-        if (!m_drawingArea->page())
+        if (!protect(m_drawingArea)->page())
             return nullptr;
 
 #if ENABLE(MODEL_PROCESS)
@@ -127,14 +129,14 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
             if (auto modelPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->modelPresentationManagerProxy() : nullptr) {
                 if (auto view = modelPresentationManager->setUpModelView(*modelContext)) {
                     m_modelLayers.add(modelContext->modelLayerIdentifier());
-                    return makeWithView(WTFMove(view));
+                    return makeWithView(WTF::move(view));
                 }
             }
         }
 #endif
 
-        auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:m_drawingArea->page()->legacyMainFrameProcessID() contextID:properties.hostingContextID()]);
-        return makeWithView(WTFMove(view));
+        auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:protect(protect(m_drawingArea)->page())->legacyMainFrameProcessID() contextID:properties.hostingContextID()]);
+        return makeWithView(WTF::move(view));
     }
     case PlatformCALayer::LayerType::LayerTypeShapeLayer:
         return makeWithView(adoptNS([[WKShapeView alloc] init]));
@@ -158,8 +160,10 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
         bool modelHandledOutOfProcess = false;
 #endif
 
-        if (!modelHandledOutOfProcess && m_drawingArea->page() && m_drawingArea->page()->preferences().modelElementEnabled()) {
-            if (auto* model = std::get_if<Ref<Model>>(&properties.additionalData)) {
+        if (!modelHandledOutOfProcess) {
+            if (RefPtr page = protect(m_drawingArea)->page()) {
+                if (protect(page->preferences())->modelElementEnabled()) {
+                    if (auto* model = std::get_if<Ref<Model>>(&properties.additionalData)) {
 #if ENABLE(SEPARATED_MODEL)
                 return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*model]));
 #elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
@@ -167,6 +171,8 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 #else
                 UNUSED_PARAM(model);
 #endif
+                    }
+                }
             }
         }
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));

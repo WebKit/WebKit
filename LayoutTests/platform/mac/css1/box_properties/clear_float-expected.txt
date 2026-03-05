@@ -26,7 +26,7 @@ layer at (0,0) size 785x793
           text run at (0,120) width 0: " "
       RenderBlock (floating) {DIV} at (0,189) size 192x117 [color=#FFFFFF] [bgcolor=#008000]
         RenderBlock {H1} at (8,8) size 176x22
-          RenderText {#text} at (0,0) size 82x22
+          RenderText {#text} at (0,-1) size 82x24
             text run at (0,0) width 82: "Top menu"
         RenderBlock {UL} at (24,33) size 156x73
           RenderListItem {LI} at (0,0) size 156x18
@@ -47,7 +47,7 @@ layer at (0,0) size 785x793
               text run at (0,0) width 89: "0.5em margin"
       RenderBlock (floating) {DIV} at (0,315) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
         RenderBlock {H1} at (8,8) size 176x22
-          RenderText {#text} at (0,0) size 112x22
+          RenderText {#text} at (0,-1) size 112x24
             text run at (0,0) width 112: "Bottom menu"
         RenderBlock {UL} at (24,33) size 156x73
           RenderListItem {LI} at (0,0) size 156x18
@@ -96,7 +96,7 @@ layer at (0,0) size 785x793
             RenderTableCell {TD} at (12,26) size 563x338 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (floating) {DIV} at (4,4) size 192x117 [color=#FFFFFF] [bgcolor=#008000]
                 RenderBlock {H1} at (8,8) size 176x22
-                  RenderText {#text} at (0,0) size 82x22
+                  RenderText {#text} at (0,-1) size 82x24
                     text run at (0,0) width 82: "Top menu"
                 RenderBlock {UL} at (24,33) size 156x73
                   RenderListItem {LI} at (0,0) size 156x18
@@ -117,7 +117,7 @@ layer at (0,0) size 785x793
                       text run at (0,0) width 89: "0.5em margin"
               RenderBlock (floating) {DIV} at (4,130) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
                 RenderBlock {H1} at (8,8) size 176x22
-                  RenderText {#text} at (0,0) size 112x22
+                  RenderText {#text} at (0,-1) size 112x24
                     text run at (0,0) width 112: "Bottom menu"
                 RenderBlock {UL} at (24,33) size 156x73
                   RenderListItem {LI} at (0,0) size 156x18

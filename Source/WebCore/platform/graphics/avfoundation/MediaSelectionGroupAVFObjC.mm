@@ -162,7 +162,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         Ref addedOption = MediaSelectionOptionAVFObjC::create(*this, addedAVOption);
         if (addedAVOption == selectedOption)
             m_selectedOption = addedOption.get();
-        m_options.set((__bridge CFTypeRef)addedAVOption, WTFMove(addedOption));
+        m_options.set((__bridge CFTypeRef)addedAVOption, WTF::move(addedOption));
     }
 
     if (!m_shouldSelectOptionAutomatically)

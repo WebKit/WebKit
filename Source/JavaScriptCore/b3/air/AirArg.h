@@ -73,6 +73,7 @@ public:
         BitImm64,
         FPImm32,
         FPImm64,
+        FPImm128,
 
         // These are the addresses. Instructions may load from (Use), store to (Def), or evaluate
         // (UseAddr) addresses.
@@ -586,6 +587,17 @@ public:
         return result;
     }
 
+    static Arg fpImm128(v128_t value)
+    {
+        if constexpr (is32Bit())
+            UNREACHABLE_FOR_PLATFORM();
+        Arg result;
+        result.m_kind = FPImm128;
+        result.m_offset = value.u64x2[0];
+        result.m_additional = value.u64x2[0];
+        return result;
+    }
+
     static Arg immPtr(const void* address)
     {
         return bigImm(std::bit_cast<intptr_t>(address));
@@ -845,6 +857,24 @@ public:
         return kind() == FPImm64;
     }
 
+    bool isFPImm128() const
+    {
+        return kind() == FPImm128;
+    }
+
+    bool isFPImmZero() const
+    {
+        switch (kind()) {
+        case FPImm32:
+        case FPImm64:
+            return value() == 0;
+        case FPImm128:
+            return bitEquals(asV128(), v128_t { });
+        default:
+            return false;
+        }
+    }
+
     bool isZeroReg() const
     {
         return kind() == ZeroReg;
@@ -859,6 +889,7 @@ public:
         case BitImm64:
         case FPImm32:
         case FPImm64:
+        case FPImm128:
             return true;
         default:
             return false;
@@ -1167,6 +1198,7 @@ public:
         case BitImm64:
         case FPImm32:
         case FPImm64:
+        case FPImm128:
         case ZeroReg:
         case SimpleAddr:
         case Addr:
@@ -1201,6 +1233,7 @@ public:
         case BitImm64:
         case FPImm32:
         case FPImm64:
+        case FPImm128:
         case RelCond:
         case ResCond:
         case DoubleCond:
@@ -1345,7 +1378,7 @@ public:
         return false;
     }
 
-    static bool isValidFPImm32Form(int64_t value)
+    static bool isValidFPImm16Form(int64_t value)
     {
         if (!value)
             return true;
@@ -1354,7 +1387,80 @@ public:
             return false;
 
 #if CPU(ARM64)
+        if (MacroAssembler::supportsFloat16() && ARM64Assembler::canEncodeFPImm<16>(value))
+            return true;
+
+        uint16_t u16 = static_cast<uint16_t>(value);
+
+        auto shiftedImm = ARM64ShiftedImmediate16::create(u16);
+        if (shiftedImm.isValid())
+            return true;
+
+        auto shiftedImmInverted = ARM64ShiftedImmediate16::create(~u16);
+        if (shiftedImmInverted.isValid())
+            return true;
+
+        uint64_t u64 = u16;
+        if (ARM64FPImmediate::create64(u64).isValid())
+            return true;
+
+        uint8_t low8 = static_cast<uint8_t>(u16);
+        uint8_t high8 = static_cast<uint8_t>(u16 >> 8);
+        if (low8 == high8)
+            return true;
+#endif
+
+        return false;
+    }
+
+    static bool isValidFPImm32Form(int64_t value)
+    {
+        if (!value)
+            return true;
+
+        if (!isARM64() && !isX86_64())
+            return false;
+
+#if CPU(ARM64)
         if (ARM64Assembler::canEncodeFPImm<32>(value))
+            return true;
+
+        uint32_t u32 = static_cast<uint32_t>(value);
+
+        auto shiftedImm = ARM64ShiftedImmediate32::create(u32);
+        if (shiftedImm.isValid())
+            return true;
+
+        auto shiftedImmInverted = ARM64ShiftedImmediate32::create(~u32);
+        if (shiftedImmInverted.isValid())
+            return true;
+
+        auto mslImm = ARM64ShiftedImmediateMSL32::create(u32);
+        if (mslImm.isValid())
+            return true;
+
+        auto mslImmInverted = ARM64ShiftedImmediateMSL32::create(~u32);
+        if (mslImmInverted.isValid())
+            return true;
+
+        uint64_t u64 = u32;
+        if (ARM64FPImmediate::create64(u64).isValid())
+            return true;
+
+        uint16_t low16 = static_cast<uint16_t>(u32);
+        uint16_t high16 = static_cast<uint16_t>(u32 >> 16);
+        if (low16 == high16)
+            return isValidFPImm16Form(static_cast<int16_t>(low16));
+#elif CPU(X86_64)
+        uint32_t u32 = static_cast<uint32_t>(value);
+
+        // All ones
+        if (u32 == 0xFFFFFFFFU)
+            return true;
+
+        // Contiguous bit pattern (pcmpeqd + shifts, no scratch needed)
+        auto pattern = X86ContiguousBitPattern32::create(u32);
+        if (pattern.isValid())
             return true;
 #endif
 
@@ -1366,15 +1472,49 @@ public:
         if (!value)
             return true;
 
-        if (!isARM64())
+        if (!isARM64() && !isX86_64())
             return false;
 
 #if CPU(ARM64)
         if (ARM64Assembler::canEncodeFPImm<64>(value))
             return true;
+
+        uint64_t u64 = static_cast<uint64_t>(value);
+        if (ARM64FPImmediate::create64(u64).isValid())
+            return true;
+
+#elif CPU(X86_64)
+        uint64_t u64 = static_cast<uint64_t>(value);
+
+        if (u64 == 0xFFFFFFFFFFFFFFFFULL)
+            return true;
+
+        auto pattern = X86ContiguousBitPattern64::create(u64);
+        if (pattern.isValid())
+            return true;
 #endif
 
-        return ARM64FPImmediate::create64(value).isValid();
+        uint32_t low32 = static_cast<uint32_t>(u64);
+        uint32_t high32 = static_cast<uint32_t>(u64 >> 32);
+        if (low32 == high32)
+            return isValidFPImm32Form(static_cast<int32_t>(low32));
+
+        return false;
+    }
+
+    static bool isValidFPImm128Form(v128_t value)
+    {
+        if (bitEquals(value, vectorAllZeros()))
+            return true;
+
+        if (!isARM64() && !isX86_64())
+            return false;
+
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        if (value.u64x2[0] == value.u64x2[1])
+            return isValidFPImm64Form(value.u64x2[0]);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        return false;
     }
 
     template<IsLegalOffset Int>
@@ -1476,6 +1616,8 @@ public:
             return isValidFPImm32Form(value());
         case FPImm64:
             return isValidFPImm64Form(value());
+        case FPImm128:
+            return isValidFPImm128Form(asV128());
         case ZeroReg:
         case SimpleAddr:
         case ExtendedOffsetAddr:
@@ -1580,6 +1722,14 @@ public:
             UNREACHABLE_FOR_PLATFORM();
         ASSERT(isBigImm() || isBitImm64() || isFPImm64());
         return MacroAssembler::TrustedImm64(value());
+    }
+
+    v128_t asV128() const
+    {
+        if constexpr (is32Bit())
+            UNREACHABLE_FOR_PLATFORM();
+        ASSERT(isFPImm128());
+        return v128_t(m_offset, m_additional);
     }
 
     decltype(auto) asTrustedBigImm() const
@@ -1750,8 +1900,10 @@ public:
 
 private:
     int64_t m_offset { 0 };
+    int64_t m_additional { 0 };
     Kind m_kind { Invalid };
     MacroAssembler::Extend m_extend { MacroAssembler::Extend::None };
+    JSC::SIMDInfo m_simdInfo;
     int32_t m_scale { 1 };
     Air::Tmp m_base;
     Air::Tmp m_index;
@@ -1760,7 +1912,6 @@ private:
     Air::Tmp m_baseHi;
     Air::Tmp m_baseLo;
 #endif
-    JSC::SIMDInfo m_simdInfo;
 };
 
 } } } // namespace JSC::B3::Air

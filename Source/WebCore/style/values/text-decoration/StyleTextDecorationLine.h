@@ -159,7 +159,7 @@ struct TextDecorationLine {
         }
     }
 
-    uint8_t addOrReplaceIfNotNone(const TextDecorationLine&);
+    void addOrReplaceIfNotNone(TextDecorationLine);
 
     template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
     {
@@ -168,14 +168,13 @@ struct TextDecorationLine {
         switch (type()) {
         case Type::Flags:
             return visitor(unpackFlags());
-        case Type::SingleValue: {
+        case Type::SingleValue:
             if (isNone())
                 return visitor(CSS::Keyword::None { });
             if (isSpellingError())
                 return visitor(CSS::Keyword::SpellingError { });
             ASSERT(isGrammarError());
             return visitor(CSS::Keyword::GrammarError { });
-            }
         }
         ASSERT_NOT_REACHED();
         return visitor(CSS::Keyword::None { });

@@ -49,7 +49,7 @@ PrintInfo::PrintInfo(GtkPrintJob* job, PrintMode printMode)
     availablePaperHeight = gtk_page_setup_get_paper_height(jobPageSetup.get(), GTK_UNIT_POINTS) - gtk_page_setup_get_top_margin(jobPageSetup.get(), GTK_UNIT_POINTS) - gtk_page_setup_get_bottom_margin(jobPageSetup.get(), GTK_UNIT_POINTS);
     margin = { WebCore::narrowPrecisionToFloat(gtk_page_setup_get_top_margin(jobPageSetup.get(), GTK_UNIT_POINTS)), WebCore::narrowPrecisionToFloat(gtk_page_setup_get_right_margin(jobPageSetup.get(), GTK_UNIT_POINTS)), WebCore::narrowPrecisionToFloat(gtk_page_setup_get_bottom_margin(jobPageSetup.get(), GTK_UNIT_POINTS)), WebCore::narrowPrecisionToFloat(gtk_page_setup_get_left_margin(jobPageSetup.get(), GTK_UNIT_POINTS)) };
 
-    pageSetup = WTFMove(jobPageSetup);
+    pageSetup = WTF::move(jobPageSetup);
 
     printSettings = adoptGRef(gtk_print_settings_new());
     gtk_print_settings_set_printer_lpi(printSettings.get(), gtk_print_settings_get_printer_lpi(jobSettings.get()));

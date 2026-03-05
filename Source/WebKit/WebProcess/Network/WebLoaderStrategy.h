@@ -58,7 +58,7 @@ public:
     explicit WebLoaderStrategy(WebProcess&);
     ~WebLoaderStrategy() final;
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
     
     void loadResource(WebCore::LocalFrame&, WebCore::CachedResource&, WebCore::ResourceRequest&&, const WebCore::ResourceLoaderOptions&, CompletionHandler<void(RefPtr<WebCore::SubresourceLoader>&&)>&&) final;
@@ -146,7 +146,7 @@ private:
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
 
     void setResourceLoadSchedulingMode(WebCore::Page&, WebCore::LoadSchedulingMode) final;
-    void prioritizeResourceLoads(const Vector<RefPtr<WebCore::SubresourceLoader>>&) final;
+    void prioritizeResourceLoads(const Vector<Ref<WebCore::SubresourceLoader>>&) final;
 
     Vector<WebCore::ResourceLoaderIdentifier> ongoingLoads() const final
     {
@@ -158,8 +158,8 @@ private:
     WeakRef<WebProcess> m_webProcess;
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer m_internallyFailedLoadTimer;
-    
-    HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebResourceLoader>> m_webResourceLoaders;
+
+    HashMap<WebCore::ResourceLoaderIdentifier, Ref<WebResourceLoader>> m_webResourceLoaders;
     HashMap<WebCore::ResourceLoaderIdentifier, WeakRef<WebURLSchemeTaskProxy>> m_urlSchemeTasks;
     HashMap<WebCore::ResourceLoaderIdentifier, PingLoadCompletionHandler> m_pingLoadCompletionHandlers;
     HashMap<WebCore::ResourceLoaderIdentifier, PreconnectCompletionHandler> m_preconnectCompletionHandlers;

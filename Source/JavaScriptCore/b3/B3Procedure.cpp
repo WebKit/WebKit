@@ -37,11 +37,14 @@
 #include "B3DataSection.h"
 #include "B3Dominators.h"
 #include "B3NaturalLoops.h"
+#include "B3OriginDump.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "JITOpaqueByproducts.h"
+#include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace B3 {
 
@@ -74,7 +77,7 @@ BasicBlock* Procedure::addBlock(double frequency)
 {
     std::unique_ptr<BasicBlock> block(new BasicBlock(m_blocks.size(), frequency));
     BasicBlock* result = block.get();
-    m_blocks.append(WTFMove(block));
+    m_blocks.append(WTF::move(block));
     return result;
 }
 
@@ -91,7 +94,7 @@ Variable* Procedure::addVariable(Type type)
 Type Procedure::addTuple(Vector<Type>&& types)
 {
     Type result = Type::tupleFromIndex(m_tuples.size());
-    m_tuples.append(WTFMove(types));
+    m_tuples.append(WTF::move(types));
     ASSERT(result.isTuple());
     return result;
 }
@@ -111,7 +114,7 @@ Value* Procedure::clone(Value* value)
     std::unique_ptr<Value> clone(value->cloneImpl());
     clone->m_index = UINT_MAX;
     clone->owner = nullptr;
-    return m_values.add(WTFMove(clone));
+    return m_values.add(WTF::move(clone));
 }
 
 Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
@@ -370,7 +373,7 @@ void* Procedure::addDataSection(size_t size)
         return nullptr;
     std::unique_ptr<DataSection> dataSection = makeUnique<DataSection>(size);
     void* result = dataSection->data();
-    m_byproducts->add(WTFMove(dataSection));
+    m_byproducts->add(WTF::move(dataSection));
     return result;
 }
 
@@ -438,7 +441,7 @@ void Procedure::setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator> gen
     code().setWasmBoundsCheckGenerator(generator);
 }
 
-RegisterSetBuilder Procedure::mutableGPRs()
+RegisterSet Procedure::mutableGPRs()
 {
     return code().mutableGPRs();
 }
@@ -504,6 +507,107 @@ void Procedure::setNeedsPCToOriginMap()
 { 
     m_needsPCToOriginMap = true;
     m_code->forcePreservationOfB3Origins();
+}
+
+void Procedure::setIonGraphPasses(Ref<JSON::Array>&& array)
+{
+    m_ionGraphPasses = array.get();
+    m_code->setIonGraphPasses(WTF::move(array));
+}
+
+void Procedure::appendIonGraphPass(ASCIILiteral passName)
+{
+    auto pass = JSON::Object::create();
+    pass->setString("name"_s, makeString("B3: "_s, passName));
+    {
+        auto ionGraph = JSON::Object::create();
+        auto ionBlocks = JSON::Array::create();
+        ionGraph->setArray("blocks"_s, ionBlocks);
+
+        for (auto* block : *this) {
+            if (!block)
+                continue;
+
+            auto ionBlock = JSON::Object::create();
+            auto attributes = JSON::Array::create();
+            auto predecessors = JSON::Array::create();
+            auto successors = JSON::Array::create();
+            auto instructions = JSON::Array::create();
+
+            for (auto* value : *block) {
+                auto instruction = JSON::Object::create();
+                auto inputs = JSON::Array::create();
+
+                for (auto* child : value->children())
+                    inputs->pushInteger(child->index());
+
+                String type;
+                {
+                    StringPrintStream stream;
+                    if (value->type().isTuple())
+                        stream.print(listDump(tupleForType(value->type())));
+                    else
+                        stream.print(value->type());
+                    type = stream.toString();
+                }
+
+                StringPrintStream stream;
+                stream.print(value->kind(), "("_s);
+                CommaPrinter comma;
+                for (auto* child : value->children())
+                    stream.print(comma, child->kind(), "#"_s, child->index());
+                value->dumpMeta(comma, stream);
+                auto effects = value->effects();
+                {
+                    CString string = toCString(effects);
+                    if (string.length())
+                        stream.print(comma, string);
+                }
+                if (auto origin = value->origin())
+                    stream.print(comma, OriginDump(this, origin));
+                stream.print(")"_s);
+
+                if (effects.terminal) {
+                    stream.print(" -> "_s);
+                    value->dumpSuccessors(block, stream);
+                }
+
+                instruction->setInteger("ptr"_s, value->index() + 1);
+                instruction->setInteger("id"_s, value->index());
+                instruction->setString("opcode"_s, stream.toString());
+                instruction->setArray("attributes"_s, JSON::Array::create());
+                instruction->setArray("inputs"_s, WTF::move(inputs));
+                instruction->setArray("uses"_s, JSON::Array::create());
+                instruction->setArray("memInputs"_s, JSON::Array::create());
+                instruction->setString("type"_s, WTF::move(type));
+
+                instructions->pushObject(WTF::move(instruction));
+            }
+
+            for (auto predecessor : block->predecessors())
+                predecessors->pushInteger(predecessor->index());
+
+            for (auto successor : block->successors())
+                successors->pushInteger(successor.block()->index());
+
+            ionBlock->setInteger("ptr"_s, block->index() + 1);
+            ionBlock->setInteger("id"_s, block->index());
+            ionBlock->setInteger("loopDepth"_s, 0);
+            ionBlock->setArray("attributes"_s, JSON::Array::create());
+            ionBlock->setArray("predecessors"_s, WTF::move(predecessors));
+            ionBlock->setArray("successors"_s, WTF::move(successors));
+            ionBlock->setArray("instructions"_s, WTF::move(instructions));
+            ionBlocks->pushObject(ionBlock);
+        }
+
+        pass->setObject("mir"_s, WTF::move(ionGraph)); // MIR stands for SpiderMonkey's middle-level IR.
+    }
+    {
+        auto ionGraph = JSON::Object::create();
+        ionGraph->setArray("blocks"_s, JSON::Array::create());
+        pass->setObject("lir"_s, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
+    }
+    m_ionGraphPasses->pushObject(pass);
 }
 
 } } // namespace JSC::B3

@@ -43,7 +43,7 @@ enum CSSValueID : uint16_t;
 enum class CSSUnitType : uint8_t;
 
 class StyledElement : public Element {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StyledElement);
+    WTF_MAKE_TZONE_ALLOCATED(StyledElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyledElement);
 public:
     virtual ~StyledElement();
@@ -52,8 +52,7 @@ public:
     void invalidateStyleAttribute();
 
     const StyleProperties* inlineStyle() const { return elementData() ? elementData()->m_inlineStyle.get() : nullptr; }
-    RefPtr<StyleProperties> protectedInlineStyle() const;
-    
+
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, CSSValueID identifier, IsImportant = IsImportant::No);
     bool setInlineStyleProperty(CSSPropertyID, CSSPropertyID identifier, IsImportant = IsImportant::No);
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSUnitType, IsImportant = IsImportant::No);

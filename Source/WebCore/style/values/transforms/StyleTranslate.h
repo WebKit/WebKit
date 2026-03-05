@@ -40,8 +40,8 @@ struct Translate {
     };
 
     Translate(CSS::Keyword::None) : value { nullptr } { }
-    Translate(Function&& value) : value { WTFMove(value.value) } { }
-    Translate(Ref<const TranslateTransformFunction>&& value) : value { WTFMove(value) } { }
+    Translate(Function&& value) : value { WTF::move(value.value) } { }
+    Translate(Ref<const TranslateTransformFunction>&& value) : value { WTF::move(value) } { }
 
     bool isRepresentableIn2D() const { return !value || value->isRepresentableIn2D(); }
     bool is3DOperation() const { return value && value->is3DOperation(); }

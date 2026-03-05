@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="static-text">This is static text.</p>
+
+<input type="text" id="text-field" value="Text field content">
+
+<textarea id="text-area">Text area content</textarea>
+
+<script>
+var output = "This test checks that various element types support the expected attributes.\n\n";
+
+if (window.accessibilityController) {
+    output += "Static text:\n";
+    var staticText = accessibilityController.accessibleElementById("static-text").childAtIndex(0);
+    output += expect("staticText.role", "'AXRole: AXStaticText'");
+    output += expect("staticText.isAttributeSupported('AXIntersectionWithSelectionRange')", "true");
+    output += expect("staticText.isAttributeSupported('AXIntersectTextMarkerRanges')", "true");
+    output += "\n";
+
+    output += "Text field:\n";
+    var textField = accessibilityController.accessibleElementById("text-field");
+    output += expect("textField.role", "'AXRole: AXTextField'");
+    output += expect("textField.isAttributeSupported('AXIntersectionWithSelectionRange')", "true");
+    output += expect("textField.isAttributeSupported('AXIntersectTextMarkerRanges')", "true");
+    output += "\n";
+
+    output += "Text area:\n";
+    var textArea = accessibilityController.accessibleElementById("text-area");
+    output += expect("textArea.role", "'AXRole: AXTextArea'");
+    output += expect("textArea.isAttributeSupported('AXIntersectionWithSelectionRange')", "true");
+    output += expect("textArea.isAttributeSupported('AXIntersectTextMarkerRanges')", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

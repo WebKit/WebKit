@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
+#include "EventTargetInterfaces.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerData.h"
 #include <JavaScriptCore/Strong.h>
@@ -47,7 +48,7 @@ class SWClientConnection;
 struct StructuredSerializeOptions;
 
 class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ServiceWorker, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ServiceWorker, WEBCORE_EXPORT);
 public:
     using State = ServiceWorkerState;
     static Ref<ServiceWorker> getOrCreate(ScriptExecutionContext&, ServiceWorkerData&&);
@@ -66,6 +67,7 @@ public:
     void updateState(State);
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
     ServiceWorkerRegistrationIdentifier registrationIdentifier() const { return m_data.registrationIdentifier; }
@@ -79,7 +81,6 @@ private:
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -87,7 +88,6 @@ private:
     void stop() final;
 
     SWClientConnection& swConnection();
-    Ref<SWClientConnection> protectedSWConnection();
 
     ServiceWorkerData m_data;
     bool m_isStopped { false };
@@ -100,3 +100,5 @@ inline ServiceWorker* ScriptExecutionContext::serviceWorker(ServiceWorkerIdentif
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(ServiceWorker)

@@ -37,7 +37,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSAttr::visitAdditionalChildren(Visitor& visitor)
 {
-    if (auto* element = wrapped().ownerElement())
+    if (SUPPRESS_UNCHECKED_LOCAL auto* element = wrapped().ownerElement())
         addWebCoreOpaqueRoot(visitor, *element);
 }
 

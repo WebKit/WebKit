@@ -30,7 +30,7 @@ int BN_mod_pow2(BIGNUM *r, const BIGNUM *a, size_t e) {
 
   // If |a| definitely has less than |e| bits, just BN_copy.
   if ((size_t)a->width < num_words) {
-    return BN_copy(r, a) != NULL;
+    return BN_copy(r, a) != nullptr;
   }
 
   // Otherwise, first make sure we have enough space in |r|.

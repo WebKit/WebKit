@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererCocoa);
 
 AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa(Init&& init)
-    : AudioMediaStreamTrackRenderer(WTFMove(init))
+    : AudioMediaStreamTrackRenderer(WTF::move(init))
     , m_resetObserver(ResetObserver::create([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->reset();
@@ -58,7 +58,7 @@ void AudioMediaStreamTrackRendererCocoa::start(CompletionHandler<void()>&& callb
 {
     clear();
 
-    AudioMediaStreamTrackRendererUnit::singleton().retrieveFormatDescription([weakThis = ThreadSafeWeakPtr { *this }, callback = WTFMove(callback)](auto formatDescription) mutable {
+    AudioMediaStreamTrackRendererUnit::singleton().retrieveFormatDescription([weakThis = ThreadSafeWeakPtr { *this }, callback = WTF::move(callback)](auto formatDescription) mutable {
         RefPtr protectedThis = weakThis.get();
         if (protectedThis && formatDescription) {
             protectedThis->m_outputDescription = *formatDescription;
@@ -117,7 +117,7 @@ void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& devi
     setRegisteredDataSource(nullptr);
 
     m_deviceID = deviceID;
-    setRegisteredDataSource(WTFMove(registeredDataSource));
+    setRegisteredDataSource(WTF::move(registeredDataSource));
 
     m_shouldRecreateDataSource = true;
 }
@@ -126,8 +126,8 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
 {
     ASSERT(isMainThread());
 
-    if (m_registeredDataSource)
-        rendererUnit().removeSource(m_deviceID, *m_registeredDataSource);
+    if (RefPtr registeredDataSource = m_registeredDataSource)
+        rendererUnit().removeSource(m_deviceID, *registeredDataSource);
 
     if (!m_outputDescription)
         return;
@@ -139,7 +139,7 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
     source->setLogger(logger(), logIdentifier());
     source->setVolume(volume());
     rendererUnit().addResetObserver(m_deviceID, m_resetObserver);
-    rendererUnit().addSource(m_deviceID, *m_registeredDataSource);
+    rendererUnit().addSource(m_deviceID, *source);
 }
 
 static unsigned pollSamplesCount()
@@ -175,7 +175,7 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
 
         callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, newSource = dataSource]() mutable {
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->setRegisteredDataSource(WTFMove(newSource));
+                protectedThis->setRegisteredDataSource(WTF::move(newSource));
         });
         m_dataSource = dataSource;
         m_shouldRecreateDataSource = false;

@@ -32,7 +32,7 @@
 
 - (NSObject *)_web_createTarget
 {
-    return [downcast<API::URLRequest>(&self._apiObject)->resourceRequest().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) copy];
+    return [protect(downcast<API::URLRequest>(&self._apiObject)->resourceRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)) copy];
 }
 
 - (NSURL *)URL

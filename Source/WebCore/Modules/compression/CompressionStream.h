@@ -41,7 +41,7 @@ public:
     ~CompressionStream();
 
 #if PLATFORM(COCOA)
-    compression_stream& getPlatformStream()
+    compression_stream& getPlatformStream() LIFETIME_BOUND
     {
         ASSERT(m_isInitialized);
         return m_stream;

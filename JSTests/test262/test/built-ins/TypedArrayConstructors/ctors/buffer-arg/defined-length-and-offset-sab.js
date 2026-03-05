@@ -30,4 +30,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(ta2.buffer, buffer, "ta2.buffer");
   assert.sameValue(ta2.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(ta2), TA.prototype);
-});
+}, null, ["passthrough"]);

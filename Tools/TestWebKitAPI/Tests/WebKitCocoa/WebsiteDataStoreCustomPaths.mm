@@ -748,7 +748,7 @@ static void respondToRangeRequests(const TestWebKitAPI::Connection& connection, 
         NSData *responseBody = [data subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)];
         auto response = makeVector(responseHeader);
         response.append(span(responseBody));
-        connection.send(WTFMove(response), [=] {
+        connection.send(WTF::move(response), [=] {
             respondToRangeRequests(connection, data);
         });
     });

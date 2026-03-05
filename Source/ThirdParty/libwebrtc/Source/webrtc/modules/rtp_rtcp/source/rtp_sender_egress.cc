@@ -132,9 +132,6 @@ RtpSenderEgress::RtpSenderEgress(const Environment& env,
       use_ntp_time_for_absolute_send_time_(!env_.field_trials().IsDisabled(
           "WebRTC-UseNtpTimeAbsoluteSendTime")) {
   RTC_DCHECK(worker_queue_);
-  RTC_DCHECK(config.transport_feedback_callback == nullptr)
-      << "transport_feedback_callback is no longer used and will soon be "
-         "deleted.";
   if (bitrate_callback_) {
     update_task_ = RepeatingTaskHandle::DelayedStart(worker_queue_,
                                                      kUpdateInterval, [this]() {
@@ -253,7 +250,8 @@ void RtpSenderEgress::SendPacket(std::unique_ptr<RtpPacketToSend> packet,
     }
   }
 
-  auto compound_packet = Packet{std::move(packet), pacing_info, now};
+  auto compound_packet =
+      Packet{.rtp_packet = std::move(packet), .info = pacing_info, .now = now};
   if (enable_send_packet_batching_ && !is_audio_) {
     packets_to_send_.push_back(std::move(compound_packet));
   } else {

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "Mutex.h"
 #include "StaticPerProcess.h"
 
@@ -49,3 +51,5 @@ DECLARE_STATIC_PER_PROCESS_STORAGE(Environment);
 BALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace bmalloc
+
+#endif // __cplusplus

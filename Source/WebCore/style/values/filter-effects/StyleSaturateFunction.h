@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicColorMatrixFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Saturate;
@@ -36,10 +38,49 @@ struct Saturate;
 
 namespace Style {
 
-class BuilderState;
+// saturate() = saturate( [ <number [0,∞]> | <percentage [0,∞]> ]?@(default=1) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-saturate
+struct Saturate {
+    using Parameter = Number<CSS::Nonnegative>;
 
-CSS::Saturate toCSSSaturate(Ref<BasicColorMatrixFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Saturate&, const BuilderState&);
+    Parameter value;
+
+    static Saturate passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value == 1; }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const Saturate&) const = default;
+};
+using SaturateFunction = FunctionNotation<CSSValueSaturate, Saturate>;
+DEFINE_TYPE_WRAPPER_GET(Saturate, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<Saturate> { auto operator()(const Saturate&, const RenderStyle&) -> CSS::Saturate; };
+template<> struct ToStyle<CSS::Saturate> { auto operator()(const CSS::Saturate&, const BuilderState&) -> Saturate; };
+
+// MARK: - Blending
+
+template<> struct Blending<Saturate> {
+    auto blend(const Saturate&, const Saturate&, const BlendingContext&) -> Saturate;
+};
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<Saturate, Ref<FilterEffect>> { auto operator()(const Saturate&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<Saturate> { auto operator()(const Saturate&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Saturate, 1)

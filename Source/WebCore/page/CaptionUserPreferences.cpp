@@ -112,16 +112,16 @@ void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::Capti
     notify();
 }
 
-Page* CaptionUserPreferences::currentPage() const
+RefPtr<Page> CaptionUserPreferences::currentPage() const
 {
-    for (auto& page : m_pageGroup->pages())
-        return &page;
+    for (Ref page : m_pageGroup->pages())
+        return page;
     return nullptr;
 }
 
 bool CaptionUserPreferences::userPrefersCaptions() const
 {
-    auto* page = currentPage();
+    RefPtr page = currentPage();
     if (!page)
         return false;
 
@@ -205,43 +205,48 @@ void CaptionUserPreferences::setPreferredAudioCharacteristic(const String& chara
 
 Vector<String> CaptionUserPreferences::preferredAudioCharacteristics() const
 {
+    if (testingMode() && !m_preferredAudioCharacteristicsForTesting.isEmpty())
+        return m_preferredAudioCharacteristicsForTesting;
+
     Vector<String> characteristics;
     if (!m_userPreferredAudioCharacteristic.isEmpty())
         characteristics.append(m_userPreferredAudioCharacteristic);
     return characteristics;
 }
 
-static String trackDisplayName(TextTrack* track)
+static String trackDisplayName(const TextTrack& track)
 {
-    if (track == &TextTrack::captionMenuOffItem())
+    if (&track == &TextTrack::captionMenuOffItemSingleton())
         return textTrackOffMenuItemText();
-    if (track == &TextTrack::captionMenuOnItem())
+    if (&track == &TextTrack::captionMenuOnItemSingleton())
         return textTrackOnMenuItemText();
-    if (track == &TextTrack::captionMenuAutomaticItem())
+    if (&track == &TextTrack::captionMenuAutomaticItemSingleton())
         return textTrackAutomaticMenuItemText();
 
-    if (auto label = track->label().string().trim(isASCIIWhitespace); !label.isEmpty())
-        return track->label();
-    if (auto languageIdentifier = track->validBCP47Language(); !languageIdentifier.isEmpty())
+    if (auto label = track.label().string().trim(isASCIIWhitespace); !label.isEmpty())
+        return track.label();
+    if (auto languageIdentifier = track.validBCP47Language(); !languageIdentifier.isEmpty())
         return languageIdentifier;
     return trackNoLabelText();
 }
 
-String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
+String CaptionUserPreferences::displayNameForTrack(const TextTrack& track) const
 {
     return trackDisplayName(track);
 }
 
-MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(TextTrack* track) const
+MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(const TextTrack& track) const
 {
     auto legibleType = MediaSelectionOption::LegibleType::Regular;
-    if (track == &TextTrack::captionMenuOffItem())
+    if (&track == &TextTrack::captionMenuOffItemSingleton())
         legibleType = MediaSelectionOption::LegibleType::LegibleOff;
-    else if (track == &TextTrack::captionMenuAutomaticItem())
+    else if (&track == &TextTrack::captionMenuOnItemSingleton())
+        legibleType = MediaSelectionOption::LegibleType::LegibleOn;
+    else if (&track == &TextTrack::captionMenuAutomaticItemSingleton())
         legibleType = MediaSelectionOption::LegibleType::LegibleAuto;
 
     auto mediaType = MediaSelectionOption::MediaType::Unknown;
-    switch (track->kind()) {
+    switch (track.kind()) {
     case TextTrack::Kind::Forced:
     case TextTrack::Kind::Descriptions:
     case TextTrack::Kind::Subtitles:
@@ -258,19 +263,19 @@ MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(TextTr
         break;
     }
 
-    return { mediaType, displayNameForTrack(track), legibleType };
+    return { mediaType, displayNameForTrack(track), legibleType, track.validBCP47Language() };
 }
     
-Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList, HashSet<TextTrack::Kind> kinds)
+Vector<Ref<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList, HashSet<TextTrack::Kind> kinds)
 {
     ASSERT(trackList);
 
-    Vector<RefPtr<TextTrack>> tracksForMenu;
+    Vector<Ref<TextTrack>> tracksForMenu;
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        TextTrack* track = trackList->item(i);
+        Ref track = *trackList->item(i);
         if (kinds.contains(track->kind()))
-            tracksForMenu.append(track);
+            tracksForMenu.append(WTF::move(track));
     }
 
     Collator collator;
@@ -280,42 +285,40 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
     });
 
     if (kinds.contains(TextTrack::Kind::Subtitles) || kinds.contains(TextTrack::Kind::Captions) || kinds.contains(TextTrack::Kind::Descriptions)) {
-        tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
-        tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
+        tracksForMenu.insert(0, TextTrack::captionMenuOffItemSingleton());
+        tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItemSingleton());
     }
 
     return tracksForMenu;
 }
 
-static String trackDisplayName(AudioTrack* track)
+static String trackDisplayName(const AudioTrack& track)
 {
-    if (auto label = track->label().string().trim(isASCIIWhitespace); !label.isEmpty())
-        return track->label();
-    if (auto languageIdentifier = track->validBCP47Language(); !languageIdentifier.isEmpty())
+    if (auto label = track.label().string().trim(isASCIIWhitespace); !label.isEmpty())
+        return track.label();
+    if (auto languageIdentifier = track.validBCP47Language(); !languageIdentifier.isEmpty())
         return languageIdentifier;
     return trackNoLabelText();
 }
 
-String CaptionUserPreferences::displayNameForTrack(AudioTrack* track) const
+String CaptionUserPreferences::displayNameForTrack(const AudioTrack& track) const
 {
     return trackDisplayName(track);
 }
 
-MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(AudioTrack* track) const
+MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(const AudioTrack& track) const
 {
-    return { MediaSelectionOption::MediaType::Audio, displayNameForTrack(track), MediaSelectionOption::LegibleType::Regular };
+    return { MediaSelectionOption::MediaType::Audio, displayNameForTrack(track), MediaSelectionOption::LegibleType::Regular, track.validBCP47Language() };
 }
 
-Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioTrackList* trackList)
+Vector<Ref<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioTrackList* trackList)
 {
     ASSERT(trackList);
 
-    Vector<RefPtr<AudioTrack>> tracksForMenu;
+    Vector<Ref<AudioTrack>> tracksForMenu;
 
-    for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        AudioTrack* track = trackList->item(i);
-        tracksForMenu.append(track);
-    }
+    for (unsigned i = 0, length = trackList->length(); i < length; ++i)
+        tracksForMenu.append(Ref { trackList->item(i) });
 
     Collator collator;
 
@@ -326,13 +329,15 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
     return tracksForMenu;
 }
 
-int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
+int CaptionUserPreferences::textTrackSelectionScore(TextTrack& track, HTMLMediaElement& mediaElement) const
 {
-    if (!mediaElement || !mediaElement->player())
-        return 0;
+    RefPtr firstEnabledAudioTrack = mediaElement.audioTracks() ? mediaElement.audioTracks()->firstEnabled() : nullptr;
+    return textTrackSelectionScore(track, captionDisplayMode(), firstEnabledAudioTrack.get());
+}
 
-    CaptionDisplayMode displayMode = captionDisplayMode();
-    auto kind = track->kind();
+int CaptionUserPreferences::textTrackSelectionScore(TextTrack& track, CaptionDisplayMode displayMode, AudioTrack* enabledAudioTrack) const
+{
+    auto kind = track.kind();
     auto prefersTextDescriptions = kind == TextTrack::Kind::Descriptions && userPrefersTextDescriptions();
     if (displayMode == CaptionDisplayMode::Manual && !prefersTextDescriptions)
         return 0;
@@ -342,10 +347,10 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
 
     if (kind != TextTrack::Kind::Captions && kind != TextTrack::Kind::Subtitles && kind != TextTrack::Kind::Forced && !prefersTextDescriptions)
         return 0;
-    if (!track->isMainProgramContent() && !prefersTextDescriptions)
+    if (!track.isMainProgramContent() && !prefersTextDescriptions)
         return 0;
 
-    bool trackHasOnlyForcedSubtitles = track->containsOnlyForcedSubtitles();
+    bool trackHasOnlyForcedSubtitles = track.containsOnlyForcedSubtitles();
     if (((trackHasOnlyForcedSubtitles && displayMode != CaptionDisplayMode::ForcedOnly) || (!trackHasOnlyForcedSubtitles && displayMode == CaptionDisplayMode::ForcedOnly)))
         return 0;
 
@@ -353,7 +358,7 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
 
     if ((displayMode == CaptionDisplayMode::Automatic) || trackHasOnlyForcedSubtitles || prefersTextDescriptions) {
 
-        String textTrackLanguage = track->validBCP47Language();
+        String textTrackLanguage = track.validBCP47Language();
         if (textTrackLanguage.isEmpty())
             return 0;
 
@@ -363,8 +368,8 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
         String audioTrackLanguage;
         if (testingMode())
             audioTrackLanguage = primaryAudioTrackLanguageOverride();
-        else
-            audioTrackLanguage = mediaElement->protectedPlayer()->languageOfPrimaryAudioTrack();
+        else if (enabledAudioTrack)
+            audioTrackLanguage = enabledAudioTrack->language();
 
         if (audioTrackLanguage.isEmpty())
             return 0;
@@ -402,7 +407,7 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
         // When the user prefers accessibility tracks, rank is SDH, then CC, then subtitles.
         if (kind == TextTrack::Kind::Subtitles)
             trackScore = 1;
-        else if (track->isClosedCaptions())
+        else if (track.isClosedCaptions())
             trackScore = 2;
         else
             trackScore = 3;
@@ -410,7 +415,7 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
         // When the user prefers translation tracks, rank is subtitles, then SDH, then CC tracks.
         if (kind == TextTrack::Kind::Subtitles)
             trackScore = 3;
-        else if (!track->isClosedCaptions())
+        else if (!track.isClosedCaptions())
             trackScore = 2;
         else
             trackScore = 1;
@@ -419,13 +424,13 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
     return trackScore + textTrackLanguageSelectionScore(track, userPreferredCaptionLanguages);
 }
 
-int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, const Vector<String>& preferredLanguages) const
+int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack& track, const Vector<String>& preferredLanguages) const
 {
-    if (track->validBCP47Language().isEmpty())
+    if (track.validBCP47Language().isEmpty())
         return 0;
 
     bool exactMatch;
-    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->validBCP47Language(), preferredLanguages, exactMatch);
+    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track.validBCP47Language(), preferredLanguages, exactMatch);
     if (languageMatchIndex >= preferredLanguages.size())
         return 0;
 
@@ -465,7 +470,7 @@ String CaptionUserPreferences::captionPreviewTitle() const
     if (testingMode())
         return "This is a preview"_s;
 
-    return WEB_UI_STRING_KEY("This is a preview style", "This is a preview style (Caption User Preferences)", "Caption Style Preview String");
+    return captionStylePreview();
 }
 
 PageGroup& CaptionUserPreferences::pageGroup() const

@@ -33,17 +33,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Report);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Report);
 
 Ref<Report> Report::create(const String& type, const String& url, RefPtr<ReportBody>&& body)
 {
-    return adoptRef(*new Report(type, url, WTFMove(body)));
+    return adoptRef(*new Report(type, url, WTF::move(body)));
 }
 
 Report::Report(const String& type, const String& url, RefPtr<ReportBody>&& body)
     : m_type(type)
     , m_url(url)
-    , m_body(WTFMove(body))
+    , m_body(WTF::move(body))
 {
 }
 
@@ -66,7 +66,7 @@ Ref<FormData> Report::createReportFormDataForViolation(const String& type, const
 
     // https://www.w3.org/TR/reporting-1/#queue-report, step 2.3.1.
     auto reportObject = JSON::Object::create();
-    reportObject->setObject("body"_s, WTFMove(body));
+    reportObject->setObject("body"_s, WTF::move(body));
     reportObject->setString("user_agent"_s, userAgent);
     reportObject->setString("destination"_s, destination);
     reportObject->setString("type"_s, type);

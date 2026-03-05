@@ -1,4 +1,0 @@
-
-
-PASS Targetting a slotted auto-hidden element with focus makes it the active element
-

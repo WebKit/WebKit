@@ -96,6 +96,8 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
+    WebCore::PaymentCoordinator& NODELETE paymentCoordinator() const;
+
     // Message handlers.
     void validateMerchant(const String& validationURLString);
     void didAuthorizePayment(const WebCore::Payment&);
@@ -106,8 +108,6 @@ private:
     void didChangeCouponCode(String&& couponCode);
 #endif
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);
-
-    Ref<WebCore::PaymentCoordinator> protectedPaymentCoordinator();
 
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();

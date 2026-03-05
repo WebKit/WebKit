@@ -39,7 +39,7 @@ static Expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, WGSL:
     auto expression = parser.parsePrimaryExpression();
     if (!expression)
         return makeUnexpected(expression.error());
-    return { std::make_pair(WTFMove(shaderModule), *expression) };
+    return { std::make_pair(WTF::move(shaderModule), *expression) };
 }
 
 template<class NumberType>

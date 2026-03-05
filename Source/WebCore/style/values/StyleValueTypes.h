@@ -180,6 +180,16 @@ template<NonConverting StyleType> struct ToCSS<StyleType> {
     }
 };
 
+// Constrained for `TreatAsEmptyLike`.
+template<EmptyLike StyleType> struct ToCSS<StyleType> {
+    using Result = typename ToCSSMapping<StyleType>::type;
+
+    template<typename... Rest> Result operator()(const StyleType&, const RenderStyle&, Rest&&...)
+    {
+        return { };
+    }
+};
+
 // Constrained for `TreatAsOptionalLike`.
 template<OptionalLike StyleType> struct ToCSS<StyleType> {
     using Result = typename ToCSSMapping<StyleType>::type;
@@ -314,6 +324,16 @@ template<NonConverting CSSType> struct ToStyle<CSSType> {
     }
 };
 
+// Constrained for `TreatAsEmptyLike`.
+template<EmptyLike CSSType> struct ToStyle<CSSType> {
+    using Result = typename ToStyleMapping<CSSType>::type;
+
+    template<typename... Rest> constexpr Result operator()(const CSSType&, Rest&&...)
+    {
+        return Result { };
+    }
+};
+
 // Constrained for `TreatAsOptionalLike`.
 template<OptionalLike CSSType> struct ToStyle<CSSType> {
     using Result = typename ToStyleMapping<CSSType>::type;
@@ -417,7 +437,7 @@ template<TupleLike StyleType> struct CSSValueCreation<StyleType> {
             );
             WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value);
 
-            return CSS::makeListCSSValue<SerializationSeparator<StyleType>>(WTFMove(list));
+            return CSS::makeListCSSValue<SerializationSeparator<StyleType>>(WTF::move(list));
         }
     }
 };
@@ -430,7 +450,7 @@ template<RangeLike StyleType> struct CSSValueCreation<StyleType> {
         for (const auto& element : value)
             list.append(createCSSValue(pool, style, element, rest...));
 
-        return CSS::makeListCSSValue<SerializationSeparator<StyleType>>(WTFMove(list));
+        return CSS::makeListCSSValue<SerializationSeparator<StyleType>>(WTF::move(list));
     }
 };
 
@@ -535,6 +555,14 @@ struct ToPlatformInvoker {
     }
 };
 inline constexpr ToPlatformInvoker toPlatform{};
+
+// Specialization for `FunctionNotation`.
+template<CSSValueID Name, typename StyleType> struct ToPlatform<FunctionNotation<Name, StyleType>> {
+    template<typename... Rest> decltype(auto) operator()(const FunctionNotation<Name, StyleType>& value, Rest&&... rest)
+    {
+        return toPlatform(value.parameters, std::forward<Rest>(rest)...);
+    }
+};
 
 // MARK: - Serialization
 
@@ -1024,6 +1052,18 @@ template<typename StyleType> auto blendOnTupleLike(const StyleType& a, const Sty
     }, WTF::tuple_zip(a, b));
 }
 
+// Constrained for `TreatAsEmptyLike`.
+template<EmptyLike StyleType> struct Blending<StyleType> {
+    auto blend(const StyleType&, const StyleType&, const auto&) -> StyleType
+    {
+        return { };
+    }
+    auto blend(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&, const auto&) -> StyleType
+    {
+        return { };
+    }
+};
+
 // Constrained for `TreatAsOptionalLike`.
 template<OptionalLike StyleType> struct Blending<StyleType> {
     constexpr auto equals(const StyleType& a, const StyleType& b) -> bool
@@ -1269,7 +1309,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], context));
-        return { WTFMove(result) };
+        return { WTF::move(result) };
     }
     auto blend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> SpaceSeparatedVector<StyleType, inlineCapacity>
     {
@@ -1278,7 +1318,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], aStyle, bStyle, context));
-        return { WTFMove(result) };
+        return { WTF::move(result) };
     }
 };
 
@@ -1351,7 +1391,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], context));
-        return { WTFMove(result) };
+        return { WTF::move(result) };
     }
     auto blend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> CommaSeparatedVector<StyleType, inlineCapacity>
     {
@@ -1360,7 +1400,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
         result.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], aStyle, bStyle, context));
-        return { WTFMove(result) };
+        return { WTF::move(result) };
     }
 };
 

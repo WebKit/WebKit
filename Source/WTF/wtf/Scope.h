@@ -42,7 +42,7 @@ public:
     }
 
     ScopeExit(ScopeExit&& other)
-        : m_exitFunction(WTFMove(other.m_exitFunction))
+        : m_exitFunction(WTF::move(other.m_exitFunction))
         , m_executeOnDestruction(std::exchange(other.m_executeOnDestruction, false))
     {
     }
@@ -68,7 +68,7 @@ private:
 };
 
 
-template<typename ExitFunction> ScopeExit<ExitFunction> makeScopeExit(ExitFunction&&) WARN_UNUSED_RETURN;
+template<typename ExitFunction> [[nodiscard]] ScopeExit<ExitFunction> makeScopeExit(ExitFunction&&);
 template<typename ExitFunction>
 ScopeExit<ExitFunction> makeScopeExit(ExitFunction&& exitFunction)
 {

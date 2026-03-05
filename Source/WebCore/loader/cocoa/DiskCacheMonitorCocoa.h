@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/ResourceRequest.h>
+#include "ResourceRequest.h"
 #include <pal/SessionID.h>
 
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;

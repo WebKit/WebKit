@@ -228,31 +228,37 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (!this._property.implicit && this._property.ownerStyle.type === WI.CSSStyleDeclaration.Type.Computed && !this._property.isShorthand) {
             let effectiveProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(this._property.name);
+
+            // Check if it's a user agent style BEFORE potentially replacing with shorthand.
+            // User agent styles don't have styleSheetTextRange, so they get replaced below.
+            let originalOwnerRule = effectiveProperty?.ownerStyle.ownerRule;
+            let shouldShowGoToArrow = WI.settings.showUserAgentStyles.value || originalOwnerRule?.type !== WI.CSSStyleSheet.Type.UserAgent;
+
             if (effectiveProperty && !effectiveProperty.styleSheetTextRange)
                 effectiveProperty = effectiveProperty.relatedShorthandProperty;
 
-            let ownerRule = effectiveProperty ? effectiveProperty.ownerStyle.ownerRule : null;
+            let ownerRule = effectiveProperty?.ownerStyle.ownerRule;
 
-            let arrowElement = this._contentElement.appendChild(WI.createGoToArrowButton());
-            arrowElement.addEventListener("click", (event) => {
-                if (!effectiveProperty || !ownerRule || !event.altKey) {
-                    if (this._delegate.spreadsheetStylePropertyShowProperty)
-                        this._delegate.spreadsheetStylePropertyShowProperty(this, this._property);
-                    return;
-                }
+            if (shouldShowGoToArrow) {
+                let arrowElement = this._contentElement.appendChild(WI.createGoToArrowButton());
+                arrowElement.addEventListener("click", (event) => {
+                    if (!effectiveProperty || !ownerRule || !event.altKey) {
+                        this._delegate.spreadsheetStylePropertyShowProperty?.(this, this._property);
+                        return;
+                    }
 
-                let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
-                let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
-                WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(startLine, startColumn), {
-                    ignoreNetworkTab: true,
-                    ignoreSearchTab: true,
+                    let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
+                    let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
+                    WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(startLine, startColumn), {
+                        ignoreNetworkTab: true,
+                        ignoreSearchTab: true,
+                    });
                 });
-            });
 
-            if (effectiveProperty && ownerRule)
-                arrowElement.title = WI.UIString("Option-click to show source");
+                if (effectiveProperty && ownerRule)
+                    arrowElement.title = WI.UIString("Option-click to show source");
+            }
         }
-
         this.updateStatus();
     }
 
@@ -336,10 +342,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     applyFilter(filterText)
     {
-        let matchesName = this._nameElement.textContent.includes(filterText);
+        let lowerCaseFilterText = filterText.toLowerCase();
+
+        let matchesName = this._nameElement.textContent.toLowerCase().includes(lowerCaseFilterText);
         this._nameElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName, !!matchesName);
 
-        let matchesValue = this._valueElement.textContent.includes(filterText);
+        let matchesValue = this._valueElement.textContent.toLowerCase().includes(lowerCaseFilterText);
         this._valueElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName, !!matchesValue);
 
         let matches = matchesName || matchesValue;
@@ -480,6 +488,37 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     inlineSwatchGetColorVariables(inlineSwatch)
     {
         return this._property.ownerStyle.nodeStyles.computedStyle.variablesForType(WI.CSSStyleDeclaration.VariablesGroupType.Colors);
+    }
+
+    inlineSwatchGetContrastInfo(inlineSwatch)
+    {
+        let propertyName = this._property.name.toLowerCase();
+        let isTextColorProperty = propertyName === "color" || propertyName === "-webkit-text-fill-color" || propertyName === "-webkit-text-stroke-color";
+        let isBackgroundColor = propertyName === "background-color" || propertyName === "background";
+
+        if (!isTextColorProperty && !isBackgroundColor)
+            return null;
+
+        let computedStyle = this._property.ownerStyle.nodeStyles?.computedStyle;
+        if (!computedStyle)
+            return null;
+
+        let contrastPropertyName = isTextColorProperty ? "background-color" : "color";
+        let contrastColor = WI.Color.fromString(computedStyle.propertyForName(contrastPropertyName)?.value ?? "");
+        if (!contrastColor)
+            return null;
+
+        if (contrastColor.alpha < 1)
+            contrastColor = contrastColor.blendOverBackground(WI.Color.fromString("white"));
+
+        let fontSizeInPt = parseFloat(computedStyle.propertyForName("font-size")?.value) * 0.75;
+        let isLargeText = fontSizeInPt >= 18;
+        if (!isLargeText && fontSizeInPt >= 14) {
+            let fontWeight = parseInt(computedStyle.propertyForName("font-weight")?.value);
+            isLargeText = fontWeight >= 700;
+        }
+
+        return {contrastColor, isLargeText, isBackgroundColor};
     }
 
     // Private

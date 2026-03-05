@@ -33,7 +33,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 

@@ -90,7 +90,7 @@ static void ForEachMismatch(const CallerState &a, const CallerState &b,
 #if defined(SUPPORTS_UNWIND_TEST)
 // We test unwind metadata by running the function under test with the trap flag
 // set. This results in |SIGTRAP| and |EXCEPTION_SINGLE_STEP| on Linux and
-// Windows, respectively. We hande these and verify libunwind or the Windows
+// Windows, respectively. We handle these and verify libunwind or the Windows
 // unwind APIs unwind successfully.
 
 // IsAncestorStackFrame returns true if |a_sp| is an ancestor stack frame of
@@ -104,7 +104,7 @@ static bool IsAncestorStackFrame(crypto_word_t a_sp, crypto_word_t b_sp) {
 #endif
 }
 
-// Implement some string formatting utilties. Ideally we would use |snprintf|,
+// Implement some string formatting utilities. Ideally we would use |snprintf|,
 // but this is called in a signal handler and |snprintf| is not async-signal-
 // safe.
 
@@ -698,7 +698,7 @@ static void EnableUnwindTestsImpl() {
   sigemptyset(&trap_action.sa_mask);
   trap_action.sa_flags = SA_SIGINFO;
   trap_action.sa_sigaction = TrapHandler;
-  if (sigaction(SIGTRAP, &trap_action, NULL) != 0) {
+  if (sigaction(SIGTRAP, &trap_action, nullptr) != 0) {
     perror("sigaction");
     abort();
   }

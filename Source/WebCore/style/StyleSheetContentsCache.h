@@ -38,7 +38,7 @@ namespace Style {
 
 class StyleSheetContentsCache {
 public:
-    static StyleSheetContentsCache& singleton();
+    static StyleSheetContentsCache& NODELETE singleton();
 
     using Key = std::pair<String, CSSParserContext>;
 

@@ -30,7 +30,7 @@
 #include "AnimationUtilities.h"
 #include "CSSPrimitiveValue.h"
 #include "FontMetrics.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"

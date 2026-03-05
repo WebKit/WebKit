@@ -40,7 +40,7 @@ inline Calculation::Child copyCalculation(Ref<Calculation::Value> value)
 
 inline Calculation::Child copyCalculation(Calc auto const& value)
 {
-    return value.protectedCalculation()->copyRoot();
+    return protect(value.calculation())->copyRoot();
 }
 
 template<auto R, typename V> Calculation::Child copyCalculation(const Number<R, V>& value)

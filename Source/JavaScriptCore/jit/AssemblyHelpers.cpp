@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,6 +119,7 @@ void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
     if (!Options::useJITAsserts())
         return;
 #if CPU(X86_64) || CPU(ARM64)
+    JIT_COMMENT(*this, "ASSERT is unboxed int32");
     Jump checkInt32 = branch64(BelowOrEqual, gpr, TrustedImm64(static_cast<uintptr_t>(0xFFFFFFFFu)));
     abortWithReason(AHIsNotInt32);
     checkInt32.link(this);
@@ -131,6 +132,7 @@ void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JS boxed int32");
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::numberTagRegister);
     abortWithReason(AHIsNotJSInt32);
     checkJSInt32.link(this);
@@ -140,6 +142,7 @@ void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JS boxed number");
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::numberTagRegister);
     abortWithReason(AHIsNotJSNumber);
     checkJSNumber.link(this);
@@ -149,6 +152,7 @@ void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JS boxed double (non-int32 number)");
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::numberTagRegister);
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::numberTagRegister);
     checkJSInt32.link(this);
@@ -160,6 +164,7 @@ void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JSCell");
     Jump checkCell = branchTest64(MacroAssembler::Zero, gpr, GPRInfo::notCellMaskRegister);
     abortWithReason(AHIsNotCell);
     checkCell.link(this);
@@ -768,18 +773,9 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
 
 void AssemblyHelpers::emitNonNullDecodeZeroExtendedStructureID(RegisterID source, RegisterID dest)
 {
-#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-    lshift64(source, TrustedImm32(StructureID::encodeShiftAmount), dest);
-#elif CPU(ADDRESS64)
+#if CPU(ADDRESS64)
     // This could use BFI on arm64 but that only helps if the start of structure heap is encodable as a mov and not as an immediate in the add so it's probably not super important.
-    if constexpr (structureHeapAddressSize >= 4 * GB) {
-        ASSERT(structureHeapAddressSize == 4 * GB);
-        move(source, dest);
-    } else {
-        static_assert(static_cast<uint32_t>(StructureID::structureIDMask) == StructureID::structureIDMask);
-        and32(TrustedImm32(static_cast<uint32_t>(StructureID::structureIDMask)), source, dest);
-    }
-    or64(TrustedImm64(startOfStructureHeap()), dest);
+    or64(TrustedImm64(structureIDBase()), source, dest);
 #else // not CPU(ADDRESS64)
     move(source, dest);
 #endif
@@ -798,18 +794,8 @@ void AssemblyHelpers::emitLoadStructure(VM&, RegisterID source, RegisterID dest)
 
 void AssemblyHelpers::emitEncodeStructureID(RegisterID source, RegisterID dest)
 {
-#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-    urshift64(source, TrustedImm32(StructureID::encodeShiftAmount), dest);
-#elif CPU(ADDRESS64)
-    static_assert(StructureID::structureIDMask <= UINT32_MAX);
-    // We don't guarantee the upper bits are cleared, since generally only
-    // the bottom 32 bits of the register are observed as the structure ID.
-    // So, we don't want to bother masking the register unless it's
-    // observable within those 32 bits.
-    if (StructureID::structureIDMask < UINT32_MAX)
-        and64(TrustedImm32(static_cast<uint32_t>(StructureID::structureIDMask)), source, dest);
-    else
-        move(source, dest);
+#if CPU(ADDRESS64)
+    and64(TrustedImm32(static_cast<uint32_t>(StructureID::structureIDMask)), source, dest);
 #else
     move(source, dest);
 #endif
@@ -944,8 +930,8 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
 
     // NOTE, some invariants of this function:
     // - When going to the slow path, we must leave resultGPR with zero in it.
-    // - We *can not* use RegisterSetBuilder::macroScratchRegisters on x86.
-    // - We *can* use RegisterSetBuilder::macroScratchRegisters on ARM.
+    // - We *can not* use RegisterSet::macroScratchRegisters on x86.
+    // - We *can* use RegisterSet::macroScratchRegisters on ARM.
 
     Jump popPath;
     Jump zeroPath;
@@ -1106,8 +1092,8 @@ void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspa
 void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-    RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
-    auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
+    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
+    auto dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
     if constexpr (AssemblyHelpersInternal::dumpVerbose)
         JIT_COMMENT(*this, "restoreCalleeSavesFromEntryFrameCalleeSavesBuffer ", *allCalleeSaves, " skip: ", dontRestoreRegisters);
@@ -1187,7 +1173,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     loadPtr(Address(vmGPR, VM::topEntryFrameOffset()), scratchGPR);
-    restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(scratchGPR, RegisterSetBuilder::stackRegisters());
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(scratchGPR, RegisterSet::stackRegisters());
 #else
     UNUSED_PARAM(vmGPR);
 #endif // NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
@@ -1198,7 +1184,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), entryFrameGPR);
 
-    RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
+    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     if constexpr (AssemblyHelpersInternal::dumpVerbose)
         JIT_COMMENT(*this, "restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl ", entryFrameGPR, " callee saves: ", *allCalleeSaves, " skip: ", skipList);
     else
@@ -1508,8 +1494,8 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), calleeSavesBuffer);
 
-    RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
-    auto dontCopyRegisters = RegisterSetBuilder::stackRegisters();
+    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
+    auto dontCopyRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
 
     StoreRegSpooler spooler(*this, calleeSavesBuffer);
@@ -1620,7 +1606,7 @@ void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list, GPRReg baseG
 
 void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
 {
-    auto dontSaveRegisters = RegisterSetBuilder::stackRegisters();
+    auto dontSaveRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
     if constexpr (AssemblyHelpersInternal::dumpVerbose)
         JIT_COMMENT(*this, "emitSaveCalleeSavesFor ", *calleeSaves, " dontRestore: ", dontSaveRegisters);
@@ -1650,7 +1636,7 @@ void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeS
 
 void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
 {
-    auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
+    auto dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
     if constexpr (AssemblyHelpersInternal::dumpVerbose)
         JIT_COMMENT(*this, "emitRestoreCalleeSavesFor ", *calleeSaves, " dontSave: ", dontRestoreRegisters);
@@ -1695,9 +1681,9 @@ void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFram
 
     CopySpooler spooler(*this, framePointerRegister, destBufferGPR, temp1, temp2, fpTemp1, fpTemp2);
 
-    RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
+    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     const RegisterAtOffsetList* currentCalleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
-    auto dontCopyRegisters = RegisterSetBuilder::stackRegisters();
+    auto dontCopyRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
 
     unsigned i = 0;
@@ -1745,7 +1731,7 @@ void AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock* codeB
     ASSERT(codeBlock->jitCode()->calleeSaveRegisters() == &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
 
     const RegisterAtOffsetList* calleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
-    auto dontSaveRegisters = RegisterSetBuilder::stackRegisters();
+    auto dontSaveRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
 
     GPRReg dstBufferGPR = temp1;

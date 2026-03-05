@@ -35,7 +35,7 @@ struct WebTransportConnectionInfo {
     WebTransportReliabilityMode reliabilityMode;
 
     WebTransportConnectionInfo isolatedCopy() const & { return { protocol.isolatedCopy(), reliabilityMode }; }
-    WebTransportConnectionInfo isolatedCopy() && { return { WTFMove(protocol).isolatedCopy(), reliabilityMode }; }
+    WebTransportConnectionInfo isolatedCopy() && { return { WTF::move(protocol).isolatedCopy(), reliabilityMode }; }
 };
 
 }

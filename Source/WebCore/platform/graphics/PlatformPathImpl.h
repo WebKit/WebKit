@@ -26,9 +26,9 @@
 #pragma once
 
 #if USE(CG)
-#include "PathCG.h"
+#include <WebCore/PathCG.h>
 #elif USE(CAIRO)
-#include "PathCairo.h"
+#include <WebCore/PathCairo.h>
 #elif USE(SKIA)
-#include "PathSkia.h"
+#include <WebCore/PathSkia.h>
 #endif

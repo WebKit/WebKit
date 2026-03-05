@@ -20,10 +20,12 @@
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "modules/congestion_controller/remb_throttler.h"
+#include "modules/congestion_controller/rtp/congestion_controller_feedback_stats.h"
 #include "modules/include/module_common_types.h"
 #include "modules/remote_bitrate_estimator/congestion_control_feedback_generator.h"
 #include "modules/remote_bitrate_estimator/transport_sequence_number_feedback_generator.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/containers/flat_map.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -61,6 +63,9 @@ class ReceiveSideCongestionController : public CallStatsObserver {
   // Returns latest receive side bandwidth estimation.
   // Returns zero if receive side bandwidth estimation is unavailable.
   DataRate LatestReceiveSideEstimate() const;
+
+  flat_map<uint32_t, SentCongestionControllerFeedbackStats>
+  GetCongestionControllerStatsPerSsrc() const;
 
   // Removes stream from receive side bandwidth estimation.
   // Noop if receive side bwe is not used or stream doesn't participate in it.

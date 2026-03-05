@@ -38,10 +38,11 @@ namespace WebCore {
 
 Path Font::platformPathForGlyph(Glyph glyph) const
 {
-    auto path = PathSkia::create();
     const auto& font = m_platformData.skFont();
-    font.getPath(glyph, path->platformPath());
-    return { path };
+    if (auto skPath = font.getPath(glyph))
+        return { PathSkia::create(WTF::move(*skPath)) };
+
+    return { };
 }
 
 FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
@@ -201,13 +202,13 @@ bool Font::platformSupportsCodePoint(char32_t character, std::optional<char32_t>
 static inline SkFont::Edging edgingForFontSmoothingMode(const SkFont& font, FontSmoothingMode smoothingMode)
 {
     switch (smoothingMode) {
-    case FontSmoothingMode::AutoSmoothing:
+    case FontSmoothingMode::Auto:
         return font.getEdging();
     case FontSmoothingMode::Antialiased:
         return SkFont::Edging::kAntiAlias;
     case FontSmoothingMode::SubpixelAntialiased:
         return SkFont::Edging::kSubpixelAntiAlias;
-    case FontSmoothingMode::NoSmoothing:
+    case FontSmoothingMode::None:
         return SkFont::Edging::kAlias;
     }
 

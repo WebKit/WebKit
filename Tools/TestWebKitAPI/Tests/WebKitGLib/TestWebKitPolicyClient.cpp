@@ -192,7 +192,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_true(webkit_navigation_action_is_redirect(navigationAction));
     g_assert_null(webkit_navigation_action_get_frame_name(navigationAction));
     request = webkit_navigation_action_get_request(navigationAction);
-    g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/").data());
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/"));
 
     // If we are waiting until load completion, it will never complete if we ignore the
     // navigation. So we tell the main loop to quit sometime later.

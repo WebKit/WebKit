@@ -50,7 +50,7 @@ public:
     static RefPtr<WebExtensionMatchPattern> create(Args&&... args)
     {
         auto result = adoptRef(new WebExtensionMatchPattern(std::forward<Args>(args)...));
-        return result && result->isValid() ? WTFMove(result) : nullptr;
+        return result && result->isValid() ? WTF::move(result) : nullptr;
     }
 
     using URLSchemeSet = HashSet<String>;
@@ -103,14 +103,14 @@ public:
     bool isValid() const { return m_valid; }
     bool isSupported() const;
 
-    String scheme() const;
+    String NODELETE scheme() const;
     String host() const;
-    String path() const;
+    String NODELETE path() const;
 
     bool hostIsPublicSuffix() const;
 
     bool matchesAllURLs() const { return m_matchesAllURLs; }
-    bool matchesAllHosts() const;
+    bool NODELETE matchesAllHosts() const;
 
     bool matchesURL(const URL&, OptionSet<Options> = { }) const;
     bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
@@ -118,7 +118,7 @@ public:
     String string() const { return stringWithScheme(nullString()); }
     Vector<String> expandedStrings() const;
 
-    const WebCore::UserContentURLPattern& pattern() const { return m_pattern; }
+    const WebCore::UserContentURLPattern& pattern() const LIFETIME_BOUND { return m_pattern; }
 
     unsigned hash() const { return m_hash; }
 

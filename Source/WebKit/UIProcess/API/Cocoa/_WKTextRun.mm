@@ -35,7 +35,7 @@
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKTextRun.class, self))
         return;
-    _textRun->API::TextRun::~TextRun();
+    SUPPRESS_UNRETAINED_ARG _textRun->API::TextRun::~TextRun();
     [super dealloc];
 }
 

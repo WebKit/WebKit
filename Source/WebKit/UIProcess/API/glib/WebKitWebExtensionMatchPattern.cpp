@@ -43,7 +43,7 @@ using namespace WebKit;
 struct _WebKitWebExtensionMatchPattern {
 #if ENABLE(WK_WEB_EXTENSIONS)
     explicit _WebKitWebExtensionMatchPattern(RefPtr<WebExtensionMatchPattern>&& matchPattern)
-        : matchPattern(WTFMove(matchPattern))
+        : matchPattern(WTF::move(matchPattern))
     {
     }
 

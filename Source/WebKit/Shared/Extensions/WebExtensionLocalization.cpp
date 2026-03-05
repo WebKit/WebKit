@@ -207,7 +207,7 @@ RefPtr<JSON::Array> WebExtensionLocalization::localizedArrayForArray(RefPtr<JSON
         else if (valueType == JSON::Value::Type::Object)
             newArray->pushObject(*localizedJSONforJSON(value->asObject()));
         else
-            newArray->pushValue(WTFMove(value));
+            newArray->pushValue(WTF::move(value));
     }
 
     return newArray;
@@ -266,8 +266,8 @@ Ref<JSON::Object> WebExtensionLocalization::predefinedMessages()
         return object;
     };
 
-    if (m_locale && !m_localeString.isEmpty()) {
-        if (m_locale->defaultWritingDirection() == WebCore::Locale::WritingDirection::LeftToRight) {
+    if (CheckedPtr locale = m_locale.get(); locale && !m_localeString.isEmpty()) {
+        if (locale->defaultWritingDirection() == WebCore::Locale::WritingDirection::LeftToRight) {
             predefinedMessages->setObject(predefinedMessageLanguageDirection, createMessageKey(predefinedMessageValueLeftToRight));
             predefinedMessages->setObject(predefinedMessageLanguageDirectionReversed, createMessageKey(predefinedMessageValueRightToLeft));
             predefinedMessages->setObject(predefinedMessageTextLeadingEdge, createMessageKey(predefinedMessageValueTextEdgeLeft));

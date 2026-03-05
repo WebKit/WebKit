@@ -35,7 +35,7 @@ class RenderIFrame;
 class TrustedHTML;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLIFrameElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLIFrameElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLIFrameElement);
 public:
     static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);
@@ -47,7 +47,7 @@ public:
     ReferrerPolicy referrerPolicy() const final;
 
     String srcdoc() const;
-    ExceptionOr<void> setSrcdoc(Variant<RefPtr<TrustedHTML>, String>&&, SubstituteData::SessionHistoryVisibility = SubstituteData::SessionHistoryVisibility::Visible);
+    ExceptionOr<void> setSrcdoc(Variant<Ref<TrustedHTML>, String>&&, SubstituteData::SessionHistoryVisibility = SubstituteData::SessionHistoryVisibility::Visible);
     SubstituteData::SessionHistoryVisibility srcdocSessionHistoryVisibility() const { return m_srcdocSessionHistoryVisibility; };
 
     LazyLoadFrameObserver& lazyLoadFrameObserver();
@@ -62,8 +62,8 @@ public:
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    const URL& initiatorSourceURL() const { return m_initiatorSourceURL; }
-    void setInitiatorSourceURL(URL&& url) { m_initiatorSourceURL = WTFMove(url); }
+    const URL& initiatorSourceURL() const LIFETIME_BOUND { return m_initiatorSourceURL; }
+    void setInitiatorSourceURL(URL&& url) { m_initiatorSourceURL = WTF::move(url); }
 #endif
 
 private:

@@ -85,7 +85,7 @@ template<LengthWrapperBaseDerived T> struct DeprecatedCSSValueConversion<T> {
             if (primitiveValue.isCalculatedPercentageWithLength()) {
                 return T {
                     typename T::Calc {
-                        primitiveValue.protectedCssCalcValue()->createCalculationValue(*conversionData, CSSCalcSymbolTable { })
+                        protect(primitiveValue.cssCalcValue())->createCalculationValue(*conversionData, CSSCalcSymbolTable { })
                     }
                 };
             }

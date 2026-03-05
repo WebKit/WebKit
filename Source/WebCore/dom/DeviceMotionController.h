@@ -54,7 +54,7 @@ public:
 
     bool hasLastData() override;
     RefPtr<Event> getLastEvent() override;
-    DeviceClient& client() final;
+    DeviceClient& NODELETE client() final;
 
     static DeviceMotionController* from(Page*);
     static bool isActiveAt(Page*);
@@ -62,8 +62,6 @@ public:
 private:
     static ASCIILiteral supplementName() { return "DeviceMotionController"_s; }
     bool isDeviceMotionController() const final { return true; }
-
-    CheckedRef<DeviceMotionClient> checkedClient();
 
     WeakRef<DeviceMotionClient> m_client;
 };

@@ -22,10 +22,6 @@
 #include "src/gpu/vk/VulkanInterface.h"
 #include "src/gpu/vk/VulkanUtilsPriv.h"
 
-#if defined(SK_USE_VMA)
-#include "src/gpu/vk/vulkanmemoryallocator/VulkanMemoryAllocatorPriv.h"
-#endif
-
 namespace skgpu::graphite {
 
 sk_sp<SharedContext> VulkanSharedContext::Make(const VulkanBackendContext& context,
@@ -80,17 +76,6 @@ sk_sp<SharedContext> VulkanSharedContext::Make(const VulkanBackendContext& conte
                                                           context.fProtectedContext));
 
     sk_sp<skgpu::VulkanMemoryAllocator> memoryAllocator = context.fMemoryAllocator;
-#if defined(SK_USE_VMA)
-    if (!memoryAllocator) {
-        // We were not given a memory allocator at creation
-        skgpu::ThreadSafe threadSafe = options.fClientWillExternallySynchronizeAllThreads
-                                               ? skgpu::ThreadSafe::kNo
-                                               : skgpu::ThreadSafe::kYes;
-        memoryAllocator = skgpu::VulkanMemoryAllocators::Make(context,
-                                                              threadSafe,
-                                                              options.fVulkanVMALargeHeapBlockSize);
-    }
-#endif
     if (!memoryAllocator) {
         SKGPU_LOG_E("No supplied vulkan memory allocator and unable to create one internally.");
         return nullptr;
@@ -154,8 +139,9 @@ VkPipelineCache VulkanSharedContext::createPipelineCache(
     createInfo.initialDataSize = 0;
     createInfo.pInitialData = nullptr;
 
+    sk_sp<SkData> cachedData;  // here to keep the cached data valid past CreatePipelineCache
     if (persistentPipelineStorage) {
-        sk_sp<SkData> cachedData = persistentPipelineStorage->load();
+        cachedData = persistentPipelineStorage->load();
 
         // For version one of the header, the total header size is 16 bytes plus
         // VK_UUID_SIZE bytes. See Section 9.6 (Pipeline Cache) in the vulkan spec to see

@@ -28,7 +28,7 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/encode/SkJpegEncoder.h"
 #include "include/private/base/SkMalloc.h"
 #include "src/core/SkAutoPixmapStorage.h"
@@ -287,20 +287,20 @@ static sk_sp<SkImage> make_codec(const SkImageInfo& info,
                                  skgpu::graphite::Recorder*,
                                  void (*draw)(SkCanvas*)) {
     sk_sp<SkImage> image(make_raster(info, nullptr, nullptr, draw));
-#if defined(SK_CODEC_ENCODES_PNG_WITH_RUST) && defined(SK_CODEC_DECODES_PNG_WITH_RUST)
+#if defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
     sk_sp<SkData> data = SkPngRustEncoder::Encode(nullptr, image.get(), {});
-    SkASSERT_RELEASE(data);
-    std::unique_ptr<SkStream> stream = SkMemoryStream::Make(data);
-    auto codec = SkPngRustDecoder::Decode(std::move(stream), nullptr, nullptr);
-    SkASSERT_RELEASE(codec);
-    return SkCodecs::DeferredImage(std::move(codec), {});
 #else
     sk_sp<SkData> data = SkPngEncoder::Encode(nullptr, image.get(), {});
+#endif
     SkASSERT_RELEASE(data);
+    std::unique_ptr<SkStream> stream = SkMemoryStream::Make(data);
+#if defined(SK_CODEC_DECODES_PNG_WITH_RUST)
+    auto codec = SkPngRustDecoder::Decode(std::move(stream), nullptr, nullptr);
+#else
     auto codec = SkPngDecoder::Decode(std::move(data), nullptr, nullptr);
+#endif
     SkASSERT_RELEASE(codec);
     return SkCodecs::DeferredImage(std::move(codec), {});
-#endif
 }
 
 static sk_sp<SkImage> make_gpu(const SkImageInfo& info,
@@ -414,25 +414,23 @@ DEF_SIMPLE_GM_CAN_FAIL(new_texture_image, canvas, errorMsg, 280, 115) {
     std::function<sk_sp<SkImage>()> imageFactories[] = {
             // Create sw raster image.
             [&] { return bmp.asImage(); },
-    // Create encoded image.
-#if defined(SK_CODEC_ENCODES_PNG_WITH_RUST) && defined(SK_CODEC_DECODES_PNG_WITH_RUST)
+            // Create encoded image.
             [&] {
+#if defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
                 sk_sp<SkData> data = SkPngRustEncoder::Encode(bmp.pixmap(), {});
+#else
+                sk_sp<SkData> data = SkPngEncoder::Encode(bmp.pixmap(), {});
+#endif
                 SkASSERT_RELEASE(data);
                 std::unique_ptr<SkStream> stream = SkMemoryStream::Make(data);
+#if defined(SK_CODEC_DECODES_PNG_WITH_RUST)
                 auto codec = SkPngRustDecoder::Decode(std::move(stream), nullptr, nullptr);
-                SkASSERT_RELEASE(codec);
-                return SkCodecs::DeferredImage(std::move(codec), {});
-            },
 #else
-            [&] {
-                sk_sp<SkData> data = SkPngEncoder::Encode(bmp.pixmap(), {});
-                SkASSERT_RELEASE(data);
-                auto codec = SkPngDecoder::Decode(std::move(data), nullptr, nullptr);
+                auto codec = SkPngDecoder::Decode(std::move(stream), nullptr, nullptr);
+#endif
                 SkASSERT_RELEASE(codec);
                 return SkCodecs::DeferredImage(std::move(codec), {});
             },
-#endif
             // Create YUV encoded image.
             [&] {
                 sk_sp<SkData> data = SkJpegEncoder::Encode(bmp.pixmap(), {});
@@ -562,7 +560,7 @@ static sk_sp<SkImage> serial_deserial(SkImage* img) {
     }
 
     SkSerialProcs sProcs;
-    sProcs.fImageProc = [](SkImage* img, void*) -> sk_sp<SkData> {
+    sProcs.fImageProc = [](SkImage* img, void*) -> sk_sp<const SkData> {
 #if defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
         return SkPngRustEncoder::Encode(as_IB(img)->directContext(), img, {});
 #else
@@ -624,16 +622,9 @@ DEF_SIMPLE_GM(crbug_404394639, canvas, 500, 500) {
     SkCanvas* canv = surf->getCanvas();
 
     SkPoint pts[] = {SkPoint::Make(0, 0), SkPoint::Make(0, SOURCE_HEIGHT)};
-    SkColor4f colors[] = {SkColor4f::FromColor(SK_ColorCYAN), SkColor4f::FromColor(SK_ColorMAGENTA)};
-    sk_sp<SkShader> gradient_shader = SkGradientShader::MakeLinear(
-        pts,
-        colors,
-        nullptr,
-        nullptr,
-        2,
-        SkTileMode::kClamp,
-        0
-    );
+    SkColor4f colors[] = {SkColors::kCyan, SkColors::kMagenta};
+    sk_sp<SkShader> gradient_shader = SkShaders::LinearGradient(
+        pts, {{colors, {}, SkTileMode::kClamp}, {}});
 
     SkPaint paint;
     paint.setShader(gradient_shader);

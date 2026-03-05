@@ -9,14 +9,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x346 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x54
-          RenderInline {SPAN} at (0,0) size 693x53
-            RenderText {#text} at (0,0) size 693x53
-              text run at (0,0) width 693: "\"The quick brown fox jumps over the lazy dog\" uses every letter in the "
-              text run at (0,27) width 170: "english language."
-        RenderBlock (anonymous) at (14,92) size 756x216
-          RenderBlock {P} at (0,0) size 756x216
-            RenderText {#text} at (0,0) size 761x215
+        RenderInline {SPAN} at (14,14) size 756x294
+          RenderText {#text} at (14,14) size 693x54
+            text run at (14,14) width 693: "\"The quick brown fox jumps over the lazy dog\" uses every letter in the "
+            text run at (14,41) width 170: "english language."
+          RenderBlock {P} at (14,92) size 756x216
+            RenderText {#text} at (0,0) size 761x216
               text run at (0,0) width 462: "Here's to the crazy ones, the misfits, the rebels, "
               text run at (462,0) width 193: "the trouble makers, "
               text run at (655,0) width 98: "the round "
@@ -37,8 +35,6 @@ layer at (0,0) size 800x600
               text run at (0,162) width 632: "people who are crazy enough to think they can change the world "
               text run at (632,162) width 122: "are the ones "
               text run at (0,189) width 77: "who do."
-        RenderBlock (anonymous) at (14,332) size 756x0
-          RenderInline {SPAN} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
 selection end:   position 562 of child 0 {#text} of child 1 {P} of child 1 {SPAN} of child 1 {DIV} of body

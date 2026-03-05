@@ -227,7 +227,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   };
   typedef std::map<uint32_t, Frame, TimestampOlderThan> EncodedFrameMap;
 
-  void PurgeOldStats() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  void PurgeOldStats(Timestamp now) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   VideoSendStream::StreamStats* GetStatsEntry(uint32_t ssrc)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 

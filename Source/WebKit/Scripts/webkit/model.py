@@ -34,7 +34,7 @@ SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
 
 class MessageReceiver(object):
-    def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, wants_send_cancel_reply):
+    def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, wants_send_cancel_reply, swift_receiver, swift_receiver_build_enabled_by):
         self.name = name
         self.superclass = superclass
         self.attributes = frozenset(attributes or [])
@@ -50,6 +50,8 @@ class MessageReceiver(object):
         self.condition = condition
         self.namespace = namespace
         self.wants_send_cancel_reply = wants_send_cancel_reply
+        self.swift_receiver = swift_receiver
+        self.swift_receiver_build_enabled_by = swift_receiver_build_enabled_by
 
     def iterparameters(self):
         return itertools.chain((parameter for message in self.messages for parameter in message.parameters),
@@ -107,7 +109,7 @@ class Parameter(object):
         return attribute in self.attributes
 
 
-ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, receiver_enabled_by_exception=False, receiver_enabled_by_conjunction=None, receiver_dispatched_from=None, receiver_dispatched_from_exception=None, receiver_dispatched_to=None, receiver_dispatched_to_exception=None, shared_preferences_needs_connection=False, messages=[
+ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, receiver_enabled_by_exception=False, receiver_enabled_by_conjunction=None, receiver_dispatched_from=None, receiver_dispatched_from_exception=None, receiver_dispatched_to=None, receiver_dispatched_to_exception=None, shared_preferences_needs_connection=False, swift_receiver=False, swift_receiver_build_enabled_by=None, messages=[
     Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE], condition=None),
     Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('CancelSyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),

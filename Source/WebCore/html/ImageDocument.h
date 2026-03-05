@@ -35,17 +35,17 @@ class HTMLImageElement;
 class LayoutSize;
 
 class ImageDocument final : public HTMLDocument {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageDocument);
+    WTF_MAKE_TZONE_ALLOCATED(ImageDocument);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDocument);
 public:
     static Ref<ImageDocument> create(LocalFrame& frame, const URL& url)
     {
-        auto document = adoptRef(*new ImageDocument(frame, url));
+        Ref document = adoptRef(*new ImageDocument(frame, url));
         document->addToContextsMap();
         return document;
     }
 
-    WEBCORE_EXPORT HTMLImageElement* imageElement() const;
+    WEBCORE_EXPORT HTMLImageElement* NODELETE imageElement() const;
 
     void updateDuringParsing();
     void finishedParsing();

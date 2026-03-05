@@ -45,7 +45,6 @@ public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     WebExtensionAPIWebPageRuntime& runtime() const;
-    Ref<WebExtensionAPIWebPageRuntime> protectedRuntime() const;
     WebExtensionAPITest& test();
 
 private:

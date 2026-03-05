@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+Ref<CachedSVGDocumentReference> CachedSVGDocumentReference::create(const Style::URL& location)
+{
+    return adoptRef(*new CachedSVGDocumentReference(location));
+}
+
 CachedSVGDocumentReference::CachedSVGDocumentReference(const Style::URL& location)
     : m_location { location }
 {
@@ -55,7 +60,7 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
     CachedResourceRequest request(ResourceRequest(URL { m_location.resolved }), fetchOptions);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
-    m_document = loader.requestSVGDocument(WTFMove(request)).value_or(nullptr);
+    m_document = loader.requestSVGDocument(WTF::move(request)).value_or(nullptr);
     if (CachedResourceHandle document = m_document)
         document->addClient(*this);
 

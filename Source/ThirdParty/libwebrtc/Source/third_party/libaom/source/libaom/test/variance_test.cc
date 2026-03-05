@@ -30,39 +30,40 @@
 
 namespace {
 
-typedef uint64_t (*MseWxH16bitFunc)(uint8_t *dst, int dstride, uint16_t *src,
-                                    int sstride, int w, int h);
-typedef uint64_t (*Mse16xH16bitFunc)(uint8_t *dst, int dstride, uint16_t *src,
-                                     int w, int h);
-typedef unsigned int (*VarianceMxNFunc)(const uint8_t *a, int a_stride,
-                                        const uint8_t *b, int b_stride,
-                                        unsigned int *sse);
-typedef void (*GetSseSum8x8QuadFunc)(const uint8_t *a, int a_stride,
-                                     const uint8_t *b, int b_stride,
-                                     uint32_t *sse8x8, int *sum8x8,
-                                     unsigned int *tot_sse, int *tot_sum,
-                                     uint32_t *var8x8);
-typedef void (*GetSseSum16x16DualFunc)(const uint8_t *a, int a_stride,
-                                       const uint8_t *b, int b_stride,
-                                       uint32_t *sse16x16,
-                                       unsigned int *tot_sse, int *tot_sum,
-                                       uint32_t *var16x16);
-typedef unsigned int (*SubpixVarMxNFunc)(const uint8_t *a, int a_stride,
-                                         int xoffset, int yoffset,
+using MseWxH16bitFunc = uint64_t (*)(uint8_t *dst, int dstride, uint16_t *src,
+                                     int sstride, int w, int h);
+using Mse16xH16bitFunc = uint64_t (*)(uint8_t *dst, int dstride, uint16_t *src,
+                                      int w, int h);
+using VarianceMxNFunc = unsigned int (*)(const uint8_t *a, int a_stride,
                                          const uint8_t *b, int b_stride,
                                          unsigned int *sse);
-typedef unsigned int (*SubpixAvgVarMxNFunc)(const uint8_t *a, int a_stride,
-                                            int xoffset, int yoffset,
-                                            const uint8_t *b, int b_stride,
-                                            uint32_t *sse,
-                                            const uint8_t *second_pred);
-typedef unsigned int (*SumOfSquaresFunction)(const int16_t *src);
+using GetSseSum8x8QuadFunc = void (*)(const uint8_t *a, int a_stride,
+                                      const uint8_t *b, int b_stride,
+                                      uint32_t *sse8x8, int *sum8x8,
+                                      unsigned int *tot_sse, int *tot_sum,
+                                      uint32_t *var8x8);
+using GetSseSum16x16DualFunc = void (*)(const uint8_t *a, int a_stride,
+                                        const uint8_t *b, int b_stride,
+                                        uint32_t *sse16x16,
+                                        unsigned int *tot_sse, int *tot_sum,
+                                        uint32_t *var16x16);
+using SubpixVarMxNFunc = unsigned int (*)(const uint8_t *a, int a_stride,
+                                          int xoffset, int yoffset,
+                                          const uint8_t *b, int b_stride,
+                                          unsigned int *sse);
+using SubpixAvgVarMxNFunc = unsigned int (*)(const uint8_t *a, int a_stride,
+                                             int xoffset, int yoffset,
+                                             const uint8_t *b, int b_stride,
+                                             uint32_t *sse,
+                                             const uint8_t *second_pred);
+using SumOfSquaresFunction = unsigned int (*)(const int16_t *src);
 
 #if !CONFIG_REALTIME_ONLY
-typedef uint32_t (*ObmcSubpelVarFunc)(const uint8_t *pre, int pre_stride,
-                                      int xoffset, int yoffset,
-                                      const int32_t *wsrc, const int32_t *mask,
-                                      unsigned int *sse);
+using ObmcSubpelVarFunc = uint32_t (*)(const uint8_t *pre, int pre_stride,
+                                       int xoffset, int yoffset,
+                                       const int32_t *wsrc, const int32_t *mask,
+                                       unsigned int *sse);
+
 #endif
 
 using libaom_test::ACMRandom;
@@ -1437,7 +1438,7 @@ void SubpelVarianceTest<SubpixAvgVarMxNFunc>::RefTest() {
 
 static const int kMaskMax = 64;
 
-typedef TestParams<ObmcSubpelVarFunc> ObmcSubpelVarianceParams;
+using ObmcSubpelVarianceParams = TestParams<ObmcSubpelVarFunc>;
 
 template <typename FunctionType>
 class ObmcVarianceTest
@@ -1592,19 +1593,19 @@ void ObmcVarianceTest<ObmcSubpelVarFunc>::SpeedTest() {
 
 #endif  // !CONFIG_REALTIME_ONLY
 
-typedef MseWxHTestClass<MseWxH16bitFunc> MseWxHTest;
-typedef Mse16xHTestClass<Mse16xH16bitFunc> Mse16xHTest;
-typedef MainTestClass<VarianceMxNFunc> AvxMseTest;
-typedef MainTestClass<VarianceMxNFunc> AvxVarianceTest;
-typedef MainTestClass<GetSseSum8x8QuadFunc> GetSseSum8x8QuadTest;
-typedef MainTestClass<GetSseSum16x16DualFunc> GetSseSum16x16DualTest;
-typedef SubpelVarianceTest<SubpixVarMxNFunc> AvxSubpelVarianceTest;
-typedef SubpelVarianceTest<SubpixAvgVarMxNFunc> AvxSubpelAvgVarianceTest;
+using MseWxHTest = MseWxHTestClass<MseWxH16bitFunc>;
+using Mse16xHTest = Mse16xHTestClass<Mse16xH16bitFunc>;
+using AvxMseTest = MainTestClass<VarianceMxNFunc>;
+using AvxVarianceTest = MainTestClass<VarianceMxNFunc>;
+using GetSseSum8x8QuadTest = MainTestClass<GetSseSum8x8QuadFunc>;
+using GetSseSum16x16DualTest = MainTestClass<GetSseSum16x16DualFunc>;
+using AvxSubpelVarianceTest = SubpelVarianceTest<SubpixVarMxNFunc>;
+using AvxSubpelAvgVarianceTest = SubpelVarianceTest<SubpixAvgVarMxNFunc>;
 #if !CONFIG_REALTIME_ONLY
-typedef ObmcVarianceTest<ObmcSubpelVarFunc> AvxObmcSubpelVarianceTest;
+using AvxObmcSubpelVarianceTest = ObmcVarianceTest<ObmcSubpelVarFunc>;
 #endif
-typedef TestParams<MseWxH16bitFunc> MseWxHParams;
-typedef TestParams<Mse16xH16bitFunc> Mse16xHParams;
+using MseWxHParams = TestParams<MseWxH16bitFunc>;
+using Mse16xHParams = TestParams<Mse16xH16bitFunc>;
 
 TEST_P(MseWxHTest, RefMse) { RefMatchTestMse(); }
 TEST_P(MseWxHTest, DISABLED_SpeedMse) { SpeedTest(); }
@@ -1659,14 +1660,14 @@ INSTANTIATE_TEST_SUITE_P(C, SumOfSquaresTest,
                          ::testing::Values(aom_get_mb_ss_c));
 #endif  // !CONFIG_REALTIME_ONLY
 
-typedef TestParams<VarianceMxNFunc> MseParams;
+using MseParams = TestParams<VarianceMxNFunc>;
 INSTANTIATE_TEST_SUITE_P(C, AvxMseTest,
                          ::testing::Values(MseParams(4, 4, &aom_mse16x16_c),
                                            MseParams(4, 3, &aom_mse16x8_c),
                                            MseParams(3, 4, &aom_mse8x16_c),
                                            MseParams(3, 3, &aom_mse8x8_c)));
 
-typedef TestParams<VarianceMxNFunc> VarianceParams;
+using VarianceParams = TestParams<VarianceMxNFunc>;
 const VarianceParams kArrayVariance_c[] = {
   VarianceParams(7, 7, &aom_variance128x128_c),
   VarianceParams(7, 6, &aom_variance128x64_c),
@@ -1696,7 +1697,7 @@ const VarianceParams kArrayVariance_c[] = {
 INSTANTIATE_TEST_SUITE_P(C, AvxVarianceTest,
                          ::testing::ValuesIn(kArrayVariance_c));
 
-typedef TestParams<GetSseSum8x8QuadFunc> GetSseSumParams;
+using GetSseSumParams = TestParams<GetSseSum8x8QuadFunc>;
 const GetSseSumParams kArrayGetSseSum8x8Quad_c[] = {
   GetSseSumParams(7, 7, &aom_get_var_sse_sum_8x8_quad_c, 0),
   GetSseSumParams(6, 6, &aom_get_var_sse_sum_8x8_quad_c, 0),
@@ -1706,7 +1707,7 @@ const GetSseSumParams kArrayGetSseSum8x8Quad_c[] = {
 INSTANTIATE_TEST_SUITE_P(C, GetSseSum8x8QuadTest,
                          ::testing::ValuesIn(kArrayGetSseSum8x8Quad_c));
 
-typedef TestParams<GetSseSum16x16DualFunc> GetSseSumParamsDual;
+using GetSseSumParamsDual = TestParams<GetSseSum16x16DualFunc>;
 const GetSseSumParamsDual kArrayGetSseSum16x16Dual_c[] = {
   GetSseSumParamsDual(7, 7, &aom_get_var_sse_sum_16x16_dual_c, 0),
   GetSseSumParamsDual(6, 6, &aom_get_var_sse_sum_16x16_dual_c, 0),
@@ -1717,7 +1718,7 @@ const GetSseSumParamsDual kArrayGetSseSum16x16Dual_c[] = {
 INSTANTIATE_TEST_SUITE_P(C, GetSseSum16x16DualTest,
                          ::testing::ValuesIn(kArrayGetSseSum16x16Dual_c));
 
-typedef TestParams<SubpixVarMxNFunc> SubpelVarianceParams;
+using SubpelVarianceParams = TestParams<SubpixVarMxNFunc>;
 const SubpelVarianceParams kArraySubpelVariance_c[] = {
   SubpelVarianceParams(7, 7, &aom_sub_pixel_variance128x128_c, 0),
   SubpelVarianceParams(7, 6, &aom_sub_pixel_variance128x64_c, 0),
@@ -1747,7 +1748,7 @@ const SubpelVarianceParams kArraySubpelVariance_c[] = {
 INSTANTIATE_TEST_SUITE_P(C, AvxSubpelVarianceTest,
                          ::testing::ValuesIn(kArraySubpelVariance_c));
 
-typedef TestParams<SubpixAvgVarMxNFunc> SubpelAvgVarianceParams;
+using SubpelAvgVarianceParams = TestParams<SubpixAvgVarMxNFunc>;
 const SubpelAvgVarianceParams kArraySubpelAvgVariance_c[] = {
   SubpelAvgVarianceParams(7, 7, &aom_sub_pixel_avg_variance128x128_c, 0),
   SubpelAvgVarianceParams(7, 6, &aom_sub_pixel_avg_variance128x64_c, 0),
@@ -1808,9 +1809,8 @@ INSTANTIATE_TEST_SUITE_P(
 #endif
 
 #if CONFIG_AV1_HIGHBITDEPTH
-typedef uint64_t (*MseHBDWxH16bitFunc)(uint16_t *dst, int dstride,
-                                       uint16_t *src, int sstride, int w,
-                                       int h);
+using MseHBDWxH16bitFunc = uint64_t (*)(uint16_t *, int, uint16_t *, int, int,
+                                        int);
 
 template <typename FunctionType>
 class MseHBDWxHTestClass
@@ -1909,15 +1909,15 @@ void MseHBDWxHTestClass<MseHBDWxHFunctionType>::RefMatchTestMse() {
   }
 }
 
-typedef TestParams<MseHBDWxH16bitFunc> MseHBDWxHParams;
-typedef MseHBDWxHTestClass<MseHBDWxH16bitFunc> MseHBDWxHTest;
-typedef MainTestClass<VarianceMxNFunc> AvxHBDMseTest;
+using MseHBDWxHParams = TestParams<MseHBDWxH16bitFunc>;
+using MseHBDWxHTest = MseHBDWxHTestClass<MseHBDWxH16bitFunc>;
+using AvxHBDMseTest = MainTestClass<VarianceMxNFunc>;
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AvxHBDMseTest);
-typedef MainTestClass<VarianceMxNFunc> AvxHBDVarianceTest;
-typedef SubpelVarianceTest<SubpixVarMxNFunc> AvxHBDSubpelVarianceTest;
-typedef SubpelVarianceTest<SubpixAvgVarMxNFunc> AvxHBDSubpelAvgVarianceTest;
+using AvxHBDVarianceTest = MainTestClass<VarianceMxNFunc>;
+using AvxHBDSubpelVarianceTest = SubpelVarianceTest<SubpixVarMxNFunc>;
+using AvxHBDSubpelAvgVarianceTest = SubpelVarianceTest<SubpixAvgVarMxNFunc>;
 #if !CONFIG_REALTIME_ONLY
-typedef ObmcVarianceTest<ObmcSubpelVarFunc> AvxHBDObmcSubpelVarianceTest;
+using AvxHBDObmcSubpelVarianceTest = ObmcVarianceTest<ObmcSubpelVarFunc>;
 #endif
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AvxHBDObmcSubpelVarianceTest);
 

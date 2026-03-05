@@ -232,7 +232,7 @@ struct aead_aes_ccm_ctx {
 };
 }  // namespace
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_aes_ccm_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=
@@ -263,7 +263,8 @@ static int aead_aes_ccm_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
   struct aead_aes_ccm_ctx *ccm_ctx = (struct aead_aes_ccm_ctx *)&ctx->state;
 
   block128_f block;
-  ctr128_f ctr = aes_ctr_set_key(&ccm_ctx->ks.ks, NULL, &block, key, key_len);
+  ctr128_f ctr =
+      aes_ctr_set_key(&ccm_ctx->ks.ks, nullptr, &block, key, key_len);
   ctx->tag_len = tag_len;
   if (!CRYPTO_ccm128_init(&ccm_ctx->ccm, &ccm_ctx->ks.ks, block, ctr, M, L)) {
     OPENSSL_PUT_ERROR(CIPHER, ERR_R_INTERNAL_ERROR);

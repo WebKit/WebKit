@@ -94,11 +94,11 @@ public:
     bool hasPrefix() const { return !m_impl->m_prefix.isNull(); }
     void setPrefix(const AtomString& prefix) { *this = QualifiedName(prefix, localName(), namespaceURI()); }
 
-    const AtomString& prefix() const { return m_impl->m_prefix; }
-    const AtomString& localName() const { return m_impl->m_localName; }
-    const AtomString& namespaceURI() const { return m_impl->m_namespaceURI; }
-    const AtomString& localNameLowercase() const { return m_impl->m_localNameLower; }
-    const AtomString& localNameUppercase() const;
+    const AtomString& prefix() const LIFETIME_BOUND { return m_impl->m_prefix; }
+    const AtomString& localName() const LIFETIME_BOUND { return m_impl->m_localName; }
+    const AtomString& namespaceURI() const LIFETIME_BOUND { return m_impl->m_namespaceURI; }
+    const AtomString& localNameLowercase() const LIFETIME_BOUND { return m_impl->m_localNameLower; }
+    const AtomString& localNameUppercase() const LIFETIME_BOUND;
 
     NodeName nodeName() const { return m_impl->m_nodeName; }
     Namespace nodeNamespace() const { return m_impl->m_namespace; }

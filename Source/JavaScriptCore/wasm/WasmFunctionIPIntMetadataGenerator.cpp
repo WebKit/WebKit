@@ -75,6 +75,17 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t va
     WRITE_TO_METADATA(m_metadata.mutableSpan().data() + size, mdConst, IPInt::Const32Metadata);
 }
 
+void FunctionIPIntMetadataGenerator::addLEB128ConstantInt64AndLength(uint64_t value, size_t length)
+{
+    IPInt::Const64Metadata mdConst {
+        .value = value,
+        .instructionLength = { .length = safeCast<uint8_t>(length) }
+    };
+    size_t size = m_metadata.size();
+    m_metadata.grow(size + sizeof(mdConst));
+    WRITE_TO_METADATA(m_metadata.mutableSpan().data() + size, mdConst, IPInt::Const64Metadata);
+}
+
 void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, size_t length)
 {
     if (type.isI32()) {

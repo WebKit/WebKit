@@ -115,7 +115,7 @@ public:
 
     class Handle {
         WTF_MAKE_NONCOPYABLE(Handle);
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MarkedBlockHandle, MarkedBlockHandle);
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Handle, MarkedBlockHandle);
         friend class LLIntOffsetsExtractor;
         friend class MarkedBlock;
         friend struct VerifyMarked;
@@ -430,7 +430,8 @@ private:
     inline bool marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion);
 
     // FIXME: rdar://139998916
-    NO_RETURN_DUE_TO_CRASH NEVER_INLINE void dumpInfoAndCrashForInvalidHandleV2(AbstractLocker&, HeapCell*);
+    NO_RETURN_DUE_TO_CRASH NEVER_INLINE void analyzeInvalidHandleAndCrash(AbstractLocker&, HeapCell*);
+    NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void dumpInfoAndCrashForInvalidHandleV2(HeapCell*, uint64_t cellFirst8Bytes, uint64_t zeroCounts, uint64_t bitfield, uint64_t subspaceHash, VM* blockVM, VM* actualVM);
     inline void setupTestForDumpInfoAndCrash();
 };
 

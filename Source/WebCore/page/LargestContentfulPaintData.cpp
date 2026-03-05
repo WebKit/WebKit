@@ -66,7 +66,7 @@ LargestContentfulPaintData::~LargestContentfulPaintData() = default;
 // https://w3c.github.io/paint-timing/#exposed-for-paint-timing
 bool LargestContentfulPaintData::isExposedForPaintTiming(const Element& element)
 {
-    if (!element.protectedDocument()->isFullyActive())
+    if (!protect(element.document())->isFullyActive())
         return false;
 
     if (!element.isInDocumentTree()) // Also checks isConnected().
@@ -196,7 +196,7 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
 
     if (image) {
         pendingEntry->setURLString(image->url().string());
-        auto loadTimestamp = window->protectedPerformance()->relativeTimeFromTimeOriginInReducedResolution(loadTime);
+        auto loadTimestamp = protect(window->performance())->relativeTimeFromTimeOriginInReducedResolution(loadTime);
         pendingEntry->setLoadTime(loadTimestamp);
     }
 
@@ -208,7 +208,7 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
     LOG_WITH_STREAM(LargestContentfulPaint, stream << " making new entry for " << element << " image " << (image ? image->url().string() : emptyString()) << " id " << pendingEntry->id() <<
         ": entry size " << pendingEntry->size() << ", loadTime " << pendingEntry->loadTime() << ", renderTime " << pendingEntry->renderTime());
 
-    m_pendingEntry = RefPtr { WTFMove(pendingEntry) };
+    m_pendingEntry = RefPtr { WTF::move(pendingEntry) };
 }
 
 // https://w3c.github.io/largest-contentful-paint/#sec-report-largest-contentful-paint
@@ -281,7 +281,7 @@ FloatRect LargestContentfulPaintData::computeViewportIntersectionRect(Element& e
     auto localTargetBounds = LayoutRect { localRect };
     auto absoluteRects = targetRenderer->computeVisibleRectsInContainer(
         { localTargetBounds },
-        &targetRenderer->checkedView().get(),
+        &protect(targetRenderer->view()).get(),
         {
             .hasPositionFixedDescendant = false,
             .dirtyRectIsFlipped = false,
@@ -358,7 +358,7 @@ void LargestContentfulPaintData::didLoadImage(Element& element, CachedImage* ima
     auto now = MonotonicTime::now();
     if (findIndex == notFound) {
         auto imageData = PerElementImageData { *image, { }, now };
-        lcpData.imageData.append(WTFMove(imageData));
+        lcpData.imageData.append(WTF::move(imageData));
     } else
         lcpData.imageData[findIndex].loadTime = now;
 }
@@ -378,7 +378,7 @@ void LargestContentfulPaintData::didPaintImage(Element& element, CachedImage* im
     if (findIndex == notFound) {
         findIndex = lcpData.imageData.size();
         auto imageData = PerElementImageData { *image, { }, MonotonicTime::now() };
-        lcpData.imageData.append(WTFMove(imageData));
+        lcpData.imageData.append(WTF::move(imageData));
     }
 
     auto& imageData = lcpData.imageData[findIndex];

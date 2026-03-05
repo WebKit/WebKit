@@ -25,7 +25,7 @@ info: |
   Let buffer be O.[[ViewedArrayBuffer]].
   If IsDetachedBuffer(buffer) is true, return false.
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, cross-realm, TypedArray]
 ---*/
 
@@ -36,4 +36,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   $DETACHBUFFER(sample.buffer);
   sample[0] = 1n;
   assert.sameValue(sample[0], undefined, '`sample[0]` is undefined');
-});
+}, null, ["passthrough"]);

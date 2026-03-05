@@ -17,7 +17,6 @@ target.width = source.width;
 target.height = source.height;
 var ctx = target.getContext("2d");
 ctx.globalCompositeOperation = "copy";
-
 var isDone = false;
 PerfTestRunner.prepareToMeasureValuesAsync({ done: done, unit: 'ms' });
 function done() {
@@ -31,6 +30,7 @@ async function runTest() {
         let imageBitmap = await createImageBitmap(source);
         ctx.drawImage(imageBitmap, 0, 0);
     }
+    ctx.getImageData(0, 0, 1, 1); // FIXME: WebKit does not have backpressure, draws too much.
     PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
     if (!isDone)
         setTimeout(runTest, 0);

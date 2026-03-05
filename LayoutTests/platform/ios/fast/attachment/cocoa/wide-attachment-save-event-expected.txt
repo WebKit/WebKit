@@ -1,0 +1,135 @@
+
+This tests that clicking on the save button sends a save event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS attachment is an instance of HTMLAttachmentElement
+PASS saveButtonClientRect is an instance of DOMRectReadOnly
+PASS saveButtonClientRect.width is > 0
+PASS saveButtonClientRect.height is > 0
+PASS saveButtonClientRect.x is > attachmentClientRect.left
+PASS saveButtonClientRect.y is > attachmentClientRect.top
+PASS attachmentClientRect.right is > saveButtonClientRect.x + saveButtonClientRect.width
+PASS attachmentClientRect.bottom is > saveButtonClientRect.y + saveButtonClientRect.height
+button center
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "saveButton"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "save"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 53
+PASS events[0].event.target is attachment
+button center left
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "saveButton"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "save"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 53
+PASS events[0].event.target is attachment
+button center right
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "saveButton"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "save"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 53
+PASS events[0].event.target is attachment
+button center top
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "saveButton"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "save"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 33
+PASS events[0].event.target is attachment
+button center bottom
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "saveButton"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "save"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 72
+PASS events[0].event.target is attachment
+outside button left
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 53
+PASS events[0].event.target is attachment
+outside button right
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 53
+PASS events[0].event.target is attachment
+outside button top
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 31
+PASS events[0].event.target is attachment
+outside button bottom
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 74
+PASS events[0].event.target is attachment
+attachment left
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 53
+PASS events[0].event.target is attachment
+attachment right
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 53
+PASS events[0].event.target is attachment
+attachment top
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 10
+PASS events[0].event.target is attachment
+attachment bottom
+PASS events.length became different from 0
+PASS events.length is 1
+PASS events[0].targetId is "attachment"
+PASS events[0].event is an instance of MouseEvent
+PASS events[0].event.type is "click"
+PASS events[0].event.x is clickX
+PASS events[0].event.y is within 0.5 of 99
+PASS events[0].event.target is attachment
+

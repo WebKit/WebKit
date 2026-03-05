@@ -72,6 +72,35 @@ http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ 
 
 http/tests/security/isolatedWorld/userGestureEvents.html [ Skip ] # Timeout
 
+# Moved these from wpe as they are only failing with the legacy API
+
+webkit.org/b/188509 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
+webkit.org/b/216650 fast/events/mouse-cursor-hidden-when-out-of-bounds.html [ Failure ]
+webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Failure ]
+
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-partial.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-wildcard.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+
+# Path with marker failures
+svg/W3C-SVG-1.1/painting-marker-03-f.svg [ Failure ]
+
+webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Pass ImageOnlyFailure ]
+
+webkit.org/b/131347 svg/compositing/hidpi-legacy-svg-compositing-sibling-no-shift.html [ ImageOnlyFailure ]
+
+fast/forms/input-text-max-length-emojis.html [ Failure ]
+
+webkit.org/b/188509 fast/dom/Window/window-resize-update-scrollbars.html [ Timeout ]
+
+# Doesn't support removeViewFromWindow()
+media/no-fullscreen-when-hidden.html [ Skip ]
+
+# Non composited mode is not supposed to work with legacy WPE API
+platform/glib/damage/basic-propagation-002-non-composited.html [ Skip ]
+platform/glib/non-compositing/ [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 #//////////////////////////////////////////////////////////////////////////////////////////

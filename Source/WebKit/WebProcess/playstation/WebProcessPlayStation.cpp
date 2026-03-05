@@ -43,7 +43,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (!parameters.isServiceWorkerProcess)
         WebCore::PlatformDisplay::setSharedDisplay(WebCore::PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release()));
 #endif
-    applyProcessCreationParameters(WTFMove(parameters.auxiliaryProcessParameters));
+    applyProcessCreationParameters(WTF::move(parameters.auxiliaryProcessParameters));
 }
 
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters&)

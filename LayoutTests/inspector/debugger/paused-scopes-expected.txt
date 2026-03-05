@@ -20,8 +20,8 @@ CALLFRAME: firstPause
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
@@ -37,8 +37,8 @@ CALLFRAME: firstPause
   SCOPE: Name (firstPause) - Type (Closure) - Hash (firstPause:<sourceID>:19:24)
     - fakeFirstPauseLexicalVariable
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -53,8 +53,8 @@ CALLFRAME: firstPause
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
@@ -63,8 +63,8 @@ CALLFRAME: firstPause
   SCOPE: Name (firstPause) - Type (Local) - Hash (firstPause:<sourceID>:19:24)
     - fakeFirstPauseLexicalVariable
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -76,16 +76,16 @@ CALLFRAME: entry
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
 
 ---- Merged Scope Chain ----
   SCOPE: Name (entry) - Type (Local) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -131,8 +131,8 @@ CALLFRAME: firstPause
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
@@ -148,8 +148,8 @@ CALLFRAME: firstPause
   SCOPE: Name (firstPause) - Type (Closure) - Hash (firstPause:<sourceID>:19:24)
     - fakeFirstPauseLexicalVariable
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -164,8 +164,8 @@ CALLFRAME: firstPause
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
@@ -174,8 +174,8 @@ CALLFRAME: firstPause
   SCOPE: Name (firstPause) - Type (Local) - Hash (firstPause:<sourceID>:19:24)
     - fakeFirstPauseLexicalVariable
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -187,16 +187,16 @@ CALLFRAME: entry
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
 
 ---- Merged Scope Chain ----
   SCOPE: Name (entry) - Type (Local) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -260,8 +260,8 @@ CALLFRAME: firstPause
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
@@ -277,8 +277,8 @@ CALLFRAME: firstPause
   SCOPE: Name (firstPause) - Type (Closure) - Hash (firstPause:<sourceID>:19:24)
     - fakeFirstPauseLexicalVariable
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -293,8 +293,8 @@ CALLFRAME: firstPause
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
@@ -303,8 +303,8 @@ CALLFRAME: firstPause
   SCOPE: Name (firstPause) - Type (Local) - Hash (firstPause:<sourceID>:19:24)
     - fakeFirstPauseLexicalVariable
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
@@ -316,16 +316,16 @@ CALLFRAME: entry
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
     - fooLexicalVariable2
   SCOPE: Name (entry) - Type (Closure) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2
   SCOPE: Name () - Type (Global) - Hash ()
 
 ---- Merged Scope Chain ----
   SCOPE: Name (entry) - Type (Local) - Hash (entry:<sourceID>:14:15)
-    - firstPause
     - fooVarVariable1
+    - firstPause
     - fooLexicalVariable2
   SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
     - globalLet2

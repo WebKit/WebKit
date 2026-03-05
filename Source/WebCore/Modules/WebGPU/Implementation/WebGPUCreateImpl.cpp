@@ -28,7 +28,6 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "ModelDowncastConvertToBackingContext.h"
 #include "ProcessIdentity.h"
 #include "WebGPUAdapterImpl.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
@@ -50,9 +49,9 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction, const WebCore::P
 #if !HAVE(TASK_IDENTITY_TOKEN)
     UNUSED_PARAM(webProcessIdentity);
 #endif
-    auto scheduleWorkBlock = makeBlockPtr([scheduleWorkFunction = WTFMove(scheduleWorkFunction)](WGPUWorkItem workItem)
+    auto scheduleWorkBlock = makeBlockPtr([scheduleWorkFunction = WTF::move(scheduleWorkFunction)](WGPUWorkItem workItem)
     {
-        scheduleWorkFunction(Function<void()>(makeBlockPtr(WTFMove(workItem))));
+        scheduleWorkFunction(Function<void()>(makeBlockPtr(WTF::move(workItem))));
     });
 
     WGPUInstanceDescriptor descriptor = {
@@ -72,8 +71,7 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction, const WebCore::P
     if (!instance)
         return nullptr;
     auto convertToBackingContext = DowncastConvertToBackingContext::create();
-    auto modelConvertToBackingContext = DDModel::DowncastConvertToBackingContext::create();
-    return GPUImpl::create(WTFMove(instance), convertToBackingContext, modelConvertToBackingContext);
+    return GPUImpl::create(WTF::move(instance), convertToBackingContext);
 }
 
 } // namespace WebCore::WebGPU

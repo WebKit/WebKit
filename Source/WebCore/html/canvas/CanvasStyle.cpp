@@ -53,7 +53,7 @@ namespace WebCore {
 class CanvasStyleColorResolutionDelegate final : public CSS::PlatformColorResolutionDelegate {
 public:
     explicit CanvasStyleColorResolutionDelegate(Ref<HTMLCanvasElement> canvasElement)
-        : m_canvasElement { WTFMove(canvasElement) }
+        : m_canvasElement { WTF::move(canvasElement) }
     {
     }
 
@@ -68,7 +68,7 @@ Color CanvasStyleColorResolutionDelegate::currentColor() const
         return Color::black;
 
     auto colorString = m_canvasElement->inlineStyle()->getPropertyValue(CSSPropertyColor);
-    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, m_canvasElement->cssParserContext(), m_canvasElement->protectedDocument().get());
+    auto color = CSSPropertyParserHelpers::parseColorRaw(colorString, m_canvasElement->cssParserContext(), protect(m_canvasElement->document()).get());
     if (color.isValid())
         return color;
     return Color::black;

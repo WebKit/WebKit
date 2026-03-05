@@ -42,7 +42,7 @@ std::optional<ComputePassDescriptor> ConvertToBackingContext::convertToBacking(c
 
     auto timestampWrites = computePassDescriptor.timestampWrites ? convertToBacking(*computePassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTFMove(*base), timestampWrites } };
+    return { { WTF::move(*base), timestampWrites } };
 }
 
 std::optional<WebCore::WebGPU::ComputePassDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePassDescriptor& computePassDescriptor)
@@ -53,7 +53,7 @@ std::optional<WebCore::WebGPU::ComputePassDescriptor> ConvertFromBackingContext:
 
     auto timestampWrites = computePassDescriptor.timestampWrites ? convertFromBacking(*computePassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTFMove(*base), timestampWrites } };
+    return { { WTF::move(*base), timestampWrites } };
 }
 
 } // namespace WebKit

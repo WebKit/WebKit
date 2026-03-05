@@ -82,6 +82,12 @@ pub enum Kem {
     P256HkdfSha256 = 16, // 0x0010
     /// KEM using DHKEM X25519 and HKDF-SHA256.
     X25519HkdfSha256 = 32, // 0x0020
+    /// X-Wing hybrid KEM.
+    XWing = 25722, // 0x647a
+    /// ML-KEM-768.
+    MlKem768 = 65, // 0x0041
+    /// ML-KEM-1024.
+    MlKem1024 = 66, // 0x0042
 }
 
 impl Kem {
@@ -91,6 +97,9 @@ impl Kem {
             match self {
                 Kem::P256HkdfSha256 => bssl_sys::EVP_hpke_p256_hkdf_sha256(),
                 Kem::X25519HkdfSha256 => bssl_sys::EVP_hpke_x25519_hkdf_sha256(),
+                Kem::XWing => bssl_sys::EVP_hpke_xwing(),
+                Kem::MlKem768 => bssl_sys::EVP_hpke_mlkem768(),
+                Kem::MlKem1024 => bssl_sys::EVP_hpke_mlkem1024(),
             }
         }
     }
@@ -99,6 +108,9 @@ impl Kem {
         match n {
             n if n == Kem::P256HkdfSha256 as u16 => Some(Self::P256HkdfSha256),
             n if n == Kem::X25519HkdfSha256 as u16 => Some(Self::X25519HkdfSha256),
+            n if n == Kem::XWing as u16 => Some(Self::XWing),
+            n if n == Kem::MlKem768 as u16 => Some(Self::MlKem768),
+            n if n == Kem::MlKem1024 as u16 => Some(Self::MlKem1024),
             _ => None,
         }
     }
@@ -552,7 +564,7 @@ mod test {
 
     #[test]
     fn all_algorithms() {
-        let kems = vec![Kem::X25519HkdfSha256, Kem::P256HkdfSha256];
+        let kems = vec![Kem::X25519HkdfSha256, Kem::P256HkdfSha256, Kem::XWing, Kem::MlKem768, Kem::MlKem1024];
         let kdfs = vec![Kdf::HkdfSha256];
         let aeads = vec![Aead::Aes128Gcm, Aead::Aes256Gcm, Aead::Chacha20Poly1305];
         let plaintext: &[u8] = b"plaintext";
@@ -590,7 +602,7 @@ mod test {
 
     #[test]
     fn kem_public_from_private() {
-        let kems = vec![Kem::X25519HkdfSha256, Kem::P256HkdfSha256];
+        let kems = vec![Kem::X25519HkdfSha256, Kem::P256HkdfSha256, Kem::XWing, Kem::MlKem768, Kem::MlKem1024];
         for kem in &kems {
             let (pub_key, priv_key) = kem.generate_keypair();
             assert_eq!(kem.public_from_private(&priv_key), Some(pub_key));

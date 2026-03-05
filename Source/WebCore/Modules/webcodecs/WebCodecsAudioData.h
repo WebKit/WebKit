@@ -55,7 +55,7 @@ public:
 
     static ExceptionOr<Ref<WebCodecsAudioData>> create(ScriptExecutionContext&, Init&&);
     static Ref<WebCodecsAudioData> create(ScriptExecutionContext&, Ref<PlatformRawAudioData>&&);
-    static Ref<WebCodecsAudioData> create(ScriptExecutionContext& context, WebCodecsAudioInternalData&& data) { return adoptRef(*new WebCodecsAudioData(context, WTFMove(data))); }
+    static Ref<WebCodecsAudioData> create(ScriptExecutionContext& context, WebCodecsAudioInternalData&& data) { return adoptRef(*new WebCodecsAudioData(context, WTF::move(data))); }
 
     // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
@@ -82,7 +82,7 @@ public:
 
     bool isDetached() const { return m_isDetached; }
 
-    const WebCodecsAudioInternalData& data() const { return m_data; }
+    const WebCodecsAudioInternalData& data() const LIFETIME_BOUND { return m_data; }
 
     size_t memoryCost() const { return m_data.memoryCost(); }
 

@@ -55,7 +55,7 @@ template<typename> struct DominatorsSelection;
 
 template<>
 struct DominatorsSelection<CPSCFG> {
-    static CPSDominators& select(Graph& graph)
+    static CPSDominators& select(Graph& graph LIFETIME_BOUND)
     {
         return graph.ensureCPSDominators();
     }
@@ -63,14 +63,14 @@ struct DominatorsSelection<CPSCFG> {
 
 template<>
 struct DominatorsSelection<SSACFG> {
-    static SSADominators& select(Graph& graph)
+    static SSADominators& select(Graph& graph LIFETIME_BOUND)
     {
         return graph.ensureSSADominators();
     }
 };
 
 template<typename T>
-auto& ensureDominatorsForCFG(Graph& graph)
+auto& ensureDominatorsForCFG(Graph& graph LIFETIME_BOUND)
 {
     return DominatorsSelection<T>::select(graph);
 }

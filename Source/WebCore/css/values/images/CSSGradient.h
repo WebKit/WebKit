@@ -92,7 +92,7 @@ using GradientAngularColorStop = GradientColorStop<GradientAngularColorStopColor
 using GradientAngularColorStopList = GradientColorStopList<GradientAngularColorStop>;
 
 using GradientLinearColorStopColor = Markable<Color>;
-using GradientLinearColorStopPosition = std::optional<LengthPercentage<>>;
+using GradientLinearColorStopPosition = std::optional<LengthPercentage<CSS::AllUnzoomed>>;
 using GradientLinearColorStop = GradientColorStop<GradientLinearColorStopColor, GradientLinearColorStopPosition>;
 using GradientLinearColorStopList = GradientColorStopList<GradientLinearColorStop>;
 
@@ -182,13 +182,13 @@ template<size_t I> const auto& get(const DeprecatedLinearGradient& gradient)
 struct RadialGradient {
     using Extent = RadialGradientExtent;
     struct Ellipse {
-        using Size = SpaceSeparatedArray<LengthPercentage<Nonnegative>, 2>;
+        using Size = SpaceSeparatedArray<LengthPercentage<NonnegativeUnzoomed>, 2>;
         Variant<Size, Extent> size;
         std::optional<Position> position;
         bool operator==(const Ellipse&) const = default;
     };
     struct Circle {
-        using Length = CSS::Length<Nonnegative>;
+        using Length = CSS::Length<NonnegativeUnzoomed>;
         Variant<Length, Extent> size;
         std::optional<Position> position;
         bool operator==(const Circle&) const = default;
@@ -237,7 +237,7 @@ template<size_t I> const auto& get(const RadialGradient& gradient)
 struct PrefixedRadialGradient {
     using Extent = PrefixedRadialGradientExtent;
     struct Ellipse {
-        using Size = SpaceSeparatedArray<LengthPercentage<Nonnegative>, 2>;
+        using Size = SpaceSeparatedArray<LengthPercentage<NonnegativeUnzoomed>, 2>;
         std::optional<Variant<Size, Extent>> size;
         std::optional<Position> position;
         bool operator==(const Ellipse&) const = default;

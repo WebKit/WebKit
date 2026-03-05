@@ -33,17 +33,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ManagedSourceBuffer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ManagedSourceBuffer);
 
 Ref<ManagedSourceBuffer> ManagedSourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPrivate, ManagedMediaSource& source)
 {
-    auto sourceBuffer = adoptRef(*new ManagedSourceBuffer(WTFMove(sourceBufferPrivate), source));
+    auto sourceBuffer = adoptRef(*new ManagedSourceBuffer(WTF::move(sourceBufferPrivate), source));
     sourceBuffer->suspendIfNeeded();
     return sourceBuffer;
 }
 
 ManagedSourceBuffer::ManagedSourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, ManagedMediaSource& source)
-    : SourceBuffer(WTFMove(sourceBufferPrivate), source)
+    : SourceBuffer(WTF::move(sourceBufferPrivate), source)
 {
 }
 

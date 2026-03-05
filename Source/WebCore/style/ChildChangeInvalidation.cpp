@@ -230,7 +230,7 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
     }
 }
 
-static bool needsDescendantTraversal(const RuleFeatureSet& features)
+static bool NODELETE needsDescendantTraversal(const RuleFeatureSet& features)
 {
     return features.usesMatchElement(MatchElement::HasNonSubject)
         || features.usesMatchElement(MatchElement::HasScopeBreaking)

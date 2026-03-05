@@ -4,7 +4,7 @@ layer at (0,0) size 800x275
   RenderBlock {html} at (0,0) size 800x275
     RenderBody {body} at (8,16) size 784x251
       RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 134x19
+        RenderText {#text} at (0,0) size 134x20
           text run at (0,0) width 134: "COL VALIGN=TOP"
       RenderTable {table} at (0,36) size 668x215 [border: (1px outset #000000)]
         RenderTableCol {colgroup} at (0,0) size 0x0

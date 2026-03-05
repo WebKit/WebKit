@@ -48,8 +48,6 @@ namespace
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolve.frag.00000017.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolveStencilNoExport.comp.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolveStencilNoExport.comp.00000001.inc"
-#include "libANGLE/renderer/vulkan/shaders/gen/BlitResolveStencilNoExport.comp.00000002.inc"
-#include "libANGLE/renderer/vulkan/shaders/gen/BlitResolveStencilNoExport.comp.00000003.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000001.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000002.inc"
@@ -204,8 +202,6 @@ constexpr CompressedShaderBlob kBlitResolve_frag_shaders[] = {
 constexpr CompressedShaderBlob kBlitResolveStencilNoExport_comp_shaders[] = {
     {kBlitResolveStencilNoExport_comp_00000000, sizeof(kBlitResolveStencilNoExport_comp_00000000)},
     {kBlitResolveStencilNoExport_comp_00000001, sizeof(kBlitResolveStencilNoExport_comp_00000001)},
-    {kBlitResolveStencilNoExport_comp_00000002, sizeof(kBlitResolveStencilNoExport_comp_00000002)},
-    {kBlitResolveStencilNoExport_comp_00000003, sizeof(kBlitResolveStencilNoExport_comp_00000003)},
 };
 constexpr CompressedShaderBlob kConvertIndex_comp_shaders[] = {
     {kConvertIndex_comp_00000000, sizeof(kConvertIndex_comp_00000000)},

@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "TransferString.h"
 #include <wtf/HashMap.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 enum class RunAsAsyncFunction : bool;
@@ -39,7 +39,7 @@ enum class RemoveTransientActivation : bool;
 namespace WebKit {
 
 struct RunJavaScriptParameters {
-    String source;
+    IPC::TransferString source;
     JSC::SourceTaintedOrigin taintedness;
     URL sourceURL;
     WebCore::RunAsAsyncFunction runAsAsyncFunction;

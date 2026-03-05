@@ -44,11 +44,11 @@ HasSelectorFilter::HasSelectorFilter(const Element& element, Type type)
 {
     switch (type) {
     case Type::Descendants:
-        for (auto& descendant : descendantsOfType<Element>(element))
+        for (Ref descendant : descendantsOfType<Element>(element))
             add(descendant);
         break;
     case Type::Children:
-        for (auto& child : childrenOfType<Element>(element))
+        for (Ref child : childrenOfType<Element>(element))
             add(child);
         break;
     }

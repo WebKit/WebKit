@@ -78,7 +78,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
     double syntheticBoldOffset = font.syntheticBoldOffset();
 
     if (!font.allowsAntialiasing())
-        fontSmoothingMode = FontSmoothingMode::NoSmoothing;
+        fontSmoothingMode = FontSmoothingMode::None;
 
     ASSERT(context.hasPlatformContext());
     auto& state = context.state();
@@ -100,7 +100,7 @@ Path Font::platformPathForGlyph(Glyph glyph) const
         cairo_translate(cr.get(), syntheticBoldOffset, 0);
         cairo_glyph_path(cr.get(), &cairoGlyph, 1);
     }
-    return { PathCairo::create(WTFMove(cr)) };
+    return { PathCairo::create(WTF::move(cr)) };
 }
 
 FloatRect Font::platformBoundsForGlyph(Glyph glyph) const

@@ -37,6 +37,7 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/InspectorWebAgentBase.h>
 #include <WebCore/LayoutRect.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Platform.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Seconds.h>
@@ -60,9 +61,10 @@ class Page;
 class RenderObject;
 class FragmentedSharedBuffer;
 
-class InspectorPageAgent final : public InspectorAgentBase, public Inspector::PageBackendDispatcherHandler {
+class InspectorPageAgent final : public InspectorAgentBase, public Inspector::PageBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorPageAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorPageAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorPageAgent);
 public:
     InspectorPageAgent(PageAgentContext&, InspectorBackendClient*, InspectorOverlay&);
     ~InspectorPageAgent();
@@ -127,7 +129,7 @@ public:
 private:
     double timestamp();
 
-    Ref<InspectorOverlay> protectedOverlay() const;
+    InspectorOverlay& NODELETE overlay() const;
 
     void overridePrefersReducedMotion(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);

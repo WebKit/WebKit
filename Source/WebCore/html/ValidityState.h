@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include <WebCore/FormListedElement.h>
-#include <WebCore/HTMLElement.h>
+#include "FormListedElement.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
@@ -37,11 +37,11 @@ public:
     Node* opaqueRootConcurrently() { return &asHTMLElement(); }
 };
 
-inline ValidityState* FormListedElement::validity()
+inline ValidityState& FormListedElement::validity()
 {
     // Because ValidityState adds nothing to FormListedElement, we rely on it being safe
     // to cast a FormListedElement like this, even though it's not actually a ValidityState.
-    return static_cast<ValidityState*>(this);
+    return static_cast<ValidityState&>(*this);
 }
 
 } // namespace WebCore

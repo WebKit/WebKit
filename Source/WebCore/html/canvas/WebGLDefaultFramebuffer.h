@@ -45,9 +45,9 @@ public:
     IntSize size() const;
     void reshape(IntSize);
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
-    void markBuffersClear(GCGLbitfield clearBuffers);
-    void markAllUnpreservedBuffersDirty();
-    void markAllBuffersDirty();
+    void NODELETE markBuffersClear(GCGLbitfield clearBuffers);
+    void NODELETE markAllUnpreservedBuffersDirty();
+    void NODELETE markAllBuffersDirty();
 
 private:
     WebGLDefaultFramebuffer(WebGLRenderingContextBase&);

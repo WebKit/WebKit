@@ -36,7 +36,7 @@ public:
     static Ref<SessionState> create(WebKit::SessionState);
     virtual ~SessionState();
 
-    const WebKit::SessionState& sessionState() const { return m_sessionState; }
+    const WebKit::SessionState& sessionState() const LIFETIME_BOUND { return m_sessionState; }
 
 private:
     explicit SessionState(WebKit::SessionState);

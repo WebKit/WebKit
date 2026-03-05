@@ -69,7 +69,7 @@ public:
     bool canUseShadowBlur() const final { return false; }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
 
 size_t DynamicContentScalingImageBufferBackend::calculateMemoryCost(const Parameters& parameters)
 {
@@ -102,7 +102,7 @@ DynamicContentScalingImageBufferBackend::~DynamicContentScalingImageBufferBacken
 std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend::createBackendHandle(WebCore::SharedMemory::Protection) const
 {
     if (auto list = displayList())
-        return WTFMove(*list);
+        return WTF::move(*list);
     return std::nullopt;
 }
 
@@ -132,7 +132,7 @@ std::optional<DynamicContentScalingDisplayList> DynamicContentScalingImageBuffer
         });
     }
 
-    return WebCore::DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
+    return WebCore::DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTF::move(sendRights) };
 }
 
 WebCore::GraphicsContext& DynamicContentScalingImageBufferBackend::context()

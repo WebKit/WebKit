@@ -1,4 +1,4 @@
 
 
-FAIL Custom Functions: @function inside @media assert_equals: --actual before resize expected "50" but got "--f()"
+FAIL Custom Functions: @function inside @media assert_equals: --actual after resize expected "100" but got "50"
 

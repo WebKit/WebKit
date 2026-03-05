@@ -36,69 +36,6 @@
 
 namespace WebCore {
 
-static void fontconfigStyle(const SkFontStyle& style, int& weight, int& width, int& slant)
-{
-    struct MapRanges {
-        SkScalar oldValue;
-        SkScalar newValue;
-    };
-
-    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
-    auto mapRanges = [](SkScalar value, MapRanges const ranges[], int rangesCount) -> SkScalar {
-        if (value < ranges[0].oldValue)
-            return ranges[0].newValue;
-
-        for (int i = 0; i < rangesCount - 1; ++i) {
-            if (value < ranges[i + 1].oldValue)
-                return ranges[i].newValue + ((value - ranges[i].oldValue) * (ranges[i + 1].newValue - ranges[i].newValue) / (ranges[i + 1].oldValue - ranges[i].oldValue));
-        }
-        return ranges[rangesCount - 1].newValue;
-    };
-    IGNORE_CLANG_WARNINGS_END
-
-    static constexpr MapRanges weightRanges[] = {
-        { SkFontStyle::kThin_Weight,       FC_WEIGHT_THIN },
-        { SkFontStyle::kExtraLight_Weight, FC_WEIGHT_EXTRALIGHT },
-        { SkFontStyle::kLight_Weight,      FC_WEIGHT_LIGHT },
-        { 350,                             FC_WEIGHT_DEMILIGHT },
-        { 380,                             FC_WEIGHT_BOOK },
-        { SkFontStyle::kNormal_Weight,     FC_WEIGHT_REGULAR },
-        { SkFontStyle::kMedium_Weight,     FC_WEIGHT_MEDIUM },
-        { SkFontStyle::kSemiBold_Weight,   FC_WEIGHT_DEMIBOLD },
-        { SkFontStyle::kBold_Weight,       FC_WEIGHT_BOLD },
-        { SkFontStyle::kExtraBold_Weight,  FC_WEIGHT_EXTRABOLD },
-        { SkFontStyle::kBlack_Weight,      FC_WEIGHT_BLACK },
-        { SkFontStyle::kExtraBlack_Weight, FC_WEIGHT_EXTRABLACK },
-    };
-    weight = mapRanges(style.weight(), weightRanges, std::size(weightRanges));
-
-    static constexpr MapRanges widthRanges[] = {
-        { SkFontStyle::kUltraCondensed_Width, FC_WIDTH_ULTRACONDENSED },
-        { SkFontStyle::kExtraCondensed_Width, FC_WIDTH_EXTRACONDENSED },
-        { SkFontStyle::kCondensed_Width,      FC_WIDTH_CONDENSED },
-        { SkFontStyle::kSemiCondensed_Width,  FC_WIDTH_SEMICONDENSED },
-        { SkFontStyle::kNormal_Width,         FC_WIDTH_NORMAL },
-        { SkFontStyle::kSemiExpanded_Width,   FC_WIDTH_SEMIEXPANDED },
-        { SkFontStyle::kExpanded_Width,       FC_WIDTH_EXPANDED },
-        { SkFontStyle::kExtraExpanded_Width,  FC_WIDTH_EXTRAEXPANDED },
-        { SkFontStyle::kUltraExpanded_Width,  FC_WIDTH_ULTRAEXPANDED },
-    };
-    width = mapRanges(style.width(), widthRanges, std::size(widthRanges));
-
-    slant = FC_SLANT_ROMAN;
-    switch (style.slant()) {
-    case SkFontStyle::kUpright_Slant:
-        slant = FC_SLANT_ROMAN;
-        break;
-    case SkFontStyle::kItalic_Slant:
-        slant = FC_SLANT_ITALIC;
-        break;
-    case SkFontStyle::kOblique_Slant:
-        slant = FC_SLANT_OBLIQUE;
-        break;
-    }
-}
-
 static String filePathFromPattern(FcPattern* pattern)
 {
     FcChar8* filename = nullptr;
@@ -112,53 +49,28 @@ static String filePathFromPattern(FcPattern* pattern)
     return FileSystem::pathByAppendingComponent(String::fromUTF8(sysroot), String::fromUTF8(reinterpret_cast<const char*>(filename)));
 }
 
-struct FontSetCacheKey {
-    FontSetCacheKey() = default;
-
-    FontSetCacheKey(int weight, int width, int slant)
-        : weight(weight)
-        , width(width)
-        , slant(slant)
-    {
-    }
-
-    explicit FontSetCacheKey(WTF::HashTableDeletedValueType)
-        : weight(-1)
-        , width(-1)
-        , slant(-1)
-    {
-    }
-
-    bool isHashTableDeletedValue() const { return weight == -1 && width == -1 && slant == -1; }
-
-    bool operator==(const FontSetCacheKey&) const = default;
-
-    int weight { 0 };
-    int width { 0 };
-    int slant { 0 };
-};
-
-inline void add(Hasher& hasher, const FontSetCacheKey& key)
-{
-    add(hasher, key.weight, key.width, key.slant);
-}
-
-struct FontSetCacheKeyHash {
-    static unsigned hash(const FontSetCacheKey& key) { return computeHash(key); }
-    static bool equal(const FontSetCacheKey& a, const FontSetCacheKey& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
 class FontSetCache {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FontSetCache);
     WTF_MAKE_NONCOPYABLE(FontSetCache);
+    class FontSet;
 public:
-    FontSetCache() = default;
+    FontSetCache(UniqueRef<FontSet>&& fontSet)
+        : m_fontSet(WTF::move(fontSet))
+    {
+    }
     ~FontSetCache() = default;
+
+    static std::unique_ptr<FontSetCache> create(const String& locale)
+    {
+        auto fontSet = FontSet::create(locale);
+        if (!fontSet)
+            return nullptr;
+        return makeUnique<FontSetCache>(makeUniqueRefFromNonNullUniquePtr(WTF::move(fontSet)));
+    }
 
     struct Font {
         Font(String&& path, int ttcIndex, FcCharSet* charSet)
-            : path(WTFMove(path))
+            : path(WTF::move(path))
             , ttcIndex(ttcIndex)
             , charSet(charSet)
         {
@@ -169,25 +81,16 @@ public:
         FcCharSet* charSet { nullptr }; // Owned by FcFontSet.
     };
 
-    const FontSetCache::Font* fontForCharacterCluster(const SkFontStyle& style, const String& locale, FcCharSet* charSet)
+    const FontSetCache::Font* fontForCharacterCluster(FcCharSet* charSet)
     {
-        int weight, width, slant;
-        fontconfigStyle(style, weight, width, slant);
-
-        auto& fontSet = m_cache.ensure(FontSetCacheKey(weight, width, slant), [&] {
-            return FontSet::create(locale, weight, width, slant);
-        }).iterator->value;
-        if (!fontSet)
-            return nullptr;
-
-        return fontSet->bestForCharacterCluster(charSet);
+        return m_fontSet->bestForCharacterCluster(charSet);
     }
 
 private:
     class FontSet {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FontSet);
     public:
-        static std::unique_ptr<FontSet> create(const String& locale, int weight, int width, int slant)
+        static std::unique_ptr<FontSet> create(const String& locale)
         {
             auto* pattern = FcPatternCreate();
             if (!locale.isNull()) {
@@ -196,10 +99,6 @@ private:
                 FcPatternAddLangSet(pattern, FC_LANG, langSet);
                 FcLangSetDestroy(langSet);
             }
-
-            FcPatternAddInteger(pattern, FC_WEIGHT, weight);
-            FcPatternAddInteger(pattern, FC_WIDTH, width);
-            FcPatternAddInteger(pattern, FC_SLANT, slant);
 
             FcPatternAddBool(pattern, FC_SCALABLE, FcTrue);
 
@@ -238,7 +137,7 @@ private:
                 if (FcPatternGetInteger(pattern, FC_INDEX, 0, &ttcIndex) != FcResultMatch)
                     ttcIndex = 0;
 
-                m_fallbackList.append(Font(WTFMove(filepath), ttcIndex, charSet));
+                m_fallbackList.append(Font(WTF::move(filepath), ttcIndex, charSet));
             }
         }
 
@@ -275,14 +174,14 @@ private:
         Vector<FontSetCache::Font> m_fallbackList;
 
     };
-    HashMap<FontSetCacheKey, std::unique_ptr<FontSet>, FontSetCacheKeyHash, SimpleClassHashTraits<FontSetCacheKey>> m_cache;
+    UniqueRef<FontSet> m_fontSet;
 };
 
 SkiaSystemFallbackFontCache::SkiaSystemFallbackFontCache() = default;
 
 SkiaSystemFallbackFontCache::~SkiaSystemFallbackFontCache() = default;
 
-sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const SkFontStyle& style, const String& locale, StringView stringView)
+sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const String& locale, StringView stringView)
 {
     FcCharSet* charSet = FcCharSetCreate();
     bool hasNonIgnorableCharacters = false;
@@ -298,11 +197,14 @@ sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const SkF
         return nullptr;
     }
 
-    auto& fontSetCache = m_cache.ensure(locale.isNull() ? emptyString() : locale, [] {
-        return makeUnique<FontSetCache>();
+    auto& fontSetCache = m_cache.ensure(locale.isNull() ? emptyString() : locale, [&] {
+        return FontSetCache::create(locale);
     }).iterator->value;
 
-    const auto* font = fontSetCache->fontForCharacterCluster(style, locale, charSet);
+    if (!fontSetCache)
+        return nullptr;
+
+    const auto* font = fontSetCache->fontForCharacterCluster(charSet);
     FcCharSetDestroy(charSet);
     if (!font)
         return nullptr;

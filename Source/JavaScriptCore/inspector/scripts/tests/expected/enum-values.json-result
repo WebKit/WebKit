@@ -129,6 +129,8 @@ InspectorBackend.activateDomain("EventDomain", null);
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include "TestProtocolObjects.h"
@@ -139,7 +141,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -295,7 +297,7 @@ void CommandDomainBackendDispatcher::dispatch(long protocol_requestId, const Str
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
     if (protocol_method == "command"_s) {
-        command(protocol_requestId, WTFMove(protocol_parameters));
+        command(protocol_requestId, WTF::move(protocol_parameters));
         return;
     }
 
@@ -328,14 +330,14 @@ void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSO
 
     auto in_opt_enumOptional = Protocol::TestHelpers::parseEnumValueFromString<Protocol::TypeDomain::Enum>(in_opt_enumOptional_json);
 
-    auto result = m_agent->command(*in_enumRequired, WTFMove(in_opt_enumOptional), in_parameterRequired, in_opt_parameterOptional);
+    auto result = m_agent->command(*in_enumRequired, WTF::move(in_opt_enumOptional), in_parameterRequired, in_opt_parameterOptional);
     if (!result) {
         ASSERT(!result.error().isEmpty());
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, result.error());
         return;
     }
 
-    auto [out_enumRequired, out_opt_enumOptional, out_returnRequired, out_opt_returnOptional] = WTFMove(result.value());
+    auto [out_enumRequired, out_opt_enumOptional, out_returnRequired, out_opt_returnOptional] = WTF::move(result.value());
 
     auto protocol_jsonMessage = JSON::Object::create();
     protocol_jsonMessage->setString("enumRequired"_s, Protocol::TestHelpers::getEnumConstantValue(out_enumRequired));
@@ -344,7 +346,7 @@ void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSO
     protocol_jsonMessage->setString("returnRequired"_s, out_returnRequired);
     if (!!out_opt_returnOptional)
         protocol_jsonMessage->setString("returnOptional"_s, out_opt_returnOptional);
-    m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
+    m_backendDispatcher->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
 }
 
 } // namespace Inspector
@@ -473,7 +475,7 @@ void EventDomainFrontendDispatcher::event(Protocol::TypeDomain::Enum enumRequire
     protocol_paramsObject->setString("parameterRequired"_s, parameterRequired);
     if (!!opt_parameterOptional)
         protocol_paramsObject->setString("parameterOptional"_s, opt_parameterOptional);
-    protocol_jsonMessage->setObject("params"_s, WTFMove(protocol_paramsObject));
+    protocol_jsonMessage->setObject("params"_s, WTF::move(protocol_paramsObject));
 
     m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());
 }
@@ -515,6 +517,7 @@ void EventDomainFrontendDispatcher::event(Protocol::TypeDomain::Enum enumRequire
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
@@ -778,7 +781,7 @@ void ObjCInspectorCommandDomainBackendDispatcher::command(long protocol_requestI
         protocol_jsonMessage->setString("returnRequired"_s, toProtocolString(out_returnRequired).createNSString().get());
         if (!!out_opt_returnOptional)
             protocol_jsonMessage->setString("returnOptional"_s, toProtocolString(*out_opt_returnOptional).createNSString().get());
-        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
+        backendDispatcher()->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
     };
 
     std::optional<TestProtocolTypeDomainEnum> o_in_enumRequired = fromProtocolString<TestProtocolTypeDomainEnum>(in_enumRequired);
@@ -911,8 +914,8 @@ using namespace Inspector;
     _commandDomainHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
-    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_s, *_controller, WTFMove(alternateDispatcher));
-    _controller->registerAlternateAgent(WTFMove(alternateAgent));
+    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_s, *_controller, WTF::move(alternateDispatcher));
+    _controller->registerAlternateAgent(WTF::move(alternateAgent));
 }
 
 - (id<TestProtocolCommandDomainDomainHandler>)commandDomainHandler
@@ -997,7 +1000,7 @@ using namespace Inspector;
     protocol_paramsObject->setString("parameterRequired"_s, toProtocolString(parameterRequired).createNSString().get());
     if (parameterOptional)
         protocol_paramsObject->setString("parameterOptional"_s, toProtocolString((*parameterOptional)).createNSString().get());
-    protocol_jsonMessage->setObject("params"_s, WTFMove(protocol_paramsObject));
+    protocol_jsonMessage->setObject("params"_s, WTF::move(protocol_paramsObject));
     router.sendEvent(protocol_jsonMessage->toJSONString());
 }
 
@@ -1162,12 +1165,11 @@ inline String toProtocolString(TestProtocolTypeDomainEnum value)
 template<>
 inline std::optional<TestProtocolTypeDomainEnum> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTypeDomainEnum> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<ComparableASCIILiteral, TestProtocolTypeDomainEnum>>({
         { "1"_s, TestProtocolTypeDomainEnum1 },
         { "2"_s, TestProtocolTypeDomainEnum2 },
         { "shared"_s, TestProtocolTypeDomainEnumShared },
-    };
-    static constexpr SortedArrayMap map { mappings };
+   }) };
     if (auto* result = map.tryGet(value))
         return *result;
     return std::nullopt;

@@ -176,7 +176,7 @@ void JSTestCallTracerPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestCallTracer::s_info = { "TestCallTracer"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracer) };
 
 JSTestCallTracer::JSTestCallTracer(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCallTracer>&& impl)
-    : JSDOMWrapper<TestCallTracer>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestCallTracer>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -502,7 +502,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto variantDefaultArgConversionResult = convertOptionalWithDefault<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&]() -> ConversionResult<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>> { return Converter<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>::ReturnType { emptyString() }; });
+    auto variantDefaultArgConversionResult = convertOptionalWithDefault<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>> { return Converter<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>::ReturnType { emptyString() }; });
     if (variantDefaultArgConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
@@ -546,7 +546,7 @@ void JSTestCallTracerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* con
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCallTracer = static_cast<JSTestCallTracer*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestCallTracer->protectedWrapped().ptr(), jsTestCallTracer);
+    uncacheWrapper(world, protect(jsTestCallTracer->wrapped()).ptr(), jsTestCallTracer);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -584,7 +584,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestCallTracer>(impl.ptr());
 #endif
-    return createWrapper<TestCallTracer>(globalObject, WTFMove(impl));
+    return createWrapper<TestCallTracer>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestCallTracer& impl)

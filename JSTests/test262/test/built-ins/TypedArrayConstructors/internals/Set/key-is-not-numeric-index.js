@@ -17,8 +17,8 @@ includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42]));
 
   assert.sameValue(
     Reflect.set(sample, "test262", "ecma262"),
@@ -44,4 +44,4 @@ testWithTypedArrayConstructors(function(TA) {
     'Reflect.set(sample, "foo", 42) must return false'
   );
   assert.sameValue(sample.foo, undefined, 'The value of sample.foo is expected to equal `undefined`');
-});
+}, null, ["passthrough"]);

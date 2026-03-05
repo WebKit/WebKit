@@ -42,7 +42,7 @@ public:
 
     static Ref<DOMMatrix> create(TransformationMatrix&& matrix, Is2D is2D)
     {
-        return adoptRef(*new DOMMatrix(WTFMove(matrix), is2D));
+        return adoptRef(*new DOMMatrix(WTF::move(matrix), is2D));
     }
 
     static ExceptionOr<Ref<DOMMatrix>> fromMatrix(DOMMatrixInit&&);

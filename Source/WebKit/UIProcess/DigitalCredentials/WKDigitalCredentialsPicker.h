@@ -24,7 +24,7 @@
  */
 #pragma once
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#if ENABLE(WEB_AUTHN)
 
 #import "WKIdentityDocumentPresentmentDelegate.h"
 
@@ -32,6 +32,7 @@
 #import <UIKit/UIKit.h>
 #endif
 #import <WebCore/DigitalCredential.h>
+#import <WebCore/DigitalCredentialsRequestData.h>
 #import <wtf/Forward.h>
 
 OBJC_CLASS WKWebView;
@@ -43,10 +44,8 @@ class WebPageProxy;
 @class WKDigitalCredentialsPicker;
 
 namespace WebCore {
-struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct ExceptionData;
-struct OpenID4VPRequest;
 }
 
 @protocol WKDigitalCredentialsPickerDelegate <NSObject>
@@ -65,4 +64,4 @@ struct OpenID4VPRequest;
 - (void)dismissWithCompletionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
 @end
 
-#endif // HAVE(DIGITAL_CREDENTIALS_UI)
+#endif // ENABLE(WEB_AUTHN)

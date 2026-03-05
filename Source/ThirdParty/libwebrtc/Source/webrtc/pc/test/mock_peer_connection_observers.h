@@ -24,7 +24,6 @@
 #include <utility>
 #include <vector>
 
-#include "api/candidate.h"
 #include "api/data_channel_interface.h"
 #include "api/jsep.h"
 #include "api/legacy_stats_types.h"
@@ -143,9 +142,8 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
     callback_triggered_ = true;
   }
 
-  void OnIceCandidatesRemoved(
-      const std::vector<Candidate>& candidates) override {
-    num_candidates_removed_++;
+  void OnIceCandidateRemoved(const IceCandidate* candidate) override {
+    ++num_candidates_removed_;
     callback_triggered_ = true;
   }
 
@@ -352,42 +350,72 @@ class MockSetSessionDescriptionObserver : public SetSessionDescriptionObserver {
   std::string error_;
 };
 
-class FakeSetLocalDescriptionObserver
-    : public SetLocalDescriptionObserverInterface {
+// Base implementation class for fake local/remote description
+// observer classes. Handles the case where the usage of the observer class
+// is not on the same thread as the callback comes in on. In that case
+// a task is posted to the original test thread to set the error variable.
+// This is to be compatible with polling `WaitUntil` loops that poll the
+// `called()` state from the test thread. If the callback were to be
+// allowed to change the called() state, then we'd be checking and modifying
+// the state of the `error_` variable on two different thread without
+// synchronization, which is a problem.
+class FakeDescriptionObserver {
  public:
-  bool called() const { return error_.has_value(); }
+  FakeDescriptionObserver() : thread_(Thread::Current()) {
+    RTC_DCHECK(thread_);
+  }
+
+  bool called() const {
+    RTC_DCHECK_RUN_ON(thread_);
+    return error_.has_value();
+  }
+
   RTCError& error() {
+    RTC_DCHECK_RUN_ON(thread_);
     RTC_DCHECK(error_.has_value());
     return *error_;
   }
 
-  // SetLocalDescriptionObserverInterface implementation.
-  void OnSetLocalDescriptionComplete(RTCError error) override {
-    error_ = std::move(error);
+ protected:
+  void OnCallback(RTCError error) {
+    if (Thread::Current() == thread_) {
+      RTC_DCHECK_RUN_ON(thread_);
+      error_ = std::move(error);
+    } else {
+      thread_->PostTask([this, error = std::move(error)]() {
+        RTC_DCHECK_RUN_ON(thread_);
+        error_ = std::move(error);
+      });
+    }
   }
 
  private:
-  // Set on complete, on success this is set to an RTCError::OK() error.
-  std::optional<RTCError> error_;
+  Thread* const thread_;
+  std::optional<RTCError> error_ RTC_GUARDED_BY(thread_);
+};
+
+class FakeSetLocalDescriptionObserver
+    : public SetLocalDescriptionObserverInterface,
+      public FakeDescriptionObserver {
+ public:
+  FakeSetLocalDescriptionObserver() = default;
+
+ private:
+  void OnSetLocalDescriptionComplete(RTCError error) override {
+    OnCallback(std::move(error));
+  }
 };
 
 class FakeSetRemoteDescriptionObserver
-    : public SetRemoteDescriptionObserverInterface {
+    : public SetRemoteDescriptionObserverInterface,
+      public FakeDescriptionObserver {
  public:
-  bool called() const { return error_.has_value(); }
-  RTCError& error() {
-    RTC_DCHECK(error_.has_value());
-    return *error_;
-  }
-
-  // SetRemoteDescriptionObserverInterface implementation.
-  void OnSetRemoteDescriptionComplete(RTCError error) override {
-    error_ = std::move(error);
-  }
+  FakeSetRemoteDescriptionObserver() = default;
 
  private:
-  // Set on complete, on success this is set to an RTCError::OK() error.
-  std::optional<RTCError> error_;
+  void OnSetRemoteDescriptionComplete(RTCError error) override {
+    OnCallback(std::move(error));
+  }
 };
 
 class MockDataChannelObserver : public DataChannelObserver {

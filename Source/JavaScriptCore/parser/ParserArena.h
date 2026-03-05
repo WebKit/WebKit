@@ -142,7 +142,7 @@ namespace JSC {
             token = Identifier::from(vm, static_cast<int32_t>(number));
         else
             token = Identifier::from(vm, number);
-        m_identifiers.append(WTFMove(token));
+        m_identifiers.append(WTF::move(token));
         return m_identifiers.last();
     }
 

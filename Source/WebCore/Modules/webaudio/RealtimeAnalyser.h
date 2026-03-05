@@ -90,7 +90,7 @@ private:
     
     // doFFTAnalysisIfNecessary() stores the floating-point magnitude analysis data here.
     AudioFloatArray m_magnitudeBuffer { DefaultFFTSize / 2 };
-    AudioFloatArray& magnitudeBuffer() { return m_magnitudeBuffer; }
+    AudioFloatArray& magnitudeBuffer() LIFETIME_BOUND { return m_magnitudeBuffer; }
 
     // A value between 0 and 1 which averages the previous version of m_magnitudeBuffer with the current analysis magnitude data.
     double m_smoothingTimeConstant { DefaultSmoothingTimeConstant };

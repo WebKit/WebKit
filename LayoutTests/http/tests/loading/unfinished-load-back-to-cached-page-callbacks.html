@@ -27,6 +27,7 @@ window.onload = function(evt) {
 
 if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
     testRunner.waitUntilDone();
 } else
     document.write('This test must be run by WebKitTestRunner!');

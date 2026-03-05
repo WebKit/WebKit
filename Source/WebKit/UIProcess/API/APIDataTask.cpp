@@ -35,14 +35,9 @@ namespace API {
 
 DataTask::~DataTask() = default;
 
-Ref<DataTaskClient> DataTask::protectedClient() const
-{
-    return m_client;
-}
-
 void DataTask::setClient(Ref<DataTaskClient>&& client)
 {
-    m_client = WTFMove(client);
+    m_client = WTF::move(client);
 }
 
 void DataTask::cancel()
@@ -57,25 +52,25 @@ void DataTask::cancel()
 void DataTask::networkProcessCrashed()
 {
     m_activity = nullptr;
-    protectedClient()->didCompleteWithError(*this, WebCore::internalError(m_originalURL));
+    protect(client())->didCompleteWithError(*this, WebCore::internalError(m_originalURL));
 }
 
 DataTask::DataTask(std::optional<WebKit::DataTaskIdentifier> identifier, WeakPtr<WebKit::WebPageProxy>&& page, WTF::URL&& originalURL, bool shouldRunAtForegroundPriority)
     : m_identifier(identifier)
-    , m_page(WTFMove(page))
-    , m_originalURL(WTFMove(originalURL))
-    , m_networkProcess(m_page ? WeakPtr { protectedPage()->protectedWebsiteDataStore()->networkProcess() } : nullptr)
-    , m_sessionID(m_page ? std::optional<PAL::SessionID> { protectedPage()->sessionID() } : std::nullopt)
+    , m_page(WTF::move(page))
+    , m_originalURL(WTF::move(originalURL))
+    , m_networkProcess(m_page ? WeakPtr { protect(protect(this->page())->websiteDataStore())->networkProcess() } : nullptr)
+    , m_sessionID(m_page ? std::optional<PAL::SessionID> { protect(this->page())->sessionID() } : std::nullopt)
     , m_client(DataTaskClient::create())
 {
     if (RefPtr networkProcess = m_networkProcess.get())
-        m_activity = shouldRunAtForegroundPriority ? networkProcess->protectedThrottler()->foregroundActivity("WKDataTask"_s) : networkProcess->protectedThrottler()->backgroundActivity("WKDataTask"_s);
+        m_activity = shouldRunAtForegroundPriority ? protect(networkProcess->throttler())->foregroundActivity("WKDataTask"_s) : protect(networkProcess->throttler())->backgroundActivity("WKDataTask"_s);
 }
 
 void DataTask::didCompleteWithError(WebCore::ResourceError&& error)
 {
     m_activity = nullptr;
-    protectedClient()->didCompleteWithError(*this, WTFMove(error));
+    protect(client())->didCompleteWithError(*this, WTF::move(error));
 }
 
 } // namespace API

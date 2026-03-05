@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class ImageBufferCGPDFDocumentBackend : public ImageBufferCGBackend {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferCGPDFDocumentBackend);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBufferCGPDFDocumentBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCGPDFDocumentBackend);
 public:
     WEBCORE_EXPORT static size_t calculateMemoryCost(const Parameters&);
@@ -49,7 +49,7 @@ private:
 
     bool canMapBackingStore() const { return false; }
     unsigned bytesPerRow() const final { return 0; }
-    GraphicsContext& context() final;
+    GraphicsContext& NODELETE context() final;
 
     RefPtr<NativeImage> copyNativeImage() final { return createNativeImageReference(); }
     RefPtr<NativeImage> createNativeImageReference() final { return nullptr; }

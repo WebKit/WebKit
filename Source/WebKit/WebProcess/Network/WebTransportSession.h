@@ -72,7 +72,9 @@ public:
     void receiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void receiveBidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void streamReceiveBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
-    void didFail(std::optional<unsigned>&&, String&&);
+    void streamReceiveError(WebCore::WebTransportStreamIdentifier, uint64_t);
+    void streamSendError(WebCore::WebTransportStreamIdentifier, uint64_t);
+    void didFail(std::optional<uint32_t>&&, String&&);
     void didDrain();
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
@@ -85,8 +87,8 @@ private:
 
     // WebTransportSession
     Ref<WebCore::WebTransportSendPromise> sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final;
-    Ref<WebCore::WritableStreamPromise> createOutgoingUnidirectionalStream() final;
-    Ref<WebCore::BidirectionalStreamPromise> createBidirectionalStream() final;
+    Ref<WebCore::WebTransportStreamPromise> createOutgoingUnidirectionalStream() final;
+    Ref<WebCore::WebTransportStreamPromise> createBidirectionalStream() final;
     Ref<WebCore::WebTransportSendPromise> streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin) final;
     Ref<WebCore::WebTransportConnectionStatsPromise> getStats() final;
     Ref<WebCore::WebTransportSendStreamStatsPromise> getSendStreamStats(WebCore::WebTransportStreamIdentifier) final;

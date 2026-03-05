@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/LayoutElementBox.h>
+#include "LayoutElementBox.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class InitialContainingBlock;
 class LayoutState;
 
 class LayoutTree {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LayoutTree);
+    WTF_MAKE_TZONE_ALLOCATED(LayoutTree);
 public:
     LayoutTree(std::unique_ptr<ElementBox>);
 

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, WebGPU::Device& device)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
     , m_device(&device)
 {
 }
@@ -47,29 +47,27 @@ String GPUComputePassEncoder::label() const
 
 void GPUComputePassEncoder::setLabel(String&& label)
 {
-    protectedBacking()->setLabel(WTFMove(label));
+    protect(backing())->setLabel(WTF::move(label));
 }
 
 void GPUComputePassEncoder::setPipeline(const GPUComputePipeline& computePipeline)
 {
-    protectedBacking()->setPipeline(computePipeline.backing());
+    protect(backing())->setPipeline(computePipeline.backing());
 }
 
-void GPUComputePassEncoder::dispatchWorkgroups(GPUSize32 workgroupCountX, std::optional<GPUSize32> workgroupCountY, std::optional<GPUSize32> workgroupCountZ)
+void GPUComputePassEncoder::dispatchWorkgroups(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219 we should be able to specify the
-    // default values via the idl file
-    protectedBacking()->dispatch(workgroupCountX, workgroupCountY.value_or(1), workgroupCountZ.value_or(1));
+    protect(backing())->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
 void GPUComputePassEncoder::dispatchWorkgroupsIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    protectedBacking()->dispatchIndirect(indirectBuffer.backing(), indirectOffset);
+    protect(backing())->dispatchIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
 void GPUComputePassEncoder::end()
 {
-    protectedBacking()->end();
+    protect(backing())->end();
     if (RefPtr device = m_device.get()) {
         m_overrideLabel = label();
         m_backing = device->invalidComputePassEncoder();
@@ -79,7 +77,7 @@ void GPUComputePassEncoder::end()
 void GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
     std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-    protectedBacking()->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTFMove(dynamicOffsets));
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTF::move(dynamicOffsets));
 }
 
 ExceptionOr<void> GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
@@ -91,23 +89,23 @@ ExceptionOr<void> GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GP
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
-    protectedBacking()->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     return { };
 }
 
 void GPUComputePassEncoder::pushDebugGroup(String&& groupLabel)
 {
-    protectedBacking()->pushDebugGroup(WTFMove(groupLabel));
+    protect(backing())->pushDebugGroup(WTF::move(groupLabel));
 }
 
 void GPUComputePassEncoder::popDebugGroup()
 {
-    protectedBacking()->popDebugGroup();
+    protect(backing())->popDebugGroup();
 }
 
 void GPUComputePassEncoder::insertDebugMarker(String&& markerLabel)
 {
-    protectedBacking()->insertDebugMarker(WTFMove(markerLabel));
+    protect(backing())->insertDebugMarker(WTF::move(markerLabel));
 }
 
 }

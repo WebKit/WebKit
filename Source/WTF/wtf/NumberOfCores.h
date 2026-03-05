@@ -20,6 +20,9 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
+#include <wtf/Platform.h>
+
 namespace WTF {
 
 // This counts logical cores.

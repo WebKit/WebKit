@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import <wtf/Compiler.h>
+#include <wtf/Compiler.h>
 #include <wtf/Platform.h>
 
 DECLARE_SYSTEM_HEADER
@@ -85,6 +85,7 @@ typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
     deDrawGlyphs = 8,
     deBeginLayer = 17,
     deEndLayer = 18,
+    deGetColorSpace = 30,
 };
 
 typedef const struct CGColorTransform* CGColorTransformRef;
@@ -386,6 +387,7 @@ size_t CGIOSurfaceContextGetBitmapInfo(CGContextRef);
 void CGIOSurfaceContextSetDisplayMask(CGContextRef, uint32_t mask);
 IOSurfaceRef CGIOSurfaceContextGetSurface(CGContextRef);
 void CGIOSurfaceContextInvalidateSurface(CGContextRef);
+void CGIOSurfaceContextFlushQueue(CGContextRef);
 #endif // HAVE(IOSURFACE)
 
 #if PLATFORM(COCOA)
@@ -396,7 +398,7 @@ typedef bool (^CGPDFAnnotationDrawCallbackType)(CGContextRef context, CGPDFPageR
 void CGContextDrawPDFPageWithAnnotations(CGContextRef, CGPDFPageRef, CGPDFAnnotationDrawCallbackType);
 void CGContextDrawPathDirect(CGContextRef, CGPathDrawingMode, CGPathRef, const CGRect* boundingBox);
 
-CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
+CGColorSpaceRef CGContextGetColorSpace(CGContextRef);
 CFPropertyListRef CGColorSpaceCopyPropertyList(CGColorSpaceRef);
 CGError CGSNewRegionWithRect(const CGRect*, CGRegionRef*);
 CGError CGSPackagesEnableConnectionOcclusionNotifications(CGSConnectionID, bool flag, bool* outCurrentVisibilityState);
@@ -417,6 +419,11 @@ CGShadingRef CGShadingCreateConic(CGColorSpaceRef, CGPoint center, CGFloat angle
 
 CGGradientRef CGGradientCreateWithColorComponentsAndOptions(CGColorSpaceRef, const CGFloat*, const CGFloat*, size_t, CFDictionaryRef);
 CGGradientRef CGGradientCreateWithColorsAndOptions(CGColorSpaceRef, CFArrayRef, const CGFloat*, CFDictionaryRef);
+
+#if HAVE(CGPATTERN_CREATE_WITH_IMAGE_TRANSFORM_STEP)
+CGPatternRef CGPatternCreateWithImageTransformStep(CGImageRef, CGAffineTransform,
+    CGFloat xStep, CGFloat yStep, CGPatternTiling);
+#endif
 
 extern const CFStringRef kCGGradientInterpolatesPremultiplied;
 
@@ -464,6 +471,12 @@ CGError CGSSetDenyWindowServerConnections(bool);
 CG_EXTERN void CGEnterLockdownModeForPDF();
 CG_LOCAL bool CGIsInLockdownModeForPDF();
 CG_EXTERN void CGEnterLockdownModeForFonts();
+#endif
+
+#if HAVE(CGCONTEXT_STROKE_ARC)
+void CGContextStrokeArc(CGContextRef cg_nullable,
+    CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle,
+    bool clockwise);
 #endif
 
 extern CGDataProviderRef __nullable CGDataProviderCreateWithCopyOfData(const void *, size_t);

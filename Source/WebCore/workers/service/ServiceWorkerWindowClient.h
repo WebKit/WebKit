@@ -37,7 +37,7 @@ class ServiceWorkerWindowClient final : public ServiceWorkerClient {
 public:
     static Ref<ServiceWorkerWindowClient> create(ServiceWorkerGlobalScope& context, ServiceWorkerClientData&& data)
     {
-        return adoptRef(*new ServiceWorkerWindowClient(context, WTFMove(data)));
+        return adoptRef(*new ServiceWorkerWindowClient(context, WTF::move(data)));
     }
 
     VisibilityState visibilityState() const { return data().isVisible ? VisibilityState::Visible : VisibilityState::Hidden; }

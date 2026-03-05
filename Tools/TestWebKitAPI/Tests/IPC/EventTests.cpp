@@ -37,14 +37,14 @@ struct MockTestMessageWithSignal {
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessage; }
     MockTestMessageWithSignal(IPC::Signal&& signal)
-        : m_signal(WTFMove(signal))
+        : m_signal(WTF::move(signal))
     {
     }
 
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << WTFMove(m_signal);
+        encoder << WTF::move(m_signal);
     }
 private:
     IPC::Signal&& m_signal;
@@ -99,7 +99,7 @@ TEST_P(EventTestABBA, SerializeAndSignal)
 
     auto pair = IPC::createEventSignalPair();
     ASSERT_TRUE(pair);
-    a()->send(MockTestMessageWithSignal { WTFMove(pair->signal) }, 77);
+    a()->send(MockTestMessageWithSignal { WTF::move(pair->signal) }, 77);
 
     pair->event.wait();
 }
@@ -124,7 +124,7 @@ TEST_P(EventTestABBA, InterruptOnDestruct)
 
     auto pair = IPC::createEventSignalPair();
     ASSERT_TRUE(pair);
-    a()->send(MockTestMessageWithSignal { WTFMove(pair->signal) }, 77);
+    a()->send(MockTestMessageWithSignal { WTF::move(pair->signal) }, 77);
 
     pair->event.wait();
 }

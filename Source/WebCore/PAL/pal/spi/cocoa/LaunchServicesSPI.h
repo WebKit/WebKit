@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <Foundation/Foundation.h>
@@ -103,6 +106,7 @@ const uint8_t kLSOpenRunningInstanceBehaviorUseRunningProcess = 1;
 enum LSSessionID {
     kLSDefaultSessionID = -2,
 };
+typedef enum LSSessionID LSSessionID;
 
 enum {
     kLSServerConnectionStatusDoNotConnectToServerMask = 0x1ULL,

@@ -73,12 +73,12 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, CodeBlock* codeBlock, BytecodeInde
 }
 
 StackFrame::StackFrame(Wasm::IndexOrName indexOrName)
-    : m_frameData(WasmFrameData { WTFMove(indexOrName), 0 })
+    : m_frameData(WasmFrameData { WTF::move(indexOrName), 0 })
 {
 }
 
 StackFrame::StackFrame(Wasm::IndexOrName indexOrName, size_t functionIndex)
-    : m_frameData(WasmFrameData { WTFMove(indexOrName), functionIndex })
+    : m_frameData(WasmFrameData { WTF::move(indexOrName), functionIndex })
 {
 }
 

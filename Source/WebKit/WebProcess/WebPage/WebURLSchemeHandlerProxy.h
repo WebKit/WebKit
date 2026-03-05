@@ -58,7 +58,6 @@ public:
 
     WebURLSchemeHandlerIdentifier identifier() const { return m_identifier; }
     WebPage& page() { return m_webPage.get(); }
-    Ref<WebPage> protectedPage();
 
     void taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void taskDidReceiveResponse(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);
@@ -74,7 +73,7 @@ private:
     WeakRef<WebPage> m_webPage;
     WebURLSchemeHandlerIdentifier m_identifier;
 
-    HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebURLSchemeTaskProxy>> m_tasks;
+    HashMap<WebCore::ResourceLoaderIdentifier, Ref<WebURLSchemeTaskProxy>> m_tasks;
 }; // class WebURLSchemeHandlerProxy
 
 } // namespace WebKit

@@ -35,10 +35,9 @@ typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
     SecureContext
-]
-interface GPUCommandEncoder {
+] interface GPUCommandEncoder {
     GPURenderPassEncoder beginRenderPass(GPURenderPassDescriptor descriptor);
-    GPUComputePassEncoder beginComputePass(optional GPUComputePassDescriptor descriptor);
+    GPUComputePassEncoder beginComputePass(optional GPUComputePassDescriptor descriptor = {});
 
     undefined copyBufferToBuffer(
         GPUBuffer source,
@@ -67,10 +66,9 @@ interface GPUCommandEncoder {
         GPUImageCopyTexture destination,
         GPUExtent3D copySize);
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219, second parameter should have default value of 0
     undefined clearBuffer(
         GPUBuffer buffer,
-        optional GPUSize64 offset,
+        optional GPUSize64 offset = 0,
         optional GPUSize64 size);
 
     undefined resolveQuerySet(
@@ -80,7 +78,7 @@ interface GPUCommandEncoder {
         GPUBuffer destination,
         GPUSize64 destinationOffset);
 
-    GPUCommandBuffer finish(optional GPUCommandBufferDescriptor descriptor);
+    GPUCommandBuffer finish(optional GPUCommandBufferDescriptor descriptor = {});
 };
 GPUCommandEncoder includes GPUObjectBase;
 GPUCommandEncoder includes GPUCommandsMixin;

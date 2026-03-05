@@ -178,7 +178,7 @@ struct TextMarkerData {
         zeroBytes(*this);
     }
 
-    TextMarkerData(std::optional<AXID> axTreeID, std::optional<AXID> axObjectID,
+    TextMarkerData(std::optional<AXTreeID> axTreeID, std::optional<AXID> axObjectID,
         unsigned offsetParam = 0,
         Position::AnchorType anchorTypeParam = Position::PositionIsOffsetInAnchor,
         Affinity affinityParam = Affinity::Downstream,
@@ -201,9 +201,9 @@ struct TextMarkerData {
 
     friend bool operator==(const TextMarkerData&, const TextMarkerData&) = default;
 
-    std::optional<AXID> axTreeID() const
+    std::optional<AXTreeID> axTreeID() const
     {
-        return treeID ? std::optional { ObjectIdentifier<AXIDType>(treeID) } : std::nullopt;
+        return treeID ? std::optional { ObjectIdentifier<AXTreeIDType>(treeID) } : std::nullopt;
     }
 
     std::optional<AXID> axObjectID() const
@@ -231,12 +231,12 @@ public:
         : m_data(data)
     { }
     AXTextMarker(TextMarkerData&& data)
-        : m_data(WTFMove(data))
+        : m_data(WTF::move(data))
     { }
 #if PLATFORM(COCOA)
     AXTextMarker(PlatformTextMarkerData);
 #endif
-    AXTextMarker(std::optional<AXID> treeID, std::optional<AXID> objectID, unsigned offset, TextMarkerOrigin origin = TextMarkerOrigin::Unknown)
+    AXTextMarker(std::optional<AXTreeID> treeID, std::optional<AXID> objectID, unsigned offset, TextMarkerOrigin origin = TextMarkerOrigin::Unknown)
         : m_data({ treeID, objectID, offset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, offset, false, origin })
     { }
     AXTextMarker(const AXCoreObject& object, unsigned offset, TextMarkerOrigin origin = TextMarkerOrigin::Unknown)
@@ -250,14 +250,14 @@ public:
     operator VisiblePosition() const;
     operator CharacterOffset() const;
     std::optional<BoundaryPoint> boundaryPoint() const;
-    bool hasSameObjectAndOffset(const AXTextMarker&) const;
+    bool NODELETE hasSameObjectAndOffset(const AXTextMarker&) const;
 
 #if PLATFORM(COCOA)
     RetainPtr<PlatformTextMarkerData> platformData() const;
     operator PlatformTextMarkerData() const { return platformData().autorelease(); }
 #endif
 
-    std::optional<AXID> treeID() const { return m_data.axTreeID(); }
+    std::optional<AXTreeID> treeID() const { return m_data.axTreeID(); }
     std::optional<AXID> objectID() const { return m_data.axObjectID(); }
     unsigned offset() const { return m_data.offset; }
     bool isNull() const { return !treeID() || !objectID(); }
@@ -272,15 +272,16 @@ public:
     bool isDownstream() const { return affinity() == Affinity::Downstream; }
     void setAffinity(Affinity affinity) { m_data.affinity = affinity; }
 
+    String description() const;
     String debugDescription() const;
     TextMarkerOrigin origin() const { return m_data.origin; }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     AXTextMarker toTextRunMarker(std::optional<AXID> stopAtID = std::nullopt) const;
     // True if this marker points to an object with non-empty text runs.
     bool isInTextRun() const;
     AXTextMarker convertToDomOffset() const;
-    void clampOffsetToLengthIfNeeded(unsigned) const;
+    void NODELETE clampOffsetToLengthIfNeeded(unsigned) const;
 
     // Find the next or previous marker, optionally stopping at the given ID and returning an invalid marker.
     AXTextMarker findMarker(AXDirection, CoalesceObjectBreaks = CoalesceObjectBreaks::Yes, IgnoreBRs = IgnoreBRs::No, std::optional<AXID> = std::nullopt, ForceSingleOffsetMovement = ForceSingleOffsetMovement::No) const;
@@ -352,12 +353,12 @@ public:
     CharacterRange characterRangeForLine(unsigned lineIndex) const;
     // The AXTextMarkerRange of the line that is `lineIndex` lines away from the start of this marker.
     AXTextMarkerRange markerRangeForLineIndex(unsigned lineIndex) const;
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     friend bool operator==(const AXTextMarker& a, const AXTextMarker& b) { return a.isEqual(b); }
 
 private:
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     const AXTextRuns* runs() const;
     // Are we at the start or end of a line?
     bool atLineBoundaryForDirection(AXDirection) const;
@@ -367,7 +368,7 @@ private:
     bool atLineEnd() const { return atLineBoundaryForDirection(AXDirection::Next); }
     // True when two nodes are visually the same (i.e. on the boundary of an object)
     bool equivalentTextPosition(const AXTextMarker&) const;
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     TextMarkerData m_data;
 };
@@ -387,14 +388,14 @@ public:
 #if PLATFORM(MAC)
     AXTextMarkerRange(AXTextMarkerRangeRef);
 #endif
-    AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, const CharacterRange&);
-    AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, unsigned offset, unsigned length);
+    AXTextMarkerRange(std::optional<AXTreeID>, std::optional<AXID>, const CharacterRange&);
+    AXTextMarkerRange(std::optional<AXTreeID>, std::optional<AXID>, unsigned offset, unsigned length);
     AXTextMarkerRange() = default;
 
     operator bool() const { return m_start && m_end; }
     operator VisiblePositionRange() const;
     std::optional<SimpleRange> simpleRange() const;
-    std::optional<CharacterRange> characterRange() const;
+    std::optional<CharacterRange> NODELETE characterRange() const;
 
     std::optional<AXTextMarkerRange> intersectionWith(const AXTextMarkerRange&) const;
 
@@ -415,11 +416,11 @@ public:
     AXTextMarker start() const { return m_start; }
     AXTextMarker end() const { return m_end; }
     bool isCollapsed() const { return m_start.isEqual(m_end); }
-    bool isConfinedTo(std::optional<AXID>) const;
+    bool NODELETE isConfinedTo(std::optional<AXID>) const;
     bool isConfined() const;
     String toString(IncludeListMarkerText = IncludeListMarkerText::Yes, IncludeImageAltText = IncludeImageAltText::No) const;
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     // Returns the bounds (frame) of the text in this range relative to the viewport.
     // Analagous to AXCoreObject::relativeFrame().
     FloatRect viewportRelativeFrame() const;
@@ -427,15 +428,16 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> toAttributedString(AXCoreObject::SpellCheck) const;
 #endif // PLATFORM(COCOA)
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
+    String description() const;
     String debugDescription() const;
 private:
     AXTextMarker m_start;
     AXTextMarker m_end;
 };
 
-inline AXTextMarkerRange::AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, const CharacterRange& range)
+inline AXTextMarkerRange::AXTextMarkerRange(std::optional<AXTreeID> treeID, std::optional<AXID> objectID, const CharacterRange& range)
     : AXTextMarkerRange(treeID, objectID, range.location, range.location + range.length)
 { }
 
@@ -459,15 +461,15 @@ inline bool operator>=(const AXTextMarkerRange& range1, const AXTextMarkerRange&
     return range1 == range2 || range1 > range2;
 }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 String listMarkerTextOnSameLine(const AXTextMarker&);
 #endif
 
 namespace Accessibility {
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, std::optional<AXID> stopAtID = std::nullopt, const std::function<void(AXIsolatedObject&)>& exitObject = [] (AXIsolatedObject&) { });
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 } // namespace Accessibility
 

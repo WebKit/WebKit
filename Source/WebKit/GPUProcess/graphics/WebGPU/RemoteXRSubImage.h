@@ -70,7 +70,7 @@ class RemoteXRSubImage final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteXRSubImage> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRSubImage(gpuConnectionToWebProcess, xrSubImage, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteXRSubImage(gpuConnectionToWebProcess, xrSubImage, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteXRSubImage();
@@ -89,19 +89,15 @@ private:
     RemoteXRSubImage& operator=(RemoteXRSubImage&&) = delete;
 
     WebCore::WebGPU::XRSubImage& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::XRSubImage> protectedBacking();
-
-    Ref<IPC::StreamServerConnection> protectedStreamConnection();
-    Ref<RemoteGPU> protectedGPU() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
     void getColorTexture(WebGPUIdentifier);
     void getDepthTexture(WebGPUIdentifier);
 
-    Ref<WebCore::WebGPU::XRSubImage> m_backing;
+    const Ref<WebCore::WebGPU::XRSubImage> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WebGPUIdentifier m_identifier;
     WeakRef<RemoteGPU> m_gpu;

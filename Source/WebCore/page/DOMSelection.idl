@@ -49,7 +49,7 @@
     undefined removeRange(Range range);
     undefined removeAllRanges();
 
-    sequence<StaticRange> getComposedRanges(optional (ShadowRoot or GetComposedRangesOptions) options, ShadowRoot... shadowRoots);
+    sequence<StaticRange> getComposedRanges(optional (ShadowRoot or GetComposedRangesOptions) options = {}, ShadowRoot... shadowRoots);
 
     undefined empty();
 

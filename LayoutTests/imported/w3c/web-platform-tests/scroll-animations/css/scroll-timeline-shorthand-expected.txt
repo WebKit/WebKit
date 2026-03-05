@@ -44,9 +44,11 @@ PASS e.style['scroll-timeline'] = "--abc y, --def" should not set unrelated long
 PASS e.style['scroll-timeline'] = "--abc, --def" should set scroll-timeline-axis
 PASS e.style['scroll-timeline'] = "--abc, --def" should set scroll-timeline-name
 PASS e.style['scroll-timeline'] = "--abc, --def" should not set unrelated longhands
-PASS Shorthand contraction of scroll-timeline-name:--abc:undefined;scroll-timeline-axis:inline:undefined
-PASS Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, block:undefined
-PASS Shorthand contraction of scroll-timeline-name:none, none:undefined;scroll-timeline-axis:block, block:undefined
-PASS Shorthand contraction of scroll-timeline-name:--a, --b, --c:undefined;scroll-timeline-axis:inline, inline:undefined
-PASS Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, inline, inline:undefined
+PASS Shorthand contraction of scroll-timeline-name:--abc;scroll-timeline-axis:inline
+PASS Shorthand contraction of scroll-timeline-name:--a, --b;scroll-timeline-axis:inline, block
+PASS Shorthand contraction of scroll-timeline-name:none, none;scroll-timeline-axis:block, block
+PASS Shorthand contraction of scroll-timeline-name:--a, --b, --c;scroll-timeline-axis:inline, inline
+PASS Shorthand contraction of scroll-timeline-name:--a, --b;scroll-timeline-axis:inline, inline, inline
+PASS Shorthand contraction of scroll-timeline-name:--a, --b
+PASS Shorthand contraction of scroll-timeline-axis:inline, inline
 

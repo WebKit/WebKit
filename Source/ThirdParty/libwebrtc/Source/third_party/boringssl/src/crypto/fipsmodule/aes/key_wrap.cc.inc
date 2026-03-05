@@ -41,7 +41,7 @@ int AES_wrap_key(const AES_KEY *key, const uint8_t *iv, uint8_t *out,
     return -1;
   }
 
-  if (iv == NULL) {
+  if (iv == nullptr) {
     iv = kDefaultIV;
   }
 
@@ -113,7 +113,7 @@ int AES_unwrap_key(const AES_KEY *key, const uint8_t *iv, uint8_t *out,
     return -1;
   }
 
-  if (iv == NULL) {
+  if (iv == nullptr) {
     iv = kDefaultIV;
   }
   if (CRYPTO_memcmp(calculated_iv, iv, 8) != 0) {
@@ -152,7 +152,7 @@ int AES_wrap_key_padded(const AES_KEY *key, uint8_t *out, size_t *out_len,
   }
 
   uint8_t *padded_in = reinterpret_cast<uint8_t *>(OPENSSL_malloc(padded_len));
-  if (padded_in == NULL) {
+  if (padded_in == nullptr) {
     return 0;
   }
   assert(padded_len >= 8);

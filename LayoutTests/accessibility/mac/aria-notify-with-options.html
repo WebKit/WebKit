@@ -18,22 +18,22 @@ function notificationCallback(object, notification, userInfo) {
     if (notification == "AXAnnouncementRequested") {
         output += `Received announcement request:\n`;
         output += formatAriaNotifyUserInfo(userInfo);
-        notificationCount++;  
+        notificationCount++;
+
+        if (notificationCount == 1) {
+            // Specify both a priority and interrupt.
+            document.ariaNotify("Chicago", { priority: "high", interrupt: "all" });
+        }
+
+        if (notificationCount == 2)
+            document.getElementById("button").ariaNotify("Boston", { priority: "high", interrupt: "pending" });
+
+        if (notificationCount == 3)
+            document.getElementById("button").ariaNotify("Boston", { priority: "high" });
+
+        if (notificationCount == 4)
+            testFinished = true;
     }
-
-    if (notificationCount == 1) {
-        // Specify both a priority and interrupt.
-        document.ariaNotify("Chicago", { priority: "high", interrupt: "all" });
-    }
-
-    if (notificationCount == 2)
-        document.getElementById("button").ariaNotify("Boston", { priority: "high", interrupt: "pending" });
-
-    if (notificationCount == 3)
-        document.getElementById("button").ariaNotify("Boston", { priority: "high" });
-	
-    if (notificationCount == 4)
-        testFinished = true;
 }
 
 if (accessibilityController) {

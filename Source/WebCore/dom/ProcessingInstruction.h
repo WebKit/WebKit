@@ -32,7 +32,7 @@ class StyleSheet;
 class CSSStyleSheet;
 
 class ProcessingInstruction final : public CharacterData, private CachedStyleSheetClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProcessingInstruction);
+    WTF_MAKE_TZONE_ALLOCATED(ProcessingInstruction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProcessingInstruction);
 public:
     USING_CAN_MAKE_WEAKPTR(CharacterData);
@@ -40,13 +40,16 @@ public:
     static Ref<ProcessingInstruction> create(Document&, String&& target, String&& data);
     virtual ~ProcessingInstruction();
 
+    // CachedResourceClient.
+    void ref() const final { CharacterData::ref(); }
+    void deref() const final { CharacterData::deref(); }
+
     const String& target() const { return m_target; }
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
     const String& localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
-    RefPtr<StyleSheet> protectedSheet() const;
 
     bool isCSS() const { return m_isCSS; }
 #if ENABLE(XSLT)
@@ -96,5 +99,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ProcessingInstruction)
-    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::Node::PROCESSING_INSTRUCTION_NODE; }
+    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::NodeType::ProcessingInstruction; }
 SPECIALIZE_TYPE_TRAITS_END()

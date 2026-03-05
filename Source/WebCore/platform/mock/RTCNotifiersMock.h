@@ -47,8 +47,8 @@ public:
     void fire() override;
 
 private:
-    RefPtr<RTCSessionDescriptionRequest> m_request;
-    RefPtr<RTCSessionDescriptionDescriptor> m_descriptor;
+    const RefPtr<RTCSessionDescriptionRequest> m_request;
+    const RefPtr<RTCSessionDescriptionDescriptor> m_descriptor;
     String m_errorName;
 };
 
@@ -59,7 +59,7 @@ public:
     void fire() override;
 
 private:
-    RefPtr<RTCVoidRequest> m_request;
+    const RefPtr<RTCVoidRequest> m_request;
     bool m_success;
     String m_errorName;
 };

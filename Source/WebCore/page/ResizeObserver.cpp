@@ -44,19 +44,19 @@ namespace WebCore {
 
 Ref<ResizeObserver> ResizeObserver::create(Document& document, Ref<ResizeObserverCallback>&& callback)
 {
-    return adoptRef(*new ResizeObserver(document, { RefPtr<ResizeObserverCallback> { WTFMove(callback) } }));
+    return adoptRef(*new ResizeObserver(document, { WTF::move(callback) }));
 }
 
 Ref<ResizeObserver> ResizeObserver::createNativeObserver(Document& document, NativeResizeObserverCallback&& nativeCallback)
 {
-    return adoptRef(*new ResizeObserver(document, { WTFMove(nativeCallback) }));
+    return adoptRef(*new ResizeObserver(document, { WTF::move(nativeCallback) }));
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ResizeObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResizeObserver);
 
 ResizeObserver::ResizeObserver(Document& document, JSOrNativeResizeObserverCallback&& callback)
     : m_document(document)
-    , m_JSOrNativeCallback(WTFMove(callback))
+    , m_JSOrNativeCallback(WTF::move(callback))
 {
 }
 
@@ -149,7 +149,7 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
                 m_activeObservations.append(observation.get());
                 {
                     Locker locker { m_observationTargetsLock };
-                    m_activeObservationTargets.append(*observation->protectedTarget());
+                    m_activeObservationTargets.append(*protect(observation->target()));
                 }
                 minObservedDepth = std::min(depth, minObservedDepth);
             } else
@@ -174,7 +174,7 @@ void ResizeObserver::deliverObservations()
 
     // Use GCReachableRef here to make sure the targets and their JS wrappers are kept alive while we deliver.
     // It is important since m_activeObservationTargets / m_targetsWaitingForFirstObservation will get cleared and
-    // thus JSResizeObserver::visitAdditionalChildren() won't be able to visit them on the GC thread.
+    // thus JSResizeObserver::visitAdditionalChildren() won't be able to visit them on a GC thread.
     Vector<GCReachableRef<Element>> activeObservationTargets;
     Vector<GCReachableRef<Element>> targetsWaitingForFirstObservation;
     {
@@ -202,7 +202,7 @@ void ResizeObserver::deliverObservations()
 
     // FIXME: The JSResizeObserver wrapper should be kept alive as long as the resize observer can fire events.
     ASSERT(isJSCallback());
-    auto jsCallback = std::get<RefPtr<ResizeObserverCallback>>(m_JSOrNativeCallback);
+    auto jsCallback = std::get<Ref<ResizeObserverCallback>>(m_JSOrNativeCallback);
     ASSERT(jsCallback->hasCallback());
     if (!jsCallback->hasCallback())
         return;
@@ -219,7 +219,7 @@ void ResizeObserver::deliverObservations()
 bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
     for (auto& observation : m_observations) {
-        if (auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
             return true;
     }
 
@@ -231,7 +231,7 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
             return true;
     }
     for (const auto& weakTarget : m_targetsWaitingForFirstObservation) {
-        if (auto* element = weakTarget.get(); element && containsWebCoreOpaqueRoot(visitor, element))
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* element = weakTarget.get(); element && containsWebCoreOpaqueRoot(visitor, element))
             return true;
     }
     return false;
@@ -250,7 +250,7 @@ bool ResizeObserver::removeTarget(Element& target)
 void ResizeObserver::removeAllTargets()
 {
     for (auto& observation : m_observations) {
-        bool removed = removeTarget(*observation->protectedTarget());
+        bool removed = removeTarget(*protect(observation->target()));
         ASSERT_UNUSED(removed, removed);
     }
     {
@@ -277,7 +277,7 @@ bool ResizeObserver::removeObservation(const Element& target)
 
 bool ResizeObserver::isJSCallback()
 {
-    return std::holds_alternative<RefPtr<ResizeObserverCallback>>(m_JSOrNativeCallback);
+    return std::holds_alternative<Ref<ResizeObserverCallback>>(m_JSOrNativeCallback);
 }
 
 bool ResizeObserver::isNativeCallback()
@@ -288,12 +288,13 @@ bool ResizeObserver::isNativeCallback()
 ResizeObserverCallback* ResizeObserver::callbackConcurrently()
 {
     return WTF::switchOn(m_JSOrNativeCallback,
-    [] (const RefPtr<ResizeObserverCallback>& jsCallback) -> ResizeObserverCallback* {
-        return jsCallback.get();
-    },
-    [] (const NativeResizeObserverCallback&) -> ResizeObserverCallback* {
-        return nullptr;
-    });
+        [](const Ref<ResizeObserverCallback>& jsCallback) -> ResizeObserverCallback* {
+            return jsCallback.ptr();
+        },
+        [](const NativeResizeObserverCallback&) -> ResizeObserverCallback* {
+            return nullptr;
+        }
+    );
 }
 
 void ResizeObserver::resetObservationSize(Element& target)

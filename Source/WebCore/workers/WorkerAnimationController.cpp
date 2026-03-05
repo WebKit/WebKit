@@ -88,7 +88,7 @@ WorkerAnimationController::CallbackId WorkerAnimationController::requestAnimatio
     WorkerAnimationController::CallbackId callbackId = ++m_nextAnimationCallbackId;
     callback->m_firedOrCancelled = false;
     callback->m_id = callbackId;
-    m_animationCallbacks.append(WTFMove(callback));
+    m_animationCallbacks.append(WTF::move(callback));
 
     InspectorInstrumentation::didRequestAnimationFrame(m_workerGlobalScope.get(), callbackId);
 
@@ -116,14 +116,14 @@ void WorkerAnimationController::scheduleAnimation()
         return;
 
     Seconds animationInterval = RequestAnimationFrameCallback::fullSpeedAnimationInterval;
-    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(m_workerGlobalScope->protectedPerformance()->now() - m_lastAnimationFrameTimestamp), 0_s);
+    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(protect(m_workerGlobalScope->performance())->now() - m_lastAnimationFrameTimestamp), 0_s);
 
     m_animationTimer.startOneShot(scheduleDelay);
 }
 
 void WorkerAnimationController::animationTimerFired()
 {
-    m_lastAnimationFrameTimestamp = m_workerGlobalScope->protectedPerformance()->now();
+    m_lastAnimationFrameTimestamp = protect(m_workerGlobalScope->performance())->now();
     serviceRequestAnimationFrameCallbacks(m_lastAnimationFrameTimestamp);
 }
 

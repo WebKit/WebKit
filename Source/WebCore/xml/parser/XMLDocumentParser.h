@@ -53,7 +53,7 @@ public:
     static Ref<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void* userData);
     XMLParserContext() = delete;
     ~XMLParserContext();
-    xmlParserCtxtPtr context() const { return m_context; }
+    xmlParserCtxtPtr context() const LIFETIME_BOUND { return m_context; }
 
 private:
     XMLParserContext(xmlParserCtxtPtr context)
@@ -74,7 +74,7 @@ public:
     }
     static Ref<XMLDocumentParser> create(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
     {
-        return adoptRef(*new XMLDocumentParser(fragment, WTFMove(prefixToNamespaceMap), defaultNamespaceURI, parserContentPolicy));
+        return adoptRef(*new XMLDocumentParser(fragment, WTF::move(prefixToNamespaceMap), defaultNamespaceURI, parserContentPolicy));
     }
 
     XMLDocumentParser() = delete;
@@ -153,8 +153,6 @@ private:
 
     void doWrite(const String&);
     void doEnd();
-
-    RefPtr<Text> protectedLeafTextNode() const { return m_leafTextNode; }
 
     xmlParserCtxtPtr context() const { return m_context ? m_context->context() : nullptr; };
 

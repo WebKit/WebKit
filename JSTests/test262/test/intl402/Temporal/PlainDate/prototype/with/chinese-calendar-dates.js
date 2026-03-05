@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal.plaindate.with
+esid: sec-temporal.plaindate.prototype.with
 description: Test `with` with Chinese calendar
 features: [Temporal]
 includes: [temporalHelpers.js]

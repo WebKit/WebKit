@@ -57,6 +57,22 @@ class OrdinalNumber;
 
 namespace WebCore {
 
+// CodePosition captures source file location for CSP violation reporting.
+// This is used to preserve source location across async boundaries (e.g., microtasks).
+struct CodePosition {
+    String sourceURL;
+    OrdinalNumber line;
+    OrdinalNumber column;
+
+    CodePosition() = default;
+    CodePosition(const String& url, OrdinalNumber l, OrdinalNumber c)
+        : sourceURL(url), line(l), column(c) { }
+    CodePosition(const String& url, const TextPosition& pos)
+        : sourceURL(url), line(pos.m_line), column(pos.m_column) { }
+
+    bool isEmpty() const { return sourceURL.isEmpty() && line == OrdinalNumber::beforeFirst(); }
+};
+
 class ContentSecurityPolicyDirective;
 class ContentSecurityPolicyDirectiveList;
 class ContentSecurityPolicySource;
@@ -141,7 +157,7 @@ public:
 
     bool allowFrameAncestors(const LocalFrame&, const URL&, bool overrideContentSecurityPolicy = false) const;
     WEBCORE_EXPORT bool allowFrameAncestors(const Vector<Ref<SecurityOrigin>>& ancestorOrigins, const URL&, bool overrideContentSecurityPolicy = false) const;
-    WEBCORE_EXPORT bool overridesXFrameOptions() const;
+    WEBCORE_EXPORT bool NODELETE overridesXFrameOptions() const;
 
     enum class RedirectResponseReceived : bool { No, Yes };
     WEBCORE_EXPORT bool allowScriptFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL(), const String& = nullString(), const String& nonce = nullString()) const;
@@ -166,7 +182,7 @@ public:
     bool requireTrustedTypesForSinkGroup(const String& sinkGroup, IncludeReportOnlyPolicies = IncludeReportOnlyPolicies::Yes) const;
     bool allowMissingTrustedTypesForSinkGroup(const String& stringContext, const String& sink, const String& sinkGroup, StringView source) const;
 
-    void setOverrideAllowInlineStyle(bool);
+    void NODELETE setOverrideAllowInlineStyle(bool);
 
     void gatherReportURIs(DOMStringList&) const;
 
@@ -212,7 +228,7 @@ public:
     }
 
     // Used by ContentSecurityPolicySource
-    const String& selfProtocol() const { return m_selfSourceProtocol; };
+    const String& selfProtocol() const LIFETIME_BOUND { return m_selfSourceProtocol; };
 
     void setUpgradeInsecureRequests(bool);
     bool upgradeInsecureRequests() const { return m_upgradeInsecureRequests; }
@@ -234,13 +250,17 @@ public:
 
     bool isHeaderDelivered() const { return m_isHeaderDelivered; }
 
-    const String& evalErrorMessage() const { return m_lastPolicyEvalDisabledErrorMessage; }
-    const String& webAssemblyErrorMessage() const { return m_lastPolicyWebAssemblyDisabledErrorMessage; }
+    const String& evalErrorMessage() const LIFETIME_BOUND { return m_lastPolicyEvalDisabledErrorMessage; }
+    const String& webAssemblyErrorMessage() const LIFETIME_BOUND { return m_lastPolicyWebAssemblyDisabledErrorMessage; }
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
-    const HashAlgorithmSetCollection& hashesToReport();
+    const HashAlgorithmSetCollection& hashesToReport() LIFETIME_BOUND;
 
     void setIsReportingToConsoleEnabled(bool value) { m_isReportingToConsoleEnabled = value; }
+
+    // Captures the current JavaScript source location from the call stack.
+    // Used to preserve source location across async boundaries for CSP violation reporting.
+    WEBCORE_EXPORT static std::optional<CodePosition> getCurrentCodePosition();
 
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const OrdinalNumber& contextLine = OrdinalNumber::beforeFirst(), const OrdinalNumber& contextColumn = OrdinalNumber::beforeFirst(), JSC::JSGlobalObject* = nullptr) const;
@@ -264,7 +284,7 @@ private:
     bool allPoliciesWithDispositionAllow(Disposition, ViolatedDirectiveCallback&&, Predicate&&, Args&&...) const;
 
     template<typename Predicate, typename... Args>
-    bool allPoliciesAllow(NOESCAPE const ViolatedDirectiveCallback&, Predicate&&, Args&&...) const WARN_UNUSED_RETURN;
+    [[nodiscard]] bool allPoliciesAllow(NOESCAPE const ViolatedDirectiveCallback&, Predicate&&, Args&&...) const;
     bool shouldPerformEarlyCSPCheck() const;
     
     using ResourcePredicate = const ContentSecurityPolicyDirective *(ContentSecurityPolicyDirectiveList::*)(const URL &, bool) const;

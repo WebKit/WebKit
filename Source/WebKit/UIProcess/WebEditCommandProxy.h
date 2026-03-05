@@ -42,7 +42,7 @@ class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditComman
 public:
     static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, String&& label, WebPageProxy& page)
     {
-        return adoptRef(*new WebEditCommandProxy(commandID, WTFMove(label), page));
+        return adoptRef(*new WebEditCommandProxy(commandID, WTF::move(label), page));
     }
     ~WebEditCommandProxy();
 

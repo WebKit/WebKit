@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OffscreenCanvasRenderingContext2D);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OffscreenCanvasRenderingContext2D);
 
 bool OffscreenCanvasRenderingContext2D::enabledForContext(ScriptExecutionContext& context)
 {
@@ -64,7 +64,7 @@ bool OffscreenCanvasRenderingContext2D::enabledForContext(ScriptExecutionContext
 
 std::unique_ptr<OffscreenCanvasRenderingContext2D> OffscreenCanvasRenderingContext2D::create(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings)
 {
-    auto renderingContext = std::unique_ptr<OffscreenCanvasRenderingContext2D>(new OffscreenCanvasRenderingContext2D(canvas, WTFMove(settings)));
+    auto renderingContext = std::unique_ptr<OffscreenCanvasRenderingContext2D>(new OffscreenCanvasRenderingContext2D(canvas, WTF::move(settings)));
 
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
 
@@ -72,7 +72,7 @@ std::unique_ptr<OffscreenCanvasRenderingContext2D> OffscreenCanvasRenderingConte
 }
 
 OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings)
-    : CanvasRenderingContext2DBase(canvas, Type::Offscreen2D, WTFMove(settings), false)
+    : CanvasRenderingContext2DBase(canvas, Type::Offscreen2D, WTF::move(settings), false)
 {
 }
 
@@ -117,7 +117,7 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     fontDescription.setSpecifiedSize(DefaultFontSize);
     fontDescription.setComputedSize(DefaultFontSize);
 
-    if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), context)) {
+    if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), context)) {
         ASSERT(context->cssFontSelector());
         modifiableState().font.initialize(*context->cssFontSelector(), *fontCascade);
 
@@ -130,15 +130,20 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
 
 RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
 {
-    if (!canvasBase().hasCreatedImageBuffer())
-        return canvasBase().allocateImageBuffer();
-    auto* buffer = canvasBase().buffer();
+    if (!hasCreatedImageBuffer())
+        return allocateImageBuffer();
+    RefPtr buffer = this->buffer();
     if (!buffer)
         return nullptr;
     // As the canvas context state is stored in GraphicsContext, which is owned
     // by buffer(), to avoid resetting the context state, we have to make a copy and
     // clear the original buffer rather than returning the original buffer.
     RefPtr result = buffer->clone();
+#if USE(SKIA)
+    // Ensure GPU commands are flushed before the ImageBuffer may be transferred cross-thread.
+    if (result)
+        result->flushDrawingContext();
+#endif
     clearCanvas();
     return result;
 }

@@ -33,9 +33,10 @@
     RetainPtr<NSImage> _draggedImage;
     RetainPtr<NSPasteboard> _draggingPasteboard;
     RetainPtr<id> _draggingSource;
+    int _draggingSequenceNumber;
 }
 
-- (id)initWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source;
+- (id)initWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source sequenceNumber:(int)sequenceNumber;
 
 - (NSWindow *)draggingDestinationWindow;
 - (NSDragOperation)draggingSourceOperationMask;

@@ -55,8 +55,8 @@ inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() const &
 
 inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() &&
 {
-    auto copy = WTFMove(*this);
-    copy.protocol = WTFMove(copy.protocol).isolatedCopy();
+    auto copy = WTF::move(*this);
+    copy.protocol = WTF::move(copy.protocol).isolatedCopy();
     return copy;
 }
 

@@ -99,3 +99,56 @@
         stroke-opacity: var(--stroke-opacity) / 2;
     }
 }
+
+.color-square > .contrast-lines-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.color-square > .contrast-lines-svg > .contrast-line {
+    fill: none;
+    stroke-width: 1px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.color-square > .contrast-lines-svg > .contrast-line.contrast-aa-threshold {
+    stroke: white;
+    stroke-opacity: 0.8;
+}
+
+.color-square > .contrast-lines-svg > .contrast-line.contrast-aaa-threshold {
+    stroke: white;
+    stroke-opacity: 0.6;
+}
+
+.color-square > .contrast-label {
+    position: absolute;
+    padding: 1px 3px;
+    font-size: 9px;
+    font-weight: bold;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 2;
+    color: white;
+    text-shadow: 0 0 2px black;
+}
+
+.color-square > .contrast-label.contrast-aa-label {
+    opacity: 0.9;
+}
+
+.color-square > .contrast-label.contrast-aaa-label {
+    opacity: 0.7;
+}
+
+@media (prefers-color-scheme: dark) {
+    .color-square > .contrast-label {
+        text-shadow: 0 0 2px white;
+    }
+}

@@ -4,64 +4,64 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 310x17
+        RenderText {#text} at (0,0) size 310x18
           text run at (0,0) width 310: "Test shrink-to-fit width for floating elements (see "
-        RenderInline {A} at (309,0) size 98x17 [color=#0000EE]
-          RenderText {#text} at (309,0) size 98x17
+        RenderInline {A} at (309,0) size 98x18 [color=#0000EE]
+          RenderText {#text} at (309,0) size 98x18
             text run at (309,0) width 98: "CSS 2.1 10.3.5"
-        RenderText {#text} at (406,0) size 10x17
+        RenderText {#text} at (406,0) size 10x18
           text run at (406,0) width 10: ")."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 196x17
+        RenderText {#text} at (0,0) size 196x18
           text run at (0,0) width 196: "Shrink-to-fit width is min(max("
-        RenderInline {I} at (196,0) size 161x17
-          RenderText {#text} at (196,0) size 161x17
+        RenderInline {I} at (196,0) size 161x18
+          RenderText {#text} at (196,0) size 161x18
             text run at (196,0) width 161: "preferred minimum width"
-        RenderText {#text} at (356,0) size 9x17
+        RenderText {#text} at (356,0) size 9x18
           text run at (356,0) width 9: ", "
-        RenderInline {I} at (364,0) size 98x17
-          RenderText {#text} at (364,0) size 98x17
+        RenderInline {I} at (364,0) size 98x18
+          RenderText {#text} at (364,0) size 98x18
             text run at (364,0) width 98: "available width"
-        RenderText {#text} at (461,0) size 14x17
+        RenderText {#text} at (461,0) size 14x18
           text run at (461,0) width 14: "), "
-        RenderInline {I} at (474,0) size 98x17
-          RenderText {#text} at (474,0) size 98x17
+        RenderInline {I} at (474,0) size 98x18
+          RenderText {#text} at (474,0) size 98x18
             text run at (474,0) width 98: "preferred width"
-        RenderText {#text} at (0,0) size 773x35
+        RenderText {#text} at (0,0) size 773x36
           text run at (571,0) width 14: "). "
           text run at (584,0) width 189: "In the following cases (except"
           text run at (0,18) width 58: "the \x{201C}x\x{201D}), "
-        RenderInline {I} at (58,18) size 161x17
-          RenderText {#text} at (58,18) size 161x17
+        RenderInline {I} at (58,18) size 161x18
+          RenderText {#text} at (58,18) size 161x18
             text run at (58,18) width 161: "preferred minimum width"
-        RenderText {#text} at (218,18) size 18x17
+        RenderText {#text} at (218,18) size 18x18
           text run at (218,18) width 18: " < "
-        RenderInline {I} at (235,18) size 98x17
-          RenderText {#text} at (235,18) size 98x17
+        RenderInline {I} at (235,18) size 98x18
+          RenderText {#text} at (235,18) size 98x18
             text run at (235,18) width 98: "available width"
-        RenderText {#text} at (332,18) size 18x17
+        RenderText {#text} at (332,18) size 18x18
           text run at (332,18) width 18: " < "
-        RenderInline {I} at (349,18) size 98x17
-          RenderText {#text} at (349,18) size 98x17
+        RenderInline {I} at (349,18) size 98x18
+          RenderText {#text} at (349,18) size 98x18
             text run at (349,18) width 98: "preferred width"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,86) size 100x236
         RenderBlock (floating) {DIV} at (0,0) size 100x42 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 61x35
+          RenderText {#text} at (3,3) size 61x36
             text run at (3,3) width 61: "longword"
             text run at (3,21) width 61: "longword"
         RenderBlock {DIV} at (0,42) size 100x10
         RenderBlock (floating) {DIV} at (0,52) size 100x42 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 61x35
+          RenderText {#text} at (3,3) size 61x36
             text run at (3,3) width 61: "longword"
             text run at (3,21) width 61: "longword"
         RenderBlock {DIV} at (0,94) size 100x10
         RenderBlock (floating) {DIV} at (0,104) size 100x42 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 61x35
+          RenderText {#text} at (3,3) size 61x36
             text run at (3,3) width 61: "longword"
             text run at (3,21) width 61: "longword"
         RenderBlock (floating) {DIV} at (86,146) size 14x24 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 8x17
+          RenderText {#text} at (3,3) size 8x18
             text run at (3,3) width 8: "x"
         RenderBlock {DIV} at (0,170) size 100x10
         RenderBlock (floating) {DIV} at (0,180) size 100x46 [border: (3px solid #000000)]

@@ -285,11 +285,21 @@ bool ssl_client_hello_decrypt(SSL_HANDSHAKE *hs, uint8_t *out_alert,
 
   // We assert with |uintptr_t| because the comparison would be UB if they
   // didn't alias.
+  // - |payload| must be contained in |extensions|.
   assert(reinterpret_cast<uintptr_t>(client_hello_outer->extensions) <=
          reinterpret_cast<uintptr_t>(payload.data()));
   assert(reinterpret_cast<uintptr_t>(client_hello_outer->extensions +
                                      client_hello_outer->extensions_len) >=
          reinterpret_cast<uintptr_t>(payload.data() + payload.size()));
+  // - |extensions| must be contained in |client_hello|.
+  assert(reinterpret_cast<uintptr_t>(client_hello_outer->client_hello) <=
+         reinterpret_cast<uintptr_t>(client_hello_outer->extensions));
+  assert(reinterpret_cast<uintptr_t>(client_hello_outer->client_hello +
+                                     client_hello_outer->client_hello_len) >=
+         reinterpret_cast<uintptr_t>(client_hello_outer->extensions +
+                                     client_hello_outer->extensions_len));
+  // From this then follows that |aad|, being a copy of |client_hello|, contains
+  // the |payload| byte range as well.
   Span<uint8_t> payload_aad = Span(aad).subspan(
       payload.data() - client_hello_outer->client_hello, payload.size());
   OPENSSL_memset(payload_aad.data(), 0, payload_aad.size());
@@ -584,7 +594,7 @@ bool ECHServerConfig::SetupContext(EVP_HPKE_CTX *ctx, uint16_t kdf_id,
   }
 
   assert(kdf_id == EVP_HPKE_HKDF_SHA256);
-  assert(get_ech_aead(aead_id) != NULL);
+  assert(get_ech_aead(aead_id) != nullptr);
   return EVP_HPKE_CTX_setup_recipient(ctx, key_.get(), EVP_hpke_hkdf_sha256(),
                                       get_ech_aead(aead_id), enc.data(),
                                       enc.size(), CBB_data(info_cbb.get()),

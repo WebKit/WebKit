@@ -37,7 +37,7 @@ namespace WebCore {
 
 ExceptionOr<Ref<XPathExpression>> XPathEvaluator::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver)
 {
-    return XPathExpression::createExpression(expression, WTFMove(resolver));
+    return XPathExpression::createExpression(expression, WTF::move(resolver));
 }
 
 Ref<XPathNSResolver> XPathEvaluator::createNSResolver(Node& nodeResolver)
@@ -50,7 +50,7 @@ ExceptionOr<Ref<XPathResult>> XPathEvaluator::evaluate(const String& expression,
     if (!XPath::isValidContextNode(contextNode))
         return Exception { ExceptionCode::NotSupportedError };
 
-    auto createResult = createExpression(expression, WTFMove(resolver));
+    auto createResult = createExpression(expression, WTF::move(resolver));
     if (createResult.hasException())
         return createResult.releaseException();
 

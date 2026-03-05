@@ -68,12 +68,12 @@ template<typename> class ExceptionOr;
 
 using OffscreenRenderingContext = Variant<
 #if ENABLE(WEBGL)
-    RefPtr<WebGLRenderingContext>,
-    RefPtr<WebGL2RenderingContext>,
+    Ref<WebGLRenderingContext>,
+    Ref<WebGL2RenderingContext>,
 #endif
-    RefPtr<GPUCanvasContext>,
-    RefPtr<ImageBitmapRenderingContext>,
-    RefPtr<OffscreenCanvasRenderingContext2D>
+    Ref<GPUCanvasContext>,
+    Ref<ImageBitmapRenderingContext>,
+    Ref<OffscreenCanvasRenderingContext2D>
 >;
 
 class PlaceholderRenderingContext;
@@ -87,9 +87,9 @@ class DetachedOffscreenCanvas {
 public:
     DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&);
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
-    const IntSize& size() const { return m_size; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
     bool originClean() const { return m_originClean; }
-    RefPtr<PlaceholderRenderingContextSource> takePlaceholderSource();
+    RefPtr<PlaceholderRenderingContextSource> NODELETE takePlaceholderSource();
 
 private:
     RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
@@ -98,7 +98,7 @@ private:
 };
 
 class OffscreenCanvas final : public ActiveDOMObject, public CanvasBase, public RefCounted<OffscreenCanvas>, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
 public:
     struct ImageEncodeOptions {
         String type = "image/png"_s;
@@ -127,8 +127,7 @@ public:
 
     void setWidth(unsigned);
     void setHeight(unsigned);
-
-    void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
+    void setSizeForControllingContext(IntSize) final;
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
@@ -145,7 +144,7 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    bool canDetach() const;
+    bool NODELETE canDetach() const;
     std::unique_ptr<DetachedOffscreenCanvas> detach();
 
     void commitToPlaceholderCanvas();
@@ -166,8 +165,7 @@ private:
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
 
-    void didUpdateSizeProperties();
-    void createImageBuffer() const final;
+    void didUpdateSizeProperties(bool sizeChanged);
 
     void scheduleCommitToPlaceholderCanvas();
 
@@ -180,6 +178,9 @@ private:
 
 }
 
-SPECIALIZE_TYPE_TRAITS_CANVAS(WebCore::OffscreenCanvas, isOffscreenCanvas())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::OffscreenCanvas)
+    static bool isType(const WebCore::CanvasBase& base) { return base.isOffscreenCanvas(); }
+    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::EventTargetInterfaceType::OffscreenCanvas; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

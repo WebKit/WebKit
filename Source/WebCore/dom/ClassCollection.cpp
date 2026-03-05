@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ClassCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClassCollection);
 
 Ref<ClassCollection> ClassCollection::create(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
 {

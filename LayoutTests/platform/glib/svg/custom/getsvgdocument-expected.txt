@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 766x35
+        RenderText {#text} at (0,0) size 766x36
           text run at (0,0) width 766: "This tests to see if HTMLEmbedElement.getSVGDocument() and HTMLObjectElement.getSVGDocument() work. You"
           text run at (0,18) width 300: "should see SUCCESS printed twice below this:"
       RenderBlock (anonymous) at (0,52) size 784x58
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                 RenderSVGInlineText {#text} at (0,0) size 71x17
                   chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 71.00: "SUCCESS"
         RenderBR {BR} at (85,6) size 0x17
-        RenderBR {BR} at (0,20) size 0x17
+        RenderBR {BR} at (0,20) size 0x18
         RenderEmbeddedObject {OBJECT} at (0,38) size 85x20
           layer at (0,0) size 85x20
             RenderView at (0,0) size 85x20

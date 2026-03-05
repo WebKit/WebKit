@@ -213,9 +213,9 @@ class DriverTest(unittest.TestCase):
         port._config.build_directory = lambda configuration: '/mock-build'
         driver = Driver(port, 0, pixel_tests=True, no_timeout=True)
         if sys.platform.startswith('win'):
-            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree.exe', '--no-timeout', '-'])
+            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner.exe', '--no-timeout', '-'])
         else:
-            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree', '--no-timeout', '-'])
+            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner', '--no-timeout', '-'])
 
     def test_check_for_driver_crash(self):
         port = TestWebKitPort()

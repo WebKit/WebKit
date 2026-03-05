@@ -42,8 +42,8 @@ public:
 
     WTF::String title() const { return m_store.title; }
     WTF::String url() const { return m_store.url; }
-    const WebCore::ResourceRequest& originalRequest() const { return m_store.originalRequest; }
-    const WebCore::ResourceResponse& response() const { return m_store.response; }
+    const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_store.originalRequest; }
+    const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_store.response; }
 
 private:
     explicit NavigationData(const WebKit::WebNavigationDataStore&);

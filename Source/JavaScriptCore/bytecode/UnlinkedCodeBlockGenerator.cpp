@@ -56,19 +56,19 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> i
     ASSERT(instructions);
     {
         Locker locker { m_codeBlock->cellLock() };
-        m_codeBlock->m_instructions = WTFMove(instructions);
+        m_codeBlock->m_instructions = WTF::move(instructions);
         m_codeBlock->allocateSharedProfiles(m_numBinaryArithProfiles, m_numUnaryArithProfiles);
         m_codeBlock->m_metadata->finalize();
 
-        m_codeBlock->m_jumpTargets = WTFMove(m_jumpTargets);
-        m_codeBlock->m_identifiers = WTFMove(m_identifiers);
-        m_codeBlock->m_constantRegisters = WTFMove(m_constantRegisters);
-        m_codeBlock->m_constantsSourceCodeRepresentation = WTFMove(m_constantsSourceCodeRepresentation);
-        m_codeBlock->m_functionDecls = WTFMove(m_functionDecls);
-        m_codeBlock->m_functionExprs = WTFMove(m_functionExprs);
+        m_codeBlock->m_jumpTargets = WTF::move(m_jumpTargets);
+        m_codeBlock->m_identifiers = WTF::move(m_identifiers);
+        m_codeBlock->m_constantRegisters = WTF::move(m_constantRegisters);
+        m_codeBlock->m_constantsSourceCodeRepresentation = WTF::move(m_constantsSourceCodeRepresentation);
+        m_codeBlock->m_functionDecls = WTF::move(m_functionDecls);
+        m_codeBlock->m_functionExprs = WTF::move(m_functionExprs);
         m_codeBlock->m_expressionInfo = m_expressionInfoEncoder.createExpressionInfo();
 
-        m_codeBlock->m_outOfLineJumpTargets = WTFMove(m_outOfLineJumpTargets);
+        m_codeBlock->m_outOfLineJumpTargets = WTF::move(m_outOfLineJumpTargets);
 
         if (!m_codeBlock->m_rareData) {
             if (!m_exceptionHandlers.isEmpty()
@@ -81,13 +81,13 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> i
                 m_codeBlock->createRareDataIfNecessary(locker);
         }
         if (m_codeBlock->m_rareData) {
-            m_codeBlock->m_rareData->m_exceptionHandlers = WTFMove(m_exceptionHandlers);
-            m_codeBlock->m_rareData->m_unlinkedSwitchJumpTables = WTFMove(m_unlinkedSwitchJumpTables);
-            m_codeBlock->m_rareData->m_unlinkedStringSwitchJumpTables = WTFMove(m_unlinkedStringSwitchJumpTables);
-            m_codeBlock->m_rareData->m_typeProfilerInfoMap = WTFMove(m_typeProfilerInfoMap);
-            m_codeBlock->m_rareData->m_opProfileControlFlowBytecodeOffsets = WTFMove(m_opProfileControlFlowBytecodeOffsets);
-            m_codeBlock->m_rareData->m_bitVectors = WTFMove(m_bitVectors);
-            m_codeBlock->m_rareData->m_constantIdentifierSets = WTFMove(m_constantIdentifierSets);
+            m_codeBlock->m_rareData->m_exceptionHandlers = WTF::move(m_exceptionHandlers);
+            m_codeBlock->m_rareData->m_unlinkedSwitchJumpTables = WTF::move(m_unlinkedSwitchJumpTables);
+            m_codeBlock->m_rareData->m_unlinkedStringSwitchJumpTables = WTF::move(m_unlinkedStringSwitchJumpTables);
+            m_codeBlock->m_rareData->m_typeProfilerInfoMap = WTF::move(m_typeProfilerInfoMap);
+            m_codeBlock->m_rareData->m_opProfileControlFlowBytecodeOffsets = WTF::move(m_opProfileControlFlowBytecodeOffsets);
+            m_codeBlock->m_rareData->m_bitVectors = WTF::move(m_bitVectors);
+            m_codeBlock->m_rareData->m_constantIdentifierSets = WTF::move(m_constantIdentifierSets);
         }
 
         if (Options::returnEarlyFromInfiniteLoopsForFuzzing()) [[unlikely]]
@@ -135,7 +135,7 @@ void UnlinkedCodeBlockGenerator::applyModification(BytecodeRewriter& rewriter, J
     rewriter.forEachLabelPoint([&] (int32_t bytecodeOffset) {
         bytecodeOffsetAdjustments.append(bytecodeOffset);
     });
-    m_expressionInfoEncoder.remap(WTFMove(bytecodeOffsetAdjustments), [&] (int32_t bytecodeOffset) {
+    m_expressionInfoEncoder.remap(WTF::move(bytecodeOffsetAdjustments), [&] (int32_t bytecodeOffset) {
         return rewriter.adjustAbsoluteOffset(bytecodeOffset);
     });
 

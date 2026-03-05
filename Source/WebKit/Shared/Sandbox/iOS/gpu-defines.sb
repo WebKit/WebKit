@@ -410,12 +410,11 @@
         vm_remap_external))
 
 (define (syscall-mig-allowed)
-#if ASAN_ENABLED
-    (kernel-mig-routine
-        mach_vm_region_recurse
-        task_set_exc_guard_behavior)
-#endif
      (kernel-mig-routine
+#if ASAN_ENABLED
+        mach_vm_region_recurse
+        task_set_exc_guard_behavior
+#endif
         _mach_make_memory_entry
         clock_get_time
         host_get_clock_service

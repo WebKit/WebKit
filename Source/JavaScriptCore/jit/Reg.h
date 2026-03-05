@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(ASSEMBLER)
 
 #include <JavaScriptCore/MacroAssembler.h>
 #include <JavaScriptCore/Width.h>
+#include <wtf/Assertions.h>
 
 namespace JSC {
 

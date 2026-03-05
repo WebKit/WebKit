@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "BExport.h"
 #include "BPlatform.h"
 #include <stddef.h>
@@ -36,3 +38,5 @@ void reportAssertionFailureWithMessage(const char* file, int line, const char* f
 #endif
 
 } // namespace bmalloc
+
+#endif // __cplusplus

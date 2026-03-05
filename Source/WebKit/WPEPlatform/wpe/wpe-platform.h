@@ -29,7 +29,7 @@
 
 #include <wpe/WPEBuffer.h>
 #include <wpe/WPEBufferDMABuf.h>
-#include <wpe/WPEBufferDMABufFormats.h>
+#include <wpe/WPEBufferFormats.h>
 #include <wpe/WPEBufferSHM.h>
 #include <wpe/WPEClipboard.h>
 #include <wpe/WPEColor.h>

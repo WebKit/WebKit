@@ -323,6 +323,38 @@ ModSqrt = a1d52989f12f204d3d2167d9b1e6c8a6174c0c786a979a5952383b7b8bd186
 A = 2eee37cf06228a387788188e650bc6d8a2ff402931443f69156a29155eca07dcb45f3aac238d92943c0c25c896098716baa433f25bd696a142f5a69d5d937e81
 P = 9df9d6cc20b8540411af4e5357ef2b0353cb1f2ab5ffc3e246b41c32f71e951f
 
+# This prime is 1 mod 8, so we need Tonelli/Shanks. The least quadratic
+# non-residue is 37, so we give up on small numbers to find a non-residue.
+ModSqrt = 2e42c
+A = 2
+P = 7deb1
+
+ModSqrt = 2
+A = 4
+P = 7deb1
+
+# This prime is 1 mod 8, so we need Tonelli/Shanks. The least quadratic
+# non-residue is 67, so we give up on small numbers to find a non-residue.
+ModSqrt = fb0fab
+A = 2
+P = 2e3a719
+
+ModSqrt = 01d6df74
+A = 3
+P = 2e3a719
+
+ModSqrt = 2
+A = 4
+P = 2e3a719
+
+ModSqrt = 6d151e
+A = 5
+P = 2e3a719
+
+ModSqrt = 2573aa
+A = 12345
+P = 2e3a719
+
 
 # NotModSquare tests.
 #

@@ -45,8 +45,8 @@ bool PatchCustom::isValidForm(Inst& inst)
         return false;
     if (!inst.args[0].special()->isValid(inst))
         return false;
-    auto clobberedEarly = inst.extraEarlyClobberedRegs().filter(RegisterSetBuilder::allScalarRegisters()).buildAndValidate();
-    auto clobberedLate = inst.extraClobberedRegs().filter(RegisterSetBuilder::allScalarRegisters()).buildAndValidate();
+    auto clobberedEarly = inst.extraEarlyClobberedRegs().filter(RegisterSet::allScalarRegisters());
+    auto clobberedLate = inst.extraClobberedRegs().filter(RegisterSet::allScalarRegisters());
     bool ok = true;
     inst.forEachTmp(
         [&] (Tmp& tmp, Arg::Role role, Bank, Width) {

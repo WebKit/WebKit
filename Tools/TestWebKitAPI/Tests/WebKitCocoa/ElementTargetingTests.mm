@@ -300,10 +300,10 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<Util::PlatformWindow>> setU
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame configuration:configuration.get() addToWindow:NO]);
     RetainPtr window = adoptNS([[UIWindow alloc] initWithFrame:frame]);
     [window addSubview:webView.get()];
-    return { WTFMove(webView), WTFMove(window) };
+    return { WTF::move(webView), WTF::move(window) };
 #else
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame]);
-    return { WTFMove(webView), { [webView window] } };
+    return { WTF::move(webView), { [webView window] } };
 #endif
 }
 

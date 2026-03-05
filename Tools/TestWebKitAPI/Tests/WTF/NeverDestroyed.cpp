@@ -53,14 +53,14 @@ TEST(WTF_NeverDestroyed, Construct)
 
     {
         static NeverDestroyed<LifecycleLogger> x;
-        static NeverDestroyed<LifecycleLogger> y { WTFMove(x) };
+        static NeverDestroyed<LifecycleLogger> y { WTF::move(x) };
         UNUSED_PARAM(y);
     }
     ASSERT_STREQ("construct(<default>) move-construct(<default>) ", takeLogStr().c_str());
 
     {
         static NeverDestroyed<const LifecycleLogger> x;
-        static NeverDestroyed<const LifecycleLogger> y { WTFMove(x) };
+        static NeverDestroyed<const LifecycleLogger> y { WTF::move(x) };
         UNUSED_PARAM(y);
     }
     ASSERT_STREQ("construct(<default>) move-construct(<default>) ", takeLogStr().c_str());

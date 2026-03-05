@@ -47,13 +47,17 @@ template<typename T, typename Counter> class EventSender;
 using LinkEventSender = EventSender<HTMLLinkElement, WeakPtrImplWithEventTargetData>;
 
 class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLLinkElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLLinkElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLinkElement);
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     static Ref<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();
+
+    // CachedResourceClient.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
 
     URL href() const;
     WEBCORE_EXPORT const AtomString& rel() const;
@@ -67,7 +71,7 @@ public:
 
     const AtomString& type() const;
 
-    std::optional<LinkIconType> iconType() const;
+    std::optional<LinkIconType> NODELETE iconType() const;
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
@@ -104,13 +108,6 @@ public:
     // Otherwise checks if any Element in the tree does.
     void processInternalResourceLink(Element* = nullptr);
 
-    // AbstractCanMakeCheckedPtr.
-    uint32_t checkedPtrCount() const final { return HTMLElement::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return HTMLElement::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { HTMLElement::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { HTMLElement::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { HTMLElement::setDidBeginCheckedPtrDeletion(); }
-
 private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
@@ -121,7 +118,7 @@ private:
 
     void potentiallyBlockRendering();
     void unblockRendering();
-    bool isImplicitlyPotentiallyRenderBlocking() const;
+    bool NODELETE isImplicitlyPotentiallyRenderBlocking() const;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
@@ -142,7 +139,7 @@ private:
     
     void setDisabledState(bool);
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 
     HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);
 
@@ -157,9 +154,7 @@ private:
 
     void removePendingSheet();
 
-    CheckedPtr<Style::Scope> checkedStyleScope();
-
-    LinkLoader m_linkLoader;
+    const Ref<LinkLoader> m_linkLoader;
     CheckedPtr<Style::Scope> m_styleScope;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;

@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include <WebCore/ScrollingTreeOverflowScrollingNode.h>
 
@@ -55,11 +55,11 @@ protected:
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
 
 private:
-    ScrollingTreeScrollingNodeDelegateMac& delegate() const;
+    ScrollingTreeScrollingNodeDelegateMac& NODELETE delegate() const;
 
     void willBeDestroyed() final;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

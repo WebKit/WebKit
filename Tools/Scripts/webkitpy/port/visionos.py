@@ -26,28 +26,17 @@ from webkitcorepy import Version
 
 from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
 from webkitpy.port.config import apple_additions
-from webkitpy.port.device_port import DevicePort
+from webkitpy.port.embedded_port import EmbeddedPort
 from webkitpy.xcode.device_type import DeviceType
 
 
 _log = logging.getLogger(__name__)
 
 
-class VisionOSPort(DevicePort):
+class VisionOSPort(EmbeddedPort):
     port_name = 'visionos'
 
     DEVICE_TYPE = DeviceType(software_variant='visionOS')
-
-    def __init__(self, *args, **kwargs):
-        super(VisionOSPort, self).__init__(*args, **kwargs)
-
-        if not self.get_option('webkit_test_runner', False):
-            raise ValueError('DumpRenderTree is not supported on this platform.')
-
-    def driver_name(self):
-        if self.get_option('driver_name'):
-            return self.get_option('driver_name')
-        return 'WebKitTestRunnerApp.app'
 
     def version_name(self):
         if self._os_version is None:

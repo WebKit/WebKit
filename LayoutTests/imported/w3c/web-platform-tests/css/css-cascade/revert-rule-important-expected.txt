@@ -1,0 +1,5 @@
+
+FAIL revert-rule in !important declaration reverts to later normal rule if the !important rule comes first assert_true: expected true got false
+PASS revert-rule in !important declaration reverts across layers
+PASS revert-rule in !important declaration reverts to earlier normal rule if the !important rule comes later
+

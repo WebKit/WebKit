@@ -39,7 +39,7 @@ void WebSocketChannelManager::addChannel(WebSocketChannel& channel)
 
 void WebSocketChannelManager::networkProcessCrashed()
 {
-    auto channels = WTFMove(m_channels);
+    auto channels = WTF::move(m_channels);
     for (auto& channel : channels.values())
         channel->networkProcessCrashed();
 }

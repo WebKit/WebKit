@@ -134,7 +134,8 @@ std::optional<PpsParser::PpsState> PpsParser::ParseInternal(
   pps.num_ref_idx_l0_default_active_minus1 = reader.ReadExponentialGolomb();
   // num_ref_idx_l1_default_active_minus1: ue(v)
   pps.num_ref_idx_l1_default_active_minus1 = reader.ReadExponentialGolomb();
-  if (pps.num_ref_idx_l0_default_active_minus1 > H264::kMaxReferenceIndex ||
+  if (!reader.Ok() ||
+      pps.num_ref_idx_l0_default_active_minus1 > H264::kMaxReferenceIndex ||
       pps.num_ref_idx_l1_default_active_minus1 > H264::kMaxReferenceIndex) {
     return std::nullopt;
   }

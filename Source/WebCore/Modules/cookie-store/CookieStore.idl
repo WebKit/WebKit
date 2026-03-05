@@ -22,11 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-// https://wicg.github.io/cookie-store/#CookieStore
 
+// https://cookiestore.spec.whatwg.org/#typedefdef-cookielist
 typedef sequence<CookieListItem> CookieList;
 
+// https://cookiestore.spec.whatwg.org/#cookiestore
 [
     ActiveDOMObject,
     EnabledBySetting=CookieStoreAPIEnabled,

@@ -35,7 +35,7 @@
 #include "MediaList.h"
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "StyleRule.h"
 #include "StyleScope.h"
@@ -56,6 +56,9 @@ bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery)
     auto context = featureEvaluationContextForQuery(containerQuery);
     if (!context)
         return false;
+
+    if (containerQuery.condition.queries.isEmpty() && !containerQuery.name.isEmpty())
+        return true;
 
     return evaluateCondition(containerQuery.condition, *context) == MQ::EvaluationResult::True;
 }
@@ -92,7 +95,7 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
         return { };
 
     RefPtr containerParent = container->parentElementInComposedTree();
-    CheckedPtr containerParentStyle = containerParent ? styleForContainer(*containerParent, containerQuery.requiredAxes, m_evaluationState) : containerStyle;
+    CheckedPtr containerParentStyle = containerParent ? CheckedPtr { styleForContainer(*containerParent, containerQuery.requiredAxes, m_evaluationState) } : containerStyle;
 
     Ref document = element->document();
     CheckedPtr rootStyle = document->documentElement()->renderStyle();
@@ -104,7 +107,7 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
     };
 }
 
-const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requiredAxes, const String& name, const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, const ContainerQueryEvaluationState* evaluationState)
+RefPtr<const Element> ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requiredAxes, const String& name, const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, const ContainerQueryEvaluationState* evaluationState)
 {
     // "For each element, the query container to be queried is selected from among the element’s
     // ancestor query containers that have a valid container-type for all the container features
@@ -134,7 +137,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
     };
 
     auto isContainerForQuery = [&](const Element& candidateElement, const Element* originatingElement = nullptr) {
-        auto style = styleForContainer(candidateElement, requiredAxes, evaluationState);
+        CheckedPtr style = styleForContainer(candidateElement, requiredAxes, evaluationState);
         if (!style)
             return false;
         if (!isValidContainerForRequiredAxes(style->containerType(), candidateElement.renderer()))
@@ -156,7 +159,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
         });
     };
 
-    auto findOriginatingElement = [&]() -> const Element* {
+    auto findOriginatingElement = [&]() -> RefPtr<const Element> {
         if (selectionMode == SelectionMode::PseudoElement)
             return &element;
 
@@ -181,7 +184,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
         // https://drafts.csswg.org/css-conditional-5/#container-queries
         for (RefPtr ancestor = originatingElement; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
             if (isContainerForQuery(*ancestor.get(), originatingElement.get()))
-                return ancestor.unsafeGet();
+                return ancestor;
         }
         return nullptr;
     }
@@ -196,7 +199,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> requ
 
     for (RefPtr ancestor = element.parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
         if (isContainerForQuery(*ancestor.get()))
-            return ancestor.unsafeGet();
+            return ancestor;
     }
     return { };
 }

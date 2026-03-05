@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #include <WebCore/ScrollingTreePluginScrollingNode.h>
 
@@ -45,7 +45,9 @@ public:
 private:
     ScrollingTreePluginScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
 
-    ScrollingTreeScrollingNodeDelegateIOS& delegate() const;
+    ScrollingTreeScrollingNodeDelegateIOS& delegate() const LIFETIME_BOUND;
+
+    bool isScrollingTreePluginScrollingNodeIOS() const final { return true; }
 
     bool commitStateBeforeChildren(const WebCore::ScrollingStateNode&) final;
     bool commitStateAfterChildren(const WebCore::ScrollingStateNode&) final;
@@ -55,4 +57,9 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ScrollingTreePluginScrollingNodeIOS)
+    static bool isType(const WebCore::ScrollingTreePluginScrollingNode& node) { return node.isScrollingTreePluginScrollingNodeIOS(); }
+    static bool isType(const WebCore::ScrollingTreeNode& node) { return is<WebCore::ScrollingTreePluginScrollingNode>(node) && isType(uncheckedDowncast<WebCore::ScrollingTreePluginScrollingNode>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // PLATFORM(IOS_FAMILY)

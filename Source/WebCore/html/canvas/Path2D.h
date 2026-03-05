@@ -63,7 +63,7 @@ public:
 
     ExceptionOr<void> addPath(Path2D&, DOMMatrix2DInit&&);
 
-    const Path& path() const { return m_path; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
 
 private:
     Path2D() = default;

@@ -1,6 +1,7 @@
 
+PASS Verify that maxMessageSize is greater than zero
 PASS Determine the local side send limitation (canSendSize) by offering a max-message-size of 0
-PASS Remote offer SDP missing max-message-size attribute
+FAIL Remote offer SDP missing max-message-size attribute promise_test: Unhandled rejection with value: object "SyntaxError: Invalid SCTP max message size."
 PASS max-message-size with a (non-zero) value provided by the remote peer
 PASS Renegotiate max-message-size with various values provided by the remote peer
 PASS max-message-size with a (non-zero) value larger than canSendSize provided by the remote peer

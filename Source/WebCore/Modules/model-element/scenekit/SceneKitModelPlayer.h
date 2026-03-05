@@ -55,26 +55,26 @@ private:
     void updateScene();
 
     // ModelPlayer overrides.
-    ModelPlayerIdentifier identifier() const override;
+    ModelPlayerIdentifier NODELETE identifier() const override;
     void load(Model&, LayoutSize) override;
     void configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) override;
-    void sizeDidChange(LayoutSize) override;
-    void enterFullscreen() override;
-    void handleMouseDown(const LayoutPoint&, MonotonicTime) override;
-    void handleMouseMove(const LayoutPoint&, MonotonicTime) override;
-    void handleMouseUp(const LayoutPoint&, MonotonicTime) override;
-    void getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) override;
-    void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) override;
-    void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
-    void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) override;
-    void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
-    void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) override;
-    void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
-    void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
-    void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) override;
-    void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) override;
-    void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) override;
-    void setIsMuted(bool, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE sizeDidChange(LayoutSize) override;
+    void NODELETE enterFullscreen() override;
+    void NODELETE handleMouseDown(const LayoutPoint&, MonotonicTime) override;
+    void NODELETE handleMouseMove(const LayoutPoint&, MonotonicTime) override;
+    void NODELETE handleMouseUp(const LayoutPoint&, MonotonicTime) override;
+    void NODELETE getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) override;
+    void NODELETE setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void NODELETE setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void NODELETE setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
+    void NODELETE animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
+    void NODELETE setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) override;
+    void NODELETE hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void NODELETE isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void NODELETE setIsMuted(bool, CompletionHandler<void(bool success)>&&) override;
     ModelPlayerAccessibilityChildren accessibilityChildren() override;
 
     // SceneKitModelLoaderClient overrides.

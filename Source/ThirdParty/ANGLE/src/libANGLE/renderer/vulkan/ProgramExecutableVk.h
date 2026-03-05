@@ -480,14 +480,13 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                              const vk::RenderPass &compatibleRenderPass,
                                              const vk::GraphicsPipelineDesc **descPtrOut,
                                              vk::PipelineHelper **pipelineOut);
-    angle::Result prepareForWarmUpPipelineCache(
-        vk::ErrorContext *context,
-        vk::PipelineRobustness pipelineRobustness,
-        vk::PipelineProtectedAccess pipelineProtectedAccess,
-        vk::GraphicsPipelineSubset subset,
-        bool *isComputeOut,
-        vk::GraphicsPipelineDesc **graphicsPipelineDescOut,
-        vk::RenderPass *renderPassOut);
+    angle::Result preparePipelineCacheForWarmUp(vk::ErrorContext *context,
+                                                vk::PipelineRobustness pipelineRobustness,
+                                                vk::PipelineProtectedAccess pipelineProtectedAccess,
+                                                vk::GraphicsPipelineSubset subset,
+                                                bool *isComputeOut,
+                                                vk::GraphicsPipelineDesc **graphicsPipelineDescOut,
+                                                vk::RenderPass *renderPassOut);
     angle::Result warmUpComputePipelineCache(vk::ErrorContext *context,
                                              vk::PipelineRobustness pipelineRobustness,
                                              vk::PipelineProtectedAccess pipelineProtectedAccess);

@@ -84,7 +84,7 @@ using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&
 using SignalHandlerMemory = AlignedStorage<SignalHandler>;
 
 struct SignalHandlers {
-    static void initialize();
+    static void NODELETE initialize();
     static void finalize();
 
     void add(Signal, SignalHandler&&);
@@ -124,7 +124,7 @@ struct SignalHandlers {
     std::array<std::array<SignalHandlerMemory, maxNumberOfHandlers>, numberOfSignals> handlers;
 
 #if OS(UNIX)
-    struct sigaction oldActions[numberOfSignals];
+    std::array<struct sigaction, numberOfSignals> oldActions;
 #endif
 };
 

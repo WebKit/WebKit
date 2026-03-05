@@ -17,22 +17,17 @@
 #include "modules/rtp_rtcp/source/rtp_packetizer_av1.h"
 #ifdef WEBRTC_WEBKIT_BUILD
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
-#endif
 #include "rtc_base/checks.h"
+#endif
 #include "test/fuzzers/fuzz_data_helper.h"
+#include "test/fuzzers/utils/validate_rtp_packetizer.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
+  test::FuzzDataHelper fuzz_input(MakeArrayView(data, size));
 
-  RtpPacketizer::PayloadSizeLimits limits;
-  limits.max_payload_len = 1200;
-  // Read uint8_t to be sure reduction_lens are much smaller than
-  // max_payload_len and thus limits structure is valid.
-  limits.first_packet_reduction_len = fuzz_input.ReadOrDefaultValue<uint8_t>(0);
-  limits.last_packet_reduction_len = fuzz_input.ReadOrDefaultValue<uint8_t>(0);
-  limits.single_packet_reduction_len =
-      fuzz_input.ReadOrDefaultValue<uint8_t>(0);
+  RtpPacketizer::PayloadSizeLimits limits = ReadPayloadSizeLimits(fuzz_input);
+
   const VideoFrameType kFrameTypes[] = {VideoFrameType::kVideoFrameKey,
                                         VideoFrameType::kVideoFrameDelta};
   VideoFrameType frame_type = fuzz_input.SelectOneOf(kFrameTypes);

@@ -19,4 +19,4 @@ testWithTypedArrayConstructors(function(ctor) {
   var sample = new ctor();
 
   assert.sameValue(ArrayBuffer.isView(sample), true);
-});
+}, null, ["passthrough"]);

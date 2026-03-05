@@ -62,7 +62,7 @@ RefPtr<Value> Value::parse(CSSParserTokenRange& tokens, CSS::PropertyParserState
     auto parserOptions = ParserOptions {
         .category = category,
         .range = range,
-        .allowedSymbols = WTFMove(symbolsAllowed),
+        .allowedSymbols = WTF::move(symbolsAllowed),
         .propertyOptions = propertyOptions
     };
     auto simplificationOptions = SimplificationOptions {
@@ -77,7 +77,7 @@ RefPtr<Value> Value::parse(CSSParserTokenRange& tokens, CSS::PropertyParserState
     if (!tree)
         return nullptr;
 
-    RefPtr result = adoptRef(new Value(category, range, WTFMove(*tree)));
+    RefPtr result = adoptRef(new Value(category, range, WTF::move(*tree)));
     LOG_WITH_STREAM(Calc, stream << "Value::create " << *result);
     return result;
 }
@@ -97,7 +97,7 @@ Ref<Value> Value::create(const Style::Calculation::Value& value, const RenderSty
 
 Ref<Value> Value::create(CSS::Category category, CSS::Range range, CSSCalc::Tree&& tree)
 {
-    return adoptRef(*new Value(category, range, WTFMove(tree)));
+    return adoptRef(*new Value(category, range, WTF::move(tree)));
 }
 
 Ref<Value> Value::copySimplified(const CSSToLengthConversionData& conversionData) const
@@ -145,7 +145,7 @@ Ref<Value> Value::copySimplified(NoConversionDataRequiredToken, const CSSCalcSym
 Value::Value(CSS::Category category, CSS::Range range, CSSCalc::Tree&& tree)
     : m_category(category)
     , m_range(range)
-    , m_tree(WTFMove(tree))
+    , m_tree(WTF::move(tree))
 {
 }
 

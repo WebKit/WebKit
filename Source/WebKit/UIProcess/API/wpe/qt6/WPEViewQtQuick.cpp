@@ -263,7 +263,7 @@ void wpe_view_qtquick_did_update_scene(WPEViewQtQuick* view)
     priv->bufferUpdateRequested = false;
     if (priv->committedBuffer)
         wpe_view_buffer_released(WPE_VIEW(view), priv->committedBuffer.get());
-    priv->committedBuffer = WTFMove(priv->pendingBuffer);
+    priv->committedBuffer = WTF::move(priv->pendingBuffer);
     wpe_view_buffer_rendered(WPE_VIEW(view), priv->committedBuffer.get());
 }
 

@@ -48,9 +48,9 @@ public:
     }
 
     virtual ~SceneKitModelLoaderUSD() = default;
-    virtual void cancel() final { m_canceled = true; }
+    virtual void NODELETE cancel() final { m_canceled = true; }
 
-    bool isCanceled() const { return m_canceled; }
+    bool NODELETE isCanceled() const { return m_canceled; }
 
 private:
     SceneKitModelLoaderUSD()
@@ -65,25 +65,25 @@ class SceneKitModelUSD final : public SceneKitModel {
 public:
     static Ref<SceneKitModelUSD> create(Ref<Model> modelSource, RetainPtr<SCNScene> scene)
     {
-        return adoptRef(*new SceneKitModelUSD(WTFMove(modelSource), WTFMove(scene)));
+        return adoptRef(*new SceneKitModelUSD(WTF::move(modelSource), WTF::move(scene)));
     }
 
     virtual ~SceneKitModelUSD() = default;
 
 private:
     SceneKitModelUSD(Ref<Model> modelSource, RetainPtr<SCNScene> scene)
-        : m_modelSource { WTFMove(modelSource) }
-        , m_scene { WTFMove(scene) }
+        : m_modelSource { WTF::move(modelSource) }
+        , m_scene { WTF::move(scene) }
     {
     }
 
     // SceneKitModel overrides.
-    virtual const Model& modelSource() const override
+    virtual const Model& NODELETE modelSource() const override
     {
         return m_modelSource.get();
     }
 
-    virtual SCNScene *defaultScene() const override
+    virtual SCNScene *NODELETE defaultScene() const override
     {
         return m_scene.get();
     }
@@ -141,7 +141,7 @@ Ref<SceneKitModelLoader> loadSceneKitModelUsingUSDLoader(Model& modelSource, Sce
 
         ASSERT(scene);
 
-        strongClient->didFinishLoading(loader.get(), SceneKitModelUSD::create(WTFMove(modelSource), WTFMove(scene)));
+        strongClient->didFinishLoading(loader.get(), SceneKitModelUSD::create(WTF::move(modelSource), WTF::move(scene)));
     });
 
     return loader;

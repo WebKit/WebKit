@@ -40,7 +40,7 @@ class HysteresisActivity {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(HysteresisActivity, PAL_EXPORT);
 public:
     explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
         , m_timer(RunLoop::mainSingleton(), "HysteresisActivity::Timer"_s, [this] { m_callback(HysteresisState::Stopped); })
     {

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x302
-  RenderBlock {HTML} at (0,0) size 800x302
-    RenderBody {BODY} at (8,8) size 784x278
+  RenderBlock {HTML} at (0,0) size 800x303
+    RenderBody {BODY} at (8,8) size 784x279
       RenderBlock (anonymous) at (0,0) size 784x54
         RenderText {#text} at (0,0) size 755x54
           text run at (0,0) width 538: "Tests of WebKit's intepretation of font sizes when no absolute font size is specified. "
@@ -14,30 +14,30 @@ layer at (0,0) size 800x302
         RenderInline {SPAN} at (0,0) size 118x15
           RenderText {#text} at (0,0) size 118x15
             text run at (0,0) width 118: "Should be 13 px"
-      RenderBlock {PRE} at (0,95) size 784x15
-        RenderInline {SPAN} at (0,0) size 82x15
-          RenderText {#text} at (0,0) size 82x15
+      RenderBlock {PRE} at (0,95) size 784x16
+        RenderInline {SPAN} at (0,0) size 82x16
+          RenderText {#text} at (0,0) size 82x16
             text run at (0,0) width 82: "Should be 13px"
-      RenderBlock {PRE} at (0,123) size 784x15
-        RenderInline {SPAN} at (0,0) size 82x15
-          RenderText {#text} at (0,0) size 82x15
+      RenderBlock {PRE} at (0,123) size 784x16
+        RenderInline {SPAN} at (0,0) size 82x16
+          RenderText {#text} at (0,0) size 82x16
             text run at (0,0) width 82: "Should be 13px"
-      RenderBlock {P} at (0,154) size 784x18
-        RenderInline {SPAN} at (0,2) size 82x15
-          RenderText {#text} at (0,2) size 82x15
+      RenderBlock {P} at (0,154) size 784x19
+        RenderInline {SPAN} at (0,2) size 82x16
+          RenderText {#text} at (0,2) size 82x16
             text run at (0,2) width 82: "Should be 13px"
-      RenderBlock {P} at (0,188) size 784x18
+      RenderBlock {P} at (0,188) size 784x19
         RenderInline {TT} at (0,0) size 101x18
+          RenderInline {SPAN} at (0,0) size 101x19
+            RenderText {#text} at (0,0) size 101x19
+              text run at (0,0) width 101: "Should be 16px"
+      RenderBlock {P} at (0,222) size 784x19
+        RenderInline {TT} at (0,2) size 101x16
           RenderInline {SPAN} at (0,0) size 101x18
             RenderText {#text} at (0,0) size 101x18
               text run at (0,0) width 101: "Should be 16px"
-      RenderBlock {P} at (0,222) size 784x18
-        RenderInline {TT} at (0,2) size 101x15
-          RenderInline {SPAN} at (0,0) size 101x18
-            RenderText {#text} at (0,0) size 101x18
-              text run at (0,0) width 101: "Should be 16px"
-      RenderBlock {P} at (0,256) size 784x22
-        RenderInline {TT} at (0,5) size 121x15
-          RenderInline {SPAN} at (0,0) size 121x22
-            RenderText {#text} at (0,0) size 121x22
+      RenderBlock {P} at (0,256) size 784x23
+        RenderInline {TT} at (0,5) size 121x16
+          RenderInline {SPAN} at (0,-1) size 121x24
+            RenderText {#text} at (0,-1) size 121x24
               text run at (0,0) width 121: "Should be 19px"

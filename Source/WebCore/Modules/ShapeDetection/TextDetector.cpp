@@ -61,7 +61,7 @@ ExceptionOr<Ref<TextDetector>> TextDetector::create(ScriptExecutionContext& scri
 }
 
 TextDetector::TextDetector(Ref<ShapeDetection::TextDetector>&& backing)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
 {
 }
 
@@ -69,7 +69,7 @@ TextDetector::~TextDetector() = default;
 
 void TextDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTF::move(source), { }, [backing = m_backing.copyRef(), promise = WTF::move(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
         if (imageBitmap.hasException()) {
             promise.resolve({ });
             return;
@@ -83,7 +83,7 @@ void TextDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageB
             return;
         }
 
-        backing->detect(*image, [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedText>&& detectedText) mutable {
+        backing->detect(*image, [promise = WTF::move(promise)](Vector<ShapeDetection::DetectedText>&& detectedText) mutable {
             promise.resolve(detectedText.map([](const auto& detectedText) {
                 return convertFromBacking(detectedText);
             }));

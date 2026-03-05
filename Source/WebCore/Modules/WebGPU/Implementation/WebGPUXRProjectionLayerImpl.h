@@ -41,15 +41,16 @@ namespace WebCore::WebGPU {
 class ConvertToBackingContext;
 
 class XRProjectionLayerImpl final : public XRProjectionLayer {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRProjectionLayerImpl);
+    WTF_MAKE_TZONE_ALLOCATED(XRProjectionLayerImpl);
 public:
     static Ref<XRProjectionLayerImpl> create(WebGPUPtr<WGPUXRProjectionLayer>&& projectionLayer, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new XRProjectionLayerImpl(WTFMove(projectionLayer), convertToBackingContext));
+        return adoptRef(*new XRProjectionLayerImpl(WTF::move(projectionLayer), convertToBackingContext));
     }
 
     virtual ~XRProjectionLayerImpl();
     WGPUXRProjectionLayer backing() const { return m_backing.get(); }
+    bool isXRProjectionLayerImpl() const final { return true; }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -61,21 +62,21 @@ private:
     XRProjectionLayerImpl& operator=(const XRProjectionLayerImpl&) = delete;
     XRProjectionLayerImpl& operator=(XRProjectionLayerImpl&&) = delete;
 
-    uint32_t textureWidth() const final;
-    uint32_t textureHeight() const final;
-    uint32_t textureArrayLength() const final;
+    uint32_t NODELETE textureWidth() const final;
+    uint32_t NODELETE textureHeight() const final;
+    uint32_t NODELETE textureArrayLength() const final;
 
-    bool ignoreDepthValues() const final;
-    std::optional<float> fixedFoveation() const final;
-    void setFixedFoveation(std::optional<float>) final;
-    WebXRRigidTransform* deltaPose() const final;
-    void setDeltaPose(WebXRRigidTransform*) final;
+    bool NODELETE ignoreDepthValues() const final;
+    std::optional<float> NODELETE fixedFoveation() const final;
+    void NODELETE setFixedFoveation(std::optional<float>) final;
+    WebXRRigidTransform* NODELETE deltaPose() const final;
+    void NODELETE setDeltaPose(WebXRRigidTransform*) final;
 
     // WebXRLayer
 #if PLATFORM(COCOA)
-    void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&&) final;
+    void NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&&) final;
 #endif
-    void endFrame() final;
+    void NODELETE endFrame() final;
 
     WebGPUPtr<WGPUXRProjectionLayer> m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
@@ -85,5 +86,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::XRProjectionLayerImpl)
+    static bool isType(const WebCore::WebGPU::XRProjectionLayer& xrProjectionLayer) { return xrProjectionLayer.isXRProjectionLayerImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

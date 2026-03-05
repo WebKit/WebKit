@@ -32,13 +32,11 @@ enum RTCRtpSFrameTransformErrorEventType {
 };
 
 // https://w3c.github.io/webrtc-encoded-transform/#dictdef-sframetransformerroreventinit
-
 dictionary RTCRtpSFrameTransformErrorEventInit : EventInit {
     required RTCRtpSFrameTransformErrorEventType errorType;
 };
 
 // https://w3c.github.io/webrtc-encoded-transform/#sframetransformerrorevent
-
 [
     Conditional=WEB_RTC,
     EnabledBySetting=WebRTCSFrameTransformEnabled,

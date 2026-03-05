@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class OffscreenCanvasRenderingContext2D final : public CanvasRenderingContext2DBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OffscreenCanvasRenderingContext2D);
+    WTF_MAKE_TZONE_ALLOCATED(OffscreenCanvasRenderingContext2D);
 public:
     static bool enabledForContext(ScriptExecutionContext&);
     static std::unique_ptr<OffscreenCanvasRenderingContext2D> create(CanvasBase&, CanvasRenderingContext2DSettings&&);
@@ -44,7 +44,7 @@ public:
     OffscreenCanvas& canvas() const { return downcast<OffscreenCanvas>(canvasBase()); }
 
     void setFont(const String&);
-    CanvasDirection direction() const;
+    CanvasDirection NODELETE direction() const;
     void fillText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
     void strokeText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
     Ref<TextMetrics> measureText(const String& text);

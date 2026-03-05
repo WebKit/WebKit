@@ -38,7 +38,7 @@ class WebGLTexture;
 
 // https://immersive-web.github.io/layers/#xrwebglsubimagetype
 class XRWebGLSubImage : public XRSubImage {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRWebGLSubImage);
+    WTF_MAKE_TZONE_ALLOCATED(XRWebGLSubImage);
 public:
     virtual ~XRWebGLSubImage();
 

@@ -51,8 +51,8 @@ public:
     JS_EXPORT_PRIVATE SimpleTypedArrayController(bool allowAtomicsWait = true);
     ~SimpleTypedArrayController() final;
     
-    JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) final;
-    void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) final;
+    JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer&) final;
+    void registerWrapper(JSGlobalObject*, ArrayBuffer&, JSArrayBuffer&) final;
     bool isAtomicsWaitAllowedOnCurrentThread() final;
 
 private:

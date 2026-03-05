@@ -598,18 +598,37 @@ private:
             case GetClosureVar:
             case GetGlobalVar:
             case GetGlobalLexicalVariable:
-            case MultiGetByOffset:
             case GetByOffset: {
+                candidate->setResult(NodeResultDouble);
+                candidate->mergeFlags(NodeMustGenerate); // Absorbs speculation check from the using edge
+                resultNode = candidate;
+                break;
+            }
+
+            case MultiGetByOffset: {
+                MultiGetByOffsetData& data = candidate->multiGetByOffsetData();
+                for (unsigned i = 0; i < data.cases.size(); ++i) {
+                    GetByOffsetMethod& method = data.cases[i].method();
+                    if (method.kind() == GetByOffsetMethod::Constant) {
+                        // It's possible there are non-Number constants that still predict NumberUse, e.g. undefined.
+                        std::optional<double> doubleConstant = method.constant()->value().toNumberFromPrimitive();
+                        method.setConstantValue(m_graph.freeze(jsDoubleNumber(*doubleConstant)));
+                    }
+                }
                 candidate->setResult(NodeResultDouble);
                 resultNode = candidate;
                 break;
             }
 
             case MultiGetByVal: {
-                if constexpr (useKind == Int52RepUse)
+                if constexpr (useKind == Int52RepUse) {
                     candidate->setResult(NodeResultInt52);
-                if constexpr (useKind == Int32Use)
+                    candidate->mergeFlags(NodeMustGenerate); // Absorbs speculation check from using edge
+                }
+                if constexpr (useKind == Int32Use) {
                     candidate->setResult(NodeResultInt32);
+                    candidate->mergeFlags(NodeMustGenerate); // Absorbs speculation check from using edge
+                }
                 resultNode = candidate;
                 break;
             }

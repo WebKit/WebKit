@@ -1,0 +1,71 @@
+
+PASS #tests .abspos 1
+PASS #tests .abspos 2
+PASS #tests .abspos 3
+PASS #tests .abspos 4
+PASS #tests .abspos 5
+PASS #tests .abspos 6
+PASS #tests .abspos 7
+PASS #tests .abspos 8
+PASS #tests .abspos 9
+PASS #tests .abspos 10
+PASS #tests .abspos 11
+FAIL #tests .abspos 12 assert_equals:
+<div class="container">
+    <div class="abspos vlr" style="align-self: start;" data-offset-y="10" data-expected-height="20"><div class="content"></div></div>
+    <div class="abspos vlr" style="justify-self: start;" data-offset-x="10" data-expected-width="20"><div class="content"></div></div>
+    <div class="abspos vlr" style="display: table;" data-offset-y="10" data-expected-height="20"><div class="content"></div></div>
+  </div>
+offsetTop expected 10 but got 0
+PASS #tests .abspos 13
+PASS #tests .abspos 14
+PASS #tests .abspos 15
+PASS #tests .abspos 16
+PASS #tests .abspos 17
+FAIL #tests .abspos 18 assert_equals:
+<div class="container">
+    <div class="abspos vlr" style="margin-bottom: 0; align-self: start;" data-offset-y="20" data-expected-height="20"><div class="content"></div></div>
+    <div class="abspos vlr" style="margin-right: 0; justify-self: start;" data-offset-x="20" data-expected-width="20"><div class="content"></div></div>
+    <div class="abspos vlr" style="margin-bottom: 0; margin-right: 0; display: table;" data-offset-y="20" data-expected-height="20"><div class="content"></div></div>
+  </div>
+offsetTop expected 20 but got 0
+PASS #tests .abspos 19
+PASS #tests .abspos 20
+FAIL #tests .abspos 21 assert_equals:
+<div class="container">
+    <div class="abspos vrl" style="align-self: start;" data-offset-y="10" data-expected-height="20"><div class="content"></div></div>
+    <div class="abspos vrl" style="justify-self: start;" data-offset-x="10" data-expected-width="20"><div class="content"></div></div>
+    <div class="abspos vrl" style="display: table;" data-offset-y="10" data-expected-height="20"><div class="content"></div></div>
+  </div>
+offsetTop expected 10 but got 0
+PASS #tests .abspos 22
+PASS #tests .abspos 23
+PASS #tests .abspos 24
+PASS #tests .abspos 25
+PASS #tests .abspos 26
+FAIL #tests .abspos 27 assert_equals:
+<div class="container">
+    <div class="abspos vrl" style="margin-bottom: 0; align-self: start;" data-offset-y="20" data-expected-height="20"><div class="content"></div></div>
+    <div class="abspos vrl" style="margin-right: 0; justify-self: start;" data-offset-x="20" data-expected-width="20"><div class="content"></div></div>
+    <div class="abspos vrl" style="margin-bottom: 0; margin-right: 0; display: table;" data-offset-y="20" data-expected-height="20"><div class="content"></div></div>
+  </div>
+offsetTop expected 20 but got 0
+PASS #tests .abspos 28
+PASS #tests .abspos 29
+PASS #tests .abspos 30
+PASS #tests .abspos 31
+PASS #tests .abspos 32
+PASS #tests .abspos 33
+PASS #tests .abspos 34
+PASS #tests .abspos 35
+PASS #tests .abspos 36
+PASS #tests .abspos 37
+PASS #tests .abspos 38
+PASS #tests .abspos 39
+PASS #tests .abspos 40
+PASS #tests .abspos 41
+PASS #tests .abspos 42
+PASS #tests .abspos 43
+PASS #tests .abspos 44
+PASS #tests .abspos 45
+

@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLObject.h"
+#include <WebCore/WebGLObject.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,9 +37,10 @@ public:
 
     virtual ~WebGLTexture();
 
-    static RefPtr<WebGLTexture> create(WebGLRenderingContextBase&);
+    static Ref<WebGLTexture> createLost();
+    static Ref<WebGLTexture> create(WebGLRenderingContextBase&);
 
-    void didBind(GCGLenum);
+    void NODELETE didBind(GCGLenum);
     GCGLenum getTarget() const { return m_target; }
 
     static GCGLint computeLevelCount(GCGLsizei width, GCGLsizei height);
@@ -49,6 +50,8 @@ public:
 
 private:
     WebGLTexture(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLTexture();
+
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
     int mapTargetToIndex(GCGLenum) const;
 

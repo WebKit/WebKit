@@ -29,14 +29,14 @@
 namespace WebKit {
 
 CacheStorageRecordInformation::CacheStorageRecordInformation(NetworkCache::Key&& key, double insertionTime, uint64_t identifier, uint64_t updateResponseCounter, uint64_t size, URL&& url, bool hasVaryStar, HashMap<String, String>&& varyHeaders)
-    : m_key(WTFMove(key))
+    : m_key(WTF::move(key))
     , m_insertionTime(insertionTime)
     , m_identifier(identifier)
     , m_updateResponseCounter(updateResponseCounter)
     , m_size(size)
-    , m_url(WTFMove(url))
+    , m_url(WTF::move(url))
     , m_hasVaryStar(hasVaryStar)
-    , m_varyHeaders(WTFMove(varyHeaders))
+    , m_varyHeaders(WTF::move(varyHeaders))
 {
 }
 
@@ -62,14 +62,14 @@ void CacheStorageRecordInformation::updateVaryHeaders(const WebCore::ResourceReq
 CacheStorageRecordInformation CacheStorageRecordInformation::isolatedCopy() &&
 {
     return {
-        crossThreadCopy(WTFMove(m_key)),
+        crossThreadCopy(WTF::move(m_key)),
         m_insertionTime,
         m_identifier,
         m_updateResponseCounter,
         m_size,
-        crossThreadCopy(WTFMove(m_url)),
+        crossThreadCopy(WTF::move(m_url)),
         m_hasVaryStar,
-        crossThreadCopy(WTFMove(m_varyHeaders))
+        crossThreadCopy(WTF::move(m_varyHeaders))
     };
 }
 

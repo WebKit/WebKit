@@ -133,5 +133,5 @@ RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, 
         return nullptr;
     }
 
-    return BitmapContext::createByAdoptingBitmapAndContext(WTFMove(buffer), WTFMove(context));
+    return BitmapContext::createByAdoptingBitmapAndContext(WTF::move(buffer), WTF::move(context));
 }

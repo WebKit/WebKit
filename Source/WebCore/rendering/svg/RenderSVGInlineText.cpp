@@ -26,6 +26,7 @@
 #include "RenderSVGInlineText.h"
 
 #include "CSSFontSelector.h"
+#include "DocumentInlines.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"
 #include "InlineIteratorSVGTextBox.h"
@@ -48,7 +49,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGInlineText);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGInlineText);
 
 static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSpace)
 {
@@ -106,7 +107,7 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
         textAncestor->subtreeTextDidChange(this);
 }
 
-void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderSVGInlineText::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
     updateScaledFont();
@@ -123,7 +124,7 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
         return;
     }
 
-    if (diff != StyleDifference::Layout)
+    if (diff != Style::DifferenceResult::Layout)
         return;
 
     // The text metrics may be influenced by style changes.
@@ -267,15 +268,15 @@ bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     auto fontDescription = style.fontDescription();
 
     // FIXME: We need to better handle the case when we compute very small fonts below (below 1pt).
-    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSizeForSVGInlineText(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), scalingFactor, renderer.protectedDocument()));
+    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSizeForSVGInlineText(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), scalingFactor, protect(renderer.document())));
 
     // SVG controls its own glyph orientation, so don't allow writing-mode
     // to affect it.
     if (fontDescription.orientation() != FontOrientation::Horizontal)
         fontDescription.setOrientation(FontOrientation::Horizontal);
 
-    scaledFont = FontCascade(WTFMove(fontDescription));
-    scaledFont.update(renderer.document().protectedFontSelector().ptr());
+    scaledFont = FontCascade(WTF::move(fontDescription));
+    scaledFont.update(protect(renderer.document().fontSelector()).ptr());
     return true;
 }
 

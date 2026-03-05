@@ -53,6 +53,7 @@ public:
     static constexpr DecorationOptions strokeBoundingBoxDecoration = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape };
     static constexpr DecorationOptions filterBoundingBoxDecoration = { DecorationOption::OverrideBoxWithFilterBox, DecorationOption::OverrideBoxWithFilterBoxForChildren };
     static constexpr DecorationOptions repaintBoundingBoxDecoration = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape, DecorationOption::IncludeMarkers, DecorationOption::IncludeClippers, DecorationOption::IncludeMaskers, DecorationOption::OverrideBoxWithFilterBox, DecorationOption::CalculateFastRepaintRect };
+    static constexpr DecorationOptions decoratedBoundingBoxDecoration = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape, DecorationOption::IncludeMarkers };
 
     FloatRect computeDecoratedBoundingBox(const DecorationOptions&, bool* boundingBoxValid = nullptr) const;
 
@@ -65,6 +66,11 @@ public:
     static FloatRect computeRepaintBoundingBox(const RenderLayerModelObject& renderer)
     {
         return computeDecoratedBoundingBox(renderer, repaintBoundingBoxDecoration);
+    }
+
+    static FloatRect computeDecoratedBoundingBox(const RenderLayerModelObject& renderer)
+    {
+        return computeDecoratedBoundingBox(renderer, decoratedBoundingBoxDecoration);
     }
 
     static LayoutRect computeVisualOverflowRect(const RenderLayerModelObject&);

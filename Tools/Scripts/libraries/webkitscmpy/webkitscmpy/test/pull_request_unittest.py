@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -567,6 +567,42 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_update_no_update_title(self):
+        """Test that --no-update-title preserves the original PR title"""
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            pr = local.Git(self.path).remote().pull_requests.get(1)
+            original_title = pr.title
+            self.assertEqual(original_title, '[Testing] Creating commits')
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(
+                    0,
+                    program.main(
+                        args=('pull-request', '-v', '--no-history', '--no-update-title'),
+                        path=self.path,
+                    ),
+                )
+
+            pr = local.Git(self.path).remote().pull_requests.get(1)
+            self.assertEqual(pr.title, original_title)  # Should not be "[Testing] Amending commits"
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                "Updated 'PR 1 | [Testing] Creating commits'!\n"
+                "https://github.example.com/WebKit/WebKit/pull/1\n",
+            )
+
     def test_github_sticky_remote(self):
         with mocks.remote.GitHub(remote='github.example.com/WebKit/WebKit-security') as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
@@ -749,6 +785,86 @@ No pre-PR checks to run""")
                 "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Updating pull-request for 'eng/pr-branch'...",
+            ],
+        )
+
+    def test_github_substring_branch(self):
+        # Test that a branch that is a substring of another branch doesn't match
+        # For example, 'eng/Adopt-LIFETIME_BOUND-for-WTF-Ref' should not match
+        # a closed PR with branch 'eng/Adopt-LIFETIME_BOUND-for-WTF-RefPtr'
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            # First create a PR with the longer branch name
+            repo.commits['eng/Adopt-LIFETIME_BOUND-for-WTF-RefPtr'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/Adopt-LIFETIME_BOUND-for-WTF-RefPtr',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/Adopt-LIFETIME_BOUND-for-WTF-RefPtr",
+                    timestamp=int(time.time()),
+                    message='Adopt LIFETIME_BOUND for WTF::RefPtr',
+                )
+            ]
+            repo.head = repo.commits['eng/Adopt-LIFETIME_BOUND-for-WTF-RefPtr'][-1]
+            self.assertEqual(0, program.main(
+                args=('pull-request', '--no-history'),
+                path=self.path,
+            ))
+
+            # Close the first PR
+            local.Git(self.path).remote().pull_requests.get(1).close()
+            self.assertFalse(local.Git(self.path).remote().pull_requests.get(1).opened)
+
+            # Now create a new branch with a name that is a substring of the closed PR's branch
+            # WITHOUT the fix, this will incorrectly match the closed PR
+            with MockTerminal.input('y'):
+                repo.commits['eng/Adopt-LIFETIME_BOUND-for-WTF-Ref'] = [
+                    repo.commits[repo.default_branch][-1],
+                    Commit(
+                        hash='a30ce8494bf1cd2a1f4e0b11c1d3d7d0c2b4e6c8',
+                        branch='eng/Adopt-LIFETIME_BOUND-for-WTF-Ref',
+                        author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                        identifier="5.1@eng/Adopt-LIFETIME_BOUND-for-WTF-Ref",
+                        timestamp=int(time.time()),
+                        message='Adopt LIFETIME_BOUND for WTF::Ref',
+                    )
+                ]
+                repo.head = repo.commits['eng/Adopt-LIFETIME_BOUND-for-WTF-Ref'][-1]
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                ))
+
+            # The new PR should be created as PR #2, not mistaken for the closed PR #1
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(2).head, 'eng/Adopt-LIFETIME_BOUND-for-WTF-Ref')
+
+        # Verify that no error message about "already associated" was shown
+        # This is the bug: the old code incorrectly matches closed PRs with substring branch names
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | Adopt LIFETIME_BOUND for WTF::RefPtr'!\n"
+            'https://github.example.com/WebKit/WebKit/pull/1\n'
+            "Created 'PR 2 | Adopt LIFETIME_BOUND for WTF::Ref'!\n"
+            'https://github.example.com/WebKit/WebKit/pull/2\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        # Verify that a new PR was created
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Using committed changes...",
+                "Rebasing 'eng/Adopt-LIFETIME_BOUND-for-WTF-Ref' on 'main'...",
+                "Rebased 'eng/Adopt-LIFETIME_BOUND-for-WTF-Ref' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/Adopt-LIFETIME_BOUND-for-WTF-Ref' to 'fork'...",
+                "Creating pull-request for 'eng/Adopt-LIFETIME_BOUND-for-WTF-Ref'...",
             ],
         )
 

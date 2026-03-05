@@ -102,7 +102,6 @@
     GLboolean isSampler(SamplerID samplerPacked) const;                                            \
     GLboolean isSync(SyncID syncPacked) const;                                                     \
     GLboolean isTransformFeedback(TransformFeedbackID idPacked) const;                             \
-    GLboolean isVertexArray(VertexArrayID arrayPacked) const;                                      \
     void *mapBufferRange(BufferBinding targetPacked, GLintptr offset, GLsizeiptr length,           \
                          GLbitfield access);                                                       \
     void pauseTransformFeedback();                                                                 \

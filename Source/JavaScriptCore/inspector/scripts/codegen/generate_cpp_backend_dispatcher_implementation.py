@@ -125,7 +125,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
         first_command_string = "\n".join([
             '    if (protocol_method == "%s"_s) {' % commands[0].command_name,
-            '        %s(protocol_requestId, WTFMove(protocol_parameters));' % commands[0].command_name,
+            '        %s(protocol_requestId, WTF::move(protocol_parameters));' % commands[0].command_name,
             '        return;',
             '    }',
         ])
@@ -134,7 +134,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         for command in commands[1:]:
             additional_command_string = "\n".join([
                 '    if (protocol_method == "%s"_s) {' % command.command_name,
-                '        %s(protocol_requestId, WTFMove(protocol_parameters));' % command.command_name,
+                '        %s(protocol_requestId, WTF::move(protocol_parameters));' % command.command_name,
                 '        return;',
                 '    }',
             ])
@@ -193,7 +193,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
                 parameter_value = '*' + parameter_value
             elif CppGenerator.should_move_argument(_type, parameter.is_optional):
-                parameter_value = 'WTFMove(%s)' % parameter_value
+                parameter_value = 'WTF::move(%s)' % parameter_value
 
             param_args = {
                 'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(_type),
@@ -256,7 +256,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                     parameter_enum_resolutions.append('')
                 parameter_enum_resolutions.append('    auto %(enumVariableName)s = Protocol::%(helpersNamespace)s::parseEnumValueFromString<%(enumType)s>(%(stringVariableName)s);' % enum_args)
                 if parameter.is_optional:
-                    parameter_expression = 'WTFMove(%s)' % variable_name
+                    parameter_expression = 'WTF::move(%s)' % variable_name
                 else:
                     parameter_enum_resolutions.append('    if (!%(enumVariableName)s) {' % enum_args)
                     parameter_enum_resolutions.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, makeString("Unknown %(parameterKey)s: "_s, %(stringVariableName)s));' % enum_args)
@@ -267,7 +267,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 if _type.raw_name() == 'string':
                     parameter_expression = variable_name
                 elif parameter.is_optional:
-                    parameter_expression = 'WTFMove(%s)' % variable_name
+                    parameter_expression = 'WTF::move(%s)' % variable_name
                 elif _type.raw_name() in ['boolean', 'integer', 'number']:
                     parameter_expression = '*' + variable_name
                 else:
@@ -312,7 +312,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
                 parameter_value = '*' + parameter_value
             elif CppGenerator.should_move_argument(_type, parameter.is_optional):
-                parameter_value = 'WTFMove(%s)' % parameter_value
+                parameter_value = 'WTF::move(%s)' % parameter_value
 
             param_args = {
                 'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(_type),
@@ -356,14 +356,14 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 ]
 
                 if len(result_destructured_names) > 1:
-                    thunkLines.append('        auto [%s] = WTFMove(result.value());' % ", ".join(result_destructured_names))
+                    thunkLines.append('        auto [%s] = WTF::move(result.value());' % ", ".join(result_destructured_names))
                 elif len(result_destructured_names):
-                    thunkLines.append('        auto %s = WTFMove(result.value());' % ", ".join(result_destructured_names))
+                    thunkLines.append('        auto %s = WTF::move(result.value());' % ", ".join(result_destructured_names))
 
                 thunkLines.append('')
                 thunkLines.append('        auto protocol_jsonMessage = JSON::Object::create();')
                 thunkLines.extend(['    ' + line for line in result_conversion_lines])
-                thunkLines.append('        backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);')
+                thunkLines.append('        backendDispatcher->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);')
                 thunkLines.append('    }')
                 method_parameters.append("\n".join(thunkLines))
 
@@ -411,14 +411,14 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             lines.append('    }')
             lines.append('')
             if len(result_destructured_names) == 1:
-                lines.append('    auto %s = WTFMove(result.value());' % result_destructured_names[0])
+                lines.append('    auto %s = WTF::move(result.value());' % result_destructured_names[0])
                 lines.append('')
             elif len(result_destructured_names) > 1:
-                lines.append('    auto [%s] = WTFMove(result.value());' % ", ".join(result_destructured_names))
+                lines.append('    auto [%s] = WTF::move(result.value());' % ", ".join(result_destructured_names))
                 lines.append('')
             lines.append('    auto protocol_jsonMessage = JSON::Object::create();')
             lines.extend(result_conversion_lines)
-            lines.append('    m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);')
+            lines.append('    m_backendDispatcher->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);')
 
         lines.append('}')
         return self.wrap_with_guard_for_condition(command.condition, "\n".join(lines))

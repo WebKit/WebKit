@@ -111,7 +111,7 @@ enum class KeywordType : uint8_t {
     Axisless
 };
 
-static std::optional<KeywordType> getKeywordType(CSSValueID id)
+static std::optional<KeywordType> NODELETE getKeywordType(CSSValueID id)
 {
     switch (id) {
     case CSSValueLeft:
@@ -189,7 +189,7 @@ static std::optional<KeywordType> getKeywordType(CSSValueID id)
 
 // Check if the two keyword types are compatible with each other. For example,
 // <physical-area-x> must go with <physical-area-y> or <axisless-keyword>
-static bool typesAreCompatible(KeywordType dim1Type, KeywordType dim2Type)
+static bool NODELETE typesAreCompatible(KeywordType dim1Type, KeywordType dim2Type)
 {
     switch (dim1Type) {
     case KeywordType::PhysicalX:
@@ -225,7 +225,7 @@ static bool typesAreCompatible(KeywordType dim1Type, KeywordType dim2Type)
 }
 
 // Check if a keyword type is explicit about its axis.
-static bool typeIsAxisExplicit(KeywordType type)
+static bool NODELETE typeIsAxisExplicit(KeywordType type)
 {
     switch (type) {
     case KeywordType::PhysicalX:
@@ -242,7 +242,7 @@ static bool typeIsAxisExplicit(KeywordType type)
 }
 
 // Check if a keyword type refers to the X or block axis.
-static bool typeIsBlockOrXAxis(KeywordType type)
+static bool NODELETE typeIsBlockOrXAxis(KeywordType type)
 {
     switch (type) {
     case KeywordType::PhysicalX:
@@ -256,7 +256,7 @@ static bool typeIsBlockOrXAxis(KeywordType type)
 }
 
 // Check if a keyword type refers to the Y or inline axis.
-static bool typeIsInlineOrYAxis(KeywordType type)
+static bool NODELETE typeIsInlineOrYAxis(KeywordType type)
 {
     switch (type) {
     case KeywordType::PhysicalY:
@@ -269,7 +269,7 @@ static bool typeIsInlineOrYAxis(KeywordType type)
     }
 }
 
-static CSSValueID makeAmbiguous(CSSValueID dim)
+static CSSValueID NODELETE makeAmbiguous(CSSValueID dim)
 {
     switch (dim) {
     case CSSValueBlockStart: return CSSValueStart;

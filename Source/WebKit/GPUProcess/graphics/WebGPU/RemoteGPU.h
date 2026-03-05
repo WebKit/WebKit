@@ -57,14 +57,14 @@ namespace IPC {
 class Connection;
 }
 
-namespace DDMeshDescriptor {
-struct DDMeshDescriptor;
-}
-
 namespace WebCore {
 class MediaPlayer;
 class NativeImage;
 class VideoFrame;
+}
+
+namespace WebModel {
+struct ImageAsset;
 }
 
 namespace WebKit {
@@ -83,7 +83,7 @@ class RemoteGPU final : public CanMakeWeakPtr<RemoteGPU>, public IPC::StreamServ
 public:
     static Ref<RemoteGPU> create(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& serverConnection)
     {
-        auto result = adoptRef(*new RemoteGPU(identifier, gpuConnectionToWebProcess, renderingBackend, WTFMove(serverConnection)));
+        auto result = adoptRef(*new RemoteGPU(identifier, gpuConnectionToWebProcess, renderingBackend, WTF::move(serverConnection)));
         result->initialize();
         return result;
     }
@@ -109,7 +109,6 @@ private:
 
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
-    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
     void workQueueInitialize();
     void workQueueUninitialize();
 
@@ -126,7 +125,7 @@ private:
 
 
     void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&&);
-    void createModelBacking(unsigned width, unsigned height, WebKit::DDModelIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
+    void NODELETE createModelBacking(unsigned width, unsigned height, const WebModel::ImageAsset& diffuseTexture, const WebModel::ImageAsset& specularTexture, WebKit::WebModelIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 
     void createPresentationContext(const WebGPU::PresentationContextDescriptor&, WebGPUIdentifier);
 
@@ -140,7 +139,7 @@ private:
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<WebCore::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());
     Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
-    Ref<DDModel::ObjectHeap> m_modelObjectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Ref<ModelObjectHeap> m_modelObjectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
     const WebGPUIdentifier m_identifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
 };

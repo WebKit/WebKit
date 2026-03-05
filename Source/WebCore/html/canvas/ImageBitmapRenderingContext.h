@@ -38,40 +38,34 @@ class ImageBuffer;
 class OffscreenCanvas;
 template<typename> class ExceptionOr;
 
+using ImageBitmapCanvas = Variant<
+      Ref<HTMLCanvasElement>
 #if ENABLE(OFFSCREEN_CANVAS)
-using ImageBitmapCanvas = Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
-#else
-using ImageBitmapCanvas = Variant<RefPtr<HTMLCanvasElement>>;
+    , Ref<OffscreenCanvas>
 #endif
+>;
 
 class ImageBitmapRenderingContext final : public CanvasRenderingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBitmapRenderingContext);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBitmapRenderingContext);
 public:
     static std::unique_ptr<ImageBitmapRenderingContext> create(CanvasBase&, ImageBitmapRenderingContextSettings&&);
-
-    enum class BitmapMode {
-        Valid,
-        Blank
-    };
-
     ~ImageBitmapRenderingContext();
 
     ImageBitmapCanvas canvas();
 
     ExceptionOr<void> transferFromImageBitmap(RefPtr<ImageBitmap>);
-
-    BitmapMode bitmapMode() { return m_bitmapMode; }
     bool hasAlpha() { return m_settings.alpha; }
+
+    RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
+    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return !m_buffer; }
+    void didUpdateCanvasSizeProperties(bool) final { }
 
 private:
     ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 
     RefPtr<ImageBuffer> transferToImageBuffer() final;
 
-    void setOutputBitmap(RefPtr<ImageBitmap>);
-    void setBlank();
-
-    BitmapMode m_bitmapMode { BitmapMode::Blank };
+    RefPtr<ImageBuffer> m_buffer;
     ImageBitmapRenderingContextSettings m_settings;
 };
 

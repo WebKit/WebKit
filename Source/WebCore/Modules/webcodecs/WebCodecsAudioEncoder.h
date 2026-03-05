@@ -45,7 +45,7 @@ class WebCodecsAudioData;
 struct WebCodecsEncodedAudioChunkMetadata;
 
 class WebCodecsAudioEncoder : public WebCodecsBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsAudioEncoder);
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsAudioEncoder);
 public:
     ~WebCodecsAudioEncoder();
 
@@ -73,7 +73,7 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    void suspend(ReasonForSuspension) final;
+    void NODELETE suspend(ReasonForSuspension) final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsAudioEncoder; }
@@ -95,6 +95,8 @@ private:
     size_t m_encoderCount { 0 };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebCodecsAudioEncoder)
 
 #endif

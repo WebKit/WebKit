@@ -32,7 +32,7 @@ class RenderObject;
 enum class RepaintRectCalculation : bool;
 
 class SVGClipPathElement final : public SVGGraphicsElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGClipPathElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGClipPathElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGClipPathElement);
 public:
     static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);
@@ -59,7 +59,7 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    Ref<SVGAnimatedEnumeration> m_clipPathUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
+    const Ref<SVGAnimatedEnumeration> m_clipPathUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
 };
 
 } // namespace WebCore

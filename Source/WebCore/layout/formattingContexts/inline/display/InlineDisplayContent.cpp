@@ -33,31 +33,127 @@ void Content::clear()
 {
     lines.clear();
     boxes.clear();
+    lineEllipses = { };
 }
 
 void Content::set(Content&& newContent)
 {
-    lines = WTFMove(newContent.lines);
-    boxes = WTFMove(newContent.boxes);
+    lines = WTF::move(newContent.lines);
+    boxes = WTF::move(newContent.boxes);
+    lineEllipses = WTF::move(newContent.lineEllipses);
 }
 
 void Content::append(Content&& newContent)
 {
-    lines.appendVector(WTFMove(newContent.lines));
-    boxes.appendVector(WTFMove(newContent.boxes));
+    auto oldLineCount = lines.size();
+    lines.appendVector(WTF::move(newContent.lines));
+    boxes.appendVector(WTF::move(newContent.boxes));
+
+    if (newContent.lineEllipses) {
+        if (!lineEllipses) {
+            lineEllipses = makeUnique<LineEllipses>();
+            lineEllipses->grow(oldLineCount);
+        }
+        lineEllipses->appendVector(WTF::move(*newContent.lineEllipses));
+    }
 }
 
 void Content::insert(Content&& newContent, size_t lineIndex, size_t boxIndex)
 {
-    lines.insertVector(lineIndex, WTFMove(newContent.lines));
-    boxes.insertVector(boxIndex, WTFMove(newContent.boxes));
+    lines.insertVector(lineIndex, WTF::move(newContent.lines));
+    boxes.insertVector(boxIndex, WTF::move(newContent.boxes));
+
+    if (newContent.lineEllipses) {
+        if (!lineEllipses) {
+            lineEllipses = makeUnique<LineEllipses>();
+            lineEllipses->grow(lineIndex);
+        }
+        lineEllipses->insertVector(lineIndex, WTF::move(*newContent.lineEllipses));
+    }
 }
 
 void Content::remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes)
 {
     lines.removeAt(firstLineIndex, numberOfLines);
     boxes.removeAt(firstBoxIndex, numberOfBoxes);
+
+    if (lineEllipses) {
+        auto end = std::min(firstLineIndex + numberOfLines, lineEllipses->size());
+        if (end > firstLineIndex)
+            lineEllipses->removeAt(firstLineIndex, end - firstLineIndex);
+    }
 }
+
+void Content::setLineEllipsis(size_t lineIndex, Line::Ellipsis&& ellipsis)
+{
+    if (!lineEllipses)
+        lineEllipses = makeUnique<LineEllipses>();
+
+    if (lineEllipses->size() <= lineIndex)
+        lineEllipses->grow(lineIndex + 1);
+    else
+        ASSERT(lineEllipses->at(lineIndex));
+
+    lineEllipses->at(lineIndex) = WTF::move(ellipsis);
+}
+
+void Content::setEllipsisOnTrailingLine(Line::Ellipsis&& ellipsis)
+{
+    if (lines.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    setLineEllipsis(lines.size() - 1, WTF::move(ellipsis));
+}
+
+std::optional<Line::Ellipsis> Content::lineEllipsis(size_t lineIndex) const
+{
+    if (!lines[lineIndex].hasEllipsis())
+        return { };
+
+    if (!lineEllipses) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    if (lineEllipses->size() <= lineIndex) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    return lineEllipses->at(lineIndex);
+}
+
+void Content::moveLineInBlockDirection(size_t lineIndex, float offset)
+{
+    if (!offset)
+        return;
+
+    auto& line = lines[lineIndex];
+    line.moveInBlockDirection(offset);
+
+    if (line.hasEllipsis()) {
+        auto ellipsis = *lineEllipsis(lineIndex);
+        auto physicalOffset = line.isHorizontal() ? FloatSize { { }, offset } : FloatSize { offset, { } };
+        ellipsis.visualRect.move(physicalOffset);
+        setLineEllipsis(lineIndex, WTF::move(ellipsis));
+    }
+}
+
+void Content::shrinkLineInBlockDirection(size_t lineIndex, float delta)
+{
+    if (!delta)
+        return;
+
+    auto& line = lines[lineIndex];
+    line.shrinkInBlockDirection(delta);
+
+    if (line.hasEllipsis()) {
+        auto ellipsis = *lineEllipsis(lineIndex);
+        auto physicalDelta = line.isHorizontal() ? FloatSize { { }, delta } : FloatSize { delta, { } };
+        ellipsis.visualRect.contract(physicalDelta);
+        setLineEllipsis(lineIndex, WTF::move(ellipsis));
+    }
+}
+
 
 }
 }

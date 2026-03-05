@@ -24,50 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@linkTimeConstant
-function asyncFromSyncIteratorOnRejected(error, context)
-{
-    "use strict";
-
-    var syncIterator = context.@syncIterator;
-    var promise = context.@promise;
-
-    @assert(@isObject(syncIterator) || syncIterator === @undefined);
-    @assert(@isPromise(promise));
-
-    if (syncIterator !== @undefined) {
-        var returnMethod;
-        try {
-            returnMethod = syncIterator.return;
-        } catch (e) {
-            return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
-        }
-        returnMethod.@call(syncIterator);
-    }
-
-    return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
-}
-
-@linkTimeConstant
-function asyncFromSyncIteratorOnFulfilledContinue(result, context)
-{
-    "use strict";
-
-    @assert(@isPromise(context.@promise));
-
-    return @resolvePromiseWithFirstResolvingFunctionCallCheck(context.@promise, { value: result, done: false });
-}
-
-@linkTimeConstant
-function asyncFromSyncIteratorOnFulfilledDone(result, context)
-{
-    "use strict";
-
-    @assert(@isPromise(context.@promise));
-
-    return @resolvePromiseWithFirstResolvingFunctionCallCheck(context.@promise, { value: result, done: true });
-}
-
 function next(value)
 {
     "use strict";
@@ -86,8 +42,8 @@ function next(value)
 
     try {
         var nextResult = @argumentCount() === 0 ? nextMethod.@call(syncIterator) : nextMethod.@call(syncIterator, value);
-        var onFulfilled = nextResult.done ? @asyncFromSyncIteratorOnFulfilledDone : @asyncFromSyncIteratorOnFulfilledContinue;
-        @resolveWithoutPromiseForAsyncAwait(nextResult.value, onFulfilled, @asyncFromSyncIteratorOnRejected, { @promise: promise, @syncIterator: syncIterator });
+        var task = nextResult.done ? @InternalMicrotaskAsyncFromSyncIteratorDone : @InternalMicrotaskAsyncFromSyncIteratorContinue;
+        @resolveWithInternalMicrotaskForAsyncAwait(nextResult.value, task, { @promise: promise, @syncIterator: syncIterator });
     } catch (e) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }
@@ -132,8 +88,8 @@ function return(value)
             return promise;
         }
 
-        var onFulfilled = returnResult.done ? @asyncFromSyncIteratorOnFulfilledDone : @asyncFromSyncIteratorOnFulfilledContinue;
-        @resolveWithoutPromiseForAsyncAwait(returnResult.value, onFulfilled, @asyncFromSyncIteratorOnRejected, { @promise: promise, @syncIterator: @undefined });
+        var task = returnResult.done ? @InternalMicrotaskAsyncFromSyncIteratorDone : @InternalMicrotaskAsyncFromSyncIteratorContinue;
+        @resolveWithInternalMicrotaskForAsyncAwait(returnResult.value, task, { @promise: promise, @syncIterator: @undefined });
     } catch (e) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }
@@ -184,14 +140,14 @@ function throw(exception)
     
     try {
         var throwResult = @argumentCount() === 0 ? throwMethod.@call(syncIterator) : throwMethod.@call(syncIterator, exception);
-        
+
         if (!@isObject(throwResult)) {
             @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator result interface is not an object.'));
             return promise;
         }
-        
-        var onFulfilled = throwResult.done ? @asyncFromSyncIteratorOnFulfilledDone : @asyncFromSyncIteratorOnFulfilledContinue;
-        @resolveWithoutPromiseForAsyncAwait(throwResult.value, onFulfilled, @asyncFromSyncIteratorOnRejected, { @promise: promise, @syncIterator: syncIterator });
+
+        var task = throwResult.done ? @InternalMicrotaskAsyncFromSyncIteratorDone : @InternalMicrotaskAsyncFromSyncIteratorContinue;
+        @resolveWithInternalMicrotaskForAsyncAwait(throwResult.value, task, { @promise: promise, @syncIterator: syncIterator });
     } catch (e) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
     }

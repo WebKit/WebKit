@@ -290,7 +290,7 @@ static String mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
         const ASCIILiteral contentType;
     };
 
-    static const MIMESniffEntry sSnifferEntries[] = {
+    static const auto sSnifferEntries = std::to_array<MIMESniffEntry>({
         // The string "FORM" followed by four bytes followed by the string "AIFF", the AIFF signature.
         { span8("\x46\x4F\x52\x4D\x00\x00\x00\x00\x41\x49\x46\x46"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "audio/aiff"_s },
         // The string "ID3", the ID3v2-tagged MP3 signature.
@@ -303,7 +303,7 @@ static String mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
         { span8("\0x52\x49\x46\x46\x00\x00\x00\x00\x41\x56\x49\x20"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "video/avi"_s },
         // The string "RIFF" followed by four bytes followed by the string "WAVE", the WAVE signature.
         { span8("\x52\x49\x46\x46\x00\x00\x00\x00\x57\x41\x56\x45"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "audio/wave"_s },
-    };
+    });
 
     // 1. Execute the following steps for each row row in the following table:
     //   1. Let patternMatched be the result of the pattern matching algorithm given input,

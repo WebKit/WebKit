@@ -58,10 +58,10 @@ class RTCRtpSender final : public RefCounted<RTCRtpSender>
     , private LoggerHelper
 #endif
     {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCRtpSender);
+    WTF_MAKE_TZONE_ALLOCATED(RTCRtpSender);
 public:
-    static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, std::unique_ptr<RTCRtpSenderBackend>&&);
-    static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&&);
+    static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, Ref<RTCRtpSenderBackend>&&);
+    static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
     virtual ~RTCRtpSender();
 
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
@@ -69,10 +69,10 @@ public:
     MediaStreamTrack* track() { return m_track.get(); }
 
     RTCDtlsTransport* transport() { return m_transport.get(); }
-    void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTFMove(transport); }
+    void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
 
-    const String& trackId() const { return m_trackId; }
-    const String& trackKind() const { return m_trackKind; }
+    const String& trackId() const LIFETIME_BOUND { return m_trackId; }
+    const String& trackKind() const LIFETIME_BOUND { return m_trackKind; }
 
     ExceptionOr<void> setMediaStreamIds(const FixedVector<String>&);
     ExceptionOr<void> setStreams(const FixedVector<std::reference_wrapper<MediaStream>>&);
@@ -91,7 +91,7 @@ public:
 
     void getStats(Ref<DeferredPromise>&&);
 
-    bool isCreatedBy(const RTCPeerConnection&) const;
+    bool NODELETE isCreatedBy(const RTCPeerConnection&) const;
 
     RTCDTMFSender* dtmf();
     std::optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
@@ -102,20 +102,20 @@ public:
     ExceptionOr<RTCEncodedStreams> createEncodedStreams(ScriptExecutionContext&);
 
 private:
-    RTCRtpSender(RTCPeerConnection&, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&&);
+    RTCRtpSender(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "RTCRtpSender"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     RefPtr<MediaStreamTrack> m_track;
     RefPtr<RTCDtlsTransport> m_transport;
     String m_trackId;
     String m_trackKind;
-    std::unique_ptr<RTCRtpSenderBackend> m_backend;
+    RefPtr<RTCRtpSenderBackend> m_backend;
     WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
     RefPtr<RTCDTMFSender> m_dtmfSender;
     std::unique_ptr<RTCRtpTransform> m_transform;

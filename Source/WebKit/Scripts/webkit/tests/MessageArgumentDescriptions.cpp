@@ -321,6 +321,18 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithSuperclassAndWantsDispatch_LoadURL>(globalObject, decoder);
     case MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwift_TestAsyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSwift_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwift_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSwift_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwift_TestAsyncMessageReply:
+        return jsValueForDecodedMessage<MessageName::TestWithSwift_TestAsyncMessageReply>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionally_TestAsyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionally_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionally_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionally_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionally_TestAsyncMessageReply:
+        return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionally_TestAsyncMessageReply>(globalObject, decoder);
     case MessageName::TestWithValidator_AlwaysEnabled:
         return jsValueForDecodedMessage<MessageName::TestWithValidator_AlwaysEnabled>(globalObject, decoder);
     case MessageName::TestWithValidator_EnabledIfPassValidation:
@@ -432,6 +444,14 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage:
         return jsValueForDecodedMessageReply<MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwift_TestAsyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSwift_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwift_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSwift_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionally_TestAsyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionally_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSwiftConditionally_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionally_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithValidator_MessageWithReply:
         return jsValueForDecodedMessageReply<MessageName::TestWithValidator_MessageWithReply>(globalObject, decoder);
     case MessageName::TestWithWantsAsyncDispatch_TestSyncMessage:
@@ -490,6 +510,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::SWServerConnectionIdentifier"_s,
         "WebCore::SamplesRendererTrackIdentifier"_s,
         "WebCore::ScrollingNodeIdentifier"_s,
+        "WebCore::ScrollRequestIdentifier"_s,
         "WebCore::ServiceWorkerIdentifier"_s,
         "WebCore::ServiceWorkerJobIdentifier"_s,
         "WebCore::ServiceWorkerRegistrationIdentifier"_s,
@@ -511,9 +532,10 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::WebTransportSendGroupIdentifier"_s,
         "WebCore::WebTransportStreamIdentifier"_s,
         "WebCore::WindowIdentifier"_s,
+        "WebCore::XRHitTestSourceIdentifier"_s,
         "WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier"_s,
         "WebKit::AuthenticationChallengeIdentifier"_s,
-        "WebKit::DDModelIdentifier"_s,
+        "WebKit::WebModelIdentifier"_s,
         "WebKit::DataTaskIdentifier"_s,
         "WebKit::DisplayLinkObserverID"_s,
         "WebKit::DownloadID"_s,
@@ -522,6 +544,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::GPUProcessConnectionIdentifier"_s,
         "WebKit::ImageBufferSetIdentifier"_s,
         "WebKit::RemoteGraphicsContextGLIdentifier"_s,
+        "WebKit::RiceBackendIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
         "WebKit::IPCStreamTesterIdentifier"_s,
         "WebKit::JSObjectID"_s,
@@ -548,7 +571,9 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteLegacyCDMIdentifier"_s,
         "WebKit::RemoteLegacyCDMSessionIdentifier"_s,
         "WebKit::RemoteMediaResourceIdentifier"_s,
+        "WebKit::RemoteMediaResourceLoaderIdentifier"_s,
         "WebKit::RemoteMediaSourceIdentifier"_s,
+        "WebKit::RemotePathImplIdentifier"_s,
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
         "WebKit::RemoteSerializedImageBufferIdentifier"_s,
         "WebKit::RemoteSnapshotIdentifier"_s,
@@ -583,6 +608,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::WebPageProxyIdentifier"_s,
         "WebKit::WebTransportSessionIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,
+        "WebKit::WebUndoStepID"_s,
     };
 }
 
@@ -1090,6 +1116,30 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "param"_s, "uint32_t"_s },
         };
+    case MessageName::TestWithSwift_TestAsyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s },
+        };
+    case MessageName::TestWithSwift_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s },
+        };
+    case MessageName::TestWithSwift_TestAsyncMessageReply:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionally_TestAsyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionally_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionally_TestAsyncMessageReply:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
     case MessageName::TestWithValidator_AlwaysEnabled:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
@@ -1272,6 +1322,22 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
             { "reply"_s, "uint8_t"_s },
         };
     case MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwift_TestAsyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwift_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionally_TestAsyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithSwiftConditionally_TestSyncMessage:
         return Vector<ArgumentDescription> {
             { "reply"_s, "uint8_t"_s },
         };

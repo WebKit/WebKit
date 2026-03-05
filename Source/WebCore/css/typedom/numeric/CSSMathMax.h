@@ -33,11 +33,11 @@ namespace WebCore {
 class CSSNumericArray;
 
 class CSSMathMax final : public CSSMathValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMathMax);
+    WTF_MAKE_TZONE_ALLOCATED(CSSMathMax);
 public:
     static ExceptionOr<Ref<CSSMathMax>> create(FixedVector<CSSNumberish>&&);
     static ExceptionOr<Ref<CSSMathMax>> create(Vector<Ref<CSSNumericValue>>&&);
-    const CSSNumericArray& values() const;
+    const CSSNumericArray& NODELETE values() const;
 
     std::optional<CSSCalc::Child> toCalcTreeNode() const final;
 

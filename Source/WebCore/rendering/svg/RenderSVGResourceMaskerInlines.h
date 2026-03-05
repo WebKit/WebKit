@@ -35,19 +35,14 @@ inline SVGMaskElement& RenderSVGResourceMasker::maskElement() const
     return downcast<SVGMaskElement>(RenderSVGResourceContainer::element());
 }
 
-inline Ref<SVGMaskElement> RenderSVGResourceMasker::protectedMaskElement() const
-{
-    return maskElement();
-}
-
 SVGUnitTypes::SVGUnitType RenderSVGResourceMasker::maskUnits() const
 {
-    return protectedMaskElement()->maskUnits();
+    return protect(maskElement())->maskUnits();
 }
 
 SVGUnitTypes::SVGUnitType RenderSVGResourceMasker::maskContentUnits() const
 {
-    return protectedMaskElement()->maskContentUnits();
+    return protect(maskElement())->maskContentUnits();
 }
 
 }

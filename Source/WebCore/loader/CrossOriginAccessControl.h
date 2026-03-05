@@ -81,8 +81,8 @@ class WEBCORE_EXPORT CrossOriginAccessControlCheckDisabler {
 public:
     static CrossOriginAccessControlCheckDisabler& singleton();
     virtual ~CrossOriginAccessControlCheckDisabler() = default;
-    void setCrossOriginAccessControlCheckEnabled(bool);
-    virtual bool crossOriginAccessControlCheckEnabled() const;
+    void NODELETE setCrossOriginAccessControlCheckEnabled(bool);
+    virtual bool NODELETE crossOriginAccessControlCheckEnabled() const;
 private:
     bool m_accessControlCheckEnabled { true };
 };

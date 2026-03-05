@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/JSObject.h>
@@ -59,7 +61,7 @@ public:
     std::optional<uint32_t> maximum() const { return m_table->maximum(); }
     uint32_t length() const { return m_table->length(); }
     uint32_t allocatedLength() const { return m_table->allocatedLength(length()); }
-    std::optional<uint32_t> grow(JSGlobalObject*, uint32_t delta, JSValue defaultValue) WARN_UNUSED_RETURN;
+    [[nodiscard]] std::optional<uint32_t> grow(JSGlobalObject*, uint32_t delta, JSValue defaultValue);
     JSValue get(JSGlobalObject*, uint32_t);
     void set(uint32_t, JSValue);
     void set(JSGlobalObject*, uint32_t, JSValue);

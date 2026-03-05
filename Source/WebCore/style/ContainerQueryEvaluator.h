@@ -48,7 +48,7 @@ public:
 
     bool evaluate(const CQ::ContainerQuery&) const;
 
-    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
+    static RefPtr<const Element> selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
 
 private:
     std::optional<MQ::FeatureEvaluationContext> featureEvaluationContextForQuery(const CQ::ContainerQuery&) const;

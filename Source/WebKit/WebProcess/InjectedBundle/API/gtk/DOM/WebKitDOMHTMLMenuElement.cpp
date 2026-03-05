@@ -94,7 +94,9 @@ static void webkit_dom_html_menu_element_dom_event_target_init(WebKitDOMEventTar
     iface->remove_event_listener = webkit_dom_html_menu_element_remove_event_listener;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLMenuElement, webkit_dom_html_menu_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_menu_element_dom_event_target_init))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_HTML_MENU_ELEMENT_PROP_0,

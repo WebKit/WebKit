@@ -31,13 +31,13 @@ namespace WebCore {
 #if PLATFORM(COCOA)
 Vector<MachSendRight> GPUCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, unsigned bufferCount, WebCore::WebGPU::Device& device) const
 {
-    return m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, bufferCount, device);
+    return m_backing->recreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, bufferCount, device);
 }
 #endif
 
 void GPUCompositorIntegration::prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&& completionHandler)
 {
-    m_backing->prepareForDisplay(frameIndex, WTFMove(completionHandler));
+    m_backing->prepareForDisplay(frameIndex, WTF::move(completionHandler));
 }
 
 void GPUCompositorIntegration::paintCompositedResultsToCanvas(WebCore::ImageBuffer& imageBuffer, uint32_t bufferIndex)

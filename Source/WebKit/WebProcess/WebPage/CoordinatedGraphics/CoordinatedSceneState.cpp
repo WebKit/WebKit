@@ -55,7 +55,7 @@ void CoordinatedSceneState::setRootLayerChildren(Vector<Ref<CoordinatedPlatformL
 
     {
         Locker locker { m_rootLayer->lock() };
-        m_rootLayer->setChildren(WTFMove(children));
+        m_rootLayer->setChildren(WTF::move(children));
     }
     m_didChangeLayers = true;
 }
@@ -93,7 +93,7 @@ const HashSet<Ref<CoordinatedPlatformLayer>>& CoordinatedSceneState::committedLa
     Locker pendingLayersLock { m_pendingLayersLock };
     if (!m_pendingLayers.isEmpty()) {
         auto removedLayers = m_committedLayers.differenceWith(m_pendingLayers);
-        m_committedLayers = WTFMove(m_pendingLayers);
+        m_committedLayers = WTF::move(m_pendingLayers);
         for (auto& layer : removedLayers)
             layer->invalidateTarget();
     }

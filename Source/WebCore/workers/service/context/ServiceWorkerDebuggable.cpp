@@ -73,7 +73,7 @@ void ServiceWorkerDebuggable::disconnect(FrontendChannel& channel)
 void ServiceWorkerDebuggable::dispatchMessageFromRemote(String&& message)
 {
     if (RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get())
-        serviceWorkerThreadProxy->inspectorProxy().sendMessageToWorker(WTFMove(message));
+        serviceWorkerThreadProxy->inspectorProxy().sendMessageToWorker(WTF::move(message));
 }
 
 } // namespace WebCore

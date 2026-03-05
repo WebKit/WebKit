@@ -460,7 +460,8 @@ void Log(const LogArgType* fmt, ...) {
   const char* tag = nullptr;
   switch (*fmt) {
     case LogArgType::kLogMetadata: {
-      meta = {va_arg(args, LogMetadata), ERRCTX_NONE, 0};
+      meta = {
+          .meta = va_arg(args, LogMetadata), .err_ctx = ERRCTX_NONE, .err = 0};
       break;
     }
     case LogArgType::kLogMetadataErr: {

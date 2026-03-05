@@ -1,29 +1,29 @@
 
-FAIL reason with a simple value of 'hi' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of '	\r
-' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of '7' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of '3' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of 'undefined' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of 'null' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of 'true' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of 'false' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of 'NaN' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL reason with a simple value of 'Infinity' should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS reason with a simple value of 'hi' should be preserved
+PASS reason with a simple value of '	\r
+' should be preserved
+PASS reason with a simple value of '7' should be preserved
+PASS reason with a simple value of '3' should be preserved
+PASS reason with a simple value of 'undefined' should be preserved
+PASS reason with a simple value of 'null' should be preserved
+PASS reason with a simple value of 'true' should be preserved
+PASS reason with a simple value of 'false' should be preserved
+PASS reason with a simple value of 'NaN' should be preserved
+PASS reason with a simple value of 'Infinity' should be preserved
 PASS reason with a type of 'symbol' should be rejected and error the stream
 PASS reason with a type of 'function' should be rejected and error the stream
-FAIL objects that can be completely expressed in JSON should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL objects that cannot be expressed in JSON should also be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL the type and message of a TypeError should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL other attributes of a TypeError should not be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL a TypeError message should be converted to a string promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL a TypeError message should not be preserved if it is a getter promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL a TypeError message should not be preserved if it is inherited promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL DOMException errors should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL EvalError should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL RangeError should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL ReferenceError should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL SyntaxError should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL TypeError should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL URIError should be preserved promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS objects that can be completely expressed in JSON should be preserved
+PASS objects that cannot be expressed in JSON should also be preserved
+PASS the type and message of a TypeError should be preserved
+PASS other attributes of a TypeError should not be preserved
+PASS a TypeError message should be converted to a string
+PASS a TypeError message should not be preserved if it is a getter
+PASS a TypeError message should not be preserved if it is inherited
+PASS DOMException errors should be preserved
+PASS EvalError should be preserved
+PASS RangeError should be preserved
+PASS ReferenceError should be preserved
+PASS SyntaxError should be preserved
+PASS TypeError should be preserved
+PASS URIError should be preserved
 

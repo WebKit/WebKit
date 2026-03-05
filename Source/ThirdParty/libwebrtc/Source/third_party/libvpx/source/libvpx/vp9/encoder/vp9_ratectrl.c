@@ -856,15 +856,19 @@ int vp9_rc_regulate_q(const VP9_COMP *cpi, int target_bits_per_frame,
           frame_type, i, correction_factor, cm->bit_depth);
     }
 
+    int diff_bits = (int)VPXMIN(
+        VPXMAX(((int64_t)target_bits_per_mb - (int64_t)bits_per_mb_at_this_q),
+               -INT_MAX),
+        INT_MAX);
     if (bits_per_mb_at_this_q <= target_bits_per_mb) {
-      if ((target_bits_per_mb - bits_per_mb_at_this_q) <= last_error)
+      if (diff_bits <= last_error)
         q = i;
       else
         q = i - 1;
 
       break;
     } else {
-      last_error = bits_per_mb_at_this_q - target_bits_per_mb;
+      last_error = -diff_bits;
     }
   } while (++i <= active_worst_quality);
 

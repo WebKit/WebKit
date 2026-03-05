@@ -442,7 +442,7 @@ def cpp_array_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_contain
 
 
 def cpp_move_expr(expr: cpp_expr) -> cpp_expr:
-    return cpp_expr(expr.type.get_rvalue_type(), f"WTFMove({str(expr)})")
+    return cpp_expr(expr.type.get_rvalue_type(), f"WTF::move({str(expr)})")
 
 
 cpp_types: Dict[str, cpp_type] = {}
@@ -809,7 +809,7 @@ class webkit_ipc_cpp_proxy_impl(object):
                 e = cpp_expr(v.type, v.name)
                 self.out_exprs += [e]
                 self.post_call_stmts += [
-                    f"{o.name} = WTFMove({v.name});",
+                    f"{o.name} = WTF::move({v.name});",
                 ]
             elif o.type.is_span():
                 webkit_ipc_type = webkit_ipc_types[o.type]
@@ -947,7 +947,7 @@ class webkit_ipc_cpp_impl(object):
         in_exprs = ", ".join(str(e) for e in self.in_exprs)
         is_async = len(self.out_exprs) == 0
 
-        call_expr = f"protectedContext()->{self.name}({in_exprs})"
+        call_expr = f"protect(m_context)->{self.name}({in_exprs})"
         if not self.return_value_expr:
             self.call_stmts += [f"{call_expr};"]
         else:

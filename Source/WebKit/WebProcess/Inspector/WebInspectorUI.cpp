@@ -55,7 +55,7 @@ Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
 
 WebInspectorUI::WebInspectorUI(WebPage& page)
     : m_page(page)
-    , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*page.protectedCorePage()))
+    , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*protect(page.corePage())))
     , m_debuggableInfo(DebuggableInfoData::empty())
 {
 }
@@ -94,11 +94,11 @@ void WebInspectorUI::updateConnection()
     if (!connectionIdentifiers)
         return;
 
-    backendConnection = IPC::Connection::createServerConnection(WTFMove(connectionIdentifiers->server));
+    backendConnection = IPC::Connection::createServerConnection(WTF::move(connectionIdentifiers->server));
     m_backendConnection = backendConnection.copyRef();
     backendConnection->open(*this);
 
-    sendToParentProcess(Messages::WebInspectorUIProxy::SetFrontendConnection(WTFMove(connectionIdentifiers->client)));
+    sendToParentProcess(Messages::WebInspectorUIProxy::SetFrontendConnection(WTF::move(connectionIdentifiers->client)));
 }
 
 void WebInspectorUI::windowObjectCleared()
@@ -107,7 +107,7 @@ void WebInspectorUI::windowObjectCleared()
     if (frontendHost)
         frontendHost->disconnectClient();
 
-    frontendHost = InspectorFrontendHost::create(this, RefPtr { m_page.get() }->protectedCorePage().get());
+    frontendHost = InspectorFrontendHost::create(this, protect(RefPtr { m_page.get() }->corePage()).get());
     m_frontendHost = frontendHost.copyRef();
     frontendHost->addSelfToGlobalObjectInWorld(mainThreadNormalWorldSingleton());
 }
@@ -295,17 +295,17 @@ void WebInspectorUI::revealFileExternally(const String& path)
 
 void WebInspectorUI::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
-    sendToParentProcess(Messages::WebInspectorUIProxy::Save(WTFMove(saveDatas), forceSaveAs));
+    sendToParentProcess(Messages::WebInspectorUIProxy::Save(WTF::move(saveDatas), forceSaveAs));
 }
 
 void WebInspectorUI::load(const WTF::String& path, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    sendToParentProcessWithAsyncReply(Messages::WebInspectorUIProxy::Load(path), WTFMove(completionHandler));
+    sendToParentProcessWithAsyncReply(Messages::WebInspectorUIProxy::Load(path), WTF::move(completionHandler));
 }
 
 void WebInspectorUI::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
 {
-    sendToParentProcessWithAsyncReply(Messages::WebInspectorUIProxy::PickColorFromScreen(), WTFMove(completionHandler));
+    sendToParentProcessWithAsyncReply(Messages::WebInspectorUIProxy::PickColorFromScreen(), WTF::move(completionHandler));
 }
 
 void WebInspectorUI::inspectedURLChanged(const String& urlString)
@@ -343,7 +343,7 @@ bool WebInspectorUI::supportsDiagnosticLogging()
 
 void WebInspectorUI::logDiagnosticEvent(const String& eventName, const DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
-    RefPtr { m_page.get() }->protectedCorePage()->checkedDiagnosticLoggingClient()->logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+    protect(protect(RefPtr { m_page.get() }->corePage())->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
 }
 
 void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
@@ -355,6 +355,11 @@ void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_s, { JSON::Value::create(m_diagnosticLoggingAvailable) });
 }
 #endif // ENABLE(INSPECTOR_TELEMETRY)
+
+void WebInspectorUI::systemAppearanceDidChange()
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("systemAppearanceDidChange"_s);
+}
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 bool WebInspectorUI::supportsWebExtensions()

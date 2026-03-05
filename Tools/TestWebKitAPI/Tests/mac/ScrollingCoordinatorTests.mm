@@ -80,6 +80,9 @@ static NSString *scrollingTreeElidingLastCommittedScrollPosition(NSString *scrol
 
 TEST(ScrollingCoordinatorTests, ScrollingTreeAfterDetachReattach)
 {
+    [[NSUserDefaults standardUserDefaults] setObject:@"Scrolling" forKey:@"WebCoreLogging"];
+    [[NSUserDefaults standardUserDefaults] setObject:@"Scrolling" forKey:@"WebKit2Logging"];
+
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 500, 500) configuration:configuration addToWindow:YES]);
     
@@ -121,6 +124,9 @@ TEST(ScrollingCoordinatorTests, ScrollingTreeAfterDetachReattach)
         [webView wheelEventAtPoint:eventLocationInWindow wheelDelta:CGSizeMake(0, -101)];
     });
     EXPECT_EQ(scrollY, 301);
+
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"WebCoreLogging"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"WebKit2Logging"];
 }
 
 TEST(ScrollingCoordinatorTests, SetContentOffset)

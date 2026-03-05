@@ -11,7 +11,7 @@ FAIL Testing 'color-interpolation-filters'. assert_equals: Default value. expect
 PASS Testing 'cursor'.
 PASS Testing 'direction'.
 PASS Testing 'display'.
-PASS Testing 'dominant-baseline'.
+FAIL Testing 'dominant-baseline'. assert_equals: Value Test. expected "text-bottom" but got "auto"
 FAIL Testing 'fill'. assert_equals: Default value. expected "black" but got "rgb(0, 0, 0)"
 PASS Testing 'fill-opacity'.
 PASS Testing 'fill-rule'.

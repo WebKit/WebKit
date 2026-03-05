@@ -195,6 +195,7 @@ using WTF::Unicode::aegeanWordSeparatorLine;
 using WTF::Unicode::arabicIndicPerMilleSign;
 using WTF::Unicode::arabicIndicPerTenThousandSign;
 using WTF::Unicode::arabicPercentSign;
+using WTF::Unicode::apostrophe;
 using WTF::Unicode::blackCircle;
 using WTF::Unicode::blackDownPointingSmallTriangle;
 using WTF::Unicode::blackDownPointingTriangle;

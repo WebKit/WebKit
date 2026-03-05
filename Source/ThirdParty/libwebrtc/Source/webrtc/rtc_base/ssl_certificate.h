@@ -24,6 +24,7 @@
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -130,9 +131,25 @@ class RTC_EXPORT SSLCertChain final {
 class SSLCertificateVerifier {
  public:
   virtual ~SSLCertificateVerifier() = default;
-  // Returns true if the certificate is valid, else false. It is up to the
-  // implementer to define what a valid certificate looks like.
-  virtual bool Verify(const SSLCertificate& certificate) = 0;
+
+  // Verify a complete certificate chain (leaf first, then intermediates).
+  // Default implementation verifies only the leaf certificate for backward
+  // compatibility. New implementations should override VerifyChain() to perform
+  // full chain validation.
+  virtual bool VerifyChain(const SSLCertChain& chain) {
+    if (chain.GetSize() == 0) {
+      return false;
+    }
+    return Verify(chain.Get(0));
+  }
+
+  // Legacy method for verifying a single certificate (the leaf).
+  // TODO(webrtc:451744857): Remove this method once all clients have migrated
+  // to VerifyChain().
+  virtual bool Verify(const SSLCertificate& certificate) {
+    RTC_CHECK_NOTREACHED();
+    return false;
+  }
 };
 
 }  //  namespace webrtc

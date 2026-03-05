@@ -26,7 +26,7 @@
 
 struct _WebKitNavigationAction {
     _WebKitNavigationAction(Ref<API::NavigationAction>&& action)
-        : action(WTFMove(action))
+        : action(WTF::move(action))
     {
     }
 

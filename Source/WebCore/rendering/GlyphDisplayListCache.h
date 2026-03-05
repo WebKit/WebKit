@@ -31,11 +31,12 @@
 #include "Logging.h"
 #include "TextRun.h"
 #include "TextRunHash.h"
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -53,10 +54,8 @@ class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>
 public:
     static Ref<GlyphDisplayListCacheEntry> create(Ref<const DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
     {
-        return adoptRef(*new GlyphDisplayListCacheEntry(WTFMove(displayList), textRun, font, context));
+        return adoptRef(*new GlyphDisplayListCacheEntry(WTF::move(displayList), textRun, font, context));
     }
-
-    ~GlyphDisplayListCacheEntry();
 
     bool operator==(const GlyphDisplayListCacheEntry& other) const
     {
@@ -70,7 +69,7 @@ public:
 
 private:
     GlyphDisplayListCacheEntry(Ref<const DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
-        : m_displayList(WTFMove(displayList))
+        : m_displayList(WTF::move(displayList))
         , m_textRun(textRun.isolatedCopy())
         , m_scaleFactor(context.scaleFactor())
         , m_fontCascadeGeneration(font.generation())
@@ -78,7 +77,7 @@ private:
     {
     }
 
-    Ref<const DisplayList::DisplayList> m_displayList;
+    const Ref<const DisplayList::DisplayList> m_displayList;
 
     TextRun m_textRun;
     FloatSize m_scaleFactor;
@@ -90,15 +89,6 @@ inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 {
     add(hasher, entry.m_textRun, entry.m_scaleFactor.width(), entry.m_scaleFactor.height(), entry.m_fontCascadeGeneration, entry.m_shouldSubpixelQuantizeFont);
 }
-
-struct GlyphDisplayListCacheEntryHash {
-    static unsigned hash(const GlyphDisplayListCacheEntry* entry) { return computeHash(*entry); }
-    static unsigned hash(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& entry) { return computeHash(entry.get()); }
-    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& a, const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& b) { return a.ptr() == b.ptr(); }
-    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& a, const GlyphDisplayListCacheEntry* b) { return a.ptr() == b; }
-    static bool equal(const GlyphDisplayListCacheEntry* a, const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& b) { return a == b.ptr(); }
-    static constexpr bool safeToCompareToEmptyOrDeleted = false;
-};
 
 class GlyphDisplayListCache {
     WTF_MAKE_TZONE_ALLOCATED(GlyphDisplayListCache);
@@ -118,7 +108,7 @@ public:
     void remove(const InlineDisplay::Box& run) { remove(&run); }
 
     void clear();
-    unsigned size() const;
+    unsigned NODELETE size() const;
 
     void setForceUseGlyphDisplayListForTesting(bool flag)
     {
@@ -135,14 +125,9 @@ private:
     void remove(const void* run);
 
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
-    HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
+    Deque<WeakPtr<GlyphDisplayListCacheEntry, SingleThreadWeakPtrImpl>> m_entries;
     bool m_forceUseGlyphDisplayListForTesting { false };
+    static constexpr unsigned s_maxDeduplicationCacheSize { 20 };
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct DefaultHash<SingleThreadWeakRef<WebCore::GlyphDisplayListCacheEntry>> : WebCore::GlyphDisplayListCacheEntryHash { };
-
-} // namespace WTF

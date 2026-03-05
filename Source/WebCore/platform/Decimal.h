@@ -158,7 +158,7 @@ public:
     {
     }
 
-    const EncodedData& value() const { return m_data; }
+    const EncodedData& value() const LIFETIME_BOUND { return m_data; }
 
     friend bool operator==(const Decimal&, const Decimal&);
     friend bool operator!=(const Decimal&, const Decimal&);

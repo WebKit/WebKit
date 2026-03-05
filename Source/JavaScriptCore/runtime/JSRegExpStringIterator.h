@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-const static uint8_t JSRegExpStringIteratorNumberOfInternalFields = 5;
+const static uint8_t JSRegExpStringIteratorNumberOfInternalFields = 3;
 
 class JSRegExpStringIterator final : public JSInternalFieldObjectImpl<JSRegExpStringIteratorNumberOfInternalFields> {
 public:
@@ -42,20 +42,22 @@ public:
     enum class Field : uint8_t {
         RegExp = 0,
         String,
-        Global,
-        FullUnicode,
-        Done,
+        Flags, // Global, FullUnicode, Done as bit flags
     };
     static_assert(numberOfInternalFields == JSRegExpStringIteratorNumberOfInternalFields);
+
+    enum class FlagBit : uint8_t {
+        Global = 1 << 0,
+        FullUnicode = 1 << 1,
+        Done = 1 << 2,
+    };
 
     static std::array<JSValue, numberOfInternalFields> initialValues()
     {
         return { {
             jsNull(),
             jsNull(),
-            jsBoolean(false),
-            jsBoolean(false),
-            jsBoolean(false),
+            jsNumber(0),
         } };
     }
 
@@ -72,12 +74,39 @@ public:
 
     static JSRegExpStringIterator* createWithInitialValues(VM&, Structure*);
 
+    bool isGlobal() const { return flags() & static_cast<uint8_t>(FlagBit::Global); }
+    bool isFullUnicode() const { return flags() & static_cast<uint8_t>(FlagBit::FullUnicode); }
+    bool isDone() const { return flags() & static_cast<uint8_t>(FlagBit::Done); }
+
     void setRegExp(VM& vm, JSObject* regExp) { internalField(Field::RegExp).set(vm, this, regExp); }
     void setString(VM& vm, JSValue string) { internalField(Field::String).set(vm, this, string); }
-    void setGlobal(VM& vm, JSValue global) { internalField(Field::Global).set(vm, this, global); }
-    void setFullUnicode(VM& vm, JSValue fullUnicode) { internalField(Field::FullUnicode).set(vm, this, fullUnicode); }
+    void setGlobal(bool global) { setFlag(FlagBit::Global, global); }
+    void setFullUnicode(bool fullUnicode) { setFlag(FlagBit::FullUnicode, fullUnicode); }
+    void setDone(bool done) { setFlag(FlagBit::Done, done); }
+    void setFlags(bool global, bool fullUnicode, bool done = false)
+    {
+        uint8_t flagValue = 0;
+        if (global)
+            flagValue |= static_cast<uint8_t>(FlagBit::Global);
+        if (fullUnicode)
+            flagValue |= static_cast<uint8_t>(FlagBit::FullUnicode);
+        if (done)
+            flagValue |= static_cast<uint8_t>(FlagBit::Done);
+        internalField(Field::Flags).setWithoutWriteBarrier(jsNumber(flagValue));
+    }
 
 private:
+    uint8_t flags() const { return static_cast<uint8_t>(internalField(Field::Flags).get().asInt32()); }
+    void setFlag(FlagBit bit, bool value)
+    {
+        uint8_t currentFlags = flags();
+        if (value)
+            currentFlags |= static_cast<uint8_t>(bit);
+        else
+            currentFlags &= ~static_cast<uint8_t>(bit);
+        internalField(Field::Flags).setWithoutWriteBarrier(jsNumber(currentFlags));
+    }
+
     JSRegExpStringIterator(VM& vm, Structure* structure)
         : Base(vm, structure)
     {

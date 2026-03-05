@@ -55,7 +55,7 @@ RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::Pro
             return nullptr;
         list.append(type.releaseNonNull());
     } while (!range.atEnd());
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 } // namespace CSSPropertyParserHelpers

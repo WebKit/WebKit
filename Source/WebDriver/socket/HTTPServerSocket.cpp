@@ -75,7 +75,7 @@ void HTTPRequestHandler::reset()
 
 void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&& data)
 {
-    switch (m_parser.parse(WTFMove(data))) {
+    switch (m_parser.parse(WTF::move(data))) {
     case HTTPParser::Phase::Complete: {
         auto message = m_parser.pullMessage();
         HTTPRequestHandler::Request request {
@@ -85,8 +85,8 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
             static_cast<size_t>(message.requestBody.size())
         };
 
-        handleRequest(WTFMove(request), [this](HTTPRequestHandler::Response&& response) {
-            sendResponse(WTFMove(response));
+        handleRequest(WTF::move(request), [this](HTTPRequestHandler::Response&& response) {
+            sendResponse(WTF::move(response));
         });
         break;
     }
@@ -96,7 +96,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
             "text/html; charset=utf-8",
             "<h1>Bad client</h1> Invalid HTML format"_s,
         };
-        sendResponse(WTFMove(response));
+        sendResponse(WTF::move(response));
         return;
     }
     default:
@@ -107,7 +107,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
 void HTTPRequestHandler::sendResponse(HTTPRequestHandler::Response&& response)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
-    endpoint.send(m_client.value(), byteCast<uint8_t>(packHTTPMessage(WTFMove(response)).utf8().span()));
+    endpoint.send(m_client.value(), byteCast<uint8_t>(packHTTPMessage(WTF::move(response)).utf8().span()));
     reset();
 }
 

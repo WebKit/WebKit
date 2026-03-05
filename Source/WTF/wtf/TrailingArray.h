@@ -125,7 +125,7 @@ protected:
 
         for (auto[i, item] : indexedRange(span())) {
             if (auto value = generator(i))
-                new (NotNull, std::addressof(item)) T(WTFMove(*value));
+                new (NotNull, std::addressof(item)) T(WTF::move(*value));
             else {
                 m_size = i;
                 return;

@@ -96,13 +96,13 @@ public:
     JS_EXPORT_PRIVATE static JSPromise* resolvedPromise(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromise(JSGlobalObject*, JSValue);
 
-    JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, VM&, JSValue);
     JS_EXPORT_PRIVATE void reject(VM&, JSGlobalObject*, JSValue);
     void fulfill(VM&, JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void rejectAsHandled(VM&, JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(VM&, JSGlobalObject*, Exception*);
     JS_EXPORT_PRIVATE void rejectAsHandled(VM&, JSGlobalObject*, Exception*);
-    JS_EXPORT_PRIVATE void performPromiseThenExported(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue, JSValue = jsUndefined());
+    JS_EXPORT_PRIVATE void performPromiseThenExported(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue);
 
     JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);
 
@@ -129,20 +129,15 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     // This is abstract operations defined in the spec.
-    void performPromiseThen(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue, JSValue = jsUndefined());
+    void performPromiseThen(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue);
     void rejectPromise(VM&, JSGlobalObject*, JSValue);
     void fulfillPromise(VM&, JSGlobalObject*, JSValue);
-    void resolvePromise(JSGlobalObject*, JSValue);
+    void resolvePromise(JSGlobalObject*, VM&, JSValue);
 
-    static void resolveWithoutPromiseForAsyncAwait(JSGlobalObject*, JSValue resolution, JSValue onFulfilled, JSValue onRejected, JSValue context);
-    static void resolveWithoutPromise(JSGlobalObject*, JSValue resolution, JSValue onFulfilled, JSValue onRejected, JSValue context);
-    static void rejectWithoutPromise(JSGlobalObject*, JSValue argument, JSValue onFulfilled, JSValue onRejected, JSValue context);
-    static void fulfillWithoutPromise(JSGlobalObject*, JSValue argument, JSValue onFulfilled, JSValue onRejected, JSValue context);
-
-    static void resolveWithInternalMicrotaskForAsyncAwait(JSGlobalObject*, JSValue resolution, InternalMicrotask, JSValue context);
-    static void resolveWithInternalMicrotask(JSGlobalObject*, JSValue resolution, InternalMicrotask, JSValue context);
-    static void rejectWithInternalMicrotask(JSGlobalObject*, JSValue argument, InternalMicrotask, JSValue context);
-    static void fulfillWithInternalMicrotask(JSGlobalObject*, JSValue argument, InternalMicrotask, JSValue context);
+    static void resolveWithInternalMicrotaskForAsyncAwait(JSGlobalObject*, VM&, JSValue resolution, InternalMicrotask, JSValue context);
+    static void resolveWithInternalMicrotask(JSGlobalObject*, VM&, JSValue resolution, InternalMicrotask, JSValue context);
+    static void rejectWithInternalMicrotask(VM&, JSGlobalObject*, JSValue argument, InternalMicrotask, JSValue context);
+    static void fulfillWithInternalMicrotask(VM&, JSGlobalObject*, JSValue argument, InternalMicrotask, JSValue context);
 
     void performPromiseThenWithInternalMicrotask(VM&, JSGlobalObject*, InternalMicrotask, JSValue promise, JSValue context);
 
@@ -150,7 +145,6 @@ public:
 
     std::tuple<JSFunction*, JSFunction*> createResolvingFunctions(VM&, JSGlobalObject*);
     std::tuple<JSFunction*, JSFunction*> createFirstResolvingFunctions(VM&, JSGlobalObject*);
-    static std::tuple<JSFunction*, JSFunction*> createResolvingFunctionsWithoutPromise(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue context);
     static std::tuple<JSFunction*, JSFunction*> createResolvingFunctionsWithInternalMicrotask(VM&, JSGlobalObject*, InternalMicrotask, JSValue context);
     static std::tuple<JSObject*, JSObject*, JSObject*> newPromiseCapability(JSGlobalObject*, JSValue constructor);
     static JSValue createPromiseCapability(VM&, JSGlobalObject*, JSObject* promise, JSObject* resolve, JSObject* reject);
@@ -179,11 +173,12 @@ JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolve);
 JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionReject);
 JSC_DECLARE_HOST_FUNCTION(promiseFirstResolvingFunctionResolve);
 JSC_DECLARE_HOST_FUNCTION(promiseFirstResolvingFunctionReject);
-JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolveWithoutPromise);
-JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionRejectWithoutPromise);
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolveWithInternalMicrotask);
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionRejectWithInternalMicrotask);
 JSC_DECLARE_HOST_FUNCTION(promiseCapabilityExecutor);
 
 JSObject* promiseSpeciesConstructor(JSGlobalObject*, JSObject*);
 Structure* createPromiseCapabilityObjectStructure(VM&, JSGlobalObject&);
+bool isDefinitelyNonThenable(JSObject*, JSGlobalObject*);
 
 } // namespace JSC

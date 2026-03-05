@@ -41,12 +41,12 @@ BlockInsertionSet::~BlockInsertionSet() = default;
 
 void BlockInsertionSet::insert(BlockInsertion&& insertion)
 {
-    m_insertions.append(WTFMove(insertion));
+    m_insertions.append(WTF::move(insertion));
 }
 
 void BlockInsertionSet::insert(size_t index, std::unique_ptr<BasicBlock>&& block)
 {
-    insert(BlockInsertion(index, WTFMove(block)));
+    insert(BlockInsertion(index, WTF::move(block)));
 }
 
 BasicBlock* BlockInsertionSet::insert(size_t index, float executionCount)
@@ -54,7 +54,7 @@ BasicBlock* BlockInsertionSet::insert(size_t index, float executionCount)
     auto block = makeUnique<BasicBlock>(BytecodeIndex(), m_graph.block(0)->variablesAtHead.numberOfArguments(), m_graph.block(0)->variablesAtHead.numberOfLocals(), m_graph.block(0)->variablesAtHead.numberOfTmps(), executionCount);
     block->isReachable = true;
     auto* result = block.get();
-    insert(index, WTFMove(block));
+    insert(index, WTF::move(block));
     return result;
 }
 
@@ -79,10 +79,10 @@ bool BlockInsertionSet::execute()
     // healthy to keep the block list from growing.
     unsigned targetIndex = 0;
     for (unsigned sourceIndex = 0; sourceIndex < m_graph.m_blocks.size();) {
-        auto block = WTFMove(m_graph.m_blocks[sourceIndex++]);
+        auto block = WTF::move(m_graph.m_blocks[sourceIndex++]);
         if (!block)
             continue;
-        m_graph.m_blocks[targetIndex++] = WTFMove(block);
+        m_graph.m_blocks[targetIndex++] = WTF::move(block);
     }
     m_graph.m_blocks.shrink(targetIndex);
     

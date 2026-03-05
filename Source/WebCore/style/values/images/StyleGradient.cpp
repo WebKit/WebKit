@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 #include "GeometryUtilities.h"
 #include "Gradient.h"
 #include "GradientColorStop.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
@@ -49,7 +49,7 @@ template<> constexpr bool IsRepeatingGradient<CSSValueRepeatingRadialGradient> =
 template<> constexpr bool IsRepeatingGradient<CSSValueWebkitRepeatingRadialGradient> = true;
 template<> constexpr bool IsRepeatingGradient<CSSValueRepeatingConicGradient> = true;
 
-template<CSSValueID Name, typename T> static constexpr bool isRepeating(const FunctionNotation<Name, T>&)
+template<CSSValueID Name, typename T> static constexpr bool NODELETE isRepeating(const FunctionNotation<Name, T>&)
 {
     return IsRepeatingGradient<Name>;
 }
@@ -108,9 +108,11 @@ auto ToStyle<CSS::GradientDeprecatedColorStop>::operator()(const CSS::GradientDe
 
 static WebCore::Color resolveColorStopColor(const Color& styleColor, const RenderStyle& style, bool hasColorFilter)
 {
+    Style::ColorResolver colorResolver { style };
+
     if (hasColorFilter)
-        return style.colorWithColorFilter(styleColor);
-    return style.colorResolvingCurrentColor(styleColor);
+        return colorResolver.colorResolvingCurrentColorApplyingColorFilter(styleColor);
+    return colorResolver.colorResolvingCurrentColor(styleColor);
 }
 
 static WebCore::Color resolveColorStopColor(const Markable<Color>& styleColor, const RenderStyle& style, bool hasColorFilter)
@@ -120,29 +122,29 @@ static WebCore::Color resolveColorStopColor(const Markable<Color>& styleColor, c
     return resolveColorStopColor(*styleColor, style, hasColorFilter);
 }
 
-static std::optional<float> resolveColorStopPosition(const GradientLinearColorStop::Position& position, float gradientLength)
+static std::optional<float> resolveColorStopPosition(const GradientLinearColorStop::Position& position, float gradientLength, ZoomFactor zoom)
 {
     if (!position)
         return std::nullopt;
 
     return WTF::switchOn(*position,
-        [&](const typename LengthPercentage<>::Dimension& length) -> std::optional<float> {
+        [&](const LengthPercentage<CSS::AllUnzoomed>::Dimension& length) -> std::optional<float> {
             if (gradientLength <= 0)
                 return 0;
-            return length.resolveZoom(Style::ZoomNeeded { }) / gradientLength;
+            return evaluate<float>(length, zoom) / gradientLength;
         },
-        [&](const typename LengthPercentage<>::Percentage& percentage) -> std::optional<float> {
+        [&](const LengthPercentage<CSS::AllUnzoomed>::Percentage& percentage) -> std::optional<float> {
             return percentage.value / 100.0;
         },
-        [&](const typename LengthPercentage<>::Calc& calc) -> std::optional<float> {
+        [&](const LengthPercentage<CSS::AllUnzoomed>::Calc& calc) -> std::optional<float> {
             if (gradientLength <= 0)
                 return 0;
-            return Style::evaluate<float>(calc, gradientLength, Style::ZoomNeeded { }) / gradientLength;
+            return evaluate<float>(calc, gradientLength, zoom) / gradientLength;
         }
     );
 }
 
-static std::optional<float> resolveColorStopPosition(const GradientAngularColorStop::Position& position, float)
+static std::optional<float> resolveColorStopPosition(const GradientAngularColorStop::Position& position, float, ZoomFactor)
 {
     if (!position)
         return std::nullopt;
@@ -155,12 +157,12 @@ static std::optional<float> resolveColorStopPosition(const GradientAngularColorS
             return percentage.value / 100.0;
         },
         [&](const typename AnglePercentage<>::Calc& calc) -> std::optional<float> {
-            return Style::evaluate<float>(calc, 100, Style::ZoomNeeded { });
+            return Style::evaluate<float>(calc, 100);
         }
     );
 }
 
-static float resolveColorStopPosition(const GradientDeprecatedColorStop::Position& position)
+static float resolveColorStopPosition(const GradientDeprecatedColorStop::Position& position, ZoomFactor)
 {
     return narrowPrecisionToFloat(position.value.value);
 }
@@ -169,8 +171,8 @@ struct ResolvedGradientStop {
     WebCore::Color color;
     std::optional<float> offset;
 
-    bool isSpecified() const { return offset.has_value(); }
-    bool isMidpoint() const { return !color.isValid(); }
+    bool NODELETE isSpecified() const { return offset.has_value(); }
+    bool NODELETE isMidpoint() const { return !color.isValid(); }
 };
 
 class LinearGradientAdapter {
@@ -180,7 +182,7 @@ public:
     {
     }
 
-    float gradientLength() const
+    float NODELETE gradientLength() const
     {
         auto gradientSize = m_data.point0 - m_data.point1;
         return gradientSize.diagonalLength();
@@ -203,9 +205,11 @@ public:
             m_data.point0 = { p0.x() + firstOffset * (p1.x() - p0.x()), p0.y() + firstOffset * (p1.y() - p0.y()) };
             m_data.point1 = { p1.x() + (lastOffset - 1) * (p1.x() - p0.x()), p1.y() + (lastOffset - 1) * (p1.y() - p0.y()) };
         } else {
-            // There's a single position that is outside the scale, clamp the positions to 1.
+            // All stops at same position - clamp offsets but keep all colors.
+            // This creates a hard color stop at the clamped position.
+            float clampedOffset = std::clamp(firstOffset, 0.0f, 1.0f);
             for (auto& stop : stops)
-                stop.offset = 1;
+                stop.offset = clampedOffset;
         }
     }
 
@@ -221,7 +225,7 @@ public:
     {
     }
 
-    float gradientLength() const { return m_data.endRadius; }
+    float NODELETE gradientLength() const { return m_data.endRadius; }
 
     // Radial gradients may need to extend further than the endpoints, because they have
     // to repeat out to the corners of the box.
@@ -285,7 +289,7 @@ private:
 
 class ConicGradientAdapter {
 public:
-    static constexpr float gradientLength() { return 1; }
+    static constexpr float NODELETE gradientLength() { return 1; }
     static constexpr float maxExtent(float) { return 1; }
 
     void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, ColorInterpolationMethod colorInterpolationMethod)
@@ -355,22 +359,23 @@ public:
 
 template<typename GradientAdapter, typename StyleGradient> GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const StyleGradient& styleGradient, const RenderStyle& style)
 {
-    bool hasColorFilter = style.hasAppleColorFilter();
+    bool hasColorFilter = !style.appleColorFilter().isNone();
     auto result = styleGradient.parameters.stops.value.template map<GradientColorStops::StopVector>([&](auto& stop) -> WebCore::GradientColorStop {
         return {
-            resolveColorStopPosition(stop.position),
+            resolveColorStopPosition(stop.position, style.usedZoomForLength()),
             resolveColorStopColor(stop.color, style, hasColorFilter)
         };
     });
 
     std::ranges::stable_sort(result, { }, &WebCore::GradientColorStop::offset);
 
-    return GradientColorStops::Sorted { WTFMove(result) };
+    return GradientColorStops::Sorted { WTF::move(result) };
 }
 
 template<typename GradientAdapter, typename StyleGradient> GradientColorStops computeStops(GradientAdapter& gradientAdapter, const StyleGradient& styleGradient, const RenderStyle& style)
 {
-    bool hasColorFilter = style.hasAppleColorFilter();
+    bool hasColorFilter = !style.appleColorFilter().isNone();
+    auto zoom = style.usedZoomForLength();
 
     size_t numberOfStops = styleGradient.parameters.stops.size();
     Vector<ResolvedGradientStop> stops(numberOfStops);
@@ -382,7 +387,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
 
         stops[i].color = resolveColorStopColor(stop.color, style, hasColorFilter);
 
-        auto offset = resolveColorStopPosition(stop.position, gradientLength);
+        auto offset = resolveColorStopPosition(stop.position, gradientLength, zoom);
         if (offset)
             stops[i].offset = *offset;
         else {
@@ -626,7 +631,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
                     }
                 }
 
-                stops = WTFMove(generatedStops);
+                stops = WTF::move(generatedStops);
             }
         }
     }
@@ -642,12 +647,12 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
     };
 }
 
-static inline float positionFromValue(LengthWrapperBaseDerived auto const& coordinate, float widthOrHeight)
+static inline float positionFromValue(LengthWrapperBaseDerived auto const& coordinate, float widthOrHeight, ZoomFactor zoom)
 {
-    return evaluate<float>(coordinate, widthOrHeight, Style::ZoomNeeded { });
+    return evaluate<float>(coordinate, widthOrHeight, zoom);
 }
 
-static inline float positionFromValue(const NumberOrPercentage<>& coordinate, float widthOrHeight)
+static inline float positionFromValue(const NumberOrPercentage<>& coordinate, float widthOrHeight, ZoomFactor)
 {
     return WTF::switchOn(coordinate,
         [&](Number<> number) -> float { return number.value; },
@@ -655,11 +660,11 @@ static inline float positionFromValue(const NumberOrPercentage<>& coordinate, fl
     );
 }
 
-template<typename Position> static inline FloatPoint computeEndPoint(const Position& value, const FloatSize& size)
+template<typename Position> static inline FloatPoint computeEndPoint(const Position& value, const FloatSize& size, ZoomFactor zoom)
 {
     return {
-        positionFromValue(get<0>(value), size.width()),
-        positionFromValue(get<1>(value), size.height())
+        positionFromValue(get<0>(value), size.width(), zoom),
+        positionFromValue(get<1>(value), size.height(), zoom),
     };
 }
 
@@ -718,11 +723,6 @@ static std::pair<FloatPoint, FloatPoint> endPointsFromAngleForPrefixedVariants(f
 {
     // Prefixed gradients use "polar coordinate" angles, rather than "bearing" angles.
     return endPointsFromAngle(90 - angleDeg, size);
-}
-
-static float resolveRadius(const LengthPercentage<CSS::Nonnegative>& radius, float widthOrHeight)
-{
-    return evaluate<float>(radius, widthOrHeight, Style::ZoomNeeded { });
 }
 
 struct DistanceToCorner {
@@ -856,7 +856,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     LinearGradientAdapter adapter { data };
     auto stops = computeStops(adapter, linear, style);
 
-    return WebCore::Gradient::create(WTFMove(data), linear.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 // MARK: - Prefixed Linear create.
@@ -911,7 +911,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     LinearGradientAdapter adapter { data };
     auto stops = computeStops(adapter, linear, style);
 
-    return WebCore::Gradient::create(WTFMove(data), linear.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 // MARK: - Deprecated Linear create.
@@ -920,14 +920,16 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 {
     ASSERT(!size.isEmpty());
 
-    auto point0 = computeEndPoint(get<0>(linear.parameters.gradientLine), size);
-    auto point1 = computeEndPoint(get<1>(linear.parameters.gradientLine), size);
+    auto zoom = style.usedZoomForLength();
+
+    auto point0 = computeEndPoint(get<0>(linear.parameters.gradientLine), size, zoom);
+    auto point1 = computeEndPoint(get<1>(linear.parameters.gradientLine), size, zoom);
 
     WebCore::Gradient::LinearData data { point0, point1 };
     LinearGradientAdapter adapter { data };
     auto stops = computeStopsForDeprecatedVariants(adapter, linear, style);
 
-    return WebCore::Gradient::create(WTFMove(data), linear.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 // MARK: - Radial create.
@@ -936,14 +938,16 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 {
     ASSERT(!size.isEmpty());
 
+    auto zoom = style.usedZoomForLength();
+
     auto computeCenterPoint = [&](const std::optional<Position>& position) -> FloatPoint {
-        return position ? computeEndPoint(*position, size) : FloatPoint { size.width() / 2, size.height() / 2 };
+        return position ? computeEndPoint(*position, size, zoom) : FloatPoint { size.width() / 2, size.height() / 2 };
     };
 
     auto computeCircleRadius = [&](const Variant<RadialGradient::Circle::Length, RadialGradient::Extent>& circleLengthOrExtent, FloatPoint centerPoint) -> std::pair<float, float> {
         return WTF::switchOn(circleLengthOrExtent,
             [&](const RadialGradient::Circle::Length& circleLength) -> std::pair<float, float> {
-                return { circleLength.resolveZoom(Style::ZoomNeeded { }), 1 };
+                return { evaluate<float>(circleLength, zoom), 1 };
             },
             [&](const RadialGradient::Extent& extent) -> std::pair<float, float> {
                 return WTF::switchOn(extent,
@@ -967,8 +971,8 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     auto computeEllipseRadii = [&](const Variant<RadialGradient::Ellipse::Size, RadialGradient::Extent>& ellipseSizeOrExtent, FloatPoint centerPoint) -> std::pair<float, float> {
         return WTF::switchOn(ellipseSizeOrExtent,
             [&](const RadialGradient::Ellipse::Size& ellipseSize) -> std::pair<float, float> {
-                auto xDist = resolveRadius(get<0>(ellipseSize), size.width());
-                auto yDist = resolveRadius(get<1>(ellipseSize), size.height());
+                auto xDist = evaluate<float>(get<0>(ellipseSize), size.width(), zoom);
+                auto yDist = evaluate<float>(get<1>(ellipseSize), size.height(), zoom);
                 return { xDist, xDist / yDist };
             },
             [&](const RadialGradient::Extent& extent) -> std::pair<float, float> {
@@ -1022,7 +1026,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     RadialGradientAdapter adapter { data, size };
     auto stops = computeStops(adapter, radial, style);
 
-    return WebCore::Gradient::create(WTFMove(data), radial.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 // MARK: - Prefixed Radial create.
@@ -1031,15 +1035,17 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 {
     ASSERT(!size.isEmpty());
 
+    auto zoom = style.usedZoomForLength();
+
     auto computeCenterPoint = [&](const std::optional<Position>& position) -> FloatPoint {
-        return position ? computeEndPoint(*position, size) : FloatPoint { size.width() / 2, size.height() / 2 };
+        return position ? computeEndPoint(*position, size, zoom) : FloatPoint { size.width() / 2, size.height() / 2 };
     };
 
     auto computeEllipseRadii = [&](const Variant<PrefixedRadialGradient::Ellipse::Size, PrefixedRadialGradient::Extent>& ellipseSizeOrExtent, FloatPoint centerPoint) -> std::pair<float, float> {
         return WTF::switchOn(ellipseSizeOrExtent,
             [&](const PrefixedRadialGradient::Ellipse::Size& ellipseSize) -> std::pair<float, float> {
-                auto xDist = resolveRadius(get<0>(ellipseSize), size.width());
-                auto yDist = resolveRadius(get<1>(ellipseSize), size.height());
+                auto xDist = evaluate<float>(get<0>(ellipseSize), size.width(), zoom);
+                auto yDist = evaluate<float>(get<1>(ellipseSize), size.height(), zoom);
                 return { xDist, xDist / yDist };
             },
             [&](const PrefixedRadialGradient::Extent& extent) -> std::pair<float, float> {
@@ -1129,7 +1135,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     RadialGradientAdapter adapter { data, size };
     auto stops = computeStops(adapter, radial, style);
 
-    return WebCore::Gradient::create(WTFMove(data), radial.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 // MARK: - Deprecated Radial create.
@@ -1138,8 +1144,10 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 {
     ASSERT(!size.isEmpty());
 
-    auto firstPoint = computeEndPoint(radial.parameters.gradientBox.first, size);
-    auto secondPoint = computeEndPoint(radial.parameters.gradientBox.second, size);
+    auto zoom = style.usedZoomForLength();
+
+    auto firstPoint = computeEndPoint(radial.parameters.gradientBox.first, size, zoom);
+    auto secondPoint = computeEndPoint(radial.parameters.gradientBox.second, size, zoom);
 
     auto firstRadius = narrowPrecisionToFloat(radial.parameters.gradientBox.firstRadius.value);
     auto secondRadius = narrowPrecisionToFloat(radial.parameters.gradientBox.secondRadius.value);
@@ -1149,7 +1157,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     RadialGradientAdapter adapter { data, size };
     auto stops = computeStopsForDeprecatedVariants(adapter, radial, style);
 
-    return WebCore::Gradient::create(WTFMove(data), radial.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 // MARK: - Conic create.
@@ -1158,8 +1166,10 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 {
     ASSERT(!size.isEmpty());
 
+    auto zoom = style.usedZoomForLength();
+
     auto computeCenterPoint = [&](const std::optional<Position>& position) -> FloatPoint {
-        return position ? computeEndPoint(*position, size) : FloatPoint { size.width() / 2, size.height() / 2 };
+        return position ? computeEndPoint(*position, size, zoom) : FloatPoint { size.width() / 2, size.height() / 2 };
     };
 
     auto centerPoint = computeCenterPoint(conic.parameters.gradientBox.position);
@@ -1169,7 +1179,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     ConicGradientAdapter adapter;
     auto stops = computeStops(adapter, conic, style);
 
-    return WebCore::Gradient::create(WTFMove(data), conic.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return WebCore::Gradient::create(WTF::move(data), conic.parameters.colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 // MARK: - createPlatformGradient
@@ -1207,7 +1217,7 @@ bool stopsAreCacheable(const Gradient& gradient)
 
 template<typename T> static bool isOpaque(const T& gradient, const RenderStyle& style)
 {
-    bool hasColorFilter = style.hasAppleColorFilter();
+    bool hasColorFilter = !style.appleColorFilter().isNone();
 
     return std::ranges::all_of(gradient.parameters.stops, [&](auto& stop) {
         return resolveColorStopColor(stop.color, style, hasColorFilter).isOpaque();

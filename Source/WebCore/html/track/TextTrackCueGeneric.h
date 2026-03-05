@@ -27,14 +27,15 @@
 
 #if ENABLE(VIDEO)
 
-#include <WebCore/Color.h>
-#include <WebCore/VTTCue.h>
+#include "Color.h"
+#include "EventTargetInterfaces.h"
+#include "VTTCue.h"
 
 namespace WebCore {
 
 // A "generic" cue is a non-WebVTT cue, so it is not positioned/sized with the WebVTT logic.
 class TextTrackCueGeneric final : public VTTCue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(TextTrackCueGeneric, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextTrackCueGeneric, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<TextTrackCueGeneric> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
 
@@ -48,16 +49,16 @@ public:
     double fontSizeMultiplier() const { return m_fontSizeMultiplier; }
     void setFontSizeMultiplier(double);
 
-    const String& fontName() const { return m_fontName; }
+    const String& fontName() const LIFETIME_BOUND { return m_fontName; }
     void setFontName(const String& name) { m_fontName = name; }
 
-    const Color& foregroundColor() const { return m_foregroundColor; }
+    const Color& foregroundColor() const LIFETIME_BOUND { return m_foregroundColor; }
     void setForegroundColor(const Color& color) { m_foregroundColor = color; }
-    
-    const Color& backgroundColor() const { return m_backgroundColor; }
+
+    const Color& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
-    
-    const Color& highlightColor() const { return m_highlightColor; }
+
+    const Color& highlightColor() const LIFETIME_BOUND { return m_highlightColor; }
     void setHighlightColor(const Color& color) { m_highlightColor = color; }
 
 private:
@@ -89,10 +90,11 @@ namespace WTF {
 
 template<> struct LogArgument<WebCore::TextTrackCueGeneric> : LogArgument<WebCore::TextTrackCue> { };
 
-}
+} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrackCueGeneric)
 static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::ConvertedToWebVTT; }
+static bool isType(const WebCore::EventTarget& context) { return context.eventTargetInterface() == WebCore::EventTargetInterfaceType::TextTrackCue; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

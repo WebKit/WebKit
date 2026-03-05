@@ -79,7 +79,7 @@ public:
         if (!buffer.atEnd() && !isASCIIWhitespace(*buffer))
             return false;
 
-        m_digests->append(WTFMove(*digest));
+        m_digests->append(WTF::move(*digest));
         return true;
     }
 
@@ -121,7 +121,7 @@ static bool isResponseEligible(const CachedResource& resource)
     return resource.isCORSSameOrigin();
 }
 
-static std::optional<EncodedResourceCryptographicDigest::Algorithm> prioritizedHashFunction(EncodedResourceCryptographicDigest::Algorithm a, EncodedResourceCryptographicDigest::Algorithm b)
+static std::optional<EncodedResourceCryptographicDigest::Algorithm> NODELETE prioritizedHashFunction(EncodedResourceCryptographicDigest::Algorithm a, EncodedResourceCryptographicDigest::Algorithm b)
 {
     if (a == b)
         return std::nullopt;
@@ -139,7 +139,7 @@ static Vector<EncodedResourceCryptographicDigest> strongestMetadataFromSet(Vecto
         // 1. If result is the empty set, add item to result and set strongest to item, skip to the next item.
         if (result.isEmpty()) {
             strongest = item.algorithm;
-            result.append(WTFMove(item));
+            result.append(WTF::move(item));
             continue;
         }
         
@@ -154,12 +154,12 @@ static Vector<EncodedResourceCryptographicDigest> strongestMetadataFromSet(Vecto
         //    to item, set result to the empty set, and add item to result.
         auto priority = prioritizedHashFunction(currentAlgorithm, newAlgorithm);
         if (!priority)
-            result.append(WTFMove(item));
+            result.append(WTF::move(item));
         else if (priority.value() == newAlgorithm) {
             strongest = item.algorithm;
 
             result.clear();
-            result.append(WTFMove(item));
+            result.append(WTF::move(item));
         }
     }
 
@@ -173,7 +173,7 @@ static Ref<FormData> createReportFormData(const String& type, const URL& url, co
 
     // https://www.w3.org/TR/reporting-1/#queue-report, step 2.3.1.
     auto reportObject = JSON::Object::create();
-    reportObject->setObject("body"_s, WTFMove(body));
+    reportObject->setObject("body"_s, WTF::move(body));
     reportObject->setString("type"_s, type);
     reportObject->setString("user_agent"_s, userAgent);
     // The spec allows user agents to delay report sending, in order to reduce impact on the user and potential overhead. See https://www.w3.org/TR/reporting-1/#delivery
@@ -203,7 +203,7 @@ static String addHashPrefix(ResourceCryptographicDigest::Algorithm algorithm, St
     return String();
 }
 
-static std::optional<ResourceCryptographicDigest::Algorithm> findStrongestAlgorithm(HashAlgorithmSet algorithmSet)
+static std::optional<ResourceCryptographicDigest::Algorithm> NODELETE findStrongestAlgorithm(HashAlgorithmSet algorithmSet)
 {
     for (int i = ResourceCryptographicDigest::algorithmCount - 1; i >= 0; --i) {
         uint8_t algorithm = (1 << i);
@@ -215,6 +215,9 @@ static std::optional<ResourceCryptographicDigest::Algorithm> findStrongestAlgori
 
 void reportHashesIfNeeded(const CachedResource& resource)
 {
+    if (!resource.isHashReportingNeeded())
+        return;
+
     RefPtr loader = resource.loader();
     if (!loader)
         return;
@@ -248,7 +251,7 @@ void reportHashesIfNeeded(const CachedResource& resource)
             body.setString("type"_s, "subresource"_s);
             body.setString("destination"_s, "script"_s);
         });
-        document->sendReportToEndpoints(documentURL, { }, fixedEndpoints, WTFMove(report), ViolationReportType::CSPHashReport);
+        document->sendReportToEndpoints(documentURL, { }, fixedEndpoints, WTF::move(report), ViolationReportType::CSPHashReport);
     }
 }
 
@@ -270,7 +273,7 @@ bool matchIntegrityMetadataSlow(const CachedResource& resource, const String& in
         return true;
 
     // 5. Let metadata be the result of getting the strongest metadata from parsedMetadata.
-    auto metadata = strongestMetadataFromSet(WTFMove(*parsedMetadata));
+    auto metadata = strongestMetadataFromSet(WTF::move(*parsedMetadata));
     
     // 6. For each item in metadata:
     for (auto& item : metadata) {

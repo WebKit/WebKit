@@ -32,7 +32,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferRemoteDisplayListBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferRemoteDisplayListBackend);
 
 std::unique_ptr<ImageBufferRemoteDisplayListBackend> ImageBufferRemoteDisplayListBackend::create(const Parameters& parameters)
 {

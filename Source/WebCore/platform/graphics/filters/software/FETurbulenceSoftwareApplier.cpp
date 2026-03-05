@@ -40,49 +40,80 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FETurbulenceSoftwareApplier);
 // The turbulence calculation code is an adapted version of what appears in the SVG 1.1 specification:
 // http://www.w3.org/TR/SVG11/filters.html#feTurbulence
 
-FETurbulenceSoftwareApplier::PaintingData FETurbulenceSoftwareApplier::initPaintingData(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, long seed, bool stitchTiles, const IntSize& paintingSize)
+static const long s_randMaximum = 2147483647; // 2**31 - 1
+static const int s_perlinNoise = 4096;
+static const int s_blockMask = FETurbulenceSoftwareApplier::s_blockSize - 1;
+
+FETurbulenceSoftwareApplier::PaintingData::PaintingData(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, long seed, bool stitchTiles)
+    : type { type }
+    , baseFrequencyX { baseFrequencyX }
+    , baseFrequencyY { baseFrequencyY }
+    , numOctaves { numOctaves }
+    , stitchTiles { stitchTiles }
 {
-    PaintingData paintingData { type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles, paintingSize, { }, { } };
-
     // The seed value clamp to the range [1, s_randMaximum - 1].
-    if (paintingData.seed <= 0)
-        paintingData.seed = -(paintingData.seed % (s_randMaximum - 1)) + 1;
-    if (paintingData.seed > s_randMaximum - 1)
-        paintingData.seed = s_randMaximum - 1;
+    if (seed <= 0)
+        seed = -(seed % (s_randMaximum - 1)) + 1;
+    if (seed > s_randMaximum - 1)
+        seed = s_randMaximum - 1;
 
-    std::span<float> gradient;
-    for (int channel = 0; channel < 4; ++channel) {
+    auto fillChannelGradient = [&seed](ChannelGradient& gradient) {
         for (int i = 0; i < s_blockSize; ++i) {
-            paintingData.latticeSelector[i] = i;
-            gradient = paintingData.gradient[channel][i];
+            std::span<float> gradientValue = gradient[i];
             do {
-                gradient[0] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
-                gradient[1] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
-            } while (!gradient[0] && !gradient[1]);
-            float normalizationFactor = std::hypot(gradient[0], gradient[1]);
-            gradient[0] /= normalizationFactor;
-            gradient[1] /= normalizationFactor;
+                gradientValue[0] = static_cast<float>((FETurbulenceSoftwareApplier::random(seed) % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
+                gradientValue[1] = static_cast<float>((FETurbulenceSoftwareApplier::random(seed) % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
+            } while (!gradientValue[0] && !gradientValue[1]);
+
+            float normalizationFactor = std::hypot(gradientValue[0], gradientValue[1]);
+            gradientValue[0] /= normalizationFactor;
+            gradientValue[1] /= normalizationFactor;
         }
-    }
 
-    for (int i = s_blockSize - 1; i > 0; --i) {
-        int k = paintingData.latticeSelector[i];
-        int j = paintingData.random() % s_blockSize;
-        ASSERT(j >= 0);
-        ASSERT(j < 2 * s_blockSize + 2);
-        paintingData.latticeSelector[i] = paintingData.latticeSelector[j];
-        paintingData.latticeSelector[j] = k;
-    }
+        for (int i = 0; i < s_blockSize; ++i)
+            gradient[s_blockSize + i] = gradient[i];
+    };
 
-    for (int i = 0; i < s_blockSize + 2; ++i) {
-        paintingData.latticeSelector[s_blockSize + i] = paintingData.latticeSelector[i];
-        for (int channel = 0; channel < 4; ++channel) {
-            paintingData.gradient[channel][s_blockSize + i][0] = paintingData.gradient[channel][i][0];
-            paintingData.gradient[channel][s_blockSize + i][1] = paintingData.gradient[channel][i][1];
+    auto fillLatticeSelector = [&]() {
+        for (int i = 0; i < s_blockSize; ++i)
+            latticeSelector[i] = i;
+
+        for (int i = s_blockSize - 1; i > 0; --i) {
+            int k = latticeSelector[i];
+            int j = FETurbulenceSoftwareApplier::random(seed) % s_blockSize;
+            ASSERT(j >= 0);
+            ASSERT(j < 2 * s_blockSize + 2);
+            latticeSelector[i] = latticeSelector[j];
+            latticeSelector[j] = k;
         }
-    }
 
-    return paintingData;
+        for (int i = 0; i < s_blockSize + 2; ++i)
+            latticeSelector[s_blockSize + i] = latticeSelector[i];
+    };
+
+    for (int channel = 0; channel < 4; ++channel)
+        fillChannelGradient(gradient[channel]);
+
+    fillLatticeSelector();
+}
+
+long FETurbulenceSoftwareApplier::random(long& seed)
+{
+    // Produces results in the range [1, 2**31 - 2]. Algorithm is:
+    // r = (a * r) mod m where a = s_randAmplitude = 16807 and
+    // m = s_randMaximum = 2**31 - 1 = 2147483647, r = seed.
+    // See [Park & Miller], CACM vol. 31 no. 10 p. 1195, Oct. 1988
+    // To test: the algorithm should produce the result 1043618065
+    // as the 10,000th generated number if the original seed is 1.
+    static const int s_randAmplitude = 16807; // 7**5; primitive root of m
+    static const int s_randQ = 127773; // m / a
+    static const int s_randR = 2836; // m % a
+
+    long result = s_randAmplitude * (seed % s_randQ) - s_randR * (seed / s_randQ);
+    if (result <= 0)
+        result += s_randMaximum;
+    seed = result;
+    return result;
 }
 
 FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY, bool stitchTiles)
@@ -97,8 +128,8 @@ FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStit
     // When stitching tiled turbulence, the frequencies must be adjusted
     // so that the tile borders will be continuous.
     if (baseFrequencyX) {
-        float lowFrequency = floorf(tileWidth * baseFrequencyX) / tileWidth;
-        float highFrequency = ceilf(tileWidth * baseFrequencyX) / tileWidth;
+        float lowFrequency = std::floor(tileWidth * baseFrequencyX) / tileWidth;
+        float highFrequency = std::ceil(tileWidth * baseFrequencyX) / tileWidth;
         // BaseFrequency should be non-negative according to the standard.
         if (baseFrequencyX / lowFrequency < highFrequency / baseFrequencyX)
             baseFrequencyX = lowFrequency;
@@ -106,8 +137,8 @@ FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStit
             baseFrequencyX = highFrequency;
     }
     if (baseFrequencyY) {
-        float lowFrequency = floorf(tileHeight * baseFrequencyY) / tileHeight;
-        float highFrequency = ceilf(tileHeight * baseFrequencyY) / tileHeight;
+        float lowFrequency = std::floor(tileHeight * baseFrequencyY) / tileHeight;
+        float highFrequency = std::ceil(tileHeight * baseFrequencyY) / tileHeight;
         if (baseFrequencyY / lowFrequency < highFrequency / baseFrequencyY)
             baseFrequencyY = lowFrequency;
         else
@@ -115,9 +146,9 @@ FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStit
     }
 
     StitchData stitchData;
-    stitchData.width = roundf(tileWidth * baseFrequencyX);
+    stitchData.width = std::roundf(tileWidth * baseFrequencyX);
     stitchData.wrapX = s_perlinNoise + stitchData.width;
-    stitchData.height = roundf(tileHeight * baseFrequencyY);
+    stitchData.height = std::roundf(tileHeight * baseFrequencyY);
     stitchData.wrapY = s_perlinNoise + stitchData.height;
 
     return stitchData;
@@ -344,7 +375,7 @@ void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, con
 
 bool FETurbulenceSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>>, FilterImage& result) const
 {
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
+    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 
@@ -363,7 +394,7 @@ bool FETurbulenceSoftwareApplier::apply(const Filter& filter, std::span<const Re
     float baseFrequencyY = m_effect->baseFrequencyY();
     auto stitchData = computeStitching(tileSize, baseFrequencyX, baseFrequencyY, m_effect->stitchTiles());
 
-    auto paintingData = initPaintingData(m_effect->type(), baseFrequencyX, baseFrequencyY, m_effect->numOctaves(), m_effect->seed(), m_effect->stitchTiles(), tileSize);
+    auto paintingData = PaintingData(m_effect->type(), baseFrequencyX, baseFrequencyY, m_effect->numOctaves(), m_effect->seed(), m_effect->stitchTiles());
 
     applyPlatform(result.absoluteImageRect(), filter.filterScale(), *destinationPixelBuffer, paintingData, stitchData);
     return true;

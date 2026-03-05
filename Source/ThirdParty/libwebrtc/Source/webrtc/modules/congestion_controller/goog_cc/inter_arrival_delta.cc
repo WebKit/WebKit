@@ -22,7 +22,6 @@ namespace webrtc {
 
 static constexpr TimeDelta kBurstDeltaThreshold = TimeDelta::Millis(5);
 static constexpr TimeDelta kMaxBurstDuration = TimeDelta::Millis(100);
-constexpr TimeDelta InterArrivalDelta::kArrivalTimeOffsetThreshold;
 
 InterArrivalDelta::InterArrivalDelta(TimeDelta send_time_group_length)
     : send_time_group_length_(send_time_group_length),

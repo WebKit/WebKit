@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorEnvironment.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
@@ -38,12 +40,10 @@ class JSGlobalObject;
 namespace Inspector {
 
 class BackendDispatcher;
-class InjectedScriptManager;
-class InspectorEnvironment;
 
 struct AgentContext {
-    InspectorEnvironment& environment;
-    InjectedScriptManager& injectedScriptManager;
+    CheckedRef<InspectorEnvironment> environment;
+    CheckedRef<InjectedScriptManager> injectedScriptManager;
     CheckedRef<FrontendRouter> frontendRouter;
     BackendDispatcher& backendDispatcher;
 };

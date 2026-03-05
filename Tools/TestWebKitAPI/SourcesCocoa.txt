@@ -35,6 +35,7 @@ cocoa/ImageAnalysisTestingUtilities.mm @nonARC
 cocoa/ModelLoadingMessageHandler.mm @nonARC
 cocoa/NSItemProviderAdditions.mm @nonARC
 cocoa/PlatformUtilitiesCocoa.mm @nonARC
+cocoa/SafeBrowsingTestUtilities.mm @nonARC
 cocoa/TestCocoa.mm @nonARC
 cocoa/TestDownloadDelegate.mm @nonARC
 cocoa/TestInspectorURLSchemeHandler.mm @nonARC
@@ -52,6 +53,8 @@ cocoa/UserMediaCaptureUIDelegate.mm @nonARC
 ios/IOSMouseEventTestHarness.mm @nonARC
 
 Tests/WTF/cocoa/URLExtras.mm @nonARC
+
+Tests/WebCore/cocoa/WebAVPlayerControllerLeakTests.mm @nonARC
 
 Tests/WebKitCocoa/AVFoundationPreference.mm @nonARC
 Tests/WebKitCocoa/AdaptiveImageGlyph.mm @nonARC
@@ -118,6 +121,7 @@ Tests/WebKitCocoa/EditorStateTests.mm @nonARC
 Tests/WebKitCocoa/ElementTargetingTests.mm @nonARC
 Tests/WebKitCocoa/ElementTextPreview.mm @nonARC
 Tests/WebKitCocoa/EnhancedSecurity.mm @nonARC
+Tests/WebKitCocoa/EnhancedSecurityPolicies.mm @nonARC
 Tests/WebKitCocoa/EventAttribution.mm @nonARC
 Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm @nonARC
 Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm @nonARC
@@ -128,6 +132,7 @@ Tests/WebKitCocoa/FindInPageUtilities.mm @nonARC
 Tests/WebKitCocoa/FindInPageAPI.mm @nonARC
 Tests/WebKitCocoa/FirstVisuallyNonEmptyMilestone.mm @nonARC
 Tests/WebKitCocoa/FixedLayoutSize.mm @nonARC
+Tests/WebKitCocoa/FocusWebView.mm @nonARC
 Tests/WebKitCocoa/FontAttributes.mm @nonARC
 Tests/WebKitCocoa/FormValidation.mm @nonARC
 Tests/WebKitCocoa/FullscreenAlert.mm @nonARC
@@ -138,6 +143,7 @@ Tests/WebKitCocoa/FullscreenScrollAndResize.mm @nonARC
 Tests/WebKitCocoa/FullscreenVideoTextRecognition.mm @nonARC
 Tests/WebKitCocoa/GPUProcess.mm @nonARC
 Tests/WebKitCocoa/Geolocation.mm @nonARC
+Tests/WebKitCocoa/GetComputedStyleAfterIframeRemoval.mm @nonARC
 Tests/WebKitCocoa/GetDisplayMedia.mm @nonARC
 Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm @nonARC
 Tests/WebKitCocoa/GetResourceData.mm @nonARC
@@ -147,6 +153,7 @@ Tests/WebKitCocoa/IDBCheckpointWAL.mm @nonARC
 Tests/WebKitCocoa/IDBDeleteRecovery.mm @nonARC
 Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm @nonARC
 Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm @nonARC
+Tests/WebKitCocoa/IPCSharedMemoryFallback.mm @nonARC
 Tests/WebKitCocoa/IPCTestingAPI.mm @nonARC
 Tests/WebKitCocoa/IconLoadingDelegate.mm @nonARC
 Tests/WebKitCocoa/ImageAnalysisTests.mm @nonARC
@@ -257,6 +264,7 @@ Tests/WebKitCocoa/SafeBrowsing.mm @nonARC
 Tests/WebKitCocoa/SampledPageTopColor.mm @nonARC
 Tests/WebKitCocoa/SchemeRegistry.mm @nonARC
 Tests/WebKitCocoa/ScreenTime.mm @nonARC
+Tests/WebKitCocoa/ScreenWakeLock.mm @nonARC
 Tests/WebKitCocoa/SerializedNode.mm @nonARC
 Tests/WebKitCocoa/ScriptTrackingPrivacyTests.mm @nonARC
 Tests/WebKitCocoa/ServiceWorkerBasic.mm @nonARC
@@ -269,6 +277,7 @@ Tests/WebKitCocoa/SimulateClickOverText.mm @nonARC
 Tests/WebKitCocoa/SiteIsolation.mm @nonARC
 Tests/WebKitCocoa/SiteIsolationUtilities.mm @nonARC
 Tests/WebKitCocoa/SnapshotStore.mm @nonARC
+Tests/WebKitCocoa/ImmersiveVideoMetadata.mm @nonARC
 Tests/WebKitCocoa/SpeechRecognition.mm @nonARC
 Tests/WebKitCocoa/StopSuspendResumeAllMedia.mm @nonARC
 Tests/WebKitCocoa/StorageQuota.mm @nonARC
@@ -398,6 +407,7 @@ Tests/WebKitCocoa/WebSocket.mm @nonARC
 Tests/WebKitCocoa/WebTransport.mm @nonARC
 Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm @nonARC
 Tests/WebKitCocoa/WebsitePolicies.mm @nonARC
+Tests/WebKitCocoa/WindowBlurInputChangeEvent.mm @nonARC 
 Tests/WebKitCocoa/WritingSuggestions.mm @nonARC
 Tests/WebKitCocoa/YoutubeReplacementPlugin.mm @nonARC
 Tests/WebKitCocoa/_WKInputDelegate.mm @nonARC

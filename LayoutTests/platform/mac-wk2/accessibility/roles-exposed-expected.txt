@@ -460,7 +460,9 @@ mi
       AXRoleDescription: group
 
 mprescripts
-      Could not get AX element.
+      AXRole: AXGroup
+      AXSubrole: AXEmptyGroup
+      AXRoleDescription: group
 
 mi
       AXRole: AXGroup

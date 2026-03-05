@@ -26,6 +26,7 @@ constexpr uint8_t kNaluTypeMask = 0x7E;
 std::vector<NaluIndex> FindNaluIndices(ArrayView<const uint8_t> buffer) {
   std::vector<H264::NaluIndex> indices = H264::FindNaluIndices(buffer);
   std::vector<NaluIndex> results;
+  results.reserve(indices.size());
   for (auto& index : indices) {
     results.push_back(
         {index.start_offset, index.payload_start_offset, index.payload_size});

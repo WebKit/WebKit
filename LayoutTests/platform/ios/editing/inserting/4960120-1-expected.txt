@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 518x19
+        RenderText {#text} at (0,0) size 518x20
           text run at (0,0) width 518: "This tests for a bug where the first newline entered into a text area would be lost."
       RenderBlock (anonymous) at (0,36) size 784x34
         RenderText {#text} at (0,0) size 0x0

@@ -63,7 +63,7 @@ ExceptionOr<Ref<BarcodeDetector>> BarcodeDetector::create(ScriptExecutionContext
 
 
 BarcodeDetector::BarcodeDetector(Ref<ShapeDetection::BarcodeDetector>&& backing)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
 {
 }
 
@@ -75,7 +75,7 @@ ExceptionOr<void> BarcodeDetector::getSupportedFormats(ScriptExecutionContext& s
         RefPtr page = document->page();
         if (!page)
             return Exception { ExceptionCode::AbortError };
-        page->chrome().getBarcodeDetectorSupportedFormats(([promise = WTFMove(promise)](Vector<ShapeDetection::BarcodeFormat>&& barcodeFormats) mutable {
+        page->chrome().getBarcodeDetectorSupportedFormats(([promise = WTF::move(promise)](Vector<ShapeDetection::BarcodeFormat>&& barcodeFormats) mutable {
             promise.resolve(barcodeFormats.map([](auto format) {
                 return convertFromBacking(format);
             }));
@@ -93,7 +93,7 @@ ExceptionOr<void> BarcodeDetector::getSupportedFormats(ScriptExecutionContext& s
 
 void BarcodeDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTF::move(source), { }, [backing = m_backing.copyRef(), promise = WTF::move(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
         if (imageBitmap.hasException()) {
             promise.resolve({ });
             return;
@@ -111,7 +111,7 @@ void BarcodeDetector::detect(ScriptExecutionContext& scriptExecutionContext, Ima
             return;
         }
 
-        backing->detect(image.releaseNonNull(), [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedBarcode>&& detectedBarcodes) mutable {
+        backing->detect(image.releaseNonNull(), [promise = WTF::move(promise)](Vector<ShapeDetection::DetectedBarcode>&& detectedBarcodes) mutable {
             promise.resolve(detectedBarcodes.map([](const auto& detectedBarcode) {
                 return convertFromBacking(detectedBarcode);
             }));

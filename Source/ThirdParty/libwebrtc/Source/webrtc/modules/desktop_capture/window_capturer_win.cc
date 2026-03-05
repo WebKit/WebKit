@@ -15,6 +15,7 @@
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/win/window_capturer_win_gdi.h"
+#include "rtc_base/logging.h"
 
 #if defined(RTC_ENABLE_WIN_WGC)
 #include "modules/desktop_capture/blank_detector_desktop_capturer_wrapper.h"
@@ -28,6 +29,8 @@ namespace webrtc {
 // static
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options) {
+  RTC_LOG(LS_INFO) << "video capture: DesktopCapturer::CreateRawWindowCapturer "
+                      "creates DesktopCapturer of type WindowCapturerWinGdi";
   std::unique_ptr<DesktopCapturer> capturer(
       WindowCapturerWinGdi::CreateRawWindowCapturer(options));
 #if defined(RTC_ENABLE_WIN_WGC)
@@ -36,6 +39,10 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
     // BlankDectector capturer will send an error when it detects a failed
     // GDI rendering, then Fallback capturer will try to capture it again with
     // WGC.
+    RTC_LOG(LS_INFO)
+        << "video capture: DesktopCapturer::CreateRawWindowCapturer creates "
+           "DesktopCapturer of type FallbackDesktopCapturerWrapper which has a "
+           "fallback capturer of type WgcCapturerWin";
     capturer = std::make_unique<BlankDetectorDesktopCapturerWrapper>(
         std::move(capturer), RgbaColor(0, 0, 0, 0),
         /*check_per_capture*/ true);

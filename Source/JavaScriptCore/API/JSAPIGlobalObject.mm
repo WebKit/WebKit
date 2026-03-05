@@ -30,7 +30,6 @@
 
 #import "APICast.h"
 #import "CallFrameInlines.h"
-#import "CatchScope.h"
 #import "Completion.h"
 #import "Error.h"
 #import "Exception.h"
@@ -51,6 +50,7 @@
 #import "ObjectConstructor.h"
 #import "SourceOrigin.h"
 #import "StrongInlines.h"
+#import "TopExceptionScope.h"
 #import <wtf/URL.h>
 #import <wtf/text/MakeString.h>
 
@@ -62,7 +62,6 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
         &supportsRichSourceInfo,
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
-        &queueMicrotaskToEventLoop,
         &shouldInterruptScriptBeforeTimeout,
         &moduleLoaderImportModule, // moduleLoaderImportModule
         &moduleLoaderResolve, // moduleLoaderResolve
@@ -209,18 +208,18 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         if (![script isKindOfClass:[JSScript class]]) [[unlikely]]
             return rejectPromise("First argument of resolution callback is not a JSScript"_s);
 
-        JSScript* jsScript = static_cast<JSScript *>(script);
+        RetainPtr jsScript = static_cast<JSScript *>(script);
 
-        JSSourceCode* source = [jsScript jsSourceCode];
-        if ([jsScript type] != kJSScriptTypeModule) [[unlikely]]
+        JSSourceCode* source = [jsScript.get() jsSourceCode];
+        if ([jsScript.get() type] != kJSScriptTypeModule) [[unlikely]]
             return rejectPromise("The JSScript that was provided did not have expected type of kJSScriptTypeModule."_s);
 
-        NSURL *sourceURL = [jsScript sourceURL];
+        NSURL *sourceURL = [jsScript.get() sourceURL];
         String oldModuleKey { [sourceURL absoluteString] };
         if (Identifier::fromString(vm, oldModuleKey) != moduleKey) [[unlikely]]
             return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: "_s, oldModuleKey, " and now: "_s, moduleKey.string()));
 
-        strongPromise.get()->resolve(globalObject, source);
+        strongPromise.get()->resolve(globalObject, vm, source);
         return encodedJSUndefined();
     });
 
@@ -293,7 +292,7 @@ JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JS
     JSInternalPromise* promise = importModule(this, key, jsUndefined(), jsUndefined(), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
     auto* result = JSPromise::create(vm, this->promiseStructure());
-    result->resolve(this, promise);
+    result->resolve(this, vm, promise);
     RETURN_IF_EXCEPTION(scope, { });
     return result;
 }

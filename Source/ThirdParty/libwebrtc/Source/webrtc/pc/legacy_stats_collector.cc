@@ -10,7 +10,6 @@
 
 #include "pc/legacy_stats_collector.h"
 
-#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -63,6 +62,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace {
@@ -554,8 +554,10 @@ const char* AdapterTypeToStatsType(AdapterType type) {
   }
 }
 
-LegacyStatsCollector::LegacyStatsCollector(PeerConnectionInternal* pc)
+LegacyStatsCollector::LegacyStatsCollector(PeerConnectionInternal* pc,
+                                           Clock& clock)
     : pc_(pc),
+      clock_(clock),
       stats_gathering_started_(0),
       use_standard_bytes_stats_(
           pc->trials().IsEnabled(kUseStandardBytesStats)) {
@@ -621,13 +623,11 @@ void LegacyStatsCollector::RemoveLocalAudioTrack(
     AudioTrackInterface* audio_track,
     uint32_t ssrc) {
   RTC_DCHECK(audio_track != nullptr);
-  local_audio_tracks_.erase(
-      std::remove_if(
-          local_audio_tracks_.begin(), local_audio_tracks_.end(),
-          [audio_track, ssrc](const LocalAudioTrackVector::value_type& track) {
-            return track.first == audio_track && track.second == ssrc;
-          }),
-      local_audio_tracks_.end());
+  std::erase_if(
+      local_audio_tracks_,
+      [audio_track, ssrc](const LocalAudioTrackVector::value_type& track) {
+        return track.first == audio_track && track.second == ssrc;
+      });
 }
 
 void LegacyStatsCollector::GetStats(MediaStreamTrackInterface* track,
@@ -677,7 +677,7 @@ void LegacyStatsCollector::UpdateStats(
   // will be ignored. Using a monotonic clock specifically for this, while using
   // a UTC clock for the reports themselves.
   const int64_t kMinGatherStatsPeriodMs = 50;
-  int64_t cache_now_ms = TimeMillis();
+  int64_t cache_now_ms = clock_.TimeInMilliseconds();
   if (cache_timestamp_ms_ != 0 &&
       cache_timestamp_ms_ + kMinGatherStatsPeriodMs > cache_now_ms) {
     return;
@@ -1013,7 +1013,7 @@ void LegacyStatsCollector::ExtractSessionInfo_s(SessionStats& session_stats) {
       }
       int srtp_crypto_suite = channel_iter.srtp_crypto_suite;
       if (srtp_crypto_suite != kSrtpInvalidCryptoSuite &&
-          SrtpCryptoSuiteToName(srtp_crypto_suite).length()) {
+          !SrtpCryptoSuiteToName(srtp_crypto_suite).empty()) {
         channel_report->AddString(StatsReport::kStatsValueNameSrtpCipher,
                                   SrtpCryptoSuiteToName(srtp_crypto_suite));
       }

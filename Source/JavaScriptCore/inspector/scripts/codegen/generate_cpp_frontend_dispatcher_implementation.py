@@ -111,7 +111,7 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
             elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
                 parameter_value = '*' + parameter_value
             elif CppGenerator.should_move_argument(_type, parameter.is_optional):
-                parameter_value = 'WTFMove(%s)' % parameter_value
+                parameter_value = 'WTF::move(%s)' % parameter_value
 
             parameter_args = {
                 'parameterKey': parameter.parameter_name,
@@ -143,7 +143,7 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
         if len(parameter_assignments) > 0:
             lines.append('    auto protocol_paramsObject = JSON::Object::create();')
             lines.extend(parameter_assignments)
-            lines.append('    protocol_jsonMessage->setObject("params"_s, WTFMove(protocol_paramsObject));')
+            lines.append('    protocol_jsonMessage->setObject("params"_s, WTF::move(protocol_paramsObject));')
 
         lines.append('')
         lines.append('    m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());')

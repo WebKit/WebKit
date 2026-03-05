@@ -36,12 +36,12 @@ class BoxLegacyPath;
 }
 
 class LegacyInlineTextBox : public LegacyInlineBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineTextBox);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyInlineTextBox);
 public:
     explicit LegacyInlineTextBox(RenderSVGInlineText&);
     virtual ~LegacyInlineTextBox();
 
-    RenderSVGInlineText& renderer() const;
+    RenderSVGInlineText& NODELETE renderer() const;
     const RenderStyle& lineStyle() const;
 
     LegacyInlineTextBox* prevTextBox() const { return m_prevTextBox; }
@@ -49,7 +49,7 @@ public:
     void setNextTextBox(LegacyInlineTextBox* n) { m_nextTextBox = n; }
     void setPreviousTextBox(LegacyInlineTextBox* p) { m_prevTextBox = p; }
 
-    bool hasTextContent() const;
+    bool hasTextContent() const { return m_len; }
 
     unsigned start() const { return m_start; }
     unsigned end() const { return m_start + m_len; }
@@ -93,14 +93,14 @@ public:
     RenderObject::HighlightState selectionState() const final;
 
 public:
-    bool isLineBreak() const final;
+    bool NODELETE isLineBreak() const final;
 
 private:
     bool isInlineTextBox() const final { return true; }
 
 public:
-    int caretMinOffset() const final;
-    int caretMaxOffset() const final;
+    int caretMinOffset() const final { return m_start; }
+    int NODELETE caretMaxOffset() const final;
 
 private:
     float textPos() const; // returns the x position relative to the left start of the text line.

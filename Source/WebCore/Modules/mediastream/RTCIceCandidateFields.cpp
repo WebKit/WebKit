@@ -33,7 +33,7 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 
-#include <webrtc/pc/webrtc_sdp.h>
+#include <webrtc/api/candidate.h>
 
 IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -42,11 +42,11 @@ namespace WebCore {
 
 std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String& sdp)
 {
-    webrtc::Candidate candidate;
-    if (!webrtc::ParseCandidate(sdp.utf8().data(), &candidate, nullptr, true))
+    auto candidate = webrtc::Candidate::ParseCandidateString(sdp.utf8().data());
+    if (!candidate.ok())
         return { };
 
-    return convertIceCandidate(candidate);
+    return convertIceCandidate(candidate.MoveValue());
 }
 
 } // namespace WebCore

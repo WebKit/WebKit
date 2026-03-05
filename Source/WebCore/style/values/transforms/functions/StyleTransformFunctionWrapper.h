@@ -31,7 +31,7 @@ namespace WebCore {
 namespace Style {
 
 template<typename Function> struct TransformFunctionWrapper {
-    TransformFunctionWrapper(Ref<const Function> value) : value { WTFMove(value) } { }
+    TransformFunctionWrapper(Ref<const Function> value) : value { WTF::move(value) } { }
 
     const Function& function() const { return value.get(); }
     const Function* operator->() const { return value.ptr(); }

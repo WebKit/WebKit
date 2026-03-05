@@ -78,8 +78,8 @@ ObjCEventListener::~ObjCEventListener()
 
 void ObjCEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    ObjCListener listener = m_listener.get();
-    [listener handleEvent:kit(&event)];
+    RetainPtr listener = m_listener.get();
+    [listener.get() handleEvent:kit(&event)];
 }
 
 bool ObjCEventListener::operator==(const EventListener& listener) const

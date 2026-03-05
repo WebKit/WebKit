@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if HAVE(MEDIA_USAGE_FRAMEWORK)
 
 #import <wtf/SoftLinking.h>

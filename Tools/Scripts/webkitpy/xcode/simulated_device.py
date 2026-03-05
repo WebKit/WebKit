@@ -649,8 +649,8 @@ class SimulatedDevice(object):
             with Timeout(seconds=30, patch=False):
                 exit_code |= self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'terminate', self.udid, service], return_exit_code=True)
         except Timeout.Exception:
-            _log.error("Exceeded timeout while running simctl terminate, this simulator will never become healthy")
-            return None
+            _log.error("Exceeded timeout while running simctl terminate, not simulator frames executing")
+            return False
 
         if exit_code == 0:
             return True

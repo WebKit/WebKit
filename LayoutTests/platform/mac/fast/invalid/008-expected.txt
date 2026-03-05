@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x577
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 31x18
+        RenderText {#text} at (0,-1) size 31x20
           text run at (0,0) width 31: "Test"
 layer at (250,50) size 247x62
   RenderBlock (positioned) {DIV} at (250,50) size 248x62 [border: (2px solid #008000)]

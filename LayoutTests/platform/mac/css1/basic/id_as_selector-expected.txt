@@ -32,8 +32,8 @@ layer at (0,0) size 785x627
       RenderBlock {P} at (0,253) size 769x18 [color=#0000FF]
         RenderText {#text} at (0,0) size 204x18
           text run at (0,0) width 204: "This paragraph should be blue ["
-        RenderInline {TT} at (203,2) size 63x15
-          RenderText {#text} at (203,2) size 63x15
+        RenderInline {TT} at (203,2) size 63x16
+          RenderText {#text} at (203,2) size 63x16
             text run at (203,2) width 63: "ID=\"two\""
         RenderText {#text} at (265,0) size 10x18
           text run at (265,0) width 10: "]."
@@ -71,8 +71,8 @@ layer at (0,0) size 785x627
               RenderBlock {P} at (4,72) size 391x18 [color=#0000FF]
                 RenderText {#text} at (0,0) size 204x18
                   text run at (0,0) width 204: "This paragraph should be blue ["
-                RenderInline {TT} at (203,2) size 71x15
-                  RenderText {#text} at (203,2) size 71x15
+                RenderInline {TT} at (203,2) size 71x16
+                  RenderText {#text} at (203,2) size 71x16
                     text run at (203,2) width 71: "ID=\"five\""
                 RenderText {#text} at (273,0) size 10x18
                   text run at (273,0) width 10: "]."

@@ -26,7 +26,7 @@ int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
                       const EVP_MD *digest, size_t key_len, uint8_t *out_key) {
   // See RFC 8018, section 5.2.
   bssl::ScopedHMAC_CTX hctx;
-  if (!HMAC_Init_ex(hctx.get(), password, password_len, digest, NULL)) {
+  if (!HMAC_Init_ex(hctx.get(), password, password_len, digest, nullptr)) {
     return 0;
   }
 
@@ -46,19 +46,19 @@ int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
 
     // Compute U_1.
     uint8_t digest_tmp[EVP_MAX_MD_SIZE];
-    if (!HMAC_Init_ex(hctx.get(), NULL, 0, NULL, NULL) ||
+    if (!HMAC_Init_ex(hctx.get(), nullptr, 0, nullptr, nullptr) ||
         !HMAC_Update(hctx.get(), salt, salt_len) ||
         !HMAC_Update(hctx.get(), i_buf, 4) ||
-        !HMAC_Final(hctx.get(), digest_tmp, NULL)) {
+        !HMAC_Final(hctx.get(), digest_tmp, nullptr)) {
       return 0;
     }
 
     OPENSSL_memcpy(out_key, digest_tmp, todo);
     for (uint32_t j = 1; j < iterations; j++) {
       // Compute the remaining U_* values and XOR.
-      if (!HMAC_Init_ex(hctx.get(), NULL, 0, NULL, NULL) ||
+      if (!HMAC_Init_ex(hctx.get(), nullptr, 0, nullptr, nullptr) ||
           !HMAC_Update(hctx.get(), digest_tmp, md_len) ||
-          !HMAC_Final(hctx.get(), digest_tmp, NULL)) {
+          !HMAC_Final(hctx.get(), digest_tmp, nullptr)) {
         return 0;
       }
       for (size_t k = 0; k < todo; k++) {

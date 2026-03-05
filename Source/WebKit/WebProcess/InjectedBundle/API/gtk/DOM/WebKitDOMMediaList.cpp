@@ -65,7 +65,9 @@ WebKitDOMMediaList* wrapMediaList(WebCore::MediaList* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMMediaList, webkit_dom_media_list, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_MEDIA_LIST_PROP_0,

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.opener && window.internals) {
+    window.opener.postMessage({ type: "processId", pid: internals.processIdentifier }, "*");
+}
+</script>
+</head>
+<body>
+This page reports its process ID to its opener.
+</body>
+</html>
+

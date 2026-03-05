@@ -39,8 +39,8 @@ class DOMPromise;
 class ReadableStream;
 class ScriptExecutionContext;
 class WebTransport;
+class WebTransportDatagramsWritable;
 class WebTransportSession;
-class WritableStream;
 struct WebTransportSendOptions;
 template<typename> class ExceptionOr;
 
@@ -50,7 +50,7 @@ public:
     ~WebTransportDatagramDuplexStream();
 
     ReadableStream& readable() { return m_readable; }
-    ExceptionOr<Ref<WritableStream>> createWritable(ScriptExecutionContext&, WebTransportSendOptions&&);
+    ExceptionOr<Ref<WebTransportDatagramsWritable>> createWritable(ScriptExecutionContext&, WebTransportSendOptions&&);
     unsigned maxDatagramSize() const { return std::numeric_limits<uint16_t>::max(); }
     std::optional<double> incomingMaxAge() const { return m_incomingMaxAge; }
     std::optional<double> outgoingMaxAge() const { return m_outgoingMaxAge; }

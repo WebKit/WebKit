@@ -99,7 +99,7 @@ private:
     template<typename MatchFunction>
     void removeMatchingPlansForVM(VM&, const MatchFunction&);
 
-    State removeAllReadyPlansForVM(VM&, Vector<RefPtr<JITPlan>, 8>&, JITCompilationKey);
+    State removeAllReadyPlansForVM(VM&, Vector<Ref<JITPlan>, 8>&, JITCompilationKey);
 
     void dump(const AbstractLocker&, PrintStream&) const;
 
@@ -122,7 +122,7 @@ private:
 
     // Used to quickly find which plans have been compiled and are ready to
     // be completed.
-    Vector<RefPtr<JITPlan>, 16> m_readyPlans;
+    Vector<Ref<JITPlan>, 16> m_readyPlans;
 
     Lock m_suspensionLock;
     Box<Lock> m_lock;

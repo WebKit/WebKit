@@ -35,7 +35,7 @@ double FullscreenTouchSecheuristic::scoreOfNextTouch(CGPoint location)
     Seconds now = MonotonicTime::now().secondsSinceEpoch();
 
     if (!m_lastTouchTime) {
-        m_lastTouchTime = WTFMove(now);
+        m_lastTouchTime = WTF::move(now);
         return 0;
     }
 
@@ -48,7 +48,7 @@ double FullscreenTouchSecheuristic::scoreOfNextTouch(CGPoint location)
 double FullscreenTouchSecheuristic::scoreOfNextTouch(CGPoint location, const Seconds& deltaTime)
 {
     if (m_lastTouchLocation.x == -1 && m_lastTouchLocation.y ==  -1) {
-        m_lastTouchLocation = WTFMove(location);
+        m_lastTouchLocation = WTF::move(location);
         return 0;
     }
 

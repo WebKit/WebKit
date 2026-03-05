@@ -2,6 +2,11 @@ list(APPEND WTF_SOURCES
     generic/MainThreadGeneric.cpp
     generic/WorkQueueGeneric.cpp
 
+    haiku/CurrentProcessMemoryStatus.cpp
+    haiku/FileSystemHaiku.cpp
+    haiku/LanguageHaiku.cpp
+    haiku/MemoryFootprintHaiku.cpp
+
     posix/CPUTimePOSIX.cpp
     posix/FileHandlePOSIX.cpp
     posix/FileSystemPOSIX.cpp

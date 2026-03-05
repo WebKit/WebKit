@@ -97,12 +97,23 @@ enum class NSURLRequestFlags : int16_t {
     ShouldStartSynchronously = (1 << 12)
 };
 
+struct ProtocolProperties {
+    std::optional<bool> isTopLevelNavigation;
+    std::optional<bool> allowAllPOSTCaching;
+    std::optional<CoreIPCString> siteForCookies;
+    std::optional<CoreIPCString> cachePartitionKey;
+    std::optional<bool> wkVeryLowLoadPriority;
+    std::optional<CoreIPCNumber> fileProtocolExpectedDevice;
+    std::optional<bool> shouldSniff;
+    std::optional<bool> contentDecoderSkipURLCheck;
+};
+
 struct CoreIPCNSURLRequestData {
 
     using BodyParts = Variant<CoreIPCString, CoreIPCData>;
     using HeaderField = std::pair<String, Variant<String, Vector<String>>>;
 
-    std::optional<CoreIPCPlistDictionary> protocolProperties;
+    std::optional<ProtocolProperties> protocolProperties;
     bool isMutable { false };
     CoreIPCURL url;
     double timeout { 0 };

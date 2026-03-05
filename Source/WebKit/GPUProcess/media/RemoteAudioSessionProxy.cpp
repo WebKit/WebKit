@@ -38,7 +38,7 @@
 #include <WebCore/AVAudioSessionCaptureDeviceManager.h>
 #include <wtf/TZoneMalloc.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, protectedConnection().get())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, protect(connection()).ptr())
 
 namespace WebKit {
 
@@ -58,6 +58,11 @@ RefPtr<GPUConnectionToWebProcess> RemoteAudioSessionProxy::gpuConnectionToWebPro
     return m_gpuConnection.get();
 }
 
+IPC::Connection& RemoteAudioSessionProxy::connection() const
+{
+    return m_gpuConnection.get()->connection();
+}
+
 WebCore::ProcessIdentifier RemoteAudioSessionProxy::processIdentifier()
 {
     return m_gpuConnection.get()->webProcessIdentifier();
@@ -65,7 +70,7 @@ WebCore::ProcessIdentifier RemoteAudioSessionProxy::processIdentifier()
 
 RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
 {
-    Ref session = protectedAudioSessionManager()->session();
+    Ref session = protect(audioSessionManager())->session();
     return {
         session->routingContextUID(),
         session->sampleRate(),
@@ -91,13 +96,13 @@ void RemoteAudioSessionProxy::setCategory(AudioSession::CategoryType category, A
     m_mode = mode;
     m_routeSharingPolicy = policy;
     m_isPlayingToBluetoothOverrideChanged = false;
-    protectedAudioSessionManager()->updateCategory();
+    protect(audioSessionManager())->updateCategory();
 }
 
 void RemoteAudioSessionProxy::setPreferredBufferSize(uint64_t size)
 {
     m_preferredBufferSize = size;
-    protectedAudioSessionManager()->updatePreferredBufferSizeForProcess();
+    protect(audioSessionManager())->updatePreferredBufferSizeForProcess();
 }
 
 void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& completion)
@@ -128,61 +133,51 @@ void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& 
 void RemoteAudioSessionProxy::setIsPlayingToBluetoothOverride(std::optional<bool>&& value)
 {
     m_isPlayingToBluetoothOverrideChanged = true;
-    protectedAudioSessionManager()->protectedSession()->setIsPlayingToBluetoothOverride(WTFMove(value));
+    protect(protect(audioSessionManager())->session())->setIsPlayingToBluetoothOverride(WTF::move(value));
 }
 
 void RemoteAudioSessionProxy::configurationChanged()
 {
-    protectedConnection()->send(Messages::RemoteAudioSession::ConfigurationChanged(configuration()), { });
+    protect(connection())->send(Messages::RemoteAudioSession::ConfigurationChanged(configuration()), { });
 }
 
 void RemoteAudioSessionProxy::beginInterruption()
 {
     m_isInterrupted = true;
-    protectedConnection()->send(Messages::RemoteAudioSession::BeginInterruptionRemote(), { });
+    protect(connection())->send(Messages::RemoteAudioSession::BeginInterruptionRemote(), { });
 }
 
 void RemoteAudioSessionProxy::endInterruption(AudioSession::MayResume mayResume)
 {
     m_isInterrupted = false;
-    protectedConnection()->send(Messages::RemoteAudioSession::EndInterruptionRemote(mayResume), { });
+    protect(connection())->send(Messages::RemoteAudioSession::EndInterruptionRemote(mayResume), { });
 }
 
 void RemoteAudioSessionProxy::beginInterruptionRemote()
 {
-    protectedAudioSessionManager()->beginInterruptionRemote();
+    protect(audioSessionManager())->beginInterruptionRemote();
 }
 
 void RemoteAudioSessionProxy::endInterruptionRemote(AudioSession::MayResume mayResume)
 {
-    protectedAudioSessionManager()->endInterruptionRemote(mayResume);
+    protect(audioSessionManager())->endInterruptionRemote(mayResume);
 }
 
 void RemoteAudioSessionProxy::setSceneIdentifier(const String& sceneIdentifier)
 {
     m_sceneIdentifier = sceneIdentifier;
-    protectedAudioSessionManager()->updateSpatialExperience();
+    protect(audioSessionManager())->updateSpatialExperience();
 }
 
 void RemoteAudioSessionProxy::setSoundStageSize(AudioSession::SoundStageSize size)
 {
     m_soundStageSize = size;
-    protectedAudioSessionManager()->updateSpatialExperience();
+    protect(audioSessionManager())->updateSpatialExperience();
 }
 
 RemoteAudioSessionProxyManager& RemoteAudioSessionProxy::audioSessionManager()
 {
     return m_gpuConnection.get()->gpuProcess().audioSessionManager();
-}
-
-Ref<RemoteAudioSessionProxyManager> RemoteAudioSessionProxy::protectedAudioSessionManager()
-{
-    return audioSessionManager();
-}
-
-Ref<IPC::Connection> RemoteAudioSessionProxy::protectedConnection() const
-{
-    return m_gpuConnection.get()->connection();
 }
 
 void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()

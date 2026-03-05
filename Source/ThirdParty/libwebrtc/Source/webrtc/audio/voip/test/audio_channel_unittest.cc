@@ -43,7 +43,6 @@
 namespace webrtc {
 namespace {
 
-using ::testing::Invoke;
 using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::Unused;
@@ -125,7 +124,7 @@ TEST_F(AudioChannelTest, PlayRtpByLocalLoop) {
     audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillOnce(Invoke(loop_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillOnce(loop_rtp);
 
   auto audio_sender = audio_channel_->GetAudioSender();
   audio_sender->SendAudioData(GetAudioFrame(0));
@@ -150,7 +149,7 @@ TEST_F(AudioChannelTest, VerifyLocalSsrcAsAssigned) {
     rtp.Parse(packet);
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillOnce(Invoke(loop_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillOnce(loop_rtp);
 
   auto audio_sender = audio_channel_->GetAudioSender();
   audio_sender->SendAudioData(GetAudioFrame(0));
@@ -165,7 +164,7 @@ TEST_F(AudioChannelTest, TestIngressStatistics) {
     audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(loop_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(loop_rtp);
 
   auto audio_sender = audio_channel_->GetAudioSender();
   audio_sender->SendAudioData(GetAudioFrame(0));
@@ -246,8 +245,8 @@ TEST_F(AudioChannelTest, TestChannelStatistics) {
     audio_channel_->ReceivedRTCPPacket(packet);
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(loop_rtp));
-  EXPECT_CALL(transport_, SendRtcp).WillRepeatedly(Invoke(loop_rtcp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(loop_rtp);
+  EXPECT_CALL(transport_, SendRtcp).WillRepeatedly(loop_rtcp);
 
   // Simulate microphone giving audio frame (10 ms). This will trigger transport
   // to send RTP as handled in loop_rtp above.

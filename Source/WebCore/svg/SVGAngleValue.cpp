@@ -93,7 +93,7 @@ String SVGAngleValue::valueAsString() const
     return String();
 }
 
-template<typename CharacterType> static inline SVGAngleValue::Type parseAngleType(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> static inline SVGAngleValue::Type NODELETE parseAngleType(StringParsingBuffer<CharacterType> buffer)
 {
     switch (buffer.lengthRemaining()) {
     case 0:

@@ -31,7 +31,7 @@
 ] interface ServiceWorkerClients {
     // The objects returned will be new instances every time
     [NewObject, CallWith=CurrentScriptExecutionContext] Promise<any> get(DOMString id);
-    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<sequence<ServiceWorkerClient>> matchAll(optional ClientQueryOptions options);
+    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<sequence<ServiceWorkerClient>> matchAll(optional ClientQueryOptions options = {});
     [NewObject, CallWith=CurrentScriptExecutionContext] Promise<ServiceWorkerWindowClient?> openWindow(USVString url);
     [NewObject, CallWith=CurrentScriptExecutionContext] Promise<undefined> claim();
 };

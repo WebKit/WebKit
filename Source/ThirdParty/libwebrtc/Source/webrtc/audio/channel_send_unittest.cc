@@ -27,7 +27,6 @@
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/frame_transformer_interface.h"
 #include "api/make_ref_counted.h"
@@ -44,6 +43,7 @@
 #include "call/rtp_transport_controller_send.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -56,7 +56,6 @@ namespace voe {
 namespace {
 
 using ::testing::Eq;
-using ::testing::Invoke;
 using ::testing::IsTrue;
 using ::testing::NiceMock;
 using ::testing::Return;
@@ -81,9 +80,8 @@ class ChannelSendTest : public ::testing::Test {
   ChannelSendTest()
       : time_controller_(Timestamp::Seconds(1)),
         field_trials_(CreateTestFieldTrials()),
-        env_(CreateEnvironment(&field_trials_,
-                               time_controller_.GetClock(),
-                               time_controller_.CreateTaskQueueFactory())),
+        env_(CreateTestEnvironment(
+            {.field_trials = &field_trials_, .time = &time_controller_})),
         transport_controller_(
             RtpTransportConfig{.env = env_,
                                .bitrate_config = GetBitrateConfig()}) {
@@ -165,7 +163,7 @@ TEST_F(ChannelSendTest, IncreaseRtpTimestampByPauseDuration) {
     timestamp = packet.Timestamp();
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(send_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(send_rtp);
   ProcessNextFrame();
   ProcessNextFrame();
   EXPECT_EQ(sent_packets, 1);
@@ -201,7 +199,7 @@ TEST_F(ChannelSendTest, FrameTransformerGetsCorrectTimestamp) {
     }
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(send_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(send_rtp);
 
   channel_->StartSend();
   int64_t transformable_frame_timestamp = -1;
@@ -250,7 +248,7 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToCorrectTransformedFrame) {
     sent_audio_levels.push_back(header.extension.audio_level()->level());
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(send_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(send_rtp);
 
   channel_->StartSend();
   std::vector<std::unique_ptr<TransformableFrameInterface>> frames;
@@ -314,7 +312,7 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToInsertedTransformedFrame) {
     sent_audio_level = header.extension.audio_level()->level();
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(send_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(send_rtp);
 
   channel_->StartSend();
 
@@ -425,7 +423,7 @@ TEST_F(ChannelSendTest, ConfiguredCsrcsAreIncludedInRtpPackets) {
     return true;
   };
 
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(send_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(send_rtp);
   ProcessNextFrame();
   ProcessNextFrame();
 
@@ -487,7 +485,7 @@ TEST_F(ChannelSendTest, FrameTransformerTakesPrecedenceOverSetCsrcs) {
   std::vector<uint32_t> csrcs_output_by_frame_transformer = {1, 2, 3};
   EXPECT_CALL(*mock_frame_transformer, Transform)
       .WillRepeatedly(
-          Invoke([&](std::unique_ptr<TransformableFrameInterface> frame) {
+          [&](std::unique_ptr<TransformableFrameInterface> frame) {
             auto audio_frame =
                 static_cast<TransformableAudioFrameInterface*>(frame.get());
             csrcs_provided_to_frame_transformer.assign(
@@ -495,7 +493,7 @@ TEST_F(ChannelSendTest, FrameTransformerTakesPrecedenceOverSetCsrcs) {
                 audio_frame->GetContributingSources().end());
             callback->OnTransformedFrame(CreateMockFrameWithCsrcs(
                 audio_frame, csrcs_output_by_frame_transformer));
-          }));
+          });
 
   std::vector<uint32_t> set_csrcs = {4, 5, 6};
   channel_->SetCsrcs(set_csrcs);
@@ -510,7 +508,7 @@ TEST_F(ChannelSendTest, FrameTransformerTakesPrecedenceOverSetCsrcs) {
     return true;
   };
 
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(send_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(send_rtp);
   ProcessNextFrame();
   ProcessNextFrame();
 

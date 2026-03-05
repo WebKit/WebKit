@@ -46,7 +46,7 @@ struct WorkletParameters {
     std::optional<uint64_t> noiseInjectionHashSalt;
 
     WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, noiseInjectionHashSalt }; }
-    WorkletParameters isolatedCopy() && { return { WTFMove(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, WTFMove(identifier).isolatedCopy(), sessionID, WTFMove(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, WTFMove(noiseInjectionHashSalt) }; }
+    WorkletParameters isolatedCopy() && { return { WTF::move(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, WTF::move(identifier).isolatedCopy(), sessionID, WTF::move(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, WTF::move(noiseInjectionHashSalt) }; }
 };
 
 } // namespace WebCore

@@ -71,7 +71,7 @@ std::optional<BindGroupLayoutEntry> ConvertToBackingContext::convertToBacking(co
             return std::nullopt;
     }
 
-    return { { bindGroupLayoutEntry.binding, bindGroupLayoutEntry.visibility, WTFMove(buffer), WTFMove(sampler), WTFMove(texture), WTFMove(storageTexture), WTFMove(externalTexture) } };
+    return { { bindGroupLayoutEntry.binding, bindGroupLayoutEntry.visibility, WTF::move(buffer), WTF::move(sampler), WTF::move(texture), WTF::move(storageTexture), WTF::move(externalTexture) } };
 }
 
 std::optional<WebCore::WebGPU::BindGroupLayoutEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupLayoutEntry& bindGroupLayoutEntry)
@@ -111,7 +111,7 @@ std::optional<WebCore::WebGPU::BindGroupLayoutEntry> ConvertFromBackingContext::
             return std::nullopt;
     }
 
-    return { { bindGroupLayoutEntry.binding, bindGroupLayoutEntry.visibility, WTFMove(buffer), WTFMove(sampler), WTFMove(texture), WTFMove(storageTexture), WTFMove(externalTexture) } };
+    return { { bindGroupLayoutEntry.binding, bindGroupLayoutEntry.visibility, WTF::move(buffer), WTF::move(sampler), WTF::move(texture), WTF::move(storageTexture), WTF::move(externalTexture) } };
 }
 
 } // namespace WebKit

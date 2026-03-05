@@ -55,9 +55,9 @@ public:
     void clearDocumentPointer() { m_document = nullptr; }
 
     WEBCORE_EXPORT Seconds interval() const;
-    WEBCORE_EXPORT OptionSet<ThrottlingReason> throttlingReasons() const;
+    WEBCORE_EXPORT OptionSet<ThrottlingReason> NODELETE throttlingReasons() const;
 
-    void suspend();
+    void NODELETE suspend();
     void resume();
 
     void addThrottlingReason(ThrottlingReason reason) { m_throttlingReasons.add(reason); }
@@ -71,12 +71,11 @@ public:
 private:
     ScriptedAnimationController(Document&);
 
-    Page* page() const;
+    Page* NODELETE page() const;
     Seconds preferredScriptedAnimationInterval() const;
     bool isThrottledRelativeToPage() const;
     bool shouldRescheduleRequestAnimationFrame(ReducedResolutionSeconds) const;
     void scheduleAnimation();
-    RefPtr<Document> protectedDocument();
 
     struct CallbackData {
         Ref<RequestAnimationFrameCallback> callback;

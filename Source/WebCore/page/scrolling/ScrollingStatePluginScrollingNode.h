@@ -62,7 +62,7 @@ private:
 #if ENABLE(SCROLLING_THREAD)
         OptionSet<SynchronousScrollingReason> synchronousScrollingReasons,
 #endif
-        RequestedScrollData&&,
+        ScrollRequestData&&,
         FloatScrollSnapOffsetsInfo&&,
         std::optional<unsigned> currentHorizontalSnapPointIndex,
         std::optional<unsigned> currentVerticalSnapPointIndex,

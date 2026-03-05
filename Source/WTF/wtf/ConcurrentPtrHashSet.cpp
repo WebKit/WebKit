@@ -63,7 +63,7 @@ void ConcurrentPtrHashSet::initialize()
     constexpr unsigned initialSize = 32;
     std::unique_ptr<Table> table = Table::create(initialSize);
     m_table.storeRelaxed(table.get());
-    m_allTables.append(WTFMove(table));
+    m_allTables.append(WTF::move(table));
 
     m_stubTable = Table::createStub();
 }
@@ -173,7 +173,7 @@ void ConcurrentPtrHashSet::resizeIfNecessary()
     // and reset it for correctness.
     m_stubTable->load.store(Table::stubDefaultLoadValue);
 
-    m_allTables.append(WTFMove(newTable));
+    m_allTables.append(WTF::move(newTable));
 }
 
 bool ConcurrentPtrHashSet::resizeAndAdd(void* ptr)

@@ -40,7 +40,7 @@ class AbortSignal;
 class ScriptExecutionContext;
 
 class AbortController final : public ScriptWrappable, public RefCounted<AbortController> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AbortController);
+    WTF_MAKE_TZONE_ALLOCATED(AbortController);
 public:
     static Ref<AbortController> create(ScriptExecutionContext&);
     ~AbortController();
@@ -48,7 +48,7 @@ public:
     AbortSignal& signal() { return m_signal; }
     void abort(JSC::JSValue reason);
 
-    WebCoreOpaqueRoot opaqueRoot();
+    WebCoreOpaqueRoot NODELETE opaqueRoot();
 
 private:
     explicit AbortController(ScriptExecutionContext&);

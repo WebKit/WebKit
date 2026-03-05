@@ -70,6 +70,15 @@ bool ElementTypeNeedsUniformWrapperStruct(bool inUniformAddressSpace, const TTyp
 using GlobalVars = TMap<ImmutableString, TIntermDeclaration *>;
 GlobalVars FindGlobalVars(TIntermBlock *root);
 
+enum class WgslPointerAddressSpace
+{
+    Private,
+    Function
+};
+
+WgslPointerAddressSpace GetWgslAddressSpaceForPointer(const TType &type);
+ImmutableString StringForWgslPointerAddressSpace(WgslPointerAddressSpace as);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_WGSL_UTILS_H_

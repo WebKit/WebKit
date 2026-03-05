@@ -44,7 +44,7 @@ public:
     {
     }
 
-    const WebCore::ApplicationManifest& applicationManifest() const { return m_applicationManifest; }
+    const WebCore::ApplicationManifest& applicationManifest() const LIFETIME_BOUND { return m_applicationManifest; }
 
 private:
     WebCore::ApplicationManifest m_applicationManifest;

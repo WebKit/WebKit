@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x339
-  RenderBlock {HTML} at (0,0) size 800x339
-    RenderBody {BODY} at (8,16) size 784x307
-      RenderBlock {P} at (0,0) size 784x35
+layer at (0,0) size 800x337
+  RenderBlock {HTML} at (0,0) size 800x337
+    RenderBody {BODY} at (8,16) size 784x305
+      RenderBlock {P} at (0,0) size 784x34
         RenderMathMLMath {math} at (0,20) size 26x11
           RenderMathMLRow {mrow} at (0,0) size 26x11
             RenderMathMLOperator {mo} at (0,0) size 26x11
               RenderBlock (anonymous) at (0,0) size 2x2
                 RenderText {#text} at (0,-3) size 2x0
                   text run at (0,-3) width 2: "\x{219F}"
-        RenderText {#text} at (25,17) size 5x17
-          text run at (25,17) width 5: " "
+        RenderText {#text} at (25,16) size 5x18
+          text run at (25,16) width 5: " "
         RenderMathMLMath {math} at (29,10) size 27x21
           RenderMathMLRow {mrow} at (0,0) size 26x21
             RenderMathMLOperator {mo} at (0,0) size 26x21
               RenderBlock (anonymous) at (0,0) size 2x2
                 RenderText {#text} at (0,-3) size 2x0
                   text run at (0,-3) width 2: "\x{219F}"
-        RenderText {#text} at (55,17) size 5x17
-          text run at (55,17) width 5: " "
+        RenderText {#text} at (55,16) size 5x18
+          text run at (55,16) width 5: " "
         RenderMathMLMath {math} at (59,0) size 26x31
           RenderMathMLRow {mrow} at (0,0) size 26x31
             RenderMathMLOperator {mo} at (0,0) size 26x31
@@ -27,7 +27,7 @@ layer at (0,0) size 800x339
                 RenderText {#text} at (0,-3) size 2x0
                   text run at (0,-3) width 2: "\x{219F}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,51) size 784x154
+      RenderBlock {P} at (0,50) size 784x154
         RenderMathMLMath {math} at (0,0) size 47x150
           RenderMathMLRow {mrow} at (0,0) size 47x150
             RenderMathMLOperator {mo} at (0,0) size 47x150
@@ -35,7 +35,7 @@ layer at (0,0) size 800x339
                 RenderText {#text} at (0,-3) size 2x0
                   text run at (0,-3) width 2: "\x{219F}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,221) size 784x86
+      RenderBlock {P} at (0,219) size 784x86
         RenderMathMLMath {math} at (0,0) size 84x82
           RenderMathMLRow {mrow} at (0,0) size 84x82
             RenderMathMLOperator {mo} at (0,0) size 84x82

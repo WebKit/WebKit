@@ -17,7 +17,7 @@ info: |
   2. Let len be ? ToLength(? Get(O, "length")).
   3. If len is 0, return -1.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -34,4 +34,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     sample.indexOf(0n, fromIndex), -1,
     "length is checked before ToInteger(fromIndex)"
   );
-});
+}, null, ["passthrough"]);

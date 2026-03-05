@@ -45,8 +45,8 @@ layer at (0,0) size 800x600
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (40,180) size 297x28
-  RenderBlock {DIV} at (12,12) size 297x28
-    RenderText {#text} at (0,0) size 192x28
+  RenderBlock {DIV} at (12,11) size 297x29
+    RenderText {#text} at (0,-1) size 192x30
       text run at (0,0) width 192: "Lorem ipsum dolor"
 selection start: position 12 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
 selection end:   position 17 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body

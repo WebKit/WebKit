@@ -75,8 +75,8 @@ void SOAuthorizationCoordinator::canAuthorize(const URL& url, CompletionHandler<
         return;
     }
     if ([PAL::getSOAuthorizationClassSingleton() respondsToSelector:@selector(canPerformAuthorizationWithURL:responseCode:callerBundleIdentifier:useInternalExtensions:completion:)]) {
-        [PAL::getSOAuthorizationClassSingleton() canPerformAuthorizationWithURL:url.createNSURL().get() responseCode:0 callerBundleIdentifier:nil useInternalExtensions:YES completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (BOOL result) mutable {
-            ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), result] () mutable {
+        [PAL::getSOAuthorizationClassSingleton() canPerformAuthorizationWithURL:url.createNSURL().get() responseCode:0 callerBundleIdentifier:nil useInternalExtensions:YES completion:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (BOOL result) mutable {
+            ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), result] () mutable {
                 completionHandler(result);
             });
         }).get()];
@@ -88,7 +88,7 @@ void SOAuthorizationCoordinator::canAuthorize(const URL& url, CompletionHandler<
 void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Function<void(bool)>&& completionHandler)
 {
     AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize");
-    canAuthorize(navigationAction->request().url(), [completionHandler = WTFMove(completionHandler), navigationAction = WTFMove(navigationAction), page = Ref { page }, delegate = m_soAuthorizationDelegate] (bool result) mutable {
+    canAuthorize(navigationAction->request().url(), [completionHandler = WTF::move(completionHandler), navigationAction = WTF::move(navigationAction), page = Ref { page }, delegate = m_soAuthorizationDelegate] (bool result) mutable {
         if (!result) {
             AUTHORIZATIONCOORDINATOR_RELEASE_LOG_STATIC("tryAuthorize: The requested URL is not registered for AppSSO handling. No further action needed.");
             completionHandler(false);
@@ -104,8 +104,8 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
             return;
         }
 
-        auto session = subframeNavigation ? SubFrameSOAuthorizationSession::create(delegate, WTFMove(navigationAction), page.get(), WTFMove(completionHandler), targetFrame->handle()->frameID()) : RedirectSOAuthorizationSession::create(delegate, WTFMove(navigationAction), page.get(), WTFMove(completionHandler));
-        [delegate setSession:WTFMove(session)];
+        auto session = subframeNavigation ? SubFrameSOAuthorizationSession::create(delegate, WTF::move(navigationAction), page.get(), WTF::move(completionHandler), targetFrame->handle()->frameID()) : RedirectSOAuthorizationSession::create(delegate, WTF::move(navigationAction), page.get(), WTF::move(completionHandler));
+        [delegate setSession:WTF::move(session)];
     });
 }
 
@@ -115,25 +115,25 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::PageConfiguration>&& conf
     bool subframeNavigation = navigationAction->sourceFrame() && !navigationAction->sourceFrame()->isMainFrame();
     if (subframeNavigation) {
         AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR("tryAuthorize (2): Attempting to perform subframe navigation.");
-        uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
+        uiClientCallback(WTF::move(navigationAction), WTF::move(newPageCallback));
         return;
     }
 
     if (!navigationAction->isProcessingUserGesture()) {
         AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR("tryAuthorize (2): Attempting to perform auth without a user gesture.");
-        uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
+        uiClientCallback(WTF::move(navigationAction), WTF::move(newPageCallback));
         return;
     }
 
-    canAuthorize(navigationAction->request().url(), [uiClientCallback = WTFMove(uiClientCallback), navigationAction = WTFMove(navigationAction), configuration = WTFMove(configuration), page = Ref { page }, delegate = m_soAuthorizationDelegate, newPageCallback = WTFMove(newPageCallback)] (bool result) mutable {
+    canAuthorize(navigationAction->request().url(), [uiClientCallback = WTF::move(uiClientCallback), navigationAction = WTF::move(navigationAction), configuration = WTF::move(configuration), page = Ref { page }, delegate = m_soAuthorizationDelegate, newPageCallback = WTF::move(newPageCallback)] (bool result) mutable {
         if (!result) {
             AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR_STATIC("tryAuthorize (2): Attempting to perform subframe navigation.");
-            uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
+            uiClientCallback(WTF::move(navigationAction), WTF::move(newPageCallback));
             return;
         }
 
-        auto session = PopUpSOAuthorizationSession::create(WTFMove(configuration), delegate, page.get(), WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback));
-        [delegate setSession:WTFMove(session)];
+        auto session = PopUpSOAuthorizationSession::create(WTF::move(configuration), delegate, page.get(), WTF::move(navigationAction), WTF::move(newPageCallback), WTF::move(uiClientCallback));
+        [delegate setSession:WTF::move(session)];
     });
 }
 

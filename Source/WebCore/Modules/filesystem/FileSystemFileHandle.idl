@@ -26,7 +26,7 @@
 // https://fs.spec.whatwg.org/#api-filesystemhandle
 
 [
-    EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled
+    EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled,
 ] dictionary FileSystemCreateWritableOptions {
     boolean keepExistingData = false;
 };

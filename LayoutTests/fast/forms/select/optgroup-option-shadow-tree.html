@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<select id="s">
+    <optgroup label="Group" id="og">
+        <option id="opt1">Child text</option>
+        <option id="opt2" label="Label text">Hidden text</option>
+    </optgroup>
+</select>
+
+<script>
+description("Tests the user agent shadow tree of option and optgroup elements in base-select mode.");
+
+if (!window.internals) {
+    testFailed("This test requires internals.");
+} else {
+    // We use select.offsetTop to force style resolution as shadow roots are lazily created.
+
+    var og = document.getElementById("og");
+    var opt1 = document.getElementById("opt1");
+    var opt2 = document.getElementById("opt2");
+    var select = document.getElementById("s");
+
+    // optgroup: should have a shadow root with a div (label) and a slot.
+    debug("Initial optgroup shadow tree:");
+    var ogShadow = internals.shadowRoot(og);
+    shouldBeTrue('ogShadow !== null');
+    shouldBe('ogShadow.childNodes.length', '2');
+    shouldBe('ogShadow.firstChild.tagName', '"DIV"');
+    shouldBe('ogShadow.firstChild.textContent', '"Group"');
+    shouldBe('ogShadow.lastChild.tagName', '"SLOT"');
+
+    // option without label attribute: no shadow root until label is set.
+    debug("");
+    debug("Option without label attribute:");
+    var opt1Shadow = internals.shadowRoot(opt1);
+    shouldBeTrue('opt1Shadow === null');
+
+    // option with label attribute: should have a shadow root with a span (visible) and a slot (hidden).
+    debug("");
+    debug("Option with label attribute:");
+    var opt2Shadow = internals.shadowRoot(opt2);
+    shouldBeTrue('opt2Shadow !== null');
+    shouldBe('opt2Shadow.childNodes.length', '2');
+    shouldBe('opt2Shadow.firstChild.textContent', '"Label text"');
+
+    // Dynamically add label attribute to opt1 - creates shadow root.
+    debug("");
+    debug("After setting label attribute on option:");
+    opt1.setAttribute("label", "Dynamic label");
+    opt1Shadow = internals.shadowRoot(opt1);
+    shouldBeTrue('opt1Shadow !== null');
+    shouldBe('opt1Shadow.firstChild.textContent', '"Dynamic label"');
+
+    // Dynamically change label attribute.
+    debug("");
+    debug("After changing label attribute on option:");
+    opt1.setAttribute("label", "Changed label");
+    select.offsetTop;
+    shouldBe('opt1Shadow.firstChild.textContent', '"Changed label"');
+
+    // Dynamically remove label attribute from opt1.
+    debug("");
+    debug("After removing label attribute from option:");
+    opt1.removeAttribute("label");
+    select.offsetTop;
+    shouldBe('opt1Shadow.firstChild.textContent', '""');
+
+    // Dynamically remove label attribute from opt2.
+    debug("");
+    debug("After removing label attribute from option with initial label:");
+    opt2.removeAttribute("label");
+    select.offsetTop;
+    shouldBe('opt2Shadow.firstChild.textContent', '""');
+
+    // Dynamically change optgroup label.
+    debug("");
+    debug("After changing optgroup label attribute:");
+    og.setAttribute("label", "New Group");
+    select.offsetTop;
+    shouldBe('ogShadow.firstChild.textContent', '"New Group"');
+
+    // Add a legend child to optgroup - should hide the label div.
+    debug("");
+    debug("After adding legend child to optgroup:");
+    var legend = document.createElement("legend");
+    legend.textContent = "Legend text";
+    og.prepend(legend);
+    shouldBe('getComputedStyle(ogShadow.firstChild).display', '"none"');
+
+    // Remove the legend child - should show the label div again.
+    debug("");
+    debug("After removing legend child from optgroup:");
+    legend.remove();
+    shouldBe('getComputedStyle(ogShadow.firstChild).display', '"block"');
+    shouldBe('ogShadow.firstChild.textContent', '"New Group"');
+
+    // Remove optgroup label attribute - should hide the label div.
+    debug("");
+    debug("After removing optgroup label attribute:");
+    og.removeAttribute("label");
+    shouldBe('getComputedStyle(ogShadow.firstChild).display', '"none"');
+
+    // Re-add optgroup label attribute.
+    debug("");
+    debug("After re-adding optgroup label attribute:");
+    og.setAttribute("label", "Re-added");
+    shouldBe('getComputedStyle(ogShadow.firstChild).display', '"block"');
+    shouldBe('ogShadow.firstChild.textContent', '"Re-added"');
+
+    // Test optgroup created without label attribute initially has no shadow root.
+    debug("");
+    debug("Optgroup without label attribute:");
+    var og2 = document.createElement("optgroup");
+    select.appendChild(og2);
+    var og2Shadow = internals.shadowRoot(og2);
+    shouldBeTrue('og2Shadow === null');
+
+    // Setting label attribute creates shadow root.
+    debug("");
+    debug("After setting label on optgroup without initial label:");
+    og2.setAttribute("label", "Late label");
+    og2Shadow = internals.shadowRoot(og2);
+    shouldBeTrue('og2Shadow !== null');
+    shouldBe('og2Shadow.firstChild.textContent', '"Late label"');
+
+    // Test optgroup with legend child and label attribute - no shadow root created.
+    debug("");
+    debug("Optgroup with legend child and label attribute:");
+    var og3 = document.createElement("optgroup");
+    var legend3 = document.createElement("legend");
+    legend3.textContent = "Legend";
+    og3.appendChild(legend3);
+    select.appendChild(og3);
+    og3.setAttribute("label", "Should not show");
+    var og3Shadow = internals.shadowRoot(og3);
+    shouldBeTrue('og3Shadow === null');
+
+    // Remove legend from og3 - shadow root should be created.
+    debug("");
+    debug("After removing legend from optgroup with label:");
+    legend3.remove();
+    og3Shadow = internals.shadowRoot(og3);
+    shouldBeTrue('og3Shadow !== null');
+    shouldBe('og3Shadow.firstChild.textContent', '"Should not show"');
+    shouldBe('getComputedStyle(og3Shadow.firstChild).display', '"block"');
+
+    // Test optgroup with legend and label built off-document, then inserted into select.
+    debug("");
+    debug("Optgroup with legend and label inserted as subtree:");
+    var og4 = document.createElement("optgroup");
+    og4.setAttribute("label", "Subtree label");
+    var legend4 = document.createElement("legend");
+    legend4.textContent = "Legend";
+    og4.appendChild(legend4);
+    select.appendChild(og4);
+    var og4Shadow = internals.shadowRoot(og4);
+    shouldBeTrue('og4Shadow === null');
+
+    // Remove legend from og4 - shadow root should be created.
+    debug("");
+    debug("After removing legend from subtree-inserted optgroup:");
+    legend4.remove();
+    og4Shadow = internals.shadowRoot(og4);
+    shouldBeTrue('og4Shadow !== null');
+    shouldBe('og4Shadow.firstChild.textContent', '"Subtree label"');
+    shouldBe('getComputedStyle(og4Shadow.firstChild).display', '"block"');
+    // Test optgroup with legend nested inside a wrapper, inserted into select.
+    debug("");
+    debug("Optgroup with legend inside wrapper inserted as subtree:");
+    var wrapper = document.createElement("div");
+    var og5 = document.createElement("optgroup");
+    og5.setAttribute("label", "Wrapped label");
+    var legend5 = document.createElement("legend");
+    legend5.textContent = "Legend";
+    og5.appendChild(legend5);
+    wrapper.appendChild(og5);
+    select.appendChild(wrapper);
+    var og5Shadow = internals.shadowRoot(og5);
+    shouldBeTrue('og5Shadow === null');
+
+    // Remove legend from og5 - shadow root should be created.
+    debug("");
+    debug("After removing legend from wrapper-inserted optgroup:");
+    legend5.remove();
+    og5Shadow = internals.shadowRoot(og5);
+    shouldBeTrue('og5Shadow !== null');
+    shouldBe('og5Shadow.firstChild.textContent', '"Wrapped label"');
+    shouldBe('getComputedStyle(og5Shadow.firstChild).display', '"block"');
+
+    // Test optgroup with label not inside a select - no shadow root.
+    debug("");
+    debug("Optgroup with label not inside a select:");
+    var og6 = document.createElement("optgroup");
+    og6.setAttribute("label", "No select");
+    document.body.appendChild(og6);
+    var og6Shadow = internals.shadowRoot(og6);
+    shouldBeTrue('og6Shadow === null');
+
+    // Test: remove select from document, add label to optgroup, re-insert select.
+    debug("");
+    debug("Optgroup gains label while select is disconnected:");
+    var og7 = document.createElement("optgroup");
+    select.appendChild(og7);
+    var og7Shadow = internals.shadowRoot(og7);
+    shouldBeTrue('og7Shadow === null');
+    select.remove();
+    og7.setAttribute("label", "Added while disconnected");
+    og7Shadow = internals.shadowRoot(og7);
+    shouldBeTrue('og7Shadow === null');
+    document.body.appendChild(select);
+    og7Shadow = internals.shadowRoot(og7);
+    shouldBeTrue('og7Shadow !== null');
+    shouldBe('og7Shadow.firstChild.textContent', '"Added while disconnected"');
+
+    // Test nested optgroup with legend: remove ancestor optgroup, then remove legend.
+    debug("");
+    debug("Nested optgroup with legend, ancestor removed then legend removed:");
+    var outerOg = document.createElement("optgroup");
+    outerOg.setAttribute("label", "Outer");
+    var innerOg = document.createElement("optgroup");
+    innerOg.setAttribute("label", "Inner");
+    var nestedLegend = document.createElement("legend");
+    nestedLegend.textContent = "Nested legend";
+    innerOg.appendChild(nestedLegend);
+    outerOg.appendChild(innerOg);
+    select.appendChild(outerOg);
+    var innerOgShadow = internals.shadowRoot(innerOg);
+    shouldBeTrue('innerOgShadow === null');
+    outerOg.remove();
+    nestedLegend.remove();
+    innerOgShadow = internals.shadowRoot(innerOg);
+    shouldBeTrue('innerOgShadow === null');
+
+    // Test parser-created optgroup with legend via innerHTML.
+    debug("");
+    debug("Parser-created optgroup with legend via innerHTML:");
+    select.innerHTML = '<optgroup label="Parsed" id="ogParsed"><legend>Parsed legend</legend></optgroup>';
+    var ogParsed = document.getElementById("ogParsed");
+    var ogParsedShadow = internals.shadowRoot(ogParsed);
+    shouldBeTrue('ogParsedShadow === null');
+    ogParsed.querySelector("legend").remove();
+    ogParsedShadow = internals.shadowRoot(ogParsed);
+    shouldBeTrue('ogParsedShadow !== null');
+    shouldBe('ogParsedShadow.firstChild.textContent', '"Parsed"');
+    shouldBe('getComputedStyle(ogParsedShadow.firstChild).display', '"block"');
+
+    // Test multiple legends in one optgroup.
+    debug("");
+    debug("Multiple legends in optgroup:");
+    select.innerHTML = '<optgroup label="Multi" id="ogMulti"></optgroup>';
+    select.offsetTop;
+    var ogMulti = document.getElementById("ogMulti");
+    var legendA = document.createElement("legend");
+    legendA.textContent = "A";
+    var legendB = document.createElement("legend");
+    legendB.textContent = "B";
+    ogMulti.appendChild(legendA);
+    ogMulti.appendChild(legendB);
+    var ogMultiShadow = internals.shadowRoot(ogMulti);
+    shouldBeTrue('ogMultiShadow !== null');
+    shouldBe('getComputedStyle(ogMultiShadow.firstChild).display', '"none"');
+    legendA.remove();
+    shouldBe('getComputedStyle(ogMultiShadow.firstChild).display', '"none"');
+    legendB.remove();
+    shouldBe('getComputedStyle(ogMultiShadow.firstChild).display', '"block"');
+    shouldBe('ogMultiShadow.firstChild.textContent', '"Multi"');
+
+    // Test moving a legend from one optgroup to another.
+    debug("");
+    debug("Moving legend between optgroups:");
+    select.innerHTML = '<optgroup label="Source" id="ogSrc"></optgroup><optgroup label="Dest" id="ogDst"></optgroup>';
+    select.offsetTop;
+    var ogSrc = document.getElementById("ogSrc");
+    var ogDst = document.getElementById("ogDst");
+    var movingLegend = document.createElement("legend");
+    movingLegend.textContent = "Moving";
+    ogSrc.appendChild(movingLegend);
+    var ogSrcShadow = internals.shadowRoot(ogSrc);
+    var ogDstShadow = internals.shadowRoot(ogDst);
+    shouldBeTrue('ogSrcShadow !== null');
+    shouldBeTrue('ogDstShadow !== null');
+    shouldBe('getComputedStyle(ogSrcShadow.firstChild).display', '"none"');
+    shouldBe('getComputedStyle(ogDstShadow.firstChild).display', '"block"');
+    ogDst.appendChild(movingLegend);
+    shouldBe('getComputedStyle(ogSrcShadow.firstChild).display', '"block"');
+    shouldBe('getComputedStyle(ogDstShadow.firstChild).display', '"none"');
+}
+</script>

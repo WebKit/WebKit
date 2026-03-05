@@ -35,7 +35,7 @@ namespace WebKit {
 
 Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCore::MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::AudioSourceProviderAVFObjC& localProvider)
 {
-    auto remoteProvider = adoptRef(*new RemoteAudioSourceProviderProxy(identifier, WTFMove(connection)));
+    auto remoteProvider = adoptRef(*new RemoteAudioSourceProviderProxy(identifier, WTF::move(connection)));
 
     localProvider.setConfigureAudioStorageCallback([remoteProvider](auto&&... args) {
         return remoteProvider->configureAudioStorage(args...);
@@ -49,7 +49,7 @@ Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCo
 
 RemoteAudioSourceProviderProxy::RemoteAudioSourceProviderProxy(WebCore::MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
 {
 }
 
@@ -59,10 +59,10 @@ std::unique_ptr<WebCore::CARingBuffer> RemoteAudioSourceProviderProxy::configure
 {
     auto result = ProducerSharedCARingBuffer::allocate(format, frameCount);
     RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
-    auto [ringBuffer, handle] = WTFMove(*result);
-    m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, WTFMove(handle), format }, 0);
+    auto [ringBuffer, handle] = WTF::move(*result);
+    m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, WTF::move(handle), format }, 0);
     // Use a redundant variable to avoid move in return position and to obtain copy elision. Clang or libc++ does not allow returning covariant of Ts from std::unique_ptr<T>s in this position.
-    std::unique_ptr<WebCore::CARingBuffer> caRingBuffer = WTFMove(ringBuffer);  // NOLINT: see above.
+    std::unique_ptr<WebCore::CARingBuffer> caRingBuffer = WTF::move(ringBuffer);  // NOLINT: see above.
     return caRingBuffer;
 }
 

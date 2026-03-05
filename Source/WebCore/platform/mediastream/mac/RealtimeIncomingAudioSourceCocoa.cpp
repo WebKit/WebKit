@@ -43,14 +43,14 @@ namespace WebCore {
 
 Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {
-    auto source = RealtimeIncomingAudioSourceCocoa::create(WTFMove(audioTrack), WTFMove(audioTrackId));
+    auto source = RealtimeIncomingAudioSourceCocoa::create(WTF::move(audioTrack), WTF::move(audioTrackId));
     source->start();
-    return WTFMove(source);
+    return WTF::move(source);
 }
 
 Ref<RealtimeIncomingAudioSourceCocoa> RealtimeIncomingAudioSourceCocoa::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {
-    return adoptRef(*new RealtimeIncomingAudioSourceCocoa(WTFMove(audioTrack), WTFMove(audioTrackId)));
+    return adoptRef(*new RealtimeIncomingAudioSourceCocoa(WTF::move(audioTrack), WTF::move(audioTrackId)));
 }
 
 static inline AudioStreamBasicDescription streamDescription(size_t sampleRate, size_t channelCount)
@@ -61,7 +61,7 @@ static inline AudioStreamBasicDescription streamDescription(size_t sampleRate, s
 }
 
 RealtimeIncomingAudioSourceCocoa::RealtimeIncomingAudioSourceCocoa(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
-    : RealtimeIncomingAudioSource(WTFMove(audioTrack), WTFMove(audioTrackId))
+    : RealtimeIncomingAudioSource(WTF::move(audioTrack), WTF::move(audioTrackId))
     , m_sampleRate(LibWebRTCAudioFormat::sampleRate)
     , m_numberOfChannels(1)
     , m_streamDescription(streamDescription(m_sampleRate, m_numberOfChannels))

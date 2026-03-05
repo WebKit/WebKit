@@ -354,7 +354,7 @@ TEST_P(DepthStencilTestES3, ClearThenDraw)
 
 // Test that VK_EXT_load_op_none is working properly when
 // one of the depth / stencil load op is none.
-// This reproduces a deqp failure on ARM: angleproject:7370
+// This reproduces a deqp failure on ARM: http://anglebug.com/42265841
 TEST_P(DepthStencilTestES3, LoadStoreOpNoneExtension)
 {
     GLFramebuffer fbo;

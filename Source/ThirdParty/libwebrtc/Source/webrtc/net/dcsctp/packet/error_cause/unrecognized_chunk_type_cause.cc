@@ -30,7 +30,6 @@ namespace dcsctp {
 //  /                  Unrecognized Chunk                           /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int UnrecognizedChunkTypeCause::kType;
 
 std::optional<UnrecognizedChunkTypeCause> UnrecognizedChunkTypeCause::Parse(
     webrtc::ArrayView<const uint8_t> data) {

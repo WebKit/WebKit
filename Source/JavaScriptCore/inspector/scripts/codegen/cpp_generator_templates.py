@@ -56,6 +56,8 @@ namespace Inspector {""")
     AlternateDispatchersHeaderPrelude = (
     """#pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 ${includes}
@@ -64,7 +66,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -151,7 +153,7 @@ ${dispatchCases}
         return;
     }
 
-    ((*this).*findResult->value)(protocol_requestId, WTFMove(protocol_parameters));
+    ((*this).*findResult->value)(protocol_requestId, WTF::move(protocol_parameters));
 }""")
 
     BackendDispatcherImplementationDomainConstructor = (
@@ -176,13 +178,13 @@ ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher
 """)
 
     BackendDispatcherImplementationAsyncCommandReplyThunk = (
-"""${domainName}BackendDispatcherHandler::${callbackName}::${callbackName}(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
+"""${domainName}BackendDispatcherHandler::${callbackName}::${callbackName}(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTF::move(backendDispatcher), id) { }
 
 void ${domainName}BackendDispatcherHandler::${callbackName}::sendSuccess(${callbackParameters})
 {
     auto protocol_jsonMessage = JSON::Object::create();
 ${returnAssignments}
-    CallbackBase::sendSuccess(WTFMove(protocol_jsonMessage));
+    CallbackBase::sendSuccess(WTF::move(protocol_jsonMessage));
 }""")
 
     FrontendDispatcherDomainDispatcherDeclaration = (
@@ -218,7 +220,7 @@ private:
         }
 
         Builder(Ref<${objectType}>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }

@@ -28,12 +28,12 @@
 
 #pragma once
 
-#include <WebCore/AsyncNodeDeletionQueue.h>
-#include <WebCore/ContainerNode.h>
-#include <WebCore/Element.h>
-#include <WebCore/HTMLElement.h>
-#include <WebCore/HTMLNames.h>
-#include <WebCore/NodeName.h>
+#include "AsyncNodeDeletionQueue.h"
+#include "ContainerNode.h"
+#include "Element.h"
+#include "HTMLElement.h"
+#include "HTMLNames.h"
+#include "NodeName.h"
 
 namespace WebCore {
 
@@ -45,7 +45,7 @@ ALWAYS_INLINE void AsyncNodeDeletionQueue::addIfSubtreeSizeIsUnderLimit(NodeVect
     if (m_nodeCount + subTreeSize > s_maxSizeAsyncNodeDeletionQueue)
         return;
     m_nodeCount += subTreeSize;
-    m_queue.appendVector(WTFMove(children));
+    m_queue.appendVector(WTF::move(children));
 }
 
 ALWAYS_INLINE void AsyncNodeDeletionQueue::deleteNodesNow()

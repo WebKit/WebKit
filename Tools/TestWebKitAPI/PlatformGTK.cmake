@@ -14,6 +14,7 @@ add_dependencies(TestWebKitAPIInjectedBundle TestWebKitAPI-forwarding-headers)
 # TestWTF
 list(APPEND TestWTF_SOURCES
     Tests/WTF/glib/ActivityObserver.cpp
+    Tests/WTF/glib/GMallocString.cpp
     Tests/WTF/glib/GRefPtr.cpp
     Tests/WTF/glib/GUniquePtr.cpp
     Tests/WTF/glib/GWeakPtr.cpp

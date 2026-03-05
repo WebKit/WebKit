@@ -63,7 +63,7 @@ public:
 
     // These constants are defined in the MATH table.
     // The implementation of OpenTypeMathData::getMathConstant assumes that they correspond to the indices of the MathContant table.
-    enum MathConstant {
+    enum class MathConstant : uint8_t {
         ScriptPercentScaleDown,
         ScriptScriptPercentScaleDown,
         DelimitedSubFormulaMinHeight,

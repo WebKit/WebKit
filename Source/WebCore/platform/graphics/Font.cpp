@@ -64,15 +64,15 @@ Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, IsIn
     return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
 }
 
-Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic)
+Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic, DownloadableBinaryFontTrustedTypes trustedType)
 {
     bool wrapping;
-    auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping);
+    auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping, trustedType);
     FontDescription description;
     description.setComputedSize(fontSize);
     // FIXME: Why doesn't this pass in any meaningful data for the last few arguments?
     auto platformData = CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { });
-    return Font::create(WTFMove(platformData), origin);
+    return Font::create(WTF::move(platformData), origin);
 }
 
 Ref<Font> Font::create(FontInternalAttributes&& attributes, FontPlatformData&& platformData)
@@ -561,7 +561,7 @@ const OpenTypeMathData* Font::mathData() const
     if (!m_mathData) {
         Ref mathData = OpenTypeMathData::create(m_platformData);
         if (mathData->hasMathData())
-            m_mathData = WTFMove(mathData);
+            m_mathData = WTF::move(mathData);
     }
     return m_mathData.get();
 }

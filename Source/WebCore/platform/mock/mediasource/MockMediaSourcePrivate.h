@@ -73,7 +73,6 @@ private:
     // MediaSourcePrivate Overrides
     AddStatus addSourceBuffer(const ContentType&, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>&) override;
     void durationChanged(const MediaTime&) override;
-    void markEndOfStream(EndOfStreamStatus) override;
 
     void notifyActiveSourceBuffersChanged() final;
 

@@ -50,8 +50,8 @@ WorkerNotificationClient::WorkerNotificationClient(WorkerGlobalScope& workerScop
 
 bool WorkerNotificationClient::show(ScriptExecutionContext& workerContext, NotificationData&& notification, RefPtr<NotificationResources>&& resources, CompletionHandler<void()>&& completionHandler)
 {
-    auto callbackID = workerContext.addNotificationCallback(WTFMove(completionHandler));
-    postToMainThread([protectedThis = Ref { *this }, notification = WTFMove(notification).isolatedCopy(), resources = WTFMove(resources), callbackID](auto* client, auto& context) mutable {
+    auto callbackID = workerContext.addNotificationCallback(WTF::move(completionHandler));
+    postToMainThread([protectedThis = Ref { *this }, notification = WTF::move(notification).isolatedCopy(), resources = WTF::move(resources), callbackID](auto* client, auto& context) mutable {
         if (!client) {
             protectedThis->postToWorkerThread([callbackID](auto& workerContext) {
                 if (auto callback = workerContext.takeNotificationCallback(callbackID))
@@ -59,7 +59,7 @@ bool WorkerNotificationClient::show(ScriptExecutionContext& workerContext, Notif
             });
             return;
         }
-        client->show(context, WTFMove(notification), WTFMove(resources), [protectedThis = WTFMove(protectedThis), callbackID]() mutable {
+        client->show(context, WTF::move(notification), WTF::move(resources), [protectedThis = WTF::move(protectedThis), callbackID]() mutable {
             protectedThis->postToWorkerThread([callbackID](auto& workerContext) {
                 if (auto callback = workerContext.takeNotificationCallback(callbackID))
                     callback();
@@ -71,17 +71,17 @@ bool WorkerNotificationClient::show(ScriptExecutionContext& workerContext, Notif
 
 void WorkerNotificationClient::cancel(NotificationData&& notification)
 {
-    postToMainThread([notification = WTFMove(notification).isolatedCopy()](auto* client, auto&) mutable {
+    postToMainThread([notification = WTF::move(notification).isolatedCopy()](auto* client, auto&) mutable {
         if (client)
-            client->cancel(WTFMove(notification));
+            client->cancel(WTF::move(notification));
     });
 }
 
 void WorkerNotificationClient::notificationObjectDestroyed(NotificationData&& notification)
 {
-    postToMainThread([notification = WTFMove(notification).isolatedCopy()](auto* client, auto&) mutable {
+    postToMainThread([notification = WTF::move(notification).isolatedCopy()](auto* client, auto&) mutable {
         if (client)
-            client->notificationObjectDestroyed(WTFMove(notification));
+            client->notificationObjectDestroyed(WTF::move(notification));
     });
 }
 
@@ -111,14 +111,14 @@ auto WorkerNotificationClient::checkPermission(ScriptExecutionContext*) -> Permi
 
 void WorkerNotificationClient::postToMainThread(Function<void(NotificationClient*, ScriptExecutionContext& context)>&& task)
 {
-    Ref { m_workerScope.get() }->thread()->workerLoaderProxy()->postTaskToLoader([task = WTFMove(task)](auto& context) mutable {
+    Ref { m_workerScope.get() }->thread()->workerLoaderProxy()->postTaskToLoader([task = WTF::move(task)](auto& context) mutable {
         task(context.notificationClient(), context);
     });
 }
 
 void WorkerNotificationClient::postToWorkerThread(Function<void(ScriptExecutionContext&)>&& task)
 {
-    ScriptExecutionContext::postTaskTo(m_workerScopeIdentifier, WTFMove(task));
+    ScriptExecutionContext::postTaskTo(m_workerScopeIdentifier, WTF::move(task));
 }
 
 } // namespace WebCore

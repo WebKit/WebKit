@@ -26,10 +26,10 @@
 using libaom_test::ACMRandom;
 
 namespace {
-typedef void (*HorverFunc)(const int16_t *diff, int stride, int w, int h,
-                           float *hcorr, float *vcorr);
+using HorverFunc = void (*)(const int16_t *diff, int stride, int w, int h,
+                            float *hcorr, float *vcorr);
 
-typedef std::tuple<const HorverFunc> HorverTestParam;
+using HorverTestParam = std::tuple<const HorverFunc>;
 
 class HorverTest : public ::testing::TestWithParam<HorverTestParam> {
  public:

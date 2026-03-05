@@ -75,7 +75,9 @@ std::unique_ptr<RtpPacketReceived> RtpFileSource::NextPacket() {
       continue;
     }
     rtp_packet->set_arrival_time(Timestamp::Millis(temp_packet.time_ms));
-    if (temp_packet.original_length > rtp_packet->headers_size()) {
+
+    // Simulate payload if only the RTP header was written in the file.
+    if (temp_packet.original_length > rtp_packet->size()) {
       size_t payload_size =
           temp_packet.original_length - rtp_packet->headers_size();
       if (rtp_packet->has_padding()) {

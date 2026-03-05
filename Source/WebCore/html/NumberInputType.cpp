@@ -107,7 +107,7 @@ const AtomString& NumberInputType::formControlType() const
 void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     ASSERT(element());
-    if (!valueChanged && sanitizedValue.isEmpty() && !protectedElement()->innerTextValue().isEmpty())
+    if (!valueChanged && sanitizedValue.isEmpty() && !protect(element())->innerTextValue().isEmpty())
         updateInnerTextValue();
     TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 }
@@ -115,20 +115,20 @@ void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, 
 double NumberInputType::valueAsDouble() const
 {
     ASSERT(element());
-    return parseToDoubleForNumberType(protectedElement()->value().get());
+    return parseToDoubleForNumberType(protect(element())->value().get());
 }
 
 ExceptionOr<void> NumberInputType::setValueAsDouble(double newValue, TextFieldEventBehavior eventBehavior) const
 {
     ASSERT(element());
-    protectedElement()->setValue(serializeForNumberType(newValue), eventBehavior);
+    protect(element())->setValue(serializeForNumberType(newValue), eventBehavior);
     return { };
 }
 
 ExceptionOr<void> NumberInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventBehavior eventBehavior) const
 {
     ASSERT(element());
-    protectedElement()->setValue(serializeForNumberType(newValue), eventBehavior);
+    protect(element())->setValue(serializeForNumberType(newValue), eventBehavior);
     return { };
 }
 
@@ -140,7 +140,7 @@ bool NumberInputType::typeMismatchFor(const String& value) const
 bool NumberInputType::typeMismatch() const
 {
     ASSERT(element());
-    ASSERT(!typeMismatchFor(protectedElement()->value()));
+    ASSERT(!typeMismatchFor(protect(element())->value()));
     return false;
 }
 
@@ -301,7 +301,7 @@ float NumberInputType::decorationWidth(float inputWidth) const
     ASSERT(element());
 
     float width = 0;
-    RefPtr spinButton = protectedElement()->innerSpinButtonElement();
+    RefPtr spinButton = protect(element())->innerSpinButtonElement();
     if (CheckedPtr spinRenderer = spinButton ? spinButton->renderBox() : nullptr) {
         width += spinRenderer->borderAndPaddingLogicalWidth();
 
@@ -341,32 +341,32 @@ String NumberInputType::serialize(const Decimal& value) const
     return serializeForNumberType(value);
 }
 
-static bool isE(char16_t ch)
+static bool NODELETE isE(char16_t ch)
 {
     return ch == 'e' || ch == 'E';
 }
 
-static bool isPlusSign(char16_t ch)
+static bool NODELETE isPlusSign(char16_t ch)
 {
     return ch == '+';
 }
 
-static bool isSignPrefix(char16_t ch)
+static bool NODELETE isSignPrefix(char16_t ch)
 {
     return ch == '+' || ch == '-';
 }
 
-static bool isDigit(char16_t ch)
+static bool NODELETE isDigit(char16_t ch)
 {
     return ch >= '0' && ch <= '9';
 }
 
-static bool isDecimalSeparator(char16_t ch)
+static bool NODELETE isDecimalSeparator(char16_t ch)
 {
     return ch == '.';
 }
 
-static bool hasTwoSignChars(const String& string)
+static bool NODELETE hasTwoSignChars(const String& string)
 {
     unsigned count = 0;
     for (unsigned i = 0; i < string.length(); ++i) {
@@ -384,7 +384,7 @@ static bool hasDecimalSeparator(const String& string)
     return string.find('.') != notFound;
 }
 
-static bool hasSignNotAfterE(const String& string)
+static bool NODELETE hasSignNotAfterE(const String& string)
 {
     for (unsigned i = 0; i < string.length(); ++i) {
         if (isSignPrefix(string[i]))
@@ -399,7 +399,7 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
     auto normalizedText = normalizeFullWidthNumberChars(event.text()).get();
     LOG(Editing, "normalizeFullWidthNumberChars() -> [%s]", normalizedText.utf8().data());
 
-    auto localizedText = protectedElement()->locale().convertFromLocalizedNumber(normalizedText);
+    auto localizedText = protect(protect(element())->locale())->convertFromLocalizedNumber(normalizedText);
 
     // If the cleaned up text doesn't match input text, don't insert partial input
     // since it could be an incorrect paste.
@@ -541,13 +541,13 @@ String NumberInputType::localizeValue(const String& proposedValue) const
     if (proposedValue.find(isE) != notFound)
         return proposedValue;
     ASSERT(element());
-    return protectedElement()->locale().convertToLocalizedNumber(proposedValue);
+    return protect(protect(element())->locale())->convertToLocalizedNumber(proposedValue);
 }
 
 String NumberInputType::visibleValue() const
 {
     ASSERT(element());
-    return localizeValue(protectedElement()->value());
+    return localizeValue(protect(element())->value());
 }
 
 String NumberInputType::convertFromVisibleValue(const String& visibleValue) const
@@ -558,7 +558,7 @@ String NumberInputType::convertFromVisibleValue(const String& visibleValue) cons
     if (visibleValue.find(isE) != notFound)
         return visibleValue;
     ASSERT(element());
-    return protectedElement()->locale().convertFromLocalizedNumber(visibleValue);
+    return protect(protect(element())->locale())->convertFromLocalizedNumber(visibleValue);
 }
 
 ValueOrReference<String> NumberInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
@@ -573,7 +573,7 @@ ValueOrReference<String> NumberInputType::sanitizeValue(const String& proposedVa
 bool NumberInputType::hasBadInput() const
 {
     ASSERT(element());
-    String standardValue = convertFromVisibleValue(protectedElement()->innerTextValue());
+    String standardValue = convertFromVisibleValue(protect(element())->innerTextValue());
     return !standardValue.isEmpty() && !std::isfinite(parseToDoubleForNumberType(standardValue));
 }
 

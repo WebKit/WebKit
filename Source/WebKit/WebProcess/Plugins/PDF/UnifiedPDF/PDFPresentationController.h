@@ -44,6 +44,7 @@ enum class GraphicsLayerType : uint8_t;
 enum class TiledBackingScrollability : uint8_t;
 class GraphicsLayer;
 class GraphicsLayerClient;
+class Path;
 };
 
 namespace WebKit {
@@ -58,7 +59,7 @@ class PDFPresentationController : public ThreadSafeRefCountedAndCanMakeThreadSaf
     WTF_MAKE_NONCOPYABLE(PDFPresentationController);
     WTF_MAKE_TZONE_ALLOCATED(PDFPresentationController);
 public:
-    static RefPtr<PDFPresentationController> createForMode(PDFDocumentLayout::DisplayMode, UnifiedPDFPlugin&);
+    static RefPtr<PDFPresentationController> createForMode(PDFDisplayMode, UnifiedPDFPlugin&);
 
     PDFPresentationController(UnifiedPDFPlugin&);
     virtual ~PDFPresentationController();
@@ -68,8 +69,8 @@ public:
     // Subclasses must call the base class teardown().
     virtual void teardown();
 
-    virtual bool supportsDisplayMode(PDFDocumentLayout::DisplayMode) const = 0;
-    virtual void willChangeDisplayMode(PDFDocumentLayout::DisplayMode newMode) = 0;
+    virtual bool supportsDisplayMode(PDFDisplayMode) const = 0;
+    virtual void willChangeDisplayMode(PDFDisplayMode newMode) = 0;
 
     // Package up the data needed to paint a set of pages for the given clip, for use by UnifiedPDFPlugin::paintPDFContent and async rendering.
     virtual PDFPageCoverage pageCoverageForContentsRect(const WebCore::FloatRect&, std::optional<PDFLayoutRow>) const = 0;
@@ -124,8 +125,8 @@ public:
     virtual void setSelectionLayerEnabled(bool) { }
 
 protected:
-    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String&, WebCore::GraphicsLayerType);
-    RefPtr<WebCore::GraphicsLayer> makePageContainerLayer(PDFDocumentLayout::PageIndex);
+    Ref<WebCore::GraphicsLayer> createGraphicsLayer(const String&, WebCore::GraphicsLayerType);
+    Ref<WebCore::GraphicsLayer> makePageContainerLayer(PDFDocumentLayout::PageIndex);
     struct LayerCoverage {
         Ref<WebCore::GraphicsLayer> layer;
         WebCore::FloatRect bounds;
@@ -133,14 +134,15 @@ protected:
     };
     virtual Vector<LayerCoverage> layerCoveragesForRepaintPageCoverage(RepaintRequirements, const PDFPageCoverage&) = 0;
 
-    static RefPtr<WebCore::GraphicsLayer> pageBackgroundLayerForPageContainerLayer(WebCore::GraphicsLayer&);
+    static Ref<WebCore::GraphicsLayer> NODELETE pageBackgroundLayerForPageContainerLayer(WebCore::GraphicsLayer&);
 
     Ref<AsyncPDFRenderer> asyncRenderer();
-    RefPtr<AsyncPDFRenderer> asyncRendererIfExists() const;
+    RefPtr<AsyncPDFRenderer> NODELETE asyncRendererIfExists() const;
     void clearAsyncRenderer();
 
     bool shouldUseInProcessBackingStore() const;
-    bool shouldAddPageBackgroundLayerShadow() const;
+
+    WebCore::Path shadowPathForLayer(const WebCore::GraphicsLayer&) const;
 
     const Ref<UnifiedPDFPlugin> m_plugin;
     RefPtr<AsyncPDFRenderer> m_asyncRenderer;

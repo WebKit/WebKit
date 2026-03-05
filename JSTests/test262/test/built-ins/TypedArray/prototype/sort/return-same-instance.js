@@ -14,8 +14,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([2, 1]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([2, 1]));
   var result = sample.sort();
 
   assert.sameValue(sample, result, "without comparefn");

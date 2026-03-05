@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <cstdint>
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 namespace WTF {
 
 // For printing integral values in hex.

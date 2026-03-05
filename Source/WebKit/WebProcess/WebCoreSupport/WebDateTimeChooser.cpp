@@ -58,7 +58,7 @@ void WebDateTimeChooser::endChooser()
     if (!page)
         return;
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::EndDateTimePicker(), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::EndDateTimePicker(), page->identifier());
 }
 
 void WebDateTimeChooser::showChooser(const WebCore::DateTimeChooserParameters& params)
@@ -68,7 +68,7 @@ void WebDateTimeChooser::showChooser(const WebCore::DateTimeChooserParameters& p
         return;
 
     page->setActiveDateTimeChooser(*this);
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::ShowDateTimePicker(params), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowDateTimePicker(params), page->identifier());
 }
 
 } // namespace WebKit

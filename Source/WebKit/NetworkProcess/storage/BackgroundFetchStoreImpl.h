@@ -44,7 +44,7 @@ struct BackgroundFetchState;
 
 class BackgroundFetchStoreImpl :  public WebCore::BackgroundFetchStore {
 public:
-    static Ref<BackgroundFetchStoreImpl> create(ThreadSafeWeakPtr<NetworkStorageManager>&& manager, WeakPtr<WebCore::SWServer>&& server) { return adoptRef(*new BackgroundFetchStoreImpl(WTFMove(manager), WTFMove(server))); }
+    static Ref<BackgroundFetchStoreImpl> create(ThreadSafeWeakPtr<NetworkStorageManager>&& manager, WeakPtr<WebCore::SWServer>&& server) { return adoptRef(*new BackgroundFetchStoreImpl(WTF::move(manager), WTF::move(server))); }
     ~BackgroundFetchStoreImpl();
 
     void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&&);
@@ -75,8 +75,6 @@ private:
     void loadAllFetches(CompletionHandler<void()>&&);
     void fetchInformationFromFilename(const String&, CompletionHandler<void(const WebCore::ServiceWorkerRegistrationKey&, const String&)>&&);
     void initializeFetches(const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
-
-    RefPtr<WebCore::SWServer> protectedServer();
 
     ThreadSafeWeakPtr<NetworkStorageManager> m_manager;
 

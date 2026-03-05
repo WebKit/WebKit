@@ -17,6 +17,7 @@
 #include <optional>
 
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/environment/environment.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
@@ -26,18 +27,11 @@ namespace webrtc {
 
 class ControllerManager;
 class EventLogWriter;
-class RtcEventLog;
 
 class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
  public:
-  struct Config {
-    Config();
-    ~Config();
-    RtcEventLog* event_log;
-  };
-
   AudioNetworkAdaptorImpl(
-      const Config& config,
+      const Environment& env,
       std::unique_ptr<ControllerManager> controller_manager,
       std::unique_ptr<DebugDumpWriter> debug_dump_writer = nullptr);
 
@@ -69,7 +63,7 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
 
   void UpdateNetworkMetrics(const Controller::NetworkMetrics& network_metrics);
 
-  const Config config_;
+  const Environment env_;
 
   std::unique_ptr<ControllerManager> controller_manager_;
 

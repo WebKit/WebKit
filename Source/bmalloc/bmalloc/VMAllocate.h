@@ -25,13 +25,14 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "AllocationCounts.h"
 #include "BAssert.h"
 #include "BPlatform.h"
 #include "BSyscall.h"
 #include "BVMTags.h"
 #include "Logging.h"
-#include "Range.h"
 #include "Sizes.h"
 #include <algorithm>
 #include <cstddef>
@@ -250,7 +251,6 @@ inline void* tryVMAllocate(size_t vmSize, VMTag usage)
     void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, static_cast<int>(usage), 0);
     if (result == MAP_FAILED)
         return nullptr;
-    RELEASE_BASSERT_DATA_ADDRESS_IS_SANE(result);
     return result;
 }
 
@@ -290,7 +290,7 @@ inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage)
     // MAP_ANON guarantees the memory is zeroed. This will also cause
     // page faults on accesses to this range following this call.
     void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, flags, tag, 0);
-    RELEASE_BASSERT(result == p && BDATA_ADDRESS_IS_SANE(result));
+    RELEASE_BASSERT(result == p);
 }
 
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
@@ -387,8 +387,21 @@ inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage)
     BUNUSED_PARAM(usage);
 
     vmValidate(p, vmSize);
-    DWORD result = DiscardVirtualMemory(p, vmSize);
-    RELEASE_BASSERT(result == ERROR_SUCCESS);
+
+    size_t totalSeen = 0;
+    void* currentPtr = p;
+    while (totalSeen < vmSize) {
+        MEMORY_BASIC_INFORMATION memInfo;
+        VirtualQuery(currentPtr, &memInfo, sizeof(memInfo));
+        RELEASE_BASSERT(memInfo.RegionSize > 0);
+        size_t chunkSize = std::min(memInfo.RegionSize, vmSize - totalSeen);
+        BOOL freeResult = VirtualFree(currentPtr, chunkSize, MEM_DECOMMIT);
+        RELEASE_BASSERT(freeResult);
+        void* allocResult = VirtualAlloc(currentPtr, chunkSize, MEM_COMMIT, PAGE_READWRITE);
+        RELEASE_BASSERT(allocResult == currentPtr);
+        currentPtr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(currentPtr) + memInfo.RegionSize);
+        totalSeen += memInfo.RegionSize;
+    }
 }
 
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
@@ -411,3 +424,5 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 } // namespace bmalloc
 
 BALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // __cplusplus

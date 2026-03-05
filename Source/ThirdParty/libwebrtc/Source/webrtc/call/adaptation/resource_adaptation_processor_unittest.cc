@@ -667,7 +667,7 @@ TEST_F(ResourceAdaptationProcessorTest,
   EXPECT_EQ(2, restrictions_listener_.adaptation_counters().Total());
 
   video_stream_adapter_->SetDegradationPreference(
-      DegradationPreference::DISABLED);
+      DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION);
 
   // Revert to `other_resource_` when removing `resource_` even though the
   // current degradataion preference is disabled.

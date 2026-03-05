@@ -33,10 +33,12 @@
 #include "WebEventModifier.h"
 #include "WebPageProxy.h"
 #include <optional>
-#include <wpe/wpe.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if USE(LIBWPE)
+#include <wpe/wpe.h>
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 #include "Logging.h"
@@ -79,6 +81,7 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
     }
 #endif
 
+#if USE(LIBWPE)
     if (modifiers & wpe_input_keyboard_modifier_alt)
         webModifiers.add(WebEventModifier::AltKey);
     if (modifiers & wpe_input_keyboard_modifier_meta)
@@ -88,6 +91,8 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
     if (modifiers & wpe_input_keyboard_modifier_shift)
         webModifiers.add(WebEventModifier::ShiftKey);
     // libWPE has no Caps Lock modifier.
+#endif
+
     return webModifiers;
 }
 
@@ -158,6 +163,8 @@ static uint32_t modifiersToEventState(OptionSet<WebEventModifier> modifiers)
 
 static unsigned libWPEMouseButtonToWPEButton(MouseButton button)
 {
+    // FIXME: Add support for the forward and backward mouse buttons.
+
     switch (button) {
     case MouseButton::None:
     case MouseButton::Left:
@@ -166,8 +173,9 @@ static unsigned libWPEMouseButtonToWPEButton(MouseButton button)
         return 3;
     case MouseButton::Right:
         return 2;
+    default:
+        return 1;
     }
-    return 1;
 }
 #endif // ENABLE(WPE_PLATFORM)
 
@@ -177,10 +185,12 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 
     auto location = deviceScaleLocationInView(page, locationInView);
 
+#if USE(LIBWPE)
     if (page.viewBackend()) {
         platformSimulateMouseInteractionLibWPE(page, interaction, button, location, keyModifiers, pointerType, m_currentModifiers);
         return;
     }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
     unsigned wpeButton = libWPEMouseButtonToWPEButton(button);
@@ -420,10 +430,13 @@ static uint32_t modifiersForKeyVal(unsigned keyVal)
 
 void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, Variant<VirtualKey, CharKey>&& key)
 {
+#if USE(LIBWPE)
     if (page.viewBackend()) {
-        platformSimulateKeyboardInteractionLibWPE(page, interaction, WTFMove(key), m_currentModifiers);
+        platformSimulateKeyboardInteractionLibWPE(page, interaction, WTF::move(key), m_currentModifiers);
         return;
     }
+#endif
+
 #if ENABLE(WPE_PLATFORM)
     uint32_t keyVal;
     WTF::switchOn(key,
@@ -453,10 +466,13 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 }
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
+#if USE(LIBWPE)
     if (page.viewBackend()) {
         platformSimulateKeySequenceLibWPE(page, keySequence, m_currentModifiers);
         return;
     }
+#endif
+
 #if ENABLE(WPE_PLATFORM)
     for (auto codePoint : StringView(keySequence).codePoints())
         doKeyStrokeEvent(page, true, wpe_unicode_to_keyval(codePoint), m_currentModifiers, true);
@@ -469,10 +485,12 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
 {
     auto location = deviceScaleLocationInView(page, locationInView);
 
+#if USE(LIBWPE)
     if (page.viewBackend()) {
         platformSimulateWheelInteractionLibWPE(page, location, delta);
         return;
     }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
     auto* view = page.wpeView();
@@ -486,12 +504,13 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
 
 void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy&page, TouchInteraction interaction, const WebCore::IntPoint& locationInView, std::optional<Seconds> duration, AutomationCompletionHandler&& completionHandler)
 {
-
+#if USE(LIBWPE)
     if (page.viewBackend()) {
         LOG(Automation, "Touch event emulation is not supported for the legacy libwpe API");
         completionHandler(AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage::InternalError, "Touch event emulation is not supported for the legacy libwpe API"_s));
         return;
     }
+#endif
 
     auto location = deviceScaleLocationInView(page, locationInView);
 

@@ -152,6 +152,8 @@ SendAudioStream::SendAudioStream(
   }
 
   send_config.rtp.extensions = GetAudioRtpExtensions(config);
+  send_config.include_in_congestion_control_allocation =
+      config.stream.in_bandwidth_estimation;
 
   sender_->SendTask([&] {
     send_stream_ = sender_->call_->CreateAudioSendStream(send_config);

@@ -85,7 +85,7 @@ public:
     void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
 #endif
 
-    bool shouldPaint() const;
+    bool NODELETE shouldPaint() const;
 
     bool paintsFloat() const { return m_paintsFloat; }
     void setPaintsFloat(bool paintsFloat) { m_paintsFloat = paintsFloat; }
@@ -101,7 +101,7 @@ public:
         return LayoutSize(m_frameRect.location().x() + m_marginOffset.width(), m_frameRect.location().y() + m_marginOffset.height());
     }
     LayoutSize marginOffset() const { ASSERT(isPlaced()); return m_marginOffset; }
-    LayoutSize translationOffsetToAncestor() const;
+    LayoutSize NODELETE translationOffsetToAncestor() const;
 
 private:
     friend FloatingObjects;
@@ -181,9 +181,9 @@ private:
     const RenderBlockFlow& renderer() const { ASSERT(m_renderer); return *m_renderer; }
     void computePlacedFloatsTree();
     const FloatingObjectTree* placedFloatsTree();
-    void increaseObjectsCount(FloatingObject::Type);
-    void decreaseObjectsCount(FloatingObject::Type);
-    FloatingObjectInterval intervalForFloatingObject(FloatingObject*);
+    void NODELETE increaseObjectsCount(FloatingObject::Type);
+    void NODELETE decreaseObjectsCount(FloatingObject::Type);
+    FloatingObjectInterval NODELETE intervalForFloatingObject(FloatingObject*);
 
     FloatingObjectSet m_set;
     std::unique_ptr<FloatingObjectTree> m_placedFloatsTree;

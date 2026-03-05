@@ -42,21 +42,21 @@ TEST(BlockPtr, FromBlock)
 TEST(BlockPtr, FromLambda)
 {
     MoveOnly moveOnly { 10 };
-    auto block = BlockPtr<unsigned ()>::fromCallable([moveOnly = WTFMove(moveOnly)] {
+    auto block = BlockPtr<unsigned ()>::fromCallable([moveOnly = WTF::move(moveOnly)] {
         return moveOnly.value();
     });
 
     EXPECT_EQ(10u, block());
 
     moveOnly = 20;
-    block = makeBlockPtr([moveOnly = WTFMove(moveOnly)] {
+    block = makeBlockPtr([moveOnly = WTF::move(moveOnly)] {
         return moveOnly.value();
     });
 
     EXPECT_EQ(20u, block());
 
     moveOnly = 30;
-    block = makeBlockPtr([moveOnly = WTFMove(moveOnly)]() mutable {
+    block = makeBlockPtr([moveOnly = WTF::move(moveOnly)]() mutable {
         return moveOnly.value();
     });
 

@@ -217,11 +217,11 @@ const WebCore::DRMDevice& drmMainDevice()
             if (auto renderNode = drmRenderNodeDevice(device)) {
                 // If we can get the render node from EGL we should use that even if it's nullptr (which is the case
                 // with software rasterization). Then, we try to get the primary node using EGL first and DRM as fallback..
-                mainDevice->renderNode = WTFMove(*renderNode);
+                mainDevice->renderNode = WTF::move(*renderNode);
                 if (!mainDevice->renderNode.isNull()) {
                     auto primaryNode = drmPrimaryNodeDevice(device);
                     if (primaryNode && !primaryNode->isNull())
-                        mainDevice->primaryNode = WTFMove(*primaryNode);
+                        mainDevice->primaryNode = WTF::move(*primaryNode);
                     else
                         mainDevice->primaryNode = drmPrimaryNodeDeviceForRenderNodeDevice(mainDevice->renderNode);
                 }
@@ -231,7 +231,7 @@ const WebCore::DRMDevice& drmMainDevice()
             // If EGL device doesn't support querying the render node, try with the primary node and then use DRM to
             // get the associated render node.
             if (auto primaryNode = drmPrimaryNodeDevice(device)) {
-                mainDevice->primaryNode = WTFMove(*primaryNode);
+                mainDevice->primaryNode = WTF::move(*primaryNode);
                 mainDevice->renderNode = drmRenderNodeDeviceFromPrimaryNodeDevice(mainDevice->primaryNode);
                 return;
             }
@@ -239,8 +239,8 @@ const WebCore::DRMDevice& drmMainDevice()
 
         // If EGL device is not supported fallback to use DRM to find the first device with a render node.
         if (auto device = drmFirstDeviceWithRenderNode()) {
-            mainDevice->primaryNode = WTFMove(device->first);
-            mainDevice->renderNode = WTFMove(device->second);
+            mainDevice->primaryNode = WTF::move(device->first);
+            mainDevice->renderNode = WTF::move(device->second);
         }
     });
     return mainDevice.get();

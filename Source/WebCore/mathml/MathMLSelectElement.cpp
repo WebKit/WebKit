@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLSelectElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLSelectElement);
 
 using namespace MathMLNames;
 
@@ -59,7 +59,7 @@ Ref<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName& tagNam
 
 RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMathMLRow>(RenderObject::Type::MathMLRow, *this, WTFMove(style));
+    return createRenderer<RenderMathMLRow>(RenderObject::Type::MathMLRow, *this, WTF::move(style));
 }
 
 //  We recognize the following values for the encoding attribute of the <semantics> element:
@@ -122,16 +122,16 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
     int selection = integralAttribute(MathMLNames::selectionAttr);
     int i;
     for (i = 1; i < selection; i++) {
-        auto* nextChild = selectedChild->nextElementSibling();
+        RefPtr nextChild = selectedChild->nextElementSibling();
         if (!nextChild)
             break;
-        selectedChild = nextChild;
+        selectedChild = nextChild.get();
     }
 
     return i;
 }
 
-Element* MathMLSelectElement::getSelectedActionChild()
+RefPtr<Element> MathMLSelectElement::getSelectedActionChild()
 {
     ASSERT(hasTagName(mactionTag));
 
@@ -154,10 +154,10 @@ Element* MathMLSelectElement::getSelectedActionChild()
         child = selectedChild;
     }
 
-    return child.unsafeGet();
+    return child;
 }
 
-Element* MathMLSelectElement::getSelectedSemanticsChild()
+RefPtr<Element> MathMLSelectElement::getSelectedSemanticsChild()
 {
     ASSERT(hasTagName(semanticsTag));
 
@@ -165,12 +165,12 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
     if (!child)
         return nullptr;
 
-    if (auto* childElement = dynamicDowncast<MathMLElement>(*child); !childElement || !childElement->isPresentationMathML()) {
+    if (RefPtr childElement = dynamicDowncast<MathMLElement>(*child); !childElement || !childElement->isPresentationMathML()) {
         // The first child is not a presentation MathML element. Hence we move to the second child and start searching an annotation child that could be displayed.
         child = child->nextElementSibling();
     } else if (!downcast<MathMLElement>(*child).isSemanticAnnotation()) {
         // The first child is a presentation MathML but not an annotation, so we can just display it.
-        return child.unsafeGet();
+        return child;
     }
     // Otherwise, the first child is an <annotation> or <annotation-xml> element. This is invalid, but some people use this syntax so we take care of this case too and start the search from this first child.
 
@@ -183,7 +183,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             if (child->hasAttributeWithoutSynchronization(MathMLNames::srcAttr))
                 continue;
             // Otherwise, we assume it is a text annotation that can always be displayed and we stop here.
-            return child.unsafeGet();
+            return child;
         }
 
         if (child->hasTagName(MathMLNames::annotation_xmlTag)) {
@@ -193,7 +193,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             // If the <annotation-xml> element has an encoding attribute describing presentation MathML, SVG or HTML we assume the content can be displayed and we stop here.
             auto& value = child->attributeWithoutSynchronization(MathMLNames::encodingAttr);
             if (isMathMLEncoding(value) || isSVGEncoding(value) || isHTMLEncoding(value))
-                return child.unsafeGet();
+                return child;
         }
     }
 
@@ -206,7 +206,7 @@ void MathMLSelectElement::updateSelectedChild()
     if (document().settings().coreMathMLEnabled())
         return;
 
-    auto* newSelectedChild = hasTagName(mactionTag) ? getSelectedActionChild() : getSelectedSemanticsChild();
+    RefPtr newSelectedChild = hasTagName(mactionTag) ? getSelectedActionChild() : getSelectedSemanticsChild();
 
     if (m_selectedChild == newSelectedChild)
         return;

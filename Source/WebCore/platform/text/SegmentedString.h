@@ -163,7 +163,7 @@ inline SegmentedString::Substring::Substring(StringView passedStringView)
 }
 
 inline SegmentedString::Substring::Substring(String&& passedString)
-    : underlyingString(WTFMove(passedString))
+    : underlyingString(WTF::move(passedString))
     , originalLength(underlyingString.length())
 {
     if (!underlyingString.isEmpty()) {
@@ -207,7 +207,7 @@ inline SegmentedString::SegmentedString(StringView stringView)
 }
 
 inline SegmentedString::SegmentedString(String&& string)
-    : m_currentSubstring(WTFMove(string))
+    : m_currentSubstring(WTF::move(string))
 {
     if (m_currentSubstring.length()) {
         m_currentCharacter = m_currentSubstring.currentCharacter();

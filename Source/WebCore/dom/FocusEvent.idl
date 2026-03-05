@@ -23,14 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/uievents/#focusevent
 [
     Exposed=Window
 ] interface FocusEvent : UIEvent {
-    constructor([AtomString] DOMString type, optional FocusEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional FocusEventInit eventInitDict = {});
 
     readonly attribute EventTarget? relatedTarget;
 };
 
+// https://w3c.github.io/uievents/#dictdef-focuseventinit
 dictionary FocusEventInit : UIEventInit {
     EventTarget? relatedTarget = null;
 };

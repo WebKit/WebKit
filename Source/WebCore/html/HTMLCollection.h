@@ -35,7 +35,7 @@ class CollectionNamedElementCache {
 public:
     inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* findElementsWithId(const AtomString& id) const;
     inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* findElementsWithName(const AtomString& name) const;
-    const Vector<AtomString>& propertyNames() const { return m_propertyNames; }
+    const Vector<AtomString>& propertyNames() const LIFETIME_BOUND { return m_propertyNames; }
     
     inline void appendToIdCache(const AtomString& id, Element&);
     inline void appendToNameCache(const AtomString& name, Element&);
@@ -60,7 +60,7 @@ private:
 
 // HTMLCollection subclasses NodeList to maintain legacy ObjC API compatibility.
 class HTMLCollection : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(HTMLCollection, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HTMLCollection, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~HTMLCollection();
 
@@ -78,7 +78,6 @@ public:
     inline NodeListInvalidationType invalidationType() const;
     inline CollectionType type() const;
     ContainerNode& ownerNode() const { return m_ownerNode; }
-    Ref<ContainerNode> protectedOwnerNode() const { return m_ownerNode; }
     inline ContainerNode& rootNode() const;
     inline void invalidateCacheForAttribute(const QualifiedName& attributeName);
     WEBCORE_EXPORT virtual void invalidateCacheForDocument(Document&);
@@ -96,12 +95,11 @@ protected:
     inline const CollectionNamedElementCache& namedItemCaches() const;
 
     inline Document& document() const;
-    inline Ref<Document> protectedDocument() const;
 
     void invalidateNamedElementCache(Document&) const;
 
     enum class RootType : bool { AtNode, AtTreeScope };
-    static RootType rootTypeFromCollectionType(CollectionType);
+    static RootType NODELETE rootTypeFromCollectionType(CollectionType);
 
     mutable Lock m_namedElementCacheAssignmentLock;
 
@@ -128,7 +126,7 @@ inline CollectionType HTMLCollection::type() const
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassName, Type) \
+#define SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
-    static bool isType(const WebCore::HTMLCollection& collection) { return collection.type() == WebCore::Type; } \
+    static bool isType(const WebCore::HTMLCollection& collection) { return collection.type() == WebCore::CollectionClassTraits<WebCore::ClassName>::collectionType; } \
 SPECIALIZE_TYPE_TRAITS_END()

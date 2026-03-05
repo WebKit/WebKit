@@ -4,7 +4,7 @@
 esid: sec-atomics.or
 description: >
   Atomics.or will operate on TA when TA.buffer is not a SharedArrayBuffer
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [ArrayBuffer, Atomics, BigInt, TypedArray]
 ---*/
 testWithBigIntTypedArrayConstructors(TA => {
@@ -12,4 +12,4 @@ testWithBigIntTypedArrayConstructors(TA => {
   const view = new TA(buffer);
   assert.sameValue(Atomics.or(view, 0, 1n), 0n, 'Atomics.or(view, 0, 1n) returns 0n');
   assert.sameValue(Atomics.load(view, 0), 1n, 'Atomics.load(view, 0) returns 1n');
-});
+}, null, ["passthrough"]);

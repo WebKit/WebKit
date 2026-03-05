@@ -46,7 +46,7 @@ public:
 
     HANDLE get() const { return m_handle; }
 
-    WTF_EXPORT_PRIVATE HANDLE leak() WARN_UNUSED_RETURN;
+    [[nodiscard]] WTF_EXPORT_PRIVATE HANDLE leak();
 
     struct IPCData {
         uintptr_t handle;

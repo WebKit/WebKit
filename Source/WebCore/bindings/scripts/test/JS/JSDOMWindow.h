@@ -35,7 +35,7 @@ public:
     using DOMWrapped = DOMWindow;
     static JSDOMWindow* create(JSC::VM& vm, JSC::Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
     {
-        JSDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSDOMWindow>(vm)) JSDOMWindow(vm, structure, WTFMove(impl), proxy);
+        JSDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSDOMWindow>(vm)) JSDOMWindow(vm, structure, WTF::move(impl), proxy);
         ptr->finishCreation(vm, proxy);
         return ptr;
     }
@@ -62,8 +62,6 @@ public:
     {
         return static_cast<DOMWindow&>(Base::wrapped());
     }
-
-    Ref<DOMWindow> protectedWrapped() const;
 
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance;

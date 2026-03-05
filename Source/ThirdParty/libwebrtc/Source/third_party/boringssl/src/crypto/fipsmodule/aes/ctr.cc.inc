@@ -73,7 +73,7 @@ void CRYPTO_ctr128_encrypt_ctr32(const uint8_t *in, uint8_t *out, size_t len,
     (*func)(in, out, blocks, key, ivec);
     // (*func) does not update ivec, caller does:
     CRYPTO_store_u32_be(ivec + 12, ctr32);
-    // ... overflow was detected, propogate carry.
+    // ... overflow was detected, propagate carry.
     if (ctr32 == 0) {
       ctr96_inc(ivec);
     }

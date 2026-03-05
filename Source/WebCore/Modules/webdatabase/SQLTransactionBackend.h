@@ -31,6 +31,7 @@
 #include "SQLTransactionStateMachine.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -59,7 +60,7 @@ private:
     void doCleanup();
 
     // State Machine functions:
-    StateFunction stateFunctionFor(SQLTransactionState) override;
+    StateFunction NODELETE stateFunctionFor(SQLTransactionState) override;
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
@@ -69,9 +70,11 @@ private:
     void cleanupAndTerminate();
     void cleanupAfterTransactionErrorCallback();
 
-    NO_RETURN_DUE_TO_ASSERT void unreachableState();
+    NO_RETURN_DUE_TO_ASSERT void NODELETE unreachableState();
 
-    SQLTransaction& m_frontend;
+    Ref<SQLTransaction> frontend() { return m_frontend.get().releaseNonNull(); }
+
+    ThreadSafeWeakPtr<SQLTransaction> m_frontend;
 };
 
 } // namespace WebCore

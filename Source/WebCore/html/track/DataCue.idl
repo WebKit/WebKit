@@ -30,13 +30,13 @@
     Conditional=VIDEO,
     Exposed=Window
 ] interface DataCue : TextTrackCue {
-    [CallWith=CurrentDocument] constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data);
     // FIXME: Remove 'unrestricted' from 'startTime' to align with the specification: See: https://bugs.webkit.org/show_bug.cgi?id=260764
     [CallWith=CurrentDocument] constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type);
-
-    attribute ArrayBuffer data;
-
-    // Proposed extensions.
     [CallWith=CurrentGlobalObject] attribute any value;
     readonly attribute DOMString type;
+
+    // FIXME: Remove constructor taking ArrayBuffer to align with the specification.
+    [CallWith=CurrentDocument] constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data);
+    // FIXME: Remove `data` to align with the specification.
+    attribute ArrayBuffer? data;
 };

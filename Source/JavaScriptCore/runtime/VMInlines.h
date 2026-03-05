@@ -100,7 +100,7 @@ inline CallFrame* VM::topJSCallFrame() const
 inline void VM::setFuzzerAgent(std::unique_ptr<FuzzerAgent>&& fuzzerAgent)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!m_fuzzerAgent, "Only one FuzzerAgent can be specified at a time.");
-    m_fuzzerAgent = WTFMove(fuzzerAgent);
+    m_fuzzerAgent = WTF::move(fuzzerAgent);
 }
 
 template<typename Func>

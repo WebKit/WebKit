@@ -31,20 +31,20 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSLCH);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSLCH);
 
 ExceptionOr<Ref<CSSLCH>> CSSLCH::create(CSSColorPercent&& lightness, CSSColorPercent&& chroma, CSSColorAngle&& hue, CSSColorPercent&& alpha)
 {
-    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
     if (rectifiedLightness.hasException())
         return rectifiedLightness.releaseException();
-    auto rectifiedChroma = rectifyCSSColorPercent(WTFMove(chroma));
+    auto rectifiedChroma = rectifyCSSColorPercent(WTF::move(chroma));
     if (rectifiedChroma.hasException())
         return rectifiedChroma.releaseException();
-    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    auto rectifiedHue = rectifyCSSColorAngle(WTF::move(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
 
@@ -53,10 +53,10 @@ ExceptionOr<Ref<CSSLCH>> CSSLCH::create(CSSColorPercent&& lightness, CSSColorPer
 }
 
 CSSLCH::CSSLCH(RectifiedCSSColorPercent&& lightness, RectifiedCSSColorPercent&& chroma, RectifiedCSSColorAngle&& hue, RectifiedCSSColorPercent&& alpha)
-    : m_lightness(WTFMove(lightness))
-    , m_chroma(WTFMove(chroma))
-    , m_hue(WTFMove(hue))
-    , m_alpha(WTFMove(alpha))
+    : m_lightness(WTF::move(lightness))
+    , m_chroma(WTF::move(chroma))
+    , m_hue(WTF::move(hue))
+    , m_alpha(WTF::move(alpha))
 {
 }
 
@@ -67,7 +67,7 @@ CSSColorPercent CSSLCH::l() const
 
 ExceptionOr<void> CSSLCH::setL(CSSColorPercent&& lightness)
 {
-    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
     if (rectifiedLightness.hasException())
         return rectifiedLightness.releaseException();
     m_lightness = rectifiedLightness.releaseReturnValue();
@@ -81,7 +81,7 @@ CSSColorPercent CSSLCH::c() const
 
 ExceptionOr<void> CSSLCH::setC(CSSColorPercent&& chroma)
 {
-    auto rectifiedChroma = rectifyCSSColorPercent(WTFMove(chroma));
+    auto rectifiedChroma = rectifyCSSColorPercent(WTF::move(chroma));
     if (rectifiedChroma.hasException())
         return rectifiedChroma.releaseException();
     m_chroma = rectifiedChroma.releaseReturnValue();
@@ -95,7 +95,7 @@ CSSColorAngle CSSLCH::h() const
 
 ExceptionOr<void> CSSLCH::setH(CSSColorAngle&& hue)
 {
-    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    auto rectifiedHue = rectifyCSSColorAngle(WTF::move(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
     m_hue = rectifiedHue.releaseReturnValue();
@@ -109,7 +109,7 @@ CSSColorPercent CSSLCH::alpha() const
 
 ExceptionOr<void> CSSLCH::setAlpha(CSSColorPercent&& alpha)
 {
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
     m_alpha = rectifiedAlpha.releaseReturnValue();

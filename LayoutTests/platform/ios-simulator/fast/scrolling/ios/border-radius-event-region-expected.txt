@@ -1,0 +1,297 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 1715.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1715.00)
+      (contentsOpaque 1)
+      (children 25
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 50.00 50.00)
+          (event region
+            (rect (0,0) width=50 height=50)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds 50.00 50.00)
+              (event region
+                (rect (0,0) width=50 height=50)
+              )
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 50.00 100.00)
+                  (event region
+                    (rect (0,0) width=50 height=100)
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 71.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 71.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (6,0) width=194 height=6)
+            (rect (0,6) width=200 height=194)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 71.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (31,0) width=169 height=4)
+            (rect (15,4) width=185 height=11)
+            (rect (4,15) width=196 height=16)
+            (rect (0,31) width=200 height=169)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 275.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (172,0) width=28 height=3)
+            (rect (144,3) width=56 height=6)
+            (rect (117,9) width=83 height=10)
+            (rect (92,19) width=108 height=13)
+            (rect (70,32) width=130 height=17)
+            (rect (49,49) width=151 height=21)
+            (rect (32,70) width=168 height=22)
+            (rect (19,92) width=181 height=25)
+            (rect (9,117) width=191 height=27)
+            (rect (3,144) width=197 height=28)
+            (rect (0,172) width=200 height=28)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 275.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (20,0) width=180 height=21)
+            (rect (6,21) width=194 height=55)
+            (rect (0,76) width=200 height=124)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 275.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (15,0) width=185 height=6)
+            (rect (0,6) width=200 height=194)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 480.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 480.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=194 height=6)
+            (rect (0,6) width=200 height=194)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 480.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=169 height=4)
+            (rect (0,4) width=185 height=11)
+            (rect (0,15) width=196 height=16)
+            (rect (0,31) width=200 height=169)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 684.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=28 height=3)
+            (rect (0,3) width=56 height=6)
+            (rect (0,9) width=83 height=10)
+            (rect (0,19) width=108 height=13)
+            (rect (0,32) width=130 height=17)
+            (rect (0,49) width=151 height=21)
+            (rect (0,70) width=168 height=22)
+            (rect (0,92) width=181 height=25)
+            (rect (0,117) width=191 height=27)
+            (rect (0,144) width=197 height=28)
+            (rect (0,172) width=200 height=28)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 684.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=180 height=21)
+            (rect (0,21) width=194 height=54)
+            (rect (0,75) width=200 height=125)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 684.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=185 height=6)
+            (rect (0,6) width=200 height=194)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 889.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 889.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=194)
+            (rect (6,194) width=194 height=6)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 889.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=169)
+            (rect (4,169) width=196 height=16)
+            (rect (15,185) width=185 height=11)
+            (rect (31,196) width=169 height=4)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 1093.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=28)
+            (rect (3,28) width=197 height=28)
+            (rect (9,56) width=191 height=27)
+            (rect (19,83) width=181 height=25)
+            (rect (32,108) width=168 height=22)
+            (rect (49,130) width=151 height=21)
+            (rect (70,151) width=130 height=17)
+            (rect (92,168) width=108 height=13)
+            (rect (117,181) width=83 height=10)
+            (rect (144,191) width=56 height=6)
+            (rect (172,197) width=28 height=3)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 1093.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=125)
+            (rect (6,125) width=194 height=54)
+            (rect (21,179) width=179 height=21)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 1093.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=194)
+            (rect (15,194) width=185 height=6)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 1298.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 1298.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=194)
+            (rect (0,194) width=194 height=6)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 1298.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=169)
+            (rect (0,169) width=196 height=16)
+            (rect (0,185) width=185 height=11)
+            (rect (0,196) width=169 height=4)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 1502.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=28)
+            (rect (0,28) width=197 height=28)
+            (rect (0,56) width=191 height=27)
+            (rect (0,83) width=181 height=25)
+            (rect (0,108) width=168 height=22)
+            (rect (0,130) width=151 height=21)
+            (rect (0,151) width=130 height=17)
+            (rect (0,168) width=108 height=13)
+            (rect (0,181) width=83 height=10)
+            (rect (0,191) width=56 height=6)
+            (rect (0,197) width=28 height=3)
+          )
+        )
+        (GraphicsLayer
+          (position 208.00 1502.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=124)
+            (rect (0,124) width=194 height=55)
+            (rect (0,179) width=180 height=21)
+          )
+        )
+        (GraphicsLayer
+          (position 408.00 1502.50)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=194)
+            (rect (0,194) width=185 height=6)
+          )
+        )
+      )
+    )
+  )
+)
+

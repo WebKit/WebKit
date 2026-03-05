@@ -37,7 +37,7 @@ namespace WebCore {
 struct XRRenderStateInit;
 
 class WebXRRenderState : public RefCounted<WebXRRenderState> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRRenderState);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRRenderState);
 public:
     static Ref<WebXRRenderState> create(XRSessionMode);
     ~WebXRRenderState();
@@ -60,7 +60,7 @@ public:
     void setBaseLayer(WebXRWebGLLayer* baseLayer) { m_baseLayer = baseLayer; }
 
 #if ENABLE(WEBXR_LAYERS)
-    const Vector<Ref<WebXRLayer>>& layers() const { return m_layers; }
+    const Vector<Ref<WebXRLayer>>& layers() const LIFETIME_BOUND { return m_layers; }
     void setLayers(const Vector<Ref<WebXRLayer>>&);
 #endif
 

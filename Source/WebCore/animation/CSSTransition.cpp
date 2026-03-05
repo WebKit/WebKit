@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransition);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTransition);
 
 Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Style::Transition& backingStyleTransition, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {

@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-static HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& allWorkers()
+static HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& NODELETE allWorkers()
 {
     ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>> allWorkers;
@@ -89,7 +89,7 @@ WebCore::Site WebSharedWorker::topSite() const
 
 void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult)
 {
-    m_fetchResult = WTFMove(fetchResult);
+    m_fetchResult = WTF::move(fetchResult);
 }
 
 void WebSharedWorker::didCreateContextConnection(WebSharedWorkerServerToContextConnection& contextConnection)

@@ -1,7 +1,7 @@
 
-FAIL No RTCRtpStreamStats exist when only remote description is set assert_equals: no rtp stats with only remote description expected 0 but got 2
-FAIL No RTCRtpStreamStats exist when only local description is set assert_equals: no rtp stats with only local description expected 0 but got 2
-FAIL No RTCRtpOutboundStreamStats should exist before negotiation completes assert_equals: No outbound rtp stats after setLocalDescription but before setRemoteDescription expected 0 but got 2
-FAIL No RTCInboundRtpStreamStats exist until packets have been received assert_true: no inbound rtp stats before packets received expected true got false
+PASS No RTCRtpStreamStats exist when only remote description is set
+PASS No RTCRtpStreamStats exist when only local description is set
+PASS No RTCRtpOutboundStreamStats should exist before negotiation completes
+PASS No RTCInboundRtpStreamStats exist until packets have been received
 FAIL RTCAudioPlayoutStats should be present assert_unreached: Audio playout stats should become available Reached unreachable code
 

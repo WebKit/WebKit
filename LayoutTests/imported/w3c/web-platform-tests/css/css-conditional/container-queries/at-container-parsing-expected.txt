@@ -83,8 +83,8 @@ PASS @container rule should be valid: @container not (width <= 500px) {} {}
 FAIL @container rule should be valid: @container (width: 100px), (height: 100px) {} {} assert_equals: expected 1 but got 0
 FAIL @container rule should be valid: @container (width),(height)  , (inline-size > 20px) {} {} assert_equals: expected 1 but got 0
 FAIL @container rule should be valid: @container (width), name (height) {} {} assert_equals: expected 1 but got 0
-FAIL @container rule should be valid: @container --foo {} {} assert_equals: expected 1 but got 0
-FAIL @container rule should be valid: @container container {} {} assert_equals: expected 1 but got 0
+PASS @container rule should be valid: @container --foo {} {}
+PASS @container rule should be valid: @container container {} {}
 FAIL @container rule should be valid: @container container, container2 {} {} assert_equals: expected 1 but got 0
 PASS @container rule should be invalid: @container  {} {}
 PASS @container rule should be invalid: @container (width), {} {}

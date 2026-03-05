@@ -21,26 +21,31 @@
 #include <wtf/glib/GSpanExtras.h>
 
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CStringView.h>
 
 namespace WTF {
 
-GMallocSpan<char> gFileGetContents(const char* path, GUniqueOutPtr<GError>& error)
+Expected<GMallocSpan<char>, GUniquePtr<GError>> gFileGetContents(CStringView path)
 {
     char* contents;
     gsize length;
-    if (!g_file_get_contents(path, &contents, &length, &error.outPtr()))
-        return { };
+    GUniqueOutPtr<GError> error;
+    if (!g_file_get_contents(path.utf8(), &contents, &length, &error.outPtr()))
+        return makeUnexpected(GUniquePtr<GError>(error.release()));
 
     return adoptGMallocSpan(unsafeMakeSpan(contents, length));
 }
 
-GMallocSpan<char*, GMallocStrv> gKeyFileGetKeys(GKeyFile* keyFile, const char* groupName, GUniqueOutPtr<GError>& error)
+Expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetKeys(GKeyFile* keyFile, CStringView groupName)
 {
     ASSERT(keyFile);
     ASSERT(groupName);
 
     size_t keyCount = 0;
-    char** keys = g_key_file_get_keys(keyFile, groupName, &keyCount, &error.outPtr());
+    GUniqueOutPtr<GError> error;
+    char** keys = g_key_file_get_keys(keyFile, groupName.utf8(), &keyCount, &error.outPtr());
+    if (error)
+        return makeUnexpected(GUniquePtr<GError>(error.release()));
     return adoptGMallocSpan<char*, GMallocStrv>(unsafeMakeSpan(keys, keyCount));
 }
 

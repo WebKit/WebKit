@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         text run at (0,131) width 532: "This test checks to make sure the border-image is not clipped by the border radius. "
       RenderBlock {DIV} at (541,10) size 127x126 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (10,161) size 126x126 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
-      RenderBR {BR} at (146,282) size 0x19
-      RenderBlock {DIV} at (10,307) size 126x126 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
-      RenderText {#text} at (146,428) size 4x19
-        text run at (146,428) width 4: " "
-      RenderBlock {DIV} at (160,307) size 126x126 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
+      RenderBlock {DIV} at (10,160) size 126x127 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
+      RenderBR {BR} at (146,281) size 0x20
+      RenderBlock {DIV} at (10,306) size 126x127 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
+      RenderText {#text} at (146,427) size 4x20
+        text run at (146,427) width 4: " "
+      RenderBlock {DIV} at (160,306) size 126x127 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
       RenderText {#text} at (0,0) size 0x0

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class ConstantSourceNode final : public AudioScheduledSourceNode {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ConstantSourceNode);
+    WTF_MAKE_TZONE_ALLOCATED(ConstantSourceNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ConstantSourceNode);
 public:
     static ExceptionOr<Ref<ConstantSourceNode>> create(BaseAudioContext&, const ConstantSourceOptions& = { });
@@ -51,7 +51,7 @@ private:
     double latencyTime() const final { return 0; }
     
     // If we are no longer playing, propogate silence ahead to downstream nodes.
-    bool propagatesSilence() const final;
+    bool NODELETE propagatesSilence() const final;
     
     const Ref<AudioParam> m_offset;
     

@@ -28,6 +28,6 @@
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface ConstantSourceNode : AudioScheduledSourceNode {
-    constructor (BaseAudioContext context, optional ConstantSourceOptions options);
+    constructor (BaseAudioContext context, optional ConstantSourceOptions options = {});
     readonly attribute AudioParam offset;
 };

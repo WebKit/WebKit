@@ -14,7 +14,7 @@ info: |
   ...
   2. If NewTarget is undefined, throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -23,4 +23,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     TA(buffer);
   });
-});
+}, null, ["passthrough"]);

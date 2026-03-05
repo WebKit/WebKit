@@ -882,7 +882,7 @@ static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue 
     JSC::JSGlobalObject* globalObject = toJS(context);
     JSC::VM& vm = globalObject->vm();
     JSC::Exception* exception = JSC::Exception::create(vm, exceptionValue);
-    globalObject->inspectorController().reportAPIException(globalObject, exception);
+    protect(globalObject->inspectorController())->reportAPIException(globalObject, exception);
 }
 #endif
 
@@ -938,18 +938,18 @@ static id containerValueToObject(JSGlobalContextRef context, JSContainerConverto
 
         if (current.type == ContainerArray) {
             ASSERT([current.objc isKindOfClass:[NSMutableArray class]]);
-            NSMutableArray *array = (NSMutableArray *)current.objc;
-        
+            RetainPtr array = dynamic_objc_cast<NSMutableArray>(current.objc);
+
             auto lengthString = OpaqueJSString::tryCreate("length"_s);
             unsigned length = JSC::toUInt32(JSValueToNumber(context, JSObjectGetProperty(context, js, lengthString.get(), 0), 0));
 
             for (unsigned i = 0; i < length; ++i) {
                 id objc = convertor.convert(JSObjectGetPropertyAtIndex(context, js, i, 0));
-                [array addObject:objc ? objc : [NSNull null]];
+                [array.get() addObject:objc ? objc : [NSNull null]];
             }
         } else {
             ASSERT([current.objc isKindOfClass:[NSMutableDictionary class]]);
-            NSMutableDictionary *dictionary = (NSMutableDictionary *)current.objc;
+            RetainPtr dictionary = dynamic_objc_cast<NSMutableDictionary>(current.objc);
 
             JSC::JSLockHolder locker(toJS(context));
 
@@ -959,7 +959,7 @@ static id containerValueToObject(JSGlobalContextRef context, JSContainerConverto
             for (size_t i = 0; i < length; ++i) {
                 JSStringRef propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNameArray, i);
                 if (id objc = convertor.convert(JSObjectGetProperty(context, js, propertyName, 0)))
-                    dictionary[(__bridge NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, propertyName)).get()] = objc;
+                    dictionary.get()[(__bridge NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, propertyName)).get()] = objc;
             }
 
             JSPropertyNameArrayRelease(propertyNameArray);
@@ -1197,18 +1197,18 @@ JSValueRef objectToValue(JSContext *context, id object)
 
         if (current.type == ContainerArray) {
             ASSERT([current.objc isKindOfClass:[NSArray class]]);
-            NSArray *array = (NSArray *)current.objc;
-            NSUInteger count = [array count];
+            RetainPtr array = dynamic_objc_cast<NSArray>(current.objc);
+            NSUInteger count = [array.get() count];
             for (NSUInteger index = 0; index < count; ++index)
-                JSObjectSetPropertyAtIndex(contextRef, js, index, convertor.convert([array objectAtIndex:index]), 0);
+                JSObjectSetPropertyAtIndex(contextRef, js, index, convertor.convert([array.get() objectAtIndex:index]), 0);
         } else {
             ASSERT(current.type == ContainerDictionary);
             ASSERT([current.objc isKindOfClass:[NSDictionary class]]);
-            NSDictionary *dictionary = (NSDictionary *)current.objc;
-            for (id key in [dictionary keyEnumerator]) {
-                if (auto *keyString = dynamic_objc_cast<NSString>(key)) {
-                    auto propertyName = OpaqueJSString::tryCreate(keyString);
-                    JSObjectSetProperty(contextRef, js, propertyName.get(), convertor.convert([dictionary objectForKey:key]), 0, 0);
+            RetainPtr dictionary = dynamic_objc_cast<NSDictionary>(current.objc);
+            for (id key in [dictionary.get() keyEnumerator]) {
+                if (RetainPtr keyString = dynamic_objc_cast<NSString>(key)) {
+                    auto propertyName = OpaqueJSString::tryCreate(keyString.get());
+                    JSObjectSetProperty(contextRef, js, propertyName.get(), convertor.convert([dictionary.get() objectForKey:key]), 0, 0);
                 }
             }
         }

@@ -37,7 +37,7 @@ namespace WebCore {
 class RTCDtlsTransport;
 
 class RTCSctpTransport final : public RefCounted<RTCSctpTransport>, public ActiveDOMObject, public EventTarget, public RTCSctpTransportBackendClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCSctpTransport);
+    WTF_MAKE_TZONE_ALLOCATED(RTCSctpTransport);
 public:
     static Ref<RTCSctpTransport> create(ScriptExecutionContext&, UniqueRef<RTCSctpTransportBackend>&&, Ref<RTCDtlsTransport>&&);
     ~RTCSctpTransport();
@@ -52,7 +52,7 @@ public:
     double maxMessageSize() const { return m_maxMessageSize.value_or(std::numeric_limits<double>::infinity()); }
     std::optional<unsigned short>  maxChannels() const { return m_maxChannels; }
 
-    void updateMaxMessageSize(std::optional<double>);
+    void NODELETE updateMaxMessageSize(std::optional<double>);
 
     const RTCSctpTransportBackend& backend() const { return m_backend.get(); }
 
@@ -61,13 +61,13 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCSctpTransport; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject
-    void stop() final;
-    bool virtualHasPendingActivity() const final;
+    void NODELETE stop() final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // RTCSctpTransport::Client
     void onStateChanged(RTCSctpTransportState, std::optional<double>, std::optional<unsigned short>) final;
@@ -80,5 +80,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(RTCSctpTransport)
 
 #endif // ENABLE(WEB_RTC)

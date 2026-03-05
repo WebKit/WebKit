@@ -27,10 +27,10 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include <WebCore/ActiveDOMObject.h>
-#include <WebCore/EventTarget.h>
-#include <WebCore/EventTargetInterfaces.h>
-#include <WebCore/WebCoreOpaqueRoot.h>
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
+#include "EventTargetInterfaces.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Ref.h>
@@ -49,7 +49,7 @@ class RemotePlayback final
     , public ActiveDOMObject
     , public EventTarget
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemotePlayback);
+    WTF_MAKE_TZONE_ALLOCATED(RemotePlayback);
 public:
     static Ref<RemotePlayback> create(HTMLMediaElement&);
     ~RemotePlayback();
@@ -63,7 +63,7 @@ public:
     void cancelWatchAvailability(std::optional<int32_t> id, Ref<DeferredPromise>&&);
     void prompt(Ref<DeferredPromise>&&);
 
-    bool hasAvailabilityCallbacks() const;
+    bool NODELETE hasAvailabilityCallbacks() const;
     void availabilityChanged(bool);
     void playbackTargetPickerWasDismissed();
     void shouldPlayToRemoteTargetChanged(bool);
@@ -79,18 +79,18 @@ public:
     void invalidate();
 
     WebCoreOpaqueRoot opaqueRootConcurrently() const;
-    Node* ownerNode() const;
+    Node* NODELETE ownerNode() const;
 
 private:
     explicit RemotePlayback(HTMLMediaElement&);
 
     void setState(State);
-    void establishConnection();
+    void NODELETE establishConnection();
     void disconnect();
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RemotePlayback; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -100,7 +100,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
     uint64_t logIdentifier() const { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
     ASCIILiteral logClassName() const { return "RemotePlayback"_s; }
 
     const Ref<const Logger> m_logger;
@@ -121,7 +121,9 @@ private:
     bool m_available { false };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(RemotePlayback)
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 

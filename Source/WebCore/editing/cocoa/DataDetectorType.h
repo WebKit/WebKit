@@ -30,13 +30,14 @@
 namespace WebCore {
 
 enum class DataDetectorType : uint8_t {
-    PhoneNumber = 1 << 0,
-    Link = 1 << 1,
-    Address = 1 << 2,
-    CalendarEvent = 1 << 3,
-    TrackingNumber = 1 << 4,
-    FlightNumber = 1 << 5,
-    LookupSuggestion = 1 << 6,
+    PhoneNumber         = 1 << 0,
+    Link                = 1 << 1,
+    Address             = 1 << 2,
+    CalendarEvent       = 1 << 3,
+    TrackingNumber      = 1 << 4,
+    FlightNumber        = 1 << 5,
+    LookupSuggestion    = 1 << 6,
+    Money               = 1 << 7,
 };
 
 }

@@ -46,7 +46,7 @@ public:
     virtual DeviceMotionData* lastMotion() const = 0;
     virtual void deviceMotionControllerDestroyed() = 0;
 
-    bool isDeviceMotionClient() const override { return true; }
+    bool isDeviceMotionClient() const final { return true; }
 };
 
 } // namespace WebCore

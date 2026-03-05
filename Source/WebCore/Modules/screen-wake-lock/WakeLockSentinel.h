@@ -37,7 +37,7 @@ class DeferredPromise;
 class WakeLockManager;
 
 class WakeLockSentinel final : public RefCounted<WakeLockSentinel>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WakeLockSentinel);
+    WTF_MAKE_TZONE_ALLOCATED(WakeLockSentinel);
 public:
     static Ref<WakeLockSentinel> create(Document& document, WakeLockType type)
     {
@@ -60,11 +60,11 @@ private:
     WakeLockSentinel(Document&, WakeLockType);
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WakeLockSentinel; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
     void eventListenersDidChange() final;
@@ -75,3 +75,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WakeLockSentinel)

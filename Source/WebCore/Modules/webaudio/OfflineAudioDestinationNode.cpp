@@ -49,12 +49,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OfflineAudioDestinationNode);
 
 OfflineAudioDestinationNode::OfflineAudioDestinationNode(OfflineAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : AudioDestinationNode(context, sampleRate)
     , m_numberOfChannels(numberOfChannels)
-    , m_renderTarget(WTFMove(renderTarget))
+    , m_renderTarget(WTF::move(renderTarget))
     , m_renderBus(AudioBus::create(numberOfChannels, AudioUtilities::renderQuantumSize))
     , m_framesToProcess(m_renderTarget ? m_renderTarget->length() : 0)
 {
@@ -122,10 +122,10 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
     m_startedRendering = true;
     Ref protectedThis { *this };
 
-    auto offThreadRendering = [this, protectedThis = WTFMove(protectedThis)]() mutable {
+    auto offThreadRendering = [this, protectedThis = WTF::move(protectedThis)]() mutable {
         auto result = renderOnAudioThread();
-        callOnMainThread([this, result, currentSampleFrame = this->currentSampleFrame(), protectedThis = WTFMove(protectedThis)]() mutable {
-            context().postTask([this, protectedThis = WTFMove(protectedThis), result, currentSampleFrame]() mutable {
+        callOnMainThread([this, result, currentSampleFrame = this->currentSampleFrame(), protectedThis = WTF::move(protectedThis)]() mutable {
+            context().postTask([this, protectedThis = WTF::move(protectedThis), result, currentSampleFrame]() mutable {
                 m_startedRendering = false;
                 switch (result) {
                 case RenderResult::Failure:
@@ -143,14 +143,14 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
     };
 
     if (RefPtr workletProxy = context().audioWorklet().proxy()) {
-        workletProxy->postTaskForModeToWorkletGlobalScope([offThreadRendering = WTFMove(offThreadRendering)](ScriptExecutionContext&) mutable {
+        workletProxy->postTaskForModeToWorkletGlobalScope([offThreadRendering = WTF::move(offThreadRendering)](ScriptExecutionContext&) mutable {
             offThreadRendering();
         }, WorkerRunLoop::defaultMode());
         return completionHandler(std::nullopt);
     }
 
     // FIXME: We should probably limit the number of threads we create for offline audio.
-    m_renderThread = Thread::create("offline renderer"_s, WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::Default);
+    m_renderThread = Thread::create("offline renderer"_s, WTF::move(offThreadRendering), ThreadType::Audio, Thread::QOS::Default);
     completionHandler(std::nullopt);
 }
 

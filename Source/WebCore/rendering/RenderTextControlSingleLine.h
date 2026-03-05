@@ -29,7 +29,7 @@ namespace WebCore {
 class RenderTextControlInnerBlock;
 
 class RenderTextControlSingleLine : public RenderTextControl {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTextControlSingleLine);
+    WTF_MAKE_TZONE_ALLOCATED(RenderTextControlSingleLine);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlSingleLine);
 public:
     RenderTextControlSingleLine(Type, HTMLInputElement&, RenderStyle&&);
@@ -42,8 +42,7 @@ public:
 protected:
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;
-    HTMLInputElement& inputElement() const;
-    Ref<HTMLInputElement> protectedInputElement() const;
+    HTMLInputElement& NODELETE inputElement() const;
 
 private:
     void textFormControlElement() const = delete;
@@ -73,7 +72,7 @@ private:
     LayoutUnit preferredContentLogicalWidth(float charWidth) const override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     HTMLElement* innerSpinButtonElement() const;
 };
@@ -91,7 +90,7 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 // ----------------------------
 
 class RenderTextControlInnerBlock final : public RenderBlockFlow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTextControlInnerBlock);
+    WTF_MAKE_TZONE_ALLOCATED(RenderTextControlInnerBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlInnerBlock);
 public:
     RenderTextControlInnerBlock(Element&, RenderStyle&&);

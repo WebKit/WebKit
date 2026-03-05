@@ -50,7 +50,7 @@ public:
     bool supportsMIMEType(const String& mimeType) const override;
     RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:

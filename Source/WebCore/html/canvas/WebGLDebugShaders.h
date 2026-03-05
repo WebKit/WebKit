@@ -35,7 +35,7 @@ namespace WebCore {
 class WebGLShader;
 
 class WebGLDebugShaders final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLDebugShaders);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLDebugShaders);
 public:
     explicit WebGLDebugShaders(WebGLRenderingContextBase&);
     ~WebGLDebugShaders();
@@ -46,3 +46,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLDebugShaders)

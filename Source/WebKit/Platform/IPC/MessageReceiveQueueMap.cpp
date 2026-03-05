@@ -33,16 +33,16 @@ void MessageReceiveQueueMap::addImpl(StoreType&& queue, const ReceiverMatcher& m
 {
     if (!matcher.receiverName) {
         ASSERT(!m_anyReceiverQueue);
-        m_anyReceiverQueue = WTFMove(queue);
+        m_anyReceiverQueue = WTF::move(queue);
         return;
     }
     uint8_t receiverName = static_cast<uint8_t>(*matcher.receiverName);
     if (!matcher.destinationID.has_value()) {
-        auto result = m_anyIDQueues.add(receiverName, WTFMove(queue));
+        auto result = m_anyIDQueues.add(receiverName, WTF::move(queue));
         ASSERT_UNUSED(result, result.isNewEntry);
         return;
     }
-    auto result = m_queues.add(std::make_pair(receiverName, *matcher.destinationID), WTFMove(queue));
+    auto result = m_queues.add(std::make_pair(receiverName, *matcher.destinationID), WTF::move(queue));
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 

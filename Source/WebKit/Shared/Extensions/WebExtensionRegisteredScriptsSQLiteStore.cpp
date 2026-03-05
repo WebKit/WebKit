@@ -66,7 +66,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::updateScripts(Vector<Ref<JSON::Ob
     for (const auto& script : scripts)
         ids.append(script->getString(idKey));
 
-    deleteScriptsWithIDs(ids, [weakThis = ThreadSafeWeakPtr { *this }, ids = WTFMove(ids), scripts = WTFMove(scripts), completionHandler = WTFMove(completionHandler)](const String& errorMessage) mutable {
+    deleteScriptsWithIDs(ids, [weakThis = ThreadSafeWeakPtr { *this }, ids = WTF::move(ids), scripts = WTF::move(scripts), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler({ });
@@ -78,7 +78,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::updateScripts(Vector<Ref<JSON::Ob
             return;
         }
 
-        protectedThis->addScripts(scripts, [completionHandler = WTFMove(completionHandler)](const String& errorMessage) mutable {
+        protectedThis->addScripts(scripts, [completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
             completionHandler(errorMessage);
         });
     });
@@ -91,7 +91,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<Strin
         return;
     }
 
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, ids = crossThreadCopy(ids), completionHandler = WTFMove(completionHandler)]() mutable {
+    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, ids = crossThreadCopy(ids), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler({ });
@@ -100,7 +100,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<Strin
 
         String errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, false)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
             });
             return;
@@ -116,7 +116,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<Strin
 
         String deleteDatabaseErrorMessage = protectedThis->deleteDatabaseIfEmpty();
 
-        WorkQueue::mainSingleton().dispatch([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             // Errors from opening the database or deleting keys take precedence over an error deleting the database.
             completionHandler(!errorMessage.isEmpty() ? errorMessage : deleteDatabaseErrorMessage);
         });
@@ -137,7 +137,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
         return;
     }
 
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, persistentScripts, completionHandler = WTFMove(completionHandler)]() mutable {
+    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, persistentScripts, completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler({ });
@@ -146,7 +146,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
 
         String errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, true)) {
-            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+            WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
             });
             return;
@@ -157,7 +157,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
         for (Ref script : persistentScripts)
             protectedThis->insertScript(script, *(protectedThis->database()), errorMessage);
 
-        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(errorMessage);
         });
     });
@@ -165,7 +165,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
 
 void WebExtensionRegisteredScriptsSQLiteStore::getScripts(CompletionHandler<void(Vector<Ref<JSON::Object>> scripts, const String& errorMessage)>&& completionHandler)
 {
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler({ }, nullString());
@@ -174,7 +174,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::getScripts(CompletionHandler<void
 
         String errorMessage;
         auto scripts = protectedThis->getScriptsWithErrorMessage(errorMessage);
-        WorkQueue::mainSingleton().dispatch([scripts = WTFMove(scripts), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([scripts = WTF::move(scripts), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(scripts, errorMessage);
         });
     });

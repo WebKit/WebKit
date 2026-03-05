@@ -33,27 +33,27 @@
 
 namespace WebCore {
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-CachedHTMLCollection<HTMLCollectionClass, traversalType>::~CachedHTMLCollection()
+template <typename HTMLCollectionClass>
+CachedHTMLCollection<HTMLCollectionClass>::~CachedHTMLCollection()
 {
     if (m_indexCache.hasValidCache())
         document().unregisterCollection(*this);
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-unsigned CachedHTMLCollection<HTMLCollectionClass, traversalType>::length() const
+template <typename HTMLCollectionClass>
+unsigned CachedHTMLCollection<HTMLCollectionClass>::length() const
 {
     return m_indexCache.nodeCount(collection());
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::item(unsigned offset) const
+template <typename HTMLCollectionClass>
+Element* CachedHTMLCollection<HTMLCollectionClass>::item(unsigned offset) const
 {
     return m_indexCache.nodeAt(collection(), offset);
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-size_t CachedHTMLCollection<HTMLCollectionClass, traversalType>::memoryCost() const
+template <typename HTMLCollectionClass>
+size_t CachedHTMLCollection<HTMLCollectionClass>::memoryCost() const
 {
     // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
     // Accessing m_indexCache.memoryCost() is safe because because it doesn't involve any pointer chasing.
@@ -61,8 +61,8 @@ size_t CachedHTMLCollection<HTMLCollectionClass, traversalType>::memoryCost() co
     return m_indexCache.memoryCost() + HTMLCollection::memoryCost();
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-void CachedHTMLCollection<HTMLCollectionClass, traversalType>::invalidateCacheForDocument(Document& document)
+template <typename HTMLCollectionClass>
+void CachedHTMLCollection<HTMLCollectionClass>::invalidateCacheForDocument(Document& document)
 {
     HTMLCollection::invalidateCacheForDocument(document);
     if (m_indexCache.hasValidCache()) {
@@ -96,8 +96,8 @@ static inline bool nameShouldBeVisibleInDocumentAll(Element& element)
     return htmlElement && nameShouldBeVisibleInDocumentAll(*htmlElement);
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(const AtomString& name) const
+template <typename HTMLCollectionClass>
+Element* CachedHTMLCollection<HTMLCollectionClass>::namedItem(const AtomString& name) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
@@ -108,17 +108,17 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
     if (name.isEmpty())
         return nullptr;
 
-    ContainerNode& root = rootNode();
-    if (traversalType != CollectionTraversalType::CustomForwardOnly && root.isInTreeScope()) {
-        RefPtr<Element> candidate;
+    Ref root = rootNode();
+    if (traversalType != CollectionTraversalType::CustomForwardOnly && root->isInTreeScope()) {
+        WeakPtr<Element, WeakPtrImplWithEventTargetData> candidate;
 
-        TreeScope& treeScope = root.treeScope();
-        if (treeScope.hasElementWithId(name)) {
-            if (!treeScope.containsMultipleElementsWithId(name))
-                candidate = treeScope.getElementById(name);
-        } else if (treeScope.hasElementWithName(name)) {
-            if (!treeScope.containsMultipleElementsWithName(name)) {
-                if ((candidate = treeScope.getElementByName(name))) {
+        Ref treeScope = root->treeScope();
+        if (treeScope->hasElementWithId(name)) {
+            if (!treeScope->containsMultipleElementsWithId(name))
+                candidate = treeScope->getElementById(name);
+        } else if (treeScope->hasElementWithName(name)) {
+            if (!treeScope->containsMultipleElementsWithName(name)) {
+                if ((candidate = treeScope->getElementByName(name))) {
                     if (!is<HTMLElement>(*candidate))
                         candidate = nullptr;
                     else if (type() == CollectionType::DocAll && !nameShouldBeVisibleInDocumentAll(*candidate))
@@ -129,40 +129,40 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
             return nullptr;
 
         if (candidate && collection().elementMatches(*candidate)) {
-            if (traversalType == CollectionTraversalType::ChildrenOnly ? candidate->parentNode() == &root : candidate->isDescendantOf(root))
-                return candidate.unsafeGet();
+            if (traversalType == CollectionTraversalType::ChildrenOnly ? candidate->parentNode() == root.ptr() : candidate->isDescendantOf(root))
+                return candidate.get();
         }
     }
 
     return namedItemSlow(name);
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-auto CachedHTMLCollection<HTMLCollectionClass, traversalType>::collectionBegin() const -> Iterator
+template <typename HTMLCollectionClass>
+auto CachedHTMLCollection<HTMLCollectionClass>::collectionBegin() const -> Iterator
 {
     return Traversal::begin(collection(), rootNode());
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-auto CachedHTMLCollection<HTMLCollectionClass, traversalType>::collectionLast() const -> Iterator
+template <typename HTMLCollectionClass>
+auto CachedHTMLCollection<HTMLCollectionClass>::collectionLast() const -> Iterator
 {
     return Traversal::last(collection(), rootNode());
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-void CachedHTMLCollection<HTMLCollectionClass, traversalType>::collectionTraverseForward(Iterator& current, unsigned count, unsigned& traversedCount) const
+template <typename HTMLCollectionClass>
+void CachedHTMLCollection<HTMLCollectionClass>::collectionTraverseForward(Iterator& current, unsigned count, unsigned& traversedCount) const
 {
     Traversal::traverseForward(collection(), current, count, traversedCount);
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-void CachedHTMLCollection<HTMLCollectionClass, traversalType>::collectionTraverseBackward(Iterator& current, unsigned count) const
+template <typename HTMLCollectionClass>
+void CachedHTMLCollection<HTMLCollectionClass>::collectionTraverseBackward(Iterator& current, unsigned count) const
 {
     Traversal::traverseBackward(collection(), current, count);
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-bool CachedHTMLCollection<HTMLCollectionClass, traversalType>::collectionCanTraverseBackward() const
+template <typename HTMLCollectionClass>
+bool CachedHTMLCollection<HTMLCollectionClass>::collectionCanTraverseBackward() const
 {
     return traversalType != CollectionTraversalType::CustomForwardOnly;
 }

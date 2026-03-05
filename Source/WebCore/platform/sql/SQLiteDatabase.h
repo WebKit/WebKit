@@ -126,9 +126,9 @@ public:
     void setSynchronous(SynchronousPragma);
     
     WEBCORE_EXPORT int lastError();
-    WEBCORE_EXPORT const char* lastErrorMsg();
+    WEBCORE_EXPORT const char* lastErrorMsg() LIFETIME_BOUND;
     
-    sqlite3* sqlite3Handle() const
+    sqlite3* sqlite3Handle() const LIFETIME_BOUND
     {
 #if !PLATFORM(IOS_FAMILY)
         ASSERT(m_sharable || m_openingThread == &Thread::currentSingleton() || !m_db);
@@ -138,7 +138,7 @@ public:
     
     void setAuthorizer(DatabaseAuthorizer&);
 
-    Lock& databaseMutex() { return m_lockingMutex; }
+    Lock& databaseMutex() LIFETIME_BOUND { return m_lockingMutex; }
     bool isAutoCommitOn() const;
 
     // The SQLite AUTO_VACUUM pragma can be either NONE, FULL, or INCREMENTAL.

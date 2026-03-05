@@ -1,0 +1,37 @@
+This test ensures we handle text stitching appropriately for list markers.
+
+PASS: fooText.pageX was equal or approximately equal to 19.
+PASS: fooText.pageY was equal or approximately equal to 8.
+PASS: fooText.width was equal or approximately equal to 55.
+PASS: fooText.height was equal or approximately equal to 15.
+
+{StaticText AXLabel: 1. Foo}
+
+{StaticText AXLabel: 2. Bar}
+
+{StaticText AXLabel: • Light blue}
+
+{StaticText AXLabel: • Red}
+
+{ListMarker}
+
+{ListMarker}
+
+Second traversal:
+
+{StaticText AXLabel: Foo Bar}
+
+{StaticText AXLabel: Light blue Red}
+
+{ListItem}
+
+{ListItem}
+
+{ListItem}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo Bar
+Light blue Red
+

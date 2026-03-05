@@ -44,7 +44,7 @@ public:
     static Ref<RTCSessionDescriptionDescriptor> create(const String& type, const String& sdp);
     virtual ~RTCSessionDescriptionDescriptor();
 
-    const String& type() const { return m_type; }
+    const String& type() const LIFETIME_BOUND { return m_type; }
     void setType(const String& type) { m_type = type; }
 
     const String& sdp() const { return m_sdp; }

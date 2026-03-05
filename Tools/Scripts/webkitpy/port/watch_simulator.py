@@ -22,24 +22,19 @@
 
 import logging
 
-from webkitcorepy import Version
-
-from webkitpy.common.memoized import memoized
 from webkitpy.port.config import apple_additions
+from webkitpy.port.embedded_simulator import EmbeddedSimulatorPort
 from webkitpy.port.watch import WatchPort
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
 
 
-class WatchSimulatorPort(WatchPort):
+class WatchSimulatorPort(EmbeddedSimulatorPort, WatchPort):
     port_name = 'watchos-simulator'
 
     ARCHITECTURES = ['i386', 'arm64_32']
     DEFAULT_ARCHITECTURE = 'i386'
-
-    DEVICE_MANAGER = SimulatedDeviceManager
 
     DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='Apple Watch', hardware_type='Series 9 - 45mm')]
     SDK = apple_additions().get_sdk('watchsimulator') if apple_additions() else 'watchsimulator'
@@ -50,48 +45,5 @@ class WatchSimulatorPort(WatchPort):
             return 'arm64_32'
         return self.DEFAULT_ARCHITECTURE
 
-    # This supports the mapping of a port name such as watchos-simulator-9 to the construction of a port
-    # using watchOS 9.
-    @staticmethod
-    def _version_from_name(name):
-        if len(name.split('-')) > 2 and name.split('-')[2].isdigit():
-            return Version.from_string(name.split('-')[2])
-        return None
-
-    @memoized
-    def device_version(self):
-        if self.get_option('version'):
-            return Version.from_string(self.get_option('version'))
-        return WatchSimulatorPort._version_from_name(self._name) or self.host.platform.xcode_sdk_version('watchsimulator')
-
-    def environment_for_api_tests(self):
-        inherited_env = super(WatchSimulatorPort, self).environment_for_api_tests()
-        new_environment = {}
-        SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
-        for value in inherited_env:
-            if not value.startswith(SIMCTL_ENV_PREFIX):
-                new_environment[SIMCTL_ENV_PREFIX + value] = inherited_env[value]
-            else:
-                new_environment[value] = inherited_env[value]
-        return new_environment
-
     def operating_system(self):
         return 'watchos-simulator'
-
-    def setup_environ_for_server(self, server_name=None):
-        _log.debug('Setting up environment for server on {}'.format(self.operating_system()))
-        env = super(WatchSimulatorPort, self).setup_environ_for_server(server_name)
-        if server_name == self.driver_name() and self.get_option('leaks'):
-            env['MallocStackLogging'] = '1'
-            env['__XPC_MallocStackLogging'] = '1'
-            env['MallocScribble'] = '1'
-            env['__XPC_MallocScribble'] = '1'
-        return env
-
-    def reset_preferences(self):
-        SimulatedDeviceManager.tear_down(self.host)
-
-    @property
-    @memoized
-    def developer_dir(self):
-        return self._executive.run_command(['xcode-select', '--print-path']).rstrip()

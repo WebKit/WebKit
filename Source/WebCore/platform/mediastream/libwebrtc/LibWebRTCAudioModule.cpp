@@ -127,7 +127,7 @@ void LibWebRTCAudioModule::pollAudioData()
 
         pollFromSource();
     }
-    m_queue->dispatchAfter(computeDelayUntilNextPolling(), WTFMove(nextPollFunction));
+    m_queue->dispatchAfter(computeDelayUntilNextPolling(), WTF::move(nextPollFunction));
 }
 
 void LibWebRTCAudioModule::pollFromSource()

@@ -50,7 +50,7 @@ public:
     void append(String&& data)
     {
         ASSERT(!m_endOfStream);
-        m_buffer.append(WTFMove(data));
+        m_buffer.append(WTF::move(data));
     }
 
     void appendEndOfStream() { m_endOfStream = true; }

@@ -54,9 +54,9 @@ class WebPageProxy;
 class ModelElementController : public RefCountedAndCanMakeWeakPtr<ModelElementController> {
     WTF_MAKE_TZONE_ALLOCATED(ModelElementController);
 public:
-    static Ref<ModelElementController> create(WebPageProxy&);
+    static Ref<ModelElementController> NODELETE create(WebPageProxy&);
 
-    WebPageProxy* page();
+    WebPageProxy* NODELETE page();
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     void getCameraForModelElement(ModelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)>&&);

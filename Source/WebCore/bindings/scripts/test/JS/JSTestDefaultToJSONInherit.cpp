@@ -148,13 +148,8 @@ void JSTestDefaultToJSONInheritPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestDefaultToJSONInherit::s_info = { "TestDefaultToJSONInherit"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInherit) };
 
 JSTestDefaultToJSONInherit::JSTestDefaultToJSONInherit(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONInherit>&& impl)
-    : JSTestDefaultToJSON(structure, globalObject, WTFMove(impl))
+    : JSTestDefaultToJSON(structure, globalObject, WTF::move(impl))
 {
-}
-
-Ref<TestDefaultToJSONInherit> JSTestDefaultToJSONInherit::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, TestDefaultToJSONInherit>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
@@ -341,10 +336,10 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 {
     UNUSED_PARAM(lexicalGlobalObject);
     if (is<TestDefaultToJSONIndirectInheritance>(impl))
-        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONIndirectInheritance>(WTFMove(impl)));
+        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONIndirectInheritance>(WTF::move(impl)));
     if (is<TestDefaultToJSONInheritFinal>(impl))
-        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONInheritFinal>(WTFMove(impl)));
-    return createWrapper<TestDefaultToJSONInherit>(globalObject, WTFMove(impl));
+        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONInheritFinal>(WTF::move(impl)));
+    return createWrapper<TestDefaultToJSONInherit>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONInherit& impl)

@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
       RenderBlock {P} at (0,0) size 800x20
-        RenderText {#text} at (0,0) size 31x19
+        RenderText {#text} at (0,0) size 31x20
           text run at (0,0) width 31: "Bug "
-        RenderInline {A} at (30,0) size 41x19 [color=#0000EE]
-          RenderText {#text} at (30,0) size 41x19
+        RenderInline {A} at (30,0) size 41x20 [color=#0000EE]
+          RenderText {#text} at (30,0) size 41x20
             text run at (30,0) width 41: "29495"
-        RenderText {#text} at (70,0) size 328x19
+        RenderText {#text} at (70,0) size 328x20
           text run at (70,0) width 328: ". You should see one green box below, with no red."
 layer at (10,60) size 50x50
   RenderBlock (positioned) {DIV} at (10,60) size 50x50 [bgcolor=#FF0000]

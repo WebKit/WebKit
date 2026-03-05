@@ -60,21 +60,6 @@ rtc_library("network_control") {
   ]
 }
 
-rtc_library("field_trial_based_config") {
-  visibility = [ "*" ]
-  allow_poison = [ "environment_construction" ]
-  sources = [
-    "field_trial_based_config.cc",
-    "field_trial_based_config.h",
-  ]
-  deps = [
-    "../../api:field_trials_registry",
-    "../../rtc_base/system:rtc_export",
-    "../../system_wrappers:field_trial",
-    "//third_party/abseil-cpp/absl/strings:string_view",
-  ]
-}
-
 rtc_source_set("datagram_transport_interface") {
   visibility = [ "*" ]
   sources = [ "data_channel_transport_interface.h" ]
@@ -104,7 +89,10 @@ rtc_library("goog_cc") {
 rtc_source_set("sctp_transport_factory_interface") {
   visibility = [ "*" ]
   sources = [ "sctp_transport_factory_interface.h" ]
-  deps = [ "../../api/environment" ]
+  deps = [
+    "..:field_trials_view",
+    "../../api/environment",
+  ]
 }
 
 rtc_library("stun_types") {

@@ -41,7 +41,7 @@ class SVGViewElement;
 class SVGViewSpec;
 
 class SVGSVGElement final : public SVGGraphicsElement, public SVGFitToViewBox, public SVGZoomAndPan {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGSVGElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGSVGElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSVGElement);
 public: // DOM
     float currentScale() const;
@@ -69,7 +69,7 @@ public: // DOM
     static Ref<SVGTransform> createSVGTransform();
     static Ref<SVGTransform> createSVGTransformFromMatrix(DOMMatrix2DInit&&);
 
-    Element* getElementById(const AtomString&);
+    RefPtr<Element> getElementById(const AtomString&);
 
     void pauseAnimations();
     void unpauseAnimations();
@@ -95,7 +95,7 @@ public:
     using SVGGraphicsElement::deref;
 
     SMILTimeContainer& timeContainer() { return m_timeContainer.get(); }
-    Ref<SMILTimeContainer> protectedTimeContainer() const;
+    const SMILTimeContainer& timeContainer() const { return m_timeContainer.get(); }
 
     void setCurrentTranslate(const FloatPoint&); // Used to pan.
     void updateCurrentTranslate();
@@ -105,16 +105,18 @@ public:
     float intrinsicWidth() const;
     float intrinsicHeight() const;
 
+    bool hasIntrinsicDimensions() const;
+
     FloatSize currentViewportSizeExcludingZoom() const;
     FloatRect currentViewBoxRect() const;
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
     bool hasTransformRelatedAttributes() const final;
 
-    const SVGLengthValue& x() const { return m_x->currentValue(); }
-    const SVGLengthValue& y() const { return m_y->currentValue(); }
-    const SVGLengthValue& width() const { return m_width->currentValue(); }
-    const SVGLengthValue& height() const { return m_height->currentValue(); }
+    const SVGLengthValue& x() const LIFETIME_BOUND { return m_x->currentValue(); }
+    const SVGLengthValue& y() const LIFETIME_BOUND { return m_y->currentValue(); }
+    const SVGLengthValue& width() const LIFETIME_BOUND { return m_width->currentValue(); }
+    const SVGLengthValue& height() const LIFETIME_BOUND { return m_height->currentValue(); }
 
     SVGAnimatedLength& xAnimated() { return m_x; }
     SVGAnimatedLength& yAnimated() { return m_y; }
@@ -146,7 +148,7 @@ private:
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
     RefPtr<SVGViewElement> findViewAnchor(StringView fragmentIdentifier) const;
-    SVGSVGElement* findRootAnchor(const SVGViewElement*) const;
+    SVGSVGElement* NODELETE findRootAnchor(const SVGViewElement*) const;
     SVGSVGElement* findRootAnchor(StringView) const;
 
     bool m_useCurrentView { false };
@@ -157,10 +159,10 @@ private:
 
     Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
 
-    Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
-    Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
-    Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
-    Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_s) };
+    const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
+    const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
+    const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
+    const Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_s) };
 };
 
 } // namespace WebCore

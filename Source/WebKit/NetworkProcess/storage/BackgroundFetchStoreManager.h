@@ -44,7 +44,7 @@ public:
 
     static Ref<BackgroundFetchStoreManager> create(const String& path, Ref<WTF::WorkQueue>&& taskQueue, QuotaCheckFunction&& quotaCheckFunction)
     {
-        return adoptRef(*new BackgroundFetchStoreManager(path, WTFMove(taskQueue), WTFMove(quotaCheckFunction)));
+        return adoptRef(*new BackgroundFetchStoreManager(path, WTF::move(taskQueue), WTF::move(quotaCheckFunction)));
     }
     ~BackgroundFetchStoreManager();
 

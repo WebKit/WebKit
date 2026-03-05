@@ -45,12 +45,12 @@ using namespace WebCore;
 
 void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
 {
-    protectedPage()->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
+    protect(m_page)->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
 
 bool WebContextMenuClient::isSpeaking() const
 {
-    return protectedPage()->isSpeaking();
+    return protect(m_page)->isSpeaking();
 }
 
 void WebContextMenuClient::speak(const String&)
@@ -63,15 +63,15 @@ void WebContextMenuClient::stopSpeaking()
 
 void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
 {
-    auto searchString = frame->protectedEditor()->selectedText().trim(deprecatedIsSpaceOrNewline);
-    protectedPage()->send(Messages::WebPageProxy::SearchTheWeb(searchString));
+    auto searchString = protect(frame->editor())->selectedText().trim(deprecatedIsSpaceOrNewline);
+    protect(m_page)->send(Messages::WebPageProxy::SearchTheWeb(searchString));
 }
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 
 void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMenuInfo& info)
 {
-    protectedPage()->send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
+    protect(m_page)->send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)

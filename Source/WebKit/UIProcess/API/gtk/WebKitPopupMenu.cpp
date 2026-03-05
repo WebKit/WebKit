@@ -43,7 +43,7 @@ void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction
     const GdkEvent* event = client()->currentlyProcessedMouseDownEvent() ? client()->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
     webkitOptionMenuSetEvent(menu.get(), const_cast<GdkEvent*>(event));
     if (webkitWebViewShowOptionMenu(WEBKIT_WEB_VIEW(m_webView), rect, menu.get())) {
-        m_menu = WTFMove(menu);
+        m_menu = WTF::move(menu);
         g_signal_connect_swapped(m_menu.get(), "close", G_CALLBACK(menuCloseCallback), this);
     } else
         WebPopupMenuProxyGtk::showPopupMenu(rect, direction, pageScaleFactor, items, platformData, selectedIndex);

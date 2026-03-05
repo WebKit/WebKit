@@ -83,6 +83,13 @@ egl::ConfigSet DisplayVkAndroid::generateConfigs()
         {
             VkFormat vkFormat =
                 mRenderer->getFormat(glFormat).getActualRenderableImageVkFormat(mRenderer);
+            // The config for display format should remain as R5G6B5, since creating B5G6R5 surfaces
+            // is currently not supported.
+            if (getFeatures().preferBGR565ToRGB565.enabled &&
+                vkFormat == VK_FORMAT_B5G6R5_UNORM_PACK16)
+            {
+                vkFormat = VK_FORMAT_R5G6B5_UNORM_PACK16;
+            }
             ASSERT(vkFormat != VK_FORMAT_UNDEFINED);
             if (isConfigFormatSupported(vkFormat))
             {

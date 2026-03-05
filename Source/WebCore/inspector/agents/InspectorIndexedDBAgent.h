@@ -33,6 +33,7 @@
 
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,9 +65,9 @@ public:
     void clearObjectStore(const String& securityOrigin, const String& databaseName, const String& objectStoreName, Ref<ClearObjectStoreCallback>&&);
 
 private:
-    Ref<Page> protectedInspectedPage() const;
+    Page& inspectedPage() const { return m_inspectedPage.get(); }
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
 
     WeakRef<Page> m_inspectedPage;

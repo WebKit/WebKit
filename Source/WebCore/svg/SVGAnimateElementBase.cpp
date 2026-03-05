@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAnimateElementBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAnimateElementBase);
 
 SVGAnimateElementBase::SVGAnimateElementBase(const QualifiedName& tagName, Document& document)
     : SVGAnimationElement(tagName, document)
@@ -48,9 +48,9 @@ SVGAttributeAnimator* SVGAnimateElementBase::animator() const
     ASSERT(!hasInvalidCSSAttributeType());
 
     if (!m_animator)
-        m_animator = protectedTargetElement()->createAnimator(attributeName(), animationMode(), calcMode(), isAccumulated(), isAdditive());
+        m_animator = protect(targetElement())->createAnimator(attributeName(), animationMode(), calcMode(), isAccumulated(), isAdditive());
 
-    return m_animator.get();
+    return m_animator;
 }
 
 bool SVGAnimateElementBase::hasValidAttributeType() const
@@ -58,7 +58,7 @@ bool SVGAnimateElementBase::hasValidAttributeType() const
     if (!targetElement() || hasInvalidCSSAttributeType())
         return false;
 
-    return protectedTargetElement()->isAnimatedAttribute(attributeName());
+    return protect(targetElement())->isAnimatedAttribute(attributeName());
 }
 
 bool SVGAnimateElementBase::hasInvalidCSSAttributeType() const
@@ -67,7 +67,7 @@ bool SVGAnimateElementBase::hasInvalidCSSAttributeType() const
         return false;
 
     if (!m_hasInvalidCSSAttributeType)
-        m_hasInvalidCSSAttributeType = hasValidAttributeName() && attributeType() == AttributeType::CSS && !isTargetAttributeCSSProperty(protectedTargetElement().get(), attributeName());
+        m_hasInvalidCSSAttributeType = hasValidAttributeName() && attributeType() == AttributeType::CSS && !isTargetAttributeCSSProperty(protect(targetElement()).get(), attributeName());
 
     return m_hasInvalidCSSAttributeType.value();
 }

@@ -114,7 +114,7 @@ void InlineBoxPainter::paint()
         if (auto* renderInline = dynamicDowncast<RenderInline>(m_renderer)) {
             auto linesBoundingBox = enclosingIntRect(renderInline->linesVisualOverflowBoundingBox());
             linesBoundingBox.moveBy(roundedIntPoint(m_paintOffset));
-            m_paintInfo.accessibilityRegionContext()->takeBounds(dynamicDowncast<RenderInline>(m_renderer), WTFMove(linesBoundingBox));
+            m_paintInfo.accessibilityRegionContext()->takeBounds(dynamicDowncast<RenderInline>(m_renderer), WTF::move(linesBoundingBox));
         }
         return;
     }
@@ -182,7 +182,7 @@ void InlineBoxPainter::paintMask()
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, localRect.size());
 
-    paintFillLayers(Color(), renderer().style().maskLayers(), paintRect, compositeOp);
+    paintFillLayers(Color(), renderer().style().maskLayers(), renderer().style().usedZoomForLength(), paintRect, compositeOp);
 
     bool hasBoxImage = maskBorderSource && maskBorderSource->canRender(&renderer(), renderer().style().usedZoom());
     if (!hasBoxImage || !maskBorderSource->isLoaded(&renderer())) {
@@ -242,17 +242,18 @@ void InlineBoxPainter::paintDecorations()
     if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(renderer(), adjustedPaintoffset, BleedAvoidance::None, m_inlineBox))
         paintBoxShadow(Style::ShadowStyle::Normal, paintRect);
 
-    auto color = style.visitedDependentColor(CSSPropertyBackgroundColor, m_paintInfo.paintBehavior);
+    auto color = style.visitedDependentBackgroundColor(m_paintInfo.paintBehavior);
     auto compositeOp = renderer().document().compositeOperatorForBackgroundColor(color, renderer());
 
-    color = style.colorByApplyingColorFilter(color);
+    Style::ColorResolver colorResolver { style };
+    color = colorResolver.colorApplyingColorFilter(color);
 
-    paintFillLayers(color, style.backgroundLayers(), paintRect, compositeOp);
+    paintFillLayers(color, style.backgroundLayers(), style.usedZoomForLength(), paintRect, compositeOp);
     paintBoxShadow(Style::ShadowStyle::Inset, paintRect);
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our
     // non-first-line style.
-    if (m_isRootInlineBox || !renderer().style().hasVisibleBorderDecoration())
+    if (m_isRootInlineBox || !renderer().style().border().hasVisibleBorderDecoration())
         return;
 
     auto& borderImage = renderer().style().borderImage();
@@ -295,17 +296,17 @@ void InlineBoxPainter::paintDecorations()
     borderPainter.paintBorder(LayoutRect(stripX, stripY, stripWidth, stripHeight), style);
 }
 
-template<typename Layers> void InlineBoxPainter::paintFillLayers(const Color& color, const Layers& fillLayers, const LayoutRect& rect, CompositeOperator op)
+template<typename Layers> void InlineBoxPainter::paintFillLayers(const Color& color, const Layers& fillLayers, Style::ZoomFactor zoom, const LayoutRect& rect, CompositeOperator op)
 {
     for (auto& layer : fillLayers.usedValues() | std::views::reverse)
-        paintFillLayer(color, FillLayerToPaint<typename Layers::value_type> { .layer = layer, .isLast = &layer == &fillLayers.usedLast() }, rect, op);
+        paintFillLayer(color, FillLayerToPaint<typename Layers::value_type> { .layer = layer, .isLast = &layer == &fillLayers.usedLast(), .zoom = zoom }, rect, op);
 }
 
 template<typename Layer> void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayerToPaint<Layer>& fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
     RefPtr image = fillLayer.layer.image().tryStyleImage();
     bool hasFillImage = image && image->canRender(&renderer(), renderer().style().usedZoom());
-    bool hasFillImageOrBorderRadius = hasFillImage || renderer().style().hasBorderRadius();
+    bool hasFillImageOrBorderRadius = hasFillImage || renderer().style().border().hasBorderRadius();
 
     BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
 

@@ -26,10 +26,8 @@
 
 #include "AffineTransform.h"
 #include "SVGPathByteStreamBuilder.h"
-#include "SVGPathConsumer.h"
 #include "SVGPathSource.h"
 #include "SVGPathStringBuilder.h"
-#include "SVGPathUtilities.h"
 #include <numbers>
 #include <wtf/MathExtras.h>
 
@@ -269,27 +267,41 @@ bool SVGPathParser::parseArcToSegment()
     if (!result)
         return false;
 
-    if (m_pathParsingMode == UnalteredParsing) {
-        m_consumer->arcTo(result->rx, result->ry, result->angle, result->largeArc, result->sweep, result->targetPoint, m_mode);
-        return true;
-    }
-
     // If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto") joining the endpoints.
     // http://www.w3.org/TR/SVG/implnote.html#ArcOutOfRangeParameters
     // If the current point and target point for the arc are identical, it should be treated as a zero length
     // path. This ensures continuity in animations.
-    if (m_mode == RelativeCoordinates)
-        result->targetPoint += m_currentPoint;
-
-    if (!result->rx || !result->ry || result->targetPoint == m_currentPoint) {
-        m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
-        m_currentPoint = result->targetPoint;
+    bool arcIsZeroLength = false;
+    if (m_pathParsingMode == NormalizedParsing) {
+        result->rx = std::abs(result->rx);
+        result->ry = std::abs(result->ry);
+        if (m_mode == RelativeCoordinates)
+            arcIsZeroLength = result->targetPoint == FloatPoint::zero();
+        else
+            arcIsZeroLength = result->targetPoint == m_currentPoint;
+    }
+    if (!result->rx || !result->ry || arcIsZeroLength) {
+        if (m_pathParsingMode == NormalizedParsing) {
+            if (m_mode == RelativeCoordinates)
+                m_currentPoint += result->targetPoint;
+            else
+                m_currentPoint = result->targetPoint;
+            m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
+        } else
+            m_consumer->lineTo(result->targetPoint, m_mode);
         return true;
     }
 
-    FloatPoint point1 = m_currentPoint;
-    m_currentPoint = result->targetPoint;
-    return decomposeArcToCubic(result->angle, result->rx, result->ry, point1, result->targetPoint, result->largeArc, result->sweep);
+    if (m_pathParsingMode == NormalizedParsing) {
+        FloatPoint point1 = m_currentPoint;
+        if (m_mode == RelativeCoordinates)
+            result->targetPoint += m_currentPoint;
+        m_currentPoint = result->targetPoint;
+        return decomposeArcToCubic(result->angle, result->rx, result->ry, point1, result->targetPoint, result->largeArc, result->sweep);
+    }
+
+    m_consumer->arcTo(result->rx, result->ry, result->angle, result->largeArc, result->sweep, result->targetPoint, m_mode);
+    return true;
 }
 
 bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)

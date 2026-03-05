@@ -33,7 +33,7 @@ uint8_t *HMAC(const EVP_MD *evp_md, const void *key, size_t key_len,
   // The underlying hash functions should not set the FIPS service indicator
   // until all operations have completed.
   FIPS_service_indicator_lock_state();
-  const int ok = HMAC_Init_ex(&ctx, key, key_len, evp_md, NULL) &&
+  const int ok = HMAC_Init_ex(&ctx, key, key_len, evp_md, nullptr) &&
                  HMAC_Update(&ctx, data, data_len) &&
                  HMAC_Final(&ctx, out, out_len);
   FIPS_service_indicator_unlock_state();
@@ -41,7 +41,7 @@ uint8_t *HMAC(const EVP_MD *evp_md, const void *key, size_t key_len,
   HMAC_CTX_cleanup(&ctx);
 
   if (!ok) {
-    return NULL;
+    return nullptr;
   }
 
   HMAC_verify_service_indicator(evp_md);
@@ -49,7 +49,7 @@ uint8_t *HMAC(const EVP_MD *evp_md, const void *key, size_t key_len,
 }
 
 void HMAC_CTX_init(HMAC_CTX *ctx) {
-  ctx->md = NULL;
+  ctx->md = nullptr;
   EVP_MD_CTX_init(&ctx->i_ctx);
   EVP_MD_CTX_init(&ctx->o_ctx);
   EVP_MD_CTX_init(&ctx->md_ctx);
@@ -58,7 +58,7 @@ void HMAC_CTX_init(HMAC_CTX *ctx) {
 HMAC_CTX *HMAC_CTX_new(void) {
   HMAC_CTX *ctx =
       reinterpret_cast<HMAC_CTX *>(OPENSSL_malloc(sizeof(HMAC_CTX)));
-  if (ctx != NULL) {
+  if (ctx != nullptr) {
     HMAC_CTX_init(ctx);
   }
   return ctx;
@@ -79,7 +79,7 @@ void HMAC_CTX_cleanse(HMAC_CTX *ctx) {
 }
 
 void HMAC_CTX_free(HMAC_CTX *ctx) {
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return;
   }
 
@@ -92,7 +92,7 @@ int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,
   int ret = 0;
   FIPS_service_indicator_lock_state();
 
-  if (md == NULL) {
+  if (md == nullptr) {
     md = ctx->md;
   }
 
@@ -103,7 +103,7 @@ int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,
   // ambiguous between using the empty key and reusing the previous key. There
   // exist callers which intend the latter, but the former is an awkward edge
   // case. Fix to API to avoid this.
-  if (md != ctx->md || key != NULL) {
+  if (md != ctx->md || key != nullptr) {
     uint8_t pad[EVP_MAX_MD_BLOCK_SIZE];
     uint8_t key_block[EVP_MAX_MD_BLOCK_SIZE];
     unsigned key_block_len;
@@ -168,7 +168,6 @@ int HMAC_Final(HMAC_CTX *ctx, uint8_t *out, unsigned int *out_len) {
       !EVP_MD_CTX_copy_ex(&ctx->md_ctx, &ctx->o_ctx) ||
       !EVP_DigestUpdate(&ctx->md_ctx, buf, i) ||
       !EVP_DigestFinal_ex(&ctx->md_ctx, out, out_len)) {
-    *out_len = 0;
     goto out;
   }
 
@@ -178,6 +177,8 @@ out:
   FIPS_service_indicator_unlock_state();
   if (ret) {
     HMAC_verify_service_indicator(ctx->md);
+  } else if (out_len) {
+    *out_len = 0;
   }
   return ret;
 }
@@ -206,7 +207,7 @@ int HMAC_Init(HMAC_CTX *ctx, const void *key, int key_len, const EVP_MD *md) {
   if (key && md) {
     HMAC_CTX_init(ctx);
   }
-  return HMAC_Init_ex(ctx, key, key_len, md, NULL);
+  return HMAC_Init_ex(ctx, key, key_len, md, nullptr);
 }
 
 int HMAC_CTX_copy(HMAC_CTX *dest, const HMAC_CTX *src) {

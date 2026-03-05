@@ -25,6 +25,11 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#import <wtf/Platform.h>
+
 #if HAVE(VISION)
 
 #import <Vision/Vision.h>
@@ -62,3 +67,5 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyQR, NSString *);
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyUPCE, NSString *);
 
 #endif // HAVE(VISION)
+
+#endif // !__has_feature(modules)

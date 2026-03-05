@@ -127,7 +127,7 @@ public:
     void removeAllContentRuleLists();
 #endif
 
-    const HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() { return m_contentRuleLists; }
+    const HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() LIFETIME_BOUND { return m_contentRuleLists; }
     Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListData() const;
 #endif
 

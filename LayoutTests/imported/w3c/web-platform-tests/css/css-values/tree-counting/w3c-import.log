@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/calc-sibling-function-in-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/calc-sibling-function-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/calc-sibling-function.html
@@ -33,4 +34,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-scale-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-transform-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-value-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-linear-gradient-gcs.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/tree-scoped-sibling-function.html

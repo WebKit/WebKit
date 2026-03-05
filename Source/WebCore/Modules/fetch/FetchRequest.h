@@ -49,7 +49,7 @@ template<typename> class ExceptionOr;
 class FetchRequest final : public FetchBodyOwner {
 public:
     using Init = FetchRequestInit;
-    using Info = Variant<RefPtr<FetchRequest>, String>;
+    using Info = Variant<Ref<FetchRequest>, String>;
 
     using Cache = FetchOptions::Cache;
     using Credentials = FetchOptions::Credentials;
@@ -60,8 +60,8 @@ public:
     static ExceptionOr<Ref<FetchRequest>> create(ScriptExecutionContext&, Info&&, Init&&);
     static Ref<FetchRequest> create(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
 
-    const String& method() const { return m_request.httpMethod(); }
-    const String& urlString() const;
+    const String& method() const LIFETIME_BOUND { return m_request.httpMethod(); }
+    const String& NODELETE urlString() const;
     FetchHeaders& headers() { return m_headers.get(); }
     const FetchHeaders& headers() const { return m_headers.get(); }
 
@@ -75,14 +75,14 @@ public:
     bool keepalive() const { return m_options.keepAlive; };
     AbortSignal& signal() { return m_signal.get(); }
 
-    const String& integrity() const { return m_options.integrity; }
+    const String& integrity() const LIFETIME_BOUND { return m_options.integrity; }
 
     ExceptionOr<Ref<FetchRequest>> clone(JSDOMGlobalObject&);
 
-    const FetchOptions& fetchOptions() const { return m_options; }
-    const ResourceRequest& internalRequest() const { return m_request; }
-    const String& internalRequestReferrer() const { return m_referrer; }
-    const URL& url() const { return m_request.url(); }
+    const FetchOptions& fetchOptions() const LIFETIME_BOUND { return m_options; }
+    const ResourceRequest& internalRequest() const LIFETIME_BOUND { return m_request; }
+    const String& internalRequestReferrer() const LIFETIME_BOUND { return m_referrer; }
+    const URL& url() const LIFETIME_BOUND { return m_request.url(); }
 
     ResourceRequest resourceRequest() const;
     std::optional<FetchIdentifier> navigationPreloadIdentifier() const { return m_navigationPreloadIdentifier.asOptional(); }
@@ -114,9 +114,9 @@ private:
     const Ref<AbortSignal> m_signal;
     Markable<FetchIdentifier> m_navigationPreloadIdentifier;
     bool m_enableContentExtensionsCheck { true };
-    IPAddressSpace m_targetAddressSpace;
+    IPAddressSpace m_targetAddressSpace { IPAddressSpace::Public };
 };
 
-WebCoreOpaqueRoot root(FetchRequest*);
+WebCoreOpaqueRoot NODELETE root(FetchRequest*);
 
 } // namespace WebCore

@@ -54,15 +54,9 @@ auto CSSValueConversion<WebkitBoxReflect>::operator()(BuilderState& state, const
         return CSS::Keyword::None { };
 
     auto convertMask = [&](RefPtr<const CSSValue> maskValue) {
-        Style::MaskBorder mask { };
-        if (maskValue)
-            mask = toStyleFromCSSValue<Style::MaskBorder>(state, *maskValue);
-
-        auto maskSlice = mask.slice();
-        maskSlice.fill = CSS::Keyword::Fill { };
-        mask.setSlice(WTFMove(maskSlice));
-
-        return mask;
+        if (!maskValue)
+            return MaskBorder { };
+        return toStyleFromCSSValue<Style::MaskBorder>(state, *maskValue, MaskBorderSliceOverride::AlwaysFill);
     };
 
     return WebkitBoxReflection {
@@ -75,7 +69,7 @@ auto CSSValueConversion<WebkitBoxReflect>::operator()(BuilderState& state, const
 Ref<CSSValue> CSSValueCreation<WebkitBoxReflection>::operator()(CSSValuePool& pool, const RenderStyle& style, const WebkitBoxReflection& value)
 {
     auto convertMask = [&](auto& mask) -> RefPtr<CSSValue> {
-        if (mask.source().isNone())
+        if (mask.maskBorderSource.isNone())
             return createCSSValue(pool, style, CSS::Keyword::None { });
         else
             return createCSSValue(pool, style, mask);

@@ -100,11 +100,14 @@ private:
             owner->setInTLS(nullptr);
         }
 
-        PointerType storagePointer() const { return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage)); }
+        PointerType storagePointer() const
+        {
+            SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage));
+        }
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        union alignas(T) {
+            std::byte bytes[sizeof(T)];
+        } m_storage;
         ThreadSpecific<T, canBeGCThread>* owner;
     };
 

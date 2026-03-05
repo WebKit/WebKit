@@ -42,7 +42,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRemoteCommandListenerProxy);
 
 RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteRemoteCommandListenerIdentifier&& identifier)
     : m_gpuConnection(gpuConnection)
-    , m_identifier(WTFMove(identifier))
+    , m_identifier(WTF::move(identifier))
 {
 }
 
@@ -51,7 +51,7 @@ RemoteRemoteCommandListenerProxy::~RemoteRemoteCommandListenerProxy() = default;
 void RemoteRemoteCommandListenerProxy::updateSupportedCommands(Vector<WebCore::PlatformMediaSession::RemoteControlCommandType>&& registeredCommands, bool supportsSeeking)
 {
     m_supportedCommands.clear();
-    m_supportedCommands.addAll(WTFMove(registeredCommands));
+    m_supportedCommands.addAll(WTF::move(registeredCommands));
     m_supportsSeeking = supportsSeeking;
 
     if (auto connection = m_gpuConnection.get())

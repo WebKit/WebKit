@@ -83,7 +83,7 @@ float AccessibilityScrollbar::valueForRange() const
 bool AccessibilityScrollbar::setValue(float value)
 {
     float newValue = value * m_scrollbar->maximum();
-    m_scrollbar->checkedScrollableArea()->scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), newValue);
+    protect(m_scrollbar->scrollableArea())->scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), newValue);
     return true;
 }
 

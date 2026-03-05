@@ -53,6 +53,8 @@ def parse(file):
     receiver_attributes = None
     shared_preferences_needs_connection = False
     wants_send_cancel_reply = False
+    swift_receiver = False
+    swift_receiver_build_enabled_by = None
     destination = None
     messages = []
     conditions = []
@@ -75,6 +77,9 @@ def parse(file):
                 if match.group('name') == 'DispatchedTo':
                     receiver_dispatched_to = parse_process_name_string(match.group('value'))
                     continue
+                if match.group('name') == 'SwiftReceiverBuildEnabledBy':
+                    swift_receiver_build_enabled_by = match.group('value')
+                    continue
                 raise Exception("ERROR: Unknown extended attribute  '%s'" % attribute)
             elif attribute == 'SharedPreferencesNeedsConnection':
                 shared_preferences_needs_connection = True
@@ -91,9 +96,14 @@ def parse(file):
             elif attribute == 'WantsSendCancelReply':
                 wants_send_cancel_reply = True
                 continue
+            elif attribute == 'SwiftReceiver':
+                swift_receiver = True
+                continue
             raise Exception("ERROR: Unknown extended attribute: '%s'" % attribute)
     if receiver_enabled_by and receiver_enabled_by_exception:
         raise Exception("ERROR: 'ExceptionForEnabledBy' cannot be used together with 'EnabledBy=%s'" % receiver_enabled_by)
+    if swift_receiver and swift_receiver_build_enabled_by:
+        raise Exception("ERROR: 'SwiftReceiver' cannot be used together with 'SwiftReceiverBuildEnabledBy=%s'" % swift_receiver_build_enabled_by)
 
     for line in file_contents:
         line = line.strip()
@@ -192,7 +202,7 @@ def parse(file):
     if receiver_dispatched_to and receiver_dispatched_to_exception:
         raise Exception("ERROR: 'ExceptionForDispatchedTo' cannot be used together with 'DispatchedTo=%s'" % receiver_dispatched_to)
 
-    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, wants_send_cancel_reply)
+    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, wants_send_cancel_reply, swift_receiver, swift_receiver_build_enabled_by)
 
 
 def parse_attributes_string(attributes_string):

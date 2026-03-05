@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include <WebCore/ScrollbarThemeMac.h>
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
@@ -49,6 +49,9 @@ public:
 
     RetainPtr<CALayer> rootContentsLayer() const { return m_rootContentsLayer; }
 
+    void startRubberBandSnapBack();
+    void rubberBandTargetOffsetDidChange();
+
 protected:
     ScrollingTreeFrameScrollingNodeMac(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
@@ -68,7 +71,7 @@ protected:
     unsigned exposedUnfilledArea() const;
 
 private:
-    ScrollingTreeScrollingNodeDelegateMac& delegate() const;
+    ScrollingTreeScrollingNodeDelegateMac& NODELETE delegate() const;
 
     void willBeDestroyed() final;
     void willDoProgrammaticScroll(const FloatPoint&) final;
@@ -94,4 +97,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ScrollingTreeFrameScrollingNodeMac) \
     static bool isType(const WebCore::ScrollingTreeFrameScrollingNode& node) { return node.isScrollingTreeFrameScrollingNodeMac(); } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

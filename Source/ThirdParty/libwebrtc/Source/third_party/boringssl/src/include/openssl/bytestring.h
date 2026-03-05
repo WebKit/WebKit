@@ -175,7 +175,7 @@ OPENSSL_EXPORT int CBS_get_u64_decimal(CBS *cbs, uint64_t *out);
 // compiler, the following functions act on tag-length-value elements in the
 // serialization itself. Thus the caller is responsible for looping over a
 // SEQUENCE, branching on CHOICEs or OPTIONAL fields, checking for trailing
-// data, and handling explict vs. implicit tagging.
+// data, and handling explicit vs. implicit tagging.
 //
 // Tags are represented as |CBS_ASN1_TAG| values in memory. The upper few bits
 // store the class and constructed bit, and the remaining bits store the tag
@@ -645,7 +645,7 @@ OPENSSL_EXPORT int CBB_add_asn1_bool(CBB *cbb, int value);
 // CBB_add_asn1_oid_from_text decodes |len| bytes from |text| as an ASCII OID
 // representation, e.g. "1.2.840.113554.4.1.72585", and writes the DER-encoded
 // contents to |cbb|. It returns one on success and zero on malloc failure or if
-// |text| was invalid. It does not include the OBJECT IDENTIFER framing, only
+// |text| was invalid. It does not include the OBJECT IDENTIFIER framing, only
 // the element's contents.
 //
 // This function considers OID strings with components which do not fit in a

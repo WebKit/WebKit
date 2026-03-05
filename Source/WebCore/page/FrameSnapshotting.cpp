@@ -27,7 +27,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "config.h"
 #include "FrameSnapshotting.h"
 
@@ -46,7 +45,7 @@
 #include "Page.h"
 #include "RenderAncestorIterator.h"
 #include "RenderObject.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -63,13 +62,13 @@ struct ScopedFramePaintingState {
 
     ~ScopedFramePaintingState()
     {
-        frame.view()->setPaintBehavior(paintBehavior);
-        frame.view()->setBaseBackgroundColor(backgroundColor);
-        frame.view()->setNodeToDraw(nullptr);
+        frame->view()->setPaintBehavior(paintBehavior);
+        frame->view()->setBaseBackgroundColor(backgroundColor);
+        frame->view()->setNodeToDraw(nullptr);
     }
 
-    const LocalFrame& frame;
-    const Node* node;
+    const WeakRef<LocalFrame> frame;
+    const WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
     const OptionSet<PaintBehavior> paintBehavior;
     const Color backgroundColor;
 };
@@ -77,7 +76,7 @@ struct ScopedFramePaintingState {
 RefPtr<ImageBuffer> snapshotFrameRect(LocalFrame& frame, const IntRect& imageRect, SnapshotOptions&& options)
 {
     Vector<FloatRect> clipRects;
-    return snapshotFrameRectWithClip(frame, imageRect, clipRects, WTFMove(options));
+    return snapshotFrameRectWithClip(frame, imageRect, clipRects, WTF::move(options));
 }
 
 RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& imageRect, const Vector<FloatRect>& clipRects, SnapshotOptions&& options)
@@ -152,19 +151,19 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
 
 RefPtr<ImageBuffer> snapshotSelection(LocalFrame& frame, SnapshotOptions&& options)
 {
-    auto& selection = frame.selection();
+    CheckedRef selection = frame.selection();
 
-    if (!selection.isRange())
+    if (!selection->isRange())
         return nullptr;
 
-    FloatRect selectionBounds = selection.selectionBounds();
+    FloatRect selectionBounds = selection->selectionBounds();
 
     // It is possible for the selection bounds to be empty; see https://bugs.webkit.org/show_bug.cgi?id=56645.
     if (selectionBounds.isEmpty())
         return nullptr;
 
     options.flags.add(SnapshotFlags::PaintSelectionOnly);
-    return snapshotFrameRect(frame, enclosingIntRect(selectionBounds), WTFMove(options));
+    return snapshotFrameRect(frame, enclosingIntRect(selectionBounds), WTF::move(options));
 }
 
 RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&& options)
@@ -178,17 +177,17 @@ RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&
     frame.view()->setNodeToDraw(&node);
 
     LayoutRect topLevelRect;
-    return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)), WTFMove(options));
+    return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)), WTF::move(options));
 }
 
 static bool styleContainsComplexBackground(const RenderStyle& style)
 {
-    return style.hasBlendMode()
-        || style.hasBackgroundImage()
+    return style.blendMode() != BlendMode::Normal
+        || Style::hasImageInAnyLayer(style.backgroundLayers())
 #if HAVE(CORE_MATERIAL)
-        || style.hasAppleVisualEffectRequiringBackdropFilter()
+        || appleVisualEffectNeedsBackdrop(style.appleVisualEffect())
 #endif
-        || style.hasBackdropFilter();
+        || !style.backdropFilter().isNone();
 }
 
 Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFrame& frame)
@@ -196,7 +195,7 @@ Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFram
     auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
 
     RenderElement* renderer = nullptr;
-    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
+    RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
     while (commonAncestor) {
         if (auto* renderElement = dynamicDowncast<RenderElement>(commonAncestor->renderer())) {
             renderer = renderElement;
@@ -212,16 +211,16 @@ Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFram
     })));
 
     Vector<Color> parentRendererBackgroundColors;
-    for (auto& ancestor : lineageOfType<RenderElement>(*renderer)) {
-        auto absoluteBoundingBox = ancestor.absoluteBoundingBoxRect();
-        auto& style = ancestor.style();
-        if (!absoluteBoundingBox.contains(boundingRectForRange) || !style.hasBackground())
+    for (CheckedRef ancestor : lineageOfType<RenderElement>(*renderer)) {
+        auto absoluteBoundingBox = ancestor->absoluteBoundingBoxRect();
+        CheckedRef style = ancestor->style();
+        if (!absoluteBoundingBox.contains(boundingRectForRange) || !style->hasBackground())
             continue;
 
         if (styleContainsComplexBackground(style))
             return estimatedBackgroundColor;
 
-        auto visitedDependentBackgroundColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
+        auto visitedDependentBackgroundColor = style->visitedDependentBackgroundColor();
         if (visitedDependentBackgroundColor != Color::transparentBlack)
             parentRendererBackgroundColors.append(visitedDependentBackgroundColor);
     }

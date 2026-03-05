@@ -59,6 +59,10 @@ public:
 
     virtual ~RemoteAudioTrackProxy();
 
+    // WebCore::AudioTrackPrivateClient.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     WebCore::TrackID id() const { return m_trackPrivate->id(); };
     void setEnabled(bool enabled)
     {

@@ -33,7 +33,12 @@
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <WebCore/AlternativeTextUIController.h>
+#import <WebCore/Color.h>
 #import <WebCore/FixedContainerEdges.h>
+#import <WebCore/FloatQuad.h>
+#import <WebCore/FloatRect.h>
+#import <WebCore/IntRect.h>
+#import <WebCore/IntSize.h>
 #import <WebCore/TextAnimationTypes.h>
 #import <WebCore/WritingToolsTypes.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -48,6 +53,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageClientImplCocoa);
 
 PageClientImplCocoa::PageClientImplCocoa(WKWebView *webView)
     : m_webView { webView }
@@ -109,6 +116,23 @@ void PageClientImplCocoa::spatialBackdropSourceDidChange()
     RetainPtr webView = m_webView.get();
     [webView _spatialBackdropSourceDidChange];
     [webView didChangeValueForKey:@"_spatialBackdropSource"];
+}
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+void PageClientImplCocoa::allowImmersiveElementFromURL(const URL& url, CompletionHandler<void(bool)>&& completion) const
+{
+    [webView() _allowImmersiveElementFromURL:url completion:WTF::move(completion)];
+}
+
+void PageClientImplCocoa::presentImmersiveElement(const WebCore::LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion) const
+{
+    [webView() _presentImmersiveElement:contextID completion:WTF::move(completion)];
+}
+
+void PageClientImplCocoa::dismissImmersiveElement(CompletionHandler<void()>&& completion) const
+{
+    [webView() _dismissImmersiveElement:WTF::move(completion)];
 }
 #endif
 
@@ -447,7 +471,7 @@ void PageClientImplCocoa::processDidUpdateThrottleState()
 #if ENABLE(FULLSCREEN_API)
 void PageClientImplCocoa::setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&& client)
 {
-    m_fullscreenClientForTesting = WTFMove(client);
+    m_fullscreenClientForTesting = WTF::move(client);
 }
 #endif
 
@@ -461,5 +485,49 @@ void PageClientImplCocoa::didCommitMainFrameData(const MainFrameData& mainFrameD
     if (mainFrameData.fixedContainerEdges)
         [webView() _updateFixedContainerEdges:*mainFrameData.fixedContainerEdges];
 }
+
+#if ENABLE(TWO_PHASE_CLICKS)
+
+void PageClientImplCocoa::didNotHandleTapAsClick(const WebCore::IntPoint& point)
+{
+    [webView() _didNotHandleTapAsClick:point];
+}
+
+void PageClientImplCocoa::didHandleTapAsHover()
+{
+    [webView() _didHandleTapAsHover];
+}
+
+void PageClientImplCocoa::didCompleteSyntheticClick()
+{
+    [webView() _didCompleteSyntheticClick];
+}
+
+void PageClientImplCocoa::commitPotentialTapFailed()
+{
+    [webView() _commitPotentialTapFailed];
+}
+
+void PageClientImplCocoa::didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling)
+{
+    [webView() _didGetTapHighlightGeometries:requestID color:color quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
+}
+
+bool PageClientImplCocoa::isPotentialTapInProgress() const
+{
+    return [webView() _isPotentialTapInProgress];
+}
+
+void PageClientImplCocoa::disableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier requestID)
+{
+    [webView() _disableDoubleTapGesturesDuringTapIfNecessary:requestID];
+}
+
+void PageClientImplCocoa::handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier requestID, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel, bool nodeIsPluginElement)
+{
+    [webView() _handleSmartMagnificationInformationForPotentialTap:requestID renderRect:renderRect fitEntireRect:fitEntireRect viewportMinimumScale:viewportMinimumScale viewportMaximumScale:viewportMaximumScale nodeIsRootLevel:nodeIsRootLevel nodeIsPluginElement:nodeIsPluginElement];
+}
+
+#endif // ENABLE(TWO_PHASE_CLICKS)
 
 } // namespace WebKit

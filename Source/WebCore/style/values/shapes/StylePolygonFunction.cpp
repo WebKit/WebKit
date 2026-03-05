@@ -39,7 +39,7 @@ namespace Style {
 
 struct PolygonPathPolicy : TinyLRUCachePolicy<Vector<FloatPoint>, WebCore::Path> {
 public:
-    static bool isKeyNull(const Vector<FloatPoint>& points)
+    static bool NODELETE isKeyNull(const Vector<FloatPoint>& points)
     {
         return !points.size();
     }
@@ -58,12 +58,12 @@ static const WebCore::Path& cachedPolygonPath(const Vector<FloatPoint>& points)
 
 // MARK: - Path
 
-WebCore::Path PathComputation<Polygon>::operator()(const Polygon& value, const FloatRect& boundingBox)
+WebCore::Path PathComputation<Polygon>::operator()(const Polygon& value, const FloatRect& boundingBox, ZoomFactor zoom)
 {
     auto boundingLocation = boundingBox.location();
     auto boundingSize = boundingBox.size();
     auto points = value.vertices.value.map([&](const auto& vertex) {
-        return evaluate<FloatPoint>(vertex, boundingSize, Style::ZoomNeeded { }) + boundingLocation;
+        return evaluate<FloatPoint>(vertex, boundingSize, zoom) + boundingLocation;
     });
     return cachedPolygonPath(points);
 }

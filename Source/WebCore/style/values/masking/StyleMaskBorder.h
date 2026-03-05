@@ -29,7 +29,6 @@
 #include <WebCore/StyleMaskBorderSlice.h>
 #include <WebCore/StyleMaskBorderSource.h>
 #include <WebCore/StyleMaskBorderWidth.h>
-#include <wtf/DataRef.h>
 
 namespace WebCore {
 namespace Style {
@@ -38,81 +37,30 @@ namespace Style {
 // FIXME: Add support for `mask-border-mode`.
 // https://drafts.fxtf.org/css-masking-1/#propdef-mask-border
 struct MaskBorder {
-    using Source = MaskBorderSource;
-    using Slice = MaskBorderSlice;
-    using Width = MaskBorderWidth;
-    using Outset = MaskBorderOutset;
-    using Repeat = MaskBorderRepeat;
-
     MaskBorder();
     MaskBorder(MaskBorderSource&&, MaskBorderSlice&&, MaskBorderWidth&&, MaskBorderOutset&&, MaskBorderRepeat&&);
 
-    bool hasSource() const { return !m_data->source.isNone(); }
-    const MaskBorderSource& source() const { return m_data->source; }
-    void setSource(MaskBorderSource&& source) { m_data.access().source = WTFMove(source); }
+    MaskBorderSource maskBorderSource;
+    MaskBorderSlice maskBorderSlice;
+    MaskBorderWidth maskBorderWidth;
+    MaskBorderOutset maskBorderOutset;
+    MaskBorderRepeat maskBorderRepeat;
 
-    const MaskBorderSlice& slice() const { return m_data->slice; }
-    void setSlice(MaskBorderSlice&& slice) { m_data.access().slice = WTFMove(slice); }
-
-    const MaskBorderWidth& width() const { return m_data->width; }
-    void setWidth(MaskBorderWidth&& width) { m_data.access().width = WTFMove(width); }
-
-    const MaskBorderOutset& outset() const { return m_data->outset; }
-    void setOutset(MaskBorderOutset&& outset) { m_data.access().outset = WTFMove(outset); }
-
-    const MaskBorderRepeat& repeat() const { return m_data->repeat; }
-    void setRepeat(MaskBorderRepeat&& repeat) { m_data.access().repeat = WTFMove(repeat); }
-
-    void copySliceFrom(const MaskBorder& other)
-    {
-        m_data.access().slice = other.m_data->slice;
-    }
-
-    void copyWidthFrom(const MaskBorder& other)
-    {
-        m_data.access().width = other.m_data->width;
-    }
-
-    void copyOutsetFrom(const MaskBorder& other)
-    {
-        m_data.access().outset = other.m_data->outset;
-    }
-
-    void copyRepeatFrom(const MaskBorder& other)
-    {
-        m_data.access().repeat = other.m_data->repeat;
-    }
+    // Alias accessors for using in generic contexts with `BorderImage`.
+    const MaskBorderSource& source() const { return maskBorderSource; }
+    const MaskBorderSlice& slice() const { return maskBorderSlice; }
+    const MaskBorderWidth& width() const { return maskBorderWidth; }
+    const MaskBorderOutset& outset() const { return maskBorderOutset; }
+    const MaskBorderRepeat& repeat() const { return maskBorderRepeat; }
 
     bool operator==(const MaskBorder&) const = default;
-
-private:
-    struct Data : RefCounted<Data> {
-        static Ref<Data> create();
-        static Ref<Data> create(MaskBorderSource&&, MaskBorderSlice&&, MaskBorderWidth&&, MaskBorderOutset&&, MaskBorderRepeat&&);
-        Ref<Data> copy() const;
-
-        bool operator==(const Data&) const;
-
-        MaskBorderSource source { CSS::Keyword::None { } };
-        MaskBorderSlice slice { .values = { MaskBorderSliceValue::Number { 0 } }, .fill = { std::nullopt } };
-        MaskBorderWidth width { .values = { CSS::Keyword::Auto { } } };
-        MaskBorderOutset outset { .values = { MaskBorderOutsetValue::Number { 0 } } };
-        MaskBorderRepeat repeat { .values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch } };
-
-    private:
-        Data();
-        Data(MaskBorderSource&&, MaskBorderSlice&&, MaskBorderWidth&&, MaskBorderOutset&&, MaskBorderRepeat&&);
-        Data(const Data&);
-    };
-
-    static DataRef<Data>& defaultData();
-
-    DataRef<Data> m_data;
 };
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<MaskBorder> { auto operator()(BuilderState&, const CSSValue&) -> MaskBorder; };
+enum class MaskBorderSliceOverride : bool { None, AlwaysFill };
+
+template<> struct CSSValueConversion<MaskBorder> { auto operator()(BuilderState&, const CSSValue&, MaskBorderSliceOverride = MaskBorderSliceOverride::None) -> MaskBorder; };
 template<> struct CSSValueCreation<MaskBorder> { auto operator()(CSSValuePool&, const RenderStyle&, const MaskBorder&) -> Ref<CSSValue>; };
 
 // MARK: - Serialization

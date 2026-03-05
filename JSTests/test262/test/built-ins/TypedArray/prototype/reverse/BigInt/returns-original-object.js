@@ -15,7 +15,7 @@ info: |
 
   ...
   6. Return O.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -36,4 +36,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(result, sample, "returns the same object (empty instance)");
   assert.sameValue(sample.buffer, buffer, "keeps the same buffer (empty instance)");
   assert.sameValue(sample.length, 0, "length is preserved (empty instance)");
-});
+}, null, ["passthrough"]);

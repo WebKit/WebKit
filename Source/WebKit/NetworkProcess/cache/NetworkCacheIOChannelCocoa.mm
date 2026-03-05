@@ -38,7 +38,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-static long dispatchQueueIdentifier(WorkQueue::QOS qos)
+static long NODELETE dispatchQueueIdentifier(WorkQueue::QOS qos)
 {
     switch (qos) {
     case WorkQueue::QOS::UserInteractive:
@@ -96,13 +96,13 @@ IOChannel::~IOChannel()
 void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue, Function<void(Data&&, int error)>&& completionHandler)
 {
     bool didCallCompletionHandler = false;
-    dispatch_io_read(m_dispatchIO.get(), offset, size, queue->protectedDispatchQueue().get(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTFMove(completionHandler), didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
+    dispatch_io_read(m_dispatchIO.get(), offset, size, protect(queue->dispatchQueue()).get(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTF::move(completionHandler), didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
         ASSERT_UNUSED(done, done || !didCallCompletionHandler);
         if (didCallCompletionHandler)
             return;
 
         Data data { OSObjectPtr<dispatch_data_t> { fileData } };
-        completionHandler(WTFMove(data), error);
+        completionHandler(WTF::move(data), error);
         didCallCompletionHandler = true;
     }).get());
 }
@@ -110,7 +110,7 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
 void IOChannel::write(size_t offset, const Data& data, Ref<WTF::WorkQueueBase>&& queue, Function<void(int error)>&& completionHandler)
 {
     RetainPtr dispatchData = data.dispatchData();
-    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData.get(), queue->protectedDispatchQueue().get(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t, int error) mutable {
+    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData.get(), protect(queue->dispatchQueue()).get(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTF::move(completionHandler)](bool done, dispatch_data_t, int error) mutable {
         if (!done) {
             RELEASE_LOG_ERROR(NetworkCacheStorage, "IOChannel::write only part of data is written.");
             return;

@@ -156,7 +156,7 @@ MouseCursor* CreateMouseCursorFromHCursor(HDC dc, HCURSOR cursor) {
 
   uint32_t* mask_plane = mask_data.get();
   std::unique_ptr<DesktopFrame> image(
-      new BasicDesktopFrame(DesktopSize(width, height)));
+      new BasicDesktopFrame(DesktopSize(width, height), FOURCC_ARGB));
   bool has_alpha = false;
 
   if (is_color) {

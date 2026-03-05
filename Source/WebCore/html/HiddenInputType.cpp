@@ -64,7 +64,7 @@ FormControlState HiddenInputType::saveFormControlState() const
 void HiddenInputType::restoreFormControlState(const FormControlState& state)
 {
     ASSERT(element());
-    protectedElement()->setAttributeWithoutSynchronization(valueAttr, AtomString { state[0] });
+    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomString { state[0] });
 }
 
 RenderPtr<RenderElement> HiddenInputType::createInputRenderer(RenderStyle&&)
@@ -91,7 +91,7 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
 void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
-    protectedElement()->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
+    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
 }
 
 bool HiddenInputType::appendFormData(DOMFormData& formData) const

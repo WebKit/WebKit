@@ -88,7 +88,7 @@ public:
         : m_ptr(encode(ptr))
     { }
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && CPU(X86_64)
     constexpr FunctionPtr(Out(SYSV_ABI *ptr)(In...))
         : m_ptr(encode(ptr))
     { }

@@ -85,7 +85,7 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         if (tokens.first().endsWith('-') && tokens.first().length() > 1) {
             auto takenFirstToken = tokens.takeFirst();
             if (auto prefix = WTF::URLParser::formURLDecode(StringView(takenFirstToken).left(takenFirstToken.length() - 1)))
-                parsedTextDirective.prefix = WTFMove(*prefix);
+                parsedTextDirective.prefix = WTF::move(*prefix);
             else
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode prefix ");
         }
@@ -99,7 +99,7 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
             tokens.last() = tokens.last().substring(1);
             
             if (auto suffix = WTF::URLParser::formURLDecode(tokens.takeLast()))
-                parsedTextDirective.suffix = WTFMove(*suffix);
+                parsedTextDirective.suffix = WTF::move(*suffix);
             else
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode suffix ");
         }
@@ -110,13 +110,13 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         }
         
         if (auto start = WTF::URLParser::formURLDecode(tokens.first()))
-            parsedTextDirective.startText = WTFMove(*start);
+            parsedTextDirective.startText = WTF::move(*start);
         else
             LOG_WITH_STREAM(TextFragment, stream << " could not decode start ");
         
         if (tokens.size() == 2) {
             if (auto end = WTF::URLParser::formURLDecode(tokens.last()))
-                parsedTextDirective.endText = WTFMove(*end);
+                parsedTextDirective.endText = WTF::move(*end);
             else
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode end ");
         }

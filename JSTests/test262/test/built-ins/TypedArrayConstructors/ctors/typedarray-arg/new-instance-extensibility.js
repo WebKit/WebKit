@@ -43,4 +43,4 @@ testWithTypedArrayConstructors(function(TA) {
     Object.isExtensible(sample2),
     "new instance does not inherit extensibility from typedarray argument"
   );
-});
+}, null, ["passthrough"]);

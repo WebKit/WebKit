@@ -16,7 +16,7 @@
 #include "include/core/SkShader.h"
 #include "include/core/SkSpan.h"
 #include "include/core/SkTileMode.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/gpu/graphite/Context.h"
 #include "src/core/SkColorData.h"
 #include "src/core/SkColorSpaceXformSteps.h"
@@ -85,7 +85,7 @@ struct GradientShaderBlocks {
                      const SkGradientBaseShader* shader,
                      sk_sp<TextureProxy> colorsAndOffsetsProxy,
                      bool useStorageBuffer,
-                     const SkGradientShader::Interpolation&);
+                     const SkGradient::Interpolation&);
 
         bool operator==(const GradientData& rhs) const = delete;
         bool operator!=(const GradientData& rhs) const = delete;
@@ -116,7 +116,7 @@ struct GradientShaderBlocks {
         const float*                  fSrcOffsets;
         const SkGradientBaseShader*   fSrcShader;
 
-        SkGradientShader::Interpolation fInterpolation;
+        SkGradient::Interpolation     fInterpolation;
     };
 
     static void AddBlock(const KeyContext&, const GradientData&);

@@ -55,7 +55,7 @@
     auto webView = adoptNS([[ParserYieldTokenTestWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration]);
     [[webView _remoteObjectRegistry] registerExportedObject:webView.get() interface:[_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ParserYieldTokenTestRunner)]];
     webView->_bundle = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:[_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ParserYieldTokenTestBundle)]];
-    webView->_schemeHandler = WTFMove(schemeHandler);
+    webView->_schemeHandler = WTF::move(schemeHandler);
     return webView;
 }
 
@@ -168,7 +168,7 @@ TEST(ParserYieldTokenTests, AsyncScriptRunsWhenFetched)
     [webView schemeHandler].startURLSchemeTaskHandler = [] (WKWebView *, id <WKURLSchemeTask> task) {
         auto script = retainPtr(@"window.eventMessages.push('Running async script.');");
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/javascript" expectedContentLength:[script length] textEncodingName:nil]);
-        dispatch_async(mainDispatchQueueSingleton(), [task = retainPtr(task), response = WTFMove(response), script = WTFMove(script)] {
+        dispatch_async(mainDispatchQueueSingleton(), [task = retainPtr(task), response = WTF::move(response), script = WTF::move(script)] {
             [task didReceiveResponse:response.get()];
             [task didReceiveData:[script dataUsingEncoding:NSUTF8StringEncoding]];
             [task didFinish];

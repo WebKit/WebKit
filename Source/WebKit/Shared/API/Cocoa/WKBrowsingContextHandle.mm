@@ -84,7 +84,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:*_pageProxyID andWebPageID:ObjectIdentifier<WebCore::PageIdentifierType>(_webPageID)];
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:*_pageProxyID andWebPageID:ObjectIdentifier<WebCore::PageIdentifierType>(_webPageID)];
 }
 
 - (NSString *)description

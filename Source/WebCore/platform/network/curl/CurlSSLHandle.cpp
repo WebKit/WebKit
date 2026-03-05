@@ -47,13 +47,13 @@ CurlSSLHandle::CurlSSLHandle()
 void CurlSSLHandle::setCACertPath(String&& caCertPath)
 {
     RELEASE_ASSERT(!caCertPath.isEmpty());
-    m_caCertInfo = WTFMove(caCertPath);
+    m_caCertInfo = WTF::move(caCertPath);
 }
 
 void CurlSSLHandle::setCACertData(CertificateInfo::Certificate&& caCertData)
 {
     RELEASE_ASSERT(!caCertData.isEmpty());
-    m_caCertInfo = WTFMove(caCertData);
+    m_caCertInfo = WTF::move(caCertData);
 }
 
 void CurlSSLHandle::clearCACertInfo()

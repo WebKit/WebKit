@@ -39,6 +39,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -114,11 +115,11 @@ struct StringWithDirection;
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 
 class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LocalFrameLoaderClient, Loader);
+    WTF_MAKE_TZONE_ALLOCATED(LocalFrameLoaderClient);
 public:
     ~LocalFrameLoaderClient();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     virtual bool isWebLocalFrameLoaderClient() const { return false; }
@@ -193,7 +194,7 @@ public:
     virtual void dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) { }
     virtual void dispatchDidReachVisuallyNonEmptyState() { }
 
-    virtual LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy) = 0;
+    virtual LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, const String& openedMainFrameName) = 0;
     virtual void dispatchShow() = 0;
 
     virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String& downloadAttribute, FramePolicyFunction&&) = 0;
@@ -204,6 +205,8 @@ public:
 
     virtual void dispatchWillSendSubmitEvent(Ref<FormState>&&) = 0;
     virtual void dispatchWillSubmitForm(FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) = 0;
+
+    virtual void dispatchBackForwardItemLoading(const URL&, const String& referer, LocalFrame& childFrame);
 
     virtual void revertToProvisionalState(DocumentLoader*) = 0;
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
@@ -224,7 +227,7 @@ public:
     virtual void updateGlobalHistory() = 0;
     virtual void updateGlobalHistoryRedirectLinks() = 0;
 
-    virtual ShouldGoToHistoryItem shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation, ProcessSwapDisposition processSwapDisposition) const = 0;
+    virtual ShouldGoToHistoryItem shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const = 0;
     virtual bool supportsAsyncShouldGoToHistoryItem() const = 0;
     virtual void shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const = 0;
 
@@ -245,6 +248,7 @@ public:
     virtual void didFinishLoad() = 0;
     virtual void prepareForDataSourceReplacement() = 0;
 
+    virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&, ResourceRequest&&) = 0;
     virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&) = 0;
     virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
     virtual void setTitle(const StringWithDirection&, const URL&) = 0;
@@ -284,6 +288,7 @@ public:
     virtual IntPoint accessibilityRemoteFrameOffset() = 0;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     virtual void setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) = 0;
+    virtual RefPtr<WebCore::AXIsolatedTree> isolatedTree() const = 0;
 #endif
     virtual void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
     virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }

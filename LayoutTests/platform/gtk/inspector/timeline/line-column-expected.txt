@@ -12,16 +12,6 @@ PASS: Capturing started.
     "type": "click",
     "defaultPrevented": false
   },
-  "children": [],
-  "endTime": "<filtered>",
-  "type": "EventDispatch"
-}
-{
-  "startTime": "<filtered>",
-  "data": {
-    "type": "click",
-    "defaultPrevented": false
-  },
   "children": [
     {
       "startTime": "<filtered>",

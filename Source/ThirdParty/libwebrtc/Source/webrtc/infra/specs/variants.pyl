@@ -7,16 +7,6 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 {
-  'SIM_IPHONE_X_16_4': {
-    'args': [
-      '--platform',
-      'iPhone X',
-      '--version',
-      '16.4',
-    ],
-    'identifier': 'iPhone X 16.4',
-    'mixins': ['xcode_16_main', 'ios_runtime_cache_16_4'],
-  },
   'SIM_IPHONE_14_17_5': {
     'args': [
       '--platform',
@@ -25,16 +15,16 @@
       '17.5',
     ],
     'identifier': 'iPhone 14 17.5',
-    'mixins': ['xcode_16_main', 'ios_runtime_cache_17_5'],
+    'mixins': ['ios_runtime_cache_17_5'],
   },
-  'SIM_IPHONE_15_18_0': {
+  'SIM_IPHONE_15_18_2': {
     'args': [
       '--platform',
       'iPhone 15',
       '--version',
-      '18.0',
+      '18.2',
     ],
-    'identifier': 'iPhone 15 18.0',
-    'mixins': ['xcode_16_main', 'ios_runtime_cache_18_0'],
+    'identifier': 'iPhone 15 18.2',
+    'mixins': ['ios_runtime_cache_18_2'],
   },
 }

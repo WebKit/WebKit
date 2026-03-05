@@ -176,7 +176,7 @@ CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
     ASSERT(m_plans.find(plan->key()) == m_plans.end());
     m_plans.add(plan->key(), plan.copyRef());
     m_totalLoad += planLoad(plan);
-    m_queues[tier].append(WTFMove(plan));
+    m_queues[tier].append(WTF::move(plan));
     wakeThreads(locker, tier);
     return CompilationResult::CompilationDeferred;
 }
@@ -241,7 +241,7 @@ auto JITWorklist::completeAllReadyPlansForVM(VM& vm, JITCompilationKey requested
 
     DeferGC deferGC(vm);
 
-    Vector<RefPtr<JITPlan>, 8> myReadyPlans;
+    Vector<Ref<JITPlan>, 8> myReadyPlans;
     State resultingState = removeAllReadyPlansForVM(vm, myReadyPlans, requestedKey);
     for (auto& plan : myReadyPlans) {
         dataLogLnIf(Options::verboseCompilationQueue(), *this, ": Completing ", plan->key());
@@ -317,7 +317,7 @@ void JITWorklist::cancelAllPlansForVM(VM& vm)
 
     waitUntilAllPlansForVMAreReady(vm);
 
-    Vector<RefPtr<JITPlan>, 8> myReadyPlans;
+    Vector<Ref<JITPlan>, 8> myReadyPlans;
     removeAllReadyPlansForVM(vm, myReadyPlans, { });
     for (auto& plan : myReadyPlans) {
         ASSERT(plan->stage() == JITPlanStage::Ready);
@@ -407,13 +407,13 @@ void JITWorklist::dump(const AbstractLocker& locker, PrintStream& out) const
         ", Num Active Threads = ", m_numberOfActiveThreads, "/", m_threads.size(), "]");
 }
 
-JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<JITPlan>, 8>& myReadyPlans, JITCompilationKey requestedKey)
+JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<Ref<JITPlan>, 8>& myReadyPlans, JITCompilationKey requestedKey)
 {
     DeferGC deferGC(vm);
     Locker locker { *m_lock };
 
     bool isCompiled = false;
-    m_readyPlans.removeAllMatching([&](RefPtr<JITPlan> plan) {
+    m_readyPlans.removeAllMatching([&](Ref<JITPlan> plan) {
         if (plan->vm() != &vm)
             return false;
         if (plan->stage() != JITPlanStage::Ready)
@@ -421,7 +421,7 @@ JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<J
         if (plan->key() == requestedKey)
             isCompiled = true;
         m_plans.remove(plan->key());
-        myReadyPlans.append(WTFMove(plan));
+        myReadyPlans.append(WTF::move(plan));
         return true;
     });
 
@@ -466,12 +466,9 @@ void JITWorklist::removeMatchingPlansForVM(VM& vm, const MatchFunction& matches)
     bool didCancelPlans = !deadPlanKeys.isEmpty();
     for (JITCompilationKey key : deadPlanKeys)
         m_plans.take(key)->cancel();
-    for (unsigned i = 0; i < m_readyPlans.size(); ++i) {
-        if (m_readyPlans[i]->stage() != JITPlanStage::Canceled)
-            continue;
-        m_readyPlans[i--] = m_readyPlans.last();
-        m_readyPlans.removeLast();
-    }
+    m_readyPlans.removeAllMatching([](auto& plan) {
+        return plan->stage() == JITPlanStage::Canceled;
+    });
     if (didCancelPlans)
         m_planCompiledOrCancelled.notifyAll();
 }

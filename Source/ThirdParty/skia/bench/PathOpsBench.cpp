@@ -137,9 +137,6 @@ template <typename T> void run_builder(T& b, bool useReserve, int N) {
 }
 
 enum class MakeType {
-#ifndef SK_HIDE_PATH_EDIT_METHODS
-    kPath,
-#endif
     kSnapshot,
     kDetach,
     kArray,
@@ -181,18 +178,11 @@ protected:
                 run_builder(b, fUseReserve, N);
                 return MakeType::kSnapshot == fMakeType ? b.snapshot() : b.detach();
             }
-#ifndef SK_HIDE_PATH_EDIT_METHODS
-            case MakeType::kPath: {
-                SkPath p;
-                run_builder(p, fUseReserve, N);
-                return p;
-            }
-#endif
             case MakeType::kArray: {
             //    ArrayPath<N*12> arrays;
             //    run_builder(arrays, false, N);
-                return SkPath::Raw({fArrays.fPts, fArrays.fPIndex},
-                                   {fArrays.fVbs, fArrays.fVIndex},
+                return SkPath::Raw({fArrays.fPts, (size_t)fArrays.fPIndex},
+                                   {fArrays.fVbs, (size_t)fArrays.fVIndex},
                                    {}, SkPathFillType::kWinding);
             }
         }
@@ -215,10 +205,6 @@ protected:
 private:
     using INHERITED = Benchmark;
 };
-#ifndef SK_HIDE_PATH_EDIT_METHODS
-DEF_BENCH( return new PathBuilderBench(MakeType::kPath, false); )
-DEF_BENCH( return new PathBuilderBench(MakeType::kPath, true); )
-#endif
 DEF_BENCH( return new PathBuilderBench(MakeType::kSnapshot, false); )
 DEF_BENCH( return new PathBuilderBench(MakeType::kDetach, false); )
 DEF_BENCH( return new PathBuilderBench(MakeType::kSnapshot, true); )

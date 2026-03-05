@@ -32,17 +32,17 @@
 #include "MathMLRowElement.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLMath);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLMath);
 
 RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& style)
-    : RenderMathMLRow(Type::MathMLMath, element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLMath, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLMath());
 }
@@ -55,9 +55,9 @@ void RenderMathMLMath::centerChildren(LayoutUnit contentWidth)
     if (!centerBlockOffset)
         return;
 
-    if (!style().isLeftToRightDirection())
+    if (!style().writingMode().deprecatedIsLeftToRightDirection())
         centerBlockOffset = -centerBlockOffset;
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+    for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         auto repaintRect = child->checkForRepaintDuringLayout() ? std::make_optional(child->frameRect()) : std::nullopt;
         child->move(centerBlockOffset, { });
         if (repaintRect) {
@@ -71,7 +71,7 @@ void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
 {
     ASSERT(needsLayout());
 
-    if (style().display() != DisplayType::Block) {
+    if (style().display() != Style::DisplayType::BlockFlow) {
         RenderMathMLRow::layoutBlock(relayoutChildren, pageLogicalHeight);
         return;
     }

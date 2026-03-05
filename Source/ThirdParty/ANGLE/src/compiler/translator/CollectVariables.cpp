@@ -133,7 +133,8 @@ class CollectVariablesTraverser : public TIntermTraverser
                               GLenum shaderType,
                               const TExtensionBehavior &extensionBehavior,
                               const ShBuiltInResources &resources,
-                              int tessControlShaderOutputVertices);
+                              int tessControlShaderOutputVertices,
+                              bool transformFloatUniformToFP16);
 
     bool visitGlobalQualifierDeclaration(Visit visit,
                                          TIntermGlobalQualifierDeclaration *node) override;
@@ -148,16 +149,19 @@ class CollectVariablesTraverser : public TIntermTraverser
                                       bool staticUse,
                                       bool isShaderIOBlock,
                                       bool isPatch,
+                                      bool isUniform,
                                       ShaderVariable *variableOut) const;
     void setFieldProperties(const TType &type,
                             const ImmutableString &name,
                             bool staticUse,
                             bool isShaderIOBlock,
                             bool isPatch,
+                            bool isUniform,
                             SymbolType symbolType,
                             ShaderVariable *variableOut) const;
     void setCommonVariableProperties(const TType &type,
                                      const TVariable &variable,
+                                     bool isUniform,
                                      ShaderVariable *variableOut) const;
 
     ShaderVariable recordAttribute(const TIntermSymbol &variable) const;
@@ -251,6 +255,7 @@ class CollectVariablesTraverser : public TIntermTraverser
     bool mBoundingBoxAdded;
     bool mTessCoordAdded;
     const int mTessControlShaderOutputVertices;
+    bool mTransformFloatUniformToFP16;
 
     char mUserVariablePrefix;
     ShHashFunction64 mHashFunction;
@@ -275,7 +280,8 @@ CollectVariablesTraverser::CollectVariablesTraverser(
     GLenum shaderType,
     const TExtensionBehavior &extensionBehavior,
     const ShBuiltInResources &resources,
-    int tessControlShaderOutputVertices)
+    int tessControlShaderOutputVertices,
+    const bool transformFloatUniformToFP16)
     : TIntermTraverser(true, false, false, symbolTable),
       mAttribs(attribs),
       mOutputVariables(outputVariables),
@@ -329,6 +335,7 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mBoundingBoxAdded(false),
       mTessCoordAdded(false),
       mTessControlShaderOutputVertices(tessControlShaderOutputVertices),
+      mTransformFloatUniformToFP16(transformFloatUniformToFP16),
       mUserVariablePrefix(userVariablePrefix),
       mHashFunction(hashFunction),
       mShaderType(shaderType),
@@ -355,7 +362,7 @@ void CollectVariablesTraverser::setBuiltInInfoFromSymbol(const TVariable &variab
                    type.getQualifier() == EvqTessLevelOuter ||
                    type.getQualifier() == EvqBoundingBox;
 
-    setFieldOrVariableProperties(type, true, isShaderIOBlock, isPatch, info);
+    setFieldOrVariableProperties(type, true, isShaderIOBlock, isPatch, false, info);
 }
 
 void CollectVariablesTraverser::recordBuiltInVaryingUsed(const TVariable &variable,
@@ -460,72 +467,6 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
     {
         UNREACHABLE();
     }
-    else if (symbolName == "gl_DepthRange")
-    {
-        ASSERT(qualifier == EvqUniform);
-
-        if (!mDepthRangeAdded)
-        {
-            ShaderVariable info;
-            const char kName[] = "gl_DepthRange";
-            info.name          = kName;
-            info.mappedName    = kName;
-            info.type          = GL_NONE;
-            info.precision     = GL_NONE;
-            info.staticUse     = true;
-            info.active        = true;
-
-            ShaderVariable nearInfo(GL_FLOAT);
-            const char kNearName[] = "near";
-            nearInfo.name          = kNearName;
-            nearInfo.mappedName    = kNearName;
-            nearInfo.precision     = GL_HIGH_FLOAT;
-            nearInfo.staticUse     = true;
-            nearInfo.active        = true;
-
-            ShaderVariable farInfo(GL_FLOAT);
-            const char kFarName[] = "far";
-            farInfo.name          = kFarName;
-            farInfo.mappedName    = kFarName;
-            farInfo.precision     = GL_HIGH_FLOAT;
-            farInfo.staticUse     = true;
-            farInfo.active        = true;
-
-            ShaderVariable diffInfo(GL_FLOAT);
-            const char kDiffName[] = "diff";
-            diffInfo.name          = kDiffName;
-            diffInfo.mappedName    = kDiffName;
-            diffInfo.precision     = GL_HIGH_FLOAT;
-            diffInfo.staticUse     = true;
-            diffInfo.active        = true;
-
-            info.fields.push_back(nearInfo);
-            info.fields.push_back(farInfo);
-            info.fields.push_back(diffInfo);
-
-            mUniforms->push_back(info);
-            mDepthRangeAdded = true;
-        }
-    }
-    else if (symbolName == "gl_NumSamples")
-    {
-        ASSERT(qualifier == EvqUniform);
-
-        if (!mNumSamplesAdded)
-        {
-            ShaderVariable info;
-            const char kName[] = "gl_NumSamples";
-            info.name          = kName;
-            info.mappedName    = kName;
-            info.type          = GL_INT;
-            info.precision     = GL_LOW_INT;
-            info.staticUse     = true;
-            info.active        = true;
-
-            mUniforms->push_back(info);
-            mNumSamplesAdded = true;
-        }
-    }
     else
     {
         switch (qualifier)
@@ -628,6 +569,50 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             case EvqSecondaryFragDataEXT:
                 recordBuiltInFragmentOutputUsed(symbol->variable(), &mSecondaryFragDataEXTAdded);
                 return;
+            case EvqDepthRange:
+                if (!mDepthRangeAdded)
+                {
+                    ShaderVariable info;
+                    const char kName[] = "gl_DepthRange";
+                    info.name          = kName;
+                    info.mappedName    = kName;
+                    info.type          = GL_NONE;
+                    info.precision     = GL_NONE;
+                    info.staticUse     = true;
+                    info.active        = true;
+
+                    ShaderVariable nearInfo(GL_FLOAT);
+                    const char kNearName[] = "near";
+                    nearInfo.name          = kNearName;
+                    nearInfo.mappedName    = kNearName;
+                    nearInfo.precision     = GL_HIGH_FLOAT;
+                    nearInfo.staticUse     = true;
+                    nearInfo.active        = true;
+
+                    ShaderVariable farInfo(GL_FLOAT);
+                    const char kFarName[] = "far";
+                    farInfo.name          = kFarName;
+                    farInfo.mappedName    = kFarName;
+                    farInfo.precision     = GL_HIGH_FLOAT;
+                    farInfo.staticUse     = true;
+                    farInfo.active        = true;
+
+                    ShaderVariable diffInfo(GL_FLOAT);
+                    const char kDiffName[] = "diff";
+                    diffInfo.name          = kDiffName;
+                    diffInfo.mappedName    = kDiffName;
+                    diffInfo.precision     = GL_HIGH_FLOAT;
+                    diffInfo.staticUse     = true;
+                    diffInfo.active        = true;
+
+                    info.fields.push_back(nearInfo);
+                    info.fields.push_back(farInfo);
+                    info.fields.push_back(diffInfo);
+
+                    mUniforms->push_back(info);
+                    mDepthRangeAdded = true;
+                }
+                break;
             case EvqInvocationID:
                 recordBuiltInVaryingUsed(symbol->variable(), &mInvocationIDAdded, mInputVaryings);
                 break;
@@ -701,6 +686,23 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             case EvqSampleMask:
                 recordBuiltInFragmentOutputUsed(symbol->variable(), &mSampleMaskAdded);
                 return;
+            case EvqNumSamples:
+                if (!mNumSamplesAdded)
+                {
+                    ShaderVariable info;
+                    const char kName[] = "gl_NumSamples";
+                    info.name          = kName;
+                    info.mappedName    = kName;
+                    info.type          = GL_INT;
+                    info.precision     = GL_LOW_INT;
+                    info.staticUse     = true;
+                    info.active        = true;
+
+                    // Note: gl_NumSamples is considered a uniform
+                    mUniforms->push_back(info);
+                    mNumSamplesAdded = true;
+                }
+                break;
             case EvqPatchVerticesIn:
                 recordBuiltInVaryingUsed(symbol->variable(), &mPatchVerticesInAdded,
                                          mInputVaryings);
@@ -751,6 +753,7 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
                                                              bool staticUse,
                                                              bool isShaderIOBlock,
                                                              bool isPatch,
+                                                             const bool isUniform,
                                                              ShaderVariable *variableOut) const
 {
     ASSERT(variableOut);
@@ -780,7 +783,7 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
             // ShaderVariable objects.
             ShaderVariable fieldVariable;
             setFieldProperties(*field->type(), field->name(), staticUse, isShaderIOBlock, isPatch,
-                               field->symbolType(), &fieldVariable);
+                               isUniform, field->symbolType(), &fieldVariable);
             variableOut->fields.push_back(fieldVariable);
         }
     }
@@ -802,7 +805,7 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
         {
             ShaderVariable fieldVariable;
 
-            setFieldProperties(*field->type(), field->name(), staticUse, true, isPatch,
+            setFieldProperties(*field->type(), field->name(), staticUse, true, isPatch, false,
                                field->symbolType(), &fieldVariable);
             fieldVariable.isShaderIOBlock = true;
             variableOut->fields.push_back(fieldVariable);
@@ -812,6 +815,11 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
     {
         variableOut->type      = GLVariableType(type);
         variableOut->precision = GLVariablePrecision(type);
+        if (mTransformFloatUniformToFP16 && isUniform && type.getBasicType() == EbtFloat &&
+            type.getPrecision() < EbpHigh)
+        {
+            variableOut->isFloat16 = true;
+        }
     }
 
     const angle::Span<const unsigned int> &arraySizes = type.getArraySizes();
@@ -847,11 +855,12 @@ void CollectVariablesTraverser::setFieldProperties(const TType &type,
                                                    bool staticUse,
                                                    bool isShaderIOBlock,
                                                    bool isPatch,
+                                                   const bool isUniform,
                                                    SymbolType symbolType,
                                                    ShaderVariable *variableOut) const
 {
     ASSERT(variableOut);
-    setFieldOrVariableProperties(type, staticUse, isShaderIOBlock, isPatch, variableOut);
+    setFieldOrVariableProperties(type, staticUse, isShaderIOBlock, isPatch, isUniform, variableOut);
     variableOut->name.assign(name.data(), name.length());
     variableOut->mappedName =
         (symbolType == SymbolType::BuiltIn)
@@ -861,6 +870,7 @@ void CollectVariablesTraverser::setFieldProperties(const TType &type,
 
 void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
                                                             const TVariable &variable,
+                                                            const bool isUniform,
                                                             ShaderVariable *variableOut) const
 {
     ASSERT(variableOut);
@@ -871,7 +881,7 @@ void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
     const bool isShaderIOBlock = type.getInterfaceBlock() != nullptr;
     const bool isPatch = type.getQualifier() == EvqPatchIn || type.getQualifier() == EvqPatchOut;
 
-    setFieldOrVariableProperties(type, staticUse, isShaderIOBlock, isPatch, variableOut);
+    setFieldOrVariableProperties(type, staticUse, isShaderIOBlock, isPatch, isUniform, variableOut);
 
     const bool isNamed = variable.symbolType() != SymbolType::Empty;
 
@@ -903,7 +913,7 @@ ShaderVariable CollectVariablesTraverser::recordAttribute(const TIntermSymbol &v
     ASSERT(!type.getStruct());
 
     ShaderVariable attribute;
-    setCommonVariableProperties(type, variable.variable(), &attribute);
+    setCommonVariableProperties(type, variable.variable(), false, &attribute);
 
     attribute.location = type.getLayoutQualifier().location;
     return attribute;
@@ -915,7 +925,7 @@ ShaderVariable CollectVariablesTraverser::recordOutputVariable(const TIntermSymb
     ASSERT(!type.getStruct());
 
     ShaderVariable outputVariable;
-    setCommonVariableProperties(type, variable.variable(), &outputVariable);
+    setCommonVariableProperties(type, variable.variable(), false, &outputVariable);
 
     outputVariable.location = type.getLayoutQualifier().location;
     outputVariable.index    = type.getLayoutQualifier().index;
@@ -928,7 +938,7 @@ ShaderVariable CollectVariablesTraverser::recordVarying(const TIntermSymbol &var
     const TType &type = variable.getType();
 
     ShaderVariable varying;
-    setCommonVariableProperties(type, variable.variable(), &varying);
+    setCommonVariableProperties(type, variable.variable(), false, &varying);
     varying.location = type.getLayoutQualifier().location;
 
     switch (type.getQualifier())
@@ -1081,8 +1091,8 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
         }
 
         ShaderVariable fieldVariable;
-        setFieldProperties(fieldType, field->name(), staticUse, false, false, field->symbolType(),
-                           &fieldVariable);
+        setFieldProperties(fieldType, field->name(), staticUse, false, false, false,
+                           field->symbolType(), &fieldVariable);
         fieldVariable.isRowMajorLayout =
             (fieldType.getLayoutQualifier().matrixPacking == EmpRowMajor);
         interfaceBlock->fields.push_back(fieldVariable);
@@ -1106,7 +1116,16 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
 ShaderVariable CollectVariablesTraverser::recordUniform(const TIntermSymbol &variable) const
 {
     ShaderVariable uniform;
-    setCommonVariableProperties(variable.getType(), variable.variable(), &uniform);
+    // For mediump and lowp float uniforms, if mTransformFloatUniformToFP16 is true, we will change
+    // data type from 32-bit float to 16-bit float later in Spirv. Pass this information to
+    // the ShaderVariable so that the frontend are aware of the data type change and will transform
+    // the data type from 32-bit float to 16-bit float before writing the uniform data to memory.
+    if (mTransformFloatUniformToFP16 && (variable.getBasicType() == EbtFloat) &&
+        variable.getPrecision() < EbpHigh)
+    {
+        uniform.isFloat16 = true;
+    }
+    setCommonVariableProperties(variable.getType(), variable.variable(), true, &uniform);
     uniform.binding = variable.getType().getLayoutQualifier().binding;
     uniform.imageUnitFormat =
         GetImageInternalFormatType(variable.getType().getLayoutQualifier().imageInternalFormat);
@@ -1292,11 +1311,7 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
         }
         else if (qualifier != EvqPixelLocalEXT)
         {
-
-            if (!namedBlock)
-            {
-                namedBlock = findNamedInterfaceBlock(interfaceBlock->name());
-            }
+            namedBlock = findNamedInterfaceBlock(interfaceBlock->name());
             ASSERT(namedBlock);
             ASSERT(namedBlock->staticUse);
             namedBlock->active      = true;
@@ -1337,12 +1352,14 @@ void CollectVariables(TIntermBlock *root,
                       GLenum shaderType,
                       const TExtensionBehavior &extensionBehavior,
                       const ShBuiltInResources &resources,
-                      int tessControlShaderOutputVertices)
+                      int tessControlShaderOutputVertices,
+                      const bool transformFloatUniformToFP16)
 {
-    CollectVariablesTraverser collect(
-        attributes, outputVariables, uniforms, inputVaryings, outputVaryings, sharedVariables,
-        uniformBlocks, shaderStorageBlocks, userVariablePrefix, hashFunction, symbolTable,
-        shaderType, extensionBehavior, resources, tessControlShaderOutputVertices);
+    CollectVariablesTraverser collect(attributes, outputVariables, uniforms, inputVaryings,
+                                      outputVaryings, sharedVariables, uniformBlocks,
+                                      shaderStorageBlocks, userVariablePrefix, hashFunction,
+                                      symbolTable, shaderType, extensionBehavior, resources,
+                                      tessControlShaderOutputVertices, transformFloatUniformToFP16);
     root->traverse(&collect);
 }
 

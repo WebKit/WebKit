@@ -34,7 +34,7 @@ public:
     using DOMWrapped = WorkletGlobalScope;
     static JSWorkletGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<WorkletGlobalScope>&& impl, JSC::JSGlobalProxy* proxy)
     {
-        JSWorkletGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSWorkletGlobalScope>(vm)) JSWorkletGlobalScope(vm, structure, WTFMove(impl));
+        JSWorkletGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSWorkletGlobalScope>(vm)) JSWorkletGlobalScope(vm, structure, WTF::move(impl));
         ptr->finishCreation(vm, proxy);
         return ptr;
     }
@@ -63,8 +63,6 @@ public:
     {
         return static_cast<WorkletGlobalScope&>(Base::wrapped());
     }
-
-    Ref<WorkletGlobalScope> protectedWrapped() const;
 
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;

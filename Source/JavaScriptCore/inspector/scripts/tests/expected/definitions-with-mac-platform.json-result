@@ -106,6 +106,8 @@ InspectorBackend.activateDomain("Network", null);
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include "TestProtocolObjects.h"
@@ -116,7 +118,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -290,7 +292,7 @@ void NetworkBackendDispatcher::dispatch(long protocol_requestId, const String& p
 
 #if COMMAND-MAC
     if (protocol_method == "loadResource"_s) {
-        loadResource(protocol_requestId, WTFMove(protocol_parameters));
+        loadResource(protocol_requestId, WTF::move(protocol_parameters));
         return;
     }
 #endif // COMMAND-MAC
@@ -316,7 +318,7 @@ void NetworkBackendDispatcher::loadResource(long protocol_requestId, RefPtr<JSON
     }
 
     auto protocol_jsonMessage = JSON::Object::create();
-    m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
+    m_backendDispatcher->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
 }
 #endif // COMMAND-MAC
 #endif // DOMAIN-MAC
@@ -477,6 +479,7 @@ void NetworkFrontendDispatcher::resourceLoaded()
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
@@ -533,7 +536,7 @@ public:
         }
 
         Builder(Ref<NetworkError>&& object)
-            : m_result(WTFMove(object))
+            : m_result(WTF::move(object))
         {
             static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
@@ -749,7 +752,7 @@ void ObjCInspectorNetworkBackendDispatcher::loadResource(long protocol_requestId
 
     id successCallback = ^{
         auto protocol_jsonMessage = JSON::Object::create();
-        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
+        backendDispatcher()->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
     };
 
     [m_delegate loadResourceWithErrorCallback:errorCallback successCallback:successCallback];
@@ -873,8 +876,8 @@ using namespace Inspector;
     _networkHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorNetworkBackendDispatcher>(handler);
-    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<NetworkBackendDispatcher, AlternateNetworkBackendDispatcher>>("Network"_s, *_controller, WTFMove(alternateDispatcher));
-    _controller->registerAlternateAgent(WTFMove(alternateAgent));
+    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<NetworkBackendDispatcher, AlternateNetworkBackendDispatcher>>("Network"_s, *_controller, WTF::move(alternateDispatcher));
+    _controller->registerAlternateAgent(WTF::move(alternateAgent));
 }
 
 - (id<TestProtocolNetworkDomainHandler>)networkHandler

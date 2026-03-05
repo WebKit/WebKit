@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</head>
+<body>
+
+    <input type="checkbox" switch>
+    <input type="checkbox" switch disabled>
+    <input type="checkbox" switch style="transform: scale(2); transform-origin: top left;">
+
+</body>
+</html>

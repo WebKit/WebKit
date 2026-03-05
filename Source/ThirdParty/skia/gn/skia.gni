@@ -77,8 +77,10 @@ declare_args() {
   # Currently only supported in Android framework
   skia_android_framework_use_perfetto = false
   skia_use_piex = !is_win && !is_wasm
+  skia_use_rust_icc = false
   skia_use_rust_png_decode = false
   skia_use_rust_png_encode = false
+  skia_use_rust_bmp_decode = false
   skia_use_sfml = false
   skia_use_webgl = is_wasm
   skia_use_webgpu = is_wasm
@@ -103,6 +105,20 @@ declare_args() {
   }
 
   skia_build_rust_targets = false
+
+  # PartitionAlloc is Chrome's memory allocator.
+  #
+  # This is useful to:
+  # - Align Skia benchmark results closer with in-browser behavior.
+  # - Expand UAFs vulnerabilities protection to Skia's internal pointers.
+  #
+  # While GCC is supported, it lacks CI coverage to catch regressions.
+  # Therefore, we disable it by default on GCC builds.
+  #
+  # TODO(b/351867706): Re-enable. One Android test reaches PA_NOTREACHED() at
+  # the moment.
+  skia_use_partition_alloc = false
+  skia_partition_alloc_dir = "//third_party/externals/partition_alloc"
 }
 
 declare_args() {

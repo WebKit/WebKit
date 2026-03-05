@@ -28,6 +28,7 @@
 #if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO) && USE(GSTREAMER)
 #include "CoordinatedPlatformLayerBuffer.h"
 #include "GStreamerCommon.h"
+#include "VideoFrameGStreamer.h"
 
 namespace WebCore {
 
@@ -35,8 +36,8 @@ using DMABufFormat = std::pair<uint32_t, uint64_t>;
 
 class CoordinatedPlatformLayerBufferVideo final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(GstSample*, GstVideoInfo*, std::optional<DMABufFormat>, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
-    CoordinatedPlatformLayerBufferVideo(GstBuffer*, GstVideoInfo*, std::optional<std::pair<uint32_t, uint64_t>>, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
@@ -44,17 +45,17 @@ public:
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(GstBuffer*, GstVideoInfo*, std::optional<std::pair<uint32_t, uint64_t>>, bool gstGLEnabled);
-#if USE(GBM)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory(GstBuffer*, GstVideoInfo*, std::optional<std::pair<uint32_t, uint64_t>>);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(bool gstGLEnabled);
+#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory();
 #endif
 #if USE(GSTREAMER_GL)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory(GstBuffer*, GstVideoInfo*);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory();
 #endif
 
-    GstVideoFrame m_videoFrame;
+    Ref<VideoFrameGStreamer> m_videoFrame;
+    std::optional<GstMappedFrame> m_mappedVideoFrame;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    bool m_isMapped { false };
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 

@@ -30,6 +30,10 @@
 #include "FEMorphologySoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEMorphologyCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radiusX, float radiusY, DestinationColorSpace colorSpace)
@@ -84,6 +88,24 @@ FloatRect FEMorphology::calculateImageRect(const Filter& filter, std::span<const
     auto imageRect = inputImageRects[0];
     imageRect.inflate(filter.resolvedSize({ m_radiusX, m_radiusY }));
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
+}
+
+OptionSet<FilterRenderingMode> FEMorphology::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEMorphology::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEMorphologyCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 bool FEMorphology::resultIsAlphaImage(std::span<const Ref<FilterImage>> inputs) const

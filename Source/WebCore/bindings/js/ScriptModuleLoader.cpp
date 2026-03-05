@@ -90,7 +90,7 @@ UniqueRef<ScriptModuleLoader> ScriptModuleLoader::shadowRealmLoader(JSC::JSGloba
     return loader;
 }
 
-static bool isRootModule(JSC::JSValue importerModuleKey)
+static bool NODELETE isRootModule(JSC::JSValue importerModuleKey)
 {
     return importerModuleKey.isSymbol() || importerModuleKey.isUndefined();
 }
@@ -136,7 +136,7 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject,
     if (!result) {
         auto* error = JSC::createTypeError(jsGlobalObject, result.error());
         ASSERT(error);
-        error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(ModuleFetchFailureKind::WasResolveError)));
+        error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(std::to_underlying(ModuleFetchFailureKind::WasResolveError)));
         JSC::throwException(jsGlobalObject, scope, error);
         return { };
     }
@@ -146,7 +146,7 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject,
 
 static void rejectToPropagateNetworkError(ScriptExecutionContext& context, Ref<DeferredPromise>&& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)
 {
-    context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTFMove(deferred), failureKind, message]() {
+    context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTF::move(deferred), failureKind, message]() {
         deferred->rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
             // We annotate exception with special private symbol. It allows us to distinguish these errors from the user thrown ones.
             JSC::VM& vm = jsGlobalObject.vm();
@@ -154,7 +154,7 @@ static void rejectToPropagateNetworkError(ScriptExecutionContext& context, Ref<D
             // https://bugs.webkit.org/show_bug.cgi?id=167553
             auto* error = JSC::createTypeError(&jsGlobalObject, message);
             ASSERT(error);
-            error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(failureKind)));
+            error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(std::to_underlying(failureKind)));
             return error;
         });
     });
@@ -163,12 +163,12 @@ static void rejectToPropagateNetworkError(ScriptExecutionContext& context, Ref<D
 static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPromise>&& deferred, ExceptionCode ec, String&& message)
 {
     // Used to signal to the promise client that the failure was from a fetch, but not one that was propagated from another context.
-    context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTFMove(deferred), ec, message = WTFMove(message)]() {
+    context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTF::move(deferred), ec, message = WTF::move(message)]() {
         deferred->rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
             JSC::VM& vm = jsGlobalObject.vm();
             JSC::JSObject* error = JSC::jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
             ASSERT(error);
-            error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(ModuleFetchFailureKind::WasFetchError)));
+            error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(std::to_underlying(ModuleFetchFailureKind::WasFetchError)));
             return error;
         });
     });
@@ -187,12 +187,12 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     if (moduleKeyValue.isSymbol()) {
-        rejectWithFetchError(*m_context, WTFMove(deferred), ExceptionCode::TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
+        rejectWithFetchError(*m_context, WTF::move(deferred), ExceptionCode::TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
         return jsPromise;
     }
 
     if (!moduleKeyValue.isString()) {
-        rejectWithFetchError(*m_context, WTFMove(deferred), ExceptionCode::TypeError, "Module key is not Symbol or String."_s);
+        rejectWithFetchError(*m_context, WTF::move(deferred), ExceptionCode::TypeError, "Module key is not Symbol or String."_s);
         return jsPromise;
     }
 
@@ -200,7 +200,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     URL completedURL { asString(moduleKeyValue)->value(jsGlobalObject) };
     if (!completedURL.isValid()) {
-        rejectWithFetchError(*m_context, WTFMove(deferred), ExceptionCode::TypeError, "Module key is a valid URL."_s);
+        rejectWithFetchError(*m_context, WTF::move(deferred), ExceptionCode::TypeError, "Module key is a valid URL."_s);
         return jsPromise;
     }
 
@@ -209,22 +209,22 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
         parameters = scriptFetchParameters->parameters();
 
     if (m_ownerType == OwnerType::Document) {
-        auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(parameters));
+        Ref loader = CachedModuleScriptLoader::create(*this, deferred.get(), *downcast<CachedScriptFetcher>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTF::move(parameters));
         m_loaders.add(loader.copyRef());
 
         // Prevent non-normal worlds from loading with a service worker.
         auto serviceWorkersMode = currentWorld(*jsGlobalObject).isNormal() ? ServiceWorkersMode::All : ServiceWorkersMode::None;
 
-        if (!loader->load(downcast<Document>(*m_context), WTFMove(completedURL), serviceWorkersMode)) {
+        if (!loader->load(downcast<Document>(*m_context), WTF::move(completedURL), serviceWorkersMode)) {
             loader->clearClient();
-            m_loaders.remove(WTFMove(loader));
-            rejectToPropagateNetworkError(*m_context, WTFMove(deferred), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
+            m_loaders.remove(WTF::move(loader));
+            rejectToPropagateNetworkError(*m_context, WTF::move(deferred), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
             return jsPromise;
         }
     } else {
-        auto loader = WorkerModuleScriptLoader::create(*this, deferred.get(), *static_cast<WorkerScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(parameters));
+        Ref loader = WorkerModuleScriptLoader::create(*this, deferred.get(), *downcast<WorkerScriptFetcher>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTF::move(parameters));
         m_loaders.add(loader.copyRef());
-        loader->load(*m_context, WTFMove(completedURL));
+        loader->load(*m_context, WTF::move(completedURL));
     }
 
     return jsPromise;
@@ -291,7 +291,7 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
         if (RefPtr frame = downcast<Document>(*m_context).frame())
             RELEASE_AND_RETURN(scope, frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
     } else {
-        if (auto* script = downcast<WorkerOrWorkletGlobalScope>(*m_context).script())
+        if (CheckedPtr script = downcast<WorkerOrWorkletGlobalScope>(*m_context).script())
             RELEASE_AND_RETURN(scope, script->evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
     }
     return JSC::jsUndefined();
@@ -301,7 +301,7 @@ static JSC::JSInternalPromise* rejectPromise(ScriptExecutionContext& context, JS
 {
     auto* jsPromise = JSC::JSInternalPromise::create(globalObject.vm(), globalObject.internalPromiseStructure());
     RELEASE_ASSERT(jsPromise);
-    rejectWithFetchError(context, DeferredPromise::create(globalObject, *jsPromise), ec, WTFMove(message));
+    rejectWithFetchError(context, DeferredPromise::create(globalObject, *jsPromise), ec, WTF::move(message));
     return jsPromise;
 }
 
@@ -356,9 +356,9 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
         parameters = ModuleFetchParameters::create(type, emptyString(), /* isTopLevelModule */ true);
 
         if (m_ownerType == OwnerType::Document) {
-            auto& document = downcast<Document>(*m_context);
-            baseURL = document.baseURL();
-            scriptFetcher = CachedScriptFetcher::create(document.charset());
+            CheckedRef document = downcast<Document>(*m_context);
+            baseURL = document->baseURL();
+            scriptFetcher = CachedScriptFetcher::create(document->charset());
         } else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#default-classic-script-fetch-options
             baseURL = m_context->url();
@@ -384,7 +384,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-an-import()-module-script-graph
             // Destination should be "script" for dynamic-import.
             if (m_ownerType == OwnerType::WorkerOrWorklet) {
-                auto& fetcher = static_cast<WorkerScriptFetcher&>(*scriptFetcher);
+                auto& fetcher = downcast<WorkerScriptFetcher>(*scriptFetcher);
                 scriptFetcher = WorkerScriptFetcher::create(*parameters, fetcher.credentials(), destination, fetcher.referrerPolicy());
             }
         }
@@ -401,7 +401,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     ASSERT(parameters);
 
     RETURN_IF_EXCEPTION(scope, reject(scope));
-    RELEASE_AND_RETURN(scope, JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, specifier), JSC::jsString(vm, baseURL.string()), JSC::JSScriptFetchParameters::create(vm, parameters.releaseNonNull()), JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher))));
+    RELEASE_AND_RETURN(scope, JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, specifier), JSC::jsString(vm, baseURL.string()), JSC::JSScriptFetchParameters::create(vm, parameters.releaseNonNull()), JSC::JSScriptFetcher::create(vm, WTF::move(scriptFetcher))));
 }
 
 JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSModuleRecord*, JSC::JSValue)
@@ -433,7 +433,7 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
         if (!domGlobalObject) [[unlikely]]
             return JSC::throwVMTypeError(globalObject, scope);
 
-        auto* context = domGlobalObject->scriptExecutionContext();
+        CheckedPtr context = domGlobalObject->scriptExecutionContext();
         if (!context) [[unlikely]]
             return JSC::throwVMTypeError(globalObject, scope);
 
@@ -474,21 +474,21 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
     JSC::SourceCode sourceCode;
     if (m_ownerType == OwnerType::Document) {
-        auto& loader = static_cast<CachedModuleScriptLoader&>(moduleScriptLoader);
+        auto& loader = downcast<CachedModuleScriptLoader>(moduleScriptLoader);
         auto& cachedScript = *loader.cachedScript();
 
         if (cachedScript.resourceError().isAccessControl()) {
-            rejectToPropagateNetworkError(*context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
+            rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
             return;
         }
 
         if (cachedScript.errorOccurred()) {
-            rejectToPropagateNetworkError(*context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
+            rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
             return;
         }
 
         if (cachedScript.wasCanceled()) {
-            rejectToPropagateNetworkError(*context, WTFMove(promise), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
+            rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
             return;
         }
 
@@ -506,7 +506,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            rejectWithFetchError(*context, WTFMove(promise), ExceptionCode::TypeError, makeString('\'', cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."_s));
+            rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, makeString('\'', cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."_s));
             return;
         }
 
@@ -519,13 +519,13 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         if (!integrity.isEmpty()) {
             if (!matchIntegrityMetadata(cachedScript, integrity)) {
                 context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(cachedScript, integrity)));
-                rejectWithFetchError(*context, WTFMove(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
+                rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
                 return;
             }
         }
 
         URL responseURL = canonicalizeAndRegisterResponseURL(cachedScript.response().url(), cachedScript.hasRedirections(), cachedScript.response().source());
-        m_requestURLToResponseURLMap.add(sourceURL.string(), WTFMove(responseURL));
+        m_requestURLToResponseURLMap.add(sourceURL.string(), WTF::move(responseURL));
         switch (type) {
         case ModuleType::JavaScript:
             sourceCode = JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
@@ -542,23 +542,23 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             RELEASE_ASSERT_NOT_REACHED();
         }
     } else {
-        auto& loader = static_cast<WorkerModuleScriptLoader&>(moduleScriptLoader);
+        auto& loader = downcast<WorkerModuleScriptLoader>(moduleScriptLoader);
 
         if (loader.failed()) {
             ASSERT(!loader.retrievedFromServiceWorkerCache());
             auto& workerScriptLoader = loader.scriptLoader();
             ASSERT(workerScriptLoader.failed());
             if (workerScriptLoader.error().isAccessControl()) {
-                rejectToPropagateNetworkError(*context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
+                rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
                 return;
             }
 
             if (workerScriptLoader.error().isCancellation()) {
-                rejectToPropagateNetworkError(*context, WTFMove(promise), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
+                rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
                 return;
             }
 
-            rejectToPropagateNetworkError(*context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
+            rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
             return;
         }
 
@@ -576,7 +576,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            rejectWithFetchError(*context, WTFMove(promise), ExceptionCode::TypeError, makeString('\'', loader.responseMIMEType(), "' is not a valid JavaScript MIME type."_s));
+            rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, makeString('\'', loader.responseMIMEType(), "' is not a valid JavaScript MIME type."_s));
             return;
         }
 
@@ -586,7 +586,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             if (auto* parameters = loader.parameters()) {
                 // If this is top-level-module, then we extract referrer-policy and apply to the dependent modules.
                 if (parameters->isTopLevelModule())
-                    static_cast<WorkerScriptFetcher&>(loader.scriptFetcher()).setReferrerPolicy(loader.referrerPolicy());
+                    downcast<WorkerScriptFetcher>(loader.scriptFetcher()).setReferrerPolicy(loader.referrerPolicy());
             }
             responseURL = canonicalizeAndRegisterResponseURL(responseURL, workerScriptLoader.isRedirected(), workerScriptLoader.responseSource());
             if (auto* globalScope = dynamicDowncast<ServiceWorkerGlobalScope>(*context))
@@ -596,22 +596,22 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         switch (type) {
         case ModuleType::JavaScript:
-            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), WTFMove(sourceURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
+            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTF::move(responseURL), WTF::move(sourceURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
             break;
 #if ENABLE(WEBASSEMBLY)
         case ModuleType::WebAssembly:
-            sourceCode = JSC::SourceCode { WebAssemblyScriptSourceCode { loader.script(), WTFMove(responseURL), loader.scriptFetcher() }.jsSourceCode() };
+            sourceCode = JSC::SourceCode { WebAssemblyScriptSourceCode { loader.script(), WTF::move(responseURL), loader.scriptFetcher() }.jsSourceCode() };
             break;
 #endif
         case ModuleType::JSON:
-            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), WTFMove(sourceURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
+            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTF::move(responseURL), WTF::move(sourceURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
-    context->checkedEventLoop()->queueTask(TaskSource::Networking, [promise = WTFMove(promise), sourceCode = WTFMove(sourceCode)]() {
+    protect(context->eventLoop())->queueTask(TaskSource::Networking, [promise = WTF::move(promise), sourceCode = WTF::move(sourceCode)]() {
         promise->resolveWithCallback([&, sourceCode](JSDOMGlobalObject& jsGlobalObject) {
             return JSC::JSSourceCode::create(jsGlobalObject.vm(), JSC::SourceCode { sourceCode });
         });

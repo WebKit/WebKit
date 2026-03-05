@@ -40,12 +40,12 @@ public:
     static std::optional<Type> listConversionType(Document&);
     static Ref<ChangeListTypeCommand> create(Ref<Document>&& document, Type type)
     {
-        return adoptRef(*new ChangeListTypeCommand(WTFMove(document), type));
+        return adoptRef(*new ChangeListTypeCommand(WTF::move(document), type));
     }
 
 private:
     ChangeListTypeCommand(Ref<Document>&& document, Type type)
-        : CompositeEditCommand(WTFMove(document))
+        : CompositeEditCommand(WTF::move(document))
         , m_type(type)
     {
     }

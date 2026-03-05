@@ -29,9 +29,9 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
-#import "MediaConfiguration.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlayer.h"
+#import "PlatformMediaConfiguration.h"
 #import "PlatformMediaSession.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
@@ -47,9 +47,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManageriOS);
 
 RefPtr<PlatformMediaSessionManager> PlatformMediaSessionManager::create(PageIdentifier pageIdentifier)
 {
-    auto manager = adoptRef(new MediaSessionManageriOS(pageIdentifier));
-    MediaSessionHelper::sharedHelper().addClient(*manager);
+    Ref manager = MediaSessionManageriOS::create(pageIdentifier);
+    MediaSessionHelper::sharedHelper().addClient(manager);
     return manager;
+}
+
+Ref<MediaSessionManageriOS> MediaSessionManageriOS::create(PageIdentifier pageIdentifier)
+{
+    return adoptRef(*new MediaSessionManageriOS(pageIdentifier));
 }
 
 MediaSessionManageriOS::MediaSessionManageriOS(PageIdentifier pageIdentifier)
@@ -117,20 +122,34 @@ void MediaSessionManageriOS::configureWirelessTargetMonitoring()
 #endif
 }
 
-bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSessionInterface& session)
+void MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!MediaSessionManagerCocoa::sessionWillBeginPlayback(session))
-        return false;
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    MediaSessionManagerCocoa::sessionWillBeginPlayback(session, [weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler), strongSession = RefPtr { &session }, logSiteIdentifier = WTF::move(logSiteIdentifier)](bool canBegin) mutable {
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
-    auto playbackTargetSupportsAirPlayVideo = MediaSessionHelper::sharedHelper().activeVideoRouteSupportsAirPlayVideo();
-    ALWAYS_LOG(LOGIDENTIFIER, "Playback Target Supports AirPlay Video = ", playbackTargetSupportsAirPlayVideo);
-    if (auto target = MediaSessionHelper::sharedHelper().playbackTarget(); target && playbackTargetSupportsAirPlayVideo)
-        session.setPlaybackTarget(*target);
-    session.setShouldPlayToPlaybackTarget(playbackTargetSupportsAirPlayVideo);
+        UNUSED_PARAM(logSiteIdentifier);
+
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
+            completionHandler(false);
+            return;
+        }
+
+        if (!canBegin) {
+            completionHandler(false);
+            return;
+        }
+
+#if PLATFORM(IOS_FAMILY)
+        auto playbackTargetSupportsAirPlayVideo = MediaSessionHelper::sharedHelper().activeVideoRouteSupportsAirPlayVideo();
+        ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "Playback Target Supports AirPlay Video = ", playbackTargetSupportsAirPlayVideo);
+        if (auto target = MediaSessionHelper::sharedHelper().playbackTarget(); target && playbackTargetSupportsAirPlayVideo)
+            strongSession->setPlaybackTarget(*target);
+        strongSession->setShouldPlayToPlaybackTarget(playbackTargetSupportsAirPlayVideo);
 #endif
 
-    return true;
+        completionHandler(true);
+    });
 }
 
 void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSessionInterface& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)
@@ -162,7 +181,7 @@ void MediaSessionManageriOS::activeAudioRouteSupportsSpatialPlaybackDidChange(Su
     setSupportsSpatialAudioPlayback(supportsSpatialPlayback == SupportsSpatialAudioPlayback::Yes);
 }
 
-std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration& configuration)
+std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration& configuration)
 {
     ASSERT(configuration.audio);
 
@@ -205,7 +224,7 @@ void MediaSessionManageriOS::activeVideoRouteDidChange(SupportsAirPlayVideo supp
     if (!nowPlayingSession)
         return;
 
-    nowPlayingSession->setPlaybackTarget(WTFMove(playbackTarget));
+    nowPlayingSession->setPlaybackTarget(WTF::move(playbackTarget));
     nowPlayingSession->setShouldPlayToPlaybackTarget(supportsAirPlayVideo == SupportsAirPlayVideo::Yes);
 }
 

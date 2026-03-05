@@ -60,7 +60,7 @@ public:
         // We need to pass in the right global object for "array".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<JSObservableArray>(lexicalGlobalObject);
         JSObservableArray* observableArray = new (NotNull, allocateCell<JSObservableArray>(vm)) JSObservableArray(vm, domStructure);
-        observableArray->finishCreation(vm, WTFMove(array));
+        observableArray->finishCreation(vm, WTF::move(array));
         return observableArray;
     }
 
@@ -97,7 +97,7 @@ private:
     JSObservableArray(VM&, Structure*);
     void finishCreation(VM&, Ref<ObservableArray>&&);
 
-    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
 
     RefPtr<ObservableArray> m_array;
 };

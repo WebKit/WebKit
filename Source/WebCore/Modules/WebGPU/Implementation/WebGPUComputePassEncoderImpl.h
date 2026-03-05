@@ -41,7 +41,7 @@ class ComputePassEncoderImpl final : public ComputePassEncoder {
 public:
     static Ref<ComputePassEncoderImpl> create(WebGPUPtr<WGPUComputePassEncoder>&& computePassEncoder, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new ComputePassEncoderImpl(WTFMove(computePassEncoder), convertToBackingContext));
+        return adoptRef(*new ComputePassEncoderImpl(WTF::move(computePassEncoder), convertToBackingContext));
     }
 
     virtual ~ComputePassEncoderImpl();
@@ -57,6 +57,7 @@ private:
     ComputePassEncoderImpl& operator=(ComputePassEncoderImpl&&) = delete;
 
     WGPUComputePassEncoder backing() const { return m_backing.get(); }
+    bool isComputePassEncoderImpl() const final { return true; }
 
     void setPipeline(const ComputePipeline&) final;
     void dispatch(Size32 workgroupCountX, Size32 workgroupCountY, Size32 workgroupCountZ) final;
@@ -67,7 +68,7 @@ private:
     void setBindGroup(Index32, const BindGroup*,
         std::optional<Vector<BufferDynamicOffset>>&&) final;
 
-    void setBindGroup(Index32, const BindGroup*,
+    void NODELETE setBindGroup(Index32, const BindGroup*,
         std::span<const uint32_t> dynamicOffsetsArrayBuffer,
         Size64 dynamicOffsetsDataStart,
         Size32 dynamicOffsetsDataLength) final;
@@ -83,5 +84,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::ComputePassEncoderImpl)
+    static bool isType(const WebCore::WebGPU::ComputePassEncoder& encoder) { return encoder.isComputePassEncoderImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

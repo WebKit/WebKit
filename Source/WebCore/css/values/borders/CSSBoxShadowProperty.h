@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/CSSBoxShadow.h>
+#include "CSSBoxShadow.h"
 
 namespace WebCore {
 namespace CSS {

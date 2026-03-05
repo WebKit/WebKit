@@ -226,7 +226,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     localFrame->selection().setSelection(oldSelection);
     frameView->setPaintBehavior(oldPaintBehavior);
 
-    auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
+    auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)));
     if (!image)
         return nil;
 
@@ -275,17 +275,17 @@ void WebContextMenuClient::showContextMenu()
     if (!frameView)
         return;
 
-    NSView* view = frameView->documentView();
+    RetainPtr view = frameView->documentView();
     IntPoint point = frameView->contentsToWindow(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
-    NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
+    NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:[[view.get() window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
 
     // Show the contextual menu for this event.
     bool isServicesMenu;
-    if (NSMenu *menu = contextMenuForEvent(event, view, isServicesMenu)) {
+    if (RetainPtr menu = contextMenuForEvent(event, view.get(), isServicesMenu)) {
         if (isServicesMenu)
-            [menu popUpMenuPositioningItem:nil atLocation:[view convertPoint:point toView:nil] inView:view];
+            [menu.get() popUpMenuPositioningItem:nil atLocation:[view.get() convertPoint:point toView:nil] inView:view.get()];
         else
-            [NSMenu popUpContextMenu:menu withEvent:event forView:view];
+            [NSMenu popUpContextMenu:menu.get() withEvent:event forView:view.get()];
     }
 }
 

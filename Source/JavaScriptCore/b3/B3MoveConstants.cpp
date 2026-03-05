@@ -54,14 +54,14 @@ public:
     {
         hoistConstants(
             [&] (const Value* value) -> bool {
-                return value->opcode() == ConstFloat || value->opcode() == ConstDouble || value->opcode() == Const128;
+                return value->opcode() == ConstDouble || value->opcode() == Const128;
             });
 
         lowerMaterializationCostHeavyConstants();
-        
+
         hoistConstants(
             [&] (const Value* value) -> bool {
-                return value->opcode() == Const32 || value->opcode() == Const64 || value->opcode() == ArgumentReg;
+                return value->opcode() == Const32 || value->opcode() == ConstFloat || value->opcode() == Const64 || value->opcode() == ArgumentReg;
             });
     }
 
@@ -263,7 +263,6 @@ private:
 
     void lowerMaterializationCostHeavyConstants()
     {
-        unsigned floatSize = 0;
         unsigned doubleSize = 0;
         unsigned v128Size = 0;
         UncheckedKeyHashMap<ValueKey, unsigned> constTable;
@@ -279,9 +278,6 @@ private:
             case ConstDouble:
                 constTable.add(key, doubleSize++);
                 break;
-            case ConstFloat:
-                constTable.add(key, floatSize++);
-                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -294,15 +290,13 @@ private:
                 return sizeof(v128_t) * indexInKind;
             case ConstDouble:
                 return sizeof(v128_t) * v128Size + sizeof(double) * indexInKind;
-            case ConstFloat:
-                return sizeof(v128_t) * v128Size + sizeof(double) * doubleSize + sizeof(float) * indexInKind;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
         };
 
-        uint8_t* dataSection = static_cast<uint8_t*>(m_proc.addDataSection(sizeof(v128_t) * v128Size + sizeof(double) * doubleSize + sizeof(float) * floatSize));
+        uint8_t* dataSection = static_cast<uint8_t*>(m_proc.addDataSection(sizeof(v128_t) * v128Size + sizeof(double) * doubleSize));
         for (auto& entry : constTable) {
             auto* pointer = dataSection + getOffset(entry.key.opcode(), entry.value);
             switch (entry.key.opcode()) {
@@ -311,9 +305,6 @@ private:
                 break;
             case ConstDouble:
                 *std::bit_cast<double*>(pointer) = entry.key.doubleValue();
-                break;
-            case ConstFloat:
-                *std::bit_cast<float*>(pointer) = entry.key.floatValue();
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -388,11 +379,8 @@ private:
         case ConstDouble: {
             return !Air::Arg::isValidFPImm64Form(std::bit_cast<uint64_t>(value->asDouble()));
         }
-        case ConstFloat: {
-            return !Air::Arg::isValidFPImm32Form(std::bit_cast<uint32_t>(value->asFloat()));
-        }
         case Const128: {
-            return !bitEquals(value->asV128(), v128_t { });
+            return !Air::Arg::isValidFPImm128Form(value->asV128());
         }
         default:
             break;

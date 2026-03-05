@@ -54,7 +54,7 @@ public:
     virtual void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters)
     {
         if constexpr (HasSingleton)
-            AuxiliaryProcessType::singleton().initialize(WTFMove(parameters));
+            AuxiliaryProcessType::singleton().initialize(WTF::move(parameters));
     }
 
     int run(int argc, char** argv)
@@ -73,7 +73,7 @@ public:
 
         InitializeWebKit2();
 
-        initializeAuxiliaryProcess(WTFMove(m_parameters));
+        initializeAuxiliaryProcess(WTF::move(m_parameters));
         RunLoop::run();
         platformFinalize();
 
@@ -88,7 +88,7 @@ public:
 
     void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters) override
     {
-        m_process = adoptRef(new AuxiliaryProcessType(WTFMove(parameters)));
+        m_process = AuxiliaryProcessType::create(WTF::move(parameters));
     }
 
 protected:

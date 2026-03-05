@@ -68,7 +68,7 @@ public:
     void setIns(uint8_t ins) { m_ins = ins; }
     void setP1(uint8_t p1) { m_p1 = p1; }
     void setP2(uint8_t p2) { m_p2 = p2; }
-    void setData(Vector<uint8_t>&& data) { m_data = WTFMove(data); }
+    void setData(Vector<uint8_t>&& data) { m_data = WTF::move(data); }
     void setResponseLength(size_t responseLength) { m_responseLength = responseLength; }
 
     uint8_t cla() const { return m_cla; }
@@ -76,7 +76,7 @@ public:
     uint8_t p1() const { return m_p1; }
     uint8_t p2() const { return m_p2; }
     size_t responseLength() const { return m_responseLength; }
-    const Vector<uint8_t>& data() const { return m_data; }
+    const Vector<uint8_t>& data() const LIFETIME_BOUND { return m_data; }
 
     static constexpr size_t kApduMaxResponseLength = 65536;
 

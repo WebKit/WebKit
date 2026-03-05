@@ -130,14 +130,14 @@ template<typename Function> static std::optional<ResultPair<Function>> pullFromS
         auto parsedFrom = std::invoke(function, fromSource, currentPoint);
         if (!parsedFrom)
             return std::nullopt;
-        fromResult = WTFMove(*parsedFrom);
+        fromResult = WTF::move(*parsedFrom);
     }
 
     auto parsedTo = std::invoke(std::forward<Function>(function), toSource, currentPoint);
     if (!parsedTo)
         return std::nullopt;
 
-    return ResultPair<Function> { WTFMove(fromResult), WTFMove(*parsedTo) };
+    return ResultPair<Function> { WTF::move(fromResult), WTF::move(*parsedTo) };
 }
 
 bool SVGPathBlender::blendMoveToSegment(float progress)
@@ -324,25 +324,25 @@ bool SVGPathBlender::blendArcToSegment(float progress)
     return true;
 }
 
-static inline PathCoordinateMode coordinateModeOfCommand(const SVGPathSegType& type)
+static inline PathCoordinateMode NODELETE coordinateModeOfCommand(const SVGPathSegType& type)
 {
     if (type < SVGPathSegType::MoveToAbs)
         return AbsoluteCoordinates;
 
     // Odd number = relative command
-    if (enumToUnderlyingType(type) % 2)
+    if (std::to_underlying(type) % 2)
         return RelativeCoordinates;
 
     return AbsoluteCoordinates;
 }
 
-static inline bool isSegmentEqual(const SVGPathSegType& fromType, const SVGPathSegType& toType, const PathCoordinateMode& fromMode, const PathCoordinateMode& toMode)
+static inline bool NODELETE isSegmentEqual(const SVGPathSegType& fromType, const SVGPathSegType& toType, const PathCoordinateMode& fromMode, const PathCoordinateMode& toMode)
 {
     if (fromType == toType && (fromType == SVGPathSegType::Unknown || fromType == SVGPathSegType::ClosePath))
         return true;
 
-    auto from = enumToUnderlyingType(fromType);
-    auto to = enumToUnderlyingType(toType);
+    auto from = std::to_underlying(fromType);
+    auto to = std::to_underlying(toType);
     if (fromMode == toMode)
         return from == to;
     if (fromMode == AbsoluteCoordinates)

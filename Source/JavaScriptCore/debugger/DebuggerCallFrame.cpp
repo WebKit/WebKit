@@ -29,7 +29,6 @@
 #include "config.h"
 #include "DebuggerCallFrame.h"
 
-#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
@@ -39,6 +38,7 @@
 #include "ShadowChickenInlines.h"
 #include "StackVisitor.h"
 #include "StrongInlines.h"
+#include "TopExceptionScope.h"
 #include "VMEntryScopeInlines.h"
 
 namespace JSC {
@@ -90,7 +90,7 @@ Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
             callFrame = frame.frame;
         Ref<DebuggerCallFrame> currentFrame = adoptRef(*new DebuggerCallFrame(vm, callFrame, frame));
         currentFrame->m_caller = currentParent;
-        currentParent = WTFMove(currentFrame);
+        currentParent = WTF::move(currentFrame);
     }
     return *currentParent;
 }
@@ -232,7 +232,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
         return jsUndefined();
 
     JSLockHolder lock(vm);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     
     JSGlobalObject* globalObject = codeBlock->globalObject();
     DebuggerEvalEnabler evalEnabler(globalObject, DebuggerEvalEnabler::Mode::EvalOnGlobalObjectAtDebuggerEntry);
@@ -268,7 +268,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
         auto* jsScope = debuggerCallFrame->scope(vm)->jsScope();
         VMEntryScope entryScope(vm, jsScope->globalObject());
         if (vm.disallowVMEntryCount) [[unlikely]]
-            result = Interpreter::checkVMEntryPermission();
+            result = VM::checkVMEntryPermission();
         else
             result = vm.interpreter.executeEval(eval, debuggerCallFrame->thisValue(vm), jsScope);
     }
@@ -293,7 +293,7 @@ void DebuggerCallFrame::invalidate()
             frame->m_scope->invalidateChain();
             frame->m_scope.clear();
         }
-        frame = WTFMove(frame->m_caller);
+        frame = WTF::move(frame->m_caller);
     }
 }
 

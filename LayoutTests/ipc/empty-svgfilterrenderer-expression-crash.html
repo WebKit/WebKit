@@ -30,12 +30,14 @@
             colorSpace: {
                 serializableColorSpace: {
                     alias: {
-                        m_cgColorSpace: {
-                            alias: {
-                                variantType: "WebKit::ICCData",
-                                variant: {
-                                    data: [],
-                                    derivative: 0
+                        optionalValue: {
+                            m_cgColorSpace: {
+                                alias: {
+                                    variantType: "WebKit::ICCData",
+                                    variant: {
+                                        data: [],
+                                        derivative: 0
+                                    },
                                 },
                             },
                         },
@@ -66,13 +68,6 @@
                     subclasses: {
                         variantType: "WebCore::SVGFilterRenderer",
                         variant: {
-                            targetBoundingBox: {
-                                location: { x: 0, y: 0 },
-                                size: {
-                                    width: 1,
-                                    height: 1,
-                                },
-                            },
                             primitiveUnits: 0,
                             expression: { alias: [] },
                             effects: [
@@ -87,11 +82,13 @@
                                             operatingColorSpace: {
                                                 serializableColorSpace: {
                                                     alias: {
-                                                        m_cgColorSpace: {
-                                                            alias: {
-                                                                variantType:
-                                                                    "WebCore::ColorSpace",
-                                                                variant: 17,
+                                                        optionalValue: {
+                                                            m_cgColorSpace: {
+                                                                alias: {
+                                                                    variantType:
+                                                                        "WebCore::ColorSpace",
+                                                                    variant: 17,
+                                                                },
                                                             },
                                                         },
                                                     },
@@ -101,26 +98,39 @@
                                     },
                                 },
                             ],
-                            renderingResourceIdentifierIfExists: {},
-                            filterRenderingModes: 0,
-                            filterScale: {
-                                width: 1,
-                                height: 1,
+                            geometry: {
+                                referenceBox : {
+                                    location : {
+                                        x : 0,
+                                        y : 0
+                                    },
+                                    size : {
+                                        width : 1,
+                                        height : 1
+                                    }
+                                },
+                                filterRegion : {
+                                    location : {
+                                        x : 1,
+                                        y : 1
+                                    },
+                                    size : {
+                                        width : 1,
+                                        height : 1
+                                    }
+                                },
+                                scale : {
+                                    width : 1,
+                                    height : 1
+                                }
                             },
-                            filterRegion: {
-                                location: {
-                                    x: 1,
-                                    y: 1,
-                                },
-                                size: {
-                                    width: 1,
-                                    height: 1,
-                                },
+                            filterRenderingModes: 0,
+                            isShowingDebugOverlay : false,
+                            renderingResourceIdentifierIfExists: {},
                             },
                         },
                     },
-                },
-            });
+                });
         } catch (err) {
             // We expect validation to fail and return a TypeError to us. If we get any other kind of error,
             // log this so we can address the issue as this may indicate the test is non-functional. If the

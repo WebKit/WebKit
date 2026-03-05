@@ -88,11 +88,11 @@ ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& d
 ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration, String&& cueID, String&& cueText, String&& settings, String&& sourceID, String&& originalStartTime)
     : m_presentationTime(presentationTime)
     , m_duration(duration)
-    , m_sourceID(WTFMove(sourceID))
-    , m_identifier(WTFMove(cueID))
-    , m_originalStartTime(WTFMove(originalStartTime))
-    , m_settings(WTFMove(settings))
-    , m_cueText(WTFMove(cueText))
+    , m_sourceID(WTF::move(sourceID))
+    , m_identifier(WTF::move(cueID))
+    , m_originalStartTime(WTF::move(originalStartTime))
+    , m_settings(WTF::move(settings))
+    , m_cueText(WTF::move(cueText))
 {
 }
 
@@ -148,7 +148,7 @@ ISOWebVTTCue ISOWebVTTCue::isolatedCopy() const &
 
 ISOWebVTTCue ISOWebVTTCue::isolatedCopy() &&
 {
-    return { m_presentationTime, m_duration, crossThreadCopy(WTFMove(m_identifier)), crossThreadCopy(WTFMove(m_cueText)), crossThreadCopy(WTFMove(m_settings)), crossThreadCopy(WTFMove(m_sourceID)), crossThreadCopy(WTFMove(m_originalStartTime)) };
+    return { m_presentationTime, m_duration, crossThreadCopy(WTF::move(m_identifier)), crossThreadCopy(WTF::move(m_cueText)), crossThreadCopy(WTF::move(m_settings)), crossThreadCopy(WTF::move(m_sourceID)), crossThreadCopy(WTF::move(m_originalStartTime)) };
 }
 
 } // namespace WebCore

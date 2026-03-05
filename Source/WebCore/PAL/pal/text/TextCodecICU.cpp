@@ -150,7 +150,7 @@ TextCodecICU::~TextCodecICU()
 {
     if (m_converter) {
         ucnv_reset(m_converter.get());
-        threadGlobalDataSingleton().cachedConverterICU().converter = WTFMove(m_converter);
+        threadGlobalDataSingleton().cachedConverterICU().converter = WTF::move(m_converter);
     }
 }
 
@@ -163,7 +163,7 @@ void TextCodecICU::createICUConverter() const
         UErrorCode error = U_ZERO_ERROR;
         const char* cachedConverterName = ucnv_getName(cachedConverter.get(), &error);
         if (U_SUCCESS(error) && m_canonicalConverterName == cachedConverterName) {
-            m_converter = WTFMove(cachedConverter);
+            m_converter = WTF::move(cachedConverter);
             return;
         }
     }
@@ -305,6 +305,7 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
         ucnv_setFromUCallBack(m_converter.get(), urlEscapedEntityCallback, 0, 0, 0, &error);
         if (U_FAILURE(error))
             return { };
+        ucnv_setFallback(m_converter.get(), false);
         break;
     }
 
@@ -321,6 +322,10 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
         ucnv_fromUnicode(m_converter.get(), &target, targetLimit, &source, sourceLimit, 0, true, &error);
         result.append(byteCast<uint8_t>(std::span(buffer)).first(target - buffer.data()));
     } while (needsToGrowToProduceBuffer(error));
+
+    if (handling == UnencodableHandling::URLEncodedEntities)
+        ucnv_setFallback(m_converter.get(), true);
+
     return result;
 }
 

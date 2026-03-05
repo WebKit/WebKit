@@ -18,11 +18,11 @@ info: |
     Perform SetValueInBuffer(targetBuffer, targetByteIndex, targetType, kNumber).
     ...
   22. Return undefined.
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var src = [42n, 43n];
   var srcObj = {
     length: 2,
@@ -31,32 +31,32 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   };
   var sample, result;
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   result = sample.set(src, 0);
   assert(compareArray(sample, [42n, 43n, 3n, 4n]), "offset: 0, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   result = sample.set(src, 1);
   assert(compareArray(sample, [1n, 42n, 43n, 4n]), "offset: 1, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   result = sample.set(src, 2);
   assert(compareArray(sample, [1n, 2n, 42n, 43n]), "offset: 2, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   result = sample.set(srcObj, 0);
   assert(compareArray(sample, [7n, 17n, 3n, 4n]), "offset: 0, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   result = sample.set(srcObj, 1);
   assert(compareArray(sample, [1n, 7n, 17n, 4n]), "offset: 1, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   result = sample.set(srcObj, 2);
   assert(compareArray(sample, [1n, 2n, 7n, 17n]), "offset: 2, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");

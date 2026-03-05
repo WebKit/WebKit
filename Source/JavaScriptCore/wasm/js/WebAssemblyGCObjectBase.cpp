@@ -38,7 +38,9 @@ const ClassInfo WebAssemblyGCObjectBase::s_info = { "WebAssemblyGCObjectBase"_s,
 
 WebAssemblyGCObjectBase::WebAssemblyGCObjectBase(VM& vm, WebAssemblyGCStructure* structure)
     : Base(vm, structure)
-{ }
+    , m_rtt(&gcStructure()->rtt())
+{
+}
 
 template<typename Visitor>
 void WebAssemblyGCObjectBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)

@@ -43,6 +43,7 @@
 #include "WebProcessPool.h"
 #include <Commctrl.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/Document.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/GDIUtilities.h>
@@ -240,7 +241,7 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     Ref pageConfiguration = configuration.copy();
     pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
     WebProcessPool& processPool = pageConfiguration->processPool();
-    m_page = processPool.createWebPage(*m_pageClient, WTFMove(pageConfiguration));
+    m_page = processPool.createWebPage(*m_pageClient, WTF::move(pageConfiguration));
 
     auto& configurationFromPage = m_page->configuration();
     m_page->initializeWebPage(configurationFromPage.openedSite(), configurationFromPage.initialSandboxFlags(), configurationFromPage.initialReferrerPolicy());
@@ -465,7 +466,7 @@ LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
                 pendingCharEvents.append(msg);
         }
     }
-    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam, WTFMove(pendingCharEvents)));
+    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam, WTF::move(pendingCharEvents)));
 
     // We claim here to always have handled the event. If the event is not in fact handled, we will
     // find out later in didNotHandleKeyEvent.
@@ -663,7 +664,7 @@ LRESULT WebView::onMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     ContextMenuAction action = static_cast<ContextMenuAction>(menuItemInfo.wID);
     bool enabled = !(menuItemInfo.fState & MFS_DISABLED);
     bool checked = menuItemInfo.fState & MFS_CHECKED;
-    WebContextMenuItemData item(ContextMenuItemType::Action, action, WTFMove(title), enabled, checked);
+    WebContextMenuItemData item(ContextMenuItemType::Action, action, WTF::move(title), enabled, checked);
     RefPtr contextMenu = static_cast<WebContextMenuProxyWin*>(m_page->activeContextMenu());
     m_page->contextMenuItemSelected(item, contextMenu->frameInfo());
 

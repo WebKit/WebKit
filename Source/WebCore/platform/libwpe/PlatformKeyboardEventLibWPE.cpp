@@ -27,15 +27,16 @@
 #include "PlatformKeyboardEvent.h"
 
 #if USE(LIBWPE)
-
 #include "WindowsKeyboardCodes.h"
 #include <wpe/wpe.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+#endif
 
 namespace WebCore {
 
+#if USE(LIBWPE)
 // FIXME: This is incomplete. We should change this to mirror
 // more like what Firefox does, and generate these switch statements
 // at build time.
@@ -1324,6 +1325,7 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
 
     return { };
 }
+#endif // USE(LIBWPE)
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCompatibility)
 {
@@ -1340,13 +1342,4 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCo
     }
 }
 
-OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
-{
-    if (s_currentModifiers)
-        return *s_currentModifiers;
-    return { };
-}
-
 } // namespace WebCore
-
-#endif // USE(LIBWPE)

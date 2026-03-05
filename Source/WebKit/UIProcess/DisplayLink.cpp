@@ -233,7 +233,7 @@ DisplayLink& DisplayLinkCollection::displayLinkForDisplay(PlatformDisplayID disp
 
     auto displayLink = makeUnique<DisplayLink>(displayID);
     auto displayLinkPtr = displayLink.get();
-    add(WTFMove(displayLink));
+    add(WTF::move(displayLink));
     return *displayLinkPtr;
 }
 
@@ -250,7 +250,7 @@ DisplayLink* DisplayLinkCollection::existingDisplayLinkForDisplay(PlatformDispla
 void DisplayLinkCollection::add(std::unique_ptr<DisplayLink>&& displayLink)
 {
     ASSERT(!m_displayLinks.containsIf([&](auto &entry) { return entry->displayID() == displayLink->displayID(); }));
-    m_displayLinks.append(WTFMove(displayLink));
+    m_displayLinks.append(WTF::move(displayLink));
 }
 
 std::optional<unsigned> DisplayLinkCollection::nominalFramesPerSecondForDisplay(PlatformDisplayID displayID)

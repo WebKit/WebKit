@@ -28,15 +28,14 @@ RtcEventVideoReceiveStreamConfig::RtcEventVideoReceiveStreamConfig(
 
 RtcEventVideoReceiveStreamConfig::RtcEventVideoReceiveStreamConfig(
     const RtcEventVideoReceiveStreamConfig& other)
-    : RtcEvent(other.timestamp_us_),
+    : RtcEvent(other),
       config_(std::make_unique<rtclog::StreamConfig>(*other.config_)) {}
 
 RtcEventVideoReceiveStreamConfig::~RtcEventVideoReceiveStreamConfig() = default;
 
 std::unique_ptr<RtcEventVideoReceiveStreamConfig>
 RtcEventVideoReceiveStreamConfig::Copy() const {
-  return absl::WrapUnique<RtcEventVideoReceiveStreamConfig>(
-      new RtcEventVideoReceiveStreamConfig(*this));
+  return absl::WrapUnique(new RtcEventVideoReceiveStreamConfig(*this));
 }
 
 }  // namespace webrtc

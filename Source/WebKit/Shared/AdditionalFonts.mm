@@ -31,7 +31,7 @@ namespace WebKit {
 AdditionalFonts AdditionalFonts::additionalFonts(const Vector<URL>& fontURLs, std::optional<audit_token_t> auditToken)
 {
     AdditionalFonts additionalFonts;
-    additionalFonts.fontDataList = WTF::compactMap(fontURLs, [auditToken = WTFMove(auditToken)](auto& fontURL) -> std::optional<FontData> {
+    additionalFonts.fontDataList = WTF::compactMap(fontURLs, [auditToken = WTF::move(auditToken)](auto& fontURL) -> std::optional<FontData> {
         std::optional<SandboxExtension::Handle> sandboxExtensionHandle;
         if (auditToken)
             sandboxExtensionHandle = SandboxExtension::createHandleForReadByAuditToken(fontURL.fileSystemPath(), *auditToken);
@@ -39,7 +39,7 @@ AdditionalFonts AdditionalFonts::additionalFonts(const Vector<URL>& fontURLs, st
             sandboxExtensionHandle = SandboxExtension::createHandle(fontURL.fileSystemPath(), SandboxExtension::Type::ReadOnly);
 
         if (sandboxExtensionHandle)
-            return FontData { fontURL, WTFMove(*sandboxExtensionHandle) };
+            return FontData { fontURL, WTF::move(*sandboxExtensionHandle) };
         return FontData { fontURL, SandboxExtension::Handle() };
     });
     return additionalFonts;

@@ -191,7 +191,7 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
     g_assert_nonnull(value);
     g_assert_no_error(error.get());
     valueString.reset(WebViewTest::javascriptResultToCString(value));
-    g_assert_nonnull(g_strrstr(valueString.get(), "window.webkit.messageHandlers.inspector.postMessage('1:1:WebPage');"));
+    g_assert_nonnull(g_strrstr(valueString.get(), "window.webkit.messageHandlers.inspector.postMessage('1:1:WebPage')"));
 }
 
 // Test to get inspector server page list from the HTTP test server.

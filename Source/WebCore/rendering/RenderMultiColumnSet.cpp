@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,10 +44,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMultiColumnSet);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMultiColumnSet);
 
 RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow, RenderStyle&& style)
-    : RenderFragmentContainerSet(Type::MultiColumnSet, fragmentedFlow.document(), WTFMove(style), fragmentedFlow)
+    : RenderFragmentContainerSet(Type::MultiColumnSet, fragmentedFlow.document(), WTF::move(style), fragmentedFlow)
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
 {
@@ -627,20 +628,20 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     if (paintInfo.context().paintingDisabled())
         return;
 
-    RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow();
-    const RenderStyle& blockStyle = parent()->style();
-    const Color& ruleColor = blockStyle.visitedDependentColorWithColorFilter(CSSPropertyColumnRuleColor);
-    bool ruleTransparent = blockStyle.columnRuleIsTransparent();
+    auto* fragmentedFlow = multiColumnFlow();
+    auto& blockStyle = parent()->style();
+
     auto ruleStyle = collapsedBorderStyle(blockStyle.columnRuleStyle());
-    auto ruleThickness = Style::evaluate<LayoutUnit>(blockStyle.columnRuleWidth(), blockStyle.usedZoomForLength());
-    auto colGap = columnGap();
-    bool renderRule = ruleStyle > BorderStyle::Hidden && !ruleTransparent;
-    if (!renderRule)
+    if (!isVisibleBorderStyle(ruleStyle) || blockStyle.columnRuleColor().isKnownTransparent())
         return;
 
-    unsigned colCount = columnCount();
+    auto colCount = columnCount();
     if (colCount <= 1)
         return;
+
+    auto ruleColor = blockStyle.visitedDependentColumnRuleColorApplyingColorFilter();
+    auto ruleThickness = Style::evaluate<LayoutUnit>(blockStyle.usedColumnRuleWidth(), Style::ZoomNeeded { });
+    auto colGap = columnGap();
 
     bool antialias = BorderPainter::shouldAntialiasLines(paintInfo.context());
 
@@ -972,6 +973,8 @@ void RenderMultiColumnSet::addOverflowFromInFlowChildren(OptionSet<ComputeOverfl
     addLayoutOverflow(lastRect);
     if (!hasNonVisibleOverflow())
         addVisualOverflow(lastRect);
+    if (hasRenderOverflow())
+        m_overflow->addContentOverflow(lastRect);
 }
 
 PositionWithAffinity RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, HitTestSource source, const RenderFragmentContainer*)

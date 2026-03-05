@@ -27,6 +27,8 @@
 #import "config.h"
 #import "DigitalCredentialsRequestValidatorBridge.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #import "Logging.h"
 #import "WKIdentityDocumentRawRequestValidator.h"
 #import <Foundation/Foundation.h>
@@ -78,7 +80,7 @@ static Vector<WebCore::CertificateInfo> buildRequestAuthentications(WKIdentityDo
             certificateChainVector.append(RetainPtr<SecCertificateRef>(certificate.certificate));
 
         auto trust = createSecTrustForChain(certificateChainVector);
-        requestAuthentications.append(WebCore::CertificateInfo { WTFMove(trust) });
+        requestAuthentications.append(WebCore::CertificateInfo { WTF::move(trust) });
     }
 
     return requestAuthentications;
@@ -102,10 +104,10 @@ static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentP
             WebCore::ISO18013ElementInfo elementInfo {
                 static_cast<bool>(elementDictionary.get()[elementIdentifier].isRetaining)
             };
-            innerVector.append(std::make_pair(WTFMove(mappedElementIdentifier), WTFMove(elementInfo)));
+            innerVector.append(std::make_pair(WTF::move(mappedElementIdentifier), WTF::move(elementInfo)));
         }
 
-        mappedDocumentRequest.namespaces.append(std::make_pair(WTFMove(mappedNamespaceKey), WTFMove(innerVector)));
+        mappedDocumentRequest.namespaces.append(std::make_pair(WTF::move(mappedNamespaceKey), WTF::move(innerVector)));
     }
 
     return mappedDocumentRequest;
@@ -127,7 +129,7 @@ static Vector<WebCore::ISO18013PresentmentRequest> buildPresentmentRequests(WKId
                 mappedDocumentSet.requests.append(mappedDocumentRequest);
             }
 
-            mappedPresentmentRequest.documentRequestSets.append(WTFMove(mappedDocumentSet));
+            mappedPresentmentRequest.documentRequestSets.append(WTF::move(mappedDocumentSet));
         }
 
         presentmentRequests.append(mappedPresentmentRequest);
@@ -147,28 +149,14 @@ static WebCore::ValidatedMobileDocumentRequest buildValidatedRequest(WKIdentityD
     return validatedRequest;
 }
 
-Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<UnvalidatedDigitalCredentialRequest> &unvalidatedRequests)
+Vector<WebCore::ValidatedMobileDocumentRequest> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<WebCore::MobileDocumentRequest> &unvalidatedRequests)
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
     RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
 
-    Vector<WebCore::ValidatedDigitalCredentialRequest> validatedRequests;
+    Vector<WebCore::ValidatedMobileDocumentRequest> validatedRequests;
 
-    for (auto request : unvalidatedRequests) {
-        if (!std::holds_alternative<WebCore::MobileDocumentRequest>(request)) {
-            LOG(DigitalCredentials, "Incoming unvalidated request is not a supported type.");
-
-            const_cast<Document&>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
-                MessageSource::JS,
-                MessageType::Log,
-                MessageLevel::Warning,
-                "Encountered an unsupported request protocol. The request will be ignored."_s
-            ));
-
-            continue;
-        }
-
-        auto mobileDocumentRequest = std::get<WebCore::MobileDocumentRequest>(request);
+    for (auto mobileDocumentRequest : unvalidatedRequests) {
 
         RetainPtr convertedEncryptionInfo = mobileDocumentRequest.encryptionInfo.createNSString();
         RetainPtr convertedDeviceRequest = mobileDocumentRequest.deviceRequest.createNSString();
@@ -180,8 +168,7 @@ Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateR
 
         if (validatedISORequest) {
             auto validatedMobileDocumentRequest = buildValidatedRequest(validatedISORequest.get());
-            auto resultVariant = WTF::Variant<WebCore::ValidatedMobileDocumentRequest, WebCore::OpenID4VPRequest>(validatedMobileDocumentRequest);
-            validatedRequests.append(WTFMove(resultVariant));
+            validatedRequests.append(WTF::move(validatedMobileDocumentRequest));
         } else if (error) {
             RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
             String errorMessage = "An error occurred validating the incoming 'org-iso-mdoc' request. The request will be ignored."_s;
@@ -189,18 +176,20 @@ Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateR
             if ([debugDescription length])
                 errorMessage = makeString(errorMessage, " ("_s, String(debugDescription.get()), ")"_s);
 
-            const_cast<Document&>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
+            const_cast<Document &>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
                 MessageSource::JS,
                 MessageType::Log,
                 MessageLevel::Warning,
-                errorMessage
-            ));
+                errorMessage));
 
-            LOG(DigitalCredentials, "Validation failed for request: %@", error);
+            LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: Validation failed for request: %@", error);
         }
     }
 
+    LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: returning %zu validated requests", validatedRequests.size());
     return validatedRequests;
 }
 
-}
+} // namespace WebKit
+
+#endif // ENABLE(WEB_AUTHN)

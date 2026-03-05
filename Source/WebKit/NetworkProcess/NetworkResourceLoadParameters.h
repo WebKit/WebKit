@@ -75,8 +75,8 @@ struct NetworkResourceLoadParameters {
     bool hadMainFrameMainResourcePrivateRelayed { false };
     bool allowPrivacyProxy { true };
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections { };
+    std::optional<bool> mayBlockNetworkRequest { false };
 
-    RefPtr<WebCore::SecurityOrigin> protectedSourceOrigin() const { return sourceOrigin; }
     uint64_t requiredCookiesVersion { 0 };
 
     Markable<WebCore::ResourceLoaderIdentifier> identifier { };
@@ -115,8 +115,10 @@ struct NetworkResourceLoadParameters {
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier { };
     WebCore::FetchingWorkerIdentifier workerIdentifier { };
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#if ENABLE(CONTENT_EXTENSIONS) || (ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS))
     URL mainDocumentURL { };
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier { };
 #endif
 

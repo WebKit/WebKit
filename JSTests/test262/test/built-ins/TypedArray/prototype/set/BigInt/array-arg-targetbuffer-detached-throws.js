@@ -18,7 +18,7 @@ info: |
   15. Let src be ? ToObject(array).
   16. Let srcLength be ? ToLength(? Get(src, "length")).
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -40,4 +40,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.set(obj);
   }, "IsDetachedBuffer happens before Get(src.length)");
-});
+}, null, ["passthrough"]);

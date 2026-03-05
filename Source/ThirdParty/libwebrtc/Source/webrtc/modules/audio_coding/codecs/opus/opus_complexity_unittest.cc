@@ -21,7 +21,6 @@
 #include "api/test/metrics/metric.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -50,7 +49,7 @@ int64_t RunComplexityTest(const Environment& env,
   EXPECT_TRUE(audio_loop.Init(kInputFileName, kMaxLoopLengthSamples,
                               kInputBlockSizeSamples));
   // Encode.
-  const int64_t start_time_ms = TimeMillis();
+  const int64_t start_time_ms = env.clock().TimeInMilliseconds();
   AudioEncoder::EncodedInfo info;
   Buffer encoded(500);
   uint32_t rtp_timestamp = 0u;
@@ -59,7 +58,7 @@ int64_t RunComplexityTest(const Environment& env,
     info = encoder->Encode(rtp_timestamp, audio_loop.GetNextBlock(), &encoded);
     rtp_timestamp += kInputBlockSizeSamples;
   }
-  return TimeMillis() - start_time_ms;
+  return env.clock().TimeInMilliseconds() - start_time_ms;
 }
 
 // This test encodes an audio file using Opus twice with different bitrates

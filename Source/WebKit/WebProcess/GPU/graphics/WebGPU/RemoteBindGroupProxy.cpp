@@ -58,7 +58,7 @@ void RemoteBindGroupProxy::setLabelInternal(const String& label)
 bool RemoteBindGroupProxy::updateExternalTextures(WebCore::WebGPU::ExternalTexture& externalTexture)
 {
     auto convertedDescriptor = Ref { m_convertToBackingContext }->convertToBacking(externalTexture);
-    auto sendResult = sendSync(Messages::RemoteBindGroup::UpdateExternalTextures(WTFMove(convertedDescriptor)));
+    auto sendResult = sendSync(Messages::RemoteBindGroup::UpdateExternalTextures(WTF::move(convertedDescriptor)));
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }

@@ -71,6 +71,7 @@ if (rtc_include_tests && !build_with_chromium) {
     ]
     deps = [
       ":column_printer",
+      "..:create_test_environment",
       "..:create_test_field_trials",
       "..:encoder_settings",
       "..:frame_generator_capturer",
@@ -88,10 +89,8 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../api:field_trials",
       "../../api:frame_generator_api",
       "../../api:libjingle_logging_api",
-      "../../api:libjingle_peerconnection_api",
       "../../api:make_ref_counted",
       "../../api:network_emulation_manager_api",
-      "../../api:rtc_event_log_output_file",
       "../../api:rtp_headers",
       "../../api:rtp_parameters",
       "../../api:scoped_refptr",
@@ -120,7 +119,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../api/video:builtin_video_bitrate_allocator_factory",
       "../../api/video:video_bitrate_allocator_factory",
       "../../api/video:video_frame",
-      "../../api/video:video_rtp_headers",
       "../../api/video_codecs:scalability_mode",
       "../../api/video_codecs:video_codecs_api",
       "../../audio",

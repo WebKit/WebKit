@@ -39,7 +39,7 @@ CSSNumericFactory* CSSNumericFactory::from(DOMCSSNamespace& css)
     if (!supplement) {
         auto newSupplement = makeUnique<CSSNumericFactory>(css);
         supplement = newSupplement.get();
-        provideTo(&css, supplementName(), WTFMove(newSupplement));
+        provideTo(&css, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

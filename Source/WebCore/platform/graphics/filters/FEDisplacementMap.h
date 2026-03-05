@@ -52,6 +52,8 @@ public:
     float scale() const { return m_scale; }
     bool setScale(float);
 
+    static IntOutsets calculateOutsets(const FloatSize& maxDisplacement);
+
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float, DestinationColorSpace);
 
@@ -64,6 +66,8 @@ private:
     const DestinationColorSpace& resultColorSpace(std::span<const Ref<FilterImage>>) const override;
     void transformInputsColorSpace(std::span<const Ref<FilterImage>> inputs) const override;
 
+    OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode>) const override;
+    std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;

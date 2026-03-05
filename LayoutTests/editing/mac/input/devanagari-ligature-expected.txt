@@ -4,6 +4,6 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x25
-        RenderText {#text} at (0,4) size 12x18
+        RenderText {#text} at (0,4) size 12x19
           text run at (0,4) width 12: "\x{915}\x{94D}\x{937}"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of body

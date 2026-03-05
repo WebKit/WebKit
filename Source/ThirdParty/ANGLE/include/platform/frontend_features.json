@@ -107,6 +107,14 @@
             "issue": "http://anglebug.com/40096838"
         },
         {
+            "name": "use_ir",
+            "category": "Features",
+            "description": [
+                "Use the translator's IR instead of AST"
+            ],
+            "issue": "http://anglebug.com/349994211"
+        },
+        {
             "name": "cache_compiled_shader",
             "category": "Features",
             "description": [
@@ -201,14 +209,6 @@
                 "Force flush after drawcall use shadow map for intel device."
             ],
             "issue": "https://issuetracker.google.com/349489248"
-        },
-        {
-            "name": "reject_webgl_shaders_with_undefined_behavior",
-            "category": "Workarounds",
-            "description": [
-                "Attempts to detect undefined behavior when in WebGL mode and reject shaders if any detected."
-            ],
-            "issue": "http://crbug.com/350528343"
         },
         {
             "name": "always_enable_emulated_multidraw_extensions",

@@ -634,7 +634,7 @@ void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceC
     if (canvasSize.isEmpty())
         return;
 
-    auto image = createNativeImageFromPixelBuffer(sourceContextAttributes, WTFMove(pixelBuffer));
+    auto image = createNativeImageFromPixelBuffer(sourceContextAttributes, WTF::move(pixelBuffer));
     paintToCanvas(*image, canvasSize, context);
 }
 
@@ -644,6 +644,18 @@ void GraphicsContextGL::forceContextLost()
     if (m_client)
         m_client->forceContextLost();
 }
+
+#if ENABLE(VIDEO)
+RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
+{
+    IntSize size { static_cast<int>(frame.presentationSize().width()), static_cast<int>(frame.presentationSize().height()) };
+    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return { };
+    imageBuffer->context().drawVideoFrame(frame, { { }, size }, ImageOrientation::Orientation::None, true);
+    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer)));
+}
+#endif
 
 } // namespace WebCore
 

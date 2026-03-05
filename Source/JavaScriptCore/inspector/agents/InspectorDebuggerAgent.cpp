@@ -155,7 +155,7 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
                 action.emulateUserGesture = actionObject->getBoolean("emulateUserGesture"_s).value_or(false);
 
-                actions.append(WTFMove(action));
+                actions.append(WTF::move(action));
             }
         }
 
@@ -163,20 +163,20 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
         ignoreCount = options->getInteger("ignoreCount"_s).value_or(0);
     }
 
-    return callback(condition, WTFMove(actions), autoContinue, ignoreCount);
+    return callback(condition, WTF::move(actions), autoContinue, ignoreCount);
 }
 
 std::optional<InspectorDebuggerAgent::ProtocolBreakpoint> InspectorDebuggerAgent::ProtocolBreakpoint::fromPayload(Protocol::ErrorString& errorString, JSC::SourceID sourceID, unsigned lineNumber, unsigned columnNumber, RefPtr<JSON::Object>&& options)
 {
-    return parseBreakpointOptions<std::optional<ProtocolBreakpoint>>(errorString, WTFMove(options), [&] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) -> std::optional<ProtocolBreakpoint> {
-        return ProtocolBreakpoint(sourceID, lineNumber, columnNumber, condition, WTFMove(actions), autoContinue, ignoreCount);
+    return parseBreakpointOptions<std::optional<ProtocolBreakpoint>>(errorString, WTF::move(options), [&] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) -> std::optional<ProtocolBreakpoint> {
+        return ProtocolBreakpoint(sourceID, lineNumber, columnNumber, condition, WTF::move(actions), autoContinue, ignoreCount);
     });
 }
 
 std::optional<InspectorDebuggerAgent::ProtocolBreakpoint> InspectorDebuggerAgent::ProtocolBreakpoint::fromPayload(Protocol::ErrorString& errorString, const String& url, bool isRegex, unsigned lineNumber, unsigned columnNumber, RefPtr<JSON::Object>&& options)
 {
-    return parseBreakpointOptions<std::optional<ProtocolBreakpoint>>(errorString, WTFMove(options), [&] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) -> std::optional<ProtocolBreakpoint> {
-        return ProtocolBreakpoint(url, isRegex, lineNumber, columnNumber, condition, WTFMove(actions), autoContinue, ignoreCount);
+    return parseBreakpointOptions<std::optional<ProtocolBreakpoint>>(errorString, WTF::move(options), [&] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) -> std::optional<ProtocolBreakpoint> {
+        return ProtocolBreakpoint(url, isRegex, lineNumber, columnNumber, condition, WTF::move(actions), autoContinue, ignoreCount);
     });
 }
 
@@ -190,7 +190,7 @@ InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint(JSC::SourceID sou
     , m_lineNumber(lineNumber)
     , m_columnNumber(columnNumber)
     , m_condition(condition)
-    , m_actions(WTFMove(actions))
+    , m_actions(WTF::move(actions))
     , m_autoContinue(autoContinue)
     , m_ignoreCount(ignoreCount)
 {
@@ -203,7 +203,7 @@ InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint(const String& url
     , m_lineNumber(lineNumber)
     , m_columnNumber(columnNumber)
     , m_condition(condition)
-    , m_actions(WTFMove(actions))
+    , m_actions(WTF::move(actions))
     , m_autoContinue(autoContinue)
     , m_ignoreCount(ignoreCount)
 {
@@ -233,8 +233,8 @@ bool InspectorDebuggerAgent::ProtocolBreakpoint::matchesScriptURL(const String& 
 
 RefPtr<JSC::Breakpoint> InspectorDebuggerAgent::debuggerBreakpointFromPayload(Protocol::ErrorString& errorString, RefPtr<JSON::Object>&& options)
 {
-    return parseBreakpointOptions<RefPtr<JSC::Breakpoint>>(errorString, WTFMove(options), [] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) {
-        return JSC::Breakpoint::create(JSC::noBreakpointID, condition, WTFMove(actions), autoContinue, ignoreCount);
+    return parseBreakpointOptions<RefPtr<JSC::Breakpoint>>(errorString, WTF::move(options), [] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) {
+        return JSC::Breakpoint::create(JSC::noBreakpointID, condition, WTF::move(actions), autoContinue, ignoreCount);
     });
 }
 
@@ -242,7 +242,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
     : InspectorAgentBase("Debugger"_s)
     , m_frontendDispatcher(makeUniqueRef<DebuggerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(DebuggerBackendDispatcher::create(context.backendDispatcher, this))
-    , m_debugger(*context.environment.debugger())
+    , m_debugger(*CheckedRef { context.environment }->debugger())
     , m_injectedScriptManager(context.injectedScriptManager)
 {
     // FIXME: make pauseReason optional so that there was no need to init it with "other".
@@ -355,11 +355,11 @@ void InspectorDebuggerAgent::updatePauseReasonAndData(DebuggerFrontendDispatcher
 {
     if (m_pauseReason != DebuggerFrontendDispatcher::Reason::Other && m_pauseReason != DebuggerFrontendDispatcher::Reason::BlackboxedScript) {
         m_lastPauseReason = m_pauseReason;
-        m_lastPauseData = WTFMove(m_pauseData);
+        m_lastPauseData = WTF::move(m_pauseData);
     }
 
     m_pauseReason = reason;
-    m_pauseData = WTFMove(data);
+    m_pauseData = WTF::move(data);
 }
 
 static Ref<JSON::Object> buildAssertPauseReason(const String& message)
@@ -442,9 +442,9 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObj
         return;
 
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto asyncStackTrace = AsyncStackTrace::create(WTFMove(callStack), singleShot, currentParentStackTrace());
+    auto asyncStackTrace = AsyncStackTrace::create(WTF::move(callStack), singleShot, currentParentStackTrace());
 
-    m_pendingAsyncCalls.set(identifier, WTFMove(asyncStackTrace));
+    m_pendingAsyncCalls.set(identifier, WTF::move(asyncStackTrace));
 }
 
 void InspectorDebuggerAgent::didCancelAsyncCall(AsyncCallType asyncCallType, uint64_t callbackId)
@@ -479,7 +479,7 @@ void InspectorDebuggerAgent::willDispatchAsyncCall(AsyncCallType asyncCallType, 
 
     asyncStackTrace->willDispatchAsyncCall(m_asyncStackTraceDepth);
 
-    m_currentAsyncCallIdentifierStack.append(WTFMove(identifier));
+    m_currentAsyncCallIdentifierStack.append(WTF::move(identifier));
 }
 
 void InspectorDebuggerAgent::didDispatchAsyncCall(AsyncCallType asyncCallType, uint64_t callbackId)
@@ -553,7 +553,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::A
 
     Protocol::ErrorString errorString;
 
-    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, !!url ? url : urlRegex, !!urlRegex, lineNumber, columnNumber.value_or(0), WTFMove(options));
+    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, !!url ? url : urlRegex, !!urlRegex, lineNumber, columnNumber.value_or(0), WTF::move(options));
     if (!protocolBreakpoint)
         return makeUnexpected(errorString);
 
@@ -582,7 +582,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::A
         locations->addItem(buildDebuggerLocation(debuggerBreakpoint));
     }
 
-    return { { protocolBreakpoint->id(), WTFMove(locations) } };
+    return { { protocolBreakpoint->id(), WTF::move(locations) } };
 }
 
 Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<Protocol::Debugger::Location>>> InspectorDebuggerAgent::setBreakpoint(Ref<JSON::Object>&& location, RefPtr<JSON::Object>&& options)
@@ -599,7 +599,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<Protoco
     if (scriptIterator == m_scripts.end())
         return makeUnexpected("Missing script for scriptId in given location"_s);
 
-    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, sourceID, lineNumber, columnNumber, WTFMove(options));
+    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, sourceID, lineNumber, columnNumber, WTF::move(options));
     if (!protocolBreakpoint)
         return makeUnexpected(errorString);
 
@@ -649,7 +649,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeBreakpoint(const Pro
 
     for (auto& debuggerBreakpoint : m_debuggerBreakpointsForProtocolBreakpointID.take(protocolBreakpointID)) {
         for (const auto& action : debuggerBreakpoint->actions())
-            m_injectedScriptManager.releaseObjectGroup(objectGroupForBreakpointAction(action.id));
+            injectedScriptManager().releaseObjectGroup(objectGroupForBreakpointAction(action.id));
 
         JSC::JSLockHolder locker(m_debugger.vm());
         m_debugger.removeBreakpoint(debuggerBreakpoint);
@@ -711,17 +711,17 @@ struct ReplacedThunk {
             CodePtr<JSC::JSEntryPtrTag> oldArityJITCodeRef;
             switch (kind) {
             case JSC::CodeSpecializationKind::CodeForCall:
-                oldJITCodeRef = WTFMove(callThunk);
-                oldArityJITCodeRef = WTFMove(callArityThunk);
+                oldJITCodeRef = WTF::move(callThunk);
+                oldArityJITCodeRef = WTF::move(callArityThunk);
                 break;
 
             case JSC::CodeSpecializationKind::CodeForConstruct:
-                oldJITCodeRef = WTFMove(constructThunk);
-                oldArityJITCodeRef = WTFMove(constructArityThunk);
+                oldJITCodeRef = WTF::move(constructThunk);
+                oldArityJITCodeRef = WTF::move(constructArityThunk);
                 break;
             }
 
-            jitCode->swapCodeRefForDebugger(WTFMove(oldJITCodeRef));
+            jitCode->swapCodeRefForDebugger(WTF::move(oldJITCodeRef));
             nativeExecutable->swapGeneratedJITCodeWithArityCheckForDebugger(kind, oldArityJITCodeRef);
         };
 
@@ -764,7 +764,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
 {
     Protocol::ErrorString errorString;
 
-    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTF::move(options));
     if (!breakpoint)
         return makeUnexpected(errorString);
 
@@ -775,9 +775,9 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
             symbolicBreakpoint.caseSensitive = *caseSensitive;
         if (isRegex)
             symbolicBreakpoint.isRegex = *isRegex;
-        symbolicBreakpoint.specialBreakpoint = WTFMove(breakpoint);
+        symbolicBreakpoint.specialBreakpoint = WTF::move(breakpoint);
 
-        if (!m_symbolicBreakpoints.appendIfNotContains(WTFMove(symbolicBreakpoint)))
+        if (!m_symbolicBreakpoints.appendIfNotContains(WTF::move(symbolicBreakpoint)))
             return makeUnexpected("Symbolic breakpoint for given symbol, given caseSensitive, and given isRegex already exists"_s);
     }
 
@@ -816,7 +816,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
                 return IterationStatus::Continue;
             });
         }
-        for (auto* nativeExecutable : WTFMove(newNativeExecutables))
+        for (auto* nativeExecutable : WTF::move(newNativeExecutables))
             didCreateNativeExecutable(*nativeExecutable);
     }
 #endif
@@ -940,7 +940,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::continueToLocation(Ref<JSO
         return { };
     }
 
-    m_continueToLocationDebuggerBreakpoint = WTFMove(debuggerBreakpoint);
+    m_continueToLocationDebuggerBreakpoint = WTF::move(debuggerBreakpoint);
 
     // Treat this as a series of steps until reaching the new breakpoint.
     // So don't issue a resumed event unless we exit the VM without pausing.
@@ -972,7 +972,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> InspectorDebug
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(functionId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(functionId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given functionId"_s);
 
@@ -991,13 +991,13 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> Inspec
     JSC::SourceID startSourceID;
     unsigned startLineNumber;
     unsigned startColumnNumber;
-    if (!parseLocation(errorString, WTFMove(start), startSourceID, startLineNumber, startColumnNumber))
+    if (!parseLocation(errorString, WTF::move(start), startSourceID, startLineNumber, startColumnNumber))
         return makeUnexpected(errorString);
 
     JSC::SourceID endSourceID;
     unsigned endLineNumber;
     unsigned endColumnNumber;
-    if (!parseLocation(errorString, WTFMove(end), endSourceID, endLineNumber, endColumnNumber))
+    if (!parseLocation(errorString, WTF::move(end), endSourceID, endLineNumber, endColumnNumber))
         return makeUnexpected(errorString);
 
     if (startSourceID != endSourceID)
@@ -1020,7 +1020,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> Inspec
             .setLineNumber(lineNumber)
             .release();
         protocolLocation->setColumnNumber(columnNumber);
-        protocolLocations->addItem(WTFMove(protocolLocation));
+        protocolLocations->addItem(WTF::move(protocolLocation));
     });
     return protocolLocations;
 }
@@ -1032,7 +1032,7 @@ void InspectorDebuggerAgent::schedulePauseAtNextOpportunity(DebuggerFrontendDisp
 
     m_javaScriptPauseScheduled = true;
 
-    updatePauseReasonAndData(reason, WTFMove(data));
+    updatePauseReasonAndData(reason, WTF::move(data));
 
     JSC::JSLockHolder locker(m_debugger.vm());
     m_debugger.schedulePauseAtNextOpportunity();
@@ -1057,7 +1057,7 @@ bool InspectorDebuggerAgent::schedulePauseForSpecialBreakpoint(JSC::Breakpoint& 
     if (!m_debugger.schedulePauseForSpecialBreakpoint(breakpoint))
         return false;
 
-    updatePauseReasonAndData(reason, WTFMove(data));
+    updatePauseReasonAndData(reason, WTF::move(data));
     return true;
 }
 
@@ -1174,7 +1174,7 @@ void InspectorDebuggerAgent::didBecomeIdle()
     m_conditionToDispatchResumed = ShouldDispatchResumed::No;
 
     if (m_enablePauseWhenIdle)
-        pause();
+        std::ignore = pause();
 }
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnDebuggerStatements(bool enabled, RefPtr<JSON::Object>&& options)
@@ -1186,11 +1186,11 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnDebuggerStatemen
         return { };
     }
 
-    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTF::move(options));
     if (!breakpoint)
         return makeUnexpected(errorString);
 
-    m_debugger.setPauseOnDebuggerStatementsBreakpoint(WTFMove(breakpoint));
+    m_debugger.setPauseOnDebuggerStatementsBreakpoint(WTF::move(breakpoint));
 
     return { };
 }
@@ -1203,18 +1203,18 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnExceptions(const
     RefPtr<JSC::Breakpoint> uncaughtExceptionsBreakpoint;
 
     if (stateString == "all"_s) {
-        allExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
+        allExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, WTF::move(options));
         if (!allExceptionsBreakpoint)
             return makeUnexpected(errorString);
     } else if (stateString == "uncaught"_s) {
-        uncaughtExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
+        uncaughtExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, WTF::move(options));
         if (!uncaughtExceptionsBreakpoint)
             return makeUnexpected(errorString);
     } else if (stateString != "none"_s)
         return makeUnexpected(makeString("Unknown state: "_s, stateString));
 
-    m_debugger.setPauseOnAllExceptionsBreakpoint(WTFMove(allExceptionsBreakpoint));
-    m_debugger.setPauseOnUncaughtExceptionsBreakpoint(WTFMove(uncaughtExceptionsBreakpoint));
+    m_debugger.setPauseOnAllExceptionsBreakpoint(WTF::move(allExceptionsBreakpoint));
+    m_debugger.setPauseOnUncaughtExceptionsBreakpoint(WTF::move(uncaughtExceptionsBreakpoint));
 
     return { };
 }
@@ -1228,11 +1228,11 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnAssertions(bool 
         return { };
     }
 
-    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTF::move(options));
     if (!breakpoint)
         return makeUnexpected(errorString);
 
-    m_pauseOnAssertionsBreakpoint = WTFMove(breakpoint);
+    m_pauseOnAssertionsBreakpoint = WTF::move(breakpoint);
 
     return { };
 }
@@ -1246,22 +1246,22 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnMicrotasks(bool 
         return { };
     }
 
-    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTF::move(options));
     if (!breakpoint)
         return makeUnexpected(errorString);
 
-    m_pauseOnMicrotasksBreakpoint = WTFMove(breakpoint);
+    m_pauseOnMicrotasksBreakpoint = WTF::move(breakpoint);
 
     return { };
 }
 
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorDebuggerAgent::evaluateOnCallFrame(const Protocol::Debugger::CallFrameId& callFrameId, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(callFrameId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(callFrameId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given callFrameId"_s);
 
-    return evaluateOnCallFrame(injectedScript, callFrameId, expression, objectGroup, WTFMove(includeCommandLineAPI), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(saveResult), WTFMove(emulateUserGesture));
+    return evaluateOnCallFrame(injectedScript, callFrameId, expression, objectGroup, WTF::move(includeCommandLineAPI), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(saveResult), WTF::move(emulateUserGesture));
 }
 
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorDebuggerAgent::evaluateOnCallFrame(InjectedScript& injectedScript, const Protocol::Debugger::CallFrameId& callFrameId, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& /* emulateUserGesture */)
@@ -1293,7 +1293,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     if (!result)
         return makeUnexpected(errorString);
 
-    return { { result.releaseNonNull(), WTFMove(wasThrown), WTFMove(savedResultIndex) } };
+    return { { result.releaseNonNull(), WTF::move(wasThrown), WTF::move(savedResultIndex) } };
 }
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& optionalCaseSensitive, std::optional<bool>&& optionalIsRegex, RefPtr<JSON::Array>&& protocolSourceRanges)
@@ -1321,7 +1321,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
             int startLine = -1;
             int startColumn = -1;
             int endLine = -1;
-            for (auto&& value : WTFMove(*protocolSourceRanges)) {
+            for (auto&& value : WTF::move(*protocolSourceRanges)) {
                 auto integer = value->asInteger();
                 if (!integer)
                     return makeUnexpected("Unexpected non-integer item in given sourceRanges"_s);
@@ -1362,7 +1362,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
             ASSERT(endLine == -1);
         }
 
-        m_blackboxedScripts.append(WTFMove(blackboxedScript));
+        m_blackboxedScripts.append(WTF::move(blackboxedScript));
     }
 
     for (auto& [sourceID, script] : m_scripts) {
@@ -1406,7 +1406,7 @@ void InspectorDebuggerAgent::setBlackboxConfiguration(JSC::SourceID sourceID, co
         }
     }
 
-    m_debugger.setBlackboxConfiguration(sourceID, WTFMove(blackboxConfiguration));
+    m_debugger.setBlackboxConfiguration(sourceID, WTF::move(blackboxConfiguration));
 }
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluations)
@@ -1520,20 +1520,20 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
         switch (kind) {
         case JSC::CodeSpecializationKind::CodeForCall:
             ASSERT(!replacedThunk->callThunk);
-            replacedThunk->callThunk = WTFMove(oldJITCodeRef);
+            replacedThunk->callThunk = WTF::move(oldJITCodeRef);
 
             ASSERT(!replacedThunk->callArityThunk);
-            replacedThunk->callArityThunk = WTFMove(oldArityJITCodeRef);
+            replacedThunk->callArityThunk = WTF::move(oldArityJITCodeRef);
 
             RELEASE_ASSERT(replacedThunk->callThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeCall(vm)).code());
             break;
 
         case JSC::CodeSpecializationKind::CodeForConstruct:
             ASSERT(!replacedThunk->constructThunk);
-            replacedThunk->constructThunk = WTFMove(oldJITCodeRef);
+            replacedThunk->constructThunk = WTF::move(oldJITCodeRef);
 
             ASSERT(!replacedThunk->constructArityThunk);
-            replacedThunk->constructArityThunk = WTFMove(oldArityJITCodeRef);
+            replacedThunk->constructArityThunk = WTF::move(oldArityJITCodeRef);
 
             RELEASE_ASSERT(replacedThunk->constructThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeConstruct(vm)).code());
             break;
@@ -1547,7 +1547,7 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
     if (!didReplaceCallThunks && !didReplaceConstructThunks)
         return;
 
-    replacedThunks().append(WTFMove(replacedThunk));
+    replacedThunks().append(WTF::move(replacedThunk));
 #else
     UNUSED_PARAM(nativeExecutable);
 #endif
@@ -1576,7 +1576,7 @@ void InspectorDebuggerAgent::willCallNativeExecutable(JSC::CallFrame* callFrame)
     auto pauseData = JSON::Object::create();
     pauseData->setString("name"_s, symbol);
 
-    breakProgram(DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData), m_symbolicBreakpoints[index].specialBreakpoint.copyRef());
+    breakProgram(DebuggerFrontendDispatcher::Reason::FunctionCall, WTF::move(pauseData), m_symbolicBreakpoints[index].specialBreakpoint.copyRef());
 }
 
 bool InspectorDebuggerAgent::isInspectorDebuggerAgent() const
@@ -1586,7 +1586,7 @@ bool InspectorDebuggerAgent::isInspectorDebuggerAgent() const
 
 JSC::JSObject* InspectorDebuggerAgent::debuggerScopeExtensionObject(JSC::Debugger& debugger, JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame)
 {
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(globalObject);
     ASSERT(!injectedScript.hasNoValue());
     if (injectedScript.hasNoValue())
         return JSC::Debugger::Client::debuggerScopeExtensionObject(debugger, globalObject, debuggerCallFrame);
@@ -1659,7 +1659,7 @@ void InspectorDebuggerAgent::willEnter(JSC::CallFrame* callFrame)
     auto pauseData = JSON::Object::create();
     pauseData->setString("name"_s, symbol);
 
-    schedulePauseForSpecialBreakpoint(*m_symbolicBreakpoints[index].specialBreakpoint, DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData));
+    schedulePauseForSpecialBreakpoint(*m_symbolicBreakpoints[index].specialBreakpoint, DebuggerFrontendDispatcher::Reason::FunctionCall, WTF::move(pauseData));
 }
 
 void InspectorDebuggerAgent::didQueueMicrotask(JSC::JSGlobalObject* globalObject, JSC::MicrotaskIdentifier identifier)
@@ -1694,7 +1694,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
     auto* debuggerGlobalObject = debuggerCallFrame.scope(globalObject->vm())->globalObject();
     m_currentCallStack = { m_pausedGlobalObject->vm(), toJS(debuggerGlobalObject, debuggerGlobalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr()) };
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(m_pausedGlobalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(m_pausedGlobalObject);
 
     // If a high level pause pause reason is not already set, try to infer a reason from the debugger.
     if (m_pauseReason == DebuggerFrontendDispatcher::Reason::Other) {
@@ -1755,7 +1755,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
             data->setString("originalReason"_s, Protocol::Helpers::getEnumConstantValue(m_lastPauseReason));
             data->setValue("originalData"_s, m_lastPauseData.releaseNonNull());
         }
-        updatePauseReasonAndData(DebuggerFrontendDispatcher::Reason::BlackboxedScript, WTFMove(data));
+        updatePauseReasonAndData(DebuggerFrontendDispatcher::Reason::BlackboxedScript, WTF::move(data));
     }
 
     // Set $exception to the exception or caught value.
@@ -1771,7 +1771,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
     if (auto* parentStackTrace = currentParentStackTrace())
         asyncStackTrace = parentStackTrace->buildInspectorObject();
 
-    m_frontendDispatcher->paused(currentCallFrames(injectedScript), Protocol::Helpers::getEnumConstantValue(m_pauseReason), m_pauseData.copyRef(), WTFMove(asyncStackTrace));
+    m_frontendDispatcher->paused(currentCallFrames(injectedScript), Protocol::Helpers::getEnumConstantValue(m_pauseReason), m_pauseData.copyRef(), WTF::move(asyncStackTrace));
 
     m_javaScriptPauseScheduled = false;
 
@@ -1780,7 +1780,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
         m_continueToLocationDebuggerBreakpoint = nullptr;
     }
 
-    auto& stopwatch = m_injectedScriptManager.inspectorEnvironment().executionStopwatch();
+    auto& stopwatch = protect(injectedScriptManager().inspectorEnvironment())->executionStopwatch();
     if (stopwatch.isActive()) {
         stopwatch.stop();
         m_didPauseStopwatch = true;
@@ -1809,7 +1809,7 @@ void InspectorDebuggerAgent::breakpointActionSound(JSC::BreakpointActionID id)
 
 void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalObject, JSC::BreakpointActionID actionID, unsigned batchId, unsigned sampleId, JSC::JSValue sample)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(globalObject);
     auto payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(actionID), true);
     if (!payload)
         return;
@@ -1818,22 +1818,22 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalOb
         .setProbeId(actionID)
         .setBatchId(batchId)
         .setSampleId(sampleId)
-        .setTimestamp(m_injectedScriptManager.inspectorEnvironment().executionStopwatch().elapsedTime().seconds())
+        .setTimestamp(protect(injectedScriptManager().inspectorEnvironment())->executionStopwatch().elapsedTime().seconds())
         .setPayload(payload.releaseNonNull())
         .release();
-    m_frontendDispatcher->didSampleProbe(WTFMove(result));
+    m_frontendDispatcher->didSampleProbe(WTF::move(result));
 }
 
 void InspectorDebuggerAgent::didContinue()
 {
     if (m_didPauseStopwatch) {
         m_didPauseStopwatch = false;
-        m_injectedScriptManager.inspectorEnvironment().executionStopwatch().start();
+        protect(injectedScriptManager().inspectorEnvironment())->executionStopwatch().start();
     }
 
     m_pausedGlobalObject = nullptr;
     m_currentCallStack = { };
-    m_injectedScriptManager.releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
+    injectedScriptManager().releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     clearPauseDetails();
     clearExceptionValue();
 
@@ -1848,15 +1848,15 @@ void InspectorDebuggerAgent::didDeferBreakpointPause(JSC::BreakpointID breakpoin
 
 void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data, RefPtr<JSC::Breakpoint>&& specialBreakpoint)
 {
-    updatePauseReasonAndData(reason, WTFMove(data));
+    updatePauseReasonAndData(reason, WTF::move(data));
 
-    m_debugger.breakProgram(WTFMove(specialBreakpoint));
+    m_debugger.breakProgram(WTF::move(specialBreakpoint));
 }
 
 void InspectorDebuggerAgent::clearInspectorBreakpointState()
 {
     for (auto& protocolBreakpointID : copyToVector(m_debuggerBreakpointsForProtocolBreakpointID.keys()))
-        removeBreakpoint(protocolBreakpointID);
+        std::ignore = removeBreakpoint(protocolBreakpointID);
 
     m_protocolBreakpointForProtocolBreakpointID.clear();
 
@@ -1954,7 +1954,7 @@ void InspectorDebuggerAgent::clearPauseDetails()
 void InspectorDebuggerAgent::clearExceptionValue()
 {
     if (m_hasExceptionValue) {
-        m_injectedScriptManager.clearExceptionValue();
+        injectedScriptManager().clearExceptionValue();
         m_hasExceptionValue = false;
     }
 }

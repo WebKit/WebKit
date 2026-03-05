@@ -47,7 +47,7 @@
 #include "RenderElement.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleExtractor.h"
 #include <JavaScriptCore/ConstructData.h>
 
@@ -81,10 +81,11 @@ static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element&
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
 {
     CheckedPtr renderElement = m_element.get();
-    if (!renderElement || !renderElement->element() || !m_paintDefinition)
+    CheckedPtr paintDefinition = m_paintDefinition.get();
+    if (!renderElement || !renderElement->element() || !paintDefinition)
         return ImageDrawResult::DidNothing;
 
-    JSC::JSValue paintConstructor = m_paintDefinition->paintConstructor;
+    JSC::JSValue paintConstructor = paintDefinition->paintConstructor;
 
     if (!paintConstructor)
         return ImageDrawResult::DidNothing;
@@ -92,7 +93,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     ASSERT(!renderElement->needsLayout());
     ASSERT(!renderElement->element()->document().needsStyleRecalc());
 
-    Ref callback = static_cast<JSCSSPaintCallback&>(m_paintDefinition->paintCallback.get());
+    Ref callback = paintDefinition->paintCallback.get();
     RefPtr scriptExecutionContext = callback->scriptExecutionContext();
     if (!scriptExecutionContext)
         return ImageDrawResult::DidNothing;
@@ -108,7 +109,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     }
 
     auto size = CSSPaintSize::create(destSize.width(), destSize.height());
-    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMapReadOnly::create(WTFMove(propertyValues));
+    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMapReadOnly::create(WTF::move(propertyValues));
 
     auto& vm = paintConstructor.getObject()->vm();
     JSC::JSLockHolder lock(vm);
@@ -124,7 +125,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
     }
 
-    auto result = callback->invoke(WTFMove(thisObject), *context, size, propertyMap, m_arguments);
+    auto result = callback->invoke(WTF::move(thisObject), *context, size, propertyMap, m_arguments);
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 

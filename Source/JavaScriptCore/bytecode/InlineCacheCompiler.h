@@ -204,13 +204,13 @@ public:
     InlineCacheHandler* next() const { return m_next.get(); }
     void setNext(RefPtr<InlineCacheHandler>&& next)
     {
-        m_next = WTFMove(next);
+        m_next = WTF::move(next);
     }
 
     AccessCase* accessCase() const { return m_accessCase.get(); }
     void setAccessCase(RefPtr<AccessCase>&& accessCase)
     {
-        m_accessCase = WTFMove(accessCase);
+        m_accessCase = WTF::move(accessCase);
     }
 
     static constexpr ptrdiff_t offsetOfCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_callTarget); }
@@ -307,7 +307,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType);
 
 inline AccessGenerationResult::AccessGenerationResult(Kind kind, Ref<InlineCacheHandler>&& handler)
     : m_kind(kind)
-    , m_handler(WTFMove(handler))
+    , m_handler(WTF::move(handler))
 {
     RELEASE_ASSERT(kind == GeneratedNewCode || kind == GeneratedFinalCode || kind == GeneratedMegamorphicCode);
 }
@@ -331,7 +331,7 @@ public:
     struct SpillState {
         SpillState() = default;
         SpillState(ScalarRegisterSet&& regs, unsigned usedStackBytes)
-            : spilledRegisters(WTFMove(regs))
+            : spilledRegisters(WTF::move(regs))
             , numberOfStackBytesUsedForRegisterPreservation(usedStackBytes)
         {
         }

@@ -25,7 +25,7 @@
 
 [
     Conditional=GAMEPAD,
-    EnabledBySetting=GamepadVibrationActuatorEnabled
+    EnabledBySetting=GamepadVibrationActuatorEnabled,
 ] dictionary GamepadEffectParameters {
     double duration = 0.0;
     double startDelay = 0.0;

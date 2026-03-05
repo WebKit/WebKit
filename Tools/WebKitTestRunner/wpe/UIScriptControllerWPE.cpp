@@ -74,6 +74,12 @@ void UIScriptControllerWPE::copyText(JSStringRef text)
     // FIXME: implement.
 }
 
+void UIScriptControllerWPE::paste()
+{
+    auto page = TestController::singleton().mainWebView()->page();
+    WKPageExecuteCommand(page, WKStringCreateWithUTF8CString("Paste"));
+}
+
 void UIScriptControllerWPE::dismissMenu()
 {
     // FIXME: implement.

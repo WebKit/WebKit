@@ -22,8 +22,6 @@
 
 namespace webrtc {
 
-constexpr char RobustThroughputEstimatorSettings::kKey[];
-
 RobustThroughputEstimatorSettings::RobustThroughputEstimatorSettings(
     const FieldTrialsView* key_value_config) {
   Parser()->Parse(

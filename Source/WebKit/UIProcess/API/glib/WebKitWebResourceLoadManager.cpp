@@ -52,19 +52,19 @@ void WebKitWebResourceLoadManager::didInitiateLoad(ResourceLoaderIdentifier reso
 
     GRefPtr<WebKitWebResource> resource = adoptGRef(webkitWebResourceCreate(*frame, request));
     m_resources.set({ resourceID, frameID }, resource);
-    webkitWebViewResourceLoadStarted(m_webView, resource.get(), WTFMove(request));
+    webkitWebViewResourceLoadStarted(m_webView, resource.get(), WTF::move(request));
 }
 
 void WebKitWebResourceLoadManager::didSendRequest(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
     if (auto* resource = m_resources.get({ resourceID, frameID }))
-        webkitWebResourceSentRequest(resource, WTFMove(request), WTFMove(redirectResponse));
+        webkitWebResourceSentRequest(resource, WTF::move(request), WTF::move(redirectResponse));
 }
 
 void WebKitWebResourceLoadManager::didReceiveResponse(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, ResourceResponse&& response)
 {
     if (auto* resource = m_resources.get({ resourceID, frameID }))
-        webkitWebResourceSetResponse(resource, WTFMove(response));
+        webkitWebResourceSetResponse(resource, WTF::move(response));
 }
 
 void WebKitWebResourceLoadManager::didFinishLoad(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, ResourceError&& error)
@@ -76,6 +76,6 @@ void WebKitWebResourceLoadManager::didFinishLoad(ResourceLoaderIdentifier resour
     if (error.isNull())
         webkitWebResourceFinished(resource.get());
     else
-        webkitWebResourceFailed(resource.get(), WTFMove(error));
+        webkitWebResourceFailed(resource.get(), WTF::move(error));
 }
 } // namespace WebKit

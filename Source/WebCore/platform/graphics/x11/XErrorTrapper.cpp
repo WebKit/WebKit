@@ -43,7 +43,7 @@ static HashMap<Display*, Vector<XErrorTrapper*>>& xErrorTrappersMap()
 XErrorTrapper::XErrorTrapper(Display* display, Policy policy, Vector<unsigned char>&& expectedErrors)
     : m_display(display)
     , m_policy(policy)
-    , m_expectedErrors(WTFMove(expectedErrors))
+    , m_expectedErrors(WTF::move(expectedErrors))
 {
     xErrorTrappersMap().add(m_display, Vector<XErrorTrapper*>()).iterator->value.append(this);
     m_previousErrorHandler = XSetErrorHandler([](Display* display, XErrorEvent* event) -> int {

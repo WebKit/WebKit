@@ -47,7 +47,7 @@ TEST(ObjTest, TestBasic) {
   ASSERT_EQ(NID_undef, OBJ_ln2nid("this is not an OID"));
   ASSERT_EQ(NID_undef, OBJ_txt2nid("this is not an OID"));
 
-  CBS_init(&cbs, NULL, 0);
+  CBS_init(&cbs, nullptr, 0);
   ASSERT_EQ(NID_undef, OBJ_cbs2nid(&cbs));
 
   // 1.2.840.113554.4.1.72585.2 (https://davidben.net/oid).
@@ -179,7 +179,7 @@ TEST(ObjTest, TestObj2Txt) {
       ASN1_OBJECT_create(NID_undef, kNonMinimalOID, sizeof(kNonMinimalOID),
                          /*sn=*/nullptr, /*ln=*/nullptr));
   ASSERT_TRUE(obj);
-  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, obj.get(), 0));
+  ASSERT_EQ(-1, OBJ_obj2txt(nullptr, 0, obj.get(), 0));
 
   // kOverflowOID is the DER representation of
   // 1.2.840.113554.4.1.72585.18446744073709551616. (The final value is 2^64.)
@@ -190,7 +190,7 @@ TEST(ObjTest, TestObj2Txt) {
   obj.reset(ASN1_OBJECT_create(NID_undef, kOverflowOID, sizeof(kOverflowOID),
                                /*sn=*/nullptr, /*ln=*/nullptr));
   ASSERT_TRUE(obj);
-  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, obj.get(), 0));
+  ASSERT_EQ(-1, OBJ_obj2txt(nullptr, 0, obj.get(), 0));
 
   // kInvalidOID is a mis-encoded version of kBasicConstraints with the final
   // octet having the high bit set.
@@ -198,5 +198,5 @@ TEST(ObjTest, TestObj2Txt) {
   obj.reset(ASN1_OBJECT_create(NID_undef, kInvalidOID, sizeof(kInvalidOID),
                                /*sn=*/nullptr, /*ln=*/nullptr));
   ASSERT_TRUE(obj);
-  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, obj.get(), 0));
+  ASSERT_EQ(-1, OBJ_obj2txt(nullptr, 0, obj.get(), 0));
 }

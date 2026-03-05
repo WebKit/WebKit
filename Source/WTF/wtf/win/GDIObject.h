@@ -49,7 +49,7 @@ public:
     T get() const { return m_object; }
 
     void clear();
-    T leak() WARN_UNUSED_RETURN;
+    [[nodiscard]] T leak();
 
     bool operator!() const { return !m_object; }
 
@@ -97,7 +97,7 @@ template<typename T> inline GDIObject<T>::GDIObject(GDIObject<T>&& other)
 
 template<typename T> inline GDIObject<T>& GDIObject<T>::operator=(GDIObject<T>&& other)
 {
-    auto object = WTFMove(other);
+    auto object = WTF::move(other);
     swap(object);
     return *this;
 }

@@ -48,7 +48,7 @@ using namespace HTMLNames;
 static const int weekDefaultStepBase = -259200000; // The first day of 1970-W01.
 static const int weekDefaultStep = 1;
 static const int weekStepScaleFactor = 604800000;
-static const StepRange::StepDescription weekStepDescription { weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger };
+static const StepRange::StepDescription weekStepDescription { weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::StepValueShouldBe::ParsedInteger };
 
 const AtomString& WeekInputType::formControlType() const
 {

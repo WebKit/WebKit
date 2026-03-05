@@ -51,14 +51,14 @@ public:
 
     static JSScriptFetcher* create(VM& vm, Structure* structure, RefPtr<ScriptFetcher>&& scriptFetcher)
     {
-        auto* result = new (NotNull, allocateCell<JSScriptFetcher>(vm)) JSScriptFetcher(vm, structure, WTFMove(scriptFetcher));
+        auto* result = new (NotNull, allocateCell<JSScriptFetcher>(vm)) JSScriptFetcher(vm, structure, WTF::move(scriptFetcher));
         result->finishCreation(vm);
         return result;
     }
 
     static JSScriptFetcher* create(VM& vm, RefPtr<ScriptFetcher>&& scriptFetcher)
     {
-        return create(vm, vm.scriptFetcherStructure.get(), WTFMove(scriptFetcher));
+        return create(vm, vm.scriptFetcherStructure.get(), WTF::move(scriptFetcher));
     }
 
     ScriptFetcher* fetcher() const
@@ -71,7 +71,7 @@ public:
 private:
     JSScriptFetcher(VM& vm, Structure* structure, RefPtr<ScriptFetcher>&& scriptFetcher)
         : Base(vm, structure)
-        , m_fetcher(WTFMove(scriptFetcher))
+        , m_fetcher(WTF::move(scriptFetcher))
     {
     }
 

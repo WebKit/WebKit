@@ -292,7 +292,7 @@ class TIntermSymbol : public TIntermTyped
   public:
     TIntermSymbol(const TVariable *variable);
 
-    TIntermTyped *deepCopy() const override { return new TIntermSymbol(*this); }
+    TIntermSymbol *deepCopy() const override { return new TIntermSymbol(*this); }
 
     bool hasConstantValue() const override;
     const TConstantUnion *getConstantValue() const override;
@@ -695,6 +695,7 @@ class TIntermBlock : public TIntermNode, public TIntermAggregateBase
   public:
     TIntermBlock() : TIntermNode(), mIsTreeRoot(false) {}
     TIntermBlock(std::initializer_list<TIntermNode *> stmts);
+    TIntermBlock(TIntermSequence &&stmts);
     ~TIntermBlock() override {}
 
     TIntermBlock *getAsBlock() override { return this; }

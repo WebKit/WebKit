@@ -176,7 +176,7 @@ private:
 template<typename T>
 void SourceBufferPrivateRemote::sendToProxy(T&& message)
 {
-    m_gpuProcessConnection.get()->connection().send(WTFMove(message), m_remoteSourceBufferIdentifier);
+    m_gpuProcessConnection.get()->connection().send(WTF::move(message), m_remoteSourceBufferIdentifier);
 }
 
 } // namespace WebKit

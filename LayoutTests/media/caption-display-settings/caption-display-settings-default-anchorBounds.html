@@ -1,0 +1,86 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CaptionDisplaySettingsEnabled=true ] -->
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>caption-display-settings</title>
+	<script src="../../resources/ui-helper.js"></script>
+	<script src="../video-test.js"></script>
+	<style>
+		#target {
+			position: absolute;
+			left: 10px;
+			top: 20px;
+			width: 30px;
+			height: 40px;
+			background-color: green;
+		}
+	</style>
+	<script>
+	async function runTest() {
+		findMediaElement();
+
+		window.options = null;
+		internals.setMockCaptionDisplaySettingsClientCallback(async (element, inOptions) => {
+			options = inOptions;
+		});
+
+		let waitForAndCallShowCaptionDisplaySettings = (target, type) => {
+			return new Promise(resolve => {
+				target.addEventListener(type, event => {
+					run('video.showCaptionDisplaySettings({})').then(resolve);
+				}, { once: true })
+			});
+		};
+
+		consoleWrite('Test anchorBounds during a mouse event:')
+
+		var promise = waitForAndCallShowCaptionDisplaySettings(window, 'mousedown');
+		run('eventSender.mouseMoveTo(15, 25)');
+		run('eventSender.mouseDown(); eventSender.mouseUp()');
+		await promise;
+
+		testExpected('options.anchorBounds.x', 15);
+		testExpected('options.anchorBounds.y', 25);
+		testExpected('options.anchorBounds.width', 0);
+		testExpected('options.anchorBounds.height', 0);
+
+		consoleWrite('-')
+		consoleWrite('Test anchorBounds during a keyboard event:')
+		promise = waitForAndCallShowCaptionDisplaySettings(target, 'keypress');
+		run('target.focus()');
+		run('eventSender.keyDown(" ")');
+		await promise;
+
+		testExpected('options.anchorBounds.x', 10);
+		testExpected('options.anchorBounds.y', 20);
+		testExpected('options.anchorBounds.width', 30);
+		testExpected('options.anchorBounds.height', 40);
+
+		consoleWrite('-')
+		consoleWrite('Test anchorBounds after a mouse event:')
+		promise = waitFor(window, 'mousedown', true);
+		run('eventSender.mouseMoveTo(35, 45)');
+		run('eventSender.mouseDown(); eventSender.mouseUp()');
+		await promise;
+		await sleepFor(10);
+		await run('video.showCaptionDisplaySettings({})');
+
+		testExpected('options.anchorBounds.x', 35);
+		testExpected('options.anchorBounds.y', 45);
+		testExpected('options.anchorBounds.width', 0);
+		testExpected('options.anchorBounds.height', 0);
+	}
+
+	window.addEventListener('load', event => {
+		requestAnimationFrame(() => {
+			runTest().then(endTest).catch(failTest);	
+		});
+	});
+	</script>
+</head>
+<body>
+	<video muted autoplay></video>
+	<button id=target></button>
+</body>
+</html>

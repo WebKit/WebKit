@@ -18,8 +18,8 @@ includes: [testTypedArray.js]
 features: [TypedArray, array-find-from-last]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([1, 2, 3]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([1, 2, 3]));
   var called = 0;
 
   var result = sample.findLastIndex(function() {

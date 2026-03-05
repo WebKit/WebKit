@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (3,3) size 82x28
                   RenderTableRow {TR} at (0,2) size 82x24
                     RenderTableCell {TD} at (2,2) size 78x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 74x19
+                      RenderText {#text} at (2,2) size 74x20
                         text run at (2,2) width 74: "Inner Right"
       RenderTable {TABLE} at (0,52) size 97x52 [border: (5px outset #000000)]
         RenderTableSection {TBODY} at (5,5) size 87x42
@@ -21,5 +21,5 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (3,3) size 73x28
                   RenderTableRow {TR} at (0,2) size 73x24
                     RenderTableCell {TD} at (2,2) size 69x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 65x19
+                      RenderText {#text} at (2,2) size 65x20
                         text run at (2,2) width 65: "Inner Left"

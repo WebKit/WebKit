@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/file-scheme-origin.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-comparison.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-extendablemessageevent.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-global.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-htmlhyperlinkelementutils.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-location.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-messageevent-opaque.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-messageevent.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-origin.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-string.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-url.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-window.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-worker.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from.any.js

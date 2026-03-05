@@ -64,7 +64,6 @@ public:
 #endif
 private:
     RemoteRenderingBackendProxy& ensureRenderingBackend() const;
-    Ref<RemoteRenderingBackendProxy> ensureProtectedRenderingBackend() const { return ensureRenderingBackend(); }
 
     mutable RefPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 };
@@ -93,9 +92,9 @@ RefPtr<ImageBuffer> GPUProcessWebWorkerClient::sinkIntoImageBuffer(std::unique_p
         return nullptr;
     if (is<RemoteSerializedImageBufferProxy>(imageBuffer)) {
         auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
-        return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTFMove(remote), ensureProtectedRenderingBackend());
+        return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTF::move(remote), protect(ensureRenderingBackend()));
     }
-    return WebWorkerClient::sinkIntoImageBuffer(WTFMove(imageBuffer));
+    return WebWorkerClient::sinkIntoImageBuffer(WTF::move(imageBuffer));
 }
 
 RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat) const
@@ -103,7 +102,7 @@ RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBuffer(const FloatSize
     if (RefPtr dispatcher = this->dispatcher())
         assertIsCurrent(*dispatcher);
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
-        return ensureProtectedRenderingBackend()->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
+        return protect(ensureRenderingBackend())->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
     return nullptr;
 }
 
@@ -115,7 +114,7 @@ RefPtr<GraphicsContextGL> GPUProcessWebWorkerClient::createGraphicsContextGL(con
         return nullptr;
     assertIsCurrent(*dispatcher);
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
-        return RemoteGraphicsContextGLProxy::create(attributes, ensureProtectedRenderingBackend(), *dispatcher);
+        return RemoteGraphicsContextGLProxy::create(attributes, protect(ensureRenderingBackend()), *dispatcher);
     return WebWorkerClient::createGraphicsContextGL(attributes);
 }
 #endif
@@ -127,7 +126,7 @@ RefPtr<WebCore::WebGPU::GPU> GPUProcessWebWorkerClient::createGPUForWebGPU() con
     if (!dispatcher)
         return nullptr;
     assertIsCurrent(*dispatcher);
-    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), DDModel::DowncastConvertToBackingContext::create(), ensureProtectedRenderingBackend(), *dispatcher);
+    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), ModelDowncastConvertToBackingContext::create(), protect(ensureRenderingBackend()), *dispatcher);
 }
 #endif
 
@@ -168,7 +167,7 @@ PlatformDisplayID WebWorkerClient::displayID() const
 RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
     assertIsCurrent(*dispatcher().get());
-    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(imageBuffer));
 }
 
 RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat) const

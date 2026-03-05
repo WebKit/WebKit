@@ -33,6 +33,7 @@
 #include "compiler/translator/tree_ops/msl/FixTypeConstructors.h"
 #include "compiler/translator/tree_ops/msl/HoistConstants.h"
 #include "compiler/translator/tree_ops/msl/IntroduceVertexIndexID.h"
+#include "compiler/translator/tree_ops/msl/RescopeGlobalVariables.h"
 #include "compiler/translator/tree_ops/msl/RewriteCaseDeclarations.h"
 #include "compiler/translator/tree_ops/msl/RewriteInterpolants.h"
 #include "compiler/translator/tree_ops/msl/RewriteOutArgs.h"
@@ -901,6 +902,14 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
         }
     }
 
+    if (compileOptions.rescopeGlobalVariables)
+    {
+        if (!RescopeGlobalVariables(*this, *root))
+        {
+            return false;
+        }
+    }
+
     // If there are any function calls that take array-of-array of opaque uniform parameters, or
     // other opaque uniforms that need special handling in Vulkan, such as atomic counters,
     // monomorphize the functions by removing said parameters and replacing them in the function
@@ -911,13 +920,16 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
     // - It dramatically simplifies future transformations w.r.t to samplers in structs, array of
     //   arrays of opaque types, atomic counters etc.
     // - Avoids the need for shader*ArrayDynamicIndexing Vulkan features.
-    UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
-                                       UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
-                                       UnsupportedFunctionArgs::AtomicCounter,
-                                       UnsupportedFunctionArgs::Image};
-    if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
+    if (!compileOptions.useIR)
     {
-        return false;
+        UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
+                                           UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
+                                           UnsupportedFunctionArgs::AtomicCounter,
+                                           UnsupportedFunctionArgs::Image};
+        if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
+        {
+            return false;
+        }
     }
 
     if (aggregateTypesUsedForUniforms > 0)

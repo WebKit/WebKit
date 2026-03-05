@@ -2,9 +2,17 @@
 <body>
 <script>
 if (window.testRunner) {
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpFrameLoadCallbacks();
 }
+
+window.addEventListener("message", function (e) {
+    if (e.data !== 'blocked')
+        console.log('FAIL: Insecure CSS was NOT blocked');
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
 </script>
 <p>This test loads a secure iframe that loads an insecure style sheet.
 We should trigger a mixed content callback because an active network attacker

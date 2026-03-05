@@ -11,7 +11,7 @@ info: |
   This description applies only if the TypedArray function is called with at
   least one argument and the Type of the first argument is Object and that
   object has an [[ArrayBufferData]] internal slot.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, SharedArrayBuffer, TypedArray]
 ---*/
 
@@ -30,4 +30,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(ta2.buffer, buffer, "ta2.buffer");
   assert.sameValue(ta2.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(ta2), TA.prototype);
-});
+}, null, ["passthrough"]);

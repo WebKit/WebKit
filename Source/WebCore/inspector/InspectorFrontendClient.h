@@ -169,7 +169,6 @@ public:
 
     WEBCORE_EXPORT virtual void sendMessageToBackend(const String&) = 0;
     WEBCORE_EXPORT virtual InspectorFrontendAPIDispatcher& frontendAPIDispatcher() = 0;
-    Ref<InspectorFrontendAPIDispatcher> protectedFrontendAPIDispatcher() { return frontendAPIDispatcher(); }
     WEBCORE_EXPORT virtual Page* frontendPage() = 0;
 
     WEBCORE_EXPORT virtual bool isUnderTest() = 0;

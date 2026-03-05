@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2015, 2025 Igalia S.L.
+ * Copyright (C) 2015, 2025, 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,47 +28,70 @@
 #include "BitmapTexturePool.h"
 
 #if USE(TEXTURE_MAPPER)
+#include "GLContext.h"
+#include "GLContextWrapper.h"
+#include "PlatformDisplay.h"
+#include <wtf/TZoneMallocInlines.h>
+
+#if USE(GLIB)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BitmapTexturePool);
+
 #if defined(BITMAP_TEXTURE_POOL_MAX_SIZE_IN_MB) && BITMAP_TEXTURE_POOL_MAX_SIZE_IN_MB > 0
-static constexpr size_t poolSizeLimit = BITMAP_TEXTURE_POOL_MAX_SIZE_IN_MB * MB;
+static constexpr size_t s_poolSizeLimitInBytes = BITMAP_TEXTURE_POOL_MAX_SIZE_IN_MB * MB;
 #else
-static constexpr size_t poolSizeLimit = std::numeric_limits<size_t>::max();
+static constexpr size_t s_poolSizeLimitInBytes = std::numeric_limits<size_t>::max();
 #endif
 
-static const Seconds releaseUnusedSecondsTolerance { 3_s };
-static const Seconds releaseUnusedTexturesTimerInterval { 500_ms };
-static const Seconds releaseUnusedSecondsToleranceOnLimitExceeded { 50_ms };
-static const Seconds releaseUnusedTexturesTimerIntervalOnLimitExceeded { 200_ms };
+static constexpr Seconds s_releaseUnusedSecondsTolerance { 3_s };
+static constexpr Seconds s_releaseUnusedTexturesTimerInterval { 500_ms };
+static constexpr Seconds s_releaseUnusedSecondsToleranceOnLimitExceeded { 50_ms };
+static constexpr Seconds s_releaseUnusedTexturesTimerIntervalOnLimitExceeded { 200_ms };
+
+BitmapTexturePool& BitmapTexturePool::singleton()
+{
+    static NeverDestroyed<BitmapTexturePool> pool;
+    return pool;
+}
 
 BitmapTexturePool::BitmapTexturePool()
-    : m_releaseUnusedTexturesTimer(RunLoop::currentSingleton(), "BitmapTexturePool::ReleaseUnusedTexturesTimer"_s, this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
-    , m_releaseUnusedSecondsTolerance(releaseUnusedSecondsTolerance)
-    , m_releaseUnusedTexturesTimerInterval(releaseUnusedTexturesTimerInterval)
+    : m_releaseUnusedTexturesTimer(RunLoop::mainSingleton(), "BitmapTexturePool::ReleaseUnusedTexturesTimer"_s, this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
+    , m_releaseUnusedSecondsTolerance(s_releaseUnusedSecondsTolerance)
+    , m_releaseUnusedTexturesTimerInterval(s_releaseUnusedTexturesTimerInterval)
 {
+#if USE(GLIB)
+    m_releaseUnusedTexturesTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+#endif
 }
 
 Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
 {
-    Entry* selectedEntry = std::find_if(m_textures.begin(), m_textures.end(),
-        [&](Entry& entry) {
-            return entry.m_texture->refCount() == 1
-                && entry.m_texture->size() == size
+    ASSERT(GLContextWrapper::currentContext());
+    Locker locker { m_lock };
+    Entry* selectedEntry = std::find_if(m_textures.begin(), m_textures.end(), [&](Entry& entry) {
+        return entry.texture->refCount() == 1
+            && entry.texture->size() == size
 #if USE(GBM)
-                && entry.m_texture->flags().contains(BitmapTexture::Flags::BackedByDMABuf) == flags.contains(BitmapTexture::Flags::BackedByDMABuf)
-                && entry.m_texture->flags().contains(BitmapTexture::Flags::ForceLinearBuffer) == flags.contains(BitmapTexture::Flags::ForceLinearBuffer)
+            && entry.texture->flags().contains(BitmapTexture::Flags::BackedByDMABuf) == flags.contains(BitmapTexture::Flags::BackedByDMABuf)
+            && entry.texture->flags().contains(BitmapTexture::Flags::ForceLinearBuffer) == flags.contains(BitmapTexture::Flags::ForceLinearBuffer)
+            && entry.texture->flags().contains(BitmapTexture::Flags::ForceVivanteSuperTiledBuffer) == flags.contains(BitmapTexture::Flags::ForceVivanteSuperTiledBuffer)
 #endif
-                && entry.m_texture->flags().contains(BitmapTexture::Flags::DepthBuffer) == flags.contains(BitmapTexture::Flags::DepthBuffer);
-        });
+            && entry.texture->flags().contains(BitmapTexture::Flags::UseBGRALayout) == flags.contains(BitmapTexture::Flags::UseBGRALayout)
+            && entry.texture->flags().contains(BitmapTexture::Flags::DepthBuffer) == flags.contains(BitmapTexture::Flags::DepthBuffer)
+            && entry.texture->flags().contains(BitmapTexture::Flags::NearestFiltering) == flags.contains(BitmapTexture::Flags::NearestFiltering);
+    });
 
     if (selectedEntry == m_textures.end()) {
         m_textures.append(Entry(BitmapTexture::create(size, flags)));
         selectedEntry = &m_textures.last();
-        m_poolSize += size.unclampedArea();
+        m_poolSizeInBytes += selectedEntry->texture->sizeInBytes();
     } else {
-        RELEASE_ASSERT(size == selectedEntry->m_texture->size());
-        selectedEntry->m_texture->reset(size, flags);
+        RELEASE_ASSERT(size == selectedEntry->texture->size());
+        selectedEntry->texture->reset(size, flags);
     }
 
     enterLimitExceededModeIfNeeded();
@@ -76,12 +99,14 @@ Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, Option
     scheduleReleaseUnusedTextures();
 
     selectedEntry->markIsInUse();
-    return selectedEntry->m_texture;
+    return selectedEntry->texture;
 }
 
 #if USE(GBM)
 Ref<BitmapTexture> BitmapTexturePool::createTextureForImage(EGLImage image, OptionSet<BitmapTexture::Flags> flags)
 {
+    ASSERT(GLContextWrapper::currentContext());
+    Locker locker { m_lock };
     auto texture = BitmapTexture::create(image, flags);
     m_imageTextures.append(texture.copyRef());
     scheduleReleaseUnusedTextures();
@@ -91,6 +116,7 @@ Ref<BitmapTexture> BitmapTexturePool::createTextureForImage(EGLImage image, Opti
 
 void BitmapTexturePool::scheduleReleaseUnusedTextures()
 {
+    ASSERT(m_lock.isHeld());
     if (m_releaseUnusedTexturesTimer.isActive())
         return;
 
@@ -99,64 +125,90 @@ void BitmapTexturePool::scheduleReleaseUnusedTextures()
 
 void BitmapTexturePool::releaseUnusedTexturesTimerFired()
 {
-    if (!m_textures.isEmpty()) {
-        // Delete entries, which have been unused in releaseUnusedSecondsTolerance.
-        MonotonicTime minUsedTime = MonotonicTime::now() - m_releaseUnusedSecondsTolerance;
+    Locker locker { m_lock };
 
-        m_textures.removeAllMatching([this, &minUsedTime](const Entry& entry) {
-            if (entry.canBeReleased(minUsedTime)) {
-                m_poolSize -= entry.m_texture->size().unclampedArea();
-                return true;
-            }
-            return false;
-        });
+    auto hasTextures = [this] -> bool {
+        if (!m_textures.isEmpty())
+            return true;
+#if USE(GBM)
+        if (!m_imageTextures.isEmpty())
+            return true;
+#endif
+        return false;
+    };
 
-        exitLimitExceededModeIfNeeded();
-    }
+    if (!hasTextures())
+        return;
+
+    auto releaseTexturesIfNeeded = [&] {
+        if (!m_textures.isEmpty()) {
+            // Delete entries, which have been unused in releaseUnusedSecondsTolerance.
+            MonotonicTime minUsedTime = MonotonicTime::now() - m_releaseUnusedSecondsTolerance;
+
+            auto matchCount = m_textures.removeAllMatching([this, &minUsedTime](const Entry& entry) {
+                if (entry.canBeReleased(minUsedTime)) {
+                    m_poolSizeInBytes -= entry.texture->sizeInBytes();
+                    return true;
+                }
+                return false;
+            });
+
+            if (matchCount)
+                exitLimitExceededModeIfNeeded();
+        }
 
 #if USE(GBM)
-    if (!m_imageTextures.isEmpty()) {
-        m_imageTextures.removeAllMatching([](const BitmapTexture& texture) {
-            return texture.refCount() == 1;
-        });
-    }
-
-    if (!m_textures.isEmpty() && !m_imageTextures.isEmpty())
-        scheduleReleaseUnusedTextures();
-#else
-    if (!m_textures.isEmpty())
-        scheduleReleaseUnusedTextures();
+        if (!m_imageTextures.isEmpty()) {
+            m_imageTextures.removeAllMatching([](const BitmapTexture& texture) {
+                return texture.refCount() == 1;
+            });
+        }
 #endif
+    };
+
+    if (GLContextWrapper::currentContext())
+        releaseTexturesIfNeeded();
+#if !PLATFORM(WIN)
+    else if (auto* context = PlatformDisplay::sharedDisplay().sharingGLContext()) {
+        GLContext::ScopedGLContextCurrent scopedCurrent(*context);
+        releaseTexturesIfNeeded();
+    }
+#endif
+
+    if (hasTextures())
+        scheduleReleaseUnusedTextures();
 }
 
 void BitmapTexturePool::enterLimitExceededModeIfNeeded()
 {
+    ASSERT(m_lock.isHeld());
     if (m_onLimitExceededMode)
         return;
 
-    if (m_poolSize > poolSizeLimit) {
+    if (m_poolSizeInBytes > s_poolSizeLimitInBytes) {
         // If we allocated a new texture and this caused that we went over the size limit, enter limit exceeded mode,
         // set values for tolerance and interval for this mode, and trigger an immediate request to release textures.
         // While on limit exceeded mode, we are more aggressive releasing textures, by polling more often and keeping
         // the unused textures in the pool for smaller periods of time.
         m_onLimitExceededMode = true;
-        m_releaseUnusedSecondsTolerance = releaseUnusedSecondsToleranceOnLimitExceeded;
-        m_releaseUnusedTexturesTimerInterval = releaseUnusedTexturesTimerIntervalOnLimitExceeded;
+        m_releaseUnusedSecondsTolerance = s_releaseUnusedSecondsToleranceOnLimitExceeded;
+        m_releaseUnusedTexturesTimerInterval = s_releaseUnusedTexturesTimerIntervalOnLimitExceeded;
         m_releaseUnusedTexturesTimer.startOneShot(0_s);
     }
 }
 
 void BitmapTexturePool::exitLimitExceededModeIfNeeded()
 {
+    ASSERT(m_lock.isHeld());
     if (!m_onLimitExceededMode)
         return;
 
     // If we're in limit exceeded mode and the pool size has become smaller than the limit,
     // exit the limit exceeded mode and set the default values for interval and tolerance again.
-    if (m_poolSize <= poolSizeLimit) {
+    if (m_poolSizeInBytes <= s_poolSizeLimitInBytes) {
         m_onLimitExceededMode = false;
-        m_releaseUnusedSecondsTolerance = releaseUnusedSecondsTolerance;
-        m_releaseUnusedTexturesTimerInterval = releaseUnusedTexturesTimerInterval;
+        m_releaseUnusedSecondsTolerance = s_releaseUnusedSecondsTolerance;
+        m_releaseUnusedTexturesTimerInterval = s_releaseUnusedTexturesTimerInterval;
     }
 }
 

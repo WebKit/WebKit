@@ -44,8 +44,8 @@ public:
     virtual bool isAnimatedLength() const { return false; }
 
     virtual bool matches(const OwnerType&, const SVGProperty&) const { return false; }
-    virtual bool matches(const OwnerType&, const SVGAnimatedProperty&) const { return false; }
-    virtual void setDirty(const OwnerType&, SVGAnimatedProperty& animatedProperty) const { animatedProperty.setDirty(); }
+    virtual bool matches(const OwnerType&, const SVGAnimatedPropertyBase&) const { return false; }
+    virtual void setDirty(const OwnerType&, SVGAnimatedPropertyBase& animatedProperty) const { animatedProperty.setDirty(); }
     virtual std::optional<String> synchronize(const OwnerType&) const { return std::nullopt; }
 
     virtual RefPtr<SVGAttributeAnimator> createAnimator(OwnerType&, const QualifiedName&, AnimationMode, CalcMode, bool, bool) const { return nullptr; }

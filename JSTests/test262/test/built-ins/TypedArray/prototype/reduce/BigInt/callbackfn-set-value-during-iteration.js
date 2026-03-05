@@ -14,12 +14,12 @@ info: |
   a [[Get]] of "length".
 
   22.1.3.19 Array.prototype.reduce ( callbackfn [ , initialValue ] )
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Reflect.set, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n, 44n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n, 44n]));
   var newVal = 0n;
 
   sample.reduce(function(acc, val, i) {

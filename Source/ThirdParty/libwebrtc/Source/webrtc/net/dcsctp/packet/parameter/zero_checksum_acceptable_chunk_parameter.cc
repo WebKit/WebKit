@@ -30,7 +30,6 @@ namespace dcsctp {
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // |           Error Detection Method Identifier (EDMID)           |
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ZeroChecksumAcceptableChunkParameter::kType;
 
 std::optional<ZeroChecksumAcceptableChunkParameter>
 ZeroChecksumAcceptableChunkParameter::Parse(

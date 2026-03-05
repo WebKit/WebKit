@@ -93,7 +93,7 @@ namespace WTF {
     class SegmentedVector final {
         friend class SegmentedVectorIterator<T, SegmentSize, Malloc>;
         WTF_MAKE_NONCOPYABLE(SegmentedVector);
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SegmentedVectorIterator);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SegmentedVector);
 
     public:
         using Iterator = SegmentedVectorIterator<T, SegmentSize, Malloc>;
@@ -156,7 +156,7 @@ namespace WTF {
         T takeLast()
         {
             ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
-            T result = WTFMove(last());
+            T result = WTF::move(last());
             --m_size;
             return result;
         }

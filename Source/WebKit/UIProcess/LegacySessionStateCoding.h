@@ -37,6 +37,6 @@ namespace WebKit {
 struct SessionState;
 
 RefPtr<API::Data> encodeLegacySessionState(const SessionState&);
-WARN_UNUSED_RETURN bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState&);
+[[nodiscard]] bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState&);
 
 } // namespace WebKit

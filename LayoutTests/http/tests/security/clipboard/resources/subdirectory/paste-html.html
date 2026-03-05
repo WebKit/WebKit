@@ -2,7 +2,7 @@
 <html>
 <head>
 <script>
-let loadedContent = [];
+let loadedContent = new Map();
 onmessage = function (event) {
     if (event.data.type == 'paste') {
         document.body.focus();
@@ -10,31 +10,36 @@ onmessage = function (event) {
         if (window.testRunner)
             document.execCommand('paste');
     } else if (event.data.type == 'contentLoaded') {
-        loadedContent.push(event.data);
+        for (const frame of Array.from(document.body.querySelectorAll('iframe'))) {
+            if (frame.contentWindow === event.source) {
+                loadedContent.set(frame, event.data);
+                break;
+            }
+        }
         checkIfLoadCompleted();
     }
 }
 
-let frames = [];
 function doPaste(event) {
     top.postMessage({type: 'pasted', html: event.clipboardData.getData('text/html')}, '*');
 }
 
 function checkIfLoadCompleted() {
     const frames = Array.from(document.body.querySelectorAll('iframe'));
-    if (loadedContent.length < frames.length)
+    if (loadedContent.size < frames.length)
         return;
 
     top.postMessage({
         type: 'checkedState',
         html: document.body.innerHTML,
-        frames: frames.map((frame, i) => {
+        frames: frames.map((frame) => {
+            const content = loadedContent.get(frame);
             return {
                 src: frame.src,
                 class: frame.className,
                 canAccessContentDocument: !!frame.contentDocument,
-                imageSrc: loadedContent[i].imageSrc,
-                imageWidth: loadedContent[i].imageWidth,
+                imageSrc: content.imageSrc,
+                imageWidth: content.imageWidth,
             }
         })}, '*');
 }

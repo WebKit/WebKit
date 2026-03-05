@@ -96,7 +96,7 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
     MESSAGE_CHECK(sharedWorkerKey.name == workerOptions.name);
     CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     if (CheckedPtr session = this->session())
-        session->ensureSharedWorkerServer().requestSharedWorker(WTFMove(sharedWorkerKey), sharedWorkerObjectIdentifier, WTFMove(port), WTFMove(workerOptions));
+        session->ensureSharedWorkerServer().requestSharedWorker(WTF::move(sharedWorkerKey), sharedWorkerObjectIdentifier, WTF::move(port), WTF::move(workerOptions));
 }
 
 void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
@@ -126,7 +126,7 @@ void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedW
 void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&& completionHandler)
 {
     CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTF::move(completionHandler));
 }
 
 void WebSharedWorkerServerConnection::notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::ResourceError& error)
@@ -143,7 +143,7 @@ void WebSharedWorkerServerConnection::postErrorToWorkerObject(WebCore::SharedWor
 
 std::optional<SharedPreferencesForWebProcess> WebSharedWorkerServerConnection::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    RefPtr webProcessConnection = m_networkProcess->protectedWebProcessConnection(connection);
+    RefPtr webProcessConnection = m_networkProcess->webProcessConnection(connection);
     if (!webProcessConnection)
         return std::nullopt;
     return webProcessConnection->sharedPreferencesForWebProcess();

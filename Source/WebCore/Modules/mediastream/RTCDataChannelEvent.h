@@ -27,17 +27,17 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <WebCore/Event.h>
-#include <WebCore/RTCDataChannel.h>
+#include "Event.h"
+#include "RTCDataChannel.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class RTCDataChannelEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDataChannelEvent);
+    WTF_MAKE_TZONE_ALLOCATED(RTCDataChannelEvent);
 public:
     struct Init : EventInit {
-        RefPtr<RTCDataChannel> channel;
+        Ref<RTCDataChannel> channel;
     };
 
     static Ref<RTCDataChannelEvent> create(const AtomString& type, CanBubble, IsCancelable, Ref<RTCDataChannel>&&);

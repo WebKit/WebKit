@@ -35,7 +35,7 @@ struct AudioStreamBasicDescription;
 
 namespace WebCore {
 
-struct AudioInfo;
+class AudioInfo;
 class SharedBuffer;
 
 WEBCORE_EXPORT bool isVorbisDecoderAvailable();

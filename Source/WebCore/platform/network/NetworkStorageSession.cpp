@@ -455,7 +455,7 @@ void NetworkStorageSession::setOptInCookiePartitioningEnabled(bool)
 #if ENABLE(APP_BOUND_DOMAINS)
 void NetworkStorageSession::setAppBoundDomains(HashSet<RegistrableDomain>&& domains)
 {
-    m_appBoundDomains = WTFMove(domains);
+    m_appBoundDomains = WTF::move(domains);
     if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains)
         cookieEnabledStateMayHaveChanged();
 }
@@ -471,7 +471,7 @@ void NetworkStorageSession::resetAppBoundDomains()
 #if ENABLE(MANAGED_DOMAINS)
 void NetworkStorageSession::setManagedDomains(HashSet<RegistrableDomain>&& domains)
 {
-    m_managedDomains = WTFMove(domains);
+    m_managedDomains = WTF::move(domains);
     if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllExceptManagedDomains)
         cookieEnabledStateMayHaveChanged();
 }
@@ -599,7 +599,7 @@ std::optional<OrganizationStorageAccessPromptQuirk> NetworkStorageSession::stora
 
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&& completionHandler)
 {
-    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, WTFMove(completionHandler));
+    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, WTF::move(completionHandler));
 }
 
 #if !PLATFORM(COCOA)
@@ -608,7 +608,7 @@ void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, Completion
     // FIXME: Stop ignoring origin.topOrigin.
     notImplemented();
 
-    deleteCookiesForHostnames(Vector { origin.clientOrigin.host() }, WTFMove(completionHandler));
+    deleteCookiesForHostnames(Vector { origin.clientOrigin.host() }, WTF::move(completionHandler));
 }
 #endif
 
@@ -648,14 +648,14 @@ void NetworkStorageSession::setCookiesVersion(uint64_t version)
             callback.callback(CookieVersionChangeCallback::Reason::VersionChange);
             continue;
         }
-        m_cookiesVersionChangeCallbacks.append(WTFMove(callback));
+        m_cookiesVersionChangeCallbacks.append(WTF::move(callback));
     }
 }
 
 void NetworkStorageSession::addCookiesVersionChangeCallback(CookieVersionChangeCallback&& callback)
 {
     ASSERT(callback.version < m_cookiesVersion);
-    m_cookiesVersionChangeCallbacks.append(WTFMove(callback));
+    m_cookiesVersionChangeCallbacks.append(WTF::move(callback));
 }
 
 void NetworkStorageSession::clearCookiesVersionChangeCallbacks()

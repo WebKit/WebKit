@@ -14,7 +14,7 @@
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 200.00 205.00)
+                  (bounds 200.00 204.50)
                   (children 1
                     (GraphicsLayer
                       (bounds 200.00 200.00)
@@ -35,7 +35,7 @@
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 200.00 205.00)
+                  (bounds 200.00 204.50)
                   (children 1
                     (GraphicsLayer
                       (bounds 200.00 200.00)

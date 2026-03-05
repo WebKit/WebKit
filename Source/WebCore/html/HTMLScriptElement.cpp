@@ -41,12 +41,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLScriptElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLScriptElement);
 
 using namespace HTMLNames;
 
 inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
 {
     ASSERT(hasTagName(scriptTag));
@@ -54,7 +54,9 @@ inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Docume
 
 Ref<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
 {
-    return adoptRef(*new HTMLScriptElement(tagName, document, wasInsertedByParser, alreadyStarted));
+    Ref scriptElement = adoptRef(*new HTMLScriptElement(tagName, document, wasInsertedByParser, alreadyStarted));
+    scriptElement->suspendIfNeeded();
+    return scriptElement;
 }
 
 bool HTMLScriptElement::isURLAttribute(const Attribute& attribute) const
@@ -78,6 +80,7 @@ void HTMLScriptElement::removedFromAncestor(RemovalType type, ContainerNode& con
 {
     HTMLElement::removedFromAncestor(type, container);
     unblockRendering();
+    unregisterSpeculationRules();
 }
 
 void HTMLScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -108,7 +111,7 @@ void HTMLScriptElement::didFinishInsertingNode()
 
 void HTMLScriptElement::setText(String&& value)
 {
-    setTextContent(WTFMove(value));
+    setTextContent(WTF::move(value));
 }
 
 DOMTokenList& HTMLScriptElement::blocking()
@@ -134,7 +137,7 @@ void HTMLScriptElement::potentiallyBlockRendering()
 {
     bool explicitRenderBlocking = m_blockingList && m_blockingList->contains("render"_s);
     if (explicitRenderBlocking || isImplicitlyPotentiallyRenderBlocking()) {
-        protectedDocument()->blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
+        protect(document())->blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
         m_isRenderBlocking = true;
     }
 }
@@ -142,20 +145,20 @@ void HTMLScriptElement::potentiallyBlockRendering()
 void HTMLScriptElement::unblockRendering()
 {
     if (m_isRenderBlocking) {
-        protectedDocument()->unblockRenderingOn(*this);
+        protect(document())->unblockRenderingOn(*this);
         m_isRenderBlocking = false;
     }
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#dom-script-text
-ExceptionOr<void> HTMLScriptElement::setText(Variant<RefPtr<TrustedScript>, String>&& value)
+ExceptionOr<void> HTMLScriptElement::setText(Variant<Ref<TrustedScript>, String>&& value)
 {
-    return setTextContent(trustedTypeCompliantString(*protectedScriptExecutionContext(), WTFMove(value), "HTMLScriptElement text"_s));
+    return setTextContent(trustedTypeCompliantString(*protect(scriptExecutionContext()), WTF::move(value), "HTMLScriptElement text"_s));
 }
 
-ExceptionOr<void> HTMLScriptElement::setTextContent(std::optional<Variant<RefPtr<TrustedScript>, String>>&& value)
+ExceptionOr<void> HTMLScriptElement::setTextContent(std::optional<Variant<Ref<TrustedScript>, String>>&& value)
 {
-    return setTextContent(trustedTypeCompliantString(*protectedScriptExecutionContext(), value ? WTFMove(*value) : emptyString(), "HTMLScriptElement textContent"_s));
+    return setTextContent(trustedTypeCompliantString(*protect(scriptExecutionContext()), value ? WTF::move(*value) : emptyString(), "HTMLScriptElement textContent"_s));
 }
 
 ExceptionOr<void> HTMLScriptElement::setTextContent(ExceptionOr<String> value)
@@ -166,20 +169,20 @@ ExceptionOr<void> HTMLScriptElement::setTextContent(ExceptionOr<String> value)
     auto newValue = value.releaseReturnValue();
 
     setTrustedScriptText(newValue);
-    setTextContent(WTFMove(newValue));
+    setTextContent(WTF::move(newValue));
     return { };
 }
 
-ExceptionOr<void> HTMLScriptElement::setInnerText(Variant<RefPtr<TrustedScript>, String>&& value)
+ExceptionOr<void> HTMLScriptElement::setInnerText(Variant<Ref<TrustedScript>, String>&& value)
 {
-    auto stringValueHolder = trustedTypeCompliantString(*protectedScriptExecutionContext(), WTFMove(value), "HTMLScriptElement innerText"_s);
+    auto stringValueHolder = trustedTypeCompliantString(*protect(scriptExecutionContext()), WTF::move(value), "HTMLScriptElement innerText"_s);
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
     auto newValue = stringValueHolder.releaseReturnValue();
 
     setTrustedScriptText(newValue);
-    setInnerText(WTFMove(newValue));
+    setInnerText(WTF::move(newValue));
     return { };
 }
 
@@ -204,9 +207,9 @@ String HTMLScriptElement::src() const
     return getURLAttributeForBindings(WebCore::HTMLNames::srcAttr).string();
 }
 
-ExceptionOr<void> HTMLScriptElement::setSrc(Variant<RefPtr<TrustedScriptURL>, String>&& value)
+ExceptionOr<void> HTMLScriptElement::setSrc(Variant<Ref<TrustedScriptURL>, String>&& value)
 {
-    auto stringValueHolder = trustedTypeCompliantString(*protectedScriptExecutionContext(), WTFMove(value), "HTMLScriptElement src"_s);
+    auto stringValueHolder = trustedTypeCompliantString(*protect(scriptExecutionContext()), WTF::move(value), "HTMLScriptElement src"_s);
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
@@ -218,7 +221,7 @@ void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(sourceAttributeValue()));
+    addSubresourceURL(urls, protect(document())->completeURL(sourceAttributeValue()));
 }
 
 String HTMLScriptElement::sourceAttributeValue() const
@@ -263,6 +266,9 @@ bool HTMLScriptElement::hasSourceAttribute() const
 
 void HTMLScriptElement::dispatchLoadEvent()
 {
+    // Keep the JS wrapper alive until the end of this method.
+    Ref wrapperProtector = makePendingActivity(*this);
+
     ASSERT(!haveFiredLoadEvent());
     setHaveFiredLoadEvent(true);
 
@@ -286,7 +292,7 @@ bool HTMLScriptElement::isScriptPreventedByAttributes() const
 
 Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
-    return adoptRef(*new HTMLScriptElement(tagQName(), document, false, alreadyStarted()));
+    return HTMLScriptElement::create(tagQName(), document, false, alreadyStarted());
 }
 
 String HTMLScriptElement::referrerPolicyForBindings() const
@@ -307,6 +313,17 @@ String HTMLScriptElement::fetchPriorityForBindings() const
 RequestPriority HTMLScriptElement::fetchPriority() const
 {
     return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
+}
+
+void HTMLScriptElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+{
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
+    ScriptElement::didMoveToNewDocument(newDocument);
+}
+
+void HTMLScriptElement::eventListenersDidChange()
+{
+    setHasRelevantLoadEventsListener(hasEventListeners(eventNames().errorEvent) || hasEventListeners(eventNames().loadEvent));
 }
 
 }

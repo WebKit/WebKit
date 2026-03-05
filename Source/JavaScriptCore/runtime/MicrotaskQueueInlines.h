@@ -25,47 +25,87 @@
 
 #pragma once
 
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/JSMicrotaskDispatcher.h>
 #include <JavaScriptCore/MicrotaskQueue.h>
+#include <JavaScriptCore/TopExceptionScope.h>
+#include <JavaScriptCore/VMEntryScopeInlines.h>
 
 namespace JSC {
 
-template<bool useCallOnEachMicrotask>
-inline void MicrotaskQueue::performMicrotaskCheckpoint(VM& vm, NOESCAPE const Invocable<QueuedTask::Result(QueuedTask&)> auto& functor)
+inline JSCell* QueuedTask::dispatcher() const
 {
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    return std::bit_cast<JSCell*>(std::bit_cast<uintptr_t>(m_dispatcher.pointer()) & ~isJSMicrotaskDispatcherFlag);
+}
+
+inline JSGlobalObject* QueuedTask::globalObject() const
+{
+    if (isJSMicrotaskDispatcher()) [[unlikely]]
+        return jsCast<JSMicrotaskDispatcher*>(dispatcher())->globalObject();
+    return jsCast<JSGlobalObject*>(dispatcher());
+}
+
+inline JSMicrotaskDispatcher* QueuedTask::jsMicrotaskDispatcher() const
+{
+    if (isJSMicrotaskDispatcher()) [[unlikely]]
+        return jsCast<JSMicrotaskDispatcher*>(dispatcher());
+    return nullptr;
+}
+
+inline std::optional<MicrotaskIdentifier> QueuedTask::identifier() const
+{
+    auto* dispatcher = jsMicrotaskDispatcher();
+    if (!dispatcher)
+        return std::nullopt;
+    return MicrotaskIdentifier { std::bit_cast<uintptr_t>(dispatcher) };
+}
+
+inline void MicrotaskQueue::enqueue(QueuedTask&& task)
+{
+    if (task.isJSMicrotaskDispatcher()) [[unlikely]] {
+        enqueueSlow(WTF::move(task));
+        return;
+    }
+    m_queue.enqueue(WTF::move(task));
+    if (!m_isScheduledToRun) [[unlikely]]
+        scheduleToRunIfNeeded();
+}
+
+template<bool useCallOnEachMicrotask>
+inline void MicrotaskQueue::performMicrotaskCheckpoint(VM& vm, NOESCAPE const Invocable<void(JSGlobalObject*, JSGlobalObject*)> auto& globalObjectSwitchCallback)
+{
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     if (vm.executionForbidden()) [[unlikely]]
         clear();
     else {
-        while (!m_queue.isEmpty()) {
-            auto task = m_queue.dequeue();
-            auto result = functor(task);
-            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
-                clear();
-                break;
-            }
-
-            if constexpr (useCallOnEachMicrotask) {
-                vm.callOnEachMicrotaskTick();
-                if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
-                    clear();
-                    break;
-                }
-            }
-
-            switch (result) {
-            case QueuedTask::Result::Executed:
-                break;
-            case QueuedTask::Result::Discard:
-                // Let this task go away.
-                break;
-            case QueuedTask::Result::Suspended: {
-                m_toKeep.enqueue(WTFMove(task));
-                break;
-            }
-            }
+        if (vm.disallowVMEntryCount) [[unlikely]] {
+            VM::checkVMEntryPermission();
+            return;
         }
+
+        std::optional<VMEntryScope> entryScope;
+        JSGlobalObject* currentGlobalObject = nullptr;
+
+        while (true) {
+            auto [nextGlobalObject, done] = drain<useCallOnEachMicrotask>(currentGlobalObject, vm, catchScope);
+            if (done)
+                break;
+
+            globalObjectSwitchCallback(currentGlobalObject, nextGlobalObject);
+
+            if (nextGlobalObject) {
+                if (!entryScope)
+                    entryScope.emplace(vm, nextGlobalObject);
+                else
+                    entryScope->setGlobalObject(nextGlobalObject);
+            } else
+                entryScope = std::nullopt;
+
+            currentGlobalObject = nextGlobalObject;
+        }
+
+        vm.didEnterVM = true;
     }
     m_queue.swap(m_toKeep);
 }

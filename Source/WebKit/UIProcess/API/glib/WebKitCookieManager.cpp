@@ -62,12 +62,12 @@ class CookieStoreObserver : public API::HTTPCookieStoreObserver {
 public:
     static RefPtr<CookieStoreObserver> create(Function<void()>&& callback)
     {
-        return adoptRef(new CookieStoreObserver(WTFMove(callback)));
+        return adoptRef(new CookieStoreObserver(WTF::move(callback)));
     }
 
 private:
     CookieStoreObserver(Function<void()>&& callback)
-        : m_callback(WTFMove(callback)) { }
+        : m_callback(WTF::move(callback)) { }
 
     void cookiesDidChange(API::HTTPCookieStore&) final
     {
@@ -249,7 +249,7 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
 
-    manager->priv->cookieStore().getHTTPCookieAcceptPolicy([task = WTFMove(task)](WebCore::HTTPCookieAcceptPolicy policy) {
+    manager->priv->cookieStore().getHTTPCookieAcceptPolicy([task = WTF::move(task)](WebCore::HTTPCookieAcceptPolicy policy) {
         g_task_return_int(task.get(), toWebKitCookieAcceptPolicy(policy));
     });
 }
@@ -294,7 +294,7 @@ void webkit_cookie_manager_add_cookie(WebKitCookieManager* manager, SoupCookie* 
     g_return_if_fail(cookie);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->cookieStore().setCookies({ WebCore::Cookie(cookie) }, [task = WTFMove(task)]() {
+    manager->priv->cookieStore().setCookies({ WebCore::Cookie(cookie) }, [task = WTF::move(task)]() {
         g_task_return_boolean(task.get(), TRUE);
     });
 }
@@ -343,7 +343,7 @@ void webkit_cookie_manager_get_cookies(WebKitCookieManager* manager, const gchar
     g_return_if_fail(uri);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->cookieStore().cookiesForURL(URL { String::fromUTF8(uri) }, [task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies) {
+    manager->priv->cookieStore().cookiesForURL(URL { String::fromUTF8(uri) }, [task = WTF::move(task)](const Vector<WebCore::Cookie>& cookies) {
         GList* cookiesList = nullptr;
         for (auto& cookie : cookies)
             cookiesList = g_list_prepend(cookiesList, cookie.toSoupCookie());
@@ -398,7 +398,7 @@ void webkit_cookie_manager_delete_cookie(WebKitCookieManager* manager, SoupCooki
     g_return_if_fail(cookie);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->cookieStore().deleteCookie(WebCore::Cookie(cookie), [task = WTFMove(task)]() {
+    manager->priv->cookieStore().deleteCookie(WebCore::Cookie(cookie), [task = WTF::move(task)]() {
         g_task_return_boolean(task.get(), TRUE);
     });
 }
@@ -503,7 +503,7 @@ void webkit_cookie_manager_delete_cookies_for_domain(WebKitCookieManager* manage
 
     WebsiteDataRecord record;
     record.addCookieHostName(String::fromUTF8(domain));
-    auto* data = webkitWebsiteDataCreate(WTFMove(record));
+    auto* data = webkitWebsiteDataCreate(WTF::move(record));
     GList dataList = { data, nullptr, nullptr };
     webkit_website_data_manager_remove(manager->priv->dataManager, WEBKIT_WEBSITE_DATA_COOKIES, &dataList, nullptr, nullptr, nullptr);
     webkit_website_data_unref(data);
@@ -550,7 +550,7 @@ void webkit_cookie_manager_replace_cookies(WebKitCookieManager* manager, GList* 
         webCookies.append(WebCore::Cookie(reinterpret_cast<SoupCookie*>(it->data)));
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->cookieStore().replaceCookies(WTFMove(webCookies), [task = WTFMove(task)]() {
+    manager->priv->cookieStore().replaceCookies(WTF::move(webCookies), [task = WTF::move(task)]() {
         g_task_return_boolean(task.get(), TRUE);
     });
 }
@@ -594,7 +594,7 @@ void webkit_cookie_manager_get_all_cookies(WebKitCookieManager* manager, GCancel
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->cookieStore().getAllCookies([task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies) {
+    manager->priv->cookieStore().getAllCookies([task = WTF::move(task)](const Vector<WebCore::Cookie>& cookies) {
         GList* cookiesList = nullptr;
         for (auto& cookie : cookies)
             cookiesList = g_list_prepend(cookiesList, cookie.toSoupCookie());

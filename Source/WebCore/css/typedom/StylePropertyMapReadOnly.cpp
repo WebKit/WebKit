@@ -64,7 +64,7 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Docum
         });
     }
 
-    return { StylePropertyMapReadOnly::reifyValue(document, WTFMove(value), propertyID) };
+    return { StylePropertyMapReadOnly::reifyValue(document, WTF::move(value), propertyID) };
 }
 
 StylePropertyMapReadOnly::Iterator::Iterator(StylePropertyMapReadOnly& map, ScriptExecutionContext* context)

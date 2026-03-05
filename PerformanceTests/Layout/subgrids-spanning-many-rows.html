@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style>
+#grid {
+  display: grid;
+  grid-template-columns: auto;
+}
+
+.subgrid {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  grid-row: span 20000;
+}
+</style>
+</head>
+
+<body>
+<div id="grid">
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+  <div class="subgrid">Row</div>
+</div>
+</body>
+<script>
+var index = 0;
+PerfTestRunner.measureRunsPerSecond({run: function() {
+  document.querySelector("body").style.width = ++index % 2 ? "50%" : "100%";
+  document.body.offsetHeight;
+}});
+</script>
+</html>

@@ -1,5 +1,0 @@
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'event.deviceProperties.uniqueId')
-
-PASS PointerEvent.deviceProperties.uniqueId
-

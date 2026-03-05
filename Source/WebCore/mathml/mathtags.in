@@ -33,9 +33,9 @@ mtable interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
 mtr interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
 mtd interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
 mmultiscripts interfaceName=MathMLScriptsElement, JSInterfaceName=MathMLElement
-mprescripts interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mprescripts interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
 menclose interfaceName=MathMLMencloseElement, JSInterfaceName=MathMLElement
-none interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+none interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
 semantics interfaceName=MathMLSelectElement, JSInterfaceName=MathMLElement
 
 maligngroup interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement

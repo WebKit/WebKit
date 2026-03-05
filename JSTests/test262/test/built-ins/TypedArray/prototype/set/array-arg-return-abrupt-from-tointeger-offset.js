@@ -38,4 +38,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     sample.set([], obj2);
   }, "abrupt from toString");
-});
+}, null, ["passthrough"]);

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/RenderElement.h>
+#include "RenderElement.h"
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {

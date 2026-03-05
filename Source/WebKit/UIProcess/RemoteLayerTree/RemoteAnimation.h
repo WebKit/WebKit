@@ -43,8 +43,8 @@ public:
 
     const RemoteAnimationTimeline& timeline() const { return m_timeline.get(); }
 
-    const OptionSet<WebCore::AcceleratedEffectProperty>& animatedProperties() const { return m_effect->animatedProperties(); }
-    const Vector<WebCore::AcceleratedEffect::Keyframe>& keyframes() const { return m_effect->keyframes(); }
+    const OptionSet<WebCore::AcceleratedEffectProperty>& animatedProperties() const LIFETIME_BOUND { return m_effect->animatedProperties(); }
+    const Vector<WebCore::AcceleratedEffect::Keyframe>& keyframes() const LIFETIME_BOUND { return m_effect->keyframes(); }
 
     void apply(WebCore::AcceleratedEffectValues&);
 

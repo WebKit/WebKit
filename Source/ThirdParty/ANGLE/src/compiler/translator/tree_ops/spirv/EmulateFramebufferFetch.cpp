@@ -108,7 +108,7 @@ bool InputAttachmentUsageTraverser::visitDeclaration(Visit visit, TIntermDeclara
         }
     }
 
-    return false;
+    return true;
 }
 
 bool InputAttachmentUsageTraverser::visitBinary(Visit visit, TIntermBinary *node)
@@ -531,7 +531,7 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
         outType->setQualifier(EvqFragmentOut);
         const TVariable *replacement =
             new TVariable(symbolTable, var->name(), outType, var->symbolType());
-        replacementMap[var] = new TIntermSymbol(replacement);
+        replacementMap[var->uniqueId()] = new TIntermSymbol(replacement);
     }
 
     if (lastFragData != nullptr || inputAttachmentMap.depth != nullptr ||
@@ -604,18 +604,18 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
 
         if (lastFragData != nullptr)
         {
-            replacementMap[glLastFragData]  = new TIntermSymbol(lastFragData);
-            replacementMap[glLastFragColor] = new TIntermBinary(
+            replacementMap[glLastFragData->uniqueId()]  = new TIntermSymbol(lastFragData);
+            replacementMap[glLastFragColor->uniqueId()] = new TIntermBinary(
                 EOpIndexDirect, new TIntermSymbol(lastFragData), CreateIndexNode(0));
         }
         if (inputAttachmentMap.depth != nullptr)
         {
-            replacementMap[glLastFragDepth] = new TIntermSwizzle(
+            replacementMap[glLastFragDepth->uniqueId()] = new TIntermSwizzle(
                 CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.depth), {0});
         }
         if (inputAttachmentMap.stencil != nullptr)
         {
-            replacementMap[glLastFragStencil] = new TIntermSwizzle(
+            replacementMap[glLastFragStencil->uniqueId()] = new TIntermSwizzle(
                 CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.stencil), {0});
         }
     }

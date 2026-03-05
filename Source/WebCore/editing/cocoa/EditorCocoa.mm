@@ -52,8 +52,8 @@
 #import "HTMLPictureElement.h"
 #import "HTMLSourceElement.h"
 #import "HTMLSpanElement.h"
-#import "ImageBufferUtilitiesCG.h"
 #import "ImageOverlay.h"
+#import "ImageUtilities.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
 #import "LocalFrame.h"
@@ -110,7 +110,7 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<std
 static RetainPtr<NSAttributedString> selectionInImageOverlayAsAttributedString(const VisibleSelection& selection)
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    auto* page = selection.document()->page();
+    RefPtr page = selection.document()->page();
     if (!page)
         return nil;
 
@@ -182,7 +182,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
                 LegacyWebArchive::ShouldArchiveSubframes::No
             };
             if (document->settings().siteIsolationEnabled())
-                content.webArchive = LegacyWebArchive::createFromSelection(document->frame(), WTFMove(options));
+                content.webArchive = LegacyWebArchive::createFromSelection(document->frame(), WTF::move(options));
             populateRichTextDataIfNeeded(content, document);
         }
         client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
@@ -211,7 +211,7 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     client()->getClientPasteboardData(selectedRange(), webContent.clientTypesAndData);
     webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
 
-    pasteboardWriterData.setWebContent(WTFMove(webContent));
+    pasteboardWriterData.setWebContent(WTF::move(webContent));
 }
 
 RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
@@ -312,7 +312,7 @@ void Editor::takeFindStringFromSelection()
     types.append(String(legacyStringPasteboardTypeSingleton()));
     auto context = PagePasteboardContext::create(document().pageID());
     platformStrategies()->pasteboardStrategy()->setTypes(types, NSPasteboardNameFind, context.get());
-    platformStrategies()->pasteboardStrategy()->setStringForType(WTFMove(stringFromSelection), legacyStringPasteboardTypeSingleton(), NSPasteboardNameFind, context.get());
+    platformStrategies()->pasteboardStrategy()->setStringForType(WTF::move(stringFromSelection), legacyStringPasteboardTypeSingleton(), NSPasteboardNameFind, context.get());
 #else
     if (auto* client = this->client()) {
         // Since the find pasteboard doesn't exist on iOS, WebKit maintains its own notion of the latest find string,
@@ -458,39 +458,39 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
 
     String fallbackType = "image/png"_s;
     auto fallbackData = encodeData(fallbackImageForMultiRepresentationHEIC(data).get(), fallbackType, std::nullopt);
-    Ref fallbackBuffer = SharedBuffer::create(WTFMove(fallbackData));
+    Ref fallbackBuffer = SharedBuffer::create(WTF::move(fallbackData));
 
     auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);
 
     auto source = HTMLSourceElement::create(document);
     source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), primaryBuffer->copyData(), primaryType)) });
     source->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { primaryType });
-    picture->appendChild(WTFMove(source));
+    picture->appendChild(WTF::move(source));
 
     auto image = HTMLImageElement::create(document);
     image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
     if (!altText.isEmpty())
         image->setAttributeWithoutSynchronization(HTMLNames::altAttr, AtomString { altText });
-    picture->appendChild(WTFMove(image));
+    picture->appendChild(WTF::move(image));
 
     auto fragment = document->createDocumentFragment();
-    fragment->appendChild(WTFMove(picture));
+    fragment->appendChild(WTF::move(picture));
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
         auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
         auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
-        registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTFMove(primaryBuffer));
-        source->setAttachmentElement(WTFMove(primaryAttachment));
+        registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTF::move(primaryBuffer));
+        source->setAttachmentElement(WTF::move(primaryAttachment));
 
         auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
         auto fallbackIdentifier = fallbackAttachment->ensureUniqueIdentifier();
-        registerAttachmentIdentifier(fallbackIdentifier, fallbackType, makeString(fallbackIdentifier, ".png"_s), WTFMove(fallbackBuffer));
-        image->setAttachmentElement(WTFMove(fallbackAttachment));
+        registerAttachmentIdentifier(fallbackIdentifier, fallbackType, makeString(fallbackIdentifier, ".png"_s), WTF::move(fallbackBuffer));
+        image->setAttachmentElement(WTF::move(fallbackAttachment));
     }
 #endif
 
-    ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), { ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditAction::Insert)->apply();
+    ReplaceSelectionCommand::create(document.get(), WTF::move(fragment), { ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditAction::Insert)->apply();
 }
 #endif
 

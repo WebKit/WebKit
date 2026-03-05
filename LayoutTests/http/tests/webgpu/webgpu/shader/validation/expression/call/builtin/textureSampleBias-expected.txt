@@ -485,6 +485,8 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f16"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
 FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E" assert_unreached:
+  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -497,14 +499,15 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
-  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: value=-9) INFO: subcase ran
   - (in subcase: value=-8) INFO: subcase ran
   - (in subcase: value=0) INFO: subcase ran
   - (in subcase: value=7) INFO: subcase ran
+  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -517,10 +520,9 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
-  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: value=8) INFO: subcase ran
  Reached unreachable code
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
@@ -536,6 +538,8 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cf16%3
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="i32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Ci32%3E"
 FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3E" assert_unreached:
+  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -548,14 +552,15 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
-  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: value=-9) INFO: subcase ran
   - (in subcase: value=-8) INFO: subcase ran
   - (in subcase: value=0) INFO: subcase ran
   - (in subcase: value=7) INFO: subcase ran
+  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -568,10 +573,9 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
-  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: value=8) INFO: subcase ran
  Reached unreachable code
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Ci32%3E"
@@ -587,6 +591,8 @@ PASS :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType=
 PASS :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="c"
 FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -602,12 +608,15 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u" as
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -623,10 +632,11 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l" as
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="none";offset=false
 PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="none";offset=true

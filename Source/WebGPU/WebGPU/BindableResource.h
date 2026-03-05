@@ -29,8 +29,10 @@
 #import <limits>
 #import <type_traits>
 #import <utility>
+#import <wtf/GenericHashKey.h>
 #import <wtf/HashFunctions.h>
 #import <wtf/HashMap.h>
+#import <wtf/Hasher.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RefPtr.h>
 #import <wtf/Variant.h>
@@ -102,36 +104,47 @@ struct IndexBufferAndIndexData {
     IndexData indexData;
 };
 
-using DrawIndexCacheContainerKey = std::pair<uint32_t, std::pair<uint32_t, std::pair<uint32_t, std::pair<uint32_t, std::pair<uint32_t, std::pair<uint32_t, std::pair<uint32_t, std::pair<uint32_t, uint64_t>>>>>>>>;
+using DrawIndexCacheContainerKey = std::array<uint32_t, 5>;
+inline void add(Hasher& hasher, const DrawIndexCacheContainerKey& input)
+{
+    for (auto value : input)
+        WTF::add(hasher, value);
+}
 
 struct DrawIndexCacheContainerValue {
     uint32_t firstIndex { 0 };
     uint32_t indexCount { 0 };
-    uint32_t vertexCount { 0 };
-    uint32_t instanceCount { 0 };
-    uint32_t firstInstance { 0 };
-    uint32_t baseVertex { 0 };
-    uint32_t minInstanceCount { 0 };
     uint32_t primitiveOffsetWithIndexType { 0 };
-    uint64_t icb { 0 };
+    union {
+        uint64_t icb { 0 };
+        struct {
+            uint32_t icb1;
+            uint32_t icb2;
+        };
+    };
     DrawIndexCacheContainerValue() { }
     DrawIndexCacheContainerValue(const DrawIndexCacheContainerKey& key)
-        : firstIndex(key.first)
-        , indexCount(key.second.first)
-        , vertexCount(key.second.second.first)
-        , instanceCount(key.second.second.second.first)
-        , firstInstance(key.second.second.second.second.first)
-        , baseVertex(key.second.second.second.second.second.first)
-        , minInstanceCount(key.second.second.second.second.second.second.first)
-        , primitiveOffsetWithIndexType(key.second.second.second.second.second.second.second.first)
-        , icb(key.second.second.second.second.second.second.second.second)
+        : firstIndex(key[0])
+        , indexCount(key[1])
+        , primitiveOffsetWithIndexType(key[2])
+        , icb1(key[3])
+        , icb2(key[4])
     {
     }
     uint32_t primitiveOffset() { return static_cast<MTLIndexType>(primitiveOffsetWithIndexType & 0x1); }
     MTLIndexType indexType() { return static_cast<MTLIndexType>(primitiveOffsetWithIndexType & 0x2); }
 };
 
-using DrawIndexCacheContainer = HashMap<DrawIndexCacheContainerKey, bool>;
+using DrawIndexCacheContainer = HashMap<GenericHashKey<DrawIndexCacheContainerKey>, uint32_t>;
 using DrawIndexCacheContainerIterator = DrawIndexCacheContainer::const_iterator;
+
+using TrackedResourceContainer = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+struct TrackedResource {
+    mutable TrackedResourceContainer m_commandEncoders;
+    void removeEncoder(uint64_t identifier) const
+    {
+        m_commandEncoders.remove(identifier);
+    }
+};
 
 } // namespace WebGPU

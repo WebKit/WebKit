@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x17
+        RenderText {#text} at (0,0) size 212x18
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 755x35
-          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x17
+        RenderInline {I} at (0,0) size 755x36
+          RenderInline {A} at (212,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (212,0) size 348x18
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7095"
-          RenderText {#text} at (0,0) size 755x35
+          RenderText {#text} at (0,0) size 755x36
             text run at (559,0) width 5: " "
             text run at (563,0) width 192: "Removing positioning from an"
             text run at (0,18) width 219: "element does not relayout properly"
-        RenderText {#text} at (218,18) size 5x17
+        RenderText {#text} at (218,18) size 5x18
           text run at (218,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 373x17
+        RenderText {#text} at (0,0) size 373x18
           text run at (0,0) width 373: "The green square should be to the left of the yellow square."
 layer at (8,94) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,86) size 784x2 [color=#808080] [border: (1px inset #808080)]

@@ -28,6 +28,8 @@
 #include "UIProcess/Media/RemoteMediaSessionManagerProxy.h"
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
+#include "RemoteMediaSessionClientProxy.h"
+#include "RemoteMediaSessionManagerProxy.h"
 #include "RemoteMediaSessionState.h"
 #include <WebCore/PlatformMediaSession.h>
 
@@ -47,44 +49,54 @@ public:
 
     void updateState(const RemoteMediaSessionState&);
 
+    WebCore::MediaSessionIdentifier sessionIdentifier() const { return m_sessionState.sessionIdentifier; }
+    WebCore::PageIdentifier pageIdentifier() const { return m_sessionState.pageIdentifier; }
+
+    WeakPtr<RemoteMediaSessionManagerProxy> manager() const { return m_manager; }
+
 private:
     RemoteMediaSessionProxy(const RemoteMediaSessionState&, RemoteMediaSessionManagerProxy&);
 
-    WebCore::MediaSessionIdentifier sessionIdentifier() const { return m_state.sessionIdentifier; }
-    WebCore::PageIdentifier pageIdentifier() const { return m_state.pageIdentifier; }
+    WebCore::PlatformMediaSessionState state() const  final { return m_sessionState.state; }
+    void setState(WebCore::PlatformMediaSessionState) final;
 
-    bool isPlayingToWirelessPlaybackTarget() const final { return m_state.isPlayingToWirelessPlaybackTarget; }
+    bool isPlayingToWirelessPlaybackTarget() const final { return m_sessionState.isPlayingToWirelessPlaybackTarget; }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setShouldPlayToPlaybackTarget(bool) final;
 #endif
 
-    bool isPlayingOnSecondScreen() const final { return m_state.isPlayingOnSecondScreen; }
+    bool isPlayingOnSecondScreen() const final { return m_sessionState.isPlayingOnSecondScreen; }
 
-    std::optional<WebCore::MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final { return m_state.groupIdentifier; }
+    std::optional<WebCore::MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final { return m_sessionState.groupIdentifier; }
 
-    bool hasMediaStreamSource() const final { return m_state.hasMediaStreamSource; }
+    bool hasMediaStreamSource() const final { return m_sessionState.hasMediaStreamSource; }
 
-    bool shouldOverridePauseDuringRouteChange() const final { return m_state.shouldOverridePauseDuringRouteChange; }
+    bool shouldOverridePauseDuringRouteChange() const final { return m_sessionState.shouldOverridePauseDuringRouteChange; }
 
-    bool isNowPlayingEligible() const final { return m_state.isNowPlayingEligible; }
-    std::optional<WebCore::NowPlayingInfo> nowPlayingInfo() const final { return m_state.nowPlayingInfo; }
+    bool isNowPlayingEligible() const final { return m_sessionState.isNowPlayingEligible; }
+    std::optional<WebCore::NowPlayingInfo> nowPlayingInfo() const final { return m_sessionState.nowPlayingInfo; }
 
-    WeakPtr<WebCore::PlatformMediaSessionInterface> selectBestMediaSession(const Vector<WeakPtr<WebCore::PlatformMediaSessionInterface>>&, WebCore::PlatformMediaSessionPlaybackControlsPurpose) { return nullptr; }
+    WeakPtr<WebCore::PlatformMediaSessionInterface> selectBestMediaSession(const Vector<WeakPtr<WebCore::PlatformMediaSessionInterface>>&, WebCore::PlatformMediaSessionPlaybackControlsPurpose) final;
+
+    bool isRemoteSessionProxy() const final { return true; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    Ref<const Logger> protectedLogger() const { return logger(); }
-    uint64_t logIdentifier() const { return m_state.logIdentifier; }
+    uint64_t logIdentifier() const { return m_sessionState.logIdentifier; }
 #endif
 
     WeakPtr<RemoteMediaSessionManagerProxy> m_manager;
-    RemoteMediaSessionState m_state;
+    RemoteMediaSessionState m_sessionState;
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
 #endif
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteMediaSessionProxy)
+static bool isType(const WebCore::PlatformMediaSessionInterface& session) { return session.isRemoteSessionProxy(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

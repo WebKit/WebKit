@@ -100,8 +100,8 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         RetainPtr<NSString> localStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
         if (!localStoragePath || ![localStoragePath isKindOfClass:[NSString class]]) {
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-            NSString *libraryDirectory = [paths objectAtIndex:0];
+            RetainPtr paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+            NSString *libraryDirectory = [paths.get() objectAtIndex:0];
             localStoragePath = [libraryDirectory stringByAppendingPathComponent:@"WebKit/LocalStorage"];
         }
         return [localStoragePath stringByStandardizingPath];

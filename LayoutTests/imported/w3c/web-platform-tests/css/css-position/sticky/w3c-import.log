@@ -19,6 +19,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-change-top-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-change-top-ref.html
@@ -72,6 +80,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-grid-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-grid-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-grid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-horizontal-rtl-overconstrained.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-hyperlink-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-hyperlink-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-hyperlink.html
@@ -99,6 +108,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-left-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-left-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-left-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-left-and-right-overconstrained.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-left.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-margins-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-margins-002.html
@@ -175,6 +185,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-right-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-right-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-right.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-subpixel-zoom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-subpixel-zoom-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-subpixel-zoom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-top-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-top-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-td-top.html
@@ -214,6 +227,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top-and-bottom-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top-and-bottom-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top-and-bottom-overconstrained.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top-and-bottom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-transforms-translate.html
@@ -222,3 +236,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/sticky-after-input.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/sticky-continuation-crash.html

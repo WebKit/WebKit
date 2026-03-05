@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-struct VideoInfo;
+class VideoInfo;
 
 class VideoTrackPrivateWebM final : public VideoTrackPrivate {
     WTF_MAKE_TZONE_ALLOCATED(VideoTrackPrivateWebM);

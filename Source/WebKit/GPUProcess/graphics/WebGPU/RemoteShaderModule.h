@@ -57,7 +57,7 @@ class RemoteShaderModule final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteShaderModule> create(WebCore::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteShaderModule();
@@ -77,10 +77,6 @@ private:
     RemoteShaderModule& operator=(RemoteShaderModule&&) = delete;
 
     WebCore::WebGPU::ShaderModule& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::ShaderModule> protectedBacking();
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
-    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap.get(); }
-    Ref<RemoteGPU> protectedGPU() const { return m_gpu.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -89,9 +85,9 @@ private:
     void setLabel(String&&);
     void destruct();
 
-    Ref<WebCore::WebGPU::ShaderModule> m_backing;
+    const Ref<WebCore::WebGPU::ShaderModule> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

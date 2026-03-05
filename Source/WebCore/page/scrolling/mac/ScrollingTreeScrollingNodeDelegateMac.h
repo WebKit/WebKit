@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include <WebCore/ScrollerPairMac.h>
 #include <WebCore/ScrollingEffectsController.h>
@@ -59,6 +59,12 @@ public:
     void currentScrollPositionChanged();
 
     bool isRubberBandInProgress() const;
+    void startRubberBandSnapBack();
+    void rubberBandTargetOffsetDidChange();
+
+#if HAVE(RUBBER_BANDING)
+    std::optional<RubberbandingState> captureRubberbandingState() const final;
+#endif
 
     void updateScrollbarPainters();
     void updateScrollbarLayers() final;
@@ -76,20 +82,30 @@ private:
     // ScrollingEffectsControllerClient.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
+    bool isScrollDeltaOpposingStretch(ScrollEventAxis, float) const final;
     IntSize stretchAmount() const final;
     bool isPinnedOnSide(BoxSide) const final;
     RectEdges<bool> edgePinnedState() const final;
 
-    bool shouldRubberBandOnSide(BoxSide) const final;
+    bool shouldRubberBandOnSide(BoxSide, FloatSize) const final;
     void didStopRubberBandAnimation() final;
     void rubberBandingStateChanged(bool) final;
+    FloatSize rubberBandTargetOffset() const final;
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    bool hasBannerViewOverlay() const final;
+    float bannerViewMaximumHeight() const final;
+#endif
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
 
     const Ref<ScrollerPairMac> m_scrollerPair;
 
     bool m_inMomentumPhase { false };
+
+#if HAVE(RUBBER_BANDING)
+    std::optional<RubberbandingState> m_pendingRubberbandingState;
+#endif
 };
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(MAC)

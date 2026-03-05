@@ -80,23 +80,23 @@ struct CacheStorageRecord {
         , options(options)
         , referrer(referrer)
         , responseHeadersGuard(responseHeadersGuard)
-        , responseData(WTFMove(responseData))
+        , responseData(WTF::move(responseData))
         , responseBodySize(responseBodySize)
-        , responseBody(WTFMove(responseBody))
+        , responseBody(WTF::move(responseBody))
     {
     }
 
     CacheStorageRecord isolatedCopy() && {
         return {
-            crossThreadCopy(WTFMove(info)),
+            crossThreadCopy(WTF::move(info)),
             requestHeadersGuard,
-            crossThreadCopy(WTFMove(request)),
-            crossThreadCopy(WTFMove(options)),
-            crossThreadCopy(WTFMove(referrer)),
+            crossThreadCopy(WTF::move(request)),
+            crossThreadCopy(WTF::move(options)),
+            crossThreadCopy(WTF::move(referrer)),
             responseHeadersGuard,
-            crossThreadCopy(WTFMove(responseData)),
+            crossThreadCopy(WTF::move(responseData)),
             responseBodySize,
-            WebCore::DOMCacheEngine::isolatedResponseBody(WTFMove(responseBody))
+            WebCore::DOMCacheEngine::isolatedResponseBody(WTF::move(responseBody))
         };
     }
 

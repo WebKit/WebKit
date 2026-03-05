@@ -69,6 +69,10 @@ typedef struct FIRSTPASS_STATS {
    */
   double sr_coded_error;
   /*!
+   * Best of intra pred error and inter pred error using long term frame as ref.
+   */
+  double lt_coded_error;
+  /*!
    * Percentage of blocks with inter pred error < intra pred error.
    */
   double pcnt_inter;
@@ -482,6 +486,9 @@ typedef struct {
   int64_t coded_error;
   // Best of intra pred error and inter pred error using golden frame as ref.
   int64_t sr_coded_error;
+  // Best of coded error using long term reference.
+  int64_t lt_coded_error;
+
   // Count of motion vector.
   int mv_count;
   // Count of blocks that pick inter prediction (inter pred error is smaller

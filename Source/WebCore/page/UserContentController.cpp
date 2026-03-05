@@ -49,7 +49,7 @@ UserContentController::~UserContentController() = default;
 void UserContentController::forEachUserScript(NOESCAPE const Function<void(DOMWrapperWorld&, const UserScript&)>& functor) const
 {
     for (const auto& worldAndUserScriptVector : m_userScripts) {
-        auto& world = *worldAndUserScriptVector.key.get();
+        Ref world = worldAndUserScriptVector.key;
         for (const auto& userScript : *worldAndUserScriptVector.value)
             functor(world, *userScript);
     }
@@ -71,13 +71,13 @@ void UserContentController::forEachUserMessageHandler(NOESCAPE const Function<vo
 
 void UserContentController::addUserScript(DOMWrapperWorld& world, std::unique_ptr<UserScript> userScript)
 {
-    auto& scriptsInWorld = m_userScripts.ensure(&world, [&] { return makeUnique<UserScriptVector>(); }).iterator->value;
-    scriptsInWorld->append(WTFMove(userScript));
+    auto& scriptsInWorld = m_userScripts.ensure(world, [&] { return makeUnique<UserScriptVector>(); }).iterator->value;
+    scriptsInWorld->append(WTF::move(userScript));
 }
 
 void UserContentController::removeUserScript(DOMWrapperWorld& world, const URL& url)
 {
-    auto it = m_userScripts.find(&world);
+    auto it = m_userScripts.find(world);
     if (it == m_userScripts.end())
         return;
 
@@ -93,13 +93,13 @@ void UserContentController::removeUserScript(DOMWrapperWorld& world, const URL& 
 
 void UserContentController::removeUserScripts(DOMWrapperWorld& world)
 {
-    m_userScripts.remove(&world);
+    m_userScripts.remove(world);
 }
 
 void UserContentController::addUserStyleSheet(DOMWrapperWorld& world, std::unique_ptr<UserStyleSheet> userStyleSheet, UserStyleInjectionTime injectionTime)
 {
-    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [&] { return makeUnique<UserStyleSheetVector>(); }).iterator->value;
-    styleSheetsInWorld->append(WTFMove(userStyleSheet));
+    auto& styleSheetsInWorld = m_userStyleSheets.ensure(world, [&] { return makeUnique<UserStyleSheetVector>(); }).iterator->value;
+    styleSheetsInWorld->append(WTF::move(userStyleSheet));
 
     if (injectionTime == InjectInExistingDocuments)
         invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
@@ -107,7 +107,7 @@ void UserContentController::addUserStyleSheet(DOMWrapperWorld& world, std::uniqu
 
 void UserContentController::removeUserStyleSheet(DOMWrapperWorld& world, const URL& url)
 {
-    auto it = m_userStyleSheets.find(&world);
+    auto it = m_userStyleSheets.find(world);
     if (it == m_userStyleSheets.end())
         return;
 
@@ -132,7 +132,7 @@ void UserContentController::removeUserStyleSheet(DOMWrapperWorld& world, const U
 
 void UserContentController::removeUserStyleSheets(DOMWrapperWorld& world)
 {
-    if (!m_userStyleSheets.remove(&world))
+    if (!m_userStyleSheets.remove(world))
         return;
 
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();

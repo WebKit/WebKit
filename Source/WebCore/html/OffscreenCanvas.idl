@@ -32,14 +32,15 @@ typedef (
     ImageBitmapRenderingContext or
     OffscreenCanvasRenderingContext2D) OffscreenRenderingContext;
 
-dictionary ImageEncodeOptions
-{
+// https://html.spec.whatwg.org/multipage/canvas.html#imageencodeoptions
+dictionary ImageEncodeOptions {
    DOMString type = "image/png";
    unrestricted double quality = 1.0;
 };
 
-enum OffscreenRenderingContextType
-{
+// https://html.spec.whatwg.org/multipage/canvas.html#offscreenrenderingcontextid
+// FIXME: This should be named `OffscreenRenderingContextId`.
+enum OffscreenRenderingContextType {
    "2d",
    "webgl",
    "webgl2",
@@ -47,6 +48,7 @@ enum OffscreenRenderingContextType
    "webgpu"
 };
 
+// https://html.spec.whatwg.org/multipage/canvas.html#offscreencanvas
 [
     ActiveDOMObject,
     GenerateIsReachable=Impl,
@@ -54,8 +56,6 @@ enum OffscreenRenderingContextType
     Conditional=OFFSCREEN_CANVAS,
     ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKERS,
     EnabledForContext,
-    ReportExtraMemoryCost,
-    ReportExternalMemoryCost,
     Exposed=(Window,Worker)
 ] interface OffscreenCanvas : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor([EnforceRange] unsigned long width, [EnforceRange] unsigned long height);
@@ -64,7 +64,12 @@ enum OffscreenRenderingContextType
     [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long height;
 
     [CallWith=CurrentGlobalObject] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
-    ImageBitmap transferToImageBitmap();
-    Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
+    // FIXME: `transferToImageBitmap` should not return a nullable type.
+    ImageBitmap? transferToImageBitmap();
+    Promise<Blob> convertToBlob(optional ImageEncodeOptions options = {});
 
+    // FIXME: Add support for `oncontextlost`.
+    // attribute EventHandler oncontextlost;
+    // FIXME: Add support for `oncontextrestored`.
+    // attribute EventHandler oncontextrestored;
 };

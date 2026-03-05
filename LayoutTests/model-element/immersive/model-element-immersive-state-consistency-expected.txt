@@ -1,0 +1,8 @@
+
+PASS Second request during first request completes correctly
+PASS Immersive request during immersive exit should first wait for exit and then proceeds
+PASS Rapid request/exit cycles maintain consistent state
+PASS Multiple concurrent requests - exactly one succeeds
+PASS State remains clean after request aborted by element removal
+PASS Element removed while waiting for exit to complete
+

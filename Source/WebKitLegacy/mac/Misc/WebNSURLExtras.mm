@@ -138,13 +138,13 @@
 
 -(NSData *)_web_hostData
 {
-    NSData *result = WTF::dataForURLComponentType(self, kCFURLComponentHost);
+    RetainPtr result = WTF::dataForURLComponentType(self, kCFURLComponentHost);
 
     // Take off localhost for file.
     if ([result _web_isCaseInsensitiveEqualToCString:"localhost"] && [[self _web_schemeData] _web_isCaseInsensitiveEqualToCString:"file"])
         return nil;
 
-    return result;
+    return result.autorelease();
 }
 
 - (NSString *)_web_hostString

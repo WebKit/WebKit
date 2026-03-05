@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html {
+    font-size: 24pt;
+}
+
+::highlight(yellowHighlight) {
+    background-color: yellow;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <div id="highlight_area">Highlight this first and then delete highlight.</div>
+    <pre id="result"></pre>
+    <p>When run, the first "this" should be highlighted, and then the highlight should be removed.</p>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    let highlightRange = new Range();
+    let highlightOne = new Highlight(highlightRange);
+    CSS.highlights.set("yellowHighlight", highlightOne);
+    let highlightNode = highlight_area;
+
+    highlightRange.setStart(highlightNode.firstChild, 10);
+    highlightRange.setEnd(highlightNode.firstChild, 14);
+
+    await UIHelper.renderingUpdate();
+
+    CSS.highlights.delete("yellowHighlight");
+    if (window.internals) {
+        let repaintRects = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+        result.textContent = repaintRects;
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</html>

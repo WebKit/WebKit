@@ -42,11 +42,11 @@ namespace WebCore {
 
 Ref<CachedModuleScriptLoader> CachedModuleScriptLoader::create(ModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
 {
-    return adoptRef(*new CachedModuleScriptLoader(client, promise, scriptFetcher, WTFMove(parameters)));
+    return adoptRef(*new CachedModuleScriptLoader(client, promise, scriptFetcher, WTF::move(parameters)));
 }
 
 CachedModuleScriptLoader::CachedModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
-    : ModuleScriptLoader(client, promise, scriptFetcher, WTFMove(parameters))
+    : ModuleScriptLoader(client, promise, scriptFetcher, WTF::move(parameters))
 {
 }
 
@@ -64,10 +64,10 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
     ASSERT(!m_cachedScript);
     String integrity = m_parameters ? m_parameters->integrity() : String { };
     auto destination = m_parameters && m_parameters->type() == JSC::ScriptFetchParameters::Type::JSON ? FetchOptionsDestination::Json : FetchOptionsDestination::Script;
-    m_cachedScript = scriptFetcher().requestModuleScript(document, sourceURL, destination, WTFMove(integrity), serviceWorkersMode);
+    m_cachedScript = scriptFetcher().requestModuleScript(document, sourceURL, destination, WTF::move(integrity), serviceWorkersMode);
     if (!m_cachedScript)
         return false;
-    m_sourceURL = WTFMove(sourceURL);
+    m_sourceURL = WTF::move(sourceURL);
 
     // If the content is already cached, this immediately calls notifyFinished.
     m_cachedScript->addClient(*this);
@@ -82,7 +82,7 @@ void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const Ne
 
     Ref<CachedModuleScriptLoader> protectedThis(*this);
     if (m_client)
-        m_client->notifyFinished(*this, WTFMove(m_sourceURL), m_promise.releaseNonNull());
+        m_client->notifyFinished(*this, WTF::move(m_sourceURL), m_promise.releaseNonNull());
 
     // Remove the client after calling notifyFinished to keep the data buffer in
     // CachedResource alive while notifyFinished processes the resource.

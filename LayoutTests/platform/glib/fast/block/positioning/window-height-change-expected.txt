@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x17
+        RenderText {#text} at (0,0) size 212x18
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 755x35
-          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x17
+        RenderInline {I} at (0,0) size 755x36
+          RenderInline {A} at (212,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (212,0) size 348x18
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5813"
-          RenderText {#text} at (0,0) size 755x35
+          RenderText {#text} at (0,0) size 755x36
             text run at (559,0) width 5: " "
             text run at (563,0) width 192: "positioned blocks don't update"
             text run at (0,18) width 226: "when resizing the window vertically"
-        RenderText {#text} at (225,18) size 5x17
+        RenderText {#text} at (225,18) size 5x18
           text run at (225,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 289x17
+        RenderText {#text} at (0,0) size 289x18
           text run at (0,0) width 289: "The two squares below should be solid green."
       RenderBlock (anonymous) at (0,96) size 784x108
         RenderIFrame {IFRAME} at (0,0) size 104x104 [border: (2px inset #000000)]

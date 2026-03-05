@@ -21,6 +21,7 @@
 #include "config.h"
 #include "AccessibilityProgressIndicator.h"
 
+#include "AXLoggerBase.h"
 #include "AXObjectCacheInlines.h"
 #include "AccessibilityObjectInlines.h"
 #include "FloatConversion.h"
@@ -40,13 +41,13 @@ using namespace HTMLNames;
 AccessibilityProgressIndicator::AccessibilityProgressIndicator(AXID axID, RenderObject& renderer, AXObjectCache& cache)
     : AccessibilityRenderObject(axID, renderer, cache)
 {
-    ASSERT(is<RenderProgress>(renderer) || is<RenderMeter>(renderer) || is<HTMLProgressElement>(renderer.node()) || is<HTMLMeterElement>(renderer.node()));
+    AX_ASSERT(is<RenderProgress>(renderer) || is<RenderMeter>(renderer) || is<HTMLProgressElement>(renderer.node()) || is<HTMLMeterElement>(renderer.node()));
 }
 
 AccessibilityProgressIndicator::AccessibilityProgressIndicator(AXID axID, Element& element, AXObjectCache& cache)
     : AccessibilityRenderObject(axID, element, cache)
 {
-    ASSERT(is<HTMLProgressElement>(element) || is<HTMLMeterElement>(element));
+    AX_ASSERT(is<HTMLProgressElement>(element) || is<HTMLMeterElement>(element));
 }
 
 Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(AXID axID, RenderObject& renderer, AXObjectCache& cache)
@@ -82,6 +83,10 @@ String AccessibilityProgressIndicator::valueDescription() const
 
     if (description.isEmpty())
         description = meter->textContent();
+
+    // If no textual description is available, use the numeric value.
+    if (description.isEmpty())
+        description = String::number(meter->value());
 
     String gaugeRegionValue = gaugeRegionValueDescription();
     if (!gaugeRegionValue.isEmpty())
@@ -160,11 +165,11 @@ String AccessibilityProgressIndicator::gaugeRegionValueDescription() const
         return String();
 
     switch (meterElement->gaugeRegion()) {
-    case HTMLMeterElement::GaugeRegionOptimum:
+    case HTMLMeterElement::GaugeRegion::Optimum:
         return AXMeterGaugeRegionOptimumText();
-    case HTMLMeterElement::GaugeRegionSuboptimal:
+    case HTMLMeterElement::GaugeRegion::Suboptimal:
         return AXMeterGaugeRegionSuboptimalText();
-    case HTMLMeterElement::GaugeRegionEvenLessGood:
+    case HTMLMeterElement::GaugeRegion::EvenLessGood:
         return AXMeterGaugeRegionLessGoodText();
     }
 #endif

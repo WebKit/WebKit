@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 enum class CodeSpecializationKind : uint8_t { CodeForCall, CodeForConstruct };

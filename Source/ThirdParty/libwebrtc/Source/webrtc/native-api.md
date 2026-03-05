@@ -84,18 +84,6 @@ You can achieve this by defining the preprocessor macro
 argument `rtc_builtin_ssl_root_certificates` to false and GN will define the
 macro for you.
 
-## `WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT`
-If you want to provide your own implementation of `webrtc::field_trial` functions
-(more info [here][field_trial_h]) you will have to exclude WebRTC's default
-implementation.
-
-You can achieve this by defining the preprocessor macro
-`WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT`. If you use GN, you can just set the GN
-argument `rtc_exclude_field_trial_default` to true and GN will define the
-macro for you.
-
-[field_trial_h]: https://webrtc.googlesource.com/src/+/main/system_wrappers/include/field_trial.h
-
 ## `WEBRTC_EXCLUDE_METRICS_DEFAULT`
 If you want to provide your own implementation of `webrtc::metrics` functions
 (more info [here][metrics_h]) you will have to exclude WebRTC's default

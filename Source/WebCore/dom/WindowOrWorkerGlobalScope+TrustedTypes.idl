@@ -27,5 +27,6 @@
     EnabledBySetting=TrustedTypesEnabled,
     ImplementedBy=WindowOrWorkerGlobalScopeTrustedTypes
 ] partial interface mixin WindowOrWorkerGlobalScope {
-    [SameObject] readonly attribute TrustedTypePolicyFactory trustedTypes;
+    // FIXME: `trustedTypes` should not be nullable.
+    [SameObject] readonly attribute TrustedTypePolicyFactory? trustedTypes;
 };

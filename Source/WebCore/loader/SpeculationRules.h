@@ -25,16 +25,19 @@
 
 #pragma once
 
+#include <WebCore/EventTarget.h>
 #include <wtf/Box.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class Node;
 enum class ReferrerPolicy : uint8_t;
 
 // https://wicg.github.io/nav-speculation/speculation-rules.html
@@ -72,7 +75,7 @@ public:
     };
 
     struct DocumentPredicate {
-        WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentPredicate);
+        WTF_MAKE_TZONE_ALLOCATED(DocumentPredicate);
     public:
         using PredicateVariant = WTF::Variant<URLPatternPredicate, CSSSelectorPredicate, Box<Conjunction>, Box<Disjunction>, Box<Negation>>;
 
@@ -80,7 +83,7 @@ public:
         DocumentPredicate(DocumentPredicate&&) = default;
         DocumentPredicate& operator=(DocumentPredicate&&) = default;
 
-        const PredicateVariant& value() const;
+        const PredicateVariant& NODELETE value() const;
 
     private:
         PredicateVariant m_value;
@@ -100,14 +103,17 @@ public:
     static Ref<SpeculationRules> create();
 
     // https://wicg.github.io/nav-speculation/speculation-rules.html#parse-speculation-rules
-    WEBCORE_EXPORT bool parseSpeculationRules(const StringView&, const URL& rulesetBaseURL, const URL& documentBaseURL);
+    WEBCORE_EXPORT bool parseSpeculationRules(Node& sourceNode, const StringView&, const URL& rulesetBaseURL, const URL& documentBaseURL);
 
-    const Vector<Rule>& prefetchRules() const;
+    // https://html.spec.whatwg.org/multipage/webappapis.html#unregister-speculation-rules
+    Vector<URL> unregisterSpeculationRules(Node& sourceNode);
+
+    const WeakHashMap<Node, Vector<Rule>, WeakPtrImplWithEventTargetData>& prefetchRules() const { return m_prefetchRulesByNode; }
 
 private:
     SpeculationRules() = default;
 
-    Vector<Rule> m_prefetchRules;
+    WeakHashMap<Node, Vector<Rule>, WeakPtrImplWithEventTargetData> m_prefetchRulesByNode;
 };
 
 } // namespace WebCore

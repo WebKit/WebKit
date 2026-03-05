@@ -16,7 +16,6 @@ var image = document.getElementById("img");
 window.onload = async function() {
     if (!window.internals)
         return;
-    internals.settings.setImageAnimationControlEnabled(true);
 
     debug("Pausing page-wide animation.");
     internals.setImageAnimationEnabled(false);
@@ -34,7 +33,6 @@ window.onload = async function() {
     internals.setImageAnimationEnabled(true);
     await shouldBecomeEqual("internals.isImageAnimating(image)", "true");
 
-    internals.settings.setImageAnimationControlEnabled(false);
     internals.clearMemoryCache();
     finishJSTest();
 };

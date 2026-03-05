@@ -25,8 +25,8 @@
 namespace WebCore {
 
 struct ScrollIntoViewOptions : ScrollOptions {
-    std::optional<ScrollLogicalPosition> blockPosition { ScrollLogicalPosition::Start };
-    std::optional<ScrollLogicalPosition> inlinePosition { ScrollLogicalPosition::Nearest };
+    ScrollLogicalPosition blockPosition { ScrollLogicalPosition::Start };
+    ScrollLogicalPosition inlinePosition { ScrollLogicalPosition::Nearest };
 };
 
 } // namespace WebCore

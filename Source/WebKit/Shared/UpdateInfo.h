@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+#if !PLATFORM(WPE) && !PLATFORM(GTK) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
 
 #include <WebCore/IntRect.h>
 #include <WebCore/ShareableBitmap.h>

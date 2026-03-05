@@ -62,8 +62,6 @@ public:
     JSValue segment(JSGlobalObject*, JSValue) const;
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
-    static JSObject* createSegmentDataObject(JSGlobalObject*, JSString*, int32_t startIndex, int32_t endIndex, UBreakIterator&, Granularity);
-
 private:
     IntlSegmenter(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;

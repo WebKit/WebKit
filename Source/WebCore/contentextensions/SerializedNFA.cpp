@@ -93,12 +93,12 @@ std::optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
 
     nfa.clear();
 
-    return { { WTFMove(*mappedFile), WTFMove(metadata) } };
+    return { { WTF::move(*mappedFile), WTF::move(metadata) } };
 }
 
 SerializedNFA::SerializedNFA(FileSystem::MappedFileData&& file, Metadata&& metadata)
-    : m_file(WTFMove(file))
-    , m_metadata(WTFMove(metadata))
+    : m_file(WTF::move(file))
+    , m_metadata(WTF::move(metadata))
 {
 }
 

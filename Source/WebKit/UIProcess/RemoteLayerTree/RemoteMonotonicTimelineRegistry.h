@@ -39,7 +39,7 @@ public:
     RemoteMonotonicTimelineRegistry() = default;
 
     bool isEmpty() const { return m_timelines.isEmpty(); }
-    void update(WebCore::ProcessIdentifier, const HashSet<Ref<WebCore::AcceleratedTimeline>>&, MonotonicTime);
+    void update(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime);
     RemoteMonotonicTimeline* get(const TimelineID&) const;
     void advanceCurrentTime(MonotonicTime);
 

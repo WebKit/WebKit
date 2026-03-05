@@ -43,19 +43,19 @@ using namespace WebKit;
 {
     switch (_type) {
     case API::Object::Type::Boolean:
-        _number._boolean->~Boolean();
+        SUPPRESS_UNCOUNTED_ARG _number._boolean->~Boolean();
         break;
 
     case API::Object::Type::Double:
-        _number._double->~Double();
+        SUPPRESS_UNCOUNTED_ARG _number._double->~Double();
         break;
 
     case API::Object::Type::UInt64:
-        _number._uint64->~UInt64();
+        SUPPRESS_UNCOUNTED_ARG _number._uint64->~UInt64();
         break;
 
     case API::Object::Type::Int64:
-        _number._int64->~Int64();
+        SUPPRESS_UNCOUNTED_ARG _number._int64->~Int64();
         break;
 
     default:

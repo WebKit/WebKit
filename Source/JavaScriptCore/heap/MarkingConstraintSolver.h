@@ -74,7 +74,7 @@ private:
         TaskWithConstraint() { }
         
         TaskWithConstraint(RefPtr<SharedTask<void(SlotVisitor&)>> task, MarkingConstraint* constraint)
-            : task(WTFMove(task))
+            : task(WTF::move(task))
             , constraint(constraint)
         {
         }

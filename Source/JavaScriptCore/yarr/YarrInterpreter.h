@@ -482,7 +482,7 @@ struct BytecodePattern {
     WTF_MAKE_TZONE_ALLOCATED(BytecodePattern);
 public:
     BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJSLock* lock, unsigned offsetVectorBaseForNamedCaptures, unsigned offsetsSize)
-        : m_body(WTFMove(body))
+        : m_body(WTF::move(body))
         , m_flags(pattern.m_flags)
         , m_allocator(allocator)
         , m_lock(lock)

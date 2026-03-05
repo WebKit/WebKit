@@ -27,6 +27,7 @@
 #include "IntlSegments.h"
 
 #include "IntlObjectInlines.h"
+#include "IntlSegmentDataObject.h"
 #include "IntlSegmentIterator.h"
 #include "IntlWorkaround.h"
 #include "JSCInlines.h"
@@ -41,7 +42,7 @@ const ClassInfo IntlSegments::s_info = { "Object"_s, &Base::s_info, nullptr, nul
 
 IntlSegments* IntlSegments::create(VM& vm, Structure* structure, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&& segmenter, Box<Vector<char16_t>>&& buffer, JSString* string, IntlSegmenter::Granularity granularity)
 {
-    auto* object = new (NotNull, allocateCell<IntlSegments>(vm)) IntlSegments(vm, structure, WTFMove(segmenter), WTFMove(buffer), granularity, string);
+    auto* object = new (NotNull, allocateCell<IntlSegments>(vm)) IntlSegments(vm, structure, WTF::move(segmenter), WTF::move(buffer), granularity, string);
     object->finishCreation(vm);
     return object;
 }
@@ -53,8 +54,8 @@ Structure* IntlSegments::createStructure(VM& vm, JSGlobalObject* globalObject, J
 
 IntlSegments::IntlSegments(VM& vm, Structure* structure, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&& segmenter, Box<Vector<char16_t>>&& buffer, IntlSegmenter::Granularity granularity, JSString* string)
     : Base(vm, structure)
-    , m_segmenter(WTFMove(segmenter))
-    , m_buffer(WTFMove(buffer))
+    , m_segmenter(WTF::move(segmenter))
+    , m_buffer(WTF::move(buffer))
     , m_string(string, WriteBarrierEarlyInit)
     , m_granularity(granularity)
 {
@@ -84,7 +85,7 @@ JSValue IntlSegments::containing(JSGlobalObject* globalObject, JSValue indexValu
         endIndex = m_buffer->size();
 
     scope.release();
-    return IntlSegmenter::createSegmentDataObject(globalObject, m_string.get(), startIndex, endIndex, *m_segmenter, m_granularity);
+    return createSegmentDataObject(globalObject, m_string.get(), startIndex, endIndex, *m_segmenter, m_granularity);
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-%segmentsprototype%-@@iterator
@@ -101,7 +102,7 @@ JSObject* IntlSegments::createSegmentIterator(JSGlobalObject* globalObject)
     }
 
     ubrk_first(segmenter.get());
-    return IntlSegmentIterator::create(vm, globalObject->segmentIteratorStructure(), WTFMove(segmenter), m_buffer, m_string.get(), m_granularity);
+    return IntlSegmentIterator::create(vm, globalObject->segmentIteratorStructure(), WTF::move(segmenter), m_buffer, m_string.get(), m_granularity);
 }
 
 template<typename Visitor>

@@ -61,7 +61,7 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy() = defa
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange(CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr page = this->page())
-        sendWithAsyncReply(Messages::DrawingArea::SetDeviceScaleFactor(page->deviceScaleFactor()), WTFMove(completionHandler));
+        sendWithAsyncReply(Messages::DrawingArea::SetDeviceScaleFactor(page->deviceScaleFactor()), WTF::move(completionHandler));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
@@ -156,7 +156,7 @@ void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState(ActivityS
         return;
 
     Seconds activityStateUpdateTimeout = Seconds::fromMilliseconds(250);
-    webProcessProxy().protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(page->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    protect(webProcessProxy().connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(page->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
@@ -177,7 +177,7 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     if (!page)
         return MachSendRight();
 
-    RetainPtr<CAContext> rootLayerContext = [page->protectedAcceleratedCompositingRootLayer() context];
+    RetainPtr<CAContext> rootLayerContext = [protect(page->acceleratedCompositingRootLayer()) context];
     if (!rootLayerContext)
         return MachSendRight();
 
@@ -202,7 +202,7 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     uint64_t callbackID = connection->installIncomingSyncMessageCallback([rootLayerContext] {
         [rootLayerContext invalidateFences];
     });
-    [CATransaction addCommitHandler:[callbackID, connection = WTFMove(connection)] () mutable {
+    [CATransaction addCommitHandler:[callbackID, connection = WTF::move(connection)] () mutable {
         connection->uninstallIncomingSyncMessageCallback(callbackID);
     } forPhase:kCATransactionPhasePostCommit];
 

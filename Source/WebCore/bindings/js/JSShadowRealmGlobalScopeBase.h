@@ -44,7 +44,7 @@ public:
 
     ShadowRealmGlobalScope& wrapped() const { return *m_wrapped; }
 
-    const JSDOMGlobalObject* incubatingRealm() const;
+    const JSDOMGlobalObject* NODELETE incubatingRealm() const;
     JSDOMGlobalObject* incubatingRealm();
 
     ScriptExecutionContext* scriptExecutionContext() const;
@@ -55,7 +55,6 @@ private:
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-    static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, JSC::QueuedTask&&);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
 protected:
@@ -74,9 +73,9 @@ inline JSDOMGlobalObject* JSShadowRealmGlobalScopeBase::incubatingRealm()
 }
 
 // Always ignores the execState and passed globalObject, ShadowRealmGlobalScope is itself a globalObject and will always use its own prototype chain.
-JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, ShadowRealmGlobalScope&);
+JSC::JSValue NODELETE toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, ShadowRealmGlobalScope&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ShadowRealmGlobalScope* scope) { return scope ? toJS(lexicalGlobalObject, globalObject, *scope) : JSC::jsNull(); }
-JSC::JSValue toJS(JSC::JSGlobalObject*, ShadowRealmGlobalScope&);
+JSC::JSValue NODELETE toJS(JSC::JSGlobalObject*, ShadowRealmGlobalScope&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, ShadowRealmGlobalScope* scope) { return scope ? toJS(lexicalGlobalObject, *scope) : JSC::jsNull(); }
 
 } // namespace WebCore

@@ -116,7 +116,7 @@ SpecialPropertyCache& StructureRareData::ensureSpecialPropertyCacheSlow()
     ASSERT(!m_specialPropertyCache);
     auto cache = makeUnique<SpecialPropertyCache>();
     WTF::storeStoreFence(); // Expose valid struct for concurrent threads including concurrent compilers.
-    m_specialPropertyCache = WTFMove(cache);
+    m_specialPropertyCache = WTF::move(cache);
     return *m_specialPropertyCache.get();
 }
 

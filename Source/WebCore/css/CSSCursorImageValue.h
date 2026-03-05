@@ -20,28 +20,27 @@
 
 #pragma once
 
-#include <WebCore/CSSURL.h>
-#include <WebCore/CSSValue.h>
-#include <WebCore/CSSValuePair.h>
-#include <WebCore/IntPoint.h>
+#include "CSSURL.h"
+#include "CSSValue.h"
+#include "CSSValuePair.h"
+#include "IntPoint.h"
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
-class StyleCursorImage;
-class StyleImage;
-
 namespace Style {
 class BuilderState;
+class CursorImage;
+class Image;
 }
 
 class CSSCursorImageValue final : public CSSValue {
 public:
     static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot);
-    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&&);
+    static Ref<CSSCursorImageValue> NODELETE create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&&);
     ~CSSCursorImageValue();
 
-    const CSS::URL& originalURL() const { return m_originalURL; }
+    const CSS::URL& originalURL() const LIFETIME_BOUND { return m_originalURL; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSCursorImageValue&) const;
@@ -51,7 +50,7 @@ public:
         return func(m_imageValue.get());
     }
 
-    RefPtr<StyleCursorImage> createStyleImage(const Style::BuilderState&) const;
+    RefPtr<Style::CursorImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
     CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, CSS::URL&&);

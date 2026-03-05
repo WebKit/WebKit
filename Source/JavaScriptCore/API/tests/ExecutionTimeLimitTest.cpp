@@ -61,14 +61,14 @@ static JSValueRef currentCPUTimeAsJSFunctionCallback(JSContextRef ctx, JSObjectR
 }
 
 bool shouldTerminateCallbackWasCalled = false;
-static bool shouldTerminateCallback(JSContextRef, void*)
+static bool NODELETE shouldTerminateCallback(JSContextRef, void*)
 {
     shouldTerminateCallbackWasCalled = true;
     return true;
 }
 
 bool cancelTerminateCallbackWasCalled = false;
-static bool cancelTerminateCallback(JSContextRef, void*)
+static bool NODELETE cancelTerminateCallback(JSContextRef, void*)
 {
     cancelTerminateCallbackWasCalled = true;
     return false;
@@ -88,7 +88,7 @@ static bool extendTerminateCallback(JSContextRef ctx, void*)
 
 #if HAVE(MACH_EXCEPTIONS)
 bool dispatchTerminateCallbackCalled = false;
-static bool dispatchTermitateCallback(JSContextRef, void*)
+static bool NODELETE dispatchTermitateCallback(JSContextRef, void*)
 {
     dispatchTerminateCallbackCalled = true;
     return true;

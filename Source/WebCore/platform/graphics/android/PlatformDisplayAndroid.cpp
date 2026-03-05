@@ -36,12 +36,23 @@ namespace WebCore {
 std::unique_ptr<PlatformDisplayAndroid> PlatformDisplayAndroid::create()
 {
 #if defined(EGL_PLATFORM_ANDROID_KHR)
-    // While not terribly common, custom Android builds other than AOSP
-    // or official Google ones may support more than one window system,
-    // so try being explicit before falling back to the default display.
-    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_android")) [[unlikely]] {
-        if (auto glDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_ANDROID_KHR, EGL_DEFAULT_DISPLAY, nullptr)))
+    using GetPlatformDisplayType = PFNEGLGETPLATFORMDISPLAYEXTPROC;
+    GetPlatformDisplayType getPlatformDisplay =
+        [] {
+            const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+            if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")) {
+                if (auto extension = reinterpret_cast<GetPlatformDisplayType>(eglGetProcAddress("eglGetPlatformDisplayEXT")))
+                    return extension;
+            }
+            if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base")) {
+                if (auto extension = reinterpret_cast<GetPlatformDisplayType>(eglGetProcAddress("eglGetPlatformDisplay")))
+                    return extension;
+            }
+            return GetPlatformDisplayType(nullptr);
+        }();
+
+    if (getPlatformDisplay) {
+        if (auto glDisplay = GLDisplay::create(getPlatformDisplay(EGL_PLATFORM_ANDROID_KHR, EGL_DEFAULT_DISPLAY, nullptr)))
             return std::unique_ptr<PlatformDisplayAndroid>(new PlatformDisplayAndroid(glDisplay.releaseNonNull()));
     }
 #endif
@@ -50,7 +61,7 @@ std::unique_ptr<PlatformDisplayAndroid> PlatformDisplayAndroid::create()
 }
 
 PlatformDisplayAndroid::PlatformDisplayAndroid(Ref<GLDisplay>&& glDisplay)
-    : PlatformDisplay(WTFMove(glDisplay))
+    : PlatformDisplay(WTF::move(glDisplay))
 {
 #if ENABLE(WEBGL) && defined(EGL_PLATFORM_ANDROID_KHR)
     m_anglePlatform = EGL_PLATFORM_ANDROID_KHR;

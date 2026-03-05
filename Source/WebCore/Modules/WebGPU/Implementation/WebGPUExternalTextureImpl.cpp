@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternalTextureImpl);
 
 ExternalTextureImpl::ExternalTextureImpl(WebGPUPtr<WGPUExternalTexture>&& externalTexture, const ExternalTextureDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext)
     : m_convertToBackingContext(convertToBackingContext)
-    , m_backing(WTFMove(externalTexture))
+    , m_backing(WTF::move(externalTexture))
     , m_colorSpace(descriptor.colorSpace)
 {
     UNUSED_VARIABLE(m_colorSpace);

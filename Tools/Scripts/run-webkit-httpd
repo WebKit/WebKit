@@ -31,6 +31,8 @@
 import sys
 
 from webkitpy.layout_tests.servers.run_webkit_httpd import parse_args, run_server
+from webkitpy.port.linux_container_sdk_utils import maybe_use_container_sdk_root_dir
+maybe_use_container_sdk_root_dir()
 
 def main(argv, stdout, stderr):
     options, args = parse_args(argv)

@@ -44,7 +44,7 @@ public:
 
         ReplyInfo(uint64_t replyID, String&& blockSignature)
             : replyID(replyID)
-            , blockSignature(WTFMove(blockSignature))
+            , blockSignature(WTF::move(blockSignature))
         {
         }
 
@@ -54,13 +54,13 @@ public:
     RemoteObjectInvocation();
     RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&&);
 
-    const String& interfaceIdentifier() const { return m_interfaceIdentifier; }
-    const RefPtr<API::Dictionary>& encodedInvocation() const { return m_encodedInvocation; }
-    const std::unique_ptr<ReplyInfo>& replyInfo() const { return m_replyInfo; }
+    const String& interfaceIdentifier() const LIFETIME_BOUND { return m_interfaceIdentifier; }
+    const RefPtr<API::Dictionary>& encodedInvocation() const LIFETIME_BOUND { return m_encodedInvocation; }
+    const std::unique_ptr<ReplyInfo>& replyInfo() const LIFETIME_BOUND { return m_replyInfo; }
 
 private:
     String m_interfaceIdentifier;
-    RefPtr<API::Dictionary> m_encodedInvocation;
+    const RefPtr<API::Dictionary> m_encodedInvocation;
     std::unique_ptr<ReplyInfo> m_replyInfo;
 };
 

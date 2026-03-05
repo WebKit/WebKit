@@ -28,6 +28,7 @@
 
 #if HAVE(AVKIT)
 
+#import "CaptionUserPreferencesMediaAF.h"
 #import "GeometryUtilities.h"
 #import "LayoutRect.h"
 #import "Logging.h"
@@ -93,6 +94,7 @@ private:
     RetainPtr<NSString> _previousVideoGravity;
     std::unique_ptr<WebAVPlayerLayerPresentationModelClient> _presentationModelClient;
     NSEdgeInsets _legibleContentInsets;
+    BOOL _showingCaptionPreview;
 #if !RELEASE_LOG_DISABLED
     uint64_t _logIdentifier;
 #endif
@@ -108,6 +110,7 @@ private:
         _previousVideoGravity = AVLayerVideoGravityResizeAspect;
         self.name = @"WebAVPlayerLayer";
         _presentationModelClient = WTF::makeUnique<WebAVPlayerLayerPresentationModelClient>(self);
+        _showingCaptionPreview = NO;
     }
     return self;
 }
@@ -121,12 +124,12 @@ private:
     [super dealloc];
 }
 
-- (VideoPresentationModel*)presentationModel
+- (RefPtr<VideoPresentationModel>)presentationModel
 {
-    return _presentationModel.get().unsafeGet();
+    return _presentationModel.get();
 }
 
-- (void)setPresentationModel:(VideoPresentationModel*)presentationModel
+- (void)setPresentationModel:(RefPtr<VideoPresentationModel>)presentationModel
 {
     auto model = _presentationModel.get();
     if (model == presentationModel)
@@ -157,7 +160,7 @@ private:
     _playerController = (WebAVPlayerController *)playerController;
 }
 
-- (void)setVideoSublayer:(CALayer *)videoSublayer
+- (void)setVideoSublayer:(nullable CALayer *)videoSublayer
 {
     _videoSublayer = videoSublayer;
 }
@@ -406,6 +409,35 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
 - (void)setLegibleContentInsets:(NSEdgeInsets)legibleContentInsets
 {
     _legibleContentInsets = legibleContentInsets;
+}
+
+- (BOOL)showingCaptionPreview
+{
+    return _showingCaptionPreview;
+}
+
+#pragma mark - Caption Preview Support
+
+- (void)setCaptionPreviewProfileID:(NSString * _Nonnull)profileID position:(CGPoint)position text:(nullable NSString *)text
+{
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    if (RefPtr model = _presentationModel.get())
+        model->requestShowCaptionDisplaySettingsPreview(profileID);
+#endif
+
+    _showingCaptionPreview = YES;
+}
+
+- (void)stopShowingCaptionPreview
+{
+    OBJC_INFO_LOG(OBJC_LOGIDENTIFIER);
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    if (RefPtr model = _presentationModel.get())
+        model->requestHideCaptionDisplaySettingsPreview();
+#endif
+
+    _showingCaptionPreview = NO;
 }
 
 #if PLATFORM(APPLETV)

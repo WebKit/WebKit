@@ -1373,11 +1373,11 @@ id CallHistoryDelegate(IMP implementation, WebView *self, SEL selector, id objec
 id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    id delegate = self->_private->formDelegate;
-    if (!delegate || ![delegate respondsToSelector:selector])
+    RetainPtr<id> delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate.get() respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjCMsgSend<id>(delegate, selector, object1, object2);
+        return wtfObjCMsgSend<id>(delegate.get(), selector, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1409,11 +1409,11 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
 id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3)
 {
 #if !PLATFORM(IOS_FAMILY)
-    id delegate = self->_private->formDelegate;
-    if (!delegate || ![delegate respondsToSelector:selector])
+    RetainPtr<id> delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate.get() respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjCMsgSend<id>(delegate, selector, object1, object2, object3);
+        return wtfObjCMsgSend<id>(delegate.get(), selector, object1, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1446,11 +1446,11 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
 id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3, id object4, id object5)
 {
 #if !PLATFORM(IOS_FAMILY)
-    id delegate = self->_private->formDelegate;
-    if (!delegate || ![delegate respondsToSelector:selector])
+    RetainPtr<id> delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate.get() respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjCMsgSend<id>(delegate, selector, object1, object2, object3, object4, object5);
+        return wtfObjCMsgSend<id>(delegate.get(), selector, object1, object2, object3, object4, object5);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1485,11 +1485,11 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
 BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object1, SEL selectorArg, id object2)
 {
 #if !PLATFORM(IOS_FAMILY)
-    id delegate = self->_private->formDelegate;
-    if (!delegate || ![delegate respondsToSelector:selector])
+    RetainPtr<id> delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate.get() respondsToSelector:selector])
         return result;
     @try {
-        return wtfObjCMsgSend<BOOL>(delegate, selector, object1, selectorArg, object2);
+        return wtfObjCMsgSend<BOOL>(delegate.get(), selector, object1, selectorArg, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }

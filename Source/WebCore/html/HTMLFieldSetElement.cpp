@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFieldSetElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFieldSetElement);
 
 using namespace HTMLNames;
 
@@ -183,7 +183,7 @@ const AtomString& HTMLFieldSetElement::formControlType() const
 RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     // Fieldsets should make a block flow if display: inline or table types are set.
-    return RenderElement::createFor(*this, WTFMove(style), { RenderElement::ConstructBlockLevelRendererFor::Inline, RenderElement::ConstructBlockLevelRendererFor::TableOrTablePart });
+    return RenderElement::createFor(*this, WTF::move(style), { RenderElement::ConstructBlockLevelRendererFor::Inline, RenderElement::ConstructBlockLevelRendererFor::TableOrTablePart });
 }
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const
@@ -193,7 +193,7 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
 
 Ref<HTMLCollection> HTMLFieldSetElement::elements()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::FieldSetElements>::traversalType>>(*this, CollectionType::FieldSetElements);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFieldSetElementsCollection>(*this);
 }
 
 void HTMLFieldSetElement::addInvalidDescendant(const HTMLElement& invalidFormControlElement)

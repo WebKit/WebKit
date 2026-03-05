@@ -61,14 +61,14 @@ WEBCORE_EXPORT @interface WAKView : WAKResponder
 
 - (WAKWindow *)window;
 
-- (NSRect)bounds;
-- (NSRect)frame;
+- (CGRect)bounds;
+- (CGRect)frame;
 
-- (void)setFrame:(NSRect)frameRect;
-- (void)setFrameOrigin:(NSPoint)newOrigin;
-- (void)setFrameSize:(NSSize)newSize;
-- (void)setBoundsOrigin:(NSPoint)newOrigin;
-- (void)setBoundsSize:(NSSize)size;
+- (void)setFrame:(CGRect)frameRect;
+- (void)setFrameOrigin:(CGPoint)newOrigin;
+- (void)setFrameSize:(CGSize)newSize;
+- (void)setBoundsOrigin:(CGPoint)newOrigin;
+- (void)setBoundsSize:(CGSize)size;
 - (void)frameSizeChanged;
 
 - (NSArray *)subviews;
@@ -90,24 +90,24 @@ WEBCORE_EXPORT @interface WAKView : WAKResponder
 - (BOOL)needsDisplay;
 - (void)display;
 - (void)displayIfNeeded;
-- (void)displayRect:(NSRect)rect;
-- (void)displayRectIgnoringOpacity:(NSRect)rect;
-- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(CGContextRef)context;
+- (void)displayRect:(CGRect)rect;
+- (void)displayRectIgnoringOpacity:(CGRect)rect;
+- (void)displayRectIgnoringOpacity:(CGRect)rect inContext:(CGContextRef)context;
 - (void)drawRect:(CGRect)rect;
 - (void)viewWillDraw;
 
-- (WAKView *)hitTest:(NSPoint)point;
-- (NSPoint)convertPoint:(NSPoint)point fromView:(WAKView *)aView;
-- (NSPoint)convertPoint:(NSPoint)point toView:(WAKView *)aView;
-- (NSSize)convertSize:(NSSize)size toView:(WAKView *)aView;
-- (NSRect)convertRect:(NSRect)rect fromView:(WAKView *)aView;
-- (NSRect)convertRect:(NSRect)rect toView:(WAKView *)aView;
+- (WAKView *)hitTest:(CGPoint)point;
+- (CGPoint)convertPoint:(CGPoint)point fromView:(WAKView *)aView;
+- (CGPoint)convertPoint:(CGPoint)point toView:(WAKView *)aView;
+- (CGSize)convertSize:(CGSize)size toView:(WAKView *)aView;
+- (CGRect)convertRect:(CGRect)rect fromView:(WAKView *)aView;
+- (CGRect)convertRect:(CGRect)rect toView:(WAKView *)aView;
 
 - (BOOL)needsPanelToBecomeKey;
 
-- (BOOL)scrollRectToVisible:(NSRect)aRect;
-- (void)scrollPoint:(NSPoint)aPoint;
-- (NSRect)visibleRect;
+- (BOOL)scrollRectToVisible:(CGRect)aRect;
+- (void)scrollPoint:(CGPoint)aPoint;
+- (CGRect)visibleRect;
 
 - (void)setHidden:(BOOL)flag;
 
@@ -124,7 +124,7 @@ WEBCORE_EXPORT @interface WAKView : WAKResponder
 - (unsigned int)autoresizingMask;
 - (BOOL)inLiveResize;
 
-- (BOOL)mouse:(NSPoint)aPoint inRect:(NSRect)aRect;
+- (BOOL)mouse:(CGPoint)aPoint inRect:(CGRect)aRect;
 
 - (void)setNeedsLayout:(BOOL)flag;
 - (void)layout;

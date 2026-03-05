@@ -60,6 +60,9 @@ function initializeDecompressionStream(format)
                 const controller = @getByIdDirectPrivate(transformStream, "controller");
                 @transformStreamDefaultControllerEnqueue(controller, buffer);
             }
+
+            if (decoder.@didDetectExtraBytes())
+                return @promiseReject(@Promise, @makeTypeError("Extra bytes past the end."));
         } catch (e) {
             return @promiseReject(@Promise, @makeTypeError(e.message));
         }

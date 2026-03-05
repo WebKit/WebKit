@@ -156,7 +156,7 @@ void TextureMapperLayer3DRenderingContext::paint(TextureMapper& textureMapper, c
 
     Deque<Layer> layerDeque;
     for (auto& layer : layers)
-        layerDeque.append(WTFMove(layer));
+        layerDeque.append(WTF::move(layer));
     layers.clear();
 
     auto root = makeUnique<LayerNode>(layerDeque.takeFirst());
@@ -197,7 +197,7 @@ void TextureMapperLayer3DRenderingContext::paint(TextureMapper& textureMapper, c
                     points.append(FloatPoint(xy.at(i), xy.at(i + 1)));
             }
 
-            ClipPath clipPath(WTFMove(points), clipBuffer->bufferID(), layer.clipVertexBufferOffset * sizeof(float));
+            ClipPath clipPath(WTF::move(points), clipBuffer->bufferID(), layer.clipVertexBufferOffset * sizeof(float));
 
             paintLayerFunction(layer.textureMapperLayer, clipPath);
         }
@@ -278,13 +278,13 @@ void TextureMapperLayer3DRenderingContext::buildTree(LayerNode& root, Deque<Laye
     for (auto& layer : layers) {
         switch (classifyLayer(layer, rootPlane)) {
         case LayerPosition::InFront:
-            frontList.append(WTFMove(layer));
+            frontList.append(WTF::move(layer));
             break;
         case LayerPosition::Behind:
-            backList.append(WTFMove(layer));
+            backList.append(WTF::move(layer));
             break;
         case LayerPosition::Coplanar:
-            root.layers.append(WTFMove(layer));
+            root.layers.append(WTF::move(layer));
             break;
         case LayerPosition::Intersecting:
             auto [backGeometry, frontGeometry] = layer.geometry.split(rootPlane);

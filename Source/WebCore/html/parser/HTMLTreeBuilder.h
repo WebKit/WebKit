@@ -72,9 +72,8 @@ public:
     // Must be called to take the parser-blocking script before calling the parser again.
     RefPtr<ScriptElement> takeScriptToProcess(TextPosition& scriptStartPosition);
     const ScriptElement* scriptToProcess() const { return m_scriptToProcess.get(); }
-    RefPtr<const ScriptElement> protectedScriptToProcess() const;
 
-    std::unique_ptr<CustomElementConstructionData> takeCustomElementConstructionData() { return WTFMove(m_customElementToConstruct); }
+    std::unique_ptr<CustomElementConstructionData> takeCustomElementConstructionData() { return WTF::move(m_customElementToConstruct); }
     void didCreateCustomOrFallbackElement(Ref<Element>&&, CustomElementConstructionData&);
 
     // Done, close any open tags, etc.
@@ -173,7 +172,7 @@ private:
     bool shouldProcessTokenInForeignContent(const AtomHTMLToken&);
     void processTokenInForeignContent(AtomHTMLToken&&);
 
-    HTMLStackItem& adjustedCurrentStackItem();
+    HTMLStackItem& adjustedCurrentStackItem() LIFETIME_BOUND;
 
     void callTheAdoptionAgency(AtomHTMLToken&);
 
@@ -181,7 +180,7 @@ private:
 
     template <bool shouldClose(const HTMLStackItem&)> void processCloseWhenNestedTag(AtomHTMLToken&&);
 
-    void parseError(const AtomHTMLToken&);
+    void NODELETE parseError(const AtomHTMLToken&);
 
     void resetInsertionModeAppropriately();
 
@@ -197,8 +196,8 @@ private:
         FragmentParsingContext(DocumentFragment&, Element& contextElement);
 
         DocumentFragment* fragment() const;
-        Element& contextElement();
-        HTMLStackItem& contextElementStackItem();
+        Element& NODELETE contextElement();
+        HTMLStackItem& NODELETE contextElementStackItem() LIFETIME_BOUND;
 
     private:
         WeakPtr<DocumentFragment, WeakPtrImplWithEventTargetData> m_fragment;

@@ -74,7 +74,7 @@ ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
             if (parent->isMainFrame())
                 break;
 
-            currentFrame = WTFMove(parent);
+            currentFrame = WTF::move(parent);
         } while (true);
     }
 

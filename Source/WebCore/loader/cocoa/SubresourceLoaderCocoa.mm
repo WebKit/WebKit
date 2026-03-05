@@ -40,7 +40,7 @@ void SubresourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedU
     DiskCacheMonitor::monitorFileBackingStoreCreation(request(), m_resource->sessionID(), [response _CFCachedURLResponse]);
     if (!m_resource->shouldCacheResponse(response.response))
         return completionHandler(nullptr);
-    ResourceLoader::willCacheResponseAsync(handle, response, WTFMove(completionHandler));
+    ResourceLoader::willCacheResponseAsync(handle, response, WTF::move(completionHandler));
 }
 
 }

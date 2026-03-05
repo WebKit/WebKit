@@ -26,9 +26,9 @@
 // https://wicg.github.io/shape-detection-api/#dictdef-facedetectoroptions
 
 [
-    EnabledBySetting=ShapeDetection
-]
-dictionary FaceDetectorOptions {
+    EnabledBySetting=ShapeDetection,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
+] dictionary FaceDetectorOptions {
     unsigned short maxDetectedFaces;
     boolean fastMode;
 };

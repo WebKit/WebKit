@@ -53,7 +53,7 @@ public:
 
     using ListenerVector = Vector<Listener>;
 
-    const ListenerVector& listeners() const { return m_listeners; }
+    const ListenerVector& listeners() const LIFETIME_BOUND { return m_listeners; }
 
     void addListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSArray *extraInfo, NSString **outExceptionString);
     void removeListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>);

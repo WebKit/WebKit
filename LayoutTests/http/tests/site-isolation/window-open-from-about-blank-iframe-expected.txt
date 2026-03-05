@@ -1,0 +1,6 @@
+This test passes if WebKit doesn't crash and the opened window returns the correct opener url and origin
+
+--------
+Frame: '<!--frame1-->'
+--------
+opened window reported opener info: opener url is about:blank and origin is http://127.0.0.1:8000

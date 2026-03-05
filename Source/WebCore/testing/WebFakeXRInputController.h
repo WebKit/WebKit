@@ -49,7 +49,7 @@ public:
 
     void setHandedness(XRHandedness handedness) { m_handedness = handedness; }
     void setTargetRayMode(XRTargetRayMode mode) { m_targetRayMode = mode; }
-    void setProfiles(Vector<String>&& profiles) { m_profiles = WTFMove(profiles); }
+    void setProfiles(Vector<String>&& profiles) { m_profiles = WTF::move(profiles); }
     void setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition = false);
     void clearGripOrigin() { m_gripOrigin = std::nullopt; }
     void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, bool emulatedPosition = false);

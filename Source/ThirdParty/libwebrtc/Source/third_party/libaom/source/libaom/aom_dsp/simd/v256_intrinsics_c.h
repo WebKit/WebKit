@@ -12,6 +12,7 @@
 #ifndef AOM_AOM_DSP_SIMD_V256_INTRINSICS_C_H_
 #define AOM_AOM_DSP_SIMD_V256_INTRINSICS_C_H_
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

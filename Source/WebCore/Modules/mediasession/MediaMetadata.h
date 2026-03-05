@@ -48,23 +48,28 @@ struct MediaImage;
 
 using MediaSessionMetadata = MediaMetadataInit;
 
-class ArtworkImageLoader final : public CachedImageClient {
+class ArtworkImageLoader final : public CachedImageClient, public RefCounted<ArtworkImageLoader> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ArtworkImageLoader, WEBCORE_EXPORT);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ArtworkImageLoader);
 public:
     using ArtworkImageLoaderCallback = Function<void(Image*)>;
     // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the
     // destruction of the ArtworkImageLoader, the callback won't be called.
-    WEBCORE_EXPORT ArtworkImageLoader(Document&, const String& src, ArtworkImageLoaderCallback&&);
+    WEBCORE_EXPORT static Ref<ArtworkImageLoader> create(Document&, const String& src, ArtworkImageLoaderCallback&&);
     WEBCORE_EXPORT ~ArtworkImageLoader();
 
     WEBCORE_EXPORT void requestImageResource();
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 protected:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
 private:
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    ArtworkImageLoader(Document&, const String& src, ArtworkImageLoaderCallback&&);
+
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     const String m_src;
     ArtworkImageLoaderCallback m_callback;
     CachedResourceHandle<CachedImage> m_cachedImage;
@@ -79,25 +84,25 @@ public:
     void setMediaSession(MediaSession&);
     void resetMediaSession();
 
-    const String& title() const { return m_metadata.title; }
+    const String& title() const LIFETIME_BOUND { return m_metadata.title; }
     void setTitle(const String&);
 
-    const String& artist() const { return m_metadata.artist; }
+    const String& artist() const LIFETIME_BOUND { return m_metadata.artist; }
     void setArtist(const String&);
 
-    const String& album() const { return m_metadata.album; }
+    const String& album() const LIFETIME_BOUND { return m_metadata.album; }
     void setAlbum(const String&);
 
-    const Vector<MediaImage>& artwork() const { return m_metadata.artwork; }
+    const Vector<MediaImage>& artwork() const LIFETIME_BOUND { return m_metadata.artwork; }
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
 
-    const String& artworkSrc() const { return m_artworkImageSrc; }
+    const String& artworkSrc() const LIFETIME_BOUND { return m_artworkImageSrc; }
     const RefPtr<Image>& artworkImage() const { return m_artworkImage; }
 
-    const MediaSessionMetadata& metadata() const { return m_metadata; }
+    const MediaSessionMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
-    const String& trackIdentifier() const { return m_metadata.trackIdentifier; }
+    const String& trackIdentifier() const LIFETIME_BOUND { return m_metadata.trackIdentifier; }
     void setTrackIdentifier(const String&);
 #endif
 
@@ -118,7 +123,7 @@ private:
 
     WeakPtr<MediaSession> m_session;
     MediaSessionMetadata m_metadata;
-    std::unique_ptr<ArtworkImageLoader> m_artworkLoader;
+    RefPtr<ArtworkImageLoader> m_artworkLoader;
     String m_artworkImageSrc;
     RefPtr<Image> m_artworkImage;
     Vector<URL> m_defaultImages;

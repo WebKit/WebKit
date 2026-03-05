@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true AsyncOverflowScrollingEnabled=true ] -->
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true AsyncOverflowScrollingEnabled=true CSSScrollAnchoringEnabled=false ] -->
 <!DOCTYPE html>
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,31 +21,54 @@
 </head>
 <body>
     <button id="test-button" aria-label="Click Me">Test</button>
+    <h1 class="click-count-1">0</h1>
+    <button id="disabled-button" aria-label="Disabled Button" disabled>Disabled</button>
     <input type="email" placeholder="Enter some text" value="foo" />
+    <input type="text" placeholder="Readonly field" value="readonly" readonly />
     <select role="menu">
         <option>One</option>
         <option selected>Two</option>
         <option>Three</option>
     </select>
+    <select role="menu" aria-label="Disabled menu" disabled>
+        <option>Alpha</option>
+        <option selected>Beta</option>
+        <option>Gamma</option>
+    </select>
     <div contenteditable="plaintext-only">
         <h3 aria-label="Heading">Subject</h3>
         <p>Hello world.</p>
     </div>
-    <h1 class="click-count">0</h1>
+    <form>
+        <a href="#">Hello World: more options</a>
+        <button id="hello-button">Hello World</button>
+        <h1 class="click-count-2">0</h1>
+    </form>
     <div class="scroller" aria-label="Child scroller">
         <div class="tall">Foo bar</div>
+        <p>Hidden in scroller</p>
     </div>
     <div class="tall"></div>
+    <p>Hidden in page</p>
     <script>
     jsTestIsAsync = true;
 
     addEventListener("load", async () => {
         textField = document.querySelector("input");
+        readonlyField = document.querySelector("input[readonly]");
         select = document.querySelector("select");
-        clickCount = document.querySelector(".click-count");
+        disabledSelect = document.querySelector("select[disabled]");
+        clickCount1 = document.querySelector(".click-count-1");
+        clickCount2 = document.querySelector(".click-count-2");
         childScroller = document.querySelector(".scroller");
+
         document.getElementById("test-button").addEventListener("click", () => {
-            clickCount.textContent = parseInt(clickCount.textContent) + 1;
+            clickCount1.textContent = parseInt(clickCount1.textContent) + 1;
+        });
+
+        document.getElementById("hello-button").addEventListener("click", event => {
+            clickCount2.textContent = parseInt(clickCount2.textContent) + 1;
+            event.preventDefault();
         });
 
         if (!window.testRunner)
@@ -53,12 +76,16 @@
 
         const debugText = await UIHelper.requestDebugText({
             nodeIdentifierInclusion: "interactive",
-            includeEventListeners: true,
+            eventListenerCategories: ["all"],
             includeAccessibilityAttributes: true,
         });
 
-        clickError = await UIHelper.performTextExtractionInteraction("click", {
+        firstClickError = await UIHelper.performTextExtractionInteraction("click", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Click Me")
+        });
+
+        secondClickError = await UIHelper.performTextExtractionInteraction("click", {
+            text: "Hello World"
         });
 
         textInputError = await UIHelper.performTextExtractionInteraction("textinput", {
@@ -77,7 +104,7 @@
             text: "Subject"
         });
 
-        scrollChildContainerError = await UIHelper.performTextExtractionInteraction("scrollby", {
+        scrollChildContainerError = await UIHelper.performTextExtractionInteraction("scroll", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Child scroller"),
             scrollDelta: {
                 x: 0,
@@ -85,19 +112,68 @@
             }
         });
 
-        scrollPageError = await UIHelper.performTextExtractionInteraction("scrollby", {
+        scrollPageError = await UIHelper.performTextExtractionInteraction("scroll", {
             scrollDelta: {
                 x: 0,
                 y: 100
             }
         });
 
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        childScrollerScrollTopAfterScrollBy = childScroller.scrollTop;
+        pageScrollTopAfterScrollBy = document.scrollingElement.scrollTop;
+
+        childScroller.scrollTop = 0;
+        document.scrollingElement.scrollTop = 0;
+
+        scrollToRevealInScrollerError = await UIHelper.performTextExtractionInteraction("scroll", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Child scroller"),
+            text: "Hidden in scroller"
+        });
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        childScrollerScrollTopAfterScrollToReveal = childScroller.scrollTop;
+
+        scrollToRevealInPageError = await UIHelper.performTextExtractionInteraction("scroll", {
+            text: "Hidden in page"
+        });
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        pageScrollTopAfterScrollToReveal = document.scrollingElement.scrollTop;
+
+        scrollToRevealNotFoundError = await UIHelper.performTextExtractionInteraction("scroll", {
+            text: "Nonexistent text"
+        });
+
         invalidActionError = await UIHelper.performTextExtractionInteraction("click", {
             nodeIdentifier: "4294967293",
         });
 
-        shouldBeEqualToString("clickError", "");
-        shouldBeEqualToString("clickCount.textContent", "1");
+        clickDisabledError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Disabled Button")
+        });
+
+        textInputReadonlyError = await UIHelper.performTextExtractionInteraction("textinput", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Readonly field"),
+            replaceAll: true,
+            text: "modified"
+        });
+
+        selectDisabledMenuItemError = await UIHelper.performTextExtractionInteraction("selectmenuitem", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Disabled menu"),
+            text: "Gamma"
+        });
+
+        shouldBeEqualToString("firstClickError", "");
+        shouldBeEqualToString("secondClickError", "")
+        shouldBeEqualToString("clickCount1.textContent", "1");
+        shouldBeEqualToString("clickCount2.textContent", "1");
         shouldBeEqualToString("textInputError", "");
         shouldBeEqualToString("textField.value", "bar");
         shouldBeEqualToString("selectMenuItemError", "");
@@ -105,10 +181,20 @@
         shouldBeEqualToString("selectTextError", "");
         shouldBeEqualToString("getSelection().toString()", "Subject");
         shouldBeEqualToString("scrollChildContainerError", "");
-        shouldBe("childScroller.scrollTop", "100");
+        shouldBe("childScrollerScrollTopAfterScrollBy", "100");
         shouldBeEqualToString("scrollPageError", "");
-        shouldBe("document.scrollingElement.scrollTop", "100");
+        shouldBe("pageScrollTopAfterScrollBy", "100");
+        shouldBeEqualToString("scrollToRevealInScrollerError", "");
+        shouldBeGreaterThan("childScrollerScrollTopAfterScrollToReveal", "0");
+        shouldBeEqualToString("scrollToRevealInPageError", "");
+        shouldBeGreaterThan("pageScrollTopAfterScrollToReveal", "100");
+        shouldBeEqualToString("scrollToRevealNotFoundError", "'Nonexistent text' not found inside the target node");
         shouldBeEqualToString("invalidActionError", "Failed to resolve nodeIdentifier 4294967293");
+        shouldBeEqualToString("clickDisabledError", "Click target is disabled");
+        shouldBeEqualToString("textInputReadonlyError", "Target is readonly");
+        shouldBeEqualToString("selectDisabledMenuItemError", "Select is disabled");
+        shouldBeEqualToString("readonlyField.value", "readonly");
+        shouldBeEqualToString("disabledSelect.value", "Beta");
 
         finishJSTest();
     });

@@ -24,11 +24,12 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 #include "GestureTypes.h"
 #endif
 #include "MessageNames.h"
@@ -602,7 +603,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
 
     DidCreateWebProcessConnection(MachSendRight&& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
-        : m_connectionIdentifier(WTFMove(connectionIdentifier))
+        : m_connectionIdentifier(WTF::move(connectionIdentifier))
         , m_flags(flags)
     {
     }
@@ -610,7 +611,7 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << WTFMove(m_connectionIdentifier);
+        encoder << WTF::move(m_connectionIdentifier);
         SUPPRESS_FORWARD_DECL_ARG encoder << m_flags;
     }
 

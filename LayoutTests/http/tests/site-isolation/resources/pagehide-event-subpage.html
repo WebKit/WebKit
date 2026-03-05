@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<title>Subpage that navigates away to a cross-origin page and sends a message when pagehide is fired</title>
+
+<script>
+
+const params = new URLSearchParams(location.search);
+const is_new_page = params.has('new');
+const chan = new BroadcastChannel("pagehide-chan");
+
+if (!is_new_page) {
+  onload = () => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      location.href = "http://localhost:8000/site-isolation/resources/pagehide-event-subpage.html?new";
+    }));
+  };
+
+  onpagehide = (event) => {
+    chan.postMessage("pagehide");
+  };
+}
+</script>

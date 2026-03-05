@@ -67,7 +67,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
     void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier, FrameInfoData&&);
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
@@ -83,11 +83,9 @@ private:
         );
 
     void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&, FrameInfoData&&);
-    void handleRequest(UniqueRef<WebCore::SpeechRecognitionRequest>&&);
+    void handleRequest(Ref<WebCore::SpeechRecognitionRequest>&&);
     void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, std::optional<WebCore::SpeechRecognitionError> = std::nullopt, std::optional<Vector<WebCore::SpeechRecognitionResultData>> = std::nullopt);
     void sendUpdate(const WebCore::SpeechRecognitionUpdate&);
-
-    CheckedPtr<WebCore::SpeechRecognizer> checkedRecognizer() const;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -98,7 +96,7 @@ private:
 
     WeakPtr<WebProcessProxy> m_process;
     SpeechRecognitionServerIdentifier m_identifier;
-    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
+    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, Ref<WebCore::SpeechRecognitionRequest>> m_requests;
     SpeechRecognitionPermissionChecker m_permissionChecker;
     std::unique_ptr<WebCore::SpeechRecognizer> m_recognizer;
     SpeechRecognitionCheckIfMockSpeechRecognitionEnabled m_checkIfMockSpeechRecognitionEnabled;

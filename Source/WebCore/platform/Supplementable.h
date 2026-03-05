@@ -101,7 +101,6 @@ public:
     virtual bool isNavigatorBeacon() const { return false; }
     virtual bool isNavigatorClipboard() const { return false; }
     virtual bool isNavigatorContacts() const { return false; }
-    virtual bool isNavigatorCookieConsent() const { return false; }
     virtual bool isNavigatorCredentials() const { return false; }
     virtual bool isNavigatorGamepad() const { return false; }
     virtual bool isNavigatorGeolocation() const { return false; }
@@ -136,7 +135,7 @@ public:
 
     static void provideTo(Supplementable<T>* host, ASCIILiteral key, std::unique_ptr<Supplement<T>> supplement)
     {
-        host->provideSupplement(key, WTFMove(supplement));
+        host->provideSupplement(key, WTF::move(supplement));
     }
 
     static Supplement<T>* from(Supplementable<T>* host, ASCIILiteral key)
@@ -152,7 +151,7 @@ public:
     {
         ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
         ASSERT(!m_supplements.get(key));
-        m_supplements.add(key, WTFMove(supplement));
+        m_supplements.add(key, WTF::move(supplement));
     }
 
     Supplement<T>* requireSupplement(ASCIILiteral key)

@@ -17,7 +17,7 @@
 #include <optional>
 #include <vector>
 
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/encoded_image.h"
 #include "api/video_codecs/video_encoder.h"
@@ -35,9 +35,9 @@ namespace webrtc {
 // TODO(nisse): Make these properties not codec specific.
 class RtpPayloadParams final {
  public:
-  RtpPayloadParams(uint32_t ssrc,
-                   const RtpPayloadState* state,
-                   const FieldTrialsView& trials);
+  RtpPayloadParams(const Environment& env,
+                   uint32_t ssrc,
+                   const RtpPayloadState* state);
   RtpPayloadParams(const RtpPayloadParams& other);
   ~RtpPayloadParams();
 

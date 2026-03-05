@@ -29,10 +29,8 @@ set(WebKitLegacy_FRAMEWORKS
     PAL
     WTF
     WebCore
+    bmalloc
 )
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND WebKit_FRAMEWORKS bmalloc)
-endif ()
 
 set(WebKitLegacy_INTERFACE_LIBRARIES WebKitLegacy)
 set(WebKitLegacy_INTERFACE_INCLUDE_DIRECTORIES ${WebKitLegacy_FRAMEWORK_HEADERS_DIR})

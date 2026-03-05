@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 54x19
+        RenderText {#text} at (0,0) size 54x20
           text run at (0,0) width 54: "Test for "
-        RenderInline {I} at (0,0) size 730x39
-          RenderInline {A} at (53,0) size 353x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 353x19
+        RenderInline {I} at (0,0) size 730x40
+          RenderInline {A} at (53,0) size 353x20 [color=#0000EE]
+            RenderText {#text} at (53,0) size 353x20
               text run at (53,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9124"
-          RenderText {#text} at (0,0) size 730x39
+          RenderText {#text} at (0,0) size 730x40
             text run at (405,0) width 5: " "
             text run at (409,0) width 321: "Drop shadow obscures \"add more stuff\" bubble at"
             text run at (0,20) width 54: "live.com"
-        RenderText {#text} at (53,20) size 5x19
+        RenderText {#text} at (53,20) size 5x20
           text run at (53,20) width 5: "."
 layer at (8,64) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,56) size 784x2 [color=#808080] [border: (1px inset #808080)]

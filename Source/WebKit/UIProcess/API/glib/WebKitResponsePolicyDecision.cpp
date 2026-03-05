@@ -188,8 +188,8 @@ gboolean webkit_response_policy_decision_is_main_frame_main_resource(WebKitRespo
 WebKitPolicyDecision* webkitResponsePolicyDecisionCreate(Ref<API::NavigationResponse>&& response, Ref<WebKit::WebFramePolicyListenerProxy>&& listener)
 {
     WebKitResponsePolicyDecision* responseDecision = WEBKIT_RESPONSE_POLICY_DECISION(g_object_new(WEBKIT_TYPE_RESPONSE_POLICY_DECISION, nullptr));
-    responseDecision->priv->navigationResponse = WTFMove(response);
+    responseDecision->priv->navigationResponse = WTF::move(response);
     WebKitPolicyDecision* decision = WEBKIT_POLICY_DECISION(responseDecision);
-    webkitPolicyDecisionSetListener(decision, WTFMove(listener));
+    webkitPolicyDecisionSetListener(decision, WTF::move(listener));
     return decision;
 }

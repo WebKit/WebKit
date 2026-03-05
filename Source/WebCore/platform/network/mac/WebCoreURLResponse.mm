@@ -32,6 +32,7 @@
 #import "MIMETypeRegistry.h"
 #import "ResourceResponse.h"
 #import "UTIUtilities.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
@@ -54,7 +55,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad, Is
         // Once UTType matches one of these mappings on all versions of macOS we support, we can remove that pair.
         // Alternatively, we could remove any pairs that we determine we no longer need.
         // And then remove this code entirely once they are all gone.
-        static constexpr std::pair<ComparableLettersLiteral, NSString *> extensionPairs[] = {
+        static constexpr SortedArrayMap extensionMap { std::to_array<std::pair<ComparableLettersLiteral, NSString *>>({
             { "ai"_s, @"application/postscript" },
             { "asc"_s, @"text/plain" },
             { "bcpio"_s, @"application/x-bcpio" },
@@ -173,8 +174,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad, Is
             { "xwd"_s, @"image/x-xwindowdump" },
             { "xyz"_s, @"chemical/x-xyz" },
             { "z"_s, @"application/x-compress" },
-        };
-        static constexpr SortedArrayMap extensionMap { extensionPairs };
+        }) };
         type = extensionMap.get(String { extension.get() });
         if (!type)
             type = preferredMIMETypeForFileExtensionFromUTType(bridge_cast(extension.get()));

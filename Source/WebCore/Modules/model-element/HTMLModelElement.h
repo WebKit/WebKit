@@ -63,15 +63,16 @@ class LayoutPoint;
 class LayoutSize;
 class Model;
 class ModelPlayerProvider;
-class MouseEvent;
+class MouseRelatedEvent;
 
 template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxy;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 template<typename> class ExceptionOr;
 
+class HTMLModelElementEventListener;
 class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject, public VisibilityChangeClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLModelElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLModelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLModelElement);
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
@@ -87,7 +88,7 @@ public:
     void visibilityStateChanged() final;
 
     void sourcesChanged();
-    const URL& currentSrc() const { return m_sourceURL; }
+    const URL& currentSrc() const LIFETIME_BOUND { return m_sourceURL; }
     bool complete() const { return m_dataComplete; }
 
     void configureGraphicsLayer(GraphicsLayer&, Color backgroundColor);
@@ -99,7 +100,7 @@ public:
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<HTMLModelElement>>;
     ReadyPromise& ready() { return m_readyPromise.get(); }
 
-    WEBCORE_EXPORT RefPtr<Model> model() const;
+    WEBCORE_EXPORT RefPtr<Model> NODELETE model() const;
 
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
     const DOMMatrixReadOnly& entityTransform() const;
@@ -149,6 +150,8 @@ public:
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     bool immersive() const;
     void requestImmersive(DOMPromiseDeferred<void>&&);
+    void ensureImmersivePresentation(CompletionHandler<void(ExceptionOr<LayerHostingContextIdentifier>)>&&);
+    void exitImmersivePresentation(CompletionHandler<void()>&&);
 #endif
 
     bool supportsDragging() const;
@@ -190,9 +193,9 @@ public:
     WEBCORE_EXPORT String inlinePreviewUUIDForTesting() const;
 #endif
 
-    size_t memoryCost() const;
+    size_t NODELETE memoryCost() const;
 #if ENABLE(RESOURCE_USAGE)
-    size_t externalMemoryCost() const;
+    size_t NODELETE externalMemoryCost() const;
 #endif
 
     bool isIntersectingViewport() const { return m_isIntersectingViewport; }
@@ -213,19 +216,19 @@ private:
     void startLoadModelTimer();
     void loadModelTimerFired();
 
-    HTMLModelElement& readyPromiseResolve();
+    HTMLModelElement& NODELETE readyPromiseResolve();
 
     CachedResourceRequest createResourceRequest(const URL&, FetchOptions::Destination);
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
     void resume() final;
     void suspend(ReasonForSuspension) final;
     void stop() final;
 
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     // StyledElement
@@ -244,6 +247,9 @@ private:
     // ModelPlayerClient overrides.
     void didFinishLoading(ModelPlayer&) final;
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
+#if ENABLE(MODEL_PROCESS)
+    void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, const String& convertedMIMEType) final;
+#endif
     void didUnload(ModelPlayer&) final;
     void didUpdate(ModelPlayer&) final;
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
@@ -263,15 +269,16 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) override;
 
     void defaultEventHandler(Event&) final;
-    void dragDidStart(MouseEvent&);
-    void dragDidChange(MouseEvent&);
-    void dragDidEnd(MouseEvent&);
+    void dragDidStart(WebCore::MouseRelatedEvent&);
+    void dragDidChange(WebCore::MouseRelatedEvent&);
+    void dragDidEnd(WebCore::MouseRelatedEvent&);
 
-    LayoutPoint flippedLocationInElementForMouseEvent(MouseEvent&);
+    LayoutPoint flippedLocationInElementForMouseEvent(WebCore::MouseRelatedEvent&);
 
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
 
     LayoutSize contentSize() const;
+    bool modelContainerSizeIsEmpty() const;
 
     void reportExtraMemoryCost();
 
@@ -303,7 +310,7 @@ private:
     void modelResourceFinished();
     void sourceRequestResource();
     bool shouldDeferLoading() const;
-    bool isModelDeferred() const;
+    bool NODELETE isModelDeferred() const;
     bool isModelLoading() const;
     bool isModelLoaded() const;
     bool isModelUnloading() const;
@@ -317,6 +324,9 @@ private:
     WeakPtr<ModelPlayerProvider> m_modelPlayerProvider;
     RefPtr<Model> m_model;
     UniqueRef<ReadyPromise> m_readyPromise;
+#if ENABLE(TOUCH_EVENTS)
+    RefPtr<HTMLModelElementEventListener> m_eventListener;
+#endif
     bool m_dataComplete { false };
     bool m_isDragging { false };
     bool m_shouldCreateModelPlayerUponRendererAttachment { false };
@@ -346,6 +356,16 @@ private:
     CachedResourceHandle<CachedRawResource> m_environmentMapResource;
     UniqueRef<EnvironmentMapPromise> m_environmentMapReadyPromise;
 #endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    bool m_detachedForImmersive { false };
+    void setDetachedForImmersive(bool);
+
+    Vector<CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>> m_modelPlayerCreationCallbacks;
+    void ensureModelPlayer(CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>&&);
+#endif
+
+    void triggerModelPlayerCreationCallbacksIfNeeded(ExceptionOr<RefPtr<ModelPlayer>>&&);
 };
 
 } // namespace WebCore

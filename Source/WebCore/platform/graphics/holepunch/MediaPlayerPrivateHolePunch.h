@@ -64,7 +64,7 @@ public:
     void pause() final { };
 
 #if USE(COORDINATED_GRAPHICS)
-    PlatformLayer* platformLayer() const final;
+    PlatformLayer* NODELETE platformLayer() const final;
 #endif
 
     FloatSize naturalSize() const final;

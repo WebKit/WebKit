@@ -131,7 +131,7 @@ static void webkit_form_data_input_stream_class_init(WebKitFormDataInputStreamCl
 GRefPtr<GInputStream> webkitFormDataInputStreamNew(Ref<FormData>&& formData)
 {
     auto* stream = WEBKIT_FORM_DATA_INPUT_STREAM(g_object_new(WEBKIT_TYPE_FORM_DATA_INPUT_STREAM, nullptr));
-    stream->priv->formData = WTFMove(formData);
+    stream->priv->formData = WTF::move(formData);
     stream->priv->currentStreamRangeLength = BlobDataItem::toEndOfFile;
 
     // GFileInputStream is not pollable, so the stream is only pollable if FormData doesn't contain EncodedFileData elements.

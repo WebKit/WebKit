@@ -89,11 +89,10 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
     NetworkSession* session();
-    CheckedPtr<NetworkSession> checkedSession();
-    PAL::SessionID sessionID() const;
+    PAL::SessionID NODELETE sessionID() const;
 
     RefPtr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
     void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
@@ -139,7 +138,7 @@ private:
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     void whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
 
-    void postMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin) final;
+    void postMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const WebCore::SecurityOriginData&) final;
 
     void contextConnectionCreated(WebCore::SWServerToContextConnection&) final;
     void updateBackgroundFetchRegistration(const WebCore::BackgroundFetchInformation&) final;
@@ -185,8 +184,7 @@ private:
     uint64_t messageSenderDestinationID() const final { return 0; }
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
-    NetworkProcess& networkProcess();
-    Ref<NetworkProcess> protectedNetworkProcess();
+    NetworkProcess& NODELETE networkProcess();
 
     bool isWebSWServerConnection() const final { return true; }
 

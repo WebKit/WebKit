@@ -82,13 +82,13 @@ WKTypeID WKBundleNodeHandleGetTypeID()
 WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef contextRef, JSObjectRef objectRef)
 {
     RefPtr<WebKit::InjectedBundleNodeHandle> nodeHandle = WebKit::InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef);
-    return toAPILeakingRef(WTFMove(nodeHandle));
+    return toAPILeakingRef(WTF::move(nodeHandle));
 }
 
 WKBundleNodeHandleRef WKBundleNodeHandleCopyDocument(WKBundleNodeHandleRef nodeHandleRef)
 {
-    RefPtr<WebKit::InjectedBundleNodeHandle> nodeHandle = WebKit::toProtectedImpl(nodeHandleRef)->document();
-    return toAPILeakingRef(WTFMove(nodeHandle));
+    RefPtr<WebKit::InjectedBundleNodeHandle> nodeHandle = protect(WebKit::toImpl(nodeHandleRef))->document();
+    return toAPILeakingRef(WTF::move(nodeHandle));
 }
 
 WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandleRef, bool* isReplaced)
@@ -99,8 +99,8 @@ WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandleRef, bool
 
 WKImageRef WKBundleNodeHandleCopySnapshotWithOptions(WKBundleNodeHandleRef nodeHandleRef, WKSnapshotOptions options)
 {
-    RefPtr<WebKit::WebImage> image = WebKit::toProtectedImpl(nodeHandleRef)->renderedImage(WebKit::toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow);
-    return toAPILeakingRef(WTFMove(image));
+    RefPtr<WebKit::WebImage> image = protect(WebKit::toImpl(nodeHandleRef))->renderedImage(WebKit::toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow);
+    return toAPILeakingRef(WTF::move(image));
 }
 
 WKBundleRangeHandleRef WKBundleNodeHandleCopyVisibleRange(WKBundleNodeHandleRef)
@@ -111,17 +111,17 @@ WKBundleRangeHandleRef WKBundleNodeHandleCopyVisibleRange(WKBundleNodeHandleRef)
 
 WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef elementHandleRef)
 {
-    return WebKit::toAPI(WebKit::toProtectedImpl(elementHandleRef)->elementBounds());
+    return WebKit::toAPI(protect(WebKit::toImpl(elementHandleRef))->elementBounds());
 }
 
 void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandleRef, WKStringRef valueRef)
 {
-    WebKit::toProtectedImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(WebKit::toWTFString(valueRef));
+    protect(WebKit::toImpl(htmlInputElementHandleRef))->setHTMLInputElementValueForUser(WebKit::toWTFString(valueRef));
 }
 
 void WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool enabled)
 {
-    WebKit::toProtectedImpl(htmlInputElementHandleRef)->setHTMLInputElementSpellcheckEnabled(enabled);
+    protect(WebKit::toImpl(htmlInputElementHandleRef))->setHTMLInputElementSpellcheckEnabled(enabled);
 }
 
 bool WKBundleNodeHandleGetHTMLInputElementAutoFilled(WKBundleNodeHandleRef)
@@ -132,17 +132,17 @@ bool WKBundleNodeHandleGetHTMLInputElementAutoFilled(WKBundleNodeHandleRef)
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFilled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool filled)
 {
-    WebKit::toProtectedImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilled(filled);
+    protect(WebKit::toImpl(htmlInputElementHandleRef))->setHTMLInputElementAutoFilled(filled);
 }
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFilledAndViewable(WKBundleNodeHandleRef htmlInputElementHandleRef, bool autoFilledAndViewable)
 {
-    WebKit::toProtectedImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilledAndViewable(autoFilledAndViewable);
+    protect(WebKit::toImpl(htmlInputElementHandleRef))->setHTMLInputElementAutoFilledAndViewable(autoFilledAndViewable);
 }
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFilledAndObscured(WKBundleNodeHandleRef htmlInputElementHandleRef, bool autoFilledAndObscured)
 {
-    WebKit::toProtectedImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilledAndObscured(autoFilledAndObscured);
+    protect(WebKit::toImpl(htmlInputElementHandleRef))->setHTMLInputElementAutoFilledAndObscured(autoFilledAndObscured);
 }
 
 bool WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef)
@@ -153,17 +153,17 @@ bool WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHand
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(WKBundleNodeHandleRef htmlInputElementHandleRef, WKAutoFillButtonType autoFillButtonType)
 {
-    WebKit::toProtectedImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
+    protect(WebKit::toImpl(htmlInputElementHandleRef))->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
 }
 
 WKAutoFillButtonType WKBundleNodeHandleGetHTMLInputElementAutoFillButtonType(WKBundleNodeHandleRef htmlInputElementHandleRef)
 {
-    return toWKAutoFillButtonType(WebKit::toProtectedImpl(htmlInputElementHandleRef)->htmlInputElementAutoFillButtonType());
+    return toWKAutoFillButtonType(protect(WebKit::toImpl(htmlInputElementHandleRef))->htmlInputElementAutoFillButtonType());
 }
 
 WKAutoFillButtonType WKBundleNodeHandleGetHTMLInputElementLastAutoFillButtonType(WKBundleNodeHandleRef htmlInputElementHandleRef)
 {
-    return toWKAutoFillButtonType(WebKit::toProtectedImpl(htmlInputElementHandleRef)->htmlInputElementLastAutoFillButtonType());
+    return toWKAutoFillButtonType(protect(WebKit::toImpl(htmlInputElementHandleRef))->htmlInputElementLastAutoFillButtonType());
 }
 
 bool WKBundleNodeHandleGetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRef)
@@ -174,7 +174,7 @@ bool WKBundleNodeHandleGetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRe
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRef htmlInputElementHandleRef, bool autoFillAvailable)
 {
-    WebKit::toProtectedImpl(htmlInputElementHandleRef)->setAutoFillAvailable(autoFillAvailable);
+    protect(WebKit::toImpl(htmlInputElementHandleRef))->setAutoFillAvailable(autoFillAvailable);
 }
 
 WKRect WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds(WKBundleNodeHandleRef)
@@ -185,12 +185,12 @@ WKRect WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds(WKBundleNodeHan
 
 bool WKBundleNodeHandleGetHTMLInputElementLastChangeWasUserEdit(WKBundleNodeHandleRef htmlInputElementHandleRef)
 {
-    return WebKit::toProtectedImpl(htmlInputElementHandleRef)->htmlInputElementLastChangeWasUserEdit();
+    return protect(WebKit::toImpl(htmlInputElementHandleRef))->htmlInputElementLastChangeWasUserEdit();
 }
 
 bool WKBundleNodeHandleGetHTMLTextAreaElementLastChangeWasUserEdit(WKBundleNodeHandleRef htmlTextAreaElementHandleRef)
 {
-    return WebKit::toProtectedImpl(htmlTextAreaElementHandleRef)->htmlTextAreaElementLastChangeWasUserEdit();
+    return protect(WebKit::toImpl(htmlTextAreaElementHandleRef))->htmlTextAreaElementLastChangeWasUserEdit();
 }
 
 WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef)
@@ -201,8 +201,8 @@ WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBund
 
 WKBundleFrameRef WKBundleNodeHandleCopyDocumentFrame(WKBundleNodeHandleRef documentHandleRef)
 {
-    RefPtr<WebKit::WebFrame> frame = WebKit::toProtectedImpl(documentHandleRef)->documentFrame();
-    return toAPILeakingRef(WTFMove(frame));
+    RefPtr<WebKit::WebFrame> frame = protect(WebKit::toImpl(documentHandleRef))->documentFrame();
+    return toAPILeakingRef(WTF::move(frame));
 }
 
 WKBundleFrameRef WKBundleNodeHandleCopyHTMLFrameElementContentFrame(WKBundleNodeHandleRef htmlFrameElementHandleRef)
@@ -213,8 +213,8 @@ WKBundleFrameRef WKBundleNodeHandleCopyHTMLFrameElementContentFrame(WKBundleNode
 
 WKBundleFrameRef WKBundleNodeHandleCopyHTMLIFrameElementContentFrame(WKBundleNodeHandleRef htmlIFrameElementHandleRef)
 {
-    RefPtr<WebKit::WebFrame> frame = WebKit::toProtectedImpl(htmlIFrameElementHandleRef)->htmlIFrameElementContentFrame();
-    return toAPILeakingRef(WTFMove(frame));
+    RefPtr<WebKit::WebFrame> frame = protect(WebKit::toImpl(htmlIFrameElementHandleRef))->htmlIFrameElementContentFrame();
+    return toAPILeakingRef(WTF::move(frame));
 }
 
 bool WKBundleNodeHandleGetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandleRef)
@@ -235,7 +235,7 @@ void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHand
 
 WKBundleFrameRef WKBundleNodeHandleCopyOwningDocumentFrame(WKBundleNodeHandleRef documentHandleRef)
 {
-    if (RefPtr document = WebKit::toProtectedImpl(documentHandleRef)->document())
+    if (RefPtr document = protect(WebKit::toImpl(documentHandleRef))->document())
         return toAPILeakingRef(document->documentFrame());
     return nullptr;
 }

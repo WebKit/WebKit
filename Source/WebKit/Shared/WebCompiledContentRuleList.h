@@ -38,7 +38,7 @@ public:
     static RefPtr<WebCompiledContentRuleList> create(WebCompiledContentRuleListData&&);
     virtual ~WebCompiledContentRuleList();
 
-    const WebCompiledContentRuleListData& data() const { return m_data; }
+    const WebCompiledContentRuleListData& data() const LIFETIME_BOUND { return m_data; }
 
 private:
     WebCompiledContentRuleList(WebCompiledContentRuleListData&&);
@@ -48,7 +48,7 @@ private:
     std::span<const uint8_t> frameURLFiltersBytecode() const final;
     std::span<const uint8_t> serializedActions() const final;
     
-    std::span<const uint8_t> spanWithOffsetAndLength(size_t, size_t) const;
+    std::span<const uint8_t> NODELETE spanWithOffsetAndLength(size_t, size_t) const;
 
     WebCompiledContentRuleListData m_data;
 };

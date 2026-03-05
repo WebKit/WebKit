@@ -68,12 +68,12 @@ enum class HiddenScrollEdgeEffectSource : uint8_t {
 
 - (BOOL)respondsToSelector:(SEL)selector
 {
-    return [super respondsToSelector:selector] || [_effect respondsToSelector:selector];
+    return [super respondsToSelector:selector] || [protect(_effect) respondsToSelector:selector];
 }
 
 - (BOOL)isKindOfClass:(Class)classToCheck
 {
-    return [super isKindOfClass:classToCheck] || [_effect isKindOfClass:classToCheck];
+    return [super isKindOfClass:classToCheck] || [protect(_effect) isKindOfClass:classToCheck];
 }
 
 - (void)setInternallyHidden:(BOOL)hidden
@@ -88,7 +88,7 @@ enum class HiddenScrollEdgeEffectSource : uint8_t {
 
 - (BOOL)isHidden
 {
-    return _effect.hidden;
+    return [protect(_effect) isHidden];
 }
 
 - (void)setHidden:(BOOL)hidden
@@ -111,7 +111,7 @@ enum class HiddenScrollEdgeEffectSource : uint8_t {
     RetainPtr isHiddenKeyName = NSStringFromSelector(@selector(isHidden));
     [self willChangeValueForKey:isHiddenKeyName.get()];
 
-    _effect.hidden = !newVisible;
+    [protect(_effect) setHidden:!newVisible];
 
     [self didChangeValueForKey:isHiddenKeyName.get()];
 }
@@ -121,15 +121,15 @@ enum class HiddenScrollEdgeEffectSource : uint8_t {
     BOOL wasUsingHardStyle = _usesHardStyle;
     _usesHardStyle = [style isEqual:UIScrollEdgeEffectStyle.hardStyle];
 
-    _effect.style = style;
+    [protect(_effect) setStyle:style];
 
     if (_boxSide == WebCore::BoxSide::Top && wasUsingHardStyle != _usesHardStyle)
-        [_scrollView _didChangeTopScrollEdgeEffectStyle];
+        [protect(_scrollView) _didChangeTopScrollEdgeEffectStyle];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p wrapping %@ (%s)>", self.class, self, _effect.description, [&] {
+    return [NSString stringWithFormat:@"<%@: %p wrapping %@ (%s)>", self.class, self, protect(_effect).get().description, [&] {
         switch (_boxSide) {
         case WebCore::BoxSide::Top:
             return "Top";

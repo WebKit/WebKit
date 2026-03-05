@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include "InitializeThreading.h"
 #include "JSLock.h"
@@ -131,4 +131,4 @@ bool verifyOpcodeInModule(const SourceModule&, JSC::Wasm::OpType expectedOpcode)
 
 int testWasmDebugInfo();
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

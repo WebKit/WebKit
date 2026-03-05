@@ -40,7 +40,7 @@ class TimeContainer;
 enum AnimatedPropertyValueType { RegularPropertyValue, CurrentColorValue, InheritValue };
 
 class SVGAnimationElement : public SVGSMILElement, public SVGTests {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGAnimationElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimationElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimationElement);
 public:
     ExceptionOr<float> getStartTime() const;
@@ -123,7 +123,7 @@ private:
     virtual void calculateAnimatedValue(float percent, unsigned repeatCount) = 0;
     virtual std::optional<float> calculateDistance(const String& /*fromString*/, const String& /*toString*/) = 0;
 
-    const Vector<float>& keyTimes() const;
+    const Vector<float>& NODELETE keyTimes() const;
     void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
     void calculateKeyTimesForCalcModePaced();
     float calculatePercentFromKeyPoints(float percent) const;

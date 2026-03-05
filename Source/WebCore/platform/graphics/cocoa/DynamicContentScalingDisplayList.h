@@ -37,8 +37,8 @@ enum class IncludeDynamicContentScalingDisplayList : bool { No, Yes };
 class DynamicContentScalingDisplayList {
 public:
     DynamicContentScalingDisplayList(Ref<WebCore::SharedBuffer> displayList, Vector<MachSendRight>&& surfaces)
-        : m_displayList(WTFMove(displayList))
-        , m_surfaces(WTFMove(surfaces))
+        : m_displayList(WTF::move(displayList))
+        , m_surfaces(WTF::move(surfaces))
     {
     }
     explicit DynamicContentScalingDisplayList(const DynamicContentScalingDisplayList&) = default;

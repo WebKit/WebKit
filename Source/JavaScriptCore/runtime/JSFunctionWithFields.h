@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSFunction.h"
+#include <JavaScriptCore/JSFunction.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -48,8 +48,23 @@ public:
 
         FirstResolvingPromise = 0,
 
-        ResolvingWithoutPromiseContext = 0,
-        ResolvingWithoutPromiseOther = 1,
+        ResolvingWithInternalMicrotaskContext = 0,
+        ResolvingWithInternalMicrotaskOther = 1,
+
+        PromiseAllContext = 0,
+        PromiseAllResolve = 1,
+
+        PromiseAllSettledContext = 0,
+        PromiseAllSettledOther = 1,
+
+        PromiseAnyContext = 0,
+        PromiseAnyReject = 1,
+
+#if ENABLE(WEBASSEMBLY)
+        WebAssemblySuspendingWrappedCallable = 0,
+        WebAssemblyPromisingWrappedFunction = 0,
+        PromiseHandlerPinballCompletion = 0,
+#endif
     };
 
     DECLARE_INFO;

@@ -35,7 +35,7 @@ class DOMPromise;
 template<typename> class ExceptionOr;
 
 class ExtendableEvent : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ExtendableEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ExtendableEvent);
 public:
     static Ref<ExtendableEvent> create(const AtomString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
@@ -50,14 +50,6 @@ public:
     WEBCORE_EXPORT void whenAllExtendLifetimePromisesAreSettled(Function<void(HashSet<Ref<DOMPromise>>&&)>&&);
 
     virtual bool isBackgroundFetchEvent() const { return false; }
-    virtual bool isBackgroundFetchUpdateUIEvent() const { return false; }
-    virtual bool isExtendableCookieChangeEvent() const { return false; }
-    virtual bool isExtendableMessageEvent() const { return false; }
-    virtual bool isFetchEvent() const { return false; }
-    virtual bool isInstallEvent() const { return false; }
-    virtual bool isNotificationEvent() const { return false; }
-    virtual bool isPushEvent() const { return false; }
-    virtual bool isPushSubscriptionChangeEvent() const { return false; }
 
 protected:
     WEBCORE_EXPORT ExtendableEvent(enum EventInterfaceType, const AtomString&, const ExtendableEventInit&, IsTrusted);
@@ -74,3 +66,13 @@ private:
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(ToValueTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::ExtendableEvent& event) { return event.interfaceType() == WebCore::EventInterfaceType::ToValueTypeName; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#define SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT_POLYMORPHIC(ToValueTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::ExtendableEvent& event) { return event.is##ToValueTypeName(); } \
+SPECIALIZE_TYPE_TRAITS_END()

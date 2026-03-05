@@ -46,7 +46,7 @@ struct TextEmphasisPosition {
     using EnumSet = TextEmphasisPositionValueEnumSet;
     using value_type = TextEmphasisPositionValueEnumSet::value_type;
 
-    constexpr TextEmphasisPosition(EnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr TextEmphasisPosition(EnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr TextEmphasisPosition(value_type value) : TextEmphasisPosition { EnumSet { value } } { }
     constexpr TextEmphasisPosition(std::initializer_list<value_type> initializerList) : TextEmphasisPosition { EnumSet { initializerList } } { }
 

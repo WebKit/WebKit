@@ -1,0 +1,35 @@
+Tests cross-process search through three-level nested iframes (A -> B -> C).
+
+=== Forward Heading Search (3 levels) ===
+Forward heading search found 4 headings:
+  1: domIdentifier=main-h1, role=AXRole: AXHeading
+  2: (remote platform element)
+  3: (remote platform element)
+  4: domIdentifier=main-h2, role=AXRole: AXHeading
+PASS: forwardResults.length >= 4 === true
+PASS: forwardResults[0].domIdentifier === 'main-h1'
+PASS: forwardResults[0].isRemotePlatformElement === false
+PASS: forwardResults[1].isRemotePlatformElement === true
+PASS: forwardResults[forwardResults.length - 1].domIdentifier === 'main-h2'
+PASS: forwardResults[forwardResults.length - 1].isRemotePlatformElement === false
+
+=== Backward Heading Search ===
+Backward heading search found 4 headings:
+  1: domIdentifier=main-h2, role=AXRole: AXHeading
+  2: (remote platform element)
+  3: (remote platform element)
+  4: domIdentifier=main-h1, role=AXRole: AXHeading
+PASS: backwardResults.length >= 4 === true
+PASS: backwardResults[0].domIdentifier === 'main-h2'
+PASS: backwardResults[0].isRemotePlatformElement === false
+PASS: backwardResults[1].isRemotePlatformElement === true
+PASS: backwardResults[backwardResults.length - 1].domIdentifier === 'main-h1'
+PASS: backwardResults[backwardResults.length - 1].isRemotePlatformElement === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Main Frame Heading
+
+
+Main Frame Heading After Iframe

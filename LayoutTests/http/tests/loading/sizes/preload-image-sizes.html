@@ -5,8 +5,10 @@
 </head>
 <body>
 <script>
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.dumpFrameLoadCallbacks();
+    }
     shouldBeTrue("internals.isPreloaded('resources/image2.png');");
     for (var i = 1; i <= 10; ++i) {
         shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?" + i + "');");

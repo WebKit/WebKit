@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -229,12 +229,16 @@ WI.contentLoaded = function()
     document.body.classList.add(WI.sharedApp.debuggableType);
     document.body.setAttribute("dir", WI.resolvedLayoutDirection());
 
+    if (WI.Platform.name === "mac")
+        WI._updateAccentColorClass();
+
     WI.layoutMeasurementContainer = document.body.appendChild(document.createElement("div"));
     WI.layoutMeasurementContainer.id = "layout-measurement-container";
 
     WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, WI._showJavaScriptTypeInformationSettingChanged, WI);
     WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, WI._enableControlFlowProfilerSettingChanged, WI);
     WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, WI._resourceCachingDisabledSettingChanged, WI);
+    WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, WI._clearResourceDataOnNavigateSettingChanged, WI);
     WI.settings.experimentalAllowInspectingInspector.addEventListener(WI.Setting.Event.Changed, WI._allowInspectingInspectorSettingChanged, WI);
 
     function setTabSize() {
@@ -1845,6 +1849,48 @@ WI._updateModifierKeys = function(event)
         WI.notifications.dispatchEventToListeners(WI.Notification.GlobalModifierKeysDidChange, event);
 };
 
+WI._updateAccentColorClass = function()
+{
+    let testElement = document.createElement("div");
+    testElement.style.color = "-apple-system-control-accent";
+    testElement.style.position = "absolute";
+    testElement.style.visibility = "hidden";
+    document.body.appendChild(testElement);
+    let accentColorString = getComputedStyle(testElement).color;
+    document.body.removeChild(testElement);
+
+    let accentColor = WI.Color.fromString(accentColorString);
+    if (!accentColor)
+        return;
+
+    let hsl = accentColor.hsl;
+    if (hsl[1] < 20) {
+        let isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        let darkFallbacks = {
+            accent: "hsl(212, 100%, 71%)",
+            selected: "hsl(219, 80%, 43%)",
+            selectedActive: "hsl(218, 85%, 62%)",
+            selectedText: "hsl(230, 51%, 36%)",
+        };
+        let lightFallbacks = {
+            accent: "hsl(212, 92%, 54%)",
+            selected: "hsl(212, 92%, 54%)",
+            selectedActive: "hsl(218, 85%, 52%)",
+            selectedText: "hsl(210, 98%, 93%)",
+        };
+        let {accent, selected, selectedActive, selectedText} = isDark ? darkFallbacks : lightFallbacks;
+        document.body.style.setProperty("--system-accent-color", accent);
+        document.body.style.setProperty("--selected-background-color", selected);
+        document.body.style.setProperty("--selected-background-color-active", selectedActive);
+        document.body.style.setProperty("--selected-text-background-color", selectedText);
+    } else {
+        document.body.style.removeProperty("--system-accent-color");
+        document.body.style.removeProperty("--selected-background-color");
+        document.body.style.removeProperty("--selected-background-color-active");
+        document.body.style.removeProperty("--selected-text-background-color");
+    }
+};
+
 WI._windowKeyDown = function(event)
 {
     WI._updateModifierKeys(event);
@@ -2549,10 +2595,14 @@ WI.setZoomFactor = function(factor)
 
 WI.resolvedLayoutDirection = function()
 {
-    let layoutDirection = WI.settings.debugLayoutDirection.value;
-    if (layoutDirection === WI.LayoutDirection.System)
-        layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
-    return layoutDirection;
+    // When the value is changed from Web Inspector Settings, Web Inspector reopens automatically.
+    // When the value is changed at the system level, the user is prompted to restart the computer.
+    if (!WI._layoutDirection) {
+        let layoutDirection = WI.settings.debugLayoutDirection.value;
+        WI._layoutDirection = layoutDirection === WI.LayoutDirection.System ? InspectorFrontendHost.userInterfaceLayoutDirection() : layoutDirection;
+    }
+
+    return WI._layoutDirection;
 };
 
 WI.resolveLayoutDirectionForElement = function(element)
@@ -2629,6 +2679,14 @@ WI._resourceCachingDisabledSettingChanged = function(event)
             continue;
 
         target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+    }
+};
+
+WI._clearResourceDataOnNavigateSettingChanged = function(event)
+{
+    for (let target of WI.targets) {
+        if (target.hasCommand("Network.setClearResourceDataOnNavigate"))
+            target.NetworkAgent.setClearResourceDataOnNavigate(WI.settings.clearNetworkOnNavigate.value);
     }
 };
 
@@ -2810,7 +2868,7 @@ WI.linkifyElement = function(linkElement, sourceCodeLocation, options = {}) {
     linkElement.addEventListener("click", showSourceCodeLocation);
     linkElement.addEventListener("contextmenu", (event) => {
         let contextMenu = WI.ContextMenu.createFromEvent(event);
-        WI.appendContextMenuItemsForSourceCode(contextMenu, sourceCodeLocation);
+        WI.appendContextMenuItemsForNetworkResource(contextMenu, sourceCodeLocation);
     });
 };
 

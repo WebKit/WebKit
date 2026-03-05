@@ -86,13 +86,13 @@ bool BaseClickableWithKeyInputType::accessKeyAction(HTMLInputElement& element, b
 auto BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
-    return handleKeydownEvent(*protectedElement(), event);
+    return handleKeydownEvent(*protect(element()), event);
 }
 
 void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent& event)
 {
     ASSERT(element());
-    handleKeypressEvent(*protectedElement(), event);
+    handleKeypressEvent(*protect(element()), event);
 }
 
 void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent& event)
@@ -104,7 +104,7 @@ bool BaseClickableWithKeyInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);
     ASSERT(element());
-    return accessKeyAction(*protectedElement(), sendMouseEvents);
+    return accessKeyAction(*protect(element()), sendMouseEvents);
 }
 
 } // namespace WebCore

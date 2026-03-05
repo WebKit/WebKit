@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <ranges>
 #include <wtf/IndexedRange.h>
 
 namespace WTF {
@@ -32,8 +33,8 @@ namespace WTF {
 template<typename IteratorA, typename IteratorB> class ZippedRangeIterator {
 public:
     ZippedRangeIterator(IteratorA&& iteratorA, IteratorB&& iteratorB)
-        : m_iteratorA(WTFMove(iteratorA))
-        , m_iteratorB(WTFMove(iteratorB))
+        : m_iteratorA(WTF::move(iteratorA))
+        , m_iteratorB(WTF::move(iteratorB))
     {
     }
 

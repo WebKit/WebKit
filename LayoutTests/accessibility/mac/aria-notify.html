@@ -19,13 +19,13 @@ function notificationCallback(object, notification, userInfo) {
         output += `Received announcement request:\n`;
         output += formatAriaNotifyUserInfo(userInfo);
 
-        notificationCount++;  
+        notificationCount++;
+        if (notificationCount == 1)
+            document.getElementById("button").ariaNotify("World");
+        else if (notificationCount == 2)
+            testFinished = true;
     }
 	
-    if (notificationCount == 1)
-        document.getElementById("button").ariaNotify("World");
-    else if (notificationCount == 2)
-        testFinished = true;
 }
 
 if (accessibilityController) {

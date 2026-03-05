@@ -99,6 +99,7 @@ fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 pointer-lock [ Skip ]
 
 # WEB_AUTHN is disabled
+http/tests/digital-credentials/ [ Skip ]
 http/wpt/identity/ [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 
@@ -789,6 +790,7 @@ http/tests/navigation/postredirect-goback1.html [ Skip ] # Missing
 http/tests/navigation/page-cache-mediastream.html [ Skip ] # Timeout
 
 http/tests/notifications [ Skip ]
+http/tests/pasteboard/copy-image-from-context-menu.html [ Skip ] # Need pasteboard support in Windows' UIScriptController
 http/tests/paymentrequest [ Skip ]
 http/tests/pointer-lock [ Skip ]
 http/tests/preconnect [ Skip ]
@@ -910,7 +912,6 @@ http/tests/security/local-user-CSS-from-remote.html [ Skip ] # Failure
 http/tests/security/local-video-poster-from-remote.html [ Skip ] # Failure
 http/tests/security/local-video-source-from-remote.html [ Skip ] # Failure
 http/tests/security/local-video-src-from-remote.html [ Skip ] # Failure
-http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Skip ] # Failure
 http/tests/security/module-no-mime-type.html [ Skip ] # Failure
 http/tests/security/sync-xhr-partition.html [ Skip ] # Failure
 http/tests/security/video-cross-origin-accessfailure.html [ Skip ] # Failure
@@ -1090,12 +1091,11 @@ webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-styl
 
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-changes-on-percentage-based-timeline.html [ Pass ]
 
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-animatable-interface.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-display-none.html [ ImageOnlyFailure ]
-
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-paused-animations.html [ Skip ] # Timeout
 
 webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/css/animation-range-ignored.html [ Skip ]
 webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-range.html [ Skip ]
@@ -1348,6 +1348,8 @@ fast/shadow-dom/shadow-host-move-to-different-document.html [ Skip ] # ImageOnly
 fast/shadow-dom/shadow-host-transition.html [ Skip ] # ImageOnlyFailure
 fast/shadow-dom/shadow-host-with-before-after.html [ Skip ] # ImageOnlyFailure
 fast/shadow-dom/shadow-layout-after-toggling-display-slot-parent.html [ Skip ] # ImageOnlyFailure
+
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select [ Skip ]
  
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Editing
@@ -1762,6 +1764,11 @@ webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 
 [ Debug ] fast/canvas/webgl/webgl2-large-getbuffersubdata.html [ Skip ] # Slow
 
+webgl/2.0.y/conformance2/glsl3/fragment-shader-loop-crash.html [ Failure Pass ] # Flake, passes locally
+webgl/2.0.y/conformance2/extensions/required-extensions.html [ Failure Pass ] # Flake, passes locally
+webgl/2.0.y/conformance2/query/occlusion-query.html [ Skip ] # Slow, timeout on buildbot. Passes locally
+webgl/2.0.y/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Slow, timeout on buildbot. Passes locally
+
 # Needs JIT
 webkit.org/b/274059 webgl/2.0.y/conformance/uniforms/uniform-default-values.html [ Skip ] # Timeout
 webkit.org/b/274059 webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Timeout
@@ -1858,6 +1865,7 @@ webkit.org/b/277235 fast/dynamic/content-visibility-crash-with-continuation-and-
 fast/editing/apply-relative-font-style-change-crash-004.html [ Failure ]
 
 webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
+webkit.org/b/238644 fast/events/mouse-event-buttons.html [ Skip ]
 
 # Makes a subsequent test an assertion failure crash
 webkit.org/b/277121 [ Debug ] fast/events/event-handler-detached-document.html
@@ -1960,6 +1968,10 @@ webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ 
 # Makes a subsequent performance resource timing test flaky with --order=random
 webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html [ Skip ]
 webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcetimingbufferfull-queue-resource-entry.html [ Skip ]
+http/tests/performance/performance-resource-timing-cross-origin-media-with-cors.html [ Skip ]
+http/tests/performance/performance-resource-timing-cross-origin-media.html [ Skip ]
+http/tests/performance/performance-resource-timing-redirection-cross-origin-media-with-cors.html [ Skip ]
+http/tests/performance/performance-resource-timing-redirection-cross-origin-media.html [ Skip ]
 
 webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
 
@@ -1980,6 +1992,9 @@ webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/u
 imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html [ Crash ]
 imported/w3c/web-platform-tests/event-timing/interaction-count-click.html [ Skip ]
 imported/w3c/web-platform-tests/event-timing/interaction-count-press-key.html [ Skip ]
+
+# Incorrect whitespace stripping might happen at the network layer?
+imported/w3c/web-platform-tests/x-frame-options/get-decode-split.html [ Skip ]
 
 # Timeout:
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-keydown-keyup.html [ Skip ]
@@ -2049,6 +2064,7 @@ fast/images/pdf-as-image-with-annotations.html [ Skip ] # ImageOnlyFailure
 fast/images/pdf-in-canvas.html [ Skip ] # Timeout
 fast/images/pixel-crack-image-background-webkit-transform-scale.html [ Skip ] # Failure
 fast/images/sprite-sheet-image-draw.html [ Skip ] # Timeout
+fast/images/imagebitmap-memory.html [ Failure Pass ]
 
 fast/inline [ Skip ]
 fast/invalid [ Skip ]
@@ -2198,6 +2214,10 @@ imported/w3c/web-platform-tests/css/reference [ Skip ]
 imported/w3c/web-platform-tests/css/selectors/focus-visible-022.tentative.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/css/selectors/user-invalid.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Skip ] # Failure
+
+# open pseudo 
+imported/w3c/web-platform-tests/css/selectors/open-pseudo.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/css/selectors/invalidation/open-pseudo-class-in-has.html [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/css/selectors/invalidation/media-loading-pseudo-classes-in-has.html [ Skip ] # Failure on Buildbot
 
@@ -3615,6 +3635,7 @@ fast/gradients/generated-gradients.html [ Skip ]
 fast/gradients/list-item-gradient.html [ Skip ]
 fast/gradients/radial-centered.html [ Skip ]
 fast/gradients/simple-gradients.html [ Skip ]
+fast/html/crash-marquee-fullscreen.html [ Skip ] # Timeout
 fast/html/details-add-child-1.html [ Skip ]
 fast/html/details-add-child-2.html [ Skip ]
 fast/html/details-add-details-child-1.html [ Skip ]
@@ -3993,12 +4014,7 @@ transforms/3d/general/perspective-units.html [ Skip ]
 transforms/3d/hit-testing/backface-hit-test.html [ Skip ]
 transforms/3d/hit-testing/backface-no-transform-hit-test.html [ Skip ]
 transforms/3d/point-mapping/3d-point-mapping-2.html [ Skip ]
-transforms/3d/point-mapping/3d-point-mapping-3.html [ Skip ]
-transforms/3d/point-mapping/3d-point-mapping-4.html [ Skip ]
-transforms/3d/point-mapping/3d-point-mapping-coplanar.html [ Skip ]
 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Skip ]
-transforms/3d/point-mapping/3d-point-mapping-origins.html [ Skip ]
-transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Skip ]
 transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Skip ]
 transforms/3d/point-mapping/3d-point-mapping.html [ Skip ]
 transforms/svg-vs-css.xhtml [ Skip ]
@@ -4354,6 +4370,8 @@ storage/indexeddb/modern/get-keyrange.html [ Failure Pass ]
 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure Pass ]
 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure Pass ]
 
+storage/indexeddb/abort-while-committing-crash.html [ Skip ]
+
 editing/style/unbold-in-bold.html [ Failure ]
 
 fast/html/body-color-legacy-parsing-3.html [ Pass ImageOnlyFailure ]
@@ -4492,6 +4510,9 @@ fast/css/highlight-text-repaint.html [ Skip ] # Failure
 fast/css/text-underline-offset-repaint.html [ Skip ] # Failure
 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Skip ] # Failure
 
+fast/canvas/fillText-edge-clip-shadow.html [ ImageOnlyFailure ]
+fast/canvas/fillText-edge-shadow.html [ ImageOnlyFailure ]
+
 webkit.org/b/286284 fast/canvas/canvas-image-shadow.html [ Failure ]
 webkit.org/b/286284 webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Failure ]
 
@@ -4557,6 +4578,7 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinate
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?pen [ Pass ]
 
 # New imported 'focus' timeout failures
+imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe.html [ Failure ]
 imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe-contentwindow.html [ Failure ]
 imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe-contentwindow.html [ Failure ]
 imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe.html [ Failure ]
@@ -4565,10 +4587,7 @@ imported/w3c/web-platform-tests/focus/hasfocus-same-site.html [ Failure ]
 imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-different-site-intermediate-frame.html [ Failure ]
 imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-same-as-top-intermediate-frame.html [ Failure ]
 imported/w3c/web-platform-tests/focus/iframe-focus-with-different-site-intermediate-frame.html [ Failure ]
-
-# Now that partial fonts are working, two characters previously rendered as a square are now showing correctly, which makes the test fail. 
-# Probably the test should be updated.
-fast/text/text-combine-placement.html [ Failure ]
+imported/w3c/web-platform-tests/focus/iframe-focus-with-same-as-top-intermediate-frame.html [ Failure ]
 
 fast/css/vertical-align-rem-on-root.html [ Skip ] # [ Timeout Pass ]
 
@@ -4615,3 +4634,19 @@ imported/w3c/web-platform-tests/css/CSS2/box-display/display-008.xht [ ImageOnly
 imported/w3c/web-platform-tests/css/CSS2/box-display/display-009.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/box-display/display-012.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/box-display/display-013.xht [ ImageOnlyFailure ]
+
+fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure ]
+fast/editing/selection-across-flex-grid-boundary.html [ ImageOnlyFailure ]
+fast/rendering/missing-selection-with-sibling-table.html [ ImageOnlyFailure ]
+fast/text/vertical-quotation-marks.html [ ImageOnlyFailure ]
+
+# webkit.org/b/304535 ui-serif, ui-sans-serif, ui-monospace, ui-rounded generic families not implemented on Windows
+imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
+
+http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Skip ]
+
+imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html [ Skip ] # Flake
+imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text.html [ Skip ] # Flake or perhaps always fails
+imported/w3c/web-platform-tests/largest-contentful-paint/video-play-after-poster.html [ Failure ] # Harness Error The operation is not supported.
+
+webkit.org/b/306256 editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]

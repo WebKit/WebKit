@@ -1,0 +1,4 @@
+http://127.0.0.1:8000/resources/js-test-pre.js
+http://localhost:8000/media/resources/hls/playlist-with-cookie.m3u8
+http://localhost:8000/media/resources/hls/sub-playlist-with-cookie.py
+

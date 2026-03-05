@@ -76,10 +76,10 @@ public:
         Iterator(IndexValueStore&, CursorDuplicity, IDBKeyDataSet::reverse_iterator, IndexValueEntry::Iterator);
 
         void invalidate();
-        bool isValid();
+        bool NODELETE isValid();
 
-        const IDBKeyData& key();
-        const IDBKeyData& primaryKey();
+        const IDBKeyData& NODELETE key();
+        const IDBKeyData& NODELETE primaryKey();
         const ThreadSafeDataBuffer& value();
 
         Iterator& operator++();

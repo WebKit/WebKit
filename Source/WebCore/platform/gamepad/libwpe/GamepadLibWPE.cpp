@@ -32,8 +32,11 @@
 #if WPE_CHECK_VERSION(1, 13, 90)
 
 #include "GamepadProviderLibWPE.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GamepadLibWPE);
 
 GamepadLibWPE::GamepadLibWPE(struct wpe_gamepad_provider* provider, uintptr_t gamepadId, unsigned index)
     : PlatformGamepad(index)

@@ -26,9 +26,9 @@ var throwDesc = {
 Object.defineProperty(proto, "0", throwDesc);
 Object.defineProperty(proto, "1", throwDesc);
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 1]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 1]));
 
   assert.sameValue(sample["0"], 42);
   assert.sameValue(sample["1"], 1);
-});
+}, null, ["passthrough"]);

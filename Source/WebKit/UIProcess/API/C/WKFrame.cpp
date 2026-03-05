@@ -42,7 +42,7 @@ WKTypeID WKFrameGetTypeID()
 
 bool WKFrameIsMainFrame(WKFrameRef frameRef)
 {
-    return toProtectedImpl(frameRef)->isMainFrame();
+    return protect(toImpl(frameRef))->isMainFrame();
 }
 
 WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frameRef)
@@ -92,7 +92,7 @@ WKStringRef WKFrameCopyTitle(WKFrameRef frameRef)
 
 WKPageRef WKFrameGetPage(WKFrameRef frameRef)
 {
-    return toAPI(toProtectedImpl(frameRef)->protectedPage().get());
+    return toAPI(protect(protect(toImpl(frameRef))->page()).get());
 }
 
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
@@ -102,7 +102,7 @@ WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
 
 bool WKFrameCanProvideSource(WKFrameRef frameRef)
 {
-    return toProtectedImpl(frameRef)->canProvideSource();
+    return protect(toImpl(frameRef))->canProvideSource();
 }
 
 bool WKFrameCanShowMIMEType(WKFrameRef, WKStringRef)
@@ -112,12 +112,12 @@ bool WKFrameCanShowMIMEType(WKFrameRef, WKStringRef)
 
 bool WKFrameIsDisplayingStandaloneImageDocument(WKFrameRef frameRef)
 {
-    return toProtectedImpl(frameRef)->isDisplayingStandaloneImageDocument();
+    return protect(toImpl(frameRef))->isDisplayingStandaloneImageDocument();
 }
 
 bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frameRef)
 {
-    return toProtectedImpl(frameRef)->isDisplayingMarkupDocument();
+    return protect(toImpl(frameRef))->isDisplayingMarkupDocument();
 }
 
 bool WKFrameIsFrameSet(WKFrameRef frameRef)
@@ -127,7 +127,7 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
 
 WKFrameHandleRef WKFrameCreateFrameHandle(WKFrameRef frameRef)
 {
-    return toAPILeakingRef(API::FrameHandle::create(toProtectedImpl(frameRef)->frameID()));
+    return toAPILeakingRef(API::FrameHandle::create(protect(toImpl(frameRef))->frameID()));
 }
 
 WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frameRef)
@@ -137,21 +137,21 @@ WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frameRef)
 
 void WKFrameGetMainResourceData(WKFrameRef frameRef, WKFrameGetResourceDataFunction callback, void* context)
 {
-    toProtectedImpl(frameRef)->getMainResourceData([context, callback] (API::Data* data) {
+    protect(toImpl(frameRef))->getMainResourceData([context, callback] (API::Data* data) {
         callback(toAPI(data), nullptr, context);
     });
 }
 
 void WKFrameGetResourceData(WKFrameRef frameRef, WKURLRef resourceURL, WKFrameGetResourceDataFunction callback, void* context)
 {
-    toProtectedImpl(frameRef)->getResourceData(toProtectedImpl(resourceURL).get(), [context, callback] (API::Data* data) {
+    protect(toImpl(frameRef))->getResourceData(protect(toImpl(resourceURL)).get(), [context, callback] (API::Data* data) {
         callback(toAPI(data), nullptr, context);
     });
 }
 
 void WKFrameGetWebArchive(WKFrameRef frameRef, WKFrameGetWebArchiveFunction callback, void* context)
 {
-    toProtectedImpl(frameRef)->getWebArchive([context, callback] (API::Data* data) {
+    protect(toImpl(frameRef))->getWebArchive([context, callback] (API::Data* data) {
         callback(toAPI(data), nullptr, context);
     });
 }

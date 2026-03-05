@@ -1113,6 +1113,7 @@ TEST_F(ReceiveStatisticsProxyTest,
 TEST_F(ReceiveStatisticsProxyTest, ReceivedFrameHistogramsAreUpdated) {
   for (int i = 0; i < kMinRequiredSamples; ++i) {
     statistics_proxy_->OnRenderedFrame(MetaData(CreateFrame(kWidth, kHeight)));
+    time_controller_.AdvanceTime(TimeDelta::Millis(33));
   }
 
   statistics_proxy_->UpdateHistograms(std::nullopt, StreamDataCounters(),

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleDeclaration);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleDeclaration);
 
 const Settings* CSSStyleDeclaration::settings() const
 {

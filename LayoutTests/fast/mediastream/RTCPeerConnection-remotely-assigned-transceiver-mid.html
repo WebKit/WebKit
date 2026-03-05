@@ -82,8 +82,6 @@
             })
             .then(function () {
                 testPassed("Offer/answer dialog completed")
-
-                window.internals.emulateRTCPeerConnectionPlatformEvent(pcB, "unmute-remote-sources-by-mid");
             })
             .catch(function (error) {
                 testFailed("Error in promise chain: " + error);

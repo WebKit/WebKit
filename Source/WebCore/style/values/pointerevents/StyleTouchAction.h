@@ -46,7 +46,7 @@ struct TouchAction {
     constexpr TouchAction(CSS::Keyword::Auto keyword) : m_value { keyword } { }
     constexpr TouchAction(CSS::Keyword::None keyword) : m_value { keyword } { }
     constexpr TouchAction(CSS::Keyword::Manipulation keyword) : m_value { keyword } { }
-    constexpr TouchAction(TouchActionValueEnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr TouchAction(TouchActionValueEnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr TouchAction(TouchActionValue value) : m_value { TouchActionValueEnumSet { value } } { }
 
     constexpr bool isNone() const { return WTF::holdsAlternative<CSS::Keyword::None>(m_value); }

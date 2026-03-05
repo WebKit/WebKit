@@ -24,7 +24,7 @@ for (var i = 0; i < testLoopCount; i++) {
     }
 
     if (!exception)
-        throw "Exception not thrown for an unitialized this at iteration";
+        throw "Exception not thrown for an uninitialized this at iteration";
 
     var a = new B(false, true);
     var b = new B(false, false);

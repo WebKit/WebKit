@@ -58,7 +58,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>& webUserContentControllerProxies()
+static HashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>& NODELETE webUserContentControllerProxies()
 {
     static NeverDestroyed<HashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>> proxies;
     return proxies;
@@ -121,10 +121,10 @@ UserContentControllerParameters WebUserContentControllerProxy::parametersForProc
 
     return {
         identifier()
-        , WTFMove(userScripts)
-        , WTFMove(userStyleSheets)
-        , WTFMove(messageHandlers)
-        , WTFMove(buffers)
+        , WTF::move(userScripts)
+        , WTF::move(userStyleSheets)
+        , WTF::move(messageHandlers)
+        , WTF::move(buffers)
 #if ENABLE(CONTENT_EXTENSIONS)
         , contentRuleListData()
 #endif
@@ -336,7 +336,7 @@ void WebUserContentControllerProxy::didPostMessage(WebPageProxy& page, FrameInfo
     RefPtr handler = m_scriptMessageHandlers.get(messageHandlerID);
     if (!handler)
         return reply(makeUnexpected(String()));
-    handler->client().didPostMessage(page, WTFMove(frameInfoData), handler->world(), WTFMove(message), WTFMove(reply));
+    handler->client().didPostMessage(page, WTF::move(frameInfoData), handler->world(), WTF::move(message), WTF::move(reply));
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

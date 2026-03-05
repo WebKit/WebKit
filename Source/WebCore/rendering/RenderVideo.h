@@ -34,19 +34,18 @@ namespace WebCore {
 class HTMLVideoElement;
 
 class RenderVideo final : public RenderMedia {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderVideo);
+    WTF_MAKE_TZONE_ALLOCATED(RenderVideo);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderVideo);
 public:
     RenderVideo(HTMLVideoElement&, RenderStyle&&);
     virtual ~RenderVideo();
 
-    WEBCORE_EXPORT HTMLVideoElement& videoElement() const;
-    Ref<HTMLVideoElement> protectedVideoElement() const;
+    WEBCORE_EXPORT HTMLVideoElement& NODELETE videoElement() const;
 
     IntRect videoBox() const;
     WEBCORE_EXPORT IntRect videoBoxInRootView() const;
 
-    static IntSize defaultSize();
+    static IntSize NODELETE defaultSize();
 
     bool supportsAcceleratedRendering() const;
     void acceleratedRenderingStateChanged();
@@ -79,7 +78,7 @@ private:
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
 
     void layout() final;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
 
     void visibleInViewportStateChanged() final;
 

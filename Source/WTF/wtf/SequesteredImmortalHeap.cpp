@@ -37,7 +37,11 @@ namespace WTF {
 SequesteredImmortalHeap& SequesteredImmortalHeap::instance()
 {
     // FIXME: this storage is not contained within the sequestered region
-    static NeverDestroyed<SequesteredImmortalHeap> instance;
+    static LazyNeverDestroyed<SequesteredImmortalHeap> instance;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        instance.construct();
+    });
     return instance.get();
 }
 
@@ -85,17 +89,70 @@ bool SequesteredImmortalHeap::scavengeImpl(void* /*userdata*/)
     dataLogLnIf(verbose, "SequesteredImmortalHeap: scavenging");
     {
         Locker listLocker { m_scavengerLock };
-        auto bound = m_nextFreeIndex;
-        ASSERT(bound <= m_allocatorSlots.size());
+        auto bound = m_slotManager.allocatedCount();
         for (size_t i = 0; i < bound; i++) {
-            // FIXME: Refactor the SeqImmortalHeap <-> SeqArenaAllocator
-            // relationship so that we don't have to assume data layouts
-            // here
-            auto& queue = *reinterpret_cast<ConcurrentDecommitQueue*>(&m_allocatorSlots[i]);
+            auto& queue = *reinterpret_cast<ConcurrentDecommitQueue*>(&m_slotManager[i]);
             queue.decommit();
         }
     }
     return false;
+}
+
+SequesteredStackAllocator::Result SequesteredStackAllocator::allocate(size_t stackSize, size_t guardSize)
+{
+    {
+        Locker lock(m_lock);
+        if (!m_freeList.isEmpty()) {
+            auto* handle = m_freeList.removeHead();
+            m_inUseList.append(handle);
+            return { handle };
+        }
+    }
+
+    auto& sih = SequesteredImmortalHeap::instance();
+
+    void* handleMemory = sih.immortalMalloc(sizeof(StackHandle));
+    auto* handle = new (handleMemory) StackHandle();
+
+    size_t totalSize = stackSize + guardSize;
+    void* stackMemory = sih.immortalAlignedMalloc(pageSize(), totalSize);
+
+    int result = mprotect(stackMemory, guardSize, PROT_NONE);
+    RELEASE_ASSERT(!result);
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN;
+    handle->stack = std::span<std::byte>(
+        reinterpret_cast<std::byte*>(reinterpret_cast<uintptr_t>(stackMemory) + guardSize),
+        stackSize
+    );
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
+
+    {
+        Locker lock(m_lock);
+        m_inUseList.append(handle);
+    }
+    return { handle };
+}
+
+void SequesteredStackAllocator::deallocate(StackHandle* handle)
+{
+    Locker lock(m_lock);
+
+#if ASSERT_ENABLED
+    {
+        bool found = false;
+        for (auto* h = m_inUseList.head(); h; h = h->next()) {
+            if (h == handle) {
+                found = true;
+                break;
+            }
+        }
+        RELEASE_ASSERT(found);
+    }
+#endif
+
+    m_inUseList.remove(handle);
+    m_freeList.push(handle);
 }
 
 GranuleHeader* SequesteredImmortalAllocator::addGranule(size_t minSize)

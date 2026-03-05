@@ -4,7 +4,7 @@ layer at (0,0) size 800x169
   RenderBlock {HTML} at (0,0) size 800x169
     RenderBody {BODY} at (8,16) size 784x137
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 288x19
+        RenderText {#text} at (0,0) size 288x20
           text run at (0,0) width 288: "The two diagrams below should be identical."
       RenderBlock {DIV} at (0,36) size 784x101
         RenderBlock {P} at (40,0) size 520x40 [color=#0000FF] [bgcolor=#00FFFF] [border: none (40px solid #FF00FF) none (40px solid #FF00FF)]

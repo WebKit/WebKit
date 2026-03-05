@@ -42,7 +42,7 @@ namespace WebCore {
 namespace CSS {
 
 Color::Color(Color::ColorKind&& kind)
-    : value { WTFMove(kind) }
+    : value { WTF::move(kind) }
 {
 }
 
@@ -52,212 +52,212 @@ Color::Color(Color::EmptyToken token)
 }
 
 Color::Color(ResolvedColor&& color)
-    : value { WTFMove(color) }
+    : value { WTF::move(color) }
 {
 }
 
 Color::Color(KeywordColor&& color)
-    : value { WTFMove(color) }
+    : value { WTF::move(color) }
 {
 }
 
 Color::Color(HexColor&& color)
-    : value { WTFMove(color) }
+    : value { WTF::move(color) }
 {
 }
 
 Color::Color(ColorLayers&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(ColorMix&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(ContrastColor&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(LightDarkColor&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<RGBFunctionLegacy<Number<>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<RGBFunctionLegacy<Percentage<>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<RGBFunctionModernAbsolute>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<HSLFunctionLegacy>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<HSLFunctionModern>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<HWBFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<LabFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<LCHFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<OKLabFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<OKLCHFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedA98RGB<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedRec2020<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedSRGBA<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(AbsoluteColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<RGBFunctionModernRelative>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<HSLFunctionModern>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<HWBFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<LabFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<LCHFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<OKLabFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<OKLCHFunction>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
 Color::Color(RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>&& color)
-    : value { makeIndirectColor(WTFMove(color)) }
+    : value { makeIndirectColor(WTF::move(color)) }
 {
 }
 
@@ -364,7 +364,7 @@ Color::ColorKind Color::copy(const Color::ColorKind& other)
 
 template<typename T> Color::ColorKind Color::makeIndirectColor(T&& color)
 {
-    return { makeUniqueRef<T>(WTFMove(color)) };
+    return { makeUniqueRef<T>(WTF::move(color)) };
 }
 
 WebCore::Color createColor(const Color& value, PlatformColorResolutionState& state)

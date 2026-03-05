@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include <WebCore/CSSValue.h>
-#include <WebCore/FontTaggedSettings.h>
+#include "CSSValue.h"
+#include "FontTaggedSettings.h"
 
 namespace WebCore {
 
@@ -35,10 +35,10 @@ class CSSFontFeatureValue final : public CSSValue {
 public:
     static Ref<CSSFontFeatureValue> create(FontTag&& tag, Ref<CSSValue>&& value)
     {
-        return adoptRef(*new CSSFontFeatureValue(WTFMove(tag), WTFMove(value)));
+        return adoptRef(*new CSSFontFeatureValue(WTF::move(tag), WTF::move(value)));
     }
 
-    const FontTag& tag() const { return m_tag; }
+    const FontTag& tag() const LIFETIME_BOUND { return m_tag; }
     const CSSValue& value() const { return m_value; }
     String customCSSText(const CSS::SerializationContext&) const;
 

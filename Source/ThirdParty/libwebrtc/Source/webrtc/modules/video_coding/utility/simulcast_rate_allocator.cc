@@ -23,6 +23,7 @@
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_codec_type.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/simulcast_stream.h"
 #include "api/video_codecs/video_codec.h"
 #include "rtc_base/checks.h"
@@ -330,11 +331,14 @@ const VideoCodec& SimulcastRateAllocator::GetCodec() const {
 }
 
 int SimulcastRateAllocator::NumTemporalStreams(size_t simulcast_id) const {
+  bool is_vp8 = codec_.simulcastStream[simulcast_id].format
+                    ? codec_.simulcastStream[simulcast_id].format->IsSameCodec(
+                          webrtc::SdpVideoFormat::VP8())
+                    : codec_.codecType == kVideoCodecVP8;
   return std::max<uint8_t>(
-      1,
-      codec_.codecType == kVideoCodecVP8 && codec_.numberOfSimulcastStreams == 0
-          ? codec_.VP8().numberOfTemporalLayers
-          : codec_.simulcastStream[simulcast_id].numberOfTemporalLayers);
+      1, is_vp8 && codec_.numberOfSimulcastStreams == 0
+             ? codec_.VP8().numberOfTemporalLayers
+             : codec_.simulcastStream[simulcast_id].numberOfTemporalLayers);
 }
 
 void SimulcastRateAllocator::SetLegacyConferenceMode(bool enabled) {

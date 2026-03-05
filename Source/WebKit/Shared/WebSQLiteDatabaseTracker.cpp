@@ -33,11 +33,11 @@ using namespace WebCore;
 
 Ref<WebSQLiteDatabaseTracker> WebSQLiteDatabaseTracker::create(IsHoldingLockedFilesHandler&& isHoldingLockedFilesHandler)
 {
-    return adoptRef(*new WebSQLiteDatabaseTracker(WTFMove(isHoldingLockedFilesHandler)));
+    return adoptRef(*new WebSQLiteDatabaseTracker(WTF::move(isHoldingLockedFilesHandler)));
 }
 
 WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(IsHoldingLockedFilesHandler&& isHoldingLockedFilesHandler)
-    : m_isHoldingLockedFilesHandler(WTFMove(isHoldingLockedFilesHandler))
+    : m_isHoldingLockedFilesHandler(WTF::move(isHoldingLockedFilesHandler))
 {
     ASSERT(RunLoop::isMain());
     SQLiteDatabaseTracker::setClient(this);

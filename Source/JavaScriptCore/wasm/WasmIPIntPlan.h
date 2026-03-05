@@ -53,13 +53,13 @@ public:
     Vector<Ref<IPIntCallee>>&& takeCallees()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_calleesVector);
+        return WTF::move(m_calleesVector);
     }
 
     JSToWasmCalleeMap&& takeJSToWasmCallees()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_jsToWasmCallees);
+        return WTF::move(m_jsToWasmCallees);
     }
 
     bool hasWork() const final

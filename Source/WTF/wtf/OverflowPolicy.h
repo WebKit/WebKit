@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace WTF {
 
 enum class OverflowPolicy : uint8_t { CrashOnOverflow, RecordOverflow };

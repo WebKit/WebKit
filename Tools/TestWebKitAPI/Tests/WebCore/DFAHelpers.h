@@ -50,7 +50,7 @@ static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLF
 {
     Vector<ContentExtensions::NFA> nfas;
     combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
-        nfas.append(WTFMove(nfa));
+        nfas.append(WTF::move(nfa));
         return true;
     });
     return nfas;
@@ -65,7 +65,7 @@ static ContentExtensions::DFA buildDFAFromPatterns(const Vector<ASCIILiteral>& p
         parser.addPattern(pattern, false, 0);
     Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
     EXPECT_EQ(1ul, nfas.size());
-    return *ContentExtensions::NFAToDFA::convert(WTFMove(nfas.first()));
+    return *ContentExtensions::NFAToDFA::convert(WTF::move(nfas.first()));
 }
 
 } // namespace TestWebKitAPI

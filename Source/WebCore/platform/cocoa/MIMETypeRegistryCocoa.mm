@@ -83,7 +83,7 @@ static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTy
 {
     static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
         HashMap<String, String, ASCIICaseInsensitiveHash> map;
-        static constexpr TypeExtensionPair additionalTypes[] = {
+        static constexpr auto additionalTypes = std::to_array<TypeExtensionPair>({
             // FIXME: Remove this list once rdar://112044000 (Many camera RAW image type identifiers are missing MIME types) is resolved.
             { "image/x-canon-cr2"_s, "cr2"_s },
             { "image/x-canon-cr3"_s, "cr3"_s },
@@ -103,7 +103,7 @@ static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTy
             { "image/x-samsung-srw"_s, "srw"_s },
             { "image/x-sony-arw"_s, "arw"_s },
             { "image/x-sony-srf"_s, "srf"_s },
-        };
+        });
         for (auto& [type, extension] : additionalTypes)
             map.add(extension, type);
         return map;

@@ -38,7 +38,7 @@ public:
         return adoptRef(*new URLRequest(request));
     }
 
-    const WebCore::ResourceRequest& resourceRequest() const { return m_request; }
+    const WebCore::ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_request; }
 
     static double defaultTimeoutInterval(); // May return 0 when using platform default.
     static void setDefaultTimeoutInterval(double);

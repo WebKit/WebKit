@@ -20,10 +20,10 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var ta1 = new TA();
   assert.sameValue(ta1.lastIndexOf(), -1);
 
-  var ta2 = new TA([0, 1, 2]);
+  var ta2 = new TA(makeCtorArg([0, 1, 2]));
   assert.sameValue(ta2.lastIndexOf(), -1);
 });

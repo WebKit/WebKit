@@ -4,25 +4,25 @@ layer at (0,0) size 785x767
   RenderBlock {html} at (0,0) size 785x767
     RenderBody {body} at (11,11) size 763x733
       RenderBlock (anonymous) at (0,0) size 762x52
-        RenderText {#text} at (0,0) size 749x52
+        RenderText {#text} at (0,-1) size 749x54
           text run at (0,0) width 353: "The two blocks should look identical. "
           text run at (352,0) width 397: "One uses an SVG, and the other just uses a"
-          text run at (0,26) width 175: "normal HTML div."
+          text run at (0,25) width 175: "normal HTML div."
       RenderBlock {p} at (0,75) size 762x27
-        RenderText {#text} at (0,0) size 518x26
+        RenderText {#text} at (0,-1) size 518x28
           text run at (0,0) width 518: "There should be a red, white and blue pattern below this"
       RenderSVGRoot {svg} at (25,149) size 202x202
         RenderSVGRect {rect} at (25,149) size 202x202 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderBlock {p} at (0,353) size 762x27
-        RenderText {#text} at (0,0) size 517x26
+        RenderText {#text} at (0,-1) size 517x28
           text run at (0,0) width 517: "There should be a red, white and blue pattern above this"
       RenderBlock {p} at (0,427) size 762x27
-        RenderText {#text} at (0,0) size 518x26
+        RenderText {#text} at (0,-1) size 518x28
           text run at (0,0) width 518: "There should be a red, white and blue pattern below this"
       RenderBlock (floating) {div} at (14,491) size 202x201 [border: (14px solid #FF0000)]
         RenderBlock {div} at (28,28) size 145x145 [bgcolor=#0000FF]
       RenderBlock {p} at (0,706) size 762x27
-        RenderText {#text} at (0,0) size 517x26
+        RenderText {#text} at (0,-1) size 517x28
           text run at (0,0) width 517: "There should be a red, white and blue pattern above this"
 layer at (12,414) size 762x2 backgroundClip at (12,414) size 761x2 clip at (0,0) size 0x0
   RenderBlock {hr} at (0,402) size 762x3 [color=#808080] [border: (1px inset #808080)]

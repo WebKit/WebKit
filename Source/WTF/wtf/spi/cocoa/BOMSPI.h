@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
 typedef struct _BOMCopier* BOMCopier;

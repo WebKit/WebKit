@@ -19,6 +19,7 @@ set(WTF_PUBLIC_HEADERS
     Atomics.h
     AutodrainedPool.h
     AutomaticThread.h
+    AvailableMemory.h
     BackwardsGraph.h
     Bag.h
     BagToHashMap.h
@@ -110,6 +111,7 @@ set(WTF_PUBLIC_HEADERS
     FunctionDispatcher.h
     FunctionPtr.h
     FunctionTraits.h
+    GenerationalSet.h
     GenericHashKey.h
     GenericTimeMixin.h
     GetPtr.h
@@ -136,13 +138,14 @@ set(WTF_PUBLIC_HEADERS
     IndexSparseSet.h
     IndexedContainerIterator.h
     InlineASM.h
+    InlineWeakPtr.h
+    InlineWeakRef.h
     Insertion.h
     InstanceCounted.h
     Int128.h
     InterferenceGraph.h
     IntervalSet.h
-    IsoMalloc.h
-    IsoMallocInlines.h
+    IsIncreasing.h
     IterationStatus.h
     IteratorRange.h
     JSONValues.h
@@ -184,6 +187,7 @@ set(WTF_PUBLIC_HEADERS
     Markable.h
     MathExtras.h
     MediaTime.h
+    MemoryDump.h
     MemoryFootprint.h
     MemoryPressureHandler.h
     MessageQueue.h
@@ -246,11 +250,13 @@ set(WTF_PUBLIC_HEADERS
     PrintStream.h
     PriorityQueue.h
     ProcessID.h
+    ProcessMemoryStatus.h
     ProcessPrivilege.h
     PtrTag.h
     RAMSize.h
     RandomDevice.h
     Range.h
+    RangeAdaptors.h
     RangeSet.h
     RawHex.h
     RawPointer.h
@@ -261,10 +267,12 @@ set(WTF_PUBLIC_HEADERS
     RecursiveLockAdapter.h
     RedBlackTree.h
     Ref.h
+    RefCountable.h
     RefCountDebugger.h
     RefCounted.h
     RefCountedAndCanMakeWeakPtr.h
     RefCountedFixedVector.h
+    RefCountedWithInlineWeakPtr.h
     RefCounter.h
     RefPtr.h
     RefTrackerMixin.h
@@ -291,6 +299,7 @@ set(WTF_PUBLIC_HEADERS
     SegmentedVector.h
     SentinelLinkedList.h
     SequesteredAllocator.h
+    SequesteredAutomaticThread.h
     SequesteredImmortalHeap.h
     SequesteredMalloc.h
     SetForScope.h
@@ -301,6 +310,8 @@ set(WTF_PUBLIC_HEADERS
     SingleThreadIntegralWrapper.h
     SinglyLinkedList.h
     SinglyLinkedListWithTail.h
+    UniquelyOwned.h
+    UniquelyOwnedPtr.h
     SixCharacterHash.h
     SmallMap.h
     SmallSet.h
@@ -308,6 +319,7 @@ set(WTF_PUBLIC_HEADERS
     SortedArrayMap.h
     SpanningTree.h
     Spectrum.h
+    StackAllocation.h
     StackBounds.h
     StackCheck.h
     StackPointer.h
@@ -431,15 +443,7 @@ set(WTF_PUBLIC_HEADERS
     dtoa/strtod.h
     dtoa/utils.h
 
-    fast_float/ascii_number.h
-    fast_float/bigint.h
-    fast_float/decimal_to_binary.h
-    fast_float/digit_comparison.h
     fast_float/fast_float.h
-    fast_float/fast_table.h
-    fast_float/float_common.h
-    fast_float/parse_number.h
-    fast_float/simple_decimal_conversion.h
 
     persistence/PersistentCoders.h
     persistence/PersistentDecoder.h
@@ -523,11 +527,13 @@ set(WTF_SOURCES
     ApproximateTime.cpp
     Assertions.cpp
     AutomaticThread.cpp
+    AvailableMemory.cpp
     BitVector.cpp
     BloomFilter.cpp
     CPUTime.cpp
     ClockType.cpp
     CodePtr.cpp
+    CompactPtr.cpp
     CompilationThread.cpp
     ConcurrentBuffer.cpp
     ConcurrentPtrHashSet.cpp
@@ -596,6 +602,7 @@ set(WTF_SOURCES
     Seconds.cpp
     SegmentedVector.cpp
     SequesteredAllocator.cpp
+    SequesteredAutomaticThread.cpp
     SequesteredImmortalHeap.cpp
     SequesteredMalloc.cpp
     SixCharacterHash.cpp
@@ -711,6 +718,9 @@ elseif (APPLE)
         cocoa/TypeCastsCocoa.h
         cocoa/VectorCocoa.h
 
+        darwin/DispatchExtras.h
+        darwin/DispatchOSObject.h
+        darwin/NetworkOSObject.h
         darwin/OSLogPrintStream.h
         darwin/WeakLinking.h
         darwin/XPCExtras.h
@@ -770,9 +780,7 @@ set(WTF_LIBRARIES
     ICU::uc
 )
 
-if (NOT USE_SYSTEM_MALLOC)
-    set(WTF_FRAMEWORKS bmalloc)
-endif ()
+set(WTF_FRAMEWORKS bmalloc)
 
 if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND WTF_LIBRARIES atomic)
@@ -816,6 +824,9 @@ else ()
     set_source_files_properties(
         SIMDUTF.cpp
         text/Base64.cpp
+        text/StringImpl.cpp
+        unicode/UTF8Conversion.cpp
+        text/StringCommon.cpp
         PROPERTIES COMPILE_FLAGS "-Wno-error=undef -Wno-undef")
 endif ()
 

@@ -56,26 +56,26 @@ public:
 
     // Forward declare these enums in the w3c naming scheme, for IDL generation
     enum {
-        PATHSEG_UNKNOWN = enumToUnderlyingType(SVGPathSegType::Unknown),
-        PATHSEG_CLOSEPATH = enumToUnderlyingType(SVGPathSegType::ClosePath),
-        PATHSEG_MOVETO_ABS = enumToUnderlyingType(SVGPathSegType::MoveToAbs),
-        PATHSEG_MOVETO_REL = enumToUnderlyingType(SVGPathSegType::MoveToRel),
-        PATHSEG_LINETO_ABS = enumToUnderlyingType(SVGPathSegType::LineToAbs),
-        PATHSEG_LINETO_REL = enumToUnderlyingType(SVGPathSegType::LineToRel),
-        PATHSEG_CURVETO_CUBIC_ABS = enumToUnderlyingType(SVGPathSegType::CurveToCubicAbs),
-        PATHSEG_CURVETO_CUBIC_REL = enumToUnderlyingType(SVGPathSegType::CurveToCubicRel),
-        PATHSEG_CURVETO_QUADRATIC_ABS = enumToUnderlyingType(SVGPathSegType::CurveToQuadraticAbs),
-        PATHSEG_CURVETO_QUADRATIC_REL = enumToUnderlyingType(SVGPathSegType::CurveToQuadraticRel),
-        PATHSEG_ARC_ABS = enumToUnderlyingType(SVGPathSegType::ArcAbs),
-        PATHSEG_ARC_REL = enumToUnderlyingType(SVGPathSegType::ArcRel),
-        PATHSEG_LINETO_HORIZONTAL_ABS = enumToUnderlyingType(SVGPathSegType::LineToHorizontalAbs),
-        PATHSEG_LINETO_HORIZONTAL_REL = enumToUnderlyingType(SVGPathSegType::LineToHorizontalRel),
-        PATHSEG_LINETO_VERTICAL_ABS = enumToUnderlyingType(SVGPathSegType::LineToVerticalAbs),
-        PATHSEG_LINETO_VERTICAL_REL = enumToUnderlyingType(SVGPathSegType::LineToVerticalRel),
-        PATHSEG_CURVETO_CUBIC_SMOOTH_ABS = enumToUnderlyingType(SVGPathSegType::CurveToCubicSmoothAbs),
-        PATHSEG_CURVETO_CUBIC_SMOOTH_REL = enumToUnderlyingType(SVGPathSegType::CurveToCubicSmoothRel),
-        PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS = enumToUnderlyingType(SVGPathSegType::CurveToQuadraticSmoothAbs),
-        PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL = enumToUnderlyingType(SVGPathSegType::CurveToQuadraticSmoothRel)
+        PATHSEG_UNKNOWN = std::to_underlying(SVGPathSegType::Unknown),
+        PATHSEG_CLOSEPATH = std::to_underlying(SVGPathSegType::ClosePath),
+        PATHSEG_MOVETO_ABS = std::to_underlying(SVGPathSegType::MoveToAbs),
+        PATHSEG_MOVETO_REL = std::to_underlying(SVGPathSegType::MoveToRel),
+        PATHSEG_LINETO_ABS = std::to_underlying(SVGPathSegType::LineToAbs),
+        PATHSEG_LINETO_REL = std::to_underlying(SVGPathSegType::LineToRel),
+        PATHSEG_CURVETO_CUBIC_ABS = std::to_underlying(SVGPathSegType::CurveToCubicAbs),
+        PATHSEG_CURVETO_CUBIC_REL = std::to_underlying(SVGPathSegType::CurveToCubicRel),
+        PATHSEG_CURVETO_QUADRATIC_ABS = std::to_underlying(SVGPathSegType::CurveToQuadraticAbs),
+        PATHSEG_CURVETO_QUADRATIC_REL = std::to_underlying(SVGPathSegType::CurveToQuadraticRel),
+        PATHSEG_ARC_ABS = std::to_underlying(SVGPathSegType::ArcAbs),
+        PATHSEG_ARC_REL = std::to_underlying(SVGPathSegType::ArcRel),
+        PATHSEG_LINETO_HORIZONTAL_ABS = std::to_underlying(SVGPathSegType::LineToHorizontalAbs),
+        PATHSEG_LINETO_HORIZONTAL_REL = std::to_underlying(SVGPathSegType::LineToHorizontalRel),
+        PATHSEG_LINETO_VERTICAL_ABS = std::to_underlying(SVGPathSegType::LineToVerticalAbs),
+        PATHSEG_LINETO_VERTICAL_REL = std::to_underlying(SVGPathSegType::LineToVerticalRel),
+        PATHSEG_CURVETO_CUBIC_SMOOTH_ABS = std::to_underlying(SVGPathSegType::CurveToCubicSmoothAbs),
+        PATHSEG_CURVETO_CUBIC_SMOOTH_REL = std::to_underlying(SVGPathSegType::CurveToCubicSmoothRel),
+        PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS = std::to_underlying(SVGPathSegType::CurveToQuadraticSmoothAbs),
+        PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL = std::to_underlying(SVGPathSegType::CurveToQuadraticSmoothRel)
     };
 
     virtual SVGPathSegType pathSegType() const = 0;

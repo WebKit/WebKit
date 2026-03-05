@@ -47,7 +47,7 @@ public:
         void addDirtyRect(const WebCore::IntRect&);
         void clearDirtyRect();
         bool hasDirtyRect() const;
-        WebCore::IntRect& dirtyRect() { return m_dirtyRect; }
+        WebCore::IntRect& dirtyRect() LIFETIME_BOUND { return m_dirtyRect; }
 
     private:
         bool m_willRemove { false };
@@ -59,7 +59,7 @@ public:
     void addDirtyRect(const WebCore::IntRect&);
     void clearDirtyRects();
     bool setCoverageRect(const WebCore::IntRect&);
-    auto& tiles() { return m_tiles; }
+    auto& tiles() LIFETIME_BOUND { return m_tiles; }
     WebCore::IntSize tilePixelSize() const;
 
 private:

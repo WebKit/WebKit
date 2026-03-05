@@ -85,9 +85,9 @@ Vector<WeakStyleable> StyleOriginatedTimelinesController::relatedTimelineScopeEl
 
 ScrollTimeline& StyleOriginatedTimelinesController::inactiveNamedTimeline(const AtomString& name)
 {
-    auto inactiveTimeline = ScrollTimeline::createInactiveStyleOriginatedTimeline(name);
-    timelinesForName(name).append(inactiveTimeline);
-    return inactiveTimeline.unsafeGet();
+    auto& timelines = timelinesForName(name);
+    timelines.append(ScrollTimeline::createInactiveStyleOriginatedTimeline(name));
+    return timelines.last();
 }
 
 static bool containsElement(const Vector<WeakStyleable>& timelineScopeElements, Element* matchElement)
@@ -209,7 +209,7 @@ void StyleOriginatedTimelinesController::registerNamedScrollTimeline(const AtomS
         auto newScrollTimeline = ScrollTimeline::create(name, axis);
         newScrollTimeline->setSource(source);
         updateTimelineForTimelineScope(newScrollTimeline, name);
-        timelines.append(WTFMove(newScrollTimeline));
+        timelines.append(WTF::move(newScrollTimeline));
         updateCSSAnimationsAssociatedWithNamedTimeline(name);
     }
 }
@@ -286,7 +286,7 @@ void StyleOriginatedTimelinesController::registerNamedViewTimeline(const AtomStr
         auto newViewTimeline = ViewTimeline::create(name, axis, insets);
         newViewTimeline->setSubject(subject);
         updateTimelineForTimelineScope(newViewTimeline, name);
-        timelines.append(WTFMove(newViewTimeline));
+        timelines.append(WTF::move(newViewTimeline));
     }
 
     if (!hasExistingTimeline)
@@ -310,7 +310,7 @@ void StyleOriginatedTimelinesController::unregisterNamedTimeline(const AtomStrin
     if (i == notFound)
         return;
 
-    auto timeline = timelines.at(i);
+    Ref timeline = timelines.at(i);
 
     // Make sure to remove the named timeline from our name-to-timelines map first,
     // such that re-syncing any CSS Animation previously registered with it resolves
@@ -397,7 +397,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         // and possibly also mark that animation's target as dirty to update the animated style.
         if (allowsDeferral == AllowsDeferral::Yes && timeline && timeline->isInactiveStyleOriginatedTimeline())
             m_cssAnimationsPendingAttachment.append(animation);
-        protectedAnimation->setTimeline(WTFMove(timeline));
+        protectedAnimation->setTimeline(WTF::move(timeline));
     }
 
     // Since we have no timeline defined for this name yet, we need
@@ -500,10 +500,10 @@ void StyleOriginatedTimelinesController::unregisterNamedTimelinesAssociatedWithE
 
 void StyleOriginatedTimelinesController::styleableWasRemoved(const Styleable& styleable)
 {
-    for (auto& timeline : m_removedTimelines) {
+    for (Ref timeline : m_removedTimelines) {
         if (originatingElement(timeline) != styleable)
             continue;
-        for (auto& animation : timeline->relevantAnimations()) {
+        for (Ref animation : timeline->relevantAnimations()) {
             if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get())) {
                 if (auto owningElement = cssAnimation->owningElement()) {
                     attachAnimation(*cssAnimation, AllowsDeferral::Yes);

@@ -25,12 +25,14 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
+#include "WasmInstanceAnchor.h"
 #include "WasmModule.h"
 #include "WasmVirtualAddress.h"
-#include "WeakGCMap.h"
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,38 +48,42 @@ namespace Wasm {
 class IPIntCallee;
 class FunctionCodeIndex;
 
-class ModuleManager {
+class JS_EXPORT_PRIVATE ModuleManager {
     WTF_MAKE_TZONE_ALLOCATED(ModuleManager);
 
 public:
-    JS_EXPORT_PRIVATE ModuleManager(VM&);
-    JS_EXPORT_PRIVATE ~ModuleManager();
+    ModuleManager() = default;
+    ~ModuleManager() = default;
 
-    JS_EXPORT_PRIVATE uint32_t registerModule(Module&);
-    JS_EXPORT_PRIVATE void unregisterModule(Module&);
-    JS_EXPORT_PRIVATE Module* module(uint32_t moduleId) const;
+    uint32_t registerModule(Module&);
+    void unregisterModule(Module&);
+    Module* module(uint32_t moduleId) const;
 
-    JS_EXPORT_PRIVATE uint32_t registerInstance(JSWebAssemblyInstance*);
-    JS_EXPORT_PRIVATE JSWebAssemblyInstance* jsInstance(uint32_t instanceId) const;
-    JS_EXPORT_PRIVATE uint32_t nextInstanceId() const;
+    uint32_t registerInstance(JSWebAssemblyInstance*);
+    JSWebAssemblyInstance* jsInstance(uint32_t instanceId);
+    uint32_t nextInstanceId() const;
 
-    JS_EXPORT_PRIVATE String generateLibrariesXML() const;
-
-    JS_EXPORT_PRIVATE String generateModuleName(VirtualAddress, const RefPtr<Module>&) const;
+    String generateLibrariesXML() const;
 
 private:
     using IdToModule = UncheckedKeyHashMap<uint32_t, Module*, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    using IdToInstance = WeakGCMap<uint32_t, JSWebAssemblyInstance, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using IdToInstance = UncheckedKeyHashMap<uint32_t, ThreadSafeWeakPtr<Wasm::InstanceAnchor>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
-    // No locks needed: mutator thread is suspended during debug operations, preventing concurrent access
-    IdToModule m_moduleIdToModule;
-    IdToInstance m_instanceIdToInstance;
+    // Amortized cleanup mechanism (matches ThreadSafeWeakHashSet behavior).
+    void amortizedCleanupIfNeeded() WTF_REQUIRES_LOCK(m_lock);
+    void cleanupHappened() WTF_REQUIRES_LOCK(m_lock);
 
-    uint32_t m_nextModuleId { 0 };
-    uint32_t m_nextInstanceId { 0 };
+    mutable Lock m_lock;
+    IdToModule m_moduleIdToModule WTF_GUARDED_BY_LOCK(m_lock);
+    IdToInstance m_instanceIdToInstance WTF_GUARDED_BY_LOCK(m_lock);
+
+    uint32_t m_nextModuleId WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    uint32_t m_nextInstanceId WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
 };
 
 } // namespace Wasm
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

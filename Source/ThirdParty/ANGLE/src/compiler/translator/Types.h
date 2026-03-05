@@ -15,6 +15,7 @@
 #include "compiler/translator/Common.h"
 #include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/SymbolUniqueId.h"
+#include "compiler/translator/ir/src/builder.h"
 
 namespace sh
 {
@@ -171,11 +172,11 @@ class TType
     bool isInterpolant() const { return interpolant; }
     void setInterpolant(bool i) { interpolant = i; }
 
-    TMemoryQualifier getMemoryQualifier() const { return memoryQualifier; }
+    const TMemoryQualifier &getMemoryQualifier() const { return memoryQualifier; }
     void setMemoryQualifier(const TMemoryQualifier &mq) { memoryQualifier = mq; }
 
-    TLayoutQualifier getLayoutQualifier() const { return layoutQualifier; }
-    void setLayoutQualifier(TLayoutQualifier lq) { layoutQualifier = lq; }
+    const TLayoutQualifier &getLayoutQualifier() const { return layoutQualifier; }
+    void setLayoutQualifier(const TLayoutQualifier &lq) { layoutQualifier = lq; }
 
     uint8_t getNominalSize() const { return primarySize; }
     uint8_t getSecondarySize() const { return secondarySize; }
@@ -253,6 +254,7 @@ class TType
     {
         return primarySize == 1 && secondarySize == 1 && !mStructure && isArray();
     }
+    bool isScalarBool() const { return isScalar() && type == EbtBool; }
     bool isScalarFloat() const { return isScalar() && type == EbtFloat; }
     bool isScalarInt() const { return isScalar() && (type == EbtInt || type == EbtUInt); }
     bool isSignedInt() const { return type == EbtInt; }
@@ -333,8 +335,6 @@ class TType
     // deepest field (nesting2.field1.position).
     int getDeepestStructNesting() const;
 
-    bool isNamelessStruct() const;
-
     bool isStructureContainingArrays() const;
     bool isStructureContainingMatrices() const;
     bool isStructureContainingType(TBasicType t) const;
@@ -366,6 +366,10 @@ class TType
     bool isSamplerVideoWEBGL() const { return type == EbtSamplerVideoWEBGL; }
     bool isImage() const { return IsImage(type); }
     bool isPixelLocal() const { return IsPixelLocal(type); }
+
+    void setTypeId(ir::TypeId typeId) { mTypeId = typeId; }
+    ir::TypeId typeId() const { return mTypeId; }
+    bool isTypeIdSet() const { return ir::IsTypeIdValid(mTypeId); }
 
   private:
     constexpr void invalidateMangledName() { mMangledName = nullptr; }
@@ -412,6 +416,8 @@ class TType
     size_t mInterfaceBlockFieldIndex;
 
     mutable const char *mMangledName;
+
+    ir::TypeId mTypeId = ir::kInvalidTypeId;
 };
 
 // TTypeSpecifierNonArray stores all of the necessary fields for type_specifier_nonarray from the
@@ -464,7 +470,7 @@ struct TTypeSpecifierNonArray
     bool isVector() const { return primarySize > 1 && secondarySize == 1; }
 };
 
-// Type represeting parsed type specifire on a struct or variable declaration or
+// Type representing parsed type specifier on a struct or variable declaration or
 // parameter declaration.
 // Note: must be trivially constructible.
 struct TPublicType

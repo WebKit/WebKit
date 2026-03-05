@@ -412,7 +412,6 @@ static void encode_superblock(const AV1_COMP *const cpi, TileDataEnc *tile_data,
   const int mi_col = xd->mi_col;
   if (!is_inter) {
     xd->cfl.store_y = store_cfl_required(cm, xd);
-    mbmi->skip_txfm = 1;
     for (int plane = 0; plane < num_planes; ++plane) {
       av1_encode_intra_block_plane(cpi, x, bsize, plane, dry_run,
                                    cpi->optimize_seg_arr[mbmi->segment_id]);
@@ -2107,6 +2106,7 @@ static void encode_b_nonrd(const AV1_COMP *const cpi, TileDataEnc *tile_data,
             (subsampling_x + subsampling_y)));
   }
 
+  if (!is_inter_block(xd->mi[0])) xd->mi[0]->skip_txfm = 0;
   encode_superblock(cpi, tile_data, td, tp, dry_run, bsize, rate);
   if (!dry_run) {
     update_cb_offsets(x, bsize, subsampling_x, subsampling_y);

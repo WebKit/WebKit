@@ -185,13 +185,6 @@ enum class WebCore::WebGPU::VertexFormat : uint8_t {
 };
 
 header: <WebCore/WebGPUShaderStage.h>
-enum class WebCore::WebGPU::ShaderStage : uint8_t {
-    Vertex,
-    Fragment,
-    Compute,
-};
-
-header: <WebCore/WebGPUShaderStage.h>
 [OptionSet] enum class WebCore::WebGPU::ShaderStage : uint8_t {
     Vertex,
     Fragment,
@@ -326,15 +319,6 @@ enum class WebCore::WebGPU::BufferUsage : uint16_t {
     Storage,
     Indirect,
     QueryResolve,
-};
-
-header: <WebCore/WebGPUTextureUsage.h>
-enum class WebCore::WebGPU::TextureUsage : uint8_t {
-    CopySource,
-    CopyDestination,
-    TextureBinding,
-    StorageBinding,
-    RenderAttachment,
 };
 
 header: <WebCore/WebGPUTextureUsage.h>

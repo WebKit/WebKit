@@ -30,6 +30,7 @@
 messages -> ModelProcessModelPlayer {
     DidCreateLayer(WebCore::LayerHostingContextIdentifier identifier)
     DidFinishLoading(WebCore::FloatPoint3D center, WebCore::FloatPoint3D extents)
+    DidConvertModelData(Ref<WebCore::SharedBuffer> convertedData, String convertedMIMEType)
     DidFailLoading()
     DidUpdateEntityTransform(WebCore::TransformationMatrix transform)
     DidUpdateAnimationPlaybackState(bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)

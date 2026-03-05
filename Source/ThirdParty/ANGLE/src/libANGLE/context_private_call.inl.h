@@ -1518,6 +1518,19 @@ inline void ContextPrivateTranslatex(PrivateState *privateState,
                              ConvertFixedToFloat(y), ConvertFixedToFloat(z));
 }
 
+inline GLboolean ContextPrivateIsVertexArray(PrivateState *privateState,
+                                             PrivateStateCache *privateStateCache,
+                                             VertexArrayID array)
+{
+    if (array.value == 0)
+    {
+        return GL_FALSE;
+    }
+
+    VertexArray *vao = privateState->getVertexArray(array);
+    return ConvertToGLBoolean(vao != nullptr);
+}
+
 inline void ContextPrivateDisableVertexAttribArray(PrivateState *privateState,
                                                    PrivateStateCache *privateStateCache,
                                                    GLuint index)

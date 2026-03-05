@@ -90,7 +90,7 @@ TEST(IOSurfacePoolTest, IOSurfacePoolNames)
     auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(initialPurpose));
     EXPECT_EQ(WebCore::IOSurface::Name::ImageBufferShareableMapped, s1->name());
 
-    pool->addSurface(WTFMove(s1));
+    pool->addSurface(WTF::move(s1));
 
     auto s2 = WebCore::IOSurface::create(pool, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
     EXPECT_EQ(WebCore::IOSurface::Name::Canvas, s2->name());

@@ -34,8 +34,8 @@ namespace WebCore {
 
 CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, Ref<CSSValue>&& value)
     : CSSValue(ClassType::FontFeature)
-    , m_tag(WTFMove(tag))
-    , m_value(WTFMove(value))
+    , m_tag(WTF::move(tag))
+    , m_value(WTF::move(value))
 {
 }
 

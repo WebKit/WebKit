@@ -1,0 +1,4 @@
+
+
+FAIL CSS Test: ::scroll-marker retains focus on ::scroll-marker with scroll-marker-group mode set to tabs assert_equals: ::scroll-marker activation retains focus expected "rgb(0, 0, 255)" but got ""
+

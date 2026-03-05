@@ -57,7 +57,7 @@ void InspectorAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     m_pendingEvaluateTestCommands.clear();
 
-    disable();
+    std::ignore = disable();
 }
 
 Protocol::ErrorStringOr<void> InspectorAgent::enable()
@@ -84,7 +84,7 @@ Protocol::ErrorStringOr<void> InspectorAgent::disable()
 
 Protocol::ErrorStringOr<void> InspectorAgent::initialized()
 {
-    m_environment.frontendInitialized();
+    protect(m_environment)->frontendInitialized();
 
     return { };
 }
@@ -92,14 +92,14 @@ Protocol::ErrorStringOr<void> InspectorAgent::initialized()
 void InspectorAgent::inspect(Ref<Protocol::Runtime::RemoteObject>&& object, Ref<JSON::Object>&& hints)
 {
     if (m_enabled) {
-        m_frontendDispatcher->inspect(WTFMove(object), WTFMove(hints));
+        m_frontendDispatcher->inspect(WTF::move(object), WTF::move(hints));
         m_pendingInspectData.first = nullptr;
         m_pendingInspectData.second = nullptr;
         return;
     }
 
-    m_pendingInspectData.first = WTFMove(object);
-    m_pendingInspectData.second = WTFMove(hints);
+    m_pendingInspectData.first = WTF::move(object);
+    m_pendingInspectData.second = WTF::move(hints);
 }
 
 void InspectorAgent::evaluateForTestInFrontend(const String& script)

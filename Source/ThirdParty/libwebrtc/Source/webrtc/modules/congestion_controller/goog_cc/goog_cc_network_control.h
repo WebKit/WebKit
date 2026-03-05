@@ -127,6 +127,7 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   TimeDelta last_estimated_round_trip_time_ = TimeDelta::PlusInfinity();
 
   double pacing_factor_;
+  TimeDelta pacing_time_window_;
   DataRate min_total_allocated_bitrate_;
   DataRate max_padding_rate_;
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TestUtilities.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <wtf/DataLog.h>
 
@@ -391,14 +391,14 @@ static bool testBrOnNonNullOpcode(OpType opcode)
 // Exception handling opcodes require runtime testing because genericUnwind() dynamically
 // computes handler PCs. See runtime tests in JSTests/wasm/debugger/resources/wasm/:
 //   throw-catch.js, throw-catch-all.js, rethrow.js, throw-ref.js, delegate.js, try-table.js
-static bool testTryOpcode(OpType) { return true; }
-static bool testCatchOpcode(OpType) { return true; }
-static bool testThrowOpcode(OpType) { return true; }
-static bool testRethrowOpcode(OpType) { return true; }
-static bool testThrowRefOpcode(OpType) { return true; }
-static bool testDelegateOpcode(OpType) { return true; }
-static bool testCatchAllOpcode(OpType) { return true; }
-static bool testTryTableOpcode(OpType) { return true; }
+static bool NODELETE testTryOpcode(OpType) { return true; }
+static bool NODELETE testCatchOpcode(OpType) { return true; }
+static bool NODELETE testThrowOpcode(OpType) { return true; }
+static bool NODELETE testRethrowOpcode(OpType) { return true; }
+static bool NODELETE testThrowRefOpcode(OpType) { return true; }
+static bool NODELETE testDelegateOpcode(OpType) { return true; }
+static bool NODELETE testCatchAllOpcode(OpType) { return true; }
+static bool NODELETE testTryTableOpcode(OpType) { return true; }
 
 void testAllControlFlowOps()
 {
@@ -431,4 +431,4 @@ void testAllControlFlowOps()
 
 } // namespace WasmDebugInfoTest
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

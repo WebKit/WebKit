@@ -53,8 +53,8 @@ void ConnectionTestBase::setupBase()
         FAIL();
         return;
     }
-    m_connections[0].connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-    m_connections[1].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
+    m_connections[0].connection = IPC::Connection::createServerConnection(WTF::move(identifiers->server));
+    m_connections[1].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(identifiers->client) });
 }
 
 void ConnectionTestBase::teardownBase()

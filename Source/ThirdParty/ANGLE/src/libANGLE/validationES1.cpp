@@ -1774,7 +1774,8 @@ bool ValidateGenFramebuffersOES(const Context *context,
                                 GLsizei n,
                                 const FramebufferID *framebuffers)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, framebuffers);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n,
+                               framebuffers);
 }
 
 bool ValidateDeleteFramebuffersOES(const Context *context,
@@ -1782,7 +1783,8 @@ bool ValidateDeleteFramebuffersOES(const Context *context,
                                    GLsizei n,
                                    const FramebufferID *framebuffers)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, framebuffers);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n,
+                               framebuffers);
 }
 
 bool ValidateGenRenderbuffersOES(const Context *context,
@@ -1790,7 +1792,8 @@ bool ValidateGenRenderbuffersOES(const Context *context,
                                  GLsizei n,
                                  const RenderbufferID *renderbuffers)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, renderbuffers);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n,
+                               renderbuffers);
 }
 
 bool ValidateDeleteRenderbuffersOES(const Context *context,
@@ -1798,7 +1801,8 @@ bool ValidateDeleteRenderbuffersOES(const Context *context,
                                     GLsizei n,
                                     const RenderbufferID *renderbuffers)
 {
-    return ValidateGenOrDelete(context, entryPoint, n, renderbuffers);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n,
+                               renderbuffers);
 }
 
 bool ValidateBindFramebufferOES(const Context *context,

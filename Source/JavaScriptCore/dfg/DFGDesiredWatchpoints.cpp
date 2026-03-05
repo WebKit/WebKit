@@ -147,7 +147,7 @@ void DesiredWatchpoints::addLazily(const ObjectPropertyCondition& key)
 
 void DesiredWatchpoints::addLazily(DesiredGlobalProperty&& property)
 {
-    m_globalProperties.addLazily(WTFMove(property));
+    m_globalProperties.addLazily(WTF::move(property));
 }
 
 bool DesiredWatchpoints::consider(Structure* structure)

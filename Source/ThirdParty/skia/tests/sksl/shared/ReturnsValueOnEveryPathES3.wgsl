@@ -1,18 +1,19 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
-  unknownInput: f32,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
+  unknownInput: f16,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
 fn inside_while_loop_b() -> bool {
   {
     loop {
-      if _globalUniforms.unknownInput == 123.0 {
+      if _globalUniforms.unknownInput == 123.0h {
         {
           return false;
         }
@@ -173,7 +174,7 @@ fn switch_with_if_that_returns_b() -> bool {
       case 1, default {
         var _skTemp8: bool = false;
         if _skTemp7 == 1 {
-          if _globalUniforms.unknownInput == 123.0 {
+          if _globalUniforms.unknownInput == 123.0h {
             return false;
           } else {
             return true;
@@ -191,7 +192,7 @@ fn switch_with_one_sided_if_then_fallthrough_b() -> bool {
       case 1, default {
         var _skTemp10: bool = false;
         if _skTemp9 == 1 {
-          if _globalUniforms.unknownInput == 123.0 {
+          if _globalUniforms.unknownInput == 123.0h {
             return false;
           }
         }
@@ -200,9 +201,9 @@ fn switch_with_one_sided_if_then_fallthrough_b() -> bool {
     }
   }
 }
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
-    var _skTemp11: vec4<f32>;
+    var _skTemp11: vec4<f16>;
     var _skTemp12: bool;
     var _skTemp13: bool;
     var _skTemp14: bool;
@@ -214,70 +215,58 @@ fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
     var _skTemp20: bool;
     var _skTemp21: bool;
     var _skTemp22: bool;
-    let _skTemp23 = inside_while_loop_b();
-    if _skTemp23 {
-      let _skTemp24 = inside_infinite_do_loop_b();
-      _skTemp22 = _skTemp24;
+    if inside_while_loop_b() {
+      _skTemp22 = inside_infinite_do_loop_b();
     } else {
       _skTemp22 = false;
     }
     if _skTemp22 {
-      let _skTemp25 = inside_infinite_while_loop_b();
-      _skTemp21 = _skTemp25;
+      _skTemp21 = inside_infinite_while_loop_b();
     } else {
       _skTemp21 = false;
     }
     if _skTemp21 {
-      let _skTemp26 = after_do_loop_b();
-      _skTemp20 = _skTemp26;
+      _skTemp20 = after_do_loop_b();
     } else {
       _skTemp20 = false;
     }
     if _skTemp20 {
-      let _skTemp27 = after_while_loop_b();
-      _skTemp19 = _skTemp27;
+      _skTemp19 = after_while_loop_b();
     } else {
       _skTemp19 = false;
     }
     if _skTemp19 {
-      let _skTemp28 = switch_with_all_returns_b();
-      _skTemp18 = _skTemp28;
+      _skTemp18 = switch_with_all_returns_b();
     } else {
       _skTemp18 = false;
     }
     if _skTemp18 {
-      let _skTemp29 = switch_fallthrough_b();
-      _skTemp17 = _skTemp29;
+      _skTemp17 = switch_fallthrough_b();
     } else {
       _skTemp17 = false;
     }
     if _skTemp17 {
-      let _skTemp30 = switch_fallthrough_twice_b();
-      _skTemp16 = _skTemp30;
+      _skTemp16 = switch_fallthrough_twice_b();
     } else {
       _skTemp16 = false;
     }
     if _skTemp16 {
-      let _skTemp31 = switch_with_break_in_loop_b();
-      _skTemp15 = _skTemp31;
+      _skTemp15 = switch_with_break_in_loop_b();
     } else {
       _skTemp15 = false;
     }
     if _skTemp15 {
-      let _skTemp32 = switch_with_continue_in_loop_b();
-      _skTemp14 = _skTemp32;
+      _skTemp14 = switch_with_continue_in_loop_b();
     } else {
       _skTemp14 = false;
     }
     if _skTemp14 {
-      let _skTemp33 = switch_with_if_that_returns_b();
-      _skTemp13 = _skTemp33;
+      _skTemp13 = switch_with_if_that_returns_b();
     } else {
       _skTemp13 = false;
     }
     if _skTemp13 {
-      let _skTemp34 = switch_with_one_sided_if_then_fallthrough_b();
-      _skTemp12 = _skTemp34;
+      _skTemp12 = switch_with_one_sided_if_then_fallthrough_b();
     } else {
       _skTemp12 = false;
     }

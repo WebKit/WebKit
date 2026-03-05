@@ -43,7 +43,6 @@ namespace dcsctp {
 //  /              Optional/Variable-Length Parameters              /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int InitAckChunk::kType;
 
 std::optional<InitAckChunk> InitAckChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

@@ -43,7 +43,7 @@ RefPtr<PolymorphicAccessJITStubRoutine> SharedJITStubSet::getStatelessStub(State
 
 void SharedJITStubSet::setStatelessStub(StatelessCacheKey key, Ref<PolymorphicAccessJITStubRoutine> stub)
 {
-    m_statelessStubs.add(key, WTFMove(stub));
+    m_statelessStubs.add(key, WTF::move(stub));
 }
 
 MacroAssemblerCodeRef<JITStubRoutinePtrTag> SharedJITStubSet::getDOMJITCode(DOMJITCacheKey key) const
@@ -53,7 +53,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> SharedJITStubSet::getDOMJITCode(DOMJ
 
 void SharedJITStubSet::setDOMJITCode(DOMJITCacheKey key, MacroAssemblerCodeRef<JITStubRoutinePtrTag> code)
 {
-    m_domJITCodes.add(key, WTFMove(code));
+    m_domJITCodes.add(key, WTF::move(code));
 }
 
 RefPtr<InlineCacheHandler> SharedJITStubSet::getSlowPathHandler(AccessType type) const
@@ -63,7 +63,7 @@ RefPtr<InlineCacheHandler> SharedJITStubSet::getSlowPathHandler(AccessType type)
 
 void SharedJITStubSet::setSlowPathHandler(AccessType type, Ref<InlineCacheHandler> handler)
 {
-    m_slowPathHandlers[static_cast<unsigned>(type)] = WTFMove(handler);
+    m_slowPathHandlers[static_cast<unsigned>(type)] = WTF::move(handler);
 }
 
 #endif // ENABLE(JIT)

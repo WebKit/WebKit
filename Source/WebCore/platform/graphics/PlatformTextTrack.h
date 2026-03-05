@@ -100,7 +100,7 @@ public:
     
     static Ref<PlatformTextTrack> create(PlatformTextTrackData&& data)
     {
-        return adoptRef(*new PlatformTextTrack(WTFMove(data)));
+        return adoptRef(*new PlatformTextTrack(WTF::move(data)));
     }
 
     virtual ~PlatformTextTrack() = default;
@@ -134,7 +134,7 @@ protected:
     }
     
     PlatformTextTrack(PlatformTextTrackData&& data)
-        : m_trackData(WTFMove(data))
+        : m_trackData(WTF::move(data))
     {
     }
 

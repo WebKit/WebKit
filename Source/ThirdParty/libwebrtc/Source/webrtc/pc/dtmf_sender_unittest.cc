@@ -200,8 +200,6 @@ class DtmfSenderTest : public ::testing::Test {
     const std::vector<std::string>& tones = observer_->tones();
     // The observer will get an empty string at the end.
     EXPECT_EQ(tones_ref.size() + 1, tones.size());
-    EXPECT_EQ(observer_->tones(),
-              observer_->tones_from_single_argument_callback());
     EXPECT_TRUE(tones.back().empty());
     EXPECT_TRUE(observer_->tones_remaining().empty());
     std::string::const_iterator it_ref = tones_ref.begin();

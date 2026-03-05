@@ -211,7 +211,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
         String className = thisObject->classRef()->className();
         if (className.isEmpty())
             className = thisObject->className();
-        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), jsString(vm, WTFMove(className)));
+        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), jsString(vm, WTF::move(className)));
         return true;
     }
 

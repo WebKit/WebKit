@@ -140,7 +140,7 @@ public:
     
     static size_t totalSize(size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)
     {
-        ASSERT(indexingPayloadSizeInBytes ? hasIndexingHeader : true);
+        ASSERT(!indexingPayloadSizeInBytes || hasIndexingHeader);
         ASSERT(sizeof(EncodedJSValue) == sizeof(IndexingHeader));
         return (preCapacity + propertyCapacity) * sizeof(EncodedJSValue) + (hasIndexingHeader ? sizeof(IndexingHeader) : 0) + indexingPayloadSizeInBytes;
     }

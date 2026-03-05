@@ -91,11 +91,11 @@ void WebDateTimePickerMac::endPicker()
 void WebDateTimePickerMac::showDateTimePicker(WebCore::DateTimeChooserParameters&& params)
 {
     if (m_picker) {
-        [m_picker updatePicker:WTFMove(params)];
+        [m_picker updatePicker:WTF::move(params)];
         return;
     }
 
-    m_picker = adoptNS([[WKDateTimePicker alloc] initWithParams:WTFMove(params) inView:m_view.get().get()]);
+    m_picker = adoptNS([[WKDateTimePicker alloc] initWithParams:WTF::move(params) inView:m_view.get().get()]);
     [m_picker showPicker:*this];
 }
 
@@ -243,7 +243,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     [_dateFormatter setLocale:englishLocale.get()];
     [_dateFormatter setTimeZone:timeZone.get()];
 
-    [self updatePicker:WTFMove(params)];
+    [self updatePicker:WTF::move(params)];
 
     return self;
 }
@@ -264,7 +264,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
 - (void)updatePicker:(WebCore::DateTimeChooserParameters&&)params
 {
-    _params = WTFMove(params);
+    _params = WTF::move(params);
 
     RetainPtr currentDateValueString = _params.currentValue.createNSString();
 

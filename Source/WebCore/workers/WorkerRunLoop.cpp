@@ -45,9 +45,9 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerThread.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/AutodrainedPool.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -71,7 +71,7 @@ class WorkerSharedTimer final : public SharedTimer {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerSharedTimer);
 public:
     // SharedTimer interface.
-    void setFiredFunction(Function<void()>&& function) final { m_sharedTimerFunction = WTFMove(function); }
+    void setFiredFunction(Function<void()>&& function) final { m_sharedTimerFunction = WTF::move(function); }
     void setFireInterval(Seconds interval) final { m_nextFireTime = MonotonicTime::now() + interval; }
     void stop() final { m_nextFireTime = MonotonicTime { }; }
 
@@ -87,7 +87,7 @@ private:
 class ModePredicate {
 public:
     explicit ModePredicate(String&& mode, bool allowEventLoopTasks)
-        : m_mode(WTFMove(mode))
+        : m_mode(WTF::move(mode))
         , m_defaultMode(m_mode == WorkerRunLoop::defaultMode())
         , m_allowEventLoopTasks(allowEventLoopTasks)
     {
@@ -383,22 +383,22 @@ void WorkerDedicatedRunLoop::terminate()
 
 void WorkerRunLoop::postTask(ScriptExecutionContext::Task&& task)
 {
-    postTaskForMode(WTFMove(task), defaultMode());
+    postTaskForMode(WTF::move(task), defaultMode());
 }
 
 void WorkerDedicatedRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task)
 {
-    m_messageQueue.appendAndKill(makeUnique<Task>(WTFMove(task), defaultMode()));
+    m_messageQueue.appendAndKill(makeUnique<Task>(WTF::move(task), defaultMode()));
 }
 
 void WorkerDedicatedRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const String& mode)
 {
-    m_messageQueue.append(makeUnique<Task>(WTFMove(task), mode));
+    m_messageQueue.append(makeUnique<Task>(WTF::move(task), mode));
 }
 
 void WorkerRunLoop::postDebuggerTask(ScriptExecutionContext::Task&& task)
 {
-    postTaskForMode(WTFMove(task), debuggerMode());
+    postTaskForMode(WTF::move(task), debuggerMode());
 }
 
 void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* context)
@@ -407,7 +407,7 @@ void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* conte
         m_task.performTask(*context);
     else if (!context->isClosing() && context->script() && !context->script()->isTerminatingExecution()) {
         JSC::VM& vm = context->script()->vm();
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         m_task.performTask(*context);
         if (context->script() && scope.exception()) [[unlikely]] {
             if (vm.hasPendingTerminationException()) {
@@ -421,7 +421,7 @@ void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* conte
 }
 
 WorkerDedicatedRunLoop::Task::Task(ScriptExecutionContext::Task&& task, const String& mode)
-    : m_task(WTFMove(task))
+    : m_task(WTF::move(task))
     , m_mode(mode.isolatedCopy())
 {
 }
@@ -440,7 +440,7 @@ void WorkerMainRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task
     if (m_terminated)
         return;
 
-    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, task = WTFMove(task)]() mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, task = WTF::move(task)]() mutable {
         RefPtr<WorkerOrWorkletGlobalScope> scope;
         {
             CheckedPtr checkedThis = weakThis.get();
@@ -461,7 +461,7 @@ void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, con
     if (m_terminated)
         return;
 
-    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, task = WTFMove(task)]() mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, task = WTF::move(task)]() mutable {
         RefPtr<WorkerOrWorkletGlobalScope> scope;
         {
             CheckedPtr checkedThis = weakThis.get();
@@ -478,7 +478,7 @@ void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, con
 bool WorkerMainRunLoop::runInMode(WorkerOrWorkletGlobalScope*, const String&, bool)
 {
     RunLoop::mainSingleton().cycle();
-    return true;
+    return !terminated();
 }
 
 } // namespace WebCore

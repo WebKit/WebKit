@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SourceBrush.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -51,12 +52,12 @@ Pattern* SourceBrush::pattern() const
 
 void SourceBrush::setGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
 {
-    m_patternGradient = SourceBrushLogicalGradient { WTFMove(gradient), spaceTransform };
+    m_patternGradient = SourceBrushLogicalGradient { WTF::move(gradient), spaceTransform };
 }
 
 void SourceBrush::setPattern(Ref<Pattern>&& pattern)
 {
-    m_patternGradient.emplace<Ref<Pattern>>(WTFMove(pattern));
+    m_patternGradient.emplace<Ref<Pattern>>(WTF::move(pattern));
 }
 
 WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)

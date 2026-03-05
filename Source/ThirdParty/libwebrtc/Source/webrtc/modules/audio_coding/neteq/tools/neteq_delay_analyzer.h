@@ -22,8 +22,8 @@
 #include "absl/strings/string_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/neteq/neteq.h"
-#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -31,7 +31,7 @@ namespace test {
 class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
                            public test::NetEqGetAudioCallback {
  public:
-  void AfterInsertPacket(const test::NetEqInput::PacketData& packet,
+  void AfterInsertPacket(const RtpPacketReceived& packet,
                          NetEq* neteq) override;
 
   void BeforeGetAudio(NetEq* neteq) override;

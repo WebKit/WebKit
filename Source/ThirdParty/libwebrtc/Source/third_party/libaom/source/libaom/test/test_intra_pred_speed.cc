@@ -35,8 +35,8 @@ namespace {
 // 0: Generate MD5 array as required
 #define APPLY_UNIT_TESTS 1
 
-typedef void (*AvxPredFunc)(uint8_t *dst, ptrdiff_t y_stride,
-                            const uint8_t *above, const uint8_t *left);
+using AvxPredFunc = void (*)(uint8_t *dst, ptrdiff_t y_stride,
+                             const uint8_t *above, const uint8_t *left);
 
 const int kBPS = 64;
 const int kTotalPixels = kBPS * kBPS;
@@ -87,7 +87,7 @@ struct IntraPredTestMem {
 // -----------------------------------------------------------------------------
 // Low Bittdepth
 
-typedef IntraPredTestMem<uint8_t> Av1IntraPredTestMem;
+using Av1IntraPredTestMem = IntraPredTestMem<uint8_t>;
 
 static const char *const kTxSizeStrings[TX_SIZES_ALL] = {
   "4X4",  "8X8",  "16X16", "32X32", "64X64", "4X8",   "8X4",
@@ -1007,11 +1007,11 @@ INTRA_PRED_TEST(NEON, TX_64X16, aom_dc_predictor_64x16_neon,
 // High Bitdepth
 namespace {
 
-typedef void (*AvxHighbdPredFunc)(uint16_t *dst, ptrdiff_t y_stride,
-                                  const uint16_t *above, const uint16_t *left,
-                                  int bd);
+using AvxHighbdPredFunc = void (*)(uint16_t *dst, ptrdiff_t y_stride,
+                                   const uint16_t *above, const uint16_t *left,
+                                   int bd);
 
-typedef IntraPredTestMem<uint16_t> Av1HighbdIntraPredTestMem;
+using Av1HighbdIntraPredTestMem = IntraPredTestMem<uint16_t>;
 
 void TestHighbdIntraPred(TX_SIZE tx_size, AvxHighbdPredFunc const *pred_funcs,
                          const char *const signatures[]) {

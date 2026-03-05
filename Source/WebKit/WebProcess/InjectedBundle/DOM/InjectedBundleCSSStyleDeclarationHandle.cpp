@@ -38,7 +38,7 @@ using namespace WebCore;
 
 using DOMStyleDeclarationHandleCache = HashMap<SingleThreadWeakRef<CSSStyleDeclaration>, WeakRef<InjectedBundleCSSStyleDeclarationHandle>>;
 
-static DOMStyleDeclarationHandleCache& domStyleDeclarationHandleCache()
+static DOMStyleDeclarationHandleCache& NODELETE domStyleDeclarationHandleCache()
 {
     static NeverDestroyed<DOMStyleDeclarationHandleCache> cache;
     return cache;

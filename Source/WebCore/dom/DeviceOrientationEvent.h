@@ -36,7 +36,7 @@ class Document;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class DeviceOrientationEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DeviceOrientationEvent);
+    WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationEvent);
 public:
     static Ref<DeviceOrientationEvent> create(const AtomString& eventType, DeviceOrientationData* orientation)
     {
@@ -50,9 +50,9 @@ public:
 
     virtual ~DeviceOrientationEvent();
 
-    std::optional<double> alpha() const;
-    std::optional<double> beta() const;
-    std::optional<double> gamma() const;
+    std::optional<double> NODELETE alpha() const;
+    std::optional<double> NODELETE beta() const;
+    std::optional<double> NODELETE gamma() const;
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<double> compassHeading() const;
@@ -60,7 +60,7 @@ public:
 
     void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy);
 #else
-    std::optional<bool> absolute() const;
+    std::optional<bool> NODELETE absolute() const;
 
     void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute);
 #endif

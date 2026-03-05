@@ -32,10 +32,9 @@
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/PlatformLayer.h>
-#include <WebCore/SourceBufferParserWebM.h>
 #include <WebCore/TimeRanges.h>
 #include <WebCore/VideoFrameMetadata.h>
-#include "WebAVSampleBufferListener.h"
+#include "SourceBufferParserWebM.h"
 #include "WebMResourceClient.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/LoggerHelper.h>
@@ -73,7 +72,6 @@ class VideoTrackPrivateWebM;
 class MediaPlayerPrivateWebM
     : public MediaPlayerPrivateInterface
     , public WebMResourceClientParent
-    , public WebAVSampleBufferListenerClient
     , private LoggerHelper
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateWebM, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateWebM);
@@ -173,6 +171,7 @@ private:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
+    Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
 
     void setNaturalSize(FloatSize);
     void effectiveRateChanged();
@@ -184,6 +183,7 @@ private:
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
     void characteristicsChanged();
+    void errorOccurred();
 
     void setPreservesPitch(bool) final;
     void setPresentationSize(const IntSize&) final;
@@ -292,7 +292,6 @@ private:
     std::optional<MediaPlayerIdentifier> identifier() const final { return m_playerIdentifier; }
 
     const Logger& logger() const final { return m_logger.get(); }
-    Ref<const Logger> protectedLogger() const { return logger(); }
     ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;

@@ -286,6 +286,7 @@ void PictureIdTest::SetupEncoder(VideoEncoderFactory* encoder_factory,
     GetVideoSendConfig()->rtp.payload_name = payload_name;
     GetVideoEncoderConfig()->codec_type =
         PayloadStringToCodecType(payload_name);
+    GetVideoEncoderConfig()->video_format = SdpVideoFormat(payload_name);
     SetVideoEncoderConfig(/* number_of_streams */ 1);
   });
 }

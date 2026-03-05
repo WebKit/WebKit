@@ -119,18 +119,20 @@ void aom_hadamard_4x4_c(const int16_t *src_diff, ptrdiff_t src_stride,
   int16_t buffer2[16];
   int16_t *tmp_buf = &buffer[0];
   for (idx = 0; idx < 4; ++idx) {
-    hadamard_col4(src_diff, src_stride, tmp_buf);  // src_diff: 9 bit
-                                                   // dynamic range [-255, 255]
+    // src_diff: 9 bit (8b), 13 bit (HBD)
+    // dynamic range [-255, 255] (8b), [-4095, 4095] (HBD)
+    hadamard_col4(src_diff, src_stride, tmp_buf);
     tmp_buf += 4;
     ++src_diff;
   }
 
   tmp_buf = &buffer[0];
   for (idx = 0; idx < 4; ++idx) {
-    hadamard_col4(tmp_buf, 4, buffer2 + 4 * idx);  // tmp_buf: 12 bit
-    // dynamic range [-2040, 2040]
-    // buffer2: 15 bit
-    // dynamic range [-16320, 16320]
+    // tmp_buf: 10 bit (8b), 14 bit (HBD)
+    // dynamic range [-510, 510] (8b), [-8190, 8190] (HBD)
+    // buffer2: 11 bit (8b), 15 bit (HBD)
+    // dynamic range [-1020, 1020] (8b), [-16380, 16380] (HBD)
+    hadamard_col4(tmp_buf, 4, buffer2 + 4 * idx);
     ++tmp_buf;
   }
 

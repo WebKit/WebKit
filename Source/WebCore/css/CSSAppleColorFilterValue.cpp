@@ -36,12 +36,12 @@ namespace WebCore {
 
 Ref<CSSAppleColorFilterValue> CSSAppleColorFilterValue::create(CSS::AppleColorFilter filter)
 {
-    return adoptRef(*new CSSAppleColorFilterValue(WTFMove(filter)));
+    return adoptRef(*new CSSAppleColorFilterValue(WTF::move(filter)));
 }
 
 CSSAppleColorFilterValue::CSSAppleColorFilterValue(CSS::AppleColorFilter filter)
     : CSSValue(ClassType::AppleColorFilter)
-    , m_filter(WTFMove(filter))
+    , m_filter(WTF::move(filter))
 {
 }
 
@@ -75,7 +75,7 @@ Ref<DeprecatedCSSOMValue> CSSAppleColorFilterValue::createDeprecatedCSSOMWrapper
                 );
             });
 
-            return DeprecatedCSSOMValueList::create(WTFMove(values), CSSValue::SpaceSeparator, owner);
+            return DeprecatedCSSOMValueList::create(WTF::move(values), CSSValue::SpaceSeparator, owner);
         }
     );
 }

@@ -12,7 +12,6 @@ ocl_cts_source_set("spirv_new") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/math_brute_force/utility.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/spirv_new/main.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/spirv_new/test_basic_versions.cpp",
-    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/spirv_new/test_cl_khr_spirv_no_integer_wrap_decoration.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/spirv_new/test_decorate.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/spirv_new/test_get_program_il.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/spirv_new/test_linkage.cpp",

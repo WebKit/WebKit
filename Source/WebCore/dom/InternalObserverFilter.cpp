@@ -65,7 +65,7 @@ public:
 
             SubscribeOptions options;
             options.signal = subscriber.signal();
-            m_sourceObservable->subscribeInternal(*context, InternalObserverFilter::create(*context, subscriber, m_predicate), options);
+            m_sourceObservable->subscribeInternal(*context, InternalObserverFilter::create(*context, subscriber, m_predicate), WTF::move(options));
 
             return { };
         }
@@ -104,12 +104,12 @@ private:
         // error handler.
         JSC::Exception* previousException = nullptr;
         {
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            auto result = protectedPredicate()->invokeRethrowingException(value, m_idx);
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+            auto result = protect(m_predicate)->invokeRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {
                 catchScope.clearException();
-                protectedSubscriber()->error(previousException->value());
+                protect(m_subscriber)->error(previousException->value());
                 return;
             }
 
@@ -120,18 +120,18 @@ private:
         m_idx += 1;
 
         if (matches)
-            protectedSubscriber()->next(value);
+            protect(m_subscriber)->next(value);
     }
 
     void error(JSC::JSValue value) final
     {
-        protectedSubscriber()->error(value);
+        protect(m_subscriber)->error(value);
     }
 
     void complete() final
     {
         InternalObserver::complete();
-        protectedSubscriber()->complete();
+        protect(m_subscriber)->complete();
     }
 
     void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
@@ -139,9 +139,6 @@ private:
         m_subscriber->visitAdditionalChildren(visitor);
         m_predicate->visitJSFunction(visitor);
     }
-
-    Ref<Subscriber> protectedSubscriber() const { return m_subscriber; }
-    Ref<PredicateCallback> protectedPredicate() const { return m_predicate; }
 
     InternalObserverFilter(ScriptExecutionContext& context, Ref<Subscriber> subscriber, Ref<PredicateCallback> predicate)
         : InternalObserver(context)

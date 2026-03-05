@@ -66,7 +66,7 @@ public:
     
     void checkLoaded();
     
-    const URL& finalURL() const { return m_finalURL; }
+    const URL& finalURL() const LIFETIME_BOUND { return m_finalURL; }
 
     void loadChildSheets();
     void loadChildSheet(const String& href);
@@ -111,7 +111,7 @@ private:
     URL m_finalURL;
     bool m_isDisabled { false };
 
-    Vector<std::unique_ptr<XSLImportRule>> m_children;
+    Vector<Ref<XSLImportRule>> m_children;
 
     bool m_embedded;
     bool m_processed;

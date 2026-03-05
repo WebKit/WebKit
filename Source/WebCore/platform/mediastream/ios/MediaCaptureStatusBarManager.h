@@ -51,7 +51,7 @@ public:
     void stop();
 
     void didError() { m_errorCallback(); }
-    void didTap(CompletionHandler<void()>&& completionHandler) { m_tapCallback(WTFMove(completionHandler)); }
+    void didTap(CompletionHandler<void()>&& completionHandler) { m_tapCallback(WTF::move(completionHandler)); }
 
 private:
     MediaCaptureStatusBarManager(TapCallback&&, ErrorCallback&&);

@@ -48,7 +48,7 @@ RefPtr<NativeImage> ImageAdapter::nativeImageOfHBITMAP(HBITMAP bmp)
         return nullptr;
 
     auto surface = adoptRef(cairo_win32_surface_create_with_dib(CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight));
-    return NativeImage::create(WTFMove(surface));
+    return NativeImage::create(WTF::move(surface));
 }
 
 bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)

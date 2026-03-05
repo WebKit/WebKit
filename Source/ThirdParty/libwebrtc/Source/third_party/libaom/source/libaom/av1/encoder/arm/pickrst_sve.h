@@ -527,64 +527,34 @@ static inline void compute_stats_win5_sve(
   {
     const int16_t *d_t = d;
 
-    if (height % 2) {
-      int32x4_t deltas[(WIENER_WIN + 1) * 2] = { vdupq_n_s32(0) };
-      int32x4_t deltas_tr[(WIENER_WIN + 1) * 2] = { vdupq_n_s32(0) };
-      int16x8_t ds[WIENER_WIN * 2];
+    int32x4_t deltas[WIENER_WIN_CHROMA] = { vdupq_n_s32(0) };
+    int16x8_t ds[WIENER_WIN_CHROMA + 1];
 
-      load_s16_8x4(d_t, d_stride, &ds[0], &ds[2], &ds[4], &ds[6]);
-      load_s16_8x4(d_t + width, d_stride, &ds[1], &ds[3], &ds[5], &ds[7]);
-      d_t += 4 * d_stride;
+    ds[0] = load_unaligned_s16_4x2(d_t + 0 * d_stride, width);
+    ds[1] = load_unaligned_s16_4x2(d_t + 1 * d_stride, width);
+    ds[2] = load_unaligned_s16_4x2(d_t + 2 * d_stride, width);
+    ds[3] = load_unaligned_s16_4x2(d_t + 3 * d_stride, width);
 
-      step3_win5_oneline_neon(&d_t, d_stride, width, height, ds, deltas);
-      transpose_arrays_s32_8x8(deltas, deltas_tr);
+    step3_win5_neon(d_t + 4 * d_stride, d_stride, width, height, ds, deltas);
 
-      update_5_stats_neon(H + 0 * wiener_win * wiener_win2 + 0 * wiener_win,
-                          deltas_tr[0], vgetq_lane_s32(deltas_tr[4], 0),
-                          H + 1 * wiener_win * wiener_win2 + 1 * wiener_win);
+    transpose_elems_inplace_s32_4x4(&deltas[0], &deltas[1], &deltas[2],
+                                    &deltas[3]);
 
-      update_5_stats_neon(H + 1 * wiener_win * wiener_win2 + 1 * wiener_win,
-                          deltas_tr[1], vgetq_lane_s32(deltas_tr[5], 0),
-                          H + 2 * wiener_win * wiener_win2 + 2 * wiener_win);
+    update_5_stats_neon(H + 0 * wiener_win * wiener_win2 + 0 * wiener_win,
+                        deltas[0], vgetq_lane_s32(deltas[4], 0),
+                        H + 1 * wiener_win * wiener_win2 + 1 * wiener_win);
 
-      update_5_stats_neon(H + 2 * wiener_win * wiener_win2 + 2 * wiener_win,
-                          deltas_tr[2], vgetq_lane_s32(deltas_tr[6], 0),
-                          H + 3 * wiener_win * wiener_win2 + 3 * wiener_win);
+    update_5_stats_neon(H + 1 * wiener_win * wiener_win2 + 1 * wiener_win,
+                        deltas[1], vgetq_lane_s32(deltas[4], 1),
+                        H + 2 * wiener_win * wiener_win2 + 2 * wiener_win);
 
-      update_5_stats_neon(H + 3 * wiener_win * wiener_win2 + 3 * wiener_win,
-                          deltas_tr[3], vgetq_lane_s32(deltas_tr[7], 0),
-                          H + 4 * wiener_win * wiener_win2 + 4 * wiener_win);
+    update_5_stats_neon(H + 2 * wiener_win * wiener_win2 + 2 * wiener_win,
+                        deltas[2], vgetq_lane_s32(deltas[4], 2),
+                        H + 3 * wiener_win * wiener_win2 + 3 * wiener_win);
 
-    } else {
-      int32x4_t deltas[WIENER_WIN_CHROMA * 2] = { vdupq_n_s32(0) };
-      int16x8_t ds[WIENER_WIN_CHROMA * 2];
-
-      ds[0] = load_unaligned_s16_4x2(d_t + 0 * d_stride, width);
-      ds[1] = load_unaligned_s16_4x2(d_t + 1 * d_stride, width);
-      ds[2] = load_unaligned_s16_4x2(d_t + 2 * d_stride, width);
-      ds[3] = load_unaligned_s16_4x2(d_t + 3 * d_stride, width);
-
-      step3_win5_neon(d_t + 4 * d_stride, d_stride, width, height, ds, deltas);
-
-      transpose_elems_inplace_s32_4x4(&deltas[0], &deltas[1], &deltas[2],
-                                      &deltas[3]);
-
-      update_5_stats_neon(H + 0 * wiener_win * wiener_win2 + 0 * wiener_win,
-                          deltas[0], vgetq_lane_s32(deltas[4], 0),
-                          H + 1 * wiener_win * wiener_win2 + 1 * wiener_win);
-
-      update_5_stats_neon(H + 1 * wiener_win * wiener_win2 + 1 * wiener_win,
-                          deltas[1], vgetq_lane_s32(deltas[4], 1),
-                          H + 2 * wiener_win * wiener_win2 + 2 * wiener_win);
-
-      update_5_stats_neon(H + 2 * wiener_win * wiener_win2 + 2 * wiener_win,
-                          deltas[2], vgetq_lane_s32(deltas[4], 2),
-                          H + 3 * wiener_win * wiener_win2 + 3 * wiener_win);
-
-      update_5_stats_neon(H + 3 * wiener_win * wiener_win2 + 3 * wiener_win,
-                          deltas[3], vgetq_lane_s32(deltas[4], 3),
-                          H + 4 * wiener_win * wiener_win2 + 4 * wiener_win);
-    }
+    update_5_stats_neon(H + 3 * wiener_win * wiener_win2 + 3 * wiener_win,
+                        deltas[3], vgetq_lane_s32(deltas[4], 3),
+                        H + 4 * wiener_win * wiener_win2 + 4 * wiener_win);
   }
 
   // Step 4: Derive the top and left edge of each square. No square in top and

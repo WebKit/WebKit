@@ -26,6 +26,7 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/audio_options.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
@@ -46,7 +47,6 @@
 #include "api/video_codecs/sdp_video_format.h"
 #include "media/base/codec.h"
 #include "media/engine/fake_webrtc_video_engine.h"
-#include "pc/sdp_utils.h"
 #include "pc/session_description.h"
 #include "pc/simulcast_description.h"
 #include "pc/test/mock_peer_connection_observers.h"
@@ -57,6 +57,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -226,14 +227,15 @@ const RTCOutboundRtpStreamStats* FindOutboundRtpByRid(
 class PeerConnectionEncodingsIntegrationTest : public ::testing::Test {
  public:
   PeerConnectionEncodingsIntegrationTest()
-      : background_thread_(std::make_unique<Thread>(&pss_)) {
+      : env_(CreateTestEnvironment()),
+        background_thread_(std::make_unique<Thread>(&pss_)) {
     RTC_CHECK(background_thread_->Start());
   }
 
   scoped_refptr<PeerConnectionTestWrapper> CreatePc(
       absl::string_view field_trials = "") {
     auto pc_wrapper = make_ref_counted<PeerConnectionTestWrapper>(
-        "pc", &pss_, background_thread_.get(), background_thread_.get());
+        "pc", env_, &pss_, background_thread_.get(), background_thread_.get());
     pc_wrapper->CreatePc({}, CreateBuiltinAudioEncoderFactory(),
                          CreateBuiltinAudioDecoderFactory(),
                          CreateTestFieldTrialsPtr(field_trials));
@@ -275,13 +277,10 @@ class PeerConnectionEncodingsIntegrationTest : public ::testing::Test {
         pc_wrapper->pc_factory()
             ->GetRtpReceiverCapabilities(MediaType::VIDEO)
             .codecs;
-    codecs.erase(std::remove_if(codecs.begin(), codecs.end(),
-                                [&codec_name](const RtpCodecCapability& codec) {
-                                  return !codec.IsResiliencyCodec() &&
-                                         !absl::EqualsIgnoreCase(codec.name,
-                                                                 codec_name);
-                                }),
-                 codecs.end());
+    std::erase_if(codecs, [&codec_name](const RtpCodecCapability& codec) {
+      return !codec.IsResiliencyCodec() &&
+             !absl::EqualsIgnoreCase(codec.name, codec_name);
+    });
     RTC_DCHECK(std::find_if(codecs.begin(), codecs.end(),
                             [&codec_name](const RtpCodecCapability& codec) {
                               return absl::EqualsIgnoreCase(codec.name,
@@ -392,8 +391,8 @@ class PeerConnectionEncodingsIntegrationTest : public ::testing::Test {
       scoped_refptr<PeerConnectionTestWrapper> pc_wrapper,
       SessionDescriptionInterface* sdp) {
     auto observer = make_ref_counted<MockSetSessionDescriptionObserver>();
-    pc_wrapper->pc()->SetLocalDescription(
-        observer.get(), CloneSessionDescription(sdp).release());
+    pc_wrapper->pc()->SetLocalDescription(observer.get(),
+                                          sdp->Clone().release());
     return observer;
   }
 
@@ -401,8 +400,8 @@ class PeerConnectionEncodingsIntegrationTest : public ::testing::Test {
       scoped_refptr<PeerConnectionTestWrapper> pc_wrapper,
       SessionDescriptionInterface* sdp) {
     auto observer = make_ref_counted<MockSetSessionDescriptionObserver>();
-    pc_wrapper->pc()->SetRemoteDescription(
-        observer.get(), CloneSessionDescription(sdp).release());
+    pc_wrapper->pc()->SetRemoteDescription(observer.get(),
+                                           sdp->Clone().release());
     return observer;
   }
 
@@ -422,6 +421,7 @@ class PeerConnectionEncodingsIntegrationTest : public ::testing::Test {
     return true;
   }
 
+  const Environment env_;
   PhysicalSocketServer pss_;
   std::unique_ptr<Thread> background_thread_;
 };
@@ -1309,7 +1309,7 @@ TEST_F(PeerConnectionEncodingsIntegrationTest, VP9_TargetBitrate_StandardL1T3) {
 }
 
 TEST_F(PeerConnectionEncodingsIntegrationTest,
-       SimulcastProducesUniqueSsrcAndRtxSsrcs) {
+       SimulcastProducesUniqueSsrcAndRtxSsrcsWhenConnected) {
   scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper = CreatePc();
   scoped_refptr<PeerConnectionTestWrapper> remote_pc_wrapper = CreatePc();
   ExchangeIceCandidates(local_pc_wrapper, remote_pc_wrapper);
@@ -1348,6 +1348,54 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
   }
   EXPECT_EQ(ssrcs.size(), 3u);
   EXPECT_EQ(rtx_ssrcs.size(), 3u);
+}
+
+// Similar to the above test, but we never exchange ICE candidates such that
+// simulcast never has a chance to "ramp up". Despite this, we should see one
+// outbound-rtp per encoding.
+TEST_F(PeerConnectionEncodingsIntegrationTest,
+       SimulcastProducesUniqueSsrcAndRtxSsrcsWhenDisconnected) {
+  scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper = CreatePc();
+  scoped_refptr<PeerConnectionTestWrapper> remote_pc_wrapper = CreatePc();
+
+  std::vector<SimulcastLayer> layers =
+      CreateLayers({"f", "h", "q"}, /*active=*/true);
+  scoped_refptr<RtpTransceiverInterface> transceiver =
+      AddTransceiverWithSimulcastLayers(local_pc_wrapper, remote_pc_wrapper,
+                                        layers);
+
+  // Inactive the middle layer.
+  auto sender = transceiver->sender();
+  auto parameters = sender->GetParameters();
+  parameters.encodings[0].active = true;
+  parameters.encodings[1].active = false;
+  parameters.encodings[2].active = true;
+  EXPECT_TRUE(sender->SetParameters(parameters).ok());
+
+  NegotiateWithSimulcastTweaks(local_pc_wrapper, remote_pc_wrapper);
+
+  // We have three outbound-rtps.
+  scoped_refptr<const RTCStatsReport> report = GetStats(local_pc_wrapper);
+  std::vector<const RTCOutboundRtpStreamStats*> outbound_rtps =
+      report->GetStatsOfType<RTCOutboundRtpStreamStats>();
+  ASSERT_EQ(outbound_rtps.size(), 3u);
+  // SSRC and RTX is unique.
+  std::set<uint32_t> ssrcs;
+  std::set<uint32_t> rtx_ssrcs;
+  for (const auto& outbound_rtp : outbound_rtps) {
+    ASSERT_TRUE(outbound_rtp->ssrc.has_value());
+    ASSERT_TRUE(outbound_rtp->rtx_ssrc.has_value());
+    ssrcs.insert(*outbound_rtp->ssrc);
+    rtx_ssrcs.insert(*outbound_rtp->rtx_ssrc);
+  }
+  EXPECT_EQ(ssrcs.size(), 3u);
+  EXPECT_EQ(rtx_ssrcs.size(), 3u);
+  // RIDs and active are set.
+  auto outbound_rtp_by_rid = GetOutboundRtpStreamStatsByRid(report);
+  EXPECT_THAT(
+      outbound_rtp_by_rid,
+      UnorderedElementsAre(Pair("q", Active()), Pair("h", Not(Active())),
+                           Pair("f", Active())));
 }
 
 TEST_F(PeerConnectionEncodingsIntegrationTest,
@@ -1735,12 +1783,9 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
       local_pc_wrapper->pc_factory()
           ->GetRtpSenderCapabilities(MediaType::AUDIO)
           .codecs;
-  not_opus_codecs.erase(
-      std::remove_if(not_opus_codecs.begin(), not_opus_codecs.end(),
-                     [&](const auto& codec) {
-                       return absl::EqualsIgnoreCase(codec.name, opus->name);
-                     }),
-      not_opus_codecs.end());
+  std::erase_if(not_opus_codecs, [&](const auto& codec) {
+    return absl::EqualsIgnoreCase(codec.name, opus->name);
+  });
 
   auto transceiver_or_error =
       local_pc_wrapper->pc()->AddTransceiver(MediaType::AUDIO);
@@ -1773,12 +1818,9 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
       local_pc_wrapper->pc_factory()
           ->GetRtpSenderCapabilities(MediaType::AUDIO)
           .codecs;
-  not_opus_codecs.erase(
-      std::remove_if(not_opus_codecs.begin(), not_opus_codecs.end(),
-                     [&](const auto& codec) {
-                       return absl::EqualsIgnoreCase(codec.name, opus->name);
-                     }),
-      not_opus_codecs.end());
+  std::erase_if(not_opus_codecs, [&](const auto& codec) {
+    return absl::EqualsIgnoreCase(codec.name, opus->name);
+  });
 
   auto transceiver_or_error =
       local_pc_wrapper->pc()->AddTransceiver(MediaType::AUDIO);
@@ -1900,12 +1942,9 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
       local_pc_wrapper->pc_factory()
           ->GetRtpSenderCapabilities(MediaType::VIDEO)
           .codecs;
-  not_vp8_codecs.erase(
-      std::remove_if(not_vp8_codecs.begin(), not_vp8_codecs.end(),
-                     [&](const auto& codec) {
-                       return absl::EqualsIgnoreCase(codec.name, vp8->name);
-                     }),
-      not_vp8_codecs.end());
+  std::erase_if(not_vp8_codecs, [&](const auto& codec) {
+    return absl::EqualsIgnoreCase(codec.name, vp8->name);
+  });
 
   auto transceiver_or_error =
       local_pc_wrapper->pc()->AddTransceiver(MediaType::VIDEO);
@@ -1938,12 +1977,9 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
       local_pc_wrapper->pc_factory()
           ->GetRtpSenderCapabilities(MediaType::VIDEO)
           .codecs;
-  not_vp8_codecs.erase(
-      std::remove_if(not_vp8_codecs.begin(), not_vp8_codecs.end(),
-                     [&](const auto& codec) {
-                       return absl::EqualsIgnoreCase(codec.name, vp8->name);
-                     }),
-      not_vp8_codecs.end());
+  std::erase_if(not_vp8_codecs, [&](const auto& codec) {
+    return absl::EqualsIgnoreCase(codec.name, vp8->name);
+  });
 
   auto transceiver_or_error =
       local_pc_wrapper->pc()->AddTransceiver(MediaType::VIDEO);
@@ -1999,12 +2035,9 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
       local_pc_wrapper->pc_factory()
           ->GetRtpSenderCapabilities(MediaType::AUDIO)
           .codecs;
-  not_opus_codecs.erase(
-      std::remove_if(not_opus_codecs.begin(), not_opus_codecs.end(),
-                     [&](const auto& codec) {
-                       return absl::EqualsIgnoreCase(codec.name, opus->name);
-                     }),
-      not_opus_codecs.end());
+  std::erase_if(not_opus_codecs, [&](const auto& codec) {
+    return absl::EqualsIgnoreCase(codec.name, opus->name);
+  });
 
   RtpTransceiverInit init;
   init.direction = RtpTransceiverDirection::kSendOnly;
@@ -2129,12 +2162,9 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
       local_pc_wrapper->pc_factory()
           ->GetRtpSenderCapabilities(MediaType::VIDEO)
           .codecs;
-  not_vp8_codecs.erase(
-      std::remove_if(not_vp8_codecs.begin(), not_vp8_codecs.end(),
-                     [&](const auto& codec) {
-                       return absl::EqualsIgnoreCase(codec.name, vp8->name);
-                     }),
-      not_vp8_codecs.end());
+  std::erase_if(not_vp8_codecs, [&](const auto& codec) {
+    return absl::EqualsIgnoreCase(codec.name, vp8->name);
+  });
 
   RtpTransceiverInit init;
   init.direction = RtpTransceiverDirection::kSendOnly;
@@ -2462,10 +2492,14 @@ TEST_P(PeerConnectionEncodingsIntegrationParameterizedTest, Simulcast) {
   // GetParameters() does not report any fallback.
   parameters = sender->GetParameters();
   ASSERT_THAT(parameters.encodings, SizeIs(3));
+
+  EXPECT_TRUE(parameters.encodings[0].scalability_mode.has_value());
   EXPECT_THAT(parameters.encodings[0].scalability_mode,
               Optional(std::string("L1T3")));
+  EXPECT_TRUE(parameters.encodings[1].scalability_mode.has_value());
   EXPECT_THAT(parameters.encodings[1].scalability_mode,
               Optional(std::string("L1T3")));
+  EXPECT_TRUE(parameters.encodings[2].scalability_mode.has_value());
   EXPECT_THAT(parameters.encodings[2].scalability_mode,
               Optional(std::string("L1T3")));
 
@@ -3051,7 +3085,7 @@ class PeerConnectionEncodingsFakeCodecsIntegrationTest
         std::make_unique<FakeWebRtcVideoDecoderFactory>();
     video_decoder_factory->AddSupportedVideoCodecType("H265");
     auto pc_wrapper = make_ref_counted<PeerConnectionTestWrapper>(
-        "pc", &pss_, background_thread_.get(), background_thread_.get());
+        "pc", env_, &pss_, background_thread_.get(), background_thread_.get());
     pc_wrapper->CreatePc(
         {}, CreateBuiltinAudioEncoderFactory(),
         CreateBuiltinAudioDecoderFactory(), std::move(video_encoder_factory),
@@ -3089,7 +3123,7 @@ class PeerConnectionEncodingsFakeCodecsIntegrationTest
                         {"profile-level-id", "f4001f"}},  // recvonly
                        {ScalabilityMode::kL1T1}));
     auto pc_wrapper = make_ref_counted<PeerConnectionTestWrapper>(
-        "pc", &pss_, background_thread_.get(), background_thread_.get());
+        "pc", env_, &pss_, background_thread_.get(), background_thread_.get());
     pc_wrapper->CreatePc(
         {}, CreateBuiltinAudioEncoderFactory(),
         CreateBuiltinAudioDecoderFactory(), std::move(video_encoder_factory),
@@ -3259,21 +3293,17 @@ TEST_F(PeerConnectionEncodingsFakeCodecsIntegrationTest,
       local_pc_wrapper->pc_factory()
           ->GetRtpSenderCapabilities(MediaType::VIDEO)
           .codecs;
-  send_codecs.erase(std::remove_if(send_codecs.begin(), send_codecs.end(),
-                                   [](const RtpCodecCapability& codec) {
-                                     return codec.name != "H264";
-                                   }),
-                    send_codecs.end());
+  std::erase_if(send_codecs, [](const RtpCodecCapability& codec) {
+    return codec.name != "H264";
+  });
   std::vector<RtpCodecCapability> recv_codecs =
       local_pc_wrapper->pc_factory()
           ->GetRtpReceiverCapabilities(MediaType::VIDEO)
           .codecs;
-  recv_codecs.erase(std::remove_if(recv_codecs.begin(), recv_codecs.end(),
-                                   [](const RtpCodecCapability& codec) {
-                                     RTC_LOG(LS_ERROR) << codec.name;
-                                     return codec.name != "H264";
-                                   }),
-                    recv_codecs.end());
+  std::erase_if(recv_codecs, [](const RtpCodecCapability& codec) {
+    RTC_LOG(LS_ERROR) << codec.name;
+    return codec.name != "H264";
+  });
   ASSERT_THAT(send_codecs, SizeIs(2u));
   ASSERT_THAT(recv_codecs, SizeIs(2u));
   EXPECT_EQ(send_codecs[0], recv_codecs[0]);

@@ -33,12 +33,12 @@ namespace WebCore {
 
 void startObservingCookieChanges(NetworkStorageSession& storageSession, WTF::Function<void()>&& callback)
 {
-    storageSession.checkedCookieStorageObserver()->startObserving(WTFMove(callback));
+    protect(storageSession.cookieStorageObserver())->startObserving(WTF::move(callback));
 }
 
 void stopObservingCookieChanges(NetworkStorageSession& storageSession)
 {
-    storageSession.checkedCookieStorageObserver()->stopObserving();
+    protect(storageSession.cookieStorageObserver())->stopObserving();
 }
 
 }

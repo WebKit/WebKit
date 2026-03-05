@@ -83,7 +83,6 @@ public:
     }
 
     RenderObject* currentObject() { return m_current.renderer(); }
-    CheckedPtr<RenderObject> checkedCurrentObject() { return currentObject(); }
     LegacyInlineIterator lineBreak() { return m_lineBreak; }
     LineWidth& lineWidth() { return m_width; }
     bool atEnd() { return m_atEnd; }

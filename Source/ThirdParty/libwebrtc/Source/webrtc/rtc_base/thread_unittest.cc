@@ -34,11 +34,12 @@
 #include "rtc_base/null_socket_server.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/socket_factory.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/rtc_expect_death.h"
@@ -87,13 +88,15 @@ class MessageClient : public TestGenerator {
 };
 
 // Receives on a socket and sends by posting messages.
-class SocketClient : public TestGenerator, public sigslot::has_slots<> {
+class SocketClient : public TestGenerator {
  public:
-  SocketClient(Socket* socket,
+  SocketClient(SocketFactory* socket_factory,
                const SocketAddress& addr,
                Thread* post_thread,
                MessageClient* phandler)
-      : socket_(AsyncUDPSocket::Create(socket, addr)),
+      : socket_(AsyncUDPSocket::Create(CreateTestEnvironment(),
+                                       addr,
+                                       *socket_factory)),
         post_thread_(post_thread),
         post_handler_(phandler) {
     socket_->RegisterReceivedPacketCallback(
@@ -102,7 +105,7 @@ class SocketClient : public TestGenerator, public sigslot::has_slots<> {
         });
   }
 
-  ~SocketClient() override { delete socket_; }
+  ~SocketClient() = default;
 
   SocketAddress address() const { return socket_->GetLocalAddress(); }
 
@@ -118,7 +121,7 @@ class SocketClient : public TestGenerator, public sigslot::has_slots<> {
   }
 
  private:
-  AsyncUDPSocket* socket_;
+  std::unique_ptr<AsyncUDPSocket> socket_;
   Thread* post_thread_;
   MessageClient* post_handler_;
 };
@@ -167,9 +170,7 @@ TEST(ThreadTest, DISABLED_Main) {
 
   // Create the socket client on its own thread.
   auto th2 = Thread::CreateWithSocketServer();
-  Socket* asocket =
-      th2->socketserver()->CreateSocket(addr.family(), SOCK_DGRAM);
-  SocketClient sock_client(asocket, addr, th1.get(), &msg_client);
+  SocketClient sock_client(th2->socketserver(), addr, th1.get(), &msg_client);
 
   socket->Connect(sock_client.address());
 

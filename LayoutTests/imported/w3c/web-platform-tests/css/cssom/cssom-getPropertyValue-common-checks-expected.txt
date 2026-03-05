@@ -1,9 +1,9 @@
 
 PASS All properties can serialize 'initial'
-FAIL All properties (except 'all') can serialize their initial value (computed) assert_array_equals: lengths differ, expected array [] length 0, got [["-webkit-mask", ""], ["-webkit-perspective-origin-x", ""], ["-webkit-perspective-origin-y", ""], ["-webkit-text-stroke", ""], ["-webkit-transform-origin-x", ""], ["-webkit-transform-origin-y", ""], ["-webkit-transform-origin-z", ""], ["grid", "none / none / none / row / auto / auto"], ["page", ""], ["perspective-origin-x", ""], ["perspective-origin-y", ""], ["transform-origin-x", ""], ["transform-origin-y", ""], ["transform-origin-z", ""]] length 14
+FAIL All properties (except 'all') can serialize their initial value (computed) assert_array_equals: lengths differ, expected array [] length 0, got [["-webkit-mask", ""], ["-webkit-perspective-origin-x", ""], ["-webkit-perspective-origin-y", ""], ["-webkit-text-stroke", ""], ["-webkit-transform-origin-x", ""], ["-webkit-transform-origin-y", ""], ["-webkit-transform-origin-z", ""], ["grid", "none / none / none / normal / auto / auto"], ["page", ""], ["perspective-origin-x", ""], ["perspective-origin-y", ""], ["transform-origin-x", ""], ["transform-origin-y", ""], ["transform-origin-z", ""]] length 14
 PASS All properties (except 'all') can serialize their initial value (specified)
 FAIL All shorthands can serialize their longhands set to 'initial' assert_array_equals: lengths differ, expected array [] length 0, got [["all", ""]] length 1
-PASS All shorthands (except 'all') can serialize their longhands set to their initial value
+FAIL All shorthands (except 'all') can serialize their longhands set to their initial value assert_array_equals: lengths differ, expected array [] length 0, got [["grid", ""]] length 1
 PASS All aliases can serialize target property set to 'initial'
 PASS All aliases can serialize target property set to its initial value
 PASS Can't serialize shorthand when longhands are set to different css-wide keywords

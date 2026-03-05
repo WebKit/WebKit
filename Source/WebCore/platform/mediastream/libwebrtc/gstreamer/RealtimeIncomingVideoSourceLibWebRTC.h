@@ -49,5 +49,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
-
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)

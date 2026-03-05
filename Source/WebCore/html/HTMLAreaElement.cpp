@@ -33,13 +33,13 @@
 #include "NodeName.h"
 #include "Path.h"
 #include "RenderImage.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLAreaElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLAreaElement);
 
 using namespace HTMLNames;
 
@@ -104,7 +104,6 @@ bool HTMLAreaElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size
     return true;
 }
 
-// FIXME: We should use RenderElement* instead of RenderObject* once we upstream iOS's DOMUIKitExtensions.{h, mm}.
 Path HTMLAreaElement::computePath(const RenderElement& renderer) const
 {
     // FIXME: This doesn't work correctly with transforms.

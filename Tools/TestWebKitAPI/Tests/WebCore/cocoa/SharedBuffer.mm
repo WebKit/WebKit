@@ -51,17 +51,17 @@ TEST_F(FragmentedSharedBufferTest, createNSDataArray)
     @autoreleasepool {
         SharedBufferBuilder builder;
         builder.empty();
-        expectDataArraysEqual(nil, builder.get()->createNSDataArray().get());
+        expectDataArraysEqual(nil, builder.buffer()->createNSDataArray().get());
 
         NSData *helloData = [NSData dataWithBytes:"hello" length:5];
         builder.append(span(helloData));
-        EXPECT_TRUE(builder.get()->isContiguous());
-        expectDataArraysEqual(@[ helloData ], builder.get()->createNSDataArray().get());
+        EXPECT_TRUE(builder.buffer()->isContiguous());
+        expectDataArraysEqual(@[ helloData ], builder.buffer()->createNSDataArray().get());
 
         NSData *worldData = [NSData dataWithBytes:"world" length:5];
         builder.append((__bridge CFDataRef)worldData);
-        EXPECT_FALSE(builder.get()->isContiguous());
-        expectDataArraysEqual(@[ helloData, worldData ], builder.get()->createNSDataArray().get());
+        EXPECT_FALSE(builder.buffer()->isContiguous());
+        expectDataArraysEqual(@[ helloData, worldData ], builder.buffer()->createNSDataArray().get());
 
         expectDataArraysEqual(@[ helloData ], SharedBuffer::create(helloData)->createNSDataArray().get());
         expectDataArraysEqual(@[ worldData ], SharedBuffer::create((__bridge CFDataRef)worldData)->createNSDataArray().get());
@@ -85,20 +85,20 @@ TEST_F(FragmentedSharedBufferTest, createNSDataForDataSegment)
         NSUInteger expectedSize = helloData.length + worldData.length;
 
         NSUInteger segmentCount = 0;
-        for (auto& segment : *builder.get().unsafeGet())
+        for (auto& segment : *builder.buffer())
             EXPECT_TRUE([segment.segment->createNSData() isEqualToData:expectedData[segmentCount++]]);
         EXPECT_EQ(expectedData.count, segmentCount);
 
         NSUInteger position = 0;
         segmentCount = 0;
         while (builder.size() > position) {
-            auto incrementalData = builder.get()->getSomeData(position);
+            auto incrementalData = builder.buffer()->getSomeData(position);
             EXPECT_TRUE([incrementalData.createNSData() isEqualToData:expectedData[segmentCount++]]);
             position += incrementalData.size();
         }
         EXPECT_EQ(expectedData.count, segmentCount);
 
-        auto lastByte = builder.get()->getSomeData(expectedSize - 1);
+        auto lastByte = builder.buffer()->getSomeData(expectedSize - 1);
         EXPECT_TRUE([lastByte.createNSData() isEqualToData:[@"d" dataUsingEncoding:NSASCIIStringEncoding]]);
         EXPECT_EQ(1LU, lastByte.size());
     }

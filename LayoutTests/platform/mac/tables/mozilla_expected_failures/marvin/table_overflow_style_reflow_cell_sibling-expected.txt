@@ -10,9 +10,9 @@ layer at (0,0) size 800x386
         RenderTableSection {TBODY} at (1,207) size 198x162
           RenderTableRow {TR} at (0,30) size 198x102
             RenderTableCell {TD} at (30,65) size 54x32 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,36) size 39x30
-                text run at (1,1) width 39: "foo bar"
-                text run at (1,16) width 19: "baz"
+              RenderText {#text} at (1,35) size 39x32
+                text run at (1,0) width 39: "foo bar"
+                text run at (1,15) width 19: "baz"
             RenderTableCell {TD} at (114,78) size 54x54 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,49) size 52x52 [border: (1px solid #008000)]
                 RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]

@@ -28,11 +28,11 @@
 namespace WebCore {
 
 class RenderSVGTSpan final : public RenderSVGInline {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGTSpan);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGTSpan);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTSpan);
 public:
     explicit RenderSVGTSpan(SVGTextPositioningElement& element, RenderStyle&& style)
-        : RenderSVGInline(Type::SVGTSpan, element, WTFMove(style))
+        : RenderSVGInline(Type::SVGTSpan, element, WTF::move(style))
     {
         ASSERT(isRenderSVGTSpan());
     }

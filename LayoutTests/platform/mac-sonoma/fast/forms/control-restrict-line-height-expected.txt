@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         text run at (0,0) width 529: "This tests that we don't honor line-height for controls that have restricted font size."
       RenderBR {BR} at (528,0) size 1x18
       RenderMenuList {SELECT} at (0,18) size 302x18 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (0,0) size 302x18
+        RenderSelectFallbackButton {DIV} at (0,0) size 302x18
           RenderText at (8,2) size 271x13
             text run at (8,2) width 271: "This text should be centered vertically in the button"
       RenderBR {BR} at (302,17) size 0x18

@@ -46,7 +46,7 @@ TEST(WTF_CrossThreadCopier, CopyLVString)
 TEST(WTF_CrossThreadCopier, MoveRVString)
 {
     String original { "1234"_s };
-    auto copy = crossThreadCopy(WTFMove(original));
+    auto copy = crossThreadCopy(WTF::move(original));
     EXPECT_TRUE(copy.impl()->hasOneRef());
     EXPECT_NULL(original.impl());
 }
@@ -55,7 +55,7 @@ TEST(WTF_CrossThreadCopier, CopyRVStringHavingTwoRef)
 {
     String original { "1234"_s };
     String original2 { original };
-    auto copy = crossThreadCopy(WTFMove(original));
+    auto copy = crossThreadCopy(WTF::move(original));
     EXPECT_EQ(original.impl()->refCount(), 2u);
     EXPECT_FALSE(original.impl() == copy.impl());
     EXPECT_TRUE(copy.impl()->hasOneRef());
@@ -73,7 +73,7 @@ TEST(WTF_CrossThreadCopier, CopyLVOptionalString)
 TEST(WTF_CrossThreadCopier, MoveRVOptionalString)
 {
     std::optional<String> original { "1234"_s };
-    auto copy = crossThreadCopy(WTFMove(original));
+    auto copy = crossThreadCopy(WTF::move(original));
     EXPECT_TRUE(copy->impl()->hasOneRef());
     EXPECT_NULL(original->impl());
 }
@@ -101,7 +101,7 @@ TEST(WTF_CrossThreadCopier, Pair)
     std::pair pair2 { "foo"_str, "bar"_str };
     firstStringImpl = pair2.first.impl();
     secondStringImpl = pair2.second.impl();
-    copy = crossThreadCopy(WTFMove(pair2));
+    copy = crossThreadCopy(WTF::move(pair2));
     EXPECT_EQ(copy, pair1);
     EXPECT_EQ(copy.first.impl(), firstStringImpl);
     EXPECT_EQ(copy.second.impl(), secondStringImpl);
@@ -126,13 +126,13 @@ TEST(WTF_CrossThreadCopier, Variant)
 
     variant = "foo"_str;
     impl = std::get<String>(variant).impl();
-    copy = crossThreadCopy(WTFMove(variant));
+    copy = crossThreadCopy(WTF::move(variant));
     ASSERT_EQ(std::get<String>(copy), "foo"_str);
     EXPECT_EQ(std::get<String>(copy).impl(), impl);
 
     variant = URL { "bar"_str };
     impl = std::get<URL>(variant).string().impl();
-    copy = crossThreadCopy(WTFMove(variant));
+    copy = crossThreadCopy(WTF::move(variant));
     ASSERT_EQ(std::get<URL>(copy), URL { "bar"_str });
     EXPECT_EQ(std::get<URL>(copy).string().impl(), impl);
 }
@@ -156,7 +156,7 @@ TEST(WTF_CrossThreadCopier, UncheckedKeyHashMap)
         EXPECT_NE(value.impl(), impls.get(value.utf8()));
     }
 
-    auto copy2 = crossThreadCopy(WTFMove(map));
+    auto copy2 = crossThreadCopy(WTF::move(map));
     EXPECT_EQ(copy2, copy);
     EXPECT_TRUE(map.isEmpty());
     for (auto& [key, value] : copy2) {
@@ -184,7 +184,7 @@ TEST(WTF_CrossThreadCopier, HashMap)
         EXPECT_NE(value.impl(), impls.get(value.utf8()));
     }
 
-    auto copy2 = crossThreadCopy(WTFMove(map));
+    auto copy2 = crossThreadCopy(WTF::move(map));
     EXPECT_EQ(copy2, copy);
     EXPECT_TRUE(map.isEmpty());
     for (auto& [key, value] : copy2) {
@@ -208,7 +208,7 @@ TEST(WTF_CrossThreadCopier, HashSet)
     for (auto& item : copy)
         EXPECT_NE(item.impl(), impls.get(item.utf8()));
 
-    auto copy2 = crossThreadCopy(WTFMove(set));
+    auto copy2 = crossThreadCopy(WTF::move(set));
     EXPECT_EQ(copy2, copy);
     EXPECT_TRUE(set.isEmpty());
     for (auto& item : copy2)
@@ -225,7 +225,7 @@ TEST(WTF_CrossThreadCopier, Optional)
     EXPECT_EQ(copy, optional);
     EXPECT_NE(copy->impl(), impl);
 
-    auto copy2 = crossThreadCopy(WTFMove(optional));
+    auto copy2 = crossThreadCopy(WTF::move(optional));
     EXPECT_EQ(copy2, copy);
     EXPECT_EQ(copy2->impl(), impl);
 }

@@ -43,6 +43,7 @@ enum DeviceType {
     Conditional=VIDEO,
     JSCustomMarkFunction,
     LegacyNoInterfaceObject,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface MediaControlsHost {
     readonly attribute DOMString layoutTraitsClassName;
     readonly attribute DOMString mediaControlsContainerClassName;
@@ -53,9 +54,10 @@ enum DeviceType {
     DOMString displayNameForTrack((TextTrack or AudioTrack)? track);
     readonly attribute TextTrack captionMenuOffItem;
     readonly attribute TextTrack captionMenuAutomaticItem;
+    readonly attribute TextTrack captionMenuOnItem;
     readonly attribute DOMString captionDisplayMode;
     undefined setSelectedTextTrack(TextTrack? track);
-    readonly attribute HTMLElement textTrackContainer;
+    readonly attribute Element? textTrackContainer;
     readonly attribute boolean allowsInlineMediaPlayback;
     readonly attribute boolean supportsFullscreen;
     readonly attribute boolean isVideoLayerInline;
@@ -85,6 +87,7 @@ enum DeviceType {
     readonly attribute sequence<DOMString> shadowRootStyleSheets;
     DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
+    [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled, ImplementedAs=mediaControlsContextMenuItemsForBindings] sequence<MediaControlsContextMenuItem> mediaControlsContextMenuItems(JSON options);
 
     [Conditional=MEDIA_SESSION] undefined ensureMediaSessionObserver();
 

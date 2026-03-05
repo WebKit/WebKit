@@ -69,6 +69,8 @@ public:
     const void* stackPosition() const {  return this; }
 #endif
 
+    [[nodiscard]] inline bool tryClearException();
+
 protected:
     ExceptionScope(VM&, ExceptionEventLocation);
     ExceptionScope(const ExceptionScope&) = delete;
@@ -99,6 +101,8 @@ public:
     ALWAYS_INLINE void assertNoExceptionExceptTermination() { ASSERT(!exception() || m_vm.hasPendingTerminationException()); }
     ALWAYS_INLINE void releaseAssertNoExceptionExceptTermination() { RELEASE_ASSERT(!exception() || m_vm.hasPendingTerminationException()); }
 
+    [[nodiscard]] ALWAYS_INLINE bool tryClearException();
+
 protected:
     ALWAYS_INLINE ExceptionScope(VM& vm)
         : m_vm(vm)
@@ -113,6 +117,17 @@ protected:
 
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 
+bool ExceptionScope::tryClearException()
+{
+    SUPPRESS_FORWARD_DECL_ARG Exception* exception = this->exception();
+
+    SUPPRESS_FORWARD_DECL_ARG if (exception && m_vm.isTerminationException(exception)) [[unlikely]]
+        return false;
+
+    m_vm.clearException();
+    return true;
+}
+
 #define RETURN_IF_EXCEPTION(scope__, value__) do { \
         SUPPRESS_UNCOUNTED_LOCAL JSC::VM& vm = (scope__).vm(); \
         EXCEPTION_ASSERT(!!(scope__).exception() == vm.traps().needHandling(JSC::VMTraps::NeedExceptionHandling)); \
@@ -120,6 +135,12 @@ protected:
             if (vm.hasExceptionsAfterHandlingTraps()) \
                 return value__; \
         } \
+    } while (false)
+
+
+#define TRY_CLEAR_EXCEPTION(scope__, value__) do { \
+        if (!(scope__).tryClearException()) [[unlikely]] \
+            return value__; \
     } while (false)
 
 #define RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope__, value__) do { \

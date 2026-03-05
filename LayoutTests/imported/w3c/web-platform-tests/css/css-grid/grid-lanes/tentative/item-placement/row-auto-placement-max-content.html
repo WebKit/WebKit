@@ -12,15 +12,15 @@ html,body {
     display: grid-lanes;
     background: gray;
     position: relative;
-    item-tolerance: 0;
-    masonry-direction: row;
+    flow-tolerance: 0;
+    grid-lanes-direction: row;
     grid-template-rows: auto auto auto;
     width: max-content;
     padding: 10px;
 }
 </style>
 <body>
-  <p>Ensure that masonry containers are sized correctly under max-content constraints even if the items do not have the max-content style.</p>
+  <p>Ensure that grid-lanes containers are sized correctly under max-content constraints even if the items do not have the max-content style.</p>
   <div class="grid-lanes">
     <div style="background: lightskyblue;">
       Number 1

@@ -32,13 +32,13 @@ using libaom_test::ACMRandom;
 namespace {
 const int number_of_iterations = 200;
 
-typedef unsigned int (*MaskedSubPixelVarianceFunc)(
+using MaskedSubPixelVarianceFunc = unsigned int (*)(
     const uint8_t *src, int src_stride, int xoffset, int yoffset,
     const uint8_t *ref, int ref_stride, const uint8_t *second_pred,
     const uint8_t *msk, int msk_stride, int invert_mask, unsigned int *sse);
 
-typedef std::tuple<MaskedSubPixelVarianceFunc, MaskedSubPixelVarianceFunc>
-    MaskedSubPixelVarianceParam;
+using MaskedSubPixelVarianceParam =
+    std::tuple<MaskedSubPixelVarianceFunc, MaskedSubPixelVarianceFunc>;
 
 class MaskedSubPixelVarianceTest
     : public ::testing::TestWithParam<MaskedSubPixelVarianceParam> {
@@ -170,9 +170,9 @@ TEST_P(MaskedSubPixelVarianceTest, ExtremeValues) {
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-typedef std::tuple<MaskedSubPixelVarianceFunc, MaskedSubPixelVarianceFunc,
-                   aom_bit_depth_t>
-    HighbdMaskedSubPixelVarianceParam;
+using HighbdMaskedSubPixelVarianceParam =
+    std::tuple<MaskedSubPixelVarianceFunc, MaskedSubPixelVarianceFunc,
+               aom_bit_depth_t>;
 
 class HighbdMaskedSubPixelVarianceTest
     : public ::testing::TestWithParam<HighbdMaskedSubPixelVarianceParam> {

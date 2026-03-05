@@ -50,9 +50,33 @@ static AtomString mouseEventType(PlatformTouchPoint::TouchPhaseType phase)
 
 Ref<MouseEvent> MouseEvent::create(const PlatformTouchEvent& event, unsigned index, Ref<WindowProxy>&& view, IsCancelable cancelable)
 {
-    return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, mouseEventType(event.touchPhaseAtIndex(index)), CanBubble::Yes, cancelable, IsComposed::Yes,
-        event.timestamp(), WTFMove(view), 0, event.touchLocationInRootViewAtIndex(index), event.touchLocationInRootViewAtIndex(index), 0, 0,
-        event.modifiers(), MouseButton::Left, 0, nullptr, 0, SyntheticClickType::NoTap, { }, { }, IsSimulated::No, IsTrusted::Yes));
+    return adoptRef(
+        *new MouseEvent(
+            EventInterfaceType::MouseEvent,
+            mouseEventType(event.touchPhaseAtIndex(index)),
+            CanBubble::Yes,
+            cancelable,
+            IsComposed::Yes,
+            event.timestamp(),
+            WTF::move(view),
+            0,
+            event.touchLocationInRootViewAtIndex(index),
+            event.touchLocationInRootViewAtIndex(index),
+            0,
+            0,
+            event.modifiers(),
+            MouseButton::Left,
+            0,
+            nullptr,
+            0,
+            SyntheticClickType::NoTap,
+            { },
+            { },
+            std::nullopt,
+            IsSimulated::No,
+            IsTrusted::Yes
+        )
+    );
 }
 
 } // namespace WebCore

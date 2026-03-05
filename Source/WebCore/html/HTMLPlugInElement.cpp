@@ -69,7 +69,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -85,8 +85,8 @@
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
 #include "Widget.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
@@ -95,7 +95,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLPlugInElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLPlugInElement);
 
 using namespace HTMLNames;
 
@@ -117,7 +117,7 @@ HTMLPlugInElement::~HTMLPlugInElement()
     ASSERT(!m_pendingPDFTestCallback);
 
     if (m_needsDocumentActivationCallbacks)
-        protectedDocument()->unregisterForDocumentSuspensionCallbacks(*this);
+        protect(document())->unregisterForDocumentSuspensionCallbacks(*this);
 }
 
 bool HTMLPlugInElement::willRespondToMouseClickEventsWithEditability(Editability) const
@@ -157,14 +157,14 @@ JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
 
     if (!m_instance) {
         if (RefPtr widget = pluginWidget())
-            m_instance = frame->checkedScript()->createScriptInstanceForWidget(widget.get());
+            m_instance = protect(frame->script())->createScriptInstanceForWidget(widget.get());
     }
     return m_instance.get();
 }
 
 PluginViewBase* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
 {
-    CheckedPtr renderWidget = loadPolicy == PluginLoadingPolicy::Load ? renderWidgetLoadingPlugin() : this->renderWidget();
+    CheckedPtr renderWidget = loadPolicy == PluginLoadingPolicy::Load ? renderWidgetLoadingPlugin() : CheckedPtr { this->renderWidget() };
     if (!renderWidget)
         return nullptr;
 
@@ -248,15 +248,19 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
 
     // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
 
-    CheckedPtr renderer = dynamicDowncast<RenderWidget>(this->renderer());
-    if (!renderer)
-        return;
+    {
+        CheckedPtr renderer = dynamicDowncast<RenderWidget>(this->renderer());
+        if (!renderer)
+            return;
 
-    if (CheckedPtr renderEmbedded = dynamicDowncast<RenderEmbeddedObject>(*renderer); renderEmbedded && renderEmbedded->isPluginUnavailable())
-        renderEmbedded->handleUnavailablePluginIndicatorEvent(&event);
+        if (CheckedPtr renderEmbedded = dynamicDowncast<RenderEmbeddedObject>(*renderer); renderEmbedded && renderEmbedded->isPluginUnavailable())
+            renderEmbedded->handleUnavailablePluginIndicatorEvent(&event);
 
-    if (RefPtr widget = renderer->widget())
-        widget->handleEvent(event);
+        if (RefPtr widget = renderer->widget()) {
+            renderer = nullptr;
+            widget->handleEvent(event);
+        }
+    }
     if (event.defaultHandled())
         return;
 
@@ -290,13 +294,13 @@ bool HTMLPlugInElement::supportsFocus() const
 RenderPtr<RenderElement> HTMLPlugInElement::createPluginRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer()) {
-        RenderPtr<RenderElement> renderer = m_pluginReplacement->createElementRenderer(*this, WTFMove(style), insertionPosition);
+        RenderPtr<RenderElement> renderer = m_pluginReplacement->createElementRenderer(*this, WTF::move(style), insertionPosition);
         if (renderer)
             renderer->markIsYouTubeReplacement();
         return renderer;
     }
 
-    return createRenderer<RenderEmbeddedObject>(*this, WTFMove(style));
+    return createRenderer<RenderEmbeddedObject>(*this, WTF::move(style));
 }
 
 RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
@@ -304,22 +308,22 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& 
     ASSERT(document().backForwardCacheState() == Document::NotInBackForwardCache);
 
     if (displayState() >= DisplayState::PreparingPluginReplacement)
-        return createPluginRenderer(WTFMove(style), insertionPosition);
+        return createPluginRenderer(WTF::move(style), insertionPosition);
 
     // Once a plug-in element creates its renderer, it needs to be told when the document goes
     // inactive or reactivates so it can clear the renderer before going into the back/forward cache.
     if (!m_needsDocumentActivationCallbacks) {
         m_needsDocumentActivationCallbacks = true;
-        protectedDocument()->registerForDocumentSuspensionCallbacks(*this);
+        protect(document())->registerForDocumentSuspensionCallbacks(*this);
     }
 
     if (useFallbackContent())
-        return RenderElement::createFor(*this, WTFMove(style));
+        return RenderElement::createFor(*this, WTF::move(style));
 
     if (isImageType())
-        return createRenderer<RenderImage>(RenderObject::Type::Image, *this, WTFMove(style));
+        return createRenderer<RenderImage>(RenderObject::Type::Image, *this, WTF::move(style));
 
-    return createPluginRenderer(WTFMove(style), insertionPosition);
+    return createPluginRenderer(WTF::move(style), insertionPosition);
 }
 
 bool HTMLPlugInElement::isReplaced(const RenderStyle*) const
@@ -459,7 +463,7 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
     if (ScriptDisallowedScope::InMainThread::isScriptAllowed())
         return document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 
-    document->checkedEventLoop()->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues, document]() mutable {
+    protect(document->eventLoop())->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues, document]() mutable {
         if (!this->isConnected() || &this->document() != document.ptr())
             return;
         RefPtr frame = this->document().frame();
@@ -479,14 +483,14 @@ bool HTMLPlugInElement::canLoadScriptURL(const URL&) const
 void HTMLPlugInElement::pluginDestroyedWithPendingPDFTestCallback(RefPtr<VoidCallback>&& callback)
 {
     ASSERT(!m_pendingPDFTestCallback);
-    m_pendingPDFTestCallback = WTFMove(callback);
+    m_pendingPDFTestCallback = WTF::move(callback);
 }
 
 RefPtr<VoidCallback> HTMLPlugInElement::takePendingPDFTestCallback()
 {
     if (!m_pendingPDFTestCallback)
         return nullptr;
-    return WTFMove(m_pendingPDFTestCallback);
+    return WTF::move(m_pendingPDFTestCallback);
 }
 
 void HTMLPlugInElement::updateImageLoaderWithNewURLSoon()
@@ -510,7 +514,7 @@ void HTMLPlugInElement::scheduleUpdateForAfterStyleResolution()
 
     m_hasUpdateScheduledForAfterStyleResolution = true;
 
-    document->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [element = GCReachableRef { *this }] {
+    protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [element = GCReachableRef { *this }] {
         element->updateAfterStyleResolution();
     });
 }
@@ -533,7 +537,7 @@ RenderEmbeddedObject* HTMLPlugInElement::renderEmbeddedObject() const
 
 bool HTMLPlugInElement::canLoadURL(const String& relativeURL) const
 {
-    return canLoadURL(protectedDocument()->completeURL(relativeURL));
+    return canLoadURL(protect(document())->completeURL(relativeURL));
 }
 
 bool HTMLPlugInElement::canLoadURL(const URL& completeURL) const
@@ -542,7 +546,7 @@ bool HTMLPlugInElement::canLoadURL(const URL& completeURL) const
         if (is<RemoteFrame>(contentFrame()))
             return false;
         RefPtr contentDocument = this->contentDocument();
-        if (contentDocument && !protectedDocument()->protectedSecurityOrigin()->isSameOriginDomain(contentDocument->protectedSecurityOrigin().get()))
+        if (contentDocument && !protect(protect(document())->securityOrigin())->isSameOriginDomain(protect(contentDocument->securityOrigin()).get()))
             return false;
     }
 
@@ -599,7 +603,7 @@ void HTMLPlugInElement::updateAfterStyleResolution()
     // Either way, clear the flag now, since we don't need to remember to try again.
     m_needsImageReload = false;
 
-    protectedDocument()->decrementLoadEventDelayCount();
+    protect(document())->decrementLoadEventDelayCount();
 }
 
 void HTMLPlugInElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -655,7 +659,7 @@ void HTMLPlugInElement::didAttachRenderers()
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer())) {
             CheckedRef renderImageResource = renderImage->imageResource();
             if (!renderImageResource->cachedImage())
-                renderImageResource->setCachedImage(m_imageLoader->protectedImage());
+                renderImageResource->setCachedImage(protect(m_imageLoader->image()));
         }
     }
 

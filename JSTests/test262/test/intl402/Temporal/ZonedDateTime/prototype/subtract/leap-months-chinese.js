@@ -19,6 +19,8 @@ const years1n = new Temporal.Duration(1);
 const leap193807L = Temporal.ZonedDateTime.from({ year: 1938, monthCode: "M07L", day: 30, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const leap195205L = Temporal.ZonedDateTime.from({ year: 1952, monthCode: "M05L", day: 30, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const leap196603L = Temporal.ZonedDateTime.from({ year: 1966, monthCode: "M03L", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
+const common200008 = Temporal.ZonedDateTime.from({ year: 2000, monthCode: "M08", day: 2, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
+const common200108 = Temporal.ZonedDateTime.from({ year: 2001, monthCode: "M08", day: 2, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const common201901 = Temporal.ZonedDateTime.from({ year: 2019, monthCode: "M01", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const common201904 = Temporal.ZonedDateTime.from({ year: 2019, monthCode: "M04", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
 const leap202004 = Temporal.ZonedDateTime.from({ year: 2020, monthCode: "M04", day: 1, hour: 12, minute: 34, timeZone: "UTC", calendar }, options);
@@ -64,6 +66,11 @@ TemporalHelpers.assertPlainDateTime(
 );
 
 TemporalHelpers.assertPlainDateTime(
+  common200008.subtract(years1, options).toPlainDateTime(),
+  2001, 9, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 1 year crossing leap month"
+);
+
+TemporalHelpers.assertPlainDateTime(
   common201904.subtract(new Temporal.Duration(-2), options).toPlainDateTime(),
   2021, 4, "M04", 1, 12, 34, 0, 0, 0, 0, "Adding 2 years to common-year M04 crossing leap year lands in common-year M04"
 );
@@ -104,6 +111,11 @@ TemporalHelpers.assertPlainDateTime(
 TemporalHelpers.assertPlainDateTime(
   leap202004L.subtract(new Temporal.Duration(8), options).toPlainDateTime(),
   2012, 5, "M04L", 1, 12, 34, 0, 0, 0, 0, "Subtracting years to go from one M04L to the previous M04L"
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common200108.subtract(years1n, options).toPlainDateTime(),
+  2000, 8, "M08", 2, 12, 34, 0, 0, 0, 0, "Subtracting 1 year crossing leap month"
 );
 
 TemporalHelpers.assertPlainDateTime(
@@ -174,6 +186,16 @@ TemporalHelpers.assertPlainDateTime(
 );
 
 TemporalHelpers.assertPlainDateTime(
+  common200008.subtract(new Temporal.Duration(-1, -12), options).toPlainDateTime(),
+  2002, 8, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 1y 12mo crossing leap month in the year part"
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common200108.subtract(new Temporal.Duration(-2, -13), options).toPlainDateTime(),
+  2004, 9, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 1y 13mo crossing leap month in the months part"
+);
+
+TemporalHelpers.assertPlainDateTime(
   common201904.subtract(new Temporal.Duration(0, -24)).toPlainDateTime(),
   2021, 3, "M03", 1, 12, 34, 0, 0, 0, 0, "Adding 24 months to common-year M04 crossing leap year with M04L, lands in common-year M03"
 );
@@ -231,6 +253,16 @@ TemporalHelpers.assertPlainDateTime(
 TemporalHelpers.assertPlainDateTime(
   leap202004L.subtract(months13n).toPlainDateTime(),
   2019, 4, "M04", 1, 12, 34, 0, 0, 0, 0, "Subtracting 13 months from M04L lands in common-year M04"
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common200108.subtract(new Temporal.Duration(1, 12), options).toPlainDateTime(),
+  1999, 8, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 1y 12mo crossing leap month in the year part"
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common200008.subtract(new Temporal.Duration(2, 13), options).toPlainDateTime(),
+  1997, 8, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 1y 13mo crossing leap month in the months part"
 );
 
 TemporalHelpers.assertPlainDateTime(

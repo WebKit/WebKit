@@ -10,7 +10,6 @@
 
 #include "pc/jsep_transport.h"
 
-#include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -39,7 +38,6 @@
 #include "pc/rtp_transport.h"
 #include "pc/sctp_transport.h"
 #include "pc/session_description.h"
-#include "pc/srtp_transport.h"
 #include "pc/transport_stats.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -95,7 +93,6 @@ JsepTransport::JsepTransport(
     scoped_refptr<IceTransportInterface> ice_transport,
     scoped_refptr<IceTransportInterface> rtcp_ice_transport,
     std::unique_ptr<RtpTransport> unencrypted_rtp_transport,
-    std::unique_ptr<SrtpTransport> sdes_transport,
     std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport,
     std::unique_ptr<DtlsTransportInternal> rtp_dtls_transport,
     std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport,
@@ -108,7 +105,6 @@ JsepTransport::JsepTransport(
       ice_transport_(std::move(ice_transport)),
       rtcp_ice_transport_(std::move(rtcp_ice_transport)),
       unencrypted_rtp_transport_(std::move(unencrypted_rtp_transport)),
-      sdes_transport_(std::move(sdes_transport)),
       dtls_srtp_transport_(std::move(dtls_srtp_transport)),
       rtp_dtls_transport_(
           rtp_dtls_transport
@@ -135,15 +131,10 @@ JsepTransport::JsepTransport(
                 (rtcp_dtls_transport_ != nullptr));
   // Verify the "only one out of these three can be set" invariant.
   if (unencrypted_rtp_transport_) {
-    RTC_DCHECK(!sdes_transport);
-    RTC_DCHECK(!dtls_srtp_transport);
-  } else if (sdes_transport_) {
-    RTC_DCHECK(!unencrypted_rtp_transport);
     RTC_DCHECK(!dtls_srtp_transport);
   } else {
     RTC_DCHECK(dtls_srtp_transport_);
     RTC_DCHECK(!unencrypted_rtp_transport);
-    RTC_DCHECK(!sdes_transport);
   }
 }
 
@@ -187,7 +178,6 @@ RTCError JsepTransport::SetLocalJsepTransportDescription(
 
   if (dtls_srtp_transport_) {
     RTC_DCHECK(!unencrypted_rtp_transport_);
-    RTC_DCHECK(!sdes_transport_);
     dtls_srtp_transport_->UpdateRecvEncryptedHeaderExtensionIds(
         jsep_description.encrypted_header_extension_ids);
   }
@@ -263,7 +253,6 @@ RTCError JsepTransport::SetRemoteJsepTransportDescription(
 
   if (dtls_srtp_transport_) {
     RTC_DCHECK(!unencrypted_rtp_transport_);
-    RTC_DCHECK(!sdes_transport_);
     dtls_srtp_transport_->UpdateSendEncryptedHeaderExtensionIds(
         jsep_description.encrypted_header_extension_ids);
     dtls_srtp_transport_->CacheRtpAbsSendTimeHeaderExtension(
@@ -292,12 +281,11 @@ RTCError JsepTransport::SetRemoteJsepTransportDescription(
 
 RTCError JsepTransport::AddRemoteCandidates(const Candidates& candidates) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  if (!local_description_ || !remote_description_) {
+  if (!remote_description_) {
     return RTCError(RTCErrorType::INVALID_STATE,
                     mid() +
-                        " is not ready to use the remote candidate "
-                        "because the local or remote description is "
-                        "not set.");
+                        " is not ready to use the remote candidate because the "
+                        "remote description is not set.");
   }
 
   for (const Candidate& candidate : candidates) {
@@ -472,17 +460,11 @@ bool JsepTransport::SetRtcpMux(bool enable,
 
 void JsepTransport::ActivateRtcpMux() {
   if (unencrypted_rtp_transport_) {
-    RTC_DCHECK(!sdes_transport_);
     RTC_DCHECK(!dtls_srtp_transport_);
     unencrypted_rtp_transport_->SetRtcpPacketTransport(nullptr);
-  } else if (sdes_transport_) {
-    RTC_DCHECK(!unencrypted_rtp_transport_);
-    RTC_DCHECK(!dtls_srtp_transport_);
-    sdes_transport_->SetRtcpPacketTransport(nullptr);
   } else if (dtls_srtp_transport_) {
     RTC_DCHECK(dtls_srtp_transport_);
     RTC_DCHECK(!unencrypted_rtp_transport_);
-    RTC_DCHECK(!sdes_transport_);
     dtls_srtp_transport_->SetDtlsTransports(rtp_dtls_transport(),
                                             /*rtcp_dtls_transport=*/nullptr);
   }

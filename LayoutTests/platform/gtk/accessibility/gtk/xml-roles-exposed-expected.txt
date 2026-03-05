@@ -1755,7 +1755,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:document, tag:div, xml-roles:graphics-document
+AXPlatformAttributes: computed-role:graphics-document, tag:div, xml-roles:graphics-document
 ------------
 AXRole: AXGroup
 AXParent: AXWebArea
@@ -1774,7 +1774,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:group, tag:div, xml-roles:graphics-object
+AXPlatformAttributes: computed-role:graphics-object, tag:div, xml-roles:graphics-object
 ------------
 AXRole: AXImage
 AXParent: AXWebArea
@@ -1793,16 +1793,35 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:image, tag:div, xml-roles:graphics-symbol
+AXPlatformAttributes: computed-role:graphics-symbol, tag:div, xml-roles:graphics-symbol
 ------------
 AXRole: AXParagraph
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 0
 AXPosition:  { 8.00000, 42.0000 }
-AXSize: { 784.000, 52.0000 }
+AXSize: { 784.000, 18.0000 }
 AXTitle:
 AXDescription:
-AXValue: Verify exposure of ARIA role values via the 'xml-roles' object attribute.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
+AXValue: Verify exposure of ARIA role values via the 'xml-roles' object attribute.
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:paragraph, tag:p
+------------
+AXRole: AXParagraph
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 76.0000 }
+AXSize: { 784.000, 18.0000 }
+AXTitle:
+AXDescription:
+AXValue: On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

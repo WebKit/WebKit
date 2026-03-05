@@ -19,9 +19,9 @@
 #include <openssl/mem.h>
 
 
-int ASN1_item_i2d_fp(const ASN1_ITEM *it, FILE *out, void *x) {
+int ASN1_item_i2d_fp(const ASN1_ITEM *it, FILE *out, const void *x) {
   BIO *b = BIO_new_fp(out, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ERR_R_BUF_LIB);
     return 0;
   }
@@ -30,10 +30,11 @@ int ASN1_item_i2d_fp(const ASN1_ITEM *it, FILE *out, void *x) {
   return ret;
 }
 
-int ASN1_item_i2d_bio(const ASN1_ITEM *it, BIO *out, void *x) {
-  unsigned char *b = NULL;
-  int n = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(x), &b, it);
-  if (b == NULL) {
+int ASN1_item_i2d_bio(const ASN1_ITEM *it, BIO *out, const void *x) {
+  unsigned char *b = nullptr;
+  int n = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(const_cast<void *>(x)),
+                        &b, it);
+  if (b == nullptr) {
     return 0;
   }
 

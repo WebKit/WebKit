@@ -32,6 +32,7 @@
 #include <WebCore/PlatformGamepad.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ public:
     // GamepadProvider
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
-    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() final { return m_gamepadVector; }
+    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() LIFETIME_BOUND final { return m_gamepadVector; }
     bool isMockGamepadProvider() const { return false; }
     void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
@@ -73,7 +74,9 @@ private:
     // We create our own Gamepad type - to wrap both HID and GameController gamepads -
     // because MultiGamepadProvider needs to manage the indexes of its own gamepads
     // no matter what the HID or GameController index is.
-    class PlatformGamepadWrapper : public PlatformGamepad {
+    class PlatformGamepadWrapper final : public PlatformGamepad {
+        WTF_MAKE_TZONE_ALLOCATED(PlatformGamepadWrapper);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformGamepadWrapper);
     public:
         PlatformGamepadWrapper(unsigned index, PlatformGamepad* wrapped)
             : PlatformGamepad(index)
@@ -84,13 +87,15 @@ private:
             m_connectTime = wrapped->connectTime();
         }
 
-        MonotonicTime lastUpdateTime() const final { return m_platformGamepad->lastUpdateTime(); }
-        const Vector<SharedGamepadValue>& axisValues() const final { return m_platformGamepad->axisValues(); }
-        const Vector<SharedGamepadValue>& buttonValues() const final { return m_platformGamepad->buttonValues(); }
+        MonotonicTime lastUpdateTime() const final { return protect(platformGamepad())->lastUpdateTime(); }
+        const Vector<SharedGamepadValue>& axisValues() const final { return protect(platformGamepad())->axisValues(); }
+        const Vector<SharedGamepadValue>& buttonValues() const final { return protect(platformGamepad())->buttonValues(); }
 
-        ASCIILiteral source() const final { return m_platformGamepad->source(); }
+        ASCIILiteral source() const final { return protect(platformGamepad())->source(); }
 
     private:
+        PlatformGamepad& platformGamepad() const { return *m_platformGamepad; }
+
         WeakPtr<PlatformGamepad> m_platformGamepad;
     };
 

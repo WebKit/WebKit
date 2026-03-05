@@ -18,6 +18,13 @@ PASS element.getAttribute(currentAttribute) is ""
 element.setAttribute("aria-activedescendant", otherData);
 PASS element[currentProperty] is otherDataProperty
 
+Test ariaActionsElements < - > aria-actions
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is ""
+element.setAttribute("aria-actions", otherData);
+PASS element[currentProperty] is otherDataProperty
+
 Test ariaAtomic < - > aria-atomic
 PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
@@ -369,7 +376,7 @@ element.setAttribute("aria-valuetext", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 
-PASS count is 51
+PASS count is 52
 PASS successfullyParsed is true
 
 TEST COMPLETE

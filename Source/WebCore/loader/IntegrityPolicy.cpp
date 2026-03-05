@@ -51,7 +51,7 @@ static void reportViolation(const URL& requestURL, Document& document, bool bloc
                 body.setString("destination"_s, "script"_s);
                 body.setBoolean("reportOnly"_s, reportOnly);
             });
-            document.sendReportToEndpoints(documentURL, { }, singleElementSpan(endpoint), WTFMove(reportFormData), ViolationReportType::IntegrityPolicy);
+            document.sendReportToEndpoints(documentURL, { }, singleElementSpan(endpoint), WTF::move(reportFormData), ViolationReportType::IntegrityPolicy);
             document.notifyReportObservers(Report::create(reportBody->type(), reportBody->documentURL(), reportBody.copyRef()));
         }
     };

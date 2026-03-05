@@ -33,7 +33,7 @@ namespace WebCore {
 enum class ViolationReportType : uint8_t;
 
 class ReportBody : public RefCounted<ReportBody> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ReportBody, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ReportBody, WEBCORE_EXPORT);
 public:
     virtual ~ReportBody();
 

@@ -48,7 +48,7 @@ private:
     double tailTime() const final { return m_tailTime; }
     double latencyTime() const final { return 0; }
     void reset() final;
-    bool requiresTailProcessing() const final;
+    bool NODELETE requiresTailProcessing() const final;
 
     IIRFilter m_iirFilter;
     double m_tailTime;

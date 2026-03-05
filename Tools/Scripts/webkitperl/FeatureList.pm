@@ -132,6 +132,7 @@ my (
     $swiftDemoUriScheme,
     $isoMallocSupport,
     $systemMallocSupport,
+    $mimallocSupport,
     $telephoneNumberDetectionSupport,
     $textAutosizingSupport,
     $touchEventsSupport,
@@ -466,6 +467,9 @@ my @features = (
 
     { option => "system-malloc", desc => "Toggle system allocator instead of bmalloc",
       define => "USE_SYSTEM_MALLOC", value => \$systemMallocSupport },
+
+    { option => "mimalloc", desc => "Toggle mimalloc instead of libpas",
+      define => "USE_MIMALLOC", value => \$mimallocSupport },
 
     { option => "woff2", desc => "Toggle support for WOFF2 Web Fonts through libwoff2",
       define => "USE_WOFF2", value => \$woff2Support },

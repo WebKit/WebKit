@@ -6,13 +6,14 @@
 <style>
 .grid-lanes {
     display: grid-lanes;
-    item-tolerance: 0;
+    flow-tolerance: 0;
     grid-template-columns: 10px 10px 20px 15px 5px;
     grid-auto-flow: dense;
+    grid-lanes-pack: dense;
 }
 </style>
 <body>
-  <p>Ensure that dense-packing with multi-span items are placed into tracks with the same used size and the same number of tracks, and priority is given to tracks closest (but after) the auto-placement cursor.</p>
+  <p>Ensure that dense-packing with multi-span items are placed into tracks with the same used size and the same number of tracks.</p>
   <div class="grid-lanes">
     <div style="background: lightskyblue; height: 20px; grid-column: 3" >
       1

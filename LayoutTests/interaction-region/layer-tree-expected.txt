@@ -13,7 +13,7 @@
           (layer cornerRadius 10))
         (
           (type 0)
-          (layer bounds [x: 0 y: 0 width: 284 height: 192])
+          (layer bounds [x: 0 y: 0 width: 284 height: 192.5])
           (layer position [x: 152 y: 152])
           (layer cornerRadius 8))
         (

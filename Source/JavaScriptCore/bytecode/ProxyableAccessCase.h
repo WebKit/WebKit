@@ -47,7 +47,7 @@ protected:
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const;
 
 private:
-    RefPtr<WatchpointSet> m_additionalSet;
+    const RefPtr<WatchpointSet> m_additionalSet;
 };
 
 } // namespace JSC

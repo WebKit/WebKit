@@ -40,6 +40,8 @@ messages -> WebInspectorUI {
     SetDiagnosticLoggingAvailable(bool available)
 #endif
 
+    SystemAppearanceDidChange()
+
     ShowConsole()
     ShowResources()
 

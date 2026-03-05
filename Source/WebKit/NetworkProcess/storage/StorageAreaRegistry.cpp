@@ -51,7 +51,7 @@ void StorageAreaRegistry::unregisterStorageArea(StorageAreaIdentifier identifier
 
 StorageAreaBase* StorageAreaRegistry::getStorageArea(StorageAreaIdentifier identifier)
 {
-    return m_storageAreas.get(identifier).get();
+    return m_storageAreas.get(identifier);
 }
 
 } // namespace WebKit

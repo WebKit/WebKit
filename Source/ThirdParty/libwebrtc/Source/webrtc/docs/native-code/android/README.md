@@ -32,7 +32,7 @@ Make sure your current working directory is src/ of your workspace.
 Then run:
 
 ```
-$ gn gen out/Debug --args='target_os="android" target_cpu="arm"'
+$ gn gen out/Debug --args='target_os="android" target_cpu="arm" android_static_analysis="off"'
 ```
 
 You can specify a directory of your own choice instead of `out/Debug`,

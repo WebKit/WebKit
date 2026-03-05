@@ -34,7 +34,7 @@
 
         const debugText = await UIHelper.requestDebugText({
             nodeIdentifierInclusion: "interactive",
-            includeEventListeners: true,
+            eventListenerCategories: ["all"],
             includeAccessibilityAttributes: true,
             includeTextInAutoFilledControls: true,
         });

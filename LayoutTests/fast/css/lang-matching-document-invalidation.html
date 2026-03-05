@@ -2,7 +2,7 @@
 <script src="../../resources/js-test.js"></script>
 <body>
 <script>
-var container, child, otherFrame;
+var container, child, grandchild, otherFrame;
 var testNumber = 0;
 
 description("This tests invalidation of :lang selectors when the document element's lang attribute changes and a descendant element is using the 'explicit language matching document element language' optimization");
@@ -24,6 +24,7 @@ function test(f) {
     f();
     container = null;
     child = null;
+    grandchild = null;
     debug("----");
 }
 
@@ -250,5 +251,58 @@ testWithOtherDocument(function() {
     container.lang = "de";
     container.remove();
     shouldMatchLang("container", "de");
+});
+
+testWithOtherDocument(function() {
+    otherFrame.contentDocument.documentElement.lang = "de";
+    makeContainerWithChild();
+    otherFrame.contentDocument.body.append(container);
+    let oldRoot = otherFrame.contentDocument.documentElement;
+    oldRoot.remove();
+    let newRoot = document.createElement("html");
+    newRoot.lang = "zh";
+    otherFrame.contentDocument.append(newRoot);
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+});
+
+testWithOtherDocument(function() {
+    otherFrame.contentDocument.documentElement.lang = "de";
+    makeContainerWithChild();
+    otherFrame.contentDocument.body.append(container);
+    let oldRoot = otherFrame.contentDocument.documentElement;
+    oldRoot.remove();
+    oldRoot.lang = "zh";
+    shouldMatchLang("container", "zh");
+    shouldMatchLang("child", "zh");
+});
+
+testWithOtherDocument(function() {
+    otherFrame.contentDocument.documentElement.lang = "de";
+    makeContainerWithChild();
+    otherFrame.contentDocument.body.append(container);
+    container.remove();
+    otherFrame.contentDocument.documentElement.lang = "zh";
+    otherFrame.contentDocument.body.append(container);
+    shouldMatchLang("container", "zh");
+    shouldMatchLang("child", "zh");
+});
+
+test(function() {
+    grandchild = document.createElement("div");
+    makeContainerWithChild();
+    child.append(grandchild);
+    shouldMatchLang("container", "");
+    shouldBe('matchedLang(grandchild)', '""');
+});
+
+test(function() {
+    makeContainerWithChild();
+    child.lang = "de";
+    grandchild = document.createElement("div");
+    child.append(grandchild);
+    shouldMatchLang("container", "");
+    shouldMatchLang("child", "de");
+    shouldBe('matchedLang(grandchild)', '"de"');
 });
 </script>

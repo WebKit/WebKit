@@ -107,7 +107,9 @@ private:
 
 #if ENABLE(THREADED_ANIMATIONS)
     JSRetainPtr<JSStringRef> animationStackForLayerWithID(uint64_t layerID) const final;
+    JSRetainPtr<JSStringRef> progressBasedTimelinesForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID) const final;
 #endif
+    bool displayLinkWantsHighFrameRate() const final;
 };
 
 } // namespace WTR

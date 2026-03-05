@@ -426,7 +426,7 @@ class MediaController
             window.removeEventListener("dragstart", this, true);
 
         if (this.host && this.host.inWindowFullscreen) {
-            this._stopPropagationOnClickEvents();
+            this._stopPropagationOnInteractionEvents();
             if (!this.host.supportsRewind)
                 this.controls.rewindButton.dropped = true;
         }
@@ -437,9 +437,9 @@ class MediaController
             this.controls.element.setAttribute('useragentpart', '-webkit-media-controls');
     }
 
-    _stopPropagationOnClickEvents()
+    _stopPropagationOnInteractionEvents()
     {
-        let clickEvents = ["click", "mousedown", "mouseup", "pointerdown", "pointerup"];
+        let clickEvents = ["click", "mousedown", "mouseup", "pointerdown", "pointerup", "touchstart", "touchmove", "touchend"];
         for (let clickEvent of clickEvents) {
             this.controls.element.addEventListener(clickEvent, (event) => {
                 event.stopPropagation();

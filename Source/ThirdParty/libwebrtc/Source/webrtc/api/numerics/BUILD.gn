@@ -35,6 +35,7 @@ if (rtc_include_tests) {
     deps = [
       ":numerics",
       "../../test:test_support",
+      "../units:timestamp",
       "//third_party/abseil-cpp/absl/algorithm:container",
     ]
   }

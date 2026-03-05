@@ -36,11 +36,11 @@ namespace API {
 
 Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData)
 {
-    return adoptRef(*new FrameInfo(WTFMove(frameInfoData)));
+    return adoptRef(*new FrameInfo(WTF::move(frameInfoData)));
 }
 
 FrameInfo::FrameInfo(WebKit::FrameInfoData&& data)
-    : m_data(WTFMove(data)) { }
+    : m_data(WTF::move(data)) { }
 
 FrameInfo::~FrameInfo() = default;
 
@@ -70,12 +70,12 @@ WTF::String FrameInfo::title() const
 
 const WebKit::WebPageProxy* FrameInfo::page() const
 {
-    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID).unsafeGet();
+    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID);
 }
 
 WebKit::WebPageProxy* FrameInfo::page()
 {
-    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID).unsafeGet();
+    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID);
 }
 
 } // namespace API

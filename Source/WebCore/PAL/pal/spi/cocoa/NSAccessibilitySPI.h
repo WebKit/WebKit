@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if USE(APPKIT)
@@ -54,6 +57,9 @@ DECLARE_SYSTEM_HEADER
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+// FIXME: (rdar://165511706) This file is invalid in a module because AppKit has symbols with incorrect linkage.
+#if !__has_feature(modules)
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification;
@@ -62,6 +68,8 @@ void NSAccessibilityHandleFocusChanged();
 void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 
 WTF_EXTERN_C_END
+
+#endif // !__has_feature(modules)
 
 #elif PLATFORM(MACCATALYST)
 

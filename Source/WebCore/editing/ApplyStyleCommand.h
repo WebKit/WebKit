@@ -48,19 +48,19 @@ public:
 
     static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, EditAction action = EditAction::ChangeAttributes, ApplyStylePropertyLevel level = ApplyStylePropertyLevel::Default)
     {
-        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, action, level));
+        return adoptRef(*new ApplyStyleCommand(WTF::move(document), style, action, level));
     }
     static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditAction::ChangeAttributes, ApplyStylePropertyLevel level = ApplyStylePropertyLevel::Default)
     {
-        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, start, end, action, level));
+        return adoptRef(*new ApplyStyleCommand(WTF::move(document), style, start, end, action, level));
     }
     static Ref<ApplyStyleCommand> create(Ref<Element>&& element, bool removeOnly = false, EditAction action = EditAction::ChangeAttributes)
     {
-        return adoptRef(*new ApplyStyleCommand(WTFMove(element), removeOnly, action));
+        return adoptRef(*new ApplyStyleCommand(WTF::move(element), removeOnly, action));
     }
     static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditAction::ChangeAttributes)
     {
-        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, isInlineElementToRemoveFunction, action));
+        return adoptRef(*new ApplyStyleCommand(WTF::move(document), style, isInlineElementToRemoveFunction, action));
     }
 
 private:

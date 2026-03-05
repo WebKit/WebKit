@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/SoftLinking.h>
 #elif OS(WINDOWS)

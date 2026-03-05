@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 216x19
+        RenderText {#text} at (0,0) size 216x20
           text run at (0,0) width 216: "Image URLs intentionally broken"
       RenderTable {TABLE} at (0,36) size 732x57
         RenderTableSection {TBODY} at (0,0) size 732x57
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (349,1) size 205x51
               RenderImage {IMG} at (554,1) size 173x51
       RenderBlock {P} at (0,109) size 784x20
-        RenderText {#text} at (0,0) size 462x19
+        RenderText {#text} at (0,0) size 462x20
           text run at (0,0) width 462: "Identical to the above except that width=\"100%\" was removed from TD"
       RenderTable {TABLE} at (0,145) size 732x57
         RenderTableSection {TBODY} at (0,0) size 732x57

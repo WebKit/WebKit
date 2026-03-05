@@ -42,7 +42,7 @@ class BindGroupImpl final : public BindGroup {
 public:
     static Ref<BindGroupImpl> create(WebGPUPtr<WGPUBindGroup>&& bindGroup, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new BindGroupImpl(WTFMove(bindGroup), convertToBackingContext));
+        return adoptRef(*new BindGroupImpl(WTF::move(bindGroup), convertToBackingContext));
     }
 
     virtual ~BindGroupImpl();
@@ -58,6 +58,7 @@ private:
     BindGroupImpl& operator=(BindGroupImpl&&) = delete;
 
     WGPUBindGroup backing() const { return m_backing.get(); }
+    bool isBindGroupImpl() const final { return true; }
 
     void setLabelInternal(const String&) final;
     bool updateExternalTextures(ExternalTexture&) final;
@@ -67,5 +68,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::BindGroupImpl)
+    static bool isType(const WebCore::WebGPU::BindGroup& bindGroup) { return bindGroup.isBindGroupImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

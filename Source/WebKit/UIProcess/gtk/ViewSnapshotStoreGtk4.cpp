@@ -33,11 +33,11 @@ using namespace WebCore;
 
 Ref<ViewSnapshot> ViewSnapshot::create(GRefPtr<GdkTexture>&& texture)
 {
-    return adoptRef(*new ViewSnapshot(WTFMove(texture)));
+    return adoptRef(*new ViewSnapshot(WTF::move(texture)));
 }
 
 ViewSnapshot::ViewSnapshot(GRefPtr<GdkTexture>&& texture)
-    : m_texture(WTFMove(texture))
+    : m_texture(WTF::move(texture))
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);

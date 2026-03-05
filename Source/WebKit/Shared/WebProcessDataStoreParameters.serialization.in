@@ -38,7 +38,7 @@
     String modelElementCacheDirectory;
     WebKit::SandboxExtensionHandle modelElementCacheDirectoryExtensionHandle;
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !USE(EXTENSIONKIT)
     WebKit::SandboxExtensionHandle containerTemporaryDirectoryExtensionHandle;
 #endif
     bool trackingPreventionEnabled;

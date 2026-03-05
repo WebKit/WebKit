@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,14 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
+#include <WebCore/StyleColor.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct DropShadow;
@@ -35,11 +39,53 @@ struct DropShadow;
 
 namespace Style {
 
-class BuilderState;
-class DropShadowFilterOperationWithStyleColor;
+struct ZoomFactor;
 
-CSS::DropShadow toCSSDropShadow(Ref<DropShadowFilterOperationWithStyleColor>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::DropShadow&, const BuilderState&);
+// drop-shadow() = drop-shadow( [ <color>?@(default=currentColor) && [<length>{2} <length [0,∞]>?@(default=0px)] ] )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-drop-shadow
+struct DropShadow {
+    Color color;
+    SpaceSeparatedPoint<Length<CSS::AllUnzoomed>> location;
+    Length<CSS::NonnegativeUnzoomed> stdDeviation;
+
+    static DropShadow passthroughForInterpolation();
+
+    bool requiresRepaintForCurrentColorChange() const { return color.containsCurrentColor(); }
+    constexpr bool affectsOpacity() const { return true; }
+    constexpr bool movesPixels() const { return true; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return isZero(stdDeviation) && isZero(location); }
+
+    IntOutsets calculateOutsets(ZoomFactor) const;
+
+    bool operator==(const DropShadow&) const = default;
+};
+using DropShadowFunction = FunctionNotation<CSSValueDropShadow, DropShadow>;
+
+template<size_t I> const auto& get(const DropShadow& value)
+{
+    if constexpr (!I)
+        return value.color;
+    else if constexpr (I == 1)
+        return value.location;
+    else if constexpr (I == 2)
+        return value.stdDeviation;
+}
+
+// MARK: - Conversion
+
+template<> struct ToCSS<DropShadow> { auto operator()(const DropShadow&, const RenderStyle&) -> CSS::DropShadow; };
+template<> struct ToStyle<CSS::DropShadow> { auto operator()(const CSS::DropShadow&, const BuilderState&) -> DropShadow; };
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<DropShadow, Ref<FilterEffect>> { auto operator()(const DropShadow&, const RenderStyle&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<DropShadow> { auto operator()(const DropShadow&, const RenderStyle&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::DropShadow, 3)

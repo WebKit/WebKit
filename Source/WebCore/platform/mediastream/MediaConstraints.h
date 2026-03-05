@@ -327,11 +327,11 @@ protected:
     }
     
     NumericConstraint(MediaConstraint&& mediaConstraint, std::optional<ValueType>&& min, std::optional<ValueType>&& max, std::optional<ValueType>&& exact, std::optional<ValueType>&& ideal)
-        : MediaConstraint(WTFMove(mediaConstraint))
-        , m_min(WTFMove(min))
-        , m_max(WTFMove(max))
-        , m_exact(WTFMove(exact))
-        , m_ideal(WTFMove(ideal))
+        : MediaConstraint(WTF::move(mediaConstraint))
+        , m_min(WTF::move(min))
+        , m_max(WTF::move(max))
+        , m_exact(WTF::move(exact))
+        , m_ideal(WTF::move(ideal))
     {
     }
 
@@ -389,7 +389,7 @@ private:
     friend struct IPC::ArgumentCoder<IntConstraint>;
     
     IntConstraint(MediaConstraint&& mediaConstraint, std::optional<int>&& min, std::optional<int>&& max,                   std::optional<int>&& exact, std::optional<int>&& ideal)
-        : NumericConstraint<int>(WTFMove(mediaConstraint), WTFMove(min), WTFMove(max), WTFMove(exact), WTFMove(ideal))
+        : NumericConstraint<int>(WTF::move(mediaConstraint), WTF::move(min), WTF::move(max), WTF::move(exact), WTF::move(ideal))
     {
     }
 };
@@ -412,7 +412,7 @@ private:
     friend struct IPC::ArgumentCoder<DoubleConstraint>;
     
     DoubleConstraint(MediaConstraint&& mediaConstraint, std::optional<double>&& min, std::optional<double>&& max,                   std::optional<double>&& exact, std::optional<double>&& ideal)
-        : NumericConstraint<double>(WTFMove(mediaConstraint), WTFMove(min), WTFMove(max), WTFMove(exact), WTFMove(ideal))
+        : NumericConstraint<double>(WTF::move(mediaConstraint), WTF::move(min), WTF::move(max), WTF::move(exact), WTF::move(ideal))
     {
     }
 };
@@ -492,9 +492,9 @@ private:
     friend struct IPC::ArgumentCoder<BooleanConstraint>;
     
     BooleanConstraint(MediaConstraint&& mediaConstraint, std::optional<bool>&& exact, std::optional<bool>&& ideal)
-        : MediaConstraint(WTFMove(mediaConstraint))
-        , m_exact(WTFMove(exact))
-        , m_ideal(WTFMove(ideal))
+        : MediaConstraint(WTF::move(mediaConstraint))
+        , m_exact(WTF::move(exact))
+        , m_ideal(WTF::move(ideal))
     {
     }
 
@@ -576,9 +576,9 @@ private:
     friend struct IPC::ArgumentCoder<StringConstraint>;
     
     StringConstraint(MediaConstraint&& mediaConstraint, Vector<String>&& exact, Vector<String>&& ideal)
-        : MediaConstraint(WTFMove(mediaConstraint))
-        , m_exact(WTFMove(exact))
-        , m_ideal(WTFMove(ideal))
+        : MediaConstraint(WTF::move(mediaConstraint))
+        , m_exact(WTF::move(exact))
+        , m_ideal(WTF::move(ideal))
     {
     }
 
@@ -603,9 +603,9 @@ public:
         , m_displaySurface(displaySurface)
         , m_logicalSurface(logicalSurface)
         , m_facingMode(facingMode)
-        , m_deviceId(WTFMove(deviceId))
-        , m_groupId(WTFMove(groupId))
-        , m_whiteBalanceMode(WTFMove(whiteBalanceMode))
+        , m_deviceId(WTF::move(deviceId))
+        , m_groupId(WTF::move(groupId))
+        , m_whiteBalanceMode(WTF::move(whiteBalanceMode))
         , m_zoom(zoom)
         , m_torch(torch)
         , m_backgroundBlur(backgroundBlur)
@@ -633,28 +633,28 @@ public:
 
     void clearDeviceId() { m_deviceId = { }; }
 
-    const std::optional<IntConstraint>& width() const { return m_width; }
-    const std::optional<IntConstraint>& height() const { return m_height; }
-    const std::optional<IntConstraint>& sampleRate() const { return m_sampleRate; }
-    const std::optional<IntConstraint>& sampleSize() const { return m_sampleSize; }
+    const std::optional<IntConstraint>& width() const LIFETIME_BOUND { return m_width; }
+    const std::optional<IntConstraint>& height() const LIFETIME_BOUND { return m_height; }
+    const std::optional<IntConstraint>& sampleRate() const LIFETIME_BOUND { return m_sampleRate; }
+    const std::optional<IntConstraint>& sampleSize() const LIFETIME_BOUND { return m_sampleSize; }
 
-    const std::optional<DoubleConstraint>& aspectRatio() const { return m_aspectRatio; }
-    const std::optional<DoubleConstraint>& frameRate() const { return m_frameRate; }
-    const std::optional<DoubleConstraint>& volume() const { return m_volume; }
+    const std::optional<DoubleConstraint>& aspectRatio() const LIFETIME_BOUND { return m_aspectRatio; }
+    const std::optional<DoubleConstraint>& frameRate() const LIFETIME_BOUND { return m_frameRate; }
+    const std::optional<DoubleConstraint>& volume() const LIFETIME_BOUND { return m_volume; }
 
-    const std::optional<BooleanConstraint>& echoCancellation() const { return m_echoCancellation; }
-    const std::optional<BooleanConstraint>& displaySurface() const { return m_displaySurface; }
-    const std::optional<BooleanConstraint>& logicalSurface() const { return m_logicalSurface; }
+    const std::optional<BooleanConstraint>& echoCancellation() const LIFETIME_BOUND { return m_echoCancellation; }
+    const std::optional<BooleanConstraint>& displaySurface() const LIFETIME_BOUND { return m_displaySurface; }
+    const std::optional<BooleanConstraint>& logicalSurface() const LIFETIME_BOUND { return m_logicalSurface; }
 
-    const std::optional<StringConstraint>& facingMode() const { return m_facingMode; }
-    const std::optional<StringConstraint>& deviceId() const { return m_deviceId; }
-    const std::optional<StringConstraint>& groupId() const { return m_groupId; }
+    const std::optional<StringConstraint>& facingMode() const LIFETIME_BOUND { return m_facingMode; }
+    const std::optional<StringConstraint>& deviceId() const LIFETIME_BOUND { return m_deviceId; }
+    const std::optional<StringConstraint>& groupId() const LIFETIME_BOUND { return m_groupId; }
 
-    const std::optional<StringConstraint>& whiteBalanceMode() const { return m_whiteBalanceMode; }
-    const std::optional<DoubleConstraint>& zoom() const { return m_zoom; }
-    const std::optional<BooleanConstraint>& torch() const { return m_torch; }
-    const std::optional<BooleanConstraint>& backgroundBlur() const { return m_backgroundBlur; }
-    const std::optional<BooleanConstraint>& powerEfficient() const { return m_powerEfficient; }
+    const std::optional<StringConstraint>& whiteBalanceMode() const LIFETIME_BOUND { return m_whiteBalanceMode; }
+    const std::optional<DoubleConstraint>& zoom() const LIFETIME_BOUND { return m_zoom; }
+    const std::optional<BooleanConstraint>& torch() const LIFETIME_BOUND { return m_torch; }
+    const std::optional<BooleanConstraint>& backgroundBlur() const LIFETIME_BOUND { return m_backgroundBlur; }
+    const std::optional<BooleanConstraint>& powerEfficient() const LIFETIME_BOUND { return m_powerEfficient; }
 
     MediaTrackConstraintSetMap isolatedCopy() const;
 

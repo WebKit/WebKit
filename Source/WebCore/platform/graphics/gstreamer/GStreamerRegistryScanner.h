@@ -22,7 +22,7 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
-#include "MediaConfiguration.h"
+#include "PlatformMediaConfiguration.h"
 #include "MediaPlayerEnums.h"
 #include "RTCRtpCapabilities.h"
 #include <wtf/Forward.h>
@@ -85,8 +85,8 @@ public:
             return lhs.isSupported == rhs.isSupported && lhs.isUsingHardware == rhs.isUsingHardware;
         }
     };
-    RegistryLookupResult isDecodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Decoding, mediaConfiguration); };
-    RegistryLookupResult isEncodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Encoding, mediaConfiguration); }
+    RegistryLookupResult isDecodingSupported(PlatformMediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Decoding, mediaConfiguration); };
+    RegistryLookupResult isEncodingSupported(PlatformMediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Encoding, mediaConfiguration); }
 
     struct CodecLookupResult {
         CodecLookupResult() = default;
@@ -115,7 +115,7 @@ public:
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> audioRtpExtensions();
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> videoRtpExtensions();
     RegistryLookupResult isRtpPacketizerSupported(const String& encoding);
-    bool isRtpHeaderExtensionSupported(StringView);
+    bool isRtpHeaderExtensionSupported(const String&);
 #endif
 
 protected:
@@ -139,7 +139,9 @@ protected:
         explicit ElementFactories(OptionSet<Type>);
         ~ElementFactories();
 
-        static const char* elementFactoryTypeToString(Type);
+#ifndef GST_DISABLE_GST_DEBUG
+        static ASCIILiteral elementFactoryTypeToString(Type);
+#endif
         GList* factory(Type) const;
 
         enum class CheckHardwareClassifier : bool { No, Yes };
@@ -163,7 +165,7 @@ protected:
     void initializeDecoders(const ElementFactories&);
     void initializeEncoders(const ElementFactories&);
 
-    RegistryLookupResult isConfigurationSupported(Configuration, const MediaConfiguration&) const;
+    RegistryLookupResult isConfigurationSupported(Configuration, const PlatformMediaConfiguration&) const;
 
     struct GstCapsWebKitMapping {
         ElementFactories::Type elementType;

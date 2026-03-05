@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class IDBGetResult {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBGetResult, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBGetResult, WEBCORE_EXPORT);
 public:
     IDBGetResult()
         : m_isDefined(false)
@@ -62,18 +62,18 @@ public:
     }
 
     IDBGetResult(const IDBKeyData& keyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath)
-        : m_value(WTFMove(value))
+        : m_value(WTF::move(value))
         , m_keyData(keyData)
         , m_keyPath(keyPath)
     {
     }
 
     IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath, Vector<IDBCursorRecord>&& prefetechedRecords = { }, bool isDefined = true)
-        : m_value(WTFMove(value))
+        : m_value(WTF::move(value))
         , m_keyData(keyData)
         , m_primaryKeyData(primaryKeyData)
         , m_keyPath(keyPath)
-        , m_prefetchedRecords(WTFMove(prefetechedRecords))
+        , m_prefetchedRecords(WTF::move(prefetechedRecords))
         , m_isDefined(isDefined)
     {
     }
@@ -85,11 +85,11 @@ public:
 
     void setValue(IDBValue&&);
 
-    const IDBValue& value() const { return m_value; }
-    const IDBKeyData& keyData() const { return m_keyData; }
-    const IDBKeyData& primaryKeyData() const { return m_primaryKeyData; }
-    const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
-    const Vector<IDBCursorRecord>& prefetchedRecords() const { return m_prefetchedRecords; }
+    const IDBValue& value() const LIFETIME_BOUND { return m_value; }
+    const IDBKeyData& keyData() const LIFETIME_BOUND { return m_keyData; }
+    const IDBKeyData& primaryKeyData() const LIFETIME_BOUND { return m_primaryKeyData; }
+    const std::optional<IDBKeyPath>& keyPath() const LIFETIME_BOUND { return m_keyPath; }
+    const Vector<IDBCursorRecord>& prefetchedRecords() const LIFETIME_BOUND { return m_prefetchedRecords; }
     bool isDefined() const { return m_isDefined; }
 
 private:

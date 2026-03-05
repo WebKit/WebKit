@@ -15,35 +15,35 @@ info: |
   source data.
 
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n, 6n]).copyWithin(0, 0),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n, 6n])).copyWithin(0, 0),
       [1n, 2n, 3n, 4n, 5n, 6n]
     )
   );
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n, 6n]).copyWithin(0, 2),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n, 6n])).copyWithin(0, 2),
       [3n, 4n, 5n, 6n, 5n, 6n]
     )
   );
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n, 6n]).copyWithin(3, 0),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n, 6n])).copyWithin(3, 0),
       [1n, 2n, 3n, 1n, 2n, 3n]
     )
   );
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n, 5n]).copyWithin(1, 4),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n, 5n])).copyWithin(1, 4),
       [0n, 4n, 5n, 3n, 4n, 5n]
     )
   );

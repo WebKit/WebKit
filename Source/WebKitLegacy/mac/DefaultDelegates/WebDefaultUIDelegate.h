@@ -29,10 +29,5 @@
 #import "WebUIDelegate.h"
 
 @interface WebDefaultUIDelegate : NSObject <WebUIDelegate>
-{
-#if PLATFORM(MAC)
-    IBOutlet NSMenu *defaultMenu;
-#endif
-}
 + (WebDefaultUIDelegate *)sharedUIDelegate;
 @end

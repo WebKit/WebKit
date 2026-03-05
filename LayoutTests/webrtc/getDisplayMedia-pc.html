@@ -64,7 +64,6 @@
                          assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
                          assert_equals(trackEvent.streams.length, 1);
                          assert_equals(trackEvent.streams[0].id, localStream.id, "first stream id");
-                         assert_equals(trackEvent.track.id, localStream.getVideoTracks()[0].id);
                          assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
                          resolve(trackEvent.streams[0]);
                      };

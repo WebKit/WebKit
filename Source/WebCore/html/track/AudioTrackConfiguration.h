@@ -38,10 +38,11 @@ using AudioTrackConfigurationInit = PlatformAudioTrackConfiguration;
 class AudioTrackConfiguration : public RefCounted<AudioTrackConfiguration> {
     WTF_MAKE_TZONE_ALLOCATED(AudioTrackConfiguration);
 public:
-    static Ref<AudioTrackConfiguration> create(AudioTrackConfigurationInit&& init) { return adoptRef(*new AudioTrackConfiguration(WTFMove(init))); }
+    static Ref<AudioTrackConfiguration> create(AudioTrackConfigurationInit&& init) { return adoptRef(*new AudioTrackConfiguration(WTF::move(init))); }
     static Ref<AudioTrackConfiguration> create() { return adoptRef(*new AudioTrackConfiguration()); }
 
-    void setState(const AudioTrackConfigurationInit& state) { m_state = state; }
+    enum class StateChanged : bool { No, Yes };
+    StateChanged updateState(const AudioTrackConfigurationInit&);
 
     String codec() const { return m_state.codec; }
     void setCodec(String codec) { m_state.codec = codec; }

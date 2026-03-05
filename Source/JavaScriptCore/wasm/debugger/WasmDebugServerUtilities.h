@@ -25,26 +25,30 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/JSWebAssemblyInstance.h>
+#include <JavaScriptCore/WasmIPIntGenerator.h>
+#include <JavaScriptCore/WasmVirtualAddress.h>
+#include <memory>
 #include <wtf/HexNumber.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 
 namespace JSC {
 
-class CallFrame;
-class JSWebAssemblyInstance;
-
-namespace IPInt {
-struct IPIntLocal;
-} // namespace IPInt
-
 namespace Wasm {
 
 class VirtualAddress;
+class IPIntCallee;
 enum class TypeKind : int8_t;
 struct Type;
 
@@ -127,6 +131,97 @@ struct Breakpoint {
     uint8_t originalBytecode { 0 };
 };
 
+// Immutable snapshot of VM state when stopped at a debugging event (interrupt/breakpoint/step).
+// Captures stop reason, location, PC/MC, and execution state for debugger inspection.
+struct StopData {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(StopData);
+
+    // GDB Remote Protocol stop reason codes mapped to GDB Remote Protocol semantics
+    // Reference: https://sourceware.org/gdb/onlinedocs/gdb/Stop-Reply-Packets.html
+    enum class Code : uint8_t {
+        Unknown = 0,
+        Stop, // SIGSTOP - Debugger interrupt (uncatchable stop) - reason:signal
+        Trace, // SIGTRAP - Single step/trace completion - reason:trace
+        Breakpoint // SIGTRAP - Breakpoint hit - reason:breakpoint (distinct from trace)
+    };
+
+    enum class Location : uint8_t {
+        Prologue = 0,
+        Breakpoint
+    };
+
+    StopData(Breakpoint::Type, VirtualAddress, uint8_t originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntLocal*, IPInt::IPIntStackEntry*, IPIntCallee*, JSWebAssemblyInstance*, CallFrame*);
+
+    StopData(IPIntCallee*, JSWebAssemblyInstance*);
+
+    ~StopData();
+
+    void setCode(Breakpoint::Type);
+    void dump(PrintStream&) const;
+
+    Code code { Code::Unknown };
+    Location location;
+    VirtualAddress address;
+    uint8_t originalBytecode { 0 };
+    uint8_t* pc { nullptr };
+    uint8_t* mc { nullptr };
+    IPInt::IPIntLocal* locals { nullptr };
+    IPInt::IPIntStackEntry* stack { nullptr };
+    RefPtr<IPIntCallee> callee;
+    JSWebAssemblyInstance* instance { nullptr };
+    CallFrame* callFrame { nullptr };
+};
+
+// Per-VM debugging state machine (Running/Stopped) with current stop information.
+// Owns stopData snapshot while stopped, tracks step-into events across function boundaries.
+// Created on-demand via VM::debugState(), accessed only when VM is stopped.
+struct DebugState {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(DebugState);
+
+    enum class State : uint8_t {
+        Running,
+        Stopped,
+    };
+
+    DebugState() = default;
+
+    void setPrologueStopData(JSWebAssemblyInstance* instance, IPIntCallee* callee)
+    {
+        stopData = makeUnique<StopData>(callee, instance);
+    }
+
+    void setBreakpointStopData(Breakpoint::Type type, VirtualAddress address, uint8_t originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntLocal* locals, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
+    {
+        stopData = makeUnique<StopData>(type, address, originalBytecode, pc, mc, locals, stack, callee, instance, callFrame);
+    }
+
+    bool atSystemCall() const { return !stopData; }
+    bool atPrologue() const { return !!stopData && stopData->location == StopData::Location::Prologue; }
+    bool atBreakpoint() const { return !!stopData && stopData->location == StopData::Location::Breakpoint; }
+
+    void clearStop()
+    {
+        state = State::Running;
+        stopData = nullptr;
+    }
+
+    void setStopped() { state = State::Stopped; }
+    bool isStopped() const { return state == State::Stopped; }
+    bool isRunning() const { return state == State::Running; }
+
+    bool hasStepIntoEvent() { return stepIntoEvent.hasAny(); }
+    void setStepIntoCall() { stepIntoEvent.set(StepIntoEvent::StepIntoCall); }
+    bool takeStepIntoCall() { return stepIntoEvent.take(StepIntoEvent::StepIntoCall); }
+    void setStepIntoThrow() { stepIntoEvent.set(StepIntoEvent::StepIntoThrow); }
+    bool takeStepIntoThrow() { return stepIntoEvent.take(StepIntoEvent::StepIntoThrow); }
+
+    State state { State::Running };
+    std::unique_ptr<const StopData> stopData { nullptr };
+
+    // Step-into tracking (for step debugging behavior)
+    StepIntoEvent stepIntoEvent;
+};
+
 template<typename T>
 inline String toNativeEndianHex(const T& value)
 {
@@ -152,9 +247,27 @@ Vector<StringView> splitWithDelimiters(StringView packet, StringView delimiters)
 
 bool getWasmReturnPC(CallFrame* currentFrame, uint8_t*& returnPC, VirtualAddress& virtualReturnPC);
 
+inline StringView getErrorReply(ProtocolError error)
+{
+    switch (error) {
+    case ProtocolError::InvalidPacket:
+        return "E01"_s;
+    case ProtocolError::InvalidAddress:
+        return "E02"_s;
+    case ProtocolError::InvalidRegister:
+        return "E03"_s;
+    case ProtocolError::MemoryError:
+        return "E04"_s;
+    case ProtocolError::UnknownCommand:
+        return "E05"_s;
+    default:
+        return "E00"_s;
+    }
+}
+
 } // namespace Wasm
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

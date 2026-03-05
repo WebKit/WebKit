@@ -53,6 +53,9 @@ extern "C" {
 #define CL_LOADER_LAYERS_EXTENSION_NAME \
     "cl_loader_layers"
 
+
+#define CL_LOADER_LAYERS_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
 typedef cl_uint             cl_layer_info;
 typedef cl_uint             cl_layer_api_version;
 

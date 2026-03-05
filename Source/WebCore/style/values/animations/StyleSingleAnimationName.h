@@ -39,7 +39,7 @@ struct SingleAnimationName {
     }
 
     SingleAnimationName(ScopedName&& keyframesName)
-        : m_value { WTFMove(keyframesName) }
+        : m_value { WTF::move(keyframesName) }
     {
     }
 

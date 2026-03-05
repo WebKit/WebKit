@@ -36,14 +36,14 @@ using namespace JSC;
 const ClassInfo JSIDBSerializationGlobalObject::s_info = { "JSIDBSerializationGlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIDBSerializationGlobalObject) };
 
 inline JSIDBSerializationGlobalObject::JSIDBSerializationGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& impl)
-    : Base(vm, structure, WTFMove(impl))
+    : Base(vm, structure, WTF::move(impl))
     , m_scriptExecutionContext(EmptyScriptExecutionContext::create(vm))
 {
 }
 
 JSIDBSerializationGlobalObject* JSIDBSerializationGlobalObject::create(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& impl)
 {
-    JSIDBSerializationGlobalObject* ptr =  new (NotNull, allocateCell<JSIDBSerializationGlobalObject>(vm)) JSIDBSerializationGlobalObject(vm, structure, WTFMove(impl));
+    JSIDBSerializationGlobalObject* ptr =  new (NotNull, allocateCell<JSIDBSerializationGlobalObject>(vm)) JSIDBSerializationGlobalObject(vm, structure, WTF::move(impl));
     ptr->finishCreation(vm);
     return ptr;
 }
@@ -60,7 +60,8 @@ GCClient::IsoSubspace* JSIDBSerializationGlobalObject::subspaceForImpl(VM& vm)
 
 void JSIDBSerializationGlobalObject::destroy(JSCell* cell)
 {
-    static_cast<JSIDBSerializationGlobalObject*>(cell)->JSIDBSerializationGlobalObject::~JSIDBSerializationGlobalObject();
+    // We cannot rely on jsCast() during JSObject destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<JSIDBSerializationGlobalObject*>(cell)->JSIDBSerializationGlobalObject::~JSIDBSerializationGlobalObject();
 }
 
 } // namespace WebCore

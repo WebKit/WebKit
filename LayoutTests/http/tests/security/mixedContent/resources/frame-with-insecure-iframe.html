@@ -1,10 +1,13 @@
-<body onload="loaded()">
+<body>
 <script>
-function loaded()
+var frameDidLoad = false;
+
+// rdar://161348735: onload doesn't fire with Site Isolation when resource is blocked by mixed content. so use setTimeout for now
+setTimeout(function()
 {
-  if (window.opener)
-    window.opener.postMessage('done', '*');
-}
+    if (window.parent)
+        window.parent.postMessage(frameDidLoad ? 'done' : 'blocked', '*');
+}, 2000);
 </script>
-<iframe src="http://127.0.0.1:8080/security/mixedContent/resources/boring.html"></iframe>
+<iframe onload="window.frameDidLoad = true" src="http://127.0.0.1:8080/security/mixedContent/resources/boring.html"></iframe>
 </body>

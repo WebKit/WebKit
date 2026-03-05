@@ -57,7 +57,7 @@ public:
     SQLiteIDBTransaction(SQLiteIDBBackingStore&, const IDBTransactionInfo&);
     ~SQLiteIDBTransaction();
 
-    const IDBResourceIdentifier& transactionIdentifier() const { return m_info.identifier(); }
+    const IDBResourceIdentifier& transactionIdentifier() const LIFETIME_BOUND { return m_info.identifier(); }
 
     IDBError begin(SQLiteDatabase&);
     IDBError commit();
@@ -71,10 +71,10 @@ public:
 
     IDBTransactionMode mode() const { return m_info.mode(); }
     IDBTransactionDurability durability() const { return m_info.durability(); }
-    bool inProgress() const;
-    bool inProgressOrReadOnly() const;
+    bool NODELETE inProgress() const;
+    bool NODELETE inProgressOrReadOnly() const;
 
-    SQLiteDatabase* sqliteDatabase() const;
+    SQLiteDatabase* NODELETE sqliteDatabase() const;
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
     SQLiteIDBBackingStore& backingStore() { return m_backingStore.get(); }
 

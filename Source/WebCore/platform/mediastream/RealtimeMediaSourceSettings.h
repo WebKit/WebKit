@@ -92,9 +92,9 @@ public:
         , m_sampleRate(sampleRate)
         , m_sampleSize(sampleSize)
         , m_echoCancellation(echoCancellation)
-        , m_deviceId(WTFMove(deviceId))
-        , m_groupId(WTFMove(groupId))
-        , m_label(WTFMove(label))
+        , m_deviceId(WTF::move(deviceId))
+        , m_groupId(WTF::move(groupId))
+        , m_label(WTF::move(label))
         , m_displaySurface(displaySurface)
         , m_logicalSurface(logicalSurface)
         , m_whiteBalanceMode(whiteBalanceMode)
@@ -102,7 +102,7 @@ public:
         , m_torch(torch)
         , m_backgroundBlur(backgroundBlur)
         , m_powerEfficient(powerEfficient)
-        , m_supportedConstraints(WTFMove(supportedConstraints))
+        , m_supportedConstraints(WTF::move(supportedConstraints))
     {
     }
 
@@ -141,11 +141,11 @@ public:
     void setEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const String& deviceId() const { return m_deviceId; }
+    const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const String& groupId() const { return m_groupId; }
+    const String& groupId() const LIFETIME_BOUND { return m_groupId; }
     void setGroupId(const String& groupId) { m_groupId = groupId; }
 
     bool supportsDisplaySurface() const { return m_supportedConstraints.supportsDisplaySurface(); }
@@ -176,10 +176,10 @@ public:
     bool powerEfficient() const { return m_powerEfficient; }
     void setPowerEfficient(bool value) { m_powerEfficient = value; }
 
-    const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
+    const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const LIFETIME_BOUND { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
-    const String& label() const { return m_label; }
+    const String& label() const LIFETIME_BOUND { return m_label; }
     void setLabel(const String& label) { m_label = label; }
 
     static String convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag>);

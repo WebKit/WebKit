@@ -469,17 +469,16 @@ TEST_P(EXTBlendFuncExtendedDrawTest, FragColor)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
 
-    const char *kFragColorShader =
-        "#extension GL_EXT_blend_func_extended : require\n"
-        "precision mediump float;\n"
-        "uniform vec4 src0;\n"
-        "uniform vec4 src1;\n"
-        "void main() {\n"
-        "  gl_FragColor = src0;\n"
-        "  gl_SecondaryFragColorEXT = src1;\n"
-        "}\n";
+    constexpr char kFS[] = R"(#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src0;
+uniform vec4 src1;
+void main() {
+  gl_FragColor = src0;
+  gl_SecondaryFragColorEXT = src1;
+})";
 
-    makeProgram(essl1_shaders::vs::Simple(), kFragColorShader);
+    makeProgram(essl1_shaders::vs::Simple(), kFS);
 
     drawTest();
 }
@@ -490,18 +489,17 @@ TEST_P(EXTBlendFuncExtendedDrawTest, FragColorBroadcast)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
 
-    const char *kFragColorShader =
-        "#extension GL_EXT_blend_func_extended : require\n"
-        "#extension GL_EXT_draw_buffers : require\n"
-        "precision mediump float;\n"
-        "uniform vec4 src0;\n"
-        "uniform vec4 src1;\n"
-        "void main() {\n"
-        "  gl_FragColor = src0;\n"
-        "  gl_SecondaryFragColorEXT = src1;\n"
-        "}\n";
+    constexpr char kFS[] = R"(#extension GL_EXT_blend_func_extended : require
+#extension GL_EXT_draw_buffers : require
+precision mediump float;
+uniform vec4 src0;
+uniform vec4 src1;
+void main() {
+  gl_FragColor = src0;
+  gl_SecondaryFragColorEXT = src1;
+})";
 
-    makeProgram(essl1_shaders::vs::Simple(), kFragColorShader);
+    makeProgram(essl1_shaders::vs::Simple(), kFS);
 
     drawTest();
 }
@@ -512,19 +510,64 @@ TEST_P(EXTBlendFuncExtendedDrawTest, FragData)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
 
-    const char *kFragColorShader =
-        "#extension GL_EXT_blend_func_extended : require\n"
-        "precision mediump float;\n"
-        "uniform vec4 src0;\n"
-        "uniform vec4 src1;\n"
-        "void main() {\n"
-        "  gl_FragData[0] = src0;\n"
-        "  gl_SecondaryFragDataEXT[0] = src1;\n"
-        "}\n";
+    constexpr char kFS[] = R"(#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src0;
+uniform vec4 src1;
+void main() {
+  gl_FragData[0] = src0;
+  gl_SecondaryFragDataEXT[0] = src1;
+})";
 
-    makeProgram(essl1_shaders::vs::Simple(), kFragColorShader);
+    makeProgram(essl1_shaders::vs::Simple(), kFS);
 
     drawTest();
+}
+
+// Test that gl_MaxDualSourceDrawBuffersEXT is defined in ESSL 100 shaders.
+TEST_P(EXTBlendFuncExtendedDrawTest, MaxDualSourceDrawBuffers)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    constexpr char kFS[] = R"(#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+void main() {
+  gl_FragColor = vec4(gl_MaxDualSourceDrawBuffersEXT / 10, 0, 0, 1);
+})";
+
+    GLint maxDualSourceDrawBuffers;
+    glGetIntegerv(GL_MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT, &maxDualSourceDrawBuffers);
+    ASSERT_GE(maxDualSourceDrawBuffers, 1);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_NEAR(
+        0, 0, GLColor(static_cast<uint32_t>(maxDualSourceDrawBuffers / 10.0), 0, 0, 255), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that gl_MaxDualSourceDrawBuffersEXT is defined in ESSL 300 shaders.
+TEST_P(EXTBlendFuncExtendedDrawTestES3, MaxDualSourceDrawBuffers)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+layout(location = 0) out mediump vec4 fragColor;
+void main() {
+  fragColor = vec4(gl_MaxDualSourceDrawBuffersEXT / 10, 0, 0, 1);
+})";
+
+    GLint maxDualSourceDrawBuffers;
+    glGetIntegerv(GL_MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT, &maxDualSourceDrawBuffers);
+    ASSERT_GE(maxDualSourceDrawBuffers, 1);
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_NEAR(
+        0, 0, GLColor(static_cast<uint32_t>(maxDualSourceDrawBuffers / 10.0), 0, 0, 255), 1);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Test that min/max blending works correctly with SRC1 factors.

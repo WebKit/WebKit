@@ -70,10 +70,6 @@ public:
 
     ImageBufferSetIdentifier identifier() const { return m_identifier; }
 
-    RefPtr<WebCore::ImageBuffer> protectedFrontBuffer() { return m_frontBuffer; }
-    RefPtr<WebCore::ImageBuffer> protectedBackBuffer() { return m_backBuffer; }
-    RefPtr<WebCore::ImageBuffer> protectedSecondaryBackBuffer() { return m_secondaryBackBuffer; }
-
     const ImageBufferSetIdentifier m_identifier { ImageBufferSetIdentifier::generate() };
     RefPtr<WebCore::ImageBuffer> m_frontBuffer;
     RefPtr<WebCore::ImageBuffer> m_backBuffer;

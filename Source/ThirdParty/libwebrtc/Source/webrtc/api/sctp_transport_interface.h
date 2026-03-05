@@ -11,7 +11,9 @@
 #ifndef API_SCTP_TRANSPORT_INTERFACE_H_
 #define API_SCTP_TRANSPORT_INTERFACE_H_
 
+#include <cstdint>
 #include <optional>
+#include <vector>
 
 #include "api/dtls_transport_interface.h"
 #include "api/ref_count.h"
@@ -19,6 +21,48 @@
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
+
+// Constants that are important to API users
+
+// The number of outgoing streams that we'll negotiate. Since stream IDs (SIDs)
+// are 0-based, the highest usable SID is 1023.
+//
+// It's recommended to use the maximum of 65535 in:
+// https://tools.ietf.org/html/draft-ietf-rtcweb-data-channel-13#section-6.2
+// However, we use 1024 in order to save memory. usrsctp allocates 104 bytes
+// for each pair of incoming/outgoing streams (on a 64-bit system), so 65535
+// streams would waste ~6MB.
+//
+// Note: "max" and "min" here are inclusive.
+constexpr uint16_t kMaxSctpStreams = 1024;
+constexpr uint16_t kMaxSctpSid = kMaxSctpStreams - 1;
+constexpr uint16_t kMinSctpSid = 0;
+// The maximum number of streams that can be negotiated according to spec.
+constexpr uint16_t kSpecMaxSctpSid = 65535;
+
+// This is the default SCTP port to use. It is passed along the wire and the
+// connectee and connector must be using the same port. It is not related to the
+// ports at the IP level. (Corresponds to: sockaddr_conn.sconn_port in
+// usrsctp.h)
+const int kSctpDefaultPort = 5000;
+
+// Error cause codes defined at
+// https://www.iana.org/assignments/sctp-parameters/sctp-parameters.xhtml#sctp-parameters-24
+enum class SctpErrorCauseCode : uint16_t {
+  kInvalidStreamIdentifier = 1,
+  kMissingMandatoryParameter = 2,
+  kStaleCookieError = 3,
+  kOutOfResource = 4,
+  kUnresolvableAddress = 5,
+  kUnrecognizedChunkType = 6,
+  kInvalidMandatoryParameter = 7,
+  kUnrecognizedParameters = 8,
+  kNoUserData = 9,
+  kCookieReceivedWhileShuttingDown = 10,
+  kRestartWithNewAddresses = 11,
+  kUserInitiatedAbort = 12,
+  kProtocolViolation = 13,
+};
 
 // States of a SCTP transport, corresponding to the JS API specification.
 // http://w3c.github.io/webrtc-pc/#dom-rtcsctptransportstate
@@ -105,6 +149,10 @@ struct SctpOptions {
   // `max_message_size` sets the maxium message size on the connection.
   // It must be smaller than or equal to kSctpSendBufferSize.
   int max_message_size = kSctpSendBufferSize;
+
+  // draft-hancke-tsvwg-snap
+  std::optional<std::vector<uint8_t>> local_init;
+  std::optional<std::vector<uint8_t>> remote_init;
 };
 
 }  // namespace webrtc

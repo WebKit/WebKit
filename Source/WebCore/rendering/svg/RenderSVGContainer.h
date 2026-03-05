@@ -31,7 +31,7 @@ namespace WebCore {
 class SVGElement;
 
 class RenderSVGContainer : public RenderSVGModelObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGContainer);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGContainer);
 public:
     virtual ~RenderSVGContainer();
@@ -46,6 +46,7 @@ public:
     FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
     FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect decoratedBoundingBox() const final { return SVGBoundingBoxComputation::computeDecoratedBoundingBox(*this); }
 
 protected:
     RenderSVGContainer(Type, Document&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
@@ -61,6 +62,7 @@ protected:
     virtual bool updateLayoutSizeIfNeeded() { return false; }
     virtual std::optional<FloatRect> overridenObjectBoundingBoxWithoutTransformations() const { return std::nullopt; }
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    void addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* container) const override;
 
     bool m_objectBoundingBoxValid { false };
     bool m_isLayoutSizeChanged { false };

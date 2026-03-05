@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLCompressedTextureETC1 final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLCompressedTextureETC1);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLCompressedTextureETC1);
 public:
     explicit WebGLCompressedTextureETC1(WebGLRenderingContextBase&);
     ~WebGLCompressedTextureETC1();
@@ -42,3 +42,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLCompressedTextureETC1)

@@ -28,7 +28,7 @@
 #include <JavaScriptCore/ButterflyInlines.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSArrayInlines.h>
-#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSFunctionInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGlobalProxy.h>
 #include <JavaScriptCore/JSObject.h>
@@ -787,6 +787,22 @@ inline CallData getConstructData(JSValue value)
     CallData result = cell->methodTable()->getConstructData(cell);
     ASSERT(result.type == CallData::Type::None || cell->isValidCallee());
     return result;
+}
+
+ALWAYS_INLINE CallData getConstructDataInline(JSCell* cell)
+{
+    if (cell->type() == JSFunctionType)
+        return JSFunction::getConstructDataInline(cell);
+    CallData result = cell->methodTable()->getConstructData(cell);
+    ASSERT(result.type == CallData::Type::None || cell->isValidCallee());
+    return result;
+}
+
+ALWAYS_INLINE CallData getConstructDataInline(JSValue value)
+{
+    if (!value.isCell())
+        return { };
+    return getConstructDataInline(value.asCell());
 }
 
 inline bool JSObject::deleteProperty(JSGlobalObject* globalObject, PropertyName propertyName)

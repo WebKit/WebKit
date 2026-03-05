@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="group" id="text">
+Lorem ipsum dolor sit amet, adipiscing elit. Cras et dolor suscipit elementum. Sed pulvinar molestie lobortis, in tristique vitae enim quis porta, in enim orci, ultrices at cursus eget, tempus ut metus. Sed eleifend sem sit amet nisl consequat, et condimentum nibh dictum. Quisque tempus eget nulla quis faucibus. Fusce vestibulum leo at varius dictum. Nullam convallis mi sed metus gravida egestas. Cras ut erat et nisl viverra ornare. Duis faucibus quam eget nibh convallis, congue porta urna dapibus. Donec eget elit mi. Vestibulum non arcu at libero eleifend molestie a sit amet mi. Vestibulum consequat nulla et sodales porta. 
+</div>
+
+<script>
+var output = "This test ensures we don't crash when trying to find sentence boundaries on the main-thread and accessibility thread at the same time.\n\n";
+
+function allTextNodes() {
+    let textNodes = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+
+    let node;
+    while (node = walker.nextNode()) {
+        if (node.textContent.trim().length > 0)
+            textNodes.push(node);
+    }
+    return textNodes;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text = accessibilityController.accessibleElementById("text");
+    var textMarkerRange = text.textMarkerRangeForElement(text);
+
+    var marker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    for (var i = 0; i < 141; i++) {
+        // Move to a marker in the middle of one of the longer sentences.
+        marker = text.nextTextMarker(marker);
+    }
+
+    var textNodes = allTextNodes();
+    function updateRangeAndSelection() {
+        // Create a random range at a random position.
+        const range = document.createRange();
+        const randomNode = textNodes[Math.floor(Math.random() * textNodes.length)];
+        const nodeLength = randomNode.textContent.length;
+
+        if (nodeLength > 0) {
+            const randomOffset = Math.floor(Math.random() * nodeLength);
+            range.setStart(randomNode, randomOffset);
+            range.setEnd(randomNode, randomOffset);
+
+            // Kick off parallel sentence searches on the main-thread using Range::expand and on the accessibility thread
+            // using previousSentenceStartTextMarkerForTextMarker and nextSentenceEndTextMarkerForTextMarker.
+
+            // Goal of using Range::expand is to exercise WebCore::startOfSentence, which in turn uses a static `sentenceBreakIterator`.
+            range.expand("sentence");
+
+            text.previousSentenceStartTextMarkerForTextMarker(marker);
+            text.nextSentenceEndTextMarkerForTextMarker(marker);
+            range.expand("sentence");
+
+            text.previousSentenceStartTextMarkerForTextMarker(marker);
+            text.nextSentenceEndTextMarkerForTextMarker(marker);
+            range.expand("sentence");
+
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
+
+    // Run multiple concurrent intervals to increase the chances of triggering the crash.
+    const intervalIds = [
+        setInterval(updateRangeAndSelection, 0),
+        setInterval(updateRangeAndSelection, 0),
+        setInterval(updateRangeAndSelection, 0),
+    ];
+
+    setTimeout(async function() {
+        // Give some time running the intervals to see if the crash occurs.
+        await sleep(1000);
+        intervalIds.forEach(id => clearInterval(id));
+        output += "PASS: No crash.\n";
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+

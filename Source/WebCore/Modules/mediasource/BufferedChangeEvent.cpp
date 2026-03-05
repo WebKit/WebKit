@@ -35,19 +35,19 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BufferedChangeEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BufferedChangeEvent);
 
 BufferedChangeEvent::BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed)
     : Event(EventInterfaceType::BufferedChangeEvent, eventNames().bufferedchangeEvent, CanBubble::No, IsCancelable::No)
-    , m_added(WTFMove(added))
-    , m_removed(WTFMove(removed))
+    , m_added(WTF::move(added))
+    , m_removed(WTF::move(removed))
 {
 }
 
 BufferedChangeEvent::BufferedChangeEvent(const AtomString& type, Init&& init)
     : Event(EventInterfaceType::BufferedChangeEvent, type, init, IsTrusted::No)
-    , m_added(WTFMove(init.addedRanges))
-    , m_removed(WTFMove(init.removedRanges))
+    , m_added(WTF::move(init.addedRanges))
+    , m_removed(WTF::move(init.removedRanges))
 {
 }
 

@@ -26,7 +26,35 @@
 #include "config.h"
 #include "WPEScreenSyncObserver.h"
 
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/WTFGType.h>
+
+struct ObserverCallback {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ObserverCallback);
+
+    ObserverCallback(WPEScreenSyncObserverSyncFunc syncFunc, gpointer userData, GDestroyNotify destroyNotify)
+        : syncFunc(syncFunc)
+        , userData(userData)
+        , destroyNotify(destroyNotify)
+    {
+    }
+
+    ~ObserverCallback()
+    {
+        if (destroyNotify)
+            destroyNotify(userData);
+    }
+
+    WPEScreenSyncObserverSyncFunc syncFunc;
+    gpointer userData;
+    GDestroyNotify destroyNotify;
+};
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ObserverCallback);
 
 /**
  * WPEScreenSyncObserver:
@@ -34,118 +62,92 @@
  * A screen sync observer.
  */
 struct _WPEScreenSyncObserverPrivate {
-    gboolean isActive;
-    WPEScreenSyncObserverSyncFunc syncFunc;
-    gpointer userData;
-    GDestroyNotify destroyNotify;
+    Lock lock;
+    HashMap<unsigned, std::unique_ptr<ObserverCallback>> callbacks WTF_GUARDED_BY_LOCK(lock);
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEScreenSyncObserver, wpe_screen_sync_observer, G_TYPE_OBJECT)
 
-static void wpeScreenSyncObserverDispose(GObject* object)
-{
-    auto* priv = WPE_SCREEN_SYNC_OBSERVER(object)->priv;
-    if (priv->syncFunc) {
-        if (priv->destroyNotify) {
-            priv->destroyNotify(priv->userData);
-            priv->destroyNotify = nullptr;
-        }
-        priv->syncFunc = nullptr;
-        priv->userData = nullptr;
-    }
-
-    G_OBJECT_CLASS(wpe_screen_sync_observer_parent_class)->dispose(object);
-}
-
 static void wpeScreenSyncObserverSync(WPEScreenSyncObserver* observer)
 {
     auto* priv = observer->priv;
-    priv->syncFunc(observer, priv->userData);
+    Vector<std::pair<WPEScreenSyncObserverSyncFunc, gpointer>> callbacks;
+    {
+        Locker locker { priv->lock };
+        callbacks.reserveInitialCapacity(priv->callbacks.size());
+        for (const auto& callback : priv->callbacks.values())
+            callbacks.append({ callback->syncFunc, callback->userData });
+    }
+
+    for (auto [syncFunc, userData] : callbacks)
+        syncFunc(observer, userData);
 }
 
 static void wpe_screen_sync_observer_class_init(WPEScreenSyncObserverClass* screenSyncObserverClass)
 {
-    auto* objectClass = G_OBJECT_CLASS(screenSyncObserverClass);
-    objectClass->dispose = wpeScreenSyncObserverDispose;
-
     screenSyncObserverClass->sync = wpeScreenSyncObserverSync;
 }
 
 /**
- * wpe_screen_sync_observer_set_callback:
+ * wpe_screen_sync_observer_add_callback:
  * @observer: a #WPEScreenSyncObserver
  * @sync_func: (scope notified): a #WPEScreenSyncObserverSyncFunc
  * @user_data: data to pass to @sync_func
  * @destroy_notify: (nullable): function for freeing @user_data or %NULL.
  *
  * Add a @sync_func to be called from a secondary thread when the screen sync is triggered.
- * The callback must be set only once and before calling wpe_screen_sync_start().
+ *
+ * To remove this callback pass the identifier that is returned by this function to
+ * wpe_screen_sync_observer_remove_callback().
+ *
+ * Returns: an identifier for this callback
  */
-void wpe_screen_sync_observer_set_callback(WPEScreenSyncObserver* observer, WPEScreenSyncObserverSyncFunc syncFunc, gpointer userData, GDestroyNotify destroyNotify)
+guint wpe_screen_sync_observer_add_callback(WPEScreenSyncObserver* observer, WPEScreenSyncObserverSyncFunc syncFunc, gpointer userData, GDestroyNotify destroyNotify)
 {
-    g_return_if_fail(WPE_IS_SCREEN_SYNC_OBSERVER(observer));
-    g_return_if_fail(syncFunc);
+    g_return_val_if_fail(WPE_IS_SCREEN_SYNC_OBSERVER(observer), 0);
+    g_return_val_if_fail(syncFunc, 0);
 
     auto* priv = observer->priv;
-    g_return_if_fail(!priv->isActive);
-    g_return_if_fail(!priv->syncFunc);
+    bool shouldStart = false;
+    unsigned nextCallbackID = 0;
+    {
+        Locker locker { priv->lock };
+        static unsigned callbackID = 0;
+        nextCallbackID = ++callbackID;
+        shouldStart = priv->callbacks.isEmpty();
+        priv->callbacks.add(nextCallbackID, makeUnique<ObserverCallback>(syncFunc, userData, destroyNotify));
+    }
 
-    priv->syncFunc = syncFunc;
-    priv->userData = userData;
-    priv->destroyNotify = destroyNotify;
+    if (shouldStart) {
+        auto* screenSyncObserverClass = WPE_SCREEN_SYNC_OBSERVER_GET_CLASS(observer);
+        screenSyncObserverClass->start(observer);
+    }
+
+    return nextCallbackID;
 }
 
 /**
- * wpe_screen_sync_observer_start:
+ * wpe_screen_sync_observer_remove_callback:
  * @observer: a #WPEScreenSyncObserver
+ * @id: an identifier returned by wpe_screen_sync_observer_add_callback()
  *
- * Start the @observer.
+ * Remove a callback previously added with wpe_screen_sync_observer_add_callback().
  */
-void wpe_screen_sync_observer_start(WPEScreenSyncObserver* observer)
+void wpe_screen_sync_observer_remove_callback(WPEScreenSyncObserver* observer, guint id)
 {
     g_return_if_fail(WPE_IS_SCREEN_SYNC_OBSERVER(observer));
+    g_return_if_fail(id > 0);
 
     auto* priv = observer->priv;
-    g_return_if_fail(priv->syncFunc);
+    bool shouldStop = false;
+    {
+        Locker locker { priv->lock };
+        priv->callbacks.remove(id);
+        shouldStop = priv->callbacks.isEmpty();
+    }
 
-    if (priv->isActive)
-        return;
-
-    auto* screenSyncObserverClass = WPE_SCREEN_SYNC_OBSERVER_GET_CLASS(observer);
-    screenSyncObserverClass->start(observer);
-    priv->isActive = TRUE;
-}
-
-/**
- * wpe_screen_sync_observer_stop:
- * @observer: a #WPEScreenSyncObserver
- *
- * Stop the @observer.
- */
-void wpe_screen_sync_observer_stop(WPEScreenSyncObserver* observer)
-{
-    g_return_if_fail(WPE_IS_SCREEN_SYNC_OBSERVER(observer));
-
-    auto* priv = observer->priv;
-    if (!priv->isActive)
-        return;
-
-    auto* screenSyncObserverClass = WPE_SCREEN_SYNC_OBSERVER_GET_CLASS(observer);
-    screenSyncObserverClass->stop(observer);
-    priv->isActive = FALSE;
-}
-
-/**
- * wpe_screen_sync_observer_is_active:
- * @observer: a #WPEScreenSyncObserver
- *
- * Return whether @observer is active.
- *
- * Returns: %TRUE if @observer is active, or %FALSE otherwise
- */
-gboolean wpe_screen_sync_observer_is_active(WPEScreenSyncObserver* observer)
-{
-    g_return_val_if_fail(WPE_IS_SCREEN_SYNC_OBSERVER(observer), FALSE);
-
-    return observer->priv->isActive;
+    if (shouldStop) {
+        auto* screenSyncObserverClass = WPE_SCREEN_SYNC_OBSERVER_GET_CLASS(observer);
+        screenSyncObserverClass->stop(observer);
+    }
 }

@@ -6,11 +6,13 @@
  */
 
 #include "include/core/SkPathBuilder.h"
+#include "include/core/SkPathTypes.h"
 #include "src/core/SkPathData.h"
 #include "src/core/SkPathPriv.h"
 
 #include "tests/Test.h"
 
+#include <functional>
 #include <limits>
 
 namespace {
@@ -306,10 +308,10 @@ DEF_TEST(pathdata_make_edgecases, reporter) {
 
     // only these two sequence will result in an "empty" PathData
 
-    const SkPathVerb empty[] = { M };  // the M will be trimmed
+    const SkPathVerb move[] = { M };  // the M will not be trimmed
 
-    REPORTER_ASSERT(reporter, SkPathData::Make({}, {empty, 0}, {})->empty());
-    REPORTER_ASSERT(reporter, SkPathData::Make({pts, 1}, empty, {})->empty());
+    REPORTER_ASSERT(reporter, SkPathData::Make({}, {}, {})->empty());
+    REPORTER_ASSERT(reporter, !SkPathData::Make({pts, 1}, move, {})->empty());
 
     // these sequenes are all illegal (bad verb sequencing)
 
@@ -323,27 +325,29 @@ DEF_TEST(pathdata_make_edgecases, reporter) {
     REPORTER_ASSERT(reporter, SkPathData::Make({pts, 2}, bad2, {}) == nullptr);
     REPORTER_ASSERT(reporter, SkPathData::Make({pts, 4}, bad3, {}) == nullptr);
 
-    // Odd but legal, the trailing M will be removed
+    // Odd but legal, the trailing M is preserved, but not part of the bounds
 
-    const SkPathVerb trimmed[] = { M, L, M }; //legal, but will trim the last M
+    const SkPathVerb trimmed[] = { M, L, M }; //legal
     auto pdata = SkPathData::Make({pts, 3}, trimmed, {});
 
-    REPORTER_ASSERT(reporter, pdata->points().size() == 2);
-    REPORTER_ASSERT(reporter, pdata->verbs().size() == 2);
+    REPORTER_ASSERT(reporter, pdata->points().size() == 3);
+    REPORTER_ASSERT(reporter, pdata->verbs().size() == 3);
+    REPORTER_ASSERT(reporter, pdata->bounds() == SkRect::Bounds({pts, 2}).value());
 
     // Now check on # of points and conic weights
 
-    const SkPathVerb verbs[] = { M, L, Q, K, C, X };    // 1+1+2+2+3 = 9 + 1 conic weight
+    const SkPathVerb verbs[] = { M, L, Q, K, C, X, M };    // 1+1+2+2+3+0+1 = 10 + 1 conic weight
 
     const struct {
         size_t nPts, nConics;
         bool success;
     } combos[] = {
-        {  9, 1, true },    // just right
-        {  8, 1, false },   // not enough points
-        { 10, 1, false },   // too many points
-        {  9, 0, false },   // not enough conics
-        {  9, 2, false },   // too many conics
+        { 10, 1, true  },   // just right
+        {  9, 1, false },   // not enough points
+        { 11, 1, false },   // too many points
+        { 10, 0, false },   // not enough conics
+        { 10, 2, false },   // too many conics
+        {  0, 1, false },   // degenerate, should not crash on moveto trim
     };
     for (auto c : combos) {
         pdata = SkPathData::Make({pts, c.nPts}, verbs, {conicWeights, c.nConics});
@@ -401,6 +405,13 @@ DEF_TEST(pathdata_make_nonfinite, reporter) {
 
     pts[1].fX = inf;  // restore non-finite value
     REPORTER_ASSERT(reporter, SkPathData::Polygon(pts, false) == nullptr);
+
+    {
+        // Non-finite trailing moves should also be rejected.
+        SkPathVerb v[] = { SkPathVerb::kMove, SkPathVerb::kLine, SkPathVerb::kMove };
+        SkPoint    p[] = { {0, 0}, {10, 10}, {inf, 20} };
+        REPORTER_ASSERT(reporter, SkPathData::Make(p, v) == nullptr);
+    }
 }
 
 DEF_TEST(pathdata_transform, reporter) {
@@ -492,5 +503,50 @@ DEF_TEST(pathdata_transform_convexity, reporter) {
         auto expected = SkPathConvexity_IsConvex(conv) ? SkPathConvexity::kUnknown
                                                        : conv;
         REPORTER_ASSERT(reporter, convexity == expected);
+    }
+}
+
+DEF_TEST(pathdata_inverted_bounds, reporter) {
+    using makerT = std::function<sk_sp<SkPathData>(const SkRect&)>;
+    const auto check = [&reporter](const makerT& maker) {
+        constexpr SkRect bounds = {-10, -10, 10, 10};
+        constexpr SkRect inverted_bounds = {10, 10, -10, -10};
+        REPORTER_ASSERT(reporter, maker(bounds)->bounds() == bounds);
+        REPORTER_ASSERT(reporter, maker(inverted_bounds)->bounds() == bounds);
+    };
+
+    {
+        for (auto maker : {factory_rect, builder_rect_rect}) {
+            for (auto dir : {SkPathDirection::kCW, SkPathDirection::kCCW}) {
+                check([&maker, dir](const SkRect& r) { return maker(r, dir); });
+            }
+        }
+    }
+
+    {
+        constexpr unsigned kStartIndexCount = 4;
+        for (auto maker : {factory_oval, builder_oval}) {
+            for (auto dir : {SkPathDirection::kCW, SkPathDirection::kCCW}) {
+                for (unsigned start = 0; start < kStartIndexCount; ++start) {
+                    check([&maker, dir, start](const SkRect& r) { return maker(r, dir, start); });
+                }
+            }
+        }
+    }
+
+    {
+        constexpr unsigned kStartIndexCount = 8;
+        for (auto maker : {factory_rrect, builder_rrect}) {
+            for (auto dir : {SkPathDirection::kCW, SkPathDirection::kCCW}) {
+                for (unsigned start = 0; start < kStartIndexCount; ++start) {
+                    for (int sign : {1, -1}) {
+                        check([&maker, dir, start, sign](const SkRect& r) {
+                            const SkRRect rrect = SkRRect::MakeRectXY(r, sign * 2, sign * 3);
+                            return maker(rrect, dir, start);
+                        });
+                    }
+                }
+            }
+        }
     }
 }

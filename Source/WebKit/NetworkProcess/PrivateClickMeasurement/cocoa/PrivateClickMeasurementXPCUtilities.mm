@@ -36,7 +36,7 @@ void addVersionAndEncodedMessageToDictionary(Vector<uint8_t>&& message, xpc_obje
 {
     ASSERT(xpc_get_type(dictionary) == XPC_TYPE_DICTIONARY);
     xpc_dictionary_set_uint64(dictionary, PCM::protocolVersionKey, PCM::protocolVersionValue);
-    xpc_dictionary_set_value(dictionary, PCM::protocolEncodedMessageKey, vectorToXPCData(WTFMove(message)).get());
+    xpc_dictionary_set_value(dictionary, PCM::protocolEncodedMessageKey, vectorToXPCData(WTF::move(message)).get());
 }
 
 } // namespace WebKit

@@ -52,7 +52,7 @@ RemoteBufferProxy::~RemoteBufferProxy()
 
 void RemoteBufferProxy::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTFMove(callback), mapModeFlags, protectedThis = Ref { *this }](auto success) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTF::move(callback), mapModeFlags, protectedThis = Ref { *this }](auto success) mutable {
         if (!success)
             return callback(false);
         protectedThis->m_mapModeFlags = mapModeFlags;
@@ -61,7 +61,7 @@ void RemoteBufferProxy::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, Web
     UNUSED_PARAM(sendResult);
 }
 
-static bool offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> requestedSize)
+static bool NODELETE offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> requestedSize)
 {
     return offset >= dataSize || (requestedSize.has_value() && requestedSize.value() + offset > dataSize);
 }
@@ -72,6 +72,7 @@ void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
     auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
     auto [data] = sendResult.takeReplyOr(std::nullopt);
 
+    offset = 0;
     if (!data || !data->span().data() || offsetOrSizeExceedsBounds(data->size(), offset, size)) {
         callback({ });
         return;
@@ -93,7 +94,7 @@ void RemoteBufferProxy::copyFrom(std::span<const uint8_t> span, size_t offset)
     size_t actualCopySize = span.size() - offset;
     if (actualCopySize > maxCrossProcessResourceCopySize) {
         auto handle = WebCore::SharedMemoryHandle::createCopy(span, WebCore::SharedMemory::Protection::ReadOnly);
-        auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::Copy(WTFMove(handle), offset), [](auto) {
+        auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::Copy(WTF::move(handle), offset), [](auto) {
         });
         UNUSED_VARIABLE(sendResult);
     } else {

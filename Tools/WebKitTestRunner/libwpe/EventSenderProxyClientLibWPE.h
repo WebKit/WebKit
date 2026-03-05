@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(LIBWPE)
+
 #include "EventSenderProxyClient.h"
 
 #include <wtf/HashSet.h>
@@ -75,3 +77,5 @@ private:
 };
 
 } // namespace WTR
+
+#endif // USE(LIBWPE)

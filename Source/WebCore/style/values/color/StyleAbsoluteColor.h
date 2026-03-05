@@ -44,7 +44,7 @@ template<typename D> Color toStyleColor(const CSS::AbsoluteColor<D>& unresolved,
         .nestingLevel = state.nestingLevel
     };
 
-    return Color { ResolvedColor { resolve(WTFMove(resolver), state.conversionData) } };
+    return Color { ResolvedColor { resolve(WTF::move(resolver), state.conversionData) } };
 }
 
 } // namespace Style

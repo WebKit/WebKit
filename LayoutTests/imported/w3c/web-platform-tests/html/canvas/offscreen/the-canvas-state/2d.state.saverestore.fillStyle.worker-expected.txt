@@ -1,3 +1,6 @@
 
-PASS save()/restore() works for fillStyle
+PASS save()/restore() restores fillStyle, for a canvas of size (300, 150).
+PASS save() does not modify fillStyle, for a canvas of size (300, 150).
+PASS save()/restore() restores fillStyle, for a canvas of size (0, 0).
+PASS save() does not modify fillStyle, for a canvas of size (0, 0).
 

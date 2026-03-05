@@ -74,12 +74,12 @@ std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMul
     if (!boundary)
         return nullptr;
 
-    return makeUnique<CurlMultipartHandle>(client, WTFMove(*boundary));
+    return makeUnique<CurlMultipartHandle>(client, WTF::move(*boundary));
 }
 
 CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, CString&& boundary)
     : m_client(client)
-    , m_boundary(WTFMove(boundary))
+    , m_boundary(WTF::move(boundary))
 {
 }
 
@@ -157,7 +157,7 @@ bool CurlMultipartHandle::processContent()
     case State::InHeader: {
         switch (parseHeadersIfPossible()) {
         case ParseHeadersResult::Success:
-            m_client->didReceiveHeaderFromMultipart(WTFMove(m_headers));
+            m_client->didReceiveHeaderFromMultipart(WTF::move(m_headers));
             m_state = State::WaitingForHeaderProcessing;
             return true;
 

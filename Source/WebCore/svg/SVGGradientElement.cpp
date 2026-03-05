@@ -39,10 +39,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGGradientElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGGradientElement);
 
 SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGElement(tagName, document, WTFMove(propertyRegistry))
+    : SVGElement(tagName, document, WTF::move(propertyRegistry))
     , SVGURIReference(this)
 {
     static bool didRegistration = false;
@@ -115,10 +115,10 @@ GradientColorStops SVGGradientElement::buildStops()
 {
     GradientColorStops stops;
     float previousOffset = 0.0f;
-    for (auto& stop : childrenOfType<SVGStopElement>(*this)) {
-        auto monotonicallyIncreasingOffset = std::clamp(stop.offset(), previousOffset, 1.0f);
+    for (Ref stop : childrenOfType<SVGStopElement>(*this)) {
+        auto monotonicallyIncreasingOffset = std::clamp(stop->offset(), previousOffset, 1.0f);
         previousOffset = monotonicallyIncreasingOffset;
-        stops.addColorStop({ monotonicallyIncreasingOffset, stop.stopColorIncludingOpacity() });
+        stops.addColorStop({ monotonicallyIncreasingOffset, stop->stopColorIncludingOpacity() });
     }
     return stops;
 }

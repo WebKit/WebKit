@@ -46,6 +46,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSRequestAnimationFrameCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(double highResTimeMs) = 0;
     virtual CallbackResult<void> invokeRethrowingException(double highResTimeMs) = 0;
 

@@ -32,5 +32,5 @@ layer at (0,0) size 800x250
                       RenderText {#text} at (3,2) size 131x36
                         text run at (3,2) width 131: "\x{21E6}THERE"
       RenderBlock {P} at (0,200) size 784x18
-        RenderText {#text} at (0,0) size 337x17
+        RenderText {#text} at (0,0) size 337x18
           text run at (0,0) width 337: "There should be 3 short lines and 2 long lines in total."

@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_DETECTION)
@@ -86,3 +89,5 @@ DECLARE_SYSTEM_HEADER
 @end
 
 #endif
+
+#endif // !__has_feature(modules)

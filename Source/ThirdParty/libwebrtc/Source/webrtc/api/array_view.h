@@ -213,18 +213,21 @@ class ArrayView final : public array_view_internal::ArrayViewBase<T, Size> {
   // N>, but not the other way around. We also don't allow conversion from
   // ArrayView<T> to ArrayView<T, N>, or from ArrayView<T, M> to ArrayView<T,
   // N> when M != N.
-  template <
-      typename U,
-      typename std::enable_if<Size != array_view_internal::kArrayViewVarSize &&
-                              HasDataAndSize<U, T>::value>::type* = nullptr>
+  template <typename U,
+            typename std::enable_if_t<
+                !std::is_same_v<ArrayView, std::remove_reference_t<U>> &&
+                Size != array_view_internal::kArrayViewVarSize &&
+                HasDataAndSize<U, T>::value>* = nullptr>
   ArrayView(U& u)  // NOLINT
       : ArrayView(u.data(), u.size()) {
     static_assert(U::size() == Size, "Sizes must match exactly");
   }
-  template <
-      typename U,
-      typename std::enable_if<Size != array_view_internal::kArrayViewVarSize &&
-                              HasDataAndSize<U, T>::value>::type* = nullptr>
+
+  template <typename U,
+            typename std::enable_if_t<
+                !std::is_same_v<ArrayView, std::remove_reference_t<U>> &&
+                Size != array_view_internal::kArrayViewVarSize &&
+                HasDataAndSize<U, T>::value>* = nullptr>
   ArrayView(const U& u)  // NOLINT(runtime/explicit)
       : ArrayView(u.data(), u.size()) {
     static_assert(U::size() == Size, "Sizes must match exactly");
@@ -241,16 +244,19 @@ class ArrayView final : public array_view_internal::ArrayViewBase<T, Size> {
   // const std::vector<T> to ArrayView<const T>,
   // Buffer to ArrayView<uint8_t> or ArrayView<const uint8_t>, and
   // const Buffer to ArrayView<const uint8_t>.
-  template <
-      typename U,
-      typename std::enable_if<Size == array_view_internal::kArrayViewVarSize &&
-                              HasDataAndSize<U, T>::value>::type* = nullptr>
+  template <typename U,
+            typename std::enable_if_t<
+                !std::is_same_v<ArrayView, std::remove_reference_t<U>> &&
+                Size == array_view_internal::kArrayViewVarSize &&
+                HasDataAndSize<U, T>::value>* = nullptr>
   ArrayView(U& u)  // NOLINT
       : ArrayView(u.data(), u.size()) {}
-  template <
-      typename U,
-      typename std::enable_if<Size == array_view_internal::kArrayViewVarSize &&
-                              HasDataAndSize<U, T>::value>::type* = nullptr>
+
+  template <typename U,
+            typename std::enable_if_t<
+                !std::is_same_v<ArrayView, std::remove_reference_t<U>> &&
+                Size == array_view_internal::kArrayViewVarSize &&
+                HasDataAndSize<U, T>::value>* = nullptr>
   ArrayView(const U& u)  // NOLINT(runtime/explicit)
       : ArrayView(u.data(), u.size()) {}
 

@@ -1,5 +1,5 @@
 
-FAIL catch SuspendError undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => Promise.resolve(42))')
-FAIL throw on reentrance promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => Promise.resolve(42))')"
-FAIL unwrapped export undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => Promise.resolve())')
+PASS catch SuspendError
+PASS throw on reentrance
+PASS unwrapped export
 

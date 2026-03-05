@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class CSSLCH final : public CSSOMColorValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSLCH);
+    WTF_MAKE_TZONE_ALLOCATED(CSSLCH);
 public:
     static ExceptionOr<Ref<CSSLCH>> create(CSSColorPercent&& lightness, CSSColorPercent&& chroma, CSSColorAngle&& hue, CSSColorPercent&& alpha);
 

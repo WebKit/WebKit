@@ -33,7 +33,7 @@ namespace WebKit {
 struct SessionState;
 
 RetainPtr<NSData> encodeSessionState(const SessionState&);
-WARN_UNUSED_RETURN bool decodeSessionState(NSData *, SessionState&);
+[[nodiscard]] bool decodeSessionState(NSData *, SessionState&);
 
 }
 

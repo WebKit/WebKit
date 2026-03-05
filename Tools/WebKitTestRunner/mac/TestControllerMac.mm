@@ -234,7 +234,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
         return;
 
     auto testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));
-    NSURL *filterURL = [(__bridge NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
+    NSURL *filterURL = [[(__bridge NSURL *)testURL.get() URLByDeletingPathExtension] URLByAppendingPathExtension:@"json"];
 
     __block RetainPtr<NSString> contentExtensionString;
     __block bool doneFetchingContentExtension = false;
@@ -488,6 +488,31 @@ const char* TestController::platformLibraryPathForTesting()
         platformLibraryPath.get() = [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
     });
     return [platformLibraryPath.get() UTF8String];
+}
+
+CFDataRef TestController::getRemoteAccessibilityToken()
+{
+    if (!m_mainWebView)
+        return nullptr;
+
+    auto* platformView = m_mainWebView->platformView();
+    if (!platformView)
+        return nullptr;
+
+    return (__bridge CFDataRef)[platformView _remoteAccessibilityChildToken];
+}
+
+void TestController::initializeWebProcessAccessibility()
+{
+    auto* platformView = m_mainWebView->platformView();
+    if (!platformView)
+        return;
+
+    // Trigger accessibility initialization by accessing an accessibility attribute.
+    // This will call WebViewImpl::enableAccessibilityIfNecessary() which then calls
+    // WebProcessPool::initializeAccessibilityIfNecessary() to send the InitializeAccessibility
+    // IPC message to the web content process.
+    [platformView accessibilityAttributeValue:NSAccessibilityRoleAttribute];
 }
 
 } // namespace WTR

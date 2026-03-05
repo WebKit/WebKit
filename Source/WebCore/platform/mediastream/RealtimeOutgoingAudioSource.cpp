@@ -38,7 +38,7 @@
 namespace WebCore {
 
 RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&& source)
-    : m_audioSource(WTFMove(source))
+    : m_audioSource(WTF::move(source))
 {
 }
 
@@ -72,7 +72,7 @@ void RealtimeOutgoingAudioSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
     ALWAYS_LOG("Changing source to ", newSource->logIdentifier());
 
     ASSERT(!m_audioSource->hasObserver(*this));
-    m_audioSource = WTFMove(newSource);
+    m_audioSource = WTF::move(newSource);
     sourceUpdated();
 }
 

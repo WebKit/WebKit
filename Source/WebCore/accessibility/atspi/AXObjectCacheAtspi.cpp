@@ -53,7 +53,7 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 
         auto* axParent = axObject.parentObjectUnignored();
         if (!axParent) {
-            if (axObject.isScrollView() && document() && axObject.scrollView() == document()->view())
+            if (axObject.isScrollArea() && document() && axObject.scrollView() == document()->view())
                 wrapper->setParent(nullptr); // nullptr means root.
             return;
         }
@@ -173,24 +173,24 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
         return;
 
     switch (editType) {
-    case AXTextEditTypeDelete:
-    case AXTextEditTypeCut:
+    case AXTextEditType::Delete:
+    case AXTextEditType::Cut:
         wrapper->textDeleted(text, position);
         break;
-    case AXTextEditTypeInsert:
-    case AXTextEditTypeTyping:
-    case AXTextEditTypeDictation:
-    case AXTextEditTypePaste:
+    case AXTextEditType::Insert:
+    case AXTextEditType::Typing:
+    case AXTextEditType::Dictation:
+    case AXTextEditType::Paste:
         wrapper->textInserted(text, position);
         break;
-    case AXTextEditTypeAttributesChange:
+    case AXTextEditType::AttributesChange:
         wrapper->textAttributesChanged();
         break;
-    case AXTextEditTypeReplace:
+    case AXTextEditType::Replace:
         // Should call postTextReplacementPlatformNotification instead.
         ASSERT_NOT_REACHED();
         break;
-    case AXTextEditTypeUnknown:
+    case AXTextEditType::Unknown:
         break;
     }
 }
@@ -269,14 +269,14 @@ void AXObjectCache::frameLoadingEventPlatformNotification(RenderView* renderView
     }
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Element* oldFocus, Element* newFocus)
+void AXObjectCache::platformHandleFocusedUIElementChanged(AccessibilityObject* oldFocus, AccessibilityObject* newFocus)
 {
-    if (auto* axObject = get(oldFocus)) {
-        if (auto* wrapper = axObject->wrapper())
+    if (oldFocus) {
+        if (auto* wrapper = oldFocus->wrapper())
             wrapper->stateChanged("focused", false);
     }
-    if (auto* axObject = getOrCreate(newFocus)) {
-        if (auto* wrapper = axObject->wrapper())
+    if (newFocus) {
+        if (auto* wrapper = newFocus->wrapper())
             wrapper->stateChanged("focused", true);
     }
 }

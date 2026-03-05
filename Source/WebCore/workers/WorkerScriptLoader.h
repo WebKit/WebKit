@@ -59,7 +59,6 @@ enum class CertificateInfoPolicy : uint8_t;
 
 class WorkerScriptLoader final : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED(WorkerScriptLoader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerScriptLoader);
 public:
     enum class AlwaysUseUTF8 : bool { No, Yes };
     static Ref<WorkerScriptLoader> create(AlwaysUseUTF8 alwaysUseUTF8 = AlwaysUseUTF8::No)
@@ -73,6 +72,10 @@ public:
     void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier = std::nullopt);
 
     void notifyError(std::optional<ScriptExecutionContextIdentifier>);
+
+    // ThreadableLoaderClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
@@ -132,7 +135,7 @@ private:
     friend class RefCounted<WorkerScriptLoader>;
     friend struct std::default_delete<WorkerScriptLoader>;
 
-    WorkerScriptLoader(AlwaysUseUTF8);
+    explicit WorkerScriptLoader(AlwaysUseUTF8);
     ~WorkerScriptLoader();
 
     std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);

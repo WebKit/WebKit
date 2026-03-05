@@ -10,13 +10,24 @@
 
 #include "modules/audio_device/win/core_audio_input_win.h"
 
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <string>
 
+#include "api/array_view.h"
+#include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
+#include "api/sequence_checker.h"
+#include "api/units/time_delta.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/fine_audio_buffer.h"
+#include "modules/audio_device/win/core_audio_base_win.h"
+#include "modules/audio_device/win/core_audio_utility_win.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/zero_memory.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -27,8 +38,9 @@ enum AudioDeviceMessageType : uint32_t {
   kMessageInputStreamDisconnected,
 };
 
-CoreAudioInput::CoreAudioInput(bool automatic_restart)
+CoreAudioInput::CoreAudioInput(const Environment& env, bool automatic_restart)
     : CoreAudioBase(
+          env,
           CoreAudioBase::Direction::kInput,
           automatic_restart,
           [this](uint64_t freq) { return OnDataCallback(freq); },

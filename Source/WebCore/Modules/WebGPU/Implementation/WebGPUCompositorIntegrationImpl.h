@@ -71,13 +71,13 @@ public:
     void registerCallbacks(WTF::Function<void(CFArrayRef)>&& renderBuffersWereRecreatedCallback, WTF::Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduledCallback)
     {
         ASSERT(!m_renderBuffersWereRecreatedCallback);
-        m_renderBuffersWereRecreatedCallback = WTFMove(renderBuffersWereRecreatedCallback);
+        m_renderBuffersWereRecreatedCallback = WTF::move(renderBuffersWereRecreatedCallback);
         ASSERT(!m_onSubmittedWorkScheduledCallback);
-        m_onSubmittedWorkScheduledCallback = WTFMove(onSubmittedWorkScheduledCallback);
+        m_onSubmittedWorkScheduledCallback = WTF::move(onSubmittedWorkScheduledCallback);
     }
 
     void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) final;
-    void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
+    void NODELETE paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -88,6 +88,8 @@ private:
     CompositorIntegrationImpl(CompositorIntegrationImpl&&) = delete;
     CompositorIntegrationImpl& operator=(const CompositorIntegrationImpl&) = delete;
     CompositorIntegrationImpl& operator=(CompositorIntegrationImpl&&) = delete;
+
+    bool isCompositorIntegrationImpl() const final { return true; }
 
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) override;
     void updateContentsHeadroom(float) override;
@@ -107,5 +109,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::CompositorIntegrationImpl)
+    static bool isType(const WebCore::WebGPU::CompositorIntegration& compositorIntegration) { return compositorIntegration.isCompositorIntegrationImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

@@ -397,7 +397,7 @@ WebKitXRPermissionRequest* webkitXRPermissionRequestCreate(const WebCore::Securi
     WebKitXRPermissionRequest* xrPermissionRequest = WEBKIT_XR_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_XR_PERMISSION_REQUEST, nullptr));
     xrPermissionRequest->priv->securityOrigin = webkitSecurityOriginCreate(WebCore::SecurityOriginData { securityOriginData });
     xrPermissionRequest->priv->mode = toWebKitXRSessionMode(mode);
-    xrPermissionRequest->priv->completionHandler = WTFMove(completionHandler);
+    xrPermissionRequest->priv->completionHandler = WTF::move(completionHandler);
     xrPermissionRequest->priv->previouslyGrantedFeatures = toWebKitXRSessionFeatures(granted);
     xrPermissionRequest->priv->consentRequiredFeatures = toWebKitXRSessionFeatures(consentRequired);
     xrPermissionRequest->priv->consentOptionalFeatures = toWebKitXRSessionFeatures(consentOptional);

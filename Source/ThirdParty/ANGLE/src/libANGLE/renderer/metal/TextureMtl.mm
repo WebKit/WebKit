@@ -1128,7 +1128,8 @@ angle::Result TextureMtl::ensureSamplerStateCreated(const gl::Context *context)
 angle::Result TextureMtl::createViewFromBaseToMaxLevel()
 {
     ASSERT(mNativeTextureStorage);
-    uint32_t maxLevel = std::min(mNativeTextureStorage->getMaxSupportedGLLevel(), mState.getEffectiveMaxLevel());
+    uint32_t maxLevel =
+        std::min(mNativeTextureStorage->getMaxSupportedGLLevel(), mState.getEffectiveMaxLevel());
 
     // In edge case where base level > max level, clamp up to base level.
     maxLevel = std::max(maxLevel, mState.getEffectiveBaseLevel());
@@ -1179,8 +1180,8 @@ angle::Result TextureMtl::onBaseMaxLevelsChanged(const gl::Context *context)
 
     // Account for clamping in createViewFromBaseToMaxLevel() to avoid redundant storage
     // re-creation when max < base (e.g., base=7 with max toggling 1->2->3 should not re-create).
-    GLuint effectiveMaxForStorage = std::max(mState.getMipmapMaxLevel(),
-                                             mState.getEffectiveBaseLevel());
+    GLuint effectiveMaxForStorage =
+        std::max(mState.getMipmapMaxLevel(), mState.getEffectiveBaseLevel());
 
     if (mState.getEffectiveBaseLevel() == mNativeTextureStorage->getBaseGLLevel() &&
         effectiveMaxForStorage == mNativeTextureStorage->getMaxSupportedGLLevel())
@@ -2195,14 +2196,10 @@ angle::Result TextureMtl::setSubImageImpl(const gl::Context *context,
     GLuint sourceRowPitch   = 0;
     GLuint sourceDepthPitch = 0;
     GLuint sourceSkipBytes  = 0;
-    ANGLE_CHECK_GL_MATH(contextMtl, formatInfo.computeRowPitch(type, area.width, unpack.alignment,
-                                                               unpack.rowLength, &sourceRowPitch));
     ANGLE_CHECK_GL_MATH(
-        contextMtl, formatInfo.computeDepthPitch(area.height, unpack.imageHeight, sourceRowPitch,
-                                                 &sourceDepthPitch));
-    ANGLE_CHECK_GL_MATH(contextMtl,
-                        formatInfo.computeSkipBytes(type, sourceRowPitch, sourceDepthPitch, unpack,
-                                                    index.usesTex3D(), &sourceSkipBytes));
+        contextMtl, formatInfo.computeRowDepthSkipBytes(
+                        type, gl::Extents{area.width, area.height, area.depth}, unpack,
+                        index.usesTex3D(), &sourceRowPitch, &sourceDepthPitch, &sourceSkipBytes));
 
     // Get corresponding source data's ANGLE format
     angle::FormatID srcAngleFormatId;
@@ -2346,9 +2343,9 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
             {
                 // Current command buffer implementation does not support 64-bit offsets.
                 ANGLE_CHECK_GL_MATH(contextMtl, offset <= std::numeric_limits<uint32_t>::max());
+                size_t imageSize = pixelsRowPitch * mtlArea.size.height;
                 mtl::BufferRef stagingBuffer;
-                ANGLE_TRY(
-                    mtl::Buffer::MakeBuffer(contextMtl, pixelsDepthPitch, nullptr, &stagingBuffer));
+                ANGLE_TRY(mtl::Buffer::MakeBuffer(contextMtl, imageSize, nullptr, &stagingBuffer));
 
                 ASSERT(pixelsAngleFormat.pixelBytes == 4 && offset % 4 == 0);
                 ANGLE_TRY(SaturateDepth(contextMtl, sourceBuffer, stagingBuffer,
@@ -2359,11 +2356,13 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
                 offset       = 0;
             }
 
+            size_t srcBytesPerImage = mtlArea.size.depth > 1 ? pixelsDepthPitch : 0;
+
             // Use blit encoder to copy
             mtl::BlitCommandEncoder *blitEncoder = GetBlitCommandEncoderForResources(
                 contextMtl, {sourceBuffer.get(), imageDef.image.get()});
             CopyBufferToOriginalTextureIfDstIsAView(
-                contextMtl, blitEncoder, sourceBuffer, offset, pixelsRowPitch, pixelsDepthPitch,
+                contextMtl, blitEncoder, sourceBuffer, offset, pixelsRowPitch, srcBytesPerImage,
                 mtlArea.size, imageDef.image, slice, mtl::kZeroNativeMipLevel, mtlArea.origin,
                 imageFormat.isPVRTC() ? MTLBlitOptionRowLinearPVRTC : MTLBlitOptionNone);
         }

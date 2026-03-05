@@ -1,0 +1,21 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+img {
+  width: 40px;
+  height: 30px;
+  background-color: green;
+}
+</style>
+<div id=container>before<span><div id=change_this>change this text</div></span>after</div>
+<script>
+window.testRunner?.waitUntilDone();
+
+window.addEventListener('load', async () => {
+  document.body.offsetHeight;
+  await UIHelper.renderingUpdate();
+  container.appendChild(document.createElement("img"));
+  change_this.innerText = "PASS if no crash or assert";
+
+  window.testRunner?.notifyDone();
+}, false);
+</script>

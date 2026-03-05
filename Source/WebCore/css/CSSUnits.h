@@ -166,11 +166,11 @@ enum class CSSUnitCategory : uint8_t {
     Other
 };
 
-CSSUnitCategory unitCategory(CSSUnitType);
-CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory);
-CSSUnitType canonicalUnitTypeForUnitType(CSSUnitType);
-double conversionToCanonicalUnitsScaleFactor(CSSUnitType);
-bool conversionToCanonicalUnitRequiresConversionData(CSSUnitType);
+CSSUnitCategory NODELETE unitCategory(CSSUnitType);
+CSSUnitType NODELETE canonicalUnitTypeForCategory(CSSUnitCategory);
+CSSUnitType NODELETE canonicalUnitTypeForUnitType(CSSUnitType);
+double NODELETE conversionToCanonicalUnitsScaleFactor(CSSUnitType);
+bool NODELETE conversionToCanonicalUnitRequiresConversionData(CSSUnitType);
 
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitCategory);
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitType);

@@ -74,10 +74,6 @@ messages -> GPUProcess : AuxiliaryProcess {
     CancelGetDisplayMediaPrompt()
 #endif
 
-#if ENABLE(VIDEO)
-    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> handle)
-#endif
-
 #if PLATFORM(MAC)
     OpenDirectoryCacheInvalidated(WebKit::SandboxExtensionHandle handle)
 #endif

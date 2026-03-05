@@ -13,22 +13,17 @@ The destination folder for these files and symlinks are:
 """
 
 load(":clang_layering_check.bzl", "generate_system_module_map")
-load(":utils.bzl", "gcs_mirror_url")
 
-# From https://github.com/llvm/llvm-project/releases/tag/llvmorg-17.0.6
-# When updating this, don't forget to use //bazel/gcs_mirror to upload a new version.
-# go run bazel/gcs_mirror/gcs_mirror.go --url [clang_url] --sha256 [clang_sha256]
-clang_prefix_arm64 = "clang+llvm-17.0.6-arm64-apple-darwin22.0"
-clang_sha256_arm64 = "1264eb3c2a4a6d5e9354c3e5dc5cb6c6481e678f6456f36d2e0e566e9400fcad"
-clang_url_arm64 = "https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.6/clang+llvm-17.0.6-arm64-apple-darwin22.0.tar.xz"
-clang_ver_arm64 = "17"
+# https://chrome-infra-packages.appspot.com/p/skia/bots/clang_mac_intel/+/NL1eTB6Iud2w7mk4TkMXSFpVZmzjF3Ms4BwDE130ZkQC
+clang_intel_url = "https://chrome-infra-packages.appspot.com/dl/skia/bots/clang_mac_intel/+/version:0"
+clang_intel_sha256 = "34bd5e4c1e88b9ddb0ee69384e4317485a55666ce317732ce01c03135df46644"
 
-# No x86_64-apple binaries published by llvm-project beyond 15.
-# TODO: find a different toolchain source.
-clang_prefix_amd64 = "clang+llvm-15.0.1-x86_64-apple-darwin"
-clang_sha256_amd64 = "0b2f1a811e68d011344103274733b7670c15bbe08b2a3a5140ccad8e19d9311e"
-clang_url_amd64 = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.1/clang+llvm-15.0.1-x86_64-apple-darwin.tar.xz"
-clang_ver_amd64 = "15.0.1"
+# https://chrome-infra-packages.appspot.com/p/skia/bots/clang_mac_arm/+/lG-b1HzK2Qbd3ebEJvtaaF6iwbZgpcyu8xTerfoa2jAC
+clang_arm_url = "https://chrome-infra-packages.appspot.com/dl/skia/bots/clang_mac_arm/+/version:0"
+clang_arm_sha256 = "946f9bd47ccad906dddde6c426fb5a685ea2c1b660a5ccaef314deadfa1ada30"
+
+# This should be the same across both arm and intel.
+clang_ver = "22"
 
 def _get_system_sdk_path(ctx):
     res = ctx.execute(["xcrun", "--sdk", "macosx", "--show-sdk-path"])
@@ -64,25 +59,19 @@ def _create_macos_sdk_symlinks(ctx):
     )
 
 def _download_mac_toolchain_impl(ctx):
-    # https://bazel.build/rules/lib/repository_ctx#os
-    # https://bazel.build/rules/lib/repository_os
-    if ctx.os.arch == "aarch64":
-        clang_ver = clang_ver_arm64
-        clang_url = clang_url_arm64
-        clang_sha256 = clang_sha256_arm64
-        clang_prefix = clang_prefix_arm64
-    else:
-        clang_ver = clang_ver_amd64
-        clang_url = clang_url_amd64
-        clang_sha256 = clang_sha256_amd64
-        clang_prefix = clang_prefix_amd64
+    # https://bazel.build/rules/lib/repository_ctx
 
     # Download the clang toolchain (the extraction can take a while)
     # https://bazel.build/rules/lib/repository_ctx#download_and_extract
+    clang_url = clang_intel_url
+    clang_sha256 = clang_intel_sha256
+    if "arm" in ctx.os.arch or "aarch64" in ctx.os.arch:
+        clang_url = clang_arm_url
+        clang_sha256 = clang_arm_sha256
     ctx.download_and_extract(
-        url = gcs_mirror_url(clang_url, clang_sha256),
+        url = clang_url,
+        type = "zip",
         output = "",
-        stripPrefix = clang_prefix,
         sha256 = clang_sha256,
     )
 
@@ -99,12 +88,13 @@ def _download_mac_toolchain_impl(ctx):
     # This list of files lines up with _make_default_flags() in mac_toolchain_config.bzl
     # It is all locations that our toolchain could find a system header.
     builtin_include_directories = [
-        "include/c++/v1",
         "lib/clang/" + clang_ver + "/include",
         # Frameworks is a symlink, and the trailing slash is intentional
         # (to ensure traversal in generate_system_module_map.sh's find).
         "symlinks/xcode/MacSDK/System/Library/Frameworks/",
         "symlinks/xcode/MacSDK/usr/include",
+        # The C++ standard library headers are here but that's accounted for above.
+        # "symlinks/xcode/MacSDK/usr/include/c++/v1",
     ]
 
     generate_system_module_map(
@@ -140,10 +130,12 @@ filegroup(
 
 # Any framework that Skia depends on directly or indirectly needs to be listed here.
 FRAMEWORK_GLOB = [
+    "symlinks/xcode/MacSDK/System/Library/Frameworks/_LocationEssentials.framework/**",
     "symlinks/xcode/MacSDK/System/Library/Frameworks/AppKit.Framework/**",
     "symlinks/xcode/MacSDK/System/Library/Frameworks/ApplicationServices.Framework/**",
     "symlinks/xcode/MacSDK/System/Library/Frameworks/AVFAudio.Framework/**",
     "symlinks/xcode/MacSDK/System/Library/Frameworks/AVFoundation.Framework/**",
+    "symlinks/xcode/MacSDK/System/Library/Frameworks/AVRouting.Framework/**",
     "symlinks/xcode/MacSDK/System/Library/Frameworks/Carbon.Framework/**",
     "symlinks/xcode/MacSDK/System/Library/Frameworks/CFNetwork.Framework/**",
     "symlinks/xcode/MacSDK/System/Library/Frameworks/CloudKit.Framework/**",
@@ -182,7 +174,6 @@ filegroup(
         "bin/clang",
     ] + glob(
         include = [
-            "include/c++/v1/**",
             "lib/clang/*/include/**",
             "symlinks/xcode/MacSDK/usr/include/**",
         ],
@@ -202,9 +193,6 @@ filegroup(
         "bin/clang",
         "bin/ld.lld",
         "bin/lld",
-        "lib/libc++.a",
-        "lib/libc++abi.a",
-        "lib/libunwind.a",
     ] + glob(
         include = [
             # libc++.tbd and libSystem.tbd live here.

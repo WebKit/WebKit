@@ -31,9 +31,8 @@ typedef [EnforceRange] unsigned long GPUIndex32;
 typedef (GPUSampler or GPUTexture or GPUTextureView or GPUBuffer or GPUBufferBinding or GPUExternalTexture) GPUBindingResource;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUBindGroupEntry {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUBindGroupEntry {
     required GPUIndex32 binding;
     required GPUBindingResource resource;
 };

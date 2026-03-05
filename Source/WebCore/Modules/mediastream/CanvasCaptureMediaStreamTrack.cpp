@@ -40,25 +40,26 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CanvasCaptureMediaStreamTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasCaptureMediaStreamTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasCaptureMediaStreamTrack::Source);
 
 Ref<CanvasCaptureMediaStreamTrack> CanvasCaptureMediaStreamTrack::create(Document& document, Ref<HTMLCanvasElement>&& canvas, std::optional<double>&& frameRequestRate)
 {
-    auto source = CanvasCaptureMediaStreamTrack::Source::create(canvas.get(), WTFMove(frameRequestRate));
-    auto track = adoptRef(*new CanvasCaptureMediaStreamTrack(document, WTFMove(canvas), WTFMove(source)));
+    auto source = CanvasCaptureMediaStreamTrack::Source::create(canvas.get(), WTF::move(frameRequestRate));
+    auto track = adoptRef(*new CanvasCaptureMediaStreamTrack(document, WTF::move(canvas), WTF::move(source)));
     track->suspendIfNeeded();
     return track;
 }
 
 CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack(Document& document, Ref<HTMLCanvasElement>&& canvas, Ref<CanvasCaptureMediaStreamTrack::Source>&& source)
     : MediaStreamTrack(document, MediaStreamTrackPrivate::create(document.logger(), source.copyRef()))
-    , m_canvas(WTFMove(canvas))
+    , m_canvas(WTF::move(canvas))
 {
 }
 
 CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack(Document& document, Ref<HTMLCanvasElement>&& canvas, Ref<MediaStreamTrackPrivate>&& privateTrack)
-    : MediaStreamTrack(document, WTFMove(privateTrack))
-    , m_canvas(WTFMove(canvas))
+    : MediaStreamTrack(document, WTF::move(privateTrack))
+    , m_canvas(WTF::move(canvas))
 {
 }
 
@@ -70,7 +71,7 @@ RefPtr<VideoFrame> CanvasCaptureMediaStreamTrack::grabFrame()
 
 Ref<CanvasCaptureMediaStreamTrack::Source> CanvasCaptureMediaStreamTrack::Source::create(HTMLCanvasElement& canvas, std::optional<double>&& frameRequestRate)
 {
-    auto source = adoptRef(*new Source(canvas, WTFMove(frameRequestRate)));
+    auto source = adoptRef(*new Source(canvas, WTF::move(frameRequestRate)));
     source->start();
 
     callOnMainThread([source] {
@@ -84,7 +85,7 @@ Ref<CanvasCaptureMediaStreamTrack::Source> CanvasCaptureMediaStreamTrack::Source
 // FIXME: Give source id and name
 CanvasCaptureMediaStreamTrack::Source::Source(HTMLCanvasElement& canvas, std::optional<double>&& frameRequestRate)
     : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Camera, "CanvasCaptureMediaStreamTrack"_s })
-    , m_frameRequestRate(WTFMove(frameRequestRate))
+    , m_frameRequestRate(WTF::move(frameRequestRate))
     , m_requestFrameTimer(*this, &Source::requestFrameTimerFired)
     , m_captureCanvasTimer(*this, &Source::captureCanvas)
     , m_canvas(&canvas)
@@ -151,7 +152,7 @@ const RealtimeMediaSourceSettings& CanvasCaptureMediaStreamTrack::Source::settin
     }
     settings.setSupportedConstraints(constraints);
 
-    m_currentSettings = WTFMove(settings);
+    m_currentSettings = WTF::move(settings);
     return m_currentSettings.value();
 }
 
@@ -237,16 +238,23 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
 
 #if USE(GSTREAMER)
-    auto gstVideoFrame = downcast<VideoFrameGStreamer>(videoFrame);
-    if (m_frameRequestRate)
-        gstVideoFrame->setFrameRate(*m_frameRequestRate);
-    else {
-        static const double s_frameRate = 60;
-        gstVideoFrame->setMaxFrameRate(s_frameRate);
-        gstVideoFrame->setPresentationTime(m_presentationTimeStamp);
-        gstVideoFrame->setMetadataAndContentHint({ metadata }, VideoFrameContentHint::Canvas);
-        m_presentationTimeStamp = m_presentationTimeStamp + MediaTime::createWithDouble(1.0 / s_frameRate);
-    }
+    auto& gstVideoFrame = downcast<VideoFrameGStreamer>(*videoFrame);
+    static const double s_fixedFrameRate = 60.0;
+
+    if (!m_clock)
+        m_clock = adoptGRef(gst_system_clock_obtain());
+    RELEASE_ASSERT(m_clock);
+
+    if (!m_frameRequestRate)
+        gstVideoFrame.setMaxFrameRate(s_fixedFrameRate);
+
+    auto frameRate = s_fixedFrameRate;
+    if (m_frameRequestRate && *m_frameRequestRate)
+        frameRate = *m_frameRequestRate;
+
+    gstVideoFrame.setFrameRate(frameRate);
+    gstVideoFrame.setPresentationTime(fromGstClockTime(gst_clock_get_time(m_clock.get())));
+    gstVideoFrame.setMetadataAndContentHint({ metadata }, VideoFrameContentHint::Canvas);
 #endif
 
     videoFrameAvailable(*videoFrame, metadata);

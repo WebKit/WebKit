@@ -13,7 +13,7 @@ info: |
       i. Let buffer be O.[[ViewedArrayBuffer]].
       ii. If IsDetachedBuffer(buffer) is true, return false.
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
 
@@ -24,4 +24,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(Reflect.has(sample, "0"), false, 'Reflect.has(sample, "0") must return false');
   assert.sameValue(Reflect.has(sample, "-0"), false, 'Reflect.has(sample, "-0") must return false');
   assert.sameValue(Reflect.has(sample, "1.1"), false, 'Reflect.has(sample, "1.1") must return false');
-});
+}, null, ["passthrough"]);

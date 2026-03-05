@@ -90,15 +90,13 @@ public:
     bool delegateIsHandlingUnimplementablePolicy() const { return m_delegateIsHandlingUnimplementablePolicy; }
 
 #if ENABLE(CONTENT_FILTERING)
-    void setContentFilterUnblockHandler(ContentFilterUnblockHandler&& unblockHandler) { m_contentFilterUnblockHandler = WTFMove(unblockHandler); }
+    void setContentFilterUnblockHandler(ContentFilterUnblockHandler&& unblockHandler) { m_contentFilterUnblockHandler = WTF::move(unblockHandler); }
 #endif
 
 private:
     void handleUnimplementablePolicy(const ResourceError&);
     URLKeepingBlobAlive extendBlobURLLifetimeIfNecessary(const ResourceRequest&, const Document&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous) const;
     std::optional<HitTestResult> hitTestResult(const NavigationAction&);
-
-    Ref<LocalFrame> protectedFrame() const;
 
     WeakRef<LocalFrame> m_frame;
 

@@ -39,7 +39,11 @@ const paddingBox = {
   width: contentBox.width + 4 + 16,
   height: contentBox.height + 1 + 8,
 };
-for (let display of ["block", "flex", "grid"]) {
+function* writingModes() {
+  yield "horizontal-tb";
+  yield* ["vertical-lr", "vertical-rl"].filter(writingMode => CSS.supports("writing-mode", writingMode));
+}
+for (let display of ["flow-root", "flex", "grid"]) {
   for (let flexDirection of ["row", "row-reverse", "column", "column-reverse"]) {
     if (flexDirection != "row" && display != "flex") {
       // Don't bother retesting with all flexDirection values unless we're actually a flex container
@@ -51,7 +55,7 @@ for (let display of ["block", "flex", "grid"]) {
         continue;
       }
       for (let direction of ["ltr", "rtl"]) {
-        for (let writingMode of ["horizontal-tb", "vertical-lr", "vertical-rl"]) {
+        for (let writingMode of writingModes()) {
           for (let overflow of ["visible", "hidden", "auto", "clip", "scroll"]) {
             wrapper.style.display = display;
             wrapper.style.overflow = overflow;

@@ -432,6 +432,9 @@ static void testWebSocketTLSErrors(WebSocketTest* test, gconstpointer)
 {
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 
+    test->loadURI(kHttpServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
     // First, check that insecure ws:// web sockets work fine.
     unsigned events = test->connectToServerAndWaitForEvents(kHttpServer);
     g_assert_true(events);
@@ -685,6 +688,9 @@ static void testWebSocketClientSideCertificate(WebSocketClientSideCertificateTes
 {
     // Ignore server certificate errors.
     WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
+    test->loadURI(kHttpServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
 
     // Try first without having the certificate in credential storage.
     auto events = test->connectToServerAndWaitForEvents(kHttpsServer);

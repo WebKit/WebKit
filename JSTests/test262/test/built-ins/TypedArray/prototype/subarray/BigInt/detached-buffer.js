@@ -30,7 +30,7 @@ info: |
   ...
   11. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -62,4 +62,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(begin, "observable ToInteger(begin)");
   assert(end, "observable ToInteger(end)");
-});
+}, null, ["passthrough"]);

@@ -27,11 +27,14 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <wtf/Deque.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS TKSmartCard;
+OBJC_CLASS TKSmartCardSlot;
+OBJC_CLASS WKSmartCardObserver;
 
 namespace WebKit {
 
@@ -40,27 +43,29 @@ using DataReceivedCallback = Function<void(Vector<uint8_t>&&)>;
 
 class CcidConnection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CcidConnection> {
 public:
-    static Ref<CcidConnection> create(RetainPtr<TKSmartCard>&&, CcidService&);
+    static Ref<CcidConnection> create(RetainPtr<TKSmartCard>&&, RetainPtr<TKSmartCardSlot>&&, CcidService&);
     ~CcidConnection();
 
-    void transact(Vector<uint8_t>&& data, DataReceivedCallback&&) const;
-    void stop() const;
+    void transact(Vector<uint8_t>&& data, DataReceivedCallback&&);
+    void stop();
     bool contactless() const { return m_contactless; };
 
 private:
-    CcidConnection(RetainPtr<TKSmartCard>&&, CcidService&);
+    CcidConnection(RetainPtr<TKSmartCard>&&, RetainPtr<TKSmartCardSlot>&&, CcidService&);
 
-    void restartPolling();
     void startPolling();
-
     void detectContactless();
-
     void trySelectFidoApplet();
+    void processPendingRequests();
 
     const RetainPtr<TKSmartCard> m_smartCard;
+    RetainPtr<TKSmartCardSlot> m_slot;
     WeakPtr<CcidService> m_service;
-    RunLoop::Timer m_retryTimer;
+    Deque<std::pair<Vector<uint8_t>, DataReceivedCallback>> m_pendingRequests;
     bool m_contactless { false };
+    bool m_hasSession { false };
+    bool m_sessionPending { false };
+    RetainPtr<WKSmartCardObserver> m_observer;
 };
 
 } // namespace WebKit

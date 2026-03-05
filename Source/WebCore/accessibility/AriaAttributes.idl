@@ -30,6 +30,7 @@ interface mixin AriaAttributes {
     // EnumeratedARIAAttributeReflectionEnabled flag to manually handle enumerated reflection.
     // FIXME: Use [Reflect, Enumerated] for ARIA enumerated attributes when the feature flag is no longer needed.
     [CEReactions=Needed, Reflect="aria-activedescendant"] attribute Element? ariaActiveDescendantElement;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-actions", EnabledBySetting=ARIAActionsSupportEnabled] attribute FrozenArray<Element>? ariaActionsElements;
     [CEReactions=Needed, ReflectSetter="aria-atomic"] attribute [AtomString] DOMString? ariaAtomic;
     [CEReactions=Needed, ReflectSetter="aria-autocomplete"] attribute [AtomString] DOMString? ariaAutoComplete;
     [CEReactions=Needed, Reflect="aria-braillelabel"] attribute DOMString? ariaBrailleLabel;

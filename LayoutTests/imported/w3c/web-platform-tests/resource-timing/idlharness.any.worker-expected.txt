@@ -23,8 +23,8 @@ PASS PerformanceResourceTiming interface: attribute connectStart
 PASS PerformanceResourceTiming interface: attribute connectEnd
 PASS PerformanceResourceTiming interface: attribute secureConnectionStart
 PASS PerformanceResourceTiming interface: attribute requestStart
-FAIL PerformanceResourceTiming interface: attribute finalResponseHeadersStart assert_true: The prototype object must have a property "finalResponseHeadersStart" expected true got false
-FAIL PerformanceResourceTiming interface: attribute firstInterimResponseStart assert_true: The prototype object must have a property "firstInterimResponseStart" expected true got false
+PASS PerformanceResourceTiming interface: attribute finalResponseHeadersStart
+PASS PerformanceResourceTiming interface: attribute firstInterimResponseStart
 PASS PerformanceResourceTiming interface: attribute responseStart
 PASS PerformanceResourceTiming interface: attribute responseEnd
 PASS PerformanceResourceTiming interface: attribute transferSize
@@ -50,8 +50,8 @@ PASS PerformanceResourceTiming interface: resource must inherit property "connec
 PASS PerformanceResourceTiming interface: resource must inherit property "connectEnd" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "secureConnectionStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "requestStart" with the proper type
-FAIL PerformanceResourceTiming interface: resource must inherit property "finalResponseHeadersStart" with the proper type assert_inherits: property "finalResponseHeadersStart" not found in prototype chain
-FAIL PerformanceResourceTiming interface: resource must inherit property "firstInterimResponseStart" with the proper type assert_inherits: property "firstInterimResponseStart" not found in prototype chain
+PASS PerformanceResourceTiming interface: resource must inherit property "finalResponseHeadersStart" with the proper type
+PASS PerformanceResourceTiming interface: resource must inherit property "firstInterimResponseStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "responseStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "responseEnd" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "transferSize" with the proper type

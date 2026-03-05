@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSFontFaceDescriptors);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFaceDescriptors);
 
 CSSFontFaceDescriptors::CSSFontFaceDescriptors(MutableStyleProperties& propertySet, CSSFontFaceRule& parentRule)
     : PropertySetCSSDescriptors(propertySet, parentRule)

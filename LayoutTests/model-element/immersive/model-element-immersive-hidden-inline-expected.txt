@@ -1,0 +1,3 @@
+
+PASS Hidden inline model should successfully enter immersive
+

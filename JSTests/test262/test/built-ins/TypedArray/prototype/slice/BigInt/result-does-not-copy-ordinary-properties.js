@@ -5,12 +5,12 @@ esid: sec-%typedarray%.prototype.slice
 description: Result does not import own properties
 info: |
   22.2.3.24 %TypedArray%.prototype.slice( start , end )
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([41n, 42n, 43n, 44n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([41n, 42n, 43n, 44n]));
   sample.foo = 42;
 
   var result = sample.slice();

@@ -21,7 +21,7 @@
 #include "config.h"
 #include "TextureMapperLayer.h"
 
-#include "BitmapTexture.h"
+#include "BitmapTexturePool.h"
 #include "ClipPath.h"
 #include "FloatQuad.h"
 #include "Region.h"
@@ -95,7 +95,7 @@ public:
 
         auto maxTextureSize = options.textureMapper.maxTextureSize();
         forEachTile(maxTextureSize, [&](const IntRect& tileRect) {
-            RefPtr<BitmapTexture> surface = options.textureMapper.acquireTextureFromPool(tileRect.size(), { BitmapTexture::Flags::SupportsAlpha });
+            RefPtr<BitmapTexture> surface = BitmapTexturePool::singleton().acquireTexture(tileRect.size(), { BitmapTexture::Flags::SupportsAlpha });
             {
                 SetForScope scopedSurface(options.surface, surface);
                 SetForScope scopedOffset(options.offset, -toIntSize(tileRect.location()));
@@ -110,7 +110,7 @@ public:
                 ASSERT(options.surface);
                 surface = options.surface;
             }
-            m_textures.append(WTFMove(surface));
+            m_textures.append(WTF::move(surface));
         });
 
         options.textureMapper.bindSurface(options.surface.get());
@@ -387,7 +387,7 @@ void TextureMapperLayer::setDamage(Damage&& damage)
     if (m_damageInLayerCoordinateSpace)
         m_damageInLayerCoordinateSpace->add(damage);
     else
-        m_damageInLayerCoordinateSpace = WTFMove(damage);
+        m_damageInLayerCoordinateSpace = WTF::move(damage);
 }
 
 void TextureMapperLayer::collectDamage(TextureMapper& textureMapper, Damage& damage)
@@ -1111,7 +1111,7 @@ static void commitSurface(TextureMapperPaintOptions& options, BitmapTexture& sur
 
 void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
+    auto surface = BitmapTexturePool::singleton().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
         SetForScope scopedSurface(options.surface, surface.ptr());
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
@@ -1127,7 +1127,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
 
 void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
+    auto surface = BitmapTexturePool::singleton().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
         SetForScope scopedSurface(options.surface, surface.ptr());
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
@@ -1293,7 +1293,7 @@ void TextureMapperLayer::removeFromParent()
 
 void TextureMapperLayer::removeAllChildren()
 {
-    auto oldChildren = WTFMove(m_children);
+    auto oldChildren = WTF::move(m_children);
     for (auto* child : oldChildren)
         child->m_parent = nullptr;
 }
@@ -1519,6 +1519,11 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
     m_animations.apply(futureApplicationResults, time + 50_ms, TextureMapperAnimation::KeepInternalState::Yes);
     m_layerTransforms.futureLocalTransform = futureApplicationResults.transform.value_or(m_layerTransforms.localTransform);
 #endif
+
+    // If the layer is invisible because of opacity and there's no opacity animation, the content won't
+    // be visible ever, so triggering repaints doesn't make sense.
+    if (!m_state.opacity && !applicationResults.opacity)
+        return false;
 
     return applicationResults.hasRunningAnimations;
 }

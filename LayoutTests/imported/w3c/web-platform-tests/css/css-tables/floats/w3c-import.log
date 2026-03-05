@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/floats/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/floats/floats-wrap-bfc-006b-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/floats/floats-wrap-bfc-006c-ref.xht

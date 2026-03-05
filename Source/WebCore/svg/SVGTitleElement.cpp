@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTitleElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTitleElement);
 
 inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -46,11 +46,11 @@ Node::InsertedIntoAncestorResult SVGTitleElement::insertedIntoAncestor(Insertion
 {
     auto result = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument && parentNode() == document().documentElement())
-        protectedDocument()->titleElementAdded(*this);
+        protect(document())->titleElementAdded(*this);
     return result;
 }
 
-static bool isTitleElementRemovedFromSVGSVGElement(SVGTitleElement& title, ContainerNode& oldParentOfRemovedTree)
+static bool NODELETE isTitleElementRemovedFromSVGSVGElement(SVGTitleElement& title, ContainerNode& oldParentOfRemovedTree)
 {
     if (!title.parentNode() && is<SVGSVGElement>(oldParentOfRemovedTree) && title.document().documentElement() == &oldParentOfRemovedTree)
         return true;
@@ -72,7 +72,7 @@ void SVGTitleElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
     if (isConnected() && parentNode() == document().documentElement())
-        protectedDocument()->titleElementTextChanged(*this);
+        protect(document())->titleElementTextChanged(*this);
 }
 
 } // namespace WebCore

@@ -72,10 +72,10 @@ RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, CSS::PropertyParserState&
     if (!args.atEnd())
         return nullptr;
 
-    auto attr = CSSAttrValue::create(WTFMove(attrName), WTFMove(fallback));
+    auto attr = CSSAttrValue::create(WTF::move(attrName), WTF::move(fallback));
     // FIXME: Consider moving to a CSSFunctionValue with a custom-ident rather than a special CSS_ATTR primitive value.
 
-    return CSSPrimitiveValue::create(WTFMove(attr));
+    return CSSPrimitiveValue::create(WTF::move(attr));
 }
 
 } // namespace CSSPropertyParserHelpers

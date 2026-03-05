@@ -76,8 +76,6 @@ public:
     void close();
 
 private:
-    Ref<Page> protectedPage() const;
-
     WeakRef<Page> m_page;
     const Ref<BackForwardClient> m_client;
 };

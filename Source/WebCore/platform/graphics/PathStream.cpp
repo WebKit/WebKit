@@ -40,12 +40,12 @@ Ref<PathStream> PathStream::create()
 
 Ref<PathStream> PathStream::create(PathSegment&& segment)
 {
-    return adoptRef(*new PathStream(WTFMove(segment)));
+    return adoptRef(*new PathStream(WTF::move(segment)));
 }
 
 Ref<PathStream> PathStream::create(Vector<PathSegment>&& segments)
 {
-    return adoptRef(*new PathStream(WTFMove(segments)));
+    return adoptRef(*new PathStream(WTF::move(segments)));
 }
 
 Ref<PathStream> PathStream::create(const Vector<PathSegment>& segments)
@@ -68,7 +68,7 @@ Ref<PathStream> PathStream::create(const Vector<FloatPoint>& points)
 }
 
 PathStream::PathStream(Vector<PathSegment>&& segments)
-    : m_segments(WTFMove(segments))
+    : m_segments(WTF::move(segments))
 {
 }
 
@@ -80,7 +80,7 @@ PathStream::PathStream(const Vector<PathSegment>& segments)
 PathStream::PathStream(PathSegment&& segment)
 {
     m_segments.reserveCapacity(16); // 16 is Vector's minCapacity, and we know we're going to append a second segment.
-    m_segments.append(WTFMove(segment));
+    m_segments.append(WTF::move(segment));
 }
 
 bool PathStream::definitelyEqual(const PathImpl& other) const

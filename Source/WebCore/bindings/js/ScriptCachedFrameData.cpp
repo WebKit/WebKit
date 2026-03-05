@@ -56,7 +56,7 @@ ScriptCachedFrameData::ScriptCachedFrameData(LocalFrame& frame)
 
     for (auto windowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
         auto* window = jsCast<JSDOMWindow*>(windowProxy->window());
-        m_windows.add(&windowProxy->world(), Strong<JSDOMWindow>(window->vm(), window));
+        m_windows.add(windowProxy->world(), Strong<JSDOMWindow>(window->vm(), window));
         window->setConsoleClient(nullptr);
     }
 

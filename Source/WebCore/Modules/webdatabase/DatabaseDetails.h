@@ -76,8 +76,8 @@ public:
     {
     }
 
-    const String& name() const { return m_name; }
-    const String& displayName() const { return m_displayName; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const String& displayName() const LIFETIME_BOUND { return m_displayName; }
     uint64_t expectedUsage() const { return m_expectedUsage; }
     uint64_t currentUsage() const { return m_currentUsage; }
     std::optional<WallTime> creationTime() const { return m_creationTime; }

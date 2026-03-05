@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="navigation-utils.js"></script>
+<script>
+
+const page = "other";
+
+window.onload = () => sendMessageToOpener("load");
+window.onpageshow = ()=> sendMessageToOpener("pageshow", event.persisted ? "persisted" : "not-persisted");
+
+window.onmessage = (event) => dispatchMessage(event.data, {
+    opener: {
+        back1: () => history.back(),
+    },
+});
+
+</script>
+</head>
+<body>
+<h1>Other page</h1>
+<p>FAIL: This page should not be displayed at the end.</p>
+</body>
+</html>

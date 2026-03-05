@@ -60,11 +60,6 @@ void UserMediaPermissionRequestManager::deref() const
     m_page->deref();
 }
 
-Ref<WebPage> UserMediaPermissionRequestManager::protectedPage() const
-{
-    return m_page.get();
-}
-
 void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& request)
 {
     RefPtr document = request.document();
@@ -80,7 +75,7 @@ void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& 
         return;
     }
 
-    auto& pendingRequests = m_pendingUserMediaRequests.add(document, Vector<Ref<UserMediaRequest>>()).iterator->value;
+    auto& pendingRequests = m_pendingUserMediaRequests.add(*document, Vector<Ref<UserMediaRequest>>()).iterator->value;
     if (pendingRequests.isEmpty())
         document->addMediaCanStartListener(*this);
     pendingRequests.append(request);
@@ -96,11 +91,11 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& u
 
     m_ongoingUserMediaRequests.add(userRequest.identifier(), userRequest);
 
-    auto webFrame = WebFrame::fromCoreFrame(*frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     RefPtr topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();
-    protectedPage()->send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier(), webFrame->info(), userRequest.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data(), userRequest.request()));
+    protect(m_page)->send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier(), webFrame->info(), userRequest.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data(), userRequest.request()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)
@@ -112,7 +107,7 @@ void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest&
     if (!document)
         return;
     
-    auto iterator = m_pendingUserMediaRequests.find(document);
+    auto iterator = m_pendingUserMediaRequests.find(*document);
     if (iterator == m_pendingUserMediaRequests.end())
         return;
 
@@ -132,7 +127,7 @@ void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
 {
     ASSERT(document.page()->canStartMedia());
 
-    auto pendingRequests = m_pendingUserMediaRequests.take(&document);
+    auto pendingRequests = m_pendingUserMediaRequests.take(document);
     for (auto& pendingRequest : pendingRequests)
         sendUserMediaRequest(pendingRequest);
 }
@@ -145,7 +140,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaReque
         return;
     }
 
-    request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalts), WTFMove(completionHandler));
+    request->allow(WTF::move(audioDevice), WTF::move(videoDevice), WTF::move(deviceIdentifierHashSalts), WTF::move(completionHandler));
 }
 
 void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, MediaAccessDenialReason reason, String&& message, MediaConstraintType invalidConstraint)
@@ -154,7 +149,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaReques
     if (!request)
         return;
 
-    request->deny(reason, WTFMove(message),  invalidConstraint);
+    request->deny(reason, WTF::move(message),  invalidConstraint);
 }
 
 void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&, MediaDeviceHashSalts&&)>&& completionHandler)
@@ -165,7 +160,7 @@ void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document
         return;
     }
 
-    protectedPage()->sendWithAsyncReply(Messages::WebPageProxy::EnumerateMediaDevicesForFrame { WebFrame::fromCoreFrame(*frame)->frameID(), document.securityOrigin().data(), document.topOrigin().data() }, WTFMove(completionHandler));
+    protect(m_page)->sendWithAsyncReply(Messages::WebPageProxy::EnumerateMediaDevicesForFrame { WebFrame::fromCoreFrame(*frame)->frameID(), document.securityOrigin().data(), document.topOrigin().data() }, WTF::move(completionHandler));
 }
 
 #if USE(GSTREAMER)
@@ -178,7 +173,7 @@ void UserMediaPermissionRequestManager::updateCaptureDevices(ShouldNotify should
         if (!haveDevicesChanged(m_captureDevices, newDevices))
             return;
 
-        m_captureDevices = WTFMove(newDevices);
+        m_captureDevices = WTF::move(newDevices);
         if (shouldNotify == ShouldNotify::Yes)
             captureDevicesChanged();
     });
@@ -193,7 +188,7 @@ void UserMediaPermissionRequestManager::devicesChanged()
 UserMediaClient::DeviceChangeObserverToken UserMediaPermissionRequestManager::addDeviceChangeObserver(Function<void()>&& observer)
 {
     auto identifier = UserMediaClient::DeviceChangeObserverToken::generate();
-    m_deviceChangeObserverMap.add(identifier, WTFMove(observer));
+    m_deviceChangeObserverMap.add(identifier, WTF::move(observer));
 
     if (!m_monitoringDeviceChange) {
         m_monitoringDeviceChange = true;
@@ -201,7 +196,7 @@ UserMediaClient::DeviceChangeObserverToken UserMediaPermissionRequestManager::ad
         updateCaptureDevices(ShouldNotify::No);
         WebCore::RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver(*this);
 #else
-        protectedPage()->send(Messages::WebPageProxy::BeginMonitoringCaptureDevices());
+        protect(m_page)->send(Messages::WebPageProxy::BeginMonitoringCaptureDevices());
 #endif
     }
     return identifier;
@@ -215,7 +210,7 @@ void UserMediaPermissionRequestManager::removeDeviceChangeObserver(UserMediaClie
 
 void UserMediaPermissionRequestManager::updateCaptureState(const WebCore::Document& document, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    protectedPage()->updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
+    protect(m_page)->updateCaptureState(document, isActive, kind, WTF::move(completionHandler));
 }
 
 void UserMediaPermissionRequestManager::captureDevicesChanged()

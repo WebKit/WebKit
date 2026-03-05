@@ -1900,9 +1900,9 @@ TEST_F(PathBuilderKeyRolloverTest, TestMultipleAsyncIssuersFromSingleSource) {
 
   EXPECT_CALL(*target_issuers_req, GetNext(_))
       // First async batch: return oldintermediate_.
-      .WillOnce(Invoke(AppendCertToList(oldintermediate_)))
+      .WillOnce(AppendCertToList(oldintermediate_))
       // Second async batch: return newintermediate_.
-      .WillOnce(Invoke(AppendCertToList(newintermediate_)));
+      .WillOnce(AppendCertToList(newintermediate_));
   {
     ::testing::InSequence s;
     // oldintermediate_ does not create a valid path, so both sync and async
@@ -1991,11 +1991,11 @@ TEST_F(PathBuilderKeyRolloverTest, TestDuplicateAsyncIntermediates) {
 
   EXPECT_CALL(*target_issuers_req, GetNext(_))
       // First async batch: return oldintermediate_.
-      .WillOnce(Invoke(AppendCertToList(oldintermediate_)))
+      .WillOnce(AppendCertToList(oldintermediate_))
       // Second async batch: return a different copy of oldintermediate_ again.
-      .WillOnce(Invoke(AppendCertToList(oldintermediate_dupe)))
+      .WillOnce(AppendCertToList(oldintermediate_dupe))
       // Third async batch: return newintermediate_.
-      .WillOnce(Invoke(AppendCertToList(newintermediate_)));
+      .WillOnce(AppendCertToList(newintermediate_));
 
   {
     ::testing::InSequence s;

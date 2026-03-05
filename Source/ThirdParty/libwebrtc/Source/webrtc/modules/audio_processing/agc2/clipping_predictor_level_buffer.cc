@@ -72,7 +72,8 @@ ClippingPredictorLevelBuffer::ComputePartialMetrics(int delay,
     sum += data_[idx].average;
     max = std::fmax(data_[idx].max, max);
   }
-  return std::optional<Level>({sum / static_cast<float>(num_items), max});
+  return std::optional<Level>(
+      {.average = sum / static_cast<float>(num_items), .max = max});
 }
 
 }  // namespace webrtc

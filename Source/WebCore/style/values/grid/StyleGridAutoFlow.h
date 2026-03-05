@@ -29,14 +29,15 @@
 namespace WebCore {
 namespace Style {
 
-// <'grid-auto-flow'> = [ row | column ] || dense
+// <'grid-auto-flow'> = normal | [ row | column ] || dense
 // https://drafts.csswg.org/css-grid-1/#grid-auto-flow-property
 struct GridAutoFlow {
-    enum class Direction : bool { Row, Column };
+    enum class Direction : uint8_t { Normal, Row, Column };
     enum class Packing : bool { Dense, Sparse };
 
-    constexpr GridAutoFlow(CSS::Keyword::Row) { }
-    constexpr GridAutoFlow(CSS::Keyword::Row, CSS::Keyword::Dense): m_packing { static_cast<uint8_t>(Packing::Dense) } { }
+    constexpr GridAutoFlow(CSS::Keyword::Normal) { }
+    constexpr GridAutoFlow(CSS::Keyword::Row) : m_direction { static_cast<uint8_t>(Direction::Row) } { }
+    constexpr GridAutoFlow(CSS::Keyword::Row, CSS::Keyword::Dense) : m_direction { static_cast<uint8_t>(Direction::Row) }, m_packing { static_cast<uint8_t>(Packing::Dense) } { }
     constexpr GridAutoFlow(CSS::Keyword::Column) : m_direction { static_cast<uint8_t>(Direction::Column) } { }
     constexpr GridAutoFlow(CSS::Keyword::Column, CSS::Keyword::Dense) : m_direction { static_cast<uint8_t>(Direction::Column) }, m_packing { static_cast<uint8_t>(Packing::Dense) } { }
     constexpr GridAutoFlow(CSS::Keyword::Dense) : m_packing { static_cast<uint8_t>(Packing::Dense) } { }
@@ -49,12 +50,14 @@ struct GridAutoFlow {
     constexpr bool isDense() const { return packing() == Packing::Dense; }
     constexpr bool isSparse() const { return packing() == Packing::Sparse; }
 
+    void setDirection(Direction direction) { m_direction = static_cast<uint8_t>(direction); }
+
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 
     constexpr bool operator==(const GridAutoFlow&) const = default;
 
 private:
-    PREFERRED_TYPE(Direction) uint8_t m_direction : 1 { static_cast<uint8_t>(Direction::Row) };
+    PREFERRED_TYPE(Direction) uint8_t m_direction : 2 { static_cast<uint8_t>(Direction::Normal) };
     PREFERRED_TYPE(Packing) uint8_t m_packing : 1 { static_cast<uint8_t>(Packing::Sparse) };
 };
 
@@ -73,9 +76,16 @@ template<typename... F> decltype(auto) GridAutoFlow::switchOn(F&&... f) const
     case Direction::Row:
         switch (packing()) {
         case Packing::Dense:
-            return visitor(CSS::Keyword::Dense { });
+            return visitor(SpaceSeparatedTuple { CSS::Keyword::Row { }, CSS::Keyword::Dense { } });
         case Packing::Sparse:
             return visitor(CSS::Keyword::Row { });
+        }
+    case Direction::Normal:
+        switch (packing()) {
+        case Packing::Dense:
+            return visitor(CSS::Keyword::Dense { });
+        case Packing::Sparse:
+            return visitor(CSS::Keyword::Normal { });
         }
     }
 }

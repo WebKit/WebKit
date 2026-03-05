@@ -442,7 +442,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, 
         cookie.httpOnly = cookieHttpOnly;
         cookie.secure = cookieSecure;
         cookie.session = cookieSession;
-        results.append(WTFMove(cookie));
+        results.append(WTF::move(cookie));
     }
 
     return results;
@@ -470,7 +470,7 @@ Vector<Cookie> CookieJarDB::getAllCookies()
         cookie.httpOnly = (pstmt->columnInt(5) == 1);
         cookie.secure = (pstmt->columnInt(6) == 1);
         cookie.session = (pstmt->columnInt(7) == 1);
-        result.append(WTFMove(cookie));
+        result.append(WTF::move(cookie));
     }
     return result;
 }
@@ -640,7 +640,7 @@ void CookieJarDB::createPrepareStatement(ASCIILiteral sql)
 {
     auto statement = m_database.prepareStatement(sql);
     ASSERT(statement);
-    m_statements.add(sql, WTFMove(statement));
+    m_statements.add(sql, WTF::move(statement));
 }
 
 SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)

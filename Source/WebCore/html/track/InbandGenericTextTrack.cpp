@@ -42,11 +42,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InbandGenericTextTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandGenericTextTrack);
 
 void GenericTextTrackCueMap::add(InbandGenericCueIdentifier inbandCueIdentifier, TextTrackCueGeneric& publicCue)
 {
-    m_dataToCueMap.add(inbandCueIdentifier, &publicCue);
+    m_dataToCueMap.add(inbandCueIdentifier, publicCue);
     m_cueToDataMap.add(&publicCue, inbandCueIdentifier);
 }
 
@@ -151,7 +151,7 @@ void InbandGenericTextTrack::addGenericCue(InbandGenericCue& inbandCue)
     if (inbandCue.status() != GenericCueData::Status::Complete)
         m_cueMap.add(inbandCue.uniqueId(), cue);
 
-    addCue(WTFMove(cue));
+    addCue(WTF::move(cue));
 }
 
 void InbandGenericTextTrack::updateGenericCue(InbandGenericCue& inbandCue)
@@ -195,12 +195,12 @@ WebVTTParser& InbandGenericTextTrack::parser()
 
 void InbandGenericTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)
 {
-    parser().parseCueData(WTFMove(cueData));
+    parser().parseCueData(WTF::move(cueData));
 }
 
 void InbandGenericTextTrack::parseWebVTTFileHeader(String&& header)
 {
-    parser().parseFileHeader(WTFMove(header));
+    parser().parseFileHeader(WTF::move(header));
 }
 
 RefPtr<TextTrackCue> InbandGenericTextTrack::cueToExtend(TextTrackCue& newCue)
@@ -211,10 +211,9 @@ RefPtr<TextTrackCue> InbandGenericTextTrack::cueToExtend(TextTrackCue& newCue)
     if (!m_cues || m_cues->length() < 2)
         return nullptr;
 
-    RefPtr cues = m_cues;
-    return [this, &newCue, &cues]() -> RefPtr<TextTrackCue> {
-        for (size_t i = 0; i < cues->length(); ++i) {
-            RefPtr existingCue = cues->item(i);
+    return [this, &newCue]() -> RefPtr<TextTrackCue> {
+        for (size_t i = 0; i < m_cues->length(); ++i) {
+            RefPtr existingCue = m_cues->item(i);
             ASSERT(existingCue->track() == this);
 
             if (abs(newCue.startMediaTime() - existingCue->startMediaTime()) > startTimeVariance())
@@ -238,7 +237,7 @@ void InbandGenericTextTrack::newCuesParsed()
         return;
 
     for (auto&& cueData : parser().takeCues()) {
-        auto cue = VTTCue::create(*document, WTFMove(cueData));
+        auto cue = VTTCue::create(*document, WTF::move(cueData));
 
         auto existingCue = cueToExtend(cue);
         if (!existingCue)
@@ -246,7 +245,7 @@ void InbandGenericTextTrack::newCuesParsed()
 
         if (!existingCue) {
             INFO_LOG(LOGIDENTIFIER, cue.get());
-            addCue(WTFMove(cue));
+            addCue(WTF::move(cue));
             continue;
         }
 
@@ -264,7 +263,7 @@ void InbandGenericTextTrack::newRegionsParsed()
 {
     RefPtr regions = this->regions();
     for (auto& region : parser().takeRegions())
-        regions->add(WTFMove(region));
+        regions->add(WTF::move(region));
 }
 
 void InbandGenericTextTrack::newStyleSheetsParsed()

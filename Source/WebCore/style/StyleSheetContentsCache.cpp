@@ -48,7 +48,7 @@ void StyleSheetContentsCache::add(Key&& key, Ref<StyleSheetContents> contents)
 {
     ASSERT(contents->isCacheable());
 
-    m_cache.add(WTFMove(key), contents);
+    m_cache.add(WTF::move(key), contents);
     contents->addedToMemoryCache();
 
     static constexpr auto maximumCacheSize = 256;

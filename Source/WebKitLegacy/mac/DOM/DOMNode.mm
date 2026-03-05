@@ -33,7 +33,6 @@
 #import "DOMNodeListInternal.h"
 #import "ExceptionHandlers.h"
 #import "ObjCEventListener.h"
-#import <WebCore/AddEventListenerOptionsInlines.h>
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/ElementInlines.h>
 #import <WebCore/JSExecState.h>
@@ -61,8 +60,8 @@ DOMNode *kit(Node* value)
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
-    if (DOMNode *wrapper = getDOMWrapper(value))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(value))
+        return wrapper.autorelease();
     RetainPtr<DOMNode> wrapper = adoptNS([[kitClass(value) alloc] _init]);
     if (!wrapper)
         return nil;
@@ -104,7 +103,7 @@ DOMNode *kit(Node* value)
 - (unsigned short)nodeType
 {
     JSMainThreadNullState state;
-    return unwrap(*self).nodeType();
+    return std::to_underlying(unwrap(*self).nodeType());
 }
 
 - (DOMNode *)parentNode
@@ -116,7 +115,7 @@ DOMNode *kit(Node* value)
 - (DOMNodeList *)childNodes
 {
     JSMainThreadNullState state;
-    return kit(unwrap(*self).childNodes().get());
+    return kit(unwrap(*self).childNodes().ptr());
 }
 
 - (DOMNode *)firstChild

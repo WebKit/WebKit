@@ -38,7 +38,7 @@ public:
     using MessageHandlers = UncheckedKeyHashMap<CString, std::pair<CString, MessageCallback>>;
     static Ref<SocketConnection> create(GRefPtr<GSocketConnection>&& connection, const MessageHandlers& messageHandlers, gpointer userData)
     {
-        return adoptRef(*new SocketConnection(WTFMove(connection), messageHandlers, userData));
+        return adoptRef(*new SocketConnection(WTF::move(connection), messageHandlers, userData));
     }
     WTF_EXPORT_PRIVATE ~SocketConnection();
 

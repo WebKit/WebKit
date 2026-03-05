@@ -5,12 +5,12 @@ esid: sec-%typedarray%.prototype.subarray
 description: Infinity values on begin and end
 info: |
   22.2.3.27 %TypedArray%.prototype.subarray( begin , end )
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([40n, 41n, 42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([40n, 41n, 42n, 43n]));
 
   assert(
     compareArray(sample.subarray(-Infinity), [40n, 41n, 42n, 43n]),

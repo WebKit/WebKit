@@ -138,7 +138,7 @@ static std::optional<CSS::RelativeColorComponent<Descriptor, Index>> consumeRela
     using TypeList = GetCSSColorParseTypeWithCalcAndSymbolsComponentTypeList<Descriptor, Index>;
     using Consumer = brigand::wrap<TypeList, MetaConsumerWrapper>;
 
-    return Consumer::consume(range, state.propertyParserState, WTFMove(symbolsAllowed));
+    return Consumer::consume(range, state.propertyParserState, WTF::move(symbolsAllowed));
 }
 
 template<typename Descriptor>
@@ -196,7 +196,7 @@ template<typename Descriptor> static CSS::AbsoluteColor<typename Descriptor::Can
         }
     };
 
-    return normalizeNonCalcComponents(WTFMove(partiallyResolved), state);
+    return normalizeNonCalcComponents(WTF::move(partiallyResolved), state);
 }
 
 // Overload of `consumeAbsoluteFunctionParameters` for callers that already have the initial component consumed.
@@ -227,7 +227,7 @@ static std::optional<CSS::Color> consumeAbsoluteFunctionParameters(CSSParserToke
         return { };
 
     auto unresolved = CSS::AbsoluteColor<Descriptor> {
-        .components = { WTFMove(c1), WTFMove(*c2), WTFMove(*c3), WTFMove(alpha) },
+        .components = { WTF::move(c1), WTF::move(*c2), WTF::move(*c3), WTF::move(alpha) },
     };
 
     if constexpr (Descriptor::allowEagerEvaluationOfResolvableCalc) {
@@ -257,10 +257,10 @@ static std::optional<CSS::Color> consumeAbsoluteFunctionParameters(CSSParserToke
     };
 
     auto resolved = CSS::ResolvedColor {
-        resolveNoConversionDataRequired(WTFMove(resolver))
+        resolveNoConversionDataRequired(WTF::move(resolver))
     };
 
-    return makeCSSColor(WTFMove(resolved));
+    return makeCSSColor(WTF::move(resolved));
 }
 
 template<typename Descriptor>
@@ -275,7 +275,7 @@ static std::optional<CSS::Color> consumeAbsoluteFunctionParameters(CSSParserToke
             return { };
     }
 
-    return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(*c1));
+    return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTF::move(*c1));
 }
 
 template<typename Descriptor>
@@ -309,11 +309,11 @@ static std::optional<CSS::Color> consumeRelativeFunctionParameters(CSSParserToke
         return { };
 
     auto unresolved = CSS::RelativeColor<Descriptor> {
-        .origin = WTFMove(originColor),
-        .components = { WTFMove(*c1), WTFMove(*c2), WTFMove(*c3), WTFMove(alpha) }
+        .origin = WTF::move(originColor),
+        .components = { WTF::move(*c1), WTF::move(*c2), WTF::move(*c3), WTF::move(alpha) }
     };
 
-    return makeCSSColor(WTFMove(unresolved));
+    return makeCSSColor(WTF::move(unresolved));
 }
 
 template<typename Descriptor>
@@ -326,7 +326,7 @@ static std::optional<CSS::Color> consumeRelativeFunctionParameters(CSSParserToke
     if (!originColor)
         return { };
 
-    return consumeRelativeFunctionParameters<Descriptor>(args, state, WTFMove(*originColor));
+    return consumeRelativeFunctionParameters<Descriptor>(args, state, WTF::move(*originColor));
 }
 
 // MARK: - Generic parameter parsing
@@ -376,11 +376,11 @@ static std::optional<CSS::Color> consumeRGBFunction(CSSParserTokenRange& range, 
     if (consumeCommaIncludingWhitespace(args)) {
         // A `comma` getting successfully consumed means this is using the legacy syntax.
 
-        return WTF::switchOn(WTFMove(*red),
+        return WTF::switchOn(WTF::move(*red),
             [&]<typename T>(T red) -> std::optional<CSS::Color> {
                 using Descriptor = RGBFunctionLegacy<T>;
 
-                return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(red));
+                return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTF::move(red));
             },
             [](CSS::Keyword::None) -> std::optional<CSS::Color> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
@@ -390,7 +390,7 @@ static std::optional<CSS::Color> consumeRGBFunction(CSSParserTokenRange& range, 
         );
     } else {
         // A `comma` NOT getting successfully consumed means this is using the modern syntax.
-        return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(*red));
+        return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTF::move(*red));
     }
 }
 
@@ -425,11 +425,11 @@ static std::optional<CSS::Color> consumeHSLFunction(CSSParserTokenRange& range, 
     if (consumeCommaIncludingWhitespace(args)) {
         // A `comma` getting successfully consumed means this is using the legacy syntax.
 
-        return WTF::switchOn(WTFMove(*hue),
+        return WTF::switchOn(WTF::move(*hue),
             [&](auto hue) -> std::optional<CSS::Color> {
                 using Descriptor = HSLFunctionLegacy;
 
-                return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(hue));
+                return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTF::move(hue));
             },
             [](CSS::Keyword::None) -> std::optional<CSS::Color> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
@@ -439,7 +439,7 @@ static std::optional<CSS::Color> consumeHSLFunction(CSSParserTokenRange& range, 
         );
     } else {
         // A `comma` NOT getting successfully consumed means this is using the modern syntax.
-        return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(*hue));
+        return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTF::move(*hue));
     }
 }
 
@@ -499,7 +499,7 @@ static std::optional<CSS::Color> consumeColorFunction(CSSParserTokenRange& range
             return { };
 
         return consumeColorSpace(args, [&]<typename Descriptor>() {
-            return consumeRelativeFunctionParameters<Descriptor>(args, state, WTFMove(*originColor));
+            return consumeRelativeFunctionParameters<Descriptor>(args, state, WTF::move(*originColor));
         });
     }
 
@@ -529,7 +529,7 @@ static std::optional<CSS::Color> consumeColorLayersFunction(CSSParserTokenRange&
         if (!color)
             return std::nullopt;
 
-        colors.append(WTFMove(*color));
+        colors.append(WTF::move(*color));
     } while (consumeCommaIncludingWhitespace(args));
 
     if (!args.atEnd())
@@ -538,7 +538,7 @@ static std::optional<CSS::Color> consumeColorLayersFunction(CSSParserTokenRange&
     return CSS::Color {
         CSS::ColorLayers {
             .blendMode = BlendMode::Normal,
-            .colors = WTFMove(colors)
+            .colors = WTF::move(colors)
         }
     };
 }
@@ -561,8 +561,8 @@ static std::optional<CSS::ColorMix::Component> consumeColorMixComponent(CSSParse
     }
 
     return CSS::ColorMix::Component {
-        .color = WTFMove(*originColor),
-        .percentage = WTFMove(percentage)
+        .color = WTF::move(*originColor),
+        .percentage = WTF::move(percentage)
     };
 }
 
@@ -622,9 +622,9 @@ static std::optional<CSS::Color> consumeColorMixFunction(CSSParserTokenRange& ra
 
     return CSS::Color {
         CSS::ColorMix {
-            .colorInterpolationMethod = WTFMove(*colorInterpolationMethod),
-            .mixComponents1 = WTFMove(*mixComponent1),
-            .mixComponents2 = WTFMove(*mixComponent2)
+            .colorInterpolationMethod = WTF::move(*colorInterpolationMethod),
+            .mixComponents1 = WTF::move(*mixComponent1),
+            .mixComponents2 = WTF::move(*mixComponent2)
         }
     };
 }
@@ -638,9 +638,6 @@ static std::optional<CSS::Color> consumeContrastColorFunction(CSSParserTokenRang
 
     ASSERT(range.peek().functionId() == CSSValueContrastColor);
 
-    if (!state.propertyParserState.context.contrastColorEnabled)
-        return std::nullopt;
-
     auto args = consumeFunction(range);
 
     auto color = consumeColor(args, state);
@@ -652,7 +649,7 @@ static std::optional<CSS::Color> consumeContrastColorFunction(CSSParserTokenRang
 
     return CSS::Color {
         CSS::ContrastColor {
-            .color = WTFMove(*color)
+            .color = WTF::move(*color)
         }
     };
 }
@@ -684,8 +681,8 @@ static std::optional<CSS::Color> consumeLightDarkFunction(CSSParserTokenRange& r
 
     return CSS::Color {
         CSS::LightDarkColor {
-            .lightColor = WTFMove(*lightColor),
-            .darkColor = WTFMove(*darkColor)
+            .lightColor = WTF::move(*lightColor),
+            .darkColor = WTF::move(*darkColor)
         }
     };
 }
@@ -870,9 +867,9 @@ RefPtr<CSSValue> consumeColor(CSSParserTokenRange& range, CSS::PropertyParserSta
         if (auto hex = color->hex())
             return propertyParserState.pool.createColorValue(Color { hex->value });
         if (auto resolved = color->resolved())
-            return propertyParserState.pool.createColorValue(WTFMove(resolved->value));
+            return propertyParserState.pool.createColorValue(WTF::move(resolved->value));
 
-        return CSSColorValue::create(WTFMove(*color));
+        return CSSColorValue::create(WTF::move(*color));
     }
 
     return nullptr;
@@ -957,8 +954,8 @@ static std::optional<CSS::DynamicRangeLimitMixComponent> consumeUnresolvedDynami
     range = rangeCopy;
 
     return CSS::DynamicRangeLimitMixComponent {
-        WTFMove(*limit),
-        WTFMove(*percentage)
+        WTF::move(*limit),
+        WTF::move(*percentage)
     };
 }
 
@@ -977,7 +974,7 @@ static std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimitM
         auto component = consumeUnresolvedDynamicRangeLimitMixComponent(args, propertyParserState);
         if (!component)
             return { };
-        resultBuilder.append(WTFMove(*component));
+        resultBuilder.append(WTF::move(*component));
     } while (consumeCommaIncludingWhitespace(args));
 
     if (!args.atEnd())
@@ -989,7 +986,7 @@ static std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimitM
     range = rangeCopy;
     return CSS::DynamicRangeLimit {
         CSS::DynamicRangeLimitMixFunction {
-            CSS::DynamicRangeLimitMixFunctionValue { CSS::DynamicRangeLimitMixParameters { WTFMove(resultBuilder) } }
+            CSS::DynamicRangeLimitMixFunctionValue { CSS::DynamicRangeLimitMixParameters { WTF::move(resultBuilder) } }
         }
     };
 }
@@ -1022,7 +1019,7 @@ std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimit(CSSPars
 
     if (range.peek().functionId() == CSSValueDynamicRangeLimitMix) {
         if (auto mix = consumeUnresolvedDynamicRangeLimitMix(range, propertyParserState))
-            return CSS::DynamicRangeLimit { WTFMove(*mix) };
+            return CSS::DynamicRangeLimit { WTF::move(*mix) };
     }
 
     return { };
@@ -1035,7 +1032,7 @@ RefPtr<CSSValue> consumeDynamicRangeLimit(CSSParserTokenRange& range, CSS::Prope
     auto dynamicRangeLimit = consumeUnresolvedDynamicRangeLimit(range, propertyParserState);
     if (!dynamicRangeLimit)
         return { };
-    return CSSDynamicRangeLimitValue::create(WTFMove(*dynamicRangeLimit));
+    return CSSDynamicRangeLimitValue::create(WTF::move(*dynamicRangeLimit));
 }
 
 } // namespace CSSPropertyParserHelpers

@@ -42,7 +42,7 @@ ObjcClass::ObjcClass(ClassStructPtr aClass)
 {
 }
 
-static RetainPtr<CFMutableDictionaryRef>& classesByIsA()
+static RetainPtr<CFMutableDictionaryRef>& NODELETE classesByIsA()
 {
     static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> classesByIsA;
     return classesByIsA;
@@ -113,34 +113,34 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
     RetainPtr<NSString> methodName = adoptNS([[NSString alloc] initWithCString:buffer.span().data() encoding:NSASCIIStringEncoding]);
 
     Method* methodPtr = 0;
-    ClassStructPtr thisClass = _isa;
-    
+    RetainPtr thisClass = _isa;
+
     while (thisClass && !methodPtr) {
-        auto objcMethodList = class_copyMethodListSpan(thisClass);
+        auto objcMethodList = class_copyMethodListSpan(thisClass.get());
         for (auto& objcMethod : objcMethodList.span()) {
             SEL objcMethodSelector = method_getName(objcMethod);
             auto objcMethodSelectorName = unsafeSpan(sel_getName(objcMethodSelector));
             NSString* mappedName = nil;
 
             // See if the class wants to exclude the selector from visibility in JavaScript.
-            if ([thisClass respondsToSelector:@selector(isSelectorExcludedFromWebScript:)])
-                if ([thisClass isSelectorExcludedFromWebScript:objcMethodSelector])
+            if ([thisClass.get() respondsToSelector:@selector(isSelectorExcludedFromWebScript:)])
+                if ([thisClass.get() isSelectorExcludedFromWebScript:objcMethodSelector])
                     continue;
 
             // See if the class want to provide a different name for the selector in JavaScript.
             // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
             // of the class.
-            if ([thisClass respondsToSelector:@selector(webScriptNameForSelector:)])
-                mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
+            if ([thisClass.get() respondsToSelector:@selector(webScriptNameForSelector:)])
+                mappedName = [thisClass.get() webScriptNameForSelector:objcMethodSelector];
 
             if ((mappedName && [mappedName isEqual:methodName.get()]) || equalSpans(objcMethodSelectorName, unsafeSpan(buffer.span().data()))) {
-                auto method = makeUnique<ObjcMethod>(thisClass, objcMethodSelector);
+                auto method = makeUnique<ObjcMethod>(thisClass.get(), objcMethodSelector);
                 methodPtr = method.get();
-                m_methodCache.add(name.impl(), WTFMove(method));
+                m_methodCache.add(name.impl(), WTF::move(method));
                 break;
             }
         }
-        thisClass = class_getSuperclass(thisClass);
+        thisClass = class_getSuperclass(thisClass.get());
     }
 
     return methodPtr;
@@ -156,17 +156,17 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
     if (field)
         return field;
 
-    ClassStructPtr thisClass = _isa;
+    RetainPtr thisClass = _isa;
 
     CString jsName = name.ascii();
     RetainPtr<NSString> fieldName = adoptNS([[NSString alloc] initWithCString:jsName.data() encoding:NSASCIIStringEncoding]);
-    id targetObject = (static_cast<ObjcInstance*>(instance))->getObject();
+    RetainPtr<id> targetObject = (downcast<ObjcInstance>(instance))->getObject();
 #if PLATFORM(IOS_FAMILY)
     IGNORE_WARNINGS_BEGIN("undeclared-selector")
-    id attributes = [targetObject respondsToSelector:@selector(attributeKeys)] ? [targetObject performSelector:@selector(attributeKeys)] : nil;
+    id attributes = [targetObject.get() respondsToSelector:@selector(attributeKeys)] ? [targetObject.get() performSelector:@selector(attributeKeys)] : nil;
     IGNORE_WARNINGS_END
 #else
-    id attributes = [targetObject attributeKeys];
+    id attributes = [targetObject.get() attributeKeys];
 #endif
     if (attributes) {
         // Class overrides attributeKeys, use that array of key names.
@@ -174,21 +174,21 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
             const char* UTF8KeyName = [keyName UTF8String]; // ObjC actually only supports ASCII names.
 
             // See if the class wants to exclude the selector from visibility in JavaScript.
-            if ([thisClass respondsToSelector:@selector(isKeyExcludedFromWebScript:)])
-                if ([thisClass isKeyExcludedFromWebScript:UTF8KeyName])
+            if ([thisClass.get() respondsToSelector:@selector(isKeyExcludedFromWebScript:)])
+                if ([thisClass.get() isKeyExcludedFromWebScript:UTF8KeyName])
                     continue;
 
             // See if the class want to provide a different name for the selector in JavaScript.
             // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
             // of the class.
             NSString* mappedName = nil;
-            if ([thisClass respondsToSelector:@selector(webScriptNameForKey:)])
-                mappedName = [thisClass webScriptNameForKey:UTF8KeyName];
+            if ([thisClass.get() respondsToSelector:@selector(webScriptNameForKey:)])
+                mappedName = [thisClass.get() webScriptNameForKey:UTF8KeyName];
 
             if ((mappedName && [mappedName isEqual:fieldName.get()]) || [keyName isEqual:fieldName.get()]) {
                 auto newField = makeUnique<ObjcField>((__bridge CFStringRef)keyName);
                 field = newField.get();
-                m_fieldCache.add(name.impl(), WTFMove(newField));
+                m_fieldCache.add(name.impl(), WTF::move(newField));
                 break;
             }
         }
@@ -197,31 +197,31 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
         // introspection.
 
         while (thisClass) {
-            auto ivarsInClass = class_copyIvarListSpan(thisClass);
+            auto ivarsInClass = class_copyIvarListSpan(thisClass.get());
             for (auto& objcIVar : ivarsInClass.span()) {
                 const char* objcIvarName = ivar_getName(objcIVar);
                 NSString *mappedName = nullptr;
 
                 // See if the class wants to exclude the selector from visibility in JavaScript.
-                if ([thisClass respondsToSelector:@selector(isKeyExcludedFromWebScript:)])
-                    if ([thisClass isKeyExcludedFromWebScript:objcIvarName])
+                if ([thisClass.get() respondsToSelector:@selector(isKeyExcludedFromWebScript:)])
+                    if ([thisClass.get() isKeyExcludedFromWebScript:objcIvarName])
                         continue;
 
                 // See if the class want to provide a different name for the selector in JavaScript.
                 // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
                 // of the class.
-                if ([thisClass respondsToSelector:@selector(webScriptNameForKey:)])
-                    mappedName = [thisClass webScriptNameForKey:objcIvarName];
+                if ([thisClass.get() respondsToSelector:@selector(webScriptNameForKey:)])
+                    mappedName = [thisClass.get() webScriptNameForKey:objcIvarName];
 
                 if ((mappedName && [mappedName isEqual:fieldName.get()]) || equalSpans(unsafeSpan(objcIvarName), jsName.span())) {
                     auto newField = makeUnique<ObjcField>(objcIVar);
                     field = newField.get();
-                    m_fieldCache.add(name.impl(), WTFMove(newField));
+                    m_fieldCache.add(name.impl(), WTF::move(newField));
                     break;
                 }
             }
 
-            thisClass = class_getSuperclass(thisClass);
+            thisClass = class_getSuperclass(thisClass.get());
         }
     }
 
@@ -230,7 +230,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
 
 JSValue ObjcClass::fallbackObject(JSGlobalObject* lexicalGlobalObject, Instance* instance, PropertyName propertyName)
 {
-    ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
+    auto* objcInstance = downcast<ObjcInstance>(instance);
     id targetObject = objcInstance->getObject();
     
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])

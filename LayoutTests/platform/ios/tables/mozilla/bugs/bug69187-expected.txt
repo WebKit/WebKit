@@ -16,21 +16,21 @@ layer at (0,0) size 800x600
                 RenderInline {FONT} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (2,2) size 183x20
-                RenderText {#text} at (0,0) size 183x19
+                RenderText {#text} at (0,0) size 183x20
                   text run at (0,0) width 183: "Alisha - Password-Protected"
               RenderBlock {P} at (2,38) size 183x20
-                RenderText {#text} at (0,0) size 47x19
+                RenderText {#text} at (0,0) size 47x20
                   text run at (0,0) width 47: "Arlesia"
               RenderBlock {P} at (2,74) size 183x20
-                RenderText {#text} at (0,0) size 37x19
+                RenderText {#text} at (0,0) size 37x20
                   text run at (0,0) width 37: "Asale"
             RenderTableCell {TD} at (190,57) size 57x97 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (2,2) size 53x20
-                RenderText {#text} at (0,0) size 35x19
+                RenderText {#text} at (0,0) size 35x20
                   text run at (0,0) width 35: "Ernie"
               RenderBlock {P} at (2,38) size 53x20
-                RenderText {#text} at (0,0) size 53x19
+                RenderText {#text} at (0,0) size 53x20
                   text run at (0,0) width 53: "Melanie"
               RenderBlock {P} at (2,74) size 53x20
-                RenderText {#text} at (0,0) size 48x19
+                RenderText {#text} at (0,0) size 48x20
                   text run at (0,0) width 48: "Tamara"

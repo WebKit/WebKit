@@ -42,7 +42,7 @@ namespace WebCore {
 OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
     : m_page(&page)
     , m_runLoopObserver(makeUniqueRef<RunLoopObserver>(RunLoopObserver::WellKnownOrder::OpportunisticTask, [weakThis = WeakPtr { this }] {
-        if (auto protectedThis = weakThis.get())
+        if (RefPtr protectedThis = weakThis.get())
             protectedThis->runLoopObserverFired();
     }, RunLoopObserver::Type::OneShot))
 {

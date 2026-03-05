@@ -25,35 +25,22 @@
 
 #pragma once
 
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #include <CoreMedia/CoreMedia.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <AVFoundation/AVStreamDataParser.h>
+#else
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol AVStreamDataParserOutputHandling;
 @class AVStreamDataParserInternal;
 
-@interface AVStreamDataParser : NSObject {
-@private
-    AVStreamDataParserInternal *_parser;
-}
-
-- (void)setDelegate:(nullable id<AVStreamDataParserOutputHandling>)delegate;
-- (void)appendStreamData:(NSData *)data;
-typedef NS_ENUM(NSUInteger, AVStreamDataParserStreamDataFlags) {
-    AVStreamDataParserStreamDataDiscontinuity = 1 << 0,
-};
-- (void)appendStreamData:(NSData *)data withFlags:(AVStreamDataParserStreamDataFlags)flags;
-- (void)providePendingMediaData;
-- (void)setShouldProvideMediaData:(BOOL)shouldProvideMediaData forTrackID:(CMPersistentTrackID)trackID;
-- (BOOL)shouldProvideMediaDataForTrackID:(CMPersistentTrackID)trackID;
-@end
-
 @protocol AVStreamDataParserOutputHandling <NSObject>
-typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
-    AVStreamDataParserOutputMediaDataReserved = 1 << 0
-};
 @optional
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset withDiscontinuity:(BOOL)withDiscontinuity;
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didFailToParseStreamDataWithError:(NSError *)err;
@@ -73,3 +60,7 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif
+
+#endif // !__has_feature(modules)

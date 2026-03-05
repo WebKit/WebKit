@@ -2,7 +2,7 @@
 
 @namespace "http://www.w3.org/1999/xhtml";
 
-[popover]:not(:popover-open):not(dialog[open]) {
+[popover]:not(:popover-open):not(dialog[open]):not(:-internal-select-popover) {
     display: none;
 }
 dialog:popover-open {
@@ -11,13 +11,16 @@ dialog:popover-open {
 
 [popover] {
     position: fixed;
-    inset: 0;
     width: fit-content;
     height: fit-content;
+    overflow: auto;
+}
+
+[popover]:not(:-internal-select-popover) {
+    inset: 0;
     margin: auto;
     border: solid;
     padding: 0.25em;
-    overflow: auto;
     color: CanvasText;
     background-color: Canvas;
 }

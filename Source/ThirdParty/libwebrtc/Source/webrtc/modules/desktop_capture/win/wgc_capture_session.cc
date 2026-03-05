@@ -8,8 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/desktop_capture/win/wgc_capture_session.h"
-
 #include <DispatcherQueue.h>
 #include <windows.graphics.capture.interop.h>
 #include <windows.graphics.directX.direct3d11.interop.h>
@@ -21,15 +19,19 @@
 #include <memory>
 #include <utility>
 
+#include "api/make_ref_counted.h"
 #include "api/sequence_checker.h"
+#include "api/units/time_delta.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
+#include "modules/desktop_capture/win/wgc_capture_session.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/time_utils.h"
 #include "rtc_base/win/create_direct3d_device.h"
 #include "rtc_base/win/get_activation_factory.h"
 #include "rtc_base/win/windows_version.h"
@@ -46,6 +48,10 @@ namespace {
 constexpr auto kPixelFormat = ABI::Windows::Graphics::DirectX::
     DirectXPixelFormat::DirectXPixelFormat_B8G8R8A8UIntNormalized;
 
+// We must wait a little longer for the first frame to avoid failing the
+// capture when there is a longer startup time.
+constexpr int kFirstFrameTimeoutMs = 5000;
+
 // These values are persisted to logs. Entries should not be renumbered and
 // numeric values should never be reused.
 enum class StartCaptureResult {
@@ -56,7 +62,7 @@ enum class StartCaptureResult {
   kD3dDelayLoadFailed = 4,
   kD3dDeviceCreationFailed = 5,
   kFramePoolActivationFailed = 6,
-  // kFramePoolCastFailed = 7, (deprecated)
+  kFramePoolCastFailed = 7,
   // kGetItemSizeFailed = 8, (deprecated)
   kCreateFramePoolFailed = 9,
   kCreateCaptureSessionFailed = 10,
@@ -80,7 +86,17 @@ enum class GetFrameResult {
   kResizeMappedTextureFailed = 10,
   kRecreateFramePoolFailed = 11,
   kFramePoolEmpty = 12,
-  kMaxValue = kFramePoolEmpty
+  kWaitForFirstFrameFailed = 13,
+  kMaxValue = kWaitForFirstFrameFailed
+};
+
+enum class WaitForFirstFrameResult {
+  kSuccess = 0,
+  kTryGetNextFrameFailed = 1,
+  kAddFrameArrivedCallbackFailed = 2,
+  kWaitingTimedOut = 3,
+  kRemoveFrameArrivedCallbackFailed = 4,
+  kMaxValue = kRemoveFrameArrivedCallbackFailed
 };
 
 void RecordStartCaptureResult(StartCaptureResult error) {
@@ -95,6 +111,19 @@ void RecordGetFrameResult(GetFrameResult error) {
       static_cast<int>(error), static_cast<int>(GetFrameResult::kMaxValue));
 }
 
+void RecordGetFirstFrameTime(int64_t elapsed_time_ms) {
+  RTC_HISTOGRAM_COUNTS(
+      "WebRTC.DesktopCapture.Win.WgcCaptureSessionTimeToFirstFrame",
+      elapsed_time_ms, /*min=*/1, /*max=*/5000, /*bucket_count=*/100);
+}
+
+void RecordWaitForFirstFrameResult(WaitForFirstFrameResult error) {
+  RTC_HISTOGRAM_ENUMERATION(
+      "WebRTC.DesktopCapture.Win.WgcCaptureSessionWaitForFirstFrameResult",
+      static_cast<int>(error),
+      static_cast<int>(WaitForFirstFrameResult::kMaxValue));
+}
+
 bool SizeHasChanged(ABI::Windows::Graphics::SizeInt32 size_new,
                     ABI::Windows::Graphics::SizeInt32 size_old) {
   return (size_new.Height != size_old.Height ||
@@ -106,6 +135,23 @@ bool DoesWgcSkipStaticFrames() {
 }
 
 }  // namespace
+
+WgcCaptureSession::RefCountedEvent::RefCountedEvent(bool manual_reset,
+                                                    bool initially_signaled)
+    : Event(manual_reset, initially_signaled) {}
+
+WgcCaptureSession::RefCountedEvent::~RefCountedEvent() = default;
+
+WgcCaptureSession::AgileFrameArrivedHandler::AgileFrameArrivedHandler(
+    scoped_refptr<RefCountedEvent> event)
+    : frame_arrived_event_(event) {}
+
+IFACEMETHODIMP WgcCaptureSession::AgileFrameArrivedHandler::Invoke(
+    ABI::Windows::Graphics::Capture::IDirect3D11CaptureFramePool* sender,
+    IInspectable* args) {
+  frame_arrived_event_->Set();
+  return S_OK;
+}
 
 WgcCaptureSession::WgcCaptureSession(intptr_t source_id,
                                      ComPtr<ID3D11Device> d3d11_device,
@@ -119,7 +165,7 @@ WgcCaptureSession::WgcCaptureSession(intptr_t source_id,
 }
 
 WgcCaptureSession::~WgcCaptureSession() {
-  RemoveEventHandler();
+  RemoveEventHandlers();
 }
 
 HRESULT WgcCaptureSession::StartCapture(const DesktopCaptureOptions& options) {
@@ -178,8 +224,20 @@ HRESULT WgcCaptureSession::StartCapture(const DesktopCaptureOptions& options) {
     return hr;
   }
 
-  hr = frame_pool_statics->Create(direct3d_device_.Get(), kPixelFormat,
-                                  kNumBuffers, size_, &frame_pool_);
+  // Cast to FramePoolStatics2 so we can use CreateFreeThreaded and avoid the
+  // need to have a DispatcherQueue. Sometimes, the time to obtain the first
+  // frame ever in a stream can take longer. To avoid timeouts,
+  // CreateFreeThreaded is needed so that the frame processing done by WGC can
+  // happen on a different thread while the main thread is waiting for it.
+  ComPtr<WGC::IDirect3D11CaptureFramePoolStatics2> frame_pool_statics2;
+  hr = frame_pool_statics->QueryInterface(IID_PPV_ARGS(&frame_pool_statics2));
+  if (FAILED(hr)) {
+    RecordStartCaptureResult(StartCaptureResult::kFramePoolCastFailed);
+    return hr;
+  }
+
+  hr = frame_pool_statics2->CreateFreeThreaded(
+      direct3d_device_.Get(), kPixelFormat, kNumBuffers, size_, &frame_pool_);
   if (FAILED(hr)) {
     RecordStartCaptureResult(StartCaptureResult::kCreateFramePoolFailed);
     return hr;
@@ -212,6 +270,18 @@ HRESULT WgcCaptureSession::StartCapture(const DesktopCaptureOptions& options) {
     session3->put_IsBorderRequired(options.wgc_require_border());
   }
 
+  // Windows 11 24H2 (10.0.26100.0) added
+  // `IGraphicsCaptureSession6::put_IncludeSecondaryWindows()`. See
+  // `wgc_include_secondary_windows()` in
+  // /modules/desktop_capture/desktop_capture_options.h for more details.
+  ComPtr<ABI::Windows::Graphics::Capture::IGraphicsCaptureSession6> session6;
+  if (SUCCEEDED(session_->QueryInterface(
+          ABI::Windows::Graphics::Capture::IID_IGraphicsCaptureSession6,
+          &session6))) {
+    session6->put_IncludeSecondaryWindows(
+        options.wgc_include_secondary_windows());
+  }
+
   allow_zero_hertz_ = options.allow_wgc_zero_hertz();
 
   hr = session_->StartCapture();
@@ -227,7 +297,58 @@ HRESULT WgcCaptureSession::StartCapture(const DesktopCaptureOptions& options) {
   return hr;
 }
 
+bool WgcCaptureSession::WaitForFirstFrame() {
+  RTC_CHECK(!has_first_frame_arrived_);
+
+  ComPtr<WGC::IDirect3D11CaptureFrame> capture_frame = nullptr;
+  // Flush the `frame_pool_` buffers so that we can receive the most recent
+  // frames.
+  for (int i = 0; i < kNumBuffers; ++i) {
+    HRESULT hr = frame_pool_->TryGetNextFrame(&capture_frame);
+    if (FAILED(hr)) {
+      RTC_LOG(LS_ERROR) << "TryGetNextFrame failed: " << hr;
+      RecordWaitForFirstFrameResult(
+          WaitForFirstFrameResult::kTryGetNextFrameFailed);
+      return false;
+    }
+  }
+
+  if (FAILED(AddFrameArrivedEventHandler())) {
+    RecordWaitForFirstFrameResult(
+        WaitForFirstFrameResult::kAddFrameArrivedCallbackFailed);
+    return false;
+  }
+
+  RTC_CHECK(has_first_frame_arrived_event_);
+  int64_t first_frame_event_wait_start = TimeMillis();
+  // Only start the frame polling once the first frame becomes available.
+  if (!has_first_frame_arrived_event_->Wait(
+          TimeDelta::Millis(kFirstFrameTimeoutMs))) {
+    RecordGetFirstFrameTime(kFirstFrameTimeoutMs);
+    RecordWaitForFirstFrameResult(WaitForFirstFrameResult::kWaitingTimedOut);
+    RTC_LOG(LS_ERROR) << "Timed out after waiting " << kFirstFrameTimeoutMs
+                      << " ms for the first frame.";
+    return false;
+  }
+
+  RecordGetFirstFrameTime(TimeMillis() - first_frame_event_wait_start);
+  RecordWaitForFirstFrameResult(WaitForFirstFrameResult::kSuccess);
+  has_first_frame_arrived_ = true;
+  RemoveFrameArrivedEventHandler();
+  return true;
+}
+
 void WgcCaptureSession::EnsureFrame() {
+  // We need to wait for the first frame because it might take some extra time
+  // for the `frame_pool_` to be populated and capture may fail because of too
+  // many `kFrameDropped` errors.
+  if (!has_first_frame_arrived_) {
+    if (!WaitForFirstFrame()) {
+      RecordGetFrameResult(GetFrameResult::kWaitForFirstFrameFailed);
+      return;
+    }
+  }
+
   // Try to process the captured frame and copy it to the `queue_`.
   HRESULT hr = ProcessFrame();
   if (SUCCEEDED(hr)) {
@@ -283,8 +404,16 @@ bool WgcCaptureSession::GetFrame(std::unique_ptr<DesktopFrame>* output_frame,
   // if we know that the source will not be capturable. This can happen e.g.
   // when captured window is minimized and if EnsureFrame() was called in this
   // state a large amount of kFrameDropped errors would be logged.
-  if (source_should_be_capturable)
+  if (source_should_be_capturable) {
     EnsureFrame();
+  } else {
+    // If the source is not capturable, we must reset `has_first_frame_arrived_`
+    // so that the next time the source becomes capturable we can wait for the
+    // first frame again.
+    if (has_first_frame_arrived_) {
+      has_first_frame_arrived_ = false;
+    }
+  }
 
   // Return a NULL frame and false as `result` if we still don't have a valid
   // frame. This will lead to a DesktopCapturer::Result::ERROR_PERMANENT being
@@ -583,7 +712,7 @@ HRESULT WgcCaptureSession::ProcessFrame() {
         // Mark resized frames as damaged.
         damage_region_.SetRect(DesktopRect::MakeSize(current_frame->size()));
       }
-    } else{
+    } else {
       // Mark a `damage_region_` even if there is no previous frame. This
       // condition does not create any increased overhead but is useful while
       // using FullScreenWindowDetector, where it would create a new
@@ -607,7 +736,7 @@ HRESULT WgcCaptureSession::OnItemClosed(WGC::IGraphicsCaptureItem* sender,
   RTC_LOG(LS_INFO) << "Capture target has been closed.";
   item_closed_ = true;
 
-  RemoveEventHandler();
+  RemoveItemClosedEventHandler();
 
   // Do not attempt to free resources in the OnItemClosed handler, as this
   // causes a race where we try to delete the item that is calling us. Removing
@@ -617,14 +746,51 @@ HRESULT WgcCaptureSession::OnItemClosed(WGC::IGraphicsCaptureItem* sender,
   return S_OK;
 }
 
-void WgcCaptureSession::RemoveEventHandler() {
+void WgcCaptureSession::RemoveEventHandlers() {
+  RemoveItemClosedEventHandler();
+  RemoveFrameArrivedEventHandler();
+}
+
+void WgcCaptureSession::RemoveItemClosedEventHandler() {
   HRESULT hr;
   if (item_ && item_closed_token_) {
     hr = item_->remove_Closed(*item_closed_token_);
     item_closed_token_.reset();
-    if (FAILED(hr))
+    if (FAILED(hr)) {
       RTC_LOG(LS_WARNING) << "Failed to remove Closed event handler: " << hr;
+    }
   }
+}
+
+void WgcCaptureSession::RemoveFrameArrivedEventHandler() {
+  RTC_DCHECK(frame_pool_);
+  if (frame_arrived_token_) {
+    HRESULT hr = frame_pool_->remove_FrameArrived(*frame_arrived_token_);
+    frame_arrived_token_.reset();
+    has_first_frame_arrived_event_ = nullptr;
+    if (FAILED(hr)) {
+      RTC_LOG(LS_WARNING) << "Failed to remove FrameArrived event handler: "
+                          << hr;
+    }
+  }
+}
+
+HRESULT WgcCaptureSession::AddFrameArrivedEventHandler() {
+  RTC_DCHECK(frame_pool_);
+  HRESULT hr = E_FAIL;
+  frame_arrived_token_ = std::make_unique<EventRegistrationToken>();
+  has_first_frame_arrived_event_ = make_ref_counted<RefCountedEvent>(
+      /*manual_reset=*/true, /*initially_signaled=*/false);
+  auto frame_arrived_handler = Microsoft::WRL::Make<AgileFrameArrivedHandler>(
+      has_first_frame_arrived_event_);
+  hr = frame_pool_->add_FrameArrived(frame_arrived_handler.Get(),
+                                     frame_arrived_token_.get());
+  if (FAILED(hr)) {
+    RTC_LOG(LS_WARNING) << "Failed to add FrameArrived event handler: " << hr;
+    frame_arrived_token_.reset();
+    has_first_frame_arrived_event_ = nullptr;
+  }
+  return hr;
 }
 
 bool WgcCaptureSession::FrameContentCanBeCompared() {

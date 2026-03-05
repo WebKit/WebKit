@@ -40,7 +40,7 @@ symbols = [
 request = "rdar://157890562"
 symbols = [
     # Only used for benchmarking, see 293525@main.
-    "nw_parameters_set_source_application_by_bundle_id",
+    "nw_parameters_set_source_application",
 ]
 
 [[temporary-usage]]
@@ -71,5 +71,63 @@ selectors = [
 request = "rdar://161241270"
 cleanup = "rdar://161241477"
 symbols = [
-    "CTFontDescriptorCreateMatchingFontDescriptorsWithOptions",
+    "CTFontGetUIFontType",
+]
+
+[[temporary-usage]]
+request = "rdar://168834967"
+cleanup = "rdar://168834815"
+symbols = [
+    "CGContextGetColorSpace",
+]
+
+[[temporary-usage]]
+request = "rdar://161402565"
+cleanup = "rdar://161402756"
+symbols = [
+    "FPFontCreateMemorySafeFontsFromData",
+]
+
+[[temporary-usage]]
+cleanup = "rdar://171200085"
+symbols = [
+    "MACaptionAppearanceCopyPreviewText",
+]
+
+[[not-web-essential]]
+request = "rdar://168411469"
+symbols = [
+    "DDResultGetRange",
+]
+
+[[temporary-usage]]
+requires = [ "HAVE_CGCONTEXT_STROKE_ARC" ]
+request = "rdar://169211312"
+cleanup = "rdar://169211412"
+symbols = [
+    "CGContextStrokeArc",
+]
+
+ [[temporary-usage]]
+ request = "rdar://170272259"
+ cleanup = "rdar://170272662"
+ symbols = [
+     "CGIOSurfaceContextFlushQueue",
+ ]
+
+[[temporary-usage]]
+request = "rdar://168696619"
+cleanup = "rdar://169487203"
+classes = ["WCRBrowserEngineClient"]
+selectors = [
+    { name = "evaluateURL:mainDocumentURL:withCompletion:onCompletionQueue:", class = "WCRBrowserEngineClient" },
+]
+requires = ["HAVE_WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST"]
+
+[[temporary-usage]]
+requires = [ "HAVE_CGPATTERN_CREATE_WITH_IMAGE_TRANSFORM_STEP" ]
+request = "rdar://170092229"
+cleanup = "rdar://170092414"
+symbols = [
+    "CGPatternCreateWithImageTransformStep",
 ]

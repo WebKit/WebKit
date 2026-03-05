@@ -27,8 +27,11 @@
 #include "MockGamepad.h"
 
 #if ENABLE(GAMEPAD)
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockGamepad);
 
 MockGamepad::MockGamepad(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
     : PlatformGamepad(index)

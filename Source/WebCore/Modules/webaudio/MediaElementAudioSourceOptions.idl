@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO&VIDEO
+    Conditional=WEB_AUDIO&VIDEO,
 ] dictionary MediaElementAudioSourceOptions {
     required HTMLMediaElement mediaElement;
 };

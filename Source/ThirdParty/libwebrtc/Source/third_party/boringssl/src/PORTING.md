@@ -283,7 +283,7 @@ parameter.
 
 ## Significant API additions
 
-In some places, BoringSSL has added significant APIs. Use of these APIs goes beyound “porting” and means giving up on OpenSSL compatibility.
+In some places, BoringSSL has added significant APIs. Use of these APIs goes beyond “porting” and means giving up on OpenSSL compatibility.
 
 One example of this has already been mentioned: the [CBS and CBB](https://commondatastorage.googleapis.com/chromium-boringssl-docs/bytestring.h.html) functions should be used whenever parsing or serialising data.
 

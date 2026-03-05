@@ -8,7 +8,7 @@ PASS the result of compressing [Hello,Hello,] with deflate-raw should be 'HelloH
 PASS the result of compressing [,Hello,Hello] with gzip should be 'HelloHello'
 PASS the result of compressing [Hello,,Hello] with gzip should be 'HelloHello'
 PASS the result of compressing [Hello,Hello,] with gzip should be 'HelloHello'
-FAIL the result of compressing [,Hello,Hello] with brotli should be 'HelloHello' assert_array_equals: value should match lengths differ, expected array object "" length 0, got object "72,101,108,108,111,72,101,108,108,111" length 10
-FAIL the result of compressing [Hello,,Hello] with brotli should be 'HelloHello' assert_array_equals: value should match lengths differ, expected array object "" length 0, got object "72,101,108,108,111,72,101,108,108,111" length 10
-FAIL the result of compressing [Hello,Hello,] with brotli should be 'HelloHello' assert_array_equals: value should match lengths differ, expected array object "" length 0, got object "72,101,108,108,111,72,101,108,108,111" length 10
+PASS the result of compressing [,Hello,Hello] with brotli should be 'HelloHello'
+PASS the result of compressing [Hello,,Hello] with brotli should be 'HelloHello'
+PASS the result of compressing [Hello,Hello,] with brotli should be 'HelloHello'
 

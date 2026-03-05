@@ -3,6 +3,6 @@ This tests that a mouse click event will cause a media element to gain focus wit
 
 EXPECTED (document.activeElement.id == 'video') OK
 EXPECTED (getComputedStyle(video).outlineStyle == 'none') OK
-EXPECTED (getComputedStyle(video).outlineWidth == '0px') OK
+EXPECTED (getComputedStyle(video).outlineWidth == '3px') OK
 END OF TEST
 

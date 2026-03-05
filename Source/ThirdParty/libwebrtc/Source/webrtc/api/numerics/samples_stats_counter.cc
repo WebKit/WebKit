@@ -35,7 +35,8 @@ SamplesStatsCounter& SamplesStatsCounter::operator=(SamplesStatsCounter&&) =
     default;
 
 void SamplesStatsCounter::AddSample(double value) {
-  AddSample(StatsSample{value, Timestamp::Micros(TimeMicros())});
+  AddSample(
+      StatsSample{.value = value, .time = Timestamp::Micros(TimeMicros())});
 }
 
 void SamplesStatsCounter::AddSample(StatsSample sample) {
@@ -85,8 +86,8 @@ SamplesStatsCounter operator*(const SamplesStatsCounter& counter,
                               double value) {
   SamplesStatsCounter out;
   for (const auto& sample : counter.GetTimedSamples()) {
-    out.AddSample(
-        SamplesStatsCounter::StatsSample{sample.value * value, sample.time});
+    out.AddSample(SamplesStatsCounter::StatsSample{
+        .value = sample.value * value, .time = sample.time});
   }
   return out;
 }
@@ -95,8 +96,8 @@ SamplesStatsCounter operator/(const SamplesStatsCounter& counter,
                               double value) {
   SamplesStatsCounter out;
   for (const auto& sample : counter.GetTimedSamples()) {
-    out.AddSample(
-        SamplesStatsCounter::StatsSample{sample.value / value, sample.time});
+    out.AddSample(SamplesStatsCounter::StatsSample{
+        .value = sample.value / value, .time = sample.time});
   }
   return out;
 }

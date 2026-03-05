@@ -28,6 +28,7 @@
 #include "ChannelCountMode.h"
 #include "ChannelInterpretation.h"
 #include "EventTarget.h"
+#include "EventTargetInterfaces.h"
 #include "ExceptionOr.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -60,7 +61,7 @@ class AudioNode
 #endif
 {
     WTF_MAKE_NONCOPYABLE(AudioNode);
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioNode);
+    WTF_MAKE_TZONE_ALLOCATED(AudioNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioNode);
 public:
     enum NodeType {
@@ -125,10 +126,8 @@ public:
     unsigned numberOfInputs() const { return m_inputs.size(); }
     unsigned numberOfOutputs() const { return m_outputs.size(); }
 
-    AudioNodeInput* input(unsigned);
-    CheckedPtr<AudioNodeInput> checkedInput(unsigned);
-    AudioNodeOutput* output(unsigned);
-    CheckedPtr<AudioNodeOutput> checkedOutput(unsigned);
+    AudioNodeInput* NODELETE input(unsigned);
+    AudioNodeOutput* NODELETE output(unsigned);
 
     // Called from main thread by corresponding JavaScript methods.
     ExceptionOr<void> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex);
@@ -236,10 +235,10 @@ protected:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "AudioNode"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
-    void initializeDefaultNodeOptions(unsigned count, ChannelCountMode, ChannelInterpretation);
+    void NODELETE initializeDefaultNodeOptions(unsigned count, ChannelCountMode, ChannelInterpretation);
 
     virtual void updatePullStatus() { }
 
@@ -298,6 +297,12 @@ template<typename T> struct AudioNodeConnectionRefDerefTraits {
         return ptr;
     }
 
+    static ALWAYS_INLINE T& ref(T& ref)
+    {
+        ref.incrementConnectionCount();
+        return ref;
+    }
+
     static ALWAYS_INLINE void derefIfNotNull(T* ptr)
     {
         if (ptr) [[likely]]
@@ -307,6 +312,9 @@ template<typename T> struct AudioNodeConnectionRefDerefTraits {
 
 template<typename T>
 using AudioConnectionRefPtr = RefPtr<T, RawPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
+
+template<typename T>
+using AudioConnectionRef = Ref<T, RawPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
 
 String convertEnumerationToString(AudioNode::NodeType);
 
@@ -318,7 +326,14 @@ template<> struct LogArgument<WebCore::AudioNode::NodeType> {
     static String toString(WebCore::AudioNode::NodeType type) { return convertEnumerationToString(type); }
 };
 
+// Make sure `protect()` returns a CheckedPtr/CheckedRef for AudioNodes instead of a RefPtr/Ref
+// since AudioNode's ref-counting is not thread-safe and protect() gets called from the AudioThread.
+inline CheckedRef<WebCore::AudioNode> protect(WebCore::AudioNode& node) { return node; }
+inline CheckedPtr<WebCore::AudioNode> protect(WebCore::AudioNode* node) { return node; }
+
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(AudioNode)
 
 #define SPECIALIZE_TYPE_TRAITS_AUDIONODE(ToValueTypeName, NodeTypeName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \

@@ -1,0 +1,259 @@
+/*
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ *           (C) 2000 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <WebCore/CounterDirectives.h>
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/StyleAnchorName.h>
+#include <WebCore/StyleBlockStepSize.h>
+#include <WebCore/StyleClip.h>
+#include <WebCore/StyleClipPath.h>
+#include <WebCore/StyleColor.h>
+#include <WebCore/StyleContain.h>
+#include <WebCore/StyleContainIntrinsicSize.h>
+#include <WebCore/StyleContainerName.h>
+#include <WebCore/StyleCounterIncrement.h>
+#include <WebCore/StyleCounterReset.h>
+#include <WebCore/StyleCounterSet.h>
+#include <WebCore/StyleGapGutter.h>
+#include <WebCore/StyleMarginTrim.h>
+#include <WebCore/StyleMaskBorder.h>
+#include <WebCore/StyleMaximumLines.h>
+#include <WebCore/StyleNameScope.h>
+#include <WebCore/StyleOffsetAnchor.h>
+#include <WebCore/StyleOffsetDistance.h>
+#include <WebCore/StyleOffsetPath.h>
+#include <WebCore/StyleOffsetPosition.h>
+#include <WebCore/StyleOffsetRotate.h>
+#include <WebCore/StyleOverflowClipMargin.h>
+#include <WebCore/StylePageSize.h>
+#include <WebCore/StylePerspective.h>
+#include <WebCore/StylePerspectiveOrigin.h>
+#include <WebCore/StylePositionAnchor.h>
+#include <WebCore/StylePositionArea.h>
+#include <WebCore/StylePositionTryFallbacks.h>
+#include <WebCore/StylePositionVisibility.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+#include <WebCore/StyleRotate.h>
+#include <WebCore/StyleScale.h>
+#include <WebCore/StyleScrollBehavior.h>
+#include <WebCore/StyleScrollMargin.h>
+#include <WebCore/StyleScrollPadding.h>
+#include <WebCore/StyleScrollSnapAlign.h>
+#include <WebCore/StyleScrollSnapType.h>
+#include <WebCore/StyleScrollTimelines.h>
+#include <WebCore/StyleScrollbarGutter.h>
+#include <WebCore/StyleScrollbarWidth.h>
+#include <WebCore/StyleShapeImageThreshold.h>
+#include <WebCore/StyleShapeMargin.h>
+#include <WebCore/StyleShapeOutside.h>
+#include <WebCore/StyleTextDecorationThickness.h>
+#include <WebCore/StyleTouchAction.h>
+#include <WebCore/StyleTranslate.h>
+#include <WebCore/StyleViewTimelines.h>
+#include <WebCore/StyleViewTransitionClass.h>
+#include <WebCore/StyleViewTransitionName.h>
+#include <WebCore/StyleWebKitBoxReflect.h>
+#include <WebCore/StyleWebKitInitialLetter.h>
+#include <WebCore/StyleWebKitLineClamp.h>
+#include <WebCore/StyleWillChange.h>
+#include <WebCore/StyleZoom.h>
+#include <wtf/DataRef.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+namespace Style {
+
+class BackdropFilterData;
+class CustomPropertyData;
+class GridData;
+class GridItemData;
+class MarqueeData;
+class MaskBorderData;
+
+// This class is for rarely used non-inherited property data. By grouping them
+// together, we save space, and only allocate this object when someone actually
+// uses one of these properties.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonInheritedRareData);
+class NonInheritedRareData : public RefCounted<NonInheritedRareData> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonInheritedRareData, NonInheritedRareData);
+public:
+    static Ref<NonInheritedRareData> create() { return adoptRef(*new NonInheritedRareData); }
+    Ref<NonInheritedRareData> copy() const;
+    ~NonInheritedRareData();
+    
+    bool operator==(const NonInheritedRareData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const NonInheritedRareData&) const;
+#endif
+
+    Contain usedContain() const;
+
+    ContainIntrinsicSize containIntrinsicWidth;
+    ContainIntrinsicSize containIntrinsicHeight;
+
+    WebkitLineClamp lineClamp;
+
+    Zoom zoom;
+
+    MaximumLines maxLines;
+
+    TouchAction touchAction;
+
+    WebkitInitialLetter initialLetter;
+
+    DataRef<MarqueeData> marquee;
+    DataRef<BackdropFilterData> backdropFilter;
+    DataRef<GridData> grid;
+    DataRef<GridItemData> gridItem;
+    DataRef<MaskBorderData> maskBorder;
+
+    Clip clip;
+
+    ScrollMarginBox scrollMargin;
+    ScrollPaddingBox scrollPadding;
+
+    CounterIncrement counterIncrement;
+    CounterReset counterReset;
+    CounterSet counterSet;
+    CounterDirectiveMap usedCounterDirectives;
+
+    WillChange willChange;
+
+    WebkitBoxReflect boxReflect;
+
+    PageSize pageSize;
+
+    ShapeOutside shapeOutside;
+    ShapeMargin shapeMargin;
+    ShapeImageThreshold shapeImageThreshold;
+
+    Perspective perspective;
+    PerspectiveOrigin perspectiveOrigin;
+
+    ClipPath clipPath;
+
+    DataRef<CustomPropertyData> customProperties;
+    HashSet<AtomString> customPaintWatchedProperties;
+
+    Rotate rotate;
+    Scale scale;
+    Translate translate;
+
+    ContainerNames containerNames;
+
+    ViewTransitionClasses viewTransitionClasses;
+    ViewTransitionName viewTransitionName;
+
+    GapGutter columnGap;
+    GapGutter rowGap;
+
+    OffsetPath offsetPath;
+    OffsetDistance offsetDistance;
+    OffsetPosition offsetPosition;
+    OffsetAnchor offsetAnchor;
+    OffsetRotate offsetRotate;
+
+    Color textDecorationColor;
+    TextDecorationThickness textDecorationThickness;
+
+    ScrollTimelines scrollTimelines;
+    ViewTimelines viewTimelines;
+
+    NameScope timelineScope;
+
+    ScrollbarGutter scrollbarGutter;
+
+    ScrollSnapType scrollSnapType;
+    ScrollSnapAlign scrollSnapAlign;
+
+    AtomString pseudoElementNameArgument;
+
+    AnchorNames anchorNames;
+    NameScope anchorScope;
+    PositionAnchor positionAnchor;
+    PositionArea positionArea;
+    PositionTryFallbacks positionTryFallbacks;
+    std::optional<size_t> usedPositionOptionIndex;
+
+    OverflowClipMargin overflowClipMargin;
+
+    BlockStepSize blockStepSize;
+    PREFERRED_TYPE(BlockStepAlign) unsigned blockStepAlign : 2;
+    PREFERRED_TYPE(BlockStepInsert) unsigned blockStepInsert : 2;
+    PREFERRED_TYPE(BlockStepRound) unsigned blockStepRound : 2;
+
+    PREFERRED_TYPE(OverscrollBehavior) unsigned overscrollBehaviorX : 2;
+    PREFERRED_TYPE(OverscrollBehavior) unsigned overscrollBehaviorY : 2;
+
+    PREFERRED_TYPE(TransformStyle3D) unsigned transformStyle3D : 2;
+    PREFERRED_TYPE(bool) unsigned transformStyleForcedToFlat : 1; // The used value for transform-style is forced to flat by a grouping property.
+    PREFERRED_TYPE(BackfaceVisibility) unsigned backfaceVisibility : 1;
+
+    PREFERRED_TYPE(ScrollBehavior) unsigned scrollBehavior : 1;
+    PREFERRED_TYPE(TextDecorationStyle) unsigned textDecorationStyle : 3;
+    PREFERRED_TYPE(TextGroupAlign) unsigned textGroupAlign : 3;
+    PREFERRED_TYPE(ContentVisibility) unsigned contentVisibility : 2;
+    PREFERRED_TYPE(BlendMode) unsigned effectiveBlendMode: 5;
+    PREFERRED_TYPE(Isolation) unsigned isolation : 1;
+    PREFERRED_TYPE(InputSecurity) unsigned inputSecurity : 1;
+#if ENABLE(APPLE_PAY)
+    PREFERRED_TYPE(ApplePayButtonStyle) unsigned applePayButtonStyle : 2;
+    PREFERRED_TYPE(ApplePayButtonType) unsigned applePayButtonType : 4;
+#endif
+    PREFERRED_TYPE(BreakBetween) unsigned breakBefore : 4;
+    PREFERRED_TYPE(BreakBetween) unsigned breakAfter : 4;
+    PREFERRED_TYPE(BreakInside) unsigned breakInside : 3;
+    PREFERRED_TYPE(ContainerType) unsigned containerType : 2;
+    PREFERRED_TYPE(TextBoxTrim) unsigned textBoxTrim : 2;
+    PREFERRED_TYPE(OverflowAnchor) unsigned overflowAnchor : 1;
+    PREFERRED_TYPE(PositionTryOrder) unsigned positionTryOrder : 3;
+    PREFERRED_TYPE(PositionVisibility) unsigned positionVisibility : 3;
+    PREFERRED_TYPE(FieldSizing) unsigned fieldSizing : 1;
+    PREFERRED_TYPE(bool) unsigned nativeAppearanceDisabled : 1;
+#if HAVE(CORE_MATERIAL)
+    PREFERRED_TYPE(AppleVisualEffect) unsigned appleVisualEffect : 5;
+#endif
+    PREFERRED_TYPE(ScrollbarWidth) unsigned scrollbarWidth : 2;
+    PREFERRED_TYPE(bool) unsigned usesAnchorFunctions : 1;
+    PREFERRED_TYPE(EnumSet<BoxAxis>) unsigned anchorFunctionScrollCompensatedAxes : 2;
+    PREFERRED_TYPE(bool) unsigned usesTreeCountingFunctions : 1;
+    PREFERRED_TYPE(bool) unsigned isPopoverInvoker : 1;
+    PREFERRED_TYPE(bool) unsigned useSVGZoomRulesForLength : 1;
+    PREFERRED_TYPE(MarginTrim) unsigned marginTrim : 4;
+    PREFERRED_TYPE(Contain) unsigned contain : 5;
+    PREFERRED_TYPE(OverflowContinue) unsigned overflowContinue : 1;
+    PREFERRED_TYPE(ScrollSnapStop) unsigned scrollSnapStop : 1;
+
+private:
+    NonInheritedRareData();
+    NonInheritedRareData(const NonInheritedRareData&);
+};
+
+} // namespace Style
+} // namespace WebCore

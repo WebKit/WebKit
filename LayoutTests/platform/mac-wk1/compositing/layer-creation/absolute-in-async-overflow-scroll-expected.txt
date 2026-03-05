@@ -1,2 +1,0 @@
-This layer should be composited.
-

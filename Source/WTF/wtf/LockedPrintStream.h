@@ -48,7 +48,7 @@ private:
     // and that assert might want to log. Better to let it. This needs to be a WordLock so that
     // LockedPrintStream (i.e. cataLog) can be used to debug ParkingLot and Lock.
     RecursiveLockAdapter<WordLock> m_lock;
-    std::unique_ptr<PrintStream> m_target;
+    const std::unique_ptr<PrintStream> m_target;
 };
 
 } // namespace WTF

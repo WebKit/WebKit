@@ -116,7 +116,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
             return;
         }
 
-        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(WTFMove(contentType), configuration), m_identifier);
+        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(WTF::move(contentType), configuration), m_identifier);
         auto [status, remoteSourceBufferIdentifier] = sendResult.takeReplyOr(AddStatus::NotSupported, std::nullopt);
 
         if (status == AddStatus::Ok) {
@@ -133,7 +133,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
         Locker locker { m_lock };
         m_sourceBuffers.append(returnedSourceBuffer);
     };
-    outPrivate = WTFMove(returnedSourceBuffer);
+    outPrivate = WTF::move(returnedSourceBuffer);
     return returnedStatus;
 }
 
@@ -189,7 +189,6 @@ void MediaSourcePrivateRemote::bufferedChanged(const PlatformTimeRanges& buffere
 
 void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus status)
 {
-    MediaSourcePrivate::markEndOfStream(status);
     ensureOnDispatcher([protectedThis = Ref { *this }, this, status] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning() || !gpuProcessConnection)
@@ -257,7 +256,7 @@ void MediaSourcePrivateRemote::MessageReceiver::proxyWaitForTarget(const WebCore
     assertIsCurrent(MediaSourcePrivateRemote::queueSingleton());
 
     if (auto client = this->client()) {
-        client->waitForTarget(target)->whenSettled(MediaSourcePrivateRemote::queueSingleton(), WTFMove(completionHandler));
+        client->waitForTarget(target)->whenSettled(MediaSourcePrivateRemote::queueSingleton(), WTF::move(completionHandler));
         return;
     }
     completionHandler(makeUnexpected(PlatformMediaError::ClientDisconnected));

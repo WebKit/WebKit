@@ -73,7 +73,7 @@ public:
     {
     }
 
-    const SMILTime& time() const { return m_time; }
+    const SMILTime& time() const LIFETIME_BOUND { return m_time; }
     bool originIsScript() const { return m_origin == ScriptOrigin; }
 
 private:

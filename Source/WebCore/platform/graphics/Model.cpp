@@ -26,23 +26,38 @@
 #include "config.h"
 #include "Model.h"
 
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-Ref<Model> Model::create(Ref<SharedBuffer>&& data, String mimeType, URL url)
+Ref<Model> Model::create(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConverted)
 {
-    return adoptRef(*new Model(WTFMove(data), WTFMove(mimeType), WTFMove(url)));
+    return adoptRef(*new Model(WTF::move(data), WTF::move(mimeType), WTF::move(url), isConverted));
 }
 
-Model::Model(Ref<SharedBuffer>&& data, String mimeType, URL url)
-    : m_data(WTFMove(data))
-    , m_mimeType(WTFMove(mimeType))
-    , m_url(WTFMove(url))
+Model::Model(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConverted)
+    : m_data(WTF::move(data))
+    , m_mimeType(WTF::move(mimeType))
+    , m_url(WTF::move(url))
+    , m_isConverted(isConverted)
 {
 }
 
 Model::~Model() = default;
+
+String Model::filename() const
+{
+    String filename = m_url.lastPathComponent().toString();
+    if (m_isConverted) {
+        static constexpr auto usdzExtension = "usdz"_s;
+        size_t dotPosition = filename.reverseFind('.');
+        if (dotPosition != notFound)
+            return makeString(filename.left(dotPosition + 1), usdzExtension);
+        return makeString(filename, '.', usdzExtension);
+    }
+    return filename;
+}
 
 TextStream& operator<<(TextStream& ts, const Model& model)
 {
@@ -51,6 +66,7 @@ TextStream& operator<<(TextStream& ts, const Model& model)
     ts.dumpProperty("data-size"_s, model.data()->size());
     ts.dumpProperty("mime-type"_s, model.mimeType());
     ts.dumpProperty("url"_s, model.url());
+    ts.dumpProperty("is-converted"_s, model.isConverted());
 
     return ts;
 }

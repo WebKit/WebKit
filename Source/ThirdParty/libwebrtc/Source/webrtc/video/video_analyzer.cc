@@ -30,6 +30,7 @@
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
@@ -502,28 +503,41 @@ void VideoAnalyzer::PollStats() {
   // 2) `lock_` is acquired after internal pacer lock in SendRtp()
   // 3) internal pacer lock is acquired by GetStats().
   Call::Stats call_stats = call_->GetStats();
+  Timestamp now = clock_->CurrentTime();
 
   MutexLock lock(&comparison_lock_);
 
-  send_bandwidth_bps_.AddSample(call_stats.send_bandwidth_bps);
+  send_bandwidth_bps_.AddSample(
+      {.value = static_cast<double>(call_stats.send_bandwidth_bps),
+       .time = now});
 
   VideoSendStream::Stats send_stats = send_stream_->GetStats();
   // It's not certain that we yet have estimates for any of these stats.
   // Check that they are positive before mixing them in.
   if (send_stats.encode_frame_rate > 0)
-    encode_frame_rate_.AddSample(send_stats.encode_frame_rate);
+    encode_frame_rate_.AddSample(
+        {.value = static_cast<double>(send_stats.encode_frame_rate),
+         .time = now});
   if (send_stats.avg_encode_time_ms > 0)
-    encode_time_ms_.AddSample(send_stats.avg_encode_time_ms);
+    encode_time_ms_.AddSample(
+        {.value = static_cast<double>(send_stats.avg_encode_time_ms),
+         .time = now});
   if (send_stats.encode_usage_percent > 0)
-    encode_usage_percent_.AddSample(send_stats.encode_usage_percent);
+    encode_usage_percent_.AddSample(
+        {.value = static_cast<double>(send_stats.encode_usage_percent),
+         .time = now});
   if (send_stats.media_bitrate_bps > 0)
-    media_bitrate_bps_.AddSample(send_stats.media_bitrate_bps);
+    media_bitrate_bps_.AddSample(
+        {.value = static_cast<double>(send_stats.media_bitrate_bps),
+         .time = now});
   size_t fec_bytes = 0;
   for (const auto& kv : send_stats.substreams) {
     fec_bytes += kv.second.rtp_stats.fec.payload_bytes +
                  kv.second.rtp_stats.fec.padding_bytes;
   }
-  fec_bitrate_bps_.AddSample((fec_bytes - last_fec_bytes_) * 8);
+  fec_bitrate_bps_.AddSample(
+      {.value = static_cast<double>((fec_bytes - last_fec_bytes_) * 8),
+       .time = now});
   last_fec_bytes_ = fec_bytes;
 
   if (receive_stream_ != nullptr) {
@@ -543,11 +557,16 @@ void VideoAnalyzer::PollStats() {
       mean_decode_time_ms_ = receive_stats.total_decode_time.ms<double>() /
                              receive_stats.frames_decoded;
     if (receive_stats.decode_ms > 0)
-      decode_time_ms_.AddSample(receive_stats.decode_ms);
+      decode_time_ms_.AddSample(
+          {.value = static_cast<double>(receive_stats.decode_ms), .time = now});
     if (receive_stats.max_decode_ms > 0)
-      decode_time_max_ms_.AddSample(receive_stats.max_decode_ms);
+      decode_time_max_ms_.AddSample(
+          {.value = static_cast<double>(receive_stats.max_decode_ms),
+           .time = now});
     if (receive_stats.width > 0 && receive_stats.height > 0) {
-      pixels_.AddSample(receive_stats.width * receive_stats.height);
+      pixels_.AddSample({.value = static_cast<double>(receive_stats.width *
+                                                      receive_stats.height),
+                         .time = now});
     }
 
     // `frames_decoded` and `frames_rendered` are used because they are more
@@ -564,12 +583,18 @@ void VideoAnalyzer::PollStats() {
   if (audio_receive_stream_ != nullptr) {
     AudioReceiveStreamInterface::Stats receive_stats =
         audio_receive_stream_->GetStats(/*get_and_clear_legacy_stats=*/true);
-    audio_expand_rate_.AddSample(receive_stats.expand_rate);
-    audio_accelerate_rate_.AddSample(receive_stats.accelerate_rate);
-    audio_jitter_buffer_ms_.AddSample(receive_stats.jitter_buffer_ms);
+    audio_expand_rate_.AddSample(
+        {.value = receive_stats.expand_rate, .time = now});
+    audio_accelerate_rate_.AddSample(
+        {.value = receive_stats.accelerate_rate, .time = now});
+    audio_jitter_buffer_ms_.AddSample(
+        {.value = static_cast<double>(receive_stats.jitter_buffer_ms),
+         .time = now});
   }
 
-  memory_usage_.AddSample(GetProcessResidentSizeBytes());
+  memory_usage_.AddSample(
+      {.value = static_cast<double>(GetProcessResidentSizeBytes()),
+       .time = now});
 }
 
 bool VideoAnalyzer::CompareFrames() {
@@ -690,7 +715,9 @@ void VideoAnalyzer::PrintResults() {
   // Record the time from the last freeze until the last rendered frame to
   // ensure we cover the full timespan of the session. Otherwise the metric
   // would penalize an early freeze followed by no freezes until the end.
-  time_between_freezes_.AddSample(last_render_time_ - last_unfreeze_time_ms_);
+  time_between_freezes_.AddSample(
+      {.value = static_cast<double>(last_render_time_ - last_unfreeze_time_ms_),
+       .time = clock_->CurrentTime()});
 
   // Freeze metrics.
   PrintResult("time_between_freezes", time_between_freezes_,
@@ -797,6 +824,7 @@ void VideoAnalyzer::PrintResults() {
 void VideoAnalyzer::PerformFrameComparison(
     const VideoAnalyzer::FrameComparison& comparison) {
   // Perform expensive psnr and ssim calculations while not holding lock.
+  Timestamp now = clock_->CurrentTime();
   double psnr = -1.0;
   double ssim = -1.0;
   if (comparison.reference && !comparison.dropped) {
@@ -807,7 +835,8 @@ void VideoAnalyzer::PerformFrameComparison(
   MutexLock lock(&comparison_lock_);
 
   if (psnr >= 0.0 && (!worst_frame_ || worst_frame_->psnr > psnr)) {
-    worst_frame_.emplace(FrameWithPsnr{psnr, *comparison.render});
+    worst_frame_.emplace(
+        FrameWithPsnr{.psnr = psnr, .frame = *comparison.render});
   }
 
   if (graph_data_output_file_) {
@@ -817,9 +846,9 @@ void VideoAnalyzer::PerformFrameComparison(
                               comparison.encoded_frame_size, psnr, ssim));
   }
   if (psnr >= 0.0)
-    psnr_.AddSample(psnr);
+    psnr_.AddSample({.value = psnr, .time = now});
   if (ssim >= 0.0)
-    ssim_.AddSample(ssim);
+    ssim_.AddSample({.value = ssim, .time = now});
 
   if (comparison.dropped) {
     ++dropped_frames_;
@@ -830,18 +859,24 @@ void VideoAnalyzer::PerformFrameComparison(
   if (last_render_time_ != 0) {
     const int64_t render_delta_ms =
         comparison.render_time_ms - last_render_time_;
-    rendered_delta_.AddSample(render_delta_ms);
+    rendered_delta_.AddSample(
+        {.value = static_cast<double>(render_delta_ms), .time = now});
     if (last_render_delta_ms_ != 0 &&
         render_delta_ms - last_render_delta_ms_ > 150) {
-      time_between_freezes_.AddSample(last_render_time_ -
-                                      last_unfreeze_time_ms_);
+      time_between_freezes_.AddSample(
+          {.value =
+               static_cast<double>(last_render_time_ - last_unfreeze_time_ms_),
+           .time = now});
       last_unfreeze_time_ms_ = comparison.render_time_ms;
     }
     last_render_delta_ms_ = render_delta_ms;
   }
   last_render_time_ = comparison.render_time_ms;
 
-  sender_time_.AddSample(comparison.send_time_ms - comparison.input_time_ms);
+  sender_time_.AddSample(
+      {.value = static_cast<double>(comparison.send_time_ms -
+                                    comparison.input_time_ms),
+       .time = now});
   if (comparison.recv_time_ms > 0) {
     // If recv_time_ms == 0, this frame consisted of a packets which were all
     // lost in the transport. Since we were able to render the frame, however,
@@ -855,12 +890,22 @@ void VideoAnalyzer::PerformFrameComparison(
     // strategies the timestamp of the received packets is set to the
     // timestamp of the protected/retransmitted media packet. I.e., then
     // recv_time_ms != 0, even though the media packets were lost.
-    receiver_time_.AddSample(comparison.render_time_ms -
-                             comparison.recv_time_ms);
-    network_time_.AddSample(comparison.recv_time_ms - comparison.send_time_ms);
+    receiver_time_.AddSample(
+        {.value = static_cast<double>(comparison.render_time_ms -
+                                      comparison.recv_time_ms),
+         .time = now});
+    network_time_.AddSample(
+        {.value = static_cast<double>(comparison.recv_time_ms -
+                                      comparison.send_time_ms),
+         .time = now});
   }
-  end_to_end_.AddSample(comparison.render_time_ms - comparison.input_time_ms);
-  encoded_frame_size_.AddSample(comparison.encoded_frame_size);
+  end_to_end_.AddSample(
+      {.value = static_cast<double>(comparison.render_time_ms -
+                                    comparison.input_time_ms),
+       .time = now});
+  encoded_frame_size_.AddSample(
+      {.value = static_cast<double>(comparison.encoded_frame_size),
+       .time = now});
 }
 
 void VideoAnalyzer::PrintResult(absl::string_view result_type,

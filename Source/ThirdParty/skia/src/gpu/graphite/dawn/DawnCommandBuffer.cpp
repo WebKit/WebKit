@@ -340,7 +340,7 @@ bool DawnCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
 
     // Set up color attachment.
 #if !defined(__EMSCRIPTEN__)
-    wgpu::DawnRenderPassColorAttachmentRenderToSingleSampled mssaRenderToSingleSampledDesc;
+    wgpu::DawnRenderPassSampleCount mssaRenderToSingleSampledDesc;
     wgpu::RenderPassDescriptorResolveRect wgpuPartialRect = {};
 #endif
 
@@ -446,8 +446,9 @@ bool DawnCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
             // msaa attachment that's coupled to the framebuffer and the StoreAndMultisampleResolve
             // action instead of loading as a draw.
         } else {
-            [[maybe_unused]] bool isMSAAToSingleSampled = renderPassDesc.fSampleCount > 1 &&
-                                                          colorTexture->numSamples() == 1;
+            [[maybe_unused]] bool isMSAAToSingleSampled =
+                    renderPassDesc.fSampleCount > SampleCount::k1 &&
+                    colorTexture->sampleCount() == SampleCount::k1;
 #if defined(__EMSCRIPTEN__)
             SkASSERT(!isMSAAToSingleSampled);
 #else
@@ -458,8 +459,8 @@ bool DawnCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
                 SkASSERT(fSharedContext->device().HasFeature(
                         wgpu::FeatureName::MSAARenderToSingleSampled));
 
-                wgpuColorAttachment.nextInChain = &mssaRenderToSingleSampledDesc;
-                mssaRenderToSingleSampledDesc.implicitSampleCount = renderPassDesc.fSampleCount;
+                wgpuRenderPass.nextInChain = &mssaRenderToSingleSampledDesc;
+                mssaRenderToSingleSampledDesc.sampleCount = (uint8_t)renderPassDesc.fSampleCount;
             }
 #endif
         }
@@ -558,7 +559,7 @@ bool DawnCommandBuffer::emulateLoadMSAAFromResolveAndBeginRenderPassEncoder(
         if (!this->doBlitWithDraw(renderPassEncoder,
                                   renderPassWithoutResolveDesc,
                                   /*srcTextureView=*/resolveTexture->renderTextureView(),
-                                  /*srcSampleCount=*/1,
+                                  /*srcSampleCount=*/SampleCount::k1,
                                   /*srcOffset=*/resolveArea.topLeft(),
                                   /*dstBounds=*/msaaArea)) {
             renderPassEncoder.End();
@@ -576,7 +577,7 @@ bool DawnCommandBuffer::emulateLoadMSAAFromResolveAndBeginRenderPassEncoder(
 bool DawnCommandBuffer::doBlitWithDraw(const wgpu::RenderPassEncoder& renderEncoder,
                                        const RenderPassDesc& frontendRenderPassDescKey,
                                        const wgpu::TextureView& srcTextureView,
-                                       int srcSampleCount,
+                                       SampleCount srcSampleCount,
                                        const SkIPoint& srcOffset,
                                        const SkIRect& dstBounds) {
     DawnResourceProvider::BlitWithDrawEncoder blit =
@@ -610,7 +611,7 @@ bool DawnCommandBuffer::endRenderPass() {
             TextureInfoPriv::ViewFormat(fResolveStepEmulationInfo->fResolveTexture->textureInfo()),
             LoadOp::kLoad,
             StoreOp::kStore,
-            /*fSampleCount=*/1 };
+            SampleCount::k1 };
 
     wgpu::RenderPassColorAttachment dawnIntermediateColorAttachment;
     dawnIntermediateColorAttachment.loadOp = wgpu::LoadOp::Load;
@@ -628,7 +629,7 @@ bool DawnCommandBuffer::endRenderPass() {
             renderPassEncoder,
             intermediateRenderPassDesc,
             /*srcTextureView=*/fResolveStepEmulationInfo->fMSAATexture->renderTextureView(),
-            /*srcSampleCount=*/fResolveStepEmulationInfo->fMSAATexture->textureInfo().numSamples(),
+            /*srcSampleCount=*/fResolveStepEmulationInfo->fMSAATexture->textureInfo().sampleCount(),
             /*srcOffset=*/fResolveStepEmulationInfo->fMSAAAOffset,
             /*dstBounds=*/fResolveStepEmulationInfo->fResolveArea);
 
@@ -791,11 +792,8 @@ void DawnCommandBuffer::bindUniformBuffer(const BindBufferInfo& info, UniformSlo
 
     unsigned int bufferIndex;
     switch (slot) {
-        case UniformSlot::kRenderStep:
-            bufferIndex = DawnGraphicsPipeline::kRenderStepUniformBufferIndex;
-            break;
-        case UniformSlot::kPaint:
-            bufferIndex = DawnGraphicsPipeline::kPaintUniformBufferIndex;
+        case UniformSlot::kCombinedUniforms:
+            bufferIndex = DawnGraphicsPipeline::kCombinedUniformIndex;
             break;
         case UniformSlot::kGradient:
             bufferIndex = DawnGraphicsPipeline::kGradientBufferIndex;
@@ -946,9 +944,8 @@ void DawnCommandBuffer::syncUniformBuffers() {
                 !fSharedContext->dawnCaps()
                          ->resourceBindingRequirements()
                          .fUsePushConstantsForIntrinsicConstants,  // intrinsic uniforms
-                fActiveGraphicsPipeline->hasStepUniforms(),            // render step uniforms
-                fActiveGraphicsPipeline->hasPaintUniforms(),           // paint uniforms
-                fActiveGraphicsPipeline->hasGradientBuffer(),          // gradient SSBO
+                fActiveGraphicsPipeline->hasCombinedUniforms(),    // paint AND renderstep uniforms!
+                fActiveGraphicsPipeline->hasGradientBuffer(),      // gradient SSBO
         };
 
         for (int i = 0; i < kNumBuffers; ++i) {

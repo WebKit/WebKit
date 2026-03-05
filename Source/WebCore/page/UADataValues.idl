@@ -23,19 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/ua-client-hints/#idl-index
+// https://wicg.github.io/ua-client-hints/#dictdef-uadatavalues
 [
     JSGenerateToJSObject,
-    EnabledBySetting=NavigatorUserAgentDataJavaScriptAPIEnabled
+    EnabledBySetting=NavigatorUserAgentDataJavaScriptAPIEnabled,
 ] dictionary UADataValues {
   DOMString architecture;
   DOMString bitness;
-  sequence<NavigatorUABrandVersion> brands;
+  [ImplementationRequired] sequence<NavigatorUABrandVersion> brands;
   sequence<DOMString> formFactors;
   sequence<NavigatorUABrandVersion> fullVersionList;
   DOMString model;
-  boolean mobile;
-  DOMString platform;
+  [ImplementationRequired] boolean mobile;
+  [ImplementationRequired] DOMString platform;
   DOMString platformVersion;
   DOMString uaFullVersion; // deprecated in favor of fullVersionList
   boolean wow64;

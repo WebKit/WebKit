@@ -111,6 +111,9 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
         this._compositingBordersVisible = compositingBordersVisible;
 
         for (let target of WI.targets) {
+            if (!target.hasDomain("Page"))
+                continue;
+
             // COMPATIBILITY(iOS 13.1): Page.setCompositingBordersVisible was replaced by Page.Setting.ShowDebugBorders and Page.Setting.ShowRepaintCounter.
             if (InspectorBackend.Enum.Page.Setting.ShowDebugBorders && InspectorBackend.Enum.Page.Setting.ShowRepaintCounter) {
                 target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ShowDebugBorders, this._compositingBordersVisible);
@@ -194,6 +197,21 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
         let target = WI.assumingMainTarget();
         target.LayerTreeAgent.reasonsForCompositingLayer(layer.layerId, function(error, reasons) {
             callback(error ? 0 : reasons);
+        });
+    }
+
+    snapshotForLayer(layer, callback)
+    {
+        console.assert(this.supported);
+
+        let target = WI.assumingMainTarget();
+        target.LayerTreeAgent.requestContent(layer.layerId, function(error, content) {
+            if (error) {
+                WI.reportInternalError(error);
+                callback(null);
+                return;
+            }
+            callback(content);
         });
     }
 

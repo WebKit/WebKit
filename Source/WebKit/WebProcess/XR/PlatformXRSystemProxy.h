@@ -74,8 +74,6 @@ private:
     RefPtr<XRDeviceProxy> deviceByIdentifier(XRDeviceIdentifier);
     bool webXREnabled() const;
 
-    Ref<WebPage> protectedPage() const;
-
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

@@ -41,20 +41,20 @@ class MediaSourcePrivateClient;
 
 class MediaSourceHandle
     : public RefCounted<MediaSourceHandle> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaSourceHandle);
+    WTF_MAKE_TZONE_ALLOCATED(MediaSourceHandle);
 public:
-    static Ref<MediaSourceHandle> create(Ref<MediaSourceHandle>&&);
+    static Ref<MediaSourceHandle> NODELETE create(Ref<MediaSourceHandle>&&);
     Ref<MediaSourceHandle> detach();
 
     virtual ~MediaSourceHandle();
 
     bool isDetached() const { return m_detached; }
-    bool canDetach() const;
+    bool NODELETE canDetach() const;
     bool detachable() const { return m_detachable; }
 
-    void setHasEverBeenAssignedAsSrcObject();
-    bool hasEverBeenAssignedAsSrcObject() const;
-    bool isManaged() const;
+    void NODELETE setHasEverBeenAssignedAsSrcObject();
+    bool NODELETE hasEverBeenAssignedAsSrcObject() const;
+    bool NODELETE isManaged() const;
 
     using TaskType = Function<void(MediaSource&)>;
     void ensureOnDispatcher(TaskType&&, bool forceRun = false) const;
@@ -76,7 +76,7 @@ private:
 
     const bool m_detachable;
     bool m_detached { false };
-    Ref<SharedPrivate> m_private;
+    const Ref<SharedPrivate> m_private;
 };
 
 using DetachedMediaSourceHandle = MediaSourceHandle;

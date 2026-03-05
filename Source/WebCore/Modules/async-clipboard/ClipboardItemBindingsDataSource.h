@@ -60,7 +60,7 @@ private:
     public:
         static Ref<ClipboardItemTypeLoader> create(Clipboard& writingDestination, const String& type, CompletionHandler<void()>&& completionHandler)
         {
-            return adoptRef(*new ClipboardItemTypeLoader(writingDestination, type, WTFMove(completionHandler)));
+            return adoptRef(*new ClipboardItemTypeLoader(writingDestination, type, WTF::move(completionHandler)));
         }
 
         ~ClipboardItemTypeLoader();
@@ -75,8 +75,8 @@ private:
 
         void invokeCompletionHandler();
 
-        const String& type() { return m_type; }
-        const BufferOrString& data() { return m_data; }
+        const String& type() LIFETIME_BOUND { return m_type; }
+        const BufferOrString& data() LIFETIME_BOUND { return m_data; }
 
     private:
         ClipboardItemTypeLoader(Clipboard&, const String& type, CompletionHandler<void()>&&);

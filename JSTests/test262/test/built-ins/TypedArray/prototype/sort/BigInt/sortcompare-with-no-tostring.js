@@ -14,7 +14,7 @@ info: |
     a. Let v be ? Call(comparefn, undefined, « x, y »).
     ...
   ...
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -23,8 +23,8 @@ BigInt.prototype.toString = function() {
   toStringCalled = true;
 }
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([20n, 100n, 3n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([20n, 100n, 3n]));
   var result = sample.sort();
   assert.sameValue(toStringCalled, false, "BigInt.prototype.toString will not be called");
   assert(compareArray(result, [3n, 20n, 100n]));

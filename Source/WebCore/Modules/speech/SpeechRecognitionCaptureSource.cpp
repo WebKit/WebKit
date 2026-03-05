@@ -71,7 +71,7 @@ CaptureSourceOrError SpeechRecognitionCaptureSource::createRealtimeMediaSource(c
 }
 
 SpeechRecognitionCaptureSource::SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier clientIdentifier, DataCallback&& dataCallback, StateUpdateCallback&& stateUpdateCallback, Ref<RealtimeMediaSource>&& source)
-    : m_impl(makeUniqueRef<SpeechRecognitionCaptureSourceImpl>(clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source)))
+    : m_impl(makeUniqueRef<SpeechRecognitionCaptureSourceImpl>(clientIdentifier, WTF::move(dataCallback), WTF::move(stateUpdateCallback), WTF::move(source)))
 {
 }
 

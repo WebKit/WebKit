@@ -37,7 +37,7 @@ class VisibleSelection;
 
 std::optional<TextList> parseTextList(StringView);
 
-Vector<std::pair<const QualifiedName&, AtomString>> nodeAttributesForSmartList(const StyledElement&, const TextList&);
+Vector<std::pair<const QualifiedName&, AtomString>> nodeAttributesForSmartList(const StyledElement&, const TextList&, const String& input);
 
 bool selectionAllowsSmartLists(const String&, const VisibleSelection&);
 

@@ -200,17 +200,17 @@ void DragDropInteractionState::addDefaultDropPreview(UIDragItem *item, UITargete
 
 UITargetedDragPreview *DragDropInteractionState::defaultDropPreview(UIDragItem *item) const
 {
-    return m_defaultDropPreviews.get(item).unsafeGet();
+    return m_defaultDropPreviews.get(item);
 }
 
 UITargetedDragPreview *DragDropInteractionState::finalDropPreview(UIDragItem *item) const
 {
-    return m_finalDropPreviews.get(item).unsafeGet();
+    return m_finalDropPreviews.get(item);
 }
 
 void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, UIView *previewContainer, RefPtr<WebCore::TextIndicator>&& textIndicator)
 {
-    auto textIndicatorImage = uiImageForImage(textIndicator->contentImage());
+    auto textIndicatorImage = uiImageForImage(protect(protect(textIndicator)->contentImage()));
     auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, textIndicator->textBoundingRectInRootViewCoordinates(), textIndicator->textRectsInBoundingRectCoordinates(), cocoaColor(textIndicator->estimatedBackgroundColor()).get(), nil, AddPreviewViewToContainer::No);
     if (!preview)
         return;
@@ -231,7 +231,7 @@ void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, CG
     for (size_t i = 0; i < placeholderRects.size(); ++i) {
         UIDragItem *item = [items objectAtIndex:i];
         auto& placeholderRect = placeholderRects[i];
-        auto defaultPreview = defaultDropPreview(item);
+        RetainPtr defaultPreview = defaultDropPreview(item);
         auto defaultPreviewSize = [defaultPreview size];
         if (!defaultPreview || defaultPreviewSize.width <= 0 || defaultPreviewSize.height <= 0 || placeholderRect.isEmpty())
             continue;
@@ -270,7 +270,7 @@ void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, CG
 
 UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *item, UIView *contentView, UIView *previewContainer, RefPtr<WebCore::TextIndicator>&& indicator) const
 {
-    return createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::No, WTFMove(indicator)).autorelease();
+    return createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::No, WTF::move(indicator)).autorelease();
 }
 
 UITargetedDragPreview *DragDropInteractionState::previewForCancelling(UIDragItem *item, UIView *contentView, UIView *previewContainer)
@@ -298,7 +298,7 @@ RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInte
         // If the context menu preview was created using the snapshot mechanism,
         // the drag preview should be created likewise, so that the size and position
         // of both previews match.
-        auto textIndicatorImage = uiImageForImage(indicator->contentImage());
+        auto textIndicatorImage = uiImageForImage(protect(protect(indicator)->contentImage()));
         return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates(), indicator->textRectsInBoundingRectCoordinates(), cocoaColor(indicator->estimatedBackgroundColor()).get(), nil, addPreviewViewToContainer).autorelease();
     }
 
@@ -307,7 +307,7 @@ RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInte
         ASSERT(image);
         if (shouldUseVisiblePathToCreatePreviewForDragSource(source)) {
             auto path = source.visiblePath.value();
-            UIBezierPath *visiblePath = [UIBezierPath bezierPathWithCGPath:path.platformPath()];
+            RetainPtr visiblePath = [UIBezierPath bezierPathWithCGPath:protect(path.platformPath()).get()];
             return createTargetedDragPreview(image->get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, visiblePath, addPreviewViewToContainer).autorelease();
         }
         return createTargetedDragPreview(image->get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, nil, addPreviewViewToContainer).autorelease();
@@ -315,7 +315,7 @@ RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInte
 
     if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
         RefPtr textIndicator = source.textIndicator;
-        RetainPtr textIndicatorImage = uiImageForImage(textIndicator->contentImage());
+        RetainPtr textIndicatorImage = uiImageForImage(protect(protect(textIndicator)->contentImage()));
         return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, textIndicator->textBoundingRectInRootViewCoordinates(), textIndicator->textRectsInBoundingRectCoordinates(), cocoaColor(textIndicator->estimatedBackgroundColor()).get(), nil, addPreviewViewToContainer).autorelease();
     }
 
@@ -396,12 +396,12 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
         if (!canUpdatePreviewForActiveDragSource(source))
             continue;
 
-        UIDragItem *dragItem = dragItemMatchingIdentifier(m_dragSession.get(), source.itemIdentifier);
+        RetainPtr dragItem = dragItemMatchingIdentifier(m_dragSession.get(), source.itemIdentifier);
         if (!dragItem)
             continue;
 
         if (source.action.contains(DragSourceAction::Link)) {
-            dragItem.previewProvider = [title = source.linkTitle.createNSString(), url = source.linkURL.createNSURL()] () -> UIDragPreview * {
+            dragItem.get().previewProvider = [title = source.linkTitle.createNSString(), url = source.linkURL.createNSURL()] () -> UIDragPreview * {
                 RetainPtr preview = [UIDragPreview previewForURL:url.get() title:title.get()];
 #if PLATFORM(VISION)
                 // FIXME: This is a slightly unfortunate since we end up copying the preview parameters,
@@ -419,7 +419,7 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
         }
         else if (source.action.contains(DragSourceAction::Color)) {
             if (auto* draggedImage = std::get_if<RetainPtr<UIImage>>(&source.dragPreviewContent)) {
-                dragItem.previewProvider = [image = *draggedImage] {
+                dragItem.get().previewProvider = [image = *draggedImage] {
                     RetainPtr imageView = adoptNS([[UIImageView alloc] initWithImage:image.get()]);
                     RetainPtr parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:[imageView bounds]] ]]);
                     return adoptNS([[UIDragPreview alloc] initWithView:imageView.get() parameters:parameters.get()]).autorelease();

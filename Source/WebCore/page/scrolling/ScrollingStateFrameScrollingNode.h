@@ -51,7 +51,7 @@ public:
     float frameScaleFactor() const { return m_frameScaleFactor; }
     WEBCORE_EXPORT void setFrameScaleFactor(float);
 
-    const EventTrackingRegions& eventTrackingRegions() const { return m_eventTrackingRegions; }
+    const EventTrackingRegions& eventTrackingRegions() const LIFETIME_BOUND { return m_eventTrackingRegions; }
     WEBCORE_EXPORT void setEventTrackingRegions(const EventTrackingRegions&);
 
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
@@ -81,29 +81,36 @@ public:
     FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
     WEBCORE_EXPORT void setObscuredContentInsets(const FloatBoxExtent&);
 
-    const LayerRepresentation& rootContentsLayer() const { return m_rootContentsLayer; }
+    // The target offset for rubber band animations when a banner view overlay is present.
+    // When non-zero, rubber banding will snap to this offset instead of the edge.
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    float bannerViewHeight() const { return m_bannerViewHeight; }
+    WEBCORE_EXPORT void setBannerViewHeight(float);
+#endif
+
+    const LayerRepresentation& rootContentsLayer() const LIFETIME_BOUND { return m_rootContentsLayer; }
     WEBCORE_EXPORT void setRootContentsLayer(const LayerRepresentation&);
 
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
-    const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
+    const LayerRepresentation& counterScrollingLayer() const LIFETIME_BOUND { return m_counterScrollingLayer; }
     WEBCORE_EXPORT void setCounterScrollingLayer(const LayerRepresentation&);
 
     // This is a clipping layer that will scroll with the page for all y-delta scroll values between 0
     // and obscuredInset().top. Once the y-deltas get beyond the content inset point, this layer no longer
     // needs to move. If the obscuredInset().top is 0, this layer does not need to move at all. This is
     // only used on the Mac.
-    const LayerRepresentation& insetClipLayer() const { return m_insetClipLayer; }
+    const LayerRepresentation& insetClipLayer() const LIFETIME_BOUND { return m_insetClipLayer; }
     WEBCORE_EXPORT void setInsetClipLayer(const LayerRepresentation&);
 
-    const LayerRepresentation& contentShadowLayer() const { return m_contentShadowLayer; }
+    const LayerRepresentation& contentShadowLayer() const LIFETIME_BOUND { return m_contentShadowLayer; }
     WEBCORE_EXPORT void setContentShadowLayer(const LayerRepresentation&);
 
     // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
-    const LayerRepresentation& headerLayer() const { return m_headerLayer; }
+    const LayerRepresentation& headerLayer() const LIFETIME_BOUND { return m_headerLayer; }
     WEBCORE_EXPORT void setHeaderLayer(const LayerRepresentation&);
 
     // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
-    const LayerRepresentation& footerLayer() const { return m_footerLayer; }
+    const LayerRepresentation& footerLayer() const LIFETIME_BOUND { return m_footerLayer; }
     WEBCORE_EXPORT void setFooterLayer(const LayerRepresentation&);
 
     // True when the visual viewport is smaller than the layout viewport, indicating that panning should be possible.
@@ -122,7 +129,7 @@ public:
     bool overlayScrollbarsEnabled() const { return m_overlayScrollbarsEnabled; }
     WEBCORE_EXPORT void setOverlayScrollbarsEnabled(bool);
 
-    WEBCORE_EXPORT bool isMainFrame() const;
+    WEBCORE_EXPORT bool NODELETE isMainFrame() const;
     
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
@@ -142,7 +149,7 @@ private:
 #if ENABLE(SCROLLING_THREAD)
         OptionSet<SynchronousScrollingReason> synchronousScrollingReasons,
 #endif
-        RequestedScrollData&&,
+        ScrollRequestData&&,
         FloatScrollSnapOffsetsInfo&&,
         std::optional<unsigned> currentHorizontalSnapPointIndex,
         std::optional<unsigned> currentVerticalSnapPointIndex,
@@ -170,6 +177,9 @@ private:
         int footerHeight,
         ScrollBehaviorForFixedElements&&,
         FloatBoxExtent&& obscuredContentInsets,
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+        float bannerViewHeight,
+#endif
         bool visualViewportIsSmallerThanLayoutViewport,
         bool asyncFrameOrOverflowScrollingEnabled,
         bool wheelEventGesturesBecomeNonBlocking,
@@ -204,6 +214,9 @@ private:
 
     float m_frameScaleFactor { 1 };
     FloatBoxExtent m_obscuredContentInsets;
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    float m_bannerViewHeight { 0 };
+#endif
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
     ScrollBehaviorForFixedElements m_behaviorForFixed { ScrollBehaviorForFixedElements::StickToDocumentBounds };

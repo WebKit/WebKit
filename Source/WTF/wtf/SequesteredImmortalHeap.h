@@ -115,7 +115,8 @@ public:
         {
             Locker lock(m_lock);
             retval = allocateImpl(bytes);
-            newAllocHead = reinterpret_cast<void*>(m_allocHead);
+            if constexpr (verbose)
+                newAllocHead = reinterpret_cast<void*>(m_allocHead);
         }
         dataLogLnIf(verbose,
             "SequesteredImmortalAllocator at ", RawPointer(this),
@@ -132,7 +133,8 @@ public:
         {
             Locker lock(m_lock);
             retval = alignedAllocateImpl(alignment, bytes);
-            newAllocHead = reinterpret_cast<void*>(m_allocHead);
+            if constexpr (verbose)
+                newAllocHead = reinterpret_cast<void*>(m_allocHead);
         }
         dataLogLnIf(verbose,
             "SequesteredImmortalAllocator at ", RawPointer(this),
@@ -161,7 +163,8 @@ private:
 
     void* alignedAllocateImpl(size_t alignment, size_t bytes)
     {
-        uintptr_t allocation = WTF::roundUpToMultipleOf<minHeadAlignment>(m_allocHead);
+        alignment = std::max(alignment, minHeadAlignment);
+        uintptr_t allocation = WTF::roundUpToMultipleOf(alignment, m_allocHead);
         uintptr_t newHead = headIncrementedBy((allocation - m_allocHead) + bytes);
         if (newHead < m_allocBound) [[likely]] {
             m_allocHead = newHead;
@@ -183,7 +186,9 @@ private:
 
     NEVER_INLINE void* alignedAllocateImplSlowPath(size_t alignment, size_t bytes)
     {
-        addGranule(bytes);
+        // FIXME: store granule headers out-of-line to avoid wasting
+        // up to alignment bytes per granule on header padding.
+        addGranule(alignment + bytes);
 
         alignment = std::max(alignment, minHeadAlignment);
         uintptr_t allocation = WTF::roundUpToMultipleOf(alignment, m_allocHead);
@@ -201,14 +206,150 @@ private:
     Lock m_lock { };
 };
 
+class SlotManager {
+private:
+    static constexpr size_t slotSize = 128;
+    static constexpr size_t numInlineSlots = 64;
+    static constexpr size_t slotsPerPage = 64;
+
+    struct alignas(slotSize) Slot {
+        std::array<std::byte, slotSize> data;
+    };
+
+    struct SlotPage : public DoublyLinkedListNode<SlotPage> {
+        SlotPage* m_prev;
+        SlotPage* m_next;
+        std::array<Slot, slotsPerPage> slots;
+    };
+
+    size_t m_nextFreeInlineSlotIndex;
+    size_t m_nextFreeOutOfLineSlotIndexInPage;
+    size_t m_totalAllocatedCount;
+    std::array<Slot, numInlineSlots> m_inlineSlots;
+    DoublyLinkedList<SlotPage> m_pages;
+
+public:
+    SlotManager()
+        : m_nextFreeInlineSlotIndex(0)
+        , m_nextFreeOutOfLineSlotIndexInPage(0)
+        , m_totalAllocatedCount(0)
+    { }
+
+    void* allocateNextSlot(SequesteredImmortalAllocator& immortalAllocator)
+    {
+        void* result;
+
+        if (m_nextFreeInlineSlotIndex < numInlineSlots) {
+            result = &m_inlineSlots[m_nextFreeInlineSlotIndex];
+            ++m_nextFreeInlineSlotIndex;
+        } else {
+            // Allocate from out-of-line pages
+            if (!m_nextFreeOutOfLineSlotIndexInPage) {
+                // Need a new page
+                void* memory = immortalAllocator.alignedAllocate(
+                    alignof(SlotPage), sizeof(SlotPage));
+                auto* page = new (memory) SlotPage();
+                m_pages.append(page);
+            }
+
+            result = &m_pages.tail()->slots[m_nextFreeOutOfLineSlotIndexInPage];
+            ++m_nextFreeOutOfLineSlotIndexInPage;
+
+            if (m_nextFreeOutOfLineSlotIndexInPage >= slotsPerPage)
+                m_nextFreeOutOfLineSlotIndexInPage = 0; // Next allocation will create new page
+        }
+
+        ++m_totalAllocatedCount;
+        return result;
+    }
+
+    int computeSlotIndex(void* slotPtr) const
+    {
+        auto slot = reinterpret_cast<uintptr_t>(slotPtr);
+        auto arrayBase = reinterpret_cast<uintptr_t>(m_inlineSlots.data());
+        auto arrayBound = arrayBase + sizeof(m_inlineSlots);
+
+        // Happy path: pointer is within inline slots
+        if (slot >= arrayBase && slot < arrayBound)
+            return static_cast<int>((slot - arrayBase) / sizeof(Slot));
+
+        int pageStartIndex = numInlineSlots;
+        for (auto* page = m_pages.head(); page; page = page->next()) {
+            auto pageBase = reinterpret_cast<uintptr_t>(&page->slots[0]);
+            auto pageBound = pageBase + sizeof(page->slots);
+
+            if (slot >= pageBase && slot < pageBound) {
+                int offsetInPage = (slot - pageBase) / sizeof(Slot);
+                return pageStartIndex + offsetInPage;
+            }
+
+            pageStartIndex += slotsPerPage;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return -1;
+    }
+
+    Slot& operator[](size_t index) {
+        if (index < numInlineSlots)
+            return m_inlineSlots[index];
+
+        size_t pageIndex = (index - numInlineSlots) / slotsPerPage;
+        size_t offsetInPage = (index - numInlineSlots) % slotsPerPage;
+
+        auto* page = m_pages.head();
+        for (size_t i = 0; i < pageIndex; ++i) {
+            RELEASE_ASSERT(page);
+            page = page->next();
+        }
+        RELEASE_ASSERT(page);
+
+        return page->slots[offsetInPage];
+    }
+
+    size_t allocatedCount() const
+    {
+        return m_totalAllocatedCount;
+    }
+};
+
+struct StackHandle : public DoublyLinkedListNode<StackHandle> {
+    std::span<std::byte> stack;
+private:
+    friend class DoublyLinkedListNode<StackHandle>;
+    StackHandle* m_prev;
+    StackHandle* m_next;
+};
+
+class SequesteredStackAllocator {
+public:
+    struct Result {
+        StackHandle* handle;
+    };
+
+    WTF_EXPORT_PRIVATE Result allocate(size_t stackSize, size_t guardSize);
+    WTF_EXPORT_PRIVATE void deallocate(StackHandle*);
+
+    SequesteredStackAllocator() = default;
+    SequesteredStackAllocator(SequesteredStackAllocator&&) = delete;
+    SequesteredStackAllocator& operator=(SequesteredStackAllocator&&) = delete;
+    SequesteredStackAllocator(const SequesteredStackAllocator&) = delete;
+    SequesteredStackAllocator& operator=(const SequesteredStackAllocator&) = delete;
+private:
+    DoublyLinkedList<StackHandle> m_freeList;
+    DoublyLinkedList<StackHandle> m_inUseList;
+    Lock m_lock;
+};
+
 class alignas(16 * KB) SequesteredImmortalHeap {
     friend class WTF::LazyNeverDestroyed<SequesteredImmortalHeap>;
+    friend class SlotManager;
     static constexpr bool verbose { false };
     static constexpr pthread_key_t key = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0;
     static constexpr size_t sequesteredImmortalHeapSlotSize { 16 * KB };
 public:
     static constexpr size_t slotSize { 128 };
-    static constexpr size_t numSlots { 64 };
+    static constexpr size_t numSlots { 110 };
 
     enum class AllocationFailureMode {
         Assert,
@@ -221,21 +362,19 @@ public:
     T* allocateAndInstall()
     {
         T* slot = nullptr;
+        size_t slotIndex = 0;
         {
             Locker locker { m_scavengerLock };
             ASSERT(!getUnchecked());
-            // FIXME: implement resizing to a larger capacity
-            RELEASE_ASSERT(m_nextFreeIndex < numSlots);
 
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            void* buff = &(m_allocatorSlots[m_nextFreeIndex++]);
+            void* buff = m_slotManager.allocateNextSlot(m_immortalAllocator);
             slot = new (buff) T();
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+            slotIndex = m_slotManager.allocatedCount() - 1;
         }
         _pthread_setspecific_direct(key, reinterpret_cast<void*>(slot));
         pthread_key_init_np(key, nullptr);
 
-        dataLogIf(verbose, "SequesteredImmortalHeap: thread (", Thread::currentSingleton(), ") allocated slot ", instance().m_nextFreeIndex - 1, " (", slot, ")");
+        dataLogLnIf(verbose, "SequesteredImmortalHeap: thread (", Thread::currentSingleton(), ") allocated slot ", slotIndex, " (", slot, ")");
         return slot;
     }
 
@@ -249,6 +388,8 @@ public:
         return m_immortalAllocator.alignedAllocate(alignment, bytes);
     }
 
+    SequesteredStackAllocator& stackAllocator() LIFETIME_BOUND { return m_stackAllocator; }
+
     void* getSlot()
     {
         return getUnchecked();
@@ -256,11 +397,7 @@ public:
 
     int computeSlotIndex(void* slotPtr)
     {
-        auto slot = reinterpret_cast<uintptr_t>(slotPtr);
-        auto arrayBase = reinterpret_cast<uintptr_t>(m_allocatorSlots.begin());
-        auto arrayBound = reinterpret_cast<uintptr_t>(m_allocatorSlots.begin()) + sizeof(m_allocatorSlots);
-        ASSERT_UNUSED(arrayBound, slot >= arrayBase && slot < arrayBound);
-        return static_cast<int>((slot - arrayBase) / slotSize);
+        return m_slotManager.computeSlotIndex(slotPtr);
     }
 
     static bool scavenge(void* userdata)
@@ -279,7 +416,6 @@ public:
                 return nullptr;
             RELEASE_ASSERT_NOT_REACHED();
         }
-        RELEASE_ASSERT_DATA_ADDRESS_IS_SANE(p);
         auto* gran = reinterpret_cast<GranuleHeader*>(p);
         gran->additionalPageCount = bytes / pageSize() - 1;
         return gran;
@@ -323,14 +459,10 @@ private:
         return _pthread_getspecific_direct(key);
     }
 
-    struct alignas(slotSize) Slot {
-        std::array<std::byte, slotSize> data;
-    };
-
     Lock m_scavengerLock { };
-    size_t m_nextFreeIndex { };
     SequesteredImmortalAllocator m_immortalAllocator { };
-    std::array<Slot, numSlots> m_allocatorSlots { };
+    SlotManager m_slotManager { };
+    SequesteredStackAllocator m_stackAllocator { };
 };
 
 }

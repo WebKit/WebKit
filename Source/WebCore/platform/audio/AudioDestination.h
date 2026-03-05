@@ -89,12 +89,12 @@ public:
 
     void callRenderCallback(AudioBus& destinationBus, size_t framesToProcess, const AudioIOPosition& outputPosition);
 
-    const String& inputDeviceId() const { return m_inputDeviceId; }
+    const String& inputDeviceId() const LIFETIME_BOUND { return m_inputDeviceId; }
     unsigned numberOfInputChannels() const { return m_numberOfInputChannels; }
     unsigned numberOfOutputChannels() const { return m_numberOfOutputChannels; }
 
 #if PLATFORM(IOS_FAMILY)
-    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
     virtual void setSceneIdentifier(const String& identifier) { m_sceneIdentifier = identifier; }
 #endif
 

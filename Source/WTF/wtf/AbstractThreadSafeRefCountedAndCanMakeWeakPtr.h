@@ -36,7 +36,7 @@ public:
 
 private:
     template<typename> friend class ThreadSafeWeakHashSet;
-    virtual size_t weakRefCount() const = 0;
+    virtual uint32_t weakRefCount() const = 0;
 };
 
 }
@@ -48,6 +48,5 @@ using WTF::AbstractThreadSafeRefCountedAndCanMakeWeakPtr;
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); } \
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); } \
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); } \
-    size_t weakRefCount() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::weakRefCount(); } \
+    uint32_t weakRefCount() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::weakRefCount(); } \
     using __Unused_type_for_semicolon = int
-

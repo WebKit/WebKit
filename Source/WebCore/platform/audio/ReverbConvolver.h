@@ -60,7 +60,7 @@ public:
 
     size_t impulseResponseLength() const { return m_impulseResponseLength; }
 
-    ReverbInputBuffer* inputBuffer() { return &m_inputBuffer; }
+    ReverbInputBuffer& inputBuffer() LIFETIME_BOUND { return m_inputBuffer; }
 
     bool useBackgroundThreads() const { return m_useBackgroundThreads; }
 

@@ -1664,6 +1664,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKAuthenticationPRFInputValues {
+    header "_WKAuthenticationExtensionsClientInputs.h"
+    export *
+  }
+
   explicit module _WKAuthenticationExtensionsClientOutputs {
     header "_WKAuthenticationExtensionsClientOutputs.h"
     export *

@@ -209,4 +209,20 @@ void ModelPlayer::resetModelTransformAfterDrag()
 
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+
+void ModelPlayer::ensureImmersivePresentation(CompletionHandler<void(std::optional<LayerHostingContextIdentifier>)>&& completion)
+{
+    ASSERT_NOT_REACHED("ModelPlayer cannot provide a layer context identifier");
+    completion(std::nullopt);
+}
+
+void ModelPlayer::exitImmersivePresentation(CompletionHandler<void()>&& completion)
+{
+    ASSERT_NOT_REACHED("ModelPlayer cannot exit an immersive presentation");
+    completion();
+}
+
+#endif
+
 } // namespace WebCore

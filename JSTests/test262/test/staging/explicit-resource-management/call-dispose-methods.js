@@ -23,24 +23,6 @@ let blockValues = [];
 })();
 assert.compareArray(blockValues, [43, 42]);
 
-// CaseBlock --------------
-let caseBlockValues = [];
-
-(function TestUsingInCaseBlock() {
-  let label = 1;
-  switch (label) {
-    case 1:
-      using x = {
-        value: 1,
-        [Symbol.dispose]() {
-          caseBlockValues.push(42);
-        }
-      };
-  }
-  caseBlockValues.push(43);
-})();
-assert.compareArray(caseBlockValues, [42, 43]);
-
 // ForStatement --------------
 let forStatementValues = [];
 

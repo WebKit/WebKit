@@ -38,7 +38,7 @@ class ProcessIdentity;
 namespace WebKit {
 
 class ImageBufferShareableMappedIOSurfaceBackend final : public WebCore::ImageBufferIOSurfaceBackend, public ImageBufferBackendHandleSharing {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferShareableMappedIOSurfaceBackend);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBufferShareableMappedIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableMappedIOSurfaceBackend);
 public:
     static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);

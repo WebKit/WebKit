@@ -40,12 +40,7 @@ NSDecimalNumber *toDecimalNumber(const String& amount)
     return [NSDecimalNumber decimalNumberWithString:amount.createNSString().get() locale:@{ NSLocaleDecimalSeparator : @"." }];
 }
 
-RetainPtr<NSDecimalNumber> toProtectedDecimalNumber(const String& amount)
-{
-    return toDecimalNumber(amount);
-}
-
-static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePayLineItem::Type type)
+static PKPaymentSummaryItemType NODELETE toPKPaymentSummaryItemType(ApplePayLineItem::Type type)
 {
     switch (type) {
     case ApplePayLineItem::Type::Final:
@@ -66,16 +61,11 @@ static NSDate *toDate(WallTime date)
     return [NSDate dateWithTimeIntervalSince1970:date.secondsSinceEpoch().value()];
 }
 
-static RetainPtr<NSDate> toProtectedDate(WallTime date)
-{
-    return toDate(date);
-}
-
 #endif // HAVE(PASSKIT_RECURRING_SUMMARY_ITEM) || HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
 
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 
-static NSCalendarUnit toCalendarUnit(ApplePayRecurringPaymentDateUnit unit)
+static NSCalendarUnit NODELETE toCalendarUnit(ApplePayRecurringPaymentDateUnit unit)
 {
     switch (unit) {
     case ApplePayRecurringPaymentDateUnit::Year:
@@ -99,13 +89,13 @@ RetainPtr<PKRecurringPaymentSummaryItem> platformRecurringSummaryItem(const Appl
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Recurring);
     // FIXME: This is a static analysis false positive (rdar://160259918).
-    SUPPRESS_UNRETAINED_ARG RetainPtr<PKRecurringPaymentSummaryItem> summaryItem = [PAL::getPKRecurringPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toProtectedDecimalNumber(lineItem.amount).get() type:toPKPaymentSummaryItemType(lineItem.type)];
+    SUPPRESS_UNRETAINED_ARG RetainPtr<PKRecurringPaymentSummaryItem> summaryItem = [PAL::getPKRecurringPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
     if (!lineItem.recurringPaymentStartDate.isNaN())
-        summaryItem.get().startDate = toProtectedDate(lineItem.recurringPaymentStartDate).get();
+        summaryItem.get().startDate = protect(toDate(lineItem.recurringPaymentStartDate)).get();
     summaryItem.get().intervalUnit = toCalendarUnit(lineItem.recurringPaymentIntervalUnit);
     summaryItem.get().intervalCount = lineItem.recurringPaymentIntervalCount;
     if (!lineItem.recurringPaymentEndDate.isNaN())
-        summaryItem.get().endDate = toProtectedDate(lineItem.recurringPaymentEndDate).get();
+        summaryItem.get().endDate = protect(toDate(lineItem.recurringPaymentEndDate)).get();
     return summaryItem;
 }
 
@@ -117,9 +107,9 @@ RetainPtr<PKDeferredPaymentSummaryItem> platformDeferredSummaryItem(const AppleP
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Deferred);
     // FIXME: This is a static analysis false positive (rdar://160259918).
-    SUPPRESS_UNRETAINED_ARG RetainPtr<PKDeferredPaymentSummaryItem> summaryItem = [PAL::getPKDeferredPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toProtectedDecimalNumber(lineItem.amount).get() type:toPKPaymentSummaryItemType(lineItem.type)];
+    SUPPRESS_UNRETAINED_ARG RetainPtr<PKDeferredPaymentSummaryItem> summaryItem = [PAL::getPKDeferredPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
     if (!lineItem.deferredPaymentDate.isNaN())
-        summaryItem.get().deferredDate = toProtectedDate(lineItem.deferredPaymentDate).get();
+        summaryItem.get().deferredDate = protect(toDate(lineItem.deferredPaymentDate)).get();
     return summaryItem;
 }
 
@@ -131,8 +121,8 @@ RetainPtr<PKAutomaticReloadPaymentSummaryItem> platformAutomaticReloadSummaryIte
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::AutomaticReload);
     // FIXME: This is a static analysis false positive (rdar://160259918).
-    SUPPRESS_UNRETAINED_ARG RetainPtr<PKAutomaticReloadPaymentSummaryItem> summaryItem = [PAL::getPKAutomaticReloadPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toProtectedDecimalNumber(lineItem.amount).get() type:toPKPaymentSummaryItemType(lineItem.type)];
-    summaryItem.get().thresholdAmount = toProtectedDecimalNumber(lineItem.automaticReloadPaymentThresholdAmount).get();
+    SUPPRESS_UNRETAINED_ARG RetainPtr<PKAutomaticReloadPaymentSummaryItem> summaryItem = [PAL::getPKAutomaticReloadPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
+    summaryItem.get().thresholdAmount = protect(toDecimalNumber(lineItem.automaticReloadPaymentThresholdAmount)).get();
     return summaryItem;
 }
 
@@ -144,14 +134,14 @@ PKDisbursementSummaryItem *platformDisbursementSummaryItem(const ApplePayLineIte
 {
     ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::Disbursement);
     // FIXME: This is a static analysis false positive (rdar://160259918).
-    SUPPRESS_UNRETAINED_ARG return [PAL::getPKDisbursementSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toProtectedDecimalNumber(lineItem.amount).get()];
+    SUPPRESS_UNRETAINED_ARG return [PAL::getPKDisbursementSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get()];
 }
 
 PKInstantFundsOutFeeSummaryItem *platformInstantFundsOutFeeSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::InstantFundsOutFee);
     // FIXME: This is a static analysis false positive (rdar://160259918).
-    SUPPRESS_UNRETAINED_ARG return [PAL::getPKInstantFundsOutFeeSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toProtectedDecimalNumber(lineItem.amount).get()];
+    SUPPRESS_UNRETAINED_ARG return [PAL::getPKInstantFundsOutFeeSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get()];
 }
 
 #endif // HAVE(PASSKIT_DISBURSEMENTS)
@@ -190,7 +180,7 @@ RetainPtr<PKPaymentSummaryItem> platformSummaryItem(const ApplePayLineItem& line
     }
 
     // FIXME: This is a static analysis false positive (rdar://160259918).
-    SUPPRESS_UNRETAINED_ARG return [PAL::getPKPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:toProtectedDecimalNumber(lineItem.amount).get() type:toPKPaymentSummaryItemType(lineItem.type)];
+    SUPPRESS_UNRETAINED_ARG return [PAL::getPKPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 
 #if HAVE(PASSKIT_DISBURSEMENTS)

@@ -169,7 +169,6 @@ public:
     bool canHaveBackingStore() const;
 
     virtual PlatformCALayer* superlayer() const = 0;
-    RefPtr<PlatformCALayer> protectedSuperlayer() const { return superlayer(); }
     virtual void removeFromSuperlayer() = 0;
     virtual void setSublayers(const PlatformCALayerList&) = 0;
     virtual PlatformCALayerList sublayersForLogging() const = 0;
@@ -291,6 +290,9 @@ public:
 
     virtual float cornerRadius() const = 0;
     virtual void setCornerRadius(float) = 0;
+
+    virtual Path shadowPath() const = 0;
+    virtual void setShadowPath(const Path&) = 0;
 
     virtual void setAntialiasesEdges(bool) = 0;
 

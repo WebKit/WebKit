@@ -34,29 +34,29 @@
 namespace WebCore {
 
 class GamepadEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GamepadEvent);
+    WTF_MAKE_TZONE_ALLOCATED(GamepadEvent);
 public:
-    static Ref<GamepadEvent> create(const AtomString& eventType, Gamepad& gamepad)
+    static Ref<GamepadEvent> create(const AtomString& eventType, Ref<Gamepad>&& gamepad)
     {
-        return adoptRef(*new GamepadEvent(eventType, gamepad));
+        return adoptRef(*new GamepadEvent(eventType, WTF::move(gamepad)));
     }
 
     struct Init : EventInit {
         RefPtr<Gamepad> gamepad;
     };
 
-    static Ref<GamepadEvent> create(const AtomString& eventType, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<GamepadEvent> create(const AtomString& eventType, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new GamepadEvent(eventType, initializer, isTrusted));
+        return adoptRef(*new GamepadEvent(eventType, WTF::move(initializer), isTrusted));
     }
 
-    Gamepad* gamepad() const { return m_gamepad.get(); }
+    Gamepad* gamepad() const { return m_gamepad; }
 
 private:
-    explicit GamepadEvent(const AtomString& eventType, Gamepad&);
-    GamepadEvent(const AtomString& eventType, const Init&, IsTrusted);
+    explicit GamepadEvent(const AtomString& eventType, Ref<Gamepad>&&);
+    GamepadEvent(const AtomString& eventType, Init&&, IsTrusted);
 
-    RefPtr<Gamepad> m_gamepad;
+    const RefPtr<Gamepad> m_gamepad;
 };
 
 } // namespace WebCore

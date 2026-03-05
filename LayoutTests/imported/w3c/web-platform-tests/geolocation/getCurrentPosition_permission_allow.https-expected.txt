@@ -1,4 +1,0 @@
-
-PASS User allows access, check that success callback is called.
-PASS Error callback is nullable for getCurrentPosition().
-

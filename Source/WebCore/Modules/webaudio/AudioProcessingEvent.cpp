@@ -37,27 +37,25 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioProcessingEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioProcessingEvent);
 
 Ref<AudioProcessingEvent> AudioProcessingEvent::create(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
 {
-    RELEASE_ASSERT(eventInitDict.inputBuffer);
-    RELEASE_ASSERT(eventInitDict.outputBuffer);
-    return adoptRef(*new AudioProcessingEvent(eventType, WTFMove(eventInitDict)));
+    return adoptRef(*new AudioProcessingEvent(eventType, WTF::move(eventInitDict)));
 }
 
 AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime)
     : Event(EventInterfaceType::AudioProcessingEvent, eventNames().audioprocessEvent, CanBubble::Yes, IsCancelable::No)
-    , m_inputBuffer(WTFMove(inputBuffer))
-    , m_outputBuffer(WTFMove(outputBuffer))
+    , m_inputBuffer(WTF::move(inputBuffer))
+    , m_outputBuffer(WTF::move(outputBuffer))
     , m_playbackTime(playbackTime)
 {
 }
 
 AudioProcessingEvent::AudioProcessingEvent(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
     : Event(EventInterfaceType::AudioProcessingEvent, eventType, eventInitDict, IsTrusted::No)
-    , m_inputBuffer(eventInitDict.inputBuffer.releaseNonNull())
-    , m_outputBuffer(eventInitDict.outputBuffer.releaseNonNull())
+    , m_inputBuffer(WTF::move(eventInitDict.inputBuffer))
+    , m_outputBuffer(WTF::move(eventInitDict.outputBuffer))
     , m_playbackTime(eventInitDict.playbackTime)
 {
 }

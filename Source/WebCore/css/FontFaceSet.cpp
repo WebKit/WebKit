@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FontFaceSet);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontFaceSet);
 
 Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
 {
@@ -97,11 +97,11 @@ RefPtr<FontFace> FontFaceSet::Iterator::next()
 {
     if (m_index >= m_target->size())
         return nullptr;
-    return m_target->backing()[m_index++].wrapper(m_target->protectedScriptExecutionContext().get());
+    return m_target->backing()[m_index++].wrapper(protect(m_target->scriptExecutionContext()).get());
 }
 
 FontFaceSet::PendingPromise::PendingPromise(LoadPromise&& promise)
-    : promise(makeUniqueRef<LoadPromise>(WTFMove(promise)))
+    : promise(makeUniqueRef<LoadPromise>(WTF::move(promise)))
 {
 }
 
@@ -167,28 +167,29 @@ void FontFaceSet::load(ScriptExecutionContext& context, const String& font, cons
     for (auto& face : matchingFaces)
         face.get().load();
 
-    auto* document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (document && document->quirks().shouldEnableFontLoadingAPIQuirk()) {
-        // HBOMax.com expects that loading fonts will succeed, and will totally break when it doesn't. But when lockdown mode is enabled, fonts
-        // fail to load, because that's the whole point of lockdown mode.
-        //
-        // This is a bit of a hack to say "When lockdown mode is enabled, and lockdown mode has removed all the remote fonts, then just pretend
-        // that the fonts loaded successfully." If there are any non-remote fonts still present, don't make any behavior change.
-        //
-        // See also: https://github.com/w3c/csswg-drafts/issues/7680
+    if (CheckedPtr document = dynamicDowncast<Document>(scriptExecutionContext())) {
+        if (document->quirks().shouldEnableFontLoadingAPIQuirk()) {
+            // HBOMax.com expects that loading fonts will succeed, and will totally break when it doesn't. But when lockdown mode is enabled, fonts
+            // fail to load, because that's the whole point of lockdown mode.
+            //
+            // This is a bit of a hack to say "When lockdown mode is enabled, and lockdown mode has removed all the remote fonts, then just pretend
+            // that the fonts loaded successfully." If there are any non-remote fonts still present, don't make any behavior change.
+            //
+            // See also: https://github.com/w3c/csswg-drafts/issues/7680
 
-        bool hasSource = false;
-        for (auto& face : matchingFaces) {
-            if (face.get().sourceCount()) {
-                hasSource = true;
-                break;
+            bool hasSource = false;
+            for (auto& face : matchingFaces) {
+                if (face.get().sourceCount()) {
+                    hasSource = true;
+                    break;
+                }
             }
-        }
-        if (!hasSource) {
-            promise.resolve(matchingFaces.map([scriptExecutionContext = scriptExecutionContext()] (const auto& matchingFace) {
-                return matchingFace.get().wrapper(scriptExecutionContext);
-            }));
-            return;
+            if (!hasSource) {
+                promise.resolve(matchingFaces.map([scriptExecutionContext = CheckedPtr { scriptExecutionContext() }] (const auto& matchingFace) {
+                    return matchingFace.get().wrapper(scriptExecutionContext.get());
+                }));
+                return;
+            }
         }
     }
 
@@ -199,16 +200,16 @@ void FontFaceSet::load(ScriptExecutionContext& context, const String& font, cons
         }
     }
 
-    auto pendingPromise = PendingPromise::create(WTFMove(promise));
+    auto pendingPromise = PendingPromise::create(WTF::move(promise));
     bool waiting = false;
 
     for (auto& face : matchingFaces) {
-        pendingPromise->faces.append(face.get().wrapper(protectedScriptExecutionContext().get()));
+        pendingPromise->faces.append(face.get().wrapper(protect(scriptExecutionContext()).get()));
         if (face.get().status() == CSSFontFace::Status::Success)
             continue;
         waiting = true;
         ASSERT(face.get().existingWrapper());
-        m_pendingPromises.add(face.get().existingWrapper(), Vector<Ref<PendingPromise>>()).iterator->value.append(pendingPromise.copyRef());
+        m_pendingPromises.add(*face.get().existingWrapper(), Vector<Ref<PendingPromise>>()).iterator->value.append(pendingPromise.copyRef());
     }
 
     if (!waiting)
@@ -240,11 +241,7 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     if (!face.existingWrapper())
         return;
 
-    auto pendingPromises = m_pendingPromises.take(face.existingWrapper());
-    if (pendingPromises.isEmpty())
-        return;
-
-    for (auto& pendingPromise : pendingPromises) {
+    for (auto& pendingPromise : m_pendingPromises.take(*face.existingWrapper())) {
         if (pendingPromise->hasReachedTerminalState)
             continue;
         if (newStatus == CSSFontFace::Status::Success) {

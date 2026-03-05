@@ -76,8 +76,8 @@ public:
 // Do not make WeakPtrImplWithEventTargetData a derived class of DefaultWeakPtrImpl to catch the bug which uses incorrect impl class.
 class WeakPtrImplWithEventTargetData final : public WTF::WeakPtrImplBase<WeakPtrImplWithEventTargetData> {
 public:
-    EventTargetData& eventTargetData() { return m_eventTargetData; }
-    const EventTargetData& eventTargetData() const { return m_eventTargetData; }
+    EventTargetData& eventTargetData() LIFETIME_BOUND { return m_eventTargetData; }
+    const EventTargetData& eventTargetData() const LIFETIME_BOUND { return m_eventTargetData; }
 
     template<typename T> WeakPtrImplWithEventTargetData(T* ptr) : WTF::WeakPtrImplBase<WeakPtrImplWithEventTargetData>(ptr) { }
 
@@ -86,18 +86,17 @@ private:
 };
 
 class WEBCORE_EXPORT EventTarget : public ScriptWrappable, public CanMakeWeakPtrWithBitField<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventTarget);
+    WTF_MAKE_TZONE_ALLOCATED(EventTarget);
 public:
     static Ref<EventTarget> create(ScriptExecutionContext&);
 
     inline void ref(); // Defined in EventTargetInlines.h.
     inline void deref(); // Defined in EventTargetInlines.h.
 
-    virtual enum EventTargetInterfaceType eventTargetInterface() const = 0;
+    virtual enum EventTargetInterfaceType NODELETE eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
-    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
 
-    virtual bool isPaymentRequest() const;
+    virtual bool NODELETE isPaymentRequest() const;
 
     using AddEventListenerOptionsOrBoolean = Variant<AddEventListenerOptions, bool>;
     void addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
@@ -106,6 +105,7 @@ public:
     ExceptionOr<bool> dispatchEventForBindings(Event&);
 
     virtual bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&);
+    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&);
     virtual bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions& = { });
 
     virtual void removeAllEventListeners();
@@ -191,11 +191,11 @@ protected:
         HasPendingResources = 1 << 15,
     };
 
-    EventTargetData& ensureEventTargetData();
+    EventTargetData& ensureEventTargetData() LIFETIME_BOUND;
 
     virtual void eventListenersDidChange() { }
 
-    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & enumToUnderlyingType(flag); }
+    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & std::to_underlying(flag); }
     void setEventTargetFlag(EventTargetFlag, bool = true);
     void clearEventTargetFlag(EventTargetFlag flag) { setEventTargetFlag(flag, false); }
 
@@ -214,3 +214,8 @@ inline void EventTarget::setEventTargetFlag(EventTargetFlag flag, bool value)
 }
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_EVENTTARGET(ClassName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
+    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::EventTargetInterfaceType::ClassName; } \
+SPECIALIZE_TYPE_TRAITS_END()

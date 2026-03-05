@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStream);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStream);
 
 Ref<MediaStream> MediaStream::create(Document& document)
 {
@@ -68,7 +68,7 @@ Ref<MediaStream> MediaStream::create(Document& document, const Vector<Ref<MediaS
 
 Ref<MediaStream> MediaStream::create(Document& document, Ref<MediaStreamPrivate>&& streamPrivate, AllowEventTracks allowEventTracks)
 {
-    auto mediaStream = adoptRef(*new MediaStream(document, WTFMove(streamPrivate), allowEventTracks));
+    auto mediaStream = adoptRef(*new MediaStream(document, WTF::move(streamPrivate), allowEventTracks));
     mediaStream->suspendIfNeeded();
     return mediaStream;
 }
@@ -96,7 +96,7 @@ MediaStream::MediaStream(Document& document, const Vector<Ref<MediaStreamTrack>>
 
 MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPrivate, AllowEventTracks allowEventTracks)
     : ActiveDOMObject(document)
-    , m_private(WTFMove(streamPrivate))
+    , m_private(WTF::move(streamPrivate))
     , m_allowEventTracks(allowEventTracks)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -104,7 +104,7 @@ MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPri
     for (auto& trackPrivate : m_private->tracks()) {
         auto track = MediaStreamTrack::create(document, trackPrivate.get());
         track->setMediaStreamId(id());
-        m_trackMap.add(trackPrivate->id(), WTFMove(track));
+        m_trackMap.add(trackPrivate->id(), WTF::move(track));
     }
 
     setIsActive(m_private->active());
@@ -137,7 +137,7 @@ RefPtr<MediaStream> MediaStream::clone()
         if (auto clone = track->clone())
             clonedTracks.append(clone.releaseNonNull());
     }
-    return MediaStream::create(*document, WTFMove(clonedTracks));
+    return MediaStream::create(*document, WTF::move(clonedTracks));
 }
 
 void MediaStream::addTrack(MediaStreamTrack& track)
@@ -219,17 +219,17 @@ void MediaStream::didAddTrack(MediaStreamTrackPrivate& trackPrivate)
     if (getTrackById(trackPrivate.id()))
         return;
 
-    auto track = MediaStreamTrack::create(*context, trackPrivate);
+    Ref track = MediaStreamTrack::create(*context, trackPrivate);
     internalAddTrack(track.copyRef());
     ASSERT(m_allowEventTracks == AllowEventTracks::Yes);
-    dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
+    dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTF::move(track)));
 }
 
 void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 {
-    if (auto track = internalTakeTrack(trackPrivate.id())) {
+    if (RefPtr track = internalTakeTrack(trackPrivate.id())) {
         ASSERT(m_allowEventTracks == AllowEventTracks::Yes);
-        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
+        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, Event::CanBubble::No, Event::IsCancelable::No, track.releaseNonNull()));
     }
 }
 
@@ -241,13 +241,13 @@ void MediaStream::addTrackFromPlatform(Ref<MediaStreamTrack>&& track)
     auto& privateTrack = track->privateTrack();
     internalAddTrack(track.copyRef());
     m_private->addTrack(privateTrack);
-    dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
+    dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTF::move(track)));
 }
 
 void MediaStream::internalAddTrack(Ref<MediaStreamTrack>&& trackToAdd)
 {
     ASSERT(!m_trackMap.contains(trackToAdd->id()));
-    m_trackMap.add(trackToAdd->id(), WTFMove(trackToAdd));
+    m_trackMap.add(trackToAdd->id(), WTF::move(trackToAdd));
     updateActiveState();
 }
 
@@ -395,11 +395,6 @@ void MediaStream::inactivate()
 bool MediaStream::virtualHasPendingActivity() const
 {
     return m_isActive && m_allowEventTracks == AllowEventTracks::Yes && hasEventListeners();
-}
-
-Ref<MediaStreamPrivate> MediaStream::protectedPrivateStream()
-{
-    return m_private;
 }
 
 ScriptExecutionContext* MediaStream::scriptExecutionContext() const

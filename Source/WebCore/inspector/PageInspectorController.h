@@ -34,6 +34,7 @@
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <WebCore/InspectorOverlay.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -64,12 +65,20 @@ class PageDebugger;
 class WebInjectedScriptManager;
 struct PageAgentContext;
 
-class PageInspectorController final : public Inspector::InspectorEnvironment, public CanMakeWeakPtr<PageInspectorController> {
+class PageInspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<PageInspectorController> {
     WTF_MAKE_NONCOPYABLE(PageInspectorController);
     WTF_MAKE_TZONE_ALLOCATED(PageInspectorController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageInspectorController);
 public:
     PageInspectorController(Page&, std::unique_ptr<InspectorBackendClient>&&);
     ~PageInspectorController() override;
+
+    // AbstractCanMakeCheckedPtr overrides
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
@@ -77,8 +86,7 @@ public:
     void inspectedPageDestroyed();
 
     WEBCORE_EXPORT bool enabled() const;
-    Page& inspectedPage() const;
-    Ref<Page> protectedInspectedPage() const;
+    Page& NODELETE inspectedPage() const;
 
     WEBCORE_EXPORT void show();
 
@@ -120,6 +128,7 @@ public:
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
     Inspector::BackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
+    WebInjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager.get(); }
 
     Inspector::InspectorAgent& ensureInspectorAgent();
     InspectorDOMAgent& ensureDOMAgent();
@@ -131,7 +140,7 @@ public:
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override;
-    WTF::Stopwatch& executionStopwatch() const final;
+    WTF::Stopwatch& NODELETE executionStopwatch() const final;
     JSC::Debugger* debugger() override;
     JSC::VM& vm() override;
 
@@ -143,7 +152,7 @@ private:
 
     WeakRef<Page> m_page;
     const Ref<InstrumentingAgents> m_instrumentingAgents;
-    const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
+    const Ref<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const UniqueRef<InspectorOverlay> m_overlay;
@@ -155,9 +164,9 @@ private:
     InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
 
     // Lazy, but also on-demand agents.
-    Inspector::InspectorAgent* m_inspectorAgent { nullptr };
+    CheckedPtr<Inspector::InspectorAgent> m_inspectorAgent;
     CheckedPtr<InspectorDOMAgent> m_domAgent;
-    InspectorPageAgent* m_pageAgent { nullptr };
+    CheckedPtr<InspectorPageAgent> m_pageAgent;
 
     bool m_isUnderTest { false };
     bool m_isAutomaticInspection { false };

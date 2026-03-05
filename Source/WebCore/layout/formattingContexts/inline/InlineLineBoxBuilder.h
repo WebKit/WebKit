@@ -42,6 +42,7 @@ public:
     LineBoxBuilder(const InlineFormattingContext&, LineLayoutResult&);
 
     LineBox build(size_t lineIndex);
+    LineBox buildForRootInlineBoxOnly(size_t lineIndex);
 
 private:
     void setVerticalPropertiesForInlineLevelBox(const LineBox&, InlineLevelBox&) const;

@@ -71,7 +71,7 @@ protected:
     PODIntervalBase(const T& low, const T& high, UserData&& data)
         : m_low(low)
         , m_high(high)
-        , m_data(WTFMove(data))
+        , m_data(WTF::move(data))
         , m_maxHigh(high)
     {
     }
@@ -86,7 +86,7 @@ private:
 template<class T, class UserData> class PODInterval : public PODIntervalBase<T, UserData> {
 public:
     PODInterval(const T& low, const T& high, UserData&& data = { })
-        : PODIntervalBase<T, UserData>(low, high, WTFMove(data))
+        : PODIntervalBase<T, UserData>(low, high, WTF::move(data))
     {
     }
 
@@ -122,7 +122,7 @@ private:
 template<typename T, typename U, typename WeakPtrImpl> class PODInterval<T, WeakPtr<U, WeakPtrImpl>> : public PODIntervalBase<T, WeakPtr<U, WeakPtrImpl>> {
 public:
     PODInterval(const T& low, const T& high, WeakPtr<U, WeakPtrImpl>&& data)
-        : PODIntervalBase<T, WeakPtr<U, WeakPtrImpl>>(low, high, WTFMove(data))
+        : PODIntervalBase<T, WeakPtr<U, WeakPtrImpl>>(low, high, WTF::move(data))
     {
     }
 

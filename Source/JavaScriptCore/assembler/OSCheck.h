@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 namespace JSC {
 
 ALWAYS_INLINE constexpr bool isDarwin()

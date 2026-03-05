@@ -131,14 +131,18 @@ enum SaveMode {
     "file-variants"
 };
 
-dictionary SaveData {
+[
+    LegacyNativeDictionaryRequiredInterfaceNullability,
+] dictionary SaveData {
     DOMString displayType;
     DOMString url;
     DOMString content;
     boolean base64Encoded;
 };
 
-dictionary ContextMenuItem {
+[
+    LegacyNativeDictionaryRequiredInterfaceNullability,
+] dictionary ContextMenuItem {
     DOMString type;
     DOMString label;
     long id;
@@ -149,8 +153,8 @@ dictionary ContextMenuItem {
 
 [
     JSGenerateToJSObject,
-]
-dictionary DebuggableInfo {
+    LegacyNativeDictionaryRequiredInterfaceNullability,
+] dictionary DebuggableInfo {
     DOMString debuggableType;
     DOMString targetPlatformName;
     DOMString targetBuildVersion;

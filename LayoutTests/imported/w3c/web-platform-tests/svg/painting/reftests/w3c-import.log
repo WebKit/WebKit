@@ -93,6 +93,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-007-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-007.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-precision-loss.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001.svg

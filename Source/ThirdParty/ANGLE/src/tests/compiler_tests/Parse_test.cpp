@@ -21,7 +21,6 @@ class ParseTest : public testing::Test
     ParseTest()
     {
         InitBuiltInResources(&mResources);
-        mResources.FragmentPrecisionHigh = 1;
         mCompileOptions.intermediateTree = true;
     }
 
@@ -42,7 +41,7 @@ class ParseTest : public testing::Test
         }
 
         const char *shaderStrings[] = {shaderString.c_str()};
-        bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, mCompileOptions);
+        bool compilationSuccess     = mTranslator->compile(shaderStrings, mCompileOptions);
         mInfoLog                    = mTranslator->getInfoSink().info.str();
         if (!compilationSuccess)
         {
@@ -240,21 +239,6 @@ void main() {
     EXPECT_FALSE(compile(kShader));
     EXPECT_TRUE(foundErrorInIntermediateTree());
     EXPECT_TRUE(foundInIntermediateTree("coherent specified multiple times"));
-}
-
-TEST_F(ParseTest, LargeArrayIndexNoCrash)
-{
-    mShaderSpec          = SH_WEBGL2_SPEC;
-    const char kShader[] = R"(#version 300 es
-int rr[~1U];
-out int o;
-void main() {
-    o = rr[1];
-})";
-    EXPECT_FALSE(compile(kShader));
-    EXPECT_TRUE(foundErrorInIntermediateTree());
-    EXPECT_TRUE(
-        foundInIntermediateTree("Size of declared variable exceeds implementation-defined limit"));
 }
 
 // Tests that separating variable declaration of multiple instances of a anonymous structure

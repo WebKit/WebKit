@@ -57,6 +57,7 @@
 #include "src/utils/SkJSONWriter.h"
 #include "src/utils/SkMultiPictureDocumentPriv.h"
 #include "src/utils/SkOSPath.h"
+#include "tools/DeserialProcsUtils.h"
 #include "tools/EncodeUtils.h"
 #include "tools/GpuToolUtils.h"
 #include "tools/Resources.h"
@@ -169,11 +170,6 @@ GMSrc::GMSrc(skiagm::GMFactory factory) : fFactory(factory) {}
 
 Result GMSrc::draw(SkCanvas* canvas, GraphiteTestContext* testContext) const {
     std::unique_ptr<skiagm::GM> gm(fFactory());
-    if (gm->isBazelOnly()) {
-        // We skip Bazel-only GMs because they might overlap with existing DM functionality. See
-        // comments in the skiagm::GM::isBazelOnly function declaration for context.
-        return Result(Result::Status::Skip, SkString("Bazel-only GM"));
-    }
     SkString msg;
 
     skiagm::DrawResult gpuSetupResult = gm->gpuSetup(canvas, &msg, testContext);
@@ -1176,31 +1172,26 @@ Result SKPSrc::draw(SkCanvas* canvas, GraphiteTestContext*) const {
 #endif
     };
 
-    SkDeserialProcs procs;
-    procs.fImageProc = [](const void* data, size_t size, void* ctx) -> sk_sp<SkImage> {
-        sk_sp<SkData> tmpData = SkData::MakeWithoutCopy(data, size);
-        sk_sp<SkImage> image = SkImages::DeferredFromEncodedData(std::move(tmpData));
-        image = image->makeRasterImage(nullptr); // force decoding
+    SkDeserialProcs procs = ToolUtils::get_default_skp_deserial_procs();
+
+    // We override the default fImageDataProc set above
+    procs.fImageDataProc =
+        [](sk_sp<SkData> data, std::optional<SkAlphaType> at, void* ctx) -> sk_sp<SkImage> {
+            sk_sp<SkImage> image = SkImages::DeferredFromEncodedData(std::move(data));
+            image = image->makeRasterImage(nullptr); // force decoding
 
 #if defined(SK_GANESH)
-        if (image) {
-            DeserializationContext* context = reinterpret_cast<DeserializationContext*>(ctx);
-            if (context->fDirectContext) {
-                return SkImages::TextureFromImage(context->fDirectContext, image);
+            if (image) {
+                DeserializationContext* context = reinterpret_cast<DeserializationContext*>(ctx);
+                if (context->fDirectContext) {
+                    return SkImages::TextureFromImage(context->fDirectContext, image);
+                }
             }
-        }
 #endif
-        return image;
-    };
+            return image;
+        };
+
     procs.fImageCtx = &ctx;
-
-    // SKPs may have typefaces encoded in them (e.g. with FreeType). We can try falling back
-    // to the Test FontMgr (possibly a native one) if we have do not have FreeType built-in.
-    procs.fTypefaceProc = [](const void* data, size_t size, void*) -> sk_sp<SkTypeface> {
-        SkStream** stream = reinterpret_cast<SkStream**>(const_cast<void*>(data));
-        return SkTypeface::MakeDeserialize(*stream, ToolUtils::TestFontMgr());
-    };
-
 
     std::unique_ptr<SkStream> stream = SkStream::MakeFromFile(fPath.c_str());
     if (!stream) {
@@ -2094,7 +2085,7 @@ Result XPSSink::draw(const Src& src, SkBitmap*, SkWStream* dst, SkString*) const
 #endif
 
 static SkSerialProcs serial_procs_using_png() {
-    static SkSerialProcs procs{.fImageProc = [](SkImage* img, void*) -> sk_sp<SkData> {
+    static SkSerialProcs procs{.fImageProc = [](SkImage* img, void*) -> sk_sp<const SkData> {
 #if defined(SK_CODEC_ENCODES_PNG_WITH_LIBPNG)
         return SkPngEncoder::Encode(as_IB(img)->directContext(), img, {});
 #elif defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
@@ -2219,11 +2210,6 @@ Result GraphiteSink::draw(const Src& src,
                           SkWStream* dstStream,
                           SkString* log) const {
     skiatest::graphite::TestOptions options = fOptions;
-    // If we've copied context options from an external source we can't trust that the
-    // priv pointer is still in scope, so assume it should be NULL and set our own up.
-    SkASSERT(!options.fContextOptions.fOptionsPriv);
-    skgpu::graphite::ContextOptionsPriv optionsPriv;
-    options.fContextOptions.fOptionsPriv = &optionsPriv;
 
     // We don't expect the src to mess with the more esoteric options
     SkDEBUGCODE(auto cache = options.fContextOptions.fPersistentPipelineStorage);
@@ -2542,11 +2528,6 @@ Result GraphitePrecompileTestingSink::draw(const Src& src,
 
     {
         TestOptions options = fOptions;
-        // If we've copied context options from an external source we can't trust that the
-        // priv pointer is still in scope, so assume it should be NULL and set our own up.
-        SkASSERT(!options.fContextOptions.fOptionsPriv);
-        ContextOptionsPriv optionsPriv;
-        options.fContextOptions.fOptionsPriv = &optionsPriv;
 
         // We don't expect the src to mess with the more esoteric options
         SkDEBUGCODE(auto cache = options.fContextOptions.fPersistentPipelineStorage);

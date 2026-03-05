@@ -42,7 +42,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingObserverCallback);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReportingObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingObserver);
 
 static bool isVisibleToReportingObservers(const String& type)
 {
@@ -58,7 +58,7 @@ static bool isVisibleToReportingObservers(const String& type)
 
 Ref<ReportingObserver> ReportingObserver::create(ScriptExecutionContext& scriptExecutionContext, Ref<ReportingObserverCallback>&& callback, Options&& options)
 {
-    auto reportingObserver = adoptRef(*new ReportingObserver(scriptExecutionContext, WTFMove(callback), WTFMove(options)));
+    auto reportingObserver = adoptRef(*new ReportingObserver(scriptExecutionContext, WTF::move(callback), WTF::move(options)));
     reportingObserver->suspendIfNeeded();
     return reportingObserver;
 }
@@ -77,7 +77,7 @@ static WeakPtr<ReportingScope> reportingScopeForContext(ScriptExecutionContext& 
 ReportingObserver::ReportingObserver(ScriptExecutionContext& scriptExecutionContext, Ref<ReportingObserverCallback>&& callback, Options&& options)
     : ActiveDOMObject(&scriptExecutionContext)
     , m_reportingScope(reportingScopeForContext(scriptExecutionContext))
-    , m_callback(WTFMove(callback))
+    , m_callback(WTF::move(callback))
     , m_types(options.types.value_or(Vector<AtomString>()))
     , m_buffered(options.buffered)
 {
@@ -114,7 +114,7 @@ void ReportingObserver::observe()
 auto ReportingObserver::takeRecords() -> Vector<Ref<Report>>
 {
     // https://www.w3.org/TR/reporting-1/#dom-reportingobserver-takerecords
-    return WTFMove(m_queuedReports);
+    return WTF::move(m_queuedReports);
 }
 
 void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& report)
@@ -157,7 +157,7 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
 
 bool ReportingObserver::virtualHasPendingActivity() const
 {
-    // We cannot ref `m_reportingScope` here since this function may get called on the GC thread.
+    // We cannot ref `m_reportingScope` here since this function may get called on a GC thread.
     SUPPRESS_UNCOUNTED_ARG return m_reportingScope && m_reportingScope->containsObserver(*this);
 }
 

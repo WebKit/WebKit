@@ -37,22 +37,19 @@ enum class MatchBasedOnRuleHash : unsigned {
     ClassC
 };
 
-enum class UsedRuleType : uint8_t {
-    StartingStyle = 1 << 0,
-    BaseAppearance = 1 << 1
-};
+enum class IsStartingStyle : bool { No, Yes };
 
 class RuleData {
 public:
     static const unsigned maximumSelectorComponentCount = 8192;
 
-    RuleData(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, OptionSet<UsedRuleType>);
+    RuleData(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle);
 
     unsigned position() const { return m_position; }
 
     const StyleRule& styleRule() const { return *m_styleRuleWithSelectorIndex.pointer(); }
 
-    const CSSSelector* selector() const
+    const CSSSelector& selector() const
     { 
         return styleRule().selectorList().selectorAt(selectorIndex());
     }
@@ -69,7 +66,7 @@ public:
     unsigned linkMatchType() const { return m_linkMatchType; }
     void setLinkMatchType(unsigned value) { m_linkMatchType = value; }
     PropertyAllowlist propertyAllowlist() const { return static_cast<PropertyAllowlist>(m_propertyAllowlist); }
-    OptionSet<UsedRuleType> usedRuleTypes() const { return OptionSet<UsedRuleType>::fromRaw(m_usedRuleTypes); }
+    IsStartingStyle isStartingStyle() const { return static_cast<IsStartingStyle>(m_isStartingStyle); }
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool value) { m_isEnabled = value; }
 
@@ -85,7 +82,7 @@ private:
     unsigned m_canMatchPseudoElement : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
     unsigned m_propertyAllowlist : 2;
-    unsigned m_usedRuleTypes : 2;
+    unsigned m_isStartingStyle : 1;
     unsigned m_isEnabled : 1;
     // If we have more rules than 2^bitcount here we'll get confused about rule order.
     unsigned m_position : 21;

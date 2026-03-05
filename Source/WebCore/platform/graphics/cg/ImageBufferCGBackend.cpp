@@ -55,7 +55,7 @@ private:
 
 ImageBufferCGBackend::ImageBufferCGBackend(const Parameters& parameters, std::unique_ptr<GraphicsContextCG>&& context)
     : ImageBufferBackend(parameters)
-    , m_context(WTFMove(context))
+    , m_context(WTF::move(context))
 {
 }
 

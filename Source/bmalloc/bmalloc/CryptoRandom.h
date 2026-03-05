@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "BExport.h"
 #include <cstddef>
 #include <inttypes.h>
@@ -35,3 +37,4 @@ BEXPORT void cryptoRandom(void* buffer, size_t length);
 
 }
 
+#endif // __cplusplus

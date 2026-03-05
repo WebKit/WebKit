@@ -91,13 +91,13 @@ void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node, No
         notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange);
 }
 
-inline RemovedSubtreeObservability observabilityOfRemovedNode(Node& node)
+inline RemovedSubtreeObservability NODELETE observabilityOfRemovedNode(Node& node)
 {
     bool isRootOfRemovedTree = !node.parentNode();
     return node.refCount() > 1 && !isRootOfRemovedTree ? RemovedSubtreeObservability::MaybeObservableByRefPtr : RemovedSubtreeObservability::NotObservable;
 }
 
-inline void updateObservability(RemovedSubtreeObservability& currentObservability, RemovedSubtreeObservability newStatus)
+inline void NODELETE updateObservability(RemovedSubtreeObservability& currentObservability, RemovedSubtreeObservability newStatus)
 {
     if (newStatus == RemovedSubtreeObservability::MaybeObservableByRefPtr)
         currentObservability = newStatus;
@@ -167,7 +167,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
     container.setLastChild(nullptr);
 
     RefPtr<Node> next;
-    for (RefPtr node = container.firstChild(); node; node = WTFMove(next)) {
+    for (RefPtr node = container.firstChild(); node; node = WTF::move(next)) {
         ASSERT(!node->deletionHasBegun());
 
         next = node->nextSibling();
@@ -220,16 +220,16 @@ static void collectFrameOwners(Vector<Ref<HTMLFrameOwnerElement>>& frameOwners, 
     auto it = elementDescendants.begin();
     auto end = elementDescendants.end();
     while (it != end) {
-        Element& element = *it;
-        if (!element.connectedSubframeCount()) {
+        Ref element = *it;
+        if (!element->connectedSubframeCount()) {
             it.traverseNextSkippingChildren();
             continue;
         }
 
-        if (RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
+        if (RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element.get()))
             frameOwners.append(frameOwnerElement.releaseNonNull());
 
-        if (RefPtr shadowRoot = element.shadowRoot())
+        if (RefPtr shadowRoot = element->shadowRoot())
             collectFrameOwners(frameOwners, *shadowRoot);
         ++it;
     }

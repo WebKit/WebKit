@@ -53,7 +53,7 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_audio_file_reader_debug);
 #define GST_CAT_DEFAULT webkit_audio_file_reader_debug
 
-class AudioFileReader : public CanMakeWeakPtr<AudioFileReader> {
+class AudioFileReader : public CanMakeWeakPtr<AudioFileReader, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioFileReader);
     WTF_MAKE_NONCOPYABLE(AudioFileReader);
 public:
@@ -275,10 +275,10 @@ void AudioFileReader::handleMessage(GstMessage* message)
         GstState oldState, newState, pending;
         gst_message_parse_state_changed(message, &oldState, &newState, &pending);
         GST_INFO_OBJECT(m_pipeline.get(), "State changed (old: %s, new: %s, pending: %s)",
-            gst_element_state_get_name(oldState), gst_element_state_get_name(newState), gst_element_state_get_name(pending));
+            gst_state_get_name(oldState), gst_state_get_name(newState), gst_state_get_name(pending));
 
-        auto dotFileName = makeString(unsafeSpan(GST_OBJECT_NAME(m_pipeline.get())), '_', unsafeSpan(gst_element_state_get_name(oldState)), '_', unsafeSpan(gst_element_state_get_name(newState)));
-        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+        auto dotFileName = makeString(unsafeSpan(GST_OBJECT_NAME(m_pipeline.get())), '_', unsafeSpan(gst_state_get_name(oldState)), '_', unsafeSpan(gst_state_get_name(newState)));
+        dumpBinToDotFile(m_pipeline, dotFileName);
         break;
     }
     case GST_MESSAGE_LATENCY:
@@ -301,7 +301,7 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
         auto caps = adoptGRef(gst_pad_query_caps(pad, nullptr));
         auto channelType = channelTypeFromCaps(caps.get());
         if (channelType)
-            m_firstChannelType = WTFMove(channelType);
+            m_firstChannelType = WTF::move(channelType);
     }
     m_channels++;
 

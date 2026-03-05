@@ -46,10 +46,10 @@ std::optional<BindGroupLayoutDescriptor> ConvertToBackingContext::convertToBacki
         auto convertedEntry = convertToBacking(entry);
         if (!convertedEntry)
             return std::nullopt;
-        entries.append(WTFMove(*convertedEntry));
+        entries.append(WTF::move(*convertedEntry));
     }
 
-    return { { WTFMove(*base), WTFMove(entries) } };
+    return { { WTF::move(*base), WTF::move(entries) } };
 }
 
 std::optional<WebCore::WebGPU::BindGroupLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const BindGroupLayoutDescriptor& bindGroupLayoutDescriptor)
@@ -64,10 +64,10 @@ std::optional<WebCore::WebGPU::BindGroupLayoutDescriptor> ConvertFromBackingCont
         auto entry = convertFromBacking(backingEntry);
         if (!entry)
             return std::nullopt;
-        entries.append(WTFMove(*entry));
+        entries.append(WTF::move(*entry));
     }
 
-    return { { WTFMove(*base), WTFMove(entries) } };
+    return { { WTF::move(*base), WTF::move(entries) } };
 }
 
 } // namespace WebKit

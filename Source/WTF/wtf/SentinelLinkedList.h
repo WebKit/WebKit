@@ -176,22 +176,22 @@ template <typename T, typename PtrTraits> void BasicRawSentinelNode<T, PtrTraits
         static_cast<T*>(this), static_cast<T*>(node));
 }
 
-template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::begin()
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::begin() LIFETIME_BOUND
 {
     return iterator { m_sentinel.next() };
 }
 
-template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::end()
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::end() LIFETIME_BOUND
 {
     return iterator { &m_sentinel };
 }
 
-template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::const_iterator SentinelLinkedList<T, RawNode>::begin() const
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::const_iterator SentinelLinkedList<T, RawNode>::begin() const LIFETIME_BOUND
 {
     return const_iterator { m_sentinel.next() };
 }
 
-template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::const_iterator SentinelLinkedList<T, RawNode>::end() const
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::const_iterator SentinelLinkedList<T, RawNode>::end() const LIFETIME_BOUND
 {
     return const_iterator { &m_sentinel };
 }

@@ -66,7 +66,7 @@ public:
     explicit WebSharedWorkerServer(NetworkSession&);
     ~WebSharedWorkerServer();
 
-    PAL::SessionID sessionID();
+    PAL::SessionID NODELETE sessionID();
     WebSharedWorkerServerToContextConnection* contextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
 
     void requestSharedWorker(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);

@@ -54,7 +54,7 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
-static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
+static bool NODELETE hiddenTruthBecauseNoReturnIsStupid() { return true; }
 
 static void usage()
 {
@@ -921,7 +921,7 @@ void testRotateFringeClobber()
     memset(things, 0, sizeof(things));
 
     // Make sure no scratches are available.
-    for (auto reg : RegisterSetBuilder::allGPRs()) {
+    for (auto reg : RegisterSet::allGPRs()) {
         if (reg == GPRInfo::regT0
             || reg == GPRInfo::regT1
             || reg == GPRInfo::regT2
@@ -932,7 +932,7 @@ void testRotateFringeClobber()
             || reg == GPRInfo::regT7
             || reg == GPRInfo::regCS0)
             continue;
-        if (RegisterSetBuilder::specialRegisters().contains(reg, IgnoreVectors))
+        if (RegisterSet::specialRegisters().contains(reg, IgnoreVectors))
             continue;
         code.pinRegister(reg);
     }
@@ -1359,7 +1359,7 @@ void testShuffleShiftMemoryAllRegs64()
     CHECK(memory[1] == 35000000000000ll);
 }
 
-int64_t combineHiLo(int64_t high, int64_t low)
+int64_t NODELETE combineHiLo(int64_t high, int64_t low)
 {
     union {
         int64_t value;
@@ -1955,7 +1955,7 @@ void testInvalidateCachedTempRegisters()
 
     // In Patchpoint, Load things[0] -> tmp. This will materialize the address in x17 (dataMemoryRegister).
     B3::PatchpointValue* patchpoint1 = patchPoint1Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint1->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint1->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint1->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1970,7 +1970,7 @@ void testInvalidateCachedTempRegisters()
     // In Patchpoint, Load things[2] -> tmp. This should not reuse the prior contents of x17.
     B3::BasicBlock* patchPoint2Root = proc.addBlock();
     B3::PatchpointValue* patchpoint2 = patchPoint2Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint2->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint2->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint2->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1984,7 +1984,7 @@ void testInvalidateCachedTempRegisters()
     // This will use and cache both x16 (dataMemoryRegister) and x17 (dataTempRegister).
     B3::BasicBlock* patchPoint3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint3 = patchPoint3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint3->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint3->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint3->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2000,7 +2000,7 @@ void testInvalidateCachedTempRegisters()
     // This should rematerialize both x16 (dataMemoryRegister) and x17 (dataTempRegister).
     B3::BasicBlock* patchPoint4Root = proc.addBlock();
     B3::PatchpointValue* patchpoint4 = patchPoint4Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint4->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint4->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint4->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2030,7 +2030,7 @@ void testArgumentRegPinned()
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint->clobber(RegisterSetBuilder(pinned));
+    patchpoint->clobber(RegisterSet(pinned));
     patchpoint->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             jit.move(CCallHelpers::TrustedImm32(42), pinned);
@@ -2100,7 +2100,7 @@ void testArgumentRegPinned3()
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint->clobber(RegisterSetBuilder(pinned));
+    patchpoint->clobber(RegisterSet(pinned));
     patchpoint->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             jit.move(CCallHelpers::TrustedImm32(42), pinned);
@@ -2220,21 +2220,21 @@ void testElideHandlesEarlyClobber()
 
     BasicBlock* root = code.addBlock();
 
-    const unsigned tmpCount = RegisterSetBuilder::allGPRs().numberOfSetRegisters() * 2;
+    const unsigned tmpCount = RegisterSet::allGPRs().numberOfSetRegisters() * 2;
     Vector<Tmp> tmps(tmpCount);
     for (unsigned i = 0; i < tmpCount; ++i) {
         tmps[i] = code.newTmp(B3::GP);
         root->append(Move, nullptr, Arg::imm(i), tmps[i]);
     }
 
-    RegisterSetBuilder registers = RegisterSetBuilder::allGPRs();
-    registers.exclude(RegisterSetBuilder::reservedHardwareRegisters());
-    registers.exclude(RegisterSetBuilder::stackRegisters());
+    RegisterSet registers = RegisterSet::allGPRs();
+    registers.exclude(RegisterSet::reservedHardwareRegisters());
+    registers.exclude(RegisterSet::stackRegisters());
     Reg firstCalleeSave;
     Reg lastCalleeSave;
     auto* patch = proc.add<B3::PatchpointValue>(B3::Int32, B3::Origin());
     patch->clobberEarly(registers);
-    for (Reg reg : registers.buildAndValidate()) {
+    for (Reg reg : registers) {
         if (!firstCalleeSave)
             firstCalleeSave = reg;
         lastCalleeSave = reg;
@@ -2243,18 +2243,18 @@ void testElideHandlesEarlyClobber()
     patch->earlyClobbered().remove(firstCalleeSave);
     patch->resultConstraints.append({ B3::ValueRep::reg(firstCalleeSave) });
     patch->earlyClobbered().remove(lastCalleeSave);
-    patch->clobber(RegisterSetBuilder(lastCalleeSave));
+    patch->clobber(RegisterSet(lastCalleeSave));
 
     patch->setGenerator([=] (CCallHelpers& jit, const JSC::B3::StackmapGenerationParams&) {
         jit.probeDebug([=] (Probe::Context& context) {
-            for (Reg reg : registers.buildAndValidate())
+            for (Reg reg : registers)
                 context.gpr(reg.gpr()) = 0;
         });
     });
 
     Inst inst(Patch, patch, Arg::special(code.addSpecial(makeUniqueWithoutFastMallocCheck<JSC::B3::PatchpointSpecial>())));
     inst.args.append(Tmp(firstCalleeSave));
-    root->appendInst(WTFMove(inst));
+    root->appendInst(WTF::move(inst));
 
     Tmp result = code.newTmp(B3::GP);
     root->append(Move, nullptr, tmps[0], result);
@@ -2270,11 +2270,11 @@ void testElideHandlesEarlyClobber()
 
 void testElideMoveThenRealloc()
 {
-    RegisterSetBuilder registers = RegisterSetBuilder::allGPRs();
-    registers.exclude(RegisterSetBuilder::stackRegisters());
-    registers.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    RegisterSet registers = RegisterSet::allGPRs();
+    registers.exclude(RegisterSet::stackRegisters());
+    registers.exclude(RegisterSet::reservedHardwareRegisters());
 
-    for (Reg reg : registers.buildAndValidate()) {
+    for (Reg reg : registers) {
         B3::Procedure proc;
         Code& code = proc.code();
 
@@ -2501,7 +2501,7 @@ void testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister()
 void testEarlyAndLateUseOfSameTmp()
 {
     WeakRandom weakRandom;
-    size_t numTmps = RegisterSetBuilder::allGPRs().numberOfSetRegisters();
+    size_t numTmps = RegisterSet::allGPRs().numberOfSetRegisters();
     int64_t expectedResult = 0;
     for (size_t i = 0; i < numTmps; ++i)
         expectedResult += i;
@@ -2529,9 +2529,9 @@ void testEarlyAndLateUseOfSameTmp()
             B3::PatchpointValue* patchpoint = proc.add<B3::PatchpointValue>(B3::Void, B3::Origin());
             patchpoint->append(dummyValue, B3::ValueRep::SomeRegister);
             patchpoint->append(dummyValue, B3::ValueRep::SomeLateRegister);
-            patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+            patchpoint->clobberLate(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                RELEASE_ASSERT(!RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits().contains(params[1].gpr(), IgnoreVectors));
+                RELEASE_ASSERT(!RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()).normalizeWidths().contains(params[1].gpr(), IgnoreVectors));
 
                 auto good = jit.branch64(CCallHelpers::Equal, params[1].gpr(), CCallHelpers::TrustedImm32(rand));
                 jit.breakpoint();
@@ -2563,7 +2563,7 @@ void testEarlyAndLateUseOfSameTmp()
 void testEarlyClobberInterference()
 {
     WeakRandom weakRandom;
-    size_t numTmps = RegisterSetBuilder::allGPRs().numberOfSetRegisters();
+    size_t numTmps = RegisterSet::allGPRs().numberOfSetRegisters();
     int64_t expectedResult = 0;
     for (size_t i = 0; i < numTmps; ++i)
         expectedResult += i;
@@ -2590,9 +2590,9 @@ void testEarlyClobberInterference()
 
             B3::PatchpointValue* patchpoint = proc.add<B3::PatchpointValue>(B3::Void, B3::Origin());
             patchpoint->append(dummyValue, B3::ValueRep::SomeRegister);
-            patchpoint->clobberEarly(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+            patchpoint->clobberEarly(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                RELEASE_ASSERT(!RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits().contains(params[0].gpr(), IgnoreVectors));
+                RELEASE_ASSERT(!RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()).normalizeWidths().contains(params[0].gpr(), IgnoreVectors));
 
                 auto good = jit.branch64(CCallHelpers::Equal, params[0].gpr(), CCallHelpers::TrustedImm32(rand));
                 jit.breakpoint();
@@ -2615,6 +2615,181 @@ void testEarlyClobberInterference()
         CHECK(actualResult == expectedResult);
     }
 }
+
+#if USE(JSVALUE64)
+void testMoveDoubleZeroConstant()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp result = code.newTmp(FP);
+    // Test MoveDouble with FPImm64 zero
+    root->append(MoveDouble, nullptr, Arg::fpImm64(0), result);
+    root->append(MoveDoubleTo64, nullptr, result, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    CHECK(compileAndRun<uint64_t>(proc) == 0);
+}
+
+void testMoveFloatZeroConstant()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp result = code.newTmp(FP);
+    // Test MoveFloat with FPImm32 zero
+    root->append(MoveFloat, nullptr, Arg::fpImm32(0), result);
+    root->append(MoveFloatTo32, nullptr, result, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    CHECK(compileAndRun<uint32_t>(proc) == 0);
+}
+
+void testMoveDoubleConstant()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp result = code.newTmp(FP);
+    // 1.5 = 0x3ff8000000000000
+    uint64_t bits = 0x3ff8000000000000ULL;
+    root->append(MoveDouble, nullptr, Arg::fpImm64(bits), result);
+    root->append(MoveDoubleTo64, nullptr, result, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    CHECK(compileAndRun<uint64_t>(proc) == bits);
+}
+
+void testMoveFloatConstant()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp result = code.newTmp(FP);
+    // 1.5f = 0x3fc00000
+    uint32_t bits = 0x3fc00000U;
+    root->append(MoveFloat, nullptr, Arg::fpImm32(bits), result);
+    root->append(MoveFloatTo32, nullptr, result, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    CHECK(compileAndRun<uint32_t>(proc) == bits);
+}
+
+void testMoveVectorZeroConstant()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp result = code.newTmp(FP);
+    Tmp gpScratch = code.newTmp(GP);
+    // Test MoveVector with FPImm128 zero
+    root->append(MoveVector, nullptr, Arg::fpImm128(vectorAllZeros()), result);
+
+    // Store vector to memory and verify
+    uint64_t output[2] = { 0xdeadbeef, 0xdeadbeef };
+    root->append(Move, nullptr, Arg::bigImm(std::bit_cast<intptr_t>(&output)), gpScratch);
+    root->append(MoveVector, nullptr, result, Arg::addr(gpScratch));
+    root->append(Move, nullptr, Arg::imm(1), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    CHECK(compileAndRun<int>(proc) == 1);
+    CHECK(output[0] == 0);
+    CHECK(output[1] == 0);
+}
+
+// Test that float constants are correctly rematerialized when spilled.
+// This test creates many float tmps to force spilling, and verifies
+// that the 32-bit float constant is not misinterpreted as a 64-bit double.
+// Regression test for https://bugs.webkit.org/show_bug.cgi?id=308019
+void testMoveFloatConstantSpill()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+
+    // 1.0f = 0x3f800000 as a 32-bit float
+    // If misinterpreted as a 64-bit double, it's ~4.6e-315
+    uint32_t floatBits = 0x3f800000U;
+
+    // Create many float constants to force spilling
+    Vector<Tmp> tmps;
+    for (unsigned i = 0; i < 50; ++i) {
+        Tmp tmp = code.newTmp(FP);
+        tmps.append(tmp);
+        root->append(MoveFloat, nullptr, Arg::fpImm32(floatBits), tmp);
+    }
+
+    // Use all the temps to ensure they stay live and get spilled
+    Tmp accumulator = code.newTmp(FP);
+    root->append(MoveFloat, nullptr, tmps[0], accumulator);
+    for (unsigned i = 1; i < tmps.size(); ++i)
+        root->append(AddFloat, nullptr, accumulator, tmps[i], accumulator);
+
+    // Return the result as a 32-bit value
+    root->append(MoveFloatTo32, nullptr, accumulator, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    // The result should be 50.0f (1.0 + 1.0 + ... 50 times)
+    uint32_t expected = std::bit_cast<uint32_t>(50.0f);
+    CHECK(compileAndRun<uint32_t>(proc) == expected);
+}
+
+void testAddDoubleZeroWithOther()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp zero = code.newTmp(FP);
+    Tmp scratch = code.newTmp(GP);
+
+    // Load 2.5 into a register
+    double inputValue = 2.5;
+    loadDoubleConstant(root, inputValue, Tmp(FPRInfo::fpRegT0), scratch);
+
+    // Move zero to another register
+    root->append(MoveDouble, nullptr, Arg::fpImm64(0), zero);
+
+    // Add them
+    Tmp result = code.newTmp(FP);
+    root->append(AddDouble, nullptr, Tmp(FPRInfo::fpRegT0), zero, result);
+    root->append(MoveDoubleTo64, nullptr, result, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    CHECK(std::bit_cast<double>(compileAndRun<uint64_t>(proc)) == 2.5);
+}
+
+void testMulDoubleZeroWithOther()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp zero = code.newTmp(FP);
+    Tmp scratch = code.newTmp(GP);
+
+    // Load 2.5 into a register
+    double inputValue = 2.5;
+    loadDoubleConstant(root, inputValue, Tmp(FPRInfo::fpRegT0), scratch);
+
+    // Move zero to another register
+    root->append(MoveDouble, nullptr, Arg::fpImm64(0), zero);
+
+    // Multiply them
+    Tmp result = code.newTmp(FP);
+    root->append(MulDouble, nullptr, Tmp(FPRInfo::fpRegT0), zero, result);
+    root->append(MoveDoubleTo64, nullptr, result, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    CHECK(std::bit_cast<double>(compileAndRun<uint64_t>(proc)) == 0.0);
+}
+#endif
 
 #if CPU(ARM64)
 void testStorePair()
@@ -2796,6 +2971,15 @@ void run(const char* filter)
     RUN(testLinearScanSpillRangesEarlyDef());
 
 #if USE(JSVALUE64)
+    RUN(testMoveDoubleZeroConstant());
+    RUN(testMoveFloatZeroConstant());
+    RUN(testMoveDoubleConstant());
+    RUN(testMoveFloatConstant());
+    RUN(testMoveVectorZeroConstant());
+    RUN(testMoveFloatConstantSpill());
+    RUN(testAddDoubleZeroWithOther());
+    RUN(testMulDoubleZeroWithOther());
+
     RUN(testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister());
 
     RUN(testEarlyAndLateUseOfSameTmp());

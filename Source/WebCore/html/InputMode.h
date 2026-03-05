@@ -46,14 +46,14 @@ const AtomString& stringForInputMode(InputMode);
 
 namespace InputModeNames {
 
-const AtomString& none();
-const AtomString& text();
-const AtomString& tel();
-const AtomString& url();
-const AtomString& email();
+const AtomString& NODELETE none();
+const AtomString& NODELETE text();
+const AtomString& NODELETE tel();
+const AtomString& NODELETE url();
+const AtomString& NODELETE email();
 const AtomString& numeric();
 const AtomString& decimal();
-const AtomString& search();
+const AtomString& NODELETE search();
 
 } // namespace InputModeNames
 

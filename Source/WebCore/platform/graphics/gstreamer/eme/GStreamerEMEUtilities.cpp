@@ -80,7 +80,7 @@ static void markupText(GMarkupParseContext*, const gchar* text, gsize textLength
         auto data = unsafeMakeSpan(reinterpret_cast<const uint8_t*>(text), textLength);
         auto pssh = base64Decode(data);
         if (pssh.has_value())
-            userData->pssh = SharedBuffer::create(WTFMove(*pssh));
+            userData->pssh = SharedBuffer::create(WTF::move(*pssh));
     }
 }
 
@@ -96,7 +96,7 @@ static GMarkupParser markupParser { markupStartElement, markupEndElement, markup
 
 RefPtr<SharedBuffer> InitData::extractCencIfNeeded(RefPtr<SharedBuffer>&& unparsedPayload)
 {
-    RefPtr<SharedBuffer> payload = WTFMove(unparsedPayload);
+    RefPtr<SharedBuffer> payload = WTF::move(unparsedPayload);
     if (!payload || !payload->size())
         return payload;
 
@@ -106,7 +106,7 @@ RefPtr<SharedBuffer> InitData::extractCencIfNeeded(RefPtr<SharedBuffer>&& unpars
     auto payloadData = spanReinterpretCast<const char>(payload->span());
     if (g_markup_parse_context_parse(markupParseContext.get(), payloadData.data(), payloadData.size(), nullptr)) {
         if (userData.pssh)
-            payload = WTFMove(userData.pssh);
+            payload = WTF::move(userData.pssh);
         else
             GST_WARNING("XML was parsed but we could not find a viable base64 encoded pssh box");
     }

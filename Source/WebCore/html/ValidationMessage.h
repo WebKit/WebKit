@@ -59,13 +59,13 @@ public:
     void updateValidationMessage(HTMLElement&, const String&);
     void requestToHideMessage();
     bool isVisible() const;
-    bool shadowTreeContains(const Node&) const;
+    bool NODELETE shadowTreeContains(const Node&) const;
     void adjustBubblePosition();
 
 private:
     explicit ValidationMessage(HTMLElement&);
 
-    ValidationMessageClient* validationMessageClient() const;
+    ValidationMessageClient* NODELETE validationMessageClient() const;
     void setMessage(String&&);
     void setMessageDOMAndStartTimer();
     void buildBubbleTree();

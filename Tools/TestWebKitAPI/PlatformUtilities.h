@@ -64,6 +64,7 @@ ALWAYS_INLINE std::string toSTD(const String& string) { return toSTD(string.utf8
 
 #if USE(FOUNDATION)
 std::string toSTD(NSString *);
+std::string toSTD(RetainPtr<NSString>);
 bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected);
 #ifdef __OBJC__
 void waitForConditionWithLogging(std::function<bool()>&&, NSTimeInterval loggingTimeout, NSString *message, ...) NS_FORMAT_FUNCTION(3, 4);

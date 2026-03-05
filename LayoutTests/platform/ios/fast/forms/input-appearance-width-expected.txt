@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 353x19
+      RenderText {#text} at (0,0) size 353x20
         text run at (0,0) width 353: "This tests that the new text fields use the correct width."
-      RenderBR {BR} at (352,0) size 1x19
+      RenderBR {BR} at (352,0) size 1x20
       RenderTextControl {INPUT} at (0,20) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
       RenderBR {BR} at (153,19) size 1x19
       RenderTextControl {INPUT} at (0,40) size 200x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]

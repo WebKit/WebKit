@@ -1,0 +1,11 @@
+
+Harness Error (FAIL), message = 2 duplicate test names: "Offsets for: position-area: span-all for in-flow overflowing ICB", "Offsets for: position-area: span-all for abspos overflowing ICB"
+
+PASS Offsets for: position-area: none for basic ICB
+PASS Offsets for: position-area: span-all for basic ICB
+PASS Offsets for: position-area: span-all for abspos overflowing ICB
+FAIL Offsets for: position-area: span-all for in-flow overflowing ICB assert_equals: Check expected offsetHeight expected 1220 but got 600
+FAIL Offsets for: position-area: span-all for in-flow overflowing ICB assert_equals: Check expected offsetWidth expected 1640 but got 800
+PASS Offsets for: position-area: span-all for abspos overflowing ICB
+PASS Offsets for: position-area: none for in-flow overflowing ICB
+

@@ -117,7 +117,7 @@ class RtcEventBweUpdateDelayBased final : public RtcEvent {
   }
 
  private:
-  RtcEventBweUpdateDelayBased(const RtcEventBweUpdateDelayBased& other);
+  RtcEventBweUpdateDelayBased(const RtcEventBweUpdateDelayBased&) = default;
 
   const int32_t bitrate_bps_;
   const BandwidthUsage detector_state_;

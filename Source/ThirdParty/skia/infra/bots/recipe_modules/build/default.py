@@ -105,17 +105,11 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
       env['MACOSX_DEPLOYMENT_TARGET'] = '11.0'
 
   # ccache + clang-tidy.sh chokes on the argument list.
-  if (api.vars.is_linux or os == 'Mac') and 'Tidy' not in extra_tokens:
-    if api.vars.is_linux:
-      ccache = workdir.joinpath('ccache_linux', 'bin', 'ccache')
-      # As of 2020-02-07, the sum of each Debian10-Clang-x86
-      # non-flutter/android/chromebook build takes less than 75G cache space.
-      env['CCACHE_MAXSIZE'] = '75G'
-    else:
-      ccache = workdir.joinpath('ccache_mac', 'bin', 'ccache')
-      # As of 2020-02-10, the sum of each Build-Mac-Clang- non-android build
-      # takes ~30G cache space.
-      env['CCACHE_MAXSIZE'] = '50G'
+  if api.vars.is_linux and 'Tidy' not in extra_tokens:
+    ccache = workdir.joinpath('ccache_linux', 'bin', 'ccache')
+    # As of 2020-02-07, the sum of each Debian10-Clang-x86
+    # non-flutter/android/chromebook build takes less than 75G cache space.
+    env['CCACHE_MAXSIZE'] = '75G'
 
     args['cc_wrapper'] = '"%s"' % ccache
 
@@ -228,8 +222,6 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
     args['skia_enable_precompile'] = 'false'
   if 'Graphite' in extra_tokens:
     args['skia_enable_graphite'] = 'true'
-  if 'Vello' in extra_tokens:
-    args['skia_enable_vello_shaders'] = 'true'
   if 'Fontations' in extra_tokens:
     args['skia_use_fontations'] = 'true'
     args['skia_use_freetype'] = 'true' # we compare with freetype in tests
@@ -239,6 +231,8 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
     args['skia_use_rust_png_encode'] = 'true'
     args['skia_use_libpng_decode'] = 'false'
     # TODO(b/356875275) set skia_use_libpng_encode to false also
+  if 'RustBMP' in extra_tokens:
+    args['skia_use_rust_bmp_decode'] = 'true'
   if 'FreeType' in extra_tokens:
     args['skia_use_freetype'] = 'true'
     args['skia_use_system_freetype2'] = 'false'
@@ -273,7 +267,7 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
       'skia_use_libgrapheme': 'true',
     })
 
-  if 'Fontations' in extra_tokens:
+  if 'ICU4X' in extra_tokens:
     args['skia_use_icu4x'] = 'true'
 
   if 'Shared' in extra_tokens:
@@ -293,7 +287,7 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
   if 'Metal' in extra_tokens and not 'Dawn' in extra_tokens:
     args['skia_use_metal'] = 'true'
     args['skia_use_gl'] = 'false'
-  if 'iOS' in extra_tokens or 'iOS18' in extra_tokens:
+  if any('iOS' in t for t in extra_tokens):
     # Bots use Chromium signing cert.
     args['skia_ios_identity'] = '".*83FNP.*"'
     # Get mobileprovision via the CIPD package.
@@ -327,7 +321,7 @@ def get_compile_flags(api, checkout_root, out_dir, workdir):
     'cxx': cxx,
     'sanitize': sanitize,
     'target_cpu': target_arch,
-    'target_os': 'ios' if ('iOS' in extra_tokens or 'iOS18' in extra_tokens) else '',
+    'target_os': 'ios' if any('iOS' in t for t in extra_tokens) else '',
     'win_sdk': win_toolchain + '/win_sdk' if 'Win' in os else '',
     'win_vc': win_toolchain + '/VC' if 'Win' in os else '',
     'skia_dwritecore_sdk': dwritecore if 'DWriteCore' in extra_tokens else '',
@@ -353,6 +347,7 @@ def finalize_gn_flags(args):
 def compile_fn(api, checkout_root, out_dir):
   skia_dir      = checkout_root.joinpath('skia')
   extra_tokens  = api.vars.extra_tokens
+  workdir       = api.path.start_dir
 
   with api.context(cwd=skia_dir):
     api.run(api.step, 'fetch-gn',
@@ -365,8 +360,10 @@ def compile_fn(api, checkout_root, out_dir):
 
   if api.vars.builder_cfg.get('os', '') in ('Mac'):
     api.xcode.install()
+    if any('iOS' in t for t in extra_tokens):
+      ensure_file_path = api.build.resource('ios.ensure')
+      api.cipd.ensure(workdir, ensure_file_path, name='download provisioning profile')
 
-  workdir = api.path.start_dir
   args, env, ccache = get_compile_flags(api, checkout_root, out_dir, workdir)
   gn_args = finalize_gn_flags(args)
   gn = skia_dir.joinpath('bin', 'gn')

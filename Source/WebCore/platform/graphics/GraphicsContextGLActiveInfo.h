@@ -37,13 +37,15 @@ class GCGLUniformActiveInfo {
 public:
     CString name;
     GCGLenum type { 0 };
-    Vector<int> locations;
+    int size { -1 };
     // WebGL2 properties.
     int blockIndex { -1 };
     int offset { -1 };
     int arrayStride { -1 };
     int matrixStride { -1 };
     int isRowMajor { -1 };
+    // For default block uniforms.
+    Vector<int> locations;
 };
 
 class GCGLAttribActiveInfo {

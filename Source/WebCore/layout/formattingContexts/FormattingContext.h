@@ -46,7 +46,7 @@ struct IntrinsicWidthConstraints;
 class LayoutState;
 
 class FormattingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FormattingContext);
+    WTF_MAKE_TZONE_ALLOCATED(FormattingContext);
 public:
     virtual ~FormattingContext();
 
@@ -56,7 +56,7 @@ public:
 
     const ElementBox& root() const { return m_root; }
 
-    LayoutState& layoutState();
+    LayoutState& NODELETE layoutState();
     const LayoutState& layoutState() const { return const_cast<FormattingContext&>(*this).layoutState(); }
 
     enum class EscapeReason {
@@ -76,7 +76,7 @@ public:
     bool isTableWrapperBlockFormattingContext() const { return isBlockFormattingContext() && root().isTableWrapperBox(); }
     bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
 
-    static const InitialContainingBlock& initialContainingBlock(const Box&);
+    static const InitialContainingBlock& NODELETE initialContainingBlock(const Box&);
     static const ElementBox& containingBlock(const Box&);
 #if ASSERT_ENABLED
     static const ElementBox& formattingContextRoot(const Box&);

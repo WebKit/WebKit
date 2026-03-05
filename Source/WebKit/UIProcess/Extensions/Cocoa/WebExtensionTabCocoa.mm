@@ -325,7 +325,7 @@ void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, Completion
         return;
     }
 
-    [m_delegate setParentTab:(parentTab ? parentTab->delegate() : nil) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setParentTab:(parentTab ? parentTab->delegate() : nil) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setParentTab: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -381,7 +381,7 @@ bool WebExtensionTab::isActive() const
         return false;
 
     RefPtr window = this->window();
-    return window ? window->activeTab() == this : false;
+    return window && window->activeTab() == this;
 }
 
 bool WebExtensionTab::isSelected() const
@@ -401,7 +401,7 @@ void WebExtensionTab::setPinned(bool pinned, CompletionHandler<void(Expected<voi
         return;
     }
 
-    [m_delegate setPinned:pinned forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setPinned:pinned forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for pin: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -448,7 +448,7 @@ void WebExtensionTab::setReaderModeActive(bool showReaderMode, CompletionHandler
         return;
     }
 
-    [m_delegate setReaderModeActive:showReaderMode forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setReaderModeActive:showReaderMode forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for toggleReaderMode: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -484,7 +484,7 @@ void WebExtensionTab::setMuted(bool muted, CompletionHandler<void(Expected<void,
         return;
     }
 
-    [m_delegate setMuted:muted forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setMuted:muted forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for mute: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -537,7 +537,7 @@ void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Ex
         return;
     }
 
-    [m_delegate setZoomFactor:zoomFactor forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setZoomFactor:zoomFactor forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setZoomFactor: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -587,7 +587,7 @@ void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(Expected<NSLoca
         return;
     }
 
-    [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSLocale *locale, NSError *error) mutable {
+    [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSLocale *locale, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for detectWebpageLocale: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -611,7 +611,7 @@ void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(Expected<Coco
         return;
     }
 
-    auto internalCompletionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](CocoaImage *image, NSError *error) mutable {
+    auto internalCompletionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler)](CocoaImage *image, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for captureVisibleWebpage: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -648,7 +648,7 @@ void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Expected<void, Web
         return;
     }
 
-    [m_delegate loadURL:url.createNSURL().get() forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate loadURL:url.createNSURL().get() forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for loadURL: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -669,7 +669,7 @@ void WebExtensionTab::reload(ReloadFromOrigin fromOrigin, CompletionHandler<void
         return;
     }
 
-    [m_delegate reloadFromOrigin:(fromOrigin == ReloadFromOrigin::Yes) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate reloadFromOrigin:(fromOrigin == ReloadFromOrigin::Yes) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for reload: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -690,7 +690,7 @@ void WebExtensionTab::goBack(CompletionHandler<void(Expected<void, WebExtensionE
         return;
     }
 
-    [m_delegate goBackForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate goBackForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for goBack: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -711,7 +711,7 @@ void WebExtensionTab::goForward(CompletionHandler<void(Expected<void, WebExtensi
         return;
     }
 
-    [m_delegate goForwardForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate goForwardForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for goForward: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -731,7 +731,7 @@ void WebExtensionTab::activate(CompletionHandler<void(Expected<void, WebExtensio
         return;
     }
 
-    [m_delegate activateForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate activateForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for activate: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -751,7 +751,7 @@ void WebExtensionTab::setSelected(bool selected, CompletionHandler<void(Expected
         return;
     }
 
-    [m_delegate setSelected:selected forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setSelected:selected forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for select: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -803,7 +803,7 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
     configuration.window = window ? window->delegate() : nil;
     configuration.index = index;
 
-    [m_delegate duplicateUsingConfiguration:configuration forWebExtensionContext:extensionContext->wrapper() completionHandler:makeBlockPtr([extensionContext, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
+    [m_delegate duplicateUsingConfiguration:configuration forWebExtensionContext:extensionContext->wrapper() completionHandler:makeBlockPtr([extensionContext, completionHandler = WTF::move(completionHandler)](id<WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for duplicate: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -828,7 +828,7 @@ void WebExtensionTab::close(CompletionHandler<void(Expected<void, WebExtensionEr
         return;
     }
 
-    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for tab close: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));

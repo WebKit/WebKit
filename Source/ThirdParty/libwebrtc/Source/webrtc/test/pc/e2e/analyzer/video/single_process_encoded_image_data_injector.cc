@@ -149,7 +149,8 @@ EncodedImageExtractionResult SingleProcessEncodedImageDataInjector::ExtractData(
     for (size_t i = 0; i <= max_spatial_index; ++i) {
       out.SetSpatialLayerFrameSize(i, 0);
     }
-    return EncodedImageExtractionResult{*id, out, true};
+    return EncodedImageExtractionResult{
+        .id = *id, .image = out, .discard = true};
   }
 
   // Make a pass from begin to end to restore origin payload and erase discarded
@@ -179,7 +180,8 @@ EncodedImageExtractionResult SingleProcessEncodedImageDataInjector::ExtractData(
   }
   out.set_size(pos);
 
-  return EncodedImageExtractionResult{*id, out, discard};
+  return EncodedImageExtractionResult{
+      .id = *id, .image = out, .discard = discard};
 }
 
 SingleProcessEncodedImageDataInjector::ExtractionInfoVector::

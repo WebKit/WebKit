@@ -47,7 +47,7 @@ namespace CSSPropertyParserHelpers {
 enum class AllowEmpty : bool { No, Yes };
 enum TrackListType : uint8_t { GridTemplate, GridTemplateNoRepeat, GridAuto };
 
-bool isGridBreadthIdent(CSSValueID);
+bool NODELETE isGridBreadthIdent(CSSValueID);
 
 // Parses a single <string> token from a <'grid-template-areas'> production.
 std::optional<CSS::GridNamedAreaMapRow> consumeUnresolvedGridTemplateAreasRow(CSSParserTokenRange&, CSS::PropertyParserState&);

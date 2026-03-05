@@ -99,7 +99,7 @@ void CallbackDeferrer::OnError(ErrorKind error, absl::string_view message) {
         Error error = std::get<Error>(std::move(data));
         return cb.OnError(error.error, error.message);
       },
-      Error{error, std::string(message)});
+      Error{.error = error, .message = std::string(message)});
 }
 
 void CallbackDeferrer::OnAborted(ErrorKind error, absl::string_view message) {
@@ -109,7 +109,7 @@ void CallbackDeferrer::OnAborted(ErrorKind error, absl::string_view message) {
         Error error = std::get<Error>(std::move(data));
         return cb.OnAborted(error.error, error.message);
       },
-      Error{error, std::string(message)});
+      Error{.error = error, .message = std::string(message)});
 }
 
 void CallbackDeferrer::OnConnected() {
@@ -149,8 +149,8 @@ void CallbackDeferrer::OnStreamsResetFailed(
         return cb.OnStreamsResetFailed(stream_reset.streams,
                                        stream_reset.message);
       },
-      StreamReset{{outgoing_streams.begin(), outgoing_streams.end()},
-                  std::string(reason)});
+      StreamReset{.streams = {outgoing_streams.begin(), outgoing_streams.end()},
+                  .message = std::string(reason)});
 }
 
 void CallbackDeferrer::OnStreamsResetPerformed(
@@ -161,7 +161,8 @@ void CallbackDeferrer::OnStreamsResetPerformed(
         StreamReset stream_reset = std::get<StreamReset>(std::move(data));
         return cb.OnStreamsResetPerformed(stream_reset.streams);
       },
-      StreamReset{{outgoing_streams.begin(), outgoing_streams.end()}});
+      StreamReset{
+          .streams = {outgoing_streams.begin(), outgoing_streams.end()}});
 }
 
 void CallbackDeferrer::OnIncomingStreamsReset(
@@ -172,7 +173,8 @@ void CallbackDeferrer::OnIncomingStreamsReset(
         StreamReset stream_reset = std::get<StreamReset>(std::move(data));
         return cb.OnIncomingStreamsReset(stream_reset.streams);
       },
-      StreamReset{{incoming_streams.begin(), incoming_streams.end()}});
+      StreamReset{
+          .streams = {incoming_streams.begin(), incoming_streams.end()}});
 }
 
 void CallbackDeferrer::OnBufferedAmountLow(StreamID stream_id) {

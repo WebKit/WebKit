@@ -31,7 +31,7 @@
 #include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderCombineText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGInlineTextBox.h"
 
 namespace WebCore {
@@ -44,14 +44,14 @@ TextBoxIterator TextBox::nextTextBox() const
 
 const FontCascade& TextBox::fontCascade() const
 {
-    if (auto* renderer = dynamicDowncast<RenderCombineText>(this->renderer()); renderer && renderer->isCombined())
+    if (CheckedPtr renderer = dynamicDowncast<RenderCombineText>(this->renderer()); renderer && renderer->isCombined())
         return renderer->textCombineFont();
 
     return style().fontCascade();
 }
 
 TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)
-    : LeafBoxIterator(WTFMove(pathVariant))
+    : LeafBoxIterator(WTF::move(pathVariant))
 {
 }
 
@@ -70,7 +70,7 @@ TextBoxIterator& TextBoxIterator::traverseNextTextBox()
 
 TextBoxIterator lineLeftmostTextBoxFor(const RenderText& text)
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(text))
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(text))
         return lineLayout->textBoxesFor(text);
 
     if (CheckedPtr svgText = dynamicDowncast<RenderSVGInlineText>(text))

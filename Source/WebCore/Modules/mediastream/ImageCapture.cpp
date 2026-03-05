@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageCapture);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageCapture);
 
 ExceptionOr<Ref<ImageCapture>> ImageCapture::create(Document& document, Ref<MediaStreamTrack> track)
 {
@@ -92,24 +92,24 @@ void ImageCapture::takePhoto(PhotoSettings&& settings, DOMPromiseDeferred<IDLInt
         return;
     }
 
-    m_track->takePhoto(WTFMove(settings))->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)](ImageCapture& capture) mutable {
+    m_track->takePhoto(WTF::move(settings))->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto&& result) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTF::move(promise), result = WTF::move(result), identifier = WTF::move(identifier)](ImageCapture& capture) mutable {
             if (!result) {
                 ERROR_LOG_WITH_THIS(&capture, identifier, "rejecting promise: ", result.error().message());
-                promise.reject(WTFMove(result.error()));
+                promise.reject(WTF::move(result.error()));
                 return;
             }
 
             ALWAYS_LOG_WITH_THIS(&capture, identifier, "resolving promise");
 
             // FIXME: This is a static analysis false positive (rdar://146889777).
-            SUPPRESS_UNCOUNTED_ARG promise.resolve(Blob::create(capture.scriptExecutionContext(), WTFMove(get<0>(result.value())), WTFMove(get<1>(result.value()))));
+            SUPPRESS_UNCOUNTED_ARG promise.resolve(Blob::create(capture.scriptExecutionContext(), WTF::move(get<0>(result.value())), WTF::move(get<1>(result.value()))));
         });
     });
 }
 
 // FIXME: Move this routine to VideoFrame.
-static ImageOrientation videoFrameOrientation(const VideoFrame& videoFrame)
+static ImageOrientation NODELETE videoFrameOrientation(const VideoFrame& videoFrame)
 {
     switch (videoFrame.rotation()) {
     case VideoFrame::Rotation::None:
@@ -125,24 +125,53 @@ static ImageOrientation videoFrameOrientation(const VideoFrame& videoFrame)
     return ImageOrientation::Orientation::OriginTopLeft;
 }
 
+static Ref<ImageBitmap> createImageBitmapViaDrawing(Ref<ImageBuffer>&& imageBuffer, VideoFrame& videoFrame)
+{
+    bool shouldDiscardAlpha = false;
+    imageBuffer->context().drawVideoFrame(videoFrame, { { }, imageBuffer->backendSize() }, videoFrameOrientation(videoFrame), shouldDiscardAlpha);
+
+    bool isOriginClean = true;
+    return ImageBitmap::create(WTF::move(imageBuffer), isOriginClean);
+}
+
+static Ref<ImageBitmap> createImageBitmapFromNativeImage(Ref<ImageBuffer>&& imageBuffer, NativeImage& nativeImage, ImageOrientation orientation)
+{
+    imageBuffer->context().drawNativeImage(nativeImage, { { }, imageBuffer->backendSize() }, { { }, imageBuffer->backendSize() }, ImagePaintingOptions { orientation });
+
+    bool isOriginClean = true;
+    return ImageBitmap::create(WTF::move(imageBuffer), isOriginClean);
+}
+
 static void createImageBitmap(VideoFrame& videoFrame, CompletionHandler<void(RefPtr<ImageBitmap>&&)>&& completionHandler)
 {
-    auto size = videoFrame.presentationSize();
+    IntSize size { static_cast<int>(videoFrame.presentationSize().width()), static_cast<int>(videoFrame.presentationSize().height()) };
     if (videoFrame.has90DegreeRotation())
-        size = size.transposedSize();
-    RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        size = { size.height(), size.width() };
+    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer) {
         completionHandler({ });
         return;
     }
-    RefPtr image = videoFrame.copyNativeImage();
-    if (!image) {
-        completionHandler({ });
+
+    if (hasPlatformStrategies()) {
+        platformStrategies()->mediaStrategy()->nativeImageFromVideoFrame(videoFrame, [videoFrame = Ref { videoFrame }, imageBuffer = imageBuffer.releaseNonNull(), completionHandler = WTF::move(completionHandler)](auto&& nativeImage) mutable {
+            if (!nativeImage) {
+                completionHandler(createImageBitmapViaDrawing(WTF::move(imageBuffer), videoFrame));
+                return;
+            }
+
+            RefPtr image = WTF::move(*nativeImage);
+            if (!image) {
+                completionHandler({ });
+                return;
+            }
+
+            completionHandler(createImageBitmapFromNativeImage(WTF::move(imageBuffer), *image, videoFrameOrientation(videoFrame)));
+        });
         return;
     }
-    imageBuffer->context().drawNativeImage(*image, { { }, size }, { { }, size }, { videoFrameOrientation(videoFrame), CompositeOperator::Copy });
-    bool isOriginClean = true;
-    completionHandler(ImageBitmap::create(imageBuffer.releaseNonNull(), isOriginClean));
+
+    completionHandler(createImageBitmapViaDrawing(imageBuffer.releaseNonNull(), videoFrame));
 }
 
 static Exception createImageCaptureException()
@@ -152,7 +181,7 @@ static Exception createImageCaptureException()
 
 static void createImageBitmapOrException(VideoFrame& videoFrame, CompletionHandler<void(ExceptionOr<Ref<ImageBitmap>>&&)>&& callback)
 {
-    createImageBitmap(videoFrame, [callback = WTFMove(callback)](auto&& bitmap) mutable {
+    createImageBitmap(videoFrame, [callback = WTF::move(callback)](auto&& bitmap) mutable {
         if (!bitmap) {
             callback(createImageCaptureException());
             return;
@@ -163,7 +192,7 @@ static void createImageBitmapOrException(VideoFrame& videoFrame, CompletionHandl
 
 class ImageCaptureVideoFrameObserver : public RealtimeMediaSource::VideoFrameObserver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageCaptureVideoFrameObserver, WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<ImageCaptureVideoFrameObserver> create(Ref<RealtimeMediaSource>&& source) { return adoptRef(*new ImageCaptureVideoFrameObserver(WTFMove(source))); }
+    static Ref<ImageCaptureVideoFrameObserver> create(Ref<RealtimeMediaSource>&& source) { return adoptRef(*new ImageCaptureVideoFrameObserver(WTF::move(source))); }
     ~ImageCaptureVideoFrameObserver()
     {
         ASSERT(m_callbacks.isEmpty());
@@ -175,7 +204,7 @@ public:
         if (m_callbacks.isEmpty())
             m_source->addVideoFrameObserver(*this);
 
-        m_callbacks.append(WTFMove(callback));
+        m_callbacks.append(WTF::move(callback));
     }
 
     void stop()
@@ -189,7 +218,7 @@ public:
 
 private:
     explicit ImageCaptureVideoFrameObserver(Ref<RealtimeMediaSource>&& source)
-        : m_source(WTFMove(source))
+        : m_source(WTF::move(source))
     {
     }
 
@@ -246,21 +275,21 @@ void ImageCapture::grabFrame(DOMPromiseDeferred<IDLInterface<ImageBitmap>>&& pro
     }
 
     if (RefPtr canvasTrack = dynamicDowncast<CanvasCaptureMediaStreamTrack>(m_track.get())) {
-        ImageCaptureVideoFrameObserver::Callback callback = [promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](auto&& result) mutable {
+        ImageCaptureVideoFrameObserver::Callback callback = [promise = WTF::move(promise), pendingActivity = makePendingActivity(*this)](auto&& result) mutable {
             if (pendingActivity->object().isContextStopped())
                 return;
 
-            queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result)](auto&) mutable {
-                promise.settle(WTFMove(result));
+            queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::ImageCapture, [promise = WTF::move(promise), result = WTF::move(result)](auto&) mutable {
+                promise.settle(WTF::move(result));
             });
         };
-        callOnMainThread([frame = canvasTrack->grabFrame(), callback = WTFMove(callback)]() mutable {
+        callOnMainThread([frame = canvasTrack->grabFrame(), callback = WTF::move(callback)]() mutable {
             if (!frame) {
                 callback(createImageCaptureException());
                 return;
             }
 
-            createImageBitmapOrException(*frame, WTFMove(callback));
+            createImageBitmapOrException(*frame, WTF::move(callback));
         });
         return;
     }
@@ -270,9 +299,9 @@ void ImageCapture::grabFrame(DOMPromiseDeferred<IDLInterface<ImageBitmap>>&& pro
         Ref { m_track->privateTrack() }->addObserver(*this);
     }
 
-    Ref { *m_grabFrameObserver }->add([promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](auto&& result) mutable {
-        queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result)](auto&) mutable {
-            promise.settle(WTFMove(result));
+    Ref { *m_grabFrameObserver }->add([promise = WTF::move(promise), pendingActivity = makePendingActivity(*this)](auto&& result) mutable {
+        queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::ImageCapture, [promise = WTF::move(promise), result = WTF::move(result)](auto&) mutable {
+            promise.settle(WTF::move(result));
         });
     });
 }
@@ -307,16 +336,16 @@ void ImageCapture::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCa
         return;
     }
 
-    m_track->getPhotoCapabilities()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)](auto& capture) mutable {
+    m_track->getPhotoCapabilities()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto&& result) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTF::move(promise), result = WTF::move(result), identifier = WTF::move(identifier)](auto& capture) mutable {
             if (!result) {
                 ERROR_LOG_WITH_THIS(&capture, identifier, "rejecting promise: ", result.error().message());
-                promise.reject(WTFMove(result.error()));
+                promise.reject(WTF::move(result.error()));
                 return;
             }
 
             ALWAYS_LOG_WITH_THIS(&capture, identifier, "resolving promise");
-            promise.resolve(WTFMove(result.value()));
+            promise.resolve(WTF::move(result.value()));
         });
     });
 }
@@ -336,16 +365,16 @@ void ImageCapture::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettin
         return;
     }
 
-    m_track->getPhotoSettings()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)](auto& capture) mutable {
+    m_track->getPhotoSettings()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto&& result) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTF::move(promise), result = WTF::move(result), identifier = WTF::move(identifier)](auto& capture) mutable {
             if (!result) {
                 ERROR_LOG_WITH_THIS(&capture, identifier, "rejecting promise: ", result.error().message());
-                promise.reject(WTFMove(result.error()));
+                promise.reject(WTF::move(result.error()));
                 return;
             }
 
             ALWAYS_LOG_WITH_THIS(&capture, identifier, "resolving promise");
-            promise.resolve(WTFMove(result.value()));
+            promise.resolve(WTF::move(result.value()));
         });
     });
 }

@@ -25,11 +25,11 @@ info: |
   If ! IsValidIntegerIndex(O, index) is false, return undefined.
   ...
 flags: [noStrict]
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   let proto = TypedArray.prototype;
   Object.defineProperty(proto, "-0", {
     configurable: true,
@@ -37,8 +37,8 @@ testWithBigIntTypedArrayConstructors(function(TA) {
       throw new Test262Error("OrdinaryGet was called!");
     }
   });
-  let sample = new TA(1);
+  let sample = new TA(makeCtorArg(1));
 
   assert.sameValue(delete sample["-0"], true, 'The value of `delete sample["-0"]` is true');
   assert.sameValue(delete sample[-0], false, 'The value of `delete sample[-0]` is false');
-});
+}, null, ["passthrough"]);

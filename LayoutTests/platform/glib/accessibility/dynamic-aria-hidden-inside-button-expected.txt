@@ -1,0 +1,23 @@
+This test ensures we expose the correct label for buttons after an aria-hidden descendant changes state.
+
+	AXTitle: Foo
+	AXDescription:
+
+	AXTitle: Foo
+	AXDescription:
+
+Dynamically changing aria-hidden.
+
+	AXTitle: Foo bar
+	AXDescription:
+
+	AXTitle: Foo bar
+	AXDescription:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+bar
+
+  Second

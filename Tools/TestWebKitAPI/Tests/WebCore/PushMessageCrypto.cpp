@@ -53,8 +53,8 @@ static ClientKeys makeAES128GCMClientKeys(void)
     auto secret = mustBase64URLDecode("BTBZMqHH6r4Tts7J_aSIgg"_s);
 
     return ClientKeys {
-        P256DHKeyPair { WTFMove(publicKey), WTFMove(privateKey) },
-        WTFMove(secret)
+        P256DHKeyPair { WTF::move(publicKey), WTF::move(privateKey) },
+        WTF::move(secret)
     };
 }
 
@@ -108,8 +108,8 @@ static ClientKeys makeAESGCMClientKeys(void)
     auto secret = mustBase64URLDecode("R29vIGdvbyBnJyBqb29iIQ"_s);
 
     return ClientKeys {
-        P256DHKeyPair { WTFMove(publicKey), WTFMove(privateKey) },
-        WTFMove(secret)
+        P256DHKeyPair { WTF::move(publicKey), WTF::move(privateKey) },
+        WTF::move(secret)
     };
 }
 

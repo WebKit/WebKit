@@ -78,7 +78,7 @@ public:
     NeverDestroyed(NeverDestroyed&& other)
     {
         AccessTraits::assertAccess();
-        MaybeRelax<T>(new (storagePointer()) T(WTFMove(*other.storagePointer())));
+        MaybeRelax<T>(new (storagePointer()) T(WTF::move(*other.storagePointer())));
     }
 
     operator T&() { return *storagePointer(); }

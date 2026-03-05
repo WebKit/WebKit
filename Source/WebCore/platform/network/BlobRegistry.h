@@ -49,7 +49,7 @@ WEBCORE_EXPORT CheckedRef<BlobRegistry> blobRegistry();
 
 // BlobRegistry is not thread-safe. It should only be called from main thread.
 class WEBCORE_EXPORT BlobRegistry : public CanMakeCheckedPtr<BlobRegistry> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BlobRegistry);
+    WTF_MAKE_TZONE_ALLOCATED(BlobRegistry);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BlobRegistry);
 public:
 

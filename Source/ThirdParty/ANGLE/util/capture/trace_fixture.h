@@ -72,13 +72,17 @@ ANGLE_REPLAY_EXPORT void SetupEntryPoints(angle::TraceCallbacks *traceCallbacks,
 
 // Maps from <captured Program ID, captured location> to run-time location.
 extern GLint **gUniformLocations;
+extern GLuint gCurrentContext;
 extern GLuint gCurrentProgram;
+extern GLuint *gCurrentProgramPerContext;
 
 void UpdateUniformLocation(GLuint program, const char *name, GLint location, GLint count);
 void DeleteUniformLocations(GLuint program);
 void UpdateUniformBlockIndex(GLuint program, const char *name, GLuint index);
 void UniformBlockBinding(GLuint program, GLuint uniformblockIndex, GLuint binding);
 void UpdateCurrentProgram(GLuint program);
+void UpdateCurrentContext(GLuint context);
+void UpdateCurrentProgramPerContext(GLuint program);
 
 // Global state
 

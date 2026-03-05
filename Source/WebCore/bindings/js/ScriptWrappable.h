@@ -39,7 +39,7 @@ namespace WebCore {
 class JSDOMObject;
 
 class ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ScriptWrappable);
+    WTF_MAKE_TZONE_ALLOCATED(ScriptWrappable);
 public:
     inline JSDOMObject* wrapper() const;
     inline void setWrapper(JSDOMObject*, JSC::WeakHandleOwner*, void*);

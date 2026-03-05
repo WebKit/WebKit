@@ -39,6 +39,7 @@ namespace WebCore {
 class TextureMapperGCGLPlatformLayer;
 
 class GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
+    WTF_MAKE_TZONE_ALLOCATED(GraphicsContextGLTextureMapperANGLE);
 public:
     WEBCORE_EXPORT static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
     virtual ~GraphicsContextGLTextureMapperANGLE();

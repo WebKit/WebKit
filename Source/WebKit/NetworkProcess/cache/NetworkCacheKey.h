@@ -47,7 +47,7 @@ struct DataKey {
         encoder << partition << type << identifier;
     }
 
-    template <class Decoder> static WARN_UNUSED_RETURN bool decodeForPersistence(Decoder& decoder, DataKey& dataKey)
+    template <class Decoder> [[nodiscard]] static bool decodeForPersistence(Decoder& decoder, DataKey& dataKey)
     {
         return decoder.decode(dataKey.partition) && decoder.decode(dataKey.type) && decoder.decode(dataKey.identifier);
     }
@@ -71,15 +71,15 @@ public:
 
     bool isNull() const { return m_identifier.isNull(); }
 
-    const String& partition() const { return m_partition; }
-    const String& identifier() const { return m_identifier; }
-    const String& type() const { return m_type; }
-    const String& range() const { return m_range; }
+    const String& partition() const LIFETIME_BOUND { return m_partition; }
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const String& type() const LIFETIME_BOUND { return m_type; }
+    const String& range() const LIFETIME_BOUND { return m_range; }
 
-    const HashType& hash() const { return m_hash; }
-    const HashType& partitionHash() const { return m_partitionHash; }
+    const HashType& hash() const LIFETIME_BOUND { return m_hash; }
+    const HashType& partitionHash() const LIFETIME_BOUND { return m_partitionHash; }
 
-    static bool stringToHash(const String&, HashType&);
+    static bool NODELETE stringToHash(const String&, HashType&);
 
     static size_t hashStringLength() { return 2 * sizeof(m_hash); }
     String hashAsString() const { return hashAsString(m_hash); }
@@ -90,10 +90,10 @@ public:
     static String partitionToPartitionHashAsString(const String& partition, const Salt&);
 
     Key isolatedCopy() && { return {
-        crossThreadCopy(WTFMove(m_partition)),
-        crossThreadCopy(WTFMove(m_type)),
-        crossThreadCopy(WTFMove(m_identifier)),
-        crossThreadCopy(WTFMove(m_range)),
+        crossThreadCopy(WTF::move(m_partition)),
+        crossThreadCopy(WTF::move(m_type)),
+        crossThreadCopy(WTF::move(m_identifier)),
+        crossThreadCopy(WTF::move(m_range)),
         m_hash,
         m_partitionHash
     }; }
@@ -114,10 +114,10 @@ private:
     HashType computePartitionHash(const Salt&) const;
     static HashType partitionToPartitionHash(const String& partition, const Salt&);
     Key(String&& partition, String&& type, String&& identifier, String&& range, HashType hash, HashType partitionHash)
-        : m_partition(WTFMove(partition))
-        , m_type(WTFMove(type))
-        , m_identifier(WTFMove(identifier))
-        , m_range(WTFMove(range))
+        : m_partition(WTF::move(partition))
+        , m_type(WTF::move(type))
+        , m_identifier(WTF::move(identifier))
+        , m_range(WTF::move(range))
         , m_hash(hash)
         , m_partitionHash(partitionHash) { }
 

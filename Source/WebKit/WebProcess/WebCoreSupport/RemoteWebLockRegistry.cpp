@@ -46,7 +46,7 @@ struct RemoteWebLockRegistry::LocksSnapshot {
     HashMap<WebCore::WebLockIdentifier, LockRequest> pendingRequests;
     HashMap<WebCore::WebLockIdentifier, LockInfo> heldLocks;
 
-    bool isEmpty() const { return pendingRequests.isEmpty() && heldLocks.isEmpty(); }
+    bool NODELETE isEmpty() const { return pendingRequests.isEmpty() && heldLocks.isEmpty(); }
 };
 
 RemoteWebLockRegistry::RemoteWebLockRegistry(WebProcess& process)
@@ -62,9 +62,9 @@ RemoteWebLockRegistry::~RemoteWebLockRegistry()
 void RemoteWebLockRegistry::requestLock(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, const String& name, WebCore::WebLockMode lockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
     ASSERT_UNUSED(sessionID, WebProcess::singleton().sessionID());
-    LockRequest request { { WTFMove(lockStolenHandler) }, WTFMove(grantedHandler) };
+    LockRequest request { { WTF::move(lockStolenHandler) }, WTF::move(grantedHandler) };
     auto& snapshot = m_locksSnapshotPerClient.ensure(clientID, [] { return LocksSnapshot { }; }).iterator->value;
-    snapshot.pendingRequests.add(lockIdentifier, WTFMove(request));
+    snapshot.pendingRequests.add(lockIdentifier, WTF::move(request));
 
     WebProcess::singleton().send(Messages::WebLockRegistryProxy::RequestLock(clientOrigin, lockIdentifier, clientID, name, lockMode, steal, ifAvailable), 0);
 }
@@ -85,7 +85,7 @@ void RemoteWebLockRegistry::releaseLock(PAL::SessionID sessionID, const WebCore:
 void RemoteWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, const String& name, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT_UNUSED(sessionID, WebProcess::singleton().sessionID());
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebLockRegistryProxy::AbortLockRequest(clientOrigin, lockIdentifier, clientID, name), [weakThis = WeakPtr { *this }, lockIdentifier, clientID, completionHandler = WTFMove(completionHandler)](bool didAbort) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebLockRegistryProxy::AbortLockRequest(clientOrigin, lockIdentifier, clientID, name), [weakThis = WeakPtr { *this }, lockIdentifier, clientID, completionHandler = WTF::move(completionHandler)](bool didAbort) mutable {
         if (weakThis && didAbort) {
             auto it = weakThis->m_locksSnapshotPerClient.find(clientID);
             if (it != weakThis->m_locksSnapshotPerClient.end()) {
@@ -101,7 +101,7 @@ void RemoteWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const Web
 void RemoteWebLockRegistry::snapshot(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&& completionHandler)
 {
     ASSERT_UNUSED(sessionID, WebProcess::singleton().sessionID());
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebLockRegistryProxy::Snapshot(clientOrigin), WTFMove(completionHandler), 0);
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebLockRegistryProxy::Snapshot(clientOrigin), WTF::move(completionHandler), 0);
 }
 
 void RemoteWebLockRegistry::clientIsGoingAway(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::ScriptExecutionContextIdentifier clientID)
@@ -121,9 +121,9 @@ void RemoteWebLockRegistry::didCompleteLockRequest(WebCore::WebLockIdentifier lo
     if (!pendingRequest.lockGrantedHandler)
         return;
 
-    auto lockGrantedHandler = WTFMove(pendingRequest.lockGrantedHandler);
+    auto lockGrantedHandler = WTF::move(pendingRequest.lockGrantedHandler);
     if (success)
-        it->value.heldLocks.add(lockIdentifier, WTFMove(pendingRequest));
+        it->value.heldLocks.add(lockIdentifier, WTF::move(pendingRequest));
     else {
         if (it->value.isEmpty())
             m_locksSnapshotPerClient.remove(it);

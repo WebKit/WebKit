@@ -41,7 +41,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ErrorEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ErrorEvent);
 
 ErrorEvent::ErrorEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::ErrorEvent, type, initializer, isTrusted)
@@ -91,15 +91,11 @@ JSValue ErrorEvent::error(JSGlobalObject& globalObject)
 RefPtr<SerializedScriptValue> ErrorEvent::trySerializeError(JSGlobalObject& exec)
 {
     if (!m_serializedError && !m_triedToSerialize) {
-        m_serializedError = SerializedScriptValue::create(exec, m_error.getValue(), SerializationForStorage::No, SerializationErrorMode::NonThrowing);
+        if (RefPtr error = SerializedScriptValue::create(exec, m_error.getValue(), SerializationForStorage::No, SerializationErrorMode::NonThrowing))
+            lazyInitialize(m_serializedError, error.releaseNonNull());
         m_triedToSerialize = true;
     }
     return m_serializedError;
-}
-
-bool ErrorEvent::isErrorEvent() const
-{
-    return true;
 }
 
 } // namespace WebCore

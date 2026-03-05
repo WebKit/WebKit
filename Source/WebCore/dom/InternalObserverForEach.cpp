@@ -44,7 +44,7 @@ class InternalObserverForEach final : public InternalObserver {
 public:
     static Ref<InternalObserverForEach> create(ScriptExecutionContext& context, Ref<VisitorCallback>&& callback, Ref<AbortSignal>&& signal, Ref<DeferredPromise>&& promise)
     {
-        Ref internalObserver = adoptRef(*new InternalObserverForEach(context, WTFMove(callback), WTFMove(signal), WTFMove(promise)));
+        Ref internalObserver = adoptRef(*new InternalObserverForEach(context, WTF::move(callback), WTF::move(signal), WTF::move(promise)));
         internalObserver->suspendIfNeeded();
         return internalObserver;
     }
@@ -52,7 +52,7 @@ public:
 private:
     void next(JSC::JSValue value) final
     {
-        auto* globalObject = protectedScriptExecutionContext()->globalObject();
+        auto* globalObject = protect(scriptExecutionContext())->globalObject();
         ASSERT(globalObject);
 
         Ref vm = globalObject->vm();
@@ -62,15 +62,15 @@ private:
 
             // The exception is not reported, instead it is forwarded to the
             // abort signal and promise rejection.
-            auto scope = DECLARE_CATCH_SCOPE(vm);
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-            protectedCallback()->invokeRethrowingException(value, m_idx++);
+            protect(m_callback)->invokeRethrowingException(value, m_idx++);
 
             JSC::Exception* exception = scope.exception();
             if (exception) [[unlikely]] {
                 scope.clearException();
                 auto value = exception->value();
-                protectedPromise()->reject<IDLAny>(value);
+                protect(m_promise)->reject<IDLAny>(value);
                 Ref { m_signal }->signalAbort(value);
             }
         }
@@ -78,13 +78,13 @@ private:
 
     void error(JSC::JSValue value) final
     {
-        protectedPromise()->reject<IDLAny>(value);
+        protect(m_promise)->reject<IDLAny>(value);
     }
 
     void complete() final
     {
         InternalObserver::complete();
-        protectedPromise()->resolve();
+        protect(m_promise)->resolve();
     }
 
     void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
@@ -92,14 +92,11 @@ private:
         m_callback->visitJSFunction(visitor);
     }
 
-    Ref<DeferredPromise> protectedPromise() const { return m_promise; }
-    Ref<VisitorCallback> protectedCallback() const { return m_callback; }
-
     InternalObserverForEach(ScriptExecutionContext& context, Ref<VisitorCallback>&& callback, Ref<AbortSignal>&& signal, Ref<DeferredPromise>&& promise)
         : InternalObserver(context)
-        , m_callback(WTFMove(callback))
-        , m_signal(WTFMove(signal))
-        , m_promise(WTFMove(promise))
+        , m_callback(WTF::move(callback))
+        , m_signal(WTF::move(signal))
+        , m_promise(WTF::move(promise))
     {
     }
 
@@ -109,13 +106,13 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorForEach(ScriptExecutionContext& context, Observable& observable, Ref<VisitorCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorForEach(ScriptExecutionContext& context, Observable& observable, Ref<VisitorCallback>&& callback, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     Ref signal = AbortSignal::create(&context);
 
     Vector<Ref<AbortSignal>> dependentSignals = { signal };
     if (options.signal)
-        dependentSignals.append(Ref { *options.signal });
+        dependentSignals.append(options.signal.releaseNonNull());
     Ref dependentSignal = AbortSignal::any(context, dependentSignals);
 
     if (dependentSignal->aborted())
@@ -125,9 +122,9 @@ void createInternalObserverOperatorForEach(ScriptExecutionContext& context, Obse
         promise->reject<IDLAny>(reason);
     });
 
-    Ref observer = InternalObserverForEach::create(context, WTFMove(callback), WTFMove(signal), WTFMove(promise));
+    Ref observer = InternalObserverForEach::create(context, WTF::move(callback), WTF::move(signal), WTF::move(promise));
 
-    observable.subscribeInternal(context, WTFMove(observer), SubscribeOptions { .signal = WTFMove(dependentSignal) });
+    observable.subscribeInternal(context, WTF::move(observer), SubscribeOptions { .signal = WTF::move(dependentSignal) });
 }
 
 } // namespace WebCore

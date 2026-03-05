@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class NVShaderNoperspectiveInterpolation final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NVShaderNoperspectiveInterpolation);
+    WTF_MAKE_TZONE_ALLOCATED(NVShaderNoperspectiveInterpolation);
 public:
     explicit NVShaderNoperspectiveInterpolation(WebGLRenderingContextBase&);
     ~NVShaderNoperspectiveInterpolation();
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(NVShaderNoperspectiveInterpolation)

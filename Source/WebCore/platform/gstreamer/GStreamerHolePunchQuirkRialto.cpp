@@ -58,8 +58,6 @@ bool GStreamerHolePunchQuirkRialto::setHolePunchVideoRectangle(GstElement* video
     return true;
 }
 
-#undef GST_CAT_DEFAULT
-
 } // namespace WebCore
 
 #endif // USE(GSTREAMER)

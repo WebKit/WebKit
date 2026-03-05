@@ -42,7 +42,7 @@ public:
         String value;
 
         CommonHeader isolatedCopy() const & { return { key , value.isolatedCopy() }; }
-        CommonHeader isolatedCopy() && { return { key , WTFMove(value).isolatedCopy() }; }
+        CommonHeader isolatedCopy() && { return { key , WTF::move(value).isolatedCopy() }; }
 
         friend bool operator==(const CommonHeader&, const CommonHeader&) = default;
     };
@@ -52,7 +52,7 @@ public:
         String value;
 
         UncommonHeader isolatedCopy() const & { return { key.isolatedCopy() , value.isolatedCopy() }; }
-        UncommonHeader isolatedCopy() && { return { WTFMove(key).isolatedCopy() , WTFMove(value).isolatedCopy() }; }
+        UncommonHeader isolatedCopy() && { return { WTF::move(key).isolatedCopy() , WTF::move(value).isolatedCopy() }; }
 
         friend bool operator==(const UncommonHeader&, const UncommonHeader&) = default;
     };

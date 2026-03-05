@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/ReferrerPolicy.h>
+#include "ReferrerPolicy.h"
 
 namespace WebCore {
 

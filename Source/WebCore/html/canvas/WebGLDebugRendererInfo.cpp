@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLDebugRendererInfo);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLDebugRendererInfo);
 
 WebGLDebugRendererInfo::WebGLDebugRendererInfo(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLDebugRendererInfo)

@@ -4,7 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,92 +28,114 @@
 #include <WebCore/BorderValue.h>
 #include <WebCore/RectCorners.h>
 #include <WebCore/RectEdges.h>
-#include <WebCore/StyleBorderImage.h>
+#include <WebCore/StyleBorderImageData.h>
 #include <WebCore/StyleBorderRadius.h>
 #include <WebCore/StyleCornerShapeValue.h>
+#include <wtf/DataRef.h>
 
 namespace WebCore {
 
 using namespace CSS::Literals;
 
-class BorderData {
-    friend class RenderStyle;
-public:
+struct BorderData {
     using Radii = Style::BorderRadius;
+
+    BorderData();
 
     bool hasBorder() const
     {
-        return m_edges.anyOf([](const auto& edge) { return edge.nonZero(); });
+        return edges.anyOf([](const auto& edge) { return edge.nonZero(); });
     }
 
     bool hasVisibleBorder() const
     {
-        return m_edges.anyOf([](const auto& edge) { return edge.isVisible(); });
+        return edges.anyOf([](const auto& edge) { return edge.isVisible(); });
     }
 
     bool hasBorderImage() const
     {
-        return !m_image.source().isNone();
+        return !borderImage->borderImage.borderImageSource.isNone();
     }
 
     bool hasBorderRadius() const
     {
-        return m_radii.anyOf([](auto& corner) { return !Style::isKnownEmpty(corner); });
+        return radii.anyOf([](auto& corner) { return !Style::isKnownEmpty(corner); });
     }
 
-    template<BoxSide side>
-    Style::LineWidth borderEdgeWidth() const
+    bool hasVisibleBorderDecoration() const
     {
-        if (m_edges[side].style() == BorderStyle::None || m_edges[side].style() == BorderStyle::Hidden)
-            return 0_css_px;
-        if (m_image.overridesBorderWidths()) {
-            if (auto fixedBorderWidthValue = m_image.width().values[side].tryFixed())
-                return Style::LineWidth { *fixedBorderWidthValue };
-        }
-        return m_edges[side].width();
+        return hasVisibleBorder() || hasBorderImage();
     }
 
-    Style::LineWidth borderLeftWidth() const { return borderEdgeWidth<BoxSide::Left>(); }
-    Style::LineWidth borderRightWidth() const { return borderEdgeWidth<BoxSide::Right>(); }
-    Style::LineWidth borderTopWidth() const { return borderEdgeWidth<BoxSide::Top>(); }
-    Style::LineWidth borderBottomWidth() const { return borderEdgeWidth<BoxSide::Bottom>(); }
+    // `BorderEdgesView` provides a `RectEdges`-like interface for efficiently working with
+    // the values stored in `BorderValue` by edge. This allows `Style::ComputedStyle` code
+    // generation to work as if the `border-{edge}-*`properties were stored in a `RectEdges`,
+    // while instead storing them grouped together by edge in `BorderValue``.
+    template<bool isConst, template<BoxSide> typename Accessor, typename GetterType, typename SetterType = GetterType>
+    using BorderEdgesView = RectEdgesView<isConst, BorderData, Accessor, GetterType, SetterType>;
 
-    Style::LineWidthBox borderWidth() const
-    {
-        return { borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth() };
-    }
+    template<BoxSide side> struct WidthAccessor {
+        static const Style::LineWidth& get(const BorderData& data) { return data.edges[side].width; }
+        static void set(BorderData& data, Style::LineWidth&& width) { data.edges[side].width = WTF::move(width); }
+    };
+    template<bool isConst> using BorderWidthsView = BorderEdgesView<isConst, WidthAccessor, const Style::LineWidth&, Style::LineWidth&&>;
+    BorderWidthsView<false> widths() { return { .data = *this }; }
+    BorderWidthsView<true> widths() const { return { .data = *this }; }
 
-    bool isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const;
+    template<BoxSide side> struct ColorAccessor {
+        static const Style::Color& get(const BorderData& data) { return data.edges[side].color; }
+        static void set(BorderData& data, Style::Color&& color) { data.edges[side].color = WTF::move(color); }
+    };
+    template<bool isConst> using BorderColorsView = BorderEdgesView<isConst, ColorAccessor, const Style::Color&, Style::Color&&>;
+    BorderColorsView<false> colors() { return { .data = *this }; }
+    BorderColorsView<true> colors() const { return { .data = *this }; }
 
-    const BorderValue& left() const { return m_edges.left(); }
-    const BorderValue& right() const { return m_edges.right(); }
-    const BorderValue& top() const { return m_edges.top(); }
-    const BorderValue& bottom() const { return m_edges.bottom(); }
+    template<BoxSide side> struct StyleAccessor {
+        static unsigned get(const BorderData& data) { return data.edges[side].style; }
+        static void set(BorderData& data, unsigned style) { data.edges[side].style = style; }
+    };
+    template<bool isConst> using BorderStylesView = BorderEdgesView<isConst, StyleAccessor, unsigned>;
+    BorderStylesView<false> styles() { return { .data = *this }; }
+    BorderStylesView<true> styles() const { return { .data = *this }; }
 
-    const Style::BorderImage& image() const { return m_image; }
+    BorderValue& left() { return edges.left(); }
+    BorderValue& right() { return edges.right(); }
+    BorderValue& top() { return edges.top(); }
+    BorderValue& bottom() { return edges.bottom(); }
 
-    const Style::BorderRadiusValue& topLeftRadius() const { return m_radii.topLeft(); }
-    const Style::BorderRadiusValue& topRightRadius() const { return m_radii.topRight(); }
-    const Style::BorderRadiusValue& bottomLeftRadius() const { return m_radii.bottomLeft(); }
-    const Style::BorderRadiusValue& bottomRightRadius() const { return m_radii.bottomRight(); }
-    const Style::BorderRadius& radii() const { return m_radii; }
+    const BorderValue& left() const { return edges.left(); }
+    const BorderValue& right() const { return edges.right(); }
+    const BorderValue& top() const { return edges.top(); }
+    const BorderValue& bottom() const { return edges.bottom(); }
 
-    const Style::CornerShapeValue& topLeftCornerShape() const { return m_cornerShapes.topLeft(); }
-    const Style::CornerShapeValue& topRightCornerShape() const { return m_cornerShapes.topRight(); }
-    const Style::CornerShapeValue& bottomLeftCornerShape() const { return m_cornerShapes.bottomLeft(); }
-    const Style::CornerShapeValue& bottomRightCornerShape() const { return m_cornerShapes.bottomRight(); }
+    Style::BorderRadiusValue& topLeftRadius() { return radii.topLeft(); }
+    Style::BorderRadiusValue& topRightRadius() { return radii.topRight(); }
+    Style::BorderRadiusValue& bottomLeftRadius() { return radii.bottomLeft(); }
+    Style::BorderRadiusValue& bottomRightRadius() { return radii.bottomRight(); }
 
-    void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
+    const Style::BorderRadiusValue& topLeftRadius() const { return radii.topLeft(); }
+    const Style::BorderRadiusValue& topRightRadius() const { return radii.topRight(); }
+    const Style::BorderRadiusValue& bottomLeftRadius() const { return radii.bottomLeft(); }
+    const Style::BorderRadiusValue& bottomRightRadius() const { return radii.bottomRight(); }
+
+    const Style::CornerShapeValue& topLeftCornerShape() const { return cornerShapes.topLeft(); }
+    const Style::CornerShapeValue& topRightCornerShape() const { return cornerShapes.topRight(); }
+    const Style::CornerShapeValue& bottomLeftCornerShape() const { return cornerShapes.bottomLeft(); }
+    const Style::CornerShapeValue& bottomRightCornerShape() const { return cornerShapes.bottomRight(); }
+
+    bool containsCurrentColor() const;
 
     bool operator==(const BorderData&) const = default;
 
-private:
-    bool containsCurrentColor() const;
+    void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const BorderData&) const;
+#endif
 
-    RectEdges<BorderValue> m_edges;
-    Style::BorderImage m_image;
-    Style::BorderRadius m_radii { Style::BorderRadiusValue { 0_css_px, 0_css_px } };
-    Style::CornerShape m_cornerShapes { Style::CornerShapeValue::round() };
+    RectEdges<BorderValue> edges;
+    Style::BorderRadius radii { Style::BorderRadiusValue { 0_css_px, 0_css_px } };
+    Style::CornerShape cornerShapes { Style::CornerShapeValue(CSS::Keyword::Round { }) };
+    DataRef<Style::BorderImageData> borderImage;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const BorderData&);

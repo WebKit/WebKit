@@ -139,8 +139,8 @@ namespace JSC::B3 {
     macro(JSWebAssemblyInstance_cachedTable0Length, JSWebAssemblyInstance::offsetOfCachedTable0Length(), Mutability::Mutable) \
     macro(JSWebAssemblyInstance_moduleRecord, JSWebAssemblyInstance::offsetOfModuleRecord(), Mutability::Mutable) \
     macro(JSWebAssemblyInstance_vm, JSWebAssemblyInstance::offsetOfVM(), Mutability::Immutable) \
-    macro(JSWebAssemblyStruct_size, JSWebAssemblyStruct::offsetOfSize(), Mutability::Immutable) \
     macro(NativeExecutable_asString, NativeExecutable::offsetOfAsString(), Mutability::Mutable) \
+    macro(RegExp_flags, RegExp::offsetOfFlags(), Mutability::Mutable) \
     macro(RegExpObject_regExpAndFlags, RegExpObject::offsetOfRegExpAndFlags(), Mutability::Mutable) \
     macro(RegExpObject_lastIndex, RegExpObject::offsetOfLastIndex(), Mutability::Mutable) \
     macro(ShadowChicken_Packet_callee, OBJECT_OFFSETOF(ShadowChicken::Packet, callee), Mutability::Mutable) \
@@ -204,6 +204,7 @@ namespace JSC::B3 {
     macro(WebAssemblyFunctionBase_entrypointLoadLocation, WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation(), Mutability::Immutable) \
     macro(WebAssemblyFunctionBase_rtt, WebAssemblyFunctionBase::offsetOfRTT(), Mutability::Immutable) \
     macro(WebAssemblyFunctionBase_targetInstance, WebAssemblyFunctionBase::offsetOfTargetInstance(), Mutability::Immutable) \
+    macro(WebAssemblyGCObjectBase_rtt, WebAssemblyGCObjectBase::offsetOfRTT(), Mutability::Immutable) \
     macro(WebAssemblyGCStructure_rtt, WebAssemblyGCStructure::offsetOfRTT(), Mutability::Immutable) \
     macro(WebAssemblyModuleRecord_exportsObject, WebAssemblyModuleRecord::offsetOfExportsObject(), Mutability::Mutable) \
     macro(Symbol_symbolImpl, Symbol::offsetOfSymbolImpl(), Mutability::Immutable) \
@@ -229,19 +230,11 @@ namespace JSC::B3 {
     macro(HasOwnPropertyCache, 0, sizeof(HasOwnPropertyCache::Entry)) \
     macro(SmallIntCache, 0, sizeof(NumericStrings::StringWithJSString)) \
     macro(WasmRTT_data, Wasm::RTT::offsetOfData(), sizeof(RefPtr<const Wasm::RTT>)) \
-    macro(WebAssemblyGCStructure_inlinedTypeDisplays, WebAssemblyGCStructure::offsetOfInlinedTypeDisplay(), sizeof(RefPtr<const Wasm::RTT>)) \
 
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \
     macro(properties) \
     /* WasmGC Struct access are analyzed via field index and field type. We can include Wasm type definition to further make alias analysis better. */ \
-    macro(JSWebAssemblyStruct_i8) \
-    macro(JSWebAssemblyStruct_i16) \
-    macro(JSWebAssemblyStruct_i32) \
-    macro(JSWebAssemblyStruct_i64) \
-    macro(JSWebAssemblyStruct_f32) \
-    macro(JSWebAssemblyStruct_f64) \
-    macro(JSWebAssemblyStruct_v128) \
-    macro(JSWebAssemblyStruct_ref) \
+    macro(JSWebAssemblyStruct_fields) \
     /* WasmGC Array access are analyzed via element index and element type. Not using IndexedAbstractHeap right now intentionally since large Wasm array has different base offset. */ \
     macro(JSWebAssemblyArray_i8) \
     macro(JSWebAssemblyArray_i16) \
@@ -354,6 +347,8 @@ public:
     void decorateFenceRead(const AbstractHeap*, Value*);
     void decorateFenceWrite(const AbstractHeap*, Value*);
     void decorateFencedAccess(const AbstractHeap*, Value*);
+    void decorateWasmStructGet(const AbstractHeap*, Value*);
+    void decorateWasmStructSet(const AbstractHeap*, Value*);
 
     void computeRangesAndDecorateInstructions();
 
@@ -382,6 +377,8 @@ private:
     Vector<HeapForValue> m_heapForFenceRead;
     Vector<HeapForValue> m_heapForFenceWrite;
     Vector<HeapForValue> m_heapForFencedAccess;
+    Vector<HeapForValue> m_heapForWasmStructGet;
+    Vector<HeapForValue> m_heapForWasmStructSet;
 };
 
 } // namespace JSC::B3

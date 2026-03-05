@@ -30,7 +30,7 @@
 
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
-#include "ImageBufferUtilitiesCG.h"
+#include "ImageUtilities.h"
 #include "IntRect.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
 
 size_t ImageBufferCGBitmapBackend::calculateMemoryCost(const Parameters& parameters)
 {
@@ -81,13 +81,13 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
         fastFree(const_cast<void*>(data));
     }));
 
-    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data.leakSpan(), WTFMove(dataProvider), WTFMove(context)));
+    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data.leakSpan(), WTF::move(dataProvider), WTF::move(context)));
 }
 
 ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, std::span<uint8_t> data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContextCG>&& context)
-    : ImageBufferCGBackend(parameters, WTFMove(context))
+    : ImageBufferCGBackend(parameters, WTF::move(context))
     , m_data(data)
-    , m_dataProvider(WTFMove(dataProvider))
+    , m_dataProvider(WTF::move(dataProvider))
 {
     ASSERT(m_data.data());
     ASSERT(m_dataProvider);

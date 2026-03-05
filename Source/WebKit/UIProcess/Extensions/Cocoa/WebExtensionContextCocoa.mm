@@ -270,7 +270,7 @@ Expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionControl
     auto lastSeenBaseURL = URL { objectForKey<NSString>(m_state, lastSeenBaseURLStateKey) };
     [m_state setObject:m_baseURL.string().createNSString().get() forKey:lastSeenBaseURLStateKey];
 
-    if (RetainPtr displayName = protectedExtension()->displayName().createNSString())
+    if (RetainPtr displayName = protect(m_extension)->displayName().createNSString())
         [m_state setObject:displayName.get() forKey:lastSeenDisplayNameStateKey];
 
     m_isSessionStorageAllowedInContentScripts = boolForKey(m_state.get(), sessionStorageAllowedInContentScriptsKey, false);
@@ -484,7 +484,7 @@ void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, C
     }
 
     static NSSet<NSString *> *dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeLocalStorage, nil];
-    [webViewConfiguration().websiteDataStore _renameOrigin:previousBaseURL.createNSURL().get() to:baseURL().createNSURL().get() forDataOfTypes:dataTypes completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    [webViewConfiguration().websiteDataStore _renameOrigin:previousBaseURL.createNSURL().get() to:baseURL().createNSURL().get() forDataOfTypes:dataTypes completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
 }
 
 void WebExtensionContext::invalidateStorage()
@@ -613,25 +613,25 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
 
     if (!isLoaded() || neededMatchPatterns.isEmpty()) {
         if (completionHandler)
-            completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
+            completionHandler(WTF::move(neededMatchPatterns), { }, WallTime::infinity());
         return;
     }
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
         if (completionHandler)
-            completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
+            completionHandler(WTF::move(neededMatchPatterns), { }, WallTime::infinity());
         return;
     }
 
     auto delegate = extensionController->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler:)]) {
         if (completionHandler)
-            completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
+            completionHandler(WTF::move(neededMatchPatterns), { }, WallTime::infinity());
         return;
     }
 
-    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededMatchPatterns, grantOnCompletion, completionHandler = WTFMove(completionHandler)](NSSet *allowedMatchPatterns, NSDate *expirationDate) mutable {
+    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededMatchPatterns, grantOnCompletion, completionHandler = WTF::move(completionHandler)](NSSet *allowedMatchPatterns, NSDate *expirationDate) mutable {
         --m_pendingPermissionRequests;
 
         THROW_UNLESS([allowedMatchPatterns isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a set");
@@ -649,12 +649,12 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
             grantPermissionMatchPatterns(MatchPatternSet(matchPatterns), expirationTime);
 
         if (completionHandler)
-            completionHandler(WTFMove(neededMatchPatterns), WTFMove(matchPatterns), expirationTime);
+            completionHandler(WTF::move(neededMatchPatterns), WTF::move(matchPatterns), expirationTime);
     };
 
     ++m_pendingPermissionRequests;
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTFMove(internalCompletionHandler), nil, nil);
+    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTF::move(internalCompletionHandler), nil, nil);
 
     // Timeout the request after a delay, denying all the requested match patterns.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {
@@ -678,25 +678,25 @@ void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& request
 
     if (!isLoaded() || neededURLs.isEmpty()) {
         if (completionHandler)
-            completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
+            completionHandler(WTF::move(neededURLs), { }, WallTime::infinity());
         return;
     }
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
         if (completionHandler)
-            completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
+            completionHandler(WTF::move(neededURLs), { }, WallTime::infinity());
         return;
     }
 
     auto delegate = extensionController->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler:)]) {
         if (completionHandler)
-            completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
+            completionHandler(WTF::move(neededURLs), { }, WallTime::infinity());
         return;
     }
 
-    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededURLs, grantOnCompletion, completionHandler = WTFMove(completionHandler)](NSSet *allowedURLs, NSDate *expirationDate) mutable {
+    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededURLs, grantOnCompletion, completionHandler = WTF::move(completionHandler)](NSSet *allowedURLs, NSDate *expirationDate) mutable {
         --m_pendingPermissionRequests;
 
         THROW_UNLESS([allowedURLs isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler: is not a set");
@@ -725,15 +725,15 @@ void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& request
         }
 
         if (grantOnCompletion == GrantOnCompletion::Yes && !matchPatterns.isEmpty())
-            grantPermissionMatchPatterns(WTFMove(matchPatterns), expirationTime);
+            grantPermissionMatchPatterns(WTF::move(matchPatterns), expirationTime);
 
         if (completionHandler)
-            completionHandler(WTFMove(neededURLs), WTFMove(urls), expirationTime);
+            completionHandler(WTF::move(neededURLs), WTF::move(urls), expirationTime);
     };
 
     ++m_pendingPermissionRequests;
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTFMove(internalCompletionHandler), nil, nil);
+    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTF::move(internalCompletionHandler), nil, nil);
 
     // Timeout the request after a delay, denying all the requested URLs.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {
@@ -754,23 +754,23 @@ void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPerm
     }
 
     if (!isLoaded() || neededPermissions.isEmpty()) {
-        completionHandler(WTFMove(neededPermissions), { }, WallTime::infinity());
+        completionHandler(WTF::move(neededPermissions), { }, WallTime::infinity());
         return;
     }
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
-        completionHandler(WTFMove(neededPermissions), { }, WallTime::infinity());
+        completionHandler(WTF::move(neededPermissions), { }, WallTime::infinity());
         return;
     }
 
     auto delegate = extensionController->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler:)]) {
-        completionHandler(WTFMove(neededPermissions), { }, WallTime::infinity());
+        completionHandler(WTF::move(neededPermissions), { }, WallTime::infinity());
         return;
     }
 
-    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededPermissions, grantOnCompletion, completionHandler = WTFMove(completionHandler)](NSSet *allowedPermissions, NSDate *expirationDate) mutable {
+    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededPermissions, grantOnCompletion, completionHandler = WTF::move(completionHandler)](NSSet *allowedPermissions, NSDate *expirationDate) mutable {
         --m_pendingPermissionRequests;
 
         THROW_UNLESS([allowedPermissions isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a set");
@@ -788,12 +788,12 @@ void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPerm
             grantPermissions(PermissionsSet(permissions), expirationTime);
 
         if (completionHandler)
-            completionHandler(WTFMove(neededPermissions), WTFMove(permissions), expirationTime);
+            completionHandler(WTF::move(neededPermissions), WTF::move(permissions), expirationTime);
     };
 
     ++m_pendingPermissionRequests;
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTFMove(internalCompletionHandler), nil, nil);
+    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTF::move(internalCompletionHandler), nil, nil);
 
     // Timeout the request after a delay, denying all the requested permissions.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {
@@ -958,8 +958,9 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
         if (includeExtensionViews == IncludeExtensionViews::No)
             return nullptr;
 
-        RefPtr tab = entry.value->tab();
-        RefPtr window = tab ? tab->window() : entry.value->window();
+        Ref value = entry.value;
+        RefPtr tab = value->tab();
+        RefPtr window = tab ? tab->window() : value->window();
         if (!tab && window)
             tab = window->activeTab();
 
@@ -1003,7 +1004,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
     // Search open inspectors.
     for (auto [inspector, tab] : openInspectors()) {
         Ref protectedInspector = inspector;
-        if (protectedInspector->protectedInspectorPage()->identifier() == webPageProxyIdentifier) {
+        if (protect(protectedInspector->inspectorPage())->identifier() == webPageProxyIdentifier) {
             if (includeExtensionViews == IncludeExtensionViews::No)
                 return nullptr;
 
@@ -1055,7 +1056,7 @@ void WebExtensionContext::openNewWindow(const WebExtensionWindowParameters& para
 {
     ASSERT(isLoaded());
 
-    windowsCreate(parameters, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](Expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) mutable {
+    windowsCreate(parameters, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](Expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) mutable {
         if (!result || !result.value()) {
             completionHandler(nullptr);
             return;
@@ -1067,7 +1068,7 @@ void WebExtensionContext::openNewWindow(const WebExtensionWindowParameters& para
 
 void WebExtensionContext::openNewTab(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>)>&& completionHandler)
 {
-    tabsCreate(std::nullopt, parameters, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](Expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&& result) mutable {
+    tabsCreate(std::nullopt, parameters, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](Expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&& result) mutable {
         if (!result || !result.value()) {
             completionHandler(nullptr);
             return;
@@ -1586,7 +1587,7 @@ void WebExtensionContext::resourceLoadDidSendRequest(WebPageProxyIdentifier page
     std::optional<IPC::FormDataReference> formDataReference;
     if (RefPtr formData = request.httpBody()) {
         RefPtr resolvedFormData = formData->resolveBlobReferences().ptr();
-        formDataReference = IPC::FormDataReference { WTFMove(resolvedFormData) };
+        formDataReference = IPC::FormDataReference { WTF::move(resolvedFormData) };
     }
 
     constexpr auto beforeRequestType = WebExtensionEventListenerType::WebRequestOnBeforeRequest;
@@ -1781,7 +1782,7 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExten
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionWindow& window)
 {
-    if (!protectedExtension()->hasAnySidebar())
+    if (!protect(extension())->hasAnySidebar())
         return std::nullopt;
 
     return m_sidebarWindowMap.ensure(window, [&] {
@@ -1791,7 +1792,7 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionTab& tab)
 {
-    if (!protectedExtension()->hasAnySidebar())
+    if (!protect(extension())->hasAnySidebar())
         return std::nullopt;
 
     return m_sidebarTabMap.ensure(tab, [&] {
@@ -1801,7 +1802,7 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(
 
 RefPtr<WebExtensionSidebar> WebExtensionContext::getOrCreateSidebar(RefPtr<WebExtensionTab> tab)
 {
-    if (!protectedExtension()->hasAnySidebar())
+    if (!protect(extension())->hasAnySidebar())
         return nil;
     if (!tab)
         return &defaultSidebar();
@@ -1817,7 +1818,7 @@ const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
     if (m_populatedCommands)
         return m_commands;
 
-    m_commands = WTF::map(protectedExtension()->commands(), [&](auto& data) {
+    m_commands = WTF::map(protect(extension())->commands(), [&](auto& data) {
         return WebExtensionCommand::create(*this, data);
     });
 
@@ -1988,7 +1989,7 @@ CocoaMenuItem *WebExtensionContext::singleMenuItemOrExtensionItemWithSubmenu(con
         return menuItems.firstObject;
     }
 
-    auto *extensionItem = [[_WKWebExtensionMenuItem alloc] initWithTitle:protectedExtension()->displayShortName().createNSString().get() handler:^(id) { }];
+    auto *extensionItem = [[_WKWebExtensionMenuItem alloc] initWithTitle:protect(extension())->displayShortName().createNSString().get() handler:^(id) { }];
     auto *extensionSubmenu = [[NSMenu alloc] init];
     extensionSubmenu.itemArray = menuItems;
     extensionItem.submenu = extensionSubmenu;
@@ -2002,7 +2003,7 @@ CocoaMenuItem *WebExtensionContext::singleMenuItemOrExtensionItemWithSubmenu(con
     if (menuItems.count == 1)
         return menuItems.firstObject;
 
-    return [UIMenu menuWithTitle:protectedExtension()->displayShortName().createNSString().get() children:menuItems];
+    return [UIMenu menuWithTitle:protect(extension())->displayShortName().createNSString().get() children:menuItems];
 #endif
 }
 
@@ -2159,7 +2160,7 @@ void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
 
 std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier() const
 {
-    if (!m_backgroundWebView || protectedExtension()->backgroundContentIsServiceWorker())
+    if (!m_backgroundWebView || protect(extension())->backgroundContentIsServiceWorker())
         return std::nullopt;
 
     return m_backgroundWebView.get()._page->webPageIDInMainFrameProcess();
@@ -2195,7 +2196,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorP
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
         Ref protectedInspector = inspector;
-        result.append({ protectedInspector->protectedInspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        result.append({ protect(protectedInspector->inspectorPage())->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
     }
 
     return result;
@@ -2207,8 +2208,9 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageI
     Vector<PageIdentifierTuple> result;
 
     for (auto entry : m_popupPageActionMap) {
-        RefPtr tab = entry.value->tab();
-        RefPtr window = tab ? tab->window() : entry.value->window();
+        Ref value = entry.value;
+        RefPtr tab = value->tab();
+        RefPtr window = tab ? tab->window() : value->window();
 
         auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
@@ -2322,9 +2324,9 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     if (!isLoaded())
         return nil;
 
-    bool isManifestVersion3 = protectedExtension()->supportsManifestVersion(3);
+    bool isManifestVersion3 = protect(extension())->supportsManifestVersion(3);
 
-    WKWebViewConfiguration *configuration = [extensionController()->protectedConfiguration()->webViewConfiguration() copy];
+    WKWebViewConfiguration *configuration = [protect(extensionController()->configuration())->webViewConfiguration() copy];
     configuration._contentSecurityPolicyModeForExtension = isManifestVersion3 ? _WKContentSecurityPolicyModeForExtensionManifestV3 : _WKContentSecurityPolicyModeForExtensionManifestV2;
     configuration._corsDisablingPatterns = createNSArray(corsDisablingPatterns()).get();
     configuration._crossOriginAccessControlCheckEnabled = NO;
@@ -2376,11 +2378,11 @@ WebsiteDataStore* WebExtensionContext::websiteDataStore(std::optional<PAL::Sessi
     if (!extensionController)
         return nullptr;
 
-    RefPtr result = extensionController->websiteDataStore(sessionID);
-    if (result && !result->isPersistent() && !hasAccessToPrivateData())
+    WeakPtr weakDataStore = extensionController->websiteDataStore(sessionID);
+    if (weakDataStore && !weakDataStore->isPersistent() && !hasAccessToPrivateData())
         return nullptr;
 
-    return result.unsafeGet();
+    return weakDataStore.get();
 }
 
 void WebExtensionContext::cookiesDidChange(API::HTTPCookieStore&)
@@ -2404,7 +2406,7 @@ void WebExtensionContext::loadBackgroundWebViewIfNeeded()
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasBackgroundContent() || m_backgroundWebView || !safeToLoadBackgroundContent())
+    if (!protect(extension())->hasBackgroundContent() || m_backgroundWebView || !safeToLoadBackgroundContent())
         return;
 
     loadBackgroundWebView();
@@ -2414,7 +2416,7 @@ void WebExtensionContext::loadBackgroundWebView()
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasBackgroundContent())
+    if (!protect(extension())->hasBackgroundContent())
         return;
 
     RefPtr extensionController = this->extensionController();
@@ -2446,16 +2448,16 @@ void WebExtensionContext::loadBackgroundWebView()
     Ref backgroundProcess = backgroundPage->siteIsolatedProcess();
 
     // Use foreground activity to keep background content responsive to events.
-    m_backgroundWebViewActivity = backgroundProcess->protectedThrottler()->foregroundActivity("Web Extension background content"_s);
+    m_backgroundWebViewActivity = protect(backgroundProcess->throttler())->foregroundActivity("Web Extension background content"_s);
 
-    if (!protectedExtension()->backgroundContentIsServiceWorker()) {
+    if (!protect(extension())->backgroundContentIsServiceWorker()) {
         backgroundProcess->send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
 
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL().createNSURL().get()]];
         return;
     }
 
-    [m_backgroundWebView _loadServiceWorker:backgroundContentURL().createNSURL().get() usingModules:protectedExtension()->backgroundContentUsesModules() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](BOOL success) {
+    [m_backgroundWebView _loadServiceWorker:backgroundContentURL().createNSURL().get() usingModules:protect(extension())->backgroundContentUsesModules() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](BOOL success) {
         if (!success) {
             m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad);
             recordErrorIfNeeded(backgroundContentLoadError());
@@ -2492,7 +2494,7 @@ static inline bool isNotRunningInTestRunner()
 
 void WebExtensionContext::scheduleBackgroundContentToUnload()
 {
-    if (!m_backgroundWebView || protectedExtension()->backgroundContentIsPersistent())
+    if (!m_backgroundWebView || protect(extension())->backgroundContentIsPersistent())
         return;
 
 #ifdef NDEBUG
@@ -2512,7 +2514,7 @@ void WebExtensionContext::scheduleBackgroundContentToUnload()
 
 void WebExtensionContext::unloadBackgroundContentIfPossible()
 {
-    if (!m_backgroundWebView || protectedExtension()->backgroundContentIsPersistent())
+    if (!m_backgroundWebView || protect(extension())->backgroundContentIsPersistent())
         return;
 
     static const auto delayForInactivePorts = isNotRunningInTestRunner() ? 2_min : 6_s;
@@ -2588,7 +2590,7 @@ void WebExtensionContext::determineInstallReasonDuringLoad()
 
 void WebExtensionContext::loadBackgroundPageListenersFromStorage()
 {
-    if (!storageIsPersistent() || protectedExtension()->backgroundContentIsPersistent())
+    if (!storageIsPersistent() || protect(extension())->backgroundContentIsPersistent())
         return;
 
     m_backgroundContentEventListeners.clear();
@@ -2613,7 +2615,7 @@ void WebExtensionContext::loadBackgroundPageListenersFromStorage()
 
 void WebExtensionContext::saveBackgroundPageListenersToStorage()
 {
-    if (!storageIsPersistent() || protectedExtension()->backgroundContentIsPersistent())
+    if (!storageIsPersistent() || protect(extension())->backgroundContentIsPersistent())
         return;
 
     RELEASE_LOG_DEBUG(Extensions, "Saving %{public}u background content event listeners to storage", m_backgroundContentEventListeners.size());
@@ -2701,7 +2703,7 @@ void WebExtensionContext::didFinishDocumentLoad(WKWebView *webView, WKNavigation
         return;
 
     // The service worker will notify the load via a completion handler instead.
-    if (protectedExtension()->backgroundContentIsServiceWorker())
+    if (protect(extension())->backgroundContentIsServiceWorker())
         return;
 
     performTasksAfterBackgroundContentLoads();
@@ -2723,7 +2725,7 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webVie
     if (webView == m_backgroundWebView) {
         unloadBackgroundWebView();
 
-        if (protectedExtension()->backgroundContentIsPersistent())
+        if (protect(extension())->backgroundContentIsPersistent())
             loadBackgroundWebView();
 
         return;
@@ -2762,7 +2764,7 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Func
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return { };
 
     InspectorTabVector result;
@@ -2786,7 +2788,7 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::loadedInspectors() 
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return { };
 
     InspectorTabVector result;
@@ -2800,7 +2802,7 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::loadedInspectors() 
 RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageProxyIdentifier webPageProxyIdentifier) const
 {
     ASSERT(isLoaded());
-    ASSERT(protectedExtension()->hasInspectorBackgroundPage());
+    ASSERT(protect(extension())->hasInspectorBackgroundPage());
 
     RefPtr<WebInspectorUIProxy> foundInspector;
 
@@ -2812,7 +2814,7 @@ RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageP
 
     for (auto [inspector, tab] : openInspectors()) {
         Ref protectedInspector = inspector;
-        if (protectedInspector->protectedInspectorPage()->identifier() == webPageProxyIdentifier) {
+        if (protect(protectedInspector->inspectorPage())->identifier() == webPageProxyIdentifier) {
             const auto& inspectorContext = m_inspectorContextMap.get(inspector);
             return inspectorContext.extension;
         }
@@ -2824,7 +2826,7 @@ RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageP
 HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::InspectorExtension& inspectorExtension) const
 {
     ASSERT(isLoaded());
-    ASSERT(protectedExtension()->hasInspectorBackgroundPage());
+    ASSERT(protect(extension())->hasInspectorBackgroundPage());
 
     HashSet<Ref<WebProcessProxy>> result;
 
@@ -2845,7 +2847,7 @@ bool WebExtensionContext::isInspectorBackgroundPage(WKWebView *webView) const
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return false;
 
     for (auto entry : m_inspectorContextMap) {
@@ -2858,14 +2860,14 @@ bool WebExtensionContext::isInspectorBackgroundPage(WKWebView *webView) const
 
 bool WebExtensionContext::isDevToolsMessageAllowed(IPC::Decoder& message)
 {
-    return isLoadedAndPrivilegedMessage(message) && protectedExtension()->hasInspectorBackgroundPage();
+    return isLoadedAndPrivilegedMessage(message) && protect(extension())->hasInspectorBackgroundPage();
 }
 
 void WebExtensionContext::loadInspectorBackgroundPagesDuringLoad()
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return;
 
     for (auto [inspector, tab] : openInspectors())
@@ -2874,7 +2876,7 @@ void WebExtensionContext::loadInspectorBackgroundPagesDuringLoad()
 
 void WebExtensionContext::unloadInspectorBackgroundPages()
 {
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return;
 
     for (auto [inspector, tab] : loadedInspectors())
@@ -2885,20 +2887,20 @@ void WebExtensionContext::loadInspectorBackgroundPagesForPrivateBrowsing()
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return;
 
     auto predicate = [](WebExtensionTab& tab, WebInspectorUIProxy&) -> bool {
         return tab.isPrivate();
     };
 
-    for (auto [inspector, tab] : openInspectors(WTFMove(predicate)))
+    for (auto [inspector, tab] : openInspectors(WTF::move(predicate)))
         loadInspectorBackgroundPage(inspector, *tab);
 }
 
 void WebExtensionContext::unloadInspectorBackgroundPagesForPrivateBrowsing()
 {
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return;
 
     for (auto [inspector, tab] : loadedInspectors()) {
@@ -2912,7 +2914,7 @@ void WebExtensionContext::unloadInspectorBackgroundPagesForPrivateBrowsing()
 void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspector, WebExtensionTab& tab)
 {
     ASSERT(isLoaded());
-    ASSERT(protectedExtension()->hasInspectorBackgroundPage());
+    ASSERT(protect(extension())->hasInspectorBackgroundPage());
 
     ASSERT(!m_inspectorContextMap.contains(inspector));
     if (m_inspectorContextMap.contains(inspector))
@@ -2958,13 +2960,13 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         WeakPtr<WebExtensionContext> m_extensionContext;
     };
 
-    inspector.protectedExtensionController()->registerExtension(uniqueIdentifier(), uniqueIdentifier(), protectedExtension()->displayName(), [this, protectedThis = Ref { *this }, inspector = Ref { inspector }, tab = Ref { tab }](Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) {
+    protect(inspector.extensionController())->registerExtension(uniqueIdentifier(), uniqueIdentifier(), protect(extension())->displayName(), [this, protectedThis = Ref { *this }, inspector = Ref { inspector }, tab = Ref { tab }](Expected<Ref<API::InspectorExtension>, Inspector::ExtensionError> result) {
         if (!result) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to register Inspector extension (error %{public}hhu)", enumToUnderlyingType(result.error()));
+            RELEASE_LOG_ERROR(Extensions, "Failed to register Inspector extension (error %{public}hhu)", std::to_underlying(result.error()));
             return;
         }
 
-        auto *inspectorWebView = inspector->protectedInspectorPage()->cocoaView().get();
+        auto *inspectorWebView = protect(inspector->inspectorPage())->cocoaView().get();
         auto *configuration = webViewConfiguration(WebViewPurpose::Inspector);
 
         bool siteIsolationEnabled = configuration.preferences._siteIsolationEnabled;
@@ -2994,13 +2996,13 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
             inspectorBackgroundWebView._page->setAlwaysUseRelatedPageProcess();
         }
 
-        Ref inspectorExtension = result.value().releaseNonNull();
+        Ref inspectorExtension = result.value();
         inspectorExtension->setClient(makeUniqueRef<InspectorExtensionClient>(inspectorExtension, *this));
 
         Ref process = inspectorBackgroundWebView._page->legacyMainFrameProcess();
 
         // Use foreground activity to keep background content responsive to events.
-        Ref inspectorBackgroundWebViewActivity = process->protectedThrottler()->foregroundActivity("Web Extension Inspector background content"_s);
+        Ref inspectorBackgroundWebViewActivity = protect(process->throttler())->foregroundActivity("Web Extension Inspector background content"_s);
 
         InspectorContext inspectorContext {
             tab->identifier(),
@@ -3009,12 +3011,12 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
             inspectorBackgroundWebViewActivity.ptr()
         };
 
-        m_inspectorContextMap.set(inspector.get(), WTFMove(inspectorContext));
+        m_inspectorContextMap.set(inspector.get(), WTF::move(inspectorContext));
 
         RefPtr window = tab->window();
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        auto appearance = inspector->protectedInspectorPage()->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
+        auto appearance = protect(inspector->inspectorPage())->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
 
         ASSERT(siteIsolationEnabled || inspectorWebView._page->legacyMainFrameProcess() == process);
         process->send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(inspectorWebView._page->webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier), identifier());
@@ -3032,9 +3034,9 @@ void WebExtensionContext::unloadInspectorBackgroundPage(WebInspectorUIProxy& ins
     auto inspectorContext = m_inspectorContextMap.take(inspector);
     [inspectorContext.backgroundWebView _close];
 
-    inspector.protectedExtensionController()->unregisterExtension(uniqueIdentifier(), [](Expected<void, Inspector::ExtensionError> result) {
+    protect(inspector.extensionController())->unregisterExtension(uniqueIdentifier(), [](Expected<void, Inspector::ExtensionError> result) {
         if (!result)
-            RELEASE_LOG_ERROR(Extensions, "Failed to unregister Inspector extension (error %{public}hhu)", enumToUnderlyingType(result.error()));
+            RELEASE_LOG_ERROR(Extensions, "Failed to unregister Inspector extension (error %{public}hhu)", std::to_underlying(result.error()));
     });
 }
 
@@ -3042,7 +3044,7 @@ void WebExtensionContext::inspectorWillOpen(WebInspectorUIProxy& inspector, WebP
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return;
 
     RefPtr tab = getTab(inspectedPage.identifier());
@@ -3056,7 +3058,7 @@ void WebExtensionContext::inspectorWillClose(WebInspectorUIProxy& inspector, Web
 {
     ASSERT(isLoaded());
 
-    if (!protectedExtension()->hasInspectorBackgroundPage())
+    if (!protect(extension())->hasInspectorBackgroundPage())
         return;
 
     unloadInspectorBackgroundPage(inspector);
@@ -3136,7 +3138,7 @@ static NSString *computeStringHashForContentBlockerRules(NSString *rules)
 
 void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0), makeBlockPtr([this, protectedThis = Ref { *this }, rulesData = RetainPtr { rulesData }, completionHandler = WTFMove(completionHandler)]() mutable {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0), makeBlockPtr([this, protectedThis = Ref { *this }, rulesData = RetainPtr { rulesData }, completionHandler = WTF::move(completionHandler)]() mutable {
         NSArray<NSString *> *jsonDeserializationErrorStrings;
         auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData.get() errorStrings:&jsonDeserializationErrorStrings];
 
@@ -3151,7 +3153,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesD
 
         auto *webKitRules = encodeJSONString(allConvertedRules, JSONOptions::FragmentsAllowed);
         if (!webKitRules) {
-            dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
+            dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(false);
             }).get());
             return;
@@ -3160,8 +3162,8 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesD
         RetainPtr previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDeclarativeNetRequestHashStateKey);
         RetainPtr hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
 
-        dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = WTFMove(previouslyLoadedHash), hashOfWebKitRules = WTFMove(hashOfWebKitRules), webKitRules = String { webKitRules }]() mutable {
-            API::ContentRuleListStore::defaultStoreSingleton().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = WTFMove(previouslyLoadedHash), hashOfWebKitRules = WTFMove(hashOfWebKitRules), webKitRules](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
+        dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), previouslyLoadedHash = WTF::move(previouslyLoadedHash), hashOfWebKitRules = WTF::move(hashOfWebKitRules), webKitRules = String { webKitRules }]() mutable {
+            API::ContentRuleListStore::defaultStoreSingleton().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), previouslyLoadedHash = WTF::move(previouslyLoadedHash), hashOfWebKitRules = WTF::move(hashOfWebKitRules), webKitRules](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
                 // The extension could have been unloaded before this was called.
                 if (!isLoaded()) {
                     completionHandler(false);
@@ -3178,7 +3180,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesD
                     }
                 }
 
-                API::ContentRuleListStore::defaultStoreSingleton().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), WebCore::ContentExtensions::CSSSelectorsAllowed::No, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
+                API::ContentRuleListStore::defaultStoreSingleton().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), WebCore::ContentExtensions::CSSSelectorsAllowed::No, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), hashOfWebKitRules](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
                     if (error) {
                         RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}s", error.message().c_str());
                         completionHandler(false);
@@ -3213,19 +3215,19 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 
     auto *allJSONData = [NSMutableDictionary dictionary];
 
-    auto applyDeclarativeNetRequestRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), allJSONData = RetainPtr { allJSONData }] () mutable {
+    auto applyDeclarativeNetRequestRules = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), allJSONData = RetainPtr { allJSONData }] () mutable {
         if (!allJSONData.get().allKeys.count) {
             removeDeclarativeNetRequestRules();
-            API::ContentRuleListStore::defaultStoreSingleton().removeContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), [completionHandler = WTFMove(completionHandler)](std::error_code error) mutable {
-                completionHandler(error ? false : true);
+            API::ContentRuleListStore::defaultStoreSingleton().removeContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), [completionHandler = WTF::move(completionHandler)](std::error_code error) mutable {
+                completionHandler(!error);
             });
             return;
         }
 
-        compileDeclarativeNetRequestRules(allJSONData.get(), WTFMove(completionHandler));
+        compileDeclarativeNetRequestRules(allJSONData.get(), WTF::move(completionHandler));
     };
 
-    auto addStaticRulesets = [this, protectedThis = Ref { *this }, applyDeclarativeNetRequestRules = WTFMove(applyDeclarativeNetRequestRules), allJSONData = RetainPtr { allJSONData }] () mutable {
+    auto addStaticRulesets = [this, protectedThis = Ref { *this }, applyDeclarativeNetRequestRules = WTF::move(applyDeclarativeNetRequestRules), allJSONData = RetainPtr { allJSONData }] () mutable {
         RefPtr extension = m_extension;
         for (auto& ruleset : extension->declarativeNetRequestRulesets()) {
             if (!m_enabledStaticRulesetIDs.contains(ruleset.rulesetID))
@@ -3244,9 +3246,9 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         applyDeclarativeNetRequestRules();
     };
 
-    auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
-        declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
-            if (!rules->length()) {
+    auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
+        declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
+            if (!rules || !rules->length()) {
                 m_dynamicRulesIDs.clear();
                 addStaticRulesets();
                 return;
@@ -3263,14 +3265,14 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             for (const auto& rule : *rules)
                 dynamicRuleIDs.add(*(rule->asObject()->getDouble("id"_s)));
 
-            m_dynamicRulesIDs = WTFMove(dynamicRuleIDs);
+            m_dynamicRulesIDs = WTF::move(dynamicRuleIDs);
 
             addStaticRulesets();
         });
     };
 
-    declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTFMove(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
-        if (!rules->length()) {
+    declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTF::move(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
+        if (!rules || !rules->length()) {
             m_sessionRulesIDs.clear();
             addDynamicAndStaticRules();
             return;
@@ -3287,7 +3289,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         for (const auto& rule : *rules)
             sessionRuleIDs.add(*(rule->asObject()->getDouble("id"_s)));
 
-        m_sessionRulesIDs = WTFMove(sessionRuleIDs);
+        m_sessionRulesIDs = WTF::move(sessionRuleIDs);
 
         addDynamicAndStaticRules();
     });

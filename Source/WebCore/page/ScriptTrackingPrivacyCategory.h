@@ -39,6 +39,7 @@ enum class ScriptTrackingPrivacyCategory : uint8_t {
     Cookies,
     HardwareConcurrency,
     LocalStorage,
+    NetworkRequests,
     Payments,
     QueryParameters,
     Referrer,
@@ -53,6 +54,7 @@ enum class ScriptTrackingPrivacyFlag : uint16_t {
     Cookies                 = 1 << static_cast<uint8_t>(ScriptTrackingPrivacyCategory::Cookies),
     HardwareConcurrency     = 1 << static_cast<uint8_t>(ScriptTrackingPrivacyCategory::HardwareConcurrency),
     LocalStorage            = 1 << static_cast<uint8_t>(ScriptTrackingPrivacyCategory::LocalStorage),
+    NetworkRequests         = 1 << static_cast<uint8_t>(ScriptTrackingPrivacyCategory::NetworkRequests),
     Payments                = 1 << static_cast<uint8_t>(ScriptTrackingPrivacyCategory::Payments),
     QueryParameters         = 1 << static_cast<uint8_t>(ScriptTrackingPrivacyCategory::QueryParameters),
     Referrer                = 1 << static_cast<uint8_t>(ScriptTrackingPrivacyCategory::Referrer),
@@ -65,9 +67,9 @@ using ScriptTrackingPrivacyFlags = OptionSet<ScriptTrackingPrivacyFlag>;
 
 String makeLogMessage(const URL&, ScriptTrackingPrivacyCategory);
 ASCIILiteral description(ScriptTrackingPrivacyCategory);
-WEBCORE_EXPORT ScriptTrackingPrivacyFlag scriptCategoryAsFlag(ScriptTrackingPrivacyCategory);
+WEBCORE_EXPORT ScriptTrackingPrivacyFlag NODELETE scriptCategoryAsFlag(ScriptTrackingPrivacyCategory);
 
-bool shouldEnableScriptTrackingPrivacy(ScriptTrackingPrivacyCategory, OptionSet<AdvancedPrivacyProtections>);
+bool NODELETE shouldEnableScriptTrackingPrivacy(ScriptTrackingPrivacyCategory, OptionSet<AdvancedPrivacyProtections>, bool needsConsistentPrivacy = false);
 
 } // namespace WebCore
 

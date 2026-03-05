@@ -84,7 +84,7 @@ void RemoteConnectionToTarget::sendMessageToTarget(String&& message)
         target = m_target.get();
     }
     if (target)
-        target->dispatchMessageFromRemote(WTFMove(message));
+        target->dispatchMessageFromRemote(WTF::move(message));
 }
 
 void RemoteConnectionToTarget::close()

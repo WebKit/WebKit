@@ -243,7 +243,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                 const vk::Format *imageUniformFormat,
                                 const gl::SamplerBinding *samplerBinding,
                                 bool isImage,
-                                const vk::BufferView **viewOut);
+                                const vk::BufferView **viewOut,
+                                VkFormat *viewVkFormatOut);
 
     // A special view used for texture copies that shouldn't perform swizzle.
     const vk::ImageView &getCopyImageView() const;
@@ -465,7 +466,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                                   gl::LevelIndex sourceLevelGL,
                                                   uint32_t layerCount,
                                                   const gl::Box &sourceArea,
-                                                  RenderPassClosureReason reason,
+                                                  QueueSubmitReason reason,
                                                   vk::BufferHelper *copyBuffer,
                                                   uint8_t **outDataPtr);
 
@@ -624,7 +625,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     void handleImmutableSamplerTransition(const vk::ImageHelper *previousImage,
                                           const vk::ImageHelper *nextImage);
 
-    vk::ImageAccess getRequiredImageAccess() const { return mRequiredImageAccess; }
+    vk::ImageFormatSupport getRequiredFormatSupport() const { return mRequiredFormatSupport; }
 
     void stageSelfAsSubresourceUpdates(ContextVk *contextVk);
 
@@ -651,7 +652,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     UniqueSerial mImageSiblingSerial;
 
     bool mRequiresMutableStorage;
-    vk::ImageAccess mRequiredImageAccess;
+    vk::ImageFormatSupport mRequiredFormatSupport;
     bool mImmutableSamplerDirty;
 
     // Only valid if this texture is an "EGLImage target" and the associated EGL Image was

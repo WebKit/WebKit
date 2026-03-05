@@ -11,25 +11,20 @@
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 
 #include <memory>
-#include <utility>
 
 #include "absl/memory/memory.h"
-#include "api/rtc_event_log/rtc_event.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 
 RtcEventAudioNetworkAdaptation::RtcEventAudioNetworkAdaptation(
-    std::unique_ptr<AudioEncoderRuntimeConfig> config)
-    : config_(std::move(config)) {
-  RTC_DCHECK(config_);
-}
-
-RtcEventAudioNetworkAdaptation::RtcEventAudioNetworkAdaptation(
-    const RtcEventAudioNetworkAdaptation& other)
-    : RtcEvent(other.timestamp_us_),
-      config_(std::make_unique<AudioEncoderRuntimeConfig>(*other.config_)) {}
+    const AudioEncoderRuntimeConfig& config)
+    : bitrate_bps_(config.bitrate_bps),
+      frame_length_ms_(config.frame_length_ms),
+      uplink_packet_loss_fraction_(config.uplink_packet_loss_fraction),
+      enable_fec_(config.enable_fec),
+      enable_dtx_(config.enable_dtx),
+      num_channels_(config.num_channels) {}
 
 RtcEventAudioNetworkAdaptation::~RtcEventAudioNetworkAdaptation() = default;
 

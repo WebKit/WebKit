@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_controller_factory_interface.h"
 #include "p2p/base/ice_controller_interface.h"
@@ -26,23 +27,12 @@
 #include "rtc_base/event.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
+namespace webrtc {
 namespace {
-
-using ::webrtc::Connection;
-using ::webrtc::IceConfig;
-using ::webrtc::IceControllerFactoryArgs;
-using ::webrtc::IceControllerInterface;
-using ::webrtc::IceMode;
-using ::webrtc::IceRecheckEvent;
-using ::webrtc::IceSwitchReason;
-using ::webrtc::MockIceAgent;
-using ::webrtc::MockIceController;
-using ::webrtc::MockIceControllerFactory;
-using ::webrtc::NominationMode;
-using ::webrtc::WrappingActiveIceController;
 
 using ::testing::_;
 using ::testing::ElementsAreArray;
@@ -51,11 +41,6 @@ using ::testing::NiceMock;
 using ::testing::Ref;
 using ::testing::Return;
 using ::testing::Sequence;
-
-using ::webrtc::AutoThread;
-using ::webrtc::Event;
-using ::webrtc::ScopedFakeClock;
-using ::webrtc::TimeDelta;
 
 using NiceMockIceController = NiceMock<MockIceController>;
 
@@ -72,7 +57,7 @@ constexpr TimeDelta kTick = TimeDelta::Millis(1);
 TEST(WrappingActiveIceControllerTest, CreateLegacyIceControllerFromFactory) {
   AutoThread main;
   MockIceAgent agent;
-  IceControllerFactoryArgs args;
+  IceControllerFactoryArgs args = {.env = CreateTestEnvironment()};
   MockIceControllerFactory legacy_controller_factory;
   EXPECT_CALL(legacy_controller_factory, RecordIceControllerCreated()).Times(1);
   WrappingActiveIceController controller(&agent, &legacy_controller_factory,
@@ -82,8 +67,7 @@ TEST(WrappingActiveIceControllerTest, CreateLegacyIceControllerFromFactory) {
 TEST(WrappingActiveIceControllerTest, PassthroughIceControllerInterface) {
   AutoThread main;
   MockIceAgent agent;
-  std::unique_ptr<MockIceController> will_move =
-      std::make_unique<MockIceController>(IceControllerFactoryArgs{});
+  auto will_move = std::make_unique<MockIceController>();
   MockIceController* wrapped = will_move.get();
   WrappingActiveIceController controller(&agent, std::move(will_move));
 
@@ -119,8 +103,7 @@ TEST(WrappingActiveIceControllerTest, HandlesImmediateSwitchRequest) {
   AutoThread main;
   ScopedFakeClock clock;
   NiceMock<MockIceAgent> agent;
-  std::unique_ptr<NiceMockIceController> will_move =
-      std::make_unique<NiceMockIceController>(IceControllerFactoryArgs{});
+  auto will_move = std::make_unique<NiceMockIceController>();
   NiceMockIceController* wrapped = will_move.get();
   WrappingActiveIceController controller(&agent, std::move(will_move));
 
@@ -128,10 +111,10 @@ TEST(WrappingActiveIceControllerTest, HandlesImmediateSwitchRequest) {
   std::vector<const Connection*> conns_to_forget{kConnectionTwo};
   int recheck_delay_ms = 10;
   IceControllerInterface::SwitchResult switch_result{
-      kConnection,
-      IceRecheckEvent(IceSwitchReason::ICE_CONTROLLER_RECHECK,
-                      recheck_delay_ms),
-      conns_to_forget};
+      .connection = kConnection,
+      .recheck_event = IceRecheckEvent(IceSwitchReason::ICE_CONTROLLER_RECHECK,
+                                       recheck_delay_ms),
+      .connections_to_forget_state_on = conns_to_forget};
 
   // ICE controller should switch to given connection immediately.
   Sequence check_then_switch;
@@ -164,8 +147,7 @@ TEST(WrappingActiveIceControllerTest, HandlesImmediateSortAndSwitchRequest) {
   AutoThread main;
   ScopedFakeClock clock;
   NiceMock<MockIceAgent> agent;
-  std::unique_ptr<NiceMockIceController> will_move =
-      std::make_unique<NiceMockIceController>(IceControllerFactoryArgs{});
+  auto will_move = std::make_unique<NiceMockIceController>();
   NiceMockIceController* wrapped = will_move.get();
   WrappingActiveIceController controller(&agent, std::move(will_move));
 
@@ -174,10 +156,10 @@ TEST(WrappingActiveIceControllerTest, HandlesImmediateSortAndSwitchRequest) {
   std::vector<const Connection*> conns_to_prune{kConnectionThree};
   int recheck_delay_ms = 10;
   IceControllerInterface::SwitchResult switch_result{
-      kConnection,
-      IceRecheckEvent(IceSwitchReason::ICE_CONTROLLER_RECHECK,
-                      recheck_delay_ms),
-      conns_to_forget};
+      .connection = kConnection,
+      .recheck_event = IceRecheckEvent(IceSwitchReason::ICE_CONTROLLER_RECHECK,
+                                       recheck_delay_ms),
+      .connections_to_forget_state_on = conns_to_forget};
 
   Sequence sort_and_switch;
   EXPECT_CALL(agent, UpdateConnectionStates()).InSequence(sort_and_switch);
@@ -222,8 +204,7 @@ TEST(WrappingActiveIceControllerTest, HandlesSortAndSwitchRequest) {
   main.PostTask([&init, &init_delay] { init.Wait(init_delay); });
 
   NiceMock<MockIceAgent> agent;
-  std::unique_ptr<NiceMockIceController> will_move =
-      std::make_unique<NiceMockIceController>(IceControllerFactoryArgs{});
+  auto will_move = std::make_unique<NiceMockIceController>();
   NiceMockIceController* wrapped = will_move.get();
   WrappingActiveIceController controller(&agent, std::move(will_move));
 
@@ -239,10 +220,10 @@ TEST(WrappingActiveIceControllerTest, HandlesSortAndSwitchRequest) {
   std::vector<const Connection*> conns_to_forget{kConnectionTwo};
   int recheck_delay_ms = 10;
   IceControllerInterface::SwitchResult switch_result{
-      kConnection,
-      IceRecheckEvent(IceSwitchReason::ICE_CONTROLLER_RECHECK,
-                      recheck_delay_ms),
-      conns_to_forget};
+      .connection = kConnection,
+      .recheck_event = IceRecheckEvent(IceSwitchReason::ICE_CONTROLLER_RECHECK,
+                                       recheck_delay_ms),
+      .connections_to_forget_state_on = conns_to_forget};
 
   // Sort and switch should take place as the subsequent task.
   Sequence sort_and_switch;
@@ -267,28 +248,27 @@ TEST(WrappingActiveIceControllerTest, StartPingingAfterSortAndSwitch) {
   main.PostTask([&init, &init_delay] { init.Wait(init_delay); });
 
   NiceMock<MockIceAgent> agent;
-  std::unique_ptr<NiceMockIceController> will_move =
-      std::make_unique<NiceMockIceController>(IceControllerFactoryArgs{});
+  auto will_move = std::make_unique<NiceMockIceController>();
   NiceMockIceController* wrapped = will_move.get();
   WrappingActiveIceController controller(&agent, std::move(will_move));
 
   // Pinging does not start automatically, unless triggered through a sort.
   EXPECT_CALL(*wrapped, HasPingableConnection()).Times(0);
-  EXPECT_CALL(*wrapped, SelectConnectionToPing(_)).Times(0);
+  EXPECT_CALL(*wrapped, GetConnectionToPing).Times(0);
   EXPECT_CALL(agent, OnStartedPinging()).Times(0);
 
   controller.OnSortAndSwitchRequest(IceSwitchReason::DATA_RECEIVED);
 
   // Pinging does not start if no pingable connection.
   EXPECT_CALL(*wrapped, HasPingableConnection()).WillOnce(Return(false));
-  EXPECT_CALL(*wrapped, SelectConnectionToPing(_)).Times(0);
+  EXPECT_CALL(*wrapped, GetConnectionToPing).Times(0);
   EXPECT_CALL(agent, OnStartedPinging()).Times(0);
 
   // Unblock the init task.
   clock.AdvanceTime(init_delay);
 
-  int recheck_delay_ms = 10;
-  IceControllerInterface::PingResult ping_result(kConnection, recheck_delay_ms);
+  TimeDelta recheck_delay = TimeDelta::Millis(10);
+  IceControllerInterface::PingResult ping_result(kConnection, recheck_delay);
 
   // Pinging starts when there is a pingable connection.
   Sequence start_pinging;
@@ -296,10 +276,10 @@ TEST(WrappingActiveIceControllerTest, StartPingingAfterSortAndSwitch) {
       .InSequence(start_pinging)
       .WillOnce(Return(true));
   EXPECT_CALL(agent, OnStartedPinging()).InSequence(start_pinging);
-  EXPECT_CALL(agent, GetLastPingSentMs())
+  EXPECT_CALL(agent, GetLastPingSent)
       .InSequence(start_pinging)
-      .WillOnce(Return(123));
-  EXPECT_CALL(*wrapped, SelectConnectionToPing(123))
+      .WillOnce(Return(Timestamp::Millis(123)));
+  EXPECT_CALL(*wrapped, GetConnectionToPing(Timestamp::Millis(123)))
       .InSequence(start_pinging)
       .WillOnce(Return(ping_result));
   EXPECT_CALL(agent, SendPingRequest(kConnection)).InSequence(start_pinging);
@@ -309,13 +289,14 @@ TEST(WrappingActiveIceControllerTest, StartPingingAfterSortAndSwitch) {
 
   // ICE controller should recheck and ping after the recheck delay.
   // No ping should be sent if no connection selected to ping.
-  EXPECT_CALL(agent, GetLastPingSentMs()).WillOnce(Return(456));
-  EXPECT_CALL(*wrapped, SelectConnectionToPing(456))
+  EXPECT_CALL(agent, GetLastPingSent).WillOnce(Return(Timestamp::Millis(456)));
+  EXPECT_CALL(*wrapped, GetConnectionToPing(Timestamp::Millis(456)))
       .WillOnce(Return(IceControllerInterface::PingResult(
-          /* connection= */ nullptr, recheck_delay_ms)));
+          /* connection= */ nullptr, recheck_delay)));
   EXPECT_CALL(agent, SendPingRequest(kConnection)).Times(0);
 
-  clock.AdvanceTime(TimeDelta::Millis(recheck_delay_ms));
+  clock.AdvanceTime(recheck_delay);
 }
 
 }  // namespace
+}  // namespace webrtc

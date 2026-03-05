@@ -690,7 +690,7 @@ public:
 
     void dispatch(Function<void()>&& function)
     {
-        m_runLoop->dispatch(WTFMove(function));
+        m_runLoop->dispatch(WTF::move(function));
     }
 
 private:

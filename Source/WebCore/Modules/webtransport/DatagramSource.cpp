@@ -48,8 +48,8 @@ void DatagramDefaultSource::receiveDatagram(std::span<const uint8_t> datagram, b
         auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(datagram.size(), 1);
         if (arrayBuffer)
             memcpySpan(arrayBuffer->mutableSpan(), datagram);
-        if (!controller().enqueue(WTFMove(arrayBuffer)))
-            doCancel();
+        if (!controller().enqueue(WTF::move(arrayBuffer)))
+            doCancel({ });
     }
     if (withFin) {
         m_isClosed = true;
@@ -61,6 +61,12 @@ void DatagramDefaultSource::receiveDatagram(std::span<const uint8_t> datagram, b
 void DatagramDefaultSource::doCancel()
 {
     m_isCancelled = true;
+    cancelFinished();
+}
+
+void DatagramDefaultSource::error(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
+{
+    ReadableStreamSource::error(globalObject, value);
 }
 
 }

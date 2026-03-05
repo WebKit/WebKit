@@ -85,7 +85,7 @@ void METHOD_unref(void *method_in) {
   struct openssl_method_common_st *method =
       reinterpret_cast<openssl_method_common_st *>(method_in);
 
-  if (method == NULL) {
+  if (method == nullptr) {
     return;
   }
   assert(method->is_static);

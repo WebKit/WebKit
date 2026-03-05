@@ -44,23 +44,18 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient&
     ASSERT(isMainThread());
 }
 
-SocketStreamHandle::SocketStreamState SocketStreamHandle::state() const
-{
-    return m_state;
-}
-
 void SocketStreamHandle::sendData(std::span<const uint8_t> data, Function<void(bool)> completionHandler)
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false);
-    platformSend(data, WTFMove(completionHandler));
+    platformSend(data, WTF::move(completionHandler));
 }
 
 void SocketStreamHandle::sendHandshake(CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&& headerFieldProxy, Function<void(bool, bool)> completionHandler)
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false, false);
-    platformSendHandshake(byteCast<uint8_t>(handshake.span()), WTFMove(headerFieldProxy), WTFMove(completionHandler));
+    platformSendHandshake(byteCast<uint8_t>(handshake.span()), WTF::move(headerFieldProxy), WTF::move(completionHandler));
 }
 
 void SocketStreamHandle::close()

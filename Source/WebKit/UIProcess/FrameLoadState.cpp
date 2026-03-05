@@ -49,7 +49,7 @@ void FrameLoadState::didStartProvisionalLoad(URL&& url)
     ASSERT(m_provisionalURL.isEmpty());
 
     m_state = State::Provisional;
-    m_provisionalURL = WTFMove(url);
+    m_provisionalURL = WTF::move(url);
     const URL& urlForObserver = m_provisionalURL;
 
     forEachObserver([&urlForObserver](FrameLoadStateObserver& observer) {
@@ -72,14 +72,14 @@ void FrameLoadState::didExplicitOpen(URL&& url)
 {
     ASSERT(!url.isNull());
     m_provisionalURL = { };
-    setURL(WTFMove(url));
+    setURL(WTF::move(url));
 }
 
 void FrameLoadState::didReceiveServerRedirectForProvisionalLoad(URL&& url)
 {
     ASSERT(m_state == State::Provisional);
 
-    m_provisionalURL = WTFMove(url);
+    m_provisionalURL = WTF::move(url);
     const URL& urlForObserver = m_provisionalURL;
 
     forEachObserver([&urlForObserver](FrameLoadStateObserver& observer) {
@@ -141,12 +141,12 @@ void FrameLoadState::didFailLoad()
 void FrameLoadState::didSameDocumentNotification(URL&& url)
 {
     ASSERT(!url.isNull());
-    setURL(url.isNull() ? URL { aboutBlankURL() } : WTFMove(url));
+    setURL(url.isNull() ? URL { aboutBlankURL() } : WTF::move(url));
 }
 
 void FrameLoadState::setURL(URL&& url)
 {
-    m_url = WTFMove(url);
+    m_url = WTF::move(url);
     const URL& urlForObserver = m_url;
     forEachObserver([&urlForObserver](FrameLoadStateObserver& observer) {
         observer.didCancelProvisionalLoad();

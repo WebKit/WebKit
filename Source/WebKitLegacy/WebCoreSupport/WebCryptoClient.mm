@@ -52,14 +52,14 @@ std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8
     auto masterKey = WebCore::defaultWebCryptoMasterKey();
     if (!masterKey)
         return std::nullopt;
-    if (!WebCore::wrapSerializedCryptoKey(WTFMove(*masterKey), key, wrappedKey))
+    if (!WebCore::wrapSerializedCryptoKey(WTF::move(*masterKey), key, wrappedKey))
         return std::nullopt;
     return wrappedKey;
 }
 
 std::optional<Vector<uint8_t>> WebCryptoClient::serializeAndWrapCryptoKey(WebCore::CryptoKeyData&& keyData) const
 {
-    auto key = WebCore::CryptoKey::create(WTFMove(keyData));
+    auto key = WebCore::CryptoKey::create(WTF::move(keyData));
     if (!key)
         return std::nullopt;
 

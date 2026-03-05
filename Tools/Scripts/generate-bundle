@@ -465,7 +465,15 @@ class BundleCreator(object):
 
     def _get_gstreamer_modules(self):
         gstreamer_plugins_dir = self._get_pkg_config_var('gstreamer-1.0', 'pluginsdir')
-        return self._list_files_directory(gstreamer_plugins_dir, filter_suffix='.so')
+        gstreamer_plugin_list = self._list_files_directory(gstreamer_plugins_dir, filter_suffix='.so')
+        # Discard the Gstreamer plugins that are not needed and that increase the final bundle
+        # size significantly (either because their own size or because they pull extra libraries)
+        gst_plugin_ignore_list = [ '1394', 'a52dec', 'aasink', 'aja', 'amrnb', 'amrwbdec', 'cacasink', 'cdparanoia', 'dc1394', 'de265', 'directfb', 'dv',
+                                   'dvdlpcmdec', 'flite', 'fluidsynthmidi', 'ges', 'gtk', 'gtkwayland', 'lc3', 'ldac', 'libvisual', 'modplug', 'msdk', 'musepack',
+                                   'neonhttpsrc', 'nvcodec', 'openaptx', 'opencv', 'openmpt', 'openni2', 'python', 'qml6', 'qmlgl', 'qroverlay', 'rtspclientsink',
+                                   'sbc', 'shout2', 'spandsp', 'taglib', 'uvch264', 'voaacenc', 'voamrwbenc', 'waylandsink', 'wildmidi', 'zbar', 'zxing',
+                                   'codec2json', 'camerabin', 'ximagesrc', 'openexr', 'nle', 'ladspa', 'openal']
+        return [p for p in gstreamer_plugin_list if os.path.basename(p).removeprefix('libgst').removesuffix('.so') not in gst_plugin_ignore_list]
 
     def _get_gstreamer_plugin_scanner(self):
         def plugin_scanner_found(plugin_scanner_path):
@@ -490,7 +498,13 @@ class BundleCreator(object):
         libc_library_names = [ 'libanl', 'libBrokenLocale', 'libc', 'libcrypt', 'libdl', 'libgcc_s', 'libm',
                                'libmvec', 'libnsl', 'libpthread', 'libresolv', 'librt', 'libthread_db', 'libutil']
         libc_libraries = []
-        lib_dir = self._get_pkg_config_var('dri', 'libdir')
+        # libc does not have pkg-config support, use gcc to find the dir for the libraries
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['gcc', '-print-file-name=libc.so.6'])
+        if retcode != 0:
+            raise RuntimeError('The gcc command returned status %d' % retcode)
+        lib_dir = os.path.dirname(os.path.realpath(stdout.strip()))
+        if not os.path.isdir(lib_dir):
+            raise RuntimeError('The value returned by gcc is not a directory: %s' % lib_dir)
         for entry in os.listdir(lib_dir):
             if any(entry.startswith(l+'.so.') for l in libc_library_names) or (entry.startswith('libnss_') and '.so.' in entry):
                 libc_libraries.append(os.path.join(lib_dir, entry))
@@ -874,11 +888,16 @@ class BundleCreator(object):
                 os.makedirs(icons_target_dir)
                 gtk_icon_basedir = '/run/host/share/icons' if flatpakutils.is_sandboxed() else '/usr/share/icons'
                 gtk_target_icon_dir = os.path.join(icons_target_dir, 'hicolor')
-                for gtk_icon_theme in ['Adwaita', 'hicolor']:
+                gtk_icon_dirs_copied = 0
+                for gtk_icon_theme in ['Adwaita', 'hicolor', 'gnome']:
                     gtk_source_icon_dir = os.path.join(gtk_icon_basedir, gtk_icon_theme)
-                    if not os.path.isdir(gtk_source_icon_dir):
-                        raise NotImplementedError('Can not find the GTK icon theme at path "%s" in this system' % gtk_source_icon_dir)
-                    shutil.copytree(gtk_source_icon_dir, gtk_target_icon_dir, ignore_dangling_symlinks=True, dirs_exist_ok=True)
+                    if os.path.isdir(gtk_source_icon_dir):
+                        gtk_icon_dirs_copied += 1
+                        shutil.copytree(gtk_source_icon_dir, gtk_target_icon_dir, ignore_dangling_symlinks=True, dirs_exist_ok=True)
+                    else:
+                        _log.warning(f"Can't find the GTK icon theme at path '{gtk_source_icon_dir}' in this system. Skipping it. This may cause missing icons in MiniBrowser.")
+                if not gtk_icon_dirs_copied:
+                       raise NotImplementedError('No GTK icon theme dirs were found in this system.')
                 retcode, stdout, stderr = self._run_cmd_and_get_output(['gtk4-update-icon-cache', '-f', '-t', gtk_target_icon_dir])
                 if retcode != 0:
                     raise RuntimeError("The command to update gtk icons cache returned non-zero status: %d.\n\tstdout: %s\n\tstderr: %s" %(retcode, stdout, stderr))

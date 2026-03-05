@@ -142,7 +142,7 @@ public:
 
     static Ref<ProcessLauncher> create(Client* client, LaunchOptions&& launchOptions)
     {
-        return adoptRef(*new ProcessLauncher(client, WTFMove(launchOptions)));
+        return adoptRef(*new ProcessLauncher(client, WTF::move(launchOptions)));
     }
 
     virtual ~ProcessLauncher();
@@ -179,7 +179,7 @@ private:
     CheckedPtr<Client> m_client;
 
 #if PLATFORM(COCOA)
-    XPCObjectPtr<xpc_connection_t> m_xpcConnection;
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
 #endif
 
 #if USE(EXTENSIONKIT)

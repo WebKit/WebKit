@@ -39,6 +39,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-font-size-with-margin-override-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-font-size-with-margin-override-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-font-size-with-margin-override.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-background-color-hsla-to-legacy-rgb-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-background-color-hsla-to-legacy-rgb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-background-color-hsla-to-legacy-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-background-color-oklch-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-background-color-oklch-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-background-color-oklch-001.html
@@ -148,6 +151,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parent-after-change-style-pseudo-element-flicker-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parent-after-change-style-pseudo-element-flicker.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/revert-rule-keyframes-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/revert-rule-keyframes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/sample-on-last-keyframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/simultaneous-animations-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/style-animation-parsing.html

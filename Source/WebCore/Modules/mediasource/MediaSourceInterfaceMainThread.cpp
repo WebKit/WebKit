@@ -36,7 +36,7 @@
 namespace WebCore {
 
 MediaSourceInterfaceMainThread::MediaSourceInterfaceMainThread(Ref<MediaSource>&& mediaSource)
-    : m_mediaSource(WTFMove(mediaSource))
+    : m_mediaSource(WTF::move(mediaSource))
 {
 }
 
@@ -80,7 +80,7 @@ bool MediaSourceInterfaceMainThread::isStreamingContent() const
 
 bool MediaSourceInterfaceMainThread::attachToElement(WeakPtr<HTMLMediaElement>&& element)
 {
-    return m_mediaSource->attachToElement(WTFMove(element));
+    return m_mediaSource->attachToElement(WTF::move(element));
 }
 
 void MediaSourceInterfaceMainThread::detachFromElement()

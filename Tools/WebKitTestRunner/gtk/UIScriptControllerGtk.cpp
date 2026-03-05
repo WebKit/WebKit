@@ -95,7 +95,8 @@ void UIScriptControllerGtk::copyText(JSStringRef text)
 
 void UIScriptControllerGtk::paste()
 {
-    // FIXME: implement.
+    auto page = TestController::singleton().mainWebView()->page();
+    WKPageExecuteCommand(page, WKStringCreateWithUTF8CString("Paste"));
 }
 
 void UIScriptControllerGtk::dismissMenu()

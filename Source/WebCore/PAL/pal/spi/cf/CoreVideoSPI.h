@@ -25,9 +25,10 @@
 
 #pragma once
 
-DECLARE_SYSTEM_HEADER
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
 
-#include <CoreVideo/CoreVideo.h>
+DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <CoreVideo/CVPixelBufferPrivate.h>

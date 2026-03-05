@@ -34,10 +34,12 @@
 #include "JITSafepoint.h"
 #include "JITWorklistThread.h"
 #include "JSCellInlines.h"
+#include "ProfilerSupport.h"
 #include "VMInlines.h"
 #include <wtf/CompilationThread.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace JSC {
 
@@ -207,43 +209,53 @@ void JITPlan::beginSignpostImpl()
     ASSERT(Options::useCompilerSignpost() && !m_signpostMessage.isNull());
     auto id = signpostId(*this);
     UNUSED_VARIABLE(id); // WTFBeginSignpost not always defined
+    String detalString;
     switch (m_stage) {
     case JITPlanStage::Preparing:
         WTFBeginSignpost(id, JSCJITPlanQueued, "%" PUBLIC_LOG_STRING, m_signpostMessage.data());
+        detalString = makeString("JSCJITPlanQueued:"_s, m_signpostMessage);
         break;
     case JITPlanStage::Compiling:
         WTFBeginSignpost(id, JSCJITCompiler, "%" PUBLIC_LOG_STRING, m_signpostMessage.data());
+        detalString = makeString("JSCJITCompiler:"_s, m_signpostMessage);
         break;
     case JITPlanStage::Ready:
         WTFBeginSignpost(id, JSCJITPlanReady, "%" PUBLIC_LOG_STRING, m_signpostMessage.data());
+        detalString = makeString("JSCJITPlanReady:"_s, m_signpostMessage);
         break;
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();
     };
+    ProfilerSupport::markStart(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.ascii().data());
 }
 
 void JITPlan::endSignpostImpl(JITPlan::SignpostDetail detail)
 {
     ASSERT(Options::useCompilerSignpost() && !m_signpostMessage.isNull());
     auto id = signpostId(*this);
-    const char* detailStr = "";
+    auto detailStr = ""_s;
     if (detail == JITPlan::SignpostDetail::Canceled)
-        detailStr = "Canceled";
+        detailStr = "Canceled"_s;
     UNUSED_VARIABLE(id); // WTFEndSignpost not always defined
     UNUSED_VARIABLE(detailStr);
+    String detalString;
     switch (m_stage) {
     case JITPlanStage::Preparing:
-        WTFEndSignpost(id, JSCJITPlanQueued, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr);
+        WTFEndSignpost(id, JSCJITPlanQueued, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr.characters());
+        detalString = makeString("JSCJITPlanQueued:"_s, m_signpostMessage, " "_s, detailStr);
         break;
     case JITPlanStage::Compiling:
-        WTFEndSignpost(id, JSCJITCompiler, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr);
+        WTFEndSignpost(id, JSCJITCompiler, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr.characters());
+        detalString = makeString("JSCJITCompiler:"_s, m_signpostMessage, " "_s, detailStr);
         break;
     case JITPlanStage::Ready:
-        WTFEndSignpost(id, JSCJITPlanReady, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr);
+        WTFEndSignpost(id, JSCJITPlanReady, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr.characters());
+        detalString = makeString("JSCJITPlanReady:"_s, m_signpostMessage, " "_s, detailStr);
         break;
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();
     };
+    ProfilerSupport::markEnd(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.ascii().data());
 }
 
 void JITPlan::compileInThread(JITWorklistThread* thread)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +35,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "Logging.h"
 #include "PlacedFloats.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TableFormattingState.h"
 
@@ -104,7 +105,7 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
                     return { containingBlock.style().logicalHeight(), containingBlock.style().usedZoomForLength() };
                 }
                 ASSERT_NOT_REACHED();
-                return { CSS::Keyword::Auto { }, Style::ZoomFactor { 1.0f, layoutBox.style().deviceScaleFactor() } };
+                return { CSS::Keyword::Auto { }, Style::ZoomFactor { 1.0f } };
             }();
             containingBlockHeight = fixedValue(nonAnonymousContainingBlockLogicalHeight, nonAnonymousContainingBlockUsedZoom);
         }
@@ -152,12 +153,12 @@ template<FormattingGeometry::WidthType widthType> std::optional<LayoutUnit> Form
             if (!elementBox->hasInFlowOrFloatingChild())
                 return IntrinsicWidthConstraints { 0_lu, containingBlockWidth };
             ASSERT(elementBox->establishesFormattingContext());
-            auto& layoutState = this->layoutState();
-            if (layoutState.hasFormattingState(*elementBox)) {
-                if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(*elementBox).intrinsicWidthConstraints())
+            CheckedRef layoutState = this->layoutState();
+            if (layoutState->hasFormattingState(*elementBox)) {
+                if (auto intrinsicWidthConstraints = layoutState->formattingStateForFormattingContext(*elementBox).intrinsicWidthConstraints())
                     return *intrinsicWidthConstraints;
             }
-            return LayoutContext::createFormattingContext(*elementBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
+            return LayoutContext::createFormattingContext(*elementBox, const_cast<LayoutState&>(layoutState.get()))->computedIntrinsicWidthConstraints();
         }();
         if (width.isMinContent())
             return intrinsicWidthConstraints.minimum;
@@ -175,9 +176,9 @@ template<FormattingGeometry::WidthType widthType> std::optional<LayoutUnit> Form
 std::optional<LayoutUnit> FormattingGeometry::computedWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
     if (auto computedWidth = computedWidthValue<WidthType::Normal>(layoutBox, containingBlockWidth)) {
-        auto& style = layoutBox.style();
+        CheckedRef style = layoutBox.style();
         // Non-quantitative values such as auto and min-content are not influenced by the box-sizing property.
-        if (style.boxSizing() == BoxSizing::ContentBox || !style.width().isSpecified())
+        if (style->boxSizing() == BoxSizing::ContentBox || !style->width().isSpecified())
             return computedWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         return *computedWidth - boxGeometry.horizontalBorderAndPadding();
@@ -339,13 +340,13 @@ VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const 
     // 6. 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
 
     auto& formattingContext = this->formattingContext();
-    auto& style = layoutBox.style();
+    CheckedRef style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     auto containingBlockHeight = verticalConstraints.logicalHeight;
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
 
-    auto top = computedValue(style.logicalTop(), containingBlockWidth, style.usedZoomForLength());
-    auto bottom = computedValue(style.logicalBottom(), containingBlockWidth, style.usedZoomForLength());
+    auto top = computedValue(style->logicalTop(), containingBlockWidth, style->usedZoomForLength());
+    auto bottom = computedValue(style->logicalBottom(), containingBlockWidth, style->usedZoomForLength());
     auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox, containingBlockHeight);
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
@@ -459,13 +460,13 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
     // 6. 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
 
     auto& formattingContext = this->formattingContext();
-    auto& style = layoutBox.style();
+    CheckedRef style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
     auto isLeftToRightDirection = FormattingContext::containingBlock(layoutBox).writingMode().isBidiLTR();
     
-    auto left = computedValue(style.logicalLeft(), containingBlockWidth, style.usedZoomForLength());
-    auto right = computedValue(style.logicalRight(), containingBlockWidth, style.usedZoomForLength());
+    auto left = computedValue(style->logicalLeft(), containingBlockWidth, style->usedZoomForLength());
+    auto right = computedValue(style->logicalRight(), containingBlockWidth, style->usedZoomForLength());
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
     UsedHorizontalMargin usedHorizontalMargin;
@@ -586,13 +587,13 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Ele
     // 5. If at this point the values are over-constrained, ignore the value for 'bottom' and solve for that value.
 
     auto& formattingContext = this->formattingContext();
-    auto& style = replacedBox.style();
+    CheckedRef style = replacedBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(replacedBox);
     auto containingBlockHeight = verticalConstraints.logicalHeight;
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
 
-    auto top = computedValue(style.logicalTop(), containingBlockWidth, style.usedZoomForLength());
-    auto bottom = computedValue(style.logicalBottom(), containingBlockWidth, style.usedZoomForLength());
+    auto top = computedValue(style->logicalTop(), containingBlockWidth, style->usedZoomForLength());
+    auto bottom = computedValue(style->logicalBottom(), containingBlockWidth, style->usedZoomForLength());
     auto height = inlineReplacedContentHeightAndMargin(replacedBox, horizontalConstraints, verticalConstraints, overriddenVerticalValues).contentHeight;
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(replacedBox, horizontalConstraints);
     std::optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
@@ -671,13 +672,13 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
     //   'right' (in case 'direction' is 'ltr') and solve for that value.
 
     auto& formattingContext = this->formattingContext();
-    auto& style = replacedBox.style();
+    CheckedRef style = replacedBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(replacedBox);
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
     auto isLeftToRightDirection = FormattingContext::containingBlock(replacedBox).writingMode().isBidiLTR();
 
-    auto left = computedValue(style.logicalLeft(), containingBlockWidth, style.usedZoomForLength());
-    auto right = computedValue(style.logicalRight(), containingBlockWidth, style.usedZoomForLength());
+    auto left = computedValue(style->logicalLeft(), containingBlockWidth, style->usedZoomForLength());
+    auto right = computedValue(style->logicalRight(), containingBlockWidth, style->usedZoomForLength());
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(replacedBox, horizontalConstraints);
     std::optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
     std::optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
@@ -906,11 +907,11 @@ ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(
     auto& formattingContext = this->formattingContext();
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(replacedBox, horizontalConstraints);
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
-    auto& style = replacedBox.style();
+    CheckedRef style = replacedBox.style();
 
     auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(replacedBox, verticalConstraints ? std::optional<LayoutUnit>(verticalConstraints->logicalHeight) : std::nullopt);
     auto heightIsAuto = !overriddenVerticalValues.height && isHeightAuto(replacedBox);
-    auto widthIsAuto = style.logicalWidth().isAuto();
+    auto widthIsAuto = style->logicalWidth().isAuto();
 
     if (heightIsAuto && widthIsAuto && replacedBox.hasIntrinsicHeight()) {
         // #2
@@ -1010,11 +1011,11 @@ LayoutSize FormattingGeometry::inFlowPositionedPositionOffset(const Box& layoutB
     // 2. If one of them is 'auto', it becomes the negative of the other.
     // 3. If neither is 'auto', 'bottom' is ignored (i.e., the used value of 'bottom' will be minus the value of 'top').
 
-    auto& style = layoutBox.style();
+    CheckedRef style = layoutBox.style();
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
 
-    auto top = computedValue(style.logicalTop(), containingBlockWidth, style.usedZoomForLength());
-    auto bottom = computedValue(style.logicalBottom(), containingBlockWidth, style.usedZoomForLength());
+    auto top = computedValue(style->logicalTop(), containingBlockWidth, style->usedZoomForLength());
+    auto bottom = computedValue(style->logicalBottom(), containingBlockWidth, style->usedZoomForLength());
 
     if (!top && !bottom) {
         // #1
@@ -1041,8 +1042,8 @@ LayoutSize FormattingGeometry::inFlowPositionedPositionOffset(const Box& layoutB
     //    If the 'direction' property of the containing block is 'ltr', the value of 'left' wins and 'right' becomes -'left'.
     //    If 'direction' of the containing block is 'rtl', 'right' wins and 'left' is ignored.
 
-    auto left = computedValue(style.logicalLeft(), containingBlockWidth, style.usedZoomForLength());
-    auto right = computedValue(style.logicalRight(), containingBlockWidth, style.usedZoomForLength());
+    auto left = computedValue(style->logicalLeft(), containingBlockWidth, style->usedZoomForLength());
+    auto right = computedValue(style->logicalRight(), containingBlockWidth, style->usedZoomForLength());
 
     if (!left && !right) {
         // #1
@@ -1081,16 +1082,16 @@ inline static WritingMode usedWritingMode(const Box& layoutBox)
 
 BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
 {
-    auto& style = layoutBox.style();
+    CheckedRef style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
         {
-            Style::evaluate<LayoutUnit>(style.borderLeftWidth(), style.usedZoomForLength()),
-            Style::evaluate<LayoutUnit>(style.borderRightWidth(), style.usedZoomForLength())
+            Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), Style::ZoomNeeded { })
         },
         {
-            Style::evaluate<LayoutUnit>(style.borderTopWidth(), style.usedZoomForLength()),
-            Style::evaluate<LayoutUnit>(style.borderBottomWidth(), style.usedZoomForLength())
+            Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), Style::ZoomNeeded { })
         },
     };
 }
@@ -1100,47 +1101,47 @@ BoxGeometry::Edges FormattingGeometry::computedPadding(const Box& layoutBox, con
     if (!layoutBox.isPaddingApplicable())
         return { };
 
-    auto& style = layoutBox.style();
-    auto usedZoom = style.usedZoomForLength();
+    CheckedRef style = layoutBox.style();
+    auto usedZoom = style->usedZoomForLength();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return {
         {
-            Style::evaluate<LayoutUnit>(style.paddingStart(), containingBlockWidth, usedZoom),
-            Style::evaluate<LayoutUnit>(style.paddingEnd(), containingBlockWidth, usedZoom)
+            Style::evaluate<LayoutUnit>(style->paddingStart(), containingBlockWidth, usedZoom),
+            Style::evaluate<LayoutUnit>(style->paddingEnd(), containingBlockWidth, usedZoom)
         },
         {
-            Style::evaluate<LayoutUnit>(style.paddingBefore(), containingBlockWidth, usedZoom),
-            Style::evaluate<LayoutUnit>(style.paddingAfter(), containingBlockWidth, usedZoom)
+            Style::evaluate<LayoutUnit>(style->paddingBefore(), containingBlockWidth, usedZoom),
+            Style::evaluate<LayoutUnit>(style->paddingAfter(), containingBlockWidth, usedZoom)
         }
     };
 }
 
 ComputedHorizontalMargin FormattingGeometry::computedHorizontalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
 {
-    auto& style = layoutBox.style();
-    const auto& zoomFactor = style.usedZoomForLength();
+    CheckedRef style = layoutBox.style();
+    const auto& zoomFactor = style->usedZoomForLength();
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
     if (usedWritingMode(layoutBox).isHorizontal())
-        return { computedValue(style.marginLeft(), containingBlockWidth, zoomFactor), computedValue(style.marginRight(), containingBlockWidth, zoomFactor) };
-    return { computedValue(style.marginTop(), containingBlockWidth, zoomFactor), computedValue(style.marginBottom(), containingBlockWidth, zoomFactor) };
+        return { computedValue(style->marginLeft(), containingBlockWidth, zoomFactor), computedValue(style->marginRight(), containingBlockWidth, zoomFactor) };
+    return { computedValue(style->marginTop(), containingBlockWidth, zoomFactor), computedValue(style->marginBottom(), containingBlockWidth, zoomFactor) };
 }
 
 ComputedVerticalMargin FormattingGeometry::computedVerticalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
 {
-    auto& style = layoutBox.style();
-    const auto& zoomFactor = style.usedZoomForLength();
+    CheckedRef style = layoutBox.style();
+    const auto& zoomFactor = style->usedZoomForLength();
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
     if (usedWritingMode(layoutBox).isHorizontal())
-        return { computedValue(style.marginTop(), containingBlockWidth, zoomFactor), computedValue(style.marginBottom(), containingBlockWidth, zoomFactor) };
-    return { computedValue(style.marginLeft(), containingBlockWidth, zoomFactor), computedValue(style.marginRight(), containingBlockWidth, zoomFactor) };
+        return { computedValue(style->marginTop(), containingBlockWidth, zoomFactor), computedValue(style->marginBottom(), containingBlockWidth, zoomFactor) };
+    return { computedValue(style->marginLeft(), containingBlockWidth, zoomFactor), computedValue(style->marginRight(), containingBlockWidth, zoomFactor) };
 }
 
 IntrinsicWidthConstraints FormattingGeometry::constrainByMinMaxWidth(const Box& layoutBox, IntrinsicWidthConstraints intrinsicWidth) const
 {
-    auto& style = layoutBox.style();
-    auto zoomFactor = style.usedZoomForLength();
-    auto minWidth = fixedValue(style.logicalMinWidth(), zoomFactor);
-    auto maxWidth = fixedValue(style.logicalMaxWidth(), zoomFactor);
+    CheckedRef style = layoutBox.style();
+    auto zoomFactor = style->usedZoomForLength();
+    auto minWidth = fixedValue(style->logicalMinWidth(), zoomFactor);
+    auto maxWidth = fixedValue(style->logicalMaxWidth(), zoomFactor);
     if (!minWidth && !maxWidth)
         return intrinsicWidth;
 

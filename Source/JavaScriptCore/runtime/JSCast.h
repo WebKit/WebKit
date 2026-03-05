@@ -147,8 +147,8 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(JSArrayBufferView, FirstTypedArrayType, LastTypedArrayType) \
     macro(JSIterator, JSType::JSIteratorType, JSType::JSIteratorType) \
     macro(JSPromise, JSType::JSPromiseType, JSType::JSPromiseType) \
-    macro(JSPromiseAllContext, JSType::JSPromiseAllContextType, JSType::JSPromiseAllContextType) \
-    macro(JSPromiseAllGlobalContext, JSType::JSPromiseAllGlobalContextType, JSType::JSPromiseAllGlobalContextType) \
+    macro(JSPromiseCombinatorsContext, JSType::JSPromiseCombinatorsContextType, JSType::JSPromiseCombinatorsContextType) \
+    macro(JSPromiseCombinatorsGlobalContext, JSType::JSPromiseCombinatorsGlobalContextType, JSType::JSPromiseCombinatorsGlobalContextType) \
     macro(JSPromiseReaction, JSType::JSPromiseReactionType, JSType::JSPromiseReactionType) \
     macro(JSGlobalProxy, JSType::GlobalProxyType, JSType::GlobalProxyType) \
     macro(JSSet, JSType::JSSetType, JSType::JSSetType) \
@@ -174,6 +174,8 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
     macro(ShadowRealmObject, JSType::ShadowRealmType, JSType::ShadowRealmType) \
     macro(JSDataView, JSType::DataViewType, JSType::DataViewType) \
+    macro(JSGenerator, JSType::JSGeneratorType, JSType::JSGeneratorType) \
+    macro(JSAsyncGenerator, JSType::JSAsyncGeneratorType, JSType::JSAsyncGeneratorType) \
     macro(WebAssemblyGCObjectBase, JSType::WebAssemblyGCObjectType, JSType::WebAssemblyGCObjectType) \
 
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \

@@ -179,7 +179,11 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 @property (nonatomic, setter=_setGamepadAccessRequiresExplicitConsent:) BOOL _gamepadAccessRequiresExplicitConsent WK_API_AVAILABLE(visionos(2.0));
 @property (nonatomic, setter=_setCSSTransformStyleSeparatedEnabled:) BOOL _cssTransformStyleSeparatedEnabled WK_API_AVAILABLE(visionos(2.4));
+@property (nonatomic, setter=_setAllowsImmersiveEnvironments:) BOOL _allowsImmersiveEnvironments WK_API_AVAILABLE(visionos(WK_XROS_TBA));
 #endif
+
+@property (nonatomic, setter=_setSystemTextExtractionEnabled:) BOOL _systemTextExtractionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setBackgroundTextExtractionEnabled:) BOOL _backgroundTextExtractionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

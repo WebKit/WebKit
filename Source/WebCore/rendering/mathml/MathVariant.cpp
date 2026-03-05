@@ -49,7 +49,7 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
     // 1. In the Latin table it represents a hole in the mathematical alphanumeric block, where the character that should occupy that position is located elsewhere.
     // 2. It represents an Arabic letter.
     //  As a replacement, 0 is reserved to indicate no mapping was found.
-    static constexpr std::pair<char32_t, char32_t> arabicInitialMapTableEntries[] = {
+    static constexpr SortedArrayMap arabicInitialMapTable = { std::to_array<std::pair<char32_t, char32_t>>({
         { 0x628, 0x1EE21 },
         { 0x62A, 0x1EE35 },
         { 0x62B, 0x1EE36 },
@@ -70,10 +70,9 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
         { 0x646, 0x1EE2D },
         { 0x647, 0x1EE24 },
         { 0x64A, 0x1EE29 }
-    };
-    static constexpr SortedArrayMap arabicInitialMapTable = { arabicInitialMapTableEntries };
+    }) };
 
-    static constexpr std::pair<char32_t, char32_t> arabicTailedMapTableEntries[] = {
+    static constexpr SortedArrayMap arabicTailedMapTable = { std::to_array<std::pair<char32_t, char32_t>>({
         { 0x62C, 0x1EE42 },
         { 0x62D, 0x1EE47 },
         { 0x62E, 0x1EE57 },
@@ -89,10 +88,9 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
         { 0x64A, 0x1EE49 },
         { 0x66F, 0x1EE5F },
         { 0x6BA, 0x1EE5D }
-    };
-    static constexpr SortedArrayMap arabicTailedMapTable = { arabicTailedMapTableEntries };
+    }) };
 
-    static constexpr std::pair<char32_t, char32_t> arabicStretchedMapTableEntries[] = {
+    static constexpr SortedArrayMap arabicStretchedMapTable = { std::to_array<std::pair<char32_t, char32_t>>({
         { 0x628, 0x1EE61 },
         { 0x62A, 0x1EE75 },
         { 0x62B, 0x1EE76 },
@@ -116,10 +114,9 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
         { 0x64A, 0x1EE69 },
         { 0x66E, 0x1EE7C },
         { 0x6A1, 0x1EE7E }
-    };
-    static constexpr SortedArrayMap arabicStretchedMapTable = { arabicStretchedMapTableEntries };
+    }) };
 
-    static constexpr std::pair<char32_t, char32_t> arabicLoopedMapTableEntries[] = {
+    static constexpr SortedArrayMap arabicLoopedMapTable = { std::to_array<std::pair<char32_t, char32_t>>({
         { 0x627, 0x1EE80 },
         { 0x628, 0x1EE81 },
         { 0x62A, 0x1EE95 },
@@ -147,10 +144,9 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
         { 0x647, 0x1EE84 },
         { 0x648, 0x1EE85 },
         { 0x64A, 0x1EE89 }
-    };
-    static constexpr SortedArrayMap arabicLoopedMapTable = { arabicLoopedMapTableEntries };
+    }) };
 
-    static constexpr std::pair<char32_t, char32_t> arabicDoubleMapTableEntries[] = {
+    static constexpr SortedArrayMap arabicDoubleMapTable = { std::to_array<std::pair<char32_t, char32_t>>({
         { 0x628, 0x1EEA1 },
         { 0x62A, 0x1EEB5 },
         { 0x62B, 0x1EEB6 },
@@ -176,10 +172,9 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
         { 0x646, 0x1EEAD },
         { 0x648, 0x1EEA5 },
         { 0x64A, 0x1EEA9 }
-    };
-    static constexpr SortedArrayMap arabicDoubleMapTable = { arabicDoubleMapTableEntries };
+    }) };
 
-    static constexpr std::pair<char32_t, char32_t> latinExceptionMapTableEntries[] = {
+    static constexpr SortedArrayMap latinExceptionMapTable = { std::to_array<std::pair<char32_t, char32_t>>({
         { 0x1D455, 0x210E },
         { 0x1D49D, 0x212C },
         { 0x1D4A0, 0x2130 },
@@ -204,8 +199,7 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
         { 0x1D548, 0x211A },
         { 0x1D549, 0x211D },
         { 0x1D551, 0x2124 }
-    };
-    static constexpr SortedArrayMap latinExceptionMapTable = { latinExceptionMapTableEntries };
+    }) };
 
     constexpr char16_t greekUpperTheta = 0x03F4;
     constexpr char16_t holeGreekUpperTheta = 0x03A2;

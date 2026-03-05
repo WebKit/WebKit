@@ -79,6 +79,13 @@ public:
         return nullptr;
     }
 
+    JSCell* callee() const
+    {
+        if (auto* jsFrame = std::get_if<JSFrameData>(&m_frameData))
+            return jsFrame->callee.get();
+        return nullptr;
+    }
+
     bool isAsyncFrameWithoutCodeBlock() const
     {
         if (auto* jsFrame = std::get_if<JSFrameData>(&m_frameData))

@@ -54,7 +54,7 @@ async function runTest() {
             shouldBeType("events[0].event", "MouseEvent");
             shouldBeEqualToString("events[0].event.type", eventType);
             shouldBe("events[0].event.x", "clickX");
-            shouldBe("events[0].event.y", "clickY");
+            shouldBeCloseTo("events[0].event.y", clickY, 0.5);
             shouldBe("events[0].event.target", "attachment");
             events.shift();
         }

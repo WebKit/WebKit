@@ -82,7 +82,7 @@ void BytecodeRewriter::insertImpl(InsertionPoint insertionPoint, IncludeBranch i
         Insertion::Type::Insert,
         includeBranch,
         0,
-        WTFMove(writer)
+        WTF::move(writer)
     });
 }
 

@@ -78,15 +78,15 @@ auto VirtualHidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
 void VirtualHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
     ASSERT(isInitialized());
-    auto task = makeBlockPtr([weakThis = WeakPtr { *this }, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+    auto task = makeBlockPtr([weakThis = WeakPtr { *this }, data = WTF::move(data), callback = WTF::move(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
-        RunLoop::mainSingleton().dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+        RunLoop::mainSingleton().dispatch([weakThis, data = WTF::move(data), callback = WTF::move(callback)]() mutable {
             if (!weakThis) {
                 callback(DataSent::No);
                 return;
             }
 
-            weakThis->assembleRequest(WTFMove(data));
+            weakThis->assembleRequest(WTF::move(data));
 
             callback(DataSent::Yes);
         });
@@ -112,10 +112,10 @@ void VirtualHidConnection::receiveHidMessage(fido::FidoHidMessage&& message)
 {
     while (message.numPackets()) {
         auto report = message.popNextPacket();
-        RunLoop::mainSingleton().dispatch([report = WTFMove(report), weakThis = WeakPtr { *this }]() mutable {
+        RunLoop::mainSingleton().dispatch([report = WTF::move(report), weakThis = WeakPtr { *this }]() mutable {
             if (!weakThis)
                 return;
-            weakThis->receiveReport(WTFMove(report));
+            weakThis->receiveReport(WTF::move(report));
         });
     }
 }
@@ -125,8 +125,8 @@ void VirtualHidConnection::recieveResponseCode(fido::CtapDeviceResponseCode code
     Vector<uint8_t> buffer;
     buffer.append(static_cast<uint8_t>(code));
 
-    auto message = FidoHidMessage::create(m_currentChannel, FidoHidDeviceCommand::kCbor, WTFMove(buffer));
-    receiveHidMessage(WTFMove(*message));
+    auto message = FidoHidMessage::create(m_currentChannel, FidoHidDeviceCommand::kCbor, WTF::move(buffer));
+    receiveHidMessage(WTF::move(*message));
 }
 
 void VirtualHidConnection::parseRequest()
@@ -148,7 +148,7 @@ void VirtualHidConnection::parseRequest()
         payload.grow(kHidInitResponseSize);
         cryptographicallyRandomValues(payload.mutableSpan().subspan(writePosition, CtapChannelIdSize));
         auto channel = kHidBroadcastChannel;
-        FidoHidInitPacket initPacket(channel, FidoHidDeviceCommand::kInit, WTFMove(payload), payload.size());
+        FidoHidInitPacket initPacket(channel, FidoHidDeviceCommand::kInit, WTF::move(payload), payload.size());
         receiveReport(initPacket.getSerializedData());
         break;
     }
@@ -228,7 +228,7 @@ void VirtualHidConnection::parseRequest()
             CBORValue::MapValue response;
             response[CBORValue(1)] = CBORValue("none");
             response[CBORValue(2)] = CBORValue(authenticatorData);
-            auto attObj = buildAttestationMap(WTFMove(authenticatorData), String { emptyString() }, { }, AttestationConveyancePreference::None);
+            auto attObj = buildAttestationMap(WTF::move(authenticatorData), String { emptyString() }, { }, AttestationConveyancePreference::None);
             response[CBORValue(3)] = CBORValue(attObj);
             auto payload = CBORWriter::write(CBORValue(response));
             Vector<uint8_t> buffer;
@@ -236,8 +236,8 @@ void VirtualHidConnection::parseRequest()
             buffer.append(static_cast<uint8_t>(fido::CtapDeviceResponseCode::kSuccess));
             buffer.appendVector(*payload);
 
-            auto message = FidoHidMessage::create(m_requestMessage->channelId(), FidoHidDeviceCommand::kCbor, WTFMove(buffer));
-            receiveHidMessage(WTFMove(*message));
+            auto message = FidoHidMessage::create(m_requestMessage->channelId(), FidoHidDeviceCommand::kCbor, WTF::move(buffer));
+            receiveHidMessage(WTF::move(*message));
         } else if (cmd == CtapRequestCommand::kAuthenticatorGetAssertion) {
             auto it = requestMap->getMap().find(CBORValue(kCtapGetAssertionRpIdKey));
             if (it == requestMap->getMap().end()) {
@@ -323,8 +323,8 @@ void VirtualHidConnection::parseRequest()
             buffer.append(static_cast<uint8_t>(fido::CtapDeviceResponseCode::kSuccess));
             buffer.appendVector(*payload);
 
-            auto message = FidoHidMessage::create(m_requestMessage->channelId(), FidoHidDeviceCommand::kCbor, WTFMove(buffer));
-            receiveHidMessage(WTFMove(*message));
+            auto message = FidoHidMessage::create(m_requestMessage->channelId(), FidoHidDeviceCommand::kCbor, WTF::move(buffer));
+            receiveHidMessage(WTF::move(*message));
         }
         break;
     }

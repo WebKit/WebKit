@@ -33,6 +33,8 @@
 
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 
+#include <cstdint>
+
 #include <JavaScriptCore/BuiltinUtils.h>
 #include <JavaScriptCore/Identifier.h>
 #include <JavaScriptCore/JSFunction.h>

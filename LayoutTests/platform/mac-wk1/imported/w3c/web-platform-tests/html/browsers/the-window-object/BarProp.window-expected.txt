@@ -1,4 +1,0 @@
-
-FAIL BarBrop objects of a nested Window assert_equals: a BarProp's visible is wrong expected true but got false
-FAIL BarProp objects of an auxiliary Window assert_equals: a BarProp's visible is wrong expected true but got false
-

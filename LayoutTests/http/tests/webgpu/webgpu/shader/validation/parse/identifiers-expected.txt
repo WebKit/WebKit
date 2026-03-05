@@ -198,27 +198,29 @@ PASS :module_var_name:ident="noexcept"
 PASS :module_var_name:ident="noinline"
 PASS :module_var_name:ident="nointerpolation"
 FAIL :module_var_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     var<private> non_coherent : i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:282:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :module_var_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     var<private> noncoherent : i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:282:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :module_var_name:ident="noperspective"
@@ -485,27 +487,29 @@ PASS :module_const_name:ident="noexcept"
 PASS :module_const_name:ident="noinline"
 PASS :module_const_name:ident="nointerpolation"
 FAIL :module_const_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     const non_coherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:295:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :module_const_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     const noncoherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:295:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :module_const_name:ident="noperspective"
@@ -772,27 +776,29 @@ PASS :override_name:ident="noexcept"
 PASS :override_name:ident="noinline"
 PASS :override_name:ident="nointerpolation"
 FAIL :override_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     override non_coherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:308:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :override_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     override noncoherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:308:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :override_name:ident="noperspective"
@@ -1059,27 +1065,29 @@ PASS :function_name:ident="noexcept"
 PASS :function_name:ident="noinline"
 PASS :function_name:ident="nointerpolation"
 FAIL :function_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     fn non_coherent() {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:320:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :function_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     fn noncoherent() {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:320:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :function_name:ident="noperspective"
@@ -1346,27 +1354,29 @@ PASS :struct_name:ident="noexcept"
 PASS :struct_name:ident="noinline"
 PASS :struct_name:ident="nointerpolation"
 FAIL :struct_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     struct non_coherent { i : i32 }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:333:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :struct_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     struct noncoherent { i : i32 }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:333:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :struct_name:ident="noperspective"
@@ -1633,27 +1643,29 @@ PASS :alias_name:ident="noexcept"
 PASS :alias_name:ident="noinline"
 PASS :alias_name:ident="nointerpolation"
 FAIL :alias_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     alias non_coherent = i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:346:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :alias_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     alias noncoherent = i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:346:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :alias_name:ident="noperspective"
@@ -1920,27 +1932,29 @@ PASS :function_param_name:ident="noexcept"
 PASS :function_param_name:ident="noinline"
 PASS :function_param_name:ident="nointerpolation"
 FAIL :function_param_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     fn F(non_coherent : i32) {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:359:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :function_param_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     fn F(noncoherent : i32) {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:359:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :function_param_name:ident="noperspective"
@@ -2209,6 +2223,8 @@ PASS :function_const_name:ident="noexcept"
 PASS :function_const_name:ident="noinline"
 PASS :function_const_name:ident="nointerpolation"
 FAIL :function_const_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2216,13 +2232,14 @@ FAIL :function_const_name:ident="non_coherent" assert_unreached:
     fn F() {
       const non_coherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:373:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :function_const_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2230,10 +2247,9 @@ FAIL :function_const_name:ident="noncoherent" assert_unreached:
     fn F() {
       const noncoherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:373:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :function_const_name:ident="noperspective"
@@ -2502,6 +2518,8 @@ PASS :function_let_name:ident="noexcept"
 PASS :function_let_name:ident="noinline"
 PASS :function_let_name:ident="nointerpolation"
 FAIL :function_let_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2509,13 +2527,14 @@ FAIL :function_let_name:ident="non_coherent" assert_unreached:
     fn F() {
       let non_coherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:387:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :function_let_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2523,10 +2542,9 @@ FAIL :function_let_name:ident="noncoherent" assert_unreached:
     fn F() {
       let noncoherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:387:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :function_let_name:ident="noperspective"
@@ -2795,6 +2813,8 @@ PASS :function_var_name:ident="noexcept"
 PASS :function_var_name:ident="noinline"
 PASS :function_var_name:ident="nointerpolation"
 FAIL :function_var_name:ident="non_coherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2802,13 +2822,14 @@ FAIL :function_var_name:ident="non_coherent" assert_unreached:
     fn F() {
       var non_coherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:401:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :function_var_name:ident="noncoherent" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2816,10 +2837,9 @@ FAIL :function_var_name:ident="noncoherent" assert_unreached:
     fn F() {
       var noncoherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:401:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :function_var_name:ident="noperspective"

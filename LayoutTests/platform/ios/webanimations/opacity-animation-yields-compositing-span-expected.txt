@@ -7,7 +7,8 @@
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 8.00)
+          (offsetFromRenderer width=0 height=0.50)
+          (position 8.00 8.50)
           (bounds 25.00 19.00)
           (opacity 0.50)
           (drawsContent 1)

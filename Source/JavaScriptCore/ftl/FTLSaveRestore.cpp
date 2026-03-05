@@ -76,8 +76,8 @@ namespace {
 struct Regs {
     Regs()
     {
-        special = RegisterSetBuilder::stackRegisters();
-        special.merge(RegisterSetBuilder::reservedHardwareRegisters());
+        special = RegisterSet::stackRegisters();
+        special.merge(RegisterSet::reservedHardwareRegisters());
 
         first = MacroAssembler::firstRegister();
         while (special.contains(first, IgnoreVectors))

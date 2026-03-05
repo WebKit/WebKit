@@ -41,7 +41,7 @@ namespace AXPreferenceHelpers {
 static bool shouldUseDefault()
 {
     RetainPtr forceDefault = [[NSUserDefaults standardUserDefaults] objectForKey:@"ForceDefaultAccessibilitySettings"];
-    return forceDefault ? [forceDefault boolValue] : false;
+    return forceDefault && [forceDefault boolValue];
 }
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)

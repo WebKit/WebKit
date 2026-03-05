@@ -9,12 +9,12 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-mask-position-y
-user-select
-mask-position-x
-text-size-adjust
 initial-letter
 box-decoration-break
+user-select
+text-size-adjust
+mask-position-y
+mask-position-x
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -89,6 +89,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-slotted-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-statement-before-import.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-statement-copy-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-stylesheet-multi-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-stylesheet-sharing-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-stylesheet-sharing-important-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-stylesheet-sharing-important.html
@@ -127,8 +128,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-layer-015-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-layer-015-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-layer-015.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-rule-basic.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-rule-layer.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-rule-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-rule-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-rule-layer.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-002-expected.xht
@@ -152,6 +154,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-has-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-hover.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-001-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-002-print.html
@@ -170,6 +173,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-scope-end.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-scope-pseudo.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-scope-start.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-inner-pseudo-scope-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-layer.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-media.html

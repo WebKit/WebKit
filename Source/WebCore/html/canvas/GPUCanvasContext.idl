@@ -28,6 +28,8 @@
 [
     ActiveDOMObject,
     EnabledBySetting=WebGPUEnabled,
+    ReportExtraMemoryCost,
+    ReportExternalMemoryCost,
     Exposed=(Window,Worker),
     SecureContext,
     SkipVTableValidation,

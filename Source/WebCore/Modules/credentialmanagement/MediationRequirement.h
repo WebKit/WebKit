@@ -25,8 +25,12 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 namespace WebCore {
 
 enum class MediationRequirement : uint8_t { Silent, Optional, Required, Conditional };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

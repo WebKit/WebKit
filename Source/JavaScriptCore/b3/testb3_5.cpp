@@ -141,7 +141,7 @@ void testPatchpointWithStackArgumentResult()
     patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
     patchpoint->resultConstraints = { ValueRep::stackArgument(0) };
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -168,9 +168,9 @@ void testPatchpointWithAnyResult()
     patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
     patchpoint->resultConstraints = { ValueRep::WarmAny };
-    patchpoint->clobberLate(RegisterSetBuilder::allFPRs());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
-    patchpoint->clobber(RegisterSetBuilder(GPRInfo::regT0));
+    patchpoint->clobberLate(RegisterSet::allFPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet(GPRInfo::regT0));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2430,10 +2430,10 @@ void testCallFunctionWithHellaFloatArguments()
     CHECK_EQ(compileAndRun<float>(proc), functionWithHellaFloatArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 }
 
-void testLinearScanWithCalleeOnStack()
+void testForcedSpillCalleeOnStack()
 {
-    // This tests proper CCall generation when compiling with a lower optimization
-    // level and operating with a callee argument that's spilt on the stack.
+    // This tests proper CCall generation when compiling with forced spilling
+    // to operate with a callee argument that's spilt on the stack.
     // On ARM64, this caused an assert in MacroAssemblerARM64 because of disallowed
     // use of the scratch register.
     // https://bugs.webkit.org/show_bug.cgi?id=170672
@@ -2450,16 +2450,14 @@ void testLinearScanWithCalleeOnStack()
             arguments[0],
             arguments[1]));
 
-    // Force the linear scan algorithm to spill everything.
-    auto original = Options::airLinearScanSpillsEverything();
-    Options::airLinearScanSpillsEverything() = true;
+    // Force the greedy register allocator to spill everything.
+    auto original = Options::airGreedyRegAllocSpillsEverything();
+    Options::airGreedyRegAllocSpillsEverything() = true;
 
-    // Compiling with 1 as the optimization level enforces the use of linear scan
-    // for register allocation.
     auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code, 41, 1), 42);
 
-    Options::airLinearScanSpillsEverything() = original;
+    Options::airGreedyRegAllocSpillsEverything() = original;
 }
 
 void testChillDiv(int num, int den, int res)

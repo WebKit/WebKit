@@ -81,6 +81,18 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return newThreadStackBounds(pthread_self());
 }
 
+#elif OS(QNX)
+
+StackBounds StackBounds::currentThreadStackBoundsInternal()
+{
+    struct _thread_local_storage* tls = __tls();
+    void* bound = tls->__stackaddr;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    void* origin = static_cast<char*>(bound) + tls->__stacksize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    return StackBounds { origin, bound };
+}
+
 #elif OS(UNIX) || OS(HAIKU)
 
 #if OS(OPENBSD)
@@ -92,18 +104,6 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
     void* origin = stack.ss_sp;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     void* bound = static_cast<char*>(origin) - stack.ss_size;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    return StackBounds { origin, bound };
-}
-
-#elif OS(QNX)
-
-StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
-{
-    struct _thread_local_storage* tls = __tls();
-    void* bound = tls->__stackaddr;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    void* origin = static_cast<char*>(bound) + tls->__stacksize;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return StackBounds { origin, bound };
 }
@@ -178,52 +178,30 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #elif OS(WINDOWS)
 
+// GetCurrentThreadStackLimits returns OS-maintained stack limits that are:
+// - Independent of guard page state
+// - Independent of VirtualQuery results
+// - Accurate regardless of stack memory layout
+//
+// This replaces the previous VirtualQuery-based implementation which assumed
+// a 3-layer stack structure (uncommitted -> guard -> committed). That approach
+// could fail when:
+// - Guard pages were consumed by other threads
+// - Security software interfered with memory scanning
+// - Stacks were fully committed with no uncommitted region
+// - Embedded scenarios (e.g., Ruby Bug #11438)
+//
+// Reference:
+// https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthreadstacklimits
+
 StackBounds StackBounds::currentThreadStackBoundsInternal()
 {
-    MEMORY_BASIC_INFORMATION stackOrigin { };
-    VirtualQuery(&stackOrigin, &stackOrigin, sizeof(stackOrigin));
-    // stackOrigin.AllocationBase points to the reserved stack memory base address.
+    ULONG_PTR lowLimit = 0;
+    ULONG_PTR highLimit = 0;
+    GetCurrentThreadStackLimits(&lowLimit, &highLimit);
 
-    void* origin = static_cast<char*>(stackOrigin.BaseAddress) + stackOrigin.RegionSize;
-    // The stack on Windows consists out of three parts (uncommitted memory, a guard page and present
-    // committed memory). The 3 regions have different BaseAddresses but all have the same AllocationBase
-    // since they are all from the same VirtualAlloc. The 3 regions are laid out in memory (from high to
-    // low) as follows:
-    //
-    //    High |-------------------|  -----
-    //         | committedMemory   |    ^
-    //         |-------------------|    |
-    //         | guardPage         | reserved memory for the stack
-    //         |-------------------|    |
-    //         | uncommittedMemory |    v
-    //    Low  |-------------------|  ----- <--- stackOrigin.AllocationBase
-    //
-    // See http://msdn.microsoft.com/en-us/library/ms686774%28VS.85%29.aspx for more information.
-
-    MEMORY_BASIC_INFORMATION uncommittedMemory;
-    VirtualQuery(stackOrigin.AllocationBase, &uncommittedMemory, sizeof(uncommittedMemory));
-    ASSERT(uncommittedMemory.State == MEM_RESERVE);
-
-    MEMORY_BASIC_INFORMATION guardPage;
-    VirtualQuery(static_cast<char*>(uncommittedMemory.BaseAddress) + uncommittedMemory.RegionSize, &guardPage, sizeof(guardPage));
-    ASSERT(guardPage.Protect & PAGE_GUARD);
-
-    void* endOfStack = stackOrigin.AllocationBase;
-
-#ifndef NDEBUG
-    MEMORY_BASIC_INFORMATION committedMemory;
-    VirtualQuery(static_cast<char*>(guardPage.BaseAddress) + guardPage.RegionSize, &committedMemory, sizeof(committedMemory));
-    ASSERT(committedMemory.State == MEM_COMMIT);
-
-    void* computedEnd = static_cast<char*>(origin) - (uncommittedMemory.RegionSize + guardPage.RegionSize + committedMemory.RegionSize);
-
-    ASSERT(stackOrigin.AllocationBase == uncommittedMemory.AllocationBase);
-    ASSERT(stackOrigin.AllocationBase == guardPage.AllocationBase);
-    ASSERT(stackOrigin.AllocationBase == committedMemory.AllocationBase);
-    ASSERT(stackOrigin.AllocationBase == uncommittedMemory.BaseAddress);
-    ASSERT(endOfStack == computedEnd);
-#endif // NDEBUG
-    void* bound = static_cast<char*>(endOfStack) + guardPage.RegionSize;
+    void* origin = reinterpret_cast<void*>(highLimit);
+    void* bound = reinterpret_cast<void*>(lowLimit);
     return StackBounds { origin, bound };
 }
 

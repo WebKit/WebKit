@@ -73,7 +73,7 @@ struct _WebKitGeolocationPosition {
     }
 
     explicit _WebKitGeolocationPosition(GeolocationPositionData&& corePosition)
-        : position(WTFMove(corePosition))
+        : position(WTF::move(corePosition))
     {
     }
 
@@ -266,7 +266,7 @@ static void webkitGeolocationManagerStart(WebKitGeolocationManager* manager)
             return;
         }
 
-        WebKitGeolocationPosition position(WTFMove(corePosition));
+        WebKitGeolocationPosition position(WTF::move(corePosition));
         webkit_geolocation_manager_update_position(manager, &position);
     });
 }
@@ -429,7 +429,7 @@ void webkit_geolocation_manager_update_position(WebKitGeolocationManager* manage
     g_return_if_fail(position);
 
     auto corePosition = position->position;
-    auto wkPosition = WebGeolocationPosition::create(WTFMove(corePosition));
+    auto wkPosition = WebGeolocationPosition::create(WTF::move(corePosition));
     manager->priv->manager->providerDidChangePosition(wkPosition.ptr());
 }
 

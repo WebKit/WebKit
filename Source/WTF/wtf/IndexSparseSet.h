@@ -92,8 +92,8 @@ public:
     unsigned size() const;
     bool isEmpty() const;
     bool contains(unsigned) const;
-    const EntryType* get(unsigned) const;
-    EntryType* get(unsigned);
+    const EntryType* get(unsigned) const LIFETIME_BOUND;
+    EntryType* get(unsigned) LIFETIME_BOUND;
 
     typedef typename ValueList::const_iterator const_iterator;
     const_iterator begin() const LIFETIME_BOUND;
@@ -103,7 +103,7 @@ public:
 
     void validate();
     
-    const ValueList& values() const { return m_values; }
+    const ValueList& values() const LIFETIME_BOUND { return m_values; }
 
 private:
     Vector<unsigned, 0, OverflowHandler, 1> m_map;
@@ -153,7 +153,7 @@ inline bool IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::remove(
 
     if (EntryTypeTraits::key(m_values[position]) == value) {
         EntryType lastValue = m_values.last();
-        m_values[position] = WTFMove(lastValue);
+        m_values[position] = WTF::move(lastValue);
         m_map[EntryTypeTraits::key(lastValue)] = position;
         m_values.removeLast();
         return true;
@@ -235,13 +235,13 @@ void IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::validate()
 }
 
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
-auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::begin() const -> const_iterator
+auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::begin() const LIFETIME_BOUND -> const_iterator
 {
     return m_values.begin();
 }
 
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
-auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::end() const -> const_iterator
+auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::end() const LIFETIME_BOUND -> const_iterator
 {
     return m_values.end();
 }

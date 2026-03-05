@@ -67,11 +67,6 @@ extern "C" {
 #endif
 #endif
 
-#if !defined(LIBYUV_DISABLE_MSA) && defined(__mips_msa)
-#define HAS_HAMMINGDISTANCE_MSA
-#define HAS_SUMSQUAREERROR_MSA
-#endif
-
 uint32_t HammingDistance_C(const uint8_t* src_a,
                            const uint8_t* src_b,
                            int count);
@@ -90,9 +85,6 @@ uint32_t HammingDistance_NEON(const uint8_t* src_a,
 uint32_t HammingDistance_NEON_DotProd(const uint8_t* src_a,
                                       const uint8_t* src_b,
                                       int count);
-uint32_t HammingDistance_MSA(const uint8_t* src_a,
-                             const uint8_t* src_b,
-                             int count);
 uint32_t SumSquareError_C(const uint8_t* src_a,
                           const uint8_t* src_b,
                           int count);
@@ -108,9 +100,6 @@ uint32_t SumSquareError_NEON(const uint8_t* src_a,
 uint32_t SumSquareError_NEON_DotProd(const uint8_t* src_a,
                                      const uint8_t* src_b,
                                      int count);
-uint32_t SumSquareError_MSA(const uint8_t* src_a,
-                            const uint8_t* src_b,
-                            int count);
 
 uint32_t HashDjb2_C(const uint8_t* src, int count, uint32_t seed);
 uint32_t HashDjb2_SSE41(const uint8_t* src, int count, uint32_t seed);

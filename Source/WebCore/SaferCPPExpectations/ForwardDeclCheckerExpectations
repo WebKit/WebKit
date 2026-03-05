@@ -1,4 +1,3 @@
-Modules/Model/Implementation/DDMeshImpl.cpp
 Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp
 Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
 Modules/WebGPU/Implementation/WebGPUBufferImpl.cpp
@@ -22,20 +21,14 @@ Modules/WebGPU/Implementation/WebGPUTextureImpl.cpp
 Modules/WebGPU/Implementation/WebGPUTextureViewImpl.cpp
 Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
 Modules/WebGPU/Implementation/WebGPUXRSubImageImpl.cpp
-Modules/mediastream/RTCPeerConnection.h
 Modules/notifications/NotificationController.h
-Modules/webdatabase/DatabaseManager.h
 Modules/webdatabase/DatabaseThread.h
 accessibility/AccessibilityObject.cpp
 bindings/js/GarbageCollectionController.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSPaintRenderingContext2DCustom.cpp
-bridge/objc/objc_runtime.h
-crypto/cocoa/CryptoAlgorithmEd25519Cocoa.cpp
-crypto/cocoa/CryptoKeyOKPCocoa.cpp
 css/CSSStyleProperties.h
 css/CSSToLengthConversionData.h
-css/MediaList.h
 css/StyleSheetContents.cpp
 css/StyleSheetContents.h
 css/values/primitives/CSSPrimitiveData.h
@@ -43,53 +36,38 @@ dom/CustomElementReactionQueue.h
 dom/Element.h
 dom/Node.h
 editing/Editor.h
-editing/TextIterator.cpp
 html/HTMLMediaElement.cpp
 html/canvas/PlaceholderRenderingContext.cpp
-html/shadow/DateTimeEditElement.h
-html/track/TrackBase.h
-[ Mac ] inspector/InspectorFrontendHost.h
-inspector/InspectorInstrumentation.h
 inspector/InspectorStyleSheet.h
 inspector/InstrumentingAgents.h
 inspector/PageInspectorController.h
 inspector/UserGestureEmulationScope.h
-inspector/agents/InspectorNetworkAgent.h
 inspector/agents/InspectorPageAgent.h
 layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.h
 layout/integration/inline/LayoutIntegrationLineLayout.h
 layout/layouttree/LayoutElementBox.h
-page/DOMWindow.cpp
-page/EventHandler.h
-page/Page.h
-page/PageOverlayController.cpp
-page/WheelEventTestMonitor.h
-[ iOS ] page/ios/ContentChangeObserver.h
+[ iOS ] page/cocoa/ContentChangeObserver.h
 [ Mac ] page/mac/ImageOverlayControllerMac.mm
 [ Mac ] page/mac/ServicesOverlayController.mm
-page/scrolling/ScrollingCoordinator.h
 page/scrolling/ScrollingStateNode.h
 [ Mac ] page/scrolling/ScrollingStateScrollingNode.cpp
 platform/PODRedBlackTree.h
 platform/Scrollbar.h
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
-[ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
 platform/graphics/ImageBufferContextSwitcher.h
 platform/graphics/ca/PlatformCALayer.h
 platform/graphics/ca/TileController.cpp
 [ iOS ] platform/ios/DeviceMotionClientIOS.h
 [ iOS ] platform/ios/LegacyTileCache.h
 platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
-[ iOS ] platform/text/TextBoundaries.cpp
+rendering/MarkedText.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
-rendering/RenderTableCellInlines.h
 rendering/RenderTextLineBoxes.h
-rendering/style/StyleCachedImage.cpp
 rendering/svg/SVGRenderingContext.h
 style/StyleExtractorState.h
 style/StyleScope.h
+style/values/images/kinds/StyleCachedImage.cpp
 testing/Internals.cpp
-xml/parser/XMLDocumentParserLibxml2.cpp

@@ -29,6 +29,7 @@
 #include <JavaScriptCore/Register.h>
 #include <JavaScriptCore/StackAlignment.h>
 #include <wtf/ForbidHeapAllocation.h>
+#include <wtf/Platform.h>
 
 #if ENABLE(WEBASSEMBLY)
 #include <JavaScriptCore/JSWebAssemblyInstance.h>

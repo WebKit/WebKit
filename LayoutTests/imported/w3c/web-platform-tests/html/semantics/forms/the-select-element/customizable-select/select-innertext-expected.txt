@@ -1,7 +1,0 @@
-
-
-FAIL <select> innerText with old content model and appearance:auto. assert_equals: expected "one\ntwo" but got ""
-FAIL <select> innerText with new content model and appearance:auto. assert_equals: expected "one\ntwo" but got ""
-FAIL <select> innerText with new content model and appearance:base-select. assert_equals: expected "one\ntwo" but got ""
-FAIL <select> innerText with new content model and appearance:base-select with picker open. assert_equals: expected "one\ntwo" but got ""
-

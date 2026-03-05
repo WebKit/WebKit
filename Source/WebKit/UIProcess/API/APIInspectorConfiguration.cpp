@@ -40,7 +40,7 @@ InspectorConfiguration::~InspectorConfiguration() = default;
 
 void InspectorConfiguration::addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&& urlSchemeHandler, const WTF::String& urlScheme)
 {
-    m_customURLSchemes.append(std::make_pair(WTFMove(urlSchemeHandler), urlScheme));
+    m_customURLSchemes.append(std::make_pair(WTF::move(urlSchemeHandler), urlScheme));
 }
 
 WebKit::WebProcessPool* InspectorConfiguration::processPool()
@@ -50,7 +50,7 @@ WebKit::WebProcessPool* InspectorConfiguration::processPool()
 
 void InspectorConfiguration::setProcessPool(RefPtr<WebKit::WebProcessPool>&& processPool)
 {
-    m_processPool = WTFMove(processPool);
+    m_processPool = WTF::move(processPool);
 }
 
 } // namespace API

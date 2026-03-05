@@ -45,7 +45,7 @@ class RemoteAdapterProxy final : public WebCore::WebGPU::Adapter {
 public:
     static Ref<RemoteAdapterProxy> create(String&& name, WebCore::WebGPU::SupportedFeatures& features, WebCore::WebGPU::SupportedLimits& limits, bool isFallbackAdapter, bool xrCompatible, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteAdapterProxy(WTFMove(name), features, limits, isFallbackAdapter, xrCompatible, parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteAdapterProxy(WTF::move(name), features, limits, isFallbackAdapter, xrCompatible, parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteAdapterProxy();
@@ -69,14 +69,14 @@ private:
     bool xrCompatible() final;
     
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Error send(T&& message)
+    [[nodiscard]] IPC::Error send(T&& message)
     {
-        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->send(WTF::move(message), backing());
     }
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    [[nodiscard]] IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
+        return protect(root().streamClientConnection())->sendSync(WTF::move(message), backing());
     }
 
     void requestDevice(const WebCore::WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Device>&&)>&&) final;

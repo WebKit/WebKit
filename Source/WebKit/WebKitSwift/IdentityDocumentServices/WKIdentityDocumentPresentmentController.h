@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #import "WKIdentityDocumentPresentmentDelegate.h"
 #import "WKIdentityDocumentPresentmentRequest.h"
 #import "WKIdentityDocumentPresentmentResponse.h"
@@ -44,3 +46,5 @@ NS_SWIFT_UI_ACTOR
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(WEB_AUTHN)

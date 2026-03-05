@@ -19,12 +19,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 87x19
+        RenderText {#text} at (0,0) size 87x20
           text run at (0,0) width 87: "See this bug: "
-        RenderInline {A} at (86,0) size 172x19 [color=#0000EE]
-          RenderText {#text} at (86,0) size 172x19
+        RenderInline {A} at (86,0) size 172x20 [color=#0000EE]
+          RenderText {#text} at (86,0) size 172x20
             text run at (86,0) width 172: "<rdar://problem/3918712>"
-        RenderText {#text} at (0,0) size 778x59
+        RenderText {#text} at (0,0) size 778x60
           text run at (257,0) width 499: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost). "
           text run at (0,20) width 778: "Should see one box with blockquoted \"foo\" text, followed by another box with an \"x\" (not in a blockquote) and \"foo\" (in "
           text run at (0,40) width 92: "a blockquote)."

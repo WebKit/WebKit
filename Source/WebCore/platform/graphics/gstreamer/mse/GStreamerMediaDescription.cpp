@@ -23,6 +23,7 @@
 #include "GStreamerCommon.h"
 
 #include <gst/pbutils/pbutils.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
 
@@ -70,8 +71,7 @@ String GStreamerMediaDescription::extractCodecName(const GRefPtr<GstCaps>& caps)
         });
     }
 
-    GUniquePtr<gchar> description(gst_pb_utils_get_codec_description(originalCaps.get()));
-    auto codecName = String::fromLatin1(description.get());
+    auto codecName = String(GMallocString::unsafeAdoptFromUTF8(gst_pb_utils_get_codec_description(originalCaps.get())).span());
 
     // Report "H.264 (Main Profile)" and "H.264 (High Profile)" just as "H.264" to allow changes between both variants
     // go unnoticed to the SourceBuffer layer.

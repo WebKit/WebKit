@@ -448,7 +448,7 @@ class Manager(object):
 
             configuration = self._port.configuration_for_upload(self._port.target_host(0))
             if not configuration.get('flavor', None):  # The --result-report-flavor argument should override wk1/wk2
-                configuration['flavor'] = 'wk2' if self._options.webkit_test_runner else 'wk1'
+                configuration['flavor'] = 'wk1' if self._port.is_webkitlegacy() else 'wk2'
             temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(test_inputs, device_type=device_type)
 
             skipped_results = TestRunResults(self._expectations[device_type], len(aggregate_tests_to_skip))

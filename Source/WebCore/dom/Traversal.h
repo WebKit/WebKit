@@ -51,7 +51,7 @@ protected:
 
     bool matchesWhatToShow(const Node& node) const
     {
-        unsigned nodeMask = 1 << (node.nodeType() - 1);
+        unsigned nodeMask = 1 << (std::to_underlying(node.nodeType()) - 1);
         return nodeMask & m_whatToShow;
     }
 

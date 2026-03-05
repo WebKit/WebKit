@@ -33,7 +33,7 @@ namespace WebCore {
 struct ServiceWorkerClientPendingMessage {
     MessageWithMessagePorts message;
     ServiceWorkerData sourceData;
-    String sourceOrigin;
+    SecurityOriginData sourceOrigin;
 };
 
 } // namespace WebCore

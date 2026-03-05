@@ -29,8 +29,10 @@
 
 #include "APIObject.h"
 #include "WebExtensionPortChannelIdentifier.h"
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSError;
 OBJC_CLASS WKWebExtensionMessagePort;
@@ -63,7 +65,7 @@ public:
 
     bool operator==(const WebExtensionMessagePort&) const;
 
-    const String& applicationIdentifier() const { return m_applicationIdentifier; }
+    const String& applicationIdentifier() const LIFETIME_BOUND { return m_applicationIdentifier; }
     WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
     WebExtensionContext* extensionContext() const;
 

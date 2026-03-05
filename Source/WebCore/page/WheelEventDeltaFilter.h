@@ -43,14 +43,14 @@ public:
 
     WEBCORE_EXPORT virtual void updateFromEvent(const PlatformWheelEvent&) = 0;
 
-    WEBCORE_EXPORT PlatformWheelEvent eventCopyWithFilteredDeltas(const PlatformWheelEvent&) const;
-    WEBCORE_EXPORT PlatformWheelEvent eventCopyWithVelocity(const PlatformWheelEvent&) const;
+    WEBCORE_EXPORT PlatformWheelEvent NODELETE eventCopyWithFilteredDeltas(const PlatformWheelEvent&) const;
+    WEBCORE_EXPORT PlatformWheelEvent NODELETE eventCopyWithVelocity(const PlatformWheelEvent&) const;
 
-    WEBCORE_EXPORT FloatSize filteredVelocity() const;
-    WEBCORE_EXPORT FloatSize filteredDelta() const;
+    WEBCORE_EXPORT FloatSize NODELETE filteredVelocity() const;
+    WEBCORE_EXPORT FloatSize NODELETE filteredDelta() const;
 
-    WEBCORE_EXPORT static bool shouldApplyFilteringForEvent(const PlatformWheelEvent&);
-    WEBCORE_EXPORT static bool shouldIncludeVelocityForEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT static bool NODELETE shouldApplyFilteringForEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT static bool NODELETE shouldIncludeVelocityForEvent(const PlatformWheelEvent&);
 
 protected:
     FloatSize m_currentFilteredDelta;

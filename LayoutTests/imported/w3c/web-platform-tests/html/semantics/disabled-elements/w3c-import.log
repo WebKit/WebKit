@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-checkbox-click.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch-additional.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabledElement.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/event-propagate-disabled-keyboard.tentative.html

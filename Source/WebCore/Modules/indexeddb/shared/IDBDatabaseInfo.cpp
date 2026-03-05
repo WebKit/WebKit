@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBDatabaseInfo);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBDatabaseInfo);
 
 IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap)
     : m_name(name)
     , m_version(version)
     , m_maxIndexID(maxIndexID)
-    , m_objectStoreMap(WTFMove(objectStoreMap))
+    , m_objectStoreMap(WTF::move(objectStoreMap))
 {
 }
 
@@ -74,7 +74,7 @@ IDBObjectStoreInfo IDBDatabaseInfo::createNewObjectStore(const String& name, std
     while (m_objectStoreMap.contains(objectStoreIdentifier))
         objectStoreIdentifier = IDBObjectStoreIdentifier::generate();
 
-    IDBObjectStoreInfo info(objectStoreIdentifier, name, WTFMove(keyPath), autoIncrement);
+    IDBObjectStoreInfo info(objectStoreIdentifier, name, WTF::move(keyPath), autoIncrement);
     m_objectStoreMap.set(info.identifier(), info);
     return info;
 }

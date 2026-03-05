@@ -94,11 +94,11 @@ public:
 
     EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
     bool destroyEGLImage(EGLImage) const;
-#if USE(GBM)
+#if USE(GBM) || OS(ANDROID)
     const Vector<GLDisplay::BufferFormat>& bufferFormats();
-#if USE(GSTREAMER)
-    const Vector<GLDisplay::BufferFormat>& bufferFormatsForVideo();
 #endif
+#if USE(GBM) && USE(GSTREAMER)
+    const Vector<GLDisplay::BufferFormat>& bufferFormatsForVideo();
 #endif
 
 #if ENABLE(WEBGL)

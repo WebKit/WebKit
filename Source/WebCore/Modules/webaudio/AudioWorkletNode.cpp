@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioWorkletNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorkletNode);
 
 ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject& globalObject, BaseAudioContext& context, String&& name, AudioWorkletNodeOptions&& options)
 {
@@ -90,7 +90,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     if (!context.scriptExecutionContext())
         return Exception { ExceptionCode::InvalidStateError, "Audio context's frame is detached"_s };
 
-    auto messageChannel = MessageChannel::create(*context.protectedScriptExecutionContext());
+    auto messageChannel = MessageChannel::create(*protect(context.scriptExecutionContext()));
     auto& nodeMessagePort = messageChannel->port1();
     auto& processorMessagePort = messageChannel->port2();
 
@@ -103,8 +103,8 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
             serializedOptions = SerializedScriptValue::nullValue();
     }
 
-    auto parameterData = WTFMove(options.parameterData);
-    auto node = adoptRef(*new AudioWorkletNode(context, name, WTFMove(options), nodeMessagePort));
+    auto parameterData = WTF::move(options.parameterData);
+    auto node = adoptRef(*new AudioWorkletNode(context, name, WTF::move(options), nodeMessagePort));
     node->suspendIfNeeded();
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });
@@ -134,7 +134,7 @@ AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name
     , ActiveDOMObject(context.scriptExecutionContext())
     , m_name(name)
     , m_parameters(AudioParamMap::create())
-    , m_port(WTFMove(port))
+    , m_port(WTF::move(port))
     , m_inputs(options.numberOfInputs)
     , m_outputs(options.numberOfOutputs)
     , m_wasOutputChannelCountGiven(!!options.outputChannelCount)
@@ -155,7 +155,7 @@ AudioWorkletNode::~AudioWorkletNode()
         Locker locker { m_processLock };
         if (m_processor) {
             if (RefPtr workletProxy = context().audioWorklet().proxy()) {
-                workletProxy->postTaskForModeToWorkletGlobalScope([processor = WTFMove(m_processor)](ScriptExecutionContext& context) {
+                workletProxy->postTaskForModeToWorkletGlobalScope([processor = WTF::move(m_processor)](ScriptExecutionContext& context) {
                     downcast<AudioWorkletGlobalScope>(context).processorIsNoLongerNeeded(*processor);
                 }, WorkerRunLoop::defaultMode());
             }
@@ -173,7 +173,7 @@ void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescript
 
     for (auto& descriptor : descriptors) {
         auto parameter = AudioParam::create(context(), descriptor.name, descriptor.defaultValue, descriptor.minValue, descriptor.maxValue, descriptor.automationRate);
-        m_parameters->add(descriptor.name, WTFMove(parameter));
+        m_parameters->add(descriptor.name, WTF::move(parameter));
     }
 
     if (paramValues) {
@@ -192,7 +192,7 @@ void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
     ASSERT(!isMainThread());
     if (processor) {
         Locker locker { m_processLock };
-        m_processor = WTFMove(processor);
+        m_processor = WTF::move(processor);
         m_workletThread = Thread::currentSingleton();
     } else
         fireProcessorErrorOnMainThread(ProcessorError::ConstructorError);
@@ -204,7 +204,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
 
     auto zeroOutput = [&] {
         for (unsigned i = 0; i < numberOfOutputs(); ++i)
-            checkedOutput(i)->bus().zero();
+            protect(output(i))->bus().zero();
     };
 
     if (!m_processLock.tryLock()) {
@@ -224,7 +224,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
         m_inputs[i] = currentInput->isConnected() ? &currentInput->bus() : nullptr;
     }
     for (unsigned i = 0; i < numberOfOutputs(); ++i)
-        m_outputs[i] = checkedOutput(i)->bus();
+        m_outputs[i] = protect(output(i))->bus();
 
     if (noiseInjectionPolicies().contains(NoiseInjectionPolicy::Minimal)) {
         for (unsigned inputIndex = 0; inputIndex < numberOfInputs(); ++inputIndex) {
@@ -270,7 +270,7 @@ void AudioWorkletNode::updatePullStatus()
 
     bool hasConnectedOutput = false;
     for (unsigned i = 0; i < numberOfOutputs(); ++i) {
-        if (checkedOutput(i)->isConnected()) {
+        if (protect(output(i))->isConnected()) {
             hasConnectedOutput = true;
             break;
         }
@@ -295,7 +295,7 @@ void AudioWorkletNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
         unsigned numberOfInputChannels = input->numberOfChannels();
         if (numberOfInputChannels != output(0)->numberOfChannels()) {
             // This will propagate the channel count to any nodes connected further downstream in the graph.
-            checkedOutput(0)->setNumberOfChannels(numberOfInputChannels);
+            protect(output(0))->setNumberOfChannels(numberOfInputChannels);
         }
     }
 

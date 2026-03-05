@@ -44,17 +44,16 @@ public:
 
     WebCore::ContextMenuItemType type() const { return m_type; }
     WebCore::ContextMenuAction action() const { return m_action; }
-    const String& title() const { return m_title; }
+    const String& title() const LIFETIME_BOUND { return m_title; }
     bool enabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
     bool checked() const { return m_checked; }
     unsigned indentationLevel() const { return m_indentationLevel; }
-    const Vector<WebContextMenuItemData>& submenu() const { return m_submenu; }
+    const Vector<WebContextMenuItemData>& submenu() const LIFETIME_BOUND { return m_submenu; }
     
     WebCore::ContextMenuItem core() const;
     
-    API::Object* userData() const;
-    RefPtr<API::Object> protectedUserData() const;
+    API::Object* NODELETE userData() const;
     void setUserData(API::Object*);
 
 private:

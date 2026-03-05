@@ -34,6 +34,7 @@ OBJC_CLASS PKPayment;
 namespace WebCore {
 
 struct ApplePayPayment;
+struct LocalizedApplePayPayment;
 
 class WEBCORE_EXPORT Payment {
 public:
@@ -42,6 +43,7 @@ public:
     virtual ~Payment();
 
     virtual ApplePayPayment toApplePayPayment(unsigned version) const;
+    virtual LocalizedApplePayPayment toLocalizedApplePayPayment(unsigned version) const;
 
     RetainPtr<PKPayment> pkPayment() const;
 

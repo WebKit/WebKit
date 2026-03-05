@@ -31,6 +31,18 @@
 
 namespace {
 
+TEST(CBSTest, CtorFromSpan) {
+  const uint8_t buf[4] = "foo";
+
+  auto span_from_static_extent = bssl::Span<const uint8_t, 4>(buf);
+  CBS cbs_from_static_extent(span_from_static_extent);
+  EXPECT_EQ(4u, CBS_len(&cbs_from_static_extent));
+
+  auto span_from_dynamic_extent = bssl::Span<const uint8_t>(buf);
+  CBS cbs_from_dynamic_extent(span_from_dynamic_extent);
+  EXPECT_EQ(4u, CBS_len(&cbs_from_dynamic_extent));
+}
+
 TEST(CBSTest, Skip) {
   static const uint8_t kData[] = {1, 2, 3};
   CBS data;
@@ -182,11 +194,11 @@ TEST(CBSTest, GetASN1) {
   // wrong tag.
   EXPECT_FALSE(CBS_get_asn1(&data, &contents, 0x31));
 
-  CBS_init(&data, NULL, 0);
+  CBS_init(&data, nullptr, 0);
   // peek at empty data.
   EXPECT_FALSE(CBS_peek_asn1_tag(&data, CBS_ASN1_SEQUENCE));
 
-  CBS_init(&data, NULL, 0);
+  CBS_init(&data, nullptr, 0);
   // optional elements at empty data.
   ASSERT_TRUE(CBS_get_optional_asn1(
       &data, &contents, &present,
@@ -198,7 +210,7 @@ TEST(CBSTest, GetASN1) {
   EXPECT_FALSE(present);
   EXPECT_EQ(0u, CBS_len(&contents));
   ASSERT_TRUE(CBS_get_optional_asn1_octet_string(
-      &data, &contents, NULL,
+      &data, &contents, nullptr,
       CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0));
   EXPECT_EQ(0u, CBS_len(&contents));
   ASSERT_TRUE(CBS_get_optional_asn1_uint64(
@@ -259,15 +271,15 @@ TEST(CBSTest, GetASN1) {
 
   CBS_init(&data, kData1, sizeof(kData1));
   // We should be able to ignore the contents and get the tag.
-  ASSERT_TRUE(CBS_get_any_asn1(&data, NULL, &tag));
+  ASSERT_TRUE(CBS_get_any_asn1(&data, nullptr, &tag));
   EXPECT_EQ(CBS_ASN1_SEQUENCE, tag);
   // We should be able to ignore the tag and get the contents.
   CBS_init(&data, kData1, sizeof(kData1));
-  ASSERT_TRUE(CBS_get_any_asn1(&data, &contents, NULL));
+  ASSERT_TRUE(CBS_get_any_asn1(&data, &contents, nullptr));
   EXPECT_EQ(Bytes("\x01\x02"), Bytes(CBS_data(&contents), CBS_len(&contents)));
   // We should be able to ignore both the tag and contents.
   CBS_init(&data, kData1, sizeof(kData1));
-  ASSERT_TRUE(CBS_get_any_asn1(&data, NULL, NULL));
+  ASSERT_TRUE(CBS_get_any_asn1(&data, nullptr, nullptr));
 
   size_t header_len;
   CBS_init(&data, kData1, sizeof(kData1));
@@ -332,7 +344,7 @@ TEST(CBSTest, GetOptionalASN1Bool) {
   static const uint8_t kInvalid[] = {0x0a, 3, CBS_ASN1_BOOLEAN, 1, 0x01};
 
   CBS data;
-  CBS_init(&data, NULL, 0);
+  CBS_init(&data, nullptr, 0);
   int val = 2;
   ASSERT_TRUE(CBS_get_optional_asn1_bool(&data, &val, 0x0a, 0));
   EXPECT_EQ(0, val);
@@ -395,9 +407,9 @@ TEST(CBBTest, Fixed) {
   uint8_t *out_buf;
   size_t out_size;
 
-  ASSERT_TRUE(CBB_init_fixed(&cbb, NULL, 0));
+  ASSERT_TRUE(CBB_init_fixed(&cbb, nullptr, 0));
   ASSERT_TRUE(CBB_finish(&cbb, &out_buf, &out_size));
-  EXPECT_EQ(NULL, out_buf);
+  EXPECT_EQ(nullptr, out_buf);
   EXPECT_EQ(0u, out_size);
 
   ASSERT_TRUE(CBB_init_fixed(&cbb, buf, 1));
@@ -1195,7 +1207,7 @@ TEST(CBSTest, ASN1Int64) {
     CBS_init(&cbs, (const uint8_t *)test.encoding, test.encoding_len);
     CBS child;
     if (CBS_get_asn1(&cbs, &child, CBS_ASN1_INTEGER)) {
-      EXPECT_EQ(test.overflow, !!CBS_is_valid_asn1_integer(&child, NULL));
+      EXPECT_EQ(test.overflow, !!CBS_is_valid_asn1_integer(&child, nullptr));
     }
   }
 
@@ -1254,7 +1266,7 @@ TEST(CBBTest, Reserve) {
   EXPECT_EQ(buf, ptr);
   // Advancing under the maximum bytes is legal.
   ASSERT_TRUE(CBB_did_write(cbb.get(), 5));
-  ASSERT_TRUE(CBB_finish(cbb.get(), NULL, &len));
+  ASSERT_TRUE(CBB_finish(cbb.get(), nullptr, &len));
   EXPECT_EQ(5u, len);
 }
 
@@ -1808,9 +1820,10 @@ TEST(CBSTest, BogusTime) {
     SCOPED_TRACE(t.timestring);
     CBS cbs;
     CBS_init(&cbs, (const uint8_t *)t.timestring, strlen(t.timestring));
-    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, NULL,
+    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, nullptr,
                                             /*allow_timezone_offset=*/0));
-    EXPECT_FALSE(CBS_parse_utc_time(&cbs, NULL, /*allow_timezone_offset=*/1));
+    EXPECT_FALSE(
+        CBS_parse_utc_time(&cbs, nullptr, /*allow_timezone_offset=*/1));
   }
   static const struct {
     const char *timestring;
@@ -1822,12 +1835,13 @@ TEST(CBSTest, BogusTime) {
     SCOPED_TRACE(t.timestring);
     CBS cbs;
     CBS_init(&cbs, (const uint8_t *)t.timestring, strlen(t.timestring));
-    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, NULL,
+    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, nullptr,
                                             /*allow_timezone_offset=*/0));
-    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, NULL,
+    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, nullptr,
                                             /*allow_timezone_offset=*/1));
-    EXPECT_TRUE(CBS_parse_utc_time(&cbs, NULL, /*allow_timezone_offset=*/1));
-    EXPECT_FALSE(CBS_parse_utc_time(&cbs, NULL, /*allow_timezone_offset=*/0));
+    EXPECT_TRUE(CBS_parse_utc_time(&cbs, nullptr, /*allow_timezone_offset=*/1));
+    EXPECT_FALSE(
+        CBS_parse_utc_time(&cbs, nullptr, /*allow_timezone_offset=*/0));
   }
   static const struct {
     const char *timestring;
@@ -1840,9 +1854,10 @@ TEST(CBSTest, BogusTime) {
     SCOPED_TRACE(t.timestring);
     CBS cbs;
     CBS_init(&cbs, (const uint8_t *)t.timestring, strlen(t.timestring));
-    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, NULL,
+    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, nullptr,
                                             /*allow_timezone_offset=*/0));
-    EXPECT_FALSE(CBS_parse_utc_time(&cbs, NULL, /*allow_timezone_offset=*/1));
+    EXPECT_FALSE(
+        CBS_parse_utc_time(&cbs, nullptr, /*allow_timezone_offset=*/1));
   }
   static const struct {
     const char *timestring;
@@ -1856,12 +1871,14 @@ TEST(CBSTest, BogusTime) {
     SCOPED_TRACE(t.timestring);
     CBS cbs;
     CBS_init(&cbs, (const uint8_t *)t.timestring, strlen(t.timestring));
-    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, NULL,
+    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, nullptr,
                                             /*allow_timezone_offset=*/0));
-    EXPECT_TRUE(CBS_parse_generalized_time(&cbs, NULL,
+    EXPECT_TRUE(CBS_parse_generalized_time(&cbs, nullptr,
                                            /*allow_timezone_offset=*/1));
-    EXPECT_FALSE(CBS_parse_utc_time(&cbs, NULL, /*allow_timezone_offset=*/1));
-    EXPECT_FALSE(CBS_parse_utc_time(&cbs, NULL, /*allow_timezone_offset=*/0));
+    EXPECT_FALSE(
+        CBS_parse_utc_time(&cbs, nullptr, /*allow_timezone_offset=*/1));
+    EXPECT_FALSE(
+        CBS_parse_utc_time(&cbs, nullptr, /*allow_timezone_offset=*/0));
   }
   static const struct {
     const char *timestring;
@@ -1874,9 +1891,10 @@ TEST(CBSTest, BogusTime) {
     SCOPED_TRACE(t.timestring);
     CBS cbs;
     CBS_init(&cbs, (const uint8_t *)t.timestring, strlen(t.timestring));
-    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, NULL,
+    EXPECT_FALSE(CBS_parse_generalized_time(&cbs, nullptr,
                                             /*allow_timezone_offset=*/0));
-    EXPECT_FALSE(CBS_parse_utc_time(&cbs, NULL, /*allow_timezone_offset=*/1));
+    EXPECT_FALSE(
+        CBS_parse_utc_time(&cbs, nullptr, /*allow_timezone_offset=*/1));
   }
 }
 

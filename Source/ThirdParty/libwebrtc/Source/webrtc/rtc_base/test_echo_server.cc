@@ -10,24 +10,23 @@
 
 #include "rtc_base/test_echo_server.h"
 
+#include "api/environment/environment.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
 
 namespace webrtc {
 
-TestEchoServer::TestEchoServer(Thread* thread, const SocketAddress& addr)
-    : server_socket_(
-          thread->socketserver()->CreateSocket(addr.family(), SOCK_STREAM)) {
+TestEchoServer::TestEchoServer(const Environment& env,
+                               Thread* thread,
+                               const SocketAddress& addr)
+    : env_(env),
+      server_socket_(
+          thread->socketserver()->Create(addr.family(), SOCK_STREAM)) {
   server_socket_->Bind(addr);
   server_socket_->Listen(5);
   server_socket_->SignalReadEvent.connect(this, &TestEchoServer::OnAccept);
 }
 
-TestEchoServer::~TestEchoServer() {
-  for (ClientList::iterator it = client_sockets_.begin();
-       it != client_sockets_.end(); ++it) {
-    delete *it;
-  }
-}
+TestEchoServer::~TestEchoServer() = default;
 
 }  // namespace webrtc

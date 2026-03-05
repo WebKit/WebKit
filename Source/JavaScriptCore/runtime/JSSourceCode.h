@@ -50,14 +50,14 @@ public:
 
     static JSSourceCode* create(VM& vm, Structure* structure, SourceCode&& sourceCode)
     {
-        auto* result = new (NotNull, allocateCell<JSSourceCode>(vm)) JSSourceCode(vm, structure, WTFMove(sourceCode));
+        auto* result = new (NotNull, allocateCell<JSSourceCode>(vm)) JSSourceCode(vm, structure, WTF::move(sourceCode));
         result->finishCreation(vm);
         return result;
     }
 
     static JSSourceCode* create(VM& vm, SourceCode&& sourceCode)
     {
-        return create(vm, vm.sourceCodeStructure.get(), WTFMove(sourceCode));
+        return create(vm, vm.sourceCodeStructure.get(), WTF::move(sourceCode));
     }
 
     const SourceCode& sourceCode() const
@@ -70,7 +70,7 @@ public:
 private:
     JSSourceCode(VM& vm, Structure* structure, SourceCode&& sourceCode)
         : Base(vm, structure)
-        , m_sourceCode(WTFMove(sourceCode))
+        , m_sourceCode(WTF::move(sourceCode))
     {
     }
 

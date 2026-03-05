@@ -87,9 +87,9 @@ private:
     UncheckedKeyHashMap<size_t, Vector<Tmp, 2>> m_tmpsToRelease;
     RegisterSet m_namedUsedRegs;
     RegisterSet m_namedDefdRegs;
-    RegisterSetBuilder m_earlyClobber;
-    RegisterSetBuilder m_lateClobber;
-    RegisterSetBuilder m_clobberedToClear;
+    RegisterSet m_earlyClobber;
+    RegisterSet m_lateClobber;
+    RegisterSet m_clobberedToClear;
     RegisterSet m_allowedRegisters;
     std::unique_ptr<UnifiedTmpLiveness> m_liveness;
 

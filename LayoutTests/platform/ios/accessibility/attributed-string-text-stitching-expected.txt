@@ -1,0 +1,38 @@
+This test ensures we return the right attributed string from a stitched-text's text marker range.
+
+Hello world! {
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman";
+    UIAccessibilityTokenFontSize = 16;
+}How{
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman Italic";
+    UIAccessibilityTokenFontSize = 16;
+    UIAccessibilityTokenItalic = 1;
+} {
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman";
+    UIAccessibilityTokenFontSize = 16;
+}are{
+    UIAccessibilityTokenBold = 1;
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman Bold";
+    UIAccessibilityTokenFontSize = 16;
+} you doing on{
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman";
+    UIAccessibilityTokenFontSize = 16;
+} this fine day{
+    UIAccessibilityTokenBold = 1;
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman Bold";
+    UIAccessibilityTokenFontSize = 16;
+}?{
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman";
+    UIAccessibilityTokenFontSize = 16;
+}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world! How are you doing on this fine day?

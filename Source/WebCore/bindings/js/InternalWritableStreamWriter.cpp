@@ -69,22 +69,6 @@ ExceptionOr<Ref<InternalWritableStreamWriter>> acquireWritableStreamDefaultWrite
     return InternalWritableStreamWriter::create(globalObject, *result.returnValue().toObject(&globalObject));
 }
 
-int writableStreamDefaultWriterGetDesiredSize(InternalWritableStreamWriter& writer)
-{
-    auto* globalObject = writer.globalObject();
-    if (!globalObject)
-        return 0;
-
-    auto* clientData = downcast<JSVMClientData>(globalObject->vm().clientData);
-    auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamDefaultWriterGetDesiredSizePrivateName();
-
-    JSC::MarkedArgumentBuffer arguments;
-    arguments.append(writer.guardedObject());
-
-    auto result = invokeWritableStreamWriterFunction(*globalObject, privateName, arguments);
-    return result.returnValue().toNumber(globalObject);
-}
-
 RefPtr<DOMPromise> writableStreamDefaultWriterCloseWithErrorPropagation(InternalWritableStreamWriter& writer)
 {
     auto* globalObject = writer.globalObject();
@@ -168,10 +152,10 @@ void InternalWritableStreamWriter::onClosedPromiseRejection(Function<void(JSDOMG
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
-    domPromise->whenSettled([domPromise, callback = WTFMove(callback)]() mutable {
-        if (domPromise->status() != DOMPromise::Status::Rejected || !domPromise->globalObject())
+    domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto* globalObject, bool isFulfilled, auto result) mutable {
+        if (isFulfilled || !globalObject)
             return;
-        callback(*domPromise->globalObject(), domPromise->result());
+        callback(*globalObject, result);
     });
 }
 
@@ -196,15 +180,36 @@ void InternalWritableStreamWriter::onClosedPromiseResolution(Function<void()>&& 
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
-    domPromise->whenSettled([domPromise, callback = WTFMove(callback)]() mutable {
-        if (domPromise->status() != DOMPromise::Status::Fulfilled)
+    domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto*, bool isFulfilled, auto) mutable {
+        if (!isFulfilled)
             return;
         callback();
     });
 }
 
-void InternalWritableStreamWriter::whenReady(Function<void ()>&& callback)
+static int writableStreamDefaultWriterGetDesiredSize(InternalWritableStreamWriter& writer)
 {
+    auto* globalObject = writer.globalObject();
+    if (!globalObject)
+        return 0;
+
+    auto* clientData = downcast<JSVMClientData>(globalObject->vm().clientData);
+    auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamDefaultWriterGetDesiredSizePrivateName();
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(writer.guardedObject());
+
+    auto result = invokeWritableStreamWriterFunction(*globalObject, privateName, arguments);
+    return result.returnValue().toNumber(globalObject);
+}
+
+void InternalWritableStreamWriter::whenReady(Function<void (bool)>&& callback)
+{
+    if (writableStreamDefaultWriterGetDesiredSize(*this) > 0) {
+        callback(true);
+        return;
+    }
+
     auto* globalObject = this->globalObject();
     if (!globalObject)
         return;
@@ -224,10 +229,8 @@ void InternalWritableStreamWriter::whenReady(Function<void ()>&& callback)
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
-    domPromise->whenSettled([domPromise, callback = WTFMove(callback)]() mutable {
-        if (domPromise->status() != DOMPromise::Status::Fulfilled)
-            return;
-        callback();
+    domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto*, bool isFulfilled, auto) mutable {
+        callback(isFulfilled);
     });
 }
 

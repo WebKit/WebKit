@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/HeapAnalyzer.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <functional>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>

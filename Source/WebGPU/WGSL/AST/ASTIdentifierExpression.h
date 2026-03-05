@@ -41,7 +41,7 @@ public:
 private:
     IdentifierExpression(SourceSpan span, Identifier&& identifier)
         : Expression(span)
-        , m_identifier(WTFMove(identifier))
+        , m_identifier(WTF::move(identifier))
     { }
 
     Identifier m_identifier;

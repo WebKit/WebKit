@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if __has_include(<libtasn1.h>)
+
 #include <libtasn1.h>
 #include <optional>
 #include <wtf/Forward.h>
@@ -63,3 +65,5 @@ bool writeElement(asn1_node root, const char* elementName, const void* data, siz
 
 } // namespace TASN1
 } // namespace PAL
+
+#endif

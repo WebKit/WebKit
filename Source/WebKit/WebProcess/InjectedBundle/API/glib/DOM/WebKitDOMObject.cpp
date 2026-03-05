@@ -17,7 +17,9 @@ enum {
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GTK/WPE port
 G_DEFINE_TYPE(WebKitDOMObject, webkit_dom_object, G_TYPE_OBJECT)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 static void webkit_dom_object_init(WebKitDOMObject*)
 {

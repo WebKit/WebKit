@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurequestadapteroptions
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPURequestAdapterOptions {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPURequestAdapterOptions {
     GPUPowerPreference powerPreference;
     boolean forceFallbackAdapter = false;
     boolean xrCompatible = false;

@@ -63,7 +63,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedPage);
 CachedPage::CachedPage(Page& page)
     : m_page(page)
     , m_expirationTime(MonotonicTime::now() + page.settings().backForwardCacheExpirationInterval())
-    , m_cachedMainFrame(makeUnique<CachedFrame>(page.mainFrame()))
+    , m_cachedMainFrame(makeUnique<CachedFrame>(protect(page.mainFrame())))
     , m_loadedSubresourceDomains([&] {
         RefPtr localFrame = page.localMainFrame();
         return localFrame ? localFrame->loader().client().loadedSubresourceDomains() : Vector<RegistrableDomain>();
@@ -83,7 +83,7 @@ static void firePageShowEvent(Page& page)
     Ref mainFrame = page.mainFrame();
 
     Vector<Ref<LocalFrame>> childFrames;
-    for (auto* child = mainFrame->tree().traverseNextInPostOrder(CanWrap::Yes); child; child = child->tree().traverseNextInPostOrder(CanWrap::No)) {
+    for (RefPtr child = mainFrame->tree().traverseNextInPostOrder(CanWrap::Yes); child; child = child->tree().traverseNextInPostOrder(CanWrap::No)) {
         if (RefPtr localChild = dynamicDowncast<LocalFrame>(child))
             childFrames.append(localChild.releaseNonNull());
     }
@@ -146,7 +146,7 @@ void CachedPage::restore(Page& page)
             localMainFrame->selection().suppressScrolling();
 
         bool hadProhibitsScrolling = false;
-        RefPtr frameView = localMainFrame->protectedVirtualView();
+        RefPtr frameView = localMainFrame->virtualView();
         if (frameView) {
             hadProhibitsScrolling = frameView->prohibitsScrolling();
             frameView->setProhibitsScrolling(true);
@@ -157,7 +157,7 @@ void CachedPage::restore(Page& page)
         if (frameView)
             frameView->setProhibitsScrolling(hadProhibitsScrolling);
         if (localMainFrame)
-            localMainFrame->checkedSelection()->restoreScrolling();
+            protect(localMainFrame->selection())->restoreScrolling();
 #endif
     }
 
@@ -172,7 +172,7 @@ void CachedPage::restore(Page& page)
 #endif
 
     if (m_needsUpdateContentsSize) {
-        if (RefPtr frameView = localMainFrame->protectedVirtualView())
+        if (RefPtr frameView = localMainFrame->virtualView())
             frameView->updateContentsSize();
     }
 
@@ -184,7 +184,7 @@ void CachedPage::restore(Page& page)
 
     for (auto& domain : m_loadedSubresourceDomains) {
         if (localMainFrame)
-            localMainFrame->loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
+            localMainFrame->loader().client().didLoadFromRegistrableDomain(WTF::move(domain));
     }
 
     clear();
@@ -192,8 +192,8 @@ void CachedPage::restore(Page& page)
 
 void CachedPage::restoreNavigationAPIHistoryItems(LocalFrame& frame, BackForwardController* backForwardController)
 {
-    RefPtr document = frame.document();
-    if (!document || !document->window())
+    RefPtr window = frame.window();
+    if (!window)
         return;
 
     CheckedPtr checkedBackForwardController = backForwardController;
@@ -203,9 +203,9 @@ void CachedPage::restoreNavigationAPIHistoryItems(LocalFrame& frame, BackForward
     if (RefPtr currentItem = frame.loader().history().currentItem()) {
         RefPtr previousItem = checkedBackForwardController->forwardItem();
         auto allItems = checkedBackForwardController->allItems(frame.frameID());
-        auto filteredItems = Navigation::filterHistoryItemsForNavigationAPI(WTFMove(allItems), *currentItem);
+        auto filteredItems = Navigation::filterHistoryItemsForNavigationAPI(WTF::move(allItems), *currentItem);
 
-        document->window()->navigation().updateForReactivation(WTFMove(filteredItems), *currentItem, previousItem.get());
+        protect(window->navigation())->updateForReactivation(WTF::move(filteredItems), *currentItem, previousItem.get());
     }
 
     for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
@@ -230,11 +230,6 @@ void CachedPage::clear()
 bool CachedPage::hasExpired() const
 {
     return MonotonicTime::now() > m_expirationTime;
-}
-
-RefPtr<DocumentLoader> CachedPage::protectedDocumentLoader() const
-{
-    return documentLoader();
 }
 
 } // namespace WebCore

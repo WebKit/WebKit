@@ -75,8 +75,6 @@ public:
     }
 
 private:
-    Ref<LocalFrame> protectedFrame() const;
-
     WeakRef<LocalFrame> m_frame;
     std::optional<ResourceLoaderIdentifier> m_initialRequestIdentifier;
 };

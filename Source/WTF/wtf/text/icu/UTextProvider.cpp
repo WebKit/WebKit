@@ -33,7 +33,7 @@ namespace WTF {
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 // Relocate pointer from source into destination as required.
-static inline void fixPointer(const UText* source, UText* destination, const void*& pointer)
+static inline void NODELETE fixPointer(const UText* source, UText* destination, const void*& pointer)
 {
     if (pointer >= source->pExtra && pointer < static_cast<char*>(source->pExtra) + source->extraSize) {
         // Pointer references source extra buffer.

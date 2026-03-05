@@ -31,9 +31,8 @@ class VisionOSTest(darwin_testcase.DarwinTest):
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=VisionOSPort.CURRENT_VERSION, **kwargs):
         if options:
             options.architecture = 'arm64'
-            options.webkit_test_runner = True
         else:
-            options = MockOptions(architecture='arm64', webkit_test_runner=True, configuration='Release')
+            options = MockOptions(architecture='arm64', configuration='Release')
         port = super(VisionOSTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, os_version=None, kwargs=kwargs)
         port.set_option('version', str(os_version))
         return port

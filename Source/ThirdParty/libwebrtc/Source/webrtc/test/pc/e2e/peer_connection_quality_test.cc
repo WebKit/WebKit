@@ -323,7 +323,8 @@ void PeerConnectionE2EQualityTest::Run(RunParams run_params) {
       std::make_unique<VideoQualityMetricsReporter>(time_controller_.GetClock(),
                                                     metrics_logger_));
   quality_metrics_reporters_.push_back(
-      std::make_unique<CrossMediaMetricsReporter>(metrics_logger_));
+      std::make_unique<CrossMediaMetricsReporter>(*time_controller_.GetClock(),
+                                                  metrics_logger_));
 
   video_quality_analyzer_injection_helper_->Start(
       test_case_name_,
@@ -468,7 +469,7 @@ void PeerConnectionE2EQualityTest::OnTrackCallback(
   auto* video_track = static_cast<VideoTrackInterface*>(track.get());
   std::unique_ptr<VideoSinkInterface<VideoFrame>> video_sink =
       video_quality_analyzer_injection_helper_->CreateVideoSink(
-          peer_name, peer_subscription, /*report_infra_stats=*/false);
+          peer_name, peer_subscription, /*report_infra_metrics=*/false);
   video_track->AddOrUpdateSink(video_sink.get(), VideoSinkWants());
   output_video_sinks_.push_back(std::move(video_sink));
 }

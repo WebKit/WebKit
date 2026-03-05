@@ -28,6 +28,7 @@
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
+#import "AdditionalButtonMasksIOS.h"
 #import "Logging.h"
 #import "UIKitSPI.h"
 #import "WebIOSEventFactory.h"
@@ -94,28 +95,28 @@ struct PointerLockState {
 {
     self.state = UIGestureRecognizerStateBegan;
 
-    [_interaction _updateMouseTouches:touches];
+    [protect(_interaction) _updateMouseTouches:touches];
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     self.state = UIGestureRecognizerStateChanged;
 
-    [_interaction _updateMouseTouches:touches];
+    [protect(_interaction) _updateMouseTouches:touches];
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     self.state = UIGestureRecognizerStateEnded;
 
-    [_interaction _updateMouseTouches:touches];
+    [protect(_interaction) _updateMouseTouches:touches];
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     self.state = UIGestureRecognizerStateCancelled;
 
-    [_interaction _updateMouseTouches:touches];
+    [protect(_interaction) _updateMouseTouches:touches];
 }
 
 #if PLATFORM(MACCATALYST)
@@ -260,23 +261,46 @@ inline static String pointerType(UITouchType type)
         return std::nullopt;
 
     auto modifiers = WebKit::WebIOSEventFactory::webEventModifiersForUIKeyModifierFlags(self._activeGesture.modifierFlags);
-    BOOL isRightButton = modifiers.contains(WebKit::WebEventModifier::ControlKey) || (_pressedButtonMask.value_or(0) & UIEventButtonMaskSecondary);
+    UIEventButtonMask currentButtonMask = _pressedButtonMask.value_or(0);
+    BOOL isControlClick = modifiers.contains(WebKit::WebEventModifier::ControlKey);
 
     auto button = [&] {
         if (!_touching)
             return WebKit::WebMouseEventButton::None;
-        if (isRightButton)
+        if (isControlClick || (currentButtonMask & UIEventButtonMaskSecondary))
             return WebKit::WebMouseEventButton::Right;
+        if (currentButtonMask & WebKit::UIEventButtonMaskTertiary)
+            return WebKit::WebMouseEventButton::Middle;
+        if (currentButtonMask & WebKit::UIEventButtonMaskQuaternary)
+            return WebKit::WebMouseEventButton::Back;
+        if (currentButtonMask & WebKit::UIEventButtonMaskQuinary)
+            return WebKit::WebMouseEventButton::Forward;
         return WebKit::WebMouseEventButton::Left;
     }();
 
     // FIXME: 'buttons' should report any buttons that are still down in the case when one button is released from a chord.
     auto buttons = [&] {
+        unsigned short buttonsBitmask = 0;
+
         if (!_touching || type == WebKit::WebEventType::MouseUp)
-            return 0;
-        if (isRightButton)
-            return 2;
-        return 1;
+            return buttonsBitmask;
+
+        UIEventButtonMask buttonMaskToCheck = (type == WebKit::WebEventType::MouseUp)
+            ? [_mouseTouchGestureRecognizer buttonMask]
+            : currentButtonMask;
+
+        if (buttonMaskToCheck & UIEventButtonMaskPrimary)
+            buttonsBitmask |= 1;
+        if ((buttonMaskToCheck & UIEventButtonMaskSecondary) || isControlClick)
+            buttonsBitmask |= 2;
+        if (buttonMaskToCheck & WebKit::UIEventButtonMaskTertiary)
+            buttonsBitmask |= 4;
+        if (buttonMaskToCheck & WebKit::UIEventButtonMaskQuaternary)
+            buttonsBitmask |= 8;
+        if (buttonMaskToCheck & WebKit::UIEventButtonMaskQuinary)
+            buttonsBitmask |= 16;
+
+        return buttonsBitmask;
     }();
 
     auto currentTouch = self.mouseTouch;
@@ -313,7 +337,7 @@ inline static String pointerType(UITouchType type)
         return;
 
     [self _forEachGesture:^(UIGestureRecognizer *gesture) {
-        [_view removeGestureRecognizer:gesture];
+        [protect(_view) removeGestureRecognizer:gesture];
     }];
     [self _resetCachedState];
 }
@@ -382,13 +406,13 @@ inline static String pointerType(UITouchType type)
     _lastLocation = location;
     auto mouseEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseMove wasCancelled:isCancelled];
     if (mouseEvent)
-        [_delegate mouseInteraction:self changedWithEvent:*mouseEvent];
+        [protect(_delegate) mouseInteraction:self changedWithEvent:*mouseEvent];
 }
 
 - (void)_updateMouseTouches:(NSSet<UITouch *> *)touches
 {
     _currentMouseTouch = touches.anyObject;
-    _lastLocation = [_mouseTouchGestureRecognizer locationInView:_view];
+    _lastLocation = [_mouseTouchGestureRecognizer locationInView:protect(_view).get()];
 
     std::optional<WebKit::WebEventType> eventType;
     auto phase = [_currentMouseTouch phase];
@@ -419,7 +443,7 @@ inline static String pointerType(UITouchType type)
         return;
 
     if (eventType)
-        [_delegate mouseInteraction:self changedWithEvent:*mouseEvent];
+        [protect(_delegate) mouseInteraction:self changedWithEvent:*mouseEvent];
 
     if (eventType == WebKit::WebEventType::MouseUp) {
         _touching = NO;
@@ -507,7 +531,7 @@ inline static String pointerType(UITouchType type)
         WebCore::mousePointerEventType()
     };
 
-    [_delegate mouseInteraction:self changedWithEvent:mouseEvent];
+    [protect(_delegate) mouseInteraction:self changedWithEvent:mouseEvent];
 }
 
 - (void)_startObservingMouseNotifications
@@ -532,7 +556,7 @@ inline static String pointerType(UITouchType type)
     if (!_pointerLockState.isActive)
         return;
     LOG(PointerLock, "Handling mouse disconnection during pointer lock");
-    [_delegate mouseInteractionDidLoseMouseDeviceDuringPointerLock:self];
+    [protect(_delegate) mouseInteractionDidLoseMouseDeviceDuringPointerLock:self];
     [self endPointerLockMouseTracking];
 }
 

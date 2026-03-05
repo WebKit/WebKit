@@ -40,8 +40,8 @@ struct Rotate {
     };
 
     Rotate(CSS::Keyword::None) : value { nullptr } { }
-    Rotate(Function&& value) : value { WTFMove(value.value) } { }
-    Rotate(Ref<const RotateTransformFunction>&& value) : value { WTFMove(value) } { }
+    Rotate(Function&& value) : value { WTF::move(value.value) } { }
+    Rotate(Ref<const RotateTransformFunction>&& value) : value { WTF::move(value) } { }
 
     bool affectedByTransformOrigin() const { return value && !value->isIdentity(); }
     bool isRepresentableIn2D() const { return !value || value->isRepresentableIn2D(); }

@@ -36,6 +36,9 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/Path.h>
+#include <WebCore/PathSegment.h>
+#include <WebCore/PathSegmentData.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -44,12 +47,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPresentationController);
 
-RefPtr<PDFPresentationController> PDFPresentationController::createForMode(PDFDocumentLayout::DisplayMode mode, UnifiedPDFPlugin& plugin)
+RefPtr<PDFPresentationController> PDFPresentationController::createForMode(PDFDisplayMode mode, UnifiedPDFPlugin& plugin)
 {
-    if (PDFDocumentLayout::isScrollingDisplayMode(mode))
+    if (isScrollingPDFDisplayMode(mode))
         return adoptRef(*new PDFScrollingPresentationController { plugin });
 
-    if (PDFDocumentLayout::isDiscreteDisplayMode(mode))
+    if (isDiscretePDFDisplayMode(mode))
         return adoptRef(*new PDFDiscretePresentationController { plugin });
 
     ASSERT_NOT_REACHED();
@@ -89,7 +92,7 @@ void PDFPresentationController::clearAsyncRenderer()
         asyncRenderer->teardown();
 }
 
-RefPtr<GraphicsLayer> PDFPresentationController::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
+Ref<GraphicsLayer> PDFPresentationController::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
     auto* graphicsLayerFactory = m_plugin->graphicsLayerFactory();
     Ref graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, graphicsLayerClient(), layerType);
@@ -97,12 +100,18 @@ RefPtr<GraphicsLayer> PDFPresentationController::createGraphicsLayer(const Strin
     return graphicsLayer;
 }
 
-RefPtr<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocumentLayout::PageIndex pageIndex)
+WebCore::Path PDFPresentationController::shadowPathForLayer(const WebCore::GraphicsLayer& layer) const
+{
+    FloatRect bounds { layer.boundsOrigin(), layer.size() };
+    return { { WebCore::PathSegment { WebCore::PathRect { bounds } } } };
+}
+
+Ref<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocumentLayout::PageIndex pageIndex)
 {
     auto addLayerShadow = [](GraphicsLayer& layer, IntPoint shadowOffset, const Color& shadowColor, int shadowStdDeviation) {
         Vector<Ref<FilterOperation>> filterOperations;
-        filterOperations.append(DropShadowFilterOperation::create(shadowOffset, shadowStdDeviation, shadowColor));
-        layer.setFilters(FilterOperations { WTFMove(filterOperations) });
+        filterOperations.append(DropShadowFilterOperation::create(shadowColor, shadowOffset, shadowStdDeviation));
+        layer.setFilters(FilterOperations { WTF::move(filterOperations) });
     };
 
     constexpr auto containerShadowOffset = IntPoint { 0, 1 };
@@ -113,11 +122,8 @@ RefPtr<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocum
     constexpr auto shadowColor = SRGBA<uint8_t> { 0, 0, 0, 38 };
     constexpr int shadowStdDeviation = 6;
 
-    RefPtr pageContainerLayer = createGraphicsLayer(makeString("Page container "_s, pageIndex), GraphicsLayer::Type::Normal);
-    RefPtr pageBackgroundLayer = createGraphicsLayer(makeString("Page background "_s, pageIndex), GraphicsLayer::Type::Normal);
-    // Can only be null if this->page() is null, which we checked above.
-    ASSERT(pageContainerLayer);
-    ASSERT(pageBackgroundLayer);
+    Ref pageContainerLayer = createGraphicsLayer(makeString("Page container "_s, pageIndex), GraphicsLayer::Type::Normal);
+    Ref pageBackgroundLayer = createGraphicsLayer(makeString("Page background "_s, pageIndex), GraphicsLayer::Type::Normal);
 
     pageContainerLayer->setAnchorPoint({ });
 
@@ -129,37 +135,19 @@ RefPtr<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocum
     pageBackgroundLayer->setAllowsTiling(false);
     pageBackgroundLayer->setNeedsDisplay(); // We only need to paint this layer once when page backgrounds change.
 
-    if (shouldAddPageBackgroundLayerShadow()) {
-        addLayerShadow(*pageContainerLayer, containerShadowOffset, containerShadowColor, containerShadowStdDeviation);
-        // FIXME: <https://webkit.org/b/276981> Need to add a 1px black border with alpha 0.0586.
-        addLayerShadow(*pageBackgroundLayer, shadowOffset, shadowColor, shadowStdDeviation);
-    }
+    addLayerShadow(pageContainerLayer, containerShadowOffset, containerShadowColor, containerShadowStdDeviation);
+    // FIXME: <https://webkit.org/b/276981> Need to add a 1px black border with alpha 0.0586.
+    addLayerShadow(pageBackgroundLayer, shadowOffset, shadowColor, shadowStdDeviation);
 
-    pageContainerLayer->addChild(*pageBackgroundLayer);
+    pageContainerLayer->addChild(WTF::move(pageBackgroundLayer));
 
     return pageContainerLayer;
 }
 
-bool PDFPresentationController::shouldAddPageBackgroundLayerShadow() const
+Ref<GraphicsLayer> PDFPresentationController::pageBackgroundLayerForPageContainerLayer(GraphicsLayer& pageContainerLayer)
 {
-#if PLATFORM(MAC)
-    return true;
-#else
-    // FIXME (288384): Remove this method and unconditionally add shadows behind the page once we figure out
-    // how to maintain a stable framerate during device rotation.
-    return false;
-#endif
-}
-
-RefPtr<GraphicsLayer> PDFPresentationController::pageBackgroundLayerForPageContainerLayer(GraphicsLayer& pageContainerLayer)
-{
-    auto& children = pageContainerLayer.children();
-    if (children.size()) {
-        Ref layer = children[0];
-        return WTFMove(layer);
-    }
-
-    return nullptr;
+    ASSERT(pageContainerLayer.children().size());
+    return pageContainerLayer.children()[0];
 }
 
 void PDFPresentationController::releaseMemory()

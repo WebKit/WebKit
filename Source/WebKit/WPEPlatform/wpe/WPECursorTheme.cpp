@@ -63,7 +63,7 @@ static GUniquePtr<char> cursorsPath(const char* basePath, Vector<GUniquePtr<char
                 return !g_strcmp0(item.get(), path.get());
             });
             if (path && !exists)
-                inherited.append(WTFMove(path));
+                inherited.append(WTF::move(path));
         }
     }
 
@@ -85,11 +85,11 @@ static std::unique_ptr<CursorTheme> tryCreateTheme(const char* basePath, uint32_
 
     if (!path) {
         // If there's no cursors path, use the first inherited theme.
-        path = WTFMove(inheritedThemes[0]);
+        path = WTF::move(inheritedThemes[0]);
         inheritedThemes.removeAt(0);
     }
 
-    return makeUnique<CursorTheme>(WTFMove(path), size, WTFMove(inheritedThemes));
+    return makeUnique<CursorTheme>(WTF::move(path), size, WTF::move(inheritedThemes));
 }
 
 std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size)
@@ -135,9 +135,9 @@ std::unique_ptr<CursorTheme> CursorTheme::create()
 }
 
 CursorTheme::CursorTheme(GUniquePtr<char>&& path, uint32_t size, Vector<GUniquePtr<char>>&& inherited)
-    : m_path(WTFMove(path))
+    : m_path(WTF::move(path))
     , m_size(size)
-    , m_inherited(WTFMove(inherited))
+    , m_inherited(WTF::move(inherited))
 {
 }
 
@@ -307,7 +307,7 @@ Vector<CursorTheme::CursorImage> CursorTheme::loadCursor(const char* name, uint3
         if (!image)
             break;
 
-        cursorImages.append(WTFMove(*image));
+        cursorImages.append(WTF::move(*image));
         if (cursorImages.size() == header->imageCount)
             break;
     }

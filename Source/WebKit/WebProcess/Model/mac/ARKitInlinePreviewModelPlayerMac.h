@@ -43,7 +43,7 @@ public:
     virtual ~ARKitInlinePreviewModelPlayerMac();
 
     static void setModelElementCacheDirectory(const String&);
-    static const String& modelElementCacheDirectory();
+    static const String& NODELETE modelElementCacheDirectory();
 
 private:
     ARKitInlinePreviewModelPlayerMac(WebPage&, WebCore::ModelPlayerClient&);

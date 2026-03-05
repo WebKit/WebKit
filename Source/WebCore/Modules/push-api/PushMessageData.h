@@ -39,9 +39,9 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class PushMessageData final : public RefCounted<PushMessageData> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushMessageData);
+    WTF_MAKE_TZONE_ALLOCATED(PushMessageData);
 public:
-    static Ref<PushMessageData> create(Vector<uint8_t>&& data) { return adoptRef(*new PushMessageData(WTFMove(data))); }
+    static Ref<PushMessageData> create(Vector<uint8_t>&& data) { return adoptRef(*new PushMessageData(WTF::move(data))); }
 
     ExceptionOr<Ref<JSC::ArrayBuffer>> arrayBuffer();
     Ref<Blob> blob(ScriptExecutionContext&);
@@ -56,7 +56,7 @@ private:
 };
 
 inline PushMessageData::PushMessageData(Vector<uint8_t>&& data)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
 {
 }
 

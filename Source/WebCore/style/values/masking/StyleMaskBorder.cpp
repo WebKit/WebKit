@@ -31,6 +31,7 @@
 #include "CSSBorderImageWidthValue.h"
 #include "CSSValueList.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveKeyword+Serialization.h"
@@ -40,91 +41,52 @@
 namespace WebCore {
 namespace Style {
 
-DataRef<MaskBorder::Data>& MaskBorder::defaultData()
-{
-    static NeverDestroyed<DataRef<Data>> data { Data::create() };
-    return data.get();
-}
-
 MaskBorder::MaskBorder()
-    : m_data(defaultData())
+    : maskBorderSource { Style::ComputedStyle::initialMaskBorderSource() }
+    , maskBorderSlice { Style::ComputedStyle::initialMaskBorderSlice() }
+    , maskBorderWidth { Style::ComputedStyle::initialMaskBorderWidth() }
+    , maskBorderOutset { Style::ComputedStyle::initialMaskBorderOutset() }
+    , maskBorderRepeat { Style::ComputedStyle::initialMaskBorderRepeat() }
 {
 }
 
 MaskBorder::MaskBorder(MaskBorderSource&& source, MaskBorderSlice&& slice, MaskBorderWidth&& width, MaskBorderOutset&& outset, MaskBorderRepeat&& repeat)
-    : m_data(Data::create(WTFMove(source), WTFMove(slice), WTFMove(width), WTFMove(outset), WTFMove(repeat)))
+    : maskBorderSource { WTF::move(source) }
+    , maskBorderSlice { WTF::move(slice) }
+    , maskBorderWidth { WTF::move(width) }
+    , maskBorderOutset { WTF::move(outset) }
+    , maskBorderRepeat { WTF::move(repeat) }
 {
-}
-
-MaskBorder::Data::Data() = default;
-MaskBorder::Data::Data(MaskBorderSource&& source, MaskBorderSlice&& slice, MaskBorderWidth&& width, MaskBorderOutset&& outset, MaskBorderRepeat&& repeat)
-    : source { WTFMove(source) }
-    , slice { WTFMove(slice) }
-    , width { WTFMove(width) }
-    , outset { WTFMove(outset) }
-    , repeat { WTFMove(repeat) }
-{
-}
-
-MaskBorder::Data::Data(const Data& other)
-    : RefCounted<Data>()
-    , source { other.source }
-    , slice { other.slice }
-    , width { other.width }
-    , outset { other.outset }
-    , repeat { other.repeat }
-{
-}
-
-Ref<MaskBorder::Data> MaskBorder::Data::create()
-{
-    return adoptRef(*new Data);
-}
-
-Ref<MaskBorder::Data> MaskBorder::Data::create(MaskBorderSource&& source, MaskBorderSlice&& slice, MaskBorderWidth&& width, MaskBorderOutset&& outset, MaskBorderRepeat&& repeat)
-{
-    return adoptRef(*new Data(WTFMove(source), WTFMove(slice), WTFMove(width), WTFMove(outset), WTFMove(repeat)));
-}
-
-Ref<MaskBorder::Data> MaskBorder::Data::copy() const
-{
-    return adoptRef(*new Data(*this));
-}
-
-bool MaskBorder::Data::operator==(const Data& other) const
-{
-    return source == other.source
-        && slice == other.slice
-        && width == other.width
-        && outset == other.outset
-        && repeat == other.repeat;
 }
 
 // MARK: - Conversion
 
-auto CSSValueConversion<MaskBorder>::operator()(BuilderState& state, const CSSValue& value) -> MaskBorder
+auto CSSValueConversion<MaskBorder>::operator()(BuilderState& state, const CSSValue& value, MaskBorderSliceOverride maskBorderSliceOverride) -> MaskBorder
 {
     MaskBorder result { };
 
-    RefPtr borderImage = dynamicDowncast<CSSValueList>(value);
+    RefPtr borderImage = requiredDowncast<CSSValueList>(state, value);
     if (!borderImage)
         return result;
 
     for (Ref current : *borderImage) {
         if (current->isImage())
-            result.setSource(toStyleFromCSSValue<MaskBorderSource>(state, current));
-        else if (RefPtr imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(current))
-            result.setSlice(toStyleFromCSSValue<MaskBorderSlice>(state, *imageSlice));
+            result.maskBorderSource = toStyleFromCSSValue<MaskBorderSource>(state, current);
+        else if (RefPtr slice = dynamicDowncast<CSSBorderImageSliceValue>(current))
+            result.maskBorderSlice = toStyleFromCSSValue<MaskBorderSlice>(state, *slice);
         else if (RefPtr slashList = dynamicDowncast<CSSValueList>(current)) {
-            if (RefPtr imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(slashList->item(0)))
-                result.setSlice(toStyleFromCSSValue<MaskBorderSlice>(state, *imageSlice));
-            if (RefPtr borderImageWidth = dynamicDowncast<CSSBorderImageWidthValue>(slashList->item(1)))
-                result.setWidth(toStyleFromCSSValue<MaskBorderWidth>(state, *borderImageWidth));
-            if (RefPtr outsetValue = slashList->item(2))
-                result.setOutset(toStyleFromCSSValue<MaskBorderOutset>(state, *outsetValue));
+            if (RefPtr slice = dynamicDowncast<CSSBorderImageSliceValue>(slashList->item(0)))
+                result.maskBorderSlice = toStyleFromCSSValue<MaskBorderSlice>(state, *slice);
+            if (RefPtr width = dynamicDowncast<CSSBorderImageWidthValue>(slashList->item(1)))
+                result.maskBorderWidth = toStyleFromCSSValue<MaskBorderWidth>(state, *width);
+            if (RefPtr outset = slashList->item(2))
+                result.maskBorderOutset = toStyleFromCSSValue<MaskBorderOutset>(state, *outset);
         } else if (current->isPair())
-            result.setRepeat(toStyleFromCSSValue<MaskBorderRepeat>(state, current));
+            result.maskBorderRepeat = toStyleFromCSSValue<MaskBorderRepeat>(state, current);
     }
+
+    if (maskBorderSliceOverride == MaskBorderSliceOverride::AlwaysFill)
+        result.maskBorderSlice.fill = CSS::Keyword::Fill { };
 
     return result;
 }
@@ -132,11 +94,11 @@ auto CSSValueConversion<MaskBorder>::operator()(BuilderState& state, const CSSVa
 auto CSSValueCreation<MaskBorder>::operator()(CSSValuePool& pool, const RenderStyle& style, const MaskBorder& value) -> Ref<CSSValue>
 {
     return createBorderImageValue({
-        .source = createCSSValue(pool, style, value.source()),
-        .slice  = createCSSValue(pool, style, value.slice()),
-        .width  = createCSSValue(pool, style, value.width()),
-        .outset = createCSSValue(pool, style, value.outset()),
-        .repeat = createCSSValue(pool, style, value.repeat()),
+        .source = createCSSValue(pool, style, value.maskBorderSource),
+        .slice  = createCSSValue(pool, style, value.maskBorderSlice),
+        .width  = createCSSValue(pool, style, value.maskBorderWidth),
+        .outset = createCSSValue(pool, style, value.maskBorderOutset),
+        .repeat = createCSSValue(pool, style, value.maskBorderRepeat),
     });
 }
 
@@ -144,29 +106,29 @@ auto CSSValueCreation<MaskBorder>::operator()(CSSValuePool& pool, const RenderSt
 
 void Serialize<MaskBorder>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const MaskBorder& value)
 {
-    if (value.source().isNone()) {
-        serializationForCSS(builder, context, style, value.source());
+    if (value.maskBorderSource.isNone()) {
+        serializationForCSS(builder, context, style, value.maskBorderSource);
         return;
     }
 
     // FIXME: Omit values that have their initial value.
 
-    serializationForCSS(builder, context, style, value.source());
+    serializationForCSS(builder, context, style, value.maskBorderSource);
     builder.append(' ');
-    serializationForCSS(builder, context, style, value.slice());
+    serializationForCSS(builder, context, style, value.maskBorderSlice);
     builder.append(" / "_s);
-    serializationForCSS(builder, context, style, value.width());
+    serializationForCSS(builder, context, style, value.maskBorderWidth);
     builder.append(" / "_s);
-    serializationForCSS(builder, context, style, value.outset());
+    serializationForCSS(builder, context, style, value.maskBorderOutset);
     builder.append(' ');
-    serializationForCSS(builder, context, style, value.repeat());
+    serializationForCSS(builder, context, style, value.maskBorderRepeat);
 }
 
 // MARK: - Logging
 
-TextStream& operator<<(TextStream& ts, const MaskBorder& image)
+TextStream& operator<<(TextStream& ts, const MaskBorder& value)
 {
-    return ts << "style-image "_s << image.source() << " slices "_s << image.slice();
+    return ts << "style-image "_s << value.maskBorderSource << " slices "_s << value.maskBorderSlice;
 }
 
 } // namespace Style

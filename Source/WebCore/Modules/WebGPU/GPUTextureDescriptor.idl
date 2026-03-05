@@ -32,9 +32,8 @@ typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
 typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUTextureDescriptor : GPUObjectDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUTextureDescriptor : GPUObjectDescriptorBase {
     required GPUExtent3D size;
     GPUIntegerCoordinate mipLevelCount = 1;
     GPUSize32 sampleCount = 1;

@@ -42,11 +42,11 @@ std::optional<Vector<uint8_t>> WebCryptoClient::serializeAndWrapCryptoKey(WebCor
 {
     Ref connection = *WebProcess::singleton().parentProcessConnection();
     if (m_pageIdentifier) {
-        auto sendResult = connection->sendSync(Messages::WebPageProxy::SerializeAndWrapCryptoKey(WTFMove(keyData)), *m_pageIdentifier);
+        auto sendResult = connection->sendSync(Messages::WebPageProxy::SerializeAndWrapCryptoKey(WTF::move(keyData)), *m_pageIdentifier);
         auto [wrappedKey] = sendResult.takeReplyOr(std::nullopt);
         return wrappedKey;
     }
-    auto sendResult = connection->sendSync(Messages::WebProcessProxy::SerializeAndWrapCryptoKey(WTFMove(keyData)), 0);
+    auto sendResult = connection->sendSync(Messages::WebProcessProxy::SerializeAndWrapCryptoKey(WTF::move(keyData)), 0);
 
     auto [wrappedKey] = sendResult.takeReplyOr(std::nullopt);
     return wrappedKey;

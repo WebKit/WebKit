@@ -45,7 +45,7 @@ class VideoTrackPrivateRemote
 public:
     static Ref<VideoTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, VideoTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new VideoTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTFMove(configuration)));
+        return adoptRef(*new VideoTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTF::move(configuration)));
     }
 
     void updateConfiguration(VideoTrackPrivateRemoteConfiguration&&);

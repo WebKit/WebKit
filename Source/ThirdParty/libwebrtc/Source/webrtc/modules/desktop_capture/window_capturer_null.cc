@@ -12,6 +12,7 @@
 
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -65,6 +66,8 @@ void WindowCapturerNull::CaptureFrame() {
 // static
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options) {
+  RTC_LOG(LS_INFO) << "video capture: DesktopCapturer::CreateRawWindowCapturer "
+                      "creates DesktopCapturer of type WindowCapturerNull";
   return std::unique_ptr<DesktopCapturer>(new WindowCapturerNull());
 }
 

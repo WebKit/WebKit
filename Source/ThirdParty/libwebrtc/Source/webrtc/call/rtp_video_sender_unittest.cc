@@ -1402,7 +1402,7 @@ TEST(RtpVideoSenderTest, ClearsPendingPacketsOnInactivation) {
   encoded_image.SetEncodedData(
       EncodedImageBuffer::Create(kPayload, sizeof(kPayload)));
   EXPECT_EQ(test.router()
-                ->OnEncodedImage(encoded_image, /*codec_specific=*/nullptr)
+                ->OnEncodedImage(encoded_image, /*codec_specific_info=*/nullptr)
                 .error,
             EncodedImageCallback::Result::OK);
 
@@ -1438,7 +1438,7 @@ TEST(RtpVideoSenderTest, ClearsPendingPacketsOnInactivation) {
   encoded_image.SetRtpTimestamp(3);
   encoded_image.capture_time_ms_ = 4;
   EXPECT_EQ(test.router()
-                ->OnEncodedImage(encoded_image, /*codec_specific=*/nullptr)
+                ->OnEncodedImage(encoded_image, /*codec_specific_info=*/nullptr)
                 .error,
             EncodedImageCallback::Result::OK);
   test.AdvanceTime(TimeDelta::Millis(33));
@@ -1480,7 +1480,7 @@ TEST(RtpVideoSenderTest,
   encoded_image.SetEncodedData(
       EncodedImageBuffer::Create(kImage, std::size(kImage)));
   EXPECT_EQ(test.router()
-                ->OnEncodedImage(encoded_image, /*codec_specific=*/nullptr)
+                ->OnEncodedImage(encoded_image, /*codec_specific_info=*/nullptr)
                 .error,
             EncodedImageCallback::Result::OK);
 
@@ -1519,7 +1519,7 @@ TEST(RtpVideoSenderTest,
   encoded_image.SetRtpTimestamp(3);
   encoded_image.capture_time_ms_ = 4;
   EXPECT_EQ(test.router()
-                ->OnEncodedImage(encoded_image, /*codec_specific=*/nullptr)
+                ->OnEncodedImage(encoded_image, /*codec_specific_info=*/nullptr)
                 .error,
             EncodedImageCallback::Result::OK);
   test.AdvanceTime(TimeDelta::Millis(33));

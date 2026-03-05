@@ -40,7 +40,7 @@ class CSSPendingSubstitutionValue final : public CSSValue {
 public:
     static Ref<CSSPendingSubstitutionValue> create(CSSPropertyID shorthandPropertyId, Ref<CSSVariableReferenceValue>&& shorthandValue)
     {
-        return adoptRef(*new CSSPendingSubstitutionValue(shorthandPropertyId, WTFMove(shorthandValue)));
+        return adoptRef(*new CSSPendingSubstitutionValue(shorthandPropertyId, WTF::move(shorthandValue)));
     }
 
     CSSVariableReferenceValue& shorthandValue() const { return m_shorthandValue; }
@@ -62,7 +62,7 @@ private:
     CSSPendingSubstitutionValue(CSSPropertyID shorthandPropertyId, Ref<CSSVariableReferenceValue>&& shorthandValue)
         : CSSValue(ClassType::PendingSubstitutionValue)
         , m_shorthandPropertyId(shorthandPropertyId)
-        , m_shorthandValue(WTFMove(shorthandValue))
+        , m_shorthandValue(WTF::move(shorthandValue))
     {
     }
 

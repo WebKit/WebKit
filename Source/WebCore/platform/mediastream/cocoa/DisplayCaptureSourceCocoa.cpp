@@ -49,10 +49,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
-#if HAVE(REPLAYKIT)
-#include "ReplayKitCaptureSource.h"
-#endif
-
 #if HAVE(SCREEN_CAPTURE_KIT)
 #include "ScreenCaptureKitCaptureSource.h"
 #endif
@@ -69,16 +65,12 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
 {
     switch (device.type()) {
     case CaptureDevice::DeviceType::Screen:
-#if HAVE(REPLAYKIT)
-        if (!ReplayKitCaptureSource::isAvailable())
-            return CaptureSourceOrError { CaptureSourceError { "Screen capture unavailable"_s, MediaAccessDenialReason::NoCaptureDevices } };
-
-        return create([] (auto& source) {
-            return makeUniqueRefWithoutRefCountedCheck<ReplayKitCaptureSource>(source);
-        }, device, WTFMove(hashSalts), constraints, pageIdentifier);
-#elif HAVE(SCREEN_CAPTURE_KIT)
+#if HAVE(SCREEN_CAPTURE_KIT)
         [[fallthrough]];
 #else
+        UNUSED_PARAM(hashSalts);
+        UNUSED_PARAM(constraints);
+        UNUSED_PARAM(pageIdentifier);
         ASSERT_NOT_REACHED();
         return { };
 #endif
@@ -87,10 +79,10 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
         if (ScreenCaptureKitCaptureSource::isAvailable()) {
             auto deviceID = ScreenCaptureKitCaptureSource::computeDeviceID(device);
             if (!deviceID)
-                return CaptureSourceOrError { WTFMove(deviceID).error() };
+                return CaptureSourceOrError { WTF::move(deviceID).error() };
             return create([deviceID = deviceID.value(), &device] (auto& source) {
                 return makeUniqueRefWithoutRefCountedCheck<ScreenCaptureKitCaptureSource>(source, device, deviceID);
-            }, device, WTFMove(hashSalts), constraints, pageIdentifier);
+            }, device, WTF::move(hashSalts), constraints, pageIdentifier);
         }
         ASSERT_NOT_REACHED();
         return { };
@@ -110,17 +102,17 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
 
 CaptureSourceOrError DisplayCaptureSourceCocoa::create(const std::function<UniqueRef<Capturer>(CapturerObserver&)>& createCapturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
-    auto source = adoptRef(*new DisplayCaptureSourceCocoa(createCapturer, device, WTFMove(hashSalts), pageIdentifier));
+    auto source = adoptRef(*new DisplayCaptureSourceCocoa(createCapturer, device, WTF::move(hashSalts), pageIdentifier));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
             return CaptureSourceOrError(CaptureSourceError { result->invalidConstraint });
     }
 
-    return CaptureSourceOrError(WTFMove(source));
+    return CaptureSourceOrError(WTF::move(source));
 }
 
 DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(const std::function<UniqueRef<Capturer>(CapturerObserver&)>& createCapturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
-    : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
+    : RealtimeMediaSource(device, WTF::move(hashSalts), pageIdentifier)
     , m_capturer(createCapturer(*this))
     , m_timer(RunLoop::currentSingleton(), "DisplayCaptureSourceCocoa::Timer"_s, this, &DisplayCaptureSourceCocoa::emitFrame)
     , m_userActivity("App nap disabled for screen capture"_s)
@@ -137,12 +129,14 @@ const RealtimeMediaSourceCapabilities& DisplayCaptureSourceCocoa::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         auto intrinsicSize = m_capturer->intrinsicSize();
-        capabilities.setWidth({ 1, intrinsicSize.width() });
-        capabilities.setHeight({ 1, intrinsicSize.height() });
+        if (intrinsicSize.width())
+            capabilities.setWidth({ 1, intrinsicSize.width() });
+        if (intrinsicSize.height())
+            capabilities.setHeight({ 1, intrinsicSize.height() });
         capabilities.setFrameRate({ .01, 30.0 });
         capabilities.setDeviceId(hashedId());
 
-        m_capabilities = WTFMove(capabilities);
+        m_capabilities = WTF::move(capabilities);
     }
     return m_capabilities.value();
 }
@@ -172,7 +166,7 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
 
         settings.setSupportedConstraints(supportedConstraints);
 
-        m_currentSettings = WTFMove(settings);
+        m_currentSettings = WTF::move(settings);
     }
     return m_currentSettings.value();
 }
@@ -213,7 +207,7 @@ void DisplayCaptureSourceCocoa::endProducingData()
 
 void DisplayCaptureSourceCocoa::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
 {
-    m_capturer->whenReady(WTFMove(callback));
+    m_capturer->whenReady(WTF::move(callback));
 }
 
 Seconds DisplayCaptureSourceCocoa::elapsedTime()

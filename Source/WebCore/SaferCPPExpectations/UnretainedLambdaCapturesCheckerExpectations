@@ -1,4 +1,2 @@
-platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
-platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
 [ iOS ] platform/ios/PlatformPasteboardIOS.mm
 [ iOS ] platform/ios/WebItemProviderPasteboard.mm

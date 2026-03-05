@@ -65,10 +65,10 @@ public:
     void multiply(const FFTFrame& frame); // multiplies ourself with frame : effectively operator*=()
     void scaleFFT(float factor);
 
-    AudioFloatArray& realData() { return m_realData; }
-    AudioFloatArray& imagData() { return m_imagData; }
-    const AudioFloatArray& realData() const { return m_realData; }
-    const AudioFloatArray& imagData() const { return m_imagData; }
+    AudioFloatArray& realData() LIFETIME_BOUND { return m_realData; }
+    AudioFloatArray& imagData() LIFETIME_BOUND { return m_imagData; }
+    const AudioFloatArray& realData() const LIFETIME_BOUND { return m_realData; }
+    const AudioFloatArray& imagData() const LIFETIME_BOUND { return m_imagData; }
 
     static int minFFTSize();
     static int maxFFTSize();
@@ -95,7 +95,7 @@ private:
     void interpolateFrequencyComponents(const FFTFrame& frame1, const FFTFrame& frame2, double x);
 
 #if USE(ACCELERATE)
-    DSPSplitComplex& dspSplitComplex() { return m_frame; }
+    DSPSplitComplex& dspSplitComplex() LIFETIME_BOUND { return m_frame; }
     DSPSplitComplex dspSplitComplex() const { return m_frame; }
 
     static FFTSetup fftSetupForSize(unsigned fftSize);

@@ -42,6 +42,8 @@ namespace WTF {
 
 #define ENABLE_META_ALLOCATOR_PROFILE 0
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(MetaAllocatorFreeSpace, WTF_INTERNAL);
+
 class MetaAllocatorTracker {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MetaAllocatorTracker);
 public:
@@ -108,7 +110,7 @@ public:
 
     // This is meant only for implementing tests. Never call this in release
     // builds.
-    WTF_EXPORT_PRIVATE size_t debugFreeSpaceSize();
+    WTF_EXPORT_PRIVATE size_t NODELETE debugFreeSpaceSize();
 
     WTF_EXPORT_PRIVATE bool isInAllocatedMemory(const AbstractLocker&, void* address);
     
@@ -139,11 +141,17 @@ protected:
 private:
     
     friend class MetaAllocatorHandle;
-    
+
     class FreeSpaceNode final : public RedBlackTree<FreeSpaceNode, size_t>::ThreadSafeNode {
-        WTF_MAKE_TZONE_ALLOCATED(FreeSpaceNode);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FreeSpaceNode);
     public:
+        void operator delete(void* object) { MetaAllocatorFreeSpaceMalloc::free(object); }
+        void* operator new(size_t size)
+        {
+            ASSERT(sizeof(FreeSpaceNode) == size);
+            return MetaAllocatorFreeSpaceMalloc::malloc(size);
+        }
+
         size_t sizeInBytes()
         {
             return m_end.untaggedPtr<size_t>() - m_start.untaggedPtr<size_t>();
@@ -179,10 +187,10 @@ private:
 
     // Utilities.
     
-    size_t roundUp(size_t sizeInBytes);
+    size_t NODELETE roundUp(size_t sizeInBytes);
     
     FreeSpaceNode* allocFreeSpaceNode();
-    WTF_EXPORT_PRIVATE void freeFreeSpaceNode(FreeSpaceNode*);
+    WTF_EXPORT_PRIVATE void freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&&);
     
     size_t m_allocationGranule;
     size_t m_pageSize;

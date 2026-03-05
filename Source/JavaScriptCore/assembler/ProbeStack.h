@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/CPU.h>
 #include <wtf/HashMap.h>
+#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>

@@ -136,7 +136,7 @@ TEST(SincResamplerTest, Convolve) {
 
   // Use a kernel from SincResampler as input and kernel data, this has the
   // benefit of already being properly sized and aligned for Convolve_SSE().
-  double result = resampler.Convolve_C(
+  double result = SincResampler::Convolve_C(
       resampler.kernel_storage_.get(), resampler.kernel_storage_.get(),
       resampler.kernel_storage_.get(), kKernelInterpolationFactor);
   double result2 = resampler.convolve_proc_(
@@ -145,7 +145,7 @@ TEST(SincResamplerTest, Convolve) {
   EXPECT_NEAR(result2, result, kEpsilon);
 
   // Test Convolve() w/ unaligned input pointer.
-  result = resampler.Convolve_C(
+  result = SincResampler::Convolve_C(
       resampler.kernel_storage_.get() + 1, resampler.kernel_storage_.get(),
       resampler.kernel_storage_.get(), kKernelInterpolationFactor);
   result2 = resampler.convolve_proc_(
@@ -172,7 +172,7 @@ TEST(SincResamplerTest, ConvolveBenchmark) {
   // Benchmark Convolve_C().
   int64_t start = TimeNanos();
   for (int i = 0; i < kConvolveIterations; ++i) {
-    resampler.Convolve_C(
+    SincResampler::Convolve_C(
         resampler.kernel_storage_.get(), resampler.kernel_storage_.get(),
         resampler.kernel_storage_.get(), kKernelInterpolationFactor);
   }

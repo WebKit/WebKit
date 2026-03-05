@@ -33,7 +33,7 @@ class SplitTextNodeContainingElementCommand : public CompositeEditCommand {
 public:
     static Ref<SplitTextNodeContainingElementCommand> create(Ref<Text>&& node, int offset)
     {
-        return adoptRef(*new SplitTextNodeContainingElementCommand(WTFMove(node), offset));
+        return adoptRef(*new SplitTextNodeContainingElementCommand(WTF::move(node), offset));
     }
 
 private:

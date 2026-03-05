@@ -28,6 +28,7 @@
 
 #include "IntlNumberFormatInlines.h"
 #include "IntlObjectInlines.h"
+#include "IntlPartObject.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -160,7 +161,7 @@ static constexpr StyleListKind styleLists[numberOfTemporalUnits] = {
     StyleListKind::LongShortNarrowNumeric,
 };
 
-static PropertyName displayName(VM& vm, TemporalUnit unit)
+static PropertyName NODELETE displayName(VM& vm, TemporalUnit unit)
 {
     switch (unit) {
 #define JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name##sDisplay;
@@ -317,7 +318,7 @@ enum class DurationSignType : uint8_t {
 };
 
 // https://tc39.es/proposal-intl-duration-format/#sec-durationsign
-static DurationSignType getDurationSign(ISO8601::Duration duration)
+static DurationSignType NODELETE getDurationSign(ISO8601::Duration duration)
 {
     for (auto value : duration) {
         if (value < 0)
@@ -346,7 +347,7 @@ static String int128ToString(Int128 value)
 
     std::ranges::reverse(resultString);
 
-    return StringImpl::adopt(WTFMove(resultString));
+    return StringImpl::adopt(WTF::move(resultString));
 }
 
 static String buildDecimalFormat(TemporalUnit unit, Int128 ns)
@@ -481,7 +482,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     return { };
                 }
 
-                return String(WTFMove(buffer));
+                return String(WTF::move(buffer));
             };
 
             // https://github.com/unicode-org/icu/blob/main/docs/userguide/format_parse/numbers/skeletons.md#sign-display
@@ -589,7 +590,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     auto formatted = formatToString(formattedNumber.get());
                     RETURN_IF_EXCEPTION(scope, { });
 
-                    elements.append({ ElementType::Element, std::signbit(value), unit, WTFMove(formatted), WTFMove(formattedNumber) });
+                    elements.append({ ElementType::Element, std::signbit(value), unit, WTF::move(formatted), WTF::move(formattedNumber) });
                 }
 
                 if (needsSeparator) {
@@ -623,7 +624,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 auto formatted = formatToString(formattedNumber.get());
                 RETURN_IF_EXCEPTION(scope, { });
 
-                elements.append({ ElementType::Element, std::signbit(value), unit, WTFMove(formatted), WTFMove(formattedNumber) });
+                elements.append({ ElementType::Element, std::signbit(value), unit, WTF::move(formatted), WTF::move(formattedNumber) });
                 break;
             }
             }
@@ -641,7 +642,7 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto elements = collectElements(globalObject, this, WTFMove(duration));
+    auto elements = collectElements(globalObject, this, WTF::move(duration));
     RETURN_IF_EXCEPTION(scope, { });
 
     Vector<String, 4> stringList;
@@ -668,14 +669,14 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
         stringList.append(builder.toString());
     }
 
-    ListFormatInput input(WTFMove(stringList));
+    ListFormatInput input(WTF::move(stringList));
 
     Vector<char16_t, 32> result;
     auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
-    return jsString(vm, String(WTFMove(result)));
+    return jsString(vm, String(WTF::move(result)));
 }
 
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.formatToParts
@@ -684,28 +685,28 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto elements = collectElements(globalObject, this, WTFMove(duration));
+    auto elements = collectElements(globalObject, this, WTF::move(duration));
     RETURN_IF_EXCEPTION(scope, { });
 
     Vector<String, 4> stringList;
     Vector<Vector<Element, 1>, 4> groupedElements;
     for (unsigned index = 0; index < elements.size(); ++index) {
         Vector<Element, 1> group;
-        group.append(WTFMove(elements[index]));
+        group.append(WTF::move(elements[index]));
         do {
             unsigned nextIndex = index + 1;
             if (!(nextIndex < elements.size()))
                 break;
             if (elements[nextIndex].m_type != ElementType::Literal)
                 break;
-            group.append(WTFMove(elements[nextIndex]));
+            group.append(WTF::move(elements[nextIndex]));
             ++index;
             ++nextIndex;
             if (!(nextIndex < elements.size()))
                 break;
             if (elements[nextIndex].m_type != ElementType::Element)
                 break;
-            group.append(WTFMove(elements[nextIndex]));
+            group.append(WTF::move(elements[nextIndex]));
             ++index;
         } while (true);
 
@@ -717,11 +718,11 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
                 builder.append(element.m_string);
             stringList.append(builder.toString());
         }
-        groupedElements.append(WTFMove(group));
+        groupedElements.append(WTF::move(group));
     }
     ASSERT(stringList.size() == groupedElements.size());
 
-    ListFormatInput input(WTFMove(stringList));
+    ListFormatInput input(WTF::move(stringList));
 
     UErrorCode status = U_ZERO_ERROR;
 
@@ -759,10 +760,7 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
     auto literalString = jsNontrivialString(vm, "literal"_s);
 
     auto createPart = [&](JSString* type, JSString* value) {
-        JSObject* part = constructEmptyObject(globalObject);
-        part->putDirect(vm, vm.propertyNames->type, type);
-        part->putDirect(vm, vm.propertyNames->value, value);
-        return part;
+        return createIntlPartObject(globalObject, type, value);
     };
 
     auto pushElements = [&](JSArray* parts, unsigned elementIndex) -> void {

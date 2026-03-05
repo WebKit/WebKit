@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/resources/child-autofocus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/resources/child-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/resources/erase-first.css
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/resources/frame-with-a.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/resources/frame-with-anchor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/resources/frame-with-autofocus-element.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/resources/grand-child-autofocus.html

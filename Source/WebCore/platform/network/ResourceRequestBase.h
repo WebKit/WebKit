@@ -74,12 +74,12 @@ public:
         RequestData() { }
 
         RequestData(URL&& url, URL&& firstPartyForCookies, double timeoutInterval, String&& httpMethod, HTTPHeaderMap&& httpHeaderFields, Vector<String>&& responseContentDispositionEncodingFallbackArray, ResourceRequestCachePolicy cachePolicy, SameSiteDisposition sameSiteDisposition, ResourceLoadPriority priority, ResourceRequestRequester requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false, bool wasSchemeOptimisticallyUpgraded = false, IPAddressSpace targetAddressSpace = IPAddressSpace::Public)
-            : m_url(WTFMove(url))
-            , m_firstPartyForCookies(WTFMove(firstPartyForCookies))
+            : m_url(WTF::move(url))
+            , m_firstPartyForCookies(WTF::move(firstPartyForCookies))
             , m_timeoutInterval(timeoutInterval)
-            , m_httpMethod(WTFMove(httpMethod))
-            , m_httpHeaderFields(WTFMove(httpHeaderFields))
-            , m_responseContentDispositionEncodingFallbackArray(WTFMove(responseContentDispositionEncodingFallbackArray))
+            , m_httpMethod(WTF::move(httpMethod))
+            , m_httpHeaderFields(WTF::move(httpHeaderFields))
+            , m_responseContentDispositionEncodingFallbackArray(WTF::move(responseContentDispositionEncodingFallbackArray))
             , m_cachePolicy(cachePolicy)
             , m_sameSiteDisposition(sameSiteDisposition)
             , m_priority(priority)
@@ -97,7 +97,7 @@ public:
         }
 
         RequestData(URL&& url, ResourceRequestCachePolicy cachePolicy)
-            : m_url(WTFMove(url))
+            : m_url(WTF::move(url))
             , m_cachePolicy(cachePolicy)
         {
         }
@@ -124,7 +124,7 @@ public:
     };
 
     ResourceRequestBase(RequestData&& requestData)
-        : m_requestData(WTFMove(requestData))
+        : m_requestData(WTF::move(requestData))
         , m_resourceRequestUpdated(true)
         , m_platformRequestUpdated(false)
         , m_resourceRequestBodyUpdated(true)
@@ -139,7 +139,7 @@ public:
     WEBCORE_EXPORT bool isNull() const;
     WEBCORE_EXPORT bool isEmpty() const;
     
-    WEBCORE_EXPORT const URL& url() const;
+    WEBCORE_EXPORT const URL& url() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setURL(URL&&, bool didFilterLinkDecoration = false);
 
     void redirectAsGETIfNeeded(const ResourceRequestBase &, const ResourceResponse&);
@@ -156,7 +156,7 @@ public:
     WEBCORE_EXPORT void setTimeoutInterval(double);
     WEBCORE_EXPORT void resetTimeoutInterval();
     
-    WEBCORE_EXPORT const URL& firstPartyForCookies() const;
+    WEBCORE_EXPORT const URL& firstPartyForCookies() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setFirstPartyForCookies(const URL&);
 
     WEBCORE_EXPORT bool isThirdParty() const;
@@ -173,10 +173,10 @@ public:
     WEBCORE_EXPORT bool isTopSite() const; // Whether this request is for a top-level navigation.
     WEBCORE_EXPORT void setIsTopSite(bool);
 
-    WEBCORE_EXPORT const String& httpMethod() const;
+    WEBCORE_EXPORT const String& httpMethod() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setHTTPMethod(const String& httpMethod);
     
-    WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
+    WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setHTTPHeaderFields(HTTPHeaderMap);
 
     WEBCORE_EXPORT String httpHeaderField(StringView name) const;
@@ -223,7 +223,7 @@ public:
 
     WEBCORE_EXPORT void clearPurpose();
 
-    const Vector<String>& responseContentDispositionEncodingFallbackArray() const { return m_requestData.m_responseContentDispositionEncodingFallbackArray; }
+    const Vector<String>& responseContentDispositionEncodingFallbackArray() const LIFETIME_BOUND { return m_requestData.m_responseContentDispositionEncodingFallbackArray; }
     WEBCORE_EXPORT void setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2 = String(), const String& encoding3 = String());
     void setResponseContentDispositionEncodingFallbackArray(const Vector<String>& array) { m_requestData.m_responseContentDispositionEncodingFallbackArray = array; }
 
@@ -240,7 +240,7 @@ public:
     WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
 
     WEBCORE_EXPORT static String partitionName(const String& domain);
-    const String& cachePartition() const { return m_cachePartition; }
+    const String& cachePartition() const LIFETIME_BOUND { return m_cachePartition; }
     WEBCORE_EXPORT void setCachePartition(const String&);
     void setDomainForCachePartition(const String& domain) { setCachePartition(partitionName(domain)); }
 
@@ -310,7 +310,7 @@ protected:
     }
 
     ResourceRequestBase(URL&& url, ResourceRequestCachePolicy policy)
-        : m_requestData({ WTFMove(url), policy })
+        : m_requestData({ WTF::move(url), policy })
         , m_resourceRequestUpdated(true)
         , m_platformRequestUpdated(false)
         , m_resourceRequestBodyUpdated(true)

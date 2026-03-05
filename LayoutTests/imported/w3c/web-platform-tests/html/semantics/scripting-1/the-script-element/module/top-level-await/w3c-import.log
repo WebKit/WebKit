@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/sibling-imports-not-blocked.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/sibling-imports-not-blocked__microtask__check-get-sync.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/sibling-imports-not-blocked__microtask__check-set-async.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/sibling-imports-not-blocked__microtask__parent.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/sibling-imports-not-blocked__task__check-get-sync.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/sibling-imports-not-blocked__task__check-set-async.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/top-level-await/sibling-imports-not-blocked__task__parent.js

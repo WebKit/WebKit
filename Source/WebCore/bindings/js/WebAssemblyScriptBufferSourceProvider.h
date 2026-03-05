@@ -38,7 +38,7 @@ class WebAssemblyScriptBufferSourceProvider final : public JSC::BaseWebAssemblyS
 public:
     static Ref<WebAssemblyScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, URL&& sourceURL, Ref<JSC::ScriptFetcher>&& scriptFetcher)
     {
-        return adoptRef(*new WebAssemblyScriptBufferSourceProvider(scriptBuffer, JSC::SourceOrigin { WTFMove(sourceURL), WTFMove(scriptFetcher) }, sourceURL.string()));
+        return adoptRef(*new WebAssemblyScriptBufferSourceProvider(scriptBuffer, JSC::SourceOrigin { WTF::move(sourceURL), WTF::move(scriptFetcher) }, sourceURL.string()));
     }
 
     unsigned hash() const final
@@ -64,7 +64,7 @@ public:
     void lockUnderlyingBufferImpl() final
     {
         ASSERT(!m_buffer);
-        if (RefPtr<const FragmentedSharedBuffer> buffer = m_scriptBuffer.buffer().get())
+        if (RefPtr buffer = m_scriptBuffer.buffer())
             m_buffer = buffer->makeContiguous();
     }
 
@@ -86,7 +86,7 @@ public:
 
 private:
     WebAssemblyScriptBufferSourceProvider(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String sourceURL)
-        : BaseWebAssemblySourceProvider(sourceOrigin, WTFMove(sourceURL))
+        : BaseWebAssemblySourceProvider(sourceOrigin, WTF::move(sourceURL))
         , m_scriptBuffer(scriptBuffer)
         , m_buffer(nullptr)
         , m_source("[WebAssembly source]"_s)

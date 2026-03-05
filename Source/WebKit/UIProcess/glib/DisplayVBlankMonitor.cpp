@@ -82,7 +82,7 @@ void DisplayVBlankMonitor::setHandler(Function<void()>&& handler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_handler);
-    m_handler = WTFMove(handler);
+    m_handler = WTF::move(handler);
 }
 
 } // namespace WebKit

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LogInitialization.h"
+#include <wtf/LogInitialization.h>
 
 #include <wtf/LogChannels.h>
 #include <wtf/Logging.h>

@@ -51,7 +51,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
         return;
 
     // Put object in cache.
-    SVGResources& resources = *m_cache.add(renderer, WTFMove(newResources)).iterator->value;
+    SVGResources& resources = *m_cache.add(renderer, WTF::move(newResources)).iterator->value;
     renderer.setHasCachedSVGResource(true);
 
     // Run cycle-detection _afterwards_, so self-references can be caught as well.
@@ -132,12 +132,12 @@ void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
         resources->removeClientFromCacheAndMarkForInvalidation(renderer, false);
 }
 
-static inline bool rendererCanHaveResources(RenderObject& renderer)
+static inline bool NODELETE rendererCanHaveResources(RenderObject& renderer)
 {
     return renderer.node() && renderer.node()->isSVGElement() && !renderer.isRenderSVGInlineText();
 }
 
-void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, Style::Difference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     // Verify that LBSE does not make use of SVGResourcesCache.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
@@ -155,10 +155,10 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
     // Since diff can be Equal even if we have have a filter property change
     // (due to how RenderElement::adjustStyleDifference works), in general we
     // want to continue to the comparison of oldStyle and newStyle below, and
-    // so we don't return early just when diff == StyleDifference::Equal. But
+    // so we don't return early just when diff == Style::DifferenceResult::Equal. But
     // this isn't necessary for filter primitives, to which the filter property
     // doesn't apply, so we check for it here too.
-    if (renderer.isLegacyRenderSVGResourceFilterPrimitive() && (diff == StyleDifference::Equal || diff == StyleDifference::Repaint || diff == StyleDifference::RepaintIfText))
+    if (renderer.isLegacyRenderSVGResourceFilterPrimitive() && (diff == Style::DifferenceResult::Equal || diff == Style::DifferenceResult::Repaint || diff == Style::DifferenceResult::RepaintIfText))
         return;
 
     auto hasStyleDifferencesAffectingResources = [&] {
@@ -186,6 +186,15 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
             return true;
 
         if (oldStyle->stroke().urlDisregardingType() != newStyle.stroke().urlDisregardingType())
+            return true;
+
+        if (oldStyle->markerStart() != newStyle.markerStart())
+            return true;
+
+        if (oldStyle->markerMid() != newStyle.markerMid())
+            return true;
+
+        if (oldStyle->markerEnd() != newStyle.markerEnd())
             return true;
 
         return false;

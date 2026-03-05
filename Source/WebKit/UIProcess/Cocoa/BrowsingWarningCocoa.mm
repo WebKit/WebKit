@@ -27,16 +27,32 @@
 #import "BrowsingWarning.h"
 
 #import "SafeBrowsingSPI.h"
-#import "SafeBrowsingSoftLink.h"
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/Language.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/MakeString.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/BrowsingWarningAdditions.mm>)
+#import <WebKitAdditions/BrowsingWarningAdditions.mm>
+#endif
+
+#if !defined(BROWSING_WARNING_PROVIDER_ADDITIONS)
+#define BROWSING_WARNING_PROVIDER_ADDITIONS
+#endif
+
+#if !defined(BROWSING_WARNING_PROVIDER_SHORT_NAME_ADDITIONS)
+#define BROWSING_WARNING_PROVIDER_SHORT_NAME_ADDITIONS
+#endif
+
+#if !defined(BROWSING_WARNING_DETAILS_TEXT_ADDITIONS)
+#define BROWSING_WARNING_DETAILS_TEXT_ADDITIONS
+#endif
+
 NSString * const SSBProviderGoogle = @"SSBProviderGoogle";
 NSString * const SSBProviderTencent = @"SSBProviderTencent";
 NSString * const SSBProviderApple = @"SSBProviderApple";
+BROWSING_WARNING_PROVIDER_ADDITIONS
 
 namespace WebKit {
 
@@ -72,10 +88,10 @@ static String localizedProviderShortName(SSBServiceLookupResult *result)
         return "Tencent"_s;
     if ([result.provider isEqual:SSBProviderApple])
         return "Apple"_s;
+    BROWSING_WARNING_PROVIDER_SHORT_NAME_ADDITIONS
     ASSERT_NOT_REACHED();
     return ""_s;
 }
-
 
 static void replace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith)
 {
@@ -143,6 +159,8 @@ static NSString *browsingWarningText(BrowsingWarning::Data data)
 
 static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBServiceLookupResult *result)
 {
+    BROWSING_WARNING_DETAILS_TEXT_ADDITIONS
+
     if (result.isPhishing) {
         RetainPtr phishingDescription = WEB_UI_NSSTRING(@"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.", "Phishing warning description");
         RetainPtr learnMore = WEB_UI_NSSTRING(@"Learn more…", "Action from safe browsing warning");
@@ -193,17 +211,17 @@ BrowsingWarning::BrowsingWarning(const URL& url, bool forMainFrameNavigation, Da
     , m_warning(browsingWarningText(data))
     , m_forMainFrameNavigation(forMainFrameNavigation)
     , m_details(browsingDetailsText(url, data))
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
 {
 }
 #endif
 
 BrowsingWarning::BrowsingWarning(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details, Data&& data)
-    : m_url(WTFMove(url))
-    , m_title(WTFMove(title))
-    , m_warning(WTFMove(warning))
-    , m_details(WTFMove(details))
-    , m_data(WTFMove(data))
+    : m_url(WTF::move(url))
+    , m_title(WTF::move(title))
+    , m_warning(WTF::move(warning))
+    , m_details(WTF::move(details))
+    , m_data(WTF::move(data))
 {
 }
 

@@ -41,18 +41,18 @@ struct BigInt64Adaptor;
 struct BigUint64Adaptor;
 
 template<typename Adaptor> class GenericTypedArrayView;
-typedef GenericTypedArrayView<Int8Adaptor> Int8Array;
-typedef GenericTypedArrayView<Int16Adaptor> Int16Array;
-typedef GenericTypedArrayView<Int32Adaptor> Int32Array;
-typedef GenericTypedArrayView<Uint8Adaptor> Uint8Array;
-typedef GenericTypedArrayView<Uint8ClampedAdaptor> Uint8ClampedArray;
-typedef GenericTypedArrayView<Uint16Adaptor> Uint16Array;
-typedef GenericTypedArrayView<Uint32Adaptor> Uint32Array;
-typedef GenericTypedArrayView<Float16Adaptor> Float16Array;
-typedef GenericTypedArrayView<Float32Adaptor> Float32Array;
-typedef GenericTypedArrayView<Float64Adaptor> Float64Array;
-typedef GenericTypedArrayView<BigInt64Adaptor> BigInt64Array;
-typedef GenericTypedArrayView<BigUint64Adaptor> BigUint64Array;
+using Int8Array = GenericTypedArrayView<Int8Adaptor>;
+using Int16Array = GenericTypedArrayView<Int16Adaptor>;
+using Int32Array = GenericTypedArrayView<Int32Adaptor>;
+using Uint8Array = GenericTypedArrayView<Uint8Adaptor>;
+using Uint8ClampedArray = GenericTypedArrayView<Uint8ClampedAdaptor>;
+using Uint16Array = GenericTypedArrayView<Uint16Adaptor>;
+using Uint32Array = GenericTypedArrayView<Uint32Adaptor>;
+using Float16Array = GenericTypedArrayView<Float16Adaptor>;
+using Float32Array = GenericTypedArrayView<Float32Adaptor>;
+using Float64Array = GenericTypedArrayView<Float64Adaptor>;
+using BigInt64Array = GenericTypedArrayView<BigInt64Adaptor>;
+using BigUint64Array = GenericTypedArrayView<BigUint64Adaptor>;
 
 }
 

@@ -335,7 +335,11 @@ void RenderDelayBufferImpl::SetAudioBufferDelay(int delay_ms) {
   }
 
   // Convert delay from milliseconds to blocks (rounded down).
-  external_audio_buffer_delay_ = delay_ms / 4;
+  constexpr int kSampleRateForFixedCaptureDelay = 16000;
+  constexpr int kNumSamplesPerMs = kSampleRateForFixedCaptureDelay / 1000;
+  external_audio_buffer_delay_ = (delay_ms * kNumSamplesPerMs +
+                                  config_.delay.fixed_capture_delay_samples) /
+                                 (kBlockSizeMs * kNumSamplesPerMs);
 }
 
 bool RenderDelayBufferImpl::HasReceivedBufferDelay() {

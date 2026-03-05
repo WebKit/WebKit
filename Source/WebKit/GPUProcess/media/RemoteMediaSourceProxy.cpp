@@ -84,7 +84,7 @@ void RemoteMediaSourceProxy::disconnect()
 void RemoteMediaSourceProxy::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate)
 {
     ASSERT(!m_private);
-    m_private = WTFMove(mediaSourcePrivate);
+    m_private = WTF::move(mediaSourcePrivate);
 }
 
 void RemoteMediaSourceProxy::reOpen()
@@ -129,7 +129,7 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
         auto identifier = RemoteSourceBufferIdentifier::generate();
         Ref remoteMediaPlayerProxy { *m_remoteMediaPlayerProxy };
         auto remoteSourceBufferProxy = RemoteSourceBufferProxy::create(*connection, identifier, sourceBufferPrivate.releaseNonNull(), remoteMediaPlayerProxy);
-        m_sourceBuffers.append(WTFMove(remoteSourceBufferProxy));
+        m_sourceBuffers.append(WTF::move(remoteSourceBufferProxy));
         remoteSourceIdentifier = identifier;
     }
 
@@ -145,7 +145,7 @@ void RemoteMediaSourceProxy::durationChanged(const MediaTime& duration)
 void RemoteMediaSourceProxy::bufferedChanged(WebCore::PlatformTimeRanges&& buffered)
 {
     if (RefPtr protectedPrivate = m_private)
-        protectedPrivate->bufferedChanged(WTFMove(buffered));
+        protectedPrivate->bufferedChanged(WTF::move(buffered));
 }
 
 void RemoteMediaSourceProxy::markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status )

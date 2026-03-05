@@ -33,7 +33,7 @@ static const SRTP_PROTECTION_PROFILE kSRTPProfiles[] = {
     {"SRTP_AES128_CM_SHA1_32", SRTP_AES128_CM_SHA1_32},
     {"SRTP_AEAD_AES_128_GCM", SRTP_AEAD_AES_128_GCM},
     {"SRTP_AEAD_AES_256_GCM", SRTP_AEAD_AES_256_GCM},
-    {0, 0},
+    {nullptr, 0},
 };
 
 static int find_profile_by_name(const char *profile_name,

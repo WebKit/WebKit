@@ -59,7 +59,7 @@ bool appendCaptionTextIfNecessary(Element& element, Vector<AccessibilityText>& t
     if (RefPtr tableElement = dynamicDowncast<HTMLTableElement>(element)) {
         RefPtr caption = tableElement->caption();
         if (String captionText = caption ? caption->innerText() : emptyString(); !captionText.isEmpty()) {
-            textOrder.append(AccessibilityText(WTFMove(captionText), AccessibilityTextSource::LabelByElement));
+            textOrder.append(AccessibilityText(WTF::move(captionText), AccessibilityTextSource::LabelByElement));
             return true;
         }
     }
@@ -198,7 +198,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
     unsigned tableHorizontalBorderSpacing = 0;
     unsigned tableVerticalBorderSpacing = 0;
     if (CheckedPtr<const RenderStyle> tableStyle = safeStyleFrom(tableElement)) {
-        tableBackgroundColor = tableStyle->visitedDependentColor(CSSPropertyBackgroundColor);
+        tableBackgroundColor = tableStyle->visitedDependentBackgroundColor();
         tableHorizontalBorderSpacing = tableStyle->borderHorizontalSpacing().resolveZoom(tableStyle->usedZoomForLength());
         tableVerticalBorderSpacing = tableStyle->borderVerticalSpacing().resolveZoom(tableStyle->usedZoomForLength());
 
@@ -242,13 +242,13 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                     if (topSectionIndicatesLayoutTable(tableSectionElement))
                         return false;
                 } else if (elementName == ElementName::HTML_tbody)
-                    firstBody = firstBody ? firstBody : tableSectionElement;
+                    firstBody = firstBody ? firstBody : RefPtr { tableSectionElement };
                 else {
                     ASSERT_WITH_MESSAGE(elementName == ElementName::HTML_tfoot, "table section elements should always have either thead, tbody, or tfoot tag");
-                    firstFoot = firstFoot ? firstFoot : tableSectionElement;
+                    firstFoot = firstFoot ? firstFoot : RefPtr { tableSectionElement };
                 }
             } else if (auto* tableRow = dynamicDowncast<HTMLTableRowElement>(currentElement.get())) {
-                firstRow = firstRow ? firstRow : tableRow;
+                firstRow = firstRow ? firstRow : RefPtr { tableRow };
 
                 rowCount += 1;
                 if (isDataTableBasedOnRowColumnCount())
@@ -260,7 +260,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                 // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
                 if (alternatingRowColorCount < 5) {
                     if (CheckedPtr<const RenderStyle> rowStyle = styleFrom(*tableRow)) {
-                        alternatingRowColors[alternatingRowColorCount] = rowStyle->visitedDependentColor(CSSPropertyBackgroundColor);
+                        alternatingRowColors[alternatingRowColorCount] = rowStyle->visitedDependentBackgroundColor();
                         alternatingRowColorCount++;
                     }
                 }
@@ -304,7 +304,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                         // If the empty-cells style is set, we'll call it a data table.
                         return true;
                     }
-                    cellColor = cellStyle->visitedDependentColor(CSSPropertyBackgroundColor);
+                    cellColor = cellStyle->visitedDependentBackgroundColor();
                 }
 
                 if (CheckedPtr cellRenderer = dynamicDowncast<RenderBlock>(cell->renderer())) {

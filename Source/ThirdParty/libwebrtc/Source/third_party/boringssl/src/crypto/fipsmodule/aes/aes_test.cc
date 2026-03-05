@@ -16,7 +16,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -25,15 +24,15 @@
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 
-#include "internal.h"
 #include "../../internal.h"
 #include "../../test/abi_test.h"
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
 #include "../../test/wycheproof_util.h"
+#include "internal.h"
 
-
-static void TestRaw(FileTest *t) {
+namespace {
+void TestRaw(FileTest *t) {
   std::vector<uint8_t> key, plaintext, ciphertext;
   ASSERT_TRUE(t->GetBytes(&key, "Key"));
   ASSERT_TRUE(t->GetBytes(&plaintext, "Plaintext"));
@@ -67,7 +66,7 @@ static void TestRaw(FileTest *t) {
   EXPECT_EQ(Bytes(plaintext), Bytes(block));
 }
 
-static void TestKeyWrap(FileTest *t) {
+void TestKeyWrap(FileTest *t) {
   // All test vectors use the default IV, so test both with implicit and
   // explicit IV.
   //
@@ -124,7 +123,7 @@ static void TestKeyWrap(FileTest *t) {
                                ciphertext.data(), ciphertext.size()));
 }
 
-static void TestKeyWrapWithPadding(FileTest *t) {
+void TestKeyWrapWithPadding(FileTest *t) {
   std::vector<uint8_t> key, plaintext, ciphertext;
   ASSERT_TRUE(t->GetBytes(&key, "Key"));
   ASSERT_TRUE(t->GetBytes(&plaintext, "Plaintext"));
@@ -165,90 +164,94 @@ TEST(AESTest, TestVectors) {
 }
 
 TEST(AESTest, WycheproofKeyWrap) {
-  FileTestGTest("third_party/wycheproof_testvectors/kw_test.txt",
-                [](FileTest *t) {
-    std::string key_size;
-    ASSERT_TRUE(t->GetInstruction(&key_size, "keySize"));
-    std::vector<uint8_t> ct, key, msg;
-    ASSERT_TRUE(t->GetBytes(&ct, "ct"));
-    ASSERT_TRUE(t->GetBytes(&key, "key"));
-    ASSERT_TRUE(t->GetBytes(&msg, "msg"));
-    ASSERT_EQ(static_cast<unsigned>(atoi(key_size.c_str())), key.size() * 8);
-    WycheproofResult result;
-    ASSERT_TRUE(GetWycheproofResult(t, &result));
+  FileTestGTest(
+      "third_party/wycheproof_testvectors/aes_wrap_test.txt", [](FileTest *t) {
+        std::string key_size;
+        ASSERT_TRUE(t->GetInstruction(&key_size, "keySize"));
+        std::vector<uint8_t> ct, key, msg;
+        ASSERT_TRUE(t->GetBytes(&ct, "ct"));
+        ASSERT_TRUE(t->GetBytes(&key, "key"));
+        ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+        ASSERT_EQ(static_cast<unsigned>(atoi(key_size.c_str())),
+                  key.size() * 8);
+        WycheproofResult result;
+        ASSERT_TRUE(GetWycheproofResult(t, &result));
 
-    if (result.IsValid()) {
-      ASSERT_GE(ct.size(), 8u);
+        if (result.IsValid()) {
+          ASSERT_GE(ct.size(), 8u);
 
-      AES_KEY aes;
-      ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
-      std::vector<uint8_t> out(ct.size() - 8);
-      int len = AES_unwrap_key(&aes, nullptr, out.data(), ct.data(), ct.size());
-      ASSERT_EQ(static_cast<int>(out.size()), len);
-      EXPECT_EQ(Bytes(msg), Bytes(out));
+          AES_KEY aes;
+          ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
+          std::vector<uint8_t> out(ct.size() - 8);
+          int len =
+              AES_unwrap_key(&aes, nullptr, out.data(), ct.data(), ct.size());
+          ASSERT_EQ(static_cast<int>(out.size()), len);
+          EXPECT_EQ(Bytes(msg), Bytes(out));
 
-      out.resize(msg.size() + 8);
-      ASSERT_EQ(0, AES_set_encrypt_key(key.data(), 8 * key.size(), &aes));
-      len = AES_wrap_key(&aes, nullptr, out.data(), msg.data(), msg.size());
-      ASSERT_EQ(static_cast<int>(out.size()), len);
-      EXPECT_EQ(Bytes(ct), Bytes(out));
-    } else {
-      AES_KEY aes;
-      ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
-      std::vector<uint8_t> out(ct.size() < 8 ? 0 : ct.size() - 8);
-      int len = AES_unwrap_key(&aes, nullptr, out.data(), ct.data(), ct.size());
-      EXPECT_EQ(-1, len);
-    }
-  });
+          out.resize(msg.size() + 8);
+          ASSERT_EQ(0, AES_set_encrypt_key(key.data(), 8 * key.size(), &aes));
+          len = AES_wrap_key(&aes, nullptr, out.data(), msg.data(), msg.size());
+          ASSERT_EQ(static_cast<int>(out.size()), len);
+          EXPECT_EQ(Bytes(ct), Bytes(out));
+        } else {
+          AES_KEY aes;
+          ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
+          std::vector<uint8_t> out(ct.size() < 8 ? 0 : ct.size() - 8);
+          int len =
+              AES_unwrap_key(&aes, nullptr, out.data(), ct.data(), ct.size());
+          EXPECT_EQ(-1, len);
+        }
+      });
 }
 
 TEST(AESTest, WycheproofKeyWrapWithPadding) {
-  FileTestGTest("third_party/wycheproof_testvectors/kwp_test.txt",
-                [](FileTest *t) {
-    std::string key_size;
-    ASSERT_TRUE(t->GetInstruction(&key_size, "keySize"));
-    std::vector<uint8_t> ct, key, msg;
-    ASSERT_TRUE(t->GetBytes(&ct, "ct"));
-    ASSERT_TRUE(t->GetBytes(&key, "key"));
-    ASSERT_TRUE(t->GetBytes(&msg, "msg"));
-    ASSERT_EQ(static_cast<unsigned>(atoi(key_size.c_str())), key.size() * 8);
-    WycheproofResult result;
-    ASSERT_TRUE(GetWycheproofResult(t, &result));
+  FileTestGTest(
+      "third_party/wycheproof_testvectors/aes_kwp_test.txt", [](FileTest *t) {
+        std::string key_size;
+        ASSERT_TRUE(t->GetInstruction(&key_size, "keySize"));
+        std::vector<uint8_t> ct, key, msg;
+        ASSERT_TRUE(t->GetBytes(&ct, "ct"));
+        ASSERT_TRUE(t->GetBytes(&key, "key"));
+        ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+        ASSERT_EQ(static_cast<unsigned>(atoi(key_size.c_str())),
+                  key.size() * 8);
+        WycheproofResult result;
+        ASSERT_TRUE(GetWycheproofResult(t, &result));
 
-    // Wycheproof contains test vectors with empty messages that it believes
-    // should pass. However, both RFC 5649 and SP 800-38F section 5.3.1 say that
-    // the minimum length is one. Therefore we consider test cases with an empty
-    // message to be invalid.
-    //
-    // Wycheproof marks various weak parameters as acceptable. We do not enforce
-    // policy in the library, so we map those flags to valid.
-    if (result.IsValid({"SmallKey", "WeakWrapping"}) && !msg.empty()) {
-      AES_KEY aes;
-      ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
-      std::vector<uint8_t> out(ct.size() - 8);
-      size_t len;
-      ASSERT_TRUE(AES_unwrap_key_padded(&aes, out.data(), &len, ct.size() - 8,
-                                        ct.data(), ct.size()));
-      EXPECT_EQ(Bytes(msg), Bytes(out.data(), len));
+        // Wycheproof contains test vectors with empty messages that it believes
+        // should pass. However, both RFC 5649 and SP 800-38F section 5.3.1 say
+        // that the minimum length is one. Therefore we consider test cases with
+        // an empty message to be invalid.
+        //
+        // Wycheproof marks various weak parameters as acceptable. We do not
+        // enforce policy in the library, so we map those flags to valid.
+        if (result.IsValid({"SmallKey", "WeakWrapping"}) && !msg.empty()) {
+          AES_KEY aes;
+          ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
+          std::vector<uint8_t> out(ct.size() - 8);
+          size_t len;
+          ASSERT_TRUE(AES_unwrap_key_padded(
+              &aes, out.data(), &len, ct.size() - 8, ct.data(), ct.size()));
+          EXPECT_EQ(Bytes(msg), Bytes(out.data(), len));
 
-      out.resize(msg.size() + 15);
-      ASSERT_EQ(0, AES_set_encrypt_key(key.data(), 8 * key.size(), &aes));
-      ASSERT_TRUE(AES_wrap_key_padded(&aes, out.data(), &len, msg.size() + 15,
-                                      msg.data(), msg.size()));
-      EXPECT_EQ(Bytes(ct), Bytes(out.data(), len));
-    } else {
-      AES_KEY aes;
-      ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
-      std::vector<uint8_t> out(ct.size());
-      size_t len;
-      ASSERT_FALSE(AES_unwrap_key_padded(&aes, out.data(), &len, ct.size(),
-                                         ct.data(), ct.size()));
-    }
-  });
+          out.resize(msg.size() + 15);
+          ASSERT_EQ(0, AES_set_encrypt_key(key.data(), 8 * key.size(), &aes));
+          ASSERT_TRUE(AES_wrap_key_padded(
+              &aes, out.data(), &len, msg.size() + 15, msg.data(), msg.size()));
+          EXPECT_EQ(Bytes(ct), Bytes(out.data(), len));
+        } else {
+          AES_KEY aes;
+          ASSERT_EQ(0, AES_set_decrypt_key(key.data(), 8 * key.size(), &aes));
+          std::vector<uint8_t> out(ct.size());
+          size_t len;
+          ASSERT_FALSE(AES_unwrap_key_padded(&aes, out.data(), &len, ct.size(),
+                                             ct.data(), ct.size()));
+        }
+      });
 }
 
 TEST(AESTest, WrapBadLengths) {
-  uint8_t key[128/8] = {0};
+  uint8_t key[128 / 8] = {0};
   AES_KEY aes;
   ASSERT_EQ(0, AES_set_encrypt_key(key, 128, &aes));
 
@@ -275,7 +278,7 @@ TEST(AESTest, InvalidKeySize) {
 TEST(AESTest, ABI) {
   for (int bits : {128, 192, 256}) {
     SCOPED_TRACE(bits);
-    const uint8_t kKey[256/8] = {0};
+    const uint8_t kKey[256 / 8] = {0};
     AES_KEY key;
     uint8_t block[AES_BLOCK_SIZE];
     uint8_t buf[AES_BLOCK_SIZE * 64] = {0};
@@ -345,7 +348,8 @@ TEST(AESTest, ABI) {
       }
 
 #if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
-      ASSERT_EQ(CHECK_ABI_SEH(aes_hw_set_encrypt_key_base, kKey, bits, &key), 0);
+      ASSERT_EQ(CHECK_ABI_SEH(aes_hw_set_encrypt_key_base, kKey, bits, &key),
+                0);
       if (aes_hw_set_encrypt_key_alt_capable()) {
         AES_KEY alt;
         ASSERT_EQ(CHECK_ABI_SEH(aes_hw_set_encrypt_key_alt, kKey, bits, &alt),
@@ -375,11 +379,11 @@ TEST(AESTest, ABI) {
 #endif  // SUPPORTS_ABI_TEST
 
 #if defined(BSAES) && !defined(BORINGSSL_SHARED_LIBRARY)
-static Bytes AESKeyToBytes(const AES_KEY *key) {
+Bytes AESKeyToBytes(const AES_KEY *key) {
   return Bytes(reinterpret_cast<const uint8_t *>(key), sizeof(*key));
 }
 
-static uint8_t aes_ref_sub_byte(uint8_t b) {
+uint8_t aes_ref_sub_byte(uint8_t b) {
   static const uint8_t kSBox[256] = {
       0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b,
       0xfe, 0xd7, 0xab, 0x76, 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0,
@@ -407,7 +411,7 @@ static uint8_t aes_ref_sub_byte(uint8_t b) {
   return kSBox[b];
 }
 
-static uint32_t aes_ref_sub_word(uint32_t in) {
+uint32_t aes_ref_sub_word(uint32_t in) {
   uint32_t a0 = aes_ref_sub_byte(in);
   uint32_t a1 = aes_ref_sub_byte(in >> 8);
   uint32_t a2 = aes_ref_sub_byte(in >> 16);
@@ -415,8 +419,7 @@ static uint32_t aes_ref_sub_word(uint32_t in) {
   return a0 | (a1 << 8) | (a2 << 16) | (a3 << 24);
 }
 
-static int aes_ref_set_encrypt_key(const uint8_t *key, int key_bits,
-                                   AES_KEY *out) {
+int aes_ref_set_encrypt_key(const uint8_t *key, int key_bits, AES_KEY *out) {
   static const uint32_t kRCon[10] = {0x01, 0x02, 0x04, 0x08, 0x10,
                                      0x20, 0x40, 0x80, 0x1b, 0x36};
   switch (key_bits) {
@@ -454,7 +457,7 @@ static int aes_ref_set_encrypt_key(const uint8_t *key, int key_bits,
   return 0;
 }
 
-static void aes_ref_inv_mix_columns(uint32_t block[4]) {
+void aes_ref_inv_mix_columns(uint32_t block[4]) {
   // This tables was generated with the following Python script:
   // clang-format off
 /*
@@ -546,7 +549,7 @@ print("static const uint32_t kTable[256] = {%s};\n" % body)
   }
 }
 
-static int aes_ref_set_decrypt_key(const uint8_t *key, int bits, AES_KEY *out) {
+int aes_ref_set_decrypt_key(const uint8_t *key, int bits, AES_KEY *out) {
   if (aes_ref_set_encrypt_key(key, bits, out) != 0) {
     return 1;
   }
@@ -617,3 +620,5 @@ TEST(AESTest, VPAESToBSAESConvert) {
   }
 }
 #endif  // BSAES && !SHARED_LIBRARY
+
+}  // namespace

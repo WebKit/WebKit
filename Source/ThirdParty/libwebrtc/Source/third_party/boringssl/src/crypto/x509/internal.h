@@ -17,6 +17,7 @@
 
 #include <openssl/base.h>
 #include <openssl/evp.h>
+#include <openssl/span.h>
 #include <openssl/x509.h>
 
 #include "../asn1/internal.h"
@@ -29,26 +30,29 @@ extern "C" {
 
 // Internal structures.
 
-typedef struct X509_val_st {
-  ASN1_TIME *notBefore;
-  ASN1_TIME *notAfter;
-} X509_VAL;
-
-DECLARE_ASN1_FUNCTIONS_const(X509_VAL)
-
 struct X509_pubkey_st {
-  X509_ALGOR *algor;
-  ASN1_BIT_STRING *public_key;
+  X509_ALGOR algor;
+  ASN1_BIT_STRING public_key;
   EVP_PKEY *pkey;
 } /* X509_PUBKEY */;
 
+void x509_pubkey_init(X509_PUBKEY *key);
+void x509_pubkey_cleanup(X509_PUBKEY *key);
+
+int x509_parse_public_key(CBS *cbs, X509_PUBKEY *out,
+                          bssl::Span<const EVP_PKEY_ALG *const> algs);
+int x509_marshal_public_key(CBB *cbb, const X509_PUBKEY *in);
+int x509_pubkey_set1(X509_PUBKEY *key, EVP_PKEY *pkey);
+
 // X509_PUBKEY is an |ASN1_ITEM| whose ASN.1 type is SubjectPublicKeyInfo and C
 // type is |X509_PUBKEY*|.
+// TODO(crbug.com/42290417): Remove this when |X509| and |X509_REQ| no longer
+// depend on the tables.
 DECLARE_ASN1_ITEM(X509_PUBKEY)
 
 struct X509_name_entry_st {
   ASN1_OBJECT *object;
-  ASN1_STRING *value;
+  ASN1_STRING value;
   int set;
 } /* X509_NAME_ENTRY */;
 
@@ -56,13 +60,19 @@ struct X509_name_entry_st {
 // (RFC 5280) and C type is |X509_NAME_ENTRY*|.
 DECLARE_ASN1_ITEM(X509_NAME_ENTRY)
 
-// we always keep X509_NAMEs in 2 forms.
+struct X509_NAME_CACHE {
+  // canon contains the DER-encoded canonicalized X.509 Name, not including the
+  // outermost TLV.
+  uint8_t *canon;
+  size_t canon_len;
+  // der contains the DER-encoded X.509 Name, including the outermost TLV.
+  uint8_t *der;
+  size_t der_len;
+};
+
 struct X509_name_st {
   STACK_OF(X509_NAME_ENTRY) *entries;
-  int modified;  // true if 'bytes' needs to be built
-  BUF_MEM *bytes;
-  unsigned char *canon_enc;
-  int canon_enclen;
+  mutable bssl::Atomic<X509_NAME_CACHE *> cache;
 } /* X509_NAME */;
 
 struct x509_attributes_st {
@@ -97,28 +107,27 @@ DECLARE_ASN1_ITEM(X509_EXTENSION)
 // (RFC 5280) and C type is |STACK_OF(X509_EXTENSION)*|.
 DECLARE_ASN1_ITEM(X509_EXTENSIONS)
 
-typedef struct {
-  ASN1_INTEGER *version;  // [ 0 ] default of v1
-  ASN1_INTEGER *serialNumber;
-  X509_ALGOR *signature;
-  X509_NAME *issuer;
-  X509_VAL *validity;
-  X509_NAME *subject;
-  X509_PUBKEY *key;
+struct x509_st {
+  // TBSCertificate fields:
+  uint8_t version;  // One of the |X509_VERSION_*| constants.
+  ASN1_INTEGER serialNumber;
+  X509_ALGOR tbs_sig_alg;
+  X509_NAME issuer;
+  ASN1_TIME notBefore;
+  ASN1_TIME notAfter;
+  X509_NAME subject;
+  X509_PUBKEY key;
   ASN1_BIT_STRING *issuerUID;            // [ 1 ] optional in v2
   ASN1_BIT_STRING *subjectUID;           // [ 2 ] optional in v2
   STACK_OF(X509_EXTENSION) *extensions;  // [ 3 ] optional in v3
-  ASN1_ENCODING enc;
-} X509_CINF;
-
-// TODO(https://crbug.com/boringssl/407): This is not const because it contains
-// an |X509_NAME|.
-DECLARE_ASN1_FUNCTIONS(X509_CINF)
-
-struct x509_st {
-  X509_CINF *cert_info;
-  X509_ALGOR *sig_alg;
-  ASN1_BIT_STRING *signature;
+  // Certificate fields:
+  X509_ALGOR sig_alg;
+  ASN1_BIT_STRING signature;
+  // Other state:
+  // buf, if not nullptr, contains a copy of the serialized Certificate.
+  // TODO(davidben): Now every parsed |X509| has an underlying |CRYPTO_BUFFER|,
+  // but |X509|s created peacemeal do not. Can we make this more uniform?
+  CRYPTO_BUFFER *buf;
   CRYPTO_refcount_t references;
   CRYPTO_EX_DATA ex_data;
   // These contain copies of various extension values
@@ -136,6 +145,8 @@ struct x509_st {
   CRYPTO_MUTEX lock;
 } /* X509 */;
 
+int x509_marshal_tbs_cert(CBB *cbb, const X509 *x509);
+
 // X509 is an |ASN1_ITEM| whose ASN.1 type is X.509 Certificate (RFC 5280) and C
 // type is |X509*|.
 DECLARE_ASN1_ITEM(X509)
@@ -149,9 +160,7 @@ typedef struct {
   STACK_OF(X509_ATTRIBUTE) *attributes;  // [ 0 ]
 } X509_REQ_INFO;
 
-// TODO(https://crbug.com/boringssl/407): This is not const because it contains
-// an |X509_NAME|.
-DECLARE_ASN1_FUNCTIONS(X509_REQ_INFO)
+DECLARE_ASN1_FUNCTIONS_const(X509_REQ_INFO)
 
 struct X509_req_st {
   X509_REQ_INFO *req_info;
@@ -187,9 +196,7 @@ typedef struct {
   ASN1_ENCODING enc;
 } X509_CRL_INFO;
 
-// TODO(https://crbug.com/boringssl/407): This is not const because it contains
-// an |X509_NAME|.
-DECLARE_ASN1_FUNCTIONS(X509_CRL_INFO)
+DECLARE_ASN1_FUNCTIONS_const(X509_CRL_INFO)
 
 // Values in idp_flags field
 // IDP present
@@ -276,7 +283,7 @@ struct x509_lookup_method_st {
   void (*free)(X509_LOOKUP *ctx);
   int (*ctrl)(X509_LOOKUP *ctx, int cmd, const char *argc, long argl,
               char **ret);
-  int (*get_by_subject)(X509_LOOKUP *ctx, int type, X509_NAME *name,
+  int (*get_by_subject)(X509_LOOKUP *ctx, int type, const X509_NAME *name,
                         X509_OBJECT *ret);
 } /* X509_LOOKUP_METHOD */;
 
@@ -385,6 +392,17 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor);
 int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
                             EVP_PKEY *pkey);
 
+// x509_verify_signature verifies a |signature| using |sigalg| and |pkey| over
+// |in|. It returns one if the signature is valid and zero on error.
+int x509_verify_signature(const X509_ALGOR *sigalg,
+                          const ASN1_BIT_STRING *signature,
+                          bssl::Span<const uint8_t> in, EVP_PKEY *pkey);
+
+// x509_sign_to_bit_string signs |in| using |ctx| and saves the result in |out|.
+// It returns the length of the signature on success and zero on error.
+int x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
+                            bssl::Span<const uint8_t> in);
+
 
 // Path-building functions.
 
@@ -406,7 +424,8 @@ int X509_policy_check(const STACK_OF(X509) *certs,
 // TODO(davidben): Reduce the scope of the verify callback and remove this. The
 // callback only runs with |X509_V_FLAG_CB_ISSUER_CHECK|, which is only used by
 // one internal project and rust-openssl, who use it by mistake.
-int x509_check_issued_with_callback(X509_STORE_CTX *ctx, X509 *x, X509 *issuer);
+int x509_check_issued_with_callback(X509_STORE_CTX *ctx, const X509 *x,
+                                    const X509 *issuer);
 
 // x509v3_bytes_to_hex encodes |len| bytes from |in| to hex and returns a
 // newly-allocated NUL-terminated string containing the result, or NULL on
@@ -536,9 +555,7 @@ GENERAL_NAMES *v2i_GENERAL_NAMES(const X509V3_EXT_METHOD *method,
                                  const X509V3_CTX *ctx,
                                  const STACK_OF(CONF_VALUE) *nval);
 
-// TODO(https://crbug.com/boringssl/407): Make |issuer| const once the
-// |X509_NAME| issue is resolved.
-int X509_check_akid(X509 *issuer, const AUTHORITY_KEYID *akid);
+int X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid);
 
 int X509_is_valid_trust_id(int trust);
 
@@ -547,13 +564,28 @@ int X509_PURPOSE_get_trust(const X509_PURPOSE *xp);
 // TODO(https://crbug.com/boringssl/695): Remove this.
 int DIST_POINT_set_dpname(DIST_POINT_NAME *dpn, X509_NAME *iname);
 
+void x509_name_init(X509_NAME *name);
+void x509_name_cleanup(X509_NAME *name);
+
+// x509_parse_name parses a DER-encoded, X.509 Name from |cbs| and writes the
+// result to |*out|. It returns one on success and zero on error.
+int x509_parse_name(CBS *cbs, X509_NAME *out);
+
 // x509_marshal_name marshals |in| as a DER-encoded, X.509 Name and writes the
 // result to |out|. It returns one on success and zero on error.
-//
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |in| was
-// mutated.
-int x509_marshal_name(CBB *out, X509_NAME *in);
+int x509_marshal_name(CBB *out, const X509_NAME *in);
+
+const X509_NAME_CACHE *x509_name_get_cache(const X509_NAME *name);
+void x509_name_invalidate_cache(X509_NAME *name);
+
+int x509_name_copy(X509_NAME *dst, const X509_NAME *src);
+
+void x509_algor_init(X509_ALGOR *alg);
+void x509_algor_cleanup(X509_ALGOR *alg);
+
+// x509_parse_algorithm parses a DER-encoded, AlgorithmIdentifier from |cbs| and
+// writes the result to |*out|. It returns one on success and zero on error.
+int x509_parse_algorithm(CBS *cbs, X509_ALGOR *out);
 
 // x509_marshal_algorithm marshals |in| as a DER-encoded, AlgorithmIdentifier
 // and writes the result to |out|. It returns one on success and zero on error.

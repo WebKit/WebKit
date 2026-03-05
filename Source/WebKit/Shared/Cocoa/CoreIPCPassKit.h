@@ -47,11 +47,11 @@ private:
     friend struct IPC::ArgumentCoder<CoreIPCPKContact>;
 
     CoreIPCPKContact(std::optional<CoreIPCPersonNameComponents>&& name, String&& emailAddress, std::optional<CoreIPCCNPhoneNumber>&& phoneNumber, std::optional<CoreIPCCNPostalAddress>&& postalAddress, String&& supplementarySublocality)
-        : m_name(WTFMove(name))
-        , m_emailAddress(WTFMove(emailAddress))
-        , m_phoneNumber(WTFMove(phoneNumber))
-        , m_postalAddress(WTFMove(postalAddress))
-        , m_supplementarySublocality(WTFMove(supplementarySublocality))
+        : m_name(WTF::move(name))
+        , m_emailAddress(WTF::move(emailAddress))
+        , m_phoneNumber(WTF::move(phoneNumber))
+        , m_postalAddress(WTF::move(postalAddress))
+        , m_supplementarySublocality(WTF::move(supplementarySublocality))
     {
     }
 

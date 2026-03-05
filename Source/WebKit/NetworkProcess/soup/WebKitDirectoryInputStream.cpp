@@ -188,8 +188,8 @@ webkit_directory_input_stream_class_init(WebKitDirectoryInputStreamClass* klass)
 GRefPtr<GInputStream> webkitDirectoryInputStreamNew(GRefPtr<GFileEnumerator>&& enumerator, CString&& uri)
 {
     auto* stream = WEBKIT_DIRECTORY_INPUT_STREAM(g_object_new(WEBKIT_TYPE_DIRECTORY_INPUT_STREAM, nullptr));
-    stream->priv->enumerator = WTFMove(enumerator);
-    stream->priv->uri = WTFMove(uri);
+    stream->priv->enumerator = WTF::move(enumerator);
+    stream->priv->uri = WTF::move(uri);
     stream->priv->buffer = adoptGRef(webkitDirectoryInputStreamCreateHeader(stream));
 
     return adoptGRef(G_INPUT_STREAM((stream)));

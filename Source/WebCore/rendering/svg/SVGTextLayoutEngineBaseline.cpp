@@ -25,7 +25,7 @@
 #include "NodeInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderSVGInlineText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGLengthContext.h"
 #include "SVGTextMetrics.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -99,7 +99,7 @@ AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseli
 
 float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const RenderSVGInlineText& textRenderer) const
 {
-    auto* textRendererParent = textRenderer.parent();
+    CheckedPtr textRendererParent = textRenderer.parent();
     ASSERT(textRendererParent);
 
     AlignmentBaseline baseline = textRenderer.style().alignmentBaseline();
@@ -178,7 +178,7 @@ static inline bool glyphOrientationIsMultiplyOf180Degrees(float orientationAngle
     return !(fmodf(orientationAngle, 180));
 }
 
-float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVerticalText, SVGTextMetrics& metrics, float angle, float& xOrientationShift, float& yOrientationShift) const
+float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVerticalText, const SVGTextMetrics& metrics, float angle, float& xOrientationShift, float& yOrientationShift) const
 {
     bool orientationIsMultiplyOf180Degrees = glyphOrientationIsMultiplyOf180Degrees(angle);
 

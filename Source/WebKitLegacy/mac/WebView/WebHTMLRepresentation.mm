@@ -61,7 +61,7 @@
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
-#import <WebCore/RenderStyleInlines.h>
+#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/ScriptDisallowedScope.h>
 #import <WebCore/Settings.h>

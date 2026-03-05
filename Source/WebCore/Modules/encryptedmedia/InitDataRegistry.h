@@ -27,6 +27,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include <WebCore/CDMTypesForward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -44,11 +45,11 @@ public:
     friend class NeverDestroyed<InitDataRegistry>;
 
     RefPtr<SharedBuffer> sanitizeInitData(const String& initDataType, const SharedBuffer&);
-    WEBCORE_EXPORT std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDs(const String& initDataType, const SharedBuffer&);
+    WEBCORE_EXPORT std::optional<CDMKeyIDs> extractKeyIDs(const String& initDataType, const SharedBuffer&);
 
     struct InitDataTypeCallbacks {
         using SanitizeInitDataCallback = Function<RefPtr<SharedBuffer>(const SharedBuffer&)>;
-        using ExtractKeyIDsCallback = Function<std::optional<Vector<Ref<SharedBuffer>>>(const SharedBuffer&)>;
+        using ExtractKeyIDsCallback = Function<std::optional<CDMKeyIDs>(const SharedBuffer&)>;
 
         SanitizeInitDataCallback sanitizeInitData;
         ExtractKeyIDsCallback extractKeyIDs;
@@ -60,7 +61,7 @@ public:
     static const String& webmName();
 
     static std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> extractPsshBoxesFromCenc(const SharedBuffer&);
-    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&);
+    static std::optional<CDMKeyIDs> extractKeyIDsCenc(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer&);
 
 private:

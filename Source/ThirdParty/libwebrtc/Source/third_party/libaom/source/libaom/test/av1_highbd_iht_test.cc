@@ -29,11 +29,11 @@ namespace {
 using libaom_test::ACMRandom;
 using std::tuple;
 
-typedef void (*HbdHtFunc)(const int16_t *input, int32_t *output, int stride,
-                          TX_TYPE tx_type, int bd);
-
-typedef void (*IHbdHtFunc)(const int32_t *coeff, uint16_t *output, int stride,
+using HbdHtFunc = void (*)(const int16_t *input, int32_t *output, int stride,
                            TX_TYPE tx_type, int bd);
+
+using IHbdHtFunc = void (*)(const int32_t *coeff, uint16_t *output, int stride,
+                            TX_TYPE tx_type, int bd);
 static const char *tx_type_name[] = {
   "DCT_DCT",
   "ADST_DCT",
@@ -59,7 +59,7 @@ static const char *tx_type_name[] = {
 //    num_coeffs,
 //    tx_type,
 //    bit_depth>
-typedef tuple<HbdHtFunc, IHbdHtFunc, IHbdHtFunc, int, TX_TYPE, int> IHbdHtParam;
+using IHbdHtParam = tuple<HbdHtFunc, IHbdHtFunc, IHbdHtFunc, int, TX_TYPE, int>;
 
 class AV1HighbdInvHTNxN : public ::testing::TestWithParam<IHbdHtParam> {
  public:
@@ -193,10 +193,10 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, AV1HighbdInvHTNxN,
                          ::testing::ValuesIn(kArrayIhtParam));
 #endif  // HAVE_SSE4_1
 
-typedef void (*HighbdInvTxfm2dFunc)(const int32_t *input, uint8_t *output,
-                                    int stride, const TxfmParam *txfm_param);
+using HighbdInvTxfm2dFunc = void (*)(const int32_t *input, uint8_t *output,
+                                     int stride, const TxfmParam *txfm_param);
 
-typedef std::tuple<const HighbdInvTxfm2dFunc> AV1HighbdInvTxfm2dParam;
+using AV1HighbdInvTxfm2dParam = std::tuple<const HighbdInvTxfm2dFunc>;
 class AV1HighbdInvTxfm2d
     : public ::testing::TestWithParam<AV1HighbdInvTxfm2dParam> {
  public:

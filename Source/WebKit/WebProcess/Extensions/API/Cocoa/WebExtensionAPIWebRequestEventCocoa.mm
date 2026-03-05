@@ -86,7 +86,7 @@ void WebExtensionAPIWebRequestEvent::addListener(WebCore::FrameIdentifier frameI
     extraInfo.shrinkToFit();
 
     m_frameIdentifier = frameIdentifier;
-    m_listeners.append({ listener, parsedFilter, WTFMove(extraInfo) });
+    m_listeners.append({ listener, parsedFilter, WTF::move(extraInfo) });
 
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, m_type, contentWorldType()), extensionContext().identifier());
 }

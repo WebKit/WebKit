@@ -21,4 +21,4 @@ testWithTypedArrayConstructors(function(ctor) {
   var sample = new TA();
 
   assert(ArrayBuffer.isView(sample));
-});
+}, null, ["passthrough"]);

@@ -49,7 +49,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchResponseBodyLoader);
 
 // https://fetch.spec.whatwg.org/#null-body-status
-static inline bool isNullBodyStatus(int status)
+static inline bool NODELETE isNullBodyStatus(int status)
 {
     return status == 101 || status == 204 || status == 205 || status == 304;
 }
@@ -60,7 +60,7 @@ Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::o
 {
     bool isOpaque = response.tainting() == ResourceResponse::Tainting::Opaque;
     Ref headers = isOpaque ? FetchHeaders::create(guard) : FetchHeaders::create(guard, HTTPHeaderMap { response.httpHeaderFields() });
-    return FetchResponse::create(context, WTFMove(body), WTFMove(headers), WTFMove(response));
+    return FetchResponse::create(context, WTF::move(body), WTF::move(headers), WTF::move(response));
 }
 
 Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
@@ -68,7 +68,7 @@ Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::o
     bool isSynthetic = response.type() == ResourceResponse::Type::Default || response.type() == ResourceResponse::Type::Error;
     bool isOpaque = response.tainting() == ResourceResponse::Tainting::Opaque;
 
-    Ref fetchResponse = adoptRef(*new FetchResponse(context, WTFMove(body), WTFMove(headers), WTFMove(response)));
+    Ref fetchResponse = adoptRef(*new FetchResponse(context, WTF::move(body), WTF::move(headers), WTF::move(response)));
     fetchResponse->suspendIfNeeded();
     if (!isSynthetic)
         fetchResponse->m_filteredResponse = ResourceResponseBase::filter(fetchResponse->m_internalResponse, ResourceResponse::PerformExposeAllHeadersCheck::Yes);
@@ -109,7 +109,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
             return Exception { ExceptionCode::TypeError, "Response cannot have a body with the given status."_s };
 
         // 6.2 Set response’s body to body’s body.
-        body = WTFMove(bodyWithType->body);
+        body = WTF::move(bodyWithType->body);
 
         // 6.3 If body’s type is non-null and response’s header list does not contain `Content-Type`, then append
         //     (`Content-Type`, body’s type) to response’s header list.
@@ -119,11 +119,11 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
 
     auto contentType = headers->fastGet(HTTPHeaderName::ContentType);
 
-    auto r = adoptRef(*new FetchResponse(&context, WTFMove(body), WTFMove(headers), { }));
+    auto r = adoptRef(*new FetchResponse(&context, WTF::move(body), WTF::move(headers), { }));
     r->suspendIfNeeded();
 
     auto mimeType = extractMIMETypeFromMediaType(contentType);
-    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? String { defaultMIMEType() } : WTFMove(mimeType));
+    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? String { defaultMIMEType() } : WTF::move(mimeType));
     r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
 
     if (auto expectedContentLength = parseContentLength(r->m_headers->fastGet(HTTPHeaderName::ContentLength)))
@@ -142,13 +142,13 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     std::optional<FetchBodyWithType> bodyWithType;
     if (body) {
         String type;
-        auto result = FetchBody::extract(WTFMove(*body), type);
+        auto result = FetchBody::extract(WTF::move(*body), type);
         if (result.hasException())
             return result.releaseException();
-        bodyWithType = { result.releaseReturnValue(), WTFMove(type) };
+        bodyWithType = { result.releaseReturnValue(), WTF::move(type) };
     }
 
-    return FetchResponse::create(context, WTFMove(bodyWithType), WTFMove(init));
+    return FetchResponse::create(context, WTF::move(bodyWithType), WTF::move(init));
 }
 
 Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
@@ -186,13 +186,13 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::jsonForBindings(ScriptExecutionCo
     if (jsonString.isNull())
         return Exception { ExceptionCode::TypeError, "Value doesn't have a JSON representation"_s };
 
-    FetchBodyWithType body { FetchBody(WTFMove(jsonString)), "application/json"_s };
-    return FetchResponse::create(context, WTFMove(body), WTFMove(init));
+    FetchBodyWithType body { FetchBody(WTF::move(jsonString)), "application/json"_s };
+    return FetchResponse::create(context, WTF::move(body), WTF::move(init));
 }
 
 FetchResponse::FetchResponse(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
-    : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
-    , m_internalResponse(WTFMove(response))
+    : FetchBodyOwner(context, WTF::move(body), WTF::move(headers))
+    , m_internalResponse(WTF::move(response))
 {
 }
 
@@ -218,7 +218,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(JSDOMGlobalObject& globalOb
         m_internalResponse.setHTTPHeaderFields(HTTPHeaderMap { headers().internalHeaders() });
 
     Ref headers = FetchHeaders::create(this->headers());
-    auto clone = FetchResponse::create(context.get(), std::nullopt, WTFMove(headers), ResourceResponse { m_internalResponse });
+    auto clone = FetchResponse::create(context.get(), std::nullopt, WTF::move(headers), ResourceResponse { m_internalResponse });
     clone->cloneBody(globalObject, *this);
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
@@ -237,7 +237,7 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
 
         protectedThis->setLoadingError(Exception { ExceptionCode::AbortError, "Fetch is aborted"_s });
 
-        if (RefPtr loader = protectedThis->m_loader.get()) {
+        if (RefPtr loader = protectedThis->m_loader) {
             if (auto callback = loader->takeNotificationCallback())
                 callback(Exception { ExceptionCode::AbortError, "Fetch is aborted"_s });
 
@@ -253,9 +253,9 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
         if (protectedThis->m_body)
             protectedThis->m_body->loadingFailed(*protectedThis->loadingException());
 
-        if (auto loader = WTFMove(protectedThis->m_loader))
+        if (RefPtr loader = std::exchange(protectedThis->m_loader, nullptr))
             loader->stop();
-        if (auto bodyLoader = WTFMove(protectedThis->m_bodyLoader))
+        if (auto bodyLoader = std::exchange(protectedThis->m_bodyLoader, nullptr))
             bodyLoader->stop();
     });
 }
@@ -265,11 +265,11 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
     auto response = adoptRef(*new FetchResponse(&context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     response->suspendIfNeeded();
 
-    response->body().checkedConsumer()->setAsLoading();
+    protect(response->body().consumer())->setAsLoading();
 
     response->addAbortSteps(request.signal());
 
-    response->m_loader = Loader::create(response.get(), WTFMove(responseCallback));
+    response->m_loader = Loader::create(response.get(), WTF::move(responseCallback));
     return response;
 }
 
@@ -281,20 +281,20 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
     }
 
     if (request.hasReadableStreamBody()) {
-        request.body().convertReadableStreamToArrayBuffer(request, [context = Ref { context }, weakRequest = WeakPtr { request }, responseCallback = WTFMove(responseCallback), initiator](auto&& exception) mutable {
+        request.body().convertReadableStreamToArrayBuffer(request, [context = Ref { context }, weakRequest = WeakPtr { request }, responseCallback = WTF::move(responseCallback), initiator](auto&& exception) mutable {
             if (!!exception) {
-                responseCallback(WTFMove(*exception));
+                responseCallback(WTF::move(*exception));
                 return;
             }
 
             Ref protectedRequest = *weakRequest;
-            Ref response = createFetchResponse(context.get(), protectedRequest.get(), WTFMove(responseCallback));
+            Ref response = createFetchResponse(context.get(), protectedRequest.get(), WTF::move(responseCallback));
             response->startLoader(context.get(), protectedRequest.get(), initiator);
         });
         return;
     }
 
-    Ref response = createFetchResponse(context, request, WTFMove(responseCallback));
+    Ref response = createFetchResponse(context, request, WTF::move(responseCallback));
     response->startLoader(context, request, initiator);
 }
 
@@ -302,7 +302,7 @@ void FetchResponse::startLoader(ScriptExecutionContext& context, FetchRequest& r
 {
     InspectorInstrumentation::willFetch(context, request.url().string());
 
-    if (RefPtr loader = m_loader.get(); loader && loader->start(context, request, initiator))
+    if (RefPtr loader = m_loader; loader && loader->start(context, request, initiator))
         return;
     m_loader = nullptr;
 }
@@ -377,12 +377,12 @@ void FetchResponse::setReceivedInternalResponse(const ResourceResponse& resource
 
 Ref<FetchResponse::Loader> FetchResponse::Loader::create(FetchResponse& response, NotificationCallback&& responseCallback)
 {
-    return adoptRef(*new Loader(response, WTFMove(responseCallback)));
+    return adoptRef(*new Loader(response, WTF::move(responseCallback)));
 }
 
 FetchResponse::Loader::Loader(FetchResponse& response, NotificationCallback&& responseCallback)
     : m_response(response)
-    , m_responseCallback(WTFMove(responseCallback))
+    , m_responseCallback(WTF::move(responseCallback))
     , m_pendingActivity(response.makePendingActivity(response))
 {
 }
@@ -397,7 +397,7 @@ void FetchResponse::Loader::didReceiveResponse(const ResourceResponse& resourceR
 
     response->setReceivedInternalResponse(resourceResponse, m_credentials);
 
-    if (auto responseCallback = WTFMove(m_responseCallback))
+    if (auto responseCallback = std::exchange(m_responseCallback, nullptr))
         responseCallback(response.releaseNonNull());
 }
 
@@ -437,7 +437,7 @@ void FetchResponse::Loader::didReceiveData(const SharedBuffer& buffer)
 bool FetchResponse::Loader::start(ScriptExecutionContext& context, const FetchRequest& request, const String& initiator)
 {
     m_credentials = request.fetchOptions().credentials;
-    Ref loader = FetchLoader::create(*this, m_response->m_body->checkedConsumer().ptr());
+    Ref loader = FetchLoader::create(*this, protect(m_response->m_body->consumer()).ptr());
     m_loader = loader.copyRef();
     loader->start(context, request, initiator);
 
@@ -455,14 +455,14 @@ bool FetchResponse::Loader::start(ScriptExecutionContext& context, const FetchRe
 void FetchResponse::Loader::stop()
 {
     m_responseCallback = { };
-    if (CheckedPtr loader = m_loader.get())
+    if (RefPtr loader = m_loader)
         loader->stop();
 }
 
 void FetchResponse::Loader::consumeDataByChunk(ConsumeDataByChunkCallback&& consumeDataCallback)
 {
     ASSERT(!m_consumeDataCallback);
-    m_consumeDataCallback = WTFMove(consumeDataCallback);
+    m_consumeDataCallback = WTF::move(consumeDataCallback);
     auto data = startStreaming();
     if (!data)
         return;
@@ -499,8 +499,8 @@ void FetchResponse::consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&& call
     m_isDisturbed = true;
 
     if (hasReadableStreamBody()) {
-        m_body->checkedConsumer()->extract(*m_body->protectedReadableStream(), [callback = WTFMove(callback), weakThis = WeakPtr { *this }](auto&& result) {
-            WTF::switchOn(WTFMove(result), [&](std::nullptr_t) {
+        protect(m_body->consumer())->extract(*protect(m_body->readableStream()), [callback = WTF::move(callback), weakThis = WeakPtr { *this }](auto&& result) {
+            WTF::switchOn(WTF::move(result), [&](std::nullptr_t) {
                 callback(nullptr);
             }, [&](std::span<const uint8_t> chunk) {
                 callback(&chunk);
@@ -510,16 +510,16 @@ void FetchResponse::consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&& call
                 auto* globalObject = context ? context->globalObject() : nullptr;
                 String message = globalObject ? value.toWTFString(globalObject) : "Load failed"_s;
                 // FIXME: Move ConsumeDataByChunkCallback to ReadableStreamToSharedBufferSink::Callback.
-                callback(Exception { ExceptionCode::TypeError, WTFMove(message) });
+                callback(Exception { ExceptionCode::TypeError, WTF::move(message) });
             }, [&](Exception&& error) {
-                callback(WTFMove(error));
+                callback(WTF::move(error));
             });
         });
         return;
     }
 
     ASSERT(isLoading());
-    protectedLoader()->consumeDataByChunk(WTFMove(callback));
+    protect(loader())->consumeDataByChunk(WTF::move(callback));
 }
 
 void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPadding)
@@ -529,12 +529,12 @@ void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPaddin
         [this](Ref<FormData>& formData) {
             if (isBodyNull())
                 setBody({ });
-            body().setAsFormData(WTFMove(formData));
+            body().setAsFormData(WTF::move(formData));
         },
         [this](Ref<SharedBuffer>& buffer) {
             if (isBodyNull())
                 setBody({ });
-            body().checkedConsumer()->setData(WTFMove(buffer));
+            protect(body().consumer())->setData(WTF::move(buffer));
         },
         [](std::nullptr_t&) {
         }
@@ -543,7 +543,7 @@ void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPaddin
 
 void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)
 {
-    body().checkedConsumer()->append(SharedBuffer::create(chunk->span()));
+    protect(body().consumer())->append(SharedBuffer::create(chunk->span()));
 }
 
 void FetchResponse::consumeBodyAsStream()
@@ -555,7 +555,7 @@ void FetchResponse::consumeBodyAsStream()
     }
 
     ASSERT(m_loader);
-    auto data = protectedLoader()->startStreaming();
+    auto data = protect(loader())->startStreaming();
     if (data) {
         Ref readableStreamSource = *m_readableStreamSource;
         if (!readableStreamSource->enqueue(data->tryCreateArrayBuffer())) {
@@ -576,7 +576,7 @@ void FetchResponse::closeStream()
 void FetchResponse::cancelStream()
 {
     if (isAllowedToRunScript() && hasReadableStreamBody()) {
-        body().protectedReadableStream()->cancel(Exception { ExceptionCode::AbortError, "load is cancelled"_s });
+        protect(body().readableStream())->cancel(Exception { ExceptionCode::AbortError, "load is cancelled"_s });
         return;
     }
     cancel();
@@ -606,7 +606,7 @@ void FetchResponse::feedStream()
 
 RefPtr<FragmentedSharedBuffer> FetchResponse::Loader::startStreaming()
 {
-    if (CheckedPtr loader = m_loader.get())
+    if (RefPtr loader = m_loader)
         return loader->startStreaming();
 
     m_shouldStartStreaming = true;
@@ -623,9 +623,9 @@ void FetchResponse::stop()
 {
     RefPtr<FetchResponse> protectedThis(this);
     FetchBodyOwner::stop();
-    if (auto loader = WTFMove(m_loader))
+    if (RefPtr loader = std::exchange(m_loader, nullptr))
         loader->stop();
-    if (auto bodyLoader = WTFMove(m_bodyLoader))
+    if (auto bodyLoader = std::exchange(m_bodyLoader, nullptr))
         bodyLoader->stop();
 }
 
@@ -647,19 +647,19 @@ void FetchResponse::setBodyLoader(UniqueRef<FetchResponseBodyLoader>&& bodyLoade
 
 void FetchResponse::receivedError(Exception&& exception)
 {
-    setLoadingError(WTFMove(exception));
+    setLoadingError(WTF::move(exception));
     processReceivedError();
 }
 
 void FetchResponse::receivedError(ResourceError&& error)
 {
-    setLoadingError(WTFMove(error));
+    setLoadingError(WTF::move(error));
     processReceivedError();
 }
 
 void FetchResponse::processReceivedError()
 {
-    if (RefPtr loader = m_loader.get()) {
+    if (RefPtr loader = m_loader) {
         if (auto callback = loader->takeNotificationCallback())
             callback(*loadingException());
         else if (auto callback = loader->takeConsumeDataCallback())
@@ -680,7 +680,7 @@ void FetchResponse::didSucceed(const NetworkLoadMetrics& metrics)
 {
     setNetworkLoadMetrics(metrics);
 
-    if (RefPtr loader = m_loader.get()) {
+    if (RefPtr loader = m_loader) {
         if (auto consumeDataCallback = loader->takeConsumeDataCallback())
             consumeDataCallback(nullptr);
     }
@@ -699,7 +699,7 @@ void FetchResponse::didSucceed(const NetworkLoadMetrics& metrics)
 
 void FetchResponse::receivedData(Ref<SharedBuffer>&& buffer)
 {
-    body().checkedConsumer()->append(buffer.get());
+    protect(body().consumer())->append(buffer.get());
 }
 
 ResourceResponse FetchResponse::resourceResponse() const

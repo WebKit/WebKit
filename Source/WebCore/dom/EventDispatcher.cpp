@@ -82,27 +82,30 @@ static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPat
     }
 }
 
-static bool isInShadowTree(EventTarget* target)
+static bool NODELETE isInShadowTree(EventTarget* target)
 {
     auto* node = dynamicDowncast<Node>(target);
     return node && node->isInShadowTree();
 }
 
-static void dispatchEventInDOM(Event& event, const EventPath& path)
+static void dispatchEventInDOM(Event& event, const EventPath& path, const Document::EventListenerCounts& listenerCounts)
 {
-    // Invoke capturing event listeners in the reverse order.
-    for (size_t i = path.size(); i > 0; --i) {
-        const EventContext& eventContext = path.contextAt(i - 1);
-        if (eventContext.currentTarget() == eventContext.target())
-            event.setEventPhase(Event::AT_TARGET);
-        else
-            event.setEventPhase(Event::CAPTURING_PHASE);
-        eventContext.handleLocalEvents(event, EventTarget::EventInvokePhase::Capturing);
-        if (event.propagationStopped())
-            return;
+    if (listenerCounts.hasCapturing()) {
+        // Invoke capturing event listeners in the reverse order.
+        for (size_t i = path.size(); i > 0; --i) {
+            const EventContext& eventContext = path.contextAt(i - 1);
+            if (eventContext.currentTarget() == eventContext.target())
+                event.setEventPhase(Event::AT_TARGET);
+            else
+                event.setEventPhase(Event::CAPTURING_PHASE);
+            eventContext.handleLocalEvents(event, EventTarget::EventInvokePhase::Capturing);
+            if (event.propagationStopped())
+                return;
+        }
     }
 
-    // Invoke bubbling event listeners.
+    // Invoke bubbling event listeners. (We don't use listenerCounts here as handleLocalEvents()
+    // needs to update event and it's highly unlikely there's no bubble listeners.)
     size_t size = path.size();
     for (size_t i = 0; i < size; ++i) {
         const EventContext& eventContext = path.contextAt(i);
@@ -123,7 +126,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!event.isTrusted())
         return false;
 
-    RefPtr localMainFrame = node.protectedDocument()->localMainFrame();
+    RefPtr localMainFrame = protect(node.document())->localMainFrame();
     if (!localMainFrame)
         return false;
 
@@ -136,7 +139,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     return is<CompositionEvent>(event) || is<InputEvent>(event) || is<KeyboardEvent>(event);
 }
 
-static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
+static HTMLInputElement* NODELETE findInputElementInEventPath(const EventPath& path)
 {
     size_t size = path.size();
     for (size_t i = 0; i < size; ++i) {
@@ -147,16 +150,23 @@ static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
     return nullptr;
 }
 
-static bool hasRelevantEventListener(Document& document, const Event& event)
+static Document::EventListenerCounts eventListenerCounts(const Document& document, const Event& event)
 {
-    if (document.hasEventListenersOfType(event.type()))
-        return true;
+    auto counts = document.eventListenerCountsOfType(event.type());
+    if (counts.capturing && counts.bubbling)
+        return counts;
 
     auto legacyType = EventTarget::legacyTypeForEvent(event);
-    if (!legacyType.isNull() && document.hasEventListenersOfType(legacyType))
-        return true;
+    if (legacyType.isNull())
+        return counts;
 
-    return false;
+    auto legacyCounts = document.eventListenerCountsOfType(legacyType);
+    if (!counts.capturing)
+        counts.capturing = legacyCounts.capturing;
+    if (!counts.bubbling)
+        counts.bubbling = legacyCounts.bubbling;
+
+    return counts;
 }
 
 static void resetAfterDispatchInShadowTree(Event& event)
@@ -177,7 +187,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     RefPtr protectedView { document->view() };
 
     auto typeInfo = eventNames().typeInfoForEvent(event.type());
-    bool shouldDispatchEventToScripts = hasRelevantEventListener(document, event);
+    auto listenerCounts = eventListenerCounts(document, event);
 
     RefPtr window = document->window();
     std::optional<PerformanceEventTimingCandidate> pendingEventTiming;
@@ -190,7 +200,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     bool targetOrRelatedTargetIsInShadowTree = node.isInShadowTree() || isInShadowTree(event.relatedTarget());
     // FIXME: We should also check touch target list.
-    bool hasNoEventListenerOrDefaultEventHandler = !shouldDispatchEventToScripts && !typeInfo.hasDefaultEventHandler() && !node.document().hasConnectedPluginElements();
+    bool hasNoEventListenerOrDefaultEventHandler = !listenerCounts.hasAny() && !typeInfo.hasDefaultEventHandler() && !node.document().hasConnectedPluginElements();
     if (hasNoEventListenerOrDefaultEventHandler && !targetOrRelatedTargetIsInShadowTree) {
         event.resetBeforeDispatch();
         event.setTarget(RefPtr { EventPath::eventTargetRespectingTargetRules(node) });
@@ -210,7 +220,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         // FIXME: We should also set shouldClearTargetsAfterDispatch to true if an EventTarget object in eventContext's touch target list
         // is a node and its root is a shadow root.
         if (eventContext.target()) {
-            shouldClearTargetsAfterDispatch = isInShadowTree(eventContext.protectedTarget().get()) || isInShadowTree(eventContext.protectedRelatedTarget().get());
+            shouldClearTargetsAfterDispatch = isInShadowTree(protect(eventContext.target()).get()) || isInShadowTree(protect(eventContext.relatedTarget()).get());
             break;
         }
     }
@@ -238,9 +248,9 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         inputForLegacyPreActivationBehavior->willDispatchEvent(event, clickHandlingState);
     }
 
-    if (!event.propagationStopped() && !eventPath.isEmpty() && !shouldSuppressEventDispatchInDOM(node, event) && shouldDispatchEventToScripts) {
+    if (!event.propagationStopped() && !eventPath.isEmpty() && !shouldSuppressEventDispatchInDOM(node, event) && listenerCounts.hasAny()) {
         event.setEventPath(eventPath);
-        dispatchEventInDOM(event, eventPath);
+        dispatchEventInDOM(event, eventPath, listenerCounts);
     }
 
     event.resetAfterDispatch();
@@ -257,7 +267,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         RefPtr finalTarget = event.target();
         event.setTarget(RefPtr { EventPath::eventTargetRespectingTargetRules(node) });
         callDefaultEventHandlersInBubblingOrder(event, eventPath);
-        event.setTarget(WTFMove(finalTarget));
+        event.setTarget(WTF::move(finalTarget));
     }
 
     if (shouldClearTargetsAfterDispatch)
@@ -274,7 +284,8 @@ static void dispatchEventWithType(std::span<T* const> targets, Event& event)
     event.setTarget(RefPtr { targets.front() });
     event.setEventPath(eventPath);
     event.resetBeforeDispatch();
-    dispatchEventInDOM(event, eventPath);
+    // Listeners are not tracked through document so pass { 1, 1 } as listener counts.
+    dispatchEventInDOM(event, eventPath, { 1, 1 });
     event.resetAfterDispatch();
 }
 

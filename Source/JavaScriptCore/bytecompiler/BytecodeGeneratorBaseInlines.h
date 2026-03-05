@@ -41,7 +41,7 @@ static inline void shrinkToFit(T& segmentedVector)
 
 template<typename Traits>
 BytecodeGeneratorBase<Traits>::BytecodeGeneratorBase(typename Traits::CodeBlock codeBlock, uint32_t virtualRegisterCountForCalleeSaves)
-    : m_codeBlock(WTFMove(codeBlock))
+    : m_codeBlock(WTF::move(codeBlock))
 {
     allocateCalleeSaveSpace(virtualRegisterCountForCalleeSaves);
 }

@@ -56,7 +56,7 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const We
         if (!convertedBufferBinding)
             return std::nullopt;
 
-        return { { bindGroupEntry.binding, WTFMove(*convertedBufferBinding), convertedBufferBinding->buffer, BindingResourceType::BufferBinding } };
+        return { { bindGroupEntry.binding, WTF::move(*convertedBufferBinding), convertedBufferBinding->buffer, BindingResourceType::BufferBinding } };
     }, [&] (std::reference_wrapper<WebCore::WebGPU::ExternalTexture> externalTexture) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(Ref { externalTexture.get() }.get());
 

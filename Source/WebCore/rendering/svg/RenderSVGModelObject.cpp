@@ -47,22 +47,23 @@
 #include "SVGNames.h"
 #include "SVGPathData.h"
 #include "SVGUseElement.h"
+#include "StyleTransformResolver.h"
 #include "TransformState.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGModelObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGModelObject);
 
 RenderSVGModelObject::RenderSVGModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
-    : RenderLayerModelObject(type, document, WTFMove(style), { }, typeFlags)
+    : RenderLayerModelObject(type, document, WTF::move(style), { }, typeFlags)
 {
     ASSERT(!isLegacyRenderSVGModelObject());
     ASSERT(isRenderSVGModelObject());
 }
 
 RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
-    : RenderLayerModelObject(type, element, WTFMove(style), { }, typeFlags)
+    : RenderLayerModelObject(type, element, WTF::move(style), { }, typeFlags)
 {
     ASSERT(!isLegacyRenderSVGModelObject());
     ASSERT(isRenderSVGModelObject());
@@ -108,14 +109,14 @@ const RenderElement* RenderSVGModelObject::pushMappingToContainer(const RenderLa
     ASSERT(style().position() == PositionType::Static);
 
     bool ancestorSkipped;
-    CheckedPtr container = this->container(ancestorToStopAt, ancestorSkipped);
+    WeakPtr container = this->container(ancestorToStopAt, ancestorSkipped);
     if (!container)
         return nullptr;
 
     ASSERT_UNUSED(ancestorSkipped, !ancestorSkipped);
 
-    pushOntoGeometryMap(geometryMap, ancestorToStopAt, container.get(), ancestorSkipped);
-    return container.unsafeGet();
+    pushOntoGeometryMap(geometryMap, ancestorToStopAt, CheckedPtr { container.get() }, ancestorSkipped);
+    return container.get();
 }
 
 LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap) const
@@ -147,9 +148,44 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixe
     quads.append(localToAbsoluteQuad(FloatRect { { }, m_layoutRect.size() }, UseTransforms, wasFixed));
 }
 
-void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderSVGModelObject::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderLayerModelObject::styleDidChange(diff, oldStyle);
+
+    // Invalidate cached visual overflow rect when relevant styles change.
+    if (oldStyle && diff >= Style::DifferenceResult::Repaint) {
+        auto visualOverflowStyleChanged = [](const RenderStyle& newStyle, const RenderStyle& oldStyle) {
+            // Stroke properties affect stroke bounding box
+            if (newStyle.strokeWidth() != oldStyle.strokeWidth()
+                || newStyle.capStyle() != oldStyle.capStyle()
+                || newStyle.joinStyle() != oldStyle.joinStyle()
+                || newStyle.strokeMiterLimit() != oldStyle.strokeMiterLimit())
+                return true;
+
+            // Outline properties
+            if (newStyle.outlineStyle() != oldStyle.outlineStyle()
+                || newStyle.usedOutlineWidth() != oldStyle.usedOutlineWidth()
+                || newStyle.usedOutlineOffset() != oldStyle.usedOutlineOffset())
+                return true;
+
+            // Resource references (clip-path, mask, filter)
+            if (newStyle.clipPath() != oldStyle.clipPath()
+                || newStyle.maskLayers() != oldStyle.maskLayers()
+                || newStyle.filter() != oldStyle.filter())
+                return true;
+
+            // Marker references
+            if (newStyle.markerStart() != oldStyle.markerStart()
+                || newStyle.markerMid() != oldStyle.markerMid()
+                || newStyle.markerEnd() != oldStyle.markerEnd())
+                return true;
+
+            return false;
+        };
+
+        if (visualOverflowStyleChanged(style(), *oldStyle))
+            m_cachedVisualOverflowRect = std::nullopt;
+    }
 
     // SVG masks are painted independent of the target renderers visibility.
     // FIXME: [LBSE] Upstream RenderElement changes
@@ -166,7 +202,7 @@ void RenderSVGModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>
     if (isTransformed())
         mode.remove(IsFixed);
 
-    auto* container = parent();
+    CheckedPtr container = parent();
     if (!container)
         return;
 
@@ -214,7 +250,7 @@ static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 
 // One of the element types that can cause graphics to be drawn onto the target canvas. Specifically: circle, ellipse,
 // image, line, path, polygon, polyline, rect, text and use.
-static bool isGraphicsElement(const RenderElement& renderer)
+static bool NODELETE isGraphicsElement(const RenderElement& renderer)
 {
     return renderer.isRenderSVGShape() || renderer.isRenderSVGText() || renderer.isRenderSVGImage() || renderer.element()->hasTagName(SVGNames::useTag);
 }
@@ -276,11 +312,11 @@ bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects,
 Path RenderSVGModelObject::computeClipPath(AffineTransform& transform) const
 {
     if (layer()->isTransformed())
-        transform.multiply(layer()->currentTransform(RenderStyle::individualTransformOperations()).toAffineTransform());
+        transform.multiply(layer()->currentTransform(Style::TransformResolver::individualTransformOperations).toAffineTransform());
 
-    if (RefPtr useElement = dynamicDowncast<SVGUseElement>(protectedElement())) {
+    if (RefPtr useElement = dynamicDowncast<SVGUseElement>(protect(element()))) {
         if (CheckedPtr clipChildRenderer = useElement->rendererClipChild())
-            transform.multiply(downcast<RenderLayerModelObject>(*clipChildRenderer).checkedLayer()->currentTransform(RenderStyle::individualTransformOperations()).toAffineTransform());
+            transform.multiply(protect(downcast<RenderLayerModelObject>(*clipChildRenderer).layer())->currentTransform(Style::TransformResolver::individualTransformOperations).toAffineTransform());
         if (RefPtr clipChild = useElement->clipChild())
             return pathFromGraphicsElement(*clipChild);
     }

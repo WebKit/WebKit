@@ -18,9 +18,9 @@
 #include <utility>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/units/timestamp.h"
 #include "media/base/media_channel.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
@@ -34,15 +34,15 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
 // Fake NetworkInterface that sends/receives RTP/RTCP packets.
 class FakeNetworkInterface : public MediaChannelNetworkInterface {
  public:
-  FakeNetworkInterface()
-      : thread_(Thread::Current()),
+  explicit FakeNetworkInterface(const Environment& env)
+      : env_(env),
+        thread_(Thread::Current()),
         dest_(NULL),
         conf_(false),
         sendbuf_size_(-1),
@@ -176,7 +176,7 @@ class FakeNetworkInterface : public MediaChannelNetworkInterface {
       if (dest_) {
         RtpPacketReceived parsed_packet;
         if (parsed_packet.Parse(packet)) {
-          parsed_packet.set_arrival_time(Timestamp::Micros(TimeMicros()));
+          parsed_packet.set_arrival_time(env_.clock().CurrentTime());
           dest_->OnPacketReceived(std::move(parsed_packet));
         } else {
           RTC_DCHECK_NOTREACHED();
@@ -210,6 +210,7 @@ class FakeNetworkInterface : public MediaChannelNetworkInterface {
     }
   }
 
+  const Environment env_;
   TaskQueueBase* thread_;
   MediaReceiveChannelInterface* dest_;
   bool conf_;

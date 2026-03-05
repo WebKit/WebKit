@@ -45,7 +45,7 @@ static PlatformImagePtr placeholderPlatformImage()
         RefPtr buffer = ImageBuffer::create(FloatSize { 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferFormat { PixelFormat::BGRA8 });
         RELEASE_ASSERT(buffer);
         buffer->context().fillRect({ 0, 0, 1, 1 }, Color::black);
-        RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
+        RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
         RELEASE_ASSERT(nativeImage);
         return nativeImage->platformImage();
     }();
@@ -56,14 +56,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteNativeImageProxy);
 
 Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&& resourceCache)
 {
-    return adoptRef(*new RemoteNativeImageProxy(size, WTFMove(colorSpace), hasAlpha, WTFMove(resourceCache)));
+    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, WTF::move(resourceCache)));
 }
 
 RemoteNativeImageProxy::RemoteNativeImageProxy(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&& resourceCache)
     : NativeImage(nullptr)
-    , m_resourceCache(WTFMove(resourceCache))
+    , m_resourceCache(WTF::move(resourceCache))
     , m_size(size)
-    , m_colorSpace(WTFMove(colorSpace))
+    , m_colorSpace(WTF::move(colorSpace))
     , m_hasAlpha(hasAlpha)
 {
 }

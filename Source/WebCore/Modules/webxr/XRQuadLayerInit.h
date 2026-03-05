@@ -35,7 +35,6 @@ namespace WebCore {
 
 // https://immersive-web.github.io/layers/#xrquadlayerinit
 struct XRQuadLayerInit : XRLayerInit {
-    XRTextureType textureType;
     RefPtr<WebXRRigidTransform> transform;
     float width;
     float height;

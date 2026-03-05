@@ -39,12 +39,12 @@ class FontDescription;
 class UnrealizedCoreTextFont {
 public:
     UnrealizedCoreTextFont(RetainPtr<CTFontRef>&& baseFont)
-        : m_baseFont(WTFMove(baseFont))
+        : m_baseFont(WTF::move(baseFont))
     {
     }
 
     UnrealizedCoreTextFont(RetainPtr<CTFontDescriptorRef>&& baseFont)
-        : m_baseFont(WTFMove(baseFont))
+        : m_baseFont(WTF::move(baseFont))
     {
     }
 

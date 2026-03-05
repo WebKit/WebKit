@@ -63,7 +63,7 @@ using namespace WebCore;
 
 using DOMRangeHandleCache = HashMap<SingleThreadWeakRef<WebCore::Range>, WeakRef<InjectedBundleRangeHandle>>;
 
-static DOMRangeHandleCache& domRangeHandleCache()
+static DOMRangeHandleCache& NODELETE domRangeHandleCache()
 {
     static NeverDestroyed<DOMRangeHandleCache> cache;
     return cache;
@@ -100,7 +100,7 @@ InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
 
 Ref<InjectedBundleNodeHandle> InjectedBundleRangeHandle::document()
 {
-    return InjectedBundleNodeHandle::getOrCreate(m_range->startContainer().protectedDocument());
+    return InjectedBundleNodeHandle::getOrCreate(protect(m_range->startContainer().document()));
 }
 
 WebCore::IntRect InjectedBundleRangeHandle::boundingRectInWindowCoordinates() const
@@ -134,7 +134,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 #endif
 
     VisibleSelection oldSelection = frame->selection().selection();
-    frame->checkedSelection()->setSelection(range);
+    protect(frame->selection())->setSelection(range);
 
     float scaleFactor = options.contains(SnapshotOption::ExcludeDeviceScaleFactor) ? 1 : frame->page()->deviceScaleFactor();
     IntRect paintRect = enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(range)));
@@ -167,7 +167,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     frameView->paint(graphicsContext, paintRect);
     frameView->setPaintBehavior(oldPaintBehavior);
 
-    frame->checkedSelection()->setSelection(oldSelection);
+    protect(frame->selection())->setSelection(oldSelection);
 
     return snapshot;
 }
@@ -175,7 +175,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 String InjectedBundleRangeHandle::text() const
 {
     auto range = makeSimpleRange(m_range);
-    range.start.protectedDocument()->updateLayout();
+    protect(range.start.document())->updateLayout();
     return plainText(range);
 }
 

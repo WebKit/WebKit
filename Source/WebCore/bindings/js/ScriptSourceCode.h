@@ -59,20 +59,20 @@ public:
     }
 
     ScriptSourceCode(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher)
-        : m_provider(CachedScriptSourceProvider::create(cachedScript, sourceType, WTFMove(scriptFetcher)))
+        : m_provider(CachedScriptSourceProvider::create(cachedScript, sourceType, WTF::move(scriptFetcher)))
         , m_code(m_provider.copyRef())
         , m_cachedScript(cachedScript)
     {
     }
 
     ScriptSourceCode(const String& source, JSC::SourceTaintedOrigin sourceTaintedOrigin, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
-        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), sourceTaintedOrigin, startPosition, sourceType))
+        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url, WTF::move(scriptFetcher) }, url.string(), sourceTaintedOrigin, startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }
 
     ScriptSourceCode(const ScriptBuffer& source, URL&& url, URL&& preRedirectURL, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
-        : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), preRedirectURL.string(), startPosition, sourceType))
+        : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url, WTF::move(scriptFetcher) }, url.string(), preRedirectURL.string(), startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }

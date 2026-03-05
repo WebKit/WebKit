@@ -33,19 +33,20 @@ namespace WebCore {
 class SVGImageElement;
 
 class RenderSVGImage final : public RenderSVGModelObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGImage);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGImage);
 public:
     RenderSVGImage(SVGImageElement&, RenderStyle&&);
     virtual ~RenderSVGImage();
 
-    SVGImageElement& imageElement() const;
-    Ref<SVGImageElement> protectedImageElement() const;
+    SVGImageElement& NODELETE imageElement() const;
 
     RenderImageResource& imageResource() { return m_imageResource; }
     const RenderImageResource& imageResource() const { return m_imageResource; }
 
     bool updateImageViewport();
+
+    bool isObjectBoundingBoxValid() const { return !m_objectBoundingBox.isEmpty(); }
 
 private:
     void willBeDestroyed() final;
@@ -59,6 +60,7 @@ private:
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect decoratedBoundingBox() const final { return m_objectBoundingBox; }
 
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) final;
 
@@ -76,7 +78,7 @@ private:
 
     bool needsHasSVGTransformFlags() const final;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }
 

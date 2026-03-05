@@ -100,26 +100,19 @@ RefPtr<Float16ArrayPixelBuffer> Float16ArrayPixelBuffer::tryCreate(const PixelBu
     if (bufferSize != arrayBuffer->byteLength())
         return nullptr;
 
-    Ref data = JSC::Float16Array::create(WTFMove(arrayBuffer));
-    return create(format, size, WTFMove(data));
+    Ref data = JSC::Float16Array::create(WTF::move(arrayBuffer));
+    return create(format, size, WTF::move(data));
 }
 
 Float16ArrayPixelBuffer::Float16ArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Float16Array>&& data)
     : PixelBuffer(format, size, data->mutableSpan())
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
 {
 }
 
 RefPtr<PixelBuffer> Float16ArrayPixelBuffer::createScratchPixelBuffer(const IntSize& size) const
 {
     return Float16ArrayPixelBuffer::tryCreate(m_format, size);
-}
-
-std::span<const uint8_t> Float16ArrayPixelBuffer::span() const
-{
-    Ref data = m_data;
-    ASSERT(data->byteLength() == (m_size.area() * 4 * sizeof(Float16)));
-    return data->span();
 }
 
 } // namespace WebCore

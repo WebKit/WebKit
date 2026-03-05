@@ -455,13 +455,13 @@ TEST_P(PerAEADTest, CleanupAfterInitFailure) {
   EVP_AEAD_CTX ctx;
   ASSERT_FALSE(EVP_AEAD_CTX_init(
       &ctx, aead(), key, key_len,
-      9999 /* a silly tag length to trigger an error */, NULL /* ENGINE */));
+      9999 /* a silly tag length to trigger an error */, nullptr /* ENGINE */));
   ERR_clear_error();
 
   // Running a second, failed _init should not cause a memory leak.
   ASSERT_FALSE(EVP_AEAD_CTX_init(
       &ctx, aead(), key, key_len,
-      9999 /* a silly tag length to trigger an error */, NULL /* ENGINE */));
+      9999 /* a silly tag length to trigger an error */, nullptr /* ENGINE */));
   ERR_clear_error();
 
   // Calling _cleanup on an |EVP_AEAD_CTX| after a failed _init should be a
@@ -487,7 +487,7 @@ TEST_P(PerAEADTest, TruncatedTags) {
   const size_t tag_len = MinimumTagLength(GetParam().flags);
   bssl::ScopedEVP_AEAD_CTX ctx;
   ASSERT_TRUE(EVP_AEAD_CTX_init(ctx.get(), aead(), key, key_len, tag_len,
-                                NULL /* ENGINE */));
+                                nullptr /* ENGINE */));
 
   const uint8_t plaintext[1] = {'A'};
 

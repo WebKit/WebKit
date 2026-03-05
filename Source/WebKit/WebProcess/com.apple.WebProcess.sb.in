@@ -22,28 +22,21 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Shared/Sandbox/macOS/common.sb"
+#include "Shared/Sandbox/macOS/webcontent-defines.sb"
 #include "Shared/Sandbox/preferences.sb"
 
 
 (define (enhanced-security)
-    (require-any
-        (require-all
-            (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
-            (require-not (require-entitlement "com.apple.private.verified-jit"))
-            (require-not (require-entitlement "com.apple.security.cs.single-jit"))))
-        (require-entitlement "com.apple.private.webkit.enhanced-security")
-    )
+    (signing-identifier "com.apple.WebKit.WebContent.EnhancedSecurity"))
 
 (define (lockdown-mode)
-    (require-all
-        (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
-        (require-not (enhanced-security))))
+    (signing-identifier "com.apple.WebKit.WebContent.CaptivePortal"))
 
 #define FALSE #f
 
-(define (webcontent_gpu_sandbox_extensions_blocking)
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140400
-    (and (equal? (param "CPU") "arm64") (not (uid 0)))
+(define webcontent_gpu_sandbox_extensions_blocking?
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140400 && defined(RC_XBS) && RC_XBS == 1
+    (equal? (param "CPU") "arm64")
 #else
     FALSE
 #endif
@@ -67,18 +60,18 @@
 
 (allow process-info-rusage (target self))
 
-(when (not (webcontent_gpu_sandbox_extensions_blocking))
-    (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
-    (allow iokit-open-service (iokit-registry-entry-class
-        "AGPM"
-        "AppleAPFSContainer"
-        "AppleM2ScalerCSCDriver"
-        "AppleVideoToolboxParavirtualizationDriver"
-        "IOAccelerator")))
+(when (not webcontent_gpu_sandbox_extensions_blocking?)
+    (allow-iokit-open-service))
 
 (deny iokit-open-service (with no-report) (iokit-registry-entry-class "AppleJPEGDriver"))
 
 (allow fs-quota-get)
+
+#if !RC_XBS
+;; Allow development dylibs to be loaded
+(allow file-read* file-map-executable
+    (literal (string-append (param "WEBKIT2_FRAMEWORK_DIR") "/libWebKitSwift.dylib")))
+#endif
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))
@@ -177,49 +170,6 @@
     (ipc-posix-name-prefix "apple.cfprefs."))
 #endif
 
-(define (IOAcceleratorMessageFilter)
-    (apply-message-filter
-        (deny (with message "IOAccelerator")
-            iokit-async-external-method
-            iokit-external-method)
-        (allow iokit-async-external-method)
-        (allow iokit-external-method)
-        (allow iokit-external-trap)
-    ))
-
-(define (IOSurfaceRootUserClientMessageFilter)
-    (apply-message-filter
-        (deny (with message "IOSurfaceRootUserClient")
-            iokit-async-external-method
-            iokit-external-method)
-        (allow iokit-async-external-method)
-        (allow iokit-external-method)
-        (allow iokit-external-trap)
-    ))
-
-(define (AppleAVDUserClientMessageFilter)
-    (apply-message-filter
-        (deny (with message "AppleAVDUserClient")
-            iokit-async-external-method
-            iokit-external-method
-            iokit-external-trap)))
-
-(define (IOSurfaceAcceleratorClientMessageFilter)
-    (apply-message-filter
-        (deny (with message "IOSurfaceAcceleratorClient")
-            iokit-async-external-method
-            iokit-external-trap)
-        (allow iokit-external-method
-            (iokit-method-number 1))))
-
-(define (IOMobileFramebufferUserClientMessageFilter)
-    (apply-message-filter
-        (deny (with message "IOMobileFramebufferUserClient")
-            iokit-async-external-method
-            iokit-external-trap)
-        (allow iokit-external-method
-            (iokit-method-number 8 28))))
-
 ;;; (system-graphics) - Allow access to graphics hardware.
 (define (system-graphics)
     ;; Preferences
@@ -232,85 +182,8 @@
     (deny file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
 
-    (when (not (webcontent_gpu_sandbox_extensions_blocking))
-    ;; OpenCL
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOAccelerator"))
-            (IOAcceleratorMessageFilter))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOAccelerator"))))
-
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOAccelerationUserClient"))
-            (apply-message-filter
-                (deny
-                    iokit-async-external-method
-                    iokit-external-trap
-                    iokit-external-method)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOAccelerationUserClient"))))
-
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOSurfaceRootUserClient"))
-            (IOSurfaceRootUserClientMessageFilter))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOSurfaceRootUserClient"))))
-
-    ;; This is needed for Encrypted Media on some hardware (MacMini8,1 for example)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleIntelMEUserClient"))
-            (apply-message-filter
-                (deny (with message "AppleIntelMEUserClient") iokit-external-method)
-                (allow iokit-external-method
-                    (iokit-method-number 120))
-                (deny
-                    iokit-async-external-method
-                    iokit-external-trap)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleIntelMEUserClient"))))
-
-    ;; This is needed for Encrypted Media on some hardware (MacMini8,1 for example)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleSNBFBUserClient"))
-            (apply-message-filter
-                (deny (with message "AppleSNBFBUserClient") iokit-external-method)
-                (allow iokit-external-method
-                    (iokit-method-number 120))
-                (deny
-                    iokit-async-external-method
-                    iokit-external-trap)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleSNBFBUserClient")))))
+    (when (not webcontent_gpu_sandbox_extensions_blocking?)
+        (allow-system-graphics-iokit))
 
     ;; QuartzCore
 #if PLATFORM(MAC)
@@ -322,59 +195,6 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-registry-entry-class "AGPMClient")))
 #endif
-
-    (when (not (webcontent_gpu_sandbox_extensions_blocking))
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleGraphicsControlClient"))
-            (apply-message-filter
-                (deny (with message "AppleGraphicsControlClient")
-                    iokit-async-external-method
-                    iokit-external-method)
-                (allow iokit-external-method
-                    (iokit-method-number 0 1 3 11))
-                (deny iokit-external-trap)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleGraphicsControlClient"))))
-
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleGraphicsPolicyClient"))
-            (apply-message-filter
-                (deny
-                    iokit-async-external-method
-                    iokit-external-trap
-                    iokit-external-method)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleGraphicsPolicyClient"))))
-    ;; OpenGL
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleMGPUPowerControlClient"))
-            (apply-message-filter
-                (deny (with message "AppleMGPUPowerControlClient") iokit-external-method)
-                (allow iokit-external-method
-                    (iokit-method-number 0 1 3))
-                (deny
-                    iokit-async-external-method
-                    iokit-external-trap)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AppleMGPUPowerControlClient")))))
 
     ;; GPU bundles
     (allow file-read*
@@ -962,118 +782,9 @@
 (deny IOKIT_OPEN_USER_CLIENT (with no-report)
     (iokit-user-client-class "AppleJPEGDriverUserClient"))
 
-(when (not (webcontent_gpu_sandbox_extensions_blocking))
-(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AppleUpstreamUserClient"))
-        (apply-message-filter
-            (deny (with message "AppleUpstreamUserClient")
-                iokit-external-method)
-            (allow iokit-external-method
-                (iokit-method-number 0 1 3 4 5))
-            (deny
-                iokit-async-external-method
-                iokit-external-trap)))
-    ; else
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AppleUpstreamUserClient"))))
-
-;; <rdar://problem/10427451> && <rdar://problem/10808817>
-(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AudioAUUC"))
-        (apply-message-filter
-            (deny (with message "AudioAUUC")
-                iokit-external-method)
-            (allow iokit-external-method
-                (iokit-method-number 0 1 3 4 5))
-            (deny
-                iokit-async-external-method
-                iokit-external-trap)))
-    ; else
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AudioAUUC"))))
-
-(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOAudioControlUserClient"))
-        (apply-message-filter
-            (deny
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method)))
-    ; else
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOAudioControlUserClient"))))
-
-(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOAudioEngineUserClient"))
-        (apply-message-filter
-            (deny
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method)))
-    ; else
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOAudioEngineUserClient")))))
-
-;; <rdar://problem/60088861>
-(when (not (webcontent_gpu_sandbox_extensions_blocking))
-(when (equal? (param "CPU") "arm64")
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-user-client-class
-                    "AppleAVDUserClient"))
-            (AppleAVDUserClientMessageFilter))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-user-client-class "AppleAVDUserClient"))))
-
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-user-client-class "IOMobileFramebufferUserClient"))
-            (IOMobileFramebufferUserClientMessageFilter))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-user-client-class "IOMobileFramebufferUserClient"))))
-
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-user-client-class "IOSurfaceAcceleratorClient")) ;; <rdar://problem/63696732>
-            (IOSurfaceAcceleratorClientMessageFilter))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-user-client-class
-                    "IOSurfaceAcceleratorClient")))))) ;; <rdar://problem/63696732>
+(when (not webcontent_gpu_sandbox_extensions_blocking?)
+    (allow-iokit-with-extension)
+    (allow-iokit-with-extension-arm64))
 
 ;; Audio
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
@@ -1117,16 +828,15 @@
 
 ; Needed for [CAContext remoteContextWithOptions]
 #if HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-(with-filter
-    (require-all
-        (require-not (lockdown-mode))
+(with-filter (require-not (lockdown-mode))
+    (with-filter
         (require-any
             (require-not (state-flag "UnifiedPDFEnabled"))
-            (require-not (state-flag "BlockIOKitInWebContentSandbox"))))
-    (allow mach-lookup
-        (require-all
-            (extension "com.apple.webkit.extension.mach")
-            (global-name "com.apple.CARenderServer"))))
+            (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+        (allow mach-lookup
+            (require-all
+                (extension "com.apple.webkit.extension.mach")
+                (global-name "com.apple.CARenderServer")))))
 #else
 (allow mach-lookup (global-name "com.apple.CARenderServer"))
 #endif
@@ -1153,15 +863,8 @@
     (global-name "com.apple.lsd.modifydb"))
 
 ;; <rdar://problem/47268166>
-(when (not (webcontent_gpu_sandbox_extensions_blocking))
-(allow mach-lookup
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (xpc-service-name "com.apple.MTLCompilerService"))))
-#else
-    (xpc-service-name "com.apple.MTLCompilerService")))
-#endif
+(when (not webcontent_gpu_sandbox_extensions_blocking?)
+    (allow-metal-compiler-service))
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.CoreServices.coreservicesd")
@@ -1511,6 +1214,9 @@
         SYS_psynch_cvwait
         SYS_psynch_mutexdrop
         SYS_psynch_mutexwait
+        SYS_psynch_rw_rdlock
+        SYS_psynch_rw_unlock
+        SYS_psynch_rw_wrlock
         SYS_read
         SYS_read_nocancel
         SYS_readlink
@@ -1551,7 +1257,6 @@
     (syscall-number
         SYS___pthread_kill
         SYS_openat_nocancel ;; Used when dumping the GC heap.
-        SYS_psynch_rw_rdlock
 #if !PLATFORM(MAC)
         SYS_rmdir
         SYS_abort_with_payload
@@ -1574,8 +1279,6 @@
     SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
     SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
     SYS_listxattr
-    SYS_psynch_rw_unlock
-    SYS_psynch_rw_wrlock
     SYS_sigprocmask
     SYS_sysctlbyname
     SYS_umask
@@ -1612,9 +1315,11 @@
         SYS_unlink))
 
 (deny syscall-unix)
-(when (defined? 'SYS_crossarch_trap)
-    (deny syscall-unix (with no-report) (syscall-number
-        SYS_crossarch_trap)))
+
+(deny syscall-unix (with no-report)
+    (syscall-number
+        (when (defined? 'SYS_crossarch_trap) SYS_crossarch_trap)
+        SYS_os_fault_with_payload))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))
@@ -1627,8 +1332,9 @@
 #endif
 (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
     (allow syscall-unix (syscall-unix-downlevels)))
-(with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-    (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
+(with-filter (require-not (lockdown-mode))
+    (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+        (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode))))
 #else
 (allow syscall-unix
     (syscall-unix-only-in-use-before-launch)
@@ -1705,8 +1411,10 @@
 
 (define (kernel-mig-routines-in-use) (kernel-mig-routine
     _mach_make_memory_entry
+#if USE(CLOCK_GET_TIME_SYSCALL)
     ;; rdar://131735906 - we should see if we can modify the dependent library to remove the clock_get_time call
     clock_get_time
+#endif
     host_get_io_master
     host_info
     io_iterator_is_valid
@@ -1808,8 +1516,9 @@
         (allow syscall-mig (kernel-mig-routines-iokit-service)))
     (with-filter (state-flag "BlockIOKitInWebContentSandbox")
         (deny syscall-mig (with no-report) (kernel-mig-routines-iokit-service)))
-    (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-        (allow syscall-mig (kernel-mig-routines-downlevels-blocked-in-lockdown-mode))))
+    (with-filter (require-not (lockdown-mode))
+        (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+            (allow syscall-mig (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))))
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (and (defined? 'mach-kernel-endpoint) (not (defined? 'syscall-mig))))
     (allow mach-kernel-endpoint
@@ -1840,8 +1549,9 @@
             (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
                 (allow mach-message-send (kernel-mig-routines-downlevels))
                 (allow mach-message-send (kernel-mig-routines-iokit)))
-            (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-                (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
+            (with-filter (require-not (lockdown-mode))
+                (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+                    (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode))))
 #else
             (allow mach-message-send (kernel-mig-routines-iokit))
             (allow mach-message-send (kernel-mig-routines-iokit-service))
@@ -1908,8 +1618,9 @@
 #if HAVE(SANDBOX_STATE_FLAGS)
     (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
         (allow syscall-mach (syscall-mach-downlevels)))
-    (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-        (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
+    (with-filter (require-not (lockdown-mode))
+        (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+            (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode))))
 #endif
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
     (allow syscall-mach (syscall-mach-downlevels))
@@ -1924,55 +1635,8 @@
         (allow syscall-mach (machtrap-number MSC_mach_msg2_trap))))
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
-(when (not (webcontent_gpu_sandbox_extensions_blocking))
-(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-registry-entry-class "IOSurfaceRootUserClient"))
-        (IOSurfaceRootUserClientMessageFilter))
-    ; else
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-registry-entry-class "IOSurfaceRootUserClient"))))
-
-(when (equal? (param "CPU") "arm64")
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (require-not (extension "com.apple.webkit.extension.iokit"))
-                (iokit-user-client-class "AppleAVDUserClient"))
-            (AppleAVDUserClientMessageFilter))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (require-not (extension "com.apple.webkit.extension.iokit"))
-                (iokit-user-client-class "AppleAVDUserClient"))))
-
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (require-not (extension "com.apple.webkit.extension.iokit"))
-                (iokit-user-client-class "IOSurfaceAcceleratorClient"))
-            (IOSurfaceAcceleratorClientMessageFilter))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (require-not (extension "com.apple.webkit.extension.iokit"))
-                (iokit-user-client-class "IOSurfaceAcceleratorClient")))))
-
-(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-connection "IOAccelerator"))
-        (IOAcceleratorMessageFilter))
-    ; else
-    (allow IOKIT_OPEN_USER_CLIENT
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-connection "IOAccelerator")))))
+(when (not webcontent_gpu_sandbox_extensions_blocking?)
+    (allow-iokit-without-extension))
 
 (deny IOKIT_OPEN_USER_CLIENT
     (require-all
@@ -1999,7 +1663,7 @@
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "RootDomainUserClient")))
 
-(when (webcontent_gpu_sandbox_extensions_blocking)
+(when webcontent_gpu_sandbox_extensions_blocking?
     (deny iokit-open-service (with telemetry))
     (deny iokit-open-user-client (with telemetry)))
 

@@ -46,7 +46,7 @@ void Phase::beginPhase()
         m_graphDumpBeforePhase = out.toCString();
     }
 
-    dataLogIf(shouldDumpGraphAtEachPhase(m_graph.m_plan.mode()),
+    dataLogIf(shouldDumpGraphAtEachPhase(m_graph),
         m_graph.prefix(), "Beginning DFG phase ", m_name, ".\n",
         m_graph.prefix(), "Before ", m_name, ":\n",
         m_graph);

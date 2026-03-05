@@ -20,8 +20,8 @@ includes: [testTypedArray.js]
 features: [Symbol, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
 
   assert.throws(TypeError, function() {
     sample.some();

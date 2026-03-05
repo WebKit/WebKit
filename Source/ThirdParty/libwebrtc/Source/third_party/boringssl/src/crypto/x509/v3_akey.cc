@@ -36,27 +36,27 @@ const X509V3_EXT_METHOD v3_akey_id = {
     NID_authority_key_identifier,
     X509V3_EXT_MULTILINE,
     ASN1_ITEM_ref(AUTHORITY_KEYID),
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
     i2v_AUTHORITY_KEYID,
     v2i_AUTHORITY_KEYID,
-    0,
-    0,
-    NULL,
+    nullptr,
+    nullptr,
+    nullptr,
 };
 
 static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_KEYID(
     const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *extlist) {
   const AUTHORITY_KEYID *akeyid =
       reinterpret_cast<const AUTHORITY_KEYID *>(ext);
-  int extlist_was_null = extlist == NULL;
+  int extlist_was_null = extlist == nullptr;
   if (akeyid->keyid) {
     char *tmp = x509v3_bytes_to_hex(akeyid->keyid->data, akeyid->keyid->length);
-    int ok = tmp != NULL && X509V3_add_value("keyid", tmp, &extlist);
+    int ok = tmp != nullptr && X509V3_add_value("keyid", tmp, &extlist);
     OPENSSL_free(tmp);
     if (!ok) {
       goto err;
@@ -64,8 +64,8 @@ static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_KEYID(
   }
   if (akeyid->issuer) {
     STACK_OF(CONF_VALUE) *tmpextlist =
-        i2v_GENERAL_NAMES(NULL, akeyid->issuer, extlist);
-    if (tmpextlist == NULL) {
+        i2v_GENERAL_NAMES(nullptr, akeyid->issuer, extlist);
+    if (tmpextlist == nullptr) {
       goto err;
     }
     extlist = tmpextlist;
@@ -81,7 +81,7 @@ err:
   if (extlist_was_null) {
     sk_CONF_VALUE_pop_free(extlist, X509V3_conf_free);
   }
-  return NULL;
+  return nullptr;
 }
 
 // Currently two options: keyid: use the issuers subject keyid, the value
@@ -95,11 +95,11 @@ static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
                                  const STACK_OF(CONF_VALUE) *values) {
   char keyid = 0, issuer = 0;
   int j;
-  ASN1_OCTET_STRING *ikeyid = NULL;
-  X509_NAME *isname = NULL;
-  GENERAL_NAMES *gens = NULL;
-  GENERAL_NAME *gen = NULL;
-  ASN1_INTEGER *serial = NULL;
+  ASN1_OCTET_STRING *ikeyid = nullptr;
+  X509_NAME *isname = nullptr;
+  GENERAL_NAMES *gens = nullptr;
+  GENERAL_NAME *gen = nullptr;
+  ASN1_INTEGER *serial = nullptr;
   const X509 *cert;
   AUTHORITY_KEYID *akeyid;
 
@@ -118,7 +118,7 @@ static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
     } else {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_UNKNOWN_OPTION);
       ERR_add_error_data(2, "name=", cnf->name);
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -127,7 +127,7 @@ static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
       return AUTHORITY_KEYID_new();
     }
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_NO_ISSUER_CERTIFICATE);
-    return NULL;
+    return nullptr;
   }
 
   cert = ctx->issuer_cert;
@@ -140,7 +140,7 @@ static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
     }
     if (keyid == 2 && !ikeyid) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_UNABLE_TO_GET_ISSUER_KEYID);
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -176,5 +176,5 @@ err:
   X509_NAME_free(isname);
   ASN1_INTEGER_free(serial);
   ASN1_OCTET_STRING_free(ikeyid);
-  return NULL;
+  return nullptr;
 }

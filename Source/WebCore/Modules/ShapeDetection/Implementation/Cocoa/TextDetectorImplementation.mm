@@ -74,7 +74,7 @@ void TextDetectorImpl::detect(const NativeImage& image, CompletionHandler<void(V
         });
     }
 
-    completionHandler(WTFMove(results));
+    completionHandler(WTF::move(results));
 }
 
 } // namespace WebCore::ShapeDetection

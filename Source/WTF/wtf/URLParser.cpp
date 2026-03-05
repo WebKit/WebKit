@@ -1059,7 +1059,7 @@ bool URLParser::isLocalhost(StringView view)
     return isAtLocalhost<char16_t>(view.span16());
 }
 
-ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length)
+ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length) LIFETIME_BOUND
 {
     if (m_didSeeSyntaxViolation) [[unlikely]] {
         ASSERT(start + length <= m_asciiBuffer.size());
@@ -1086,7 +1086,7 @@ ALWAYS_INLINE size_t URLParser::currentPosition(const CodePointIterator<Characte
 }
 
 URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* nonUTF8QueryEncoding)
-    : m_inputString(WTFMove(input))
+    : m_inputString(WTF::move(input))
 {
     if (m_inputString.isNull()) {
         if (base.isValid() && !base.m_hasOpaquePath) {
@@ -2060,7 +2060,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
         m_url.m_string = m_inputString;
         ASSERT(m_asciiBuffer.isEmpty());
     } else
-        m_url.m_string = String::adopt(WTFMove(m_asciiBuffer));
+        m_url.m_string = String::adopt(WTF::move(m_asciiBuffer));
     m_url.m_isValid = true;
     URL_PARSER_LOG("Parsed URL <%s>\n\n", m_url.m_string.utf8().data());
 }
@@ -2130,7 +2130,7 @@ void URLParser::serializeIPv4(IPv4Address address)
     appendNumberToASCIIBuffer<uint8_t>(address);
 }
     
-static size_t zeroSequenceLength(const std::array<uint16_t, 8>& address, size_t begin)
+static size_t NODELETE zeroSequenceLength(const std::array<uint16_t, 8>& address, size_t begin)
 {
     size_t end = begin;
     for (; end < 8; end++) {
@@ -2140,7 +2140,7 @@ static size_t zeroSequenceLength(const std::array<uint16_t, 8>& address, size_t 
     return end - begin;
 }
 
-static std::optional<size_t> findLongestZeroSequence(const std::array<uint16_t, 8>& address)
+static std::optional<size_t> NODELETE findLongestZeroSequence(const std::array<uint16_t, 8>& address)
 {
     std::optional<size_t> longest;
     size_t longestLength = 0;
@@ -2933,7 +2933,7 @@ auto URLParser::parseURLEncodedForm(StringView input) -> URLEncodedForm
     URLEncodedForm output;
     for (StringView bytes : input.split('&')) {
         if (auto nameAndValue = parseQueryNameAndValue(bytes))
-            output.append(WTFMove(*nameAndValue));
+            output.append(WTF::move(*nameAndValue));
     }
     return output;
 }
@@ -2944,12 +2944,12 @@ std::optional<KeyValuePair<String, String>> URLParser::parseQueryNameAndValue(St
     if (equalIndex == notFound) {
         auto name = formURLDecode(makeStringByReplacingAll(bytes, '+', ' '));
         if (name)
-            return { { WTFMove(*name), emptyString() } };
+            return { { WTF::move(*name), emptyString() } };
     } else {
         auto name = formURLDecode(makeStringByReplacingAll(bytes.left(equalIndex), '+', ' '));
         auto value = formURLDecode(makeStringByReplacingAll(bytes.substring(equalIndex + 1), '+', ' '));
         if (name && value)
-            return { { WTFMove(*name), WTFMove(*value) } };
+            return { { WTF::move(*name), WTF::move(*value) } };
     }
     return std::nullopt;
 }
@@ -2986,7 +2986,7 @@ String URLParser::serialize(const URLEncodedForm& tuples)
         output.append('=');
         serializeURLEncodedForm(tuple.value, output);
     }
-    return String::adopt(WTFMove(output));
+    return String::adopt(WTF::move(output));
 }
 
 const UIDNA& URLParser::internationalDomainNameTranscoder()

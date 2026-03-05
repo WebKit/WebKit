@@ -31,6 +31,7 @@
 #include "AudioResampler.h"
 #include "AudioUtilities.h"
 #include <algorithm>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -58,7 +59,10 @@ std::span<float> AudioResamplerKernel::getSourceSpan(size_t framesToProcess, siz
 
     // Determine how many input frames we'll need.
     // We need to fill the buffer up to and including endIndex (so add 1) but we've already buffered m_fillIndex frames from last time.
-    size_t framesNeeded = 1 + endIndex - m_fillIndex;
+    size_t framesNeeded;
+    if (!WTF::safeSub(1 + endIndex, m_fillIndex, framesNeeded))
+        return { };
+
     if (numberOfSourceFramesNeededP)
         *numberOfSourceFramesNeededP = framesNeeded;
 

@@ -43,7 +43,7 @@ bcm_infallible BCM_sha384_init(SHA512_CTX *sha) {
   sha->bytes_so_far_low = 0;
   sha->bytes_so_far_high = 0;
   sha->num = 0;
-  sha->md_len = BCM_SHA384_DIGEST_LENGTH;
+  sha->md_len = SHA384_DIGEST_LENGTH;
   return bcm_infallible::approved;
 }
 
@@ -61,7 +61,7 @@ bcm_infallible BCM_sha512_init(SHA512_CTX *sha) {
   sha->bytes_so_far_low = 0;
   sha->bytes_so_far_high = 0;
   sha->num = 0;
-  sha->md_len = BCM_SHA512_DIGEST_LENGTH;
+  sha->md_len = SHA512_DIGEST_LENGTH;
   return bcm_infallible::approved;
 }
 
@@ -78,7 +78,7 @@ bcm_infallible BCM_sha512_256_init(SHA512_CTX *sha) {
   sha->bytes_so_far_low = 0;
   sha->bytes_so_far_high = 0;
   sha->num = 0;
-  sha->md_len = BCM_SHA512_256_DIGEST_LENGTH;
+  sha->md_len = SHA512_256_DIGEST_LENGTH;
   return bcm_infallible::approved;
 }
 
@@ -88,12 +88,12 @@ static void sha512_block_data_order(uint64_t state[8], const uint8_t *in,
 #endif
 
 
-bcm_infallible BCM_sha384_final(uint8_t out[BCM_SHA384_DIGEST_LENGTH],
+bcm_infallible BCM_sha384_final(uint8_t out[SHA384_DIGEST_LENGTH],
                                 SHA512_CTX *sha) {
   // This function must be paired with |BCM_sha384_init|, which sets
-  // |sha->md_len| to |BCM_SHA384_DIGEST_LENGTH|.
-  assert(sha->md_len == BCM_SHA384_DIGEST_LENGTH);
-  sha512_final_impl(out, BCM_SHA384_DIGEST_LENGTH, sha);
+  // |sha->md_len| to |SHA384_DIGEST_LENGTH|.
+  assert(sha->md_len == SHA384_DIGEST_LENGTH);
+  sha512_final_impl(out, SHA384_DIGEST_LENGTH, sha);
   return bcm_infallible::approved;
 }
 
@@ -107,12 +107,12 @@ bcm_infallible BCM_sha512_256_update(SHA512_CTX *sha, const void *data,
   return BCM_sha512_update(sha, data, len);
 }
 
-bcm_infallible BCM_sha512_256_final(uint8_t out[BCM_SHA512_256_DIGEST_LENGTH],
+bcm_infallible BCM_sha512_256_final(uint8_t out[SHA512_256_DIGEST_LENGTH],
                                     SHA512_CTX *sha) {
   // This function must be paired with |BCM_sha512_256_init|, which sets
-  // |sha->md_len| to |BCM_SHA512_256_DIGEST_LENGTH|.
-  assert(sha->md_len == BCM_SHA512_256_DIGEST_LENGTH);
-  sha512_final_impl(out, BCM_SHA512_256_DIGEST_LENGTH, sha);
+  // |sha->md_len| to |SHA512_256_DIGEST_LENGTH|.
+  assert(sha->md_len == SHA512_256_DIGEST_LENGTH);
+  sha512_final_impl(out, SHA512_256_DIGEST_LENGTH, sha);
   return bcm_infallible::approved;
 }
 
@@ -166,10 +166,10 @@ bcm_infallible BCM_sha512_update(SHA512_CTX *c, const void *in_data,
   return bcm_infallible::approved;
 }
 
-bcm_infallible BCM_sha512_final(uint8_t out[BCM_SHA512_DIGEST_LENGTH],
+bcm_infallible BCM_sha512_final(uint8_t out[SHA512_DIGEST_LENGTH],
                                 SHA512_CTX *sha) {
-  // Ideally we would assert |sha->md_len| is |BCM_SHA512_DIGEST_LENGTH| to
-  // match the size hint, but calling code often pairs |BCM_sha384_init| with
+  // Ideally we would assert |sha->md_len| is |SHA512_DIGEST_LENGTH| to match
+  // the size hint, but calling code often pairs |BCM_sha384_init| with
   // |BCM_sha512_final| and expects |sha->md_len| to carry the size over.
   //
   // TODO(davidben): Add an assert and fix code to match them up.

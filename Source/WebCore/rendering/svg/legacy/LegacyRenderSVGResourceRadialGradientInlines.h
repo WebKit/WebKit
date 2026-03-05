@@ -36,9 +36,4 @@ inline SVGRadialGradientElement& LegacyRenderSVGResourceRadialGradient::radialGr
     return downcast<SVGRadialGradientElement>(LegacyRenderSVGResourceGradient::gradientElement());
 }
 
-inline Ref<SVGRadialGradientElement> LegacyRenderSVGResourceRadialGradient::protectedRadialGradientElement() const
-{
-    return radialGradientElement();
-}
-
 } // namespace WebCore

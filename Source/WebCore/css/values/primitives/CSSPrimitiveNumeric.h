@@ -64,7 +64,7 @@ template<NumericRaw RawType> struct PrimitiveNumeric {
     }
 
     PrimitiveNumeric(Calc calc)
-        : m_data { WTFMove(calc) }
+        : m_data { WTF::move(calc) }
     {
     }
 
@@ -96,7 +96,7 @@ template<NumericRaw RawType> struct PrimitiveNumeric {
     }
 
     PrimitiveNumeric(PrimitiveNumeric&& other)
-        : m_data { WTFMove(other.m_data) }
+        : m_data { WTF::move(other.m_data) }
     {
     }
 
@@ -108,7 +108,7 @@ template<NumericRaw RawType> struct PrimitiveNumeric {
 
     PrimitiveNumeric& operator=(PrimitiveNumeric&& other)
     {
-        m_data = WTFMove(other.m_data);
+        m_data = WTF::move(other.m_data);
         return *this;
     }
 

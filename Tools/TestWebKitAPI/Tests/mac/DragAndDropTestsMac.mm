@@ -26,9 +26,11 @@
 #import "config.h"
 
 #import "DragAndDropSimulator.h"
+#import "HTTPServer.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestDraggingInfo.h"
+#import "TestNavigationDelegate.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/PasteboardCustomData.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -58,6 +60,113 @@ TEST(DragAndDropTests, NumberOfValidItemsForDrop)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"observedDragOver"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"observedDrop"].boolValue);
     EXPECT_EQ(1U, numberOfValidItemsForDrop);
+}
+
+TEST(DragAndDropTests, DragEndEventCoordinatesWithNestedIframes)
+{
+    static constexpr ASCIILiteral mainframeHTML = "<iframe width='500' height='500' style='position: absolute; top: 50px; left: 50px; border: 2px solid red;' src='https://domain2.com/subframe'></iframe>"_s;
+
+    static constexpr ASCIILiteral subframeHTML = "<script>"
+    "   window.events = [];"
+    "   addEventListener('message', function(event) {"
+    "       console.log(event.data);"
+    "       window.events.push(event.data);"
+    "   });"
+    "</script>"
+    "<iframe width='500' height='500' style='position: absolute; top: 50px; left: 50px; border: 2px solid blue;' src='https://domain3.com/nestedSubframe'></iframe>"_s;
+
+    static constexpr ASCIILiteral nestedSubframeHTML =
+    "<body style='margin: 0; padding: 0; width: 100%; height: 100vh; background-color: lightblue;'>"
+    "<div id='draggable' draggable='true' style='width: 100px; height: 100px; background-color: yellow; position: absolute; top: 50px; left: 50px;'>Drag me</div>"
+    "<script>"
+        "const draggable = document.getElementById('draggable');"
+        "draggable.addEventListener('dragstart', (event) => {"
+            "parent.postMessage('dragstart:' + event.clientX + ',' + event.clientY, '*');"
+        "});"
+        "draggable.addEventListener('dragend', (event) => {"
+            "parent.postMessage('dragend:' + event.clientX + ',' + event.clientY, '*');"
+        "});"
+    "</script>"
+    "</body>"_s;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } },
+        { "/nestedSubframe"_s, { nestedSubframeHTML } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 800, 800) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [simulator runFrom:CGPointMake(200, 200) to:CGPointMake(300, 300)];
+
+    RetainPtr<NSArray<NSString *>> events = [webView objectByEvaluatingJavaScript:@"window.events" inFrame:[webView firstChildFrame]];
+    EXPECT_GT([events count], 0U);
+    bool foundDragStart = false;
+    bool foundDragEnd = false;
+    NSString *dragEndEvent = nil;
+
+    for (NSString *event in events.get()) {
+        if ([event hasPrefix:@"dragstart:"]) {
+            foundDragStart = true;
+        } else if ([event hasPrefix:@"dragend:"]) {
+            foundDragEnd = true;
+            dragEndEvent = event;
+        }
+    }
+
+    EXPECT_TRUE(foundDragStart);
+    EXPECT_TRUE(foundDragEnd);
+
+    if (dragEndEvent) {
+        RetainPtr coords = [dragEndEvent substringFromIndex:[@"dragend:" length]];
+        RetainPtr components = [coords componentsSeparatedByString:@","];
+        if ([components count] == 2) {
+            int x = [components[0] intValue];
+            int y = [components[1] intValue];
+            EXPECT_TRUE(x >= 190 && x <= 200) << "Expected dragend x coordinate around 193, got " << x;
+            EXPECT_TRUE(y >= 190 && y <= 200) << "Expected dragend y coordinate around 196, got " << y;
+        }
+    }
+
+    [webView waitForNextPresentationUpdate];
+    [simulator runFrom:CGPointMake(200, 200) to:CGPointMake(0, 0)];
+
+    events = [webView objectByEvaluatingJavaScript:@"window.events" inFrame:[webView firstChildFrame]];
+    EXPECT_GT([events count], 0U);
+    foundDragStart = false;
+    foundDragEnd = false;
+    dragEndEvent = nil;
+
+    for (NSString *event in events.get()) {
+        if ([event hasPrefix:@"dragstart:"]) {
+            foundDragStart = true;
+        } else if ([event hasPrefix:@"dragend:"]) {
+            foundDragEnd = true;
+            dragEndEvent = event;
+        }
+    }
+
+    EXPECT_TRUE(foundDragStart);
+    EXPECT_TRUE(foundDragEnd);
+
+    if (dragEndEvent) {
+        RetainPtr coords = [dragEndEvent substringFromIndex:[@"dragend:" length]];
+        RetainPtr components = [coords componentsSeparatedByString:@","];
+        if ([components count] == 2) {
+            int x = [components[0] intValue];
+            int y = [components[1] intValue];
+            EXPECT_TRUE(x >= -105 && x <= -95) << "Expected dragend x coordinate around -100, got " << x;
+            EXPECT_TRUE(y >= -105 && y <= -95) << "Expected dragend y coordinate around -100, got " << y;
+        }
+    }
 }
 
 TEST(DragAndDropTests, DropUserSelectAllUserDragElementDiv)
@@ -241,6 +350,28 @@ TEST(DragAndDropTests, ProvideImageDataAsTypeIdentifiers)
     [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
     [webView pasteboard:uniquePasteboard.get() provideDataForType:UTTypeGIF.identifier];
     EXPECT_GT([uniquePasteboard dataForType:UTTypeGIF.identifier].length, 0u);
+}
+
+TEST(DragAndDropTests, DragLocationForImageInScrolledSubframe)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration preferences]._largeImageAsyncDecodingEnabled = NO;
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"image-in-scrolled-subframe"];
+
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] -> bool {
+        return [webView stringByEvaluatingJavaScript:@"doneLoadingSubframe"].boolValue;
+    }, 3, @"Expected subframe to finish loading.");
+
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(200, 200)];
+
+    CGPoint dragLocation = [simulator initialDragImageLocationInView];
+    EXPECT_TRUE(NSPointInRect(dragLocation, [webView bounds]));
+
+    RetainPtr dragTypes = [[[simulator draggingInfo] draggingPasteboard] types];
+    EXPECT_TRUE([dragTypes containsObject:UTTypePNG.identifier]);
 }
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

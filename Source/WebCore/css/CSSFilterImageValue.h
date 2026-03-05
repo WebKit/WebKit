@@ -35,15 +35,14 @@ namespace WebCore {
 
 namespace Style {
 class BuilderState;
+class Image;
 }
-
-class StyleImage;
 
 class CSSFilterImageValue final : public CSSValue {
 public:
     static Ref<CSSFilterImageValue> create(Ref<CSSValue>&& imageValueOrNone, CSS::Filter&& filter)
     {
-        return adoptRef(*new CSSFilterImageValue(WTFMove(imageValueOrNone), WTFMove(filter)));
+        return adoptRef(*new CSSFilterImageValue(WTF::move(imageValueOrNone), WTF::move(filter)));
     }
     ~CSSFilterImageValue();
 
@@ -53,7 +52,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
-    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
+    RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 
 private:
     explicit CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, CSS::Filter&&);

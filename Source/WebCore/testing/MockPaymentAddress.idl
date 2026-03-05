@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=APPLE_PAY
+    Conditional=APPLE_PAY,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MockPaymentAddress {
     DOMString countryCode;
     FrozenArray<DOMString> addressLines;

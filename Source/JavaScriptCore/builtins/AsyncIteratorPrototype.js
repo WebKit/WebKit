@@ -68,7 +68,7 @@ function asyncDispose()
             @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
             return promise;
         }
-        @performPromiseThen(resultWrapper, @promiseReturnUndefinedOnFulfilled, @undefined, promise, @undefined);
+        @performPromiseThen(resultWrapper, @promiseReturnUndefinedOnFulfilled, @undefined, promise);
     }
 
     return promise;

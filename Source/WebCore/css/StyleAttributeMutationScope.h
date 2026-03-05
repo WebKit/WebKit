@@ -59,7 +59,7 @@ public:
             shouldReadOldValue = true;
 
         if (m_element->isDefinedCustomElement()) [[unlikely]] {
-            auto* reactionQueue = m_element->reactionQueue();
+            CheckedPtr reactionQueue = m_element->reactionQueue();
             if (reactionQueue && reactionQueue->observesStyleAttribute()) {
                 m_isCustomElement = true;
                 shouldReadOldValue = true;
@@ -83,7 +83,7 @@ public:
 
         if (m_mutationRecipients) {
             auto mutation = MutationRecord::createAttributes(*m_element, HTMLNames::styleAttr, m_oldValue);
-            m_mutationRecipients->enqueueMutationRecord(WTFMove(mutation));
+            m_mutationRecipients->enqueueMutationRecord(WTF::move(mutation));
         }
 
         if (m_isCustomElement) {

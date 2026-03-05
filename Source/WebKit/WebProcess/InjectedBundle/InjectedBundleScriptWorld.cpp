@@ -40,7 +40,7 @@ using namespace WebCore;
 
 using WorldMap = HashMap<SingleThreadWeakRef<const DOMWrapperWorld>, WeakRef<InjectedBundleScriptWorld>>;
 
-static WorldMap& allWorlds()
+static WorldMap& NODELETE allWorlds()
 {
     static NeverDestroyed<WorldMap> map;
     return map;
@@ -163,16 +163,6 @@ void InjectedBundleScriptWorld::exposeClosedShadowRootsForExtensions()
 void InjectedBundleScriptWorld::disableOverrideBuiltinsBehavior()
 {
     m_world->disableLegacyOverrideBuiltInsBehavior();
-}
-
-Ref<const WebCore::DOMWrapperWorld> InjectedBundleScriptWorld::protectedCoreWorld() const
-{
-    return m_world;
-}
-
-Ref<WebCore::DOMWrapperWorld> InjectedBundleScriptWorld::protectedCoreWorld()
-{
-    return m_world;
 }
 
 } // namespace WebKit

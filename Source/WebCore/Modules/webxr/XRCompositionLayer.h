@@ -38,7 +38,7 @@ namespace WebCore {
 class XRLayerBacking;
 
 class XRCompositionLayer : public WebXRLayer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRCompositionLayer);
+    WTF_MAKE_TZONE_ALLOCATED(XRCompositionLayer);
 public:
     virtual ~XRCompositionLayer();
 

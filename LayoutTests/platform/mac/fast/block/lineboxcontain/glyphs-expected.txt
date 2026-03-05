@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x275
-  RenderBlock {HTML} at (0,0) size 800x275
-    RenderBody {BODY} at (8,8) size 784x251
+layer at (0,0) size 800x273
+  RenderBlock {HTML} at (0,0) size 800x273
+    RenderBody {BODY} at (8,8) size 784x249
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 499x18
           text run at (0,0) width 261: "You should see a green rectangle below. "
           text run at (260,0) width 239: "If you see any red, the test has failed."
-      RenderBlock {P} at (0,164) size 784x17 [border: (1px solid #000000)]
-        RenderText {#text} at (1,-2) size 280x18
+      RenderBlock {P} at (0,162) size 784x17 [border: (1px solid #000000)]
+        RenderText {#text} at (1,-3) size 280x19
           text run at (1,-2) width 280: "this block should hug the lowercase glyphs."
-      RenderBlock {P} at (0,197) size 784x54
+      RenderBlock {P} at (0,194) size 784x55
         RenderBlock (floating) at (0,0) size 22x24
-          RenderText at (0,-8) size 22x41
+          RenderText at (0,-9) size 22x42
             text run at (0,-8) width 22: "T"
         RenderText {#text} at (24,0) size 418x18
           text run at (24,0) width 418: "he first letter here should look nicer because it uses glyph bounds"
@@ -22,15 +22,15 @@ layer at (0,0) size 800x275
         RenderBR {BR} at (547,18) size 1x18
         RenderText {#text} at (0,36) size 461x18
           text run at (0,36) width 461: "Maybe we should do this by default for all first letters like Firefox does."
-layer at (8,26) size 384x130
-  RenderBlock {DIV} at (0,18) size 384x130 [bgcolor=#FF0000]
-    RenderInline {SPAN} at (0,1) size 320x64 [color=#008000]
-      RenderText {#text} at (0,1) size 320x64
-        text run at (0,1) width 320: "xxxxx"
-    RenderInline {SPAN} at (320,-50) size 64x128 [bgcolor=#008000]
-    RenderBR {BR} at (384,1) size 0x64
-    RenderBlock {DIV} at (0,2) size 64x128 [bgcolor=#008000]
-    RenderInline {SPAN} at (64,66) size 320x64 [color=#008000]
-      RenderText {#text} at (64,66) size 320x64
-        text run at (64,66) width 320: "xxxxx"
+layer at (8,26) size 384x128
+  RenderBlock {DIV} at (0,18) size 384x129 [bgcolor=#FF0000]
+    RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
+      RenderText {#text} at (0,0) size 320x65
+        text run at (0,0) width 320: "xxxxx"
+    RenderInline {SPAN} at (320,-51) size 64x129 [bgcolor=#008000]
+    RenderBR {BR} at (384,0) size 0x65
+    RenderBlock {DIV} at (0,0) size 64x129 [bgcolor=#008000]
+    RenderInline {SPAN} at (64,64) size 320x65 [color=#008000]
+      RenderText {#text} at (64,64) size 320x65
+        text run at (64,64) width 320: "xxxxx"
     RenderText {#text} at (0,0) size 0x0

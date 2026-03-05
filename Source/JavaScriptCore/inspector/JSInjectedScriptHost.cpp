@@ -82,7 +82,7 @@ const ClassInfo JSInjectedScriptHost::s_info = { "InjectedScriptHost"_s, &Base::
 
 JSInjectedScriptHost::JSInjectedScriptHost(VM& vm, Structure* structure, Ref<InjectedScriptHost>&& impl)
     : Base(vm, structure)
-    , m_wrapped(WTFMove(impl))
+    , m_wrapped(WTF::move(impl))
 {
 }
 
@@ -275,7 +275,7 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
 
     String scriptID = String::number(sourceCode->provider()->asID());
     JSObject* location = constructEmptyObject(globalObject);
-    location->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, WTFMove(scriptID)));
+    location->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, WTF::move(scriptID)));
     location->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(lineNumber));
     location->putDirect(vm, Identifier::fromString(vm, "columnNumber"_s), jsNumber(columnNumber));
 
@@ -284,11 +284,11 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
 
     String name = function->name(vm);
     if (!name.isEmpty())
-        result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, WTFMove(name)));
+        result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, WTF::move(name)));
 
     String displayName = function->displayName(vm);
     if (!displayName.isEmpty())
-        result->putDirect(vm, Identifier::fromString(vm, "displayName"_s), jsString(vm, WTFMove(displayName)));
+        result->putDirect(vm, Identifier::fromString(vm, "displayName"_s), jsString(vm, WTF::move(displayName)));
 
     return result;
 }
@@ -453,7 +453,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         JSArray* liveArray = constructEmptyArray(globalObject, nullptr, liveRegistrations.size());
         RETURN_IF_EXCEPTION(scope, JSValue());
 
-        for (auto&& liveRegistration : WTFMove(liveRegistrations)) {
+        for (auto&& liveRegistration : WTF::move(liveRegistrations)) {
             JSObject* registrationObject = constructEmptyObject(globalObject);
             registrationObject->putDirect(vm, Identifier::fromString(vm, "target"_s), liveRegistration.target);
             registrationObject->putDirect(vm, Identifier::fromString(vm, "heldValue"_s), liveRegistration.heldValue);
@@ -470,7 +470,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         JSArray* deadArray = constructEmptyArray(globalObject, nullptr, deadRegistrations.size());
         RETURN_IF_EXCEPTION(scope, JSValue());
 
-        for (auto&& deadRegistration : WTFMove(deadRegistrations)) {
+        for (auto&& deadRegistration : WTF::move(deadRegistrations)) {
             JSObject* registrationObject = constructEmptyObject(globalObject);
             registrationObject->putDirect(vm, Identifier::fromString(vm, "heldValue"_s), deadRegistration.heldValue);
             if (deadRegistration.unregisterToken)

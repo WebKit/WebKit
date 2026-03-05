@@ -18,6 +18,12 @@ Both meter elements should have a nested shadow box with a width specified:
 |           id="value"
 |           style="inline-size: 70%;"
 |           useragentpart="-webkit-meter-optimum-value"
+|     <div>
+|       style="appearance: inherit;"
+|       useragentpart="slider-track"
+|       <div>
+|         style="transform: translate(-30%, 0px);"
+|         useragentpart="slider-fill"
 | "\n    "
 | <meter>
 |   high="6"
@@ -40,6 +46,12 @@ Both meter elements should have a nested shadow box with a width specified:
 |           id="value"
 |           style="inline-size: 100%;"
 |           useragentpart="-webkit-meter-suboptimum-value"
+|     <div>
+|       style="appearance: inherit;"
+|       useragentpart="slider-track"
+|       <div>
+|         style="transform: translate(0%, 0px);"
+|         useragentpart="slider-fill"
 | "\n    "
 | <meter>
 |   high="6"
@@ -62,4 +74,10 @@ Both meter elements should have a nested shadow box with a width specified:
 |           id="value"
 |           style="inline-size: 100%;"
 |           useragentpart="-webkit-meter-even-less-good-value"
+|     <div>
+|       style="appearance: inherit;"
+|       useragentpart="slider-track"
+|       <div>
+|         style="transform: translate(0%, 0px);"
+|         useragentpart="slider-fill"
 | "\n  "

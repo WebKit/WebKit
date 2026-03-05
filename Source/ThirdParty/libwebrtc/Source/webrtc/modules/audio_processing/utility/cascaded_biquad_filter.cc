@@ -33,7 +33,7 @@ CascadedBiQuadFilter::~CascadedBiQuadFilter() = default;
 
 void CascadedBiQuadFilter::Process(ArrayView<const float> x,
                                    ArrayView<float> y) {
-  if (biquads_.size() > 0) {
+  if (!biquads_.empty()) {
     ApplyBiQuad(x, y, &biquads_[0]);
     for (size_t k = 1; k < biquads_.size(); ++k) {
       ApplyBiQuad(y, y, &biquads_[k]);

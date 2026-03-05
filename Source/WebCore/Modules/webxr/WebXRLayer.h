@@ -39,7 +39,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class WebXRLayer : public RefCounted<WebXRLayer>, public EventTarget, public ContextDestructionObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRLayer);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRLayer);
 public:
     virtual ~WebXRLayer();
 
@@ -72,5 +72,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebXRLayer)
 
 #endif // ENABLE(WEBXR)

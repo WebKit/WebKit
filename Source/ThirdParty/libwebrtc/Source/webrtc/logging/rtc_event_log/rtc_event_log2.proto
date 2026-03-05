@@ -2,6 +2,7 @@
 // WITHOUT PRIOR WARNING. THIS FILE SHOULD NOT BE USED IN PRODUCTION CODE.
 
 syntax = "proto2";
+
 option optimize_for = LITE_RUNTIME;
 package webrtc.rtclog2;
 
@@ -35,12 +36,14 @@ message EventStream {
   repeated IceCandidatePairEvent ice_candidate_events = 26;
   repeated DtlsTransportStateEvent dtls_transport_state_events = 27;
   repeated DtlsWritableState dtls_writable_states = 28;
-  repeated GenericPacketSent generic_packets_sent = 29;
-  repeated GenericPacketReceived generic_packets_received = 30;
-  repeated GenericAckReceived generic_acks_received = 31;
+  repeated GenericPacketSent generic_packets_sent = 29 [deprecated = true];
+  repeated GenericPacketReceived generic_packets_received = 30
+      [deprecated = true];
+  repeated GenericAckReceived generic_acks_received = 31 [deprecated = true];
   repeated RouteChange route_changes = 32;
   repeated RemoteEstimates remote_estimates = 33;
   repeated NetEqSetMinimumDelay neteq_set_minimum_delay = 34;
+  repeated ScreamBweUpdates scream_bwe_updates = 35;
 
   repeated AudioRecvStreamConfig audio_recv_stream_configs = 101;
   repeated AudioSendStreamConfig audio_send_stream_configs = 102;
@@ -442,6 +445,30 @@ message DelayBasedBweUpdates {
   optional bytes timestamp_ms_deltas = 101;
   optional bytes bitrate_bps_deltas = 102;
   optional bytes detector_state_deltas = 103;
+}
+
+message ScreamBweUpdates {
+  // required
+  optional int64 timestamp_ms = 1;
+
+  optional uint32 ref_window_bytes = 2;
+  optional uint32 target_rate_kbps = 3;
+  optional uint32 smoothed_rtt_ms = 4;
+  optional uint32 avg_queue_delay_ms = 5;
+  optional uint32 l4s_marked_permille = 6;
+  optional uint32 data_in_flight_bytes = 7;
+
+  // optional - required if the batch contains delta encoded events.
+  optional uint32 number_of_deltas = 15;
+
+  // Delta encodings.
+  optional bytes timestamp_ms_deltas = 101;
+  optional bytes ref_window_bytes_deltas = 102;
+  optional bytes target_rate_kbps_deltas = 103;
+  optional bytes smoothed_rtt_ms_deltas = 104;
+  optional bytes avg_queue_delay_ms_deltas = 105;
+  optional bytes l4s_marked_permille_deltas = 106;
+  optional bytes data_in_flight_bytes_deltas = 107;
 }
 
 // Maps RTP header extension names to numerical IDs.

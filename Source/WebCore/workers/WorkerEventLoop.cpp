@@ -51,16 +51,17 @@ void WorkerEventLoop::scheduleToRun()
 {
     RefPtr globalScope = downcast<WorkerOrWorkletGlobalScope>(scriptExecutionContext());
     ASSERT(globalScope);
+    ASSERT(globalScope->workerOrWorkletThread());
     // Post this task with a special event mode, so that it can be separated from other
     // kinds of tasks so that queued microtasks can run even if other tasks are ignored.
-    globalScope->postTaskForMode([eventLoop = Ref { *this }] (ScriptExecutionContext&) {
-        eventLoop->run();
+    globalScope->postTaskForMode([eventLoop = Ref { *this }] (ScriptExecutionContext& context) {
+        eventLoop->run(context.vm());
     }, WorkerEventLoop::taskMode());
 }
 
 bool WorkerEventLoop::isContextThread() const
 {
-    return protectedScriptExecutionContext()->isContextThread();
+    return protect(scriptExecutionContext())->isContextThread();
 }
 
 MicrotaskQueue& WorkerEventLoop::microtaskQueue()
@@ -68,7 +69,7 @@ MicrotaskQueue& WorkerEventLoop::microtaskQueue()
     RefPtr context = scriptExecutionContext();
     ASSERT(context);
     if (!m_microtaskQueue)
-        m_microtaskQueue = makeUnique<MicrotaskQueue>(context->vm(), *this);
+        m_microtaskQueue = MicrotaskQueue::create(context->vm(), *this);
     return *m_microtaskQueue;
 }
 

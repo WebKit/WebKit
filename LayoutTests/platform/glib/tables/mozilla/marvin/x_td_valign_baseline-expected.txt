@@ -4,19 +4,19 @@ layer at (0,0) size 800x303
   RenderBlock {html} at (0,0) size 800x303
     RenderBody {body} at (8,16) size 784x279
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 175x17
+        RenderText {#text} at (0,0) size 175x18
           text run at (0,0) width 175: "TD VALIGN=BASELINE"
       RenderTable {table} at (0,34) size 784x245 [border: (1px outset #000000)]
         RenderTableSection (anonymous) at (1,1) size 782x243
           RenderTableRow {tr} at (0,2) size 782x239
-            RenderTableCell {td} at (2,25) size 214x94 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,24) size 214x95 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,25) size 206x89
-                text run at (2,2) width 204: "Compare the baseline of the first"
-                text run at (2,20) width 44: "line of "
-                text run at (46,20) width 146: "text in this cell with the"
-                text run at (2,38) width 206: "baseline of the first line of text in"
-                text run at (2,56) width 176: "the next cell: they should be"
-                text run at (2,74) width 108: "vertically aligned"
+                text run at (2,3) width 204: "Compare the baseline of the first"
+                text run at (2,21) width 44: "line of "
+                text run at (46,21) width 146: "text in this cell with the"
+                text run at (2,39) width 206: "baseline of the first line of text in"
+                text run at (2,57) width 176: "the next cell: they should be"
+                text run at (2,75) width 108: "vertically aligned"
             RenderTableCell {td} at (217,2) size 564x239 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 532x233
                 text run at (2,3) width 358: "Compare the baseline "

@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
 #include "api/sequence_checker.h"
 #include "api/transport/stun.h"
@@ -28,7 +29,7 @@ const int STUN_SERVER_PORT = 3478;
 class StunServer {
  public:
   // Creates a STUN server, which will listen on the given socket.
-  explicit StunServer(AsyncUDPSocket* socket);
+  explicit StunServer(absl_nonnull std::unique_ptr<AsyncUDPSocket> socket);
   // Removes the STUN server from the socket and deletes the socket.
   virtual ~StunServer();
 

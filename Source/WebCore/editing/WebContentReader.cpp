@@ -35,9 +35,9 @@ namespace WebCore {
 void WebContentReader::addFragment(Ref<DocumentFragment>&& newFragment)
 {
     if (!m_fragment)
-        m_fragment = WTFMove(newFragment);
+        m_fragment = WTF::move(newFragment);
     else
-        protectedFragment()->appendChild(newFragment);
+        protect(fragment())->appendChild(newFragment);
 }
 
 bool FrameWebContentReader::shouldSanitize() const

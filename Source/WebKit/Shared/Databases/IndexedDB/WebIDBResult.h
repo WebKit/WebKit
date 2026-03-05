@@ -45,15 +45,15 @@ public:
 
     WebIDBResult(const WebCore::IDBResultData& resultData, Vector<SandboxExtension::Handle>&& handles)
         : m_resultData(resultData)
-        , m_handles(WTFMove(handles))
+        , m_handles(WTF::move(handles))
     {
     }
     
     WebIDBResult(WebIDBResult&&) = default;
     WebIDBResult& operator=(WebIDBResult&&) = default;
 
-    const WebCore::IDBResultData& resultData() const { return m_resultData; }
-    const Vector<SandboxExtension::Handle>& handles() const { return m_handles; }
+    const WebCore::IDBResultData& resultData() const LIFETIME_BOUND { return m_resultData; }
+    const Vector<SandboxExtension::Handle>& handles() const LIFETIME_BOUND { return m_handles; }
 
 private:
     friend struct IPC::ArgumentCoder<WebIDBResult>;

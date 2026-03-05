@@ -31,6 +31,7 @@
 #include "CDATASection.h"
 #include "Comment.h"
 #include "CommonAtomStrings.h"
+#include "CustomElementRegistry.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -201,7 +202,7 @@ MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resol
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
     , m_serializeShadowRoots(serializeShadowRoots)
-    , m_explicitShadowRoots(WTFMove(explicitShadowRoots))
+    , m_explicitShadowRoots(WTF::move(explicitShadowRoots))
     , m_exclusionRules(exclusionRules)
 {
     ASSERT(serializeShadowRoots != SerializeShadowRoots::AllForInterchange || explicitShadowRoots.isEmpty());
@@ -212,8 +213,8 @@ MarkupAccumulator::~MarkupAccumulator() = default;
 void MarkupAccumulator::enableURLReplacement(HashMap<String, String>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet)
 {
     m_serializationContext = CSS::SerializationContext {
-        WTFMove(replacementURLStrings),
-        WTFMove(replacementURLStringsForCSSStyleSheet),
+        WTF::move(replacementURLStrings),
+        WTF::move(replacementURLStringsForCSSStyleSheet),
         true,
     };
 }
@@ -273,7 +274,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         Namespaces namespaceHash;
         namespaceHash.set(xmlAtom().impl(), XMLNames::xmlNamespaceURI->impl());
         namespaceHash.set(XMLNames::xmlNamespaceURI->impl(), xmlAtom().impl());
-        namespaceStack.append(WTFMove(namespaceHash));
+        namespaceStack.append(WTF::move(namespaceHash));
     } else
         namespaceStack.constructAndAppend();
 
@@ -319,7 +320,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
 
         while (current != &targetNode) {
             if (RefPtr nextSibling = current->nextSibling()) {
-                current = WTFMove(nextSibling);
+                current = WTF::move(nextSibling);
                 namespaceStack.removeLast();
                 namespaceStack.append(namespaceStack.last());
                 break;
@@ -381,7 +382,7 @@ std::pair<String, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulato
     return { element.resolveURLStringIfNeeded(urlString, m_resolveURLs), IsCreatedByURLReplacement::No };
 }
 
-const ShadowRoot* MarkupAccumulator::suitableShadowRoot(const Node& node)
+RefPtr<const ShadowRoot> MarkupAccumulator::suitableShadowRoot(const Node& node)
 {
     if (!shouldIncludeShadowRoots())
         return nullptr;
@@ -389,7 +390,7 @@ const ShadowRoot* MarkupAccumulator::suitableShadowRoot(const Node& node)
     RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(node);
     if (!shadowRoot || !includeShadowRoot(*shadowRoot))
         return nullptr;
-    return shadowRoot.unsafeGet();
+    return shadowRoot;
 }
 
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
@@ -423,7 +424,19 @@ void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespa
             m_markup.append(" shadowrootserializable=\"\""_s);
         if (shadowRoot->isClonable())
             m_markup.append(" shadowrootclonable=\"\""_s);
-        if (shadowRoot->protectedHost()->customElementRegistry() != shadowRoot->registryForBindings())
+        bool shouldAppendRegistryAttribute = [&] {
+            Ref document = shadowRoot->document();
+            if (document->usesNullCustomElementRegistry() && shadowRoot->usesNullCustomElementRegistry())
+                return false;
+
+            RefPtr documentRegistry = document->customElementRegistry();
+            RefPtr shadowRegistry = shadowRoot->customElementRegistry();
+            bool documentHasGlobalRegistry = (documentRegistry && !documentRegistry->isScoped()) || document->window();
+            bool shadowHasGlobalRegistry = (shadowRegistry && !shadowRegistry->isScoped())
+                || (!shadowRegistry && !shadowRoot->usesNullCustomElementRegistry() && document->window());
+            return !(documentHasGlobalRegistry && shadowHasGlobalRegistry);
+        }();
+        if (shouldAppendRegistryAttribute)
             m_markup.append(" shadowrootcustomelementregistry=\"\""_s);
         m_markup.append('>');
     } else
@@ -453,12 +466,9 @@ void MarkupAccumulator::appendAttributeValue(StringBuilder& result, const String
             return EntityMaskInAttributeValue;
         case SerializationSyntax::HTML:
             return EntityMaskInHTMLAttributeValue;
-        case SerializationSyntax::HTMLLegacyAttributeValue:
-            return EntityMaskInHTMLLegacyAttributeValue;
-        default:
-            ASSERT_NOT_REACHED();
-            return EntityMaskInAttributeValue;
         }
+        ASSERT_NOT_REACHED();
+        return EntityMaskInAttributeValue;
     }();
     appendCharactersReplacingEntities(result, attribute, entityMask);
 }
@@ -724,11 +734,11 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
             // Always use xml as prefix if the namespace is the XML namespace.
             prefixedName.setPrefix(xmlAtom());
         } else {
-            AtomStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : nullptr;
+            RefPtr foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : nullptr;
             bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
             if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
                 if (RefPtr prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : nullptr)
-                    prefixedName.setPrefix(AtomString(WTFMove(prefix)));
+                    prefixedName.setPrefix(AtomString(WTF::move(prefix)));
                 else {
                     bool shouldBeDeclaredUsingAppendNamespace = !attribute.prefix().isEmpty() && !foundNS;
                     if (!shouldBeDeclaredUsingAppendNamespace && attribute.localName() != xmlnsAtom() && namespaces)
@@ -832,38 +842,38 @@ void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& 
         namespaces->checkConsistency();
 
     switch (node.nodeType()) {
-    case Node::TEXT_NODE:
+    case NodeType::Text:
         appendText(result, uncheckedDowncast<Text>(node));
         break;
-    case Node::COMMENT_NODE:
+    case NodeType::Comment:
         // FIXME: Comment content is not escaped, but that may be OK because XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
         result.append("<!--"_s, uncheckedDowncast<Comment>(node).data(), "-->"_s);
         break;
-    case Node::DOCUMENT_NODE:
+    case NodeType::Document:
         appendXMLDeclaration(result, uncheckedDowncast<Document>(node));
         break;
-    case Node::DOCUMENT_FRAGMENT_NODE:
+    case NodeType::DocumentFragment:
         break;
-    case Node::DOCUMENT_TYPE_NODE:
+    case NodeType::DocumentType:
         appendDocumentType(result, uncheckedDowncast<DocumentType>(node));
         break;
-    case Node::PROCESSING_INSTRUCTION_NODE: {
+    case NodeType::ProcessingInstruction: {
         auto& instruction = uncheckedDowncast<ProcessingInstruction>(node);
         // FIXME: PI data is not escaped, but XMLSerializer (and possibly other callers) this should raise an exception if it includes "?>".
         result.append("<?"_s, instruction.target(), ' ', instruction.data(), "?>"_s);
         break;
     }
-    case Node::ELEMENT_NODE:
+    case NodeType::Element:
         ASSERT_NOT_REACHED();
         break;
-    case Node::CDATA_SECTION_NODE:
+    case NodeType::CDATASection:
         if (inXMLFragmentSerialization()) {
             // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
             result.append("<![CDATA["_s, uncheckedDowncast<CDATASection>(node).data(), "]]>"_s);
         } else
             appendText(result, uncheckedDowncast<Text>(node));
         break;
-    case Node::ATTRIBUTE_NODE:
+    case NodeType::Attribute:
         appendAttributeValue(result, uncheckedDowncast<Attr>(node).value());
         break;
     }
@@ -903,9 +913,7 @@ bool MarkupAccumulator::shouldExcludeElement(const Element& element)
 
 SerializationSyntax MarkupAccumulator::serializationSyntax(Document& document)
 {
-    if (!document.isHTMLDocument())
-        return SerializationSyntax::XML;
-    return document.settings().htmlLegacyAttributeValueSerializationEnabled() ? SerializationSyntax::HTMLLegacyAttributeValue : SerializationSyntax::HTML;
+    return document.isHTMLDocument() ? SerializationSyntax::HTML : SerializationSyntax::XML;
 }
 
 }

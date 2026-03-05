@@ -47,7 +47,6 @@ enum CSSAtRuleID : uint8_t {
     CSSAtRuleSupports,
     CSSAtRuleViewTransition,
 
-    CSSAtRuleInternalBaseAppearance,
     CSSAtRuleWebkitKeyframes,
     CSSAtRuleCounterStyle,
     CSSAtRuleLayer,

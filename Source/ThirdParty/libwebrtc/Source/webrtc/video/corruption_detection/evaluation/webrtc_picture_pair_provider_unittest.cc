@@ -22,7 +22,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/environment/environment_factory.h"
-#include "api/field_trials_view.h"
+#include "api/field_trials.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_decoder_factory.h"
@@ -129,11 +129,6 @@ TestClip GetTestClip() {
   return TestClip::CreateYuvClip(kFilename, kWidth, kHeight, kFramerate,
                                  kCodecMode);
 }
-
-class EmptyFieldTrials : public FieldTrialsView {
- public:
-  std::string Lookup(absl::string_view key) const override { return ""; }
-};
 
 class WebRtcPicturePairProviderTest : public TestWithParam<VideoCodecType> {
  protected:
@@ -385,7 +380,7 @@ TEST_P(WebRtcPicturePairProviderTest, SetRatesWithSvcRateAllocator) {
   codec_config.spatialLayers[0].maxBitrate = bitrate_kbps;
   codec_config.spatialLayers[0].active = true;
 
-  SvcRateAllocator svc_rate_allocator(codec_config, EmptyFieldTrials());
+  SvcRateAllocator svc_rate_allocator(codec_config, FieldTrials(""));
   VideoEncoder::RateControlParameters rate_params =
       VideoEncoder::RateControlParameters(
           svc_rate_allocator.GetAllocation(kDefaultBitrate.bps(), kFramerate),

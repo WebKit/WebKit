@@ -65,6 +65,11 @@ enum class SessionCompositionType : uint8_t {
     Other,
 };
 
+enum class IsForProofreadingReview : bool {
+    No,
+    Yes
+};
+
 using SessionID = WTF::UUID;
 
 struct Session {
@@ -76,6 +81,7 @@ struct Session {
     ID identifier;
     Type type { Type::Composition };
     CompositionType compositionType { CompositionType::None };
+    IsForProofreadingReview isForProofreadingReview { IsForProofreadingReview::No };
 };
 
 #pragma mark - Context
@@ -97,6 +103,7 @@ enum class TextSuggestionState : uint8_t {
     Reviewing,
     Rejected,
     Invalid,
+    Accepted,
 };
 
 using TextSuggestionID = WTF::UUID;

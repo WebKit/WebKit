@@ -12,9 +12,11 @@ rtc_source_set("fake_sctp_transport") {
   visibility = [ "*" ]
   sources = [ "fake_sctp_transport.h" ]
   deps = [
+    "../../../api:field_trials_view",
     "../../../api:libjingle_peerconnection_api",
     "../../../api:priority",
     "../../../api:rtc_error",
+    "../../../api:sctp_transport_interface",
     "../../../api/environment",
     "../../../api/transport:datagram_transport_interface",
     "../../../api/transport:sctp_transport_factory_interface",

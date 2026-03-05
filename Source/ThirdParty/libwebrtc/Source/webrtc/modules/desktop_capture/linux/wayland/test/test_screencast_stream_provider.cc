@@ -13,7 +13,16 @@
 
 #include <fcntl.h>
 #include <pipewire/pipewire.h>
+#include <spa/buffer/buffer.h>
+#include <spa/buffer/meta.h>
+#include <spa/param/format.h>
+#include <spa/param/param.h>
 #include <spa/param/video/format-utils.h>
+#include <spa/param/video/raw.h>
+#include <spa/pod/builder.h>
+#include <spa/pod/vararg.h>
+#include <spa/utils/defs.h>
+#include <spa/utils/type.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -87,7 +96,8 @@ TestScreenCastStreamProvider::TestScreenCastStreamProvider(Observer* observer,
                            &pw_stream_events_, this);
     uint8_t buffer[2048] = {};
 
-    spa_pod_builder builder = spa_pod_builder{buffer, sizeof(buffer)};
+    spa_pod_builder builder =
+        spa_pod_builder{.data = buffer, .size = sizeof(buffer)};
 
     std::vector<const spa_pod*> params;
 
@@ -282,7 +292,7 @@ void TestScreenCastStreamProvider::OnStreamParamChanged(
   auto stride = SPA_ROUND_UP_N(that->width_ * kBytesPerPixel, 4);
 
   uint8_t buffer[1024] = {};
-  auto builder = spa_pod_builder{buffer, sizeof(buffer)};
+  auto builder = spa_pod_builder{.data = buffer, .size = sizeof(buffer)};
 
   // Setup buffers and meta header for new format.
 

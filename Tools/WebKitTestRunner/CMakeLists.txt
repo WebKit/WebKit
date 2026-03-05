@@ -26,10 +26,8 @@ set(WebKitTestRunner_FRAMEWORKS
     WTF
     WebCore
     WebKit
+    bmalloc
 )
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND WebKitTestRunner_FRAMEWORKS bmalloc)
-endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
     if (HAVE_STD_EXPERIMENTAL_FILESYSTEM)
@@ -57,7 +55,7 @@ set_source_files_properties(${WebKitTestRunner_WEB_PREFERENCES} PROPERTIES GENER
 add_custom_command(
     OUTPUT ${WebKitTestRunner_DERIVED_SOURCES_DIR}/TestOptionsGeneratedKeys.h
     DEPENDS ${WebKitTestRunner_WEB_PREFERENCES_TEMPLATES} ${WebKitTestRunner_WEB_PREFERENCES} WTF_CopyPreferences
-    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKit --outputDir "${WebKitTestRunner_DERIVED_SOURCES_DIR}" --template ${WebKitTestRunner_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb ${WebKitTestRunner_WEB_PREFERENCES}
+    COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKit --outputDir "${WebKitTestRunner_DERIVED_SOURCES_DIR}" --template ${WebKitTestRunner_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb ${WebKitTestRunner_WEB_PREFERENCES}
     COMMAND_EXPAND_LISTS
     VERBATIM)
 

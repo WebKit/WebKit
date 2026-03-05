@@ -30,7 +30,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/cache"
     "${WEBCORE_DIR}/Modules/compression"
     "${WEBCORE_DIR}/Modules/contact-picker"
-    "${WEBCORE_DIR}/Modules/cookie-consent"
     "${WEBCORE_DIR}/Modules/cookie-store"
     "${WEBCORE_DIR}/Modules/credentialmanagement"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
@@ -132,6 +131,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/html/track"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/inspector/agents"
+    "${WEBCORE_DIR}/inspector/agents/frame"
     "${WEBCORE_DIR}/inspector/agents/page"
     "${WEBCORE_DIR}/inspector/agents/worker"
     "${WEBCORE_DIR}/layout"
@@ -201,6 +201,8 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/storage"
     "${WEBCORE_DIR}/style"
     "${WEBCORE_DIR}/style/calc"
+    "${WEBCORE_DIR}/style/computed"
+    "${WEBCORE_DIR}/style/computed/data"
     "${WEBCORE_DIR}/style/values"
     "${WEBCORE_DIR}/style/values/align"
     "${WEBCORE_DIR}/style/values/anchor-position"
@@ -223,6 +225,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/style/values/fonts"
     "${WEBCORE_DIR}/style/values/grid"
     "${WEBCORE_DIR}/style/values/images"
+    "${WEBCORE_DIR}/style/values/images/kinds"
     "${WEBCORE_DIR}/style/values/inline"
     "${WEBCORE_DIR}/style/values/line-grid"
     "${WEBCORE_DIR}/style/values/lists"
@@ -251,6 +254,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/style/values/transitions"
     "${WEBCORE_DIR}/style/values/ui"
     "${WEBCORE_DIR}/style/values/view-transitions"
+    "${WEBCORE_DIR}/style/values/viewport"
     "${WEBCORE_DIR}/style/values/will-change"
     "${WEBCORE_DIR}/svg"
     "${WEBCORE_DIR}/svg/animation"
@@ -364,9 +368,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/contact-picker/ContactsSelectOptions.idl
     Modules/contact-picker/Navigator+Contacts.idl
 
-    Modules/cookie-consent/Navigator+CookieConsent.idl
-    Modules/cookie-consent/RequestCookieConsentOptions.idl
-
     Modules/cookie-store/CookieChangeEvent.idl
     Modules/cookie-store/CookieChangeEventInit.idl
     Modules/cookie-store/CookieInit.idl
@@ -447,13 +448,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/highlight/HighlightRegistry.idl
 
     Modules/identity/DigitalCredential.idl
-    Modules/identity/DigitalCredentialRequest.idl
+    Modules/identity/DigitalCredentialGetRequest.idl
+    Modules/identity/DigitalCredentialPresentationProtocol.idl
     Modules/identity/DigitalCredentialRequestOptions.idl
-    Modules/identity/IdentityCredentialProtocol.idl
 
     Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl
 
-    Modules/identity/protocols/openid/OpenID4VPRequest.idl
 
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl
@@ -489,6 +489,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediacapabilities/WorkerNavigator+MediaCapabilities.idl
 
     Modules/mediacontrols/DOMWindow+MediaControls.idl
+    Modules/mediacontrols/MediaControlsContextMenuItem.idl
     Modules/mediacontrols/MediaControlsHost.idl
     Modules/mediacontrols/MediaControlsUtils.idl
 
@@ -539,6 +540,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamTrack.idl
     Modules/mediastream/MediaStreamTrackEvent.idl
+    Modules/mediastream/MediaStreamTrackHandle.idl
     Modules/mediastream/MediaStreamTrackProcessor.idl
     Modules/mediastream/MediaTrackCapabilities.idl
     Modules/mediastream/MediaTrackConstraints.idl
@@ -1427,6 +1429,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/MediaEncryptedEvent.idl
     html/MediaError.idl
     html/OffscreenCanvas.idl
+    html/Origin.idl
     html/PopoverInvokerElement.idl
     html/RadioNodeList.idl
     html/ResolvedCaptionDisplaySettingsOptions.idl
@@ -2113,6 +2116,8 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/htmlSwitchControl.css
     ${WEBCORE_DIR}/css/mathml.css
     ${WEBCORE_DIR}/css/mathmlCoreExtras.css
+    ${WEBCORE_DIR}/css/mathmlFontSizeMath.css
+    ${WEBCORE_DIR}/css/mathmlLegacyFontSizeMath.css
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
@@ -2133,10 +2138,8 @@ set(WebCore_FRAMEWORKS
     JavaScriptCore
     PAL
     WTF
+    bmalloc
 )
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND WebCore_FRAMEWORKS bmalloc)
-endif ()
 
 if (ENABLE_XSLT)
     list(APPEND WebCore_LIBRARIES LibXslt::LibXslt)
@@ -2490,6 +2493,9 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MockCDMFactory.idl
     testing/MockCaptionDisplaySettingsClientCallback.idl
     testing/MockContentFilterSettings.idl
+    testing/MockMediaDeviceRoute.idl
+    testing/MockMediaDeviceRouteController.idl
+    testing/MockMediaDeviceRouteURLCallback.idl
     testing/MockPageOverlay.idl
     testing/MockWebAuthenticationConfiguration.idl
     testing/ServiceWorkerInternals.idl
@@ -2522,6 +2528,7 @@ if (ENABLE_WEBXR)
         testing/FakeXRInputSourceInit.idl
         testing/FakeXRRigidTransformInit.idl
         testing/FakeXRViewInit.idl
+        testing/FakeXRWorldInit.idl
         testing/WebFakeXRDevice.idl
         testing/WebFakeXRInputController.idl
         testing/WebXRTest.idl
@@ -2744,7 +2751,7 @@ add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
     MAIN_DEPENDENCY domjit/DOMJITAbstractHeapRepository.yaml
     DEPENDS ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb
-    COMMAND ${RUBY_EXECUTABLE} ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb ${WEBCORE_DIR}/domjit/DOMJITAbstractHeapRepository.yaml ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
+    COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb ${WEBCORE_DIR}/domjit/DOMJITAbstractHeapRepository.yaml ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h)
 
@@ -2799,7 +2806,8 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebCoreLogDefinitions
 
 # Generate CSS property names
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleInlinesGenerated.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleSettersGenerated.h ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleExtractorGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.h ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleProperties+PropertyNames.idl
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyInitialValuesGeneratedInlines.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp 
+${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.cpp ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+ConstructionInlines.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+GettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+SettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleChangedAnimatablePropertiesGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+GettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+InitialInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+SettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleExtractorGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.h ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleProperties+PropertyNames.idl
     MAIN_DEPENDENCY ${WEBCORE_DIR}/css/scripts/process-css-properties.py
     DEPENDS ${WebCore_CSS_PROPERTY_NAMES}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
@@ -2808,7 +2816,10 @@ add_custom_command(
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleChangedAnimatablePropertiesGenerated.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleExtractorGenerated.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp)
@@ -2882,7 +2893,7 @@ add_custom_command(
        ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.idl
     MAIN_DEPENDENCY ${WEBCORE_DIR}/page/Settings.yaml
     DEPENDS ${WEBCORE_DIR}/Scripts/GenerateSettings.rb ${SETTINGS_TEMPLATES} WTF_CopyPreferences ${WTF_WEB_PREFERENCES}
-    COMMAND ${RUBY_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateSettings.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${SETTINGS_TEMPLATES},;--template;>" ${WTF_WEB_PREFERENCES} ${WEBCORE_DIR}/page/Settings.yaml
+    COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateSettings.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${SETTINGS_TEMPLATES},;--template;>" ${WTF_WEB_PREFERENCES} ${WEBCORE_DIR}/page/Settings.yaml
     COMMAND_EXPAND_LISTS
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Settings.h)
@@ -3059,8 +3070,6 @@ target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/DocumentSyncData.serialization.in
     ${WebCore_DERIVED_SOURCES_DIR}/FrameTreeSyncData.serialization.in
-
-    Modules/Model/InternalAPI/DDModel.serialization.in
 
     Modules/WebGPU/InternalAPI/WebGPU.serialization.in
     Modules/indexeddb/IndexedDB.serialization.in

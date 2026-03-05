@@ -163,6 +163,7 @@ public:
             bool showExtendedGridLines;
             bool showTrackSizes;
             bool showAreaNames;
+            bool showOrderNumbers;
         };
 
         WeakPtr<Node, WeakPtrImplWithEventTargetData> gridNode;
@@ -204,7 +205,7 @@ public:
 
     void setShowRulers(bool);
 
-    Node* highlightedNode() const;
+    Node* NODELETE highlightedNode() const;
     unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
     unsigned flexOverlayCount() const { return m_activeFlexOverlays.size(); }
 

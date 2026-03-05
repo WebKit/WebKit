@@ -28,7 +28,6 @@ var gif = document.getElementById("gif");
 window.onload = async function() {
     if (!window.internals)
         return;
-    internals.settings.setImageAnimationControlEnabled(true);
 
     debug("Pausing animations page-wide.");
     internals.setImageAnimationEnabled(false);
@@ -47,7 +46,6 @@ window.onload = async function() {
     await shouldBecomeEqual("internals.isImageAnimating(gif)", "true");
 
     internals.setImageAnimationEnabled(true);
-    internals.settings.setImageAnimationControlEnabled(false);
 
     internals.clearMemoryCache();
     finishJSTest();

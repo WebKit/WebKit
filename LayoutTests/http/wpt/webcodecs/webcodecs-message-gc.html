@@ -82,6 +82,25 @@ async function doEncodeDecode(encoderConfig)
   clearInterval(timer);
 }
 
+function listenToConsoleMessages()
+{
+  window.gotVideoFrameConsoleMessage = false;
+  const messagePromise = new Promise((resolve, reject) => {
+    if (!window.internals) {
+      window.gotVideoFrameConsoleMessage = true;
+      return;
+    }
+    internals.setConsoleMessageListener(message => {
+      window.gotVideoFrameConsoleMessage |= message.includes("A VideoFrame was destroyed");
+    });
+  });
+}
+
+function didReceiveVideoFrameConsoleMessage()
+{
+  return window.gotVideoFrameConsoleMessage;
+}
+
 function doTest(codec, title)
 {
   const config = { codec };
@@ -91,7 +110,15 @@ function doTest(codec, title)
   config.framerate = 30;
 
   promise_test(async t => {
-    return doEncodeDecode(config);
+    listenToConsoleMessages();
+
+    let counter = 0;
+    while (++counter < 50) {
+      await doEncodeDecode(config);
+      if (didReceiveVideoFrameConsoleMessage())
+        break;
+    }
+    assert_less_than(counter, 50);
   }, title);
 }
 

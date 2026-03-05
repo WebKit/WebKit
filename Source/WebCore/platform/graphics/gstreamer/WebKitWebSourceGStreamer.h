@@ -40,7 +40,7 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_SRC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), WEBKIT_TYPE_WEB_SRC))
 #define WEBKIT_WEB_SRC_CAST(obj)       ((WebKitWebSrc*)(obj))
 
-#define WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME  "webkit.resource-loader"
+static constexpr auto WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME = "webkit.resource-loader"_s;
 
 struct WebKitWebSrcPrivate;
 

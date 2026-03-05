@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,13 @@ class WEBCORE_EXPORT MediaSessionManagerCocoa
     , public AudioHardwareListener::Client {
     WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerCocoa);
 public:
-    MediaSessionManagerCocoa(PageIdentifier);
+#if PLATFORM(MAC)
+    static Ref<MediaSessionManagerCocoa> create(PageIdentifier);
+#endif
+
+    // NowPlayingManagerClient.
+    void ref() const override { PlatformMediaSessionManager::ref(); }
+    void deref() const override { PlatformMediaSessionManager::deref(); }
     
     static WEBCORE_EXPORT void clearNowPlayingInfo();
     static WEBCORE_EXPORT void setNowPlayingInfo(bool setAsNowPlayingApplication, bool shouldUpdateNowPlayingSuppression, const NowPlayingInfo&);
@@ -56,6 +62,8 @@ public:
     static String audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayerPitchCorrectionAlgorithm, bool preservesPitch, double rate);
 
 protected:
+    explicit MediaSessionManagerCocoa(PageIdentifier);
+
     void updateSessionState() override;
     void beginInterruption(PlatformMediaSession::InterruptionType) final;
 
@@ -70,14 +78,17 @@ protected:
     std::optional<NowPlayingInfo> nowPlayingInfo() const final { return m_nowPlayingInfo; }
 
     void scheduleSessionStatusUpdate() final;
-    void updateNowPlayingInfo();
+    void updateNowPlayingInfo() final;
+    void setNowPlayingUpdateInterval(double) final;
+    double nowPlayingUpdateInterval() final;
     void updateActiveNowPlayingSession(RefPtr<PlatformMediaSessionInterface>);
+    bool shouldUpdateNowPlaying(const NowPlayingInfo&);
 
     void removeSession(PlatformMediaSessionInterface&) override;
     void addSession(PlatformMediaSessionInterface&) override;
     void setCurrentSession(PlatformMediaSessionInterface&) override;
 
-    bool sessionWillBeginPlayback(PlatformMediaSessionInterface&) override;
+    void sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) override;
     void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying) override;
     void sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&) final;
     void clientCharacteristicsChanged(PlatformMediaSessionInterface&, bool) final;
@@ -105,11 +116,13 @@ private:
 
     void possiblyChangeAudioCategory();
 
-    std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&) final;
+    std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration&) final;
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     static void updateNowPlayingSuppression(const NowPlayingInfo*);
 #endif
+
+    void adjustNowPlayingUpdateInterval();
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override;
@@ -124,9 +137,12 @@ private:
     double m_lastUpdatedNowPlayingDuration { NAN };
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
     Markable<MediaUniqueIdentifier> m_lastUpdatedNowPlayingInfoUniqueIdentifier;
-    std::optional<NowPlayingInfo> m_nowPlayingInfo;
 
+    std::optional<NowPlayingInfo> m_nowPlayingInfo;
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
+    RunLoop::Timer m_nowPlayingUpdateTimer;
+    Seconds m_nowPlayingUpdateInterval { 5_s };
+
     RefPtr<AudioHardwareListener> m_audioHardwareListener;
 
     AudioHardwareListener::BufferSizeRange m_supportedAudioHardwareBufferSizes;

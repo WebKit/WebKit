@@ -38,5 +38,5 @@ WKTypeID WKFormSubmissionListenerGetTypeID()
 
 void WKFormSubmissionListenerContinue(WKFormSubmissionListenerRef submissionListener)
 {
-    toProtectedImpl(submissionListener)->continueSubmission();
+    protect(toImpl(submissionListener))->continueSubmission();
 }

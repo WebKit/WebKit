@@ -37,11 +37,11 @@ struct FontVariationSettings {
     using Value = Style::Number<CSS::All, float>;
 
     FontVariationSettings(CSS::Keyword::Normal) : m_platform { } { }
-    FontVariationSettings(WebCore::FontVariationSettings&& platform) : m_platform { WTFMove(platform) } { }
+    FontVariationSettings(WebCore::FontVariationSettings&& platform) : m_platform { WTF::move(platform) } { }
     FontVariationSettings(const WebCore::FontVariationSettings& platform) : m_platform { platform } { }
 
     const WebCore::FontVariationSettings& platform() const { return m_platform; }
-    WebCore::FontVariationSettings takePlatform() { return WTFMove(m_platform); }
+    WebCore::FontVariationSettings takePlatform() { return WTF::move(m_platform); }
 
     bool operator==(const FontVariationSettings&) const = default;
 

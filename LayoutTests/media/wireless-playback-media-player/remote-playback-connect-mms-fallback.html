@@ -1,0 +1,64 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                video = document.createElement('video');
+                testExpected('video.remote.state', 'disconnected');
+
+                const mediaType = 'video/mp4';
+                const mediaURL = findMediaFile('video', '../content/test');
+                const mediaSource = new ManagedMediaSource();
+
+                const firstSource = document.createElement('source');
+                firstSource.type = mediaType;
+                firstSource.src = URL.createObjectURL(mediaSource);
+                video.appendChild(firstSource);
+
+                const secondSource = document.createElement('source');
+                secondSource.src = mediaURL;
+                secondSource.type = mediaType;
+                video.appendChild(secondSource);
+
+                await new Promise((resolve) => {
+                    mediaSource.addEventListener('sourceopen', resolve, { once: true });
+                    document.body.appendChild(video);
+                });
+
+                await new Promise((resolve) => {
+                    mediaSource.onstartstreaming = async () => {
+                        const sourceBuffer = mediaSource.addSourceBuffer(mediaType);
+                        const mediaResource = await fetch(mediaURL);
+                        const mediaBuffer = await mediaResource.arrayBuffer();
+                        sourceBuffer.addEventListener('updateend', resolve, { once: true });
+                        sourceBuffer.appendBuffer(mediaBuffer);
+                    };
+                });
+
+                await waitFor(video, 'canplaythrough');
+
+                run(`video.play()`)
+                await waitFor(video, 'playing');
+
+                const connectPromise = waitFor(video.remote, 'connect');
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+                await connectPromise;
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <p>Test that a 'connect' event is dispatched when a MediaDeviceRoute activates for a video element with an MMS source and an AirPlay-compatible source.</p> 
+    </body>
+</html>

@@ -16,7 +16,7 @@ info: |
 
   ...
   7. Return true.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
@@ -43,4 +43,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.sameValue(called, sample.length, "callbackfn called for each index");
   assert.sameValue(result, true, "return is true");
-});
+}, null, ["passthrough"]);

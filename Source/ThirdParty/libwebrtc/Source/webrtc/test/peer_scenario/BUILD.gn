@@ -23,6 +23,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       "..:create_frame_generator_capturer",
+      "..:create_test_environment",
       "..:create_test_field_trials",
       "..:fake_video_codecs",
       "..:fileutils",
@@ -34,6 +35,7 @@ if (rtc_include_tests) {
       "../../api:create_modular_peer_connection_factory",
       "../../api:enable_media_with_defaults",
       "../../api:field_trials",
+      "../../api:jsep",
       "../../api:libjingle_peerconnection_api",
       "../../api:make_ref_counted",
       "../../api:media_stream_interface",
@@ -80,6 +82,7 @@ if (rtc_include_tests) {
       "../../pc:pc_test_utils",
       "../../pc:rtp_transport_internal",
       "../../pc:session_description",
+      "../../pc:webrtc_sdp",
       "../../rtc_base:async_packet_socket",
       "../../rtc_base:checks",
       "../../rtc_base:copy_on_write_buffer",

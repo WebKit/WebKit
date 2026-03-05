@@ -101,7 +101,7 @@ static WTF::String constructedPath(const WTF::String& base, const WTF::String& i
 // represent the size and offset of the structure in memory, possibly with compiler-added padding.
 constexpr size_t currentVersionFileHeaderSize = 2 * sizeof(uint32_t) + 7 * sizeof(uint64_t);
 
-static constexpr size_t headerSize(uint32_t version)
+static constexpr size_t NODELETE headerSize(uint32_t version)
 {
     if (version < 12)
         return 2 * sizeof(uint32_t) + 5 * sizeof(uint64_t);
@@ -119,7 +119,7 @@ struct ContentRuleListMetaData {
     uint64_t unused64bits1 { 0 };
     uint64_t unused64bits2 { 0 }; // Additional space on disk reserved so we can add something without incrementing the version number.
 
-    size_t fileSize() const
+    size_t NODELETE fileSize() const
     {
         return headerSize(version)
             + sourceSize
@@ -169,37 +169,37 @@ static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(cons
     decoder >> version;
     if (!version)
         return std::nullopt;
-    metaData.version = WTFMove(*version);
+    metaData.version = WTF::move(*version);
 
     std::optional<uint64_t> sourceSize;
     decoder >> sourceSize;
     if (!sourceSize)
         return std::nullopt;
-    metaData.sourceSize = WTFMove(*sourceSize);
+    metaData.sourceSize = WTF::move(*sourceSize);
 
     std::optional<uint64_t> actionsSize;
     decoder >> actionsSize;
     if (!actionsSize)
         return std::nullopt;
-    metaData.actionsSize = WTFMove(*actionsSize);
+    metaData.actionsSize = WTF::move(*actionsSize);
 
     std::optional<uint64_t> urlFiltersBytecodeSize;
     decoder >> urlFiltersBytecodeSize;
     if (!urlFiltersBytecodeSize)
         return std::nullopt;
-    metaData.urlFiltersBytecodeSize = WTFMove(*urlFiltersBytecodeSize);
+    metaData.urlFiltersBytecodeSize = WTF::move(*urlFiltersBytecodeSize);
 
     std::optional<uint64_t> topURLFiltersBytecodeSize;
     decoder >> topURLFiltersBytecodeSize;
     if (!topURLFiltersBytecodeSize)
         return std::nullopt;
-    metaData.topURLFiltersBytecodeSize = WTFMove(*topURLFiltersBytecodeSize);
+    metaData.topURLFiltersBytecodeSize = WTF::move(*topURLFiltersBytecodeSize);
 
     std::optional<uint64_t> frameURLFiltersBytecodeSize;
     decoder >> frameURLFiltersBytecodeSize;
     if (!frameURLFiltersBytecodeSize)
         return std::nullopt;
-    metaData.frameURLFiltersBytecodeSize = WTFMove(*frameURLFiltersBytecodeSize);
+    metaData.frameURLFiltersBytecodeSize = WTF::move(*frameURLFiltersBytecodeSize);
 
     std::optional<uint32_t> unused32bits;
     decoder >> unused32bits;
@@ -262,7 +262,7 @@ static std::optional<MappedData> openAndMapContentRuleList(const WTF::String& pa
     if (!metaData)
         return std::nullopt;
 
-    return {{ WTFMove(*metaData), { WTFMove(fileData) }}};
+    return {{ WTF::move(*metaData), { WTF::move(fileData) }}};
 }
 
 static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, FileHandle& fileHandle)
@@ -286,7 +286,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
     class CompilationClient final : public ContentExtensionCompilationClient {
     public:
         CompilationClient(FileSystem::FileHandle&& fileHandle, ContentRuleListMetaData& metaData)
-            : m_fileHandle(WTFMove(fileHandle))
+            : m_fileHandle(WTF::move(fileHandle))
             , m_metaData(metaData)
         {
             ASSERT(!metaData.sourceSize);
@@ -368,7 +368,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
             m_fileHandle = { };
         }
 
-        bool hadErrorWhileWritingToFile() { return m_hadFileError; }
+        bool NODELETE hadErrorWhileWritingToFile() { return m_hadFileError; }
 
     private:
         void writeToFile(bool value)
@@ -411,9 +411,9 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
     }
 
     ContentRuleListMetaData metaData;
-    CompilationClient compilationClient(WTFMove(temporaryFileHandle), metaData);
+    CompilationClient compilationClient(WTF::move(temporaryFileHandle), metaData);
     
-    if (auto compilerError = compileRuleList(compilationClient, WTFMove(json), WTFMove(parsedRules))) {
+    if (auto compilerError = compileRuleList(compilationClient, WTF::move(json), WTF::move(parsedRules))) {
         RELEASE_LOG_ERROR(ContentRuleLists, "Content Rule List compiling failed: Compiling failed.");
         return makeUnexpected(compilerError);
     }
@@ -443,7 +443,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
 
-    return {{ WTFMove(metaData), WTFMove(mappedData) }};
+    return {{ WTF::move(metaData), WTF::move(mappedData) }};
 }
 
 static Ref<API::ContentRuleList> createExtension(WTF::String&& identifier, MappedData&& data)
@@ -461,7 +461,7 @@ static Ref<API::ContentRuleList> createExtension(WTF::String&& identifier, Mappe
     const size_t frameURLFiltersOffset = topURLFiltersOffset + data.metaData.topURLFiltersBytecodeSize;
 
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
-        WTFMove(identifier),
+        WTF::move(identifier),
         sharedMemory.releaseNonNull(),
         actionsOffset,
         data.metaData.actionsSize,
@@ -473,9 +473,9 @@ static Ref<API::ContentRuleList> createExtension(WTF::String&& identifier, Mappe
         data.metaData.frameURLFiltersBytecodeSize
     );
 
-    RefPtr compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
+    RefPtr compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTF::move(compiledContentRuleListData));
     ASSERT(compiledContentRuleList);
-    return API::ContentRuleList::create(compiledContentRuleList.releaseNonNull(), WTFMove(data.data));
+    return API::ContentRuleList::create(compiledContentRuleList.releaseNonNull(), WTF::move(data.data));
 }
 
 static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mappedData)
@@ -529,17 +529,17 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
 void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
     auto filePath = constructedPath(m_storePath, identifier);
-    lookupContentRuleListFile(WTFMove(filePath), WTFMove(identifier), WTFMove(completionHandler));
+    lookupContentRuleListFile(WTF::move(filePath), WTF::move(identifier), WTF::move(completionHandler));
 }
 
 void ContentRuleListStore::lookupContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = WTFMove(filePath).isolatedCopy(), identifier = WTFMove(identifier).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = WTF::move(filePath).isolatedCopy(), identifier = WTF::move(identifier).isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
         auto contentRuleList = openAndMapContentRuleList(filePath);
         if (!contentRuleList) {
-            RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+            RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)] () mutable {
                 completionHandler(nullptr, Error::LookupFailed);
             });
             return;
@@ -551,20 +551,20 @@ void ContentRuleListStore::lookupContentRuleListFile(WTF::String&& filePath, WTF
 
         if (versionMismatch || fileSizeMismatch || !actionsMatchingEverythingValid) {
             if (auto sourceFromOldVersion = getContentRuleListSourceFromMappedFile(*contentRuleList); actionsMatchingEverythingValid && !sourceFromOldVersion.isEmpty()) {
-                RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), sourceFromOldVersion = WTFMove(sourceFromOldVersion).isolatedCopy(), identifier = WTFMove(identifier).isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-                    protectedThis->compileContentRuleList(WTFMove(identifier), WTFMove(sourceFromOldVersion), WTFMove(completionHandler));
+                RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), sourceFromOldVersion = WTF::move(sourceFromOldVersion).isolatedCopy(), identifier = WTF::move(identifier).isolatedCopy(), completionHandler = WTF::move(completionHandler)] () mutable {
+                    protectedThis->compileContentRuleList(WTF::move(identifier), WTF::move(sourceFromOldVersion), WTF::move(completionHandler));
                 });
                 return;
             }
 
-            RunLoop::mainSingleton().dispatch([versionMismatch, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+            RunLoop::mainSingleton().dispatch([versionMismatch, protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)] () mutable {
                 completionHandler(nullptr, versionMismatch ? Error::VersionMismatch : (Error::LookupFailed));
             });
             return;
         }
 
-        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), identifier = WTFMove(identifier).isolatedCopy(), contentRuleList = WTFMove(*contentRuleList), completionHandler = WTFMove(completionHandler)] () mutable {
-            completionHandler(createExtension(WTFMove(identifier), WTFMove(contentRuleList)), { });
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), identifier = WTF::move(identifier).isolatedCopy(), contentRuleList = WTF::move(*contentRuleList), completionHandler = WTF::move(completionHandler)] () mutable {
+            completionHandler(createExtension(WTF::move(identifier), WTF::move(contentRuleList)), { });
         });
     });
 }
@@ -573,15 +573,15 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
 {
     ASSERT(RunLoop::isMain());
 
-    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, storePath = m_storePath.isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
         Vector<WTF::String> identifiers;
         for (auto& fileName : listDirectory(storePath)) {
             if (fileName.startsWith(constructedPathPrefix))
                 identifiers.append(decodeFromFilename(fileName.substring(constructedPathPrefix.length())));
         }
 
-        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), identifiers = WTFMove(identifiers)]() mutable {
-            completionHandler(WTFMove(identifiers));
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler), identifiers = WTF::move(identifiers)]() mutable {
+            completionHandler(WTF::move(identifiers));
         });
     });
 }
@@ -589,7 +589,7 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
 void ContentRuleListStore::compileContentRuleList(WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
     auto filePath = constructedPath(m_storePath, identifier);
-    compileContentRuleListFile(WTFMove(filePath), WTFMove(identifier), WTFMove(json), WebCore::ContentExtensions::CSSSelectorsAllowed::Yes, WTFMove(completionHandler));
+    compileContentRuleListFile(WTF::move(filePath), WTF::move(identifier), WTF::move(json), WebCore::ContentExtensions::CSSSelectorsAllowed::Yes, WTF::move(completionHandler));
 }
 
 void ContentRuleListStore::compileContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, WTF::String&& json, WebCore::ContentExtensions::CSSSelectorsAllowed cssSelectorsAllowed, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
@@ -606,7 +606,7 @@ void ContentRuleListStore::compileContentRuleListFile(WTF::String&& filePath, WT
             return completionHandler(nullptr, parsedRules.error());
     }
 
-    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = WTFMove(filePath).isolatedCopy(), identifier = WTFMove(identifier).isolatedCopy(), json = WTFMove(json).isolatedCopy(), parsedRules = crossThreadCopy(WTFMove(parsedRules).value()), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler), cssSelectorsAllowed] () mutable {
+    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = WTF::move(filePath).isolatedCopy(), identifier = WTF::move(identifier).isolatedCopy(), json = WTF::move(json).isolatedCopy(), parsedRules = crossThreadCopy(WTF::move(parsedRules).value()), storePath = m_storePath.isolatedCopy(), completionHandler = WTF::move(completionHandler), cssSelectorsAllowed] () mutable {
         if (cssSelectorsAllowed == WebCore::ContentExtensions::CSSSelectorsAllowed::No) {
             auto parsedRulesOnBackgroundQueue = WebCore::ContentExtensions::parseRuleList(json, cssSelectorsAllowed);
             if (!parsedRulesOnBackgroundQueue.has_value())
@@ -615,17 +615,17 @@ void ContentRuleListStore::compileContentRuleListFile(WTF::String&& filePath, WT
             parsedRules = parsedRulesOnBackgroundQueue.value();
         }
 
-        auto result = compiledToFile(WTFMove(json), WTFMove(parsedRules), filePath);
+        auto result = compiledToFile(WTF::move(json), WTF::move(parsedRules), filePath);
 
         if (!result.has_value()) {
-            RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), error = WTFMove(result.error()), completionHandler = WTFMove(completionHandler)] () mutable {
+            RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), error = WTF::move(result.error()), completionHandler = WTF::move(completionHandler)] () mutable {
                 completionHandler(nullptr, error);
             });
             return;
         }
 
-        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), identifier = WTFMove(identifier), data = WTFMove(result.value()), completionHandler = WTFMove(completionHandler)] () mutable {
-            auto contentRuleList = createExtension(WTFMove(identifier), WTFMove(data));
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), identifier = WTF::move(identifier), data = WTF::move(result.value()), completionHandler = WTF::move(completionHandler)] () mutable {
+            auto contentRuleList = createExtension(WTF::move(identifier), WTF::move(data));
             completionHandler(contentRuleList.ptr(), { });
         });
     });
@@ -634,16 +634,16 @@ void ContentRuleListStore::compileContentRuleListFile(WTF::String&& filePath, WT
 void ContentRuleListStore::removeContentRuleList(WTF::String&& identifier, CompletionHandler<void(std::error_code)> completionHandler)
 {
     auto filePath = constructedPath(m_storePath, identifier);
-    removeContentRuleListFile(WTFMove(filePath), WTFMove(completionHandler));
+    removeContentRuleListFile(WTF::move(filePath), WTF::move(completionHandler));
 }
 
 void ContentRuleListStore::removeContentRuleListFile(WTF::String&& filePath, CompletionHandler<void(std::error_code)> completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = WTFMove(filePath).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto complete = [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)](std::error_code error) mutable {
-            RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), error = WTFMove(error)] () mutable {
+    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = WTF::move(filePath).isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
+        auto complete = [protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)](std::error_code error) mutable {
+            RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler), error = WTF::move(error)] () mutable {
                 completionHandler(error);
             });
         };
@@ -744,9 +744,9 @@ void ContentRuleListStore::getContentRuleListSource(WTF::String&& identifier, Co
 {
     ASSERT(RunLoop::isMain());
 
-    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = constructedPath(m_storePath, identifier).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto complete = [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)](WTF::String&& source) mutable {
-            RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), source = WTFMove(source).isolatedCopy()] () mutable {
+    fileSystemQueueSingleton().dispatch([protectedThis = Ref { *this }, filePath = constructedPath(m_storePath, identifier).isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
+        auto complete = [protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)](WTF::String&& source) mutable {
+            RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler), source = WTF::move(source).isolatedCopy()] () mutable {
                 completionHandler(source);
             });
         };

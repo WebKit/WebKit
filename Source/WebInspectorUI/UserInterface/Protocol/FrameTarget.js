@@ -29,6 +29,44 @@ WI.FrameTarget = class FrameTarget extends WI.Target
     {
         super(parentTarget, targetId, name, WI.TargetType.Frame, connection, options);
 
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, WI.ExecutionContext.Type.Normal, this.displayName);
+        this._executionContextList = new WI.ExecutionContextList;
     }
+
+    // Public
+
+    get executionContextList()
+    {
+        return this._executionContextList;
+    }
+
+    get executionContext()
+    {
+        return this._executionContext;
+    }
+
+    addExecutionContext(context)
+    {
+        // On navigation, a new Normal context replaces all prior contexts.
+        if (context.type === WI.ExecutionContext.Type.Normal && this._executionContext) {
+            this._executionContextList.clear();
+            this._executionContext = null;
+        }
+
+        this._executionContextList.add(context);
+
+        if (context.type === WI.ExecutionContext.Type.Normal)
+            this._executionContext = context;
+
+        this.dispatchEventToListeners(WI.FrameTarget.Event.ExecutionContextAdded, {context});
+    }
+
+    clearExecutionContexts()
+    {
+        this._executionContextList.clear();
+        this._executionContext = null;
+    }
+};
+
+WI.FrameTarget.Event = {
+    ExecutionContextAdded: "frame-target-execution-context-added",
 };

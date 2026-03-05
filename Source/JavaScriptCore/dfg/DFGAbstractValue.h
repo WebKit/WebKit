@@ -241,7 +241,7 @@ struct AbstractValue {
     
     void set(Graph&, AbstractValue&& other)
     {
-        *this = WTFMove(other);
+        *this = WTF::move(other);
     }
     
     void set(Graph&, const FrozenValue&, StructureClobberState);

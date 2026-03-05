@@ -98,7 +98,7 @@ namespace WebCore {
 
 static constexpr unsigned s_maxCachedStringSize = 40000;
 
-unsigned maxCachedSetInnerHTMLStringSize()
+unsigned NODELETE maxCachedSetInnerHTMLStringSize()
 {
     return s_maxCachedStringSize;
 }
@@ -119,7 +119,7 @@ ALWAYS_INLINE static bool isCachedSubtreeValid(Node& cachedContainer)
 }
 
 template<typename CharacterType>
-static bool isCachedPrefixMatch(const CachedSetInnerHTML& cache, std::span<const CharacterType> source, const ElementName& elementName)
+static bool NODELETE isCachedPrefixMatch(const CachedSetInnerHTML& cache, std::span<const CharacterType> source, const ElementName& elementName)
 {
     if (cache.source.length() > source.size())
         return false;
@@ -146,12 +146,13 @@ static bool isCachedPrefixMatch(const CachedSetInnerHTML& cache, std::span<const
 template<typename CharacterType>
 static FragmentReuseResult tryAvoidParsingByCloningExistingSubtree(std::span<const CharacterType> source, ContainerNode& destinationParent, Element& contextElement)
 {
-    auto& cache = destinationParent.protectedDocument()->cachedSetInnerHTML();
+    Ref destinationParentDocument = destinationParent.document();
+    auto& cache = destinationParentDocument->cachedSetInnerHTML();
     RefPtr cachedContainer = cache.cachedContainer.get();
     if (!cachedContainer)
         return FragmentReuseResult::CannotReuse;
     if (!isCachedSubtreeValid(*cachedContainer)) {
-        destinationParent.protectedDocument()->invalidateCachedSetInnerHTML();
+        destinationParentDocument->invalidateCachedSetInnerHTML();
         return FragmentReuseResult::CannotReuse;
     }
 
@@ -177,9 +178,9 @@ static FragmentReuseResult cloneCachedPrefixAndParseSuffix(std::span<const Chara
     ASSERT(cachedContainer->hasChildNodes());
 
     for (RefPtr nodeToClone = cachedContainer->firstChild(); nodeToClone; nodeToClone = nodeToClone->nextSibling()) {
-        Ref<Node> clonedChild = nodeToClone->cloneNodeInternal(destinationParent.protectedDocument(), Node::CloningOperation::SelfOnly, nullptr);
+        Ref<Node> clonedChild = nodeToClone->cloneNodeInternal(protect(destinationParent.document()), Node::CloningOperation::SelfOnly, nullptr);
         if (RefPtr nodeToCloneAsContainer = dynamicDowncast<ContainerNode>(*nodeToClone))
-            nodeToCloneAsContainer->cloneSubtreeForFastParser(destinationParent.protectedDocument(), nullptr, downcast<ContainerNode>(clonedChild.get()), 0);
+            nodeToCloneAsContainer->cloneSubtreeForFastParser(protect(destinationParent.document()), nullptr, downcast<ContainerNode>(clonedChild.get()), 0);
         destinationParent.parserAppendChildIntoIsolatedTree(clonedChild.get());
     }
 
@@ -223,30 +224,30 @@ enum class HTMLFastPathResult : uint8_t {
     FailedCssPseudoDirEnabledAndDirAttributeDirty
 };
 
-template<typename CharacterType> static inline bool isQuoteCharacter(CharacterType character)
+template<typename CharacterType> static inline bool NODELETE isQuoteCharacter(CharacterType character)
 {
     return character == '"' || character == '\'';
 }
 
-template<typename CharacterType> static inline bool isValidUnquotedAttributeValueChar(CharacterType character)
+template<typename CharacterType> static inline bool NODELETE isValidUnquotedAttributeValueChar(CharacterType character)
 {
     return isASCIIAlphanumeric(character) || character == '_' || character == '-';
 }
 
 // https://html.spec.whatwg.org/#syntax-attribute-name
-template<typename CharacterType> static inline bool isValidAttributeNameChar(CharacterType character)
+template<typename CharacterType> static inline bool NODELETE isValidAttributeNameChar(CharacterType character)
 {
     if (character == '=') // Early return for the most common way to end an attribute.
         return false;
     return isASCIIAlphanumeric(character) || character == '-';
 }
 
-template<typename CharacterType> static inline bool isCharAfterTagNameOrAttribute(CharacterType character)
+template<typename CharacterType> static inline bool NODELETE isCharAfterTagNameOrAttribute(CharacterType character)
 {
     return character == ' ' || character == '>' || isASCIIWhitespace(character) || character == '/';
 }
 
-template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute(CharacterType character)
+template<typename CharacterType> static inline bool NODELETE isCharAfterUnquotedAttribute(CharacterType character)
 {
     return character == ' ' || character == '>' || isASCIIWhitespace(character);
 }
@@ -344,7 +345,7 @@ public:
         return false;
     }
 
-    HTMLFastPathResult parseResult() const { return m_parseResult; }
+    HTMLFastPathResult NODELETE parseResult() const { return m_parseResult; }
 
 private:
     const Ref<Document> m_document;
@@ -397,11 +398,11 @@ private:
             {
                 return HTMLElementClass::create(document);
             }
-            static constexpr bool allowedInPhrasingOrFlowContent()
+            static constexpr bool NODELETE allowedInPhrasingOrFlowContent()
             {
                 return permittedParents == PermittedParents::PhrasingOrFlowContent;
             }
-            static constexpr bool allowedInFlowContent()
+            static constexpr bool NODELETE allowedInFlowContent()
             {
                 return permittedParents == PermittedParents::PhrasingOrFlowContent || permittedParents == PermittedParents::FlowContent;
             }
@@ -890,9 +891,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         out.append('&');
     }
 
-    bool parsingFailed() const { return m_parseResult != HTMLFastPathResult::Succeeded; }
+    bool NODELETE parsingFailed() const { return m_parseResult != HTMLFastPathResult::Succeeded; }
 
-    void didFail(HTMLFastPathResult result)
+    void NODELETE didFail(HTMLFastPathResult result)
     {
         if (m_parseResult == HTMLFastPathResult::Succeeded)
             m_parseResult = result;
@@ -918,9 +919,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     parent.parserAppendChild(Text::create(m_document, result.tryUseWhitespaceCache()));
             } else if (!result.escapedText.isEmpty()) {
                 if (!parent.isConnected())
-                    parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, WTFMove(result.escapedText)));
+                    parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, WTF::move(result.escapedText)));
                 else
-                    parent.parserAppendChild(Text::create(m_document, WTFMove(result.escapedText)));
+                    parent.parserAppendChild(Text::create(m_document, WTF::move(result.escapedText)));
             }
 
             if (m_parsingBuffer.atEnd())
@@ -976,7 +977,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 hasDuplicateAttributes = true;
                 continue;
             }
-            m_attributeBuffer.append(Attribute { WTFMove(attributeName), WTFMove(attributeValue) });
+            m_attributeBuffer.append(Attribute { WTF::move(attributeName), WTF::move(attributeValue) });
         }
         parent.parserSetAttributes(m_attributeBuffer, Element::AttributeModificationReason::ParserFastPath);
         if (hasDuplicateAttributes) [[unlikely]]
@@ -1072,7 +1073,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     {
         parseAttributes(element);
         if (parsingFailed())
-            return WTFMove(element);
+            return WTF::move(element);
         if (!parent.isConnected())
             parent.parserAppendChildIntoIsolatedTree(element);
         else
@@ -1097,21 +1098,21 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             return didFail(HTMLFastPathResult::FailedUnexpectedTagNameCloseState, element);
 
         element->finishParsingChildren();
-        return WTFMove(element);
+        return WTF::move(element);
     }
 
     template<typename HTMLElementType> Ref<HTMLElementType> parseVoidElement(Ref<HTMLElementType>&& element, ContainerNode& parent)
     {
         parseAttributes(element);
         if (parsingFailed())
-            return WTFMove(element);
+            return WTF::move(element);
         if (!parent.isConnected())
             parent.parserAppendChildIntoIsolatedTree(element);
         else
             parent.parserAppendChild(element);
         element->beginParsingChildren();
         element->finishParsingChildren();
-        return WTFMove(element);
+        return WTF::move(element);
     }
 };
 

@@ -66,7 +66,7 @@ static ImageRotationSessionVT::RotationProperties transformToRotationProperties(
 ImageRotationSessionVT::ImageRotationSessionVT(AffineTransform&& transform, FloatSize size, IsCGImageCompatible isCGImageCompatible, ShouldUseIOSurface shouldUseIOSurface)
     : ImageRotationSessionVT(transformToRotationProperties(transform), size, isCGImageCompatible, shouldUseIOSurface)
 {
-    m_transform = WTFMove(transform);
+    m_transform = WTF::move(transform);
 }
 
 ImageRotationSessionVT::ImageRotationSessionVT(const RotationProperties& rotation, FloatSize size, IsCGImageCompatible isCGImageCompatible, ShouldUseIOSurface shouldUseIOSurface)
@@ -115,7 +115,7 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
             return nullptr;
         }
 
-        m_rotationPool = WTFMove(*bufferPool);
+        m_rotationPool = WTF::move(*bufferPool);
     }
 
     RetainPtr<CVPixelBufferRef> result;
@@ -162,7 +162,7 @@ RefPtr<VideoFrame> ImageRotationSessionVT::applyRotation(VideoFrame& videoFrame,
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(videoFrame.presentationTime(), false, VideoFrameRotation::None, WTFMove(pixelBuffer), videoFrame.colorSpace());
+    return VideoFrameCV::create(videoFrame.presentationTime(), false, VideoFrameRotation::None, WTF::move(pixelBuffer), PlatformVideoColorSpace { videoFrame.colorSpace() });
 }
 
 }

@@ -284,7 +284,7 @@ pointer. The caller must own the object before the function call and, after
 transfer, no longer owns it. As a corollary, the caller may no longer reference
 the object without a separate guarantee on the lifetime. The function may even
 release the object before returning. Callers that wish to independently retain a
-transfered object must therefore take a reference or make a copy before
+transferred object must therefore take a reference or make a copy before
 transferring. Callers should also take note of whether the function is
 documented to transfer pointers unconditionally or only on success. Unlike C++
 and Rust, functions in BoringSSL typically only transfer on success.

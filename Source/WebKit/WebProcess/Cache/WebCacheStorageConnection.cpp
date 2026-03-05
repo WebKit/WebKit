@@ -66,7 +66,7 @@ Ref<IPC::Connection> WebCacheStorageConnection::connection()
 }
 
 struct WebCacheStorageConnection::PromiseConverter {
-    static auto convertError(IPC::Error)
+    static auto NODELETE convertError(IPC::Error)
     {
         return makeUnexpected(WebCore::DOMCacheEngine::Error::Internal);
     }
@@ -99,7 +99,7 @@ auto WebCacheStorageConnection::batchDeleteOperation(WebCore::DOMCacheIdentifier
 
 auto WebCacheStorageConnection::batchPutOperation(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&& records) -> Ref<BatchPromise>
 {
-    return connection()->sendWithPromisedReply<PromiseConverter>(Messages::NetworkStorageManager::CacheStoragePutRecords { cacheIdentifier, WTFMove(records) });
+    return connection()->sendWithPromisedReply<PromiseConverter>(Messages::NetworkStorageManager::CacheStoragePutRecords { cacheIdentifier, WTF::move(records) });
 }
 
 void WebCacheStorageConnection::reference(WebCore::DOMCacheIdentifier cacheIdentifier)

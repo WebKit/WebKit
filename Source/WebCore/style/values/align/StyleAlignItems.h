@@ -70,7 +70,7 @@ struct AlignItems {
 
     constexpr bool operator==(const AlignItems&) const = default;
 
-    StyleSelfAlignmentData resolve(std::optional<StyleSelfAlignmentData> = std::nullopt) const;
+    StyleSelfAlignmentData resolve() const;
 
 private:
     enum class PrimaryKind : uint8_t {

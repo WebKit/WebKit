@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 // We track collector phase in order to allow either the collector thread or the mutator thread to

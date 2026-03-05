@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #if HAVE(CORE_MATERIAL)
@@ -79,3 +82,5 @@ extern NSDictionary <NSString *, id> *MTVisualStylingCreateDictionaryRepresentat
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // HAVE(CORE_MATERIAL)
+
+#endif // !__has_feature(modules)

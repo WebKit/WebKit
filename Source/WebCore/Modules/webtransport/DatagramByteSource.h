@@ -49,6 +49,7 @@ public:
 
     void pull(JSDOMGlobalObject&, ReadableByteStreamController&, Ref<DeferredPromise>&&);
     void cancel(Ref<DeferredPromise>&&);
+    void error(JSC::JSGlobalObject&, JSC::JSValue) final;
 
 private:
     DatagramByteSource();

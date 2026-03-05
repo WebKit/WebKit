@@ -47,26 +47,25 @@ public:
     ArrayBuffer* authenticatorData() const { return m_authenticatorData.get(); }
     ArrayBuffer* signature() const { return m_signature.get(); }
     ArrayBuffer* userHandle() const { return m_userHandle.get(); }
-    const String& name() const { return m_name; }
-    const String& displayName() const { return m_displayName; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const String& displayName() const LIFETIME_BOUND { return m_displayName; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
     SecAccessControlRef accessControl() const { return m_accessControl.get(); }
-    const String& group() const { return m_group; }
+    const String& group() const LIFETIME_BOUND { return m_group; }
     bool synchronizable() const { return m_synchronizable; }
     LAContext * laContext() const { return m_laContext.get(); }
-    RetainPtr<LAContext> protectedLAContext() const { return m_laContext; }
     RefPtr<ArrayBuffer> largeBlob() const { return m_largeBlob; }
-    const String& accessGroup() const { return m_accessGroup; }
+    const String& accessGroup() const LIFETIME_BOUND { return m_accessGroup; }
 
     WEBCORE_EXPORT void setAuthenticatorData(Vector<uint8_t>&&);
-    void setSignature(Ref<ArrayBuffer>&& signature) { m_signature = WTFMove(signature); }
+    void setSignature(Ref<ArrayBuffer>&& signature) { m_signature = WTF::move(signature); }
     void setName(const String& name) { m_name = name; }
     void setDisplayName(const String& displayName) { m_displayName = displayName; }
     void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
     void setGroup(const String& group) { m_group = group; }
     void setSynchronizable(bool synchronizable) { m_synchronizable = synchronizable; }
     void setLAContext(LAContext *context) { m_laContext = context; }
-    void setLargeBlob(Ref<ArrayBuffer>&& largeBlob) { m_largeBlob = WTFMove(largeBlob); }
+    void setLargeBlob(Ref<ArrayBuffer>&& largeBlob) { m_largeBlob = WTF::move(largeBlob); }
     void setAccessGroup(const String& accessGroup) { m_accessGroup = accessGroup; }
 
     AuthenticationResponseJSON::AuthenticatorAssertionResponseJSON toJSON();

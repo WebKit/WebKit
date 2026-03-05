@@ -55,9 +55,9 @@ public:
     const CString& signatureAlgorithmsList() const { return m_signatureAlgorithmsList; }
     const CString& ecCurves() const { return m_ecCurves; }
 
-    void setCipherList(CString&& data) { m_cipherList = WTFMove(data); }
-    void setSignatureAlgorithmsList(CString&& data) { m_signatureAlgorithmsList = WTFMove(data); }
-    void setECCurves(CString&& data) { m_ecCurves = WTFMove(data); }
+    void setCipherList(CString&& data) { m_cipherList = WTF::move(data); }
+    void setSignatureAlgorithmsList(CString&& data) { m_signatureAlgorithmsList = WTF::move(data); }
+    void setECCurves(CString&& data) { m_ecCurves = WTF::move(data); }
 
     bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
     WEBCORE_EXPORT void setIgnoreSSLErrors(bool flag) { m_ignoreSSLErrors = flag; }

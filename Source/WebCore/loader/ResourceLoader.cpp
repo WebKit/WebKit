@@ -154,7 +154,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
         return completionHandler(false);
     m_defersLoading = m_options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame->page()->defersLoading();
 
-    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !frame->document()->protectedSecurityOrigin()->canDisplay(clientRequest.url(), OriginAccessPatternsForWebProcess::singleton())) {
+    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !protect(protect(frame->document())->securityOrigin())->canDisplay(clientRequest.url(), OriginAccessPatternsForWebProcess::singleton())) {
         RESOURCELOADER_RELEASE_LOG("init: Cancelling load because it violates security policy.");
         FrameLoader::reportLocalLoadFailed(frame.get(), clientRequest.url().string());
         releaseResources();
@@ -184,9 +184,9 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
         if (RefPtr document = frame->document())
             clientRequest.setFirstPartyForCookies(document->firstPartyForCookies());
     }
-    FrameLoader::addSameSiteInfoToRequestIfNeeded(clientRequest, frame->protectedDocument().get());
+    FrameLoader::addSameSiteInfoToRequestIfNeeded(clientRequest, protect(frame->document()).get());
 
-    willSendRequestInternal(WTFMove(clientRequest), ResourceResponse(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](ResourceRequest&& request) mutable {
+    willSendRequestInternal(WTF::move(clientRequest), ResourceResponse(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](ResourceRequest&& request) mutable {
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of willSendRequest, bail out.
@@ -202,7 +202,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
             return completionHandler(false);
         }
 
-        m_request = WTFMove(request);
+        m_request = WTF::move(request);
         m_originalRequest = m_request;
         completionHandler(true);
     });
@@ -210,7 +210,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
 
 void ResourceLoader::deliverResponseAndData(ResourceResponse&& response, RefPtr<FragmentedSharedBuffer>&& buffer)
 {
-    didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }, buffer = WTFMove(buffer)]() mutable {
+    didReceiveResponse(WTF::move(response), [this, protectedThis = Ref { *this }, buffer = WTF::move(buffer)]() mutable {
         if (reachedTerminalState())
             return;
 
@@ -273,7 +273,7 @@ void ResourceLoader::start()
 
     bool isMainFrameNavigation = frame() && frame()->isMainFrame() && options().mode == FetchOptions::Mode::Navigate;
 
-    m_handle = ResourceHandle::create(frameLoader->protectedNetworkingContext().get(), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation);
+    m_handle = ResourceHandle::create(protect(frameLoader->networkingContext()), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.contentEncodingSniffingPolicy, WTF::move(sourceOrigin), isMainFrameNavigation);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)
@@ -290,15 +290,9 @@ void ResourceLoader::setDefersLoading(bool defers)
 
 FrameLoader* ResourceLoader::frameLoader() const
 {
-    RefPtr frame = m_frame.get();
-    if (!frame)
-        return nullptr;
-    return &frame->loader();
-}
-
-RefPtr<DocumentLoader> ResourceLoader::protectedDocumentLoader() const
-{
-    return m_documentLoader;
+    if (m_frame)
+        return &m_frame->loader();
+    return nullptr;
 }
 
 void ResourceLoader::loadDataURL()
@@ -333,7 +327,7 @@ void ResourceLoader::loadDataURL()
 
         auto dataSize = decodeResult->data.size();
         ResourceResponse dataResponse = ResourceResponse::dataURLResponse(url, decodeResult.value());
-        this->didReceiveResponse(WTFMove(dataResponse), [this, protectedThis = WTFMove(protectedThis), dataSize, data = SharedBuffer::create(WTFMove(decodeResult->data))]() {
+        this->didReceiveResponse(WTF::move(dataResponse), [this, protectedThis = WTF::move(protectedThis), dataSize, data = SharedBuffer::create(WTF::move(decodeResult->data))]() {
             if (!this->reachedTerminalState() && dataSize && m_request.httpMethod() != "HEAD"_s)
                 this->didReceiveBuffer(data, dataSize, DataPayloadWholeResource);
 
@@ -375,12 +369,7 @@ void ResourceLoader::addBuffer(const FragmentedSharedBuffer& buffer, DataPayload
 
 const FragmentedSharedBuffer* ResourceLoader::resourceData() const
 {
-    return m_resourceData.get().unsafeGet();
-}
-
-RefPtr<const FragmentedSharedBuffer> ResourceLoader::protectedResourceData() const
-{
-    return resourceData();
+    return m_resourceData.buffer();
 }
 
 void ResourceLoader::clearResourceData()
@@ -392,11 +381,6 @@ void ResourceLoader::clearResourceData()
 bool ResourceLoader::isSubresourceLoader() const
 {
     return false;
-}
-
-RefPtr<FrameLoader> ResourceLoader::protectedFrameLoader() const
-{
-    return frameLoader();
 }
 
 void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -424,8 +408,9 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     RefPtr documentLoader = m_documentLoader;
     if (!redirectResponse.isNull() && frameLoader && page && userContentProvider && documentLoader) {
         auto results = userContentProvider->processContentRuleListsForLoad(*page, request.url(), m_resourceType, *documentLoader, redirectResponse.url());
-        ContentExtensions::applyResultsToRequest(WTFMove(results), page.get(), request);
-        if (results.shouldBlock()) {
+        bool shouldBlock = results.shouldBlock();
+        ContentExtensions::applyResultsToRequest(WTF::move(results), page.get(), request);
+        if (shouldBlock) {
             RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of content blocker");
             didFail(blockedByContentBlockerError());
             completionHandler({ });
@@ -450,15 +435,24 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         }
     }
 
+    if (RefPtr document = frameLoader->frame().document()) {
+        if (document->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::NetworkRequests)) {
+            RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of script tracking privacy protection");
+            didFail({ errorDomainWebKitInternal, 0, request.url(), "Blocked by script tracking privacy protection"_s, ResourceError::Type::AccessControl });
+            completionHandler({ });
+            return;
+        }
+    }
+
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier && frameLoader)
-            frameLoader->notifier().assignIdentifierToInitialRequest(*m_identifier, protectedDocumentLoader().get(), request);
+            frameLoader->notifier().assignIdentifierToInitialRequest(*m_identifier, protect(this->documentLoader()), request);
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
         if (m_reachedTerminalState) {
             RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load reached terminal state after calling assignIdentifierToInitialRequest()");
-            completionHandler(WTFMove(request));
+            completionHandler(WTF::move(request));
             return;
         }
 #endif
@@ -466,7 +460,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         if (frameLoader)
             frameLoader->notifier().willSendRequest(*this, *m_identifier, request, redirectResponse);
     } else if (RefPtr frame = m_frame.get())
-        InspectorInstrumentation::willSendRequest(frame.get(), *m_identifier, frame->loader().protectedDocumentLoader().get(), request, redirectResponse, protectedCachedResource().get(), this);
+        InspectorInstrumentation::willSendRequest(frame.get(), *m_identifier, protect(frame->loader().documentLoader()), request, redirectResponse, protect(cachedResource()).get(), this);
 
 #if USE(QUICK_LOOK)
     if (m_documentLoader) {
@@ -480,14 +474,14 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: Processing cross-origin redirect");
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
         if (frameLoader)
-            frameLoader->protectedClient()->didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
+            protect(frameLoader->client())->didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
     }
     m_request = request;
 
     if (isRedirect) {
         auto& redirectURL = request.url();
         if (m_documentLoader && !m_documentLoader->isCommitted() && frameLoader)
-            frameLoader->protectedClient()->dispatchDidReceiveServerRedirectForProvisionalLoad();
+            protect(frameLoader->client())->dispatchDidReceiveServerRedirectForProvisionalLoad();
 
         if (redirectURL.protocolIsData()) {
             // Handle data URL decoding locally.
@@ -498,12 +492,12 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     }
 
     RESOURCELOADER_RELEASE_LOG_FORWARDABLE(RESOURCELOADER_WILLSENDREQUESTINTERNAL);
-    completionHandler(WTFMove(request));
+    completionHandler(WTF::move(request));
 }
 
 void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    willSendRequestInternal(WTFMove(request), redirectResponse, WTFMove(completionHandler));
+    willSendRequestInternal(WTF::move(request), redirectResponse, WTF::move(completionHandler));
 }
 
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)
@@ -542,12 +536,12 @@ static void logResourceResponseSource(LocalFrame* frame, ResourceResponse::Sourc
         return;
     }
 
-    frame->protectedPage()->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceResponseSourceKey(), sourceKey, ShouldSample::Yes);
+    protect(frame->page())->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceResponseSourceKey(), sourceKey, ShouldSample::Yes);
 }
 
 bool ResourceLoader::shouldAllowResourceToAskForCredentials() const
 {
-    if (m_canCrossOriginRequestsAskUserForCredentials)
+    if (!cachedResource() || cachedResource()->type() == CachedResource::Type::MainResource)
         return true;
     RefPtr frame = m_frame.get();
     if (!frame)
@@ -571,13 +565,13 @@ void ResourceLoader::didBlockAuthenticationChallenge()
         return;
     RefPtr frame = m_frame.get();
     if (frame && !shouldAllowResourceToAskForCredentials())
-        frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked "_s, m_request.url().stringCenterEllipsizedToLength(), " from asking for credentials because it is a cross-origin request."_s));
+        protect(frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked "_s, m_request.url().stringCenterEllipsizedToLength(), " from asking for credentials because it is a cross-origin request."_s));
 }
 
 void ResourceLoader::didReceiveResponse(ResourceResponse&& r, CompletionHandler<void()>&& policyCompletionHandler)
 {
     ASSERT(!m_reachedTerminalState);
-    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(policyCompletionHandler));
+    CompletionHandlerCallingScope completionHandlerCaller(WTF::move(policyCompletionHandler));
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
@@ -603,7 +597,7 @@ void ResourceLoader::didReceiveResponse(ResourceResponse&& r, CompletionHandler<
 
     logResourceResponseSource(frame.get(), r.source());
 
-    m_response = WTFMove(r);
+    m_response = WTF::move(r);
 
     RefPtr frameLoader = this->frameLoader();
     if (frameLoader && m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_identifier)
@@ -788,7 +782,7 @@ bool ResourceLoader::isPortAllowed(const URL& url)
 void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     RefPtr protectedHandle { handle };
-    willSendRequestInternal(WTFMove(request), redirectResponse, WTFMove(completionHandler));
+    willSendRequestInternal(WTF::move(request), redirectResponse, WTF::move(completionHandler));
 }
 
 void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
@@ -798,7 +792,7 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
 
 void ResourceLoader::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response, CompletionHandler<void()>&& completionHandler)
 {
-    didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
+    didReceiveResponse(WTF::move(response), WTF::move(completionHandler));
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const SharedBuffer& buffer, int encodedDataLength)
@@ -846,7 +840,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
 
     Ref protectedThis { *this };
     RefPtr frameLoader = this->frameLoader();
-    return frameLoader && frameLoader->protectedClient()->shouldUseCredentialStorage(protectedDocumentLoader().get(), *identifier());
+    return frameLoader && protect(frameLoader->client())->shouldUseCredentialStorage(protect(documentLoader()), *identifier());
 }
 
 bool ResourceLoader::isAllowedToAskUserForCredentials() const
@@ -856,7 +850,7 @@ bool ResourceLoader::isAllowedToAskUserForCredentials() const
     if (!shouldAllowResourceToAskForCredentials())
         return false;
     RefPtr frame = m_frame.get();
-    return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && frame && frame->document()->protectedSecurityOrigin()->canRequest(originalRequest().url(), OriginAccessPatternsForWebProcess::singleton()));
+    return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && frame && protect(protect(frame->document())->securityOrigin())->canRequest(originalRequest().url(), OriginAccessPatternsForWebProcess::singleton()));
 }
 
 bool ResourceLoader::shouldIncludeCertificateInfo() const
@@ -899,7 +893,7 @@ bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace
 {
     Ref protectedThis { *this };
     RefPtr frameLoader = this->frameLoader();
-    return frameLoader && frameLoader->client().canAuthenticateAgainstProtectionSpace(protectedDocumentLoader().get(), *identifier(), protectionSpace);
+    return frameLoader && frameLoader->client().canAuthenticateAgainstProtectionSpace(protect(documentLoader()), *identifier(), protectionSpace);
 }
 
 #endif
@@ -958,20 +952,15 @@ bool ResourceLoader::isPDFJSResourceLoad() const
 #endif
 }
 
-RefPtr<LocalFrame> ResourceLoader::protectedFrame() const
-{
-    return m_frame.get();
-}
-
 LocalFrame* ResourceLoader::frame() const
 {
-    return m_frame.get();
+    return m_frame;
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
 ResourceMonitor* ResourceLoader::resourceMonitorIfExists()
 {
-    RefPtr frame = m_frame.get();
+    RefPtr frame = m_frame;
     if (RefPtr document = frame ? frame->document() : nullptr)
         return document->resourceMonitorIfExists();
     return nullptr;

@@ -63,7 +63,7 @@ struct SelectionContext {
 static CheckedPtr<RenderObject> rendererAfterOffset(const RenderObject& renderer, unsigned offset)
 {
     CheckedPtr child = renderer.childAt(offset);
-    return child ? child : renderer.nextInPreOrderAfterChildren();
+    return child ? child : CheckedPtr { renderer.nextInPreOrderAfterChildren() };
 }
 
 static bool isValidRendererForSelection(const RenderObject& renderer, const RenderRange& selection)
@@ -144,7 +144,7 @@ void RenderSelection::set(const RenderRange& selection, RepaintMode blockRepaint
 void RenderSelection::clear()
 {
     if (!m_selectionWasCaret)
-        m_renderView->checkedLayer()->repaintBlockSelectionGaps();
+        protect(m_renderView->layer())->repaintBlockSelectionGaps();
     set({ }, RenderSelection::RepaintMode::NewMinusOld);
 }
 
@@ -255,7 +255,7 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
     }
 
     if (blockRepaintMode != RepaintMode::Nothing)
-        m_renderView->checkedLayer()->clearBlockSelectionGapsBounds();
+        protect(m_renderView->layer())->clearBlockSelectionGapsBounds();
 
     // Now that the selection state has been updated for the new objects, walk them again and
     // put them in the new objects list.
@@ -267,11 +267,11 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
             auto selectionGeometry = makeUnique<RenderSelectionGeometry>(*currentRenderer, true);
 #if ENABLE(SERVICE_CONTROLS)
             for (auto& quad : selectionGeometry->collectedSelectionQuads())
-                m_selectionGeometryGatherer.addQuad(selectionGeometry->checkedRepaintContainer().get(), quad);
+                m_selectionGeometryGatherer.addQuad(protect(selectionGeometry->repaintContainer()).get(), quad);
             if (!currentRenderer->isRenderTextOrLineBreak())
                 m_selectionGeometryGatherer.setTextOnly(false);
 #endif
-            newSelectedRenderers.set(*currentRenderer, WTFMove(selectionGeometry));
+            newSelectedRenderers.set(*currentRenderer, WTF::move(selectionGeometry));
             CheckedPtr containingBlock = currentRenderer->containingBlock();
             while (containingBlock && !is<RenderView>(*containingBlock)) {
                 auto& blockSelectionGeometry = newSelectedBlocks.add(*containingBlock, nullptr).iterator->value;
@@ -280,7 +280,7 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
                 blockSelectionGeometry = makeUnique<RenderBlockSelectionGeometry>(*containingBlock);
                 containingBlock = containingBlock->containingBlock();
 #if ENABLE(SERVICE_CONTROLS)
-                m_selectionGeometryGatherer.addGapRects(blockSelectionGeometry->checkedRepaintContainer().get(), blockSelectionGeometry->rects());
+                m_selectionGeometryGatherer.addGapRects(protect(blockSelectionGeometry->repaintContainer()).get(), blockSelectionGeometry->rects());
 #endif
             }
         }

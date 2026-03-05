@@ -30,10 +30,13 @@
 
 #import "CcidConnection.h"
 #import "CtapCcidDriver.h"
+#import "Logging.h"
 #import <CryptoTokenKit/TKSmartCard.h>
 #import <WebCore/AuthenticatorTransport.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+
+#define CCID_SERVICE_RELEASE_LOG(fmt, ...) RELEASE_LOG(WebAuthn, "%p - CcidService::" fmt, this, ##__VA_ARGS__)
 
 @interface _WKSmartCardSlotObserver : NSObject {
     WeakPtr<WebKit::CcidService> m_service;
@@ -68,6 +71,8 @@ CcidService::CcidService(AuthenticatorTransportServiceObserver& observer)
 
 CcidService::~CcidService()
 {
+    m_restartTimer.stop();
+    m_connection = nullptr;
     removeObservers();
 }
 
@@ -100,14 +105,27 @@ void CcidService::removeObservers()
 
 void CcidService::platformStartDiscovery()
 {
+    CCID_SERVICE_RELEASE_LOG("platformStartDiscovery, m_connection=%p", m_connection.get());
+    if (m_connection)
+        Ref { *m_connection }->stop();
+    m_connection = nullptr;
     removeObservers();
     m_slotsObserver = adoptNS([[_WKSmartCardSlotObserver alloc] initWithService:this]);
     [[TKSmartCardSlotManager defaultManager] addObserver:m_slotsObserver.get() forKeyPath:@"slotNames" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
 }
 
-void CcidService::onValidCard(RetainPtr<TKSmartCard>&& smartCard)
+void CcidService::onValidCard(RetainPtr<TKSmartCard>&& smartCard, RetainPtr<TKSmartCardSlot>&& slot)
 {
-    m_connection = WebKit::CcidConnection::create(WTFMove(smartCard), *this);
+    CCID_SERVICE_RELEASE_LOG("onValidCard, smartCard=%p, slot=%p, existing m_connection=%p", smartCard.get(), slot.get(), m_connection.get());
+    if (m_connection)
+        return;
+    m_connection = WebKit::CcidConnection::create(WTF::move(smartCard), WTF::move(slot), *this);
+}
+
+void CcidService::onCardRemoved()
+{
+    CCID_SERVICE_RELEASE_LOG("onCardRemoved, m_connection=%p", m_connection.get());
+    m_connection = nullptr;
 }
 
 void CcidService::updateSlots(NSArray *slots)
@@ -119,9 +137,11 @@ void CcidService::updateSlots(NSArray *slots)
         auto it = m_slotObservers.find(name);
         if (it == m_slotObservers.end()) {
             [[TKSmartCardSlotManager defaultManager] getSlotWithName:nsName reply:makeBlockPtr([this, protectedThis = Ref { *this }, name](TKSmartCardSlot * _Nullable slot) mutable {
-                auto slotObserver = adoptNS([[_WKSmartCardSlotStateObserver alloc] initWithService:this slot:WTFMove(slot)]);
-                m_slotObservers.add(name, slotObserver);
+                auto slotObserver = adoptNS([[_WKSmartCardSlotStateObserver alloc] initWithService:this slot:WTF::move(slot)]);
                 [slot addObserver:slotObserver.get() forKeyPath:@"state" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
+                callOnMainRunLoop([this, protectedThis = WTF::move(protectedThis), name, slotObserver = WTF::move(slotObserver)] () mutable {
+                    m_slotObservers.add(name, slotObserver);
+                });
             }).get()];
         }
     }
@@ -144,7 +164,7 @@ void CcidService::updateSlots(NSArray *slots)
     if (!(self = [super init]))
         return nil;
 
-    m_service = WTFMove(service);
+    m_service = WTF::move(service);
 
     return self;
 }
@@ -158,7 +178,8 @@ void CcidService::updateSlots(NSArray *slots)
     callOnMainRunLoop([service = m_service, change = retainPtr(change)] () mutable {
         if (!service)
             return;
-        service->updateSlots(retainPtr(change.get()[NSKeyValueChangeNewKey]).get());
+        Ref protectedService = *service;
+        protectedService->updateSlots(retainPtr(change.get()[NSKeyValueChangeNewKey]).get());
     });
 }
 @end
@@ -169,8 +190,8 @@ void CcidService::updateSlots(NSArray *slots)
     if (!(self = [super init]))
         return nil;
 
-    m_service = WTFMove(service);
-    m_slot = WTFMove(slot);
+    m_service = WTF::move(service);
+    m_slot = WTF::move(slot);
 
     return self;
 }
@@ -178,25 +199,39 @@ void CcidService::updateSlots(NSArray *slots)
 - (void)observeValueForKeyPath:(id)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     UNUSED_PARAM(object);
-    UNUSED_PARAM(change);
     UNUSED_PARAM(context);
 
     if (!m_service)
         return;
-    switch ([change[NSKeyValueChangeNewKey] intValue]) {
+    int state = [change[NSKeyValueChangeNewKey] intValue];
+    switch (state) {
     case TKSmartCardSlotStateMissing:
+        RELEASE_LOG(WebAuthn, "_WKSmartCardSlotStateObserver: state=Missing");
         [self removeObserver];
         return;
-    case TKSmartCardSlotStateValidCard: {
-        RetainPtr smartCard = [object makeSmartCard];
-        callOnMainRunLoop([service = m_service, smartCard = WTFMove(smartCard)] () mutable {
+    case TKSmartCardSlotStateEmpty:
+        RELEASE_LOG(WebAuthn, "_WKSmartCardSlotStateObserver: state=Empty");
+        callOnMainRunLoop([service = m_service] () mutable {
             if (!service)
                 return;
-            service->onValidCard(WTFMove(smartCard));
+            Ref protectedService = *service;
+            protectedService->onCardRemoved();
+        });
+        break;
+    case TKSmartCardSlotStateValidCard: {
+        RELEASE_LOG(WebAuthn, "_WKSmartCardSlotStateObserver: state=ValidCard");
+        RetainPtr smartCard = [object makeSmartCard];
+        RetainPtr slot = m_slot;
+        callOnMainRunLoop([service = m_service, smartCard = WTF::move(smartCard), slot = WTF::move(slot)] () mutable {
+            if (!service)
+                return;
+            Ref protectedService = *service;
+            protectedService->onValidCard(WTF::move(smartCard), WTF::move(slot));
         });
         break;
     }
     default:
+        RELEASE_LOG(WebAuthn, "_WKSmartCardSlotStateObserver: state=%d", state);
         break;
     }
 }

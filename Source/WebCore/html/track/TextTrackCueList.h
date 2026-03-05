@@ -42,7 +42,7 @@ public:
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const;
-    TextTrackCue* item(unsigned index) const;
+    TextTrackCue* NODELETE item(unsigned index) const;
     TextTrackCue* getCueById(const String&) const;
 
     unsigned cueIndex(const TextTrackCue&) const;
@@ -58,7 +58,7 @@ public:
 private:
     TextTrackCueList() = default;
 
-    Vector<RefPtr<TextTrackCue>> m_vector;
+    Vector<Ref<TextTrackCue>> m_vector;
     RefPtr<TextTrackCueList> m_activeCues;
 };
 

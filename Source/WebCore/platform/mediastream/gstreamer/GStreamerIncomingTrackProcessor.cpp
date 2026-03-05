@@ -26,6 +26,7 @@
 #include "GStreamerRegistryScanner.h"
 #include "VideoFrameMetadataGStreamer.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GMallocString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_incoming_track_processor_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_incoming_track_processor_debug
@@ -44,8 +45,8 @@ GStreamerIncomingTrackProcessor::GStreamerIncomingTrackProcessor()
 
 void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMediaEndpoint>&& endPoint, GRefPtr<GstPad>&& pad)
 {
-    m_endPoint = WTFMove(endPoint);
-    m_pad = WTFMove(pad);
+    m_endPoint = WTF::move(endPoint);
+    m_pad = WTF::move(pad);
 
     auto caps = adoptGRef(gst_pad_get_current_caps(m_pad.get()));
     if (!caps)
@@ -59,7 +60,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
         typeName = "video"_s;
         m_data.type = RealtimeMediaSource::Type::Video;
     }
-    m_data.caps = WTFMove(caps);
+    m_data.caps = WTF::move(caps);
 
     GST_DEBUG_OBJECT(m_bin.get(), "Processing track with caps %" GST_PTR_FORMAT, m_data.caps.get());
     auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
@@ -69,7 +70,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
         if (auto msIdAttribute = gstStructureGetString(structure, CStringView::unsafeFromUTF8(msIdAttributeName.utf8().data()))) {
             auto components = String(msIdAttribute.span()).split(' ');
             if (components.size() == 2)
-                m_sdpMsIdAndTrackId = { WTFMove(components[0]), WTFMove(components[1]) };
+                m_sdpMsIdAndTrackId = { WTF::move(components[0]), WTF::move(components[1]) };
         }
     }
 
@@ -101,7 +102,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
         m_data.trackId = m_sdpMsIdAndTrackId.second;
 
     m_sink = gst_element_factory_make("fakesink", "sink");
-    g_object_set(m_sink.get(), "sync", TRUE, "enable-last-sample", FALSE, nullptr);
+    g_object_set(m_sink.get(), "sync", TRUE, "enable-last-sample", FALSE, "qos", TRUE, nullptr);
     auto queue = gst_element_factory_make("queue", "queue");
 
     auto trackProcessor = incomingTrackProcessor();
@@ -131,11 +132,12 @@ String GStreamerIncomingTrackProcessor::mediaStreamIdFromPad()
     // Look-up the mediastream ID, using the msid attribute, fall back to pad name if there is no msid.
     String mediaStreamId;
     if (gstObjectHasProperty(m_pad.get(), "msid"_s)) {
-        GUniqueOutPtr<char> msid;
-        g_object_get(m_pad.get(), "msid", &msid.outPtr(), nullptr);
+        GUniqueOutPtr<char> msidChars;
+        g_object_get(m_pad.get(), "msid", &msidChars.outPtr(), nullptr);
+        auto msid = GMallocString::unsafeAdoptFromUTF8(WTF::move(msidChars));
         if (msid) {
-            mediaStreamId = String::fromUTF8(msid.get());
-            GST_DEBUG_OBJECT(m_bin.get(), "msid set from pad msid property: %s", mediaStreamId.utf8().data());
+            mediaStreamId = String(msid.span());
+            GST_DEBUG_OBJECT(m_bin.get(), "msid set from pad msid property: %s", msid.utf8());
         }
     }
 
@@ -147,9 +149,9 @@ String GStreamerIncomingTrackProcessor::mediaStreamIdFromPad()
         return m_sdpMsIdAndTrackId.first;
     }
 
-    GUniquePtr<gchar> name(gst_pad_get_name(m_pad.get()));
-    mediaStreamId = String::fromLatin1(name.get());
-    GST_DEBUG_OBJECT(m_bin.get(), "msid set from webrtcbin src pad name: %s", mediaStreamId.utf8().data());
+    auto name = GMallocString::unsafeAdoptFromUTF8(gst_pad_get_name(m_pad.get()));
+    mediaStreamId = name.span();
+    GST_DEBUG_OBJECT(m_bin.get(), "msid set from webrtcbin src pad name: %s", name.utf8());
     return mediaStreamId;
 }
 
@@ -168,12 +170,12 @@ void GStreamerIncomingTrackProcessor::retrieveMediaStreamAndTrackIdFromSDP()
     if (!media) [[unlikely]]
         return;
 
-    const char* msidAttribute = gst_sdp_media_get_attribute_val(media, "msid");
+    auto msidAttribute = CStringView::unsafeFromUTF8(gst_sdp_media_get_attribute_val(media, "msid"));
     if (!msidAttribute)
         return;
 
-    GST_LOG_OBJECT(m_bin.get(), "SDP media msid attribute value: %s", msidAttribute);
-    auto components = String::fromUTF8(msidAttribute).split(' ');
+    GST_LOG_OBJECT(m_bin.get(), "SDP media msid attribute value: %s", msidAttribute.utf8());
+    auto components = String(msidAttribute.span()).split(' ');
     if (components.size() != 2)
         return;
 
@@ -228,21 +230,48 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
         if (!classifiers.contains("Decoder"_s) || !classifiers.contains("Video"_s))
             return;
 
-        configureMediaStreamVideoDecoder(element);
+        auto self = reinterpret_cast<GStreamerIncomingTrackProcessor*>(userData);
+        self->m_videoDecoderName = configureMediaStreamVideoDecoder(element);
+        webkitGstTraceProcessingTimeForElement(element);
+
+        auto sinkPad = adoptGRef(gst_element_get_static_pad(element, "sink"));
+        gst_pad_add_probe(sinkPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+            auto self = reinterpret_cast<GStreamerIncomingTrackProcessor*>(userData);
+            auto buffer = GST_PAD_PROBE_INFO_BUFFER(info);
+            if (!GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT))
+                self->m_decodedKeyFrames++;
+            self->m_framesReceived++;
+            return GST_PAD_PROBE_OK;
+        }, userData, nullptr);
 
         auto pad = adoptGRef(gst_element_get_static_pad(element, "src"));
-        gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM), [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM), [](GstPad* pad, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
             auto self = reinterpret_cast<GStreamerIncomingTrackProcessor*>(userData);
             if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM) {
                 auto event = GST_PAD_PROBE_INFO_EVENT(info);
                 if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS) {
                     GstCaps* caps;
                     gst_event_parse_caps(event, &caps);
-                    self->m_videoSize = getVideoResolutionFromCaps(caps).value_or(FloatSize { 0, 0 });
+
+                    GstVideoInfo info;
+                    gst_video_info_init(&info);
+                    if (!gst_video_info_from_caps(&info, caps))
+                        return GST_PAD_PROBE_OK;
+
+                    self->m_videoSize = { GST_VIDEO_INFO_WIDTH(&info), GST_VIDEO_INFO_HEIGHT(&info) };
+                    gst_util_fraction_to_double(GST_VIDEO_INFO_FPS_N(&info), GST_VIDEO_INFO_FPS_D(&info), &self->m_frameRate);
                 }
                 return GST_PAD_PROBE_OK;
             }
+
             self->m_decodedVideoFrames++;
+
+            auto decoder = adoptGRef(gst_pad_get_parent_element(pad));
+            auto processingTime = webkitGstBufferGetProcessingTime(gst_pad_probe_info_get_buffer(info), decoder.get());
+            if (processingTime.isInvalid())
+                return GST_PAD_PROBE_OK;
+
+            self->m_totalVideoDecodeTime += processingTime;
             return GST_PAD_PROBE_OK;
         }, userData, nullptr);
     }), this);
@@ -352,10 +381,20 @@ const GstStructure* GStreamerIncomingTrackProcessor::stats()
     g_object_get(m_sink.get(), "stats", &stats.outPtr(), nullptr);
 
     auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s).value_or(0);
-    m_stats.reset(gst_structure_new("incoming-video-stats", "frames-decoded", G_TYPE_UINT64, m_decodedVideoFrames, "frames-dropped", G_TYPE_UINT64, droppedVideoFrames, nullptr));
+    m_stats.reset(gst_structure_new("incoming-video-stats", "frames-decoded", G_TYPE_UINT64, m_decodedVideoFrames, "frames-dropped", G_TYPE_UINT64, droppedVideoFrames,
+        "frames-received", G_TYPE_UINT64, m_framesReceived, "key-frames-decoded", G_TYPE_UINT64, m_decodedKeyFrames, nullptr));
 
     if (!m_videoSize.isZero())
         gst_structure_set(m_stats.get(), "frame-width", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.width()), "frame-height", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.height()), nullptr);
+
+    auto averageRate = gstStructureGet<double>(stats.get(), "average-rate"_s);
+    if (averageRate && m_frameRate)
+        gst_structure_set(m_stats.get(), "frames-per-second", G_TYPE_DOUBLE, *averageRate * m_frameRate, nullptr);
+
+    if (m_totalVideoDecodeTime.isValid())
+        gst_structure_set(m_stats.get(), "total-decode-time", G_TYPE_DOUBLE, m_totalVideoDecodeTime.toDouble(), nullptr);
+
+    gst_structure_set(m_stats.get(), "decoder-implementation", G_TYPE_STRING, m_videoDecoderName.utf8().data(), nullptr);
 
     return m_stats.get();
 }

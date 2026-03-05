@@ -23,17 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://svgwg.org/svg2-draft/types.html#InterfaceSVGGraphicsElement
 [
     Exposed=Window
 ] interface SVGGraphicsElement : SVGElement {
-    readonly attribute SVGAnimatedTransformList transform;
+    [SameObject] readonly attribute SVGAnimatedTransformList transform;
 
-    readonly attribute SVGElement nearestViewportElement;
-    readonly attribute SVGElement farthestViewportElement;
-
+    // FIXME: `getBBox` should return a `DOMRect`.
+    // FIXME: `getBBox` should take an `optional SVGBoundingBoxOptions` as a parameter.
     [ImplementedAs=getBBoxForBindings, NewObject] SVGRect getBBox();
-    [ImplementedAs=getCTMForBindings, NewObject] SVGMatrix getCTM();
-    [ImplementedAs=getScreenCTMForBindings, NewObject] SVGMatrix getScreenCTM();
+    // FIXME: `getCTM` should return a `DOMMatrix?`.
+    [ImplementedAs=getCTMForBindings, NewObject] SVGMatrix? getCTM();
+    // FIXME: `getScreenCTM` should return a `DOMMatrix?`.
+    [ImplementedAs=getScreenCTMForBindings, NewObject] SVGMatrix? getScreenCTM();
 };
 
 SVGGraphicsElement includes SVGTests;

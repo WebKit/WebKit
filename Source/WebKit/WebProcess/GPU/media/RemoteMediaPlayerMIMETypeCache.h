@@ -52,15 +52,15 @@ public:
     HashSet<String>& supportedTypes();
     WebCore::MediaPlayerEnums::SupportsType supportsTypeAndCodecs(const WebCore::MediaEngineSupportParameters&);
     void addSupportedTypes(const Vector<String>&);
-    bool isEmpty() const;
+    bool NODELETE isEmpty() const;
 
 private:
-    Ref<RemoteMediaPlayerManager> protectedManager() const;
+    Ref<RemoteMediaPlayerManager> manager() const;
 
-    ThreadSafeWeakPtr<RemoteMediaPlayerManager> m_manager; // Cannot be null.
+    ThreadSafeWeakRef<RemoteMediaPlayerManager> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
 
-    using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool, bool>;
+    using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool, bool, WebCore::MediaPlaybackTargetType>;
     std::optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
     HashSet<String> m_supportedTypesCache;
     bool m_hasPopulatedSupportedTypesCacheFromGPUProcess { false };

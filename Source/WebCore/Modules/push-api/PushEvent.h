@@ -25,17 +25,17 @@
 
 #pragma once
 
-#include <WebCore/ExtendableEvent.h>
-#include <WebCore/Notification.h>
-#include <WebCore/NotificationData.h>
-#include <WebCore/PushEventInit.h>
+#include "ExtendableEvent.h"
+#include "Notification.h"
+#include "NotificationData.h"
+#include "PushEventInit.h"
 
 namespace WebCore {
 
 class PushMessageData;
 
 class PushEvent final : public ExtendableEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushEvent);
+    WTF_MAKE_TZONE_ALLOCATED(PushEvent);
 public:
     static Ref<PushEvent> create(const AtomString&, PushEventInit&&, IsTrusted = IsTrusted::No);
     static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
@@ -46,8 +46,8 @@ public:
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
     static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, Ref<Notification>, std::optional<uint64_t> appBadge, IsTrusted);
 
-    Notification* notification();
-    std::optional<uint64_t> appBadge();
+    Notification* NODELETE notification();
+    std::optional<uint64_t> NODELETE appBadge();
 
     Notification* proposedNotification() const { return m_proposedNotification.get(); }
     std::optional<uint64_t> proposedAppBadge() const { return m_proposedAppBadge; }
@@ -55,14 +55,12 @@ public:
     void setUpdatedNotification(Notification* notification) { m_updatedNotification = notification; }
     std::optional<NotificationData> updatedNotificationData() const;
 
-    void setUpdatedAppBadge(std::optional<uint64_t>&& updatedAppBadge) { m_updatedAppBadge = WTFMove(updatedAppBadge); }
-    const std::optional<std::optional<uint64_t>>& updatedAppBadge() const { return m_updatedAppBadge; }
+    void setUpdatedAppBadge(std::optional<uint64_t>&& updatedAppBadge) { m_updatedAppBadge = WTF::move(updatedAppBadge); }
+    const std::optional<std::optional<uint64_t>>& updatedAppBadge() const LIFETIME_BOUND { return m_updatedAppBadge; }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
 
 private:
     PushEvent(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
-
-    bool isPushEvent() const final { return true; }
 
     RefPtr<PushMessageData> m_data;
 
@@ -79,6 +77,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PushEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isPushEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(PushEvent)

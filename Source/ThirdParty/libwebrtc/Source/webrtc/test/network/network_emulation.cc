@@ -58,9 +58,10 @@ EmulatedNetworkOutgoingStats GetOverallOutgoingStats(
 }
 
 EmulatedNetworkIncomingStats GetOverallIncomingStats(
+    Clock& clock,
     const std::map<IPAddress, EmulatedNetworkIncomingStats>& incoming_stats,
     EmulatedNetworkStatsGatheringMode mode) {
-  EmulatedNetworkIncomingStatsBuilder builder(mode);
+  EmulatedNetworkIncomingStatsBuilder builder(clock, mode);
   for (const auto& entry : incoming_stats) {
     builder.AddIncomingStats(entry.second);
   }
@@ -100,7 +101,9 @@ void EmulatedNetworkOutgoingStatsBuilder::OnPacketSent(
   stats_.bytes_sent += DataSize::Bytes(packet.ip_packet_size());
   stats_.ecn_count.Add(packet.ecn);
   if (stats_gathering_mode_ == EmulatedNetworkStatsGatheringMode::kDebug) {
-    stats_.sent_packets_size.AddSample(packet.ip_packet_size());
+    stats_.sent_packets_size.AddSample(
+        {.value = static_cast<double>(packet.ip_packet_size()),
+         .time = sent_time});
   }
 }
 
@@ -127,8 +130,9 @@ EmulatedNetworkOutgoingStats EmulatedNetworkOutgoingStatsBuilder::Build()
 }
 
 EmulatedNetworkIncomingStatsBuilder::EmulatedNetworkIncomingStatsBuilder(
+    Clock& clock,
     EmulatedNetworkStatsGatheringMode stats_gathering_mode)
-    : stats_gathering_mode_(stats_gathering_mode) {
+    : clock_(clock), stats_gathering_mode_(stats_gathering_mode) {
   sequence_checker_.Detach();
 }
 
@@ -138,7 +142,8 @@ void EmulatedNetworkIncomingStatsBuilder::OnPacketDropped(
   stats_.packets_discarded_no_receiver++;
   stats_.bytes_discarded_no_receiver += packet_size;
   if (stats_gathering_mode_ == EmulatedNetworkStatsGatheringMode::kDebug) {
-    stats_.packets_discarded_no_receiver_size.AddSample(packet_size.bytes());
+    stats_.packets_discarded_no_receiver_size.AddSample(
+        {.value = packet_size.bytes<double>(), .time = clock_.CurrentTime()});
   }
 }
 
@@ -157,7 +162,9 @@ void EmulatedNetworkIncomingStatsBuilder::OnPacketReceived(
   stats_.ecn_count.Add(packet.ecn);
   stats_.bytes_received += DataSize::Bytes(packet.ip_packet_size());
   if (stats_gathering_mode_ == EmulatedNetworkStatsGatheringMode::kDebug) {
-    stats_.received_packets_size.AddSample(packet.ip_packet_size());
+    stats_.received_packets_size.AddSample(
+        {.value = static_cast<double>(packet.ip_packet_size()),
+         .time = received_time});
   }
 }
 
@@ -188,15 +195,17 @@ EmulatedNetworkIncomingStats EmulatedNetworkIncomingStatsBuilder::Build()
 }
 
 EmulatedNetworkStatsBuilder::EmulatedNetworkStatsBuilder(
+    Clock& clock,
     EmulatedNetworkStatsGatheringMode stats_gathering_mode)
-    : stats_gathering_mode_(stats_gathering_mode) {
+    : clock_(clock), stats_gathering_mode_(stats_gathering_mode) {
   sequence_checker_.Detach();
 }
 
 EmulatedNetworkStatsBuilder::EmulatedNetworkStatsBuilder(
+    Clock& clock,
     IPAddress local_ip,
     EmulatedNetworkStatsGatheringMode stats_gathering_mode)
-    : stats_gathering_mode_(stats_gathering_mode) {
+    : clock_(clock), stats_gathering_mode_(stats_gathering_mode) {
   local_addresses_.push_back(local_ip);
   sequence_checker_.Detach();
 }
@@ -206,7 +215,8 @@ void EmulatedNetworkStatsBuilder::OnPacketSent(Timestamp sent_time,
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   if (stats_gathering_mode_ == EmulatedNetworkStatsGatheringMode::kDebug) {
     sent_packets_queue_wait_time_us_.AddSample(
-        (sent_time - packet.arrival_time).us());
+        {.value = (sent_time - packet.arrival_time).us<double>(),
+         .time = clock_.CurrentTime()});
   }
   auto it = outgoing_stats_per_destination_.find(packet.to.ipaddr());
   if (it == outgoing_stats_per_destination_.end()) {
@@ -228,7 +238,7 @@ void EmulatedNetworkStatsBuilder::OnPacketDropped(IPAddress source_ip,
     incoming_stats_per_source_
         .emplace(source_ip,
                  std::make_unique<EmulatedNetworkIncomingStatsBuilder>(
-                     stats_gathering_mode_))
+                     clock_, stats_gathering_mode_))
         .first->second->OnPacketDropped(packet_size);
   } else {
     it->second->OnPacketDropped(packet_size);
@@ -244,7 +254,7 @@ void EmulatedNetworkStatsBuilder::OnPacketReceived(
     incoming_stats_per_source_
         .emplace(packet.from.ipaddr(),
                  std::make_unique<EmulatedNetworkIncomingStatsBuilder>(
-                     stats_gathering_mode_))
+                     clock_, stats_gathering_mode_))
         .first->second->OnPacketReceived(received_time, packet);
   } else {
     it->second->OnPacketReceived(received_time, packet);
@@ -284,7 +294,7 @@ void EmulatedNetworkStatsBuilder::AddEmulatedNetworkStats(
       incoming_stats_per_source_
           .emplace(entry.first,
                    std::make_unique<EmulatedNetworkIncomingStatsBuilder>(
-                       stats_gathering_mode_))
+                       clock_, stats_gathering_mode_))
           .first->second->AddIncomingStats(entry.second);
     } else {
       it->second->AddIncomingStats(entry.second);
@@ -306,16 +316,17 @@ EmulatedNetworkStats EmulatedNetworkStatsBuilder::Build() const {
       .local_addresses = local_addresses_,
       .overall_outgoing_stats =
           GetOverallOutgoingStats(outgoing_stats, stats_gathering_mode_),
-      .overall_incoming_stats =
-          GetOverallIncomingStats(incoming_stats, stats_gathering_mode_),
+      .overall_incoming_stats = GetOverallIncomingStats(clock_, incoming_stats,
+                                                        stats_gathering_mode_),
       .outgoing_stats_per_destination = std::move(outgoing_stats),
       .incoming_stats_per_source = std::move(incoming_stats),
       .sent_packets_queue_wait_time_us = sent_packets_queue_wait_time_us_};
 }
 
 EmulatedNetworkNodeStatsBuilder::EmulatedNetworkNodeStatsBuilder(
+    Clock& clock,
     EmulatedNetworkStatsGatheringMode stats_gathering_mode)
-    : stats_gathering_mode_(stats_gathering_mode) {
+    : clock_(clock), stats_gathering_mode_(stats_gathering_mode) {
   sequence_checker_.Detach();
 }
 
@@ -324,9 +335,11 @@ void EmulatedNetworkNodeStatsBuilder::AddPacketTransportTime(
     size_t packet_size) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   if (stats_gathering_mode_ == EmulatedNetworkStatsGatheringMode::kDebug) {
-    stats_.packet_transport_time.AddSample(time.ms<double>());
-    stats_.size_to_packet_transport_time.AddSample(packet_size /
-                                                   time.ms<double>());
+    stats_.packet_transport_time.AddSample(
+        {.value = time.ms<double>(), .time = clock_.CurrentTime()});
+    stats_.size_to_packet_transport_time.AddSample(
+        {.value = packet_size / time.ms<double>(),
+         .time = clock_.CurrentTime()});
   }
 }
 
@@ -368,7 +381,7 @@ LinkEmulation::LinkEmulation(
       network_behavior_(std::move(network_behavior)),
       receiver_(receiver),
       fake_dtls_handshake_sizes_(fake_dtls_handshake_sizes),
-      stats_builder_(stats_gathering_mode) {
+      stats_builder_(*clock_, stats_gathering_mode) {
   task_queue_->PostTask([&]() {
     RTC_DCHECK_RUN_ON(task_queue_);
     network_behavior_->RegisterDeliveryTimeChangedCallback([&]() {
@@ -603,7 +616,7 @@ EmulatedEndpointImpl::EmulatedEndpointImpl(const Options& options,
       task_queue_(task_queue),
       router_(task_queue_),
       next_port_(kFirstEphemeralPort),
-      stats_builder_(options_.ip, options_.stats_gathering_mode) {
+      stats_builder_(*clock_, options_.ip, options_.stats_gathering_mode) {
   constexpr int kIPv4NetworkPrefixLength = 24;
   constexpr int kIPv6NetworkPrefixLength = 64;
 
@@ -683,7 +696,9 @@ std::optional<uint16_t> EmulatedEndpointImpl::BindReceiverInternal(
   RTC_CHECK(port != 0) << "Can't find free port for receiver in endpoint "
                        << options_.log_name << "; id=" << options_.id;
   bool result =
-      port_to_receiver_.insert({port, {receiver, is_one_shot}}).second;
+      port_to_receiver_
+          .insert({port, {.receiver = receiver, .is_one_shot = is_one_shot}})
+          .second;
   if (!result) {
     RTC_LOG(LS_INFO) << "Can't bind receiver to used port " << desired_port
                      << " in endpoint " << options_.log_name
@@ -806,9 +821,12 @@ EmulatedEndpointImpl* EndpointsContainer::LookupByLocalAddress(
 }
 
 EndpointsContainer::EndpointsContainer(
+    Clock* clock,
     const std::vector<EmulatedEndpointImpl*>& endpoints,
     EmulatedNetworkStatsGatheringMode stats_gathering_mode)
-    : endpoints_(endpoints), stats_gathering_mode_(stats_gathering_mode) {}
+    : clock_(clock),
+      endpoints_(endpoints),
+      stats_gathering_mode_(stats_gathering_mode) {}
 
 bool EndpointsContainer::HasEndpoint(EmulatedEndpointImpl* endpoint) const {
   for (auto* e : endpoints_) {
@@ -835,7 +853,7 @@ std::vector<EmulatedEndpoint*> EndpointsContainer::GetEndpoints() const {
 }
 
 EmulatedNetworkStats EndpointsContainer::GetStats() const {
-  EmulatedNetworkStatsBuilder stats_builder(stats_gathering_mode_);
+  EmulatedNetworkStatsBuilder stats_builder(*clock_, stats_gathering_mode_);
   for (auto* endpoint : endpoints_) {
     stats_builder.AddEmulatedNetworkStats(endpoint->stats());
   }

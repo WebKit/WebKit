@@ -36,7 +36,7 @@ WKTypeID WKHTTPCookieStoreGetTypeID()
 
 void WKHTTPCookieStoreDeleteAllCookies(WKHTTPCookieStoreRef cookieStore, void* context, WKHTTPCookieStoreDeleteAllCookiesFunction callback)
 {
-    WebKit::toProtectedImpl(cookieStore)->deleteAllCookies([context, callback] {
+    protect(WebKit::toImpl(cookieStore))->deleteAllCookies([context, callback] {
         if (callback)
             callback(context);
     });
@@ -44,7 +44,7 @@ void WKHTTPCookieStoreDeleteAllCookies(WKHTTPCookieStoreRef cookieStore, void* c
 
 void WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKHTTPCookieStoreRef cookieStore, WKHTTPCookieAcceptPolicy policy, void* context, WKHTTPCookieStoreSetHTTPCookieAcceptPolicyFunction callback)
 {
-    WebKit::toProtectedImpl(cookieStore)->setHTTPCookieAcceptPolicy(WebKit::toHTTPCookieAcceptPolicy(policy), [context, callback] {
+    protect(WebKit::toImpl(cookieStore))->setHTTPCookieAcceptPolicy(WebKit::toHTTPCookieAcceptPolicy(policy), [context, callback] {
         if (callback)
             callback(context);
     });

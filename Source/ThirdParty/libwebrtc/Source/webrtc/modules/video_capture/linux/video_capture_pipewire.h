@@ -11,6 +11,10 @@
 #ifndef MODULES_VIDEO_CAPTURE_LINUX_VIDEO_CAPTURE_PIPEWIRE_H_
 #define MODULES_VIDEO_CAPTURE_LINUX_VIDEO_CAPTURE_PIPEWIRE_H_
 
+#include <pipewire/pipewire.h>
+#include <spa/pod/pod.h>
+#include <spa/utils/hook.h>
+
 #include <cstdint>
 
 #include "api/scoped_refptr.h"
@@ -19,12 +23,13 @@
 #include "modules/video_capture/video_capture_defines.h"
 #include "modules/video_capture/video_capture_impl.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace videocapturemodule {
 class VideoCaptureModulePipeWire : public VideoCaptureImpl {
  public:
-  explicit VideoCaptureModulePipeWire(VideoCaptureOptions* options);
+  VideoCaptureModulePipeWire(Clock* clock, VideoCaptureOptions* options);
   ~VideoCaptureModulePipeWire() override;
   int32_t Init(const char* deviceUniqueId);
   int32_t StartCapture(const VideoCaptureCapability& capability) override;

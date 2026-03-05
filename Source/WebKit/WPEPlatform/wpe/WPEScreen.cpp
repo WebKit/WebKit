@@ -217,7 +217,7 @@ static void wpeScreenTryEnsureSyncObserver(WPEScreen* screen)
             continue;
 
         if (auto crtcIndex = findCrtc(WPE_SCREEN(screen), fd.value())) {
-            screen->priv->syncObserver = adoptGRef(wpeScreenSyncObserverDRMCreate(WTFMove(fd), *crtcIndex));
+            screen->priv->syncObserver = adoptGRef(wpeScreenSyncObserverDRMCreate(WTF::move(fd), *crtcIndex));
             if (screen->priv->syncObserver) {
                 g_debug("WPEScreen %u: Created WPEScreenSyncObserverDRM for device %s with CRTC index %u", screen->priv->id, devices[i]->nodes[DRM_NODE_PRIMARY], *crtcIndex);
                 break;

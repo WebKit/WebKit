@@ -37,22 +37,22 @@ using ::testing::ValuesIn;
 
 #if !CONFIG_REALTIME_ONLY
 namespace {
-typedef enum {
+enum ColorFormat {
   I400,  // Monochrome
   I420,  // 4:2:0
   I422,  // 4:2:2
   I444,  // 4:4:4
-} ColorFormat;
+};
 static const char *color_fmt_str[] = { "I400", "I420", "I422", "I444" };
-typedef void (*TemporalFilterFunc)(
+using TemporalFilterFunc = void (*)(
     const YV12_BUFFER_CONFIG *frame_to_filter, const MACROBLOCKD *mbd,
     const BLOCK_SIZE block_size, const int mb_row, const int mb_col,
     const int num_planes, const double *noise_level, const MV *subblock_mvs,
     const int *subblock_mses, const int q_factor, const int filter_strength,
     int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum, uint16_t *count);
-typedef libaom_test::FuncParam<TemporalFilterFunc> TemporalFilterFuncParam;
+using TemporalFilterFuncParam = libaom_test::FuncParam<TemporalFilterFunc>;
 
-typedef std::tuple<TemporalFilterFuncParam, int> TemporalFilterWithParam;
+using TemporalFilterWithParam = std::tuple<TemporalFilterFuncParam, int>;
 
 class TemporalFilterTest
     : public ::testing::TestWithParam<TemporalFilterWithParam> {
@@ -325,11 +325,11 @@ const int kWidths[] = { 3840, 1920, 1280, 800, 640, 360, 357 };
 const int kHeights[] = { 2160, 1080, 720, 600, 480, 240, 237 };
 #endif  // HAVE_AVX2 || HAVE_NEON
 
-typedef double (*EstimateNoiseFunc)(const uint8_t *src, int height, int width,
-                                    int stride, int edge_thresh);
+using EstimateNoiseFunc = double (*)(const uint8_t *src, int height, int width,
+                                     int stride, int edge_thresh);
 
-typedef std::tuple<EstimateNoiseFunc, EstimateNoiseFunc, int, int>
-    EstimateNoiseWithParam;
+using EstimateNoiseWithParam =
+    std::tuple<EstimateNoiseFunc, EstimateNoiseFunc, int, int>;
 
 class EstimateNoiseTest
     : public ::testing::TestWithParam<EstimateNoiseWithParam> {
@@ -423,16 +423,16 @@ INSTANTIATE_TEST_SUITE_P(
 
 #if CONFIG_AV1_HIGHBITDEPTH
 
-typedef void (*HBDTemporalFilterFunc)(
+using HBDTemporalFilterFunc = void (*)(
     const YV12_BUFFER_CONFIG *frame_to_filter, const MACROBLOCKD *mbd,
     const BLOCK_SIZE block_size, const int mb_row, const int mb_col,
     const int num_planes, const double *noise_level, const MV *subblock_mvs,
     const int *subblock_mses, const int q_factor, const int filter_strength,
     int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum, uint16_t *count);
-typedef libaom_test::FuncParam<HBDTemporalFilterFunc>
-    HBDTemporalFilterFuncParam;
+using HBDTemporalFilterFuncParam =
+    libaom_test::FuncParam<HBDTemporalFilterFunc>;
 
-typedef std::tuple<HBDTemporalFilterFuncParam, int> HBDTemporalFilterWithParam;
+using HBDTemporalFilterWithParam = std::tuple<HBDTemporalFilterFuncParam, int>;
 
 class HBDTemporalFilterTest
     : public ::testing::TestWithParam<HBDTemporalFilterWithParam> {

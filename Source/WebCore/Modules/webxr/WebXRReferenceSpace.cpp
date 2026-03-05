@@ -39,7 +39,7 @@ namespace WebCore {
 
 static constexpr double DefaultUserHeightInMeters = 1.65;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRReferenceSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRReferenceSpace);
 
 Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSession& session, XRReferenceSpaceType type)
 {
@@ -52,11 +52,11 @@ Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSe
 
 Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSession& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
 {
-    return adoptRef(*new WebXRReferenceSpace(document, session, WTFMove(offset), type));
+    return adoptRef(*new WebXRReferenceSpace(document, session, WTF::move(offset), type));
 }
 
 WebXRReferenceSpace::WebXRReferenceSpace(Document& document, WebXRSession& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
-    : WebXRSpace(document, WTFMove(offset))
+    : WebXRSpace(document, WTF::move(offset))
     , m_session(session)
     , m_type(type)
 {
@@ -111,7 +111,7 @@ ExceptionOr<Ref<WebXRReferenceSpace>> WebXRReferenceSpace::getOffsetReferenceSpa
     // Set offsetSpace’s origin offset to the result of multiplying base’s origin offset by originOffset in the relevant realm of base.
     auto offset = WebXRRigidTransform::create(originOffset().rawTransform() * offsetTransform.rawTransform());
 
-    return create(*document, *m_session.get(), WTFMove(offset), m_type);
+    return create(*document, *m_session.get(), WTF::move(offset), m_type);
 }
 
 std::optional<TransformationMatrix> WebXRReferenceSpace::floorOriginTransform() const

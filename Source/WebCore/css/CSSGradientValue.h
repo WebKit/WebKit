@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/CSSGradient.h>
-#include <WebCore/StyleImage.h>
+#include "CSSGradient.h"
+#include "StyleImage.h"
 
 namespace WebCore {
 
@@ -38,19 +38,19 @@ class CSSGradientValue final : public CSSValue {
 public:
     static Ref<CSSGradientValue> create(CSS::Gradient&& gradient)
     {
-        return adoptRef(*new CSSGradientValue(WTFMove(gradient)));
+        return adoptRef(*new CSSGradientValue(WTF::move(gradient)));
     }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
+    RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
     CSSGradientValue(CSS::Gradient&& gradient)
         : CSSValue(ClassType::Gradient)
-        , m_gradient(WTFMove(gradient))
+        , m_gradient(WTF::move(gradient))
     {
     }
 
@@ -62,7 +62,7 @@ private:
     }
 
     CSS::Gradient m_gradient;
-    mutable RefPtr<StyleImage> m_cachedStyleImage;
+    mutable RefPtr<Style::Image> m_cachedStyleImage;
 };
 
 } // namespace WebCore

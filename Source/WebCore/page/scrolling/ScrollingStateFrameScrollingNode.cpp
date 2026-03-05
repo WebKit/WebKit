@@ -52,7 +52,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> synchronousScrollingReasons,
 #endif
-    RequestedScrollData&& requestedScrollData,
+    ScrollRequestData&& requestedScrollData,
     FloatScrollSnapOffsetsInfo&& snapOffsetsInfo,
     std::optional<unsigned> currentHorizontalSnapPointIndex,
     std::optional<unsigned> currentVerticalSnapPointIndex,
@@ -80,6 +80,9 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     int footerHeight,
     ScrollBehaviorForFixedElements&& scrollBehaviorForFixedElements,
     FloatBoxExtent&& obscuredContentInsets,
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    float bannerViewHeight,
+#endif
     bool visualViewportIsSmallerThanLayoutViewport,
     bool asyncFrameOrOverflowScrollingEnabled,
     bool wheelEventGesturesBecomeNonBlocking,
@@ -93,7 +96,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
 ) : ScrollingStateScrollingNode(
     isMainFrame ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe,
     scrollingNodeID,
-    WTFMove(children),
+    WTF::move(children),
     changedProperties,
     layerID,
     scrollableAreaSize,
@@ -101,12 +104,12 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     reachableContentsSize,
     scrollPosition,
     scrollOrigin,
-    WTFMove(scrollableAreaParameters),
+    WTF::move(scrollableAreaParameters),
 #if ENABLE(SCROLLING_THREAD)
     synchronousScrollingReasons,
 #endif
-    WTFMove(requestedScrollData),
-    WTFMove(snapOffsetsInfo),
+    WTF::move(requestedScrollData),
+    WTF::move(snapOffsetsInfo),
     currentHorizontalSnapPointIndex,
     currentVerticalSnapPointIndex,
     isMonitoringWheelEvents,
@@ -115,19 +118,19 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     horizontalScrollbarLayer,
     verticalScrollbarLayer,
     mouseIsOverContentArea,
-    WTFMove(mouseLocationState),
-    WTFMove(scrollbarHoverState),
-    WTFMove(scrollbarEnabledState),
-    WTFMove(scrollbarColor),
+    WTF::move(mouseLocationState),
+    WTF::move(scrollbarHoverState),
+    WTF::move(scrollbarEnabledState),
+    WTF::move(scrollbarColor),
     scrollbarLayoutDirection,
     scrollbarWidth,
     useDarkAppearanceForScrollbars,
-    WTFMove(keyboardScrollData))
+    WTF::move(keyboardScrollData))
     , m_rootContentsLayer(rootContentsLayer)
     , m_counterScrollingLayer(counterScrollingLayer)
     , m_insetClipLayer(insetClipLayer)
     , m_contentShadowLayer(contentShadowLayer)
-    , m_eventTrackingRegions(WTFMove(eventTrackingRegions))
+    , m_eventTrackingRegions(WTF::move(eventTrackingRegions))
     , m_layoutViewport(layoutViewport)
     , m_sizeForVisibleContent(sizeForVisibleContent)
     , m_minLayoutViewportOrigin(minLayoutViewportOrigin)
@@ -135,9 +138,12 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     , m_overrideVisualViewportSize(overrideVisualViewportSize)
     , m_frameScaleFactor(frameScaleFactor)
     , m_obscuredContentInsets(obscuredContentInsets)
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    , m_bannerViewHeight(bannerViewHeight)
+#endif
     , m_headerHeight(headerHeight)
     , m_footerHeight(footerHeight)
-    , m_behaviorForFixed(WTFMove(scrollBehaviorForFixedElements))
+    , m_behaviorForFixed(WTF::move(scrollBehaviorForFixedElements))
 
     , m_visualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport)
     , m_asyncFrameOrOverflowScrollingEnabled(asyncFrameOrOverflowScrollingEnabled)
@@ -164,6 +170,9 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_overrideVisualViewportSize(stateNode.overrideVisualViewportSize())
     , m_frameScaleFactor(stateNode.frameScaleFactor())
     , m_obscuredContentInsets(stateNode.obscuredContentInsets())
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    , m_bannerViewHeight(stateNode.bannerViewHeight())
+#endif
     , m_headerHeight(stateNode.headerHeight())
     , m_footerHeight(stateNode.footerHeight())
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
@@ -214,6 +223,9 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applic
         Property::FooterLayer,
         Property::BehaviorForFixedElements,
         Property::ObscuredContentInsets,
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+        Property::BannerViewHeight,
+#endif
         Property::VisualViewportIsSmallerThanLayoutViewport,
         Property::AsyncFrameOrOverflowScrollingEnabled,
         Property::WheelEventGesturesBecomeNonBlocking,
@@ -330,6 +342,19 @@ void ScrollingStateFrameScrollingNode::setObscuredContentInsets(const FloatBoxEx
     m_obscuredContentInsets = obscuredContentInsets;
     setPropertyChanged(Property::ObscuredContentInsets);
 }
+
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+
+void ScrollingStateFrameScrollingNode::setBannerViewHeight(float bannerViewHeight)
+{
+    if (m_bannerViewHeight == bannerViewHeight)
+        return;
+
+    m_bannerViewHeight = bannerViewHeight;
+    setPropertyChanged(Property::BannerViewHeight);
+}
+
+#endif
 
 void ScrollingStateFrameScrollingNode::setRootContentsLayer(const LayerRepresentation& layerRepresentation)
 {
@@ -464,6 +489,10 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<
         ts.dumpProperty("left content inset"_s, m_obscuredContentInsets.left());
     if (m_obscuredContentInsets.right())
         ts.dumpProperty("right content inset"_s, m_obscuredContentInsets.right());
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    if (m_bannerViewHeight)
+        ts.dumpProperty("banner view height"_s, m_bannerViewHeight);
+#endif
     if (m_headerHeight)
         ts.dumpProperty("header height"_s, m_headerHeight);
     if (m_footerHeight)

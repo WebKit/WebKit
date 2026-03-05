@@ -76,7 +76,7 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 }
 #endif // ASSERT_ENABLED
 
-static constexpr float platformDeviceWidthOverride()
+static constexpr float NODELETE platformDeviceWidthOverride()
 {
 #if PLATFORM(WATCHOS)
     return 320;
@@ -85,7 +85,7 @@ static constexpr float platformDeviceWidthOverride()
 #endif
 }
 
-static constexpr double platformMinimumScaleForWebpage()
+static constexpr double NODELETE platformMinimumScaleForWebpage()
 {
 #if PLATFORM(WATCHOS)
     return 0.1;
@@ -94,7 +94,7 @@ static constexpr double platformMinimumScaleForWebpage()
 #endif
 }
 
-static constexpr bool shouldOverrideShrinkToFitArgument()
+static constexpr bool NODELETE shouldOverrideShrinkToFitArgument()
 {
 #if PLATFORM(WATCHOS)
     return true;
@@ -103,7 +103,7 @@ static constexpr bool shouldOverrideShrinkToFitArgument()
 #endif
 }
 
-static bool needsUpdateAfterChangingDisabledAdaptations(const OptionSet<DisabledAdaptations>& oldDisabledAdaptations, const OptionSet<DisabledAdaptations>& newDisabledAdaptations)
+static bool NODELETE needsUpdateAfterChangingDisabledAdaptations(const OptionSet<DisabledAdaptations>& oldDisabledAdaptations, const OptionSet<DisabledAdaptations>& newDisabledAdaptations)
 {
     if (oldDisabledAdaptations == newDisabledAdaptations)
         return false;

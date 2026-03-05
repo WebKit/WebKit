@@ -29,6 +29,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEDisplacementMapCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEDisplacementMap> FEDisplacementMap::create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, DestinationColorSpace colorSpace)
@@ -81,6 +85,12 @@ FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, std::span<
     return filter.maxEffectRect(primitiveSubregion);
 }
 
+IntOutsets FEDisplacementMap::calculateOutsets(const FloatSize& maxDisplacement)
+{
+    auto intDisplacement = expandedIntSize(maxDisplacement);
+    return { intDisplacement.height(), intDisplacement.width(), intDisplacement.height(), intDisplacement.width() };
+}
+
 const DestinationColorSpace& FEDisplacementMap::resultColorSpace(std::span<const Ref<FilterImage>> inputs) const
 {
     // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image
@@ -95,6 +105,24 @@ void FEDisplacementMap::transformInputsColorSpace(std::span<const Ref<FilterImag
     // Do not transform the first primitive input, as per the spec.
     ASSERT(inputs.size() == 2);
     inputs[1]->transformToColorSpace(operatingColorSpace());
+}
+
+OptionSet<FilterRenderingMode> FEDisplacementMap::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEDisplacementMap::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEDisplacementMapCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FEDisplacementMap::createSoftwareApplier() const

@@ -30,7 +30,6 @@
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "ResolvedStyle.h"
-#include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include "TextManipulationController.h"
@@ -41,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTitleElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTitleElement);
 
 using namespace HTMLNames;
 
@@ -71,7 +70,7 @@ void HTMLTitleElement::didFinishInsertingNode()
     HTMLElement::didFinishInsertingNode();
 
     m_title = computedTextWithDirection();
-    protectedDocument()->titleElementAdded(*this);
+    protect(document())->titleElementAdded(*this);
 }
 
 void HTMLTitleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -79,7 +78,7 @@ void HTMLTitleElement::removedFromAncestor(RemovalType removalType, ContainerNod
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (removalType.disconnectedFromDocument)
-        protectedDocument()->titleElementRemoved(*this);
+        protect(document())->titleElementRemoved(*this);
 }
 
 void HTMLTitleElement::childrenChanged(const ChildChange& change)
@@ -88,7 +87,7 @@ void HTMLTitleElement::childrenChanged(const ChildChange& change)
 
     if (isConnected()) {
         m_title = computedTextWithDirection();
-        protectedDocument()->titleElementTextChanged(*this);
+        protect(document())->titleElementTextChanged(*this);
     }
 }
 
@@ -110,7 +109,7 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
 
 void HTMLTitleElement::setText(String&& value)
 {
-    setTextContent(WTFMove(value));
+    setTextContent(WTF::move(value));
 }
 
 }

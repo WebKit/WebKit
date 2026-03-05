@@ -265,10 +265,11 @@ struct Box
     float4 aux2;
 };
 
-enum class UseBarriers : bool
+enum class UseBarriers
 {
-    No = false,
-    IfNotCoherent
+    Never,
+    IfNotCoherent,
+    Always,
 };
 
 class PLSProgram
@@ -420,8 +421,9 @@ class PLSProgram
             glBufferData(GL_ARRAY_BUFFER, boxes.size() * sizeof(Box), boxes.data(), GL_STATIC_DRAW);
             base = 0;
         }
-        if (useBarriers == UseBarriers::IfNotCoherent &&
-            !IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent"))
+        if ((useBarriers == UseBarriers::IfNotCoherent &&
+             !IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent")) ||
+            useBarriers == UseBarriers::Always)
         {
             for (size_t i = 0; i < boxes.size(); ++i)
             {
@@ -635,6 +637,11 @@ class PixelLocalStorageTest : public ANGLETest<>
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
+    // Tests that run with and without the "noncoherent" qualifier.
+    void doRGBA8Test(bool noncoherent);
+    void doR32Test(bool noncoherent);
+    void doCoherencyTest(bool noncoherent);
+
     // Implemented as a class members so we can run the test on ES3 and ES31 both.
     void doStateRestorationTest();
     void doDrawStateTest();
@@ -674,20 +681,31 @@ TEST_P(PixelLocalStorageTest, ImplementationDependentLimits)
 }
 
 // Verify that rgba8, rgba8i, and rgba8ui pixel local storage behaves as specified.
-TEST_P(PixelLocalStorageTest, RGBA8)
+void PixelLocalStorageTest::doRGBA8Test(bool noncoherent)
 {
-    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
-
-    mProgram.compile(R"(
+    std::ostringstream shader;
+    if (noncoherent)
+    {
+        shader << R"(
+        layout(binding=0, rgba8, noncoherent) uniform lowp pixelLocalANGLE plane1;
+        layout(rgba8i, noncoherent, binding=1) uniform lowp ipixelLocalANGLE plane2;
+        layout(noncoherent, binding=2, rgba8ui) uniform lowp upixelLocalANGLE plane3;)";
+    }
+    else
+    {
+        shader << R"(
         layout(binding=0, rgba8) uniform lowp pixelLocalANGLE plane1;
         layout(rgba8i, binding=1) uniform lowp ipixelLocalANGLE plane2;
-        layout(binding=2, rgba8ui) uniform lowp upixelLocalANGLE plane3;
-        void main()
-        {
-            pixelLocalStoreANGLE(plane1, color + pixelLocalLoadANGLE(plane1));
-            pixelLocalStoreANGLE(plane2, ivec4(aux1) + pixelLocalLoadANGLE(plane2));
-            pixelLocalStoreANGLE(plane3, uvec4(aux2) + pixelLocalLoadANGLE(plane3));
-        })");
+        layout(binding=2, rgba8ui) uniform lowp upixelLocalANGLE plane3;)";
+    }
+    shader << R"(
+    void main()
+    {
+        pixelLocalStoreANGLE(plane1, color + pixelLocalLoadANGLE(plane1));
+        pixelLocalStoreANGLE(plane2, ivec4(aux1) + pixelLocalLoadANGLE(plane2));
+        pixelLocalStoreANGLE(plane3, uvec4(aux2) + pixelLocalLoadANGLE(plane3));
+    })";
+    mProgram.compile(shader.str().c_str());
 
     PLSTestTexture tex1(GL_RGBA8);
     PLSTestTexture tex2(GL_RGBA8I);
@@ -709,7 +727,8 @@ TEST_P(PixelLocalStorageTest, RGBA8)
     mProgram.drawBoxes({{FULLSCREEN, {2, -1, -2, -3}, {-500, 0, 0, 0}, {1, 0, 0, 0}},
                         {FULLSCREEN, {0, 1, 0, 100}, {0, -129, 0, 0}, {0, 50, 0, 0}},
                         {FULLSCREEN, {0, 0, 1, 0}, {0, 0, -70, 0}, {0, 0, 100, 0}},
-                        {FULLSCREEN, {0, 0, 0, -1}, {128, 0, 0, 500}, {0, 0, 0, 300}}});
+                        {FULLSCREEN, {0, 0, 0, -1}, {128, 0, 0, 500}, {0, 0, 0, 300}}},
+                       noncoherent ? UseBarriers::Always : UseBarriers::IfNotCoherent);
 
     glEndPixelLocalStorageANGLE(3, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE,
                                                 GL_STORE_OP_STORE_ANGLE}));
@@ -726,43 +745,78 @@ TEST_P(PixelLocalStorageTest, RGBA8)
     ASSERT_GL_NO_ERROR();
 }
 
-// Verify that r32f and r32ui pixel local storage behaves as specified.
-TEST_P(PixelLocalStorageTest, R32)
+// Verify that rgba8, rgba8i, and rgba8ui pixel local storage behaves as specified.
+TEST_P(PixelLocalStorageTest, RGBA8)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    doRGBA8Test(/*noncoherent=*/false);
+}
 
-    mProgram.compile(R"(
+// Verify that rgba8, rgba8i, and rgba8ui pixel local storage behaves as specified when using the
+// "noncoherent" qualifier.
+TEST_P(PixelLocalStorageTest, RGBA8_noncoherent)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    doRGBA8Test(/*noncoherent=*/true);
+}
+
+// Verify that r32f, r32i, and r32ui pixel local storage behaves as specified.
+void PixelLocalStorageTest::doR32Test(bool noncoherent)
+{
+    std::ostringstream shader;
+    if (noncoherent)
+    {
+        shader << R"(
+        layout(noncoherent, r32f, binding=0) uniform highp pixelLocalANGLE plane1;
+        layout(binding=1, noncoherent, r32i) uniform highp ipixelLocalANGLE plane2;
+        layout(r32ui, binding=2, noncoherent) uniform highp upixelLocalANGLE plane3;)";
+    }
+    else
+    {
+        shader << R"(
         layout(r32f, binding=0) uniform highp pixelLocalANGLE plane1;
-        layout(binding=1, r32ui) uniform highp upixelLocalANGLE plane2;
-        void main()
-        {
-            pixelLocalStoreANGLE(plane1, color + pixelLocalLoadANGLE(plane1));
-            pixelLocalStoreANGLE(plane2, uvec4(aux1) + pixelLocalLoadANGLE(plane2));
-        })");
+        layout(binding=1, r32i) uniform highp ipixelLocalANGLE plane2;
+        layout(r32ui, binding=2) uniform highp upixelLocalANGLE plane3;)";
+    }
+    shader << R"(
+    void main()
+    {
+        pixelLocalStoreANGLE(plane1, color + pixelLocalLoadANGLE(plane1));
+        pixelLocalStoreANGLE(plane2, ivec4(aux1) + pixelLocalLoadANGLE(plane2));
+        pixelLocalStoreANGLE(plane3, uvec4(aux2) + pixelLocalLoadANGLE(plane3));
+    })";
+    mProgram.compile(shader.str().c_str());
 
     PLSTestTexture tex1(GL_R32F);
-    PLSTestTexture tex2(GL_R32UI);
+    PLSTestTexture tex2(GL_R32I);
+    PLSTestTexture tex3(GL_R32UI);
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glFramebufferTexturePixelLocalStorageANGLE(0, tex1, 0, 0);
     glFramebufferTexturePixelLocalStorageANGLE(1, tex2, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(2, tex3, 0, 0);
     glViewport(0, 0, W, H);
     glDrawBuffers(0, nullptr);
 
-    glBeginPixelLocalStorageANGLE(2, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
 
     // Accumulate R in 4 separate passes.
-    mProgram.drawBoxes({{FULLSCREEN, {-1.5, 0, 0, 0}, {0x000000ff, 0, 0, 0}},
-                        {FULLSCREEN, {-10.25, 0, 0, 0}, {0x0000ff00, 0, 0, 0}},
-                        {FULLSCREEN, {-100, 0, 0, 0}, {0x00ff0000, 0, 0, 0}},
-                        {FULLSCREEN, {.25, 0, 0, 0}, {0xff000000, 0, 0, 22}}});
+    mProgram.drawBoxes(
+        {{FULLSCREEN, {-1.5, 0, 0, 0}, {0x000000ff, 0, 0, 0}, {0x000000ff, 0, 0, 0}},
+         {FULLSCREEN, {-10.25, 0, 0, 0}, {0x0000ff00, 0, 0, 0}, {0x0000ff00, 0, 0, 0}},
+         {FULLSCREEN, {-100, 0, 0, 0}, {0x00ff0000, 0, 0, 0}, {0x00ff0000, 0, 0, 0}},
+         {FULLSCREEN, {.25, 0, 0, 0}, {-0x1000000, 0, 0, 0}, {0xff000000, 0, 0, 22}}},
+        noncoherent ? UseBarriers::Always : UseBarriers::IfNotCoherent);
 
-    glEndPixelLocalStorageANGLE(2, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE}));
+    glEndPixelLocalStorageANGLE(3, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE,
+                                                GL_STORE_OP_STORE_ANGLE}));
 
     // These values should be exact matches.
     //
-    // GL_R32F is spec'd as a 32-bit IEEE float, and GL_R32UI is a 32-bit unsigned integer.
+    // GL_R32F is spec'd as a 32-bit IEEE float, GL_R32I is a 32-bit signed integer,
+    // and GL_R32UI is a 32-bit unsigned integer.
     // There is some affordance for fp32 fused operations, but "a + b" is required to be
     // correctly rounded.
     //
@@ -781,9 +835,29 @@ TEST_P(PixelLocalStorageTest, R32)
     EXPECT_PIXEL_RECT32F_EQ(0, 0, W, H, GLColor32F(-111.5, 0, 0, 1));
 
     attachTexture2DToScratchFBO(tex2);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, W, H, GLColor32I(-1, 0, 0, 1));
+
+    attachTexture2DToScratchFBO(tex3);
     EXPECT_PIXEL_RECT32UI_EQ(0, 0, W, H, GLColor32UI(0xffffffff, 0, 0, 1));
 
     ASSERT_GL_NO_ERROR();
+}
+
+// Verify that r32f, r32i, and r32ui pixel local storage behaves as specified.
+TEST_P(PixelLocalStorageTest, R32)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
+    doR32Test(/*noncoherent=*/false);
+}
+
+// Verify that r32f, r32i, and r32ui pixel local storage behaves as specified
+// when using the "noncoherent" qualifier.
+TEST_P(PixelLocalStorageTest, R32_noncoherent)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
+    doR32Test(/*noncoherent=*/true);
 }
 
 // Check proper functioning of the clear value state.
@@ -955,27 +1029,36 @@ TEST_P(PixelLocalStorageTest, ClearValues_rgba8)
     EXPECT_PIXEL_RECT32UI_EQ(0, 0, 1, 1, GLColor32UI(0, 0, 0, 0));
 }
 
-// Check clear values for r32f and r32ui PLS format.
+// Check clear values for r32f, r32i, and r32ui PLS format.
 TEST_P(PixelLocalStorageTest, ClearValues_r32)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     // Test custom R32 clear values.
     PLSTestTexture tex32f(GL_R32F);
+    PLSTestTexture tex32i(GL_R32I);
     PLSTestTexture tex32ui(GL_R32UI);
     glFramebufferTexturePixelLocalStorageANGLE(0, tex32f, 0, 0);
-    glFramebufferTexturePixelLocalStorageANGLE(1, tex32ui, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(1, tex32i, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(2, tex32ui, 0, 0);
     glFramebufferPixelLocalClearValuefvANGLE(0, ClearF(100.5, 0, 0, 0));
-    glFramebufferPixelLocalClearValueuivANGLE(1, ClearUI(0xbaadbeef, 1, 1, 0));
-    glBeginPixelLocalStorageANGLE(2, GLenumArray({GL_LOAD_OP_CLEAR_ANGLE, GL_LOAD_OP_CLEAR_ANGLE}));
+    glFramebufferPixelLocalClearValueivANGLE(1, ClearI(-2, 1, 0, 0));
+    glFramebufferPixelLocalClearValueuivANGLE(2, ClearUI(0xbaadbeef, 1, 1, 0));
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_CLEAR_ANGLE, GL_LOAD_OP_CLEAR_ANGLE, GL_LOAD_OP_CLEAR_ANGLE}));
     EXPECT_PIXEL_LOCAL_CLEAR_VALUE_FLOAT(0, ({100.5f, 0, 0, 0}));
-    EXPECT_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT(1, ({0xbaadbeef, 1, 1, 0}));
-    glEndPixelLocalStorageANGLE(2, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE}));
+    EXPECT_PIXEL_LOCAL_CLEAR_VALUE_INT(1, ({-2, 1, 0, 0}));
+    EXPECT_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT(2, ({0xbaadbeef, 1, 1, 0}));
+    glEndPixelLocalStorageANGLE(3, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE,
+                                                GL_STORE_OP_STORE_ANGLE}));
     attachTexture2DToScratchFBO(tex32f);
     EXPECT_PIXEL_RECT32F_EQ(0, 0, 1, 1, GLColor32F(100.5f, 0, 0, 1));
+    attachTexture2DToScratchFBO(tex32i);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, 1, 1, GLColor32I(-2, 0, 0, 1));
     attachTexture2DToScratchFBO(tex32ui);
     EXPECT_PIXEL_RECT32UI_EQ(0, 0, 1, 1, GLColor32UI(0xbaadbeef, 0, 0, 1));
 }
@@ -1327,6 +1410,7 @@ TEST_P(PixelLocalStorageTest, FragmentReject_viewport)
 TEST_P(PixelLocalStorageTest, ForgetBarrier)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
 
     mProgram.compile(R"(
     layout(binding=0, r32f) uniform highp pixelLocalANGLE framebuffer;
@@ -1375,9 +1459,9 @@ TEST_P(PixelLocalStorageTest, ForgetBarrier)
 
     // First make sure it works properly with a barrier.
     glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_CLEAR_ANGLE}));
-    mProgram.drawBoxes(boxesA_100, UseBarriers::No);
+    mProgram.drawBoxes(boxesA_100, UseBarriers::Never);
     glPixelLocalStorageBarrierANGLE();
-    mProgram.drawBoxes(boxesB_7, UseBarriers::No);
+    mProgram.drawBoxes(boxesB_7, UseBarriers::Never);
     glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
 
     attachTexture2DToScratchFBO(tex);
@@ -1394,9 +1478,9 @@ TEST_P(PixelLocalStorageTest, ForgetBarrier)
     // constraints.
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_CLEAR_ANGLE}));
-    mProgram.drawBoxes(boxesA_100, UseBarriers::No);
+    mProgram.drawBoxes(boxesA_100, UseBarriers::Never);
     // OOPS! We forgot to insert a barrier!
-    mProgram.drawBoxes(boxesB_7, UseBarriers::No);
+    mProgram.drawBoxes(boxesB_7, UseBarriers::Never);
     glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
 
     float pixels[H * W * 4];
@@ -1665,6 +1749,7 @@ TEST_P(PixelLocalStorageTest, ProgramCache)
 TEST_P(PixelLocalStorageTest, LoadOnly)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
 
     PLSTestTexture tex(GL_RGBA8);
 
@@ -1780,6 +1865,7 @@ TEST_P(PixelLocalStorageTest, LoadOnly)
 TEST_P(PixelLocalStorageTest, LoadAfterStore)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
 
     // Run a fibonacci loop that stores and loads the same PLS multiple times.
     mProgram.compile(R"(
@@ -1817,18 +1903,24 @@ TEST_P(PixelLocalStorageTest, LoadAfterStore)
 
     ASSERT_GL_NO_ERROR();
 
-    // Now verify that r32f and r32ui still reload as (r, 0, 0, 1), even after an in-shader store.
+    // Now verify that r32f, r32i, and r32ui still reload as (r, 0, 0, 1), even after an in-shader
+    // store.
     mProgram.compile(R"(
         layout(binding=0, r32f) uniform highp pixelLocalANGLE pls32f;
-        layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls32ui;
+        layout(binding=1, r32i) uniform highp ipixelLocalANGLE pls32i;
+        layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls32ui;
 
         out vec4 fragcolor;
         void main()
         {
             pixelLocalStoreANGLE(pls32f, vec4(1, .5, .5, .5));
+            pixelLocalStoreANGLE(pls32i, ivec4(1, -1, -1, 0));
             pixelLocalStoreANGLE(pls32ui, uvec4(1, 1, 1, 0));
-            if ((int(floor(gl_FragCoord.x)) & 1) == 0)
+            lowp int index = int(floor(gl_FragCoord.x)) % 3;
+            if (index == 0)
                 fragcolor = pixelLocalLoadANGLE(pls32f);
+            else if (index == 1)
+                fragcolor = vec4(pixelLocalLoadANGLE(pls32i));
             else
                 fragcolor = vec4(pixelLocalLoadANGLE(pls32ui));
         })");
@@ -1836,18 +1928,17 @@ TEST_P(PixelLocalStorageTest, LoadAfterStore)
     tex.reset(GL_RGBA8);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glFramebufferMemorylessPixelLocalStorageANGLE(0, GL_R32F);
-    glFramebufferMemorylessPixelLocalStorageANGLE(1, GL_R32UI);
+    glFramebufferMemorylessPixelLocalStorageANGLE(1, GL_R32I);
+    glFramebufferMemorylessPixelLocalStorageANGLE(2, GL_R32UI);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
     glDrawBuffers(1, GLenumArray({GL_COLOR_ATTACHMENT0}));
 
-    glBeginPixelLocalStorageANGLE(2, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
 
     mProgram.drawBoxes({{FULLSCREEN}});
 
-    int n;
-    glGetIntegerv(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, &n);
-    glEndPixelLocalStorageANGLE(n,
-                                GLenumArray({GL_DONT_CARE, GL_DONT_CARE, GL_STORE_OP_STORE_ANGLE}));
+    glEndPixelLocalStorageANGLE(3, GLenumArray({GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE}));
 
     EXPECT_PIXEL_RECT_EQ(0, 0, W, H, GLColor(255, 0, 0, 255));
     ASSERT_GL_NO_ERROR();
@@ -1857,6 +1948,7 @@ TEST_P(PixelLocalStorageTest, LoadAfterStore)
 TEST_P(PixelLocalStorageTest, FunctionArguments)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
 
     mProgram.compile(R"(
     layout(binding=0, rgba8) uniform lowp pixelLocalANGLE dst;
@@ -1907,14 +1999,26 @@ TEST_P(PixelLocalStorageTest, FunctionArguments)
     ASSERT_GL_NO_ERROR();
 }
 
-// Check that if the "_coherent" extension is advertised, PLS operations are ordered and coherent.
-TEST_P(PixelLocalStorageTest, Coherency)
+// Check that large amounts of overlapping draws are ordered and coherent, either implicitly via the
+// "_coherent" extension, or explicitly via app-suppied barrier commands.
+void PixelLocalStorageTest::doCoherencyTest(bool noncoherent)
 {
-    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
-
-    mProgram.compile(R"(
-    layout(binding=0, rgba8ui) uniform lowp upixelLocalANGLE framebuffer;
-    layout(binding=1, rgba8) uniform lowp pixelLocalANGLE tmp;
+    std::ostringstream shader;
+    if (noncoherent)
+    {
+        shader << R"(
+        layout(binding=0, rgba8ui, noncoherent) uniform lowp upixelLocalANGLE framebuffer;
+        layout(binding=1, rgba8, noncoherent) uniform lowp pixelLocalANGLE tmp;)";
+    }
+    else
+    {
+        shader << R"(
+        layout(binding=0, rgba8ui) uniform lowp upixelLocalANGLE framebuffer;
+        layout(binding=1, rgba8) uniform lowp pixelLocalANGLE tmp;)";
+    }
+    shader << R"(
+    // Defining a noncoherent plane shouldn't make the others noncoherent.
+    layout(binding=2, rgba8ui, noncoherent) uniform lowp upixelLocalANGLE framebufferNoncoherent;
     // The application shouldn't be able to override internal synchronization functions used by
     // the compiler.
     //
@@ -1932,16 +2036,28 @@ TEST_P(PixelLocalStorageTest, Coherency)
     {
         highp uvec4 d = pixelLocalLoadANGLE(framebuffer) >> 1;
         pixelLocalStoreANGLE(framebuffer, uvec4(color) + d);
+
+        // NOTE: This isn't valid without barriers since the plane is noncoherent. We do this to
+        // verify that if 'd' above is coherent, accessing this noncoherent plane doesn't
+        // disable the interlock and make 'd' noncoherent as well.
+        highp uvec4 dNoncoherent = pixelLocalLoadANGLE(framebufferNoncoherent) >> 1;
+        pixelLocalStoreANGLE(framebufferNoncoherent, uvec4(color) + dNoncoherent);
+
+        // Make sure the compiler doesn't call our overloads of GLSL functions it might be using
+        // for synchronization.
         beginInvocationInterlockNV();
         endInvocationInterlockARB();
-    })");
+    })";
+    mProgram.compile(shader.str().c_str());
 
     PLSTestTexture tex(GL_RGBA8UI);
+    PLSTestTexture texNoncoherent(GL_RGBA8UI);
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glFramebufferTexturePixelLocalStorageANGLE(0, tex, 0, 0);
     glFramebufferMemorylessPixelLocalStorageANGLE(1, GL_RGBA8);
+    glFramebufferTexturePixelLocalStorageANGLE(2, texNoncoherent, 0, 0);
     glViewport(0, 0, W, H);
     glDrawBuffers(0, nullptr);
 
@@ -1951,6 +2067,7 @@ TEST_P(PixelLocalStorageTest, Coherency)
     // This test times out on Swiftshader and noncoherent backends if we draw anywhere near the
     // same number of boxes as we do on coherent, hardware backends.
     int boxesPerList = !IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent") ||
+                               noncoherent ||
                                strstr((const char *)glGetString(GL_RENDERER), "SwiftShader")
                            ? 200
                            : H * W * 3;
@@ -1990,8 +2107,8 @@ TEST_P(PixelLocalStorageTest, Coherency)
             float x1 = x + w;
             float y0 = y;
             float y1 = y + h;
-            // Allow boxes to have negative widths and heights. This adds randomness by making the
-            // diagonals go in different directions.
+            // Allow boxes to have negative widths and heights. This adds randomness by making
+            // the diagonals go in different directions.
             if (rand() & 1)
             {
                 std::swap(x0, x1);
@@ -2004,12 +2121,14 @@ TEST_P(PixelLocalStorageTest, Coherency)
         }
     }
 
-    glBeginPixelLocalStorageANGLE(2, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
     for (const std::vector<Box> &boxes : boxesList)
     {
-        mProgram.drawBoxes(boxes);
+        mProgram.drawBoxes(boxes, noncoherent ? UseBarriers::Always : UseBarriers::IfNotCoherent);
     }
-    glEndPixelLocalStorageANGLE(2, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_DONT_CARE}));
+    glEndPixelLocalStorageANGLE(
+        3, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_DONT_CARE, GL_STORE_OP_STORE_ANGLE}));
 
     attachTexture2DToScratchFBO(tex);
     std::vector<uint8_t> actual(H * W * 4);
@@ -2017,6 +2136,22 @@ TEST_P(PixelLocalStorageTest, Coherency)
     EXPECT_EQ(expected, actual);
 
     ASSERT_GL_NO_ERROR();
+}
+
+// Check that large amounts of overlapping draws are ordered and coherent, either implicitly via the
+// "_coherent" extension, or explicitly via app-suppied barrier commands.
+TEST_P(PixelLocalStorageTest, Coherency)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    doCoherencyTest(/*noncoherent=*/false);
+}
+
+// Check that large amounts of overlapping draws that use the "noncoherent" qualifier are still
+// ordered and coherent as long as we call glPixelLocalStorageBarrierANGLE().
+TEST_P(PixelLocalStorageTest, Coherency_noncoherent)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    doCoherencyTest(/*noncoherent=*/true);
 }
 
 // Check that binding mipmap levels to PLS is supported.
@@ -2139,6 +2274,124 @@ TEST_P(PixelLocalStorageTest, TextureLevelsAndLayers)
         EXPECT_PIXEL_RECT_EQ(W / 2.f, 0, W / 2.f, H, GLColor::red);
         ASSERT_GL_NO_ERROR();
     }
+}
+
+// Check that PLS works on multiple layers of the same array texture.
+TEST_P(PixelLocalStorageTest, Texture2DArrayMultipleLayers)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    PLSTestTexture tex(GL_RGBA8);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture texArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
+    ASSERT_GL_NO_ERROR();
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 2, GL_R32UI, W * 2, H * 2, 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexturePixelLocalStorageANGLE(0, tex, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(1, texArray, 1, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(2, texArray, 1, 1);
+    glViewport(0, 0, W, H);
+    glDrawBuffers(0, nullptr);
+
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    ASSERT_GL_NO_ERROR();
+
+    // Pass 1: seed the texArray.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        pixelLocalStoreANGLE(pls1, uvec4(floatBitsToUint(1.)));
+        pixelLocalStoreANGLE(pls2, uvec4(floatBitsToUint(2.)));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+
+    // Pass 2: read the texArray.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        float r = uintBitsToFloat(pixelLocalLoadANGLE(pls1).r);
+        float g = uintBitsToFloat(pixelLocalLoadANGLE(pls2).r) - 2.;
+        pixelLocalStoreANGLE(pls0, vec4(r, g, 0, 1));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+    ASSERT_GL_NO_ERROR();
+
+    glEndPixelLocalStorageANGLE(3,
+                                GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_DONT_CARE, GL_DONT_CARE}));
+
+    attachTexture2DToScratchFBO(tex);
+    EXPECT_PIXEL_RECT_EQ(0, 0, W, H, GLColor::red);
+}
+
+// Check that PLS works on multiple faces of the same cube texture.
+TEST_P(PixelLocalStorageTest, TextureCubeMultipleFaces)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    PLSTestTexture tex(GL_RGBA8);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture texCube;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texCube);
+    ASSERT_GL_NO_ERROR();
+    glTexStorage2D(GL_TEXTURE_CUBE_MAP, 2, GL_R32UI, W * 2, H * 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexturePixelLocalStorageANGLE(0, tex, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(1, texCube, 1, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(2, texCube, 1, 5);
+    glViewport(0, 0, W, H);
+    glDrawBuffers(0, nullptr);
+
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    ASSERT_GL_NO_ERROR();
+
+    // Pass 1: seed the texCube.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        pixelLocalStoreANGLE(pls1, uvec4(floatBitsToUint(1.)));
+        pixelLocalStoreANGLE(pls2, uvec4(floatBitsToUint(2.)));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+
+    // Pass 2: read the texCube.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        float r = uintBitsToFloat(pixelLocalLoadANGLE(pls1).r);
+        float g = uintBitsToFloat(pixelLocalLoadANGLE(pls2).r) - 2.;
+        pixelLocalStoreANGLE(pls0, vec4(r, g, 0, 1));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+    ASSERT_GL_NO_ERROR();
+
+    glEndPixelLocalStorageANGLE(3,
+                                GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_DONT_CARE, GL_DONT_CARE}));
+
+    attachTexture2DToScratchFBO(tex);
+    EXPECT_PIXEL_RECT_EQ(0, 0, W, H, GLColor::red);
 }
 
 // Check that cube map faces work as PLS planes.
@@ -3590,7 +3843,7 @@ TEST_P(PixelLocalStorageTest, LeakFramebufferAndTexture)
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8UI, 10, 10);
     glFramebufferTexturePixelLocalStorageANGLE(0, tex0, 0, 0);
 
-    PLSTestTexture tex1(GL_R32F);
+    PLSTestTexture tex1(GL_R32UI);
     glFramebufferTexturePixelLocalStorageANGLE(1, tex1, 0, 0);
 
     glFramebufferMemorylessPixelLocalStorageANGLE(3, GL_RGBA8I);
@@ -4188,11 +4441,6 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 #define PLS_INSTANTIATE_RENDERING_TEST_AND(TEST, API, ...)                                \
     ANGLE_INSTANTIATE_TEST(                                                               \
         TEST,                                                                             \
-        PLATFORM(API, D3D11) /* D3D coherent. */                                          \
-            .enable(Feature::EmulatePixelLocalStorage),                                   \
-        PLATFORM(API, D3D11) /* D3D noncoherent. */                                       \
-            .enable(Feature::DisableRasterizerOrderViews)                                 \
-            .enable(Feature::EmulatePixelLocalStorage),                                   \
         PLATFORM(API, OPENGL) /* OpenGL coherent. */                                      \
             .enable(Feature::EmulatePixelLocalStorage),                                   \
         PLATFORM(API, OPENGL) /* OpenGL noncoherent. */                                   \
@@ -4230,10 +4478,17 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 
 #define PLS_INSTANTIATE_RENDERING_TEST_ES3(TEST)                                                   \
     PLS_INSTANTIATE_RENDERING_TEST_AND(                                                            \
-        TEST, ES3, /* Metal, coherent (in tiled memory on Apple Silicon).*/                        \
-        ES3_METAL().enable(Feature::EmulatePixelLocalStorage), /* Metal, coherent via raster order \
-                                                                  groups + read_write textures.*/  \
-        ES3_METAL()                                                                                \
+        TEST, ES3,                                                                                 \
+                                                                                                   \
+        ES3_D3D11().enable(Feature::EmulatePixelLocalStorage), /* D3D coherent. */                 \
+                                                                                                   \
+        ES3_D3D11() /* D3D noncoherent. */                                                         \
+            .enable(Feature::DisableRasterizerOrderViews)                                          \
+            .enable(Feature::EmulatePixelLocalStorage),                                            \
+                                                                                                   \
+        ES3_METAL().enable(Feature::EmulatePixelLocalStorage), /* Metal, coherent (in tiled memory \
+                                                                  on Apple Silicon).*/             \
+        ES3_METAL() /* Metal, coherent via raster order groups + read_write textures.*/            \
             .enable(Feature::EmulatePixelLocalStorage)                                             \
             .enable(Feature::DisableProgrammableBlending), /* Metal, coherent, r32 packed          \
                                                               read_write texture formats.*/        \
@@ -4483,14 +4738,10 @@ static void do_implicitly_enabled_extensions_test(const char *plsExtensionToRequ
 {
     bool hasDrawBuffersIndexedOES = IsGLExtensionRequestable("GL_OES_draw_buffers_indexed");
     bool hasDrawBuffersIndexedEXT = IsGLExtensionRequestable("GL_EXT_draw_buffers_indexed");
-    bool hasColorBufferFloat      = IsGLExtensionRequestable("GL_EXT_color_buffer_float");
-    bool hasColorBufferHalfFloat  = IsGLExtensionRequestable("GL_EXT_color_buffer_half_float");
     bool hasCoherent = IsGLExtensionRequestable("GL_ANGLE_shader_pixel_local_storage_coherent");
 
     EXPECT_TRUE(!IsGLExtensionEnabled("GL_OES_draw_buffers_indexed"));
     EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_draw_buffers_indexed"));
-    EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
-    EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
     EXPECT_TRUE(!IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent"));
     EXPECT_TRUE(!IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
 
@@ -4504,14 +4755,6 @@ static void do_implicitly_enabled_extensions_test(const char *plsExtensionToRequ
     if (hasDrawBuffersIndexedEXT)
     {
         EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_draw_buffers_indexed"));
-    }
-    if (hasColorBufferFloat)
-    {
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
-    }
-    if (hasColorBufferHalfFloat)
-    {
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
     }
     if (hasCoherent)
     {
@@ -4539,26 +4782,6 @@ static void do_implicitly_enabled_extensions_test(const char *plsExtensionToRequ
         EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_draw_buffers_indexed"));
     }
 
-    if (hasColorBufferFloat)
-    {
-        // If EXT_color_buffer_float ever becomes disablable, it will have to implicitly disable
-        // ANGLE_shader_pixel_local_storage.
-        glDisableExtensionANGLE("GL_EXT_color_buffer_float");
-        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
-    }
-
-    if (hasColorBufferHalfFloat)
-    {
-        // If EXT_color_buffer_half_float ever becomes disablable, it will have to implicitly
-        // disable ANGLE_shader_pixel_local_storage.
-        glDisableExtensionANGLE("GL_EXT_color_buffer_half_float");
-        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
-    }
-
     if (hasCoherent)
     {
         // ANGLE_shader_pixel_local_storage_coherent is not disablable.
@@ -4580,14 +4803,6 @@ static void do_implicitly_enabled_extensions_test(const char *plsExtensionToRequ
     if (hasDrawBuffersIndexedEXT)
     {
         EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_draw_buffers_indexed"));
-    }
-    if (hasColorBufferFloat)
-    {
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
-    }
-    if (hasColorBufferHalfFloat)
-    {
-        EXPECT_TRUE(IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
     }
     if (hasCoherent)
     {
@@ -4620,8 +4835,6 @@ TEST_P(PixelLocalStorageRequestableExtensionTest, ImplicitlyEnabledExtensionsCoh
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
         EXPECT_TRUE(!IsGLExtensionEnabled("GL_OES_draw_buffers_indexed"));
         EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_draw_buffers_indexed"));
-        EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
-        EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
         EXPECT_TRUE(!IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent"));
         EXPECT_TRUE(!IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
     }
@@ -4640,8 +4853,6 @@ TEST_P(PixelLocalStorageRequestableExtensionTest, ANGLEShaderPixelLocalStorageNo
 
     EnsureGLExtensionEnabled("GL_OES_draw_buffers_indexed");
     EnsureGLExtensionEnabled("GL_EXT_draw_buffers_indexed");
-    EnsureGLExtensionEnabled("GL_EXT_color_buffer_float");
-    EnsureGLExtensionEnabled("GL_EXT_color_buffer_half_float");
     EXPECT_TRUE(!IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage_coherent"));
     EXPECT_TRUE(!IsGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
 
@@ -4767,9 +4978,9 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferMemorylessPixelLocalStorageAN
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    glFramebufferMemorylessPixelLocalStorageANGLE(0, GL_R32F);
+    glFramebufferMemorylessPixelLocalStorageANGLE(0, GL_R32UI);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_R32F);
+    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_R32UI);
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, GL_NONE);
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE, GL_NONE);
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, GL_NONE);
@@ -4834,6 +5045,20 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferMemorylessPixelLocalStorageAN
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, GL_NONE);
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE, GL_NONE);
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, GL_NONE);
+
+    // INVALID_OPERATION is generated if <internalformat> is not color-renderable.
+    glFramebufferMemorylessPixelLocalStorageANGLE(0, GL_R32F);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Internal format is not renderable.");
+    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_RGBA8I);
+
+    // Repeat after enabling the extension
+    if (EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"))
+    {
+        glFramebufferMemorylessPixelLocalStorageANGLE(0, GL_R32F);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_R32F);
+    }
 
     ASSERT_GL_NO_ERROR();
 }
@@ -5082,6 +5307,25 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferTexturePixelLocalStorageANGLE
     glFramebufferTexturePixelLocalStorageANGLE(2, tex, 1, 0);
     EXPECT_GL_SINGLE_ERROR(GL_INVALID_ENUM);
     EXPECT_GL_SINGLE_ERROR_MSG("Invalid pixel local storage internal format.");
+
+    // INVALID_OPERATION is generated if <backingtexture> is nonzero and its internalformat is not
+    // color-renderable.
+    tex.reset();
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_R32F, 10, 10);
+    EXPECT_GL_NO_ERROR();
+    glFramebufferTexturePixelLocalStorageANGLE(2, tex, 1, 0);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Internal format is not renderable.");
+    EXPECT_PLS_INTEGER(2, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_RGBA8I);
+
+    // Repeat after enabling the extension
+    if (EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"))
+    {
+        glFramebufferTexturePixelLocalStorageANGLE(2, tex, 1, 0);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PLS_INTEGER(2, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_R32F);
+    }
 
     ASSERT_GL_NO_ERROR();
 }
@@ -7725,7 +7969,7 @@ TEST_P(PixelLocalStorageValidationTest, LeakFramebufferAndTexture)
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8UI, 10, 10);
     glFramebufferTexturePixelLocalStorageANGLE(0, tex0, 0, 0);
 
-    PLSTestTexture tex1(GL_R32F);
+    PLSTestTexture tex1(GL_R32UI);
     glFramebufferTexturePixelLocalStorageANGLE(1, tex1, 0, 0);
 
     glFramebufferMemorylessPixelLocalStorageANGLE(3, GL_RGBA8I);
@@ -7753,7 +7997,7 @@ TEST_P(PixelLocalStorageValidationTest, LoseContext)
     glBindTexture(GL_TEXTURE_2D, tex0);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8UI, 10, 10);
 
-    PLSTestTexture tex1(GL_R32F);
+    PLSTestTexture tex1(GL_R32UI);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo0);
     glFramebufferTexturePixelLocalStorageANGLE(0, tex0, 0, 0);
@@ -8015,9 +8259,8 @@ TEST_P(PixelLocalStorageCompilerTest, LayoutQualifiers)
     layout(binding=4, rgba16ui) highp uniform upixelLocalANGLE pls4;
     layout(binding=5, rgba32i) highp uniform ipixelLocalANGLE pls5;
     layout(binding=6, rgba16i) highp uniform ipixelLocalANGLE pls6;
-    layout(binding=7, r32i) highp uniform ipixelLocalANGLE pls7;
-    layout(binding=999999999, rgba) highp uniform ipixelLocalANGLE pls8;
-    highp uniform pixelLocalANGLE pls9;
+    layout(binding=999999999, rgba) highp uniform ipixelLocalANGLE pls7;
+    highp uniform pixelLocalANGLE pls8;
     void main()
     {
     })";
@@ -8029,14 +8272,13 @@ TEST_P(PixelLocalStorageCompilerTest, LayoutQualifiers)
     EXPECT_TRUE(log.has("ERROR: 0:7: 'rgba16ui' : illegal pixel local storage format"));
     EXPECT_TRUE(log.has("ERROR: 0:8: 'rgba32i' : illegal pixel local storage format"));
     EXPECT_TRUE(log.has("ERROR: 0:9: 'rgba16i' : illegal pixel local storage format"));
-    EXPECT_TRUE(log.has("ERROR: 0:10: 'r32i' : illegal pixel local storage format"));
-    EXPECT_TRUE(log.has("ERROR: 0:11: 'rgba' : invalid layout qualifier"));
+    EXPECT_TRUE(log.has("ERROR: 0:10: 'rgba' : invalid layout qualifier"));
+    EXPECT_TRUE(log.has(
+        "ERROR: 0:10: 'layout qualifier' : pixel local storage requires a format specifier"));
     EXPECT_TRUE(log.has(
         "ERROR: 0:11: 'layout qualifier' : pixel local storage requires a format specifier"));
-    EXPECT_TRUE(log.has(
-        "ERROR: 0:12: 'layout qualifier' : pixel local storage requires a format specifier"));
     EXPECT_TRUE(
-        log.has("ERROR: 0:12: 'layout qualifier' : pixel local storage requires a binding index"));
+        log.has("ERROR: 0:11: 'layout qualifier' : pixel local storage requires a binding index"));
 
     // PLS handles must be within MAX_PIXEL_LOCAL_STORAGE_PLANES.
     GLint MAX_PIXEL_LOCAL_STORAGE_PLANES;
@@ -8067,6 +8309,8 @@ TEST_P(PixelLocalStorageCompilerTest, LayoutQualifiers)
     layout(binding=10, r32f) highp uniform upixelLocalANGLE pls10;
     layout(binding=11, r32ui) highp uniform pixelLocalANGLE pls11;
     layout(binding=12, r32ui) highp uniform ipixelLocalANGLE pls12;
+    layout(binding=13, r32i) highp uniform pixelLocalANGLE pls13;
+    layout(binding=14, r32i) highp uniform upixelLocalANGLE pls14;
     void main()
     {
     })";
@@ -8097,6 +8341,10 @@ TEST_P(PixelLocalStorageCompilerTest, LayoutQualifiers)
         log.has("ERROR: 0:14: 'r32ui' : pixel local storage format requires upixelLocalANGLE"));
     EXPECT_TRUE(
         log.has("ERROR: 0:15: 'r32ui' : pixel local storage format requires upixelLocalANGLE"));
+    EXPECT_TRUE(
+        log.has("ERROR: 0:16: 'r32i' : pixel local storage format requires ipixelLocalANGLE"));
+    EXPECT_TRUE(
+        log.has("ERROR: 0:17: 'r32i' : pixel local storage format requires ipixelLocalANGLE"));
 
     // PLS handles cannot have duplicate binding indices.
     constexpr char kPLSDuplicateBindings[] = R"(#version 310 es
@@ -8528,12 +8776,12 @@ TEST_P(PixelLocalStorageCompilerTest, BlendFuncExtended_illegal_with_PLS)
     void main()
     {})";
     EXPECT_FALSE(log.compileFragmentShader(kBlendFuncExtendedNoLocation));
-    EXPECT_TRUE(log.has(
-        "ERROR: 0:5: 'out1' : must explicitly specify all locations when using multiple fragment "
-        "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
-    EXPECT_TRUE(log.has(
-        "ERROR: 0:6: 'out0' : must explicitly specify all locations when using multiple fragment "
-        "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
+    EXPECT_TRUE(
+        log.has("'out1' : must explicitly specify all locations when using multiple fragment "
+                "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
+    EXPECT_TRUE(
+        log.has("'out0' : must explicitly specify all locations when using multiple fragment "
+                "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
 
     // index=0 is ok.
     constexpr char kValidFragmentIndex0[] = R"(#version 300 es

@@ -42,26 +42,31 @@ class Document;
 class DocumentThreadableLoader;
 class ResourceError;
 
-class CrossOriginPreflightChecker final : private CachedRawResourceClient {
+class CrossOriginPreflightChecker final : public RefCounted<CrossOriginPreflightChecker>, private CachedRawResourceClient {
 public:
     static void doPreflight(DocumentThreadableLoader&, ResourceRequest&&);
 
-    CrossOriginPreflightChecker(DocumentThreadableLoader&, ResourceRequest&&);
+    static Ref<CrossOriginPreflightChecker> create(DocumentThreadableLoader&, ResourceRequest&&);
     ~CrossOriginPreflightChecker();
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void startPreflight();
 
     void setDefersLoading(bool);
 
 private:
+    CrossOriginPreflightChecker(DocumentThreadableLoader&, ResourceRequest&&);
+
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) final;
 
     static void handleLoadingFailure(DocumentThreadableLoader&, unsigned long, const ResourceError&);
     static void validatePreflightResponse(DocumentThreadableLoader&, ResourceRequest&&, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&);
-    Ref<DocumentThreadableLoader> protectedLoader() const;
 
-    SingleThreadWeakRef<DocumentThreadableLoader> m_loader;
+    SingleThreadWeakPtr<DocumentThreadableLoader> m_loader;
     CachedResourceHandle<CachedRawResource> m_resource;
     ResourceRequest m_request;
 };

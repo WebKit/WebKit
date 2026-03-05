@@ -95,7 +95,7 @@ private:
     void unmarkEndOfStream();
     void setMediaPlayerReadyState(WebCore::MediaPlayerEnums::ReadyState);
     void setTimeFudgeFactor(const MediaTime&);
-    void attached();
+    void NODELETE attached();
     void shutdown();
 
     void disconnect();

@@ -30,9 +30,4 @@
 
 namespace WebCore {
 
-inline RefPtr<LocalDOMWindow> Document::protectedWindow() const
-{
-    return m_domWindow;
-}
-
 }

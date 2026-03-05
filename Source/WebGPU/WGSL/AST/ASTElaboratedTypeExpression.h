@@ -40,8 +40,8 @@ public:
 private:
     ElaboratedTypeExpression(SourceSpan span, Identifier&& base, Expression::List&& arguments)
         : Expression(span)
-        , m_base(WTFMove(base))
-        , m_arguments(WTFMove(arguments))
+        , m_base(WTF::move(base))
+        , m_arguments(WTF::move(arguments))
     { }
 
     Identifier m_base;

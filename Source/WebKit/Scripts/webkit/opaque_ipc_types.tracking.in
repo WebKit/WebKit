@@ -100,7 +100,17 @@
 [Legacy] AliasParam WebKit::CoreIPCCFDictionary::KeyType Variant<WebKit::CoreIPCCFArray, WebKit::CoreIPCBoolean, WebKit::CoreIPCCFCharacterSet, WebKit::CoreIPCData, WebKit::CoreIPCDate, WebKit::CoreIPCCFDictionary, WebKit::CoreIPCNull, WebKit::CoreIPCNumber, WebKit::CoreIPCString, WebKit::CoreIPCCFURL>
 [Legacy] AliasParam WebKit::CoreIPCNSURLRequestData::BodyParts Variant<WebKit::CoreIPCString, WebKit::CoreIPCData>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::ExceptionType Vector<std::pair<WebKit::CoreIPCString, Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, bool>>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, WebKit::CoreIPCDate, bool>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoSubDict Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoEntry Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDict>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoArray Vector<WebKit::CoreIPCSecTrustData::RevocationInfoEntry>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoOption Variant<WebKit::CoreIPCDate, WebKit::CoreIPCString, bool, WebKit::CoreIPCSecTrustData::RevocationInfoArray>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoType Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::InfoOption>>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyArrayOfData Vector<WebKit::CoreIPCData>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyVariant Variant<bool, WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyArrayOfNumbers, WebKit::CoreIPCSecTrustData::PolicyArrayOfStrings, WebKit::CoreIPCSecTrustData::PolicyArrayOfData, WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers, WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumber>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyOption Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyVariant>>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyValue Variant<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyOption>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyType Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyValue>>
 [Legacy] AliasParam WebKit::ImageBufferBackendHandle Variant<WebCore::ShareableBitmapHandle, MachSendRight, WebCore::DynamicContentScalingDisplayList>
 [Legacy] AliasParam WebKit::ImageBufferBackendHandle Variant<WebCore::ShareableBitmapHandle, MachSendRight>
 [Legacy] AliasParam WebKit::ObjectValue WebKit::CoreIPCData
@@ -121,6 +131,10 @@
 [Legacy] StructureParam WebKit::NetworkSessionCreationParameters.proxyConfigData std::optional<Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>>
 [Legacy] StructureParam WebKit::ICCData.data Vector<uint8_t>
 [Legacy] StructureParam WebKit::IndexedColorSpace.table Vector<uint8_t>
+
+[UnsafeWrapper] std::optional<WebKit::CoreIPCSecTrustData::InfoType> {
+    [NeedsReview] StructureParam WebKit::CoreIPCSecTrustData.info
+}
 
 [UnsafeWrapper] std::optional<std::span<const uint8_t>> {
     [Legacy] StructureParam WebKit::CoreIPCData.dataReference() 
@@ -233,15 +247,12 @@
     [Legacy] MessageParam RemoteQueue.WriteTextureWithCopy data
     [Legacy] MessageParam WebPageProxy.BindRemoteAccessibilityFrames dataToken
     [Legacy] MessageParam WebSWServerConnection.SubscribeToPushService applicationServerKey
-    [Legacy] StructureParam WebKit::DDModel::DDReplaceVertices.buffer
-    [Legacy] StructureParam WebKit::DDModel::DDUpdateMeshDescriptor.indices
     [Legacy] StructureParam WebKit::CoreIPCPKSecureElementPass.ipcData()
     [Legacy] StructureParam WebKit::CoreIPCCFURL.toVector()
     [Legacy] StructureParam WebKit::NetworkProcessCreationParameters.uiProcessCookieStorageIdentifier
     [Legacy] StructureParam WebKit::WebPushD::WebPushDaemonConnectionConfiguration.hostAppAuditTokenData
     [Legacy] StructureParam WebKit::WebsiteDataStoreParameters.uiProcessCookieStorageIdentifier
     [Legacy] StructureParam WebCore::ContentFilterUnblockHandler.webFilterEvaluatorData()
-    [Legacy] StructureParam WebCore::FontPlatformSerializedCreationData.fontFaceData
     [Legacy] StructureParam WebCore::FormData.m_boundary
     [Legacy] StructureParam WebCore::NotificationData.data
     [Legacy] StructureParam WebCore::PushSubscriptionData.clientECDHPublicKey
@@ -254,9 +265,10 @@
     [Legacy] StructureParam WebCore::WrappedCryptoKey.encryptedKey
     [Legacy] StructureParam JSC::ArrayBuffer.toVector()
     [Legacy] StructureParam WebCore::MockWebAuthenticationConfiguration::HidConfiguration.pinProtocols
-    [Legacy] StructureParam WebCore::DDModel::DDReplaceVertices.buffer
-    [Legacy] StructureParam WebCore::DDModel::DDUpdateMeshDescriptor.indices
-    [Legacy] StructureParam WebCore::DDModel::DDImageAsset.data
+    [Legacy] StructureParam WebModel::ImageAsset.data
+    [Legacy] StructureParam WebModel::MaterialDescriptor.materialGraph
+    [Legacy] StructureParam WebModel::UpdateMaterialDescriptor.materialGraph
+    [Legacy] StructureParam WebModel::UpdateMeshDescriptor.indexData
     [Legacy] StructureParam WebCore::CustomFontCreationData.fontFaceData
 
     [NotSentFromWebContent] MessageParam WebPage.GetInformationFromImageData imageData
@@ -264,12 +276,6 @@
     [NotSentFromWebContent] MessageParamReply WebPageProxy.BindRemoteAccessibilityFrames token
     [NotSentFromWebContent] MessageParamReply WebPageProxy.LoadSynchronousURLSchemeTask data
     [NotSentFromWebContent] MessageParamReply NetworkConnectionToWebProcess.PerformSynchronousLoad data
-}
-
-[UnsafeWrapper] Vector<char> {
-    [Legacy] StructureParam WebKit::RTCNetwork.description
-    [Legacy] StructureParam WebKit::RTCNetwork.name
-    [Legacy] StructureParam WebKit::WebRTCNetwork::SocketAddress.hostname
 }
 
 [UnsafeWrapper] Vector<unsigned char> {
@@ -361,14 +367,9 @@
     [Legacy] StructureParam WebKit::NetworkSessionCreationParameters.proxyConfiguration
     [Legacy] StructureParam WebKit::SecItemRequestData.m_attributesToMatch
     [Legacy] StructureParam WebKit::SecItemRequestData.m_queryDictionary
-    [Legacy] StructureParam WebCore::FontPlatformDataAttributes.m_attributes
 }
 
-[UnsafeWrapper] std::optional<RetainPtr<CFArrayRef>> {
-    [Legacy] StructureParam WebCore::FontPlatformSerializedAttributes.featureSettings
-}
-
-[UnsafeWrapper] std::optional<RetainPtr<CFDataRef>> {
+[UnsafeWrapper] RetainPtr<CFDataRef> {
     [Legacy] StructureParam WebCore::FontPlatformSerializedAttributes.matrix
 }
 
@@ -382,15 +383,15 @@
 
 [UnsafeWrapper] RetainPtr<NSData> {
     [Legacy] StructureParam WebCore::TextRecognitionResult.imageAnalysisData
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentMerchantSessionData.signature
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentMerchantSessionData.ampEnrollmentPinning
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentTokenData.paymentData
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentData.credential
 }
 
 [UnsafeWrapper] std::span<const char> {
     [Legacy] StructureParam WebKit::RTCPacketOptions::SerializableData.srtpAuthKey
     [Legacy] StructureParam WTF::CString.span()
-}
-
-[UnsafeWrapper] std::optional<WebKit::CoreIPCPlistDictionary> {
-    [Legacy] StructureParam WebKit::CoreIPCNSURLRequestData.protocolProperties
 }
 
 # Shared Memory
@@ -414,7 +415,7 @@
     [Legacy] MessageParamReply WebPage.DidGetLoadDecisionForIcon iconData
     [Legacy] MessageParam RemoteImageDecoderAVFProxy.CreateDecoder data
     [Legacy] MessageParam RemoteImageDecoderAVFProxy.SetData data
-    [Legacy] MessageParam RemoteMediaResourceManager.DataReceived data
+    [Legacy] MessageParam RemoteMediaResourceLoader.DataReceived data
     [Legacy] MessageParam RemoteSourceBufferProxy.Append data
     [Legacy] MessageParam WebProcess.ConsumeAudioComponentRegistrations registrationData
     [Legacy] MessageParam WebPageProxy.RegisterAttachmentIdentifierFromData data
@@ -440,7 +441,7 @@
 [UnsafeWrapper] std::optional<WebCore::SharedMemory::Handle> {
     [Legacy] MessageParamReply WebPage.DrawPagesForPrinting data
     [Legacy] MessageParamReply WebPage.DrawPagesForPrintingDuringDOMPrintOperation data
-    [Legacy] MessageParamReply RemoteMediaResourceManager.DataReceived remoteData
+    [Legacy] MessageParamReply RemoteMediaResourceLoader.DataReceived remoteData
     [Legacy] MessageParam RemoteBuffer.Copy data
     [Legacy] MessageParam RemoteQueue.WriteBuffer data
     [Legacy] MessageParam RemoteQueue.WriteTexture dataHandle
@@ -453,6 +454,8 @@
 [UnsafeWrapper] WebCore::SharedMemoryHandle {
     [Legacy] StructureParam WebKit::ConsumerSharedCARingBufferHandle.memory
     [Legacy] StructureParam WebCore::ShareableResourceHandle.m_handle
+    [NotSentFromWebContent] StructureParam IPC::TransferString::SharedSpan8.dataHandle
+    [NotSentFromWebContent] StructureParam IPC::TransferString::SharedSpan16.dataHandle
 }
 
 [UnsafeWrapper] WebCore::SharedMemory::Handle {
@@ -477,8 +480,74 @@
     [DebugOnly] MessageParam WebPasteboardProxy.TestIPCSharedMemory handle
 }
 
+[Legacy] StructureParam WebModel::UpdateMeshDescriptor.vertexData Vector<Vector<uint8_t>>
+
+[UnsafeWrapper] AliasParam IPC::TransferString::IPCData Variant<std::monostate, std::span<const uint8_t>, std::span<const char16_t>, IPC::TransferString::SharedSpan8, IPC::TransferString::SharedSpan16>
+
+[UnsafeWrapper] WebCore::GraphicsContextGL::ExternalSyncSource {
+    [Legacy] MessageParam RemoteGraphicsContextGL.CreateExternalSync arg0
+}
+
+[UnsafeWrapper] IPC::TransferString::IPCData {
+    [Legacy] StructureParam IPC::TransferString.toIPCData()
+}
+
+[UnsafeWrapper] FileSystem::Salt {
+    [Legacy] StructureParam WebKit::WebProcessDataStoreParameters.mediaKeysStorageSalt
+}
+
+[UnsafeWrapper] WebKit::SharedVideoFrame::Buffer {
+    [Legacy] StructureParam WebKit::SharedVideoFrame.buffer
+}
+
+[UnsafeWrapper] UniqueRef<WebKit::CFObjectValue> {
+    [Legacy] StructureParam WebKit::CoreIPCCFType.object()
+}
+
+[UnsafeWrapper] std::optional<WebKit::ImageBufferBackendHandle> {
+    [Legacy] MessageParam RemoteImageBufferProxy.DidCreateBackend handle
+    [Legacy] MessageParamReply WebPage.TakeSnapshot image
+    [Legacy] StructureParam WebKit::RemoteLayerBackingStoreProperties.m_bufferHandle
+    [Legacy] StructureParam WebKit::BufferSetBackendHandle.bufferHandle
+    [Legacy] StructureParam WebKit::ImageBufferSetPrepareBufferForDisplayOutputData.backendHandle
+    [Legacy] StructureParam WebKit::WCBackingStore.handle()
+}
+
+[UnsafeWrapper] UniqueRef<WebKit::ObjectValue> {
+    [Legacy] StructureParam WebKit::CoreIPCNSCFObject.value()
+}
+
+[UnsafeWrapper] std::optional<WebKit::SharedVideoFrame::Buffer> {
+    [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewVideoFrameBuffer frame
+    [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewConvertedVideoFrameBuffer frame
+}
+
+[UnsafeWrapper] std::optional<Vector<WebKit::CoreIPCNSURLRequestData::BodyParts>> {
+    [Legacy] StructureParam WebKit::CoreIPCNSURLRequestData.bodyParts
+}
+
+[UnsafeWrapper] UniqueRef<WebKit::PlistValue> {
+    [Legacy] StructureParam WebKit::CoreIPCPlistObject.value()
+}
+
+[UnsafeWrapper] std::unique_ptr<Vector<KeyValuePair<WebKit::CoreIPCCFDictionary::KeyType, WebKit::CoreIPCCFType>>> {
+    [Legacy] StructureParam WebKit::CoreIPCCFDictionary.vector()
+}
+
+[UnsafeWrapper] std::optional<Vector<WebKit::CoreIPCSecTrustData::ExceptionType>> {
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.exceptions
+}
+
+[UnsafeWrapper] Vector<WebKit::CoreIPCSecTrustData::PolicyType> {
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.policies
+}
+
+[Legacy] StructureParam WebCore::AccessibilityRemoteToken.bytes Vector<uint8_t>
+
 # GTK Specific
 [Legacy] StructureParam sk_sp<SkColorSpace>.dataReference() std::span<const uint8_t>
 [Legacy] StructureParam sk_sp<SkData>.dataReference() std::span<const uint8_t>
 [Legacy] StructureParam SkString.data() std::span<const char>
 [Legacy] StructureParam WebCore::CertificateInfo.certificateChain() Vector<Vector<uint8_t>>
+[Legacy] MessageParam RiceBackend.SendData data WebCore::SharedMemory::Handle
+[Legacy] MessageParam RiceBackendProxy.NotifyIncomingData data WebCore::SharedMemory::Handle

@@ -107,7 +107,7 @@ class OPENSSL_EXPORT VerifyError {
   StatusCode Code() const;
 
   // Index returns the certificate in the chain for which the error first
-  // occured, starting with 0 for the leaf certificate. Later certificates in
+  // occurred, starting with 0 for the leaf certificate. Later certificates in
   // the chain may also exhibit the same error. If the error is not specific to
   // a certificate, -1 is returned.
   ptrdiff_t Index() const;

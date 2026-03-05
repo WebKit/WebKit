@@ -47,7 +47,7 @@ public:
     
     void invalidate();
 
-    WebProcessProxy* process() const;
+    WebProcessProxy* NODELETE process() const;
 
 private:
     GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy&, GeolocationIdentifier, WebProcessProxy&);
@@ -61,7 +61,7 @@ class GeolocationPermissionRequest : public API::ObjectImpl<API::Object::Type::G
 public:
     static Ref<GeolocationPermissionRequest> create(Function<void(bool)>&& completionHandler)
     {
-        return adoptRef(*new GeolocationPermissionRequest(WTFMove(completionHandler)));
+        return adoptRef(*new GeolocationPermissionRequest(WTF::move(completionHandler)));
     }
     
     void allow() { m_completionHandler(true); }
@@ -69,7 +69,7 @@ public:
 
 private:
     GeolocationPermissionRequest(Function<void(bool)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
     { }
     
     Function<void(bool)> m_completionHandler;

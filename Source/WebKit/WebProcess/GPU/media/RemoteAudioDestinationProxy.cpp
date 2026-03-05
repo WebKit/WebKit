@@ -42,9 +42,9 @@
 #if PLATFORM(COCOA)
 #include <WebCore/AudioUtilitiesCocoa.h>
 #include <WebCore/CARingBuffer.h>
-#include <WebCore/SpanCoreAudio.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <mach/mach_time.h>
+#include <pal/cf/CoreAudioExtras.h>
 #endif
 
 namespace WebKit {
@@ -106,7 +106,7 @@ void RemoteAudioDestinationProxy::startRenderingThread()
 
     // FIXME(263073): Coalesce compatible realtime threads together to render sequentially
     // rather than have separate realtime threads for each RemoteAudioDestinationProxy.
-    m_renderThread = WebCore::createMaybeRealtimeAudioThread("RemoteAudioDestinationProxy render thread"_s, WTFMove(offThreadRendering), Seconds { 128 / m_remoteSampleRate });
+    m_renderThread = WebCore::createMaybeRealtimeAudioThread("RemoteAudioDestinationProxy render thread"_s, WTF::move(offThreadRendering), Seconds { 128 / m_remoteSampleRate });
 }
 
 void RemoteAudioDestinationProxy::stopRenderingThread()
@@ -138,7 +138,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         if (frameCount)
             frameCountHandle = frameCount->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
         RELEASE_ASSERT(frameCountHandle.has_value());
-        gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::CreateAudioDestination(*m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), [protectedThis = Ref { *this }](size_t latency) {
+        gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::CreateAudioDestination(*m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTF::move(*frameCountHandle)), [protectedThis = Ref { *this }](size_t latency) {
             protectedThis->m_audioUnitLatency = latency;
         }, 0);
 
@@ -148,9 +148,9 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         size_t numberOfFrames = m_remoteSampleRate * ringBufferSizeInSecond;
         auto result = ProducerSharedCARingBuffer::allocate(streamFormat, numberOfFrames);
         RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
-        auto [ringBuffer, handle] = WTFMove(*result);
-        m_ringBuffer = WTFMove(ringBuffer);
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { *m_destinationID, WTFMove(handle) }, 0);
+        auto [ringBuffer, handle] = WTF::move(*result);
+        m_ringBuffer = WTF::move(ringBuffer);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { *m_destinationID, WTF::move(handle) }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
         m_audioBufferList->setSampleCount(maxAudioBufferListSampleCount);
 #endif
@@ -181,14 +181,14 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
 {
     RefPtr connection = this->connection();
     if (!connection) {
-        RunLoop::currentSingleton().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::currentSingleton().dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
             protectedThis->setIsPlaying(false);
             completionHandler(false);
         });
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying, size_t latency) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](bool isPlaying, size_t latency) mutable {
         protectedThis->setIsPlaying(isPlaying);
         protectedThis->m_audioUnitLatency = latency;
         completionHandler(isPlaying);
@@ -199,14 +199,14 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
 {
     RefPtr connection = existingConnection();
     if (!connection) {
-        RunLoop::currentSingleton().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::currentSingleton().dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
             protectedThis->setIsPlaying(false);
             completionHandler(true);
         });
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](bool isPlaying) mutable {
         protectedThis->setIsPlaying(isPlaying);
         completionHandler(!isPlaying);
     });
@@ -239,7 +239,7 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
 
         // Associate the destination data array with the output bus then fill the FIFO.
         for (UInt32 i = 0; i < numberOfBuffers; ++i) {
-            auto memory = WebCore::mutableSpan<float>(buffers[i]);
+            auto memory = PAL::mutableSpan<float>(buffers[i]);
             if (numberOfFrames < memory.size())
                 memory = memory.first(numberOfFrames);
             m_outputBus->setChannelMemory(i, memory);

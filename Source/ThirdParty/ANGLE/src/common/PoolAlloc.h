@@ -52,8 +52,8 @@
 #endif
 
 #if !defined(ANGLE_ALLOC_PROFILE)
-#define ANGLE_ALLOC_PROFILE(kind, ...)
-#define ANGLE_ALLOC_PROFILE_ALIGNMENT(x) (x)
+#    define ANGLE_ALLOC_PROFILE(kind, ...)
+#    define ANGLE_ALLOC_PROFILE_ALIGNMENT(x) (x)
 #endif
 
 namespace angle

@@ -46,6 +46,8 @@ public:
         RefPtr<RTCPeerConnection> connection;
     };
 
+    virtual bool isJSRTCLogsCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(const Logs&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(const Logs&) = 0;
 

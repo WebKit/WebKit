@@ -73,7 +73,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document, OptionSet<ParserC
     , m_scriptRunner(makeUnique<HTMLScriptRunner>(document, static_cast<HTMLScriptRunnerHost&>(*this)))
     , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options))
     , m_parserScheduler(HTMLParserScheduler::create(*this))
-    , m_preloader(makeUnique<HTMLResourcePreloader>(document))
+    , m_preloader(HTMLResourcePreloader::create(document))
     , m_shouldEmitTracePoints(isMainDocumentLoadingFromHTTP(document))
 {
 }
@@ -243,13 +243,13 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
             RefPtr document = this->document();
             ThrowOnDynamicMarkupInsertionCountIncrementer incrementer(*document);
 
-            document->eventLoop().performMicrotaskCheckpoint();
+            document->eventLoop().performMicrotaskCheckpoint(document->vm());
 
             CustomElementReactionStack reactionStack(document->globalObject());
             Ref elementInterface = constructionData->elementInterface.get();
             auto newElement = elementInterface->constructElementWithFallback(*document, constructionData->registry, constructionData->name,
                 m_scriptRunner && !m_scriptRunner->isExecutingScript() ? ParserConstructElementWithEmptyStack::Yes : ParserConstructElementWithEmptyStack::No);
-            m_treeBuilder->didCreateCustomOrFallbackElement(WTFMove(newElement), *constructionData);
+            m_treeBuilder->didCreateCustomOrFallbackElement(WTF::move(newElement), *constructionData);
         }
         return;
     }
@@ -277,7 +277,7 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
     RefPtr parserScheduler = m_parserScheduler;
     do {
         if (isWaitingForScripts()) [[unlikely]] {
-            if (mode == SynchronousMode::AllowYield && parserScheduler->shouldYieldBeforeExecutingScript(m_treeBuilder->protectedScriptToProcess().get(), session))
+            if (mode == SynchronousMode::AllowYield && parserScheduler->shouldYieldBeforeExecutingScript(protect(m_treeBuilder->scriptToProcess()).get(), session))
                 return true;
             
             runScriptsForPausedTreeBuilder();
@@ -290,7 +290,7 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
         // how the parser has always handled stopping when the page assigns window.location. What should
         // happen instead is that assigning window.location causes the parser to stop parsing cleanly.
         // The problem is we're not prepared to do that at every point where we run JavaScript.
-        if (!parsingFragment && document()->frame() && document()->protectedFrame()->protectedNavigationScheduler()->locationChangePending()) [[unlikely]]
+        if (!parsingFragment && document()->frame() && protect(protect(document()->frame())->navigationScheduler())->locationChangePending()) [[unlikely]]
             return false;
 
         if (mode == SynchronousMode::AllowYield && parserScheduler->shouldYieldBeforeToken(session)) [[unlikely]]
@@ -372,7 +372,7 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLTokenizer::TokenPtr& raw
         rawToken.clear();
     }
 
-    m_treeBuilder->constructTree(WTFMove(token));
+    m_treeBuilder->constructTree(WTF::move(token));
 }
 
 bool HTMLDocumentParser::hasInsertionPoint()
@@ -394,7 +394,7 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
     Ref<HTMLDocumentParser> protectedThis(*this);
 
     source.setExcludeLineNumbers();
-    m_input.insertAtCurrentInsertionPoint(WTFMove(source));
+    m_input.insertAtCurrentInsertionPoint(WTF::move(source));
     pumpTokenizerIfPossible(SynchronousMode::ForceSynchronous);
 
     if (isWaitingForScripts() && !isDetached()) {
@@ -412,12 +412,12 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
 
 void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
-    append(WTFMove(inputSource), SynchronousMode::AllowYield);
+    append(WTF::move(inputSource), SynchronousMode::AllowYield);
 }
 
 void HTMLDocumentParser::appendSynchronously(RefPtr<StringImpl>&& inputSource)
 {
-    append(WTFMove(inputSource), SynchronousMode::ForceSynchronous);
+    append(WTF::move(inputSource), SynchronousMode::ForceSynchronous);
 }
 
 void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMode synchronousMode)
@@ -429,7 +429,7 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMod
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
 
-    String source { WTFMove(inputSource) };
+    String source { WTF::move(inputSource) };
 
     if (m_preloadScanner) {
         if (m_input.current().isEmpty() && !isWaitingForScripts()) {
@@ -439,7 +439,7 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMod
         } else {
             m_preloadScanner->appendToEnd(source);
             if (isWaitingForScripts())
-                m_preloadScanner->scan(*m_preloader, *protectedDocument());
+                m_preloadScanner->scan(*m_preloader, *protect(document()));
         }
     }
 
@@ -584,7 +584,7 @@ void HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan()
 {
     ASSERT(m_preloadScanner);
     m_preloadScanner->appendToEnd(m_input.current());
-    m_preloadScanner->scan(*m_preloader, *protectedDocument());
+    m_preloadScanner->scan(*m_preloader, *protect(document()));
 }
 
 static ALWAYS_INLINE bool canChangeModuleScriptsExecutionTiming()

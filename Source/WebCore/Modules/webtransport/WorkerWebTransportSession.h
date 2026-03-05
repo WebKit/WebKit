@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class WebTransport;
-class WebTransportSendStreamSink;
 
 class WorkerWebTransportSession : public WebTransportSession, public WebTransportSessionClient {
 public:
@@ -48,14 +47,16 @@ private:
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
     void receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier) final;
-    void receiveBidirectionalStream(Ref<WebTransportSendStreamSink>&&) final;
+    void receiveBidirectionalStream(WebTransportStreamIdentifier) final;
     void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
-    void didFail(std::optional<unsigned>&&, String&&) final;
+    void streamReceiveError(WebTransportStreamIdentifier, uint64_t) final;
+    void streamSendError(WebTransportStreamIdentifier, uint64_t) final;
+    void didFail(std::optional<uint32_t>&&, String&&) final;
     void didDrain() final;
 
     Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final;
-    Ref<WritableStreamPromise> createOutgoingUnidirectionalStream() final;
-    Ref<BidirectionalStreamPromise> createBidirectionalStream() final;
+    Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() final;
+    Ref<WebTransportStreamPromise> createBidirectionalStream() final;
     Ref<WebTransportSendPromise> streamSendBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin) final;
     Ref<WebTransportConnectionStatsPromise> getStats() final;
     Ref<WebTransportSendStreamStatsPromise> getSendStreamStats(WebTransportStreamIdentifier) final;

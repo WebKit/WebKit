@@ -42,7 +42,7 @@ public:
 
     String customCSSText(const CSS::SerializationContext&) const;
 
-    bool equals(const CSSUnicodeRangeValue&) const;
+    bool NODELETE equals(const CSSUnicodeRangeValue&) const;
 
 private:
     CSSUnicodeRangeValue(char32_t from, char32_t to)

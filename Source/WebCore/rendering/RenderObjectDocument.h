@@ -34,7 +34,6 @@
 namespace WebCore {
 
 inline Document& RenderObject::document() const { return m_node.get().document(); }
-inline Ref<Document> RenderObject::protectedDocument() const { return document(); }
 
 inline bool RenderObject::isDocumentElementRenderer() const
 {
@@ -44,6 +43,11 @@ inline bool RenderObject::isDocumentElementRenderer() const
 inline RenderView& RenderObject::view() const
 {
     return *document().renderView();
+}
+
+inline const Settings& RenderObject::settings() const
+{
+    return document().settings();
 }
 
 inline bool RenderObject::renderTreeBeingDestroyed() const

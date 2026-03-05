@@ -21,10 +21,8 @@ set(TestRunnerShared_FRAMEWORKS
     PAL
     WTF
     WebCore
+    bmalloc
 )
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND WebKitTestRunner_FRAMEWORKS bmalloc)
-endif ()
 
 set(TestRunnerShared_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}

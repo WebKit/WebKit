@@ -20,7 +20,9 @@
 
 #if USE(GSTREAMER)
 
+#include "GRefPtrGStreamer.h"
 #include <gst/gst.h>
+#include <wtf/text/WTFString.h>
 
 G_BEGIN_DECLS
 
@@ -48,6 +50,7 @@ GType webkit_audio_sink_get_type(void);
 
 G_END_DECLS
 
-GstElement* webkitAudioSinkNew(const String&);
+GstElement* webkitAudioSinkNew(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+bool webkitAudioSinkSetDevice(GstElement*, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
 
 #endif // USE(GSTREAMER)

@@ -254,8 +254,6 @@ static void set_allintra_speed_feature_framesize_dependent(
     sf->part_sf.ml_4_partition_search_level_index = 2;
     if (is_720p_or_larger) {
       sf->part_sf.use_square_partition_only_threshold = BLOCK_64X64;
-    } else if (is_480p_or_larger) {
-      sf->part_sf.use_square_partition_only_threshold = BLOCK_32X32;
     } else {
       sf->part_sf.use_square_partition_only_threshold = BLOCK_32X32;
     }
@@ -640,8 +638,8 @@ static void set_good_speed_features_lc_dec_framesize_dependent(
 
   const AV1_COMMON *const cm = &cpi->common;
   const bool is_720p_or_larger = AOMMIN(cm->width, cm->height) >= 720;
-  const bool is_between_608p_and_720p = AOMMIN(cm->width, cm->height) >= 608 &&
-                                        AOMMIN(cm->width, cm->height) <= 720;
+  const bool is_between_608p_and_1080p = AOMMIN(cm->width, cm->height) >= 608 &&
+                                         AOMMIN(cm->width, cm->height) <= 1080;
   const bool is_vertical_video = cm->width < cm->height;
 
   const FRAME_UPDATE_TYPE update_type =
@@ -650,7 +648,7 @@ static void set_good_speed_features_lc_dec_framesize_dependent(
   const int is_key_frame = frame_is_intra_only(cm);
 
   // Speed features for vertical videos
-  if (is_vertical_video && is_between_608p_and_720p) {
+  if (is_vertical_video && is_between_608p_and_1080p) {
     const int leaf_and_overlay_frames =
         (update_type == LF_UPDATE || update_type == OVERLAY_UPDATE ||
          update_type == INTNL_OVERLAY_UPDATE);
@@ -809,8 +807,6 @@ static void set_good_speed_feature_framesize_dependent(
     sf->part_sf.ml_4_partition_search_level_index = 2;
     if (is_720p_or_larger) {
       sf->part_sf.use_square_partition_only_threshold = BLOCK_64X64;
-    } else if (is_480p_or_larger) {
-      sf->part_sf.use_square_partition_only_threshold = BLOCK_32X32;
     } else {
       sf->part_sf.use_square_partition_only_threshold = BLOCK_32X32;
     }
@@ -1710,7 +1706,7 @@ static void set_rt_speed_feature_framesize_dependent(const AV1_COMP *const cpi,
   if (cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN) {
     // TODO(marpan): Check settings for speed 7 and 8.
     if (speed >= 7) {
-      sf->rt_sf.reduce_mv_pel_precision_highmotion = 1;
+      sf->rt_sf.reduce_mv_pel_precision_highmotion = 0;
       sf->mv_sf.use_bsize_dependent_search_method = 0;
       sf->rt_sf.skip_cdef_sb = 1;
       sf->rt_sf.increase_color_thresh_palette = 1;
@@ -1729,7 +1725,6 @@ static void set_rt_speed_feature_framesize_dependent(const AV1_COMP *const cpi,
       sf->rt_sf.nonrd_prune_ref_frame_search = 3;
       sf->rt_sf.var_part_split_threshold_shift = 10;
       sf->mv_sf.subpel_search_method = SUBPEL_TREE_PRUNED_MORE;
-      sf->rt_sf.reduce_mv_pel_precision_highmotion = 3;
       sf->rt_sf.reduce_mv_pel_precision_lowcomplex = 1;
       sf->lpf_sf.cdef_pick_method = CDEF_PICK_FROM_Q;
       sf->rt_sf.nonrd_check_partition_merge_mode = 0;
@@ -1747,7 +1742,7 @@ static void set_rt_speed_feature_framesize_dependent(const AV1_COMP *const cpi,
       sf->rt_sf.prune_palette_search_nonrd = 1;
       sf->rt_sf.prune_intra_mode_using_best_sad_so_far = true;
       sf->rt_sf.rc_faster_convergence_static = 1;
-      sf->rt_sf.rc_compute_spatial_var_sc = 1;
+      sf->rt_sf.rc_compute_spatial_var_sc_kf = 1;
     }
     if (speed >= 11) {
       sf->rt_sf.skip_lf_screen = 2;
@@ -2462,7 +2457,7 @@ static inline void init_rt_sf(REAL_TIME_SPEED_FEATURES *rt_sf) {
   rt_sf->overshoot_detection_cbr = NO_DETECTION;
   rt_sf->check_scene_detection = 0;
   rt_sf->rc_adjust_keyframe = 0;
-  rt_sf->rc_compute_spatial_var_sc = 0;
+  rt_sf->rc_compute_spatial_var_sc_kf = 0;
   rt_sf->prefer_large_partition_blocks = 0;
   rt_sf->use_temporal_noise_estimate = 0;
   rt_sf->fullpel_search_step_param = 0;
@@ -2750,8 +2745,8 @@ static void set_good_speed_features_lc_dec_qindex_dependent(
   if (speed < 1 || speed > 3) return;
 
   const AV1_COMMON *const cm = &cpi->common;
-  const bool is_between_608p_and_720p = AOMMIN(cm->width, cm->height) >= 608 &&
-                                        AOMMIN(cm->width, cm->height) <= 720;
+  const bool is_between_608p_and_1080p = AOMMIN(cm->width, cm->height) >= 608 &&
+                                         AOMMIN(cm->width, cm->height) <= 1080;
   const bool is_720p_or_larger = AOMMIN(cm->width, cm->height) >= 720;
   const bool is_vertical_video = cm->width < cm->height;
   const FRAME_UPDATE_TYPE update_type =
@@ -2761,7 +2756,7 @@ static void set_good_speed_features_lc_dec_qindex_dependent(
        update_type == INTNL_OVERLAY_UPDATE);
 
   // Speed features for vertical videos
-  if (is_vertical_video && is_between_608p_and_720p) {
+  if (is_vertical_video && is_between_608p_and_1080p) {
     sf->lpf_sf.min_lr_unit_size = RESTORATION_UNITSIZE_MAX >> 1;
     sf->lpf_sf.max_lr_unit_size = RESTORATION_UNITSIZE_MAX >> 1;
   }

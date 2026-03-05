@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class EXTTextureCompressionBPTC final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTTextureCompressionBPTC);
+    WTF_MAKE_TZONE_ALLOCATED(EXTTextureCompressionBPTC);
     WTF_MAKE_NONCOPYABLE(EXTTextureCompressionBPTC);
 public:
     explicit EXTTextureCompressionBPTC(WebGLRenderingContextBase&);
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTTextureCompressionBPTC)

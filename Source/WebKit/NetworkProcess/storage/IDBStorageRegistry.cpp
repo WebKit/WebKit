@@ -54,7 +54,7 @@ void IDBStorageRegistry::removeConnectionToClient(IPC::Connection::UniqueID conn
     auto allConnectionsToClient = std::exchange(m_connectionsToClient, { });
     for (auto& [identifier, connectionToClient] : allConnectionsToClient) {
         if (connectionToClient->ipcConnection() != connection) {
-            m_connectionsToClient.add(identifier, WTFMove(connectionToClient));
+            m_connectionsToClient.add(identifier, WTF::move(connectionToClient));
             continue;
         }
         connectionToClient->connectionToClient().connectionToClientClosed();
@@ -95,14 +95,14 @@ void IDBStorageRegistry::unregisterTransaction(WebCore::IDBServer::UniqueIDBData
 
 WebCore::IDBServer::UniqueIDBDatabaseConnection* IDBStorageRegistry::connection(WebCore::IDBDatabaseConnectionIdentifier identifier)
 {
-    return m_connections.get(identifier).get();
+    return m_connections.get(identifier);
 }
 
 WebCore::IDBServer::UniqueIDBDatabaseTransaction* IDBStorageRegistry::transaction(WebCore::IDBResourceIdentifier identifier)
 {
     if (identifier.isEmpty())
         return nullptr;
-    return m_transactions.get(identifier).get();
+    return m_transactions.get(identifier);
 }
 
 } // namespace WebKit

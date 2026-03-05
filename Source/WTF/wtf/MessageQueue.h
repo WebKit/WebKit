@@ -93,7 +93,7 @@ namespace WTF {
     inline void MessageQueue<DataType>::append(std::unique_ptr<DataType> message)
     {
         Locker lock { m_lock };
-        m_queue.append(WTFMove(message));
+        m_queue.append(WTF::move(message));
         m_condition.notifyOne();
     }
 
@@ -101,7 +101,7 @@ namespace WTF {
     inline void MessageQueue<DataType>::appendAndKill(std::unique_ptr<DataType> message)
     {
         Locker lock { m_lock };
-        m_queue.append(WTFMove(message));
+        m_queue.append(WTF::move(message));
         m_killed = true;
         m_condition.notifyAll();
     }
@@ -112,7 +112,7 @@ namespace WTF {
     {
         Locker lock { m_lock };
         bool wasEmpty = m_queue.isEmpty();
-        m_queue.append(WTFMove(message));
+        m_queue.append(WTF::move(message));
         m_condition.notifyOne();
         return wasEmpty;
     }
@@ -121,7 +121,7 @@ namespace WTF {
     inline void MessageQueue<DataType>::prepend(std::unique_ptr<DataType> message)
     {
         Locker lock { m_lock };
-        m_queue.prepend(WTFMove(message));
+        m_queue.prepend(WTF::move(message));
         m_condition.notifyOne();
     }
 
@@ -167,7 +167,7 @@ namespace WTF {
         }
 
         ASSERT(found != m_queue.end());
-        std::unique_ptr<DataType> message = WTFMove(*found);
+        std::unique_ptr<DataType> message = WTF::move(*found);
         m_queue.remove(found);
         result = MessageQueueMessageReceived;
         return message;
@@ -191,7 +191,7 @@ namespace WTF {
         Locker lock { m_lock };
         if (m_killed)
             return { };
-        return WTFMove(m_queue);
+        return WTF::move(m_queue);
     }
 
     template<typename DataType>

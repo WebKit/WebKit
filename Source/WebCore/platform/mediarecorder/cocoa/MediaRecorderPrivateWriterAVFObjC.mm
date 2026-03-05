@@ -93,12 +93,12 @@ std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriterAVFObjC::c
         return nullptr;
     }
 
-    return std::unique_ptr<MediaRecorderPrivateWriter> { new MediaRecorderPrivateWriterAVFObjC(WTFMove(writer), listener) };
+    return std::unique_ptr<MediaRecorderPrivateWriter> { new MediaRecorderPrivateWriterAVFObjC(WTF::move(writer), listener) };
 }
 
 MediaRecorderPrivateWriterAVFObjC::MediaRecorderPrivateWriterAVFObjC(RetainPtr<AVAssetWriter>&& writer, MediaRecorderPrivateWriterListener& listener)
     : m_delegate(adoptNS([[WebAVAssetWriterDelegate alloc] initWithWriter:listener]))
-    , m_writer(WTFMove(writer))
+    , m_writer(WTF::move(writer))
     , m_waitingQueue(WorkQueue::create("MediaRecorderPrivateWriterAVFObjC"_s))
 {
     [m_writer setPreferredOutputSegmentInterval:PAL::kCMTimeIndefinite];
@@ -235,7 +235,7 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
         auto sample = samples.takeFirst();
         if (sample->trackID() == m_audioTrackIndex) {
             if (auto cmSample = toCMSampleBuffer(sample, m_audioDescription.get()))
-                audioSamples.append(WTFMove(*cmSample));
+                audioSamples.append(WTF::move(*cmSample));
             else {
                 ASSERT_NOT_REACHED();
                 break;
@@ -243,7 +243,7 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
             continue;
         }
         if (auto cmSample = toCMSampleBuffer(sample, m_videoDescription.get())) {
-            videoSamples.append(WTFMove(*cmSample));
+            videoSamples.append(WTF::move(*cmSample));
             m_hasAddedVideoFrame = true;
         } else {
             ASSERT_NOT_REACHED();
@@ -257,7 +257,7 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
     if (m_audioAssetWriterInput && audioSamples.size()) {
         GenericPromise::Producer producer;
         promises.append(producer.promise());
-        [m_audioAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTFMove(producer), samples = WTFMove(audioSamples), writerInput = m_audioAssetWriterInput]() mutable {
+        [m_audioAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTF::move(producer), samples = WTF::move(audioSamples), writerInput = m_audioAssetWriterInput]() mutable {
             while ([writerInput isReadyForMoreMediaData]) {
                 if (samples.size()) {
                     [writerInput appendSampleBuffer:samples.takeFirst().get()];
@@ -272,7 +272,7 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
     if (m_videoAssetWriterInput && videoSamples.size()) {
         GenericPromise::Producer producer;
         promises.append(producer.promise());
-        [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTFMove(producer), samples = WTFMove(audioSamples), writerInput = m_videoAssetWriterInput, hasAddedVideoFrame = m_hasAddedVideoFrame, endTime]() mutable {
+        [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTF::move(producer), samples = WTF::move(audioSamples), writerInput = m_videoAssetWriterInput, hasAddedVideoFrame = m_hasAddedVideoFrame, endTime]() mutable {
             while ([writerInput isReadyForMoreMediaData]) {
                 if (samples.size()) {
                     [writerInput appendSampleBuffer:samples.takeFirst().get()];
@@ -289,8 +289,8 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<Med
 
     GenericPromise::Producer producer;
     Ref promise = producer.promise();
-    GenericPromise::all(promises)->whenSettled(m_waitingQueue, [producer = WTFMove(producer), writer = m_writer]() mutable {
-        [writer finishWritingWithCompletionHandler:makeBlockPtr([producer = WTFMove(producer)]() mutable {
+    GenericPromise::all(promises)->whenSettled(m_waitingQueue, [producer = WTF::move(producer), writer = m_writer]() mutable {
+        [writer finishWritingWithCompletionHandler:makeBlockPtr([producer = WTF::move(producer)]() mutable {
             producer.resolve();
         }).get()];
     });

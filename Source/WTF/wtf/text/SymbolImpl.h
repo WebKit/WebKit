@@ -72,7 +72,7 @@ public:
     };
 
 protected:
-    WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
+    WTF_EXPORT_PRIVATE static unsigned NODELETE nextHashForSymbol();
 
     friend class StringImpl;
 
@@ -137,12 +137,12 @@ public:
 
 private:
     PrivateSymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base)
-        : SymbolImpl(characters, WTFMove(base), s_flagIsPrivate)
+        : SymbolImpl(characters, WTF::move(base), s_flagIsPrivate)
     {
     }
 
     PrivateSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base)
-        : SymbolImpl(characters, WTFMove(base), s_flagIsPrivate)
+        : SymbolImpl(characters, WTF::move(base), s_flagIsPrivate)
     {
     }
 };
@@ -153,20 +153,20 @@ private:
     friend class SymbolImpl;
     friend class SymbolRegistry;
 
-    SymbolRegistry* symbolRegistry() const { return m_symbolRegistry.get(); }
+    SymbolRegistry* symbolRegistry() const LIFETIME_BOUND { return m_symbolRegistry.get(); }
     void clearSymbolRegistry() { m_symbolRegistry = nullptr; }
 
     static Ref<RegisteredSymbolImpl> create(StringImpl& rep, SymbolRegistry&);
     static Ref<RegisteredSymbolImpl> createPrivate(StringImpl& rep, SymbolRegistry&);
 
     RegisteredSymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
-        : SymbolImpl(characters, WTFMove(base), flags)
+        : SymbolImpl(characters, WTF::move(base), flags)
         , m_symbolRegistry(&registry)
     {
     }
 
     RegisteredSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
-        : SymbolImpl(characters, WTFMove(base), flags)
+        : SymbolImpl(characters, WTF::move(base), flags)
         , m_symbolRegistry(&registry)
     {
     }

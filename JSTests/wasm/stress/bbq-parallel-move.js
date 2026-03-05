@@ -63,8 +63,11 @@ async function test() {
     }
 
     if (verbose) print(lastLog)
-    if (lastLog != "value: 3")
-        throw ""
+    if (lastLog != "value: 3") {
+        print("FAIL");
+        print(JSON.stringify(lastLog));
+        throw new Error();
+    }
 
     if (verbose) print("Success")
 }

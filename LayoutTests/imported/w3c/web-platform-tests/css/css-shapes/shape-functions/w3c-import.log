@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/circle-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/circle-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/circle-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/ellipse-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/ellipse-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/ellipse-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/inset-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/inset-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/inset-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/rect-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/rect-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/rect-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/shape-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/shape-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/shape-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/xywh-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/xywh-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/xywh-function-valid.html

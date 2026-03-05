@@ -25,11 +25,14 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
+#include "BPlatform.h"
+
 #if BUSE(TZONE)
 
 #include "BExport.h"
 #include "BInline.h"
-#include "BPlatform.h"
 
 #include <os/log.h>
 #include <stdarg.h>
@@ -87,3 +90,5 @@ private:
 #else // not BUSE(TZONE)
 #define TZONE_LOG_DEBUG(...)
 #endif // BUSE(TZONE)
+
+#endif // __cplusplus

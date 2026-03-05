@@ -59,8 +59,8 @@ public:
         
         m_count = 0;
 
-        dataLogIf((m_verbose && !shouldDumpGraphAtEachPhase(m_graph.m_plan.mode())), "Graph before CFA:\n", m_graph);
-        
+        dataLogIf((m_verbose && !shouldDumpGraphAtEachPhase(m_graph)), "Graph before CFA:\n", m_graph);
+
         // This implements a pseudo-worklist-based forward CFA, except that the visit order
         // of blocks is the bytecode program order (which is nearly topological), and
         // instead of a worklist we just walk all basic blocks checking if cfaShouldRevisit

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "MixedContentChecker.h"
 
+#include "ContentFilter.h"
 #include "Document.h"
 #include "FrameLoader.h"
 #include "LegacySchemeRegistry.h"
@@ -80,12 +81,12 @@ static bool isMixedContent(const Frame& frame, const URL& url)
     return false;
 }
 
-static bool destinationIsImageAudioOrVideo(FetchOptions::Destination destination)
+static bool NODELETE destinationIsImageAudioOrVideo(FetchOptions::Destination destination)
 {
     return destination == FetchOptions::Destination::Audio || destination == FetchOptions::Destination::Image || destination == FetchOptions::Destination::Video;
 }
 
-static bool destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination destination, Initiator initiator)
+static bool NODELETE destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination destination, Initiator initiator)
 {
     return destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset;
 }
@@ -133,6 +134,11 @@ bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpg
     RefPtr<Document> document;
     if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
         document = localFrame->document();
+
+#if ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS)
+    if (url == ContentFilter::blockedPageURL())
+        return false;
+#endif
 
     if (!isMixedContent(frame, url))
         return false;

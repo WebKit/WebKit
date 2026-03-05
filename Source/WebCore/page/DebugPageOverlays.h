@@ -69,14 +69,14 @@ private:
 
     void regionChanged(LocalFrame&, RegionType);
 
-    bool hasOverlaysForPage(Page&) const;
+    bool NODELETE hasOverlaysForPage(Page&) const;
     
     void updateOverlayRegionVisibility(Page&, OptionSet<DebugOverlayRegions>);
 
     bool shouldPaintOverlayIntoLayer(Page&, RegionType) const;
 
     RegionOverlay* regionOverlayForPage(Page&, RegionType) const;
-    RegionOverlay& ensureRegionOverlayForPage(Page&, RegionType);
+    Ref<RegionOverlay> ensureRegionOverlayForPage(Page&, RegionType);
 
     WeakHashMap<Page, Vector<RefPtr<RegionOverlay>>> m_pageRegionOverlays;
 

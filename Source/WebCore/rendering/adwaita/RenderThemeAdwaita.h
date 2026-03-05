@@ -45,7 +45,6 @@ public:
 
     void setAccentColor(const Color&);
 
-private:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
     Vector<String, 2> mediaControlsScripts() final;
@@ -53,11 +52,9 @@ private:
 #endif
 
 #if ENABLE(VIDEO)
-    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) override;
+    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) final;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
     String mediaControlsFormattedStringForDuration(double) final;
-
-    String m_mediaControlsStyleSheet;
 #endif // ENABLE(VIDEO)
 
     bool supportsHover() const final { return true; }
@@ -82,8 +79,8 @@ private:
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
 
     bool popsMenuBySpaceOrReturn() const final { return true; }
-    void adjustMenuListStyle(RenderStyle&, const Element*) const override;
-    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustMenuListStyle(RenderStyle&, const Element*) const final;
+    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
     Style::PaddingBox popupInternalPaddingBox(const RenderStyle&) const final;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
@@ -91,7 +88,7 @@ private:
 
     void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
 
-    Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
+    WEBCORE_EXPORT Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
     IntSize sliderTickSize() const final;
     int sliderTickOffsetFromTrackCenter() const final;
@@ -102,7 +99,12 @@ private:
     Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox&, float, const Element*) const final;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    std::optional<Seconds> caretBlinkInterval() const override;
+    std::optional<Seconds> caretBlinkInterval() const final;
+#endif
+
+private:
+#if ENABLE(VIDEO)
+    String m_mediaControlsStyleSheet;
 #endif
 };
 

@@ -27,7 +27,7 @@
 
 
 int BN_rand(BIGNUM *rnd, int bits, int top, int bottom) {
-  if (rnd == NULL) {
+  if (rnd == nullptr) {
     return 0;
   }
 

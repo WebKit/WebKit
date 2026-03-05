@@ -27,16 +27,24 @@
 
 namespace WebCore
 {
-// RenderOverflow is a class for tracking content that spills out of a box.  This class is used by RenderBox and
-// LegacyInlineFlowBox.
+// RenderOverflow is a class for tracking content that spills out of a box.
+// This class is used by RenderBox and LegacyInlineFlowBox.
 //
-// There are two types of overflow: layout overflow (which is expected to be reachable via scrolling mechanisms) and
-// visual overflow (which is not expected to be reachable via scrolling mechanisms).
+// There are three types of overflow:
+// * layout overflow (which is expected to be reachable via scrolling mechanisms)
+// * visual overflow (which is not expected to be reachable via scrolling mechanisms)
+// * content overflow (non-recursive overflow of the in-flow content edge, a subset of layout overflow)
 //
-// Layout overflow examples include other boxes that spill out of our box,  For example, in the inline case a tall image
-// could spill out of a line box. 
-    
-// Examples of visual overflow are shadows, text stroke, outline (and eventually border-image).
+// Layout overflow examples include other boxes that spill out of our box (recursively).
+// For example, in the inline case a tall image could spill out of a line box.
+//
+// Examples of visual overflow are shadows, text stroke, outline, border-image.
+//
+// Examples of content overflow are a grid larger than its container's content box,
+// line boxes that extend past a block's explicit height, etc. This content area
+// is the rectangle that gets aligned by content alignment, that gets wrapped by
+// padding when calculating a scroll container's scrollable area, and that defines
+// the "scrollable containing block" for absolutely positioned boxes.
 
 // This object is allocated only when some of these fields have non-default values in the owning box.
 class RenderOverflow : public CanMakeCheckedPtr<RenderOverflow> {
@@ -44,35 +52,38 @@ class RenderOverflow : public CanMakeCheckedPtr<RenderOverflow> {
     WTF_MAKE_NONCOPYABLE(RenderOverflow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderOverflow);
 public:
-    RenderOverflow(const LayoutRect& layoutRect, const LayoutRect& visualRect) 
-        : m_layoutOverflow(layoutRect)
+    RenderOverflow(const LayoutRect& layoutRect, const LayoutRect& visualRect, const LayoutRect& contentRect)
+        : m_contentArea(contentRect)
+        , m_layoutOverflow(layoutRect)
         , m_visualOverflow(visualRect)
     {
     }
    
     const LayoutRect layoutOverflowRect() const { return m_layoutOverflow; }
     const LayoutRect visualOverflowRect() const { return m_visualOverflow; }
-    
+    const LayoutRect contentArea() const { return m_contentArea; }
+
     void move(LayoutUnit dx, LayoutUnit dy);
     
     void addLayoutOverflow(const LayoutRect&);
     void addVisualOverflow(const LayoutRect&);
+    void addContentOverflow(const LayoutRect& rect) { m_contentArea.uniteEvenIfEmpty(rect); }
+    void addContentOverflowX(const LayoutRect& rect) { m_contentArea.uniteXEvenIfEmpty(rect); }
+    void addContentOverflowY(const LayoutRect& rect) { m_contentArea.uniteYEvenIfEmpty(rect); }
 
     void setLayoutOverflow(const LayoutRect& rect) { m_layoutOverflow = rect; }
     void setVisualOverflow(const LayoutRect& rect) { m_visualOverflow = rect; }
-
-    LayoutUnit layoutClientAfterEdge() const { return m_layoutClientAfterEdge; }
-    void setLayoutClientAfterEdge(LayoutUnit clientAfterEdge) { m_layoutClientAfterEdge = clientAfterEdge; }
+    void setContentArea(const LayoutRect& rect) { m_contentArea = rect; }
 
 private:
+    LayoutRect m_contentArea;
     LayoutRect m_layoutOverflow;
     LayoutRect m_visualOverflow;
-
-    LayoutUnit m_layoutClientAfterEdge;
 };
 
 inline void RenderOverflow::move(LayoutUnit dx, LayoutUnit dy)
 {
+    m_contentArea.move(dx, dy);
     m_layoutOverflow.move(dx, dy);
     m_visualOverflow.move(dx, dy);
 }

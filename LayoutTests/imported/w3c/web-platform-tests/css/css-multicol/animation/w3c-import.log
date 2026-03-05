@@ -18,4 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/animation/column-rule-color-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/animation/column-rule-width-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/animation/column-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/animation/column-wrap-reset-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/animation/columns-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/animation/discrete-no-interpolation.html

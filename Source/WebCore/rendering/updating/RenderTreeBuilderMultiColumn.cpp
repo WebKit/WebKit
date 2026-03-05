@@ -30,7 +30,7 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTextControl.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
@@ -215,7 +215,7 @@ void RenderTreeBuilder::MultiColumn::restoreColumnSpannersForContainer(RenderMul
         // Detaching the spanner takes care of removing the placeholder (and merges the RenderMultiColumnSets).
         auto spannerToReInsert = m_builder.detach(*spanner->parent(), *spanner, WillBeDestroyed::No);
         auto restoreColumnSpannersScope = SetForScope { gRestoringColumnSpannersForContainer, true };
-        m_builder.attach(spannerOriginalParent, WTFMove(spannerToReInsert));
+        m_builder.attach(spannerOriginalParent, WTF::move(spannerToReInsert));
     }
 }
 
@@ -298,10 +298,10 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     if (auto* enclosingflow = dynamicDowncast<RenderMultiColumnFlow>(flow.enclosingFragmentedFlow()))
         restoreColumnSpannersForContainer(*enclosingflow, flow);
 
-    auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), DisplayType::Block));
+    auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), Style::DisplayType::BlockFlow));
     newFragmentedFlow->initializeStyle();
     auto& fragmentedFlow = *newFragmentedFlow;
-    m_builder.blockBuilder().attach(flow, WTFMove(newFragmentedFlow), nullptr);
+    m_builder.blockBuilder().attach(flow, WTF::move(newFragmentedFlow), nullptr);
 
     // Reparent children preceding the fragmented flow into the fragmented flow.
     m_builder.moveChildren(flow, fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
@@ -354,7 +354,7 @@ void RenderTreeBuilder::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
     m_builder.moveAllChildren(multiColumnFlow, flow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     m_builder.destroy(multiColumnFlow);
     for (auto& parentAndSpanner : parentAndSpannerList)
-        m_builder.attach(*parentAndSpanner.first, WTFMove(parentAndSpanner.second));
+        m_builder.attach(*parentAndSpanner.first, WTF::move(parentAndSpanner.second));
 }
 
 RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(RenderMultiColumnFlow& flow, RenderObject*& subtreeRoot, RenderObject& descendant)
@@ -390,12 +390,12 @@ RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(R
         // end flowing one column set and move to the next one.
         auto newPlaceholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(flow, downcast<RenderBox>(descendant), container->style());
         auto& placeholder = *newPlaceholder;
-        m_builder.attach(*container, WTFMove(newPlaceholder), descendant.nextSibling());
+        m_builder.attach(*container, WTF::move(newPlaceholder), descendant.nextSibling());
         auto takenDescendant = m_builder.detach(*container, descendant, WillBeDestroyed::No);
 
         // This is a guard to stop an ancestor flow thread from processing the spanner.
         auto shiftingSpannerScope = SetForScope { gShiftingSpanner, true };
-        m_builder.blockBuilder().attach(*multicolContainer, WTFMove(takenDescendant), insertBeforeMulticolChild);
+        m_builder.blockBuilder().attach(*multicolContainer, WTF::move(takenDescendant), insertBeforeMulticolChild);
 
         // The spanner has now been moved out from the flow thread, but we don't want to
         // examine its children anyway. They are all part of the spanner and shouldn't trigger
@@ -430,10 +430,10 @@ RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(R
     // Need to create a new column set when there's no set already created. We also always insert
     // another column set after a spanner. Even if it turns out that there are no renderers
     // following the spanner, there may be bottom margins there, which take up space.
-    auto newSet = createRenderer<RenderMultiColumnSet>(flow, RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), DisplayType::Block));
+    auto newSet = createRenderer<RenderMultiColumnSet>(flow, RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), Style::DisplayType::BlockFlow));
     newSet->initializeStyle();
     auto& set = *newSet;
-    m_builder.blockBuilder().attach(*multicolContainer, WTFMove(newSet), insertBeforeMulticolChild);
+    m_builder.blockBuilder().attach(*multicolContainer, WTF::move(newSet), insertBeforeMulticolChild);
     flow.invalidateFragments();
 
     // We cannot handle immediate column set siblings at the moment (and there's no need for

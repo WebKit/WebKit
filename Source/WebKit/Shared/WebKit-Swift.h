@@ -25,6 +25,14 @@
 
 #pragma once
 
+// This file is a no-op unless we have a feature where C++ calls into Swift
+// or uses Swift data types.
+#if ENABLE(SWIFT_DEMO_URI_SCHEME) || ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT)
+
+#ifdef __swift__
+#warning "You're including WebKit-Swift.h from a C++ header file - don't do that. This may cause circular Swift<->C++ dependencies and build problems."
+#endif
+
 // Anything needing to use Swift types or functions should include
 // this rather than directly including WebKit-Swift-Generated.h. Its purposes:
 // - include any pre-requisite headers
@@ -32,15 +40,36 @@
 // - select between the headers generated using built-in or custom build
 //   actions on different SDK versions
 
-// Future: #include statements should go here when the generated header
-// file depends upon C++ types. rdar://165068038 may resolve the need for
-// this.
+#include <wtf/Platform.h>
+
+// If Swift function parameters or return types depend on C++ types, the
+// relevant headers must be included here. rdar://165068038
+#include "APIArray.h"
+#include "IPCTesterReceiverMessages.h"
+#include "WebBackForwardListItem.h"
+#include "WebBackForwardListMessages.h"
+#include "WebBackForwardListSwiftUtilities.h"
+#include "WebPageProxy.h"
+
+#ifdef __OBJC__
+#include "WKSeparatedImageView.h"
+#include "WKUIDelegatePrivate.h"
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebKit-Swift-Additions.h>
+#endif
 
 // rdar://165192318
 IGNORE_CLANG_WARNINGS_BEGIN("arc-bridge-casts-disallowed-in-nonarc")
+// rdar://171345626
+IGNORE_CLANG_WARNINGS_BEGIN("objc-property-no-attribute")
 #ifdef GENERATE_SINGLE_SWIFT_INTEROP_FILE
 #include "WebKit-Swift-Generated.h"
 #else
 #include "WebKit-Swift-CPP.h"
 #endif
 IGNORE_CLANG_WARNINGS_END
+IGNORE_CLANG_WARNINGS_END
+
+#endif // ENABLE(SWIFT_DEMO_URI_SCHEME) || ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT)

@@ -60,8 +60,8 @@ public:
     LibWebRTCSocket* socket(WebCore::LibWebRTCSocketIdentifier identifier) { return m_sockets.get(identifier); }
 
     void forSocketInGroup(WebCore::ScriptExecutionContextIdentifier, NOESCAPE const Function<void(LibWebRTCSocket&)>&);
-    webrtc::AsyncPacketSocket* createUdpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
-    webrtc::AsyncPacketSocket* createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
+    std::unique_ptr<webrtc::AsyncPacketSocket> createUdpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
+    std::unique_ptr<webrtc::AsyncPacketSocket> createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
 
     CheckedPtr<LibWebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
     void removeResolver(LibWebRTCResolverIdentifier identifier) { m_resolvers.remove(identifier); }
@@ -71,7 +71,7 @@ public:
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
     void setConnection(RefPtr<IPC::Connection>&&);
-    IPC::Connection* connection();
+    IPC::Connection* NODELETE connection();
 
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.

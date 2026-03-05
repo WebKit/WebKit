@@ -52,6 +52,12 @@ class TestContributor(unittest.TestCase):
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
+    def test_git_username_only(self):
+        contributor = Contributor.from_scm_log('Author:     Jonathan Bedard <jonathanbedard>')
+
+        self.assertEqual(contributor.name, 'Jonathan Bedard')
+        self.assertEqual(contributor.emails, ['jonathanbedard'])
+
     def test_git_no_author(self):
         contributor = Contributor.from_scm_log('Author: Automated Checkin <devnull>')
         self.assertIsNone(contributor)

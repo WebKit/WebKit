@@ -49,11 +49,11 @@ RefPtr<GBMDevice> GBMDevice::create(const CString& filename)
         WTFLogAlways("Failed to create GBM device for DRM node: %s: %s", filename.data(), safeStrerror(errno).data());
         return nullptr;
     }
-    return adoptRef(*new GBMDevice(WTFMove(fd), device));
+    return adoptRef(*new GBMDevice(WTF::move(fd), device));
 }
 
 GBMDevice::GBMDevice(UnixFileDescriptor&& fd, struct gbm_device* device)
-    : m_fd(WTFMove(fd))
+    : m_fd(WTF::move(fd))
     , m_device(device)
 {
 }

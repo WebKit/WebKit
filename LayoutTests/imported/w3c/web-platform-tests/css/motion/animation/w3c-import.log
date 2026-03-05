@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-distance-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-coord-box-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-interpolation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-interpolation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-interpolation-003.html

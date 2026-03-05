@@ -74,7 +74,6 @@ public:
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     void setPlayBackControlsManager(WebPlaybackControlsManager *);
     WebPlaybackControlsManager *playBackControlsManager();
-    RetainPtr<WebPlaybackControlsManager> protectedPlayBackControlsManager();
 
     void updatePlaybackControlsManagerCanTogglePictureInPicture();
 #endif

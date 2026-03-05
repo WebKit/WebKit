@@ -136,7 +136,7 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, J
             return executable;
     }
 
-    auto source = makeSource(WTFMove(program), sourceOrigin, taintedOrigin, sourceURL, position);
+    auto source = makeSource(WTF::move(program), sourceOrigin, taintedOrigin, sourceURL, position);
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
             name, globalObject, source, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition);
@@ -161,7 +161,7 @@ FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()
     rareData->m_functionStart = functionStart();
     rareData->m_functionEnd = functionEnd();
     WTF::storeStoreFence();
-    m_rareData = WTFMove(rareData);
+    m_rareData = WTF::move(rareData);
     return *m_rareData;
 }
 

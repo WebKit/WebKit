@@ -30,7 +30,6 @@ namespace dcsctp {
 //  /                     Cookie                                    /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int CookieEchoChunk::kType;
 
 std::optional<CookieEchoChunk> CookieEchoChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

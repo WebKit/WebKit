@@ -80,28 +80,28 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,352) size 784x18
         RenderText {#text} at (0,0) size 255x18
           text run at (0,0) width 255: "The following lines should be identical:"
-      RenderBlock {P} at (0,386) size 784x19
-        RenderText {#text} at (0,1) size 62x18
+      RenderBlock {P} at (0,386) size 784x20
+        RenderText {#text} at (0,1) size 62x19
           text run at (0,1) width 62 RTL: "\x{5D3}\x{5D4}\x{5D5}([\x{202A}\x{202C}\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,421) size 784x19
-        RenderText {#text} at (26,1) size 36x18
+      RenderBlock {P} at (0,421) size 784x20
+        RenderText {#text} at (26,1) size 36x19
           text run at (26,1) width 36 RTL: "\x{5D3}\x{5D4}\x{5D5}(["
-        RenderInline {SPAN} at (26,1) size 0x18
-        RenderText {#text} at (0,1) size 27x18
+        RenderInline {SPAN} at (26,1) size 0x19
+        RenderText {#text} at (0,1) size 27x19
           text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,456) size 784x19
-        RenderText {#text} at (26,1) size 36x18
+      RenderBlock {P} at (0,456) size 784x20
+        RenderText {#text} at (26,1) size 36x19
           text run at (26,1) width 36 RTL: "\x{5D3}\x{5D4}\x{5D5}(["
-        RenderInline {SPAN} at (26,1) size 0x18
-          RenderInline {SPAN} at (26,1) size 0x18
-        RenderText {#text} at (0,1) size 27x18
+        RenderInline {SPAN} at (26,1) size 0x19
+          RenderInline {SPAN} at (26,1) size 0x19
+        RenderText {#text} at (0,1) size 27x19
           text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,491) size 784x19
-        RenderText {#text} at (26,1) size 36x18
+      RenderBlock {P} at (0,491) size 784x20
+        RenderText {#text} at (26,1) size 36x19
           text run at (26,1) width 36 RTL: "\x{5D3}\x{5D4}\x{5D5}(["
-        RenderInline {SPAN} at (26,1) size 0x18
-          RenderInline {SPAN} at (26,1) size 0x18
-        RenderText {#text} at (0,1) size 27x18
+        RenderInline {SPAN} at (26,1) size 0x19
+          RenderInline {SPAN} at (26,1) size 0x19
+        RenderText {#text} at (0,1) size 27x19
           text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]

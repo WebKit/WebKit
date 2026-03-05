@@ -207,6 +207,18 @@ class RegisterID
             'sp'
         when 'lr'
             'x30'
+        when 'zr'
+            case kind
+            when :word
+                "wzr"
+            when :ptr
+                prefix = $currentSettings["ADDRESS64"] ? "x" : "w"
+                prefix + "zr"
+            when :quad
+                "xzr"
+            else
+                raise "bad zr kind #{kind}"
+            end
         else
             raise "Bad register name #{@name} at #{codeOriginString}"
         end
@@ -1404,7 +1416,20 @@ class Instruction
         when "bfiq"
             $asm.puts "bfi #{operands[3].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}, #{operands[1].value}, #{operands[2].value}"
         when "pcrtoaddr"
-            $asm.puts "adr #{operands[1].arm64Operand(:quad)}, #{operands[0].value}"
+            labelRef = operands[0]
+            register = operands[1].arm64Operand(:quad)
+            if labelRef.externOrGlobal?
+                $asm.putStr("#if OS(DARWIN)")
+                $asm.puts "adrp #{register}, #{labelRef.asmLabel}@PAGE"
+                $asm.puts "add #{register}, #{register}, #{labelRef.asmLabel}@PAGEOFF"
+                $asm.putStr("#else")
+                $asm.puts "adrp #{register}, #{labelRef.asmLabel}"
+                $asm.puts "add #{register}, #{register}, :lo12:#{labelRef.asmLabel}"
+                $asm.putStr("#endif")
+            else
+                $asm.puts "adr #{register}, #{labelRef.value}"
+            end
+
         when "globaladdr"
             uid = $asm.newUID
 
@@ -1430,6 +1455,12 @@ class Instruction
             $asm.putStr("#else")
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, [#{operands[1].arm64Operand(:quad)}, :got_lo12:#{operands[0].asmLabel}]"
             $asm.putStr("#endif")
+
+            # On Windows, use COFF-style addressing.
+            $asm.putStr("#elif OS(WINDOWS)")
+
+            $asm.puts "adrp #{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}"
+            $asm.puts "add #{operands[1].arm64Operand(:quad)}, #{operands[1].arm64Operand(:quad)}, :lo12:#{operands[0].asmLabel}"
 
             # Throw a compiler error everywhere else.
             $asm.putStr("#else")

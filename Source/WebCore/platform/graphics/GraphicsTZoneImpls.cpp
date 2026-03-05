@@ -25,11 +25,13 @@
 
 #include "config.h"
 
+#include "GraphicsLayerAnimationValue.h"
 #include "TiledBacking.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsLayerAnimationValue);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TiledBacking);
 
 } // namespace WebCore

@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2025 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2026 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -62,13 +62,19 @@ GCC_PREPROCESSOR_DEFINITIONS_ENABLE_WEBGPU_SWIFT = ENABLE_WEBGPU_SWIFT;
 
 DEFINES_MODULE = YES;
 MODULEMAP_FILE = WebGPU/WebGPU.modulemap;
+MODULEMAP_PRIVATE_FILE = WebGPU/WebGPU_Private.modulemap;
 
-SUPPORTS_TEXT_BASED_API = $(SUPPORTS_TEXT_BASED_API_$(OVERRIDE_SUPPORTS_TEXT_BASED_API));
-SUPPORTS_TEXT_BASED_API_ = YES;
-SUPPORTS_TEXT_BASED_API_NO = NO;
-SUPPORTS_TEXT_BASED_API_YES = YES;
-TAPI_USE_SRCROOT = $(TAPI_USE_SRCROOT$(WK_XCODE_15));
-TAPI_USE_SRCROOT_XCODE_SINCE_15 = YES;
+ENABLE_MODULE_VERIFIER = $(WK_ENABLE_MODULE_VERIFIER_$(ENABLE_WEBGPU_SWIFT));
+WK_ENABLE_MODULE_VERIFIER_ = NO;
+WK_ENABLE_MODULE_VERIFIER_ENABLE_WEBGPU_SWIFT = YES;
+
+MODULE_VERIFIER_SUPPORTED_LANGUAGES = objective-c objective-c++;
+MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = gnu23 gnu++23;
+MODULE_VERIFIER_KIND = builtin;
+OTHER_MODULE_VERIFIER_FLAGS = -- -I$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH) -I$(WK_ADDITIONAL_SDKS)$(WK_LIBRARY_HEADERS_FOLDER_PATH) -isystem $(SDKROOT)$(WK_LIBRARY_HEADERS_FOLDER_PATH);
+
+SUPPORTS_TEXT_BASED_API = $(OVERRIDE_SUPPORTS_TEXT_BASED_API:default=YES);
+TAPI_USE_SRCROOT = YES;
 TAPI_VERIFY_MODE = Pedantic;
 
 WK_AUDIT_SPI_ALLOWLISTS = $(SRCROOT)/Configurations/AllowedSPI.toml $(SRCROOT)/Configurations/AllowedSPI-legacy.toml $(WK_AUDIT_SPI_ALLOWLISTS_$(USE_INTERNAL_SDK));
@@ -96,32 +102,48 @@ ALLOW_SHARED_CACHE__YES_macosx = NO;
 OTHER_LDFLAGS_SHARED_CACHE = $(OTHER_LDFLAGS_SHARED_CACHE_$(ALLOW_SHARED_CACHE));
 OTHER_LDFLAGS_SHARED_CACHE_NO = -Wl,-not_for_dyld_shared_cache;
 
-OTHER_LDFLAGS = $(inherited) $(UNEXPORT_SWIFT_CXX_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS) $(OTHER_LDFLAGS_SHARED_CACHE) -Wl,-unexported_symbol,*s_heapSpec;
+OTHER_LDFLAGS = $(inherited) $(UNEXPORT_SWIFT_CXX_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS) $(OTHER_LDFLAGS_SHARED_CACHE) $(OTHER_LDFLAGS_ADDITIONAL_FRAMEWORKS) -Wl,-unexported_symbol,*s_heapSpec;
 
 ENABLE_WEBGPU_SWIFT = ;
-ENABLE_WEBGPU_SWIFT[sdk=macosx*][arch=arm64*] = ENABLE_WEBGPU_SWIFT;
+
+ENABLE_WEBGPU_SWIFT[sdk=macosx*] = ENABLE_WEBGPU_SWIFT;
+ENABLE_WEBGPU_SWIFT[sdk=macosx*26.0*] = ;
+ENABLE_WEBGPU_SWIFT[sdk=macosx*26.1*] = ;
 ENABLE_WEBGPU_SWIFT[sdk=macosx*14*] = ;
 ENABLE_WEBGPU_SWIFT[sdk=macosx*15*] = ;
-ENABLE_WEBGPU_SWIFT[sdk=iphoneos*] = ENABLE_WEBGPU_SWIFT;
-// FIXME: Support WebGPU swift in iOS simulator builds once the underlying
-// modules issue is fixed (https://bugs.webkit.org/show_bug.cgi?id=300146).
-ENABLE_WEBGPU_SWIFT[sdk=iphonesimulator*] = ;
-ENABLE_WEBGPU_SWIFT[sdk=macosx*][arch=x86*] = ;
+
+ENABLE_WEBGPU_SWIFT[sdk=iphone*] = ENABLE_WEBGPU_SWIFT;
+ENABLE_WEBGPU_SWIFT[sdk=iphone*26.0*] = ;
+ENABLE_WEBGPU_SWIFT[sdk=iphone*26.1*] = ;
+ENABLE_WEBGPU_SWIFT[sdk=iphone*26.2*] = ;
+ENABLE_WEBGPU_SWIFT[sdk=iphone*26.3*] = ;
+
+// WebGPU has a problem on iOS simulator on older SDKs
+// (https://bugs.webkit.org/show_bug.cgi?id=300146).
+ENABLE_WEBGPU_SWIFT[sdk=iphonesimulator26*] = ;
+
 ENABLE_WEBGPU_SWIFT[sdk=xros*] = ENABLE_WEBGPU_SWIFT;
+ENABLE_WEBGPU_SWIFT[sdk=xros*26.0*] = ;
+ENABLE_WEBGPU_SWIFT[sdk=xros*26.1*] = ;
+ENABLE_WEBGPU_SWIFT[sdk=xros*26.2*] = ;
+ENABLE_WEBGPU_SWIFT[sdk=xros*26.3*] = ;
+
 ENABLE_WEBGPU_SWIFT[sdk=appletvos*] = ;
-ENABLE_WEBGPU_SWIFT[sdk=watchos*] = ;
+
+ENABLE_WEBGPU_SWIFT[sdk=watch*] = ;
 
 SWIFT_OBJC_INTERFACE_HEADER_NAME = WebGPUSwift-Generated.h;
 SWIFT_VERSION = 6.0;
 SWIFT_INSTALL_OBJC_HEADER = NO;
 SWIFT_OBJC_INTEROP_MODE = $(WK_SWIFT_OBJC_INTEROP_MODE_$(ENABLE_WEBGPU_SWIFT))
 WK_SWIFT_OBJC_INTEROP_MODE_ENABLE_WEBGPU_SWIFT = objcxx;
+SWIFT_LIBRARY_LEVEL = spi;
 
 // FIXME: reenable this once rdar://154887575 lands
 // SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES
 
 // FIXME: broaden SafeInteropWrappers to all of WebKit; rdar://159439903
-OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebGPU/platform-enabled-swift-args.$(arch).resp -Xcc -std=c++2b -Xcc -D__WEBGPU__ -Xcc -DUCHAR_TYPE=char16_t -enable-experimental-feature SafeInteropWrappers -Xcc -fvisibility=hidden -no-verify-emitted-module-interface;
+OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebGPU/platform-enabled-swift-args.$(arch).resp -Xcc -std=c++2b -Xcc -D__WEBGPU__ -Xcc -DUCHAR_TYPE=char16_t -enable-experimental-feature SafeInteropWrappers -enable-experimental-feature LifetimeDependence -Xcc -fvisibility=hidden -no-verify-emitted-module-interface;
 
 SWIFT_OPTIMIZATION_LEVEL = -O;
 SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;
@@ -135,5 +157,8 @@ RUN_SWIFT_ABI_CHECKER_TOOL = NO;
 
 // When back-deploying for STP and downlevel builds, force Xcode to embed any
 // compatibility runtimes alongside WebKit.framework.
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = $(WK_USE_OVERRIDE_FRAMEWORKS_DIR);
-SWIFT_STDLIB_TOOL_DESTINATION_DIR = $(DSTROOT)$(WK_OVERRIDE_FRAMEWORKS_DIR);
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES[config=Production] = $(WK_USE_OVERRIDE_FRAMEWORKS_DIR);
+SWIFT_STDLIB_TOOL_DESTINATION_DIR = $(SWIFT_STDLIB_TOOL_DESTINATION_DIR_$(DEPLOYMENT_LOCATION));
+SWIFT_STDLIB_TOOL_DESTINATION_DIR_NO = $(BUILT_PRODUCTS_DIR);
+SWIFT_STDLIB_TOOL_DESTINATION_DIR_YES = $(DSTROOT)$(WK_OVERRIDE_FRAMEWORKS_DIR);

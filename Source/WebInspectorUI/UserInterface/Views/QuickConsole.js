@@ -71,6 +71,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
         WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._handleFrameExecutionContextsCleared, this);
         WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextAdded, this._handleFrameExecutionContextAdded, this);
 
+        WI.FrameTarget.addEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._handleFrameTargetExecutionContextAdded, this);
+
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._handleDebuggerActiveCallFrameDidChange, this);
 
         WI.runtimeManager.addEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this._handleActiveExecutionContextChanged, this);
@@ -105,6 +107,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         WI.Frame.removeEventListener(WI.Frame.Event.PageExecutionContextChanged, this._handleFramePageExecutionContextChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ExecutionContextsCleared, this._handleFrameExecutionContextsCleared, this);
+
+        WI.FrameTarget.removeEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._handleFrameTargetExecutionContextAdded, this);
 
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._handleDebuggerActiveCallFrameDidChange, this);
 
@@ -213,7 +217,10 @@ WI.QuickConsole = class QuickConsole extends WI.View
             return;
         }
 
-        if (WI.networkManager.frames.length === 1 && !WI.targetManager.workerTargets.length) {
+        // Check if we should show the picker: multiple frames, workers, or frame targets
+        let frameTargets = this._frameTargetsWithExecutionContext();
+
+        if (WI.networkManager.frames.length === 1 && !WI.targetManager.workerTargets.length && !frameTargets.length) {
             let mainFrameContexts = WI.networkManager.mainFrame.executionContextList.contexts;
             let contextsToShow = mainFrameContexts.filter((context) => context.type !== WI.ExecutionContext.Type.Internal || WI.settings.engineeringShowInternalExecutionContexts.value);
             if (contextsToShow.length <= 1) {
@@ -315,6 +322,35 @@ WI.QuickConsole = class QuickConsole extends WI.View
             for (let workerTarget of workerTargets) {
                 if (!workerTargets.includes(workerTarget.parentTarget))
                     addExecutionContextsForWorker(workerTarget, 1);
+            }
+        }
+
+        // Add FrameTarget execution contexts (for site-isolated frames)
+        let frameTargets = this._frameTargetsWithExecutionContext();
+        if (frameTargets.length) {
+            contextMenu.appendHeader(WI.UIString("Frame Targets"));
+
+            for (let frameTarget of frameTargets) {
+                let mainExecutionContext = frameTarget.executionContext;
+
+                let contexts = frameTarget.executionContextList.contexts.sort((a, b) => {
+                    if (a === mainExecutionContext)
+                        return -1;
+                    if (b === mainExecutionContext)
+                        return 1;
+
+                    const executionContextTypeRanking = [
+                        WI.ExecutionContext.Type.Normal,
+                        WI.ExecutionContext.Type.User,
+                        WI.ExecutionContext.Type.Internal,
+                    ];
+                    return executionContextTypeRanking.indexOf(a.type) - executionContextTypeRanking.indexOf(b.type);
+                });
+
+                for (let context of contexts) {
+                    let indent = (context === mainExecutionContext) ? 1 : 2;
+                    addExecutionContext(context, indent);
+                }
             }
         }
     }
@@ -458,9 +494,19 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
+    _handleFrameTargetExecutionContextAdded(event)
+    {
+        this._updateActiveExecutionContextDisplay();
+    }
+
     _canUseExecutionContextOfInspectedNode()
     {
         return InspectorBackend.hasDomain("DOM");
+    }
+
+    _frameTargetsWithExecutionContext()
+    {
+        return WI.targetManager.targets.filter((target) => target instanceof WI.FrameTarget && target.executionContext);
     }
 
     _toggleOrFocus(event)

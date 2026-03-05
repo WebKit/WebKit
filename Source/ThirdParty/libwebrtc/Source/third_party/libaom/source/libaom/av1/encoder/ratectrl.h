@@ -194,6 +194,7 @@ typedef struct {
   uint64_t avg_source_sad;
   uint64_t prev_avg_source_sad;
   uint64_t frame_source_sad;
+  unsigned int last_frame_low_source_sad;
   uint64_t frame_spatial_variance;
   int static_since_last_scene_change;
   int last_encoded_size_keyframe;

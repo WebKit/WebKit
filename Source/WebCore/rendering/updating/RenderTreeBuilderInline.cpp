@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::Inline);
 
-static bool canUseAsParentForContinuation(const RenderObject* renderer)
+static bool NODELETE canUseAsParentForContinuation(const RenderObject* renderer)
 {
     if (!renderer)
         return false;
@@ -62,7 +62,7 @@ static RenderBoxModelObject* nextContinuation(const RenderBoxModelObject* render
     return renderer->inlineContinuation();
 }
 
-RenderBoxModelObject& RenderTreeBuilder::Inline::parentCandidateInContinuation(RenderInline& parent, const RenderObject* beforeChild)
+CheckedRef<RenderBoxModelObject> RenderTreeBuilder::Inline::parentCandidateInContinuation(RenderInline& parent, const RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == &parent)
         return parent;
@@ -71,15 +71,15 @@ RenderBoxModelObject& RenderTreeBuilder::Inline::parentCandidateInContinuation(R
     CheckedPtr current = nextContinuation(&parent);
     while (current) {
         if (beforeChild && beforeChild->parent() == current)
-            return current->firstChild() == beforeChild ? *previous.unsafeGet() : *current.unsafeGet();
+            return current->firstChild() == beforeChild ? previous.releaseNonNull() : current.releaseNonNull();
         auto next = nextContinuation(current.get());
         if (!next)
-            return !beforeChild && !current->firstChild() ? *previous.unsafeGet() : *current.unsafeGet();
+            return !beforeChild && !current->firstChild() ? previous.releaseNonNull() : current.releaseNonNull();
         previous = current;
         current = next;
     }
     ASSERT_NOT_REACHED();
-    return *previous.unsafeGet();
+    return previous.releaseNonNull();
 }
 
 static RenderPtr<RenderInline> cloneAsContinuation(RenderInline& renderer)
@@ -94,7 +94,7 @@ static RenderPtr<RenderInline> cloneAsContinuation(RenderInline& renderer)
     return cloneInline;
 }
 
-static RenderElement* inFlowPositionedInlineAncestor(RenderElement& renderer)
+static RenderElement* NODELETE inFlowPositionedInlineAncestor(RenderElement& renderer)
 {
     auto* ancestor = &renderer;
     while (ancestor && ancestor->isRenderInline()) {
@@ -117,10 +117,10 @@ void RenderTreeBuilder::Inline::attach(RenderInline& parent, RenderPtr<RenderObj
     if (auto* fragmentedFlow = parent.enclosingFragmentedFlow())
         beforeChildOrPlaceholder = m_builder.multiColumnBuilder().resolveMovedChild(*fragmentedFlow, beforeChild);
     if (parent.continuation()) {
-        insertChildToContinuation(parent, WTFMove(child), beforeChildOrPlaceholder);
+        insertChildToContinuation(parent, WTF::move(child), beforeChildOrPlaceholder);
         return;
     }
-    attachIgnoringContinuation(parent, WTFMove(child), beforeChildOrPlaceholder);
+    attachIgnoringContinuation(parent, WTF::move(child), beforeChildOrPlaceholder);
 }
 
 void RenderTreeBuilder::Inline::insertChildToContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -128,18 +128,18 @@ void RenderTreeBuilder::Inline::insertChildToContinuation(RenderInline& parent, 
     ASSERT(m_buildsContinuations);
 
     if (!beforeChild) {
-        auto& parentCandidate = parentCandidateInContinuation(parent, { });
-        auto* lastContinuation = nextContinuation(&parentCandidate);
+        CheckedRef parentCandidate = parentCandidateInContinuation(parent, { });
+        auto* lastContinuation = nextContinuation(parentCandidate.ptr());
         if (!lastContinuation) {
             // parentCandidate is the last continuation.
-            return m_builder.attachIgnoringContinuation(parentCandidate, WTFMove(child));
+            return m_builder.attachIgnoringContinuation(parentCandidate, WTF::move(child));
         }
         // The inline box inside the "post" part of the continuation is the preferred parent but we may not be able to put this child in there.
-        auto& nextToLastContinuation = parentCandidate;
+        CheckedRef nextToLastContinuation = parentCandidate;
         auto childIsInline = newChildIsInline(parent, *child);
-        if (childIsInline == lastContinuation->isInline() || childIsInline != nextToLastContinuation.isInline() || child->isFloatingOrOutOfFlowPositioned())
-            return m_builder.attachIgnoringContinuation(*lastContinuation, WTFMove(child));
-        return m_builder.attachIgnoringContinuation(nextToLastContinuation, WTFMove(child));
+        if (childIsInline == lastContinuation->isInline() || childIsInline != nextToLastContinuation->isInline() || child->isFloatingOrOutOfFlowPositioned())
+            return m_builder.attachIgnoringContinuation(*lastContinuation, WTF::move(child));
+        return m_builder.attachIgnoringContinuation(nextToLastContinuation, WTF::move(child));
     }
 
     // It may or may not be the direct parent of the beforeChild.
@@ -164,22 +164,22 @@ void RenderTreeBuilder::Inline::insertChildToContinuation(RenderInline& parent, 
         auto& beforeChildParent = *beforeChild->parent();
         auto beforeChildIsFirstChildInContinuation = beforeChild == beforeChildParent.firstChild() && beforeChildParent.isAnonymousBlock() && beforeChildParent.isContinuation();
         if (!beforeChildIsFirstChildInContinuation)
-            return m_builder.attachIgnoringContinuation(*beforeChildContinuationAncestor, WTFMove(child), beforeChild);
-        return m_builder.attachIgnoringContinuation(parentCandidateInContinuation(parent, beforeChild), WTFMove(child));
+            return m_builder.attachIgnoringContinuation(*beforeChildContinuationAncestor, WTF::move(child), beforeChild);
+        return m_builder.attachIgnoringContinuation(parentCandidateInContinuation(parent, beforeChild), WTF::move(child));
     }
 
-    auto& parentCandidate = parentCandidateInContinuation(parent, beforeChild);
-    if (&parentCandidate == beforeChildContinuationAncestor)
-        return m_builder.attachIgnoringContinuation(parentCandidate, WTFMove(child), beforeChild);
+    CheckedRef parentCandidate = parentCandidateInContinuation(parent, beforeChild);
+    if (parentCandidate.ptr() == beforeChildContinuationAncestor)
+        return m_builder.attachIgnoringContinuation(parentCandidate, WTF::move(child), beforeChild);
     // A continuation always consists of two potential candidates: an inline or an anonymous block box holding block children.
     bool childInline = newChildIsInline(parent, *child);
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
     if (childInline == beforeChildContinuationAncestor->isInline() || beforeChild->isInline())
-        return m_builder.attachIgnoringContinuation(*beforeChildContinuationAncestor, WTFMove(child), beforeChild);
-    if (parentCandidate.isInline() == childInline)
-        return m_builder.attachIgnoringContinuation(parentCandidate, WTFMove(child)); // Just treat like an append.
-    return m_builder.attachIgnoringContinuation(*beforeChildContinuationAncestor, WTFMove(child), beforeChild);
+        return m_builder.attachIgnoringContinuation(*beforeChildContinuationAncestor, WTF::move(child), beforeChild);
+    if (parentCandidate->isInline() == childInline)
+        return m_builder.attachIgnoringContinuation(parentCandidate, WTF::move(child)); // Just treat like an append.
+    return m_builder.attachIgnoringContinuation(*beforeChildContinuationAncestor, WTF::move(child), beforeChild);
 }
 
 void RenderTreeBuilder::Inline::attachIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -195,14 +195,14 @@ void RenderTreeBuilder::Inline::attachIgnoringContinuation(RenderInline& parent,
         // inline into continuations. This involves creating an anonymous block box to hold
         // |newChild|. We then make that block box a continuation of this inline. We take all of
         // the children after |beforeChild| and put them in a clone of this object.
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.containingBlock() ? parent.containingBlock()->style() : parent.style(), DisplayType::Block);
+        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.containingBlock() ? parent.containingBlock()->style() : parent.style(), Style::DisplayType::BlockFlow);
 
         // If inside an inline affected by in-flow positioning the block needs to be affected by it too.
         // Giving the block a layer like this allows it to collect the x/y offsets from inline parents later.
         if (auto positionedAncestor = inFlowPositionedInlineAncestor(parent))
             newStyle.setPosition(positionedAncestor->style().position());
 
-        auto newBox = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, parent.document(), WTFMove(newStyle));
+        auto newBox = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, parent.document(), WTF::move(newStyle));
         newBox->initializeStyle();
         newBox->setIsContinuation();
         RenderBoxModelObject* oldContinuation = parent.continuation();
@@ -210,7 +210,7 @@ void RenderTreeBuilder::Inline::attachIgnoringContinuation(RenderInline& parent,
             oldContinuation->removeFromContinuationChain();
         newBox->insertIntoContinuationChainAfter(parent);
 
-        splitFlow(parent, beforeChild, WTFMove(newBox), WTFMove(child), oldContinuation);
+        splitFlow(parent, beforeChild, WTF::move(newBox), WTF::move(child), oldContinuation);
         return;
     }
 
@@ -221,7 +221,7 @@ void RenderTreeBuilder::Inline::attachIgnoringContinuation(RenderInline& parent,
     }
 
     auto& childToAdd = *child;
-    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
     childToAdd.setNeedsLayoutAndPreferredWidthsUpdate();
 }
 
@@ -258,7 +258,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
         block = block->containingBlock();
     } else {
         // No anonymous block available for use. Make one.
-        createdPre = Block::createAnonymousBlockWithStyle(block->protectedDocument(), block->style());
+        createdPre = Block::createAnonymousBlockWithStyle(protect(block->document()), block->style());
         pre = createdPre.get();
         madeNewBeforeBlock = true;
     }
@@ -268,9 +268,9 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (createdPre)
-        m_builder.attachToRenderElementInternal(*block, WTFMove(createdPre), boxFirst);
-    m_builder.attachToRenderElementInternal(*block, WTFMove(newBlockBox), boxFirst);
-    m_builder.attachToRenderElementInternal(*block, WTFMove(createdPost), boxFirst);
+        m_builder.attachToRenderElementInternal(*block, WTF::move(createdPre), boxFirst);
+    m_builder.attachToRenderElementInternal(*block, WTF::move(newBlockBox), boxFirst);
+    m_builder.attachToRenderElementInternal(*block, WTF::move(createdPost), boxFirst);
     block->setChildrenInline(false);
 
     if (madeNewBeforeBlock) {
@@ -280,7 +280,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
             auto internalMoveScope = SetForScope { m_builder.m_internalMovesType, IsInternalMove::Yes };
             o = no->nextSibling();
             auto childToMove = m_builder.detachFromRenderElement(*block, *no, WillBeDestroyed::No);
-            m_builder.attachToRenderElementInternal(*pre, WTFMove(childToMove));
+            m_builder.attachToRenderElementInternal(*pre, WTF::move(childToMove));
             no->setNeedsLayoutAndPreferredWidthsUpdate();
         }
     }
@@ -294,7 +294,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
     // We delayed adding the newChild until now so that the |newBlockBox| would be fully
     // connected, thus allowing newChild access to a renderArena should it need
     // to wrap itself in additional boxes (e.g., table construction).
-    m_builder.attach(addedBlockBox, WTFMove(child));
+    m_builder.attach(addedBlockBox, WTF::move(child));
 
     // Always just do a full layout in order to ensure that line boxes (especially wrappers for images)
     // get deleted properly. Because objects moves from the pre block into the post block, we want to
@@ -343,7 +343,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             // every time, which is a bit wasteful.
         }
         auto childToMove = m_builder.detachFromRenderElement(*rendererToMove->parent(), *rendererToMove, WillBeDestroyed::No);
-        m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(childToMove));
+        m_builder.attachIgnoringContinuation(*cloneInline, WTF::move(childToMove));
         auto* newParent = rendererToMove->parent();
         if (CheckedPtr newParentBox = dynamicDowncast<RenderBox>(newParent))
             markBoxForRelayoutAfterSplit(*newParentBox);
@@ -370,11 +370,11 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
     while (current && current != fromBlock) {
         if (splitDepth < cMaxSplitDepth && !current->isAnonymous()) {
             // Create a new clone.
-            RenderPtr<RenderInline> cloneChild = WTFMove(cloneInline);
+            RenderPtr<RenderInline> cloneChild = WTF::move(cloneInline);
             cloneInline = cloneAsContinuation(downcast<RenderInline>(*current));
 
             // Insert our child clone as the first child.
-            m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(cloneChild));
+            m_builder.attachIgnoringContinuation(*cloneInline, WTF::move(cloneChild));
 
             // Hook the clone up as a continuation of |curr|.
             cloneInline->insertIntoContinuationChainAfter(*current);
@@ -384,7 +384,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             for (auto* sibling = currentChild->nextSibling(); sibling;) {
                 auto* next = sibling->nextSibling();
                 auto childToMove = m_builder.detachFromRenderElement(*current, *sibling, WillBeDestroyed::No);
-                m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(childToMove));
+                m_builder.attachIgnoringContinuation(*cloneInline, WTF::move(childToMove));
                 sibling->setNeedsLayoutAndPreferredWidthsUpdate();
                 sibling = next;
             }
@@ -402,14 +402,14 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
         cloneBlockChild.resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
 
     // Now we are at the block level. We need to put the clone into the toBlock.
-    m_builder.attachToRenderElementInternal(*toBlock, WTFMove(cloneInline));
+    m_builder.attachToRenderElementInternal(*toBlock, WTF::move(cloneInline));
 
     // Now take all the children after currentChild and remove them from the fromBlock
     // and put them in the toBlock.
     for (auto* current = currentChild->nextSibling(); current;) {
         auto* next = current->nextSibling();
         auto childToMove = m_builder.detachFromRenderElement(*fromBlock, *current, WillBeDestroyed::No);
-        m_builder.attachToRenderElementInternal(*toBlock, WTFMove(childToMove));
+        m_builder.attachToRenderElementInternal(*toBlock, WTF::move(childToMove));
         current = next;
     }
 }
@@ -417,7 +417,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
 bool RenderTreeBuilder::Inline::newChildIsInline(const RenderInline& parent, const RenderObject& child)
 {
     // inline parent generates inline-table.
-    return child.isInline() || (m_builder.tableBuilder().childRequiresTable(parent, child) && parent.style().display() == DisplayType::Inline);
+    return child.isInline() || (m_builder.tableBuilder().childRequiresTable(parent, child) && parent.style().display() == Style::DisplayType::InlineFlow);
 }
 
 void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, RenderElement& child)
@@ -426,7 +426,7 @@ void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, Rende
         return;
 
     // We have to split the parent flow.
-    auto newBox = Block::createAnonymousBlockWithStyle(parent.containingBlock()->protectedDocument(), parent.containingBlock()->style());
+    auto newBox = Block::createAnonymousBlockWithStyle(protect(parent.containingBlock()->document()), parent.containingBlock()->style());
     newBox->setIsContinuation();
     auto* oldContinuation = parent.continuation();
     if (oldContinuation)
@@ -434,65 +434,7 @@ void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, Rende
     newBox->insertIntoContinuationChainAfter(parent);
     auto* beforeChild = child.nextSibling();
     auto removedChild = m_builder.detachFromRenderElement(parent, child, WillBeDestroyed::No);
-    splitFlow(parent, beforeChild, WTFMove(newBox), WTFMove(removedChild), oldContinuation);
-}
-
-void RenderTreeBuilder::Inline::updateAfterDescendants(RenderInline& parent)
-{
-    if (m_buildsContinuations)
-        return;
-    wrapRunsOfBlocksInAnonymousBlock(parent);
-}
-
-void RenderTreeBuilder::Inline::wrapRunsOfBlocksInAnonymousBlock(RenderInline& parent)
-{
-    // Wrap runs of block boxes with an anonymous block so their margins collapse correctly for blocks-in-inline.
-    ASSERT(!m_buildsContinuations);
-
-    auto dropNestedAnonymousBlocks = [&](CheckedRef<RenderBlockFlow> anonymousBlock) {
-        ASSERT(anonymousBlock->isAnonymousBlock());
-        SingleThreadWeakPtr<RenderObject> nextChild;
-        for (SingleThreadWeakPtr<RenderObject> movedChild = anonymousBlock->firstChild(); movedChild; movedChild = nextChild) {
-            nextChild = movedChild->nextSibling();
-            auto blockChild = dynamicDowncast<RenderBlockFlow>(movedChild.get());
-            if (blockChild && blockChild->isAnonymousBlock() && !blockChild->childrenInline())
-                m_builder.blockBuilder().dropAnonymousBoxChild(anonymousBlock, *blockChild);
-        }
-    };
-
-    SingleThreadWeakPtr<RenderBox> firstInRun;
-    SingleThreadWeakPtr<RenderBox> lastInRun;
-
-    auto wrapRunInAnonymousBlockIfNeeded = [&] {
-        // FIXME: Removing wrapping requires changes how RenderBlockFlow handles block formatting state.
-        if (!firstInRun)
-            return;
-
-        auto newBlock = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.containingBlock()->style());
-        newBlock->setChildrenInline(false);
-        CheckedRef block = *newBlock;
-        m_builder.attachToRenderElementInternal(parent, WTFMove(newBlock), firstInRun.get());
-        m_builder.moveChildren(parent, block, firstInRun.get(), lastInRun->nextSibling(), RenderTreeBuilder::NormalizeAfterInsertion::No);
-
-        // We might have wrapped existing anonymous blocks and they are now nested. Get rid of them,
-        dropNestedAnonymousBlocks(block);
-    };
-
-    for (CheckedPtr child = parent.firstChild() ; child; child = child->nextSibling()) {
-        if (child->isInline()) {
-            wrapRunInAnonymousBlockIfNeeded();
-            firstInRun = nullptr;
-            lastInRun = nullptr;
-            continue;
-        }
-        if (auto* blockChild = dynamicDowncast<RenderBox>(*child); blockChild && blockChild->isInFlow()) {
-            // Floats and out-of-flow boxes are wrapped if they are in the middle of a block run.
-            if (!firstInRun)
-                firstInRun = blockChild;
-            lastInRun = blockChild;
-        }
-    }
-    wrapRunInAnonymousBlockIfNeeded();
+    splitFlow(parent, beforeChild, WTF::move(newBox), WTF::move(removedChild), oldContinuation);
 }
 
 }

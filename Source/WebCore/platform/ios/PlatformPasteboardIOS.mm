@@ -196,7 +196,7 @@ static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformP
             if (domTypeAsString == "text/uri-list"_s && ([platformTypes containsObject:UTTypeFileURL.identifier] || shouldAvoidExposingURLType()))
                 continue;
 
-            domPasteboardTypes.add(WTFMove(domTypeAsString));
+            domPasteboardTypes.add(WTF::move(domTypeAsString));
         }
     }
     return copyToVector(domPasteboardTypes);
@@ -739,7 +739,7 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
     for (int index = 0; index < numberOfItems; ++index) {
         String value = readString(index, type);
         if (!value.isEmpty())
-            strings.append(WTFMove(value));
+            strings.append(WTF::move(value));
     }
     return strings;
 }

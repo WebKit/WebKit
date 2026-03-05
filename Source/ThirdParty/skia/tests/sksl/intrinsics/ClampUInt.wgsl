@@ -1,30 +1,23 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  testInputs: vec4<f32>,
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  testInputs: vec4<f16>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
-    let uintValues: vec4<u32> = vec4<u32>(_globalUniforms.testInputs * 100.0 + 200.0);
+    let uintValues: vec4<u32> = vec4<u32>(_globalUniforms.testInputs * 100.0h + 200.0h);
     const expectedA: vec4<u32> = vec4<u32>(100u, 200u, 275u, 300u);
     const clampLow: vec4<u32> = vec4<u32>(100u, 0u, 0u, 300u);
     const expectedB: vec4<u32> = vec4<u32>(100u, 200u, 250u, 425u);
     const clampHigh: vec4<u32> = vec4<u32>(300u, 400u, 250u, 500u);
-    let _skTemp0 = clamp(uintValues.x, 100u, 300u);
-    let _skTemp1 = clamp(uintValues.xy, vec2<u32>(100u), vec2<u32>(300u));
-    let _skTemp2 = clamp(uintValues.xyz, vec3<u32>(100u), vec3<u32>(300u));
-    let _skTemp3 = clamp(uintValues, vec4<u32>(100u), vec4<u32>(300u));
-    let _skTemp4 = clamp(uintValues.x, 100u, 300u);
-    let _skTemp5 = clamp(uintValues.xy, vec2<u32>(100u, 0u), vec2<u32>(300u, 400u));
-    let _skTemp6 = clamp(uintValues.xyz, vec3<u32>(100u, 0u, 0u), vec3<u32>(300u, 400u, 250u));
-    let _skTemp7 = clamp(uintValues, clampLow, clampHigh);
-    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>((((((((((((((((_skTemp0 == expectedA.x) && all(_skTemp1 == expectedA.xy)) && all(_skTemp2 == expectedA.xyz)) && all(_skTemp3 == expectedA)) && (100u == expectedA.x)) && all(vec2<u32>(100u, 200u) == expectedA.xy)) && all(vec3<u32>(100u, 200u, 275u) == expectedA.xyz)) && all(vec4<u32>(100u, 200u, 275u, 300u) == expectedA)) && (_skTemp4 == expectedB.x)) && all(_skTemp5 == expectedB.xy)) && all(_skTemp6 == expectedB.xyz)) && all(_skTemp7 == expectedB)) && (100u == expectedB.x)) && all(vec2<u32>(100u, 200u) == expectedB.xy)) && all(vec3<u32>(100u, 200u, 250u) == expectedB.xyz)) && all(vec4<u32>(100u, 200u, 250u, 425u) == expectedB)));
+    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>((((((((((((((((clamp(uintValues.x, 100u, 300u) == expectedA.x) && all(clamp(uintValues.xy, vec2<u32>(100u), vec2<u32>(300u)) == expectedA.xy)) && all(clamp(uintValues.xyz, vec3<u32>(100u), vec3<u32>(300u)) == expectedA.xyz)) && all(clamp(uintValues, vec4<u32>(100u), vec4<u32>(300u)) == expectedA)) && (100u == expectedA.x)) && all(vec2<u32>(100u, 200u) == expectedA.xy)) && all(vec3<u32>(100u, 200u, 275u) == expectedA.xyz)) && all(vec4<u32>(100u, 200u, 275u, 300u) == expectedA)) && (clamp(uintValues.x, 100u, 300u) == expectedB.x)) && all(clamp(uintValues.xy, vec2<u32>(100u, 0u), vec2<u32>(300u, 400u)) == expectedB.xy)) && all(clamp(uintValues.xyz, vec3<u32>(100u, 0u, 0u), vec3<u32>(300u, 400u, 250u)) == expectedB.xyz)) && all(clamp(uintValues, clampLow, clampHigh) == expectedB)) && (100u == expectedB.x)) && all(vec2<u32>(100u, 200u) == expectedB.xy)) && all(vec3<u32>(100u, 200u, 250u) == expectedB.xyz)) && all(vec4<u32>(100u, 200u, 250u, 425u) == expectedB)));
   }
 }
 @fragment fn main() -> FSOut {

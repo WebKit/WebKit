@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://github.com/whsieh/UndoManager/blob/master/README.md
+
 [
     EnabledBySetting=UndoManagerAPIEnabled,
 ] dictionary UndoItemInit {

@@ -48,7 +48,7 @@ struct bio_bio_st {
 static int bio_new(BIO *bio) {
   struct bio_bio_st *b =
       reinterpret_cast<bio_bio_st *>(OPENSSL_zalloc(sizeof *b));
-  if (b == NULL) {
+  if (b == nullptr) {
     return 0;
   }
 
@@ -62,29 +62,29 @@ static void bio_destroy_pair(BIO *bio) {
   BIO *peer_bio;
   struct bio_bio_st *peer_b;
 
-  if (b == NULL) {
+  if (b == nullptr) {
     return;
   }
 
   peer_bio = b->peer;
-  if (peer_bio == NULL) {
+  if (peer_bio == nullptr) {
     return;
   }
 
   peer_b = reinterpret_cast<bio_bio_st *>(peer_bio->ptr);
 
-  assert(peer_b != NULL);
+  assert(peer_b != nullptr);
   assert(peer_b->peer == bio);
 
-  peer_b->peer = NULL;
+  peer_b->peer = nullptr;
   peer_bio->init = 0;
-  assert(peer_b->buf != NULL);
+  assert(peer_b->buf != nullptr);
   peer_b->len = 0;
   peer_b->offset = 0;
 
-  b->peer = NULL;
+  b->peer = nullptr;
   bio->init = 0;
-  assert(b->buf != NULL);
+  assert(b->buf != nullptr);
   b->len = 0;
   b->offset = 0;
 }
@@ -92,7 +92,7 @@ static void bio_destroy_pair(BIO *bio) {
 static int bio_free(BIO *bio) {
   struct bio_bio_st *b = reinterpret_cast<bio_bio_st *>(bio->ptr);
 
-  assert(b != NULL);
+  assert(b != nullptr);
 
   if (b->peer) {
     bio_destroy_pair(bio);
@@ -116,15 +116,15 @@ static int bio_read(BIO *bio, char *buf, int size_) {
   }
 
   b = reinterpret_cast<bio_bio_st *>(bio->ptr);
-  assert(b != NULL);
-  assert(b->peer != NULL);
+  assert(b != nullptr);
+  assert(b->peer != nullptr);
   peer_b = reinterpret_cast<bio_bio_st *>(b->peer->ptr);
-  assert(peer_b != NULL);
-  assert(peer_b->buf != NULL);
+  assert(peer_b != nullptr);
+  assert(peer_b->buf != nullptr);
 
   peer_b->request = 0;  // will be set in "retry_read" situation
 
-  if (buf == NULL || size == 0) {
+  if (buf == nullptr || size == 0) {
     return 0;
   }
 
@@ -195,14 +195,14 @@ static int bio_write(BIO *bio, const char *buf, int num_) {
 
   BIO_clear_retry_flags(bio);
 
-  if (!bio->init || buf == NULL || num == 0) {
+  if (!bio->init || buf == nullptr || num == 0) {
     return 0;
   }
 
   b = reinterpret_cast<bio_bio_st *>(bio->ptr);
-  assert(b != NULL);
-  assert(b->peer != NULL);
-  assert(b->buf != NULL);
+  assert(b != nullptr);
+  assert(b->peer != nullptr);
+  assert(b->buf != nullptr);
 
   b->request = 0;
   if (b->closed) {
@@ -265,35 +265,35 @@ static int bio_make_pair(BIO *bio1, BIO *bio2, size_t writebuf1_len,
                          size_t writebuf2_len) {
   struct bio_bio_st *b1, *b2;
 
-  assert(bio1 != NULL);
-  assert(bio2 != NULL);
+  assert(bio1 != nullptr);
+  assert(bio2 != nullptr);
 
   b1 = reinterpret_cast<bio_bio_st *>(bio1->ptr);
   b2 = reinterpret_cast<bio_bio_st *>(bio2->ptr);
 
-  if (b1->peer != NULL || b2->peer != NULL) {
+  if (b1->peer != nullptr || b2->peer != nullptr) {
     OPENSSL_PUT_ERROR(BIO, BIO_R_IN_USE);
     return 0;
   }
 
-  if (b1->buf == NULL) {
+  if (b1->buf == nullptr) {
     if (writebuf1_len) {
       b1->size = writebuf1_len;
     }
     b1->buf = reinterpret_cast<uint8_t *>(OPENSSL_malloc(b1->size));
-    if (b1->buf == NULL) {
+    if (b1->buf == nullptr) {
       return 0;
     }
     b1->len = 0;
     b1->offset = 0;
   }
 
-  if (b2->buf == NULL) {
+  if (b2->buf == nullptr) {
     if (writebuf2_len) {
       b2->size = writebuf2_len;
     }
     b2->buf = reinterpret_cast<uint8_t *>(OPENSSL_malloc(b2->size));
-    if (b2->buf == NULL) {
+    if (b2->buf == nullptr) {
       return 0;
     }
     b2->len = 0;
@@ -414,12 +414,12 @@ int BIO_new_bio_pair(BIO **bio1_p, size_t writebuf1_len, BIO **bio2_p,
                      size_t writebuf2_len) {
   BIO *bio1 = BIO_new(bio_s_bio());
   BIO *bio2 = BIO_new(bio_s_bio());
-  if (bio1 == NULL || bio2 == NULL ||
+  if (bio1 == nullptr || bio2 == nullptr ||
       !bio_make_pair(bio1, bio2, writebuf1_len, writebuf2_len)) {
     BIO_free(bio1);
     BIO_free(bio2);
-    *bio1_p = NULL;
-    *bio2_p = NULL;
+    *bio1_p = nullptr;
+    *bio2_p = nullptr;
     return 0;
   }
 
@@ -429,13 +429,13 @@ int BIO_new_bio_pair(BIO **bio1_p, size_t writebuf1_len, BIO **bio2_p,
 }
 
 size_t BIO_ctrl_get_read_request(BIO *bio) {
-  return BIO_ctrl(bio, BIO_C_GET_READ_REQUEST, 0, NULL);
+  return BIO_ctrl(bio, BIO_C_GET_READ_REQUEST, 0, nullptr);
 }
 
 size_t BIO_ctrl_get_write_guarantee(BIO *bio) {
-  return BIO_ctrl(bio, BIO_C_GET_WRITE_GUARANTEE, 0, NULL);
+  return BIO_ctrl(bio, BIO_C_GET_WRITE_GUARANTEE, 0, nullptr);
 }
 
 int BIO_shutdown_wr(BIO *bio) {
-  return (int)BIO_ctrl(bio, BIO_C_SHUTDOWN_WR, 0, NULL);
+  return (int)BIO_ctrl(bio, BIO_C_SHUTDOWN_WR, 0, nullptr);
 }

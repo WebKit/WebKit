@@ -71,15 +71,15 @@ void ResourceMonitorChecker::checkEligibility(ContentExtensions::ResourceLoadInf
 {
     ASSERT(isMainThread());
 
-    m_workQueue->dispatch([this, info = crossThreadCopy(WTFMove(info)), completionHandler = WTFMove(completionHandler)] mutable {
+    m_workQueue->dispatch([this, info = crossThreadCopy(WTF::move(info)), completionHandler = WTF::move(completionHandler)] mutable {
         if (!m_ruleList && m_ruleListIsPreparing) {
-            m_pendingQueries.append(std::make_pair(WTFMove(info), WTFMove(completionHandler)));
+            m_pendingQueries.append(std::make_pair(WTF::move(info), WTF::move(completionHandler)));
             return;
         }
 
         Eligibility eligibility = m_ruleList ? checkEligibility(info) : defaultEligibility;
 
-        callOnMainRunLoop([eligibility, completionHandler = WTFMove(completionHandler)] mutable {
+        callOnMainRunLoop([eligibility, completionHandler = WTF::move(completionHandler)] mutable {
             completionHandler(eligibility);
         });
     });
@@ -99,8 +99,8 @@ void ResourceMonitorChecker::setContentRuleList(ContentExtensions::ContentExtens
 {
     ASSERT(isMainThread());
 
-    m_workQueue->dispatch([this, backend = crossThreadCopy(WTFMove(backend))] mutable {
-        m_ruleList = makeUnique<ContentExtensions::ContentExtensionsBackend>(WTFMove(backend));
+    m_workQueue->dispatch([this, backend = crossThreadCopy(WTF::move(backend))] mutable {
+        m_ruleList = makeUnique<ContentExtensions::ContentExtensionsBackend>(WTF::move(backend));
         m_ruleListIsPreparing = false;
 
         RESOURCEMONITOR_RELEASE_LOG("ContentExtensionsBackend: Content rule list is set");
@@ -122,7 +122,7 @@ void ResourceMonitorChecker::finishPendingQueries(Function<Eligibility(const Con
 
         Eligibility eligibility = checker(info);
 
-        callOnMainRunLoop([eligibility, completionHandler = WTFMove(completionHandler)] mutable {
+        callOnMainRunLoop([eligibility, completionHandler = WTF::move(completionHandler)] mutable {
             completionHandler(eligibility);
         });
     }

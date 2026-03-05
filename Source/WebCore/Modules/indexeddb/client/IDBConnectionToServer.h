@@ -60,7 +60,7 @@ struct IDBIterateCursorData;
 namespace IDBClient {
 
 class IDBConnectionToServer final : public ThreadSafeRefCounted<IDBConnectionToServer>, public CanMakeThreadSafeCheckedPtr<IDBConnectionToServer> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBConnectionToServer, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBConnectionToServer, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBConnectionToServer);
 public:
     WEBCORE_EXPORT static Ref<IDBConnectionToServer> create(IDBConnectionToServerDelegate&, PAL::SessionID);
@@ -68,7 +68,7 @@ public:
 
     WEBCORE_EXPORT IDBConnectionIdentifier identifier() const;
 
-    IDBConnectionProxy& proxy() { return m_proxy; }
+    IDBConnectionProxy& proxy() LIFETIME_BOUND { return m_proxy; }
 
     void deleteDatabase(const IDBOpenRequestData&);
     WEBCORE_EXPORT void didDeleteDatabase(const IDBResultData&);
@@ -158,8 +158,6 @@ private:
 
     typedef void (IDBConnectionToServer::*ResultFunction)(const IDBResultData&);
     void callResultFunctionWithErrorLater(ResultFunction, const IDBResourceIdentifier& requestIdentifier);
-
-    Ref<IDBConnectionToServerDelegate> protectedDelegate() const { return m_delegate.get(); }
 
     WeakRef<IDBConnectionToServerDelegate> m_delegate;
     bool m_serverConnectionIsValid { true };

@@ -39,7 +39,7 @@ void MockCaptionDisplaySettingsClientCallback::showCaptionDisplaySettings(HTMLMe
     }
 
     if (RefPtr promise = invoke(element, options).releaseReturnValue()) {
-        promise->whenSettled([completionHandler = WTFMove(completionHandler)] () mutable {
+        promise->whenSettled([completionHandler = WTF::move(completionHandler)] () mutable {
             completionHandler({ });
         });
     }

@@ -32,14 +32,13 @@ namespace WebCore {
 class SVGForeignObjectElement;
 
 class RenderSVGForeignObject final : public RenderSVGBlock {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGForeignObject);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGForeignObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGForeignObject);
 public:
     RenderSVGForeignObject(SVGForeignObjectElement&, RenderStyle&&);
     virtual ~RenderSVGForeignObject();
 
-    SVGForeignObjectElement& foreignObjectElement() const;
-    Ref<SVGForeignObjectElement> protectedForeignObjectElement() const;
+    SVGForeignObjectElement& NODELETE foreignObjectElement() const;
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 
@@ -48,6 +47,9 @@ public:
     FloatRect objectBoundingBox() const final { return m_viewport; }
     FloatRect strokeBoundingBox() const final { return m_viewport; }
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect decoratedBoundingBox() const final { return m_viewport; }
+
+    bool isObjectBoundingBoxValid() const { return !m_viewport.isEmpty(); }
 
 private:
     void graphicsElement() const = delete;
@@ -65,7 +67,7 @@ private:
     // fixed position content uses the <fO> as ancestor layer (when computing offsets from the container).
     bool needsHasSVGTransformFlags() const final { return true; }
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
     FloatRect m_viewport;
 };

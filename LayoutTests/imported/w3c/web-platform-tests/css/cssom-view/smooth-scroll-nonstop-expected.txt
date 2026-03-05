@@ -1,17 +1,4 @@
-      reject(`No ${eventName} event received for target ${target}`);
-    }, timeoutMs)', 'test.step_timeout' is undefined...
 
-Harness Error (FAIL), message = Unhandled rejection: test.step_timeout is not a function. (In 'test.step_timeout(() => {
-      reject(`No ${eventName} event received for target ${target}`);
-    }, timeoutMs)', 'test.step_timeout' is undefined)
-
-PASS noop scrollTo doesn't interrupt ongoing smooth scroll.
-TIMEOUT noop scrollIntoView doesn't interrupt ongoing smooth scroll. Test timed out
-
-Harness Error (FAIL), message = Unhandled rejection: test.step_timeout is not a function. (In 'test.step_timeout(() => {
-      reject(`No ${eventName} event received for target ${target}`);
-    }, timeoutMs)', 'test.step_timeout' is undefined)
-
-PASS noop scrollTo doesn't interrupt ongoing smooth scroll.
-TIMEOUT noop scrollIntoView doesn't interrupt ongoing smooth scroll. Test timed out
+FAIL noop scrollTo doesn't interrupt ongoing smooth scroll. assert_equals: scroller reached the target offset expected 400 but got 53
+FAIL noop scrollIntoView doesn't interrupt ongoing smooth scroll. assert_equals: scroller reached the target offset expected 400 but got 51
 

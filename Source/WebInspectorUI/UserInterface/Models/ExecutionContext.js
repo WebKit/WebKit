@@ -31,7 +31,8 @@ WI.ExecutionContext = class ExecutionContext
         console.assert(typeof id === "number" || id === WI.RuntimeManager.TopLevelExecutionContextIdentifier);
         console.assert(Object.values(WI.ExecutionContext.Type).includes(type));
         console.assert(!name || typeof name === "string");
-        console.assert(frame instanceof WI.Frame || id === WI.RuntimeManager.TopLevelExecutionContextIdentifier);
+        // Frame is required unless: (1) it's a top-level context, or (2) target is a FrameTarget (site isolation).
+        console.assert(frame instanceof WI.Frame || id === WI.RuntimeManager.TopLevelExecutionContextIdentifier || target instanceof WI.FrameTarget);
 
         this._target = target;
         this._id = id;

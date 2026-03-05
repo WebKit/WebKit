@@ -40,21 +40,21 @@
 #include "Options.h"
 #include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
+#include "VMManager.h"
 #include "VMTraps.h"
 #include "WasmCapabilities.h"
+#include "WasmExecutionHandler.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmThunks.h"
+#include <bmalloc/BPlatform.h>
 #include <mutex>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/BPlatform.h>
 #if BUSE(LIBPAS)
 #include <bmalloc/pas_scavenger.h>
-#endif
 #endif
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -112,11 +112,9 @@ void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCusto
         }
         Options::finalize();
 
-#if !USE(SYSTEM_MALLOC)
 #if BUSE(LIBPAS)
         if (Options::libpasScavengeContinuously())
             pas_scavenger_disable_shut_down();
-#endif
 #endif
 
         JITOperationList::populatePointersInJavaScriptCore();
@@ -142,8 +140,13 @@ void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCusto
         if (Wasm::isSupported() || !Options::usePollingTraps()) {
             if (!Options::usePollingTraps())
                 VMTraps::initializeSignals();
-            if (Wasm::isSupported())
+            if (Wasm::isSupported()) {
                 Wasm::prepareSignalingMemory();
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+                VMManager::setWasmDebuggerOnStop(Wasm::wasmDebuggerOnStopCallback);
+                VMManager::setWasmDebuggerOnResume(Wasm::wasmDebuggerOnResumeCallback);
+#endif
+            }
         }
 
         assertInvariants();

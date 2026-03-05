@@ -28,7 +28,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrameView.h"
 #include "NativeImage.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderingContext.h"
@@ -38,10 +38,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
 
 LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(Type::LegacySVGResourcePattern, element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(Type::LegacySVGResourcePattern, element, WTF::move(style))
 {
 }
 
@@ -50,11 +50,6 @@ LegacyRenderSVGResourcePattern::~LegacyRenderSVGResourcePattern() = default;
 SVGPatternElement& LegacyRenderSVGResourcePattern::patternElement() const
 {
     return downcast<SVGPatternElement>(LegacyRenderSVGResourceContainer::element());
-}
-
-Ref<SVGPatternElement> LegacyRenderSVGResourcePattern::protectedPatternElement() const
-{
-    return patternElement();
 }
 
 void LegacyRenderSVGResourcePattern::removeAllClientsFromCache()
@@ -76,7 +71,7 @@ void LegacyRenderSVGResourcePattern::removeClientFromCache(RenderElement& client
 
 void LegacyRenderSVGResourcePattern::collectPatternAttributes(PatternAttributes& attributes) const
 {
-    const LegacyRenderSVGResourcePattern* current = this;
+    CheckedPtr current = this;
 
     while (current) {
         Ref pattern = current->patternElement();
@@ -107,7 +102,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;
-    if (!buildTileImageTransform(renderer, m_attributes, protectedPatternElement(), tileBoundaries, tileImageTransform))
+    if (!buildTileImageTransform(renderer, m_attributes, protect(patternElement()), tileBoundaries, tileImageTransform))
         return nullptr;
 
     auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
@@ -150,7 +145,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by
     // removeAllClientsFromCacheAndMarkForInvalidation(), we only make it visible in the cache at the very end.
-    return m_patternMap.set(renderer, WTFMove(patternData)).iterator->value.get();
+    return m_patternMap.set(renderer, WTF::move(patternData)).iterator->value.get();
 }
 
 auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
@@ -159,7 +154,7 @@ auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     ASSERT(!resourceMode.isEmpty());
 
     if (m_shouldCollectPatternAttributes) {
-        protectedPatternElement()->synchronizeAllAttributes();
+        protect(patternElement())->synchronizeAllAttributes();
 
         m_attributes = PatternAttributes();
         collectPatternAttributes(m_attributes);
@@ -273,12 +268,12 @@ RefPtr<ImageBuffer> LegacyRenderSVGResourcePattern::createTileImage(GraphicsCont
         contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.
-    for (auto& child : childrenOfType<SVGElement>(Ref { *attributes.patternContentElement() })) {
-        if (!child.renderer())
+    for (Ref child : childrenOfType<SVGElement>(Ref { *attributes.patternContentElement() })) {
+        if (!child->renderer())
             continue;
-        if (child.renderer()->needsLayout())
+        if (child->renderer()->needsLayout())
             return nullptr;
-        SVGRenderingContext::renderSubtreeToContext(tileImageContext, *child.renderer(), contentTransformation);
+        SVGRenderingContext::renderSubtreeToContext(tileImageContext, *child->renderer(), contentTransformation);
     }
 
     return tileImage;

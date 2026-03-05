@@ -66,7 +66,7 @@ JSValue JSElementInternals::setFormValue(JSGlobalObject& lexicalGlobalObject, Ca
         state = stateConversionResult.releaseReturnValue();
     }
 
-    auto result = wrapped().setFormValue(value.releaseReturnValue(), WTFMove(state));
+    auto result = wrapped().setFormValue(value.releaseReturnValue(), WTF::move(state));
     if (result.hasException()) [[unlikely]] {
         propagateException(lexicalGlobalObject, throwScope, result.releaseException());
         return { };
@@ -106,6 +106,11 @@ static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, co
 JSValue JSElementInternals::ariaControlsElements(JSGlobalObject& lexicalGlobalObject) const
 {
     return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_controlsAttr);
+}
+
+JSValue JSElementInternals::ariaActionsElements(JSGlobalObject& lexicalGlobalObject) const
+{
+    return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_actionsAttr);
 }
 
 JSValue JSElementInternals::ariaDescribedByElements(JSGlobalObject& lexicalGlobalObject) const

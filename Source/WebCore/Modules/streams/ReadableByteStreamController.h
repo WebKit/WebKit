@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "JSDOMGuardedObject.h"
 #include "JSValueInWrappedObject.h"
 #include "ReadableStreamReadRequest.h"
 #include <wtf/Deque.h>
@@ -52,7 +53,7 @@ class UnderlyingSourcePullCallback;
 class UnderlyingSourceStartCallback;
 
 class ReadableByteStreamController : public CanMakeWeakPtr<ReadableByteStreamController> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ReadableByteStreamController);
+    WTF_MAKE_TZONE_ALLOCATED(ReadableByteStreamController);
 public:
     ~ReadableByteStreamController();
 
@@ -66,17 +67,16 @@ public:
 
     void respondPendingPullIntosOnClose(JSDOMGlobalObject&);
 
-    ReadableStream& stream();
-    Ref<ReadableStream> protectedStream();
+    ReadableStream& NODELETE stream();
 
-    void pullInto(JSDOMGlobalObject&, JSC::ArrayBufferView&, size_t, Ref<ReadableStreamReadIntoRequest>&&);
+    void pullInto(JSDOMGlobalObject&, JSC::ArrayBufferView&, uint64_t, Ref<ReadableStreamReadIntoRequest>&&);
 
     void runCancelSteps(JSDOMGlobalObject&, JSC::JSValue, Function<void(std::optional<JSC::JSValue>&&)>&&);
     void runPullSteps(JSDOMGlobalObject&, Ref<ReadableStreamReadRequest>&&);
-    void runReleaseSteps();
+    void NODELETE runReleaseSteps();
 
     void storeError(JSDOMGlobalObject&, JSC::JSValue);
-    JSC::JSValue storedError() const;
+    JSC::JSValue NODELETE storedError() const;
 
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
@@ -85,12 +85,15 @@ public:
 
     bool hasPendingPullIntos() const { return !m_pendingPullIntos.isEmpty(); }
 
-    void ref();
+    void NODELETE ref();
     void deref();
+    void stop();
 
     void error(JSDOMGlobalObject&, const Exception&);
     void error(JSDOMGlobalObject&, JSC::JSValue);
-    void close(JSDOMGlobalObject&);
+
+    enum class ShouldThrowOnError : bool { No, Yes };
+    bool close(JSDOMGlobalObject&, ShouldThrowOnError = ShouldThrowOnError::Yes);
     void closeAndRespondToPendingPullIntos(JSDOMGlobalObject&);
     size_t pullFromBytes(JSDOMGlobalObject&, JSC::ArrayBuffer&, size_t offset);
     ExceptionOr<void> enqueue(JSDOMGlobalObject&, JSC::ArrayBufferView&);
@@ -99,16 +102,14 @@ public:
     bool isPulling() const { return m_pulling; }
 
     template<typename Visitor> void visitAdditionalChildren(Visitor&);
-
-    JSValueInWrappedObject& underlyingSourceConcurrently() { return m_underlyingSource; }
-    JSValueInWrappedObject& storedErrorConcurrently() { return m_storedError; }
+    template<typename Visitor> void visitDirectChildren(Visitor&);
 
     using PullAlgorithm = Function<Ref<DOMPromise>(JSDOMGlobalObject&, ReadableByteStreamController&)>;
     using CancelAlgorithm = Function<Ref<DOMPromise>(JSDOMGlobalObject&, ReadableByteStreamController&, std::optional<JSC::JSValue>&&)>;
 
 private:
     friend ReadableStream;
-    ReadableByteStreamController(ReadableStream&, JSC::JSValue, RefPtr<UnderlyingSourcePullCallback>&&, RefPtr<UnderlyingSourceCancelCallback>&&, double highWaterMark, size_t autoAllocateChunkSize);
+    ReadableByteStreamController(JSDOMGlobalObject&, ReadableStream&, JSC::JSValue, RefPtr<UnderlyingSourcePullCallback>&&, RefPtr<UnderlyingSourceCancelCallback>&&, double highWaterMark, size_t autoAllocateChunkSize);
 
     ExceptionOr<void> enqueue(JSDOMGlobalObject&, JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength);
 
@@ -141,14 +142,14 @@ private:
     void invalidateByobRequest();
     Vector<PullIntoDescriptor> processPullIntoDescriptorsUsingQueue();
     void enqueueDetachedPullIntoToQueue(JSDOMGlobalObject&, PullIntoDescriptor&);
-    PullIntoDescriptor shiftPendingPullInto();
+    PullIntoDescriptor NODELETE shiftPendingPullInto();
     void enqueueChunkToQueue(Ref<JSC::ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
     void enqueueClonedChunkToQueue(JSDOMGlobalObject&, JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength);
     void callPullIfNeeded(JSDOMGlobalObject&);
     bool shouldCallPull();
     bool fillPullIntoDescriptorFromQueue(PullIntoDescriptor&);
     RefPtr<JSC::ArrayBufferView> convertPullIntoDescriptor(JSC::VM&, PullIntoDescriptor&);
-    void fillHeadPullIntoDescriptor(size_t, PullIntoDescriptor&);
+    void NODELETE fillHeadPullIntoDescriptor(size_t, PullIntoDescriptor&);
     void commitPullIntoDescriptor(JSDOMGlobalObject&, PullIntoDescriptor&);
 
     void clearAlgorithms();
@@ -181,6 +182,7 @@ private:
     JSValueInWrappedObject m_underlyingSource;
     JSValueInWrappedObject m_storedError;
 
+    Lock m_gcLock;
     PullAlgorithm m_pullAlgorithmWrapper;
     CancelAlgorithm m_cancelAlgorithmWrapper;
 };

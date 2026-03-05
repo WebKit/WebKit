@@ -27,6 +27,7 @@
 #include "VP9Utilities.h"
 #include <gst/pbutils/codec-utils.h>
 #include <gst/video/video.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -45,7 +46,7 @@ static void ensureDebugCategoryInitialized()
     });
 }
 
-std::pair<const char*, const char*> GStreamerCodecUtilities::parseH264ProfileAndLevel(const String& codec)
+std::pair<CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndLevel(const String& codec)
 {
     ensureDebugCategoryInitialized();
 
@@ -59,8 +60,8 @@ std::pair<const char*, const char*> GStreamerCodecUtilities::parseH264ProfileAnd
     sps[1] = (spsAsInteger >> 8) & 0xff;
     sps[2] = spsAsInteger & 0xff;
 
-    const char* profile = gst_codec_utils_h264_get_profile(sps.data(), 3);
-    const char* level = gst_codec_utils_h264_get_level(sps.data(), 3);
+    auto profile = CStringView::unsafeFromUTF8(gst_codec_utils_h264_get_profile(sps.data(), 3));
+    auto level = String::fromLatin1(gst_codec_utils_h264_get_level(sps.data(), 3));
 
     // To avoid going through a class hierarchy for such a simple
     // string conversion, we use a little trick here: See
@@ -68,27 +69,26 @@ std::pair<const char*, const char*> GStreamerCodecUtilities::parseH264ProfileAnd
     char levelAsStringFallback[2] = { '\0', '\0' };
     if (!level && sps[2] > 0 && sps[2] <= 5) {
         levelAsStringFallback[0] = static_cast<char>('0' + sps[2]);
-        level = levelAsStringFallback;
+        level = String(byteCast<Latin1Character>(unsafeSpan(levelAsStringFallback)));
     }
 
-    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8().data(), GST_STR_NULL(profile), GST_STR_NULL(level));
+    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8().data(), GST_STR_NULL(profile.utf8()), level.ascii().data());
     return { profile, level };
 }
 
 static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(const String& codecString)
 {
     auto outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
-    auto [gstProfile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecString);
-    if (gstProfile)
-        gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, gstProfile, nullptr);
-    if (level)
-        gst_caps_set_simple(outputCaps.get(), "level", G_TYPE_STRING, level, nullptr);
+    auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecString);
+    if (profile)
+        gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, profile.utf8(), nullptr);
+    if (!level.isEmpty())
+        gst_caps_set_simple(outputCaps.get(), "level", G_TYPE_STRING, level.ascii().data(), nullptr);
 
     StringBuilder formatBuilder;
-    auto profile = StringView::fromLatin1(gstProfile);
-    auto isY444TenBits = profile.startsWithIgnoringASCIICase("high-4:4:4"_s);
-    auto isY422TenBits = profile.findIgnoringASCIICase("high-4:2:2"_s) != notFound;
-    auto isI420TenBits = profile.findIgnoringASCIICase("high-10"_s) != notFound;
+    auto isY444TenBits = startsWithLettersIgnoringASCIICase(profile.span(), "high-4:4:4"_s);
+    auto isY422TenBits = containsIgnoringASCIICase(profile.span(), "high-4:2:2"_s);
+    auto isI420TenBits = containsIgnoringASCIICase(profile.span(), "high-10"_s);
     if (isY444TenBits)
         formatBuilder.append("Y444"_s);
     else if (isY422TenBits)
@@ -106,12 +106,12 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(con
     }
 
     auto pixelFormat = formatBuilder.toString();
-    GST_DEBUG("Setting pixel format %s for profile %s", pixelFormat.ascii().data(), gstProfile);
+    GST_DEBUG("Setting pixel format %s for profile %s", pixelFormat.ascii().data(), profile.utf8());
     auto inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, pixelFormat.ascii().data(), nullptr));
     return { inputCaps, outputCaps };
 }
 
-const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
+CStringView GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
 {
     ensureDebugCategoryInitialized();
 
@@ -141,20 +141,19 @@ const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
             profileTierLevel[i] = constraints[j];
     }
 
-    return gst_codec_utils_h265_get_profile(profileTierLevel.data(), profileTierLevel.size());
+    return CStringView::unsafeFromUTF8(gst_codec_utils_h265_get_profile(profileTierLevel.data(), profileTierLevel.size()));
 }
 
 static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(const String& codecString)
 {
     auto outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
-    auto gstProfile = GStreamerCodecUtilities::parseHEVCProfile(codecString);
-    if (gstProfile)
-        gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, gstProfile, nullptr);
+    auto profile = GStreamerCodecUtilities::parseHEVCProfile(codecString);
+    if (profile)
+        gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, profile.utf8(), nullptr);
 
     StringBuilder formatBuilder;
-    auto profile = StringView::fromLatin1(gstProfile);
-    auto isY444 = profile.findIgnoringASCIICase("-444"_s) != notFound;
-    auto isY422 = profile.findIgnoringASCIICase("-422"_s) != notFound;
+    auto isY444 = containsIgnoringASCIICase(profile.span(), "-444"_s);
+    auto isY422 = containsIgnoringASCIICase(profile.span(), "-422"_s);
     if (isY444)
         formatBuilder.append("Y444"_s);
     else if (isY422)
@@ -168,8 +167,8 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(con
 #else
         auto endianness = "BE"_s;
 #endif
-        auto is12Bits = profile.findIgnoringASCIICase("-12"_s) != notFound;
-        auto is10Bits = profile.findIgnoringASCIICase("-10"_s) != notFound;
+        auto is12Bits = containsIgnoringASCIICase(profile.span(), "-12"_s);
+        auto is10Bits = containsIgnoringASCIICase(profile.span(), "-10"_s);
         if (is10Bits)
             formatBuilder.append("_10"_s, endianness);
         else if (is12Bits)
@@ -177,7 +176,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(con
     }
 
     auto pixelFormat = formatBuilder.toString();
-    GST_DEBUG("Setting pixel format %s for profile %s", pixelFormat.ascii().data(), gstProfile);
+    GST_DEBUG("Setting pixel format %s for profile %s", pixelFormat.ascii().data(), profile.utf8());
     auto inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, pixelFormat.ascii().data(), nullptr));
     return { inputCaps, outputCaps };
 }
@@ -312,39 +311,41 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(cons
     if (!configurationRecord)
         return { nullptr, nullptr };
 
-    const char* profile;
+    ASCIILiteral profile;
     switch (configurationRecord->profile) {
     case AV1ConfigurationProfile::Main:
-        profile = "main";
+        profile = "main"_s;
         break;
     case AV1ConfigurationProfile::High:
-        profile = "high";
+        profile = "high"_s;
         break;
     case AV1ConfigurationProfile::Professional:
-        profile = "professional";
+        profile = "professional"_s;
         break;
     }
 
-    auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-av1", "profile", G_TYPE_STRING, profile, "bit-depth-luma", G_TYPE_UINT, configurationRecord->bitDepth, "bit-depth-chroma", G_TYPE_UINT, configurationRecord->bitDepth, nullptr));
+    auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-av1", "profile", G_TYPE_STRING, profile.characters(),
+        "bit-depth-luma", G_TYPE_UINT, configurationRecord->bitDepth, "bit-depth-chroma", G_TYPE_UINT,
+        configurationRecord->bitDepth, nullptr));
 
-    const char* chromaFormat = nullptr;
+    ASCIILiteral chromaFormat;
     auto yuvFormat = "I420"_s;
     switch (static_cast<AV1ConfigurationChromaSubsampling>(configurationRecord->chromaSubsampling)) {
     case AV1ConfigurationChromaSubsampling::Subsampling_422:
         yuvFormat = "I422"_s;
-        chromaFormat = "4:2:2";
+        chromaFormat = "4:2:2"_s;
         break;
     case AV1ConfigurationChromaSubsampling::Subsampling_444:
         yuvFormat = "Y444"_s;
-        chromaFormat = "4:4:4";
+        chromaFormat = "4:4:4"_s;
         break;
     case AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown:
     case AV1ConfigurationChromaSubsampling::Subsampling_420_Vertical:
     case AV1ConfigurationChromaSubsampling::Subsampling_420_Colocated:
         if (configurationRecord->monochrome)
-            chromaFormat = "4:0:0";
+            chromaFormat = "4:0:0"_s;
         else
-            chromaFormat = "4:2:0";
+            chromaFormat = "4:2:0"_s;
         break;
     };
 
@@ -500,7 +501,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(cons
     };
 
     if (!gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&info), GST_VIDEO_COLORIMETRY_SRGB))
-        gst_caps_set_simple(outputCaps.get(), "chroma-format", G_TYPE_STRING, chromaFormat, nullptr);
+        gst_caps_set_simple(outputCaps.get(), "chroma-format", G_TYPE_STRING, chromaFormat.characters(), nullptr);
 
     auto inputCaps = adoptGRef(gst_video_info_to_caps(&info));
     GST_DEBUG("Codec %s maps to input %" GST_PTR_FORMAT " and output %" GST_PTR_FORMAT, codecString.ascii().data(), inputCaps.get(), outputCaps.get());
@@ -535,22 +536,22 @@ std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromC
 
     if (codecString.startsWith("vp8"_s) || codecString.startsWith("vp08"_s) || codecString.startsWith("vp9"_s) || codecString.startsWith("vp09"_s)) {
         auto [inputCaps, outputCaps] = vpxCapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     if (codecString.startsWith("av01"_s)) {
         auto [inputCaps, outputCaps] = av1CapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     if (codecString.startsWith("avc1"_s)) {
         auto [inputCaps, outputCaps] = h264CapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     if (codecString.startsWith("hvc1"_s) || codecString.startsWith("hev1"_s)) {
         auto [inputCaps, outputCaps] = h265CapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     return { nullptr, nullptr };

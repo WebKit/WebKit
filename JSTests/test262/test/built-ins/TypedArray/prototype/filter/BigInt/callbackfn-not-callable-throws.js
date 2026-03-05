@@ -9,12 +9,12 @@ info: |
   ...
   4. If IsCallable(callbackfn) is false, throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(4);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(4));
 
   assert.throws(TypeError, function() {
     sample.filter();

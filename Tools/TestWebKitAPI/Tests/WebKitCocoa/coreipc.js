@@ -226,7 +226,7 @@ const aliases = {
     'GCGLErrorCodeSet': 'OptionSet<GCGLErrorCode>',
     // these RetainPtr<T> should not be treated as optionnal because
     // of the 'Ref wrapped by' in Source/WebKit/Shared/cf/CFTypes.serialization.in
-    // see generated code in WebKitBuild/Debug/DerivedSources/WebKit/WebKitPlatformGeneratedSerializers.mm
+    // see generated code in WebKitBuild/Debug/DerivedSources/WebKit/IPC/WebKitPlatformGeneratedSerializers.mm
     'RetainPtr<CFTypeRef>': 'WebKit::CoreIPCCFType',
     'RetainPtr<CFDataRef>': 'WebKit::CoreIPCData',
     'RetainPtr<CFStringRef>': 'String',

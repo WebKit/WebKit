@@ -311,7 +311,7 @@ ALWAYS_INLINE JSBigInt::ComparisonResult compareBigIntToOtherPrimitive(JSGlobalO
     if (primValue.isString()) {
         auto string = asString(primValue)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
-        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, WTFMove(string));
+        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, WTF::move(string));
         RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
         if (!bigIntValue)
             return JSBigInt::ComparisonResult::Undefined;
@@ -351,7 +351,7 @@ ALWAYS_INLINE JSBigInt::ComparisonResult compareBigInt32ToOtherPrimitive(JSGloba
     if (primValue.isString()) {
         auto string = asString(primValue)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
-        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, WTFMove(string));
+        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, WTF::move(string));
         RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
         if (!bigIntValue)
             return JSBigInt::ComparisonResult::Undefined;

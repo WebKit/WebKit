@@ -119,10 +119,6 @@ if ($showHelp) {
    exit 1;
 }
 
-if (isAnyWindows()) {
-    $ftlJIT = 0;
-}
-
 if ($buildDir && !isCMakeBuild()) {
     print STDERR "--build-dir is currently only supported for cmake builds";
     exit 1;

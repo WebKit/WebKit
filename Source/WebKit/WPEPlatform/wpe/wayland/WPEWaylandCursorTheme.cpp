@@ -44,7 +44,7 @@ std::unique_ptr<WaylandCursorTheme> WaylandCursorTheme::create(const char* name,
     if (!pool)
         return nullptr;
 
-    return makeUnique<WaylandCursorTheme>(WTFMove(theme), WTFMove(pool));
+    return makeUnique<WaylandCursorTheme>(WTF::move(theme), WTF::move(pool));
 }
 
 std::unique_ptr<WaylandCursorTheme> WaylandCursorTheme::create(struct wl_shm* shm)
@@ -57,12 +57,12 @@ std::unique_ptr<WaylandCursorTheme> WaylandCursorTheme::create(struct wl_shm* sh
     if (!pool)
         return nullptr;
 
-    return makeUnique<WaylandCursorTheme>(WTFMove(theme), WTFMove(pool));
+    return makeUnique<WaylandCursorTheme>(WTF::move(theme), WTF::move(pool));
 }
 
 WaylandCursorTheme::WaylandCursorTheme(std::unique_ptr<CursorTheme>&& theme, std::unique_ptr<WaylandSHMPool>&& pool)
-    : m_theme(WTFMove(theme))
-    , m_pool(WTFMove(pool))
+    : m_theme(WTF::move(theme))
+    , m_pool(WTF::move(pool))
 {
 
 }
@@ -109,7 +109,7 @@ void WaylandCursorTheme::loadCursor(const char* name, double scale, std::optiona
             m_pool->write(cursorImage.pixels.span(), offset);
 
         image.buffer = m_pool->createBuffer(offset, image.width, image.height, image.width * 4);
-        images.append(WTFMove(image));
+        images.append(WTF::move(image));
     }
 }
 

@@ -48,6 +48,7 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import "CoreVideoSoftLink.h"
 
 using namespace WebCore;
 
@@ -154,13 +155,13 @@ RefPtr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Samp
     if (!sampleBufferDisplayLayer)
         return nullptr;
 
-    return adoptRef(*new LocalSampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer), client));
+    return adoptRef(*new LocalSampleBufferDisplayLayer(WTF::move(sampleBufferDisplayLayer), client));
 }
 
 LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&& sampleBufferDisplayLayer, SampleBufferDisplayLayerClient& client)
     : SampleBufferDisplayLayer(client)
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
-    , m_sampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer))
+    , m_sampleBufferDisplayLayer(WTF::move(sampleBufferDisplayLayer))
     , m_processingQueue(WorkQueue::create("LocalSampleBufferDisplayLayer queue"_s))
 #if !RELEASE_LOG_DISABLED
     , m_frameRateMonitor([this](auto info) { onIrregularFrameRateNotification(info.frameTime, info.lastFrameTime); })
@@ -262,12 +263,6 @@ PlatformLayer* LocalSampleBufferDisplayLayer::displayLayer()
 PlatformLayer* LocalSampleBufferDisplayLayer::rootLayer()
 {
     return m_rootLayer.get();
-}
-
-
-RetainPtr<PlatformLayer> LocalSampleBufferDisplayLayer::protectedRootLayer()
-{
-    return rootLayer();
 }
 
 bool LocalSampleBufferDisplayLayer::didFail() const
@@ -475,7 +470,7 @@ void LocalSampleBufferDisplayLayer::addVideoFrameToPendingQueue(Ref<VideoFrame>&
     assertIsCurrent(workQueue());
 
     removeOldVideoFramesFromPendingQueue();
-    m_pendingVideoFrameQueue.append(WTFMove(videoFrame));
+    m_pendingVideoFrameQueue.append(WTF::move(videoFrame));
 }
 
 void LocalSampleBufferDisplayLayer::clearVideoFrames()
@@ -515,7 +510,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     return;
                 }
                 auto videoFrame = protectedThis->m_pendingVideoFrameQueue.takeFirst();
-                protectedThis->enqueueBufferInternal(videoFrame->protectedPixelBuffer().get(), videoFrame->presentationTime());
+                protectedThis->enqueueBufferInternal(protect(videoFrame->pixelBuffer()).get(), videoFrame->presentationTime());
             }
         });
     }];

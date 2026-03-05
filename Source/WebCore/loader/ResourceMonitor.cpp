@@ -88,7 +88,7 @@ void ResourceMonitor::setDocumentURL(URL&& url)
     if (!frame)
         return;
 
-    m_frameURL = WTFMove(url);
+    m_frameURL = WTF::move(url);
 
     didReceiveResponse(m_frameURL, m_frame->isMainFrame() ? ContentExtensions::ResourceType::TopDocument : ContentExtensions::ResourceType::ChildDocument);
 
@@ -117,7 +117,7 @@ void ResourceMonitor::didReceiveResponse(const URL& url, OptionSet<ContentExtens
         .type = resourceType
     };
 
-    ResourceMonitorChecker::singleton().checkEligibility(WTFMove(info), [weakThis = WeakPtr { *this }, url, resourceType](Eligibility eligibility) {
+    ResourceMonitorChecker::singleton().checkEligibility(WTF::move(info), [weakThis = WeakPtr { *this }, url, resourceType](Eligibility eligibility) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->continueAfterDidReceiveEligibility(eligibility, url, resourceType);
     });
@@ -231,7 +231,7 @@ void ResourceMonitor::checkNetworkUsageExcessIfNecessary()
             return;
         }
 
-        frame->loader().protectedClient()->didExceedNetworkUsageThreshold();
+        protect(frame->loader().client())->didExceedNetworkUsageThreshold();
     }
 }
 

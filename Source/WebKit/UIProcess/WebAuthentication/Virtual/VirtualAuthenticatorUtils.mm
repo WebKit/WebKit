@@ -92,7 +92,7 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
         [nsPublicKeyData getBytes:x.mutableSpan().data() range:NSMakeRange(1, ES256FieldElementLength)];
         Vector<uint8_t> y(ES256FieldElementLength);
         [nsPublicKeyData getBytes:y.mutableSpan().data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
-        cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
+        cosePublicKey = encodeES256PublicKeyAsCBOR(WTF::move(x), WTF::move(y));
     }
     return std::pair { credentialId, cosePublicKey };
 }

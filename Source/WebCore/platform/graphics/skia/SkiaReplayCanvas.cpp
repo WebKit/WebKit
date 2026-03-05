@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Igalia S.L.
+ * Copyright (C) 2025, 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SkiaReplayCanvas.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#if USE(SKIA)
 #include "GLContext.h"
 #include "GLFence.h"
 #include "PlatformDisplay.h"
@@ -42,13 +42,31 @@ SkiaReplayCanvas::SkiaReplayCanvas(const IntSize& size, const RefPtr<SkiaRecordi
     : SkNWayCanvas(size.width(), size.height())
     , m_recording(recording)
 {
+    // Create atlas wrappers from pre-prepared GPU atlases.
+    // GPU atlases were uploaded on main thread; we just rewrap for this worker's context.
+    if (m_recording && m_recording->hasGPUAtlases()) {
+        auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+        if (!glContext || !glContext->makeContextCurrent())
+            return;
+
+        m_recording->waitForUploadCondition();
+        m_recording->waitForUploadFence();
+
+        const auto& gpuAtlases = m_recording->gpuAtlases();
+        m_atlases.reserveInitialCapacity(gpuAtlases.size());
+
+        for (const auto& gpuAtlas : gpuAtlases) {
+            if (auto atlas = SkiaReplayAtlas::create(gpuAtlas))
+                m_atlases.append(WTF::move(atlas));
+        }
+    }
 }
 
 SkiaReplayCanvas::~SkiaReplayCanvas() = default;
 
-Ref<SkiaReplayCanvas> SkiaReplayCanvas::create(const IntSize& size, const RefPtr<SkiaRecordingResult>& recodingResult)
+Ref<SkiaReplayCanvas> SkiaReplayCanvas::create(const IntSize& size, const RefPtr<SkiaRecordingResult>& recordingResult)
 {
-    return adoptRef(*new SkiaReplayCanvas(size, recodingResult));
+    return adoptRef(*new SkiaReplayCanvas(size, recordingResult));
 }
 
 sk_sp<SkImage> SkiaReplayCanvas::waitForRenderingCompletionAndRewrapImageIfNeeded(const SkImage* image)
@@ -175,6 +193,20 @@ void SkiaReplayCanvas::onDrawGlyphRunList(const sktext::GlyphRunList& glyphRunLi
 
 void SkiaReplayCanvas::onDrawImage2(const SkImage* image, SkScalar x, SkScalar y, const SkSamplingOptions& sampling, const SkPaint* paint)
 {
+    // Check for atlas substitution for raster images.
+    if (!m_atlases.isEmpty() && image && !image->isTextureBacked()) {
+        for (auto& atlas : m_atlases) {
+            if (auto atlasRect = atlas->rectForImage(*image)) {
+                // Draw from atlas instead of original image.
+                const auto& atlasTexture = atlas->atlasTexture();
+                ASSERT(atlasTexture);
+                auto dst = SkRect::MakeXYWH(x, y, atlasRect->width(), atlasRect->height());
+                SkNWayCanvas::onDrawImageRect2(atlasTexture.get(), *atlasRect, dst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
+                return;
+            }
+        }
+    }
+
     invokeDrawFunctionWithImage(image, [&](const SkImage* image) {
         SkNWayCanvas::onDrawImage2(image, x, y, sampling, paint);
     });
@@ -189,6 +221,42 @@ void SkiaReplayCanvas::onDrawImageLattice2(const SkImage* image, const Lattice& 
 
 void SkiaReplayCanvas::onDrawImageRect2(const SkImage* image, const SkRect& src, const SkRect& dst, const SkSamplingOptions& sampling, const SkPaint* paint, SrcRectConstraint constraint)
 {
+    // Check for atlas substitution for raster images.
+    if (!m_atlases.isEmpty() && image && !image->isTextureBacked()) {
+        for (auto& atlas : m_atlases) {
+            if (auto atlasRect = atlas->rectForImage(*image)) {
+                // Draw from atlas instead of original image.
+                const auto& atlasTexture = atlas->atlasTexture();
+                ASSERT(atlasTexture);
+
+                // Map src rect from image coordinates to atlas coordinates.
+                SkScalar atlasX = atlasRect->x() + src.x();
+                SkScalar atlasY = atlasRect->y() + src.y();
+                auto atlasSrc = SkRect::MakeXYWH(atlasX, atlasY, src.width(), src.height());
+
+                // Clamp to image bounds within atlas to prevent reading adjacent images.
+                SkRect imageBoundsInAtlas = *atlasRect;
+                if (!atlasSrc.intersect(imageBoundsInAtlas))
+                    return;
+
+                // Adjust destination proportionally if source was clamped.
+                if (atlasSrc.width() != src.width() || atlasSrc.height() != src.height()) {
+                    SkScalar leftClip = atlasSrc.x() - atlasX;
+                    SkScalar topClip = atlasSrc.y() - atlasY;
+                    SkScalar scaleX = dst.width() / src.width();
+                    SkScalar scaleY = dst.height() / src.height();
+
+                    auto adjustedDst = SkRect::MakeXYWH(dst.x() + leftClip * scaleX, dst.y() + topClip * scaleY, atlasSrc.width() * scaleX, atlasSrc.height() * scaleY);
+                    SkNWayCanvas::onDrawImageRect2(atlasTexture.get(), atlasSrc, adjustedDst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
+                    return;
+                }
+
+                SkNWayCanvas::onDrawImageRect2(atlasTexture.get(), atlasSrc, dst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
+                return;
+            }
+        }
+    }
+
     invokeDrawFunctionWithImage(image, [&](const SkImage* image) {
         SkNWayCanvas::onDrawImageRect2(image, src, dst, sampling, paint, constraint);
     });
@@ -273,4 +341,4 @@ void SkiaReplayCanvas::onDrawVerticesObject(const SkVertices* vertices, SkBlendM
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#endif // USE(SKIA)

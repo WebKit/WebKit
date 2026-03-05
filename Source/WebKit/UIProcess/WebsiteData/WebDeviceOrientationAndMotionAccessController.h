@@ -43,7 +43,7 @@ class WebDeviceOrientationAndMotionAccessController : public CanMakeWeakPtr<WebD
 public:
     WebDeviceOrientationAndMotionAccessController(WebsiteDataStore&);
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     void shouldAllowAccess(WebPageProxy&, WebFrameProxy&, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);

@@ -29,6 +29,7 @@
 
 #include "Chrome.h"
 #include "ContainerNodeInlines.h"
+#include "DocumentPage.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -48,12 +49,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpinButtonElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpinButtonElement);
 
 using namespace HTMLNames;
 
 inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner& spinButtonOwner)
-    : HTMLDivElement(divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
+    : HTMLDivElement(document, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_spinButtonOwner(spinButtonOwner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
@@ -210,7 +211,7 @@ void SpinButtonElement::releaseCapture()
 
 bool SpinButtonElement::matchesReadWritePseudoClass() const
 {
-    return protectedShadowHost()->matchesReadWritePseudoClass();
+    return protect(shadowHost())->matchesReadWritePseudoClass();
 }
 
 void SpinButtonElement::startRepeatingTimer()

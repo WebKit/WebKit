@@ -25,11 +25,15 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if HAVE(RSA_BSSA)
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://167351607) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 // FIXME(227598): Remove conditional once CryptoKitPrivate/RSABSSA.h is available.
 #if __has_include(<CryptoKitPrivate/RSABSSA.h>)
@@ -40,17 +44,17 @@ DECLARE_SYSTEM_HEADER
 
 #else
 
+@interface RSABSSATokenReady : NSObject
+@property (nonatomic, retain, readonly) NSData* tokenContent;
+@property (nonatomic, retain, readonly) NSData* keyId;
+@property (nonatomic, retain, readonly) NSData* signature;
+@end
+
 @interface RSABSSATokenWaitingActivation : NSObject
 #if HAVE(RSA_BSSA)
 - (RSABSSATokenReady*)activateTokenWithServerResponse:(NSData*)serverResponse error:(NSError* __autoreleasing *)error;
 #endif
 @property (nonatomic, retain, readonly) NSData* blindedMessage;
-@end
-
-@interface RSABSSATokenReady : NSObject
-@property (nonatomic, retain, readonly) NSData* tokenContent;
-@property (nonatomic, retain, readonly) NSData* keyId;
-@property (nonatomic, retain, readonly) NSData* signature;
 @end
 
 #if HAVE(RSA_BSSA)

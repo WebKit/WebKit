@@ -36,7 +36,7 @@ class Path;
 namespace Style {
 
 struct Inset {
-    using Insets = MinimallySerializingSpaceSeparatedRectEdges<LengthPercentage<>>;
+    using Insets = MinimallySerializingSpaceSeparatedRectEdges<LengthPercentage<CSS::AllUnzoomed>>;
 
     Insets insets;
     BorderRadius radii;
@@ -55,7 +55,7 @@ template<size_t I> const auto& get(const Inset& value)
 
 DEFINE_TYPE_MAPPING(CSS::Inset, Inset)
 
-template<> struct PathComputation<Inset> { WebCore::Path operator()(const Inset&, const FloatRect&); };
+template<> struct PathComputation<Inset> { WebCore::Path operator()(const Inset&, const FloatRect&, ZoomFactor); };
 
 } // namespace Style
 } // namespace WebCore

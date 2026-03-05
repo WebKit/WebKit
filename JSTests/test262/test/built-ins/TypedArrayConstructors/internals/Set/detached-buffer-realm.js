@@ -36,4 +36,4 @@ testWithTypedArrayConstructors(function(TA) {
   $DETACHBUFFER(sample.buffer);
   sample[0] = 1;
   assert.sameValue(sample[0], undefined, '`sample[0]` is undefined');
-});
+}, null, ["passthrough"]);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

@@ -1,0 +1,3 @@
+
+PASS Origin.from(globalThis) is a tuple origin.
+

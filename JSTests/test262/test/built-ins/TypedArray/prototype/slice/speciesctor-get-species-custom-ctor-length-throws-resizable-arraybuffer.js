@@ -40,4 +40,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.slice();
   });
-});
+}, null, ["passthrough"]);

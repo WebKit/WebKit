@@ -87,7 +87,7 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 #endif
     RELEASE_ASSERT(nextFree < maxNumberOfHandlers);
     SignalHandlerMemory* memory = &handlers[signalIndex][nextFree];
-    new (memory) SignalHandler(WTFMove(handler));
+    new (memory) SignalHandler(WTF::move(handler));
 
     numberOfHandlers[signalIndex]++;
 }
@@ -195,7 +195,7 @@ static void initMachExceptionHandlerThread()
     dispatch_resume(source);
 }
 
-static exception_mask_t toMachMask(Signal signal)
+static exception_mask_t NODELETE toMachMask(Signal signal)
 {
     switch (signal) {
     case Signal::AccessFault: return EXC_MASK_BAD_ACCESS;
@@ -207,7 +207,7 @@ static exception_mask_t toMachMask(Signal signal)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Signal fromMachException(exception_type_t type)
+static Signal NODELETE fromMachException(exception_type_t type)
 {
     switch (type) {
     case EXC_BAD_ACCESS: return Signal::AccessFault;
@@ -434,7 +434,7 @@ inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline Signal fromSystemSignal(int signal)
+inline Signal NODELETE fromSystemSignal(int signal)
 {
     switch (signal) {
     case SIGSEGV: return Signal::AccessFault;
@@ -450,7 +450,7 @@ inline Signal fromSystemSignal(int signal)
     }
 }
 
-inline size_t offsetForSystemSignal(int sig)
+inline size_t NODELETE offsetForSystemSignal(int sig)
 {
     Signal signal = fromSystemSignal(sig);
     return static_cast<size_t>(signal) + (sig == SIGBUS);
@@ -482,7 +482,7 @@ void activateSignalHandlersFor(Signal signal)
 
 void addSignalHandler(Signal signal, SignalHandler&& handler)
 {
-    g_wtfConfig.signalHandlers.add(signal, WTFMove(handler));
+    g_wtfConfig.signalHandlers.add(signal, WTF::move(handler));
 }
 
 static void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
@@ -537,9 +537,7 @@ static void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
     }
 
     unsigned oldActionIndex = static_cast<size_t>(signal) + (sig == SIGBUS);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    struct sigaction& oldAction = handlers.oldActions[static_cast<size_t>(oldActionIndex)];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    struct sigaction& oldAction = handlers.oldActions[oldActionIndex];
     if (signal == Signal::Usr) {
         if (oldAction.sa_sigaction)
             oldAction.sa_sigaction(sig, info, ucontext);
@@ -602,11 +600,9 @@ void SignalHandlers::finalize()
             RELEASE_ASSERT(!result);
             action.sa_flags = SA_SIGINFO;
             auto systemSignals = toSystemSignal(signal);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
             result = sigaction(std::get<0>(systemSignals), &action, &handlers.oldActions[offsetForSystemSignal(std::get<0>(systemSignals))]);
             if (std::get<1>(systemSignals))
                 result |= sigaction(*std::get<1>(systemSignals), &action, &handlers.oldActions[offsetForSystemSignal(*std::get<1>(systemSignals))]);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             RELEASE_ASSERT(!result);
         }
     }

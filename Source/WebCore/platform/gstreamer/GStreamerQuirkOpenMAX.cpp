@@ -35,6 +35,13 @@ GStreamerQuirkOpenMAX::GStreamerQuirkOpenMAX()
     GST_DEBUG_CATEGORY_INIT(webkit_openmax_quirks_debug, "webkitquirksopenmax", 0, "WebKit OpenMAX Quirks");
 }
 
+bool GStreamerQuirkOpenMAX::isPlatformSupported() const
+{
+    auto registry = gst_registry_get();
+    auto feature = adoptGRef(gst_registry_lookup_feature(registry, "omx"));
+    return feature;
+}
+
 bool GStreamerQuirkOpenMAX::processWebAudioSilentBuffer(GstBuffer* buffer) const
 {
     GST_TRACE("Force disabling GAP buffer flag");

@@ -40,7 +40,7 @@ std::optional<BufferDescriptor> ConvertToBackingContext::convertToBacking(const 
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), bufferDescriptor.size, bufferDescriptor.usage, bufferDescriptor.mappedAtCreation } };
+    return { { WTF::move(*base), bufferDescriptor.size, bufferDescriptor.usage, bufferDescriptor.mappedAtCreation } };
 }
 
 std::optional<WebCore::WebGPU::BufferDescriptor> ConvertFromBackingContext::convertFromBacking(const BufferDescriptor& bufferDescriptor)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::BufferDescriptor> ConvertFromBackingContext::conv
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), bufferDescriptor.size, bufferDescriptor.usage, bufferDescriptor.mappedAtCreation } };
+    return { { WTF::move(*base), bufferDescriptor.size, bufferDescriptor.usage, bufferDescriptor.mappedAtCreation } };
 }
 
 } // namespace WebKit

@@ -25,6 +25,7 @@
 #include "absl/strings/string_view.h"
 #include "api/audio_options.h"
 #include "api/candidate.h"
+#include "api/environment/environment.h"
 #include "api/jsep.h"
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
@@ -80,6 +81,7 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
 
   // Creates an SdpOfferAnswerHandler. Modifies dependencies.
   static std::unique_ptr<SdpOfferAnswerHandler> Create(
+      const Environment& env,
       PeerConnectionSdpMethods* pc,
       const PeerConnectionInterface::RTCConfiguration& configuration,
       std::unique_ptr<RTCCertificateGeneratorInterface> cert_generator,
@@ -151,7 +153,6 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   void AddIceCandidate(std::unique_ptr<IceCandidate> candidate,
                        std::function<void(RTCError)> callback);
   bool RemoveIceCandidate(const IceCandidate* candidate);
-  bool RemoveIceCandidates(const std::vector<Candidate>& candidates);
   // Adds a locally generated candidate to the local description.
   void AddLocalIceCandidate(const IceCandidate* candidate);
   void RemoveLocalIceCandidates(absl::string_view mid,
@@ -214,7 +215,8 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   class LocalIceCredentialsToReplace;
 
   // Only called by the Create() function.
-  explicit SdpOfferAnswerHandler(PeerConnectionSdpMethods* pc,
+  explicit SdpOfferAnswerHandler(const Environment& env,
+                                 PeerConnectionSdpMethods* pc,
                                  ConnectionContext* context);
   // Called from the `Create()` function. Can only be called
   // once. Modifies dependencies.
@@ -563,9 +565,13 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
 
   void ReportInitialSdpMunging(bool had_local_description, SdpType type);
 
+  // Helper function to negotiate an SCTP m= line.
+  void MaybeNegotiateSctp(MediaSessionOptions* session_options)
+      RTC_RUN_ON(signaling_thread());
+
   // ==================================================================
   // Access to pc_ variables
-  MediaEngineInterface* media_engine() const;
+  const MediaEngineInterface* media_engine() const;
   TransceiverList* transceivers();
   const TransceiverList* transceivers() const;
   DataChannelController* data_channel_controller();
@@ -587,6 +593,7 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   const VideoOptions& video_options() { return video_options_; }
   bool ConfiguredForMedia() const;
 
+  const Environment& env_;
   PeerConnectionSdpMethods* const pc_;
   ConnectionContext* const context_;
 

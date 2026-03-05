@@ -42,6 +42,8 @@ public:
     Vector<PlatformXR::FrameData::InputSource> collectInputSources(const XrFrameState&, XrSpace) const;
     void updateInteractionProfile();
 
+    const Vector<UniqueRef<OpenXRInputSource>>& inputSources() { return m_inputSources; }
+
 private:
     OpenXRInput(XrInstance, XrSession);
     XrResult initialize(OpenXRSystemProperties&&);

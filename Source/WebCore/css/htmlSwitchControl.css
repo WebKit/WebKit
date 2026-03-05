@@ -29,7 +29,7 @@ input[type="checkbox"][switch] {
     display: initial;
 }
 
-input[type="checkbox"][switch]::thumb, input[type="checkbox"][switch]::track {
+input[type="checkbox"][switch]::slider-thumb, input[type="checkbox"][switch]::slider-track {
     appearance: inherit !important;
 }
 

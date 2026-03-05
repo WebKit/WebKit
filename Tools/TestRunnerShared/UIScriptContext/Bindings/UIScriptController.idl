@@ -47,13 +47,18 @@ dictionary TextExtractionTestOptions {
     boolean clipToBounds = false;
     boolean includeRects = false;
     boolean includeURLs = false;
+    boolean includeSelectOptions = false;
+    boolean shortenURLs = false;
     DOMString nodeIdentifierInclusion = "none";
-    boolean includeEventListeners = false;
+    object eventListenerCategories;
     boolean includeAccessibilityAttributes = false;
     boolean includeTextInAutoFilledControls = false;
+    boolean includeOffscreenPasswordFields = false;
     boolean mergeParagraphs = false;
     boolean skipNearlyTransparentContent = false;
     DOMString outputFormat;
+    object dataDetectorTypes;
+    DOMString wordLimitPolicy;
 };
 
 dictionary TextExtractionInteractionOptions {
@@ -268,6 +273,7 @@ interface UIScriptController {
 
     // <input type=color>
     undefined setSelectedColorForColorPicker(double red, double green, double blue);
+    readonly attribute boolean isShowingColorPicker;
 
     undefined keyboardAccessoryBarNext();
     undefined keyboardAccessoryBarPrevious();
@@ -420,6 +426,7 @@ interface UIScriptController {
     readonly attribute boolean isWebContentFirstResponder;
 
     undefined setHardwareKeyboardAttached(boolean attached);
+    undefined setShowKeyboardAfterElementFocusDelay(double delay);
 
     undefined setWebViewEditable(boolean editable);
 
@@ -465,5 +472,7 @@ interface UIScriptController {
 
 #if defined(ENABLE_THREADED_ANIMATIONS) && ENABLE_THREADED_ANIMATIONS
     DOMString animationStackForLayerWithID(unsigned long long layerID);
+    DOMString progressBasedTimelinesForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID);
 #endif
+    boolean displayLinkWantsHighFrameRate();
 };

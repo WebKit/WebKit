@@ -565,7 +565,7 @@ class PropertyData:
                 output += codePoint
             else:
                 output += "\\x{:x}".format(ord(codePoint))
-        file.write("{{ std::span {{ const_cast<char32_t*>(U\"{}\"), {} }}}}".format(output, len(utf32String)))
+        file.write("{{ std::span {{ U\"{}\", {} }}}}".format(output, len(utf32String)))
 
     def dump(self, file, commaAfter):
         file.write("static std::unique_ptr<CharacterClass> {}()\n{{\n".format(self.getCreateFuncName()))
@@ -618,7 +618,7 @@ class PropertyData:
 
     @classmethod
     def createAndDumpHashTable(self, file, propertyDict, tablePrefix):
-        def createAndDumpHashTableHelper(propertyDict, tablePrefix, isMac):
+        def createAndDumpHashTableHelper(propertyDict, tablePrefix):
             propertyKeys = propertyDict.keys()
             numberOfKeys = len(propertyKeys)
             hashSize = ceilingToPowerOf2(numberOfKeys * 2)
@@ -637,7 +637,7 @@ class PropertyData:
 
             for keyValue in keyValuesToHash:
                 key = keyValue[0]
-                hash = stringHash(key, isMac) % hashSize
+                hash = stringHash(key) % hashSize
                 while hashTable[hash] is not None:
                     if hashTable[hash][1] is not None:
                         hash = hashTable[hash][1]
@@ -673,12 +673,7 @@ class PropertyData:
             hashTableString += "    {{ {}, {}, {}TableValue, {}TableIndex }};\n\n".format(len(valueTable), hashMask, tablePrefix, tablePrefix)
             return hashTableString
 
-        hashTableForMacOS = createAndDumpHashTableHelper(propertyDict, tablePrefix, True)
-        hashTableForIOS = createAndDumpHashTableHelper(propertyDict, tablePrefix, False)
-        hashTableToWrite = hashTableForMacOS
-        if hashTableForMacOS != hashTableForIOS:
-            hashTableToWrite = "#if PLATFORM(MAC)\n{}#else\n{}#endif\n".format(hashTableForMacOS, hashTableForIOS)
-        file.write(hashTableToWrite)
+        file.write(createAndDumpHashTableHelper(propertyDict, tablePrefix))
 
     @classmethod
     def dumpMayContainStringFunc(cls, file):

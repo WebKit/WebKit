@@ -2,12 +2,12 @@ PASS initialSelectionRects.length is 1
 PASS initialSelectionRects[0].left is 0
 PASS initialSelectionRects[0].top is 2
 PASS initialSelectionRects[0].width is 309
-PASS initialSelectionRects[0].height is 112
+PASS initialSelectionRects[0].height is 113
 PASS finalSelectionRects.length is 1
 PASS finalSelectionRects[0].left is 0
 PASS finalSelectionRects[0].top is 2
 PASS finalSelectionRects[0].width is 309
-PASS finalSelectionRects[0].height is 112
+PASS finalSelectionRects[0].height is 113
 PASS successfullyParsed is true
 
 TEST COMPLETE

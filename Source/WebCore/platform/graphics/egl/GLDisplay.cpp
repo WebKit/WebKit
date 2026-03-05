@@ -20,7 +20,9 @@
 #include "config.h"
 #include "GLDisplay.h"
 
+#include "FourCC.h"
 #include "GLContext.h"
+#include "Logging.h"
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringView.h>
@@ -32,7 +34,12 @@
 #include <EGL/eglext.h>
 #endif
 
-#if USE(GBM)
+#if OS(ANDROID)
+#include "BufferFormatAndroid.h"
+#include <android/hardware_buffer.h>
+#include <drm/drm_fourcc.h>
+#include <wtf/NeverDestroyed.h>
+#elif USE(GBM)
 #include <drm_fourcc.h>
 #endif
 
@@ -51,7 +58,9 @@ namespace WebCore {
 
 RefPtr<GLDisplay> GLDisplay::create(EGLDisplay eglDisplay)
 {
+#if !USE(GRAPHICS_LAYER_WC)
     ASSERT(isMainThread());
+#endif
     if (eglDisplay == EGL_NO_DISPLAY)
         return nullptr;
 
@@ -185,7 +194,7 @@ static Vector<GLDisplay::BufferFormat> queryDMABufFormats(EGLDisplay eglDisplay,
                 }
             }
         }
-        return GLDisplay::BufferFormat { format, WTFMove(dmabufModifiers) };
+        return GLDisplay::BufferFormat { format, WTF::move(dmabufModifiers) };
     });
 }
 
@@ -230,5 +239,51 @@ const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormatsForVideo()
 }
 #endif
 #endif // USE(GBM)
+
+#if OS(ANDROID)
+const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormats()
+{
+    static LazyNeverDestroyed<Vector<GLDisplay::BufferFormat>> formats;
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        formats.construct();
+
+        // This list includes those formats supported by AHardwareBuffer which are suitable for rendering content, sorted by preference. See:
+        // https://android.googlesource.com/platform/frameworks/native/+/4f463a6b1de9198963dc6aff74154a504ba3f8f6/libs/nativewindow/include/android/hardware_buffer.h#66
+        static constexpr FourCC drmFormats[] = {
+            DRM_FORMAT_RGBA8888,
+            DRM_FORMAT_RGBX8888,
+            DRM_FORMAT_RGB565,
+            DRM_FORMAT_RGBA1010102,
+            DRM_FORMAT_RGB888,
+        };
+
+        // The usage flags match the common set used in the usageToAHardwareBufferUsage() helper function
+        // in AcceleratedSurface.cpp, under the assumption that the additional flag hinting that buffers
+        // may be mapped, and the scanout flags can be added to formats determined here to be supported.
+        //
+        // The width, height, and layers count cannot be zero, otherwise AHardwareBuffer_isSupported()
+        // will always fail. Ideally the check would be done with the actual size needed for an allocation
+        // but that would require additional plumbing and does not seem to be needed at the moment.
+        AHardwareBuffer_Desc description { };
+        description.usage = AHARDWAREBUFFER_USAGE_GPU_FRAMEBUFFER | AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE;
+        description.width = description.height = description.layers = 1;
+
+        for (const auto& drmFormat : drmFormats) {
+            const auto ahbFormat = toAHardwareBufferFormat(drmFormat);
+            RELEASE_ASSERT(ahbFormat);
+            description.format = ahbFormat.value();
+            if (AHardwareBuffer_isSupported(&description)) {
+                RELEASE_LOG_DEBUG(GraphicsBuffer, "AHB: Adding supported DRM format '%s'", drmFormat.string().data());
+                formats->append(GLDisplay::BufferFormat(drmFormat.value));
+            } else
+                RELEASE_LOG_DEBUG(GraphicsBuffer, "AHB: Skipping unsupported DRM format '%s'", drmFormat.string().data());
+        }
+        RELEASE_LOG_DEBUG(GraphicsBuffer, "AHB: There are %zu supported formats", formats->size());
+    });
+
+    return formats.get();
+}
+#endif // OS(ANDROID)
 
 } // namespace WebCore

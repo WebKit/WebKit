@@ -26,10 +26,10 @@ namespace WebCore {
 
 class RectBase {
 public:
-    const CSSValue& top() const { return m_top.get(); }
-    const CSSValue& right() const { return m_right.get(); }
-    const CSSValue& bottom() const { return m_bottom.get(); }
-    const CSSValue& left() const { return m_left.get(); }
+    const CSSValue& top() const { return m_top; }
+    const CSSValue& right() const { return m_right; }
+    const CSSValue& bottom() const { return m_bottom; }
+    const CSSValue& left() const { return m_left; }
 
     bool equals(const RectBase& other) const
     {
@@ -40,17 +40,17 @@ public:
     }
 
 protected:
-    explicit RectBase(Ref<CSSValue> value)
+    explicit RectBase(Ref<CSSValue>&& value)
         : m_top(value)
         , m_right(value)
         , m_bottom(value)
-        , m_left(WTFMove(value))
+        , m_left(WTF::move(value))
     { }
-    RectBase(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left)
-        : m_top(WTFMove(top))
-        , m_right(WTFMove(right))
-        , m_bottom(WTFMove(bottom))
-        , m_left(WTFMove(left))
+    RectBase(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left)
+        : m_top(WTF::move(top))
+        , m_right(WTF::move(right))
+        , m_bottom(WTF::move(bottom))
+        , m_left(WTF::move(left))
     { }
     ~RectBase() = default;
 

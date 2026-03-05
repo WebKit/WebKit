@@ -220,7 +220,7 @@ static DragStartData runDragStartDataTestCase(DragAndDropSimulator *simulator, N
     [allData removeObjectForKey:@"text/html"];
     [allData removeObjectForKey:@"Files"];
     if ([allData count])
-        result.customData = WTFMove(allData);
+        result.customData = WTF::move(allData);
     return result;
 }
 

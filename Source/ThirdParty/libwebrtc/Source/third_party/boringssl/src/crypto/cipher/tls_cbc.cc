@@ -53,7 +53,10 @@ int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
 
   for (size_t i = 0; i < to_check; i++) {
     uint8_t mask = constant_time_ge_8(padding_length, i);
-    uint8_t b = in[in_len - 1 - i];
+    // The value barrier on |(in_len - 1 - i)| isn't needed to enforce
+    // constant-time. It is just there to prevent a false positive in
+    // constant-time checks by valgrind.
+    uint8_t b = in[value_barrier_w(in_len - 1 - i)];
     // The final |padding_length+1| bytes should all have the value
     // |padding_length|. Therefore the XOR should be zero.
     good &= ~(mask & (padding_length ^ b));

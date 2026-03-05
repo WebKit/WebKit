@@ -19,18 +19,18 @@
 
 
 void CRYPTO_refcount_inc(CRYPTO_refcount_t *count) {
-  uint32_t expected = CRYPTO_atomic_load_u32(count);
+  uint32_t expected = count->load();
 
   while (expected != CRYPTO_REFCOUNT_MAX) {
     uint32_t new_value = expected + 1;
-    if (CRYPTO_atomic_compare_exchange_weak_u32(count, &expected, new_value)) {
+    if (count->compare_exchange_weak(expected, new_value)) {
       break;
     }
   }
 }
 
 int CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *count) {
-  uint32_t expected = CRYPTO_atomic_load_u32(count);
+  uint32_t expected = count->load();
 
   for (;;) {
     if (expected == 0) {
@@ -39,8 +39,7 @@ int CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *count) {
       return 0;
     } else {
       const uint32_t new_value = expected - 1;
-      if (CRYPTO_atomic_compare_exchange_weak_u32(count, &expected,
-                                                  new_value)) {
+      if (count->compare_exchange_weak(expected, new_value)) {
         return new_value == 0;
       }
     }

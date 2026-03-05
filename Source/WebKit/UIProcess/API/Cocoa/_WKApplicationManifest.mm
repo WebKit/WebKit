@@ -270,6 +270,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     NSInteger dir = [aDecoder decodeIntegerForKey:@"dir"];
     // FIXME: <https://webkit.org/b/278619> Remove this assert after further manifest IPC hardening.
     RELEASE_ASSERT(dir >= 0 && dir <= 2);
+    String lang = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"lang"];
     String name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
     String shortName = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"];
     String description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
@@ -290,18 +291,19 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     RetainPtr<NSArray<_WKApplicationManifestIcon *>> shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
-        WTFMove(rawJSON),
+        WTF::move(rawJSON),
         static_cast<WebCore::ApplicationManifest::Direction>(dir),
-        WTFMove(name),
-        WTFMove(shortName),
-        WTFMove(description),
-        WTFMove(scopeURL),
+        WTF::move(lang),
+        WTF::move(name),
+        WTF::move(shortName),
+        WTF::move(description),
+        WTF::move(scopeURL),
         isDefaultScope,
         static_cast<WebCore::ApplicationManifest::Display>(display),
-        WTFMove(orientationValue),
-        WTFMove(manifestURL),
-        WTFMove(startURL),
-        WTFMove(manifestId),
+        WTF::move(orientationValue),
+        WTF::move(manifestURL),
+        WTF::move(startURL),
+        WTF::move(manifestId),
         WebCore::roundAndClampToSRGBALossy(RetainPtr { backgroundColor.get().CGColor }.get()),
         WebCore::roundAndClampToSRGBALossy(RetainPtr { themeColor.get().CGColor }.get()),
         makeVector<String>(categories.get()),
@@ -309,7 +311,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
         makeVector<WebCore::ApplicationManifest::Shortcut>(shortcuts.get()),
     };
 
-    API::Object::constructInWrapper<API::ApplicationManifest>(self, WTFMove(coreApplicationManifest));
+    API::Object::constructInWrapper<API::ApplicationManifest>(self, WTF::move(coreApplicationManifest));
 
     return self;
 }
@@ -319,7 +321,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifest.class, self))
         return;
 
-    _applicationManifest->~ApplicationManifest();
+    SUPPRESS_UNRETAINED_ARG _applicationManifest->~ApplicationManifest();
 
     [super dealloc];
 }
@@ -328,6 +330,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 {
     [aCoder encodeObject:self.rawJSON forKey:@"raw_json"];
     [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().dir) forKey:@"dir"];
+    [aCoder encodeObject:self.lang forKey:@"lang"];
     [aCoder encodeObject:self.name forKey:@"name"];
     [aCoder encodeObject:self.shortName forKey:@"short_name"];
     [aCoder encodeObject:self.applicationDescription forKey:@"description"];
@@ -383,6 +386,11 @@ static RetainPtr<NSString> nullableNSString(const WTF::String& string)
     }
 
     ASSERT_NOT_REACHED();
+}
+
+- (NSString *)lang
+{
+    return nullableNSString(_applicationManifest->applicationManifest().lang).autorelease();
 }
 
 - (NSString *)name

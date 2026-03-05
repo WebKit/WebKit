@@ -35,8 +35,7 @@
 #include <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
 #include <WebCore/StyleTextBoxEdge.h>
 #include <WebCore/StyleWebKitLineBoxContain.h>
-#include <WebCore/StyleZoomPrimitives.h>
-#include <wtf/OptionSet.h>
+#include <wtf/EnumSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -60,9 +59,6 @@ public:
 
         InlineLayoutUnit height() const { return ascent + descent; }
         friend bool operator==(const AscentAndDescent&, const AscentAndDescent&) = default;
-        // FIXME: Remove this.
-        // We need floor/ceil to match legacy layout integral positioning.
-        void round();
     };
     InlineLayoutUnit ascent() const { return m_ascentAndDescent.ascent; }
     InlineLayoutUnit descent() const { return m_ascentAndDescent.descent; }
@@ -101,12 +97,12 @@ public:
     bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
 
     enum class Type : uint8_t {
-        InlineBox             = 1 << 0,
-        LineSpanningInlineBox = 1 << 1,
-        RootInlineBox         = 1 << 2,
-        AtomicInlineBox       = 1 << 3,
-        LineBreakBox          = 1 << 4,
-        GenericInlineLevelBox = 1 << 5
+        InlineBox,
+        LineSpanningInlineBox,
+        RootInlineBox,
+        AtomicInlineBox,
+        LineBreakBox,
+        GenericInlineLevelBox
     };
     Type type() const { return m_type; }
 
@@ -116,11 +112,11 @@ public:
     bool isLastBox() const { return m_isLastWithinLayoutBox; }
 
 private:
-    enum class PositionWithinLayoutBox {
-        First = 1 << 0,
-        Last  = 1 << 1
+    enum class PositionWithinLayoutBox : bool {
+        First,
+        Last
     };
-    InlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type, OptionSet<PositionWithinLayoutBox> = { PositionWithinLayoutBox::First, PositionWithinLayoutBox::Last });
+    InlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type, EnumSet<PositionWithinLayoutBox> = { PositionWithinLayoutBox::First, PositionWithinLayoutBox::Last });
 
     friend class InlineDisplayLineBuilder;
     friend class LineBox;
@@ -171,7 +167,7 @@ private:
         TextBoxTrim textBoxTrim;
         WebCore::Style::TextBoxEdge textBoxEdge;
         WebCore::Style::LineFitEdge lineFitEdge;
-        WebCore::Style::ZoomFactor zoomFactor { 1.0f, 1.0f };
+        WebCore::Style::ZoomFactor zoomFactor { 1.0f };
         WebCore::Style::WebkitLineBoxContain lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
@@ -216,12 +212,6 @@ inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
 {
     return WTF::holdsAlternative<CSS::Keyword::Top>(m_style.verticalAlignment)
         || WTF::holdsAlternative<CSS::Keyword::Bottom>(m_style.verticalAlignment);
-}
-
-inline void InlineLevelBox::AscentAndDescent::round()
-{
-    ascent = floorf(ascent);
-    descent = ceilf(descent);
 }
 
 }

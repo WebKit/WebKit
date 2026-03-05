@@ -56,10 +56,10 @@
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/data_channel_transport_interface.h"
 #include "api/transport/enums.h"
-#include "api/transport/network_control.h"
 #include "api/turn_customizer.h"
 #include "call/call.h"
 #include "call/payload_type_picker.h"
+#include "media/base/media_engine.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "p2p/base/ice_transport_internal.h"
 #include "p2p/base/port.h"
@@ -80,11 +80,11 @@
 #include "pc/rtp_transmission_manager.h"
 #include "pc/rtp_transport_internal.h"
 #include "pc/sdp_offer_answer.h"
+#include "pc/sdp_state_provider.h"
 #include "pc/session_description.h"
 #include "pc/transceiver_list.h"
 #include "pc/transport_stats.h"
 #include "pc/usage_pattern.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_certificate.h"
@@ -237,7 +237,6 @@ class PeerConnection : public PeerConnectionInternal,
   void AddIceCandidate(std::unique_ptr<IceCandidate> candidate,
                        std::function<void(RTCError)> callback) override;
   bool RemoveIceCandidate(const IceCandidate* candidate) override;
-  bool RemoveIceCandidates(const std::vector<Candidate>& candidates) override;
 
   RTCError SetBitrate(const BitrateSettings& bitrate) override;
   void ReconfigureBandwidthEstimation(
@@ -413,9 +412,8 @@ class PeerConnection : public PeerConnectionInternal,
   // `sctp_mid()` if set. Called as part of setting the local description.
   RTCError StartSctpTransport(const SctpOptions& options) override;
 
-  // Returns the CryptoOptions for this PeerConnection. This will always
-  // return the RTCConfiguration.crypto_options if set and return a stock
-  // configuration if nothing was set.
+  // Returns the CryptoOptions set as RTCConfiguration.crypto_options for this
+  // PeerConnection.
   CryptoOptions GetCryptoOptions() override;
 
   // Internal implementation for AddTransceiver family of methods. If
@@ -435,6 +433,7 @@ class PeerConnection : public PeerConnectionInternal,
   void TeardownDataChannelTransport_n(RTCError error)
       RTC_RUN_ON(network_thread());
 
+  const Environment& env() const override { return env_; }
   const FieldTrialsView& trials() const override { return env_.field_trials(); }
 
   bool ConfiguredForMedia() const;
@@ -448,15 +447,6 @@ class PeerConnection : public PeerConnectionInternal,
   int FeedbackAccordingToRfc8888CountForTesting() const;
   int FeedbackAccordingToTransportCcCountForTesting() const;
 
-  NetworkControllerInterface* GetNetworkController() override {
-    if (!worker_thread()->IsCurrent()) {
-      return worker_thread()->BlockingCall(
-          [this]() { return GetNetworkController(); });
-    }
-    RTC_DCHECK_RUN_ON(worker_thread());
-    RTC_DCHECK(call_);
-    return call_->GetTransportControllerSend()->GetNetworkController();
-  }
   PayloadTypePicker& payload_type_picker() override {
     return payload_type_picker_;
   }
@@ -622,6 +612,8 @@ class PeerConnection : public PeerConnectionInternal,
 
   void SetSctpTransportName(std::string sctp_transport_name);
 
+  MediaEngineInterface* media_engine() const RTC_RUN_ON(worker_thread());
+
   std::function<void(const webrtc::CopyOnWriteBuffer& packet,
                      int64_t packet_time_us)>
   InitializeRtcpCallback();
@@ -630,6 +622,12 @@ class PeerConnection : public PeerConnectionInternal,
   InitializeUnDemuxablePacketHandler();
 
   bool CanAttemptDtlsStunPiggybacking();
+
+  // Runs a task on the signaling thread. If the current thread is the signaling
+  // thread, the task will run immediately. Otherwise it will be posted to the
+  // signaling thread and run asynchronously behind the
+  // `signaling_thread_safety_` flag.
+  void RunOnSignalingThread(absl::AnyInvocable<void() &&> task);
 
   const Environment env_;
   const scoped_refptr<ConnectionContext> context_;
@@ -677,6 +675,8 @@ class PeerConnection : public PeerConnectionInternal,
   // The unique_ptr belongs to the worker thread, but the Call object manages
   // its own thread safety.
   std::unique_ptr<Call> call_ RTC_GUARDED_BY(worker_thread());
+  std::unique_ptr<ConnectionContext::MediaEngineReference> media_engine_ref_
+      RTC_GUARDED_BY(worker_thread());
   ScopedTaskSafety signaling_thread_safety_;
   scoped_refptr<PendingTaskSafetyFlag> network_thread_safety_;
   scoped_refptr<PendingTaskSafetyFlag> worker_thread_safety_;
@@ -735,6 +735,39 @@ class PeerConnection : public PeerConnectionInternal,
   std::unique_ptr<RtpTransmissionManager> rtp_manager_;
 
   std::unique_ptr<CodecLookupHelper> codec_lookup_helper_;
+
+  template <const SessionDescriptionInterface* (SdpStateProvider::*accessor)()
+                const>
+  const SessionDescriptionInterface* HandleSessionDescriptionAccessor(
+      std::unique_ptr<SessionDescriptionInterface>& clone) const {
+    if (signaling_thread()->IsCurrent()) {
+      RTC_DCHECK_RUN_ON(signaling_thread());
+      return (sdp_handler_.get()->*accessor)();
+    }
+    signaling_thread()->BlockingCall([&] {
+      RTC_DCHECK_RUN_ON(signaling_thread());
+      const SessionDescriptionInterface* desc =
+          (sdp_handler_.get()->*accessor)();
+      clone = desc ? desc->Clone() : nullptr;
+    });
+    return clone.get();
+  }
+
+  // Optionally set clones of the properties as owned by SdpOfferAnswerHandler.
+  // When these properties are accessed from outside the signaling thread,
+  // we clone the description on the signaling thread and return a pointer to
+  // the clone instead.
+  mutable std::unique_ptr<SessionDescriptionInterface> local_description_clone_;
+  mutable std::unique_ptr<SessionDescriptionInterface>
+      remote_description_clone_;
+  mutable std::unique_ptr<SessionDescriptionInterface>
+      current_local_description_clone_;
+  mutable std::unique_ptr<SessionDescriptionInterface>
+      current_remote_description_clone_;
+  mutable std::unique_ptr<SessionDescriptionInterface>
+      pending_local_description_clone_;
+  mutable std::unique_ptr<SessionDescriptionInterface>
+      pending_remote_description_clone_;
 
   // This variable needs to be the last one in the class.
   WeakPtrFactory<PeerConnection> weak_factory_;

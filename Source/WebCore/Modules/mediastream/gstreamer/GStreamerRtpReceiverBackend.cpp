@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpReceiverBackend);
 
 GStreamerRtpReceiverBackend::GStreamerRtpReceiverBackend(GRefPtr<GstWebRTCRTPTransceiver>&& rtcTransceiver)
-    : m_rtcTransceiver(WTFMove(rtcTransceiver))
+    : m_rtcTransceiver(WTF::move(rtcTransceiver))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -87,7 +87,7 @@ RTCRtpParameters GStreamerRtpReceiverBackend::getParameters()
         if (auto fmtpLine = gstStructureGetString(structure, "fmtp-line"_s))
             codec.sdpFmtpLine = fmtpLine.span();
 
-        parameters.codecs.append(WTFMove(codec));
+        parameters.codecs.append(WTF::move(codec));
 
         gstStructureForeach(structure, [&](auto id, const auto value) -> bool {
             auto name = gstIdToString(id);
@@ -149,7 +149,7 @@ std::unique_ptr<RTCDtlsTransportBackend> GStreamerRtpReceiverBackend::dtlsTransp
     g_object_get(m_rtcReceiver.get(), "transport", &transport.outPtr(), nullptr);
     if (!transport)
         return nullptr;
-    return makeUnique<GStreamerDtlsTransportBackend>(WTFMove(transport));
+    return makeUnique<GStreamerDtlsTransportBackend>(WTF::move(transport));
 }
 
 #undef GST_CAT_DEFAULT

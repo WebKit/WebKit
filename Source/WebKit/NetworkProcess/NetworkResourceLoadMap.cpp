@@ -32,7 +32,7 @@
 namespace WebKit {
 
 NetworkResourceLoadMap::NetworkResourceLoadMap(Function<void(bool hasUpload)>&& hasUploadChangeListener)
-    : m_hasUploadChangeListener(WTFMove(hasUploadChangeListener))
+    : m_hasUploadChangeListener(WTF::move(hasUploadChangeListener))
 {
 }
 
@@ -41,11 +41,11 @@ NetworkResourceLoadMap::~NetworkResourceLoadMap()
     clear();
 }
 
-NetworkResourceLoadMap::MapType::AddResult NetworkResourceLoadMap::add(WebCore::ResourceLoaderIdentifier identifier, Ref<NetworkResourceLoader>&& loader)
+NetworkResourceLoadMap::MapType::AddResult NetworkResourceLoadMap::add(WebCore::ResourceLoaderIdentifier identifier, Ref<NetworkResourceLoader>&& loader) LIFETIME_BOUND
 {
     ASSERT(!m_loaders.contains(identifier));
     bool hasUpload = loader->originalRequest().hasUpload();
-    auto result = m_loaders.add(identifier, WTFMove(loader));
+    auto result = m_loaders.add(identifier, WTF::move(loader));
     if (hasUpload)
         setHasUpload(true);
     return result;
@@ -74,7 +74,7 @@ RefPtr<NetworkResourceLoader> NetworkResourceLoadMap::take(WebCore::ResourceLoad
     return loader;
 }
 
-NetworkResourceLoader* NetworkResourceLoadMap::get(WebCore::ResourceLoaderIdentifier identifier) const
+NetworkResourceLoader* NetworkResourceLoadMap::get(WebCore::ResourceLoaderIdentifier identifier) const LIFETIME_BOUND
 {
     return m_loaders.get(identifier);
 }

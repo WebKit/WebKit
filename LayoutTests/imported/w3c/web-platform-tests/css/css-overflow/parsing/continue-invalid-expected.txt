@@ -1,4 +1,6 @@
 
 PASS e.style['continue'] = "none" should not set the property value
 PASS e.style['continue'] = "auto discard" should not set the property value
+PASS e.style['continue'] = "auto collapse" should not set the property value
+PASS e.style['continue'] = "auto -webkit-legacy" should not set the property value
 

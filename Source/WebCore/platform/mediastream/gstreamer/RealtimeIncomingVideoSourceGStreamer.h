@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RealtimeIncomingVideoSourceGStreamer : public RealtimeIncomingSourceGStreamer {
 public:
-    static Ref<RealtimeIncomingVideoSourceGStreamer> create(AtomString&& videoTrackId) { return adoptRef(*new RealtimeIncomingVideoSourceGStreamer(WTFMove(videoTrackId))); }
+    static Ref<RealtimeIncomingVideoSourceGStreamer> create(AtomString&& videoTrackId) { return adoptRef(*new RealtimeIncomingVideoSourceGStreamer(WTF::move(videoTrackId))); }
     ~RealtimeIncomingVideoSourceGStreamer() = default;
 
     // RealtimeMediaSource API

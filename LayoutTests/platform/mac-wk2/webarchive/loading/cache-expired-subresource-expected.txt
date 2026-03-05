@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 cache-expired-subresource.html - didFinishLoading
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame

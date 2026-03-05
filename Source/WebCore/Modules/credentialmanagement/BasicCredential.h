@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include <WebCore/Document.h>
 #include <WebCore/IDLTypes.h>
 #include <WebCore/JSDOMPromiseDeferredForward.h>
@@ -51,7 +53,7 @@ public:
 
     virtual Type credentialType() const = 0;
 
-    const String& id() const { return m_id; }
+    const String& id() const LIFETIME_BOUND { return m_id; }
     String type() const;
     Discovery discovery() const { return m_discovery; }
 
@@ -69,3 +71,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
     static bool isType(const WebCore::BasicCredential& credential) { return credential.credentialType() == WebCore::Type; } \
 SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(WEB_AUTHN)

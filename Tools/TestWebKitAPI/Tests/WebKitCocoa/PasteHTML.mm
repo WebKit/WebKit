@@ -587,6 +587,37 @@ TEST(PasteHTML, TransformColorsDependsOnUsedInlineStyle)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('li').style.color"], @"rgb(0, 0, 0)");
 }
 
+TEST(PasteHTML, PasteDarkTextOnWhiteBackgroundIntoDarkModeEditor)
+{
+    {
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+        [webView _setEditable:YES];
+        [webView synchronouslyLoadHTMLString:@"<span style='background-color: white; color: rgb(5, 5, 5);'>Hello World</span>"];
+        [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.querySelector('span'))"];
+        [webView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
+    }
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration _setColorFilterEnabled:NO];
+    [configuration preferences]._punchOutWhiteBackgroundsInDarkMode = YES;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _setEditable:YES];
+    [webView forceDarkMode];
+    [webView synchronouslyLoadHTMLString:@"<html><head><style>:root { color-scheme: light dark; }</style></head><body></body></html>"];
+
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView paste:nil];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr computedColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).color"];
+    EXPECT_WK_STREQ(computedColor.get(), "rgb(255, 255, 255)");
+
+    RetainPtr computedCaretColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).caretColor"];
+    EXPECT_WK_STREQ(computedCaretColor.get(), "rgb(255, 255, 255)");
+}
+
 #endif // ENABLE(DARK_MODE_CSS)
 
 #endif // PLATFORM(COCOA)

@@ -63,7 +63,7 @@ Ref<ModelConnectionToWebProcess> ModelConnectionToWebProcess::create(
     ModelProcessConnectionParameters&& parameters,
     const std::optional<String>& attributionTaskID)
 {
-    return adoptRef(*new ModelConnectionToWebProcess(modelProcess, webProcessIdentifier, sessionID, WTFMove(connectionHandle), WTFMove(parameters), attributionTaskID));
+    return adoptRef(*new ModelConnectionToWebProcess(modelProcess, webProcessIdentifier, sessionID, WTF::move(connectionHandle), WTF::move(parameters), attributionTaskID));
 }
 
 ModelConnectionToWebProcess::ModelConnectionToWebProcess(
@@ -74,10 +74,10 @@ ModelConnectionToWebProcess::ModelConnectionToWebProcess(
     ModelProcessConnectionParameters&& parameters,
     const std::optional<String>& attributionTaskID)
     : m_modelProcessModelPlayerManagerProxy(ModelProcessModelPlayerManagerProxy::create(*this))
-    , m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }))
+    , m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(connectionHandle) }))
     , m_modelProcess(modelProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
-    , m_webProcessIdentity(WTFMove(parameters.webProcessIdentity))
+    , m_webProcessIdentity(WTF::move(parameters.webProcessIdentity))
     , m_sessionID(sessionID)
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(parameters.presentingApplicationAuditToken ? std::optional(parameters.presentingApplicationAuditToken->auditToken()) : std::nullopt)
@@ -86,7 +86,7 @@ ModelConnectionToWebProcess::ModelConnectionToWebProcess(
     , m_ipcTester(IPCTester::create())
 #endif
     , m_attributionTaskID(attributionTaskID)
-    , m_sharedPreferencesForWebProcess(WTFMove(parameters.sharedPreferencesForWebProcess))
+    , m_sharedPreferencesForWebProcess(WTF::move(parameters.sharedPreferencesForWebProcess))
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -128,7 +128,7 @@ void ModelConnectionToWebProcess::createVisibilityPropagationContextForPage(WebP
     auto contextForVisibilityPropagation = LayerHostingContext::create({ canShowWhileLocked });
     RELEASE_LOG(Process, "ModelConnectionToWebProcess::createVisibilityPropagationContextForPage: pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", contextID=%u", pageProxyID.toUInt64(), pageID.toUInt64(), contextForVisibilityPropagation->contextID());
     modelProcess().send(Messages::ModelProcessProxy::DidCreateContextForVisibilityPropagation(pageProxyID, pageID, contextForVisibilityPropagation->contextID()));
-    m_visibilityPropagationContexts.add(std::make_pair(pageProxyID, pageID), WTFMove(contextForVisibilityPropagation));
+    m_visibilityPropagationContexts.add(std::make_pair(pageProxyID, pageID), WTF::move(contextForVisibilityPropagation));
 }
 
 void ModelConnectionToWebProcess::destroyVisibilityPropagationContextForPage(WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID)
@@ -184,7 +184,7 @@ Logger& ModelConnectionToWebProcess::logger()
 
 void ModelConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
-    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ".", description(messageName).characters(), m_webProcessIdentifier.toUInt64());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString("Received an invalid message '"_s, description(messageName), "' from WebContent process "_s, m_webProcessIdentifier.toUInt64(), "."_s).utf8().data());
     m_modelProcess->parentProcessConnection()->send(Messages::ModelProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 

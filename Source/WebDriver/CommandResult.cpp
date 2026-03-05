@@ -42,7 +42,7 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
     : m_errorCode(errorCode)
 {
     if (!m_errorCode) {
-        m_result = WTFMove(result);
+        m_result = WTF::move(result);
         return;
     }
 

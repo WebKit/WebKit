@@ -1,0 +1,75 @@
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+.box {
+    position: absolute;
+    border: none;
+    background: #ccc;
+}
+#div1 {
+    left: 100px;
+    top: 50px;
+    width: 200px;
+    height: 80px;
+}
+#div2 {
+    left: 150px;
+    top: 180px;
+    width: 120px;
+    height: 60px;
+}
+</style>
+</head>
+<body>
+
+<div id="div1" class="box" role="group">First div</div>
+<div id="div2" class="box" role="group">Second div</div>
+
+<script>
+var output = "Test x, y, width, height via the client accessibility APIs.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForElements([
+            (element) => element.role.includes("AXGroup"),
+        ]);
+
+        var webArea = accessibilityController.rootElement.childAtIndex(0);
+        output += `webArea role: ${webArea.role}\n`;
+        output += `webArea childrenCount: ${webArea.childrenCount}\n`;
+
+        var div1 = webArea.childAtIndex(0);
+        output += `div1 role: ${div1.role}\n`;
+
+        var div2 = webArea.childAtIndex(1);
+        output += `div2 role: ${div2.role}\n`;
+
+        // Check exact sizes
+        output += `div1 width: ${div1.width}\n`;
+        output += `div1 height: ${div1.height}\n`;
+        output += `div2 width: ${div2.width}\n`;
+        output += `div2 height: ${div2.height}\n`;
+
+        // Check relative positions (div2.x - div1.x should be 50, div2.y - div1.y should be 130)
+        // Absolute positions depend on window location so only test relative differences
+        var xDiff = div2.x - div1.x;
+        var yDiff = div2.y - div1.y;
+        output += `x difference (div2.x - div1.x): ${xDiff}\n`;
+        output += `y difference (div2.y - div1.y): ${yDiff}\n`;
+
+        debug(output);
+        document.getElementById("div1").hidden = true;
+        document.getElementById("div2").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

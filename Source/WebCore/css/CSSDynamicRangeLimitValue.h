@@ -33,7 +33,7 @@ class CSSDynamicRangeLimitValue final : public CSSValue {
 public:
     static Ref<CSSDynamicRangeLimitValue> create(CSS::DynamicRangeLimit);
 
-    const CSS::DynamicRangeLimit& dynamicRangeLimit() const { return m_dynamicRangeLimit; }
+    const CSS::DynamicRangeLimit& dynamicRangeLimit() const LIFETIME_BOUND { return m_dynamicRangeLimit; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSDynamicRangeLimitValue&) const;

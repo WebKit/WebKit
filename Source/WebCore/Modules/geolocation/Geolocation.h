@@ -55,7 +55,7 @@ class SecurityOrigin;
 struct PositionOptions;
 
 class Geolocation final : public RefCounted<Geolocation>, public ScriptWrappable, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Geolocation, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Geolocation, WEBCORE_EXPORT);
     friend class GeoNotifier;
 public:
     void ref() const final { RefCounted::ref(); }
@@ -65,16 +65,16 @@ public:
     WEBCORE_EXPORT ~Geolocation();
 
     WEBCORE_EXPORT void resetAllGeolocationPermission();
-    Document* document() const;
+    Document* NODELETE document() const;
 
     void getCurrentPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
     int watchPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
     void clearWatch(int watchID);
 
     WEBCORE_EXPORT void setIsAllowed(bool, const String& authorizationToken);
-    const String& authorizationToken() const { return m_authorizationToken; }
+    const String& authorizationToken() const LIFETIME_BOUND { return m_authorizationToken; }
     WEBCORE_EXPORT void resetIsAllowed();
-    bool isAllowed() const { return m_allowGeolocation == Yes; }
+    bool isAllowed() const { return m_allowGeolocation == AllowGeolocation::Yes; }
 
     bool hasBeenRequested() const { return m_hasBeenRequested; }
 
@@ -82,7 +82,7 @@ public:
     void setError(GeolocationError&);
     bool shouldBlockGeolocationRequests();
 
-    Navigator* navigator();
+    Navigator* NODELETE navigator();
     WEBCORE_EXPORT LocalFrame* frame() const;
 
 private:
@@ -95,28 +95,27 @@ private:
     void suspend(ReasonForSuspension) override;
     void resume() override;
 
-    bool isDenied() const { return m_allowGeolocation == No; }
+    bool isDenied() const { return m_allowGeolocation == AllowGeolocation::No; }
 
     Page* page() const;
     SecurityOrigin* securityOrigin() const;
-    RefPtr<SecurityOrigin> protectedSecurityOrigin() const;
 
-    typedef Vector<RefPtr<GeoNotifier>> GeoNotifierVector;
-    typedef HashSet<RefPtr<GeoNotifier>> GeoNotifierSet;
+    typedef Vector<Ref<GeoNotifier>> GeoNotifierVector;
+    typedef HashSet<Ref<GeoNotifier>> GeoNotifierSet;
 
     class Watchers {
     public:
-        bool add(int id, RefPtr<GeoNotifier>&&);
+        bool add(int id, Ref<GeoNotifier>&&);
         GeoNotifier* find(int id);
         void remove(int id);
         void remove(GeoNotifier*);
-        bool contains(GeoNotifier*) const;
+        bool NODELETE contains(GeoNotifier*) const;
         void clear();
-        bool isEmpty() const;
+        bool NODELETE isEmpty() const;
         void getNotifiersVector(GeoNotifierVector&) const;
     private:
-        typedef HashMap<int, RefPtr<GeoNotifier>> IdToNotifierMap;
-        typedef HashMap<RefPtr<GeoNotifier>, int> NotifierToIdMap;
+        typedef HashMap<int, Ref<GeoNotifier>> IdToNotifierMap;
+        typedef HashMap<Ref<GeoNotifier>, int> NotifierToIdMap;
         IdToNotifierMap m_idToNotifierMap;
         NotifierToIdMap m_notifierToIdMap;
     };
@@ -143,20 +142,22 @@ private:
     void requestPermission();
     void revokeAuthorizationTokenIfNecessary();
 
-    bool startUpdating(GeoNotifier*);
+    bool startUpdating(GeoNotifier&);
     void stopUpdating();
 
     void handlePendingPermissionNotifiers();
 
-    void startRequest(GeoNotifier*);
+    void startRequest(GeoNotifier&);
 
-    void fatalErrorOccurred(GeoNotifier*);
-    void requestTimedOut(GeoNotifier*);
-    void requestUsesCachedPosition(GeoNotifier*);
+    void fatalErrorOccurred(GeoNotifier&);
+    void requestTimedOut(GeoNotifier&);
+    void requestUsesCachedPosition(GeoNotifier&);
     bool haveSuitableCachedPosition(const PositionOptions&);
     void makeCachedPositionCallbacks();
 
     void resumeTimerFired();
+
+    enum class AllowGeolocation : uint8_t { Unknown, InProgress, Yes, No };
 
     WeakPtr<Navigator> m_navigator;
     GeoNotifierSet m_oneShots;
@@ -166,7 +167,7 @@ private:
 
     bool m_hasBeenRequested { false };
 
-    enum { Unknown, InProgress, Yes, No } m_allowGeolocation { Unknown };
+    AllowGeolocation m_allowGeolocation { AllowGeolocation::Unknown };
     String m_authorizationToken;
     bool m_isSuspended { false };
     bool m_resetOnResume { false };

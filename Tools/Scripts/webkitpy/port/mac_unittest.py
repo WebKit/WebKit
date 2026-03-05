@@ -58,30 +58,30 @@ class MacTest(darwin_testcase.DarwinTest):
 
     def test_versions(self):
         # Note: these tests don't need to be exhaustive as long as we get path coverage.
-        self.assert_name('mac', 'snowleopard', 'mac-snowleopard')
-        self.assert_name('mac-snowleopard', 'leopard', 'mac-snowleopard')
-        self.assert_name('mac-snowleopard', 'lion', 'mac-snowleopard')
-        self.assert_name('mac', 'lion', 'mac-lion')
-        self.assert_name('mac-lion', 'lion', 'mac-lion')
-        self.assert_name('mac', 'mountainlion', 'mac-mountainlion')
-        self.assert_name('mac-mountainlion', 'lion', 'mac-mountainlion')
-        self.assert_name('mac', 'mavericks', 'mac-mavericks')
-        self.assert_name('mac-mavericks', 'mountainlion', 'mac-mavericks')
-        self.assert_name('mac', 'yosemite', 'mac-yosemite')
-        self.assert_name('mac-yosemite', 'mavericks', 'mac-yosemite')
-        self.assert_name('mac', 'elcapitan', 'mac-elcapitan')
-        self.assert_name('mac-elcapitan', 'mavericks', 'mac-elcapitan')
-        self.assert_name('mac-elcapitan', 'yosemite', 'mac-elcapitan')
-        self.assert_name('mac', 'sierra', 'mac-sierra')
-        self.assert_name('mac-sierra', 'yosemite', 'mac-sierra')
-        self.assert_name('mac-sierra', 'elcapitan', 'mac-sierra')
-        self.assert_name('mac', 'highsierra', 'mac-highsierra')
-        self.assert_name('mac-highsierra', 'elcapitan', 'mac-highsierra')
-        self.assert_name('mac-highsierra', 'sierra', 'mac-highsierra')
-        self.assert_name('mac', 'mojave', 'mac-mojave')
-        self.assert_name('mac-mojave', 'sierra', 'mac-mojave')
-        self.assert_name('mac-mojave', 'highsierra', 'mac-mojave')
-        self.assertRaises(AssertionError, self.assert_name, 'mac-tiger', 'leopard', 'mac-leopard')
+        self.assert_name('mac', 'snowleopard', 'mac-snowleopard-wk2')
+        self.assert_name('mac-snowleopard', 'leopard', 'mac-snowleopard-wk2')
+        self.assert_name('mac-snowleopard', 'lion', 'mac-snowleopard-wk2')
+        self.assert_name('mac', 'lion', 'mac-lion-wk2')
+        self.assert_name('mac-lion', 'lion', 'mac-lion-wk2')
+        self.assert_name('mac', 'mountainlion', 'mac-mountainlion-wk2')
+        self.assert_name('mac-mountainlion', 'lion', 'mac-mountainlion-wk2')
+        self.assert_name('mac', 'mavericks', 'mac-mavericks-wk2')
+        self.assert_name('mac-mavericks', 'mountainlion', 'mac-mavericks-wk2')
+        self.assert_name('mac', 'yosemite', 'mac-yosemite-wk2')
+        self.assert_name('mac-yosemite', 'mavericks', 'mac-yosemite-wk2')
+        self.assert_name('mac', 'elcapitan', 'mac-elcapitan-wk2')
+        self.assert_name('mac-elcapitan', 'mavericks', 'mac-elcapitan-wk2')
+        self.assert_name('mac-elcapitan', 'yosemite', 'mac-elcapitan-wk2')
+        self.assert_name('mac', 'sierra', 'mac-sierra-wk2')
+        self.assert_name('mac-sierra', 'yosemite', 'mac-sierra-wk2')
+        self.assert_name('mac-sierra', 'elcapitan', 'mac-sierra-wk2')
+        self.assert_name('mac', 'highsierra', 'mac-highsierra-wk2')
+        self.assert_name('mac-highsierra', 'elcapitan', 'mac-highsierra-wk2')
+        self.assert_name('mac-highsierra', 'sierra', 'mac-highsierra-wk2')
+        self.assert_name('mac', 'mojave', 'mac-mojave-wk2')
+        self.assert_name('mac-mojave', 'sierra', 'mac-mojave-wk2')
+        self.assert_name('mac-mojave', 'highsierra', 'mac-mojave-wk2')
+        self.assertRaises(AssertionError, self.assert_name, 'mac-tiger', 'leopard', 'mac-leopard-wk2')
 
     def test_setup_environ_for_server(self):
         port = self.make_port(options=MockOptions(leaks=True, guard_malloc=True))
@@ -180,88 +180,81 @@ class MacTest(darwin_testcase.DarwinTest):
     def test_layout_test_searchpath_with_apple_additions(self):
         with port_testcase.bind_mock_apple_additions():
             search_path = self.make_port().default_baseline_search_path()
-        self.assertEqual(search_path[0], '/additional_testing_path/mac-add-lion-wk1')
-        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-lion-wk1')
+        self.assertEqual(search_path[0], '/additional_testing_path/mac-add-lion-wk2')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-lion-wk2')
         self.assertEqual(search_path[2], '/additional_testing_path/mac-add-lion')
         self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac-lion')
-        self.assertEqual(search_path[4], '/additional_testing_path/mac-add-mountainlion-wk1')
-        self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/mac-mountainlion-wk1')
+        self.assertEqual(search_path[4], '/additional_testing_path/mac-add-mountainlion-wk2')
+        self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/mac-mountainlion-wk2')
 
     def test_latest_baseline_search_path(self):
         search_path = self.make_port(port_name='macos-tahoe').default_baseline_search_path()
-        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-wk1')
+        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-wk2')
         self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac')
 
     def test_downlevel_baseline_search_path(self):
         search_path = self.make_port(port_name='macos-sequoia').default_baseline_search_path()
-        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-sequoia-wk1')
+        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-sequoia-wk2')
         self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-sequoia')
-        self.assertEqual(search_path[2], '/mock-checkout/LayoutTests/platform/mac-wk1')
+        self.assertEqual(search_path[2], '/mock-checkout/LayoutTests/platform/mac-wk2')
         self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac')
 
     def test_factory_with_future_version(self):
-        port = self.make_port(options=MockOptions(webkit_test_runner=True), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
+        port = self.make_port(os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
         self.assertEqual(port.driver_name(), 'WebKitTestRunner')
         self.assertEqual(port.version_name(), VersionNameMap().to_name(MacPort.CURRENT_VERSION, platform=MacPort.port_name))
 
-        port = self.make_port(options=MockOptions(webkit_test_runner=False), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
+        port = self.make_port(options=MockOptions(driver_names=['DumpRenderTree']), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
         self.assertEqual(port.driver_name(), 'DumpRenderTree')
         self.assertEqual(port.version_name(), VersionNameMap().to_name(MacPort.CURRENT_VERSION, platform=MacPort.port_name))
 
-        port = self.make_port(options=MockOptions(webkit_test_runner=False), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac-wk2')
-        self.assertEqual(port.driver_name(), 'WebKitTestRunner')
+        port = self.make_port(options=MockOptions(driver_names=['DumpRenderTree']), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
+        self.assertEqual(port.driver_name(), 'DumpRenderTree')
         self.assertEqual(port.version_name(), VersionNameMap().to_name(MacPort.CURRENT_VERSION, platform=MacPort.port_name))
 
-        port = self.make_port(options=MockOptions(webkit_test_runner=True), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac-wk2')
+        port = self.make_port(os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac-wk2')
         self.assertEqual(port.driver_name(), 'WebKitTestRunner')
         self.assertEqual(port.version_name(), VersionNameMap().to_name(MacPort.CURRENT_VERSION, platform=MacPort.port_name))
 
     def test_factory_with_future_version_and_apple_additions(self):
         with port_testcase.bind_mock_apple_additions():
-            port = self.make_port(options=MockOptions(webkit_test_runner=True), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
+            port = self.make_port(os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
             self.assertEqual(port.driver_name(), 'WebKitTestRunner')
             self.assertEqual(port.version_name(), None)
 
-            port = self.make_port(options=MockOptions(webkit_test_runner=False), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
+            port = self.make_port(options=MockOptions(driver_names=['DumpRenderTree']), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
             self.assertEqual(port.driver_name(), 'DumpRenderTree')
             self.assertEqual(port.version_name(), None)
 
-            port = self.make_port(options=MockOptions(webkit_test_runner=False), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac-wk2')
-            self.assertEqual(port.driver_name(), 'WebKitTestRunner')
+            port = self.make_port(options=MockOptions(driver_names=['DumpRenderTree']), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac')
+            self.assertEqual(port.driver_name(), 'DumpRenderTree')
             self.assertEqual(port.version_name(), None)
 
-            port = self.make_port(options=MockOptions(webkit_test_runner=True), os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac-wk2')
+            port = self.make_port(os_version=MacTest.FUTURE_VERSION, os_name='mac', port_name='mac-wk2')
             self.assertEqual(port.driver_name(), 'WebKitTestRunner')
             self.assertEqual(port.version_name(), None)
 
     def test_factory_with_portname_version(self):
-        port = self.make_port(options=MockOptions(webkit_test_runner=False), port_name='mac-mountainlion')
+        port = self.make_port(options=MockOptions(driver_names=['DumpRenderTree']), port_name='mac-mountainlion')
         self.assertEqual(port.driver_name(), 'DumpRenderTree')
         self.assertEqual(port.version_name(), 'Mountain Lion')
 
-        port = self.make_port(options=MockOptions(webkit_test_runner=True), port_name='mac-mountainlion')
+        port = self.make_port(port_name='mac-mountainlion')
         self.assertEqual(port.driver_name(), 'WebKitTestRunner')
         self.assertEqual(port.version_name(), 'Mountain Lion')
 
-        port = self.make_port(options=MockOptions(webkit_test_runner=True), port_name='mac-mountainlion-wk2')
-        self.assertEqual(port.driver_name(), 'WebKitTestRunner')
-        self.assertEqual(port.version_name(), 'Mountain Lion')
-
-        port = self.make_port(options=MockOptions(webkit_test_runner=False), port_name='mac-mountainlion-wk2')
+        port = self.make_port(port_name='mac-mountainlion-wk2')
         self.assertEqual(port.driver_name(), 'WebKitTestRunner')
         self.assertEqual(port.version_name(), 'Mountain Lion')
 
     def test_factory_with_portname_wk2(self):
-        port = self.make_port(options=MockOptions(webkit_test_runner=False), port_name='mac')
+        port = self.make_port(options=MockOptions(driver_names=['DumpRenderTree']), port_name='mac')
         self.assertEqual(port.driver_name(), 'DumpRenderTree')
 
-        port = self.make_port(options=MockOptions(webkit_test_runner=True), port_name='mac')
+        port = self.make_port(port_name='mac')
         self.assertEqual(port.driver_name(), 'WebKitTestRunner')
 
-        port = self.make_port(options=MockOptions(webkit_test_runner=True), port_name='mac-wk2')
-        self.assertEqual(port.driver_name(), 'WebKitTestRunner')
-
-        port = self.make_port(options=MockOptions(webkit_test_runner=False), port_name='mac-wk2')
+        port = self.make_port(port_name='mac-wk2')
         self.assertEqual(port.driver_name(), 'WebKitTestRunner')
 
     def test_configuration_for_upload(self):

@@ -38,4 +38,4 @@ testWithTypedArrayConstructors(TA => {
     }
   });
   ta.toSorted();
-});
+}, null, ["passthrough"]);

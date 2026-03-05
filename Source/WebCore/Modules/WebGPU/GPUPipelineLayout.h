@@ -36,10 +36,10 @@ class GPUPipelineLayout : public RefCounted<GPUPipelineLayout> {
 public:
     static Ref<GPUPipelineLayout> create(Ref<WebGPU::PipelineLayout>&& backing)
     {
-        return adoptRef(*new GPUPipelineLayout(WTFMove(backing)));
+        return adoptRef(*new GPUPipelineLayout(WTF::move(backing)));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     WebGPU::PipelineLayout& backing() { return m_backing; }
@@ -47,7 +47,7 @@ public:
 
 private:
     GPUPipelineLayout(Ref<WebGPU::PipelineLayout>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

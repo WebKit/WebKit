@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 691x17
+        RenderText {#text} at (0,0) size 691x18
           text run at (0,0) width 691: "This file includes Khmer and Lao text, and makes sure that the render tree metrics match what they should be."
       RenderBlock (anonymous) at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 48x17
+        RenderText {#text} at (0,0) size 48x18
           text run at (0,0) width 48: "Khmer:"
       RenderBlock {P} at (0,68) size 784x144
-        RenderText {#text} at (0,0) size 764x143
+        RenderText {#text} at (0,0) size 764x144
           text run at (0,0) width 748: "\x{179A}\x{17C3}\x{17A1}\x{1784}\x{17CB} \x{179A}\x{1794}\x{179F}\x{17CB}\x{1781}\x{17D2}\x{1798}\x{17C2}\x{179A} \x{179B}\x{1791}\x{17D2}\x{1792}\x{1795}\x{179B}\x{200B}\x{1794}\x{17D2}\x{179A}\x{17A0}\x{17C2}\x{179B} \x{1794}\x{1780}\x{1794}\x{17D2}\x{179A}\x{17C2}\x{200B}\x{1791}\x{17C6}\x{1796}\x{17D0}\x{179A}\x{200B}\x{1793}\x{17C1}\x{17C7} \x{179F}\x{17D2}\x{179C}\x{17C2}\x{1784}\x{179A}\x{1780} \x{179A}\x{17BC}\x{1794}\x{1797}\x{17B6}\x{1796} \x{1795}\x{17C2}\x{1793}\x{1791}\x{17B8} \x{1794}\x{1780}\x{200B}"
           text run at (0,18) width 708: "\x{1794}\x{17D2}\x{179A}\x{17C2} \x{179A}\x{17BC}\x{1794}\x{1797}\x{17B6}\x{1796}\x{200B}\x{179F}\x{1798}\x{17D2}\x{179A}\x{17B6}\x{1794}\x{17CB} \x{1785}\x{17D2}\x{179A}\x{17BE}\x{1793}\x{200B}\x{1791}\x{17C0}\x{178F}\x{200B}\x{178A}\x{17C4}\x{1799} \x{1787}\x{17C6}\x{1793}\x{17BD}\x{1799} \x{1795}\x{17D2}\x{1789}\x{17BE}\x{200B}\x{1798}\x{178F}\x{17B7}\x{200B}\x{1794}\x{17D2}\x{179A}\x{178F}\x{17B7}\x{1780}\x{1798}\x{17D2}\x{1798} \x{17AF}\x{1780}\x{1787}\x{1793}\x{1797}\x{17B6}\x{1796} &"
           text run at (0,36) width 748: "\x{1782}\x{17C4}\x{179B}\x{1780}\x{17B6}\x{179A}\x{178E}\x{17CD} \x{1796}\x{179B}\x{200B}\x{179B}\x{17B6}\x{179C} \x{1787}\x{17B6}\x{200B}\x{1781}\x{17C1}\x{178F}\x{17D2}\x{178F}\x{200B}\x{1798}\x{17BD}\x{1799}\x{200B}\x{1793}\x{17C3}\x{200B}\x{178A}\x{17C2}\x{1793}\x{178A}\x{17B8}\x{200B}\x{1780}\x{1798}\x{17D2}\x{1796}\x{17BB}\x{1787}\x{17B6}\x{200B}\x{1780}\x{17D2}\x{179A}\x{17C4}\x{1798} \x{178B}\x{17B7}\x{178F}\x{200B}\x{1793}\x{17C5}\x{200B}\x{178F}\x{17C6}\x{1794}\x{1793}\x{17CB} \x{178A}\x{17C2}\x{1793}\x{178A}\x{17B8}\x{200B}\x{179F}\x{178E}\x{17D2}\x{178F}\x{200B}"
@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
           text run at (0,108) width 764: "\x{1798}\x{1787}\x{17D2}\x{1788}\x{1798}\x{178E}\x{17D2}\x{178C}\x{179B}\x{200B}\x{1793}\x{17C3}\x{200B}\x{1781}\x{17C1}\x{178F}\x{17D2}\x{178F}\x{200B}\x{1793}\x{17C1}\x{17C7}\x{200B}\x{1782}\x{17BA} \x{1791}\x{17B8}\x{200B}\x{179A}\x{17BD}\x{1798}\x{200B}\x{1781}\x{17C1}\x{178F}\x{17D2}\x{178F}\x{200B}\x{1796}\x{179B}\x{200B}\x{179B}\x{17B6}\x{179C}\x{17D4} \x{1796}\x{17B8}\x{200B}\x{1791}\x{17B8}\x{200B}\x{179A}\x{17BD}\x{1798}\x{200B}\x{1781}\x{17C1}\x{178F}\x{17D2}\x{178F}\x{200B}\x{1796}\x{179B}\x{200B}\x{179B}\x{17B6}\x{179C}\x{200B}\x{1791}\x{17C5}\x{200B}\x{1791}\x{17B8}\x{1780}\x{17D2}\x{179A}\x{17BB}\x{1784}\x{200B}"
           text run at (0,126) width 472: "\x{1796}\x{17D2}\x{179A}\x{17C3}\x{1793}\x{1782}\x{179A}\x{1798}\x{17B6}\x{1793}\x{200B}\x{1785}\x{1798}\x{17D2}\x{1784}\x{17B6}\x{1799} \x{17E2}\x{17E8}\x{17E0} \x{1782}\x{200B}.\x{200B}\x{1798}\x{200B}. \x{178F}\x{17B6}\x{1798}\x{1795}\x{17D2}\x{179B}\x{17BC}\x{179C}\x{200B}\x{1787}\x{17B6}\x{178F}\x{17B7} \x{179B}\x{17C1}\x{1781} \x{17E1}"
       RenderBlock (anonymous) at (0,228) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 29x17
+        RenderBR {BR} at (0,0) size 0x18
+        RenderText {#text} at (0,18) size 29x18
           text run at (0,18) width 29: "Lao:"
       RenderBlock {P} at (0,280) size 784x228
         RenderText {#text} at (0,1) size 783x226

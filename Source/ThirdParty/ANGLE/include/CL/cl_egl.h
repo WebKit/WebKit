@@ -51,6 +51,9 @@ extern "C" {
 #define CL_KHR_EGL_IMAGE_EXTENSION_NAME \
     "cl_khr_egl_image"
 
+
+#define CL_KHR_EGL_IMAGE_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
 /* Command type for events created with clEnqueueAcquireEGLObjectsKHR */
 #define CL_COMMAND_EGL_FENCE_SYNC_OBJECT_KHR                0x202F
 #define CL_COMMAND_ACQUIRE_EGL_OBJECTS_KHR                  0x202D
@@ -143,6 +146,9 @@ clEnqueueReleaseEGLObjectsKHR(
 #define cl_khr_egl_event 1
 #define CL_KHR_EGL_EVENT_EXTENSION_NAME \
     "cl_khr_egl_event"
+
+
+#define CL_KHR_EGL_EVENT_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
 
 /* CLeglDisplayKHR is an opaque handle to an EGLDisplay */
 /* type CLeglDisplayKHR */

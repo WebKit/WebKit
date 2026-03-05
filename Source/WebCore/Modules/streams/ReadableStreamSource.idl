@@ -32,7 +32,7 @@
 ] interface ReadableStreamSource {
     [Custom, PrivateIdentifier] Promise<undefined> start(ReadableStreamDefaultController controller);
     [Custom, PrivateIdentifier] Promise<undefined> pull(ReadableStreamDefaultController controller);
-    [PrivateIdentifier] undefined cancel(any reason);
+    [PrivateIdentifier] Promise<undefined> cancel(any reason);
 
     // Place holder to keep the controller linked to the source.
     [CachedAttribute, CustomGetter, PrivateIdentifier] readonly attribute any controller;

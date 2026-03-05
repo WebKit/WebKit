@@ -253,7 +253,7 @@ TransportFeedbackAdapter::ProcessTransportFeedback(
                      << " packets because they were sent on a different route.";
   }
   return ToTransportFeedback(std::move(packet_result_vector),
-                             feedback_receive_time, /*suports_ecn=*/false);
+                             feedback_receive_time, /*supports_ecn=*/false);
 }
 
 std::optional<TransportPacketsFeedback>
@@ -303,6 +303,12 @@ TransportFeedbackAdapter::ProcessCongestionControlFeedback(
     result.sent_packet = packet_feedback->sent;
     if (packet_info.arrival_time_offset.IsFinite()) {
       result.receive_time = current_offset_ - packet_info.arrival_time_offset;
+      TimeDelta rtt = feedback_receive_time - result.sent_packet.send_time -
+                      packet_info.arrival_time_offset;
+      if (smoothed_rtt_.IsInfinite()) {
+        smoothed_rtt_ = rtt;
+      }
+      smoothed_rtt_ = (smoothed_rtt_ * 7 + rtt) / 8;  // RFC 6298, alpha = 1/8
       supports_ecn &= packet_info.ecn != EcnMarking::kNotEct;
     }
     result.ecn = packet_info.ecn;
@@ -346,6 +352,7 @@ TransportFeedbackAdapter::ToTransportFeedback(
   msg.packet_feedbacks = std::move(packet_results);
   msg.data_in_flight = in_flight_.GetOutstandingData(network_route_);
   msg.transport_supports_ecn = supports_ecn;
+  msg.smoothed_rtt = smoothed_rtt_;
 
   return msg;
 }
@@ -353,6 +360,7 @@ TransportFeedbackAdapter::ToTransportFeedback(
 void TransportFeedbackAdapter::SetNetworkRoute(
     const NetworkRoute& network_route) {
   network_route_ = network_route;
+  smoothed_rtt_ = TimeDelta::PlusInfinity();
 }
 
 DataSize TransportFeedbackAdapter::GetOutstandingData() const {

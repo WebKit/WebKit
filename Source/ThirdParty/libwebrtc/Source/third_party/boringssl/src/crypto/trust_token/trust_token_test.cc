@@ -689,7 +689,7 @@ INSTANTIATE_TEST_SUITE_P(TrustTokenAllProtocolTest, TrustTokenProtocolTest,
 TEST_P(TrustTokenProtocolTest, InvalidToken) {
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
 
   size_t key_index;
@@ -716,9 +716,9 @@ TEST_P(TrustTokenProtocolTest, InvalidToken) {
     // Corrupt the token.
     token->data[0] ^= 0x42;
 
-    uint8_t *redeem_msg = NULL, *redeem_resp = NULL;
+    uint8_t *redeem_msg = nullptr, *redeem_resp = nullptr;
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_redemption(
-        client.get(), &redeem_msg, &msg_len, token, NULL, 0, 0));
+        client.get(), &redeem_msg, &msg_len, token, nullptr, 0, 0));
     bssl::UniquePtr<uint8_t> free_redeem_msg(redeem_msg);
     uint32_t public_value;
     uint8_t private_value;
@@ -741,7 +741,7 @@ TEST_P(TrustTokenProtocolTest, InvalidToken) {
 TEST_P(TrustTokenProtocolTest, TruncatedIssuanceRequest) {
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -763,7 +763,7 @@ TEST_P(TrustTokenProtocolTest, TruncatedIssuanceRequest) {
 TEST_P(TrustTokenProtocolTest, TruncatedIssuanceResponse) {
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -790,7 +790,7 @@ TEST_P(TrustTokenProtocolTest, TruncatedIssuanceResponse) {
 TEST_P(TrustTokenProtocolTest, ExtraDataIssuanceResponse) {
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *request = NULL, *response = NULL;
+  uint8_t *request = nullptr, *response = nullptr;
   size_t request_len, response_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -819,7 +819,7 @@ TEST_P(TrustTokenProtocolTest, ExtraDataIssuanceResponse) {
 TEST_P(TrustTokenProtocolTest, TruncatedRedemptionRequest) {
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -845,7 +845,7 @@ TEST_P(TrustTokenProtocolTest, TruncatedRedemptionRequest) {
     const uint8_t kClientData[] = "\x70TEST CLIENT DATA";
     uint64_t kRedemptionTime = (method()->has_srr ? 13374242 : 0);
 
-    uint8_t *redeem_msg = NULL;
+    uint8_t *redeem_msg = nullptr;
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_redemption(
         client.get(), &redeem_msg, &msg_len, token, kClientData,
         sizeof(kClientData) - 1, kRedemptionTime));
@@ -912,7 +912,7 @@ TEST_P(TrustTokenProtocolTest, IssuedWithBadKeyID) {
                                                   sizeof(metadata_key)));
 
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -949,7 +949,7 @@ class TrustTokenMetadataTest
 TEST_P(TrustTokenMetadataTest, SetAndGetMetadata) {
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -980,7 +980,7 @@ TEST_P(TrustTokenMetadataTest, SetAndGetMetadata) {
     const uint8_t kClientData[] = "\x70TEST CLIENT DATA";
     uint64_t kRedemptionTime = (method()->has_srr ? 13374242 : 0);
 
-    uint8_t *redeem_msg = NULL;
+    uint8_t *redeem_msg = nullptr;
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_redemption(
         client.get(), &redeem_msg, &msg_len, token, kClientData,
         sizeof(kClientData) - 1, kRedemptionTime));
@@ -1017,7 +1017,7 @@ TEST_P(TrustTokenMetadataTest, TooManyRequests) {
   issuer_max_batchsize = 1;
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -1049,7 +1049,7 @@ TEST_P(TrustTokenMetadataTest, TruncatedProof) {
 
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -1117,7 +1117,7 @@ TEST_P(TrustTokenMetadataTest, ExcessDataProof) {
 
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(
@@ -1212,7 +1212,7 @@ TEST_P(TrustTokenBadKeyTest, BadKey) {
 
   ASSERT_NO_FATAL_FAILURE(SetupContexts());
 
-  uint8_t *issue_msg = NULL, *issue_resp = NULL;
+  uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
   size_t msg_len, resp_len;
   if (use_message()) {
     ASSERT_TRUE(TRUST_TOKEN_CLIENT_begin_issuance_over_message(

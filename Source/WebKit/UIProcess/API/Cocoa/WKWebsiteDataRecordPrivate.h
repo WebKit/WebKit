@@ -39,6 +39,7 @@ WK_EXTERN NSString * const _WKWebsiteDataTypeAdClickAttributions WK_API_AVAILABL
 WK_EXTERN NSString * const _WKWebsiteDataTypePrivateClickMeasurements WK_API_AVAILABLE(macos(12.0), ios(15.0));
 WK_EXTERN NSString * const _WKWebsiteDataTypeAlternativeServices WK_API_AVAILABLE(macos(11.0), ios(14.0));
 WK_EXTERN NSString * const _WKWebsiteDataTypeFileSystem WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebsiteDataTypeFileSystem", macos(13.0, 14.0), ios(16.0, 17.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeEnhancedSecurityRecord WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @interface WKWebsiteDataRecord (WKPrivate)
 

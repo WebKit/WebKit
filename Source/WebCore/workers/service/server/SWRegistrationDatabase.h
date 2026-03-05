@@ -68,7 +68,6 @@ private:
     std::optional<uint64_t> recordsCount();
     std::optional<Vector<ServiceWorkerContextData>> importRegistrationsImpl();
     std::optional<Vector<ServiceWorkerScripts>> updateRegistrationsImpl(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
-    CheckedPtr<SQLiteDatabase> checkedDatabase() const;
 
     String m_directory;
     std::unique_ptr<SQLiteDatabase> m_database;

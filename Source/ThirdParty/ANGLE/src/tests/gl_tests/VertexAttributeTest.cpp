@@ -355,7 +355,7 @@ class VertexAttributeTest : public ANGLETest<>
             "void main(void)\n"
             "{\n"
             "    gl_Position = position;\n"
-            "    vec4 threshold = max(abs(expected) * 0.01, 1.0 / 64.0);\n"
+            "    vec4 threshold = max(abs(expected) * 0.01, vec4(1.0 / 64.0));\n"
             "    color = vec4(lessThanEqual(abs(test - expected), threshold));\n"
             "}\n";
 
@@ -1843,7 +1843,7 @@ TEST_P(VertexAttributeTest, DrawArraysWithDisabledAttribute)
         "void main(void)\n"
         "{\n"
         "    gl_Position = position;\n"
-        "    vec4 threshold = max(abs(expected + disabled) * 0.005, 1.0 / 64.0);\n"
+        "    vec4 threshold = max(abs(expected + disabled) * 0.005, vec4(1.0 / 64.0));\n"
         "    color = vec4(lessThanEqual(abs(test - expected), threshold));\n"
         "}\n";
 
@@ -2574,13 +2574,65 @@ void main() {
                            reinterpret_cast<const void *>(0));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(colorLocation);
 
     drawQuad(program, "a_position", 0.5f);
 
     // Verify green was drawn.
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
     ASSERT_GL_NO_ERROR();
+}
+
+// Validate that we can support GL_MAX_ATTRIBS attribs with built-in attribs
+TEST_P(VertexAttributeTestES3, MaxAttribsWithBuiltInAttribs)
+{
+    GLint maxAttribs;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
+    ASSERT_GL_NO_ERROR();
+
+    std::stringstream shaderStream;
+    shaderStream << "#version 300 es" << std::endl << "precision highp float;" << std::endl;
+    for (GLint attribIndex = 1; attribIndex < maxAttribs; ++attribIndex)
+    {
+        shaderStream << "in float a" << attribIndex << ";" << std::endl;
+    }
+    shaderStream << "in vec4 position;" << std::endl;
+    shaderStream << "out float color;" << std::endl
+                 << "void main() {" << std::endl
+                 << "  gl_Position = position;" << std::endl
+                 << "  color = 0.0;" << std::endl;
+    for (GLint attribIndex = 1; attribIndex < maxAttribs; ++attribIndex)
+    {
+        shaderStream << "  color += a" << attribIndex << ";" << std::endl;
+    }
+
+    // Built-In attributes
+    shaderStream << "  color += (float(gl_VertexID) + float(gl_InstanceID))/2.0f;" << std::endl;
+    shaderStream << "}" << std::endl;
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision highp float;\n"
+        "in float color;\n"
+        "out vec4 FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "    FragColor = vec4(color, 0.0, 0.0, 1.0);\n"
+        "}\n";
+
+    ANGLE_GL_PROGRAM(program, shaderStream.str().c_str(), kFS);
+
+    GLint location = glGetAttribLocation(program, "gl_VertexID");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(location, -1);
+
+    location = 0;
+    location = glGetAttribLocation(program, "gl_InstanceID");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(location, -1);
+
+    drawQuad(program, "position", 0.5f);
+    EXPECT_PIXEL_NEAR(0, 0, 128, 0, 0, 255, 1);
 }
 
 class VertexAttributeTestES31 : public VertexAttributeTestES3
@@ -3891,6 +3943,140 @@ TEST_P(VertexAttributeTest, VertexAttribPointerCopyBufferFromInvalidAddress)
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
     EXPECT_GL_NO_ERROR();
+}
+
+// Test that there is no crash when two vertex attribute indices are enabled and initialized via
+// glVertexAttribPointer(), but then the corresponding array buffer is deleted and recreated, and
+// for the next draws only one attribute among them is re-initialized via glVertexAttribPointer().
+TEST_P(VertexAttributeTest, VertexAttribPointerCopyBufferFromInvalidAddressAfterArrayBufferDeletion)
+{
+    // clang-format off
+    const GLfloat vertices[] = {
+        // position   // color
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // Lower left corner
+        1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // Bottom right corner
+        0.0f,  1.0f,  0.0f, 0.0f, 1.0f, 1.0f   // Top
+        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  // Extra bottom left
+        1.0f,  -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,  // Extra bottom right
+        0.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f   // Extra top
+    };
+    // clang-format on
+
+    constexpr char kVS[] = R"(
+        attribute highp vec2 position;
+        attribute mediump vec4 color;
+        varying mediump vec4 fragColor;
+        varying highp vec2 fragTexCoord;
+        void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+            fragColor = color;
+            fragTexCoord = 0.5 * (position + 1.0);
+        }
+    )";
+
+    constexpr char kFS[] = R"(
+        precision mediump float;
+        varying mediump vec4 fragColor;
+        varying highp vec2 fragTexCoord;
+        void main() {
+           if (fragTexCoord.x > 0.5) {
+                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+           } else {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+           }
+        }
+    )";
+
+    mProgram = CompileProgram(kVS, kFS);
+    ASSERT_NE(0u, mProgram);
+    glBindAttribLocation(mProgram, 0, "position");
+    glBindAttribLocation(mProgram, 1, "color");
+    glUseProgram(mProgram);
+    EXPECT_GL_NO_ERROR();
+
+    glGenBuffers(1, &mBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    EXPECT_GL_NO_ERROR();
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (GLvoid *)(2 * sizeof(GLfloat)));
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_TRIANGLES, 3, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Here the original bound array buffer is deleted, but is recreated with the same data. Next,
+    // the vertex attribute pointer 0 is re-initialized, but vertex attribute pointer 1 is skipped.
+    glDeleteBuffers(1, &mBuffer);
+    glGenBuffers(1, &mBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
+    // Missing VertexAttribPointer at index 1
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_TRIANGLES, 3, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that when the offset for the vertex attribute pointer is not aligned with the stride, the
+// draw is successful without crashes due to out-of-bound access.
+TEST_P(VertexAttributeTest, BufferOffsetNonAlignedWithStride)
+{
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    constexpr char kVS[] = R"(
+attribute highp vec3 pos;
+void main() {
+    gl_Position = vec4(pos, 1.0);
+})";
+    constexpr char kFS[] = R"(
+precision highp float;
+void main() {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "pos");
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    const std::vector<float> kVertexData = {-1.0f, -1.0f, 0.0f, -1.0f, 1.0f,  0.0f,
+                                            1.0f,  1.0f,  0.0f, -1.0f, -1.0f, 0.0f,
+                                            1.0f,  1.0f,  0.0f, 1.0f,  -1.0f, 0.0f};
+    constexpr size_t kOffset             = 1;
+    constexpr size_t kStride             = 12;
+    static_assert(kOffset % kStride != 0, "Offset must not be aligned with stride.");
+
+    constexpr size_t kBufferSize = 1 * 1024 * 1024;
+    std::vector<uint8_t> bufferData(kBufferSize, 0);
+    memcpy(bufferData.data() + kOffset, kVertexData.data(), kVertexData.size() * sizeof(float));
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize, bufferData.data(), GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, kStride,
+                          reinterpret_cast<const void *>(kOffset));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
 }
 
 // Test that default unsigned integer attribute works correctly even if there is a gap in
@@ -5579,6 +5765,8 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
     ES3_VULKAN().enable(Feature::ForceFallbackFormat),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().disable(Feature::ForceSizePointerForBoundVertexBuffers),
+    ES3_VULKAN_SWIFTSHADER().disable(Feature::ForceSizePointerForBoundVertexBuffers),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass),
     ES2_OPENGL().enable(Feature::ForceMinimumMaxVertexAttributes),
@@ -5605,15 +5793,18 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass),
     ES3_VULKAN()
         .disable(Feature::UseVertexInputBindingStrideDynamicState)
-        .disable(Feature::SupportsGraphicsPipelineLibrary));
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
+    ES3_VULKAN().disable(Feature::ForceSizePointerForBoundVertexBuffers));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES31);
-ANGLE_INSTANTIATE_TEST_ES31_AND(VertexAttributeTestES31,
-                                ES31_VULKAN().enable(Feature::ForceFallbackFormat),
-                                ES31_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
-                                ES31_VULKAN()
-                                    .disable(Feature::UseVertexInputBindingStrideDynamicState)
-                                    .disable(Feature::SupportsGraphicsPipelineLibrary));
+ANGLE_INSTANTIATE_TEST_ES31_AND(
+    VertexAttributeTestES31,
+    ES31_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES31_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES31_VULKAN()
+        .disable(Feature::UseVertexInputBindingStrideDynamicState)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
+    ES31_VULKAN().disable(Feature::ForceSizePointerForBoundVertexBuffers));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VertexAttributeCachingTest,

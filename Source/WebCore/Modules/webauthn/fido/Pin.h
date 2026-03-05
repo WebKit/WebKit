@@ -36,6 +36,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <WebCore/CBORValue.h>
+#include <WebCore/CryptoKeyAES.h>
 #include <WebCore/FidoConstants.h>
 
 namespace WebCore {
@@ -139,7 +140,7 @@ struct SetPinRequest {
 public:
     const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
     WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(PINUVAuthProtocol, const String& newPin, const WebCore::CryptoKeyEC&);
-    WEBCORE_EXPORT const Vector<uint8_t>& pinAuth() const;
+    WEBCORE_EXPORT const Vector<uint8_t>& NODELETE pinAuth() const;
 
     friend Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
 
@@ -189,7 +190,7 @@ public:
     // client-data hash.
     WEBCORE_EXPORT Vector<uint8_t> pinAuth(PINUVAuthProtocol, const Vector<uint8_t>& clientDataHash) const;
 
-    WEBCORE_EXPORT const Vector<uint8_t>& token() const;
+    WEBCORE_EXPORT const Vector<uint8_t>& NODELETE token() const;
 
 private:
     explicit TokenResponse(Ref<WebCore::CryptoKeyHMAC>&&);
@@ -202,17 +203,17 @@ private:
 class HmacSecretRequest {
     WTF_MAKE_NONCOPYABLE(HmacSecretRequest);
 public:
-    WEBCORE_EXPORT static std::optional<HmacSecretRequest> create(PINUVAuthProtocol, const Vector<uint8_t>& salt1, const std::optional<Vector<uint8_t>>& salt2, const WebCore::CryptoKeyEC& peerKey);
+    WEBCORE_EXPORT static std::optional<HmacSecretRequest> create(PINUVAuthProtocol, const Vector<uint8_t>& salt1, const std::optional<Vector<uint8_t>>& salt2, RefPtr<WebCore::CryptoKeyEC>&& peerKey);
     HmacSecretRequest(HmacSecretRequest&&) = default;
     HmacSecretRequest& operator=(HmacSecretRequest&&) = default;
 
     const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
 
-    const cbor::CBORValue::MapValue& coseKey() const { return m_coseKey; }
+    const cbor::CBORValue::MapValue& coseKey() const LIFETIME_BOUND { return m_coseKey; }
 
-    const Vector<uint8_t>& saltEnc() const { return m_saltEnc; }
+    const Vector<uint8_t>& saltEnc() const LIFETIME_BOUND { return m_saltEnc; }
 
-    const Vector<uint8_t>& saltAuth() const { return m_saltAuth; }
+    const Vector<uint8_t>& saltAuth() const LIFETIME_BOUND { return m_saltAuth; }
 
     PINUVAuthProtocol protocol() const { return m_protocol; }
 
@@ -230,7 +231,7 @@ class HmacSecretResponse {
 public:
     WEBCORE_EXPORT static std::optional<HmacSecretResponse> parse(PINUVAuthProtocol, const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& encryptedOutput);
 
-    WEBCORE_EXPORT const Vector<uint8_t>& output() const;
+    WEBCORE_EXPORT const Vector<uint8_t>& NODELETE output() const;
 
 private:
     explicit HmacSecretResponse(Vector<uint8_t>&& decryptedOutput);

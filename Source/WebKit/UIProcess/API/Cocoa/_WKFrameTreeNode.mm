@@ -53,7 +53,7 @@
 - (NSArray<_WKFrameTreeNode *> *)childFrames
 {
     return createNSArray(_node->childFrames(), [&] (auto& child) {
-        return wrapper(API::FrameTreeNode::create(WebKit::FrameTreeNodeData(child), Ref { *_node }->protectedPage()));
+        return wrapper(API::FrameTreeNode::create(WebKit::FrameTreeNodeData(child), protect(Ref { *_node }->page())));
     }).autorelease();
 }
 

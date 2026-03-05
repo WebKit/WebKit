@@ -27,9 +27,11 @@
 
 #if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestNSBundleExtras.h"
 #import "TestUIDelegate.h"
+#import "TestWKWebView.h"
 #import "TestWKWebViewController.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -37,7 +39,15 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
+#import <objc/runtime.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/text/WTFString.h>
+#import <pal/ios/QuickLookSoftLink.h>
+
+#if PLATFORM(VISION)
+SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
+SOFT_LINK_CLASS(AssetViewer, ASVLaunchPreview);
+#endif
 
 static bool hasTriggerInfo;
 static bool wasTriggered;
@@ -278,6 +288,188 @@ TEST(WebKit, SystemPreviewTriggeredOnDetachedElement)
 
     [webView _triggerSystemPreviewActionOnElement:elementID document:documentID.createNSString().get() page:pageID];
     Util::run(&wasTriggeredByDetachedElement);
+}
+
+static void testModelPreviewPrompt(void(^loadModel)(TestWKWebView *)) {
+    bool arqlInvoked = false;
+    bool alertPresented = false;
+
+    auto swizzledQLItemBlock = makeBlockPtr([&](id self, SEL _cmd, id dataProvider, id contentType, id previewTitle) {
+        arqlInvoked = true;
+        return nil;
+    });
+
+    Class qlItemClass = PAL::getQLItemClassSingleton();
+    SEL targetSelector = @selector(initWithDataProvider:contentType:previewTitle:);
+
+    InstanceMethodSwizzler qlItemSwizzler { qlItemClass, targetSelector, imp_implementationWithBlock(swizzledQLItemBlock.get()) };
+
+    auto swizzledPresentBlock = makeBlockPtr([&](id self, UIViewController *controllerToPresent, BOOL animated, void (^completion)()) {
+        EXPECT_TRUE([controllerToPresent isKindOfClass:[UIAlertController class]]);
+        UIAlertController *alert = (UIAlertController *)controllerToPresent;
+        alertPresented = true;
+
+        EXPECT_WK_STREQ(@"View 3D Object?", alert.title);
+        EXPECT_EQ(2U, alert.actions.count);
+
+        UIAlertAction *cancelAction = alert.actions[0];
+        EXPECT_EQ(UIAlertActionStyleCancel, cancelAction.style);
+        id cancelHandler = [cancelAction valueForKey:@"handler"];
+        EXPECT_TRUE(cancelHandler != nil);
+        void (^cancelHandlerBlock)(UIAlertAction *) = cancelHandler;
+        cancelHandlerBlock(cancelAction);
+        EXPECT_FALSE(arqlInvoked);
+
+        UIAlertAction *allowAction = alert.actions[1];
+        EXPECT_EQ(UIAlertActionStyleDefault, allowAction.style);
+        id allowHandler = [allowAction valueForKey:@"handler"];
+        EXPECT_TRUE(allowHandler != nil);
+        void (^allowHandlerBlock)(UIAlertAction *) = allowHandler;
+        allowHandlerBlock(allowAction);
+        EXPECT_TRUE(arqlInvoked);
+    });
+
+    InstanceMethodSwizzler presentSwizzler { [UIViewController class], @selector(presentViewController:animated:completion:), imp_implementationWithBlock(swizzledPresentBlock.get()) };
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+
+    RetainPtr viewController = adoptNS([[UIViewController alloc] init]);
+    RetainPtr uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    [uiDelegate setViewController:viewController.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+    [viewController setView:webView.get()];
+
+    loadModel(webView.get());
+
+    TestWebKitAPI::Util::run(&alertPresented);
+}
+
+static void testRelARPrompt(void(^loadModel)(TestWKWebView *)) {
+    bool arInvoked = false;
+    bool alertPresented = false;
+    bool testingAllowPath = false;
+
+#if PLATFORM(VISION)
+    auto swizzledASVBeginBlock = makeBlockPtr([&](id self, SEL _cmd, NSArray *urls, BOOL is3DContent, NSURL *websiteURL, void (^completion)(NSError *)) {
+        arInvoked = true;
+        if (completion)
+            completion(nil);
+    });
+
+    Class asvLaunchPreviewClass = getASVLaunchPreviewClassSingleton();
+    SEL beginSelector = NSSelectorFromString(@"beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:");
+    InstanceMethodSwizzler asvSwizzler { asvLaunchPreviewClass, beginSelector, imp_implementationWithBlock(swizzledASVBeginBlock.get()) };
+#else
+    auto swizzledSetDataSourceBlock = makeBlockPtr([&](id self, SEL _cmd, id dataSource) {
+        arInvoked = true;
+    });
+
+    Class qlPreviewControllerClass = PAL::getQLPreviewControllerClassSingleton();
+    InstanceMethodSwizzler methodSwizzler { qlPreviewControllerClass, @selector(setDataSource:), imp_implementationWithBlock(swizzledSetDataSourceBlock.get()) };
+#endif
+
+    auto swizzledPresentBlock = makeBlockPtr([&](id self, UIViewController *controllerToPresent, BOOL animated, void (^completion)()) {
+#if !PLATFORM(VISION)
+        if ([controllerToPresent isKindOfClass:PAL::getQLPreviewControllerClassSingleton()])
+            return;
+#endif
+
+        EXPECT_TRUE([controllerToPresent isKindOfClass:[UIAlertController class]]);
+        UIAlertController *alert = (UIAlertController *)controllerToPresent;
+        alertPresented = true;
+
+        EXPECT_WK_STREQ(@"View in AR?", alert.title);
+        EXPECT_EQ(2U, alert.actions.count);
+
+        if (testingAllowPath) {
+            UIAlertAction *allowAction = alert.actions[1];
+            EXPECT_EQ(UIAlertActionStyleDefault, allowAction.style);
+            id handler = [allowAction valueForKey:@"handler"];
+            EXPECT_TRUE(handler != nil);
+            void (^handlerBlock)(UIAlertAction *) = handler;
+            handlerBlock(allowAction);
+            EXPECT_TRUE(arInvoked);
+        } else {
+            UIAlertAction *cancelAction = alert.actions[0];
+            EXPECT_EQ(UIAlertActionStyleCancel, cancelAction.style);
+            id handler = [cancelAction valueForKey:@"handler"];
+            EXPECT_TRUE(handler != nil);
+            void (^handlerBlock)(UIAlertAction *) = handler;
+            handlerBlock(cancelAction);
+            EXPECT_FALSE(arInvoked);
+        }
+    });
+
+    InstanceMethodSwizzler presentSwizzler { [UIViewController class], @selector(presentViewController:animated:completion:), imp_implementationWithBlock(swizzledPresentBlock.get()) };
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+
+    RetainPtr viewController = adoptNS([[UIViewController alloc] init]);
+    RetainPtr uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    [uiDelegate setViewController:viewController.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+    [viewController setView:webView.get()];
+
+    loadModel(webView.get());
+    TestWebKitAPI::Util::run(&alertPresented);
+
+    testingAllowPath = true;
+    alertPresented = false;
+
+    loadModel(webView.get());
+    TestWebKitAPI::Util::run(&alertPresented);
+}
+
+TEST(WebKit, PromptUSDZTopLevelNavigation)
+{
+    testModelPreviewPrompt(^(TestWKWebView *webView) {
+        RetainPtr usdzURL = [NSBundle.test_resourcesBundle URLForResource:@"UnitBox" withExtension:@"usdz"];
+        [webView loadRequest:[NSURLRequest requestWithURL:usdzURL.get()]];
+    });
+}
+
+TEST(WebKit, PromptRealityTopLevelNavigation)
+{
+    testModelPreviewPrompt(^(TestWKWebView *webView) {
+        RetainPtr realityURL = [NSBundle.test_resourcesBundle URLForResource:@"hab" withExtension:@"reality"];
+        [webView loadRequest:[NSURLRequest requestWithURL:realityURL.get()]];
+    });
+}
+
+TEST(WebKit, PromptUSDZLinkWithoutRelAR)
+{
+    testModelPreviewPrompt(^(TestWKWebView *webView) {
+        [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+        [webView evaluateJavaScript:@"document.getElementById('usdz-link').click()" completionHandler:nil];
+    });
+}
+
+TEST(WebKit, PromptRealityLinkWithoutRelAR)
+{
+    testModelPreviewPrompt(^(TestWKWebView *webView) {
+        [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+        [webView evaluateJavaScript:@"document.getElementById('reality-link').click()" completionHandler:nil];
+    });
+}
+
+TEST(WebKit, PromptUSDZLinkWithRelAR)
+{
+    testRelARPrompt(^(TestWKWebView *webView) {
+        [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+        [webView evaluateJavaScript:@"document.getElementById('arlink').click()" completionHandler:nil];
+    });
+}
+
+TEST(WebKit, PromptRealityLinkWithRelAR)
+{
+    testRelARPrompt(^(TestWKWebView *webView) {
+        [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+        [webView evaluateJavaScript:@"document.getElementById('reality-with-relar-link').click()" completionHandler:nil];
+    });
 }
 
 }

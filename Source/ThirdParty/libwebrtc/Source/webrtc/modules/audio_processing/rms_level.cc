@@ -125,10 +125,12 @@ RmsLevel::Levels RmsLevel::AverageAndPeak() {
   // Note that block_size_ should by design always be non-empty when
   // sample_count_ != 0. Also, the * operator of std::optional enforces this
   // with a DCHECK.
-  Levels levels = (sample_count_ == 0)
-                      ? Levels{RmsLevel::kMinLevelDb, RmsLevel::kMinLevelDb}
-                      : Levels{ComputeRms(sum_square_ / sample_count_),
-                               ComputeRms(max_sum_square_ / *block_size_)};
+  Levels levels =
+      (sample_count_ == 0)
+          ? Levels{.average = RmsLevel::kMinLevelDb,
+                   .peak = RmsLevel::kMinLevelDb}
+          : Levels{.average = ComputeRms(sum_square_ / sample_count_),
+                   .peak = ComputeRms(max_sum_square_ / *block_size_)};
   Reset();
   return levels;
 }

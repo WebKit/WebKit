@@ -23,10 +23,6 @@
 
 namespace webrtc {
 
-constexpr int ScalabilityStructureFullSvc::kMaxNumSpatialLayers;
-constexpr int ScalabilityStructureFullSvc::kMaxNumTemporalLayers;
-constexpr absl::string_view ScalabilityStructureFullSvc::kFramePatternNames[];
-
 ScalabilityStructureFullSvc::ScalabilityStructureFullSvc(
     int num_spatial_layers,
     int num_temporal_layers,

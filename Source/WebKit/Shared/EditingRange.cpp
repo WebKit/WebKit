@@ -46,7 +46,7 @@ std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::LocalFrame& f
         // directly in the document DOM, so serialization is problematic. Our solution is
         // to use the root editable element of the selection start as the positional base.
         // That fits with AppKit's idea of an input context.
-        RefPtr element = frame.checkedSelection()->rootEditableElementOrDocumentElement();
+        RefPtr element = protect(frame.selection())->rootEditableElementOrDocumentElement();
         if (!element)
             return std::nullopt;
         return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
@@ -59,7 +59,7 @@ std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::LocalFrame& f
         return std::nullopt;
 
     auto scopeEnd = makeBoundaryPointAfterNodeContents(Ref { paragraphStart->container->treeScope().rootNode() });
-    return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
+    return WebCore::resolveCharacterRange({ WTF::move(*paragraphStart), WTF::move(scopeEnd) }, range);
 }
 
 EditingRange EditingRange::fromRange(WebCore::LocalFrame& frame, const std::optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
@@ -69,7 +69,7 @@ EditingRange EditingRange::fromRange(WebCore::LocalFrame& frame, const std::opti
     if (!range)
         return { };
 
-    RefPtr element = frame.checkedSelection()->rootEditableElementOrDocumentElement();
+    RefPtr element = protect(frame.selection())->rootEditableElementOrDocumentElement();
     if (!element)
         return { };
 

@@ -38,7 +38,7 @@ namespace WebCore {
 
 GraphicsLayerAsyncContentsDisplayDelegateCocoa::GraphicsLayerAsyncContentsDisplayDelegateCocoa(GraphicsLayerCA& layer)
 {
-    m_layer = adoptNS([[CALayer alloc] init]);
+    lazyInitialize(m_layer, adoptNS([[CALayer alloc] init]));
     [m_layer setName:@"OffscreenCanvasLayer"];
 
     layer.setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::Canvas);

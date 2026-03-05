@@ -1,0 +1,58 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#iframe {
+    position: absolute;
+    left: 100px;
+    top: 50px;
+    width: 400px;
+    height: 300px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/resources/frame-with-text.html"></iframe>
+
+<script>
+var output = "Test iframe bounds (in screen position) in site isolation.\n\n";
+
+var iframe, iframeX, iframeY, webArea;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            return webArea;
+        });
+
+        var pageOrigin = { x: webArea.x, y: webArea.y };
+
+        await waitFor(() => {
+            iframe = webArea.childAtIndex(0);
+            if (!iframe)
+                return false;
+
+            iframeX = iframe.x - pageOrigin.x;
+            iframeY = iframe.y - pageOrigin.y;
+
+            return iframeX == 100 && iframeY == 50;
+        });
+
+        output += expect("iframeX", "100");
+        output += expect("iframeY", "50");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

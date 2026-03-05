@@ -120,23 +120,27 @@ angle::Result Image::getInfo(ImageInfo name,
 
 Image::~Image() = default;
 
-bool Image::isRegionValid(const cl::MemOffsets &origin, const cl::Coordinate &region) const
+bool Image::isRegionValid(const cl::Offset &origin, const cl::Extents &region) const
 {
     switch (getType())
     {
         case MemObjectType::Image1D:
         case MemObjectType::Image1D_Buffer:
-            return origin.x + region.x <= mDesc.width;
+            return origin.x + region.width <= mDesc.width;
         case MemObjectType::Image2D:
-            return origin.x + region.x <= mDesc.width && origin.y + region.y <= mDesc.height;
+            return origin.x + region.width <= mDesc.width &&
+                   origin.y + region.height <= mDesc.height;
         case MemObjectType::Image3D:
-            return origin.x + region.x <= mDesc.width && origin.y + region.y <= mDesc.height &&
-                   origin.z + region.z <= mDesc.depth;
+            return origin.x + region.width <= mDesc.width &&
+                   origin.y + region.height <= mDesc.height &&
+                   origin.z + region.depth <= mDesc.depth;
         case MemObjectType::Image1D_Array:
-            return origin.x + region.x <= mDesc.width && origin.y + region.y <= mDesc.arraySize;
+            return origin.x + region.width <= mDesc.width &&
+                   origin.y + region.height <= mDesc.arraySize;
         case MemObjectType::Image2D_Array:
-            return origin.x + region.x <= mDesc.width && origin.y + region.y <= mDesc.height &&
-                   origin.z + region.z <= mDesc.arraySize;
+            return origin.x + region.width <= mDesc.width &&
+                   origin.y + region.height <= mDesc.height &&
+                   origin.z + region.depth <= mDesc.arraySize;
         default:
             ASSERT(false);
             break;

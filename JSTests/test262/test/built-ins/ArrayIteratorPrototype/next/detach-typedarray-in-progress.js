@@ -23,4 +23,4 @@ testWithTypedArrayConstructors(TA => {
     }
   });
   assert.sameValue(i, 1);
-});
+}, null, ["passthrough"]);

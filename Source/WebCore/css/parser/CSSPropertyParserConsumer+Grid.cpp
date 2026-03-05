@@ -158,7 +158,7 @@ RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range, CSS::PropertyParser
     if (numericValue && numericValue->isZero().value_or(false))
         return nullptr; // An <integer> value of zero makes the declaration invalid.
 
-    return CSSGridLineValue::create(WTFMove(spanValue), WTFMove(numericValue), WTFMove(gridLineName));
+    return CSSGridLineValue::create(WTF::move(spanValue), WTF::move(numericValue), WTF::move(gridLineName));
 }
 
 static bool isGridTrackFixedSized(const CSSPrimitiveValue& primitiveValue)
@@ -183,8 +183,8 @@ static bool isGridTrackFixedSized(const CSSValue& value)
     if (function.name() == CSSValueFitContent || function.length() < 2)
         return false;
 
-    return isGridTrackFixedSized(downcast<CSSPrimitiveValue>(*function.protectedItem(0)))
-        || isGridTrackFixedSized(downcast<CSSPrimitiveValue>(*function.protectedItem(1)));
+    return isGridTrackFixedSized(downcast<CSSPrimitiveValue>(*protect(function.item(0))))
+        || isGridTrackFixedSized(downcast<CSSPrimitiveValue>(*protect(function.item(1))));
 }
 
 static RefPtr<CSSPrimitiveValue> consumeGridBreadth(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -298,12 +298,12 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSS::Prop
         return false;
 
     if (isAutoRepeat)
-        list.append(CSSGridAutoRepeatValue::create(*autoRepeatType, WTFMove(repeatedValues)));
+        list.append(CSSGridAutoRepeatValue::create(*autoRepeatType, WTF::move(repeatedValues)));
     else {
         auto maxRepetitions = Style::GridPosition::max() / numberOfTracks;
         if (auto repetitionsInteger = repetitions->resolveAsIntegerIfNotCalculated(); repetitionsInteger && repetitionsInteger > maxRepetitions)
             repetitions = CSSPrimitiveValue::createInteger(maxRepetitions);
-        list.append(CSSGridIntegerRepeatValue::create(repetitions.releaseNonNull(), WTFMove(repeatedValues)));
+        list.append(CSSGridIntegerRepeatValue::create(repetitions.releaseNonNull(), WTF::move(repeatedValues)));
     }
     return true;
 }
@@ -332,9 +332,9 @@ static bool consumeSubgridNameRepeatFunction(CSSParserTokenRange& range, CSS::Pr
     } while (!args.atEnd());
 
     if (isAutoRepeat)
-        list.append(CSSGridAutoRepeatValue::create(CSSValueAutoFill, WTFMove(repeatedValues)));
+        list.append(CSSGridAutoRepeatValue::create(CSSValueAutoFill, WTF::move(repeatedValues)));
     else
-        list.append(CSSGridIntegerRepeatValue::create(repetitions.releaseNonNull(), WTFMove(repeatedValues)));
+        list.append(CSSGridIntegerRepeatValue::create(repetitions.releaseNonNull(), WTF::move(repeatedValues)));
     return true;
 }
 
@@ -357,7 +357,7 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, CSS::PropertyP
             else
                 return nullptr;
         }
-        return CSSSubgridValue::create(WTFMove(values));
+        return CSSSubgridValue::create(WTF::move(values));
     }
 
     bool allowGridLineNames = trackListType != GridAuto;
@@ -392,7 +392,7 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, CSS::PropertyP
         if (auto lineNames = consumeGridLineNames(range, state))
             values.append(lineNames.releaseNonNull());
     } while (!range.atEnd() && range.peek().type() != DelimiterToken);
-    return CSSValueList::createSpaceSeparated(WTFMove(values));
+    return CSSValueList::createSpaceSeparated(WTF::move(values));
 }
 
 RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -419,27 +419,26 @@ RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range, CSS::Prope
 
     if (!map.rowCount)
         return nullptr;
-    return CSSGridTemplateAreasValue::create({ WTFMove(map) });
+    return CSSGridTemplateAreasValue::create({ WTF::move(map) });
 }
 
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
-    auto rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);
+    auto rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn, CSSValueNormal>(range);
     auto denseAlgorithm = consumeIdent<CSSValueDense>(range);
     if (!rowOrColumnValue) {
         rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);
         if (!rowOrColumnValue && !denseAlgorithm)
             return nullptr;
     }
+
     CSSValueListBuilder parsedValues;
     if (rowOrColumnValue) {
-        CSSValueID value = rowOrColumnValue->valueID();
-        if (value == CSSValueColumn || (value == CSSValueRow && !denseAlgorithm))
-            parsedValues.append(rowOrColumnValue.releaseNonNull());
+        parsedValues.append(rowOrColumnValue.releaseNonNull());
     }
     if (denseAlgorithm)
         parsedValues.append(denseAlgorithm.releaseNonNull());
-    return CSSValueList::createSpaceSeparated(WTFMove(parsedValues));
+    return CSSValueList::createSpaceSeparated(WTF::move(parsedValues));
 }
 
 } // namespace CSSPropertyParserHelpers

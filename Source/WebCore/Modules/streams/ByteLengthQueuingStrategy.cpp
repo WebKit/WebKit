@@ -33,7 +33,7 @@ namespace WebCore {
 
 Ref<ByteLengthQueuingStrategy> ByteLengthQueuingStrategy::create(Init&& init)
 {
-    return adoptRef(*new ByteLengthQueuingStrategy(WTFMove(init)));
+    return adoptRef(*new ByteLengthQueuingStrategy(WTF::move(init)));
 }
 
 ByteLengthQueuingStrategy::~ByteLengthQueuingStrategy() = default;

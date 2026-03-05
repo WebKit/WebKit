@@ -76,14 +76,14 @@ public:
 
     WebKit::WebPageProxy* page() { return m_page.get(); }
 
-    const std::optional<WebKit::FrameInfoData>& frameInfo() const { return m_data.frameInfo; }
+    const std::optional<WebKit::FrameInfoData>& frameInfo() const LIFETIME_BOUND { return m_data.frameInfo; }
     const std::optional<WebCore::FrameIdentifier> targetFrame() const { return m_data.targetFrame; }
 
     bool allowsFollowingLink() const { return m_data.allowsFollowingLink; }
 
     bool allowsFollowingImageURL() const { return m_data.allowsFollowingImageURL; }
 
-    const std::optional<WebCore::ResourceResponse>& linkLocalResourceResponse() const { return m_data.linkLocalResourceResponse; }
+    const std::optional<WebCore::ResourceResponse>& linkLocalResourceResponse() const LIFETIME_BOUND { return m_data.linkLocalResourceResponse; }
 
 private:
     explicit HitTestResult(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page)

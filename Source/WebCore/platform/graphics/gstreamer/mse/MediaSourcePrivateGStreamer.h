@@ -122,9 +122,8 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
-#endif
-
     uint64_t m_nextSourceBufferID { 0 };
+#endif
 
     // Stores info on known tracks, so we can:
     // 1) Work around collision in track ID between multiple source buffers.

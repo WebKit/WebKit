@@ -145,7 +145,7 @@ der::Input SequenceValueFromString(std::string_view s) {
 
   // mappings_copy is used to keep track of which mappings have already been
   // satisfied (by nulling the |value| field). This is used to track when
-  // blocks are mulitply defined.
+  // blocks are multiply defined.
   std::vector<PemBlockMapping> mappings_copy(mappings,
                                              mappings + mappings_length);
 

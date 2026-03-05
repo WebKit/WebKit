@@ -41,7 +41,7 @@ public:
 private:
     ConstAssertStatement(SourceSpan span, AST::ConstAssert::Ref&& assertion)
         : Statement(span)
-        , m_assertion(WTFMove(assertion))
+        , m_assertion(WTF::move(assertion))
     { }
 
     AST::ConstAssert::Ref m_assertion;

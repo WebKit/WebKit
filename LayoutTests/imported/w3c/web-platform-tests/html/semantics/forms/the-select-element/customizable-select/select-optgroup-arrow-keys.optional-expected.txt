@@ -1,4 +1,10 @@
 
+one
+two
+three
+four
+five
+six
 
-FAIL Keyboard navigation forwards and backwards should visit each option with optgroups. assert_equals: appearance:base-select must be supported to run this test. expected "base-select" but got "auto"
+PASS Keyboard navigation forwards and backwards should visit each option with optgroups.
 

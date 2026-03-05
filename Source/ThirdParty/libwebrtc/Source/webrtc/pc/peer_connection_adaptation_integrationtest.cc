@@ -14,6 +14,7 @@
 #include "api/adaptation/resource.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
@@ -29,8 +30,9 @@
 #include "pc/test/peer_connection_test_wrapper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/time_utils.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/wait_until.h"
@@ -53,10 +55,11 @@ void Negotiate(scoped_refptr<PeerConnectionTestWrapper> caller,
 }
 
 TrackWithPeriodicSource CreateTrackWithPeriodicSource(
+    Clock& clock,
     scoped_refptr<PeerConnectionFactoryInterface> factory) {
   FakePeriodicVideoSource::Config periodic_track_source_config;
   periodic_track_source_config.frame_interval_ms = 100;
-  periodic_track_source_config.timestamp_offset_ms = TimeMillis();
+  periodic_track_source_config.timestamp_offset_ms = clock.TimeInMilliseconds();
   scoped_refptr<FakePeriodicVideoTrackSource> periodic_track_source =
       make_ref_counted<FakePeriodicVideoTrackSource>(
           periodic_track_source_config, /* remote */ false);
@@ -68,9 +71,9 @@ TrackWithPeriodicSource CreateTrackWithPeriodicSource(
 }
 
 // Triggers overuse and obtains VideoSinkWants. Adaptation processing happens in
-// parallel and this function makes no guarantee that the returnd VideoSinkWants
-// have yet to reflect the overuse signal. Used together with EXPECT_TRUE_WAIT
-// to "spam overuse until a change is observed".
+// parallel and this function makes no guarantee that the returned
+// VideoSinkWants have yet to reflect the overuse signal. Used together with
+// EXPECT_TRUE_WAIT to "spam overuse until a change is observed".
 VideoSinkWants TriggerOveruseAndGetSinkWants(
     scoped_refptr<FakeResource> fake_resource,
     const FakePeriodicVideoSource& source) {
@@ -81,7 +84,8 @@ VideoSinkWants TriggerOveruseAndGetSinkWants(
 class PeerConnectionAdaptationIntegrationTest : public ::testing::Test {
  public:
   PeerConnectionAdaptationIntegrationTest()
-      : virtual_socket_server_(),
+      : env_(CreateTestEnvironment()),
+        virtual_socket_server_(),
         network_thread_(new Thread(&virtual_socket_server_)),
         worker_thread_(Thread::Create()) {
     RTC_CHECK(network_thread_->Start());
@@ -91,7 +95,7 @@ class PeerConnectionAdaptationIntegrationTest : public ::testing::Test {
   scoped_refptr<PeerConnectionTestWrapper> CreatePcWrapper(const char* name) {
     scoped_refptr<PeerConnectionTestWrapper> pc_wrapper =
         make_ref_counted<PeerConnectionTestWrapper>(
-            name, &virtual_socket_server_, network_thread_.get(),
+            name, env_, &virtual_socket_server_, network_thread_.get(),
             worker_thread_.get());
     PeerConnectionInterface::RTCConfiguration config;
     config.sdp_semantics = SdpSemantics::kUnifiedPlan;
@@ -101,6 +105,7 @@ class PeerConnectionAdaptationIntegrationTest : public ::testing::Test {
   }
 
  protected:
+  const Environment env_;
   VirtualSocketServer virtual_socket_server_;
   std::unique_ptr<Thread> network_thread_;
   std::unique_ptr<Thread> worker_thread_;
@@ -114,7 +119,7 @@ TEST_F(PeerConnectionAdaptationIntegrationTest,
 
   // Adding a track and negotiating ensures that a VideoSendStream exists.
   TrackWithPeriodicSource track_with_source =
-      CreateTrackWithPeriodicSource(caller_wrapper->pc_factory());
+      CreateTrackWithPeriodicSource(env_.clock(), caller_wrapper->pc_factory());
   auto sender = caller->AddTrack(track_with_source.track, {}).value();
   Negotiate(caller_wrapper, callee_wrapper);
   // Prefer degrading resolution.
@@ -150,7 +155,7 @@ TEST_F(PeerConnectionAdaptationIntegrationTest,
 
   // Adding a track and negotiating ensures that a VideoSendStream exists.
   TrackWithPeriodicSource track_with_source =
-      CreateTrackWithPeriodicSource(caller_wrapper->pc_factory());
+      CreateTrackWithPeriodicSource(env_.clock(), caller_wrapper->pc_factory());
   auto sender = caller->AddTrack(track_with_source.track, {}).value();
   Negotiate(caller_wrapper, callee_wrapper);
   // Prefer degrading resolution.

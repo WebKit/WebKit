@@ -35,7 +35,7 @@
 namespace WebCore {
 
 inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& relativeFilePath)
-    : SubstituteResource(URL { url }, ResourceResponse { response }, WTFMove(data))
+    : SubstituteResource(URL { url }, ResourceResponse { response }, WTF::move(data))
     , m_mimeType(mimeType)
     , m_textEncoding(textEncoding)
     , m_frameName(frameName)
@@ -59,15 +59,15 @@ Ref<ArchiveResource> ArchiveResource::createWithData(Ref<FragmentedSharedBuffer>
         // Provide a valid HTTP status code for http URLs since we have logic in WebCore that validates it.
         if (url.protocolIsInHTTPFamily())
             syntheticResponse.setHTTPStatusCode(200);
-        return adoptRef(*new ArchiveResource(WTFMove(data), url, mimeType, textEncoding, frameName, WTFMove(syntheticResponse), relativeFilePath));
+        return adoptRef(*new ArchiveResource(WTF::move(data), url, mimeType, textEncoding, frameName, WTF::move(syntheticResponse), relativeFilePath));
     }
 
-    return adoptRef(*new ArchiveResource(WTFMove(data), url, mimeType, textEncoding, frameName, response, relativeFilePath));
+    return adoptRef(*new ArchiveResource(WTF::move(data), url, mimeType, textEncoding, frameName, response, relativeFilePath));
 }
 
 RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const ResourceResponse& response)
 {
-    return create(WTFMove(data), url, response.mimeType(), response.textEncodingName(), String(), response);
+    return create(WTF::move(data), url, response.mimeType(), response.textEncodingName(), String(), response);
 }
 
 Expected<String, ArchiveError> ArchiveResource::saveToDisk(const String& directory)
@@ -79,7 +79,7 @@ Expected<String, ArchiveError> ArchiveResource::saveToDisk(const String& directo
 
     auto filePath = FileSystem::pathByAppendingComponent(directory, m_relativeFilePath);
     FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
-    auto fileData = protectedData()->extractData();
+    auto fileData = protect(data())->extractData();
     auto bytesWritten = FileSystem::overwriteEntireFile(filePath, fileData.span());
 
     if (!bytesWritten)

@@ -1805,7 +1805,7 @@ read ack
 				shouldFail:      true,
 				// Ensure the client does not send application data at the False
 				// Start point. EOF comes from the client closing the connection
-				// in response ot the alert.
+				// in response to the alert.
 				expectedLocalError: "tls: peer did not false start: EOF",
 				// Ensures the client picks up the alert before reporting an
 				// authenticated |SSL_R_ECH_REJECTED|.

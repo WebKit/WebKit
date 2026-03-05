@@ -51,7 +51,7 @@ void NetworkConnectionToWebProcess::updateActivePages(String&& overrideDisplayNa
 #if ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
         // In this case, the WebContent process has not been checked in with Launch Services yet.
         // We store the display name, and set it after checkin has completed.
-        m_pendingDisplayName = WTFMove(overrideDisplayName);
+        m_pendingDisplayName = WTF::move(overrideDisplayName);
 #endif
         return;
     }
@@ -125,13 +125,13 @@ void NetworkConnectionToWebProcess::checkInWebProcess(const CoreIPCAuditToken& a
         NSDictionary *dictionary = (__bridge NSDictionary *)result;
         RELEASE_LOG(Process, "Launch Services checkin completed, result = %{public}@, error = %{public}@", dictionary, (__bridge NSError *)error);
 
-        callOnMainRunLoop([weakThis = WTFMove(weakThis), auditToken = WTFMove(auditToken)] mutable {
+        callOnMainRunLoop([weakThis = WTF::move(weakThis), auditToken = WTF::move(auditToken)] mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
             if (protectedThis->m_pendingDisplayName.isNull())
                 return;
-            protectedThis->updateActivePages(std::exchange(protectedThis->m_pendingDisplayName, String()), { }, WTFMove(auditToken));
+            protectedThis->updateActivePages(std::exchange(protectedThis->m_pendingDisplayName, String()), { }, WTF::move(auditToken));
         });
     });
 

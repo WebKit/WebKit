@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ArgList.h"
 
-#include "JSCJSValueInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 using std::min;
@@ -32,19 +31,6 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ArgList);
 
-void MarkedVectorBase::addMarkSet(JSValue v)
-{
-    if (m_markSet)
-        return;
-
-    Heap* heap = Heap::heap(v);
-    if (!heap)
-        return;
-
-    m_markSet = &heap->markListSet();
-    m_markSet->add(this);
-}
-
 void ArgList::getSlice(int startIndex, ArgList& result) const
 {
     if (startIndex <= 0 || static_cast<unsigned>(startIndex) >= m_argCount) {
@@ -54,77 +40,6 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
 
     result.m_args = m_args + startIndex;
     result.m_argCount =  m_argCount - startIndex;
-}
-
-template<typename Visitor>
-void MarkedVectorBase::markLists(Visitor& visitor, ListSet& markSet)
-{
-    ListSet::iterator end = markSet.end();
-    for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
-        MarkedVectorBase* list = *it;
-        for (unsigned i = 0; i < list->m_size; ++i)
-            visitor.appendUnbarriered(JSValue::decode(list->slotFor(i)));
-    }
-}
-
-template void MarkedVectorBase::markLists(AbstractSlotVisitor&, ListSet&);
-template void MarkedVectorBase::markLists(SlotVisitor&, ListSet&);
-
-auto MarkedVectorBase::slowEnsureCapacity(size_t requestedCapacity) -> Status
-{
-    setNeedsOverflowCheck();
-    auto checkedNewCapacity = CheckedInt32(requestedCapacity);
-    if (checkedNewCapacity.hasOverflowed()) [[unlikely]]
-        return Status::Overflowed;
-    return expandCapacity(checkedNewCapacity);
-}
-
-auto MarkedVectorBase::expandCapacity() -> Status
-{
-    setNeedsOverflowCheck();
-    auto checkedNewCapacity = CheckedInt32(m_capacity) * 2;
-    if (checkedNewCapacity.hasOverflowed()) [[unlikely]]
-        return Status::Overflowed;
-    return expandCapacity(checkedNewCapacity);
-}
-
-auto MarkedVectorBase::expandCapacity(unsigned newCapacity) -> Status
-{
-    setNeedsOverflowCheck();
-    ASSERT(m_capacity < newCapacity);
-    auto checkedSize = CheckedSize(newCapacity) * sizeof(EncodedJSValue);
-    if (checkedSize.hasOverflowed()) [[unlikely]]
-        return Status::Overflowed;
-    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(FastMalloc::tryMalloc(checkedSize));
-    if (!newBuffer)
-        return Status::Overflowed;
-    for (unsigned i = 0; i < m_size; ++i) {
-        newBuffer[i] = m_buffer[i];
-        addMarkSet(JSValue::decode(m_buffer[i]));
-    }
-
-    if (EncodedJSValue* base = mallocBase())
-        FastMalloc::free(base);
-
-    m_buffer = newBuffer;
-    m_capacity = newCapacity;
-    return Status::Success;
-}
-
-auto MarkedVectorBase::slowAppend(JSValue v) -> Status
-{
-    ASSERT(m_size <= m_capacity);
-    if (m_size == m_capacity) {
-        auto status = expandCapacity();
-        if (status == Status::Overflowed) {
-            ASSERT(m_needsOverflowCheck);
-            return status;
-        }
-    }
-    slotFor(m_size) = JSValue::encode(v);
-    ++m_size;
-    addMarkSet(v);
-    return Status::Success;
 }
 
 } // namespace JSC

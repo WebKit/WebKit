@@ -12,6 +12,7 @@ function secondRequest()
     xhr.onreadystatechange = function()
     {
         if (xhr.readyState == xhr.DONE) {
+            window.removeEventListener("DOMSubtreeModified", secondRequest, true);
             document.getElementById('console').appendChild(document.createTextNode("PASS"));
             testRunner.notifyDone();
         }

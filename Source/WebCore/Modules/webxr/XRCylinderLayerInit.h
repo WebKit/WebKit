@@ -35,7 +35,6 @@ namespace WebCore {
 
 // https://immersive-web.github.io/layers/#xrcylinderlayerinit
 struct XRCylinderLayerInit : public XRLayerInit {
-    XRTextureType textureType;
     RefPtr<WebXRRigidTransform> transform;
     float radius;
     float centralAngle;

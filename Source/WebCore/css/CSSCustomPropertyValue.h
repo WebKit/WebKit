@@ -48,16 +48,16 @@ public:
     static Ref<CSSCustomPropertyValue> createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&&);
     static Ref<CSSCustomPropertyValue> createWithCSSWideKeyword(const AtomString& name, CSSWideKeyword);
 
-    const AtomString& name() const { return m_name; }
-    const VariantValue& value() const { return m_value; }
+    const AtomString& name() const LIFETIME_BOUND { return m_name; }
+    const VariantValue& value() const LIFETIME_BOUND { return m_value; }
 
     Ref<const CSSVariableData> asVariableData() const;
 
     bool isCurrentColor() const;
 
-    bool isVariableReference() const;
-    bool isVariableData() const;
-    bool isCSSWideKeyword() const;
+    bool NODELETE isVariableReference() const;
+    bool NODELETE isVariableData() const;
+    bool NODELETE isCSSWideKeyword() const;
 
     std::optional<CSSWideKeyword> tryCSSWideKeyword() const;
 
@@ -69,7 +69,7 @@ private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
         : CSSValue(ClassType::CustomProperty)
         , m_name(name)
-        , m_value(WTFMove(value))
+        , m_value(WTF::move(value))
     {
     }
 

@@ -28,6 +28,7 @@
 
 #include "CAAudioStreamDescription.h"
 #include "Logging.h"
+#include <pal/cf/CoreAudioExtras.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
@@ -43,18 +44,8 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     : m_bytesPerFrame(format.bytesPerFrame())
     , m_channelCount(format.numberOfInterleavedChannels())
 {
-    // AudioBufferList is a variable-length struct, so create on the heap with a generic new() operator
-    // with a custom size, and initialize the struct manually.
     uint32_t bufferCount = format.numberOfChannelStreams();
-
-    CheckedSize bufferListSize = offsetof(AudioBufferList, mBuffers);
-    bufferListSize += CheckedSize { sizeof(AudioBuffer) } * std::max(1U, bufferCount);
-    m_listBufferSize = bufferListSize;
-    lazyInitialize(m_canonicalList, std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize))));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    memset(m_canonicalList.get(), 0, m_listBufferSize);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    m_canonicalList->mNumberBuffers = bufferCount;
+    lazyInitialize(m_canonicalList, PAL::createAudioBufferList(bufferCount, PAL::ShouldZeroMemory::Yes));
     auto canonicalListBuffers = span(*m_canonicalList);
     for (uint32_t buffer = 0; buffer < bufferCount; ++buffer)
         canonicalListBuffers[buffer].mNumberChannels = m_channelCount;
@@ -120,7 +111,7 @@ std::optional<std::pair<UniqueRef<WebAudioBufferList>, RetainPtr<CMBlockBufferRe
 
     auto instance = makeUniqueRef<WebAudioBufferList>(description);
     if (RetainPtr block = instance->setSampleCountWithBlockBuffer(sampleCount))
-        return std::make_pair(WTFMove(instance), WTFMove(block));
+        return std::make_pair(WTF::move(instance), WTF::move(block));
 
     return { };
 }
@@ -146,7 +137,7 @@ RetainPtr<CMBlockBufferRef> WebAudioBufferList::setSampleCountWithBlockBuffer(si
         RELEASE_LOG_ERROR(Media, "WebAudioBufferList::setSampleCountWithBlockBuffer CMBlockBufferGetDataSpan failed.");
         return { };
     }
-    m_blockBuffer = WTFMove(block);
+    m_blockBuffer = WTF::move(block);
 
     initializeList(data.first(bufferSizes->second), bufferSizes->first);
 
@@ -172,7 +163,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, C
         return;
 
     CMBlockBufferRef buffer = nullptr;
-    if (noErr == PAL::CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_canonicalList.get(), m_listBufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer))
+    if (noErr == PAL::CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_canonicalList.get(), PAL::allocationSize(*m_canonicalList), kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer))
         m_blockBuffer = adoptCF(buffer);
 
     reset();
@@ -181,10 +172,8 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, C
 void WebAudioBufferList::reset()
 {
     if (!m_list)
-        lazyInitialize(m_list, std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize))));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    memcpy(m_list.get(), m_canonicalList.get(), m_listBufferSize);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        lazyInitialize(m_list, createAudioBufferList(m_canonicalList->mNumberBuffers, PAL::ShouldZeroMemory::No));
+    memcpySpan(span(*m_list), span(*m_canonicalList));
 }
 
 IteratorRange<AudioBuffer*> WebAudioBufferList::buffers() const

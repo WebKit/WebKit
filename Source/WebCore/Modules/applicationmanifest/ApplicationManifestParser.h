@@ -43,7 +43,7 @@ public:
     WEBCORE_EXPORT static std::optional<ApplicationManifest> parseWithValidation(const String&, const URL& manifestURL, const URL& documentURL);
 
 private:
-    ApplicationManifestParser(RefPtr<Document>);
+    ApplicationManifestParser(RefPtr<Document>&&);
     ApplicationManifest parseManifest(const JSON::Object&, const String&, const URL&, const URL&);
 
     RefPtr<JSON::Object> createJSONObject(const String&);
@@ -51,6 +51,7 @@ private:
     ApplicationManifest::Direction parseDir(const JSON::Object&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
     const std::optional<ScreenOrientationLockType> parseOrientation(const JSON::Object&);
+    String parseLang(const JSON::Object&);
     String parseName(const JSON::Object&);
     String parseDescription(const JSON::Object&);
     String parseShortName(const JSON::Object&);
@@ -67,7 +68,7 @@ private:
     void logManifestPropertyInvalidURL(const String&);
     void logDeveloperWarning(const String& message);
 
-    RefPtr<Document> m_document;
+    const RefPtr<Document> m_document;
     URL m_manifestURL;
 };
 

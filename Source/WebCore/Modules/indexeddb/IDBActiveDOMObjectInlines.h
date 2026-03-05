@@ -57,7 +57,7 @@ inline void IDBActiveDOMObject::callFunctionOnOriginThread(Function<void()>&& fu
     Locker<Lock> lock(m_scriptExecutionContextLock);
 
     if (CheckedPtr context = scriptExecutionContext())
-        context->postTask(WTFMove(function));
+        context->postTask(WTF::move(function));
 }
 
 }

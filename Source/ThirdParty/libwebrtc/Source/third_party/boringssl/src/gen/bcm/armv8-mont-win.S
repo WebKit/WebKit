@@ -432,7 +432,7 @@ Lsqr8x_outer_loop:
 	adc	x24,x24,x15
 
 	adds	x24,x24,x16
-	sub	x14,x3,x5	// rewinded ap
+	sub	x14,x3,x5	// rewound ap
 	adc	x25,xzr,xzr		// t[14]
 	add	x25,x25,x17
 
@@ -779,7 +779,7 @@ Lsqr8x_tail:
 					// to be zero at this point
 	ldp	x6,x7,[x2,#8*0]
 	sub	x27,x3,x1	// done yet?
-	sub	x16,x3,x5	// rewinded np
+	sub	x16,x3,x5	// rewound np
 	ldp	x8,x9,[x2,#8*2]
 	ldp	x10,x11,[x2,#8*4]
 	ldp	x12,x13,[x2,#8*6]
@@ -1121,7 +1121,7 @@ Loop_mul4x_1st_tail:
 	//adc	x0,x0,xzr
 	cbnz	x28,Loop_mul4x_1st_tail
 
-	sub	x11,x27,x5	// rewinded x1
+	sub	x11,x27,x5	// rewound x1
 	cbz	x10,Lmul4x_proceed
 
 	ldp	x6,x7,[x1,#8*0]
@@ -1263,7 +1263,7 @@ Loop_mul4x_tail:
 	//adc	x0,x0,xzr
 	cbnz	x28,Loop_mul4x_tail
 
-	sub	x11,x3,x5		// rewinded np?
+	sub	x11,x3,x5		// rewound np?
 	adc	x0,x0,xzr
 	cbz	x10,Loop_mul4x_break
 

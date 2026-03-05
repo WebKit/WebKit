@@ -175,7 +175,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
         [pipLabel setText:@"This video is playing in picture in picture."];
         [pipLabel setTextAlignment:NSTextAlignmentCenter];
         [pipLabel setTextColor:greyUIColor()];
-        [pipLabel setFont:[PAL::getUIFontClassSingleton() systemFontOfSize:16]];
+        [pipLabel setFont:static_cast<UIFont *>([PAL::getUIFontClassSingleton() systemFontOfSize:16])];
         [pipLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         [pipPlacard addSubview:pipLabel.get()];
@@ -246,7 +246,7 @@ std::optional<MediaPlayerIdentifier>VideoPresentationInterfaceIOS::playerIdentif
 
 void VideoPresentationInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
 {
-    m_playbackSessionInterface->setPlayerIdentifier(WTFMove(identifier));
+    m_playbackSessionInterface->setPlayerIdentifier(WTF::move(identifier));
 }
 
 void VideoPresentationInterfaceIOS::audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy routeSharingPolicy)
@@ -293,7 +293,7 @@ void VideoPresentationInterfaceIOS::preparedToReturnToInline(bool visible, const
     [playerViewController().view setNeedsLayout];
     [playerViewController().view layoutIfNeeded];
     if (m_prepareToInlineCallback) {
-        WTF::Function<void(bool)> callback = WTFMove(m_prepareToInlineCallback);
+        WTF::Function<void(bool)> callback = WTF::move(m_prepareToInlineCallback);
         callback(visible);
     }
 }
@@ -705,7 +705,7 @@ void VideoPresentationInterfaceIOS::preparedToExitFullscreen()
 
 void VideoPresentationInterfaceIOS::prepareForPictureInPictureStop(WTF::Function<void(bool)>&& callback)
 {
-    m_prepareToInlineCallback = WTFMove(callback);
+    m_prepareToInlineCallback = WTF::move(callback);
     if (auto model = videoPresentationModel())
         model->fullscreenMayReturnToInline();
 }

@@ -65,9 +65,7 @@ struct KeyPressEntry {
     const char* name;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
-
-static const KeyDownEntry keyDownEntries[] = {
+static constexpr KeyDownEntry keyDownEntries[] = {
     { VK_LEFT,   0,                  "MoveLeft"                                },
     { VK_LEFT,   ShiftKey,           "MoveLeftAndModifySelection"              },
     { VK_LEFT,   CtrlKey,            "MoveWordLeft"                            },
@@ -131,7 +129,7 @@ static const KeyDownEntry keyDownEntries[] = {
     { VK_INSERT, 0,                  "OverWrite"                               },
 };
 
-static const KeyPressEntry keyPressEntries[] = {
+static constexpr KeyPressEntry keyPressEntries[] = {
     { '\t',   0,                  "InsertTab"                                  },
     { '\t',   ShiftKey,           "InsertBacktab"                              },
     { '\r',   0,                  "InsertNewline"                              },
@@ -141,18 +139,16 @@ static const KeyPressEntry keyPressEntries[] = {
     { '\r',   AltKey | ShiftKey,  "InsertNewline"                              },
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
 static const char* interpretKeyEvent(const KeyboardEvent& event)
 {
     static NeverDestroyed<HashMap<int, const char*>> keyDownCommandsMap;
     static NeverDestroyed<HashMap<int, const char*>> keyPressCommandsMap;
 
     if (keyDownCommandsMap.get().isEmpty()) {
-        for (unsigned i = 0; i < std::size(keyDownEntries); i++)
-            keyDownCommandsMap.get().set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
-        for (unsigned i = 0; i < std::size(keyPressEntries); i++)
-            keyPressCommandsMap.get().set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
+        for (const auto& entry : keyDownEntries)
+            keyDownCommandsMap.get().set(entry.modifiers << 16 | entry.virtualKey, entry.name);
+        for (const auto& entry : keyPressEntries)
+            keyPressCommandsMap.get().set(entry.modifiers << 16 | entry.charCode, entry.name);
     }
 
     unsigned modifiers = 0;

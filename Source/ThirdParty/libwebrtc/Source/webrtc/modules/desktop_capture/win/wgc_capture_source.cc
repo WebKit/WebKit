@@ -21,6 +21,7 @@
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "modules/desktop_capture/win/window_capture_utils.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/win/get_activation_factory.h"
 
 using Microsoft::WRL::ComPtr;
@@ -134,24 +135,32 @@ bool WgcWindowSource::FocusOnSource() {
 
 HRESULT WgcWindowSource::CreateCaptureItem(
     ComPtr<WGC::IGraphicsCaptureItem>* result) {
-  if (!ResolveCoreWinRTDelayload())
+  if (!ResolveCoreWinRTDelayload()) {
+    RTC_LOG(LS_ERROR) << "Failed to load CoreWinRT library";
     return E_FAIL;
+  }
 
   ComPtr<IGraphicsCaptureItemInterop> interop;
   HRESULT hr = GetActivationFactory<
       IGraphicsCaptureItemInterop,
       RuntimeClass_Windows_Graphics_Capture_GraphicsCaptureItem>(&interop);
-  if (FAILED(hr))
+  if (FAILED(hr)) {
+    RTC_LOG_ERR(LS_ERROR) << "GetActivationFactory failed with hr:" << hr;
     return hr;
+  }
 
   ComPtr<WGC::IGraphicsCaptureItem> item;
   hr = interop->CreateForWindow(reinterpret_cast<HWND>(GetSourceId()),
                                 IID_PPV_ARGS(&item));
-  if (FAILED(hr))
+  if (FAILED(hr)) {
+    RTC_LOG_ERR(LS_ERROR) << "CreateForWindow failed with hr: " << hr;
     return hr;
+  }
 
-  if (!item)
+  if (!item) {
+    RTC_LOG(LS_ERROR) << "CreateForWindow returned null IGraphicsCaptureItem";
     return E_HANDLE;
+  }
 
   *result = std::move(item);
   return hr;
@@ -196,32 +205,44 @@ bool WgcScreenSource::IsCapturable() {
 
 HRESULT WgcScreenSource::CreateCaptureItem(
     ComPtr<WGC::IGraphicsCaptureItem>* result) {
-  if (!hmonitor_)
+  if (!hmonitor_) {
+    RTC_LOG(LS_ERROR) << "hmonitor_ is NULL";
     return E_ABORT;
+  }
 
-  if (!ResolveCoreWinRTDelayload())
+  if (!ResolveCoreWinRTDelayload()) {
+    RTC_LOG(LS_ERROR) << "Failed to load CoreWinRT library";
     return E_FAIL;
+  }
 
   ComPtr<IGraphicsCaptureItemInterop> interop;
   HRESULT hr = GetActivationFactory<
       IGraphicsCaptureItemInterop,
       RuntimeClass_Windows_Graphics_Capture_GraphicsCaptureItem>(&interop);
-  if (FAILED(hr))
+  if (FAILED(hr)) {
+    RTC_LOG_ERR(LS_ERROR) << "GetActivationFactory failed with hr:" << hr;
     return hr;
+  }
 
   // Ensure the monitor is still valid (hasn't disconnected) before trying to
   // create the item. On versions of Windows before Win11, `CreateForMonitor`
   // will crash if no displays are connected.
-  if (!IsMonitorValid(hmonitor_.value()))
+  if (!IsMonitorValid(hmonitor_.value())) {
+    RTC_LOG(LS_ERROR) << "Monitor is invalid";
     return E_ABORT;
+  }
 
   ComPtr<WGC::IGraphicsCaptureItem> item;
   hr = interop->CreateForMonitor(*hmonitor_, IID_PPV_ARGS(&item));
-  if (FAILED(hr))
+  if (FAILED(hr)) {
+    RTC_LOG_ERR(LS_ERROR) << "CreateForMonitor failed with hr: " << hr;
     return hr;
+  }
 
-  if (!item)
+  if (!item) {
+    RTC_LOG(LS_ERROR) << "CreateForMonitor returned null IGraphicsCaptureItem";
     return E_HANDLE;
+  }
 
   *result = std::move(item);
   return hr;

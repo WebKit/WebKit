@@ -58,14 +58,14 @@ public:
     ~LibWebRTCSocket();
 
     WebCore::ScriptExecutionContextIdentifier contextIdentifier() const { return m_contextIdentifier; }
-    const webrtc::SocketAddress& localAddress() const { return m_localAddress; }
-    const webrtc::SocketAddress& remoteAddress() const { return m_remoteAddress; }
+    const webrtc::SocketAddress& localAddress() const LIFETIME_BOUND { return m_localAddress; }
+    const webrtc::SocketAddress& remoteAddress() const LIFETIME_BOUND { return m_remoteAddress; }
 
     void setError(int error) { m_error = error; }
     void setState(State state) { m_state = state; }
 
     void suspend();
-    void resume();
+    void NODELETE resume();
 
 private:
     bool willSend(size_t);

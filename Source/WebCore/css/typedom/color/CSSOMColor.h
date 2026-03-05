@@ -30,14 +30,15 @@
 namespace WebCore {
 
 class CSSOMColor final : public CSSOMColorValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSOMColor);
+    WTF_MAKE_TZONE_ALLOCATED(CSSOMColor);
 public:
     template<typename... Args> static Ref<CSSOMColor> create(Args&&... args) { return adoptRef(*new CSSOMColor(std::forward<Args>(args)...)); }
 
-    void setColorSpace(CSSKeywordish);
+    std::optional<CSSKeywordish> NODELETE colorSpace() const;
+    void NODELETE setColorSpace(std::optional<CSSKeywordish>);
 
-    const CSSNumberish& alpha() const { return m_alpha; }
-    void setAlpha(CSSNumberish alpha) { m_alpha = WTFMove(alpha); }
+    const CSSNumberish& alpha() const LIFETIME_BOUND { return m_alpha; }
+    void setAlpha(CSSNumberish alpha) { m_alpha = WTF::move(alpha); }
 
 private:
     CSSOMColor(CSSKeywordish, Vector<CSSColorPercent>, CSSNumberish);

@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include <WebCore/EventNames.h>
-#include <WebCore/EventTarget.h>
-#include <WebCore/EventTargetInterfaces.h>
-#include <WebCore/IDBActiveDOMObject.h>
-#include <WebCore/IDBConnectionProxy.h>
-#include <WebCore/IDBDatabaseConnectionIdentifier.h>
-#include <WebCore/IDBDatabaseInfo.h>
-#include <WebCore/IDBKeyPath.h>
-#include <WebCore/IDBTransactionMode.h>
+#include "EventNames.h"
+#include "EventTarget.h"
+#include "EventTargetInterfaces.h"
+#include "IDBActiveDOMObject.h"
+#include "IDBConnectionProxy.h"
+#include "IDBDatabaseConnectionIdentifier.h"
+#include "IDBDatabaseInfo.h"
+#include "IDBKeyPath.h"
+#include "IDBTransactionMode.h"
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -48,15 +48,15 @@ class IDBTransactionInfo;
 struct EventNames;
 
 class IDBDatabase final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<IDBDatabase>, public EventTarget, public IDBActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBDatabase);
+    WTF_MAKE_TZONE_ALLOCATED(IDBDatabase);
 public:
     static Ref<IDBDatabase> create(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBResultData&);
 
     virtual ~IDBDatabase();
 
     // IDBDatabase IDL
-    const String name() const;
-    uint64_t version() const;
+    const String NODELETE name() const;
+    uint64_t NODELETE version() const;
     Ref<DOMStringList> objectStoreNames() const;
 
     struct ObjectStoreParameters {
@@ -79,7 +79,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBDatabase; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void derefEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
@@ -87,7 +87,7 @@ public:
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
-    IDBDatabaseInfo& info() { return m_info; }
+    IDBDatabaseInfo& info() LIFETIME_BOUND { return m_info; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
     std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier() const;
 
@@ -126,8 +126,6 @@ private:
 
     void maybeCloseInServer();
 
-    RefPtr<IDBTransaction> protectedVersionChangeTransaction() const;
-
     const Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
     IDBDatabaseInfo m_info;
     IDBDatabaseConnectionIdentifier m_databaseConnectionIdentifier;
@@ -136,12 +134,14 @@ private:
     bool m_closedInServer { false };
 
     RefPtr<IDBTransaction> m_versionChangeTransaction;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_activeTransactions;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
+    HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_activeTransactions;
+    HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_committingTransactions;
+    HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_abortingTransactions;
     
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
     std::atomic<bool> m_isContextSuspended { false };
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(IDBDatabase)

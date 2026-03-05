@@ -14,7 +14,7 @@
 }
 
 .parent:hover .child { 
-    background: green;
+  background: green;
 }
 
 </style>
@@ -35,10 +35,7 @@ customElements.define('custom-element', class extends HTMLElement {
 <custom-element id=target></custom-element>
 
 <script>
-if (window.eventSender) {
-    var x = target.offsetLeft + target.offsetWidth / 2;
-    var y = target.offsetTop + target.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-}
+if (window.eventSender)
+    eventSender.mouseMoveTo(target.offsetLeft, target.offsetTop);
 </script>
 </body>

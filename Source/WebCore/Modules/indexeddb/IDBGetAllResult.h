@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class IDBGetAllResult {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBGetAllResult, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBGetAllResult, WEBCORE_EXPORT);
 public:
     IDBGetAllResult() = default;
 
@@ -50,9 +50,9 @@ public:
     IDBGetAllResult isolatedCopy() const;
 
     IndexedDB::GetAllType type() const { return m_type; }
-    const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
-    WEBCORE_EXPORT const Vector<IDBKeyData>& keys() const;
-    WEBCORE_EXPORT const Vector<IDBValue>& values() const;
+    const std::optional<IDBKeyPath>& keyPath() const LIFETIME_BOUND { return m_keyPath; }
+    WEBCORE_EXPORT const Vector<IDBKeyData>& NODELETE keys() const;
+    WEBCORE_EXPORT const Vector<IDBValue>& NODELETE values() const;
 
     void addKey(IDBKeyData&&);
     void addValue(IDBValue&&);
@@ -63,9 +63,9 @@ private:
     friend struct IPC::ArgumentCoder<IDBGetAllResult>;
     IDBGetAllResult(IndexedDB::GetAllType type, Vector<IDBKeyData>&& keys, Vector<IDBValue>&& values, std::optional<IDBKeyPath>&& keyPath)
         : m_type(type)
-        , m_keys(WTFMove(keys))
-        , m_values(WTFMove(values))
-        , m_keyPath(WTFMove(keyPath))
+        , m_keys(WTF::move(keys))
+        , m_values(WTF::move(values))
+        , m_keyPath(WTF::move(keyPath))
     {
     }
 

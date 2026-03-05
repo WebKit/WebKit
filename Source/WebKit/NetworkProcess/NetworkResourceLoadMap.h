@@ -43,11 +43,11 @@ public:
     bool isEmpty() const { return m_loaders.isEmpty(); }
     bool contains(WebCore::ResourceLoaderIdentifier identifier) const { return m_loaders.contains(identifier); }
     MapType::iterator begin() LIFETIME_BOUND { return m_loaders.begin(); }
-    MapType::ValuesIteratorRange values() { return m_loaders.values(); }
+    MapType::ValuesIteratorRange values() LIFETIME_BOUND { return m_loaders.values(); }
     void clear();
 
-    MapType::AddResult add(WebCore::ResourceLoaderIdentifier, Ref<NetworkResourceLoader>&&);
-    NetworkResourceLoader* get(WebCore::ResourceLoaderIdentifier) const;
+    MapType::AddResult add(WebCore::ResourceLoaderIdentifier, Ref<NetworkResourceLoader>&&) LIFETIME_BOUND;
+    NetworkResourceLoader* get(WebCore::ResourceLoaderIdentifier) const LIFETIME_BOUND;
     bool remove(WebCore::ResourceLoaderIdentifier);
     RefPtr<NetworkResourceLoader> take(WebCore::ResourceLoaderIdentifier);
 

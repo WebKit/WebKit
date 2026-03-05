@@ -40,6 +40,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -89,6 +90,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setExtraHTTPHeaders(Ref<JSON::Object>&&) final;
     Inspector::Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> getResponseBody(const Inspector::Protocol::Network::RequestId&) final;
     Inspector::Protocol::ErrorStringOr<void> setResourceCachingDisabled(bool) final;
+    Inspector::Protocol::ErrorStringOr<void> setClearResourceDataOnNavigate(bool) final;
     void loadResource(const Inspector::Protocol::Network::FrameId&, const String& url, Ref<LoadResourceCallback>&&) final;
     Inspector::Protocol::ErrorStringOr<String> getSerializedCertificate(const Inspector::Protocol::Network::RequestId&) final;
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveWebSocket(const Inspector::Protocol::Network::RequestId&, const String& objectGroup) final;
@@ -171,7 +173,7 @@ private:
 
     const UniqueRef<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     const UniqueRef<NetworkResourcesData> m_resourcesData;
 
@@ -189,6 +191,7 @@ private:
     bool m_enabled { false };
     bool m_loadingXHRSynchronously { false };
     bool m_interceptionEnabled { false };
+    bool m_clearResourceDataOnNavigate { true };
 };
 
 } // namespace WebCore

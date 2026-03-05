@@ -33,8 +33,7 @@
 #include <WebCore/PasteboardItemInfo.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/SelectionData.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GSpanExtras.h>
 
 #if ENABLE(WPE_PLATFORM)
 #include "WPEUtilities.h"
@@ -48,14 +47,10 @@ using namespace WebCore;
 #if ENABLE(WPE_PLATFORM)
 static Vector<String> clipboardFormats(WPEClipboard* clipboard)
 {
-    Vector<String> types;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    if (const auto* formats = wpe_clipboard_get_formats(clipboard)) {
-        for (unsigned i = 0; formats[i]; ++i)
-            types.append(String::fromUTF8(formats[i]));
-    }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    return types;
+    const auto formats = span(wpe_clipboard_get_formats(clipboard));
+    return Vector<String>(formats.size(), [&formats](size_t index) {
+        return String::fromUTF8(formats[index]);
+    });
 }
 #endif
 
@@ -69,9 +64,11 @@ void WebPasteboardProxy::getTypes(const String&, CompletionHandler<void(Vector<S
     }
 #endif
 
+#if USE(LIBWPE)
     Vector<String> pasteboardTypes;
     PlatformPasteboard().getTypes(pasteboardTypes);
-    completionHandler(WTFMove(pasteboardTypes));
+    completionHandler(WTF::move(pasteboardTypes));
+#endif
 }
 
 void WebPasteboardProxy::readText(IPC::Connection&, const String&, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
@@ -86,7 +83,9 @@ void WebPasteboardProxy::readText(IPC::Connection&, const String&, const String&
     }
 #endif
 
+#if USE(LIBWPE)
     completionHandler(PlatformPasteboard().readString(0, pasteboardType.startsWith("text/plain"_s) ? "text/plain;charset=utf-8"_s : pasteboardType));
+#endif
 }
 
 void WebPasteboardProxy::readFilePaths(IPC::Connection&, const String&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -134,12 +133,14 @@ void WebPasteboardProxy::writeToClipboard(const String&, SelectionData&& selecti
     }
 #endif
 
+#if USE(LIBWPE)
     PasteboardWebContent contents;
     if (selectionData.hasText())
         contents.text = selectionData.text();
     if (selectionData.hasMarkup())
         contents.markup = selectionData.markup();
     PlatformPasteboard().write(contents);
+#endif
 }
 
 void WebPasteboardProxy::clearClipboard(const String&)
@@ -166,18 +167,14 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const S
                     domTypes.add(type);
             }
 
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            if (const auto* formats = wpe_clipboard_get_formats(clipboard)) {
-                for (unsigned i = 0; formats[i]; ++i) {
-                    String format = String::fromUTF8(formats[i]);
-                    if (format == PasteboardCustomData::wpeType())
-                        continue;
+            for (const char* format : span(wpe_clipboard_get_formats(clipboard))) {
+                String formatString = String::fromUTF8(format);
+                if (formatString == PasteboardCustomData::wpeType())
+                    continue;
 
-                    if (Pasteboard::isSafeTypeForDOMToReadAndWrite(format))
-                        domTypes.add(format);
-                }
+                if (Pasteboard::isSafeTypeForDOMToReadAndWrite(formatString))
+                    domTypes.add(formatString);
             }
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             completionHandler(copyToVector(domTypes));
             return;
         }
@@ -226,7 +223,9 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<Pasteboa
     }
 #endif
 
+#if USE(LIBWPE)
     completionHandler(PlatformPasteboard().write(data));
+#endif
 }
 
 #if ENABLE(WPE_PLATFORM)
@@ -239,7 +238,7 @@ static PasteboardItemInfo pasteboardItemInfoFromFormats(Vector<String>&& formats
         info.webSafeTypesByFidelity.append("text/html"_s);
     if (formats.contains("text/uri-list"_s))
         info.webSafeTypesByFidelity.append("text/uri-list"_s);
-    info.platformTypesByFidelity = WTFMove(formats);
+    info.platformTypesByFidelity = WTF::move(formats);
     return info;
 }
 #endif
@@ -341,7 +340,10 @@ void WebPasteboardProxy::getPasteboardChangeCount(IPC::Connection&, const String
         return;
     }
 #endif
+
+#if USE(LIBWPE)
     completionHandler(PlatformPasteboard().changeCount());
+#endif
 }
 
 } // namespace WebKit

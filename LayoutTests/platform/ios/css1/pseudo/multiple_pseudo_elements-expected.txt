@@ -4,10 +4,10 @@ layer at (0,0) size 800x1071
   RenderBlock {HTML} at (0,0) size 800x1071
     RenderBody {BODY} at (8,8) size 784x1055 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x20
-        RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-          RenderText at (0,0) size 10x19
+        RenderInline (generated) at (0,0) size 10x20 [color=#800000]
+          RenderText at (0,0) size 10x20
             text run at (0,0) width 10: "T"
-        RenderText {#text} at (9,0) size 354x19
+        RenderText {#text} at (9,0) size 354x20
           text run at (9,0) width 354: "he style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,36) size 784x98
         RenderText {#text} at (0,0) size 359x98
@@ -25,20 +25,20 @@ layer at (0,0) size 800x1071
           text run at (358,70) width 1: " "
           text run at (0,84) width 0: " "
       RenderBlock {P} at (0,165) size 784x60
-        RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-          RenderText at (0,0) size 10x19
+        RenderInline (generated) at (0,0) size 10x20 [color=#800000]
+          RenderText at (0,0) size 10x20
             text run at (0,0) width 10: "T"
-        RenderText {#text} at (0,0) size 782x59
+        RenderText {#text} at (0,0) size 782x60
           text run at (9,0) width 735: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be"
           text run at (0,20) width 44: "green. "
           text run at (43,20) width 524: "If this precise combination does not occur, then the user agent has failed this test. "
           text run at (566,20) width 216: "Remember that in order to ensure"
           text run at (0,40) width 459: "a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,241) size 784x190
-        RenderInline (generated) at (0,2) size 69x125 [color=#800000]
-          RenderText at (0,2) size 69x125
+        RenderInline (generated) at (0,2) size 69x126 [color=#800000]
+          RenderText at (0,2) size 69x126
             text run at (0,2) width 69: "T"
-        RenderText {#text} at (0,73) size 766x116
+        RenderText {#text} at (0,73) size 766x117
           text run at (68,73) width 634: "he first letter of this paragraph, and only that one,"
           text run at (0,130) width 754: "should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the entire first line"
           text run at (0,150) width 304: "should be 200% bigger than normal and green. "
@@ -46,10 +46,10 @@ layer at (0,0) size 800x1071
           text run at (0,170) width 58: "this test. "
           text run at (57,170) width 678: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,447) size 784x126
-        RenderInline (generated) at (0,1) size 76x63 [color=#800000]
-          RenderText at (0,1) size 76x63
+        RenderInline (generated) at (0,1) size 76x64 [color=#800000]
+          RenderText at (0,1) size 76x64
             text run at (0,1) width 76: "\"W"
-        RenderText {#text} at (0,36) size 783x89
+        RenderText {#text} at (0,36) size 783x90
           text run at (75,36) width 336: "e should check for quotation support,\" it was said. "
           text run at (410,36) width 361: "The first two characters in this paragraph-- a double-"
           text run at (0,66) width 696: "quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark red). "
@@ -60,29 +60,29 @@ layer at (0,0) size 800x1071
         RenderTableSection {TBODY} at (1,1) size 782x464
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x19
-                RenderText {#text} at (4,4) size 161x19
+              RenderInline {STRONG} at (4,4) size 161x20
+                RenderText {#text} at (4,4) size 161x20
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x436
             RenderTableCell {TD} at (0,232) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,208) size 4x19
+              RenderText {#text} at (4,208) size 4x20
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,28) size 770x436 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x60
-                RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-                  RenderText at (0,0) size 10x19
+                RenderInline (generated) at (0,0) size 10x20 [color=#800000]
+                  RenderText at (0,0) size 10x20
                     text run at (0,0) width 10: "T"
-                RenderText {#text} at (0,0) size 744x59
+                RenderText {#text} at (0,0) size 744x60
                   text run at (9,0) width 735: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be"
                   text run at (0,20) width 44: "green. "
                   text run at (43,20) width 524: "If this precise combination does not occur, then the user agent has failed this test. "
                   text run at (566,20) width 170: "Remember that in order to"
                   text run at (0,40) width 505: "ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,80) size 762x210
-                RenderInline (generated) at (0,2) size 69x125 [color=#800000]
-                  RenderText at (0,2) size 69x125
+                RenderInline (generated) at (0,2) size 69x126 [color=#800000]
+                  RenderText at (0,2) size 69x126
                     text run at (0,2) width 69: "T"
-                RenderText {#text} at (0,73) size 754x136
+                RenderText {#text} at (0,73) size 754x137
                   text run at (68,73) width 634: "he first letter of this paragraph, and only that one,"
                   text run at (0,130) width 754: "should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the entire first line"
                   text run at (0,150) width 304: "should be 200% bigger than normal and green. "
@@ -91,10 +91,10 @@ layer at (0,0) size 800x1071
                   text run at (97,170) width 646: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one"
                   text run at (0,190) width 28: "line."
               RenderBlock {P} at (4,306) size 762x126
-                RenderInline (generated) at (0,1) size 76x63 [color=#800000]
-                  RenderText at (0,1) size 76x63
+                RenderInline (generated) at (0,1) size 76x64 [color=#800000]
+                  RenderText at (0,1) size 76x64
                     text run at (0,1) width 76: "\"W"
-                RenderText {#text} at (0,36) size 757x89
+                RenderText {#text} at (0,36) size 757x90
                   text run at (75,36) width 336: "e should check for quotation support,\" it was said. "
                   text run at (410,36) width 306: "The first two characters in this paragraph-- a"
                   text run at (0,66) width 741: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark red)."

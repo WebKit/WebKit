@@ -75,7 +75,7 @@ public:
 
     size_t size() const { return m_map.size(); }
 
-    const MapType& map() const { return m_map; }
+    const MapType& map() const LIFETIME_BOUND { return m_map; }
 
 private:
     explicit Dictionary(MapType&&);

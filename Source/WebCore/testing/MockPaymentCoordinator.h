@@ -60,7 +60,7 @@ public:
 
     void setCanMakePayments(bool canMakePayments) { m_canMakePayments = canMakePayments; }
     void setCanMakePaymentsWithActiveCard(bool canMakePaymentsWithActiveCard) { m_canMakePaymentsWithActiveCard = canMakePaymentsWithActiveCard; }
-    void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTFMove(shippingAddress); }
+    void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTF::move(shippingAddress); }
     void changeShippingOption(String&& shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod&&);
 #if ENABLE(APPLE_PAY_COUPON_CODE)
@@ -121,6 +121,10 @@ public:
     const String& merchantCategoryCode() const { return m_merchantCategoryCode; }
 #endif
 
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    const std::optional<bool> isDelegatedRequest() const { return m_isDelegatedRequest; }
+#endif
+
     bool installmentConfigurationReturnsNil() const;
 
 private:
@@ -155,7 +159,7 @@ private:
     uint64_t m_hideCount { 0 };
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };
-    ApplePayPaymentContact m_shippingAddress;
+    LocalizedApplePayPaymentContact m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;
     Vector<MockPaymentError> m_errors;
@@ -203,6 +207,10 @@ private:
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
     String m_merchantCategoryCode;
+#endif
+
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    std::optional<bool> m_isDelegatedRequest;
 #endif
 };
 

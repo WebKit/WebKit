@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class CSSRule;
+class CSSRuleList;
 class CSSStyleSheet;
 class CSSValue;
 class DeprecatedCSSOMValue;
@@ -48,7 +49,7 @@ enum class StyleDeclarationType : uint8_t {
 
 class CSSStyleDeclaration : public ScriptWrappable, public AbstractRefCountedAndCanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleDeclaration);
+    WTF_MAKE_TZONE_ALLOCATED(CSSStyleDeclaration);
 public:
     virtual ~CSSStyleDeclaration();
 
@@ -56,7 +57,7 @@ public:
 
     virtual StyledElement* parentElement() const { return nullptr; }
     virtual CSSRule* parentRule() const = 0;
-    virtual CSSRule* cssRules() const = 0;
+    virtual CSSRuleList* cssRules() const = 0;
     virtual String cssText() const = 0;
     virtual ExceptionOr<void> setCssText(const String&) = 0;
     virtual unsigned length() const = 0;

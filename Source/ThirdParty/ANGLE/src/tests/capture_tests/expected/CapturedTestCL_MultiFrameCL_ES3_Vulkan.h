@@ -19,3 +19,5 @@ void InitReplay(void);
 
 extern const char * clCreateProgramWithSource_strings_0[];
 static clIcdGetPlatformIDsKHR_fn clIcdGetPlatformIDsKHR;
+static clEnqueueAcquireExternalMemObjectsKHR_fn clEnqueueAcquireExternalMemObjectsKHR;
+static clEnqueueReleaseExternalMemObjectsKHR_fn clEnqueueReleaseExternalMemObjectsKHR;

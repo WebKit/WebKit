@@ -159,7 +159,7 @@ public:
     ~Cache();
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
 
-    size_t capacity() const;
+    size_t NODELETE capacity() const;
     void updateCapacity();
 
     // Completion handler may get called back synchronously on failure.
@@ -176,7 +176,7 @@ public:
         Markable<UseDecision> useDecision;
 
         RetrieveInfo isolatedCopy() && { return {
-            crossThreadCopy(WTFMove(url)),
+            crossThreadCopy(WTF::move(url)),
             startTime,
             completionTime,
             priority,
@@ -231,7 +231,7 @@ public:
 
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
-    const String& storageDirectory() const { return m_storageDirectory; }
+    const String& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
     void fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
     void deleteData(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
     void deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
@@ -247,8 +247,6 @@ private:
     void deleteDumpFile();
 
     std::optional<Seconds> maxAgeCap(Entry&, const WebCore::ResourceRequest&, PAL::SessionID);
-
-    Ref<Storage> protectedStorage() const { return m_storage; }
 
     const Ref<Storage> m_storage;
     const Ref<NetworkProcess> m_networkProcess;

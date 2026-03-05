@@ -53,7 +53,7 @@ rect: style.getPropertyValue(column-fill) : balance
 rect: style.getPropertyValue(column-gap) : normal
 rect: style.getPropertyValue(column-rule-color) : rgb(0, 0, 0)
 rect: style.getPropertyValue(column-rule-style) : none
-rect: style.getPropertyValue(column-rule-width) : 0px
+rect: style.getPropertyValue(column-rule-width) : 3px
 rect: style.getPropertyValue(column-span) : none
 rect: style.getPropertyValue(column-width) : auto
 rect: style.getPropertyValue(content) : normal
@@ -93,7 +93,7 @@ rect: style.getPropertyValue(font-weight) : 400
 rect: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 rect: style.getPropertyValue(glyph-orientation-vertical) : auto
 rect: style.getPropertyValue(grid-auto-columns) : auto
-rect: style.getPropertyValue(grid-auto-flow) : row
+rect: style.getPropertyValue(grid-auto-flow) : normal
 rect: style.getPropertyValue(grid-auto-rows) : auto
 rect: style.getPropertyValue(grid-column-end) : auto
 rect: style.getPropertyValue(grid-column-start) : auto
@@ -139,7 +139,7 @@ rect: style.getPropertyValue(orphans) : 2
 rect: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 rect: style.getPropertyValue(outline-offset) : 0px
 rect: style.getPropertyValue(outline-style) : none
-rect: style.getPropertyValue(outline-width) : 0px
+rect: style.getPropertyValue(outline-width) : 3px
 rect: style.getPropertyValue(overflow-wrap) : normal
 rect: style.getPropertyValue(overflow-x) : visible
 rect: style.getPropertyValue(overflow-y) : visible
@@ -294,7 +294,7 @@ g: style.getPropertyValue(column-fill) : balance
 g: style.getPropertyValue(column-gap) : normal
 g: style.getPropertyValue(column-rule-color) : rgb(0, 0, 0)
 g: style.getPropertyValue(column-rule-style) : none
-g: style.getPropertyValue(column-rule-width) : 0px
+g: style.getPropertyValue(column-rule-width) : 3px
 g: style.getPropertyValue(column-span) : none
 g: style.getPropertyValue(column-width) : auto
 g: style.getPropertyValue(content) : normal
@@ -334,7 +334,7 @@ g: style.getPropertyValue(font-weight) : 400
 g: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 g: style.getPropertyValue(glyph-orientation-vertical) : auto
 g: style.getPropertyValue(grid-auto-columns) : auto
-g: style.getPropertyValue(grid-auto-flow) : row
+g: style.getPropertyValue(grid-auto-flow) : normal
 g: style.getPropertyValue(grid-auto-rows) : auto
 g: style.getPropertyValue(grid-column-end) : auto
 g: style.getPropertyValue(grid-column-start) : auto
@@ -380,7 +380,7 @@ g: style.getPropertyValue(orphans) : 2
 g: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 g: style.getPropertyValue(outline-offset) : 0px
 g: style.getPropertyValue(outline-style) : none
-g: style.getPropertyValue(outline-width) : 0px
+g: style.getPropertyValue(outline-width) : 3px
 g: style.getPropertyValue(overflow-wrap) : normal
 g: style.getPropertyValue(overflow-x) : visible
 g: style.getPropertyValue(overflow-y) : visible

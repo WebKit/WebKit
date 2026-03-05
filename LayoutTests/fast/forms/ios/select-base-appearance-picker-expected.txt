@@ -1,0 +1,19 @@
+This test verifies that base appearance selects use the in-page popover instead of the native iOS picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+=== Test 1: Base appearance select should use in-page popover ===
+PASS selectBase.options[0].checkVisibility() is false
+PASS selectBase.options[0].checkVisibility() is true
+PASS showingNativeMenu is false
+PASS selectBase.options[0].checkVisibility() is false
+
+=== Test 2: Auto appearance select should use native picker ===
+PASS selectAuto.options[0].checkVisibility() is false
+PASS selectAuto.options[0].checkVisibility() is false
+PASS selectAuto.options[0].checkVisibility() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

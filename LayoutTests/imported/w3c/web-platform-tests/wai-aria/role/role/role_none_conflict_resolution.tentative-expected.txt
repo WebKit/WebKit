@@ -1,0 +1,14 @@
+Presentational role inherited with global
+
+a
+b
+c
+a
+col 1	col 2
+cell 1	cell 2
+cell 3	cell 4
+
+FAIL presentational roles conflict - ul[role=none] > li[aria-describedby] assert_false: Computed Role: "listitem" does not match any of the acceptable role strings in ["generic", "", "none"]: <li aria-describedby="test" data-testname="presentational roles conflict - ul[role=none] &gt; li[aria-describedby]" class="ex-generic">a</li> expected false got true
+PASS presentational roles conflict - table[role=none] td[aria-describedby]
+PASS presentational roles conflict - table.with-style[role=none] td[aria-describedby]
+

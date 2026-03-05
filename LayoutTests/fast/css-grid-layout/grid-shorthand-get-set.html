@@ -189,11 +189,11 @@
     debug("Test the initial value");
     var element = document.createElement("div");
     document.body.appendChild(element);
-    testGridDefinitionsValues(element, "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(element, "none", "none", "none", "normal", "auto", "auto");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-columns')", "'none'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-rows')", "'none'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-areas')", "'none'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-flow')", "'row'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-flow')", "'normal'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'auto'");
 

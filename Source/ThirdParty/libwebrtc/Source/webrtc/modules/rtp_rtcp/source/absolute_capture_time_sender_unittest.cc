@@ -40,12 +40,15 @@ TEST(AbsoluteCaptureTimeSenderTest, InterpolateLaterPacketSentLater) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
 
@@ -71,12 +74,15 @@ TEST(AbsoluteCaptureTimeSenderTest, InterpolateEarlierPacketSentLater) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 - 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 - 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 - 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 - 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 - 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 - 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -104,12 +110,15 @@ TEST(AbsoluteCaptureTimeSenderTest,
   constexpr uint32_t kRtpTimestamp0 = uint32_t{0} - 80;
   constexpr uint32_t kRtpTimestamp1 = 1280 - 80;
   constexpr uint32_t kRtpTimestamp2 = 2560 - 80;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -137,12 +146,15 @@ TEST(AbsoluteCaptureTimeSenderTest,
   constexpr uint32_t kRtpTimestamp0 = 799;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 - 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 - 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 - 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 - 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 - 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 - 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -169,12 +181,15 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfTooLate) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -206,12 +221,15 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfSourceChanged) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -238,12 +256,15 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateWhenForced) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -273,12 +294,15 @@ TEST(AbsoluteCaptureTimeSenderTest, SkipInterpolateIfRtpClockFrequencyChanged) {
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 640;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 1280;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -304,12 +328,15 @@ TEST(AbsoluteCaptureTimeSenderTest,
   constexpr uint32_t kSource = 1337;
   constexpr int kRtpClockFrequency = 0;
   constexpr uint32_t kRtpTimestamp = 1020300000;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -337,12 +364,15 @@ TEST(AbsoluteCaptureTimeSenderTest,
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
-  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9000 + 20),
-                                           Int64MsToQ32x32(370)};
-  const AbsoluteCaptureTime kExtension2 = {Int64MsToUQ32x32(9000 + 40),
-                                           std::nullopt};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 20),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(370)};
+  const AbsoluteCaptureTime kExtension2 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000 + 40),
+      .estimated_capture_clock_offset = std::nullopt};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);
@@ -370,17 +400,18 @@ TEST(AbsoluteCaptureTimeSenderTest,
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
-                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension0 = {
+      .absolute_capture_timestamp = Int64MsToUQ32x32(9000),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
   const AbsoluteCaptureTime kExtension1 = {
-      Int64MsToUQ32x32(9000 + 20 +
-                       AbsoluteCaptureTimeSender::kInterpolationMaxError.ms()),
-      Int64MsToQ32x32(-350)};
+      .absolute_capture_timestamp = Int64MsToUQ32x32(
+          9000 + 20 + AbsoluteCaptureTimeSender::kInterpolationMaxError.ms()),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
   const AbsoluteCaptureTime kExtension2 = {
-      Int64MsToUQ32x32(9000 + 40 +
-                       AbsoluteCaptureTimeSender::kInterpolationMaxError.ms() +
-                       1),
-      Int64MsToQ32x32(-350)};
+      .absolute_capture_timestamp = Int64MsToUQ32x32(
+          9000 + 40 + AbsoluteCaptureTimeSender::kInterpolationMaxError.ms() +
+          1),
+      .estimated_capture_clock_offset = Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeSender sender(&clock);

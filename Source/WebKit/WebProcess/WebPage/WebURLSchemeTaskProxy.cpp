@@ -57,7 +57,7 @@ static uint64_t pageIDFromWebFrame(const RefPtr<WebFrame>& frame)
     return 0;
 }
 
-static uint64_t frameIDFromWebFrame(const RefPtr<WebFrame>& frame)
+static uint64_t NODELETE frameIDFromWebFrame(const RefPtr<WebFrame>& frame)
 {
     if (frame)
         return frame->frameID().toUInt64();
@@ -107,30 +107,30 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
 
     if (m_waitingForCompletionHandler) {
         WEBURLSCHEMETASKPROXY_RELEASE_LOG("didPerformRedirection: Received redirect during previous redirect processing, queuing it.");
-        queueTask([this, protectedThis = Ref { *this }, redirectResponse = WTFMove(redirectResponse), request = WTFMove(request), completionHandler = WTFMove(completionHandler)]() mutable {
-            didPerformRedirection(WTFMove(redirectResponse), WTFMove(request), WTFMove(completionHandler));
+        queueTask([this, protectedThis = Ref { *this }, redirectResponse = WTF::move(redirectResponse), request = WTF::move(request), completionHandler = WTF::move(completionHandler)]() mutable {
+            didPerformRedirection(WTF::move(redirectResponse), WTF::move(request), WTF::move(completionHandler));
         });
         return;
     }
     m_waitingForCompletionHandler = true;
 
-    auto innerCompletionHandler = [this, protectedThis = Ref { *this }, originalRequest = request, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+    auto innerCompletionHandler = [this, protectedThis = Ref { *this }, originalRequest = request, completionHandler = WTF::move(completionHandler)] (ResourceRequest&& request) mutable {
         m_waitingForCompletionHandler = false;
 
-        completionHandler(WTFMove(request));
+        completionHandler(WTF::move(request));
 
         processNextPendingTask();
     };
 
-    loader->willSendRequest(WTFMove(request), redirectResponse, WTFMove(innerCompletionHandler));
+    loader->willSendRequest(WTF::move(request), redirectResponse, WTF::move(innerCompletionHandler));
 }
 
 void WebURLSchemeTaskProxy::didReceiveResponse(ResourceResponse&& response)
 {
     if (m_waitingForCompletionHandler) {
         WEBURLSCHEMETASKPROXY_RELEASE_LOG("didReceiveResponse: Received response during redirect processing, queuing it.");
-        queueTask([this, protectedThis = Ref { *this }, response = WTFMove(response)] mutable {
-            didReceiveResponse(WTFMove(response));
+        queueTask([this, protectedThis = Ref { *this }, response = WTF::move(response)] mutable {
+            didReceiveResponse(WTF::move(response));
         });
         return;
     }
@@ -140,7 +140,7 @@ void WebURLSchemeTaskProxy::didReceiveResponse(ResourceResponse&& response)
         return;
 
     m_waitingForCompletionHandler = true;
-    loader->didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }] {
+    loader->didReceiveResponse(WTF::move(response), [this, protectedThis = Ref { *this }] {
         m_waitingForCompletionHandler = false;
         processNextPendingTask();
     });

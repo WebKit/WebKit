@@ -32,7 +32,7 @@ namespace WTF::FileSystemImpl {
 
 MappedFileData::MappedFileData(std::span<uint8_t> fileData, Win32Handle&& fileMapping)
     : m_fileData(fileData)
-    , m_fileMapping(WTFMove(fileMapping))
+    , m_fileMapping(WTF::move(fileMapping))
 {
 }
 

@@ -60,7 +60,7 @@ using namespace WebCore;
     if (!(self = [super init]))
         return nil;
     _private = [[WebNotificationPrivate alloc] init];
-    _private->_internal = WTFMove(coreNotification);
+    _private->_internal = WTF::move(coreNotification);
     return self;
 }
 @end

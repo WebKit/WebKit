@@ -135,11 +135,11 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     if (!node->classSource().isNull())
         setClassSource(node->classSource());
     if (parentScopeTDZVariables)
-        ensureRareData().m_parentScopeTDZVariables = WTFMove(parentScopeTDZVariables);
+        ensureRareData().m_parentScopeTDZVariables = WTF::move(parentScopeTDZVariables);
     if (generatorOrAsyncWrapperFunctionParameterNames)
-        ensureRareData().m_generatorOrAsyncWrapperFunctionParameterNames = FixedVector<Identifier>(WTFMove(generatorOrAsyncWrapperFunctionParameterNames.value()));
+        ensureRareData().m_generatorOrAsyncWrapperFunctionParameterNames = FixedVector<Identifier>(WTF::move(generatorOrAsyncWrapperFunctionParameterNames.value()));
     if (parentPrivateNameEnvironment)
-        ensureRareData().m_parentPrivateNameEnvironment = WTFMove(*parentPrivateNameEnvironment);
+        ensureRareData().m_parentPrivateNameEnvironment = WTF::move(*parentPrivateNameEnvironment);
 }
 
 UnlinkedFunctionExecutable::~UnlinkedFunctionExecutable()
@@ -274,7 +274,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks(VM& vm)
     ASSERT(m_decoder);
     ASSERT(m_cachedCodeBlockForCallOffset || m_cachedCodeBlockForConstructOffset);
 
-    RefPtr<Decoder> decoder = WTFMove(m_decoder);
+    RefPtr<Decoder> decoder = WTF::move(m_decoder);
     int32_t cachedCodeBlockForCallOffset = m_cachedCodeBlockForCallOffset;
     int32_t cachedCodeBlockForConstructOffset = m_cachedCodeBlockForConstructOffset;
 

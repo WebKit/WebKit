@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=MEDIA_SOURCE
+    Conditional=MEDIA_SOURCE,
 ] dictionary MediaSourceInit {
     boolean detachable = false;
 };

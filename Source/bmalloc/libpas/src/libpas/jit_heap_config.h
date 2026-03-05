@@ -205,6 +205,8 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
             PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATIONS(jit_small_segregated_page_config) \
         }, \
         .medium_segregated_config = { \
+            /* In order to enable this, we would need to add another medium page-header \
+             * table. But there's probably no reason to do so. */ \
             .base = { \
                 .is_enabled = false \
             } \

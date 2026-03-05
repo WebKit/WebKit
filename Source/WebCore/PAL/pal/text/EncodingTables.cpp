@@ -7077,7 +7077,7 @@ const std::array<std::pair<uint16_t, char16_t>, 17048>& eucKR()
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("windows-949", &error) };
         ASSERT(U_SUCCESS(error));
-        auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> std::optional<std::pair<uint16_t, char16_t>> {
+        auto getPair = [icuConverter = WTF::move(icuConverter)] (uint16_t pointer) -> std::optional<std::pair<uint16_t, char16_t>> {
             std::array<uint8_t, 2> icuInput { static_cast<uint8_t>(pointer / 190u + 0x81), static_cast<uint8_t>(pointer % 190u + 0x41) };
             std::array<char16_t, 2> icuOutput;
             UErrorCode error = U_ZERO_ERROR;
@@ -7089,11 +7089,11 @@ const std::array<std::pair<uint16_t, char16_t>, 17048>& eucKR()
         size_t arrayIndex = 0;
         for (uint16_t pointer = 0; pointer < 13776; pointer++) {
             if (auto pair = getPair(pointer))
-                (*array)[arrayIndex++] = WTFMove(*pair);
+                (*array)[arrayIndex++] = WTF::move(*pair);
         }
         for (uint16_t pointer = 13870; pointer < 23750; pointer++) {
             if (auto pair = getPair(pointer))
-                (*array)[arrayIndex++] = WTFMove(*pair);
+                (*array)[arrayIndex++] = WTF::move(*pair);
         }
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(arrayIndex == 17048);
         ASSERT(*array == eucKRDecodingIndexReference);

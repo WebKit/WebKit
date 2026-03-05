@@ -40,7 +40,7 @@
 };
 
 [
-    Conditional=FULLSCREEN_API
+    Conditional=FULLSCREEN_API,
 ] dictionary FullscreenOptions {
     FullscreenNavigationUI navigationUI = "auto";
     [EnabledBySetting=FullScreenKeyboardLock] FullscreenKeyboardLock keyboardLock = "none";

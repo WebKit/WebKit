@@ -99,6 +99,12 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
+    FeatureInfo useIr = {
+        "useIr",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
     FeatureInfo cacheCompiledShader = {
         "cacheCompiledShader",
         FeatureCategory::FrontendFeatures,
@@ -167,12 +173,6 @@ struct FrontendFeatures : FeatureSetBase
 
     FeatureInfo forceFlushAfterDrawcallUsingShadowmap = {
         "forceFlushAfterDrawcallUsingShadowmap",
-        FeatureCategory::FrontendWorkarounds,
-        &members,
-    };
-
-    FeatureInfo rejectWebglShadersWithUndefinedBehavior = {
-        "rejectWebglShadersWithUndefinedBehavior",
         FeatureCategory::FrontendWorkarounds,
         &members,
     };

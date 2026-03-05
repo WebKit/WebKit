@@ -20,7 +20,7 @@ layer at (8,26) size 167x32 clip at (9,27) size 165x30
       RenderText {#text} at (0,0) size 21x13
         text run at (0,0) width 21: "text"
 layer at (179,26) size 167x32 clip at (180,27) size 165x30
-  RenderTextControl {TEXTAREA} at (171,18) size 167x32 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid color(srgb 0.341176 0.341176 0.341176))]
+  RenderTextControl {TEXTAREA} at (171,18) size 167x32 [color=oklab(0.34 0 0)] [bgcolor=#FFFFFF] [border: (1px solid oklab(0.34 0 0))]
     RenderBlock {DIV} at (6,3) size 155x13
     RenderBlock {DIV} at (6,3) size 155x13 [color=#640000]
       RenderText {#text} at (0,0) size 68x13
@@ -32,7 +32,7 @@ layer at (350,26) size 167x32 clip at (351,27) size 165x30
       RenderText {#text} at (0,0) size 37x13
         text run at (0,0) width 37: "default"
 layer at (521,26) size 167x32 clip at (522,27) size 165x30
-  RenderTextControl {TEXTAREA} at (513,18) size 167x32 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid color(srgb 0.341176 0.341176 0.341176))]
+  RenderTextControl {TEXTAREA} at (513,18) size 167x32 [color=oklab(0.34 0 0)] [bgcolor=#FFFFFF] [border: (1px solid oklab(0.34 0 0))]
     RenderBlock {DIV} at (6,3) size 155x13
     RenderBlock {DIV} at (6,3) size 155x13 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 85x13

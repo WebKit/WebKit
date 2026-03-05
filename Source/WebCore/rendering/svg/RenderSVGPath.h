@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class RenderSVGPath final : public RenderSVGShape {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGPath);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGPath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGPath);
 public:
     RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
@@ -50,9 +50,9 @@ private:
     void strokeShape(GraphicsContext&) const override;
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
 
-    void styleDidChange(StyleDifference, const RenderStyle*) final;
+    void styleDidChange(Style::Difference, const RenderStyle*) final;
 
-    bool shouldStrokeZeroLengthSubpath() const;
+    bool NODELETE shouldStrokeZeroLengthSubpath() const;
     Path* zeroLengthLinecapPath(const FloatPoint&) const;
     FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();

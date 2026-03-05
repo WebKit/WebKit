@@ -14,8 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/abspos-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/abspos.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/out-of-flow-svg-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/out-of-flow-svg-root-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/out-of-flow-svg-root.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/outer-svg-intrinsic-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/outer-svg-intrinsic-size-002.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/outer-svg-intrinsic-size-003-expected.xht

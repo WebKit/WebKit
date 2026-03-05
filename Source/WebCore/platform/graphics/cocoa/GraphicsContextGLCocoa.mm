@@ -68,6 +68,8 @@ namespace WebCore {
 
 using GL = GraphicsContextGL;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLCocoa);
+
 // This variable is accessed in single-threaded manner.
 // For WK1, this variable is accessed from multiple threads but always sequentially.
 static GraphicsContextGLANGLE* currentContext;
@@ -168,15 +170,15 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 
 RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLAttributes&& attributes, ProcessIdentity&& resourceOwner)
 {
-    auto context = adoptRef(*new GraphicsContextGLCocoa(WTFMove(attributes), WTFMove(resourceOwner)));
+    auto context = adoptRef(*new GraphicsContextGLCocoa(WTF::move(attributes), WTF::move(resourceOwner)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
 GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& creationAttributes, ProcessIdentity&& resourceOwner)
-    : GraphicsContextGLANGLE(WTFMove(creationAttributes))
-    , m_resourceOwner(WTFMove(resourceOwner))
+    : GraphicsContextGLANGLE(WTF::move(creationAttributes))
+    , m_resourceOwner(WTF::move(resourceOwner))
     , m_drawingBufferColorSpace(DestinationColorSpace::SRGB())
 {
 }
@@ -456,7 +458,7 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
         EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, surface->surface(), m_configObj, surfaceAttributes);
         if (!pbuffer)
             return false;
-        buffer = IOSurfacePbuffer { WTFMove(surface), pbuffer };
+        buffer = IOSurfacePbuffer { WTF::move(surface), pbuffer };
     }
 
     auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
@@ -527,9 +529,9 @@ GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSourc
         return { };
     }
 
-    RetainPtr<id<MTLTexture>> texture = WTF::switchOn(WTFMove(source),
+    RetainPtr<id<MTLTexture>> texture = WTF::switchOn(WTF::move(source),
     [&](EGLImageSourceIOSurfaceHandle&& ioSurface) -> RetainPtr<id> {
-        auto surface = IOSurface::createFromSendRight(WTFMove(ioSurface.handle));
+        auto surface = IOSurface::createFromSendRight(WTF::move(ioSurface.handle));
         if (!surface)
             return nullptr;
 
@@ -656,7 +658,7 @@ RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sha
 
 GCGLExternalSync GraphicsContextGLCocoa::createExternalSync(ExternalSyncSource&& syncEvent)
 {
-    auto [syncEventHandle, signalValue] = WTFMove(syncEvent);
+    auto [syncEventHandle, signalValue] = WTF::move(syncEvent);
     auto sharedEvent = newSharedEventWithMachPort(syncEventHandle.sendRight());
     if (!sharedEvent) {
         LOG(WebGL, "Unable to create a MTLSharedEvent from the syncEvent.");
@@ -742,7 +744,7 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
     }
     prepareTexture();
     // The fence inserted by this will be scheduled because next BindTexImage will wait until scheduled.
-    insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
+    insertFinishedSignalOrInvoke(WTF::move(finishedSignal));
     bool success = bindNextDrawingBuffer();
     waitUntilWorkScheduled();
     if (!success)
@@ -803,7 +805,7 @@ RefPtr<VideoFrame> GraphicsContextGLCocoa::surfaceBufferToVideoFrame(SurfaceBuff
     if (!source || source.size() != getInternalFramebufferSize())
         return nullptr;
     // We will mirror and rotate the buffer explicitly. Thus the source being used is always a new one.
-    auto pixelBuffer = createCVPixelBuffer(source.surface()->protectedSurface().get());
+    auto pixelBuffer = createCVPixelBuffer(protect(source.surface()->surface()).get());
     if (!pixelBuffer)
         return nullptr;
     // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
@@ -815,7 +817,7 @@ RefPtr<VideoFrame> GraphicsContextGLCocoa::surfaceBufferToVideoFrame(SurfaceBuff
         return nullptr;
     if (m_resourceOwner)
         setOwnershipIdentityForCVPixelBuffer(mediaSamplePixelBuffer.get(), m_resourceOwner);
-    return VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTFMove(mediaSamplePixelBuffer));
+    return VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTF::move(mediaSamplePixelBuffer));
 }
 #endif
 
@@ -881,7 +883,7 @@ void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signa
     uint64_t signalValue = ++nextSignalValue;
     RetainPtr<id<MTLSharedEvent>> event = m_finishedMetalSharedEvent.get();
     // The block below has to be a real compiler generated block instead of BlockPtr due to a Metal bug. rdar://108035473
-    __block Function<void()> blockSignal = WTFMove(signal);
+    __block Function<void()> blockSignal = WTF::move(signal);
     [event notifyListener:m_finishedMetalSharedEventListener.get() atValue:signalValue block:^(id<MTLSharedEvent>, uint64_t) {
         blockSignal();
     }];

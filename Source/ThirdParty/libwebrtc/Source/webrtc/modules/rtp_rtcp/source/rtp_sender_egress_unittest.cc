@@ -855,7 +855,8 @@ TEST_F(RtpSenderEgressTest, SendPacketUpdatesStats) {
   const ArrayView<const RtpExtensionSize> kNoRtpHeaderExtensionSizes;
   FlexfecSender flexfec(env_, kFlexfectPayloadType, kFlexFecSsrc, kSsrc,
                         /*mid=*/"",
-                        /*header_extensions=*/{}, kNoRtpHeaderExtensionSizes,
+                        /*rtp_header_extensions=*/{},
+                        kNoRtpHeaderExtensionSizes,
                         /*rtp_state=*/nullptr);
   RtpRtcpInterface::Configuration config = DefaultConfig();
   config.fec_generator = &flexfec;

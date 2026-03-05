@@ -38,11 +38,11 @@ namespace WebKit {
 
 Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<WebCore::IOSurface> surface)
 {
-    return adoptRef(*new ViewSnapshot(WTFMove(surface)));
+    return adoptRef(*new ViewSnapshot(WTF::move(surface)));
 }
 
 ViewSnapshot::ViewSnapshot(std::unique_ptr<WebCore::IOSurface> surface)
-    : m_surface(WTFMove(surface))
+    : m_surface(WTF::move(surface))
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
@@ -56,7 +56,7 @@ void ViewSnapshot::setSurface(std::unique_ptr<WebCore::IOSurface> surface)
         return;
     }
 
-    m_surface = WTFMove(surface);
+    m_surface = WTF::move(surface);
     ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
 }
 
@@ -96,11 +96,6 @@ id ViewSnapshot::asLayerContents()
     }
 
     return m_surface->asLayerContents();
-}
-
-RetainPtr<id> ViewSnapshot::asProtectedLayerContents()
-{
-    return asLayerContents();
 }
 
 RetainPtr<CGImageRef> ViewSnapshot::asImageForTesting()

@@ -32,13 +32,12 @@
 #import "WKSLinearMediaPlayer.h"
 #import "WKSLinearMediaTypes.h"
 #import <WebCore/ExceptionOr.h>
+#import <WebCore/ImmersiveVideoMetadata.h>
 #import <WebCore/MediaSelectionOption.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PlaybackSessionModel.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/SpatialVideoMetadata.h>
 #import <WebCore/TimeRanges.h>
-#import <WebCore/VideoProjectionMetadata.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
@@ -417,17 +416,14 @@ void PlaybackSessionInterfaceLMK::supportsLinearMediaPlayerChanged(bool supports
     ASSERT_NOT_REACHED();
 }
 
-void PlaybackSessionInterfaceLMK::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+void PlaybackSessionInterfaceLMK::immersiveVideoMetadataChanged(const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
 {
     RetainPtr<WKSLinearMediaSpatialVideoMetadata> spatialVideoMetadata;
-    if (metadata)
-        spatialVideoMetadata = adoptNS([allocWKSLinearMediaSpatialVideoMetadataInstance() initWithWidth:metadata->size.width() height:metadata->size.height() horizontalFOVDegrees:metadata->horizontalFOVDegrees baseline:metadata->baseline disparityAdjustment:metadata->disparityAdjustment]);
+    if (metadata && metadata->isSpatial())
+        spatialVideoMetadata = adoptNS([allocWKSLinearMediaSpatialVideoMetadataInstance() initWithWidth:metadata->size.width() height:metadata->size.height() horizontalFieldOfView:*metadata->horizontalFieldOfView stereoCameraBaseline:*metadata->stereoCameraBaseline horizontalDisparityAdjustment:*metadata->horizontalDisparityAdjustment]);
     [m_player setSpatialVideoMetadata:spatialVideoMetadata.get()];
-}
 
-void PlaybackSessionInterfaceLMK::videoProjectionMetadataChanged(const std::optional<WebCore::VideoProjectionMetadata>& metadata)
-{
-    [m_player setIsImmersiveVideo:!!metadata];
+    [m_player setIsImmersiveVideo:metadata && metadata->isImmersive()];
 }
 
 void PlaybackSessionInterfaceLMK::startObservingNowPlayingMetadata()

@@ -1,0 +1,10 @@
+Test minValue and maxValue via the client accessibility APIs.
+
+Slider role: AXRole: AXSlider
+Slider minValue: 10
+Slider maxValue: 100
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -45,7 +45,7 @@ public:
         RELEASE_ASSERT(RunLoop::isMain());
     }
 
-    const WTF::String& firstPartyDomain() const { return m_firstPartyData.firstPartyDomain.string(); }
+    const WTF::String& firstPartyDomain() const LIFETIME_BOUND { return m_firstPartyData.firstPartyDomain.string(); }
     bool storageAccess() const { return m_firstPartyData.storageAccessGranted; }
     double timeLastUpdated() const { return m_firstPartyData.timeLastUpdated.value(); }
 

@@ -55,7 +55,8 @@ public:
         virtual ExceptionOr<void> undo() = 0;
         virtual ExceptionOr<void> redo() = 0;
 
-        virtual bool isUndoableStateMark() { return false; }
+        virtual bool isSetStyleSheetTextAction() const { return false; }
+        virtual bool isUndoableStateMark() const { return false; }
     };
 
     InspectorHistory() = default;

@@ -39,7 +39,7 @@ public:
     ~GStreamerAudioCapturer() = default;
 
     GstElement* createConverter() final;
-    const char* name() final { return "Audio"; }
+    ASCIILiteral name() final { return "Audio"_s; }
 
     bool setSampleRate(int);
 

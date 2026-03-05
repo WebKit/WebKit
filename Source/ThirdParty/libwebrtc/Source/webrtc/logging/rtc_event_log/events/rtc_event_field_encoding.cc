@@ -163,9 +163,11 @@ EventEncoder::EventEncoder(EventParameters params,
     for (const RtcEvent* event : batch) {
       timestamps.push_back(EncodeAsUnsigned(event->timestamp_ms()));
     }
-    constexpr FieldParameters timestamp_params{"timestamp_ms",
-                                               FieldParameters::kTimestampField,
-                                               FieldType::kVarInt, 64};
+    constexpr FieldParameters timestamp_params{
+        .name = "timestamp_ms",
+        .field_id = FieldParameters::kTimestampField,
+        .field_type = FieldType::kVarInt,
+        .value_width = 64};
     EncodeField(timestamp_params, timestamps);
   }
 }

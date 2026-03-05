@@ -50,22 +50,22 @@ WK_GCC_PREPROCESSOR_DEFINITIONS = $(WK_GCC_PREPROCESSOR_DEFINITIONS_$(USE_INTERN
 WK_GCC_PREPROCESSOR_DEFINITIONS_YES = $(WK_OS_UNFAIR_LOCK_INLINE_CFLAGS) __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(WK_GCC_PREPROCESSOR_DEFINITIONS);
 
-WK_COMMON_OTHER_CFLAGS = $(WK_SANITIZER_OTHER_CFLAGS) $(WK_COMMON_OTHER_CFLAGS_PGO_$(WK_OR_$(CLANG_USE_OPTIMIZATION_PROFILE)_$(CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING)));
+WK_COMMON_OTHER_CFLAGS = $(WK_SANITIZER_OTHER_CFLAGS) $(WK_COMMON_OTHER_CFLAGS_PGO_$(WK_OR_$(WK_ENABLE_PGO_USE)_$(ENABLE_LLVM_PROFILE_GENERATION)));
 // Work around rdar://141760829 until the fix is available on all clang-1700
 // based toolchains.
 WK_COMMON_OTHER_CFLAGS_PGO_YES = -mllvm -system-headers-coverage;
-WK_COMMON_OTHER_CFLAGS_PGO_YES[sdk=macosx13.*] = ;
-WK_COMMON_OTHER_CFLAGS_PGO_YES[sdk=macosx14.*] = ;
+
 OTHER_CFLAGS = $(inherited) $(WK_COMMON_OTHER_CFLAGS);
 
 WK_COMMON_OTHER_CPLUSPLUSFLAGS = $(WK_LIBCPP_ASSERTIONS_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(inherited) $(WK_COMMON_OTHER_CPLUSPLUSFLAGS);
 
-_EXPERIMENTAL_SWIFT_EXPLICIT_MODULES = $(WK_DEFAULT_SWIFT_ENABLE_EXPLICIT_MODULES);
-WK_DEFAULT_SWIFT_ENABLE_EXPLICIT_MODULES = YES;
-WK_DEFAULT_SWIFT_ENABLE_EXPLICIT_MODULES[sdk=macosx14*] = ;
+_EXPERIMENTAL_SWIFT_EXPLICIT_MODULES = YES;
 
-WK_COMMON_OTHER_LDFLAGS = $(WK_SANITIZER_OTHER_LDFLAGS) $(WK_COMMON_OTHER_LDFLAGS_INSTRUMENTATION_$(CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING));
+WK_DEFAULT_COMPILATION_CACHE_ENABLE_CACHING = YES;
+COMPILATION_CACHE_ENABLE_CACHING = $(WK_DEFAULT_COMPILATION_CACHE_ENABLE_CACHING);
+
+WK_COMMON_OTHER_LDFLAGS = $(WK_SANITIZER_OTHER_LDFLAGS) $(WK_COMMON_OTHER_LDFLAGS_INSTRUMENTATION_$(ENABLE_LLVM_PROFILE_GENERATION));
 // Work around rdar://151083138 by moving the section the profiling runtime
 // mmaps to its own segment.
 WK_COMMON_OTHER_LDFLAGS_INSTRUMENTATION_YES = -Wl,-rename_section,__DATA,__llvm_prf_cnts,__MMAP_DATA,__llvm_prf_cnts;
@@ -74,7 +74,7 @@ OTHER_LDFLAGS = $(inherited) $(WK_COMMON_OTHER_LDFLAGS);
 WK_COMMON_OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2b -fno-rtti $(WK_SANITIZER_OTHER_TAPI_FLAGS);
 OTHER_TAPI_FLAGS = $(inherited) $(WK_COMMON_OTHER_TAPI_FLAGS);
 
-WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_NOT_$(WK_ANY_SANITIZER_ENABLED));
+WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_NOT_$(WK_OR_$(WK_ANY_SANITIZER_ENABLED)_$(OVERRIDE_SUPPORTS_TEXT_BASED_API)));
 // Explicitly disable auditing on other embedded platforms, because some SDKs
 // fall back to reading settings for iOS.
 WK_DEFAULT_WK_AUDIT_SPI[sdk=appletvos*] = ;
@@ -86,42 +86,42 @@ WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos26.0.internal] = ;
 
 WK_AUDIT_SPI = $(WK_DEFAULT_WK_AUDIT_SPI);
 
-WK_OTHER_AUDIT_SPI_FLAGS = $(WK_OTHER_AUDIT_SPI_FLAGS_148943382) $(WK_OTHER_AUDIT_SPI_FLAGS_$(CONFIGURATION));
+WK_OTHER_AUDIT_SPI_FLAGS = $(WK_OTHER_AUDIT_SPI_FLAGS_148943382) $(WK_OTHER_AUDIT_SPI_FLAGS_164901718) $(WK_OTHER_AUDIT_SPI_FLAGS_$(CONFIGURATION));
 WK_OTHER_AUDIT_SPI_FLAGS_Release = -DNDEBUG;
 WK_OTHER_AUDIT_SPI_FLAGS_Production = -DNDEBUG;
-WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=*.internal] = -DSDKDB_HAS_148943382;
+WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=iphoneos26.0.internal] = -DSDKDB_HAS_148943382;
+WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=iphoneos26.1.internal] = -DSDKDB_HAS_148943382;
+WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=iphoneos26.2.internal] = -DSDKDB_HAS_148943382;
+WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=iphoneos26.3.internal] = -DSDKDB_HAS_148943382;
+WK_OTHER_AUDIT_SPI_FLAGS_164901718[sdk=iphoneos26.*.internal] = -DSDKDB_HAS_164901718;
 WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=iphoneos18*] = ;
 
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 GCC_THREADSAFE_STATICS = YES;
 
-WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wpointer-to-int-cast -Wreorder-init-list -Wundef -Wunused-but-set-variable -Wvla;
+WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wpointer-to-int-cast -Wreorder-init-list -Wundef -Wunused-but-set-variable -Wvla -Werror=unguarded-availability;
 WARNING_CFLAGS = $(inherited) $(WK_COMMON_WARNING_CFLAGS) $(WK_SANITIZER_WARNING_CFLAGS);
 
 CLANG_CXX_STANDARD_LIBRARY_HARDENING = extensive;
 
-// Setting CLANG_CXX_STANDARD_LIBRARY_HARDENING is sufficient in recent XCode versions but we want to keep
-// the libcpp assertion enabled on downlevels so use `-D_LIBCPP_ENABLE_ASSERTIONS=1` as well.
-WK_LIBCPP_ASSERTIONS_CFLAGS[sdk=iphone*17*] = -D_LIBCPP_ENABLE_ASSERTIONS=1;
-WK_LIBCPP_ASSERTIONS_CFLAGS[sdk=macosx14*] = -D_LIBCPP_ENABLE_ASSERTIONS=1;
-WK_LIBCPP_ASSERTIONS_CFLAGS[sdk=appletv*17*] = -D_LIBCPP_ENABLE_ASSERTIONS=1;
-WK_LIBCPP_ASSERTIONS_CFLAGS[sdk=watch*10*] = -D_LIBCPP_ENABLE_ASSERTIONS=1;
-
-// Enable strict memory safety in Swift, and treat any such warnings as errors.
+// Enable strict memory safety in Swift.
 // Enable for sufficiently recent Xcode only.
 WK_SWIFT_MEMORY_SAFETY_FLAGS = $(WK_SWIFT_MEMORY_SAFETY_FLAGS_$(WK_XCODE_BEFORE_17));
 WK_SWIFT_MEMORY_SAFETY_FLAGS_ = -strict-memory-safety -enable-experimental-feature Lifetimes -enable-experimental-feature LifetimeDependence -enable-experimental-feature ImportNonPublicCxxMembers;
-// rdar://164903024: Work around strict safety bug by only promoting warnings
-// to errors in certain SDK versions. Merge this -Werror argument into the
-// above build setting once fixed.
-// Keep it turned off on VisionOS until rdar://164555610 and rdar://164559261 are fixed.
-WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=macosx26.0*] = -Werror StrictMemorySafety $(inherited);
-WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=macosx26.1*] = -Werror StrictMemorySafety $(inherited);
-WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=macosx26.2*] = -Werror StrictMemorySafety $(inherited);
-WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=iphone*26.0*] = -Werror StrictMemorySafety $(inherited);
-WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=iphone*26.1*] = -Werror StrictMemorySafety $(inherited);
-WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=iphone*26.2*] = -Werror StrictMemorySafety $(inherited);
 
-OTHER_SWIFT_FLAGS = $(inherited) $(WK_SWIFT_MEMORY_SAFETY_FLAGS);
+// Treat memory safety warnings as errors.
+WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS = -Werror StrictMemorySafety;
+// Keep it turned off on VisionOS until rdar://164555610 and rdar://164559261 are fixed.
+WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS[sdk=xr*] = ;
+// rdar://164903024: Work around false positives in some SDK versions.
+WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS[sdk=*26.3*] = ;
+
+// rdar://168992837 requires us to tell swiftc to tell clang how to set version macros
+// when interpreting C++ headers as clang modules, so that we get identical feature
+// enablement to C++ interpretation of those headers (otherwise we get mismatched data members etc.)
+WK_SWIFT_CLANG_DEPLOYMENT_TARGET = $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET_$(WK_PLATFORM_NAME);
+WK_SWIFT_CLANG_DEPLOYMENT_TARGET_macosx = -clang-target $(CURRENT_ARCH)-apple-macos$(MACOSX_DEPLOYMENT_TARGET);
+
+OTHER_SWIFT_FLAGS = $(inherited) $(WK_SWIFT_MEMORY_SAFETY_FLAGS) $(WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS) $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET) $(WK_SANITIZER_OTHER_SWIFT_FLAGS);
 
 OTHER_LIBTOOLFLAGS = -no_warning_for_no_symbols;

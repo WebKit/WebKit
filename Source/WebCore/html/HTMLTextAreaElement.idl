@@ -26,7 +26,7 @@
 ] interface HTMLTextAreaElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
-    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement form;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
     [CEReactions=NotNeeded] attribute long minLength;
     [CEReactions=NotNeeded] attribute long maxLength;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
@@ -49,7 +49,8 @@
     [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 
-    readonly attribute NodeList labels;
+    // FIXME: `labels` should not be nullable.
+    readonly attribute NodeList? labels;
 
     undefined select();
     attribute unsigned long selectionStart;

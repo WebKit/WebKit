@@ -25,25 +25,17 @@
 #pragma once
 
 #include <WebCore/FrameLoaderTypes.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class CachedResourceClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedResourceClient> : std::true_type { };
-}
 
 namespace WebCore {
 
 class CachedResource;
 class NetworkLoadMetrics;
 
-class WEBCORE_EXPORT CachedResourceClient : public CanMakeSingleThreadWeakPtr<CachedResourceClient> {
+class WEBCORE_EXPORT CachedResourceClient : public CanMakeSingleThreadWeakPtr<CachedResourceClient>, public AbstractRefCounted {
     WTF_MAKE_NONCOPYABLE(CachedResourceClient);
 public:
     enum CachedResourceClientType {
@@ -60,9 +52,9 @@ public:
     virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     virtual void deprecatedDidReceiveCachedResource(CachedResource&);
 
-    static CachedResourceClientType expectedType();
-    virtual CachedResourceClientType resourceClientType() const;
-    virtual bool shouldMarkAsReferenced() const;
+    static CachedResourceClientType NODELETE expectedType();
+    virtual CachedResourceClientType NODELETE resourceClientType() const;
+    virtual bool NODELETE shouldMarkAsReferenced() const;
 
 #if ASSERT_ENABLED
     void addAssociatedResource(CachedResource&);

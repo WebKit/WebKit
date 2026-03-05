@@ -592,7 +592,7 @@ static PlatformTouchPoint::TouchPhaseType touchPhaseFromPlatformEventType(Platfo
 class PlatformTouchPointBuilder : public PlatformTouchPoint {
 public:
     PlatformTouchPointBuilder(unsigned identifier, const IntPoint& locationInRootView, std::optional<IntPoint>&& locationInViewport, TouchPhaseType phase)
-        : PlatformTouchPoint(identifier, locationInRootView, WTFMove(locationInViewport), phase)
+        : PlatformTouchPoint(identifier, locationInRootView, WTF::move(locationInViewport), phase)
     {
     }
 };

@@ -52,7 +52,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
 
-    auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, fontCreationContext);
+    auto font = preparePlatformFont(WTF::move(unrealizedFont), fontDescription, fontCreationContext);
     ASSERT(font);
     FontPlatformData platformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), this);
 
@@ -60,14 +60,13 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     return platformData;
 }
 
-static RetainPtr<CFDataRef> extractFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataShared(RetainPtr<CFArrayRef>&& array, const String& itemInCollection)
 {
-    RetainPtr<CFDataRef> bufferData = buffer.createCFData();
-
-    FPFontRef font = nullptr;
-    auto array = adoptCF(FPFontCreateFontsFromData(bufferData.get()));
     if (!array)
         return nullptr;
+
+    FPFontRef font = nullptr;
+
     auto length = CFArrayGetCount(array.get());
     if (length <= 0)
         return nullptr;
@@ -91,9 +90,27 @@ static RetainPtr<CFDataRef> extractFontCustomPlatformData(SharedBuffer& buffer, 
     return adoptCF(FPFontCopySFNTData(font));
 }
 
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataSystemParser(const SharedBuffer& buffer, const String& itemInCollection)
+{
+    RetainPtr bufferData = buffer.createCFData();
+
+    RetainPtr array = adoptCF(FPFontCreateFontsFromData(bufferData.get()));
+    return extractFontCustomPlatformDataShared(WTF::move(array), itemInCollection);
+}
+
+#if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataMemorySafe(const SharedBuffer& buffer, const String& itemInCollection)
+{
+    RetainPtr bufferData = buffer.createCFData();
+
+    RetainPtr array = adoptCF(FPFontCreateMemorySafeFontsFromData(bufferData.get()));
+    return extractFontCustomPlatformDataShared(WTF::move(array), itemInCollection);
+}
+#endif
+
 RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
 {
-    RetainPtr extractedData = extractFontCustomPlatformData(buffer, itemInCollection);
+    RetainPtr extractedData = extractFontCustomPlatformDataSystemParser(buffer, itemInCollection);
     if (!extractedData) {
         // Something is wrong with the font.
         return nullptr;
@@ -102,14 +119,14 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
     RetainPtr fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(extractedData.get()));
     Ref bufferRef = SharedBuffer::create(extractedData.get());
 
-    FontPlatformData::CreationData creationData = { WTFMove(bufferRef), itemInCollection };
-    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
+    FontPlatformData::CreationData creationData = { WTF::move(bufferRef), itemInCollection };
+    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTF::move(creationData)));
 }
 
 RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer& buffer, const String& itemInCollection)
 {
 #if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
-    RetainPtr extractedData = extractFontCustomPlatformData(buffer, itemInCollection);
+    RetainPtr extractedData = extractFontCustomPlatformDataMemorySafe(buffer, itemInCollection);
     if (!extractedData) {
         // Something is wrong with the font.
         return nullptr;
@@ -123,8 +140,8 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBu
 
     Ref bufferRef = SharedBuffer::create(extractedData.get());
 
-    FontPlatformData::CreationData creationData = { WTFMove(bufferRef), itemInCollection };
-    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
+    FontPlatformData::CreationData creationData = { WTF::move(bufferRef), itemInCollection };
+    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTF::move(creationData)));
 #else
     UNUSED_PARAM(buffer);
     UNUSED_PARAM(itemInCollection);
@@ -134,7 +151,7 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBu
 
 std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data, bool shouldUseLockdownFontParser )
 {
-    RefPtr fontCustomPlatformData = shouldUseLockdownFontParser ? FontCustomPlatformData::createMemorySafe(WTFMove(data.fontFaceData), data.itemInCollection) : FontCustomPlatformData::create(WTFMove(data.fontFaceData), data.itemInCollection);
+    RefPtr fontCustomPlatformData = shouldUseLockdownFontParser ? FontCustomPlatformData::createMemorySafe(WTF::move(data.fontFaceData), data.itemInCollection) : FontCustomPlatformData::create(WTF::move(data.fontFaceData), data.itemInCollection);
     if (!fontCustomPlatformData)
         return std::nullopt;
     fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;

@@ -12,22 +12,22 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,2) size 475x56
                     RenderTableCell {TD} at (2,29) size 3x2 [r=0 c=0 rs=1 cs=1]
                     RenderTableCell {TD} at (6,2) size 468x56 [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 218x17
+                      RenderText {#text} at (1,1) size 218x18
                         text run at (1,1) width 218: "Welcome to the new DaveCentral!"
-                      RenderBR {BR} at (218,1) size 1x17
-                      RenderText {#text} at (1,19) size 462x35
+                      RenderBR {BR} at (218,1) size 1x18
+                      RenderText {#text} at (1,19) size 462x36
                         text run at (1,19) width 85: "I have a new "
                         text run at (86,19) width 353: "Linux software archive as well as the Windows archive "
                         text run at (438,19) width 25: "you"
                         text run at (1,37) width 186: "have come to know and love."
             RenderTableCell {TD} at (483,2) size 123x94 [bgcolor=#99CCCC] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 117x17
+              RenderText {#text} at (2,2) size 117x18
                 text run at (2,2) width 117: "ANDOVER.NET"
-              RenderBR {BR} at (119,2) size 0x17
-              RenderText {#text} at (2,20) size 108x17
+              RenderBR {BR} at (119,2) size 0x18
+              RenderText {#text} at (2,20) size 108x18
                 text run at (2,20) width 108: "E-COMMERCE"
-              RenderBR {BR} at (110,20) size 0x17
-              RenderText {#text} at (2,38) size 102x53
+              RenderBR {BR} at (110,20) size 0x18
+              RenderText {#text} at (2,38) size 102x54
                 text run at (2,38) width 102: "Buy some smart"
                 text run at (2,56) width 62: "stuff from"
                 text run at (2,74) width 83: "Andover.Net"

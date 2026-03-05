@@ -1,0 +1,64 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <meta charset='UTF-8'>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+            var placardDescription;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                video = document.getElementsByTagName('video')[0];
+                testExpected('video.remote.state', 'disconnected');
+
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                await waitFor(video, 'canplaythrough');
+
+                run(`video.play()`)
+                await waitFor(video, 'playing');
+
+                const connectPromise = waitFor(video.remote, 'connect');
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                route.deviceName = 'test';
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+                await connectPromise;
+
+                const videoShadowRoot = internals.shadowRoot(video);
+
+                const checkPlacard = () => {
+                    placardDescription = videoShadowRoot.querySelector('.placard .description');
+                    if (!placardDescription)
+                        return false;
+
+                    testExpected('placardDescription.innerText', 'This video is playing on “test”.');
+                    return true;
+                };
+
+                if (checkPlacard()) {
+                    endTest();
+                    return;
+                }
+
+                const mutationObserver = new MutationObserver((mutationList, observer) => {
+                    if (checkPlacard()) {
+                        observer.disconnect();
+                        endTest();
+                        return;
+                    }
+                });
+
+                mutationObserver.observe(videoShadowRoot, { childList: true, subtree: true });
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that the AirPlay placard is populated with the MediaDeviceRoute's deviceName.</p> 
+    </body>
+</html>

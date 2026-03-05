@@ -48,7 +48,7 @@ class PresentationContext : public RefCountedAndCanMakeWeakPtr<PresentationConte
 public:
     virtual ~PresentationContext() = default;
 
-    WARN_UNUSED_RETURN virtual bool configure(const CanvasConfiguration&) = 0;
+    [[nodiscard]] virtual bool configure(const CanvasConfiguration&) = 0;
     virtual void unconfigure() = 0;
     virtual void present(uint32_t frameIndex, bool = false) = 0;
 
@@ -56,6 +56,7 @@ public:
     virtual RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) = 0;
 
     virtual bool isRemotePresentationContextProxy() const { return false; }
+    virtual bool isPresentationContextImpl() const { return false; }
 
 protected:
     PresentationContext() = default;

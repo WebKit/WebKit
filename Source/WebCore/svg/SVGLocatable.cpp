@@ -39,7 +39,7 @@ namespace WebCore {
 
 // FIXME: This doesn't match SVGElement::viewportElement() as it has an extra check for
 // foreign object.
-static bool isViewportElement(const SVGElement* element)
+static bool NODELETE isViewportElement(const SVGElement* element)
 {
     if (!element)
         return false;
@@ -78,10 +78,10 @@ FloatRect SVGLocatable::getBBox(SVGElement* element, StyleUpdateStrategy styleUp
 {
     ASSERT(element);
     if (styleUpdateStrategy == AllowStyleUpdate)
-        element->protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element);
+        protect(element->document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element);
 
     // FIXME: Eventually we should support getBBox for detached elements.
-    if (!element->renderer())
+    if (!element->renderer() || element->renderer()->isRenderSVGHiddenContainer())
         return FloatRect();
 
     return element->renderer()->objectBoundingBox();
@@ -91,7 +91,7 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
 {
     ASSERT(element);
     if (styleUpdateStrategy == AllowStyleUpdate)
-        element->protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element);
+        protect(element->document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element);
 
     RefPtr stopAtElement = mode == CTMScope::NearestViewportScope ? nearestViewportElement(element) : nullptr;
 
@@ -108,7 +108,7 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
 
     AffineTransform ctm;
 
-    for (Element* currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
+    for (RefPtr<Element> currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
         RefPtr svgElement = dynamicDowncast<SVGElement>(*currentElement);
         if (!svgElement)
             break;

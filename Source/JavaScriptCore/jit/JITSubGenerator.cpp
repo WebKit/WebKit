@@ -47,9 +47,6 @@ JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICG
         return JITMathICInlineResult::DontGenerate;
 
     if (lhs.isOnlyNumber() && rhs.isOnlyNumber()) {
-        if (!jit.supportsFloatingPoint())
-            return JITMathICInlineResult::DontGenerate;
-
         if (!m_leftOperand.definitelyIsNumber())
             state.slowPathJumps.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
         if (!m_rightOperand.definitelyIsNumber())
@@ -102,12 +99,6 @@ bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     jit.boxInt32(m_scratchGPR, m_result);
 
     endJumpList.append(jit.jump());
-
-    if (!jit.supportsFloatingPoint()) {
-        slowPathJumpList.append(leftNotInt);
-        slowPathJumpList.append(rightNotInt);
-        return true;
-    }
 
     leftNotInt.link(&jit);
     if (!m_leftOperand.definitelyIsNumber())

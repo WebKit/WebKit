@@ -26,10 +26,11 @@
 #include "config.h"
 #include "CallData.h"
 
-#include "CatchScope.h"
 #include "Interpreter.h"
+#include "InterpreterInlines.h"
 #include "JSObjectInlines.h"
 #include "ScriptProfilingScope.h"
+#include "TopExceptionScope.h"
 
 #if ASSERT_ENABLED
 #include "IntegrityInlines.h"
@@ -72,7 +73,7 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallDat
 JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSValue result = call(globalObject, functionObject, callData, thisValue, args);
     if (scope.exception()) [[unlikely]] {
         returnedException = scope.exception();
@@ -81,27 +82,6 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallDat
     }
     RELEASE_ASSERT(result);
     return result;
-}
-
-JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisValue, JSCell* context, const ArgList& args, ASCIILiteral errorMessage)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto callData = JSC::getCallDataInline(functionObject);
-    if (callData.type == CallData::Type::None)
-        return throwTypeError(globalObject, scope, errorMessage);
-
-    ASSERT_WITH_MESSAGE(callData.type == CallData::Type::JS || callData.type == CallData::Type::Native, "Expected object to be callable but received %d", static_cast<int>(callData.type));
-    ASSERT_WITH_MESSAGE(!thisValue.isEmpty(), "Expected thisValue to be non-empty. Use jsUndefined() if you meant to use undefined.");
-#if ASSERT_ENABLED
-    for (size_t i = 0; i < args.size(); ++i) {
-        ASSERT_WITH_MESSAGE(!args.at(i).isEmpty(), "arguments[%zu] is JSValue(). Use jsUndefined() if you meant to make it undefined.", i);
-        if (args.at(i).isCell())
-            Integrity::auditCell(vm, args.at(i).asCell());
-    }
-#endif
-    RELEASE_AND_RETURN(scope, vm.interpreter.executeCall(asObject(functionObject), callData, thisValue, context, args));
 }
 
 JSValue profiledCall(JSGlobalObject* globalObject, ProfilingReason reason, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args)

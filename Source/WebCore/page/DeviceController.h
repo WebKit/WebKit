@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include <WebCore/Event.h>
-#include <WebCore/LocalDOMWindow.h>
-#include <WebCore/Supplementable.h>
-#include <WebCore/Timer.h>
+#include "Event.h"
+#include "LocalDOMWindow.h"
+#include "Supplementable.h"
+#include "Timer.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -50,7 +50,7 @@ public:
     void addDeviceEventListener(LocalDOMWindow&);
     void removeDeviceEventListener(LocalDOMWindow&);
     void removeAllDeviceEventListeners(LocalDOMWindow&);
-    bool hasDeviceEventListener(LocalDOMWindow&) const;
+    bool NODELETE hasDeviceEventListener(LocalDOMWindow&) const;
 
     void dispatchDeviceEvent(Event&);
     bool isActive() { return !m_listeners.isEmpty(); }
@@ -61,7 +61,6 @@ public:
 
 private:
     void fireDeviceEvent();
-    CheckedRef<DeviceClient> checkedClient();
 
     HashCountedSet<RefPtr<LocalDOMWindow>> m_listeners;
     HashCountedSet<RefPtr<LocalDOMWindow>> m_lastEventListeners;

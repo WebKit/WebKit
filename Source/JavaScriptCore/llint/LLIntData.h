@@ -43,10 +43,6 @@ namespace JSC {
 
 class VM;
 
-#if USE(APPLE_INTERNAL_SDK) && defined(OS_SCRIPT_CONFIG_SPI_VERSION) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-#define HAVE_OS_SCRIPT_CONFIG_SPI 1
-#endif
-
 #if ENABLE(C_LOOP)
 typedef OpcodeID LLIntCode;
 #else
@@ -71,8 +67,15 @@ constexpr size_t OpcodeConfigSizeToProtect = std::max(CeilingOnPageSize, 16 * KB
 
 #if HAVE(OS_SCRIPT_CONFIG_SPI)
 static_assert(OS_SCRIPT_CONFIG_STORAGE_SIZE == OpcodeConfigSizeToProtect);
+#elif PLATFORM(COCOA)
+// When targeting older versions of macOS that do not have
+// os_script_config_storage runtime support, this redeclaration clashes with
+// the declaration in the SDK that is marked as unavailable. Use a different
+// name to work around the availability diagnostic.
+extern "C" uint8_t os_script_config_storage_stub[] __asm__("_os_script_config_storage");
+#define os_script_config_storage os_script_config_storage_stub
 #else
-extern "C" WTF_EXPORT_PRIVATE uint8_t os_script_config_storage[];
+extern "C" uint8_t os_script_config_storage[];
 #endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

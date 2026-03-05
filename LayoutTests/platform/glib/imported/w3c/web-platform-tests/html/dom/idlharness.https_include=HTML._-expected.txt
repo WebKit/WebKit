@@ -3601,12 +3601,12 @@ PASS HTMLLegendElement must be primary interface of document.createElement("lege
 PASS Stringification of document.createElement("legend")
 PASS HTMLLegendElement interface: document.createElement("legend") must inherit property "form" with the proper type
 PASS HTMLLegendElement interface: document.createElement("legend") must inherit property "align" with the proper type
-FAIL HTMLSelectedContentElement interface: existence and properties of interface object assert_own_property: self does not have own property "HTMLSelectedContentElement" expected property "HTMLSelectedContentElement" missing
-FAIL HTMLSelectedContentElement interface object length assert_own_property: self does not have own property "HTMLSelectedContentElement" expected property "HTMLSelectedContentElement" missing
-FAIL HTMLSelectedContentElement interface object name assert_own_property: self does not have own property "HTMLSelectedContentElement" expected property "HTMLSelectedContentElement" missing
-FAIL HTMLSelectedContentElement interface: existence and properties of interface prototype object assert_own_property: self does not have own property "HTMLSelectedContentElement" expected property "HTMLSelectedContentElement" missing
-FAIL HTMLSelectedContentElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "HTMLSelectedContentElement" expected property "HTMLSelectedContentElement" missing
-FAIL HTMLSelectedContentElement interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "HTMLSelectedContentElement" expected property "HTMLSelectedContentElement" missing
+PASS HTMLSelectedContentElement interface: existence and properties of interface object
+PASS HTMLSelectedContentElement interface object length
+PASS HTMLSelectedContentElement interface object name
+PASS HTMLSelectedContentElement interface: existence and properties of interface prototype object
+PASS HTMLSelectedContentElement interface: existence and properties of interface prototype object's "constructor" property
+PASS HTMLSelectedContentElement interface: existence and properties of interface prototype object's @@unscopables property
 PASS HTMLDetailsElement interface: existence and properties of interface object
 PASS HTMLDetailsElement interface object length
 PASS HTMLDetailsElement interface object name

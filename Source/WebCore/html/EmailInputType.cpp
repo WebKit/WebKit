@@ -68,7 +68,7 @@ bool EmailInputType::typeMismatchFor(const String& value) const
     ASSERT(element());
     if (value.isEmpty())
         return false;
-    if (!protectedElement()->multiple())
+    if (!protect(element())->multiple())
         return !isValidEmailAddress(value);
     for (auto& address : value.splitAllowingEmptyEntries(',')) {
         if (!isValidEmailAddress(StringView(address).trim(isASCIIWhitespace<char16_t>)))
@@ -80,13 +80,13 @@ bool EmailInputType::typeMismatchFor(const String& value) const
 bool EmailInputType::typeMismatch() const
 {
     ASSERT(element());
-    return typeMismatchFor(protectedElement()->value());
+    return typeMismatchFor(protect(element())->value());
 }
 
 String EmailInputType::typeMismatchText() const
 {
     ASSERT(element());
-    return protectedElement()->multiple() ? validationMessageTypeMismatchForMultipleEmailText() : validationMessageTypeMismatchForEmailText();
+    return protect(element())->multiple() ? validationMessageTypeMismatchForMultipleEmailText() : validationMessageTypeMismatchForEmailText();
 }
 
 bool EmailInputType::supportsSelectionAPI() const
@@ -115,7 +115,7 @@ ValueOrReference<String> EmailInputType::sanitizeValue(const String& proposedVal
     }
 
     ASSERT(element());
-    if (!protectedElement()->multiple())
+    if (!protect(element())->multiple())
         return noLineBreakValue.trim(isASCIIWhitespace);
     Vector<String> addresses = noLineBreakValue.splitAllowingEmptyEntries(',');
     StringBuilder strippedValue;

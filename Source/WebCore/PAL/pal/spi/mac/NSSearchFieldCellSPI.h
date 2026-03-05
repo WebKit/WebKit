@@ -25,10 +25,17 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
+
+#if USE(APPKIT)
 
 #import <AppKit/NSSearchFieldCell.h>
 
 @interface NSSearchFieldCell ()
 @property (getter=isCenteredLook) BOOL centeredLook;
 @end
+
+#endif // USE(APPKIT)

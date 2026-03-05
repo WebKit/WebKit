@@ -33,7 +33,7 @@ namespace WebCore {
 
 struct BackgroundFetchInformation {
     BackgroundFetchInformation isolatedCopy() const & { return { registrationIdentifier, identifier.isolatedCopy(), uploadTotal, uploaded, downloadTotal, downloaded, result, failureReason, recordsAvailable }; }
-    BackgroundFetchInformation isolatedCopy() && { return { registrationIdentifier, WTFMove(identifier).isolatedCopy(), uploadTotal, uploaded, downloadTotal, downloaded, result, failureReason, recordsAvailable }; }
+    BackgroundFetchInformation isolatedCopy() && { return { registrationIdentifier, WTF::move(identifier).isolatedCopy(), uploadTotal, uploaded, downloadTotal, downloaded, result, failureReason, recordsAvailable }; }
 
     ServiceWorkerRegistrationIdentifier registrationIdentifier;
     String identifier;

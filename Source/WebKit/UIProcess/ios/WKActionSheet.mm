@@ -97,33 +97,33 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (CGRect)_presentationRectForStyle:(WKActionSheetPresentationStyle)style
 {
     if (style == WKActionSheetPresentAtElementRect)
-        return [_sheetDelegate presentationRectForIndicatedElement];
+        return [protect(_sheetDelegate) presentationRectForIndicatedElement];
 
     if (style == WKActionSheetPresentAtClosestIndicatorRect)
-        return [_sheetDelegate presentationRectForElementUsingClosestIndicatedRect];
+        return [protect(_sheetDelegate) presentationRectForElementUsingClosestIndicatedRect];
 
-    return [_sheetDelegate initialPresentationRectInHostViewForSheet];
+    return [protect(_sheetDelegate) initialPresentationRectInHostViewForSheet];
 }
 
 - (BOOL)presentSheetFromRect:(CGRect)presentationRect
 {
-    UIView *view = [_sheetDelegate hostViewForSheet];
+    RetainPtr<UIView> view = [protect(_sheetDelegate) hostViewForSheet];
     if (!view)
         return NO;
 
-    UIViewController *presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
-    presentedViewController.modalPresentationStyle = UIModalPresentationPopover;
+    RetainPtr presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
+    presentedViewController.get().modalPresentationStyle = UIModalPresentationPopover;
 
-    UIPopoverPresentationController *presentationController = presentedViewController.popoverPresentationController;
-    presentationController.sourceView = view;
-    presentationController.sourceRect = presentationRect;
-    presentationController.permittedArrowDirections = _arrowDirections;
+    RetainPtr<UIPopoverPresentationController> presentationController = presentedViewController.get().popoverPresentationController;
+    presentationController.get().sourceView = view;
+    presentationController.get().sourceRect = presentationRect;
+    presentationController.get().permittedArrowDirections = _arrowDirections;
 
     if (_popoverPresentationControllerDelegateWhileRotating)
-        presentationController.delegate = _popoverPresentationControllerDelegateWhileRotating.get();
+        presentationController.get().delegate = _popoverPresentationControllerDelegateWhileRotating.get();
 
-    _currentPresentingViewController = view._wk_viewControllerForFullScreenPresentation;
-    [_currentPresentingViewController presentViewController:presentedViewController animated:YES completion:nil];
+    _currentPresentingViewController = view.get()._wk_viewControllerForFullScreenPresentation;
+    [_currentPresentingViewController presentViewController:presentedViewController.get() animated:YES completion:nil];
 
     return YES;
 }
@@ -160,11 +160,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     //    rotation, we take this opportunity to simplify the view controller hierarchy and simply re-present the content
     //    view controller, without re-presenting the alert controller.
 
-    UIView *view = [_sheetDelegate hostViewForSheet];
+    RetainPtr<UIView> view = [protect(_sheetDelegate) hostViewForSheet];
     if (!view)
         return;
 
-    auto presentingViewController = view._wk_viewControllerForFullScreenPresentation;
+    auto presentingViewController = view.get()._wk_viewControllerForFullScreenPresentation;
 
     // topPresentedViewController is either self (cases (a) and (b) above) or an action's view controller
     // (case (c) above).
@@ -210,7 +210,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)updateSheetPosition
 {
-    UIViewController *presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
+    RetainPtr presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
 
     // There are two asynchronous events which might trigger this call, and we have to wait for both of them before doing something.
     // - One runloop iteration after rotation (to let the Web content re-layout, see below)
@@ -227,7 +227,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Re-present the popover only if we are still pointing to content onscreen, or if we can't dismiss it without losing information.
         // (if the view controller is modal)
 
-        CGRect intersection = CGRectIntersection([[_sheetDelegate hostViewForSheet] bounds], presentationRect);
+        CGRect intersection = CGRectIntersection([[protect(_sheetDelegate) hostViewForSheet] bounds], presentationRect);
         if (!CGRectIsEmpty(intersection))
             [self presentSheetFromRect:intersection];
         else if (wasPresentedViewControllerModal)
@@ -242,7 +242,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _isRotating = NO;
     _readyToPresentAfterRotation = YES;
-    [_sheetDelegate updatePositionInformation];
+    [protect(_sheetDelegate) updatePositionInformation];
     [self updateSheetPosition];
 }
 

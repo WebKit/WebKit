@@ -37,7 +37,8 @@ struct Child;
 }
 
 // Non-generic base type to allow code sharing and out-of-line definitions.
-struct UnevaluatedCalculationBase {
+class UnevaluatedCalculationBase {
+public:
     explicit UnevaluatedCalculationBase(Calculation::Value&);
     explicit UnevaluatedCalculationBase(Ref<Calculation::Value>&&);
     explicit UnevaluatedCalculationBase(Calculation::Child&&, CSS::Category, CSS::Range);
@@ -49,12 +50,12 @@ struct UnevaluatedCalculationBase {
 
     WEBCORE_EXPORT ~UnevaluatedCalculationBase();
 
-    Ref<Calculation::Value> protectedCalculation() const;
+    Calculation::Value& calculation() const { return m_calc; }
 
     bool equal(const UnevaluatedCalculationBase&) const;
 
 private:
-    Ref<Calculation::Value> calc;
+    Ref<Calculation::Value> m_calc;
 };
 
 // Wrapper for `Ref<Calculation::Value>` that includes range and category as part of the type.
@@ -72,7 +73,7 @@ template<CSS::Numeric CSSType> struct UnevaluatedCalculation : UnevaluatedCalcul
     }
 
     explicit UnevaluatedCalculation(Calculation::Child&& child)
-        : UnevaluatedCalculationBase(WTFMove(child), category, range)
+        : UnevaluatedCalculationBase(WTF::move(child), category, range)
     {
     }
 

@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpusamplerdescriptor
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUSamplerDescriptor : GPUObjectDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUSamplerDescriptor : GPUObjectDescriptorBase {
     GPUAddressMode addressModeU = "clamp-to-edge";
     GPUAddressMode addressModeV = "clamp-to-edge";
     GPUAddressMode addressModeW = "clamp-to-edge";

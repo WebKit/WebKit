@@ -30,7 +30,6 @@ namespace dcsctp {
 //  /                       New Address TLVs                        /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int RestartOfAnAssociationWithNewAddressesCause::kType;
 
 std::optional<RestartOfAnAssociationWithNewAddressesCause>
 RestartOfAnAssociationWithNewAddressesCause::Parse(

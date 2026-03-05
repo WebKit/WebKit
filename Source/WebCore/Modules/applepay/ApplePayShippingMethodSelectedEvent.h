@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class ApplePayShippingMethodSelectedEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ApplePayShippingMethodSelectedEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ApplePayShippingMethodSelectedEvent);
 public:
     static Ref<ApplePayShippingMethodSelectedEvent> create(const AtomString& type, const ApplePayShippingMethod& shippingMethod)
     {
@@ -42,7 +42,7 @@ public:
 
     virtual ~ApplePayShippingMethodSelectedEvent();
 
-    const ApplePayShippingMethod& shippingMethod() const { return m_shippingMethod; }
+    const ApplePayShippingMethod& shippingMethod() const LIFETIME_BOUND { return m_shippingMethod; }
 
 private:
     ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePayShippingMethod&);

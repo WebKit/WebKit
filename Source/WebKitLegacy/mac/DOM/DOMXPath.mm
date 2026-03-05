@@ -62,8 +62,8 @@ DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver* impl)
     if (!impl)
         return nil;
     
-    if (DOMNativeXPathNSResolver *wrapper = getDOMWrapper(impl))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(impl))
+        return wrapper.autorelease();
     
     auto wrapper = adoptNS([[DOMNativeXPathNSResolver alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(impl);

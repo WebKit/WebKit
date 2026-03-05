@@ -133,7 +133,7 @@ void GamepadProviderLibWPE::gamepadConnected(uintptr_t id)
         m_gamepadVector.grow(index + 1);
 
     m_gamepadVector[index] = gamepad.get();
-    m_gamepadMap.set(id, WTFMove(gamepad));
+    m_gamepadMap.set(id, WTF::move(gamepad));
 
     if (!m_initialGamepadsConnected) {
         // This added device is the result of us starting to monitor gamepads.

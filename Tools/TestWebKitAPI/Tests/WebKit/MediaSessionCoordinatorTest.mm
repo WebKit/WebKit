@@ -269,7 +269,7 @@ public:
     {
         for (auto event : events) {
             auto eventMessage = makeString(event, " event"_s);
-            [webView() performAfterReceivingMessage:eventMessage.createNSString().get() action:[this, eventMessage = WTFMove(eventMessage)] {
+            [webView() performAfterReceivingMessage:eventMessage.createNSString().get() action:[this, eventMessage = WTF::move(eventMessage)] {
                 _eventListenersCalled.add(eventMessage);
             }];
         }
@@ -310,7 +310,7 @@ public:
             auto handlerMessage = makeString(handler, suffix);
             RetainPtr nsHandlerMessage = handlerMessage.createNSString();
             [_messageHandlers addObject:nsHandlerMessage.get()];
-            [webView() performAfterReceivingMessage:nsHandlerMessage.get() action:[this, handlerMessage = WTFMove(handlerMessage)] {
+            [webView() performAfterReceivingMessage:nsHandlerMessage.get() action:[this, handlerMessage = WTF::move(handlerMessage)] {
                 _sessionMessagesPosted.add(handlerMessage);
             }];
         }

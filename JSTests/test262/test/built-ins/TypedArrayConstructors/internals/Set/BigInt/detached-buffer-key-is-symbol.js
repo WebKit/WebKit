@@ -11,7 +11,7 @@ info: |
   2. If Type(P) is String, then
     ...
   3. Return ? OrdinarySet(O, P, V, Receiver).
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Symbol, Reflect, TypedArray]
 ---*/
 var s = Symbol('1');
@@ -27,4 +27,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   );
 
   assert.sameValue(sample[s], 'test262', 'The value of sample[s] is "test262"');
-});
+}, null, ["passthrough"]);

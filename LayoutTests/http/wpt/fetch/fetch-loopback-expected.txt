@@ -1,0 +1,3 @@
+
+PASS fetch with targetAddressSpace set to "loopback" should succeed
+

@@ -51,7 +51,7 @@ DedicatedWorkerThread::~DedicatedWorkerThread() = default;
 
 Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
-    auto scope = DedicatedWorkerGlobalScope::create(params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider(), WTFMove(m_workerClient));
+    auto scope = DedicatedWorkerGlobalScope::create(params, WTF::move(origin), *this, WTF::move(topOrigin), idbConnectionProxy(), socketProvider(), WTF::move(m_workerClient));
     if (params.serviceWorkerData)
         scope->setActiveServiceWorker(ServiceWorker::getOrCreate(scope.get(), ServiceWorkerData { *params.serviceWorkerData }));
     scope->updateServiceWorkerClientData();

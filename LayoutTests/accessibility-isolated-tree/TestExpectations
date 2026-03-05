@@ -4,10 +4,8 @@ accessibility/isolated-tree [ Pass ]
 #
 # Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
-accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Failure ]
 accessibility/keyevents-posted-for-increment-actions.html [ Failure ]
-accessibility/mac/document-attributes.html [ Failure ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Failure ]
 # Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
 accessibility/mac/frame-with-title.html [ Failure ]
@@ -18,13 +16,6 @@ accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
 accessibility/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
-
-# Fails because we don't compute node-only AX objects as ignored when they're within a display:none container.
-# This causes us to fail to call AXIsolatedTree::addUnconnectedNode in AXObjectCache::addRelation, meaning
-# we never create an isolated object for #menu-item-one, causing ariaLabelledByElementAtIndex(0) to return null.
-accessibility/menuitem-is-selected.html [ Failure ]
-
-accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
 
 # This test only passes with ITM due to a workaround in the test that we should fix.
 # accessibility/mac/text-marker-from-typing-notification.html
@@ -42,6 +33,8 @@ accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Fai
 accessibility/text-marker/text-marker-bidi-element-arabic.html [ Failure ]
 accessibility/text-marker/text-marker-bidi-element-hebrew.html [ Failure ]
 
+accessibility/mac/search-text-with-image-hang.html [ Failure ]
+
 # Failures introduced by ENABLE(AX_THREAD_TEXT_APIS).
 accessibility/content-editable-as-textarea.html [ Failure ]
 accessibility/mac/attributed-string-for-text-marker-range-using-webarea.html [ Failure ]
@@ -49,7 +42,7 @@ accessibility/mac/attributed-string-includes-misspelled-with-selection.html [ Fa
 accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-for-range-with-options.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-for-range.html [ Failure ]
-accessibility/mac/character-offset-from-upstream-position.html [ Failure ]
+accessibility/mac/line-range-continuity.html [ Failure ]
 accessibility/mac/content-editable-attributed-string.html [ Failure ]
 accessibility/mac/misspelled-attributed-string.html [ Failure ]
 accessibility/mac/spellcheck-with-voiceover.html [ Failure ]
@@ -64,9 +57,9 @@ accessibility/search-misspellings.html [ Failure ]
 accessibility/text-marker/text-marker-previous-next.html [ Failure ]
 accessibility/mac/text-marker-for-index-2.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Failure ]
-accessibility/mac/selected-visible-position-range.html [ Timeout ]
+accessibility/mac/selected-visible-position-range.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Timeout ]
-accessibility/mac/text-operation/text-operation-replace-across-multiple-fields.html [ Timeout ]
+accessibility/mac/text-operation/text-operation-replace-across-multiple-fields.html [ Failure ]
 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 
-accessibility/mac/doctype-node-in-text-marker-crash.html [ Crash ]
+accessibility/mac/html5-input-number.html [ Timeout ]

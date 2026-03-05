@@ -189,7 +189,7 @@ void IDBConnectionToClient::notifyOpenDBRequestBlocked(const IDBResourceIdentifi
 void IDBConnectionToClient::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, Vector<IDBDatabaseNameAndVersion>&& databases)
 {
     if (CheckedPtr delegate = m_delegate)
-        delegate->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
+        delegate->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(databases));
 }
 
 void IDBConnectionToClient::registerDatabaseConnection(UniqueIDBDatabaseConnection& connection)

@@ -108,6 +108,11 @@ imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworke
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html [ Skip ]
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html [ Skip ]
 
+# Digital Credentials supported added in iOS 26
+imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
+http/tests/digital-credentials/ [ Skip ]
+http/wpt/identity/ [ Skip ]
+
 # -- The above has different, expected behavior on iOS 26 than iOS 18 --
 # -- New failure expectations below this point only!! --
 

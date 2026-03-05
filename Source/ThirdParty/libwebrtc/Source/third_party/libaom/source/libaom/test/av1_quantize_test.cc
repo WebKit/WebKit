@@ -22,7 +22,7 @@
 
 namespace {
 
-typedef void (*QuantizeFpFunc)(
+using QuantizeFpFunc = void (*)(
     const tran_low_t *coeff_ptr, intptr_t count, const int16_t *zbin_ptr,
     const int16_t *round_ptr, const int16_t *quant_ptr,
     const int16_t *quant_shift_ptr, tran_low_t *qcoeff_ptr,

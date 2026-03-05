@@ -48,7 +48,7 @@ class WebKit::ContextMenuContextData {
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     std::optional<WebCore::MediaPlayerClientIdentifier> mediaElementIdentifier();
 #endif
-
+    std::optional<WebKit::WebMouseEventInputSource> inputSource();
 };
 
 #endif // ENABLE(CONTEXT_MENUS)

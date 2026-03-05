@@ -27,6 +27,7 @@ rtc_library("options") {
     "../../rtc_base:checks",
     "../../rtc_base:ssl_adapter",
     "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/algorithm:container",
   ]
 }
 

@@ -47,7 +47,7 @@ private:
         , m_initializer(initializer)
         , m_test(test)
         , m_update(update)
-        , m_body(WTFMove(body))
+        , m_body(WTF::move(body))
     { }
 
     Statement::Ptr m_initializer;

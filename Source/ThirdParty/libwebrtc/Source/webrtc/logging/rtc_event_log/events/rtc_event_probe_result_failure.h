@@ -77,7 +77,7 @@ class RtcEventProbeResultFailure final : public RtcEvent {
   }
 
  private:
-  RtcEventProbeResultFailure(const RtcEventProbeResultFailure& other);
+  RtcEventProbeResultFailure(const RtcEventProbeResultFailure&) = default;
 
   const int32_t id_;
   const ProbeFailureReason failure_reason_;

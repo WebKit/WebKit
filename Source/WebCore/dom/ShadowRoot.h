@@ -54,7 +54,7 @@ class Scope;
 }
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ShadowRoot);
+    WTF_MAKE_TZONE_ALLOCATED(ShadowRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ShadowRoot);
 public:
 
@@ -64,12 +64,12 @@ public:
         ShadowRootDelegatesFocus delegatesFocus = ShadowRootDelegatesFocus::No, Clonable clonable = Clonable::No, ShadowRootSerializable serializable = ShadowRootSerializable::No, ShadowRootAvailableToElementInternals availableToElementInternals = ShadowRootAvailableToElementInternals::No,
         RefPtr<CustomElementRegistry>&& registry = nullptr, ShadowRootScopedCustomElementRegistry scopedRegistry = ShadowRootScopedCustomElementRegistry::No, const AtomString& referenceTarget = nullAtom())
     {
-        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, serializable, availableToElementInternals, WTFMove(registry), scopedRegistry, referenceTarget));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, serializable, availableToElementInternals, WTF::move(registry), scopedRegistry, referenceTarget));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
     {
-        return adoptRef(*new ShadowRoot(document, WTFMove(assignment)));
+        return adoptRef(*new ShadowRoot(document, WTF::move(assignment)));
     }
 
     virtual ~ShadowRoot();
@@ -81,7 +81,6 @@ public:
     using TreeScope::rootNode;
 
     Style::Scope& styleScope() { return *m_styleScope; }
-    CheckedRef<Style::Scope> checkedStyleScope() const;
     StyleSheetList& styleSheets();
 
     bool delegatesFocus() const { return m_delegatesFocus; }
@@ -96,18 +95,17 @@ public:
     bool isDeclarativeShadowRoot() const { return m_isDeclarativeShadowRoot; }
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
-    Element* host() const { return m_host.get(); }
-    RefPtr<Element> protectedHost() const { return m_host.get(); }
-    void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
+    Element* host() const { return m_host; }
+    void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTF::move(host); }
 
     bool hasScopedCustomElementRegistry() const { return m_hasScopedCustomElementRegistry; }
     CustomElementRegistry* registryForBindings() const;
 
-    ExceptionOr<void> setHTMLUnsafe(Variant<RefPtr<TrustedHTML>, String>&&);
+    ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&);
     String getHTML(GetHTMLOptions&&) const;
 
     String innerHTML() const;
-    ExceptionOr<void> setInnerHTML(Variant<RefPtr<TrustedHTML>, String>&&);
+    ExceptionOr<void> setInnerHTML(Variant<Ref<TrustedHTML>, String>&&);
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
@@ -120,7 +118,7 @@ public:
     void removeAllEventListeners() override;
 
     SlotAssignmentMode slotAssignmentMode() const { return m_slotAssignmentMode; }
-    HTMLSlotElement* findAssignedSlot(const Node&);
+    inline HTMLSlotElement* NODELETE findAssignedSlot(const Node&); // Defined in SlotAssignment.h
 
     void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName);
     void addSlotElementByName(const AtomString&, HTMLSlotElement&);
@@ -128,14 +126,14 @@ public:
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current);
     void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&);
     void slotFallbackDidChange(HTMLSlotElement&);
-    void resolveSlotsBeforeNodeInsertionOrRemoval();
-    void willRemoveAllChildren(ContainerNode&);
-    void willRemoveAssignedNode(Node&);
+    inline void NODELETE resolveSlotsBeforeNodeInsertionOrRemoval(); // Defined in SlotAssignment.h
+    inline void NODELETE willRemoveAllChildren(ContainerNode&); // Defined in SlotAssignment.h
+    inline void willRemoveAssignedNode(Node&); // Defined in SlotAssignment.h
 
-    void didRemoveAllChildrenOfShadowHost();
-    void didMutateTextNodesOfShadowHost();
-    void hostChildElementDidChange(const Element&);
-    void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue);
+    inline void didRemoveAllChildrenOfShadowHost(); // Defined in SlotAssignment.h
+    inline void didMutateTextNodesOfShadowHost(); // Defined in SlotAssignment.h
+    inline void hostChildElementDidChange(const Element&); // Defined in SlotAssignment.h
+    inline void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue); // Defined in SlotAssignment.h
 
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&);
 
@@ -143,13 +141,13 @@ public:
     void moveShadowRootToNewDocument(Document& oldDocument, Document& newDocument);
 
     using PartMappings = HashMap<AtomString, Vector<AtomString, 1>>;
-    const PartMappings& partMappings() const;
+    const PartMappings& partMappings() const LIFETIME_BOUND;
     void invalidatePartMappings();
 
-    Vector<RefPtr<WebAnimation>> getAnimations();
+    Vector<Ref<WebAnimation>> getAnimations();
 
     bool hasReferenceTarget() const { return !m_referenceTarget.isNull(); }
-    const AtomString& referenceTarget() const { return m_referenceTarget; }
+    const AtomString& referenceTarget() const LIFETIME_BOUND { return m_referenceTarget; }
     void setReferenceTarget(const AtomString&);
     RefPtr<Element> referenceTargetElement() const
     {
@@ -159,8 +157,6 @@ public:
 private:
     ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, ShadowRootDelegatesFocus, Clonable, ShadowRootSerializable, ShadowRootAvailableToElementInternals, RefPtr<CustomElementRegistry>&&, ShadowRootScopedCustomElementRegistry, const AtomString& referenceTarget);
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
-
-    bool childTypeAllowed(NodeType) const override;
 
     Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode& insertionPoint) override;

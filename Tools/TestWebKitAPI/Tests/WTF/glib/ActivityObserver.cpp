@@ -45,7 +45,7 @@ static void runTestWhileRunLoopIsActive(Function<void()>&& testFunction, bool& d
     ASSERT(!done);
 
     // Schedule test to run immediately after RunLoop starts (0ms delay)
-    RunLoop::currentSingleton().dispatchAfter(0_ms, [testFunction = WTFMove(testFunction)] {
+    RunLoop::currentSingleton().dispatchAfter(0_ms, [testFunction = WTF::move(testFunction)] {
         testFunction();
     });
 

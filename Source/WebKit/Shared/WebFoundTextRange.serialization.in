@@ -34,6 +34,6 @@
 
 struct WebKit::WebFoundTextRange {
     Variant<WebKit::WebFoundTextRange::DOMData, WebKit::WebFoundTextRange::PDFData> data;
-    AtomString frameIdentifier;
+    Vector<uint64_t> pathToFrame;
     uint64_t order;
 }

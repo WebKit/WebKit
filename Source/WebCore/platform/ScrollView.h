@@ -61,6 +61,7 @@ OBJC_CLASS NSView;
 
 namespace WebCore {
 
+class CornerRadii;
 class FloatQuad;
 class HostWindow;
 class LegacyTileCache;
@@ -88,6 +89,8 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(Widget);
 
+    String debugDescription() const override;
+
     // ScrollableArea functions.
     WEBCORE_EXPORT void setScrollOffset(const ScrollOffset&) final;
     bool isScrollCornerVisible() const final;
@@ -113,9 +116,7 @@ public:
     // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars. These functions
     // can be used to obtain those scrollbars.
     Scrollbar* horizontalScrollbar() const final { return m_horizontalScrollbar.get(); }
-    RefPtr<Scrollbar> protectedHorizontalScrollbar() const { return horizontalScrollbar(); }
     Scrollbar* verticalScrollbar() const final { return m_verticalScrollbar.get(); }
-    RefPtr<Scrollbar> protectedVerticalScrollbar() const { return verticalScrollbar(); }
     bool isScrollViewScrollbar(const Widget* child) const { return horizontalScrollbar() == child || verticalScrollbar() == child; }
 
     void positionScrollbarLayers();
@@ -173,6 +174,7 @@ public:
 
     private:
         SingleThreadWeakPtr<ScrollView> m_scrollView;
+        ScrollAnchoringSuppressionScope m_anchoringSuppressor;
     };
 
     WEBCORE_EXPORT std::unique_ptr<ProhibitScrollingWhenChangingContentSizeForScope> prohibitScrollingWhenChangingContentSizeForScope();
@@ -191,6 +193,8 @@ public:
     enum class InsetType : bool { WebCoreInset, WebCoreOrPlatformInset };
     virtual FloatBoxExtent obscuredContentInsets(InsetType = InsetType::WebCoreInset) const { return 0; }
     IntRect frameRectShrunkByInset() const;
+
+    virtual CornerRadii scrollbarAvoidanceCornerRadii() const;
 
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the unobscured viewport
     // width and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them
@@ -251,7 +255,7 @@ public:
     ScrollPosition maximumScrollPosition() const override; // The maximum position we can be scrolled to.
 
     // Adjust the passed in scroll position to keep it between the minimum and maximum positions.
-    ScrollPosition adjustScrollPositionWithinRange(const ScrollPosition&) const;
+    ScrollPosition adjustScrollPositionWithinRange(const ScrollPosition&) const override;
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
 
@@ -420,7 +424,7 @@ public:
     virtual void updateScrollbarSteps();
 
     // Called to update the scrollbars to accurately reflect the state of the view.
-    void updateScrollbars(const ScrollPosition& desiredPosition);
+    WEBCORE_EXPORT void updateScrollbars(const ScrollPosition& desiredPosition);
 
 protected:
     ScrollView();
@@ -469,11 +473,9 @@ protected:
 #if PLATFORM(COCOA)
 public:
     WEBCORE_EXPORT NSView* documentView() const;
-    WEBCORE_EXPORT RetainPtr<NSView> protectedDocumentView() const;
 
 private:
     PlatformScrollView* scrollView() const;
-    RetainPtr<PlatformScrollView> protectedScrollView() const;
 #endif
 
 private:
@@ -488,7 +490,6 @@ private:
     bool setHasScrollbarInternal(RefPtr<Scrollbar>&, ScrollbarOrientation, bool hasBar, bool* contentSizeAffected);
 
     bool isScrollView() const final { return true; }
-    String debugDescription() const override;
 
     void init();
     void destroy();

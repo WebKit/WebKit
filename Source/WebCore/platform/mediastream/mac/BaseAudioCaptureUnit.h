@@ -134,7 +134,7 @@ protected:
     virtual void validateOutputDevice(uint32_t /* currentOutputDeviceID */) { }
     virtual bool migrateToNewDefaultDevice(const CaptureDevice&) { return false; }
 
-    void setVoiceActivityListenerCallback(Function<void()>&& callback) { m_voiceActivityCallback = WTFMove(callback); }
+    void setVoiceActivityListenerCallback(Function<void()>&& callback) { m_voiceActivityCallback = WTF::move(callback); }
     bool hasVoiceActivityListenerCallback() const { return !!m_voiceActivityCallback; }
     void voiceActivityDetected();
 

@@ -68,12 +68,12 @@ class CryptoKeyRSA final : public CryptoKey {
 public:
     static Ref<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKeyContainer&& platformKey, bool extractable, CryptoKeyUsageBitmap usage)
     {
-        return adoptRef(*new CryptoKeyRSA(identifier, hash, hasHash, type, WTFMove(platformKey), extractable, usage));
+        return adoptRef(*new CryptoKeyRSA(identifier, hash, hasHash, type, WTF::move(platformKey), extractable, usage));
     }
     static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyRSAComponents&, bool extractable, CryptoKeyUsageBitmap);
     virtual ~CryptoKeyRSA() = default;
 
-    bool isRestrictedToHash(CryptoAlgorithmIdentifier&) const;
+    bool NODELETE isRestrictedToHash(CryptoAlgorithmIdentifier&) const;
 
     size_t keySizeInBits() const;
 

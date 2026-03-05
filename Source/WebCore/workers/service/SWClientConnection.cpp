@@ -32,6 +32,7 @@
 #include "MessageEvent.h"
 #include "ResourceMonitor.h"
 #include "SWContextManager.h"
+#include "SecurityOrigin.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerJobData.h"
@@ -55,9 +56,9 @@ static bool dispatchToContextThreadIfNecessary(const ServiceWorkerOrClientIdenti
     RELEASE_ASSERT(isMainThread());
 
     return switchOn(contextIdentifier, [&] (ScriptExecutionContextIdentifier identifier) {
-        return ScriptExecutionContext::postTaskTo(identifier, WTFMove(task));
+        return ScriptExecutionContext::postTaskTo(identifier, WTF::move(task));
     }, [&](ServiceWorkerIdentifier identifier) {
-        return SWContextManager::singleton().postTaskToServiceWorker(identifier, WTFMove(task));
+        return SWContextManager::singleton().postTaskToServiceWorker(identifier, WTF::move(task));
     });
 }
 
@@ -90,7 +91,7 @@ bool SWClientConnection::postTaskForJob(ServiceWorkerJobIdentifier jobIdentifier
         LOG_ERROR("Job %s was not found", jobIdentifier.loggingString().utf8().data());
         return false;
     }
-    auto isPosted = dispatchToContextThreadIfNecessary(iterator->value, [jobIdentifier, task = WTFMove(task)] (ScriptExecutionContext& context) mutable {
+    auto isPosted = dispatchToContextThreadIfNecessary(iterator->value, [jobIdentifier, task = WTF::move(task)] (ScriptExecutionContext& context) mutable {
         if (RefPtr container = context.serviceWorkerContainer()) {
             if (RefPtr job = container->job(jobIdentifier))
                 task(*job);
@@ -103,16 +104,16 @@ bool SWClientConnection::postTaskForJob(ServiceWorkerJobIdentifier jobIdentifier
 
 void SWClientConnection::jobRejectedInServer(ServiceWorkerJobIdentifier jobIdentifier, ExceptionData&& exceptionData)
 {
-    postTaskForJob(jobIdentifier, IsJobComplete::Yes, [exceptionData = WTFMove(exceptionData).isolatedCopy()] (auto& job) mutable {
-        job.failedWithException(WTFMove(exceptionData).toException());
+    postTaskForJob(jobIdentifier, IsJobComplete::Yes, [exceptionData = WTF::move(exceptionData).isolatedCopy()] (auto& job) mutable {
+        job.failedWithException(WTF::move(exceptionData).toException());
     });
 }
 
 void SWClientConnection::registrationJobResolvedInServer(ServiceWorkerJobIdentifier jobIdentifier, ServiceWorkerRegistrationData&& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
     auto registrationKey = registrationData.key;
-    bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::Yes, [registrationData = WTFMove(registrationData).isolatedCopy(), shouldNotifyWhenResolved] (auto& job) mutable {
-        job.resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
+    bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::Yes, [registrationData = WTF::move(registrationData).isolatedCopy(), shouldNotifyWhenResolved] (auto& job) mutable {
+        job.resolvedWithRegistration(WTF::move(registrationData), shouldNotifyWhenResolved);
     });
 
     if (!isPosted && shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
@@ -125,25 +126,25 @@ void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jo
         job.startScriptFetch(cachePolicy);
     });
     if (!isPosted)
-        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, WTFMove(registrationKey), workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope "_s, registrationKey.scope().string()) }));
+        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, WTF::move(registrationKey), workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope "_s, registrationKey.scope().string()) }));
 }
 
-static void postMessageToContainer(ScriptExecutionContext& context, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
+static void postMessageToContainer(ScriptExecutionContext& context, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, const SecurityOriginData& sourceOrigin)
 {
     if (RefPtr container = context.ensureServiceWorkerContainer())
-        container->postMessage(WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+        container->postMessage(WTF::move(message), WTF::move(sourceData), sourceOrigin.securityOrigin());
 }
 
-void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
+void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, const SecurityOriginData& sourceOrigin)
 {
     ASSERT(isMainThread());
 
     if (RefPtr destinationDocument = Document::allDocumentsMap().get(destinationContextIdentifier)) {
-        postMessageToContainer(*destinationDocument, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+        postMessageToContainer(*destinationDocument, WTF::move(message), WTF::move(sourceData), sourceOrigin);
         return;
     }
-    ScriptExecutionContext::postTaskTo(destinationContextIdentifier, [message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()](auto& context) mutable {
-        postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+    ScriptExecutionContext::postTaskTo(destinationContextIdentifier, [message = WTF::move(message), sourceData = WTF::move(sourceData).isolatedCopy(), sourceOrigin = sourceOrigin.isolatedCopy()](auto& context) mutable {
+        postMessageToContainer(context, WTF::move(message), WTF::move(sourceData), sourceOrigin);
     });
 }
 
@@ -165,7 +166,7 @@ void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdenti
     forDedicatedAndSharedWorkers([identifier, state, &serviceWorkerData] {
         return [identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)] (auto& context) mutable {
             if (RefPtr container = context.serviceWorkerContainer())
-                container->updateRegistrationState(identifier, state, WTFMove(serviceWorkerData));
+                container->updateRegistrationState(identifier, state, WTF::move(serviceWorkerData));
         };
     });
 }
@@ -303,7 +304,7 @@ void SWClientConnection::clearPendingJobs()
 {
     ASSERT(isMainThread());
 
-    auto jobSources = WTFMove(m_scheduledJobSources);
+    auto jobSources = WTF::move(m_scheduledJobSources);
     for (auto& keyValue : jobSources) {
         dispatchToContextThreadIfNecessary(keyValue.value, [identifier = keyValue.key] (auto& context) {
             if (RefPtr container = context.serviceWorkerContainer()) {

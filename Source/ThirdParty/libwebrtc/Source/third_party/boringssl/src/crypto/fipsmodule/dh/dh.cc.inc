@@ -31,8 +31,8 @@
 
 DH *DH_new(void) {
   DH *dh = reinterpret_cast<DH *>(OPENSSL_zalloc(sizeof(DH)));
-  if (dh == NULL) {
-    return NULL;
+  if (dh == nullptr) {
+    return nullptr;
   }
 
   CRYPTO_MUTEX_init(&dh->method_mont_p_lock);
@@ -41,7 +41,7 @@ DH *DH_new(void) {
 }
 
 void DH_free(DH *dh) {
-  if (dh == NULL) {
+  if (dh == nullptr) {
     return;
   }
 
@@ -74,21 +74,21 @@ const BIGNUM *DH_get0_g(const DH *dh) { return dh->g; }
 
 void DH_get0_key(const DH *dh, const BIGNUM **out_pub_key,
                  const BIGNUM **out_priv_key) {
-  if (out_pub_key != NULL) {
+  if (out_pub_key != nullptr) {
     *out_pub_key = dh->pub_key;
   }
-  if (out_priv_key != NULL) {
+  if (out_priv_key != nullptr) {
     *out_priv_key = dh->priv_key;
   }
 }
 
 int DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key) {
-  if (pub_key != NULL) {
+  if (pub_key != nullptr) {
     BN_free(dh->pub_key);
     dh->pub_key = pub_key;
   }
 
-  if (priv_key != NULL) {
+  if (priv_key != nullptr) {
     BN_free(dh->priv_key);
     dh->priv_key = priv_key;
   }
@@ -98,40 +98,41 @@ int DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key) {
 
 void DH_get0_pqg(const DH *dh, const BIGNUM **out_p, const BIGNUM **out_q,
                  const BIGNUM **out_g) {
-  if (out_p != NULL) {
+  if (out_p != nullptr) {
     *out_p = dh->p;
   }
-  if (out_q != NULL) {
+  if (out_q != nullptr) {
     *out_q = dh->q;
   }
-  if (out_g != NULL) {
+  if (out_g != nullptr) {
     *out_g = dh->g;
   }
 }
 
 int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g) {
-  if ((dh->p == NULL && p == NULL) || (dh->g == NULL && g == NULL)) {
+  if ((dh->p == nullptr && p == nullptr) ||
+      (dh->g == nullptr && g == nullptr)) {
     return 0;
   }
 
-  if (p != NULL) {
+  if (p != nullptr) {
     BN_free(dh->p);
     dh->p = p;
   }
 
-  if (q != NULL) {
+  if (q != nullptr) {
     BN_free(dh->q);
     dh->q = q;
   }
 
-  if (g != NULL) {
+  if (g != nullptr) {
     BN_free(dh->g);
     dh->g = g;
   }
 
   // Invalidate the cached Montgomery parameters.
   BN_MONT_CTX_free(dh->method_mont_p);
-  dh->method_mont_p = NULL;
+  dh->method_mont_p = nullptr;
   return 1;
 }
 
@@ -254,7 +255,7 @@ static int dh_compute_key(DH *dh, BIGNUM *out_shared_key,
     return 0;
   }
 
-  if (dh->priv_key == NULL) {
+  if (dh->priv_key == nullptr) {
     OPENSSL_PUT_ERROR(DH, DH_R_NO_PRIVATE_VALUE);
     return 0;
   }
@@ -354,7 +355,8 @@ int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
       // Also, padded output avoids side-channels, so is always strongly
       // advisable.
       DH_compute_key_padded(shared_bytes, peers_key, dh) != (int)dh_len ||
-      !EVP_Digest(shared_bytes, dh_len, out, &out_len_unsigned, digest, NULL) ||
+      !EVP_Digest(shared_bytes, dh_len, out, &out_len_unsigned, digest,
+                  nullptr) ||
       out_len_unsigned != digest_len) {
     goto err;
   }

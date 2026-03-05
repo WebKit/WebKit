@@ -28,10 +28,13 @@
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
 #include "HIDGamepad.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GenericHIDGamepad final : public HIDGamepad {
+    WTF_MAKE_TZONE_ALLOCATED(GenericHIDGamepad);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GenericHIDGamepad);
 public:
     GenericHIDGamepad(HIDDevice&&, unsigned index);
 

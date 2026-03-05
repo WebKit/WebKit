@@ -1,0 +1,3 @@
+
+PASS Scroll adjustments happen even if it's triggered from scroll event listeners
+

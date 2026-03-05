@@ -39,7 +39,7 @@ public:
 private:
     CallStatement(SourceSpan span, CallExpression::Ref&& call)
         : Statement(span)
-        , m_call(WTFMove(call))
+        , m_call(WTF::move(call))
     { }
 
     CallExpression::Ref m_call;

@@ -1,7 +1,7 @@
 {
     "domain": "Network",
     "description": "Network domain allows tracking network activities of the page. It exposes information about http, file, data and other requests and responses, their headers, bodies, timing, etc.",
-    "debuggableTypes": ["itml", "page", "service-worker", "web-page"],
+    "debuggableTypes": ["itml", "service-worker", "web-page"],
     "targetTypes": ["itml", "page", "service-worker"],
     "types": [
         {
@@ -216,6 +216,14 @@
             "description": "Toggles whether the resource cache may be used when loading resources in the inspected page. If <code>true</code>, the resource cache will not be used when loading resources.",
             "parameters": [
                 { "name": "disabled", "type": "boolean", "description": "Whether to prevent usage of the resource cache." }
+            ]
+        },
+        {
+            "name": "setClearResourceDataOnNavigate",
+            "description": "Toggles whether resource data is cleared on page navigations / reloads.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "clearResourceDataOnNavigate", "type": "boolean", "description": "Whether to clear resource data on navigations." }
             ]
         },
         {

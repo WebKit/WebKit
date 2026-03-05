@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://drafts.fxtf.org/geometry-1/#DOMRect
-
+// https://drafts.csswg.org/geometry/#dictdef-domrectinit
 dictionary DOMRectInit {
     unrestricted double x = 0;
     unrestricted double y = 0;

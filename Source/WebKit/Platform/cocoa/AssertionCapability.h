@@ -38,8 +38,8 @@ class AssertionCapability final : public ExtensionCapability {
 public:
     AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction = nullptr, Function<void()>&& didInvalidateFunction = nullptr);
 
-    const String& domain() const { return m_domain; }
-    const String& name() const { return m_name; }
+    const String& domain() const LIFETIME_BOUND { return m_domain; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
     // ExtensionCapability
     String environmentIdentifier() const final { return m_environmentIdentifier; }

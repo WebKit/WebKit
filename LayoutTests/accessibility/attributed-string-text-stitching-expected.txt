@@ -1,0 +1,66 @@
+This test ensures we return the right attributed string from a stitched-text's text marker range.
+
+Attributes in range {0, 13}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {13, 3}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontItalic = 1;
+    AXFontName = "Times-Italic";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {16, 1}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {17, 3}:
+AXFont: {
+    AXFontBold = 1;
+    AXFontFamily = Times;
+    AXFontName = "Times-Bold";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {20, 13}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {33, 14}:
+AXFont: {
+    AXFontBold = 1;
+    AXFontFamily = Times;
+    AXFontName = "Times-Bold";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {47, 1}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Hello world! How are you doing on this fine day?
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world! How are you doing on this fine day?

@@ -61,8 +61,6 @@ bool GStreamerHolePunchQuirkWesteros::setHolePunchVideoRectangle(GstElement* vid
     return true;
 }
 
-#undef GST_CAT_DEFAULT
-
 } // namespace WebCore
 
 #endif // USE(GSTREAMER)

@@ -60,6 +60,8 @@ rtc_library("libaom_av1_encoder") {
   ]
   deps = [
     "../..:video_codec_interface",
+    "../..:video_coding_utility",
+    "../../:frame_sampler",
     "../../../../api:field_trials_view",
     "../../../../api:scoped_refptr",
     "../../../../api/environment",
@@ -78,6 +80,7 @@ rtc_library("libaom_av1_encoder") {
     "../../../../rtc_base:logging",
     "../../../../rtc_base:rtc_numerics",
     "../../../../rtc_base/experiments:encoder_info_settings",
+    "../../../../rtc_base/experiments:psnr_experiment",
     "../../svc:scalability_structures",
     "../../svc:scalable_video_controller",
     "//third_party/abseil-cpp/absl/algorithm:container",
@@ -136,6 +139,7 @@ if (rtc_include_tests) {
         "../../../../api/units:time_delta",
         "../../../../modules/rtp_rtcp:rtp_rtcp_format",
         "../../../../test:fileutils",
+        "../../../../test:test_support",
         "../../../../test:video_test_support",
         "../../svc:scalability_mode_util",
         "../../svc:scalability_structures",

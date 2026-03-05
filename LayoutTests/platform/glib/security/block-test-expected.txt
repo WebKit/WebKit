@@ -69,8 +69,7 @@ CONSOLE MESSAGE: Not allowed to use restricted network port 6679: http://255.255
 CONSOLE MESSAGE: Not allowed to use restricted network port 6697: http://255.255.255.255:6697/test.jpg
 http://255.255.255.255:65535/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:65535/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255:65535/test.jpg - didFailLoadingWithError: <NSError domain g-io-error-quark, code 38, failing URL "http://255.255.255.255:65535/test.jpg">
-http://255.255.255.255:0/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:0/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255:0/test.jpg - didFailLoadingWithError: <NSError domain g-io-error-quark, code 38, failing URL "http://255.255.255.255:0/test.jpg">
+CONSOLE MESSAGE: Not allowed to use restricted network port 0: http://255.255.255.255:0/test.jpg
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain g-io-error-quark, code 38, failing URL "http://255.255.255.255/test.jpg">
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)

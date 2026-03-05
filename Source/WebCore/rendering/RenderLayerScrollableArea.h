@@ -82,7 +82,7 @@ public:
     void unregisterAsTouchEventListenerForScrolling();
 #endif
 
-    void setPostLayoutScrollPosition(std::optional<ScrollPosition>);
+    void NODELETE setPostLayoutScrollPosition(std::optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
     bool hasPostLayoutScrollPosition() { return !!m_postLayoutScrollPosition; }
 
@@ -106,7 +106,7 @@ public:
     void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
     void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
 
-    bool scrollsOverflow() const;
+    bool NODELETE scrollsOverflow() const;
     bool hasScrollableHorizontalOverflow() const;
     bool hasScrollableVerticalOverflow() const;
     bool hasScrollbars() const { return horizontalScrollbar() || verticalScrollbar(); }
@@ -117,33 +117,33 @@ public:
     
     bool needsAnimatedScroll() const final { return m_isRegisteredForAnimatedScroll; }
     
-    OverscrollBehavior horizontalOverscrollBehavior() const final;
-    OverscrollBehavior verticalOverscrollBehavior() const final;
+    OverscrollBehavior NODELETE horizontalOverscrollBehavior() const final;
+    OverscrollBehavior NODELETE verticalOverscrollBehavior() const final;
 
     Color scrollbarThumbColorStyle() const final;
     Color scrollbarTrackColorStyle() const final;
-    Style::ScrollbarGutter scrollbarGutterStyle() const final;
-    ScrollbarWidth scrollbarWidthStyle() const final;
+    Style::ScrollbarGutter NODELETE scrollbarGutterStyle() const final;
+    ScrollbarWidth NODELETE scrollbarWidthStyle() const final;
     std::optional<ScrollbarColor> scrollbarColorStyle() const final;
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
     void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }
 
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
-    bool canUseCompositedScrolling() const;
+    bool NODELETE canUseCompositedScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
     bool hasCompositedScrollableOverflow() const { return m_hasCompositedScrollableOverflow; }
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
 
-    bool hasOverflowControls() const;
+    bool NODELETE hasOverflowControls() const;
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
     bool hitTestResizerInFragments(const LayerFragments&, const HitTestLocation&, LayoutPoint& pointInFragment) const;
 
     void paintOverflowControls(GraphicsContext&, OptionSet<PaintBehavior>, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
-    void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& damageRect);
-    void paintResizer(GraphicsContext&, const LayoutPoint&, const LayoutRect& damageRect);
+    void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& scrollCornerRect, const IntRect& damageRect);
+    void paintResizer(GraphicsContext&, const LayoutPoint&, const IntRect& resizerRect, const LayoutRect& damageRect);
     void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
 
     void updateScrollInfoAfterLayout();
@@ -182,19 +182,19 @@ public:
     void didUpdateScroll() final;
 #endif
 
-    GraphicsLayer* layerForHorizontalScrollbar() const final;
-    GraphicsLayer* layerForVerticalScrollbar() const final;
-    GraphicsLayer* layerForScrollCorner() const final;
+    GraphicsLayer* NODELETE layerForHorizontalScrollbar() const final;
+    GraphicsLayer* NODELETE layerForVerticalScrollbar() const final;
+    GraphicsLayer* NODELETE layerForScrollCorner() const final;
 
     bool usesCompositedScrolling() const final;
     bool usesAsyncScrolling() const final;
 
-    bool shouldPlaceVerticalScrollbarOnLeft() const final;
+    bool NODELETE shouldPlaceVerticalScrollbarOnLeft() const final;
 
     bool isRenderLayer() const final { return true; }
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
     void invalidateScrollCornerRect(const IntRect&) final;
-    bool isActive() const final;
+    bool NODELETE isActive() const final;
     bool isScrollCornerVisible() const final;
     IntRect scrollCornerRect() const final;
     IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const final;
@@ -207,15 +207,15 @@ public:
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
     IntSize overhangAmount() const final;
     IntPoint lastKnownMousePositionInView() const final;
-    bool isHandlingWheelEvent() const final;
+    bool NODELETE isHandlingWheelEvent() const final;
     bool shouldSuspendScrollAnimations() const final;
     IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;
     bool isUserScrollInProgress() const final;
     bool isRubberBandInProgress() const final;
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
+    bool NODELETE forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
     bool isScrollSnapInProgress() const final;
-    bool scrollAnimatorEnabled() const final;
-    bool mockScrollbarsControllerEnabled() const final;
+    bool NODELETE scrollAnimatorEnabled() const final;
+    bool NODELETE mockScrollbarsControllerEnabled() const final;
     void logMockScrollbarsControllerMessage(const String&) const final;
 
     String debugDescription() const final;
@@ -260,16 +260,14 @@ public:
     void animatedScrollDidEnd() final;
     LayoutRect scrollRectToVisible(const LayoutRect& absoluteRect, const ScrollRectToVisibleOptions&);
     std::optional<LayoutRect> updateScrollPositionForScrollIntoView(const ScrollPositionChangeOptions&, const LayoutRect& revealRect, const LayoutRect& localExposeRect);
-    void updateScrollAnchoringElement() final;
-    void updateScrollPositionForScrollAnchoringController() final;
-    void invalidateScrollAnchoringElement() final;
-    ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
+
+    ScrollAnchoringController* scrollAnchoringController() const final { return m_scrollAnchoringController.get(); }
 
     void updateAnchorPositionedAfterScroll() final;
 
     void createScrollbarsController() final;
 
-    std::optional<FrameIdentifier> rootFrameID() const final;
+    std::optional<FrameIdentifier> NODELETE rootFrameID() const final;
 
     void scrollbarWidthChanged(ScrollbarWidth) override;
 
@@ -281,7 +279,7 @@ private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
 
-    bool showsOverflowControls() const;
+    bool NODELETE showsOverflowControls() const;
 
     ScrollOffset clampScrollOffset(const ScrollOffset&) const;
 
@@ -340,7 +338,7 @@ private:
     RenderPtr<RenderScrollbarPart> m_scrollCorner;
     RenderPtr<RenderScrollbarPart> m_resizer;
 
-    std::unique_ptr<RenderMarquee> m_marquee; // Used for <marquee>.
+    std::unique_ptr<RenderMarquee> m_marquee;
 
     std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
 };

@@ -102,7 +102,7 @@ float EncodedPowerRatio(AudioEncoder* encoder,
     AudioEncoder::EncodedInfo encoder_info =
         encoder->Encode(rtp_timestamp, audio_loop->GetNextBlock(), &encoded);
     rtp_timestamp += kInputBlockSizeSamples;
-    if (encoded.size() > 0) {
+    if (!encoded.empty()) {
       int decoder_info = decoder->Decode(
           encoded.data(), encoded.size(), kSampleRateHz,
           decoded.size() * sizeof(decoded[0]), decoded.data(), &speech_type);

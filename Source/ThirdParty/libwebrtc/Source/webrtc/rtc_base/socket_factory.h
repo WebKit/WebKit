@@ -11,16 +11,23 @@
 #ifndef RTC_BASE_SOCKET_FACTORY_H_
 #define RTC_BASE_SOCKET_FACTORY_H_
 
+#include <memory>
+
+#include "absl/base/nullability.h"
+#include "absl/memory/memory.h"
 #include "rtc_base/socket.h"
 
 namespace webrtc {
 
 class SocketFactory {
  public:
-  virtual ~SocketFactory() {}
+  virtual ~SocketFactory() = default;
 
-  // Returns a new socket.  The type can be SOCK_DGRAM and SOCK_STREAM.
+  // Returns a new socket. The type can be SOCK_DGRAM and SOCK_STREAM.
   virtual Socket* CreateSocket(int family, int type) = 0;
+  absl_nullable std::unique_ptr<Socket> Create(int family, int type) {
+    return absl::WrapUnique(CreateSocket(family, type));
+  }
 };
 
 }  //  namespace webrtc

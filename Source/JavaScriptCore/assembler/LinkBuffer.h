@@ -412,8 +412,8 @@ private:
     bool m_isRewriting { false };
     Profile m_profile { Profile::Uncategorized };
     CodePtr<LinkBufferPtrTag> m_code;
-    Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
-    Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
+    Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
+    Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
 
     static size_t s_profileCummulativeLinkedSizes[numberOfProfiles];
     static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];

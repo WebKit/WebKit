@@ -35,6 +35,7 @@
 #include <WebCore/ServiceWorkerImportedScript.h>
 #include <WebCore/ServiceWorkerJobDataIdentifier.h>
 #include <WebCore/ServiceWorkerRegistrationData.h>
+#include <WebCore/ServiceWorkerRoute.h>
 #include <WebCore/WorkerType.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
@@ -59,9 +60,11 @@ struct ServiceWorkerContextData {
     MemoryCompactRobinHoodHashMap<URL, ServiceWorkerImportedScript> scriptResourceMap;
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
     NavigationPreloadState navigationPreloadState;
-    
+    Vector<ServiceWorkerRoute> routes;
+
     using ImportedScript = ServiceWorkerImportedScript;
 
+    WEBCORE_EXPORT ServiceWorkerContextData copy() const;
     WEBCORE_EXPORT ServiceWorkerContextData isolatedCopy() const &;
     WEBCORE_EXPORT ServiceWorkerContextData isolatedCopy() &&;
 };

@@ -92,7 +92,7 @@ static void sendViolationReportWhenNavigatingToCOOPResponse(ReportingClient& rep
         body.setString("type"_s, "navigation-to-response"_s);
         body.setString("referrer"_s, referrer);
     });
-    reportingClient.sendReportToEndpoints(coopURL, { }, singleElementSpan(endpoint), WTFMove(report), ViolationReportType::CrossOriginOpenerPolicy);
+    reportingClient.sendReportToEndpoints(coopURL, { }, singleElementSpan(endpoint), WTF::move(report), ViolationReportType::CrossOriginOpenerPolicy);
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-from
@@ -109,7 +109,7 @@ static void sendViolationReportWhenNavigatingAwayFromCOOPResponse(ReportingClien
         body.setString("type"_s, "navigation-from-response"_s);
     });
 
-    reportingClient.sendReportToEndpoints(coopURL, { }, singleElementSpan(endpoint), WTFMove(report), ViolationReportType::CrossOriginOpenerPolicy);
+    reportingClient.sendReportToEndpoints(coopURL, { }, singleElementSpan(endpoint), WTF::move(report), ViolationReportType::CrossOriginOpenerPolicy);
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#matching-coop
@@ -178,7 +178,7 @@ static std::pair<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOr
 
     // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become opaque.
     auto responseOrigin = responseCSP && !responseCSP->sandboxFlags().isEmpty() ? SecurityOrigin::createOpaque() : SecurityOrigin::create(response.url());
-    return { WTFMove(responseOrigin), obtainCrossOriginOpenerPolicy(response) };
+    return { WTF::move(responseOrigin), obtainCrossOriginOpenerPolicy(response) };
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-enforce
@@ -257,7 +257,7 @@ CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() const &
 
 CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() &&
 {
-    return { value, reportOnlyValue, WTFMove(reportingEndpoint).isolatedCopy(), WTFMove(reportOnlyReportingEndpoint).isolatedCopy() };
+    return { value, reportOnlyValue, WTF::move(reportingEndpoint).isolatedCopy(), WTF::move(reportOnlyReportingEndpoint).isolatedCopy() };
 }
 
 void CrossOriginOpenerPolicy::addPolicyHeadersTo(ResourceResponse& response) const
@@ -291,7 +291,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandl
 
 CrossOriginOpenerPolicyEnforcementResult CrossOriginOpenerPolicyEnforcementResult::from(const URL& currentURL, Ref<SecurityOrigin>&& currentOrigin, const CrossOriginOpenerPolicy& crossOriginOpenerPolicy, std::optional<NavigationRequester> requester, const URL& openerURL)
 {
-    CrossOriginOpenerPolicyEnforcementResult result { currentURL, WTFMove(currentOrigin), crossOriginOpenerPolicy };
+    CrossOriginOpenerPolicyEnforcementResult result { currentURL, WTF::move(currentOrigin), crossOriginOpenerPolicy };
     result.isCurrentContextNavigationSource = requester && Ref { result.currentOrigin }->isSameOriginAs(requester->securityOrigin);
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(currentURL) && openerURL.isValid())
         result.url = openerURL;

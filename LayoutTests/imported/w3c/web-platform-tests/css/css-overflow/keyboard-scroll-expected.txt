@@ -1,0 +1,6 @@
+This is the targeted node
+
+FAIL Keyboard scrolling scrolls the scroller when clicked target is removed assert_equals: expected "#inner" but got "document"
+FAIL Keyboard scrolling scrolls the scroller when clicked children are removed assert_equals: expected "#inner" but got "document"
+FAIL Keyboard scrolling scrolls the next nearest scroller if the clicked scroller is removed assert_equals: expected "#outer" but got "document"
+

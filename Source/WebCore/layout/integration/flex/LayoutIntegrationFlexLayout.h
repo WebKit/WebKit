@@ -51,15 +51,15 @@ public:
     ~FlexLayout();
 
     void updateFormattingContexGeometries();
-    void updateStyle(const RenderBlock&, const RenderStyle& oldStyle);
+    void NODELETE updateStyle(const RenderBlock&, const RenderStyle& oldStyle);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 
     void layout();
-    void paint(PaintInfo&, const LayoutPoint& paintOffset);
-    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
+    void NODELETE paint(PaintInfo&, const LayoutPoint& paintOffset);
+    bool NODELETE hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    void collectOverflow();
+    void NODELETE collectOverflow();
     LayoutUnit contentBoxLogicalHeight() const;
 
 private:

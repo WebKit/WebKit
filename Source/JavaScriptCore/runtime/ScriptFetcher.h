@@ -32,6 +32,9 @@ namespace JSC {
 class ScriptFetcher : public RefCounted<ScriptFetcher> {
 public:
     virtual ~ScriptFetcher() { }
+
+    virtual bool isCachedScriptFetcher() const { return false; }
+    virtual bool isWorkerScriptFetcher() const { return false; }
 };
 
 } // namespace JSC

@@ -65,6 +65,9 @@ extern "C" {
 #define CL_KHR_D3D10_SHARING_EXTENSION_NAME \
     "cl_khr_d3d10_sharing"
 
+
+#define CL_KHR_D3D10_SHARING_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
 typedef cl_uint             cl_d3d10_device_source_khr;
 typedef cl_uint             cl_d3d10_device_set_khr;
 
@@ -227,6 +230,9 @@ clEnqueueReleaseD3D10ObjectsKHR(
 #define cl_intel_sharing_format_query_d3d10 1
 #define CL_INTEL_SHARING_FORMAT_QUERY_D3D10_EXTENSION_NAME \
     "cl_intel_sharing_format_query_d3d10"
+
+
+#define CL_INTEL_SHARING_FORMAT_QUERY_D3D10_EXTENSION_VERSION CL_MAKE_VERSION(0, 0, 0)
 
 /* when cl_khr_d3d10_sharing is supported */
 

@@ -38,7 +38,7 @@ using namespace HTMLNames;
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFormControlsCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFormControlsCollection);
 
 HTMLFormControlsCollection::HTMLFormControlsCollection(ContainerNode& ownerNode)
     : CachedHTMLCollection(ownerNode, CollectionType::FormControls)
@@ -53,16 +53,16 @@ Ref<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode
 
 HTMLFormControlsCollection::~HTMLFormControlsCollection() = default;
 
-std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsCollection::namedItemOrItems(const AtomString& name) const
+std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> HTMLFormControlsCollection::namedItemOrItems(const AtomString& name) const
 {
     auto namedItems = this->namedItems(name);
 
     if (namedItems.isEmpty())
         return std::nullopt;
     if (namedItems.size() == 1)
-        return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
+        return Variant<Ref<RadioNodeList>, Ref<Element>> { WTF::move(namedItems[0]) };
 
-    return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { protectedOwnerNode()->radioNodeList(name) } };
+    return Variant<Ref<RadioNodeList>, Ref<Element>> { protect(ownerNode())->radioNodeList(name) };
 }
 
 static unsigned findFormListedElement(const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& elements, const Element& element)
@@ -97,7 +97,8 @@ HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) co
         if (element->asFormListedElement()->isEnumeratable()) {
             m_cachedElement = element.get();
             m_cachedElementOffsetInArray = i;
-            return element.unsafeGet();
+            ASSERT(element == elements[i].get());
+            return elements[i].get();
         }
     }
     return nullptr;
@@ -149,7 +150,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
             cache->appendToNameCache(name, *element);
     }
 
-    setNamedItemCache(WTFMove(cache));
+    setNamedItemCache(WTF::move(cache));
 }
 
 void HTMLFormControlsCollection::invalidateCacheForDocument(Document& document)

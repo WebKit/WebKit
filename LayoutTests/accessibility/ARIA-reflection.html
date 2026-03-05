@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true ] -->
 <html>
 <body id="body">
 <script src="../resources/js-test-pre.js"></script>
@@ -33,6 +33,7 @@
 
     function isElementsArrayReflectionProperty(property) {
         switch (property) {
+            case "ariaActionsElements":
             case "ariaControlsElements":
             case "ariaDescribedByElements":
             case "ariaDetailsElements":
@@ -129,7 +130,7 @@
         }
 
         debug("\n");
-        shouldBe("count", "51");
+        shouldBe("count", "52");
 
     } else {
         testFailed("Could not load accessibility controller");

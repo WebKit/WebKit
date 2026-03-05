@@ -24,35 +24,35 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x281 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 162x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 162x27
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (162,27) size 557x26 [color=#0000EE]
-            RenderText {#text} at (162,27) size 557x26
+          RenderInline {A} at (162,27) size 557x27 [color=#0000EE]
+            RenderText {#text} at (162,27) size 557x27
               text run at (162,27) width 557: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
-          RenderText {#text} at (0,54) size 728x26
+          RenderText {#text} at (0,54) size 728x27
             text run at (0,54) width 728: "Text transformed with text-transform does not copy with transform applied"
         RenderBlock {DIV} at (14,111) size 756x156
           RenderBlock (anonymous) at (0,0) size 756x54
-            RenderText {#text} at (0,0) size 183x26
+            RenderText {#text} at (0,0) size 183x27
               text run at (0,0) width 183: "Expected Results:"
-            RenderBR {BR} at (183,0) size 0x26
-            RenderText {#text} at (0,27) size 202x26
+            RenderBR {BR} at (183,0) size 0x27
+            RenderText {#text} at (0,27) size 202x27
               text run at (0,27) width 202: "Should see the string"
           RenderBlock {PRE} at (0,78) size 756x27
             RenderText {#text} at (0,0) size 210x27
               text run at (0,0) width 210: "Foo Bar baz Bar"
           RenderBlock (anonymous) at (0,129) size 756x27
-            RenderText {#text} at (0,0) size 155x26
+            RenderText {#text} at (0,0) size 155x27
               text run at (0,0) width 155: "(case sensitive)."
       RenderBlock {DIV} at (0,305) size 784x31 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (2,2) size 153x26
-          RenderInline {SPAN} at (2,2) size 78x26
-            RenderText {#text} at (2,2) size 78x26
+        RenderInline {SPAN} at (2,2) size 153x27
+          RenderInline {SPAN} at (2,2) size 78x27
+            RenderText {#text} at (2,2) size 78x27
               text run at (2,2) width 78: "Foo Bar"
-          RenderText {#text} at (80,2) size 75x26
+          RenderText {#text} at (80,2) size 75x27
             text run at (80,2) width 75: " bazBar"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 1 {#text} of child 1 {SPAN} of child 3 {DIV} of body

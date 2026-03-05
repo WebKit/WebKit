@@ -61,7 +61,7 @@ Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalOb
 
 JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure)
     : Base(vm, structure)
-    , m_memory(Wasm::Memory::create(vm))
+    , m_memory(Wasm::Memory::create())
 {
 }
 
@@ -80,8 +80,8 @@ void JSWebAssemblyMemory::associateArrayBuffer(JSGlobalObject* globalObject, boo
         size_t size = m_memory->size();
         ASSERT(data);
         if (shouldBeFixedLength) {
-            auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle)] (void*) { });
-            m_buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(data), size }, WTFMove(destructor));
+            auto destructor = createSharedTask<void(void*)>([protectedHandle = WTF::move(protectedHandle)] (void*) { });
+            m_buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(data), size }, WTF::move(destructor));
         } else {
             // The determination of maxByteLength of a resizable non-shared array buffer may change in
             // https://webassembly.github.io/threads/js-api/index.html#create-a-resizable-memory-buffer
@@ -97,8 +97,8 @@ void JSWebAssemblyMemory::associateArrayBuffer(JSGlobalObject* globalObject, boo
 #endif
             PageCount memoryMax = m_memory->maximum();
             size_t maxByteLength = memoryMax.isValid() ? memoryMax.bytes() : defaultMaxByteLengthIfMemoryHasNoMax;
-            ArrayBufferContents contents(data, size, maxByteLength, WTFMove(protectedHandle));
-            m_buffer = ArrayBuffer::create(WTFMove(contents));
+            ArrayBufferContents contents(data, size, maxByteLength, WTF::move(protectedHandle));
+            m_buffer = ArrayBuffer::create(WTF::move(contents));
         }
         if (m_memory->sharingMode() == MemorySharingMode::Shared)
             m_buffer->makeShared();
@@ -167,8 +167,8 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(JSGlobalObject* globalObject)
         void* memory = m_memory->basePointer();
         size_t size = m_memory->size();
         ASSERT(memory);
-        auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle)] (void*) { });
-        m_buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(memory), size }, WTFMove(destructor));
+        auto destructor = createSharedTask<void(void*)>([protectedHandle = WTF::move(protectedHandle)] (void*) { });
+        m_buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(memory), size }, WTF::move(destructor));
         m_buffer->makeWasmMemory();
         if (m_memory->sharingMode() == MemorySharingMode::Shared)
             m_buffer->makeShared();

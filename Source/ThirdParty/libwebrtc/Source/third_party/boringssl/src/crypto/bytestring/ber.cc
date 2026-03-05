@@ -128,7 +128,7 @@ static int cbs_convert_ber(CBS *in, CBB *out, CBS_ASN1_TAG string_tag,
     int indefinite;
     CBB *out_contents, out_contents_storage;
     if (!CBS_get_any_ber_asn1_element(in, &contents, &tag, &header_len,
-                                      /*out_ber_found=*/NULL, &indefinite)) {
+                                      /*out_ber_found=*/nullptr, &indefinite)) {
       return 0;
     }
 
@@ -200,10 +200,10 @@ int CBS_asn1_ber_to_der(CBS *in, CBS *out, uint8_t **out_storage) {
   }
 
   if (!conversion_needed) {
-    if (!CBS_get_any_asn1_element(in, out, NULL, NULL)) {
+    if (!CBS_get_any_asn1_element(in, out, nullptr, nullptr)) {
       return 0;
     }
-    *out_storage = NULL;
+    *out_storage = nullptr;
     return 1;
   }
 
@@ -228,7 +228,7 @@ int CBS_get_asn1_implicit_string(CBS *in, CBS *out, uint8_t **out_storage,
 
   if (CBS_peek_asn1_tag(in, outer_tag)) {
     // Normal implicitly-tagged string.
-    *out_storage = NULL;
+    *out_storage = nullptr;
     return CBS_get_asn1(in, out, outer_tag);
   }
 

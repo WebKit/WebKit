@@ -47,7 +47,7 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> synchronousScrollingReasons,
 #endif
-    RequestedScrollData&& requestedScrollData,
+    ScrollRequestData&& requestedScrollData,
     FloatScrollSnapOffsetsInfo&& snapOffsetsInfo,
     std::optional<unsigned> currentHorizontalSnapPointIndex,
     std::optional<unsigned> currentVerticalSnapPointIndex,
@@ -68,7 +68,7 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
 ) : ScrollingStateScrollingNode(
     ScrollingNodeType::Overflow,
     scrollingNodeID,
-    WTFMove(children),
+    WTF::move(children),
     changedProperties,
     layerID,
     scrollableAreaSize,
@@ -76,12 +76,12 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
     reachableContentsSize,
     scrollPosition,
     scrollOrigin,
-    WTFMove(scrollableAreaParameters),
+    WTF::move(scrollableAreaParameters),
 #if ENABLE(SCROLLING_THREAD)
     synchronousScrollingReasons,
 #endif
-    WTFMove(requestedScrollData),
-    WTFMove(snapOffsetsInfo),
+    WTF::move(requestedScrollData),
+    WTF::move(snapOffsetsInfo),
     currentHorizontalSnapPointIndex,
     currentVerticalSnapPointIndex,
     isMonitoringWheelEvents,
@@ -90,14 +90,14 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
     horizontalScrollbarLayer,
     verticalScrollbarLayer,
     mouseIsOverContentArea,
-    WTFMove(mouseLocationState),
-    WTFMove(scrollbarHoverState),
-    WTFMove(scrollbarEnabledState),
-    WTFMove(scrollbarColor),
+    WTF::move(mouseLocationState),
+    WTF::move(scrollbarHoverState),
+    WTF::move(scrollbarEnabledState),
+    WTF::move(scrollbarColor),
     scrollbarLayoutDirection,
     scrollbarWidth,
     useDarkAppearanceForScrollbars,
-    WTFMove(scrollData)
+    WTF::move(scrollData)
 ) { }
 
 ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)

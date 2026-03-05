@@ -58,6 +58,7 @@
 #include "RenderedDocumentMarker.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBox.h"
+#include "SelectionGeometry.h"
 #include "Settings.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "Text.h"
@@ -79,14 +80,13 @@
 #include "Document.h"
 #include "EditorClient.h"
 #include "Page.h"
-#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
 
 using namespace WTF::Unicode;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderText);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderText);
 
 struct SameSizeAsRenderText : public RenderObject {
 #if ENABLE(TEXT_AUTOSIZING)
@@ -135,7 +135,7 @@ inline void SecureTextTimer::restart(unsigned offsetAfterLastTypedCharacter)
     startOneShot(1_s * m_renderer.settings().passwordEchoDurationInSeconds());
 }
 
-inline unsigned SecureTextTimer::takeOffsetAfterLastTypedCharacter()
+inline unsigned NODELETE SecureTextTimer::takeOffsetAfterLastTypedCharacter()
 {
     unsigned offset = m_offsetAfterLastTypedCharacter;
     m_offsetAfterLastTypedCharacter = 0;
@@ -149,19 +149,19 @@ void SecureTextTimer::fired()
     m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
+static HashMap<SingleThreadWeakRef<const RenderText>, String>& NODELETE originalTextMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
     return map;
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& inlineWrapperForDisplayContentsMap()
+static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& NODELETE inlineWrapperForDisplayContentsMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>> map;
     return map;
 }
 
-static constexpr char16_t convertNoBreakSpaceToSpace(char16_t character)
+static constexpr char16_t NODELETE convertNoBreakSpaceToSpace(char16_t character)
 {
     return character == noBreakSpace ? ' ' : character;
 }
@@ -325,13 +325,19 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
     return textBox.fontCascade().offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), runPosition, true);
 }
 
+static FontCascade::CodePath computeFontCodePath(const String& text, bool containsOnlyASCII)
+{
+    ASSERT(containsOnlyASCII == text.impl()->containsOnlyASCII());
+    return (containsOnlyASCII || text.is8Bit()) ? FontCascade::CodePath::Simple : FontCascade::characterRangeCodePath(text.span16());
+}
+
 inline RenderText::RenderText(Type type, Node& node, const String& text)
     : RenderObject(type, node, TypeFlag::IsText, { })
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
+    , m_fontCodePath(computeFontCodePath(m_text, m_containsOnlyASCII))
 {
     ASSERT(!m_text.isNull());
-    computeFontCodePath();
     ASSERT(isRenderText());
 }
 
@@ -351,12 +357,12 @@ RenderText::~RenderText()
     ASSERT(!originalTextMap().contains(this));
 }
 
-Layout::InlineTextBox* RenderText::layoutBox()
+Layout::InlineTextBox* NODELETE RenderText::layoutBox()
 {
     return downcast<Layout::InlineTextBox>(RenderObject::layoutBox());
 }
 
-const Layout::InlineTextBox* RenderText::layoutBox() const
+const Layout::InlineTextBox* NODELETE RenderText::layoutBox() const
 {
     return downcast<Layout::InlineTextBox>(RenderObject::layoutBox());
 }
@@ -366,7 +372,7 @@ ASCIILiteral RenderText::renderName() const
     return "RenderText"_s;
 }
 
-Text* RenderText::textNode() const
+Text* NODELETE RenderText::textNode() const
 {
     return downcast<Text>(RenderObject::node());
 }
@@ -428,13 +434,13 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     }
 }
 
-void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderText::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     // There is no need to ever schedule repaints from a style change of a text run, since
     // we already did this for the parent of the text run.
     // We do have to schedule layouts, though, since a style change can force us to
     // need to relayout.
-    if (diff == StyleDifference::Layout) {
+    if (diff == Style::DifferenceResult::Layout) {
         setNeedsLayoutAndPreferredWidthsUpdate();
         m_knownToHaveNoOverflowAndNoFallbackFonts = false;
     }
@@ -460,7 +466,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         RenderText::setText(originalText(), true);
 
     // FIXME: First line change on the block comes in as equal on text.
-    auto needsLayoutBoxStyleUpdate = layoutBox() && (diff >= StyleDifference::RecompositeLayer || (&style() != &firstLineStyle()));
+    auto needsLayoutBoxStyleUpdate = layoutBox() && (diff >= Style::DifferenceResult::RecompositeLayer || (&style() != &firstLineStyle()));
     if (needsLayoutBoxStyleUpdate)
         LayoutIntegration::LineLayout::updateStyle(*this);
 
@@ -507,7 +513,6 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
     });
 }
 
-#if PLATFORM(IOS_FAMILY)
 // This function is similar in spirit to addLineBoxRects, but returns rectangles
 // which are annotated with additional state which helps the iPhone draw selections in its unique way.
 // Full annotations are added in this class.
@@ -567,7 +572,6 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
         rects.append(selectionGeometry);
     }
 }
-#endif
 
 static std::optional<IntRect> ellipsisRectForTextBox(const InlineIterator::TextBox& textBox, unsigned start, unsigned end)
 {
@@ -926,9 +930,9 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
     return createPositionWithAffinity(0, Affinity::Downstream);
 }
 
-static inline std::optional<float> combineTextWidth(const RenderText& renderer, const FontCascade& fontCascade, const RenderStyle& style)
+static inline std::optional<float> NODELETE combineTextWidth(const RenderText& renderer, const FontCascade& fontCascade, const RenderStyle& style)
 {
-    if (!style.hasTextCombine())
+    if (style.textCombine() == TextCombine::None)
         return { };
     auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(renderer);
     if (!combineTextRenderer)
@@ -1070,7 +1074,7 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
 
     stripFrontSpaces = collapseWhiteSpace && m_hasEndWS;
 
-    if (!style.autoWrap() || widths.min > widths.max)
+    if (style.textWrapMode() == TextWrapMode::NoWrap || widths.min > widths.max)
         widths.min = widths.max;
 
     // Compute our max widths by scanning the string for newlines.
@@ -1109,7 +1113,7 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
     return widths;
 }
 
-static inline bool isSpaceAccordingToStyle(char16_t c, const RenderStyle& style)
+static inline bool NODELETE isSpaceAccordingToStyle(char16_t c, const RenderStyle& style)
 {
     return c == ' ' || (c == noBreakSpace && style.nbspMode() == NBSPMode::Space);
 }
@@ -1279,13 +1283,13 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
 
     std::optional<LayoutUnit> firstGlyphLeftOverflow;
 
-    bool breakNBSP = style.autoWrap() && style.nbspMode() == NBSPMode::Space;
+    bool breakNBSP = style.textWrapMode() != TextWrapMode::NoWrap && style.nbspMode() == NBSPMode::Space;
     
-    bool breakAnywhere = style.lineBreak() == LineBreak::Anywhere && style.autoWrap();
+    bool breakAnywhere = style.lineBreak() == LineBreak::Anywhere && style.textWrapMode() != TextWrapMode::NoWrap;
     // Note the deliberate omission of word-wrap/overflow-wrap's break-word value from this breakAll check.
     // Those do not affect minimum preferred sizes. Note that break-word is a non-standard value for
     // word-break, but we support it as though it means break-all.
-    bool breakAll = (style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && style.autoWrap();
+    bool breakAll = (style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && style.textWrapMode() != TextWrapMode::NoWrap;
     bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
     bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default
         && contentAnalysis == TextBreakIterator::ContentAnalysis::Mechanical;
@@ -1384,7 +1388,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
             }
 
             bool isCollapsibleWhiteSpace = (j < length) && style.isCollapsibleWhiteSpace(c);
-            if (j < length && style.autoWrap())
+            if (j < length && style.textWrapMode() != TextWrapMode::NoWrap)
                 m_hasBreakableChar = true;
 
             // Add in wordSpacing to our currMaxWidth, but not if this is the last word on a line or the
@@ -1409,14 +1413,14 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
         } else {
             // Nowrap can never be broken, so don't bother setting the
             // breakable character boolean. Pre can only be broken if we encounter a newline.
-            if (style.autoWrap() || isNewline)
+            if (style.textWrapMode() != TextWrapMode::NoWrap || isNewline)
                 m_hasBreakableChar = true;
 
             if (isNewline) { // Only set if preserveNewline was true and we saw a newline.
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
-                    if (!style.autoWrap())
+                    if (style.textWrapMode() == TextWrapMode::NoWrap)
                         m_beginMinWidth = currMaxWidth;
                 }
 
@@ -1444,7 +1448,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
 
     m_maxWidth = std::max(currMaxWidth, *m_maxWidth);
 
-    if (!style.autoWrap())
+    if (style.textWrapMode() == TextWrapMode::NoWrap)
         m_minWidth = m_maxWidth;
 
     if (style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && style.textWrapMode() == TextWrapMode::NoWrap) {
@@ -1535,7 +1539,7 @@ void RenderText::setSelectionState(HighlightState state)
         containingBlock->setSelectionState(state);
 }
 
-static inline bool isInlineFlowOrEmptyText(const RenderObject& renderer)
+static inline bool NODELETE isInlineFlowOrEmptyText(const RenderObject& renderer)
 {
     if (is<RenderInline>(renderer))
         return true;
@@ -1584,7 +1588,7 @@ Vector<char16_t> RenderText::previousCharacter() const
 static String convertToFullSizeKana(const String& string)
 {
     // https://www.w3.org/TR/css-text-3/#small-kana
-    static constexpr std::pair<char32_t, char16_t> kanasMap[] = {
+    static constexpr SortedArrayMap sortedMap { std::to_array<std::pair<char32_t, char16_t>>({
         { 0x3041, 0x3042 },
         { 0x3043, 0x3044 },
         { 0x3045, 0x3046 },
@@ -1643,9 +1647,7 @@ static String convertToFullSizeKana(const String& string)
         { 0x1B165, 0x30F1 },
         { 0x1B166, 0x30F2 },
         { 0x1B167, 0x30F3 }
-    };
-
-    static constexpr SortedArrayMap sortedMap { kanasMap };
+    }) };
 
     auto codePoints = StringView { string }.codePoints();
 
@@ -1760,7 +1762,7 @@ void RenderText::setRenderedText(const String& newText)
     }
 
     m_containsOnlyASCII = text().containsOnlyASCII();
-    computeFontCodePath();
+    m_fontCodePath = computeFontCodePath(text(), m_containsOnlyASCII);
     m_canUseSimplifiedTextMeasuring = { };
     m_hasPositionDependentContentWidth = { };
     m_hasStrongDirectionalityContent = { };
@@ -1802,8 +1804,7 @@ void RenderText::secureText(char16_t maskingCharacter)
     std::span<char16_t> characters;
     m_text = String::createUninitialized(length, characters);
 
-    for (unsigned i = 0; i < length; ++i)
-        characters[i] = maskingCharacter;
+    std::ranges::fill(characters, maskingCharacter);
     if (characterToReveal)
         characters[revealedCharactersOffset] = characterToReveal;
 }
@@ -2121,15 +2122,6 @@ int RenderText::nextOffset(int current) const
     return iterator.following(current).value_or(current + 1);
 }
 
-void RenderText::computeFontCodePath()
-{
-    if (m_containsOnlyASCII || text().is8Bit()) {
-        m_fontCodePath = static_cast<unsigned>(FontCascade::CodePath::Simple);
-        return;
-    }
-    m_fontCodePath = static_cast<unsigned>(FontCascade::characterRangeCodePath(text().span16()));
-}
-
 void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter)
 {
     if (style().textSecurity() == TextSecurity::None)
@@ -2156,7 +2148,7 @@ RenderInline* RenderText::inlineWrapperForDisplayContents()
 
     if (!m_hasInlineWrapperForDisplayContents)
         return nullptr;
-    return inlineWrapperForDisplayContentsMap().get(this).get();
+    return inlineWrapperForDisplayContentsMap().get(this);
 }
 
 void RenderText::setInlineWrapperForDisplayContents(RenderInline* wrapper)

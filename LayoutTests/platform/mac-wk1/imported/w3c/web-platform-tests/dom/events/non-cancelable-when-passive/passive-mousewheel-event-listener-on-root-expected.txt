@@ -1,3 +1,0 @@
-
-FAIL passive mousewheel event listener on root assert_equals: expected false but got true
-

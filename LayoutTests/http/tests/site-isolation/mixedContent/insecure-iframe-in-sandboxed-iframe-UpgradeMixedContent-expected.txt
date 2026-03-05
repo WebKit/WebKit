@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/site-isolation/mixedContent/resources/frame-with-insecure-iframe.html requested insecure content from http://127.0.0.1:8080/security/mixedContent/resources/boring.html. This content was blocked and must be served over HTTPS.
-
-This test embeds a secure iframe which tries to open mixed content. We should block mixed content even though the parent frame is insecure because the middle frame is HTTPS.
-
-

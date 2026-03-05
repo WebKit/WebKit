@@ -34,11 +34,11 @@ class WebPushSubscriptionData final : public ObjectImpl<Object::Type::WebPushSub
 public:
     static Ref<WebPushSubscriptionData> create(WebCore::PushSubscriptionData&& data)
     {
-        return adoptRef(*new WebPushSubscriptionData(WTFMove(data)));
+        return adoptRef(*new WebPushSubscriptionData(WTF::move(data)));
     }
 
     explicit WebPushSubscriptionData(WebCore::PushSubscriptionData&& data)
-        : m_data(WTFMove(data)) { }
+        : m_data(WTF::move(data)) { }
 
     WTF::URL endpoint() const { return WTF::URL { m_data.endpoint }; }
     Vector<uint8_t> applicationServerKey() const { return m_data.serverVAPIDPublicKey; }

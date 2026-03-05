@@ -26,7 +26,7 @@ namespace WebCore {
 
 void startObservingCookieChanges(NetworkStorageSession& storageSession, Function<void()>&& callback)
 {
-    storageSession.setCookieObserverHandler(WTFMove(callback));
+    storageSession.setCookieObserverHandler(WTF::move(callback));
 }
 
 void stopObservingCookieChanges(NetworkStorageSession& storageSession)

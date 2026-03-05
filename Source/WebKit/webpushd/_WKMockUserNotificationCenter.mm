@@ -27,8 +27,8 @@
 #import "_WKMockUserNotificationCenter.h"
 
 #import <wtf/BlockPtr.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchOSObject.h>
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
@@ -147,7 +147,7 @@ static _WKMockUserNotificationCenter *centersByBundleIdentifier(NSString *bundle
 {
     RetainPtr settings = [UNMutableNotificationSettings emptySettings];
     [settings setAuthorizationStatus:m_hasPermission ? UNAuthorizationStatusAuthorized : UNAuthorizationStatusNotDetermined];
-    return settings.unsafeGet();
+    return settings.autorelease();
 }
 
 @end

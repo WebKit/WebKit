@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WindowEventLoop);
 
-static MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>& windowEventLoopMap()
+static MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>& NODELETE windowEventLoopMap()
 {
     RELEASE_ASSERT(isMainThread());
     static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>> map;
@@ -119,7 +119,7 @@ bool WindowEventLoop::isContextThread() const
 MicrotaskQueue& WindowEventLoop::microtaskQueue()
 {
     if (!m_microtaskQueue)
-        m_microtaskQueue = makeUnique<MicrotaskQueue>(commonVM(), *this);
+        m_microtaskQueue = MicrotaskQueue::create(commonVM(), *this);
     return *m_microtaskQueue;
 }
 
@@ -180,7 +180,8 @@ bool WindowEventLoop::shouldEndIdlePeriod()
 {
     if (hasTasksForFullyActiveDocument())
         return true;
-    if (microtaskQueue().hasMicrotasksForFullyActiveDocument())
+    SUPPRESS_UNCOUNTED_LOCAL auto& microtaskQueue = this->microtaskQueue();
+    if (microtaskQueue.hasMicrotasksForFullyActiveDocument())
         return true;
     return false;
 }
@@ -230,7 +231,7 @@ void WindowEventLoop::didReachTimeToRun()
 {
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
     auto deadline = ApproximateTime::now() + ThreadTimers::maxDurationOfFiringTimers;
-    run(deadline);
+    run(commonVM(), deadline);
     opportunisticallyRunIdleCallbacks(deadline.approximateMonotonicTime());
 }
 
@@ -245,7 +246,7 @@ void WindowEventLoop::queueMutationObserverCompoundMicrotask()
     if (m_mutationObserverCompoundMicrotaskQueuedFlag)
         return;
     m_mutationObserverCompoundMicrotaskQueuedFlag = true;
-    m_perpetualTaskGroupForSimilarOriginWindowAgents->queueMicrotask([weakThis = WeakPtr { *this }] {
+    m_perpetualTaskGroupForSimilarOriginWindowAgents->queueMicrotask(commonVM(), [weakThis = WeakPtr { *this }] {
         // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
@@ -266,7 +267,7 @@ CustomElementQueue& WindowEventLoop::backupElementQueue()
 {
     if (!m_processingBackupElementQueue) {
         m_processingBackupElementQueue = true;
-        m_perpetualTaskGroupForSimilarOriginWindowAgents->queueMicrotask([weakThis = WeakPtr { *this }] {
+        m_perpetualTaskGroupForSimilarOriginWindowAgents->queueMicrotask(commonVM(), [weakThis = WeakPtr { *this }] {
             // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)

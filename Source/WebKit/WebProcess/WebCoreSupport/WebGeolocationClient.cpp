@@ -50,25 +50,25 @@ WebGeolocationClient::~WebGeolocationClient() = default;
 void WebGeolocationClient::geolocationDestroyed()
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->unregisterWebPage(*page);
+        protect(WebProcess::singleton().geolocationManager())->unregisterWebPage(*page);
 }
 
 void WebGeolocationClient::startUpdating(const String& authorizationToken, bool needsHighAccuracy)
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->registerWebPage(*page, authorizationToken, needsHighAccuracy);
+        protect(WebProcess::singleton().geolocationManager())->registerWebPage(*page, authorizationToken, needsHighAccuracy);
 }
 
 void WebGeolocationClient::stopUpdating()
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->unregisterWebPage(*page);
+        protect(WebProcess::singleton().geolocationManager())->unregisterWebPage(*page);
 }
 
 void WebGeolocationClient::setEnableHighAccuracy(bool enabled)
 {
     if (RefPtr page = m_page.get())
-        WebProcess::singleton().protectedSupplement<WebGeolocationManager>()->setEnableHighAccuracyForPage(*page, enabled);
+        protect(WebProcess::singleton().geolocationManager())->setEnableHighAccuracyForPage(*page, enabled);
 }
 
 std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()

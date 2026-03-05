@@ -42,7 +42,7 @@ class AdapterImpl final : public Adapter {
 public:
     static Ref<AdapterImpl> create(WebGPUPtr<WGPUAdapter>&& adapter, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new AdapterImpl(WTFMove(adapter), convertToBackingContext));
+        return adoptRef(*new AdapterImpl(WTF::move(adapter), convertToBackingContext));
     }
 
     virtual ~AdapterImpl();
@@ -58,6 +58,7 @@ private:
     AdapterImpl& operator=(AdapterImpl&&) = delete;
 
     WGPUAdapter backing() const { return m_backing.get(); }
+    bool isAdapterImpl() const final { return true; }
     bool xrCompatible() final;
 
     void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) final;
@@ -67,5 +68,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::AdapterImpl)
+    static bool isType(const WebCore::WebGPU::Adapter& adapter) { return adapter.isAdapterImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

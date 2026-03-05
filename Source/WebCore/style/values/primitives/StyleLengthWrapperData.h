@@ -67,7 +67,6 @@ struct LengthWrapperData {
 
     float value() const { ASSERT(m_kind != LengthWrapperDataKind::Calculation); return m_floatValue; }
     Calculation::Value& calculationValue() const;
-    Ref<Calculation::Value> protectedCalculationValue() const;
 
     struct IPCData {
         float value;
@@ -148,7 +147,7 @@ inline LengthWrapperData::LengthWrapperData(const LengthWrapperData& other)
 
 inline LengthWrapperData::LengthWrapperData(LengthWrapperData&& other)
 {
-    initialize(WTFMove(other));
+    initialize(WTF::move(other));
 }
 
 inline LengthWrapperData& LengthWrapperData::operator=(const LengthWrapperData& other)
@@ -171,7 +170,7 @@ inline LengthWrapperData& LengthWrapperData::operator=(LengthWrapperData&& other
     if (m_kind == LengthWrapperDataKind::Calculation)
         deref();
 
-    initialize(WTFMove(other));
+    initialize(WTF::move(other));
     return *this;
 }
 

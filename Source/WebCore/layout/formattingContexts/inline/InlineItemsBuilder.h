@@ -53,7 +53,7 @@ private:
     LayoutQueue initializeLayoutQueue(InlineItemPosition startPosition);
     LayoutQueue traverseUntilDamaged(const Box& firstDamagedLayoutBox);
     void breakAndComputeBidiLevels(InlineItemList&);
-    InlineContentCache::InlineItems::ContentAttributes computeContentAttributesAndInlineTextItemWidths(InlineItemList&, InlineItemPosition damagePosition, const InlineItemList& damagedItemList);
+    void computeInlineTextItemWidthsAndTextSpacing(InlineItemList&);
 
     void handleTextContent(const InlineTextBox&, InlineItemList&, std::optional<size_t> partialContentOffset);
     bool buildInlineItemListForTextFromBreakingPositionsCache(const InlineTextBox&, InlineItemList&);
@@ -65,6 +65,8 @@ private:
 
     void computeInlineBoxBoundaryTextSpacings(const InlineItemList&);
 
+    std::pair<bool, bool> shouldDeferTextMeasurement(const InlineTextBox&) const;
+
     const ElementBox& root() const { return m_root; }
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 
@@ -73,6 +75,8 @@ private:
     const ElementBox& m_root;
     const SecurityOrigin& m_securityOrigin;
 
+    size_t m_inlineBoxCount { 0 };
+    bool m_hasTextAndLineBreakOnlyContent { true }; // Note that this is true for cases like <span>text content</span>
     bool m_contentRequiresVisualReordering { false };
     bool m_hasTextAutospace { !root().style().textAutospace().isNoAutospace() };
     std::optional<bool> m_textContentPopulatedFromCache { };

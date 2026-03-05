@@ -50,7 +50,7 @@ public:
 protected:
     ImageBufferSkiaSurfaceBackend(const Parameters&, sk_sp<SkSurface>&&, RenderingMode);
 
-    GraphicsContext& context() final { return m_context; }
+    GraphicsContext& context() override { return m_context; }
     unsigned bytesPerRow() const final;
     bool canMapBackingStore() const final;
 

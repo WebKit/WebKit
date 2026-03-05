@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 346x19
+      RenderText {#text} at (0,0) size 346x20
         text run at (0,0) width 346: "The two black rectangles below should look identical."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

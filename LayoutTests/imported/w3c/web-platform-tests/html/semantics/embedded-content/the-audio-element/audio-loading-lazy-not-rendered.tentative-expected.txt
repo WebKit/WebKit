@@ -1,0 +1,3 @@
+
+FAIL In-viewport audio with loading=lazy and no controls attribute, or display:none or hidden attribute should never load assert_unreached: Not-rendered audio elements with loading=lazy should not attempt to load. Reached unreachable code
+

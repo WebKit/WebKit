@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+</head>
+<body>
+    <input id="rangeToText" type="range">
+    <input id="switchToText" type="switch">
+    <input id="textToEnabledRange" type="text">
+    <input id="textToDisabledRange" type="text" disabled>
+    <input id="textToEnabledSwitch" type="text">
+    <input id="textToDisabledSwitch" type="text" disabled>
+    <input id="enabledCheckboxToSwitch" type="checkbox">
+    <input id="disabledCheckboxToSwitch" type="checkbox" disabled>
+    <input id="enabledSwitchToCheckbox" type="checkbox" switch>
+</body>
+<script>
+    prepareForTest();
+    rangeToText.type = "text";
+    switchToText.type = "text";
+    textToEnabledRange.type = "range";
+    textToDisabledRange.type = "range";
+    textToEnabledSwitch.setAttribute("switch", "");
+    textToEnabledSwitch.type = "checkbox";
+    textToDisabledSwitch.setAttribute("switch", "");
+    textToDisabledSwitch.type = "checkbox";
+    enabledCheckboxToSwitch.setAttribute("switch", "");
+    disabledCheckboxToSwitch.setAttribute("switch", "");
+    enabledSwitchToCheckbox.removeAttribute("switch");
+    dumpRegions();
+</script>
+</html>

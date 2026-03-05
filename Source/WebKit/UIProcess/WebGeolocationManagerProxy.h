@@ -60,6 +60,7 @@ public:
     static Ref<WebGeolocationManagerProxy> create(WebProcessPool*);
     ~WebGeolocationManagerProxy();
 
+    // WebContextSupplement, IPC::MessageReceiver.
     void ref() const final { API::ObjectImpl<API::Object::Type::GeolocationManager>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::GeolocationManager>::deref(); }
 
@@ -71,9 +72,6 @@ public:
     void resetPermissions();
 #endif
 
-    using API::Object::ref;
-    using API::Object::deref;
-
     void webProcessIsGoingAway(WebProcessProxy&);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
@@ -82,8 +80,6 @@ private:
 
     // WebContextSupplement
     void processPoolDestroyed() override;
-    void refWebContextSupplement() override;
-    void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

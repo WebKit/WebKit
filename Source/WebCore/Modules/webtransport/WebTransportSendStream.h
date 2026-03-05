@@ -46,7 +46,7 @@ public:
     ~WebTransportSendStream();
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
-    WebTransportSendGroup* sendGroup();
+    WebTransportSendGroup* NODELETE sendGroup();
     ExceptionOr<void> setSendGroup(WebTransportSendGroup*);
     std::optional<int64_t> sendOrder() { return m_sendOrder; }
     void setSendOrder(std::optional<int64_t> order) { m_sendOrder = order; }

@@ -36,25 +36,27 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeImage);
 
-#if !USE(CG)
+#if !USE(CG) && !USE(SKIA)
 RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage)
 {
     if (!platformImage)
         return nullptr;
-    return adoptRef(*new NativeImage(WTFMove(platformImage)));
+    return adoptRef(*new NativeImage(WTF::move(platformImage)));
 }
 
 RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)
 {
-    return create(WTFMove(image));
+    return create(WTF::move(image));
 }
 #endif
 
+#if !USE(SKIA)
 NativeImage::NativeImage(PlatformImagePtr&& platformImage)
-    : m_platformImage(WTFMove(platformImage))
+    : m_platformImage(WTF::move(platformImage))
 {
     computeHeadroom();
 }
+#endif
 
 NativeImage::~NativeImage()
 {
@@ -72,15 +74,15 @@ bool NativeImage::hasHDRContent() const
     return colorSpace().usesITUR_2100TF();
 }
 
-void NativeImage::replacePlatformImage(PlatformImagePtr&& platformImage)
+void NativeImage::replacePlatformImage(PlatformImagePtr&& platformImage) const
 {
     ASSERT(platformImage);
-    m_platformImage = WTFMove(platformImage);
+    m_platformImage = WTF::move(platformImage);
     computeHeadroom();
 }
 
 #if !USE(CG)
-void NativeImage::computeHeadroom()
+void NativeImage::computeHeadroom() const
 {
 }
 #endif

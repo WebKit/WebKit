@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 437x80
           RenderTableRow {TR} at (0,2) size 437x50
             RenderTableCell {TD} at (2,15) size 136x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,15) size 31x19
+              RenderText {#text} at (2,15) size 31x20
                 text run at (2,2) width 31: "Blah"
             RenderTableCell {TD} at (139,2) size 296x50 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (112,2) size 72x46 [border: (1px outset #000000)]
@@ -22,5 +22,5 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,54) size 437x24
             RenderTableCell {TD} at (2,54) size 433x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 429x19
+              RenderText {#text} at (2,2) size 429x20
                 text run at (2,2) width 429: "This line is only here to separate the two columns in the row above"

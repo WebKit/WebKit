@@ -28,6 +28,8 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHasherInlines.h>
+#include <wtf/text/SuperFastHash.h>
+#include <wtf/text/WYHash.h>
 
 
 namespace TestWebKitAPI {

@@ -6,7 +6,7 @@ layer at (0,0) size 785x1843
 layer at (8,16) size 750x400
   RenderBlock {DIV} at (0,0) size 750x400 [bgcolor=#EEEEEE]
     RenderBlock {H2} at (0,19) size 750x55 [bgcolor=#CCCCCC]
-      RenderText {#text} at (0,0) size 687x53
+      RenderText {#text} at (0,0) size 687x54
         text run at (0,0) width 670: "This is a spanning element at the beginning of the columns block. "
         text run at (670,0) width 17: "It"
         text run at (0,27) width 527: "should collapse its margins with the top of the page."
@@ -15,7 +15,7 @@ layer at (8,16) size 367x612
   RenderMultiColumnFlowThread at (0,0) size 367x612
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 367x612
-      RenderText {#text} at (0,0) size 363x611
+      RenderText {#text} at (0,0) size 363x612
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -56,7 +56,7 @@ layer at (8,432) size 750x400
   RenderBlock {DIV} at (0,415) size 750x401 [bgcolor=#EEEEEE]
     RenderMultiColumnSet at (0,0) size 750x306
     RenderBlock {H2} at (0,325) size 750x55 [bgcolor=#CCCCCC]
-      RenderText {#text} at (0,0) size 696x53
+      RenderText {#text} at (0,0) size 696x54
         text run at (0,0) width 606: "This is a spanning element at the end of the columns block. "
         text run at (606,0) width 90: "It should"
         text run at (0,27) width 504: "collapse its margins with the h2 in the next block."
@@ -64,7 +64,7 @@ layer at (8,432) size 750x400
 layer at (8,432) size 367x612
   RenderMultiColumnFlowThread at (0,0) size 367x612
     RenderBlock (anonymous) at (0,0) size 367x612
-      RenderText {#text} at (0,0) size 363x611
+      RenderText {#text} at (0,0) size 363x612
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -105,7 +105,7 @@ layer at (8,432) size 367x612
 layer at (8,848) size 750x399
   RenderBlock {DIV} at (0,831) size 750x401 [bgcolor=#EEEEEE]
     RenderBlock {H2} at (0,19) size 750x55 [bgcolor=#CCCCCC]
-      RenderText {#text} at (0,0) size 687x53
+      RenderText {#text} at (0,0) size 687x54
         text run at (0,0) width 670: "This is a spanning element at the beginning of the columns block. "
         text run at (670,0) width 17: "It"
         text run at (0,27) width 621: "should collapse its margins with the h2 in the previous block."
@@ -114,7 +114,7 @@ layer at (8,848) size 367x612
   RenderMultiColumnFlowThread at (0,0) size 367x612
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 367x612
-      RenderText {#text} at (0,0) size 363x611
+      RenderText {#text} at (0,0) size 363x612
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -155,13 +155,13 @@ layer at (8,1263) size 750x564
   RenderBlock {DIV} at (0,1247) size 750x565 [bgcolor=#EEEEEE]
     RenderMultiColumnSet at (0,0) size 750x198
     RenderBlock {H2} at (0,217) size 750x55 [bgcolor=#CCCCCC]
-      RenderText {#text} at (0,0) size 730x53
+      RenderText {#text} at (0,0) size 730x54
         text run at (0,0) width 640: "This is a spanning element in the middle of the columns block. "
         text run at (640,0) width 90: "It should"
         text run at (0,27) width 569: "collapse its margins with the spanning element below it."
     RenderMultiColumnSet at (0,291) size 750x0
     RenderBlock {H2} at (0,291) size 750x55 [bgcolor=#CCCCCC]
-      RenderText {#text} at (0,0) size 730x53
+      RenderText {#text} at (0,0) size 730x54
         text run at (0,0) width 640: "This is a spanning element in the middle of the columns block. "
         text run at (640,0) width 90: "It should"
         text run at (0,27) width 569: "collapse its margins with the spanning element above it."
@@ -169,7 +169,7 @@ layer at (8,1263) size 750x564
 layer at (8,1263) size 367x792 backgroundClip at (0,0) size 785x1843 clip at (0,0) size 785x1843
   RenderMultiColumnFlowThread at (0,0) size 367x792
     RenderBlock (anonymous) at (0,0) size 367x396
-      RenderText {#text} at (0,0) size 363x395
+      RenderText {#text} at (0,0) size 363x396
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -196,7 +196,7 @@ layer at (8,1263) size 367x792 backgroundClip at (0,0) size 785x1843 clip at (0,
     RenderMultiColumnSpannerPlaceholder at (0,396) size 0x0
     RenderMultiColumnSpannerPlaceholder at (0,396) size 0x0
     RenderBlock (anonymous) at (0,396) size 367x396
-      RenderText {#text} at (0,0) size 363x395
+      RenderText {#text} at (0,0) size 363x396
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"

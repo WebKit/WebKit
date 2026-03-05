@@ -36,6 +36,9 @@
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
+// FIXME: Modularize WebRTC
+IGNORE_CLANG_WARNINGS_BEGIN("non-modular-include-in-module")
+
 // See Bug 274508: Disable thread-safety-reference-return warnings in libwebrtc
 IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
@@ -45,6 +48,8 @@ IGNORE_CLANG_WARNINGS_END
 #include <webrtc/api/scoped_refptr.h>
 #include <webrtc/api/video_codecs/video_decoder_factory.h>
 #include <webrtc/api/video_codecs/video_encoder_factory.h>
+
+IGNORE_CLANG_WARNINGS_END
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -116,8 +121,9 @@ public:
         virtual void suspend() { };
         virtual void resume() { };
         virtual void disableRelay() { };
+        virtual bool shouldEnableServiceClass() { return true; }
     };
-    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&);
+    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool /* enableServiceClass */);
 
 protected:
     LibWebRTCProvider();
@@ -138,6 +144,8 @@ protected:
     bool m_useNetworkThreadWithSocketServer { true };
 
 private:
+    bool isWebCoreLibWebRTCProvider() const final { return true; }
+
     void initializeAudioDecodingCapabilities() final;
     void initializeVideoDecodingCapabilities() final;
     void initializeAudioEncodingCapabilities() final;
@@ -145,8 +153,8 @@ private:
 
     virtual void willCreatePeerConnectionFactory();
 
-    std::optional<MediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const VideoConfiguration&) final;
-    std::optional<MediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const VideoConfiguration&) final;
+    std::optional<PlatformMediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration&) final;
+    std::optional<PlatformMediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration&) final;
 
     bool m_useL4S { false };
     std::optional<bool> m_supportsVP9VTBForTesting { false };
@@ -165,5 +173,9 @@ inline LibWebRTCAudioModule* LibWebRTCProvider::audioModule()
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LibWebRTCProvider) \
+static bool isType(const WebCore::WebRTCProvider& provider) { return provider.isWebCoreLibWebRTCProvider(); } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(LIBWEBRTC)

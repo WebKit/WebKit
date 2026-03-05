@@ -36,7 +36,7 @@ static TestsMap& testsMap()
 
 void WebProcessTest::add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()> closure)
 {
-    testsMap().add(testName, WTFMove(closure));
+    testsMap().add(testName, WTF::move(closure));
 }
 
 std::unique_ptr<WebProcessTest> WebProcessTest::create(const String& testName)

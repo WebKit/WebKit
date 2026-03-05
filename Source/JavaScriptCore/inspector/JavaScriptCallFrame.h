@@ -37,7 +37,7 @@ class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:
     static Ref<JavaScriptCallFrame> create(Ref<JSC::DebuggerCallFrame>&& debuggerCallFrame)
     {
-        return adoptRef(*new JavaScriptCallFrame(WTFMove(debuggerCallFrame)));
+        return adoptRef(*new JavaScriptCallFrame(WTF::move(debuggerCallFrame)));
     }
 
     JavaScriptCallFrame* caller();

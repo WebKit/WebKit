@@ -75,8 +75,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-unicode-data.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-unpaired-surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-closed-websocket-connection-ccns.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-closed-websocket-connection.window.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-open-websocket-connection-and-close-it-in-pagehide.window.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-open-websocket-connection-ccns.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-open-websocket-connection.window.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/basic-auth.any.js

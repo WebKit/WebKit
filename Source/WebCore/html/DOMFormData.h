@@ -43,7 +43,7 @@ class HTMLFormElement;
 
 class DOMFormData : public RefCounted<DOMFormData>, public ContextDestructionObserver {
 public:
-    using FormDataEntryValue = Variant<RefPtr<File>, String>;
+    using FormDataEntryValue = Variant<Ref<File>, String>;
 
     struct Item {
         String name;
@@ -57,8 +57,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const Vector<Item>& items() const { return m_items; }
-    const PAL::TextEncoding& encoding() const { return m_encoding; }
+    const Vector<Item>& items() const LIFETIME_BOUND { return m_items; }
+    const PAL::TextEncoding& encoding() const LIFETIME_BOUND { return m_encoding; }
 
     void append(const String& name, const String& value);
     void append(const String& name, Blob&, const String& filename = { });

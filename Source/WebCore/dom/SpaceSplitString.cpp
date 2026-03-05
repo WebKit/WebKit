@@ -88,7 +88,7 @@ struct SpaceSplitStringTableKeyTraits : public HashTraits<AtomString>
 
 typedef HashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
 
-static SpaceSplitStringTable& spaceSplitStringTable()
+static SpaceSplitStringTable& NODELETE spaceSplitStringTable()
 {
     static NeverDestroyed<SpaceSplitStringTable> table;
     return table;
@@ -122,7 +122,7 @@ public:
         return true;
     }
 
-    bool referenceStringWasFound() const { return m_referenceStringWasFound; }
+    bool NODELETE referenceStringWasFound() const { return m_referenceStringWasFound; }
 
 private:
     const ReferenceCharacterType* m_referenceCharacters;
@@ -153,13 +153,13 @@ class TokenCounter {
 public:
     TokenCounter() : m_tokenCount(0) { }
 
-    template<typename CharacterType> bool processToken(std::span<const CharacterType>)
+    template<typename CharacterType> bool NODELETE processToken(std::span<const CharacterType>)
     {
         ++m_tokenCount;
         return true;
     }
 
-    unsigned tokenCount() const { return m_tokenCount; }
+    unsigned NODELETE tokenCount() const { return m_tokenCount; }
 
 private:
     unsigned m_tokenCount;
@@ -183,7 +183,7 @@ public:
         return true;
     }
 
-    const AtomString* nextMemoryBucket() const { return m_memoryBucket.data(); }
+    const AtomString* NODELETE nextMemoryBucket() const { return m_memoryBucket.data(); }
 
 private:
     const AtomString& m_keyString;
@@ -196,16 +196,17 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
 
     RELEASE_ASSERT(tokenCount < (std::numeric_limits<unsigned>::max() - sizeof(SpaceSplitStringData)) / sizeof(AtomString));
     size_t sizeToAllocate = sizeof(SpaceSplitStringData) + tokenCount * sizeof(AtomString);
-    SpaceSplitStringData* spaceSplitStringData = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
+    auto* rawPointer = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
 
-    new (NotNull, spaceSplitStringData) SpaceSplitStringData(keyString, tokenCount);
+    new (NotNull, rawPointer) SpaceSplitStringData(keyString, tokenCount);
+    Ref spaceSplitStringData = adoptRef(*rawPointer);
     auto tokenArray = spaceSplitStringData->tokenArray();
     TokenAtomStringInitializer tokenInitializer(keyString, tokenArray);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
     ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
-    ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData) == static_cast<ptrdiff_t>(sizeToAllocate));
+    ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData.ptr()) == static_cast<ptrdiff_t>(sizeToAllocate));
 
-    return adoptRef(*spaceSplitStringData);
+    return spaceSplitStringData;
 }
 
 RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyString)

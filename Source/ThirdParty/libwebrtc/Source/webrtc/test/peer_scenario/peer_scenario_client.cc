@@ -21,13 +21,10 @@
 #include "absl/container/inlined_vector.h"
 #include "absl/memory/memory.h"
 #include "api/audio_options.h"
-#include "api/candidate.h"
 #include "api/create_modular_peer_connection_factory.h"
 #include "api/data_channel_interface.h"
 #include "api/enable_media_with_defaults.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
-#include "api/field_trials.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
 #include "api/media_stream_interface.h"
@@ -69,6 +66,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 #include "test/create_frame_generator_capturer.h"
+#include "test/create_test_environment.h"
 #include "test/fake_decoder.h"
 #include "test/fake_vp8_encoder.h"
 #include "test/frame_generator_capturer.h"
@@ -136,10 +134,10 @@ class LambdaPeerConnectionObserver final : public PeerConnectionObserver {
     for (const auto& handler : handlers_->on_ice_candidate_error)
       handler(address, port, url, error_code, error_text);
   }
-  void OnIceCandidatesRemoved(
-      const std::vector<Candidate>& candidates) override {
-    for (const auto& handler : handlers_->on_ice_candidates_removed)
-      handler(candidates);
+  void OnIceCandidateRemoved(const IceCandidate* candidate) override {
+    for (const auto& handler : handlers_->on_ice_candidates_removed) {
+      handler(candidate);
+    }
   }
   void OnAddTrack(scoped_refptr<RtpReceiverInterface> receiver,
                   const std::vector<scoped_refptr<MediaStreamInterface>>&
@@ -242,10 +240,9 @@ PeerScenarioClient::PeerScenarioClient(
     Thread* signaling_thread,
     std::unique_ptr<LogWriterFactoryInterface> log_writer_factory,
     PeerScenarioClient::Config config)
-    : env_(CreateEnvironment(
-          std::make_unique<FieldTrials>(std::move(config.field_trials)),
-          net->time_controller()->GetClock(),
-          net->time_controller()->GetTaskQueueFactory())),
+    : env_(
+          CreateTestEnvironment({.field_trials = std::move(config.field_trials),
+                                 .time = net->time_controller()})),
       endpoints_(CreateEndpoints(net, config.endpoints)),
       signaling_thread_(signaling_thread),
       log_writer_factory_(std::move(log_writer_factory)),
@@ -465,6 +462,28 @@ void PeerScenarioClient::SetSdpAnswer(
                 CreateSessionDescription(SdpType::kAnswer, remote_answer);
             done_handler(*answer);
           }));
+}
+
+void PeerScenarioClient::SetLocalDescription(
+    std::string sdp,
+    SdpType type,
+    std::function<void(RTCError)> on_complete) {
+  RTC_DCHECK_RUN_ON(signaling_thread_);
+  peer_connection_->SetLocalDescription(
+      CreateSessionDescription(type, sdp),
+      make_ref_counted<LambdaSetLocalDescriptionObserver>(
+          std::move(on_complete)));
+}
+
+void PeerScenarioClient::SetRemoteDescription(
+    std::string sdp,
+    SdpType type,
+    std::function<void(RTCError)> on_complete) {
+  RTC_DCHECK_RUN_ON(signaling_thread_);
+  peer_connection_->SetRemoteDescription(
+      CreateSessionDescription(type, sdp),
+      make_ref_counted<LambdaSetRemoteDescriptionObserver>(
+          std::move(on_complete)));
 }
 
 void PeerScenarioClient::AddIceCandidate(

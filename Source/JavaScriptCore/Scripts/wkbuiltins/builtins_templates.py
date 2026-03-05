@@ -60,6 +60,9 @@ THE POSSIBILITY OF SUCH DAMAGE.
     HeaderIncludeGuard = (
     """#pragma once""")
 
+    RequiredHeaderIncludes = (
+    """#include <cstdint>""")
+
     NamespaceTop = (
     """namespace ${namespace} {""")
 

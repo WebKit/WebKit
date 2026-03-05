@@ -1538,7 +1538,7 @@ ImmutableString TextureFunctionHLSL::useTextureFunction(const ImmutableString &n
 
         bool bias = (argumentCount > mandatoryArgumentCount);  // Bias argument is optional
 
-        if (lod0 || shaderType == GL_VERTEX_SHADER || shaderType == GL_COMPUTE_SHADER)
+        if (lod0 || shaderType == GL_VERTEX_SHADER)
         {
             if (bias)
             {
@@ -1553,13 +1553,6 @@ ImmutableString TextureFunctionHLSL::useTextureFunction(const ImmutableString &n
         {
             textureFunction.method = TextureFunction::BIAS;
         }
-    }
-
-    if (IsShadowSampler(textureFunction.sampler) &&
-        textureFunction.method == TextureFunction::LOD &&
-        lod0)  // This prevents accidentally emitting SampleCmp inside discontinuous loops
-    {
-        textureFunction.method = TextureFunction::LOD0;
     }
 
     mUsesTexture.insert(textureFunction);

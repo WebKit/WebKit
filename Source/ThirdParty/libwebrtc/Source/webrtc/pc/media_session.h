@@ -17,8 +17,10 @@
 #include <string>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/media_types.h"
 #include "api/rtc_error.h"
+#include "api/transport/sctp_transport_factory_interface.h"
 #include "media/base/media_engine.h"
 #include "media/base/stream_params.h"
 #include "p2p/base/ice_credentials_iterator.h"
@@ -51,10 +53,12 @@ class MediaSessionDescriptionFactory {
   // The TransportDescriptionFactory, the UniqueRandomIdGenerator, and the
   // PayloadTypeSuggester are not owned by MediaSessionDescriptionFactory, so
   // they must be kept alive by the user of this class.
-  MediaSessionDescriptionFactory(MediaEngineInterface* media_engine,
+  MediaSessionDescriptionFactory(const Environment& env,
+                                 const MediaEngineInterface* media_engine,
                                  bool rtx_enabled,
                                  UniqueRandomIdGenerator* ssrc_generator,
                                  const TransportDescriptionFactory* factory,
+                                 SctpTransportFactoryInterface* sctp_factory,
                                  CodecLookupHelper* codec_lookup_helper);
 
   RtpHeaderExtensions filtered_rtp_header_extensions(
@@ -173,13 +177,19 @@ class MediaSessionDescriptionFactory {
     return ssrc_generator_.get();
   }
 
+  // Feedback format according to RFC-8888 will be offered if true.
+  const bool offer_rfc_8888_;
+  // Feedback format according to RFC-8888 will be accepted if offered.
+  const bool accept_offer_with_rfc_8888_;
   bool is_unified_plan_ = false;
   // This object may or may not be owned by this class.
   AlwaysValidPointer<UniqueRandomIdGenerator> const ssrc_generator_;
   bool enable_encrypted_rtp_header_extensions_ = true;
   const TransportDescriptionFactory* transport_desc_factory_;
+  SctpTransportFactoryInterface* sctp_factory_;
   CodecLookupHelper* codec_lookup_helper_;
   bool payload_types_in_transport_trial_enabled_;
+  const Environment env_;
 };
 
 // Convenience functions.

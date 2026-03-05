@@ -34,7 +34,7 @@ class CSSPositionTryRule;
 struct CSSParserContext;
 
 class CSSFunctionDescriptors final : public PropertySetCSSDescriptors {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSFunctionDescriptors);
+    WTF_MAKE_TZONE_ALLOCATED(CSSFunctionDescriptors);
 public:
     static Ref<CSSFunctionDescriptors> create(MutableStyleProperties& propertySet, CSSFunctionDeclarations& parentRule)
     {
@@ -49,7 +49,7 @@ public:
 
     CSSFunctionDescriptors(MutableStyleProperties&, CSSFunctionDeclarations&);
 
-    StyleRuleType ruleType() const final;
+    StyleRuleType NODELETE ruleType() const final;
 };
 
 } // namespace WebCore

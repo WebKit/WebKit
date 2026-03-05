@@ -36,7 +36,7 @@ using namespace WebCore;
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, Vector<MSG>&& pendingCharEvents)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(hwnd, message, wParam, lParam))
     , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))
-    , m_pendingCharEvents(WTFMove(pendingCharEvents))
+    , m_pendingCharEvents(WTF::move(pendingCharEvents))
 {
 }
 

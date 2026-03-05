@@ -351,7 +351,8 @@ void RtcpTransceiverImpl::HandleSenderReport(
     return;
   RemoteSenderState& remote_sender =
       remote_senders_[sender_report.sender_ssrc()];
-  remote_sender.last_received_sender_report = {{now, sender_report.ntp()}};
+  remote_sender.last_received_sender_report = {
+      {.local_received_time = now, .remote_sent_time = sender_report.ntp()}};
   HandleReportBlocks(sender_report.sender_ssrc(), now,
                      sender_report.report_blocks(), report_blocks);
 

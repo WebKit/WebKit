@@ -63,14 +63,14 @@ void TrackQueue::enqueueObject(GRefPtr<GstMiniObject>&& object)
             m_notEmptyCallback ? "set, will be called" : "unset");
     }
     if (!m_notEmptyCallback)
-        m_queue.append(WTFMove(object));
+        m_queue.append(WTF::move(object));
     else {
         // If a low level callback was ever set, it had to be dispatched when the queue was empty at latest.
         ASSERT(!m_lowLevelCallback);
 
         NotEmptyHandler notEmptyCallback;
         std::swap(notEmptyCallback, m_notEmptyCallback);
-        notEmptyCallback(WTFMove(object));
+        notEmptyCallback(WTF::move(object));
     }
 }
 
@@ -98,7 +98,7 @@ void TrackQueue::notifyWhenLowLevel(LowLevelHandler&& lowLevelCallback)
     ASSERT(isMainThread());
     GST_TRACE("TrackQueue for '%" PRIu64 "': Setting lowLevelCallback%s.", m_trackId,
         m_lowLevelCallback ? " (previous callback will be discarded)" : "");
-    m_lowLevelCallback = WTFMove(lowLevelCallback);
+    m_lowLevelCallback = WTF::move(lowLevelCallback);
     checkLowLevel();
 }
 
@@ -121,7 +121,7 @@ void TrackQueue::notifyWhenNotEmpty(NotEmptyHandler&& notEmptyCallback)
 {
     ASSERT(!isMainThread());
     ASSERT(!m_notEmptyCallback);
-    m_notEmptyCallback = WTFMove(notEmptyCallback);
+    m_notEmptyCallback = WTF::move(notEmptyCallback);
     GST_TRACE("TrackQueue for '%" PRIu64 "': notEmptyCallback set.", m_trackId);
 }
 

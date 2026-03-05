@@ -29,7 +29,7 @@ namespace WebCore {
 class SVGElement;
 
 class LegacyRenderSVGContainer : public LegacyRenderSVGModelObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGContainer);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGContainer);
 public:
     virtual ~LegacyRenderSVGContainer();
@@ -39,6 +39,12 @@ public:
     virtual bool didTransformToRootUpdate() { return false; }
     bool isObjectBoundingBoxValid() const { return static_cast<bool>(m_objectBoundingBox); }
     bool isRepaintSuspendedForChildren() const { return m_repaintIsSuspendedForChildrenDuringLayout; }
+    bool hasNonScalingStrokeDescendant() const { return m_nonScalingStrokeDescendantCount > 0; }
+    void adjustNonScalingStrokeDescendantCount(int delta)
+    {
+        ASSERT(delta > 0 || m_nonScalingStrokeDescendantCount >= static_cast<unsigned>(-delta));
+        m_nonScalingStrokeDescendantCount += delta;
+    }
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox.value_or(FloatRect()); }
 
@@ -55,6 +61,7 @@ protected:
 
     FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
+    FloatRect decoratedBoundingBox() const final;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
@@ -79,6 +86,7 @@ private:
 
     bool m_needsBoundariesUpdate { true };
     bool m_repaintIsSuspendedForChildrenDuringLayout { false };
+    unsigned m_nonScalingStrokeDescendantCount { 0 };
 };
 
 } // namespace WebCore

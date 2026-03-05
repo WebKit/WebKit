@@ -27,6 +27,6 @@
 [
     EnabledBySetting=requestIdleCallbackEnabled
 ] partial interface DOMWindow {
-    unsigned long requestIdleCallback(IdleRequestCallback callback, optional IdleRequestOptions options);
+    unsigned long requestIdleCallback(IdleRequestCallback callback, optional IdleRequestOptions options = {});
     undefined cancelIdleCallback(unsigned long handle);
 };

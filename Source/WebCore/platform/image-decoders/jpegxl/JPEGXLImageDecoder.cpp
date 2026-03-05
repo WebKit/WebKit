@@ -27,7 +27,7 @@
 #include "config.h"
 #include "JPEGXLImageDecoder.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
 
 #if USE(JPEGXL)
 

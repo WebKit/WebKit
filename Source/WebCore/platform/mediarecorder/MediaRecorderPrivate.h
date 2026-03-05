@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include <WebCore/ExceptionOr.h>
-#include <WebCore/MediaRecorderPrivateOptions.h>
-#include <WebCore/RealtimeMediaSource.h>
+#include "ExceptionOr.h"
+#include "MediaRecorderPrivateOptions.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -66,8 +66,8 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     struct AudioVideoSelectedTracks {
-        MediaStreamTrackPrivate* audioTrack { nullptr };
-        MediaStreamTrackPrivate* videoTrack { nullptr };
+        WeakPtr<MediaStreamTrackPrivate> audioTrack;
+        WeakPtr<MediaStreamTrackPrivate> videoTrack;
     };
     WEBCORE_EXPORT static AudioVideoSelectedTracks selectTracks(MediaStreamPrivate&);
 
@@ -117,24 +117,24 @@ private:
 
 inline void MediaRecorderPrivate::setAudioSource(RefPtr<RealtimeMediaSource>&& audioSource)
 {
-    if (m_audioSource)
-        m_audioSource->removeAudioSampleObserver(*this);
+    if (RefPtr audioSource = m_audioSource)
+        audioSource->removeAudioSampleObserver(*this);
 
-    m_audioSource = WTFMove(audioSource);
+    m_audioSource = WTF::move(audioSource);
 
-    if (m_audioSource)
-        m_audioSource->addAudioSampleObserver(*this);
+    if (RefPtr audioSource = m_audioSource)
+        audioSource->addAudioSampleObserver(*this);
 }
 
 inline void MediaRecorderPrivate::setVideoSource(RefPtr<RealtimeMediaSource>&& videoSource)
 {
-    if (m_videoSource)
-        m_videoSource->removeVideoFrameObserver(*this);
+    if (RefPtr videoSource = m_videoSource)
+        videoSource->removeVideoFrameObserver(*this);
 
-    m_videoSource = WTFMove(videoSource);
+    m_videoSource = WTF::move(videoSource);
 
-    if (m_videoSource)
-        m_videoSource->addVideoFrameObserver(*this);
+    if (RefPtr videoSource = m_videoSource)
+        videoSource->addVideoFrameObserver(*this);
 }
 
 inline MediaRecorderPrivate::~MediaRecorderPrivate()
@@ -142,10 +142,10 @@ inline MediaRecorderPrivate::~MediaRecorderPrivate()
     // Subclasses should stop observing sonner than here. Otherwise they might be called from a background thread while half destroyed
     ASSERT(!m_audioSource);
     ASSERT(!m_videoSource);
-    if (m_audioSource)
-        m_audioSource->removeAudioSampleObserver(*this);
-    if (m_videoSource)
-        m_videoSource->removeVideoFrameObserver(*this);
+    if (RefPtr audioSource = m_audioSource)
+        audioSource->removeAudioSampleObserver(*this);
+    if (RefPtr videoSource = m_videoSource)
+        videoSource->removeVideoFrameObserver(*this);
 }
 
 } // namespace WebCore

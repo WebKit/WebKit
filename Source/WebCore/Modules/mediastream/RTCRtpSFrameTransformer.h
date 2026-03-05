@@ -61,9 +61,9 @@ public:
     using TransformResult = Expected<Vector<uint8_t>, ErrorInformation>;
     WEBCORE_EXPORT TransformResult transform(std::span<const uint8_t>);
 
-    const Vector<uint8_t>& authenticationKey() const { return m_authenticationKey; }
-    const Vector<uint8_t>& encryptionKey() const { return m_encryptionKey; }
-    const Vector<uint8_t>& saltKey() const { return m_saltKey; }
+    const Vector<uint8_t>& authenticationKey() const LIFETIME_BOUND { return m_authenticationKey; }
+    const Vector<uint8_t>& encryptionKey() const LIFETIME_BOUND { return m_encryptionKey; }
+    const Vector<uint8_t>& saltKey() const LIFETIME_BOUND { return m_saltKey; }
 
     uint64_t keyId() const { return m_keyId; }
     uint64_t counter() const { return m_counter; }
@@ -87,7 +87,7 @@ private:
     ExceptionOr<Vector<uint8_t>> encryptData(std::span<const uint8_t>, const Vector<uint8_t>& iv, const Vector<uint8_t>& key);
     ExceptionOr<Vector<uint8_t>> decryptData(std::span<const uint8_t>, const Vector<uint8_t>& iv, const Vector<uint8_t>& key);
     Vector<uint8_t> computeEncryptedDataSignature(const Vector<uint8_t>& nonce, std::span<const uint8_t> header, std::span<const uint8_t> data, const Vector<uint8_t>& key);
-    void updateAuthenticationSize();
+    void NODELETE updateAuthenticationSize();
 
     mutable Lock m_keyLock;
     bool m_hasKey { false };

@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=false ] -->
+<html>
+<head>
+<title>Test simultaneous animations removed mid-flight</title>
+<style>
+    #target {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+    }
+</style>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+
+promise_test(async t => {
+    const target = document.getElementById('target');
+
+    const fadeAnimation = target.animate(
+        [{opacity: 1}, {opacity: 0}],
+        {duration: 100, fill: 'forwards'}
+    );
+
+    const scaleAnimation = target.animate(
+        [{transform: 'scale(1)'}, {transform: 'scale(0)'}],
+        {duration: 100, fill: 'forwards'}
+    );
+
+    await Promise.all([fadeAnimation.ready, scaleAnimation.ready]);
+    await renderingFrames(1);
+
+    let acceleratedAnimations = internals.acceleratedAnimationsForElement(target);
+    assert_equals(acceleratedAnimations.length, 2, 'Both animations should be accelerated');
+
+    fadeAnimation.cancel();
+    let afterFirstCancel = internals.acceleratedAnimationsForElement(target);
+
+    scaleAnimation.cancel();
+    let afterBothCancel = internals.acceleratedAnimationsForElement(target);
+
+    assert_not_equals(afterFirstCancel.length, afterBothCancel.length,
+        'Both animations should transition separately');
+
+}, 'Simultaneous animations cancelled mid-flight');
+
+</script>
+</body>
+</html>

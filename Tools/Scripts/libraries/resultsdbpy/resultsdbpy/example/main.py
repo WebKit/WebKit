@@ -25,6 +25,7 @@ import json
 
 from resultsdbpy.example.environment import Environment, ModelFromEnvironment
 from flask import abort, Flask, request
+from flask_compress import Compress
 from resultsdbpy.controller.api_routes import APIRoutes
 from resultsdbpy.view.view_routes import ViewRoutes
 
@@ -34,6 +35,7 @@ print(f'Environment for web-app:\n{environment}')
 
 model = ModelFromEnvironment(environment)
 app = Flask(__name__)
+Compress(app)
 
 
 api_routes = APIRoutes(model=model, import_name=__name__)

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DatasetDOMStringMap);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DatasetDOMStringMap);
 
 static bool isValidAttributeName(const String& name)
 {
@@ -72,7 +72,7 @@ static String convertAttributeNameToPropertyName(const String& name)
     return stringBuilder.toString();
 }
 
-static bool isValidPropertyName(const String& name)
+static bool NODELETE isValidPropertyName(const String& name)
 {
     unsigned length = name.length();
     for (unsigned i = 0; i < length; ++i) {
@@ -85,12 +85,12 @@ static bool isValidPropertyName(const String& name)
 template<typename CharacterType>
 static inline AtomString convertPropertyNameToAttributeName(const StringImpl& name)
 {
-    const CharacterType dataPrefix[] = { 'd', 'a', 't', 'a', '-' };
+    static constexpr auto dataPrefix = std::to_array<CharacterType>({ 'd', 'a', 't', 'a', '-' });
 
     Vector<CharacterType, 32> buffer;
 
     unsigned length = name.length();
-    buffer.reserveInitialCapacity(std::size(dataPrefix) + length);
+    buffer.reserveInitialCapacity(dataPrefix.size() + length);
 
     buffer.append(std::span { dataPrefix });
 
@@ -199,17 +199,12 @@ ExceptionOr<void> DatasetDOMStringMap::setNamedItem(const String& name, const At
 {
     if (!isValidPropertyName(name))
         return Exception { ExceptionCode::SyntaxError };
-    return protectedElement()->setAttribute(convertPropertyNameToAttributeName(name), value);
+    return protect(element())->setAttribute(convertPropertyNameToAttributeName(name), value);
 }
 
 bool DatasetDOMStringMap::deleteNamedProperty(const String& name)
 {
-    return protectedElement()->removeAttribute(convertPropertyNameToAttributeName(name));
-}
-
-Ref<Element> DatasetDOMStringMap::protectedElement() const
-{
-    return m_element.get();
+    return protect(element())->removeAttribute(convertPropertyNameToAttributeName(name));
 }
 
 DatasetDOMStringMap::~DatasetDOMStringMap() = default;

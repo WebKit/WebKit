@@ -401,7 +401,7 @@ bool SSLAEADContext::Seal(uint8_t *out, size_t *out_len, size_t max_out_len,
   }
 
   if (!SealScatter(out, out + prefix_len, out + prefix_len + in_len, type,
-                   record_version, seqnum, header, in, in_len, 0, 0)) {
+                   record_version, seqnum, header, in, in_len, nullptr, 0)) {
     return false;
   }
   *out_len = prefix_len + in_len + suffix_len;

@@ -1,0 +1,42 @@
+-- texttree
+
+root
+    scrollable,scrollPosition=(0,0),contentSize=[…]
+        section
+            article
+                'Article Title'
+                'January 1, 2024'
+                'This is some article content with highlighted text.'
+            form,autocomplete='on',name='signup'
+                'Sign up for our newsletter'
+                input,'checkbox',label='Remember me'
+                'Remember me'
+                input,'text',placeholder='Username',name='username',minlength=3,maxlength=20,required
+                input,'password',placeholder='Password',name='password',minlength=3,maxlength=20,required,secure
+                input,'text',placeholder='Email',pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$',name='email',required
+                input,'text',placeholder='Zip Code',pattern='[0-9]{5}',name='zipcode',minlength=5,maxlength=5
+
+-- html
+
+<body>
+    <main>
+        <section>
+            <article>
+                Article Title
+                January 1, 2024
+                This is some article content with highlighted text.
+            </article>
+            <form autocomplete='on' name='signup'>
+                Sign up for our newsletter
+                <input type='checkbox' label='Remember me'>
+                Remember me
+                <input type='text' placeholder='Username' name='username' minlength=3 maxlength=20 required>
+                <input type='password' placeholder='Password' name='password' minlength=3 maxlength=20 required>
+                <input type='text' placeholder='Email' pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$' name='email' required>
+                <input type='text' placeholder='Zip Code' pattern='[0-9]{5}' name='zipcode' minlength=5 maxlength=5>
+            </form>
+        </section>
+    </main>
+</body>
+
+

@@ -23,6 +23,7 @@
 #include "Options.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 /**
@@ -688,27 +689,25 @@ GOptionGroup* jsc_options_get_option_group(void)
     });
     g_option_group_set_translation_domain(group, GETTEXT_PACKAGE);
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    GArray* entries = g_array_new(TRUE, TRUE, sizeof(GOptionEntry));
+    Vector<GOptionEntry> entries;
 #define REGISTER_OPTION(type_, name_, defaultValue_, availability_, description_) \
     if (Options::Availability::availability_ == Options::Availability::Normal \
         || Options::isAvailable(Options::name_##ID, Options::Availability::availability_)) { \
         GUniquePtr<char> name(g_strdup_printf("jsc-%s", #name_));       \
-        entries = g_array_set_size(entries, entries->len + 1); \
-        GOptionEntry* entry = &g_array_index(entries, GOptionEntry, entries->len - 1); \
-        entry->long_name = name.get();                                  \
-        entry->arg = G_OPTION_ARG_CALLBACK;                             \
-        entry->arg_data = reinterpret_cast<gpointer>(setOptionEntry);   \
-        entry->description = description_;                              \
-        names->append(WTFMove(name));                                   \
+        GOptionEntry entry { };                                         \
+        entry.long_name = name.get();                                   \
+        entry.arg = G_OPTION_ARG_CALLBACK;                              \
+        entry.arg_data = reinterpret_cast<gpointer>(setOptionEntry);    \
+        entry.description = description_;                               \
+        entries.append(entry);                                          \
+        names->append(WTF::move(name));                                 \
     }
-
     Options::initialize([] { });
     FOR_EACH_JSC_OPTION(REGISTER_OPTION)
 #undef REGISTER_OPTION
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    g_option_group_add_entries(group, reinterpret_cast<GOptionEntry*>(entries->data));
+    entries.append(GOptionEntry { });
+    g_option_group_add_entries(group, entries.span().data());
     return group;
 }
 

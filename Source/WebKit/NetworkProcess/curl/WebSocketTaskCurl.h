@@ -88,8 +88,6 @@ private:
     void didReceiveData(WebCore::CurlStreamID, const WebCore::SharedBuffer&) final;
     void didFail(WebCore::CurlStreamID, CURLcode, WebCore::CertificateInfo&&) final;
 
-    RefPtr<NetworkSocketChannel> protectedChannel() const;
-
     void tryServerTrustEvaluation(WebCore::AuthenticationChallenge&&, String&&);
 
     bool appendReceivedBuffer(const WebCore::SharedBuffer&);

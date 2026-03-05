@@ -69,7 +69,8 @@ public:
     void shouldStart();
 
     // The following should only be called by SOAuthorizationDelegate methods.
-    void fallBackToWebPath();
+    enum class UserCancel : bool { No, Yes };
+    void fallBackToWebPath(UserCancel = UserCancel::No);
     void abort();
     // Only responses that meet all of the following requirements will be processed:
     // 1) it has the same origin as the request;
@@ -95,7 +96,7 @@ protected:
     WebPageProxy* page() const { return m_page.get(); }
     State state() const { return m_state; }
     ASCIILiteral stateString() const;
-    ASCIILiteral initiatingActionString() const;
+    ASCIILiteral NODELETE initiatingActionString() const;
     void setState(State state) { m_state = state; }
     const API::NavigationAction* navigationAction() { return m_navigationAction.get(); }
     Ref<API::NavigationAction> releaseNavigationAction();
@@ -103,6 +104,7 @@ protected:
 private:
     virtual void shouldStartInternal() = 0;
     virtual void fallBackToWebPathInternal() = 0;
+    virtual void userCancel() { fallBackToWebPathInternal(); }
     virtual void abortInternal() = 0;
     virtual void completeInternal(const WebCore::ResourceResponse&, NSData *) = 0;
 

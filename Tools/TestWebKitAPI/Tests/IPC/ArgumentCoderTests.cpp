@@ -166,7 +166,7 @@ template<> struct ArgumentCoder<TestWebKitAPI::EncodingCounter> {
     }
     static void encode(Encoder& encoder, TestWebKitAPI::EncodingCounter&& counter)
     {
-        WTFMove(counter).encode(encoder);
+        WTF::move(counter).encode(encoder);
     }
 };
 
@@ -226,7 +226,7 @@ public:
         }
         case EncodingCounterTestType::MovedRValue: {
             auto object = createFunctor(counterValues);
-            m_encoder << WTFMove(object);
+            m_encoder << WTF::move(object);
 
             ASSERT_EQ(counterValues, EncodingCounter::CounterValues(0, expectedEncodingCount));
             break;
@@ -378,7 +378,7 @@ template<> struct ArgumentCoder<TestWebKitAPI::DecodingMoveCounter> {
     template<typename Encoder>
     static void encode(Encoder& encoder, TestWebKitAPI::DecodingMoveCounter&& counter)
     {
-        WTFMove(counter).encode(encoder);
+        WTF::move(counter).encode(encoder);
     }
     static std::optional<TestWebKitAPI::DecodingMoveCounter> decode(Decoder& decoder)
     {

@@ -28,6 +28,7 @@
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKFrameInfo.h>
@@ -139,6 +140,30 @@ TEST(WebKit, FormSubmission)
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
     [webView _setInputDelegate:delegate.get()];
+    [webView loadHTMLString:documentWithFormHTML baseURL:nil];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, FormSubmissionNavigationAPI)
+{
+    RetainPtr inputDelegate = adoptNS([[InputDelegate alloc] init]);
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+
+    static bool done = false;
+    navigationDelegate.get().willSubmitForm = ^(WKFormInfo *formInfo) {
+        EXPECT_EQ(formInfo.formValues.count, 2u);
+        EXPECT_STREQ([[formInfo.formValues objectForKey:@"testname1"] UTF8String], "testvalue1");
+        EXPECT_STREQ([[formInfo.formValues objectForKey:@"testname2"] UTF8String], "testvalue2");
+
+        done = true;
+    };
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:inputDelegate.get() forURLScheme:@"test"];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
     [webView loadHTMLString:documentWithFormHTML baseURL:nil];
     TestWebKitAPI::Util::run(&done);
 }

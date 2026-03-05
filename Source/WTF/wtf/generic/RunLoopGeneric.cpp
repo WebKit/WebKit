@@ -30,13 +30,14 @@
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WTF {
 
 static constexpr bool report = false;
 
 class RunLoop::TimerBase::ScheduledTask final : public ThreadSafeRefCounted<ScheduledTask>, public RedBlackTree<ScheduledTask, MonotonicTime>::ThreadSafeNode {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ScheduledTask);
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledTask);
     WTF_MAKE_NONCOPYABLE(ScheduledTask);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScheduledTask);
 public:
@@ -119,6 +120,8 @@ private:
     bool m_isRepeating { };
     bool m_isScheduled { };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RunLoop::TimerBase::ScheduledTask);
 
 RunLoop::RunLoop()
 {
@@ -238,7 +241,7 @@ void RunLoop::run()
 
 void RunLoop::setWakeUpCallback(WTF::Function<void()>&& function)
 {
-    RunLoop::currentSingleton().m_wakeUpCallback = WTFMove(function);
+    RunLoop::currentSingleton().m_wakeUpCallback = WTF::move(function);
 }
 
 // RunLoop operations are thread-safe. These operations can be called from outside of the RunLoop's thread.
@@ -298,7 +301,7 @@ void RunLoop::unscheduleWithLock(TimerBase::ScheduledTask& task)
 // Since RunLoop does not own the registered TimerBase,
 // TimerBase and its owner should manage these lifetime.
 RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
-    : m_runLoop(WTFMove(runLoop))
+    : m_runLoop(WTF::move(runLoop))
     , m_description(description)
     , m_scheduledTask(ScheduledTask::create(*this))
 {

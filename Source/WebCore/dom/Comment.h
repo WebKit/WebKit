@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class Comment final : public CharacterData {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Comment);
+    WTF_MAKE_TZONE_ALLOCATED(Comment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Comment);
 public:
     static Ref<Comment> create(Document&, String&&);
@@ -43,5 +43,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Comment)
-    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::Node::COMMENT_NODE; }
+    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::NodeType::Comment; }
 SPECIALIZE_TYPE_TRAITS_END()

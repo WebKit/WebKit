@@ -784,7 +784,7 @@ class PathVerifier {
               const std::set<der::Input> &user_initial_policy_set,
               bool allow_precertificate, CertErrors *errors);
 
-  // Enforces trust anchor constraints compatibile with RFC 5937.
+  // Enforces trust anchor constraints compatible with RFC 5937.
   //
   // Note that the anchor constraints are encoded via the attached certificate
   // itself.
@@ -875,7 +875,7 @@ class PathVerifier {
   //    * working_public_key_parameters
   //
   // They are combined for simplicity since the signature verification takes an
-  // EVP_PKEY, and the parameter inheritence is not applicable for the supported
+  // EVP_PKEY, and the parameter inheritance is not applicable for the supported
   // key types. |working_public_key_| may be null if parsing failed.
   //
   // An approximate explanation of |working_public_key_| is this description

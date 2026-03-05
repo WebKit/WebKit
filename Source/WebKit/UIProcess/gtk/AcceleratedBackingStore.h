@@ -64,11 +64,11 @@ public:
     using Rects = Vector<WebCore::IntRect, 1>;
 
     static OptionSet<RendererBufferTransportMode> rendererBufferTransportMode();
-    static bool checkRequirements();
+    static bool canUseHardwareAcceleration();
 #if USE(GBM)
     static Vector<RendererBufferFormat> preferredBufferFormats();
 #endif
-    static RefPtr<AcceleratedBackingStore> create(WebPageProxy&);
+    static Ref<AcceleratedBackingStore> create(WebPageProxy&);
     ~AcceleratedBackingStore();
 
     void ref() const final { RefCounted::ref(); }
@@ -193,6 +193,7 @@ private:
 #if USE(GTK4)
         GRefPtr<GdkTexture> m_texture;
 #else
+        GRefPtr<GdkGLContext> m_gdkGLContext;
         unsigned m_textureID { 0 };
 #endif
         uint32_t m_fourcc { 0 };
@@ -210,14 +211,23 @@ private:
 
         Buffer::Type type() const override { return Buffer::Type::Gbm; }
         void didUpdateContents(Buffer*, const Rects&) override;
+#if GTK_CHECK_VERSION(4, 16, 0)
+        GdkTexture* texture() const override { return m_texture.get(); }
+#else
         cairo_surface_t* surface() const override { return m_surface.get(); }
+#endif
         RendererBufferDescription description() const override;
         RefPtr<WebCore::NativeImage> asNativeImageForTesting() const override;
         void release() override;
 
         WTF::UnixFileDescriptor m_fd;
         struct gbm_bo* m_buffer { nullptr };
+#if GTK_CHECK_VERSION(4, 16, 0)
+        GRefPtr<GdkMemoryTextureBuilder> m_builder;
+        GRefPtr<GdkTexture> m_texture;
+#else
         RefPtr<cairo_surface_t> m_surface;
+#endif
     };
 #endif
 
@@ -230,13 +240,22 @@ private:
 
         Buffer::Type type() const override { return Buffer::Type::SharedMemory; }
         void didUpdateContents(Buffer*, const Rects&) override;
+#if GTK_CHECK_VERSION(4, 16, 0)
+        GdkTexture* texture() const override { return m_texture.get(); }
+#else
         cairo_surface_t* surface() const override { return m_surface.get(); }
+#endif
         RendererBufferDescription description() const override;
         RefPtr<WebCore::NativeImage> asNativeImageForTesting() const override;
         void release() override;
 
         RefPtr<WebCore::ShareableBitmap> m_bitmap;
+#if GTK_CHECK_VERSION(4, 16, 0)
+        GRefPtr<GdkMemoryTextureBuilder> m_builder;
+        GRefPtr<GdkTexture> m_texture;
+#else
         RefPtr<cairo_surface_t> m_surface;
+#endif
     };
 
     WeakPtr<WebPageProxy> m_webPage;

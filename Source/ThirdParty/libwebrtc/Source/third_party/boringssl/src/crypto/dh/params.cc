@@ -24,18 +24,18 @@
 
 
 static BIGNUM *get_params(BIGNUM *ret, bssl::Span<const BN_ULONG> words) {
-  BIGNUM *alloc = NULL;
-  if (ret == NULL) {
+  BIGNUM *alloc = nullptr;
+  if (ret == nullptr) {
     alloc = BN_new();
-    if (alloc == NULL) {
-      return NULL;
+    if (alloc == nullptr) {
+      return nullptr;
     }
     ret = alloc;
   }
 
   if (!bn_set_words(ret, words.data(), words.size())) {
     BN_free(alloc);
-    return NULL;
+    return nullptr;
   }
 
   return ret;
@@ -306,16 +306,16 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator,
   }
 
   // Make sure |dh| has the necessary elements
-  if (dh->p == NULL) {
+  if (dh->p == nullptr) {
     dh->p = BN_new();
-    if (dh->p == NULL) {
+    if (dh->p == nullptr) {
       OPENSSL_PUT_ERROR(DH, ERR_R_BN_LIB);
       return 0;
     }
   }
-  if (dh->g == NULL) {
+  if (dh->g == nullptr) {
     dh->g = BN_new();
-    if (dh->g == NULL) {
+    if (dh->g == nullptr) {
       OPENSSL_PUT_ERROR(DH, ERR_R_BN_LIB);
       return 0;
     }
@@ -359,7 +359,7 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator,
 }
 
 static int int_dh_bn_cpy(BIGNUM **dst, const BIGNUM *src) {
-  BIGNUM *a = NULL;
+  BIGNUM *a = nullptr;
 
   if (src) {
     a = BN_dup(src);
@@ -396,12 +396,12 @@ static int int_dh_param_copy(DH *to, const DH *from, int is_x942) {
 DH *DHparams_dup(const DH *dh) {
   DH *ret = DH_new();
   if (!ret) {
-    return NULL;
+    return nullptr;
   }
 
   if (!int_dh_param_copy(ret, dh, -1)) {
     DH_free(ret);
-    return NULL;
+    return nullptr;
   }
 
   return ret;

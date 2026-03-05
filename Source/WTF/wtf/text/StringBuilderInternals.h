@@ -43,7 +43,7 @@ template<typename AllocationCharacterType, typename CurrentCharacterType> void S
     ASSERT(!hasOverflowed());
     StringImpl::copyCharacters(newBufferCharacters, currentCharactersToCopy);
 
-    m_buffer = WTFMove(buffer);
+    m_buffer = WTF::move(buffer);
     m_string = { };
 }
 
@@ -59,7 +59,7 @@ template<typename CharacterType> void StringBuilder::reallocateBuffer(unsigned r
                 didOverflow();
                 return;
             }
-            m_buffer = WTFMove(*buffer);
+            m_buffer = WTF::move(*buffer);
             return;
         }
     }

@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/VM.h>
+#include <wtf/Platform.h>
 
 namespace JSC {
 namespace Wasm {

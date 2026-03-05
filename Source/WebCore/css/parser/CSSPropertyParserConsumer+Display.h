@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -38,9 +39,39 @@ struct PropertyParserState;
 
 namespace CSSPropertyParserHelpers {
 
+enum class DisplayOutside : uint8_t { NoOutside, Block, Inline };
+enum class DisplayInside  : uint8_t { NoInside, Flow, FlowRoot, Table, Flex, Grid, GridLanes, Ruby };
+
 // MARK: <'display'> consuming
 // https://drafts.csswg.org/css-display/#propdef-display
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CSSPropertyParserHelpers::DisplayOutside> {
+    using values = EnumValues<
+        WebCore::CSSPropertyParserHelpers::DisplayOutside,
+        WebCore::CSSPropertyParserHelpers::DisplayOutside::NoOutside,
+        WebCore::CSSPropertyParserHelpers::DisplayOutside::Block,
+        WebCore::CSSPropertyParserHelpers::DisplayOutside::Inline
+    >;
+};
+
+template<> struct EnumTraits<WebCore::CSSPropertyParserHelpers::DisplayInside> {
+    using values = EnumValues<
+        WebCore::CSSPropertyParserHelpers::DisplayInside,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::NoInside,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::Flow,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::FlowRoot,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::Table,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::Flex,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::Grid,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::GridLanes,
+        WebCore::CSSPropertyParserHelpers::DisplayInside::Ruby
+    >;
+};
+
+} // namespace WTF

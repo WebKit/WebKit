@@ -72,9 +72,9 @@ public:
         , m_max(other.m_max)
     {
         if (isBitVector())
-            new (NotNull, &m_inline.bitVector) BitVector(WTFMove(other.m_inline.bitVector));
+            new (NotNull, &m_inline.bitVector) BitVector(WTF::move(other.m_inline.bitVector));
         else
-            new (NotNull, &m_inline.hashSet) Set(WTFMove(other.m_inline.hashSet));
+            new (NotNull, &m_inline.hashSet) Set(WTF::move(other.m_inline.hashSet));
     }
 
     void clear()
@@ -291,7 +291,7 @@ private:
         for (IndexType oldIndex : m_inline.bitVector)
             newSet.add(oldIndex + m_min);
         m_inline.bitVector.~BitVector();
-        new (NotNull, &m_inline.hashSet) Set(WTFMove(newSet));
+        new (NotNull, &m_inline.hashSet) Set(WTF::move(newSet));
         m_size = std::numeric_limits<unsigned>::max();
 
         ASSERT(!isBitVector());
@@ -309,7 +309,7 @@ private:
             ++m_size;
         }
         m_inline.hashSet.~Set();
-        new (NotNull, &m_inline.bitVector) BitVector(WTFMove(newBitVector));
+        new (NotNull, &m_inline.bitVector) BitVector(WTF::move(newBitVector));
 
         ASSERT(isBitVector());
     }

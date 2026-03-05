@@ -75,6 +75,10 @@ struct ApplePayRequestBase {
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
     String merchantCategoryCode;
 #endif
+
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    std::optional<bool> isDelegatedRequest;
+#endif
 };
 
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document&, unsigned version, const ApplePayRequestBase&, const PaymentCoordinator&);

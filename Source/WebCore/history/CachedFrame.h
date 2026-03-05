@@ -51,7 +51,6 @@ public:
 
     Document* document() const { return m_document.get(); }
     FrameView* view() const { return m_view.get(); }
-    RefPtr<FrameView> protectedView() const;
     const URL& url() const { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
 
@@ -85,19 +84,18 @@ public:
     void destroy();
 
     WEBCORE_EXPORT void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
-    WEBCORE_EXPORT CachedFramePlatformData* cachedFramePlatformData();
+    WEBCORE_EXPORT CachedFramePlatformData* NODELETE cachedFramePlatformData();
 
     HasInsecureContent hasInsecureContent() const;
-    UsedLegacyTLS usedLegacyTLS() const;
-    WasPrivateRelayed wasPrivateRelayed() const;
+    UsedLegacyTLS NODELETE usedLegacyTLS() const;
+    WasPrivateRelayed NODELETE wasPrivateRelayed() const;
 
     using CachedFrameBase::document;
     using CachedFrameBase::view;
-    using CachedFrameBase::protectedView;
     using CachedFrameBase::url;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
 
-    size_t descendantFrameCount() const;
+    size_t NODELETE descendantFrameCount() const;
 };
 
 } // namespace WebCore

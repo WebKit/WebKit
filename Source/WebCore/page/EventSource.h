@@ -43,26 +43,27 @@
 namespace WebCore {
 
 class MessageEvent;
+class SecurityOrigin;
 class TextResourceDecoder;
 class ThreadableLoader;
 template<typename> class ExceptionOr;
 
 class EventSource final : public RefCounted<EventSource>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventSource);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventSource);
+    WTF_MAKE_TZONE_ALLOCATED(EventSource);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     struct Init {
         bool withCredentials;
     };
-    static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, const Init&);
+    static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, Init&&);
     virtual ~EventSource();
+
+    // EventTarget, ThreadableLoaderClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const String& url() const;
+    const String& url() const LIFETIME_BOUND;
     bool withCredentials() const;
 
     using State = short;
@@ -75,11 +76,10 @@ public:
     void close();
 
 private:
-    EventSource(ScriptExecutionContext&, const URL&, const Init&);
+    EventSource(ScriptExecutionContext&, const URL&, Init&&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::EventSource; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -95,9 +95,9 @@ private:
 
     // ActiveDOMObject
     void stop() final;
-    void suspend(ReasonForSuspension) final;
+    void NODELETE suspend(ReasonForSuspension) final;
     void resume() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     void connect();
     void networkRequestEnded();
@@ -131,10 +131,10 @@ private:
     String m_currentlyParsedEventId;
     String m_lastEventId;
     uint64_t m_reconnectDelay { defaultReconnectDelay };
-    String m_eventStreamOrigin;
+    RefPtr<SecurityOrigin> m_eventStreamOrigin;
 };
 
-inline const String& EventSource::url() const
+inline const String& EventSource::url() const LIFETIME_BOUND
 {
     return m_url.string();
 }
@@ -150,3 +150,5 @@ inline EventSource::State EventSource::readyState() const
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(EventSource)

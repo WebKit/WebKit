@@ -29,8 +29,10 @@
 
 #include "IntlNumberFormatInlines.h"
 #include "IntlObjectInlines.h"
+#include "IntlPartObject.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include <unicode/uformattedvalue.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -131,17 +133,17 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     RETURN_IF_EXCEPTION(scope, void());
 
     UErrorCode status = U_ZERO_ERROR;
-    m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(UNUM_DECIMAL, nullptr, 0, dataLocaleWithExtensions.data(), nullptr, &status));
+    auto numberFormat = std::unique_ptr<UNumberFormat, ICUDeleter<unum_close>>(unum_open(UNUM_DECIMAL, nullptr, 0, dataLocaleWithExtensions.data(), nullptr, &status));
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;
     }
 
     // Align to IntlNumberFormat's default.
-    unum_setAttribute(m_numberFormat.get(), UNUM_MIN_INTEGER_DIGITS, 1);
-    unum_setAttribute(m_numberFormat.get(), UNUM_MIN_FRACTION_DIGITS, 0);
-    unum_setAttribute(m_numberFormat.get(), UNUM_MAX_FRACTION_DIGITS, 3);
-    unum_setAttribute(m_numberFormat.get(), UNUM_GROUPING_USED, true);
+    unum_setAttribute(numberFormat.get(), UNUM_MIN_INTEGER_DIGITS, 1);
+    unum_setAttribute(numberFormat.get(), UNUM_MIN_FRACTION_DIGITS, 0);
+    unum_setAttribute(numberFormat.get(), UNUM_MAX_FRACTION_DIGITS, 3);
+    unum_setAttribute(numberFormat.get(), UNUM_GROUPING_USED, true);
 
     // Grouping attributes have hidden -2 option which makes grouping rules locale-sensitive.
     // While this is supported so long, this is not explicitly exposed as APIs.
@@ -152,17 +154,24 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     // These options are tested in test262/test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-long.js etc.
     // e.g. https://github.com/tc39/test262/commit/79c1818a6812a2a6c47e3e3c56ba9f2b3eaff4d5
     constexpr int32_t useLocaleDefault = -2;
-    unum_setAttribute(m_numberFormat.get(), UNUM_GROUPING_SIZE, useLocaleDefault);
-    unum_setAttribute(m_numberFormat.get(), UNUM_SECONDARY_GROUPING_SIZE, useLocaleDefault);
-    unum_setAttribute(m_numberFormat.get(), UNUM_MINIMUM_GROUPING_DIGITS, useLocaleDefault);
+    unum_setAttribute(numberFormat.get(), UNUM_GROUPING_SIZE, useLocaleDefault);
+    unum_setAttribute(numberFormat.get(), UNUM_SECONDARY_GROUPING_SIZE, useLocaleDefault);
+    unum_setAttribute(numberFormat.get(), UNUM_MINIMUM_GROUPING_DIGITS, useLocaleDefault);
 
-    UNumberFormat* clonedNumberFormat = unum_clone(m_numberFormat.get(), &status);
+    // ureldatefmt_open adopts the UNumberFormat, so we release ownership here.
+    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), numberFormat.release(), icuStyle, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;
     }
 
-    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), clonedNumberFormat, icuStyle, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
+    m_formattedResult = std::unique_ptr<UFormattedRelativeDateTime, ICUDeleter<ureldatefmt_closeResult>>(ureldatefmt_openResult(&status));
+    if (U_FAILURE(status)) [[unlikely]] {
+        throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
+        return;
+    }
+
+    m_cfpos = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;
@@ -253,7 +262,7 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
         return String();
     }
 
-    return String(result);
+    return String(WTF::move(result));
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTime
@@ -265,64 +274,117 @@ JSValue IntlRelativeTimeFormat::format(JSGlobalObject* globalObject, double valu
     String result = formatInternal(globalObject, value, unit);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return jsString(vm, WTFMove(result));
+    return jsString(vm, WTF::move(result));
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTimeToParts
 JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, double value, StringView unit) const
 {
+    ASSERT(m_relativeDateTimeFormatter);
+    ASSERT(m_formattedResult);
+    ASSERT(m_cfpos);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String formattedRelativeTime = formatInternal(globalObject, value, unit);
-    RETURN_IF_EXCEPTION(scope, { });
+    if (!std::isfinite(value)) {
+        throwRangeError(globalObject, scope, "number argument must be finite"_s);
+        return { };
+    }
+
+    auto unitType = relativeTimeUnitType(unit);
+    if (!unitType) {
+        throwRangeError(globalObject, scope, "unit argument is not a recognized unit type"_s);
+        return { };
+    }
 
     UErrorCode status = U_ZERO_ERROR;
-    auto iterator = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
-    ASSERT(U_SUCCESS(status));
 
-    double absValue = std::abs(value);
-
-    Vector<char16_t, 32> buffer;
-    status = callBufferProducingFunction(unum_formatDoubleForFields, m_numberFormat.get(), absValue, buffer, iterator.get());
-    if (U_FAILURE(status))
+    // Reuse cached UFormattedRelativeDateTime to avoid per-call heap allocation.
+    if (m_numeric)
+        ureldatefmt_formatNumericToResult(m_relativeDateTimeFormatter.get(), value, unitType.value(), m_formattedResult.get(), &status);
+    else
+        ureldatefmt_formatToResult(m_relativeDateTimeFormatter.get(), value, unitType.value(), m_formattedResult.get(), &status);
+    if (U_FAILURE(status)) [[unlikely]]
         return throwTypeError(globalObject, scope, "failed to format relative time"_s);
 
-    auto formattedNumber = String(buffer);
+    auto formattedValue = ureldatefmt_resultAsValue(m_formattedResult.get(), &status);
+    if (U_FAILURE(status)) [[unlikely]]
+        return throwTypeError(globalObject, scope, "failed to format relative time"_s);
+
+    int32_t formattedStringLength = 0;
+    const char16_t* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
+    if (U_FAILURE(status)) [[unlikely]]
+        return throwTypeError(globalObject, scope, "failed to format relative time"_s);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    String formattedRelativeTime(std::span(formattedStringPointer, formattedStringLength));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+    // Iterate all fields from the UFormattedValue in a single pass.
+    // UFIELD_CATEGORY_RELATIVE_DATETIME fields delimit literal vs numeric regions.
+    // UFIELD_CATEGORY_NUMBER fields provide number sub-part details (integer, fraction, etc.)
+    // within the numeric region, eliminating the need for a separate unum_formatDoubleForFields call.
+    ucfpos_reset(m_cfpos.get(), &status);
+    if (U_FAILURE(status)) [[unlikely]]
+        return throwTypeError(globalObject, scope, "failed to format relative time"_s);
+
+    int32_t numberStart = -1;
+    int32_t numberEnd = -1;
+    Vector<IntlNumberFormatField> numberFields;
+
+    while (ufmtval_nextPosition(formattedValue, m_cfpos.get(), &status)) {
+        if (U_FAILURE(status)) [[unlikely]]
+            return throwTypeError(globalObject, scope, "failed to format relative time"_s);
+
+        int32_t category = ucfpos_getCategory(m_cfpos.get(), &status);
+        int32_t fieldType = ucfpos_getField(m_cfpos.get(), &status);
+        int32_t beginIndex = 0;
+        int32_t endIndex = 0;
+        ucfpos_getIndexes(m_cfpos.get(), &beginIndex, &endIndex, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            return throwTypeError(globalObject, scope, "failed to format relative time"_s);
+
+        if (category == UFIELD_CATEGORY_RELATIVE_DATETIME && fieldType == UDAT_REL_NUMERIC_FIELD) {
+            numberStart = beginIndex;
+            numberEnd = endIndex;
+        } else if (category == UFIELD_CATEGORY_NUMBER && fieldType >= 0) {
+            // Collect number fields; positions will be adjusted below.
+            numberFields.append({ fieldType, { beginIndex, endIndex } });
+        }
+    }
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
-    if (!parts)
+    if (!parts) [[unlikely]]
         return throwOutOfMemoryError(globalObject, scope);
 
     JSString* literalString = jsNontrivialString(vm, "literal"_s);
 
-    // We only have one input number, so our relative time will have at most one numeric substring,
-    // but we need to list all of the numeric parts separately.
-    size_t numberEnd = 0;
-    size_t numberStart = formattedRelativeTime.find(formattedNumber);
-    if (numberStart != notFound) {
-        numberEnd = numberStart + buffer.size();
-
-        // Add initial literal if there is one.
-        if (numberStart) {
-            JSObject* part = constructEmptyObject(globalObject);
-            part->putDirect(vm, vm.propertyNames->type, literalString);
-            part->putDirect(vm, vm.propertyNames->value, jsSubstring(vm, formattedRelativeTime, 0, numberStart));
+    if (numberStart >= 0) {
+        if (numberStart > 0) {
+            JSObject* part = createIntlPartObject(globalObject, literalString, jsSubstring(vm, formattedRelativeTime, 0, numberStart));
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });
         }
 
-        IntlFieldIterator fieldIterator(*iterator.get());
-        IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, std::signbit(absValue), IntlMathematicalValue::numberTypeFromDouble(absValue), formattedNumber, fieldIterator, parts, nullptr, jsString(vm, singularUnit(unit)));
-        RETURN_IF_EXCEPTION(scope, { });
-    }
+        // Adjust field positions to be relative to the numeric substring.
+        auto numberPartString = formattedRelativeTime.substring(numberStart, numberEnd - numberStart);
+        for (auto& field : numberFields)
+            field.m_range = { field.m_range.begin() - numberStart, field.m_range.end() - numberStart };
 
-    // Add final literal if there is one.
-    auto stringLength = formattedRelativeTime.length();
-    if (numberEnd != stringLength) {
-        JSObject* part = constructEmptyObject(globalObject);
-        part->putDirect(vm, vm.propertyNames->type, literalString);
-        part->putDirect(vm, vm.propertyNames->value, jsSubstring(vm, formattedRelativeTime, numberEnd, stringLength - numberEnd));
+        double absValue = std::abs(value);
+        IntlFieldIterator fieldIterator(WTF::move(numberFields));
+        IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, std::signbit(absValue), IntlMathematicalValue::numberTypeFromDouble(absValue), numberPartString, fieldIterator, parts, nullptr, jsString(vm, singularUnit(unit)));
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto stringLength = formattedRelativeTime.length();
+        if (static_cast<unsigned>(numberEnd) < stringLength) {
+            JSObject* part = createIntlPartObject(globalObject, literalString, jsSubstring(vm, formattedRelativeTime, numberEnd, stringLength - numberEnd));
+            parts->push(globalObject, part);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    } else {
+        // No numeric field (e.g., numeric: "auto" producing "today", "yesterday").
+        JSObject* part = createIntlPartObject(globalObject, literalString, jsString(vm, formattedRelativeTime));
         parts->push(globalObject, part);
         RETURN_IF_EXCEPTION(scope, { });
     }

@@ -34,8 +34,7 @@ namespace Style {
 
 // <'justify-self'> = auto | normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ]
 // https://drafts.csswg.org/css-align/#propdef-justify-self
-// Additional values, `anchor-center` and `dialog` added to <self-position> by CSS Anchor Positioning.
-// FIXME: Add support for `dialog`.
+// Additional values, `anchor-center` added to <self-position> by CSS Anchor Positioning.
 // https://drafts.csswg.org/css-anchor-position-1/#anchor-center
 struct JustifySelf {
     constexpr JustifySelf(CSS::Keyword::Auto);
@@ -75,7 +74,7 @@ struct JustifySelf {
 
     constexpr bool operator==(const JustifySelf&) const = default;
 
-    StyleSelfAlignmentData resolve(std::optional<StyleSelfAlignmentData> = std::nullopt) const;
+    StyleSelfAlignmentData resolve(const RenderStyle* containerStyle = nullptr) const; // Resolves 'auto' against containerStyle's justify-items.
 
 private:
     enum class PrimaryKind : uint8_t {

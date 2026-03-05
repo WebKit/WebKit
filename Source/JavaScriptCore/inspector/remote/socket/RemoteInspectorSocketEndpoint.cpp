@@ -101,7 +101,7 @@ std::optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char
     if (!connection->isListening())
         return std::nullopt;
 
-    m_listeners.add(id, WTFMove(connection));
+    m_listeners.add(id, WTF::move(connection));
     wakeupWorkerThread();
     return id;
 }
@@ -213,7 +213,7 @@ std::optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(Platform
     if (!Socket::isValid(connection->socket))
         return std::nullopt;
 
-    m_clients.add(id, WTFMove(connection));
+    m_clients.add(id, WTF::move(connection));
     wakeupWorkerThread();
 
     return id;
@@ -287,7 +287,7 @@ void RemoteInspectorSocketEndpoint::recvIfEnabled(ConnectionID id)
             if (*readSize > 0) {
                 recvBuffer.shrink(*readSize);
                 locker.unlockEarly();
-                connection->client.didReceive(*this, id, WTFMove(recvBuffer));
+                connection->client.didReceive(*this, id, WTF::move(recvBuffer));
                 return;
             }
         }

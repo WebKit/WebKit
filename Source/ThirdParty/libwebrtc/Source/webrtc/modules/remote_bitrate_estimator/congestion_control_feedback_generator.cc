@@ -23,11 +23,13 @@
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/congestion_controller/rtp/congestion_controller_feedback_stats.h"
 #include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/congestion_control_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/containers/flat_map.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
@@ -54,12 +56,14 @@ void CongestionControlFeedbackGenerator::OnReceivedPacket(
   RTC_DCHECK_RUN_ON(&sequence_checker_);
 
   marker_bit_seen_ |= packet.Marker();
+  Timestamp now = env_.clock().CurrentTime();
   if (!first_arrival_time_since_feedback_) {
-    first_arrival_time_since_feedback_ = packet.arrival_time();
+    first_arrival_time_since_feedback_ = now;
   }
-  feedback_trackers_[packet.Ssrc()].ReceivedPacket(packet);
-  if (NextFeedbackTime() < packet.arrival_time()) {
-    SendFeedback(env_.clock().CurrentTime());
+  auto it = feedback_trackers_.try_emplace(packet.Ssrc(), packet.Ssrc()).first;
+  it->second.ReceivedPacket(packet);
+  if (NextFeedbackTime() < now) {
+    SendFeedback(now);
   }
 }
 
@@ -118,6 +122,21 @@ void CongestionControlFeedbackGenerator::CalculateNextPossibleSendTime(
       now + std::clamp(send_rate_debt_ / kMaxFeedbackRate,
                        min_time_between_feedback_.Get(),
                        max_time_between_feedback_.Get());
+}
+
+flat_map<uint32_t, SentCongestionControllerFeedbackStats>
+CongestionControlFeedbackGenerator::GetStatsPerSsrc() const {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  flat_map<uint32_t, SentCongestionControllerFeedbackStats> result;
+  result.reserve(feedback_trackers_.size());
+  for (const auto& [ssrc, tracker] : feedback_trackers_) {
+    // feedback_trackers_ are sorted by the SSRC, so when adding to the
+    // flat_map, expect it uses the same sorting and thus new elements would
+    // always be at the end.
+    result.insert_or_assign(
+        /*hint=*/result.end(), /*key=*/ssrc, tracker.GetStats());
+  }
+  return result;
 }
 
 }  // namespace webrtc

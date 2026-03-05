@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class HTMLEmbedElement final : public HTMLPlugInElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLEmbedElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLEmbedElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLEmbedElement);
 public:
     static Ref<HTMLEmbedElement> create(Document&);
@@ -41,7 +41,7 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final;
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     const AtomString& imageSourceURL() const final;
 
     bool isInteractiveContent() const final { return true; }

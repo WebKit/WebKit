@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 187x26
           RenderTableRow {TR} at (0,2) size 187x22
             RenderTableCell {TD} at (2,2) size 82x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x19
+              RenderText {#text} at (1,1) size 80x20
                 text run at (1,1) width 80: "first-column"
             RenderTableCell {TD} at (85,2) size 100x22 [bgcolor=#BBBBBB] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 98x19
+              RenderText {#text} at (1,1) size 98x20
                 text run at (1,1) width 98: "second-column"

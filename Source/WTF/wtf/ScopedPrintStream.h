@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/DataLog.h>
 #include <wtf/StringPrintStream.h>
 
 namespace WTF {

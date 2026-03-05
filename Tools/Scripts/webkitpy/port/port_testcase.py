@@ -550,17 +550,14 @@ class PortTestCase(unittest.TestCase):
         def platform_dirs(port):
             return [port.host.filesystem.basename(port.host.filesystem.dirname(f)) for f in port.expectations_files()]
 
-        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport'])
+        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'wk2', 'testwebkitport-wk2'])
 
         port = TestWebKitPort(port_name="testwebkitport-version")
-        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'testwebkitport-version'])
-
-        port = TestWebKitPort(port_name="testwebkitport-version-wk2")
         self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'testwebkitport-version', 'wk2', 'testwebkitport-wk2'])
 
         port = TestWebKitPort(port_name="testwebkitport-version",
                               options=MockOptions(additional_platform_directory=["internal-testwebkitport"]))
-        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'testwebkitport-version', 'internal-testwebkitport'])
+        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'testwebkitport-version', 'wk2', 'testwebkitport-wk2', 'internal-testwebkitport'])
 
     def test_root_option(self):
         port = TestWebKitPort()
@@ -568,7 +565,7 @@ class PortTestCase(unittest.TestCase):
         if sys.platform.startswith('win'):
             self.assertEqual(port._path_to_driver(), "/foo/DumpRenderTree.exe")
         else:
-            self.assertEqual(port._path_to_driver(), "/foo/DumpRenderTree")
+            self.assertEqual(port._path_to_driver(), "/foo/WebKitTestRunner")
 
     def test_test_expectations(self):
         # Check that we read the expectations file
@@ -582,7 +579,7 @@ class PortTestCase(unittest.TestCase):
         port = TestWebKitPort()
         # Delay setting _executive to avoid logging during construction
         port._executive = MockExecutive(should_log=True)
-        port._options = MockOptions(configuration="Release")  # This should not be necessary, but I think TestWebKitPort is actually reading from disk (and thus detects the current configuration).
+        port._options = MockOptions(driver_names=['DumpRenderTree'], configuration="Release")  # This should not be necessary, but I think TestWebKitPort is actually reading from disk (and thus detects the current configuration).
         with OutputCapture(level=logging.INFO) as captured:
             self.assertTrue(port._build_driver())
         self.assertEqual(
@@ -591,7 +588,7 @@ class PortTestCase(unittest.TestCase):
         )
 
         # Make sure WebKitTestRunner is used.
-        port._options = MockOptions(webkit_test_runner=True, configuration="Release")
+        port._options = MockOptions(configuration="Release")
         with OutputCapture(level=logging.INFO) as captured:
             self.assertTrue(port._build_driver())
         self.assertEqual(
@@ -609,6 +606,9 @@ MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mo
             captured.root.log.getvalue(),
             '''MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'MOCK_ENVIRON_COPY': '1'}
 Output of ['Tools/Scripts/build-dumprendertree', '--release']:
+MOCK output of child process
+MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout, env={'MOCK_ENVIRON_COPY': '1'}
+Output of ['Tools/Scripts/build-webkittestrunner', '--release']:
 MOCK output of child process
 ''',
         )

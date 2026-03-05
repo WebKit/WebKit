@@ -37,7 +37,7 @@
 namespace WebKit {
 
 AuthenticationDecisionListener::AuthenticationDecisionListener(CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
+    : m_completionHandler(WTF::move(completionHandler))
 {
 }
 

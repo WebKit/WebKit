@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ScrollingTreeStickyNodeCocoa.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #import "Logging.h"
 #import "ScrollingStateStickyNode.h"
 #import "ScrollingThread.h"
@@ -91,20 +89,37 @@ void ScrollingTreeStickyNodeCocoa::applyLayerPositions()
         setIsSticking(isCurrentlySticking(*constrainingRect));
 }
 
+#if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
+void ScrollingTreeStickyNodeCocoa::willBeDestroyed()
+{
+    RefPtr scrollingTree = this->scrollingTree();
+    if (!scrollingTree)
+        return;
+
+    ensureOnMainRunLoop([scrollingTree = WTF::move(scrollingTree), nodeID = scrollingNodeID()] {
+        scrollingTree->scrollingTreeNodeWillBeRemoved(nodeID);
+    });
+}
+#endif
+
 void ScrollingTreeStickyNodeCocoa::setIsSticking(bool isSticking)
 {
     if (m_isSticking == isSticking)
         return;
 
-    if (std::exchange(m_isSticking, isSticking))
-        return;
+    m_isSticking = isSticking;
 
     RefPtr scrollingTree = this->scrollingTree();
     if (!scrollingTree)
         return;
 
-    ensureOnMainRunLoop([scrollingTree = WTFMove(scrollingTree), nodeID = scrollingNodeID()] {
-        scrollingTree->stickyScrollingTreeNodeBeganSticking(nodeID);
+    ensureOnMainRunLoop([scrollingTree = WTF::move(scrollingTree), nodeID = scrollingNodeID(), isSticking] {
+        if (isSticking)
+            scrollingTree->stickyScrollingTreeNodeBeganSticking(nodeID);
+#if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
+        else
+            scrollingTree->stickyScrollingTreeNodeEndedSticking(nodeID);
+#endif
     });
 }
 
@@ -122,5 +137,3 @@ FloatPoint ScrollingTreeStickyNodeCocoa::layerTopLeft() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ASYNC_SCROLLING)

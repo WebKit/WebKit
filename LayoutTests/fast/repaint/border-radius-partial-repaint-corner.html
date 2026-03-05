@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body { margin: 0; }
+#trigger {
+    position: absolute;
+    top: 65px;
+    left: 65px;
+    width: 20px;
+    height: 20px;
+    background: white;
+}
+#bordered {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 200px;
+    height: 200px;
+    border: 20px solid black;
+    border-radius: 40px;
+    background: white;
+}
+</style>
+<div id="trigger"></div>
+<div id="bordered"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+}
+
+window.addEventListener('load', async () => {
+    await UIHelper.renderingUpdate();
+
+    document.getElementById('trigger').style.backgroundColor = 'lightgray';
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

@@ -50,7 +50,6 @@ public:
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // HeapBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<void> enable() override;
     Inspector::Protocol::ErrorStringOr<void> disable() override;
 
 protected:

@@ -35,6 +35,6 @@ class ScriptExecutionContext;
 class VisitorCallback;
 struct SubscribeOptions;
 
-void createInternalObserverOperatorForEach(ScriptExecutionContext&, Observable&, Ref<VisitorCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+void createInternalObserverOperatorForEach(ScriptExecutionContext&, Observable&, Ref<VisitorCallback>&&, SubscribeOptions&&, Ref<DeferredPromise>&&);
 
 } // namespace WebCore

@@ -26,6 +26,7 @@
 #ifndef PAS_SMALL_LARGE_MAP_ENTRY_H
 #define PAS_SMALL_LARGE_MAP_ENTRY_H
 
+#include "pas_internal_config.h"
 #include "pas_large_map_entry.h"
 #include "pas_utils.h"
 
@@ -106,6 +107,13 @@ static inline pas_large_heap* pas_small_large_map_entry_heap(pas_small_large_map
     return (pas_large_heap*)((uintptr_t)entry.encoded_heap * PAS_INTERNAL_MIN_ALIGN);
 }
 
+static inline bool pas_small_large_map_entry_delegated_to_system_malloc(
+    pas_small_large_map_entry entry)
+{
+    PAS_UNUSED_PARAM(entry);
+    return false;
+}
+
 static inline pas_large_map_entry pas_small_large_map_entry_get_entry(
     pas_small_large_map_entry entry)
 {
@@ -113,6 +121,7 @@ static inline pas_large_map_entry pas_small_large_map_entry_get_entry(
     result.begin = pas_small_large_map_entry_begin(entry);
     result.end = pas_small_large_map_entry_end(entry);
     result.heap = pas_small_large_map_entry_heap(entry);
+    result.delegated_to_system_malloc = pas_small_large_map_entry_delegated_to_system_malloc(entry);
     return result;
 }
 
@@ -122,7 +131,8 @@ static inline bool pas_small_large_map_entry_can_create(pas_large_map_entry entr
     result = pas_small_large_map_entry_create(entry);
     return entry.begin == pas_small_large_map_entry_begin(result)
         && entry.end == pas_small_large_map_entry_end(result)
-        && entry.heap == pas_small_large_map_entry_heap(result);
+        && entry.heap == pas_small_large_map_entry_heap(result)
+        && entry.delegated_to_system_malloc == pas_small_large_map_entry_delegated_to_system_malloc(result);
 }
 
 PAS_END_EXTERN_C;

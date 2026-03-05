@@ -47,9 +47,9 @@ public:
         uint32_t pathIndex { 0 };
 
         NodePathComponent(String&& elementIdentifier, String&& name, String&& data, uint32_t index)
-            : identifier(WTFMove(elementIdentifier))
-            , nodeName(WTFMove(name))
-            , textData(WTFMove(data))
+            : identifier(WTF::move(elementIdentifier))
+            , nodeName(WTF::move(name))
+            , textData(WTF::move(data))
             , pathIndex(index)
         {
         }
@@ -70,11 +70,11 @@ public:
     AppHighlightRangeData(const AppHighlightRangeData&) = default;
     AppHighlightRangeData() = default;
     AppHighlightRangeData(String&& identifier, String&& text, NodePath&& startContainer, uint64_t startOffset, NodePath&& endContainer, uint64_t endOffset)
-        : m_identifier(WTFMove(identifier))
-        , m_text(WTFMove(text))
-        , m_startContainer(WTFMove(startContainer))
+        : m_identifier(WTF::move(identifier))
+        , m_text(WTF::move(text))
+        , m_startContainer(WTF::move(startContainer))
         , m_startOffset(startOffset)
-        , m_endContainer(WTFMove(endContainer))
+        , m_endContainer(WTF::move(endContainer))
         , m_endOffset(endOffset)
     {
     }
@@ -91,11 +91,11 @@ public:
 
     AppHighlightRangeData& operator=(const AppHighlightRangeData&) = default;
 
-    const String& identifier() const { return m_identifier; }
-    const String& text() const { return m_text; }
-    const NodePath& startContainer() const { return m_startContainer; }
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
+    const NodePath& startContainer() const LIFETIME_BOUND { return m_startContainer; }
     uint32_t startOffset() const { return m_startOffset; }
-    const NodePath& endContainer() const { return m_endContainer; }
+    const NodePath& endContainer() const LIFETIME_BOUND { return m_endContainer; }
     uint32_t endOffset() const { return m_endOffset; }
 
     Ref<SharedBuffer> toSharedBuffer() const;

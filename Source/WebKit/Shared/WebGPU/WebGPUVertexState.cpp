@@ -47,12 +47,12 @@ std::optional<VertexState> ConvertToBackingContext::convertToBacking(const WebCo
             auto convertedBuffer = convertToBacking(*buffer);
             if (!convertedBuffer)
                 return std::nullopt;
-            buffers.append(WTFMove(convertedBuffer));
+            buffers.append(WTF::move(convertedBuffer));
         } else
             buffers.append(std::nullopt);
     }
 
-    return { { WTFMove(*base), WTFMove(buffers) } };
+    return { { WTF::move(*base), WTF::move(buffers) } };
 }
 
 std::optional<WebCore::WebGPU::VertexState> ConvertFromBackingContext::convertFromBacking(const VertexState& vertexState)
@@ -68,12 +68,12 @@ std::optional<WebCore::WebGPU::VertexState> ConvertFromBackingContext::convertFr
             auto buffer = convertFromBacking(*backingBuffer);
             if (!buffer)
                 return std::nullopt;
-            buffers.append(WTFMove(*buffer));
+            buffers.append(WTF::move(*buffer));
         } else
             buffers.append(std::nullopt);
     }
 
-    return { { WTFMove(*base), WTFMove(buffers) } };
+    return { { WTF::move(*base), WTF::move(buffers) } };
 }
 
 } // namespace WebKit

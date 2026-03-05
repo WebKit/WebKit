@@ -42,6 +42,7 @@
 #include "NavigationDisabler.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderWidgetInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
@@ -81,11 +82,6 @@ CachedFrameBase::~CachedFrameBase()
     ASSERT(!m_document);
 }
 
-RefPtr<FrameView> CachedFrameBase::protectedView() const
-{
-    return m_view;
-}
-
 void CachedFrameBase::pruneDetachedChildFrames()
 {
     m_childFrames.removeAllMatching([] (auto& childFrame) {
@@ -123,7 +119,7 @@ void CachedFrameBase::restore()
         // It is necessary to update any platform script objects after restoring the
         // cached page.
         if (localFrame) {
-            localFrame->checkedScript()->updatePlatformScriptObjects();
+            protect(localFrame->script())->updatePlatformScriptObjects();
             localFrame->loader().client().didRestoreFromBackForwardCache();
         }
 
@@ -132,7 +128,7 @@ void CachedFrameBase::restore()
         // Reconstruct the FrameTree. And open the child CachedFrames in their respective FrameLoaders.
         for (auto& childFrame : m_childFrames) {
             ASSERT(childFrame->view()->frame().page());
-            frame->tree().appendChild(childFrame->view()->frame());
+            frame->tree().appendChild(protect(protect(childFrame->view())->frame()));
             childFrame->open();
             if (localFrame)
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_document == localFrame->document());
@@ -154,7 +150,7 @@ void CachedFrameBase::restore()
 #endif
 
     if (localFrame)
-        localFrame->protectedView()->didRestoreFromBackForwardCache();
+        protect(localFrame->view())->didRestoreFromBackForwardCache();
 }
 
 CachedFrame::CachedFrame(Frame& frame)
@@ -171,8 +167,9 @@ CachedFrame::CachedFrame(Frame& frame)
         m_childFrames.append(makeUniqueRef<CachedFrame>(*child));
 
     if (document) {
-        RELEASE_ASSERT(document->window());
-        RELEASE_ASSERT(document->window()->frame());
+        RefPtr window = document->window();
+        RELEASE_ASSERT(window);
+        RELEASE_ASSERT(window->frame());
 
         // Active DOM objects must be suspended before we cache the frame script data.
         document->suspend(ReasonForSuspension::BackForwardCache);
@@ -182,7 +179,7 @@ CachedFrame::CachedFrame(Frame& frame)
     m_cachedFrameScriptData = localFrame ? makeUnique<ScriptCachedFrameData>(*localFrame) : nullptr;
 
     if (document)
-        document->protectedWindow()->suspendForBackForwardCache();
+        protect(document->window())->suspendForBackForwardCache();
 
     // Clear FrameView to reset flags such as 'firstVisuallyNonEmptyLayoutCallbackPending' so that the
     // 'DidFirstVisuallyNonEmptyLayout' callback gets called against when restoring from the BackForwardCache.
@@ -230,7 +227,8 @@ CachedFrame::CachedFrame(Frame& frame)
     if (document)
         document->detachFromCachedFrame(*this);
 
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_documentLoader || !m_documentLoader->isLoading());
+    RefPtr loader = m_documentLoader;
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!loader || !loader->isLoading());
 }
 
 void CachedFrame::open()
@@ -239,7 +237,7 @@ void CachedFrame::open()
     ASSERT(m_document || is<RemoteFrameView>(m_view.get()));
 
     if (RefPtr localFrameView = dynamicDowncast<LocalFrameView>(m_view.get()))
-        localFrameView->protectedFrame()->loader().open(*this);
+        protect(localFrameView->frame())->loader().open(*this);
 }
 
 void CachedFrame::clear()
@@ -277,11 +275,12 @@ void CachedFrame::destroy()
     ASSERT(m_view);
     ASSERT(!document->frame());
 
-    document->protectedWindow()->willDestroyCachedFrame();
+    protect(document->window())->willDestroyCachedFrame();
 
-    Ref frame = m_view->frame();
-    if (!m_isMainFrame && m_view->frame().page()) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get()))
+    RefPtr view = m_view;
+    Ref frame = view->frame();
+    if (!m_isMainFrame && frame->page()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
             localFrame->loader().detachViewsAndDocumentLoader();
         frame->detachFromPage();
     }
@@ -292,7 +291,7 @@ void CachedFrame::destroy()
     if (m_cachedFramePlatformData)
         m_cachedFramePlatformData->clear();
 
-    if (RefPtr localFrameView = dynamicDowncast<LocalFrameView>(m_view.get()); localFrameView)
+    if (RefPtr localFrameView = dynamicDowncast<LocalFrameView>(view); localFrameView)
         LocalFrame::clearTimers(localFrameView.get(), document.get());
 
     // FIXME: Why do we need to call removeAllEventListeners here? When the document is in back/forward cache, this method won't work
@@ -307,7 +306,7 @@ void CachedFrame::destroy()
 
 void CachedFrame::setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData> data)
 {
-    m_cachedFramePlatformData = WTFMove(data);
+    m_cachedFramePlatformData = WTF::move(data);
 }
 
 CachedFramePlatformData* CachedFrame::cachedFramePlatformData()
@@ -341,7 +340,7 @@ UsedLegacyTLS CachedFrame::usedLegacyTLS() const
 // FIXME: Remove all uses of HasInsecureContent across the codebase since we no longer allow insecure content.
 HasInsecureContent CachedFrame::hasInsecureContent() const
 {
-    if (auto* document = this->document()) {
+    if (RefPtr document = this->document()) {
         if (!document->isSecureContext())
             return HasInsecureContent::Yes;
     }

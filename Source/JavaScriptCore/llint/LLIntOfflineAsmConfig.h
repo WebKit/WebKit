@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,11 @@
 
 #pragma once
 
-#include <JavaScriptCore/InPlaceInterpreter.h>
+#include "InPlaceInterpreter.h"
 #include <JavaScriptCore/LLIntCommon.h>
 #include <JavaScriptCore/StructureID.h>
 #include <wtf/Assertions.h>
 #include <wtf/Gigacage.h>
-
-#define OFFLINE_ASM_UseCompressedHeap USE_COMPRESSED_HEAP
 
 #if ENABLE(C_LOOP)
 #define OFFLINE_ASM_C_LOOP 1
@@ -115,12 +113,6 @@
 #define OFFLINE_ASM_ADDRESS64 1
 #else
 #define OFFLINE_ASM_ADDRESS64 0
-#endif
-
-#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-#define OFFLINE_ASM_STRUCTURE_ID_WITH_SHIFT 1
-#else
-#define OFFLINE_ASM_STRUCTURE_ID_WITH_SHIFT 0
 #endif
 
 #if ASSERT_ENABLED

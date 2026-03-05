@@ -9,10 +9,10 @@
  */
 #include "api/test/time_controller.h"
 
-#include <functional>
 #include <memory>
 
 #include "absl/strings/string_view.h"
+#include "api/function_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
@@ -34,8 +34,15 @@ std::unique_ptr<TaskQueueFactory> TimeController::CreateTaskQueueFactory() {
   };
   return std::make_unique<FactoryWrapper>(GetTaskQueueFactory());
 }
-bool TimeController::Wait(const std::function<bool()>& condition,
+bool TimeController::Wait(FunctionView<bool()> condition,
                           TimeDelta max_duration) {
+  if (condition()) {
+    return true;
+  }
+  // Run pending tasks first as they might change result of the `condition` and
+  // thus avoid unnecessary advancing time.
+  AdvanceTime(TimeDelta::Zero());
+
   // Step size is chosen to be short enough to not significantly affect latency
   // in real time tests while being long enough to avoid adding too much load to
   // the system.

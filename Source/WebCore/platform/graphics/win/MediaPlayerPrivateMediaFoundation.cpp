@@ -70,10 +70,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateMediaFoundation::Direct3DPresent
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateMediaFoundation::CustomVideoPresenter);
 
 class MediaPlayerPrivateMediaFoundation::AsyncCallback : public IMFAsyncCallback {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerPrivateMediaFoundationAsyncCallback);
+    WTF_MAKE_TZONE_ALLOCATED(AsyncCallback);
 public:
     AsyncCallback(Function<void(IMFAsyncResult*)>&& callback)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
     {
     }
 
@@ -118,6 +118,8 @@ private:
     Function<void(IMFAsyncResult*)> m_callback;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateMediaFoundation::AsyncCallback);
+
 MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation(MediaPlayer& player)
     : m_weakThis(this)
     , m_player(player)
@@ -140,6 +142,8 @@ MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation()
 }
 
 class MediaPlayerFactoryMediaFoundation final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerFactoryMediaFoundation);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlayerFactoryMediaFoundation);
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::MediaFoundation; };
 
@@ -158,6 +162,8 @@ private:
         return MediaPlayerPrivateMediaFoundation::supportsType(parameters);
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerFactoryMediaFoundation);
 
 void MediaPlayerPrivateMediaFoundation::registerMediaEngine(MediaEngineRegistrar registrar)
 {
@@ -349,7 +355,7 @@ MediaTime MediaPlayerPrivateMediaFoundation::currentTime() const
     if (m_buffered.length() && currentTime > m_buffered.maximumBufferedTime()) {
         PlatformTimeRanges ranges;
         ranges.add(MediaTime::zeroTime(), currentTime);
-        m_buffered = WTFMove(ranges);
+        m_buffered = WTF::move(ranges);
     }
     return currentTime;
 }
@@ -598,10 +604,10 @@ bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url
         hr = asyncResult->GetStatus();
         bool loadingProgress = SUCCEEDED(hr);
 
-        callOnMainThread([this, weakThis, mediaSource = WTFMove(mediaSource), loadingProgress]() mutable {
+        callOnMainThread([this, weakThis, mediaSource = WTF::move(mediaSource), loadingProgress]() mutable {
             if (!weakThis)
                 return;
-            onCreatedMediaSource(WTFMove(mediaSource), loadingProgress);
+            onCreatedMediaSource(WTF::move(mediaSource), loadingProgress);
         });
     }));
 
@@ -848,7 +854,7 @@ COMPtr<IMFVideoDisplayControl> MediaPlayerPrivateMediaFoundation::videoDisplay()
 void MediaPlayerPrivateMediaFoundation::onCreatedMediaSource(COMPtr<IMFMediaSource>&& mediaSource, bool loadingProgress)
 {
     m_loadingProgress = loadingProgress;
-    m_mediaSource = WTFMove(mediaSource);
+    m_mediaSource = WTF::move(mediaSource);
 
     if (!createTopologyFromSource())
         return;
@@ -2865,7 +2871,7 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Gra
     auto imageInfo = SkImageInfo::Make(width, height, colorType, kUnpremul_SkAlphaType);
     auto pixmap = SkPixmap(imageInfo, wholeOutput.data(), pitchInByte);
     auto skImage = SkImages::RasterFromPixmap(pixmap, nullptr, nullptr);
-    auto image = NativeImage::create(WTFMove(skImage));
+    auto image = NativeImage::create(WTF::move(skImage));
     FloatRect srcRect(0, 0, width, height);
     context.drawNativeImage(*image, destRect, srcRect);
 

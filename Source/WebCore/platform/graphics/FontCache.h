@@ -110,7 +110,7 @@ struct FontCachePrewarmInformation {
 
     bool isEmpty() const;
     FontCachePrewarmInformation isolatedCopy() const & { return { crossThreadCopy(seenFamilies), crossThreadCopy(fontNamesRequiringSystemFallback) }; }
-    FontCachePrewarmInformation isolatedCopy() && { return { crossThreadCopy(WTFMove(seenFamilies)), crossThreadCopy(WTFMove(fontNamesRequiringSystemFallback)) }; }
+    FontCachePrewarmInformation isolatedCopy() && { return { crossThreadCopy(WTF::move(seenFamilies)), crossThreadCopy(WTF::move(fontNamesRequiringSystemFallback)) }; }
 };
 
 enum class FontLookupOptions : uint8_t {

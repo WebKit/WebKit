@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FileHandle.h"
+#include <wtf/FileHandle.h>
 
 #include <wtf/FileSystem.h>
 #include <wtf/MappedFileData.h>

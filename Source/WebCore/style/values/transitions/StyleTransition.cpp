@@ -40,7 +40,7 @@ Transition::Transition()
 Transition::Transition(SingleTransitionProperty&& property)
     : Transition { }
 {
-    setProperty(WTFMove(property));
+    setProperty(WTF::move(property));
 }
 
 Transition::Data::Data()

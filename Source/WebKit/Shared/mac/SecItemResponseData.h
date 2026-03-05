@@ -42,7 +42,7 @@ public:
     >;
     SecItemResponseData(OSStatus code, Result&& result)
         : m_resultCode(code)
-        , m_resultObject(WTFMove(result)) { }
+        , m_resultObject(WTF::move(result)) { }
 
     Result& resultObject() { return m_resultObject; }
     const Result& resultObject() const { return m_resultObject; }

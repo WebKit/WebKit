@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "absl/memory/memory.h"
-#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 
@@ -22,16 +21,9 @@ RtcEventProbeResultSuccess::RtcEventProbeResultSuccess(int32_t id,
                                                        int32_t bitrate_bps)
     : id_(id), bitrate_bps_(bitrate_bps) {}
 
-RtcEventProbeResultSuccess::RtcEventProbeResultSuccess(
-    const RtcEventProbeResultSuccess& other)
-    : RtcEvent(other.timestamp_us_),
-      id_(other.id_),
-      bitrate_bps_(other.bitrate_bps_) {}
-
 std::unique_ptr<RtcEventProbeResultSuccess> RtcEventProbeResultSuccess::Copy()
     const {
-  return absl::WrapUnique<RtcEventProbeResultSuccess>(
-      new RtcEventProbeResultSuccess(*this));
+  return absl::WrapUnique(new RtcEventProbeResultSuccess(*this));
 }
 
 }  // namespace webrtc

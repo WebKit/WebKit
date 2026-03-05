@@ -184,10 +184,11 @@ TEST(BweRampupTest, RampUpWithUndemuxableRtpPackets) {
   DataRate initial_bwe = GetAvailableSendBitrate(GetStatsAndProcess(s, caller));
   s.ProcessMessages(TimeDelta::Seconds(2));
 
+  // Since the packets are undemuxable, no packets will be received preventing
+  // the inbound-rtp stats entry from being created.
   auto callee_inbound_stats =
       GetStatsAndProcess(s, callee)->GetStatsOfType<RTCInboundRtpStreamStats>();
-  ASSERT_THAT(callee_inbound_stats, SizeIs(1));
-  ASSERT_EQ(*callee_inbound_stats[0]->frames_received, 0u);
+  ASSERT_THAT(callee_inbound_stats, SizeIs(0));
 
   DataRate final_bwe = GetAvailableSendBitrate(GetStatsAndProcess(s, caller));
   // Ensure BWE has increased from the initial BWE. BWE will not increase unless

@@ -91,10 +91,10 @@ AV1_INSTANTIATE_TEST_SUITE(QMTest, ::testing::ValuesIn(kTestMode),
                            ::testing::Range(5, 9));
 
 #if !CONFIG_REALTIME_ONLY
-typedef struct {
+struct QuantParam {
   const unsigned int min_q;
   const unsigned int max_q;
-} QuantParam;
+};
 
 const QuantParam QuantTestParams[] = {
   { 0, 10 }, { 0, 60 }, { 20, 35 }, { 35, 50 }, { 50, 63 }

@@ -39,7 +39,7 @@ optimization internally.
    command buffer into vulkan's primary command buffer, puts secondary command buffer back to
 unstarted state and then goes into recycler for reuse.
 
-The back-end (mostly) records Image and Buffer barriers through additional `CommandBufferAccess`
+The back-end (mostly) records Image and Buffer barriers through additional `CommandResources`
 APIs, the result of which is passed to `getOutsideRenderPassCommandBuffer`.  Note that the barriers
 are not actually recorded until `getOutsideRenderPassCommandBuffer` is called:
 
@@ -62,13 +62,13 @@ In this example we'll be recording a buffer copy command:
 
 ```
     // Ensure that ANGLE sets proper read and write barriers for the Buffers.
-    vk::CommandBufferAccess access;
-    access.onBufferTransferWrite(dstBuffer);
-    access.onBufferTransferRead(srcBuffer);
+    vk::CommandResources resources;
+    resources.onBufferTransferWrite(dstBuffer);
+    resources.onBufferTransferRead(srcBuffer);
 
     // Get a pointer to a secondary command buffer for command recording.
     vk::OutsideRenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
     // Record the copy command into the secondary buffer. We're done!
     commandBuffer->copyBuffer(srcBuffer->getBuffer(), dstBuffer->getBuffer(), copyCount, copies);

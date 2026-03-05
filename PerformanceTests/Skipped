@@ -128,6 +128,24 @@ MediaTime/
 [GTK] IndexedDB/basic/index-cursor-delete.html
 [GTK] IndexedDB/basic/index-cursor-update.html
 
+# Bug 303226 - [GTK] More IndexedDB performance test timeouts
+[GTK] IndexedDB/basic/index-cursor-delete-2.html
+[GTK] IndexedDB/basic/index-multientry.html
+[GTK] IndexedDB/basic/objectstore-add.html
+[GTK] IndexedDB/basic/objectstore-clear.html
+[GTK] IndexedDB/basic/objectstore-cursor-delete.html
+[GTK] IndexedDB/basic/objectstore-cursor-update.html
+[GTK] IndexedDB/basic/objectstore-delete.html
+[GTK] IndexedDB/basic/objectstore-put.html
+[GTK] IndexedDB/stress/large-array-keys.html
+[GTK] IndexedDB/stress/large-number-of-inserts-responsiveness.html
+[GTK] IndexedDB/stress/large-string-keys.html
+
+# Bug 303227 - [GTK] 3 canvas performance tests timeout
+[GTK] Canvas/compositing-fillRect.html
+[GTK] Canvas/drawImageSourceImageBitmapOffscreenCanvasWebGL.html
+[GTK] Canvas/drawImageSourceVideoFrameOffscreenCanvasWebGL.html
+
 # Bug 203229 - [GTK] Perf test SVG/UnderTheSeeBenchmark.html timeouts
 [GTK] SVG/UnderTheSeeBenchmark.html
 

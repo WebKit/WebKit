@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAltGlyphElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAltGlyphElement);
 
 inline SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document& document)
     : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -76,7 +76,7 @@ bool SVGAltGlyphElement::childShouldCreateRenderer(const Node& child) const
 
 RenderPtr<RenderElement> SVGAltGlyphElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTSpan>(*this, WTFMove(style));
+    return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
 }
 
 bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const

@@ -78,7 +78,7 @@ void WebNotificationManagerProxy::setProvider(std::unique_ptr<API::NotificationP
         return;
     }
 
-    m_provider = WTFMove(provider);
+    m_provider = WTF::move(provider);
     m_provider->addNotificationManager(*this);
 }
 
@@ -89,22 +89,12 @@ void WebNotificationManagerProxy::processPoolDestroyed()
     m_provider->removeNotificationManager(*this);
 }
 
-void WebNotificationManagerProxy::refWebContextSupplement()
-{
-    API::Object::ref();
-}
-
-void WebNotificationManagerProxy::derefWebContextSupplement()
-{
-    API::Object::deref();
-}
-
 HashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
 {
     return m_provider->notificationPermissions();
 }
 
-static std::optional<WebPageProxyIdentifier> identifierForPagePointer(WebPageProxy* webPage)
+static std::optional<WebPageProxyIdentifier> NODELETE identifierForPagePointer(WebPageProxy* webPage)
 {
     return webPage ? std::optional { webPage->identifier() } : std::nullopt;
 }
@@ -114,7 +104,7 @@ void WebNotificationManagerProxy::show(WebPageProxy* webPage, IPC::Connection& c
     LOG(Notifications, "WebPageProxy (%p) asking to show notification (%s)", webPage, notificationData.notificationID.toString().utf8().data());
 
     auto notification = WebNotification::createNonPersistent(notificationData, identifierForPagePointer(webPage), connection);
-    showImpl(webPage, WTFMove(notification), WTFMove(notificationResources));
+    showImpl(webPage, WTF::move(notification), WTF::move(notificationResources));
 }
 
 bool WebNotificationManagerProxy::showPersistent(const WebsiteDataStore& dataStore, IPC::Connection* connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources>&& notificationResources)
@@ -122,14 +112,14 @@ bool WebNotificationManagerProxy::showPersistent(const WebsiteDataStore& dataSto
     LOG(Notifications, "WebsiteDataStore (%p) asking to show notification (%s)", &dataStore, notificationData.notificationID.toString().utf8().data());
 
     auto notification = WebNotification::createPersistent(notificationData, dataStore.configuration().identifier(), connection);
-    return showImpl(nullptr, WTFMove(notification), WTFMove(notificationResources));
+    return showImpl(nullptr, WTF::move(notification), WTF::move(notificationResources));
 }
 
 bool WebNotificationManagerProxy::showImpl(WebPageProxy* webPage, Ref<WebNotification>&& notification, RefPtr<WebCore::NotificationResources>&& notificationResources)
 {
     m_globalNotificationMap.set(notification->identifier(), notification->coreNotificationID());
     m_notifications.set(notification->coreNotificationID(), notification);
-    return m_provider->show(webPage, notification.get(), WTFMove(notificationResources));
+    return m_provider->show(webPage, notification.get(), WTF::move(notificationResources));
 }
 
 void WebNotificationManagerProxy::cancel(WebPageProxy* page, const WTF::UUID& pageNotificationID)
@@ -212,7 +202,7 @@ static void dispatchDidClickNotification(WebNotification* notification)
 
     if (notification->isPersistentNotification()) {
         if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
-            dataStore->protectedNetworkProcess()->processNotificationEvent(notification->data(), NotificationEventType::Click, [](bool) { });
+            protect(dataStore->networkProcess())->processNotificationEvent(notification->data(), NotificationEventType::Click, [](bool) { });
         else
             RELEASE_LOG_ERROR(Notifications, "WebsiteDataStore not found from sessionID %" PRIu64 ", dropping notification click", notification->sessionID().toUInt64());
         return;
@@ -238,7 +228,7 @@ void WebNotificationManagerProxy::providerDidClickNotification(const WTF::UUID& 
 
 void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* globalNotificationIDs)
 {
-    Vector<RefPtr<WebNotification>> closedNotifications;
+    Vector<Ref<WebNotification>> closedNotifications;
 
     size_t size = globalNotificationIDs->size();
     for (size_t i = 0; i < size; ++i) {
@@ -273,14 +263,14 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
 
         if (notification->isPersistentNotification()) {
             if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
-                dataStore->protectedNetworkProcess()->processNotificationEvent(notification->data(), NotificationEventType::Close, [](bool) { });
+                protect(dataStore->networkProcess())->processNotificationEvent(notification->data(), NotificationEventType::Close, [](bool) { });
             else
                 RELEASE_LOG_ERROR(Notifications, "WebsiteDataStore not found from sessionID %" PRIu64 ", dropping notification close", notification->sessionID().toUInt64());
             return;
         }
 
         m_globalNotificationMap.remove(notification->identifier());
-        closedNotifications.append(WTFMove(notification));
+        closedNotifications.append(notification.releaseNonNull());
     }
 
     for (auto& notification : closedNotifications) {
@@ -296,7 +286,7 @@ static void setPushesAndNotificationsEnabledForOrigin(const WebCore::SecurityOri
 {
     WebsiteDataStore::forEachWebsiteDataStore([&origin, enabled](WebsiteDataStore& dataStore) {
         if (dataStore.isPersistent())
-            dataStore.protectedNetworkProcess()->setPushAndNotificationsEnabledForOrigin(dataStore.sessionID(), origin, enabled, []() { });
+            protect(dataStore.networkProcess())->setPushAndNotificationsEnabledForOrigin(dataStore.sessionID(), origin, enabled, []() { });
     });
 }
 
@@ -305,7 +295,7 @@ static void removePushSubscriptionsForOrigins(const Vector<WebCore::SecurityOrig
     WebsiteDataStore::forEachWebsiteDataStore([&origins](WebsiteDataStore& dataStore) {
         if (dataStore.isPersistent()) {
             for (auto& origin : origins)
-                dataStore.protectedNetworkProcess()->removePushSubscriptionsForOrigin(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
+                protect(dataStore.networkProcess())->removePushSubscriptionsForOrigin(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
         }
     });
 }

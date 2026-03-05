@@ -43,7 +43,7 @@ class Navigator final
     , public LocalDOMWindowProperty
     , public Supplementable<Navigator>
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Navigator);
+    WTF_MAKE_TZONE_ALLOCATED(Navigator);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Navigator);
 public:
     static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
@@ -67,16 +67,14 @@ public:
     bool standalone() const;
 #endif
 
-    int maxTouchPoints() const;
+    int NODELETE maxTouchPoints() const;
 
     WEBCORE_EXPORT GPU* gpu();
 
     Page* page();
-    RefPtr<Page> protectedPage();
 
     const Document* document() const;
     Document* document();
-    RefPtr<Document> protectedDocument();
 
     void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(Ref<DeferredPromise>&&);

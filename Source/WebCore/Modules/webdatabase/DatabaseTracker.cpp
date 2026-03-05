@@ -380,7 +380,7 @@ Vector<SecurityOriginData> DatabaseTracker::origins()
     int stepResult;
     while ((stepResult = statement->step()) == SQLITE_ROW) {
         if (auto origin = SecurityOriginData::fromDatabaseIdentifier(statement->columnText(0)))
-            origins.append(WTFMove(origin).value().isolatedCopy());
+            origins.append(WTF::move(origin).value().isolatedCopy());
     }
     origins.shrinkToFit();
 
@@ -509,8 +509,8 @@ void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const
         return;
     }
 
-    if (m_client)
-        m_client->dispatchDidModifyDatabase(origin, name);
+    if (RefPtr client = m_client.get())
+        client->dispatchDidModifyDatabase(origin, name);
 }
 
 void DatabaseTracker::doneCreatingDatabase(Database& database)
@@ -695,10 +695,10 @@ void DatabaseTracker::setQuota(const SecurityOriginData& origin, uint64_t quota)
             LOG_ERROR("Failed to set quota %" PRIu64 " in tracker database for origin %s", quota, origin.databaseIdentifier().utf8().data());
     }
 
-    if (m_client) {
+    if (RefPtr client = m_client.get()) {
         if (insertedNewOrigin)
-            m_client->dispatchDidAddNewOrigin();
-        m_client->dispatchDidModifyOrigin(origin);
+            client->dispatchDidAddNewOrigin();
+        client->dispatchDidModifyOrigin(origin);
     }
 }
 
@@ -726,8 +726,8 @@ bool DatabaseTracker::addDatabase(const SecurityOriginData& origin, const String
         return false;
     }
 
-    if (m_client)
-        m_client->dispatchDidModifyOrigin(origin);
+    if (RefPtr client = m_client.get())
+        client->dispatchDidModifyOrigin(origin);
 
     return true;
 }
@@ -896,11 +896,11 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
            SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectoryPath);
         }
 
-        if (m_client) {
-            m_client->dispatchDidModifyOrigin(origin);
-            m_client->dispatchDidDeleteDatabaseOrigin();
+        if (RefPtr client = m_client.get()) {
+            client->dispatchDidModifyOrigin(origin);
+            client->dispatchDidDeleteDatabaseOrigin();
             for (auto& name : databaseNames)
-                m_client->dispatchDidModifyDatabase(origin, name);
+                client->dispatchDidModifyDatabase(origin, name);
         }
     }
     return true;
@@ -1057,10 +1057,10 @@ bool DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const Str
         return false;
     }
 
-    if (m_client) {
-        m_client->dispatchDidModifyOrigin(origin);
-        m_client->dispatchDidModifyDatabase(origin, name);
-        m_client->dispatchDidDeleteDatabase();
+    if (RefPtr client = m_client.get()) {
+        client->dispatchDidModifyOrigin(origin);
+        client->dispatchDidModifyDatabase(origin, name);
+        client->dispatchDidDeleteDatabase();
     }
     doneDeletingDatabase(origin, name);
     
@@ -1181,18 +1181,19 @@ void DatabaseTracker::removeDeletedOpenedDatabases() WTF_IGNORES_THREAD_SAFETY_A
             }
 
             if (!deletedDatabaseNamesForThisOrigin.isEmpty())
-                deletedDatabaseNames.append({ origin, WTFMove(deletedDatabaseNamesForThisOrigin) });
+                deletedDatabaseNames.append({ origin, WTF::move(deletedDatabaseNamesForThisOrigin) });
         }
     }
     
     for (auto& deletedDatabase : deletedDatabases)
         deletedDatabase->markAsDeletedAndClose();
 
+    RefPtr client = m_client.get();
     for (auto& deletedDatabase : deletedDatabaseNames) {
         auto& origin = deletedDatabase.first;
-        m_client->dispatchDidModifyOrigin(origin);
+        client->dispatchDidModifyOrigin(origin);
         for (auto& databaseName : deletedDatabase.second)
-            m_client->dispatchDidModifyDatabase(origin, databaseName);
+            client->dispatchDidModifyDatabase(origin, databaseName);
     }
 }
     
@@ -1268,7 +1269,7 @@ static Lock notificationLock;
 
 using NotificationQueue = Vector<std::pair<SecurityOriginData, String>>;
 
-static NotificationQueue& notificationQueue()
+static NotificationQueue& NODELETE notificationQueue()
 {
     static NeverDestroyed<NotificationQueue> queue;
     return queue;
@@ -1308,11 +1309,12 @@ void DatabaseTracker::notifyDatabasesChanged()
         notificationScheduled = false;
     }
 
-    if (!tracker.m_client)
+    RefPtr client = tracker.m_client.get();
+    if (!client)
         return;
 
     for (auto& notification : notifications)
-        tracker.m_client->dispatchDidModifyDatabase(notification.first, notification.second);
+        client->dispatchDidModifyDatabase(notification.first, notification.second);
 }
 
 

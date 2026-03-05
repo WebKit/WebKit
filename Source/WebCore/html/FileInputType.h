@@ -56,8 +56,7 @@ public:
     virtual ~FileInputType();
 
     String firstElementPathForInputValue() const; // Checked first, before internal storage or the value attribute.
-    FileList& files() { return m_fileList; }
-    Ref<FileList> protectedFiles() const { return m_fileList; }
+    FileList& files() const { return m_fileList; }
     void setFiles(RefPtr<FileList>&&, WasSetByJavaScript);
 
     static std::pair<Vector<FileChooserFileInfo>, String> filesFromFormControlState(const FormControlState&);
@@ -76,7 +75,7 @@ private:
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
     enum class RequestIcon : bool { No, Yes };
     void setFiles(RefPtr<FileList>&&, RequestIcon, WasSetByJavaScript);
-    String displayString() const final;
+    String NODELETE displayString() const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     void showPicker() final;
     bool allowsShowPickerAcrossFrames() final;
@@ -86,7 +85,7 @@ private:
     bool receiveDroppedFiles(const DragData&) final;
 #endif
 
-    Icon* icon() const final;
+    Icon* NODELETE icon() const final;
     void createShadowSubtree() final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
@@ -107,8 +106,6 @@ private:
     bool allowsDirectories() const;
 
     bool dirAutoUsesValue() const final;
-
-    RefPtr<FileChooser> protectedFileChooser() const { return m_fileChooser; }
 
     RefPtr<FileChooser> m_fileChooser;
     std::unique_ptr<FileIconLoader> m_fileIconLoader;

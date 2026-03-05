@@ -36,7 +36,7 @@ struct GlyphOverflow;
 typedef HashMap<const LegacyInlineTextBox*, std::pair<Vector<SingleThreadWeakPtr<const Font>>, GlyphOverflow>> GlyphOverflowAndFallbackFontsMap;
 
 class LegacyInlineFlowBox : public LegacyInlineBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineFlowBox);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyInlineFlowBox);
 public:
     explicit LegacyInlineFlowBox(RenderBoxModelObject& renderer)
         : LegacyInlineBox(renderer)
@@ -152,7 +152,7 @@ protected:
     // The following members are only used by RootInlineBox but moved here to keep the bits packed.
 
     // Whether or not this line uses alphabetic or ideographic baselines by default.
-    unsigned m_baselineType : 1 { enumToUnderlyingType(FontBaseline::Alphabetic) }; // FontBaseline
+    unsigned m_baselineType : 1 { std::to_underlying(FontBaseline::Alphabetic) }; // FontBaseline
 
     unsigned m_lineBreakBidiStatusEor : 5; // UCharDirection
     unsigned m_lineBreakBidiStatusLastStrong : 5; // UCharDirection

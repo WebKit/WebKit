@@ -96,6 +96,6 @@ static void webkit_clipboard_permission_request_class_init(WebKitClipboardPermis
 WebKitClipboardPermissionRequest* webkitClipboardPermissionRequestCreate(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     WebKitClipboardPermissionRequest* clipboardPermissionRequest = WEBKIT_CLIPBOARD_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_CLIPBOARD_PERMISSION_REQUEST, nullptr));
-    clipboardPermissionRequest->priv->completionHandler = WTFMove(completionHandler);
+    clipboardPermissionRequest->priv->completionHandler = WTF::move(completionHandler);
     return clipboardPermissionRequest;
 }

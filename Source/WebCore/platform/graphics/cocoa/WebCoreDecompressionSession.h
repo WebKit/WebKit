@@ -25,10 +25,9 @@
 
 #pragma once
 
-
+#include "MediaPromiseTypes.h"
+#include "ProcessIdentity.h"
 #include <CoreMedia/CMTime.h>
-#include <WebCore/MediaPromiseTypes.h>
-#include <WebCore/ProcessIdentity.h>
 #include <atomic>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>

@@ -23,6 +23,7 @@
 
 #if PLATFORM(MAC)
 
+#import "AttachmentLayout.h"
 #import "BitmapImage.h"
 #import "CSSPropertyNames.h"
 #import "CSSValueKeywords.h"
@@ -60,10 +61,12 @@
 #import "RenderMedia.h"
 #import "RenderMeter.h"
 #import "RenderSlider.h"
-#import "RenderStyleSetters.h"
+#import "RenderStyle+GettersInlines.h"
+#import "RenderStyle+SettersInlines.h"
 #import "RenderView.h"
 #import "SliderThumbElement.h"
 #import "StringTruncator.h"
+#import "StyleComputedStyle+InitialInlines.h"
 #import "StylePadding.h"
 #import "UTIUtilities.h"
 #import <Carbon/Carbon.h>
@@ -145,7 +148,7 @@ enum {
     leftPadding
 };
 
-RenderTheme& RenderTheme::singleton()
+RenderThemeMac& RenderTheme::singleton()
 {
     static NeverDestroyed<RenderThemeMac> theme;
     return theme;
@@ -843,7 +846,7 @@ static Style::PreferredSizePair sizeFromNSControlSize(NSControlSize nsControlSiz
         resultWidth = Style::PreferredSize::Fixed { static_cast<float>(controlSize.width()) };
     if (zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto() && controlSize.height() > 0)
         resultHeight = Style::PreferredSize::Fixed { static_cast<float>(controlSize.height()) };
-    return { WTFMove(resultWidth), WTFMove(resultHeight) };
+    return { WTF::move(resultWidth), WTF::move(resultHeight) };
 }
 
 static Style::PreferredSizePair sizeFromFont(const FontCascade& font, const Style::PreferredSizePair& zoomedSize, float zoomFactor, const std::span<const IntSize, 4> sizes)
@@ -853,7 +856,7 @@ static Style::PreferredSizePair sizeFromFont(const FontCascade& font, const Styl
 
 // Popup button
 
-static std::span<const int, 4> popupButtonMargins(NSControlSize size)
+static std::span<const int, 4> NODELETE popupButtonMargins(NSControlSize size)
 {
     static constexpr std::array margins {
         std::array { 0, 3, 1, 3 },
@@ -864,7 +867,7 @@ static std::span<const int, 4> popupButtonMargins(NSControlSize size)
     return margins[size];
 }
 
-static std::span<const IntSize, 4> popupButtonSizes()
+static std::span<const IntSize, 4> NODELETE popupButtonSizes()
 {
     static constexpr std::array sizes {
         IntSize { 0, 21 },
@@ -875,7 +878,7 @@ static std::span<const IntSize, 4> popupButtonSizes()
     return sizes;
 }
 
-static std::span<const int, 4> popupButtonPadding(NSControlSize size, bool isRTL)
+static std::span<const int, 4> NODELETE popupButtonPadding(NSControlSize size, bool isRTL)
 {
     static constexpr std::array paddingLTR {
         std::array { 2, 26, 3, 8 },
@@ -894,7 +897,7 @@ static std::span<const int, 4> popupButtonPadding(NSControlSize size, bool isRTL
 
 // Checkboxes and radio buttons
 
-static const std::span<const IntSize, 4> checkboxSizes()
+static const std::span<const IntSize, 4> NODELETE checkboxSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 14, 14 },
@@ -905,7 +908,7 @@ static const std::span<const IntSize, 4> checkboxSizes()
     return sizes;
 }
 
-static std::span<const int, 4> checkboxMargins(NSControlSize controlSize)
+static std::span<const int, 4> NODELETE checkboxMargins(NSControlSize controlSize)
 {
     static constexpr std::array margins {
         // top right bottom left
@@ -938,7 +941,7 @@ static const std::span<const IntSize, 4> radioSizes()
     return sizes;
 }
 
-static std::span<const int, 4> radioMargins(NSControlSize controlSize)
+static std::span<const int, 4> NODELETE radioMargins(NSControlSize controlSize)
 {
     static constexpr std::array margins {
         // top right bottom left
@@ -962,7 +965,7 @@ static Style::PreferredSizePair radioSize(const Style::PreferredSizePair& zoomed
 // Buttons
 
 // Buttons really only constrain height. They respect width.
-static const std::span<const IntSize, 4> buttonSizes()
+static const std::span<const IntSize, 4> NODELETE buttonSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 0, 20 },
@@ -973,7 +976,7 @@ static const std::span<const IntSize, 4> buttonSizes()
     return sizes;
 }
 
-static std::span<const int, 4> buttonMargins(NSControlSize controlSize)
+static std::span<const int, 4> NODELETE buttonMargins(NSControlSize controlSize)
 {
     // FIXME: These values may need to be reevaluated. They appear to have been originally chosen
     // to reflect the size of shadows around native form controls on macOS, but as of macOS 10.15,
@@ -989,7 +992,7 @@ static std::span<const int, 4> buttonMargins(NSControlSize controlSize)
 
 // Stepper
 
-static const std::span<const IntSize, 4> stepperSizes()
+static const std::span<const IntSize, 4> NODELETE stepperSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 19, 27 },
@@ -1016,7 +1019,7 @@ static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 
 // Switch
 
-static const std::span<const IntSize, 4> switchSizes()
+static const std::span<const IntSize, 4> NODELETE switchSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 38, 22 },
@@ -1027,7 +1030,7 @@ static const std::span<const IntSize, 4> switchSizes()
     return sizes;
 }
 
-static std::span<const int, 4> visualSwitchMargins(NSControlSize controlSize, bool isVertical)
+static std::span<const int, 4> NODELETE visualSwitchMargins(NSControlSize controlSize, bool isVertical)
 {
     static constexpr std::array switchMarginsNonMini { 2, 2, 1, 2 };
     static constexpr std::array switchMarginsMini { 1, 1, 0, 1 };
@@ -1229,8 +1232,8 @@ static void setFontFromControlSize(RenderStyle& style, NSControlSize controlSize
     fontDescription.setSpecifiedSize([font pointSize] * style.usedZoom());
 
     // Reset line height
-    style.setLineHeight(RenderStyle::initialLineHeight());
-    style.setFontDescription(WTFMove(fontDescription));
+    style.setLineHeight(Style::ComputedStyle::initialLineHeight());
+    style.setFontDescription(WTF::move(fontDescription));
 }
 
 void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element* element) const
@@ -1244,6 +1247,7 @@ void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element* el
     UNUSED_PARAM(element);
 #endif
 
+    style.setLogicalWidth(16_css_px);
     // Add a margin to place the button at end of the input field.
     style.setMarginEnd(-4_css_px / style.usedZoomForLength().value);
 }
@@ -1284,7 +1288,7 @@ void RenderThemeMac::createColorWellSwatchSubtree(HTMLElement& swatch)
 
 void RenderThemeMac::setColorWellSwatchBackground(HTMLElement& swatch, Color color)
 {
-    Ref swatchChild = *downcast<HTMLElement>(swatch.protectedFirstChild());
+    Ref swatchChild = *downcast<HTMLElement>(swatch.firstChild());
 
     auto backgroundColor = color.isOpaque() ? color : blendSourceOver(Color::white, color);
     auto foregroundColor = color.isOpaque() ? Color::transparentBlack : blendSourceOver(Color::black, color);
@@ -1313,7 +1317,7 @@ const int styledPopupPaddingLeft = 8;
 const int styledPopupPaddingTop = 1;
 const int styledPopupPaddingBottom = 2;
 
-static std::span<const IntSize, 4> menuListButtonSizes()
+static std::span<const IntSize, 4> NODELETE menuListButtonSizes()
 {
     static constexpr std::array sizes { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 28) };
     return sizes;
@@ -1413,16 +1417,18 @@ void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element
 #else
     UNUSED_PARAM(element);
 #endif
-    float fontScale = style.computedFontSize() / baseFontSize;
+
+    auto usedZoom = style.usedZoomForLength();
+    float fontScale = style.computedFontSize() / baseFontSize / usedZoom.value;
 
     style.resetPadding();
 
-    auto radius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { std::trunc(baseBorderRadius + fontScale - 1) }; // FIXME: Round up?
+    auto radius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { std::trunc(baseBorderRadius + fontScale - 1) }; // FIXME: Round up?
     style.setBorderRadius({ radius, radius });
 
     style.setMinHeight(18_css_px);
 
-    style.setLineHeight(RenderStyle::initialLineHeight());
+    style.setLineHeight(Style::ComputedStyle::initialLineHeight());
 }
 
 std::span<const IntSize, 4> RenderThemeMac::menuListSizes() const
@@ -1531,7 +1537,7 @@ std::span<const IntSize, 4> RenderThemeMac::resultsButtonSizes() const
     return sizes;
 }
 
-const int emptyResultsOffset = 9;
+constexpr int emptyResultsOffset = 9;
 void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
@@ -1544,14 +1550,21 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
 #endif
 
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    int widthOffset = 0;
-    int heightOffset = 0;
-    if (style.writingMode().isHorizontal())
-        widthOffset = emptyResultsOffset;
-    else
-        heightOffset = emptyResultsOffset;
-    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width() - widthOffset) });
-    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height() - heightOffset) });
+    bool isHorizontalWritingMode = style.writingMode().isHorizontal();
+    auto computedWidth = [isHorizontalWritingMode, &size]() -> float {
+        if (isHorizontalWritingMode)
+            return std::max(0, size.width() - emptyResultsOffset);
+        return size.width();
+    };
+
+    auto computedHeight = [isHorizontalWritingMode, &size]() -> float {
+        if (!isHorizontalWritingMode)
+            return std::max(0, size.height() - emptyResultsOffset);
+        return size.height();
+    };
+
+    style.setWidth(Style::PreferredSize::Fixed { computedWidth() });
+    style.setHeight(Style::PreferredSize::Fixed { computedHeight() });
     style.setBoxShadow(CSS::Keyword::None { });
 }
 
@@ -1816,9 +1829,9 @@ RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fi
         return IconAndSize { nil, FloatSize() };
 
     if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title)) {
-        auto image = icon->image();
+        RetainPtr image = icon->image();
         auto size = [image size];
-        return IconAndSize { image, FloatSize(size) };
+        return IconAndSize { WTF::move(image), FloatSize(size) };
     }
 
     return IconAndSize { nil, FloatSize() };
@@ -1837,9 +1850,9 @@ static void paintAttachmentIconBackground(const RenderAttachment& attachment, Gr
     if (paintBorder)
         backgroundRect.inflate(-attachmentIconSelectionBorderThickness);
 
-    CheckedRef style = attachment.style();
-    Color backgroundColor = style->colorByApplyingColorFilter(attachmentIconBackgroundColor);
-    context.fillRoundedRect(FloatRoundedRect(backgroundRect, FloatRoundedRect::Radii(attachmentIconBackgroundRadius)), backgroundColor);
+    Style::ColorResolver colorResolver { attachment.style() };
+    auto backgroundColor = colorResolver.colorApplyingColorFilter(attachmentIconBackgroundColor);
+    context.fillRoundedRect(FloatRoundedRect(backgroundRect, CornerRadii(attachmentIconBackgroundRadius)), backgroundColor);
 
     if (paintBorder) {
         FloatRect borderRect = layout.iconBackgroundRect;
@@ -1849,7 +1862,7 @@ static void paintAttachmentIconBackground(const RenderAttachment& attachment, Gr
         Path borderPath;
         borderPath.addRoundedRect(borderRect, iconBackgroundRadiusSize);
 
-        Color borderColor = style->colorByApplyingColorFilter(attachmentIconBorderColor);
+        auto borderColor = colorResolver.colorApplyingColorFilter(attachmentIconBorderColor);
         context.setStrokeColor(borderColor);
         context.setStrokeThickness(attachmentIconSelectionBorderThickness);
         context.strokePath(borderPath);
@@ -1884,7 +1897,7 @@ static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float de
 
 static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
-    auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(attachment.protectedDocument()->deviceScaleFactor(), layout);
+    auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(protect(attachment.document())->deviceScaleFactor(), layout);
 
     // Center the placeholder image where the icon would usually be.
     FloatRect placeholderRect(0, 0, placeholderImage->width() / imageScale, placeholderImage->height() / imageScale);
@@ -1906,13 +1919,11 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
         return line.backgroundRect;
     });
 
-    Color backgroundColor;
-    if (attachment.frame().checkedSelection()->isFocusedAndActive())
-        backgroundColor = colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
-    else
-        backgroundColor = attachmentTitleInactiveBackgroundColor;
+    auto backgroundColor = colorFromCocoaColor(protect(attachment.frame().selection())->isFocusedAndActive() ? [NSColor selectedContentBackgroundColor] : [NSColor unemphasizedSelectedContentBackgroundColor]);
 
-    backgroundColor = attachment.checkedStyle()->colorByApplyingColorFilter(backgroundColor);
+    Style::ColorResolver colorResolver { attachment.style() };
+
+    backgroundColor = colorResolver.colorApplyingColorFilter(backgroundColor);
     context.setFillColor(backgroundColor);
 
     Path backgroundPath = PathUtilities::pathWithShrinkWrappedRects(backgroundRects, attachmentTitleBackgroundRadius);
@@ -1930,7 +1941,7 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
     FloatRect backgroundRect = borderRect;
     backgroundRect.inflate(-attachmentProgressBarBorderWidth / 2);
 
-    FloatRoundedRect backgroundRoundedRect(backgroundRect, FloatRoundedRect::Radii(backgroundRect.height() / 2));
+    FloatRoundedRect backgroundRoundedRect(backgroundRect, CornerRadii(backgroundRect.height() / 2));
     context.fillRoundedRect(backgroundRoundedRect, attachmentProgressBarBackgroundColor);
 
     {
@@ -1939,7 +1950,7 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
 
         FloatRect progressRect = progressBounds;
         progressRect.setWidth(progressRect.width() * progress);
-        progressRect = encloseRectToDevicePixels(progressRect, attachment.protectedDocument()->deviceScaleFactor());
+        progressRect = encloseRectToDevicePixels(progressRect, protect(attachment.document())->deviceScaleFactor());
 
         context.fillRect(progressRect, attachmentProgressBarFillColor);
     }
@@ -1957,7 +1968,9 @@ static void paintAttachmentPlaceholderBorder(const RenderAttachment& attachment,
     Path borderPath;
     borderPath.addRoundedRect(layout.attachmentRect, FloatSize(attachmentPlaceholderBorderRadius, attachmentPlaceholderBorderRadius));
 
-    Color placeholderBorderColor = attachment.checkedStyle()->colorByApplyingColorFilter(attachmentPlaceholderBorderColor);
+    Style::ColorResolver colorResolver { attachment.style() };
+
+    auto placeholderBorderColor = colorResolver.colorApplyingColorFilter(attachmentPlaceholderBorderColor);
     context.setStrokeColor(placeholderBorderColor);
     context.setStrokeThickness(attachmentPlaceholderBorderWidth);
     context.setStrokeStyle(StrokeStyle::DashedStroke);
@@ -1992,7 +2005,7 @@ bool RenderThemeMac::paintAttachment(const RenderElement& renderer, const PaintI
     GraphicsContextStateSaver saver(context);
 
     context.translate(toFloatSize(paintRect.location()));
-    context.translate(floorSizeToDevicePixels({ LayoutUnit((paintRect.width() - attachmentIconBackgroundSize) / 2), 0 }, renderer.protectedDocument()->deviceScaleFactor()));
+    context.translate(floorSizeToDevicePixels({ LayoutUnit((paintRect.width() - attachmentIconBackgroundSize) / 2), 0 }, protect(renderer.document())->deviceScaleFactor()));
 
     bool usePlaceholder = validProgress && !progress;
 

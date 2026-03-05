@@ -64,7 +64,7 @@ void WebPageProxy::loadRecentSearches(IPC::Connection&, const String& name, Comp
 
     Vector<WebCore::RecentSearch> searchItems;
     WebCore::SearchPopupMenuDB::singleton().loadRecentSearches(name, searchItems);
-    completionHandler(WTFMove(searchItems));
+    completionHandler(WTF::move(searchItems));
 }
 
 void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState&)

@@ -22,6 +22,6 @@
 X509_EXTENSION *X509V3_EXT_conf_nid(CRYPTO_MUST_BE_NULL *conf,
                                     const X509V3_CTX *ctx, int ext_nid,
                                     const char *value) {
-  assert(conf == NULL);
-  return X509V3_EXT_nconf_nid(NULL, ctx, ext_nid, value);
+  assert(conf == nullptr);
+  return X509V3_EXT_nconf_nid(nullptr, ctx, ext_nid, value);
 }

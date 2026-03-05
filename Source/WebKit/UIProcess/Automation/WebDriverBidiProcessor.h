@@ -53,7 +53,7 @@ public:
     void processBidiMessage(const String&);
     void sendBidiMessage(const String&);
 
-    BidiBrowserAgent& browserAgent() const { return m_browserAgent; }
+    BidiBrowserAgent& browserAgent() const LIFETIME_BOUND { return m_browserAgent; }
 
     // Inspector::FrontendChannel methods. Domain events sent via WebDriverBidi domain notifiers are packaged up
     // by FrontendRouter and are then sent back out-of-process via WebAutomationSession::sendBidiMessage().
@@ -61,8 +61,8 @@ public:
     void sendMessageToFrontend(const String&) override;
 
     // Event entry points called from the owning WebAutomationSession.
-    Inspector::BidiBrowsingContextFrontendDispatcher& browsingContextDomainNotifier() const { return m_browsingContextDomainNotifier; }
-    Inspector::BidiLogFrontendDispatcher& logDomainNotifier() const { return m_logDomainNotifier; }
+    Inspector::BidiBrowsingContextFrontendDispatcher& browsingContextDomainNotifier() const LIFETIME_BOUND { return m_browsingContextDomainNotifier; }
+    Inspector::BidiLogFrontendDispatcher& logDomainNotifier() const LIFETIME_BOUND { return m_logDomainNotifier; }
 
 private:
     WeakPtr<WebAutomationSession> m_session;

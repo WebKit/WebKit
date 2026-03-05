@@ -12,12 +12,14 @@
 #define MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_BASE_WIN_H_
 
 #include <atomic>
+#include <cstdint>
 #include <functional>
-#include <memory>
 #include <optional>
 #include <string>
+#include <type_traits>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "modules/audio_device/win/core_audio_utility_win.h"
 #include "rtc_base/platform_thread.h"
@@ -77,7 +79,8 @@ class CoreAudioBase : public IAudioSessionEvents {
   CoreAudioBase& operator=(const CoreAudioBase&) = delete;
 
  protected:
-  explicit CoreAudioBase(Direction direction,
+  explicit CoreAudioBase(const Environment& env,
+                         Direction direction,
                          bool automatic_restart,
                          OnDataCallback data_callback,
                          OnErrorCallback error_callback);
@@ -122,7 +125,9 @@ class CoreAudioBase : public IAudioSessionEvents {
   bool IsDefaultCommunicationsDeviceId(absl::string_view device_id) const;
   EDataFlow GetDataFlow() const;
   bool IsRestarting() const;
-  int64_t TimeSinceStart() const;
+  int64_t TimeSinceStartMs() const;
+
+  const Environment env_;
 
   // TODO(henrika): is the existing thread checker in WindowsAudioDeviceModule
   // sufficient? As is, we have one top-level protection and then a second

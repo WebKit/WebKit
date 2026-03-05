@@ -42,23 +42,23 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSRotate);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSRotate);
 
 ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSNumberish x, CSSNumberish y, CSSNumberish z, Ref<CSSNumericValue> angle)
 {
     if (!angle->type().matches<CSSNumericBaseType::Angle>())
         return Exception { ExceptionCode::TypeError };
 
-    auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
-    auto rectifiedY = CSSNumericValue::rectifyNumberish(WTFMove(y));
-    auto rectifiedZ = CSSNumericValue::rectifyNumberish(WTFMove(z));
+    auto rectifiedX = CSSNumericValue::rectifyNumberish(WTF::move(x));
+    auto rectifiedY = CSSNumericValue::rectifyNumberish(WTF::move(y));
+    auto rectifiedZ = CSSNumericValue::rectifyNumberish(WTF::move(z));
 
     if (!rectifiedX->type().matchesNumber()
         || !rectifiedY->type().matchesNumber()
         || !rectifiedZ->type().matchesNumber())
         return Exception { ExceptionCode::TypeError };
 
-    return adoptRef(*new CSSRotate(Is2D::No, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ), WTFMove(angle)));
+    return adoptRef(*new CSSRotate(Is2D::No, WTF::move(rectifiedX), WTF::move(rectifiedY), WTF::move(rectifiedZ), WTF::move(angle)));
 }
 
 ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<CSSNumericValue> angle)
@@ -69,49 +69,49 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<CSSNumericValue> angle)
         CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
         CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
         CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER),
-        WTFMove(angle)));
+        WTF::move(angle)));
 }
 
 ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<const CSSFunctionValue> cssFunctionValue, Document& document)
 {
-    auto makeRotate = [&](NOESCAPE const Function<ExceptionOr<Ref<CSSRotate>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSRotate>> {
-        Vector<RefPtr<CSSNumericValue>> components;
-        for (auto& componentCSSValue : cssFunctionValue.get()) {
-            auto valueOrException = CSSStyleValueFactory::reifyValue(document, componentCSSValue, std::nullopt);
+    auto makeRotate = [&](NOESCAPE const Function<ExceptionOr<Ref<CSSRotate>>(Vector<Ref<CSSNumericValue>>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSRotate>> {
+        Vector<Ref<CSSNumericValue>> components;
+        for (Ref componentCSSValue : cssFunctionValue.get()) {
+            auto valueOrException = CSSStyleValueFactory::reifyValue(document, componentCSSValue.get(), std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
             RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
             if (!numericValue)
                 return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-            components.append(WTFMove(numericValue));
+            components.append(numericValue.releaseNonNull());
         }
         if (components.size() != expectedNumberOfComponents) {
             ASSERT_NOT_REACHED();
             return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
         }
-        return create(WTFMove(components));
+        return create(WTF::move(components));
     };
 
     switch (cssFunctionValue->name()) {
     case CSSValueRotateX:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(CSSNumericFactory::number(1), CSSNumericFactory::number(0), CSSNumericFactory::number(0), *components[0]);
+        return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSRotate::create(CSSNumericFactory::number(1), CSSNumericFactory::number(0), CSSNumericFactory::number(0), WTF::move(components[0]));
         }, 1);
     case CSSValueRotateY:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(1), CSSNumericFactory::number(0), *components[0]);
+        return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(1), CSSNumericFactory::number(0), WTF::move(components[0]));
         }, 1);
     case CSSValueRotateZ:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(0), CSSNumericFactory::number(1), *components[0]);
+        return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(0), CSSNumericFactory::number(1), WTF::move(components[0]));
         }, 1);
     case CSSValueRotate:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(*components[0]);
+        return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSRotate::create(WTF::move(components[0]));
         }, 1);
     case CSSValueRotate3d:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(components[0], components[1], components[2], *components[3]);
+        return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSRotate::create(WTF::move(components[0]), WTF::move(components[1]), WTF::move(components[2]), WTF::move(components[3]));
         }, 4);
     default:
         ASSERT_NOT_REACHED();
@@ -119,39 +119,39 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<const CSSFunctionValue> cssFun
     }
 }
 
-CSSRotate::CSSRotate(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, Ref<CSSNumericValue> z, Ref<CSSNumericValue> angle)
+CSSRotate::CSSRotate(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue>&& x, Ref<CSSNumericValue>&& y, Ref<CSSNumericValue>&& z, Ref<CSSNumericValue>&& angle)
     : CSSTransformComponent(is2D)
-    , m_x(WTFMove(x))
-    , m_y(WTFMove(y))
-    , m_z(WTFMove(z))
-    , m_angle(WTFMove(angle))
+    , m_x(WTF::move(x))
+    , m_y(WTF::move(y))
+    , m_z(WTF::move(z))
+    , m_angle(WTF::move(angle))
 {
 }
 
 ExceptionOr<void> CSSRotate::setX(CSSNumberish x)
 {
-    auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(x));
+    auto rectified = CSSNumericValue::rectifyNumberish(WTF::move(x));
     if (!rectified->type().matchesNumber())
         return Exception { ExceptionCode::TypeError };
-    m_x = WTFMove(rectified);
+    m_x = WTF::move(rectified);
     return { };
 }
 
 ExceptionOr<void> CSSRotate::setY(CSSNumberish y)
 {
-    auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(y));
+    auto rectified = CSSNumericValue::rectifyNumberish(WTF::move(y));
     if (!rectified->type().matchesNumber())
         return Exception { ExceptionCode::TypeError };
-    m_y = WTFMove(rectified);
+    m_y = WTF::move(rectified);
     return { };
 }
 
 ExceptionOr<void> CSSRotate::setZ(CSSNumberish z)
 {
-    auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(z));
+    auto rectified = CSSNumericValue::rectifyNumberish(WTF::move(z));
     if (!rectified->type().matchesNumber())
         return Exception { ExceptionCode::TypeError };
-    m_z = WTFMove(rectified);
+    m_z = WTF::move(rectified);
     return { };
 }
 
@@ -159,7 +159,7 @@ ExceptionOr<void> CSSRotate::setAngle(Ref<CSSNumericValue> angle)
 {
     if (!angle->type().matches<CSSNumericBaseType::Angle>())
         return Exception { ExceptionCode::TypeError };
-    m_angle = WTFMove(angle);
+    m_angle = WTF::move(angle);
     return { };
 }
 
@@ -204,7 +204,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
         matrix.rotate3d(x, y, z, angle->value());
     }
 
-    return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
+    return { DOMMatrix::create(WTF::move(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }
 
 RefPtr<CSSValue> CSSRotate::toCSSValue() const

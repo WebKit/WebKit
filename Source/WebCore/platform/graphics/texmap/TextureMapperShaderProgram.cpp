@@ -50,6 +50,31 @@ static inline bool compositingLogEnabled()
         GLSL_DIRECTIVE(define TextureSpaceMatrixPrecision mediump) \
     GLSL_DIRECTIVE(endif)
 
+// ES 3.0 Compatibility Macros
+#define ES3_COMPATIBILITY_VERTEX \
+    GLSL_DIRECTIVE(if __VERSION__ >= 300) \
+        GLSL_DIRECTIVE(define texture2D texture) \
+        GLSL_DIRECTIVE(define texture2DProj textureProj) \
+        GLSL_DIRECTIVE(define texture2DLod textureLod) \
+        GLSL_DIRECTIVE(define texture2DProjLod textureProjLod) \
+        GLSL_DIRECTIVE(define textureCube texture) \
+        GLSL_DIRECTIVE(define textureCubeLod textureLod) \
+        GLSL_DIRECTIVE(define attribute in) \
+        GLSL_DIRECTIVE(define varying out) \
+    GLSL_DIRECTIVE(endif)
+
+#define ES3_COMPATIBILITY_FRAGMENT \
+    GLSL_DIRECTIVE(if __VERSION__ >= 300) \
+        GLSL_DIRECTIVE(define texture2D texture) \
+        GLSL_DIRECTIVE(define texture2DProj textureProj) \
+        GLSL_DIRECTIVE(define texture2DLod textureLod) \
+        GLSL_DIRECTIVE(define texture2DProjLod textureProjLod) \
+        GLSL_DIRECTIVE(define textureCube texture) \
+        GLSL_DIRECTIVE(define textureCubeLod textureLod) \
+        GLSL_DIRECTIVE(define varying in) \
+        "out mediump vec4 fragColor;\n" \
+        GLSL_DIRECTIVE(define gl_FragColor fragColor) \
+    GLSL_DIRECTIVE(endif)
 
 // Input/output variables definition for OpenGL ES < 3.2.
 static const char* vertexTemplateLT320Vars =
@@ -64,7 +89,7 @@ static const char* vertexTemplateLT320Vars =
         varying float v_antialias;
         varying vec4 v_nonProjectedPosition;
     );
-
+// clang-format off
 static const char* vertexTemplateCommon =
     STRINGIFY(
         uniform mat4 u_modelViewMatrix;
@@ -133,7 +158,7 @@ static const char* vertexTemplateCommon =
             gl_Position = u_projectionMatrix * v_nonProjectedPosition;
         }
     );
-
+// clang-format on
 #define ANTIALIASING_TEX_COORD_DIRECTIVE \
     GLSL_DIRECTIVE(if defined(ENABLE_Antialiasing)) \
         GLSL_DIRECTIVE(define transformTexCoord fragmentTransformTexCoord) \
@@ -149,7 +174,11 @@ static const char* vertexTemplateCommon =
 
 #define OES_EGL_IMAGE_EXTERNAL_DIRECTIVE \
     GLSL_DIRECTIVE(ifdef ENABLE_TextureExternalOES) \
-        GLSL_DIRECTIVE(extension GL_OES_EGL_image_external : require) \
+        GLSL_DIRECTIVE(if __VERSION__ >= 300) \
+            GLSL_DIRECTIVE(extension GL_OES_EGL_image_external_essl3 : require) \
+        GLSL_DIRECTIVE(else) \
+            GLSL_DIRECTIVE(extension GL_OES_EGL_image_external : require) \
+        GLSL_DIRECTIVE(endif) \
         GLSL_DIRECTIVE(define SamplerExternalOESType samplerExternalOES) \
         STRINGIFY( \
             precision mediump samplerExternalOES;\n \
@@ -157,6 +186,22 @@ static const char* vertexTemplateCommon =
     GLSL_DIRECTIVE(else) \
         GLSL_DIRECTIVE(define SamplerExternalOESType sampler2D) \
     GLSL_DIRECTIVE(endif)
+
+// clang-format off
+#define EXT_YUV_TARGET_DIRECTIVE \
+    STRINGIFY(\n) \
+    GLSL_DIRECTIVE(ifdef ENABLE_TextureExternalOESYUV) \
+        GLSL_DIRECTIVE(extension GL_EXT_YUV_target : require) \
+        GLSL_DIRECTIVE(define SamplerExternalOESYUVType __samplerExternal2DY2YEXT) \
+    GLSL_DIRECTIVE(else) \
+        GLSL_DIRECTIVE(if __VERSION__ >= 300) \
+            GLSL_DIRECTIVE(extension GL_OES_EGL_image_external_essl3 : require) \
+        GLSL_DIRECTIVE(else) \
+            GLSL_DIRECTIVE(extension GL_OES_EGL_image_external : require) \
+        GLSL_DIRECTIVE(endif) \
+        GLSL_DIRECTIVE(define SamplerExternalOESYUVType samplerExternalOES) \
+    GLSL_DIRECTIVE(endif)
+// clang-format on
 
 // The max number of stacked rounded rectangle clips allowed is 10, which is also the
 // max number of transforms that we can get. We need 3 components for each rounded
@@ -171,12 +216,15 @@ static const char* vertexTemplateCommon =
 // Common header for all versions. We define the matrices variables here to keep the precision
 // directives scope: the first one applies to the matrices variables and the next one to the
 // rest of them.
+// clang-format off
 static const char* fragmentTemplateHeaderCommon =
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
     ROUNDED_RECT_CONSTANTS
     OES_EGL_IMAGE_EXTERNAL_DIRECTIVE
-    TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
+    TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE;
+
+static const char* fragmentTemplateHeaderCommonVariables =
     STRINGIFY(
         precision TextureSpaceMatrixPrecision float;
     )
@@ -197,6 +245,95 @@ static const char* fragmentTemplateLT320Vars =
         varying vec4 v_nonProjectedPosition;
     );
 
+static const char* fragmentTemplateYUVToRGB =
+    "\n"
+    GLSL_DIRECTIVE(ifdef ENABLE_TextureExternalOESYUV)
+    STRINGIFY(
+        void applyTextureExternalOESYUV(inout vec4 color, vec2 texCoord)
+        {
+            vec4 contentColor = vec4(yuv_2_rgb(texture2D(s_yuvToRgbSampler, texCoord).rgb, itu_601).rgb, 1.0);
+            color = sourceOver(contentColor, color);
+        }
+    )
+    "\n"
+    GLSL_DIRECTIVE(else)
+    STRINGIFY(
+        void applyTextureExternalOESYUV(inout vec4 color, vec2 texCoord)
+        {
+            vec4 contentColor = texture2D(s_yuvToRgbSampler, texCoord);
+            color = sourceOver(contentColor, color);
+        }
+    )
+    "\n"
+    GLSL_DIRECTIVE(endif);
+
+static const char* fragmentTemplateYUVToRGBNoop =
+    "\n"
+    STRINGIFY(
+        void applyTextureExternalOESYUV(inout vec4 color, vec2 texCoord)
+        {
+            vec4 contentColor = texture2D(s_yuvToRgbSampler, texCoord);
+            color = sourceOver(contentColor, color);
+        }
+    );
+
+// PQ tone-mapping function with conditional highp precision.
+// Only enabled when highp is available in fragment shaders, because we get banding artifacts with mediump
+// precision.
+static const char* fragmentTemplateToneMapPq =
+    "\n"
+    GLSL_DIRECTIVE(ifdef GL_FRAGMENT_PRECISION_HIGH)
+    STRINGIFY(
+        void applyToneMapPQ(inout vec4 color)
+        {
+            // Reference PQ EOTF (ITU-R BT.2100)
+            highp float m1 = 0.1593017578125;
+            highp float m2 = 78.84375;
+            highp float c1 = 0.8359375;
+            highp float c2 = 18.8515625;
+            highp float c3 = 18.6875;
+
+            highp vec3 pqPowM2 = pow(max(color.rgb, vec3(0.0)), vec3(1.0 / m2));
+            highp vec3 numerator = max(pqPowM2 - c1, vec3(0.0));
+            highp vec3 denominator = c2 - c3 * pqPowM2;
+            highp vec3 linear = pow(numerator / denominator, vec3(1.0 / m1));
+
+            // Normalize using HDR reference white (ITU-R BT.2408)
+            const highp float hdrReferenceWhite = 203.0;
+            const highp float pqMaxNits = 10000.0;
+            highp vec3 normalized = linear * (pqMaxNits / hdrReferenceWhite);
+
+            // Tone-map using maxRGB-based Reinhard, which preserves saturation.
+            // Simplified version of that Chromium does, described in
+            // https://docs.google.com/document/d/17T2ek1i2R7tXdfHCnM-i5n6__RoYe0JyMfKmTEjoGR8/edit?tab=t.0#heading=h.h00l7d53phqy
+            highp float maxRGB = max(max(normalized.r, normalized.g), normalized.b);
+            highp vec3 toneMapped = normalized / (1.0 + maxRGB);
+
+            // Convert from BT.2020 to BT.709 color primaries
+            highp mat3 bt2020ToBt709 = mat3(
+                1.6605, -0.1246, -0.0182,
+                -0.5876, 1.1329, -0.1006,
+                -0.0728, -0.0083, 1.1187
+            );
+            highp vec3 bt709Linear = bt2020ToBt709 * toneMapped;
+
+            // Apply inverse EOTF for sRGB gamma encoding (IEC 61966-2)
+            bvec3 cutoff = lessThan(bt709Linear, vec3(0.0031308));
+            highp vec3 higher = vec3(1.055) * pow(bt709Linear, vec3(1.0 / 2.4)) - vec3(0.055);
+            highp vec3 lower = bt709Linear * vec3(12.92);
+            highp vec3 srgb = mix(higher, lower, vec3(cutoff));
+
+            color = vec4(srgb, color.a);
+        }
+    )
+    "\n"
+    GLSL_DIRECTIVE(else)
+    STRINGIFY(
+        void applyToneMapPQ(inout vec4 color) { }
+    )
+    "\n"
+    GLSL_DIRECTIVE(endif);
+
 static const char* fragmentTemplateCommon =
     STRINGIFY(
         uniform sampler2D s_sampler;
@@ -206,11 +343,13 @@ static const char* fragmentTemplateCommon =
         uniform sampler2D s_samplerA;
         uniform sampler2D s_contentTexture;
         uniform SamplerExternalOESType s_externalOESTexture;
+        uniform SamplerExternalOESYUVType s_yuvToRgbSampler;
         uniform float u_opacity;
         uniform float u_filterAmount;
         uniform mat4 u_yuvToRgb;
         uniform vec4 u_color;
         uniform vec2 u_texelSize;
+        uniform vec2 u_uvMax;
         uniform float u_gaussianKernel[GAUSSIAN_KERNEL_MAX_HALF_SIZE];
         uniform float u_gaussianKernelOffset[GAUSSIAN_KERNEL_MAX_HALF_SIZE];
         uniform int u_gaussianKernelHalfSize;
@@ -240,51 +379,19 @@ static const char* fragmentTemplateCommon =
 
         void applyManualRepeat(inout vec2 pos) { pos = fract(pos); }
 
+        void applyClampUVBounds(inout vec2 texCoord)
+        {
+            vec2 uvMax = u_uvMax - u_texelSize / 2.;
+            texCoord = clamp(texCoord, vec2(0.), uvMax);
+        }
+
         void applyTextureRGB(inout vec4 color, vec2 texCoord) { color = u_textureColorSpaceMatrix * texture2D(s_sampler, texCoord); }
 
         void applyPremultiply(inout vec4 color) { color = vec4(color.rgb * color.a, color.a); }
 
-        void applyToneMapPQ(inout vec4 color)
-        {
-            // Reference PQ EOTF (ITU-R BT.2100)
-            float m1 = 0.1593017578125;
-            float m2 = 78.84375;
-            float c1 = 0.8359375;
-            float c2 = 18.8515625;
-            float c3 = 18.6875;
+        void applyToneMapPQ(inout vec4 color);
 
-            vec3 pqPowM2 = pow(max(color.rgb, vec3(0.0)), vec3(1.0 / m2));
-            vec3 numerator = max(pqPowM2 - c1, vec3(0.0));
-            vec3 denominator = c2 - c3 * pqPowM2;
-            vec3 linear = pow(numerator / denominator, vec3(1.0 / m1));
-
-            // Normalize using HDR reference white (ITU-R BT.2408)
-            const float hdrReferenceWhite = 203.0;
-            const float pqMaxNits = 10000.0;
-            vec3 normalized = linear * (pqMaxNits / hdrReferenceWhite);
-
-            // Tone-map using maxRGB-based Reinhard, which preserves saturation.
-            // Simplified version of that Chromium does, described in
-            // https://docs.google.com/document/d/17T2ek1i2R7tXdfHCnM-i5n6__RoYe0JyMfKmTEjoGR8/edit?tab=t.0#heading=h.h00l7d53phqy
-            float maxRGB = max(max(normalized.r, normalized.g), normalized.b);
-            vec3 toneMapped = normalized / (1.0 + maxRGB);
-
-            // Convert from BT.2020 to BT.709 color primaries
-            mat3 bt2020ToBt709 = mat3(
-                1.6605, -0.1246, -0.0182,
-                -0.5876, 1.1329, -0.1006,
-                -0.0728, -0.0083, 1.1187
-            );
-            vec3 bt709Linear = bt2020ToBt709 * toneMapped;
-
-            // Apply inverse EOTF for sRGB gamma encoding (IEC 61966-2)
-            bvec3 cutoff = lessThan(bt709Linear, vec3(0.0031308));
-            vec3 higher = vec3(1.055) * pow(bt709Linear, vec3(1.0 / 2.4)) - vec3(0.055);
-            vec3 lower = bt709Linear * vec3(12.92);
-            vec3 srgb = mix(higher, lower, vec3(cutoff));
-
-            color = vec4(srgb, color.a);
-        }
+        void applyTextureExternalOESYUV(inout vec4 color, vec2 texCoord);
 
         vec3 yuvToRgb(float y, float u, float v)
         {
@@ -545,6 +652,7 @@ static const char* fragmentTemplateCommon =
             vec4 color = vec4(1., 1., 1., 1.);
             vec2 texCoord = transformTexCoord();
             applyManualRepeatIfNeeded(texCoord);
+            applyClampUVBoundsIfNeeded(texCoord);
             applyTextureRGBIfNeeded(color, texCoord);
             applyTextureYUVIfNeeded(color, texCoord);
             applyTextureYUVAIfNeeded(color, texCoord);
@@ -570,10 +678,12 @@ static const char* fragmentTemplateCommon =
             applyTextureCopyIfNeeded(color, texCoord);
             applyBlurFilterIfNeeded(color, texCoord);
             applyTextureExternalOESIfNeeded(color, texCoord);
+            applyTextureExternalOESYUVIfNeeded(color, texCoord);
             applyRoundedRectClipIfNeeded(color);
             gl_FragColor = color;
         }
     );
+// clang-format on
 
 Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapperShaderProgram::Options options)
 {
@@ -608,11 +718,18 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     SET_APPLIER_FROM_OPTIONS(AlphaToShadow);
     SET_APPLIER_FROM_OPTIONS(ContentTexture);
     SET_APPLIER_FROM_OPTIONS(ManualRepeat);
+    SET_APPLIER_FROM_OPTIONS(ClampUVBounds);
     SET_APPLIER_FROM_OPTIONS(TextureExternalOES);
+    SET_APPLIER_FROM_OPTIONS(TextureExternalOESYUV);
     SET_APPLIER_FROM_OPTIONS(RoundedRectClip);
     SET_APPLIER_FROM_OPTIONS(Premultiply);
 
     StringBuilder vertexShaderBuilder;
+
+    if (glVersion >= 300) {
+        vertexShaderBuilder.append(unsafeSpan(GLSL_DIRECTIVE(version 300 es)));
+        vertexShaderBuilder.append(unsafeSpan(ES3_COMPATIBILITY_VERTEX));
+    }
 
     // Append the options.
     vertexShaderBuilder.append(optionsApplierBuilder.toString());
@@ -625,6 +742,11 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
 
     StringBuilder fragmentShaderBuilder;
 
+    if (glVersion >= 300) {
+        fragmentShaderBuilder.append(unsafeSpan(GLSL_DIRECTIVE(version 300 es)));
+        fragmentShaderBuilder.append(unsafeSpan(ES3_COMPATIBILITY_FRAGMENT));
+    }
+
     // Append the options.
     fragmentShaderBuilder.append(optionsApplierBuilder.toString());
 
@@ -636,11 +758,26 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     // Append the common header.
     fragmentShaderBuilder.append(unsafeSpan(fragmentTemplateHeaderCommon));
 
+    if (GLContext::current()->glExtensions().EXT_YUV_target)
+        fragmentShaderBuilder.append(unsafeSpan(EXT_YUV_TARGET_DIRECTIVE));
+    else
+        fragmentShaderBuilder.append(unsafeSpan(GLSL_DIRECTIVE(define SamplerExternalOESYUVType sampler2D)));
+
+    fragmentShaderBuilder.append(unsafeSpan(fragmentTemplateHeaderCommonVariables));
+
     // Append the appropriate input/output variable definitions.
     fragmentShaderBuilder.append(unsafeSpan(fragmentTemplateLT320Vars));
 
     // Append the common code.
     fragmentShaderBuilder.append(unsafeSpan(fragmentTemplateCommon));
+
+    // Append the PQ tone mapping function.
+    fragmentShaderBuilder.append(unsafeSpan(fragmentTemplateToneMapPq));
+
+    if (GLContext::current()->glExtensions().EXT_YUV_target)
+        fragmentShaderBuilder.append(unsafeSpan(fragmentTemplateYUVToRGB));
+    else
+        fragmentShaderBuilder.append(unsafeSpan(fragmentTemplateYUVToRGBNoop));
 
     return adoptRef(*new TextureMapperShaderProgram(vertexShaderBuilder.toString(), fragmentShaderBuilder.toString()));
 }

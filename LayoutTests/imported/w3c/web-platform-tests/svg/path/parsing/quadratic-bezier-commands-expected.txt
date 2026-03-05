@@ -1,0 +1,16 @@
+
+PASS Absolute quadratic bezier: Q 100,25 150,50
+PASS Relative quadratic bezier: q 50,-25 100,0 from (50,50)
+PASS Quadratic bezier endpoints are correct
+PASS Multiple quadratic bezier pairs: Q x1,y1 x,y x1,y1 x,y
+PASS Smooth quadratic bezier: T 150,150
+PASS Smooth quadratic bezier after Q: reflects control point
+PASS Relative smooth quadratic bezier: t x,y
+PASS Smooth quadratic bezier without preceding Q
+PASS Multiple smooth quadratic bezier coordinates
+PASS Chain of T commands: each T reflects previous control point
+PASS Quadratic bezier with space separators (no commas)
+PASS Quadratic bezier with all comma separators
+PASS Smooth quadratic bezier after cubic curve
+PASS Quadratic bezier after smooth quadratic bezier
+

@@ -47,12 +47,12 @@ std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const Web
             auto convertedTarget = convertToBacking(*target);
             if (!convertedTarget)
                 return std::nullopt;
-            targets.append(WTFMove(*convertedTarget));
+            targets.append(WTF::move(*convertedTarget));
         } else
             targets.append(std::nullopt);
     }
 
-    return { { WTFMove(*base), WTFMove(targets) } };
+    return { { WTF::move(*base), WTF::move(targets) } };
 }
 
 std::optional<WebCore::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBacking(const FragmentState& fragmentState)
@@ -68,12 +68,12 @@ std::optional<WebCore::WebGPU::FragmentState> ConvertFromBackingContext::convert
             auto target = convertFromBacking(*backingTarget);
             if (!target)
                 return std::nullopt;
-            targets.append(WTFMove(*target));
+            targets.append(WTF::move(*target));
         } else
             targets.append(std::nullopt);
     }
 
-    return { { WTFMove(*base), WTFMove(targets) } };
+    return { { WTF::move(*base), WTF::move(targets) } };
 }
 
 } // namespace WebKit

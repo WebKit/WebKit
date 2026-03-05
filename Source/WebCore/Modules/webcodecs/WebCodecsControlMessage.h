@@ -41,13 +41,13 @@ class WebCodecsControlMessage final {
 public:
     WebCodecsControlMessage(WebCodecsBase& codec, Function<WebCodecsControlMessageOutcome()>&& message)
         : m_pendingActivity(codec.makePendingActivity(codec))
-        , m_message(WTFMove(message))
+        , m_message(WTF::move(message))
     {
     }
 
     WebCodecsControlMessage(WebCodecsControlMessage&& other)
-        : m_pendingActivity(WTFMove(other.m_pendingActivity))
-        , m_message(WTFMove(other.m_message))
+        : m_pendingActivity(WTF::move(other.m_pendingActivity))
+        , m_message(WTF::move(other.m_message))
     {
     }
 

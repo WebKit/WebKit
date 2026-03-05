@@ -96,7 +96,7 @@ private:
     {
     }
 
-    Ref<const CSSValue> protectedValue() const { return m_value; }
+    const CSSValue& value() const { return m_value; }
 
     Ref<const CSSValue> m_value;
 };

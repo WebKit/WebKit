@@ -411,7 +411,7 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(const ResolutionData& data) 
                 return 1.0;
             };
 
-            return { timingFunction->transformProgress(*directedProgress, transformProgressDuration(), before), before };
+            return { protect(timingFunction)->transformProgress(*directedProgress, transformProgressDuration(), before), before };
         }
 
         return { *directedProgress, before };

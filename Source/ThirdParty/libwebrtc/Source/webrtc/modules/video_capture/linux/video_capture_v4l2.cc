@@ -33,6 +33,7 @@
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
 
 // These defines are here to support building on kernel 3.16 which some
 // downstream projects, e.g. Firefox, use.
@@ -54,8 +55,8 @@
 
 namespace webrtc {
 namespace videocapturemodule {
-VideoCaptureModuleV4L2::VideoCaptureModuleV4L2()
-    : VideoCaptureImpl(),
+VideoCaptureModuleV4L2::VideoCaptureModuleV4L2(Clock* clock)
+    : VideoCaptureImpl(clock),
       _deviceId(-1),
       _deviceFd(-1),
       _buffersAllocatedByDevice(-1),

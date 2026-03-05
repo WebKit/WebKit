@@ -58,7 +58,7 @@ UserMediaProcessManager::UserMediaProcessManager()
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-static bool needsAppleCameraService()
+static bool NODELETE needsAppleCameraService()
 {
 #if !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
     return false;
@@ -124,14 +124,14 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 
             if (needsAudioSandboxExtension) {
                 if (auto handle = SandboxExtension::createHandleForGenericExtension(audioExtensionPath)) {
-                    handles[--extensionCount] = WTFMove(*handle);
+                    handles[--extensionCount] = WTF::move(*handle);
                     ids.append(audioExtensionPath);
                 }
             }
 
             if (needsVideoSandboxExtension) {
                 if (auto handle = SandboxExtension::createHandleForGenericExtension(videoExtensionPath)) {
-                    handles[--extensionCount] = WTFMove(*handle);
+                    handles[--extensionCount] = WTF::move(*handle);
                     ids.append(videoExtensionPath);
                 }
             }
@@ -140,28 +140,28 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             if (needsAppleCameraSandboxExtension) {
                 machBootstrapExtension = SandboxExtension::createHandleForMachBootstrapExtension();
                 if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, auditToken)) {
-                    handles[--extensionCount] = WTFMove(*handle);
+                    handles[--extensionCount] = WTF::move(*handle);
                     ids.append(appleCameraServicePath);
                 }
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
                 if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, auditToken)) {
-                    handles[--extensionCount] = WTFMove(*handle);
+                    handles[--extensionCount] = WTF::move(*handle);
                     ids.append(additionalAppleCameraServicePath);
                 }
 #endif
 #if HAVE(APPLE_CAMERA_USER_CLIENT)
                 if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraUserClientPath, auditToken)) {
-                    handles[--extensionCount] = WTFMove(*handle);
+                    handles[--extensionCount] = WTF::move(*handle);
                     ids.append(appleCameraUserClientPath);
                 }
 
                 if (auto handle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitClientClass, auditToken)) {
-                    handles[--extensionCount] = WTFMove(*handle);
+                    handles[--extensionCount] = WTF::move(*handle);
                     ids.append(appleCameraUserClientIOKitClientClass);
                 }
 
                 if (auto handle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClass, auditToken)) {
-                    handles[--extensionCount] = WTFMove(*handle);
+                    handles[--extensionCount] = WTF::move(*handle);
                     ids.append(appleCameraUserClientIOKitServiceClass);
                 }
 #endif
@@ -182,7 +182,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             process->grantAudioCaptureExtension();
         if (needsVideoSandboxExtension)
             process->grantVideoCaptureExtension();
-        process->send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles), WTFMove(machBootstrapExtension))), 0);
+        process->send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTF::move(handles), WTF::move(machBootstrapExtension))), 0);
     }
 #else
     UNUSED_PARAM(proxy);
@@ -283,7 +283,7 @@ void UserMediaProcessManager::updateCaptureDevices(ShouldNotify shouldNotify)
         if (!haveDevicesChanged(protectedThis->m_captureDevices, newDevices))
             return;
 
-        protectedThis->m_captureDevices = WTFMove(newDevices);
+        protectedThis->m_captureDevices = WTF::move(newDevices);
         if (shouldNotify == ShouldNotify::Yes)
             protectedThis->captureDevicesChanged();
     });

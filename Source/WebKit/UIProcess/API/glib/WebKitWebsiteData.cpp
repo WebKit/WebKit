@@ -52,7 +52,7 @@ using namespace WebKit;
  */
 struct _WebKitWebsiteData {
     explicit _WebKitWebsiteData(WebsiteDataRecord&& websiteDataDecord)
-        : record(WTFMove(websiteDataDecord))
+        : record(WTF::move(websiteDataDecord))
     {
     }
 
@@ -121,7 +121,7 @@ WebKitWebsiteData* webkitWebsiteDataCreate(WebsiteDataRecord&& record)
         return nullptr;
 
     WebKitWebsiteData* websiteData = static_cast<WebKitWebsiteData*>(fastMalloc(sizeof(WebKitWebsiteData)));
-    new (websiteData) WebKitWebsiteData(WTFMove(record));
+    new (websiteData) WebKitWebsiteData(WTF::move(record));
     return websiteData;
 }
 

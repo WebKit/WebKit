@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WaveShaperNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WaveShaperNode);
 
 ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& context, const WaveShaperOptions& options)
 {
@@ -56,7 +56,7 @@ ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& contex
         return result.releaseException();
 
     if (curve) {
-        result = node->setCurveForBindings(WTFMove(curve));
+        result = node->setCurveForBindings(WTF::move(curve));
         if (result.hasException())
             return result.releaseException();
     }
@@ -85,7 +85,7 @@ ExceptionOr<void> WaveShaperNode::setCurveForBindings(RefPtr<Float32Array>&& cur
         // The specification states that we should maintain an internal copy of the curve so that
         // subsequent modifications of the contents of the array have no effect.
         auto clonedCurve = Float32Array::create(curve->data(), curve->length());
-        curve = WTFMove(clonedCurve);
+        curve = WTF::move(clonedCurve);
     }
 
     waveShaperProcessor()->setCurveForBindings(curve.get());
@@ -104,7 +104,7 @@ RefPtr<Float32Array> WaveShaperNode::curveForBindings()
     return Float32Array::create(curve->data(), curve->length());
 }
 
-static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType type)
+static inline WaveShaperProcessor::OverSampleType NODELETE processorType(OverSampleType type)
 {
     switch (type) {
     case OverSampleType::None:

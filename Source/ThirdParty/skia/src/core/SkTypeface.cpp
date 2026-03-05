@@ -30,21 +30,21 @@
 #include "src/core/SkTypefaceCache.h"
 #include "src/sfnt/SkOTTable_OS_2.h"
 
-#ifdef SK_TYPEFACE_FACTORY_FREETYPE
+#if defined(SK_TYPEFACE_FACTORY_FREETYPE)
 #include "src/ports/SkTypeface_FreeType.h"
 #endif
 
-#ifdef SK_TYPEFACE_FACTORY_CORETEXT
+#if defined(SK_TYPEFACE_FACTORY_CORETEXT)
 #include "src/ports/SkTypeface_mac_ct.h"
 #endif
 
-#ifdef SK_TYPEFACE_FACTORY_DIRECTWRITE
+#if defined(SK_TYPEFACE_FACTORY_DIRECTWRITE)
 #include "src/ports/SkTypeface_win_dw.h"
 #endif
 
-// TODO(skbug.com/40045343): This needs to be set by Bazel rules.
-#ifdef SK_TYPEFACE_FACTORY_FONTATIONS
-#include "src/ports/SkTypeface_fontations_priv.h"
+#if defined(SK_TYPEFACE_FACTORY_FONTATIONS)
+#include "include/ports/SkTypeface_fontations.h"
+#include "src/ports/SkTypeface_fontations_factory.h"
 #endif
 
 #include <algorithm>
@@ -178,7 +178,7 @@ namespace {
             { SkTypeface_FreeType::FactoryId, SkTypeface_FreeType::MakeFromStream },
 #endif
 #ifdef SK_TYPEFACE_FACTORY_FONTATIONS
-            { SkTypeface_Fontations::FactoryId, SkTypeface_Fontations::MakeFromStream },
+            { SkTypefaces::Fontations::FactoryId, SkTypeface_Make_Fontations },
 #endif
         }};
         return decoders.get();
@@ -198,7 +198,7 @@ void SkTypeface::Register(
     decoders()->push_back(DecoderProc{id, make});
 }
 
-void SkTypeface::serialize(SkWStream* wstream, SerializeBehavior behavior) const {
+bool SkTypeface::serialize(SkWStream* wstream, SerializeBehavior behavior) const {
     bool isLocalData = false;
     SkFontDescriptor desc;
     this->onGetFontDescriptor(&desc, &isLocalData);
@@ -229,13 +229,12 @@ void SkTypeface::serialize(SkWStream* wstream, SerializeBehavior behavior) const
             }
         }
     }
-    desc.serialize(wstream);
+    return desc.serialize(wstream);
 }
 
 sk_sp<SkData> SkTypeface::serialize(SerializeBehavior behavior) const {
     SkDynamicMemoryWStream stream;
-    this->serialize(&stream, behavior);
-    return stream.detachAsData();
+    return this->serialize(&stream, behavior) ? stream.detachAsData() : nullptr;
 }
 
 sk_sp<SkTypeface> SkTypeface::MakeDeserialize(SkStream* stream, sk_sp<SkFontMgr> lastResortMgr) {
@@ -502,6 +501,11 @@ bool SkTypeface::isFixedPitch() const {
 bool SkTypeface::onGetFixedPitch() const {
     return fIsFixedPitch;
 }
+
+bool SkTypeface::isSyntheticBold() const { return this->onIsSyntheticBold(); }
+bool SkTypeface::isSyntheticOblique() const { return this->onIsSyntheticOblique(); }
+bool SkTypeface::onIsSyntheticBold() const { return false; }
+bool SkTypeface::onIsSyntheticOblique() const { return false; }
 
 void SkTypeface::getGlyphToUnicodeMap(SkSpan<SkUnichar> dst) const {
     sk_bzero(dst.data(), dst.size_bytes());

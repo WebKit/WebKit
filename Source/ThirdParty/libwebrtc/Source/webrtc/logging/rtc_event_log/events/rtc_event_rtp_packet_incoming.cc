@@ -13,7 +13,6 @@
 #include <memory>
 
 #include "absl/memory/memory.h"
-#include "api/rtc_event_log/rtc_event.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
@@ -22,16 +21,11 @@ RtcEventRtpPacketIncoming::RtcEventRtpPacketIncoming(
     const RtpPacketReceived& packet)
     : packet_(packet) {}
 
-RtcEventRtpPacketIncoming::RtcEventRtpPacketIncoming(
-    const RtcEventRtpPacketIncoming& other)
-    : RtcEvent(other.timestamp_us_), packet_(other.packet_) {}
-
 RtcEventRtpPacketIncoming::~RtcEventRtpPacketIncoming() = default;
 
 std::unique_ptr<RtcEventRtpPacketIncoming> RtcEventRtpPacketIncoming::Copy()
     const {
-  return absl::WrapUnique<RtcEventRtpPacketIncoming>(
-      new RtcEventRtpPacketIncoming(*this));
+  return absl::WrapUnique(new RtcEventRtpPacketIncoming(*this));
 }
 
 }  // namespace webrtc

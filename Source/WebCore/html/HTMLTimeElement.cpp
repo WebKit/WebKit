@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTimeElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTimeElement);
 
 using namespace HTMLNames;
 

@@ -52,4 +52,4 @@ struct ShareDataWithParsedURL {
     ShareDataOriginator originator;
 };
     
-}
+} // namespace WebCore

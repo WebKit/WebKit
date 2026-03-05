@@ -27,7 +27,7 @@ namespace WebCore {
 class Gradient;
 
 class RenderSVGResourceGradient : public RenderSVGResourcePaintServer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourceGradient);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceGradient);
 public:
     virtual ~RenderSVGResourceGradient();
@@ -51,7 +51,8 @@ protected:
 
     bool buildGradientIfNeeded(const RenderLayerModelObject&, const RenderStyle&, AffineTransform& userspaceTransform);
     GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&) const;
-    GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
+    GradientSpreadMethod NODELETE platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
+    ColorInterpolationMethod gradientColorInterpolationMethod() const;
 
     RefPtr<Gradient> m_gradient;
 };

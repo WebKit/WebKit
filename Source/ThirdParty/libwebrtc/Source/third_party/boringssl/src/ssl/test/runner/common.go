@@ -697,7 +697,7 @@ type Config struct {
 	AvailableTrustAnchors [][]byte
 
 	// ResumptionAcrossNames specifies whether session tickets issued by the TLS
-	// server should be marked as compatable with cross-name resumption.
+	// server should be marked as compatible with cross-name resumption.
 	ResumptionAcrossNames bool
 
 	// Bugs specifies optional misbehaviour to be used for testing other
@@ -899,7 +899,7 @@ type ProtocolBugs struct {
 	PartialNewSessionTicketWithServerHelloDone bool
 
 	// PartialNewSessionTicketWithServerHelloDone, if true, causes the TLS 1.2
-	// server to send part of the Finshed in the same record as ServerHelloDone.
+	// server to send part of the Finished in the same record as ServerHelloDone.
 	PartialFinishedWithServerHelloDone bool
 
 	// PartialServerHelloWithHelloRetryRequest, if true, causes the TLS 1.3
@@ -967,7 +967,7 @@ type ProtocolBugs struct {
 	SendSupportedVersions []uint16
 
 	// NegotiateVersion, if non-zero, causes the server to negotiate the
-	// specifed wire version rather than the version supported by either
+	// specified wire version rather than the version supported by either
 	// peer.
 	NegotiateVersion uint16
 
@@ -1506,7 +1506,7 @@ type ProtocolBugs struct {
 	SendLargeRecords bool
 
 	// NegotiateALPNAndNPN, if true, causes the server to negotiate both
-	// ALPN and NPN in the same connetion.
+	// ALPN and NPN in the same connection.
 	NegotiateALPNAndNPN bool
 
 	// SendALPN, if non-empty, causes the server to send the specified
@@ -1882,7 +1882,7 @@ type ProtocolBugs struct {
 	InvalidChannelIDSignature bool
 
 	// AlwaysNegotiateChannelID, if true, causes the server to negotiate Channel
-	// ID, even whenn the client does not offer it.
+	// ID, even when the client does not offer it.
 	AlwaysNegotiateChannelID bool
 
 	// ExpectGREASE, if true, causes messages without GREASE values to be

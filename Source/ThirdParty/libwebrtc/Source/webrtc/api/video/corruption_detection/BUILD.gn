@@ -1,0 +1,143 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("filter_settings") {
+  visibility = [ "*" ]
+  sources = [ "corruption_detection_filter_settings.h" ]
+}
+
+rtc_library("frame_instrumentation_data") {
+  visibility = [ "*" ]
+  sources = [
+    "frame_instrumentation_data.cc",
+    "frame_instrumentation_data.h",
+  ]
+
+  deps = [
+    "../../:array_view",
+    "../../../rtc_base:checks",
+  ]
+}
+
+rtc_library("frame_instrumentation_data_reader") {
+  visibility = [ "*" ]
+  sources = [
+    "frame_instrumentation_data_reader.cc",
+    "frame_instrumentation_data_reader.h",
+  ]
+
+  deps = [
+    ":frame_instrumentation_data",
+    "../../:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../transport/rtp:corruption_detection_message",
+  ]
+}
+
+rtc_library("frame_instrumentation_evaluation") {
+  visibility = [ "*" ]
+  sources = [
+    "frame_instrumentation_evaluation.cc",
+    "frame_instrumentation_evaluation.h",
+  ]
+  deps = [
+    ":frame_instrumentation_data",
+    "../:video_frame",
+    "../:video_rtp_headers",
+    "../../:array_view",
+    "../../:scoped_refptr",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../video/corruption_detection:corruption_classifier",
+    "../../../video/corruption_detection:halton_frame_sampler",
+  ]
+}
+
+rtc_library("frame_instrumentation_generator") {
+  visibility = [ "*" ]
+  sources = [
+    "frame_instrumentation_generator.cc",
+    "frame_instrumentation_generator.h",
+  ]
+  deps = [
+    ":filter_settings",
+    ":frame_instrumentation_data",
+    "../:encoded_image",
+    "../:video_frame",
+    "../:video_frame_type",
+    "../../../modules:module_api_public",
+    "../../../modules/video_coding:video_coding_utility",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:macromagic",
+    "../../../rtc_base/synchronization:mutex",
+    "../../../video/corruption_detection:generic_mapping_functions",
+    "../../../video/corruption_detection:halton_frame_sampler",
+    "../../../video/corruption_detection:utils",
+    "../../video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("frame_instrumentation_data_unittest") {
+    testonly = true
+    sources = [ "frame_instrumentation_data_unittest.cc" ]
+
+    deps = [
+      ":frame_instrumentation_data",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("frame_instrumentation_data_reader_unittest") {
+    testonly = true
+    sources = [ "frame_instrumentation_data_reader_unittest.cc" ]
+
+    deps = [
+      ":frame_instrumentation_data",
+      ":frame_instrumentation_data_reader",
+      "../../../test:test_support",
+      "../../transport/rtp:corruption_detection_message",
+    ]
+  }
+
+  rtc_library("frame_instrumentation_evaluation_unittest") {
+    testonly = true
+    sources = [ "frame_instrumentation_evaluation_unittest.cc" ]
+    deps = [
+      ":frame_instrumentation_data",
+      ":frame_instrumentation_evaluation",
+      "../:video_frame",
+      "../:video_rtp_headers",
+      "../../:scoped_refptr",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("frame_instrumentation_generator_unittest") {
+    testonly = true
+    sources = [ "frame_instrumentation_generator_unittest.cc" ]
+    deps = [
+      ":filter_settings",
+      ":frame_instrumentation_data",
+      ":frame_instrumentation_generator",
+      "../:encoded_image",
+      "../:video_frame",
+      "../:video_frame_type",
+      "../../../api:make_ref_counted",
+      "../../../api:scoped_refptr",
+      "../../../rtc_base:refcount",
+      "../../../test:test_support",
+      "../../../video/corruption_detection:utils",
+    ]
+  }
+}

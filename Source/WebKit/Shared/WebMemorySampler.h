@@ -72,14 +72,14 @@ struct WebMemoryStatistics {
     
 class WebMemorySampler final : public CanMakeCheckedPtr<WebMemorySampler> {
     WTF_MAKE_NONCOPYABLE(WebMemorySampler);
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebMemorySampler);
+    WTF_MAKE_TZONE_ALLOCATED(WebMemorySampler);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebMemorySampler);
 public:
-    static WebMemorySampler* singleton();
+    static WebMemorySampler* NODELETE singleton();
     void start(const double interval = 0);
     void start(SandboxExtension::Handle&&, const String&, const double interval = 0);
     void stop();
-    bool isRunning() const;
+    bool isRunning() const { return m_isRunning; }
     
     // Do nothing since this is a singleton.
     void ref() const { }

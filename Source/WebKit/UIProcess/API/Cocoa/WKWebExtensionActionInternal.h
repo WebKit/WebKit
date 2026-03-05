@@ -44,8 +44,6 @@ template<> struct WrapperTraits<WebExtensionAction> {
 
 @property (nonatomic, readonly) WebKit::WebExtensionAction& _webExtensionAction;
 
-- (Ref<WebKit::WebExtensionAction>)_protectedWebExtensionAction;
-
 @end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

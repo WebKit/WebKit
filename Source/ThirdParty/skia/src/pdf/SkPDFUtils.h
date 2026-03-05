@@ -66,12 +66,10 @@ std::unique_ptr<SkPDFArray> MatrixToArray(const SkMatrix& matrix);
 void MoveTo(SkScalar x, SkScalar y, SkWStream* content);
 void AppendLine(SkScalar x, SkScalar y, SkWStream* content);
 void AppendRectangle(const SkRect& rect, SkWStream* content);
-void EmitPath(const SkPath& path, SkPaint::Style paintStyle,
-              bool doConsumeDegerates, SkWStream* content, SkScalar tolerance = 0.25f);
-inline void EmitPath(const SkPath& path, SkPaint::Style paintStyle,
-                     SkWStream* content, SkScalar tolerance = 0.25f) {
-    SkPDFUtils::EmitPath(path, paintStyle, true, content, tolerance);
-}
+enum class EmptyPath : bool { Discard, Preserve };
+enum class EmptyVerb : bool { Discard, Preserve };
+[[nodiscard]] bool EmitPath(const SkPath&, SkPaint::Style, EmptyPath, EmptyVerb,
+                            SkWStream* content, SkScalar tolerance = 0.25f);
 void ClosePath(SkWStream* content);
 void PaintPath(SkPaint::Style style, SkPathFillType fill, SkWStream* content);
 void StrokePath(SkWStream* content);
@@ -136,6 +134,7 @@ inline SkMatrix GetShaderLocalMatrix(const SkShader* shader) {
 bool InverseTransformBBox(const SkMatrix& matrix, SkRect* bbox);
 void PopulateTilingPatternDict(SkPDFDict* pattern,
                                SkRect& bbox,
+                               bool tileX, bool tileY,
                                std::unique_ptr<SkPDFDict> resources,
                                const SkMatrix& matrix);
 

@@ -78,7 +78,7 @@ public:
     uint32_t replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
     
     void hideFindIndicator();
-    void resetMatchIndex();
+    void NODELETE resetMatchIndex();
     void showFindIndicatorInSelection();
 
     bool isShowingOverlay() const { return m_isShowingFindIndicator && m_findPageOverlay; }
@@ -105,13 +105,11 @@ private:
     void didFailToFindString();
     void didHideFindIndicator();
     
-    unsigned findIndicatorRadius() const;
-    bool shouldHideFindIndicatorOnScroll() const;
+    unsigned NODELETE findIndicatorRadius() const;
+    bool NODELETE shouldHideFindIndicatorOnScroll() const;
     void didScrollAffectingFindIndicatorPosition();
 
     RefPtr<WebCore::LocalFrame> frameWithSelection(WebCore::Page*);
-
-    RefPtr<WebPage> protectedWebPage() const;
 
 #if ENABLE(PDF_PLUGIN)
     PluginView* mainFramePlugIn();
@@ -127,10 +125,6 @@ private:
     Vector<WebCore::SimpleRange> m_findMatches;
     // Index value is -1 if not found or if number of matches exceeds provided maximum.
     int m_foundStringMatchIndex { -1 };
-
-    // For instances where the normalized selection range is collapsed.
-    std::optional<WebCore::SimpleRange> m_lastFoundRange;
-    std::optional<WebCore::VisibleSelection> m_lastSelection;
 
 #if PLATFORM(IOS_FAMILY)
     RefPtr<WebCore::PageOverlay> m_findIndicatorOverlay;

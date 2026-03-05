@@ -31,28 +31,8 @@ mask32 = 2**32 - 1
 secret = [11562461410679940143, 16646288086500911323, 10285213230658275043, 6384245875588680899]
 
 
-def stringHash(str, useWYHash):
-    strLen = len(str)
-    if useWYHash:
-        if strLen <= 48:
-            return superFastHash(str)
-        return wyhash(str)
-    else:
-        return superFastHash(str)
-
-
-def avalancheBits(value):
-    value &= mask32
-
-    # Force "avalanching" of lower 32 bits
-    value ^= (value << 3)
-    value += (value >> 5)
-    value &= mask32
-    value ^= ((value << 2) & mask32)
-    value += (value >> 15)
-    value &= mask32
-    value ^= ((value << 10) & mask32)
-    return value
+def stringHash(str):
+    return wyhash(str)
 
 
 def maskTop8BitsAndAvoidZero(value):
@@ -68,37 +48,6 @@ def maskTop8BitsAndAvoidZero(value):
     if not value:
         value = 0x800000
     return value
-
-
-def superFastHash(str):
-    # Implements Paul Hsieh's SuperFastHash - http://www.azillionmonkeys.com/qed/hash.html
-    # Latin1Character data is interpreted as Latin-1-encoded (zero extended to 16 bits).
-    stringHashingStartValue = 0x9E3779B9
-
-    hash = stringHashingStartValue
-
-    strLength = len(str)
-    characterPairs = int(strLength / 2)
-    remainder = strLength & 1
-
-    # Main loop
-    while characterPairs > 0:
-        hash += ord(str[0])
-        tmp = (ord(str[1]) << 11) ^ hash
-        hash = ((hash << 16) & mask32) ^ tmp
-        str = str[2:]
-        hash += (hash >> 11)
-        hash &= mask32
-        characterPairs = characterPairs - 1
-
-    # Handle end case
-    if remainder:
-        hash += ord(str[0])
-        hash ^= ((hash << 11) & mask32)
-        hash += (hash >> 17)
-
-    hash = avalancheBits(hash)
-    return maskTop8BitsAndAvoidZero(hash)
 
 
 def wyhash(string):
@@ -216,7 +165,7 @@ def ceilingToPowerOf2(v):
 # where the indexMask in the corresponding HashTable should
 # be numEntries - 1.
 def createHashTable(keys, hashTableName):
-    def createHashTableHelper(keys, hashTableName, useWYHash):
+    def createHashTableHelper(keys, hashTableName):
         table = {}
         links = {}
         compactSize = ceilingToPowerOf2(len(keys))
@@ -227,7 +176,7 @@ def createHashTable(keys, hashTableName):
         i = 0
         for key in keys:
             depth = 0
-            hashValue = stringHash(key, useWYHash) % numEntries
+            hashValue = stringHash(key) % numEntries
             while hashValue in table:
                 if hashValue in links:
                     hashValue = links[hashValue]
@@ -254,10 +203,6 @@ def createHashTable(keys, hashTableName):
         string += '};\n'
         return string
 
-    hashTableForWYHash = createHashTableHelper(keys, hashTableName, True)
-    hashTableForSFHash = createHashTableHelper(keys, hashTableName, False)
-    result = hashTableForWYHash
-    if hashTableForWYHash != hashTableForSFHash:
-        result = "#if ENABLE(WYHASH_STRING_HASHER)\n{}#else\n{}#endif".format(hashTableForWYHash, hashTableForSFHash)
-    print(result)
+    hashTableForWYHash = createHashTableHelper(keys, hashTableName)
+    print(hashTableForWYHash)
 

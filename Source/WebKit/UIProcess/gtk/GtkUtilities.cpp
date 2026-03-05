@@ -32,7 +32,6 @@
 #include <gdk/x11/gdkx.h>
 #endif
 
-#if USE(SKIA)
 #if !USE(GTK4)
 #include <WebCore/RefPtrCairo.h>
 #endif
@@ -40,7 +39,6 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPixmap.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -140,24 +138,6 @@ unsigned stateModifierForGdkButton(unsigned button)
     return 1 << (8 + button - 1);
 }
 
-#if USE(CAIRO) && USE(GTK4)
-GRefPtr<GdkTexture> cairoSurfaceToGdkTexture(cairo_surface_t* surface)
-{
-    ASSERT(cairo_image_surface_get_format(surface) == CAIRO_FORMAT_ARGB32);
-    auto width = cairo_image_surface_get_width(surface);
-    auto height = cairo_image_surface_get_height(surface);
-    if (width <= 0 || height <= 0)
-        return nullptr;
-    auto stride = cairo_image_surface_get_stride(surface);
-    auto* data = cairo_image_surface_get_data(surface);
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, height * stride, [](gpointer data) {
-        cairo_surface_destroy(static_cast<cairo_surface_t*>(data));
-    }, cairo_surface_reference(surface)));
-    return adoptGRef(gdk_memory_texture_new(width, height, GDK_MEMORY_DEFAULT, bytes.get(), stride));
-}
-#endif
-
-#if USE(SKIA)
 GRefPtr<GdkPixbuf> skiaImageToGdkPixbuf(SkImage& image)
 {
 #if USE(GTK4)
@@ -205,14 +185,6 @@ RefPtr<cairo_surface_t> skiaImageToCairoSurface(SkImage& image)
     });
 
     return surface;
-}
-#endif
-#endif // USE(SKIA)
-
-#if USE(CAIRO)
-GRefPtr<GdkPixbuf> cairoSurfaceToGdkPixbuf(cairo_surface_t* surface)
-{
-    return adoptGRef(gdk_pixbuf_get_from_surface(surface, 0, 0, cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface)));
 }
 #endif
 
@@ -265,11 +237,7 @@ GRefPtr<GdkPixbuf> selectionDataImageAsGdkPixbuf(const SelectionData& selectionD
         return nullptr;
 
     auto& platformImage = nativeImage->platformImage();
-#if USE(CAIRO)
-    return cairoSurfaceToGdkPixbuf(platformImage.get());
-#elif USE(SKIA)
     return skiaImageToGdkPixbuf(*platformImage.get());
-#endif
 }
 
 void monitorWorkArea(GdkMonitor* monitor, GdkRectangle* area)

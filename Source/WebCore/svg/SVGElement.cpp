@@ -45,7 +45,7 @@
 #include "NodeName.h"
 #include "RenderAncestorIterator.h"
 #include "RenderSVGResourceContainer.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "ResolvedStyle.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementRareData.h"
@@ -77,12 +77,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGElement);
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
     : StyledElement(tagName, document, typeFlags | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks)
     , m_propertyAnimatorFactory(makeUniqueRef<SVGPropertyAnimatorFactory>())
-    , m_propertyRegistry(WTFMove(propertyRegistry))
+    , m_propertyRegistry(WTF::move(propertyRegistry))
     , m_className(SVGAnimatedString::create(this))
 {
     static bool didRegistration = false;
@@ -96,14 +96,14 @@ SVGElement::~SVGElement()
 {
     if (m_svgRareData) {
         RELEASE_ASSERT(m_svgRareData->referencingElements().isEmptyIgnoringNullReferences());
-        for (SVGElement& instance : copyToVectorOf<Ref<SVGElement>>(instances()))
-            instance.m_svgRareData->setCorrespondingElement(nullptr);
+        for (Ref instance : copyToVectorOf<Ref<SVGElement>>(instances()))
+            instance->m_svgRareData->setCorrespondingElement(nullptr);
         RELEASE_ASSERT(!m_svgRareData->correspondingElement());
         m_svgRareData = nullptr;
     }
 
     Ref<Document> document = this->document();
-    document->checkedSVGExtensions()->removeElementToRebuild(*this);
+    protect(document->svgExtensions())->removeElementToRebuild(*this);
 
     if (hasPendingResources()) {
         treeScopeForSVGReferences().removeElementFromPendingSVGResources(*this);
@@ -230,14 +230,17 @@ SVGSVGElement* SVGElement::ownerSVGElement() const
     return nullptr;
 }
 
-SVGElement* SVGElement::viewportElement() const
+SVGElement* SVGElement::viewportElement(ViewportElementType type) const
 {
     // This function needs shadow tree support - as RenderSVGContainer uses this function
-    // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
+    // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwise.
     auto* node = parentNode();
     while (node) {
-        if (is<SVGSVGElement>(*node) || is<SVGImageElement>(*node) || node->hasTagName(SVGNames::symbolTag))
-            return downcast<SVGElement>(node);
+        if (is<SVGSVGElement>(*node) || is<SVGImageElement>(*node))
+            return dynamicDowncast<SVGElement>(node);
+
+        if (type == ViewportElementType::Any && node->hasTagName(SVGNames::symbolTag))
+            return dynamicDowncast<SVGElement>(node);
 
         node = node->parentOrShadowHostNode();
     }
@@ -344,8 +347,8 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
 
 bool SVGElement::haveLoadedRequiredResources()
 {
-    for (auto& child : childrenOfType<SVGElement>(*this)) {
-        if (!child.haveLoadedRequiredResources())
+    for (Ref child : childrenOfType<SVGElement>(*this)) {
+        if (!child->haveLoadedRequiredResources())
             return false;
     }
     return true;
@@ -418,8 +421,8 @@ static bool hasLoadListener(Element* element)
     if (element->hasEventListeners(eventNames().loadEvent))
         return true;
 
-    for (element = element->parentOrShadowHostElement(); element; element = element->parentOrShadowHostElement()) {
-        if (element->hasCapturingEventListeners(eventNames().loadEvent))
+    for (CheckedPtr current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
+        if (current->hasCapturingEventListeners(eventNames().loadEvent))
             return true;
     }
 
@@ -437,17 +440,6 @@ void SVGElement::sendLoadEventIfPossible()
     dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-void SVGElement::loadEventTimerFired()
-{
-    sendLoadEventIfPossible();
-}
-
-Timer* SVGElement::loadEventTimer()
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 void SVGElement::finishParsingChildren()
 {
     StyledElement::finishParsingChildren();
@@ -460,7 +452,7 @@ void SVGElement::finishParsingChildren()
     invalidateInstances();
 }
 
-static inline bool isSVGLayerAwareElement(const SVGElement& element)
+static inline bool NODELETE isSVGLayerAwareElement(const SVGElement& element)
 {
     using namespace ElementNames;
 
@@ -531,7 +523,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
 
     switch (name.nodeName()) {
     case AttributeNames::idAttr:
-        protectedDocument()->checkedSVGExtensions()->rebuildAllElementReferencesForTarget(*this);
+        protect(protect(document())->svgExtensions())->rebuildAllElementReferencesForTarget(*this);
         break;
     case AttributeNames::classAttr:
         m_className->setBaseValInternal(newValue);
@@ -559,8 +551,15 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
 void SVGElement::synchronizeAttribute(const QualifiedName& name)
 {
     // If the value of the property has changed, serialize the new value to the attribute.
-    if (auto value = propertyRegistry().synchronize(name))
+    if (auto value = propertyRegistry().synchronize(name)) {
+        // If the serialized value is empty and the attribute doesn't exist,
+        // don't recreate it. This handles the case where the attribute was
+        // explicitly removed after the list was emptied.
+        if (value->isEmpty() && !hasAttribute(name))
+            return;
+
         setSynchronizedLazyAttribute(name, AtomString { *value });
+    }
 }
 
 void SVGElement::synchronizeAllAttributes()
@@ -583,7 +582,7 @@ void SVGElement::commitPropertyChange(SVGProperty* property)
     svgAttributeChanged(propertyRegistry().propertyAttributeName(*property));
 }
 
-void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)
+void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
 {
     QualifiedName attributeName = propertyRegistry().animatedPropertyAttributeName(animatedProperty);
     ASSERT(attributeName != nullQName());

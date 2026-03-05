@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(JIT)
 
 #include <JavaScriptCore/CCallHelpers.h>
@@ -83,9 +85,9 @@ public:
 
     SnippetParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : m_vm(vm)
-        , m_regs(WTFMove(regs))
-        , m_gpScratch(WTFMove(gpScratch))
-        , m_fpScratch(WTFMove(fpScratch))
+        , m_regs(WTF::move(regs))
+        , m_gpScratch(WTF::move(gpScratch))
+        , m_fpScratch(WTF::move(fpScratch))
     {
     }
 

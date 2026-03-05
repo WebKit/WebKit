@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CryptoAlgorithmEcKeyParamsInit.h"
 #include "CryptoAlgorithmParameters.h"
 
 namespace WebCore {
@@ -34,12 +35,22 @@ class CryptoAlgorithmEcKeyParams final : public CryptoAlgorithmParameters {
 public:
     String namedCurve;
 
+    CryptoAlgorithmEcKeyParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmEcKeyParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmEcKeyParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , namedCurve { WTF::move(init.namedCurve) }
+    {
+    }
+
     Class parametersClass() const final { return Class::EcKeyParams; }
 
     CryptoAlgorithmEcKeyParams isolatedCopy() const
     {
-        CryptoAlgorithmEcKeyParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmEcKeyParams result { identifier };
         result.namedCurve = namedCurve.isolatedCopy();
 
         return result;

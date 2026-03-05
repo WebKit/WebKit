@@ -199,7 +199,7 @@ GCOwnedDataScope<AtomStringImpl*> JSRopeString::resolveRopeToExistingAtomString(
             existingAtomString = AtomStringImpl::lookUp(newImpl.ptr());
             if (existingAtomString)
                 return Ref { *existingAtomString };
-            return WTFMove(newImpl);
+            return WTF::move(newImpl);
         });
         RETURN_IF_EXCEPTION(scope, { });
         return { this, existingAtomString.get() };
@@ -275,7 +275,7 @@ const String& JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM
 {
     constexpr bool reportAllocation = true;
     return resolveRopeWithFunction<reportAllocation>(nullOrGlobalObjectForOOM, [] (Ref<StringImpl>&& newImpl) {
-        return WTFMove(newImpl);
+        return WTF::move(newImpl);
     });
 }
 
@@ -283,7 +283,7 @@ const String& JSRopeString::resolveRopeWithoutGC() const
 {
     constexpr bool reportAllocation = false;
     return resolveRopeWithFunction<reportAllocation>(nullptr, [] (Ref<StringImpl>&& newImpl) {
-        return WTFMove(newImpl);
+        return WTF::move(newImpl);
     });
 }
 

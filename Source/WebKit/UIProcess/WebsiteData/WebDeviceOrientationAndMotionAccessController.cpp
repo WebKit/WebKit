@@ -45,7 +45,7 @@ WebDeviceOrientationAndMotionAccessController::WebDeviceOrientationAndMotionAcce
 
 void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
-    auto originData = SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL())->data();
+    auto originData = SecurityOrigin::createFromString(protect(page.pageLoadState())->activeURL())->data();
     auto currentPermission = cachedDeviceOrientationPermission(originData);
     if (currentPermission != DeviceOrientationOrMotionPermissionState::Prompt || !mayPrompt)
         return completionHandler(currentPermission);
@@ -53,11 +53,11 @@ void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPagePro
     auto& pendingRequests = m_pendingRequests.ensure(originData, [] {
         return Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>> { };
     }).iterator->value;
-    pendingRequests.append(WTFMove(completionHandler));
+    pendingRequests.append(WTF::move(completionHandler));
     if (pendingRequests.size() > 1)
         return;
 
-    page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTFMove(frameInfo), [weakThis = WeakPtr { *this }, originData](bool granted) mutable {
+    page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTF::move(frameInfo), [weakThis = WeakPtr { *this }, originData](bool granted) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

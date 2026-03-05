@@ -14,6 +14,7 @@
 #include <string>
 
 #include "api/async_dns_resolver.h"
+#include "api/environment/environment.h"
 #include "api/local_network_access_permission.h"
 #include "api/ref_count.h"
 #include "api/rtc_event_log/rtc_event_log.h"
@@ -40,9 +41,9 @@ class IceTransportInterface : public RefCountInterface {
   virtual IceTransportInternal* internal() = 0;
 };
 
-struct IceTransportInit final {
+class IceTransportInit final {
  public:
-  IceTransportInit() = default;
+  explicit IceTransportInit(const Environment& env) : env_(env) {}
   IceTransportInit(const IceTransportInit&) = delete;
   IceTransportInit(IceTransportInit&&) = default;
   IceTransportInit& operator=(const IceTransportInit&) = delete;
@@ -70,8 +71,7 @@ struct IceTransportInit final {
     lna_permission_factory_ = lna_permission_factory;
   }
 
-  RtcEventLog* event_log() { return event_log_; }
-  void set_event_log(RtcEventLog* event_log) { event_log_ = event_log; }
+  RtcEventLog* event_log() { return &env_.event_log(); }
 
   void set_ice_controller_factory(
       IceControllerFactoryInterface* ice_controller_factory) {
@@ -100,20 +100,18 @@ struct IceTransportInit final {
     return active_ice_controller_factory_;
   }
 
-  const FieldTrialsView* field_trials() { return field_trials_; }
-  void set_field_trials(const FieldTrialsView* field_trials) {
-    field_trials_ = field_trials;
-  }
+  const FieldTrialsView* field_trials() { return &env_.field_trials(); }
+
+  const Environment& env() { return env_; }
 
  private:
+  Environment env_;
   PortAllocator* port_allocator_ = nullptr;
   AsyncDnsResolverFactoryInterface* async_dns_resolver_factory_ = nullptr;
   LocalNetworkAccessPermissionFactoryInterface* lna_permission_factory_ =
       nullptr;
-  RtcEventLog* event_log_ = nullptr;
   IceControllerFactoryInterface* ice_controller_factory_ = nullptr;
   ActiveIceControllerFactoryInterface* active_ice_controller_factory_ = nullptr;
-  const FieldTrialsView* field_trials_ = nullptr;
   // TODO(https://crbug.com/webrtc/12657): Redesign to have const members.
 };
 

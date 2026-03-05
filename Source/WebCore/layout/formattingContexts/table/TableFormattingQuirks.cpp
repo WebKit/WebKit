@@ -30,7 +30,7 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutState.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "TableFormattingContext.h"
 #include "TableGrid.h"
 
@@ -61,9 +61,9 @@ LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
     // The "let's find the nearest ancestor with fixed height to resolve percent height" quirk is limited to the table formatting
     // context. If we can't resolve it within the table subtree, we default it to 0.
     // e.g <div style="height: 100px"><table><tr><td style="height: 100%"></td></tr></table></div> is resolved to 0px.
-    for (auto& ancestor : containingBlockChainWithinFormattingContext(layoutBox, formattingContext().root())) {
-        if (auto fixedHeight = ancestor.style().logicalHeight().tryFixed())
-            return LayoutUnit { fixedHeight->resolveZoom(ancestor.style().usedZoomForLength()) };
+    for (CheckedRef ancestor : containingBlockChainWithinFormattingContext(layoutBox, formattingContext().root())) {
+        if (auto fixedHeight = ancestor->style().logicalHeight().tryFixed())
+            return LayoutUnit { fixedHeight->resolveZoom(ancestor->style().usedZoomForLength()) };
     }
     return { };
 }

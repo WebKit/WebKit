@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,13 @@
 
 /* BCOMPILER() - the compiler being used to build the project */
 #define BCOMPILER(BFEATURE) (defined BCOMPILER_##BFEATURE && BCOMPILER_##BFEATURE)
+
+/* BCOMPILER_HAS_CLANG_BUILTIN() - whether the compiler supports a particular clang builtin. */
+#ifdef __has_builtin
+#define BCOMPILER_HAS_CLANG_BUILTIN(x) __has_builtin(x)
+#else
+#define BCOMPILER_HAS_CLANG_BUILTIN(x) 0
+#endif
 
 /* BCOMPILER_HAS_CLANG_FEATURE() - whether the compiler supports a particular language or library feature. */
 /* http://clang.llvm.org/docs/LanguageExtensions.html#has-feature-and-has-extension */

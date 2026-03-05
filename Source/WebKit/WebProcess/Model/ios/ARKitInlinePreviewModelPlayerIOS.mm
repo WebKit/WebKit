@@ -108,7 +108,7 @@ std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerIOS::modelIdentifier
 void ARKitInlinePreviewModelPlayerIOS::configureGraphicsLayer(WebCore::GraphicsLayer& graphicsLayer, WebCore::ModelPlayerGraphicsLayerConfiguration&& configuration)
 {
     if (configuration.model)
-        graphicsLayer.setContentsToModel(WTFMove(configuration.model), configuration.isInteractive ? WebCore::GraphicsLayer::ModelInteraction::Enabled : WebCore::GraphicsLayer::ModelInteraction::Disabled);
+        graphicsLayer.setContentsToModel(WTF::move(configuration.model), configuration.isInteractive ? WebCore::GraphicsLayer::ModelInteraction::Enabled : WebCore::GraphicsLayer::ModelInteraction::Disabled);
 }
 
 void ARKitInlinePreviewModelPlayerIOS::enterFullscreen()

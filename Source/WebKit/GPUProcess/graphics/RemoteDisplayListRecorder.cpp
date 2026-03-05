@@ -42,7 +42,7 @@ Ref<RemoteDisplayListRecorder> RemoteDisplayListRecorder::create(RemoteDisplayLi
 
 RemoteDisplayListRecorder::RemoteDisplayListRecorder(UniqueRef<DisplayList::RecorderImpl>&& recorder, RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackend& renderingBackend)
     : RemoteGraphicsContext(recorder, renderingBackend)
-    , m_recorder(WTFMove(recorder))
+    , m_recorder(WTF::move(recorder))
     , m_identifier(identifier)
 {
 }

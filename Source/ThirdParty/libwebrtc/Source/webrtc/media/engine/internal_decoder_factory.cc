@@ -70,7 +70,7 @@ VideoDecoderFactory::CodecSupport InternalDecoderFactory::QueryCodecSupport(
   if (reference_scaling) {
     VideoCodecType codec = PayloadStringToCodecType(format.name);
     if (codec != kVideoCodecVP9 && codec != kVideoCodecAV1) {
-      return {/*is_supported=*/false, /*is_power_efficient=*/false};
+      return {.is_supported = false, .is_power_efficient = false};
     }
   }
 

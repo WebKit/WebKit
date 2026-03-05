@@ -131,7 +131,7 @@ public:
     void startEventMonitor(std::optional<AtspiAccessible*> source, Vector<CString>&& events)
     {
         m_eventMonitor.source = source;
-        m_eventMonitor.eventTypes = WTFMove(events);
+        m_eventMonitor.eventTypes = WTF::move(events);
         m_eventMonitor.listener = adoptGRef(atspi_event_listener_new([](AtspiEvent* event, gpointer userData) {
             auto* test = static_cast<AccessibilityTest*>(userData);
             if (test->shouldProcessEvent(event))
@@ -149,7 +149,7 @@ public:
         while (m_eventMonitor.events.size() < expectedEvents && MonotonicTime::now() - startTime < timeout.value_or(Seconds::infinity()))
             g_main_context_iteration(nullptr, timeout ? FALSE : TRUE);
 
-        auto events = WTFMove(m_eventMonitor.events);
+        auto events = WTF::move(m_eventMonitor.events);
         for (const auto& event : m_eventMonitor.eventTypes)
             atspi_event_listener_deregister(m_eventMonitor.listener.get(), event.data(), nullptr);
         m_eventMonitor = { nullptr, { }, { }, nullptr };

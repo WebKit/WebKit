@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static inline bool lengthIsValid(size_t length)
+static inline bool NODELETE lengthIsValid(size_t length)
 {
     return (length == CryptoKeyAES::s_length128) || (length == CryptoKeyAES::s_length192) || (length == CryptoKeyAES::s_length256);
 }
@@ -50,7 +50,7 @@ CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<uin
 
 CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&& key, bool extractable, CryptoKeyUsageBitmap usage)
     : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
-    , m_key(WTFMove(key))
+    , m_key(WTF::move(key))
 {
     ASSERT(isValidAESAlgorithm(algorithm));
 }
@@ -77,7 +77,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier algorithm
 {
     if (!lengthIsValid(keyData.size() * 8))
         return nullptr;
-    return adoptRef(new CryptoKeyAES(algorithm, WTFMove(keyData), extractable, usages));
+    return adoptRef(new CryptoKeyAES(algorithm, WTF::move(keyData), extractable, usages));
 }
 
 RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages, CheckAlgCallback&& callback)
@@ -98,7 +98,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;
 
-    return adoptRef(new CryptoKeyAES(algorithm, WTFMove(*octetSequence), extractable, usages));
+    return adoptRef(new CryptoKeyAES(algorithm, WTF::move(*octetSequence), extractable, usages));
 }
 
 JsonWebKey CryptoKeyAES::exportJwk() const

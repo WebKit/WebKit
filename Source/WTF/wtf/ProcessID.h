@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if OS(UNIX)
 #include <unistd.h>
 #endif

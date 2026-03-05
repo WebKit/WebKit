@@ -41,6 +41,6 @@ WKMutableDictionaryRef WKMutableDictionaryCreateWithCapacity(size_t capacity)
 
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
 {
-    return WebKit::toProtectedImpl(dictionaryRef)->set(WebKit::toProtectedImpl(keyRef)->string(), WebKit::toImpl(itemRef));
+    return protect(WebKit::toImpl(dictionaryRef))->set(protect(WebKit::toImpl(keyRef))->string(), WebKit::toImpl(itemRef));
 }
 

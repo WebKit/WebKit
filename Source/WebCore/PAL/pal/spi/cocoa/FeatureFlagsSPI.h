@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -33,6 +36,11 @@ DECLARE_SYSTEM_HEADER
 
 #else
 
+WTF_EXTERN_C_BEGIN
+
 #define os_feature_enabled(d, f) _os_feature_enabled_impl(#d, #f)
-extern "C" bool _os_feature_enabled_impl(const char *domain, const char *feature);
+bool _os_feature_enabled_impl(const char *domain, const char *feature);
+
+WTF_EXTERN_C_END
+
 #endif

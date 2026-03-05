@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 #if HAVE(APP_SSO)
 
 #import <pal/spi/cocoa/AppSSOSPI.h>

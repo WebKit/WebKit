@@ -649,7 +649,7 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
   // Probe for getrandom support
   ret.push_back(Event::GetRandom(1, GRND_NONBLOCK));
   std::function<void()> wait_for_entropy;
-  std::function<bool(bool, size_t)> sysrand;
+  std::function<bool(size_t)> sysrand;
 
   if (flags & NO_GETRANDOM) {
     if (kIsFIPS) {
@@ -664,7 +664,7 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
       return ret;
     }
 
-    sysrand = [&ret, flags](bool block, size_t len) {
+    sysrand = [&ret, flags](size_t len) {
       ret.push_back(Event::UrandomRead(len));
       if (flags & URANDOM_ERROR) {
         ret.push_back(Event::Abort());
@@ -688,71 +688,46 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
       ret.push_back(Event::GetRandom(1, 0));
       getrandom_ready = true;
     };
-    sysrand = [&ret, &wait_for_entropy](bool block, size_t len) {
-      if (block) {
-        wait_for_entropy();
-      }
-      ret.push_back(Event::GetRandom(len, block ? 0 : GRND_NONBLOCK));
+    sysrand = [&ret, &wait_for_entropy](size_t len) {
+      wait_for_entropy();
+      ret.push_back(Event::GetRandom(len, 0));
       return true;
     };
   }
 
-  const size_t kSeedLength = CTR_DRBG_SEED_LEN * (kIsFIPS ? 10 : 1);
+  const size_t kSeedLength =
+      CTR_DRBG_SEED_LEN * (kIsFIPS ? 10 : 1) + (kIsFIPS ? 16 : 0);
   const size_t kAdditionalDataLength = 32;
 
   if (!have_rdrand()) {
     if (!have_fork_detection()) {
-      if (!sysrand(true, kAdditionalDataLength)) {
+      if (!sysrand(kAdditionalDataLength)) {
         return ret;
       }
       used_daemon = kUsesDaemon && AppendDaemonEvents(&ret, flags);
     }
-    if (  // Initialise CRNGT.
-        (!used_daemon && !sysrand(true, kSeedLength + (kIsFIPS ? 16 : 0))) ||
-        // Personalisation draw if the daemon was used.
-        (used_daemon && !sysrand(false, CTR_DRBG_SEED_LEN)) ||
-        // Second entropy draw.
-        (!have_fork_detection() && !sysrand(true, kAdditionalDataLength))) {
+    if (// Initialise CRNGT. If the daemon is used, the OS is used for the
+        // personalisation data of length |CTR_DRBG_SEED_LEN|. Otherwise, it
+        // used for the seed itself, including FIPS overread.
+        !sysrand(used_daemon ? CTR_DRBG_SEED_LEN : kSeedLength) ||
+        // Second additional data, when other fork-safety measures have failed.
+        (!have_fork_detection() && !sysrand(kAdditionalDataLength))) {
       return ret;
     }
   } else if (
-      // First additional data. If fast RDRAND isn't available then a
-      // non-blocking OS entropy draw will be tried.
+      // First additional data, when other fork-safety measures have failed. If
+      // fast RDRAND isn't available then we use OS entropy.
       (!have_fast_rdrand() && !have_fork_detection() &&
-       !sysrand(false, kAdditionalDataLength)) ||
-      // Opportuntistic entropy draw in FIPS mode because RDRAND was used.
-      // In non-FIPS mode it's just drawn from |CRYPTO_sysrand| in a blocking
-      // way.
-      !sysrand(!kIsFIPS, CTR_DRBG_SEED_LEN) ||
-      // Second entropy draw's additional data.
+       !sysrand(kAdditionalDataLength)) ||
+      // OS entropy for the seed, or personalisation data if RDRAND was used.
+      !sysrand(CTR_DRBG_SEED_LEN) ||
+      // Second additional data, when other fork-safety measures have failed.
       (!have_fast_rdrand() && !have_fork_detection() &&
-       !sysrand(false, kAdditionalDataLength))) {
+       !sysrand(kAdditionalDataLength))) {
     return ret;
   }
 
   return ret;
-}
-
-static void CheckInvariants(const std::vector<Event> &events) {
-  // If RDRAND is available then there should be no blocking syscalls in FIPS
-  // mode.
-#if defined(BORINGSSL_FIPS)
-  if (have_rdrand()) {
-    for (const auto &event : events) {
-      switch (event.type) {
-        case Event::Syscall::kGetRandom:
-          if ((event.flags & GRND_NONBLOCK) == 0) {
-            ADD_FAILURE() << "Blocking getrandom found with RDRAND: "
-                          << ToString(events);
-          }
-          break;
-
-        default:
-          break;
-      }
-    }
-  }
-#endif
 }
 
 // Tests that |TestFunctionPRNGModel| is a correct model for the code in
@@ -793,7 +768,6 @@ TEST(URandomTest, Test) {
     TRACE_FLAG(SOCKET_READ_SHORT);
 
     const std::vector<Event> expected_trace = TestFunctionPRNGModel(flags);
-    CheckInvariants(expected_trace);
     std::vector<Event> actual_trace;
     GetTrace(&actual_trace, flags, TestFunction);
 

@@ -33,26 +33,26 @@ namespace WebCore {
 class GStreamerAudioData final : public PlatformAudioData {
 public:
     GStreamerAudioData(GRefPtr<GstSample>&& sample, GstAudioInfo&& info)
-        : m_sample(WTFMove(sample))
-        , m_audioInfo(WTFMove(info))
+        : m_sample(WTF::move(sample))
+        , m_audioInfo(WTF::move(info))
     {
     }
 
     GStreamerAudioData(GRefPtr<GstSample>&& sample, const GstAudioInfo& info)
-        : m_sample(WTFMove(sample))
+        : m_sample(WTF::move(sample))
         , m_audioInfo(info)
     {
     }
 
     GStreamerAudioData(GRefPtr<GstSample>&& sample)
-        : m_sample(WTFMove(sample))
+        : m_sample(WTF::move(sample))
     {
         gst_audio_info_from_caps(&m_audioInfo, gst_sample_get_caps(m_sample.get()));
     }
 
-    void setSample(GRefPtr<GstSample>&& sample) { m_sample = WTFMove(sample); }
+    void setSample(GRefPtr<GstSample>&& sample) { m_sample = WTF::move(sample); }
     const GRefPtr<GstSample>& getSample() const { return m_sample; }
-    const GstAudioInfo& getAudioInfo() const { return m_audioInfo; }
+    const GstAudioInfo& getAudioInfo() const LIFETIME_BOUND { return m_audioInfo; }
     uint32_t channelCount() const { return GST_AUDIO_INFO_CHANNELS(&m_audioInfo); }
 
 private:

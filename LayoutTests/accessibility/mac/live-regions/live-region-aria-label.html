@@ -1,0 +1,52 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<div id="polite-region" aria-live="polite">
+</div>
+
+<script>
+var output = "This tests that the notifications for aria-live properly handle alternative text provided via aria-label.\n\n";    
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n${formatAnnouncementUserInfo(userInfo)}\n`;
+
+        notificationCount++;
+        if (notificationCount == 1) {
+            document.getElementById("abbreviation").textContent = "FYI";
+            document.getElementById("abbreviation").ariaLabel = "For your information";
+        } else if (notificationCount == 2)
+            testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("polite-region");
+
+    const div = document.createElement("div");
+    div.ariaLabel = "Be right back";
+    div.id = "abbreviation";
+    div.textContent = "BRB";
+    
+    document.getElementById("polite-region").appendChild(div);
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

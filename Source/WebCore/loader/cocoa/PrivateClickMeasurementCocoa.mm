@@ -87,7 +87,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateSourceSecretTok
     if (auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, m_sourceUnlinkableToken, secretToken, "source"_s))
         return errorMessage;
     
-    m_sourceSecretToken = WTFMove(secretToken);
+    m_sourceSecretToken = WTF::move(secretToken);
     return std::nullopt;
 }
 

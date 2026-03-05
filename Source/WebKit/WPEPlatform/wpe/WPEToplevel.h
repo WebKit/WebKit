@@ -38,7 +38,7 @@ G_BEGIN_DECLS
 #define WPE_TYPE_TOPLEVEL (wpe_toplevel_get_type())
 WPE_DECLARE_DERIVABLE_TYPE (WPEToplevel, wpe_toplevel, WPE, TOPLEVEL, GObject)
 
-typedef struct _WPEBufferDMABufFormats WPEBufferDMABufFormats;
+typedef struct _WPEBufferFormats WPEBufferFormats;
 typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEScreen WPEScreen;
 typedef struct _WPEView WPEView;
@@ -47,18 +47,18 @@ struct _WPEToplevelClass
 {
     GObjectClass parent_class;
 
-    void                    (* set_title)                     (WPEToplevel *toplevel,
-                                                               const char  *title);
-    WPEScreen              *(* get_screen)                    (WPEToplevel *toplevel);
-    gboolean                (* resize)                        (WPEToplevel *toplevel,
-                                                               int          width,
-                                                               int          height);
-    gboolean                (* set_fullscreen)                (WPEToplevel *toplevel,
-                                                               gboolean     fullscreen);
-    gboolean                (* set_maximized)                 (WPEToplevel *toplevel,
-                                                               gboolean     maximized);
-    gboolean                (* set_minimized)                 (WPEToplevel *toplevel);
-    WPEBufferDMABufFormats *(* get_preferred_dma_buf_formats) (WPEToplevel *toplevel);
+    void              (* set_title)                    (WPEToplevel *toplevel,
+                                                        const char  *title);
+    WPEScreen        *(* get_screen)                   (WPEToplevel *toplevel);
+    gboolean          (* resize)                       (WPEToplevel *toplevel,
+                                                        int          width,
+                                                        int          height);
+    gboolean          (* set_fullscreen)               (WPEToplevel *toplevel,
+                                                        gboolean     fullscreen);
+    gboolean          (* set_maximized)                (WPEToplevel *toplevel,
+                                                        gboolean     maximized);
+    gboolean          (* set_minimized)                (WPEToplevel *toplevel);
+    WPEBufferFormats *(* get_preferred_buffer_formats) (WPEToplevel *toplevel);
 
     gpointer padding[32];
 };
@@ -93,40 +93,40 @@ typedef gboolean (* WPEToplevelForeachViewFunc) (WPEToplevel *toplevel,
                                                  WPEView     *view,
                                                  gpointer     user_data);
 
-WPE_API GList                  *wpe_toplevel_list                              (void);
-WPE_API WPEDisplay             *wpe_toplevel_get_display                       (WPEToplevel               *toplevel);
-WPE_API void                    wpe_toplevel_set_title                         (WPEToplevel               *toplevel,
-                                                                                const char                *title);
-WPE_API guint                   wpe_toplevel_get_max_views                     (WPEToplevel               *toplevel);
-WPE_API guint                   wpe_toplevel_get_n_views                       (WPEToplevel               *toplevel);
-WPE_API void                    wpe_toplevel_foreach_view                      (WPEToplevel               *toplevel,
-                                                                                WPEToplevelForeachViewFunc func,
-                                                                                gpointer                   user_data);
-WPE_API void                    wpe_toplevel_closed                            (WPEToplevel               *toplevel);
-WPE_API void                    wpe_toplevel_get_size                          (WPEToplevel               *toplevel,
-                                                                                int                       *width,
-                                                                                int                       *height);
-WPE_API gboolean                wpe_toplevel_resize                            (WPEToplevel               *toplevel,
-                                                                                int                        width,
-                                                                                int                        height);
-WPE_API void                    wpe_toplevel_resized                           (WPEToplevel               *toplevel,
-                                                                                int                        width,
-                                                                                int                        height);
-WPE_API WPEToplevelState        wpe_toplevel_get_state                         (WPEToplevel               *toplevel);
-WPE_API void                    wpe_toplevel_state_changed                     (WPEToplevel               *toplevel,
-                                                                                WPEToplevelState           state);
-WPE_API gdouble                 wpe_toplevel_get_scale                         (WPEToplevel               *toplevel);
-WPE_API void                    wpe_toplevel_scale_changed                     (WPEToplevel               *toplevel,
-                                                                                gdouble                    scale);
-WPE_API WPEScreen              *wpe_toplevel_get_screen                        (WPEToplevel               *toplevel);
-WPE_API void                    wpe_toplevel_screen_changed                    (WPEToplevel               *toplevel);
-WPE_API gboolean                wpe_toplevel_fullscreen                        (WPEToplevel               *toplevel);
-WPE_API gboolean                wpe_toplevel_unfullscreen                      (WPEToplevel               *toplevel);
-WPE_API gboolean                wpe_toplevel_maximize                          (WPEToplevel               *toplevel);
-WPE_API gboolean                wpe_toplevel_unmaximize                        (WPEToplevel               *toplevel);
-WPE_API gboolean                wpe_toplevel_minimize                          (WPEToplevel               *toplevel);
-WPE_API WPEBufferDMABufFormats *wpe_toplevel_get_preferred_dma_buf_formats     (WPEToplevel               *toplevel);
-WPE_API void                    wpe_toplevel_preferred_dma_buf_formats_changed (WPEToplevel               *toplevel);
+WPE_API GList            *wpe_toplevel_list                             (void);
+WPE_API WPEDisplay       *wpe_toplevel_get_display                      (WPEToplevel               *toplevel);
+WPE_API void              wpe_toplevel_set_title                        (WPEToplevel               *toplevel,
+                                                                         const char                *title);
+WPE_API guint             wpe_toplevel_get_max_views                    (WPEToplevel               *toplevel);
+WPE_API guint             wpe_toplevel_get_n_views                      (WPEToplevel               *toplevel);
+WPE_API void              wpe_toplevel_foreach_view                     (WPEToplevel               *toplevel,
+                                                                         WPEToplevelForeachViewFunc func,
+                                                                         gpointer                   user_data);
+WPE_API void              wpe_toplevel_closed                           (WPEToplevel               *toplevel);
+WPE_API void              wpe_toplevel_get_size                         (WPEToplevel               *toplevel,
+                                                                         int                       *width,
+                                                                         int                       *height);
+WPE_API gboolean          wpe_toplevel_resize                           (WPEToplevel               *toplevel,
+                                                                         int                        width,
+                                                                         int                        height);
+WPE_API void              wpe_toplevel_resized                          (WPEToplevel               *toplevel,
+                                                                         int                        width,
+                                                                         int                        height);
+WPE_API WPEToplevelState  wpe_toplevel_get_state                        (WPEToplevel               *toplevel);
+WPE_API void              wpe_toplevel_state_changed                    (WPEToplevel               *toplevel,
+                                                                         WPEToplevelState           state);
+WPE_API gdouble           wpe_toplevel_get_scale                        (WPEToplevel               *toplevel);
+WPE_API void              wpe_toplevel_scale_changed                    (WPEToplevel               *toplevel,
+                                                                         gdouble                    scale);
+WPE_API WPEScreen        *wpe_toplevel_get_screen                       (WPEToplevel               *toplevel);
+WPE_API void              wpe_toplevel_screen_changed                   (WPEToplevel               *toplevel);
+WPE_API gboolean          wpe_toplevel_fullscreen                       (WPEToplevel               *toplevel);
+WPE_API gboolean          wpe_toplevel_unfullscreen                     (WPEToplevel               *toplevel);
+WPE_API gboolean          wpe_toplevel_maximize                         (WPEToplevel               *toplevel);
+WPE_API gboolean          wpe_toplevel_unmaximize                       (WPEToplevel               *toplevel);
+WPE_API gboolean          wpe_toplevel_minimize                         (WPEToplevel               *toplevel);
+WPE_API WPEBufferFormats *wpe_toplevel_get_preferred_buffer_formats     (WPEToplevel               *toplevel);
+WPE_API void              wpe_toplevel_preferred_buffer_formats_changed (WPEToplevel               *toplevel);
 
 G_END_DECLS
 

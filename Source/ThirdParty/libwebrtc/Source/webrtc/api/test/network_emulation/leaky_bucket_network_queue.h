@@ -19,7 +19,9 @@
 
 #include "api/test/network_emulation/network_queue.h"
 #include "api/test/simulated_network.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "rtc_base/random.h"
 
 namespace webrtc {
 
@@ -27,7 +29,18 @@ namespace webrtc {
 // can be queued.
 class LeakyBucketNetworkQueue : public NetworkQueue {
  public:
-  LeakyBucketNetworkQueue() = default;
+  struct Config {
+    int seed = 1;
+    // If enqueued packets are sent as ECT1 and sojourn time is larger than
+    // `target_ect1_sojourn_time`, packets will be marked as CE with
+    // probability (sojourn_time - `target_ect1_sojourn_time`) /
+    // (`max_ect1_sojourn_time` - `target_ect1_sojourn_time`)
+    TimeDelta max_ect1_sojourn_time = TimeDelta::PlusInfinity();
+    TimeDelta target_ect1_sojourn_time = TimeDelta::PlusInfinity();
+  };
+
+  LeakyBucketNetworkQueue() : LeakyBucketNetworkQueue(Config()) {}
+  explicit LeakyBucketNetworkQueue(const Config& config);
   // If `max_capacity` is larger than current queue length, existing packets are
   // not dropped. But the queue will not accept new packets until queue length
   // is below `max_capacity`,
@@ -42,17 +55,31 @@ class LeakyBucketNetworkQueue : public NetworkQueue {
   void DropOldestPacket();
 
  private:
-  size_t max_packet_capacity_ = kMaxPacketCapacity;
+  void MaybeMarkAsCe(Timestamp time_now, PacketInFlightInfo& packet_info);
 
+  size_t max_packet_capacity_ = kMaxPacketCapacity;
+  const TimeDelta max_ect1_sojourn_time_;
+  const TimeDelta target_ect1_sojourn_time_;
+
+  Random random_;
   std::queue<PacketInFlightInfo> queue_;
   std::vector<PacketInFlightInfo> dropped_packets_;
 };
 
 class LeakyBucketNetworkQueueFactory : public NetworkQueueFactory {
  public:
+  LeakyBucketNetworkQueueFactory()
+      : LeakyBucketNetworkQueueFactory(LeakyBucketNetworkQueue::Config()) {}
+  explicit LeakyBucketNetworkQueueFactory(
+      const LeakyBucketNetworkQueue::Config& config)
+      : config_(config) {}
+
   std::unique_ptr<NetworkQueue> CreateQueue() override {
-    return std::make_unique<LeakyBucketNetworkQueue>();
+    return std::make_unique<LeakyBucketNetworkQueue>(config_);
   }
+
+ private:
+  const LeakyBucketNetworkQueue::Config config_;
 };
 }  // namespace webrtc
 

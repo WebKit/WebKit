@@ -43,7 +43,7 @@ template<typename T>
 static Expected<T, WebExtensionError> toExpected(std::optional<T>&& optional, NSString * const errorMessage = @"value not found")
 {
     if (optional)
-        return WTFMove(optional.value());
+        return WTF::move(optional.value());
     return makeUnexpected(errorMessage);
 }
 
@@ -207,7 +207,7 @@ void WebExtensionContext::sidebarOpen(const std::optional<WebExtensionWindowIden
             completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), @"options", maybeSidebar.error()));
             return;
         }
-        Ref<WebExtensionSidebar> sidebar = WTFMove(maybeSidebar.value());
+        Ref<WebExtensionSidebar> sidebar = WTF::move(maybeSidebar.value());
 
         if (auto window = sidebar->window())
             tab = window->get().activeTab();
@@ -270,7 +270,7 @@ void WebExtensionContext::sidebarClose(CompletionHandler<void(Expected<void, Web
         return;
     }
 
-    Ref sidebar = WTFMove(maybeSidebar.value());
+    Ref sidebar = WTF::move(maybeSidebar.value());
     closeSidebar(sidebar.get());
     completionHandler({ });
 }
@@ -328,7 +328,7 @@ void WebExtensionContext::sidebarToggle(CompletionHandler<void(Expected<void, We
         return;
     }
 
-    Ref sidebar = WTFMove(maybeSidebar.value());
+    Ref sidebar = WTF::move(maybeSidebar.value());
     if (sidebar->isOpen())
         closeSidebar(sidebar.get());
     else

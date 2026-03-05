@@ -42,13 +42,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateMock);
 MediaRecorderPrivateMock::MediaRecorderPrivateMock(MediaStreamPrivate& stream)
 {
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
-    if (selectedTracks.audioTrack) {
-        m_audioTrackID = selectedTracks.audioTrack->id();
-        setAudioSource(&selectedTracks.audioTrack->source());
+    if (RefPtr audioTrack = selectedTracks.audioTrack.get()) {
+        m_audioTrackID = audioTrack->id();
+        setAudioSource(&audioTrack->source());
     }
-    if (selectedTracks.videoTrack) {
-        m_videoTrackID = selectedTracks.videoTrack->id();
-        setVideoSource(&selectedTracks.videoTrack->source());
+    if (RefPtr videoTrack = selectedTracks.videoTrack.get()) {
+        m_videoTrackID = videoTrack->id();
+        setVideoSource(&videoTrack->source());
     }
 }
 
@@ -103,8 +103,8 @@ void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
     }
 
     // Delay calling the completion handler a bit to mimick real writer behavior.
-    Timer::schedule(50_ms, [completionHandler = WTFMove(completionHandler), buffer = buffer.releaseNonNull(), mimeType = mimeType(), timeCode = MonotonicTime::now().secondsSinceEpoch().value()]() mutable {
-        completionHandler(WTFMove(buffer), mimeType, timeCode);
+    Timer::schedule(50_ms, [completionHandler = WTF::move(completionHandler), buffer = buffer.releaseNonNull(), mimeType = mimeType(), timeCode = MonotonicTime::now().secondsSinceEpoch().value()]() mutable {
+        completionHandler(WTF::move(buffer), mimeType, timeCode);
     });
 }
 

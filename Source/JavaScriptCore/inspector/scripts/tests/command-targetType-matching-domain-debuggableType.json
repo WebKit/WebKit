@@ -1,7 +1,7 @@
 [
 {
     "domain": "Domain",
-    "debuggableTypes": ["page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page", "worker"],
     "commands": [{"name": "Command"}],
     "events": [{"name": "Event"}]

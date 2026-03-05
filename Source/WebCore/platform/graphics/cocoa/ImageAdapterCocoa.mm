@@ -62,7 +62,7 @@ Ref<Image> ImageAdapter::loadPlatformResource(const char *name)
     if (namedImageData) {
         auto image = BitmapImage::create();
         image->setData(SharedBuffer::create(namedImageData), true);
-        return WTFMove(image);
+        return WTF::move(image);
     }
 
     // We have reports indicating resource loads are failing, but we don't yet know the root cause(s).

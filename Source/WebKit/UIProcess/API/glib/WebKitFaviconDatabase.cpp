@@ -131,7 +131,7 @@ void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database
 
     database->priv->iconDatabase->checkIconURLAndSetPageURLIfNeeded(icon.url.string(), pageURL,
         isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
-            [database = GRefPtr<WebKitFaviconDatabase>(database), url = icon.url.string().isolatedCopy(), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)](bool found, bool changed) {
+            [database = GRefPtr<WebKitFaviconDatabase>(database), url = icon.url.string().isolatedCopy(), pageURL = pageURL.isolatedCopy(), completionHandler = WTF::move(completionHandler)](bool found, bool changed) {
             if (!webkitFaviconDatabaseIsOpen(database.get())) {
                 completionHandler(false);
                 return;
@@ -180,31 +180,25 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
         return;
     }
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    if (g_str_has_prefix(pageURI, "about:")) {
+    if (StringView::fromLatin1(pageURI).startsWith("about:"_s)) {
         g_task_report_new_error(database, callback, userData, 0,
             WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURI);
         return;
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(database, cancellable, callback, userData));
     WebKitFaviconDatabasePrivate* priv = database->priv;
     priv->iconDatabase->loadIconsForPageURL(String::fromUTF8(pageURI), isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
-        [task = WTFMove(task), pageURI = CString(pageURI)](Vector<PlatformImagePtr>&& icons) {
+        [task = WTF::move(task), pageURI = CString(pageURI)](Vector<PlatformImagePtr>&& icons) {
             if (icons.isEmpty()) {
                 g_task_return_new_error(task.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN,
                     _("Unknown favicon for page %s"), pageURI.data());
                 return;
             }
             auto& icon = icons.last();
-#if USE(CAIRO)
-            g_task_return_pointer(task.get(), icon.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
-#elif USE(SKIA)
             g_task_return_pointer(task.get(), SkRef(icon.get()), [](gpointer data) {
                 static_cast<SkImage*>(data)->unref();
             });
-#endif
         });
 }
 
@@ -255,13 +249,8 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
     g_return_val_if_fail(g_task_is_valid(result, database), nullptr);
 
 #if USE(GTK4)
-#if USE(CAIRO)
-    auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
-    auto texture = image ? cairoSurfaceToGdkTexture(image.get()) : nullptr;
-#elif USE(SKIA)
     auto* image = static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error));
     auto texture = image ? skiaImageToGdkTexture(*image) : nullptr;
-#endif
 
     if (texture)
         return texture.leakRef();
@@ -270,12 +259,8 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
         g_set_error_literal(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Failed to create texture"));
     return nullptr;
 #else
-#if USE(SKIA)
     auto* image = static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error));
     return image ? skiaImageToCairoSurface(*image).leakRef() : nullptr;
-#else
-    return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
-#endif
 #endif
 }
 #endif

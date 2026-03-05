@@ -119,6 +119,12 @@ unsigned Arg::jsHash() const
         result += static_cast<unsigned>(m_offset);
         result += static_cast<unsigned>(m_offset >> 32);
         break;
+    case FPImm128:
+        result += static_cast<unsigned>(m_offset);
+        result += static_cast<unsigned>(m_offset >> 32);
+        result += static_cast<unsigned>(m_additional);
+        result += static_cast<unsigned>(m_additional >> 32);
+        break;
     case SimpleAddr:
         result += m_base.internalValue();
         break;
@@ -173,6 +179,9 @@ void Arg::dump(PrintStream& out) const
         return;
     case FPImm64:
         out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
+        return;
+    case FPImm128:
+        out.print(asV128());
         return;
     case ZeroReg:
         out.print("%xzr");
@@ -270,6 +279,9 @@ void printInternal(PrintStream& out, Arg::Kind kind)
         return;
     case Arg::FPImm64:
         out.print("FPImm64");
+        return;
+    case Arg::FPImm128:
+        out.print("FPImm128");
         return;
     case Arg::ZeroReg:
         out.print("ZeroReg");

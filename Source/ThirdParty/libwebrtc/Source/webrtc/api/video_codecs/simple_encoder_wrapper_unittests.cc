@@ -133,7 +133,7 @@ TEST(SimpleEncoderWrapper, SupportedSvcModesUpToL3T3KeyWithHScaling) {
 // implementation for testing, but hey, this is just a PoC.
 TEST(SimpleEncoderWrapper, EncodeL1T1) {
   auto encoder = LibaomAv1EncoderFactory().CreateEncoder(
-      {.max_encode_dimensions = {1080, 720},
+      {.max_encode_dimensions = {.width = 1080, .height = 720},
        .encoding_format = {.sub_sampling = EncodingFormat::k420,
                            .bit_depth = 8},
        .rc_mode = VideoEncoderFactoryInterface::StaticEncoderSettings::Cqp(),
@@ -177,7 +177,7 @@ TEST(SimpleEncoderWrapper, EncodeL1T1) {
 
 TEST(SimpleEncoderWrapper, EncodeL2T2_KEY) {
   auto encoder = LibaomAv1EncoderFactory().CreateEncoder(
-      {.max_encode_dimensions = {1080, 720},
+      {.max_encode_dimensions = {.width = 1080, .height = 720},
        .encoding_format = {.sub_sampling = EncodingFormat::k420,
                            .bit_depth = 8},
        .rc_mode = VideoEncoderFactoryInterface::StaticEncoderSettings::Cqp(),
@@ -237,7 +237,7 @@ TEST(SimpleEncoderWrapper, EncodeL2T2_KEY) {
 
 TEST(SimpleEncoderWrapper, EncodeL1T3ForceKeyframe) {
   auto encoder = LibaomAv1EncoderFactory().CreateEncoder(
-      {.max_encode_dimensions = {1080, 720},
+      {.max_encode_dimensions = {.width = 1080, .height = 720},
        .encoding_format = {.sub_sampling = EncodingFormat::k420,
                            .bit_depth = 8},
        .rc_mode = VideoEncoderFactoryInterface::StaticEncoderSettings::Cqp(),

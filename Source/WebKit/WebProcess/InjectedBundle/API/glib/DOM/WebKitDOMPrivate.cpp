@@ -35,7 +35,6 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 WebKitDOMNode* wrap(WebCore::Node* node)
 {
     ASSERT(node);
-    ASSERT(node->nodeType());
 
 #if PLATFORM(GTK)
     if (auto* wrapper = wrapNodeGtk(node))
@@ -43,17 +42,17 @@ WebKitDOMNode* wrap(WebCore::Node* node)
 #endif
 
     switch (node->nodeType()) {
-    case WebCore::Node::ELEMENT_NODE:
+    case WebCore::NodeType::Element:
         return WEBKIT_DOM_NODE(wrapElement(downcast<WebCore::Element>(node)));
-    case WebCore::Node::DOCUMENT_NODE:
+    case WebCore::NodeType::Document:
         return WEBKIT_DOM_NODE(wrapDocument(downcast<WebCore::Document>(node)));
-    case WebCore::Node::ATTRIBUTE_NODE:
-    case WebCore::Node::TEXT_NODE:
-    case WebCore::Node::CDATA_SECTION_NODE:
-    case WebCore::Node::PROCESSING_INSTRUCTION_NODE:
-    case WebCore::Node::COMMENT_NODE:
-    case WebCore::Node::DOCUMENT_TYPE_NODE:
-    case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
+    case WebCore::NodeType::Attribute:
+    case WebCore::NodeType::Text:
+    case WebCore::NodeType::CDATASection:
+    case WebCore::NodeType::ProcessingInstruction:
+    case WebCore::NodeType::Comment:
+    case WebCore::NodeType::DocumentType:
+    case WebCore::NodeType::DocumentFragment:
         break;
     }
 

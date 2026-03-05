@@ -82,6 +82,8 @@ void ANGLEComputeTestCL::updatePerfCounters()
     {
         uint32_t counter               = iter.first;
         std::vector<GLuint64> &samples = iter.second.samples;
+        ASSERT(perfData[counter].group == 0);
+        ASSERT(perfData[counter].counter == counter);
         samples.push_back(perfData[counter].value);
     }
 }

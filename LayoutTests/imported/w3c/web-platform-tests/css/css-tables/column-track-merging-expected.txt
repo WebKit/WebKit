@@ -145,6 +145,6 @@ FAIL main table 12 assert_equals:
   <td></td>
 </tr>
 </tbody></table>
-width expected 640 but got 180
+width expected 640 but got 580
 PASS main table 13
 

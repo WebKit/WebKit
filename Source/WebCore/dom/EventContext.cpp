@@ -75,12 +75,12 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 #endif
 
     if (!m_node) {
-        protectedCurrentTarget()->fireEventListeners(event, phase);
+        protect(currentTarget())->fireEventListeners(event, phase);
         return;
     }
 
     if (m_type == Type::Window) [[unlikely]] {
-        protectedCurrentTarget()->fireEventListeners(event, phase);
+        protect(currentTarget())->fireEventListeners(event, phase);
         return;
     }
 
@@ -97,7 +97,7 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
     if (!m_node->hasEventTargetData())
         return;
 
-    protectedNode()->fireEventListeners(event, phase);
+    protect(node())->fireEventListeners(event, phase);
 }
 
 #if ENABLE(TOUCH_EVENTS)

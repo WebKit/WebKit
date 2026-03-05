@@ -38,13 +38,12 @@ namespace CSSPropertyParserHelpers {
 
 static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSParserTokenRange& range)
 {
-    static constexpr std::pair<CSSValueID, HueInterpolationMethod> hueInterpolationMethodMappings[] {
+    static constexpr SortedArrayMap hueInterpolationMethodMap { std::to_array<std::pair<CSSValueID, HueInterpolationMethod>>({
         { CSSValueShorter, HueInterpolationMethod::Shorter },
         { CSSValueLonger, HueInterpolationMethod::Longer },
         { CSSValueIncreasing, HueInterpolationMethod::Increasing },
         { CSSValueDecreasing, HueInterpolationMethod::Decreasing },
-    };
-    static constexpr SortedArrayMap hueInterpolationMethodMap { hueInterpolationMethodMappings };
+    }) };
 
     return consumeIdentUsingMapping(range, hueInterpolationMethodMap);
 }

@@ -41,7 +41,7 @@ class InlineContentBuilder {
 public:
     InlineContentBuilder(const RenderBlockFlow&);
 
-    FloatRect build(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage*) const;
+    FloatRect build(std::unique_ptr<Layout::InlineLayoutResult>&&, InlineContent&, const Layout::InlineDamage*) const;
     void updateLineOverflow(InlineContent&) const;
 
 private:

@@ -23,10 +23,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-// rdar://140690546 - Can currently be dispatchedTo UI & GPU
 [
     DispatchedFrom=WebContent,
-    ExceptionForDispatchedTo,
+    DispatchedTo=GPU,
     ExceptionForEnabledBy
 ]
 messages -> UserMediaCaptureManagerProxy {

@@ -36,72 +36,6 @@ DECLARE_ALIGNED(16, static const uint16_t, kDotProdMergeBlockTbl[24]) = {
 DECLARE_ALIGNED(16, static const uint16_t, kTblConv4_8[8]) = { 0, 2, 4, 6,
                                                                1, 3, 5, 7 };
 
-static INLINE void transpose_concat_4x4(const int16x4_t s0, const int16x4_t s1,
-                                        const int16x4_t s2, const int16x4_t s3,
-                                        int16x8_t res[2]) {
-  // Transpose 16-bit elements:
-  // s0: 00, 01, 02, 03
-  // s1: 10, 11, 12, 13
-  // s2: 20, 21, 22, 23
-  // s3: 30, 31, 32, 33
-  //
-  // res[0]: 00 10 20 30 01 11 21 31
-  // res[1]: 02 12 22 32 03 13 23 33
-
-  int16x8_t s0q = vcombine_s16(s0, vdup_n_s16(0));
-  int16x8_t s1q = vcombine_s16(s1, vdup_n_s16(0));
-  int16x8_t s2q = vcombine_s16(s2, vdup_n_s16(0));
-  int16x8_t s3q = vcombine_s16(s3, vdup_n_s16(0));
-
-  int16x8_t s02 = vzip1q_s16(s0q, s2q);
-  int16x8_t s13 = vzip1q_s16(s1q, s3q);
-
-  int16x8x2_t s0123 = vzipq_s16(s02, s13);
-
-  res[0] = s0123.val[0];
-  res[1] = s0123.val[1];
-}
-
-static INLINE void transpose_concat_8x4(const int16x8_t s0, const int16x8_t s1,
-                                        const int16x8_t s2, const int16x8_t s3,
-                                        int16x8_t res[4]) {
-  // Transpose 16-bit elements:
-  // s0: 00, 01, 02, 03, 04, 05, 06, 07
-  // s1: 10, 11, 12, 13, 14, 15, 16, 17
-  // s2: 20, 21, 22, 23, 24, 25, 26, 27
-  // s3: 30, 31, 32, 33, 34, 35, 36, 37
-  //
-  // res[0]: 00 10 20 30 01 11 21 31
-  // res[1]: 02 12 22 32 03 13 23 33
-  // res[2]: 04 14 24 34 05 15 25 35
-  // res[3]: 06 16 26 36 07 17 27 37
-
-  int16x8x2_t s02 = vzipq_s16(s0, s2);
-  int16x8x2_t s13 = vzipq_s16(s1, s3);
-
-  int16x8x2_t s0123_lo = vzipq_s16(s02.val[0], s13.val[0]);
-  int16x8x2_t s0123_hi = vzipq_s16(s02.val[1], s13.val[1]);
-
-  res[0] = s0123_lo.val[0];
-  res[1] = s0123_lo.val[1];
-  res[2] = s0123_hi.val[0];
-  res[3] = s0123_hi.val[1];
-}
-
-static INLINE void vpx_tbl2x4_s16(int16x8_t s0[4], int16x8_t s1[4],
-                                  int16x8_t res[4], uint16x8_t idx) {
-  res[0] = vpx_tbl2_s16(s0[0], s1[0], idx);
-  res[1] = vpx_tbl2_s16(s0[1], s1[1], idx);
-  res[2] = vpx_tbl2_s16(s0[2], s1[2], idx);
-  res[3] = vpx_tbl2_s16(s0[3], s1[3], idx);
-}
-
-static INLINE void vpx_tbl2x2_s16(int16x8_t s0[2], int16x8_t s1[2],
-                                  int16x8_t res[2], uint16x8_t idx) {
-  res[0] = vpx_tbl2_s16(s0[0], s1[0], idx);
-  res[1] = vpx_tbl2_s16(s0[1], s1[1], idx);
-}
-
 static INLINE uint16x4_t highbd_convolve8_4_v(int16x8_t s_lo[2],
                                               int16x8_t s_hi[2],
                                               int16x8_t filter,
@@ -169,10 +103,10 @@ static INLINE void highbd_convolve8_8tap_vert_sve2(
     s += 7 * src_stride;
 
     int16x8_t s0123[2], s1234[2], s2345[2], s3456[2];
-    transpose_concat_4x4(s0, s1, s2, s3, s0123);
-    transpose_concat_4x4(s1, s2, s3, s4, s1234);
-    transpose_concat_4x4(s2, s3, s4, s5, s2345);
-    transpose_concat_4x4(s3, s4, s5, s6, s3456);
+    transpose_concat_s16_4x4(s0, s1, s2, s3, &s0123[0], &s0123[1]);
+    transpose_concat_s16_4x4(s1, s2, s3, s4, &s1234[0], &s1234[1]);
+    transpose_concat_s16_4x4(s2, s3, s4, s5, &s2345[0], &s2345[1]);
+    transpose_concat_s16_4x4(s3, s4, s5, s6, &s3456[0], &s3456[1]);
 
     do {
       int16x4_t s7, s8, s9, sA;
@@ -180,7 +114,7 @@ static INLINE void highbd_convolve8_8tap_vert_sve2(
       load_s16_4x4(s, src_stride, &s7, &s8, &s9, &sA);
 
       int16x8_t s4567[2], s5678[2], s6789[2], s789A[2];
-      transpose_concat_4x4(s7, s8, s9, sA, s789A);
+      transpose_concat_s16_4x4(s7, s8, s9, sA, &s789A[0], &s789A[1]);
 
       vpx_tbl2x2_s16(s3456, s789A, s4567, merge_tbl_idx.val[0]);
       vpx_tbl2x2_s16(s3456, s789A, s5678, merge_tbl_idx.val[1]);
@@ -219,17 +153,22 @@ static INLINE void highbd_convolve8_8tap_vert_sve2(
       s += 7 * src_stride;
 
       int16x8_t s0123[4], s1234[4], s2345[4], s3456[4];
-      transpose_concat_8x4(s0, s1, s2, s3, s0123);
-      transpose_concat_8x4(s1, s2, s3, s4, s1234);
-      transpose_concat_8x4(s2, s3, s4, s5, s2345);
-      transpose_concat_8x4(s3, s4, s5, s6, s3456);
+      transpose_concat_s16_8x4(s0, s1, s2, s3, &s0123[0], &s0123[1], &s0123[2],
+                               &s0123[3]);
+      transpose_concat_s16_8x4(s1, s2, s3, s4, &s1234[0], &s1234[1], &s1234[2],
+                               &s1234[3]);
+      transpose_concat_s16_8x4(s2, s3, s4, s5, &s2345[0], &s2345[1], &s2345[2],
+                               &s2345[3]);
+      transpose_concat_s16_8x4(s3, s4, s5, s6, &s3456[0], &s3456[1], &s3456[2],
+                               &s3456[3]);
 
       do {
         int16x8_t s7, s8, s9, sA;
         load_s16_8x4(s, src_stride, &s7, &s8, &s9, &sA);
 
         int16x8_t s4567[4], s5678[5], s6789[4], s789A[4];
-        transpose_concat_8x4(s7, s8, s9, sA, s789A);
+        transpose_concat_s16_8x4(s7, s8, s9, sA, &s789A[0], &s789A[1],
+                                 &s789A[2], &s789A[3]);
 
         vpx_tbl2x4_s16(s3456, s789A, s4567, merge_tbl_idx.val[0]);
         vpx_tbl2x4_s16(s3456, s789A, s5678, merge_tbl_idx.val[1]);
@@ -343,10 +282,10 @@ void vpx_highbd_convolve8_avg_vert_sve2(const uint16_t *src,
     s += 7 * src_stride;
 
     int16x8_t s0123[2], s1234[2], s2345[2], s3456[2];
-    transpose_concat_4x4(s0, s1, s2, s3, s0123);
-    transpose_concat_4x4(s1, s2, s3, s4, s1234);
-    transpose_concat_4x4(s2, s3, s4, s5, s2345);
-    transpose_concat_4x4(s3, s4, s5, s6, s3456);
+    transpose_concat_s16_4x4(s0, s1, s2, s3, &s0123[0], &s0123[1]);
+    transpose_concat_s16_4x4(s1, s2, s3, s4, &s1234[0], &s1234[1]);
+    transpose_concat_s16_4x4(s2, s3, s4, s5, &s2345[0], &s2345[1]);
+    transpose_concat_s16_4x4(s3, s4, s5, s6, &s3456[0], &s3456[1]);
 
     do {
       int16x4_t s7, s8, s9, sA;
@@ -354,7 +293,7 @@ void vpx_highbd_convolve8_avg_vert_sve2(const uint16_t *src,
       load_s16_4x4(s, src_stride, &s7, &s8, &s9, &sA);
 
       int16x8_t s4567[2], s5678[2], s6789[2], s789A[2];
-      transpose_concat_4x4(s7, s8, s9, sA, s789A);
+      transpose_concat_s16_4x4(s7, s8, s9, sA, &s789A[0], &s789A[1]);
 
       vpx_tbl2x2_s16(s3456, s789A, s4567, merge_tbl_idx.val[0]);
       vpx_tbl2x2_s16(s3456, s789A, s5678, merge_tbl_idx.val[1]);
@@ -398,17 +337,22 @@ void vpx_highbd_convolve8_avg_vert_sve2(const uint16_t *src,
       s += 7 * src_stride;
 
       int16x8_t s0123[4], s1234[4], s2345[4], s3456[4];
-      transpose_concat_8x4(s0, s1, s2, s3, s0123);
-      transpose_concat_8x4(s1, s2, s3, s4, s1234);
-      transpose_concat_8x4(s2, s3, s4, s5, s2345);
-      transpose_concat_8x4(s3, s4, s5, s6, s3456);
+      transpose_concat_s16_8x4(s0, s1, s2, s3, &s0123[0], &s0123[1], &s0123[2],
+                               &s0123[3]);
+      transpose_concat_s16_8x4(s1, s2, s3, s4, &s1234[0], &s1234[1], &s1234[2],
+                               &s1234[3]);
+      transpose_concat_s16_8x4(s2, s3, s4, s5, &s2345[0], &s2345[1], &s2345[2],
+                               &s2345[3]);
+      transpose_concat_s16_8x4(s3, s4, s5, s6, &s3456[0], &s3456[1], &s3456[2],
+                               &s3456[3]);
 
       do {
         int16x8_t s7, s8, s9, sA;
         load_s16_8x4(s, src_stride, &s7, &s8, &s9, &sA);
 
         int16x8_t s4567[4], s5678[5], s6789[4], s789A[4];
-        transpose_concat_8x4(s7, s8, s9, sA, s789A);
+        transpose_concat_s16_8x4(s7, s8, s9, sA, &s789A[0], &s789A[1],
+                                 &s789A[2], &s789A[3]);
 
         vpx_tbl2x4_s16(s3456, s789A, s4567, merge_tbl_idx.val[0]);
         vpx_tbl2x4_s16(s3456, s789A, s5678, merge_tbl_idx.val[1]);

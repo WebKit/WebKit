@@ -46,7 +46,7 @@ public:
     virtual ~ScrollingStateFixedNode();
 
     WEBCORE_EXPORT void updateConstraints(const FixedPositionViewportConstraints&);
-    const FixedPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
+    const FixedPositionViewportConstraints& viewportConstraints() const LIFETIME_BOUND { return m_constraints; }
 
 private:
     WEBCORE_EXPORT ScrollingStateFixedNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, FixedPositionViewportConstraints&&);

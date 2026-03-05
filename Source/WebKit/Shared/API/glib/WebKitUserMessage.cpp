@@ -179,15 +179,15 @@ static void webkit_user_message_class_init(WebKitUserMessageClass* klass)
 WebKitUserMessage* webkitUserMessageCreate(UserMessage&& message)
 {
     WebKitUserMessage* returnValue = WEBKIT_USER_MESSAGE(g_object_new(WEBKIT_TYPE_USER_MESSAGE, nullptr));
-    returnValue->priv->message = WTFMove(message);
+    returnValue->priv->message = WTF::move(message);
     return returnValue;
 }
 
 WebKitUserMessage* webkitUserMessageCreate(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& replyHandler)
 {
     WebKitUserMessage* returnValue = WEBKIT_USER_MESSAGE(g_object_new(WEBKIT_TYPE_USER_MESSAGE, nullptr));
-    returnValue->priv->message = WTFMove(message);
-    returnValue->priv->replyHandler = WTFMove(replyHandler);
+    returnValue->priv->message = WTF::move(message);
+    returnValue->priv->replyHandler = WTF::move(replyHandler);
     return returnValue;
 }
 

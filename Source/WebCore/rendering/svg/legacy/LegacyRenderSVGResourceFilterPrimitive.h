@@ -34,13 +34,13 @@ class FilterEffect;
 class SVGFilterPrimitiveStandardAttributes;
 
 class LegacyRenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHiddenContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilterPrimitive);
 public:
     LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);
-    SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement() const;
+    SVGFilterPrimitiveStandardAttributes& NODELETE filterPrimitiveElement() const;
 
-    void styleDidChange(StyleDifference, const RenderStyle*) override;
+    void styleDidChange(Style::Difference, const RenderStyle*) override;
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceFilterPrimitive"_s; }
 

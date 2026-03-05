@@ -22,15 +22,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/mediacapture-main/#dom-mediastreamtrackevent
 [
     Conditional=MEDIA_STREAM,
     Exposed=Window
 ] interface MediaStreamTrackEvent : Event {
     constructor([AtomString] DOMString type, MediaStreamTrackEventInit eventInitDict);
-
     [SameObject] readonly attribute MediaStreamTrack track;
 };
 
+// https://w3c.github.io/mediacapture-main/#dom-mediastreamtrackeventinit
 dictionary MediaStreamTrackEventInit : EventInit {
     required MediaStreamTrack track;
 };

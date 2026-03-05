@@ -13,35 +13,36 @@
 </div>
 
 <script>
-    if (window.accessibilityController) {
-        let output = "This tests the ability to search for accessible elements from an ignored element.\n\n";
+let output = "This tests the ability to search for accessible elements from an ignored element.\n\n";
 
-        var container = accessibilityController.accessibleElementById("container");
-        var element = accessibilityController.accessibleElementById("test").childAtIndex(0);
-        var range = element.textMarkerRangeForElement(element);
-        output += expect("element.stringForTextMarkerRange(range)", "'First line of text'");
+if (window.accessibilityController) {
+    var container = accessibilityController.accessibleElementById("container");
+    var element = accessibilityController.accessibleElementById("test").childAtIndex(0);
+    var range = element.textMarkerRangeForElement(element);
+    output += expect("element.stringForTextMarkerRange(range)", "'First line of text'");
 
-        // Try to get the ignored element using line text marker calls.
-        var marker = element.endTextMarkerForTextMarkerRange(range);
-        marker = element.nextTextMarker(marker);
-        marker = element.nextTextMarker(marker);
-        range = element.lineTextMarkerRangeForTextMarker(marker);
-        output += expect("element.stringForTextMarkerRange(range)", "'button'");
+    // Try to get the ignored element using line text marker calls.
+    var marker = element.endTextMarkerForTextMarkerRange(range);
+    marker = element.nextTextMarker(marker);
+    marker = element.nextTextMarker(marker);
+    range = element.lineTextMarkerRangeForTextMarker(marker);
+    // The range for the line containing the button must include a '\n' since the <button> element is followed by <br>.
+    output += expect("element.stringForTextMarkerRange(range)", "`button\n`");
 
-        marker = element.startTextMarkerForTextMarkerRange(range);
-        var startElement = element.accessibilityElementForTextMarker(marker);
+    marker = element.startTextMarkerForTextMarkerRange(range);
+    var startElement = element.accessibilityElementForTextMarker(marker);
 
-        // Search forward
-        var resultElement = container.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "", false);
-        output += expect("resultElement.stringValue", "'AXValue: Third line of text'");
+    // Search forward
+    var resultElement = container.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "", false);
+    output += expect("resultElement.stringValue", "'AXValue: Third line of text'");
 
-        // Search backward
-        resultElement = container.uiElementForSearchPredicate(startElement, false, "AXAnyTypeSearchKey", "", false);
-        output += expect("resultElement.stringValue", "'AXValue: First line of text'");
+    // Search backward
+    resultElement = container.uiElementForSearchPredicate(startElement, false, "AXAnyTypeSearchKey", "", false);
+    output += expect("resultElement.stringValue", "'AXValue: First line of text'");
 
-        document.getElementById("container").style.visibility = "hidden";
-        debug(output);
-    }
+    document.getElementById("container").style.visibility = "hidden";
+    debug(output);
+}
 </script>
 </body>
 </html>

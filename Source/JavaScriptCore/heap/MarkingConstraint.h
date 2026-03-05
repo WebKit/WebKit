@@ -28,6 +28,7 @@
 #include <JavaScriptCore/ConstraintConcurrency.h>
 #include <JavaScriptCore/ConstraintParallelism.h>
 #include <JavaScriptCore/ConstraintVolatility.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <limits.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>

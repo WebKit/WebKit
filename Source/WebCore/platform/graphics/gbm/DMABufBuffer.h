@@ -51,11 +51,11 @@ public:
 
     static Ref<DMABufBuffer> create(const IntSize& size, uint32_t fourcc, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
     {
-        return adoptRef(*new DMABufBuffer(size, fourcc, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier));
+        return adoptRef(*new DMABufBuffer(size, fourcc, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier));
     }
     static Ref<DMABufBuffer> create(uint64_t id, Attributes&& attributes)
     {
-        return adoptRef(*new DMABufBuffer(id, WTFMove(attributes)));
+        return adoptRef(*new DMABufBuffer(id, WTF::move(attributes)));
     }
     ~DMABufBuffer();
 

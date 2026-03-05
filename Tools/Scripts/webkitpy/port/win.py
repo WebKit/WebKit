@@ -59,12 +59,10 @@ class WinPort(ApplePort):
 
     VERSION_MIN = Version(5, 1)
     VERSION_MAX = Version(10)
-
     ARCHITECTURES = ['x86', 'x86_64']
-
     DEFAULT_ARCHITECTURE = 'x86_64'
-
     CRASH_LOG_PREFIX = "CrashLog"
+    DRIVER_NAMES = ('WebKitTestRunner', 'DumpRenderTree')
 
     if sys.platform.startswith('win'):
         POST_MORTEM_DEBUGGER_KEY = r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug'
@@ -107,7 +105,7 @@ class WinPort(ApplePort):
 
     def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WebKitTestRunner, so we don't need this hack there.
-        if not self.get_option('webkit_test_runner'):
+        if self.is_webkitlegacy():
             # Windows does not have an EDITING DELEGATE, so strip those messages to make more tests pass.
             # It's possible other ports might want this, and if so, this could move down into WebKitPort.
             delegate_regexp = re.compile("^EDITING DELEGATE: .*?\n", re.MULTILINE)
@@ -135,7 +133,7 @@ class WinPort(ApplePort):
         return env
 
     def driver_name(self):
-        return "WebKitTestRunnerWS"
+        return super(WinPort, self).driver_name() + 'WS'
 
     def run_minibrowser(self, args):
         miniBrowser = self._build_path('MiniBrowser.exe')
@@ -454,7 +452,7 @@ class WinPort(ApplePort):
         normalize = lambda version: version.lower().replace(' ', '')
         to_name = lambda version: version_name_map.to_name(version, platform=self.port_name)
 
-        wk_version = 'wk2' if self.get_option('webkit_test_runner') else 'wk1'
+        wk_version = 'wk1' if self.is_webkitlegacy() else 'wk2'
 
         for version in versions:
             version_name = to_name(version)
@@ -466,7 +464,7 @@ class WinPort(ApplePort):
 
         paths.append(self.port_name + '-' + wk_version)
         paths.append(self.port_name)
-        if self.get_option('webkit_test_runner'):
+        if not self.is_webkitlegacy():
             paths.append('wk2')
         paths.extend(self.get_option("additional_platform_directory", []))
 

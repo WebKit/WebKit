@@ -17,6 +17,19 @@ selectors = [
     { name = "_rasterizedImage", class = "UIImage" },
 ]
 
+[[not-web-essential]]
+request = "rdar://165225257"
+selectors = [
+    { name = "lookUpURL:isMainFrame:hasHighConfidenceOfSafety:cachedResult:completionHandler:", class = "SSBLookupContext" },
+    { name = "_getListsForNamespace:collectionId:completionHandler:", class = "SSBLookupContext" },
+]
+
+[[not-web-essential]]
+request = "rdar://166711133"
+selectors = [
+    { name = "entepriseAttestationIdentityPersistentReferenceForRelyingParty:", class = "ASCWebKitSPISupport" },
+]
+
 # Added in rdar://112101742.
 [[equivalent-api]]
 request = "rdar://157876115"
@@ -77,10 +90,13 @@ selectors = [
     { name = "_setServerTrust:", class = "?" },
 ]
 symbols = [
+    "nw_connection_abort_reads",
+    "nw_connection_abort_writes",
     "nw_http_fields_access_value_by_name",
     "nw_parameters_create_webtransport_http",
     "nw_protocol_copy_webtransport_definition",
     "nw_webtransport_create_options",
+    "nw_webtransport_metadata_get_is_peer_initiated",
     "nw_webtransport_metadata_get_is_unidirectional",
     "nw_webtransport_metadata_get_session_error_code",
     "nw_webtransport_metadata_set_session_error_code",
@@ -88,6 +104,8 @@ symbols = [
     "nw_webtransport_metadata_set_session_error_message",
     "nw_webtransport_metadata_get_session_closed",
     "nw_webtransport_metadata_set_remote_drain_handler",
+    "nw_webtransport_metadata_set_remote_receive_error_handler",
+    "nw_webtransport_metadata_set_remote_send_error_handler",
     "nw_webtransport_metadata_copy_connect_response",
     "nw_webtransport_metadata_get_transport_mode",
     "nw_webtransport_options_add_connect_request_header",
@@ -240,10 +258,47 @@ requires = ["HAVE_UIKIT_SCROLLBAR_COLOR_SPI"]
 [[temporary-usage]]
 request = "rdar://164431329"
 cleanup = "rdar://164667890"
-classes = [
-    "AVLegibleMediaOptionsMenuController",
-]
 selectors = [
     { name = "buildMenuOfType:", class = "AVLegibleMediaOptionsMenuController" },
 ]
 requires = ["HAVE_AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER"]
+
+[[temporary-usage]]
+request = "rdar://165789536"
+cleanup = "rdar://165842824"
+selectors = [
+    { name = "requestProofreadingReviewOfString:range:language:options:completionHandler:", class = "UITextChecker" },
+]
+
+[[staging]]
+request = "rdar://163791929"
+cleanup = "rdar://165836164"
+selectors = [
+ { name = "setIsDelegatedRequest:", class = "PKPaymentRequest" },
+]
+requires = ["HAVE_PASSKIT_DELEGATED_REQUEST"]
+requires-sdk = ["iOS < 26.4"]
+
+[[temporary-usage]]
+request = "rdar://170141943"
+cleanup = "rdar://170141943"
+selectors = [
+    { name = "_setUseVisionAlternateScrollIndicatorRendering:", class = "UIScrollView" },
+]
+requires = ["PLATFORM_VISION"]
+
+ [[staging]]
+request = "rdar://170178645"
+selectors = [
+    { name = "screenCaptureWithEnvironment:", class = "BEProcessCapability" },
+]
+requires = ["ENABLE_EXTENSION_CAPABILITIES"]
+requires-sdk = ["iOS <= 26.*"]
+
+[[temporary-usage]]
+request = "rdar://171730075"
+cleanup = "rdar://171730140"
+selectors = [
+    { name = "_lookToScrollGroupName", class = "UIScrollView" },
+]
+requires = ["PLATFORM_VISION"]

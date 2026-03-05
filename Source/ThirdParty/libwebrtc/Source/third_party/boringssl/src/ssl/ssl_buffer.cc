@@ -70,7 +70,7 @@ bool SSLBuffer::EnsureCap(size_t header_len, size_t new_cap) {
     // sensitive data, we allocate with malloc rather than |OPENSSL_malloc| and
     // avoid zeroing on free.
     new_buf = (uint8_t *)malloc(new_cap + SSL3_ALIGN_PAYLOAD - 1);
-    if (new_buf == NULL) {
+    if (new_buf == nullptr) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }

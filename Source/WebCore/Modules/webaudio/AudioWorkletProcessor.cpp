@@ -48,11 +48,11 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorkletProcessorConstructionData);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioWorkletProcessor);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorkletProcessor);
 
 using namespace JSC;
 
-static unsigned busChannelCount(const AudioBus& bus)
+static unsigned NODELETE busChannelCount(const AudioBus& bus)
 {
     return bus.numberOfChannels();
 }
@@ -66,17 +66,17 @@ static ArrayType* getArrayAtIndex(JSArray& jsArray, JSGlobalObject& globalObject
     return item ? jsDynamicCast<ArrayType*>(item) : nullptr;
 }
 
-static unsigned busChannelCount(const AudioBus* bus)
+static unsigned NODELETE busChannelCount(const AudioBus* bus)
 {
     return bus ? busChannelCount(*bus) : 0;
 }
 
-static JSArray* toJSArray(JSValueInWrappedObject& wrapper)
+static JSArray* NODELETE toJSArray(JSValueInWrappedObject& wrapper)
 {
     return wrapper ? jsDynamicCast<JSArray*>(wrapper.getValue()) : nullptr;
 }
 
-static JSObject* toJSObject(JSValueInWrappedObject& wrapper)
+static JSObject* NODELETE toJSObject(JSValueInWrappedObject& wrapper)
 {
     return wrapper ? jsDynamicCast<JSObject*>(wrapper.getValue()) : nullptr;
 }

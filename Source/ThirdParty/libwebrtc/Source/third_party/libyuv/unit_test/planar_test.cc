@@ -2605,7 +2605,7 @@ TEST_F(LibYUVPlanarTest, TestHalfFloatPlane_16bit_denormal) {
   EXPECT_EQ(0, diff);
 }
 
-#if defined(__arm__)
+#if defined(__arm__) && !defined(__SOFTFP__)
 static void EnableFlushDenormalToZero(void) {
   uint32_t cw;
   asm volatile(
@@ -2646,7 +2646,7 @@ TEST_F(LibYUVPlanarTest, TestHalfFloatPlane_10bit_flush_denormal) {
   DisableFlushDenormalToZero();
   EXPECT_EQ(0, diff);
 }
-#endif  // defined(__arm__)
+#endif  // defined(__arm__) && !defined(__SOFTFP__)
 
 static float TestByteToFloat(int benchmark_width,
                              int benchmark_height,

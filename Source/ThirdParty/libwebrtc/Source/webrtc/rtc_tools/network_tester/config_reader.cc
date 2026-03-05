@@ -28,7 +28,7 @@ ConfigReader::ConfigReader(const std::string& config_file_path)
   RTC_DCHECK(config_stream.good());
   std::string config_data((std::istreambuf_iterator<char>(config_stream)),
                           (std::istreambuf_iterator<char>()));
-  if (config_data.size() > 0) {
+  if (!config_data.empty()) {
     proto_all_configs_.ParseFromString(config_data);
   }
 }

@@ -33,5 +33,5 @@
 
     readonly attribute boolean specified; // Useless; always returns true.
 
-    [EnabledByDeprecatedGlobalSetting=AttrStyleEnabled] readonly attribute CSSStyleProperties style;
+    [EnabledByDeprecatedGlobalSetting=AttrStyleEnabled] readonly attribute CSSStyleProperties? style;
 };

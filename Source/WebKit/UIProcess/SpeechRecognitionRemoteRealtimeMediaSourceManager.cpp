@@ -104,7 +104,7 @@ uint64_t SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderDestina
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::setStorage(WebCore::RealtimeMediaSourceIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
     if (auto source = m_sources.get(identifier).get())
-        source->setStorage(WTFMove(handle), description);
+        source->setStorage(WTF::move(handle), description);
 }
 
 #endif

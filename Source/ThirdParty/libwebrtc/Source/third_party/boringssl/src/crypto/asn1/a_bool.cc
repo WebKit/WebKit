@@ -21,13 +21,10 @@
 
 
 int i2d_ASN1_BOOLEAN(ASN1_BOOLEAN a, unsigned char **outp) {
-  CBB cbb;
-  if (!CBB_init(&cbb, 3) ||  //
-      !CBB_add_asn1_bool(&cbb, a != ASN1_BOOLEAN_FALSE)) {
-    CBB_cleanup(&cbb);
-    return -1;
-  }
-  return CBB_finish_i2d(&cbb, outp);
+  return bssl::I2DFromCBB(
+      /*initial_capacity=*/3, outp, [&](CBB *cbb) -> bool {
+        return CBB_add_asn1_bool(cbb, a != ASN1_BOOLEAN_FALSE);
+      });
 }
 
 ASN1_BOOLEAN d2i_ASN1_BOOLEAN(ASN1_BOOLEAN *out, const unsigned char **inp,
@@ -45,7 +42,7 @@ ASN1_BOOLEAN d2i_ASN1_BOOLEAN(ASN1_BOOLEAN *out, const unsigned char **inp,
   }
 
   ASN1_BOOLEAN ret = val ? ASN1_BOOLEAN_TRUE : ASN1_BOOLEAN_FALSE;
-  if (out != NULL) {
+  if (out != nullptr) {
     *out = ret;
   }
   *inp = CBS_data(&cbs);

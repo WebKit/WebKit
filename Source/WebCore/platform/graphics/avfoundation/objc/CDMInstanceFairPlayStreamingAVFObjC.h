@@ -29,7 +29,9 @@
 
 #include "CDMInstance.h"
 #include "CDMInstanceSession.h"
+#include "CDMKeyID.h"
 #include "ContentKeyGroupDataSource.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
 #include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
@@ -54,22 +56,13 @@ class Logger;
 #endif
 
 namespace WebCore {
-class AVContentKeySessionDelegateClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVContentKeySessionDelegateClient> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
 class CDMPrivateFairPlayStreaming;
 class MediaSampleAVFObjC;
 struct CDMMediaCapability;
 
-class AVContentKeySessionDelegateClient : public CanMakeWeakPtr<AVContentKeySessionDelegateClient> {
+class AVContentKeySessionDelegateClient : public AbstractRefCountedAndCanMakeWeakPtr<AVContentKeySessionDelegateClient> {
 public:
     virtual ~AVContentKeySessionDelegateClient() = default;
     virtual void didProvideRequest(AVContentKeyRequest*) = 0;
@@ -95,8 +88,12 @@ class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVC
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>);
 
-    CDMInstanceFairPlayStreamingAVFObjC(const CDMPrivateFairPlayStreaming&);
+    static Ref<CDMInstanceFairPlayStreamingAVFObjC> create(const CDMPrivateFairPlayStreaming&);
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
+
+    // AVContentKeySessionDelegateClient.
+    void ref() const final { CDMInstance::ref(); }
+    void deref() const final { CDMInstance::deref(); }
 
     static bool supportsPersistableState();
     static bool supportsPersistentKeys();
@@ -135,13 +132,12 @@ public:
     void externalProtectionStatusDidChangeForContentKey(AVContentKey *) final;
     void externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*) final;
 
-    using Keys = Vector<Ref<SharedBuffer>>;
-    CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const Keys&) const;
+    CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const CDMKeyIDs&) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForGroup(WebAVContentKeyGrouping *) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKey(AVContentKey *) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForRequest(AVContentKeyRequest *) const;
 
-    bool isAnyKeyUsable(const Keys&) const;
+    bool isAnyKeyUsable(const CDMKeyIDs&) const;
 
     using KeyStatusesChangedObserver = Observer<void()>;
     void addKeyStatusesChangedObserver(const KeyStatusesChangedObserver&);
@@ -161,6 +157,8 @@ public:
     const String& mediaKeysHashSalt() const { return m_mediaKeysHashSalt; }
 
 private:
+    explicit CDMInstanceFairPlayStreamingAVFObjC(const CDMPrivateFairPlayStreaming&);
+
     void handleUnexpectedRequests(Vector<RetainPtr<AVContentKeyRequest>>&&);
 
     WeakPtr<CDMInstanceClient> m_client;
@@ -187,8 +185,12 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
 public:
     USING_CAN_MAKE_WEAKPTR(AVContentKeySessionDelegateClient);
 
-    CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
+    static Ref<CDMInstanceSessionFairPlayStreamingAVFObjC> create(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
+
+    // ContentKeyGroupDataSource, AVContentKeySessionDelegateClient.
+    void ref() const final { CDMInstanceSession::ref(); }
+    void deref() const final { CDMInstanceSession::deref(); }
 
     // CDMInstanceSession
     void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
@@ -215,8 +217,7 @@ public:
     void externalProtectionStatusDidChangeForContentKey(AVContentKey *) final;
     void externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*) final;
 
-    using Keys = CDMInstanceFairPlayStreamingAVFObjC::Keys;
-    Keys keyIDs();
+    CDMKeyIDs keyIDs();
     AVContentKeySession *contentKeySession() { return m_session ? m_session.get() : m_instance->contentKeySession(); }
     WebAVContentKeyGrouping *contentKeyReportGroup() { return m_group.get(); }
 
@@ -228,7 +229,7 @@ public:
 
     bool hasKey(AVContentKey *) const;
     bool hasRequest(AVContentKeyRequest*) const;
-    bool isAnyKeyUsable(const Keys&) const;
+    bool isAnyKeyUsable(const CDMKeyIDs&) const;
 
     const KeyStatusVector& keyStatuses() const { return m_keyStatuses; }
     KeyStatusVector copyKeyStatuses() const;
@@ -238,6 +239,8 @@ public:
     static RetainPtr<NSDictionary> optionsForKeyRequestWithHashSalt(const String&);
 
 private:
+    explicit CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
+
     bool ensureSessionOrGroup(KeyGroupingStrategy);
     bool isLicenseTypeSupported(LicenseType) const;
 

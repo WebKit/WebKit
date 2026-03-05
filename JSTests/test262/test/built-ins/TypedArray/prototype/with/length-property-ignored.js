@@ -15,19 +15,19 @@ includes: [testTypedArray.js, compareArray.js]
 features: [TypedArray, change-array-by-copy]
 ---*/
 
-testWithTypedArrayConstructors(TA => {
-  var ta = new TA([3, 1, 2]);
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
+  var ta = new TA(makeCtorArg([3, 1, 2]));
   Object.defineProperty(ta, "length", { value: 2 })
   var res = ta.with(0, 0);
   assert.compareArray(res, [0, 1, 2]);
   assert.sameValue(res.length, 3);
 
-  ta = new TA([3, 1, 2]);
+  ta = new TA(makeCtorArg([3, 1, 2]));
   Object.defineProperty(ta, "length", { value: 5 });
   res = ta.with(0, 0);
   assert.compareArray(res, [0, 1, 2]);
   assert.sameValue(res.length, 3);
-});
+}, null, ["passthrough"]);
 
 function setLength(length) {
     Object.defineProperty(TypedArray.prototype, "length", {
@@ -35,8 +35,8 @@ function setLength(length) {
     });
 }
 
-testWithTypedArrayConstructors(TA => {
-  var ta = new TA([3, 1, 2]);
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
+  var ta = new TA(makeCtorArg([3, 1, 2]));
 
   setLength(2);
   var res = ta.with(0, 0);
@@ -47,4 +47,4 @@ testWithTypedArrayConstructors(TA => {
   res = ta.with(0, 0);
   setLength(3);
   assert.compareArray(res, [0, 1, 2]);
-});
+}, null, ["passthrough"]);

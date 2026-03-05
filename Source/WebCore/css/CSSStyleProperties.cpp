@@ -51,16 +51,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleProperties);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PropertySetCSSStyleProperties);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyleRuleCSSStyleProperties);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineCSSStyleProperties);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleProperties);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PropertySetCSSStyleProperties);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleCSSStyleProperties);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineCSSStyleProperties);
 
 namespace {
 
 enum class PropertyNamePrefix { None, Epub, WebKit };
 
-static inline bool matchesCSSPropertyNamePrefix(const StringImpl& propertyName, ASCIILiteral prefix)
+static inline bool NODELETE matchesCSSPropertyNamePrefix(const StringImpl& propertyName, ASCIILiteral prefix)
 {
     ASSERT(toASCIILower(propertyName[0]) == prefix[0zu]);
     const size_t offset = 1;
@@ -532,7 +532,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::wrapForDeprecatedCSS
 
 StyleSheetContents* PropertySetCSSStyleProperties::contextStyleSheet() const
 {
-    CSSStyleSheet* cssStyleSheet = parentStyleSheet();
+    RefPtr cssStyleSheet = parentStyleSheet();
     return cssStyleSheet ? &cssStyleSheet->contents() : nullptr;
 }
 
@@ -593,7 +593,7 @@ CSSRule* StyleRuleCSSStyleProperties::parentRule() const
 
 OptionalOrReference<CSSParserContext> StyleRuleCSSStyleProperties::cssParserContext() const
 {
-    auto* styleSheet = contextStyleSheet();
+    RefPtr styleSheet = contextStyleSheet();
     if (!styleSheet)
         return PropertySetCSSStyleProperties::cssParserContext();
 

@@ -42,7 +42,7 @@ class XRInputSourceEvent;
 class WebXRSession;
 
 class WebXRInputSourceArray final : public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRInputSourceArray);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRInputSourceArray);
 public:
     explicit WebXRInputSourceArray(WebXRSession&);
 

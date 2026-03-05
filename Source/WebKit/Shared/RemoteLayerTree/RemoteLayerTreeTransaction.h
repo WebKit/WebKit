@@ -43,7 +43,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
-#include <WebCore/AcceleratedTimeline.h>
+#include <WebCore/AcceleratedEffectStackUpdater.h>
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
@@ -134,7 +134,7 @@ public:
     RemoteLayerTreeTransaction& operator=(RemoteLayerTreeTransaction&&);
 
     std::optional<WebCore::PlatformLayerIdentifier> rootLayerID() const { return m_rootLayerID.asOptional(); }
-    void setRootLayerID(WebCore::PlatformLayerIdentifier);
+    void NODELETE setRootLayerID(WebCore::PlatformLayerIdentifier);
     void layerPropertiesChanged(PlatformCALayerRemote&);
     void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<WebCore::PlatformLayerIdentifier>);
@@ -145,16 +145,16 @@ public:
     void dump() const;
 #endif
     
-    bool hasAnyLayerChanges() const;
+    bool NODELETE hasAnyLayerChanges() const;
 
-    const Vector<LayerCreationProperties>& createdLayers() const { return m_createdLayers; }
-    const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers() const { return m_destroyedLayerIDs; }
-    const Vector<WebCore::PlatformLayerIdentifier>& layerIDsWithNewlyUnreachableBackingStore() const { return m_layerIDsWithNewlyUnreachableBackingStore; }
+    const Vector<LayerCreationProperties>& createdLayers() const LIFETIME_BOUND { return m_createdLayers; }
+    const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers() const LIFETIME_BOUND { return m_destroyedLayerIDs; }
+    const Vector<WebCore::PlatformLayerIdentifier>& layerIDsWithNewlyUnreachableBackingStore() const LIFETIME_BOUND { return m_layerIDsWithNewlyUnreachableBackingStore; }
 
-    HashSet<Ref<PlatformCALayerRemote>>& changedLayers();
+    HashSet<Ref<PlatformCALayerRemote>>& NODELETE changedLayers() LIFETIME_BOUND;
 
-    const LayerPropertiesMap& changedLayerProperties() const;
-    LayerPropertiesMap& changedLayerProperties();
+    const LayerPropertiesMap& NODELETE changedLayerProperties() const LIFETIME_BOUND;
+    LayerPropertiesMap& changedLayerProperties() LIFETIME_BOUND;
 
     void setRemoteContextHostedIdentifier(Markable<WebCore::LayerHostingContextIdentifier> identifier) { m_remoteContextHostedIdentifier = identifier; }
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier() const { return m_remoteContextHostedIdentifier; }
@@ -172,8 +172,8 @@ public:
     void setScrollPosition(WebCore::IntPoint p) { m_scrollPosition = p; }
 
 #if ENABLE(THREADED_ANIMATIONS)
-    const HashSet<Ref<WebCore::AcceleratedTimeline>>& timelines() const { return m_timelines; }
-    void setTimelines(const HashSet<Ref<WebCore::AcceleratedTimeline>>& timelines) { m_timelines = timelines; }
+    const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate() const LIFETIME_BOUND { return m_timelinesUpdate; }
+    void setTimelinesUpdate(WebCore::AcceleratedTimelinesUpdate&& timelinesUpdate) { m_timelinesUpdate = WTF::move(timelinesUpdate); }
 #endif
 
 private:
@@ -194,7 +194,7 @@ private:
     WebCore::IntPoint m_scrollPosition;
 
 #if ENABLE(THREADED_ANIMATIONS)
-    HashSet<Ref<WebCore::AcceleratedTimeline>> m_timelines;
+    WebCore::AcceleratedTimelinesUpdate m_timelinesUpdate;
 #endif
 };
 

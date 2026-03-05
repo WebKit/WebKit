@@ -33,30 +33,20 @@ namespace WebCore {
 class WebAnimation;
 
 class AnimationEventBase : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AnimationEventBase);
+    WTF_MAKE_TZONE_ALLOCATED(AnimationEventBase);
 public:
     virtual ~AnimationEventBase();
-
-    virtual bool isAnimationPlaybackEvent() const { return false; }
-    virtual bool isCSSAnimationEvent() const { return false; }
-    virtual bool isCSSTransitionEvent() const { return false; }
 
     WebAnimation* animation() const { return m_animation.get(); }
     std::optional<Seconds> scheduledTime() const { return m_scheduledTime; }
 
 protected:
     AnimationEventBase(enum EventInterfaceType, const AtomString&, WebAnimation*, std::optional<Seconds> scheduledTime);
-    AnimationEventBase(enum EventInterfaceType, const AtomString&, const EventInit&, IsTrusted);
+    AnimationEventBase(enum EventInterfaceType, const AtomString&, EventInit&&, IsTrusted);
 
 private:
-    RefPtr<WebAnimation> m_animation;
+    const RefPtr<WebAnimation> m_animation;
     Markable<Seconds> m_scheduledTime;
 };
 
-}
-
-#define SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-static bool isType(const WebCore::AnimationEventBase& value) { return value.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
+} // namespace WebCore

@@ -40,7 +40,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NativePromise.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -66,8 +66,7 @@ class VideoMediaSampleRenderer;
 class VideoTrackPrivate;
 
 class MediaPlayerPrivateMediaSourceAVFObjC
-    : public CanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
-    , public RefCounted<MediaPlayerPrivateMediaSourceAVFObjC>
+    : public RefCountedAndCanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
     , public MediaPlayerPrivateInterface
     , private LoggerHelper
 {
@@ -111,7 +110,7 @@ public:
 
     void effectiveRateChanged();
     void setNaturalSize(const FloatSize&);
-    void characteristicsChanged();
+    void characteristicsFromMediaSourceChanged() final;
 
     MediaTime currentTime() const override;
     MediaTime currentOrPendingSeekTime() const final { return currentTime(); }
@@ -236,6 +235,7 @@ private:
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
+    Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
     bool supportsAcceleratedRendering() const override;
@@ -247,7 +247,6 @@ private:
 
     Ref<AudioVideoRenderer> audioVideoRenderer() const;
 
-    RefPtr<MediaSourcePrivateAVFObjC> protectedMediaSourcePrivate() const;
 
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by
     // javascript running in the page, the video will, by necessity, always be CORS correct and
@@ -307,6 +306,9 @@ private:
 
     void readyStateFromMediaSourceChanged() final;
     void updateStateFromReadyState();
+    void mediaSourceHasRetrievedAllData() final;
+
+    bool supportsProgressMonitoring() const final { return false; }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const final { return true; }

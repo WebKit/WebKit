@@ -64,7 +64,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
         return CaptureSourceOrError({ "No mock camera device"_s , MediaAccessDenialReason::PermissionDenied });
 #endif
 
-    Ref<RealtimeMediaSource> source = MockRealtimeVideoSourceMac::create(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier);
+    Ref<RealtimeMediaSource> source = MockRealtimeVideoSourceMac::create(WTF::move(deviceID), WTF::move(name), WTF::move(hashSalts), pageIdentifier);
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
             return CaptureSourceOrError(CaptureSourceError { error->invalidConstraint });
@@ -75,11 +75,11 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
 
 Ref<MockRealtimeVideoSource> MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
 {
-    return adoptRef(*new MockRealtimeVideoSourceMac(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier));
+    return adoptRef(*new MockRealtimeVideoSourceMac(WTF::move(deviceID), WTF::move(name), WTF::move(hashSalts), pageIdentifier));
 }
 
 MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
-    : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier)
+    : MockRealtimeVideoSource(WTF::move(deviceID), WTF::move(name), WTF::move(hashSalts), pageIdentifier)
 {
 }
 

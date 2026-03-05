@@ -39,7 +39,7 @@
 #include "RenderElement.h"
 #include "RenderIterator.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -47,15 +47,15 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLToken);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLToken);
 
 RenderMathMLToken::RenderMathMLToken(Type type, MathMLTokenElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(type, element, WTFMove(style))
+    : RenderMathMLBlock(type, element, WTF::move(style))
 {
 }
 
 RenderMathMLToken::RenderMathMLToken(Type type, Document& document, RenderStyle&& style)
-    : RenderMathMLBlock(type, document, WTFMove(style))
+    : RenderMathMLBlock(type, document, WTF::move(style))
 {
 }
 
@@ -127,7 +127,7 @@ void RenderMathMLToken::setMathVariantGlyphDirty()
     setNeedsLayoutAndPreferredWidthsUpdate();
 }
 
-void RenderMathMLToken::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderMathMLToken::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     setMathVariantGlyphDirty();
@@ -143,8 +143,10 @@ std::optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
 {
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
-        if (mathVariantGlyph.font)
-            return LayoutUnit { static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y())) } + borderAndPaddingBefore();
+        if (mathVariantGlyph.font) {
+            auto baseline = settings().subpixelInlineLayoutEnabled() ? LayoutUnit(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()) : LayoutUnit(roundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()));
+            return { borderAndPaddingBefore() + baseline };
+        }
     }
     return RenderMathMLBlock::firstLineBaseline();
 }
@@ -170,7 +172,7 @@ void RenderMathMLToken::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
     }
 
     recomputeLogicalWidth();
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+    for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
         child->layoutIfNeeded();
     setLogicalWidth(LayoutUnit(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph)));
     setLogicalHeight(LayoutUnit(mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).height()));
@@ -193,12 +195,18 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
         return;
 
     GraphicsContextStateSaver stateSaver(info.context());
-    info.context().setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
+    info.context().setFillColor(style().visitedDependentColorApplyingColorFilter());
 
-    LayoutUnit glyphAscent = static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()));
+    auto glyphAscent = settings().subpixelInlineLayoutEnabled() ? -mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y() : roundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y());
     // FIXME: If we're just drawing a single glyph, why do we need to compute an advance?
     auto advance = makeGlyphBufferAdvance(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph));
-    info.context().drawGlyphs(*mathVariantGlyph.font, singleElementSpan(mathVariantGlyph.glyph), singleElementSpan(advance), paintOffset + location() + LayoutPoint(borderLeft() + paddingLeft(), glyphAscent + borderAndPaddingBefore()), style().fontCascade().fontDescription().usedFontSmoothing());
+    auto location = paintOffset + this->location() + LayoutPoint { borderLeft() + paddingLeft(), glyphAscent + borderAndPaddingBefore() };
+    if (style().writingMode().isHorizontal())
+        location.setY(roundToDevicePixel(LayoutUnit { location.y() }, document().deviceScaleFactor()));
+    else
+        location.setX(roundToDevicePixel(LayoutUnit { location.x() }, document().deviceScaleFactor()));
+
+    info.context().drawGlyphs(*mathVariantGlyph.font, singleElementSpan(mathVariantGlyph.glyph), singleElementSpan(advance), location, style().fontCascade().fontDescription().usedFontSmoothing());
 }
 
 void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)

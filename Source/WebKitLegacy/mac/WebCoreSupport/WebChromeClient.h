@@ -36,6 +36,7 @@ namespace WebCore {
 class Frame;
 class HTMLImageElement;
 enum class BroadcastFocusedElement : bool;
+enum class ContentChange : uint8_t;
 enum class PointerLockRequestResult : uint8_t;
 struct FocusOptions;
 }
@@ -75,17 +76,7 @@ private:
     bool canRunModal() const final;
     void runModal() final;
 
-    void setToolbarsVisible(bool);
-    bool toolbarsVisible() const final;
-
-    void setStatusbarVisible(bool);
-    bool statusbarVisible() const final;
-
-    void setScrollbarsVisible(bool);
-    bool scrollbarsVisible() const final;
-
-    void setMenubarVisible(bool);
-    bool menubarVisible() const final;
+    bool isPopup() const final;
 
     void setResizable(bool) final;
 
@@ -220,8 +211,6 @@ private:
     void exitFullScreenForElement(WebCore::Element*, CompletionHandler<void()>&&) final;
 #endif
 
-    bool selectItemWritingDirectionIsNatural() override;
-    bool selectItemAlignmentFollowsMenuWritingDirection() override;
     RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const override;
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const override;
 
@@ -255,7 +244,9 @@ private:
 
     void registerBlobPathForTesting(const String&, CompletionHandler<void()>&&) final;
 
-    void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    void didFinishContentChangeObserving(WebCore::LocalFrame&, WebCore::ContentChange) final;
+#endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_mockVideoPresentationModeEnabled { false };

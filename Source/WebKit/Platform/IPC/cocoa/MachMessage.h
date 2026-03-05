@@ -42,14 +42,14 @@ public:
     static std::unique_ptr<MachMessage> create(MessageName, size_t);
     ~MachMessage();
 
-    static CheckedSize messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
+    static CheckedSize NODELETE messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
 
     size_t size() const { return m_size; }
     mach_msg_header_t* header() LIFETIME_BOUND { return m_messageHeader; }
 
     std::span<uint8_t> span() LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(m_messageHeader), m_size); }
 
-    void leakDescriptors();
+    void NODELETE leakDescriptors();
 
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }

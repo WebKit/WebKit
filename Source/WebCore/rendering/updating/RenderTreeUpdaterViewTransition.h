@@ -39,10 +39,11 @@ class RenderTreeUpdater::ViewTransition {
 public:
     ViewTransition(RenderTreeUpdater&);
 
-    void updatePseudoElementTree(RenderElement*, StyleDifference minimalStyleDifference);
+    void updatePseudoElementTree(RenderElement*, Style::DifferenceResult minimalStyleDifference);
+
 private:
     void buildPseudoElementGroup(RenderBlockFlow& viewTransitionRoot, const AtomString&, RenderElement&, RenderObject* = nullptr);
-    void updatePseudoElementGroup(const RenderStyle&, RenderBox&, RenderElement&, StyleDifference minimalStyleDifference);
+    void updatePseudoElementGroup(const RenderStyle&, RenderBox&, RenderElement&, Style::DifferenceResult minimalStyleDifference);
     RenderTreeUpdater& m_updater;
 };
 

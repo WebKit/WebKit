@@ -38,12 +38,12 @@
 namespace WebCore {
 
 FontChanges::FontChanges(String&& fontName, String&& fontFamily, std::optional<double>&& fontSize, std::optional<double>&& fontSizeDelta, std::optional<bool>&& bold, std::optional<bool>&& italic)
-    : m_fontName(WTFMove(fontName))
-    , m_fontFamily(WTFMove(fontFamily))
-    , m_fontSize(WTFMove(fontSize))
-    , m_fontSizeDelta(WTFMove(fontSizeDelta))
-    , m_bold(WTFMove(bold))
-    , m_italic(WTFMove(italic))
+    : m_fontName(WTF::move(fontName))
+    , m_fontFamily(WTF::move(fontFamily))
+    , m_fontSize(WTF::move(fontSize))
+    , m_fontSizeDelta(WTF::move(fontSizeDelta))
+    , m_bold(WTF::move(bold))
+    , m_italic(WTF::move(italic))
 {
     ASSERT(!m_fontSize || !m_fontSizeDelta);
 }
@@ -100,23 +100,23 @@ static RefPtr<CSSValue> cssValueForTextShadow(const FontShadow& shadow)
 
     CSS::TextShadowProperty::List list {
         CSS::TextShadow {
-            .color = WTFMove(color),
-            .location = { WTFMove(width), WTFMove(height) },
-            .blur = WTFMove(blur),
+            .color = WTF::move(color),
+            .location = { WTF::move(width), WTF::move(height) },
+            .blur = WTF::move(blur),
         }
     };
 
-    return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTFMove(list) });
+    return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTF::move(list) });
 }
 
 FontAttributeChanges::FontAttributeChanges(std::optional<VerticalAlignChange>&& verticalAlign, std::optional<Color>&& backgroundColor, std::optional<Color>&& foregroundColor, std::optional<FontShadow>&& shadow, std::optional<bool>&& strikeThrough, std::optional<bool>&& underline, FontChanges&& fontChanges)
-    : m_verticalAlign(WTFMove(verticalAlign))
-    , m_backgroundColor(WTFMove(backgroundColor))
-    , m_foregroundColor(WTFMove(foregroundColor))
-    , m_shadow(WTFMove(shadow))
-    , m_strikeThrough(WTFMove(strikeThrough))
-    , m_underline(WTFMove(underline))
-    , m_fontChanges(WTFMove(fontChanges))
+    : m_verticalAlign(WTF::move(verticalAlign))
+    , m_backgroundColor(WTF::move(backgroundColor))
+    , m_foregroundColor(WTF::move(foregroundColor))
+    , m_shadow(WTF::move(shadow))
+    , m_strikeThrough(WTF::move(strikeThrough))
+    , m_underline(WTF::move(underline))
+    , m_fontChanges(WTF::move(fontChanges))
 {
 }
 

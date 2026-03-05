@@ -42,6 +42,19 @@ TIntermFunctionDefinition *FindMain(TIntermBlock *root)
     return nullptr;
 }
 
+TIntermFunctionPrototype *FindMainPrototype(TIntermBlock *root)
+{
+    for (TIntermNode *node : *root->getSequence())
+    {
+        TIntermFunctionPrototype *nodePrototype = node->getAsFunctionPrototypeNode();
+        if (nodePrototype != nullptr && nodePrototype->getFunction()->isMain())
+        {
+            return nodePrototype;
+        }
+    }
+    return nullptr;
+}
+
 TIntermBlock *FindMainBody(TIntermBlock *root)
 {
     TIntermFunctionDefinition *main = FindMain(root);

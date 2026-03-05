@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=PAYMENT_REQUEST
+    Conditional=PAYMENT_REQUEST,
 ] dictionary PaymentDetailsBase {
     sequence<PaymentItem> displayItems;
     sequence<PaymentShippingOption> shippingOptions;

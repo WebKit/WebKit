@@ -51,13 +51,13 @@ template<typename T> static void dispatchWorkItem(void* dispatchContext)
 
 void WorkQueueBase::dispatch(Function<void()>&& function)
 {
-    dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
+    dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { WTF::move(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueueBase::dispatchWithQOS(Function<void()>&& function, QOS qos)
 {
     // FIXME: This is a false positive. rdar://160931336
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto blockWithQOS = adoptOSObject(dispatch_block_create_with_qos_class(DISPATCH_BLOCK_ENFORCE_QOS_CLASS, Thread::dispatchQOSClass(qos), 0, makeBlockPtr([function = WTFMove(function)] () mutable {
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto blockWithQOS = adoptOSObject(dispatch_block_create_with_qos_class(DISPATCH_BLOCK_ENFORCE_QOS_CLASS, Thread::dispatchQOSClass(qos), 0, makeBlockPtr([function = WTF::move(function)] () mutable {
         function();
         function = { };
     }).get()));
@@ -66,16 +66,16 @@ void WorkQueueBase::dispatchWithQOS(Function<void()>&& function, QOS qos)
 
 void WorkQueueBase::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
-    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
+    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { WTF::move(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueueBase::dispatchSync(Function<void()>&& function)
 {
-    dispatch_sync_f(m_dispatchQueue.get(), new Function<void()> { WTFMove(function) }, dispatchWorkItem<Function<void()>>);
+    dispatch_sync_f(m_dispatchQueue.get(), new Function<void()> { WTF::move(function) }, dispatchWorkItem<Function<void()>>);
 }
 
 WorkQueueBase::WorkQueueBase(OSObjectPtr<dispatch_queue_t>&& dispatchQueue)
-    : m_dispatchQueue(WTFMove(dispatchQueue))
+    : m_dispatchQueue(WTF::move(dispatchQueue))
     , m_threadID(mainThreadID)
 {
 }
@@ -106,7 +106,7 @@ WorkQueue::WorkQueue(MainTag)
 
 void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t index)>&& function)
 {
-    dispatch_apply(iterations, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([function = WTFMove(function)](size_t index) {
+    dispatch_apply(iterations, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([function = WTF::move(function)](size_t index) {
         function(index);
     }).get());
 }

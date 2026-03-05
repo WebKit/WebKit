@@ -74,7 +74,7 @@ void PipeWireCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void(
     }
 
     GST_DEBUG("Attempting to access the camera");
-    portal->accessCamera([this, callback = WTFMove(callback)](auto fd) mutable {
+    portal->accessCamera([this, callback = WTF::move(callback)](auto fd) mutable {
         if (!fd) {
             GST_DEBUG("Camera access unavailable");
             callback();
@@ -102,13 +102,13 @@ CaptureSourceOrError PipeWireCaptureDeviceManager::createCaptureSource(const Cap
 {
     GST_DEBUG("Creating capture source for device %s", device.persistentId().ascii().data());
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
-        return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
+        return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTF::move(hashSalts), constraints);
 
     // We don't support audio capture yet.
     if (!m_deviceTypes.contains(CaptureDevice::DeviceType::Camera))
         return CaptureSourceOrError({ { }, MediaAccessDenialReason::PermissionDenied });
 
-    return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
+    return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTF::move(hashSalts), constraints);
 }
 
 #undef GST_CAT_DEFAULT

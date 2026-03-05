@@ -164,7 +164,7 @@ struct BuiltInResultStructHash
             static_cast<uint8_t>(key.msbPrimarySize),
         };
 
-        return angle::ComputeGenericHash(properties, sizeof(properties));
+        return angle::ComputeGenericHash(properties);
     }
 };
 
@@ -308,6 +308,9 @@ class OutputSPIRVTraverser : public TIntermTraverser
 
     spirv::IdRef createFunctionCall(TIntermAggregate *node, spirv::IdRef resultTypeId);
 
+    const spirv::IdRef getSpirvTypeIdWithExpectedPrecisionBit(const TType &expectedType,
+                                                              const TType &actualType);
+
     void visitArrayLength(TIntermUnary *node);
 
     // Cast between types.  There are two kinds of casts:
@@ -322,6 +325,9 @@ class OutputSPIRVTraverser : public TIntermTraverser
     spirv::IdRef castBasicType(spirv::IdRef value,
                                const TType &valueType,
                                const TType &expectedType,
+                               spirv::IdRef *resultTypeIdOut);
+    spirv::IdRef castFloatType(spirv::IdRef value,
+                               const TType &valueType,
                                spirv::IdRef *resultTypeIdOut);
     spirv::IdRef cast(spirv::IdRef value,
                       const TType &valueType,
@@ -387,7 +393,7 @@ class OutputSPIRVTraverser : public TIntermTraverser
     // - TVariable, or
     // - TInterfaceBlock: because TIntermSymbols referencing a field of an unnamed interface block
     //   don't reference the TVariable that defines the struct, but the TInterfaceBlock itself.
-    angle::HashMap<const TSymbol *, spirv::IdRef> mSymbolIdMap;
+    angle::HashMap<TSymbolUniqueId, spirv::IdRef> mSymbolIdMap;
 
     // A map of TFunction to its various SPIR-V ids.
     angle::HashMap<const TFunction *, FunctionIds> mFunctionIdMap;
@@ -538,7 +544,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
                                                               spv::StorageClass *storageClass)
 {
     *storageClass = GetStorageClass(mCompileOptions, type, mCompiler->getShaderType());
-    auto iter     = mSymbolIdMap.find(symbol);
+    auto iter     = mSymbolIdMap.find(symbol->uniqueId());
     if (iter != mSymbolIdMap.end())
     {
         return iter->second;
@@ -755,7 +761,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
             break;
     }
 
-    mSymbolIdMap.insert({symbol, varId});
+    mSymbolIdMap.insert({symbol->uniqueId(), varId});
     return varId;
 }
 
@@ -1065,8 +1071,14 @@ spirv::IdRef OutputSPIRVTraverser::accessChainLoad(NodeData *data,
     }
 
     // Upon loading values, cast them to the default SPIR-V variant.
+    accessChain.typeSpec.precision = (accessChain.typeSpec.precision == SPIRVPrecisionChoice::Unset)
+                                         ? SPIRVPrecisionChoice::Default
+                                         : accessChain.typeSpec.precision;
+    SpirvTypeSpec expectedTypeSpec = {};
+    expectedTypeSpec.precision     = SPIRVPrecisionChoice::Default;
+
     const spirv::IdRef castResult =
-        cast(loadResult, valueType, accessChain.typeSpec, {}, resultTypeIdOut);
+        cast(loadResult, valueType, accessChain.typeSpec, expectedTypeSpec, resultTypeIdOut);
 
     return castResult;
 }
@@ -1095,7 +1107,12 @@ void OutputSPIRVTraverser::accessChainStore(NodeData *data,
     // Store through the access chain.  The values are always cast to the default SPIR-V type
     // variant when loaded from memory and operated on as such.  When storing, we need to cast the
     // result to the variant specified by the access chain.
-    value = cast(value, valueType, {}, accessChain.typeSpec, nullptr);
+    accessChain.typeSpec.precision = (accessChain.typeSpec.precision == SPIRVPrecisionChoice::Unset)
+                                         ? SPIRVPrecisionChoice::Default
+                                         : accessChain.typeSpec.precision;
+    SpirvTypeSpec valueTypeSpec    = {};
+    valueTypeSpec.precision        = SPIRVPrecisionChoice::Default;
+    value = cast(value, valueType, valueTypeSpec, accessChain.typeSpec, nullptr);
 
     if (!accessChain.swizzles.empty())
     {
@@ -1216,8 +1233,8 @@ void OutputSPIRVTraverser::declareConst(TIntermDeclaration *decl)
                        initializer->isConstantNullValue());
 
     // Remember the id of the variable for future look up.
-    ASSERT(mSymbolIdMap.count(variable) == 0);
-    mSymbolIdMap[variable] = constId;
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) == 0);
+    mSymbolIdMap.emplace(variable->uniqueId(), constId);
 
     if (!mInGlobalScope)
     {
@@ -1250,8 +1267,8 @@ void OutputSPIRVTraverser::declareSpecConst(TIntermDeclaration *decl)
         type.getBasicType(), type.getLayoutQualifier().location, mBuilder.getName(variable).data());
 
     // Remember the id of the variable for future look up.
-    ASSERT(mSymbolIdMap.count(variable) == 0);
-    mSymbolIdMap[variable] = specConstId;
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) == 0);
+    mSymbolIdMap.emplace(variable->uniqueId(), specConstId);
 }
 
 spirv::IdRef OutputSPIRVTraverser::createConstant(const TType &type,
@@ -1769,6 +1786,16 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromVectors(
     return result;
 }
 
+const spirv::IdRef OutputSPIRVTraverser::getSpirvTypeIdWithExpectedPrecisionBit(
+    const TType &expectedType,
+    const TType &actualType)
+{
+    const SpirvType expectedSpirvType = mBuilder.getSpirvType(expectedType, {});
+    SpirvTypeSpec typeSpec            = {};
+    typeSpec.precision                = expectedSpirvType.typeSpec.precision;
+    return mBuilder.getTypeData(actualType, typeSpec).id;
+}
+
 spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromMatrix(
     TIntermAggregate *node,
     spirv::IdRef typeId,
@@ -1810,7 +1837,16 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromMatrix(
         // directly and potentially swizzle them.
         TType paramColumnType(parameterType);
         paramColumnType.toMatrixColumnType();
-        const spirv::IdRef paramColumnTypeId = mBuilder.getTypeData(paramColumnType, {}).id;
+        // For below case, paramComponentType (umat4.x) uses 16-bit floats, and we need to convert
+        // it to 32-bit to match with the float data type of Matrix constructed (mat3):
+        // precision mediump float;
+        // uniform mat4 umat4;
+        // void main() {
+        //   vec3 colorComponents = mat3(umat4) * vec3(1.0, 1.0, 1.0);
+        //   gl_FragColor = vec4(colorComponents, 1.0);
+        // }
+        const spirv::IdRef paramColumnTypeId =
+            getSpirvTypeIdWithExpectedPrecisionBit(type, paramColumnType);
 
         const bool needsSwizzle           = parameterType.getRows() > type.getRows();
         spirv::LiteralIntegerList swizzle = {spirv::LiteralInteger(0), spirv::LiteralInteger(1),
@@ -1844,7 +1880,16 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromMatrix(
         // given parameter.
         TType paramComponentType(parameterType);
         paramComponentType.toComponentType();
-        const spirv::IdRef paramComponentTypeId = mBuilder.getTypeData(paramComponentType, {}).id;
+        // For below case, paramComponentType (vs_u_0.x) uses 16-bit float, and we need to convert
+        // it to 32-bit to match with the float data type of Matrix constructed (mat4):
+        // precision mediump float;
+        // uniform mat3 vs_u_0;
+        // void main()
+        // {
+        //     gl_Position += mat4(vs_u_0) * vec4(1.0, 1.0, 1.0, 1.0);
+        // }
+        const spirv::IdRef paramComponentTypeId =
+            getSpirvTypeIdWithExpectedPrecisionBit(type, paramComponentType);
 
         for (uint8_t columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
         {
@@ -1964,7 +2009,18 @@ void OutputSPIRVTraverser::extractComponents(TIntermAggregate *node,
             TType componentType(argumentType);
             componentType.toComponentType();
             componentType.setBasicType(expectedType.getBasicType());
-            const spirv::IdRef componentTypeId = mBuilder.getTypeData(componentType, {}).id;
+
+            // For this case:
+            // precision mediump float;
+            // uniform vec3 uniVec3;
+            // void main() {
+            //     gl_FragColor = vec4(uniVec3, 0.0);
+            // }
+            // expectedType is 32-bit float vec4, but componentType (uniVec3) uses 16-bit floats.
+            // We need to change the componentType float data type to match with the
+            // expectedType float data type.
+            const spirv::IdRef componentTypeId =
+                getSpirvTypeIdWithExpectedPrecisionBit(expectedType, componentType);
 
             // Cast the whole vector parameter in one go.
             const spirv::IdRef castParameterId =
@@ -1991,7 +2047,18 @@ void OutputSPIRVTraverser::extractComponents(TIntermAggregate *node,
 
         TType componentType(argumentType);
         componentType.toComponentType();
-        const spirv::IdRef componentTypeId = mBuilder.getTypeData(componentType, {}).id;
+
+        // For this case:
+        // precision mediump float;
+        // uniform mat2 umat2;
+        // void main()
+        //{
+        // gl_FragColor = vec4(umat2);
+        //}
+        // expectedType is 32-bit float vec4, but componentType (umat2) uses 16-bit float.
+        // We need to change the componentType to match with the expectedType.
+        const spirv::IdRef componentTypeId =
+            getSpirvTypeIdWithExpectedPrecisionBit(expectedType, componentType);
 
         // For matrix parameters, take components out of the matrix one by one in column-major
         // order.  No cast is done here; it would only be required for vector constructors with
@@ -2274,6 +2341,60 @@ void OutputSPIRVTraverser::visitArrayLength(TIntermUnary *node)
     nodeDataInitRValue(&mNodeData.back(), castResultId, intTypeId);
 }
 
+// If an expression is short-circuited, it must not be executed.  However, in some cases there is
+// nothing to execute, such as constants, variables etc.  Notably, hasSideEffects() is not
+// a sufficient check, because it could include read-only operations that are out of bounds, despite
+// not having any side effects.
+bool IsSafeToExecuteInShortCircuit(TIntermTyped *node)
+{
+    // Constants and symbols are safe to execute.
+    if (node->getAsConstantUnion() || node->getAsSymbolNode())
+    {
+        return true;
+    }
+
+    // Swizzle is safe if the operand is safe.
+    {
+        TIntermSwizzle *asSwizzle = node->getAsSwizzleNode();
+        if (asSwizzle)
+        {
+            return IsSafeToExecuteInShortCircuit(asSwizzle->getOperand());
+        }
+    }
+
+    // Indexing a struct or interface block is safe to execute, as long as no array index is in the
+    // access chain.
+    {
+        TIntermBinary *asBinary = node->getAsBinaryNode();
+        if (asBinary != nullptr)
+        {
+            return (asBinary->getOp() == EOpIndexDirectInterfaceBlock ||
+                    asBinary->getOp() == EOpIndexDirectStruct) &&
+                   IsSafeToExecuteInShortCircuit(asBinary->getLeft());
+        }
+    }
+
+    // Constructors are safe as long as every member is safe.
+    {
+        TIntermAggregate *asAggregate = node->getAsAggregate();
+        if (asAggregate != nullptr && asAggregate->getOp() == EOpConstruct)
+        {
+            for (TIntermNode *component : *asAggregate->getSequence())
+            {
+                if (!IsSafeToExecuteInShortCircuit(component->getAsTyped()))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    // Assume everything else is unsafe.  This includes safe but complex expressions that are better
+    // off not getting executed anyway.
+    return false;
+}
+
 bool IsShortCircuitNeeded(TIntermOperator *node)
 {
     TOperator op = node->getOp();
@@ -2286,12 +2407,9 @@ bool IsShortCircuitNeeded(TIntermOperator *node)
 
     ASSERT(node->getChildCount() == 2);
 
-    // If the right hand side does not have side effects, short-circuiting is unnecessary.
-    // TODO: experiment with the performance of OpLogicalAnd/Or vs short-circuit based on the
-    // complexity of the right hand side expression.  We could potentially only allow
-    // OpLogicalAnd/Or if the right hand side is a constant or an access chain and have more complex
-    // expressions be placed inside an if block.  http://anglebug.com/40096715
-    return node->getChildNode(1)->getAsTyped()->hasSideEffects();
+    // If the right hand side is not safe to execute, short-circuiting is needed
+    // For example: is_in_bounds(index) && access(data[index])
+    return !IsSafeToExecuteInShortCircuit(node->getChildNode(1)->getAsTyped());
 }
 
 using WriteUnaryOp      = void (*)(spirv::Blob *blob,
@@ -3225,11 +3343,6 @@ spirv::IdRef OutputSPIRVTraverser::createAtomicBuiltIn(TIntermOperator *node,
     {
         // One parameter for coordinates.
         ++imagePointerParameterCount;
-        if (IsImageMS(operandBasicType))
-        {
-            // One parameter for samples.
-            ++imagePointerParameterCount;
-        }
     }
 
     ASSERT(parameterCount >= 2 + imagePointerParameterCount);
@@ -3737,8 +3850,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     // If an implicit-lod instruction is used outside a fragment shader, change that to an explicit
     // one as they are not allowed in SPIR-V outside fragment shaders.
     const bool noLodSupport = IsSamplerBuffer(samplerBasicType) ||
-                              IsImageBuffer(samplerBasicType) || IsSamplerMS(samplerBasicType) ||
-                              IsImageMS(samplerBasicType);
+                              IsImageBuffer(samplerBasicType) || IsSamplerMS(samplerBasicType);
     const bool makeLodExplicit =
         mCompiler->getShaderType() != GL_FRAGMENT_SHADER && lodIndex == 0 && dPdxIndex == 0 &&
         !noLodSupport && (spirvOp == spv::OpImageSampleImplicitLod || spirvOp == spv::OpImageFetch);
@@ -4157,6 +4269,92 @@ spirv::IdRef OutputSPIRVTraverser::createInterpolate(TIntermOperator *node,
     return result;
 }
 
+spirv::IdRef OutputSPIRVTraverser::castFloatType(spirv::IdRef value,
+                                                 const TType &valueType,
+                                                 spirv::IdRef *resultTypeIdOut)
+{
+    ASSERT(valueType.getBasicType() == EbtFloat);
+    SpirvType valueSpirvType = mBuilder.getSpirvType(valueType, {});
+    spirv::IdRef castTypeId;  // default to invalid
+    spirv::IdRef castValue;   // default fo invalid
+    // OpFConvert only works for scalar or vector data types
+    // If it is matrix type, we need to first extract each column, convert each column, and
+    // composite a new matrix
+    if (valueType.isMatrix())
+    {
+        // Get the matrix column SPIR-V type Id.
+        // We need this type Id to create the OpCompositeExtract instruction that extract each
+        // column of the matrix
+        TType currentMatrixColumnType = valueType;
+        currentMatrixColumnType.toMatrixColumnType();
+        SpirvType currentMatrixColumnSpirvType = mBuilder.getSpirvType(currentMatrixColumnType, {});
+        // In below case:
+        // uniform mat3x4 uniMat3x4[5];
+        // uniMat3x4[i] qualifier is EvqTemporary, in which case the
+        // typeSpec.precision is not set to UseFP16.
+        // We need to set the bit to true to get the correct 16-bit float data type.
+        currentMatrixColumnSpirvType.typeSpec.precision = SPIRVPrecisionChoice::UseFP16;
+        const spirv::IdRef currentMatrixColumnTypeId =
+            mBuilder.getSpirvTypeData(currentMatrixColumnSpirvType, nullptr).id;
+
+        // Get the converted matrix column SPIR-V type Id.
+        // We need this type Id to creat the OpFConvert instruction that converts each column of the
+        // matrix
+        SpirvType expectedMatrixColumnSpirvType          = currentMatrixColumnSpirvType;
+        expectedMatrixColumnSpirvType.typeSpec.precision = SPIRVPrecisionChoice::Default;
+        const spirv::IdRef expectedMatrixColumnTypeId =
+            mBuilder.getSpirvTypeData(expectedMatrixColumnSpirvType, nullptr).id;
+
+        // Extract each column of the matrix and converted them to the expected type
+        const size_t matrixColCount = valueType.getCols();
+        spirv::IdRefList convertedMatrixColIds;
+        for (size_t i = 0; i < matrixColCount; ++i)
+        {
+            // Extract each column vector from the matrix
+            const spirv::IdRef currentMatrixColumnExtractId =
+                mBuilder.getNewId(mBuilder.getDecorations(valueType));
+            spirv::WriteCompositeExtract(mBuilder.getSpirvCurrentFunctionBlock(),
+                                         currentMatrixColumnTypeId, currentMatrixColumnExtractId,
+                                         value, {spirv::LiteralInteger(static_cast<uint32_t>(i))});
+
+            // Convert each column
+            // Decorate the converted matrix column with "RelaxedPrecision", if the current matrix
+            // column are using 16-bit floats, so that compilers will be able to treat the converted
+            // matrix column as 16-bit floats.
+            const spirv::IdRef expectedMatrixColumnTypeExtractId =
+                mBuilder.getNewId(mBuilder.getDecorations(valueType));
+            spirv::WriteFConvert(mBuilder.getSpirvCurrentFunctionBlock(),
+                                 expectedMatrixColumnTypeId, expectedMatrixColumnTypeExtractId,
+                                 currentMatrixColumnExtractId);
+            convertedMatrixColIds.push_back(expectedMatrixColumnTypeExtractId);
+        }
+
+        // Finally construct the new matrix with the converted columns
+        valueSpirvType.typeSpec.precision = SPIRVPrecisionChoice::Default;
+        castTypeId                        = mBuilder.getSpirvTypeData(valueSpirvType, nullptr).id;
+        // Decorate the converted matrix with "RelaxedPrecision", too.
+        castValue = mBuilder.getNewId(mBuilder.getDecorations(valueType));
+        spirv::WriteCompositeConstruct(mBuilder.getSpirvCurrentFunctionBlock(), castTypeId,
+                                       castValue, convertedMatrixColIds);
+    }
+    else
+    {
+        valueSpirvType.typeSpec.precision = SPIRVPrecisionChoice::Default;
+
+        castTypeId = mBuilder.getSpirvTypeData(valueSpirvType, nullptr).id;
+        // Decorate the converted variable with "RelaxedPrecision"
+        castValue = mBuilder.getNewId(mBuilder.getDecorations(valueType));
+        spirv::WriteFConvert(mBuilder.getSpirvCurrentFunctionBlock(), castTypeId, castValue, value);
+    }
+
+    if (resultTypeIdOut)
+    {
+        *resultTypeIdOut = castTypeId;
+    }
+
+    return castValue;
+}
+
 spirv::IdRef OutputSPIRVTraverser::castBasicType(spirv::IdRef value,
                                                  const TType &valueType,
                                                  const TType &expectedType,
@@ -4174,6 +4372,15 @@ spirv::IdRef OutputSPIRVTraverser::castBasicType(spirv::IdRef value,
     SpirvType valueSpirvType                            = mBuilder.getSpirvType(valueType, {});
     valueSpirvType.type                                 = expectedBasicType;
     valueSpirvType.typeSpec.isOrHasBoolInInterfaceBlock = false;
+    // In below case
+    // uniform mediump float x;
+    // if (bool(bool(x)))
+    // valueSpirvType.typeSpec.precision == SPIRVPrecisionChoice::UseFP16
+    // We want to reset precision to SPIRVPrecisionChoice::Default, because 16-bit
+    // does not make sense for bool
+    SpirvType expectedSpirvType       = mBuilder.getSpirvType(expectedType, {});
+    valueSpirvType.typeSpec.precision = expectedSpirvType.typeSpec.precision;
+
     const spirv::IdRef castTypeId = mBuilder.getSpirvTypeData(valueSpirvType, nullptr).id;
 
     const spirv::IdRef castValue = mBuilder.getNewId(mBuilder.getDecorations(expectedType));
@@ -4289,13 +4496,16 @@ spirv::IdRef OutputSPIRVTraverser::cast(spirv::IdRef value,
                                         const SpirvTypeSpec &expectedTypeSpec,
                                         spirv::IdRef *resultTypeIdOut)
 {
+    ASSERT(valueTypeSpec.precision != SPIRVPrecisionChoice::Unset &&
+           expectedTypeSpec.precision != SPIRVPrecisionChoice::Unset);
     // If there's no difference in type specialization, there's nothing to cast.
     if (valueTypeSpec.blockStorage == expectedTypeSpec.blockStorage &&
         valueTypeSpec.isInvariantBlock == expectedTypeSpec.isInvariantBlock &&
         valueTypeSpec.isRowMajorQualifiedBlock == expectedTypeSpec.isRowMajorQualifiedBlock &&
         valueTypeSpec.isRowMajorQualifiedArray == expectedTypeSpec.isRowMajorQualifiedArray &&
         valueTypeSpec.isOrHasBoolInInterfaceBlock == expectedTypeSpec.isOrHasBoolInInterfaceBlock &&
-        valueTypeSpec.isPatchIOBlock == expectedTypeSpec.isPatchIOBlock)
+        valueTypeSpec.isPatchIOBlock == expectedTypeSpec.isPatchIOBlock &&
+        valueTypeSpec.precision == expectedTypeSpec.precision)
     {
         return value;
     }
@@ -4307,11 +4517,15 @@ spirv::IdRef OutputSPIRVTraverser::cast(spirv::IdRef value,
     //
     // If SPIR-V 1.4 is available, use OpCopyLogical if possible.  OpCopyLogical works on arrays and
     // structs, and only if the types are logically the same.  This means that arrays and structs
-    // can be copied with this instruction despite their SpirvTypeSpec being different.  The only
-    // exception is if there is a mismatch in the isOrHasBoolInInterfaceBlock type specialization
+    // can be copied with this instruction despite their SpirvTypeSpec being different.
+    // The only exceptions are:
+    // 1) If there is a mismatch in the isOrHasBoolInInterfaceBlock type specialization
     // as it actually changes the type of the struct members.
+    // 2) If there is a mismatch in the precision type specialization as it changes
+    // float data type between 16-bit and 32-bit.
     if (mCompileOptions.emitSPIRV14 && (valueType.isArray() || valueType.getStruct() != nullptr) &&
-        valueTypeSpec.isOrHasBoolInInterfaceBlock == expectedTypeSpec.isOrHasBoolInInterfaceBlock)
+        valueTypeSpec.isOrHasBoolInInterfaceBlock == expectedTypeSpec.isOrHasBoolInInterfaceBlock &&
+        valueTypeSpec.precision == expectedTypeSpec.precision)
     {
         const spirv::IdRef expectedTypeId =
             mBuilder.getTypeDataOverrideTypeSpec(valueType, expectedTypeSpec).id;
@@ -4398,24 +4612,34 @@ spirv::IdRef OutputSPIRVTraverser::cast(spirv::IdRef value,
     }
     else
     {
-        // Bool types in interface blocks are emulated with uint.  bool<->uint cast is done here.
-        ASSERT(valueType.getBasicType() == EbtBool);
-        ASSERT(valueTypeSpec.isOrHasBoolInInterfaceBlock ||
-               expectedTypeSpec.isOrHasBoolInInterfaceBlock);
-
-        TType emulatedValueType(valueType);
-        emulatedValueType.setBasicType(EbtUInt);
-        emulatedValueType.setPrecise(EbpLow);
-
-        // If value is loaded as uint, it needs to change to bool.  If it's bool, it needs to change
-        // to uint before storage.
-        if (valueTypeSpec.isOrHasBoolInInterfaceBlock)
+        ASSERT(valueType.getBasicType() == EbtBool || valueType.getBasicType() == EbtFloat);
+        if (valueType.getBasicType() == EbtBool)
         {
-            return castBasicType(value, emulatedValueType, valueType, resultTypeIdOut);
+            // Bool types in interface blocks are emulated with uint.  bool<->uint cast is done
+            // here.
+            ASSERT(valueTypeSpec.isOrHasBoolInInterfaceBlock ||
+                   expectedTypeSpec.isOrHasBoolInInterfaceBlock);
+            TType emulatedValueType(valueType);
+            emulatedValueType.setBasicType(EbtUInt);
+            emulatedValueType.setPrecise(EbpLow);
+
+            // If value is loaded as uint, it needs to change to bool.  If it's bool, it needs to
+            // change to uint before storage.
+            if (valueTypeSpec.isOrHasBoolInInterfaceBlock)
+            {
+                return castBasicType(value, emulatedValueType, valueType, resultTypeIdOut);
+            }
+            else
+            {
+                return castBasicType(value, valueType, emulatedValueType, resultTypeIdOut);
+            }
         }
         else
         {
-            return castBasicType(value, valueType, emulatedValueType, resultTypeIdOut);
+            // 32-bit floats and 16-bit floats cast is done here
+            ASSERT(valueTypeSpec.precision == SPIRVPrecisionChoice::UseFP16 &&
+                   expectedTypeSpec.precision == SPIRVPrecisionChoice::Default);
+            return castFloatType(value, valueType, resultTypeIdOut);
         }
     }
 
@@ -4791,7 +5015,7 @@ void OutputSPIRVTraverser::visitSymbol(TIntermSymbol *node)
     // They are needed to determine the derived type in an access chain, but are not promoted in
     // intermediate nodes' TTypes.
     SpirvTypeSpec typeSpec;
-    typeSpec.inferDefaults(type, mCompiler);
+    typeSpec.inferDefaults(type, mCompiler, mCompileOptions.transformFloatUniformTo16Bits);
 
     const spirv::IdRef typeId = mBuilder.getTypeData(type, typeSpec).id;
 
@@ -4801,8 +5025,8 @@ void OutputSPIRVTraverser::visitSymbol(TIntermSymbol *node)
         type.getQualifier() == EvqSpecConst)
     {
         ASSERT(interfaceBlock == nullptr);
-        ASSERT(mSymbolIdMap.count(symbol) > 0);
-        nodeDataInitRValue(&mNodeData.back(), mSymbolIdMap[symbol], typeId);
+        ASSERT(mSymbolIdMap.count(symbol->uniqueId()) > 0);
+        nodeDataInitRValue(&mNodeData.back(), mSymbolIdMap[symbol->uniqueId()], typeId);
         return;
     }
 
@@ -5121,8 +5345,8 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
     // prior to 1.4 requires the type to be either scalar or vector.
     const TType &type   = node->getType();
     bool canUseOpSelect = (type.isScalar() || type.isVector() || mCompileOptions.emitSPIRV14) &&
-                          !node->getTrueExpression()->hasSideEffects() &&
-                          !node->getFalseExpression()->hasSideEffects();
+                          IsSafeToExecuteInShortCircuit(node->getTrueExpression()) &&
+                          IsSafeToExecuteInShortCircuit(node->getFalseExpression());
 
     // Don't use OpSelect on buggy drivers.  Technically this is only needed if the two sides don't
     // have matching use of RelaxedPrecision, but not worth being precise about it.
@@ -5601,8 +5825,8 @@ bool OutputSPIRVTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionD
                                           ids.parameterTypeIds[paramIndex], paramId);
 
             // Remember the id of the variable for future look up.
-            ASSERT(mSymbolIdMap.count(paramVariable) == 0);
-            mSymbolIdMap[paramVariable] = paramId;
+            ASSERT(mSymbolIdMap.count(paramVariable->uniqueId()) == 0);
+            mSymbolIdMap.emplace(paramVariable->uniqueId(), paramId);
 
             mBuilder.writeDebugName(paramId, mBuilder.getName(paramVariable).data());
         }
@@ -5702,9 +5926,9 @@ bool OutputSPIRVTraverser::visitGlobalQualifierDeclaration(Visit visit,
     ASSERT(node->isInvariant());
 
     const TVariable *variable = &node->getSymbol()->variable();
-    ASSERT(mSymbolIdMap.count(variable) > 0);
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) > 0);
 
-    const spirv::IdRef variableId = mSymbolIdMap[variable];
+    const spirv::IdRef variableId = mSymbolIdMap[variable->uniqueId()];
 
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), variableId, spv::DecorationInvariant, {});
 
@@ -6166,13 +6390,13 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     // Remember the id of the variable for future look up.  For interface blocks, also remember the
     // id of the interface block.
-    ASSERT(mSymbolIdMap.count(variable) == 0);
-    mSymbolIdMap[variable] = variableId;
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) == 0);
+    mSymbolIdMap.emplace(variable->uniqueId(), variableId);
 
     if (type.isInterfaceBlock())
     {
-        ASSERT(mSymbolIdMap.count(type.getInterfaceBlock()) == 0);
-        mSymbolIdMap[type.getInterfaceBlock()] = variableId;
+        ASSERT(mSymbolIdMap.count(type.getInterfaceBlock()->uniqueId()) == 0);
+        mSymbolIdMap.emplace(type.getInterfaceBlock()->uniqueId(), variableId);
     }
 
     return false;

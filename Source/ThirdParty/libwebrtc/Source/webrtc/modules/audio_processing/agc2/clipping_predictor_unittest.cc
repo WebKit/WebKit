@@ -136,7 +136,7 @@ void AnalyzeZeroCrestFactorAudio(int num_calls,
 
 TEST(ClippingPeakPredictorTest, NoPredictorCreated) {
   auto predictor =
-      CreateClippingPredictor(kNumChannels, /*config=*/{/*enabled=*/false});
+      CreateClippingPredictor(kNumChannels, /*config=*/{.enabled = false});
   EXPECT_FALSE(predictor);
 }
 
@@ -144,8 +144,8 @@ TEST(ClippingPeakPredictorTest, ClippingEventPredictionCreated) {
   // TODO(bugs.webrtc.org/12874): Use designated initializers one fixed.
   auto predictor = CreateClippingPredictor(
       kNumChannels,
-      /*config=*/{/*enabled=*/true,
-                  /*mode=*/ClippingPredictorMode::kClippingEventPrediction});
+      /*config=*/{.enabled = true,
+                  .mode = ClippingPredictorMode::kClippingEventPrediction});
   EXPECT_TRUE(predictor);
 }
 
@@ -153,17 +153,18 @@ TEST(ClippingPeakPredictorTest, AdaptiveStepClippingPeakPredictionCreated) {
   // TODO(bugs.webrtc.org/12874): Use designated initializers one fixed.
   auto predictor = CreateClippingPredictor(
       kNumChannels, /*config=*/{
-          /*enabled=*/true,
-          /*mode=*/ClippingPredictorMode::kAdaptiveStepClippingPeakPrediction});
+          .enabled = true,
+          .mode = ClippingPredictorMode::kAdaptiveStepClippingPeakPrediction});
   EXPECT_TRUE(predictor);
 }
 
 TEST(ClippingPeakPredictorTest, FixedStepClippingPeakPredictionCreated) {
   // TODO(bugs.webrtc.org/12874): Use designated initializers one fixed.
   auto predictor = CreateClippingPredictor(
-      kNumChannels, /*config=*/{
-          /*enabled=*/true,
-          /*mode=*/ClippingPredictorMode::kFixedStepClippingPeakPrediction});
+      kNumChannels,
+      /*config=*/{
+          .enabled = true,
+          .mode = ClippingPredictorMode::kFixedStepClippingPeakPrediction});
   EXPECT_TRUE(predictor);
 }
 

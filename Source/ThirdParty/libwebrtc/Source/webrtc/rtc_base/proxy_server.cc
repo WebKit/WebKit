@@ -71,17 +71,22 @@ ProxyBinding::ProxyBinding(AsyncProxyServerSocket* int_socket,
       ext_socket_(ext_socket),
       connected_(false),
       out_buffer_(kBufferSize),
-      in_buffer_(kBufferSize) {
-  int_socket_->SignalConnectRequest.connect(this,
-                                            &ProxyBinding::OnConnectRequest);
+      in_buffer_(kBufferSize),
+      destroyed_trampoline_(this) {
+  int_socket_->SubscribeConnectRequest(
+      [this](AsyncProxyServerSocket* socket, const SocketAddress& addr) {
+        OnConnectRequest(socket, addr);
+      });
   int_socket_->SignalReadEvent.connect(this, &ProxyBinding::OnInternalRead);
   int_socket_->SignalWriteEvent.connect(this, &ProxyBinding::OnInternalWrite);
-  int_socket_->SignalCloseEvent.connect(this, &ProxyBinding::OnInternalClose);
-  ext_socket_->SignalConnectEvent.connect(this,
-                                          &ProxyBinding::OnExternalConnect);
+  int_socket_->SubscribeCloseEvent(
+      [this](Socket* socket, int error) { OnInternalClose(socket, error); });
+  ext_socket_->SubscribeConnectEvent(
+      [this](Socket* socket) { OnExternalConnect(socket); });
   ext_socket_->SignalReadEvent.connect(this, &ProxyBinding::OnExternalRead);
   ext_socket_->SignalWriteEvent.connect(this, &ProxyBinding::OnExternalWrite);
-  ext_socket_->SignalCloseEvent.connect(this, &ProxyBinding::OnExternalClose);
+  ext_socket_->SubscribeCloseEvent(
+      [this](Socket* socket, int error) { OnExternalClose(socket, error); });
 }
 
 ProxyBinding::~ProxyBinding() = default;
@@ -151,7 +156,7 @@ void ProxyBinding::Write(Socket* socket, FifoBuffer* buffer) {
 }
 
 void ProxyBinding::Destroy() {
-  SignalDestroyed(this);
+  NotifyDestroyed(this);
 }
 
 }  // namespace webrtc

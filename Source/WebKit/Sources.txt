@@ -45,7 +45,7 @@ GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/ShareablePixelBuffer.cpp
 GPUProcess/graphics/Model/ModelObjectHeap.cpp
-GPUProcess/graphics/Model/RemoteDDMesh.cpp
+GPUProcess/graphics/Model/RemoteMesh.cpp
 GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp
@@ -92,7 +92,6 @@ GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
 GPUProcess/media/RemoteMediaPlayerProxy.cpp
 GPUProcess/media/RemoteMediaResource.cpp
 GPUProcess/media/RemoteMediaResourceLoader.cpp
-GPUProcess/media/RemoteMediaResourceManager.cpp
 GPUProcess/media/RemoteVideoFrameObjectHeap.cpp
 GPUProcess/media/RemoteMediaSourceProxy.cpp
 GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp
@@ -248,6 +247,7 @@ Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
 Shared/TextExtractionToStringConversion.cpp
+Shared/TextExtractionURLCache.cpp
 Shared/UserData.cpp
 Shared/WebBackForwardListFrameItem.cpp
 Shared/WebBackForwardListItem.cpp
@@ -328,8 +328,6 @@ Shared/Gamepad/GamepadData.cpp
 
 Shared/graphics/ImageBufferSet.cpp
 
-Shared/Model/ModelObjectDescriptorBase.cpp
-
 Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
 Shared/WebGPU/WebGPUBindGroupEntry.cpp
 Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.cpp
@@ -409,6 +407,7 @@ UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DisplayLink.cpp
 UIProcess/DisplayLinkProcessProxyClient.cpp
 UIProcess/DrawingAreaProxy.cpp
+UIProcess/EnhancedSecurityTracking.cpp
 UIProcess/FindStringCallbackAggregator.cpp
 UIProcess/FindTextMatchesCallbackAggregator.cpp
 UIProcess/FrameLoadState.cpp
@@ -432,6 +431,7 @@ UIProcess/RemotePagePlaybackSessionManagerProxy.cpp
 UIProcess/RemotePageProxy.cpp
 UIProcess/RemotePageScreenOrientationManagerProxy.cpp
 UIProcess/RemotePageVideoPresentationManagerProxy.cpp
+UIProcess/RemotePageWebDeviceOrientationUpdateProviderProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
@@ -441,6 +441,7 @@ UIProcess/SystemPreviewController.cpp
 UIProcess/SpeechRecognitionPermissionManager.cpp
 UIProcess/TextChecker.cpp
 UIProcess/TextCheckerCompletion.cpp
+UIProcess/TextExtractionAssertionScope.cpp
 UIProcess/UIProcessLogInitialization.cpp
 UIProcess/UserMediaPermissionCheckProxy.cpp
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
@@ -490,10 +491,12 @@ UIProcess/API/APIContentRuleList.cpp
 UIProcess/API/APIContentRuleListAction.cpp
 UIProcess/API/APIContentRuleListStore.cpp
 UIProcess/API/APIContentWorld.cpp
+UIProcess/API/APIContentWorldConfiguration.cpp
 UIProcess/API/APIContextMenuElementInfo.cpp
 UIProcess/API/APIDataTask.cpp
 UIProcess/API/APIDebuggableInfo.cpp
 UIProcess/API/APIFeature.cpp
+UIProcess/API/APIFormInfo.cpp
 UIProcess/API/APIFrameInfo.cpp
 UIProcess/API/APIFrameTreeNode.cpp
 UIProcess/API/APIHTTPCookieStore.cpp
@@ -624,17 +627,17 @@ UIProcess/GPU/GPUProcessProxy.cpp
 
 UIProcess/Model/ModelProcessProxy.cpp
 
+UIProcess/Inspector/FrameInspectorTargetProxy.cpp
 UIProcess/Inspector/InspectorTargetProxy.cpp
+UIProcess/Inspector/PageInspectorTargetProxy.cpp
 UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp
-UIProcess/Inspector/WebFrameInspectorTargetProxy.cpp
+UIProcess/Inspector/WasmDebuggerDebuggable.cpp
 UIProcess/Inspector/WebInspectorBackendProxy.cpp
 UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp
 UIProcess/Inspector/WebInspectorUIProxy.cpp
 UIProcess/Inspector/WebInspectorUtilities.cpp
-UIProcess/Inspector/WasmDebuggerDebuggable.cpp
 UIProcess/Inspector/WebPageDebuggable.cpp
 UIProcess/Inspector/WebPageInspectorController.cpp
-UIProcess/Inspector/WebPageInspectorTargetProxy.cpp
 
 UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
 
@@ -668,6 +671,8 @@ UIProcess/WebAuthentication/Authenticator.cpp
 UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
 UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp
 
+UIProcess/WebsiteData/EnhancedSecuritySitesHolder.cpp
+UIProcess/WebsiteData/EnhancedSecuritySitesPersistence.cpp
 UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp
 UIProcess/WebsiteData/WebsiteDataRecord.cpp
 UIProcess/WebsiteData/WebsiteDataStore.cpp
@@ -737,8 +742,8 @@ WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp @no-unify
 WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp @no-unify
 
 WebProcess/Inspector/RemoteWebInspectorUI.cpp
-WebProcess/Inspector/WebFrameInspectorTarget.cpp
-WebProcess/Inspector/WebFrameInspectorTargetFrontendChannel.cpp
+WebProcess/Inspector/UIProcessForwardingFrontendChannel.cpp
+WebProcess/Inspector/FrameInspectorTarget.cpp
 WebProcess/Inspector/WebInspectorBackend.cpp
 WebProcess/Inspector/WebInspectorBackendClient.cpp
 WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp
@@ -746,9 +751,7 @@ WebProcess/Inspector/WebInspectorUI.cpp
 
 WebProcess/Inspector/WasmDebuggerDispatcher.cpp
 WebProcess/Inspector/WebInspectorUIExtensionController.cpp
-WebProcess/Inspector/WebPageInspectorTarget.cpp
-WebProcess/Inspector/WebPageInspectorTargetController.cpp
-WebProcess/Inspector/WebPageInspectorTargetFrontendChannel.cpp
+WebProcess/Inspector/PageInspectorTarget.cpp
 
 WebProcess/Media/RemoteMediaSessionManager.cpp
 
@@ -768,7 +771,7 @@ WebProcess/GPU/RemoteSharedResourceCacheProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
-WebProcess/GPU/graphics/Model/RemoteDDMeshProxy.cpp
+WebProcess/GPU/graphics/Model/RemoteMeshProxy.cpp
 WebProcess/GPU/graphics/Model/ModelDowncastConvertToBackingContext.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.cpp
@@ -830,6 +833,7 @@ WebProcess/GPU/media/RemoteLegacyCDMSession.cpp
 WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify
+WebProcess/GPU/media/RemoteMediaResourceLoaderProxy.cpp
 WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
 WebProcess/GPU/media/RemoteVideoFrameProxy.cpp
 WebProcess/GPU/media/RemoteRemoteCommandListener.cpp
@@ -989,7 +993,7 @@ RemoteCommandEncoderMessageReceiver.cpp
 RemoteCompositorIntegrationMessageReceiver.cpp
 RemoteComputePassEncoderMessageReceiver.cpp
 RemoteComputePipelineMessageReceiver.cpp
-RemoteDDMeshMessageReceiver.cpp
+RemoteMeshMessageReceiver.cpp
 RemoteDeviceMessageReceiver.cpp
 RemoteExternalTextureMessageReceiver.cpp
 RemoteFaceDetectorMessageReceiver.cpp

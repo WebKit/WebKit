@@ -215,7 +215,7 @@ WebKitWebProcessExtension* webkitWebProcessExtensionCreate(InjectedBundle* bundl
 void webkitWebProcessExtensionDidReceiveUserMessage(WebKitWebProcessExtension* extension, UserMessage&& message)
 {
     // Sink the floating ref.
-    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), [](UserMessage&&) { });
+    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTF::move(message), [](UserMessage&&) { });
     g_signal_emit(extension, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get());
 }
 
@@ -281,20 +281,20 @@ void webkit_web_process_extension_send_message_to_context(WebKitWebProcessExtens
     }
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(extension, cancellable, callback, userData));
-    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTFMove(task)](UserMessage&& replyMessage) {
+    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTF::move(task)](UserMessage&& replyMessage) {
         switch (replyMessage.type) {
         case UserMessage::Type::Null:
             g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
             break;
         case UserMessage::Type::Message:
-            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTFMove(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
+            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTF::move(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
             break;
         case UserMessage::Type::Error:
             g_task_return_new_error(task.get(), WEBKIT_USER_MESSAGE_ERROR, replyMessage.errorCode, _("Message %s was not handled"), replyMessage.name.data());
             break;
         }
     };
-    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::SendMessageToWebContextWithReply(webkitUserMessageGetMessage(message)), WTFMove(completionHandler));
+    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::SendMessageToWebContextWithReply(webkitUserMessageGetMessage(message)), WTF::move(completionHandler));
 }
 
 /**

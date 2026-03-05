@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicComponentTransferFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Contrast;
@@ -36,10 +38,49 @@ struct Contrast;
 
 namespace Style {
 
-class BuilderState;
+// contrast() = contrast( [ <number [0,∞]> | <percentage [0,∞]> ]?@(default=1) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-contrast
+struct Contrast {
+    using Parameter = Number<CSS::Nonnegative>;
 
-CSS::Contrast toCSSContrast(Ref<BasicComponentTransferFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Contrast&, const BuilderState&);
+    Parameter value;
+
+    static Contrast passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value == 1; }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const Contrast&) const = default;
+};
+using ContrastFunction = FunctionNotation<CSSValueContrast, Contrast>;
+DEFINE_TYPE_WRAPPER_GET(Contrast, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<Contrast> { auto operator()(const Contrast&, const RenderStyle&) -> CSS::Contrast; };
+template<> struct ToStyle<CSS::Contrast> { auto operator()(const CSS::Contrast&, const BuilderState&) -> Contrast; };
+
+// MARK: - Blending
+
+template<> struct Blending<Contrast> {
+    auto blend(const Contrast&, const Contrast&, const BlendingContext&) -> Contrast;
+};
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<Contrast, Ref<FilterEffect>> { auto operator()(const Contrast&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<Contrast> { auto operator()(const Contrast&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Contrast, 1)

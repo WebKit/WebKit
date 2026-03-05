@@ -410,7 +410,7 @@ static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolv
     // ASSERT here that we didn't create multiple objects for the same inline.
     resolver.setWhitespaceCollapsingTransitionForIsolatedRun(*isolatedRun, resolver.whitespaceCollapsingState().currentTransition());
     resolver.isolatedRuns().append(BidiIsolatedRun(obj, pos, root, *isolatedRun));
-    resolver.runs().appendRun(WTFMove(isolatedRun));
+    resolver.runs().appendRun(WTF::move(isolatedRun));
 }
 
 class IsolateTracker {

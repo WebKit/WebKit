@@ -26,13 +26,16 @@
 #include "config.h"
 #include "NativeWebKeyboardEvent.h"
 
+#if USE(LIBWPE)
 #include "WebEventFactory.h"
 
 namespace WebKit {
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool isAutoRepeat, HandledByInputMethod handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange)))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, handledByInputMethod == HandledByInputMethod::Yes, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange)))
 {
 }
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE)

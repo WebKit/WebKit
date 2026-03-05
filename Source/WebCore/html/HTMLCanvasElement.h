@@ -64,7 +64,7 @@ struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
 
 class HTMLCanvasElement final : public HTMLElement, public ActiveDOMObject, public CanvasBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLCanvasElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLCanvasElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLCanvasElement);
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
@@ -73,16 +73,14 @@ public:
     static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
 
-    using HTMLElement::protectedScriptExecutionContext;
 
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
-    void setCSSCanvasContextSize(const IntSize& newSize);
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
 
-    CanvasRenderingContext* getContext(const String&);
+    RefPtr<CanvasRenderingContext> getContext(const String&);
 
     static bool is2dType(const String&);
     CanvasRenderingContext2D* createContext2d(const String&, CanvasRenderingContext2DSettings&&);
@@ -92,7 +90,7 @@ public:
     static bool isWebGLType(const String&);
     static WebGLVersion toWebGLVersion(const String&);
     WebGLRenderingContextBase* createContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
-    WebGLRenderingContextBase* getContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
+    RefPtr<WebGLRenderingContextBase> getContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
 #endif
 
     static bool isBitmapRendererType(const String&);
@@ -131,10 +129,6 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): Only some canvas rendering contexts need an ImageBuffer.
-    // It would be better to have the contexts own the buffers.
-    void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
-
     bool needsPreparationForDisplay();
     void prepareForDisplay();
     void dynamicRangeLimitDidChange(PlatformDynamicRangeLimit);
@@ -143,7 +137,7 @@ public:
     void setIsSnapshotting(bool isSnapshotting) { m_isSnapshotting = isSnapshotting; }
     bool isSnapshotting() const { return m_isSnapshotting; }
 
-    bool isControlledByOffscreen() const;
+    bool NODELETE isControlledByOffscreen() const;
 
     void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) final;
     void dispatchEvent(Event&) final;
@@ -153,6 +147,8 @@ public:
     void deref() const final { HTMLElement::deref(); }
 
     using HTMLElement::scriptExecutionContext;
+
+    void setSizeForControllingContext(IntSize) final;
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
@@ -176,20 +172,15 @@ private:
 
     void didUpdateSizeProperties();
 
-    void createImageBuffer() const final;
-    void clearImageBuffer() const;
-
     bool usesContentsAsLayerContents() const;
 
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return HTMLElement::scriptExecutionContext(); }
-    RefPtr<ScriptExecutionContext> protectedCanvasBaseScriptExecutionContext() const { return canvasBaseScriptExecutionContext(); }
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     std::optional<FloatRect> computeDirtyRectangleIfNeeded(const std::optional<FloatRect>&) const;
 
     bool m_ignoreDidUpdateSizeProperties { false };
-    mutable bool m_didClearImageBuffer { false };
 #if ENABLE(WEBGL)
     bool m_hasRelevantWebGLEventListener { false };
 #endif

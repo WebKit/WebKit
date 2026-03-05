@@ -31,6 +31,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SchedulePair.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class SynchronousLoaderMessageQueue;
 
 @interface WebCoreResourceHandleAsOperationQueueDelegate : NSObject <NSURLConnectionDelegate> {
     Lock m_lock;
-    WebCore::ResourceHandle* m_handle WTF_GUARDED_BY_LOCK(m_lock);
+    WeakPtr<WebCore::ResourceHandle> m_handle WTF_GUARDED_BY_LOCK(m_lock);
 
     // Synchronous delegates on operation queue wait until main thread sends an asynchronous response.
     BinarySemaphore m_semaphore;

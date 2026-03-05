@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,8 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
-#include "RenderImageResourceStyleImage.h"
 #include "RenderQuote.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -139,7 +138,7 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote
     return contentRenderer;
 }
 
-static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoElementType pseudoElementType)
+void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoElementType pseudoElementType)
 {
     if (auto* contentData = style.content().tryData()) {
         auto altText = contentData->altText.value_or(String { });
@@ -147,7 +146,7 @@ static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& ps
             WTF::switchOn(contentItem,
                 [&](const auto& item) {
                     if (auto child = createContentRenderer(item, altText, pseudoRenderer.document(), style); child && pseudoRenderer.isChildAllowed(*child, style))
-                        builder.attach(pseudoRenderer, WTFMove(child));
+                        builder.attach(pseudoRenderer, WTF::move(child));
                 }
             );
         }
@@ -174,7 +173,7 @@ static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& ps
 #endif
 }
 
-static void updateStyleForContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
+void RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
 {
     for (auto& contentRenderer : descendantsOfType<RenderElement>(pseudoRenderer)) {
         // We only manage the style for the generated content which must be images or text.
@@ -188,7 +187,7 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
 {
     ASSERT(pseudoElementType == PseudoElementType::Before || pseudoElementType == PseudoElementType::After);
 
-    PseudoElement* pseudoElement = pseudoElementType == PseudoElementType::Before ? current.beforePseudoElement() : current.afterPseudoElement();
+    RefPtr pseudoElement = pseudoElementType == PseudoElementType::Before ? current.beforePseudoElement() : current.afterPseudoElement();
 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
@@ -224,7 +223,7 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
 
     pseudoElement = &current.ensurePseudoElement(pseudoElementType);
 
-    if (updateStyle->display() == DisplayType::Contents) {
+    if (updateStyle->display() == Style::DisplayType::Contents) {
         // For display:contents we create an inline wrapper that inherits its
         // style from the display:contents style.
         auto contentsStyle = RenderStyle::createPtr();
@@ -233,17 +232,17 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
         contentsStyle->copyContentFrom(*updateStyle);
         contentsStyle->copyPseudoElementsFrom(*updateStyle);
 
-        Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), styleChanges, elementUpdate.recompositeLayer };
-        m_updater.updateElementRenderer(*pseudoElement, WTFMove(contentsUpdate));
+        Style::ElementUpdate contentsUpdate { WTF::move(contentsStyle), styleChanges, elementUpdate.recompositeLayer };
+        m_updater.updateElementRenderer(*pseudoElement, WTF::move(contentsUpdate));
         auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
-        pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)));
+        pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTF::move(pseudoElementUpdateStyle)));
     } else {
         auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
-        Style::ElementUpdate pseudoElementUpdate { makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)), styleChanges, elementUpdate.recompositeLayer };
-        m_updater.updateElementRenderer(*pseudoElement, WTFMove(pseudoElementUpdate));
-        if (updateStyle->display() == DisplayType::None) {
+        Style::ElementUpdate pseudoElementUpdate { makeUnique<RenderStyle>(WTF::move(pseudoElementUpdateStyle)), styleChanges, elementUpdate.recompositeLayer };
+        m_updater.updateElementRenderer(*pseudoElement, WTF::move(pseudoElementUpdate));
+        if (updateStyle->display() == Style::DisplayType::None) {
             auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
-            pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)));
+            pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTF::move(pseudoElementUpdateStyle)));
         } else
             pseudoElement->clearDisplayContentsOrNoneStyle();
     }
@@ -264,10 +263,10 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
     m_updater.m_builder.updateAfterDescendants(*pseudoElementRenderer);
 }
 
-void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer, StyleDifference minimalStyleDifference)
+void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer, Style::DifferenceResult minimalStyleDifference)
 {
     auto destroyBackdropIfNeeded = [&renderer, this]() {
-        if (WeakPtr backdropRenderer = renderer.backdropRenderer())
+        if (WeakPtr backdropRenderer = renderer.pseudoElementRenderer(PseudoElementType::Backdrop))
             m_updater.m_builder.destroy(*backdropRenderer);
     };
 
@@ -278,19 +277,19 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
     }
 
     auto style = renderer.getCachedPseudoStyle({ PseudoElementType::Backdrop }, &renderer.style());
-    if (!style || style->display() == DisplayType::None) {
+    if (!style || style->display() == Style::DisplayType::None) {
         destroyBackdropIfNeeded();
         return;
     }
 
     auto newStyle = RenderStyle::clone(*style);
-    if (auto backdropRenderer = renderer.backdropRenderer())
-        backdropRenderer->setStyle(WTFMove(newStyle), minimalStyleDifference);
+    if (auto backdropRenderer = renderer.pseudoElementRenderer(PseudoElementType::Backdrop))
+        backdropRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);
     else {
-        auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, renderer.document(), WTFMove(newStyle));
+        auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, renderer.document(), WTF::move(newStyle));
         newBackdropRenderer->initializeStyle();
-        renderer.setBackdropRenderer(*newBackdropRenderer.get());
-        m_updater.m_builder.attach(renderer.view(), WTFMove(newBackdropRenderer));
+        renderer.setPseudoElementRenderer(PseudoElementType::Backdrop, *newBackdropRenderer.get());
+        m_updater.m_builder.attach(renderer.view(), WTF::move(newBackdropRenderer));
     }
 }
 
@@ -307,7 +306,7 @@ bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const RenderStyle* 
 
 void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element, RenderTreeBuilder& builder)
 {
-    auto* pseudoElement = element.beforePseudoElement();
+    RefPtr pseudoElement = element.beforePseudoElement();
     if (!pseudoElement)
         return;
     tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
@@ -316,22 +315,22 @@ void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& ele
 
 void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& element, RenderTreeBuilder& builder)
 {
-    auto* pseudoElement = element.afterPseudoElement();
+    RefPtr pseudoElement = element.afterPseudoElement();
     if (!pseudoElement)
         return;
     tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
     element.clearAfterPseudoElement();
 }
 
-void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer, StyleDifference minimalStyleDifference)
+void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer, Style::DifferenceResult minimalStyleDifference)
 {
     auto destroyWritingSuggestionsIfNeeded = [&renderer, this]() {
         if (!renderer.element())
             return;
 
-        auto& editor = renderer.element()->document().editor();
+        Ref editor = renderer.element()->document().editor();
 
-        if (WeakPtr writingSuggestionsRenderer = editor.writingSuggestionRenderer())
+        if (WeakPtr writingSuggestionsRenderer = editor->writingSuggestionRenderer())
             m_updater.m_builder.destroy(*writingSuggestionsRenderer);
     };
 
@@ -341,22 +340,22 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
     if (!renderer.element())
         return;
 
-    auto& editor = renderer.element()->document().editor();
-    RefPtr nodeBeforeWritingSuggestions = editor.nodeBeforeWritingSuggestions();
+    Ref editor = renderer.element()->document().editor();
+    RefPtr nodeBeforeWritingSuggestions = editor->nodeBeforeWritingSuggestions();
     if (!nodeBeforeWritingSuggestions)
         return;
 
     if (renderer.element() != nodeBeforeWritingSuggestions->parentElement())
         return;
 
-    auto* writingSuggestionData = editor.writingSuggestionData();
+    auto* writingSuggestionData = editor->writingSuggestionData();
     if (!writingSuggestionData) {
         destroyWritingSuggestionsIfNeeded();
         return;
     }
 
     auto style = renderer.getCachedPseudoStyle({ PseudoElementType::InternalWritingSuggestions }, &renderer.style());
-    if (!style || style->display() == DisplayType::None) {
+    if (!style || style->display() == Style::DisplayType::None) {
         destroyWritingSuggestionsIfNeeded();
         return;
     }
@@ -386,10 +385,10 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
     nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
 
     auto newStyle = RenderStyle::clone(*style);
-    newStyle.setDisplay(DisplayType::Inline);
+    newStyle.setDisplay(Style::DisplayType::InlineFlow);
 
-    if (auto writingSuggestionsRenderer = editor.writingSuggestionRenderer()) {
-        writingSuggestionsRenderer->setStyle(WTFMove(newStyle), minimalStyleDifference);
+    if (auto writingSuggestionsRenderer = editor->writingSuggestionRenderer()) {
+        writingSuggestionsRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);
 
         auto* writingSuggestionsText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->firstChild());
         if (!writingSuggestionsText) {
@@ -411,23 +410,23 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
             suffixText->setText(suffix);
         }
     } else {
-        auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTFMove(newStyle));
+        auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTF::move(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
 
         WeakPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
 
         auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
-        m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTFMove(writingSuggestionsText));
+        m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTF::move(writingSuggestionsText));
 
-        editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
-        m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
+        editor->setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
+        m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
 
         if (!parentForWritingSuggestions) {
             destroyWritingSuggestionsIfNeeded();
             return;
         }
 
-        auto* prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
+        RefPtr prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
         if (!prefixNode) {
             ASSERT_NOT_REACHED();
             destroyWritingSuggestionsIfNeeded();
@@ -436,7 +435,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
         if (!suffix.isEmpty()) {
             auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
-            m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(suffixRenderer), rendererAfterWritingSuggestions.get());
+            m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(suffixRenderer), rendererAfterWritingSuggestions.get());
         }
     }
 }

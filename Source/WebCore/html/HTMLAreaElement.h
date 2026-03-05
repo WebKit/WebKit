@@ -33,7 +33,7 @@ class HitTestResult;
 class Path;
 
 class HTMLAreaElement final : public HTMLAnchorElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAreaElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLAreaElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAreaElement);
 public:
     static Ref<HTMLAreaElement> create(const QualifiedName&, Document&);
@@ -65,7 +65,7 @@ private:
 
     enum class Shape : uint8_t { Default, Poly, Rect, Circle };
     Path getRegion(const LayoutSize&) const;
-    void invalidateCachedRegion();
+    void NODELETE invalidateCachedRegion();
 
     std::unique_ptr<Path> m_region;
     Vector<double> m_coords;

@@ -38,6 +38,7 @@ struct FullScreenMediaDetails {
 
     String mimeType { };
     std::optional<WebCore::SharedMemory::Handle> imageHandle { std::nullopt };
+    bool launchInImmersive { false };
 };
 
 }

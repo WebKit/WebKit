@@ -98,18 +98,18 @@ public:
     IDBResultType type() const { return m_type; }
     IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
 
-    const IDBError& error() const { return m_error; }
+    const IDBError& error() const LIFETIME_BOUND { return m_error; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return *m_databaseConnectionIdentifier; }
 
-    const IDBDatabaseInfo& databaseInfo() const;
-    const IDBTransactionInfo& transactionInfo() const;
+    const IDBDatabaseInfo& NODELETE databaseInfo() const;
+    const IDBTransactionInfo& NODELETE transactionInfo() const;
 
     const IDBKeyData* resultKey() const { return m_resultKey.get(); }
     uint64_t resultInteger() const { return m_resultInteger; }
 
-    WEBCORE_EXPORT const IDBGetResult& getResult() const;
-    WEBCORE_EXPORT IDBGetResult& getResultRef();
-    WEBCORE_EXPORT const IDBGetAllResult& getAllResult() const;
+    WEBCORE_EXPORT const IDBGetResult& NODELETE getResult() const;
+    WEBCORE_EXPORT IDBGetResult& NODELETE getResultRef();
+    WEBCORE_EXPORT const IDBGetAllResult& NODELETE getAllResult() const;
 
     WEBCORE_EXPORT IDBResultData();
 

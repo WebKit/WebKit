@@ -63,7 +63,7 @@ struct SingleTransitionProperty {
     }
 
     SingleTransitionProperty(CustomIdentifier&& identifier)
-        : m_value { fromCustomIdentifier(WTFMove(identifier)) }
+        : m_value { fromCustomIdentifier(WTF::move(identifier)) }
     {
     }
 
@@ -90,8 +90,8 @@ private:
     static Kind fromCustomIdentifier(CustomIdentifier&& identifier)
     {
         if (isCustomPropertyName(identifier.value))
-            return Kind { SingleProperty { .value = WTFMove(identifier.value) } };
-        return Kind { UnknownProperty { .value = WTFMove(identifier) } };
+            return Kind { SingleProperty { .value = WTF::move(identifier.value) } };
+        return Kind { UnknownProperty { .value = WTF::move(identifier) } };
     }
 
     Kind m_value;

@@ -96,7 +96,7 @@ void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCor
 
     RetainPtr<_WKLinkIconParameters> parameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIcon]);
 
-    [delegate webView:m_iconLoadingDelegate->m_webView.get().get() shouldLoadIconWithParameters:parameters.get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (IconLoadCompletionHandler loadCompletionHandler) mutable {
+    [delegate webView:m_iconLoadingDelegate->m_webView.get().get() shouldLoadIconWithParameters:parameters.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] (IconLoadCompletionHandler loadCompletionHandler) mutable {
         ASSERT(RunLoop::isMain());
         if (loadCompletionHandler) {
             completionHandler([loadCompletionHandler = makeBlockPtr(loadCompletionHandler)](API::Data* data) {

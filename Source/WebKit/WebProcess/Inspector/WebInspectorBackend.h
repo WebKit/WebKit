@@ -47,7 +47,7 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    WebPage* page() const;
+    WebPage* NODELETE page() const;
 
     void updateDockingAvailability();
 
@@ -58,7 +58,7 @@ public:
     void didClose(IPC::Connection&) override { close(); }
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override { close(); }
 
-    void show(CompletionHandler<void()>&&);
+    void show(CompletionHandler<void(bool success)>&&);
     void close();
 
     void canAttachWindow(bool& result);

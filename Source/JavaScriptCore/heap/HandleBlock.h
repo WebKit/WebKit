@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/DoublyLinkedList.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 

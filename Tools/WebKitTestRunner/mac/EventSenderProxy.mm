@@ -251,48 +251,41 @@ static CGSGesturePhase EventSenderCGGesturePhaseFromNSEventPhase(NSEventPhase ph
 
 namespace WTR {
 
-enum MouseAction {
-    MouseDown,
-    MouseUp,
-    MouseDragged
+enum class MouseAction : uint8_t {
+    Down,
+    Up,
+    Dragged,
 };
 
-// Match the DOM spec (sadly the DOM spec does not provide an enum)
-enum MouseButton {
-    LeftMouseButton = 0,
-    MiddleMouseButton = 1,
-    RightMouseButton = 2,
-    NoMouseButton = -2
-};
-
-static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction action)
+static NSEventType eventTypeForMouseButtonAndAction(WebCore::MouseButton button, MouseAction action)
 {
+    using namespace WebCore;
     switch (button) {
-    case LeftMouseButton:
+    case MouseButton::Left:
         switch (action) {
-        case MouseDown:
+        case MouseAction::Down:
             return NSEventTypeLeftMouseDown;
-        case MouseUp:
+        case MouseAction::Up:
             return NSEventTypeLeftMouseUp;
-        case MouseDragged:
+        case MouseAction::Dragged:
             return NSEventTypeLeftMouseDragged;
         }
-    case RightMouseButton:
+    case MouseButton::Right:
         switch (action) {
-        case MouseDown:
+        case MouseAction::Down:
             return NSEventTypeRightMouseDown;
-        case MouseUp:
+        case MouseAction::Up:
             return NSEventTypeRightMouseUp;
-        case MouseDragged:
+        case MouseAction::Dragged:
             return NSEventTypeRightMouseDragged;
         }
     default:
         switch (action) {
-        case MouseDown:
+        case MouseAction::Down:
             return NSEventTypeOtherMouseDown;
-        case MouseUp:
+        case MouseAction::Up:
             return NSEventTypeOtherMouseUp;
-        case MouseDragged:
+        case MouseAction::Dragged:
             return NSEventTypeOtherMouseDragged;
         }
     }
@@ -324,6 +317,7 @@ static NSTimeInterval absoluteTimeForEventTime(double currentEventTime)
 EventSenderProxy::EventSenderProxy(TestController* testController)
     : m_testController(testController)
 {
+    m_mouseButtonsCurrentlyDown.reserveInitialCapacity(5);
 }
 
 EventSenderProxy::~EventSenderProxy() = default;
@@ -347,13 +341,20 @@ static NSUInteger swizzledEventPressedMouseButtons()
     return TestController::singleton().eventSenderProxy()->mouseButtonsCurrentlyDown();
 }
 
+static NSInteger swizzledEventButtonNumber()
+{
+    return TestController::singleton().eventSenderProxy()->lastButtonDown();
+}
+
 void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
 {
-    m_mouseButtonsCurrentlyDown |= (1 << buttonNumber);
+    auto button = WebCore::buttonFromShort(static_cast<int16_t>(buttonNumber));
+    m_mouseButtonsCurrentlyDown.set(button, true);
+    m_lastButtonDown = nsEventButtonNumberFromWebCoreMouseButton(button);
 
     updateClickCountForButton(buttonNumber);
 
-    NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
+    NSEventType eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Down);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:NSMakePoint(m_position.x, m_position.y)
                                    modifierFlags:buildModifierFlags(modifiers)
@@ -367,19 +368,22 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
     m_targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     if (m_targetView) {
         auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
+        auto eventButtonNumberSwizzler = makeUnique<InstanceMethodSwizzler>([NSEvent class], @selector(buttonNumber), reinterpret_cast<IMP>(swizzledEventButtonNumber));
         [NSApp _setCurrentEvent:event];
         [m_targetView mouseDown:event];
         [NSApp _setCurrentEvent:nil];
-        if (buttonNumber == LeftMouseButton)
+        if (button == WebCore::MouseButton::Left)
             m_leftMouseButtonDown = true;
     }
 }
 
 void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
 {
-    m_mouseButtonsCurrentlyDown &= ~(1 << buttonNumber);
+    auto button = WebCore::buttonFromShort(static_cast<int16_t>(buttonNumber));
+    m_mouseButtonsCurrentlyDown.set(button, false);
+    m_lastButtonDown = nsEventButtonNumberFromWebCoreMouseButton(button);
 
-    NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
+    NSEventType eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Up);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:NSMakePoint(m_position.x, m_position.y)
                                    modifierFlags:buildModifierFlags(modifiers)
@@ -399,10 +403,11 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
 
     ASSERT(m_targetView);
     auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
+    auto eventButtonNumberSwizzler = makeUnique<InstanceMethodSwizzler>([NSEvent class], @selector(buttonNumber), reinterpret_cast<IMP>(swizzledEventButtonNumber));
     [NSApp _setCurrentEvent:event];
     [m_targetView mouseUp:event];
     [NSApp _setCurrentEvent:nil];
-    if (buttonNumber == LeftMouseButton)
+    if (button == WebCore::MouseButton::Left)
         m_leftMouseButtonDown = false;
     m_clickTime = currentEventTime();
     m_clickPosition = m_position;
@@ -410,7 +415,7 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
 
 void EventSenderProxy::sendMouseDownToStartPressureEvents()
 {
-    updateClickCountForButton(0);
+    updateClickCountForButton(std::to_underlying(WebCore::MouseButton::Left));
 
     NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown
         location:NSMakePoint(m_position.x, m_position.y)

@@ -7,7 +7,7 @@ PASS selectionRects.length is 1
 PASS selectionRects[0].left is 2
 PASS selectionRects[0].top is 4
 PASS selectionRects[0].width is 309
-PASS selectionRects[0].height is 112
+PASS selectionRects[0].height is 113
 PASS successfullyParsed is true
 
 TEST COMPLETE

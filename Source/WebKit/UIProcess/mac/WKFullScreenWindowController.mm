@@ -190,7 +190,6 @@ enum FullScreenState : NSInteger {
 @interface WKFullScreenWindowController (Private) <NSAnimationDelegate>
 - (void)_replaceView:(NSView *)view with:(NSView *)otherView;
 - (WebKit::WebFullScreenManagerProxy *)_manager;
-- (RefPtr<WebKit::WebFullScreenManagerProxy>)_protectedManager;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
@@ -443,13 +442,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
-    gpuProcess->postWillTakeSnapshotNotification([self, protectedSelf = RetainPtr { self }, completionHandler = WTFMove(completionHandler), logIdentifier = OBJC_LOGIDENTIFIER] () mutable {
+    gpuProcess->postWillTakeSnapshotNotification([self, protectedSelf = RetainPtr { self }, completionHandler = WTF::move(completionHandler), logIdentifier = OBJC_LOGIDENTIFIER] () mutable {
         OBJC_ALWAYS_LOG(logIdentifier, " - finished posting snapshot notification");
 
-        [protectedSelf _continueEnteringFullscreenAfterPostingNotification:WTFMove(completionHandler)];
+        [protectedSelf _continueEnteringFullscreenAfterPostingNotification:WTF::move(completionHandler)];
     });
 #else
-    [self _continueEnteringFullscreenAfterPostingNotification:WTFMove(completionHandler)];
+    [self _continueEnteringFullscreenAfterPostingNotification:WTF::move(completionHandler)];
 #endif
 }
 
@@ -460,7 +459,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return completionHandler(false);
     }
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
-    _enterFullScreenCompletionHandler = WTFMove(completionHandler);
+    _enterFullScreenCompletionHandler = WTF::move(completionHandler);
     _fullScreenState = EnteringFullScreen;
 
     _initialFrame = initialFrame;
@@ -565,14 +564,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             eventNumber:0
             clickCount:0
             pressure:0];
-        WebKit::NativeWebMouseEvent webEvent(fakeEvent.get(), nil, webView.get());
+        WebKit::NativeWebMouseEvent webEvent(fakeEvent.get(), nil, webView.get(), WebKit::WebMouseEventInputSource::UserDriven);
         page->handleMouseEvent(webEvent);
     }
     page->flushDeferredResizeEvents();
     page->flushDeferredScrollEvents();
 
     if (_exitFullScreenCompletionHandler)
-        [self exitFullScreen:WTFMove(_exitFullScreenCompletionHandler)];
+        [self exitFullScreen:WTF::move(_exitFullScreenCompletionHandler)];
 }
 
 - (void)exitFullScreen:(CompletionHandler<void()>&&)completionHandler
@@ -582,7 +581,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Do not try to exit fullscreen during the enter animation; remember
         // that exit was requested and perform the exit upon enter fullscreen
         // animation complete.
-        _exitFullScreenCompletionHandler = WTFMove(completionHandler);
+        _exitFullScreenCompletionHandler = WTF::move(completionHandler);
         return;
     }
 
@@ -642,7 +641,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_fullScreenState != WaitingToExitFullScreen)
         return completionHandler();
     _fullScreenState = ExitingFullScreen;
-    _beganExitFullScreenCompletionHandler = WTFMove(completionHandler);
+    _beganExitFullScreenCompletionHandler = WTF::move(completionHandler);
 
     RetainPtr window = [self window];
     if (![window isOnActiveSpace]) {
@@ -653,8 +652,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [window exitFullScreenMode:self];
 }
-
-WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
 {
@@ -921,12 +918,6 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 #pragma mark Internal Interface
 
 - (WebKit::WebFullScreenManagerProxy*)_manager
-{
-    RefPtr page = _page.get();
-    return page ? page->fullScreenManager() : nullptr;
-}
-
-- (RefPtr<WebKit::WebFullScreenManagerProxy>)_protectedManager
 {
     RefPtr page = _page.get();
     return page ? page->fullScreenManager() : nullptr;

@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGLengthValue);
 
-static inline SVGLengthType cssLengthUnitToSVGLengthType(CSS::LengthPercentageUnit unit)
+static inline SVGLengthType NODELETE cssLengthUnitToSVGLengthType(CSS::LengthPercentageUnit unit)
 {
     switch (unit) {
     case CSS::LengthPercentageUnit::Px:                 return SVGLengthType::Pixels;
@@ -61,7 +61,7 @@ static inline SVGLengthType cssLengthUnitToSVGLengthType(CSS::LengthPercentageUn
     }
 }
 
-static inline CSS::LengthPercentageUnit svgLengthTypeToCSSLengthUnit(SVGLengthType type)
+static inline CSS::LengthPercentageUnit NODELETE svgLengthTypeToCSSLengthUnit(SVGLengthType type)
 {
     switch (type) {
     case SVGLengthType::Number:       return CSS::LengthPercentageUnit::Px;
@@ -120,13 +120,21 @@ SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, StringView va
     SVGLengthValue length(lengthMode);
 
     parseError = SVGParsingError::None;
+
+    // Empty string should use fallback.
+    if (valueAsString.isEmpty()) {
+        if (!fallbackValue.isNull())
+            return SVGLengthValue(lengthMode, fallbackValue);
+        return length;
+    }
+
     if (length.setValueAsString(valueAsString).hasException())
         parseError = SVGParsingError::ParsingFailed;
     else if (negativeValuesMode == SVGLengthNegativeValuesMode::Forbid && length.valueInSpecifiedUnits() < 0)
         parseError = SVGParsingError::ForbiddenNegativeValue;
 
-    // If parsing failed or value is null, and we have a fallback, use it
-    if (!fallbackValue.isNull() && (parseError != SVGParsingError::None || valueAsString.isNull()))
+    // If parsing failed and we have a fallback, use it.
+    if (!fallbackValue.isNull() && parseError != SVGParsingError::None)
         return SVGLengthValue(lengthMode, fallbackValue);
 
     return length;
@@ -327,6 +335,11 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
     if (string.isEmpty())
         return Exception { ExceptionCode::SyntaxError };
 
+    // Trim leading and trailing whitespace to match SVG parsing expectations.
+    auto trimmedString = string.trim(isASCIIWhitespace<char16_t>);
+    if (trimmedString.isEmpty())
+        return Exception { ExceptionCode::SyntaxError };
+
     // CSS::Range only clamps to boundaries, but we historically handled
     // overflow values like "-45e58" to 0 instead of FLT_MAX.
     // FIXME: Consider setting to a proper value
@@ -343,15 +356,14 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
         .context = parserContext
     };
 
-    String newString = string.toString();
-    CSSTokenizer tokenizer(newString);
+    CSSTokenizer tokenizer(trimmedString.toString());
     auto tokenRange = tokenizer.tokenRange();
 
     if (auto number = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<>>::consume(tokenRange, parserState, { })) {
         if (!tokenRange.atEnd())
             return Exception { ExceptionCode::SyntaxError };
 
-        m_value = isFloatOverflow(*number) ? CSS::Number<>(0) : WTFMove(*number);
+        m_value = isFloatOverflow(*number) ? CSS::Number<>(0) : WTF::move(*number);
 
         return { };
     }
@@ -365,7 +377,7 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
         if (length->isCalc())
             return Exception { ExceptionCode::SyntaxError };
 
-        m_value = WTFMove(*length);
+        m_value = WTF::move(*length);
 
         return { };
     }

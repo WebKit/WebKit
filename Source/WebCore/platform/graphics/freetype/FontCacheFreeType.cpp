@@ -135,7 +135,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     getFontPropertiesFromPattern(resultPattern.get(), description, { }, fixedWidth, syntheticBold, syntheticOblique);
 
     RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(resultPattern.get()));
-    FontPlatformData alternateFontData(fontFace.get(), WTFMove(resultPattern), description.computedSize(), fixedWidth, syntheticBold, syntheticOblique, description.orientation());
+    FontPlatformData alternateFontData(fontFace.get(), WTF::move(resultPattern), description.computedSize(), fixedWidth, syntheticBold, syntheticOblique, description.orientation());
     return fontForPlatformData(alternateFontData);
 }
 
@@ -466,7 +466,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 #endif
 
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
-    FontPlatformData platformData(fontFace.get(), WTFMove(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
+    FontPlatformData platformData(fontFace.get(), WTF::move(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);
@@ -544,7 +544,7 @@ VariationDefaultsMap defaultVariationValues(FT_Face face, ShouldLocalizeAxisName
         if (axisName.isEmpty())
             axisName = String::fromUTF8(ftMMVar->axis[i].name);
 
-        VariationDefaults resultValues = { WTFMove(axisName), narrowPrecisionToFloat(ftMMVar->axis[i].def / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].minimum / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].maximum / 65536.) };
+        VariationDefaults resultValues = { WTF::move(axisName), narrowPrecisionToFloat(ftMMVar->axis[i].def / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].minimum / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].maximum / 65536.) };
         result.set(resultKey, resultValues);
     }
     FT_Done_MM_Var(face->glyph->library, ftMMVar);

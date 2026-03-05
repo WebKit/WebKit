@@ -40,7 +40,7 @@ template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 class DOMException;
 
 class FontFaceSet final : public RefCounted<FontFaceSet>, private FontEventClient, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FontFaceSet);
+    WTF_MAKE_TZONE_ALLOCATED(FontFaceSet);
 public:
     static Ref<FontFaceSet> create(ScriptExecutionContext&, const Vector<Ref<FontFace>>& initialFaces);
     static Ref<FontFaceSet> create(ScriptExecutionContext&, CSSFontFaceSet& backing);
@@ -65,7 +65,7 @@ public:
     LoadStatus status() const;
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFaceSet>>;
-    ReadyPromise& ready() { return m_readyPromise.get(); }
+    ReadyPromise& ready() LIFETIME_BOUND { return m_readyPromise.get(); }
     void documentDidFinishLoading();
 
     CSSFontFaceSet& backing() { return m_backing; }
@@ -85,12 +85,12 @@ private:
     struct PendingPromise : RefCounted<PendingPromise> {
         static Ref<PendingPromise> create(LoadPromise&& promise)
         {
-            return adoptRef(*new PendingPromise(WTFMove(promise)));
+            return adoptRef(*new PendingPromise(WTF::move(promise)));
         }
         ~PendingPromise();
 
     private:
-        PendingPromise(LoadPromise&&);
+        explicit PendingPromise(LoadPromise&&);
 
     public:
         Vector<Ref<FontFace>> faces;
@@ -108,19 +108,20 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::FontFaceSet; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // Callback for ReadyPromise.
-    FontFaceSet& readyPromiseResolve();
+    FontFaceSet& NODELETE readyPromiseResolve();
 
     const Ref<CSSFontFaceSet> m_backing;
-    HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
+    HashMap<Ref<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     UniqueRef<ReadyPromise> m_readyPromise;
 
     bool m_isDocumentLoaded { true };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(FontFaceSet)

@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<CSS::SymbolRaw> validatedRange(CSS::SymbolRaw value, CSSPropertyParserOptions)
+std::optional<CSS::SymbolRaw> NODELETE validatedRange(CSS::SymbolRaw value, CSSPropertyParserOptions)
 {
     return value;
 }

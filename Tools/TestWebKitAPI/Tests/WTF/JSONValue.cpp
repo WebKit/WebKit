@@ -437,7 +437,7 @@ TEST(JSONValue, ToJSONString)
         subArray->pushString("string"_s);
         subArray->pushObject(JSON::Object::create());
         EXPECT_EQ(subArray->toJSONString(), "[\"string\",{}]"_s);
-        array->pushArray(WTFMove(subArray));
+        array->pushArray(WTF::move(subArray));
         EXPECT_EQ(array->toJSONString(), "[null,true,false,1,1.5,\"webkit\",[\"string\",{}]]"_s);
     }
 
@@ -457,7 +457,7 @@ TEST(JSONValue, ToJSONString)
         Ref<JSON::Object> subObject = JSON::Object::create();
         subObject->setString("foo"_s, "bar"_s);
         subObject->setInteger("baz"_s, 25);
-        object->setObject("object"_s, WTFMove(subObject));
+        object->setObject("object"_s, WTF::move(subObject));
         EXPECT_EQ(object->toJSONString(), "{\"null\":null,\"boolean\":true,\"double\":1.5,\"string\":\"webkit\",\"array\":[],\"object\":{\"foo\":\"bar\",\"baz\":25}}"_s);
     }
 }

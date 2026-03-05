@@ -63,7 +63,7 @@ using CallbackId = int;
 using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
 
 class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DedicatedWorkerGlobalScope);
+    WTF_MAKE_TZONE_ALLOCATED(DedicatedWorkerGlobalScope);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DedicatedWorkerGlobalScope);
 public:
     static Ref<DedicatedWorkerGlobalScope> create(const WorkerParameters&, Ref<SecurityOrigin>&&, DedicatedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
@@ -72,6 +72,7 @@ public:
     const String& name() const { return m_name; }
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     Ref<DedicatedWorkerThread> thread();
 
@@ -114,7 +115,13 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DedicatedWorkerGlobalScope)
+    static bool isType(const WebCore::EventTarget& context) { return context.eventTargetInterface() == WebCore::EventTargetInterfaceType::DedicatedWorkerGlobalScope; }
     static bool isType(const WebCore::ScriptExecutionContext& context)
+    {
+        auto* global = dynamicDowncast<WebCore::WorkerGlobalScope>(context);
+        return global && global->type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker;
+    }
+    static bool isType(const WebCore::WorkerOrWorkletGlobalScope& context)
     {
         auto* global = dynamicDowncast<WebCore::WorkerGlobalScope>(context);
         return global && global->type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker;

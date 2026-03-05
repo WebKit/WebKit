@@ -59,8 +59,8 @@ dictionary NavigateEventInit : EventInit {
   DOMFormData? formData = null;
   DOMString? downloadRequest = null;
   any info;
-  Element? sourceElement = null;
   [EnabledBySetting=UAVisualTransitionDetectionEnabled] boolean hasUAVisualTransition = false;
+  Element? sourceElement = null;
 };
 
 dictionary NavigationInterceptOptions {

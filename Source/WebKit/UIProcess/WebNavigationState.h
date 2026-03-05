@@ -55,7 +55,7 @@ public:
     explicit WebNavigationState(WebPageProxy&);
     ~WebNavigationState();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     Ref<API::Navigation> createBackForwardNavigation(WebCore::ProcessIdentifier, Ref<WebBackForwardListFrameItem>&& targetFrameItem, RefPtr<WebBackForwardListItem>&& currentItem, WebCore::FrameLoadType);
@@ -72,7 +72,7 @@ public:
 
     void clearNavigationsFromProcess(WebCore::ProcessIdentifier);
 
-    using NavigationMap = HashMap<WebCore::NavigationIdentifier, RefPtr<API::Navigation>>;
+    using NavigationMap = HashMap<WebCore::NavigationIdentifier, Ref<API::Navigation>>;
 
 private:
     WeakRef<WebPageProxy> m_page;

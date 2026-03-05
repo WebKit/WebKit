@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFrameElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFrameElement);
 
 using namespace HTMLNames;
 
@@ -59,7 +59,7 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFrame>(*this, WTFMove(style));
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFrame>(*this, WTF::move(style));
 }
 
 bool HTMLFrameElement::noResize() const

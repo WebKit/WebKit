@@ -29,6 +29,7 @@
 #include <WebCore/InlineIteratorBoxLegacyPath.h>
 #include <WebCore/LayoutElementBox.h>
 #include <WebCore/LayoutIntegrationInlineContent.h>
+#include <WebCore/RenderBlockFlow.h>
 #include <WebCore/TextBoxSelectableRange.h>
 
 namespace WebCore {
@@ -57,7 +58,7 @@ public:
     FloatRect visualRectIgnoringBlockDirection() const { return box().visualRectIgnoringBlockDirection(); }
 
     inline bool isHorizontal() const;
-    inline WritingMode writingMode() const;
+    WritingMode writingMode() const { return box().writingMode(); }
     bool isLineBreak() const { return box().isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return isText() ? start() : 0; }
@@ -90,7 +91,8 @@ public:
             length(),
             extraTrailingLength(),
             box.isLineBreak(),
-            textContent.partiallyVisibleContentLength()
+            textContent.partiallyVisibleContentLength(),
+            formattingContextRoot().writingMode().bidiDirection() != direction()
         };
     }
 
@@ -199,7 +201,7 @@ public:
     {
         auto lineIndex = box().lineIndex();
         bool wasInlineBox = box().isInlineBox();
-        auto& startBox = box().layoutBox();
+        CheckedRef startBox = box().layoutBox();
 
         traverseNextBox();
 
@@ -212,11 +214,21 @@ public:
             setAtEnd();
     }
 
+    void traversePreviousBoxOnLine()
+    {
+        auto lineIndex = box().lineIndex();
+
+        traversePreviousBox();
+
+        if (!atEnd() && lineIndex != box().lineIndex())
+            setAtEnd();
+    }
+
     BoxModernPath firstLeafBoxForInlineBox() const
     {
         ASSERT(box().isInlineBox());
 
-        auto& inlineBox = box().layoutBox();
+        CheckedRef inlineBox = box().layoutBox();
 
         // The next box is the first descendant of this box;
         auto first = *this;
@@ -232,7 +244,7 @@ public:
     {
         ASSERT(box().isInlineBox());
 
-        auto& inlineBox = box().layoutBox();
+        CheckedRef inlineBox = box().layoutBox();
 
         // FIXME: Get the last box index directly from the display box.
         auto last = firstLeafBoxForInlineBox();
@@ -282,7 +294,7 @@ public:
 private:
     bool isWithinInlineBox(const Layout::Box& inlineBox)
     {
-        for (auto* layoutBox = &box().layoutBox().parent();; layoutBox = &layoutBox->parent()) {
+        for (CheckedPtr layoutBox = &box().layoutBox().parent();; layoutBox = &layoutBox->parent()) {
             if (layoutBox == &inlineBox)
                 return true;
             if (!layoutBox->isInlineBox())

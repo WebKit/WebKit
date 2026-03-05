@@ -66,12 +66,23 @@ static unsigned isIdentifierContinue(char16_t character, std::span<const char16_
 
 static unsigned isIdentifierStart(Latin1Character character, std::span<const Latin1Character>)
 {
-    return isASCIIAlpha(character) || character == '_';
+    if (isASCIIAlpha(character) || character == '_')
+        return 1;
+    char16_t uChar = character;
+    if (u_stringHasBinaryProperty(&uChar, 1, UCHAR_XID_START))
+        return 1;
+    return 0;
 }
 
 static unsigned isIdentifierContinue(Latin1Character character, std::span<const Latin1Character>)
 {
-    return isASCIIAlphanumeric(character) || character == '_';
+    if (isASCIIAlphanumeric(character) || character == '_')
+        return 1;
+    char16_t uChar = character;
+    if (u_stringHasBinaryProperty(&uChar, 1, UCHAR_XID_CONTINUE))
+        return 1;
+    return 0;
+
 }
 
 template<typename CharacterType>
@@ -95,7 +106,7 @@ Token Lexer<CharacterType>::makeIntegerToken(TokenType type, int64_t integerValu
 template<typename CharacterType>
 Token Lexer<CharacterType>::makeIdentifierToken(String&& identifier)
 {
-    return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTFMove(identifier) };
+    return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTF::move(identifier) };
 }
 
 template<typename T>
@@ -325,7 +336,7 @@ Token Lexer<T>::nextToken()
 
             String view(StringImpl::createWithoutCopying(startOfToken.subspan(0, currentTokenLength())));
 
-            static constexpr std::pair<ComparableASCIILiteral, TokenType> keywordMappings[] {
+            static constexpr SortedArrayMap keywords { std::to_array<std::pair<ComparableASCIILiteral, TokenType>>({
                 { "_"_s, TokenType::Underbar },
 
 #define MAPPING_ENTRY(lexeme, name)\
@@ -333,11 +344,10 @@ Token Lexer<T>::nextToken()
 FOREACH_KEYWORD(MAPPING_ENTRY)
 #undef MAPPING_ENTRY
 
-            };
-            static constexpr SortedArrayMap keywords { keywordMappings };
+            }) };
 
             // https://www.w3.org/TR/WGSL/#reserved-words
-            static constexpr ComparableASCIILiteral reservedWords[] {
+            static constexpr SortedArraySet reservedWordSet { std::to_array<ComparableASCIILiteral>({
                 "NULL"_s,
                 "Self"_s,
                 "abstract"_s,
@@ -483,8 +493,7 @@ FOREACH_KEYWORD(MAPPING_ENTRY)
                 "with"_s,
                 "writeonly"_s,
                 "yield"_s,
-            };
-            static constexpr SortedArraySet reservedWordSet { reservedWords };
+            }) };
 
             auto tokenType = keywords.get(view);
             if (tokenType != TokenType::Invalid)
@@ -498,7 +507,7 @@ FOREACH_KEYWORD(MAPPING_ENTRY)
                 return makeToken(TokenType::Invalid);
 
 
-            return makeIdentifierToken(WTFMove(view));
+            return makeIdentifierToken(WTF::move(view));
         }
         break;
     }
@@ -560,32 +569,47 @@ bool Lexer<T>::skipBlockComments()
             }
         } else if (ch == '\n')
             newLine();
+        else if (ch == '\0')
+            return false;
     }
 
     return false;
 }
 
 template <typename T>
-void Lexer<T>::skipLineComment()
+bool Lexer<T>::skipLineComment()
 {
     ASSERT(peek(0) == '/' && peek(1) == '/');
     // Note that in the case of \r\n this makes the comment end on the \r. It is
     // fine, as the \n after that is simple whitespace.
-    while (!isAtEndOfFile() && peek() != '\n')
+    while (!isAtEndOfFile() && peek() != '\n') {
+        if (peek() == '\0')
+            return false;
         shift();
+    }
+    return true;
 }
 
 template <typename T>
 bool Lexer<T>::skipWhitespaceAndComments()
 {
     while (!isAtEndOfFile()) {
-        if (isUnicodeCompatibleASCIIWhitespace(m_current)) {
+        auto isWhitespace = isUnicodeCompatibleASCIIWhitespace(m_current) || m_current == u'\x85';
+        if (std::is_same_v<T, char16_t>) {
+            isWhitespace = isWhitespace
+                || m_current == u'\U0000200E'
+                || m_current == u'\U0000200F'
+                || m_current == u'\U00002028'
+                || m_current == u'\U00002029';
+        }
+        if (isWhitespace) {
             if (shift() == '\n')
                 newLine();
         } else if (peek(0) == '/') {
-            if (peek(1) == '/')
-                skipLineComment();
-            else if (peek(1) == '*') {
+            if (peek(1) == '/') {
+                if (!skipLineComment())
+                    return false;
+            } else if (peek(1) == '*') {
                 if (!skipBlockComments())
                     return false;
             } else

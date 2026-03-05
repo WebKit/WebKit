@@ -27,22 +27,13 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class PictureInPictureObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PictureInPictureObserver> : std::true_type { };
-}
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
 class IntSize;
 
-class PictureInPictureObserver : public CanMakeWeakPtr<PictureInPictureObserver> {
+class PictureInPictureObserver : public AbstractRefCountedAndCanMakeWeakPtr<PictureInPictureObserver> {
 public:
     virtual ~PictureInPictureObserver() { };
     virtual void didEnterPictureInPicture(const IntSize&) = 0;

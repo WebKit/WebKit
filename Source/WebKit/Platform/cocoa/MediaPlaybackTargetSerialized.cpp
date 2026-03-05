@@ -32,12 +32,12 @@ namespace WebKit {
 
 Ref<MediaPlaybackTargetSerialized> MediaPlaybackTargetSerialized::create(MediaPlaybackTargetContextSerialized&& context)
 {
-    return adoptRef(*new MediaPlaybackTargetSerialized(WTFMove(context)));
+    return adoptRef(*new MediaPlaybackTargetSerialized(WTF::move(context)));
 }
 
 MediaPlaybackTargetSerialized::MediaPlaybackTargetSerialized(MediaPlaybackTargetContextSerialized&& context)
     : MediaPlaybackTarget { Type::Serialized }
-    , m_context { WTFMove(context) }
+    , m_context { WTF::move(context) }
 {
 }
 

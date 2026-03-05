@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/StaticRange.h>
-#include <WebCore/UIEvent.h>
+#include "StaticRange.h"
+#include "UIEvent.h"
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ class WindowProxy;
 enum class IsInputMethodComposing : bool { No, Yes };
 
 class InputEvent final : public UIEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InputEvent);
+    WTF_MAKE_TZONE_ALLOCATED(InputEvent);
 public:
     struct Init : UIEventInit {
         String data;
@@ -47,29 +47,28 @@ public:
     virtual ~InputEvent();
 
     static Ref<InputEvent> create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
-        const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
+        const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
 
     static Ref<InputEvent> create(const AtomString& type, const Init& initializer)
     {
         return adoptRef(*new InputEvent(type, initializer));
     }
 
-    bool isInputEvent() const override { return true; }
-    const String& inputType() const { return m_inputType; }
-    const String& data() const { return m_data; }
-    RefPtr<DataTransfer> dataTransfer() const;
-    const Vector<RefPtr<StaticRange>>& getTargetRanges() { return m_targetRanges; }
+    const String& inputType() const LIFETIME_BOUND { return m_inputType; }
+    const String& data() const LIFETIME_BOUND { return m_data; }
+    DataTransfer* NODELETE dataTransfer() const;
+    const Vector<Ref<StaticRange>>& getTargetRanges() LIFETIME_BOUND { return m_targetRanges; }
     bool isInputMethodComposing() const { return m_isInputMethodComposing; }
 
 private:
     InputEvent(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&&,
-        const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
+        const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
     InputEvent(const AtomString& eventType, const Init&);
 
     String m_inputType;
     String m_data;
-    RefPtr<DataTransfer> m_dataTransfer;
-    Vector<RefPtr<StaticRange>> m_targetRanges;
+    const RefPtr<DataTransfer> m_dataTransfer;
+    Vector<Ref<StaticRange>> m_targetRanges;
     bool m_isInputMethodComposing;
 };
 

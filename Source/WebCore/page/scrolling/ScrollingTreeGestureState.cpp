@@ -52,7 +52,7 @@ bool ScrollingTreeGestureState::handleGestureCancel(const PlatformWheelEvent& ev
 {
     if (event.isGestureCancel()) {
         if (m_mayBeginNodeID)
-            m_scrollingTree.handleWheelEventPhase(*m_mayBeginNodeID, PlatformWheelEventPhase::Cancelled);
+            m_scrollingTree.get()->handleWheelEventPhase(*m_mayBeginNodeID, PlatformWheelEventPhase::Cancelled);
         return true;
     }
     
@@ -65,7 +65,7 @@ void ScrollingTreeGestureState::nodeDidHandleEvent(ScrollingNodeID nodeID, const
     switch (event.phase()) {
     case PlatformWheelEventPhase::MayBegin:
         m_mayBeginNodeID = nodeID;
-        m_scrollingTree.handleWheelEventPhase(nodeID, event.phase());
+        m_scrollingTree.get()->handleWheelEventPhase(nodeID, event.phase());
         break;
     case PlatformWheelEventPhase::Cancelled:
         // We can get here for via handleWheelEventAfterMainThread(), in which case handleGestureCancel() was not called first.
@@ -73,11 +73,11 @@ void ScrollingTreeGestureState::nodeDidHandleEvent(ScrollingNodeID nodeID, const
         break;
     case PlatformWheelEventPhase::Began:
         m_activeNodeID = nodeID;
-        m_scrollingTree.handleWheelEventPhase(nodeID, event.phase());
+        m_scrollingTree.get()->handleWheelEventPhase(nodeID, event.phase());
         break;
     case PlatformWheelEventPhase::Ended:
         if (m_activeNodeID)
-            m_scrollingTree.handleWheelEventPhase(*m_activeNodeID, event.phase());
+            m_scrollingTree.get()->handleWheelEventPhase(*m_activeNodeID, event.phase());
         break;
     case PlatformWheelEventPhase::Changed:
     case PlatformWheelEventPhase::Stationary:
@@ -93,11 +93,11 @@ void ScrollingTreeGestureState::nodeDidHandleEvent(ScrollingNodeID nodeID, const
         break;
     case PlatformWheelEventPhase::Began:
         m_activeNodeID = nodeID;
-        m_scrollingTree.handleWheelEventPhase(nodeID, event.momentumPhase());
+        m_scrollingTree.get()->handleWheelEventPhase(nodeID, event.momentumPhase());
         break;
     case PlatformWheelEventPhase::Ended:
         if (m_activeNodeID)
-            m_scrollingTree.handleWheelEventPhase(*m_activeNodeID, event.momentumPhase());
+            m_scrollingTree.get()->handleWheelEventPhase(*m_activeNodeID, event.momentumPhase());
         break;
     case PlatformWheelEventPhase::Changed:
     case PlatformWheelEventPhase::Stationary:

@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
           text run at (0,31) width 702: "need to cause dependent elements in the document tree to update as well."
       RenderBlock {DIV} at (0,60) size 784x43
         RenderBlock (anonymous) at (0,0) size 784x13
-          RenderText {#text} at (0,0) size 104x12
+          RenderText {#text} at (0,0) size 104x13
             text run at (0,0) width 104: "This text should be small."
         RenderBlock {DIV} at (0,13) size 784x30
           RenderText {#text} at (0,1) size 445x28

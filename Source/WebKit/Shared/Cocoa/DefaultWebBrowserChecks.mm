@@ -131,7 +131,7 @@ static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter,
     return result != kTCCAccessPreflightDenied;
 }
 
-static RefPtr<WorkQueue>& itpQueue()
+static RefPtr<WorkQueue>& NODELETE itpQueue()
 {
     static NeverDestroyed<RefPtr<WorkQueue>> itpQueue;
     return itpQueue;

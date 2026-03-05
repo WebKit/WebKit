@@ -31,10 +31,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionRequest);
 
+Ref<SpeechRecognitionRequest> SpeechRecognitionRequest::create(SpeechRecognitionRequestInfo&& requestInfo)
+{
+    return adoptRef(*new SpeechRecognitionRequest(WTF::move(requestInfo)));
+}
+
 SpeechRecognitionRequest::SpeechRecognitionRequest(SpeechRecognitionRequestInfo&& requestInfo)
-    : m_info(WTFMove(requestInfo))
+    : m_info(WTF::move(requestInfo))
 {
 }
+
+SpeechRecognitionRequest::~SpeechRecognitionRequest() = default;
 
 } // namespace WebCore
 

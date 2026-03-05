@@ -23,16 +23,10 @@
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 
 namespace webrtc {
-constexpr RtcEvent::Type RtcEventBeginLog::kType;
-constexpr EventParameters RtcEventBeginLog::event_params_;
-constexpr FieldParameters RtcEventBeginLog::utc_start_time_params_;
 
 RtcEventBeginLog::RtcEventBeginLog(Timestamp timestamp,
                                    Timestamp utc_start_time)
     : RtcEvent(timestamp.us()), utc_start_time_ms_(utc_start_time.ms()) {}
-
-RtcEventBeginLog::RtcEventBeginLog(const RtcEventBeginLog& other)
-    : RtcEvent(other.timestamp_us_) {}
 
 RtcEventBeginLog::~RtcEventBeginLog() = default;
 
@@ -59,7 +53,10 @@ RtcEventLogParseStatus RtcEventBeginLog::Parse(
       ExtendLoggedBatch(output, parser.NumEventsInBatch());
 
   constexpr FieldParameters timestamp_params{
-      "timestamp_ms", FieldParameters::kTimestampField, FieldType::kVarInt, 64};
+      .name = "timestamp_ms",
+      .field_id = FieldParameters::kTimestampField,
+      .field_type = FieldType::kVarInt,
+      .value_width = 64};
   RtcEventLogParseStatusOr<ArrayView<uint64_t>> result =
       parser.ParseNumericField(timestamp_params);
   if (!result.ok())

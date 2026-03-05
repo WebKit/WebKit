@@ -114,18 +114,18 @@ struct Type {
     static constexpr Type makeFlex() { return { .flex = 1 }; }
     static constexpr Type makePercent() { return { .percent = 1 }; }
 
-    static Type determineType(CSSUnitType);
-    static PercentHintValue determinePercentHint(CSS::Category);
+    static Type NODELETE determineType(CSSUnitType);
+    static PercentHintValue NODELETE determinePercentHint(CSS::Category);
 
-    static std::optional<Type> add(Type, Type);
+    static std::optional<Type> NODELETE add(Type, Type);
     static std::optional<Type> add(std::optional<Type> a, Type b) { if (!a) return a; return add(*a, b); }
-    static std::optional<Type> multiply(Type, Type);
+    static std::optional<Type> NODELETE multiply(Type, Type);
     static std::optional<Type> multiply(std::optional<Type> a, Type b) { if (!a) return a; return multiply(*a, b); }
-    static Type invert(Type);
+    static Type NODELETE invert(Type);
 
     static std::optional<Type> sameType(Type, Type);
-    static std::optional<Type> consistentType(Type, Type);
-    static std::optional<Type> madeConsistent(Type base, Type input);
+    static std::optional<Type> NODELETE consistentType(Type, Type);
+    static std::optional<Type> NODELETE madeConsistent(Type base, Type input);
 
     static constexpr decltype(auto) allBaseTypes();
     static constexpr decltype(auto) allPotentialPercentHintTypes();
@@ -155,10 +155,10 @@ struct Type {
     };
     template<Match...> constexpr bool matchesAny(MatchingContext = { .allowsPercentHint = false }) const;
 
-    bool matches(CSS::Category) const;
+    bool NODELETE matches(CSS::Category) const;
 
     // Returns the CSS::Category for Type, if there is one.
-    std::optional<CSS::Category> calculationCategory() const;
+    std::optional<CSS::Category> NODELETE calculationCategory() const;
 };
 
 static_assert(sizeof(Type) == 8);

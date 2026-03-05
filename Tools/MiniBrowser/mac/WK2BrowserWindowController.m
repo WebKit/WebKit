@@ -27,6 +27,7 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#import <PDFKit/PDFDocument.h>
 #import <QuartzCore/CATextLayer.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -170,9 +171,18 @@ static const int testFooterBannerHeight = 58;
     [_webView removeObserver:self forKeyPath:@"URL"];
     [_webView removeObserver:self forKeyPath:@"hasOnlySecureContent"];
     [_webView removeObserver:self forKeyPath:@"_gpuProcessIdentifier"];
-    
+
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
+}
+
+- (void)windowDidLoad
+{
+    [super windowDidLoad];
+
+    // Private windows get separate identifier so they can't merge with regular windows
+    if (_isPrivateBrowsingWindow)
+        self.window.tabbingIdentifier = @"MiniBrowserPrivateWindow";
 }
 
 - (void)userAgentDidChange:(NSNotification *)notification
@@ -186,7 +196,7 @@ static const int testFooterBannerHeight = 58;
 {
     [urlText setStringValue:[self addProtocolIfNecessary:urlText.stringValue]];
     NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
-    [_webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [_webView loadURL:url];
 }
 
 - (IBAction)setPageScale:(id)sender
@@ -278,6 +288,10 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     SEL action = menuItem.action;
 
+    if (action == @selector(cloneSiteIsolatedWindow:))
+        return YES;
+    if (action == @selector(cloneNonIsolatedWindow:))
+        return YES;
     if (action == @selector(saveAsPDF:))
         return YES;
     if (action == @selector(saveAsImage:))
@@ -614,6 +628,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [footerBannerLayer setBackgroundColor:[NSColor colorWithSRGBRed:116. / 255. green:187. / 255. blue:251. / 255. alpha:1].CGColor];
         [_webView _setFooterBannerLayer:footerBannerLayer];
     }
+
+    [self updateTitle:_webView.title];
 }
 
 - (void)updateTitleForBadgeChange
@@ -633,6 +649,11 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (BrowserAppDelegate.currentBadge)
         title = [title stringByAppendingFormat:@" (%@)", BrowserAppDelegate.currentBadge];
+
+    SettingsController *settings = [[NSApp browserAppDelegate] settingsController];
+    pid_t webPID = _webView._webProcessIdentifier;
+    if (settings.showWebProcessIdentifierInTitle && webPID)
+        title = [title stringByAppendingFormat:@" [%d]", webPID];
 
     self.window.title = title;
 
@@ -1027,6 +1048,31 @@ static BOOL isJavaScriptURL(NSURL *url)
 {
 }
 
+- (void)_cloneWindowSiteIsolated:(BOOL)siteIsolated
+{
+    _WKSessionState *sessionState = [_webView _sessionState];
+
+    WKWebViewConfiguration *configuration = _webView.configuration;
+    _configuration.preferences._siteIsolationEnabled = siteIsolated;
+
+    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
+    [controller.window makeKeyAndOrderFront:self];
+
+    [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
+
+    [controller->_webView _restoreSessionState:sessionState andNavigate:YES];
+}
+
+- (IBAction)cloneSiteIsolatedWindow:(id)sender
+{
+    [self _cloneWindowSiteIsolated:YES];
+}
+
+- (IBAction)cloneNonIsolatedWindow:(id)sender
+{
+    [self _cloneWindowSiteIsolated:NO];
+}
+
 - (IBAction)saveAsPDF:(id)sender
 {
     NSSavePanel *panel = [NSSavePanel savePanel];
@@ -1036,7 +1082,8 @@ static BOOL isJavaScriptURL(NSURL *url)
         if (result != NSModalResponseOK)
             return;
         [self->_webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
-            [pdfSnapshotData writeToURL:[panel URL] options:0 error:nil];
+            PDFDocument *pdfDocument = [[PDFDocument alloc] initWithData:pdfSnapshotData];
+            [pdfDocument writeToURL:[panel URL]];
         }];
     }];
 }

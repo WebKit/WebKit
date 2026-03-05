@@ -14,6 +14,8 @@
 #include "av1/common/warped_motion.h"
 #include "aom_dsp/x86/synonyms.h"
 
+#if !CONFIG_HIGHWAY
+
 DECLARE_ALIGNED(32, static const uint8_t, shuffle_alpha0_mask01_avx2[32]) = {
   0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
   0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1
@@ -1208,3 +1210,5 @@ void av1_warp_affine_avx2(const int32_t *mat, const uint8_t *ref, int width,
     }
   }
 }
+
+#endif  // !CONFIG_HIGHWAY

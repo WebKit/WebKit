@@ -39,7 +39,7 @@ NavigationResponse::NavigationResponse(API::FrameInfo& frame, const WebCore::Res
     , m_request(request)
     , m_response(response)
     , m_canShowMIMEType(canShowMIMEType)
-    , m_downloadAttribute(WTFMove(downloadAttribute))
+    , m_downloadAttribute(WTF::move(downloadAttribute))
     , m_navigation(navigation) { }
 
 NavigationResponse::~NavigationResponse() = default;

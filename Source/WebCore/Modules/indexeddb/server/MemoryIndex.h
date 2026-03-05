@@ -65,7 +65,7 @@ public:
 
     ~MemoryIndex();
 
-    const IDBIndexInfo& info() const { return m_info; }
+    const IDBIndexInfo& info() const LIFETIME_BOUND { return m_info; }
 
     void rename(const String& newName) { m_info.rename(newName); }
 
@@ -83,8 +83,7 @@ public:
     MemoryIndexCursor* maybeOpenCursor(const IDBCursorInfo&, MemoryBackingStoreTransaction&);
     IndexValueStore* valueStore() { return m_records.get(); }
 
-    MemoryObjectStore* objectStore();
-    RefPtr<MemoryObjectStore> protectedObjectStore();
+    MemoryObjectStore* NODELETE objectStore();
 
     void cursorDidBecomeClean(MemoryIndexCursor&);
     void cursorDidBecomeDirty(MemoryIndexCursor&);
@@ -113,7 +112,7 @@ private:
     HashMap<IDBKeyData, Vector<IDBKeyData>, DefaultHash<IDBKeyData>, IDBKeyDataHashTraits> m_transactionModifiedRecords;
     std::unique_ptr<IndexValueStore> m_records;
 
-    HashMap<IDBResourceIdentifier, RefPtr<MemoryIndexCursor>> m_cursors;
+    HashMap<IDBResourceIdentifier, Ref<MemoryIndexCursor>> m_cursors;
     WeakHashSet<MemoryIndexCursor> m_cleanCursors;
 };
 

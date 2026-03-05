@@ -12,34 +12,33 @@
 
 #include <functional>
 #include <memory>
+#include <utility>
 
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/transport/stun.h"
 #include "p2p/test/stun_server.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
 
 namespace webrtc {
 
-std::unique_ptr<TestStunServer, std::function<void(TestStunServer*)>>
-TestStunServer::Create(SocketServer* ss,
-                       const SocketAddress& addr,
-                       Thread& network_thread) {
-  Socket* socket = ss->CreateSocket(addr.family(), SOCK_DGRAM);
-  RTC_CHECK(socket != nullptr) << "Failed to create socket";
-  AsyncUDPSocket* udp_socket = AsyncUDPSocket::Create(socket, addr);
+TestStunServer::StunServerPtr TestStunServer::Create(const Environment& env,
+                                                     const SocketAddress& addr,
+                                                     SocketServer& ss,
+                                                     Thread& network_thread) {
+  std::unique_ptr<AsyncUDPSocket> udp_socket =
+      AsyncUDPSocket::Create(env, addr, ss);
   RTC_CHECK(udp_socket != nullptr) << "Failed to create AsyncUDPSocket";
   TestStunServer* server = nullptr;
-  network_thread.BlockingCall(
-      [&]() { server = new TestStunServer(udp_socket, network_thread); });
-  std::unique_ptr<TestStunServer, std::function<void(TestStunServer*)>> result(
-      server, [&](TestStunServer* server) {
-        network_thread.BlockingCall([server]() { delete server; });
-      });
-  return result;
+  network_thread.BlockingCall([&]() {
+    server = new TestStunServer(std::move(udp_socket), network_thread);
+  });
+  return StunServerPtr(server, [&network_thread](TestStunServer* server) {
+    network_thread.BlockingCall([server]() { delete server; });
+  });
 }
 
 void TestStunServer::OnBindingRequest(StunMessage* msg,

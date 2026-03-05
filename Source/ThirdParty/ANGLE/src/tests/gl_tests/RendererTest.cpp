@@ -276,7 +276,5 @@ TEST_P(RendererTest, ValidateCanonicalFormat)
 
 // Select configurations (e.g. which renderer, which GLES major version) these tests should be run
 // against.
-// TODO(http://anglebug.com/42266907): move ES2_WEBGPU to the definition of
-// ANGLE_ALL_TEST_PLATFORMS_ES2 once webgpu is developed enough to run more tests.
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL_AND(RendererTest, ES2_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL(RendererTest);
 }  // namespace angle

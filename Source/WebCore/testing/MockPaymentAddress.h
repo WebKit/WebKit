@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-struct MockPaymentAddress : ApplePayPaymentContact {
+struct MockPaymentAddress : LocalizedApplePayPaymentContact {
 };
 
 } // namespace WebCore

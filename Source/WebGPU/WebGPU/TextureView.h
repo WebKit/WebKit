@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import "BindableResource.h"
+#import <WebGPU/WGPUTextureViewImpl.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -33,11 +35,6 @@
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
-// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
-// annotating incomplete types
-struct SWIFT_SHARED_REFERENCE(wgpuTextureViewReference, wgpuTextureViewRelease) WGPUTextureViewImpl {
-};
-
 namespace WebGPU {
 
 class CommandEncoder;
@@ -45,7 +42,7 @@ class Device;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gputextureview
-class TextureView : public RefCountedAndCanMakeWeakPtr<TextureView>, public WGPUTextureViewImpl {
+class TextureView : public RefCountedAndCanMakeWeakPtr<TextureView>, public WGPUTextureViewImpl, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(TextureView);
 public:
     static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
@@ -108,17 +105,16 @@ private:
 
     const Ref<Device> m_device;
     const Ref<Texture> m_parentTexture;
-    mutable Vector<uint64_t> m_commandEncoders;
 } SWIFT_SHARED_REFERENCE(refTextureView, derefTextureView);
 
 } // namespace WebGPU
 
 inline void refTextureView(WebGPU::TextureView* obj)
 {
-    ref(obj);
+    WTF::ref(obj);
 }
 
 inline void derefTextureView(WebGPU::TextureView* obj)
 {
-    deref(obj);
+    WTF::deref(obj);
 }

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !PLATFORM(WPE)
+#if !PLATFORM(WPE) && !PLATFORM(GTK)
 
 #include <WebCore/IntSize.h>
 #include <WebCore/PlatformImage.h>
@@ -33,7 +33,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if USE(CAIRO) || PLATFORM(GTK)
+#if USE(CAIRO)
 #include <WebCore/RefPtrCairo.h>
 #elif USE(SKIA)
 class SkCanvas;
@@ -49,7 +49,7 @@ class IntRect;
 namespace WebKit {
 struct UpdateInfo;
 
-#if USE(CAIRO) || PLATFORM(GTK)
+#if USE(CAIRO)
 typedef struct _cairo cairo_t;
 using PlatformPaintContextPtr = cairo_t*;
 #elif USE(SKIA)
@@ -63,7 +63,7 @@ public:
     BackingStore(const WebCore::IntSize&, float deviceScaleFactor);
     ~BackingStore();
 
-    const WebCore::IntSize& size() const { return m_size; }
+    const WebCore::IntSize& size() const LIFETIME_BOUND { return m_size; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
     void paint(PlatformPaintContextPtr, const WebCore::IntRect&);
@@ -74,7 +74,7 @@ private:
 
     WebCore::IntSize m_size;
     float m_deviceScaleFactor { 1 };
-#if PLATFORM(GTK) || USE(CAIRO)
+#if USE(CAIRO)
     RefPtr<cairo_surface_t> m_surface;
     RefPtr<cairo_surface_t> m_scrollSurface;
     PAL::HysteresisActivity m_scrolledHysteresis;
@@ -85,4 +85,4 @@ private:
 
 } // namespace WebKit
 
-#endif // !PLATFORM(WPE)
+#endif // !PLATFORM(WPE) && !PLATFORM(GTK)

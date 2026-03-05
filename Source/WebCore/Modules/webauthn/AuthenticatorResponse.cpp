@@ -43,19 +43,19 @@ RefPtr<AuthenticatorResponse> AuthenticatorResponse::tryCreate(AuthenticatorResp
         if (!data.attestationObject)
             return nullptr;
 
-        auto response = AuthenticatorAttestationResponse::create(data.rawId.releaseNonNull(), data.attestationObject.releaseNonNull(), attachment, WTFMove(data.transports));
+        auto response = AuthenticatorAttestationResponse::create(data.rawId.releaseNonNull(), data.attestationObject.releaseNonNull(), attachment, WTF::move(data.transports));
         if (data.extensionOutputs)
-            response->setExtensions(WTFMove(*data.extensionOutputs));
+            response->setExtensions(WTF::move(*data.extensionOutputs));
         response->setClientDataJSON(data.clientDataJSON.releaseNonNull());
-        return WTFMove(response);
+        return WTF::move(response);
     }
 
     if (!data.authenticatorData || !data.signature)
         return nullptr;
 
-    Ref response = AuthenticatorAssertionResponse::create(data.rawId.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle), WTFMove(data.extensionOutputs), attachment);
+    Ref response = AuthenticatorAssertionResponse::create(data.rawId.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTF::move(data.userHandle), WTF::move(data.extensionOutputs), attachment);
     response->setClientDataJSON(data.clientDataJSON.releaseNonNull());
-    return WTFMove(response);
+    return WTF::move(response);
 }
 
 AuthenticatorResponseData AuthenticatorResponse::data() const
@@ -69,7 +69,7 @@ AuthenticatorResponseData AuthenticatorResponse::data() const
 
 void AuthenticatorResponse::setExtensions(AuthenticationExtensionsClientOutputs&& extensions)
 {
-    m_extensions = WTFMove(extensions);
+    m_extensions = WTF::move(extensions);
 }
 
 AuthenticationExtensionsClientOutputs AuthenticatorResponse::extensions() const
@@ -78,8 +78,7 @@ AuthenticationExtensionsClientOutputs AuthenticatorResponse::extensions() const
 
     // Clone ArrayBuffers to prevent detachment issues
     if (result.prf && result.prf->results) {
-        if (result.prf->results->first)
-            result.prf->results->first = ArrayBuffer::tryCreate(result.prf->results->first.get()->span());
+        result.prf->results->first = ArrayBuffer::create(result.prf->results->first->span());
         if (result.prf->results->second)
             result.prf->results->second = ArrayBuffer::tryCreate(result.prf->results->second.get()->span());
     }
@@ -92,7 +91,7 @@ AuthenticationExtensionsClientOutputs AuthenticatorResponse::extensions() const
 
 void AuthenticatorResponse::setClientDataJSON(Ref<ArrayBuffer>&& clientDataJSON)
 {
-    m_clientDataJSON = WTFMove(clientDataJSON);
+    m_clientDataJSON = WTF::move(clientDataJSON);
 }
 
 ArrayBuffer* AuthenticatorResponse::clientDataJSON() const
@@ -106,7 +105,7 @@ AuthenticatorAttachment AuthenticatorResponse::attachment() const
 }
 
 AuthenticatorResponse::AuthenticatorResponse(Ref<ArrayBuffer>&& rawId, AuthenticatorAttachment attachment)
-    : m_rawId(WTFMove(rawId))
+    : m_rawId(WTF::move(rawId))
     , m_attachment(attachment)
 {
 }

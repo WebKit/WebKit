@@ -58,9 +58,9 @@ class PublicKeyCredential final : public BasicCredential {
 public:
     static Ref<PublicKeyCredential> create(Ref<AuthenticatorResponse>&&);
 
-    ArrayBuffer* rawId() const;
-    AuthenticatorResponse* response() const { return m_response.ptr(); }
-    AuthenticatorAttachment authenticatorAttachment() const;
+    ArrayBuffer& NODELETE rawId() const;
+    AuthenticatorResponse& response() const { return m_response; }
+    AuthenticatorAttachment NODELETE authenticatorAttachment() const;
     AuthenticationExtensionsClientOutputs getClientExtensionResults() const;
     PublicKeyCredentialJSON toJSON();
 

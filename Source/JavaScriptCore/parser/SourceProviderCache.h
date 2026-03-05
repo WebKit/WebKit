@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/ImplementationVisibility.h>
 #include <JavaScriptCore/SourceProviderCacheItem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

@@ -30,9 +30,9 @@
 namespace WebCore {
 namespace Style {
 
-// Utility type that wraps a StyleImage for use with the strong style type system.
+// Utility type that wraps an Image for use with the strong style type system.
 struct ImageWrapper {
-    Ref<StyleImage> value;
+    Ref<Image> value;
 
     bool operator==(const ImageWrapper& other) const
     {
@@ -51,7 +51,7 @@ template<> struct Serialize<ImageWrapper> { void operator()(StringBuilder&, cons
 // MARK: - Blending
 
 template<> struct Blending<ImageWrapper> {
-    auto blend(const ImageWrapper&, const ImageWrapper&, const BlendingContext&) -> ImageWrapper;
+    auto blend(const ImageWrapper&, const ImageWrapper&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> ImageWrapper;
 };
 
 // MARK: - Logging

@@ -230,7 +230,7 @@ CompactTDZEnvironment::CompactTDZEnvironment(const TDZEnvironment& env)
     });
 
     sortCompact(variables);
-    m_variables = WTFMove(variables);
+    m_variables = WTF::move(variables);
 }
 
 bool CompactTDZEnvironment::operator==(const CompactTDZEnvironment& other) const
@@ -285,7 +285,7 @@ TDZEnvironment& CompactTDZEnvironment::toTDZEnvironmentSlow() const
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
         }
     }
-    m_variables = Variables(WTFMove(inflated));
+    m_variables = Variables(WTF::move(inflated));
     return const_cast<Inflated&>(std::get<Inflated>(m_variables));
 }
 

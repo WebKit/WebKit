@@ -150,7 +150,7 @@ bool CoordinatedUnacceleratedTileBuffer::tryEnsureSurface()
 
     auto imageInfo = SkImageInfo::Make(m_size.width(), m_size.height(), kBGRA_8888_SkColorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
     // FIXME: ref buffer and unref on release proc?
-    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+    SkSurfaceProps properties = FontRenderOptions::singleton().createSurfaceProps();
     m_surface = SkSurfaces::WrapPixels(imageInfo, data(), imageInfo.minRowBytes64(), &properties);
     return true;
 }
@@ -160,12 +160,12 @@ bool CoordinatedUnacceleratedTileBuffer::tryEnsureSurface()
 Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(Ref<BitmapTexture>&& texture)
 {
     auto flags = CoordinatedTileBuffer::Flags { texture->isOpaque() ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha };
-    return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTFMove(texture), flags));
+    return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTF::move(texture), flags));
 }
 
 CoordinatedAcceleratedTileBuffer::CoordinatedAcceleratedTileBuffer(Ref<BitmapTexture>&& texture, Flags flags)
     : CoordinatedTileBuffer(flags)
-    , m_texture(WTFMove(texture))
+    , m_texture(WTF::move(texture))
 {
 }
 
@@ -200,7 +200,7 @@ bool CoordinatedAcceleratedTileBuffer::tryEnsureSurface()
     unsigned msaaSampleCount = PlatformDisplay::sharedDisplay().msaaSampleCount();
 #endif
 
-    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+    SkSurfaceProps properties = FontRenderOptions::singleton().createSurfaceProps();
     m_surface = SkSurfaces::WrapBackendTexture(PlatformDisplay::sharedDisplay().skiaGrContext(),
         backendTexture,
         kTopLeft_GrSurfaceOrigin,
@@ -214,7 +214,13 @@ bool CoordinatedAcceleratedTileBuffer::tryEnsureSurface()
 
 void CoordinatedAcceleratedTileBuffer::completePainting()
 {
-    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    auto* recordingContext = m_surface->recordingContext();
+    auto* grContext = recordingContext ? recordingContext->asDirectContext() : nullptr;
+    if (!grContext) {
+        CoordinatedTileBuffer::completePainting();
+        return;
+    }
+
     auto& glDisplay = PlatformDisplay::sharedDisplay().glDisplay();
     if (GLFence::isSupported(glDisplay)) {
         grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kNo);

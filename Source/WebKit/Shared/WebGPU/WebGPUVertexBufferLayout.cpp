@@ -42,10 +42,10 @@ std::optional<VertexBufferLayout> ConvertToBackingContext::convertToBacking(cons
         auto convertedAttribute = convertToBacking(attribute);
         if (!convertedAttribute)
             return std::nullopt;
-        attributes.append(WTFMove(*convertedAttribute));
+        attributes.append(WTF::move(*convertedAttribute));
     }
 
-    return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, WTFMove(attributes) } };
+    return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, WTF::move(attributes) } };
 }
 
 std::optional<WebCore::WebGPU::VertexBufferLayout> ConvertFromBackingContext::convertFromBacking(const VertexBufferLayout& vertexBufferLayout)
@@ -56,10 +56,10 @@ std::optional<WebCore::WebGPU::VertexBufferLayout> ConvertFromBackingContext::co
         auto attribute = convertFromBacking(backingAttribute);
         if (!attribute)
             return std::nullopt;
-        attributes.append(WTFMove(*attribute));
+        attributes.append(WTF::move(*attribute));
     }
 
-    return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, WTFMove(attributes) } };
+    return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, WTF::move(attributes) } };
 }
 
 } // namespace WebKit

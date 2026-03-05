@@ -60,9 +60,10 @@ class ReplaceDefaultUniformsTraverser : public TIntermTraverser
             return;
         }
 
-        ASSERT(mVariableMap.count(&variable) > 0);
+        ASSERT(mVariableMap.count(variable.uniqueId()) > 0);
 
-        queueReplacement(mVariableMap.at(&variable)->deepCopy(), OriginalNode::IS_DROPPED);
+        queueReplacement(mVariableMap.at(variable.uniqueId())->deepCopy(),
+                         OriginalNode::IS_DROPPED);
     }
 
   private:
@@ -186,12 +187,12 @@ bool GatherDefaultUniforms(TCompiler *compiler,
 
             if ((*outUniformBlock)->symbolType() == SymbolType::Empty)
             {
-                variableMap[variable] = CreateVariableForFieldOfNamelessInterfaceBlock(
+                variableMap[variable->uniqueId()] = CreateVariableForFieldOfNamelessInterfaceBlock(
                     *outUniformBlock, static_cast<int>(fieldIndex), symbolTable);
             }
             else
             {
-                variableMap[variable] = AccessFieldOfNamedInterfaceBlock(
+                variableMap[variable->uniqueId()] = AccessFieldOfNamedInterfaceBlock(
                     *outUniformBlock, static_cast<int>(fieldIndex));
             }
         }

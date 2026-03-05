@@ -21,13 +21,16 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_debug_dump_writer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/fake_clock.h"
+#include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -65,7 +68,8 @@ struct ControllerManagerStates {
   std::vector<MockController*> mock_controllers;
 };
 
-ControllerManagerStates CreateControllerManager() {
+ControllerManagerStates CreateControllerManager(
+    const Environment& env = CreateTestEnvironment()) {
   ControllerManagerStates states;
   std::vector<std::unique_ptr<Controller>> controllers;
   std::map<const Controller*, std::pair<int, float>> chracteristic_points;
@@ -85,10 +89,11 @@ ControllerManagerStates CreateControllerManager() {
       std::make_pair(kChracteristicBandwithBps[1],
                      kChracteristicPacketLossFraction[1]);
 
-  states.controller_manager.reset(new ControllerManagerImpl(
+  states.controller_manager = std::make_unique<ControllerManagerImpl>(
+      env,
       ControllerManagerImpl::Config(kMinReorderingTimeMs,
                                     kMinReorderingSquareDistance),
-      std::move(controllers), chracteristic_points));
+      std::move(controllers), chracteristic_points);
   return states;
 }
 
@@ -152,8 +157,9 @@ TEST(ControllerManagerTest, ControllersWithCharPointDependOnNetworkMetrics) {
 }
 
 TEST(ControllerManagerTest, DoNotReorderBeforeMinReordingTime) {
-  ScopedFakeClock fake_clock;
-  auto states = CreateControllerManager();
+  SimulatedClock fake_clock(Timestamp::Seconds(123'456));
+  auto states =
+      CreateControllerManager(CreateTestEnvironment({.time = &fake_clock}));
   CheckControllersOrder(&states, kChracteristicBandwithBps[0],
                         kChracteristicPacketLossFraction[0],
                         {kNumControllers - 2, kNumControllers - 1, 0, 1});
@@ -167,8 +173,9 @@ TEST(ControllerManagerTest, DoNotReorderBeforeMinReordingTime) {
 }
 
 TEST(ControllerManagerTest, ReorderBeyondMinReordingTimeAndMinDistance) {
-  ScopedFakeClock fake_clock;
-  auto states = CreateControllerManager();
+  SimulatedClock fake_clock(Timestamp::Seconds(123'456));
+  auto states =
+      CreateControllerManager(CreateTestEnvironment({.time = &fake_clock}));
   constexpr int kBandwidthBps =
       (kChracteristicBandwithBps[0] + kChracteristicBandwithBps[1]) / 2;
   constexpr float kPacketLossFraction = (kChracteristicPacketLossFraction[0] +
@@ -186,8 +193,9 @@ TEST(ControllerManagerTest, ReorderBeyondMinReordingTimeAndMinDistance) {
 }
 
 TEST(ControllerManagerTest, DoNotReorderIfNetworkMetricsChangeTooSmall) {
-  ScopedFakeClock fake_clock;
-  auto states = CreateControllerManager();
+  SimulatedClock fake_clock(Timestamp::Seconds(123'456));
+  auto states =
+      CreateControllerManager(CreateTestEnvironment({.time = &fake_clock}));
   constexpr int kBandwidthBps =
       (kChracteristicBandwithBps[0] + kChracteristicBandwithBps[1]) / 2;
   constexpr float kPacketLossFraction = (kChracteristicPacketLossFraction[0] +
@@ -286,15 +294,21 @@ constexpr int kInitialFrameLengthMs = 60;
 constexpr int kMinBitrateBps = 6000;
 
 ControllerManagerStates CreateControllerManager(
+    const Environment& env,
     absl::string_view config_string) {
   ControllerManagerStates states;
   constexpr size_t kNumEncoderChannels = 2;
   const std::vector<int> encoder_frame_lengths_ms = {20, 60};
   states.controller_manager = ControllerManagerImpl::Create(
-      config_string, kNumEncoderChannels, encoder_frame_lengths_ms,
+      env, config_string, kNumEncoderChannels, encoder_frame_lengths_ms,
       kMinBitrateBps, kIntialChannelsToEncode, kInitialFrameLengthMs,
       kInitialBitrateBps, kInitialFecEnabled, kInitialDtxEnabled);
   return states;
+}
+
+ControllerManagerStates CreateControllerManager(
+    absl::string_view config_string) {
+  return CreateControllerManager(CreateTestEnvironment(), config_string);
 }
 
 enum class ControllerType : int8_t {
@@ -363,21 +377,19 @@ TEST(ControllerManagerTest, DebugDumpLoggedWhenCreateFromConfigString) {
   constexpr size_t kNumEncoderChannels = 2;
   const std::vector<int> encoder_frame_lengths_ms = {20, 60};
 
-  constexpr int64_t kClockInitialTimeMs = 12345678;
-  ScopedFakeClock fake_clock;
-  fake_clock.AdvanceTime(TimeDelta::Millis(kClockInitialTimeMs));
+  SimulatedClock fake_clock(Timestamp::Millis(12'345'678));
   auto debug_dump_writer =
       std::unique_ptr<MockDebugDumpWriter>(new NiceMock<MockDebugDumpWriter>());
   EXPECT_CALL(*debug_dump_writer, Die());
   EXPECT_CALL(*debug_dump_writer,
               DumpControllerManagerConfig(ControllerManagerEqual(config),
-                                          kClockInitialTimeMs));
+                                          fake_clock.TimeInMilliseconds()));
 
-  ControllerManagerImpl::Create(config_string, kNumEncoderChannels,
-                                encoder_frame_lengths_ms, kMinBitrateBps,
-                                kIntialChannelsToEncode, kInitialFrameLengthMs,
-                                kInitialBitrateBps, kInitialFecEnabled,
-                                kInitialDtxEnabled, debug_dump_writer.get());
+  ControllerManagerImpl::Create(
+      CreateTestEnvironment({.time = &fake_clock}), config_string,
+      kNumEncoderChannels, encoder_frame_lengths_ms, kMinBitrateBps,
+      kIntialChannelsToEncode, kInitialFrameLengthMs, kInitialBitrateBps,
+      kInitialFecEnabled, kInitialDtxEnabled, debug_dump_writer.get());
 }
 
 TEST(ControllerManagerTest, CreateFromConfigStringAndCheckDefaultOrder) {
@@ -427,7 +439,7 @@ TEST(ControllerManagerTest, CreateCharPointFreeConfigAndCheckDefaultOrder) {
 }
 
 TEST(ControllerManagerTest, CreateFromConfigStringAndCheckReordering) {
-  ScopedFakeClock fake_clock;
+  SimulatedClock fake_clock(Timestamp::Seconds(123'456));
   audio_network_adaptor::config::ControllerManager config;
   config.set_min_reordering_time_ms(kMinReorderingTimeMs);
   config.set_min_reordering_squared_distance(kMinReorderingSquareDistance);
@@ -447,7 +459,8 @@ TEST(ControllerManagerTest, CreateFromConfigStringAndCheckReordering) {
   std::string config_string;
   config.SerializeToString(&config_string);
 
-  auto states = CreateControllerManager(config_string);
+  auto states = CreateControllerManager(
+      CreateTestEnvironment({.time = &fake_clock}), config_string);
 
   Controller::NetworkMetrics metrics;
   metrics.uplink_bandwidth_bps = kChracteristicBandwithBps[0];

@@ -36,11 +36,11 @@ struct GPUComputePassDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            timestampWrites.convertToBacking(),
+            timestampWrites ? std::optional { timestampWrites->convertToBacking() } : std::nullopt,
         };
     }
 
-    GPUComputePassTimestampWrites timestampWrites;
+    std::optional<GPUComputePassTimestampWrites> timestampWrites;
 };
 
 }

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFECompositeElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFECompositeElement);
 
 inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -60,7 +60,7 @@ void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const At
     switch (name.nodeName()) {
     case AttributeNames::operatorAttr: {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(*this, newValue);
-        if (enumToUnderlyingType(propertyValue))
+        if (std::to_underlying(propertyValue))
             Ref { m_svgOperator }->setBaseValInternal<CompositeOperationType>(propertyValue);
         break;
     }

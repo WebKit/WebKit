@@ -112,7 +112,7 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
 #endif
 }
 
-void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated)
+void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated, WebCore::InterruptScrollAnimation)
 {
     notImplemented();
 }
@@ -193,7 +193,7 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
-    m_undoController.registerEditCommand(WTFMove(command), undoOrRedo);
+    m_undoController.registerEditCommand(WTF::move(command), undoOrRedo);
 }
 
 void PageClientImpl::clearAllEditCommands()
@@ -287,7 +287,7 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
 #if ENABLE(CONTEXT_MENUS)
 Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, FrameInfoData&& frameInfoData, ContextMenuContextData&& context, const UserData& userData)
 {
-    return WebContextMenuProxyGtk::create(m_viewWidget, page, WTFMove(frameInfoData), WTFMove(context), userData);
+    return WebContextMenuProxyGtk::create(m_viewWidget, page, WTF::move(frameInfoData), WTF::move(context), userData);
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -310,7 +310,7 @@ RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestions
 
 Ref<ValidationBubble> PageClientImpl::createValidationBubble(String&& message, const ValidationBubble::Settings& settings)
 {
-    return ValidationBubbleGtk::create(m_viewWidget, WTFMove(message), settings);
+    return ValidationBubbleGtk::create(m_viewWidget, WTF::move(message), settings);
 }
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -347,7 +347,7 @@ void PageClientImpl::selectionDidChange()
 
 RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect)
 {
-    return webkitWebViewBaseTakeViewSnapshot(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(clipRect));
+    return webkitWebViewBaseTakeViewSnapshot(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTF::move(clipRect));
 }
 
 void PageClientImpl::didChangeContentSize(const IntSize& size)
@@ -358,7 +358,7 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
 #if ENABLE(DRAG_SUPPORT)
 void PageClientImpl::startDrag(SelectionData&& selection, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& dragImage, IntPoint&& dragImageHotspot)
 {
-    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(selection), dragOperationMask, WTFMove(dragImage), WTFMove(dragImageHotspot));
+    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTF::move(selection), dragOperationMask, WTF::move(dragImage), WTF::move(dragImageHotspot));
 }
 
 void PageClientImpl::didPerformDragControllerAction()
@@ -383,7 +383,7 @@ WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
 
 void PageClientImpl::setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&& client)
 {
-    m_fullscreenClientForTesting = WTFMove(client);
+    m_fullscreenClientForTesting = WTF::move(client);
 }
 
 void PageClientImpl::closeFullScreenManager()
@@ -404,7 +404,7 @@ void PageClientImpl::enterFullScreen(WebCore::FloatSize, CompletionHandler<void(
     if (isFullScreen())
         return completionHandler(false);
 
-    webkitWebViewBaseWillEnterFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(completionHandler));
+    webkitWebViewBaseWillEnterFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTF::move(completionHandler));
 
     if (!WEBKIT_IS_WEB_VIEW(m_viewWidget) || !webkitWebViewEnterFullScreen(WEBKIT_WEB_VIEW(m_viewWidget)))
         webkitWebViewBaseEnterFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
@@ -418,7 +418,7 @@ void PageClientImpl::exitFullScreen(CompletionHandler<void()>&& completionHandle
     if (!isFullScreen())
         return completionHandler();
 
-    webkitWebViewBaseWillExitFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(completionHandler));
+    webkitWebViewBaseWillExitFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTF::move(completionHandler));
 
     if (!WEBKIT_IS_WEB_VIEW(m_viewWidget) || !webkitWebViewExitFullScreen(WEBKIT_WEB_VIEW(m_viewWidget)))
         webkitWebViewBaseExitFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
@@ -563,7 +563,7 @@ void PageClientImpl::derefView()
 void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get("CLIPBOARD"_s);
-    clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, requiresInteraction, completionHandler = WTFMove(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
+    clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, requiresInteraction, completionHandler = WTF::move(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
         if (requiresInteraction == WebCore::DOMPasteRequiresInteraction::No && PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
             completionHandler(DOMPasteAccessResponse::GrantedForGesture);
             return;
@@ -574,7 +574,7 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebC
             return;
         }
 
-        GRefPtr<WebKitClipboardPermissionRequest> request = adoptGRef(webkitClipboardPermissionRequestCreate(WTFMove(completionHandler)));
+        GRefPtr<WebKitClipboardPermissionRequest> request = adoptGRef(webkitClipboardPermissionRequestCreate(WTF::move(completionHandler)));
         webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(weakWebView.get()), WEBKIT_PERMISSION_REQUEST(request.get()));
     });
 }

@@ -99,7 +99,7 @@ namespace ax = WebCore::Accessibility;
 // Called directly by Accessibility framework.
 - (id)accessibilityRootObjectWrapper
 {
-    return [self accessibilityRootObjectWrapper:[self protectedFocusedLocalFrame].get()];
+    return [self accessibilityRootObjectWrapper:protect([self focusedLocalFrame]).get()];
 }
 
 - (id)accessibilityRootObjectWrapper:(WebCore::LocalFrame*)frame
@@ -131,7 +131,7 @@ namespace ax = WebCore::Accessibility;
                 return [protectedSelf accessibilityPluginObject];
         }
 
-        RefPtr frame = protectedFrame ? protectedFrame : [protectedSelf focusedLocalFrame];
+        RefPtr frame = protectedFrame ? protectedFrame : RefPtr { [protectedSelf focusedLocalFrame] };
         if (RefPtr document = frame ? frame->document() : nullptr) {
             if (CheckedPtr cache = document->axObjectCache()) {
                 if (RefPtr root = cache->rootObjectForFrame(*frame))
@@ -143,7 +143,7 @@ namespace ax = WebCore::Accessibility;
             // It's possible we were given a null frame (this is explicitly expected when off the main-thread, since
             // we can't access the webpage off the main-thread to get a frame). Now that we are actually on the main-thread,
             // try again if necessary.
-            RefPtr frame = protectedFrame ? protectedFrame : [protectedSelf focusedLocalFrame];
+            RefPtr frame = protectedFrame ? protectedFrame : RefPtr { [protectedSelf focusedLocalFrame] };
 
             if (RefPtr root = frame ? cache->rootObjectForFrame(*frame) : nullptr)
                 return root->wrapper();
@@ -166,7 +166,7 @@ namespace ax = WebCore::Accessibility;
         [self setSize:webPage->size()];
 #endif
         RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(webPage->mainFrame());
-        m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
+        m_hasMainFramePlugin = frame && frame->document() && frame->document()->isPluginDocument();
     } else {
         m_pageID = std::nullopt;
         m_hasMainFramePlugin = false;
@@ -202,20 +202,21 @@ namespace ax = WebCore::Accessibility;
     if (!cache)
         return;
 
-    std::optional isolatedTreeFrameID = cache->frameID();
-    if (!isolatedTreeFrameID)
-        return;
-
     RefPtr mainFrame = m_page ? Ref { *m_page }->mainFrame() : nullptr;
     if (!mainFrame)
         return;
 
     // Ignore an isolated tree that's not the main frame, otherwise VoiceOver might jump directly to an iframe
     // when interacting with a page.
-    if (*isolatedTreeFrameID != mainFrame->frameID())
+    if (cache->frameID() != mainFrame->frameID())
         return;
 
     m_isolatedTree = tree.get();
+}
+
+- (RefPtr<WebCore::AXIsolatedTree>)isolatedTree
+{
+    return m_isolatedTree.get();
 }
 
 - (void)setWindow:(id)window
@@ -274,7 +275,7 @@ namespace ax = WebCore::Accessibility;
 
 - (id)accessibilityFocusedUIElement
 {
-    return [[self accessibilityRootObjectWrapper:[self protectedFocusedLocalFrame].get()] accessibilityFocusedUIElement];
+    return [[self accessibilityRootObjectWrapper:protect([self focusedLocalFrame]).get()] accessibilityFocusedUIElement];
 }
 
 - (WebCore::LocalFrame *)focusedLocalFrame
@@ -302,11 +303,6 @@ namespace ax = WebCore::Accessibility;
     }
 
     return nullptr;
-}
-
-- (RefPtr<WebCore::LocalFrame>)protectedFocusedLocalFrame
-{
-    return [self focusedLocalFrame];
 }
 
 @end

@@ -53,7 +53,7 @@ Vector<String> ClipboardItemPasteboardDataSource::types() const
 void ClipboardItemPasteboardDataSource::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr clipboard = m_item->clipboard())
-        clipboard->getType(Ref { m_item.get() }, type, WTFMove(promise));
+        clipboard->getType(Ref { m_item.get() }, type, WTF::move(promise));
     else
         promise->reject(ExceptionCode::NotAllowedError);
 }

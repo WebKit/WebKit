@@ -21,6 +21,6 @@ PASS setCodecPreferences() can remove rtx
 PASS setCodecPreferences() can remove red
 PASS setCodecPreferences() can remove ulpfec
 PASS setCodecPreferences() filters on receiver and prefers receiver order
-FAIL setCodecPreferences should accept audio codecs regardless of mimeType case promise_test: Unhandled rejection with value: object "InvalidModificationError: RTCRtpCodecCapability bad mimeType"
-FAIL setCodecPreferences should accept video codecs regardless of mimeType case promise_test: Unhandled rejection with value: object "InvalidModificationError: RTCRtpCodecCapability bad mimeType"
+PASS setCodecPreferences should accept audio codecs regardless of mimeType case
+PASS setCodecPreferences should accept video codecs regardless of mimeType case
 

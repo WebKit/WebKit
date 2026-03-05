@@ -30,7 +30,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |                      Cumulative TSN Ack                       |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ShutdownChunk::kType;
 
 std::optional<ShutdownChunk> ShutdownChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

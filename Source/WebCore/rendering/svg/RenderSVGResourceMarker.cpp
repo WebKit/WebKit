@@ -36,14 +36,15 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
+#include "StyleTransformResolver.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceMarker);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceMarker);
 
 RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, RenderStyle&& style)
-    : RenderSVGResourceContainer(Type::SVGResourceMarker, element, WTFMove(style))
+    : RenderSVGResourceContainer(Type::SVGResourceMarker, element, WTF::move(style))
 {
 }
 
@@ -107,18 +108,21 @@ void RenderSVGResourceMarker::updateLayerTransform()
     RenderSVGContainer::updateLayerTransform();
 }
 
-void RenderSVGResourceMarker::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGResourceMarker::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     // This code resembles RenderLayerModelObject::applySVGTransform(), but supporting non-SVGGraphicsElement derived elements,
     // such as SVGMarkerElement, that do not allow user-specified transformations (no SMIL, no SVG/CSS transformations) - only
     // the marker-induced transformations when applying markers to path elements.
-    FloatPoint3D originTranslate;
-    if (options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && !m_supplementalLayerTransform.isIdentityOrTranslation())
-        originTranslate = style.computeTransformOrigin(boundingBox);
 
-    style.applyTransformOrigin(transform, originTranslate);
+    Style::TransformResolver transformResolver { transform, style };
+
+    FloatPoint3D originTranslate;
+    if (options.contains(Style::TransformResolverOption::TransformOrigin) && !m_supplementalLayerTransform.isIdentityOrTranslation())
+        originTranslate = transformResolver.computeTransformOrigin(boundingBox);
+
+    transformResolver.applyTransformOrigin(originTranslate);
     transform.multiplyAffineTransform(m_supplementalLayerTransform);
-    style.unapplyTransformOrigin(transform, originTranslate);
+    transformResolver.unapplyTransformOrigin(originTranslate);
 }
 
 LayoutRect RenderSVGResourceMarker::overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy, PaintPhase) const

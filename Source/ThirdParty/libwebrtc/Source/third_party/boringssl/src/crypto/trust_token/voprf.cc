@@ -143,7 +143,7 @@ static int voprf_derive_key_from_secret(const VOPRF_METHOD *method,
   int ok = 0;
   CBB cbb;
   CBB_zero(&cbb);
-  uint8_t *buf = NULL;
+  uint8_t *buf = nullptr;
   size_t len;
   if (!CBB_init(&cbb, 0) ||
       !CBB_add_bytes(&cbb, kKeygenLabel, sizeof(kKeygenLabel)) ||
@@ -203,7 +203,7 @@ static STACK_OF(TRUST_TOKEN_PRETOKEN) *voprf_blind(const VOPRF_METHOD *method,
   const EC_GROUP *group = method->group_func();
   STACK_OF(TRUST_TOKEN_PRETOKEN) *pretokens =
       sk_TRUST_TOKEN_PRETOKEN_new_null();
-  if (pretokens == NULL) {
+  if (pretokens == nullptr) {
     goto err;
   }
 
@@ -211,7 +211,7 @@ static STACK_OF(TRUST_TOKEN_PRETOKEN) *voprf_blind(const VOPRF_METHOD *method,
     // Insert |pretoken| into |pretokens| early to simplify error-handling.
     TRUST_TOKEN_PRETOKEN *pretoken = reinterpret_cast<TRUST_TOKEN_PRETOKEN *>(
         OPENSSL_malloc(sizeof(TRUST_TOKEN_PRETOKEN)));
-    if (pretoken == NULL ||
+    if (pretoken == nullptr ||
         !sk_TRUST_TOKEN_PRETOKEN_push(pretokens, pretoken)) {
       TRUST_TOKEN_PRETOKEN_free(pretoken);
       goto err;
@@ -257,7 +257,7 @@ static STACK_OF(TRUST_TOKEN_PRETOKEN) *voprf_blind(const VOPRF_METHOD *method,
 
 err:
   sk_TRUST_TOKEN_PRETOKEN_pop_free(pretokens, TRUST_TOKEN_PRETOKEN_free);
-  return NULL;
+  return nullptr;
 }
 
 static int hash_to_scalar_dleq(const VOPRF_METHOD *method, EC_SCALAR *out,
@@ -270,7 +270,7 @@ static int hash_to_scalar_dleq(const VOPRF_METHOD *method, EC_SCALAR *out,
   int ok = 0;
   CBB cbb;
   CBB_zero(&cbb);
-  uint8_t *buf = NULL;
+  uint8_t *buf = nullptr;
   size_t len;
   if (!CBB_init(&cbb, 0) ||
       !CBB_add_bytes(&cbb, kDLEQLabel, sizeof(kDLEQLabel)) ||
@@ -306,7 +306,7 @@ static int hash_to_scalar_challenge(const VOPRF_METHOD *method, EC_SCALAR *out,
       !cbb_serialize_point(&cbb, group, a2) ||
       !cbb_serialize_point(&cbb, group, a3) ||
       !CBB_add_bytes(&cbb, kChallengeLabel, sizeof(kChallengeLabel) - 1) ||
-      !CBB_finish(&cbb, NULL, &len) ||
+      !CBB_finish(&cbb, nullptr, &len) ||
       !method->hash_to_scalar(group, out, transcript, len)) {
     return 0;
   }
@@ -326,7 +326,7 @@ static int hash_to_scalar_batch(const VOPRF_METHOD *method, EC_SCALAR *out,
   int ok = 0;
   CBB cbb;
   CBB_zero(&cbb);
-  uint8_t *buf = NULL;
+  uint8_t *buf = nullptr;
   size_t len;
   if (!CBB_init(&cbb, 0) ||
       !CBB_add_bytes(&cbb, kDLEQBatchLabel, sizeof(kDLEQBatchLabel)) ||
@@ -405,8 +405,8 @@ static int mul_public_2(const EC_GROUP *group, EC_JACOBIAN *out,
                         const EC_JACOBIAN *p1, const EC_SCALAR *scalar1) {
   EC_JACOBIAN points[2] = {*p0, *p1};
   EC_SCALAR scalars[2] = {*scalar0, *scalar1};
-  return ec_point_mul_scalar_public_batch(group, out, /*g_scalar=*/NULL, points,
-                                          scalars, 2);
+  return ec_point_mul_scalar_public_batch(group, out, /*g_scalar=*/nullptr,
+                                          points, scalars, 2);
 }
 
 static int dleq_verify(const VOPRF_METHOD *method, CBS *cbs,
@@ -529,10 +529,10 @@ static int voprf_sign_tt(const VOPRF_METHOD *method,
 
     EC_JACOBIAN BT_batch, Z_batch;
     if (!ec_point_mul_scalar_public_batch(group, &BT_batch,
-                                          /*g_scalar=*/NULL, BTs, es,
+                                          /*g_scalar=*/nullptr, BTs, es,
                                           num_to_issue) ||
         !ec_point_mul_scalar_public_batch(group, &Z_batch,
-                                          /*g_scalar=*/NULL, Zs, es,
+                                          /*g_scalar=*/nullptr, Zs, es,
                                           num_to_issue)) {
       goto err;
     }
@@ -569,7 +569,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind_tt(
   const EC_GROUP *group = method->group_func();
   if (count > sk_TRUST_TOKEN_PRETOKEN_num(pretokens)) {
     OPENSSL_PUT_ERROR(TRUST_TOKEN, TRUST_TOKEN_R_DECODE_FAILURE);
-    return NULL;
+    return nullptr;
   }
 
   int ok = 0;
@@ -582,7 +582,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind_tt(
       reinterpret_cast<EC_SCALAR *>(OPENSSL_calloc(count, sizeof(EC_SCALAR)));
   CBB batch_cbb;
   CBB_zero(&batch_cbb);
-  if (ret == NULL || BTs == NULL || Zs == NULL || es == NULL ||
+  if (ret == nullptr || BTs == nullptr || Zs == nullptr || es == nullptr ||
       !CBB_init(&batch_cbb, 0) ||
       !cbb_add_point(&batch_cbb, group, &key->pubs)) {
     goto err;
@@ -631,7 +631,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind_tt(
     TRUST_TOKEN *token =
         TRUST_TOKEN_new(CBB_data(&token_cbb), CBB_len(&token_cbb));
     CBB_cleanup(&token_cbb);
-    if (token == NULL || !sk_TRUST_TOKEN_push(ret, token)) {
+    if (token == nullptr || !sk_TRUST_TOKEN_push(ret, token)) {
       TRUST_TOKEN_free(token);
       goto err;
     }
@@ -648,9 +648,9 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind_tt(
 
   EC_JACOBIAN BT_batch, Z_batch;
   if (!ec_point_mul_scalar_public_batch(group, &BT_batch,
-                                        /*g_scalar=*/NULL, BTs, es, count) ||
+                                        /*g_scalar=*/nullptr, BTs, es, count) ||
       !ec_point_mul_scalar_public_batch(group, &Z_batch,
-                                        /*g_scalar=*/NULL, Zs, es, count)) {
+                                        /*g_scalar=*/nullptr, Zs, es, count)) {
     goto err;
   }
 
@@ -670,7 +670,7 @@ err:
   CBB_cleanup(&batch_cbb);
   if (!ok) {
     sk_TRUST_TOKEN_pop_free(ret, TRUST_TOKEN_free);
-    ret = NULL;
+    ret = nullptr;
   }
   return ret;
 }
@@ -729,7 +729,7 @@ static int compute_composite_element(const VOPRF_METHOD *method,
       !CBB_add_u16(&cbb, index) || !cbb_serialize_point(&cbb, group, C) ||
       !cbb_serialize_point(&cbb, group, D) ||
       !CBB_add_bytes(&cbb, kCompositeLabel, sizeof(kCompositeLabel) - 1) ||
-      !CBB_finish(&cbb, NULL, &len) ||
+      !CBB_finish(&cbb, nullptr, &len) ||
       !method->hash_to_scalar(group, di, transcript, len)) {
     return 0;
   }
@@ -898,7 +898,7 @@ static int voprf_sign_impl(const VOPRF_METHOD *method,
 
     EC_JACOBIAN M, Z;
     if (!ec_point_mul_scalar_public_batch(group, &M,
-                                          /*g_scalar=*/NULL, BTs, dis,
+                                          /*g_scalar=*/nullptr, BTs, dis,
                                           num_to_issue) ||
         !ec_point_mul_scalar(group, &Z, &M, &key->xs)) {
       goto err;
@@ -961,7 +961,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind(
   const EC_GROUP *group = method->group_func();
   if (count > sk_TRUST_TOKEN_PRETOKEN_num(pretokens)) {
     OPENSSL_PUT_ERROR(TRUST_TOKEN, TRUST_TOKEN_R_DECODE_FAILURE);
-    return NULL;
+    return nullptr;
   }
 
   int ok = 0;
@@ -972,7 +972,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind(
       OPENSSL_calloc(count, sizeof(EC_JACOBIAN)));
   EC_SCALAR *dis =
       reinterpret_cast<EC_SCALAR *>(OPENSSL_calloc(count, sizeof(EC_SCALAR)));
-  if (ret == NULL || !BTs || !Zs || !dis) {
+  if (ret == nullptr || !BTs || !Zs || !dis) {
     goto err;
   }
 
@@ -1023,7 +1023,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind(
     TRUST_TOKEN *token =
         TRUST_TOKEN_new(CBB_data(&token_cbb), CBB_len(&token_cbb));
     CBB_cleanup(&token_cbb);
-    if (token == NULL || !sk_TRUST_TOKEN_push(ret, token)) {
+    if (token == nullptr || !sk_TRUST_TOKEN_push(ret, token)) {
       TRUST_TOKEN_free(token);
       goto err;
     }
@@ -1031,9 +1031,10 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind(
 
   EC_JACOBIAN M, Z;
   if (!ec_point_mul_scalar_public_batch(group, &M,
-                                        /*g_scalar=*/NULL, BTs, dis, count) ||
+                                        /*g_scalar=*/nullptr, BTs, dis,
+                                        count) ||
       !ec_point_mul_scalar_public_batch(group, &Z,
-                                        /*g_scalar=*/NULL, Zs, dis, count)) {
+                                        /*g_scalar=*/nullptr, Zs, dis, count)) {
     goto err;
   }
 
@@ -1051,7 +1052,7 @@ err:
   OPENSSL_free(dis);
   if (!ok) {
     sk_TRUST_TOKEN_pop_free(ret, TRUST_TOKEN_free);
-    ret = NULL;
+    ret = nullptr;
   }
   return ret;
 }

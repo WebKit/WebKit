@@ -25,7 +25,6 @@ import json
 import logging
 import re
 import requests
-from requests.auth import HTTPBasicAuth
 
 from ews.common.buildbot import Buildbot
 from ews.models.patch import Change
@@ -108,11 +107,13 @@ class GitHub(object):
     def fetch_data_from_url_with_authentication_github(cls, url):
         response = None
         try:
-            username, access_token = GitHub.credentials()
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            _, access_token = GitHub.credentials()
             response = requests.get(
-                url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
+                url, timeout=60,
+                headers=dict(
+                    Accept='application/vnd.github.v3+json',
+                    Authorization=f'Bearer {access_token}',
+                ),
             )
             if response.status_code // 100 != 2:
                 _log.error(f'Accessed {url} with unexpected status code {response.status_code}.\n')
@@ -136,12 +137,13 @@ class GitHub(object):
         else:
             comment_url = '{api_url}/issues/{pr_number}/comments'.format(api_url=api_url, pr_number=pr_number)
         try:
-            username, access_token = GitHub.credentials()
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            _, access_token = GitHub.credentials()
             response = requests.request(
-                'POST', comment_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(body=ews_comment),
+                'POST', comment_url, timeout=60,
+                headers=dict(
+                    Accept='application/vnd.github.v3+json',
+                    Authorization=f'Bearer {access_token}',
+                ), json=dict(body=ews_comment),
             )
             if response.status_code // 100 != 2:
                 _log.error('Failed to post comment to PR {}. Unexpected response code from GitHub: {}, url: {}\n'.format(pr_number, response.status_code, comment_url))
@@ -165,12 +167,14 @@ class GitHub(object):
 
         description_url = '{api_url}/issues/{pr_number}'.format(api_url=api_url, pr_number=pr_number)
         try:
-            username, access_token = GitHub.credentials()
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            _, access_token = GitHub.credentials()
 
             response = requests.request(
-                'GET', description_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
+                'GET', description_url, timeout=60,
+                headers=dict(
+                    Accept='application/vnd.github.v3+json',
+                    Authorization=f'Bearer {access_token}',
+                ),
             )
             if response.status_code // 100 != 2:
                 _log.error('Failed to get PR {} description. Unexpected response code from GitHub: {}\n'.format(pr_number, response.status_code))
@@ -180,8 +184,11 @@ class GitHub(object):
             description = GitHubEWS.generate_updated_pr_description(description, ews_comment)
 
             response = requests.request(
-                'POST', description_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
+                'POST', description_url, timeout=60,
+                headers=dict(
+                    Accept='application/vnd.github.v3+json',
+                    Authorization=f'Bearer {access_token}',
+                ),
                 json=dict(body=description),
             )
 
@@ -212,13 +219,14 @@ class GitHubEWS(GitHub):
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
                           ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'win-tests'],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
-                          ['webkitpy', 'ios-wk2-wpt', 'api-mac-debug', 'wpe-cairo-libwebrtc', ''],
+                          ['webkitpy', 'ios-wk2-wpt', 'api-mac-debug', 'gtk3-libwebrtc', ''],
                           ['jsc', 'api-ios', 'mac-wk1', 'gtk', ''],
-                          ['jsc-arm64', 'vision', 'mac-wk2', 'gtk-wk2', ''],
-                          ['services', 'vision-sim', 'mac-AS-debug-wk2', 'api-gtk', ''],
-                          ['merge', 'vision-wk2', 'mac-wk2-stress', 'playstation', ''],
-                          ['unsafe-merge', 'tv', 'mac-intel-wk2', 'jsc-armv7', ''],
-                          ['', 'tv-sim', 'mac-safer-cpp', 'jsc-armv7-tests', ''],
+                          ['jsc-debug-arm64', 'ios-safer-cpp', 'mac-wk2', 'gtk-wk2', ''],
+                          ['services', 'vision', 'mac-AS-debug-wk2', 'api-gtk', ''],
+                          ['merge', 'vision-sim', 'mac-wk2-stress', 'playstation', ''],
+                          ['unsafe-merge', 'vision-wk2', 'mac-intel-wk2', 'jsc-armv7', ''],
+                          ['', 'tv', 'mac-safer-cpp', 'jsc-armv7-tests', ''],
+                          ['', 'tv-sim', '', '', ''],
                           ['', 'watch', '', '', ''],
                           ['', 'watch-sim', '', '', '']]
     approved_user_list_for_apple_internal_builds = []
@@ -291,7 +299,7 @@ class GitHubEWS(GitHub):
 
     @classmethod
     def escape_github_markdown(cls, string):
-        return string.replace('|', '\\|')
+        return string.replace('\n', ' ').replace('"', ' ').replace('|', '\\|')
 
     def should_include_apple_internal_builds(self, pr_author, pr_project):
         return (pr_author in self.approved_user_list_for_apple_internal_builds) and (pr_project in GITHUB_PROJECTS)
@@ -414,7 +422,7 @@ class GitHubEWS(GitHub):
             icon = GitHubEWS.ICON_BUILD_ERROR
             hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
 
-        # Hover-over text comes from buildbot and can conceivable contain a |, escape it
+        # Hover-over text comes from buildbot and can contain special characters (newlines, quotes, pipes) that break markdown, sanitize it
         hover_over_text = self.escape_github_markdown(hover_over_text)
         return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 

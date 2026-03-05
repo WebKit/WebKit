@@ -33,6 +33,9 @@ class WebKit::WebEvent {
     OptionSet<WebKit::WebEventModifier> modifiers();
     MonotonicTime timestamp();
     WTF::UUID authorizationToken();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    uintptr_t signpostIdentifier();
+#endif
 };
 
 enum class WebKit::WebEventType : uint32_t {
@@ -62,7 +65,7 @@ enum class WebKit::WebEventType : uint32_t {
 
 class WebKit::WebKeyboardEvent : WebKit::WebEvent {
     String text();
-#if !PLATFORM(GTK) && !USE(LIBWPE)
+#if !PLATFORM(GTK) && !USE(LIBWPE) && !ENABLE(WPE_PLATFORM)
     String unmodifiedText();
 #endif
     String key();
@@ -70,13 +73,13 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
     String keyIdentifier();
     int32_t windowsVirtualKeyCode();
     int32_t nativeVirtualKeyCode();
-#if !PLATFORM(GTK) && !USE(LIBWPE)
+#if !PLATFORM(GTK) && !USE(LIBWPE) && !ENABLE(WPE_PLATFORM)
     int32_t macCharCode();
 #endif
-#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     bool handledByInputMethod();
 #endif
-#if PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines();
     std::optional<WebKit::EditingRange> preeditSelectionRange();
 #endif
@@ -88,7 +91,7 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 #endif
     bool isAutoRepeat();
     bool isKeypad();
-#if !PLATFORM(GTK) && !USE(LIBWPE)
+#if !PLATFORM(GTK) && !USE(LIBWPE) && !ENABLE(WPE_PLATFORM)
     bool isSystemKey();
 #endif
 };
@@ -153,6 +156,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     Left,
     Middle,
     Right,
+    Back,
+    Forward,
     None
 };
 
@@ -160,6 +165,11 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     NoTap,
     OneFingerTap,
     TwoFingerTap
+};
+
+[CustomHeader] enum class WebKit::WebMouseEventInputSource : uint8_t {
+    UserDriven,
+    Automation,
 };
 
 enum class WebKit::GestureWasCancelled : bool;
@@ -174,6 +184,7 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
     float deltaZ();
     int32_t clickCount();
     double force();
+    WebKit::WebMouseEventInputSource inputSource();
     WebKit::WebMouseEventSyntheticClickType syntheticClickType();
 #if PLATFORM(MAC)
     int32_t eventNumber();
@@ -234,7 +245,7 @@ class WebKit::WebWheelEvent : WebKit::WebEvent {
 #if PLATFORM(COCOA)
     bool directionInvertedFromDevice();
 #endif
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     WebKit::WebWheelEvent::Phase phase();
     WebKit::WebWheelEvent::Phase momentumPhase();
     bool hasPreciseScrollingDeltas();

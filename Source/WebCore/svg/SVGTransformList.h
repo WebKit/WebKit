@@ -52,7 +52,7 @@ public:
     ExceptionOr<Ref<SVGTransform>> createSVGTransformFromMatrix(DOMMatrix2DInit&& matrixInit)
     {
         Ref svgTransform =  SVGTransform::create();
-        svgTransform->setMatrix(WTFMove(matrixInit));
+        svgTransform->setMatrix(WTF::move(matrixInit));
         return svgTransform;
     }
 

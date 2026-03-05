@@ -30,9 +30,12 @@
 
 #if ENABLE(GAMEPAD) && ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformGamepadWPE);
 
 PlatformGamepadWPE::PlatformGamepadWPE(WPEGamepad* gamepad, unsigned index)
     : PlatformGamepad(index)

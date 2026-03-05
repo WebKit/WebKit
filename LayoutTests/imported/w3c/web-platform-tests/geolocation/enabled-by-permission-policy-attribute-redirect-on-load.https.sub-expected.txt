@@ -1,7 +1,6 @@
 
+Harness Error (FAIL), message = Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Permissions-Policy allow="geolocation" allows same-origin redirection Test timed out
-NOTRUN Permissions-Policy allow="geolocation" allows cross-origin redirection
+NOTRUN Permissions-Policy allow="geolocation" allows same-origin redirection
+NOTRUN Permissions-Policy allow="geolocation" disallows cross-origin redirection
 

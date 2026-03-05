@@ -66,8 +66,6 @@ public:
 #endif
 
 private:
-    RefPtr<GPUConnectionToWebProcess> protectedConnection() const { return m_gpuConnection.get(); }
-
     HashMap<WebCore::VideoReceiverEndpointIdentifier, WebCore::PlatformVideoTarget> m_videoTargetCache;
     struct VideoReceiverEndpointCacheEntry {
         Markable<WebCore::MediaPlayerIdentifier> playerIdentifier;

@@ -41,7 +41,7 @@ public:
     String containerQuery() const;
 
 private:
-    const StyleRuleContainer& styleRuleContainer() const;
+    const StyleRuleContainer& NODELETE styleRuleContainer() const;
 
     CSSContainerRule(StyleRuleContainer&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Container; }

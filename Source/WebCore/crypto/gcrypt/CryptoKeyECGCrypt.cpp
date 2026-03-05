@@ -135,7 +135,7 @@ std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmId
 
     auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(publicKeySexp.release()), true, usages);
     auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(privateKeySexp.release()), extractable, usages);
-    return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
+    return CryptoKeyPair { WTF::move(publicKey), WTF::move(privateKey) };
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -501,7 +501,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
     if (!q || q->size() != curveUncompressedPointSize(m_curve))
         return { };
 
-    return WTFMove(q.value());
+    return WTF::move(q.value());
 }
 
 bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
@@ -533,7 +533,7 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
                 if (d->size() < uncompressedFieldElementSize) {
                     Vector<uint8_t> paddedData(uncompressedFieldElementSize - d->size(), 0);
                     paddedData.appendVector(*d);
-                    *d = WTFMove(paddedData);
+                    *d = WTF::move(paddedData);
                 }
 
                 jwk.d = base64URLEncodeToString(*d);
@@ -603,7 +603,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     if (!result)
         return { };
 
-    return WTFMove(result.value());
+    return WTF::move(result.value());
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
@@ -656,7 +656,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
             if (data->size() < uncompressedFieldElementSize) {
                 Vector<uint8_t> paddedData(uncompressedFieldElementSize - data->size(), 0);
                 paddedData.appendVector(*data);
-                *data = WTFMove(paddedData);
+                *data = WTF::move(paddedData);
             }
 
             // Write out the data under `privateKey`.
@@ -722,7 +722,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     if (!result)
         return { };
 
-    return WTFMove(result.value());
+    return WTF::move(result.value());
 }
 
 } // namespace WebCore

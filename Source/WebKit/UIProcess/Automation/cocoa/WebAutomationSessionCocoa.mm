@@ -57,7 +57,7 @@ static std::optional<String> getBase64EncodedPNGData(const RetainPtr<CGImageRef>
 
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& imageDataHandle)
 {
-    auto bitmap = ShareableBitmap::create(WTFMove(imageDataHandle), SharedMemory::Protection::ReadOnly);
+    auto bitmap = ShareableBitmap::create(WTF::move(imageDataHandle), SharedMemory::Protection::ReadOnly);
     if (!bitmap)
         return std::nullopt;
 

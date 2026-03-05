@@ -55,7 +55,7 @@ EVP_MD_CTX *EVP_MD_CTX_new(void) {
 EVP_MD_CTX *EVP_MD_CTX_create(void) { return EVP_MD_CTX_new(); }
 
 int EVP_MD_CTX_cleanup(EVP_MD_CTX *ctx) {
-  assert(ctx->pctx == NULL || ctx->pctx_ops != NULL);
+  assert(ctx->pctx == nullptr || ctx->pctx_ops != nullptr);
   if (ctx->pctx_ops) {
     ctx->pctx_ops->free(ctx->pctx);
   }
@@ -93,7 +93,7 @@ void EVP_MD_CTX_set_flags(EVP_MD_CTX *ctx, int flags) {}
 int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
   // |in->digest| may be NULL if this is a signing |EVP_MD_CTX| for, e.g.,
   // Ed25519 which does not hash with |EVP_MD_CTX|.
-  if (in == NULL || (in->pctx == NULL && in->digest == NULL)) {
+  if (in == nullptr || (in->pctx == nullptr && in->digest == nullptr)) {
     OPENSSL_PUT_ERROR(DIGEST, DIGEST_R_INPUT_NOT_INITIALIZED);
     return 0;
   }
@@ -102,8 +102,8 @@ int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
     return 0;
   }
 
-  EVP_PKEY_CTX *pctx = NULL;
-  assert(in->pctx == NULL || in->pctx_ops != NULL);
+  EVP_PKEY_CTX *pctx = nullptr;
+  assert(in->pctx == nullptr || in->pctx_ops != nullptr);
   if (in->pctx) {
     pctx = in->pctx_ops->dup(in->pctx);
     if (!pctx) {
@@ -114,12 +114,12 @@ int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
   EVP_MD_CTX_cleanup(out);
 
   out->digest = in->digest;
-  if (in->digest != NULL) {
+  if (in->digest != nullptr) {
     OPENSSL_memcpy(out->md_data, in->md_data, in->digest->ctx_size);
   }
   out->pctx = pctx;
   out->pctx_ops = in->pctx_ops;
-  assert(out->pctx == NULL || out->pctx_ops != NULL);
+  assert(out->pctx == nullptr || out->pctx_ops != nullptr);
 
   return 1;
 }
@@ -153,7 +153,7 @@ int EVP_DigestInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *engine) {
     ctx->digest = type;
   }
 
-  assert(ctx->pctx == NULL || ctx->pctx_ops != NULL);
+  assert(ctx->pctx == nullptr || ctx->pctx_ops != nullptr);
 
   ctx->digest->init(ctx);
   return 1;
@@ -161,7 +161,7 @@ int EVP_DigestInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *engine) {
 
 int EVP_DigestInit(EVP_MD_CTX *ctx, const EVP_MD *type) {
   EVP_MD_CTX_init(ctx);
-  return EVP_DigestInit_ex(ctx, type, NULL);
+  return EVP_DigestInit_ex(ctx, type, nullptr);
 }
 
 int EVP_DigestUpdate(EVP_MD_CTX *ctx, const void *data, size_t len) {
@@ -172,7 +172,7 @@ int EVP_DigestUpdate(EVP_MD_CTX *ctx, const void *data, size_t len) {
 int EVP_DigestFinal_ex(EVP_MD_CTX *ctx, uint8_t *md_out, unsigned int *size) {
   assert(ctx->digest->md_size <= EVP_MAX_MD_SIZE);
   ctx->digest->final(ctx, md_out);
-  if (size != NULL) {
+  if (size != nullptr) {
     *size = ctx->digest->md_size;
   }
   OPENSSL_cleanse(ctx->md_data, ctx->digest->ctx_size);
@@ -194,8 +194,8 @@ int EVP_Digest(const void *data, size_t count, uint8_t *out_md,
 }
 
 const EVP_MD *EVP_MD_CTX_get0_md(const EVP_MD_CTX *ctx) {
-  if (ctx == NULL) {
-    return NULL;
+  if (ctx == nullptr) {
+    return nullptr;
   }
   return ctx->digest;
 }

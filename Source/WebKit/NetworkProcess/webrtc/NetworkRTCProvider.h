@@ -93,7 +93,7 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { protectedRTCMonitor()->didReceiveMessage(connection, decoder); }
+    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { protect(m_rtcMonitor)->didReceiveMessage(connection, decoder); }
 
     class Socket {
     public:
@@ -116,7 +116,6 @@ public:
     void callOnRTCNetworkThread(Function<void()>&&);
 
     IPC::Connection& connection() { return m_ipcConnection.get(); }
-    Ref<IPC::Connection> protectedConnection() { return m_ipcConnection.get(); }
 
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
 
@@ -159,9 +158,7 @@ private:
 
     void signalSocketIsClosed(WebCore::LibWebRTCSocketIdentifier);
 
-    void assertIsRTCNetworkThread();
-
-    Ref<NetworkRTCMonitor> protectedRTCMonitor();
+    void NODELETE assertIsRTCNetworkThread();
 
     static constexpr size_t maxSockets { 256 };
 

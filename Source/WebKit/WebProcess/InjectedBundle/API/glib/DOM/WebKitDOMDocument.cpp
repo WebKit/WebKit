@@ -57,11 +57,13 @@ WebKitDOMDocument* wrapDocument(WebCore::Document* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 #if PLATFORM(GTK)
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocument, webkit_dom_document, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkitDOMDocumentDOMEventTargetInit))
 #else
 G_DEFINE_TYPE(WebKitDOMDocument, webkit_dom_document, WEBKIT_DOM_TYPE_NODE)
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkit_dom_document_class_init(WebKitDOMDocumentClass* documentClass)
 {

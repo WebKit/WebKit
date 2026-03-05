@@ -183,6 +183,17 @@ void LoadRGB8ToBGR565(const ImageLoadContext &context,
                       size_t outputRowPitch,
                       size_t outputDepthPitch);
 
+void LoadRGB8ToRGB565(const ImageLoadContext &context,
+                      size_t width,
+                      size_t height,
+                      size_t depth,
+                      const uint8_t *input,
+                      size_t inputRowPitch,
+                      size_t inputDepthPitch,
+                      uint8_t *output,
+                      size_t outputRowPitch,
+                      size_t outputDepthPitch);
+
 void LoadRGB565ToBGR565(const ImageLoadContext &context,
                         size_t width,
                         size_t height,
@@ -382,6 +393,17 @@ void LoadRGB10A2ToRGB5A1(const ImageLoadContext &context,
                          size_t outputDepthPitch);
 
 void LoadRGB10A2ToRGB565(const ImageLoadContext &context,
+                         size_t width,
+                         size_t height,
+                         size_t depth,
+                         const uint8_t *input,
+                         size_t inputRowPitch,
+                         size_t inputDepthPitch,
+                         uint8_t *output,
+                         size_t outputRowPitch,
+                         size_t outputDepthPitch);
+
+void LoadRGB10A2ToBGR565(const ImageLoadContext &context,
                          size_t width,
                          size_t height,
                          size_t depth,

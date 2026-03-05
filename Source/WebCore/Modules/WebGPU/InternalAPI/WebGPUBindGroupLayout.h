@@ -41,11 +41,12 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
 
     virtual bool isRemoteBindGroupLayoutProxy() const { return false; }
+    virtual bool isBindGroupLayoutImpl() const { return false; }
 
 protected:
     BindGroupLayout() = default;

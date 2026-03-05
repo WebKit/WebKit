@@ -220,6 +220,7 @@ public:
 
     bool isConstant() const;
     bool isInteger() const;
+    bool isFP() const;
     
     virtual Value* negConstant(Procedure&) const;
     virtual Value* addConstant(Procedure&, int32_t other) const;
@@ -452,6 +453,9 @@ protected:
         case Set:
         case WasmAddress:
         case WasmBoundsCheck:
+        case WasmStructGet:
+        case WasmRefCast:
+        case WasmRefTest:
         case VectorExtractLane:
         case VectorSplat:
         case VectorNot:
@@ -516,6 +520,8 @@ protected:
         case Store8:
         case Store16:
         case Store:
+        case WasmStructSet:
+        case WasmStructNew:
         case VectorReplaceLane:
         case VectorEqual:
         case VectorNotEqual:

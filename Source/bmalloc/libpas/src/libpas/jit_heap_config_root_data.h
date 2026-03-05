@@ -37,6 +37,9 @@ typedef struct pas_page_header_table pas_page_header_table;
 
 struct jit_heap_config_root_data {
     pas_page_header_table* small_page_header_table;
+    /* The JIT heap does not have a medium-segregated heap,
+     * so unlike basic-heaps it does not need a second
+     * medium-page-header-table. */
     pas_page_header_table* medium_page_header_table;
 };
 

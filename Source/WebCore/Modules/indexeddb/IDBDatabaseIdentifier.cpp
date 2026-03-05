@@ -36,7 +36,7 @@ namespace WebCore {
 
 IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient)
     : m_databaseName(databaseName)
-    , m_origin { WTFMove(mainFrameOrigin), WTFMove(openingOrigin) }
+    , m_origin { WTF::move(mainFrameOrigin), WTF::move(openingOrigin) }
     , m_isTransient(isTransient)
 {
     // The empty string is a valid database name, but a null string is not.
@@ -55,8 +55,8 @@ IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const &
 IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() &&
 {
     IDBDatabaseIdentifier identifier;
-    identifier.m_databaseName = WTFMove(m_databaseName).isolatedCopy();
-    identifier.m_origin = WTFMove(m_origin).isolatedCopy();
+    identifier.m_databaseName = WTF::move(m_databaseName).isolatedCopy();
+    identifier.m_origin = WTF::move(m_origin).isolatedCopy();
     identifier.m_isTransient = m_isTransient;
     return identifier;
 }

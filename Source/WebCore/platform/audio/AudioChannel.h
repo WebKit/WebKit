@@ -81,21 +81,21 @@ public:
         m_span = m_span.first(newLength);
     }
 
-    std::span<const float> span() const { return m_span; }
-    std::span<float> mutableSpan()
+    std::span<const float> span() const LIFETIME_BOUND { return m_span; }
+    std::span<float> mutableSpan() LIFETIME_BOUND
     {
         clearSilentFlag();
         return m_span;
     }
 
     // Direct access to PCM sample data. Non-const accessor clears silent flag.
-    float* mutableData()
+    float* mutableData() LIFETIME_BOUND
     {
         clearSilentFlag();
         return m_span.data();
     }
 
-    const float* data() const { return m_span.data(); }
+    const float* data() const LIFETIME_BOUND { return m_span.data(); }
 
     // Zeroes out all sample values in buffer.
     void zero()

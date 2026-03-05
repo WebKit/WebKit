@@ -36,6 +36,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
+#include "CSSSelector.h"
 #include "DOMFormData.h"
 #include "DocumentEventLoop.h"
 #include "DocumentPage.h"
@@ -57,6 +58,7 @@
 #include "LocalizedStrings.h"
 #include "NodeRenderStyle.h"
 #include "PlatformKeyboardEvent.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderTextControlSingleLine.h"
@@ -96,17 +98,18 @@ TextFieldInputType::~TextFieldInputType()
 bool TextFieldInputType::isKeyboardFocusable(const FocusEventData&) const
 {
     ASSERT(element());
+    Ref element = *this->element();
 #if PLATFORM(IOS_FAMILY)
-    if (element()->isReadOnly())
+    if (element->isReadOnly())
         return false;
 #endif
-    return protectedElement()->isTextFormControlFocusable();
+    return element->isTextFormControlFocusable();
 }
 
 bool TextFieldInputType::isMouseFocusable() const
 {
     ASSERT(element());
-    return protectedElement()->isTextFormControlFocusable();
+    return protect(element())->isTextFormControlFocusable();
 }
 
 bool TextFieldInputType::isEmptyValue() const
@@ -197,7 +200,7 @@ void TextFieldInputType::handleClickEvent(MouseEvent&)
 void TextFieldInputType::showPicker()
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (protectedElement()->hasDataList())
+    if (protect(element())->hasDataList())
         displaySuggestions(DataListSuggestionActivationType::ControlClicked);
 #endif
 }
@@ -214,7 +217,7 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
         event.setDefaultHandled();
     }
     RefPtr frame = element->document().frame();
-    if (frame && frame->protectedEditor()->doTextFieldCommandFromEvent(element.get(), &event))
+    if (frame && protect(frame->editor())->doTextFieldCommandFromEvent(element.get(), &event))
         event.setDefaultHandled();
     return ShouldCallBaseEventHandler::Yes;
 }
@@ -222,7 +225,7 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
 void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent& event)
 {
     ASSERT(element());
-    if (!protectedElement()->isMutable())
+    if (!protect(element())->isMutable())
         return;
     if (m_suggestionPicker)
         return;
@@ -246,7 +249,7 @@ void TextFieldInputType::forwardEvent(Event& event)
     if (isFocusEvent || isBlurEvent)
         capsLockStateMayHaveChanged();
     if (event.isMouseEvent() || isFocusEvent || isBlurEvent)
-        protectedElement()->forwardEvent(event);
+        protect(element())->forwardEvent(event);
 }
 
 void TextFieldInputType::elementDidBlur()
@@ -266,7 +269,7 @@ void TextFieldInputType::elementDidBlur()
 
     CheckedPtr innerLayerScrollable = innerLayer->ensureLayerScrollableArea();
 
-    bool isLeftToRightDirection = downcast<RenderTextControlSingleLine>(*renderer).style().isLeftToRightDirection();
+    bool isLeftToRightDirection = downcast<RenderTextControlSingleLine>(*renderer).style().writingMode().deprecatedIsLeftToRightDirection();
     ScrollOffset scrollOffset(isLeftToRightDirection ? 0 : innerLayerScrollable->scrollWidth(), 0);
     innerLayerScrollable->scrollToOffset(scrollOffset);
 
@@ -279,14 +282,14 @@ void TextFieldInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection)
     ASSERT_UNUSED(oldFocusedNode, oldFocusedNode != element());
     Ref element = *this->element();
     if (RefPtr frame = element->document().frame())
-        frame->protectedEditor()->textFieldDidBeginEditing(element.get());
+        protect(frame->editor())->textFieldDidBeginEditing(element.get());
 }
 
 void TextFieldInputType::handleBlurEvent()
 {
     InputType::handleBlurEvent();
     ASSERT(element());
-    protectedElement()->endEditing();
+    protect(element())->endEditing();
 }
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event& event)
@@ -300,24 +303,19 @@ RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(RenderStyle&& s
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderTextControlSingleLine>(RenderObject::Type::TextControlSingleLine, *protectedElement(), WTFMove(style));
-}
-
-bool TextFieldInputType::needsContainer() const
-{
-    return false;
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderTextControlSingleLine>(RenderObject::Type::TextControlSingleLine, *protect(element()), WTF::move(style));
 }
 
 bool TextFieldInputType::shouldHaveSpinButton() const
 {
     ASSERT(element());
-    return RenderTheme::singleton().shouldHaveSpinButton(*protectedElement());
+    return RenderTheme::singleton().shouldHaveSpinButton(*protect(element()));
 }
 
 bool TextFieldInputType::shouldHaveCapsLockIndicator() const
 {
     ASSERT(element());
-    return RenderTheme::singleton().shouldHaveCapsLockIndicator(*protectedElement());
+    return RenderTheme::singleton().shouldHaveCapsLockIndicator(*protect(element()));
 }
 
 void TextFieldInputType::createShadowSubtree()
@@ -455,16 +453,6 @@ void TextFieldInputType::readOnlyStateChanged()
     updateAutoFillButton();
 }
 
-bool TextFieldInputType::supportsReadOnly() const
-{
-    return true;
-}
-
-bool TextFieldInputType::shouldUseInputMethod() const
-{
-    return true;
-}
-
 void TextFieldInputType::createDataListDropdownIndicator()
 {
     ASSERT(!m_dataListDropdownIndicator);
@@ -474,7 +462,7 @@ void TextFieldInputType::createDataListDropdownIndicator()
         return;
     
     ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
-    Ref dataListDropdownIndicator = DataListButtonElement::create(element()->protectedDocument().get(), *this);
+    Ref dataListDropdownIndicator = DataListButtonElement::create(protect(element()->document()).get(), *this);
     m_dataListDropdownIndicator = dataListDropdownIndicator.copyRef();
     RefPtr { m_container }->appendChild(dataListDropdownIndicator);
     dataListDropdownIndicator->setUserAgentPart(UserAgentParts::webkitListButton());
@@ -645,14 +633,14 @@ void TextFieldInputType::updatePlaceholderText()
         return;
     }
     if (!m_placeholder) {
-        Ref placeholder = TextControlPlaceholderElement::create(element->protectedDocument());
+        Ref placeholder = TextControlPlaceholderElement::create(protect(element->document()));
         m_placeholder = placeholder.copyRef();
         if (RefPtr container = m_container)
-            element->protectedUserAgentShadowRoot()->insertBefore(placeholder, container);
+            protect(element->userAgentShadowRoot())->insertBefore(placeholder, container);
         else
-            element->protectedUserAgentShadowRoot()->insertBefore(placeholder, innerTextElement());
+            protect(element->userAgentShadowRoot())->insertBefore(placeholder, innerTextElement());
     }
-    RefPtr { m_placeholder }->setInnerText(WTFMove(placeholderText));
+    RefPtr { m_placeholder }->setInnerText(WTF::move(placeholderText));
 }
 
 bool TextFieldInputType::appendFormData(DOMFormData& formData) const
@@ -707,7 +695,7 @@ void TextFieldInputType::didSetValueByUserEdit()
     if (!element->focused())
         return;
     if (RefPtr frame = element->document().frame())
-        frame->protectedEditor()->textDidChangeInTextField(element.get());
+        protect(frame->editor())->textDidChangeInTextField(element.get());
     if (element->hasDataList())
         displaySuggestions(DataListSuggestionActivationType::TextChanged);
 }
@@ -745,7 +733,7 @@ void TextFieldInputType::focusAndSelectSpinButtonOwner()
 bool TextFieldInputType::shouldSpinButtonRespondToMouseEvents() const
 {
     ASSERT(element());
-    return protectedElement()->isMutable();
+    return protect(element())->isMutable();
 }
 
 bool TextFieldInputType::shouldDrawCapsLockIndicator() const
@@ -765,7 +753,7 @@ bool TextFieldInputType::shouldDrawCapsLockIndicator() const
     if (!frame)
         return false;
 
-    if (!frame->checkedSelection()->isFocusedAndActive())
+    if (!protect(frame->selection())->isFocusedAndActive())
         return false;
 
     return PlatformKeyboardEvent::currentCapsLockState();
@@ -796,9 +784,9 @@ void TextFieldInputType::autoFillButtonElementWasClicked()
     if (!page)
         return;
 
-    auto event = Event::create(eventNames().webkitautofillrequestEvent, Event::CanBubble::No, Event::IsCancelable::No);
+    auto event = Event::create(eventNames().webkitautofillrequestEvent, Event::CanBubble::No, Event::IsCancelable::No, Event::IsComposed::Yes);
     event->setIsAutofillEvent();
-    element->dispatchEvent(WTFMove(event));
+    element->dispatchEvent(WTF::move(event));
 
     page->chrome().client().handleAutoFillButtonClick(*element);
 }
@@ -829,7 +817,7 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
     innerBlock->appendChild(Ref { *m_innerText });
 
     if (selectionState) {
-        document->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [selectionState = *selectionState, element = WeakPtr { element }] {
+        protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [selectionState = *selectionState, element = WeakPtr { element }] {
             if (!element || !element->focused())
                 return;
 
@@ -851,7 +839,7 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
         return;
 
     ASSERT(element());
-    Ref autoFillButton = AutoFillButtonElement::create(element()->protectedDocument().get(), *this);
+    Ref autoFillButton = AutoFillButtonElement::create(protect(element()->document()).get(), *this);
     m_autoFillButton = autoFillButton.copyRef();
     RefPtr { m_container }->appendChild(autoFillButton);
 
@@ -934,7 +922,7 @@ IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
     if (!element()->renderer())
         return IntRect();
     Ref element = *this->element();
-    return element->protectedDocument()->protectedView()->contentsToRootView(element->checkedRenderer()->absoluteBoundingBoxRect());
+    return protect(protect(element->document())->view())->contentsToRootView(protect(element->renderer())->absoluteBoundingBoxRect());
 }
 
 Vector<DataListSuggestion> TextFieldInputType::suggestions()
@@ -964,13 +952,13 @@ Vector<DataListSuggestion> TextFieldInputType::suggestions()
                 suggestion.label = { };
 
             if (elementValue.isEmpty() || suggestion.value.startsWithIgnoringASCIICase(elementValue))
-                suggestions.append(WTFMove(suggestion));
+                suggestions.append(WTF::move(suggestion));
             else if (suggestion.value.containsIgnoringASCIICase(elementValue) || (canShowLabels && suggestion.label.containsIgnoringASCIICase(elementValue)))
-                matchesContainingValue.append(WTFMove(suggestion));
+                matchesContainingValue.append(WTF::move(suggestion));
         }
     }
 
-    suggestions.appendVector(WTFMove(matchesContainingValue));
+    suggestions.appendVector(WTF::move(matchesContainingValue));
     m_cachedSuggestions = std::make_pair(elementValue, suggestions);
 
     return suggestions;
@@ -978,7 +966,7 @@ Vector<DataListSuggestion> TextFieldInputType::suggestions()
 
 void TextFieldInputType::didSelectDataListOption(const String& selectedOption)
 {
-    protectedElement()->setValue(selectedOption, DispatchInputAndChangeEvent);
+    protect(element())->setValue(selectedOption, DispatchInputAndChangeEvent);
 }
 
 void TextFieldInputType::didCloseSuggestions()
@@ -986,39 +974,44 @@ void TextFieldInputType::didCloseSuggestions()
     m_cachedSuggestions = { };
     if (RefPtr suggestionPicker = std::exchange(m_suggestionPicker, nullptr))
         suggestionPicker->detach();
+    setPopupIsVisible(false);
     if (CheckedPtr renderer = element()->renderer())
         renderer->repaint();
 }
 
 void TextFieldInputType::displaySuggestions(DataListSuggestionActivationType type)
 {
-    if (element()->isDisabledFormControl() || !element()->renderer())
+    Ref element = *this->element();
+    if (element->isDisabledFormControl() || !element->renderer())
         return;
 
     if (!UserGestureIndicator::processingUserGesture() && !(type == DataListSuggestionActivationType::TextChanged || type == DataListSuggestionActivationType::DataListMayHaveChanged))
         return;
 
-    if (!m_suggestionPicker && suggestions().size() > 0)
+    if (!m_suggestionPicker && suggestions().size() > 0) {
+        setPopupIsVisible(true);
         m_suggestionPicker = chrome()->createDataListSuggestionPicker(*this);
+    }
 
-    if (RefPtr suggestionPicker = m_suggestionPicker)
+    if (RefPtr suggestionPicker = m_suggestionPicker) {
+        setPopupIsVisible(true);
         suggestionPicker->displayWithActivationType(type);
+    }
 }
 
 void TextFieldInputType::closeSuggestions()
 {
     if (RefPtr suggestionPicker = m_suggestionPicker)
         suggestionPicker->close();
+    setPopupIsVisible(false);
 }
 
-bool TextFieldInputType::isPresentingAttachedView() const
+void TextFieldInputType::setPopupIsVisible(bool visible)
 {
-    return !!m_suggestionPicker;
-}
-
-bool TextFieldInputType::isFocusingWithDataListDropdown() const
-{
-    return m_isFocusingWithDataListDropdown;
+    if (m_popupIsVisible == visible || !element())
+        return;
+    Style::PseudoClassChangeInvalidation styleInvalidation(*protect(element()), CSSSelector::PseudoClass::Open, visible);
+    m_popupIsVisible = visible;
 }
 
 } // namespace WebCore

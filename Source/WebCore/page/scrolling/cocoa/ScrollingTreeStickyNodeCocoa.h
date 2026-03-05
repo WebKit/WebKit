@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingTree.h>
 #include <WebCore/ScrollingTreeStickyNode.h>
@@ -47,6 +45,9 @@ private:
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) final;
     void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
+#if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
+    void willBeDestroyed() final;
+#endif
     FloatPoint layerTopLeft() const final;
     CALayer *layer() const final { return m_layer.get(); }
     bool hasViewportClippingLayer() const final;
@@ -60,5 +61,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeStickyNodeCocoa, isStickyNode())
-
-#endif // ENABLE(ASYNC_SCROLLING)

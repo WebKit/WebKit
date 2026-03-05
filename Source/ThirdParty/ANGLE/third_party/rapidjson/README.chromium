@@ -2,6 +2,7 @@ Name: RapidJSON
 URL: https://github.com/TenCent/rapidjson
 Version: N/A
 Revision: DEPS
+Update Mechanism: Manual
 License: MIT, BSD-3-Clause, JSON
 License File: src/license.txt
 Shipped: no

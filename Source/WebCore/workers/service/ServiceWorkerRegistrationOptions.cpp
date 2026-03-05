@@ -35,7 +35,7 @@ ServiceWorkerRegistrationOptions ServiceWorkerRegistrationOptions::isolatedCopy(
 
 ServiceWorkerRegistrationOptions ServiceWorkerRegistrationOptions::isolatedCopy() &&
 {
-    return ServiceWorkerRegistrationOptions { WTFMove(scope).isolatedCopy(), type, updateViaCache };
+    return ServiceWorkerRegistrationOptions { WTF::move(scope).isolatedCopy(), type, updateViaCache };
 }
 
 } // namespace WebCore

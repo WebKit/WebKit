@@ -77,7 +77,7 @@ const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
                 if (!g_strcmp0(type, "Automation"))
                     targetList.append({ targetID, name, static_cast<bool>(isPaired) });
             }
-            sessionHost.setTargetList(connectionID, WTFMove(targetList));
+            sessionHost.setTargetList(connectionID, WTF::move(targetList));
         }}
     },
     { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
@@ -95,7 +95,7 @@ const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
 
 void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
 {
-    launchBrowser(WTFMove(completionHandler));
+    launchBrowser(WTF::move(completionHandler));
 }
 
 bool SessionHost::isConnected() const
@@ -108,9 +108,9 @@ struct ConnectToBrowserAsyncData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ConnectToBrowserAsyncData);
     ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& inspectorAddress, GCancellable* cancellable, Function<void(std::optional<String>)>&& completionHandler)
         : sessionHost(sessionHost)
-        , inspectorAddress(WTFMove(inspectorAddress))
+        , inspectorAddress(WTF::move(inspectorAddress))
         , cancellable(cancellable)
-        , completionHandler(WTFMove(completionHandler))
+        , completionHandler(WTF::move(completionHandler))
     {
     }
 
@@ -151,7 +151,7 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
     );
     if (!targetIp.isEmpty()) {
         m_isRemoteBrowser = true;
-        connectToBrowser(makeUnique<ConnectToBrowserAsyncData>(this, WTFMove(inspectorAddress), m_cancellable.get(), WTFMove(completionHandler)));
+        connectToBrowser(makeUnique<ConnectToBrowserAsyncData>(this, WTF::move(inspectorAddress), m_cancellable.get(), WTF::move(completionHandler)));
         return;
     }
 
@@ -183,7 +183,7 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
         sessionHost->m_browser = nullptr;
     }, this);
 
-    connectToBrowser(makeUnique<ConnectToBrowserAsyncData>(this, WTFMove(inspectorAddress), m_cancellable.get(), WTFMove(completionHandler)));
+    connectToBrowser(makeUnique<ConnectToBrowserAsyncData>(this, WTF::move(inspectorAddress), m_cancellable.get(), WTF::move(completionHandler)));
 }
 
 void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& data)
@@ -191,7 +191,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
     if (!m_browser && !m_isRemoteBrowser)
         return;
 
-    RunLoop::mainSingleton().dispatchAfter(100_ms, [connectToBrowserData = WTFMove(data)]() mutable {
+    RunLoop::mainSingleton().dispatchAfter(100_ms, [connectToBrowserData = WTF::move(data)]() mutable {
         auto* data = connectToBrowserData.release();
         if (g_cancellable_is_cancelled(data->cancellable.get()))
             return;
@@ -207,14 +207,14 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                         return;
 
                     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED)) {
-                        data->sessionHost->connectToBrowser(WTFMove(data));
+                        data->sessionHost->connectToBrowser(WTF::move(data));
                         return;
                     }
                     data->completionHandler(String::fromUTF8(error->message));
                     return;
                 }
 
-                data->sessionHost->setupConnection(SocketConnection::create(WTFMove(connection), messageHandlers(), data->sessionHost));
+                data->sessionHost->setupConnection(SocketConnection::create(WTF::move(connection), messageHandlers(), data->sessionHost));
                 data->completionHandler(std::nullopt);
         }, data);
     });
@@ -235,7 +235,7 @@ void SessionHost::connectionDidClose()
 void SessionHost::setupConnection(Ref<SocketConnection>&& connection)
 {
     ASSERT(!m_socketConnection);
-    m_socketConnection = WTFMove(connection);
+    m_socketConnection = WTF::move(connection);
 }
 
 static bool matchBrowserOptions(const String& browserName, const String& browserVersion, const Capabilities& capabilities)
@@ -330,7 +330,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
 {
     ASSERT(m_socketConnection);
     ASSERT(!m_startSessionCompletionHandler);
-    m_startSessionCompletionHandler = WTFMove(completionHandler);
+    m_startSessionCompletionHandler = WTF::move(completionHandler);
     m_sessionID = createVersion4UUIDString();
     GVariantBuilder builder;
     m_socketConnection->sendMessage("StartAutomationSession", g_variant_new("(sa{sv})", m_sessionID.utf8().data(), buildSessionCapabilities(&builder) ? &builder : nullptr));

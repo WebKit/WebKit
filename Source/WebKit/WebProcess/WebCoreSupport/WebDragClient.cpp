@@ -39,9 +39,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDragClient);
 void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData&)
 {
     if (action == DragDestinationAction::Load)
-        protectedPage()->willPerformLoadDragDestinationAction();
+        protect(m_page.get())->willPerformLoadDragDestinationAction();
     else
-        protectedPage()->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
+        protect(m_page.get())->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
 }
 
 void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&)
@@ -50,7 +50,7 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint
 
 OptionSet<DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
-    return protectedPage()->allowedDragSourceActions();
+    return protect(m_page.get())->allowedDragSourceActions();
 }
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
@@ -62,11 +62,6 @@ void WebDragClient::didConcludeEditDrag()
 {
 }
 #endif
-
-RefPtr<WebPage> WebDragClient::protectedPage()
-{
-    return m_page.get();
-}
 
 } // namespace WebKit
 

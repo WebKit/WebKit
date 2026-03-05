@@ -136,7 +136,7 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
                     swOldConnection->unregisterServiceWorkerClient(*contextIdentifier);
                     if (RefPtr swNewConnection = connection->swConnection()) {
                         clientData->serviceWorkerClientData.identifier = *initializationData.clientIdentifier;
-                        swNewConnection->registerServiceWorkerClient(WTFMove(clientData->clientOrigin), WTFMove(clientData->serviceWorkerClientData), clientData->controllingServiceWorkerRegistrationIdentifier, WTFMove(clientData->userAgent));
+                        swNewConnection->registerServiceWorkerClient(WTF::move(clientData->clientOrigin), WTF::move(clientData->serviceWorkerClientData), clientData->controllingServiceWorkerRegistrationIdentifier, WTF::move(clientData->userAgent));
                     }
                 }
             }
@@ -161,7 +161,7 @@ void WebSharedWorkerServerToContextConnection::resumeSharedWorker(WebCore::Share
 void WebSharedWorkerServerToContextConnection::postConnectEvent(const WebSharedWorker& sharedWorker, const WebCore::TransferredMessagePort& port, CompletionHandler<void(bool)>&& completionHandler)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("postConnectEvent: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
-    sendWithAsyncReply(Messages::WebSharedWorkerContextManagerConnection::PostConnectEvent { sharedWorker.identifier(), port, sharedWorker.origin().clientOrigin.toString() }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebSharedWorkerContextManagerConnection::PostConnectEvent { sharedWorker.identifier(), port, sharedWorker.origin().clientOrigin }, WTF::move(completionHandler));
 }
 
 void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSharedWorker& sharedWorker)

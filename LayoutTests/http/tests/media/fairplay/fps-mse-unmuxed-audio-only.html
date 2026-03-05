@@ -6,6 +6,8 @@
     <script src=support.js></script>
     <script src="eme2016.js"></script>
     <script>
+    var isPlayingAudio = false;
+
     window.addEventListener('load', async event => {
         startTest().then(endTest).catch(failTest);
     });
@@ -41,7 +43,15 @@
         consoleWrite('Playing');
         await shouldResolve(run('audio.play()'));
 
-        await testExpectedEventually('audio.currentTime', '0.1', '>', 1000);
+        await testExpectedEventually('audio.currentTime', '0.2', '>', 2000);
+
+        consoleWrite('-');
+        consoleWrite('Verifying audio is producing audible sound');
+        
+        if (window.internals) {
+            isPlayingAudio = internals.pageMediaState().includes('IsPlayingAudio') && audio.currentTime > 0;
+            testExpected('isPlayingAudio', true, '==');
+        }
     }
     </script>
 </head>

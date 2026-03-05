@@ -44,7 +44,7 @@ namespace WebKit {
     RetainPtr<id> NAME = dict.get()[@#NAME];        \
     if ([NAME isKindOfClass:CLASS.class]) {         \
         auto var = WRAPPER(NAME.get());             \
-        m_data.NAME = WTFMove(var);                 \
+        m_data.NAME = WTF::move(var);                 \
     }
 
 #define SET_NSURLREQUESTDATA_PRIMITIVE(NAME, CLASS, PRIMITIVE) \
@@ -58,10 +58,6 @@ namespace WebKit {
             [dict setObject:var##KEY.get() forKey:@#KEY]; \
     }
 
-#define SET_DICT_FROM_MEMBER(KEY) \
-    if (auto var##KEY = m_data.KEY.toID()) \
-        [dict setObject:var##KEY.get() forKey:@#KEY] \
-
 #define SET_DICT_FROM_OPTIONAL_PRIMITIVE(KEY, CLASS, PRIMITIVE)                    \
     if (m_data.KEY)                                                                \
         [dict setObject:[NSNumber numberWith##PRIMITIVE:*m_data.KEY] forKey:@#KEY]
@@ -69,19 +65,50 @@ namespace WebKit {
 #define SET_DICT_FROM_PRIMITIVE(KEY, CLASS, PRIMITIVE) \
     [dict setObject:[NSNumber numberWith##PRIMITIVE:m_data.KEY] forKey:@#KEY]
 
+#define SET_PROTOCOL_PROPERTY_BOOL(dict, key, target) \
+    if (RetainPtr<id> value = [dict objectForKey:key]; [value isKindOfClass:[NSNumber class]]) \
+        target = [value boolValue]
+
+#define SET_PROTOCOL_PROPERTY(dict, key, CLASS, WRAPPER, target) \
+    if (RetainPtr<id> value = [dict objectForKey:key]; [value isKindOfClass:CLASS.class]) \
+        target = WRAPPER(value.get())
+
+#define SET_PROTOCOL_DICT_BOOL(dict, key, value) \
+    if (value) \
+        [dict setObject:[NSNumber numberWithBool:*value] forKey:key]
+
+#define SET_PROTOCOL_DICT_MEMBER(dict, key, value) \
+    if (value) { \
+        if (RetainPtr obj = value->toID()) \
+            [dict setObject:obj.get() forKey:key]; \
+    }
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCNSURLRequest);
 
 CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
 {
     RetainPtr dict = [request _webKitPropertyListData];
 
-    SET_NSURLREQUESTDATA(protocolProperties, NSDictionary, CoreIPCPlistDictionary);
+    if (RetainPtr protocolPropertiesDict = dynamic_objc_cast<NSDictionary>(dict.get()[@"protocolProperties"])) {
+        ProtocolProperties props;
+        SET_PROTOCOL_PROPERTY_BOOL(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation", props.isTopLevelNavigation);
+        SET_PROTOCOL_PROPERTY_BOOL(protocolPropertiesDict, @"kCFURLRequestAllowAllPOSTCaching", props.allowAllPOSTCaching);
+        SET_PROTOCOL_PROPERTY(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertySiteForCookies", NSString, CoreIPCString, props.siteForCookies);
+        SET_PROTOCOL_PROPERTY(protocolPropertiesDict, @"_kCFURLCachePartitionKey", NSString, CoreIPCString, props.cachePartitionKey);
+        SET_PROTOCOL_PROPERTY_BOOL(protocolPropertiesDict, @"WKVeryLowLoadPriority", props.wkVeryLowLoadPriority);
+        SET_PROTOCOL_PROPERTY(protocolPropertiesDict, @"NSURLRequestFileProtocolExpectedDevice", NSNumber, CoreIPCNumber, props.fileProtocolExpectedDevice);
+        SET_PROTOCOL_PROPERTY_BOOL(protocolPropertiesDict, @"_kCFURLConnectionPropertyShouldSniff", props.shouldSniff);
+        SET_PROTOCOL_PROPERTY_BOOL(protocolPropertiesDict, @"kCFURLRequestContentDecoderSkipURLCheck", props.contentDecoderSkipURLCheck);
+
+        m_data.protocolProperties = WTF::move(props);
+    }
+
     SET_NSURLREQUESTDATA_PRIMITIVE(isMutable, NSNumber, bool);
 
     RetainPtr<id> url = dict.get()[@"URL"];
     if ([url isKindOfClass:NSURL.class]) {
         auto var = CoreIPCURL(url.get());
-        m_data.url = WTFMove(var);
+        m_data.url = WTF::move(var);
     }
 
     SET_NSURLREQUESTDATA_PRIMITIVE(timeout, NSNumber, double);
@@ -139,7 +166,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
                 vector.append({ key, nsString.get() });
         }
         vector.shrinkToFit();
-        m_data.headerFields = WTFMove(vector);
+        m_data.headerFields = WTF::move(vector);
     }
 
     SET_NSURLREQUESTDATA(body, NSData, CoreIPCData);
@@ -151,15 +178,15 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
         for (id element in bodyParts.get()) {
             if ([element isKindOfClass:[NSString class]]) {
                 CoreIPCString tooAdd(element);
-                vector.append(WTFMove(tooAdd));
+                vector.append(WTF::move(tooAdd));
             }
             if ([element isKindOfClass:[NSData class]]) {
                 CoreIPCData tooAdd(element);
-                vector.append(WTFMove(tooAdd));
+                vector.append(WTF::move(tooAdd));
             }
         }
         vector.shrinkToFit();
-        m_data.bodyParts = WTFMove(vector);
+        m_data.bodyParts = WTF::move(vector);
     }
 
     SET_NSURLREQUESTDATA_PRIMITIVE(startTimeoutTime, NSNumber, double);
@@ -212,12 +239,12 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
                 vector.append(CoreIPCNumber(element));
         }
         vector.shrinkToFit();
-        m_data.contentDispositionEncodingFallbackArray = WTFMove(vector);
+        m_data.contentDispositionEncodingFallbackArray = WTF::move(vector);
     }
 }
 
 CoreIPCNSURLRequest::CoreIPCNSURLRequest(CoreIPCNSURLRequestData&& data)
-    : m_data(WTFMove(data)) { }
+    : m_data(WTF::move(data)) { }
 
 CoreIPCNSURLRequest::CoreIPCNSURLRequest(const RetainPtr<NSURLRequest>& request)
     : CoreIPCNSURLRequest(request.get()) { }
@@ -227,7 +254,20 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 {
     RetainPtr dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:CoreIPCNSURLRequestData::numberOfFields]);
 
-    SET_DICT_FROM_OPTIONAL_MEMBER(protocolProperties);
+    if (m_data.protocolProperties) {
+        RetainPtr protocolPropertiesDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:8]);
+        SET_PROTOCOL_DICT_BOOL(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation", m_data.protocolProperties->isTopLevelNavigation);
+        SET_PROTOCOL_DICT_BOOL(protocolPropertiesDict, @"kCFURLRequestAllowAllPOSTCaching", m_data.protocolProperties->allowAllPOSTCaching);
+        SET_PROTOCOL_DICT_MEMBER(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertySiteForCookies", m_data.protocolProperties->siteForCookies);
+        SET_PROTOCOL_DICT_MEMBER(protocolPropertiesDict, @"_kCFURLCachePartitionKey", m_data.protocolProperties->cachePartitionKey);
+        SET_PROTOCOL_DICT_BOOL(protocolPropertiesDict, @"WKVeryLowLoadPriority", m_data.protocolProperties->wkVeryLowLoadPriority);
+        SET_PROTOCOL_DICT_MEMBER(protocolPropertiesDict, @"NSURLRequestFileProtocolExpectedDevice", m_data.protocolProperties->fileProtocolExpectedDevice);
+        SET_PROTOCOL_DICT_BOOL(protocolPropertiesDict, @"_kCFURLConnectionPropertyShouldSniff", m_data.protocolProperties->shouldSniff);
+        SET_PROTOCOL_DICT_BOOL(protocolPropertiesDict, @"kCFURLRequestContentDecoderSkipURLCheck", m_data.protocolProperties->contentDecoderSkipURLCheck);
+
+        [dict setObject:protocolPropertiesDict.get() forKey:@"protocolProperties"];
+    }
+
     SET_DICT_FROM_PRIMITIVE(isMutable, NSNumber, Bool);
 
     if (auto nsURL = m_data.url.toID())
@@ -250,7 +290,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
     [dict setObject:[NSNumber numberWithUnsignedChar:static_cast<uint8_t>(m_data.networkServiceType)] forKey:@"networkServiceType"];
 
     int clampedRequestPriority = std::min(std::max(m_data.requestPriority, -1),
-        static_cast<int>(WTF::enumToUnderlyingType(WebCore::ResourceLoadPriority::Highest)));
+        static_cast<int>(std::to_underlying(WebCore::ResourceLoadPriority::Highest)));
     [dict setObject:[NSNumber numberWithInt:clampedRequestPriority] forKey:@"requestPriority"];
 
     SET_DICT_FROM_OPTIONAL_PRIMITIVE(isHTTP, NSNumber, Bool);
@@ -340,9 +380,12 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 
 #undef SET_NSURLREQUESTDATA
 #undef SET_NSURLREQUESTDATA_PRIMITIVE
-#undef SET_DICT_FROM_MEMBER
 #undef SET_DICT_FROM_OPTIONAL_MEMBER
 #undef SET_DICT_FROM_PRIMITIVE
 #undef SET_DICT_FROM_OPTIONAL_PRIMITIVE
+#undef SET_PROTOCOL_PROPERTY_BOOL
+#undef SET_PROTOCOL_PROPERTY
+#undef SET_PROTOCOL_DICT_BOOL
+#undef SET_PROTOCOL_DICT_MEMBER
 
 #endif // PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)

@@ -46,7 +46,7 @@ void FileIconLoader::invalidate()
 void FileIconLoader::iconLoaded(RefPtr<Icon>&& icon)
 {
     if (m_client)
-        m_client->iconLoaded(WTFMove(icon));
+        m_client->iconLoaded(WTF::move(icon));
 }
 
 FileIconLoader::FileIconLoader(FileIconLoaderClient& client)

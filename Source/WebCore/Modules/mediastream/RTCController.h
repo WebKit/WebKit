@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include <WebCore/EventTarget.h>
-#include <WebCore/SecurityOrigin.h>
+#include "EventTarget.h"
+#include "SecurityOrigin.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>

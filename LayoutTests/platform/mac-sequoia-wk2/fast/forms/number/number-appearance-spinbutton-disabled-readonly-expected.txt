@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
             text run at (248,8) width 87: " Normal state"
       RenderBlock {DIV} at (0,81) size 784x29
         RenderInline {LABEL} at (0,8) size 341x18
-          RenderTextControl {INPUT} at (0,0) size 247x29 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+          RenderTextControl {INPUT} at (0,0) size 247x29 [color=oklab(0.34 0 0)] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
             RenderFlexibleBox {DIV} at (3,0) size 241x29
               RenderBlock {DIV} at (0,3) size 222x23
           RenderText {#text} at (246,8) size 95x18

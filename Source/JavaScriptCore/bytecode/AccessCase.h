@@ -322,13 +322,13 @@ public:
 protected:
     AccessCase(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&);
     AccessCase(AccessCase&& other)
-        : m_type(WTFMove(other.m_type))
-        , m_viaGlobalProxy(WTFMove(other.m_viaGlobalProxy))
-        , m_offset(WTFMove(other.m_offset))
-        , m_structureID(WTFMove(other.m_structureID))
-        , m_conditionSet(WTFMove(other.m_conditionSet))
-        , m_polyProtoAccessChain(WTFMove(other.m_polyProtoAccessChain))
-        , m_identifier(WTFMove(other.m_identifier))
+        : m_type(WTF::move(other.m_type))
+        , m_viaGlobalProxy(WTF::move(other.m_viaGlobalProxy))
+        , m_offset(WTF::move(other.m_offset))
+        , m_structureID(WTF::move(other.m_structureID))
+        , m_conditionSet(WTF::move(other.m_conditionSet))
+        , m_polyProtoAccessChain(WTF::move(other.m_polyProtoAccessChain))
+        , m_identifier(WTF::move(other.m_identifier))
     { }
 
     AccessCase(const AccessCase& other)

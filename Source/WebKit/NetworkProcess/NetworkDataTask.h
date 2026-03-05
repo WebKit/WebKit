@@ -115,11 +115,10 @@ public:
     virtual State state() const = 0;
 
     NetworkDataTaskClient* client() const { return m_client.get(); }
-    RefPtr<NetworkDataTaskClient> protectedClient() const { return client(); }
     void clearClient() { m_client = nullptr; }
 
     std::optional<DownloadID> pendingDownloadID() const { return m_pendingDownloadID.asOptional(); }
-    PendingDownload* pendingDownload() const;
+    PendingDownload* NODELETE pendingDownload() const;
     void setPendingDownloadID(DownloadID downloadID)
     {
         ASSERT(!m_pendingDownloadID);
@@ -128,13 +127,13 @@ public:
     void setPendingDownload(PendingDownload&);
 
     virtual void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) { m_pendingDownloadLocation = filename; }
-    const String& pendingDownloadLocation() const { return m_pendingDownloadLocation; }
+    const String& pendingDownloadLocation() const LIFETIME_BOUND { return m_pendingDownloadLocation; }
     bool isDownload() const { return !!m_pendingDownloadID; }
 
-    const WebCore::ResourceRequest& firstRequest() const { return m_firstRequest; }
+    const WebCore::ResourceRequest& firstRequest() const LIFETIME_BOUND { return m_firstRequest; }
     virtual String suggestedFilename() const { return String(); }
     void setSuggestedFilename(const String& suggestedName) { m_suggestedFilename = suggestedName; }
-    const String& partition() { return m_partition; }
+    const String& partition() LIFETIME_BOUND { return m_partition; }
 
     bool isTopLevelNavigation() const { return m_dataTaskIsForMainFrameNavigation; }
 
@@ -153,12 +152,6 @@ public:
     PAL::SessionID sessionID() const { return m_session->sessionID(); }
     const NetworkSession* networkSession() const { return m_session.get(); }
     NetworkSession* networkSession() { return m_session.get(); }
-
-    CheckedPtr<NetworkSession> checkedNetworkSession()
-    {
-        ASSERT(m_session);
-        return m_session.get();
-    }
 
     virtual void setTimingAllowFailedFlag() { }
 

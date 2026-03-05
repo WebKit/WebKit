@@ -26,7 +26,7 @@
 
 // @internal
 
-function createInternalReadableStreamFromUnderlyingSource(underlyingSource, strategy)
+function createInternalReadableStreamFromUnderlyingSource(underlyingSource, strategy, optionalHighWatermark)
 {
     "use strict";
 
@@ -55,7 +55,7 @@ function createInternalReadableStreamFromUnderlyingSource(underlyingSource, stra
     // For now, we emulate this with underlyingSource with private properties.
     if (underlyingSource.@pull !== @undefined) {
         const size = @getByIdDirectPrivate(strategy, "size");
-        const highWaterMark = @getByIdDirectPrivate(strategy, "highWaterMark");
+        const highWaterMark = optionalHighWatermark !== @undefined ? optionalHighWatermark : @getByIdDirectPrivate(strategy, "highWaterMark");
         @setupReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark !== @undefined ? highWaterMark : 1, underlyingSource.@start, underlyingSource.@pull, underlyingSource.@cancel);
         return stream;
     }

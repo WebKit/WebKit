@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 527x19
+        RenderText {#text} at (0,0) size 527x20
           text run at (0,0) width 527: "The layering and positions of the boxes should not be affected by oveflow:hidden."
       RenderBlock (anonymous) at (0,36) size 784x475
         RenderText {#text} at (320,305) size 4x19
@@ -18,7 +18,7 @@ layer at (28,219) size 150x150
     RenderText zI: -1 {#text} at (0,0) size 0x0
 layer at (50,301) size 100x100
   RenderBlock (positioned) {DIV} at (22,82) size 100x100 [bgcolor=#008000] [border: (2px solid #000000)]
-    RenderText {#text} at (22,22) size 54x41
+    RenderText {#text} at (22,22) size 54x42
       text run at (22,22) width 54: "Behind"
       text run at (22,43) width 52: "behind"
 layer at (68,259) size 200x200 layerType: foreground only
@@ -41,7 +41,7 @@ layer at (352,64) size 150x150 backgroundClip at (402,114) size 180x180 clip at 
     RenderText zI: -1 {#text} at (0,0) size 0x0
 layer at (374,146) size 100x100 backgroundClip at (402,114) size 180x180 clip at (402,114) size 180x180
   RenderBlock (positioned) {DIV} at (22,82) size 100x100 [bgcolor=#008000] [border: (2px solid #000000)]
-    RenderText {#text} at (22,22) size 54x41
+    RenderText {#text} at (22,22) size 54x42
       text run at (22,22) width 54: "Behind"
       text run at (22,43) width 52: "behind"
 layer at (392,104) size 200x200 clip at (402,114) size 180x180 scrollWidth 230 scrollHeight 230 layerType: foreground only

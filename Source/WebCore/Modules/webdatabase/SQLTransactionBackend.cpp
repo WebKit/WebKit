@@ -231,9 +231,9 @@
 // ==============================================================================
 // The RefPtr chain goes something like this:
 //
-//     At birth (in DatabaseBackend::runTransaction()):
+//     At birth (in Database::runTransaction()):
 //     ====================================================
-//     DatabaseBackend                    // Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue points to ...
+//     Database                           // Deque<Ref<SQLTransaction>> m_transactionQueue points to ...
 //     --> SQLTransactionBackend          // RefPtr<SQLTransaction> m_frontend points to ...
 //         --> SQLTransaction             // RefPtr<SQLTransactionBackend> m_backend points to ...
 //             --> SQLTransactionBackend  // which is a circular reference.
@@ -246,7 +246,7 @@
 //     or if the database was interrupted. See comments on "What happens if a transaction
 //     is interrupted?" below for details.
 //
-//     After scheduling the transaction with the DatabaseThread (DatabaseBackend::scheduleTransaction()):
+//     After scheduling the transaction with the DatabaseThread (Database::scheduleTransaction()):
 //     ======================================================================================================
 //     DatabaseThread                         // MessageQueue<DatabaseTask> m_queue points to ...
 //     --> DatabaseTransactionTask            // RefPtr<SQLTransactionBackend> m_transaction points to ...
@@ -300,9 +300,9 @@
 //     Phase 1. After Birth, before scheduling
 //
 //     - To clean up, DatabaseThread::databaseThread() will call
-//       DatabaseBackend::close() during its shutdown.
-//     - DatabaseBackend::close() will iterate
-//       DatabaseBackend::m_transactionQueue and call
+//       Database::close() during its shutdown.
+//     - Database::close() will iterate
+//       Database::m_transactionQueue and call
 //       notifyDatabaseThreadIsShuttingDown() on each transaction there.
 //        
 //     Phase 2. After scheduling, before state AcquireLock
@@ -348,30 +348,34 @@ SQLTransactionBackend::SQLTransactionBackend(SQLTransaction& frontend)
 
 SQLTransactionBackend::~SQLTransactionBackend()
 {
-    ASSERT(!m_frontend.m_sqliteTransaction);
+#if ASSERT_ENABLED
+    RefPtr frontend = m_frontend.get();
+    ASSERT(!frontend || !frontend->m_sqliteTransaction);
+#endif
 }
 
 void SQLTransactionBackend::doCleanup()
 {
-    ASSERT(m_frontend.database().databaseThread().getThread() == &Thread::currentSingleton());
+    ASSERT(frontend()->database().databaseThread().getThread() == &Thread::currentSingleton());
 
-    m_frontend.releaseOriginLockIfNeeded();
+    Ref frontend = this->frontend();
+    frontend->releaseOriginLockIfNeeded();
 
-    Locker locker { m_frontend.m_statementLock };
-    m_frontend.m_statementQueue.clear();
+    Locker locker { frontend->m_statementLock };
+    frontend->m_statementQueue.clear();
 
-    if (m_frontend.m_sqliteTransaction) {
+    if (frontend->m_sqliteTransaction) {
         // In the event we got here because of an interruption or error (i.e. if
         // the transaction is in progress), we should roll it back here. Clearing
         // m_sqliteTransaction invokes SQLiteTransaction's destructor which does
         // just that. We might as well do this unconditionally and free up its
         // resources because we're already terminating.
-        m_frontend.m_sqliteTransaction = nullptr;
+        frontend->m_sqliteTransaction = nullptr;
     }
 
     // Release the lock on this database
-    if (m_frontend.m_lockAcquired)
-        m_frontend.m_database->transactionCoordinator().releaseLock(m_frontend);
+    if (frontend->m_lockAcquired)
+        frontend->m_database->transactionCoordinator().releaseLock(frontend.get());
 
     // Do some aggresive clean up here except for m_database.
     //
@@ -396,7 +400,7 @@ void SQLTransactionBackend::doCleanup()
     // SQLTransactionBackend is guaranteed to not destruct until the frontend
     // is also destructing.
 
-    m_frontend.m_wrapper = nullptr;
+    frontend->m_wrapper = nullptr;
 }
 
 SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQLTransactionState state)
@@ -427,7 +431,8 @@ void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
 {
     // Only honor the requested state transition if we're not supposed to be
     // cleaning up and shutting down:
-    if (m_frontend.m_database->opened()) {
+    Ref frontend = this->frontend();
+    if (frontend->m_database->opened()) {
         setStateToRequestedState();
         ASSERT(m_nextState == SQLTransactionState::AcquireLock
             || m_nextState == SQLTransactionState::OpenTransactionAndPreflight
@@ -449,15 +454,15 @@ void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
     LOG(StorageAPI, "Database was stopped or interrupted - cancelling work for this transaction");
 
     // The current SQLite transaction should be stopped, as well
-    if (m_frontend.m_sqliteTransaction) {
-        m_frontend.m_sqliteTransaction->stop();
-        m_frontend.m_sqliteTransaction = nullptr;
+    if (frontend->m_sqliteTransaction) {
+        frontend->m_sqliteTransaction->stop();
+        frontend->m_sqliteTransaction = nullptr;
     }
 
     // Terminate the frontend state machine. This also gets the frontend to
     // call computeNextStateAndCleanupIfNeeded() and clear its wrappers
     // if needed.
-    m_frontend.requestTransitToState(SQLTransactionState::End);
+    frontend->requestTransitToState(SQLTransactionState::End);
 
     // Redirect to the end state to abort, clean up, and end the transaction.
     doCleanup();
@@ -465,7 +470,7 @@ void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
 
 void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
 {
-    ASSERT(m_frontend.database().databaseThread().getThread() == &Thread::currentSingleton());
+    ASSERT(frontend()->database().databaseThread().getThread() == &Thread::currentSingleton());
 
     // If the transaction is in progress, we should roll it back here, since this
     // is our last opportunity to do something related to this transaction on the
@@ -477,27 +482,27 @@ void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
 
 void SQLTransactionBackend::acquireLock()
 {
-    m_frontend.acquireLock();
+    frontend()->acquireLock();
 }
 
 void SQLTransactionBackend::openTransactionAndPreflight()
 {
-    m_frontend.openTransactionAndPreflight();
+    frontend()->openTransactionAndPreflight();
 }
 
 void SQLTransactionBackend::runStatements()
 {
-    m_frontend.runStatements();
+    frontend()->runStatements();
 }
 
 void SQLTransactionBackend::cleanupAndTerminate()
 {
-    m_frontend.cleanupAndTerminate();
+    frontend()->cleanupAndTerminate();
 }
 
 void SQLTransactionBackend::cleanupAfterTransactionErrorCallback()
 {
-    m_frontend.cleanupAfterTransactionErrorCallback();
+    frontend()->cleanupAfterTransactionErrorCallback();
 }
 
 // requestTransitToState() can be called from the frontend. Hence, it should
@@ -508,7 +513,8 @@ void SQLTransactionBackend::requestTransitToState(SQLTransactionState nextState)
     LOG(StorageAPI, "Scheduling %s for transaction %p\n", nameForSQLTransactionState(nextState).characters(), this);
     m_requestedState = nextState;
     ASSERT(m_requestedState != SQLTransactionState::End);
-    m_frontend.m_database->scheduleTransactionStep(m_frontend);
+    Ref frontend = this->frontend();
+    frontend->m_database->scheduleTransactionStep(frontend.get());
 }
 
 // This state function is used as a stub function to plug unimplemented states

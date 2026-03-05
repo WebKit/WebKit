@@ -40,16 +40,16 @@ public:
 
     explicit SharedBufferReference(RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
         : m_size(buffer ? buffer->size() : 0)
-        , m_buffer(WTFMove(buffer)) { }
+        , m_buffer(WTF::move(buffer)) { }
     explicit SharedBufferReference(Ref<WebCore::FragmentedSharedBuffer>&& buffer)
         : m_size(buffer->size())
-        , m_buffer(WTFMove(buffer)) { }
+        , m_buffer(WTF::move(buffer)) { }
     explicit SharedBufferReference(RefPtr<WebCore::SharedBuffer>&& buffer)
         : m_size(buffer ? buffer->size() : 0)
-        , m_buffer(WTFMove(buffer)) { }
+        , m_buffer(WTF::move(buffer)) { }
     explicit SharedBufferReference(Ref<WebCore::SharedBuffer>&& buffer)
         : m_size(buffer->size())
-        , m_buffer(WTFMove(buffer)) { }
+        , m_buffer(WTF::move(buffer)) { }
     explicit SharedBufferReference(const WebCore::FragmentedSharedBuffer& buffer)
         : m_size(buffer.size())
         , m_buffer(const_cast<WebCore::FragmentedSharedBuffer*>(&buffer)) { }
@@ -58,6 +58,7 @@ public:
     struct SerializableBuffer {
         uint64_t size;
         std::optional<WebCore::SharedMemory::Handle> handle;
+        std::optional<WebCore::MemoryLedger> ledger;
     };
     SharedBufferReference(std::optional<SerializableBuffer>&&);
 #endif
@@ -70,6 +71,8 @@ public:
     size_t size() const { return m_size; }
     bool isEmpty() const { return !size(); }
     bool isNull() const { return isEmpty() && !m_buffer; }
+
+    void transferOwnershipToReceiver(WebCore::MemoryLedger ledger) { m_ledger = ledger; }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     RefPtr<WebCore::FragmentedSharedBuffer> buffer() const { return m_buffer; }
@@ -87,11 +90,12 @@ public:
 private:
     SharedBufferReference(Ref<WebCore::SharedMemory>&& memory, size_t size)
         : m_size(size)
-        , m_memory(WTFMove(memory)) { }
+        , m_memory(WTF::move(memory)) { }
 
     size_t m_size { 0 };
     mutable RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
     RefPtr<WebCore::SharedMemory> m_memory; // Only set on the receiver side and if m_size isn't 0.
+    std::optional<WebCore::MemoryLedger> m_ledger;
 };
 
 } // namespace IPC

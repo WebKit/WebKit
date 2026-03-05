@@ -57,6 +57,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -115,18 +116,27 @@ WEBKIT_DEFINE_FINAL_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT, GObject)
 
 static void webFrameDestroyed(WebFrame*);
 
-class WebKitFrameWrapper final: public FrameDestructionObserver {
+class WebKitFrameWrapper final: public FrameDestructionObserver, public RefCounted<WebKitFrameWrapper> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitFrameWrapper);
 public:
+    static Ref<WebKitFrameWrapper> create(WebFrame& webFrame)
+    {
+        return adoptRef(*new WebKitFrameWrapper(webFrame));
+    }
+
+    WebKitFrame* webkitFrame() const { return m_webkitFrame.get(); }
+
+    // FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     WebKitFrameWrapper(WebFrame& webFrame)
         : FrameDestructionObserver(webFrame.coreLocalFrame())
         , m_webkitFrame(adoptGRef(webkitFrameCreate(&webFrame)))
     {
     }
 
-    WebKitFrame* webkitFrame() const { return m_webkitFrame.get(); }
-
-private:
     void frameDestroyed() override
     {
         FrameDestructionObserver::frameDestroyed();
@@ -136,7 +146,7 @@ private:
     GRefPtr<WebKitFrame> m_webkitFrame;
 };
 
-typedef HashMap<WebFrame*, std::unique_ptr<WebKitFrameWrapper>> WebFrameMap;
+typedef HashMap<WebFrame*, Ref<WebKitFrameWrapper>> WebFrameMap;
 
 static WebFrameMap& webFrameMap()
 {
@@ -158,11 +168,10 @@ static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
     if (auto* webKitFrame = webkitFrameGet(webFrame))
         return webKitFrame;
 
-    std::unique_ptr<WebKitFrameWrapper> wrapper = makeUnique<WebKitFrameWrapper>(*webFrame);
-    auto wrapperPtr = wrapper.get();
-    webFrameMap().set(webFrame, WTFMove(wrapper));
+    Ref wrapper = WebKitFrameWrapper::create(*webFrame);
+    webFrameMap().set(webFrame, wrapper.copyRef());
 
-    return wrapperPtr->webkitFrame();
+    return wrapper->webkitFrame();
 }
 
 static void webFrameDestroyed(WebFrame* webFrame)
@@ -805,7 +814,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 void webkitWebPageDidReceiveUserMessage(WebKitWebPage* webPage, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     // Sink the floating ref.
-    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), WTFMove(completionHandler));
+    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTF::move(message), WTF::move(completionHandler));
     gboolean returnValue;
     g_signal_emit(webPage, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
 }
@@ -934,20 +943,20 @@ void webkit_web_page_send_message_to_view(WebKitWebPage* webPage, WebKitUserMess
     }
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webPage, cancellable, callback, userData));
-    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTFMove(task)](UserMessage&& replyMessage) {
+    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTF::move(task)](UserMessage&& replyMessage) {
         switch (replyMessage.type) {
         case UserMessage::Type::Null:
             g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
             break;
         case UserMessage::Type::Message:
-            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTFMove(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
+            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTF::move(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
             break;
         case UserMessage::Type::Error:
             g_task_return_new_error(task.get(), WEBKIT_USER_MESSAGE_ERROR, replyMessage.errorCode, _("Message %s was not handled"), replyMessage.name.data());
             break;
         }
     };
-    webPage->priv->webPage->sendWithAsyncReply(Messages::WebPageProxy::SendMessageToWebViewWithReply(webkitUserMessageGetMessage(message)), WTFMove(completionHandler));
+    webPage->priv->webPage->sendWithAsyncReply(Messages::WebPageProxy::SendMessageToWebViewWithReply(webkitUserMessageGetMessage(message)), WTF::move(completionHandler));
 }
 
 /**

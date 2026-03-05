@@ -59,7 +59,7 @@ void GeolocationClientMock::setController(GeolocationController* controller)
 
 void GeolocationClientMock::setPosition(GeolocationPositionData&& position)
 {
-    m_lastPosition = WTFMove(position);
+    m_lastPosition = WTF::move(position);
     clearError();
     asyncUpdateController();
 }
@@ -85,7 +85,7 @@ int GeolocationClientMock::numberOfPendingPermissionRequests() const
 
 void GeolocationClientMock::requestPermission(Geolocation& geolocation)
 {
-    m_pendingPermission.add(&geolocation);
+    m_pendingPermission.add(geolocation);
     if (m_permissionState != PermissionStateUnset)
         asyncUpdatePermission();
 }
@@ -93,7 +93,7 @@ void GeolocationClientMock::requestPermission(Geolocation& geolocation)
 void GeolocationClientMock::cancelPermissionRequest(Geolocation& geolocation)
 {
     // Called from Geolocation::disconnectFrame() in response to Frame destruction.
-    m_pendingPermission.remove(&geolocation);
+    m_pendingPermission.remove(geolocation);
     if (m_pendingPermission.isEmpty() && m_permissionTimer.isActive())
         m_permissionTimer.stop();
 }
@@ -114,7 +114,7 @@ void GeolocationClientMock::permissionTimerFired()
     // no further requests for permission to the mock. Consequently the callbacks
     // which fire synchronously from Geolocation::setIsAllowed() cannot reentrantly modify
     // m_pendingPermission.
-    for (RefPtr permission : m_pendingPermission)
+    for (Ref permission : m_pendingPermission)
         permission->setIsAllowed(allowed, { });
     m_pendingPermission.clear();
 }

@@ -4,7 +4,7 @@ layer at (0,0) size 800x307
   RenderBlock {HTML} at (0,0) size 800x307
     RenderBody {BODY} at (8,16) size 784x40
       RenderBlock {P} at (0,0) size 784x40 [color=#000080]
-        RenderText {#text} at (0,0) size 764x39
+        RenderText {#text} at (0,0) size 764x40
           text run at (0,0) width 395: "The blue boxes below should be in numeric order and form a "
           text run at (394,0) width 370: "backwards \"D\". (Boxes labelled \"A\" should be in the first"
           text run at (0,20) width 57: "column; "

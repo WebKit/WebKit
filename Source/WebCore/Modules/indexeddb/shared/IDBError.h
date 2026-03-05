@@ -50,13 +50,13 @@ public:
     std::optional<ExceptionCode> code() const { return m_code; }
     String name() const;
     String message() const;
-    const String& messageForSerialization() const { return m_message; }
+    const String& messageForSerialization() const LIFETIME_BOUND { return m_message; }
 
     bool isNull() const { return !m_code; }
     operator bool() const { return !isNull(); }
 
     IDBError isolatedCopy() const & { return IDBError { m_code, m_message.isolatedCopy() }; }
-    IDBError isolatedCopy() && { return IDBError { m_code, WTFMove(m_message).isolatedCopy() }; }
+    IDBError isolatedCopy() && { return IDBError { m_code, WTF::move(m_message).isolatedCopy() }; }
 
 private:
     std::optional<ExceptionCode> m_code;

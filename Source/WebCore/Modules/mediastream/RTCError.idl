@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcerror
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
@@ -39,6 +40,7 @@
     readonly attribute unsigned long? sentAlert;
 };
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcerrorinit
 dictionary RTCErrorInit {
     required RTCErrorDetailType errorDetail;
     long sdpLineNumber;

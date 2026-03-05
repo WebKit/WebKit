@@ -38,7 +38,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferShareableMappedIOSurfaceBitmapBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferShareableMappedIOSurfaceBitmapBackend);
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBitmapBackend> ImageBufferShareableMappedIOSurfaceBitmapBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
@@ -55,13 +55,13 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBitmapBackend> ImageBufferSha
     if (!lockAndContext)
         return nullptr;
     CGContextClearRect(lockAndContext->context.get(), FloatRect(FloatPoint::zero(), backendSize));
-    return makeUnique<ImageBufferShareableMappedIOSurfaceBitmapBackend>(parameters, WTFMove(surface), WTFMove(*lockAndContext), creationContext.surfacePool.get());
+    return makeUnique<ImageBufferShareableMappedIOSurfaceBitmapBackend>(parameters, WTF::move(surface), WTF::move(*lockAndContext), creationContext.surfacePool.get());
 }
 
 ImageBufferShareableMappedIOSurfaceBitmapBackend::ImageBufferShareableMappedIOSurfaceBitmapBackend(const Parameters& parameters, std::unique_ptr<IOSurface> surface, IOSurface::LockAndContext&& lockAndContext, IOSurfacePool* ioSurfacePool)
     : ImageBufferCGBackend(parameters)
-    , m_surface(WTFMove(surface))
-    , m_lock(WTFMove(lockAndContext.lock))
+    , m_surface(WTF::move(surface))
+    , m_lock(WTF::move(lockAndContext.lock))
     , m_ioSurfacePool(ioSurfacePool)
 {
     m_context = makeUnique<GraphicsContextCG>(lockAndContext.context.get());
@@ -71,7 +71,7 @@ ImageBufferShareableMappedIOSurfaceBitmapBackend::ImageBufferShareableMappedIOSu
 ImageBufferShareableMappedIOSurfaceBitmapBackend::~ImageBufferShareableMappedIOSurfaceBitmapBackend()
 {
     releaseGraphicsContext();
-    IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
+    IOSurface::moveToPool(WTF::move(m_surface), m_ioSurfacePool.get());
 }
 
 bool ImageBufferShareableMappedIOSurfaceBitmapBackend::canMapBackingStore() const
@@ -98,7 +98,7 @@ GraphicsContext& ImageBufferShareableMappedIOSurfaceBitmapBackend::context()
         // Re-lock on first context() request after the external access has ended and new update starts.
         if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadWrite>()) {
             if (lock->surfaceBaseAddress() == CGBitmapContextGetData(cgContext.get())) {
-                m_lock = WTFMove(lock);
+                m_lock = WTF::move(lock);
                 return *m_context;
             }
         }
@@ -106,7 +106,7 @@ GraphicsContext& ImageBufferShareableMappedIOSurfaceBitmapBackend::context()
     } else {
         auto lockAndContext = m_surface->createBitmapPlatformContext();
         if (lockAndContext) {
-            m_lock = WTFMove(lockAndContext->lock);
+            m_lock = WTF::move(lockAndContext->lock);
             m_context = makeUnique<GraphicsContextCG>(lockAndContext->context.get());
             applyBaseTransform(*m_context);
             return *m_context;

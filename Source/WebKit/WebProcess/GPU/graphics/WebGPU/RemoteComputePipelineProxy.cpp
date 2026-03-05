@@ -57,7 +57,7 @@ Ref<WebCore::WebGPU::BindGroupLayout> RemoteComputePipelineProxy::getBindGroupLa
     auto sendResult = send(Messages::RemoteComputePipeline::GetBindGroupLayout(index, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteBindGroupLayoutProxy::create(m_parent->protectedRoot(), m_convertToBackingContext, identifier);
+    return RemoteBindGroupLayoutProxy::create(protect(m_parent->root()), m_convertToBackingContext, identifier);
 }
 
 void RemoteComputePipelineProxy::setLabelInternal(const String& label)

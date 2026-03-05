@@ -30,15 +30,15 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognitionResult);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionResult);
 
 Ref<SpeechRecognitionResult> SpeechRecognitionResult::create(Vector<Ref<SpeechRecognitionAlternative>>&& alternatives, bool isFinal)
 {
-    return adoptRef(*new SpeechRecognitionResult(WTFMove(alternatives), isFinal));
+    return adoptRef(*new SpeechRecognitionResult(WTF::move(alternatives), isFinal));
 }
 
 SpeechRecognitionResult::SpeechRecognitionResult(Vector<Ref<SpeechRecognitionAlternative>>&& alternatives, bool isFinal)
-    : m_alternatives(WTFMove(alternatives))
+    : m_alternatives(WTF::move(alternatives))
     , m_isFinal(isFinal)
 {
 }

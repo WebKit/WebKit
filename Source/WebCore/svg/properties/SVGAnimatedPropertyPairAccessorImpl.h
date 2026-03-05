@@ -45,11 +45,11 @@ class SVGAnimatedAngleOrientAccessor final : public SVGAnimatedPropertyPairAcces
 
 public:
     using Base::Base;
-    template<Ref<SVGAnimatedAngle> OwnerType::*property1, Ref<SVGAnimatedOrientType> OwnerType::*property2>
+    template<auto property1, auto property2>
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedAngleOrientAccessor, property1, property2>(); }
 
 private:
-    void setDirty(const OwnerType& owner, SVGAnimatedProperty& animatedProperty) const final
+    void setDirty(const OwnerType& owner, SVGAnimatedPropertyBase& animatedProperty) const final
     {
         auto type = property2(owner)->baseVal();
         if (m_accessor1.matches(owner, animatedProperty) && type != SVGMarkerOrientAngle)
@@ -80,7 +80,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedAngleOrientAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+        downcast<SVGAnimatedAngleOrientAnimator>(animator).appendAnimatedInstance(property1(owner), property2(owner));
     }
 };
 
@@ -92,7 +92,7 @@ class SVGAnimatedIntegerPairAccessor final : public SVGAnimatedPropertyPairAcces
 
 public:
     using Base::Base;
-    template<Ref<SVGAnimatedInteger> OwnerType::*property1, Ref<SVGAnimatedInteger> OwnerType::*property2>
+    template<auto property1, auto property2>
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedIntegerPairAccessor, property1, property2>(); }
 
 private:
@@ -115,7 +115,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedIntegerPairAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+        downcast<SVGAnimatedIntegerPairAnimator>(animator).appendAnimatedInstance(property1(owner), property2(owner));
     }
 };
 
@@ -127,7 +127,7 @@ class SVGAnimatedNumberPairAccessor final : public SVGAnimatedPropertyPairAccess
 
 public:
     using Base::Base;
-    template<Ref<SVGAnimatedNumber> OwnerType::*property1, Ref<SVGAnimatedNumber> OwnerType::*property2 >
+    template<auto property1, auto property2>
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberPairAccessor, property1, property2>(); }
 
 private:
@@ -150,7 +150,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedNumberPairAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+        downcast<SVGAnimatedNumberPairAnimator>(animator).appendAnimatedInstance(property1(owner), property2(owner));
     }
 };
 

@@ -26,11 +26,13 @@
 #include "config.h"
 #include <wtf/text/StringCommon.h>
 
+#include <wtf/SIMDUTF.h>
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
-SUPPRESS_ASAN
+SUPPRESS_NODELETE SUPPRESS_ASAN
 const float* findFloatAlignedImpl(const float* pointer, float target, size_t length)
 {
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b11));
@@ -60,7 +62,7 @@ const float* findFloatAlignedImpl(const float* pointer, float target, size_t len
     }
 }
 
-SUPPRESS_ASAN
+SUPPRESS_NODELETE SUPPRESS_ASAN
 const double* findDoubleAlignedImpl(const double* pointer, double target, size_t length)
 {
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b111));
@@ -91,7 +93,7 @@ const double* findDoubleAlignedImpl(const double* pointer, double target, size_t
     }
 }
 
-SUPPRESS_ASAN
+SUPPRESS_NODELETE SUPPRESS_ASAN
 const Latin1Character* find8NonASCIIAlignedImpl(std::span<const Latin1Character> data)
 {
     constexpr simde_uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
@@ -121,7 +123,7 @@ const Latin1Character* find8NonASCIIAlignedImpl(std::span<const Latin1Character>
     }
 }
 
-SUPPRESS_ASAN
+SUPPRESS_NODELETE SUPPRESS_ASAN
 const char16_t* find16NonASCIIAlignedImpl(std::span<const char16_t> data)
 {
     auto* pointer = data.data();
@@ -151,6 +153,19 @@ const char16_t* find16NonASCIIAlignedImpl(std::span<const char16_t> data)
         length -= stride;
         cursor += stride;
     }
+}
+
+SUPPRESS_NODELETE
+bool isWellFormedUTF16(std::span<const char16_t> data)
+{
+    return simdutf::validate_utf16(data.data(), data.size());
+}
+
+SUPPRESS_NODELETE
+void toWellFormedUTF16(std::span<const char16_t> input, std::span<char16_t> output)
+{
+    ASSERT(input.size() == output.size());
+    simdutf::to_well_formed_utf16(input.data(), input.size(), output.data());
 }
 
 } // namespace WTF

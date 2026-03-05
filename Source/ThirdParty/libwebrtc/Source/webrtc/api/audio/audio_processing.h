@@ -145,7 +145,7 @@ class RTC_EXPORT AudioProcessing : public RefCountInterface {
 
       // Maximum allowed processing rate used internally. May only be set to
       // 32000 or 48000 and any differing values will be treated as 48000.
-      int maximum_internal_processing_rate = 48000;
+      int maximum_internal_processing_rate = 32000;
       // Allow multi-channel processing of render audio.
       bool multi_channel_render = false;
       // Allow multi-channel processing of capture audio when AEC3 is active

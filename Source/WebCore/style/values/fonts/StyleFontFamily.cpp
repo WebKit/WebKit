@@ -69,7 +69,7 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
             ASSERT(!family.isEmpty());
 
             return {
-                WTFMove(family),
+                WTF::move(family),
                 FontFamilyKind::Generic
             };
         }
@@ -110,7 +110,7 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
     }
 
     return {
-        RefCountedFixedVector<AtomString>::createFromVector(WTFMove(families)),
+        RefCountedFixedVector<AtomString>::createFromVector(WTF::move(families)),
         *firstFontKind
     };
 }

@@ -26,6 +26,6 @@
 
 namespace WebCore {
 
-enum class RTCIceComponent { Rtp, Rtcp };
+enum class RTCIceComponent : uint8_t { Rtp, Rtcp };
 
 } // namespace WebCore

@@ -70,8 +70,6 @@ int64_t GetNewAvgRttMs(const std::list<CallStats::RttTime>& reports,
 
 }  // namespace
 
-constexpr TimeDelta CallStats::kUpdateInterval;
-
 CallStats::CallStats(Clock* clock, TaskQueueBase* task_queue)
     : clock_(clock),
       max_rtt_ms_(-1),

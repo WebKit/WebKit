@@ -55,7 +55,7 @@ auto InspectorCanvasArgumentProcessor<IDLDictionary<DOMMatrix2DInit>>::operator(
     array->addItem(argument.d.value_or(1));
     array->addItem(argument.e.value_or(0));
     array->addItem(argument.f.value_or(0));
-    return {{ WTFMove(array), RecordingSwizzleType::DOMMatrix }};
+    return {{ WTF::move(array), RecordingSwizzleType::DOMMatrix }};
 }
 
 auto InspectorCanvasArgumentProcessor<IDLDictionary<ImageDataSettings>>::operator()(InspectorCanvas&, const ImageDataSettings&) -> std::optional<InspectorCanvasProcessedArgument>
@@ -90,79 +90,79 @@ auto InspectorCanvasArgumentProcessor<IDLArrayBufferView>::operator()(InspectorC
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLFloat32Array>::operator()(InspectorCanvas&, const RefPtr<JSC::Float32Array>&) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLFloat32Array>::operator()(InspectorCanvas&, const Ref<JSC::Float32Array>&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInt32Array>::operator()(InspectorCanvas&, const RefPtr<JSC::Int32Array>&) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInt32Array>::operator()(InspectorCanvas&, const Ref<JSC::Int32Array>&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLUint32Array>::operator()(InspectorCanvas&, const RefPtr<JSC::Uint32Array>&) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLUint32Array>::operator()(InspectorCanvas&, const Ref<JSC::Uint32Array>&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
 // MARK: - Interfaces
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<Element>>::operator()(InspectorCanvas& context, const RefPtr<Element>&) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<Element>>::operator()(InspectorCanvas& context, const Ref<Element>&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     // Elements are not serializable, so add a string as a placeholder since the actual
     // element cannot be reconstructed in the frontend.
     return {{ context.valueIndexForData("Element"_s), RecordingSwizzleType::None }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<HTMLImageElement>>::operator()(InspectorCanvas& context, const RefPtr<HTMLImageElement>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<HTMLImageElement>>::operator()(InspectorCanvas& context, const Ref<HTMLImageElement>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<SVGImageElement>>::operator()(InspectorCanvas& context, const RefPtr<SVGImageElement>&) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<SVGImageElement>>::operator()(InspectorCanvas& context, const Ref<SVGImageElement>&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     // FIXME: To maintain existing behavior for initial specialization adoption, we pretend SVGImageElement goes down the Element path.
     return {{ context.valueIndexForData("Element"_s), RecordingSwizzleType::None }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<HTMLCanvasElement>>::operator()(InspectorCanvas& context, const RefPtr<HTMLCanvasElement>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<HTMLCanvasElement>>::operator()(InspectorCanvas& context, const Ref<HTMLCanvasElement>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<CSSStyleImageValue>>::operator()(InspectorCanvas& context, const RefPtr<CSSStyleImageValue>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<CSSStyleImageValue>>::operator()(InspectorCanvas& context, const Ref<CSSStyleImageValue>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<CanvasGradient>>::operator()(InspectorCanvas& context, const RefPtr<CanvasGradient>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<CanvasGradient>>::operator()(InspectorCanvas& context, const Ref<CanvasGradient>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
-    return {{ context.valueIndexForData(const_cast<RefPtr<CanvasGradient>&>(argument)), RecordingSwizzleType::CanvasGradient }};
+    return {{ context.valueIndexForData(const_cast<Ref<CanvasGradient>&>(argument)), RecordingSwizzleType::CanvasGradient }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<CanvasPattern>>::operator()(InspectorCanvas& context, const RefPtr<CanvasPattern>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<CanvasPattern>>::operator()(InspectorCanvas& context, const Ref<CanvasPattern>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::CanvasPattern }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<Path2D>>::operator()(InspectorCanvas& context, const RefPtr<Path2D>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<Path2D>>::operator()(InspectorCanvas& context, const Ref<Path2D>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(buildStringFromPath(argument->path())), RecordingSwizzleType::Path2D }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<ImageBitmap>>::operator()(InspectorCanvas& context, const RefPtr<ImageBitmap>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<ImageBitmap>>::operator()(InspectorCanvas& context, const Ref<ImageBitmap>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::ImageBitmap }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<ImageData>>::operator()(InspectorCanvas& context, const RefPtr<ImageData>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<ImageData>>::operator()(InspectorCanvas& context, const Ref<ImageData>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::ImageData }};
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<OffscreenCanvas>>::operator()(InspectorCanvas& context, const RefPtr<OffscreenCanvas>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<OffscreenCanvas>>::operator()(InspectorCanvas& context, const Ref<OffscreenCanvas>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
@@ -171,7 +171,7 @@ auto InspectorCanvasArgumentProcessor<IDLInterface<OffscreenCanvas>>::operator()
 
 #if ENABLE(VIDEO)
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<HTMLVideoElement>>::operator()(InspectorCanvas& context, const RefPtr<HTMLVideoElement>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<HTMLVideoElement>>::operator()(InspectorCanvas& context, const Ref<HTMLVideoElement>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
@@ -180,7 +180,7 @@ auto InspectorCanvasArgumentProcessor<IDLInterface<HTMLVideoElement>>::operator(
 
 #if ENABLE(WEB_CODECS)
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebCodecsVideoFrame>>::operator()(InspectorCanvas&, const RefPtr<WebCodecsVideoFrame>&) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebCodecsVideoFrame>>::operator()(InspectorCanvas&, const Ref<WebCodecsVideoFrame>&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(0), RecordingSwizzleType::Image }};
 }
@@ -189,62 +189,62 @@ auto InspectorCanvasArgumentProcessor<IDLInterface<WebCodecsVideoFrame>>::operat
 
 #if ENABLE(WEBGL)
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLBuffer>>::operator()(InspectorCanvas&, const RefPtr<WebGLBuffer>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLBuffer>>::operator()(InspectorCanvas&, const Ref<WebGLBuffer>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLBuffer }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLFramebuffer>>::operator()(InspectorCanvas&, const RefPtr<WebGLFramebuffer>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLFramebuffer>>::operator()(InspectorCanvas&, const Ref<WebGLFramebuffer>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLFramebuffer }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLProgram>>::operator()(InspectorCanvas&, const RefPtr<WebGLProgram>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLProgram>>::operator()(InspectorCanvas&, const Ref<WebGLProgram>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLProgram }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLQuery>>::operator()(InspectorCanvas&, const RefPtr<WebGLQuery>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLQuery>>::operator()(InspectorCanvas&, const Ref<WebGLQuery>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLQuery }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLRenderbuffer>>::operator()(InspectorCanvas&, const RefPtr<WebGLRenderbuffer>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLRenderbuffer>>::operator()(InspectorCanvas&, const Ref<WebGLRenderbuffer>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLRenderbuffer }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLSampler>>::operator()(InspectorCanvas&, const RefPtr<WebGLSampler>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLSampler>>::operator()(InspectorCanvas&, const Ref<WebGLSampler>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLSampler }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLShader>>::operator()(InspectorCanvas&, const RefPtr<WebGLShader>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLShader>>::operator()(InspectorCanvas&, const Ref<WebGLShader>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLShader }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLSync>>::operator()(InspectorCanvas&, const RefPtr<WebGLSync>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLSync>>::operator()(InspectorCanvas&, const Ref<WebGLSync>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLSync }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLTexture>>::operator()(InspectorCanvas&, const RefPtr<WebGLTexture>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLTexture>>::operator()(InspectorCanvas&, const Ref<WebGLTexture>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLTexture }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLUniformLocation>>::operator()(InspectorCanvas&, const RefPtr<WebGLUniformLocation>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLUniformLocation>>::operator()(InspectorCanvas&, const Ref<WebGLUniformLocation>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(argument->location()), RecordingSwizzleType::WebGLUniformLocation }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLVertexArrayObject>>::operator()(InspectorCanvas&, const RefPtr<WebGLVertexArrayObject>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLVertexArrayObject>>::operator()(InspectorCanvas&, const Ref<WebGLVertexArrayObject>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLVertexArrayObject }};
 }
 
-auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLTransformFeedback>>::operator()(InspectorCanvas&, const RefPtr<WebGLTransformFeedback>& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLTransformFeedback>>::operator()(InspectorCanvas&, const Ref<WebGLTransformFeedback>& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLTransformFeedback }};
 }
@@ -256,7 +256,7 @@ auto InspectorCanvasArgumentProcessor<IDLInterface<WebGLTransformFeedback>>::ope
 auto InspectorCanvasArgumentProcessor<IDLCanvasImageSourceUnion>::operator()(InspectorCanvas& context, const CanvasImageSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return WTF::switchOn(argument,
-        [&]<typename T>(const RefPtr<T>& value) {
+        [&]<typename T>(const Ref<T>& value) {
             return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
         }
     );
@@ -268,7 +268,7 @@ auto InspectorCanvasArgumentProcessor<IDLCanvasStyleVariantUnion>::operator()(In
         [&](const String& value) {
             return InspectorCanvasArgumentProcessor<IDLDOMString>{}(context, value);
         },
-        [&]<typename T>(const RefPtr<T>& value) {
+        [&]<typename T>(const Ref<T>& value) {
             return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
         }
     );
@@ -292,7 +292,7 @@ auto InspectorCanvasArgumentProcessor<IDLCanvasPathRadiusUnion>::operator()(Insp
 auto InspectorCanvasArgumentProcessor<IDLTexImageSourceUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::TexImageSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return WTF::switchOn(argument,
-        [&]<typename T>(const RefPtr<T>& value) {
+        [&]<typename T>(const Ref<T>& value) {
             return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
         }
     );
@@ -301,15 +301,11 @@ auto InspectorCanvasArgumentProcessor<IDLTexImageSourceUnion>::operator()(Inspec
 auto InspectorCanvasArgumentProcessor<IDLBufferDataSourceUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::BufferDataSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return WTF::switchOn(argument,
-        [&](const RefPtr<ArrayBuffer>& value) -> std::optional<InspectorCanvasProcessedArgument> {
-            if (!value)
-                return std::nullopt;
-            return InspectorCanvasArgumentProcessor<IDLArrayBuffer>{}(context, *value);
+        [&](const Ref<ArrayBuffer>& value) -> std::optional<InspectorCanvasProcessedArgument> {
+            return InspectorCanvasArgumentProcessor<IDLArrayBuffer>{}(context, value);
         },
-        [&](const RefPtr<ArrayBufferView>& value) -> std::optional<InspectorCanvasProcessedArgument> {
-            if (!value)
-                return std::nullopt;
-            return InspectorCanvasArgumentProcessor<IDLArrayBufferView>{}(context, *value);
+        [&](const Ref<ArrayBufferView>& value) -> std::optional<InspectorCanvasProcessedArgument> {
+            return InspectorCanvasArgumentProcessor<IDLArrayBufferView>{}(context, value);
         }
     );
 }
@@ -317,7 +313,7 @@ auto InspectorCanvasArgumentProcessor<IDLBufferDataSourceUnion>::operator()(Insp
 auto InspectorCanvasArgumentProcessor<IDLFloat32ListUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::Float32List::VariantType& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return WTF::switchOn(argument,
-        [&](const RefPtr<Float32Array>& value) {
+        [&](const Ref<Float32Array>& value) {
             return InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLFloat32Array>>{}(context, value);
         },
         [&](const Vector<float>& value) {
@@ -329,7 +325,7 @@ auto InspectorCanvasArgumentProcessor<IDLFloat32ListUnion>::operator()(Inspector
 auto InspectorCanvasArgumentProcessor<IDLInt32ListUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::Int32List::VariantType& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return WTF::switchOn(argument,
-        [&](const RefPtr<Int32Array>& value) {
+        [&](const Ref<Int32Array>& value) {
             return InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLInt32Array>>{}(context, value);
         },
         [&](const Vector<int>& value) {
@@ -341,7 +337,7 @@ auto InspectorCanvasArgumentProcessor<IDLInt32ListUnion>::operator()(InspectorCa
 auto InspectorCanvasArgumentProcessor<IDLUint32ListUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::Uint32List::VariantType& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return WTF::switchOn(argument,
-        [&](const RefPtr<Uint32Array>& value) {
+        [&](const Ref<Uint32Array>& value) {
             return InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLUint32Array>>{}(context, value);
         },
         [&](const Vector<uint32_t>& value) {

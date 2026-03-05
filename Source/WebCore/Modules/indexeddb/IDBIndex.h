@@ -43,19 +43,18 @@ class WebCoreOpaqueRoot;
 struct IDBKeyRangeData;
 
 class IDBIndex final : public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBIndex);
+    WTF_MAKE_TZONE_ALLOCATED(IDBIndex);
 public:
     static UniqueRef<IDBIndex> create(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
 
     virtual ~IDBIndex();
 
-    const String& name() const;
+    const String& NODELETE name() const;
     ExceptionOr<void> setName(const String&);
-    IDBObjectStore& objectStore();
-    Ref<IDBObjectStore> protectedObjectStore();
-    const IDBKeyPath& keyPath() const;
-    bool unique() const;
-    bool multiEntry() const;
+    IDBObjectStore& NODELETE objectStore();
+    const IDBKeyPath& NODELETE keyPath() const;
+    bool NODELETE unique() const;
+    bool NODELETE multiEntry() const;
 
     void rollbackInfoForVersionChangeAbort();
 
@@ -77,16 +76,16 @@ public:
     ExceptionOr<Ref<IDBRequest>> getAllKeys(RefPtr<IDBKeyRange>&&, std::optional<uint32_t> count);
     ExceptionOr<Ref<IDBRequest>> getAllKeys(JSC::JSGlobalObject&, JSC::JSValue key, std::optional<uint32_t> count);
 
-    const IDBIndexInfo& info() const { return m_info; }
+    const IDBIndexInfo& info() const LIFETIME_BOUND { return m_info; }
 
-    void markAsDeleted();
+    void NODELETE markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
     // ActiveDOMObject.
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
-    WebCoreOpaqueRoot opaqueRoot();
+    WebCoreOpaqueRoot NODELETE opaqueRoot();
 
 private:
     IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);

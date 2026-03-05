@@ -28,28 +28,35 @@
 #if ENABLE(WEBXR_HIT_TEST)
 
 #include "PlatformXR.h"
-#include <wtf/RefCounted.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class WebXRSession;
+class WebXRSpace;
+template<typename> class ExceptionOr;
 
-class WebXRHitTestSource : public RefCounted<WebXRHitTestSource> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRHitTestSource);
+class WebXRHitTestSource : public RefCountedAndCanMakeWeakPtr<WebXRHitTestSource> {
+    WTF_MAKE_TZONE_ALLOCATED(WebXRHitTestSource);
 public:
-    static Ref<WebXRHitTestSource> create(WebXRSession&, PlatformXR::HitTestSource&&);
+    static Ref<WebXRHitTestSource> create(WebXRSession&, PlatformXR::HitTestSource&&, WebXRSpace&);
     ~WebXRHitTestSource();
     ExceptionOr<void> cancel();
 
     std::optional<PlatformXR::HitTestSource> handle() const { return m_source; }
 
+    WebXRSpace& space() const;
+
 private:
-    WebXRHitTestSource(WebXRSession&, PlatformXR::HitTestSource&&);
+    WebXRHitTestSource(WebXRSession&, PlatformXR::HitTestSource&&, WebXRSpace&);
 
     WeakPtr<WebXRSession> m_session;
     std::optional<PlatformXR::HitTestSource> m_source;
+    Ref<WebXRSpace> m_space;
 };
 
 } // namespace WebCore

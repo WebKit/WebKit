@@ -47,11 +47,12 @@ class RemoteLegacyCDMProxy;
 class RemoteMediaPlayerProxy;
 
 class RemoteLegacyCDMSessionProxy : public IPC::MessageReceiver, public WebCore::LegacyCDMSessionClient, public RefCounted<RemoteLegacyCDMSessionProxy> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteLegacyCDMSessionProxy);
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLegacyCDMSessionProxy);
 public:
     static Ref<RemoteLegacyCDMSessionProxy> create(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
     ~RemoteLegacyCDMSessionProxy();
 
+    // IPC::MessageReceiver, WebCore::LegacyCDMSessionClient.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
@@ -59,7 +60,6 @@ public:
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
     WebCore::LegacyCDMSession* session() const { return m_session.get(); }
-    RefPtr<WebCore::LegacyCDMSession> protectedSession() const;
 
     RefPtr<ArrayBuffer> getCachedKeyForKeyId(const String&);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
@@ -67,8 +67,6 @@ public:
 private:
     friend class RemoteLegacyCDMFactoryProxy;
     RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
-
-    RefPtr<RemoteLegacyCDMFactoryProxy> protectedFactory() const { return m_factory.get(); }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -83,7 +81,7 @@ private:
     const Logger& logger() const final { return m_logger; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "RemoteLegacyCDMSessionProxy"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     // Messages

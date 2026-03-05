@@ -41,7 +41,7 @@ protected:
     ScrollingTreeViewportConstrainedNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
     virtual ~ScrollingTreeViewportConstrainedNode();
-    virtual const ViewportConstraints& constraints() const = 0;
+    virtual const ViewportConstraints& constraints() const LIFETIME_BOUND = 0;
     virtual ScrollingPlatformLayer* layer() const = 0;
 
     FloatPoint computeLayerPosition() const;

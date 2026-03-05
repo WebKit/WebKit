@@ -25,13 +25,18 @@
 
 WI.ColorPicker = class ColorPicker extends WI.Object
 {
-    constructor({preventChangingColorFormats, colorVariables} = {})
+    constructor({preventChangingColorFormats, colorVariables, contrastInfo} = {})
     {
         super();
 
         this._preventChangingColorFormats = !!preventChangingColorFormats;
+        this._contrastInfo = contrastInfo || null;
 
         this._colorSquare = new WI.ColorSquare(this, 200);
+        if (this._contrastInfo?.contrastColor) {
+            this._colorSquare.contrastColor = this._contrastInfo.contrastColor;
+            this._colorSquare.isLargeText = !!this._contrastInfo.isLargeText;
+        }
 
         this._hueSlider = new WI.Slider;
         this._hueSlider.delegate = this;
@@ -60,6 +65,14 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         let colorInputsWrapperElement = this._element.appendChild(document.createElement("div"));
         colorInputsWrapperElement.classList.add("color-inputs-wrapper");
+
+        if (!this._preventChangingColorFormats) {
+            let formatOptionsElement = WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "format-options");
+            formatOptionsElement.role = "button";
+            WI.addMouseDownContextMenuHandlers(formatOptionsElement, this._populateFormatContextMenu.bind(this));
+            colorInputsWrapperElement.appendChild(formatOptionsElement);
+        }
+
         colorInputsWrapperElement.appendChild(this._colorInputsContainerElement);
 
         if (InspectorFrontendHost.canPickColorFromScreen()) {
@@ -84,6 +97,10 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             colorInputsWrapperElement.appendChild(pickColorElement);
         }
 
+        this._contrastInfoElement = null;
+        if (this._contrastInfo?.contrastColor)
+            this._createContrastInfoSection();
+
         this._opacity = 0;
         this._opacityPattern = "url(Images/Checkers.svg)";
 
@@ -95,7 +112,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
             let swatchesTitle = variableColorSwatchesContainer.appendChild(document.createElement("h2"));
             swatchesTitle.textContent = WI.UIString("Variables", "Variables @ Color Picker", "Title of swatches section in Color Picker");
-            
+
             let variableColorSwatchesListElement = variableColorSwatchesContainer.appendChild(document.createElement("ul"));
             let sortedColorVariables = WI.ColorPicker.sortColorVariables(colorVariables);
 
@@ -139,10 +156,8 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         return WI.Color.fromStringBestMatchingSuggestedFormatAndGamut(pickedColorCSSString, {suggestedFormat, suggestedGamut, forceSuggestedFormatAndGamut});
     }
 
-    // Static
-
     static sortColorVariables(colorVariables)
-    {   
+    {
         const rotation = 2;
         const weights = [Math.E / 11.279, Math.E / 3.934, Math.E / 39.975];
 
@@ -171,6 +186,54 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         });
     }
 
+    static addContextMenuFormatItems(contextMenu, color, formatChangedCallback)
+    {
+        let isColorOutsideSRGB = color.isOutsideSRGB();
+
+        if (!isColorOutsideSRGB) {
+            if (color.isKeyword() && color.format !== WI.Color.Format.Keyword) {
+                contextMenu.appendItem(WI.UIString("Format: Keyword"), () => {
+                    formatChangedCallback(WI.Color.Format.Keyword);
+                });
+            }
+
+            let hexInfo = color.getNextValidHEXFormat();
+            if (hexInfo) {
+                contextMenu.appendItem(hexInfo.title, () => {
+                    formatChangedCallback(hexInfo.format);
+                });
+            }
+
+            if (color.simple && color.format !== WI.Color.Format.HSL) {
+                contextMenu.appendItem(WI.UIString("Format: HSL"), () => {
+                    formatChangedCallback(WI.Color.Format.HSL);
+                });
+            } else if (color.format !== WI.Color.Format.HSLA) {
+                contextMenu.appendItem(WI.UIString("Format: HSLA"), () => {
+                    formatChangedCallback(WI.Color.Format.HSLA);
+                });
+            }
+
+            if (color.simple && color.format !== WI.Color.Format.RGB) {
+                contextMenu.appendItem(WI.UIString("Format: RGB"), () => {
+                    formatChangedCallback(WI.Color.Format.RGB);
+                });
+            } else if (color.format !== WI.Color.Format.RGBA) {
+                contextMenu.appendItem(WI.UIString("Format: RGBA"), () => {
+                    formatChangedCallback(WI.Color.Format.RGBA);
+                });
+            }
+
+            if (color.format !== WI.Color.Format.ColorFunction) {
+                contextMenu.appendItem(WI.UIString("Format: Color Function"), () => {
+                    formatChangedCallback(WI.Color.Format.ColorFunction);
+                });
+            }
+
+            contextMenu.appendSeparator();
+        }
+    }
+
     // Public
 
     get element() { return this._element; }
@@ -182,6 +245,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             return;
 
         this._opacity = opacity;
+        this._colorSquare.opacity = opacity;
         this._updateColor();
     }
 
@@ -199,6 +263,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._color = color;
 
         this._colorSquare.tintedColor = this._color;
+        this._colorSquare.opacity = this._color.alpha;
 
         this._hueSlider.value = this._color.hsl[0] / 360;
 
@@ -207,6 +272,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         this._showColorComponentInputs();
         this._updateColorGamut();
+        this._updateContrastInfo();
 
         this._dontUpdateColor = false;
     }
@@ -264,6 +330,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
 
         this._updateColorGamut();
+        this._updateContrastInfo();
     }
 
     _updateOpacitySlider()
@@ -400,6 +467,97 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     {
         this.color = resolvedColor;
         this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color, variableName});
+    }
+
+    _changeFormat(format)
+    {
+        if (this._color.format === format)
+            return;
+
+        this._color.format = format;
+        this._colorInputsFormat = null;
+        this._showColorComponentInputs();
+        this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+    }
+
+    _populateFormatContextMenu(contextMenu)
+    {
+        WI.ColorPicker.addContextMenuFormatItems(contextMenu, this._color, (format) => {
+            this._changeFormat(format);
+        });
+
+        if (this._color.gamut !== WI.Color.Gamut.DisplayP3) {
+            contextMenu.appendItem(WI.UIString("Convert to Display-P3"), () => {
+                this._color.gamut = WI.Color.Gamut.DisplayP3;
+                this._colorInputsFormat = null;
+                this._showColorComponentInputs();
+                this._updateColorGamut();
+                this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+            });
+        }
+
+        if (this._color.gamut !== WI.Color.Gamut.SRGB) {
+            let label = this._color.isOutsideSRGB() ? WI.UIString("Clamp to sRGB") : WI.UIString("Convert to sRGB");
+            contextMenu.appendItem(label, () => {
+                this._color.gamut = WI.Color.Gamut.SRGB;
+                this._colorInputsFormat = null;
+                this._showColorComponentInputs();
+                this._updateColorGamut();
+                this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+            });
+        }
+    }
+
+    _createContrastInfoSection()
+    {
+        this._contrastInfoElement = this._element.appendChild(document.createElement("div"));
+        this._contrastInfoElement.classList.add("contrast-info");
+
+        let labelElement = this._contrastInfoElement.appendChild(document.createElement("span"));
+        labelElement.classList.add("contrast-label");
+        labelElement.textContent = WI.UIString("Contrast", "Contrast @ Color Picker", "Label for contrast ratio section in Color Picker");
+
+        this._contrastRatioElement = this._contrastInfoElement.appendChild(document.createElement("span"));
+        this._contrastRatioElement.classList.add("contrast-ratio");
+
+        this._complianceBadgeElement = this._contrastInfoElement.appendChild(document.createElement("span"));
+        this._complianceBadgeElement.classList.add("compliance-badge");
+
+        let separatorElement = this._contrastInfoElement.appendChild(document.createElement("span"));
+        separatorElement.classList.add("contrast-separator");
+        separatorElement.textContent = WI.UIString("vs", "vs @ Color Picker Contrast", "Separator between foreground and background colors in contrast info");
+
+        let swatchTooltip = this._contrastInfo.isBackgroundColor ? WI.UIString("Text Color") : WI.UIString("Background Color");
+        let contrastSwatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, this._contrastInfo.contrastColor, {readOnly: true, tooltip: swatchTooltip});
+        this._contrastInfoElement.appendChild(contrastSwatch.element);
+    }
+
+    _updateContrastInfo()
+    {
+        if (!this._contrastInfo?.contrastColor || !this._contrastInfoElement)
+            return;
+
+        let effectiveForeground = this._color.blendOverBackground(this._contrastInfo.contrastColor);
+
+        let ratio = effectiveForeground.contrastRatio(this._contrastInfo.contrastColor);
+        let isLargeText = !!this._contrastInfo.isLargeText;
+        let compliance = WI.Color.contrastComplianceForRatio(ratio, {isLargeText});
+
+        this._contrastRatioElement.textContent = ratio.toFixed(2) + ":1";
+
+        this._complianceBadgeElement.textContent = compliance;
+        this._complianceBadgeElement.className = "compliance-badge";
+        switch (compliance) {
+        case WI.Color.ContrastCompliance.AAA:
+            this._complianceBadgeElement.classList.add("contrast-aaa");
+            break;
+        case WI.Color.ContrastCompliance.AA:
+            this._complianceBadgeElement.classList.add("contrast-aa");
+            break;
+        case WI.Color.ContrastCompliance.Fail:
+            this._complianceBadgeElement.classList.add("contrast-fail");
+            break;
+        }
     }
 };
 

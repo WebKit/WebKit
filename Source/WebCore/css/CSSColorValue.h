@@ -35,9 +35,9 @@ class Color;
 class CSSColorValue final : public CSSValue {
 public:
     static Ref<CSSColorValue> create(CSS::Color);
-    static Ref<CSSColorValue> create(WebCore::Color);
+    static Ref<CSSColorValue> NODELETE create(WebCore::Color);
 
-    const CSS::Color& color() const { return m_color; }
+    const CSS::Color& color() const LIFETIME_BOUND { return m_color; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSColorValue&) const;

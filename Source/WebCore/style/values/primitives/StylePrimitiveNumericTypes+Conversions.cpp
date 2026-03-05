@@ -24,10 +24,11 @@
 
 #include "config.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
-#include "Settings.h"
 
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "Settings.h"
 #include "StyleLengthResolution.h"
+#include "StyleZoomPrimitivesInlines.h"
 
 namespace WebCore {
 namespace Style {

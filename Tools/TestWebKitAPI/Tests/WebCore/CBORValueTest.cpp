@@ -71,7 +71,7 @@ TEST(CBORValueTest, ConstructStringFromWTFStringConstRef)
 TEST(CBORValueTest, ConstructStringFromWTFStringRefRef)
 {
     String str = "foobar"_s;
-    CBORValue value(WTFMove(str));
+    CBORValue value(WTF::move(str));
     ASSERT_TRUE(CBORValue::Type::String == value.type());
     EXPECT_TRUE("foobar"_s == value.getString());
 }
@@ -97,7 +97,7 @@ TEST(CBORValueTest, ConstructArray)
 
     array.last() = CBORValue("bar");
     {
-        CBORValue value(WTFMove(array));
+        CBORValue value(WTF::move(array));
         ASSERT_TRUE(CBORValue::Type::Array == value.type());
         ASSERT_EQ(1u, value.getArray().size());
         ASSERT_TRUE(CBORValue::Type::String == value.getArray()[0].type());
@@ -120,7 +120,7 @@ TEST(CBORValueTest, ConstructMap)
 
     map[CBORValue("foo")] = CBORValue("baz");
     {
-        CBORValue value(WTFMove(map));
+        CBORValue value(WTF::move(map));
         ASSERT_TRUE(CBORValue::Type::Map == value.type());
         ASSERT_EQ(value.getMap().count(keyFoo), 1u);
         ASSERT_TRUE(CBORValue::Type::String == value.getMap().find(keyFoo)->second.type());
@@ -219,7 +219,7 @@ TEST(CBORValueTest, CopyArray)
 {
     CBORValue::ArrayValue array;
     array.append(123);
-    CBORValue value(WTFMove(array));
+    CBORValue value(WTF::move(array));
 
     CBORValue copiedValue(value.clone());
     ASSERT_EQ(1u, copiedValue.getArray().size());
@@ -236,7 +236,7 @@ TEST(CBORValueTest, CopyMap)
     CBORValue::MapValue map;
     CBORValue keyA("a");
     map[CBORValue("a")] = CBORValue(123);
-    CBORValue value(WTFMove(map));
+    CBORValue value(WTF::move(map));
 
     CBORValue copiedValue(value.clone());
     EXPECT_EQ(1u, copiedValue.getMap().size());
@@ -271,7 +271,7 @@ TEST(CBORValueTest, CopySimpleValue)
 TEST(CBORValueTest, MoveUnsigned)
 {
     CBORValue value(74);
-    CBORValue moved_value(WTFMove(value));
+    CBORValue moved_value(WTF::move(value));
     EXPECT_TRUE(CBORValue::Type::Unsigned == moved_value.type());
     EXPECT_EQ(74u, moved_value.getInteger());
 
@@ -285,7 +285,7 @@ TEST(CBORValueTest, MoveUnsigned)
 TEST(CBORValueTest, MoveNegativeInteger)
 {
     CBORValue value(-74);
-    CBORValue moved_value(WTFMove(value));
+    CBORValue moved_value(WTF::move(value));
     EXPECT_TRUE(CBORValue::Type::Negative == moved_value.type());
     EXPECT_EQ(-74, moved_value.getInteger());
 
@@ -299,7 +299,7 @@ TEST(CBORValueTest, MoveNegativeInteger)
 TEST(CBORValueTest, MoveString)
 {
     CBORValue value("foobar");
-    CBORValue moved_value(WTFMove(value));
+    CBORValue moved_value(WTF::move(value));
     EXPECT_TRUE(CBORValue::Type::String == moved_value.type());
     EXPECT_TRUE("foobar"_s == moved_value.getString());
 
@@ -314,7 +314,7 @@ TEST(CBORValueTest, MoveBytestring)
 {
     const CBORValue::BinaryValue bytes({ 0xF, 0x0, 0x0, 0xB, 0xA, 0x2 });
     CBORValue value(bytes);
-    CBORValue moved_value(WTFMove(value));
+    CBORValue moved_value(WTF::move(value));
     EXPECT_TRUE(CBORValue::Type::ByteString == moved_value.type());
     EXPECT_TRUE(bytes == moved_value.getByteString());
 
@@ -331,8 +331,8 @@ TEST(CBORValueTest, MoveConstructMap)
     const CBORValue keyA("a");
     map[CBORValue("a")] = CBORValue(123);
 
-    CBORValue value(WTFMove(map));
-    CBORValue moved_value(WTFMove(value));
+    CBORValue value(WTF::move(map));
+    CBORValue moved_value(WTF::move(value));
     ASSERT_TRUE(CBORValue::Type::Map == moved_value.type());
     ASSERT_EQ(moved_value.getMap().count(keyA), 1u);
     ASSERT_TRUE(moved_value.getMap().find(keyA)->second.isUnsigned());
@@ -346,7 +346,7 @@ TEST(CBORValueTest, MoveAssignMap)
     map[CBORValue("a")] = CBORValue(123);
 
     CBORValue blank;
-    blank = CBORValue(WTFMove(map));
+    blank = CBORValue(WTF::move(map));
     ASSERT_TRUE(blank.isMap());
     ASSERT_EQ(blank.getMap().count(keyA), 1u);
     ASSERT_TRUE(blank.getMap().find(keyA)->second.isUnsigned());
@@ -358,12 +358,12 @@ TEST(CBORValueTest, MoveArray)
     CBORValue::ArrayValue array;
     array.append(123);
     CBORValue value(array);
-    CBORValue moved_value(WTFMove(value));
+    CBORValue moved_value(WTF::move(value));
     EXPECT_TRUE(CBORValue::Type::Array == moved_value.type());
     EXPECT_EQ(123u, moved_value.getArray().last().getInteger());
 
     CBORValue blank;
-    blank = CBORValue(WTFMove(array));
+    blank = CBORValue(WTF::move(array));
     EXPECT_TRUE(CBORValue::Type::Array == blank.type());
     EXPECT_EQ(123u, blank.getArray().last().getInteger());
 }
@@ -371,7 +371,7 @@ TEST(CBORValueTest, MoveArray)
 TEST(CBORValueTest, MoveSimpleValue)
 {
     CBORValue value(CBORValue::SimpleValue::Undefined);
-    CBORValue moved_value(WTFMove(value));
+    CBORValue moved_value(WTF::move(value));
     EXPECT_TRUE(CBORValue::Type::SimpleValue == moved_value.type());
     EXPECT_TRUE(CBORValue::SimpleValue::Undefined == moved_value.getSimpleValue());
 

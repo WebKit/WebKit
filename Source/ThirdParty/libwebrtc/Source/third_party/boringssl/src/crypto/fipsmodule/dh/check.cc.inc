@@ -34,7 +34,8 @@ int dh_check_params_fast(const DH *dh) {
   }
 
   // q must be bounded by p.
-  if (dh->q != NULL && (BN_is_negative(dh->q) || BN_ucmp(dh->q, dh->p) > 0)) {
+  if (dh->q != nullptr &&
+      (BN_is_negative(dh->q) || BN_ucmp(dh->q, dh->p) > 0)) {
     OPENSSL_PUT_ERROR(DH, DH_R_INVALID_PARAMETERS);
     return 0;
   }
@@ -56,7 +57,7 @@ int DH_check_pub_key(const DH *dh, const BIGNUM *pub_key, int *out_flags) {
   }
 
   bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return 0;
   }
   bssl::BN_CTXScope scope(ctx.get());
@@ -68,20 +69,18 @@ int DH_check_pub_key(const DH *dh, const BIGNUM *pub_key, int *out_flags) {
 
   // Check |pub_key| is less than |dh->p| - 1.
   BIGNUM *tmp = BN_CTX_get(ctx.get());
-  if (tmp == NULL ||
-      !BN_copy(tmp, dh->p) ||
-      !BN_sub_word(tmp, 1)) {
+  if (tmp == nullptr || !BN_copy(tmp, dh->p) || !BN_sub_word(tmp, 1)) {
     return 0;
   }
   if (BN_cmp(pub_key, tmp) >= 0) {
     *out_flags |= DH_CHECK_PUBKEY_TOO_LARGE;
   }
 
-  if (dh->q != NULL) {
+  if (dh->q != nullptr) {
     // Check |pub_key|^|dh->q| is 1 mod |dh->p|. This is necessary for RFC 5114
     // groups which are not safe primes but pick a generator on a prime-order
     // subgroup of size |dh->q|.
-    if (!BN_mod_exp_mont(tmp, pub_key, dh->q, dh->p, ctx.get(), NULL)) {
+    if (!BN_mod_exp_mont(tmp, pub_key, dh->q, dh->p, ctx.get(), nullptr)) {
       return 0;
     }
     if (!BN_is_one(tmp)) {

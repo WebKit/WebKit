@@ -576,6 +576,13 @@ cl_int ValidateCreateImageWithProperties(cl_context context,
                                          const cl_image_desc *image_desc,
                                          const void *host_ptr);
 
+// cl_arm_import_memory
+cl_int ValidateImportMemoryARM(cl_context context,
+                               MemFlags flagsPacked,
+                               const cl_import_properties_arm *properties,
+                               const void *memory,
+                               size_t size);
+
 // cl_khr_external_memory
 cl_int ValidateEnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                                    cl_uint num_mem_objects,
@@ -594,6 +601,8 @@ cl_int ValidateEnqueueReleaseExternalMemObjectsKHR(cl_command_queue command_queu
 cl_int ValidateIcdGetPlatformIDsKHR(cl_uint num_entries,
                                     const cl_platform_id *platforms,
                                     const cl_uint *num_platforms);
+cl_int ValidateIcdGetFunctionAddressForPlatformKHR(cl_platform_id platform, const char *func_name);
+cl_int ValidateIcdSetPlatformDispatchDataKHR(cl_platform_id platform, const void *dispatch_data);
 }  // namespace cl
 
 #endif  // LIBANGLE_VALIDATION_CL_AUTOGEN_H_

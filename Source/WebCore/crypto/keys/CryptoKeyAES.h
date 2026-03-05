@@ -49,7 +49,7 @@ public:
     }
     virtual ~CryptoKeyAES();
 
-    static bool isValidAESAlgorithm(CryptoAlgorithmIdentifier);
+    static bool NODELETE isValidAESAlgorithm(CryptoAlgorithmIdentifier);
 
     static RefPtr<CryptoKeyAES> generate(CryptoAlgorithmIdentifier, size_t lengthBits, bool extractable, CryptoKeyUsageBitmap);
     WEBCORE_EXPORT static RefPtr<CryptoKeyAES> importRaw(CryptoAlgorithmIdentifier, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);

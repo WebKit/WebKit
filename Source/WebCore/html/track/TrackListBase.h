@@ -41,7 +41,7 @@ class TrackBase;
 using TrackID = uint64_t;
 
 class TrackListBase : public RefCounted<TrackListBase>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrackListBase);
+    WTF_MAKE_TZONE_ALLOCATED(TrackListBase);
 public:
     virtual ~TrackListBase();
 
@@ -50,10 +50,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    enum Type { BaseTrackList, TextTrackList, AudioTrackList, VideoTrackList };
-    Type type() const { return m_type; }
-
-    virtual unsigned length() const;
+    virtual unsigned NODELETE length() const;
     virtual bool contains(TrackBase&) const;
     virtual bool contains(TrackID) const;
     virtual void remove(TrackBase&, bool scheduleEvent = true);
@@ -78,12 +75,12 @@ public:
     bool isAnyTrackEnabled() const;
 
 protected:
-    TrackListBase(ScriptExecutionContext*, Type);
+    explicit TrackListBase(ScriptExecutionContext*);
 
     void scheduleAddTrackEvent(Ref<TrackBase>&&);
     void scheduleRemoveTrackEvent(Ref<TrackBase>&&);
 
-    Vector<RefPtr<TrackBase>> m_inbandTracks;
+    Vector<Ref<TrackBase>> m_inbandTracks;
 
 private:
     void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
@@ -92,7 +89,6 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    Type m_type;
     WeakPtr<OpaqueRootObserver> m_opaqueRootObserver;
     bool m_isChangeEventScheduled { false };
 };

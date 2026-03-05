@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 
 #include <array>
 #include <wtf/EnumTraits.h>
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 
@@ -34,7 +36,7 @@ namespace WTF {
 // This assumes the values of the enum start at 0 and monotonically increase by 1
 // (so the conversion function between size_t and the enum is just a simple static_cast).
 // LastValue is the maximum value of the enum, which determines the size of the array.
-template <typename Key, typename T, Key LastValue = EnumTraits<Key>::values::max>
+template<typename Key, typename T, Key LastValue = EnumTraits<Key>::values::max>
 class EnumeratedArray {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EnumeratedArray);
 public:
@@ -50,37 +52,37 @@ public:
     using reverse_iterator = std::reverse_iterator<iterator>;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-    EnumeratedArray() = default;
+    constexpr EnumeratedArray() = default;
 
-    EnumeratedArray(const EnumeratedArray& from)
+    constexpr EnumeratedArray(const EnumeratedArray& from)
         : m_storage(from.m_storage)
     {
     }
 
-    EnumeratedArray(EnumeratedArray&& from)
-        : m_storage(WTFMove(from.m_storage))
+    constexpr EnumeratedArray(EnumeratedArray&& from)
+        : m_storage(WTF::move(from.m_storage))
     {
     }
 
-    EnumeratedArray(const UnderlyingType& from)
+    constexpr EnumeratedArray(const UnderlyingType& from)
         : m_storage(from)
     {
     }
 
-    EnumeratedArray(UnderlyingType&& from)
-        : m_storage(WTFMove(from))
+    constexpr EnumeratedArray(UnderlyingType&& from)
+        : m_storage(WTF::move(from))
     {
     }
 
-    EnumeratedArray& operator=(const EnumeratedArray& from)
+    constexpr EnumeratedArray& operator=(const EnumeratedArray& from)
     {
         m_storage = from.m_storage;
         return *this;
     }
 
-    EnumeratedArray& operator=(EnumeratedArray&& from)
+    constexpr EnumeratedArray& operator=(EnumeratedArray&& from)
     {
-        m_storage = WTFMove(from.m_storage);
+        m_storage = WTF::move(from.m_storage);
         return *this;
     }
 
@@ -219,20 +221,20 @@ public:
         return m_storage.swap(other.m_storage);
     }
 
-    template <typename Key2, typename T2, Key2 LastValue2>
+    template<typename Key2, typename T2, Key2 LastValue2>
     constexpr bool operator==(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
     {
         return m_storage == rhs.m_storage;
     }
 
-    template <typename Key2, typename T2, Key2 LastValue2>
-    std::strong_ordering operator<=>(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
+    template<typename Key2, typename T2, Key2 LastValue2>
+    constexpr std::strong_ordering operator<=>(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
     {
         return m_storage <=> rhs.m_storage;
     }
 
 private:
-    typename UnderlyingType::size_type index(size_type pos) const
+    static constexpr typename UnderlyingType::size_type index(size_type pos)
     {
         return static_cast<typename UnderlyingType::size_type>(pos);
     }

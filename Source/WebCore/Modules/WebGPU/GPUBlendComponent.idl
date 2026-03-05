@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpublendcomponent
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUBlendComponent {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUBlendComponent {
     GPUBlendOperation operation = "add";
     GPUBlendFactor srcFactor = "one";
     GPUBlendFactor dstFactor = "zero";

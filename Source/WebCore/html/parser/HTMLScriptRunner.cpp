@@ -113,7 +113,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
         stopWatchingForLoad(pendingScript);
 
     if (!isExecutingScript() && m_document)
-        m_document->eventLoop().performMicrotaskCheckpoint();
+        m_document->eventLoop().performMicrotaskCheckpoint(m_document->vm());
 
     {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
@@ -233,7 +233,7 @@ void HTMLScriptRunner::requestDeferredScript(ScriptElement& scriptElement)
 {
     auto pendingScript = requestPendingScript(scriptElement);
     ASSERT(pendingScript->needsLoading());
-    m_scriptsToExecuteAfterParsing.append(WTFMove(pendingScript));
+    m_scriptsToExecuteAfterParsing.append(WTF::move(pendingScript));
 }
 
 // This method is meant to match the HTML5 definition of "running a script"
@@ -248,7 +248,7 @@ void HTMLScriptRunner::runScript(ScriptElement& scriptElement, const TextPositio
     // unfortunately no obvious way to tell if prepareScript is going to
     // execute the script before calling it.
     if (!isExecutingScript() && m_document)
-        m_document->eventLoop().performMicrotaskCheckpoint();
+        m_document->eventLoop().performMicrotaskCheckpoint(m_document->vm());
 
     InsertionPointRecord insertionPointRecord(m_host.inputStream());
     NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);

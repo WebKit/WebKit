@@ -70,7 +70,7 @@ class RtcEventProbeResultSuccess final : public RtcEvent {
   }
 
  private:
-  RtcEventProbeResultSuccess(const RtcEventProbeResultSuccess& other);
+  RtcEventProbeResultSuccess(const RtcEventProbeResultSuccess&) = default;
 
   const int32_t id_;
   const int32_t bitrate_bps_;

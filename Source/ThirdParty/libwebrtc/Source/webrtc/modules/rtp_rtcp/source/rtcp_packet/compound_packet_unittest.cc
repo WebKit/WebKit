@@ -28,7 +28,6 @@
 #include "test/rtcp_packet_parser.h"
 
 using ::testing::_;
-using ::testing::Invoke;
 using ::testing::MockFunction;
 using webrtc::rtcp::Bye;
 using webrtc::rtcp::CompoundPacket;
@@ -110,14 +109,13 @@ TEST(RtcpCompoundPacketTest, BuildWithInputBuffer) {
 
   const size_t kBufferSize = kRrLength + kReportBlockLength + kFirLength;
   MockFunction<void(ArrayView<const uint8_t>)> callback;
-  EXPECT_CALL(callback, Call(_))
-      .WillOnce(Invoke([&](ArrayView<const uint8_t> packet) {
-        RtcpPacketParser parser;
-        parser.Parse(packet);
-        EXPECT_EQ(1, parser.receiver_report()->num_packets());
-        EXPECT_EQ(1u, parser.receiver_report()->report_blocks().size());
-        EXPECT_EQ(1, parser.fir()->num_packets());
-      }));
+  EXPECT_CALL(callback, Call(_)).WillOnce([&](ArrayView<const uint8_t> packet) {
+    RtcpPacketParser parser;
+    parser.Parse(packet);
+    EXPECT_EQ(1, parser.receiver_report()->num_packets());
+    EXPECT_EQ(1u, parser.receiver_report()->report_blocks().size());
+    EXPECT_EQ(1, parser.fir()->num_packets());
+  });
 
   EXPECT_TRUE(compound.Build(kBufferSize, callback.AsStdFunction()));
 }
@@ -139,20 +137,20 @@ TEST(RtcpCompoundPacketTest, BuildWithTooSmallBuffer_FragmentedSend) {
   const size_t kBufferSize = kRrLength + kReportBlockLength;
   MockFunction<void(ArrayView<const uint8_t>)> callback;
   EXPECT_CALL(callback, Call(_))
-      .WillOnce(Invoke([&](ArrayView<const uint8_t> packet) {
+      .WillOnce([&](ArrayView<const uint8_t> packet) {
         RtcpPacketParser parser;
         parser.Parse(packet);
         EXPECT_EQ(1, parser.receiver_report()->num_packets());
         EXPECT_EQ(1U, parser.receiver_report()->report_blocks().size());
         EXPECT_EQ(0, parser.fir()->num_packets());
-      }))
-      .WillOnce(Invoke([&](ArrayView<const uint8_t> packet) {
+      })
+      .WillOnce([&](ArrayView<const uint8_t> packet) {
         RtcpPacketParser parser;
         parser.Parse(packet);
         EXPECT_EQ(0, parser.receiver_report()->num_packets());
         EXPECT_EQ(0U, parser.receiver_report()->report_blocks().size());
         EXPECT_EQ(1, parser.fir()->num_packets());
-      }));
+      });
 
   EXPECT_TRUE(compound.Build(kBufferSize, callback.AsStdFunction()));
 }

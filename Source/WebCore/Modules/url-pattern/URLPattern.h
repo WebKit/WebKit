@@ -47,38 +47,44 @@ class URLPatternComponent;
 }
 
 class URLPattern final : public RefCounted<URLPattern> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(URLPattern);
+    WTF_MAKE_TZONE_ALLOCATED(URLPattern);
 public:
     using URLPatternInput = Variant<String, URLPatternInit>;
 
     static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
-    static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, std::optional<URLPatternInput>&&, URLPatternOptions&&);
+    static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, URLPatternInput&&, URLPatternOptions&&);
 
-    using Compatible = Variant<String, URLPatternInit, RefPtr<URLPattern>>;
+    using Compatible = Variant<String, URLPatternInit, Ref<URLPattern>>;
     static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, Compatible&&, const String&);
 
     ~URLPattern();
 
-    ExceptionOr<bool> test(ScriptExecutionContext&, std::optional<URLPatternInput>&&, String&& baseURL) const;
+    ExceptionOr<bool> test(ScriptExecutionContext&, URLPatternInput&&, String&& baseURL) const;
 
-    ExceptionOr<std::optional<URLPatternResult>> exec(ScriptExecutionContext&, std::optional<URLPatternInput>&&, String&& baseURL) const;
+    ExceptionOr<std::optional<URLPatternResult>> exec(ScriptExecutionContext&, URLPatternInput&&, String&& baseURL) const;
 
-    const String& protocol() const { return m_protocolComponent.patternString(); }
-    const String& username() const { return m_usernameComponent.patternString(); }
-    const String& password() const { return m_passwordComponent.patternString(); }
-    const String& hostname() const { return m_hostnameComponent.patternString(); }
-    const String& port() const { return m_portComponent.patternString(); }
-    const String& pathname() const { return m_pathnameComponent.patternString(); }
-    const String& search() const { return m_searchComponent.patternString(); }
-    const String& hash() const { return m_hashComponent.patternString(); }
+    const String& protocol() const LIFETIME_BOUND { return m_protocolComponent.patternString(); }
+    const String& username() const LIFETIME_BOUND { return m_usernameComponent.patternString(); }
+    const String& password() const LIFETIME_BOUND { return m_passwordComponent.patternString(); }
+    const String& hostname() const LIFETIME_BOUND { return m_hostnameComponent.patternString(); }
+    const String& port() const LIFETIME_BOUND { return m_portComponent.patternString(); }
+    const String& pathname() const LIFETIME_BOUND { return m_pathnameComponent.patternString(); }
+    const String& search() const LIFETIME_BOUND { return m_searchComponent.patternString(); }
+    const String& hash() const LIFETIME_BOUND { return m_hashComponent.patternString(); }
 
-    bool hasRegExpGroups() const;
+    bool NODELETE hasRegExpGroups() const;
+    bool shouldIgnoreCase() const { return m_shouldIgnoreCase; }
 
 private:
-    URLPattern();
-    ExceptionOr<void> compileAllComponents(ScriptExecutionContext&, URLPatternInit&&, const URLPatternOptions&);
+    explicit URLPattern(bool shouldIgnoreCase)
+        : m_shouldIgnoreCase(shouldIgnoreCase)
+    {
+    }
+
+    ExceptionOr<void> compileAllComponents(ScriptExecutionContext&, URLPatternInit&&);
     ExceptionOr<std::optional<URLPatternResult>> match(ScriptExecutionContext&, Variant<URL, URLPatternInput>&&, String&& baseURLString) const;
 
+    const bool m_shouldIgnoreCase;
     URLPatternUtilities::URLPatternComponent m_protocolComponent;
     URLPatternUtilities::URLPatternComponent m_usernameComponent;
     URLPatternUtilities::URLPatternComponent m_passwordComponent;

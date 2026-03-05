@@ -12,8 +12,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,83) size 19x4
-          text run at (182,83) width 4: " "
+        RenderText {#text} at (182,83) size 20x4
+          text run at (182,83) width 5: " "
         RenderBlock {DIV} at (0,87) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px groove #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -22,8 +22,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,170) size 19x4
-          text run at (182,170) width 4: " "
+        RenderText {#text} at (182,170) size 20x4
+          text run at (182,170) width 5: " "
         RenderBlock {DIV} at (0,174) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px ridge #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,257) size 19x4
-          text run at (182,257) width 4: " "
+        RenderText {#text} at (182,257) size 20x4
+          text run at (182,257) width 5: " "
         RenderBlock {DIV} at (0,261) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px outset #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -42,8 +42,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,344) size 19x4
-          text run at (182,344) width 4: " "
+        RenderText {#text} at (182,344) size 20x4
+          text run at (182,344) width 5: " "
         RenderBlock {DIV} at (0,348) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px inset #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -52,8 +52,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,431) size 19x4
-          text run at (182,431) width 4: " "
+        RenderText {#text} at (182,431) size 20x4
+          text run at (182,431) width 5: " "
         RenderBlock {DIV} at (0,435) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px double #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -72,8 +72,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,83) size 19x4
-          text run at (182,83) width 4: " "
+        RenderText {#text} at (182,83) size 20x4
+          text run at (182,83) width 5: " "
         RenderBlock {DIV} at (0,87) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px groove #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -82,8 +82,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,170) size 19x4
-          text run at (182,170) width 4: " "
+        RenderText {#text} at (182,170) size 20x4
+          text run at (182,170) width 5: " "
         RenderBlock {DIV} at (0,174) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px ridge #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -92,8 +92,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,257) size 19x4
-          text run at (182,257) width 4: " "
+        RenderText {#text} at (182,257) size 20x4
+          text run at (182,257) width 5: " "
         RenderBlock {DIV} at (0,261) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px outset #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -102,8 +102,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,344) size 19x4
-          text run at (182,344) width 4: " "
+        RenderText {#text} at (182,344) size 20x4
+          text run at (182,344) width 5: " "
         RenderBlock {DIV} at (0,348) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px inset #808080)]
             RenderText {#text} at (28,35) size 72x48
@@ -112,8 +112,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (156,0) size 72x48
               text run at (156,0) width 48: "   "
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (182,431) size 19x4
-          text run at (182,431) width 4: " "
+        RenderText {#text} at (182,431) size 20x4
+          text run at (182,431) width 5: " "
         RenderBlock {DIV} at (0,435) size 256x83
           RenderInline {SPAN} at (8,0) size 240x83 [bgcolor=#DDDDDD] [border: (20px double #808080)]
             RenderText {#text} at (28,35) size 72x48

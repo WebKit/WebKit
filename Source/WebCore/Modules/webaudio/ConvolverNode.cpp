@@ -49,9 +49,9 @@ constexpr size_t MaxFFTSize = 32768;
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ConvolverNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConvolverNode);
 
-static unsigned computeNumberOfOutputChannels(unsigned inputChannels, unsigned responseChannels)
+static unsigned NODELETE computeNumberOfOutputChannels(unsigned inputChannels, unsigned responseChannels)
 {
     // The number of output channels for a Convolver must be one or two. And can only be one if
     // there's a mono source and a mono response buffer.
@@ -68,7 +68,7 @@ ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context,
 
     node->setNormalizeForBindings(!options.disableNormalization);
 
-    result = node->setBufferForBindings(WTFMove(options.buffer));
+    result = node->setBufferForBindings(WTF::move(options.buffer));
     if (result.hasException())
         return result.releaseException();
 
@@ -109,7 +109,7 @@ void ConvolverNode::process(size_t framesToProcess)
         // Note that we can handle the case where nothing is connected to the input, in which case we'll just feed silence into the convolver.
         // FIXME: If we wanted to get fancy we could try to factor in the 'tail time' and stop processing once the tail dies down if
         // we keep getting fed silence.
-        m_reverb->process(checkedInput(0)->bus(), outputBus, framesToProcess);
+        m_reverb->process(protect(input(0))->bus(), outputBus, framesToProcess);
     }
 }
 
@@ -152,18 +152,18 @@ ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buff
         // Synchronize with process().
         Locker locker { m_processLock };
 
-        m_reverb = WTFMove(reverb);
-        m_buffer = WTFMove(buffer);
+        m_reverb = WTF::move(reverb);
+        m_buffer = WTF::move(buffer);
         if (m_buffer) {
             // This will propagate the channel count to any nodes connected further downstream in the graph.
-            checkedOutput(0)->setNumberOfChannels(computeNumberOfOutputChannels(checkedInput(0)->numberOfChannels(), m_buffer->numberOfChannels()));
+            protect(output(0))->setNumberOfChannels(computeNumberOfOutputChannels(protect(input(0))->numberOfChannels(), m_buffer->numberOfChannels()));
         }
     }
 
     return { };
 }
 
-AudioBuffer* ConvolverNode::bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+AudioBuffer* NODELETE ConvolverNode::bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(isMainThread());
     return m_buffer.get();
@@ -234,7 +234,7 @@ void ConvolverNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
         if (!isInitialized()) {
             // This will propagate the channel count to any nodes connected further
             // downstream in the graph.
-            checkedOutput(0)->setNumberOfChannels(numberOfOutputChannels);
+            protect(output(0))->setNumberOfChannels(numberOfOutputChannels);
             initialize();
         }
     }

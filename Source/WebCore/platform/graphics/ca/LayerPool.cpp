@@ -75,14 +75,14 @@ LayerPool::LayerList& LayerPool::listOfLayersWithSize(const IntSize& size, Acces
     return it->value;
 }
 
-void LayerPool::addLayer(const RefPtr<PlatformCALayer>& layer)
+void LayerPool::addLayer(PlatformCALayer& layer)
 {
     RELEASE_ASSERT(isMainThread());
-    IntSize layerSize(expandedIntSize(layer->bounds().size()));
+    IntSize layerSize(expandedIntSize(layer.bounds().size()));
     if (!canReuseLayerWithSize(layerSize))
         return;
 
-    listOfLayersWithSize(layerSize).prepend(layer);
+    listOfLayersWithSize(layerSize).prepend(Ref { layer });
     m_totalBytes += backingStoreBytesForSize(layerSize);
     
     m_lastAddTime = MonotonicTime::now();

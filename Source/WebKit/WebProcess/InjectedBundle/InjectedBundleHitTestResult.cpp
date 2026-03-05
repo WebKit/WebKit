@@ -52,12 +52,12 @@ Ref<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const HitTe
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() const
 {
-    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.protectedInnerNonSharedNode().get());
+    return InjectedBundleNodeHandle::getOrCreate(protect(m_hitTestResult.innerNonSharedNode()).get());
 }
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle() const
 {
-    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.protectedURLElement().get());
+    return InjectedBundleNodeHandle::getOrCreate(protect(m_hitTestResult.URLElement()).get());
 }
 
 RefPtr<WebFrame> InjectedBundleHitTestResult::frame() const

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 
@@ -37,13 +38,14 @@ enum class FindOptions : uint16_t;
 
 class FindTextMatchCallbackAggregator : public RefCounted<FindTextMatchCallbackAggregator> {
 public:
-    static Ref<FindTextMatchCallbackAggregator> create(CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
-    void foundMatches(Vector<WebFoundTextRange>&&);
+    static Ref<FindTextMatchCallbackAggregator> create(WebPageProxy&, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
+    void foundMatches(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&);
     ~FindTextMatchCallbackAggregator();
 
 private:
-    FindTextMatchCallbackAggregator(CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
+    WeakPtr<WebPageProxy> m_page;
+    FindTextMatchCallbackAggregator(WebPageProxy&, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
     CompletionHandler<void(Vector<WebFoundTextRange>&&)> m_completionHandler;
-    Vector<WebFoundTextRange> m_range;
+    HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>> m_frameMatches;
 };
 } // namespace WebKit

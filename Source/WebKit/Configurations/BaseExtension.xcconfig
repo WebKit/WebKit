@@ -27,6 +27,9 @@ CLANG_ENABLE_OBJC_ARC = YES;
 CLANG_ENABLE_MODULES = YES;
 CLANG_MODULE_CACHE_PATH = ;
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO;
+WK_PGO_GEN_FLAGS = ; // Disable IR PGO profile generation
+WK_PGO_USE_CFLAGS = ; // Disable IR PGO profile use
+WK_PGO_USE_LDFLAGS = ; // Disable IR PGO profile use
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)/System/Library/ExtensionKit/Extensions;
 INSTALL_PATH[sdk=*simulator] = $(WK_INSTALL_PATH_PREFIX)/System/Library/ExtensionKit/Extensions;
 INSTALL_PATH[sdk=iphone*17.4*] = $(WK_INSTALL_PATH_PREFIX)/System/Library/ExtensionKit/Extensions;

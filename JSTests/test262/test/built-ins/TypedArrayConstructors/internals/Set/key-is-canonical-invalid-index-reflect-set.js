@@ -27,7 +27,7 @@ var value = {
   },
 };
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var target, receiver;
 
   [1, 1.5, -1].forEach(function(key) {
@@ -38,21 +38,21 @@ testWithTypedArrayConstructors(function(TA) {
     });
 
 
-    target = new TA([0]);
+    target = new TA(makeCtorArg([0]));
     receiver = {};
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should succeed (key: " + key + ", receiver: empty object)");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: empty object)");
     assert(!receiver.hasOwnProperty(key), "receiver[" + key + "] should not be created (receiver: empty object)");
 
 
-    target = new TA([0]);
-    receiver = new TA([1]);
+    target = new TA(makeCtorArg([0]));
+    receiver = new TA(makeCtorArg([1]));
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should succeed (key: " + key + ", receiver: another typed array of the same length)");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: another typed array of the same length)");
     assert(!receiver.hasOwnProperty(key), "receiver[" + key + "] should not be created (receiver: another typed array of the same length)");
 
 
-    target = new TA([0]);
+    target = new TA(makeCtorArg([0]));
     receiver = Object.defineProperty({}, key, {
       get: function() { return 1; },
       set: function(_v) { throw new Test262Error(key + " setter should be unreachable!"); },
@@ -63,14 +63,14 @@ testWithTypedArrayConstructors(function(TA) {
     assert.sameValue(receiver[key], 1, "receiver[" + key + "] should remain unchanged (receiver: plain object with " + key + " accessor)");
 
 
-    target = new TA([0]);
+    target = new TA(makeCtorArg([0]));
     receiver = Object.defineProperty({}, key, { value: 1, writable: false, configurable: true });
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should succeed (receiver: plain object with non-writable " + key + ")");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: plain object with non-writable " + key + ")");
     assert.sameValue(receiver[key], 1, "receiver[" + key + "] should remain unchanged (receiver: plain object with non-writable " + key + ")");
 
 
-    target = new TA([0]);
+    target = new TA(makeCtorArg([0]));
     receiver = Object.preventExtensions({});
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should fail (key: " + key + ", receiver: non-extensible empty object)");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: non-extensible empty object)");
@@ -81,11 +81,11 @@ testWithTypedArrayConstructors(function(TA) {
   });
 
 
-  target = new TA([0]);
-  receiver = new TA([1, 1]);
+  target = new TA(makeCtorArg([0]));
+  receiver = new TA(makeCtorArg([1, 1]));
   assert(Reflect.set(target, 1, value, receiver), "Reflect.set should succeed (receiver: another typed array of greater length)");
   assert(!target.hasOwnProperty(1), "target[1] should not be created (receiver: another typed array of greater length)");
   assert.sameValue(receiver[1], 1, "receiver[1] should remain unchanged (receiver: another typed array of greater length)");
-});
+}, null, ["passthrough"]);
 
 assert.sameValue(valueOfCalls, 0, "value should not be coerced");

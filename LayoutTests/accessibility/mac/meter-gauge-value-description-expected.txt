@@ -4,10 +4,10 @@ This tests the gauge value description for meter elements.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS meter1.valueDescription is 'AXValueDescription: '
-PASS meter2.valueDescription is 'AXValueDescription: suboptimal value'
-PASS meter3.valueDescription is 'AXValueDescription: optimal value'
-PASS meter4.valueDescription is 'AXValueDescription: critical value'
+PASS meter1.valueDescription is 'AXValueDescription: 1'
+PASS meter2.valueDescription is 'AXValueDescription: 5, suboptimal value'
+PASS meter3.valueDescription is 'AXValueDescription: 50, optimal value'
+PASS meter4.valueDescription is 'AXValueDescription: 90, critical value'
 PASS meter5.valueDescription is 'AXValueDescription: 50 hours, optimal value'
 PASS successfullyParsed is true
 

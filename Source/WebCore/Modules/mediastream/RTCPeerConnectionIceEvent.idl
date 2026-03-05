@@ -23,18 +23,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dictionary RTCPeerConnectionIceEventInit : EventInit {
-    RTCIceCandidate? candidate;
-    DOMString? url;
-};
-
+// https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnectioniceevent
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCPeerConnectionIceEvent : Event {
-    constructor([AtomString] DOMString type, optional RTCPeerConnectionIceEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional RTCPeerConnectionIceEventInit eventInitDict = {});
 
     readonly attribute RTCIceCandidate? candidate;
     readonly attribute DOMString? url;
 };
+
+// https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnectioniceeventinit
+dictionary RTCPeerConnectionIceEventInit : EventInit {
+    [ImplementationDefaultValue=null] RTCIceCandidate? candidate;
+    [ImplementationDefaultValue=null] DOMString? url;
+};
+

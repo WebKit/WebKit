@@ -167,7 +167,7 @@ bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathBy
     // (i.e. streamToAppendTo) has to be cleared before calling addAnimatedPath.
     SVGPathByteStreamBuilder builder(streamToAppendTo);
 
-    SVGPathByteStream fromStreamCopy = WTFMove(streamToAppendTo);
+    SVGPathByteStream fromStreamCopy = WTF::move(streamToAppendTo);
 
     SVGPathByteStreamSource fromSource(fromStreamCopy);
     SVGPathByteStreamSource bySource(byStream);

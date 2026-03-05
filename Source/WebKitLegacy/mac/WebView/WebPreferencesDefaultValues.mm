@@ -154,7 +154,18 @@ bool defaultNeedsKeyboardEventDisambiguationQuirks()
     return needsQuirks;
 }
 
+bool defaultHTMLEnhancedSelectParsingQuirkEnabled()
+{
+    return WTF::MacApplication::isGridLegends() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoHTMLEnhancedSelectParsingQuirk);
+}
+
 #endif // PLATFORM(MAC)
+
+bool defaultFontFaceSetConstructorEnabled()
+{
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoFontFaceSetConstructor);
+    return !newSDK;
+}
 
 bool defaultMutationEventsEnabled()
 {

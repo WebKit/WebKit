@@ -90,17 +90,10 @@ static int TestCpuEnv(int cpu_info) {
     cpu_info &= ~libyuv::kCpuHasSME;
   }
 #endif
-#if defined(__mips__) && defined(__linux__)
-  if (TestEnv("LIBYUV_DISABLE_MSA")) {
-    cpu_info &= ~libyuv::kCpuHasMSA;
-  }
-#endif
 #if defined(__longarch__) && defined(__linux__)
   if (TestEnv("LIBYUV_DISABLE_LSX")) {
     cpu_info &= ~libyuv::kCpuHasLSX;
   }
-#endif
-#if defined(__longarch__) && defined(__linux__)
   if (TestEnv("LIBYUV_DISABLE_LASX")) {
     cpu_info &= ~libyuv::kCpuHasLASX;
   }

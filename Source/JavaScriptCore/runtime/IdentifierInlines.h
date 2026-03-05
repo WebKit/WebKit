@@ -160,7 +160,7 @@ inline Identifier Identifier::fromString(VM& vm, AtomStringImpl* atomStringImpl)
 
 inline Identifier Identifier::fromString(VM& vm, Ref<AtomStringImpl>&& atomStringImpl)
 {
-    return Identifier(vm, WTFMove(atomStringImpl));
+    return Identifier(vm, WTF::move(atomStringImpl));
 }
 
 inline Identifier Identifier::fromString(VM& vm, const AtomString& atomString)

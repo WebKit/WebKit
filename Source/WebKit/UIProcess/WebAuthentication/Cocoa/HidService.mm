@@ -44,7 +44,7 @@ static void deviceAddedCallback(void* context, IOReturn, void*, IOHIDDeviceRef d
 }
 
 // FIXME(191518)
-static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
+static void NODELETE deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
     // FIXME(191525)
 }

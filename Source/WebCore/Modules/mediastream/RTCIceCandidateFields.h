@@ -46,7 +46,7 @@ struct RTCIceCandidateFields {
     std::optional<unsigned short> relatedPort;
     String usernameFragment;
 
-    RTCIceCandidateFields isolatedCopy() && { return { WTFMove(foundation).isolatedCopy(), component, priority, WTFMove(address).isolatedCopy(), protocol, port, type, tcpType, WTFMove(relatedAddress).isolatedCopy(), relatedPort, WTFMove(usernameFragment).isolatedCopy() }; }
+    RTCIceCandidateFields isolatedCopy() && { return { WTF::move(foundation).isolatedCopy(), component, priority, WTF::move(address).isolatedCopy(), protocol, port, type, tcpType, WTF::move(relatedAddress).isolatedCopy(), relatedPort, WTF::move(usernameFragment).isolatedCopy() }; }
 };
 
 std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String&);

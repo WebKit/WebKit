@@ -69,7 +69,9 @@ WebKitDOMDOMImplementation* wrapDOMImplementation(WebCore::DOMImplementation* co
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMDOMImplementation, webkit_dom_dom_implementation, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkit_dom_dom_implementation_finalize(GObject* object)
 {
@@ -176,7 +178,7 @@ WebKitDOMHTMLDocument* webkit_dom_dom_implementation_create_html_document(WebKit
     g_return_val_if_fail(title, 0);
     WebCore::DOMImplementation* item = WebKit::core(self);
     WTF::String convertedTitle = WTF::String::fromUTF8(title);
-    RefPtr<WebCore::HTMLDocument> gobjectResult = WTF::getPtr(item->createHTMLDocument(WTFMove(convertedTitle)));
+    RefPtr<WebCore::HTMLDocument> gobjectResult = WTF::getPtr(item->createHTMLDocument(WTF::move(convertedTitle)));
     return WebKit::kit(gobjectResult.get());
 }
 

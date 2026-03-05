@@ -235,6 +235,13 @@ void RemoteGraphicsContextProxy::clipOut(const Path& path)
 void RemoteGraphicsContextProxy::clipPath(const Path& path, WindRule rule)
 {
     updateStateForClipPath(path);
+    if (RefPtr impl = path.asImpl(); impl && !impl->isTransient()) {
+        if (auto identifier = recordResourceUse(*impl)) {
+            send(Messages::RemoteGraphicsContext::ClipCachedPath(*identifier, rule));
+            return;
+        }
+    }
+
     send(Messages::RemoteGraphicsContext::ClipPath(path, rule));
 }
 
@@ -270,7 +277,7 @@ void RemoteGraphicsContextProxy::drawFilteredImageBuffer(ImageBuffer* sourceImag
         identifier = sourceImage->renderingResourceIdentifier();
     }
 
-    send(Messages::RemoteGraphicsContext::DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
+    send(Messages::RemoteGraphicsContext::DrawFilteredImageBuffer(WTF::move(identifier), sourceImageRect, filter));
 }
 
 void RemoteGraphicsContextProxy::drawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
@@ -309,7 +316,7 @@ void RemoteGraphicsContextProxy::drawImageBuffer(ImageBuffer& imageBuffer, const
     send(Messages::RemoteGraphicsContext::DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
 }
 
-void RemoteGraphicsContextProxy::drawNativeImage(NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RemoteGraphicsContextProxy::drawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
     auto headroom = options.headroom();
@@ -324,7 +331,7 @@ void RemoteGraphicsContextProxy::drawNativeImage(NativeImage& image, const Float
     ImagePaintingOptions clampedOptions(options, headroom);
 #endif
     appendStateChangeItemIfNecessary();
-    if (!recordResourceUse(image))
+    if (!recordResourceUse(const_cast<NativeImage&>(image)))
         return;
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
     send(Messages::RemoteGraphicsContext::DrawNativeImage(image.renderingResourceIdentifier(), destRect, srcRect, clampedOptions));
@@ -337,8 +344,8 @@ void RemoteGraphicsContextProxy::drawSystemImage(SystemImage& systemImage, const
 {
     appendStateChangeItemIfNecessary();
 #if USE(SYSTEM_PREVIEW)
-    if (auto* badgeSystemImage = dynamicDowncast<ARKitBadgeSystemImage>(systemImage)) {
-        if (auto image = badgeSystemImage->image()) {
+    if (RefPtr badgeSystemImage = dynamicDowncast<ARKitBadgeSystemImage>(systemImage)) {
+        if (RefPtr image = badgeSystemImage->image()) {
             auto nativeImage = image->nativeImage();
             if (!nativeImage)
                 return;
@@ -350,10 +357,10 @@ void RemoteGraphicsContextProxy::drawSystemImage(SystemImage& systemImage, const
     send(Messages::RemoteGraphicsContext::DrawSystemImage(systemImage, destinationRect));
 }
 
-void RemoteGraphicsContextProxy::drawPattern(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void RemoteGraphicsContextProxy::drawPattern(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
-    if (!recordResourceUse(image))
+    if (!recordResourceUse(const_cast<NativeImage&>(image)))
         return;
     send(Messages::RemoteGraphicsContext::DrawPatternNativeImage(image.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options));
 }
@@ -464,6 +471,13 @@ void RemoteGraphicsContextProxy::fillPath(const Path& path)
         return;
     }
 
+    if (RefPtr impl = path.asImpl(); impl && !impl->isTransient()) {
+        if (auto identifier = recordResourceUse(*impl)) {
+            send(Messages::RemoteGraphicsContext::FillCachedPath(*identifier));
+            return;
+        }
+    }
+
     send(Messages::RemoteGraphicsContext::FillPath(path));
 }
 
@@ -527,11 +541,11 @@ void RemoteGraphicsContextProxy::drawVideoFrame(const VideoFrame& frame, const F
     auto sharedVideoFrame = m_sharedVideoFrameWriter->write(frame, [&](auto& semaphore) {
         send(Messages::RemoteGraphicsContext::SetSharedVideoFrameSemaphore { semaphore });
     }, [&](SharedMemory::Handle&& handle) {
-        send(Messages::RemoteGraphicsContext::SetSharedVideoFrameMemory { WTFMove(handle) });
+        send(Messages::RemoteGraphicsContext::SetSharedVideoFrameMemory { WTF::move(handle) });
     });
     if (!sharedVideoFrame)
         return;
-    send(Messages::RemoteGraphicsContext::DrawVideoFrame(WTFMove(*sharedVideoFrame), destination, orientation, shouldDiscardAlpha));
+    send(Messages::RemoteGraphicsContext::DrawVideoFrame(WTF::move(*sharedVideoFrame), destination, orientation, shouldDiscardAlpha));
 #endif
 }
 #endif
@@ -641,7 +655,7 @@ void RemoteGraphicsContextProxy::setURLForRect(const URL& link, const FloatRect&
     send(Messages::RemoteGraphicsContext::SetURLForRect(link, destRect));
 }
 
-bool RemoteGraphicsContextProxy::recordResourceUse(NativeImage& image)
+bool RemoteGraphicsContextProxy::recordResourceUse(const NativeImage& image)
 {
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]] {
@@ -715,6 +729,17 @@ std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResour
     }
 
     return renderingBackend->remoteResourceCacheProxy().recordGradientUse(gradient);
+}
+
+std::optional<RemotePathImplIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const WebCore::PathImpl& path)
+{
+    RefPtr renderingBackend = m_renderingBackend.get();
+    if (!renderingBackend) [[unlikely]] {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    return renderingBackend->remoteResourceCacheProxy().recordPathImplUse(path);
 }
 
 bool RemoteGraphicsContextProxy::recordResourceUse(Filter& filter)

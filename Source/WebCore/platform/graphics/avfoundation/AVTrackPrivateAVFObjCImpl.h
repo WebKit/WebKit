@@ -29,9 +29,9 @@
 #if ENABLE(VIDEO)
 
 #include "AudioTrackPrivate.h"
+#include "ImmersiveVideoMetadata.h"
 #include "InbandTextTrackPrivate.h"
 #include "PlatformVideoColorSpace.h"
-#include "SpatialVideoMetadata.h"
 #include "VideoTrackPrivate.h"
 #include <wtf/Observer.h>
 #include <wtf/Ref.h>
@@ -107,8 +107,7 @@ private:
     PlatformVideoColorSpace colorSpace() const;
     double framerate() const;
     uint64_t bitrate() const;
-    std::optional<SpatialVideoMetadata> spatialVideoMetadata() const;
-    std::optional<VideoProjectionMetadata> videoProjectionMetadata() const;
+    std::optional<ImmersiveVideoMetadata> immersiveVideoMetadata() const;
     uint32_t sampleRate() const;
     uint32_t numberOfChannels() const;
     bool isProtected() const;

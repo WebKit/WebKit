@@ -45,7 +45,7 @@ void JSWorkerGlobalScope::visitAdditionalChildren(Visitor& visitor)
     if (auto* navigator = wrapped().optionalNavigator())
         addWebCoreOpaqueRoot(visitor, *navigator);
 
-    // We cannot ref the object here as this may get called on the GC thread.
+    // We cannot ref the object here as this may get called on a GC thread.
     SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
     
     // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
@@ -71,7 +71,7 @@ JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject,
     auto* globalObject = asObject(functionValue)->globalObject();
 
     scope.release();
-    globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, JSC::QueuedTask { nullptr, JSC::InternalMicrotask::InvokeFunctionJob, globalObject, functionValue });
+    queueMicrotaskToEventLoop(*this, JSC::QueuedTask { nullptr, JSC::InternalMicrotask::InvokeFunctionJob, 0, globalObject, functionValue });
     return jsUndefined();
 }
 

@@ -1,9 +1,0 @@
-
-PASS Property item-tolerance value 'normal'
-PASS Property item-tolerance value 'infinite'
-PASS Property item-tolerance value '10px'
-PASS Property item-tolerance value '20%'
-PASS Property item-tolerance value 'calc(20% + 10px)'
-PASS Property item-tolerance value 'calc(-0.5em + 10px)'
-PASS Property item-tolerance value 'calc(0.5em + 10px)'
-

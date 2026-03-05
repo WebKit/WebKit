@@ -180,7 +180,7 @@ public:
 
     void check(const RegistrableDomain& registrableDomain, CompletionHandler<void(bool)>&& completionHandler)
     {
-        m_completionHandler = WTFMove(completionHandler);
+        m_completionHandler = WTF::move(completionHandler);
         m_provider = makeUnique<CoreLocationGeolocationProvider>(registrableDomain, *this, CoreLocationGeolocationProvider::Mode::AuthorizationOnly);
     }
 
@@ -214,7 +214,7 @@ private:
 void CoreLocationGeolocationProvider::requestAuthorization(const RegistrableDomain& registrableDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto authorizationChecker = AuthorizationChecker::create();
-    authorizationChecker->check(registrableDomain, [authorizationChecker, completionHandler = WTFMove(completionHandler)](bool authorized) mutable {
+    authorizationChecker->check(registrableDomain, [authorizationChecker, completionHandler = WTF::move(completionHandler)](bool authorized) mutable {
         completionHandler(authorized);
     });
 }

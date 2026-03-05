@@ -8,7 +8,7 @@ description("Testing <code>MacOSInlineMediaControls</code> mute button visibilit
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new MacOSInlineMediaControls({ width: 150, height: 200 });
+const mediaControls = new MacOSInlineMediaControls({ width: 500, height: 200 });
 
 mediaControls._host = {
     isMediaControlsMacInlineSizeSpecsEnabled: true
@@ -51,7 +51,7 @@ function testMuteButtonVisibilityBehavior() {
     shouldBeFalse("mediaControls.muteButton.visible", "Mute button should be hidden when width < 60 (forced)");
     
     // Test 3: Restore width - mute button becomes visible again
-    mediaControls.width = 150;
+    mediaControls.width = 500;
     mediaControls.needsLayout = true;
     flushAllLayouts();
     

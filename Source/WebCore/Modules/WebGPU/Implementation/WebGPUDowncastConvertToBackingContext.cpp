@@ -64,142 +64,142 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
 
 WGPUAdapter DowncastConvertToBackingContext::convertToBacking(const Adapter& adapter)
 {
-    return static_cast<const AdapterImpl&>(adapter).backing();
+    return downcast<AdapterImpl>(adapter).backing();
 }
 
 WGPUBindGroup DowncastConvertToBackingContext::convertToBacking(const BindGroup& bindGroup)
 {
-    return static_cast<const BindGroupImpl&>(bindGroup).backing();
+    return downcast<BindGroupImpl>(bindGroup).backing();
 }
 
 WGPUBindGroupLayout DowncastConvertToBackingContext::convertToBacking(const BindGroupLayout& bindGroupLayout)
 {
-    return static_cast<const BindGroupLayoutImpl&>(bindGroupLayout).backing();
+    return downcast<BindGroupLayoutImpl>(bindGroupLayout).backing();
 }
 
 WGPUBuffer DowncastConvertToBackingContext::convertToBacking(const Buffer& buffer)
 {
-    return static_cast<const BufferImpl&>(buffer).backing();
+    return downcast<BufferImpl>(buffer).backing();
 }
 
 WGPUCommandBuffer DowncastConvertToBackingContext::convertToBacking(const CommandBuffer& commandBuffer)
 {
-    return static_cast<const CommandBufferImpl&>(commandBuffer).backing();
+    return downcast<CommandBufferImpl>(commandBuffer).backing();
 }
 
 WGPUCommandEncoder DowncastConvertToBackingContext::convertToBacking(const CommandEncoder& commandEncoder)
 {
-    return static_cast<const CommandEncoderImpl&>(commandEncoder).backing();
+    return downcast<CommandEncoderImpl>(commandEncoder).backing();
 }
 
 WGPUComputePassEncoder DowncastConvertToBackingContext::convertToBacking(const ComputePassEncoder& computePassEncoder)
 {
-    return static_cast<const ComputePassEncoderImpl&>(computePassEncoder).backing();
+    return downcast<ComputePassEncoderImpl>(computePassEncoder).backing();
 }
 
 WGPUComputePipeline DowncastConvertToBackingContext::convertToBacking(const ComputePipeline& computePipeline)
 {
-    return static_cast<const ComputePipelineImpl&>(computePipeline).backing();
+    return downcast<ComputePipelineImpl>(computePipeline).backing();
 }
 
 WGPUDevice DowncastConvertToBackingContext::convertToBacking(const Device& device)
 {
-    return static_cast<const DeviceImpl&>(device).backing();
+    return downcast<DeviceImpl>(device).backing();
 }
 
 WGPUExternalTexture DowncastConvertToBackingContext::convertToBacking(const ExternalTexture& externalTexture)
 {
-    return static_cast<const ExternalTextureImpl&>(externalTexture).backing();
+    return downcast<ExternalTextureImpl>(externalTexture).backing();
 }
 
 WGPUInstance DowncastConvertToBackingContext::convertToBacking(const GPU& gpu)
 {
-    return static_cast<const GPUImpl&>(gpu).backing();
+    return downcast<GPUImpl>(gpu).backing();
 }
 
 WGPUPipelineLayout DowncastConvertToBackingContext::convertToBacking(const PipelineLayout& pipelineLayout)
 {
-    return static_cast<const PipelineLayoutImpl&>(pipelineLayout).backing();
+    return downcast<PipelineLayoutImpl>(pipelineLayout).backing();
 }
 
 WGPUSurface DowncastConvertToBackingContext::convertToBacking(const PresentationContext& presentationContext)
 {
-    return static_cast<const PresentationContextImpl&>(presentationContext).backing();
+    return downcast<PresentationContextImpl>(presentationContext).backing();
 }
 
 WGPUQuerySet DowncastConvertToBackingContext::convertToBacking(const QuerySet& querySet)
 {
-    return static_cast<const QuerySetImpl&>(querySet).backing();
+    return downcast<QuerySetImpl>(querySet).backing();
 }
 
 WGPUQueue DowncastConvertToBackingContext::convertToBacking(const Queue& queue)
 {
-    return static_cast<const QueueImpl&>(queue).backing();
+    return downcast<QueueImpl>(queue).backing();
 }
 
 WGPURenderBundleEncoder DowncastConvertToBackingContext::convertToBacking(const RenderBundleEncoder& renderBundleEncoder)
 {
-    return static_cast<const RenderBundleEncoderImpl&>(renderBundleEncoder).backing();
+    return downcast<RenderBundleEncoderImpl>(renderBundleEncoder).backing();
 }
 
 WGPURenderBundle DowncastConvertToBackingContext::convertToBacking(const RenderBundle& renderBundle)
 {
-    return static_cast<const RenderBundleImpl&>(renderBundle).backing();
+    return downcast<RenderBundleImpl>(renderBundle).backing();
 }
 
 WGPURenderPassEncoder DowncastConvertToBackingContext::convertToBacking(const RenderPassEncoder& renderPassEncoder)
 {
-    return static_cast<const RenderPassEncoderImpl&>(renderPassEncoder).backing();
+    return downcast<RenderPassEncoderImpl>(renderPassEncoder).backing();
 }
 
 WGPURenderPipeline DowncastConvertToBackingContext::convertToBacking(const RenderPipeline& renderPipeline)
 {
-    return static_cast<const RenderPipelineImpl&>(renderPipeline).backing();
+    return downcast<RenderPipelineImpl>(renderPipeline).backing();
 }
 
 WGPUSampler DowncastConvertToBackingContext::convertToBacking(const Sampler& sampler)
 {
-    return static_cast<const SamplerImpl&>(sampler).backing();
+    return downcast<SamplerImpl>(sampler).backing();
 }
 
 WGPUShaderModule DowncastConvertToBackingContext::convertToBacking(const ShaderModule& shaderModule)
 {
-    return static_cast<const ShaderModuleImpl&>(shaderModule).backing();
+    return downcast<ShaderModuleImpl>(shaderModule).backing();
 }
 
 WGPUTexture DowncastConvertToBackingContext::convertToBacking(const Texture& texture)
 {
-    return static_cast<const TextureImpl&>(texture).backing();
+    return downcast<TextureImpl>(texture).backing();
 }
 
 WGPUTextureView DowncastConvertToBackingContext::convertToBacking(const TextureView& textureView)
 {
-    return static_cast<const TextureViewImpl&>(textureView).backing();
+    return downcast<TextureViewImpl>(textureView).backing();
 }
 
 CompositorIntegrationImpl& DowncastConvertToBackingContext::convertToBacking(CompositorIntegration& compositorIntegration)
 {
-    return static_cast<CompositorIntegrationImpl&>(compositorIntegration);
+    return downcast<CompositorIntegrationImpl>(compositorIntegration);
 }
 
 WGPUXRBinding DowncastConvertToBackingContext::convertToBacking(const XRBinding& xrBinding)
 {
-    return static_cast<const XRBindingImpl&>(xrBinding).backing();
+    return downcast<XRBindingImpl>(xrBinding).backing();
 }
 
 WGPUXRProjectionLayer DowncastConvertToBackingContext::convertToBacking(const XRProjectionLayer& layer)
 {
-    return static_cast<const XRProjectionLayerImpl&>(layer).backing();
+    return downcast<XRProjectionLayerImpl>(layer).backing();
 }
 
 WGPUXRSubImage DowncastConvertToBackingContext::convertToBacking(const XRSubImage& subImage)
 {
-    return static_cast<const XRSubImageImpl&>(subImage).backing();
+    return downcast<XRSubImageImpl>(subImage).backing();
 }
 
 WGPUXRView DowncastConvertToBackingContext::convertToBacking(const XRView& xrView)
 {
-    return static_cast<const XRViewImpl&>(xrView).backing();
+    return downcast<XRViewImpl>(xrView).backing();
 }
 
 } // namespace WebCore::WebGPU

@@ -41,13 +41,13 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     static Ref<ContentRuleList> create(Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList, WebKit::NetworkCache::Data&& mappedFile)
     {
-        return adoptRef(*new ContentRuleList(WTFMove(contentRuleList), WTFMove(mappedFile)));
+        return adoptRef(*new ContentRuleList(WTF::move(contentRuleList), WTF::move(mappedFile)));
     }
 
     ContentRuleList(Ref<WebKit::WebCompiledContentRuleList>&&, WebKit::NetworkCache::Data&&);
     virtual ~ContentRuleList();
 
-    const WTF::String& name() const;
+    const WTF::String& NODELETE name() const LIFETIME_BOUND;
     const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
     
     static bool supportsRegularExpression(const WTF::String&);

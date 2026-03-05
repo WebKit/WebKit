@@ -9,11 +9,12 @@
     var sourceBuffer;
     var initSegment;
     var samples;
+    var errorName;
 
     if (window.internals)
         internals.initializeMockMediaSource();
 
-    function runTest() {
+    async function runTest() {
         findMediaElement();
 
         run(`internals.setMediaElementRestrictions(video, 'RequireUserGestureForAudioRateChange')`);
@@ -21,27 +22,16 @@
         source = new MediaSource();
         testExpected('source.readyState', 'closed');
 
-        waitForEventOn(source, 'sourceopen', sourceOpen);
         video.src = URL.createObjectURL(source);
-    }
+        await waitFor(source, 'sourceopen');
 
-    function handlePause() {
-        endTest();
-    }
+        waitFor(video, "ended").then(failTest);
 
-    function sourceOpen() {
         run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
-        waitForEventOn(sourceBuffer, 'updateend', loadSamples, false, true);
         initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]);
         run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
 
-        waitFor(video, 'pause', false).then(handlePause);
-        video.play().catch(function(error) {
-            failTest();
-        });
-    }
-
-    function loadSamples() {
         samples = concatenateSamples([
             makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
             makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.SYNC),
@@ -53,12 +43,15 @@
             makeASample(7, 7, 1, 1, 1, SAMPLE_FLAG.SYNC),
         ]);
 
-        waitFor(sourceBuffer, 'updateend', false).then(updateEnd);
         run('sourceBuffer.appendBuffer(samples)');
-    }
+        await waitFor(sourceBuffer, 'updateend');
 
-    function updateEnd() {
-        waitForEventAndFail("onended");
+        video.play().catch(function(error) {
+            errorName = error.name;
+            testExpected('errorName', "NotAllowedError");
+            testExpected(error instanceof DOMException, true);
+            endTest();
+        });
     }
     </script>
 </head>

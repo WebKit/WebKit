@@ -27,7 +27,6 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "StyleBuilderChecking.h"
-#include "StyleBuilderConverter.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
@@ -73,7 +72,7 @@ auto CSSValueConversion<Translate>::operator()(BuilderState& state, const CSSVal
     auto ty = list->size() > 1 ? toStyleFromCSSValue<TranslateTransformFunction::LengthPercentage>(state, list->item(1)) : TranslateTransformFunction::LengthPercentage { 0_css_px };
     auto tz = list->size() > 2 ? toStyleFromCSSValue<TranslateTransformFunction::Length>(state, list->item(2)) : TranslateTransformFunction::Length { 0_css_px };
 
-    return TranslateTransformFunction::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), type);
+    return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), type);
 }
 
 // MARK: - Blending

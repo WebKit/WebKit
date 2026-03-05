@@ -25,9 +25,13 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
-#if !PLATFORM(WATCHOS) || USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if (!PLATFORM(WATCHOS) || USE(APPLE_INTERNAL_SDK)) && !__has_feature(modules)
 #import <LinkPresentation/LinkPresentation.h>
 #else
 #import <Foundation/Foundation.h>
@@ -40,7 +44,8 @@ DECLARE_SYSTEM_HEADER
 @end
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #import <LinkPresentation/LPMetadata.h>
 #import <LinkPresentation/LPMetadataProviderPrivate.h>

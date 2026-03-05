@@ -961,7 +961,7 @@ namespace JSC {
 
     inline ForNode::ForNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, VariableEnvironment&& lexicalVariables, bool initializerContainsClosure)
         : StatementNode(location)
-        , VariableEnvironmentNode(WTFMove(lexicalVariables))
+        , VariableEnvironmentNode(WTF::move(lexicalVariables))
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_expr3(expr3)
@@ -1013,7 +1013,7 @@ namespace JSC {
 
     inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, DestructuringPatternNode* catchPattern, StatementNode* catchBlock, VariableEnvironment&& catchEnvironment, StatementNode* finallyBlock)
         : StatementNode(location)
-        , VariableEnvironmentNode(WTFMove(catchEnvironment))
+        , VariableEnvironmentNode(WTF::move(catchEnvironment))
         , m_tryBlock(tryBlock)
         , m_catchPattern(catchPattern)
         , m_catchBlock(catchBlock)
@@ -1089,8 +1089,8 @@ namespace JSC {
 
     inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, const Identifier& name, const SourceCode& classSource, VariableEnvironment&& classHeadEnvironment, VariableEnvironment&& classEnvironment, ExpressionNode* constructorExpression, ExpressionNode* classHeritage, PropertyListNode* classElements)
         : ExpressionNode(location)
-        , VariableEnvironmentNode(WTFMove(classEnvironment))
-        , m_classHeadEnvironment(WTFMove(classHeadEnvironment))
+        , VariableEnvironmentNode(WTF::move(classEnvironment))
+        , m_classHeadEnvironment(WTF::move(classHeadEnvironment))
         , m_classSource(classSource)
         , m_name(name)
         , m_ecmaName(&name)
@@ -1127,7 +1127,7 @@ namespace JSC {
 
     inline SwitchNode::SwitchNode(const JSTokenLocation& location, ExpressionNode* expr, CaseBlockNode* block, VariableEnvironment&& lexicalVariables, FunctionStack&& functionStack)
         : StatementNode(location)
-        , VariableEnvironmentNode(WTFMove(lexicalVariables), WTFMove(functionStack))
+        , VariableEnvironmentNode(WTF::move(lexicalVariables), WTF::move(functionStack))
         , m_expr(expr)
         , m_block(block)
     {
@@ -1135,14 +1135,14 @@ namespace JSC {
 
     inline BlockNode::BlockNode(const JSTokenLocation& location, SourceElements* statements, VariableEnvironment&& lexicalVariables, FunctionStack&& functionStack)
         : StatementNode(location)
-        , VariableEnvironmentNode(WTFMove(lexicalVariables), WTFMove(functionStack))
+        , VariableEnvironmentNode(WTF::move(lexicalVariables), WTF::move(functionStack))
         , m_statements(statements)
     {
     }
 
     inline EnumerationNode::EnumerationNode(const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment&& lexicalVariables)
         : StatementNode(location)
-        , VariableEnvironmentNode(WTFMove(lexicalVariables))
+        , VariableEnvironmentNode(WTF::move(lexicalVariables))
         , m_lexpr(lexpr)
         , m_expr(expr)
         , m_statement(statement)
@@ -1151,12 +1151,12 @@ namespace JSC {
     }
     
     inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment&& lexicalVariables)
-        : EnumerationNode(location, lexpr, expr, statement, WTFMove(lexicalVariables))
+        : EnumerationNode(location, lexpr, expr, statement, WTF::move(lexicalVariables))
     {
     }
     
     inline ForOfNode::ForOfNode(bool isForAwait, const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment&& lexicalVariables)
-        : EnumerationNode(location, lexpr, expr, statement, WTFMove(lexicalVariables))
+        : EnumerationNode(location, lexpr, expr, statement, WTF::move(lexicalVariables))
         , m_isForAwait(isForAwait)
     {
     }

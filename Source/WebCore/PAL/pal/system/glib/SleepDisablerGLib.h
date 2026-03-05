@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if USE(GLIB)
+
 #include "SleepDisabler.h"
 
 #include <wtf/glib/GRefPtr.h>
@@ -57,3 +61,5 @@ private:
 };
 
 } // namespace PAL
+
+#endif

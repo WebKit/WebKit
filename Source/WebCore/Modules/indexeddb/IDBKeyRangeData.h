@@ -60,10 +60,10 @@ struct IDBKeyRangeData {
     }
 
     IDBKeyRangeData(IDBKeyData&& lowerKey, IDBKeyData&& upperKey, bool lowerOpen, bool upperOpen)
-        : lowerKey(WTFMove(lowerKey))
-        , upperKey(WTFMove(upperKey))
-        , lowerOpen(WTFMove(lowerOpen))
-        , upperOpen(WTFMove(upperOpen))
+        : lowerKey(WTF::move(lowerKey))
+        , upperKey(WTF::move(upperKey))
+        , lowerOpen(WTF::move(lowerOpen))
+        , upperOpen(WTF::move(upperOpen))
     {
     }
 

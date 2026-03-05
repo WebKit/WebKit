@@ -41,7 +41,7 @@ public:
 private:
     IdAttribute(SourceSpan span, Expression::Ref&& value)
         : Attribute(span)
-        , m_value(WTFMove(value))
+        , m_value(WTF::move(value))
     { }
 
     Expression::Ref m_value;

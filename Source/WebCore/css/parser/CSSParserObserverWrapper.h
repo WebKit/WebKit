@@ -42,14 +42,14 @@ public:
         return adoptRef(*new CSSParserObserverWrapper(observer));
     }
 
-    unsigned startOffset(const CSSParserTokenRange&);
-    unsigned previousTokenStartOffset(const CSSParserTokenRange&);
-    unsigned endOffset(const CSSParserTokenRange&); // Includes trailing comments
+    unsigned NODELETE startOffset(const CSSParserTokenRange&);
+    unsigned NODELETE previousTokenStartOffset(const CSSParserTokenRange&);
+    unsigned NODELETE endOffset(const CSSParserTokenRange&); // Includes trailing comments
 
-    void skipCommentsBefore(const CSSParserTokenRange&, bool leaveDirectlyBefore);
+    void NODELETE skipCommentsBefore(const CSSParserTokenRange&, bool leaveDirectlyBefore);
     void yieldCommentsBefore(const CSSParserTokenRange&);
 
-    CSSParserObserver& observer() { return m_observer; }
+    CSSParserObserver& observer() LIFETIME_BOUND { return m_observer; }
     void addComment(unsigned startOffset, unsigned endOffset, unsigned tokensBefore)
     {
         CommentPosition position = {startOffset, endOffset, tokensBefore};

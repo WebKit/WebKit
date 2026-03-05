@@ -33,8 +33,8 @@
 BIGNUM *BN_new(void) {
   BIGNUM *bn = reinterpret_cast<BIGNUM *>(OPENSSL_malloc(sizeof(BIGNUM)));
 
-  if (bn == NULL) {
-    return NULL;
+  if (bn == nullptr) {
+    return nullptr;
   }
 
   OPENSSL_memset(bn, 0, sizeof(BIGNUM));
@@ -48,7 +48,7 @@ BIGNUM *BN_secure_new(void) { return BN_new(); }
 void BN_init(BIGNUM *bn) { OPENSSL_memset(bn, 0, sizeof(BIGNUM)); }
 
 void BN_free(BIGNUM *bn) {
-  if (bn == NULL) {
+  if (bn == nullptr) {
     return;
   }
 
@@ -59,7 +59,7 @@ void BN_free(BIGNUM *bn) {
   if (bn->flags & BN_FLG_MALLOCED) {
     OPENSSL_free(bn);
   } else {
-    bn->d = NULL;
+    bn->d = nullptr;
   }
 }
 
@@ -68,18 +68,18 @@ void BN_clear_free(BIGNUM *bn) { BN_free(bn); }
 BIGNUM *BN_dup(const BIGNUM *src) {
   BIGNUM *copy;
 
-  if (src == NULL) {
-    return NULL;
+  if (src == nullptr) {
+    return nullptr;
   }
 
   copy = BN_new();
-  if (copy == NULL) {
-    return NULL;
+  if (copy == nullptr) {
+    return nullptr;
   }
 
   if (!BN_copy(copy, src)) {
     BN_free(copy);
-    return NULL;
+    return nullptr;
   }
 
   return copy;
@@ -91,7 +91,7 @@ BIGNUM *BN_copy(BIGNUM *dest, const BIGNUM *src) {
   }
 
   if (!bn_wexpand(dest, src->width)) {
-    return NULL;
+    return nullptr;
   }
 
   OPENSSL_memcpy(dest->d, src->d, sizeof(src->d[0]) * src->width);
@@ -102,7 +102,7 @@ BIGNUM *BN_copy(BIGNUM *dest, const BIGNUM *src) {
 }
 
 void BN_clear(BIGNUM *bn) {
-  if (bn->d != NULL) {
+  if (bn->d != nullptr) {
     OPENSSL_memset(bn->d, 0, bn->dmax * sizeof(bn->d[0]));
   }
 
@@ -308,7 +308,7 @@ int bn_wexpand(BIGNUM *bn, size_t words) {
   }
 
   a = reinterpret_cast<BN_ULONG *>(OPENSSL_calloc(words, sizeof(BN_ULONG)));
-  if (a == NULL) {
+  if (a == nullptr) {
     return 0;
   }
 

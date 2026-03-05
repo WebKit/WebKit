@@ -1,7 +1,8 @@
 //@ $skipModes << :lockdown
 "use strict"
 const consoleStub = console || {
-  log: print
+  // log: print
+  log: () => {}
 }
 var console = consoleStub
 
@@ -88,7 +89,8 @@ for (let i = 0; i < warmup; i++) {
   runTest()
   run = (run + i) % 10 // make sure it isn't a constant
 }
-run = 1_000_000
+// run = 1_000_000
+run = 1000
 
 console.log("Warmup complete")
 

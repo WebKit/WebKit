@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureProxy);
 RemoteTextureProxy::RemoteTextureProxy(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool isCanvasBacking)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_root(WTFMove(root))
+    , m_root(WTF::move(root))
     , m_isCanvasBacking(isCanvasBacking)
 {
 }
@@ -52,7 +52,7 @@ RemoteTextureProxy::~RemoteTextureProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-static bool equalDescriptors(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& a, const std::optional<WebCore::WebGPU::TextureViewDescriptor>& b)
+static bool NODELETE equalDescriptors(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& a, const std::optional<WebCore::WebGPU::TextureViewDescriptor>& b)
 {
     if (!a && !b)
         return true;
@@ -89,11 +89,11 @@ RefPtr<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::o
         return nullptr;
 
     auto result = RemoteTextureViewProxy::create(*this, convertToBackingContext, identifier);
-    result->setLabel(WTFMove(convertedDescriptor->label));
+    result->setLabel(WTF::move(convertedDescriptor->label));
     if (!m_isCanvasBacking)
         return result;
 
-    m_lastCreatedView = WTFMove(result);
+    m_lastCreatedView = WTF::move(result);
     m_lastCreatedViewDescriptor = descriptor;
     return m_lastCreatedView;
 }

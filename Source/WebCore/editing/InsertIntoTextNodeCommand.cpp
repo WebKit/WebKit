@@ -44,7 +44,7 @@ namespace WebCore {
 
 InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho, EditAction editingAction)
     : SimpleEditCommand(node->document(), editingAction)
-    , m_node(WTFMove(node))
+    , m_node(WTF::move(node))
     , m_offset(offset)
     , m_text(text)
     , m_allowPasswordEcho(allowPasswordEcho)

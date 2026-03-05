@@ -49,8 +49,8 @@ void getScreenTimeURLs(std::optional<WTF::UUID> identifier, CompletionHandler<vo
 
     RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier.get()]);
 
-    [webHistory fetchAllHistoryWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSSet<NSURL *> *urls, NSError *error) mutable {
-        ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), urls = retainPtr(urls), error = retainPtr(error)] mutable {
+    [webHistory fetchAllHistoryWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSSet<NSURL *> *urls, NSError *error) mutable {
+        ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), urls = retainPtr(urls), error = retainPtr(error)] mutable {
             if (error) {
                 completionHandler({ });
                 return;
@@ -60,10 +60,10 @@ void getScreenTimeURLs(std::optional<WTF::UUID> identifier, CompletionHandler<vo
             for (NSURL *site in urls.get()) {
                 URL url { site };
                 if (url.isValid())
-                    result.add(WTFMove(url));
+                    result.add(WTF::move(url));
             }
 
-            completionHandler(WTFMove(result));
+            completionHandler(WTF::move(result));
         });
     }).get()];
 }

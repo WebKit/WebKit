@@ -122,7 +122,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
 
     auto* jsMemory = JSWebAssemblyMemory::create(vm, webAssemblyMemoryStructure);
 
-    RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(vm, initialPageCount, maximumPageCount, sharingMode, desiredMemoryMode,
+    RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(vm, initialPageCount, maximumPageCount, sharingMode, Wasm::AddressType { }, desiredMemoryMode,
         [&vm, jsMemory] (Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });
     if (!memory) {
         throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));

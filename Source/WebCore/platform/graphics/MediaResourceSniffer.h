@@ -42,7 +42,7 @@ public:
     ~MediaResourceSniffer();
 
     using Promise = NativePromise<ContentType, PlatformMediaError>;
-    Promise& promise() const;
+    Ref<Promise> promise() const;
     void cancel();
 
 private:

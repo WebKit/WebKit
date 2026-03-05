@@ -38,15 +38,17 @@ namespace WebCore {
 
 ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(WebTransportStreamIdentifier identifier, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<ReadableStreamSource>&& source)
 {
-    auto result = createInternalReadableStream(globalObject, WTFMove(source));
+    auto result = createInternalReadableStream(globalObject, WTF::move(source));
     if (result.hasException())
         return result.releaseException();
 
-    return adoptRef(*new WebTransportReceiveStream(globalObject.protectedScriptExecutionContext().get(), identifier, session, result.releaseReturnValue()));
+    Ref stream = adoptRef(*new WebTransportReceiveStream(protect(globalObject.scriptExecutionContext()).get(), identifier, session, result.releaseReturnValue()));
+    stream->suspendIfNeeded();
+    return stream;
 }
 
 WebTransportReceiveStream::WebTransportReceiveStream(ScriptExecutionContext* context, WebTransportStreamIdentifier identifier, WebTransportSession& session, Ref<InternalReadableStream>&& stream)
-    : ReadableStream(context, WTFMove(stream))
+    : ReadableStream(context, WTF::move(stream))
     , m_identifier(identifier)
     , m_session(session) { }
 
@@ -57,7 +59,7 @@ void WebTransportReceiveStream::getStats(ScriptExecutionContext& context, Ref<De
     RefPtr session = m_session.get();
     if (!session)
         return promise->reject(ExceptionCode::InvalidStateError);
-    context.enqueueTaskWhenSettled(session->getReceiveStreamStats(m_identifier), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&& stats) mutable {
+    context.enqueueTaskWhenSettled(session->getReceiveStreamStats(m_identifier), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& stats) mutable {
         if (!stats)
             return promise->reject(ExceptionCode::InvalidStateError);
         promise->resolve<IDLDictionary<WebTransportReceiveStreamStats>>(*stats);

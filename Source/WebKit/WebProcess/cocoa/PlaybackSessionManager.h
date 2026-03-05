@@ -44,6 +44,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 
 namespace IPC {
@@ -61,6 +62,7 @@ namespace WebKit {
 
 class WebPage;
 class PlaybackSessionManager;
+class TextRecognitionRequest;
 
 class PlaybackSessionInterfaceContext final
     : public RefCounted<PlaybackSessionInterfaceContext>
@@ -105,8 +107,7 @@ private:
     void volumeChanged(double) final;
     void isPictureInPictureSupportedChanged(bool) final;
     void isInWindowFullscreenActiveChanged(bool) final;
-    void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&) final;
-    void videoProjectionMetadataChanged(const std::optional<WebCore::VideoProjectionMetadata>&) final;
+    void immersiveVideoMetadataChanged(const std::optional<WebCore::ImmersiveVideoMetadata>&) final;
 
     PlaybackSessionInterfaceContext(PlaybackSessionManager&, WebCore::HTMLMediaElementIdentifier);
 
@@ -187,8 +188,7 @@ private:
     void volumeChanged(WebCore::MediaPlayerClientIdentifier, double);
     void isPictureInPictureSupportedChanged(WebCore::MediaPlayerClientIdentifier, bool);
     void isInWindowFullscreenActiveChanged(WebCore::MediaPlayerClientIdentifier, bool);
-    void spatialVideoMetadataChanged(WebCore::MediaPlayerClientIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
-    void videoProjectionMetadataChanged(WebCore::MediaPlayerClientIdentifier, const std::optional<WebCore::VideoProjectionMetadata>&);
+    void immersiveVideoMetadataChanged(WebCore::MediaPlayerClientIdentifier, const std::optional<WebCore::ImmersiveVideoMetadata>&);
 #if HAVE(PIP_SKIP_PREROLL)
     void canSkipAdChanged(WebCore::MediaPlayerClientIdentifier, bool);
 #endif
@@ -231,11 +231,15 @@ private:
 
     void forEachModel(Function<void(WebCore::PlaybackSessionModel&)>&&);
 
+#if ENABLE(IMAGE_ANALYSIS)
+    TextRecognitionRequest& textRecognitionRequest() { return m_textRecognitionRequest.get(); }
+#endif
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "VideoPresentationManager"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     WeakPtr<WebPage> m_page;
@@ -251,6 +255,10 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+    const UniqueRef<TextRecognitionRequest> m_textRecognitionRequest;
 #endif
 };
 

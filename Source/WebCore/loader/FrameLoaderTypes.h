@@ -110,6 +110,12 @@ enum class NavigationHistoryBehavior : uint8_t {
     Reload // Internal, not part of the specification
 };
 
+enum class NavigationUpgradeToHTTPSBehavior : uint8_t {
+    Disabled,
+    HTTPFallback,
+    BasedOnPolicy
+};
+
 enum class ShouldOpenExternalURLsPolicy : uint8_t {
     ShouldNotAllow,
     ShouldAllowExternalSchemesButNotAppLinks,

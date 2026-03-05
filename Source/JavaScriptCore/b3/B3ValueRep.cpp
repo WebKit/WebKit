@@ -36,7 +36,7 @@ namespace JSC { namespace B3 {
 
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(ValueRep);
 
-void ValueRep::addUsedRegistersTo(bool isSIMDContext, RegisterSetBuilder& set) const
+void ValueRep::addUsedRegistersTo(bool isSIMDContext, RegisterSet& set) const
 {
     switch (m_kind) {
     case WarmAny:
@@ -65,9 +65,9 @@ void ValueRep::addUsedRegistersTo(bool isSIMDContext, RegisterSetBuilder& set) c
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RegisterSetBuilder ValueRep::usedRegisters(bool isSIMDContext) const
+RegisterSet ValueRep::usedRegisters(bool isSIMDContext) const
 {
-    RegisterSetBuilder result;
+    RegisterSet result;
     addUsedRegistersTo(isSIMDContext, result);
     return result;
 }

@@ -22,7 +22,7 @@ function startTransactions()
     const putRequest = objectStore.put("value", "key");
     putRequest.onsuccess = (event) => {
         window.webkit.messageHandlers.testHandler.postMessage("Continue");
-        onPutSuccess();
+        onPutSuccess(event);
     }
     transaction.oncomplete = () => {
         window.webkit.messageHandlers.testHandler.postMessage("Unexpected Success");

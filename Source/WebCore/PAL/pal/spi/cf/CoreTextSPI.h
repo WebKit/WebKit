@@ -25,16 +25,28 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #include <CoreText/CoreText.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
+#ifdef __cplusplus
+#include <wtf/cf/CFTypeTraits.h>
+WTF_DECLARE_CF_TYPE_TRAIT(CTFont);
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <CoreText/CoreTextPriv.h>
 #include <OTSVG/OTSVG.h>
+
+// FIXME: (rdar://167351286) Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
 #include <fparse/FPFontParser.h>
+#endif
 
 #else
 
@@ -58,7 +70,8 @@ typedef CF_OPTIONS(CFOptionFlags, CTFontShapeOptions) {
 
 typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
     kCTFontDescriptorOptionSystemUIFont = 1 << 1,
-    kCTFontDescriptorOptionPreferAppleSystemFont = kCTFontOptionsPreferSystemFont
+    kCTFontDescriptorOptionPreferAppleSystemFont = kCTFontOptionsPreferSystemFont,
+    kCTFontDescriptorOptionThisIsNotARealOption = 0xFFFFFFFF
 };
 
 enum {
@@ -98,15 +111,16 @@ typedef CF_ENUM(CFIndex, CTFontPalette)
 
 typedef const struct __OTSVGTable * OTSVGTableRef;
 
-typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
-    kCTFontDescriptorOptionThisIsNotARealOption = 0xFFFFFFFF
-};
-
 typedef CF_ENUM(uint32_t, CTFontTextStylePlatform)
 {
-    kCTFontTextStylePlatformDefault = (CTFontTextStylePlatform)-1,
-    kCTFontTextStylePlatformPhone = (CTFontTextStylePlatform)0,
-    kCTFontTextStylePlatformVision = (CTFontTextStylePlatform)5,
+    kCTFontTextStylePlatformDefault      = (CTFontTextStylePlatform)-1,
+    kCTFontTextStylePlatformPhone        = 0,
+    kCTFontTextStylePlatformWatch        = 1,
+    kCTFontTextStylePlatformTV           = 2,
+    kCTFontTextStylePlatformMac          = 3,
+    kCTFontTextStylePlatformMacTouchBar  = 4,
+    kCTFontTextStylePlatformVision       = 5,
+    kCTFontTextStylePlatformVisionLegacy = 6,
 };
 
 typedef CF_OPTIONS(CFOptionFlags, CTFontDescriptorMatchingOptions) {
@@ -244,13 +258,14 @@ bool CTFontIsAppleColorEmoji(CTFontRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph, CGFloat contentsScale);
 
-CFArrayRef _Nullable CTFontDescriptorCreateMatchingFontDescriptorsWithOptions(CTFontDescriptorRef, CFSetRef _Nullable, CTFontDescriptorMatchingOptions);
+CTFontUIFontType CTFontGetUIFontType(CTFontRef);
 CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
 
 CFBitVectorRef CTFontCopyColorGlyphCoverage(CTFontRef);
 
 #if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
 CTFontDescriptorRef CTFontManagerCreateMemorySafeFontDescriptorFromData(CFDataRef);
+CFArrayRef FPFontCreateMemorySafeFontsFromData(CFDataRef);
 #endif
 
 typedef const struct __FPFont* FPFontRef;

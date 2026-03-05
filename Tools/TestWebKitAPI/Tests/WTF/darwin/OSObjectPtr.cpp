@@ -25,10 +25,8 @@
 
 #include "config.h"
 
-#include <wtf/OSObjectPtr.h>
-
 #include <CoreFoundation/CoreFoundation.h>
-#include <dispatch/dispatch.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 #if __has_feature(objc_arc) && !defined(NDEBUG)
 // Debug builds with ARC enabled cause objects to be autoreleased

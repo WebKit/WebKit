@@ -14,7 +14,7 @@ info: |
     b. If numericIndex is not undefined, then
     ...
   4. Return ? OrdinaryHasProperty(O, P).
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [BigInt, Reflect, TypedArray]
 ---*/
 
@@ -26,4 +26,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.sameValue(Reflect.has(sample, "foo"), false);
   assert.sameValue(Reflect.has(sample, "bar"), true);
-});
+}, null, ["passthrough"]);

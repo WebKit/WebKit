@@ -324,7 +324,8 @@ TEST_P(LibaomAv1SvcTest, SetRatesMatchMeasuredBitrate) {
   for (const auto& frame : encoded_frames) {
     ASSERT_TRUE(frame.codec_specific_info.generic_frame_info);
     const auto& layer = *frame.codec_specific_info.generic_frame_info;
-    LayerId layer_id = {layer.spatial_id, layer.temporal_id};
+    LayerId layer_id = {.spatial_id = layer.spatial_id,
+                        .temporal_id = layer.temporal_id};
     // This is almost same as
     // layer_size[layer_id] += DataSize::Bytes(frame.encoded_image.size());
     // but avoids calling deleted default constructor for DataSize.

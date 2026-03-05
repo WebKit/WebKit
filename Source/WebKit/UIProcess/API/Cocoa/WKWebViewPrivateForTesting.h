@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,14 @@ struct WKAppPrivacyReportTestingData {
     BOOL didPerformSoftUpdate;
 };
 
+@class STWebpageController;
+
+#if TARGET_OS_IPHONE
+typedef UIVisualEffectView _WKPlatformVisualEffectView;
+#else
+typedef NSVisualEffectView _WKPlatformVisualEffectView;
+#endif
+
 @class _WKNowPlayingMetadata;
 @protocol _WKMediaSessionCoordinator;
 
@@ -69,7 +77,7 @@ struct WKAppPrivacyReportTestingData {
 - (void)_setGrammarCheckingEnabledForTesting:(BOOL)enabled;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
-- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger))callback;
+- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger, NSUInteger))callback;
 - (void)_setNowPlayingMetadataObserver:(void(^)(_WKNowPlayingMetadata *))observer;
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:(void (^)(void))updateBlock;
@@ -100,6 +108,9 @@ struct WKAppPrivacyReportTestingData {
 - (void)_didPresentContactPicker;
 - (void)_didDismissContactPicker;
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts;
+
+- (STWebpageController *)_screenTimeWebpageController;
+- (_WKPlatformVisualEffectView *)_screenTimeBlurredSnapshot;
 
 - (void)_getRenderTreeAsStringWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(NSString * NS_NULLABLE_RESULT, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
@@ -185,7 +196,9 @@ struct WKAppPrivacyReportTestingData {
 
 #if defined(ENABLE_THREADED_ANIMATIONS) && ENABLE_THREADED_ANIMATIONS
 - (NSString *)_animationStackForLayerWithID:(unsigned long long)layerID;
+- (NSString *)_progressBasedTimelinesForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID;
 #endif
+- (bool)_displayLinkWantsHighFrameRate;
 
 @end
 

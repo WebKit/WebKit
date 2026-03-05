@@ -44,7 +44,7 @@ class TextTrackCueList;
 class VTTRegionList;
 
 class TextTrack : public TrackBase, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextTrack);
+    WTF_MAKE_TZONE_ALLOCATED(TextTrack);
 public:
     static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language);
     static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
@@ -57,13 +57,13 @@ public:
 
     void didMoveToNewDocument(Document& newDocument) final;
 
-    static TextTrack& captionMenuOffItem();
-    static TextTrack& captionMenuOnItem();
-    static TextTrack& captionMenuAutomaticItem();
+    static TextTrack& captionMenuOffItemSingleton();
+    static TextTrack& captionMenuOnItemSingleton();
+    static TextTrack& captionMenuAutomaticItemSingleton();
 
     static bool isValidKindKeyword(const AtomString&);
 
-    TextTrackList* textTrackList() const;
+    TextTrackList* NODELETE textTrackList() const;
 
     enum class Kind { Subtitles, Captions, Descriptions, Chapters, Metadata, Forced };
     Kind kind() const;
@@ -85,11 +85,9 @@ public:
     void setReadinessState(ReadinessState state) { m_readinessState = state; }
 
     TextTrackCueList* cues();
-    RefPtr<TextTrackCueList> protectedCues();
-    TextTrackCueList* activeCues() const;
+    TextTrackCueList* activeCues() const LIFETIME_BOUND;
 
     TextTrackCueList* cuesInternal() const { return m_cues.get(); }
-    inline RefPtr<TextTrackCueList> protectedCues() const;
 
     void addClient(TextTrackClient&);
     void clearClient(TextTrackClient&);
@@ -98,7 +96,6 @@ public:
     virtual ExceptionOr<void> removeCue(TextTrackCue&);
 
     VTTRegionList* regions();
-    RefPtr<VTTRegionList> protectedRegions();
 
     void cueWillChange(TextTrackCue&);
     void cueDidChange(TextTrackCue&, bool);
@@ -119,8 +116,8 @@ public:
         m_renderedTrackIndex = std::nullopt;
     }
 
-    bool isRendered();
-    bool isSpoken();
+    bool NODELETE isRendered();
+    bool NODELETE isSpoken();
     int trackIndexRelativeToRenderedTracks();
 
     bool hasBeenConfigured() const { return m_hasBeenConfigured; }
@@ -139,7 +136,7 @@ public:
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
 
-    const std::optional<Vector<String>>& styleSheets() const { return m_styleSheets; }
+    const std::optional<Vector<String>>& styleSheets() const LIFETIME_BOUND { return m_styleSheets; }
 
     virtual bool shouldPurgeCuesFromUnbufferedRanges() const { return false; }
     virtual void removeCuesNotInTimeRanges(const PlatformTimeRanges&);
@@ -156,7 +153,7 @@ protected:
 
     void newCuesAvailable(const TextTrackCueList&);
 
-    RefPtr<TextTrackCueList> m_cues;
+    const RefPtr<TextTrackCueList> m_cues;
     std::optional<Vector<String>> m_styleSheets;
     WeakHashSet<TextTrackClient> m_clients;
 
@@ -253,6 +250,7 @@ template<> struct HashTraits<WebCore::TextTrack::Kind> : StrongEnumHashTraits<We
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrack)
     static bool isType(const WebCore::TrackBase& track) { return track.type() == WebCore::TrackBase::TextTrack; }
+    static bool isType(const WebCore::EventTarget& context) { return context.eventTargetInterface() == WebCore::EventTargetInterfaceType::TextTrack; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -56,17 +56,17 @@ bool CSSStyleSheetObservableArray::setValueAt(JSC::JSGlobalObject* lexicalGlobal
     if (sheetConversionResult.hasException(scope)) [[unlikely]]
         return false;
 
-    if (auto exception = shouldThrowWhenAddingSheet(*sheetConversionResult.returnValue())) {
-        throwException(lexicalGlobalObject, scope, createDOMException(*lexicalGlobalObject, WTFMove(*exception)));
+    if (auto exception = shouldThrowWhenAddingSheet(sheetConversionResult.returnValue())) {
+        throwException(lexicalGlobalObject, scope, createDOMException(*lexicalGlobalObject, WTF::move(*exception)));
         return false;
     }
 
     if (index == m_sheets.size())
-        m_sheets.append(*sheetConversionResult.returnValue());
+        m_sheets.append(sheetConversionResult.returnValue());
     else
-        m_sheets[index] = *sheetConversionResult.returnValue();
+        m_sheets[index] = sheetConversionResult.returnValue();
 
-    didAddSheet(*sheetConversionResult.releaseReturnValue());
+    didAddSheet(sheetConversionResult.releaseReturnValue());
     return true;
 }
 
@@ -94,12 +94,12 @@ ExceptionOr<void> CSSStyleSheetObservableArray::setSheets(Vector<Ref<CSSStyleShe
 {
     for (auto& sheet : sheets) {
         if (auto exception = shouldThrowWhenAddingSheet(sheet))
-            return WTFMove(*exception);
+            return WTF::move(*exception);
     }
 
     for (auto& sheet : m_sheets)
         willRemoveSheet(sheet);
-    m_sheets = WTFMove(sheets);
+    m_sheets = WTF::move(sheets);
     for (auto& sheet : m_sheets)
         didAddSheet(sheet);
 
@@ -110,7 +110,7 @@ std::optional<Exception> CSSStyleSheetObservableArray::shouldThrowWhenAddingShee
 {
     if (!sheet.wasConstructedByJS())
         return Exception { ExceptionCode::NotAllowedError, "Sheet needs to be constructed by JavaScript"_s };
-    auto* treeScope = this->treeScope();
+    RefPtr treeScope = this->treeScope();
     if (!treeScope || sheet.constructorDocument() != &treeScope->documentScope())
         return Exception { ExceptionCode::NotAllowedError, "Sheet constructor document doesn't match"_s };
     return std::nullopt;

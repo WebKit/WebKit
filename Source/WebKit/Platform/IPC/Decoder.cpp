@@ -54,7 +54,7 @@ std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, Vector
 {
     auto bufferCopy = copyBuffer(buffer);
     auto bufferCopySpan = bufferCopy.span();
-    return Decoder::create(bufferCopySpan, [bufferCopy = WTFMove(bufferCopy)](auto) { }, WTFMove(attachments)); // NOLINT
+    return Decoder::create(bufferCopySpan, [bufferCopy = WTF::move(bufferCopy)](auto) { }, WTF::move(attachments)); // NOLINT
 }
 
 std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
@@ -65,7 +65,7 @@ std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, Buffer
         RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (buffer size: %lu)", buffer.size_bytes());
         return nullptr;
     }
-    auto decoder = std::unique_ptr<Decoder>(new Decoder(buffer, WTFMove(bufferDeallocator), WTFMove(attachments)));
+    auto decoder = std::unique_ptr<Decoder>(new Decoder(buffer, WTF::move(bufferDeallocator), WTF::move(attachments)));
     if (!decoder->isValid())
         return nullptr;
     return decoder;
@@ -74,8 +74,8 @@ std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, Buffer
 Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
     : m_buffer { buffer }
     , m_bufferPosition { m_buffer.begin() }
-    , m_bufferDeallocator { WTFMove(bufferDeallocator) }
-    , m_attachments { WTFMove(attachments) }
+    , m_bufferDeallocator { WTF::move(bufferDeallocator) }
+    , m_attachments { WTF::move(attachments) }
 {
     if (reinterpret_cast<uintptr_t>(m_buffer.data()) % alignof(uint64_t)) [[unlikely]] {
         markInvalid();
@@ -85,12 +85,12 @@ Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeal
     auto messageFlags = decode<OptionSet<MessageFlags>>();
     if (!messageFlags) [[unlikely]]
         return;
-    m_messageFlags = WTFMove(*messageFlags);
+    m_messageFlags = WTF::move(*messageFlags);
 
     auto messageName = decode<MessageName>();
     if (!messageName) [[unlikely]]
         return;
-    m_messageName = WTFMove(*messageName);
+    m_messageName = WTF::move(*messageName);
 
     auto destinationID = decode<uint64_t>();
     if (!destinationID) [[unlikely]]
@@ -100,7 +100,7 @@ Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeal
         markInvalid();
         return;
     }
-    m_destinationID = WTFMove(*destinationID);
+    m_destinationID = WTF::move(*destinationID);
     if (messageIsSync(m_messageName)) {
         auto syncRequestID = decode<SyncRequestID>();
         if (!syncRequestID) [[unlikely]]
@@ -124,7 +124,7 @@ Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
     auto messageName = decode<MessageName>();
     if (!messageName) [[unlikely]]
         return;
-    m_messageName = WTFMove(*messageName);
+    m_messageName = WTF::move(*messageName);
     if (messageIsSync(m_messageName)) {
         auto syncRequestID = decode<SyncRequestID>();
         if (!syncRequestID) [[unlikely]]
@@ -162,7 +162,7 @@ bool Decoder::shouldMaintainOrderingWithAsyncMessages() const
 #if PLATFORM(MAC)
 void Decoder::setImportanceAssertion(ImportanceAssertion&& assertion)
 {
-    m_importanceAssertion = WTFMove(assertion);
+    m_importanceAssertion = WTF::move(assertion);
 }
 #endif
 
@@ -176,7 +176,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!wrappedMessage)
         return nullptr;
 
-    auto wrappedDecoder = Decoder::create(*wrappedMessage, WTFMove(attachments));
+    auto wrappedDecoder = Decoder::create(*wrappedMessage, WTF::move(attachments));
     wrappedDecoder->setIsAllowedWhenWaitingForSyncReplyOverride(true);
     return wrappedDecoder;
 }

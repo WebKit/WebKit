@@ -45,8 +45,8 @@ public:
 
     void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
     {
-        m_dispatcher.dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = Ref { m_receiver.get() }]() mutable {
-            connection->dispatchMessageReceiverMessage(receiver.get(), WTFMove(message));
+        m_dispatcher.dispatch([connection = Ref { connection }, message = WTF::move(message), receiver = Ref { m_receiver.get() }]() mutable {
+            connection->dispatchMessageReceiverMessage(receiver.get(), WTF::move(message));
         });
     }
 private:
@@ -66,8 +66,8 @@ public:
 
     void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
     {
-        m_queue->dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = m_receiver]() mutable {
-            connection->dispatchMessageReceiverMessage(receiver.get(), WTFMove(message));
+        m_queue->dispatch([connection = Ref { connection }, message = WTF::move(message), receiver = m_receiver]() mutable {
+            connection->dispatchMessageReceiverMessage(receiver.get(), WTF::move(message));
         });
     }
 private:

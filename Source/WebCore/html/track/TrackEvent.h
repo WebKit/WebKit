@@ -35,16 +35,16 @@
 namespace WebCore {
 
 class TrackEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrackEvent);
+    WTF_MAKE_TZONE_ALLOCATED(TrackEvent);
 public:
     virtual ~TrackEvent();
 
     static Ref<TrackEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<TrackBase>&& track)
     {
-        return adoptRef(*new TrackEvent(type, canBubble, cancelable, WTFMove(track)));
+        return adoptRef(*new TrackEvent(type, canBubble, cancelable, WTF::move(track)));
     }
 
-    using TrackEventTrack = Variant<RefPtr<VideoTrack>, RefPtr<AudioTrack>, RefPtr<TextTrack>>;
+    using TrackEventTrack = Variant<Ref<VideoTrack>, Ref<AudioTrack>, Ref<TextTrack>>;
 
     struct Init : public EventInit {
         std::optional<TrackEventTrack> track;
@@ -52,7 +52,7 @@ public:
 
     static Ref<TrackEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new TrackEvent(type, WTFMove(initializer), isTrusted));
+        return adoptRef(*new TrackEvent(type, WTF::move(initializer), isTrusted));
     }
 
     std::optional<TrackEventTrack> track() const { return m_track; }

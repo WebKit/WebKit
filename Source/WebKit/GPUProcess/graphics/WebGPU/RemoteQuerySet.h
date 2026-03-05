@@ -54,7 +54,7 @@ class RemoteQuerySet final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteQuerySet> create(WebCore::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteQuerySet(querySet, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteQuerySet(querySet, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteQuerySet();
@@ -74,9 +74,6 @@ private:
     RemoteQuerySet& operator=(RemoteQuerySet&&) = delete;
 
     WebCore::WebGPU::QuerySet& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::QuerySet> protectedBacking();
-
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -85,9 +82,9 @@ private:
 
     void setLabel(String&&);
 
-    Ref<WebCore::WebGPU::QuerySet> m_backing;
+    const Ref<WebCore::WebGPU::QuerySet> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

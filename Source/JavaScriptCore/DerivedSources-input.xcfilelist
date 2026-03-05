@@ -52,7 +52,6 @@ $(PROJECT_DIR)/builtins/DisposableStackPrototype.js
 $(PROJECT_DIR)/builtins/FunctionPrototype.js
 $(PROJECT_DIR)/builtins/GeneratorPrototype.js
 $(PROJECT_DIR)/builtins/GlobalOperations.js
-$(PROJECT_DIR)/builtins/InternalPromiseConstructor.js
 $(PROJECT_DIR)/builtins/IteratorHelpers.js
 $(PROJECT_DIR)/builtins/JSIteratorConstructor.js
 $(PROJECT_DIR)/builtins/JSIteratorHelperPrototype.js
@@ -64,7 +63,6 @@ $(PROJECT_DIR)/builtins/ModuleLoader.js
 $(PROJECT_DIR)/builtins/ObjectConstructor.js
 $(PROJECT_DIR)/builtins/PromiseConstructor.js
 $(PROJECT_DIR)/builtins/PromiseOperations.js
-$(PROJECT_DIR)/builtins/PromisePrototype.js
 $(PROJECT_DIR)/builtins/ProxyHelpers.js
 $(PROJECT_DIR)/builtins/ReflectObject.js
 $(PROJECT_DIR)/builtins/RegExpPrototype.js
@@ -209,6 +207,8 @@ $(PROJECT_DIR)/runtime/TemporalPlainMonthDayConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainMonthDayPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainTimeConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainTimePrototype.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainYearMonthConstructor.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainYearMonthPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalTimeZoneConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalTimeZonePrototype.cpp
 $(PROJECT_DIR)/ucd/CaseFolding.txt
@@ -247,6 +247,8 @@ $(PROJECT_DIR)/wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyStructConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyStructPrototype.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblySuspendErrorConstructor.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblySuspendErrorPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTableConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTablePrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTagConstructor.cpp
@@ -254,5 +256,6 @@ $(PROJECT_DIR)/wasm/js/WebAssemblyTagPrototype.cpp
 $(PROJECT_DIR)/wasm/wasm.json
 $(PROJECT_DIR)/yarr/create_regex_tables
 $(PROJECT_DIR)/yarr/generateYarrCanonicalizeUnicode
+$(PROJECT_DIR)/parser/generateLexerUnicodePropertyTables.py
 $(PROJECT_DIR)/yarr/generateYarrUnicodePropertyTables.py
 $(PROJECT_DIR)/yarr/hasher.py

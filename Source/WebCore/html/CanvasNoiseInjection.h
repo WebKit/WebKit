@@ -41,7 +41,7 @@ public:
     void postProcessDirtyCanvasBuffer(ImageBuffer*, NoiseInjectionHashSalt, CanvasNoiseInjectionPostProcessArea = CanvasNoiseInjectionPostProcessArea::DirtyRect);
     bool postProcessPixelBufferResults(PixelBuffer&, NoiseInjectionHashSalt) const;
     void updateDirtyRect(const IntRect&);
-    void clearDirtyRect();
+    void NODELETE clearDirtyRect();
     bool haveDirtyRects() const { return !m_postProcessDirtyRect.isEmpty(); }
 
 private:

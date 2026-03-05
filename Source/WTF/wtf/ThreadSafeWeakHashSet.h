@@ -38,10 +38,10 @@ class ThreadSafeWeakHashSet final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeWeakHashSet);
 public:
     ThreadSafeWeakHashSet() = default;
-    ThreadSafeWeakHashSet(ThreadSafeWeakHashSet&& other) { moveFrom(WTFMove(other)); }
+    ThreadSafeWeakHashSet(ThreadSafeWeakHashSet&& other) { moveFrom(WTF::move(other)); }
     ThreadSafeWeakHashSet& operator=(ThreadSafeWeakHashSet&& other)
     {
-        moveFrom(WTFMove(other));
+        moveFrom(WTF::move(other));
         return *this;
     }
 
@@ -54,7 +54,7 @@ public:
 
     private:
         const_iterator(Vector<Ref<T>>&& strongReferences)
-            : m_strongReferences(WTFMove(strongReferences)) { }
+            : m_strongReferences(WTF::move(strongReferences)) { }
 
     public:
         T* get() const
@@ -101,7 +101,7 @@ public:
         ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
         ASSERT(retainedControlBlock);
         amortizedCleanupIfNeeded();
-        m_set.add(std::make_pair(WTFMove(retainedControlBlock), &value));
+        m_set.add(std::make_pair(WTF::move(retainedControlBlock), &value));
     }
 
     template<typename U>

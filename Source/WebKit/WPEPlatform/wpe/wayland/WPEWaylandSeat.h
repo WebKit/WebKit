@@ -58,7 +58,7 @@ public:
     void emitPointerEnter(WPEView*) const;
     void emitPointerLeave(WPEView*) const;
 
-    void setAvailableInputDevicesChangedCallback(Function<void(WPEAvailableInputDevices)>&& callback) { m_capabilitiesChangedCallback = WTFMove(callback); }
+    void setAvailableInputDevicesChangedCallback(Function<void(WPEAvailableInputDevices)>&& callback) { m_capabilitiesChangedCallback = WTF::move(callback); }
 
 private:
     static const struct wl_seat_listener s_listener;

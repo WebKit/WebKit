@@ -58,6 +58,10 @@ class FakeFieldTrials : public FieldTrialsView {
     return "fake";
   }
 
+  std::unique_ptr<FieldTrialsView> CreateCopy() const override {
+    return std::make_unique<FakeFieldTrials>([] {});
+  }
+
  private:
   absl::AnyInvocable<void() &&> on_destroyed_;
 };

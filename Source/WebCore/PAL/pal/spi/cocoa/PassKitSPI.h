@@ -25,6 +25,12 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
@@ -105,10 +111,6 @@ DECLARE_SYSTEM_HEADER
 
 #if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-// FIXME: PassKit does not declare its NSString constant symbols with C linkage, so we end up with
-// linkage mismatches in the SOFT_LINK_CONSTANT macros used in PassKitSoftLink.mm unless we wrap
-// these includes in an extern "C" block.
-WTF_EXTERN_C_BEGIN
 #if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
 #import <PassKitCore/PKConstants.h>
 #import <PassKitCore/PKError.h>
@@ -116,7 +118,6 @@ WTF_EXTERN_C_BEGIN
 #import <PassKit/PKConstants.h>
 #import <PassKit/PKError.h>
 #endif
-WTF_EXTERN_C_END
 
 #endif // !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
@@ -361,6 +362,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readwrite) PKShippingMethod *shippingMethod;
 @end
 
+@interface PKShippingMethod () <NSSecureCoding>
+@end
+
+@interface PKPaymentMerchantSession () <NSSecureCoding>
+@end
+
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD) && !USE(APPLE_INTERNAL_SDK)
 @interface PKShippingMethods : NSObject
 - (instancetype)initWithMethods:(NSArray<PKShippingMethod *> *)methods defaultMethod:(nullable PKShippingMethod *)defaultMethod;
@@ -376,6 +383,8 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD) && !USE(APPLE_INTERNAL_SDK)
 
 NS_ASSUME_NONNULL_END
+
+// FIXME: (rdar://165525506) This file is invalid in a module because PassKit has symbols with incorrect linkage.
 
 extern "C"
 void PKDrawApplePayButtonWithCornerRadius(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType, PKPaymentButtonStyle, NSString * _Nullable languageCode);
@@ -396,3 +405,12 @@ NS_ASSUME_NONNULL_END
 #define PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION
 #import "PassKitInstallmentsSPI.h"
 #undef PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION
+
+#if HAVE(PASSKIT_DELEGATED_REQUEST)
+// FIXME: <rdar://165836164> (Remove bincompat staging code from WebKit)
+@interface PKPaymentRequest (DelegatedRequest)
+@property (nonatomic, assign) BOOL isDelegatedRequest;
+@end
+#endif // HAVE(PASSKIT_DELEGATED_REQUEST)
+
+#endif // !__has_feature(modules)

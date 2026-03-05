@@ -33,7 +33,7 @@ namespace WebCore {
 
 Ref<StyleRulePositionTry> StyleRulePositionTry::create(AtomString&& name, Ref<StyleProperties>&& properties)
 {
-    return adoptRef(*new StyleRulePositionTry(WTFMove(name), WTFMove(properties)));
+    return adoptRef(*new StyleRulePositionTry(WTF::move(name), WTF::move(properties)));
 }
 
 StyleRulePositionTry::StyleRulePositionTry(AtomString&& name, Ref<StyleProperties>&& properties)
@@ -46,7 +46,7 @@ StyleRulePositionTry::StyleRulePositionTry(AtomString&& name, Ref<StylePropertie
 StyleRulePositionTry::StyleRulePositionTry(const StyleRulePositionTry& o)
     : StyleRuleBase(o)
     , m_name(o.m_name)
-    , m_properties(o.protectedProperties()->mutableCopy())
+    , m_properties(protect(o.properties())->mutableCopy())
 {
 }
 
@@ -95,7 +95,7 @@ void CSSPositionTryRule::reattach(StyleRuleBase& rule)
 {
     m_positionTryRule = downcast<StyleRulePositionTry>(rule);
     if (RefPtr propertiesCSSOMWrapper = m_propertiesCSSOMWrapper)
-        propertiesCSSOMWrapper->reattach(protectedPositionTryRule()->protectedMutableProperties());
+        propertiesCSSOMWrapper->reattach(protect(protect(positionTryRule())->mutableProperties()));
 }
 
 AtomString CSSPositionTryRule::name() const
@@ -105,7 +105,7 @@ AtomString CSSPositionTryRule::name() const
 
 CSSPositionTryDescriptors& CSSPositionTryRule::style()
 {
-    Ref mutableProperties = protectedPositionTryRule()->mutableProperties();
+    Ref mutableProperties = protect(positionTryRule())->mutableProperties();
 
     if (!m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper = CSSPositionTryDescriptors::create(mutableProperties.get(), *this);

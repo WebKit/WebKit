@@ -63,7 +63,7 @@ static void __asan_unpoison_memory_region(const void *addr, size_t size) {}
   }
 #else
 #define WEAK_SYMBOL_FUNC(rettype, name, args) \
-  static rettype(*const name) args = NULL;
+  static rettype(*const name) args = nullptr;
 #endif
 
 #if defined(BORINGSSL_DETECT_SDALLOCX)
@@ -77,7 +77,7 @@ static void __asan_unpoison_memory_region(const void *addr, size_t size) {}
 // allocator with |sdallocx| is imported which does.
 WEAK_SYMBOL_FUNC(void, sdallocx, (void *ptr, size_t size, int flags))
 #else
-static void (*const sdallocx)(void *ptr, size_t size, int flags) = NULL;
+static void (*const sdallocx)(void *ptr, size_t size, int flags) = nullptr;
 #endif
 
 // The following three functions can be defined to override default heap
@@ -121,7 +121,7 @@ static void malloc_exit_handler(void) {
 
 static void init_malloc_failure(void) {
   const char *env = getenv("MALLOC_NUMBER_TO_FAIL");
-  if (env != NULL && env[0] != 0) {
+  if (env != nullptr && env[0] != 0) {
     char *endptr;
     malloc_number_to_fail = strtoull(env, &endptr, 10);
     if (*endptr == 0) {
@@ -129,7 +129,7 @@ static void init_malloc_failure(void) {
       atexit(malloc_exit_handler);
     }
   }
-  break_on_malloc_fail = getenv("MALLOC_BREAK_ON_FAIL") != NULL;
+  break_on_malloc_fail = getenv("MALLOC_BREAK_ON_FAIL") != nullptr;
 }
 
 // should_fail_allocation returns one if the current allocation should fail and
@@ -188,11 +188,11 @@ void *OPENSSL_malloc(size_t size) {
     goto err;
   }
 
-  if (OPENSSL_memory_alloc != NULL) {
-    assert(OPENSSL_memory_free != NULL);
-    assert(OPENSSL_memory_get_size != NULL);
+  if (OPENSSL_memory_alloc != nullptr) {
+    assert(OPENSSL_memory_free != nullptr);
+    assert(OPENSSL_memory_get_size != nullptr);
     void *ptr2 = OPENSSL_memory_alloc(size);
-    if (ptr2 == NULL && size != 0) {
+    if (ptr2 == nullptr && size != 0) {
       goto err;
     }
     return ptr2;
@@ -203,7 +203,7 @@ void *OPENSSL_malloc(size_t size) {
   }
 
   ptr = malloc(size + OPENSSL_MALLOC_PREFIX);
-  if (ptr == NULL) {
+  if (ptr == nullptr) {
     goto err;
   }
 
@@ -215,12 +215,12 @@ void *OPENSSL_malloc(size_t size) {
 err:
   // This only works because ERR does not call OPENSSL_malloc.
   OPENSSL_PUT_ERROR(CRYPTO, ERR_R_MALLOC_FAILURE);
-  return NULL;
+  return nullptr;
 }
 
 void *OPENSSL_zalloc(size_t size) {
   void *ret = OPENSSL_malloc(size);
-  if (ret != NULL) {
+  if (ret != nullptr) {
     OPENSSL_memset(ret, 0, size);
   }
   return ret;
@@ -229,18 +229,18 @@ void *OPENSSL_zalloc(size_t size) {
 void *OPENSSL_calloc(size_t num, size_t size) {
   if (size != 0 && num > SIZE_MAX / size) {
     OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
-    return NULL;
+    return nullptr;
   }
 
   return OPENSSL_zalloc(num * size);
 }
 
 void OPENSSL_free(void *orig_ptr) {
-  if (orig_ptr == NULL) {
+  if (orig_ptr == nullptr) {
     return;
   }
 
-  if (OPENSSL_memory_free != NULL) {
+  if (OPENSSL_memory_free != nullptr) {
     OPENSSL_memory_free(orig_ptr);
     return;
   }
@@ -265,12 +265,12 @@ void OPENSSL_free(void *orig_ptr) {
 }
 
 void *OPENSSL_realloc(void *orig_ptr, size_t new_size) {
-  if (orig_ptr == NULL) {
+  if (orig_ptr == nullptr) {
     return OPENSSL_malloc(new_size);
   }
 
   size_t old_size;
-  if (OPENSSL_memory_get_size != NULL) {
+  if (OPENSSL_memory_get_size != nullptr) {
     old_size = OPENSSL_memory_get_size(orig_ptr);
   } else {
     void *ptr = ((uint8_t *)orig_ptr) - OPENSSL_MALLOC_PREFIX;
@@ -280,8 +280,8 @@ void *OPENSSL_realloc(void *orig_ptr, size_t new_size) {
   }
 
   void *ret = OPENSSL_malloc(new_size);
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   size_t to_copy = new_size;
@@ -365,8 +365,8 @@ size_t OPENSSL_strnlen(const char *s, size_t len) {
 }
 
 char *OPENSSL_strdup(const char *s) {
-  if (s == NULL) {
-    return NULL;
+  if (s == nullptr) {
+    return nullptr;
   }
   // Copy the NUL terminator.
   return reinterpret_cast<char *>(OPENSSL_memdup(s, strlen(s) + 1));
@@ -462,11 +462,12 @@ int OPENSSL_vasprintf_internal(char **str, const char *format, va_list args,
   void (*deallocate)(void *) = system_malloc ? free : OPENSSL_free;
   void *(*reallocate)(void *, size_t) =
       system_malloc ? realloc : OPENSSL_realloc;
-  char *candidate = NULL;
+  char *candidate = nullptr;
   size_t candidate_len = 64;  // TODO(bbe) what's the best initial size?
   int ret;
 
-  if ((candidate = reinterpret_cast<char *>(allocate(candidate_len))) == NULL) {
+  if ((candidate = reinterpret_cast<char *>(allocate(candidate_len))) ==
+      nullptr) {
     goto err;
   }
   va_list args_copy;
@@ -482,7 +483,7 @@ int OPENSSL_vasprintf_internal(char **str, const char *format, va_list args,
 
     candidate_len = (size_t)ret + 1;
     if ((tmp = reinterpret_cast<char *>(
-             reallocate(candidate, candidate_len))) == NULL) {
+             reallocate(candidate, candidate_len))) == nullptr) {
       goto err;
     }
     candidate = tmp;
@@ -497,7 +498,7 @@ int OPENSSL_vasprintf_internal(char **str, const char *format, va_list args,
 
 err:
   deallocate(candidate);
-  *str = NULL;
+  *str = nullptr;
   errno = ENOMEM;
   return -1;
 }
@@ -521,11 +522,11 @@ char *OPENSSL_strndup(const char *str, size_t size) {
   if (alloc_size < size) {
     // overflow
     OPENSSL_PUT_ERROR(CRYPTO, ERR_R_MALLOC_FAILURE);
-    return NULL;
+    return nullptr;
   }
   char *ret = reinterpret_cast<char *>(OPENSSL_malloc(alloc_size));
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   OPENSSL_memcpy(ret, str, size);
@@ -558,12 +559,12 @@ size_t OPENSSL_strlcat(char *dst, const char *src, size_t dst_size) {
 
 void *OPENSSL_memdup(const void *data, size_t size) {
   if (size == 0) {
-    return NULL;
+    return nullptr;
   }
 
   void *ret = OPENSSL_malloc(size);
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   OPENSSL_memcpy(ret, data, size);

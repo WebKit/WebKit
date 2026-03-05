@@ -29,6 +29,7 @@
 
 #import "AppKitSPI.h"
 #import "InstanceMethodSwizzler.h"
+#import "PasteboardUtilities.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -61,7 +62,7 @@
     [notificationCenter addObserver:self selector:@selector(handleNotification:) name:NSPopoverDidShowNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(handleNotification:) name:NSPopoverWillCloseNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(handleNotification:) name:NSPopoverDidCloseNotification object:nil];
-    _callback = WTFMove(callback);
+    _callback = WTF::move(callback);
     return self;
 }
 
@@ -98,26 +99,6 @@
 
 @end
 
-using MenuItemFilter = BOOL(^)(NSMenuItem *);
-
-static NSMenuItem *itemMatchingFilter(NSMenu *menu, MenuItemFilter filter)
-{
-    for (NSInteger index = 0; index < menu.numberOfItems; ++index) {
-        auto *item = [menu itemAtIndex:index];
-        if (!item)
-            continue;
-
-        if (filter(item))
-            return item;
-
-        if (item.hasSubmenu) {
-            if (auto *foundItem = itemMatchingFilter(item.submenu, filter))
-                return foundItem;
-        }
-    }
-    return nil;
-}
-
 static RetainPtr<NSArray> lastSharingServicePickerItems;
 
 @implementation NSSharingServicePicker (ContextMenuTests)
@@ -126,62 +107,6 @@ static RetainPtr<NSArray> lastSharingServicePickerItems;
 {
     lastSharingServicePickerItems = items;
     return [self swizzled_initWithItems:items];
-}
-
-@end
-
-@interface TestWKWebView (ContextMenuTests)
-
-@end
-
-@implementation TestWKWebView (ContextMenuTests)
-
-- (void)rightClick:(NSPoint)clickLocation andSelectItemMatching:(MenuItemFilter)filter
-{
-    bool selectedItem = false;
-    RetainPtr selectItemTimer = [NSTimer timerWithTimeInterval:0.25 repeats:YES block:[&selectedItem, strongSelf = RetainPtr { self }, filter = makeBlockPtr(filter)](NSTimer *timer) {
-        NSMenu *activeMenu = [strongSelf _activeMenu];
-        if (!activeMenu)
-            return;
-
-        auto *item = itemMatchingFilter(activeMenu, filter.get());
-        if (!item)
-            return;
-
-        auto *itemMenu = item.menu;
-        [itemMenu performActionForItemAtIndex:[itemMenu indexOfItem:item]];
-        [activeMenu cancelTracking];
-        [timer invalidate];
-        selectedItem = true;
-    }];
-
-    [NSRunLoop.mainRunLoop addTimer:selectItemTimer.get() forMode:NSEventTrackingRunLoopMode];
-    [self.window orderFrontRegardless];
-    [self mouseDownAtPoint:NSMakePoint(50, 350) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
-    [self mouseUpAtPoint:NSMakePoint(50, 350) withFlags:0 eventType:NSEventTypeRightMouseUp];
-    TestWebKitAPI::Util::run(&selectedItem);
-}
-
-- (_WKContextMenuElementInfo *)rightClickAtPointAndWaitForContextMenu:(NSPoint)clickLocation
-{
-    auto uiDelegate = adoptNS([TestUIDelegate new]);
-
-    __block RetainPtr<_WKContextMenuElementInfo> result;
-    __block bool gotProposedMenu = false;
-    [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
-        result = elementInfo;
-        gotProposedMenu = true;
-        completion(nil);
-    }];
-
-    EXPECT_NULL(self.UIDelegate);
-    self.UIDelegate = uiDelegate.get();
-    [self rightClickAtPoint:clickLocation];
-    TestWebKitAPI::Util::run(&gotProposedMenu);
-    [self waitForNextPresentationUpdate];
-
-    self.UIDelegate = nil;
-    return result.autorelease();
 }
 
 @end
@@ -399,7 +324,12 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringDefaultC
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 }
 
+// FIXME when rdar://168100136 is resolved.
+#if PLATFORM(MAC) && defined(NDEBUG)
+TEST(ContextMenuTests, DISABLED_ContextMenuElementInfoContainsQRCodePayloadString)
+#else
 TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadString)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setContextMenuQRCodeDetectionEnabled:YES];
@@ -864,6 +794,57 @@ TEST(ContextMenuTests, ContextMenuTopLevelTextNodeInShadowDOMShouldNotCrash)
     )")];
     RetainPtr elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(5, 395)];
     EXPECT_NOT_NULL([elementInfo hitTestResult]);
+}
+
+TEST(ContextMenuTests, CopyLinkIncludesTitle)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<a href='https://webkit.org' style='position: absolute; top: 0; left: 0; display: inline-block; width: 200px; height: 200px;'>WebKit</a>"];
+
+    clearPasteboard();
+
+    [webView rightClick:NSMakePoint(10, 10) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.identifier isEqualToString:_WKMenuItemIdentifierCopyLink];
+    }];
+
+    while (!readTitleFromPasteboard())
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_WK_STREQ(@"WebKit", readTitleFromPasteboard());
+}
+
+TEST(ContextMenuTests, CopyLinkUsesFullURLAsTitleForLinkWithShortPath)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<a href='https://webkit.org' style='position: absolute; top: 0; left: 0; display: inline-block; width: 200px; height: 200px;'></a>"];
+
+    clearPasteboard();
+
+    [webView rightClick:NSMakePoint(10, 10) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.identifier isEqualToString:_WKMenuItemIdentifierCopyLink];
+    }];
+
+    while (!readTitleFromPasteboard())
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_WK_STREQ(@"https://webkit.org/", readTitleFromPasteboard());
+}
+
+TEST(ContextMenuTests, CopyLinkUsesPathComponentAsTitleForLinkWithPath)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<a href='https://webkit.org/something-cool' style='position: absolute; top: 0; left: 0; display: inline-block; width: 200px; height: 200px;'></a>"];
+
+    clearPasteboard();
+
+    [webView rightClick:NSMakePoint(10, 10) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.identifier isEqualToString:_WKMenuItemIdentifierCopyLink];
+    }];
+
+    while (!readTitleFromPasteboard())
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_WK_STREQ(@"something-cool", readTitleFromPasteboard());
 }
 
 } // namespace TestWebKitAPI

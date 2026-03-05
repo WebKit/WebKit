@@ -9,8 +9,6 @@
  */
 #include "pc/codec_vendor.h"
 
-#include <algorithm>
-#include <cstddef>
 #include <map>
 #include <optional>
 #include <string>
@@ -79,11 +77,8 @@ std::optional<Codec> FindMatchingCodec(const CodecList& codecs1,
 }
 
 void StripCNCodecs(CodecList& audio_codecs) {
-  audio_codecs.writable_codecs().erase(
-      std::remove_if(
-          audio_codecs.begin(), audio_codecs.end(),
-          [](const Codec& codec) { return IsComfortNoiseCodec(codec); }),
-      audio_codecs.end());
+  std::erase_if(audio_codecs.writable_codecs(),
+                [](const Codec& codec) { return IsComfortNoiseCodec(codec); });
 }
 
 bool IsMediaContentOfType(const ContentInfo* content, MediaType media_type) {
@@ -838,7 +833,7 @@ RTCErrorOr<Codecs> CodecVendor::GetNegotiatedCodecsForAnswer(
 }
 
 CodecVendor::CodecVendor(
-    MediaEngineInterface* media_engine,
+    const MediaEngineInterface* media_engine,
     bool rtx_enabled,
     const FieldTrialsView& trials) {  // Null media_engine is permitted in
                                       // order to allow unit testing where

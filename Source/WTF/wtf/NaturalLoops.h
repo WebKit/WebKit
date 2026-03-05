@@ -271,8 +271,8 @@ public:
         dataLogLnIf(verbose, "Results: ", *this);
     }
     
-    Graph& graph() { return m_graph; }
-    
+    Graph& graph() LIFETIME_BOUND { return m_graph; }
+
     unsigned numLoops() const
     {
         return m_loops.size();

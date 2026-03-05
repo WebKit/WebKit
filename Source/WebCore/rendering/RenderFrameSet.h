@@ -24,6 +24,7 @@
 #pragma once
 
 #include "RenderBox.h"
+#include <utility>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class RenderFrame;
 
 struct HTMLDimensionsListValue;
 
-enum FrameEdge { LeftFrameEdge, RightFrameEdge, TopFrameEdge, BottomFrameEdge };
+enum class FrameEdge : uint8_t { Left, Right, Top, Bottom };
 
 struct FrameEdgeInfo {
     explicit FrameEdgeInfo(bool preventResize = false, bool allowBorder = true)
@@ -42,11 +43,11 @@ struct FrameEdgeInfo {
     {
     }
 
-    bool preventResize(FrameEdge edge) const { return m_preventResize[edge]; }
-    bool allowBorder(FrameEdge edge) const { return m_allowBorder[edge]; }
+    bool preventResize(FrameEdge edge) const { return m_preventResize[std::to_underlying(edge)]; }
+    bool allowBorder(FrameEdge edge) const { return m_allowBorder[std::to_underlying(edge)]; }
 
-    void setPreventResize(FrameEdge edge, bool preventResize) { m_preventResize[edge] = preventResize; }
-    void setAllowBorder(FrameEdge edge, bool allowBorder) { m_allowBorder[edge] = allowBorder; }
+    void setPreventResize(FrameEdge edge, bool preventResize) { m_preventResize[std::to_underlying(edge)] = preventResize; }
+    void setAllowBorder(FrameEdge edge, bool allowBorder) { m_allowBorder[std::to_underlying(edge)] = allowBorder; }
 
 private:
     Vector<bool> m_preventResize;
@@ -54,20 +55,20 @@ private:
 };
 
 class RenderFrameSet final : public RenderBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderFrameSet);
+    WTF_MAKE_TZONE_ALLOCATED(RenderFrameSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFrameSet);
 public:
     RenderFrameSet(HTMLFrameSetElement&, RenderStyle&&);
     virtual ~RenderFrameSet();
 
-    HTMLFrameSetElement& frameSetElement() const;
+    HTMLFrameSetElement& NODELETE frameSetElement() const;
 
     FrameEdgeInfo edgeInfo() const;
 
     bool userResize(MouseEvent&);
 
-    bool canResizeRow(const IntPoint&) const;
-    bool canResizeColumn(const IntPoint&) const;
+    bool NODELETE canResizeRow(const IntPoint&) const;
+    bool NODELETE canResizeColumn(const IntPoint&) const;
 
     void notifyFrameEdgeInfoChanged();
 
@@ -103,13 +104,13 @@ private:
 
     void layOutAxis(GridAxis&, std::span<const HTMLDimensionsListValue>, int availableSpace);
     void computeEdgeInfo();
-    void fillFromEdgeInfo(const FrameEdgeInfo& edgeInfo, int r, int c);
+    void NODELETE fillFromEdgeInfo(const FrameEdgeInfo&, int r, int c);
     void positionFrames();
 
-    int splitPosition(const GridAxis&, int split) const;
-    int hitTestSplit(const GridAxis&, int position) const;
+    int NODELETE splitPosition(const GridAxis&, int split) const;
+    int NODELETE hitTestSplit(const GridAxis&, int position) const;
 
-    void startResizing(GridAxis&, int position);
+    void NODELETE startResizing(GridAxis&, int position);
     void continueResizing(GridAxis&, int position);
 
     void paintRowBorder(const PaintInfo&, const IntRect&);

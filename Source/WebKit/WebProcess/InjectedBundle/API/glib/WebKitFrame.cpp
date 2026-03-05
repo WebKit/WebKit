@@ -109,7 +109,7 @@ Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*
         JSValueRef jsValue = nullptr;
         {
             JSC::JSLockHolder lock(globalObject);
-            jsValue = toRef(globalObject, toJS(globalObject, globalObject, element.ptr()));
+            jsValue = toRef(globalObject, toJS(globalObject, globalObject, element));
         }
         return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue) : nullptr;
     });
@@ -313,7 +313,7 @@ JSCValue* webkit_frame_get_js_value_for_dom_object_in_script_world(WebKitFrame* 
         JSC::JSLockHolder lock(globalObject);
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         if (WEBKIT_DOM_IS_NODE(domObject))
-            jsValue = toRef(globalObject, toJS(globalObject, globalObject, WebKit::core(WEBKIT_DOM_NODE(domObject))));
+            jsValue = toRef(globalObject, toJS(globalObject, globalObject, RefPtr { WebKit::core(WEBKIT_DOM_NODE(domObject)) }.releaseNonNull()));
         G_GNUC_END_IGNORE_DEPRECATIONS;
     }
 

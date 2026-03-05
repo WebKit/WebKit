@@ -49,7 +49,7 @@ class EventTarget;
 class ScriptExecutionContext;
 
 class Event : public ScriptWrappable, public RefCountedAndCanMakeWeakPtr<Event> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Event);
+    WTF_MAKE_TZONE_ALLOCATED(Event);
 public:
     using IsTrusted = EventIsTrusted;
     using CanBubble = EventCanBubble;
@@ -79,11 +79,9 @@ public:
     enum EventInterfaceType interfaceType() const { return static_cast<enum EventInterfaceType>(m_eventInterface); }
 
     EventTarget* target() const { return m_target.get(); }
-    RefPtr<EventTarget> protectedTarget() const;
     void setTarget(RefPtr<EventTarget>&&);
 
     EventTarget* currentTarget() const { return m_currentTarget.get(); }
-    RefPtr<EventTarget> protectedCurrentTarget() const;
     void setCurrentTarget(RefPtr<EventTarget>&&, std::optional<bool> isInShadowTree = std::nullopt);
     bool currentTargetIsInShadowTree() const { return m_currentTargetIsInShadowTree; }
 
@@ -97,7 +95,7 @@ public:
     DOMHighResTimeStamp timeStampForBindings(ScriptExecutionContext&) const;
     MonotonicTime timeStamp() const { return m_createTime; }
 
-    void setEventPath(const EventPath&);
+    void NODELETE setEventPath(const EventPath&);
     Vector<Ref<EventTarget>> composedPath(JSC::JSGlobalObject&) const;
 
     void stopPropagation() { m_propagationStopped = true; }
@@ -110,33 +108,14 @@ public:
     void setLegacyReturnValue(bool);
 
     virtual bool isBeforeTextInsertedEvent() const { return false; }
-    virtual bool isBeforeUnloadEvent() const { return false; }
-    virtual bool isClipboardEvent() const { return false; }
-    virtual bool isCommandEvent() const { return false; }
-    virtual bool isCompositionEvent() const { return false; }
-    virtual bool isDragEvent() const { return false; }
-    virtual bool isErrorEvent() const { return false; }
-    virtual bool isFocusEvent() const { return false; }
-    virtual bool isGestureEvent() const { return false; }
-    virtual bool isInputEvent() const { return false; }
-    virtual bool isKeyboardEvent() const { return false; }
     virtual bool isMouseEvent() const { return false; }
-    virtual bool isPaymentMethodChangeEvent() const { return false; }
-    virtual bool isPointerEvent() const { return false; }
-    virtual bool isSpeechSynthesisErrorEvent() const { return false; }
-    virtual bool isTextEvent() const { return false; }
-    virtual bool isToggleEvent() const { return false; }
-    virtual bool isTouchEvent() const { return false; }
     virtual bool isUIEvent() const { return false; }
     virtual bool isUIEventWithKeyState() const { return false; }
-    virtual bool isVersionChangeEvent() const { return false; }
-    virtual bool isWheelEvent() const { return false; }
-    virtual bool isXMLHttpRequestProgressEvent() const { return false; }
 
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 
-    void resetBeforeDispatch();
+    void NODELETE resetBeforeDispatch();
     void resetAfterDispatch();
 
     bool defaultPrevented() const { return m_wasCanceled; }
@@ -168,9 +147,6 @@ public:
     bool isAutofillEvent() { return m_isAutofillEvent; }
     void setIsAutofillEvent() { m_isAutofillEvent = true; }
 
-    bool isShadowRootAttachedEvent() { return m_isShadowRootAttachedEvent; }
-    void setIsShadowRootAttachedEvent() { m_isShadowRootAttachedEvent = true; }
-
 protected:
     explicit Event(enum EventInterfaceType, IsTrusted = IsTrusted::No);
     Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
@@ -200,7 +176,6 @@ private:
     unsigned m_isExecutingPassiveEventListener : 1;
     unsigned m_currentTargetIsInShadowTree : 1;
     unsigned m_isAutofillEvent : 1;
-    unsigned m_isShadowRootAttachedEvent : 1;
 
     unsigned m_eventPhase : 2;
 
@@ -253,6 +228,11 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Event&);
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_EVENT(ToValueTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::Event& event) { return event.interfaceType() == WebCore::EventInterfaceType::ToValueTypeName; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#define SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(ToValueTypeName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::Event& event) { return event.is##ToValueTypeName(); } \
 SPECIALIZE_TYPE_TRAITS_END()

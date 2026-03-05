@@ -251,14 +251,16 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const 
         movementDelta.width(),
         movementDelta.height(),
         0 /* deltaZ */,
-        currentClickCount
+        currentClickCount,
+        0 /* force */,
+        WebMouseEventInputSource::UserDriven
         );
 }
 
 WebMouseEvent WebEventFactory::createWebMouseEvent(const DoublePoint& position)
 {
     // Mouse events without GdkEvent are crossing events, handled as a mouse move.
-    return WebMouseEvent({ WebEventType::MouseMove, { }, MonotonicTime::now() }, WebMouseEventButton::None, 0, position, position, 0, 0, 0, 0);
+    return WebMouseEvent({ WebEventType::MouseMove, { }, MonotonicTime::now() }, WebMouseEventButton::None, 0, position, position, 0, 0, 0, 0, 0, WebMouseEventInputSource::UserDriven);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
@@ -278,9 +280,9 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
         WebKeyboardEvent::windowsKeyCodeForGdkKeyval(keyval),
         static_cast<int>(keyval),
         handledByInputMethod,
-        WTFMove(preeditUnderlines),
-        WTFMove(preeditSelectionRange),
-        WTFMove(commands),
+        WTF::move(preeditUnderlines),
+        WTF::move(preeditSelectionRange),
+        WTF::move(commands),
         isAutoRepeat,
         isGdkKeyCodeFromKeyPad(keyval)
         );
@@ -308,7 +310,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector
         ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent({ type, modifiersForEvent(event), monotonicTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
+    return WebTouchEvent({ type, modifiersForEvent(event), monotonicTimeForEvent(event) }, WTF::move(touchPoints), { }, { });
 }
 #endif
 

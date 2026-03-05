@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(JIT)
 
 // macro(OperationType, ArgType1, ArgType2, ...)

@@ -52,7 +52,7 @@ public:
 private:
     bool show(WebPageProxy* page, WebNotification& notification, RefPtr<WebCore::NotificationResources>&& resources) override
     {
-        m_provider.show(page, notification, WTFMove(resources));
+        m_provider.show(page, notification, WTF::move(resources));
         return true;
     }
 
@@ -97,7 +97,7 @@ void WebKitNotificationProvider::apiNotificationCloseCallback(WebKitNotification
     uint64_t notificationID = webkit_notification_get_id(notification);
     Vector<RefPtr<API::Object>> arrayIDs;
     arrayIDs.append(API::UInt64::create(notificationID));
-    provider->m_notificationManager->providerDidCloseNotifications(API::Array::create(WTFMove(arrayIDs)).ptr());
+    provider->m_notificationManager->providerDidCloseNotifications(API::Array::create(WTF::move(arrayIDs)).ptr());
     provider->m_apiNotifications.remove(WebNotificationIdentifier { notificationID });
 }
 
@@ -197,7 +197,7 @@ HashMap<WTF::String, bool> WebKitNotificationProvider::notificationPermissions()
 
 void WebKitNotificationProvider::setNotificationPermissions(HashMap<String, bool>&& permissionsMap)
 {
-    m_notificationPermissions = WTFMove(permissionsMap);
+    m_notificationPermissions = WTF::move(permissionsMap);
 }
 
 void WebKitNotificationProvider::didClickNotification(WebNotificationIdentifier notificationID)
@@ -214,5 +214,5 @@ void WebKitNotificationProvider::didCloseNotification(WebNotificationIdentifier 
 
     Vector<RefPtr<API::Object>> arrayIDs;
     arrayIDs.append(API::UInt64::create(notificationID.toUInt64()));
-    m_notificationManager->providerDidCloseNotifications(API::Array::create(WTFMove(arrayIDs)).ptr());
+    m_notificationManager->providerDidCloseNotifications(API::Array::create(WTF::move(arrayIDs)).ptr());
 }

@@ -204,17 +204,13 @@ class FieldTrials : public FieldTrialsView {
     if (key == "WebRTC-CongestionWindow" ||
         key == "WebRTC-UseBaseHeavyVP8TL3RateAllocation" ||
         key == "WebRTC-VideoRateControl" ||
+        key == "WebRTC-Video-CalculatePsnr" ||
         key == "WebRTC-GetEncoderInfoOverride" ||
         key == "WebRTC-VP9-GetEncoderInfoOverride" ||
         key == "WebRTC-VP9-PerformanceFlags" ||
         key == "WebRTC-VP9QualityScaler" ||
         key == "WebRTC-VP9-SvcForSimulcast" ||
         key == "WebRTC-StableTargetRate") {
-      return "";
-    }
-
-    // TODO: bugs.webrtc.org/15827 - Fuzz frame drop config.
-    if (key == "WebRTC-LibvpxVp9Encoder-SvcFrameDropConfig") {
       return "";
     }
 
@@ -601,7 +597,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
           }
           bool drop = false;
           // Never drop keyframe.
-          if (frame_types[0] != VideoFrameType::kVideoFrameKey) {
+          if ((state.pkt.data.frame.flags & VPX_FRAME_IS_KEY) == 0) {
             switch (state.frame_drop.framedrop_mode) {
               case FULL_SUPERFRAME_DROP:
                 drop = encode_spatial_layers == 0;

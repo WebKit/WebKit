@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/resources/blank.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/resources/select-restore-invalid-option-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/resources/show-picker-child-iframe.html

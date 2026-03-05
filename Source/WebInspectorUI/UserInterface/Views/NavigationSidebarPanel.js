@@ -158,16 +158,6 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         return contentTreeOutline;
     }
 
-    suppressFilteringOnTreeElements(treeElements)
-    {
-        console.assert(Array.isArray(treeElements), "TreeElements should be an array.");
-
-        for (let treeElement of treeElements)
-            treeElement[WI.NavigationSidebarPanel.SuppressFilteringSymbol] = true;
-
-        this.updateFilter();
-    }
-
     treeElementForRepresentedObject(representedObject)
     {
         let treeElement = null;

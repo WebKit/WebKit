@@ -1,5 +1,5 @@
 
-FAIL worker.postMessage should be able to transfer a ReadableStream The object can not be cloned.
-FAIL postMessage in a worker should be able to transfer a ReadableStream promise_test: Unhandled rejection with value: "error in worker"
-FAIL terminating a worker should not error the stream promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS worker.postMessage should be able to transfer a ReadableStream
+PASS postMessage in a worker should be able to transfer a ReadableStream
+PASS terminating a worker should not error the stream
 

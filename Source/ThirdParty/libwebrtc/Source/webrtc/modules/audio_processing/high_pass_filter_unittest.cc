@@ -135,8 +135,10 @@ std::vector<float> CreateVector(const ArrayView<const float>& array_view) {
 float DcSignalAtenuation(float sampleRate) {
   constexpr int kNumChannels = 1;
   HighPassFilter high_pass_filter(sampleRate, kNumChannels);
+  // Use a sufficient long test sequence to reduce the impact of initial
+  // transients/ringing of the HPF filter on the measurements.
   std::vector<std::vector<float>> audio_data(
-      1, std::vector<float>(sampleRate / 100));
+      1, std::vector<float>(sampleRate / 10));
 
   constexpr float kMaxDcLevel = 32767.0f;
   float energy_before_filtering;
@@ -222,9 +224,9 @@ TEST(HighPassFilterAccuracyTest, MonoInitial) {
       -0.232329f, -0.273644f, -0.323162f, -0.149105f, -0.559646f, 0.269458f,
       0.145333f,  -0.005597f, -0.009717f, -0.223051f, 0.284676f,  -0.037228f,
       -0.199679f, 0.377651f,  -0.062813f, -0.164607f};
-  const float kReference[] = {0.146139f, 0.490339f,  -0.649516f, 0.233889f,
-                              0.073224f, -0.373246f, -0.115382f, 0.102119f,
-                              0.976229f, 0.702288f,  -0.457669f, 0.757161f};
+  const float kReference[] = {0.131826f, 0.430194f,  -0.638357f, 0.213868f,
+                              0.049683f, -0.358489f, -0.094094f, 0.111697f,
+                              0.891429f, 0.563210f,  -0.539361f, 0.598238f};
 
   for (bool use_audio_buffer_interface : {true, false}) {
     RunBitexactnessTest(1, use_audio_buffer_interface,
@@ -316,9 +318,9 @@ TEST(HighPassFilterAccuracyTest, MonoConverged) {
       0.263284f,  0.083972f,  -0.104256f, 0.227892f,  0.223253f,  0.033592f,
       0.159638f,  0.115358f,  -0.275811f, 0.212265f,  -0.183658f, -0.168768f};
 
-  const float kReference[] = {-0.248978f, -0.087127f, 0.083567f,  -0.036940f,
-                              0.127056f,  0.147304f,  -0.221897f, -0.004650f,
-                              -0.535279f, 0.385823f,  -0.116531f, -0.265494f};
+  const float kReference[] = {-0.232532f, -0.066054f, 0.094511f,  -0.021924f,
+                              0.128477f,  0.135562f,  -0.210019f, 0.004422f,
+                              -0.474193f, 0.400765f,  -0.085890f, -0.211323f};
 
   for (bool use_audio_buffer_interface : {true, false}) {
     RunBitexactnessTest(1, use_audio_buffer_interface,

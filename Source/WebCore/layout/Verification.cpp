@@ -238,7 +238,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         if (renderTableRow && renderTableRow->table()->collapseBorders())
             return false;
         // Section borders are either collapsed or ignored. However they may produce negative padding boxes.
-        if (renderTableSection && (renderTableSection->table()->collapseBorders() || renderer.style().hasBorder()))
+        if (renderTableSection && (renderTableSection->table()->collapseBorders() || renderer.style().border().hasBorder()))
             return false;
     }
     if (!areEssentiallyEqual(frameRect, BoxGeometry::borderBoxRect(boxGeometry))) {

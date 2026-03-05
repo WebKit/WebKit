@@ -182,7 +182,7 @@ impl<C: EvpCipherType> Cipher<C> {
     }
 
     fn apply_keystream_in_place(&mut self, buffer: &mut [u8]) -> Result<(), CipherError> {
-        // WARNING: This is not safe to re-use for the CBC mode of operation since it is applying
+        // WARNING: This is not safe to reuse for the CBC mode of operation since it is applying
         // the key stream in-place.
         assert_eq!(
             self.cipher_mode(),

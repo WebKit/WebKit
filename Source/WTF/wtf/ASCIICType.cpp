@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "ASCIICType.h"
+#include <wtf/ASCIICType.h>
 
 namespace WTF {
 

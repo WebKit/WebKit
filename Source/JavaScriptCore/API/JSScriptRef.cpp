@@ -45,7 +45,7 @@ struct OpaqueJSScript final : public SourceProvider {
 public:
     static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, String filename, int startingLineNumber, const String& source)
     {
-        return WTF::adoptRef(*new OpaqueJSScript(vm, sourceOrigin, WTFMove(filename), startingLineNumber, source));
+        return WTF::adoptRef(*new OpaqueJSScript(vm, sourceOrigin, WTF::move(filename), startingLineNumber, source));
     }
 
     unsigned hash() const final
@@ -78,7 +78,7 @@ public:
 
 private:
     OpaqueJSScript(VM& vm, const SourceOrigin& sourceOrigin, String&& filename, int startingLineNumber, const String& source)
-        : SourceProvider(sourceOrigin, WTFMove(filename), String(), SourceTaintedOrigin::Untainted, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()), SourceProviderSourceType::Program)
+        : SourceProvider(sourceOrigin, WTF::move(filename), String(), SourceTaintedOrigin::Untainted, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()), SourceProviderSourceType::Program)
         , m_vm(vm)
         , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
     {

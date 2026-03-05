@@ -577,7 +577,7 @@ public:
 
     const Vector<GRefPtr<WebKitUserMessage>>& waitUntilViewMessagesReceived(Vector<CString>&& messageNames)
     {
-        m_expectedViewMessageNames = WTFMove(messageNames);
+        m_expectedViewMessageNames = WTF::move(messageNames);
         m_receivedViewMessages = { };
         g_main_loop_run(m_mainLoop);
         m_expectedViewMessageNames = { };
@@ -591,7 +591,7 @@ public:
 
     const Vector<GRefPtr<WebKitUserMessage>>& waitUntilContextMessagesReceived(Vector<CString>&& messageNames)
     {
-        m_expectedContextMessageNames = WTFMove(messageNames);
+        m_expectedContextMessageNames = WTF::move(messageNames);
         m_receivedContextMessages = { };
         g_main_loop_run(m_mainLoop);
         m_expectedContextMessageNames = { };

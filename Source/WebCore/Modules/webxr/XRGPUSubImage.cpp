@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRGPUSubImage);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRGPUSubImage);
 
 static auto makeTextureViewDescriptor(WebGPU::XREye eye)
 {
@@ -52,10 +52,10 @@ static auto makeTextureViewDescriptor(WebGPU::XREye eye)
 }
 
 XRGPUSubImage::XRGPUSubImage(Ref<WebGPU::XRSubImage>&& backing, WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
     , m_device(device)
     , m_descriptor(makeTextureViewDescriptor(eye))
-    , m_viewport(WebXRViewport::create(WTFMove(viewport)))
+    , m_viewport(WebXRViewport::create(WTF::move(viewport)))
     , m_width(physicalSize[0])
     , m_height(physicalSize[1])
 {

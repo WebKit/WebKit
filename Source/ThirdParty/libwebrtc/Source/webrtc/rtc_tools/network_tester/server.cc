@@ -10,14 +10,15 @@
 
 #include <memory>
 
+#include "api/environment/environment_factory.h"
 #include "rtc_base/null_socket_server.h"
 #include "rtc_base/thread.h"
 #include "rtc_tools/network_tester/test_controller.h"
 
 int main(int /*argn*/, char* /*argv*/[]) {
   webrtc::Thread main_thread(std::make_unique<webrtc::NullSocketServer>());
-  webrtc::TestController server(9090, 9090, "server_config.dat",
-                                "server_packet_log.dat");
+  webrtc::TestController server(webrtc::CreateEnvironment(), 9090, 9090,
+                                "server_config.dat", "server_packet_log.dat");
   while (!server.IsTestDone()) {
     // 100 ms is arbitrary chosen.
     main_thread.ProcessMessages(/*cms=*/100);

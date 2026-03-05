@@ -46,7 +46,7 @@ struct FontDescriptionKeyRareData : public RefCounted<FontDescriptionKeyRareData
 public:
     static Ref<FontDescriptionKeyRareData> create(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette, FontSizeAdjust&& fontSizeAdjust)
     {
-        return adoptRef(*new FontDescriptionKeyRareData(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette), WTFMove(fontSizeAdjust)));
+        return adoptRef(*new FontDescriptionKeyRareData(WTF::move(featureSettings), WTF::move(variationSettings), WTF::move(variantAlternates), WTF::move(fontPalette), WTF::move(fontSizeAdjust)));
     }
 
     const FontFeatureSettings& featureSettings() const
@@ -85,11 +85,11 @@ public:
 
 private:
     FontDescriptionKeyRareData(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette, FontSizeAdjust&& fontSizeAdjust)
-        : m_featureSettings(WTFMove(featureSettings))
-        , m_variationSettings(WTFMove(variationSettings))
-        , m_variantAlternates(WTFMove(variantAlternates))
-        , m_fontPalette(WTFMove(fontPalette))
-        , m_fontSizeAdjust(WTFMove(fontSizeAdjust))
+        : m_featureSettings(WTF::move(featureSettings))
+        , m_variationSettings(WTF::move(variationSettings))
+        , m_variantAlternates(WTF::move(variantAlternates))
+        , m_fontPalette(WTF::move(fontPalette))
+        , m_fontSizeAdjust(WTF::move(fontSizeAdjust))
     {
     }
 
@@ -122,7 +122,7 @@ struct FontDescriptionKey {
         auto fontPalette = description.fontPalette();
         auto fontSizeAdjust = description.fontSizeAdjust();
         if (!featureSettings.isEmpty() || !variationSettings.isEmpty() || !variantAlternates.isNormal() || fontPalette.type != FontPalette::Type::Normal || !fontSizeAdjust.isNone())
-            lazyInitialize(m_rareData, FontDescriptionKeyRareData::create(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette), WTFMove(fontSizeAdjust)));
+            lazyInitialize(m_rareData, FontDescriptionKeyRareData::create(WTF::move(featureSettings), WTF::move(variationSettings), WTF::move(variantAlternates), WTF::move(fontPalette), WTF::move(fontSizeAdjust)));
     }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
@@ -256,7 +256,7 @@ public:
     static FontCascadeCache& forCurrentThread();
 
     void invalidate();
-    void clearWidthCaches();
+    void clearMeasurementCaches();
     void pruneUnreferencedEntries();
     void pruneSystemFallbackFonts();
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, FontSelector*);

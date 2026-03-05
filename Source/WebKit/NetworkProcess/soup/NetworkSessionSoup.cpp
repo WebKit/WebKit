@@ -88,7 +88,7 @@ void NetworkSessionSoup::setCookiePersistentStorage(const String& storagePath, S
         jar = adoptGRef(soup_cookie_jar_db_new(storagePath.utf8().data(), FALSE));
         break;
     }
-    storageSession->setCookieStorage(WTFMove(jar));
+    storageSession->setCookieStorage(WTF::move(jar));
 
     m_networkSession->setCookieJar(storageSession->cookieStorage());
 }
@@ -113,7 +113,7 @@ RefPtr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdenti
         }), this);
     }
 
-    bool shouldBlockCookies = checkedNetworkStorageSession()->shouldBlockCookies(request, frameID, pageID, networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
+    bool shouldBlockCookies = protect(networkStorageSession())->shouldBlockCookies(request, frameID, pageID, networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
     if (shouldBlockCookies)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
 

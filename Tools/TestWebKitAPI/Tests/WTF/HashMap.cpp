@@ -33,10 +33,27 @@
 #include "Test.h"
 #include <string>
 #include <wtf/HashMap.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/Ref.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefCountedWithInlineWeakPtr.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
+
+namespace {
+
+class InlineWeakPtrObject : public RefCountedWithInlineWeakPtr<InlineWeakPtrObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InlineWeakPtrObject);
+public:
+    static Ref<InlineWeakPtrObject> create()
+    {
+        return adoptRef(*new InlineWeakPtrObject);
+    }
+};
+
+}
 
 namespace TestWebKitAPI {
 
@@ -61,7 +78,7 @@ TEST(WTF_HashMap, HashTableIteratorComparison)
 }
 
 struct TestDoubleHashTraits : HashTraits<double> {
-    static const int minimumTableSize = 8;
+    static constexpr unsigned minimumTableSize = 8;
 };
 
 typedef HashMap<double, int64_t, DefaultHash<double>, TestDoubleHashTraits> DoubleHashMap;
@@ -109,7 +126,7 @@ TEST(WTF_HashMap, MoveOnlyValues)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyValues.set(i + 1, WTFMove(moveOnly));
+        moveOnlyValues.set(i + 1, WTF::move(moveOnly));
     }
 
     for (size_t i = 0; i < 100; ++i) {
@@ -132,7 +149,7 @@ TEST(WTF_HashMap, MoveOnlyKeys)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyKeys.set(WTFMove(moveOnly), i + 1);
+        moveOnlyKeys.set(WTF::move(moveOnly), i + 1);
     }
 
     for (size_t i = 0; i < 100; ++i) {
@@ -196,7 +213,7 @@ TEST(WTF_HashMap, UniquePtrKey)
     HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
-    map.add(WTFMove(uniquePtr), 2);
+    map.add(WTF::move(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -215,7 +232,7 @@ TEST(WTF_HashMap, UniquePtrKey_CustomDeleter)
     HashMap<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>, int> map;
 
     std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>> uniquePtr(new ConstructorDestructorCounter(), DeleterCounter<ConstructorDestructorCounter>());
-    map.add(WTFMove(uniquePtr), 2);
+    map.add(WTF::move(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -236,7 +253,7 @@ TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    map.add(WTFMove(uniquePtr), 2);
+    map.add(WTF::move(uniquePtr), 2);
 
     auto it = map.find(ptr);
     ASSERT_TRUE(it != map.end());
@@ -250,7 +267,7 @@ TEST(WTF_HashMap, UniquePtrKey_ContainsUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    map.add(WTFMove(uniquePtr), 2);
+    map.add(WTF::move(uniquePtr), 2);
 
     EXPECT_EQ(true, map.contains(ptr));
 }
@@ -261,7 +278,7 @@ TEST(WTF_HashMap, UniquePtrKey_GetUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    map.add(WTFMove(uniquePtr), 2);
+    map.add(WTF::move(uniquePtr), 2);
 
     int value = map.get(ptr);
     EXPECT_EQ(2, value);
@@ -275,7 +292,7 @@ TEST(WTF_HashMap, UniquePtrKey_RemoveUsingRawPointer)
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    map.add(WTFMove(uniquePtr), 2);
+    map.add(WTF::move(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -295,7 +312,7 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    map.add(WTFMove(uniquePtr), 2);
+    map.add(WTF::move(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -311,7 +328,7 @@ TEST(WTF_HashMap, UniqueRefValue)
 {
     HashMap<int, UniqueRef<int>> map;
     UniqueRef<int> five = makeUniqueRefWithoutFastMallocCheck<int>(5);
-    map.add(5, WTFMove(five));
+    map.add(5, WTF::move(five));
     EXPECT_TRUE(map.contains(5));
     int* shouldBeFive = map.get(5);
     EXPECT_EQ(*shouldBeFive, 5);
@@ -348,7 +365,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
         HashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
-        map.add(WTFMove(ptr), 0);
+        map.add(WTF::move(ptr), 0);
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -362,7 +379,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
         HashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
-        map.add(WTFMove(ptr), 0);
+        map.add(WTF::move(ptr), 0);
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -423,7 +440,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 
     {
         RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.add(WTFMove(ptr2), 0);
+        auto addResult = map.add(WTF::move(ptr2), 0);
         EXPECT_FALSE(addResult.isNewEntry);
     }
 
@@ -449,7 +466,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 
     {
         RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.add(WTFMove(ptr2), 0);
+        auto addResult = map.add(WTF::move(ptr2), 0);
         EXPECT_FALSE(addResult.isNewEntry);
     }
 
@@ -482,7 +499,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
         HashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
-        map.set(WTFMove(ptr), 0);
+        map.set(WTF::move(ptr), 0);
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -497,7 +514,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
         HashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
-        map.set(WTFMove(ptr), 0);
+        map.set(WTF::move(ptr), 0);
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -556,7 +573,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
 
         {
             RefPtr<RefLogger> ptr2(&a);
-            auto addResult = map.set(WTFMove(ptr2), 1);
+            auto addResult = map.set(WTF::move(ptr2), 1);
             EXPECT_FALSE(addResult.isNewEntry);
             EXPECT_EQ(1, map.get(ptr.get()));
         }
@@ -581,7 +598,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
 
         {
             RefPtr<RefLogger> ptr2(&a);
-            auto addResult = map.set(WTFMove(ptr2), 1);
+            auto addResult = map.set(WTF::move(ptr2), 1);
             EXPECT_FALSE(addResult.isNewEntry);
             EXPECT_EQ(1, map.get(ptr.get()));
         }
@@ -660,7 +677,7 @@ class ObjectWithRefLogger {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjectWithRefLogger);
 public:
     ObjectWithRefLogger(Ref<RefLogger>&& logger)
-        : m_logger(WTFMove(logger))
+        : m_logger(WTF::move(logger))
     {
     }
 
@@ -672,7 +689,7 @@ static void testMovingUsingEnsure(Ref<RefLogger>&& logger)
 {
     HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
     
-    map.ensure(1, [&] { return makeUnique<ObjectWithRefLogger>(WTFMove(logger)); });
+    map.ensure(1, [&] { return makeUnique<ObjectWithRefLogger>(WTF::move(logger)); });
 }
 
 static void testMovingUsingAdd(Ref<RefLogger>&& logger)
@@ -680,7 +697,7 @@ static void testMovingUsingAdd(Ref<RefLogger>&& logger)
     HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
 
     auto& slot = map.add(1, nullptr).iterator->value;
-    slot = makeUnique<ObjectWithRefLogger>(WTFMove(logger));
+    slot = makeUnique<ObjectWithRefLogger>(WTF::move(logger));
 }
 
 TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
@@ -688,7 +705,7 @@ TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
     {
         DerivedRefLogger a("a");
         Ref<RefLogger> ref(a);
-        testMovingUsingEnsure(WTFMove(ref));
+        testMovingUsingEnsure(WTF::move(ref));
 
         EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
@@ -696,7 +713,7 @@ TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
     {
         DerivedRefLogger a("a");
         Ref<RefLogger> ref(a);
-        testMovingUsingAdd(WTFMove(ref));
+        testMovingUsingAdd(WTF::move(ref));
 
         EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
@@ -795,7 +812,7 @@ TEST(WTF_HashMap, Ref_Key)
         HashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
-        map.add(WTFMove(ref), 1);
+        map.add(WTF::move(ref), 1);
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -806,7 +823,7 @@ TEST(WTF_HashMap, Ref_Key)
         HashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
-        map.set(WTFMove(ref), 1);
+        map.set(WTF::move(ref), 1);
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -817,10 +834,10 @@ TEST(WTF_HashMap, Ref_Key)
         HashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> refA(a);
-        map.add(WTFMove(refA), 1);
+        map.add(WTF::move(refA), 1);
 
         Ref<RefLogger> refA2(a);
-        map.set(WTFMove(refA2), 1);
+        map.set(WTF::move(refA2), 1);
     }
 
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
@@ -831,7 +848,7 @@ TEST(WTF_HashMap, Ref_Key)
         HashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
-        map.ensure(WTFMove(ref), []() { 
+        map.ensure(WTF::move(ref), []() { 
             return 1; 
         });
     }
@@ -844,7 +861,7 @@ TEST(WTF_HashMap, Ref_Key)
         HashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
-        map.add(WTFMove(ref), 1);
+        map.add(WTF::move(ref), 1);
         
         auto it = map.find(&a);
         ASSERT_TRUE(it != map.end());
@@ -861,7 +878,7 @@ TEST(WTF_HashMap, Ref_Key)
         HashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
-        map.add(WTFMove(ref), 1);
+        map.add(WTF::move(ref), 1);
 
         map.remove(&a);
     }
@@ -874,7 +891,7 @@ TEST(WTF_HashMap, Ref_Key)
         HashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
-        map.add(WTFMove(ref), 1);
+        map.add(WTF::move(ref), 1);
 
         int i = map.take(&a);
         ASSERT_EQ(i, 1);
@@ -888,7 +905,7 @@ TEST(WTF_HashMap, Ref_Key)
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
             auto* pointer = ref.ptr();
-            map.add(WTFMove(ref), i + 1);
+            map.add(WTF::move(ref), i + 1);
             ASSERT_TRUE(map.contains(pointer));
         }
     }
@@ -904,7 +921,7 @@ TEST(WTF_HashMap, Ref_Value)
         HashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
-        map.add(1, WTFMove(ref));
+        map.add(1, WTF::move(ref));
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -915,7 +932,7 @@ TEST(WTF_HashMap, Ref_Value)
         HashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
-        map.set(1, WTFMove(ref));
+        map.set(1, WTF::move(ref));
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -927,10 +944,10 @@ TEST(WTF_HashMap, Ref_Value)
         HashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> refA(a);
-        map.add(1, WTFMove(refA));
+        map.add(1, WTF::move(refA));
 
         Ref<RefLogger> refB(b);
-        map.set(1, WTFMove(refB));
+        map.set(1, WTF::move(refB));
     }
 
     ASSERT_STREQ("ref(a) ref(b) deref(a) deref(b) ", takeLogStr().c_str());
@@ -941,7 +958,7 @@ TEST(WTF_HashMap, Ref_Value)
         HashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
-        map.add(1, WTFMove(ref));
+        map.add(1, WTF::move(ref));
         
         auto aGet = map.get(1);
         ASSERT_EQ(aGet, &a);
@@ -962,7 +979,7 @@ TEST(WTF_HashMap, Ref_Value)
         HashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
-        map.add(1, WTFMove(ref));
+        map.add(1, WTF::move(ref));
         
         auto aOut = map.take(1);
         ASSERT_TRUE(static_cast<bool>(aOut));
@@ -984,7 +1001,7 @@ TEST(WTF_HashMap, Ref_Value)
         HashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
-        map.add(1, WTFMove(ref));
+        map.add(1, WTF::move(ref));
         map.remove(1);
     }
 
@@ -1008,7 +1025,7 @@ TEST(WTF_HashMap, Ref_Value)
         for (int i = 0; i < 64; ++i) {
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
-            map.add(i + 1, WTFMove(ref));
+            map.add(i + 1, WTF::move(ref));
             ASSERT_TRUE(map.contains(i + 1));
         }
     }
@@ -1056,7 +1073,7 @@ TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
     for (int32_t i = 0; i < 160; ++i) {
         Ref<Key> key = Key::create();
         map.add(Ref<Key>(key.get()), Value { i });
-        vectorMap.append({ WTFMove(key), i });
+        vectorMap.append({ WTF::move(key), i });
     }
 
     for (auto& pair : vectorMap)
@@ -1187,7 +1204,7 @@ class TestObjectWithCustomDestructor {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TestObjectWithCustomDestructor);
 public:
     TestObjectWithCustomDestructor(Function<void()>&& runInDestructor)
-        : m_runInDestructor(WTFMove(runInDestructor))
+        : m_runInDestructor(WTF::move(runInDestructor))
     { }
 
     ~TestObjectWithCustomDestructor()
@@ -1333,6 +1350,223 @@ TEST(WTF_HashMap, KeysValuesRangesAllAnyNoneOf)
     EXPECT_TRUE(std::ranges::any_of(map.values(), [] (int el) {
         return el < 2;
     }));
+}
+
+TEST(WTF_HashMap, fromRangeConstructorBasicTypes)
+{
+    Vector<KeyValuePair<int, String>> pairs {
+        { 1, "one"_s },
+        { 2, "two"_s },
+        { 3, "three"_s }
+    };
+    HashMap<int, String> wtfMap = pairs | rangeTo<HashMap<int, String>>();
+
+    EXPECT_EQ(3U, wtfMap.size());
+    EXPECT_EQ("one"_s, wtfMap.get(1));
+    EXPECT_EQ("two"_s, wtfMap.get(2));
+    EXPECT_EQ("three"_s, wtfMap.get(3));
+}
+
+TEST(WTF_HashMap, fromRangeConstructorInitializerList)
+{
+    auto initList = {
+        KeyValuePair { 10, 100 },
+        KeyValuePair(20, 200),
+        KeyValuePair(30, 300)
+    };
+    HashMap<int, int> wtfMap(fromRange, initList);
+
+    EXPECT_EQ(3U, wtfMap.size());
+    EXPECT_EQ(100, wtfMap.get(10));
+    EXPECT_EQ(200, wtfMap.get(20));
+    EXPECT_EQ(300, wtfMap.get(30));
+}
+
+TEST(WTF_HashMap, fromRangeConstructorEmptyRange)
+{
+    Vector<KeyValuePair<int, int>> emptyVec;
+    HashMap<int, int> wtfMap(fromRange, emptyVec);
+
+    EXPECT_TRUE(wtfMap.isEmpty());
+    EXPECT_EQ(0U, wtfMap.size());
+}
+
+TEST(WTF_HashMap, fromRangeConstructorMoveOnlyValues)
+{
+    Vector<KeyValuePair<int, MoveOnly>> stdVec;
+    stdVec.append({ 1, MoveOnly { 42 } });
+    stdVec.append({ 2, MoveOnly { 99 } });
+
+    HashMap<int, MoveOnly> wtfMap(fromRange, WTF::move(stdVec));
+
+    EXPECT_EQ(2U, wtfMap.size());
+
+    auto it1 = wtfMap.find(1);
+    auto it2 = wtfMap.find(2);
+
+    ASSERT_NE(wtfMap.end(), it1);
+    ASSERT_NE(wtfMap.end(), it2);
+
+    EXPECT_EQ(42U, it1->value.value());
+    EXPECT_EQ(99U, it2->value.value());
+}
+
+TEST(WTF_HashMap, fromRangeConstructorStringKeys)
+{
+    Vector<KeyValuePair<String, double>> stdVec {
+        { "pi"_s, 3.14159 },
+        { "e"_s, 2.71828 },
+        { "sqrt2"_s, 1.41421 }
+    };
+    HashMap<String, double> wtfMap(fromRange, stdVec);
+
+    EXPECT_EQ(3U, wtfMap.size());
+    EXPECT_DOUBLE_EQ(3.14159, wtfMap.get("pi"_s));
+    EXPECT_DOUBLE_EQ(2.71828, wtfMap.get("e"_s));
+    EXPECT_DOUBLE_EQ(1.41421, wtfMap.get("sqrt2"_s));
+}
+
+TEST(WTF_HashMap, fromRangeConstructorCustomHashTraits)
+{
+    // Test with custom hash map configuration
+    using CustomHashMap = HashMap<double, int64_t, DefaultHash<double>, TestDoubleHashTraits>;
+
+    Vector<KeyValuePair<double, int64_t>> stdVec {
+        { 1.1, 11 },
+        { 2.2, 22 },
+        { 3.3, 33 }
+    };
+    CustomHashMap wtfMap(fromRange, stdVec);
+
+    EXPECT_EQ(3U, wtfMap.size());
+    EXPECT_EQ(11, wtfMap.get(1.1));
+    EXPECT_EQ(22, wtfMap.get(2.2));
+    EXPECT_EQ(33, wtfMap.get(3.3));
+}
+
+TEST(WTF_HashMap, RangeToBasicUsage)
+{
+    // Test the rangeTo range adaptor with HashMap
+    Vector<KeyValuePair<int, String>> stdVec {
+        { 1, "one"_s },
+        { 2, "two"_s },
+        { 3, "three"_s }
+    };
+    auto wtfMap = stdVec | rangeTo<HashMap<int, String>>();
+
+    EXPECT_EQ(3U, wtfMap.size());
+    EXPECT_EQ("one"_s, wtfMap.get(1));
+    EXPECT_EQ("two"_s, wtfMap.get(2));
+    EXPECT_EQ("three"_s, wtfMap.get(3));
+}
+
+TEST(WTF_HashMap, RangeToChainedOperations)
+{
+    Vector<KeyValuePair<int, int>> stdVec {
+        { 1, 10 },
+        { 2, 20 },
+        { 3, 30 },
+        { 4, 40 }
+    };
+
+    auto result = stdVec
+        | std::views::filter([](const auto& pair) { return !(pair.key % 2); })
+        | std::views::transform([](const auto& pair) -> KeyValuePair<int, int> { return { pair.key, pair.value * 2 }; })
+        | rangeTo<HashMap<int, int>>();
+
+    EXPECT_EQ(2U, result.size());
+    EXPECT_EQ(40, result.get(2)); // 20 * 2
+    EXPECT_EQ(80, result.get(4)); // 40 * 2
+}
+
+class Object : public WTF::RefCountedAndCanMakeWeakPtr<Object> {
+public:
+    static Ref<Object> create() { return adoptRef(*new Object); }
+
+private:
+    Object() = default;
+};
+
+TEST(WTF_HashMap, WeakPtr)
+{
+    HashMap<WeakPtr<Object>, int> map;
+
+    RefPtr object1 = Object::create();
+    map.add(object1.get(), 1);
+
+    Ref object2 = Object::create();
+
+    // Present when live
+    EXPECT_TRUE(map.contains(object1.get()));
+    EXPECT_EQ(map.find(object1.get())->value, 1);
+    EXPECT_EQ(1u, map.size());
+    for (auto& entry : map) {
+        EXPECT_EQ(entry.key, object1.get());
+        EXPECT_EQ(entry.value, 1);
+    }
+
+    EXPECT_FALSE(map.contains(&object2.get()));
+    EXPECT_EQ(map.find(&object2.get()), map.end());
+
+    Object* rawObject1 = object1.get();
+    object1 = nullptr;
+
+    // Absent when dead
+    EXPECT_EQ(map.get(rawObject1), 0);
+    EXPECT_FALSE(map.contains(rawObject1));
+    EXPECT_EQ(map.find(rawObject1), map.end());
+    EXPECT_EQ(map.begin(), map.end());
+
+    // Accurate size after removing weak nulls
+    EXPECT_EQ(1u, map.size());
+    map.removeWeakNullEntries();
+    EXPECT_EQ(0u, map.size());
+
+    // Bounded growth as added objects die
+    for (size_t i = 0; i < 128; ++i)
+        map.add(&Object::create().get(), 1);
+    EXPECT_LT(map.size(), 16u);
+}
+
+TEST(WTF_HashMap, InlineWeakPtr)
+{
+    HashMap<InlineWeakPtr<InlineWeakPtrObject>, int> map;
+
+    RefPtr object1 = InlineWeakPtrObject::create();
+    map.add(object1.get(), 1);
+
+    Ref object2 = InlineWeakPtrObject::create();
+
+    // Present when live
+    EXPECT_TRUE(map.contains(object1.get()));
+    EXPECT_EQ(map.find(object1.get())->value, 1);
+    EXPECT_EQ(1u, map.size());
+    for (auto& entry : map) {
+        EXPECT_EQ(entry.key, object1.get());
+        EXPECT_EQ(entry.value, 1);
+    }
+
+    EXPECT_FALSE(map.contains(&object2.get()));
+    EXPECT_EQ(map.find(&object2.get()), map.end());
+
+    InlineWeakPtrObject* rawObject1 = object1.get();
+    object1 = nullptr;
+
+    // Absent when dead
+    EXPECT_EQ(map.get(rawObject1), 0);
+    EXPECT_FALSE(map.contains(rawObject1));
+    EXPECT_EQ(map.find(rawObject1), map.end());
+    EXPECT_EQ(map.begin(), map.end());
+
+    // Accurate size after removing weak nulls
+    EXPECT_EQ(1u, map.size());
+    map.removeWeakNullEntries();
+    EXPECT_EQ(0u, map.size());
+
+    // Bounded growth as added objects die
+    for (size_t i = 0; i < 128; ++i)
+        map.add(&InlineWeakPtrObject::create().get(), 1);
+    EXPECT_LT(map.size(), 16u);
 }
 
 } // namespace TestWebKitAPI

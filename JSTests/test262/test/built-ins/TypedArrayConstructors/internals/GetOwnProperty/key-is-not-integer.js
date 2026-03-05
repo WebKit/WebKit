@@ -23,8 +23,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
 
   assert.sameValue(Object.getOwnPropertyDescriptor(sample, "1.1"), undefined);
   assert.sameValue(Object.getOwnPropertyDescriptor(sample, "0.1"), undefined);

@@ -29,21 +29,16 @@
 #import "WKDOMInternals.h"
 #import <WebCore/Text.h>
 
-static Ref<WebCore::Text> protectedImpl(WKDOMText *text)
-{
-    return downcast<WebCore::Text>(*text->_impl);
-}
-
 @implementation WKDOMText
 
 - (NSString *)data
 {
-    return protectedImpl(self)->data().createNSString().autorelease();
+    return protect(downcast<WebCore::Text>(*_impl))->data().createNSString().autorelease();
 }
 
 - (void)setData:(NSString *)data
 {
-    protectedImpl(self)->setData(data);
+    protect(downcast<WebCore::Text>(*_impl))->setData(data);
 }
 
 @end

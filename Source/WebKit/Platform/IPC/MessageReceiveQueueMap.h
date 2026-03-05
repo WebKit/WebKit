@@ -37,7 +37,7 @@ enum class ReceiverName : uint8_t;
 class MessageReceiveQueueMap {
 public:
     void add(MessageReceiveQueue& queue, const ReceiverMatcher& matcher) { addImpl(StoreType(&queue), matcher); }
-    void add(std::unique_ptr<MessageReceiveQueue>&& queue, const ReceiverMatcher& matcher) { addImpl(StoreType(WTFMove(queue)), matcher); }
+    void add(std::unique_ptr<MessageReceiveQueue>&& queue, const ReceiverMatcher& matcher) { addImpl(StoreType(WTF::move(queue)), matcher); }
     void remove(const ReceiverMatcher&);
 
     MessageReceiveQueue* get(const Decoder&) const;

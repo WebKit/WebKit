@@ -64,22 +64,19 @@ ParallelEnvironment::ParallelEnvironment(ThreadFunction threadFunction, size_t s
     m_numberOfJobs = m_threads.size() + 1;
 }
 
-void ParallelEnvironment::execute(void* parameters)
+void ParallelEnvironment::execute(std::span<uint8_t> parameters)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    unsigned char* currentParameter = static_cast<unsigned char*>(parameters);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    size_t i;
-    for (i = 0; i < m_threads.size(); ++i) {
-        m_threads[i]->execute(m_threadFunction, currentParameter);
-        currentParameter += m_sizeOfParameter;
+    std::span<uint8_t> currentParameter = parameters;
+    for (size_t i = 0; i < m_threads.size(); ++i) {
+        m_threads[i]->execute(m_threadFunction, currentParameter.data());
+        skip(currentParameter, m_sizeOfParameter);
     }
 
     // The work for the main thread.
-    (*m_threadFunction)(currentParameter);
+    (*m_threadFunction)(currentParameter.data());
 
     // Wait until all jobs are done.
-    for (i = 0; i < m_threads.size(); ++i)
+    for (size_t i = 0; i < m_threads.size(); ++i)
         m_threads[i]->waitForFinish();
 }
 

@@ -1389,7 +1389,7 @@ func translateExpectedError(canonical string) []string {
 	}
 
 	// not specifying a canonical error will have the same effect as -loose-errors being true
-	// since the emptry string with match all error substrings.
+	// since the empty string with match all error substrings.
 	return []string{canonical}
 }
 

@@ -209,8 +209,6 @@ onload = async () => {
   for (let result of results) {
     if (result.status === 'rejected') { throw result.reason; }
   }
-  log('the end')
-  log(location);
   } catch (e) {
     log('error');
     log(e);

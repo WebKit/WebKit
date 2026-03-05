@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <WebCore/Decimal.h>
+#include "Decimal.h"
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -33,10 +33,10 @@ enum class RangeLimitations : bool { Valid, Invalid };
 class StepRange {
     WTF_MAKE_TZONE_ALLOCATED(StepRange);
 public:
-    enum StepValueShouldBe {
-        StepValueShouldBeReal,
-        ParsedStepValueShouldBeInteger,
-        ScaledStepValueShouldBeInteger,
+    enum class StepValueShouldBe : uint8_t {
+        Real,
+        ParsedInteger,
+        ScaledInteger,
     };
 
     struct StepDescription {
@@ -45,9 +45,9 @@ public:
         int defaultStep { 1 };
         int defaultStepBase { 0 };
         int stepScaleFactor { 1 };
-        StepValueShouldBe stepValueShouldBe { StepValueShouldBeReal };
+        StepValueShouldBe stepValueShouldBe { StepValueShouldBe::Real };
 
-        constexpr StepDescription(int defaultStep, int defaultStepBase, int stepScaleFactor, StepValueShouldBe stepValueShouldBe = StepValueShouldBeReal)
+        constexpr StepDescription(int defaultStep, int defaultStepBase, int stepScaleFactor, StepValueShouldBe stepValueShouldBe = StepValueShouldBe::Real)
             : defaultStep(defaultStep)
             , defaultStepBase(defaultStepBase)
             , stepScaleFactor(stepScaleFactor)

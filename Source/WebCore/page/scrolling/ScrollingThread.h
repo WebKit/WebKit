@@ -57,7 +57,7 @@ private:
 
     ScrollingThread();
 
-    RunLoop& runLoop() { return m_runLoop; }
+    RunLoop& runLoop() LIFETIME_BOUND { return m_runLoop; }
 
     const Ref<RunLoop> m_runLoop;
 };

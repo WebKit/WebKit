@@ -29,11 +29,16 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
     {
         super(null);
 
-        console.assert(resource instanceof WI.Resource);
+        console.assert(resource instanceof WI.Resource || resource instanceof WI.Redirect, "Expected WI.Resource or WI.Redirect, got:", resource);
 
         this._resource = resource;
-        this._resource.addEventListener(WI.Resource.Event.RequestHeadersDidChange, this._resourceRequestHeadersDidChange, this);
-        this._resource.addEventListener(WI.Resource.Event.ResponseReceived, this._resourceResponseReceived, this);
+
+        // Only Resources have events to listen to
+        // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
+        if (this._resource instanceof WI.Resource) {
+            this._resource.addEventListener(WI.Resource.Event.RequestHeadersDidChange, this._resourceRequestHeadersDidChange, this);
+            this._resource.addEventListener(WI.Resource.Event.ResponseReceived, this._resourceResponseReceived, this);
+        }
 
         this.element.classList.add("resource-details", "resource-cookies");
     }
@@ -206,7 +211,8 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         let detailsElement = this._requestCookiesSection.detailsElement;
         detailsElement.removeChildren();
 
-        if (this._resource.responseSource === WI.Resource.ResponseSource.MemoryCache) {
+        // Redirects don't have responseSource, so only check for Resources
+        if (this._resource instanceof WI.Resource && this._resource.responseSource === WI.Resource.ResponseSource.MemoryCache) {
             this._requestCookiesSection.markIncompleteSectionWithMessage(WI.UIString("No request, served from the memory cache."));
             return;
         }
@@ -241,7 +247,8 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         let detailsElement = this._responseCookiesSection.detailsElement;
         detailsElement.removeChildren();
 
-        if (!this._resource.hasResponse()) {
+        // Redirects always have a response, Resources may not
+        if (this._resource instanceof WI.Resource && !this._resource.hasResponse()) {
             this._responseCookiesSection.markIncompleteSectionWithLoadingIndicator();
             return;
         }

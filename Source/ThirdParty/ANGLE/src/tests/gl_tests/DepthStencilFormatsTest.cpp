@@ -19,8 +19,9 @@ using namespace angle;
 struct ReadbackTestParam
 {
     GLuint attachment;
-    GLuint format;
-    GLuint type;
+    GLint internalformat;
+    GLenum format;
+    GLenum type;
     void *data;
     int depthBits;
     int stencilBits;
@@ -261,17 +262,19 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
 
     // test level > 0
-    glTexImage2D(GL_TEXTURE_2D, 1, type.format, 1, 1, 0, type.format, type.type, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, type.internalformat, 1, 1, 0, type.format, type.type, nullptr);
     EXPECT_GL_NO_ERROR();
 
     // test with data
-    glTexImage2D(GL_TEXTURE_2D, 0, type.format, 1, 1, 0, type.format, type.type, type.data);
+    glTexImage2D(GL_TEXTURE_2D, 0, type.internalformat, 1, 1, 0, type.format, type.type, type.data);
     EXPECT_GL_NO_ERROR();
 
     // test real thing
-    glTexImage2D(GL_TEXTURE_2D, 0, type.format, res, res, 0, type.format, type.type, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, type.internalformat, res, res, 0, type.format, type.type,
+                 nullptr);
     EXPECT_GL_NO_ERROR();
 
     // test texSubImage2D
@@ -444,7 +447,15 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UShort)
 {
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {
-        GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, fakeData, 16, 0};
+        GL_DEPTH_ATTACHMENT,
+        // GLES 2.0: If internalformat does not match format, the error INVALID_OPERATION is
+        // generated.
+        // GLES 3.0+: Specifying a combination of values for format, type, and internalformat that
+        // is not listed as a valid combination in tables 3.2 or 3.3 generates the error
+        // INVALID_OPERATION.
+        getClientMajorVersion() < 3 ? GL_DEPTH_COMPONENT : GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
+        GL_UNSIGNED_SHORT, fakeData, 16, 0};
+
     depthStencilReadbackCase(type);
 }
 
@@ -456,7 +467,14 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {
-        GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, fakeData, 16, 0};
+        GL_DEPTH_ATTACHMENT,
+        // GLES 2.0: If internalformat does not match format, the error INVALID_OPERATION is
+        // generated.
+        // GLES 3.0+: Specifying a combination of values for format, type, and internalformat that
+        // is not listed as a valid combination in tables 3.2 or 3.3 generates the error
+        // INVALID_OPERATION.
+        getClientMajorVersion() < 3 ? GL_DEPTH_COMPONENT : GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
+        GL_UNSIGNED_INT, fakeData, 16, 0};
     depthStencilReadbackCase(type);
 }
 
@@ -467,7 +485,16 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_Float)
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     GLuint fakeData[10]    = {0};
-    ReadbackTestParam type = {GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT, fakeData, 32, 0};
+    ReadbackTestParam type = {
+        GL_DEPTH_ATTACHMENT,
+        // GLES 2.0: If internalformat does not match format, the error INVALID_OPERATION is
+        // generated.
+        // GLES 3.0+: Specifying a combination of values for format, type, and internalformat that
+        // is not listed as a valid combination in tables 3.2 or 3.3 generates the error
+        // INVALID_OPERATION.
+        getClientMajorVersion() < 3 ? GL_DEPTH_COMPONENT : GL_DEPTH_COMPONENT32F,
+        GL_DEPTH_COMPONENT, GL_FLOAT, fakeData, 32, 0};
+
     depthStencilReadbackCase(type);
 }
 
@@ -476,7 +503,15 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_DepthStencil)
 {
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {
-        GL_DEPTH_STENCIL_ATTACHMENT, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8_OES, fakeData, 24, 8};
+        GL_DEPTH_STENCIL_ATTACHMENT,
+        // GLES 2.0: If internalformat does not match format, the error INVALID_OPERATION is
+        // generated.
+        // GLES 3.0+: Specifying a combination of values for format, type, and internalformat that
+        // is not listed as a valid combination in tables 3.2 or 3.3 generates the error
+        // INVALID_OPERATION.
+        getClientMajorVersion() < 3 ? GL_DEPTH_STENCIL : GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL,
+        GL_UNSIGNED_INT_24_8_OES, fakeData, 24, 8};
+
     depthStencilReadbackCase(type);
 }
 
@@ -544,7 +579,8 @@ void main()
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_depth_texture") &&
                        !IsGLExtensionEnabled("GL_ANGLE_depth_texture"));
 
-    bool depthTextureCubeSupport  = IsGLExtensionEnabled("GL_OES_depth_texture_cube_map");
+    bool depthTextureCubeSupport =
+        IsGLExtensionEnabled("GL_OES_depth_texture_cube_map") || getClientMajorVersion() >= 3;
     bool textureSrgbDecodeSupport = IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode");
 
     // http://anglebug.com/42262117
@@ -830,8 +866,25 @@ void main()
                 glFramebufferTexture2D(GL_FRAMEBUFFER, type.attachment, GL_TEXTURE_2D, 0, 0);
                 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
                                        tex, 0);
-                EXPECT_GLENUM_NE(GL_NO_ERROR, glGetError());
-                EXPECT_GLENUM_NE(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+                if (getClientMajorVersion() < 3)
+                {
+                    EXPECT_GLENUM_NE(GL_NO_ERROR, glGetError());
+                    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT,
+                                     glCheckFramebufferStatus(GL_FRAMEBUFFER));
+                }
+                else
+                {
+                    EXPECT_GL_NO_ERROR();
+                    // Attaching a level of a texture to GL_DEPTH_STENCIL_ATTACHMENT is equivalent
+                    // to attaching that level to both the GL_DEPTH_ATTACHMENT and the
+                    // GL_STENCIL_ATTACHMENT attachment points simultaneously.
+                    // The texture type is depth-only, so expect incomplete when attempting to
+                    // attach to GL_DEPTH_STENCIL_ATTACHMENT.
+                    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT,
+                                     glCheckFramebufferStatus(GL_FRAMEBUFFER));
+                }
+
                 glClear(GL_DEPTH_BUFFER_BIT);
                 EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1298,7 +1351,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST_ES2(DepthStencilFormatsTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DepthStencilFormatsTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DepthStencilFormatsTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(DepthStencilFormatsTestES3);
@@ -1432,8 +1485,7 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
 }
 
 // Initialize a depth texture by writing to it in a fragment shader then attempt to read it from a
-// compute shader. Regression test for D3D11 not unbinding the depth texture and the sampler binding
-// failing.
+// compute shader.
 TEST_P(DepthStencilFormatsTestES31, ReadDepthStencilInComputeShader)
 {
     constexpr char kTestVertexShader[] = R"(#version 310 es

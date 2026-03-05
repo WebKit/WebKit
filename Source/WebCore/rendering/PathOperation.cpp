@@ -47,14 +47,14 @@ Ref<ReferencePathOperation> ReferencePathOperation::create(const Style::URL& url
 
 Ref<ReferencePathOperation> ReferencePathOperation::create(std::optional<Path>&& path)
 {
-    return adoptRef(*new ReferencePathOperation(WTFMove(path)));
+    return adoptRef(*new ReferencePathOperation(WTF::move(path)));
 }
 
 Ref<PathOperation> ReferencePathOperation::clone() const
 {
     if (auto path = this->path()) {
         auto pathCopy = *path;
-        return adoptRef(*new ReferencePathOperation(WTFMove(pathCopy)));
+        return adoptRef(*new ReferencePathOperation(WTF::move(pathCopy)));
     }
     return adoptRef(*new ReferencePathOperation(std::nullopt));
 }
@@ -70,7 +70,7 @@ ReferencePathOperation::ReferencePathOperation(const Style::URL& url, const Atom
 
 ReferencePathOperation::ReferencePathOperation(std::optional<Path>&& path)
     : PathOperation(Type::Reference)
-    , m_path(WTFMove(path))
+    , m_path(WTF::move(path))
 {
 }
 
@@ -78,7 +78,7 @@ ReferencePathOperation::ReferencePathOperation(std::optional<Path>&& path)
 
 Ref<ShapePathOperation> ShapePathOperation::create(Style::BasicShape shape, CSSBoxType referenceBox)
 {
-    return adoptRef(*new ShapePathOperation(WTFMove(shape), referenceBox));
+    return adoptRef(*new ShapePathOperation(WTF::move(shape), referenceBox));
 }
 
 Ref<PathOperation> ShapePathOperation::clone() const
@@ -98,9 +98,9 @@ RefPtr<PathOperation> ShapePathOperation::blend(const PathOperation* to, const B
     return ShapePathOperation::create(WebCore::Style::blend(m_shape, toShapePathOperation->m_shape, context));
 }
 
-std::optional<Path> ShapePathOperation::getPath(const TransformOperationData& data) const
+std::optional<Path> ShapePathOperation::getPath(const TransformOperationData& data, Style::ZoomFactor zoom) const
 {
-    return MotionPath::computePathForShape(*this, data);
+    return MotionPath::computePathForShape(*this, data, zoom);
 }
 
 // MARK: - BoxPathOperation
@@ -115,16 +115,16 @@ Ref<PathOperation> BoxPathOperation::clone() const
     return adoptRef(*new BoxPathOperation(referenceBox()));
 }
 
-std::optional<Path> BoxPathOperation::getPath(const TransformOperationData& data) const
+std::optional<Path> BoxPathOperation::getPath(const TransformOperationData& data, Style::ZoomFactor zoom) const
 {
-    return MotionPath::computePathForBox(*this, data);
+    return MotionPath::computePathForBox(*this, data, zoom);
 }
 
 // MARK: - RayPathOperation
 
 Ref<RayPathOperation> RayPathOperation::create(Style::RayFunction&& ray, CSSBoxType referenceBox)
 {
-    return adoptRef(*new RayPathOperation(WTFMove(ray), referenceBox));
+    return adoptRef(*new RayPathOperation(WTF::move(ray), referenceBox));
 }
 
 Ref<RayPathOperation> RayPathOperation::create(const Style::RayFunction& ray, CSSBoxType referenceBox)
@@ -149,9 +149,9 @@ RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const Ble
     return RayPathOperation::create(Style::blend(m_ray, toRayPathOperation->m_ray, context), m_referenceBox);
 }
 
-std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data) const
+std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data, Style::ZoomFactor zoom) const
 {
-    return MotionPath::computePathForRay(*this, data);
+    return MotionPath::computePathForRay(*this, data, zoom);
 }
 
 } // namespace WebCore

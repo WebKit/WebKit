@@ -56,4 +56,4 @@ testWithTypedArrayConstructors(TA => {
     array.reverse();
     throw new Test262Error('reverse completed successfully');
   });
-});
+}, null, ["passthrough"]);

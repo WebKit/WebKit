@@ -47,11 +47,11 @@ public:
     }
 
     template<size_t... ArgumentsIndex>
-    CCallHelpers::JumpList generateImpl(InlineCacheCompiler& compiler, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
+    CCallHelpers::JumpList generateImpl(InlineCacheCompiler& compiler, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
     {
         CCallHelpers::JumpList exceptions;
         // We spill (1) the used registers by IC and (2) the used registers by Snippet.
-        InlineCacheCompiler::SpillState spillState = compiler.preserveLiveRegistersToStackForCall(usedRegistersBySnippet.buildAndValidate());
+        InlineCacheCompiler::SpillState spillState = compiler.preserveLiveRegistersToStackForCall(usedRegistersBySnippet);
 
         jit.makeSpaceOnStackForCCall();
 
@@ -74,7 +74,7 @@ public:
         return exceptions;
     }
 
-    CCallHelpers::JumpList generate(InlineCacheCompiler& compiler, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers& jit) final
+    CCallHelpers::JumpList generate(InlineCacheCompiler& compiler, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit) final
     {
         m_from.link(&jit);
         CCallHelpers::JumpList exceptions = generateImpl(compiler, usedRegistersBySnippet, jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
@@ -100,7 +100,7 @@ private:
 SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
-CCallHelpers::JumpList AccessCaseSnippetParams::emitSlowPathCalls(InlineCacheCompiler& compiler, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers& jit)
+CCallHelpers::JumpList AccessCaseSnippetParams::emitSlowPathCalls(InlineCacheCompiler& compiler, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit)
 {
     CCallHelpers::JumpList exceptions;
     for (auto& generator : m_generators)

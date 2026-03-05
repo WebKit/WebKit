@@ -18,8 +18,8 @@ features: [TypedArray, change-array-by-copy]
 includes: [testTypedArray.js, compareArray.js]
 ---*/
 
-testWithTypedArrayConstructors(TA => {
-  var arr = new TA([0, 1, 2]);
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
+  var arr = new TA(makeCtorArg([0, 1, 2]));
 
   assert.compareArray(arr.with(-1, 4), [0, 1, 4]);
   assert.compareArray(arr.with(-3, 4), [4, 1, 2]);

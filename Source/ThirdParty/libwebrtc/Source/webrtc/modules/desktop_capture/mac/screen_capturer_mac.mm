@@ -383,6 +383,7 @@ bool ScreenCapturerMac::CgBlit(const DesktopFrame& frame,
     if (!frame_source) {
       continue;
     }
+    RTC_CHECK_EQ(frame_source->pixel_format(), frame.pixel_format());
 
     const uint8_t* display_base_address = frame_source->data();
     int src_bytes_per_row = frame_source->stride();

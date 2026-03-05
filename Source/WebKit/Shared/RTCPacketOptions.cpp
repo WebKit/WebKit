@@ -55,7 +55,7 @@ static_assert(static_cast<webrtc::DiffServCodePoint>(RTCPacketOptions::Different
 static_assert(static_cast<webrtc::DiffServCodePoint>(RTCPacketOptions::DifferentiatedServicesCodePoint::CS6) == webrtc::DSCP_CS6);
 static_assert(static_cast<webrtc::DiffServCodePoint>(RTCPacketOptions::DifferentiatedServicesCodePoint::CS7) == webrtc::DSCP_CS7);
 
-static RTCPacketOptions::DifferentiatedServicesCodePoint toDifferentiatedServicesCodePoint(webrtc::DiffServCodePoint dscp)
+static RTCPacketOptions::DifferentiatedServicesCodePoint NODELETE toDifferentiatedServicesCodePoint(webrtc::DiffServCodePoint dscp)
 {
     switch (dscp) {
     case webrtc::DSCP_NO_CHANGE:
@@ -119,7 +119,7 @@ RTCPacketOptions::RTCPacketOptions(const SerializableData& data)
         params.srtp_auth_key = std::vector<char>(data.srtpAuthKey.begin(), data.srtpAuthKey.end());
     params.srtp_packet_index = data.srtpPacketIndex;
 
-    options.packet_time_params = WTFMove(params);
+    options.packet_time_params = WTF::move(params);
 }
 
 auto RTCPacketOptions::serializableData() const -> SerializableData

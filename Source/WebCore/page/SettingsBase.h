@@ -73,32 +73,32 @@ public:
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;
 
-    virtual FontGenericFamilies& fontGenericFamilies() = 0;
-    virtual const FontGenericFamilies& fontGenericFamilies() const = 0;
+    virtual FontGenericFamilies& fontGenericFamilies() LIFETIME_BOUND = 0;
+    virtual const FontGenericFamilies& fontGenericFamilies() const LIFETIME_BOUND = 0;
 
     WEBCORE_EXPORT void setStandardFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setFixedFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setSerifFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& serifFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setSansSerifFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setCursiveFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setFantasyFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setPictographFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setMathFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const String& mathFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT const String& mathFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(Seconds); // Initialized to DOMTimer::defaultMinimumInterval().
     Seconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
@@ -111,31 +111,30 @@ public:
 
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>&);
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const String&);
-    const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const { return m_mediaContentTypesRequiringHardwareSupport; }
+    const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const LIFETIME_BOUND { return m_mediaContentTypesRequiringHardwareSupport; }
 
-    void setAllowedMediaContainerTypes(std::optional<Vector<String>>&& types) { m_allowedMediaContainerTypes = WTFMove(types); }
+    void setAllowedMediaContainerTypes(std::optional<Vector<String>>&& types) { m_allowedMediaContainerTypes = WTF::move(types); }
     WEBCORE_EXPORT void setAllowedMediaContainerTypes(const String&);
-    const std::optional<Vector<String>>& allowedMediaContainerTypes() const { return m_allowedMediaContainerTypes; }
+    const std::optional<Vector<String>>& allowedMediaContainerTypes() const LIFETIME_BOUND { return m_allowedMediaContainerTypes; }
 
-    void setAllowedMediaCodecTypes(std::optional<Vector<String>>&& types) { m_allowedMediaCodecTypes = WTFMove(types); }
+    void setAllowedMediaCodecTypes(std::optional<Vector<String>>&& types) { m_allowedMediaCodecTypes = WTF::move(types); }
     WEBCORE_EXPORT void setAllowedMediaCodecTypes(const String&);
-    const std::optional<Vector<String>>& allowedMediaCodecTypes() const { return m_allowedMediaCodecTypes; }
+    const std::optional<Vector<String>>& allowedMediaCodecTypes() const LIFETIME_BOUND { return m_allowedMediaCodecTypes; }
 
-    void setAllowedMediaVideoCodecIDs(std::optional<Vector<FourCC>>&& types) { m_allowedMediaVideoCodecIDs = WTFMove(types); }
+    void setAllowedMediaVideoCodecIDs(std::optional<Vector<FourCC>>&& types) { m_allowedMediaVideoCodecIDs = WTF::move(types); }
     WEBCORE_EXPORT void setAllowedMediaVideoCodecIDs(const String&);
-    const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const { return m_allowedMediaVideoCodecIDs; }
+    const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const LIFETIME_BOUND { return m_allowedMediaVideoCodecIDs; }
 
-    void setAllowedMediaAudioCodecIDs(std::optional<Vector<FourCC>>&& types) { m_allowedMediaAudioCodecIDs = WTFMove(types); }
+    void setAllowedMediaAudioCodecIDs(std::optional<Vector<FourCC>>&& types) { m_allowedMediaAudioCodecIDs = WTF::move(types); }
     WEBCORE_EXPORT void setAllowedMediaAudioCodecIDs(const String&);
-    const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const { return m_allowedMediaAudioCodecIDs; }
+    const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const LIFETIME_BOUND { return m_allowedMediaAudioCodecIDs; }
 
-    void setAllowedMediaCaptionFormatTypes(std::optional<Vector<FourCC>>&& types) { m_allowedMediaCaptionFormatTypes = WTFMove(types); }
+    void setAllowedMediaCaptionFormatTypes(std::optional<Vector<FourCC>>&& types) { m_allowedMediaCaptionFormatTypes = WTF::move(types); }
     WEBCORE_EXPORT void setAllowedMediaCaptionFormatTypes(const String&);
-    const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const { return m_allowedMediaCaptionFormatTypes; }
+    const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const LIFETIME_BOUND { return m_allowedMediaCaptionFormatTypes; }
 
     WEBCORE_EXPORT void resetToConsistentState();
 
-    WEBCORE_EXPORT RefPtr<Page> protectedPage() const;
     WeakPtr<Page> page() const { return m_page; }
 
 protected:

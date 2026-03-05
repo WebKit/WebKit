@@ -19,6 +19,8 @@
 
 #pragma once
 
+#if USE(LIBWPE)
+
 #include "WebKitWebViewBackend.h"
 
 #include <wtf/glib/GRefPtr.h>
@@ -28,3 +30,5 @@ WTF_DECLARE_GREF_TRAITS(WebKitWebViewBackend)
 }
 
 void webkitWebViewBackendUnref(WebKitWebViewBackend*);
+
+#endif // USE(LIBWPE)

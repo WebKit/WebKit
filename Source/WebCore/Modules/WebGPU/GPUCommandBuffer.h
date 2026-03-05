@@ -41,10 +41,10 @@ class GPUCommandBuffer : public RefCounted<GPUCommandBuffer> {
 public:
     static Ref<GPUCommandBuffer> create(Ref<WebGPU::CommandBuffer>&& backing, GPUCommandEncoder& encoder)
     {
-        return adoptRef(*new GPUCommandBuffer(WTFMove(backing), encoder));
+        return adoptRef(*new GPUCommandBuffer(WTF::move(backing), encoder));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
     void setOverrideLabel(String&&);
 
@@ -54,7 +54,7 @@ public:
 
 private:
     GPUCommandBuffer(Ref<WebGPU::CommandBuffer>&& backing, GPUCommandEncoder& encoder)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
         , m_encoder(encoder)
     {
     }

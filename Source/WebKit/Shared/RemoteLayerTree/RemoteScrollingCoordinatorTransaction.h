@@ -28,6 +28,7 @@
 #if ENABLE(UI_SIDE_COMPOSITING)
 
 #include <WebCore/FrameIdentifier.h>
+#include <wtf/Markable.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -50,10 +50,10 @@ IDBRequestData::IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifie
     : m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_requestIdentifier(requestIdentifier)
     , m_transactionIdentifier(transactionIdentifier)
-    , m_cursorIdentifier(WTFMove(cursorIdentifier))
+    , m_cursorIdentifier(WTF::move(cursorIdentifier))
     , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_indexIdentifier(indexIdentifier)
-    , m_indexRecordType(WTFMove(indexRecordType))
+    , m_indexRecordType(WTF::move(indexRecordType))
     , m_requestedVersion(requestedVersion)
     , m_requestType(requestType)
 {

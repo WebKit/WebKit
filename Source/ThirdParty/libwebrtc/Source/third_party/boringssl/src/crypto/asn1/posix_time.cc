@@ -189,7 +189,7 @@ struct tm *OPENSSL_gmtime(const time_t *time, struct tm *out_tm) {
       "time_t is broken");
   int64_t posix_time = *time;
   if (!OPENSSL_posix_to_tm(posix_time, out_tm)) {
-    return NULL;
+    return nullptr;
   }
   return out_tm;
 }

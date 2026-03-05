@@ -169,6 +169,29 @@ luci.bucket(
     ),
 )
 luci.bucket(
+    name = "ci.shadow",
+    shadows = "ci",
+    constraints = luci.bucket_constraints(
+        pools = ["luci.flex.ci"],
+        service_accounts = [
+          "libyuv-ci-builder@chops-service-accounts.iam.gserviceaccount.com",
+        ],
+    ),
+    bindings = [
+        # For led permissions.
+        luci.binding(
+            roles = "role/buildbucket.creator",
+            groups = [
+                "chromium-led-users",
+                "mdb/chrome-build-access-sphinx",
+                "mdb/chrome-troopers",
+                "mdb/foundry-x-team",
+            ],
+        ),
+    ],
+    dynamic = True,
+)
+luci.bucket(
     name = "try",
     acls = [
         acl.entry(acl.BUILDBUCKET_TRIGGERER, groups = [
@@ -184,6 +207,29 @@ luci.bucket(
     ),
 )
 luci.bucket(
+    name = "try.shadow",
+    shadows = "try",
+    constraints = luci.bucket_constraints(
+        pools = ["luci.flex.try"],
+        service_accounts = [
+            "libyuv-try-builder@chops-service-accounts.iam.gserviceaccount.com",
+        ],
+    ),
+    bindings = [
+        # For led permissions.
+        luci.binding(
+            roles = "role/buildbucket.creator",
+            groups = [
+                "chromium-led-users",
+                "mdb/chrome-build-access-sphinx",
+                "mdb/chrome-troopers",
+                "mdb/foundry-x-team",
+            ],
+        ),
+    ],
+    dynamic = True,
+)
+luci.bucket(
     name = "cron",
 )
 
@@ -191,7 +237,7 @@ def get_os_dimensions(os):
     if os == "android":
         return {"device_type": "walleye"}
     if os == "ios" or os == "mac":
-        return {"os": "Mac-12", "cpu": "x86-64"}
+        return {"os": "Mac-15", "cpu": "arm64"}
     elif os == "win":
         return {"os": "Windows-10", "cores": "8", "cpu": "x86-64"}
     elif os == "linux":
@@ -212,7 +258,6 @@ def libyuv_ci_builder(name, dimensions, properties, triggered_by):
         executable = luci.recipe(
             name = "libyuv/libyuv",
             cipd_package = "infra/recipe_bundles/chromium.googlesource.com/chromium/tools/build",
-            use_python3 = True,
         ),
     )
 
@@ -229,7 +274,6 @@ def libyuv_try_builder(name, dimensions, properties, recipe_name = "libyuv/libyu
         executable = luci.recipe(
             name = recipe_name,
             cipd_package = "infra/recipe_bundles/chromium.googlesource.com/chromium/tools/build",
-            use_python3 = True,
         ),
     )
 
@@ -242,6 +286,9 @@ def get_build_properties(bucket):
             "enable_cloud_profiler": True,
             "enable_cloud_trace": True,
             "enable_monitoring": True,
+        },
+        "$depot_tools/osx_sdk": {
+            "sdk_version": "17a324"
         },
     }
 
@@ -290,7 +337,6 @@ luci.builder(
     executable = luci.recipe(
         name = "libyuv/roll_deps",
         cipd_package = "infra/recipe_bundles/chromium.googlesource.com/chromium/tools/build",
-        use_python3 = True,
     ),
 )
 

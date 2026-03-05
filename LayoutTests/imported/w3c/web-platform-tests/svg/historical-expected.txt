@@ -27,6 +27,7 @@ PASS SVGTRefElement interface must be removed
 PASS SVGPaint interface must be removed
 FAIL SVGPathSeg interface must be removed assert_false: expected false got true
 PASS SVGStylable interface must be removed
+PASS SVGUnknownElement interface must be removed
 PASS SVGVKernElement interface must be removed
 FAIL SVGViewSpec interface must be removed assert_false: expected false got true
 PASS SVGZoomEvent interface must be removed
@@ -43,10 +44,10 @@ PASS SVGElement.prototype.xmlbase must be removed
 PASS SVGElement.prototype.xmllang must be removed
 PASS SVGElement.prototype.xmlspace must be removed
 PASS SVGAElement.prototype.text must be removed
-FAIL SVGGraphicsElement.prototype.farthestViewportElement must be removed assert_false: expected false got true
+PASS SVGGraphicsElement.prototype.farthestViewportElement must be removed
 PASS SVGGraphicsElement.prototype.getTransformToElement must be removed
 PASS SVGGraphicsElement.prototype.hasExtension must be removed
-FAIL SVGGraphicsElement.prototype.nearestViewportElement must be removed assert_false: expected false got true
+PASS SVGGraphicsElement.prototype.nearestViewportElement must be removed
 PASS SVGGraphicsElement.prototype.requiredFeatures must be removed
 FAIL SVGSVGElement.prototype.currentView must be removed assert_false: expected false got true
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterX must be removed

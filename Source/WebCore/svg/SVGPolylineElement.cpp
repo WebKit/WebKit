@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGPolylineElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPolylineElement);
 
 inline SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Document& document)
     : SVGPolyElement(tagName, document)

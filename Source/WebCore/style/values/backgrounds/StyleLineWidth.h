@@ -26,9 +26,7 @@
 #pragma once
 
 #include <WebCore/LayoutUnit.h>
-
 #include <WebCore/StylePrimitiveNumeric.h>
-#include <WebCore/StyleZoomPrimitives.h>
 #include <cmath>
 
 namespace WebCore {
@@ -41,12 +39,15 @@ namespace Style {
 // <line-width> = <length [0,∞]> | thin | medium | thick
 // https://drafts.csswg.org/css-backgrounds/#typedef-line-width
 struct LineWidth {
-    using Length = Style::Length<CSS::NonnegativeUnzoomed>;
+    using Length = Style::Length<CSS::Nonnegative>;
 
     Length value;
 
     constexpr LineWidth(Length length) : value { length } { }
     constexpr LineWidth(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : value { literal } { }
+
+    static Length snapLengthAsBorderWidth(float, float deviceScaleFactor);
+    static Length snapLengthAsBorderWidth(Length, float deviceScaleFactor);
 
     constexpr bool isZero() const { return value.isZero(); }
     constexpr bool isPositive() const { return value.isPositive(); }
@@ -64,40 +65,26 @@ using LineWidthBox = MinimallySerializingSpaceSeparatedRectEdges<Style::LineWidt
 
 template<> struct CSSValueConversion<LineWidth> { auto operator()(BuilderState&, const CSSValue&) -> LineWidth; };
 
+// MARK: - Blending
+
+template<> struct Blending<LineWidth> {
+    auto blend(const LineWidth&, const LineWidth&, const RenderStyle&, const RenderStyle&, const Interpolation::Context&) -> LineWidth;
+};
+
 // MARK: - Evaluate
 
 template<typename Result> struct Evaluation<LineWidth, Result> {
-    constexpr auto operator()(const LineWidth& value, ZoomFactor zoom) -> Result
+    constexpr auto operator()(const LineWidth& value, ZoomNeeded zoom) -> Result
     {
-        float result = value.value.resolveZoom(zoom);
-
-        // Any original result that was >= 1 should not be allowed to fall below 1. This keeps border lines from vanishing.
-        if (zoom.value < 1.0f && result < 1.0f && value.value.unresolvedValue() >= 1.0f)
-            return Result(1.0f); // CSS::Keyword::Thin equivalent
-
-        if (auto minimumLineWidth = 1.0f / zoom.deviceScaleFactor; result > 0.0f && result < minimumLineWidth)
-            return Result(minimumLineWidth);
-
-        float snapped = std::floor(result * zoom.deviceScaleFactor) / zoom.deviceScaleFactor;
-
-        if constexpr (std::is_same_v<Result, LayoutUnit>)
-            return LayoutUnit::fromRawValue(clampToInteger(snapped * kFixedPointDenominator));
-        else
-            return Result(snapped);
+        return Result(value.value.resolveZoom(zoom));
     }
 };
 
 template<> struct Evaluation<LineWidthBox, FloatBoxExtent> {
-    auto operator()(const LineWidthBox&, ZoomFactor) -> FloatBoxExtent;
+    auto operator()(const LineWidthBox&, ZoomNeeded) -> FloatBoxExtent;
 };
 template<> struct Evaluation<LineWidthBox, LayoutBoxExtent> {
-    auto operator()(const LineWidthBox&, ZoomFactor) -> LayoutBoxExtent;
-};
-
-// MARK: - Serialize
-
-template<> struct Serialize<LineWidth> {
-    void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const LineWidth&);
+    auto operator()(const LineWidthBox&, ZoomNeeded) -> LayoutBoxExtent;
 };
 
 } // namespace Style

@@ -54,14 +54,13 @@ static RefPtr<CSSValue> consumeRayFunction(CSSParserTokenRange& range, CSS::Prop
     // <ray-size> = closest-side | closest-corner | farthest-side | farthest-corner | sides
     // https://drafts.fxtf.org/motion-1/#ray-function
 
-    static constexpr std::pair<CSSValueID, CSS::RaySize> sizeMappings[] {
+    static constexpr SortedArrayMap sizeMap { std::to_array<std::pair<CSSValueID, CSS::RaySize>>({
         { CSSValueClosestSide, CSS::RaySize { CSS::Keyword::ClosestSide { } } },
         { CSSValueClosestCorner, CSS::RaySize { CSS::Keyword::ClosestCorner { } } },
         { CSSValueFarthestSide, CSS::RaySize { CSS::Keyword::FarthestSide { } } },
         { CSSValueFarthestCorner, CSS::RaySize { CSS::Keyword::FarthestCorner { } } },
         { CSSValueSides, CSS::RaySize { CSS::Keyword::Sides { } } },
-    };
-    static constexpr SortedArrayMap sizeMap { sizeMappings };
+    }) };
 
     if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueRay)
         return { };
@@ -111,10 +110,10 @@ static RefPtr<CSSValue> consumeRayFunction(CSSParserTokenRange& range, CSS::Prop
     return CSSRayValue::create(
         CSS::RayFunction {
             .parameters = CSS::Ray {
-                WTFMove(*angle),
+                WTF::move(*angle),
                 size.value_or(CSS::RaySize { CSS::Keyword::ClosestSide { } }),
-                WTFMove(contain),
-                WTFMove(position)
+                WTF::move(contain),
+                WTF::move(position)
             }
         }
     );
@@ -158,7 +157,7 @@ RefPtr<CSSValue> consumeOffsetPath(CSSParserTokenRange& range, CSS::PropertyPars
     auto consumeShape = [&]() -> bool {
         if (shapeOrRay)
             return false;
-        shapeOrRay = consumeBasicShape(range, state, PathParsingOption::RejectPathFillRule);
+        shapeOrRay = consumeBasicShape(range, state, BasicShapeParsingOptions::RejectPathFunctionFillRule);
         return !!shapeOrRay;
     };
     auto consumeBox = [&]() -> bool {
@@ -189,7 +188,7 @@ RefPtr<CSSValue> consumeOffsetPath(CSSParserTokenRange& range, CSS::PropertyPars
     if (list.isEmpty())
         return nullptr;
 
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 } // namespace CSSPropertyParserHelpers

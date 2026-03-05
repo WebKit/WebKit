@@ -356,7 +356,7 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 {
     auto makeCredentialResponse = readCTAPMakeCredentialResponse(std::span { TestData::kTestMakeCredentialResponse }, AuthenticatorAttachment::CrossPlatform, { });
     ASSERT_TRUE(makeCredentialResponse);
-    auto cborAttestationObject = cbor::CBORReader::read(makeCredentialResponse->attestationObject()->toVector());
+    auto cborAttestationObject = cbor::CBORReader::read(makeCredentialResponse->attestationObject().toVector());
     ASSERT_TRUE(cborAttestationObject);
     ASSERT_TRUE(cborAttestationObject->isMap());
 
@@ -394,8 +394,8 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
     ASSERT_EQ(certificate.getArray().size(), 1u);
     ASSERT_TRUE(certificate.getArray()[0].isByteString());
     EXPECT_EQ(certificate.getArray()[0].getByteString(), Vector<uint8_t> { TestData::kCtap2MakeCredentialCertificate });
-    EXPECT_EQ(makeCredentialResponse->rawId()->byteLength(), sizeof(TestData::kCtap2MakeCredentialCredentialId));
-    EXPECT_TRUE(equalSpans(makeCredentialResponse->rawId()->span(), std::span { TestData::kCtap2MakeCredentialCredentialId }));
+    EXPECT_EQ(makeCredentialResponse->rawId().byteLength(), sizeof(TestData::kCtap2MakeCredentialCredentialId));
+    EXPECT_TRUE(equalSpans(makeCredentialResponse->rawId().span(), std::span { TestData::kCtap2MakeCredentialCredentialId }));
 }
 
 // Leveraging example 5 of section 6.1 of the CTAP spec.
@@ -445,11 +445,11 @@ TEST(CTAPResponseTest, TestParseRegisterResponseData)
 {
     auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, std::span { TestData::kTestU2fRegisterResponse }, AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
-    EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_TRUE(equalSpans(response->rawId()->span(), std::span { TestData::kU2fSignKeyHandle }));
+    EXPECT_EQ(response->rawId().byteLength(), sizeof(TestData::kU2fSignKeyHandle));
+    EXPECT_TRUE(equalSpans(response->rawId().span(), std::span { TestData::kU2fSignKeyHandle }));
     auto expectedAttestationObject = getTestAttestationObjectBytes();
-    EXPECT_EQ(response->attestationObject()->byteLength(), expectedAttestationObject.size());
-    EXPECT_TRUE(equalSpans(response->attestationObject()->span(), expectedAttestationObject.span()));
+    EXPECT_EQ(response->attestationObject().byteLength(), expectedAttestationObject.size());
+    EXPECT_TRUE(equalSpans(response->attestationObject().span(), expectedAttestationObject.span()));
 }
 
 // Test malformed user public key.
@@ -547,8 +547,8 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
 {
     auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
-    EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_TRUE(equalSpans(response->rawId()->span(), std::span { TestData::kU2fSignKeyHandle }));
+    EXPECT_EQ(response->rawId().byteLength(), sizeof(TestData::kU2fSignKeyHandle));
+    EXPECT_TRUE(equalSpans(response->rawId().span(), std::span { TestData::kU2fSignKeyHandle }));
     EXPECT_EQ(response->authenticatorData()->byteLength(), sizeof(TestData::kTestSignAuthenticatorData));
     EXPECT_TRUE(equalSpans(response->authenticatorData()->span(), std::span { TestData::kTestSignAuthenticatorData }));
     EXPECT_EQ(response->signature()->byteLength(), sizeof(TestData::kU2fSignature));
@@ -557,7 +557,7 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullKeyHandle)
 {
-    auto response = readU2fSignResponse(TestData::kRelyingPartyId, BufferSource(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, JSC::ArrayBuffer::create(static_cast<size_t>(0U), 1), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
@@ -645,7 +645,7 @@ TEST(CTAPResponseTest, TestSerializeGetInfoResponse)
     options.setIsPlatformDevice(true);
     options.setClientPinAvailability(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedButPinNotSet);
     options.setUserVerificationAvailability(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
-    response.setOptions(WTFMove(options));
+    response.setOptions(WTF::move(options));
     response.setMaxMsgSize(1200);
     response.setPinProtocols({ PINUVAuthProtocol::kPinProtocol1 });
 
@@ -666,36 +666,6 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponseWithHmacSecret)
     ASSERT_TRUE(extensions.prf);
     ASSERT_TRUE(extensions.prf->enabled);
     EXPECT_TRUE(*extensions.prf->enabled);
-}
-
-TEST(CTAPResponseTest, TestReadGetAssertionResponseWithHmacSecret)
-{
-    // CBOR-encoded response with hmac-secret extension output (32 bytes encrypted)
-    auto response = readCTAPGetAssertionResponse(std::span { TestData::kTestGetAssertionResponseWithHmacSecret }, AuthenticatorAttachment::CrossPlatform);
-    ASSERT_TRUE(response);
-
-    // Verify extension output contains prf.results with first ArrayBuffer (converted from hmac-secret)
-    auto extensions = response->extensions();
-    ASSERT_TRUE(extensions.prf);
-    ASSERT_TRUE(extensions.prf->results);
-    ASSERT_TRUE(extensions.prf->results->first);
-    EXPECT_EQ(extensions.prf->results->first->byteLength(), 32u);
-}
-
-TEST(CTAPResponseTest, TestReadGetAssertionResponseWithHmacSecret64)
-{
-    // CBOR-encoded response with hmac-secret extension output (64 bytes encrypted for 2 salts)
-    auto response = readCTAPGetAssertionResponse(std::span { TestData::kTestGetAssertionResponseWithHmacSecret64 }, AuthenticatorAttachment::CrossPlatform);
-    ASSERT_TRUE(response);
-
-    // Verify extension output contains prf.results with both first and second ArrayBuffers
-    auto extensions = response->extensions();
-    ASSERT_TRUE(extensions.prf);
-    ASSERT_TRUE(extensions.prf->results);
-    ASSERT_TRUE(extensions.prf->results->first);
-    EXPECT_EQ(extensions.prf->results->first->byteLength(), 32u);
-    ASSERT_TRUE(extensions.prf->results->second);
-    EXPECT_EQ(extensions.prf->results->second->byteLength(), 32u);
 }
 
 } // namespace TestWebKitAPI

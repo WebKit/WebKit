@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI && compiler(>=6.0)
+#if ENABLE_SWIFTUI
 
 import Foundation
 
@@ -140,6 +140,18 @@ extension WebPage {
         mutating func decideAuthenticationChallengeDisposition(
             for challenge: URLAuthenticationChallenge
         ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
+
+        /// Allow the application to process form autofill information before a form submission actually takes place.
+        ///
+        /// This is an informative callback only. The form values cannot be changed, nor can the navigation be changed
+        /// to not submit a form.
+        ///
+        /// The form submission will not actually proceed until after this callback asynchronously resolves.
+        ///
+        /// - Parameter formInfo: The form values that will be submitted for this navigation
+        @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+        @MainActor
+        mutating func willSubmit(formInfo: WebPage.FormInfo) async
     }
 }
 
@@ -170,6 +182,12 @@ extension WebPage.NavigationDeciding {
         for challenge: URLAuthenticationChallenge
     ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         (.performDefaultHandling, nil)
+    }
+
+    /// By default, this method does nothing.
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @MainActor
+    public func willSubmit(formInfo: WebPage.FormInfo) async {
     }
 }
 

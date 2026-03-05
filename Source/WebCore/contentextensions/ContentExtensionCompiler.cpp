@@ -224,14 +224,14 @@ static bool compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
 
         if (!firstNFASeen) {
             // Put all the universal actions on the first DFA.
-            addUniversalActionsToDFA(dfa, WTFMove(universalActions));
+            addUniversalActionsToDFA(dfa, WTF::move(universalActions));
         }
 
         Vector<DFABytecode> bytecode;
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
-        writeBytecodeToClient(WTFMove(bytecode));
+        writeBytecodeToClient(WTF::move(bytecode));
         firstNFASeen = true;
     };
 
@@ -243,16 +243,16 @@ static bool compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
         nfa.debugPrintDot();
 #endif
         LOG_LARGE_STRUCTURES(nfa, nfa.memoryUsed());
-        auto dfa = NFAToDFA::convert(WTFMove(nfa));
+        auto dfa = NFAToDFA::convert(WTF::move(nfa));
         if (!dfa)
             return false;
         LOG_LARGE_STRUCTURES(*dfa, dfa->memoryUsed());
 
         if (dfa->graphSize() < smallDFASize)
-            smallDFACombiner.addDFA(WTFMove(*dfa));
+            smallDFACombiner.addDFA(WTF::move(*dfa));
         else {
             dfa->minimize();
-            lowerDFAToBytecode(WTFMove(*dfa));
+            lowerDFAToBytecode(WTF::move(*dfa));
         }
         return true;
     });
@@ -261,7 +261,7 @@ static bool compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
 
     smallDFACombiner.combineDFAs(smallDFASize, [&](DFA&& dfa) {
         LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
-        lowerDFAToBytecode(WTFMove(dfa));
+        lowerDFAToBytecode(WTF::move(dfa));
     });
 
     ASSERT(filters.isEmpty());
@@ -271,13 +271,13 @@ static bool compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
         // create a dummy one and add any universal actions.
 
         DFA dummyDFA = DFA::empty();
-        addUniversalActionsToDFA(dummyDFA, WTFMove(universalActions));
+        addUniversalActionsToDFA(dummyDFA, WTF::move(universalActions));
 
         Vector<DFABytecode> bytecode;
         DFABytecodeCompiler compiler(dummyDFA, bytecode);
         compiler.compile();
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
-        writeBytecodeToClient(WTFMove(bytecode));
+        writeBytecodeToClient(WTF::move(bytecode));
     }
     LOG_LARGE_STRUCTURES(universalActions, universalActions.capacity() * sizeof(unsigned));
     return true;
@@ -300,7 +300,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
     LOG_LARGE_STRUCTURES(actions, actions.capacity() * sizeof(SerializedActionByte));
-    client.writeActions(WTFMove(actions));
+    client.writeActions(WTF::move(actions));
 
     // FIXME: These don't all need to be in memory at the same time.
     CombinedURLFilters urlFilters;
@@ -330,7 +330,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
             status = URLFilterParser::Ok;
         }
         if (status != URLFilterParser::Ok) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), URLFilterParser::statusString(status).characters());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             return ContentExtensionError::JSONInvalidRegex;
         }
 
@@ -347,7 +349,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
                     status = URLFilterParser::Ok;
                 }
                 if (status != URLFilterParser::Ok) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).characters());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     return ContentExtensionError::JSONInvalidRegex;
                 }
                 break;
@@ -359,7 +363,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
                     status = URLFilterParser::Ok;
                 }
                 if (status != URLFilterParser::Ok) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).characters());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     return ContentExtensionError::JSONInvalidRegex;
                 }
                 break;
@@ -374,7 +380,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime patternPartitioningEnd = MonotonicTime::now();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     dataLogF("    Time spent partitioning the rules into groups: %f\n", (patternPartitioningEnd - patternPartitioningStart).seconds());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     LOG_LARGE_STRUCTURES(filtersWithoutConditions, filtersWithoutConditions.memoryUsed());
@@ -386,25 +394,27 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     MonotonicTime totalNFAToByteCodeBuildTimeStart = MonotonicTime::now();
 #endif
 
-    bool success = compileToBytecode(WTFMove(urlFilters), WTFMove(universalActions), [&](Vector<DFABytecode>&& bytecode) {
-        client.writeURLFiltersBytecode(WTFMove(bytecode));
+    bool success = compileToBytecode(WTF::move(urlFilters), WTF::move(universalActions), [&](Vector<DFABytecode>&& bytecode) {
+        client.writeURLFiltersBytecode(WTF::move(bytecode));
     });
     if (!success)
         return ContentExtensionError::ErrorWritingSerializedNFA;
-    success = compileToBytecode(WTFMove(topURLFilters), WTFMove(topURLUniversalActions), [&](Vector<DFABytecode>&& bytecode) {
-        client.writeTopURLFiltersBytecode(WTFMove(bytecode));
+    success = compileToBytecode(WTF::move(topURLFilters), WTF::move(topURLUniversalActions), [&](Vector<DFABytecode>&& bytecode) {
+        client.writeTopURLFiltersBytecode(WTF::move(bytecode));
     });
     if (!success)
         return ContentExtensionError::ErrorWritingSerializedNFA;
-    success = compileToBytecode(WTFMove(frameURLFilters), WTFMove(frameURLUniversalActions), [&](Vector<DFABytecode>&& bytecode) {
-        client.writeFrameURLFiltersBytecode(WTFMove(bytecode));
+    success = compileToBytecode(WTF::move(frameURLFilters), WTF::move(frameURLUniversalActions), [&](Vector<DFABytecode>&& bytecode) {
+        client.writeFrameURLFiltersBytecode(WTF::move(bytecode));
     });
     if (!success)
         return ContentExtensionError::ErrorWritingSerializedNFA;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime totalNFAToByteCodeBuildTimeEnd = MonotonicTime::now();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart).seconds());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     client.finalize();

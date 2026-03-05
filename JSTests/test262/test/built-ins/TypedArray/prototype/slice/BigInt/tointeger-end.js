@@ -10,7 +10,7 @@ info: |
   6. If end is undefined, let relativeEnd be len; else let relativeEnd be ?
   ToInteger(end).
   ...
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -20,8 +20,8 @@ var obj = {
   }
 };
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([40n, 41n, 42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([40n, 41n, 42n, 43n]));
 
   assert(compareArray(sample.slice(0, false), []), "false");
   assert(compareArray(sample.slice(0, true), [40n]), "true");

@@ -52,11 +52,11 @@ public:
 
     IDBKeyData() = default;
     IDBKeyData(ValueVariant&& value)
-        : m_value(WTFMove(value)) { }
+        : m_value(WTF::move(value)) { }
     IDBKeyData(const IDBKeyData&, IsolatedCopyTag);
     IDBKeyData(bool isPlaceholder, ValueVariant&& value)
         : m_isPlaceholder(isPlaceholder)
-        , m_value(WTFMove(value)) { }
+        , m_value(WTF::move(value)) { }
     WEBCORE_EXPORT IDBKeyData(const IDBKey*);
     bool isPlaceholder() const { return m_isPlaceholder; }
 
@@ -86,7 +86,7 @@ public:
     WEBCORE_EXPORT IDBKeyData isolatedCopy() const;
 
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;
-    WEBCORE_EXPORT static WARN_UNUSED_RETURN bool decode(KeyedDecoder&, IDBKeyData&);
+    [[nodiscard]] WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyData&);
 
     void setArrayValue(const Vector<IDBKeyData>&);
     void setBinaryValue(const ThreadSafeDataBuffer&);
@@ -99,7 +99,7 @@ public:
     bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
     bool isValid() const;
     WEBCORE_EXPORT static bool isValidValue(const ValueVariant&);
-    IndexedDB::KeyType type() const;
+    IndexedDB::KeyType NODELETE type() const;
 
     WEBCORE_EXPORT friend std::weak_ordering operator<=>(const IDBKeyData&, const IDBKeyData&);
 
@@ -132,7 +132,7 @@ public:
 
     size_t size() const;
 
-    const ValueVariant& value() const { return m_value; };
+    const ValueVariant& value() const LIFETIME_BOUND { return m_value; };
 
 private:
     friend struct IDBKeyDataHashTraits;

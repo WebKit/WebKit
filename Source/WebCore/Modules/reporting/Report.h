@@ -35,25 +35,25 @@ namespace WebCore {
 class FormData;
 
 class Report : public RefCounted<Report> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Report, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Report, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<Report> create(const String& type, const String& url, RefPtr<ReportBody>&&);
 
     WEBCORE_EXPORT ~Report();
 
-    WEBCORE_EXPORT const String& type() const;
-    WEBCORE_EXPORT const String& url() const;
+    WEBCORE_EXPORT const String& NODELETE type() const;
+    WEBCORE_EXPORT const String& NODELETE url() const;
     ReportBody* body() const { return m_body.get(); }
-    RefPtr<ReportBody> protectedBody() const { return m_body; }
+    RefPtr<ReportBody> bodyForSerialization() const { return m_body; }
 
     static Ref<FormData> createReportFormDataForViolation(const String& type, const URL&, const String& userAgent, const String& destination, NOESCAPE const Function<void(JSON::Object&)>& populateBody);
 
 private:
-    WEBCORE_EXPORT explicit Report(const String& type, const String& url, RefPtr<ReportBody>&&);
+    WEBCORE_EXPORT Report(const String& type, const String& url, RefPtr<ReportBody>&&);
 
     String m_type;
     String m_url;
-    RefPtr<ReportBody> m_body;
+    const RefPtr<ReportBody> m_body;
 };
 
 } // namespace WebCore

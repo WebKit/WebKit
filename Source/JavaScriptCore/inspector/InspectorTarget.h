@@ -27,17 +27,10 @@
 
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/JSExportMacros.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace Inspector {
-class InspectorTarget;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<Inspector::InspectorTarget> : std::true_type { };
-}
 
 namespace Inspector {
 
@@ -48,7 +41,9 @@ enum class InspectorTargetType : uint8_t {
     ServiceWorker,
 };
 
-class InspectorTarget : public CanMakeWeakPtr<InspectorTarget> {
+class InspectorTarget : public CanMakeWeakPtr<InspectorTarget>, public CanMakeCheckedPtr<InspectorTarget> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorTarget);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorTarget);
 public:
     virtual ~InspectorTarget() = default;
 

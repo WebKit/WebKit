@@ -39,17 +39,18 @@ function iframeSentMessage(message)
     if (frameDocumentIDs.length == allFrames.length) {
         handle = setInterval(() => {
             gc();
+            if (++checkCount > 10) {
+                clearInterval(handle);
+                testFailed("All iframe documents leaked.");
+                finishJSTest();
+                return;
+            }
             for (const documentID of frameDocumentIDs) {
                 if (!internals.isDocumentAlive(documentID)) {
                     clearInterval(handle);
                     testPassed("The iframe document didn't leak.");
                     finishJSTest();
                     return;
-                }
-                if (++checkCount > 10) {
-                    clearInterval(handle);
-                    testFailed("All iframe documents leaked.");
-                    finishJSTest();
                 }
             }
         }, 10);

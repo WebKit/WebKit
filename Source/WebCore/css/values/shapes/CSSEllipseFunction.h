@@ -34,7 +34,7 @@ namespace CSS {
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-ellipse
 struct Ellipse {
     using Extent = Variant<Keyword::ClosestCorner, Keyword::ClosestSide, Keyword::FarthestCorner, Keyword::FarthestSide>;
-    using Length = CSS::LengthPercentage<Nonnegative>;
+    using Length = CSS::LengthPercentage<NonnegativeUnzoomed>;
     using RadialSize = Variant<Length, Extent>;
 
     // FIXME: The spec says that this should take only a single RadialSize, not a pair, but this does not match the tests.

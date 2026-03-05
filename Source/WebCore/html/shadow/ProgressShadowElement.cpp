@@ -32,24 +32,21 @@
 #include "ProgressShadowElement.h"
 
 #include "ContainerNodeInlines.h"
-#include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "RenderProgress.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "UserAgentParts.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressShadowElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressInnerElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressBarElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressValueElement);
-
-using namespace HTMLNames;
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressShadowElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressInnerElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressBarElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressValueElement);
 
 ProgressShadowElement::ProgressShadowElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(document)
 {
 }
 
@@ -72,7 +69,7 @@ ProgressInnerElement::ProgressInnerElement(Document& document)
 
 RenderPtr<RenderElement> ProgressInnerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderProgress>(*this, WTFMove(style));
+    return createRenderer<RenderProgress>(*this, WTF::move(style));
 }
 
 bool ProgressInnerElement::rendererIsNeeded(const RenderStyle& style)
@@ -98,21 +95,24 @@ void ProgressValueElement::setInlineSizePercentage(double size)
 
 Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)
 {
-    Ref<ProgressInnerElement> result = adoptRef(*new ProgressInnerElement(document));
+    Ref result = adoptRef(*new ProgressInnerElement(document));
+    ScriptDisallowedScope::EventAllowedScope resultScope { result };
     result->setUserAgentPart(UserAgentParts::webkitProgressInnerElement());
     return result;
 }
 
 Ref<ProgressBarElement> ProgressBarElement::create(Document& document)
 {
-    Ref<ProgressBarElement> result = adoptRef(*new ProgressBarElement(document));
+    Ref result = adoptRef(*new ProgressBarElement(document));
+    ScriptDisallowedScope::EventAllowedScope resultScope { result };
     result->setUserAgentPart(UserAgentParts::webkitProgressBar());
     return result;
 }
 
 Ref<ProgressValueElement> ProgressValueElement::create(Document& document)
 {
-    Ref<ProgressValueElement> result = adoptRef(*new ProgressValueElement(document));
+    Ref result = adoptRef(*new ProgressValueElement(document));
+    ScriptDisallowedScope::EventAllowedScope resultScope { result };
     result->setUserAgentPart(UserAgentParts::webkitProgressValue());
     return result;
 }

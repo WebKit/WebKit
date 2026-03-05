@@ -43,7 +43,7 @@ Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
 
 CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode) const
 {
-    return requestScriptWithCache(document, sourceURL, destination, String { }, WTFMove(integrity), { }, serviceWorkersMode);
+    return requestScriptWithCache(document, sourceURL, destination, String { }, WTF::move(integrity), { }, serviceWorkersMode);
 }
 
 CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode) const
@@ -52,26 +52,26 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
         return nullptr;
 
     ASSERT(document.contentSecurityPolicy());
-    bool hasKnownNonce = document.checkedContentSecurityPolicy()->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
+    bool hasKnownNonce = protect(document.contentSecurityPolicy())->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.serviceWorkersMode = serviceWorkersMode.value_or(ServiceWorkersMode::All);
-    options.integrity = WTFMove(integrity);
+    options.integrity = WTF::move(integrity);
     options.referrerPolicy = m_referrerPolicy;
     options.fetchPriority = m_fetchPriority;
     options.nonce = m_nonce;
     options.destination = destination;
     ASSERT(destination == FetchOptionsDestination::Script || destination == FetchOptionsDestination::Json);
 
-    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTFMove(options), document, crossOriginMode);
+    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, crossOriginMode);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setCharset(m_charset);
-    request.setPriority(WTFMove(resourceLoadPriority));
+    request.setPriority(WTF::move(resourceLoadPriority));
     if (!m_initiatorType.isNull())
         request.setInitiatorType(m_initiatorType);
 
-    return document.protectedCachedResourceLoader()->requestScript(WTFMove(request)).value_or(nullptr);
+    return protect(document.cachedResourceLoader())->requestScript(WTF::move(request)).value_or(nullptr);
 }
 
 }

@@ -143,7 +143,7 @@ ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type,
     return ssl_open_record_partial;
   }
 
-  Span<const uint8_t> header = in.subspan(0, SSL3_RT_HEADER_LENGTH);
+  auto header = in.first(SSL3_RT_HEADER_LENGTH);
   ssl_do_msg_callback(ssl, 0 /* read */, SSL3_RT_HEADER, header);
 
   *out_consumed = in.size() - CBS_len(&cbs);
@@ -264,7 +264,7 @@ static bool do_seal_record(SSL *ssl, uint8_t *out_prefix, uint8_t *out,
                            uint8_t *out_suffix, uint8_t type, const uint8_t *in,
                            const size_t in_len) {
   SSLAEADContext *aead = ssl->s3->aead_write_ctx.get();
-  uint8_t *extra_in = NULL;
+  uint8_t *extra_in = nullptr;
   size_t extra_in_len = 0;
   if (!aead->is_null_cipher() && ssl_protocol_version(ssl) >= TLS1_3_VERSION) {
     // TLS 1.3 hides the actual record type inside the encrypted data.

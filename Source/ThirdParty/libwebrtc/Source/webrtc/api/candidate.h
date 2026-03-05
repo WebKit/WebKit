@@ -14,9 +14,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/rtc_error.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/socket_address.h"
@@ -26,17 +28,14 @@ namespace webrtc {
 
 enum class IceCandidateType : int { kHost, kSrflx, kPrflx, kRelay };
 RTC_EXPORT absl::string_view IceCandidateTypeToString(IceCandidateType);
+RTC_EXPORT std::optional<IceCandidateType> StringToIceCandidateType(
+    absl::string_view);
 
-// TODO(tommi): Remove. No usage in WebRTC now, remove once downstream projects
-// don't have reliance.
-[[deprecated("Use IceCandidateType")]] static constexpr char LOCAL_PORT_TYPE[] =
-    "local";
-[[deprecated("Use IceCandidateType")]] static constexpr char STUN_PORT_TYPE[] =
-    "stun";
-[[deprecated("Use IceCandidateType")]] static constexpr char PRFLX_PORT_TYPE[] =
-    "prflx";
-[[deprecated("Use IceCandidateType")]] static constexpr char RELAY_PORT_TYPE[] =
-    "relay";
+// RFC 6544, TCP candidate encoding rules.
+static constexpr int DISCARD_PORT = 9;
+static constexpr char TCPTYPE_ACTIVE_STR[] = "active";
+static constexpr char TCPTYPE_PASSIVE_STR[] = "passive";
+static constexpr char TCPTYPE_SIMOPEN_STR[] = "so";
 
 // TURN servers are limited to 32 in accordance with
 // https://w3c.github.io/webrtc-pc/#dom-rtcconfiguration-iceservers
@@ -59,6 +58,14 @@ class RTC_EXPORT Candidate {
             uint16_t network_cost = 0);
   Candidate(const Candidate&);
   ~Candidate();
+
+  // Parses the `candidate-attribute` as described in:
+  // https://www.rfc-editor.org/rfc/rfc5245#section-15.1
+  // The `message` string must start with "candidate:", not "a=candidate:" and
+  // contain the candidate description in a single line.
+  // Returns a constructed Candidate instance on success, or error information
+  // if parsing failed.
+  static RTCErrorOr<Candidate> ParseCandidateString(absl::string_view message);
 
   // 8 character long randomized ID string for logging purposes.
   const std::string& id() const { return id_; }
@@ -191,13 +198,6 @@ class RTC_EXPORT Candidate {
   const std::string& tcptype() const { return tcptype_; }
   void set_tcptype(absl::string_view tcptype) { Assign(tcptype_, tcptype); }
 
-  // The name of the transport channel of this candidate.
-  // TODO(phoglund): remove.
-  const std::string& transport_name() const { return transport_name_; }
-  void set_transport_name(absl::string_view transport_name) {
-    Assign(transport_name_, transport_name);
-  }
-
   // The URL of the ICE server which this candidate is gathered from.
   const std::string& url() const { return url_; }
   void set_url(absl::string_view url) { Assign(url_, url); }
@@ -212,6 +212,14 @@ class RTC_EXPORT Candidate {
   std::string ToString() const { return ToStringInternal(false); }
 
   std::string ToSensitiveString() const { return ToStringInternal(true); }
+
+  // Returns the `candidate-attribute` as described in:
+  // https://www.rfc-editor.org/rfc/rfc5245#section-15.1
+  // The returned string will start with "candidate:", not "a=candidate:" and
+  // will not end with "\r\n".
+  // include_ufrag: Controls whether or not the username is included in the
+  // returned string.
+  std::string ToCandidateAttribute(bool include_ufrag) const;
 
   uint32_t GetPriority(uint32_t type_preference,
                        int network_adapter_preference,
@@ -232,9 +240,7 @@ class RTC_EXPORT Candidate {
   // any remote ice parameters have been set.
   [[deprecated("Use variant with filter_ufrag")]] Candidate ToSanitizedCopy(
       bool use_hostname_address,
-      bool filter_related_address) const {
-    return ToSanitizedCopy(use_hostname_address, filter_related_address, false);
-  }
+      bool filter_related_address) const;
   Candidate ToSanitizedCopy(bool use_hostname_address,
                             bool filter_related_address,
                             bool filter_ufrag) const;
@@ -281,7 +287,6 @@ class RTC_EXPORT Candidate {
   std::string foundation_;
   SocketAddress related_address_;
   std::string tcptype_;
-  std::string transport_name_;
   uint16_t network_id_;
   uint16_t network_cost_;
   std::string url_;

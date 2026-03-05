@@ -91,7 +91,7 @@ enum class VTTAlignSetting : uint8_t {
 // ----------------------------
 
 class VTTCueBox : public TextTrackCueBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(VTTCueBox);
+    WTF_MAKE_TZONE_ALLOCATED(VTTCueBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VTTCueBox);
 public:
     static Ref<VTTCueBox> create(Document&, VTTCue&);
@@ -116,7 +116,7 @@ class VTTCue
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(VTTCue);
+    WTF_MAKE_TZONE_ALLOCATED(VTTCue);
 public:
     static Ref<VTTCue> create(Document&, double start, double end, String&& content);
     static Ref<VTTCue> create(Document&, Ref<WebVTTCueData>&&);
@@ -161,21 +161,21 @@ public:
     AlignSetting align() const { return m_cueAlignment; }
     void setAlign(AlignSetting);
 
-    const String& text() const final { return m_content; }
+    const String& text() const LIFETIME_BOUND final { return m_content; }
     void setText(const String&);
 
-    const String& cueSettings() const { return m_settings; }
+    const String& cueSettings() const LIFETIME_BOUND { return m_settings; }
     void setCueSettings(const String&);
 
     RefPtr<DocumentFragment> getCueAsHTML() final;
     RefPtr<DocumentFragment> createCueRenderingTree();
 
-    void notifyRegionWhenRemovingDisplayTree(bool);
+    void NODELETE notifyRegionWhenRemovingDisplayTree(bool);
 
-    VTTRegion* region();
+    VTTRegion* NODELETE region();
     void setRegion(VTTRegion*);
 
-    const String& regionId();
+    const String& NODELETE regionId() LIFETIME_BOUND;
 
     void setIsActive(bool) override;
 
@@ -192,12 +192,12 @@ public:
     std::pair<double, double> getPositionCoordinates() const;
 
     using DisplayPosition = std::pair<std::optional<double>, std::optional<double>>;
-    const DisplayPosition& getCSSPosition() const { return m_displayPosition; };
+    const DisplayPosition& getCSSPosition() const LIFETIME_BOUND { return m_displayPosition; };
 
-    CSSValueID getCSSAlignment() const;
-    int getCSSSize() const;
-    CSSValueID getCSSWritingDirection() const;
-    CSSValueID getCSSWritingMode() const;
+    CSSValueID NODELETE getCSSAlignment() const;
+    int NODELETE getCSSSize() const;
+    CSSValueID NODELETE getCSSWritingDirection() const;
+    CSSValueID NODELETE getCSSWritingMode() const;
 
     void recalculateStyles() final { m_displayTreeShouldChange = true; }
     void setFontSize(int, bool important) override;
@@ -209,18 +209,18 @@ public:
 
     void didChange(bool = false) final;
 
-    double calculateComputedTextPosition() const;
-    PositionAlignSetting calculateComputedPositionAlignment() const;
+    double NODELETE calculateComputedTextPosition() const;
+    PositionAlignSetting NODELETE calculateComputedPositionAlignment() const;
     double calculateMaximumSize() const;
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    RefPtr<SpeechSynthesisUtterance> speechUtterance() const { return m_speechUtterance; }
+    SpeechSynthesisUtterance* speechUtterance() const { return m_speechUtterance.get(); }
 #endif
 
-    const LineAndPositionSetting& left() const { return m_left; }
-    const LineAndPositionSetting& top() const { return m_top; }
-    const LineAndPositionSetting& width() const { return m_width; }
-    const LineAndPositionSetting& height() const { return m_height; }
+    const LineAndPositionSetting& left() const LIFETIME_BOUND { return m_left; }
+    const LineAndPositionSetting& top() const LIFETIME_BOUND { return m_top; }
+    const LineAndPositionSetting& width() const LIFETIME_BOUND { return m_width; }
+    const LineAndPositionSetting& height() const LIFETIME_BOUND { return m_height; }
 
 protected:
     VTTCue(Document&, const MediaTime& start, const MediaTime& end, String&& content);
@@ -260,8 +260,6 @@ private:
     void pauseSpeaking() final;
     void cancelSpeaking() final;
 
-    RefPtr<DocumentFragment> protectedWebVTTNodeTree() const { return m_webVTTNodeTree.get(); }
-
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger; }
     uint64_t logIdentifier() const final;
@@ -285,7 +283,7 @@ private:
     RefPtr<DocumentFragment> m_webVTTNodeTree;
     const Ref<HTMLSpanElement> m_cueHighlightBox;
     const Ref<HTMLDivElement> m_cueBackdropBox;
-    RefPtr<VTTCueBox> m_displayTree;
+    const RefPtr<VTTCueBox> m_displayTree;
 #if ENABLE(SPEECH_SYNTHESIS)
     RefPtr<SpeechSynthesis> m_speechSynthesis;
     RefPtr<SpeechSynthesisUtterance> m_speechUtterance;

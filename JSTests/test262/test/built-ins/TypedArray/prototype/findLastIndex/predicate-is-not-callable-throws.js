@@ -51,5 +51,5 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.findLastIndex(/./);
   }, "/./");
-});
+}, null, ["passthrough"]);
 

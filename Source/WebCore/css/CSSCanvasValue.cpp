@@ -33,7 +33,7 @@ namespace WebCore {
 
 CSSCanvasValue::CSSCanvasValue(String&& name)
     : CSSValue { ClassType::Canvas }
-    , m_name { WTFMove(name) }
+    , m_name { WTF::move(name) }
 {
 }
 
@@ -49,12 +49,12 @@ bool CSSCanvasValue::equals(const CSSCanvasValue& other) const
     return m_name == other.m_name;
 }
 
-RefPtr<StyleImage> CSSCanvasValue::createStyleImage(const Style::BuilderState&) const
+RefPtr<Style::Image> CSSCanvasValue::createStyleImage(const Style::BuilderState&) const
 {
     if (m_cachedStyleImage)
         return m_cachedStyleImage;
 
-    m_cachedStyleImage = StyleCanvasImage::create(m_name);
+    m_cachedStyleImage = Style::CanvasImage::create(m_name);
     return m_cachedStyleImage;
 }
 

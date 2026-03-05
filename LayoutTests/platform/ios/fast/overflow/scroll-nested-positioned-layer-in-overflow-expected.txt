@@ -8,7 +8,7 @@ layer at (0,42) size 800x558 clip at (0,42) size 785x558 scrollY 282 scrollHeigh
 layer at (0,-240) size 571x840 backgroundClip at (0,42) size 785x558 clip at (0,42) size 785x558
   RenderBlock (positioned) {DIV} at (0,0) size 572x840
     RenderBlock (anonymous) at (0,0) size 572x20
-      RenderText {#text} at (0,0) size 572x19
+      RenderText {#text} at (0,0) size 572x20
         text run at (0,0) width 572: "This tests that we can scroll to reveal something in a nested positioned block in overflow."
     RenderBlock {DIV} at (0,20) size 572x800
     RenderBlock (anonymous) at (0,820) size 572x20

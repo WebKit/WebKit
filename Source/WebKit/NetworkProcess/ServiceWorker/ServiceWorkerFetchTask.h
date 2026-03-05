@@ -27,6 +27,7 @@
 
 #include "DownloadID.h"
 #include "SharedPreferencesForWebProcess.h"
+#include <WebCore/DOMCacheEngine.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -41,6 +42,8 @@ class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class SWServerRegistration;
+
+struct RetrieveRecordsOptions;
 }
 
 namespace IPC {
@@ -52,12 +55,15 @@ class SharedBufferReference;
 
 namespace WebCore {
 class NetworkLoadMetrics;
+
+struct ClientOrigin;
 }
 
 namespace WebKit {
 class DownloadManager;
 class NetworkResourceLoader;
 class NetworkSession;
+class NetworkStorageManager;
 class ServiceWorkerNavigationPreloader;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
@@ -66,9 +72,8 @@ class ServiceWorkerFetchTask : public RefCountedAndCanMakeWeakPtr<ServiceWorkerF
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerFetchTask);
 public:
     static RefPtr<ServiceWorkerFetchTask> fromNavigationPreloader(WebSWServerConnection&, NetworkResourceLoader&, const WebCore::ResourceRequest&, NetworkSession*);
-
-    static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
-    static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, RefPtr<ServiceWorkerNavigationPreloader>&&);
+    static Ref<ServiceWorkerFetchTask> fromCache(NetworkResourceLoader&, NetworkStorageManager&, WebCore::ResourceRequest&&, String&&);
+    static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady, bool shouldRaceNetworkAndFetchHandler);
 
     ~ServiceWorkerFetchTask();
 
@@ -82,7 +87,7 @@ public:
     WebCore::FetchIdentifier fetchIdentifier() const { return m_fetchIdentifier; }
     std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier() const { return m_serviceWorkerIdentifier; }
 
-    WebCore::ResourceRequest takeRequest() { return WTFMove(m_currentRequest); }
+    WebCore::ResourceRequest takeRequest() { return WTF::move(m_currentRequest); }
 
     void cannotHandle();
     void contextClosed();
@@ -94,15 +99,16 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
-    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
+    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady, bool shouldRaceNetworkAndFetchHandler);
     ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, RefPtr<ServiceWorkerNavigationPreloader>&&);
+    ServiceWorkerFetchTask(NetworkResourceLoader&, WebCore::ResourceRequest&&);
 
     enum class ShouldSetSource : bool { No, Yes };
     void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
     void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::SharedBufferReference&);
     void didReceiveDataFromPreloader(const WebCore::FragmentedSharedBuffer&);
-    void didReceiveFormData(const IPC::FormDataReference&);
+    void NODELETE didReceiveFormData(const IPC::FormDataReference&);
     void didFinish(const WebCore::NetworkLoadMetrics&);
     void didFail(const WebCore::ResourceError&);
     void didNotHandle();
@@ -123,13 +129,16 @@ private:
 
     void workerClosed();
 
+    void loadFromCache(NetworkStorageManager&, WebCore::ClientOrigin&&, WebCore::RetrieveRecordsOptions&&, String&&);
+    void respondWithCacheResponse(std::optional<WebCore::DOMCacheEngine::Record>&&);
+    void finishLoadingWithCacheResponse(WebCore::DOMCacheEngine::Record&&);
+    void sendData(Ref<WebCore::SharedBuffer>&&);
+
     RefPtr<IPC::Connection> serviceWorkerConnection();
     template<typename Message> bool sendToClient(Message&&);
 
-    RefPtr<NetworkResourceLoader> protectedLoader() const;
     void sendNavigationPreloadUpdate();
-
-    RefPtr<ServiceWorkerNavigationPreloader> protectedPreloader();
+    void processPreloadResponse();
 
     WeakPtr<WebSWServerConnection> m_swServerConnection;
     WeakPtr<NetworkResourceLoader> m_loader;
@@ -141,10 +150,12 @@ private:
     std::unique_ptr<WebCore::Timer> m_timeoutTimer;
     Markable<WebCore::ServiceWorkerRegistrationIdentifier> m_serviceWorkerRegistrationIdentifier;
     RefPtr<ServiceWorkerNavigationPreloader> m_preloader;
+    const bool m_shouldRaceNetworkAndFetchHandler { false };
     bool m_wasHandled { false };
     bool m_isDone { false };
     bool m_shouldSoftUpdate { false };
     bool m_isLoadingFromPreloader { false };
+    std::optional<WebCore::DOMCacheEngine::Record> m_cacheRecord;
 };
 
 }

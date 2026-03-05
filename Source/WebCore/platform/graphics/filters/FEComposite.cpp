@@ -31,6 +31,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FECompositeCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4, DestinationColorSpace colorSpace)
@@ -116,6 +120,25 @@ FloatRect FEComposite::calculateImageRect(const Filter& filter, std::span<const 
         // Take the union of both input effects.
         return FilterEffect::calculateImageRect(filter, inputImageRects, primitiveSubregion);
     }
+}
+
+OptionSet<FilterRenderingMode> FEComposite::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    if (FECompositeCoreImageApplier::supportsCoreImageRendering(*this))
+        modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEComposite::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FECompositeCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FEComposite::createSoftwareApplier() const

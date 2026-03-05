@@ -228,7 +228,7 @@ public:
 
     void overrideInfo(const FunctionOverrideInfo&);
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     InferredValue<JSFunction>& singleton()
     {

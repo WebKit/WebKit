@@ -34,7 +34,11 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
+#pragma clang diagnostic pop
 #endif
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(WPE) || PLATFORM(GTK))
@@ -46,7 +50,7 @@ namespace WebCore {
 class Node;
 
 class PointerEvent : public MouseEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PointerEvent);
+    WTF_MAKE_TZONE_ALLOCATED(PointerEvent);
 public:
     struct Init : MouseEventInit {
         PointerID pointerId { mousePointerID };
@@ -69,7 +73,7 @@ public:
 
     static Ref<PointerEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::No));
+        return adoptRef(*new PointerEvent(type, WTF::move(initializer), IsTrusted::No));
     }
 
     static Ref<PointerEvent> createForPointerCapture(const AtomString& type, PointerID pointerId, bool isPrimary, String pointerType)
@@ -80,7 +84,7 @@ public:
         initializer.isPrimary = isPrimary;
         initializer.pointerType = pointerType;
         initializer.composed = true;
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::Yes));
+        return adoptRef(*new PointerEvent(type, WTF::move(initializer), IsTrusted::Yes));
     }
 
     static Ref<PointerEvent> createForBindings()
@@ -132,8 +136,6 @@ public:
     Vector<Ref<PointerEvent>> getPredictedEvents() const;
 
     void receivedTarget() final;
-
-    bool isPointerEvent() const final { return true; }
 
     // https://w3c.github.io/pointerevents/#attributes-and-default-actions
     // Many user agents expose non-standard attributes fromElement and toElement in MouseEvents to
@@ -227,4 +229,5 @@ inline bool PointerEvent::typeRequiresResolvedButton(const AtomString& type)
 
 } // namespace WebCore
 
+// Technically a polymorphic Event class because of SimulatedPointerEvent, but that uses the same type.
 SPECIALIZE_TYPE_TRAITS_EVENT(PointerEvent)

@@ -46,4 +46,4 @@ testWithTypedArrayConstructors(function(TA) {
     undefined,
     "find returns undefined when predicate is not called"
   );
-});
+}, null, ["passthrough"]);

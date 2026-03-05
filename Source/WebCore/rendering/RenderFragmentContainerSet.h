@@ -43,7 +43,7 @@ class RenderFragmentedFlow;
 // FIXME: For now we derive from RenderFragmentContainer, but this may change at some point.
 
 class RenderFragmentContainerSet : public RenderFragmentContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderFragmentContainerSet);
+    WTF_MAKE_TZONE_ALLOCATED(RenderFragmentContainerSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentContainerSet);
 public:
     void expandToEncompassFragmentedFlowContentsIfNeeded();
@@ -53,7 +53,7 @@ protected:
     virtual ~RenderFragmentContainerSet();
 
 private:
-    void installFragmentedFlow() final;
+    void NODELETE installFragmentedFlow() final;
 
     ASCIILiteral renderName() const override = 0;
     

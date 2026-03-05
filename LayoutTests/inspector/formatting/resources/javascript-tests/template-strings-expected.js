@@ -15,7 +15,12 @@ tag`before ${1 + 1} after`
     before ${func()} after
     before ${{a: 1}} after
     before ${[1]} after
-    before ${
-y
+    before ${y
 } after
 `
+`
+A
+B
+C
+`
+let shouldNotHaveNewLinesIntroduceBefore;

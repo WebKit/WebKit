@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLObjectElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLObjectElement);
 
 using namespace HTMLNames;
 
@@ -154,7 +154,7 @@ static void mapDataParamToSrc(Vector<AtomString>& paramNames, Vector<AtomString>
     }
     if (!foundSrcParam && !dataParamValue.isNull()) {
         paramNames.append(AtomString { "src"_s });
-        paramValues.append(WTFMove(dataParamValue));
+        paramValues.append(WTF::move(dataParamValue));
     }
 }
 
@@ -390,7 +390,7 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 {
     HTMLPlugInElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(attributeWithoutSynchronization(dataAttr)));
+    addSubresourceURL(urls, protect(document())->completeURL(attributeWithoutSynchronization(dataAttr)));
 }
 
 void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)

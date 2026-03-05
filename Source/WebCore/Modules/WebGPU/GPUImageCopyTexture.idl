@@ -29,10 +29,11 @@
 typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 typedef (sequence<GPUIntegerCoordinate> or GPUOrigin3DDict) GPUOrigin3D;
 
+// FIXME: This has been rename to `GPUTexelCopyTextureInfo`
+// https://gpuweb.github.io/gpuweb/#gputexelcopytextureinfo
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUImageCopyTexture {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUImageCopyTexture {
     required GPUTexture texture;
     GPUIntegerCoordinate mipLevel = 0;
     GPUOrigin3D origin;

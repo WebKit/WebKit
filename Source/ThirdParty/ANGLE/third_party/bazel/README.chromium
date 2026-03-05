@@ -5,6 +5,7 @@ License: Apache-2.0
 License File: LICENSE
 Version: N/A
 Revision: DEPS
+Update Mechanism: Manual
 Security Critical: no
 Shipped: no
 
@@ -12,4 +13,3 @@ Description:
 This directory contains Bazel components used for building Android binaries.
 Chromium does not use Bazel itself as the build platform. Please refer to each
 sub-directory for information on each Bazel component.
-

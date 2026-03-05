@@ -39,7 +39,7 @@ enum class SingleAnimationRangeType : bool;
 
 class Element;
 
-using TimelineRangeValue = Variant<TimelineRangeOffset, RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>, String>;
+using TimelineRangeValue = Variant<TimelineRangeOffset, Ref<CSSNumericValue>, Ref<CSSKeywordValue>, String>;
 
 RefPtr<CSSValue> convertToCSSValue(TimelineRangeValue&&, RefPtr<Element>, Style::SingleAnimationRangeType);
 

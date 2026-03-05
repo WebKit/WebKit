@@ -49,6 +49,13 @@ template<> struct AsyncReplyError<Expected<WebCore::PushSubscriptionData, WebCor
     }
 };
 
+template<> struct AsyncReplyError<Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>> {
+    static Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> create()
+    {
+        return makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Connection to web push daemon failed"_s });
+    }
+};
+
 }
 
 namespace WebKit {
@@ -75,7 +82,7 @@ private:
 
     void newConnectionWasInitialized() const final;
 #if PLATFORM(COCOA)
-    XPCObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final { return nullptr; }
+    OSObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final { return nullptr; }
     void connectionReceivedEvent(xpc_object_t) final { }
 #endif
 

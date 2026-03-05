@@ -8,7 +8,7 @@ layer at (8,8) size 404x404 clip at (10,10) size 400x385 scrollX 200 scrollWidth
     RenderMultiColumnSet at (2,2) size 400x385
 layer at (-190,10) size 400x2195 backgroundClip at (10,10) size 400x385 clip at (10,10) size 400x385
   RenderMultiColumnFlowThread at (2,2) size 400x2195
-    RenderText {#text} at (0,0) size 399x2194
+    RenderText {#text} at (0,0) size 399x2195
       text run at (0,0) width 347: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
       text run at (0,18) width 388: "Maecenas lacinia massa in lectus pretium vulputate. Curabitur"
       text run at (0,36) width 397: "viverra augue in leo faucibus congue. Vestibulum ligula neque,"

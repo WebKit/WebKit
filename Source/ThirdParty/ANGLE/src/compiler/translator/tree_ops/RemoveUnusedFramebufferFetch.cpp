@@ -182,7 +182,7 @@ VariableReplacementMap FindUnusedInoutVariablesTraverser::getReplacementMap() co
         const TVariable *replacement =
             new TVariable(mSymbolTable, var->name(), newType, var->symbolType());
 
-        replacementMap[var] = new TIntermSymbol(replacement);
+        replacementMap[var->uniqueId()] = new TIntermSymbol(replacement);
     }
 
     return replacementMap;

@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <stdint.h>
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 WTF_EXTERN_C_BEGIN

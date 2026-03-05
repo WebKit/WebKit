@@ -35,7 +35,7 @@ namespace Style {
 // https://drafts.fxtf.org/motion/#propdef-offset-anchor
 struct OffsetAnchor {
     OffsetAnchor(CSS::Keyword::Auto keyword) : m_value { keyword} { }
-    OffsetAnchor(Position&& position) : m_value { WTFMove(position) } { }
+    OffsetAnchor(Position&& position) : m_value { WTF::move(position) } { }
     OffsetAnchor(const Position& position) : m_value { position } { }
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -87,7 +87,7 @@ template<> struct Blending<OffsetAnchor> {
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<OffsetAnchor, AcceleratedEffectOffsetAnchor> {
-    auto operator()(const OffsetAnchor&, FloatSize, ZoomNeeded) -> AcceleratedEffectOffsetAnchor;
+    auto operator()(const OffsetAnchor&, FloatSize, ZoomFactor) -> AcceleratedEffectOffsetAnchor;
 };
 
 #endif

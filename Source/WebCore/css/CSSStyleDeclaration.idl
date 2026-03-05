@@ -31,7 +31,8 @@ typedef USVString CSSOMString;
     Exposed=Window,
 ] interface CSSStyleDeclaration {
     [CEReactions=Needed] attribute CSSOMString cssText;
-    readonly attribute CSSRuleList cssRules;
+    // FIXME: This is non-standard and always returns null. It should be removed.
+    readonly attribute CSSRuleList? cssRules;
     readonly attribute unsigned long length;
     getter CSSOMString item(unsigned long index);
     CSSOMString getPropertyValue(CSSOMString property);

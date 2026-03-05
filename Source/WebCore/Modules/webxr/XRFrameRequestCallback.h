@@ -43,6 +43,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSXRFrameRequestCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(double highResTimeMs, WebXRFrame&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(double highResTimeMs, WebXRFrame&) = 0;
 

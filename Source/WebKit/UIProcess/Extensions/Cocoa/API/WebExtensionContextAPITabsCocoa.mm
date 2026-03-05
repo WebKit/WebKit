@@ -46,8 +46,10 @@
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
-#import <WebCore/ImageBufferUtilitiesCG.h>
+#import <WebCore/ImageUtilities.h>
 #import <wtf/CallbackAggregator.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/WorkQueue.h>
 
 namespace WebKit {
 
@@ -105,7 +107,7 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     if (parameters.url)
         configuration.url = parameters.url.value().createNSURL().get();
 
-    [delegate webExtensionController:extensionController->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
+    [delegate webExtensionController:extensionController->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new tab: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -141,7 +143,7 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
 
     auto updateActiveAndSelected = [](WebExtensionTab& tab, const WebExtensionTabParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
         if (parameters.active.value_or(false) && !tab.isActive()) {
-            tab.activate(WTFMove(stepCompletionHandler));
+            tab.activate(WTF::move(stepCompletionHandler));
             return;
         }
 
@@ -154,14 +156,14 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
         if (shouldSelect && !tab.isSelected()) {
             // If active is not explicitly set to false, activate the tab. This matches Firefox.
             if (parameters.active.value_or(true))
-                tab.activate(WTFMove(stepCompletionHandler));
+                tab.activate(WTF::move(stepCompletionHandler));
             else
-                tab.select(WTFMove(stepCompletionHandler));
+                tab.select(WTF::move(stepCompletionHandler));
             return;
         }
 
         if (!shouldSelect && tab.isSelected()) {
-            tab.deselect(WTFMove(stepCompletionHandler));
+            tab.deselect(WTF::move(stepCompletionHandler));
             return;
         }
 
@@ -174,7 +176,7 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
             return;
         }
 
-        tab.loadURL(parameters.url.value(), WTFMove(stepCompletionHandler));
+        tab.loadURL(parameters.url.value(), WTF::move(stepCompletionHandler));
     };
 
     auto updatePinned = [](WebExtensionTab& tab, const WebExtensionTabParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
@@ -184,9 +186,9 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
         }
 
         if (parameters.pinned.value())
-            tab.pin(WTFMove(stepCompletionHandler));
+            tab.pin(WTF::move(stepCompletionHandler));
         else
-            tab.unpin(WTFMove(stepCompletionHandler));
+            tab.unpin(WTF::move(stepCompletionHandler));
     };
 
     auto updateMuted = [](WebExtensionTab& tab, const WebExtensionTabParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
@@ -196,9 +198,9 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
         }
 
         if (parameters.muted.value())
-            tab.mute(WTFMove(stepCompletionHandler));
+            tab.mute(WTF::move(stepCompletionHandler));
         else
-            tab.unmute(WTFMove(stepCompletionHandler));
+            tab.unmute(WTF::move(stepCompletionHandler));
     };
 
     auto updateParentTab = [this, protectedThis = Ref { *this }](WebExtensionTab& tab, const WebExtensionTabParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
@@ -210,34 +212,34 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
             return;
         }
 
-        tab.setParentTab(newParentTab, WTFMove(stepCompletionHandler));
+        tab.setParentTab(newParentTab, WTF::move(stepCompletionHandler));
     };
 
-    updateActiveAndSelected(*tab, parameters, [tab = Ref { *tab }, parameters, updateURL = WTFMove(updateURL), updatePinned = WTFMove(updatePinned), updateMuted = WTFMove(updateMuted), updateParentTab = WTFMove(updateParentTab), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& activeOrSelectedResult) mutable {
+    updateActiveAndSelected(*tab, parameters, [tab = Ref { *tab }, parameters, updateURL = WTF::move(updateURL), updatePinned = WTF::move(updatePinned), updateMuted = WTF::move(updateMuted), updateParentTab = WTF::move(updateParentTab), completionHandler = WTF::move(completionHandler)](Expected<void, WebExtensionError>&& activeOrSelectedResult) mutable {
         if (!activeOrSelectedResult) {
             completionHandler(makeUnexpected(activeOrSelectedResult.error()));
             return;
         }
 
-        updateURL(tab, parameters, [tab, parameters, updatePinned = WTFMove(updatePinned), updateMuted = WTFMove(updateMuted), updateParentTab = WTFMove(updateParentTab), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& urlResult) mutable {
+        updateURL(tab, parameters, [tab, parameters, updatePinned = WTF::move(updatePinned), updateMuted = WTF::move(updateMuted), updateParentTab = WTF::move(updateParentTab), completionHandler = WTF::move(completionHandler)](Expected<void, WebExtensionError>&& urlResult) mutable {
             if (!urlResult) {
                 completionHandler(makeUnexpected(urlResult.error()));
                 return;
             }
 
-            updatePinned(tab, parameters, [tab, parameters, updateMuted = WTFMove(updateMuted), updateParentTab = WTFMove(updateParentTab), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& pinnedResult) mutable {
+            updatePinned(tab, parameters, [tab, parameters, updateMuted = WTF::move(updateMuted), updateParentTab = WTF::move(updateParentTab), completionHandler = WTF::move(completionHandler)](Expected<void, WebExtensionError>&& pinnedResult) mutable {
                 if (!pinnedResult) {
                     completionHandler(makeUnexpected(pinnedResult.error()));
                     return;
                 }
 
-                updateMuted(tab, parameters, [tab, parameters, updateParentTab = WTFMove(updateParentTab), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& mutedResult) mutable {
+                updateMuted(tab, parameters, [tab, parameters, updateParentTab = WTF::move(updateParentTab), completionHandler = WTF::move(completionHandler)](Expected<void, WebExtensionError>&& mutedResult) mutable {
                     if (!mutedResult) {
                         completionHandler(makeUnexpected(mutedResult.error()));
                         return;
                     }
 
-                    updateParentTab(tab, parameters, [tab, completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& parentResult) mutable {
+                    updateParentTab(tab, parameters, [tab, completionHandler = WTF::move(completionHandler)](Expected<void, WebExtensionError>&& parentResult) mutable {
                         if (!parentResult) {
                             completionHandler(makeUnexpected(parentResult.error()));
                             return;
@@ -259,7 +261,7 @@ void WebExtensionContext::tabsDuplicate(WebExtensionTabIdentifier tabIdentifier,
         return;
     }
 
-    tab->duplicate(parameters, [completionHandler = WTFMove(completionHandler)](Expected<RefPtr<WebExtensionTab>, WebExtensionError>&& result) mutable {
+    tab->duplicate(parameters, [completionHandler = WTF::move(completionHandler)](Expected<RefPtr<WebExtensionTab>, WebExtensionError>&& result) mutable {
         if (!result) {
             completionHandler(makeUnexpected(result.error()));
             return;
@@ -283,7 +285,7 @@ void WebExtensionContext::tabsGet(WebExtensionTabIdentifier tabIdentifier, Compl
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         completionHandler({ tab->parameters() });
     });
 }
@@ -297,7 +299,7 @@ void WebExtensionContext::tabsGetCurrent(WebPageProxyIdentifier webPageProxyIden
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         completionHandler({ tab->parameters() });
     });
 }
@@ -319,13 +321,13 @@ void WebExtensionContext::tabsQuery(WebPageProxyIdentifier webPageProxyIdentifie
         }
     }
 
-    requestPermissionToAccessURLs(tabURLs, nullptr, [matchedTabs = WTFMove(matchedTabs), completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs(tabURLs, nullptr, [matchedTabs = WTF::move(matchedTabs), completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         // Get the parameters after permission has been granted, so it can include the URL and title if allowed.
         auto result = WTF::map(matchedTabs, [&](auto& tab) {
             return tab->parameters();
         });
 
-        completionHandler(WTFMove(result));
+        completionHandler(WTF::move(result));
     });
 }
 
@@ -337,7 +339,7 @@ void WebExtensionContext::tabsReload(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
-    tab->reload(reloadFromOrigin, WTFMove(completionHandler));
+    tab->reload(reloadFromOrigin, WTF::move(completionHandler));
 }
 
 void WebExtensionContext::tabsGoBack(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -348,7 +350,7 @@ void WebExtensionContext::tabsGoBack(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
-    tab->goBack(WTFMove(completionHandler));
+    tab->goBack(WTF::move(completionHandler));
 }
 
 void WebExtensionContext::tabsGoForward(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -359,7 +361,7 @@ void WebExtensionContext::tabsGoForward(WebPageProxyIdentifier webPageProxyIdent
         return;
     }
 
-    tab->goForward(WTFMove(completionHandler));
+    tab->goForward(WTF::move(completionHandler));
 }
 
 void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
@@ -372,13 +374,13 @@ void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxy
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
         }
 
-        tab->detectWebpageLocale([completionHandler = WTFMove(completionHandler)](Expected<NSLocale *, WebExtensionError>&& result) mutable {
+        tab->detectWebpageLocale([completionHandler = WTF::move(completionHandler)](Expected<NSLocale *, WebExtensionError>&& result) mutable {
             if (!result) {
                 completionHandler(makeUnexpected(result.error()));
                 return;
@@ -415,13 +417,13 @@ void WebExtensionContext::tabsCaptureVisibleTab(WebPageProxyIdentifier webPagePr
         return;
     }
 
-    requestPermissionToAccessURLs({ activeTab->url() }, activeTab, [activeTab, imageFormat, imageQuality, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ activeTab->url() }, activeTab, [activeTab, imageFormat, imageQuality, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!activeTab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"either the 'activeTab' permission or granted host permissions for the current website are required"));
             return;
         }
 
-        activeTab->captureVisibleWebpage([completionHandler = WTFMove(completionHandler), imageFormat, imageQuality](Expected<CocoaImage *, WebExtensionError>&& result) mutable {
+        activeTab->captureVisibleWebpage([completionHandler = WTF::move(completionHandler), imageFormat, imageQuality](Expected<CocoaImage *, WebExtensionError>&& result) mutable {
             if (!result) {
                 completionHandler(makeUnexpected(result.error()));
                 return;
@@ -443,8 +445,13 @@ void WebExtensionContext::tabsCaptureVisibleTab(WebPageProxyIdentifier webPagePr
                 return;
             }
 
-            // FIXME: This is a static analysis false positive.
-            SUPPRESS_UNRETAINED_ARG completionHandler(URL { WebCore::dataURL(cgImage.get(), toMIMEType(imageFormat), imageQuality) });
+            static NeverDestroyed<Ref<WorkQueue>> queue { WorkQueue::create("org.WebKit.WKWebExtension.tabsCaptureVisibleTab"_s) };
+            queue.get()->dispatch([cgImage = WTF::move(cgImage), imageFormat, imageQuality, completionHandler = WTF::move(completionHandler)]() mutable {
+                URL result { WebCore::encodeDataURL(cgImage.get(), toMIMEType(imageFormat), imageQuality) };
+                WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), result = crossThreadCopy(WTF::move(result))]() mutable {
+                    completionHandler(WTF::move(result));
+                });
+            });
         });
     });
 }
@@ -457,7 +464,7 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
         return;
     }
 
-    tab->toggleReaderMode(WTFMove(completionHandler));
+    tab->toggleReaderMode(WTF::move(completionHandler));
 }
 
 void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
@@ -485,16 +492,16 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
     }
 
     auto targetParametersCopy = targetParameters;
-    targetParametersCopy.pageProxyIdentifier = webView._protectedPage->identifier();
+    targetParametersCopy.pageProxyIdentifier = protect(*webView._page)->identifier();
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTFMove(completionHandler), { });
+    Ref callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
     for (Ref process : processes) {
         process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, targetParametersCopy, senderParameters), [callbackAggregator](String&& replyJSON) {
             if (replyJSON.isNull())
                 return;
 
-            callbackAggregator.get()(WTFMove(replyJSON));
+            callbackAggregator.get()(WTF::move(replyJSON));
         }, identifier());
     }
 }
@@ -527,7 +534,7 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
     for (Ref process : processes) {
         process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, targetParameters, senderParameters), [=, this, protectedThis = Ref { *this }, &handledCount](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
             // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
-            addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
+            addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTF::move(addedPortCounts));
 
             fireQueuedPortMessageEventsIfNeeded(targetContentWorldType, channelIdentifier);
             fireQueuedPortMessageEventsIfNeeded(sourceContentWorldType, channelIdentifier);
@@ -564,7 +571,7 @@ void WebExtensionContext::tabsSetZoom(WebPageProxyIdentifier webPageProxyIdentif
         return;
     }
 
-    tab->setZoomFactor(zoomFactor, WTFMove(completionHandler));
+    tab->setZoomFactor(zoomFactor, WTF::move(completionHandler));
 }
 
 void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdentifiers, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -584,7 +591,7 @@ void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdenti
         return;
     }
 
-    Ref callbackAggregator = EagerCallbackAggregator<void(Expected<void, WebExtensionError>)>::create(WTFMove(completionHandler), { });
+    Ref callbackAggregator = EagerCallbackAggregator<void(Expected<void, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
     for (RefPtr tab : tabs) {
         tab->close([callbackAggregator](Expected<void, WebExtensionError>&& result) mutable {
@@ -604,7 +611,7 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
@@ -629,8 +636,8 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
         }
 
         auto scriptPairs = getSourcePairsForParameters(parameters, *this);
-        executeScript(scriptPairs, webView, *m_contentScriptWorld, *tab, parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
-            completionHandler(WTFMove(injectionResults));
+        executeScript(scriptPairs, webView, *m_contentScriptWorld, *tab, parameters, *this, [completionHandler = WTF::move(completionHandler)](InjectionResults&& injectionResults) mutable {
+            completionHandler(WTF::move(injectionResults));
         });
     });
 }
@@ -645,7 +652,7 @@ void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdent
         return;
     }
 
-    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
             completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;

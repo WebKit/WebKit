@@ -132,7 +132,7 @@ void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
     playbackSessionInterface().startObservingNowPlayingMetadata();
-    [linearMediaPlayer() enterFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) {
+    [linearMediaPlayer() enterFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (BOOL success, NSError *error) {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
             playbackSessionModel->setSpatialTrackingLabel(m_spatialTrackingLabel);
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Large);
@@ -146,7 +146,7 @@ void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<vo
 void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
     playbackSessionInterface().stopObservingNowPlayingMetadata();
-    [linearMediaPlayer() exitFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) {
+    [linearMediaPlayer() exitFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (BOOL success, NSError *error) {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
             playbackSessionModel->setSpatialTrackingLabel(nullString());
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Automatic);
@@ -168,11 +168,11 @@ void VideoPresentationInterfaceLMK::enterExternalPlayback(CompletionHandler<void
     }
 
     setupPlayerViewController();
-    m_exitExternalPlaybackHandler = WTFMove(exitHandler);
+    m_exitExternalPlaybackHandler = WTF::move(exitHandler);
     playbackSessionInterface().startObservingNowPlayingMetadata();
 
     // Puts the player into `enteringExternal` state.
-    [linearMediaPlayer() enterExternalPlaybackWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, handler = WTFMove(enterHandler)] (BOOL success, NSError *error) mutable {
+    [linearMediaPlayer() enterExternalPlaybackWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, handler = WTF::move(enterHandler)] (BOOL success, NSError *error) mutable {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
             playbackSessionModel->setSpatialTrackingLabel(m_spatialTrackingLabel);
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Large);
@@ -202,15 +202,17 @@ void VideoPresentationInterfaceLMK::exitExternalPlayback()
     }
 
     playbackSessionInterface().stopObservingNowPlayingMetadata();
-    [linearMediaPlayer() exitExternalPlaybackWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, handler = WTFMove(exitHandler)] (BOOL success, NSError *error) mutable {
+    [linearMediaPlayer() exitExternalPlaybackWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, handler = WTF::move(exitHandler)] (BOOL success, NSError *error) mutable {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
             playbackSessionModel->setSpatialTrackingLabel(nullString());
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Automatic);
         }
         invalidatePlayerViewController();
 
-        if (RefPtr model = this->videoPresentationModel())
+        if (RefPtr model = this->videoPresentationModel()) {
+            model->setRequiresTextTrackRepresentation(false);
             model->didExitExternalPlayback();
+        }
 
         if (handler)
             handler(success);
@@ -249,8 +251,10 @@ void VideoPresentationInterfaceLMK::didSetVideoReceiverEndpoint()
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
-    if (RefPtr model = this->videoPresentationModel())
+    if (RefPtr model = this->videoPresentationModel()) {
+        model->setRequiresTextTrackRepresentation(true);
         model->didEnterExternalPlayback();
+    }
 }
 
 UIViewController *VideoPresentationInterfaceLMK::playerViewController() const

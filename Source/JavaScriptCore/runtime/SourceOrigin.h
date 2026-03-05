@@ -39,7 +39,7 @@ public:
 
     explicit SourceOrigin(const URL& url, Ref<ScriptFetcher>&& fetcher)
         : m_url(url)
-        , m_fetcher(WTFMove(fetcher))
+        , m_fetcher(WTF::move(fetcher))
     {
     }
 

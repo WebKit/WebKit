@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #import "WKIdentityDocumentPresentmentMobileDocumentRequest.h"
 #import <Foundation/Foundation.h>
 
@@ -42,3 +44,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(WEB_AUTHN)

@@ -231,7 +231,7 @@ struct OptionSetValueChecker<T, EnumValues<E>> {
 }
 
 template<typename E, ConcurrencyTag concurrency>
-WARN_UNUSED_RETURN constexpr bool isValidOptionSet(OptionSet<E, concurrency> optionSet)
+[[nodiscard]] constexpr bool isValidOptionSet(OptionSet<E, concurrency> optionSet)
 {
     // FIXME: Remove this when all OptionSet enums are migrated to generated serialization.
     auto allValidBitsValue = IsValidOptionSetHelper::OptionSetValueChecker<std::make_unsigned_t<std::underlying_type_t<E>>, typename EnumTraits<E>::values>::allValidBits();
@@ -248,7 +248,7 @@ struct ConstexprOptionSet {
     }
 
     ALWAYS_INLINE constexpr ConstexprOptionSet(std::initializer_list<E> initializerList)
-        : ConstexprOptionSet<E>(OptionSet<E>(WTFMove(initializerList)))
+        : ConstexprOptionSet<E>(OptionSet<E>(WTF::move(initializerList)))
     {
     }
 

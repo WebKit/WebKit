@@ -15,14 +15,14 @@
             (GraphicsLayer
               (offsetFromRenderer width=13 height=13)
               (position 23.00 23.00)
-              (bounds origin 292.00 0.00)
+              (bounds origin 300.00 0.00)
               (bounds 316.00 316.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=13 height=13)
-                  (scrollOffset (292,0))
+                  (scrollOffset (300,0))
                   (anchor 0.00 0.00)
-                  (bounds 608.00 616.00)
+                  (bounds 616.00 616.00)
                 )
               )
             )

@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
@@ -40,6 +39,7 @@
 #include "rtc_base/event.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/thread_annotations.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 #include "test/video_codec_settings.h"
@@ -170,7 +170,7 @@ class IvfVideoFrameGeneratorTest : public ::testing::Test {
         kMaxFrameEncodeWaitTimeout));
   }
 
-  Environment env_ = CreateEnvironment();
+  Environment env_ = CreateTestEnvironment();
   std::string file_name_;
   std::vector<VideoFrame> video_frames_;
 };

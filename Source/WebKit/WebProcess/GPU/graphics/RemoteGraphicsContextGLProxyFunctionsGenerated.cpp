@@ -2933,7 +2933,7 @@ GCGLExternalImage RemoteGraphicsContextGLProxy::createExternalImage(WebCore::Gra
     if (isContextLost())
         return { };
     auto name = createObjectName();
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::CreateExternalImage(name, WTFMove(arg0), internalFormat, layer));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CreateExternalImage(name, WTF::move(arg0), internalFormat, layer));
     if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return { };
@@ -2968,7 +2968,7 @@ GCGLExternalSync RemoteGraphicsContextGLProxy::createExternalSync(WebCore::Graph
     if (isContextLost())
         return { };
     auto name = createObjectName();
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::CreateExternalSync(name, WTFMove(arg0)));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CreateExternalSync(name, WTF::move(arg0)));
     if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return { };

@@ -30,6 +30,7 @@
 #include "ImageDecoder.h"
 #include "Logging.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -58,13 +59,13 @@ void ImageFrameWorkQueue::start()
     if (m_workQueue)
         return;
 
-    RefPtr decoder = protectedSource()->decoder();
+    RefPtr decoder = m_source.get()->decoder();
     if (!decoder)
         return;
 
     m_workQueue = WorkQueue::create("org.webkit.ImageDecoder"_s, WorkQueue::QOS::Default);
 
-    m_workQueue->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = this->protectedSource(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
+    m_workQueue->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = m_source.get(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
         Request request;
         while (protectedRequestQueue->dequeue(request)) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
@@ -76,7 +77,7 @@ void ImageFrameWorkQueue::start()
                 startingTime = MonotonicTime::now();
 
             PlatformImagePtr platformImage = protectedDecoder->createFrameImageAtIndex(request.index, request.subsamplingLevel, request.options);
-            RefPtr nativeImage = NativeImage::create(WTFMove(platformImage));
+            RefPtr nativeImage = NativeImage::create(WTF::move(platformImage));
 
             // Pretend as if decoding the frame took minimumDecodingDuration.
             if (minimumDecodingDuration > 0_s) {
@@ -86,9 +87,9 @@ void ImageFrameWorkQueue::start()
             }
 
             // Even if we fail to decode the frame, it is important to sync the main thread with this result.
-            callOnMainThread([protectedThis, protectedWorkQueue, protectedSource, request, nativeImage = WTFMove(nativeImage)] () mutable {
+            callOnMainThread([protectedThis, protectedWorkQueue, protectedSource, request, nativeImage = WTF::move(nativeImage)] () mutable {
                 // The WorkQueue may have been recreated before the frame was decoded.
-                if (protectedWorkQueue.ptr() != protectedThis->m_workQueue || protectedSource.ptr() != protectedThis->m_source.get()) {
+                if (protectedWorkQueue.ptr() != protectedThis->m_workQueue || protectedSource.ptr() != protectedThis->m_source.get().ptr()) {
                     LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. WorkQueue was recreated at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8().data(), request.index);
                     return;
                 }
@@ -100,12 +101,12 @@ void ImageFrameWorkQueue::start()
                 }
 
                 protectedThis->decodeQueue().removeFirst();
-                protectedSource->imageFrameDecodeAtIndexHasFinished(request.index, request.subsamplingLevel, request.animatingState, request.options, WTFMove(nativeImage));
+                protectedSource->imageFrameDecodeAtIndexHasFinished(request.index, request.subsamplingLevel, request.animatingState, request.options, WTF::move(nativeImage));
             });
         }
 
         // Ensure destruction happens on creation thread.
-        callOnMainThread([protectedThis = WTFMove(protectedThis), protectedWorkQueue = WTFMove(protectedWorkQueue), protectedSource = WTFMove(protectedSource)] () mutable { });
+        callOnMainThread([protectedThis = WTF::move(protectedThis), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)] () mutable { });
     });
 }
 
@@ -123,7 +124,7 @@ void ImageFrameWorkQueue::stop()
 {
     ASSERT(isMainThread());
 
-    Ref source = protectedSource();
+    Ref source = m_source.get();
 
     for (auto& request : m_decodeQueue) {
         LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. Decoding was cancelled for frame at index = %d.", __FUNCTION__, this, source->sourceUTF8().data(), request.index);

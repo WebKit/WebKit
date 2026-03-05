@@ -93,7 +93,7 @@ public:
         m_encodedWord = makeWord(useKind, proofStatus(), killStatus());
 #endif
     }
-    
+
     ProofStatus proofStatusUnchecked() const
     {
 #if USE(JSVALUE64)

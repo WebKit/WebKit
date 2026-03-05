@@ -59,7 +59,6 @@
 /third_party/googletest/src
 /third_party/ijar
 /third_party/jdk/current
-/third_party/jdk/extras/java_8
 /third_party/jinja2
 /third_party/jsoncpp
 /third_party/kotlin_stdlib

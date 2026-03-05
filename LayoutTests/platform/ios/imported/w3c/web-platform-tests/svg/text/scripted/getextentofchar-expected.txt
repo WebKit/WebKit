@@ -1,0 +1,6 @@
+abc
+abc
+
+PASS Multiple chunks in a tspan
+FAIL With dominant-baseline assert_approx_equals: expected 147.5 +/- 1 but got 135.5
+

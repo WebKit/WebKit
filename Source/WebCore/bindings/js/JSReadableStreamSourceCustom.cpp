@@ -45,18 +45,18 @@ JSValue JSReadableStreamSource::start(JSGlobalObject& lexicalGlobalObject, CallF
 
     m_controller.set(vm, this, controller);
 
-    wrapped().start(ReadableStreamDefaultController(controller), WTFMove(promise));
+    wrapped().start(ReadableStreamDefaultController(controller), WTF::move(promise));
 
     return jsUndefined();
 }
 
 JSValue JSReadableStreamSource::pull(JSGlobalObject&, CallFrame&, Ref<DeferredPromise>&& promise)
 {
-    wrapped().pull(WTFMove(promise));
+    wrapped().pull(WTF::move(promise));
     return jsUndefined();
 }
 
-JSValue JSReadableStreamSource::controller(JSGlobalObject&) const
+JSValue NODELETE JSReadableStreamSource::controller(JSGlobalObject&) const
 {
     ASSERT_NOT_REACHED();
     return jsUndefined();

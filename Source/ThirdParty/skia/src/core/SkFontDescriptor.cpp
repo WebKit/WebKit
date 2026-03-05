@@ -31,6 +31,8 @@ enum {
     kItalic         = 0x13, // scalar (0 is Roman, 1 is fully Italic)
 
     // Related to font data. Can also be used with a requested font.
+    kSyntheticBold  = 0xF6, // no data
+    kSyntheticOblique = 0xF7, // no data
     kPaletteIndex   = 0xF8, // int
     kPaletteEntryOverrides = 0xF9, // int count, (int, u32)[count]
     kFontVariation  = 0xFA, // int count, (u32, scalar)[count]
@@ -43,33 +45,23 @@ enum {
 
 SkFontDescriptor::SkFontDescriptor() { }
 
-[[nodiscard]] static bool read_string(SkStream* stream, SkString* string) {
-    size_t length;
-    if (!stream->readPackedUInt(&length)) { return false; }
-    if (length > 0) {
-        if (StreamRemainingLengthIsBelow(stream, length)) {
-            return false;
-        }
-        string->resize(length);
-        if (stream->read(string->data(), length) != length) { return false; }
-    }
-    return true;
+static bool write_id(SkWStream* stream, uint32_t id) {
+    return stream->writePackedUInt(id);
 }
-
 static bool write_string(SkWStream* stream, const SkString& string, uint32_t id) {
     if (string.isEmpty()) { return true; }
-    return stream->writePackedUInt(id) &&
+    return write_id(stream, id) &&
            stream->writePackedUInt(string.size()) &&
            stream->write(string.c_str(), string.size());
 }
 
 static bool write_uint(SkWStream* stream, size_t n, uint32_t id) {
-    return stream->writePackedUInt(id) &&
+    return write_id(stream, id) &&
            stream->writePackedUInt(n);
 }
 
 static bool write_scalar(SkWStream* stream, SkScalar n, uint32_t id) {
-    return stream->writePackedUInt(id) &&
+    return write_id(stream, id) &&
            stream->writeScalar(n);
 }
 
@@ -77,6 +69,19 @@ static bool write_scalar(SkWStream* stream, SkScalar n, uint32_t id) {
     size_t i;
     if (!stream->readPackedUInt(&i)) { return kInvalid; }
     return i;
+}
+
+[[nodiscard]] static bool read_string(SkStream* stream, SkString* string) {
+    size_t length;
+    if (!stream->readPackedUInt(&length)) { return false; }
+    if (length > 0) {
+        if (SkStreamPriv::RemainingLengthIsBelow(stream, length)) {
+            return false;
+        }
+        string->resize(length);
+        if (stream->read(string->data(), length) != length) { return false; }
+    }
+    return true;
 }
 
 static constexpr SkScalar usWidths[9] {
@@ -145,7 +150,7 @@ bool SkFontDescriptor::Deserialize(SkStream* stream, SkFontDescriptor* result) {
             case kFontVariation:
                 if (!stream->readPackedUInt(&coordinateCount)) { return false; }
                 if (!SkTFitsIn<CoordinateCountType>(coordinateCount)) { return false; }
-                if (StreamRemainingLengthIsBelow(stream, coordinateCount)) {
+                if (SkStreamPriv::RemainingLengthIsBelow(stream, coordinateCount)) {
                     return false;
                 }
                 result->fCoordinateCount = SkTo<CoordinateCountType>(coordinateCount);
@@ -171,7 +176,7 @@ bool SkFontDescriptor::Deserialize(SkStream* stream, SkFontDescriptor* result) {
                 if (!SkTFitsIn<PaletteEntryOverrideCountType>(paletteEntryOverrideCount)) {
                     return false;
                 }
-                if (StreamRemainingLengthIsBelow(stream, paletteEntryOverrideCount)) {
+                if (SkStreamPriv::RemainingLengthIsBelow(stream, paletteEntryOverrideCount)) {
                     return false;
                 }
                 result->fPaletteEntryOverrideCount =
@@ -189,6 +194,12 @@ bool SkFontDescriptor::Deserialize(SkStream* stream, SkFontDescriptor* result) {
                         return false;
                     }
                 }
+                break;
+            case kSyntheticBold:
+                result->fSyntheticBold = true;
+                break;
+            case kSyntheticOblique:
+                result->fSyntheticOblique = true;
                 break;
             case kFactoryId:
                 if (!stream->readPackedUInt(&factoryId)) { return false; }
@@ -210,7 +221,7 @@ bool SkFontDescriptor::Deserialize(SkStream* stream, SkFontDescriptor* result) {
     size_t length;
     if (!stream->readPackedUInt(&length)) { return false; }
     if (length > 0) {
-        if (StreamRemainingLengthIsBelow(stream, length)) {
+        if (SkStreamPriv::RemainingLengthIsBelow(stream, length)) {
             return false;
         }
         sk_sp<SkData> data(SkData::MakeUninitialized(length));
@@ -223,52 +234,62 @@ bool SkFontDescriptor::Deserialize(SkStream* stream, SkFontDescriptor* result) {
     return true;
 }
 
-void SkFontDescriptor::serialize(SkWStream* stream) const {
+bool SkFontDescriptor::serialize(SkWStream* stream) const {
     uint32_t styleBits = (fStyle.weight() << 16) | (fStyle.width() << 8) | (fStyle.slant());
-    stream->writePackedUInt(styleBits);
+    if (!stream->writePackedUInt(styleBits)) { return false; }
 
-    write_string(stream, fFamilyName, kFontFamilyName);
-    write_string(stream, fFullName, kFullName);
-    write_string(stream, fPostscriptName, kPostscriptName);
+    if (!write_string(stream, fFamilyName, kFontFamilyName)) { return false; }
+    if (!write_string(stream, fFullName, kFullName)) { return false; }
+    if (!write_string(stream, fPostscriptName, kPostscriptName)) { return false; }
 
-    write_scalar(stream, fStyle.weight(), kWeight);
-    write_scalar(stream, fStyle.width()[width_for_usWidth], kWidth);
-    write_scalar(stream, fStyle.slant() == SkFontStyle::kUpright_Slant ? 0 : 14, kSlant);
-    write_scalar(stream, fStyle.slant() == SkFontStyle::kItalic_Slant ? 1 : 0, kItalic);
+    if (!write_scalar(stream, fStyle.weight(), kWeight)) { return false; }
+    if (!write_scalar(stream, fStyle.width()[width_for_usWidth], kWidth)) { return false; }
+    SkScalar slant = fStyle.slant() == SkFontStyle::kUpright_Slant ? 0 : 14;
+    if (!write_scalar(stream, slant, kSlant)) { return false; }
+    SkScalar italic = fStyle.slant() == SkFontStyle::kItalic_Slant ? 1 : 0;
+    if (!write_scalar(stream, italic, kItalic)) { return false; }
 
     if (fCollectionIndex > 0) {
-        write_uint(stream, fCollectionIndex, kFontIndex);
+        if (!write_uint(stream, fCollectionIndex, kFontIndex)) { return false; }
     }
     if (fPaletteIndex > 0) {
-        write_uint(stream, fPaletteIndex, kPaletteIndex);
+        if (!write_uint(stream, fPaletteIndex, kPaletteIndex)) { return false; }
     }
     if (fCoordinateCount > 0) {
-        write_uint(stream, fCoordinateCount, kFontVariation);
+        if (!write_uint(stream, fCoordinateCount, kFontVariation)) { return false; }
         for (int i = 0; i < fCoordinateCount; ++i) {
-            stream->write32(fVariation[i].axis);
-            stream->writeScalar(fVariation[i].value);
+            if (!stream->write32(fVariation[i].axis)) { return false; }
+            if (!stream->writeScalar(fVariation[i].value)) { return false; }
         }
     }
     if (fPaletteEntryOverrideCount > 0) {
-        write_uint(stream, fPaletteEntryOverrideCount, kPaletteEntryOverrides);
+        if (!write_uint(stream, fPaletteEntryOverrideCount, kPaletteEntryOverrides)) {return false;}
         for (int i = 0; i < fPaletteEntryOverrideCount; ++i) {
-            stream->writePackedUInt(fPaletteEntryOverrides[i].index);
-            stream->write32(fPaletteEntryOverrides[i].color);
+            if (!stream->writePackedUInt(fPaletteEntryOverrides[i].index)) { return false; }
+            if (!stream->write32(fPaletteEntryOverrides[i].color)) { return false; }
         }
     }
+    if (fSyntheticBold) {
+        if (!write_id(stream, kSyntheticBold)) { return false; }
+    }
+    if (fSyntheticOblique) {
+        if (!write_id(stream, kSyntheticOblique)) { return false; }
+    }
 
-    write_uint(stream, fFactoryId, kFactoryId);
+    if (!write_uint(stream, fFactoryId, kFactoryId)) { return false; }
 
-    stream->writePackedUInt(kSentinel);
+    if (!stream->writePackedUInt(kSentinel)) { return false; }
 
     if (fStream) {
         std::unique_ptr<SkStreamAsset> fontStream = fStream->duplicate();
         size_t length = fontStream->getLength();
-        stream->writePackedUInt(length);
-        stream->writeStream(fontStream.get(), length);
+        if (!stream->writePackedUInt(length)) { return false; }
+        if (!stream->writeStream(fontStream.get(), length)) { return false; }
     } else {
-        stream->writePackedUInt(0);
+        if (!stream->writePackedUInt(0)) { return false; }
     }
+
+    return true;
 }
 
 SkFontStyle::Width SkFontDescriptor::SkFontStyleWidthForWidthAxisValue(SkScalar width) {

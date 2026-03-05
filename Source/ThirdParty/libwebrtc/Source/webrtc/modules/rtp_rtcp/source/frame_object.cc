@@ -13,11 +13,11 @@
 #include <cstdint>
 #include <optional>
 #include <utility>
-#include <variant>
 
 #include "api/rtp_packet_infos.h"
 #include "api/scoped_refptr.h"
 #include "api/video/color_space.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
@@ -25,7 +25,6 @@
 #include "api/video/video_frame_type.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 
 namespace webrtc {
@@ -45,9 +44,7 @@ RtpFrameObject::RtpFrameObject(
     VideoContentType content_type,
     const RTPVideoHeader& video_header,
     const std::optional<class ColorSpace>& color_space,
-    const std::optional<
-        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>&
-        frame_instrumentation_data,
+    const std::optional<FrameInstrumentationData>& frame_instrumentation_data,
     RtpPacketInfos packet_infos,
     scoped_refptr<EncodedImageBuffer> image_buffer)
     : image_buffer_(image_buffer),

@@ -16,18 +16,18 @@ Object.defineProperty(options, "alphabet", {
   }
 });
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   if (TA === Uint8Array) return;
-  var sample = new TA(2);
+  var sample = new TA(makeCtorArg(2));
   assert.throws(TypeError, function() {
     Uint8Array.prototype.toBase64.call(sample, options);
   });
-});
+}, null, ["passthrough"]);
 
 assert.throws(TypeError, function() {
   Uint8Array.prototype.toBase64.call([], options);
-});
+}, null, ["passthrough"]);
 
 assert.throws(TypeError, function() {
   toBase64(options);
-});
+}, null, ["passthrough"]);

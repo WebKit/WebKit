@@ -35,7 +35,7 @@ class InternalError final : public RefCounted<InternalError> {
 public:
     static Ref<InternalError> create(String&& message)
     {
-        return adoptRef(*new InternalError(WTFMove(message)));
+        return adoptRef(*new InternalError(WTF::move(message)));
     }
 
     static Ref<InternalError> create(const String& message)
@@ -43,11 +43,11 @@ public:
         return adoptRef(*new InternalError(message));
     }
 
-    const String& message() const { return m_message; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
 
 private:
     InternalError(String&& message)
-        : m_message(WTFMove(message))
+        : m_message(WTF::move(message))
     {
     }
 

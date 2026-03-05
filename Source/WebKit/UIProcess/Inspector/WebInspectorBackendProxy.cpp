@@ -31,44 +31,44 @@ namespace WebKit {
 
 void WebInspectorBackendProxy::requestOpenLocalInspectorFrontend()
 {
-    m_proxy->requestOpenLocalInspectorFrontend();
+    protect(m_proxy)->requestOpenLocalInspectorFrontend();
 }
 
 void WebInspectorBackendProxy::didClose()
 {
-    m_proxy->didClose();
+    protect(m_proxy)->didClose();
 }
 
 void WebInspectorBackendProxy::bringToFront()
 {
-    m_proxy->bringToFront();
+    protect(m_proxy)->bringToFront();
 }
 
 void WebInspectorBackendProxy::elementSelectionChanged(bool active)
 {
-    m_proxy->elementSelectionChanged(active);
+    protect(m_proxy)->elementSelectionChanged(active);
 }
 
 void WebInspectorBackendProxy::timelineRecordingChanged(bool active)
 {
-    m_proxy->timelineRecordingChanged(active);
+    protect(m_proxy)->timelineRecordingChanged(active);
 }
 
 void WebInspectorBackendProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
-    m_proxy->setDeveloperPreferenceOverride(developerPreference, overrideValue);
+    protect(m_proxy)->setDeveloperPreferenceOverride(developerPreference, overrideValue);
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 void WebInspectorBackendProxy::setEmulatedConditions(std::optional<int64_t> bytesPerSecondLimit)
 {
-    m_proxy->setEmulatedConditions(bytesPerSecondLimit);
+    protect(m_proxy)->setEmulatedConditions(bytesPerSecondLimit);
 }
 #endif
 
 void WebInspectorBackendProxy::attachAvailabilityChanged(bool available)
 {
-    m_proxy->attachAvailabilityChanged(available);
+    protect(m_proxy)->attachAvailabilityChanged(available);
 }
 
 } // namespace WebKit

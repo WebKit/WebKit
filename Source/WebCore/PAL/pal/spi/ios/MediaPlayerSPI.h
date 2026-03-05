@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: (rdar://165540771) Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #import <wtf/Platform.h>
@@ -76,3 +79,5 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#endif // !__has_feature(modules)

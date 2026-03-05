@@ -53,25 +53,43 @@ struct SVGPaint {
         : m_type { Type::None }
     {
     }
-    SVGPaint(Style::Color&& value)
+    SVGPaint(Color&& value)
         : m_type { Type::Color }
-        , m_color { WTFMove(value) }
+        , m_color { WTF::move(value) }
     {
     }
-    SVGPaint(Style::URL&& value)
+    SVGPaint(URL&& value)
         : m_type { Type::URL }
-        , m_url { WTFMove(value) }
+        , m_url { WTF::move(value) }
     {
     }
     SVGPaint(URLNone&& value)
         : m_type { Type::URLNone }
-        , m_url { WTFMove(value.url) }
+        , m_url { WTF::move(value.url) }
     {
     }
     SVGPaint(URLColor&& value)
         : m_type { Type::URLColor }
-        , m_url { WTFMove(value.url) }
-        , m_color { WTFMove(value.color) }
+        , m_url { WTF::move(value.url) }
+        , m_color { WTF::move(value.color) }
+    {
+    }
+
+    // Convenience constructors for common named colors supported by Color.
+    SVGPaint(CSS::Keyword::Currentcolor keyword)
+        : SVGPaint { Color { keyword } }
+    {
+    }
+    SVGPaint(CSS::Keyword::Transparent keyword)
+        : SVGPaint { Color { keyword } }
+    {
+    }
+    SVGPaint(CSS::Keyword::Black keyword)
+        : SVGPaint { Color { keyword } }
+    {
+    }
+    SVGPaint(CSS::Keyword::White keyword)
+        : SVGPaint { Color { keyword } }
     {
     }
 

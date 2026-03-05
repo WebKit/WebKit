@@ -190,7 +190,7 @@ ___
 # What matters here is the order of instructions relative to certain other
 # instructions, i.e.
 # - lsr and lsl must precede orr of the corresponding registers.
-# - lsl must preced the lsr of the same register afterwards.
+# - lsl must precede the lsr of the same register afterwards.
 # The chosen order of the instructions overall is to try and maximize
 # the pipeline usage.
 sub SHIFT256 {

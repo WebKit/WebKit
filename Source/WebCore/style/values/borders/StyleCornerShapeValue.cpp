@@ -42,28 +42,28 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         case CSSValueRound:
-            return CornerShapeValue::round();
+            return CSS::Keyword::Round { };
         case CSSValueScoop:
-            return CornerShapeValue::scoop();
+            return CSS::Keyword::Scoop { };
         case CSSValueBevel:
-            return CornerShapeValue::bevel();
+            return CSS::Keyword::Bevel { };
         case CSSValueNotch:
-            return CornerShapeValue::notch();
+            return CSS::Keyword::Notch { };
         case CSSValueStraight:
-            return CornerShapeValue::straight();
+            return CSS::Keyword::Straight { };
         case CSSValueSquircle:
-            return CornerShapeValue::squircle();
+            return CSS::Keyword::Squircle { };
         default:
             break;
         }
 
         state.setCurrentPropertyInvalidAtComputedValueTime();
-        return CornerShapeValue::round();
+        return CSS::Keyword::Round { };
     }
 
     auto superellipseFunction = requiredFunctionDowncast<CSSValueSuperellipse, CSSPrimitiveValue>(state, value);
     if (!superellipseFunction)
-        return CornerShapeValue::round();
+        return CSS::Keyword::Round { };
 
     Ref superellipseDescriptor = superellipseFunction->item(0);
     if (superellipseDescriptor->valueID() == CSSValueInfinity)
@@ -73,7 +73,7 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
         return { SuperellipseFunction { Number<CSS::Nonnegative>(std::max(0.0, superellipseDescriptor->resolveAsNumber<double>(state.cssToLengthConversionData()))) } };
 
     state.setCurrentPropertyInvalidAtComputedValueTime();
-    return CornerShapeValue::round();
+    return CSS::Keyword::Round { };
 }
 
 // MARK: - Blending

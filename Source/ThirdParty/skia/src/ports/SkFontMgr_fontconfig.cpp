@@ -113,7 +113,7 @@ template<typename T, void (*D)(T*)> void FcTDestroy(T* t) {
     FCLocker::AssertHeld();
     D(t);
 }
-template <typename T, T* (*C)(), void (*D)(T*)> class SkAutoFc
+template <typename T, T* (*C)(), void (*D)(T*)> class [[nodiscard]] SkAutoFc
     : public SkAutoTCallVProc<T, FcTDestroy<T, D>> {
     using inherited = SkAutoTCallVProc<T, FcTDestroy<T, D>>;
 public:
@@ -707,7 +707,9 @@ public:
         : fFC(config ? config : FcInitLoadConfigAndFonts())
         , fSysroot(reinterpret_cast<const char*>(FcConfigGetSysRoot(fFC)))
         , fFamilyNames(GetFamilyNames(fFC))
-        , fScanner(std::move(scanner)) { }
+        , fScanner(std::move(scanner)) {
+            SkASSERT(fScanner);
+        }
 
     ~SkFontMgr_fontconfig() override {
         // Hold the lock while unrefing the config.

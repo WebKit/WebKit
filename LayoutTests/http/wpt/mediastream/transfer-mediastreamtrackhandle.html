@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    const worker = await createWorker(`
+        let processor;
+        let reader;
+        self.onmessage = async (event) => {
+            self.postMessage(event.data, [event.data]);
+        }
+    `);
+
+    const handle1 = new MediaStreamTrackHandle(stream.getVideoTracks()[0]);
+    assert_true(handle1 instanceof MediaStreamTrackHandle);
+
+    worker.postMessage(handle1, [handle1]);
+    const handle2 = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+
+    assert_true(handle2 instanceof MediaStreamTrackHandle);
+}, "Transfer MediaStreamTrackHandle");
+</script>
+</body>
+</html>

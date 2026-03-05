@@ -10,6 +10,6 @@ PASS Setting element.dataset[''] should also change the value of element.getAttr
 PASS Setting element.dataset['à'] should also change the value of element.getAttribute('data-à')
 PASS Setting element.dataset['-foo'] should throw a SYNTAX_ERR
 PASS Setting element.dataset['foo '] should throw an INVALID_CHARACTER_ERR
-PASS Setting element.dataset[';foo'] should throw an INVALID_CHARACTER_ERR
+FAIL Setting element.dataset[';foo'] should not throw. Invalid qualified name: 'data-;foo'
 PASS Setting element.dataset['ெfoo'] should also change the value of element.getAttribute('ெfoo')
 

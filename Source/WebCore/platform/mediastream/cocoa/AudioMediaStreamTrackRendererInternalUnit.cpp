@@ -35,8 +35,8 @@
 #include "CoreAudioCaptureDevice.h"
 #include "CoreAudioCaptureDeviceManager.h"
 #include "Logging.h"
-#include "SpanCoreAudio.h"
 #include <Accelerate/Accelerate.h>
+#include <pal/cf/CoreAudioExtras.h>
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>

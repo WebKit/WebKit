@@ -8,13 +8,12 @@
 #include "tools/MSKPPlayer.h"
 
 #include "include/core/SkCanvas.h"
-#include "include/core/SkCanvasVirtualEnforcer.h"
 #include "include/core/SkPicture.h"
 #include "include/core/SkPictureRecorder.h"
 #include "include/core/SkSurface.h"
 #include "include/docs/SkMultiPictureDocument.h"
 #include "include/private/base/SkTArray.h"
-#include "include/utils/SkNoDrawCanvas.h"
+#include "include/utils/SkNWayCanvas.h"
 #include "src/base/SkTLazy.h"
 #include "src/core/SkCanvasPriv.h"
 #include "src/core/SkStringUtils.h"
@@ -123,87 +122,21 @@ void MSKPPlayer::DrawLayerCmd::draw(SkCanvas* canvas,
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class MSKPPlayer::CmdRecordCanvas : public SkCanvasVirtualEnforcer<SkCanvas> {
+class MSKPPlayer::CmdRecordCanvas : public SkNWayCanvas {
 public:
     CmdRecordCanvas(LayerCmds* dst, LayerMap* offscreenLayers, const SkIRect* clipRect = nullptr)
-            : fDst(dst), fOffscreenLayers(offscreenLayers) {
+            : SkNWayCanvas(dst->fDimensions.width(), dst->fDimensions.height())
+            , fDst(dst)
+            , fOffscreenLayers(offscreenLayers) {
         if (clipRect) {
             fClipRect = *clipRect;
         }
-        fRecorder.beginRecording(SkRect::Make(dst->fDimensions));
+        this->addCanvas(fRecorder.beginRecording(SkRect::Make(dst->fDimensions)));
     }
     ~CmdRecordCanvas() override { this->recordPicCmd(); }
 
 protected:
-    void onDrawPaint(const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawPaint(paint);
-    }
-
-    void onDrawBehind(const SkPaint& paint) override {
-        SkCanvasPriv::DrawBehind(fRecorder.getRecordingCanvas(), paint);
-    }
-
-    void onDrawRect(const SkRect& rect, const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawRect(rect, paint);
-    }
-
-    void onDrawRRect(const SkRRect& rrect, const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawRRect(rrect, paint);
-    }
-
-    void onDrawDRRect(const SkRRect& outer, const SkRRect& inner, const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawDRRect(outer, inner, paint);
-    }
-
-    void onDrawOval(const SkRect& rect, const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawOval(rect, paint);
-    }
-
-    void onDrawArc(const SkRect& rect,
-                   SkScalar startAngle,
-                   SkScalar sweepAngle,
-                   bool useCenter,
-                   const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawArc(rect, startAngle, sweepAngle, useCenter, paint);
-    }
-
-    void onDrawPath(const SkPath& path, const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawPath(path, paint);
-    }
-
-    void onDrawRegion(const SkRegion& region, const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawRegion(region, paint);
-    }
-
-    void onDrawTextBlob(const SkTextBlob* blob,
-                        SkScalar x,
-                        SkScalar y,
-                        const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawTextBlob(blob, x, y, paint);
-    }
-
-    void onDrawPatch(const SkPoint cubics[12],
-                     const SkColor colors[4],
-                     const SkPoint texCoords[4],
-                     SkBlendMode mode,
-                     const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawPatch(cubics, colors, texCoords, mode, paint);
-    }
-
-    void onDrawPoints(SkCanvas::PointMode mode,
-                      size_t count,
-                      const SkPoint pts[],
-                      const SkPaint& paint) override {
-        fRecorder.getRecordingCanvas()->drawPoints(mode, {pts, count}, paint);
-    }
-
-    void onDrawImage2(const SkImage* image,
-                      SkScalar dx,
-                      SkScalar dy,
-                      const SkSamplingOptions& sampling,
-                      const SkPaint* paint) override {
-        fRecorder.getRecordingCanvas()->drawImage(image, dx, dy, sampling, paint);
-    }
+    using INHERITED = SkNWayCanvas;
 
     void onDrawImageRect2(const SkImage* image,
                           const SkRect& src,
@@ -227,71 +160,8 @@ protected:
             fNextDrawImageFromLayerID = -1;
             return;
         }
-        fRecorder.getRecordingCanvas()->drawImageRect(image, src, dst, sampling, paint, constraint);
+        this->INHERITED::onDrawImageRect2(image, src, dst, sampling, paint, constraint);
     }
-
-    void onDrawImageLattice2(const SkImage* image,
-                             const Lattice& lattice,
-                             const SkRect& dst,
-                             SkFilterMode mode,
-                             const SkPaint* paint) override {
-        fRecorder.getRecordingCanvas()->drawImageLattice(image, lattice, dst, mode, paint);
-    }
-
-    void onDrawAtlas2(const SkImage* image,
-                      const SkRSXform rsxForms[],
-                      const SkRect src[],
-                      const SkColor colors[],
-                      int count,
-                      SkBlendMode mode,
-                      const SkSamplingOptions& sampling,
-                      const SkRect* cull,
-                      const SkPaint* paint) override {
-        fRecorder.getRecordingCanvas()->drawAtlas(image,
-                                                  {rsxForms, count},
-                                                  {src, count},
-                                                  {colors, colors ? count : 0},
-                                                  mode,
-                                                  sampling,
-                                                  cull,
-                                                  paint);
-    }
-
-    void onDrawEdgeAAImageSet2(const ImageSetEntry imageSet[],
-                               int count,
-                               const SkPoint dstClips[],
-                               const SkMatrix preViewMatrices[],
-                               const SkSamplingOptions& sampling,
-                               const SkPaint* paint,
-                               SrcRectConstraint constraint) override {
-        fRecorder.getRecordingCanvas()->experimental_DrawEdgeAAImageSet(imageSet,
-                                                                        count,
-                                                                        dstClips,
-                                                                        preViewMatrices,
-                                                                        sampling,
-                                                                        paint,
-                                                                        constraint);
-    }
-
-#ifdef SK_BUILD_FOR_ANDROID_FRAMEWORK
-    void onDrawEdgeAAQuad(const SkRect& rect,
-                          const SkPoint clip[4],
-                          SkCanvas::QuadAAFlags aaFlags,
-                          const SkColor4f& color,
-                          SkBlendMode mode) override {}
-#else
-    void onDrawEdgeAAQuad(const SkRect& rect,
-                          const SkPoint clip[4],
-                          SkCanvas::QuadAAFlags aaFlags,
-                          const SkColor4f& color,
-                          SkBlendMode mode) override {
-        fRecorder.getRecordingCanvas()->experimental_DrawEdgeAAQuad(rect,
-                                                                    clip,
-                                                                    aaFlags,
-                                                                    color,
-                                                                    mode);
-    }
-#endif
 
     void onDrawAnnotation(const SkRect& rect, const char key[], SkData* value) override {
         static constexpr char kOffscreenLayerDraw[] = "OffscreenLayerDraw";
@@ -321,14 +191,6 @@ protected:
                 return;
             }
         }
-    }
-
-    void onDrawShadowRec(const SkPath& path, const SkDrawShadowRec& rec) override {
-        fRecorder.getRecordingCanvas()->private_draw_shadow_rec(path, rec);
-    }
-
-    void onDrawDrawable(SkDrawable* drawable, const SkMatrix* matrix) override {
-        fRecorder.getRecordingCanvas()->drawDrawable(drawable, matrix);
     }
 
     void onDrawPicture(const SkPicture* picture,

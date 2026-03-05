@@ -50,7 +50,7 @@ inline bool CharacterOffset::isEqual(const CharacterOffset& other) const
 template<typename U>
 inline Vector<Ref<AXCoreObject>> AXObjectCache::objectsForIDs(const U& axIDs) const
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     CheckedPtr cache = this;
     return WTF::compactMap(axIDs, [cache](auto& axID) -> std::optional<Ref<AXCoreObject>> {
@@ -71,15 +71,15 @@ inline Node* AXObjectCache::nodeForID(std::optional<AXID> axID) const
 
 inline AccessibilityObject* AXObjectCache::getOrCreate(Node& node, IsPartOfRelation isPartOfRelation)
 {
-    if (RefPtr object = get(node))
-        return object.unsafeGet();
+    if (auto* object = get(node))
+        return object;
     return getOrCreateSlow(node, isPartOfRelation);
 }
 
 inline AccessibilityObject* AXObjectCache::getOrCreate(Element& element, IsPartOfRelation isPartOfRelation)
 {
-    if (RefPtr object = get(element))
-        return object.unsafeGet();
+    if (auto* object = get(element))
+        return object;
     return getOrCreateSlow(element, isPartOfRelation);
 }
 
@@ -93,22 +93,6 @@ inline void AXObjectCache::scheduleObjectRegionsUpdate(bool scheduleImmediately)
 inline void AXObjectCache::willUpdateObjectRegions()
 {
     m_geometryManager->willUpdateObjectRegions();
-}
-
-inline void AXObjectCache::objectBecameIgnored(const AccessibilityObject& object)
-{
-    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
-        tree->objectBecameIgnored(object);
-}
-
-inline void AXObjectCache::objectBecameUnignored(const AccessibilityObject& object)
-{
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
-        tree->objectBecameUnignored(object);
-#else
-    UNUSED_PARAM(object);
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 }
 
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)

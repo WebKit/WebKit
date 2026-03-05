@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingStateScrollingNode.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "GraphicsLayer.h"
 #import "Scrollbar.h"
@@ -58,4 +58,4 @@ void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verti
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

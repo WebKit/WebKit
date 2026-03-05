@@ -58,10 +58,9 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const RemoteCDMConfiguration& configuration() const { return m_configuration.get(); }
+    const RemoteCDMConfiguration& configuration() const LIFETIME_BOUND { return m_configuration.get(); }
 
     RemoteCDMFactoryProxy* factory() const { return m_factory.get(); }
-    RefPtr<RemoteCDMFactoryProxy> protectedFactory() const { return m_factory.get(); }
 
     bool supportsInitData(const String&, const WebCore::SharedBuffer&);
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer& response);

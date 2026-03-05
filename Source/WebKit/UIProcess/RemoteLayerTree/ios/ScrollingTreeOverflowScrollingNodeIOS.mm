@@ -27,7 +27,6 @@
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
 
 #if PLATFORM(IOS_FAMILY)
-#if ENABLE(ASYNC_SCROLLING)
 
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "UIKitSPI.h"
@@ -63,7 +62,7 @@ ScrollingTreeScrollingNodeDelegateIOS& ScrollingTreeOverflowScrollingNodeIOS::de
 
 WKBaseScrollView *ScrollingTreeOverflowScrollingNodeIOS::scrollView() const
 {
-    return delegate().scrollView();
+    return protect(delegate())->scrollView();
 }
 
 bool ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
@@ -71,13 +70,14 @@ bool ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebC
     if (!is<ScrollingStateScrollingNode>(stateNode))
         return false;
 
+    CheckedRef delegate = this->delegate();
     if (stateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
-        delegate().resetScrollViewDelegate();
+        delegate->resetScrollViewDelegate();
 
     if (!ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
 
-    delegate().commitStateBeforeChildren(downcast<ScrollingStateScrollingNode>(stateNode));
+    delegate->commitStateBeforeChildren(downcast<ScrollingStateScrollingNode>(stateNode));
     return true;
 }
 
@@ -87,14 +87,14 @@ bool ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const Scrol
     if (!scrollingStateNode)
         return false;
 
-    delegate().commitStateAfterChildren(*scrollingStateNode);
+    protect(delegate())->commitStateAfterChildren(*scrollingStateNode);
 
     return ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(*scrollingStateNode);
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()
 {
-    delegate().repositionScrollingLayers();
+    protect(delegate())->repositionScrollingLayers();
 }
 
 String ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
@@ -117,5 +117,4 @@ String ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(Scrol
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING)
 #endif // PLATFORM(IOS_FAMILY)

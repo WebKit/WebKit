@@ -23,9 +23,8 @@
 #include "absl/algorithm/container.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/str_cat.h"
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
 #include "api/jsep.h"
-#include "api/jsep_session_description.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
@@ -113,13 +112,15 @@ WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
     std::function<void(const scoped_refptr<RTCCertificate>&)>
         on_certificate_ready,
     CodecLookupHelper* codec_lookup_helper,
-    const FieldTrialsView& field_trials)
+    const Environment& env)
     : signaling_thread_(context->signaling_thread()),
-      transport_desc_factory_(field_trials),
-      session_desc_factory_(context->media_engine(),
+      transport_desc_factory_(env.field_trials()),
+      session_desc_factory_(env,
+                            context->media_engine(),
                             context->use_rtx(),
                             context->ssrc_generator(),
                             &transport_desc_factory_,
+                            context->sctp_transport_factory(),
                             codec_lookup_helper),
       // RFC 4566 suggested a Network Time Protocol (NTP) format timestamp
       // as the session id and session version. To simplify, it should be fine
@@ -296,7 +297,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
   // is created regardless if it's identical to the previous one or not.
   // The `session_version_` is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  auto offer = std::make_unique<JsepSessionDescription>(
+  auto offer = SessionDescriptionInterface::Create(
       SdpType::kOffer, std::move(desc), session_id_,
       absl::StrCat(session_version_++));
   if (sdp_info_->local_description()) {
@@ -355,7 +356,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
   // Get a new version number by increasing the `session_version_answer_`.
   // The `session_version_` is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  auto answer = std::make_unique<JsepSessionDescription>(
+  auto answer = SessionDescriptionInterface::Create(
       SdpType::kAnswer, std::move(desc), session_id_,
       absl::StrCat(session_version_++));
   if (sdp_info_->local_description()) {
@@ -401,6 +402,7 @@ void WebRtcSessionDescriptionFactory::PostCreateSessionDescriptionFailed(
 void WebRtcSessionDescriptionFactory::PostCreateSessionDescriptionSucceeded(
     CreateSessionDescriptionObserver* observer,
     std::unique_ptr<SessionDescriptionInterface> description) {
+  description->RelinquishThreadOwnership();
   Post([observer = scoped_refptr<CreateSessionDescriptionObserver>(observer),
         description = std::move(description)]() mutable {
     observer->OnSuccess(description.release());

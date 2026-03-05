@@ -27,11 +27,13 @@
 
 #include <wtf/Platform.h>
 
-// Enables LLINT tracing.
+// Enables LLINT and IPInt tracing.
 // - Prints every instruction executed if Options::traceLLIntExecution() is enabled.
 // - Prints some information for some of the more subtle slow paths if
 //   Options::traceLLIntSlowPath() is enabled.
-#define LLINT_TRACING USE_COMPRESSED_HEAP
+// - Prints every Wasm opcode executed in IPInt if Options::traceWasmIPIntExecution()
+//   is enabled.
+#define LLINT_TRACING 0
 
 // Disable inline allocation in the interpreter. This is great if you're changing
 // how the GC allocates.

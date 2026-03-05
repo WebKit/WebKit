@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/CoreTextCompositionEngine.h>
+#include "CoreTextCompositionEngine.h"
 #include <pal/spi/cf/CoreTextSPI.h>
 
 class ChineseCompositionRules {

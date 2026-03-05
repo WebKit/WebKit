@@ -41,9 +41,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableRowsCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTableRowsCollection);
 
-static inline void assertRowIsInTable(HTMLTableElement& table, HTMLTableRowElement* row)
+static inline void NODELETE assertRowIsInTable(HTMLTableElement& table, HTMLTableRowElement* row)
 {
 #if ASSERT_ENABLED
     UNUSED_PARAM(table);
@@ -59,7 +59,7 @@ static inline void assertRowIsInTable(HTMLTableElement& table, HTMLTableRowEleme
 #endif // not ASSERT_ENABLED
 }
 
-static inline bool isInSection(HTMLTableRowElement& row, const HTMLQualifiedName& sectionTag)
+static inline bool NODELETE isInSection(HTMLTableRowElement& row, const HTMLQualifiedName& sectionTag)
 {
     // Because we know that the parent is a table or a section, it's safe to cast it to an HTMLElement
     // giving us access to the faster hasTagName overload from that class.
@@ -166,7 +166,7 @@ Ref<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement& t
 
 Element* HTMLTableRowsCollection::customElementAfter(Element* previous) const
 {
-    return rowAfter(protectedTableElement().get(), downcast<HTMLTableRowElement>(previous));
+    return rowAfter(protect(tableElement()), downcast<HTMLTableRowElement>(previous));
 }
 
 }

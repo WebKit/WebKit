@@ -25,7 +25,7 @@
 
 
 // Limit to ensure we don't overflow: much greater than
-// anything enountered in practice.
+// anything encountered in practice.
 
 #define NAME_ONELINE_MAX (1024 * 1024)
 
@@ -36,13 +36,13 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len) {
   const char *s;
   char *p;
   unsigned char *q;
-  BUF_MEM *b = NULL;
+  BUF_MEM *b = nullptr;
   static const char hex[17] = "0123456789ABCDEF";
   int gs_doit[4];
   char tmp_buf[80];
 
-  if (buf == NULL) {
-    if ((b = BUF_MEM_new()) == NULL) {
+  if (buf == nullptr) {
+    if ((b = BUF_MEM_new()) == nullptr) {
       goto err;
     }
     if (!BUF_MEM_grow(b, 200)) {
@@ -51,9 +51,9 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len) {
     b->data[0] = '\0';
     len = 200;
   } else if (len <= 0) {
-    return NULL;
+    return nullptr;
   }
-  if (a == NULL) {
+  if (a == nullptr) {
     if (b) {
       buf = b->data;
       OPENSSL_free(b);
@@ -67,19 +67,19 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len) {
   for (i = 0; i < sk_X509_NAME_ENTRY_num(a->entries); i++) {
     ne = sk_X509_NAME_ENTRY_value(a->entries, i);
     n = OBJ_obj2nid(ne->object);
-    if ((n == NID_undef) || ((s = OBJ_nid2sn(n)) == NULL)) {
+    if ((n == NID_undef) || ((s = OBJ_nid2sn(n)) == nullptr)) {
       i2t_ASN1_OBJECT(tmp_buf, sizeof(tmp_buf), ne->object);
       s = tmp_buf;
     }
     l1 = strlen(s);
 
-    type = ne->value->type;
-    num = ne->value->length;
+    type = ne->value.type;
+    num = ne->value.length;
     if (num > NAME_ONELINE_MAX) {
       OPENSSL_PUT_ERROR(X509, X509_R_NAME_TOO_LONG);
       goto err;
     }
-    q = ne->value->data;
+    q = ne->value.data;
 
     if ((type == V_ASN1_GENERALSTRING) && ((num % 4) == 0)) {
       gs_doit[0] = gs_doit[1] = gs_doit[2] = gs_doit[3] = 0;
@@ -115,7 +115,7 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len) {
       OPENSSL_PUT_ERROR(X509, X509_R_NAME_TOO_LONG);
       goto err;
     }
-    if (b != NULL) {
+    if (b != nullptr) {
       if (!BUF_MEM_grow(b, l + 1)) {
         goto err;
       }
@@ -130,7 +130,7 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len) {
     p += l1;
     *(p++) = '=';
 
-    q = ne->value->data;
+    q = ne->value.data;
 
     for (j = 0; j < num; j++) {
       if (!gs_doit[j & 3]) {
@@ -148,7 +148,7 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len) {
     }
     *p = '\0';
   }
-  if (b != NULL) {
+  if (b != nullptr) {
     p = b->data;
     OPENSSL_free(b);
   } else {
@@ -160,5 +160,5 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len) {
   return p;
 err:
   BUF_MEM_free(b);
-  return NULL;
+  return nullptr;
 }

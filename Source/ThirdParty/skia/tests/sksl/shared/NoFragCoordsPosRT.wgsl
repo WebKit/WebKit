@@ -1,5 +1,6 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct VSIn {
   @location(0) pos: vec4<f32>,
 };
@@ -10,7 +11,7 @@ struct VSOut {
 struct _GlobalUniforms {
   sk_RTAdjust: vec4<f32>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
 fn _skslMain(_stageIn: VSIn, _stageOut: ptr<function, VSOut>) {
   {
     (*_stageOut).sk_Position = _stageIn.pos;

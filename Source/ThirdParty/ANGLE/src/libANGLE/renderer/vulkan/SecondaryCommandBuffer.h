@@ -16,9 +16,9 @@
 #endif
 
 #include "common/vulkan/vk_headers.h"
+#include "libANGLE/renderer/vulkan/AllocatorHelperPool.h"
 #include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
-#    include "libANGLE/renderer/vulkan/AllocatorHelperPool.h"
 
 namespace rx
 {
@@ -52,9 +52,13 @@ enum class CommandID : uint16_t
     BindGraphicsPipeline,
     BindIndexBuffer,
     BindIndexBuffer2,
+    BindTileMemory,
     BindTransformFeedbackBuffers,
     BindVertexBuffers,
     BindVertexBuffers2,
+    BindVertexBuffers2NoSize,
+    BindVertexBuffers2NoSizeNoStride,
+    BindVertexBuffers2NoStride,
     BlitImage,
     BufferBarrier,
     BufferBarrier2,
@@ -107,6 +111,7 @@ enum class CommandID : uint16_t
     SetLineWidth,
     SetLogicOp,
     SetPrimitiveRestartEnable,
+    SetPrimitiveTopology,
     SetRasterizerDiscardEnable,
     SetScissor,
     SetStencilCompareMask,
@@ -208,7 +213,10 @@ struct BindTransformFeedbackBuffersParams
 VERIFY_8_BYTE_ALIGNMENT(BindTransformFeedbackBuffersParams)
 
 using BindVertexBuffersParams  = BindTransformFeedbackBuffersParams;
-using BindVertexBuffers2Params = BindVertexBuffersParams;
+using BindVertexBuffers2Params         = BindVertexBuffersParams;
+using BindVertexBuffers2NoSizeParams         = BindVertexBuffers2Params;
+using BindVertexBuffers2NoSizeNoStrideParams = BindVertexBuffers2Params;
+using BindVertexBuffers2NoStrideParams = BindVertexBuffers2Params;
 
 struct BlitImageParams
 {
@@ -218,6 +226,8 @@ struct BlitImageParams
     VkImage srcImage;
     VkImage dstImage;
     VkImageBlit region;
+    VkImageLayout srcImageLayout;
+    VkImageLayout dstImageLayout;
 };
 VERIFY_8_BYTE_ALIGNMENT(BlitImageParams)
 
@@ -237,6 +247,14 @@ struct BufferBarrier2Params
     VkBufferMemoryBarrier2 bufferMemoryBarrier2;
 };
 VERIFY_8_BYTE_ALIGNMENT(BufferBarrier2Params)
+
+struct BindTileMemoryParams
+{
+    CommandHeader header;
+    uint32_t padding;
+    VkDeviceMemory tileMemory;
+};
+VERIFY_8_BYTE_ALIGNMENT(BindTileMemoryParams)
 
 struct ClearAttachmentsParams
 {
@@ -592,6 +610,8 @@ struct ResolveImageParams
     VkImageResolve region;
     VkImage srcImage;
     VkImage dstImage;
+    VkImageLayout srcImageLayout;
+    VkImageLayout dstImageLayout;
 };
 VERIFY_8_BYTE_ALIGNMENT(ResolveImageParams)
 
@@ -705,6 +725,14 @@ struct SetPrimitiveRestartEnableParams
     VkBool32 primitiveRestartEnable;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetPrimitiveRestartEnableParams)
+
+struct SetPrimitiveTopologyParams
+{
+    CommandHeader header;
+
+    VkPrimitiveTopology primitiveTopology;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetPrimitiveTopologyParams)
 
 struct SetRasterizerDiscardEnableParams
 {
@@ -885,6 +913,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                           VkDeviceSize size,
                           VkIndexType indexType);
 
+    void bindTileMemory(const DeviceMemory &tileMemory);
+
     void bindTransformFeedbackBuffers(uint32_t firstBinding,
                                       uint32_t bindingCount,
                                       const VkBuffer *buffers,
@@ -902,6 +932,23 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                             const VkDeviceSize *offsets,
                             const VkDeviceSize *sizes,
                             const VkDeviceSize *strides);
+
+    void bindVertexBuffers2NoSize(uint32_t firstBinding,
+                                  uint32_t bindingCount,
+                                  const VkBuffer *buffers,
+                                  const VkDeviceSize *offsets,
+                                  const VkDeviceSize *strides);
+
+    void bindVertexBuffers2NoSizeNoStride(uint32_t firstBinding,
+                                          uint32_t bindingCount,
+                                          const VkBuffer *buffers,
+                                          const VkDeviceSize *offsets);
+
+    void bindVertexBuffers2NoStride(uint32_t firstBinding,
+                                    uint32_t bindingCount,
+                                    const VkBuffer *buffers,
+                                    const VkDeviceSize *offsets,
+                                    const VkDeviceSize *sizes);
 
     void blitImage(const Image &srcImage,
                    VkImageLayout srcImageLayout,
@@ -1078,6 +1125,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void setLineWidth(float lineWidth);
     void setLogicOp(VkLogicOp logicOp);
     void setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable);
+    void setPrimitiveTopology(VkPrimitiveTopology primitiveTopology);
     void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
     void setStencilCompareMask(uint32_t compareFrontMask, uint32_t compareBackMask);
@@ -1404,6 +1452,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindIndexBuffer2(const Buffer &buffer,
     paramStruct->indexType = indexType;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::bindTileMemory(const DeviceMemory &tileMemory)
+{
+    BindTileMemoryParams *paramStruct =
+        initCommand<BindTileMemoryParams>(CommandID::BindTileMemory);
+    paramStruct->tileMemory = tileMemory.getHandle();
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::bindTransformFeedbackBuffers(uint32_t firstBinding,
                                                                        uint32_t bindingCount,
                                                                        const VkBuffer *buffers,
@@ -1453,13 +1508,37 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2(uint32_t firstBindi
                                                              const VkDeviceSize *strides)
 {
     ASSERT(firstBinding == 0);
-    ASSERT(sizes == nullptr);
     uint8_t *writePtr;
     const ArrayParamSize buffersSize      = calculateArrayParameterSize<VkBuffer>(bindingCount);
     const ArrayParamSize offsetsSize      = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    const ArrayParamSize sizesSize        = offsetsSize;
     const ArrayParamSize stridesSize      = offsetsSize;
     BindVertexBuffers2Params *paramStruct = initCommand<BindVertexBuffers2Params>(
         CommandID::BindVertexBuffers2,
+        buffersSize.allocateBytes + offsetsSize.allocateBytes + sizesSize.allocateBytes +
+            stridesSize.allocateBytes,
+        &writePtr);
+    // Copy params
+    paramStruct->bindingCount = bindingCount;
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    writePtr                  = storeArrayParameter(writePtr, offsets, offsetsSize);
+    writePtr                  = storeArrayParameter(writePtr, sizes, sizesSize);
+    storeArrayParameter(writePtr, strides, stridesSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2NoSize(uint32_t firstBinding,
+                                                                   uint32_t bindingCount,
+                                                                   const VkBuffer *buffers,
+                                                                   const VkDeviceSize *offsets,
+                                                                   const VkDeviceSize *strides)
+{
+    ASSERT(firstBinding == 0);
+    uint8_t *writePtr;
+    const ArrayParamSize buffersSize = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    const ArrayParamSize stridesSize = offsetsSize;
+    BindVertexBuffers2NoSizeParams *paramStruct = initCommand<BindVertexBuffers2NoSizeParams>(
+        CommandID::BindVertexBuffers2NoSize,
         buffersSize.allocateBytes + offsetsSize.allocateBytes + stridesSize.allocateBytes,
         &writePtr);
     // Copy params
@@ -1467,6 +1546,47 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2(uint32_t firstBindi
     writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
     writePtr                  = storeArrayParameter(writePtr, offsets, offsetsSize);
     storeArrayParameter(writePtr, strides, stridesSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2NoSizeNoStride(
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBuffer *buffers,
+    const VkDeviceSize *offsets)
+{
+    ASSERT(firstBinding == 0);
+    uint8_t *writePtr;
+    const ArrayParamSize buffersSize = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    BindVertexBuffers2NoSizeNoStrideParams *paramStruct =
+        initCommand<BindVertexBuffers2NoSizeNoStrideParams>(
+            CommandID::BindVertexBuffers2NoSizeNoStride,
+            buffersSize.allocateBytes + offsetsSize.allocateBytes, &writePtr);
+    // Copy params
+    paramStruct->bindingCount = bindingCount;
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    storeArrayParameter(writePtr, offsets, offsetsSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2NoStride(uint32_t firstBinding,
+                                                                     uint32_t bindingCount,
+                                                                     const VkBuffer *buffers,
+                                                                     const VkDeviceSize *offsets,
+                                                                     const VkDeviceSize *sizes)
+{
+    ASSERT(firstBinding == 0);
+    uint8_t *writePtr;
+    const ArrayParamSize buffersSize = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    const ArrayParamSize sizesSize   = offsetsSize;
+    BindVertexBuffers2NoStrideParams *paramStruct = initCommand<BindVertexBuffers2NoStrideParams>(
+        CommandID::BindVertexBuffers2NoStride,
+        buffersSize.allocateBytes + offsetsSize.allocateBytes + sizesSize.allocateBytes, &writePtr);
+    // Copy params
+    paramStruct->bindingCount = bindingCount;
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    writePtr                  = storeArrayParameter(writePtr, offsets, offsetsSize);
+    storeArrayParameter(writePtr, sizes, sizesSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::blitImage(const Image &srcImage,
@@ -1478,14 +1598,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::blitImage(const Image &srcImage,
                                                     VkFilter filter)
 {
     // Currently ANGLE uses limited params so verify those assumptions and update if they change
-    ASSERT(srcImageLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-    ASSERT(dstImageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     ASSERT(regionCount == 1);
     BlitImageParams *paramStruct = initCommand<BlitImageParams>(CommandID::BlitImage);
     paramStruct->srcImage        = srcImage.getHandle();
     paramStruct->dstImage        = dstImage.getHandle();
     paramStruct->filter          = filter;
     paramStruct->region          = regions[0];
+    paramStruct->srcImageLayout  = srcImageLayout;
+    paramStruct->dstImageLayout  = dstImageLayout;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bufferBarrier(
@@ -2022,13 +2142,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::resolveImage(const Image &srcImage,
                                                        const VkImageResolve *regions)
 {
     // Currently ANGLE uses limited params so verify those assumptions and update if they change.
-    ASSERT(srcImageLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-    ASSERT(dstImageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     ASSERT(regionCount == 1);
     ResolveImageParams *paramStruct = initCommand<ResolveImageParams>(CommandID::ResolveImage);
     paramStruct->srcImage           = srcImage.getHandle();
     paramStruct->dstImage           = dstImage.getHandle();
     paramStruct->region             = regions[0];
+    paramStruct->srcImageLayout     = srcImageLayout;
+    paramStruct->dstImageLayout     = dstImageLayout;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setBlendConstants(const float blendConstants[4])
@@ -2134,6 +2254,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::setPrimitiveRestartEnable(VkBool32 pri
     SetPrimitiveRestartEnableParams *paramStruct =
         initCommand<SetPrimitiveRestartEnableParams>(CommandID::SetPrimitiveRestartEnable);
     paramStruct->primitiveRestartEnable = primitiveRestartEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setPrimitiveTopology(
+    VkPrimitiveTopology primitiveTopology)
+{
+    SetPrimitiveTopologyParams *paramStruct =
+        initCommand<SetPrimitiveTopologyParams>(CommandID::SetPrimitiveTopology);
+    paramStruct->primitiveTopology = primitiveTopology;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setRasterizerDiscardEnable(
@@ -2290,7 +2418,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::writeTimestamp(VkPipelineStageFlagBits
                                                          const QueryPool &queryPool,
                                                          uint32_t query)
 {
-    ASSERT(pipelineStage == VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+    ASSERT(pipelineStage == VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 
     WriteTimestampParams *paramStruct =
         initCommand<WriteTimestampParams>(CommandID::WriteTimestamp);
@@ -2302,7 +2430,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::writeTimestamp2(VkPipelineStageFlagBit
                                                           const QueryPool &queryPool,
                                                           uint32_t query)
 {
-    ASSERT(pipelineStage == VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT);
+    ASSERT(pipelineStage == VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT);
 
     WriteTimestampParams *paramStruct =
         initCommand<WriteTimestampParams>(CommandID::WriteTimestamp2);

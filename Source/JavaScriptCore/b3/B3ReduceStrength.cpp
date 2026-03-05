@@ -43,6 +43,9 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
+#include "B3WasmRefTypeCheckValue.h"
+#include "B3WasmStructGetValue.h"
+#include "B3WasmStructSetValue.h"
 #include "SIMDShuffle.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -927,6 +930,65 @@ private:
                     break;
                 }
             }
+
+            if (m_value->isFP()) {
+                if (m_value->child(1)->hasFloat()) {
+                    uint32_t value = std::bit_cast<uint32_t>(m_value->child(1)->asFloat());
+                    // Turn this: Mul(value, 2.0)
+                    // Into this: Add(value, value)
+                    if (value == std::bit_cast<uint32_t>(2.0f)) {
+                        replaceWithNew<Value>(Add, m_value->origin(), m_value->child(0), m_value->child(0));
+                        break;
+                    }
+
+                    // Turn this: Mul(value, -1.0)
+                    // Into this: Sub(-0.0, value)
+                    if (value == std::bit_cast<uint32_t>(-1.0f)) {
+                        Value* constant = m_insertionSet.insert<ConstFloatValue>(m_index, m_value->origin(), -0.0f);
+                        replaceWithNew<Value>(Sub, m_value->origin(), constant, m_value->child(0));
+                        break;
+                    }
+
+                    // Turn this: Mul(value, -2.0)
+                    // Into this: Sub(-0.0, Add(value, value))
+                    // Both Mul and Sub(Add(...)) are arithmetic operations, so sNaN → qNaN behavior is preserved.
+                    // We use Sub(-0.0, x) instead of Neg(x) because Neg is non-arithmetic and would not quiet sNaN.
+                    if (value == std::bit_cast<uint32_t>(-2.0f)) {
+                        Value* add = m_insertionSet.insert<Value>(m_index, Add, m_value->origin(), m_value->child(0), m_value->child(0));
+                        Value* negZero = m_insertionSet.insert<ConstFloatValue>(m_index, m_value->origin(), -0.0f);
+                        replaceWithNew<Value>(Sub, m_value->origin(), negZero, add);
+                        break;
+                    }
+                }
+                if (m_value->child(1)->hasDouble()) {
+                    uint64_t value = std::bit_cast<uint64_t>(m_value->child(1)->asDouble());
+                    // Turn this: Mul(value, 2.0)
+                    // Into this: Add(value, value)
+                    if (value == std::bit_cast<uint64_t>(2.0)) {
+                        replaceWithNew<Value>(Add, m_value->origin(), m_value->child(0), m_value->child(0));
+                        break;
+                    }
+
+                    // Turn this: Mul(value, -1.0)
+                    // Into this: Sub(-0.0, value)
+                    if (value == std::bit_cast<uint64_t>(-1.0)) {
+                        Value* constant = m_insertionSet.insert<ConstDoubleValue>(m_index, m_value->origin(), -0.0);
+                        replaceWithNew<Value>(Sub, m_value->origin(), constant, m_value->child(0));
+                        break;
+                    }
+
+                    // Turn this: Mul(value, -2.0)
+                    // Into this: Sub(-0.0, Add(value, value))
+                    // Both Mul and Sub(Add(...)) are arithmetic operations, so sNaN → qNaN behavior is preserved.
+                    // We use Sub(-0.0, x) instead of Neg(x) because Neg is non-arithmetic and would not quiet sNaN.
+                    if (value == std::bit_cast<uint64_t>(-2.0)) {
+                        Value* add = m_insertionSet.insert<Value>(m_index, Add, m_value->origin(), m_value->child(0), m_value->child(0));
+                        Value* negZero = m_insertionSet.insert<ConstDoubleValue>(m_index, m_value->origin(), -0.0);
+                        replaceWithNew<Value>(Sub, m_value->origin(), negZero, add);
+                        break;
+                    }
+                }
+            }
             break;
 
         case MulHigh:
@@ -959,6 +1021,51 @@ private:
             // likes.
             if (replaceWithNewValue(m_value->child(0)->divConstant(m_proc, m_value->child(1))))
                 break;
+
+            if (m_value->isFP()) {
+                if (m_value->child(1)->hasFloat()) {
+                    float divisor = m_value->child(1)->asFloat();
+                    // Turn this: Div(value, -1.0)
+                    // Into this: Sub(-0.0, value)
+                    // Both Div and Sub are arithmetic operations, so sNaN → qNaN behavior is preserved.
+                    // We use Sub(-0.0, x) instead of Neg(x) because Neg is non-arithmetic and would not quiet sNaN.
+                    if (std::bit_cast<uint32_t>(divisor) == std::bit_cast<uint32_t>(-1.0f)) {
+                        Value* negZero = m_insertionSet.insert<ConstFloatValue>(m_index, m_value->origin(), -0.0f);
+                        replaceWithNew<Value>(Sub, m_value->origin(), negZero, m_value->child(0));
+                        break;
+                    }
+                    // Turn this: Div(value, power_of_2)
+                    // Into this: Mul(value, 1.0 / power_of_2)
+                    // Both Div and Mul are arithmetic operations, so sNaN → qNaN behavior is preserved.
+                    // All reciprocals of normal powers of two are exactly representable in IEEE 754.
+                    if (std::isnormal(divisor) && (std::bit_cast<uint32_t>(divisor) & 0x007FFFFF) == 0) {
+                        Value* reciprocal = m_insertionSet.insert<ConstFloatValue>(m_index, m_value->origin(), 1.0f / divisor);
+                        replaceWithNew<Value>(Mul, m_value->origin(), m_value->child(0), reciprocal);
+                        break;
+                    }
+                }
+                if (m_value->child(1)->hasDouble()) {
+                    double divisor = m_value->child(1)->asDouble();
+                    // Turn this: Div(value, -1.0)
+                    // Into this: Sub(-0.0, value)
+                    // Both Div and Sub are arithmetic operations, so sNaN → qNaN behavior is preserved.
+                    // We use Sub(-0.0, x) instead of Neg(x) because Neg is non-arithmetic and would not quiet sNaN.
+                    if (std::bit_cast<uint64_t>(divisor) == std::bit_cast<uint64_t>(-1.0)) {
+                        Value* negZero = m_insertionSet.insert<ConstDoubleValue>(m_index, m_value->origin(), -0.0);
+                        replaceWithNew<Value>(Sub, m_value->origin(), negZero, m_value->child(0));
+                        break;
+                    }
+                    // Turn this: Div(value, power_of_2)
+                    // Into this: Mul(value, 1.0 / power_of_2)
+                    // Both Div and Mul are arithmetic operations, so sNaN → qNaN behavior is preserved.
+                    // All reciprocals of normal powers of two are exactly representable in IEEE 754.
+                    if (std::isnormal(divisor) && (std::bit_cast<uint64_t>(divisor) & 0x000FFFFFFFFFFFFFULL) == 0) {
+                        Value* reciprocal = m_insertionSet.insert<ConstDoubleValue>(m_index, m_value->origin(), 1.0 / divisor);
+                        replaceWithNew<Value>(Mul, m_value->origin(), m_value->child(0), reciprocal);
+                        break;
+                    }
+                }
+            }
 
             if (m_value->child(1)->hasInt()) {
                 switch (m_value->child(1)->asInt()) {
@@ -2180,7 +2287,8 @@ private:
                     case Add: {
                         // Turn this: Trunc(SShr(Add(@a, constant), $12))
                         // Into this: Add(Trunc(SShr(@a, $12), converted-constant)
-                        if (sshrArg0->child(1)->hasInt64()) {
+                        if (sshrArg0->child(1)->hasInt64()
+                            && !(sshrArg0->child(1)->asInt64() & ((1LL << JSValue::int52ShiftAmount) - 1))) {
                             auto* shiftAmount = m_value->child(0)->child(1);
                             int64_t constant = sshrArg0->child(1)->asInt64();
                             auto* shifted = m_insertionSet.insert<Value>(m_index, SShr, m_value->child(0)->origin(), sshrArg0->child(0), shiftAmount);
@@ -3427,6 +3535,147 @@ private:
             }
             default:
                 break;
+            }
+            break;
+        }
+
+        case WasmStructGet: {
+            auto replaceWithNonTrapping = [&] {
+                WasmStructGetValue* structGet = m_value->as<WasmStructGetValue>();
+                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmStructGetValue>(m_index, WasmStructGet, m_value->origin(), m_value->type(), structGet->child(0), structGet->rtt(), structGet->structType(), structGet->fieldIndex(), structGet->fieldHeapKey(), structGet->mutability());
+                newValue->as<WasmStructFieldValue>()->setRange(structGet->range());
+                m_value->replaceWithIdentity(newValue);
+                m_changed = true;
+            };
+
+            if (m_value->traps()) {
+                switch (m_value->child(0)->opcode()) {
+                case WasmStructNew:
+                    replaceWithNonTrapping();
+                    break;
+                case WasmRefCast: {
+                    if (!m_value->child(0)->as<WasmRefTypeCheckValue>()->allowNull()) {
+                        replaceWithNonTrapping();
+                        break;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+            break;
+        }
+
+        case WasmStructSet: {
+            auto replaceWithNonTrapping = [&] {
+                WasmStructSetValue* structSet = m_value->as<WasmStructSetValue>();
+                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmStructSetValue>(m_index, WasmStructSet, m_value->origin(), structSet->child(0), structSet->child(1), structSet->rtt(), structSet->structType(), structSet->fieldIndex(), structSet->fieldHeapKey());
+                newValue->as<WasmStructFieldValue>()->setRange(structSet->range());
+                m_value->replaceWithIdentity(newValue);
+                m_changed = true;
+            };
+
+            if (m_value->traps()) {
+                switch (m_value->child(0)->opcode()) {
+                case WasmStructNew:
+                    replaceWithNonTrapping();
+                    break;
+                case WasmRefCast: {
+                    if (!m_value->child(0)->as<WasmRefTypeCheckValue>()->allowNull()) {
+                        replaceWithNonTrapping();
+                        break;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+            break;
+        }
+
+        case WasmRefCast: {
+            auto* cast = m_value->as<WasmRefTypeCheckValue>();
+            auto* child = cast->child(0);
+            if (child->opcode() == WasmStructNew) {
+                auto* structNew = child->as<WasmStructNewValue>();
+                auto rtt = structNew->rtt();
+                int32_t toHeapType = cast->targetHeapType();
+                SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = cast->targetRTT();
+                if (!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
+                    if (rtt->isSubRTT(*targetRTT)) {
+                        // shouldNegate can only be set on WasmRefTest.
+                        ASSERT(!cast->shouldNegate());
+                        replaceWithIdentity(structNew);
+                        break;
+                    }
+                }
+            }
+
+            auto replaceWithNullTrapping = [&] {
+                auto flags = cast->flags();
+                flags.remove(WasmRefTypeCheckFlag::AllowNull);
+                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmRefTypeCheckValue>(m_index, trapping(WasmRefCast), Int64, cast->origin(), cast->targetHeapType(), flags, cast->targetRTT(), cast->child(0));
+                replaceWithIdentity(newValue);
+            };
+
+            if (cast->allowNull()) {
+                // This is really common in JetStream3/j2cl-box2d-wasm, which uses J2CL, Java to wasm compiler.
+                // When you write a code in Java like,
+                //
+                //     ((Derived)instance).field
+                //
+                //  Cast itself does not trap even if instance is null. But field access will trap if it is null.
+                //  This will be represented as a sequence of code like,
+                //
+                //      @a: WasmRefCast<Trap>(..., allowNull = true)
+                //      @b: WasmStructGet<Trap>(@a, ...)
+                //
+                //  But if they are subsequent, we can convert them into
+                //
+                //      @a: WasmRefCast<Trap>(..., allowNull = false)
+                //      @b: WasmStructGet(@a, ...)
+                //
+                // This is more efficient since WasmRefCast can leverage signal handler based null trap.
+                constexpr unsigned maxSubsequentValues = 5;
+                for (unsigned i = 1; i < maxSubsequentValues; ++i) {
+                    if (m_index + i >= m_block->size())
+                        break;
+                    auto* value = m_block->at(m_index + i);
+                    auto effects = value->effects();
+                    if (value->opcode() == WasmStructGet) {
+                        if (value->child(0) == cast) {
+                            replaceWithNullTrapping();
+                            break;
+                        }
+                    }
+                    if (value->opcode() == WasmStructSet) {
+                        if (value->child(0) == cast) {
+                            replaceWithNullTrapping();
+                            break;
+                        }
+                    }
+                    if (effects.exitsSideways || effects.writes)
+                        break;
+                }
+            }
+            break;
+        }
+
+        case WasmRefTest: {
+            auto* cast = m_value->as<WasmRefTypeCheckValue>();
+            auto* child = cast->child(0);
+            if (child->opcode() == WasmStructNew) {
+                auto* structNew = child->as<WasmStructNewValue>();
+                auto rtt = structNew->rtt();
+                int32_t toHeapType = cast->targetHeapType();
+                SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = cast->targetRTT();
+                if (!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
+                    const bool isSubtype = rtt->isSubRTT(*targetRTT);
+                    replaceWithNewValue(m_proc.addIntConstant(m_value, cast->shouldNegate() ? !isSubtype : isSubtype));
+                    break;
+                }
             }
             break;
         }

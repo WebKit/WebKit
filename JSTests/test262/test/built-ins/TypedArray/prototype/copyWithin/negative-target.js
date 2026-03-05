@@ -26,10 +26,10 @@ includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(-1, 0),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(-1, 0),
       [0, 1, 2, 0]
     ),
     '[0, 1, 2, 3].copyWithin(-1, 0) -> [0, 1, 2, 0]'
@@ -37,7 +37,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3, 4]).copyWithin(-2, 2),
+      new TA(makeCtorArg([0, 1, 2, 3, 4])).copyWithin(-2, 2),
       [0, 1, 2, 2, 3]
     ),
     '[0, 1, 2, 3, 4].copyWithin(-2, 2) -> [0, 1, 2, 2, 3]'
@@ -45,7 +45,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0, 1, 2, 3]).copyWithin(-1, 2),
+      new TA(makeCtorArg([0, 1, 2, 3])).copyWithin(-1, 2),
       [0, 1, 2, 2]
     ),
     '[0, 1, 2, 3].copyWithin(-1, 2) -> [0, 1, 2, 2]'

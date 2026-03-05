@@ -53,12 +53,12 @@ private:
     void forEachUserScript(NOESCAPE const Function<void(DOMWrapperWorld&, const UserScript&)>&) const final;
     void forEachUserStyleSheet(NOESCAPE const Function<void(const UserStyleSheet&)>&) const final;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final;
+    void NODELETE forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final;
 #endif
     bool hasBuffersForWorld(const DOMWrapperWorld&) const override { return false; }
     WebKitBuffer* buffer(const DOMWrapperWorld&, const String&) const override { return nullptr; }
 #if ENABLE(CONTENT_EXTENSIONS)
-    const ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const override { return m_contentExtensionBackend; }
+    const ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const LIFETIME_BOUND override { return m_contentExtensionBackend; }
 #endif
 
     UserScriptMap m_userScripts;

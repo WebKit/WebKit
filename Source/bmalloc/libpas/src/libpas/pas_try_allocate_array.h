@@ -34,6 +34,7 @@
 #include "pas_local_allocator_inlines.h"
 #include "pas_physical_memory_transaction.h"
 #include "pas_segregated_heap.h"
+#include "pas_try_allocate_common.h"
 
 #if LIBPAS_ENABLED
 

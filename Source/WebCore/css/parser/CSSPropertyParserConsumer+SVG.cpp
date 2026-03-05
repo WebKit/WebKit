@@ -94,7 +94,7 @@ RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range, CSS::PropertyPars
         return nullptr;
     }
 
-    return CSSValueList::createSpaceSeparated(WTFMove(paintOrderList));
+    return CSSValueList::createSpaceSeparated(WTF::move(paintOrderList));
 }
 
 RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -115,7 +115,7 @@ RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range, CSS::Propert
             return nullptr;
         dashes.append(dash.releaseNonNull());
     } while (!range.atEnd());
-    return CSSValueList::createCommaSeparated(WTFMove(dashes));
+    return CSSValueList::createCommaSeparated(WTF::move(dashes));
 }
 
 } // namespace CSSPropertyParserHelpers

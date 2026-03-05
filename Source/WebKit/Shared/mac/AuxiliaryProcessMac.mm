@@ -78,7 +78,7 @@ SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_OPTIONAL(HIServices, HIS_XPC_ResetMessageConnection, void, (), ())
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #define USE_CACHE_COMPILED_SANDBOX 1
 #else
 #define USE_CACHE_COMPILED_SANDBOX 0
@@ -456,7 +456,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     auto contents = fileContents(info.filePath);
     if (!contents || contents->isEmpty())
         return false;
-    Vector<uint8_t> cachedSandboxContents = WTFMove(*contents);
+    Vector<uint8_t> cachedSandboxContents = WTF::move(*contents);
     if (sizeof(CachedSandboxHeader) > cachedSandboxContents.size())
         return false;
 
@@ -639,17 +639,6 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
     return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);
 }
 
-static StringView parseOSVersion(StringView osSystemMarketingVersion)
-{
-    auto firstDotIndex = osSystemMarketingVersion.find('.');
-    if (firstDotIndex == notFound)
-        return { };
-    auto secondDotIndex = osSystemMarketingVersion.find('.', firstDotIndex + 1);
-    if (secondDotIndex == notFound)
-        return osSystemMarketingVersion;
-    return osSystemMarketingVersion.left(secondDotIndex);
-}
-
 static String getHomeDirectory()
 {
     // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
@@ -676,14 +665,6 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
 {
     RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
 
-    String osSystemMarketingVersion = systemMarketingVersion();
-    auto osVersion = parseOSVersion(osSystemMarketingVersion);
-    if (osVersion.isNull()) {
-        WTFLogAlways("%s: Couldn't find OS Version\n", getprogname());
-        exitProcess(EX_NOPERM);
-    }
-    sandboxParameters.addParameter("_OS_VERSION"_s, osVersion.utf8());
-
     // Use private temporary and cache directories.
     setenv("DIRHELPER_USER_DIR_SUFFIX", FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data(), 1);
     char temporaryDirectory[PATH_MAX];
@@ -704,9 +685,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     auto homeDirectory = getHomeDirectory();
     
     sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory.utf8().data());
-    String path = FileSystem::pathByAppendingComponent(homeDirectory, "Library"_s);
-    sandboxParameters.addPathParameter("HOME_LIBRARY_DIR"_s, FileSystem::fileSystemRepresentation(path).data());
-    path = FileSystem::pathByAppendingComponent(path, "/Preferences"_s);
+    String path = FileSystem::pathByAppendingComponents(homeDirectory, std::initializer_list<StringView>({ "Library"_s, "Preferences"_s }));
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR"_s, FileSystem::fileSystemRepresentation(path).data());
 
 #if CPU(X86_64)
@@ -779,18 +758,7 @@ void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, c
     RELEASE_ASSERT(success);
 }
 
-#if USE(APPKIT)
-void AuxiliaryProcess::stopNSAppRunLoop()
-{
-    ASSERT([NSApp isRunning]);
-    [NSApp stop:nil];
-
-    RetainPtr event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0.0 windowNumber:0 context:nil subtype:0 data1:0 data2:0];
-    [NSApp postEvent:event.get() atStart:true];
-}
-#endif
-
-#if !PLATFORM(MACCATALYST) && ENABLE(WEBPROCESS_NSRUNLOOP)
+#if PLATFORM(MAC)
 void AuxiliaryProcess::stopNSRunLoop()
 {
     ASSERT([NSRunLoop mainRunLoop]);
@@ -798,7 +766,7 @@ void AuxiliaryProcess::stopNSRunLoop()
         exitProcess(0);
     }];
 }
-#endif
+#endif // PLATFORM(MAC)
 
 void AuxiliaryProcess::setQOS(int latencyQOS, int throughputQOS)
 {
@@ -820,7 +788,7 @@ void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& 
     // we need to rebuild the cache by getting the home directory while holding a temporary sandbox
     // extension to the associated Open Directory service.
 
-    auto sandboxExtension = SandboxExtension::create(WTFMove(handle));
+    auto sandboxExtension = SandboxExtension::create(WTF::move(handle));
     if (!sandboxExtension)
         return;
 

@@ -40,7 +40,7 @@
 
     _clientDataJSON = [clientDataJSON retain];
     _rawId = [rawId retain];
-    _extensions = WTFMove(extensions);
+    _extensions = WTF::move(extensions);
     _attachment = attachment;
 
     return self;

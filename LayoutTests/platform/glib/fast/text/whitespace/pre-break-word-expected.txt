@@ -4,5 +4,5 @@ layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
       RenderBlock {DIV} at (0,0) size 154x22 [border: (2px solid #FF0000)]
-        RenderText {#text} at (2,2) size 893x17
+        RenderText {#text} at (2,2) size 893x18
           text run at (2,2) width 893: "Even though this div is white-space pre, the text inside should still wrap to multiple lines because of the word-wrap:break-word CSS property."

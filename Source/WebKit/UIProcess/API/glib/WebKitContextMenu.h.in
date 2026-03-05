@@ -111,6 +111,11 @@ WEBKIT_API GdkEvent *
 webkit_context_menu_get_event            (WebKitContextMenu     *menu);
 #endif
 
+WEBKIT_API gboolean
+webkit_context_menu_get_position         (WebKitContextMenu     *menu,
+                                          gint                  *x,
+                                          gint                  *y);
+
 G_END_DECLS
 
 #endif

@@ -56,6 +56,12 @@ struct WeakMapBucketDataKeyValue {
 };
 static_assert(sizeof(WeakMapBucketDataKeyValue) == 16);
 
+template<typename T>
+concept WeakMapBucketSameAsDataKeyValue = std::same_as<T, WeakMapBucketDataKeyValue>;
+
+template<typename T>
+concept WeakMapBucketSameAsDataKey = std::same_as<T, WeakMapBucketDataKey>;
+
 ALWAYS_INLINE uint32_t jsWeakMapHash(JSCell* key);
 ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t keyCount);
 
@@ -67,32 +73,32 @@ public:
         m_data.key.set(vm, owner, key);
     }
 
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value>::type setValue(VM& vm, JSCell* owner, JSValue value)
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE void setValue(VM& vm, JSCell* owner, JSValue value)
     {
         m_data.value.set(vm, owner, value);
     }
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKey>::value>::type setValue(VM&, JSCell*, JSValue) { }
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE void setValue(VM&, JSCell*, JSValue) { }
 
     ALWAYS_INLINE JSCell* key() const { return m_data.key.get(); }
 
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value, JSValue>::type value() const
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE JSValue value() const
     {
         return m_data.value.get();
     }
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKey>::value, JSValue>::type value() const { return JSValue(); }
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE JSValue value() const { return JSValue(); }
 
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value>::type copyFrom(const WeakMapBucket& from)
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE void copyFrom(const WeakMapBucket& from)
     {
         m_data.key.copyFrom(from.m_data.key);
         m_data.value.setWithoutWriteBarrier(from.m_data.value.get());
     }
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKey>::value>::type copyFrom(const WeakMapBucket& from)
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE void copyFrom(const WeakMapBucket& from)
     {
         m_data.key.copyFrom(from.m_data.key);
     }
@@ -102,20 +108,20 @@ public:
         return OBJECT_OFFSETOF(WeakMapBucket, m_data) + OBJECT_OFFSETOF(Data, key);
     }
 
-    template <typename T = Data>
-    static typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value, ptrdiff_t>::type offsetOfValue()
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    static ptrdiff_t offsetOfValue()
     {
         return OBJECT_OFFSETOF(WeakMapBucket, m_data) + OBJECT_OFFSETOF(Data, value);
     }
 
-    template <typename T = Data>
-    ALWAYS_INLINE static typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value, JSValue>::type extractValue(const WeakMapBucket& bucket)
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE static JSValue extractValue(const WeakMapBucket& bucket)
     {
         return bucket.value();
     }
 
-    template <typename T = Data>
-    ALWAYS_INLINE static typename std::enable_if<std::is_same<T, WeakMapBucketDataKey>::value, JSValue>::type extractValue(const WeakMapBucket&)
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE static JSValue extractValue(const WeakMapBucket&)
     {
         return JSValue();
     }
@@ -141,20 +147,20 @@ public:
         clearValue();
     }
 
-    template <typename T = Data, typename Visitor>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value>::type visitAggregate(Visitor& visitor)
+    template<WeakMapBucketSameAsDataKeyValue T = Data, typename Visitor>
+    ALWAYS_INLINE void visitAggregate(Visitor& visitor)
     {
         visitor.append(m_data.value);
     }
 
 private:
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value>::type clearValue()
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE void clearValue()
     {
         m_data.value.clear();
     }
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKey>::value>::type clearValue() { }
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE void clearValue() { }
 
     Data m_data;
 };
@@ -215,8 +221,9 @@ public:
     // WeakMap operations must not cause GC. We model operations in DFG based on this guarantee.
     // This guarantee is ensured by AssertNoGC.
 
-    template <typename T = WeakMapBucketType>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucket<WeakMapBucketDataKeyValue>>::value, JSValue>::type get(JSCell* key)
+    template<typename T = WeakMapBucketType>
+        requires std::same_as<T, WeakMapBucket<WeakMapBucketDataKeyValue>>
+    ALWAYS_INLINE JSValue get(JSCell* key)
     {
         AssertNoGC assertNoGC;
         if (WeakMapBucketType* bucket = findBucket(key))
@@ -224,8 +231,9 @@ public:
         return jsUndefined();
     }
 
-    template <typename T = WeakMapBucketType>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucket<WeakMapBucketDataKeyValue>>::value, JSValue>::type getBucket(JSCell* key, uint32_t hash, size_t index)
+    template<typename T = WeakMapBucketType>
+        requires std::same_as<T, WeakMapBucket<WeakMapBucketDataKeyValue>>
+    ALWAYS_INLINE JSValue getBucket(JSCell* key, uint32_t hash, size_t index)
     {
         UNUSED_PARAM(key);
         UNUSED_PARAM(hash);
@@ -298,12 +306,12 @@ public:
 
     static constexpr bool isWeakMap()
     {
-        return std::is_same<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKeyValue>>::value;
+        return std::same_as<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKeyValue>>;
     }
 
     static constexpr bool isWeakSet()
     {
-        return std::is_same<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKey>>::value;
+        return std::same_as<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKey>>;
     }
 
     template<typename CellType, SubspaceAccess mode>

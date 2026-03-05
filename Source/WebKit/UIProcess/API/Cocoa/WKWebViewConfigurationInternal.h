@@ -25,13 +25,18 @@
 
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 
-#ifdef __cplusplus
-#if !__has_feature(modules)
+#if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
 #import "APIPageConfiguration.h"
 #import "WKObject.h"
 #import <wtf/AlignedStorage.h>
 #import <wtf/Ref.h>
+
+#endif // !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+#if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
 namespace WebKit {
 
@@ -46,9 +51,19 @@ template<> struct WrapperTraits<API::PageConfiguration> {
     AlignedStorage<API::PageConfiguration> _pageConfiguration;
 }
 
+@end
+
+#endif // !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
+
+@interface WKWebViewConfiguration ()
+
 @property (nonatomic, readonly, nullable) NSString *_applicationNameForDesktopUserAgent;
 
++ (BOOL)_isValidCustomScheme:(NSString *)urlScheme;
+
 @end
+
+#if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
 #if PLATFORM(IOS_FAMILY)
 _WKDragLiftDelay toDragLiftDelay(NSUInteger);
@@ -56,15 +71,6 @@ _WKDragLiftDelay toWKDragLiftDelay(WebKit::DragLiftDelay);
 WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay);
 #endif
 
-#endif // !__has_feature(modules)
-#endif // __cplusplus
+#endif // !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface WKWebViewConfiguration ()
-
-+ (BOOL)_isValidCustomScheme:(NSString *)urlScheme;
-
-@end
-
-NS_ASSUME_NONNULL_END
+NS_HEADER_AUDIT_END(nullability, sendability)

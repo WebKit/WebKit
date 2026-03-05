@@ -32,7 +32,7 @@
 namespace WebCore::WebGPU {
 
 class XRLayerBacking : public WebCore::XRLayerBacking {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRLayerBacking);
+    WTF_MAKE_TZONE_ALLOCATED(XRLayerBacking);
 
 protected:
     XRLayerBacking() = default;

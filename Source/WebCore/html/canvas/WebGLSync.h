@@ -35,18 +35,20 @@ namespace WebCore {
 class WebGLSync final : public WebGLObject {
 public:
     virtual ~WebGLSync();
-
-    static RefPtr<WebGLSync> create(WebGLRenderingContextBase&);
+    static Ref<WebGLSync> createLost();
+    static Ref<WebGLSync> create(WebGLRenderingContextBase&);
 
     void updateCache(WebGLRenderingContextBase&);
-    GCGLint getCachedResult(GCGLenum pname) const;
-    bool isSignaled() const;
+    GCGLint NODELETE getCachedResult(GCGLenum pname) const;
+    bool NODELETE isSignaled() const;
     void scheduleAllowCacheUpdate(WebGLRenderingContextBase&);
 
     bool isUsable() const { return object() && !isDeleted(); }
     bool isInitialized() const { return true; }
 private:
     WebGLSync(WebGLRenderingContextBase&, GCGLsync);
+    WebGLSync();
+
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     bool m_allowCacheUpdate = { false };

@@ -109,7 +109,7 @@ public:
         if (!backend)
             return nullptr;
         auto backendInfo = populateBackendInfo<BackendType>(backendParameters);
-        return create<ImageBufferType>(parameters, backendInfo, creationContext, WTFMove(backend), std::forward<Arguments>(arguments)...);
+        return create<ImageBufferType>(parameters, backendInfo, creationContext, WTF::move(backend), std::forward<Arguments>(arguments)...);
     }
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
@@ -118,13 +118,13 @@ public:
         auto backendParameters = backend->parameters();
         auto parameters = Parameters { size, backendParameters.resolutionScale, backendParameters.colorSpace, backendParameters.bufferFormat, backendParameters.purpose };
         auto backendInfo = populateBackendInfo<BackendType>(backendParameters);
-        return create<ImageBufferType>(parameters, backendInfo, creationContext, WTFMove(backend), std::forward<Arguments>(arguments)...);
+        return create<ImageBufferType>(parameters, backendInfo, creationContext, WTF::move(backend), std::forward<Arguments>(arguments)...);
     }
 
     template<typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(Parameters parameters, const ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext& creationContext, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
     {
-        return adoptRef(new ImageBufferType(parameters, backendInfo, creationContext, WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return adoptRef(new ImageBufferType(parameters, backendInfo, creationContext, WTF::move(backend), std::forward<Arguments>(arguments)...));
     }
 
     template<typename BackendType>
@@ -155,6 +155,8 @@ public:
 
     WEBCORE_EXPORT virtual void flushDrawingContext();
     WEBCORE_EXPORT virtual bool flushDrawingContextAsync();
+
+    WEBCORE_EXPORT virtual void submitDrawingCommands();
 
     void prepareForDisplay();
 
@@ -218,21 +220,11 @@ public:
     //     buffer = nullptr;
     WEBCORE_EXPORT static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
-#if USE(SKIA)
-    static RefPtr<ImageBuffer> sinkIntoImageBufferForCrossThreadTransfer(RefPtr<ImageBuffer>);
-    static RefPtr<ImageBuffer> sinkIntoImageBufferAfterCrossThreadTransfer(RefPtr<ImageBuffer>, std::unique_ptr<GLFence>&&);
-#endif
     static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
     WEBCORE_EXPORT static RefPtr<SharedBuffer> sinkIntoPDFDocument(RefPtr<ImageBuffer>);
 
     WEBCORE_EXPORT virtual void convertToLuminanceMask();
     WEBCORE_EXPORT virtual void transformToColorSpace(const DestinationColorSpace& newColorSpace);
-
-    WEBCORE_EXPORT String toDataURL(const String& mimeType, std::optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No) const;
-    WEBCORE_EXPORT Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No) const;
-
-    WEBCORE_EXPORT static String toDataURL(Ref<ImageBuffer> source, const String& mimeType, std::optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No);
-    WEBCORE_EXPORT static Vector<uint8_t> toData(Ref<ImageBuffer> source, const String& mimeType, std::optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No);
 
     WEBCORE_EXPORT virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& = ImageBufferAllocator()) const;
     WEBCORE_EXPORT virtual void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied);

@@ -8,13 +8,13 @@ layer at (0,0) size 800x600
           text run at (0,0) width 576: "The following 5 inputs should be all be rendered exactly the same, aligned to the left side."
       RenderBlock (anonymous) at (0,34) size 784x84
         RenderTextControl {INPUT} at (0,0) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderBR {BR} at (155,1) size 1x18
+        RenderBR {BR} at (155,0) size 1x19
         RenderTextControl {INPUT} at (0,21) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderBR {BR} at (155,22) size 1x18
+        RenderBR {BR} at (155,21) size 1x19
         RenderTextControl {INPUT} at (0,42) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderBR {BR} at (155,43) size 1x18
+        RenderBR {BR} at (155,42) size 1x19
         RenderTextControl {INPUT} at (0,63) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderBR {BR} at (155,64) size 1x18
+        RenderBR {BR} at (155,63) size 1x19
       RenderBlock {DIV} at (0,118) size 784x21
         RenderTextControl {INPUT} at (0,0) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
 layer at (15,46) size 142x13

@@ -54,6 +54,7 @@ public:
     std::optional<size_t> legacyClampedLineIndex() const { return m_legacyClampedLineIndex; }
 
     void setLineCount(size_t lineCount) { m_lineCount = lineCount; }
+    void incrementLineCount() { ++m_lineCount; }
     size_t lineCount() const { return m_lineCount; }
 
     void setLineCountWithInlineContentIncludingNestedBlocks(size_t lineCount) { m_lineCountWithInlineContentIncludingNestedBlocks = lineCount; }
@@ -74,7 +75,7 @@ public:
     bool shouldShapeTextAcrossInlineBoxes() const { return m_shouldShapeTextAcrossInlineBoxes; }
 
     // Integration codepath
-    void setNestedListMarkerOffsets(HashMap<CheckedRef<const ElementBox>, LayoutUnit>&& nestedListMarkerOffsets) { m_nestedListMarkerOffsets = WTFMove(nestedListMarkerOffsets); }
+    void setNestedListMarkerOffsets(HashMap<CheckedRef<const ElementBox>, LayoutUnit>&& nestedListMarkerOffsets) { m_nestedListMarkerOffsets = WTF::move(nestedListMarkerOffsets); }
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(listMarkerBox); }
     void setShouldNotSynthesizeInlineBlockBaseline() { m_shouldNotSynthesizeInlineBlockBaseline = true; }
     bool shouldNotSynthesizeInlineBlockBaseline() const { return m_shouldNotSynthesizeInlineBlockBaseline; }

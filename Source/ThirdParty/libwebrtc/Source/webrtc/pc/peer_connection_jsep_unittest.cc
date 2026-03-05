@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
 #include <cstddef>
 #include <map>
 #include <memory>
@@ -38,7 +37,6 @@
 #include "p2p/base/transport_info.h"
 #include "pc/media_session.h"
 #include "pc/peer_connection_wrapper.h"
-#include "pc/sdp_utils.h"
 #include "pc/session_description.h"
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/thread.h"
@@ -418,8 +416,7 @@ TEST_F(PeerConnectionJsepTest, CreateAnswerHasSameMidsAsOffer) {
 
   std::unique_ptr<SessionDescriptionInterface> offer = caller->CreateOffer();
   const auto* offer_data = GetFirstDataContent(offer->description());
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
 
   std::unique_ptr<SessionDescriptionInterface> answer = callee->CreateAnswer();
@@ -680,8 +677,7 @@ TEST_F(PeerConnectionJsepTest,
 
   // Setting the offer on each side will dissociate the first transceivers and
   // associate the new transceivers.
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   EXPECT_EQ(std::nullopt, first_transceiver->mid());
   ASSERT_EQ(1u, caller->pc()->GetTransceivers().size());
   EXPECT_EQ(second_mid, caller->pc()->GetTransceivers()[0]->mid());
@@ -697,8 +693,7 @@ TEST_F(PeerConnectionJsepTest,
   EXPECT_EQ(second_mid, answer_contents[0].mid());
 
   // Finishing the negotiation shouldn't add or dissociate any transceivers.
-  ASSERT_TRUE(
-      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(callee->SetLocalDescription(answer->Clone()));
   ASSERT_TRUE(caller->SetRemoteDescription(std::move(answer)));
   auto caller_transceivers = caller->pc()->GetTransceivers();
   ASSERT_EQ(1u, caller_transceivers.size());
@@ -798,8 +793,7 @@ TEST_P(RecycleMediaSectionTest, CurrentLocalAndCurrentRemoteRejected) {
 
   // Setting the local offer will dissociate the previous transceiver and set
   // the MID for the new transceiver.
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   EXPECT_EQ(std::nullopt, first_transceiver->mid());
   EXPECT_EQ(second_mid, second_transceiver->mid());
 
@@ -820,8 +814,7 @@ TEST_P(RecycleMediaSectionTest, CurrentLocalAndCurrentRemoteRejected) {
   EXPECT_EQ(second_type_, answer_contents[0].media_description()->type());
 
   // Setting the local answer should succeed.
-  ASSERT_TRUE(
-      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(callee->SetLocalDescription(answer->Clone()));
 
   // Setting the remote answer should succeed and not create any new
   // transceivers.
@@ -861,8 +854,7 @@ TEST_P(RecycleMediaSectionTest, CurrentRemoteOnlyRejected) {
 
   // Setting the local offer will dissociate the previous transceiver and set
   // the MID for the new transceiver.
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   EXPECT_EQ(std::nullopt, caller_first_transceiver->mid());
   EXPECT_EQ(second_mid, caller_second_transceiver->mid());
 
@@ -883,8 +875,7 @@ TEST_P(RecycleMediaSectionTest, CurrentRemoteOnlyRejected) {
   EXPECT_EQ(second_type_, answer_contents[0].media_description()->type());
 
   // Setting the local answer should succeed.
-  ASSERT_TRUE(
-      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(callee->SetLocalDescription(answer->Clone()));
 
   // Setting the remote answer should succeed and not create any new
   // transceivers.
@@ -924,8 +915,7 @@ TEST_P(RecycleMediaSectionTest, CurrentLocalOnlyRejected) {
 
   // Setting the local offer will dissociate the previous transceiver and set
   // the MID for the new transceiver.
-  ASSERT_TRUE(
-      callee->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(callee->SetLocalDescription(offer->Clone()));
   EXPECT_EQ(std::nullopt, callee_first_transceiver->mid());
   EXPECT_EQ(second_mid, callee_second_transceiver->mid());
 
@@ -946,8 +936,7 @@ TEST_P(RecycleMediaSectionTest, CurrentLocalOnlyRejected) {
   EXPECT_EQ(second_type_, answer_contents[0].media_description()->type());
 
   // Setting the local answer should succeed.
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(answer->Clone()));
 
   // Setting the remote answer should succeed and not create any new
   // transceivers.
@@ -1136,8 +1125,7 @@ TEST_F(PeerConnectionJsepTest, DataChannelDoesNotRecycleMediaSection) {
   EXPECT_EQ(MediaType::AUDIO, offer_contents[0].media_description()->type());
   EXPECT_EQ(MediaType::DATA, offer_contents[1].media_description()->type());
 
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
 
   std::unique_ptr<SessionDescriptionInterface> answer = callee->CreateAnswer();
@@ -1201,8 +1189,7 @@ TEST_F(PeerConnectionJsepTest, OfferAnswerWithChangedMids) {
   RenameSection(0, kFirstMid, offer.get());
   RenameSection(1, kSecondMid, offer.get());
 
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   auto caller_transceivers = caller->pc()->GetTransceivers();
   EXPECT_EQ(kFirstMid, caller_transceivers[0]->mid());
   EXPECT_EQ(kSecondMid, caller_transceivers[1]->mid());
@@ -1217,8 +1204,7 @@ TEST_F(PeerConnectionJsepTest, OfferAnswerWithChangedMids) {
   EXPECT_EQ(kFirstMid, answer_contents[0].mid());
   EXPECT_EQ(kSecondMid, answer_contents[1].mid());
 
-  ASSERT_TRUE(
-      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  ASSERT_TRUE(callee->SetLocalDescription(answer->Clone()));
   ASSERT_TRUE(caller->SetRemoteDescription(std::move(answer)));
 }
 
@@ -1243,8 +1229,7 @@ TEST_F(PeerConnectionJsepTest, CreateOfferGeneratesUniqueMidIfAlreadyTaken) {
   std::unique_ptr<SessionDescriptionInterface> offer = caller->CreateOffer();
   RenameSection(0, default_second_mid, offer.get());
 
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
 
@@ -1276,8 +1261,7 @@ TEST_F(PeerConnectionJsepTest,
   std::unique_ptr<SessionDescriptionInterface> offer = caller->CreateOffer();
   RenameSection(0, default_data_mid, offer.get());
 
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
 
@@ -1648,9 +1632,9 @@ static void RemoveRtpHeaderExtensionByUri(
     absl::string_view uri) {
   std::vector<RtpExtension> header_extensions =
       media_description->rtp_header_extensions();
-  header_extensions.erase(std::remove_if(
-      header_extensions.begin(), header_extensions.end(),
-      [uri](const RtpExtension& extension) { return extension.uri == uri; }));
+  std::erase_if(header_extensions, [uri](const RtpExtension& extension) {
+    return extension.uri == uri;
+  });
   media_description->set_rtp_header_extensions(header_extensions);
 }
 
@@ -1743,8 +1727,7 @@ TEST_F(PeerConnectionJsepTest, LegacyNoMidTwoRemoteOffers) {
   std::unique_ptr<SessionDescriptionInterface> offer = caller->CreateOffer();
   ClearMids(offer.get());
 
-  ASSERT_TRUE(
-      callee->SetRemoteDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(callee->SetRemoteDescription(offer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
   EXPECT_TRUE(callee->SetLocalDescription(callee->CreateAnswer()));
 }

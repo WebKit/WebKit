@@ -24,6 +24,7 @@
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
 #include <wtf/Forward.h>
+#include <wtf/GenericHashKey.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
@@ -83,7 +84,7 @@ struct RuleAndSelector {
     uint16_t selectorIndex; // Keep in sync with RuleData's selectorIndex size.
     uint16_t selectorListIndex; // Keep in sync with RuleData's selectorListIndex size.
 
-    const CSSSelector& selector() const;
+    const CSSSelector& NODELETE selector() const;
 };
 
 struct RuleFeature : public RuleAndSelector {
@@ -105,16 +106,30 @@ using PseudoClassInvalidationKey = std::tuple<unsigned, uint8_t, AtomString>;
 
 using RuleFeatureVector = Vector<RuleFeature>;
 
+struct SelectorDeduplicationKey {
+    SelectorDeduplicationKey(const CSSSelector&);
+
+    const CSSSelector* selector;
+    unsigned cachedHash;
+
+    unsigned hash() const { return cachedHash; }
+    bool operator==(const SelectorDeduplicationKey&) const;
+};
+
 struct RuleFeatureSet {
     void add(const RuleFeatureSet&);
     void clear();
     void shrinkToFit();
-    void collectFeatures(const RuleData&, const Vector<Ref<const StyleRuleScope>>& scopeRules = { });
+
+    struct CollectionContext {
+        HashSet<GenericHashKey<SelectorDeduplicationKey>> selectorDeduplicationSet;
+    };
+    void collectFeatures(CollectionContext&, const RuleData&, const Vector<Ref<const StyleRuleScope>>& scopeRules = { });
     void registerContentAttribute(const AtomString&);
 
     bool usesHasPseudoClass() const;
-    bool usesMatchElement(MatchElement matchElement) const { return usedMatchElements[enumToUnderlyingType(matchElement)]; }
-    void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[enumToUnderlyingType(matchElement)] = true; }
+    bool usesMatchElement(MatchElement matchElement) const { return usedMatchElements[std::to_underlying(matchElement)]; }
+    void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[std::to_underlying(matchElement)] = true; }
 
     HashSet<AtomString> idsInRules;
     HashSet<AtomString> idsMatchingAncestorsInRules;
@@ -152,15 +167,16 @@ private:
         Vector<HasInvalidationFeature> hasPseudoClasses;
     };
     DoesBreakScope recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject, IsNegation = IsNegation::No, CanBreakScope = CanBreakScope::No);
+    void collectPseudoElementFeatures(const RuleData&);
 };
 
-bool isHasPseudoClassMatchElement(MatchElement);
+bool NODELETE isHasPseudoClassMatchElement(MatchElement);
 MatchElement computeHasPseudoClassMatchElement(const CSSSelector&);
 
 enum class InvalidationKeyType : uint8_t { Universal = 1, Class, Id, Attribute, Tag };
 PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass, InvalidationKeyType, const AtomString& = starAtom());
 
-bool unlikelyToHaveSelectorForAttribute(const AtomString&);
+bool NODELETE unlikelyToHaveSelectorForAttribute(const AtomString&);
 
 inline bool isUniversalInvalidation(const PseudoClassInvalidationKey& key)
 {

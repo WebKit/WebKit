@@ -359,7 +359,7 @@ TEST(NoiseModel, InitFailsWithInvalidBitdepth) {
 // (uint8_t and uint16_t) and bit depths (8, 10, 12).
 template <typename T, int bit_depth, bool use_highbd>
 struct BitDepthParams {
-  typedef T data_type_t;
+  using data_type_t = T;
   static const int kBitDepth = bit_depth;
   static const bool kUseHighBD = use_highbd;
 };
@@ -368,7 +368,7 @@ template <typename T>
 class FlatBlockEstimatorTest : public ::testing::Test, public T {
  public:
   void SetUp() override { random_.Reset(171); }
-  typedef std::vector<typename T::data_type_t> VecType;
+  using VecType = std::vector<typename T::data_type_t>;
   VecType data_;
   libaom_test::ACMRandom random_;
 };
@@ -527,11 +527,9 @@ TYPED_TEST_P(FlatBlockEstimatorTest, FindFlatBlocks) {
 REGISTER_TYPED_TEST_SUITE_P(FlatBlockEstimatorTest, ExtractBlock,
                             FindFlatBlocks);
 
-typedef ::testing::Types<BitDepthParams<uint8_t, 8, false>,   // lowbd
-                         BitDepthParams<uint16_t, 8, true>,   // lowbd in 16-bit
-                         BitDepthParams<uint16_t, 10, true>,  // highbd data
-                         BitDepthParams<uint16_t, 12, true> >
-    AllBitDepthParams;
+using AllBitDepthParams = ::testing::Types<
+    BitDepthParams<uint8_t, 8, false>, BitDepthParams<uint16_t, 8, true>,
+    BitDepthParams<uint16_t, 10, true>, BitDepthParams<uint16_t, 12, true>>;
 // Note the empty final argument can be removed if C++20 is made the minimum
 // requirement.
 INSTANTIATE_TYPED_TEST_SUITE_P(FlatBlockInstatiation, FlatBlockEstimatorTest,

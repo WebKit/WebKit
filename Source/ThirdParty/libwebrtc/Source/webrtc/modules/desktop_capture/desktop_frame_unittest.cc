@@ -118,21 +118,20 @@ TEST(DesktopFrameTest, FrameDataSwitchesBetweenNonBlackAndBlack) {
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRects) {
-  // clang-format off
   const TestData tests[] = {
-    {"0 origin",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 0, 2, 2)},
+      {.description = "0 origin",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 2, 2)},
 
-    {"Negative origin",
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(-1, -1, 2, 2)}
-  };
-  // clang-format on
+      {.description = "Negative origin",
+       .dest_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2)}};
 
   RunTests(tests);
 }
@@ -140,239 +139,246 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRects) {
 TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRectsScaled) {
   // The scale factors shouldn't affect matching rects (they're only applied
   // to any difference between the origins)
-  // clang-format off
   const TestData tests[] = {
-    {"0 origin 2x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(0, 0, 2, 2)},
+      {.description = "0 origin 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 2, 2)},
 
-    {"0 origin 0.5x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(0, 0, 2, 2)},
+      {.description = "0 origin 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 2, 2)},
 
-    {"Negative origin 2x",
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(-1, -1, 2, 2)},
+      {.description = "Negative origin 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2)},
 
-    {"Negative origin 0.5x",
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(-1, -1, 2, 2)}
-  };
-  // clang-format on
+      {.description = "Negative origin 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2)}};
 
   RunTests(tests);
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsFullyContainedRects) {
-  // clang-format off
   const TestData tests[] = {
-    {"0 origin top left",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 0, 1, 1),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 0, 1, 1)},
+      {.description = "0 origin top left",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 0, 1, 1),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 1, 1)},
 
-    {"0 origin bottom right",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(1, 1, 1, 1),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(1, 1, 1, 1)},
+      {.description = "0 origin bottom right",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(1, 1, 1, 1),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(1, 1, 1, 1)},
 
-    {"Negative origin bottom left",
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     DesktopRect::MakeXYWH(-1, 0, 1, 1),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(-1, 0, 1, 1)}
-  };
-  // clang-format on
+      {.description = "Negative origin bottom left",
+       .dest_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, 0, 1, 1),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(-1, 0, 1, 1)}};
 
   RunTests(tests);
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsFullyContainedRectsScaled) {
-  // clang-format off
   const TestData tests[] = {
-    {"0 origin top left 2x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 0, 1, 1),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(0, 0, 1, 1)},
+      {.description = "0 origin top left 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 0, 1, 1),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 1, 1)},
 
-    {"0 origin top left 0.5x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 0, 1, 1),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(0, 0, 1, 1)},
+      {.description = "0 origin top left 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 0, 1, 1),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 1, 1)},
 
-    {"0 origin bottom left 2x",
-     DesktopRect::MakeXYWH(0, 0, 4, 4),
-     DesktopRect::MakeXYWH(1, 1, 2, 2),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(2, 2, 2, 2)},
+      {.description = "0 origin bottom left 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 4, 4),
+       .src_frame_rect = DesktopRect::MakeXYWH(1, 1, 2, 2),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(2, 2, 2, 2)},
 
-    {"0 origin bottom middle 2x/1x",
-     DesktopRect::MakeXYWH(0, 0, 4, 3),
-     DesktopRect::MakeXYWH(1, 1, 2, 2),
-     2.0, 1.0,
-     DesktopRect::MakeXYWH(2, 1, 2, 2)},
+      {.description = "0 origin bottom middle 2x/1x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 4, 3),
+       .src_frame_rect = DesktopRect::MakeXYWH(1, 1, 2, 2),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(2, 1, 2, 2)},
 
-    {"0 origin middle 0.5x",
-     DesktopRect::MakeXYWH(0, 0, 3, 3),
-     DesktopRect::MakeXYWH(2, 2, 1, 1),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(1, 1, 1, 1)},
+      {.description = "0 origin middle 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 3, 3),
+       .src_frame_rect = DesktopRect::MakeXYWH(2, 2, 1, 1),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(1, 1, 1, 1)},
 
-    {"Negative origin bottom left 2x",
-     DesktopRect::MakeXYWH(-1, -1, 3, 3),
-     DesktopRect::MakeXYWH(-1, 0, 1, 1),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(-1, 1, 1, 1)},
+      {.description = "Negative origin bottom left 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(-1, -1, 3, 3),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, 0, 1, 1),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(-1, 1, 1, 1)},
 
-    {"Negative origin near middle 0.5x",
-     DesktopRect::MakeXYWH(-2, -2, 2, 2),
-     DesktopRect::MakeXYWH(0, 0, 1, 1),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(-1, -1, 1, 1)}
-  };
-  // clang-format on
+      {.description = "Negative origin near middle 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(-2, -2, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 0, 1, 1),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(-1, -1, 1, 1)}};
 
   RunTests(tests);
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsPartiallyContainedRects) {
-  // clang-format off
   const TestData tests[] = {
-    {"Top left",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(-1, -1, 2, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 0, 1, 1)},
+      {.description = "Top left",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, -1, 2, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 1, 1)},
 
-    {"Top right",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(1, -1, 2, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(1, 0, 1, 1)},
+      {.description = "Top right",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(1, -1, 2, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(1, 0, 1, 1)},
 
-    {"Bottom right",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(1, 1, 2, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(1, 1, 1, 1)},
+      {.description = "Bottom right",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(1, 1, 2, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(1, 1, 1, 1)},
 
-    {"Bottom left",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(-1, 1, 2, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 1, 1, 1)}
-  };
-  // clang-format on
+      {.description = "Bottom left",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, 1, 2, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 1, 1, 1)}};
 
   RunTests(tests);
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsPartiallyContainedRectsScaled) {
-  // clang-format off
   const TestData tests[] = {
-    {"Top left 2x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(-1, -1, 3, 3),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(0, 0, 1, 1)},
+      {.description = "Top left 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, -1, 3, 3),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 1, 1)},
 
-    {"Top right 0.5x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(2, -2, 2, 2),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(1, 0, 1, 1)},
+      {.description = "Top right 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(2, -2, 2, 2),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(1, 0, 1, 1)},
 
-    {"Bottom right 2x",
-     DesktopRect::MakeXYWH(0, 0, 3, 3),
-     DesktopRect::MakeXYWH(-1, 1, 3, 3),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(0, 2, 1, 1)},
+      {.description = "Bottom right 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 3, 3),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, 1, 3, 3),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 2, 1, 1)},
 
-    {"Bottom left 0.5x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(-2, 2, 2, 2),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(0, 1, 1, 1)}
-  };
-  // clang-format on
+      {.description = "Bottom left 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-2, 2, 2, 2),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 1, 1, 1)}};
 
   RunTests(tests);
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsUncontainedRects) {
-  // clang-format off
   const TestData tests[] = {
-    {"Left",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(-1, 0, 1, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)},
+      {.description = "Left",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, 0, 1, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)},
 
-    {"Top",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, -1, 2, 1),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)},
+      {.description = "Top",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, -1, 2, 1),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)},
 
-    {"Right",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(2, 0, 1, 2),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)},
+      {.description = "Right",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(2, 0, 1, 2),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)},
 
-
-    {"Bottom",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 2, 2, 1),
-     1.0, 1.0,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)}
-  };
-  // clang-format on
+      {.description = "Bottom",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 2, 2, 1),
+       .horizontal_scale = 1.0,
+       .vertical_scale = 1.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)}};
 
   RunTests(tests);
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsUncontainedRectsScaled) {
-  // clang-format off
   const TestData tests[] = {
-    {"Left 2x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(-1, 0, 2, 2),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)},
+      {.description = "Left 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(-1, 0, 2, 2),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)},
 
-    {"Top 0.5x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, -2, 2, 1),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)},
+      {.description = "Top 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, -2, 2, 1),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)},
 
-    {"Right 2x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(1, 0, 1, 2),
-     2.0, 2.0,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)},
+      {.description = "Right 2x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(1, 0, 1, 2),
+       .horizontal_scale = 2.0,
+       .vertical_scale = 2.0,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)},
 
-
-    {"Bottom 0.5x",
-     DesktopRect::MakeXYWH(0, 0, 2, 2),
-     DesktopRect::MakeXYWH(0, 4, 2, 1),
-     0.5, 0.5,
-     DesktopRect::MakeXYWH(0, 0, 0, 0)}
-  };
-  // clang-format on
+      {.description = "Bottom 0.5x",
+       .dest_frame_rect = DesktopRect::MakeXYWH(0, 0, 2, 2),
+       .src_frame_rect = DesktopRect::MakeXYWH(0, 4, 2, 1),
+       .horizontal_scale = 0.5,
+       .vertical_scale = 0.5,
+       .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)}};
 
   RunTests(tests);
 }

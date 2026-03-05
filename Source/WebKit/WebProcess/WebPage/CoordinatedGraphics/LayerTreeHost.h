@@ -28,7 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CallbackID.h"
-#include "LayerTreeContext.h"
+#include "FrameRenderer.h"
 #include "ThreadedCompositor.h"
 #include <WebCore/CoordinatedImageBackingStore.h>
 #include <WebCore/CoordinatedPlatformLayer.h>
@@ -36,13 +36,14 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/PlatformScreen.h>
-#include <WebCore/RunLoopObserver.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 #if ENABLE(DAMAGE_TRACKING)
 #include <WebCore/Region.h>
@@ -56,11 +57,6 @@ class GraphicsLayer;
 class GraphicsLayerFactory;
 class NativeImage;
 class SkiaPaintingEngine;
-#if USE(CAIRO)
-namespace Cairo {
-class PaintingEngine;
-}
-#endif
 }
 
 namespace WebKit {
@@ -68,72 +64,30 @@ class CoordinatedSceneState;
 class WebPage;
 struct RenderProcessInfo;
 
-class LayerTreeHost final : public CanMakeCheckedPtr<LayerTreeHost>, public WebCore::GraphicsLayerFactory, public WebCore::CoordinatedPlatformLayer::Client
-{
+class LayerTreeHost final : public FrameRenderer, public CanMakeCheckedPtr<LayerTreeHost>, public WebCore::GraphicsLayerFactory, public WebCore::CoordinatedPlatformLayer::Client {
     WTF_MAKE_TZONE_ALLOCATED(LayerTreeHost);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LayerTreeHost);
 public:
+    static std::unique_ptr<LayerTreeHost> create(WebPage&);
+
     explicit LayerTreeHost(WebPage&);
     ~LayerTreeHost();
-
-    WebPage& webPage() const { return m_webPage; }
-    CoordinatedSceneState& sceneState() const { return m_sceneState.get(); }
-
-    const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
-    void setLayerTreeStateIsFrozen(bool);
-
-    void setRootCompositingLayer(WebCore::GraphicsLayer*);
-    void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
-
-    void scheduleRenderingUpdate();
-    void updateRenderingWithForcedRepaint();
-    void updateRenderingWithForcedRepaintAsync(CompletionHandler<void()>&&);
-    void sizeDidChange();
-
-    void pauseRendering();
-    void resumeRendering();
-
-    WebCore::GraphicsLayerFactory* graphicsLayerFactory();
-
-    void backgroundColorDidChange();
 
     void willRenderFrame();
     void didRenderFrame();
 
-#if PLATFORM(GTK)
-    void adjustTransientZoom(double, WebCore::FloatPoint);
-    void commitTransientZoom(double, WebCore::FloatPoint);
-#endif
-
-    void ensureDrawing();
-
 #if ENABLE(DAMAGE_TRACKING)
     void notifyFrameDamageForTesting(WebCore::Region&&);
-    void resetDamageHistoryForTesting();
-    void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&&);
 #endif
 
-#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
-    void preferredBufferFormatsDidChange();
-#endif
-
-    void fillGLInformation(RenderProcessInfo&&, CompletionHandler<void(RenderProcessInfo&&)>&&);
 private:
     void updateRootLayer();
     WebCore::FloatRect visibleContentsRect() const;
 
-    void scheduleRenderingUpdateRunLoopObserver();
-    void invalidateRenderingUpdateRunLoopObserver();
-    void renderingUpdateRunLoopObserverFired();
-    void updateRendering();
     void requestCompositionForRenderingUpdate();
 
     // CoordinatedPlatformLayer::Client
-#if USE(CAIRO)
-    WebCore::Cairo::PaintingEngine& paintingEngine() override;
-#elif USE(SKIA)
     WebCore::SkiaPaintingEngine& paintingEngine() const override { return *m_skiaPaintingEngine.get(); }
-#endif
     Ref<WebCore::CoordinatedImageBackingStore> imageBackingStore(Ref<WebCore::NativeImage>&&) override;
 
     void attachLayer(WebCore::CoordinatedPlatformLayer&) override;
@@ -149,23 +103,44 @@ private:
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
+    // FrameRenderer
+    uint64_t surfaceID() const override;
+    void updateRenderingWithForcedRepaint() override;
+    void scheduleRenderingUpdate() override;
+    bool canUpdateRendering() const override;
+    void updateRendering() override;
+    void suspend() override;
+    void resume() override;
+    void sizeDidChange() override;
+    void backgroundColorDidChange() override;
+    bool ensureDrawing() override;
+    void fillGLInformation(RenderProcessInfo&&, CompletionHandler<void(RenderProcessInfo&&)>&&) override;
+    WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
+    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+    void preferredBufferFormatsDidChange() override;
+#endif
+#if ENABLE(DAMAGE_TRACKING)
+    void resetDamageHistoryForTesting() override;
+    void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&&) const override;
+#endif
 #if PLATFORM(GTK)
+    void adjustTransientZoom(double, WebCore::FloatPoint, WebCore::FloatPoint) override;
+    void commitTransientZoom(double, WebCore::FloatPoint, WebCore::FloatPoint) override;
+
     WebCore::FloatPoint constrainTransientZoomOrigin(double, WebCore::FloatPoint) const;
     WebCore::CoordinatedPlatformLayer* layerForTransientZoom() const;
     void applyTransientZoomToLayers(double, WebCore::FloatPoint);
 #endif
 
-    WebPage& m_webPage;
-    LayerTreeContext m_layerTreeContext;
+    const WeakRef<WebPage> m_webPage;
     const Ref<CoordinatedSceneState> m_sceneState;
     WebCore::GraphicsLayer* m_rootCompositingLayer { nullptr };
     WebCore::GraphicsLayer* m_overlayCompositingLayer { nullptr };
-    bool m_layerTreeStateIsFrozen { false };
     bool m_pendingResize { false };
     bool m_pendingForceRepaint { false };
-    bool m_isUpdatingRendering { false };
     bool m_waitUntilPaintingComplete { false };
-    bool m_isSuspended { false };
     bool m_isWaitingForRenderer { false };
     bool m_scheduledWhileWaitingForRenderer { false };
     bool m_forceFrameSync { false };
@@ -174,16 +149,7 @@ private:
     bool m_compositionRequiredInScrollingThread { false };
 #endif
     RefPtr<ThreadedCompositor> m_compositor;
-    struct {
-        CompletionHandler<void()> callback;
-        std::optional<uint32_t> compositionRequestID;
-    } m_forceRepaintAsync;
-    std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
-#if USE(CAIRO)
-    std::unique_ptr<WebCore::Cairo::PaintingEngine> m_paintingEngine;
-#elif USE(SKIA)
     std::unique_ptr<WebCore::SkiaPaintingEngine> m_skiaPaintingEngine;
-#endif
     HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
 
 #if PLATFORM(GTK)
@@ -193,7 +159,7 @@ private:
 #endif
 
 #if ENABLE(DAMAGE_TRACKING)
-    Lock m_frameDamageHistoryForTestingLock;
+    mutable Lock m_frameDamageHistoryForTestingLock;
     Vector<WebCore::Region> m_frameDamageHistoryForTesting WTF_GUARDED_BY_LOCK(m_frameDamageHistoryForTestingLock);
     std::shared_ptr<WebCore::Damage> m_damageInGlobalCoordinateSpace;
 #endif

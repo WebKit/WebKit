@@ -54,7 +54,7 @@ private:
 
 inline ClassChangeInvalidation::ClassChangeInvalidation(Ref<Element>&& element, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
     : m_isEnabled(element->needsStyleInvalidation())
-    , m_element(WTFMove(element))
+    , m_element(WTF::move(element))
 
 {
     if (!m_isEnabled)

@@ -7,22 +7,50 @@ PASS addTransceiver() with direction inactive should have result transceiver.dir
 PASS addTransceiver() with invalid direction should throw TypeError
 PASS addTransceiver(track) should have result with sender.track be given track
 PASS addTransceiver(track) multiple times should create multiple transceivers
-FAIL addTransceiver() with rid containing invalid non-alphanumeric characters should throw TypeError assert_throws_js: function "() =>
-      pc.addTransceiver('video', {
+FAIL addTransceiver("video") with rid containing invalid non-alphanumeric characters should throw TypeError assert_throws_js: function "() =>
+      pc.addTransceiver(kind, {
         sendEncodings: [{
           rid: '@Invalid!'
         }]
       })" threw object "InvalidAccessError: Invalid RID value provided." ("InvalidAccessError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL addTransceiver() with rid longer than 16 characters should throw TypeError assert_throws_js: function "() =>
-      pc.addTransceiver('audio', {
+FAIL addTransceiver("video") with rid longer than 16 characters should throw TypeError assert_throws_js: function "() =>
+      pc.addTransceiver(kind, {
         sendEncodings: [{
           rid: 'a'.repeat(17)
         }]
       })" threw object "InvalidAccessError: Invalid RID value provided." ("InvalidAccessError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-PASS addTransceiver() with valid rid value should succeed
-PASS addTransceiver() with valid sendEncodings should succeed
+FAIL addTransceiver("video") with duplicate rids should throw TypeError assert_throws_js: function "() =>
+      pc.addTransceiver(kind, {
+        sendEncodings: [{rid: 'a'}, {rid: 'a'}]
+      })" did not throw
+PASS addTransceiver("video") with valid rid value should succeed
+PASS addTransceiver("video") with multiple rid values should succeed
+PASS addTransceiver("video") with valid sendEncodings should succeed
+FAIL addTransceiver("audio") with rid containing invalid non-alphanumeric characters should throw TypeError assert_throws_js: function "() =>
+      pc.addTransceiver(kind, {
+        sendEncodings: [{
+          rid: '@Invalid!'
+        }]
+      })" threw object "InvalidAccessError: Invalid RID value provided." ("InvalidAccessError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL addTransceiver("audio") with rid longer than 16 characters should throw TypeError assert_throws_js: function "() =>
+      pc.addTransceiver(kind, {
+        sendEncodings: [{
+          rid: 'a'.repeat(17)
+        }]
+      })" threw object "InvalidAccessError: Invalid RID value provided." ("InvalidAccessError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL addTransceiver("audio") with duplicate rids should throw TypeError assert_throws_js: function "() =>
+      pc.addTransceiver(kind, {
+        sendEncodings: [{rid: 'a'}, {rid: 'a'}]
+      })" did not throw
+PASS addTransceiver("audio") with valid rid value should succeed
+PASS addTransceiver("audio") with multiple rid values should succeed
+PASS addTransceiver("audio") with valid sendEncodings should succeed
 

@@ -35,14 +35,14 @@ namespace Style {
 
 // <cursor-image> = [ <url> | <url-set> ] <number>{2}?
 // https://drafts.csswg.org/css-ui-4/#typedef-cursor-cursor-image
-struct CursorImage {
-    Ref<StyleImage> image;
+struct CursorImageAndHotSpot {
+    Ref<Image> image;
     IntPoint hotSpot { -1, -1 };
 
-    bool operator==(const CursorImage&) const = default;
+    bool operator==(const CursorImageAndHotSpot&) const = default;
 };
 
-using CursorImageList = CommaSeparatedRefCountedFixedVector<CursorImage>;
+using CursorImageList = CommaSeparatedRefCountedFixedVector<CursorImageAndHotSpot>;
 
 // <'cursor'> = <cursor-image>#? <cursor-predefined>
 // https://drafts.csswg.org/css-ui-4/#propdef-cursor
@@ -53,7 +53,7 @@ struct Cursor {
     CursorType predefined { CursorType::Auto };
 
     Cursor(Images&& images, CursorType predefined)
-        : images { WTFMove(images) }
+        : images { WTF::move(images) }
         , predefined { predefined }
     {
     }
@@ -90,15 +90,15 @@ template<size_t I> const auto& get(const Cursor& value)
 
 template<> struct CSSValueConversion<Cursor> { auto operator()(BuilderState&, const CSSValue&) -> Cursor; };
 
-template<> struct CSSValueCreation<CursorImage> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const CursorImage&); };
+template<> struct CSSValueCreation<CursorImageAndHotSpot> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const CursorImageAndHotSpot&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<CursorImage> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const CursorImage&); };
+template<> struct Serialize<CursorImageAndHotSpot> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const CursorImageAndHotSpot&); };
 
 // MARK: - Logging
 
-WTF::TextStream& operator<<(WTF::TextStream&, const CursorImage&);
+WTF::TextStream& operator<<(WTF::TextStream&, const CursorImageAndHotSpot&);
 
 } // namespace Style
 } // namespace WebCore

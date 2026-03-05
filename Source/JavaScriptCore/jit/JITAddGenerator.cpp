@@ -103,11 +103,6 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         jit.boxInt32(scratch, m_result);
         endJumpList.append(jit.jump());
 
-        if (!jit.supportsFloatingPoint()) {
-            slowPathJumpList.append(notInt32);
-            return true;
-        }
-
         // Try to do doubleVar + double(intConstant).
         notInt32.link(&jit);
         if (!varOpr.definitelyIsNumber())
@@ -136,13 +131,6 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 
         jit.boxInt32(scratch, m_result);
         endJumpList.append(jit.jump());
-
-
-        if (!jit.supportsFloatingPoint()) {
-            slowPathJumpList.append(leftNotInt);
-            slowPathJumpList.append(rightNotInt);
-            return true;
-        }
 
         leftNotInt.link(&jit);
         if (!m_leftOperand.definitelyIsNumber())

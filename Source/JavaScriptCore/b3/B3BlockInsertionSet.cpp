@@ -71,7 +71,7 @@ BasicBlock* BlockInsertionSet::splitForward(
     valueIndex = 0;
 
     // Fixup the predecessors of 'block'. They now must jump to the new block.
-    result->predecessors() = WTFMove(block->predecessors());
+    result->predecessors() = WTF::move(block->predecessors());
     block->addPredecessor(result);
     for (BasicBlock* predecessor : result->predecessors())
         predecessor->replaceSuccessor(block, result);

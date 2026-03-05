@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/CSSProperty.h>
+#include "CSSProperty.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -37,6 +37,8 @@ struct PropertyParserState;
 
 struct PropertyParserResult {
     Vector<CSSProperty, 256>& parsedProperties;
+
+    void addProperty(CSSProperty&&);
 
     // Bottleneck where the CSSValue is added to the CSSProperty vector.
     void addProperty(PropertyParserState&, CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, IsImportant, IsImplicit = IsImplicit::No);

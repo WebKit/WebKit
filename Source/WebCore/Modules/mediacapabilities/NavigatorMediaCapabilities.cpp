@@ -47,7 +47,7 @@ NavigatorMediaCapabilities& NavigatorMediaCapabilities::from(Navigator& navigato
     if (!supplement) {
         auto newSupplement = makeUnique<NavigatorMediaCapabilities>();
         supplement = newSupplement.get();
-        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTF::move(newSupplement));
     }
     return *supplement;
 }

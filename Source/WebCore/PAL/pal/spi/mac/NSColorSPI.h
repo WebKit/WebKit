@@ -25,11 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
+
+#if PLATFORM(MAC)
 
 #import <AppKit/NSColor.h>
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSColor_Private.h>
 #import <AppKit/NSColor_UserAccent.h>
@@ -65,8 +70,12 @@ typedef NS_ENUM(NSInteger, NSUserAccentColor) {
     NSUserAccentColorMulticolor = -2,
 };
 
-extern "C" NSUserAccentColor NSColorGetUserAccentColor(void);
-extern "C" void NSColorSetUserAccentColor(NSUserAccentColor key, BOOL sendNotification);
+WTF_EXTERN_C_BEGIN
+
+NSUserAccentColor NSColorGetUserAccentColor(void);
+void NSColorSetUserAccentColor(NSUserAccentColor key, BOOL sendNotification);
+
+WTF_EXTERN_C_END
 
 #endif
 
@@ -76,3 +85,5 @@ extern "C" void NSColorSetUserAccentColor(NSUserAccentColor key, BOOL sendNotifi
 @property (class, strong, readonly) NSColor *tertiarySystemFillColor;
 @end
 #endif
+
+#endif // PLATFORM(MAC)

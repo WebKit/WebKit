@@ -121,7 +121,6 @@ Modules/async-clipboard/mac/ClipboardImageReaderMac.mm @nonARC
 Modules/compression/cocoa/CompressionStreamEncoderCocoa.mm @nonARC
 Modules/compression/cocoa/DecompressionStreamDecoderCocoa.mm @nonARC
 Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp
-Modules/model-element/DDModelPlayer.mm @nonARC
 Modules/model-element/scenekit/SceneKitModel.mm @nonARC
 Modules/model-element/scenekit/SceneKitModelLoader.mm @nonARC
 Modules/model-element/scenekit/SceneKitModelLoaderClient.mm @nonARC
@@ -229,6 +228,8 @@ loader/mac/LoaderNSURLExtras.mm @nonARC
 loader/mac/ResourceLoaderMac.mm @nonARC
 page/CaptionUserPreferencesMediaAF.cpp
 page/cocoa/CaptionUserPreferencesMediaAFCocoa.mm @nonARC
+page/cocoa/ContentChangeObserver.cpp
+page/cocoa/DOMTimerHoldingTank.cpp
 page/cocoa/EventHandlerCocoa.mm @nonARC
 page/cocoa/MemoryReleaseCocoa.mm @nonARC
 page/cocoa/PageCocoa.mm @nonARC
@@ -237,8 +238,6 @@ page/cocoa/ResourceUsageOverlayCocoa.mm @nonARC
 page/cocoa/ResourceUsageThreadCocoa.mm @nonARC
 page/cocoa/SettingsBaseCocoa.mm @nonARC
 page/cocoa/WebTextIndicatorLayer.mm @nonARC
-page/ios/ContentChangeObserver.cpp
-page/ios/DOMTimerHoldingTank.cpp
 page/ios/EventHandlerIOS.mm @nonARC
 page/ios/FrameIOS.mm @nonARC
 page/ios/WebEventRegion.mm @nonARC
@@ -284,6 +283,8 @@ platform/audio/cocoa/SpatialAudioExperienceHelper.mm @nonARC
 platform/audio/cocoa/WebAudioBufferList.cpp
 platform/audio/ios/AudioOutputUnitAdaptorIOS.cpp @no-unify
 platform/audio/ios/AudioSessionIOS.mm @nonARC @no-unify
+platform/audio/ios/MediaDeviceRoute.mm @nonARC @no-unify
+platform/audio/ios/MediaDeviceRouteController.mm @nonARC
 platform/audio/ios/MediaSessionHelperIOS.mm @nonARC @no-unify
 platform/audio/ios/MediaSessionManagerIOS.mm @nonARC @no-unify
 platform/audio/mac/AudioBusMac.mm @nonARC
@@ -428,7 +429,6 @@ platform/graphics/cg/ImageBufferCGBackend.cpp
 platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
 platform/graphics/cg/ImageBufferCGPDFDocumentBackend.cpp
 platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
-platform/graphics/cg/ImageBufferUtilitiesCG.cpp
 platform/graphics/cg/ImageDecoderCG.cpp
 platform/graphics/cg/ImageUtilitiesCG.cpp
 platform/graphics/cg/IntPointCG.cpp
@@ -463,9 +463,9 @@ platform/graphics/cocoa/IOSurfacePoolCocoa.mm @nonARC
 platform/graphics/cocoa/IconCocoa.mm @nonARC
 platform/graphics/cocoa/IntRectCocoa.mm @nonARC
 platform/graphics/cocoa/ImageAdapterCocoa.mm @nonARC
-platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/MediaPlayerCocoa.mm @nonARC
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm @nonARC @no-unify
+platform/graphics/cocoa/PlatformMediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/PlatformTimeRangesCocoa.mm @nonARC @no-unify
 platform/graphics/cocoa/SourceBufferParser.cpp
 platform/graphics/cocoa/SourceBufferParserWebM.cpp
@@ -497,8 +497,22 @@ platform/graphics/cv/CVUtilities.mm @nonARC
 platform/graphics/cv/ImageTransferSessionVT.mm @nonARC
 platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/VideoFrameCV.mm @nonARC
+platform/graphics/coreimage/FEBlendCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FECompositeCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEConvolveMatrixCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEDisplacementMapCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEDropShadowCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEFloodCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEGaussianBlurCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEImageCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FELightingCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEMergeCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEMorphologyCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEOffsetCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FETileCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FETurbulenceCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FilterImageCoreImage.mm @nonARC
 platform/graphics/coreimage/SourceAlphaCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm @nonARC
@@ -570,7 +584,6 @@ platform/ios/QuickLook.mm @nonARC
 platform/ios/ScrollAnimatorIOS.mm @nonARC
 platform/ios/ScrollViewIOS.mm @nonARC
 platform/ios/ScrollbarThemeIOS.mm @nonARC
-platform/ios/SelectionGeometry.cpp
 platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm @nonARC
 platform/ios/TileControllerMemoryHandlerIOS.cpp
@@ -654,7 +667,6 @@ platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/ios/AVAudioSessionCaptureDevice.mm @nonARC
 platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @nonARC @no-unify
 platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @nonARC
-platform/mediastream/ios/ReplayKitCaptureSource.mm @nonARC @no-unify
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 platform/mediastream/mac/AVCaptureDeviceManager.mm @nonARC
 platform/mediastream/mac/AVVideoCaptureSource.mm @nonARC @no-unify

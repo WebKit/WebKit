@@ -9,6 +9,7 @@ layout(push_constant) uniform PushConstants {
     CoordType offset;
     vec2 stretch;
     vec2 invSrcExtent;
+    int srcMip;
     int srcLayer;
     int samples;
     float invSamples;

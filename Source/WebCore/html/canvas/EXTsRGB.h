@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class EXTsRGB final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTsRGB);
+    WTF_MAKE_TZONE_ALLOCATED(EXTsRGB);
     WTF_MAKE_NONCOPYABLE(EXTsRGB);
 public:
     explicit EXTsRGB(WebGLRenderingContextBase&);
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTsRGB)

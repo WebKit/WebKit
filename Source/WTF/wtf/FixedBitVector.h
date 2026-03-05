@@ -33,8 +33,6 @@
 #include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 // FIXME: This should be `: private BitVector`.
@@ -51,7 +49,7 @@ public:
     }
 
     FixedBitVector(BitVector&& other)
-        : m_bitVector(WTFMove(other))
+        : m_bitVector(WTF::move(other))
     {
     }
 
@@ -98,7 +96,9 @@ ALWAYS_INLINE bool FixedBitVector::concurrentTestAndSet(size_t bitIndex, Depende
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     WordType* data = dependency.consume(m_bitVector.words().data()) + wordIndex;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return !std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&](WordType& value) -> bool {
             if (value & mask)
@@ -116,7 +116,9 @@ ALWAYS_INLINE bool FixedBitVector::concurrentTestAndClear(size_t bitIndex, Depen
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     WordType* data = dependency.consume(m_bitVector.words().data()) + wordIndex;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&](WordType& value) -> bool {
             if (!(value & mask))
@@ -134,7 +136,7 @@ ALWAYS_INLINE bool FixedBitVector::testAndSet(size_t bitIndex)
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    WordType* bits = m_bitVector.words().data();
+    auto bits = m_bitVector.words();
     bool previousValue = bits[wordIndex] & mask;
     bits[wordIndex] |= mask;
     return previousValue;
@@ -147,7 +149,7 @@ ALWAYS_INLINE bool FixedBitVector::testAndClear(size_t bitIndex)
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    WordType* bits = m_bitVector.words().data();
+    auto bits = m_bitVector.words();
     bool previousValue = bits[wordIndex] & mask;
     bits[wordIndex] &= ~mask;
     return previousValue;
@@ -160,7 +162,7 @@ ALWAYS_INLINE bool FixedBitVector::test(size_t bitIndex) const
 
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
-    return m_bitVector.words().data()[wordIndex] & mask;
+    return m_bitVector.words()[wordIndex] & mask;
 }
 
 ALWAYS_INLINE size_t FixedBitVector::findBit(size_t startIndex, bool value) const
@@ -212,5 +214,3 @@ template<> struct HashTraits<FixedBitVector> : public CustomHashTraits<FixedBitV
 } // namespace WTF
 
 using WTF::FixedBitVector;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

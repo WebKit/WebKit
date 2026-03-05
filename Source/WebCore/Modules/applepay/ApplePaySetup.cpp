@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static bool shouldDiscloseFeatures(Document& document)
+static bool NODELETE shouldDiscloseFeatures(Document& document)
 {
     auto* page = document.page();
     if (!page || page->usesEphemeralSession())
@@ -76,11 +76,11 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
         return;
     }
 
-    m_setupFeaturesPromise = WTFMove(promise);
+    m_setupFeaturesPromise = WTF::move(promise);
 
-    page->protectedPaymentCoordinator()->getSetupFeatures(m_configuration, document.url(), [pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
+    protect(page->paymentCoordinator())->getSetupFeatures(m_configuration, document.url(), [pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
         if (pendingActivity->object().m_setupFeaturesPromise)
-            std::exchange(pendingActivity->object().m_setupFeaturesPromise, std::nullopt)->resolve(WTFMove(setupFeatures));
+            std::exchange(pendingActivity->object().m_setupFeaturesPromise, std::nullopt)->resolve(WTF::move(setupFeatures));
     });
 }
 
@@ -108,9 +108,9 @@ void ApplePaySetup::begin(Document& document, Vector<Ref<ApplePaySetupFeature>>&
         return;
     }
 
-    m_beginPromise = WTFMove(promise);
+    m_beginPromise = WTF::move(promise);
 
-    page->protectedPaymentCoordinator()->beginApplePaySetup(m_configuration, page->mainFrameURL(), WTFMove(features), [pendingActivity = makePendingActivity(*this)](bool result) {
+    protect(page->paymentCoordinator())->beginApplePaySetup(m_configuration, page->mainFrameURL(), WTF::move(features), [pendingActivity = makePendingActivity(*this)](bool result) {
         if (pendingActivity->object().m_beginPromise)
             std::exchange(pendingActivity->object().m_beginPromise, std::nullopt)->resolve(result);
     });
@@ -118,14 +118,14 @@ void ApplePaySetup::begin(Document& document, Vector<Ref<ApplePaySetupFeature>>&
 
 Ref<ApplePaySetup> ApplePaySetup::create(ScriptExecutionContext& context, ApplePaySetupConfiguration&& configuration)
 {
-    auto setup = adoptRef(*new ApplePaySetup(context, WTFMove(configuration)));
+    auto setup = adoptRef(*new ApplePaySetup(context, WTF::move(configuration)));
     setup->suspendIfNeeded();
     return setup;
 }
 
 ApplePaySetup::ApplePaySetup(ScriptExecutionContext& context, ApplePaySetupConfiguration&& configuration)
     : ActiveDOMObject(&context)
-    , m_configuration(WTFMove(configuration))
+    , m_configuration(WTF::move(configuration))
 {
 }
 
@@ -138,7 +138,7 @@ void ApplePaySetup::stop()
         std::exchange(m_beginPromise, std::nullopt)->reject(Exception { ExceptionCode::AbortError });
 
     if (RefPtr page = downcast<Document>(*scriptExecutionContext()).page())
-        page->protectedPaymentCoordinator()->endApplePaySetup();
+        protect(page->paymentCoordinator())->endApplePaySetup();
 }
 
 void ApplePaySetup::suspend(ReasonForSuspension)

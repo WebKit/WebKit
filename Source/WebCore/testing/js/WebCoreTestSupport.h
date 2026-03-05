@@ -63,6 +63,10 @@ TEST_SUPPORT_EXPORT void setAllowsAnySSLCertificate(bool);
 TEST_SUPPORT_EXPORT bool allowsAnySSLCertificate();
 TEST_SUPPORT_EXPORT void setLinkedOnOrAfterEverythingForTesting();
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+TEST_SUPPORT_EXPORT void setAccessibilityIsolatedTreeEnabled(bool);
+#endif
+
 TEST_SUPPORT_EXPORT void installMockGamepadProvider();
 TEST_SUPPORT_EXPORT void connectMockGamepad(unsigned index);
 TEST_SUPPORT_EXPORT void disconnectMockGamepad(unsigned index);

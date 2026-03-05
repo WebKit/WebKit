@@ -136,7 +136,7 @@ void JSTestIterablePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestIterable::s_info = { "TestIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIterable) };
 
 JSTestIterable::JSTestIterable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIterable>&& impl)
-    : JSDOMWrapper<TestIterable>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestIterable>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -204,15 +204,15 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static TestIterableIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestIterable& iteratedObject, IterationKind kind)
+    static TestIterableIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestIterable& iteratedObject, IterationKind kind, InternalIterator&& iterator)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<TestIterableIterator>(vm)) TestIterableIterator(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<TestIterableIterator>(vm)) TestIterableIterator(structure, iteratedObject, kind, WTF::move(iterator));
         instance->finishCreation(vm);
         return instance;
     }
 private:
-    TestIterableIterator(JSC::Structure* structure, JSTestIterable& iteratedObject, IterationKind kind)
-        : Base(structure, iteratedObject, kind)
+    TestIterableIterator(JSC::Structure* structure, JSTestIterable& iteratedObject, IterationKind kind, InternalIterator&& iterator)
+        : Base(structure, iteratedObject, kind, WTF::move(iterator))
     {
     }
 };
@@ -227,9 +227,13 @@ const JSC::ClassInfo TestIterableIterator::s_info = { "TestIterable Iterator"_s,
 template<>
 const JSC::ClassInfo TestIterableIteratorPrototype::s_info = { "TestIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIteratorPrototype) };
 
-static inline EncodedJSValue jsTestIterablePrototypeFunction_entriesCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
+static inline EncodedJSValue jsTestIterablePrototypeFunction_entriesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Values));
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
@@ -237,9 +241,13 @@ JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries, (JSC::JSGlobal
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
 }
 
-static inline EncodedJSValue jsTestIterablePrototypeFunction_keysCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
+static inline EncodedJSValue jsTestIterablePrototypeFunction_keysCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Keys));
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Keys)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
@@ -247,9 +255,13 @@ JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys, (JSC::JSGlobalObj
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys");
 }
 
-static inline EncodedJSValue jsTestIterablePrototypeFunction_valuesCaller(JSGlobalObject*, CallFrame*, JSTestIterable* thisObject)
+static inline EncodedJSValue jsTestIterablePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Values));
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
@@ -298,7 +310,7 @@ void JSTestIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIterable = static_cast<JSTestIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestIterable->protectedWrapped().ptr(), jsTestIterable);
+    uncacheWrapper(world, protect(jsTestIterable->wrapped()).ptr(), jsTestIterable);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -336,7 +348,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestIterable>(impl.ptr());
 #endif
-    return createWrapper<TestIterable>(globalObject, WTFMove(impl));
+    return createWrapper<TestIterable>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestIterable& impl)

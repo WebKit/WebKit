@@ -32,6 +32,7 @@
 #include "MemoryIDBBackingStore.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteIDBBackingStore.h"
+#include "SQLiteMemoryIDBBackingStore.h"
 #include "SecurityOrigin.h"
 #include <algorithm>
 #include <wtf/CompletionHandler.h>
@@ -46,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBBackingStore);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBServer);
 
 IDBServer::IDBServer(const String& databaseDirectoryPath, SpaceRequester&& spaceRequester, Lock& lock)
-    : m_spaceRequester(WTFMove(spaceRequester))
+    : m_spaceRequester(WTF::move(spaceRequester))
     , m_lock(lock)
 {
     ASSERT(!isMainThread());
@@ -68,7 +69,7 @@ void IDBServer::registerConnection(IDBConnectionToClient& connection)
 {
     ASSERT(!isMainThread());
     ASSERT(!m_connectionMap.contains(connection.identifier()));
-    m_connectionMap.set(connection.identifier(), &connection);
+    m_connectionMap.set(connection.identifier(), connection);
 }
 
 void IDBServer::unregisterConnection(IDBConnectionToClient& connection)
@@ -195,7 +196,7 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr transaction = m_transactions.get(transactionIdentifier).get();
+    RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         // If there is no transaction there is nothing to abort.
         // We also have no access to a connection over which to message failure-to-abort.
@@ -207,7 +208,7 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
 
 RefPtr<UniqueIDBDatabaseTransaction> IDBServer::idbTransaction(const IDBRequestData& requestData) const
 {
-    return m_transactions.get(requestData.transactionIdentifier()).get();
+    return m_transactions.get(requestData.transactionIdentifier());
 }
 
 void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
@@ -404,7 +405,7 @@ void IDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseCon
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -425,7 +426,7 @@ void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdenti
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr transaction = m_transactions.get(transactionIdentifier).get();
+    RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         // If there is no transaction there is nothing to commit.
         // We also have no access to a connection over which to message failure-to-commit.
@@ -441,7 +442,7 @@ void IDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionI
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    if (RefPtr connection = m_databaseConnections.get(databaseConnectionIdentifier).get())
+    if (RefPtr connection = m_databaseConnections.get(databaseConnectionIdentifier))
         connection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
@@ -451,7 +452,7 @@ void IDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier d
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -464,7 +465,7 @@ void IDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databas
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -486,11 +487,11 @@ void IDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databa
     ASSERT(m_lock.isHeld());
 
     if (transactionIdentifier) {
-        if (RefPtr transaction = m_transactions.get(*transactionIdentifier).get())
+        if (RefPtr transaction = m_transactions.get(*transactionIdentifier))
             transaction->abortWithoutCallback();
     }
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -503,13 +504,13 @@ void IDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databa
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    if (RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get())
+    if (RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
         databaseConnection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
 void IDBServer::didGenerateIndexKeyForRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo& indexInfo, const IDBKeyData& key, const IndexKey& indexKey, std::optional<int64_t> recordID)
 {
-    if (RefPtr transaction = m_transactions.get(transactionIdentifier).get())
+    if (RefPtr transaction = m_transactions.get(transactionIdentifier))
         transaction->didGenerateIndexKeyForRecord(requestIdentifier, indexInfo, key, indexKey, recordID);
 }
 
@@ -543,7 +544,7 @@ static void getDatabaseNameAndVersionFromOriginDirectory(const String& directory
             continue;
 
         if (auto nameAndVersion = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(fullDatabasePath))
-            result.append(WTFMove(*nameAndVersion));
+            result.append(WTF::move(*nameAndVersion));
     }
 }
 
@@ -564,7 +565,7 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
             visitedDatabasePaths.add(path);
 
         if (auto nameAndVersion = database->nameAndVersion())
-            result.append(WTFMove(*nameAndVersion));
+            result.append(WTF::move(*nameAndVersion));
     }
 
     auto oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, m_databaseDirectoryPath, "v0"_s);
@@ -577,18 +578,18 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
     if (!connection)
         return;
 
-    connection->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(result));
+    connection->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(result));
 }
 
 static void collectOriginsForVersion(const String& versionPath, HashSet<WebCore::SecurityOriginData>& securityOrigins)
 {
     for (auto& databaseIdentifier : FileSystem::listDirectory(versionPath)) {
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier)) {
-            securityOrigins.add(WTFMove(*securityOrigin));
+            securityOrigins.add(WTF::move(*securityOrigin));
         
             for (auto& databaseIdentifier : FileSystem::listDirectory(FileSystem::pathByAppendingComponent(versionPath, databaseIdentifier))) {
                 if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-                    securityOrigins.add(WTFMove(*securityOrigin));
+                    securityOrigins.add(WTF::move(*securityOrigin));
             }
         }
     }

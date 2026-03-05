@@ -41,15 +41,15 @@ public:
     // Style data for Content-Distribution properties: align-content, justify-content.
     // <content-distribution> || [ <overflow-position>? && <content-position> ]
     constexpr StyleContentAlignmentData(ContentPosition position, ContentDistribution distribution = ContentDistribution::Default, OverflowAlignment overflow = OverflowAlignment::Default)
-        : m_position(enumToUnderlyingType(position))
-        , m_distribution(enumToUnderlyingType(distribution))
-        , m_overflow(enumToUnderlyingType(overflow))
+        : m_position(std::to_underlying(position))
+        , m_distribution(std::to_underlying(distribution))
+        , m_overflow(std::to_underlying(overflow))
     {
     }
 
-    void setPosition(ContentPosition position) { m_position = enumToUnderlyingType(position); }
-    void setDistribution(ContentDistribution distribution) { m_distribution = enumToUnderlyingType(distribution); }
-    void setOverflow(OverflowAlignment overflow) { m_overflow = enumToUnderlyingType(overflow); }
+    void setPosition(ContentPosition position) { m_position = std::to_underlying(position); }
+    void setDistribution(ContentDistribution distribution) { m_distribution = std::to_underlying(distribution); }
+    void setOverflow(OverflowAlignment overflow) { m_overflow = std::to_underlying(overflow); }
 
     ContentPosition position() const { return static_cast<ContentPosition>(m_position); }
     ContentDistribution distribution() const { return static_cast<ContentDistribution>(m_distribution); }
@@ -59,11 +59,11 @@ public:
         return ContentPosition::Normal == static_cast<ContentPosition>(m_position)
         && ContentDistribution::Default == static_cast<ContentDistribution>(m_distribution);
     }
-    bool isStartward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
-    bool isEndward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
+    bool NODELETE isStartward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
+    bool NODELETE isEndward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
     // leftRightAxisDirection is only needed for justify-content (invalid for align-content).
     // Pass std::nullopt if neither the inline axis nor the physical left-right axis matches the justify-content axis (e.g. in flexbox).
-    bool isCentered() const;
+    bool NODELETE isCentered() const;
 
     friend bool operator==(const StyleContentAlignmentData&, const StyleContentAlignmentData&) = default;
 

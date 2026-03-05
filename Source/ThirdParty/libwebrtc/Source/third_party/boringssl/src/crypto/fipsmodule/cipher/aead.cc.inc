@@ -42,20 +42,20 @@ EVP_AEAD_CTX *EVP_AEAD_CTX_new(const EVP_AEAD *aead, const uint8_t *key,
   EVP_AEAD_CTX *ctx =
       reinterpret_cast<EVP_AEAD_CTX *>(OPENSSL_malloc(sizeof(EVP_AEAD_CTX)));
   if (!ctx) {
-    return NULL;
+    return nullptr;
   }
   EVP_AEAD_CTX_zero(ctx);
 
-  if (EVP_AEAD_CTX_init(ctx, aead, key, key_len, tag_len, NULL)) {
+  if (EVP_AEAD_CTX_init(ctx, aead, key, key_len, tag_len, nullptr)) {
     return ctx;
   }
 
   EVP_AEAD_CTX_free(ctx);
-  return NULL;
+  return nullptr;
 }
 
 void EVP_AEAD_CTX_free(EVP_AEAD_CTX *ctx) {
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return;
   }
   EVP_AEAD_CTX_cleanup(ctx);
@@ -67,7 +67,7 @@ int EVP_AEAD_CTX_init(EVP_AEAD_CTX *ctx, const EVP_AEAD *aead,
                       ENGINE *impl) {
   if (!aead->init) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_NO_DIRECTION_SET);
-    ctx->aead = NULL;
+    ctx->aead = nullptr;
     return 0;
   }
   return EVP_AEAD_CTX_init_with_direction(ctx, aead, key, key_len, tag_len,
@@ -80,7 +80,7 @@ int EVP_AEAD_CTX_init_with_direction(EVP_AEAD_CTX *ctx, const EVP_AEAD *aead,
                                      enum evp_aead_direction_t dir) {
   if (key_len != aead->key_len) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_UNSUPPORTED_KEY_SIZE);
-    ctx->aead = NULL;
+    ctx->aead = nullptr;
     return 0;
   }
 
@@ -94,18 +94,18 @@ int EVP_AEAD_CTX_init_with_direction(EVP_AEAD_CTX *ctx, const EVP_AEAD *aead,
   }
 
   if (!ok) {
-    ctx->aead = NULL;
+    ctx->aead = nullptr;
   }
 
   return ok;
 }
 
 void EVP_AEAD_CTX_cleanup(EVP_AEAD_CTX *ctx) {
-  if (ctx->aead == NULL) {
+  if (ctx->aead == nullptr) {
     return;
   }
   ctx->aead->cleanup(ctx);
-  ctx->aead = NULL;
+  ctx->aead = nullptr;
 }
 
 // check_alias returns 1 if |out| is compatible with |in| and 0 otherwise. If
@@ -141,7 +141,7 @@ int EVP_AEAD_CTX_seal(const EVP_AEAD_CTX *ctx, uint8_t *out, size_t *out_len,
   size_t out_tag_len;
   if (ctx->aead->seal_scatter(ctx, out, out + in_len, &out_tag_len,
                               max_out_len - in_len, nonce, nonce_len, in,
-                              in_len, NULL, 0, ad, ad_len)) {
+                              in_len, nullptr, 0, ad, ad_len)) {
     *out_len = in_len + out_tag_len;
     return 1;
   }
@@ -268,7 +268,7 @@ const EVP_AEAD *EVP_AEAD_CTX_aead(const EVP_AEAD_CTX *ctx) { return ctx->aead; }
 
 int EVP_AEAD_CTX_get_iv(const EVP_AEAD_CTX *ctx, const uint8_t **out_iv,
                         size_t *out_len) {
-  if (ctx->aead->get_iv == NULL) {
+  if (ctx->aead->get_iv == nullptr) {
     OPENSSL_PUT_ERROR(CIPHER, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }

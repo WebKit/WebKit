@@ -95,7 +95,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromMutableNSType)
     RetainPtr<NSMutableString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(WTFMove(temp));
+    RetainPtr<NSString> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -115,7 +115,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSameNSType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(WTFMove(temp));
+    RetainPtr<NSString> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -135,7 +135,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(WTFMove(temp));
+    RetainPtr<NSString> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -155,7 +155,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSTypeReversed)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(WTFMove(temp));
+    RetainPtr<NSString> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -177,7 +177,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromMutableNSType)
     RetainPtr<NSMutableString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTFMove(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -199,7 +199,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSameNSType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTFMove(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -221,7 +221,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTFMove(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -243,7 +243,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSTypeReversed)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTFMove(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
@@ -307,7 +307,7 @@ TEST(RETAIN_PTR_TEST_NAME, OptionalRetainPtrNS)
     // Test move from std::optional<RetainPtr<NSObject>>.
     EXPECT_EQ(2L, CFGetRetainCount((CFTypeRef)objectPtr2));
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
-        optionalObject1 = WTFMove(optionalObject2);
+        optionalObject1 = WTF::move(optionalObject2);
     }
     EXPECT_EQ(2L, CFGetRetainCount((CFTypeRef)objectPtr2));
     EXPECT_TRUE(optionalObject1.value());

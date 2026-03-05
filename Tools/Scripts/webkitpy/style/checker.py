@@ -152,13 +152,7 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming"]),
 
     ([
-        # The WPEQtViewBackend class needs to enforce a certain include order to the gbm.h/epoxy constraints.
-        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewBackend.h')],
-     ["-build/include_order"]),
-
-    ([
         # The WPEQtViewLoadRequest class uses Qt naming conventions (d_ptr).
-        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewLoadRequest.h'),
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtViewLoadRequest.h'),
 
         # The WPEQtView class uses Qt naming conventions (d_ptr).
@@ -169,7 +163,6 @@ _PATH_RULES_SPECIFIER = [
         # The WPEQtView class can't rely on the readability/parameter_name rule,
         # because omitting parameter names for QML signals leads to runtime
         # errors.
-        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtView.h'),
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.h')],
      ["-readability/parameter_name", "-readability/naming/acronym"]),
 
@@ -195,9 +188,7 @@ _PATH_RULES_SPECIFIER = [
     ([
         # The WPE QT wrapper lib is not part of Webkit and therefore don't need to statically
         # link the WTF framework. Instead it uses the standard alloc mechanism.
-        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5'),
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6'),
-        os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt5', 'main.cpp'),
         os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt6', 'main.cpp')],
      ["-runtime/wtf_make_unique", "-readability/naming/underscores", "-readability/naming/acronym"]),
 
@@ -292,6 +283,12 @@ _PATH_RULES_SPECIFIER = [
     ([
       # These files define GObjects, which implies some definitions of
       # variables and functions containing underscores.
+      os.path.join('Source', 'WebCore', 'Modules', 'mediastream', 'gstreamer', 'GStreamerIceAgent.cpp'),
+      os.path.join('Source', 'WebCore', 'Modules', 'mediastream', 'gstreamer', 'GStreamerIceAgent.h'),
+      os.path.join('Source', 'WebCore', 'Modules', 'mediastream', 'gstreamer', 'GStreamerIceStream.cpp'),
+      os.path.join('Source', 'WebCore', 'Modules', 'mediastream', 'gstreamer', 'GStreamerIceStream.h'),
+      os.path.join('Source', 'WebCore', 'Modules', 'mediastream', 'gstreamer', 'GStreamerIceTransport.cpp'),
+      os.path.join('Source', 'WebCore', 'Modules', 'mediastream', 'gstreamer', 'GStreamerIceTransport.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GStreamerSinksWorkarounds.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GStreamerSinksWorkarounds.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.cpp'),
@@ -330,7 +327,8 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'WebKitAutoconfigProxyResolver.h'),
       os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'WebKitFormDataInputStream.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'WebKitFormDataInputStream.h'),
-      os.path.join('Source', 'WebKit', 'NetworkProcess', 'soup', 'WebKitDirectoryInputStream.h')],
+      os.path.join('Source', 'WebKit', 'NetworkProcess', 'soup', 'WebKitDirectoryInputStream.h'),
+      os.path.join('Source', 'WebKit', 'Shared', 'glib', 'WebKitContextMenuGAction.cpp')],
      ["-readability/naming",
       "-readability/enum_casing"]),
     ([

@@ -20,4 +20,4 @@ features: [TypedArray]
 testWithTypedArrayConstructors(function(TAConstructor) {
   var typedArray = new TAConstructor(new ArrayBuffer(8), -0);
   assert.sameValue(typedArray.byteOffset, +0);
-});
+}, null, ["passthrough"]);

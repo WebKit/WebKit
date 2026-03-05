@@ -64,7 +64,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             newArray[i] = other.m_array[i];
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         m_size = other.m_size;
-        m_array = WTFMove(newArray);
+        m_array = WTF::move(newArray);
         return *this;
     }
     

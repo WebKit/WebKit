@@ -76,7 +76,7 @@ struct PerformanceMeasureOptions;
 template<typename> class ExceptionOr;
 
 class Performance final : public RefCounted<Performance>, public ContextDestructionObserver, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Performance);
+    WTF_MAKE_TZONE_ALLOCATED(Performance);
 public:
     static Ref<Performance> create(ScriptExecutionContext* context, MonotonicTime timeOrigin) { return adoptRef(*new Performance(context, timeOrigin)); }
     ~Performance();
@@ -90,9 +90,9 @@ public:
     DOMHighResTimeStamp timeOrigin() const;
     ReducedResolutionSeconds nowInReducedResolutionSeconds() const;
 
-    PerformanceNavigation* navigation();
-    PerformanceTiming* timing();
-    EventCounts* eventCounts();
+    PerformanceNavigation& navigation();
+    PerformanceTiming& timing();
+    EventCounts& eventCounts() LIFETIME_BOUND;
 
     uint64_t interactionCount();
 
@@ -105,13 +105,13 @@ public:
     void processEventEntry(const PerformanceEventTimingCandidate&);
 
     void clearResourceTimings();
-    void setResourceTimingBufferSize(unsigned);
+    void NODELETE setResourceTimingBufferSize(unsigned);
 
     ExceptionOr<Ref<PerformanceMark>> mark(JSC::JSGlobalObject&, const String& markName, std::optional<PerformanceMarkOptions>&&);
     void clearMarks(const String& markName);
 
     using StartOrMeasureOptions = Variant<String, PerformanceMeasureOptions>;
-    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, std::optional<StartOrMeasureOptions>&&, const String& endMark);
+    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, StartOrMeasureOptions&&, const String& endMark);
     void clearMeasures(const String& measureName);
 
     void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&);
@@ -127,17 +127,14 @@ public:
     void unregisterPerformanceObserver(PerformanceObserver&);
 
     static void allowHighPrecisionTime();
-    static Seconds timeResolution();
+    static Seconds NODELETE timeResolution();
     static Seconds reduceTimeResolution(Seconds);
 
     Seconds relativeTimeFromTimeOriginInReducedResolutionSeconds(MonotonicTime) const;
     DOMHighResTimeStamp relativeTimeFromTimeOriginInReducedResolution(MonotonicTime) const;
     MonotonicTime monotonicTimeFromRelativeTime(DOMHighResTimeStamp) const;
 
-    ScriptExecutionContext* scriptExecutionContext() const final;
-
-    using RefCounted::ref;
-    using RefCounted::deref;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void scheduleTaskIfNeeded();
 
@@ -153,7 +150,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    bool isResourceTimingBufferFull() const;
+    bool NODELETE isResourceTimingBufferFull() const;
     void resourceTimingBufferFullTimerFired();
 
     void queueEntry(PerformanceEntry&);
@@ -188,7 +185,9 @@ private:
     RefPtr<PerformanceEntry> m_largestContentfulPaint;
     std::unique_ptr<PerformanceUserTiming> m_userTiming;
 
-    ListHashSet<RefPtr<PerformanceObserver>> m_observers;
+    ListHashSet<Ref<PerformanceObserver>> m_observers;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(Performance)

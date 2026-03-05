@@ -1,0 +1,127 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+var passphrase = "main-page-value";
+
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/runtime/resources/frame-with-passphrase.html`;
+    document.body.appendChild(iframe);
+}
+
+function removeCrossOriginIFrame() {
+    iframe.remove();
+}
+
+function test() {
+    // FIXME: <https://webkit.org/b/307733> Dynamically creating cross-origin iframes has timing
+    // issues around frame target creation. Poll until the iframe's scripts have executed.
+    async function waitForExpressionInTarget(target, expression, maxAttempts = 20) {
+        for (let i = 0; i < maxAttempts; i++) {
+            let response = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+            if (response.result.value)
+                return response.result.value;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return undefined;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.CrossOriginEvaluate");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.CrossOrigin.FrameTargetCreated",
+        description: "Adding a cross-origin iframe should create a frame target with an execution context.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let event = await targetAddedPromise;
+            let target = event.data.target;
+
+            InspectorTest.assert(target instanceof WI.FrameTarget);
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+            InspectorTest.expectNotNull(target.RuntimeAgent, "Cross-origin frame target should have a RuntimeAgent.");
+
+            // The execution context arrives asynchronously after the target is added.
+            if (!target.executionContext)
+                await target.awaitEvent(WI.FrameTarget.Event.PageExecutionContextChanged);
+            InspectorTest.expectNotNull(target.executionContext, "Cross-origin frame target should eventually have an ExecutionContext.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.CrossOrigin.EvaluatePassphrase",
+        description: "Evaluating in the cross-origin frame should return values from that frame's context.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+            let crossOriginTarget = frameTargets[frameTargets.length - 1];
+
+            let passphraseValue = await waitForExpressionInTarget(crossOriginTarget, "window.passphrase");
+            InspectorTest.expectEqual(passphraseValue, "cross-origin-secret", "Cross-origin frame should have passphrase 'cross-origin-secret'.");
+
+            let pageResponse = await WI.pageTarget.RuntimeAgent.evaluate.invoke({expression: "window.passphrase", objectGroup: "test", returnByValue: true});
+            InspectorTest.expectEqual(pageResponse.result.value, "main-page-value", "Main page should have passphrase 'main-page-value'.");
+
+            InspectorTest.expectNotEqual(passphraseValue, pageResponse.result.value, "Cross-origin frame and main page should have different passphrase values.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.CrossOrigin.EvaluateHostname",
+        description: "Evaluating document.location.hostname should return the cross-origin hostname.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+            let crossOriginTarget = frameTargets[frameTargets.length - 1];
+
+            let frameHostname = await waitForExpressionInTarget(crossOriginTarget, "document.location.hostname");
+            let pageResponse = await WI.pageTarget.RuntimeAgent.evaluate.invoke({expression: "document.location.hostname", objectGroup: "test", returnByValue: true});
+
+            InspectorTest.expectNotEqual(frameHostname, pageResponse.result.value, "Cross-origin frame hostname should differ from main page hostname.");
+            InspectorTest.log(`Main page hostname: ${pageResponse.result.value}`);
+            InspectorTest.log(`Cross-origin frame hostname: ${frameHostname}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.CrossOrigin.CallFunctionOn",
+        description: "callFunctionOn should work with objects created in the cross-origin frame's context.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+            let crossOriginTarget = frameTargets[frameTargets.length - 1];
+
+            let createResponse = await crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "({key: 'from-cross-origin'})", objectGroup: "test"});
+            InspectorTest.expectThat(!createResponse.wasThrown, "Creating object in cross-origin frame should not throw.");
+            InspectorTest.expectNotNull(createResponse.result.objectId, "Created object should have an objectId.");
+
+            let callResponse = await crossOriginTarget.RuntimeAgent.callFunctionOn.invoke({
+                objectId: createResponse.result.objectId,
+                functionDeclaration: "function() { return this.key; }",
+                returnByValue: true,
+            });
+            InspectorTest.expectEqual(callResponse.result.value, "from-cross-origin", "callFunctionOn should return the object's key value.");
+            InspectorTest.expectThat(!callResponse.wasThrown, "callFunctionOn should not throw.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.CrossOrigin.RemoveIframe",
+        description: "Removing the cross-origin iframe should remove the frame target.",
+        async test() {
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            InspectorTest.evaluateInPage("removeCrossOriginIFrame()");
+            let event = await targetRemovedPromise;
+            let target = event.data.target;
+
+            InspectorTest.assert(target instanceof WI.FrameTarget);
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Removed target should have Frame type.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Runtime.evaluate and callFunctionOn work correctly in cross-origin iframes under site isolation.</p>
+</body>

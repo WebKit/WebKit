@@ -86,7 +86,7 @@ const RegisterAtOffsetList& RegisterAtOffsetList::llintBaselineCalleeSaveRegiste
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSetBuilder::llintBaselineCalleeSaveRegisters());
+        result.construct(RegisterSet::llintBaselineCalleeSaveRegisters());
     });
     return result.get();
 }
@@ -96,7 +96,7 @@ const RegisterAtOffsetList& RegisterAtOffsetList::dfgCalleeSaveRegisters()
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSetBuilder::dfgCalleeSaveRegisters());
+        result.construct(RegisterSet::dfgCalleeSaveRegisters());
     });
     return result.get();
 }
@@ -107,7 +107,7 @@ const RegisterAtOffsetList& RegisterAtOffsetList::wasmPinnedRegisters()
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSetBuilder::wasmPinnedRegisters());
+        result.construct(RegisterSet::wasmPinnedRegisters());
     });
     return result.get();
 }
@@ -117,7 +117,7 @@ const RegisterAtOffsetList& RegisterAtOffsetList::ipintCalleeSaveRegisters()
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSetBuilder::ipintCalleeSaveRegisters());
+        result.construct(RegisterSet::ipintCalleeSaveRegisters());
     });
     return result.get();
 }
@@ -127,7 +127,7 @@ const RegisterAtOffsetList& RegisterAtOffsetList::bbqCalleeSaveRegisters()
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSetBuilder::bbqCalleeSaveRegisters());
+        result.construct(RegisterSet::bbqCalleeSaveRegisters());
     });
     return result.get();
 }

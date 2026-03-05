@@ -35,7 +35,7 @@ class WebKitSerializedNode : public RefCounted<WebKitSerializedNode> {
 public:
     static Ref<WebKitSerializedNode> create(const Node& node, bool deep) { return adoptRef(*new WebKitSerializedNode(node, deep)); }
 
-    const SerializedNode& serializedNode() const { return m_serializedNode; }
+    const SerializedNode& serializedNode() const LIFETIME_BOUND { return m_serializedNode; }
 
 private:
     WebKitSerializedNode(const Node&, bool);

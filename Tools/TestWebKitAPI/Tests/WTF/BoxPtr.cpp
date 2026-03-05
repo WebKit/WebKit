@@ -110,7 +110,7 @@ TEST(WTF_BoxPtr, Basic)
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
         BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
-        BoxPtr<BoxPtrLogger> p2 = WTFMove(p1);
+        BoxPtr<BoxPtrLogger> p2 = WTF::move(p1);
         EXPECT_EQ(false, static_cast<bool>(p1));
         EXPECT_EQ(a, p2->get());
     }
@@ -119,7 +119,7 @@ TEST(WTF_BoxPtr, Basic)
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
         BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
-        BoxPtr<BoxPtrLogger> p2(WTFMove(p1));
+        BoxPtr<BoxPtrLogger> p2(WTF::move(p1));
         EXPECT_EQ(false, static_cast<bool>(p1));
         EXPECT_EQ(a, p2->get());
     }
@@ -168,7 +168,7 @@ TEST(WTF_BoxPtr, Assignment)
         EXPECT_EQ(a, p1->get());
         EXPECT_EQ(b, p2->get());
         log() << "| ";
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         EXPECT_EQ(b, p1->get());
         EXPECT_EQ(false, static_cast<bool>(p2));
         log() << "| ";
@@ -193,7 +193,7 @@ TEST(WTF_BoxPtr, Assignment)
         BoxPtr<BoxPtrLogger> ptr = adoptInBoxPtr(a);
         EXPECT_EQ(a, ptr->get());
         IGNORE_WARNINGS_BEGIN("self-move")
-        ptr = WTFMove(ptr);
+        ptr = WTF::move(ptr);
         IGNORE_WARNINGS_END
         EXPECT_EQ(a, ptr->get());
     }

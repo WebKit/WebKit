@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ScrollingTreePositionedNodeCocoa.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #import "Logging.h"
 #import "ScrollingStatePositionedNode.h"
 #import "WebCoreCALayerExtras.h"
@@ -68,5 +66,3 @@ void ScrollingTreePositionedNodeCocoa::applyLayerPositions()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ASYNC_SCROLLING)

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(B3_JIT)
 
 #include <JavaScriptCore/B3Common.h>

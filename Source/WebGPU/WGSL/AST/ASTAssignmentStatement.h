@@ -40,8 +40,8 @@ public:
 private:
     AssignmentStatement(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs)
         : Statement(span)
-        , m_lhs(WTFMove(lhs))
-        , m_rhs(WTFMove(rhs))
+        , m_lhs(WTF::move(lhs))
+        , m_rhs(WTF::move(rhs))
     { }
 
     Expression::Ref m_lhs;

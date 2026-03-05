@@ -116,7 +116,7 @@ private:
     void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
     void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, const String&);
 
-    HashMap<IDBConnectionIdentifier, RefPtr<IDBConnectionToClient>> m_connectionMap;
+    HashMap<IDBConnectionIdentifier, Ref<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
 
     HashMap<IDBDatabaseConnectionIdentifier, WeakPtr<UniqueIDBDatabaseConnection>> m_databaseConnections;

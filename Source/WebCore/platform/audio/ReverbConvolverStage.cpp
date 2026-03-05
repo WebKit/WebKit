@@ -108,8 +108,7 @@ ReverbConvolverStage::~ReverbConvolverStage() = default;
 
 void ReverbConvolverStage::processInBackground(ReverbConvolver* convolver, size_t framesToProcess)
 {
-    ReverbInputBuffer* inputBuffer = convolver->inputBuffer();
-    auto source = inputBuffer->directReadFrom(&m_inputReadIndex, framesToProcess);
+    auto source = convolver->inputBuffer().directReadFrom(&m_inputReadIndex, framesToProcess);
     process(source);
 }
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/JSCPtrTag.h>
 
 namespace JSC {

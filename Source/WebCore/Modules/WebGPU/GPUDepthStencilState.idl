@@ -30,9 +30,8 @@ typedef [EnforceRange] unsigned long GPUStencilValue;
 typedef [EnforceRange] long GPUDepthBias;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUDepthStencilState {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUDepthStencilState {
     required GPUTextureFormat format;
 
     boolean depthWriteEnabled;

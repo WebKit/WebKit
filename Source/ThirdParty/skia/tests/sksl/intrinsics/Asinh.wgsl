@@ -1,22 +1,19 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  inputVal: vec4<f32>,
-  expected: vec4<f32>,
-  colorGreen: vec4<f32>,
-  colorRed: vec4<f32>,
+  inputVal: vec4<f16>,
+  expected: vec4<f16>,
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
-    let _skTemp0 = asinh(_globalUniforms.inputVal.x);
-    let _skTemp1 = asinh(_globalUniforms.inputVal.xy);
-    let _skTemp2 = asinh(_globalUniforms.inputVal.xyz);
-    let _skTemp3 = asinh(_globalUniforms.inputVal);
-    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>((((((((_skTemp0 == _globalUniforms.expected.x) && all(_skTemp1 == _globalUniforms.expected.xy)) && all(_skTemp2 == _globalUniforms.expected.xyz)) && all(_skTemp3 == _globalUniforms.expected)) && (0.0 == _globalUniforms.expected.x)) && all(vec2<f32>(0.0) == _globalUniforms.expected.xy)) && all(vec3<f32>(0.0, 0.0, 1.0) == _globalUniforms.expected.xyz)) && all(vec4<f32>(0.0, 0.0, 1.0, -1.0) == _globalUniforms.expected)));
+    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>((((((((asinh(_globalUniforms.inputVal.x) == _globalUniforms.expected.x) && all(asinh(_globalUniforms.inputVal.xy) == _globalUniforms.expected.xy)) && all(asinh(_globalUniforms.inputVal.xyz) == _globalUniforms.expected.xyz)) && all(asinh(_globalUniforms.inputVal) == _globalUniforms.expected)) && (0.0h == _globalUniforms.expected.x)) && all(vec2<f16>(0.0h) == _globalUniforms.expected.xy)) && all(vec3<f16>(0.0h, 0.0h, 1.0h) == _globalUniforms.expected.xyz)) && all(vec4<f16>(0.0h, 0.0h, 1.0h, -1.0h) == _globalUniforms.expected)));
   }
 }
 @fragment fn main() -> FSOut {

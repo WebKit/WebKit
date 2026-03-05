@@ -49,7 +49,7 @@ public:
 
     static HashSet<CheckedPtr<LayerPool>>& allLayerPools();
     
-    void addLayer(const RefPtr<PlatformCALayer>&);
+    void addLayer(PlatformCALayer&);
     RefPtr<PlatformCALayer> takeLayerWithSize(const IntSize&);
 
     void drain();
@@ -58,7 +58,7 @@ public:
     unsigned capacity() const { return m_maxBytesForPool; }
 
 private:
-    typedef Deque<RefPtr<PlatformCALayer>> LayerList;
+    typedef Deque<Ref<PlatformCALayer>> LayerList;
 
     unsigned decayedCapacity() const;
 

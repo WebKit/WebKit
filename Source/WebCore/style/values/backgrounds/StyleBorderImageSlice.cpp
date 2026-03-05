@@ -57,27 +57,16 @@ auto CSSValueConversion<BorderImageSlice>::operator()(BuilderState& state, const
     if (RefPtr sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value)) {
         auto& slices = sliceValue->slices();
         return BorderImageSlice {
-            .values = {
-                convertBorderImageSliceValue(state, slices.top()),
-                convertBorderImageSliceValue(state, slices.right()),
-                convertBorderImageSliceValue(state, slices.bottom()),
-                convertBorderImageSliceValue(state, slices.left()),
-            },
-            .fill = sliceValue->fill() ? std::make_optional(CSS::Keyword::Fill { }) : std::nullopt,
+            convertBorderImageSliceValue(state, slices.top()),
+            convertBorderImageSliceValue(state, slices.right()),
+            convertBorderImageSliceValue(state, slices.bottom()),
+            convertBorderImageSliceValue(state, slices.left()),
+            sliceValue->fill() ? std::make_optional(CSS::Keyword::Fill { }) : std::nullopt,
         };
     }
 
     // Values coming from CSS Typed OM may not have been converted to a CSSBorderImageSliceValue.
-    auto sliceValue = convertBorderImageSliceValue(state, value);
-    return BorderImageSlice {
-        .values = {
-            sliceValue,
-            sliceValue,
-            sliceValue,
-            sliceValue,
-        },
-        .fill = std::nullopt
-    };
+    return convertBorderImageSliceValue(state, value);
 }
 
 auto CSSValueCreation<BorderImageSlice>::operator()(CSSValuePool& pool, const RenderStyle& style, const BorderImageSlice& value) -> Ref<CSSValue>
@@ -146,13 +135,11 @@ auto Blending<BorderImageSlice>::blend(const BorderImageSlice& a, const BorderIm
     }
 
     return BorderImageSlice {
-        .values = {
-            Style::blend(a.values.top(),     b.values.top(), context),
-            Style::blend(a.values.right(),   b.values.right(), context),
-            Style::blend(a.values.bottom(),  b.values.bottom(), context),
-            Style::blend(a.values.left(),    b.values.left(), context),
-        },
-        .fill = (!context.progress || !context.isDiscrete ? a : b).fill,
+        Style::blend(a.values.top(),     b.values.top(), context),
+        Style::blend(a.values.right(),   b.values.right(), context),
+        Style::blend(a.values.bottom(),  b.values.bottom(), context),
+        Style::blend(a.values.left(),    b.values.left(), context),
+        (!context.progress || !context.isDiscrete ? a : b).fill,
     };
 }
 

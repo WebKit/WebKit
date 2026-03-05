@@ -37,11 +37,6 @@
 
 namespace WTF {
 
-template<typename CharacterType> inline bool isNotASCIISpace(CharacterType c)
-{
-    return !isUnicodeCompatibleASCIIWhitespace(c);
-}
-
 template<typename CharacterType, typename DelimiterType> bool skipExactly(const CharacterType*& position, const CharacterType* end, DelimiterType delimiter)
 {
     if (position < end && *position == delimiter) {
@@ -297,7 +292,6 @@ static inline bool Latin1CharacterPredicateAdapter(Latin1Character c) { return c
 } // namespace WTF
 
 using WTF::Latin1CharacterPredicateAdapter;
-using WTF::isNotASCIISpace;
 using WTF::skipCharactersExactly;
 using WTF::skipExactly;
 using WTF::skipExactlyIgnoringASCIICase;

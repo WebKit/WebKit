@@ -101,7 +101,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalTimeZonePrototypeFuncToString, (JSGlobalObject*
         [](int64_t offset) -> String {
             return ISO8601::formatTimeZoneOffsetString(offset);
         });
-    return JSValue::encode(jsString(vm, WTFMove(string)));
+    return JSValue::encode(jsString(vm, WTF::move(string)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.timezone.prototype.tojson

@@ -64,7 +64,7 @@ class RtcEventDtlsWritableState : public RtcEvent {
   }
 
  private:
-  RtcEventDtlsWritableState(const RtcEventDtlsWritableState& other);
+  RtcEventDtlsWritableState(const RtcEventDtlsWritableState&) = default;
 
   const bool writable_;
 };

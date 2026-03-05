@@ -25,7 +25,13 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
+
+#include <wtf/Platform.h>
+
+#if PLATFORM(MAC)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -57,3 +63,5 @@ typedef NS_OPTIONS(NSUInteger, NSSharingServiceMask) {
 @end
 
 #endif
+
+#endif // PLATFORM(MAC)

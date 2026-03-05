@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 #if HAVE(ACCESSIBILITY_FRAMEWORK)
 
 #import <Accessibility/Accessibility.h>

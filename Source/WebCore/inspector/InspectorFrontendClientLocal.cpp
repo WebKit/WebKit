@@ -133,8 +133,8 @@ private:
             Ref controller { *m_inspectedPageController };
             bool dispatched = false;
             if (m_dispatchTarget == InspectorFrontendClientLocal::DispatchBackendTarget::MainFrame) {
-                if (RefPtr localMainFrame = controller->protectedInspectedPage()->localMainFrame()) {
-                    localMainFrame->protectedInspectorController()->dispatchMessageFromFrontend(m_messages.takeFirst());
+                if (RefPtr localMainFrame = protect(controller->inspectedPage())->localMainFrame()) {
+                    protect(localMainFrame->inspectorController())->dispatchMessageFromFrontend(m_messages.takeFirst());
                     dispatched = true;
                 }
             }
@@ -171,7 +171,7 @@ void InspectorFrontendClientLocal::Settings::deleteProperty(const String&)
 InspectorFrontendClientLocal::InspectorFrontendClientLocal(PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings, DispatchBackendTarget dispatchTarget)
     : m_inspectedPageController(inspectedPageController)
     , m_frontendPage(frontendPage)
-    , m_settings(WTFMove(settings))
+    , m_settings(WTF::move(settings))
     , m_dockSide(DockSide::Undocked)
     , m_dispatchTask(InspectorBackendDispatchTask::create(inspectedPageController, dispatchTarget))
     , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*frontendPage))
@@ -274,19 +274,14 @@ void InspectorFrontendClientLocal::setDockingUnavailable(bool unavailable)
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(unavailable) });
 }
 
-RefPtr<PageInspectorController> InspectorFrontendClientLocal::protectedInspectedPageController() const
+PageInspectorController* InspectorFrontendClientLocal::inspectedPageController() const
 {
     return m_inspectedPageController.get();
 }
 
-RefPtr<Page> InspectorFrontendClientLocal::protectedFrontendPage() const
-{
-    return m_frontendPage.get();
-}
-
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 {
-    unsigned totalHeight = protectedFrontendPage()->protectedMainFrame()->protectedVirtualView()->visibleHeight() + protectedInspectedPageController()->protectedInspectedPage()->protectedMainFrame()->protectedVirtualView()->visibleHeight();
+    unsigned totalHeight = protect(protect(protect(frontendPage())->mainFrame())->virtualView())->visibleHeight() + protect(protect(protect(protect(inspectedPageController())->inspectedPage())->mainFrame())->virtualView())->visibleHeight();
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
@@ -294,7 +289,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 
 void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
 {
-    unsigned totalWidth = protectedFrontendPage()->protectedMainFrame()->protectedVirtualView()->visibleWidth() + protectedInspectedPageController()->protectedInspectedPage()->protectedMainFrame()->protectedVirtualView()->visibleWidth();
+    unsigned totalWidth = protect(protect(protect(frontendPage())->mainFrame())->virtualView())->visibleWidth() + protect(protect(protect(protect(inspectedPageController())->inspectedPage())->mainFrame())->virtualView())->visibleWidth();
     unsigned attachedWidth = constrainedAttachedWindowWidth(width, totalWidth);
     setAttachedWindowWidth(attachedWidth);
 }
@@ -306,7 +301,7 @@ void InspectorFrontendClientLocal::changeSheetRect(const FloatRect& rect)
 
 void InspectorFrontendClientLocal::openURLExternally(const String& url)
 {
-    RefPtr localMainFrame = protectedInspectedPageController()->protectedInspectedPage()->localMainFrame();
+    RefPtr localMainFrame = protect(protect(inspectedPageController())->inspectedPage())->localMainFrame();
     if (!localMainFrame)
         return;
     Ref mainFrame = *localMainFrame;
@@ -316,7 +311,7 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
 
     FrameLoadRequest frameLoadRequest { *mainFrameDocument, mainFrameDocument->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
 
-    auto [frame, created] = WebCore::createWindow(mainFrame, WTFMove(frameLoadRequest), { });
+    auto [frame, created] = WebCore::createWindow(mainFrame, WTF::move(frameLoadRequest), { });
     if (!frame)
         return;
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
@@ -329,9 +324,9 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
     page->setOpenedByDOMWithOpener(true);
 
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?
-    ResourceRequest resourceRequest { localFrame->protectedDocument()->completeURL(url) };
-    FrameLoadRequest frameLoadRequest2 { *mainFrameDocument, mainFrameDocument->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
-    localFrame->loader().changeLocation(WTFMove(frameLoadRequest2));
+    ResourceRequest resourceRequest { protect(localFrame->document())->completeURL(url) };
+    FrameLoadRequest frameLoadRequest2 { *mainFrameDocument, mainFrameDocument->securityOrigin(), WTF::move(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
+    localFrame->loader().changeLocation(WTF::move(frameLoadRequest2));
 }
 
 void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
@@ -364,7 +359,7 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 {
-    unsigned inspectedPageHeight = protectedInspectedPageController()->protectedInspectedPage()->protectedMainFrame()->protectedVirtualView()->visibleHeight();
+    unsigned inspectedPageHeight = protect(protect(protect(protect(inspectedPageController())->inspectedPage())->mainFrame())->virtualView())->visibleHeight();
     String value = m_settings->getProperty(inspectorAttachedHeightSetting);
     unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : parseIntegerAllowingTrailingJunk<unsigned>(value).value_or(0);
 
@@ -435,7 +430,7 @@ void InspectorFrontendClientLocal::showResources()
 
 void InspectorFrontendClientLocal::showMainResourceForFrame(LocalFrame* frame)
 {
-    String frameId = protectedInspectedPageController()->ensurePageAgent().frameId(frame);
+    String frameId = CheckedRef { protect(inspectedPageController())->ensurePageAgent() }->frameId(frame);
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameId) });
 }
 
@@ -461,7 +456,7 @@ bool InspectorFrontendClientLocal::isUnderTest()
 
 unsigned InspectorFrontendClientLocal::inspectionLevel() const
 {
-    return protectedInspectedPageController()->inspectionLevel() + 1;
+    return protect(inspectedPageController())->inspectionLevel() + 1;
 }
 
 Page* InspectorFrontendClientLocal::inspectedPage() const

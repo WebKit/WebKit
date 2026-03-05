@@ -46,11 +46,11 @@ namespace WebCore {
 
 Ref<WorkerModuleScriptLoader> WorkerModuleScriptLoader::create(ModuleScriptLoaderClient& client, DeferredPromise& promise, WorkerScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
 {
-    return adoptRef(*new WorkerModuleScriptLoader(client, promise, scriptFetcher, WTFMove(parameters)));
+    return adoptRef(*new WorkerModuleScriptLoader(client, promise, scriptFetcher, WTF::move(parameters)));
 }
 
 WorkerModuleScriptLoader::WorkerModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, WorkerScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
-    : ModuleScriptLoader(client, promise, scriptFetcher, WTFMove(parameters))
+    : ModuleScriptLoader(client, promise, scriptFetcher, WTF::move(parameters))
     , m_scriptLoader(WorkerScriptLoader::create(WorkerScriptLoader::AlwaysUseUTF8::Yes))
 {
 }
@@ -62,7 +62,7 @@ WorkerModuleScriptLoader::~WorkerModuleScriptLoader()
 
 void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourceURL)
 {
-    m_sourceURL = WTFMove(sourceURL);
+    m_sourceURL = WTF::move(sourceURL);
 
     if (auto* globalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context)) {
         if (auto* scriptResource = globalScope->scriptResource(m_sourceURL)) {
@@ -117,7 +117,7 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             fetchOptions.mode = FetchOptions::Mode::SameOrigin;
     }
 
-    m_scriptLoader->loadAsynchronously(context, WTFMove(request), WorkerScriptLoader::Source::ModuleScript, WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this, taskMode());
+    m_scriptLoader->loadAsynchronously(context, WTF::move(request), WorkerScriptLoader::Source::ModuleScript, WTF::move(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this, taskMode());
 }
 
 ReferrerPolicy WorkerModuleScriptLoader::referrerPolicy()
@@ -147,7 +147,7 @@ void WorkerModuleScriptLoader::notifyClientFinished()
     Ref protectedThis { *this };
 
     if (m_client)
-        m_client->notifyFinished(*this, WTFMove(m_sourceURL), m_promise.releaseNonNull());
+        m_client->notifyFinished(*this, WTF::move(m_sourceURL), m_promise.releaseNonNull());
 }
 
 String WorkerModuleScriptLoader::taskMode()

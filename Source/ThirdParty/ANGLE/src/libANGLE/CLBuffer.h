@@ -9,6 +9,7 @@
 #define LIBANGLE_CLBUFFER_H_
 
 #include "libANGLE/CLMemory.h"
+#include "libANGLE/cl_utils.h"
 
 namespace cl
 {
@@ -33,6 +34,7 @@ class Buffer final : public Memory
     MemObjectType getType() const final;
 
     bool isSubBuffer() const;
+    static Buffer *Cast(cl_mem memobj);
 
   private:
     Buffer(Context &context, PropArray &&properties, MemFlags flags, size_t size, void *hostPtr);
@@ -65,6 +67,12 @@ inline MemObjectType Buffer::getType() const
 inline bool Buffer::isSubBuffer() const
 {
     return mParent != nullptr;
+}
+
+inline Buffer *Buffer::Cast(cl_mem memobj)
+{
+    ASSERT(cl::IsBufferType(Memory::Cast(memobj)->getType()));
+    return static_cast<Buffer *>(memobj);
 }
 
 }  // namespace cl

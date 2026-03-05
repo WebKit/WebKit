@@ -46,7 +46,7 @@
 namespace {
 
 static int HexToBIGNUMWithReturn(bssl::UniquePtr<BIGNUM> *out, const char *in) {
-  BIGNUM *raw = NULL;
+  BIGNUM *raw = nullptr;
   int ret = BN_hex2bn(&raw, in);
   out->reset(raw);
   return ret;
@@ -754,12 +754,12 @@ static void TestModExp(BIGNUMFileTest *t, BN_CTX *ctx) {
 
   if (BN_is_odd(m.get())) {
     ASSERT_TRUE(
-        BN_mod_exp_mont(ret.get(), a.get(), e.get(), m.get(), ctx, NULL));
+        BN_mod_exp_mont(ret.get(), a.get(), e.get(), m.get(), ctx, nullptr));
     EXPECT_BIGNUMS_EQUAL("A ^ E (mod M) (Montgomery)", mod_exp.get(),
                          ret.get());
 
     ASSERT_TRUE(BN_mod_exp_mont_consttime(ret.get(), a.get(), e.get(), m.get(),
-                                          ctx, NULL));
+                                          ctx, nullptr));
     EXPECT_BIGNUMS_EQUAL("A ^ E (mod M) (constant-time)", mod_exp.get(),
                          ret.get());
 
@@ -1048,7 +1048,7 @@ TEST_F(BNTest, BN2BinPadded) {
   // Test edge case at 0.
   bssl::UniquePtr<BIGNUM> n(BN_new());
   ASSERT_TRUE(n);
-  ASSERT_TRUE(BN_bn2bin_padded(NULL, 0, n.get()));
+  ASSERT_TRUE(BN_bn2bin_padded(nullptr, 0, n.get()));
 
   OPENSSL_memset(out, -1, sizeof(out));
   ASSERT_TRUE(BN_bn2bin_padded(out, sizeof(out), n.get()));
@@ -1062,7 +1062,7 @@ TEST_F(BNTest, BN2BinPadded) {
     ASSERT_EQ(bytes, BN_bn2bin(n.get(), reference));
 
     // Empty buffer should fail.
-    EXPECT_FALSE(BN_bn2bin_padded(NULL, 0, n.get()));
+    EXPECT_FALSE(BN_bn2bin_padded(nullptr, 0, n.get()));
 
     // One byte short should fail.
     EXPECT_FALSE(BN_bn2bin_padded(out, bytes - 1, n.get()));
@@ -1137,7 +1137,7 @@ TEST_F(BNTest, LittleEndian) {
 }
 
 static int DecimalToBIGNUM(bssl::UniquePtr<BIGNUM> *out, const char *in) {
-  BIGNUM *raw = NULL;
+  BIGNUM *raw = nullptr;
   int ret = BN_dec2bn(&raw, in);
   out->reset(raw);
   return ret;
@@ -1200,7 +1200,7 @@ TEST_F(BNTest, Hex2BN) {
 }
 
 static bssl::UniquePtr<BIGNUM> ASCIIToBIGNUM(const char *in) {
-  BIGNUM *raw = NULL;
+  BIGNUM *raw = nullptr;
   if (!BN_asc2bn(&raw, in)) {
     return nullptr;
   }
@@ -1272,14 +1272,14 @@ TEST_F(BNTest, MPI) {
     bssl::UniquePtr<BIGNUM> bn(ASCIIToBIGNUM(test.base10));
     ASSERT_TRUE(bn);
 
-    const size_t mpi_len = BN_bn2mpi(bn.get(), NULL);
+    const size_t mpi_len = BN_bn2mpi(bn.get(), nullptr);
     ASSERT_LE(mpi_len, sizeof(scratch)) << "MPI size is too large to test";
 
     const size_t mpi_len2 = BN_bn2mpi(bn.get(), scratch);
     EXPECT_EQ(mpi_len, mpi_len2);
     EXPECT_EQ(Bytes(test.mpi, test.mpi_len), Bytes(scratch, mpi_len));
 
-    bssl::UniquePtr<BIGNUM> bn2(BN_mpi2bn(scratch, mpi_len, NULL));
+    bssl::UniquePtr<BIGNUM> bn2(BN_mpi2bn(scratch, mpi_len, nullptr));
     ASSERT_TRUE(bn2) << "failed to parse";
     EXPECT_BIGNUMS_EQUAL("BN_mpi2bn", bn.get(), bn2.get());
   }
@@ -1558,7 +1558,7 @@ TEST_F(BNTest, BadModulus) {
   ERR_clear_error();
 
   EXPECT_FALSE(BN_mod_exp_mont(a.get(), BN_value_one(), BN_value_one(),
-                               zero.get(), ctx(), NULL));
+                               zero.get(), ctx(), nullptr));
   ERR_clear_error();
 
   EXPECT_FALSE(BN_mod_exp_mont_consttime(
@@ -1586,7 +1586,7 @@ TEST_F(BNTest, BadModulus) {
   ERR_clear_error();
 
   EXPECT_FALSE(BN_mod_exp_mont(a.get(), BN_value_one(), BN_value_one(), b.get(),
-                               ctx(), NULL));
+                               ctx(), nullptr));
   ERR_clear_error();
 
   EXPECT_FALSE(BN_mod_exp_mont_consttime(
@@ -1636,8 +1636,8 @@ TEST_F(BNTest, SmallPrime) {
 
   bssl::UniquePtr<BIGNUM> r(BN_new());
   ASSERT_TRUE(r);
-  ASSERT_TRUE(BN_generate_prime_ex(r.get(), static_cast<int>(kBits), 0, NULL,
-                                   NULL, NULL));
+  ASSERT_TRUE(BN_generate_prime_ex(r.get(), static_cast<int>(kBits), 0, nullptr,
+                                   nullptr, nullptr));
   EXPECT_EQ(kBits, BN_num_bits(r.get()));
 }
 
@@ -2508,8 +2508,8 @@ TEST_F(BNTest, LessThanWords) {
     }
   }
 
-  EXPECT_EQ(0, bn_less_than_words(NULL, NULL, 0));
-  EXPECT_EQ(0, bn_in_range_words(NULL, 0, NULL, 0));
+  EXPECT_EQ(0, bn_less_than_words(nullptr, nullptr, 0));
+  EXPECT_EQ(0, bn_in_range_words(nullptr, 0, nullptr, 0));
 }
 #endif  // !BORINGSSL_SHARED_LIBRARY
 

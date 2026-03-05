@@ -107,7 +107,7 @@ static String storageDirectory(DWORD pathIdentifier)
         return String();
 
     buffer.shrink(wcslen(wcharFrom(buffer.span().data())));
-    String directory = String::adopt(WTFMove(buffer));
+    String directory = String::adopt(WTF::move(buffer));
 
     directory = pathByAppendingComponent(directory, "Apple Computer\\WebKit"_s);
     if (!makeAllDirectories(directory))
@@ -176,7 +176,7 @@ std::pair<String, FileHandle> openTemporaryFile(StringView, StringView suffix)
     if (!handle)
         return { String(), FileHandle() };
 
-    return { proposedPath, WTFMove(handle) };
+    return { proposedPath, WTF::move(handle) };
 }
 
 FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)

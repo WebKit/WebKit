@@ -1,0 +1,29 @@
+root
+    'Welcome to Test Page'
+    navigation
+        list
+            list-item
+                link,'Section 1'
+            list-item
+                link,'Section 2'
+    'Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.'
+    section
+        button,'Click Me'
+        'This button does nothing'
+        input,'text',placeholder='Enter text here'
+        'Clickable Div'
+    section
+        article
+            'Article Title'
+            'January 1, 2024'
+            'This is some article content with highlighted text.'
+        'Related Links'
+        list
+            list-item
+                link,'Example Link'
+            list-item
+                link,'Test Link'
+        'Ready'
+        button,'Update Status'
+    'The quick brown fox jumped over the lazy dog.'
+    'Footer content with © 2024'

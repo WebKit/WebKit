@@ -53,14 +53,12 @@ public:
     void networkProcessCrashed() final;
     void setAsActive() final;
 
-    WebRTCMonitor& monitor() { return m_webNetworkMonitor; }
-    Ref<WebRTCMonitor> protectedMonitor() { return m_webNetworkMonitor; }
+    WebRTCMonitor& monitor() LIFETIME_BOUND { return m_webNetworkMonitor; }
     LibWebRTCSocketFactory& socketFactory() { return m_socketFactory; }
-    CheckedRef<LibWebRTCSocketFactory> checkedSocketFactory() { return m_socketFactory; }
 
     void disableNonLocalhostConnections() { socketFactory().disableNonLocalhostConnections(); }
 
-    Ref<WebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return WebRTCResolver::create(checkedSocketFactory(), identifier); }
+    Ref<WebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return WebRTCResolver::create(protect(socketFactory()), identifier); }
 
 private:
     void setSocketFactoryConnection();

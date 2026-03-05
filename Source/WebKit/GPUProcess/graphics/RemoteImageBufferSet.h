@@ -69,7 +69,7 @@ private:
     RemoteImageBufferSet(ImageBufferSetIdentifier, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
 
     void startListeningForIPC();
-    IPC::StreamConnectionWorkQueue& workQueue() const;
+    IPC::StreamConnectionWorkQueue& NODELETE workQueue() const;
 
     // IPC::StreamMessageReceiver
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
@@ -77,6 +77,7 @@ private:
     // Messages
     void updateConfiguration(const RemoteImageBufferSetConfiguration&);
     void endPrepareForDisplay(RenderingUpdateID, CompletionHandler<void(ImageBufferSetPrepareBufferForDisplayOutputData, RenderingUpdateID)>&&);
+    void submitDrawingCommands();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     void dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&&);
@@ -93,7 +94,6 @@ private:
     RemoteImageBufferSetConfiguration m_configuration;
     IPC::ScopedActiveMessageReceiveQueue<RemoteImageBufferGraphicsContext> m_context;
 
-    std::optional<WebCore::IntRect> m_previouslyPaintedRect;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;
 #endif

@@ -28,16 +28,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Comment);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Comment);
 
 inline Comment::Comment(Document& document, String&& text)
-    : CharacterData(document, WTFMove(text), COMMENT_NODE)
+    : CharacterData(document, WTF::move(text), NodeType::Comment)
 {
 }
 
 Ref<Comment> Comment::create(Document& document, String&& text)
 {
-    return adoptRef(*new Comment(document, WTFMove(text)));
+    return adoptRef(*new Comment(document, WTF::move(text)));
 }
 
 String Comment::nodeName() const

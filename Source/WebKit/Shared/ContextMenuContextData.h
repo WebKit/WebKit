@@ -44,6 +44,8 @@ class Encoder;
 
 namespace WebKit {
 
+enum class WebMouseEventInputSource : uint8_t;
+
 class ContextMenuContextData {
 public:
     using Type = WebCore::ContextMenuContext::Type;
@@ -76,15 +78,16 @@ public:
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
         , std::optional<WebCore::HTMLMediaElementIdentifier> mediaElementIdentifier
 #endif
+        , std::optional<WebMouseEventInputSource> inputSource
     );
 
     Type type() const { return m_type; }
-    const WebCore::IntPoint& menuLocation() const { return m_menuLocation; }
+    const WebCore::IntPoint& menuLocation() const LIFETIME_BOUND { return m_menuLocation; }
     void setMenuLocation(WebCore::IntPoint menuLocation) { m_menuLocation = menuLocation; }
-    const Vector<WebKit::WebContextMenuItemData>& menuItems() const { return m_menuItems; }
+    const Vector<WebKit::WebContextMenuItemData>& menuItems() const LIFETIME_BOUND { return m_menuItems; }
 
-    const std::optional<WebHitTestResultData>& webHitTestResultData() const { return m_webHitTestResultData; }
-    const String& selectedText() const { return m_selectedText; }
+    const std::optional<WebHitTestResultData>& webHitTestResultData() const LIFETIME_BOUND { return m_webHitTestResultData; }
+    const String& selectedText() const LIFETIME_BOUND { return m_selectedText; }
 
     bool hasEntireImage() const { return m_hasEntireImage; }
     bool allowsFollowingLink() const { return m_allowsFollowingLink; }
@@ -94,7 +97,7 @@ public:
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::AttributedString&& controlledSelection, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
         : m_type(Type::ServicesMenu)
         , m_menuLocation(menuLocation)
-        , m_controlledSelection(WTFMove(controlledSelection))
+        , m_controlledSelection(WTF::move(controlledSelection))
         , m_selectedTelephoneNumbers(selectedTelephoneNumbers)
         , m_selectionIsEditable(isEditable)
     {
@@ -115,8 +118,8 @@ public:
     WebCore::ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createControlledImageReadOnlyHandle() const;
 
-    const WebCore::AttributedString& controlledSelection() const { return m_controlledSelection; }
-    const Vector<String>& selectedTelephoneNumbers() const { return m_selectedTelephoneNumbers; }
+    const WebCore::AttributedString& controlledSelection() const LIFETIME_BOUND { return m_controlledSelection; }
+    const Vector<String>& selectedTelephoneNumbers() const LIFETIME_BOUND { return m_selectedTelephoneNumbers; }
 
     bool selectionIsEditable() const { return m_selectionIsEditable; }
 
@@ -134,7 +137,7 @@ public:
     WebCore::ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle() const;
 
-    const String& qrCodePayloadString() const { return m_qrCodePayloadString; }
+    const String& qrCodePayloadString() const LIFETIME_BOUND { return m_qrCodePayloadString; }
     void setQRCodePayloadString(const String& string) { m_qrCodePayloadString = string; }
 #endif
 
@@ -142,6 +145,8 @@ public:
     void setMediaElementIdentifier(WebCore::HTMLMediaElementIdentifier identifier) { m_mediaElementIdentifier = identifier; }
     std::optional<WebCore::HTMLMediaElementIdentifier> mediaElementIdentifier() const { return m_mediaElementIdentifier; }
 #endif
+
+    std::optional<WebMouseEventInputSource> inputSource() const { return m_inputSource; }
 
 private:
     Type m_type;
@@ -181,6 +186,8 @@ private:
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     Markable<WebCore::HTMLMediaElementIdentifier> m_mediaElementIdentifier;
 #endif
+
+    std::optional<WebMouseEventInputSource> m_inputSource;
 };
 
 } // namespace WebKit

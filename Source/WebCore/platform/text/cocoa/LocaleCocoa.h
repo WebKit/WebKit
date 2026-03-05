@@ -54,33 +54,34 @@ class DateComponents;
 
 class LocaleCocoa final : public Locale {
     WTF_MAKE_TZONE_ALLOCATED(LocaleCocoa);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocaleCocoa);
 public:
     explicit LocaleCocoa(const AtomString&);
     ~LocaleCocoa();
 
-    Locale::WritingDirection defaultWritingDirection() const override;
+    Locale::WritingDirection defaultWritingDirection() const final;
 
-    String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
+    String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) final;
 
-    String dateFormat() override;
-    String monthFormat() override;
-    String shortMonthFormat() override;
-    String timeFormat() override;
-    String shortTimeFormat() override;
-    String dateTimeFormatWithSeconds() override;
-    String dateTimeFormatWithoutSeconds() override;
-    const Vector<String>& monthLabels() override;
-    const Vector<String>& shortMonthLabels() override;
-    const Vector<String>& standAloneMonthLabels() override;
-    const Vector<String>& shortStandAloneMonthLabels() override;
-    const Vector<String>& timeAMPMLabels() override;
+    String dateFormat() final;
+    String monthFormat() final;
+    String shortMonthFormat() final;
+    String timeFormat() final;
+    String shortTimeFormat() final;
+    String dateTimeFormatWithSeconds() final;
+    String dateTimeFormatWithoutSeconds() final;
+    const Vector<String>& monthLabels() final;
+    const Vector<String>& shortMonthLabels() final;
+    const Vector<String>& standAloneMonthLabels() final;
+    const Vector<String>& shortStandAloneMonthLabels() final;
+    const Vector<String>& timeAMPMLabels() final;
 
     static RetainPtr<CFStringRef> canonicalLanguageIdentifierFromString(const AtomString&);
     static void releaseMemory();
 
 private:
     RetainPtr<NSDateFormatter> shortDateFormatter();
-    void initializeLocaleData() override;
+    void initializeLocaleData() final;
 
     RetainPtr<NSLocale> m_locale;
     RetainPtr<NSCalendar> m_gregorianCalendar;

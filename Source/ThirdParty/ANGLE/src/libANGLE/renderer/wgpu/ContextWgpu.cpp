@@ -69,6 +69,7 @@ constexpr angle::PackedEnumMap<webgpu::RenderPassClosureReason, const char *>
          "Render pass closed to update texture"},
         {webgpu::RenderPassClosureReason::CopyTextureToTexture,
          "Render pass closed to copy texture"},
+        {webgpu::RenderPassClosureReason::CopyImage, "Render pass closed to copy image"},
     }};
 
 }  // namespace
@@ -234,9 +235,16 @@ void ContextWgpu::ensureCommandEncoderCreated()
     }
 }
 
-webgpu::CommandEncoderHandle &ContextWgpu::getCurrentCommandEncoder()
+angle::Result ContextWgpu::getCurrentCommandEncoder(webgpu::RenderPassClosureReason closureReason,
+                                                    webgpu::CommandEncoderHandle *outHandle)
 {
-    return mCurrentCommandEncoder;
+    if (hasActiveRenderPass())
+    {
+        ANGLE_TRY(endRenderPass(closureReason));
+    }
+    ensureCommandEncoderCreated();
+    *outHandle = mCurrentCommandEncoder;
+    return angle::Result::Continue;
 }
 
 angle::Result ContextWgpu::finish(const gl::Context *context)
@@ -930,6 +938,8 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                             break;
+                        case gl::state::EXTENDED_DIRTY_BIT_FETCH_PER_SAMPLE_ENABLED:
+                            break;
                         default:
                             UNREACHABLE();
                     }
@@ -1161,21 +1171,21 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
                                      uint32_t *outFirstIndex,
                                      uint32_t *indexCountOut)
 {
-    gl::DrawElementsType dstDndexTypeOrInvalid = indexTypeOrInvalid;
+    gl::DrawElementsType dstIndexTypeOrInvalid = indexTypeOrInvalid;
     if (mode == gl::PrimitiveMode::LineLoop &&
-        dstDndexTypeOrInvalid == gl::DrawElementsType::InvalidEnum)
+        dstIndexTypeOrInvalid == gl::DrawElementsType::InvalidEnum)
     {
         if (vertexOrIndexCount >= std::numeric_limits<unsigned short>::max())
         {
-            dstDndexTypeOrInvalid = gl::DrawElementsType::UnsignedInt;
+            dstIndexTypeOrInvalid = gl::DrawElementsType::UnsignedInt;
         }
         else
         {
-            dstDndexTypeOrInvalid = gl::DrawElementsType::UnsignedShort;
+            dstIndexTypeOrInvalid = gl::DrawElementsType::UnsignedShort;
         }
     }
 
-    if (mRenderPipelineDesc.setPrimitiveMode(mode, dstDndexTypeOrInvalid))
+    if (mRenderPipelineDesc.setPrimitiveMode(mode, dstIndexTypeOrInvalid))
     {
         invalidateCurrentRenderPipeline();
     }
@@ -1199,11 +1209,11 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
     }
 
     bool reAddDirtyIndexBufferBit = false;
-    if (dstDndexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
+    if (dstIndexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
     {
         *outFirstIndex =
-            gl_wgpu::GetFirstIndexForDrawCall(dstDndexTypeOrInvalid, adjustedIndicesPtr);
-        if (mCurrentIndexBufferType != dstDndexTypeOrInvalid)
+            gl_wgpu::GetFirstIndexForDrawCall(dstIndexTypeOrInvalid, adjustedIndicesPtr);
+        if (mCurrentIndexBufferType != dstIndexTypeOrInvalid)
         {
             invalidateIndexBuffer();
         }
@@ -1247,9 +1257,9 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
                     break;
 
                 case DIRTY_BIT_INDEX_BUFFER:
-                    if (dstDndexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
+                    if (dstIndexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
                     {
-                        ANGLE_TRY(handleDirtyIndexBuffer(dstDndexTypeOrInvalid, &dirtyBitIter));
+                        ANGLE_TRY(handleDirtyIndexBuffer(dstIndexTypeOrInvalid, &dirtyBitIter));
                     }
                     else
                     {

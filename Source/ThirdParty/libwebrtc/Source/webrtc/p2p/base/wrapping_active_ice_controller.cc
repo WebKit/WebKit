@@ -124,7 +124,7 @@ void WrappingActiveIceController::SelectAndPingConnection() {
   agent_.UpdateConnectionStates();
 
   IceControllerInterface::PingResult result =
-      wrapped_->SelectConnectionToPing(agent_.GetLastPingSentMs());
+      wrapped_->GetConnectionToPing(agent_.GetLastPingSent());
   HandlePingResult(result);
 }
 

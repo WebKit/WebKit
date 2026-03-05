@@ -44,7 +44,7 @@ std::optional<ComputePipelineDescriptor> ConvertToBackingContext::convertToBacki
     if (!compute)
         return std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(*compute) } };
+    return { { WTF::move(*base), WTF::move(*compute) } };
 }
 
 std::optional<WebCore::WebGPU::ComputePipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePipelineDescriptor& computePipelineDescriptor)
@@ -57,7 +57,7 @@ std::optional<WebCore::WebGPU::ComputePipelineDescriptor> ConvertFromBackingCont
     if (!compute)
         return std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(*compute) } };
+    return { { WTF::move(*base), WTF::move(*compute) } };
 }
 
 } // namespace WebKit

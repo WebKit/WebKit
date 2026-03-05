@@ -62,8 +62,6 @@ public:
 private:
     explicit RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&);
 
-    Ref<IPC::Connection> protectedConnection() const { return m_connection; }
-
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;

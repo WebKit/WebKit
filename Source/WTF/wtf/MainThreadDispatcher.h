@@ -36,7 +36,7 @@ public:
 
 private:
     MainThreadDispatcher() = default;
-    bool isCurrent() const final;
+    bool NODELETE isCurrent() const final;
     void dispatch(Function<void ()>&&) final;
 };
 

@@ -106,7 +106,6 @@ private:
         ~NavigationClient();
 
     private:
-        RefPtr<NavigationState> protectedNavigationState() const { return m_navigationState.get(); }
 
         void didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest&, API::Navigation*, API::Object*) override;
         void didStartProvisionalLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
@@ -296,7 +295,6 @@ private:
     } m_historyDelegateMethods;
 
 #if USE(RUNNINGBOARD)
-    RefPtr<ProcessThrottler::BackgroundActivity> m_networkActivity;
     RunLoop::Timer m_releaseNetworkActivityTimer;
 #endif
 };

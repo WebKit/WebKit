@@ -24,5 +24,5 @@ line
 line
 line
 line
-Selection before tap: (node at 2#13, [object Text]#13)
+Selection before tap: (node at 0#13, [object Text]#13)
 Selection after tap: (node at 40#13, [object Text]#13)

@@ -36,9 +36,9 @@ public:
     static Ref<PerformanceServerTiming> create(String&& name, double duration, String&& description);
     ~PerformanceServerTiming();
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     double duration() const { return m_duration; }
-    const String& description() const { return m_description; }
+    const String& description() const LIFETIME_BOUND { return m_description; }
 
 private:
     PerformanceServerTiming(String&& name, double duration, String&& description);

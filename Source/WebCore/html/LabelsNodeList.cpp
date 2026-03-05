@@ -35,10 +35,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LabelsNodeList);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LabelsNodeList);
 
 LabelsNodeList::LabelsNodeList(HTMLElement& element)
-    : CachedLiveNodeList(element, NodeListInvalidationType::InvalidateOnForTypeAttrChange)
+    : CachedLiveNodeList(element, LiveNodeListType::LabelsNodeList, NodeListInvalidationType::InvalidateOnForTypeAttrChange)
 {
 }
 

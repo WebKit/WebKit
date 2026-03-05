@@ -13,7 +13,7 @@ info: |
   ...
   4. Let numberLength be ? ToNumber(length).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
@@ -23,4 +23,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     new TA(s);
   });
-});
+}, null, ["passthrough"]);

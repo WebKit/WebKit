@@ -37,7 +37,7 @@ namespace JSC {
 namespace WebCore {
     using CreateWrapperFunction = WebScriptObject * (*)(JSC::JSObject&);
     using DisconnectWindowWrapperFunction = void (*)(WebScriptObject *);
-    WEBCORE_EXPORT void initializeDOMWrapperHooks(CreateWrapperFunction, DisconnectWindowWrapperFunction);
+    WEBCORE_EXPORT void NODELETE initializeDOMWrapperHooks(CreateWrapperFunction, DisconnectWindowWrapperFunction);
 
     NSObject *getJSWrapper(JSC::JSObject*);
     void addJSWrapper(NSObject *wrapper, JSC::JSObject*);

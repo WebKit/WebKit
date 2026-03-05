@@ -22,12 +22,12 @@ info: |
       i. Let kValue be ? Get(O, Pk).
       ii. Let testResult be ToBoolean(? Call(callbackfn, T, « kValue, k, O »)).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n, 44n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n, 44n]));
 
   sample.every(function(v, i) {
     if (i < sample.length - 1) {

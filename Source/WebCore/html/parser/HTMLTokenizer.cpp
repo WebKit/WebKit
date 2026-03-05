@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline Latin1Character convertASCIIAlphaToLower(char16_t character)
+static inline Latin1Character NODELETE convertASCIIAlphaToLower(char16_t character)
 {
     ASSERT(isASCIIAlpha(character));
     return toASCIILowerUnchecked(character);

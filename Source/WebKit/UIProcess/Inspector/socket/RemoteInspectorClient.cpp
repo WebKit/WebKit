@@ -66,7 +66,7 @@ public:
         // FIXME <https://webkit.org/b/205537>: this should infer more useful data about the debug target.
         Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
         debuggableInfo->setDebuggableType(m_debuggableType);
-        m_proxy->initialize(WTFMove(debuggableInfo), m_inspectorClient->backendCommandsURL());
+        m_proxy->initialize(WTF::move(debuggableInfo), m_inspectorClient->backendCommandsURL());
     }
 
     void show()
@@ -253,7 +253,7 @@ void RemoteInspectorClient::setTargetList(const Event& event)
         if (!target.type)
             continue;
 
-        targetList.append(WTFMove(target));
+        targetList.append(WTF::move(target));
     }
 
     auto connectionID = event.connectionID.value();
@@ -278,7 +278,7 @@ void RemoteInspectorClient::setTargetList(const Event& event)
     for (auto& targetID : targetsToRemove)
         m_inspectorProxyMap.remove(std::make_pair(connectionID, targetID));
 
-    m_targets.set(connectionID, WTFMove(targetList));
+    m_targets.set(connectionID, WTF::move(targetList));
     m_observer->targetListChanged(*this);
 }
 

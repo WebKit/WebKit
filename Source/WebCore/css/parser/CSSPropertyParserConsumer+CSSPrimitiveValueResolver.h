@@ -52,12 +52,12 @@ struct CSSPrimitiveValueResolverBase {
 
     static RefPtr<CSSPrimitiveValue> resolve(CSS::Calc auto value, CSSPropertyParserOptions = { })
     {
-        return CSSPrimitiveValue::create(value.protectedCalc());
+        return CSSPrimitiveValue::create(protect(value.calcValue()));
     }
 
     static RefPtr<CSSPrimitiveValue> resolve(CSS::Numeric auto value, CSSPropertyParserOptions options = { })
     {
-        return WTF::switchOn(WTFMove(value), [&](auto&& value) { return resolve(WTFMove(value), options); });
+        return WTF::switchOn(WTF::move(value), [&](auto&& value) { return resolve(WTF::move(value), options); });
     }
 
     template<CSS::Range nR, CSS::Range pR, typename T> static RefPtr<CSSPrimitiveValue> resolve(const CSS::NumberOrPercentageResolvedToNumber<nR, pR, T>& value, CSSPropertyParserOptions options = { })

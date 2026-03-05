@@ -357,6 +357,47 @@ void main()
 class WebGL2CompatibilityTest : public WebGLCompatibilityTest
 {};
 
+class HardenedContextTest : public ANGLETest<>
+{
+  protected:
+    EGLContext setupHardenedContext()
+    {
+        EGLWindow *window                = getEGLWindow();
+        const EGLDisplay display         = window->getDisplay();
+        const EGLConfig config           = window->getConfig();
+        const EGLSurface surface         = window->getSurface();
+        const EGLint contextAttributes[] = {
+            EGL_CONTEXT_MAJOR_VERSION_KHR,
+            GetParam().majorVersion,
+            EGL_CONTEXT_MINOR_VERSION_KHR,
+            GetParam().minorVersion,
+            EGL_CONTEXT_HARDENED_ANGLE,
+            EGL_TRUE,
+            EGL_NONE,
+        };
+
+        mOriginalContext = eglGetCurrentContext();
+
+        EGLContext context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttributes);
+        EXPECT_NE(context, EGL_NO_CONTEXT);
+        eglMakeCurrent(display, surface, surface, context);
+        return context;
+    }
+
+    void destroyHardenedContext(EGLContext context)
+    {
+        EGLWindow *window        = getEGLWindow();
+        const EGLDisplay display = window->getDisplay();
+        const EGLSurface surface = window->getSurface();
+
+        eglMakeCurrent(display, surface, surface, mOriginalContext);
+        eglDestroyContext(display, context);
+    }
+
+  private:
+    EGLContext mOriginalContext = EGL_NO_CONTEXT;
+};
+
 // Context creation would fail if EGL_ANGLE_create_context_webgl_compatibility was not available so
 // the GL extension should always be present
 TEST_P(WebGLCompatibilityTest, ExtensionStringExposed)
@@ -5343,10 +5384,9 @@ TEST_P(WebGLCompatibilityTest, EnableCompressedTextureExtensionLossyDecode)
 // This is an implementation-defined limit - crbug.com/1220237 .
 TEST_P(WebGLCompatibilityTest, ValidateArraySizes)
 {
-    // Note: on macOS with ANGLE's OpenGL backend, getting anywhere
-    // close to this limit causes pathologically slow shader
-    // compilation in the driver. For the "ok" case, therefore, use a
-    // fairly small array.
+    // Note: on macOS/Intel with ANGLE's OpenGL backend, loops are not used to initialize arrays, so
+    // getting anywhere close to this limit results in gigantic shaders that are too slow to
+    // compile. For the "ok" case, therefore, use a fairly small array.
     constexpr char kVSArrayOK[] =
         R"(varying vec4 color;
 const int array_size = 500;
@@ -5407,10 +5447,9 @@ void main()
 // This is an implementation-defined limit - crbug.com/1220237 .
 TEST_P(WebGLCompatibilityTest, ValidateStructSizes)
 {
-    // Note: on macOS with ANGLE's OpenGL backend, getting anywhere
-    // close to this limit causes pathologically slow shader
-    // compilation in the driver. For this reason, only perform a
-    // negative test.
+    // Note: on macOS/Intel with ANGLE's OpenGL backend, loops are not used to initialize arrays, so
+    // getting anywhere close to this limit results in gigantic shaders that are too slow to
+    // compile. For this reason, only perform a negative test.
     constexpr char kFSStructTooLarge[] =
         R"(precision mediump float;
 struct Light {
@@ -5897,7 +5936,7 @@ TEST_P(WebGL2CompatibilityTest, RenderToLevelsOfSampledTexture)
 }
 
 // Reject attempts to allocate too-large variables in shaders.
-// This is an implementation-defined limit - crbug.com/1220237 .
+// This is an implementation-defined limit - http://crbug.com/40056230.
 TEST_P(WebGL2CompatibilityTest, ValidateTypeSizes)
 {
     constexpr char kFSArrayBlockTooLarge[] = R"(#version 300 es
@@ -5922,8 +5961,38 @@ void main()
     EXPECT_EQ(0u, program);
 }
 
+// Similar to WebGL2CompatibilityTest.ValidateTypeSizes, but ensure the same validation is done in
+// non-webgl contexts with the EGL_CONTEXT_HARDENED_ANGLE flag.
+TEST_P(HardenedContextTest, ValidateTypeSizes)
+{
+    constexpr char kFSArrayBlockTooLarge[] = R"(#version 300 es
+precision mediump float;
+// 1 + the maximum size this implementation allows.
+uniform LargeArrayBlock {
+    vec4 large_array[134217729];
+};
+
+out vec4 out_FragColor;
+
+void main()
+{
+    if (large_array[1].x == 2.0)
+        out_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    else
+        out_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+)";
+
+    EGLContext hardenedContext = setupHardenedContext();
+
+    GLuint program = CompileProgram(essl3_shaders::vs::Simple(), kFSArrayBlockTooLarge);
+    EXPECT_EQ(0u, program);
+
+    destroyHardenedContext(hardenedContext);
+}
+
 // Ensure that new type size validation code added for
-// crbug.com/1220237 does not crash.
+// http://crbug.com/40056230 does not crash.
 TEST_P(WebGL2CompatibilityTest, ValidatingTypeSizesShouldNotCrash)
 {
     constexpr char kFS1[] = R"(#version 300 es
@@ -6966,4 +7035,7 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompatibilityTest);
 ANGLE_INSTANTIATE_TEST_ES3(WebGL2CompatibilityTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HardenedContextTest);
+ANGLE_INSTANTIATE_TEST_ES3(HardenedContextTest);
 }  // namespace angle

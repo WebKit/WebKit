@@ -143,9 +143,6 @@ This is an example on how to build and run WPE for development on the RPi:
 
 1. Build the image that will be flashed on the board:
 
-# NOTE: If you are using the **WebKit Container SDK** remember to unset the *LD_LIBRARY_PATH*
-# before building, if you don't it can cause problems with the yocto setup.
-
 ```
 user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bits-mesa --build-image
 ```

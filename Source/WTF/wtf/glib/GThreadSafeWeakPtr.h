@@ -55,7 +55,7 @@ public:
         g_weak_ref_clear(&m_ref);
     }
 
-    WARN_UNUSED_RETURN GRefPtr<T> get()
+    [[nodiscard]] GRefPtr<T> get()
     {
         return adoptGRef(reinterpret_cast<T*>(g_weak_ref_get(&m_ref)));
     }

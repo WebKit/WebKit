@@ -54,8 +54,7 @@ public:
     void willDestroyGlobalObjectInFrame() final;
     void willDetachGlobalObjectFromFrame() final;
 
-    WEBCORE_EXPORT LocalFrame* frame() const;
-    RefPtr<LocalFrame> protectedFrame() const;
+    WEBCORE_EXPORT LocalFrame* NODELETE frame() const;
     DOMWrapperWorld& world() const { return m_world; }
 
 private:

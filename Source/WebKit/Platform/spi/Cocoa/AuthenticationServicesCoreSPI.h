@@ -35,6 +35,8 @@ DECLARE_SYSTEM_HEADER
 + (void)getArePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler NS_REFINED_FOR_SWIFT;
 + (void)getCanCurrentProcessAccessPasskeysForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler;
 + (void)getClientCapabilitiesForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(NSDictionary<NSString *, NSNumber *> * _Nonnull))completionHandler;
++ (NSData *)entepriseAttestationIdentityPersistentReferenceForRelyingParty:(NSString *)relyingParty;
++ (NSData *)alternateLargeBlobIfNecessaryForRelyingParty:(NSString *)relyingParty clientDataHash:(NSData *)clientDataHash;
 @end
 
 // FIXME: Most of the forward declarations below should be behind a non-Apple-internal SDK compile-time flag.

@@ -69,7 +69,7 @@ class RemoteXRView final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteXRView> create(WebCore::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRView(xrView, objectHeap, gpu, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteXRView(xrView, objectHeap, gpu, WTF::move(streamConnection), identifier));
     }
 
     virtual ~RemoteXRView();
@@ -87,16 +87,14 @@ private:
     RemoteXRView& operator=(const RemoteXRView&) = delete;
     RemoteXRView& operator=(RemoteXRView&&) = delete;
 
-    Ref<IPC::StreamServerConnection> protectedStreamConnection();
-
     WebCore::WebGPU::XRView& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
 
-    Ref<WebCore::WebGPU::XRView> m_backing;
+    const Ref<WebCore::WebGPU::XRView> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
     WeakRef<RemoteGPU> m_gpu;
 };

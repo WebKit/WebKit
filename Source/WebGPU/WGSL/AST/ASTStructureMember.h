@@ -65,10 +65,10 @@ public:
 private:
     StructureMember(SourceSpan span, Identifier&& name, Expression::Ref&& type, Attribute::List&& attributes)
         : Node(span)
-        , m_name(WTFMove(name))
+        , m_name(WTF::move(name))
         , m_originalName(m_name)
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
+        , m_attributes(WTF::move(attributes))
+        , m_type(WTF::move(type))
     { }
 
     Identifier m_name;

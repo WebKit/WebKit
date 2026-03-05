@@ -28,19 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtctrackevent
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCTrackEvent : Event {
     constructor([AtomString] DOMString type, RTCTrackEventInit eventInitDict);
-
-    readonly attribute RTCRtpReceiver receiver;
-    readonly attribute MediaStreamTrack track;
+    // FIXME: `receiver` should not be nullable.
+    readonly attribute RTCRtpReceiver? receiver;
+    // FIXME: `track` should not be nullable.
+    readonly attribute MediaStreamTrack? track;
     [CachedAttribute, SameObject] readonly attribute FrozenArray<MediaStream> streams;
-    readonly attribute RTCRtpTransceiver transceiver;
+    // FIXME: `transceiver` should not be nullable.
+    readonly attribute RTCRtpTransceiver? transceiver;
 };
 
+// https://w3c.github.io/webrtc-pc/#dom-rtctrackeventinit
 dictionary RTCTrackEventInit : EventInit {
     required RTCRtpReceiver receiver;
     required MediaStreamTrack track;

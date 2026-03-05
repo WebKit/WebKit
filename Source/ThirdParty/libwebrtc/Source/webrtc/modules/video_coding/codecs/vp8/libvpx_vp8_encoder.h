@@ -34,8 +34,10 @@
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/utility/corruption_detection_settings_generator.h"
+#include "modules/video_coding/utility/frame_sampler.h"
 #include "modules/video_coding/utility/framerate_controller_deprecated.h"
 #include "rtc_base/experiments/encoder_info_settings.h"
+#include "rtc_base/experiments/psnr_experiment.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "third_party/libvpx/source/libvpx/vpx/vpx_encoder.h"
 #include "third_party/libvpx/source/libvpx/vpx/vpx_image.h"
@@ -155,6 +157,11 @@ class LibvpxVp8Encoder : public VideoEncoder {
 
   std::unique_ptr<CorruptionDetectionSettingsGenerator>
       corruption_detection_settings_generator_;
+
+  // Determine whether the frame should be sampled for PSNR.
+  // TODO(webrtc:388070060): Remove after rollout.
+  const PsnrExperiment psnr_experiment_;
+  FrameSampler psnr_frame_sampler_;
 };
 
 }  // namespace webrtc

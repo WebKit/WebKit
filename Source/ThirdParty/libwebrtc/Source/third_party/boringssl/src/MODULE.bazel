@@ -16,7 +16,7 @@
 # the revision where we bump the version.
 module(
     name = "boringssl",
-    version = "0.20250818.0",
+    version = "0.20251002.0",
     compatibility_level = 2,
 )
 
@@ -30,7 +30,7 @@ module(
 # need to request they run tests when triaging issues. If
 # https://github.com/bazelbuild/bazel/issues/22187 is ever fixed, we can change
 # this.
-bazel_dep(name = "googletest", version = "1.17.0")
+bazel_dep(name = "googletest", version = "1.17.0.bcr.1")
 bazel_dep(name = "platforms", version = "1.0.0")
-bazel_dep(name = "rules_cc", version = "0.2.0")
+bazel_dep(name = "rules_cc", version = "0.2.8")
 bazel_dep(name = "rules_license", version = "1.0.0")

@@ -31,7 +31,7 @@ CaptureClockOffsetUpdater::AdjustEstimatedCaptureClockOffset(
          static_cast<uint64_t>(*remote_to_local_clock_offset_);
 }
 
-std::optional<TimeDelta> CaptureClockOffsetUpdater::ConvertsToTimeDela(
+std::optional<TimeDelta> CaptureClockOffsetUpdater::ConvertToTimeDelta(
     std::optional<int64_t> q32x32) {
   if (q32x32 == std::nullopt) {
     return std::nullopt;

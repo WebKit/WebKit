@@ -6,7 +6,7 @@ layer at (0,0) size 800x140
       RenderBlock {DIV} at (0,0) size 784x124 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF) (96px solid #0000FF) (3px solid #0000FF)]
         RenderBlock (floating) {DIV} at (421,11) size 352x72 [bgcolor=#008080]
           RenderBlock {P} at (16,16) size 320x40
-            RenderText {#text} at (0,0) size 320x39
+            RenderText {#text} at (0,0) size 320x40
               text run at (0,0) width 320: "This teal box should start inside the dark blue box"
               text run at (0,20) width 84: "and spill out "
               text run at (83,20) width 175: "onto the blue area below it."

@@ -76,7 +76,7 @@ String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResul
     StringBuilder stringBuilder;
     stringBuilder.append(metalCodePrologue());
 
-    Metal::emitMetalFunctions(stringBuilder, shaderModule, prepareResult, constantValues, WTFMove(deviceState));
+    Metal::emitMetalFunctions(stringBuilder, shaderModule, prepareResult, constantValues, WTF::move(deviceState));
 
 #if PLATFORM(COCOA)
     dumpMetalCodeIfNeeded(stringBuilder);

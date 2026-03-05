@@ -126,7 +126,7 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
     if (!range.atEnd())
         return { };
 
-    return Feature { featureName, Syntax::Plain, { }, Comparison { op, WTFMove(value) } };
+    return Feature { featureName, Syntax::Plain, { }, Comparison { op, WTF::move(value) } };
 }
 
 std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
@@ -175,7 +175,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return { };
         }
 
-        return Comparison { *op, WTFMove(value) };
+        return Comparison { *op, WTF::move(value) };
     };
 
     auto consumeRightComparison = [&]() -> std::optional<Comparison> {
@@ -188,7 +188,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return { };
         }
 
-        return Comparison { *op, WTFMove(value) };
+        return Comparison { *op, WTF::move(value) };
     };
 
     auto leftComparison = consumeLeftComparison();
@@ -218,7 +218,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
     if (!range.atEnd() || !validateComparisons())
         return { };
 
-    return Feature { WTFMove(featureName), Syntax::Range, WTFMove(leftComparison), WTFMove(rightComparison) };
+    return Feature { WTF::move(featureName), Syntax::Range, WTF::move(leftComparison), WTF::move(rightComparison) };
 }
 
 RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const MediaQueryParserContext& context)

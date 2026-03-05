@@ -70,7 +70,7 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
         for (const ParametersToTest params : parametersToTest)
         {
             VkFormat actualImageVkFormat = rx::vk::GetVkFormatFromFormatID(
-                renderer, vkFormat.getActualImageFormatID(rx::vk::ImageAccess::SampleOnly));
+                renderer, vkFormat.getActualImageFormatID(rx::vk::ImageFormatSupport::SampleOnly));
 
             // Now let's verify that against vulkan.
             VkFormatProperties formatProperties;
@@ -117,5 +117,6 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanFormatTablesTest, ES2_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanFormatTablesTest);
 
 }  // anonymous namespace

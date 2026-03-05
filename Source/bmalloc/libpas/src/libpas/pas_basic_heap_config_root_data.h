@@ -36,7 +36,8 @@ typedef struct pas_basic_heap_config_root_data pas_basic_heap_config_root_data;
 typedef struct pas_page_header_table pas_page_header_table;
 
 struct pas_basic_heap_config_root_data {
-    pas_page_header_table* medium_page_header_table;
+    pas_page_header_table* medium_segregated_page_header_table;
+    pas_page_header_table* medium_bitfit_page_header_table;
     pas_page_header_table* marge_page_header_table;
 };
 

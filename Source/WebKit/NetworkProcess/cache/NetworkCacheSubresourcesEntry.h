@@ -36,19 +36,19 @@ class SubresourceInfo {
     WTF_MAKE_TZONE_ALLOCATED(SubresourceInfo);
 public:
     SubresourceInfo(Key&& key, WallTime lastSeen, WallTime firstSeen)
-        : m_key(WTFMove(key))
+        : m_key(WTF::move(key))
         , m_lastSeen(lastSeen)
         , m_firstSeen(firstSeen)
         , m_isTransient(true) { }
     SubresourceInfo(Key&& key, WallTime lastSeen, WallTime firstSeen, bool isSameSite, bool isAppInitiated, URL&& firstPartyForCookies, WebCore::HTTPHeaderMap&& requestHeaders, WebCore::ResourceLoadPriority priority)
-        : m_key(WTFMove(key))
+        : m_key(WTF::move(key))
         , m_lastSeen(lastSeen)
         , m_firstSeen(firstSeen)
         , m_isTransient(false)
         , m_isSameSite(isSameSite)
         , m_isAppInitiated(isAppInitiated)
-        , m_firstPartyForCookies(WTFMove(firstPartyForCookies))
-        , m_requestHeaders(WTFMove(requestHeaders))
+        , m_firstPartyForCookies(WTF::move(firstPartyForCookies))
+        , m_requestHeaders(WTF::move(requestHeaders))
         , m_priority(priority) { }
     SubresourceInfo(const Key&, const WebCore::ResourceRequest&, const SubresourceInfo* previousInfo);
 

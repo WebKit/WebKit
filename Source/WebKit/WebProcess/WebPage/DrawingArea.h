@@ -87,7 +87,7 @@ public:
     DrawingAreaIdentifier identifier() const { return m_identifier; }
 
 #if ENABLE(TILED_CA_DRAWING_AREA)
-    static bool supportsGPUProcessRendering(DrawingAreaType);
+    static bool NODELETE supportsGPUProcessRendering(DrawingAreaType);
 #else
     static bool supportsGPUProcessRendering();
 #endif
@@ -174,7 +174,7 @@ public:
     virtual void backgroundColorDidChange() { };
 #endif
 
-#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
     virtual void preferredBufferFormatsDidChange() { }
 #endif
 
@@ -190,8 +190,6 @@ public:
     virtual void adoptLayersFromDrawingArea(DrawingArea&) { }
     virtual void adoptDisplayRefreshMonitorsFromDrawingArea(DrawingArea&) { }
 
-    virtual void setNextRenderingUpdateRequiresSynchronousImageDecoding() { }
-
     void removeMessageReceiverIfNeeded();
     
     WebCore::TiledBacking* mainFrameTiledBacking() const;
@@ -206,11 +204,9 @@ protected:
 
     template<typename T> bool send(T&& message)
     {
-        Ref webPage = m_webPage.get();
+        Ref webPage = m_webPage;
         return webPage->send(std::forward<T>(message), m_identifier.toUInt64(), { });
     }
-
-    Ref<WebPage> protectedWebPage() const { return m_webPage.get(); }
 
     DrawingAreaIdentifier m_identifier;
     WeakRef<WebPage> m_webPage;

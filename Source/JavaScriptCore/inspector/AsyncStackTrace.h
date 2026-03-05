@@ -26,6 +26,8 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/JSExportMacros.h>
+#include <cstdint>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

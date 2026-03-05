@@ -86,13 +86,14 @@ list(APPEND WebKit_SOURCES
     UIProcess/playstation/PageClientImpl.cpp
     UIProcess/playstation/PlayStationWebView.cpp
     UIProcess/playstation/WebPageProxyPlayStation.cpp
+    UIProcess/playstation/WebPreferencesPlayStation.cpp
     UIProcess/playstation/WebProcessPoolPlayStation.cpp
 
     WebProcess/GPU/media/playstation/VideoLayerRemotePlayStation.cpp
 
     WebProcess/InjectedBundle/playstation/InjectedBundlePlayStation.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp
+    WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurfacePlayStation.cpp
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 
     WebProcess/WebPage/playstation/WebPagePlayStation.cpp

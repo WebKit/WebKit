@@ -1,13 +1,10 @@
 include(GLibMacros)
 include(InspectorGResources.cmake)
 include(ModernMediaControlsGResources.cmake)
+include(Platform/Skia.cmake)
 
 if (ENABLE_PDFJS)
     include(PdfJSGResources.cmake)
-endif ()
-
-if (USE_SKIA)
-    include(Platform/Skia.cmake)
 endif ()
 
 set(WebKit_OUTPUT_NAME webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION})
@@ -295,9 +292,10 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBKIT_DIR}/NetworkProcess/glib"
-    "${WEBKIT_DIR}/NetworkProcess/gtk"
     "${WEBKIT_DIR}/NetworkProcess/soup"
+    "${WEBKIT_DIR}/NetworkProcess/webrtc/rice"
     "${WEBKIT_DIR}/Platform/IPC/glib"
     "${WEBKIT_DIR}/Platform/IPC/unix"
     "${WEBKIT_DIR}/Platform/classifier"
@@ -327,6 +325,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk"
     "${WEBKIT_DIR}/WebProcess/Inspector/gtk"
+    "${WEBKIT_DIR}/WebProcess/Network/webrtc/rice"
     "${WEBKIT_DIR}/WebProcess/glib"
     "${WEBKIT_DIR}/WebProcess/gtk"
     "${WEBKIT_DIR}/WebProcess/soup"
@@ -370,12 +369,6 @@ endif ()
 
 if (USE_OPENXR)
    list(APPEND WebKit_LIBRARIES OpenXR::openxr_loader)
-endif ()
-
-if (USE_CAIRO)
-    list(APPEND WebKit_SERIALIZATION_IN_FILES
-        Shared/cairo/WebCoreFontCairo.serialization.in
-    )
 endif ()
 
 if (USE_LIBWEBRTC)

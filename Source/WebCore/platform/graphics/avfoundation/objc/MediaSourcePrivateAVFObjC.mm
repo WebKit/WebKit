@@ -91,11 +91,12 @@ MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC()
 void MediaSourcePrivateAVFObjC::setPlayer(MediaPlayerPrivateInterface* player)
 {
     assertIsMainThread();
-    ASSERT(player);
-    m_player = downcast<MediaPlayerPrivateMediaSourceAVFObjC>(player);
-    Ref renderer = m_player.get()->audioVideoRenderer();
+    RefPtr newPlayer = downcast<MediaPlayerPrivateMediaSourceAVFObjC>(player);
+    ASSERT(newPlayer);
+    m_player = newPlayer.copyRef();
+    Ref renderer = newPlayer->audioVideoRenderer();
     m_renderer = renderer.get();
-    ensureOnDispatcher([protectedThis = Ref { *this }, renderer = WTFMove(renderer)] {
+    ensureOnDispatcher([protectedThis = Ref { *this }, renderer = WTF::move(renderer)] {
         for (Ref sourceBuffer : protectedThis->sourceBuffers())
             downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->setAudioVideoRenderer(renderer);
     });
@@ -134,13 +135,13 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     parser->setLogger(m_logger, m_logIdentifier);
 #endif
 
-    Ref newSourceBuffer = SourceBufferPrivateAVFObjC::create(*this, parser.releaseNonNull(), *renderer);
+    Ref newSourceBuffer = SourceBufferPrivateAVFObjC::create(*this, configuration, parser.releaseNonNull(), *renderer);
     newSourceBuffer->setResourceOwner(m_resourceOwner);
     outPrivate = newSourceBuffer.copyRef();
     newSourceBuffer->setMediaSourceDuration(duration());
     {
         Locker locker { m_lock };
-        m_sourceBuffers.append(WTFMove(newSourceBuffer));
+        m_sourceBuffers.append(WTF::move(newSourceBuffer));
     }
     return AddStatus::Ok;
 }
@@ -148,7 +149,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
 void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
 {
     assertIsCurrent(m_dispatcher.get());
-    if (downcast<SourceBufferPrivateAVFObjC>(&sourceBuffer) == m_sourceBufferWithSelectedVideo)
+    if (downcast<SourceBufferPrivateAVFObjC>(&sourceBuffer) == m_sourceBufferWithSelectedVideo.get().get())
         m_sourceBufferWithSelectedVideo = nullptr;
     MediaSourcePrivate::removeSourceBuffer(sourceBuffer);
 }
@@ -174,22 +175,12 @@ void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime& duration)
     });
 }
 
-void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)
-{
-    if (status != EndOfStreamStatus::NoError)
-        return;
-    callOnMainThreadWithPlayer([](auto& player) {
-        player.setNetworkState(MediaPlayer::NetworkState::Loaded);
-    });
-    MediaSourcePrivate::markEndOfStream(status);
-}
-
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
 {
     assertIsCurrent(m_dispatcher.get());
     FloatSize result;
 
-    for (auto* sourceBuffer : m_activeSourceBuffers)
+    for (RefPtr sourceBuffer : m_activeSourceBuffers)
         result = result.expandedTo(downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->naturalSize());
 
     return result;
@@ -199,9 +190,9 @@ void MediaSourcePrivateAVFObjC::hasSelectedVideoChanged(SourceBufferPrivateAVFOb
 {
     assertIsCurrent(m_dispatcher.get());
     bool hasSelectedVideo = sourceBuffer.hasSelectedVideo();
-    if (m_sourceBufferWithSelectedVideo == &sourceBuffer && !hasSelectedVideo)
+    if (m_sourceBufferWithSelectedVideo.get().get() == &sourceBuffer && !hasSelectedVideo)
         setSourceBufferWithSelectedVideo(nullptr);
-    else if (m_sourceBufferWithSelectedVideo != &sourceBuffer && hasSelectedVideo)
+    else if (m_sourceBufferWithSelectedVideo.get().get() != &sourceBuffer && hasSelectedVideo)
         setSourceBufferWithSelectedVideo(&sourceBuffer);
 }
 
@@ -212,7 +203,7 @@ void MediaSourcePrivateAVFObjC::flushAndReenqueueActiveVideoSourceBuffers()
         if (!protectedThis)
             return;
         assertIsCurrent(protectedThis->m_dispatcher.get());
-        for (auto* sourceBuffer : protectedThis->m_activeSourceBuffers)
+        for (RefPtr sourceBuffer : protectedThis->m_activeSourceBuffers)
             downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->flushAndReenqueueVideo();
     });
 }
@@ -229,13 +220,13 @@ bool MediaSourcePrivateAVFObjC::waitingForKey() const
 void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC* sourceBuffer)
 {
     assertIsCurrent(m_dispatcher.get());
-    if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->setVideoRenderer(false);
+    if (RefPtr sourceBufferWithSelectedVideo = m_sourceBufferWithSelectedVideo.get())
+        sourceBufferWithSelectedVideo->setVideoRenderer(false);
 
     m_sourceBufferWithSelectedVideo = sourceBuffer;
 
-    if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->setVideoRenderer(true);
+    if (sourceBuffer)
+        sourceBuffer->setVideoRenderer(true);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -287,7 +278,7 @@ bool MediaSourcePrivateAVFObjC::timeIsProgressing() const
 
 void MediaSourcePrivateAVFObjC::callOnMainThreadWithPlayer(Function<void(MediaPlayerPrivateMediaSourceAVFObjC&)>&& callback)
 {
-    ensureOnMainThread([callback = WTFMove(callback), weakThis = ThreadSafeWeakPtr { *this }] {
+    ensureOnMainThread([callback = WTF::move(callback), weakThis = ThreadSafeWeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

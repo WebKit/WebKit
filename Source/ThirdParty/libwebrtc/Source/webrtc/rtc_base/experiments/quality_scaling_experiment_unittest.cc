@@ -58,8 +58,17 @@ TEST(QualityScalingExperimentTest, EnabledWithFieldTrial) {
 }
 
 TEST(QualityScalingExperimentTest, ParseSettings) {
-  const QualityScalingExperiment::Settings kExpected = {1, 2, 3,    4,     5, 6,
-                                                        7, 8, 0.9f, 0.99f, 1};
+  const QualityScalingExperiment::Settings kExpected = {.vp8_low = 1,
+                                                        .vp8_high = 2,
+                                                        .vp9_low = 3,
+                                                        .vp9_high = 4,
+                                                        .h264_low = 5,
+                                                        .h264_high = 6,
+                                                        .generic_low = 7,
+                                                        .generic_high = 8,
+                                                        .alpha_high = 0.9f,
+                                                        .alpha_low = 0.99f,
+                                                        .drop = 1};
   FieldTrials field_trials(
       "WebRTC-Video-QualityScaling/Enabled-1,2,3,4,5,6,7,8,0.9,0.99,1/");
   const auto settings = QualityScalingExperiment::ParseSettings(field_trials);

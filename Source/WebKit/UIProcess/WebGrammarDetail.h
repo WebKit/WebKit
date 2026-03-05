@@ -45,9 +45,9 @@ public:
     int location() const { return m_grammarDetail.range.location; }
     int length() const { return m_grammarDetail.range.length; }
     Ref<API::Array> guesses() const;
-    const String& userDescription() const { return m_grammarDetail.userDescription; }
+    const String& userDescription() const LIFETIME_BOUND { return m_grammarDetail.userDescription; }
 
-    const WebCore::GrammarDetail& grammarDetail() { return m_grammarDetail; }
+    const WebCore::GrammarDetail& grammarDetail() LIFETIME_BOUND { return m_grammarDetail; }
 
 private:
     WebGrammarDetail(int location, int length, API::Array* guesses, const String& userDescription);

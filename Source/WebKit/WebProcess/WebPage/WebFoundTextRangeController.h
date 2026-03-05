@@ -28,6 +28,7 @@
 #include "WebFindOptions.h"
 #include "WebFoundTextRange.h"
 #include <WebCore/FindOptions.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformLayerIdentifier.h>
@@ -55,7 +56,7 @@ class WebFoundTextRangeController : private WebCore::PageOverlayClient {
 public:
     explicit WebFoundTextRangeController(WebPage&);
 
-    void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<WebKit::WebFoundTextRange>&&)>&&);
+    void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&&);
 
     void replaceFoundTextRangeWithString(const WebFoundTextRange&, const String&);
 
@@ -95,9 +96,6 @@ private:
     WebCore::LocalFrame* frameForFoundTextRange(const WebFoundTextRange&) const;
     WebCore::Document* documentForFoundTextRange(const WebFoundTextRange&) const;
     std::optional<WebCore::SimpleRange> simpleRangeFromFoundTextRange(WebFoundTextRange);
-
-    RefPtr<WebPage> protectedWebPage() const { return m_webPage.get(); }
-    RefPtr<WebCore::PageOverlay> protectedFindPageOverlay() const { return m_findPageOverlay; }
 
     WeakPtr<WebPage> m_webPage;
     RefPtr<WebCore::PageOverlay> m_findPageOverlay;

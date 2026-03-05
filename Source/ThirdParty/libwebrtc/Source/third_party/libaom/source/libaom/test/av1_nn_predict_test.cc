@@ -24,11 +24,11 @@
 #include "test/acm_random.h"
 
 namespace {
-typedef void (*NnPredict_Func)(const float *const input_nodes,
-                               const NN_CONFIG *const nn_config,
-                               int reduce_prec, float *const output);
+using NnPredict_Func = void (*)(const float *const input_nodes,
+                                const NN_CONFIG *const nn_config,
+                                int reduce_prec, float *const output);
 
-typedef std::tuple<const NnPredict_Func> NnPredictTestParam;
+using NnPredictTestParam = std::tuple<const NnPredict_Func>;
 
 const float epsilon = 1e-3f;  // Error threshold for functional equivalence
 

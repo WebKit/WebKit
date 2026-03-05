@@ -37,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AVIFImageReader);
 
 AVIFImageReader::AVIFImageReader(RefPtr<AVIFImageDecoder>&& decoder)
-    : m_decoder(WTFMove(decoder))
+    : m_decoder(WTF::move(decoder))
     , m_avifDecoder(avifDecoderCreate())
 {
     // Allow the PixelInformationProperty ('pixi') to be missing in AV1 image

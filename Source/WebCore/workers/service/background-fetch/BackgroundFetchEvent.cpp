@@ -30,17 +30,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BackgroundFetchEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchEvent);
 
 Ref<BackgroundFetchEvent> BackgroundFetchEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto registration = init.registration;
-    return adoptRef(*new BackgroundFetchEvent(EventInterfaceType::BackgroundFetchEvent, type, WTFMove(init), WTFMove(registration), isTrusted));
+    Ref registration = WTF::move(init.registration);
+    return adoptRef(*new BackgroundFetchEvent(EventInterfaceType::BackgroundFetchEvent, type, WTF::move(init), WTF::move(registration), isTrusted));
 }
 
-BackgroundFetchEvent::BackgroundFetchEvent(enum EventInterfaceType eventInterface, const AtomString& type, ExtendableEventInit&& eventInit, RefPtr<BackgroundFetchRegistration>&& registration, IsTrusted isTrusted)
-    : ExtendableEvent(eventInterface, type, WTFMove(eventInit), isTrusted)
-    , m_registration(WTFMove(registration))
+BackgroundFetchEvent::BackgroundFetchEvent(enum EventInterfaceType eventInterface, const AtomString& type, ExtendableEventInit&& eventInit, Ref<BackgroundFetchRegistration>&& registration, IsTrusted isTrusted)
+    : ExtendableEvent(eventInterface, type, WTF::move(eventInit), isTrusted)
+    , m_registration(WTF::move(registration))
 {
 }
 
@@ -48,7 +48,7 @@ BackgroundFetchEvent::~BackgroundFetchEvent()
 {
 }
 
-RefPtr<BackgroundFetchRegistration> BackgroundFetchEvent::registration() const
+BackgroundFetchRegistration& BackgroundFetchEvent::registration() const
 {
     return m_registration;
 }

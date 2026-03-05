@@ -9,10 +9,5 @@ PASS .flexbox 7
 PASS .flexbox 8
 PASS .flexbox 9
 PASS .flexbox 10
-FAIL .flexbox 11 assert_equals:
-<div class="flexbox wrap-reverse vertical-padding" data-expected-scroll-height="215">
-    <div></div>
-    <div></div>
-</div>
-scrollHeight expected 215 but got 210
+PASS .flexbox 11
 

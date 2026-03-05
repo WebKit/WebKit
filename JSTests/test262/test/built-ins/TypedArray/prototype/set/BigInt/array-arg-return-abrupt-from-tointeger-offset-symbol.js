@@ -12,14 +12,14 @@ info: |
   22.2.3.23.2 applies.
   ...
   6. Let targetOffset be ? ToInteger(offset).
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
 var s = Symbol("1");
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
 
   assert.throws(TypeError, function() {
     sample.set([1n], s);

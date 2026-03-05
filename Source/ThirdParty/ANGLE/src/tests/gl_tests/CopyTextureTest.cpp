@@ -3256,7 +3256,8 @@ ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
                                  ES2_OPENGL(),
                                  ES2_OPENGLES(),
                                  ES2_VULKAN(),
-                                 ES2_METAL());
+                                 ES2_METAL(),
+                                 ES2_WEBGPU());
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTestWebGL);
 ANGLE_INSTANTIATE_TEST(CopyTextureTestDest,
                        ES2_D3D11(),

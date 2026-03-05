@@ -31,13 +31,13 @@ namespace WebCore {
 
 class CSSQuadValue final : public CSSValue {
 public:
-    static Ref<CSSQuadValue> create(Quad);
-    static Ref<CSSQuadValue> create(Ref<CSSValue>);
-    static Ref<CSSQuadValue> create(Ref<CSSValue>, Ref<CSSValue>);
-    static Ref<CSSQuadValue> create(Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
-    static Ref<CSSQuadValue> create(Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
+    static Ref<CSSQuadValue> NODELETE create(Quad);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>&&);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>&&, Ref<CSSValue>&&);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>&&, Ref<CSSValue>&&, Ref<CSSValue>&&);
+    static Ref<CSSQuadValue> create(Ref<CSSValue>&&, Ref<CSSValue>&&, Ref<CSSValue>&&, Ref<CSSValue>&&);
 
-    const Quad& quad() const { return m_quad; }
+    const Quad& quad() const LIFETIME_BOUND { return m_quad; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSQuadValue&) const;
@@ -54,24 +54,24 @@ inline const Quad& CSSValue::quad() const
     return downcast<CSSQuadValue>(*this).quad();
 }
 
-inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a)
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue>&& a)
 {
-    return CSSQuadValue::create(Quad { a, a, a, a });
+    return CSSQuadValue::create(Quad { a.copyRef(), a.copyRef(), a.copyRef(), WTF::move(a) });
 }
 
-inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a, Ref<CSSValue> b)
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue>&& a, Ref<CSSValue>&& b)
 {
-    return CSSQuadValue::create(Quad { a, b, a, b });
+    return CSSQuadValue::create(Quad { a.copyRef(), b.copyRef(), WTF::move(a), WTF::move(b) });
 }
 
-inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a, Ref<CSSValue> b, Ref<CSSValue> c)
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue>&& a, Ref<CSSValue>&& b, Ref<CSSValue>&& c)
 {
-    return CSSQuadValue::create(Quad { a, b, c, b });
+    return CSSQuadValue::create(Quad { WTF::move(a), b.copyRef(), WTF::move(c), WTF::move(b) });
 }
 
-inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue> a, Ref<CSSValue> b, Ref<CSSValue> c, Ref<CSSValue> d)
+inline Ref<CSSQuadValue> CSSQuadValue::create(Ref<CSSValue>&& a, Ref<CSSValue>&& b, Ref<CSSValue>&& c, Ref<CSSValue>&& d)
 {
-    return CSSQuadValue::create(Quad { WTFMove(a), WTFMove(b), WTFMove(c), WTFMove(d) });
+    return CSSQuadValue::create(Quad { WTF::move(a), WTF::move(b), WTF::move(c), WTF::move(d) });
 }
 
 } // namespace WebCore

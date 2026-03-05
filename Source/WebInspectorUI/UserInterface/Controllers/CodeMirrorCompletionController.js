@@ -648,9 +648,8 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
 
         var matchingWords = [];
 
-        var prefix = this._prefix;
+        let prefix = this._prefix;
         let prefixLowerCase = prefix.toLowerCase();
-        let caseSensitiveMatching = WI.settings.experimentalShowCaseSensitiveAutocomplete.value;
 
         var localState = mainToken.state.localState ? mainToken.state.localState : mainToken.state;
 
@@ -692,8 +691,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
                 if (declaringVariable && !allowedKeywordsWhenDeclaringVariable.has(keyword))
                     continue;
 
-                let startsWithPrefix = caseSensitiveMatching ? keyword.startsWith(prefix) : keyword.toLowerCase().startsWith(prefixLowerCase);
-                if (!startsWithPrefix)
+                if (!keyword.toLowerCase().startsWith(prefixLowerCase))
                     continue;
 
                 matchingWords.push(keyword);
@@ -712,8 +710,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
                     if (matchingWords.includes(variable.name))
                         continue;
 
-                    let startsWithPrefix = caseSensitiveMatching ? variable.name.startsWith(prefix) : variable.name.toLowerCase().startsWith(prefixLowerCase);
-                    if (!startsWithPrefix)
+                    if (!variable.name.toLowerCase().startsWith(prefixLowerCase))
                         continue;
 
                     matchingWords.push(variable.name);
@@ -846,7 +843,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             var lastIndex = Math.min(commonPrefix.length, completion.length);
             for (var j = prefixLength; j < lastIndex; ++j) {
                 if (commonPrefix[j] !== completion[j]) {
-                    commonPrefix = commonPrefix.substr(0, j);
+                    commonPrefix = commonPrefix.substring(0, j);
                     break;
                 }
             }

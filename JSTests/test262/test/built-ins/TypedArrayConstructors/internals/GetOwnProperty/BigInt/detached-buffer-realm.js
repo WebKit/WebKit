@@ -21,7 +21,7 @@ info: |
   Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
   If IsDetachedBuffer(buffer) is true, return undefined.
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, cross-realm, TypedArray]
 ---*/
 
@@ -38,4 +38,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     undefined,
     'Object.getOwnPropertyDescriptor("new OtherTA(1)", 0) must return undefined'
   );
-});
+}, null, ["passthrough"]);

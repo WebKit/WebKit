@@ -33,7 +33,7 @@ class RemoveNodeCommand : public SimpleEditCommand {
 public:
     static Ref<RemoveNodeCommand> create(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction = EditAction::Unspecified)
     {
-        return adoptRef(*new RemoveNodeCommand(WTFMove(node), shouldAssumeContentIsAlwaysEditable, editingAction));
+        return adoptRef(*new RemoveNodeCommand(WTF::move(node), shouldAssumeContentIsAlwaysEditable, editingAction));
     }
 
 private:

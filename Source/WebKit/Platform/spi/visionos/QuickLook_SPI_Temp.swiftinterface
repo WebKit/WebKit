@@ -15,10 +15,12 @@ final public class PreviewApplication {
     public static let showCloseButtonKey: Swift.String
     public static let matchScenePlacementIDKey: Swift.String
     public static let isContentManaged: Swift.String
+    public static let launchInImmersiveModeKey: Swift.String
     public var hideDocumentMenu: Swift.Bool
     public var showCloseButton: Swift.Bool
     public var matchScenePlacementID: Swift.String?
     public var isContentManaged: Swift.Bool
+    public var launchInImmersiveMode: Swift.Bool
     public init()
   }
   @objc deinit

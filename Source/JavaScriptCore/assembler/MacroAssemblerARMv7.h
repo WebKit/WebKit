@@ -406,343 +406,6 @@ public:
         }
     }
 
-    void rotateLeft64(RegisterID srcHi, RegisterID srcLo, RegisterID shiftAmount, RegisterID destHi, RegisterID destLo, RegisterID scratch0, RegisterID scratch1)
-    {
-        // Test/swap bit 5
-        // leftShift = amount & 31
-        // rightShift = 32 - leftShift
-        // resultLo = (srcLo << leftShift) | (srcHi >> rightShift)
-        // resultHi = (srcHi << leftShift) | (srcLo >> rightShift)
-
-        // Test if bit 5 is set
-        m_assembler.tst(shiftAmount, ARMThumbImmediate::makeEncodedImm(32));
-        m_assembler.mov(scratch0, srcLo);
-        m_assembler.mov(scratch1, srcHi);
-
-        // If bit 5 is set, swap them
-        m_assembler.it(ARMv7Assembler::ConditionNE, true);
-        m_assembler.mov(scratch0, srcHi);
-        m_assembler.mov(scratch1, srcLo);
-
-        // leftShift = shiftAmount & 31
-        RegisterID dataTemp = getCachedDataTempRegisterIDAndInvalidate();
-        m_assembler.ARM_and(dataTemp, shiftAmount, ARMThumbImmediate::makeEncodedImm(31));
-
-        // rightShift = 32 - leftShift
-        sub32(TrustedImm32(32), dataTemp, destLo);
-
-        m_assembler.lsl(destHi, scratch0, dataTemp); // A = scratch0 << leftShift
-        m_assembler.lsl(dataTemp, scratch1, dataTemp); // C = scratch1 << leftShift
-        m_assembler.lsr(scratch1, scratch1, destLo); // B = scratch1 >> rightShift
-        m_assembler.lsr(scratch0, scratch0, destLo); // D = scratch0 >> rightShift
-
-        m_assembler.orr(destLo, destHi, scratch1); // resultLo = A | B
-        m_assembler.orr(destHi, dataTemp, scratch0); // resultHi = C | D
-    }
-
-    void rotateLeft64(RegisterID srcHi, RegisterID srcLo, TrustedImm32 shiftAmount, RegisterID destHi, RegisterID destLo, RegisterID scratch0, RegisterID scratch1)
-    {
-        ASSERT(shiftAmount.m_value > 0 && shiftAmount.m_value <= 63);
-
-        // Special case: rotation by 32 is just a swap
-        if (shiftAmount.m_value == 32) {
-            m_assembler.mov(destLo, srcHi);
-            m_assembler.mov(destHi, srcLo);
-            return;
-        }
-
-        int32_t leftShift = shiftAmount.m_value & 31;
-        int32_t rightShift = 32 - leftShift;
-
-        bool needSwap = shiftAmount.m_value & 32;
-        if (needSwap) {
-            m_assembler.mov(scratch0, srcHi);
-            m_assembler.mov(scratch1, srcLo);
-        } else {
-            m_assembler.mov(scratch0, srcLo);
-            m_assembler.mov(scratch1, srcHi);
-        }
-
-        RegisterID dataTemp = getCachedDataTempRegisterIDAndInvalidate();
-
-        m_assembler.lsl(destHi, scratch0, leftShift); // A = scratch0 << leftShift
-        m_assembler.lsl(dataTemp, scratch1, leftShift); // C = scratch1 << leftShift
-        m_assembler.lsr(scratch1, scratch1, rightShift); // B = scratch1 >> rightShift
-        m_assembler.lsr(scratch0, scratch0, rightShift); // D = scratch0 >> rightShift
-
-        m_assembler.orr(destLo, destHi, scratch1); // resultLo = A | B
-        m_assembler.orr(destHi, dataTemp, scratch0); // resultHi = C | D
-    }
-
-    void rotateRight64(RegisterID srcHi, RegisterID srcLo, RegisterID shiftAmount, RegisterID destHi, RegisterID destLo, RegisterID scratch0, RegisterID scratch1)
-    {
-        // Test/swap bit 5
-        // rightShift = amount & 31
-        // leftShift = 32 - rightShift
-        // resultLo = (srcLo >> rightShift) | (srcHi << leftShift)
-        // resultHi = (srcHi >> rightShift) | (srcLo << leftShift)
-
-        // Test if bit 5 is set
-        m_assembler.tst(shiftAmount, ARMThumbImmediate::makeEncodedImm(32));
-        m_assembler.mov(scratch0, srcLo);
-        m_assembler.mov(scratch1, srcHi);
-
-        // If bit 5 is set, swap them
-        m_assembler.it(ARMv7Assembler::ConditionNE, true);
-        m_assembler.mov(scratch0, srcHi);
-        m_assembler.mov(scratch1, srcLo);
-
-        // rightShift = shiftAmount & 31
-        RegisterID dataTemp = getCachedDataTempRegisterIDAndInvalidate();
-        m_assembler.ARM_and(dataTemp, shiftAmount, ARMThumbImmediate::makeEncodedImm(31));
-
-        // leftShift = 32 - rightShift
-        sub32(TrustedImm32(32), dataTemp, destLo);
-
-        m_assembler.lsr(destHi, scratch0, dataTemp); // A = scratch0 >> rightShift
-        m_assembler.lsr(dataTemp, scratch1, dataTemp); // C = scratch1 >> rightShift
-        m_assembler.lsl(scratch1, scratch1, destLo); // B = scratch1 << leftShift
-        m_assembler.lsl(scratch0, scratch0, destLo); // D = scratch0 << leftShift
-
-        m_assembler.orr(destLo, destHi, scratch1); // resultLo = A | B
-        m_assembler.orr(destHi, dataTemp, scratch0); // resultHi = C | D
-    }
-
-    void rotateRight64(RegisterID srcHi, RegisterID srcLo, TrustedImm32 shiftAmount, RegisterID destHi, RegisterID destLo, RegisterID scratch0, RegisterID scratch1)
-    {
-        ASSERT(shiftAmount.m_value > 0 && shiftAmount.m_value <= 63);
-
-        // Special case: rotation by 32 is just a swap
-        if (shiftAmount.m_value == 32) {
-            m_assembler.mov(destLo, srcHi);
-            m_assembler.mov(destHi, srcLo);
-            return;
-        }
-
-        int32_t rightShift = shiftAmount.m_value & 31;
-        int32_t leftShift = 32 - rightShift;
-
-        bool needSwap = shiftAmount.m_value & 32;
-        if (needSwap) {
-            m_assembler.mov(scratch0, srcHi);
-            m_assembler.mov(scratch1, srcLo);
-        } else {
-            m_assembler.mov(scratch0, srcLo);
-            m_assembler.mov(scratch1, srcHi);
-        }
-
-        RegisterID dataTemp = getCachedDataTempRegisterIDAndInvalidate();
-
-        m_assembler.lsr(destHi, scratch0, rightShift); // A = scratch0 >> rightShift
-        m_assembler.lsr(dataTemp, scratch1, rightShift); // C = scratch1 >> rightShift
-        m_assembler.lsl(scratch1, scratch1, leftShift); // B = scratch1 << leftShift
-        m_assembler.lsl(scratch0, scratch0, leftShift); // D = scratch0 << leftShift
-
-        m_assembler.orr(destLo, destHi, scratch1); // resultLo = A | B
-        m_assembler.orr(destHi, dataTemp, scratch0); // resultHi = C | D
-    }
-
-    void lshift64(RegisterID srcHi, RegisterID srcLo, RegisterID shiftAmount, RegisterID destHi, RegisterID destLo, RegisterID scratch0, RegisterID scratch1)
-    {
-        // shift = amount & 63
-        // resultHi = (srcHi << shift) | (srcLo >> (32 - shift)) | (srcLo << (shift - 32))
-        // resultLo = srcLo << shift
-
-        RegisterID dataTemp = getCachedDataTempRegisterIDAndInvalidate();
-
-        // shift = shiftAmount & 63
-        m_assembler.ARM_and(dataTemp, shiftAmount, ARMThumbImmediate::makeEncodedImm(63));
-
-        // 32 - shift
-        sub32(TrustedImm32(32), dataTemp, scratch0);
-
-        // resultHi = (srcHi << shift) | (srcLo >> (32 - shift))
-        m_assembler.lsl(destHi, srcHi, dataTemp);
-        m_assembler.lsr(scratch1, srcLo, scratch0);
-        m_assembler.orr(destHi, destHi, scratch1);
-
-        // shift - 32
-        m_assembler.sub(scratch0, dataTemp, ARMThumbImmediate::makeEncodedImm(32));
-
-        // resultHi |= (srcLo << (shift - 32))
-        m_assembler.lsl(scratch1, srcLo, scratch0);
-        m_assembler.orr(destHi, destHi, scratch1);
-
-        // resultLo = srcLo << shift
-        m_assembler.lsl(destLo, srcLo, dataTemp);
-    }
-
-    void lshift64(RegisterID srcHi, RegisterID srcLo, TrustedImm32 shiftAmount, RegisterID destHi, RegisterID destLo)
-    {
-        ASSERT(shiftAmount.m_value >= 0 && shiftAmount.m_value <= 63);
-
-        int32_t shift = shiftAmount.m_value;
-        if (!shift) {
-            m_assembler.mov(destLo, srcLo);
-            m_assembler.mov(destHi, srcHi);
-            return;
-        }
-
-        if (shift < 32) {
-            // resultHi = (srcHi << shift) | (srcLo >> (32 - shift))
-            // resultLo = srcLo << shift
-            RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
-            m_assembler.lsl(destHi, srcHi, shift);
-            m_assembler.lsr(scratch, srcLo, 32 - shift);
-            m_assembler.orr(destHi, destHi, scratch);
-            m_assembler.lsl(destLo, srcLo, shift);
-            return;
-        }
-
-        if (shift == 32) {
-            // resultHi = srcLo
-            // resultLo = 0
-            m_assembler.mov(destHi, srcLo);
-            m_assembler.mov(destLo, ARMThumbImmediate::makeEncodedImm(0));
-            return;
-        }
-
-        // resultHi = srcLo << (shift - 32)
-        // resultLo = 0
-        m_assembler.lsl(destHi, srcLo, shift - 32);
-        m_assembler.mov(destLo, ARMThumbImmediate::makeEncodedImm(0));
-    }
-
-    void urshift64(RegisterID srcHi, RegisterID srcLo, RegisterID shiftAmount, RegisterID destHi, RegisterID destLo, RegisterID scratch0, RegisterID scratch1)
-    {
-        // shift = amount & 63
-        // resultLo = (srcLo >> shift) | (srcHi << (32 - shift)) | (srcHi >> (shift - 32))
-        // resultHi = srcHi >> shift
-
-        RegisterID dataTemp = getCachedDataTempRegisterIDAndInvalidate();
-
-        // shift = shiftAmount & 63
-        m_assembler.ARM_and(dataTemp, shiftAmount, ARMThumbImmediate::makeEncodedImm(63));
-
-        // 32 - shift
-        sub32(TrustedImm32(32), dataTemp, scratch0);
-
-        // resultLo = (srcLo >> shift) | (srcHi << (32 - shift))
-        m_assembler.lsr(destLo, srcLo, dataTemp);
-        m_assembler.lsl(scratch1, srcHi, scratch0);
-        m_assembler.orr(destLo, destLo, scratch1);
-
-        // shift - 32
-        m_assembler.sub(scratch0, dataTemp, ARMThumbImmediate::makeEncodedImm(32));
-
-        // resultLo |= (srcHi >> (shift - 32))
-        m_assembler.lsr(scratch1, srcHi, scratch0);
-        m_assembler.orr(destLo, destLo, scratch1);
-
-        // resultHi = srcHi >> shift
-        m_assembler.lsr(destHi, srcHi, dataTemp);
-    }
-
-    void urshift64(RegisterID srcHi, RegisterID srcLo, TrustedImm32 shiftAmount, RegisterID destHi, RegisterID destLo)
-    {
-        ASSERT(shiftAmount.m_value >= 0 && shiftAmount.m_value <= 63);
-
-        int32_t shift = shiftAmount.m_value;
-        if (!shift) {
-            m_assembler.mov(destLo, srcLo);
-            m_assembler.mov(destHi, srcHi);
-            return;
-        }
-
-        if (shift < 32) {
-            // resultLo = (srcLo >> shift) | (srcHi << (32 - shift))
-            // resultHi = srcHi >> shift
-            RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
-            m_assembler.lsr(destLo, srcLo, shift);
-            m_assembler.lsl(scratch, srcHi, 32 - shift);
-            m_assembler.orr(destLo, destLo, scratch);
-            m_assembler.lsr(destHi, srcHi, shift);
-            return;
-        }
-
-        if (shift == 32) {
-            // resultLo = srcHi
-            // resultHi = 0
-            m_assembler.mov(destLo, srcHi);
-            m_assembler.mov(destHi, ARMThumbImmediate::makeEncodedImm(0));
-            return;
-        }
-
-        // resultLo = srcHi >> (shift - 32)
-        // resultHi = 0
-        m_assembler.lsr(destLo, srcHi, shift - 32);
-        m_assembler.mov(destHi, ARMThumbImmediate::makeEncodedImm(0));
-    }
-
-    void rshift64(RegisterID srcHi, RegisterID srcLo, RegisterID shiftAmount, RegisterID destHi, RegisterID destLo, RegisterID scratch0, RegisterID scratch1)
-    {
-        // shift = amount & 63
-        // resultLo = (srcLo >> shift) | (srcHi << (32 - shift)) | (srcHi >> (shift - 32))
-        // resultHi = srcHi >> shift (arithmetic)
-
-        RegisterID dataTemp = getCachedDataTempRegisterIDAndInvalidate();
-
-        // shift = shiftAmount & 63
-        m_assembler.ARM_and(dataTemp, shiftAmount, ARMThumbImmediate::makeEncodedImm(63));
-
-        // 32 - shift
-        sub32(TrustedImm32(32), dataTemp, scratch0);
-
-        // resultLo = (srcLo >> shift) | (srcHi << (32 - shift))
-        m_assembler.lsr(destLo, srcLo, dataTemp);
-        m_assembler.lsl(scratch1, srcHi, scratch0);
-        m_assembler.orr(destLo, destLo, scratch1);
-
-        // shift - 32
-        m_assembler.sub(scratch0, dataTemp, ARMThumbImmediate::makeEncodedImm(32));
-
-        // (srcHi >> (shift - 32)) for the shift >= 32 case
-        m_assembler.asr(scratch1, srcHi, scratch0);
-
-        // if (shift >= 32) use scratch1, else keep destLo
-        m_assembler.orr(scratch1, destLo, scratch1);
-        moveConditionally32(RelationalCondition::AboveOrEqual, dataTemp, TrustedImm32(32), scratch1, destLo, destLo);
-
-        // resultHi = srcHi >> shift (arithmetic)
-        m_assembler.asr(destHi, srcHi, dataTemp);
-    }
-
-    void rshift64(RegisterID srcHi, RegisterID srcLo, TrustedImm32 shiftAmount, RegisterID destHi, RegisterID destLo)
-    {
-        ASSERT(shiftAmount.m_value >= 0 && shiftAmount.m_value <= 63);
-
-        int32_t shift = shiftAmount.m_value;
-        if (!shift) {
-            m_assembler.mov(destLo, srcLo);
-            m_assembler.mov(destHi, srcHi);
-            return;
-        }
-
-        if (shift < 32) {
-            // resultLo = (srcLo >> shift) | (srcHi << (32 - shift))
-            // resultHi = srcHi >> shift (arithmetic)
-            RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
-            m_assembler.lsr(destLo, srcLo, shift);
-            m_assembler.lsl(scratch, srcHi, 32 - shift);
-            m_assembler.orr(destLo, destLo, scratch);
-            m_assembler.asr(destHi, srcHi, shift);
-            return;
-        }
-
-        if (shift == 32) {
-            // resultLo = srcHi
-            // resultHi = srcHi >> 31 (sign extend)
-            m_assembler.mov(destLo, srcHi);
-            m_assembler.asr(destHi, srcHi, 31);
-            return;
-        }
-
-        // resultLo = srcHi >> (shift - 32) (arithmetic)
-        // resultHi = srcHi >> 31 (sign extend)
-        m_assembler.asr(destLo, srcHi, shift - 32);
-        m_assembler.asr(destHi, srcHi, 31);
-    }
-
     void and16(Address src, RegisterID dest)
     {
         load16(src, dataTempRegister);
@@ -916,6 +579,11 @@ public:
         }
     }
 
+    void lshiftUnchecked(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.lsl(dest, src, shiftAmount);
+    }
+
     void lshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
         RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
@@ -976,6 +644,14 @@ public:
     {
         m_assembler.umull(destLo, destHi, left, right);
     }
+
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
+    // FIXME: Add more of div flavors.
+    void div32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.sdiv(dest, left, right);
+    }
+#endif
 
     void neg32(RegisterID srcDest)
     {
@@ -1135,6 +811,11 @@ public:
         m_assembler.ror(dest, src, scratch);
     }
 
+    void rshiftUnchecked(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.asr(dest, src, shiftAmount);
+    }
+
     void rshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
         RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
@@ -1170,6 +851,11 @@ public:
         m_assembler.ARM_and(dest, shiftAmount, ARMThumbImmediate::makeEncodedImm(0x1f));
         move(imm, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.asr(dest, dataTempRegister, dest);
+    }
+
+    void urshiftUnchecked(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.lsr(dest, src, shiftAmount);
     }
 
     void urshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
@@ -2015,6 +1701,16 @@ public:
         store32(dataTempRegister, dest.withOffset(sizeof(int)));
     }
 
+    void transfer64(BaseIndex src, BaseIndex dest)
+    {
+        if (src == dest)
+            return;
+        load32(src, dataTempRegister);
+        store32(dataTempRegister, dest);
+        load32(src.withOffset(sizeof(int)), dataTempRegister);
+        store32(dataTempRegister, dest.withOffset(sizeof(int)));
+    }
+
     void transferPtr(Address src, Address dest)
     {
         transfer32(src, dest);
@@ -2184,10 +1880,6 @@ public:
 
     // Floating-point operations:
 
-    static bool supportsFloatingPoint() { return true; }
-    static bool supportsFloatingPointTruncate() { return true; }
-    static bool supportsFloatingPointSqrt() { return true; }
-    static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloatingPointRounding() { return false; }
     static bool supportsFloat16() { return false; }
 

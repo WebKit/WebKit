@@ -71,6 +71,7 @@ static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncWith);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncIncludes);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncCopyWithin);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToSpliced);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncFlat);
 
 // ------------------------------ ArrayPrototype ----------------------------
 
@@ -117,7 +118,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().indexOfPublicName(), arrayProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ArrayIndexOfIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, arrayProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().filterPublicName(), arrayPrototypeFilterCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().flatPublicName(), arrayPrototypeFlatCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->flat, arrayProtoFuncFlat, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().flatMapPublicName(), arrayPrototypeFlatMapCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().reducePublicName(), arrayPrototypeReduceCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().reduceRightPublicName(), arrayPrototypeReduceRightCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -155,7 +156,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         &vm.propertyNames->builtinNames().findIndexPublicName(),
         &vm.propertyNames->builtinNames().findLastPublicName(),
         &vm.propertyNames->builtinNames().findLastIndexPublicName(),
-        &vm.propertyNames->builtinNames().flatPublicName(),
+        &vm.propertyNames->flat,
         &vm.propertyNames->builtinNames().flatMapPublicName(),
         &vm.propertyNames->includes,
         &vm.propertyNames->builtinNames().keysPublicName(),
@@ -1014,7 +1015,7 @@ static ALWAYS_INLINE void sortImpl(JSGlobalObject* globalObject, JSObject* thisO
             JSValue value = JSValue::decode(encodedValue);
             String string = value.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
-            entries.append(std::tuple { value, WTFMove(string) });
+            entries.append(std::tuple { value, WTF::move(string) });
         }
         sortBucketSort(sorted, 0, entries, 0);
         dest = sorted;
@@ -1551,6 +1552,8 @@ static JSArray* concatAppendArray(JSGlobalObject* globalObject, VM& vm, JSArray*
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
+
+    DeferGC deferGC(vm);
     auto* butterfly = Butterfly::fromBase(memory, 0, 0);
     butterfly->setVectorLength(vectorLength);
     butterfly->setPublicLength(resultSize);
@@ -2108,6 +2111,114 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToSpliced, (JSGlobalObject* globalObject,
         RETURN_IF_EXCEPTION(scope, { });
     }
 
+    return JSValue::encode(result);
+}
+
+static uint64_t flatIntoArray(JSGlobalObject* globalObject, JSObject* target, JSObject* source, uint64_t sourceLength, uint64_t targetIndex, uint64_t depth)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!vm.isSafeToRecurseSoft()) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        return std::numeric_limits<uint64_t>::max();
+    }
+
+    for (uint64_t sourceIndex = 0; sourceIndex < sourceLength; ++sourceIndex) {
+        JSValue element = source->getIfPropertyExists(globalObject, sourceIndex);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!element)
+            continue;
+
+        bool elementIsArray = isArray(globalObject, element);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (depth > 0 && elementIsArray) {
+            uint64_t newDepth = depth - 1;
+            if (depth == std::numeric_limits<uint64_t>::max()) [[unlikely]]
+                newDepth = depth;
+            JSObject* elementObject = asObject(element);
+            uint64_t elementLength = toLength(globalObject, elementObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            targetIndex = flatIntoArray(globalObject, target, elementObject, elementLength, targetIndex, newDepth);
+            RETURN_IF_EXCEPTION(scope, { });
+        } else {
+            if (targetIndex >= maxSafeIntegerAsUInt64()) [[unlikely]] {
+                throwTypeError(globalObject, scope, "flatten array exceeds 2**52 - 1");
+                return { };
+            }
+            target->putDirectIndex(globalObject, targetIndex, element, 0, PutDirectIndexShouldThrow);
+            RETURN_IF_EXCEPTION(scope, { });
+            targetIndex++;
+        }
+    }
+
+    return targetIndex;
+}
+
+JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncFlat, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+
+    thisValue = thisValue.toThis(globalObject, ECMAMode::strict());
+    RETURN_IF_EXCEPTION(scope, { });
+    if (thisValue.isUndefinedOrNull()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Array.prototype.flat requires that |this| not be null or undefined"_s);
+
+    auto* thisObject = thisValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    uint64_t length = toLength(globalObject, thisObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    uint64_t depthNum = 1;
+    if (callFrame->argumentCount()) {
+        JSValue depthValue = callFrame->uncheckedArgument(0);
+        if (!depthValue.isUndefined()) {
+            depthNum = [&]() -> uint64_t {
+                if (depthValue.isInt32()) [[likely]] {
+                    int32_t depthInt32 = depthValue.asInt32();
+                    if (depthInt32 < 0) [[unlikely]]
+                        return 0;
+                    return static_cast<uint64_t>(depthInt32);
+                }
+                double depthDouble = depthValue.toIntegerOrInfinity(globalObject);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (depthDouble < 0) [[unlikely]]
+                    return 0;
+                if (std::isinf(depthDouble)) [[unlikely]]
+                    return std::numeric_limits<uint64_t>::max();
+                return static_cast<uint64_t>(depthDouble);
+            }();
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
+
+    if (isJSArray(thisObject) && arraySpeciesWatchpointIsValid(vm, thisObject)) [[likely]] {
+        JSArray* thisArray = jsCast<JSArray*>(thisObject);
+        auto fastResult = thisArray->fastFlat(globalObject, depthNum, length);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (fastResult) [[likely]]
+            return JSValue::encode(fastResult);
+    }
+
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, thisObject, 0);
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    if (speciesResult.first == SpeciesConstructResult::Exception) [[unlikely]]
+        return { };
+
+    JSObject* result;
+    if (speciesResult.first == SpeciesConstructResult::CreatedObject) [[unlikely]]
+        result = speciesResult.second;
+    else {
+        result = constructEmptyArray(globalObject, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    scope.release();
+    flatIntoArray(globalObject, asObject(result), thisObject, length, /* start */ 0, depthNum);
     return JSValue::encode(result);
 }
 

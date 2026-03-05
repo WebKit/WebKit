@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/AnchorPositionEvaluator.h>
+#include "AnchorPositionEvaluator.h"
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {

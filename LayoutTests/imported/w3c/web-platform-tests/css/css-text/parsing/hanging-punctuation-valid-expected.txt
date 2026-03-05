@@ -16,4 +16,5 @@ PASS e.style['hanging-punctuation'] = "force-end first last" should set the prop
 PASS e.style['hanging-punctuation'] = "allow-end last first" should set the property value
 PASS e.style['hanging-punctuation'] = "last first force-end" should set the property value
 PASS e.style['hanging-punctuation'] = "last allow-end first" should set the property value
+PASS e.style['hanging-punctuation'] = "first allow-end" should set the property value
 

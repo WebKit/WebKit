@@ -66,8 +66,8 @@ rgb(255, 255, 255)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=tr
 -apple-system-indigo
 rgb(97, 85, 245)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
 rgb(97, 85, 245)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
-rgb(107, 93, 255)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
-rgb(107, 93, 255)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+rgb(109, 124, 255)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(109, 124, 255)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
 
 -apple-system-label
 rgb(0, 0, 0)            	useDarkAppearance=false	useElevatedUserInterfaceLevel=false

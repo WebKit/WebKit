@@ -62,6 +62,8 @@
             // In case the previous scroll failed.
             document.scrollingElement.scrollTop = 0;
             scrollers[1].scrollTop = 0;
+            
+            await UIHelper.ensurePresentationUpdate();
 
             // Hit the scroller
             await UIHelper.immediateScrollElementAtContentPointToOffset(bounds.left + bounds.width / 2 + 10, bounds.top + 10, 0, 100);
@@ -95,5 +97,6 @@
         </div>
         <div class="overlay" style="transform: scale(0.5)"></div>
     </div>
+    <div id="console"></div>
 </body>
 </html>

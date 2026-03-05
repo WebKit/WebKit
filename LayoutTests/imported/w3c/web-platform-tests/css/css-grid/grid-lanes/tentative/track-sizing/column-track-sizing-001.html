@@ -6,14 +6,15 @@
 <style>
 .grid-lanes {
     display: grid-lanes;
-    item-tolerance: 0;
+    flow-tolerance: 0;
     grid-template-columns: 5% repeat(3, 10px 15%) repeat(1, 15px 5px 20px);
+    grid-template-rows: 100px 100px;
     width: 500px;
     gap: 10px;
 }
 </style>
 <body>
-  <p>Test that masonry tracks are correctly sized.</p>
+  <p>Test that grid-lanes tracks are correctly sized.</p>
   <div class="grid-lanes">
     <div style="width: 100%; height: 50px; background: orange;"></div>
     <div style="width: 100%; height: 30px; background: yellow;"></div>

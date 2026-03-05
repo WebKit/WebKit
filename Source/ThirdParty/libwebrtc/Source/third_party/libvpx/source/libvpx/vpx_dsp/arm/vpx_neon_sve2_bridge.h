@@ -29,4 +29,18 @@ static INLINE int16x8_t vpx_tbl2_s16(int16x8_t s0, int16x8_t s1,
       svtbl2_s16(samples, svset_neonq_u16(svundef_u16(), tbl)));
 }
 
+static INLINE void vpx_tbl2x4_s16(int16x8_t s0[4], int16x8_t s1[4],
+                                  int16x8_t res[4], uint16x8_t idx) {
+  res[0] = vpx_tbl2_s16(s0[0], s1[0], idx);
+  res[1] = vpx_tbl2_s16(s0[1], s1[1], idx);
+  res[2] = vpx_tbl2_s16(s0[2], s1[2], idx);
+  res[3] = vpx_tbl2_s16(s0[3], s1[3], idx);
+}
+
+static INLINE void vpx_tbl2x2_s16(int16x8_t s0[2], int16x8_t s1[2],
+                                  int16x8_t res[2], uint16x8_t idx) {
+  res[0] = vpx_tbl2_s16(s0[0], s1[0], idx);
+  res[1] = vpx_tbl2_s16(s0[1], s1[1], idx);
+}
+
 #endif  // VPX_VPX_DSP_ARM_VPX_NEON_SVE2_BRIDGE_H_

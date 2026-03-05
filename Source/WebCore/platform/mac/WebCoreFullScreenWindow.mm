@@ -28,6 +28,7 @@
 #if !PLATFORM(IOS_FAMILY)
 
 #import "WebCoreFullScreenWindow.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 // FIXME: This isn't really an NSWindowController method - it's a method that
 // the NSWindowController subclass that's using WebCoreFullScreenWindow needs to implement.

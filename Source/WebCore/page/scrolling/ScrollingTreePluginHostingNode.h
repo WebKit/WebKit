@@ -44,7 +44,7 @@ private:
     ScrollingTreePluginHostingNode(ScrollingTree&, ScrollingNodeID);
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) final;
-    void applyLayerPositions() final;
+    void NODELETE applyLayerPositions() final;
 
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 };

@@ -15,17 +15,17 @@ info: |
       ii. Return true.
   ...
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n]);
-  assert.sameValue(Reflect.set(sample, '1.1', 1n), true, 'Reflect.set("new TA([42n])", "1.1", 1n) must return true');
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n]));
+  assert.sameValue(Reflect.set(sample, '1.1', 1n), true, 'Reflect.set("new TA(makeCtorArg([42n]))", "1.1", 1n) must return true');
 
   assert.sameValue(
     Reflect.set(sample, '0.0001', 1n),
     true,
-    'Reflect.set("new TA([42n])", "0.0001", 1n) must return true'
+    'Reflect.set("new TA(makeCtorArg([42n]))", "0.0001", 1n) must return true'
   );
 
   assert.sameValue(sample.hasOwnProperty('1.1'), false, 'sample.hasOwnProperty("1.1") must return false');

@@ -274,7 +274,7 @@ void Node::convertToNewArrayWithButterfly(Graph&, Node* butterfly)
     IndexingType indexingType = this->indexingType();
     setOpAndDefaultFlags(NewArrayWithButterfly);
     ASSERT(child1()->asInt32() < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH);
-    children.child2() = Edge(butterfly);
+    children.child2() = Edge(butterfly, KnownStorageUse);
     ASSERT_UNUSED(indexingType, indexingType == this->indexingType());
 }
 

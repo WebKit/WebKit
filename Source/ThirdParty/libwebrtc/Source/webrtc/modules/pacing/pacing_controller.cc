@@ -165,28 +165,28 @@ void PacingController::SetProbingEnabled(bool enabled) {
 
 void PacingController::SetPacingRates(DataRate pacing_rate,
                                       DataRate padding_rate) {
-  RTC_CHECK_GT(pacing_rate, DataRate::Zero());
-  RTC_CHECK_GE(padding_rate, DataRate::Zero());
-  if (padding_rate > pacing_rate) {
-    RTC_LOG(LS_WARNING) << "Padding rate " << padding_rate.kbps()
+  SetPacerConfig(PacerConfig::Create(Timestamp::Zero(), pacing_rate,
+                                     padding_rate, send_burst_interval_));
+}
+
+void PacingController::SetPacerConfig(PacerConfig pacer_config) {
+  RTC_DCHECK(pacer_config.time_window.IsFinite());
+  if (pacer_config.pad_rate() > pacer_config.data_rate()) {
+    RTC_LOG(LS_WARNING) << "Padding rate " << pacer_config.pad_rate().kbps()
                         << "kbps is higher than the pacing rate "
-                        << pacing_rate.kbps() << "kbps, capping.";
-    padding_rate = pacing_rate;
+                        << padding_rate_.kbps() << "kbps, capping.";
+    padding_rate_ = pacer_config.data_rate();
+  } else {
+    padding_rate_ = pacer_config.pad_rate();
   }
 
-  if (pacing_rate > max_rate || padding_rate > max_rate) {
-    RTC_LOG(LS_WARNING) << "Very high pacing rates ( > " << max_rate.kbps()
-                        << " kbps) configured: pacing = " << pacing_rate.kbps()
-                        << " kbps, padding = " << padding_rate.kbps()
-                        << " kbps.";
-    max_rate = std::max(pacing_rate, padding_rate) * 1.1;
-  }
-  pacing_rate_ = pacing_rate;
-  padding_rate_ = padding_rate;
+  pacing_rate_ = pacer_config.data_rate();
+  send_burst_interval_ = pacer_config.time_window;
+
   MaybeUpdateMediaRateDueToLongQueue(CurrentTime());
 
   RTC_LOG(LS_VERBOSE) << "bwe:pacer_updated pacing_kbps=" << pacing_rate_.kbps()
-                      << " padding_budget_kbps=" << padding_rate.kbps();
+                      << " padding_budget_kbps=" << padding_rate_.kbps();
 }
 
 void PacingController::EnqueuePacket(std::unique_ptr<RtpPacketToSend> packet) {

@@ -37,7 +37,7 @@ public:
         std::optional<RTCEncodedVideoFrameMetadata> metadata;
     };
     static Ref<RTCEncodedVideoFrame> create(RTCEncodedVideoFrame&, const Options&);
-    static Ref<RTCEncodedVideoFrame> create(Ref<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedVideoFrame(WTFMove(frame))); }
+    static Ref<RTCEncodedVideoFrame> create(Ref<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedVideoFrame(WTF::move(frame))); }
     ~RTCEncodedVideoFrame();
 
     enum class Type { Empty, Key, Delta };

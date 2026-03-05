@@ -4,146 +4,146 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (8,8) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (0,0) size 185x23
+        RenderText {#text} at (0,-1) size 185x25
           text run at (0,0) width 185: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (0,0) size 191x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 191x46
+        RenderInline {SPAN} at (0,-1) size 191x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 191x48
             text run at (184,0) width 7: " "
-            text run at (0,23) width 79: "sit amet"
+            text run at (0,22) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (224,8) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (4,0) size 186x23
+        RenderText {#text} at (4,-1) size 186x25
           text run at (4,0) width 186: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (60,0) size 136x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (60,0) size 136x46
+        RenderInline {SPAN} at (60,-1) size 136x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (60,-1) size 136x48
             text run at (189,0) width 7: " "
-            text run at (60,23) width 80: "sit amet"
+            text run at (60,22) width 80: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (440,8) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (9,0) size 185x23
+        RenderText {#text} at (9,-1) size 185x25
           text run at (9,0) width 185: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (121,0) size 79x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (121,0) size 79x46
+        RenderInline {SPAN} at (121,-1) size 79x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (121,-1) size 79x48
             text run at (193,0) width 7: " "
-            text run at (121,23) width 79: "sit amet"
+            text run at (121,22) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (8,70) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (0,0) size 194x23
+        RenderText {#text} at (0,-1) size 194x25
           text run at (0,0) width 194: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 200x46
+        RenderInline {SPAN} at (0,-1) size 200x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 200x48
             text run at (193,0) width 7: " "
-            text run at (0,23) width 79: "sit amet"
+            text run at (0,22) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (224,70) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (6,0) size 185x23
+        RenderText {#text} at (6,-1) size 185x25
           text run at (6,0) width 185: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (0,0) size 79x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 79x46
+        RenderInline {SPAN} at (0,-1) size 79x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 79x48
             text run at (0,0) width 7 RTL: " "
-            text run at (0,23) width 79: "sit amet"
+            text run at (0,22) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (440,70) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (10,0) size 186x23
+        RenderText {#text} at (10,-1) size 186x25
           text run at (10,0) width 186: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (4,0) size 136x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (4,0) size 136x46
+        RenderInline {SPAN} at (4,-1) size 136x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (4,-1) size 136x48
             text run at (4,0) width 7 RTL: " "
-            text run at (60,23) width 80: "sit amet"
+            text run at (60,22) width 80: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (8,132) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (15,0) size 185x23
+        RenderText {#text} at (15,-1) size 185x25
           text run at (15,0) width 185: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (9,0) size 191x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (9,0) size 191x46
+        RenderInline {SPAN} at (9,-1) size 191x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (9,-1) size 191x48
             text run at (9,0) width 7 RTL: " "
-            text run at (121,23) width 79: "sit amet"
+            text run at (121,22) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (224,132) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (6,0) size 194x23
+        RenderText {#text} at (6,-1) size 194x25
           text run at (6,0) width 194: "Lorem ipsum dolor"
-        RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 200x46
+        RenderInline {SPAN} at (0,-1) size 200x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 200x48
             text run at (0,0) width 7 RTL: " "
-            text run at (121,23) width 79: "sit amet"
+            text run at (121,22) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (440,132) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (0,0) size 178x23
+        RenderText {#text} at (0,-1) size 178x25
           text run at (0,0) width 134: "Lorem ipsum "
           text run at (133,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
-        RenderInline {SPAN} at (0,0) size 185x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 185x46
+        RenderInline {SPAN} at (0,-1) size 185x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 185x48
             text run at (177,0) width 8: " "
-            text run at (0,23) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
-            text run at (39,23) width 56: " amet"
+            text run at (0,22) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
+            text run at (39,22) width 56: " amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (8,194) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (7,0) size 179x23
+        RenderText {#text} at (7,-1) size 179x25
           text run at (7,0) width 135: "Lorem ipsum "
           text run at (141,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
-        RenderInline {SPAN} at (52,0) size 141x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (52,0) size 141x46
+        RenderInline {SPAN} at (52,-1) size 141x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (52,-1) size 141x48
             text run at (185,0) width 8: " "
-            text run at (52,23) width 41 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
-            text run at (92,23) width 56: " amet"
+            text run at (52,22) width 41 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
+            text run at (92,22) width 56: " amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (224,194) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (15,0) size 179x23
+        RenderText {#text} at (15,-1) size 179x25
           text run at (15,0) width 135: "Lorem ipsum "
           text run at (149,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
-        RenderInline {SPAN} at (105,0) size 95x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (105,0) size 95x46
+        RenderInline {SPAN} at (105,-1) size 95x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (105,-1) size 95x48
             text run at (193,0) width 7: " "
-            text run at (105,23) width 41 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
-            text run at (145,23) width 55: " amet"
+            text run at (105,22) width 41 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
+            text run at (145,22) width 55: " amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (440,194) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (0,0) size 194x23
+        RenderText {#text} at (0,-1) size 194x25
           text run at (0,0) width 150: "Lorem ipsum "
           text run at (149,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
-        RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 200x46
+        RenderInline {SPAN} at (0,-1) size 200x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 200x48
             text run at (193,0) width 7: " "
-            text run at (0,23) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
-            text run at (39,23) width 56: " amet"
+            text run at (0,22) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
+            text run at (39,22) width 56: " amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (8,256) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (6,0) size 179x23
+        RenderText {#text} at (6,-1) size 179x25
           text run at (6,0) width 52 RTL: " \x{5D0}\x{5E0}\x{5D8}\x{5E3}"
           text run at (57,0) width 128: "Lorem ipsum"
-        RenderInline {SPAN} at (0,0) size 95x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 95x46
+        RenderInline {SPAN} at (0,-1) size 95x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 95x48
             text run at (0,0) width 7 RTL: " "
-            text run at (0,23) width 49: "amet"
-            text run at (48,23) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
+            text run at (0,22) width 49: "amet"
+            text run at (48,22) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (224,256) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (14,0) size 179x23
+        RenderText {#text} at (14,-1) size 179x25
           text run at (14,0) width 52 RTL: " \x{5D0}\x{5E0}\x{5D8}\x{5E3}"
           text run at (65,0) width 128: "Lorem ipsum"
-        RenderInline {SPAN} at (7,0) size 141x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (7,0) size 141x46
+        RenderInline {SPAN} at (7,-1) size 141x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (7,-1) size 141x48
             text run at (7,0) width 8 RTL: " "
-            text run at (52,23) width 50: "amet"
-            text run at (101,23) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
+            text run at (52,22) width 50: "amet"
+            text run at (101,22) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (440,256) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (22,0) size 178x23
+        RenderText {#text} at (22,-1) size 178x25
           text run at (22,0) width 52 RTL: " \x{5D0}\x{5E0}\x{5D8}\x{5E3}"
           text run at (73,0) width 127: "Lorem ipsum"
-        RenderInline {SPAN} at (15,0) size 185x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (15,0) size 185x46
+        RenderInline {SPAN} at (15,-1) size 185x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (15,-1) size 185x48
             text run at (15,0) width 8 RTL: " "
-            text run at (105,23) width 49: "amet"
-            text run at (153,23) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
+            text run at (105,22) width 49: "amet"
+            text run at (153,22) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (8,318) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (6,0) size 194x23
+        RenderText {#text} at (6,-1) size 194x25
           text run at (6,0) width 60 RTL: " \x{5D0}\x{5E0}\x{5D8}\x{5E3}"
           text run at (65,0) width 135: "Lorem ipsum"
-        RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 200x46
+        RenderInline {SPAN} at (0,-1) size 200x48 [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,-1) size 200x48
             text run at (0,0) width 7 RTL: " "
-            text run at (105,23) width 49: "amet"
-            text run at (153,23) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
+            text run at (105,22) width 49: "amet"
+            text run at (153,22) width 47 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
         RenderText {#text} at (0,0) size 0x0

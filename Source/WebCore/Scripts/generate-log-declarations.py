@@ -45,11 +45,64 @@ def generate_log_client_declarations_file(log_messages, log_client_declarations_
 
 def generate_log_client_virtual_functions(log_messages, log_client_virtual_functions_file):
     with open(log_client_virtual_functions_file, 'w') as file:
+        file.write("""
+/* Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <os/log.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+namespace WebCore {
+
+class LogClient {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LogClient);
+public:
+    LogClient() = default;
+    virtual ~LogClient() { }
+
+    virtual void log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t) = 0;
+    virtual bool isWebKitLogClient() const { return false; }
+
+""")
+
         for log_message in log_messages:
             function_name = log_message[0]
             parameters = log_message[2]
             arguments_string = get_arguments_string(parameters, PARAMETER_LIST_INCLUDE_TYPE | PARAMETER_LIST_MODIFY_CSTRING)
             file.write("    virtual void " + function_name + "(" + arguments_string + ") { }\n")
+
+        file.write("""
+    };
+
+WEBCORE_EXPORT std::unique_ptr<LogClient>& logClient();
+
+}
+""")
+
+        file.write("\n")
+
         file.close()
 
     return

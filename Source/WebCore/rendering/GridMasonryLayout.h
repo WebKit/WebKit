@@ -54,7 +54,7 @@ public:
 
     void initializeMasonry(unsigned gridAxisTracks, Style::GridTrackSizingDirection masonryAxisDirection);
     void performMasonryPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, Style::GridTrackSizingDirection masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase);
-    LayoutUnit offsetForGridItem(const RenderBox&) const;
+    LayoutUnit NODELETE offsetForGridItem(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
     LayoutUnit gridGap() const { return m_masonryAxisGridGap; };
 
@@ -63,7 +63,7 @@ private:
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void placeMasonryItems(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
-    void setItemGridAxisContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
+    void setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
     void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, GridMasonryLayout::MasonryLayoutPhase);
     LayoutUnit calculateMasonryIntrinsicLogicalWidth(RenderBox&, GridMasonryLayout::MasonryLayoutPhase);
 
@@ -72,11 +72,11 @@ private:
     void updateRunningPositions(const RenderBox& gridItem, const GridArea&);
     void updateItemOffset(const RenderBox& gridItem, LayoutUnit offset);
     LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
-    inline Style::GridTrackSizingDirection gridAxisDirection() const;
+    inline Style::GridTrackSizingDirection NODELETE gridAxisDirection() const;
 
     bool hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection masonryDirection) const;
-    GridArea masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
-    GridSpan gridAxisSpanFromArea(const GridArea&) const;
+    GridArea NODELETE masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
+    GridSpan NODELETE gridAxisSpanFromArea(const GridArea&) const;
 
     unsigned m_gridAxisTracksCount;
 

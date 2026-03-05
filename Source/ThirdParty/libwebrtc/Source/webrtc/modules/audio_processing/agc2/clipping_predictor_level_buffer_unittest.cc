@@ -37,7 +37,7 @@ TEST_P(ClippingPredictorLevelBufferParametrization, CheckEmptyBufferSize) {
 TEST_P(ClippingPredictorLevelBufferParametrization, CheckHalfEmptyBufferSize) {
   ClippingPredictorLevelBuffer buffer(capacity());
   for (int i = 0; i < buffer.Capacity() / 2; ++i) {
-    buffer.Push({2, 4});
+    buffer.Push({.average = 2, .max = 4});
   }
   EXPECT_EQ(buffer.Capacity(), std::max(capacity(), 1));
   EXPECT_EQ(buffer.Size(), std::max(capacity(), 1) / 2);
@@ -46,7 +46,7 @@ TEST_P(ClippingPredictorLevelBufferParametrization, CheckHalfEmptyBufferSize) {
 TEST_P(ClippingPredictorLevelBufferParametrization, CheckFullBufferSize) {
   ClippingPredictorLevelBuffer buffer(capacity());
   for (int i = 0; i < buffer.Capacity(); ++i) {
-    buffer.Push({2, 4});
+    buffer.Push({.average = 2, .max = 4});
   }
   EXPECT_EQ(buffer.Capacity(), std::max(capacity(), 1));
   EXPECT_EQ(buffer.Size(), std::max(capacity(), 1));
@@ -55,7 +55,7 @@ TEST_P(ClippingPredictorLevelBufferParametrization, CheckFullBufferSize) {
 TEST_P(ClippingPredictorLevelBufferParametrization, CheckLargeBufferSize) {
   ClippingPredictorLevelBuffer buffer(capacity());
   for (int i = 0; i < 2 * buffer.Capacity(); ++i) {
-    buffer.Push({2, 4});
+    buffer.Push({.average = 2, .max = 4});
   }
   EXPECT_EQ(buffer.Capacity(), std::max(capacity(), 1));
   EXPECT_EQ(buffer.Size(), std::max(capacity(), 1));
@@ -63,12 +63,12 @@ TEST_P(ClippingPredictorLevelBufferParametrization, CheckLargeBufferSize) {
 
 TEST_P(ClippingPredictorLevelBufferParametrization, CheckSizeAfterReset) {
   ClippingPredictorLevelBuffer buffer(capacity());
-  buffer.Push({1, 1});
-  buffer.Push({1, 1});
+  buffer.Push({.average = 1, .max = 1});
+  buffer.Push({.average = 1, .max = 1});
   buffer.Reset();
   EXPECT_EQ(buffer.Capacity(), std::max(capacity(), 1));
   EXPECT_EQ(buffer.Size(), 0);
-  buffer.Push({1, 1});
+  buffer.Push({.average = 1, .max = 1});
   EXPECT_EQ(buffer.Capacity(), std::max(capacity(), 1));
   EXPECT_EQ(buffer.Size(), 1);
 }
@@ -79,8 +79,8 @@ INSTANTIATE_TEST_SUITE_P(ClippingPredictorLevelBufferTest,
 
 TEST(ClippingPredictorLevelBufferTest, CheckMetricsAfterFullBuffer) {
   ClippingPredictorLevelBuffer buffer(/*capacity=*/2);
-  buffer.Push({1, 2});
-  buffer.Push({3, 6});
+  buffer.Push({.average = 1, .max = 2});
+  buffer.Push({.average = 3, .max = 6});
   EXPECT_THAT(buffer.ComputePartialMetrics(/*delay=*/0, /*num_items=*/1),
               Optional(Eq(ClippingPredictorLevelBuffer::Level{3, 6})));
   EXPECT_THAT(buffer.ComputePartialMetrics(/*delay=*/1, /*num_items=*/1),
@@ -91,11 +91,11 @@ TEST(ClippingPredictorLevelBufferTest, CheckMetricsAfterFullBuffer) {
 
 TEST(ClippingPredictorLevelBufferTest, CheckMetricsAfterPushBeyondCapacity) {
   ClippingPredictorLevelBuffer buffer(/*capacity=*/2);
-  buffer.Push({1, 1});
-  buffer.Push({3, 6});
-  buffer.Push({5, 10});
-  buffer.Push({7, 14});
-  buffer.Push({6, 12});
+  buffer.Push({.average = 1, .max = 1});
+  buffer.Push({.average = 3, .max = 6});
+  buffer.Push({.average = 5, .max = 10});
+  buffer.Push({.average = 7, .max = 14});
+  buffer.Push({.average = 6, .max = 12});
   EXPECT_THAT(buffer.ComputePartialMetrics(/*delay=*/0, /*num_items=*/1),
               Optional(Eq(ClippingPredictorLevelBuffer::Level{6, 12})));
   EXPECT_THAT(buffer.ComputePartialMetrics(/*delay=*/1, /*num_items=*/1),
@@ -106,8 +106,8 @@ TEST(ClippingPredictorLevelBufferTest, CheckMetricsAfterPushBeyondCapacity) {
 
 TEST(ClippingPredictorLevelBufferTest, CheckMetricsAfterTooFewItems) {
   ClippingPredictorLevelBuffer buffer(/*capacity=*/4);
-  buffer.Push({1, 2});
-  buffer.Push({3, 6});
+  buffer.Push({.average = 1, .max = 2});
+  buffer.Push({.average = 3, .max = 6});
   EXPECT_EQ(buffer.ComputePartialMetrics(/*delay=*/0, /*num_items=*/3),
             std::nullopt);
   EXPECT_EQ(buffer.ComputePartialMetrics(/*delay=*/2, /*num_items=*/1),
@@ -116,10 +116,10 @@ TEST(ClippingPredictorLevelBufferTest, CheckMetricsAfterTooFewItems) {
 
 TEST(ClippingPredictorLevelBufferTest, CheckMetricsAfterReset) {
   ClippingPredictorLevelBuffer buffer(/*capacity=*/2);
-  buffer.Push({1, 2});
+  buffer.Push({.average = 1, .max = 2});
   buffer.Reset();
-  buffer.Push({5, 10});
-  buffer.Push({7, 14});
+  buffer.Push({.average = 5, .max = 10});
+  buffer.Push({.average = 7, .max = 14});
   EXPECT_THAT(buffer.ComputePartialMetrics(/*delay=*/0, /*num_items=*/1),
               Optional(Eq(ClippingPredictorLevelBuffer::Level{7, 14})));
   EXPECT_THAT(buffer.ComputePartialMetrics(/*delay=*/0, /*num_items=*/2),

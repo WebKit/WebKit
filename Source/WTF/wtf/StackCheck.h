@@ -69,7 +69,7 @@ public:
             m_savedLastStackCheckpoint = m_checker.m_lastStackCheckpoint;
             m_checker.m_lastStackCheckpoint = currentStackCheckpoint;
             if constexpr (verboseStackCheckVerification) {
-                m_savedLastCheckpointStackTrace = WTFMove(m_checker.m_lastCheckpointStackTrace);
+                m_savedLastCheckpointStackTrace = WTF::move(m_checker.m_lastCheckpointStackTrace);
                 m_checker.m_lastCheckpointStackTrace = StackTrace::captureStackTrace(INT_MAX);
             }
 
@@ -83,7 +83,7 @@ public:
         {
             m_checker.m_lastStackCheckpoint = m_savedLastStackCheckpoint;
             if constexpr (verboseStackCheckVerification)
-                m_checker.m_lastCheckpointStackTrace = WTFMove(m_savedLastCheckpointStackTrace);
+                m_checker.m_lastCheckpointStackTrace = WTF::move(m_savedLastCheckpointStackTrace);
         }
 #endif
 

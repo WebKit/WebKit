@@ -54,8 +54,10 @@ if (USE_COORDINATED_GRAPHICS)
         "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     )
     list(APPEND WebCore_SOURCES
-        page/scrolling/coordinated/ScrollingCoordinatorCoordinated.cpp
+        page/scrolling/coordinated/ScrollerCoordinated.cpp
+        page/scrolling/coordinated/ScrollerPairCoordinated.cpp
         page/scrolling/coordinated/ScrollingStateNodeCoordinated.cpp
+        page/scrolling/coordinated/ScrollingStateScrollingNodeCoordinated.cpp
         page/scrolling/coordinated/ScrollingTreeCoordinated.cpp
         page/scrolling/coordinated/ScrollingTreeFixedNodeCoordinated.cpp
         page/scrolling/coordinated/ScrollingTreeFrameScrollingNodeCoordinated.cpp
@@ -84,6 +86,8 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/GraphicsLayerCoordinated.cpp
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        page/scrolling/coordinated/ScrollingTreeCoordinated.h
+
         platform/graphics/texmap/coordinated/CoordinatedAnimatedBackingStoreClient.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.h

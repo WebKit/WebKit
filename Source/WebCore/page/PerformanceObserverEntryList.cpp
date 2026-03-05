@@ -36,11 +36,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceObserverEntryList);
 
 Ref<PerformanceObserverEntryList> PerformanceObserverEntryList::create(Vector<Ref<PerformanceEntry>>&& entries)
 {
-    return adoptRef(*new PerformanceObserverEntryList(WTFMove(entries)));
+    return adoptRef(*new PerformanceObserverEntryList(WTF::move(entries)));
 }
 
 PerformanceObserverEntryList::PerformanceObserverEntryList(Vector<Ref<PerformanceEntry>>&& entries)
-    : m_entries(WTFMove(entries))
+    : m_entries(WTF::move(entries))
 {
     ASSERT(!m_entries.isEmpty());
 

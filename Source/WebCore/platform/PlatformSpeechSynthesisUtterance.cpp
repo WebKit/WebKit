@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-Ref<PlatformSpeechSynthesisUtterance> PlatformSpeechSynthesisUtterance::create(PlatformSpeechSynthesisUtteranceClient& client)
+Ref<PlatformSpeechSynthesisUtterance> PlatformSpeechSynthesisUtterance::create(PlatformSpeechSynthesisUtteranceClient* client)
 {
     return adoptRef(*new PlatformSpeechSynthesisUtterance(client));
 }
     
-inline PlatformSpeechSynthesisUtterance::PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient& client)
-    : m_client(&client)
+inline PlatformSpeechSynthesisUtterance::PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient* client)
+    : m_client(client)
 {
 }
     

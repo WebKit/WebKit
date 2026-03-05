@@ -29,7 +29,6 @@
 namespace webrtc {
 namespace {
 using ::testing::AtLeast;
-using ::testing::Invoke;
 using ::testing::MockFunction;
 using ::testing::NiceMock;
 using ::testing::Return;
@@ -156,10 +155,10 @@ TEST(SimulatedTimeControllerTest, SkipsDelayedTaskForward) {
   constexpr auto duration_during_which_nothing_runs = TimeDelta::Seconds(2);
   constexpr auto shorter_duration = TimeDelta::Seconds(1);
   MockFunction<void()> fun;
-  EXPECT_CALL(fun, Call).WillOnce(Invoke([&] {
+  EXPECT_CALL(fun, Call).WillOnce([&] {
     ASSERT_EQ(sim.GetClock()->CurrentTime(),
               kStartTime + duration_during_which_nothing_runs);
-  }));
+  });
   main_thread->PostDelayedTask(fun.AsStdFunction(), shorter_duration);
   sim.SkipForwardBy(duration_during_which_nothing_runs);
   // Run tasks that were pending during the skip.

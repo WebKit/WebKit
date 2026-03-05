@@ -42,8 +42,8 @@ public:
 private:
     CompoundStatement(SourceSpan span, Attribute::List&& attributes, Statement::List&& statements)
         : Statement(span)
-        , m_attributes(WTFMove(attributes))
-        , m_statements(WTFMove(statements))
+        , m_attributes(WTF::move(attributes))
+        , m_statements(WTF::move(statements))
     { }
 
     Attribute::List m_attributes;

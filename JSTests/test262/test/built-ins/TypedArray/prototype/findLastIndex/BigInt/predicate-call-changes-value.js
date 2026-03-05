@@ -12,16 +12,16 @@ info: |
     ...
     c. Let testResult be ! ToBoolean(? Call(predicate, thisArg, « kValue, 𝔽(k), O »)).
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray, array-find-from-last]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var arr = [10n, 20n, 30n];
   var sample;
   var result;
 
-  sample = new TA(3);
+  sample = new TA(makeCtorArg(3));
   sample.findLastIndex(function(val, i) {
     sample[i] = arr[i];
 

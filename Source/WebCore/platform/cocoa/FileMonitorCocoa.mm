@@ -55,7 +55,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
 
     LOG(ResourceLoadStatistics, "Creating monitor %p", m_platformMonitor.get());
 
-    dispatch_source_set_event_handler(m_platformMonitor.get(), makeBlockPtr([modificationHandler = WTFMove(modificationHandler), fileMonitor = m_platformMonitor] {
+    dispatch_source_set_event_handler(m_platformMonitor.get(), makeBlockPtr([modificationHandler = WTF::move(modificationHandler), fileMonitor = m_platformMonitor] {
         // If this is getting called after the monitor was cancelled, just drop the notification.
         if (dispatch_source_testcancel(fileMonitor.get()))
             return;
@@ -71,7 +71,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
         }
     }).get());
     
-    dispatch_source_set_cancel_handler(m_platformMonitor.get(), makeBlockPtr([handle = WTFMove(handle)] () mutable { }).get());
+    dispatch_source_set_cancel_handler(m_platformMonitor.get(), makeBlockPtr([handle = WTF::move(handle)] () mutable { }).get());
     
     dispatch_resume(m_platformMonitor.get());
 }

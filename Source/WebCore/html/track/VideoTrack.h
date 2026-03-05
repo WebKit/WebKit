@@ -28,8 +28,8 @@
 
 #if ENABLE(VIDEO)
 
-#include <WebCore/TrackBase.h>
-#include <WebCore/VideoTrackPrivateClient.h>
+#include "TrackBase.h"
+#include "VideoTrackPrivateClient.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
@@ -50,6 +50,10 @@ public:
         return adoptRef(*new VideoTrack(context, trackPrivate));
     }
     virtual ~VideoTrack();
+
+    // VideoTrackPrivateClient.
+    void ref() const final { MediaTrackBase::ref(); }
+    void deref() const final { MediaTrackBase::deref(); }
 
     static const AtomString& signKeyword();
 

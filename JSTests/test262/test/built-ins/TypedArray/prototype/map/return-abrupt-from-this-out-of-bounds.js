@@ -56,4 +56,4 @@ testWithTypedArrayConstructors(TA => {
     array.map(() => {});
     throw new Test262Error('map completed successfully');
   });
-});
+}, null, ["passthrough"]);

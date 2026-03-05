@@ -82,7 +82,7 @@ def load_expectations(checker_list, project, platform):
     for checker in checker_list:
         expectations_path = checker.expectations_path(project)
         if not os.path.isfile(expectations_path):
-            return
+            continue
         with open(expectations_path) as expectation_file:
             for line in expectation_file:
                 if line.startswith('//') or line.startswith('#'):

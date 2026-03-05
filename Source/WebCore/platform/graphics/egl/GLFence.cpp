@@ -107,7 +107,7 @@ std::unique_ptr<GLFence> GLFence::importFD(const GLDisplay& display, UnixFileDes
         return nullptr;
 
     if (display.extensions().ANDROID_native_fence_sync)
-        return GLFenceEGL::importFD(display, WTFMove(fd));
+        return GLFenceEGL::importFD(display, WTF::move(fd));
 #else
     UNUSED_PARAM(fd);
 #endif

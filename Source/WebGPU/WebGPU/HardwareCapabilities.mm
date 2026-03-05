@@ -264,7 +264,7 @@ static HardwareCapabilities apple4(id<MTLDevice> device)
 
     return {
         defaultLimits(),
-        WTFMove(features),
+        WTF::move(features),
         baseCapabilities,
     };
 }
@@ -286,7 +286,7 @@ static HardwareCapabilities apple5(id<MTLDevice> device)
 
     return {
         defaultLimits(),
-        WTFMove(features),
+        WTF::move(features),
         baseCapabilities,
     };
 }
@@ -347,7 +347,7 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
             .maxStorageBuffersInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageTexturesInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
         },
-        WTFMove(features),
+        WTF::move(features),
         baseCapabilities,
     };
 }
@@ -407,7 +407,7 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
             .maxStorageBuffersInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageTexturesInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
         },
-        WTFMove(features),
+        WTF::move(features),
         baseCapabilities,
     };
 }
@@ -467,7 +467,7 @@ static HardwareCapabilities mac2(id<MTLDevice> device)
             .maxStorageBuffersInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageTexturesInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
         },
-        WTFMove(features),
+        WTF::move(features),
         baseCapabilities,
     };
 }

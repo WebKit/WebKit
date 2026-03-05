@@ -18,8 +18,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(4);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(4));
 
   assert.throws(TypeError, function() {
     TA(typedArray);

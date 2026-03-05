@@ -60,7 +60,7 @@ class PolygonLayoutShape : public LayoutShape {
     WTF_MAKE_NONCOPYABLE(PolygonLayoutShape);
 public:
     PolygonLayoutShape(Vector<FloatPoint>&& vertices, float boxLogicalWidth)
-        : m_polygon(WTFMove(vertices))
+        : m_polygon(WTF::move(vertices))
         , m_boxLogicalWidth(boxLogicalWidth)
     {
     }

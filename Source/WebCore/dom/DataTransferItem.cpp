@@ -47,26 +47,26 @@ namespace WebCore {
 
 Ref<DataTransferItem> DataTransferItem::create(WeakPtr<DataTransferItemList>&& list, const String& type, Kind kind)
 {
-    return adoptRef(*new DataTransferItem(WTFMove(list), type, kind));
+    return adoptRef(*new DataTransferItem(WTF::move(list), type, kind));
 }
 
 Ref<DataTransferItem> DataTransferItem::create(WeakPtr<DataTransferItemList>&& list, const String& type, Ref<File>&& file)
 {
-    return adoptRef(*new DataTransferItem(WTFMove(list), type, WTFMove(file)));
+    return adoptRef(*new DataTransferItem(WTF::move(list), type, WTF::move(file)));
 }
 
 DataTransferItem::DataTransferItem(WeakPtr<DataTransferItemList>&& list, const String& type, Kind kind)
-    : m_list(WTFMove(list))
+    : m_list(WTF::move(list))
     , m_type(type)
     , m_kind(kind)
 {
 }
 
 DataTransferItem::DataTransferItem(WeakPtr<DataTransferItemList>&& list, const String& type, Ref<File>&& file)
-    : m_list(WTFMove(list))
+    : m_list(WTF::move(list))
     , m_type(type)
     , m_kind(Kind::File)
-    , m_file(WTFMove(file))
+    , m_file(WTF::move(file))
 {
 }
 
@@ -112,20 +112,20 @@ void DataTransferItem::getAsString(Document& document, RefPtr<StringCallback>&& 
     callback->scheduleCallback(document, dataTransfer->getDataForItem(document, m_type));
 }
 
-RefPtr<File> DataTransferItem::getAsFile() const
+File* DataTransferItem::getAsFile() const
 {
     if (!m_list || !m_list->dataTransfer().canReadData())
         return nullptr;
-    return m_file.copyRef();
+    return m_file;
 }
 
 RefPtr<FileSystemEntry> DataTransferItem::getAsEntry(ScriptExecutionContext& context) const
 {
-    auto file = getAsFile();
+    RefPtr file = getAsFile();
     if (!file)
         return nullptr;
 
-    return DOMFileSystem::createEntryForFile(context, *file);
+    return DOMFileSystem::createEntryForFile(context, file.releaseNonNull());
 }
 
 } // namespace WebCore

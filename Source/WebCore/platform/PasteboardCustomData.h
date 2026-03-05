@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT ~PasteboardCustomData();
 
     const String& origin() const { return m_origin; }
-    void setOrigin(String&& origin) { m_origin = WTFMove(origin); }
+    void setOrigin(String&& origin) { m_origin = WTF::move(origin); }
     void setOrigin(const String& origin) { m_origin = origin; }
 
     WEBCORE_EXPORT Ref<SharedBuffer> createSharedBuffer() const;

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/resources/testharness.js from asking for credentials because it is a cross-origin request.
-CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/cookies/resources/testharness-helpers.js from asking for credentials because it is a cross-origin request.
-
-
-PASS Partitioned cookies are not sent in embedded same-site to cross-site redirects
-PASS Cross-site embed partitioned cookie access
-

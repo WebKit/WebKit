@@ -43,7 +43,7 @@ typedef struct {
 
 static_assert(EVP_MAX_MD_SIZE < 256, "mac_key_len does not fit in uint8_t");
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >= sizeof(AEAD_TLS_CTX),
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >= sizeof(AEAD_TLS_CTX),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >= alignof(AEAD_TLS_CTX),
               "AEAD state has insufficient alignment");
@@ -85,10 +85,11 @@ static int aead_tls_init(EVP_AEAD_CTX *ctx, const uint8_t *key, size_t key_len,
   tls_ctx->mac_key_len = (uint8_t)mac_key_len;
   tls_ctx->implicit_iv = implicit_iv;
 
-  if (!EVP_CipherInit_ex(&tls_ctx->cipher_ctx, cipher, NULL, &key[mac_key_len],
-                         implicit_iv ? &key[mac_key_len + enc_key_len] : NULL,
-                         dir == evp_aead_seal) ||
-      !HMAC_Init_ex(tls_ctx->hmac_ctx, key, mac_key_len, md, NULL)) {
+  if (!EVP_CipherInit_ex(
+          &tls_ctx->cipher_ctx, cipher, nullptr, &key[mac_key_len],
+          implicit_iv ? &key[mac_key_len + enc_key_len] : nullptr,
+          dir == evp_aead_seal) ||
+      !HMAC_Init_ex(tls_ctx->hmac_ctx, key, mac_key_len, md, nullptr)) {
     aead_tls_cleanup(ctx);
     return 0;
   }
@@ -163,7 +164,7 @@ static int aead_tls_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
   // in-place.
   uint8_t mac[EVP_MAX_MD_SIZE];
   unsigned mac_len;
-  if (!HMAC_Init_ex(tls_ctx->hmac_ctx, NULL, 0, NULL, NULL) ||
+  if (!HMAC_Init_ex(tls_ctx->hmac_ctx, nullptr, 0, nullptr, nullptr) ||
       !HMAC_Update(tls_ctx->hmac_ctx, ad, ad_len) ||
       !HMAC_Update(tls_ctx->hmac_ctx, ad_extra, sizeof(ad_extra)) ||
       !HMAC_Update(tls_ctx->hmac_ctx, in, in_len) ||
@@ -174,7 +175,8 @@ static int aead_tls_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
   // Configure the explicit IV.
   if (EVP_CIPHER_CTX_mode(&tls_ctx->cipher_ctx) == EVP_CIPH_CBC_MODE &&
       !tls_ctx->implicit_iv &&
-      !EVP_EncryptInit_ex(&tls_ctx->cipher_ctx, NULL, NULL, NULL, nonce)) {
+      !EVP_EncryptInit_ex(&tls_ctx->cipher_ctx, nullptr, nullptr, nullptr,
+                          nonce)) {
     return 0;
   }
 
@@ -280,7 +282,8 @@ static int aead_tls_open(const EVP_AEAD_CTX *ctx, uint8_t *out, size_t *out_len,
   // Configure the explicit IV.
   if (EVP_CIPHER_CTX_mode(&tls_ctx->cipher_ctx) == EVP_CIPH_CBC_MODE &&
       !tls_ctx->implicit_iv &&
-      !EVP_DecryptInit_ex(&tls_ctx->cipher_ctx, NULL, NULL, NULL, nonce)) {
+      !EVP_DecryptInit_ex(&tls_ctx->cipher_ctx, nullptr, nullptr, nullptr,
+                          nonce)) {
     return 0;
   }
 
@@ -356,7 +359,7 @@ static int aead_tls_open(const EVP_AEAD_CTX *ctx, uint8_t *out, size_t *out_len,
     assert(EVP_CIPHER_CTX_mode(&tls_ctx->cipher_ctx) != EVP_CIPH_CBC_MODE);
 
     unsigned mac_len_u;
-    if (!HMAC_Init_ex(tls_ctx->hmac_ctx, NULL, 0, NULL, NULL) ||
+    if (!HMAC_Init_ex(tls_ctx->hmac_ctx, nullptr, 0, nullptr, nullptr) ||
         !HMAC_Update(tls_ctx->hmac_ctx, ad_fixed, ad_len) ||
         !HMAC_Update(tls_ctx->hmac_ctx, out, data_len) ||
         !HMAC_Final(tls_ctx->hmac_ctx, mac, &mac_len_u)) {
@@ -462,13 +465,13 @@ static const EVP_AEAD aead_aes_128_cbc_sha1_tls = {
     SHA_DIGEST_LENGTH,       // max tag length
     0,                       // seal_scatter_supports_extra_in
 
-    NULL,  // init
+    nullptr,  // init
     aead_aes_128_cbc_sha1_tls_init,
     aead_tls_cleanup,
     aead_tls_open,
     aead_tls_seal_scatter,
-    NULL,  // open_gather
-    NULL,  // get_iv
+    nullptr,  // open_gather
+    nullptr,  // get_iv
     aead_tls_tag_len,
 };
 
@@ -479,12 +482,12 @@ static const EVP_AEAD aead_aes_128_cbc_sha1_tls_implicit_iv = {
     SHA_DIGEST_LENGTH,            // max tag length
     0,                            // seal_scatter_supports_extra_in
 
-    NULL,  // init
+    nullptr,  // init
     aead_aes_128_cbc_sha1_tls_implicit_iv_init,
     aead_tls_cleanup,
     aead_tls_open,
     aead_tls_seal_scatter,
-    NULL,             // open_gather
+    nullptr,          // open_gather
     aead_tls_get_iv,  // get_iv
     aead_tls_tag_len,
 };
@@ -496,13 +499,13 @@ static const EVP_AEAD aead_aes_128_cbc_sha256_tls = {
     SHA256_DIGEST_LENGTH,       // max tag length
     0,                          // seal_scatter_supports_extra_in
 
-    NULL,  // init
+    nullptr,  // init
     aead_aes_128_cbc_sha256_tls_init,
     aead_tls_cleanup,
     aead_tls_open,
     aead_tls_seal_scatter,
-    NULL,  // open_gather
-    NULL,  // get_iv
+    nullptr,  // open_gather
+    nullptr,  // get_iv
     aead_tls_tag_len,
 };
 
@@ -513,13 +516,13 @@ static const EVP_AEAD aead_aes_256_cbc_sha1_tls = {
     SHA_DIGEST_LENGTH,       // max tag length
     0,                       // seal_scatter_supports_extra_in
 
-    NULL,  // init
+    nullptr,  // init
     aead_aes_256_cbc_sha1_tls_init,
     aead_tls_cleanup,
     aead_tls_open,
     aead_tls_seal_scatter,
-    NULL,  // open_gather
-    NULL,  // get_iv
+    nullptr,  // open_gather
+    nullptr,  // get_iv
     aead_tls_tag_len,
 };
 
@@ -530,12 +533,12 @@ static const EVP_AEAD aead_aes_256_cbc_sha1_tls_implicit_iv = {
     SHA_DIGEST_LENGTH,            // max tag length
     0,                            // seal_scatter_supports_extra_in
 
-    NULL,  // init
+    nullptr,  // init
     aead_aes_256_cbc_sha1_tls_implicit_iv_init,
     aead_tls_cleanup,
     aead_tls_open,
     aead_tls_seal_scatter,
-    NULL,             // open_gather
+    nullptr,          // open_gather
     aead_tls_get_iv,  // get_iv
     aead_tls_tag_len,
 };
@@ -547,13 +550,13 @@ static const EVP_AEAD aead_des_ede3_cbc_sha1_tls = {
     SHA_DIGEST_LENGTH,       // max tag length
     0,                       // seal_scatter_supports_extra_in
 
-    NULL,  // init
+    nullptr,  // init
     aead_des_ede3_cbc_sha1_tls_init,
     aead_tls_cleanup,
     aead_tls_open,
     aead_tls_seal_scatter,
-    NULL,  // open_gather
-    NULL,  // get_iv
+    nullptr,  // open_gather
+    nullptr,  // get_iv
     aead_tls_tag_len,
 };
 
@@ -564,12 +567,12 @@ static const EVP_AEAD aead_des_ede3_cbc_sha1_tls_implicit_iv = {
     SHA_DIGEST_LENGTH,           // max tag length
     0,                           // seal_scatter_supports_extra_in
 
-    NULL,  // init
+    nullptr,  // init
     aead_des_ede3_cbc_sha1_tls_implicit_iv_init,
     aead_tls_cleanup,
     aead_tls_open,
     aead_tls_seal_scatter,
-    NULL,             // open_gather
+    nullptr,          // open_gather
     aead_tls_get_iv,  // get_iv
     aead_tls_tag_len,
 };

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/videoframe-utilities.js"></script>
+<style>
+body { margin: 0 }
+canvas { image-rendering: pixelated }
+</style>
+<canvas style="display: none" id="referenceCanvas"></canvas>
+<canvas style="display: none" id="resultCanvas"></canvas>
+<script>
+// Tests that VP9 encoding preserves pixel values.
+// 1. Create sRGB RGBA test pattern.
+// 2. Convert that to I420 BT709 data with a reference JS implementation.
+// 3. Encode the I420 video frame to VP9 and decode it back to VideoFrame
+// Check that the video frame has correct contents by drawing it and inspecting pixels.
+// To verify that the image is correct:
+// V1. Convert the I420 BT709 to sRGB RGBA data with a reference JS implementation.
+// V2. Create VideoFrame out of that and draw it to reference canvas.
+// V3. Expect that reference and result match.
+
+let colors = [[255, 0, 0, 255], [0, 255, 0,  255], [0, 255, 255, 255], [30, 30, 230, 255], [3, 3, 77, 255]];
+let subtests = [];
+for (let fullRange of [true, false]) {
+  for (let color of colors)
+    subtests.push({fullRange, color});
+}
+
+for (let subtest of subtests) {
+  promise_test(async () => {
+    await runTest(subtest.color, subtest.fullRange);
+  }, `VP9 encoding preserves pixel values fullRange: ${subtest.fullRange} color:${subtest.color}`);
+}
+
+async function runTest(color, fullRange) {
+    const pattern = createTestImageData(referenceCanvas.width, referenceCanvas.height, color);
+    const i420Data = sRGBImageDataToI420BT709(pattern, fullRange);
+    const videoFrame = new VideoFrame(i420Data.data, {
+        format: i420Data.format,
+        codedWidth: i420Data.width,
+        codedHeight: i420Data.height,
+        layout: i420Data.layout,
+        timestamp: 0
+    });
+    // This is being tested.
+    let testedVideoFrame = await encodeDecodeVideoFrame(videoFrame, "vp09.00.10.08");
+    resultCanvas.getContext('2d').drawImage(testedVideoFrame, 0, 0);
+    testedVideoFrame.close();
+    referenceCanvas.getContext("2d").drawImage(videoFrame, 0, 0);
+    videoFrame.close();
+
+    let referenceColor = referenceCanvas.getContext("2d").getImageData(0, 0, 1, 1).data;
+    let resultColor = resultCanvas.getContext("2d").getImageData(0, 0, 1, 1).data;
+    assert_array_approx_equals(resultColor, referenceColor, 20);
+    assert_array_approx_equals(resultColor, color, 20);
+}
+</script>

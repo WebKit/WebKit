@@ -1,0 +1,10 @@
+
+
+Harness Error (FAIL), message = Error: assert_true: Window load event should fire before loadstart for lazy audio in viewport expected true got false
+
+TIMEOUT In-viewport audio with loading='lazy' fires window load before loadstart Test timed out
+
+Harness Error (FAIL), message = Error: assert_true: Window load event should fire before loadstart for lazy audio in viewport expected true got false
+
+TIMEOUT In-viewport audio with loading='lazy' fires window load before loadstart Test timed out
+

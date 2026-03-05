@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/Identifier.h>
+
 namespace JSC {
 
 template <class TreeBuilder>

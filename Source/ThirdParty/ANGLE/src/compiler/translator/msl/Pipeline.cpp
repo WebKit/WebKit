@@ -112,7 +112,7 @@ bool Pipeline::uses(const TVariable &var) const
                 case TQualifier::EvqSampleMaskIn:
                 case TQualifier::EvqSampleMask:
                     return var.symbolType() == SymbolType::BuiltIn;
-                case TQualifier::EvqUniform:
+                case TQualifier::EvqNumSamples:
                     return var.name() == "gl_NumSamples";
                 default:
                     return false;

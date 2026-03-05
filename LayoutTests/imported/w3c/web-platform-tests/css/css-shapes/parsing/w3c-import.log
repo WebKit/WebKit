@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-image-threshold-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-image-threshold-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-image-threshold-valid.html
@@ -22,6 +23,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-margin-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-outside-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-outside-invalid-position.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-outside-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-outside-valid-position.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-outside-valid.html

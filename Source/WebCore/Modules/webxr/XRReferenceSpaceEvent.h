@@ -37,24 +37,24 @@ class WebXRReferenceSpace;
 class WebXRRigidTransform;
 
 class XRReferenceSpaceEvent : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRReferenceSpaceEvent);
+    WTF_MAKE_TZONE_ALLOCATED(XRReferenceSpaceEvent);
 public:
     struct Init : EventInit {
-        RefPtr<WebXRReferenceSpace> referenceSpace;
+        Ref<WebXRReferenceSpace> referenceSpace;
         RefPtr<WebXRRigidTransform> transform;
     };
 
-    static Ref<XRReferenceSpaceEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<XRReferenceSpaceEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRReferenceSpaceEvent();
 
     const WebXRReferenceSpace& referenceSpace() const;
-    WebXRRigidTransform* transform() const;
+    WebXRRigidTransform* NODELETE transform() const;
 
 private:
-    XRReferenceSpaceEvent(const AtomString&, const Init&, IsTrusted);
+    XRReferenceSpaceEvent(const AtomString&, Init&&, IsTrusted);
 
-    RefPtr<WebXRReferenceSpace> m_referenceSpace;
-    RefPtr<WebXRRigidTransform> m_transform;
+    const Ref<WebXRReferenceSpace> m_referenceSpace;
+    const RefPtr<WebXRRigidTransform> m_transform;
 };
 
 } // namespace WebCore

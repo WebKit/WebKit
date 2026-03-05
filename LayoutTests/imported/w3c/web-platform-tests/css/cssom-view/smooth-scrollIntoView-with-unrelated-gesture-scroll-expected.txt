@@ -1,4 +1,4 @@
 
 
-FAIL scrollIntoView is not interrupted by unrelated gesture scroll promise_test: Unhandled rejection with value: object "TypeError: getValue is not a function. (In 'getValue()', 'getValue' is undefined)"
+PASS scrollIntoView is not interrupted by unrelated gesture scroll
 

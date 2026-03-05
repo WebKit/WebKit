@@ -1,0 +1,12 @@
+reset
+
+
+
+FAIL CSS :open for <input type=date> assert_true: Should match :open after opening the picker. expected true got false
+FAIL CSS :open for <input type=datetime-local> assert_true: Should match :open after opening the picker. expected true got false
+FAIL CSS :open for <input type=week> assert_true: Should match :open after opening the picker. expected true got false
+FAIL CSS :open for <input type=month> assert_true: Should match :open after opening the picker. expected true got false
+FAIL CSS :open for <input type=time> assert_true: Should match :open after opening the picker. expected true got false
+FAIL CSS :open for <input type=color> assert_false: Should not match :open after closing the picker. expected false got true
+FAIL CSS :open for <input type=text list=datalist> assert_true: Should match :open after opening the list. expected true got false
+

@@ -52,9 +52,7 @@ FakeAudioCaptureModule::FakeAudioCaptureModule()
       frames_received_(0) {}
 
 FakeAudioCaptureModule::~FakeAudioCaptureModule() {
-  if (process_thread_) {
-    process_thread_->Stop();
-  }
+  RTC_DCHECK(!initialized_);
 }
 
 webrtc::scoped_refptr<FakeAudioCaptureModule> FakeAudioCaptureModule::Create() {
@@ -84,18 +82,23 @@ int32_t FakeAudioCaptureModule::RegisterAudioCallback(
 }
 
 int32_t FakeAudioCaptureModule::Init() {
-  // Initialize is called by the factory method. Safe to ignore this Init call.
+  // Initialize is called by the factory method.
+  initialized_ = true;
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::Terminate() {
-  // Clean up in the destructor. No action here, just success.
+  StopPlayout();
+  StopRecording();
+  if (process_thread_) {
+    process_thread_->Stop();
+  }
+  initialized_ = false;
   return 0;
 }
 
 bool FakeAudioCaptureModule::Initialized() const {
-  RTC_DCHECK_NOTREACHED();
-  return 0;
+  return initialized_;
 }
 
 int16_t FakeAudioCaptureModule::PlayoutDevices() {
@@ -194,6 +197,8 @@ int32_t FakeAudioCaptureModule::StopPlayout() {
   bool start = false;
   {
     webrtc::MutexLock lock(&mutex_);
+    if (!playing_)
+      return 0;
     playing_ = false;
     start = ShouldStartProcessing();
   }
@@ -223,6 +228,8 @@ int32_t FakeAudioCaptureModule::StopRecording() {
   bool start = false;
   {
     webrtc::MutexLock lock(&mutex_);
+    if (!recording_)
+      return 0;
     recording_ = false;
     start = ShouldStartProcessing();
   }
@@ -424,6 +431,7 @@ bool FakeAudioCaptureModule::ShouldStartProcessing() {
 }
 
 void FakeAudioCaptureModule::UpdateProcessing(bool start) {
+  RTC_DCHECK(initialized_);
   if (start) {
     if (!process_thread_) {
       process_thread_ = webrtc::Thread::Create();

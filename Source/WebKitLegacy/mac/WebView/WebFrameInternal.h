@@ -28,6 +28,7 @@
 
 // This header contains WebFrame declarations that can be used anywhere in WebKit, but are neither SPI nor API.
 
+#import "LegacyWebPageInspectorController.h"
 #import "WebFramePrivate.h"
 #import "WebPreferencesPrivate.h"
 #import <WebCore/CaptionUserPreferences.h>
@@ -98,6 +99,7 @@ WebView *getWebView(WebFrame *webFrame);
 #if PLATFORM(IOS_FAMILY)
     BOOL isCommitting;
 #endif
+    WeakPtr<LegacyWebPageInspectorController> webPageInspectorController;
 }
 @end
 

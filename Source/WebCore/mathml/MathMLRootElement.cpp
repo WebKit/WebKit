@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLRootElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLRootElement);
 
 using namespace MathMLNames;
 
@@ -60,7 +60,17 @@ Ref<MathMLRootElement> MathMLRootElement::create(const QualifiedName& tagName, D
 RenderPtr<RenderElement> MathMLRootElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(msqrtTag) || hasTagName(mrootTag));
-    return createRenderer<RenderMathMLRoot>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLRoot>(*this, WTF::move(style));
+}
+
+void MathMLRootElement::childrenChanged(const ChildChange& change)
+{
+    MathMLRowElement::childrenChanged(change);
+
+    if (CheckedPtr rootRenderer = dynamicDowncast<RenderMathMLRoot>(this->renderer())) {
+        rootRenderer->resetRadicalOperator();
+        rootRenderer->setNeedsLayoutAndPreferredWidthsUpdate();
+    }
 }
 
 }

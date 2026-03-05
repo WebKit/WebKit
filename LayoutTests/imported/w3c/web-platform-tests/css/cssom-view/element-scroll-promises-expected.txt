@@ -1,0 +1,26 @@
+
+FAIL Element.scroll(auto): return type assert_true: expected true got false
+PASS Element.scroll(auto): promise behavior
+FAIL Element.scroll(instant): return type assert_true: expected true got false
+PASS Element.scroll(instant): promise behavior
+FAIL Element.scroll(smooth): return type assert_true: expected true got false
+FAIL Element.scroll(smooth): promise behavior assert_equals: Position after await expected 5000 but got 0
+FAIL Element.scrollTo(auto): return type assert_true: expected true got false
+PASS Element.scrollTo(auto): promise behavior
+FAIL Element.scrollTo(instant): return type assert_true: expected true got false
+PASS Element.scrollTo(instant): promise behavior
+FAIL Element.scrollTo(smooth): return type assert_true: expected true got false
+FAIL Element.scrollTo(smooth): promise behavior assert_equals: Position after await expected 5000 but got 0
+FAIL Element.scrollBy(auto): return type assert_true: expected true got false
+PASS Element.scrollBy(auto): promise behavior
+FAIL Element.scrollBy(instant): return type assert_true: expected true got false
+PASS Element.scrollBy(instant): promise behavior
+FAIL Element.scrollBy(smooth): return type assert_true: expected true got false
+FAIL Element.scrollBy(smooth): promise behavior assert_equals: Position after await expected 5000 but got 0
+FAIL Element.scrollIntoView(auto): return type assert_true: expected true got false
+PASS Element.scrollIntoView(auto): promise behavior
+FAIL Element.scrollIntoView(instant): return type assert_true: expected true got false
+PASS Element.scrollIntoView(instant): promise behavior
+FAIL Element.scrollIntoView(smooth): return type assert_true: expected true got false
+FAIL Element.scrollIntoView(smooth): promise behavior assert_equals: Position after await expected 5000 but got 0
+

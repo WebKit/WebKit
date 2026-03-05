@@ -29,7 +29,6 @@
 #include "WebKitDOMNodeListPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
@@ -38,6 +37,7 @@
 #include <WebCore/JSNode.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 
@@ -517,7 +517,7 @@ gushort webkit_dom_node_get_node_type(WebKitDOMNode* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), 0);
     WebCore::Node* item = WebKit::core(self);
-    gushort result = item->nodeType();
+    gushort result = std::to_underlying(item->nodeType());
     return result;
 }
 

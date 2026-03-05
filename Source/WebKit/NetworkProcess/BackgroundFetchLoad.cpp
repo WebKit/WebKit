@@ -47,7 +47,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchLoad);
 
 BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
-    : m_sessionID(WTFMove(sessionID))
+    : m_sessionID(WTF::move(sessionID))
     , m_client(client)
     , m_request(request.internalRequest)
     , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
@@ -73,7 +73,7 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
             // We should never send a synthetic redirect for BackgroundFetchLoads.
             ASSERT_NOT_REACHED();
         }, [&] (ResourceRequest& request) {
-            this->loadRequest(networkProcess, WTFMove(request));
+            this->loadRequest(networkProcess, WTF::move(request));
         });
     });
 }
@@ -95,14 +95,9 @@ void BackgroundFetchLoad::abort()
     m_task = nullptr;
 }
 
-RefPtr<WebCore::BackgroundFetchRecordLoaderClient> BackgroundFetchLoad::protectedClient() const
-{
-    return m_client.get();
-}
-
 void BackgroundFetchLoad::didFinish(const ResourceError& error, const ResourceResponse& response)
 {
-    protectedClient()->didFinish(error);
+    protect(m_client)->didFinish(error);
 }
 
 void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& request)
@@ -114,33 +109,33 @@ void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRe
         return;
 
     NetworkLoadParameters loadParameters;
-    loadParameters.request = WTFMove(request);
+    loadParameters.request = WTF::move(request);
     loadParameters.topOrigin = m_networkLoadChecker->topOrigin();
     loadParameters.sourceOrigin = m_networkLoadChecker->origin();
     loadParameters.storedCredentialsPolicy = m_networkLoadChecker->options().credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
     loadParameters.clientCredentialPolicy = ClientCredentialPolicy::CannotAskClientForCredentials;
 
-    Ref task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
+    Ref task = NetworkDataTask::create(*networkSession, *this, WTF::move(loadParameters));
     m_task = task.ptr();
     task->resume();
 }
 
 void BackgroundFetchLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
-    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTFMove(request), WTFMove(redirectResponse), nullptr, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTF::move(request), WTF::move(redirectResponse), nullptr, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
         if (!result.has_value()) {
             weakThis->didFinish(result.error());
             completionHandler({ });
             return;
         }
-        auto request = WTFMove(result->redirectRequest);
+        auto request = WTF::move(result->redirectRequest);
         if (!request.url().protocolIsInHTTPFamily()) {
             weakThis->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
             completionHandler({ });
             return;
         }
 
-        completionHandler(WTFMove(request));
+        completionHandler(WTF::move(request));
     });
 }
 
@@ -148,7 +143,7 @@ void BackgroundFetchLoad::didReceiveChallenge(AuthenticationChallenge&& challeng
 {
     BGLOAD_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        Ref { m_networkLoadChecker }->protectedNetworkProcess()->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        protect(protect(Ref { m_networkLoadChecker }->networkProcess())->authenticationManager())->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };
@@ -180,13 +175,13 @@ void BackgroundFetchLoad::didReceiveResponse(ResourceResponse&& response, Negoti
     if (!weakThis)
         return;
 
-    protectedClient()->didReceiveResponse(WTFMove(response));
+    protect(m_client)->didReceiveResponse(WTF::move(response));
 }
 
 void BackgroundFetchLoad::didReceiveData(const SharedBuffer& data)
 {
     BGLOAD_RELEASE_LOG("didReceiveData");
-    protectedClient()->didReceiveResponseBodyChunk(data);
+    protect(m_client)->didReceiveResponseBodyChunk(data);
 }
 
 void BackgroundFetchLoad::didCompleteWithError(const ResourceError& error, const NetworkLoadMetrics&)
@@ -201,7 +196,7 @@ void BackgroundFetchLoad::didCompleteWithError(const ResourceError& error, const
 
 void BackgroundFetchLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
 {
-    protectedClient()->didSendData(totalBytesSent);
+    protect(m_client)->didSendData(totalBytesSent);
 }
 
 void BackgroundFetchLoad::wasBlocked()

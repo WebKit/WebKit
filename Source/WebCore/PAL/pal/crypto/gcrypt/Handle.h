@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if USE(GCRYPT)
+
 #include <gcrypt.h>
 
 namespace PAL {
@@ -132,3 +136,5 @@ struct HandleDeleter<gcry_sexp_t> {
 
 } // namespace GCrypt
 } // namespace PAL
+
+#endif

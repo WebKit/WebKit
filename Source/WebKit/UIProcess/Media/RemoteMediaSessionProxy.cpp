@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionProxy);
 RemoteMediaSessionProxy::RemoteMediaSessionProxy(const RemoteMediaSessionState& state, RemoteMediaSessionManagerProxy& manager)
     : PlatformMediaSession(*new RemoteMediaSessionClientProxy(state, manager))
     , m_manager(manager)
-    , m_state(state)
+    , m_sessionState(state)
 #if !RELEASE_LOG_DISABLED
     , m_logger(manager.process()->logger())
 #endif
@@ -52,10 +52,23 @@ RemoteMediaSessionProxy::~RemoteMediaSessionProxy()
 {
 }
 
-void RemoteMediaSessionProxy::updateState(const RemoteMediaSessionState& state)
+void RemoteMediaSessionProxy::updateState(const RemoteMediaSessionState& remoteState)
 {
-    // FIXME: merge changes, notify as necessary
-    m_state = state;
+    m_sessionState = remoteState;
+    downcast<RemoteMediaSessionClientProxy>(protect(client())).updateState(remoteState);
+
+}
+
+void RemoteMediaSessionProxy::setState(WebCore::PlatformMediaSessionState state)
+{
+    PlatformMediaSession::setState(state);
+    m_sessionState.state = state;
+}
+
+WeakPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionProxy::selectBestMediaSession(const Vector<WeakPtr<WebCore::PlatformMediaSessionInterface>>&, WebCore::PlatformMediaSessionPlaybackControlsPurpose)
+{
+    // FIXME: Another synchronous API we need to fix.
+    return nullptr;
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

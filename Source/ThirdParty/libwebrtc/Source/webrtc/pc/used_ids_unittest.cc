@@ -78,9 +78,11 @@ class UsedRtpHeaderExtensionIdsTest
     : public ::testing::TestWithParam<TestParams> {};
 
 constexpr TestParams kOneByteTestParams = {
-    UsedRtpHeaderExtensionIds::IdDomain::kOneByteOnly, 14};
+    .id_domain = UsedRtpHeaderExtensionIds::IdDomain::kOneByteOnly,
+    .max_id = 14};
 constexpr TestParams kTwoByteTestParams = {
-    UsedRtpHeaderExtensionIds::IdDomain::kTwoByteAllowed, 255};
+    .id_domain = UsedRtpHeaderExtensionIds::IdDomain::kTwoByteAllowed,
+    .max_id = 255};
 
 INSTANTIATE_TEST_SUITE_P(All,
                          UsedRtpHeaderExtensionIdsTest,

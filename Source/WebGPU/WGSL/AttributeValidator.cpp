@@ -310,13 +310,13 @@ void AttributeValidator::visit(AST::Variable& variable)
             }
 
             auto uintIdValue = static_cast<unsigned>(idValue);
-            if (m_shaderModule.containsOverride(uintIdValue)) [[unlikely]] {
+            if (m_shaderModule.containsOverrideID(uintIdValue)) [[unlikely]] {
                 error(attribute.span(), "@id value must be unique"_s);
                 return;
             }
 
             update(attribute.span(), variable.m_id, uintIdValue);
-            m_shaderModule.addOverride(uintIdValue);
+            m_shaderModule.addOverrideID(uintIdValue);
             continue;
         }
 

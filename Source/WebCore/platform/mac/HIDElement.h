@@ -39,7 +39,7 @@ class HIDElement {
 public:
     explicit HIDElement(IOHIDElementRef);
 
-    IOHIDElementRef rawElement() const { return m_rawElement.get(); }
+    IOHIDElementRef rawElement() const LIFETIME_BOUND { return m_rawElement.get(); }
 
     CFIndex physicalMin() const { return m_physicalMin; }
     CFIndex physicalMax() const { return m_physicalMax; }

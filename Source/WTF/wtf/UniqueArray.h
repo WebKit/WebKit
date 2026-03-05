@@ -114,7 +114,7 @@ template<typename T>
 using UniqueArray = typename UniqueArrayMaker<std::is_trivially_destructible<T>::value, T>::ResultType;
 
 template<typename T>
-UniqueArray<T> makeUniqueArray(size_t size)
+[[nodiscard]] UniqueArray<T> makeUniqueArray(size_t size)
 {
     static_assert(std::is_same<typename std::remove_extent<T>::type, T>::value);
     return UniqueArrayMaker<std::is_trivially_destructible<T>::value, T>::make(size);

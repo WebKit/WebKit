@@ -18,10 +18,13 @@
 #include <memory>
 #include <string>
 
+#include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/transport/stun.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -45,8 +48,8 @@ class StunRequestManager {
   ~StunRequestManager();
 
   // Starts sending the given request (perhaps after a delay).
-  void Send(StunRequest* request);
-  void SendDelayed(StunRequest* request, int delay);
+  void Send(std::unique_ptr<StunRequest> request,
+            TimeDelta delay = TimeDelta::Zero());
 
   // If `msg_type` is kAllRequestsForTest, sends all pending requests right
   // away. Otherwise, sends those that have a matching type right away. Only for
@@ -67,7 +70,7 @@ class StunRequestManager {
   // Determines whether the given message is a response to one of the
   // outstanding requests, and if so, processes it appropriately.
   bool CheckResponse(StunMessage* msg);
-  bool CheckResponse(const char* data, size_t size);
+  bool CheckResponse(ArrayView<const uint8_t> payload);
 
   // Called from a StunRequest when a timeout occurs.
   void OnRequestTimedOut(StunRequest* request);
@@ -79,7 +82,8 @@ class StunRequestManager {
   void SendPacket(const void* data, size_t size, StunRequest* request);
 
  private:
-  typedef std::map<std::string, std::unique_ptr<StunRequest>> RequestMap;
+  typedef std::map<std::string, std::unique_ptr<StunRequest>, std::less<>>
+      RequestMap;
 
   TaskQueueBase* const thread_;
   RequestMap requests_ RTC_GUARDED_BY(thread_);
@@ -90,8 +94,9 @@ class StunRequestManager {
 // constructed beforehand or built on demand.
 class StunRequest {
  public:
-  explicit StunRequest(StunRequestManager& manager);
-  StunRequest(StunRequestManager& manager,
+  StunRequest(const Environment& env, StunRequestManager& manager);
+  StunRequest(const Environment& env,
+              StunRequestManager& manager,
               std::unique_ptr<StunMessage> message);
   virtual ~StunRequest();
 
@@ -112,8 +117,8 @@ class StunRequest {
   // Returns a const pointer to `msg_`.
   const StunMessage* msg() const;
 
-  // Time elapsed since last send (in ms)
-  int Elapsed() const;
+  // Time elapsed since last send.
+  TimeDelta Elapsed() const;
 
   // Add method to explitly allow requests w/o password.
   // - STUN_BINDINGs from StunPort to a stun server
@@ -123,6 +128,8 @@ class StunRequest {
 
  protected:
   friend class StunRequestManager;
+
+  const Environment& env() { return env_; }
 
   // Called by StunRequestManager.
   void Send(TimeDelta delay);
@@ -152,9 +159,10 @@ class StunRequest {
   // specified timeout.
   void SendDelayed(TimeDelta delay);
 
+  const Environment env_;
   StunRequestManager& manager_;
   const std::unique_ptr<StunMessage> msg_;
-  int64_t tstamp_ RTC_GUARDED_BY(network_thread());
+  Timestamp tstamp_ RTC_GUARDED_BY(network_thread());
   int count_ RTC_GUARDED_BY(network_thread());
   bool timeout_ RTC_GUARDED_BY(network_thread());
   ScopedTaskSafety task_safety_{

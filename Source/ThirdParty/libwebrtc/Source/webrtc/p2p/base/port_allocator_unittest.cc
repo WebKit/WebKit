@@ -239,6 +239,7 @@ TEST_F(PortAllocatorTest, TakePooledSessionUpdatesIceParameters) {
       static_cast<webrtc::FakePortAllocatorSession*>(
           allocator_->TakePooledSession(kContentName, 1, kIceUfrag, kIcePwd)
               .release()));
+  EXPECT_FALSE(session->pooled());
   EXPECT_EQ(1, session->transport_info_update_count());
   EXPECT_EQ(kContentName, session->content_name());
   EXPECT_EQ(1, session->component());

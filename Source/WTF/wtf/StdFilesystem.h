@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if HAVE(STD_FILESYSTEM)
 #include <filesystem>
 #elif HAVE(STD_EXPERIMENTAL_FILESYSTEM)

@@ -30,6 +30,7 @@
 
 #include <WebCore/KeyboardScroll.h>
 #include <WebCore/RectEdges.h>
+#include <WebCore/RubberbandingState.h>
 #include <WebCore/ScrollAnimation.h>
 #include <WebCore/ScrollSnapAnimatorState.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
@@ -57,7 +58,7 @@ class ScrollingEffectsControllerTimer : public RunLoop::TimerBase {
 public:
     ScrollingEffectsControllerTimer(RunLoop& runLoop, Function<void()>&& callback)
         : RunLoop::TimerBase(runLoop, "ScrollingEffectsControllerTimer"_s)
-        , m_callback(WTFMove(callback))
+        , m_callback(WTF::move(callback))
     {
     }
 
@@ -96,17 +97,22 @@ public:
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
     virtual IntSize stretchAmount() const = 0;
+    virtual bool isScrollDeltaOpposingStretch(ScrollEventAxis, float) const = 0;
 
     // "Pinned" means scrolled at or beyond the edge.
     virtual bool isPinnedOnSide(BoxSide) const = 0;
     virtual RectEdges<bool> edgePinnedState() const = 0;
 
-    virtual bool shouldRubberBandOnSide(BoxSide) const = 0;
+    virtual bool shouldRubberBandOnSide(BoxSide, FloatSize) const = 0;
 
     virtual void willStartRubberBandAnimation() { }
     virtual void didStopRubberBandAnimation() { }
 
     virtual void rubberBandingStateChanged(bool) { }
+
+    virtual FloatSize rubberBandTargetOffset() const { return { }; }
+    virtual bool hasBannerViewOverlay() const { return false; }
+    virtual float bannerViewMaximumHeight() const { return 0; }
 #endif
 
     virtual void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
@@ -186,13 +192,21 @@ public:
 
 #if PLATFORM(MAC)
     static FloatSize wheelDeltaBiasingTowardsVertical(const FloatSize&);
+    static bool isScrollDeltaOpposingStretch(IntSize stretch, ScrollEventAxis, float delta);
 
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 
     void stopRubberBanding();
+    void startRubberBandSnapBack();
+    void rubberBandTargetOffsetDidChange();
     bool isRubberBandInProgress() const;
     RectEdges<bool> rubberBandingEdges() const { return m_rubberBandingEdges; }
+
+    std::optional<RubberbandingState> captureRubberbandingState() const;
+    bool restoreRubberbandingState(const RubberbandingState&);
+    bool shouldAttemptRubberbandingRestoration(const RubberbandingState&);
+    FloatSize deltaWithAdditionalAdjustments(const FloatSize& adjustedDelta, bool);
 #endif
 
 private:
@@ -218,12 +232,13 @@ private:
     void startRubberBandAnimationIfNecessary();
 
     bool startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
+    bool startRubberBandAnimationWithElapsedTime(const FloatSize& initialVelocity, const FloatSize& initialOverscroll, Seconds alreadyElapsed, std::optional<FloatSize> targetOverscroll = std::nullopt);
     void stopRubberBandAnimation();
 
     void willStartRubberBandAnimation();
     void didStopRubberBandAnimation();
 
-    bool shouldRubberBandOnSide(BoxSide) const;
+    bool shouldRubberBandOnSide(BoxSide, FloatSize) const;
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
     void updateRubberBandingEdges(IntSize clientStretch);
@@ -283,6 +298,9 @@ private:
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };
     bool m_isRubberBanding { false };
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    bool m_skipAdditionalDeltaAdjustments { false };
+#endif
 
     Deque<FloatSize> m_recentDiscreteWheelDeltas;
     std::unique_ptr<ScrollingEffectsControllerTimer> m_discreteSnapTransitionTimer;

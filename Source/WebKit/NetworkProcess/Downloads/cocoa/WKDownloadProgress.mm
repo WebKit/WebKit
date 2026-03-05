@@ -79,7 +79,7 @@ Vector<uint8_t> activityAccessToken()
 {
     [m_downloadMonitor beginMonitoring:makeBlockPtr([weakDownload = WeakPtr { m_download }](BEDownloadMonitorLocation *location, NSError *error) mutable {
         RELEASE_LOG(Network, "Download begin for url %{sensitive}s, error %s", location.url.absoluteString.UTF8String, error.localizedDescription.UTF8String);
-        ensureOnMainRunLoop([weakDownload = WTFMove(weakDownload), location = RetainPtr { location }] {
+        ensureOnMainRunLoop([weakDownload = WTF::move(weakDownload), location = RetainPtr { location }] {
             if (!weakDownload)
                 return;
             weakDownload->setPlaceholderURL(location.get().url, location.get().bookmarkData);
@@ -109,14 +109,14 @@ Vector<uint8_t> activityAccessToken()
 
     self.cancellable = YES;
     self.cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKModernDownloadProgress> { self }] () mutable {
-        ensureOnMainRunLoop([weakSelf = WTFMove(weakSelf)] {
+        ensureOnMainRunLoop([weakSelf = WTF::move(weakSelf)] {
             [weakSelf performCancel];
         });
     }).get();
 
     auto fileCreatedHandlerDownloadMonitorLocation = makeBlockPtr([weakDownload = WeakPtr { m_download }, weakSelf = WeakObjCPtr<WKModernDownloadProgress> { self }](BEDownloadMonitorLocation *location) mutable {
         RELEASE_LOG(Network, "File created handler for url %{sensitive}s", location.url.absoluteString.UTF8String);
-        ensureOnMainRunLoop([weakDownload = WTFMove(weakDownload), location = RetainPtr { location }, weakSelf = WTFMove(weakSelf)] {
+        ensureOnMainRunLoop([weakDownload = WTF::move(weakDownload), location = RetainPtr { location }, weakSelf = WTF::move(weakSelf)] {
             if (!weakDownload)
                 return;
             weakDownload->setFinalURL(location.get().url, location.get().bookmarkData);
@@ -220,7 +220,7 @@ Vector<uint8_t> activityAccessToken()
 
     self.cancellable = YES;
     self.cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKDownloadProgress> { self }] () mutable {
-        ensureOnMainRunLoop([weakSelf = WTFMove(weakSelf)] {
+        ensureOnMainRunLoop([weakSelf = WTF::move(weakSelf)] {
             if (RetainPtr protectedSelf = weakSelf.get())
                 [protectedSelf performCancel];
         });

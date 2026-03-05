@@ -20,6 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/column-empty-grid-lanes-container-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/column-empty-grid-lanes-container-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/column-empty-grid-lanes-container-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/column-empty-grid-lanes-container-content-editable-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/column-empty-grid-lanes-container-content-editable-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/column-empty-grid-lanes-container-content-editable-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-columns-item-containing-block-is-grid-content-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-columns-item-containing-block-is-grid-content-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-fieldset-crash.html
@@ -31,6 +34,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-empty-grid-lanes-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-empty-grid-lanes-container-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-empty-grid-lanes-container-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-empty-grid-lanes-container-content-editable-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-empty-grid-lanes-container-content-editable-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-empty-grid-lanes-container-content-editable-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-min-max-content-container-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-min-max-content-container-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/row-min-max-content-container.html

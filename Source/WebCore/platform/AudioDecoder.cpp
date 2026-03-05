@@ -70,13 +70,13 @@ Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, c
 #if USE(GSTREAMER)
     CreatePromise::Producer producer;
     Ref promise = producer.promise();
-    CreateCallback callback = [producer = WTFMove(producer)] (auto&& result) mutable {
-        producer.settle(WTFMove(result));
+    CreateCallback callback = [producer = WTF::move(producer)] (auto&& result) mutable {
+        producer.settle(WTF::move(result));
     };
-    GStreamerAudioDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback));
+    GStreamerAudioDecoder::create(codecName, config, WTF::move(callback), WTF::move(outputCallback));
     return promise;
 #elif USE(AVFOUNDATION)
-    return AudioDecoderCocoa::create(codecName, config, WTFMove(outputCallback));
+    return AudioDecoderCocoa::create(codecName, config, WTF::move(outputCallback));
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);

@@ -130,8 +130,9 @@ class EncoderBitrateAdjusterTest : public Test,
     RTC_DCHECK_EQ(media_utilization_factors.size(),
                   network_utilization_factors.size());
 
-    const int64_t start_us = TimeMicros();
-    while (TimeMicros() < start_us + (duration_ms * kNumMicrosecsPerMillisec)) {
+    const int64_t start_us = time_controller_.GetClock()->TimeInMicroseconds();
+    while (time_controller_.GetClock()->TimeInMicroseconds() <
+           start_us + (duration_ms * kNumMicrosecsPerMillisec)) {
       time_controller_.AdvanceTime(TimeDelta::Seconds(1) /
                                    target_framerate_fps_);
       for (size_t si = 0; si < NumSpatialLayers(); ++si) {

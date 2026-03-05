@@ -150,7 +150,7 @@ TEST(CoarseFilterUpdateGainDeathTest, NullDataOutputGain) {
   RenderSignalAnalyzer analyzer(EchoCanceller3Config{});
   FftData E;
   const EchoCanceller3Config::Filter::CoarseConfiguration& config = {
-      12, 0.5f, 220075344.f};
+      .length_blocks = 12, .rate = 0.5f, .noise_gate = 220075344.f};
   CoarseFilterUpdateGain gain(config, 250);
   std::array<float, kFftLengthBy2Plus1> render_power;
   render_power.fill(0.f);

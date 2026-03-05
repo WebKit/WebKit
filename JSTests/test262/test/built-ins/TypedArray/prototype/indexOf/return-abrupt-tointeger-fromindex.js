@@ -27,8 +27,8 @@ var fromIndex = {
   }
 };
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(1);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(1));
 
   assert.throws(Test262Error, function() {
     sample.indexOf(7, fromIndex);

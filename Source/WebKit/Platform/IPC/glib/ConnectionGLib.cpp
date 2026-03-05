@@ -158,14 +158,14 @@ std::unique_ptr<Decoder> Connection::createMessageDecoder()
             if (attachmentInfo.isNull())
                 attachments[attachmentIndex] = UnixFileDescriptor();
             else
-                attachments[attachmentIndex] = WTFMove(m_fileDescriptors[fdIndex++]);
+                attachments[attachmentIndex] = WTF::move(m_fileDescriptors[fdIndex++]);
             break;
         case AttachmentInfo::Type::HardwareBuffer:
             if (attachmentInfo.isNull())
                 attachments[attachmentIndex] = nullptr;
             else {
                 RELEASE_ASSERT(!m_incomingHardwareBuffers.isEmpty());
-                attachments[attachmentIndex] = WTFMove(m_incomingHardwareBuffers.first());
+                attachments[attachmentIndex] = WTF::move(m_incomingHardwareBuffers.first());
                 m_incomingHardwareBuffers.removeAt(0);
             }
             break;
@@ -174,12 +174,12 @@ std::unique_ptr<Decoder> Connection::createMessageDecoder()
         }
 #else
         if (!attachmentInfo.isNull())
-            attachments[attachmentIndex] = WTFMove(m_fileDescriptors[fdIndex++]);
+            attachments[attachmentIndex] = WTF::move(m_fileDescriptors[fdIndex++]);
 #endif
     }
 
     if (!messageInfo.isBodyOutOfLine())
-        return Decoder::create(messageData.first(messageInfo.bodySize()), WTFMove(attachments));
+        return Decoder::create(messageData.first(messageInfo.bodySize()), WTF::move(attachments));
 
     ASSERT(messageInfo.bodySize());
     auto& attachmentInfo = reinterpretCastSpanStartTo<AttachmentInfo>(messageData);
@@ -188,14 +188,14 @@ std::unique_ptr<Decoder> Connection::createMessageDecoder()
         return nullptr;
     }
 
-    auto handle = WebCore::SharedMemory::Handle { WTFMove(m_fileDescriptors[fdIndex]), messageInfo.bodySize() };
-    auto messageBody = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly);
+    auto handle = WebCore::SharedMemory::Handle { WTF::move(m_fileDescriptors[fdIndex]), messageInfo.bodySize() };
+    auto messageBody = WebCore::SharedMemory::map(WTF::move(handle), WebCore::SharedMemory::Protection::ReadOnly);
     if (!messageBody) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    return Decoder::create(messageBody->mutableSpan().first(messageInfo.bodySize()), WTFMove(attachments));
+    return Decoder::create(messageBody->mutableSpan().first(messageInfo.bodySize()), WTF::move(attachments));
 }
 
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
@@ -245,7 +245,7 @@ void Connection::readyReadHandler()
             return;
 
         if (auto decoder = createMessageDecoder())
-            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
+            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(decoder)));
     }
 #endif
 
@@ -289,7 +289,7 @@ void Connection::readyReadHandler()
 #endif // OS(ANDROID)
 
         if (auto decoder = createMessageDecoder())
-            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
+            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(decoder)));
     }
 }
 
@@ -349,7 +349,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
             return false;
     }
 
-    return sendOutputMessage(WTFMove(outputMessage));
+    return sendOutputMessage(WTF::move(outputMessage));
 }
 
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
@@ -423,7 +423,7 @@ bool Connection::sendOutputMessage(UnixMessage&& outputMessage)
     if (bytesWritten >= 0) {
 #if OS(ANDROID)
         RELEASE_ASSERT(m_outgoingHardwareBuffers.isEmpty());
-        m_outgoingHardwareBuffers = WTFMove(hardwareBuffers);
+        m_outgoingHardwareBuffers = WTF::move(hardwareBuffers);
         if (!sendOutgoingHardwareBuffers())
             return false;
 #endif
@@ -432,15 +432,15 @@ bool Connection::sendOutputMessage(UnixMessage&& outputMessage)
 
     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK)) {
         m_hasPendingOutputMessage = true;
-        m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), m_cancellable.get(), [this, protectedThis = Ref { *this }, message = WTFMove(outputMessage)] (GIOCondition condition) mutable -> gboolean {
+        m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), m_cancellable.get(), [this, protectedThis = Ref { *this }, message = WTF::move(outputMessage)] (GIOCondition condition) mutable -> gboolean {
             if (condition & G_IO_OUT) {
                 ASSERT(m_hasPendingOutputMessage);
                 // We can't stop the monitor from this lambda, because stop destroys the lambda.
-                m_connectionQueue->dispatch([this, protectedThis = Ref { *this }, message = WTFMove(message)]() mutable {
+                m_connectionQueue->dispatch([this, protectedThis = Ref { *this }, message = WTF::move(message)]() mutable {
                     m_writeSocketMonitor.stop();
                     m_hasPendingOutputMessage = false;
                     if (m_isConnected) {
-                        sendOutputMessage(WTFMove(message));
+                        sendOutputMessage(WTF::move(message));
                         sendOutgoingMessages();
                     }
                 });
@@ -464,7 +464,7 @@ IGNORE_CLANG_WARNINGS_END
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
     SocketPair socketPair = createPlatformConnection(SOCK_SEQPACKET);
-    return { { Identifier { WTFMove(socketPair.server) }, ConnectionHandle { WTFMove(socketPair.client) } } };
+    return { { Identifier { WTF::move(socketPair.server) }, ConnectionHandle { WTF::move(socketPair.client) } } };
 }
 
 void Connection::sendCredentials() const
@@ -477,7 +477,7 @@ void Connection::sendCredentials() const
         if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_CLOSED) || g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
             return;
 
-        g_error("Connection: Failed to send crendentials: %s", error->message);
+        g_error("Connection: Failed to send credentials: %s", error->message);
     }
     g_socket_set_blocking(m_socket.get(), FALSE);
 }
@@ -553,7 +553,7 @@ bool Connection::receiveIncomingHardwareBuffers()
         if (!result) {
             m_pendingIncomingHardwareBufferCount--;
             auto hardwareBuffer = adoptRef(buffer);
-            m_incomingHardwareBuffers.append(WTFMove(hardwareBuffer));
+            m_incomingHardwareBuffers.append(WTF::move(hardwareBuffer));
             continue;
         }
 

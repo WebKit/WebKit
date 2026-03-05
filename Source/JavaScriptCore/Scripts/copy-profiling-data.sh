@@ -2,7 +2,7 @@
 
 # Decompresses and copies PGO profiles from WebKitAdditions to a derived folder.
 
-if [ "${CLANG_USE_OPTIMIZATION_PROFILE}" = YES ]; then
+if [ "${WK_ENABLE_PGO_USE}" = YES ]; then
     eval $(stat -s "${SCRIPT_INPUT_FILE_0}")
     if [ ${st_size} -lt 1024 ]; then
         if [ "${CONFIGURATION}" = Production ]; then

@@ -59,7 +59,7 @@ auto NameSectionParser::parse() -> Result
             Name nameString;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get module's name length for payload "_s, payloadNumber);
             WASM_ALLOCATOR_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get module's name of length "_s, nameLen, " for payload "_s, payloadNumber);
-            nameSection->moduleName = WTFMove(nameString);
+            nameSection->moduleName = WTF::move(nameString);
             break;
         }
         case NameType::Function: {
@@ -73,7 +73,7 @@ auto NameSectionParser::parse() -> Result
                 WASM_PARSER_FAIL_IF(m_info.functionIndexSpaceSize() <= index, "function "_s, function, " index "_s, index, " is larger than function index space "_s, m_info.functionIndexSpaceSize(), " for payload "_s, payloadNumber);
                 WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get functions "_s, function, "'s name length for payload "_s, payloadNumber);
                 WASM_ALLOCATOR_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get function "_s, function, "'s name of length "_s, nameLen, " for payload "_s, payloadNumber);
-                nameSection->functionNames[index] = WTFMove(nameString);
+                nameSection->functionNames[index] = WTF::move(nameString);
             }
             break;
         }

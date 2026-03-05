@@ -57,25 +57,15 @@ auto CSSValueConversion<MaskBorderOutset>::operator()(BuilderState& state, const
     if (RefPtr quadValue = dynamicDowncast<CSSQuadValue>(value)) {
         auto& quad = quadValue->quad();
         return MaskBorderOutset {
-            .values = {
-                convertMaskBorderOutsetValue(state, quad.top()),
-                convertMaskBorderOutsetValue(state, quad.right()),
-                convertMaskBorderOutsetValue(state, quad.bottom()),
-                convertMaskBorderOutsetValue(state, quad.left()),
-            }
+            convertMaskBorderOutsetValue(state, quad.top()),
+            convertMaskBorderOutsetValue(state, quad.right()),
+            convertMaskBorderOutsetValue(state, quad.bottom()),
+            convertMaskBorderOutsetValue(state, quad.left()),
         };
     }
 
     // Values coming from CSS Typed OM may not have been converted to a Quad.
-    auto outsetValue = convertMaskBorderOutsetValue(state, value);
-    return MaskBorderOutset {
-        .values = {
-            outsetValue,
-            outsetValue,
-            outsetValue,
-            outsetValue,
-        }
-    };
+    return convertMaskBorderOutsetValue(state, value);
 }
 
 auto CSSValueCreation<MaskBorderOutset>::operator()(CSSValuePool& pool, const RenderStyle& style, const MaskBorderOutset& value) -> Ref<CSSValue>
@@ -144,12 +134,10 @@ auto Blending<MaskBorderOutset>::blend(const MaskBorderOutset& a, const MaskBord
     }
 
     return MaskBorderOutset {
-        .values = {
-            Style::blend(a.values.top(),     b.values.top(), context),
-            Style::blend(a.values.right(),   b.values.right(), context),
-            Style::blend(a.values.bottom(),  b.values.bottom(), context),
-            Style::blend(a.values.left(),    b.values.left(), context),
-        }
+        Style::blend(a.values.top(),     b.values.top(), context),
+        Style::blend(a.values.right(),   b.values.right(), context),
+        Style::blend(a.values.bottom(),  b.values.bottom(), context),
+        Style::blend(a.values.left(),    b.values.left(), context),
     };
 }
 

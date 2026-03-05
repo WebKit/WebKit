@@ -25,7 +25,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |   Type = 8    |Chunk  Flags   |      Length = 4               |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ShutdownAckChunk::kType;
 
 std::optional<ShutdownAckChunk> ShutdownAckChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

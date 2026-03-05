@@ -33,8 +33,8 @@ namespace WebCore {
 
 class HTMLElement;
 
-class SubmitEvent : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SubmitEvent);
+class SubmitEvent final : public Event {
+    WTF_MAKE_TZONE_ALLOCATED(SubmitEvent);
 public:
     struct Init : EventInit {
         RefPtr<HTMLElement> submitter;
@@ -49,7 +49,9 @@ private:
     SubmitEvent(const AtomString& type, Init&&);
     explicit SubmitEvent(RefPtr<HTMLElement>&& submitter);
 
-    RefPtr<HTMLElement> m_submitter;
+    const RefPtr<HTMLElement> m_submitter;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(SubmitEvent)

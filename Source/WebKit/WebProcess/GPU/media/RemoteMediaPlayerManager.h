@@ -57,7 +57,6 @@ public:
     void setUseGPUProcess(bool);
 
     GPUProcessConnection& gpuProcessConnection();
-    Ref<GPUProcessConnection> protectedGPUProcessConnection();
 
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -66,7 +65,6 @@ public:
     std::optional<WebCore::MediaPlayerIdentifier> findRemotePlayerId(const WebCore::MediaPlayerPrivateInterface*);
 
     RemoteMediaPlayerMIMETypeCache& typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
-    CheckedRef<RemoteMediaPlayerMIMETypeCache> checkedTypeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
@@ -82,7 +80,7 @@ private:
     friend class MediaPlayerRemoteFactory;
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<String>&);
     WebCore::MediaPlayer::SupportsType supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const WebCore::MediaEngineSupportParameters&);
-    bool supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String& keySystem, const String& mimeType);
+    bool NODELETE supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String& keySystem, const String& mimeType);
 
     HashMap<WebCore::MediaPlayerIdentifier, ThreadSafeWeakPtr<MediaPlayerPrivateRemote>> m_players;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;

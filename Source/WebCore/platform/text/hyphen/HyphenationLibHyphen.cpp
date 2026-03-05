@@ -90,52 +90,6 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
     }
 }
 
-#if ENABLE(DEVELOPER_MODE)
-
-#if PLATFORM(GTK)
-static CString webkitBuildDirectory()
-{
-    const char* webkitOutputDir = g_getenv("WEBKIT_OUTPUTDIR");
-    if (webkitOutputDir)
-        return webkitOutputDir;
-
-    GUniquePtr<char> outputDir(g_build_filename(FileSystem::webkitTopLevelDirectory().data(), "WebKitBuild", nullptr));
-    return outputDir.get();
-}
-#endif // PLATFORM(GTK)
-
-static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomString, Vector<String>>& availableLocales)
-{
-    // It's unfortunate that we need to look for the dictionaries this way, but
-    // libhyphen doesn't have the concept of installed dictionaries. Instead,
-    // we have this special case for WebKit tests.
-#if PLATFORM(GTK)
-    // Try alternative dictionaries path for people using Flatpak.
-    GUniquePtr<char> dictionariesPath(g_build_filename("/usr", "share", "webkitgtk-test-dicts", nullptr));
-    if (g_getenv("FLATPAK_ID") && g_file_test(dictionariesPath.get(), static_cast<GFileTest>(G_FILE_TEST_IS_DIR))) {
-        scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
-        return;
-    }
-
-    CString buildDirectory = webkitBuildDirectory();
-    dictionariesPath.reset(g_build_filename(buildDirectory.data(), "DependenciesGTK", "Root", "webkitgtk-test-dicts", nullptr));
-    if (g_file_test(dictionariesPath.get(), static_cast<GFileTest>(G_FILE_TEST_IS_DIR))) {
-        scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
-        return;
-    }
-
-    // Try alternative dictionaries path for people not using JHBuild.
-    dictionariesPath.reset(g_build_filename(buildDirectory.data(), "webkitgtk-test-dicts", nullptr));
-    if (g_file_test(dictionariesPath.get(), static_cast<GFileTest>(G_FILE_TEST_IS_DIR)))
-        scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
-
-#elif defined(TEST_HYPHENATAION_PATH)
-    scanDirectoryForDictionaries(TEST_HYPHENATAION_PATH, availableLocales);
-#else
-    UNUSED_PARAM(availableLocales);
-#endif
-}
-#endif
 
 static HashMap<AtomString, Vector<String>>& availableLocales()
 {
@@ -145,10 +99,6 @@ static HashMap<AtomString, Vector<String>>& availableLocales()
     if (!scannedLocales) {
         for (size_t i = 0; i < std::size(gDictionaryDirectories); i++)
             scanDirectoryForDictionaries(gDictionaryDirectories[i], availableLocales);
-
-#if ENABLE(DEVELOPER_MODE)
-        scanTestDictionariesDirectoryIfNecessary(availableLocales);
-#endif
 
         scannedLocales = true;
     }

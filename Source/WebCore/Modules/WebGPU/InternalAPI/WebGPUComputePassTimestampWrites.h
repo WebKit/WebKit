@@ -38,8 +38,6 @@ struct ComputePassTimestampWrites {
     WeakPtr<QuerySet> querySet;
     Size32 beginningOfPassWriteIndex { kQuerySetIndexUndefined };
     Size32 endOfPassWriteIndex { kQuerySetIndexUndefined };
-
-    RefPtr<QuerySet> protectedQuerySet() const { return querySet.get(); }
 };
 
 } // namespace WebCore::WebGPU

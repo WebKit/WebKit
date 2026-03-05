@@ -19,7 +19,7 @@
  */
 
 #import "config.h"
-#import <wtf/text/TextStreamCocoa.h>
+#import <wtf/text/TextStream.h>
 
 #import <objc/runtime.h>
 #import <wtf/text/cf/StringConcatenateCF.h>

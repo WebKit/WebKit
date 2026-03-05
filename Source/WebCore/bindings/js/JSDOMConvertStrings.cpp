@@ -76,7 +76,7 @@ ConversionResult<IDLByteString> valueToByteString(JSGlobalObject& lexicalGlobalO
     if (throwIfInvalidByteString(lexicalGlobalObject, scope, string)) [[unlikely]]
         return ConversionResult<IDLByteString>::exception();
 
-    return { WTFMove(string) };
+    return { WTF::move(string) };
 }
 
 ConversionResult<IDLAtomStringAdaptor<IDLByteString>> valueToByteAtomString(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
@@ -106,7 +106,7 @@ ConversionResult<IDLUSVString> valueToUSVString(JSGlobalObject& lexicalGlobalObj
     auto string = value.toWTFString(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, ConversionResult<IDLUSVString>::exception());
 
-    return { replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string)) };
+    return { replaceUnpairedSurrogatesWithReplacementCharacter(WTF::move(string)) };
 }
 
 ConversionResult<IDLAtomStringAdaptor<IDLUSVString>> valueToUSVAtomString(JSGlobalObject& lexicalGlobalObject, JSValue value)

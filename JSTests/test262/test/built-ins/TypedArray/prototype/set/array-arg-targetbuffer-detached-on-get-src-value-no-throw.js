@@ -33,4 +33,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(0, sample.byteLength);
   assert.sameValue(0, sample.byteOffset);
   assert.sameValue(0, sample.length);
-});
+}, null, ["passthrough"]);

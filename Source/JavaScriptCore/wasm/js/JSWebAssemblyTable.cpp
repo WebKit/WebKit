@@ -39,7 +39,7 @@ const ClassInfo JSWebAssemblyTable::s_info = { "WebAssembly.Table"_s, &Base::s_i
 
 JSWebAssemblyTable* JSWebAssemblyTable::create(VM& vm, Structure* structure, Ref<Wasm::Table>&& table)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyTable>(vm)) JSWebAssemblyTable(vm, structure, WTFMove(table));
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyTable>(vm)) JSWebAssemblyTable(vm, structure, WTF::move(table));
     instance->table()->setOwner(instance);
     instance->finishCreation(vm);
     return instance;
@@ -52,7 +52,7 @@ Structure* JSWebAssemblyTable::createStructure(VM& vm, JSGlobalObject* globalObj
 
 JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, Ref<Wasm::Table>&& table)
     : Base(vm, structure)
-    , m_table(WTFMove(table))
+    , m_table(WTF::move(table))
 {
 }
 

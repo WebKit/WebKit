@@ -42,11 +42,11 @@ using namespace WebCore;
 
 Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
 {
-    return adoptRef(*new RedirectSOAuthorizationSession(delegate, WTFMove(navigationAction), page, WTFMove(completionHandler)));
+    return adoptRef(*new RedirectSOAuthorizationSession(delegate, WTF::move(navigationAction), page, WTF::move(completionHandler)));
 }
 
 RedirectSOAuthorizationSession::RedirectSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
-    : NavigationSOAuthorizationSession(delegate, WTFMove(navigationAction), page, InitiatingAction::Redirect, WTFMove(completionHandler))
+    : NavigationSOAuthorizationSession(delegate, WTF::move(navigationAction), page, InitiatingAction::Redirect, WTF::move(completionHandler))
 {
 }
 

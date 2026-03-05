@@ -18,7 +18,6 @@
 #include <string>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_processing.h"
@@ -54,6 +53,7 @@
 #include "modules/audio_device/include/test_audio_device.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/fake_videorenderer.h"
 #include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
@@ -69,7 +69,7 @@ class BaseTest;
 
 class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
  public:
-  explicit CallTest(absl::string_view field_trials = "");
+  explicit CallTest(FieldTrials field_trials = CreateTestFieldTrials(""));
   virtual ~CallTest();
 
   static const std::map<uint8_t, MediaType> payload_type_map_;

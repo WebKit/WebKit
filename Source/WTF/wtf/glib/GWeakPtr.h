@@ -50,19 +50,19 @@ public:
         removeWeakPtr();
     }
 
-    T& operator*() const
+    T& operator*() const LIFETIME_BOUND
     {
         ASSERT(m_ptr);
         return *m_ptr;
     }
 
-    T* operator->() const
+    T* operator->() const LIFETIME_BOUND
     {
         ASSERT(m_ptr);
         return m_ptr;
     }
 
-    T* get() const
+    T* LIFETIME_BOUND get() const
     {
         return m_ptr;
     }

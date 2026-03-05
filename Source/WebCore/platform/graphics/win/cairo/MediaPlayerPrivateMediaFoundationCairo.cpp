@@ -72,7 +72,7 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Gra
 
         if (cairoFormat != CAIRO_FORMAT_INVALID) {
             auto surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch));
-            auto image = NativeImage::create(WTFMove(surface));
+            auto image = NativeImage::create(WTF::move(surface));
             FloatRect srcRect(0, 0, width, height);
             context.drawNativeImage(*image, destRect, srcRect);
         }

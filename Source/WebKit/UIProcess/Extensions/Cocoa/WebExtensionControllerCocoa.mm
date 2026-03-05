@@ -139,7 +139,7 @@ void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> data
     }
 
     Ref recordHolder = WebExtensionDataRecordHolder::create();
-    Ref aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
+    Ref aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTF::move(completionHandler)]() mutable {
         Vector<Ref<WebExtensionDataRecord>> records;
         for (auto& entry : recordHolder->recordsMap)
             records.append(entry.value);
@@ -201,7 +201,7 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> dataT
     }
 
     Ref recordHolder = WebExtensionDataRecordHolder::create();
-    Ref aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
+    Ref aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(recordHolder->recordsMap.takeFirst());
     });
 
@@ -233,7 +233,7 @@ void WebExtensionController::removeData(OptionSet<WebExtensionDataType> dataType
         return;
     }
 
-    Ref aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTFMove(completionHandler)]() mutable {
+    Ref aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler();
     });
 
@@ -263,7 +263,7 @@ void WebExtensionController::calculateStorageSize(RefPtr<WebExtensionStorageSQLi
     if (!storage)
         return;
 
-    storage->getStorageSizeForKeys({ }, [completionHandler = WTFMove(completionHandler)](size_t storageSize, const String& errorMessage) mutable {
+    storage->getStorageSizeForKeys({ }, [completionHandler = WTF::move(completionHandler)](size_t storageSize, const String& errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Add storage size of window.localStorage, window.sessionStorage and indexedDB.
         if (!errorMessage.isEmpty())
             completionHandler(makeUnexpected(errorMessage));
@@ -274,7 +274,7 @@ void WebExtensionController::calculateStorageSize(RefPtr<WebExtensionStorageSQLi
 
 void WebExtensionController::removeStorage(RefPtr<WebExtensionStorageSQLiteStore> storage, WebExtensionDataType type, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    storage->deleteDatabase([completionHandler = WTFMove(completionHandler)](const String& errorMessage) mutable {
+    storage->deleteDatabase([completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Remove window.localStorage, window.sessionStorage, indexedDB.
         if (!errorMessage.isEmpty())
             completionHandler(makeUnexpected(errorMessage));
@@ -362,7 +362,7 @@ void WebExtensionController::unloadAll()
 {
     auto contextsCopy = m_extensionContexts;
     for (Ref context : contextsCopy)
-        unload(context);
+        std::ignore = unload(context);
 }
 
 void WebExtensionController::dispatchDidLoad(WebExtensionContext& context)
@@ -501,7 +501,7 @@ void WebExtensionController::addWebsiteDataStore(WebsiteDataStore& dataStore)
     if (!m_cookieStoreObserver)
         m_cookieStoreObserver = HTTPCookieStoreObserver::create(*this);
 
-    dataStore.protectedCookieStore()->registerObserver(*protectedCookieStoreObserver());
+    protect(dataStore.cookieStore())->registerObserver(*protect(m_cookieStoreObserver));
 }
 
 void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
@@ -515,7 +515,7 @@ void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
     m_websiteDataStores.remove(dataStore);
 
     if (RefPtr observer = m_cookieStoreObserver)
-        dataStore.protectedCookieStore()->unregisterObserver(*observer);
+        protect(dataStore.cookieStore())->unregisterObserver(*observer);
 
     if (m_websiteDataStores.isEmptyIgnoringNullReferences())
         m_cookieStoreObserver = nullptr;
@@ -531,7 +531,7 @@ void WebExtensionController::cookiesDidChange(API::HTTPCookieStore& cookieStore)
 
 bool WebExtensionController::isFeatureEnabled(const String& featureName) const
 {
-    WKPreferences *preferences = protectedConfiguration()->webViewConfiguration().preferences;
+    WKPreferences *preferences = protect(configuration())->webViewConfiguration().preferences;
 
     auto *cocoaFeatureName = featureName.createNSString().get();
     for (_WKFeature *feature in WKPreferences._features) {
@@ -712,10 +712,10 @@ void WebExtensionController::updateWebsitePoliciesForNavigation(API::WebsitePoli
         for (Ref pattern : context->currentPermissionMatchPatterns())
             patterns.appendVector(pattern->expandedStrings());
 
-        actionPatterns.set(context->uniqueIdentifier(), WTFMove(patterns));
+        actionPatterns.set(context->uniqueIdentifier(), WTF::move(patterns));
     }
 
-    websitePolicies.setActiveContentRuleListActionPatterns(WTFMove(actionPatterns));
+    websitePolicies.setActiveContentRuleListActionPatterns(WTF::move(actionPatterns));
 }
 
 void WebExtensionController::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceRequest& request)

@@ -179,26 +179,26 @@ public:
     // bugs are:
     // https://bugs.webkit.org/show_bug.cgi?id=151335 (LateUse)
     // https://bugs.webkit.org/show_bug.cgi?id=151811 (warm Any)
-    void clobberEarly(const RegisterSetBuilder& set)
+    void clobberEarly(const RegisterSet& set)
     {
         m_earlyClobbered.merge(set);
     }
 
-    void clobberLate(const RegisterSetBuilder& set)
+    void clobberLate(const RegisterSet& set)
     {
         m_lateClobbered.merge(set);
     }
 
-    void clobber(const RegisterSetBuilder& set)
+    void clobber(const RegisterSet& set)
     {
         clobberEarly(set);
         clobberLate(set);
     }
 
-    RegisterSetBuilder& earlyClobbered() { return m_earlyClobbered; }
-    RegisterSetBuilder& lateClobbered() { return m_lateClobbered; }
-    const RegisterSetBuilder& earlyClobbered() const { return m_earlyClobbered; }
-    const RegisterSetBuilder& lateClobbered() const { return m_lateClobbered; }
+    RegisterSet& earlyClobbered() { return m_earlyClobbered; }
+    RegisterSet& lateClobbered() { return m_lateClobbered; }
+    const RegisterSet& earlyClobbered() const { return m_earlyClobbered; }
+    const RegisterSet& lateClobbered() const { return m_lateClobbered; }
 
     void setGenerator(RefPtr<StackmapGenerator> generator)
     {
@@ -306,9 +306,9 @@ private:
     
     Vector<ValueRep> m_reps;
     RefPtr<StackmapGenerator> m_generator;
-    RegisterSetBuilder m_earlyClobbered;
-    RegisterSetBuilder m_lateClobbered;
-    RegisterSetBuilder m_usedRegisters; // Stackmaps could be further duplicated by Air, but that's unlikely, so we just merge the used registers sets if that were to happen.
+    RegisterSet m_earlyClobbered;
+    RegisterSet m_lateClobbered;
+    RegisterSet m_usedRegisters; // Stackmaps could be further duplicated by Air, but that's unlikely, so we just merge the used registers sets if that were to happen.
 };
 
 } } // namespace JSC::B3

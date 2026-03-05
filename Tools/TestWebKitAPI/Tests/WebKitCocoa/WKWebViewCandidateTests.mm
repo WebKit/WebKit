@@ -168,25 +168,29 @@ TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpa
 }
 
 // rdar://137237282 && rdar://142904687
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000)
-TEST(WKWebViewCandidateTests, DISABLED_InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
-#else
+// Uses insertText: instead of typeString:inputMessage: to work around an OS
+// regression where typeCharacter: no longer dispatches input events properly.
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
-#endif
 {
     auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
-    [wkWebView typeString:@"hel" inputMessage:@"input"];
+    [wkWebView insertText:@"hel"];
+    [wkWebView waitForMessage:@"input"];
+    [wkWebView waitForNextPresentationUpdate];
     [wkWebView insertCandidatesAndWaitForResponse:@"hello " range:NSMakeRange(0, 3)];
     EXPECT_WK_STREQ("hello ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 
     [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
     {
-        [wkWebView typeString:@" " inputMessage:@"input"];
+        [wkWebView insertText:@" "];
+        [wkWebView waitForMessage:@"input"];
+        [wkWebView waitForNextPresentationUpdate];
         EXPECT_WK_STREQ("hello ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
         EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
 
-        [wkWebView typeString:@" " inputMessage:@"input"];
+        [wkWebView insertText:@" "];
+        [wkWebView waitForMessage:@"input"];
+        [wkWebView waitForNextPresentationUpdate];
         EXPECT_WK_STREQ("hello  ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
         EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
     }];

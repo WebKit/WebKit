@@ -61,7 +61,8 @@ RuntimeArray::~RuntimeArray()
 
 void RuntimeArray::destroy(JSCell* cell)
 {
-    static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
+    // Cannot call jsCast() during destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
 JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
@@ -99,7 +100,7 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalG
     
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->getLength()) {
-        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray()->valueAt(lexicalGlobalObject, index.value()));
         return true;
     }
@@ -111,7 +112,7 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* l
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (index < thisObject->getLength()) {
-        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray()->valueAt(lexicalGlobalObject, index));
         return true;
     }

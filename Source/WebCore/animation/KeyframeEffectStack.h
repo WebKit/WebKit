@@ -73,7 +73,7 @@ public:
     bool allowsAcceleration() const;
 
     void clearInvalidCSSAnimationNames();
-    bool hasInvalidCSSAnimationNames() const;
+    bool NODELETE hasInvalidCSSAnimationNames() const;
     bool containsInvalidCSSAnimationName(const String&) const;
     void addInvalidCSSAnimationName(const String&);
 
@@ -86,7 +86,7 @@ public:
 
     bool hasAcceleratedEffects(const Settings&) const;
 #if ENABLE(THREADED_ANIMATIONS)
-    void setAcceleratedEffects(WeakListHashSet<AcceleratedEffect>&& acceleratedEffects) { m_acceleratedEffects = WTFMove(acceleratedEffects); }
+    void setAcceleratedEffects(WeakListHashSet<AcceleratedEffect>&& acceleratedEffects) { m_acceleratedEffects = WTF::move(acceleratedEffects); }
 #endif
 
 private:

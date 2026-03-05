@@ -76,7 +76,7 @@ void CoordinatedPlatformLayerBufferProxy::consumePendingBufferIfNeeded()
         return;
 
     if (m_layer)
-        m_layer->setContentsBuffer(WTFMove(m_pendingBuffer));
+        m_layer->setContentsBuffer(WTF::move(m_pendingBuffer));
     else
         m_pendingBuffer = nullptr;
 }
@@ -87,7 +87,7 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
     {
         Locker locker { m_lock };
         if (!m_layer) {
-            m_pendingBuffer = WTFMove(buffer);
+            m_pendingBuffer = WTF::move(buffer);
             return;
         }
 
@@ -97,7 +97,7 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
 
     {
         Locker layerLocker { layer->lock() };
-        layer->setContentsBuffer(WTFMove(buffer), std::nullopt, CoordinatedPlatformLayer::RequireComposition::No);
+        layer->setContentsBuffer(WTF::move(buffer), std::nullopt, CoordinatedPlatformLayer::RequireComposition::No);
     }
     layer->requestComposition(CompositionReason::VideoFrame);
 }
@@ -123,12 +123,12 @@ void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTextur
     };
 
     if (shouldWait == ShouldWait::No) {
-        compositingRunLoop->dispatch(WTFMove(dropCurrentBuffer));
+        compositingRunLoop->dispatch(WTF::move(dropCurrentBuffer));
         return;
     }
 
     BinarySemaphore semaphore;
-    compositingRunLoop->dispatch([&semaphore, function = WTFMove(dropCurrentBuffer)]() mutable {
+    compositingRunLoop->dispatch([&semaphore, function = WTF::move(dropCurrentBuffer)]() mutable {
         function();
         semaphore.signal();
     });

@@ -54,10 +54,10 @@ Vector<uint8_t> encodeES256PublicKeyAsCBOR(Vector<uint8_t>&& x, Vector<uint8_t>&
     publicKeyMap[cbor::CBORValue(COSE::kty)] = cbor::CBORValue(COSE::EC2);
     publicKeyMap[cbor::CBORValue(COSE::alg)] = cbor::CBORValue(COSE::ES256);
     publicKeyMap[cbor::CBORValue(COSE::crv)] = cbor::CBORValue(COSE::P_256);
-    publicKeyMap[cbor::CBORValue(COSE::x)] = cbor::CBORValue(WTFMove(x));
-    publicKeyMap[cbor::CBORValue(COSE::y)] = cbor::CBORValue(WTFMove(y));
+    publicKeyMap[cbor::CBORValue(COSE::x)] = cbor::CBORValue(WTF::move(x));
+    publicKeyMap[cbor::CBORValue(COSE::y)] = cbor::CBORValue(WTF::move(y));
 
-    auto cosePublicKey = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(publicKeyMap)));
+    auto cosePublicKey = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(publicKeyMap)));
     ASSERT(cosePublicKey);
     return *cosePublicKey;
 }
@@ -138,17 +138,17 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
         format = String::fromLatin1(noneAttestationValue);
         statementMap.clear();
     }
-    attestationObjectMap[cbor::CBORValue("authData")] = cbor::CBORValue(WTFMove(authData));
-    attestationObjectMap[cbor::CBORValue("fmt")] = cbor::CBORValue(WTFMove(format));
-    attestationObjectMap[cbor::CBORValue("attStmt")] = cbor::CBORValue(WTFMove(statementMap));
+    attestationObjectMap[cbor::CBORValue("authData")] = cbor::CBORValue(WTF::move(authData));
+    attestationObjectMap[cbor::CBORValue("fmt")] = cbor::CBORValue(WTF::move(format));
+    attestationObjectMap[cbor::CBORValue("attStmt")] = cbor::CBORValue(WTF::move(statementMap));
     return attestationObjectMap;
 }
 
 Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation, ShouldZeroAAGUID shouldZero)
 {
-    cbor::CBORValue::MapValue attestationObjectMap = buildAttestationMap(WTFMove(authData), WTFMove(format), WTFMove(statementMap), attestation, shouldZero);
+    cbor::CBORValue::MapValue attestationObjectMap = buildAttestationMap(WTF::move(authData), WTF::move(format), WTF::move(statementMap), attestation, shouldZero);
 
-    auto attestationObject = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(attestationObjectMap)));
+    auto attestationObject = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(attestationObjectMap)));
     ASSERT(attestationObject);
     return *attestationObject;
 }

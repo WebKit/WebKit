@@ -79,7 +79,7 @@ std::optional<WebCore::PasteboardItemInfo> WebPasteboardOverrides::overriddenInf
     // FIXME: This is currently appropriate for all clients that rely on PasteboardItemInfo, but we may need to adjust
     // this in the future so that we don't treat 'inline' types such as plain text as uploaded files.
     item.platformTypesForFileUpload = types;
-    return { WTFMove(item) };
+    return { WTF::move(item) };
 }
 
 bool WebPasteboardOverrides::getDataForOverride(const String& pasteboardName, const String& type, Vector<uint8_t>& data) const

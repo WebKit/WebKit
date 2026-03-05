@@ -15,14 +15,14 @@
 #include "test/i420_video_source.h"
 #include "test/util.h"
 namespace {
-typedef struct {
+struct AltRefTestParams {
   const unsigned int min_kf_dist;
   const unsigned int max_kf_dist;
   const unsigned int min_gf_interval;
   const unsigned int max_gf_interval;
   const unsigned int lag_in_frames;
   libaom_test::TestMode encoding_mode;
-} AltRefTestParams;
+};
 
 static const AltRefTestParams TestParams[] = {
   { 0, 10, 4, 8, 10, ::libaom_test::kOnePassGood },
@@ -113,11 +113,11 @@ AV1_INSTANTIATE_TEST_SUITE(AltRefFramePresenceTestLarge,
                            ::testing::ValuesIn(TestParams),
                            ::testing::Values(AOM_Q, AOM_VBR, AOM_CBR, AOM_CQ));
 
-typedef struct {
+struct gfIntervalParam {
   const ::libaom_test::TestMode encoding_mode;
   const unsigned int min_gf_interval;
   const unsigned int max_gf_interval;
-} gfIntervalParam;
+};
 
 const gfIntervalParam gfTestParams[] = {
   // single pass

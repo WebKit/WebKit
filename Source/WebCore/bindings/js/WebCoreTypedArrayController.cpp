@@ -41,14 +41,14 @@ WebCoreTypedArrayController::WebCoreTypedArrayController(bool allowAtomicsWait)
 
 WebCoreTypedArrayController::~WebCoreTypedArrayController() = default;
 
-JSC::JSArrayBuffer* WebCoreTypedArrayController::toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
+JSC::JSArrayBuffer* WebCoreTypedArrayController::toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer& buffer)
 {
     return JSC::jsCast<JSC::JSArrayBuffer*>(WebCore::toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), buffer));
 }
 
-void WebCoreTypedArrayController::registerWrapper(JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer* native, JSC::JSArrayBuffer* wrapper)
+void WebCoreTypedArrayController::registerWrapper(JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer& native, JSC::JSArrayBuffer& wrapper)
 {
-    cacheWrapper(JSC::jsCast<JSDOMGlobalObject*>(globalObject)->world(), native, wrapper);
+    cacheWrapper(JSC::jsCast<JSDOMGlobalObject*>(globalObject)->world(), &native, &wrapper);
 }
 
 bool WebCoreTypedArrayController::isAtomicsWaitAllowedOnCurrentThread()
@@ -66,7 +66,8 @@ bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots
 
 void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = *static_cast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
+    // We cannot rely on jsCast() during JSObject destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST auto& wrapper = *static_cast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
     uncacheWrapper(*static_cast<DOMWrapperWorld*>(context), wrapper.impl(), &wrapper);
 }
 

@@ -35,9 +35,9 @@ namespace WebCore {
 
 Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&& extensions, AuthenticatorAttachment attachment)
 {
-    auto response = adoptRef(*new AuthenticatorAssertionResponse(WTFMove(rawId), WTFMove(authenticatorData), WTFMove(signature), WTFMove(userHandle), attachment));
+    auto response = adoptRef(*new AuthenticatorAssertionResponse(WTF::move(rawId), WTF::move(authenticatorData), WTF::move(signature), WTF::move(userHandle), attachment));
     if (extensions)
-        response->setExtensions(WTFMove(*extensions));
+        response->setExtensions(WTF::move(*extensions));
     return response;
 }
 
@@ -46,7 +46,7 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const
     RefPtr<ArrayBuffer> userhandleBuffer;
     if (!userHandle.isEmpty())
         userhandleBuffer = ArrayBuffer::create(userHandle);
-    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(authenticatorData), ArrayBuffer::create(signature), WTFMove(userhandleBuffer), std::nullopt, attachment);
+    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(authenticatorData), ArrayBuffer::create(signature), WTF::move(userhandleBuffer), std::nullopt, attachment);
 }
 
 Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&& extensions, AuthenticatorAttachment attachment)
@@ -54,12 +54,12 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const
     RefPtr<ArrayBuffer> userhandleBuffer;
     if (!userHandle.isEmpty())
         userhandleBuffer = ArrayBuffer::create(userHandle);
-    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(authenticatorData), ArrayBuffer::create(signature), WTFMove(userhandleBuffer), WTFMove(extensions), attachment);
+    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(authenticatorData), ArrayBuffer::create(signature), WTF::move(userhandleBuffer), WTF::move(extensions), attachment);
 }
 
 Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
 {
-    return adoptRef(*new AuthenticatorAssertionResponse(WTFMove(rawId), WTFMove(userHandle), WTFMove(name), accessControl, attachment));
+    return adoptRef(*new AuthenticatorAssertionResponse(WTF::move(rawId), WTF::move(userHandle), WTF::move(name), accessControl, attachment));
 }
 
 void AuthenticatorAssertionResponse::setAuthenticatorData(Vector<uint8_t>&& authenticatorData)
@@ -68,17 +68,17 @@ void AuthenticatorAssertionResponse::setAuthenticatorData(Vector<uint8_t>&& auth
 }
 
 AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle, AuthenticatorAttachment attachment)
-    : AuthenticatorResponse(WTFMove(rawId), attachment)
-    , m_authenticatorData(WTFMove(authenticatorData))
-    , m_signature(WTFMove(signature))
-    , m_userHandle(WTFMove(userHandle))
+    : AuthenticatorResponse(WTF::move(rawId), attachment)
+    , m_authenticatorData(WTF::move(authenticatorData))
+    , m_signature(WTF::move(signature))
+    , m_userHandle(WTF::move(userHandle))
 {
 }
 
 AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
-    : AuthenticatorResponse(WTFMove(rawId), attachment)
-    , m_userHandle(WTFMove(userHandle))
-    , m_name(WTFMove(name))
+    : AuthenticatorResponse(WTF::move(rawId), attachment)
+    , m_userHandle(WTF::move(userHandle))
+    , m_name(WTF::move(name))
     , m_accessControl(accessControl)
 {
 }
@@ -96,13 +96,13 @@ AuthenticatorResponseData AuthenticatorAssertionResponse::data() const
 AuthenticationResponseJSON::AuthenticatorAssertionResponseJSON AuthenticatorAssertionResponse::toJSON()
 {
     AuthenticationResponseJSON::AuthenticatorAssertionResponseJSON value;
-    if (auto authData = authenticatorData())
+    if (RefPtr authData = authenticatorData())
         value.authenticatorData = base64URLEncodeToString(authData->span());
-    if (auto sig = signature())
+    if (RefPtr sig = signature())
         value.signature = base64URLEncodeToString(sig->span());
     if (auto handle = userHandle())
         value.userHandle = base64URLEncodeToString(handle->span());
-    if (auto clientData = clientDataJSON())
+    if (RefPtr clientData = clientDataJSON())
         value.clientDataJSON = base64URLEncodeToString(clientData->span());
     return value;
 }

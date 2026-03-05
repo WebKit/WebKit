@@ -549,13 +549,13 @@ Ref<A> a = A::create();
 ```
 
 When passing the ownership of a ref-counted object to a function,
-use rvalue reference with `WTFMove` (equivalent to `std::move` with some safety checks),
+use rvalue reference with `WTF::move` (equivalent to `std::move` with some safety checks),
 and use a regular reference when there is a guarantee for the caller to keep the object alive as follows:
 
 ```cpp
 class B {
 public:
-    void setA(Ref<A>&& a) { m_a = WTFMove(a); }
+    void setA(Ref<A>&& a) { m_a = WTF::move(a); }
 private:
     Ref<A> m_a;
 };
@@ -567,7 +567,7 @@ void createA(B& b) {
 }
 ```
 
-Note that there is no `WTFMove` on `A::create` due to copy elision.
+Note that there is no `WTF::move` on `A::create` due to copy elision.
 
 ### Forwarding ref and deref
 

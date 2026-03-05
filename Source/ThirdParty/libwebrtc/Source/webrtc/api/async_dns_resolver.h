@@ -23,20 +23,18 @@ namespace webrtc {
 // The AsyncDnsResolverInterface class encapsulates a single name query.
 //
 // Usage:
-//   std::unique_ptr<AsyncDnsResolverInterface> resolver =
-//        factory->Create(address-to-be-resolved, [r = resolver.get()]() {
-//     if (r->result.GetResolvedAddress(AF_INET, &addr) {
-//       // success
-//     } else {
-//       // failure
-//       error = r->result().GetError();
-//     }
-//     // Release resolver.
-//     resolver_list.erase(std::remove_if(resolver_list.begin(),
-//     resolver_list.end(),
-//                         [](refptr) { refptr.get() == r; });
-//   });
-//   resolver_list.push_back(std::move(resolver));
+// std::unique_ptr<AsyncDnsResolverInterface> resolver =
+//      factory->Create(address-to-be-resolved, [r = resolver.get()]() {
+//   if (r->result.GetResolvedAddress(AF_INET, &addr) {
+//     // success
+//   } else {
+//     // failure
+//     error = r->result().GetError();
+//   }
+//   // Release resolver.
+//   std::erase_if(resolver_list, [](refptr) { refptr.get() == r; });
+// });
+// resolver_list.push_back(std::move(resolver));
 
 class AsyncDnsResolverResult {
  public:

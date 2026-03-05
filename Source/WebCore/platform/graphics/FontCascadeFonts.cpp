@@ -71,7 +71,7 @@ private:
 };
 
 inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPage>&& singleFont)
-    : m_singleFont(WTFMove(singleFont))
+    : m_singleFont(WTF::move(singleFont))
 {
 }
 
@@ -173,7 +173,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
                     return ranges;
             }
             if (auto font = fontCache->fontForFamily(description, family))
-                return FontRanges(WTFMove(font));
+                return FontRanges(WTF::move(font));
             return FontRanges();
         }, [&](const FontFamilyPlatformSpecification& fontFamilySpecification) -> FontRanges {
             return { fontFamilySpecification.fontRanges(description), IsGenericFontFamily::Yes };
@@ -188,7 +188,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
     // Geeza Pro font.
     for (auto& family : description.families()) {
         if (auto font = fontCache->similarFont(description, family))
-            return FontRanges(WTFMove(font));
+            return FontRanges(WTF::move(font));
     }
     return { };
 }
@@ -316,7 +316,7 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(char32_t charac
 {
     bool syntheticOblique = data.font->platformData().syntheticOblique();
     if (orientation == NonCJKGlyphOrientation::Upright || shouldIgnoreRotation(character)) {
-        GlyphData uprightData = Ref { *data.font }->protectedUprightOrientationFont()->glyphDataForCharacter(character);
+        GlyphData uprightData = protect(protect(data.font)->uprightOrientationFont())->glyphDataForCharacter(character);
         // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically
         // to be upright. For synthetic oblique, however, we will always return the uprightData to ensure
         // that non-CJK and CJK runs are broken up. This guarantees that vertical
@@ -329,7 +329,7 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(char32_t charac
         if (uprightData.font)
             return uprightData;
     } else if (orientation == NonCJKGlyphOrientation::Mixed) {
-        GlyphData verticalRightData = Ref { *data.font }->protectedVerticalRightOrientationFont()->glyphDataForCharacter(character);
+        GlyphData verticalRightData = protect(protect(data.font)->verticalRightOrientationFont())->glyphDataForCharacter(character);
 
         // If there is a baked-in rotated glyph, we will use it unless syntheticOblique is set. If
         // synthetic oblique is set, we fall back to the horizontal glyph. This guarantees that vertical
@@ -371,7 +371,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const
 
     StringBuilder stringBuilder;
     stringBuilder.append(character);
-    auto systemFallbackFont = font->systemFallbackFontForCharacterCluster(stringBuilder, description, resolvedEmojiPolicy, m_isForPlatformFont ? IsForPlatformFont::Yes : IsForPlatformFont::No);
+    RefPtr systemFallbackFont = font->systemFallbackFontForCharacterCluster(stringBuilder, description, resolvedEmojiPolicy, m_isForPlatformFont ? IsForPlatformFont::Yes : IsForPlatformFont::No);
     if (!systemFallbackFont)
         return GlyphData();
 
@@ -385,7 +385,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const
     if (variant == NormalVariant)
         fallbackGlyphData = systemFallbackFont->glyphDataForCharacter(character);
     else
-        fallbackGlyphData = systemFallbackFont->protectedVariantFont(description, variant)->glyphDataForCharacter(character);
+        fallbackGlyphData = protect(systemFallbackFont->variantFont(description, variant))->glyphDataForCharacter(character);
 
     if (fallbackGlyphData.font && fallbackGlyphData.font->platformData().orientation() == FontOrientation::Vertical && !fallbackGlyphData.font->isTextOrientationFallback()) {
         if (variant == NormalVariant && !FontCascade::isCJKIdeographOrSymbol(character))
@@ -394,7 +394,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const
 
     // Keep the system fallback fonts we use alive.
     if (fallbackGlyphData.isValid())
-        m_systemFallbackFontSet.add(WTFMove(systemFallbackFont));
+        m_systemFallbackFontSet.add(systemFallbackFont.releaseNonNull());
 
     return fallbackGlyphData;
 }
@@ -526,7 +526,7 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
         return nullptr;
 
     if (desiredVisibility == FallbackVisibility::Invisible && font->visibility() == Font::Visibility::Visible)
-        return const_cast<GlyphPage*>(font->protectedInvisibleFont()->glyphPage(pageNumber));
+        return const_cast<GlyphPage*>(protect(font->invisibleFont())->glyphPage(pageNumber));
     return const_cast<GlyphPage*>(font->glyphPage(pageNumber));
 }
 
@@ -568,6 +568,47 @@ void FontCascadeFonts::pruneSystemFallbacks()
         });
     }
     m_systemFallbackFontSet.clear();
+    m_shapedTextCache.clear();
+}
+
+const TextShapingResult* FontCascadeFonts::getOrCreateCachedShapedText(const TextRun& run, const FontCascade& fontCascade, unsigned from, std::optional<unsigned> to, ForTextEmphasis forTextEmphasis)
+{
+    auto isCacheable = [&] {
+        unsigned destination = to.value_or(run.length());
+        if (from || destination != run.length() || forTextEmphasis == ForTextEmphasis::Yes)
+            return false;
+        // These properties are not keyed in the cache. We could add it directly to TextMeasurementCache but this is not relevant for width
+        if (run.rtl() || run.directionalOverride())
+            return false;
+        // Expansion distributes extra space across glyphs in the presence of expansion
+        if (run.expansion())
+            return false;
+        return true;
+    };
+
+    if (!isCacheable())
+        return nullptr;
+
+    // FIXME: TextMeasurementCache callers use the pattern of "adding" an empty entry as a way to perform a search with the same constraints that ::add enforces (no letter-spacing, no word-spacing, etc). We should properly encapsulate these requirements in both the ::add method and a dedicated ::find method.
+    CachedTextShapingResult* cacheEntry = m_shapedTextCache.add(run, nullptr, TextShapingContext { fontCascade });
+
+    if (!cacheEntry)
+        return nullptr;
+
+    if (*cacheEntry)
+        return cacheEntry->get();
+
+    auto codePath = fontCascade.codePath(run);
+    TextShapingResult result;
+    if (fontCascade.shouldUseComplexTextController(codePath))
+        result = fontCascade.layoutComplexText(run, 0, run.length(), ForTextEmphasis::No);
+    else
+        result = fontCascade.layoutSimpleText(run, 0, run.length(), ForTextEmphasis::No);
+    result.glyphBuffer.flatten();
+
+    *cacheEntry = WTF::makeUnique<TextShapingResult>(WTF::move(result));
+
+    return cacheEntry->get();
 }
 
 TextStream& operator<<(TextStream& ts, const FontCascadeFonts& fontCascadeFonts)

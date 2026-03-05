@@ -56,13 +56,13 @@ static ASCIILiteral pasteboardCustomDataType()
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), "CLIPBOARD"_s);
+    return makeUnique<Pasteboard>(WTF::move(context), "CLIPBOARD"_s);
 }
 
 #if ENABLE(DRAG_SUPPORT)
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), SelectionData());
+    return makeUnique<Pasteboard>(WTF::move(context), SelectionData());
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
@@ -72,27 +72,27 @@ std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionData&& selectionData)
-    : m_context(WTFMove(context))
-    , m_selectionData(WTFMove(selectionData))
+    : m_context(WTF::move(context))
+    , m_selectionData(WTF::move(selectionData))
 {
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionData& selectionData)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_selectionData(selectionData)
 {
 }
 #endif
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const String& name)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_name(name)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_name))
 {
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
 {
 }
 
@@ -153,7 +153,7 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
 #if PLATFORM(GTK)
         data.setCanSmartReplace(smartReplaceOption == CanSmartReplace);
 #endif
-        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTF::move(data));
     }
 }
 
@@ -166,7 +166,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     } else {
         SelectionData data;
         data.setURL(pasteboardURL.url, pasteboardURL.title);
-        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTF::move(data));
     }
 }
 
@@ -191,7 +191,7 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
             data.setMarkup(pasteboardImage.url.markup);
         }
         data.setImage(pasteboardImage.image.get());
-        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTF::move(data));
     }
 }
 
@@ -219,7 +219,7 @@ void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
         PasteboardCustomData customData;
         customData.setOrigin(pasteboardContent.contentOrigin);
         data.setCustomData(customData.createSharedBuffer());
-        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTF::move(data));
     }
 }
 

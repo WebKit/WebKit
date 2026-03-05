@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRRay);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRRay);
 
 // https://immersive-web.github.io/hit-test/#dom-xrray-xrray
 ExceptionOr<Ref<WebXRRay>> WebXRRay::create(const DOMPointInit& origin, const XRRayDirectionInit& direction)
@@ -55,7 +55,7 @@ ExceptionOr<Ref<WebXRRay>> WebXRRay::create(const DOMPointInit& origin, const XR
         dpDirection = DOMPointReadOnly::create(direction.x / length, direction.y / length, direction.z / length, 0);
     else
         dpDirection = DOMPointReadOnly::create(0, 0, -1, 0);
-    return adoptRef(*new WebXRRay(WTFMove(dpOrigin), *WTFMove(dpDirection)));
+    return adoptRef(*new WebXRRay(WTF::move(dpOrigin), *WTF::move(dpDirection)));
 }
 
 Ref<WebXRRay> WebXRRay::create(WebXRRigidTransform& transform)
@@ -64,12 +64,12 @@ Ref<WebXRRay> WebXRRay::create(WebXRRigidTransform& transform)
     FloatPoint3D z = transform.rawTransform().mapPoint({ 0, 0, -1 });
     FloatPoint3D direction = z - origin;
     Ref dpDirection = DOMPointReadOnly::create(direction.x(), direction.y(), direction.z(), 0);
-    return adoptRef(*new WebXRRay(DOMPointReadOnly::fromFloatPoint(origin), WTFMove(dpDirection)));
+    return adoptRef(*new WebXRRay(DOMPointReadOnly::fromFloatPoint(origin), WTF::move(dpDirection)));
 }
 
 WebXRRay::WebXRRay(Ref<DOMPointReadOnly>&& origin, Ref<DOMPointReadOnly>&& direction)
-    : m_origin(WTFMove(origin))
-    , m_direction(WTFMove(direction))
+    : m_origin(WTF::move(origin))
+    , m_direction(WTF::move(direction))
 {
 }
 

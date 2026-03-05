@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <WebCore/CSSURL.h>
-#include <WebCore/CSSValue.h>
-#include <WebCore/CachedResourceHandle.h>
-#include <WebCore/ResourceLoaderOptions.h>
+#include "CSSURL.h"
+#include "CSSValue.h"
+#include "CachedResourceHandle.h"
+#include "ResourceLoaderOptions.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,13 +45,13 @@ public:
     ~CSSFontFaceSrcLocalValue();
 
     bool isEmpty() const { return m_fontFaceName.isEmpty(); }
-    const AtomString& fontFaceName() const { return m_fontFaceName; }
+    const AtomString& fontFaceName() const LIFETIME_BOUND { return m_fontFaceName; }
 
-    SVGFontFaceElement* svgFontFaceElement() const;
+    SVGFontFaceElement* NODELETE svgFontFaceElement() const;
     void setSVGFontFaceElement(SVGFontFaceElement&);
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSFontFaceSrcLocalValue&) const;
+    bool NODELETE equals(const CSSFontFaceSrcLocalValue&) const;
 
 private:
     explicit CSSFontFaceSrcLocalValue(AtomString&&);
@@ -111,7 +111,7 @@ public:
     static Ref<CSSFontFaceSrcResourceValue> create(CSS::URL, String format, Vector<FontTechnology>&&);
 
     bool isEmpty() const { return m_location.specified.isEmpty(); }
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
+    RefPtr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;

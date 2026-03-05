@@ -90,7 +90,7 @@ static inline Ref<AtomStringImpl> addToStringTable(const T& value)
 
 using UTF16Buffer = HashTranslatorCharBuffer<char16_t>;
 struct UTF16BufferTranslator {
-    static unsigned hash(const UTF16Buffer& buf)
+    static unsigned NODELETE hash(const UTF16Buffer& buf)
     {
         return buf.hash;
     }
@@ -115,7 +115,7 @@ struct HashedUTF8Characters {
 };
 
 struct HashedUTF8CharactersTranslator {
-    static unsigned hash(const HashedUTF8Characters& characters)
+    static unsigned NODELETE hash(const HashedUTF8Characters& characters)
     {
         return characters.length.hash;
     }
@@ -244,7 +244,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(StringImpl* baseString, unsigned star
     
 using Latin1Buffer = HashTranslatorCharBuffer<Latin1Character>;
 struct Latin1BufferTranslator {
-    static unsigned hash(const Latin1Buffer& buf)
+    static unsigned NODELETE hash(const Latin1Buffer& buf)
     {
         return buf.hash;
     }
@@ -393,10 +393,10 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(Ref<StringImpl>&& string)
         return *uncheckedDowncast<AtomStringImpl>(StringImpl::empty());
 
     if (string->isStatic())
-        return addStatic(WTFMove(string));
+        return addStatic(WTF::move(string));
 
     if (string->isSymbol())
-        return addSymbol(WTFMove(string));
+        return addSymbol(WTF::move(string));
 
     ASSERT_WITH_MESSAGE(!string->isAtom(), "AtomStringImpl should not hit the slow case if the string is already an atom.");
 
@@ -406,7 +406,7 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(Ref<StringImpl>&& string)
     if (addResult.isNewEntry) {
         ASSERT(addResult.iterator->get() == string.ptr());
         string->setIsAtom(true);
-        return uncheckedDowncast<AtomStringImpl>(WTFMove(string));
+        return uncheckedDowncast<AtomStringImpl>(WTF::move(string));
     }
 
     return *uncheckedDowncast<AtomStringImpl>(addResult.iterator->get());

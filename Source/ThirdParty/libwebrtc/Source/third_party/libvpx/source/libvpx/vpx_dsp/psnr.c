@@ -177,7 +177,8 @@ int64_t vpx_highbd_get_y_sse(const YV12_BUFFER_CONFIG *a,
 #if CONFIG_VP9_HIGHBITDEPTH
 void vpx_calc_highbd_psnr(const YV12_BUFFER_CONFIG *a,
                           const YV12_BUFFER_CONFIG *b, PSNR_STATS *psnr,
-                          uint32_t bit_depth, uint32_t in_bit_depth) {
+                          uint32_t bit_depth, uint32_t in_bit_depth,
+                          int spatial_layer_id) {
   const int widths[3] = { a->y_crop_width, a->uv_crop_width, a->uv_crop_width };
   const int heights[3] = { a->y_crop_height, a->uv_crop_height,
                            a->uv_crop_height };
@@ -219,12 +220,13 @@ void vpx_calc_highbd_psnr(const YV12_BUFFER_CONFIG *a,
   psnr->samples[0] = total_samples;
   psnr->psnr[0] =
       vpx_sse_to_psnr((double)total_samples, peak, (double)total_sse);
+  psnr->spatial_layer_id = spatial_layer_id;
 }
 
 #endif  // !CONFIG_VP9_HIGHBITDEPTH
 
 void vpx_calc_psnr(const YV12_BUFFER_CONFIG *a, const YV12_BUFFER_CONFIG *b,
-                   PSNR_STATS *psnr) {
+                   PSNR_STATS *psnr, int spatial_layer_id) {
   static const double peak = 255.0;
   const int widths[3] = { a->y_crop_width, a->uv_crop_width, a->uv_crop_width };
   const int heights[3] = { a->y_crop_height, a->uv_crop_height,
@@ -255,4 +257,5 @@ void vpx_calc_psnr(const YV12_BUFFER_CONFIG *a, const YV12_BUFFER_CONFIG *b,
   psnr->samples[0] = total_samples;
   psnr->psnr[0] =
       vpx_sse_to_psnr((double)total_samples, peak, (double)total_sse);
+  psnr->spatial_layer_id = spatial_layer_id;
 }

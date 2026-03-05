@@ -47,6 +47,7 @@
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -100,7 +101,7 @@ void PageRuntimeAgent::frameNavigated(LocalFrame& frame)
 
 void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
-    auto* pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent();
+    CheckedPtr pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent();
     if (!pageAgent)
         return;
 
@@ -114,13 +115,13 @@ InjectedScript PageRuntimeAgent::injectedScriptForEval(Inspector::Protocol::Erro
         if (!localMainFrame)
             return InjectedScript();
 
-        InjectedScript result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
+        auto result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
         if (result.hasNoValue())
             errorString = "Internal error: main world execution context not found"_s;
         return result;
     }
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
+    auto injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         errorString = "Missing injected script for given executionContextId"_s;
     return injectedScript;
@@ -138,7 +139,7 @@ void PageRuntimeAgent::unmuteConsole()
 
 void PageRuntimeAgent::reportExecutionContextCreation()
 {
-    auto* pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent();
+    CheckedPtr pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent();
     if (!pageAgent)
         return;
 
@@ -200,12 +201,12 @@ Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
+    auto injectedScript = injectedScriptForEval(errorString, WTF::move(executionContextId));
     if (injectedScript.hasNoValue())
         return makeUnexpected(errorString);
 
     UserGestureEmulationScope userGestureScope(m_inspectedPage, emulateUserGesture.value_or(false), dynamicDowncast<Document>(executionContext(injectedScript.globalObject())));
-    return InspectorRuntimeAgent::evaluate(injectedScript, expression, objectGroup, WTFMove(includeCommandLineAPI), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(saveResult), WTFMove(emulateUserGesture));
+    return InspectorRuntimeAgent::evaluate(injectedScript, expression, objectGroup, WTF::move(includeCommandLineAPI), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(saveResult), WTF::move(emulateUserGesture));
 }
 
 void PageRuntimeAgent::callFunctionOn(const Inspector::Protocol::Runtime::RemoteObjectId& objectId, const String& expression, RefPtr<JSON::Array>&& optionalArguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
@@ -217,7 +218,7 @@ void PageRuntimeAgent::callFunctionOn(const Inspector::Protocol::Runtime::Remote
     }
 
     UserGestureEmulationScope userGestureScope(m_inspectedPage, emulateUserGesture.value_or(false), dynamicDowncast<Document>(executionContext(injectedScript.globalObject())));
-    return InspectorRuntimeAgent::callFunctionOn(objectId, expression, WTFMove(optionalArguments), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(emulateUserGesture), WTFMove(awaitPromise), WTFMove(callback));
+    return InspectorRuntimeAgent::callFunctionOn(objectId, expression, WTF::move(optionalArguments), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(emulateUserGesture), WTF::move(awaitPromise), WTF::move(callback));
 }
 
 } // namespace WebCore

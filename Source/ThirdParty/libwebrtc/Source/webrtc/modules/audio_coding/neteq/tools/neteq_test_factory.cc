@@ -31,7 +31,6 @@
 #include "api/make_ref_counted.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_factory.h"
-#include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
@@ -90,16 +89,15 @@ class SsrcSwitchDetector : public NetEqPostInsertPacket {
   explicit SsrcSwitchDetector(NetEqPostInsertPacket* other_callback)
       : other_callback_(other_callback) {}
 
-  void AfterInsertPacket(const NetEqInput::PacketData& packet,
+  void AfterInsertPacket(const RtpPacketReceived& packet,
                          NetEq* neteq) override {
-    if (last_ssrc_ && packet.header.ssrc != *last_ssrc_) {
+    if (last_ssrc_ && packet.Ssrc() != *last_ssrc_) {
       std::cout << "Changing streams from 0x" << std::hex << *last_ssrc_
-                << " to 0x" << std::hex << packet.header.ssrc << std::dec
-                << " (payload type "
-                << static_cast<int>(packet.header.payloadType) << ")"
+                << " to 0x" << std::hex << packet.Ssrc() << std::dec
+                << " (payload type " << int{packet.PayloadType()} << ")"
                 << std::endl;
     }
-    last_ssrc_ = packet.header.ssrc;
+    last_ssrc_ = packet.Ssrc();
     if (other_callback_) {
       other_callback_->AfterInsertPacket(packet, neteq);
     }
@@ -208,14 +206,14 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
   // Check the sample rate.
   std::optional<int> sample_rate_hz;
   std::set<std::pair<int, uint32_t>> discarded_pt_and_ssrc;
-  while (std::optional<RTPHeader> first_rtp_header = input->NextHeader()) {
-    RTC_DCHECK(first_rtp_header);
-    sample_rate_hz = CodecSampleRate(first_rtp_header->payloadType, config);
+  while (const RtpPacketReceived* first_rtp_packet = input->NextPacket()) {
+    RTC_DCHECK(first_rtp_packet);
+    sample_rate_hz = CodecSampleRate(first_rtp_packet->PayloadType(), config);
     if (sample_rate_hz) {
       std::cout << "Found valid packet with payload type "
-                << static_cast<int>(first_rtp_header->payloadType)
-                << " and SSRC 0x" << std::hex << first_rtp_header->ssrc
-                << std::dec << std::endl;
+                << int{first_rtp_packet->PayloadType()} << " and SSRC 0x"
+                << std::hex << first_rtp_packet->Ssrc() << std::dec
+                << std::endl;
       if (config.initial_dummy_packets > 0) {
         std::cout << "Nr of initial dummy packets: "
                   << config.initial_dummy_packets << std::endl;
@@ -226,8 +224,8 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
     }
     // Discard this packet and move to the next. Keep track of discarded payload
     // types and SSRCs.
-    discarded_pt_and_ssrc.emplace(first_rtp_header->payloadType,
-                                  first_rtp_header->ssrc);
+    discarded_pt_and_ssrc.emplace(first_rtp_packet->PayloadType(),
+                                  first_rtp_packet->Ssrc());
     input->PopPacket();
   }
   if (!discarded_pt_and_ssrc.empty()) {
@@ -271,7 +269,7 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
       CreateBuiltinAudioDecoderFactory();
 
   // Check if a replacement audio file was provided.
-  if (config.replacement_audio_file.size() > 0) {
+  if (!config.replacement_audio_file.empty()) {
     // Find largest unused payload type.
     int replacement_pt = 127;
     while (codecs.find(replacement_pt) != codecs.end()) {

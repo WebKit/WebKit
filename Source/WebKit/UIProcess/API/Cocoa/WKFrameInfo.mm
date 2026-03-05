@@ -38,17 +38,12 @@
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
-static Ref<API::FrameInfo> protectedFrameInfo(WKFrameInfo *frameInfo)
-{
-    return *frameInfo->_frameInfo;
-}
-
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKFrameInfo.class, self))
         return;
 
-    SUPPRESS_UNCOUNTED_ARG protectedFrameInfo(self)->~FrameInfo();
+    SUPPRESS_UNCOUNTED_ARG protect(*_frameInfo)->~FrameInfo();
 
     [super dealloc];
 }
@@ -78,7 +73,7 @@ static Ref<API::FrameInfo> protectedFrameInfo(WKFrameInfo *frameInfo)
 
 - (WKWebView *)webView
 {
-    RefPtr page = protectedFrameInfo(self)->page();
+    RefPtr page = protect(*_frameInfo)->page();
     return page ? page->cocoaView().autorelease() : nil;
 }
 
@@ -100,17 +95,20 @@ static Ref<API::FrameInfo> protectedFrameInfo(WKFrameInfo *frameInfo)
 
 - (_WKFrameHandle *)_handle
 {
-    return wrapper(protectedFrameInfo(self)->handle()).autorelease();
+    return wrapper(protect(*_frameInfo)->handle()).autorelease();
 }
 
 - (_WKFrameHandle *)_parentFrameHandle
 {
-    return wrapper(protectedFrameInfo(self)->parentFrameHandle()).autorelease();
+    return wrapper(protect(*_frameInfo)->parentFrameHandle()).autorelease();
 }
 
 - (NSUUID *)_documentIdentifier
 {
-    return _frameInfo->documentID()->object().createNSUUID().autorelease();
+    auto documentID = _frameInfo->documentID();
+    if (!documentID)
+        return nil;
+    return documentID->object().createNSUUID().autorelease();
 }
 
 - (pid_t)_processIdentifier
@@ -135,7 +133,7 @@ static Ref<API::FrameInfo> protectedFrameInfo(WKFrameInfo *frameInfo)
 
 - (NSString *)_title
 {
-    return protectedFrameInfo(self)->title().createNSString().autorelease();
+    return protect(*_frameInfo)->title().createNSString().autorelease();
 }
 
 - (BOOL)_isScrollable

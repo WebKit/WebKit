@@ -58,9 +58,9 @@ namespace Style {
 //   before creating a PositionAreaSpan.
 struct PositionAreaSpan {
     constexpr PositionAreaSpan(PositionAreaAxis axis, PositionAreaTrack track, PositionAreaSelf self)
-        : m_axis(enumToUnderlyingType(axis))
-        , m_track(enumToUnderlyingType(track))
-        , m_self(enumToUnderlyingType(self))
+        : m_axis(std::to_underlying(axis))
+        , m_track(std::to_underlying(track))
+        , m_self(std::to_underlying(self))
     {
     }
 

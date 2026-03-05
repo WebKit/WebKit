@@ -170,10 +170,10 @@ int BN_div(BIGNUM *quotient, BIGNUM *rem, const BIGNUM *numerator,
   BIGNUM *tmp = BN_CTX_get(ctx);
   BIGNUM *snum = BN_CTX_get(ctx);
   BIGNUM *sdiv = BN_CTX_get(ctx);
-  BIGNUM *res = quotient == NULL ? BN_CTX_get(ctx) : quotient;
+  BIGNUM *res = quotient == nullptr ? BN_CTX_get(ctx) : quotient;
   int norm_shift, num_n, loop, div_n;
   BN_ULONG d0, d1;
-  if (tmp == NULL || snum == NULL || sdiv == NULL || res == NULL) {
+  if (tmp == nullptr || snum == nullptr || sdiv == nullptr || res == nullptr) {
     return 0;
   }
 
@@ -330,7 +330,7 @@ int BN_div(BIGNUM *quotient, BIGNUM *rem, const BIGNUM *numerator,
   bn_set_minimal_width(res);
 
   // Knuth step D8: Unnormalize. snum now contains the remainder.
-  if (rem != NULL && !BN_rshift(rem, snum, norm_shift)) {
+  if (rem != nullptr && !BN_rshift(rem, snum, norm_shift)) {
     return 0;
   }
 
@@ -412,15 +412,15 @@ int bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
 
   bssl::BN_CTXScope scope(ctx);
   BIGNUM *q = quotient, *r = remainder;
-  if (quotient == NULL || quotient == numerator || quotient == divisor) {
+  if (quotient == nullptr || quotient == numerator || quotient == divisor) {
     q = BN_CTX_get(ctx);
   }
-  if (remainder == NULL || remainder == numerator || remainder == divisor) {
+  if (remainder == nullptr || remainder == numerator || remainder == divisor) {
     r = BN_CTX_get(ctx);
   }
   BIGNUM *tmp = BN_CTX_get(ctx);
   int initial_words;
-  if (q == NULL || r == NULL || tmp == NULL ||
+  if (q == nullptr || r == nullptr || tmp == nullptr ||
       !bn_wexpand(q, numerator->width) || !bn_wexpand(r, divisor->width) ||
       !bn_wexpand(tmp, divisor->width)) {
     return 0;
@@ -472,8 +472,8 @@ int bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
     }
   }
 
-  if ((quotient != NULL && !BN_copy(quotient, q)) ||
-      (remainder != NULL && !BN_copy(remainder, r))) {
+  if ((quotient != nullptr && !BN_copy(quotient, q)) ||
+      (remainder != nullptr && !BN_copy(remainder, r))) {
     return 0;
   }
 
@@ -482,8 +482,8 @@ int bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
 
 static BIGNUM *bn_scratch_space_from_ctx(size_t width, BN_CTX *ctx) {
   BIGNUM *ret = BN_CTX_get(ctx);
-  if (ret == NULL || !bn_wexpand(ret, width)) {
-    return NULL;
+  if (ret == nullptr || !bn_wexpand(ret, width)) {
+    return nullptr;
   }
   ret->neg = 0;
   ret->width = (int)width;
@@ -503,8 +503,8 @@ static const BIGNUM *bn_resized_from_ctx(const BIGNUM *bn, size_t width,
     return bn;
   }
   BIGNUM *ret = bn_scratch_space_from_ctx(width, ctx);
-  if (ret == NULL || !BN_copy(ret, bn) || !bn_resize_words(ret, width)) {
-    return NULL;
+  if (ret == nullptr || !BN_copy(ret, bn) || !bn_resize_words(ret, width)) {
+    return nullptr;
   }
   return ret;
 }
@@ -573,7 +573,7 @@ int BN_mod_mul(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, const BIGNUM *m,
                BN_CTX *ctx) {
   bssl::BN_CTXScope scope(ctx);
   BIGNUM *t = BN_CTX_get(ctx);
-  if (t == NULL) {
+  if (t == nullptr) {
     return 0;
   }
 
@@ -713,7 +713,7 @@ BN_ULONG BN_mod_word(const BIGNUM *a, BN_ULONG w) {
   // fall back to using |BN_div_word|.
   if (w > ((BN_ULONG)1 << BN_BITS4)) {
     BIGNUM *tmp = BN_dup(a);
-    if (tmp == NULL) {
+    if (tmp == nullptr) {
       return (BN_ULONG)-1;
     }
     ret = BN_div_word(tmp, w);

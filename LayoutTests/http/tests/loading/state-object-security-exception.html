@@ -37,6 +37,7 @@ var URLsToTry = new Array(
 async function runTest()
 {
     testRunner?.dumpAsText();
+    testRunner?.dumpFrameLoadCallbacks();
     testRunner?.waitUntilDone();
     await testRunner?.clearBackForwardList();
     for (n in URLsToTry)

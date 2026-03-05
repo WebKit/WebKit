@@ -117,7 +117,7 @@ void VisitedLinkStore::sendStoreHandleToProcess(WebProcessProxy& process)
     auto handle = m_linkHashStore->createSharedMemoryHandle();
     if (!handle)
         return;
-    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(WTFMove(*handle)), identifier());
+    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(WTF::move(*handle)), identifier());
 }
 
 void VisitedLinkStore::didInvalidateSharedMemory()

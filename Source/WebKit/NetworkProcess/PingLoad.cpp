@@ -43,26 +43,24 @@ using namespace WebCore;
 
 PingLoad::PingLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
     : m_sessionID(sessionID)
-    , m_parameters(WTFMove(parameters))
-    , m_completionHandler(WTFMove(completionHandler))
+    , m_parameters(WTF::move(parameters))
+    , m_completionHandler(WTF::move(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
+    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTF::move(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
 {
     initialize(networkProcess);
 }
 
 PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
     : m_sessionID(connection.sessionID())
-    , m_parameters(WTFMove(parameters))
-    , m_completionHandler(WTFMove(completionHandler))
+    , m_parameters(WTF::move(parameters))
+    , m_completionHandler(WTF::move(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(NetworkLoadChecker::create(connection.networkProcess(), nullptr,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
+    , m_networkLoadChecker(NetworkLoadChecker::create(connection.networkProcess(), nullptr,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTF::move(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
     , m_blobFiles(connection.resolveBlobReferences(m_parameters))
 {
-    for (auto& file : m_blobFiles) {
-        if (file)
-            file->prepareForFileAccess();
-    }
+    for (auto& file : m_blobFiles)
+        file->prepareForFileAccess();
 
     initialize(Ref { connection.networkProcess() });
 }
@@ -71,11 +69,11 @@ void PingLoad::initialize(NetworkProcess& networkProcess)
 {
     m_networkLoadChecker->enableContentExtensionsCheck();
     if (m_parameters.cspResponseHeaders)
-        m_networkLoadChecker->setCSPResponseHeaders(WTFMove(m_parameters.cspResponseHeaders.value()));
+        m_networkLoadChecker->setCSPResponseHeaders(WTF::move(m_parameters.cspResponseHeaders.value()));
     m_networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
     m_networkLoadChecker->setCrossOriginEmbedderPolicy(m_parameters.crossOriginEmbedderPolicy);
 #if ENABLE(CONTENT_EXTENSIONS)
-    m_networkLoadChecker->setContentExtensionController(WTFMove(m_parameters.mainDocumentURL), WTFMove(m_parameters.frameURL), m_parameters.userContentControllerIdentifier);
+    m_networkLoadChecker->setContentExtensionController(WTF::move(m_parameters.mainDocumentURL), WTF::move(m_parameters.frameURL), m_parameters.userContentControllerIdentifier);
 #endif
 
     // If the server never responds, this object will hang around forever.
@@ -95,7 +93,7 @@ void PingLoad::initialize(NetworkProcess& networkProcess)
                 ASSERT_NOT_REACHED();
             },
             [&protectedThis, &networkProcess] (ResourceRequest& request) {
-                protectedThis->loadRequest(networkProcess, WTFMove(request));
+                protectedThis->loadRequest(networkProcess, WTF::move(request));
             }
         );
     });
@@ -108,10 +106,8 @@ PingLoad::~PingLoad()
         task->clearClient();
         task->cancel();
     }
-    for (auto& file : m_blobFiles) {
-        if (file)
-            file->revokeFileAccess();
-    }
+    for (auto& file : m_blobFiles)
+        file->revokeFileAccess();
 }
 
 void PingLoad::didFinish(const ResourceError& error, const ResourceResponse& response)
@@ -126,8 +122,8 @@ void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& req
     PING_RELEASE_LOG("startNetworkLoad");
     if (CheckedPtr networkSession = networkProcess.networkSession(m_sessionID)) {
         auto loadParameters = m_parameters.networkLoadParameters();
-        loadParameters.request = WTFMove(request);
-        Ref task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
+        loadParameters.request = WTF::move(request);
+        Ref task = NetworkDataTask::create(*networkSession, *this, WTF::move(loadParameters));
         m_task = task.copyRef();
         task->resume();
     } else
@@ -136,20 +132,20 @@ void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& req
 
 void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
-    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTFMove(request), WTFMove(redirectResponse), nullptr, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTF::move(request), WTF::move(redirectResponse), nullptr, [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
         if (!result.has_value()) {
             protectedThis->didFinish(result.error());
             completionHandler({ });
             return;
         }
-        auto request = WTFMove(result->redirectRequest);
+        auto request = WTF::move(result->redirectRequest);
         if (!request.url().protocolIsInHTTPFamily()) {
             protectedThis->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
             completionHandler({ });
             return;
         }
 
-        completionHandler(WTFMove(request));
+        completionHandler(WTF::move(request));
     });
 }
 
@@ -157,7 +153,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negotiat
 {
     PING_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        m_networkLoadChecker->protectedNetworkProcess()->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        protect(protect(m_networkLoadChecker->networkProcess())->authenticationManager())->didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };

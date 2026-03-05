@@ -40,7 +40,7 @@ struct JSHandleData {
     size_t refCount { 0 };
 };
 using HandleMap = HashMap<JSHandleIdentifier, JSHandleData>;
-static HandleMap& handleMap()
+static HandleMap& NODELETE handleMap()
 {
     static MainThreadNeverDestroyed<HandleMap> map;
     return map.get();
@@ -91,7 +91,7 @@ JSC::JSObject* WebKitJSHandle::objectForIdentifier(JSHandleIdentifier identifier
 static Markable<FrameIdentifier> windowFrameIdentifier(JSC::JSObject* object)
 {
     if (auto* window = jsDynamicCast<WebCore::JSWindowProxy*>(object)) {
-        if (RefPtr frame = window->protectedWrapped()->frame())
+        if (RefPtr frame = window->wrapped().frame())
             return frame->frameID();
     }
     return std::nullopt;

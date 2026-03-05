@@ -42,10 +42,10 @@
                             (GraphicsLayer
                               (offsetFromRenderer width=30 height=30)
                               (anchor 0.00 0.00)
-                              (bounds 425.00 10040.00)
+                              (bounds 440.00 10040.00)
                               (drawsContent 1)
                               (event region
-                                (rect (0,0) width=425 height=10040)
+                                (rect (0,0) width=440 height=10040)
                               )
                             )
                           )

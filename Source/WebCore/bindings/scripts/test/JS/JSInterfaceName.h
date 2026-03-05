@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<InterfaceName>;
     static JSInterfaceName* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<InterfaceName>&& impl)
     {
-        JSInterfaceName* ptr = new (NotNull, JSC::allocateCell<JSInterfaceName>(globalObject->vm().heap)) JSInterfaceName(structure, *globalObject, WTFMove(impl));
+        JSInterfaceName* ptr = new (NotNull, JSC::allocateCell<JSInterfaceName>(globalObject->vm().heap)) JSInterfaceName(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

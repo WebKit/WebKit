@@ -26,19 +26,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dictionary MediaEncryptedEventInit : EventInit {
-    DOMString initDataType = "";
-    ArrayBuffer? initData = null;
-};
-
+// https://w3c.github.io/encrypted-media/#dom-mediaencryptedevent
 [
     Conditional=ENCRYPTED_MEDIA,
     EnabledBySetting=EncryptedMediaAPIEnabled,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     Exposed=Window
 ] interface MediaEncryptedEvent : Event {
-    constructor([AtomString] DOMString type, optional MediaEncryptedEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional MediaEncryptedEventInit eventInitDict = {});
 
     readonly attribute DOMString initDataType;
     readonly attribute ArrayBuffer? initData;
+};
+
+// https://w3c.github.io/encrypted-media/#dom-mediaencryptedeventinit
+dictionary MediaEncryptedEventInit : EventInit {
+    DOMString initDataType = "";
+    ArrayBuffer? initData = null;
 };

@@ -51,6 +51,8 @@ bool IsImage2DType(GLenum type);
 bool IsAtomicCounterType(GLenum type);
 bool IsOpaqueType(GLenum type);
 bool IsMatrixType(GLenum type);
+bool IsFloatScalarAndVectorType(GLenum type);
+bool IsFloatVectorType(GLenum type);
 GLenum TransposeMatrixType(GLenum type);
 int VariableRegisterCount(GLenum type);
 int MatrixRegisterCount(GLenum type, bool isRowMajorMatrix);
@@ -99,9 +101,9 @@ constexpr T GetPrimitiveRestartIndexFromType()
 static_assert(GetPrimitiveRestartIndexFromType<uint8_t>() == 0xFF,
               "verify restart index for uint8_t values");
 static_assert(GetPrimitiveRestartIndexFromType<uint16_t>() == 0xFFFF,
-              "verify restart index for uint8_t values");
+              "verify restart index for uint16_t values");
 static_assert(GetPrimitiveRestartIndexFromType<uint32_t>() == 0xFFFFFFFF,
-              "verify restart index for uint8_t values");
+              "verify restart index for uint32_t values");
 
 bool IsTriangleMode(PrimitiveMode drawMode);
 bool IsPolygonMode(PrimitiveMode mode);

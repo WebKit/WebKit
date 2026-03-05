@@ -58,7 +58,7 @@ RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacterCluster(cons
     auto fontAddResult = m_characterFallbackMaps.add(font, CharacterFallbackMap());
 
     auto key = CharacterFallbackMapKey { description.computedLocale(), characterCluster.toString(), isForPlatformFont != IsForPlatformFont::No, resolvedEmojiPolicy };
-    return fontAddResult.iterator->value.ensure(WTFMove(key), [&] {
+    return fontAddResult.iterator->value.ensure(WTF::move(key), [&] {
         StringBuilder stringBuilder;
         stringBuilder.append(FontCascade::normalizeSpaces(characterCluster));
 

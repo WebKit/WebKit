@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -52,8 +53,8 @@ public:
     WEBCORE_EXPORT void initialize(const String& databasePath);
     WEBCORE_EXPORT void setClient(DatabaseManagerClient*);
 
-    bool isAvailable();
-    WEBCORE_EXPORT void setIsAvailable(bool);
+    bool NODELETE isAvailable();
+    WEBCORE_EXPORT void NODELETE setIsAvailable(bool);
 
     // This gets a DatabaseContext for the specified Document.
     // If one doesn't already exist, it will create a new one.
@@ -61,7 +62,7 @@ public:
 
     ExceptionOr<Ref<Database>> openDatabase(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&&);
 
-    WEBCORE_EXPORT bool hasOpenDatabases(Document&);
+    WEBCORE_EXPORT bool NODELETE hasOpenDatabases(Document&);
     void stopDatabases(Document&, DatabaseTaskSynchronizer*);
 
     WEBCORE_EXPORT String fullPathForDatabase(SecurityOrigin&, const String& name, bool createIfDoesNotExist = true);
@@ -84,7 +85,7 @@ private:
 
     static void logErrorMessage(Document&, const String& message);
 
-    DatabaseManagerClient* m_client { nullptr };
+    WeakPtr<DatabaseManagerClient> m_client;
     bool m_databaseIsAvailable { true };
 
     Lock m_proposedDatabasesLock;

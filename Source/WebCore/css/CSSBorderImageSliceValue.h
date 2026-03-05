@@ -34,10 +34,10 @@ class CSSPrimitiveValue;
 
 class CSSBorderImageSliceValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageSliceValue> create(Quad, bool fill);
+    static Ref<CSSBorderImageSliceValue> NODELETE create(Quad, bool fill);
     ~CSSBorderImageSliceValue();
 
-    const Quad& slices() const { return m_slices; }
+    const Quad& slices() const LIFETIME_BOUND { return m_slices; }
     bool fill() const { return m_fill; }
 
     String customCSSText(const CSS::SerializationContext&) const;

@@ -35,12 +35,12 @@
 namespace WebCore::ContentExtensions {
 
 template <typename IntType>
-static IntType getBits(std::span<const uint8_t> bytecode, uint32_t index)
+static IntType NODELETE getBits(std::span<const uint8_t> bytecode, uint32_t index)
 {
     return reinterpretCastSpanStartTo<const IntType>(bytecode.subspan(index));
 }
 
-static uint32_t get24BitsUnsigned(std::span<const uint8_t> bytecode, uint32_t index)
+static uint32_t NODELETE get24BitsUnsigned(std::span<const uint8_t> bytecode, uint32_t index)
 {
     ASSERT(index + UInt24Size <= bytecode.size());
     uint32_t highBits = getBits<uint8_t>(bytecode, index + sizeof(uint16_t));
@@ -48,12 +48,12 @@ static uint32_t get24BitsUnsigned(std::span<const uint8_t> bytecode, uint32_t in
     return (highBits << 16) | lowBits;
 }
 
-static DFABytecodeInstruction getInstruction(std::span<const uint8_t> bytecode, uint32_t index)
+static DFABytecodeInstruction NODELETE getInstruction(std::span<const uint8_t> bytecode, uint32_t index)
 {
     return static_cast<DFABytecodeInstruction>(getBits<uint8_t>(bytecode, index) & DFABytecodeInstructionMask);
 }
 
-static size_t jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
+static size_t NODELETE jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
 {
     switch (jumpSize) {
     case DFABytecodeJumpSize::Int8:
@@ -68,18 +68,18 @@ static size_t jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-template<typename T> uint32_t consumeInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
+template<typename T> uint32_t NODELETE consumeInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
 {
     programCounter += sizeof(T);
     return getBits<T>(bytecode, programCounter - sizeof(T));
 }
-static uint32_t consume24BitUnsignedInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
+static uint32_t NODELETE consume24BitUnsignedInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
 {
     programCounter += UInt24Size;
     return get24BitsUnsigned(bytecode, programCounter - UInt24Size);
 }
 
-static constexpr bool hasFlags(DFABytecodeInstruction instruction)
+static constexpr bool NODELETE hasFlags(DFABytecodeInstruction instruction)
 {
     switch (instruction) {
     case DFABytecodeInstruction::TestFlagsAndAppendAction:
@@ -98,7 +98,7 @@ static constexpr bool hasFlags(DFABytecodeInstruction instruction)
     return false;
 }
 
-static constexpr bool hasAction(DFABytecodeInstruction instruction)
+static constexpr bool NODELETE hasAction(DFABytecodeInstruction instruction)
 {
     switch (instruction) {
     case DFABytecodeInstruction::TestFlagsAndAppendAction:
@@ -117,7 +117,7 @@ static constexpr bool hasAction(DFABytecodeInstruction instruction)
     return false;
 }
 
-static ResourceFlags consumeResourceFlagsAndInstruction(std::span<const uint8_t> bytecode, uint32_t& programCounter)
+static ResourceFlags NODELETE consumeResourceFlagsAndInstruction(std::span<const uint8_t> bytecode, uint32_t& programCounter)
 {
     ASSERT_UNUSED(hasFlags, hasFlags(getInstruction(bytecode, programCounter)));
     switch (static_cast<DFABytecodeFlagsSize>(bytecode[programCounter++] & DFABytecodeFlagsSizeMask)) {
@@ -134,7 +134,7 @@ static ResourceFlags consumeResourceFlagsAndInstruction(std::span<const uint8_t>
     return 0;
 }
 
-static uint32_t consumeAction(std::span<const uint8_t> bytecode, uint32_t& programCounter, uint32_t instructionLocation)
+static uint32_t NODELETE consumeAction(std::span<const uint8_t> bytecode, uint32_t& programCounter, uint32_t instructionLocation)
 {
     ASSERT_UNUSED(hasAction, hasAction(getInstruction(bytecode, instructionLocation)));
     ASSERT(programCounter > instructionLocation);
@@ -152,7 +152,7 @@ static uint32_t consumeAction(std::span<const uint8_t> bytecode, uint32_t& progr
     return 0;
 }
 
-static DFABytecodeJumpSize getJumpSize(std::span<const uint8_t> bytecode, uint32_t index)
+static DFABytecodeJumpSize NODELETE getJumpSize(std::span<const uint8_t> bytecode, uint32_t index)
 {
     auto jumpSize = static_cast<DFABytecodeJumpSize>(getBits<uint8_t>(bytecode, index) & DFABytecodeJumpSizeMask);
     ASSERT(jumpSize == DFABytecodeJumpSize::Int32
@@ -162,7 +162,7 @@ static DFABytecodeJumpSize getJumpSize(std::span<const uint8_t> bytecode, uint32
     return jumpSize;
 }
 
-static int32_t getJumpDistance(std::span<const uint8_t> bytecode, uint32_t index, DFABytecodeJumpSize jumpSize)
+static int32_t NODELETE getJumpDistance(std::span<const uint8_t> bytecode, uint32_t index, DFABytecodeJumpSize jumpSize)
 {
     switch (jumpSize) {
     case DFABytecodeJumpSize::Int8:

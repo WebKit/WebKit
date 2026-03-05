@@ -31,11 +31,11 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 
-using CSSColorRGBComp = Variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
-using RectifiedCSSColorRGBComp = Variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>;
+using CSSColorRGBComp = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSKeywordValue>>;
+using RectifiedCSSColorRGBComp = Variant<Ref<CSSNumericValue>, Ref<CSSKeywordValue>>;
 
 class CSSRGB final : public CSSOMColorValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSRGB);
+    WTF_MAKE_TZONE_ALLOCATED(CSSRGB);
 public:
     static ExceptionOr<Ref<CSSRGB>> create(CSSColorRGBComp&&, CSSColorRGBComp&&, CSSColorRGBComp&&, CSSColorPercent&&);
 

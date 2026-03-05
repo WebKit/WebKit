@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+            var actualURL;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                video = document.createElement('video');
+                const mediaURL = findMediaFile('video', '../content/test');
+                video.src = mediaURL;
+                document.body.appendChild(video);
+
+                await waitFor(video, 'canplaythrough');
+
+                run(`video.play()`)
+                await waitFor(video, 'playing');
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                const loadedURL = await urlPromise;
+                const expectedURL = new URL(mediaURL, document.baseURI).href.substring(document.baseURI.indexOf('/LayoutTests/'));
+                actualURL = loadedURL.substring(loadedURL.indexOf('/LayoutTests/'));
+
+                testExpected('actualURL', expectedURL);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <p>Test that a video's src attribute URL is passed to a MediaDeviceRoute when the route activates.</p>
+    </body>
+</html>

@@ -175,7 +175,7 @@ Color Color::semanticColor() const
         return *this;
     
     if (isOutOfLine())
-        return { protectedAsOutOfLine(), colorSpace(), Flags::Semantic };
+        return { protect(asOutOfLine()), colorSpace(), Flags::Semantic };
     return { asInline(), Flags::Semantic };
 }
 
@@ -194,7 +194,7 @@ ColorComponents<float, 4> Color::toResolvedColorComponentsInColorSpace(const Des
 std::pair<ColorSpace, ColorComponents<float, 4>> Color::colorSpaceAndResolvedColorComponents() const
 {
     if (isOutOfLine())
-        return { colorSpace(), resolveColorComponents(protectedAsOutOfLine()->resolvedComponents()) };
+        return { colorSpace(), resolveColorComponents(protect(asOutOfLine())->resolvedComponents()) };
     return { ColorSpace::SRGB, asColorComponents(convertColor<SRGBA<float>>(asInline()).resolved()) };
 }
 

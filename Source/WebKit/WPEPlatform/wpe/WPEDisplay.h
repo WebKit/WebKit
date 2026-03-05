@@ -31,7 +31,7 @@
 #endif
 
 #include <glib-object.h>
-#include <wpe/WPEBufferDMABufFormats.h>
+#include <wpe/WPEBufferFormats.h>
 #include <wpe/WPEClipboard.h>
 #include <wpe/WPEDRMDevice.h>
 #include <wpe/WPEDefines.h>
@@ -40,6 +40,7 @@
 #include <wpe/WPEKeymap.h>
 #include <wpe/WPEScreen.h>
 #include <wpe/WPESettings.h>
+#include <wpe/WPEToplevel.h>
 #include <wpe/WPEView.h>
 
 G_BEGIN_DECLS
@@ -60,22 +61,24 @@ struct _WPEDisplayClass
 {
     GObjectClass parent_class;
 
-    gboolean                (* connect)                       (WPEDisplay *display,
-                                                               GError    **error);
-    WPEView                *(* create_view)                   (WPEDisplay *display);
-    gpointer                (* get_egl_display)               (WPEDisplay *display,
-                                                               GError    **error);
-    WPEKeymap              *(* get_keymap)                    (WPEDisplay *display);
-    WPEClipboard           *(* get_clipboard)                 (WPEDisplay *display);
-    WPEBufferDMABufFormats *(* get_preferred_dma_buf_formats) (WPEDisplay *display);
-    guint                   (* get_n_screens)                 (WPEDisplay *display);
-    WPEScreen              *(* get_screen)                    (WPEDisplay *display,
-                                                               guint       index);
-    WPEDRMDevice           *(* get_drm_device)                (WPEDisplay *display);
-    gboolean                (* use_explicit_sync)             (WPEDisplay *display);
-    WPEInputMethodContext  *(* create_input_method_context)   (WPEDisplay *display,
-                                                               WPEView    *view);
-    WPEGamepadManager      *(* create_gamepad_manager)        (WPEDisplay *display);
+    gboolean                (* connect)                      (WPEDisplay *display,
+                                                              GError    **error);
+    WPEView                *(* create_view)                  (WPEDisplay *display);
+    gpointer                (* get_egl_display)              (WPEDisplay *display,
+                                                              GError    **error);
+    WPEKeymap              *(* get_keymap)                   (WPEDisplay *display);
+    WPEClipboard           *(* get_clipboard)                (WPEDisplay *display);
+    WPEBufferFormats       *(* get_preferred_buffer_formats) (WPEDisplay *display);
+    guint                   (* get_n_screens)                (WPEDisplay *display);
+    WPEScreen              *(* get_screen)                   (WPEDisplay *display,
+                                                              guint       index);
+    WPEDRMDevice           *(* get_drm_device)               (WPEDisplay *display);
+    gboolean                (* use_explicit_sync)            (WPEDisplay *display);
+    WPEInputMethodContext  *(* create_input_method_context)  (WPEDisplay *display,
+                                                              WPEView    *view);
+    WPEToplevel            *(* create_toplevel)              (WPEDisplay *display,
+                                                              guint       max_views);
+    WPEGamepadManager      *(* create_gamepad_manager)       (WPEDisplay *display);
 
     gpointer padding[32];
 };
@@ -95,34 +98,36 @@ typedef enum {
     WPE_DISPLAY_ERROR_CONNECTION_LOST
 } WPEDisplayError;
 
-WPE_API GQuark                   wpe_display_error_quark                   (void);
-WPE_API WPEDisplay              *wpe_display_get_default                   (void);
-WPE_API WPEDisplay              *wpe_display_get_primary                   (void);
-WPE_API void                     wpe_display_set_primary                   (WPEDisplay *display);
-WPE_API gboolean                 wpe_display_connect                       (WPEDisplay *display,
-                                                                            GError    **error);
-WPE_API void                     wpe_display_disconnected                  (WPEDisplay *display,
-                                                                            GError     *error);
-WPE_API gpointer                 wpe_display_get_egl_display               (WPEDisplay *display,
-                                                                            GError    **error);
-WPE_API WPEKeymap               *wpe_display_get_keymap                    (WPEDisplay *display);
-WPE_API WPEClipboard            *wpe_display_get_clipboard                 (WPEDisplay *display);
-WPE_API WPEBufferDMABufFormats  *wpe_display_get_preferred_dma_buf_formats (WPEDisplay *display);
-WPE_API guint                    wpe_display_get_n_screens                 (WPEDisplay *display);
-WPE_API WPEScreen               *wpe_display_get_screen                    (WPEDisplay *display,
-                                                                            guint       index);
-WPE_API void                     wpe_display_screen_added                  (WPEDisplay *display,
-                                                                            WPEScreen *screen);
-WPE_API void                     wpe_display_screen_removed                (WPEDisplay *display,
-                                                                            WPEScreen *screen);
-WPE_API WPEDRMDevice            *wpe_display_get_drm_device                (WPEDisplay *display);
-WPE_API gboolean                 wpe_display_use_explicit_sync             (WPEDisplay *display);
+WPE_API GQuark                   wpe_display_error_quark                  (void);
+WPE_API WPEDisplay              *wpe_display_get_default                  (void);
+WPE_API WPEDisplay              *wpe_display_get_primary                  (void);
+WPE_API void                     wpe_display_set_primary                  (WPEDisplay *display);
+WPE_API gboolean                 wpe_display_connect                      (WPEDisplay *display,
+                                                                           GError    **error);
+WPE_API void                     wpe_display_disconnected                 (WPEDisplay *display,
+                                                                           GError     *error);
+WPE_API gpointer                 wpe_display_get_egl_display              (WPEDisplay *display,
+                                                                           GError    **error);
+WPE_API WPEKeymap               *wpe_display_get_keymap                   (WPEDisplay *display);
+WPE_API WPEClipboard            *wpe_display_get_clipboard                (WPEDisplay *display);
+WPE_API WPEBufferFormats        *wpe_display_get_preferred_buffer_formats (WPEDisplay *display);
+WPE_API guint                    wpe_display_get_n_screens                (WPEDisplay *display);
+WPE_API WPEScreen               *wpe_display_get_screen                   (WPEDisplay *display,
+                                                                           guint       index);
+WPE_API void                     wpe_display_screen_added                 (WPEDisplay *display,
+                                                                           WPEScreen *screen);
+WPE_API void                     wpe_display_screen_removed               (WPEDisplay *display,
+                                                                           WPEScreen *screen);
+WPE_API WPEDRMDevice            *wpe_display_get_drm_device               (WPEDisplay *display);
+WPE_API gboolean                 wpe_display_use_explicit_sync            (WPEDisplay *display);
 
-WPE_API WPESettings             *wpe_display_get_settings                  (WPEDisplay *display);
-WPE_API WPEAvailableInputDevices wpe_display_get_available_input_devices   (WPEDisplay *display);
-WPE_API void                     wpe_display_set_available_input_devices   (WPEDisplay *display,
-                                                                            WPEAvailableInputDevices devices);
-WPE_API WPEGamepadManager       *wpe_display_create_gamepad_manager        (WPEDisplay *display);
+WPE_API WPESettings             *wpe_display_get_settings                 (WPEDisplay *display);
+WPE_API WPEAvailableInputDevices wpe_display_get_available_input_devices  (WPEDisplay *display);
+WPE_API void                     wpe_display_set_available_input_devices  (WPEDisplay *display,
+                                                                           WPEAvailableInputDevices devices);
+WPE_API WPEToplevel             *wpe_display_create_toplevel              (WPEDisplay *display,
+                                                                           guint       max_views);
+WPE_API WPEGamepadManager       *wpe_display_create_gamepad_manager       (WPEDisplay *display);
 
 G_END_DECLS
 

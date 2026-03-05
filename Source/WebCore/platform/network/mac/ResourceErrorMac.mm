@@ -267,11 +267,6 @@ NSError *ResourceError::nsError() const
     return m_platformError.get();
 }
 
-RetainPtr<NSError> ResourceError::protectedNSError() const
-{
-    return nsError();
-}
-
 NSError *ResourceError::nsError(NSError *underlyingError) const
 {
     if (isNull()) {
@@ -295,19 +290,9 @@ CFErrorRef ResourceError::cfError() const
     return bridge_cast(nsError());
 }
 
-RetainPtr<CFErrorRef> ResourceError::protectedCFError() const
-{
-    return cfError();
-}
-
 CFErrorRef ResourceError::cfError(CFErrorRef underlyingError) const
 {
     return bridge_cast(nsError(bridge_cast(underlyingError)));
-}
-
-RetainPtr<CFErrorRef> ResourceError::protectedCFError(CFErrorRef underlyingError) const
-{
-    return cfError(underlyingError);
 }
 
 ResourceError::operator CFErrorRef() const

@@ -165,234 +165,6 @@ function match(strArg)
     return @matchSlow(this, str);
 }
 
-@overriddenName="[Symbol.matchAll]"
-function matchAll(strArg)
-{
-    "use strict";
-
-    var regExp = this;
-    if (!@isObject(regExp))
-        @throwTypeError("RegExp.prototype.@@matchAll requires |this| to be an Object");
-
-    var string = @toString(strArg);
-    var Matcher = @speciesConstructor(regExp, @RegExp);
-
-    var flags = @toString(regExp.flags);
-    var matcher = new Matcher(regExp, flags);
-    matcher.lastIndex = @toLength(regExp.lastIndex);
-
-    var global = @stringIncludesInternal.@call(flags, "g");
-    var fullUnicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
-
-    return @regExpStringIteratorCreate(matcher, string, global, fullUnicode);
-}
-
-@linkTimeConstant
-function getSubstitution(matched, str, position, captures, namedCaptures, replacement)
-{
-    "use strict";
-
-    var matchLength = matched.length;
-    var stringLength = str.length;
-    var tailPos = position + matchLength;
-    var m = captures.length;
-    var replacementLength = replacement.length;
-    var result = "";
-    var lastStart = 0;
-
-    for (var start = 0; start = @stringIndexOfInternal.@call(replacement, "$", lastStart), start !== -1; lastStart = start) {
-        if (start - lastStart > 0)
-            result = result + @stringSubstring.@call(replacement, lastStart, start);
-        start++;
-        if (start >= replacementLength)
-            result = result + "$";
-        else {
-            var ch = replacement[start];
-            switch (ch)
-            {
-            case "$":
-                result = result + "$";
-                start++;
-                break;
-            case "&":
-                result = result + matched;
-                start++;
-                break;
-            case "`":
-                if (position > 0)
-                    result = result + @stringSubstring.@call(str, 0, position);
-                start++;
-                break;
-            case "'":
-                if (tailPos < stringLength)
-                    result = result + @stringSubstring.@call(str, tailPos);
-                start++;
-                break;
-            case "<":
-                if (namedCaptures !== @undefined) {
-                    var groupNameStartIndex = start + 1;
-                    var groupNameEndIndex = @stringIndexOfInternal.@call(replacement, ">", groupNameStartIndex);
-                    if (groupNameEndIndex !== -1) {
-                        var groupName = @stringSubstring.@call(replacement, groupNameStartIndex, groupNameEndIndex);
-                        var capture = namedCaptures[groupName];
-                        if (capture !== @undefined)
-                            result = result + @toString(capture);
-
-                        start = groupNameEndIndex + 1;
-                        break;
-                    }
-                }
-
-                result = result + "$<";
-                start++;
-                break;
-            default:
-                var chCode = ch.@charCodeAt(0);
-                if (chCode >= 0x30 && chCode <= 0x39) {
-                    var originalStart = start - 1;
-                    start++;
-
-                    var n = chCode - 0x30;
-                    if (n > m) {
-                        result = result + @stringSubstring.@call(replacement, originalStart, start);
-                        break;
-                    }
-
-                    if (start < replacementLength) {
-                        var nextChCode = replacement.@charCodeAt(start);
-                        if (nextChCode >= 0x30 && nextChCode <= 0x39) {
-                            var nn = 10 * n + nextChCode - 0x30;
-                            if (nn <= m) {
-                                n = nn;
-                                start++;
-                            }
-                        }
-                    }
-
-                    if (n == 0) {
-                        result = result + @stringSubstring.@call(replacement, originalStart, start);
-                        break;
-                    }
-
-                    var capture = captures[n - 1];
-                    if (capture !== @undefined)
-                        result = result + capture;
-                } else
-                    result = result + "$";
-                break;
-            }
-        }
-    }
-
-    return result + @stringSubstring.@call(replacement, lastStart);
-}
-
-@overriddenName="[Symbol.replace]"
-function replace(strArg, replace)
-{
-    "use strict";
-
-    if (!@isObject(this))
-        @throwTypeError("RegExp.prototype.@@replace requires that |this| be an Object");
-
-    var regexp = this;
-
-    var str = @toString(strArg);
-    var stringLength = str.length;
-    var functionalReplace = @isCallable(replace);
-
-    if (!functionalReplace)
-        replace = @toString(replace);
-
-    var flags = @toString(regexp.flags);
-    var global = @stringIncludesInternal.@call(flags, "g");
-    var unicode = false;
-
-    if (global) {
-        unicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
-        regexp.lastIndex = 0;
-    }
-
-    var resultList = [];
-    var result;
-    var done = false;
-    while (!done) {
-        result = @regExpExec(regexp, str);
-
-        if (result === null)
-            done = true;
-        else {
-            @arrayPush(resultList, result);
-            if (!global)
-                done = true;
-            else {
-                var matchStr = @toString(result[0]);
-
-                if (!matchStr.length) {
-                    var thisIndex = @toLength(regexp.lastIndex);
-                    regexp.lastIndex = @advanceStringIndex(str, thisIndex, unicode);
-                }
-            }
-        }
-    }
-
-    var accumulatedResult = "";
-    var nextSourcePosition = 0;
-
-    for (var i = 0, resultListLength = resultList.length; i < resultListLength; ++i) {
-        var result = resultList[i];
-        var nCaptures = result.length - 1;
-        if (nCaptures < 0)
-            nCaptures = 0;
-        var matched = @toString(result[0]);
-        var matchLength = matched.length;
-        var position = @toIntegerOrInfinity(result.index);
-        position = (position > stringLength) ? stringLength : position;
-        position = (position < 0) ? 0 : position;
-
-        var captures = [];
-        for (var n = 1; n <= nCaptures; n++) {
-            var capN = result[n];
-            if (capN !== @undefined)
-                capN = @toString(capN);
-            @arrayPush(captures, capN);
-        }
-
-        var replacement;
-        var namedCaptures = result.groups;
-
-        if (functionalReplace) {
-            var replacerArgs = [ matched ];
-            for (var j = 0; j < captures.length; j++)
-                @arrayPush(replacerArgs, captures[j]);
-
-            @arrayPush(replacerArgs, position);
-            @arrayPush(replacerArgs, str);
-
-            if (namedCaptures !== @undefined)
-                @arrayPush(replacerArgs, namedCaptures);
-
-            var replValue = replace.@apply(@undefined, replacerArgs);
-            replacement = @toString(replValue);
-        } else {
-            if (namedCaptures !== @undefined)
-                namedCaptures = @toObject(namedCaptures, "RegExp.prototype[Symbol.replace] requires 'groups' property of a match not be null");
-
-            replacement = @getSubstitution(matched, str, position, captures, namedCaptures, replace);
-        }
-
-        if (position >= nextSourcePosition) {
-            accumulatedResult = accumulatedResult + @stringSubstring.@call(str, nextSourcePosition, position) + replacement;
-            nextSourcePosition = position + matchLength;
-        }
-    }
-
-    if (nextSourcePosition >= stringLength)
-        return  accumulatedResult;
-
-    return accumulatedResult + @stringSubstring.@call(str, nextSourcePosition);
-}
-
 @linkTimeConstant
 function hasObservableSideEffectsForRegExpSplit(regexp)
 {
@@ -466,7 +238,11 @@ function split(string, limit)
     // 4. Let C be ? SpeciesConstructor(rx, %RegExp%).
     var speciesConstructor = @speciesConstructor(regexp, @RegExp);
 
-    if (speciesConstructor === @RegExp && !@hasObservableSideEffectsForRegExpSplit(regexp))
+    // Skip fast path if limit is number or undefined
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1287525
+    var isLimitNumberOrUndefined = typeof limit === "number" || limit === @undefined;
+
+    if (speciesConstructor === @RegExp && !@hasObservableSideEffectsForRegExpSplit(regexp) && isLimitNumberOrUndefined)
         return @regExpSplitFast.@call(regexp, str, limit);
 
     // 5. Let flags be ? ToString(? Get(rx, "flags")).
@@ -484,7 +260,7 @@ function split(string, limit)
 
     // We need to check again for RegExp subclasses that will fail the speciesConstructor test
     // but can still use the fast path after we invoke the constructor above.
-    if (!@hasObservableSideEffectsForRegExpSplit(splitter))
+    if (!@hasObservableSideEffectsForRegExpSplit(splitter) && isLimitNumberOrUndefined)
         return @regExpSplitFast.@call(splitter, str, limit);
 
     // 11. Let A be ArrayCreate(0).
@@ -551,8 +327,9 @@ function split(string, limit)
                 // 5. Let p be e.
                 position = endPosition;
                 // 6. Let numberOfCaptures be ? ToLength(? Get(z, "length")).
+                var numberOfCaptures = matches.length;
                 // 7. Let numberOfCaptures be max(numberOfCaptures-1, 0).
-                var numberOfCaptures = matches.length > 1 ? matches.length - 1 : 0;
+                numberOfCaptures = numberOfCaptures > 1 ? numberOfCaptures - 1 : 0;
 
                 // 8. Let i be 1.
                 var i = 1;

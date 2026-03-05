@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<style>
+
+@keyframes anim {
+    from { opacity: 0; filter: blur(4px) drop-shadow(rgba(255, 255, 255, 0) 0px 0px 0px) }
+    to   { opacity: 0; filter: blur(0px) drop-shadow(rgb(235, 235, 235) 0px 0px 7px) }
+}
+
+div {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+	animation: anim 1s;
+    filter: blur(4px) drop-shadow(rgba(255, 255, 255, 0) 0px 0px 0px)
+}
+
+</style>
+
+<div>PASS if this does not crash.</div>
+
+<script>
+
+window.testRunner?.dumpAsText();
+
+</script>

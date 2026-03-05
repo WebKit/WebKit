@@ -235,9 +235,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         hb_buffer_reset(buffer.get());
     };
     if (m_run->ltr())
-        forEachHBRun<LTR>(characters, WTFMove(shapeFunction));
+        forEachHBRun<LTR>(characters, WTF::move(shapeFunction));
     else
-        forEachHBRun<RTL>(characters, WTFMove(shapeFunction));
+        forEachHBRun<RTL>(characters, WTF::move(shapeFunction));
 }
 
 } // namespace WebCore

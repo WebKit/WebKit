@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
 
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>

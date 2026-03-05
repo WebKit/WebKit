@@ -58,7 +58,7 @@ public:
     void remove(RequestInfo&&, CacheQueryOptions&&, DOMPromiseDeferred<IDLBoolean>&&);
     void keys(std::optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     DOMCacheIdentifier identifier() const { return m_identifier; }
 
     using MatchCallback = CompletionHandler<void(ExceptionOr<RefPtr<FetchResponse>>)>;

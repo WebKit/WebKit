@@ -44,13 +44,13 @@ namespace Calculation {
 
 Ref<Value> Value::create(CSS::Category category, CSS::Range range, Tree&& tree)
 {
-    return adoptRef(*new Value(category, range, WTFMove(tree)));
+    return adoptRef(*new Value(category, range, WTF::move(tree)));
 }
 
 Value::Value(CSS::Category category, CSS::Range range, Tree&& tree)
     : m_category(category)
     , m_range(range)
-    , m_tree(WTFMove(tree))
+    , m_tree(WTF::move(tree))
 {
 }
 
@@ -80,7 +80,7 @@ Tree Value::copyTree() const
 Child Value::copyRoot() const
 {
     auto tree = copyTree();
-    return { WTFMove(tree.root) };
+    return { WTF::move(tree.root) };
 }
 
 bool Value::operator==(const Value& other) const

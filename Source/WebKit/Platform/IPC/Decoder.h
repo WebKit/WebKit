@@ -29,6 +29,8 @@
 #include "MessageNames.h"
 #include "ReceiverMatcher.h"
 #include "SyncRequestID.h"
+#include <bmalloc/TZoneHeap.h>
+#include <bmalloc/bmalloc.h>
 #include <memory>
 #include <span>
 #include <wtf/ArgumentCoder.h>
@@ -48,11 +50,6 @@
 
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"
-#endif
-
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/TZoneHeap.h>
-#include <bmalloc/bmalloc.h>
 #endif
 
 namespace IPC {
@@ -100,16 +97,16 @@ public:
     bool matches(const ReceiverMatcher& matcher) const { return matcher.matches(messageReceiverName(), destinationID()); }
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
-    ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
+    ShouldDispatchWhenWaitingForSyncReply NODELETE shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || m_isAllowedWhenWaitingForSyncReplyOverride; }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
-    bool shouldUseFullySynchronousModeForTesting() const;
-    bool shouldMaintainOrderingWithAsyncMessages() const;
+    bool NODELETE shouldUseFullySynchronousModeForTesting() const;
+    bool NODELETE shouldMaintainOrderingWithAsyncMessages() const;
     void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
     bool isAsyncReplyMessage() const { return isAsyncReply(messageName()); }
 
 #if PLATFORM(MAC)
-    void setImportanceAssertion(ImportanceAssertion&&);
+    void NODELETE setImportanceAssertion(ImportanceAssertion&&);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -127,19 +124,19 @@ public:
     std::span<const uint8_t> span() const { return m_buffer; }
     size_t currentBufferOffset() const { return std::distance(m_buffer.begin(), m_bufferPosition); }
 
-    WARN_UNUSED_RETURN bool isValid() const { return !!m_buffer.data(); }
+    [[nodiscard]] bool isValid() const { return !!m_buffer.data(); }
     void markInvalid()
     {
         auto buffer = std::exchange(m_buffer, { });
         if (m_bufferDeallocator && !buffer.empty())
-            m_bufferDeallocator(WTFMove(buffer));
+            m_bufferDeallocator(WTF::move(buffer));
     }
 
     template<typename T>
-    WARN_UNUSED_RETURN std::span<const T> decodeSpan(size_t);
+    [[nodiscard]] std::span<const T> decodeSpan(size_t);
 
     template<typename T>
-    WARN_UNUSED_RETURN std::optional<T> decodeObject();
+    [[nodiscard]] std::optional<T> decodeObject();
 
     template<typename T>
     Decoder& operator>>(std::optional<T>& t)
@@ -181,14 +178,14 @@ public:
     }
 
 #if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-    AllowedClassHashSet& allowedClasses() { return m_allowedClasses; }
+    AllowedClassHashSet& allowedClasses() LIFETIME_BOUND { return m_allowedClasses; }
 #endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 #endif // __OBJC__
 
     std::optional<Attachment> takeLastAttachment();
 
     void addIndexOfDecodingFailure(uint32_t indexOfObjectFailingDecoding) { m_indicesOfObjectsFailingDecoding.append(indexOfObjectFailingDecoding); }
-    const Vector<uint32_t>& indicesOfObjectsFailingDecoding() const { return m_indicesOfObjectsFailingDecoding; }
+    const Vector<uint32_t>& indicesOfObjectsFailingDecoding() const LIFETIME_BOUND { return m_indicesOfObjectsFailingDecoding; }
 
 private:
     Decoder(std::span<const uint8_t> buffer, BufferDeallocator&&, Vector<Attachment>&&);

@@ -129,6 +129,7 @@ VP9_CX_SRCS-$(HAVE_SSSE3) += encoder/x86/highbd_temporal_filter_ssse3.c
 VP9_CX_SRCS-$(HAVE_SSE4_1) += encoder/x86/highbd_temporal_filter_sse4.c
 VP9_CX_SRCS-$(HAVE_AVX2) += encoder/x86/highbd_temporal_filter_avx2.c
 VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_highbd_temporal_filter_neon.c
+VP9_CX_SRCS-$(HAVE_SVE2) += encoder/arm/neon/vp9_highbd_temporal_filter_sve2.c
 endif
 
 VP9_CX_SRCS-$(HAVE_SSE2) += encoder/x86/vp9_dct_sse2.asm
@@ -179,6 +180,7 @@ VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/arm/neon/vp9_temporal_filt
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/arm/neon/vp9_temporal_filter_neon_dotprod.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/arm/neon/vp9_temporal_filter_neon_i8mm.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/arm/neon/vp9_highbd_temporal_filter_neon.c
+VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/arm/neon/vp9_highbd_temporal_filter_sve2.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_alt_ref_aq.h
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_alt_ref_aq.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_aq_variance.c

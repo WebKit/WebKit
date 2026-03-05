@@ -79,7 +79,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
 #if ENABLE(SCROLLING_THREAD)
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ReasonsForSynchronousScrolling] OptionSet<WebCore::SynchronousScrollingReason> synchronousScrollingReasons()
 #endif
-    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::RequestedScrollData requestedScrollData()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::ScrollRequestData requestedScrollData()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::SnapOffsetsInfo] WebCore::FloatScrollSnapOffsetsInfo snapOffsetsInfo()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex] std::optional<unsigned> currentHorizontalSnapPointIndex()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex] std::optional<unsigned> currentVerticalSnapPointIndex()
@@ -107,6 +107,9 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::FooterHeight] int footerHeight()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::BehaviorForFixedElements] WebCore::ScrollBehaviorForFixedElements scrollBehaviorForFixedElements()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ObscuredContentInsets] WebCore::FloatBoxExtent obscuredContentInsets()
+#if ENABLE(BANNER_VIEW_OVERLAYS)
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::BannerViewHeight] float bannerViewHeight()
+#endif
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport] bool visualViewportIsSmallerThanLayoutViewport()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled] bool asyncFrameOrOverflowScrollingEnabled()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking] bool wheelEventGesturesBecomeNonBlocking();
@@ -134,7 +137,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
 #if ENABLE(SCROLLING_THREAD)
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ReasonsForSynchronousScrolling] OptionSet<WebCore::SynchronousScrollingReason> synchronousScrollingReasons()
 #endif
-    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::RequestedScrollData requestedScrollData()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::ScrollRequestData requestedScrollData()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::SnapOffsetsInfo] WebCore::FloatScrollSnapOffsetsInfo snapOffsetsInfo()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex] std::optional<unsigned> currentHorizontalSnapPointIndex()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex] std::optional<unsigned> currentVerticalSnapPointIndex()
@@ -176,7 +179,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
 #if ENABLE(SCROLLING_THREAD)
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ReasonsForSynchronousScrolling] OptionSet<WebCore::SynchronousScrollingReason> synchronousScrollingReasons()
 #endif
-    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::RequestedScrollData requestedScrollData()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::ScrollRequestData requestedScrollData()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::SnapOffsetsInfo] WebCore::FloatScrollSnapOffsetsInfo snapOffsetsInfo()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex] std::optional<unsigned> currentHorizontalSnapPointIndex()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex] std::optional<unsigned> currentVerticalSnapPointIndex()

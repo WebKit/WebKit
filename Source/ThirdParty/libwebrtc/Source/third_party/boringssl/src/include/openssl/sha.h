@@ -15,8 +15,7 @@
 #ifndef OPENSSL_HEADER_SHA_H
 #define OPENSSL_HEADER_SHA_H
 
-#include <openssl/base.h>        // IWYU pragma: export
-#include <openssl/bcm_public.h>  // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 // `sha.h` historically included SHA-1 and SHA-2 hash functions. So, for
 // backward compatibility `sha2.h` is included here. New uses of this header
@@ -61,6 +60,29 @@ OPENSSL_EXPORT uint8_t *SHA1(const uint8_t *data, size_t len,
 // |block|.
 OPENSSL_EXPORT void SHA1_Transform(SHA_CTX *sha,
                                    const uint8_t block[SHA_CBLOCK]);
+
+struct sha_state_st {
+#if defined(__cplusplus) || defined(OPENSSL_WINDOWS)
+  uint32_t h[5];
+#else
+  // wpa_supplicant accesses |h0|..|h4| so we must support those names for
+  // compatibility with it until it can be updated. Anonymous unions are only
+  // standard in C11, so disable this workaround in C++.
+  union {
+    uint32_t h[5];
+    struct {
+      uint32_t h0;
+      uint32_t h1;
+      uint32_t h2;
+      uint32_t h3;
+      uint32_t h4;
+    };
+  };
+#endif
+  uint32_t Nl, Nh;
+  uint8_t data[SHA_CBLOCK];
+  unsigned num;
+} /* SHA_CTX */;
 
 // CRYPTO_fips_186_2_prf derives |out_len| bytes from |xkey| using the PRF
 // defined in FIPS 186-2, Appendix 3.1, with change notice 1 applied. The b

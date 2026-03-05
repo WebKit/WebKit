@@ -25,20 +25,11 @@
 
 #pragma once
 
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class PopupOpeningObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PopupOpeningObserver> : std::true_type { };
-}
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
-class PopupOpeningObserver : public CanMakeWeakPtr<PopupOpeningObserver> {
+class PopupOpeningObserver : public AbstractRefCountedAndCanMakeWeakPtr<PopupOpeningObserver> {
 public:
     virtual void willOpenPopup() = 0;
 

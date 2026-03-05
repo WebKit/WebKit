@@ -42,6 +42,12 @@
 #include <QuartzCore/QuartzCore.h>
 #endif
 
+#if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkM44.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
 namespace TestWebKitAPI {
 
 static void testIdentity(const WebCore::TransformationMatrix& transform)
@@ -1170,7 +1176,7 @@ TEST(TransformationMatrix, Equality)
     ASSERT_TRUE(test3 != test4);
 }
 
-#if USE(CA)
+#if USE(CA) || USE(SKIA)
 static void testTranslationMatrix(const WebCore::TransformationMatrix& matrix)
 {
     EXPECT_DOUBLE_EQ(1.0, matrix.m11());
@@ -1222,6 +1228,31 @@ TEST(TransformationMatrix, Casting)
     EXPECT_DOUBLE_EQ(3.0, caFromWK.m42);
     EXPECT_DOUBLE_EQ(2.0, caFromWK.m43);
     EXPECT_DOUBLE_EQ(1.0, caFromWK.m44);
+#elif USE(SKIA)
+    SkM44 m44 = SkM44::Translate(10.0f, 15.0f, 30.0f);
+    WebCore::TransformationMatrix fromSkiaM44(m44);
+    testTranslationMatrix(fromSkiaM44);
+
+    SkM44 m44FromWK = test;
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(0, 0), 16.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(1, 0), 15.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(2, 0), 14.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(3, 0), 13.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(0, 1), 12.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(1, 1), 11.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(2, 1), 10.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(3, 1), 9.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(0, 2), 8.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(1, 2), 7.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(2, 2), 6.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(3, 2), 5.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(0, 3), 4.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(1, 3), 3.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(2, 3), 2.0);
+    EXPECT_DOUBLE_EQ(m44FromWK.rc(3, 3), 1.0);
+
+    WebCore::TransformationMatrix fromMM4 = m44FromWK;
+    EXPECT_TRUE(fromMM4 == test);
 #else
     UNUSED_VARIABLE(test);
 #endif
@@ -1239,6 +1270,18 @@ TEST(TransformationMatrix, Casting)
     EXPECT_DOUBLE_EQ(11.0, cgFromWK.d);
     EXPECT_DOUBLE_EQ(4.0, cgFromWK.tx);
     EXPECT_DOUBLE_EQ(3.0, cgFromWK.ty);
+#elif USE(SKIA)
+    SkMatrix skMatrix = SkMatrix::MakeAll(6.0, 4.0, 2.0, 5.0, 3.0, 1.0, 0, 0, SK_Scalar1);
+    WebCore::TransformationMatrix fromSkMatrix = WebCore::AffineTransform(skMatrix);
+    testAffineLikeConstruction(fromSkMatrix);
+
+    SkMatrix skMatrixFromWK = test.toAffineTransform();
+    EXPECT_DOUBLE_EQ(16.0, skMatrixFromWK.get(SkMatrix::kMScaleX));
+    EXPECT_DOUBLE_EQ(15.0, skMatrixFromWK.get(SkMatrix::kMSkewY));
+    EXPECT_DOUBLE_EQ(12.0, skMatrixFromWK.get(SkMatrix::kMSkewX));
+    EXPECT_DOUBLE_EQ(11.0, skMatrixFromWK.get(SkMatrix::kMScaleY));
+    EXPECT_DOUBLE_EQ(4.0, skMatrixFromWK.get(SkMatrix::kMTransX));
+    EXPECT_DOUBLE_EQ(3.0, skMatrixFromWK.get(SkMatrix::kMTransY));
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))

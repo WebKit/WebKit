@@ -48,7 +48,7 @@ private:
 
 inline AttributeChangeInvalidation::AttributeChangeInvalidation(Ref<Element>&& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
     : m_isEnabled(element->needsStyleInvalidation())
-    , m_element(WTFMove(element))
+    , m_element(WTF::move(element))
 {
     if (!m_isEnabled)
         return;

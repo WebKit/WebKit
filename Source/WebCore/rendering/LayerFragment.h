@@ -90,7 +90,7 @@ public:
 
     LayerFragment() = default;
 
-    LayerFragment(Rects&& rects) { this->rects = WTFMove(rects); }
+    LayerFragment(Rects&& rects) { this->rects = WTF::move(rects); }
 
     LayoutRect layerBounds() const { return rects.layerBounds(); }
 

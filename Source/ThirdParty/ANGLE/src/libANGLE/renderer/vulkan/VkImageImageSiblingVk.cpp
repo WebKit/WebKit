@@ -49,9 +49,10 @@ angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)
     ANGLE_VK_CHECK(displayVk, formatID != angle::FormatID::NONE, VK_ERROR_FORMAT_NOT_SUPPORTED);
 
     const vk::Format &vkFormat = renderer->getFormat(formatID);
-    const vk::ImageAccess imageAccess =
-        isRenderable(nullptr) ? vk::ImageAccess::Renderable : vk::ImageAccess::SampleOnly;
-    const angle::FormatID actualImageFormatID = vkFormat.getActualImageFormatID(imageAccess);
+    const vk::ImageFormatSupport formatSupport = isRenderable(nullptr)
+                                                     ? vk::ImageFormatSupport::Renderable
+                                                     : vk::ImageFormatSupport::SampleOnly;
+    const angle::FormatID actualImageFormatID  = vkFormat.getActualImageFormatID(formatSupport);
     const angle::Format &format               = angle::Format::Get(actualImageFormatID);
 
     angle::FormatID intendedFormatID;

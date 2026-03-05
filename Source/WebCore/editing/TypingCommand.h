@@ -90,12 +90,12 @@ public:
 private:
     static Ref<TypingCommand> create(Ref<Document>&& document, Type command, const String& text = emptyString(), OptionSet<Option> options = { }, TextGranularity granularity = TextGranularity::CharacterGranularity, TextCompositionType compositionType = TextCompositionType::None)
     {
-        return adoptRef(*new TypingCommand(WTFMove(document), command, text, options, granularity, compositionType));
+        return adoptRef(*new TypingCommand(WTF::move(document), command, text, options, granularity, compositionType));
     }
 
     static Ref<TypingCommand> create(Ref<Document>&& document, Type command, const String& text, OptionSet<Option> options, TextCompositionType compositionType)
     {
-        return adoptRef(*new TypingCommand(WTFMove(document), command, text, options, TextGranularity::CharacterGranularity, compositionType));
+        return adoptRef(*new TypingCommand(WTF::move(document), command, text, options, TextGranularity::CharacterGranularity, compositionType));
     }
 
     TypingCommand(Ref<Document>&&, Type, const String& text, OptionSet<Option>, TextGranularity, TextCompositionType);

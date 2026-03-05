@@ -42,7 +42,7 @@ class InbandChapterTrackPrivateAVFObjC : public InbandTextTrackPrivate {
 public:
     static Ref<InbandChapterTrackPrivateAVFObjC> create(RetainPtr<NSLocale> locale, TrackID trackID)
     {
-        return adoptRef(*new InbandChapterTrackPrivateAVFObjC(WTFMove(locale), trackID));
+        return adoptRef(*new InbandChapterTrackPrivateAVFObjC(WTF::move(locale), trackID));
     }
 
     virtual ~InbandChapterTrackPrivateAVFObjC() = default;

@@ -34,9 +34,9 @@ namespace WebCore {
 bool isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&);
 bool verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
 ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit&, const std::optional<DOMRectInit>&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
-size_t videoPixelFormatToPlaneCount(VideoPixelFormat);
-size_t videoPixelFormatToSampleByteSizePerPlane();
-size_t videoPixelFormatToSubSampling(VideoPixelFormat, size_t);
+size_t NODELETE videoPixelFormatToPlaneCount(VideoPixelFormat);
+size_t NODELETE videoPixelFormatToSampleByteSizePerPlane();
+size_t NODELETE videoPixelFormatToSubSampling(VideoPixelFormat, size_t);
 
 struct CombinedPlaneLayout {
     size_t allocationSize { 0 };
@@ -49,7 +49,7 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
 
 void initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame&, const WebCodecsVideoFrame::Init&, const DOMRectInit&, size_t defaultDisplayWidth, size_t defaultDisplayHeight);
 
-VideoColorSpaceInit videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
+VideoColorSpaceInit NODELETE videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
 
 bool validateVideoFrameInit(const WebCodecsVideoFrame::Init&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
 

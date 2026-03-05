@@ -38,10 +38,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TileCoverageMap);
 TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)
     , m_updateTimer(*this, &TileCoverageMap::updateTimerFired)
-    , m_layer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeSimpleLayer, this))
-    , m_visibleViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
-    , m_layoutViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
-    , m_coverageRectIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_layer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeSimpleLayer, this))
+    , m_visibleViewportIndicatorLayer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_layoutViewportIndicatorLayer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_coverageRectIndicatorLayer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
 {
     auto obscuredContentInsets = controller.obscuredContentInsets();
     m_position = { obscuredContentInsets.left(), obscuredContentInsets.top() };
@@ -51,7 +51,7 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_layer.get().setBorderColor(Color::black);
     m_layer.get().setBorderWidth(1);
     m_layer.get().setPosition(FloatPoint(2, 2));
-    m_layer.get().setContentsScale(m_controller.deviceScaleFactor());
+    m_layer.get().setContentsScale(controller.deviceScaleFactor());
 
     m_visibleViewportIndicatorLayer.get().setName(MAKE_STATIC_STRING_IMPL("visible viewport indicator"));
     m_visibleViewportIndicatorLayer.get().setBorderWidth(2);
@@ -70,7 +70,7 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_layer.get().appendSublayer(m_coverageRectIndicatorLayer);
     m_layer.get().appendSublayer(m_visibleViewportIndicatorLayer);
     
-    if (m_controller.layoutViewportRect())
+    if (controller.layoutViewportRect())
         m_layer.get().appendSublayer(m_layoutViewportIndicatorLayer);
 
     update();
@@ -94,20 +94,21 @@ void TileCoverageMap::updateTimerFired()
 
 void TileCoverageMap::update()
 {
-    FloatRect containerBounds = m_controller.bounds();
-    FloatRect visibleRect = m_controller.visibleRect();
-    FloatRect coverageRect = m_controller.coverageRect();
+    CheckedRef controller = m_controller.get();
+    FloatRect containerBounds = controller->bounds();
+    FloatRect visibleRect = controller->visibleRect();
+    FloatRect coverageRect = controller->coverageRect();
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
 
     float widthScale = 1;
     float scale = 1;
     if (!containerBounds.isEmpty()) {
         widthScale = std::min<float>(visibleRect.width() / containerBounds.width(), 0.1);
-        float visibleHeight = visibleRect.height() - std::min(m_controller.obscuredContentInsets().top(), visibleRect.y());
+        float visibleHeight = visibleRect.height() - std::min(controller->obscuredContentInsets().top(), visibleRect.y());
         scale = std::min(widthScale, visibleHeight / containerBounds.height());
     }
 
-    float indicatorScale = scale * m_controller.tileGrid().scale();
+    float indicatorScale = scale * controller->tileGrid().scale();
 
     FloatRect mapBounds = containerBounds;
     mapBounds.scale(indicatorScale);
@@ -121,7 +122,7 @@ void TileCoverageMap::update()
     m_visibleViewportIndicatorLayer->setPosition(visibleRect.location());
     m_visibleViewportIndicatorLayer->setBounds(FloatRect(FloatPoint(), visibleRect.size()));
 
-    if (auto layoutViewportRect = m_controller.layoutViewportRect()) {
+    if (auto layoutViewportRect = controller->layoutViewportRect()) {
         FloatRect layoutRect = layoutViewportRect.value();
         layoutRect.scale(indicatorScale);
         layoutRect.expand(2, 2);
@@ -139,7 +140,7 @@ void TileCoverageMap::update()
     m_coverageRectIndicatorLayer->setBounds(FloatRect(FloatPoint(), coverageRect.size()));
 
     Color visibleRectIndicatorColor;
-    switch (m_controller.indicatorMode()) {
+    switch (controller->indicatorMode()) {
     case SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication:
         visibleRectIndicatorColor = SRGBA<uint8_t> { 200, 80, 255 };
         break;
@@ -165,12 +166,12 @@ PlatformLayerIdentifier TileCoverageMap::platformCALayerIdentifier() const
 void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)
 {
     ASSERT_UNUSED(platformCALayer, platformCALayer == m_layer.ptr());
-    m_controller.tileGrid().drawTileMapContents(context.platformContext(), m_layer.get().bounds());
+    m_controller->tileGrid().drawTileMapContents(context.platformContext(), m_layer.get().bounds());
 }
 
 float TileCoverageMap::platformCALayerDeviceScaleFactor() const
 {
-    return m_controller.rootLayer().owner()->platformCALayerDeviceScaleFactor();
+    return m_controller->rootLayer()->owner()->platformCALayerDeviceScaleFactor();
 }
 
 void TileCoverageMap::setDeviceScaleFactor(float deviceScaleFactor)
@@ -180,7 +181,7 @@ void TileCoverageMap::setDeviceScaleFactor(float deviceScaleFactor)
 
 OptionSet<ContentsFormat> TileCoverageMap::screenContentsFormats() const
 {
-    return m_controller.rootLayer().owner()->screenContentsFormats();
+    return m_controller->rootLayer()->owner()->screenContentsFormats();
 }
 
 }

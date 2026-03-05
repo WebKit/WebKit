@@ -78,4 +78,9 @@ inline unsigned logStackAlignmentRegisters()
     return WTF::fastLog2(stackAlignmentRegisters());
 }
 
+inline bool isStackAligned(const void* pointer)
+{
+    return !(reinterpret_cast<uintptr_t>(pointer) & (stackAlignmentBytes() - 1));
+}
+
 } // namespace JSC

@@ -95,7 +95,7 @@ ModelProcessProxy::ModelProcessProxy()
 #endif
 
     // Initialize the model process.
-    sendWithAsyncReply(Messages::ModelProcess::InitializeModelProcess(WTFMove(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] () { }, 0);
+    sendWithAsyncReply(Messages::ModelProcess::InitializeModelProcess(WTF::move(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] () { }, 0);
 
     updateProcessAssertion();
 }
@@ -140,8 +140,8 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
             Messages::ModelProcess::CreateModelConnectionToWebProcess {
                 webProcessProxy.coreProcessIdentifier(),
                 webProcessProxy.sessionID(),
-                WTFMove(connectionIdentifier),
-                WTFMove(parameters),
+                WTF::move(connectionIdentifier),
+                WTF::move(parameters),
                 attributionTaskID
             },
             [this, weakThis = WeakPtr { *this }]() mutable {
@@ -157,19 +157,19 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
     RELEASE_LOG(ProcessSuspension, "%p - ModelProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     startResponsivenessTimer(UseLazyStop::No);
 #if HAVE(TASK_IDENTITY_TOKEN)
-    webProcessProxy.createMemoryAttributionIDIfNeeded([weakThis = WeakPtr { *this }, createConnectionBlock = WTFMove(createConnectionBlock), connectionIdentifier = WTFMove(connectionIdentifier), parameters = WTFMove(parameters)](const std::optional<String>& attributionTaskID) mutable {
+    webProcessProxy.createMemoryAttributionIDIfNeeded([weakThis = WeakPtr { *this }, createConnectionBlock = WTF::move(createConnectionBlock), connectionIdentifier = WTF::move(connectionIdentifier), parameters = WTF::move(parameters)](const std::optional<String>& attributionTaskID) mutable {
         if (!weakThis)
             return;
-        createConnectionBlock(WTFMove(connectionIdentifier), WTFMove(parameters), attributionTaskID);
+        createConnectionBlock(WTF::move(connectionIdentifier), WTF::move(parameters), attributionTaskID);
     });
 #else
-    createConnectionBlock(WTFMove(connectionIdentifier), WTFMove(parameters), std::nullopt);
+    createConnectionBlock(WTF::move(connectionIdentifier), WTF::move(parameters), std::nullopt);
 #endif
 }
 
 void ModelProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::ModelProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTFMove(sharedPreferencesForWebProcess) }, WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::ModelProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));
 }
 
 void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
@@ -239,12 +239,12 @@ void ModelProcessProxy::terminateForTesting()
 
 void ModelProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::ModelProcess::WebProcessConnectionCountForTesting(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::ModelProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
 }
 
 void ModelProcessProxy::modelPlayerCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::ModelProcess::ModelPlayerCountForTesting(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::ModelProcess::ModelPlayerCountForTesting(), WTF::move(completionHandler));
 }
 
 void ModelProcessProxy::didClose(IPC::Connection&)
@@ -271,7 +271,7 @@ void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Conne
 {
     bool didTerminate = !connectionIdentifier;
 
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIdentifier));
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTF::move(connectionIdentifier));
 
     if (didTerminate) {
         modelProcessExited(ProcessTerminationReason::Crash);
@@ -301,12 +301,12 @@ void ModelProcessProxy::updateProcessAssertion()
 
     if (hasAnyForegroundWebProcesses) {
         if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses.get()))
-            m_activityFromWebProcesses = protectedThrottler()->foregroundActivity("Model for foreground view(s)"_s);
+            m_activityFromWebProcesses = protect(throttler())->foregroundActivity("Model for foreground view(s)"_s);
         return;
     }
     if (hasAnyBackgroundWebProcesses) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses.get()))
-            m_activityFromWebProcesses = protectedThrottler()->backgroundActivity("Model for background view(s)"_s);
+            m_activityFromWebProcesses = protect(throttler())->backgroundActivity("Model for background view(s)"_s);
         return;
     }
 
@@ -321,7 +321,7 @@ void ModelProcessProxy::updateProcessAssertion()
 
 void ModelProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::ModelProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, MonotonicTime::now() + Seconds(remainingRunTime)), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+    sendWithAsyncReply(Messages::ModelProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, MonotonicTime::now() + Seconds(remainingRunTime)), WTF::move(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void ModelProcessProxy::sendProcessDidResume(ResumeReason)

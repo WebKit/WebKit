@@ -9,10 +9,12 @@
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPicture.h"
+#include "include/core/SkSerialProcs.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkString.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTo.h"
+#include "tools/DeserialProcsUtils.h"
 
 #include <utility>
 
@@ -49,7 +51,10 @@ void SKPSlide::load(SkScalar, SkScalar) {
         return;
     }
     fStream->rewind();
-    fPic = SkPicture::MakeFromStream(fStream.get());
+
+    SkDeserialProcs procs = ToolUtils::get_default_skp_deserial_procs();
+
+    fPic = SkPicture::MakeFromStream(fStream.get(), &procs);
     if (!fPic) {
         SkDebugf("Could not parse SkPicture from skp stream for slide %s.\n", fName.c_str());
         return;

@@ -40,7 +40,7 @@ namespace WebCore {
 AudioWorkletThread::AudioWorkletThread(AudioWorkletMessagingProxy& messagingProxy, WorkletParameters&& parameters)
     : WorkerOrWorkletThread(parameters.identifier.isolatedCopy())
     , m_messagingProxy(&messagingProxy)
-    , m_parameters(WTFMove(parameters).isolatedCopy())
+    , m_parameters(WTF::move(parameters).isolatedCopy())
 {
 }
 
@@ -69,8 +69,12 @@ WorkerDebuggerProxy* AudioWorkletThread::workerDebuggerProxy() const
 
 Ref<Thread> AudioWorkletThread::createThread()
 {
-    return Thread::create("WebCore: AudioWorklet"_s, [this] {
-        workerOrWorkletThread();
+    return Thread::create("WebCore: AudioWorklet"_s, [weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->workerOrWorkletThread();
     }, ThreadType::Audio, m_parameters.isAudioContextRealTime ? Thread::QOS::UserInteractive : Thread::QOS::Default);
 }
 

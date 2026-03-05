@@ -33,7 +33,7 @@ class RemoveFormatCommand : public CompositeEditCommand {
 public:
     static Ref<RemoveFormatCommand> create(Ref<Document>&& document)
     {
-        return adoptRef(*new RemoveFormatCommand(WTFMove(document)));
+        return adoptRef(*new RemoveFormatCommand(WTF::move(document)));
     }
 
 private:

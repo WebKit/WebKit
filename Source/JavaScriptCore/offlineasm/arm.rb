@@ -766,8 +766,14 @@ class Instruction
             armMoveImmediate(operands[0].value >> 32, operands[1])
             armMoveImmediate(operands[0].value & 0xffffffff, operands[2])
         when "mvlbl"
-                $asm.puts "movw #{operands[1].armOperand}, \#:lower16:#{operands[0].value}"
-                $asm.puts "movt #{operands[1].armOperand}, \#:upper16:#{operands[0].value}"
+            afterData = LocalLabel.unique(codeOrigin, "mvlbl")
+            data = LocalLabel.unique(codeOrigin, "mvlbl")
+            $asm.puts "b #{LocalLabelReference.new(codeOrigin, afterData).asmLabel}"
+            $asm.puts ".align 1"
+            data.lower("ARM")
+            $asm.puts ".word #{operands[0].value}"
+            afterData.lower("ARM")
+            $asm.puts "ldr #{operands[1].armOperand}, #{LocalLabelReference.new(codeOrigin, data).asmLabel}"
         when "sxb2i"
             $asm.puts "sxtb #{armFlippedOperands(operands)}"
         when "sxh2i"
@@ -1011,4 +1017,3 @@ class Instruction
         end
     end
 end
-

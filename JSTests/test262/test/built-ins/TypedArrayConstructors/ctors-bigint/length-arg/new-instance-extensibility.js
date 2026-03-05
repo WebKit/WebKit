@@ -27,12 +27,12 @@ info: |
   ...
   11. Set the [[Extensible]] internal slot of A to true.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(4);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(4));
 
   assert(Object.isExtensible(sample));
 });

@@ -26,8 +26,8 @@
 #include "StyleOffsetPosition.h"
 
 #include "CSSPositionValue.h"
-#include "RenderStyleInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
@@ -66,7 +66,7 @@ auto CSSValueConversion<OffsetPosition>::operator()(BuilderState& state, const C
 
     RefPtr positionValue = requiredDowncast<CSSPositionValue>(state, value);
     if (!positionValue)
-        return RenderStyle::initialOffsetPosition();
+        return Style::ComputedStyle::initialOffsetPosition();
     return OffsetPosition { toStyle(positionValue->position(), state) };
 }
 
@@ -98,11 +98,11 @@ auto Blending<OffsetPosition>::blend(const OffsetPosition& a, const OffsetPositi
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-auto Evaluation<OffsetPosition, AcceleratedEffectOffsetPosition>::operator()(const OffsetPosition& value, FloatSize referenceBox, ZoomNeeded token) -> AcceleratedEffectOffsetPosition
+auto Evaluation<OffsetPosition, AcceleratedEffectOffsetPosition>::operator()(const OffsetPosition& value, FloatSize referenceBox, ZoomFactor zoom) -> AcceleratedEffectOffsetPosition
 {
     return WTF::switchOn(value,
         [&](const Style::Position& position) -> AcceleratedEffectOffsetPosition {
-            return { .value = Style::evaluate<FloatPoint>(position, referenceBox, token) };
+            return { .value = Style::evaluate<FloatPoint>(position, referenceBox, zoom) };
         },
         [](const CSS::Keyword::Normal&) -> AcceleratedEffectOffsetPosition {
             return { .value = AcceleratedEffectOffsetPosition::Normal { } };

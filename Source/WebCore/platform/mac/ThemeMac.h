@@ -28,7 +28,7 @@
 #include <wtf/Platform.h>
 #if PLATFORM(MAC)
 
-#include <WebCore/ThemeCocoa.h>
+#include "ThemeCocoa.h"
 
 namespace WebCore {
 

@@ -28,4 +28,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.sort(comparefn);
   });
-});
+}, null, ["passthrough"]);

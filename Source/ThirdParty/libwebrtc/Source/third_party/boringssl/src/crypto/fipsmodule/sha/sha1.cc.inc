@@ -47,7 +47,7 @@ bcm_infallible BCM_sha1_transform(SHA_CTX *c, const uint8_t data[SHA_CBLOCK]) {
 namespace {
 struct SHA1Traits {
   using HashContext = SHA_CTX;
-  static constexpr size_t kBlockSize = BCM_SHA_CBLOCK;
+  static constexpr size_t kBlockSize = SHA_CBLOCK;
   static constexpr bool kLengthIsBigEndian = true;
   static void HashBlocks(uint32_t *state, const uint8_t *data,
                          size_t num_blocks) {
@@ -184,7 +184,7 @@ bcm_infallible BCM_fips_186_2_prf(uint8_t *out, size_t out_len,
 #endif
 
 /* Originally X was an array. As it's automatic it's natural
- * to expect RISC compiler to accomodate at least part of it in
+ * to expect RISC compiler to accommodate at least part of it in
  * the register bank, isn't it? Unfortunately not all compilers
  * "find" this expectation reasonable:-( On order to make such
  * compilers generate better code I replace X[] with a bunch of

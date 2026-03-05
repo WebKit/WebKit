@@ -81,7 +81,7 @@ WKStringRef WKNotificationCopyDir(WKNotificationRef notification)
 
 WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification)
 {
-    return toAPI(RefPtr { toProtectedImpl(notification)->origin() }.get());
+    return toAPI(protect(toImpl(notification)->origin()).get());
 }
 
 uint64_t WKNotificationGetID(WKNotificationRef notification)

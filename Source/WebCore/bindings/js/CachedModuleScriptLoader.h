@@ -51,6 +51,10 @@ public:
 
     virtual ~CachedModuleScriptLoader();
 
+    // CachedResourceClient.
+    void ref() const final { ModuleScriptLoader::ref(); }
+    void deref() const final { ModuleScriptLoader::deref(); }
+
     bool load(Document&, URL&& sourceURL, std::optional<ServiceWorkersMode>);
 
     CachedScript* cachedScript() { return m_cachedScript.get(); }
@@ -59,6 +63,8 @@ public:
 private:
     CachedModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
+    bool isCachedModuleScriptLoader() const final { return true; }
+
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
     CachedResourceHandle<CachedScript> m_cachedScript;
@@ -66,3 +72,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CachedModuleScriptLoader)
+    static bool isType(const WebCore::ModuleScriptLoader& loader) { return loader.isCachedModuleScriptLoader(); }
+SPECIALIZE_TYPE_TRAITS_END()

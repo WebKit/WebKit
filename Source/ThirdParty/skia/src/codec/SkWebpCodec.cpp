@@ -195,7 +195,7 @@ bool SkWebpCodec::ensureAllData() {
     if (fOnlyHeaderParsed) {
         SkDynamicMemoryWStream newData;
         newData.write(fData->data(), fData->size());
-        SkStreamCopy(&newData, this->stream());
+        SkStreamPriv::Copy(&newData, this->stream());
         fData = newData.detachAsData();
         fOnlyHeaderParsed = false;
 
@@ -272,16 +272,16 @@ std::unique_ptr<SkCodec> SkWebpCodec::MakeFromStream(std::unique_ptr<SkStream> s
         }
     }
 
-    std::unique_ptr<SkEncodedInfo::ICCProfile> profile = nullptr;
+    std::unique_ptr<SkCodecs::ColorProfile> profile = nullptr;
     {
         WebPChunkIterator chunkIterator;
         SkAutoTCallVProc<WebPChunkIterator, WebPDemuxReleaseChunkIterator> autoCI(&chunkIterator);
         if (WebPDemuxGetChunk(demux, "ICCP", 1, &chunkIterator)) {
             // FIXME: I think this could be MakeWithoutCopy
             auto chunk = SkData::MakeWithCopy(chunkIterator.chunk.bytes, chunkIterator.chunk.size);
-            profile = SkEncodedInfo::ICCProfile::Make(std::move(chunk));
+            profile = SkCodecs::ColorProfile::MakeICCProfile(std::move(chunk));
         }
-        if (profile && profile->profile()->data_color_space != skcms_Signature_RGB) {
+        if (profile && profile->dataSpace() != SkCodecs::ColorProfile::DataSpace::kRGB) {
             profile = nullptr;
         }
     }
@@ -795,7 +795,7 @@ std::unique_ptr<SkCodec> Decode(std::unique_ptr<SkStream> stream,
     return SkWebpCodec::MakeFromStream(std::move(stream), outResult);
 }
 
-std::unique_ptr<SkCodec> Decode(sk_sp<SkData> data,
+std::unique_ptr<SkCodec> Decode(sk_sp<const SkData> data,
                                 SkCodec::Result* outResult,
                                 SkCodecs::DecodeContext) {
     if (!data) {

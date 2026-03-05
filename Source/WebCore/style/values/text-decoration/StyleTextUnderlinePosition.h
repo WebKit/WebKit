@@ -48,7 +48,7 @@ struct TextUnderlinePosition {
     enum class Side : uint8_t { NoPreference, Left, Right };
 
     constexpr TextUnderlinePosition(CSS::Keyword::Auto) : m_value { } { }
-    constexpr TextUnderlinePosition(EnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr TextUnderlinePosition(EnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr TextUnderlinePosition(value_type value) : TextUnderlinePosition { EnumSet { value } } { }
     constexpr TextUnderlinePosition(std::initializer_list<value_type> initializerList) : TextUnderlinePosition { EnumSet { initializerList } } { }
 

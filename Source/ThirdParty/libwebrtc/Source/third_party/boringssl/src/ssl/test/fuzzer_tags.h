@@ -42,7 +42,7 @@ static const uint16_t kRequestClientCert = 2;
 // kHandoffTag is followed by the output of |SSL_serialize_handoff|.
 static const uint16_t kHandoffTag = 3;
 
-// kHandbackTag is followed by te output of |SSL_serialize_handback|.
+// kHandbackTag is followed by the output of |SSL_serialize_handback|.
 static const uint16_t kHandbackTag = 4;
 
 // kHintsTag is followed by the output of |SSL_serialize_handshake_hints|.

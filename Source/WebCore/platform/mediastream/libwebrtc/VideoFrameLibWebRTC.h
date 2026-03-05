@@ -33,8 +33,11 @@
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
+// FIXME: Modularize WebRTC
+IGNORE_CLANG_WARNINGS_BEGIN("non-modular-include-in-module")
 #include <webrtc/api/video/video_frame.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitUtilities.h>
+IGNORE_CLANG_WARNINGS_END
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -56,7 +59,6 @@ private:
     IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final { return m_videoPixelFormat; }
     CVPixelBufferRef pixelBuffer() const final;
-    RefPtr<NativeImage> copyNativeImage() const final;
 
     Ref<VideoFrame> clone() final;
 

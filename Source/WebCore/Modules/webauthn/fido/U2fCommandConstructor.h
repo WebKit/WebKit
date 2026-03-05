@@ -53,7 +53,7 @@ WEBCORE_EXPORT bool isConvertibleToU2fRegisterCommand(const WebCore::PublicKeyCr
 // Checks whether user verification is not required and that allow list is
 // not empty.
 // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-authenticatorGetAssertion-interoperability
-WEBCORE_EXPORT bool isConvertibleToU2fSignCommand(const WebCore::PublicKeyCredentialRequestOptions&);
+WEBCORE_EXPORT bool NODELETE isConvertibleToU2fSignCommand(const WebCore::PublicKeyCredentialRequestOptions&);
 
 // Extracts APDU encoded U2F register command from PublicKeyCredentialCreationOptions.
 WEBCORE_EXPORT std::optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& clientDataHash, const WebCore::PublicKeyCredentialCreationOptions&);

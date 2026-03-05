@@ -101,13 +101,13 @@ void WebViewRenderingUpdateScheduler::registerCACommitHandlers()
     if (m_haveRegisteredCommitHandlers)
         return;
 
-    WebView* webView = m_webView;
+    RetainPtr webView = m_webView;
     [CATransaction addCommitHandler:^{
-        [webView _willStartRenderingUpdateDisplay];
+        [webView.get() _willStartRenderingUpdateDisplay];
     } forPhase:kCATransactionPhasePreLayout];
 
     [CATransaction addCommitHandler:^{
-        [webView _didCompleteRenderingUpdateDisplay];
+        [webView.get() _didCompleteRenderingUpdateDisplay];
     } forPhase:kCATransactionPhasePostCommit];
     
     m_haveRegisteredCommitHandlers = true;

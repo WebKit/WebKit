@@ -107,11 +107,11 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
     gst_buffer_add_audio_meta(buffer.get(), &info, numberOfFrames, nullptr);
 
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), &segment, nullptr));
-    return PlatformRawAudioDataGStreamer::create(WTFMove(sample));
+    return PlatformRawAudioDataGStreamer::create(WTF::move(sample));
 }
 
 PlatformRawAudioDataGStreamer::PlatformRawAudioDataGStreamer(GRefPtr<GstSample>&& sample)
-    : m_sample(WTFMove(sample))
+    : m_sample(WTF::move(sample))
 {
     ensureAudioDataDebugCategoryInitialized();
     gst_audio_info_from_caps(&m_info, gst_sample_get_caps(m_sample.get()));
@@ -214,15 +214,15 @@ std::optional<Variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Ve
 }
 
 #ifndef GST_DISABLE_GST_DEBUG
-static const char* layoutToString(GstAudioLayout layout)
+static ASCIILiteral layoutToString(GstAudioLayout layout)
 {
     switch (layout) {
     case GST_AUDIO_LAYOUT_INTERLEAVED:
-        return "interleaved";
+        return "interleaved"_s;
     case GST_AUDIO_LAYOUT_NON_INTERLEAVED:
-        return "planar";
+        return "planar"_s;
     }
-    return "unknown";
+    return "unknown"_s;
 }
 #endif
 
@@ -239,8 +239,10 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
 #ifndef GST_DISABLE_GST_DEBUG
     [[maybe_unused]] auto [gstSourceFormat, sourceLayout] = convertAudioSampleFormatToGStreamerFormat(sourceFormat);
     auto [gstDestinationFormat, destinationLayout] = convertAudioSampleFormatToGStreamerFormat(format);
-    const char* destinationFormatDescription = gst_audio_format_to_string(gstDestinationFormat);
-    GST_TRACE("Copying %s %s data at planeIndex %zu, destination format is %s %s, source offset: %zu", layoutToString(sourceLayout), gst_audio_format_to_string(gstSourceFormat), planeIndex, layoutToString(destinationLayout), destinationFormatDescription, sourceOffset);
+    auto destinationFormatDescription = CStringView::unsafeFromUTF8(gst_audio_format_to_string(gstDestinationFormat));
+    GST_TRACE("Copying %s %s data at planeIndex %zu, destination format is %s %s, source offset: %zu",
+        layoutToString(sourceLayout).characters(), gst_audio_format_to_string(gstSourceFormat), planeIndex,
+        layoutToString(destinationLayout).characters(), destinationFormatDescription.utf8(), sourceOffset);
 #endif
 
     // Copy memory when:

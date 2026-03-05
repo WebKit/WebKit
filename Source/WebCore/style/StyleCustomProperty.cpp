@@ -34,8 +34,6 @@
 #include "CSSVariableReferenceValue.h"
 #include "RenderStyle.h"
 #include "StyleCalculationValue.h"
-#include "StyleExtractorConverter.h"
-#include "StyleExtractorSerializer.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -44,7 +42,7 @@
 namespace WebCore {
 namespace Style {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomProperty);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomProperty);
 
 bool CustomProperty::operator==(const CustomProperty& other) const
 {
@@ -93,11 +91,11 @@ Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const RenderStyl
                 builder.append(convertValue(value));
             switch (valueList.separator) {
             case CSSValue::SpaceSeparator:
-                return CSSValueList::createSpaceSeparated(WTFMove(builder));
+                return CSSValueList::createSpaceSeparated(WTF::move(builder));
             case CSSValue::CommaSeparator:
-                return CSSValueList::createCommaSeparated(WTFMove(builder));
+                return CSSValueList::createCommaSeparated(WTF::move(builder));
             case CSSValue::SlashSeparator:
-                return CSSValueList::createSlashSeparated(WTFMove(builder));
+                return CSSValueList::createSlashSeparated(WTF::move(builder));
             }
             RELEASE_ASSERT_NOT_REACHED();
         }

@@ -84,7 +84,7 @@ public:
     class Promise final : public PromiseBase {
     public:
         Awaitable<U> get_return_object() { return Awaitable<U> { std::coroutine_handle<Promise>::from_promise(*this) }; }
-        void return_value(U&& value) { m_value = WTFMove(value); }
+        void return_value(U&& value) { m_value = WTF::move(value); }
         U result() && { return std::exchange(m_value, { }); }
     private:
         U m_value;
@@ -109,7 +109,7 @@ public:
             m_coroutine.promise().setHandle(handle);
             return m_coroutine;
         }
-        T await_resume() { return WTFMove(this->m_coroutine.promise()).result(); }
+        T await_resume() { return WTF::move(this->m_coroutine.promise()).result(); }
     private:
         std::coroutine_handle<promise_type> m_coroutine;
     };
@@ -138,12 +138,12 @@ template<typename T> class [[nodiscard]] AwaitableFromCompletionHandler {
 public:
     using Callback = CompletionHandler<void(CompletionHandler<void(T&&)>)>;
     AwaitableFromCompletionHandler(Callback&& callback)
-        : m_callback(WTFMove(callback)) { }
+        : m_callback(WTF::move(callback)) { }
     bool await_ready() const { return !!m_result; }
     void await_suspend(std::coroutine_handle<> handle)
     {
         m_callback([this, handle] (T&& result) mutable {
-            m_result = WTFMove(result);
+            m_result = WTF::move(result);
             handle();
         });
     }
@@ -157,7 +157,7 @@ template<> class [[nodiscard]] AwaitableFromCompletionHandler<void> {
 public:
     using Callback = CompletionHandler<void(CompletionHandler<void(void)>)>;
     AwaitableFromCompletionHandler(Callback&& callback)
-        : m_callback(WTFMove(callback)) { }
+        : m_callback(WTF::move(callback)) { }
     bool await_ready() const { return !m_callback; }
     void await_suspend(std::coroutine_handle<> handle)
     {

@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-hashchangeevent-interface
-
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#hashchangeevent
 [
     Exposed=Window
 ] interface HashChangeEvent : Event {
@@ -28,6 +27,7 @@
     readonly attribute USVString newURL;
 };
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#hashchangeeventinit
 dictionary HashChangeEventInit : EventInit {
     USVString oldURL = "";
     USVString newURL = "";

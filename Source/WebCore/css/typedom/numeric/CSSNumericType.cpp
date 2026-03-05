@@ -38,30 +38,30 @@ std::optional<CSSNumericType> CSSNumericType::create(CSSUnitType unit, int expon
     CSSNumericType type;
     switch (unitCategory(unit)) {
     case CSSUnitCategory::Number:
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::Percent:
         type.percent = exponent;
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::AbsoluteLength:
     case CSSUnitCategory::FontRelativeLength:
     case CSSUnitCategory::ViewportPercentageLength:
         type.length = exponent;
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::Angle:
         type.angle = exponent;
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::Time:
         type.time = exponent;
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::Frequency:
         type.frequency = exponent;
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::Resolution:
         type.resolution = exponent;
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::Flex:
         type.flex = exponent;
-        return { WTFMove(type) };
+        return { WTF::move(type) };
     case CSSUnitCategory::Other:
         break;
     }
@@ -81,7 +81,7 @@ std::optional<CSSNumericType> CSSNumericType::addTypes(CSSNumericType a, CSSNume
         a.applyPercentHint(*b.percentHint);
 
     if (a == b)
-        return { WTFMove(a) };
+        return { WTF::move(a) };
 
     for (auto type : eachBaseType()) {
         if (type == CSSNumericBaseType::Percent)
@@ -94,7 +94,7 @@ std::optional<CSSNumericType> CSSNumericType::addTypes(CSSNumericType a, CSSNume
             return std::nullopt;
     }
 
-    return { WTFMove(a) };
+    return { WTF::move(a) };
 }
 
 template<typename Argument> std::optional<CSSNumericType> typeFromVector(const Vector<Ref<CSSNumericValue>>& values, std::optional<CSSNumericType>(*function)(Argument, Argument))

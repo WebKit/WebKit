@@ -13,6 +13,8 @@ PASS :placement:stmt="nested_switch_case_continue"
 PASS :placement:stmt="return_continue"
 PASS :placement:stmt="loop_continue_after_decl_used_in_continuing"
 FAIL :placement:stmt="loop_continue_before_decl_used_in_continuing" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -24,13 +26,16 @@ FAIL :placement:stmt="loop_continue_before_decl_used_in_continuing" assert_unrea
       return vec4f(1);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/continue.spec.js:103:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :placement:stmt="loop_continue_before_decl_not_used_in_continuing"
 FAIL :placement:stmt="loop_nested_continue_before_decl_used_in_continuing" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -42,10 +47,11 @@ FAIL :placement:stmt="loop_nested_continue_before_decl_used_in_continuing" asser
       return vec4f(1);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/continue.spec.js:103:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :placement:stmt="loop_continue_expression"
 PASS :placement:stmt="for_init_continue"

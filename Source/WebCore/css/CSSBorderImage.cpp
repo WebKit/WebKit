@@ -39,12 +39,12 @@ Ref<CSSValueList> createBorderImageValue(CSS::BorderImageComponents&& components
             listSlash.append(components.width.releaseNonNull());
         if (components.outset)
             listSlash.append(components.outset.releaseNonNull());
-        list.append(CSSValueList::createSlashSeparated(WTFMove(listSlash)));
+        list.append(CSSValueList::createSlashSeparated(WTF::move(listSlash)));
     } else if (components.slice)
         list.append(components.slice.releaseNonNull());
     if (components.repeat)
         list.append(components.repeat.releaseNonNull());
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 } // namespace WebCore

@@ -26,13 +26,14 @@
 #pragma once
 
 #include "EventTarget.h"
+#include "EventTargetInterfaces.h"
 #include "LocalDOMWindowProperty.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class VisualViewport final : public RefCounted<VisualViewport>, public EventTarget, public LocalDOMWindowProperty {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(VisualViewport);
+    WTF_MAKE_TZONE_ALLOCATED(VisualViewport);
 public:
     static Ref<VisualViewport> create(LocalDOMWindow& window) { return adoptRef(*new VisualViewport(window)); }
 
@@ -40,6 +41,7 @@ public:
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    using EventTarget::addEventListener;
 
     double offsetLeft() const;
     double offsetTop() const;
@@ -72,3 +74,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(VisualViewport)

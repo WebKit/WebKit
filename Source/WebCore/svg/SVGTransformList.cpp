@@ -53,7 +53,7 @@ ExceptionOr<RefPtr<SVGTransform>> SVGTransformList::consolidate()
     auto newItem = SVGTransform::create(concatenate());
     clearItems();
 
-    auto item = append(WTFMove(newItem));
+    auto item = append(WTF::move(newItem));
     commitChange();
     return RefPtr { item.ptr() };
 }

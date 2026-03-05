@@ -7,7 +7,7 @@
 #ifndef skgpu_graphite_DrawList_DEFINED
 #define skgpu_graphite_DrawList_DEFINED
 
-#include "include/gpu/graphite/GraphiteTypes.h"
+#include "src/gpu/graphite/DrawListBase.h"
 
 #include "include/private/base/SkDebug.h"
 #include "src/base/SkBlockAllocator.h"
@@ -15,6 +15,7 @@
 #include "src/base/SkTBlockList.h"
 #include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/DrawCommands.h"
+#include "src/gpu/graphite/DrawListTypes.h"
 #include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/DrawParams.h"
 #include "src/gpu/graphite/PaintParams.h"
@@ -61,21 +62,9 @@ class Renderer;
  * it to. Draw-specific simplification, style application, and advanced clipping should be handled
  * at a higher layer.
  */
-class DrawList {
+class DrawList : public DrawListBase {
 public:
-    // The maximum number of render steps that can be recorded into a DrawList before it must be
-    // converted to a DrawPass. The true fundamental limit is imposed by the limits of the depth
-    // attachment and precision of CompressedPaintersOrder and PaintDepth. These values can be
-    // shared by multiple draw calls so it's more difficult to reason about how much room is left
-    // in a DrawList. Limiting it to this keeps tracking simple and ensures that the sequences in
-    // DrawOrder cannot overflow since they are always less than or equal to the number of draws.
-    // TODO(b/322840221): The theoretic max for this value is 16-bit, but we see markedly better
-    // performance with smaller values. This should be understood and fixed directly rather than as
-    // a magic side-effect, but for now, let it go fast.
-    static constexpr int kMaxRenderSteps = 4096;
-    static_assert(kMaxRenderSteps <= std::numeric_limits<uint16_t>::max());
-
-    // Add a construtor to prevent default zero initialization of SkTBlockList members' storage.
+    // Add a constructor to prevent default zero initialization of SkTBlockList members' storage.
     DrawList() {}
 
     // DrawList requires that all Transforms be valid and asserts as much; invalid transforms should
@@ -83,66 +72,43 @@ public:
     // 'shape' and 'stroke' parameters. If the renderer uses coverage AA, 'ordering' must have a
     // compressed painters order that reflects that. If the renderer uses stencil, the 'ordering'
     // must have a valid stencil index as well.
-    void recordDraw(const Renderer* renderer,
-                    const Transform& localToDevice,
-                    const Geometry& geometry,
-                    const Clip& clip,
-                    DrawOrder ordering,
-                    UniquePaintParamsID paintID,
-                    SkEnumBitMask<DstUsage> dstUsage,
-                    BarrierType barrierBeforeDraws,
-                    PipelineDataGatherer* gatherer,
-                    const StrokeStyle* stroke);
+    std::pair<DrawParams*, Layer*> recordDraw(
+            const Renderer* renderer,
+            const Transform& localToDevice,
+            const Geometry& geometry,
+            const Clip& clip,
+            DrawOrder ordering,
+            UniquePaintParamsID paintID,
+            SkEnumBitMask<DstUsage> dstUsage,
+            BarrierType barrierBeforeDraws,
+            PipelineDataGatherer* gatherer,
+            const StrokeStyle* stroke,
+            const Layer* latestDepthLayer) override;
 
     std::unique_ptr<DrawPass> snapDrawPass(Recorder* recorder,
                                            sk_sp<TextureProxy> target,
                                            const SkImageInfo& targetInfo,
-                                           const DstReadStrategy dstReadStrategy);
-
-    int renderStepCount() const { return fRenderStepCount; }
-
-    bool modifiesTarget() const {
-        return this->renderStepCount() > 0 || fLoadOp == LoadOp::kClear;
-    }
-
-    bool samplesTexture(const TextureProxy* texture) const {
-        return fTextureDataCache.hasTexture(texture);
-    }
+                                           DstReadStrategy dstReadStrategy) override;
 
     // Discard all previously recorded draws and set to the requested load op (with optional clear
     // color).
-    void reset(LoadOp op, SkColor4f clearColor = {0.f, 0.f, 0.f, 0.f});
-
-    // Bounds for a dst read required by this DrawList. These bounds are only valid if drawsReadDst
-    // returns true.
-    const Rect& dstReadBounds() const { return fDstReadBounds; }
-    const Rect& passBounds() const { return fPassBounds; }
-    bool drawsReadDst() const { return !fDstReadBounds.isEmptyNegativeOrNaN(); }
-    bool drawsRequireMSAA() const { return fRequiresMSAA; }
-    SkEnumBitMask<DepthStencilFlags> depthStencilFlags() const { return fDepthStencilFlags; }
-
-    SkDEBUGCODE(bool hasCoverageMaskDraws() const { return fCoverageMaskShapeDrawCount > 0; })
+    void reset(LoadOp op, SkColor4f clearColor = {0.f, 0.f, 0.f, 0.f}) override;
 
 private:
-    friend class DrawPass;
-
     struct Draw {
     public:
         Draw(const Renderer* renderer, const Transform& transform, const Geometry& geometry,
              const Clip& clip, DrawOrder order, BarrierType barrierBeforeDraws,
              const StrokeStyle* stroke)
                 : fRenderer(renderer)
-                , fDrawParams(transform, geometry, clip, order, stroke)
-                , fBarrierBeforeDraws(barrierBeforeDraws) {}
+                , fDrawParams(transform, geometry, clip, order, stroke, barrierBeforeDraws) {}
 
-        const Renderer* renderer()                             const { return fRenderer;           }
-        const DrawParams& drawParams()                         const { return fDrawParams;         }
-        const BarrierType& barrierBeforeDraws()                const { return fBarrierBeforeDraws; }
+        const Renderer* renderer()              const { return fRenderer;   }
+        const DrawParams& drawParams()          const { return fDrawParams; }
 
     private:
-        const Renderer* fRenderer; // Owned by SharedContext of Recorder that recorded the draw
-        DrawParams fDrawParams; // The DrawParam's transform is owned by fTransforms of the DrawList
-        BarrierType fBarrierBeforeDraws;
+        const Renderer* fRenderer;
+        DrawParams fDrawParams;
     };
 
     template <uint64_t Bits, uint64_t Offset>
@@ -182,19 +148,16 @@ private:
      */
     class SortKey {
     public:
-        SortKey(const DrawList::Draw* draw,
-                int renderStep,
+        SortKey(const Draw* draw, int renderStep,
                 GraphicsPipelineCache::Index pipelineIndex,
-                UniformDataCache::Index geomUniformIndex,
-                UniformDataCache::Index shadingUniformIndex,
+                UniformDataCache::Index uniformIndex,
                 TextureDataCache::Index textureBindingIndex)
                 : fPipelineKey(
                           ColorDepthOrderField::set(draw->drawParams().order().paintOrder().bits())
                           | StencilIndexField::set(draw->drawParams().order().stencilIndex().bits())
                           | RenderStepField::set(static_cast<uint32_t>(renderStep))
                           | PipelineField::set(pipelineIndex))
-                , fUniformKey(GeometryUniformField::set(geomUniformIndex)   |
-                              ShadingUniformField::set(shadingUniformIndex) |
+                , fUniformKey(UniformField::set(uniformIndex) |
                               TextureBindingsField::set(textureBindingIndex))
                 , fDraw(draw) {
             SkASSERT(pipelineIndex < GraphicsPipelineCache::kInvalidIndex);
@@ -210,16 +173,13 @@ private:
             return fDraw->renderer()->step(RenderStepField::get(fPipelineKey));
         }
 
-        const DrawList::Draw& draw() const { return *fDraw; }
+        const Draw& draw() const { return *fDraw; }
 
         GraphicsPipelineCache::Index pipelineIndex() const {
             return PipelineField::get(fPipelineKey);
         }
-        UniformDataCache::Index geometryUniformIndex() const {
-            return GeometryUniformField::get(fUniformKey);
-        }
-        UniformDataCache::Index shadingUniformIndex() const {
-            return ShadingUniformField::get(fUniformKey);
+        UniformDataCache::Index uniformIndex() const {
+            return UniformField::get(fUniformKey);
         }
         TextureDataCache::Index textureBindingIndex() const {
             return TextureBindingsField::get(fUniformKey);
@@ -238,55 +198,32 @@ private:
         // The uniform/texture index fields need 1 extra bit to encode "no-data". Values that are
         // greater than or equal to 2^(bits-1) represent "no-data", while values between
         // [0, 2^(bits-1)-1] can access data arrays without extra logic.
-        using GeometryUniformField = Bitfield<17, 47>; // bits >= 1+log2(max total steps)
-        using ShadingUniformField  = Bitfield<17, 30>; // bits >= 1+log2(max total steps)
+        using UniformField         = Bitfield<34, 30>; // bits >= 1+log2(max total steps)
         using TextureBindingsField = Bitfield<30, 0>;  // bits >= 1+log2(max total steps)
         uint64_t fUniformKey;
 
         // Backpointer to the draw that produced the sort key
-        const DrawList::Draw* fDraw;
+        const Draw* fDraw;
 
+// https://issues.skia.org/issues/485303056
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wtautological-value-range-compare"
+#endif
         static_assert(ColorDepthOrderField::kBits >= sizeof(CompressedPaintersOrder));
         static_assert(StencilIndexField::kBits    >= sizeof(DisjointStencilIndex));
-        static_assert(RenderStepField::kBits      >= SkNextLog2_portable(Renderer::kMaxRenderSteps));
-        static_assert(PipelineField::kBits        >= SkNextLog2_portable(DrawList::kMaxRenderSteps));
-        static_assert(GeometryUniformField::kBits >= 1+SkNextLog2_portable(DrawList::kMaxRenderSteps));
-        static_assert(ShadingUniformField::kBits  >= 1+SkNextLog2_portable(DrawList::kMaxRenderSteps));
-        static_assert(TextureBindingsField::kBits >= 1+SkNextLog2_portable(DrawList::kMaxRenderSteps));
+        static_assert(RenderStepField::kBits      >= SkNextLog2(Renderer::kMaxRenderSteps));
+        static_assert(PipelineField::kBits        >= SkNextLog2(DrawListBase::kMaxRenderSteps));
+        static_assert(UniformField::kBits         >= 1+SkNextLog2(DrawListBase::kMaxRenderSteps));
+        static_assert(TextureBindingsField::kBits >= 1+SkNextLog2(DrawListBase::kMaxRenderSteps));
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
     };
 
-
-    // The returned Transform reference remains valid for the lifetime of the DrawList.
-    const Transform& deduplicateTransform(const Transform&);
-
-    SkTBlockList<Transform, 16> fTransforms{SkBlockAllocator::GrowthPolicy::kFibonacci};
-    SkTBlockList<Draw, 16>      fDraws{SkBlockAllocator::GrowthPolicy::kFibonacci};
-
-    // Running total of RenderSteps for all draws, assuming nothing is culled
-    int fRenderStepCount = 0;
-
-#if defined(SK_DEBUG)
-    // The number of CoverageMask draws that have been recorded. Used in debugging.
-    int fCoverageMaskShapeDrawCount = 0;
-#endif
-
-    // Tracked for all paints that read from the dst. If it is later determined that the
-    // DstReadStrategy is not kTextureCopy, this value can simply be ignored.
-    Rect fDstReadBounds = Rect::InfiniteInverted();
-    Rect fPassBounds = Rect::InfiniteInverted();
-    // Other properties of draws contained within this DrawList
-    bool fRequiresMSAA = false;
-    SkEnumBitMask<DepthStencilFlags> fDepthStencilFlags = DepthStencilFlags::kNone;
+    SkTBlockList<Draw, 4> fDraws{SkBlockAllocator::GrowthPolicy::kFibonacci};
 
     std::vector<SortKey> fSortKeys;
-
-    UniformDataCache fGeometryUniformDataCache;
-    UniformDataCache fShadingUniformDataCache;
-    TextureDataCache fTextureDataCache;
-    GraphicsPipelineCache fPipelineCache;
-
-    LoadOp fLoadOp = LoadOp::kLoad;
-    std::array<float, 4> fClearColor = {0.f, 0.f, 0.f, 0.f};
 };
 
 } // namespace skgpu::graphite

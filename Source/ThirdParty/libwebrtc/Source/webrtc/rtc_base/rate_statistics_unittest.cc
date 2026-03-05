@@ -319,7 +319,7 @@ TEST_F(RateStatisticsTest, HandlesSomewhatLargeNumbers) {
 }
 
 TEST_F(RateStatisticsTest, HandlesLowFps) {
-  RateStatistics fps_stats(/*window_size_ms=*/1000, /*scale=*/1000);
+  RateStatistics fps_stats(/*max_window_size_ms=*/1000, /*scale=*/1000);
 
   const int64_t kExpectedFps = 1;
   constexpr int64_t kTimeDelta = 1000 / kExpectedFps;
@@ -341,7 +341,7 @@ TEST_F(RateStatisticsTest, HandlesLowFps) {
 }
 
 TEST_F(RateStatisticsTest, Handles25Fps) {
-  RateStatistics fps_stats(/*window_size_ms=*/1000, /*scale=*/1000);
+  RateStatistics fps_stats(/*max_window_size_ms=*/1000, /*scale=*/1000);
 
   constexpr int64_t kExpectedFps = 25;
   constexpr int64_t kTimeDelta = 1000 / kExpectedFps;

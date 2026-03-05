@@ -47,7 +47,7 @@ struct WebCodecsAudioEncoderConfig {
     std::optional<AacEncoderConfig> aac;
     std::optional<FlacEncoderConfig> flac;
 
-    WebCodecsAudioEncoderConfig isolatedCopy() && { return { WTFMove(codec).isolatedCopy(), sampleRate, numberOfChannels, bitrate, bitrateMode, opus, aac, flac }; }
+    WebCodecsAudioEncoderConfig isolatedCopy() && { return { WTF::move(codec).isolatedCopy(), sampleRate, numberOfChannels, bitrate, bitrateMode, opus, aac, flac }; }
     WebCodecsAudioEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), sampleRate, numberOfChannels, bitrate, bitrateMode, opus, aac, flac }; }
 };
 

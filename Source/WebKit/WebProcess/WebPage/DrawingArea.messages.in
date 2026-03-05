@@ -27,6 +27,9 @@
 messages -> DrawingArea {
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     UpdateGeometry(WebCore::IntSize size) -> ()
+#endif
+
+#if !PLATFORM(WPE) && !PLATFORM(GTK) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
     ForceUpdate()
     DidDiscardBackingStore()
 #endif

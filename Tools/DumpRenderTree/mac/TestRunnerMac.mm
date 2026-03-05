@@ -437,7 +437,7 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
             geolocationPosition.speed = speed;
         if (providesFloorLevel)
             geolocationPosition.floorLevel = floorLevel;
-        position = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:(WTFMove(geolocationPosition))]);
+        position = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:(WTF::move(geolocationPosition))]);
     }
     [[MockGeolocationProvider shared] setPosition:position.get()];
 }

@@ -37,6 +37,13 @@
 
 namespace WebCore {
 
+namespace Style {
+struct ZoomFactor;
+}
+
+class Image;
+class LayoutRoundedRect;
+
 struct LineSegment {
     LineSegment() = default;
 
@@ -52,9 +59,6 @@ struct LineSegment {
     bool isValid { false };
 };
 
-class Image;
-class LayoutRoundedRect;
-
 // A representation of a BasicShape that enables layout code to determine how to break a line up into segments
 // that will fit within or around a shape. The line is defined by a pair of logical Y coordinates and the
 // computed segments are returned as pairs of logical X coordinates. The BasicShape itself is defined in
@@ -67,7 +71,7 @@ public:
         Path marginShape;
     };
 
-    static Ref<const LayoutShape> createShape(const Style::BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float logicalMargin);
+    static Ref<const LayoutShape> createShape(const Style::BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float logicalMargin, Style::ZoomFactor);
     static Ref<const LayoutShape> createRasterShape(Image*, float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode, float logicalMargin);
     static Ref<const LayoutShape> createBoxShape(const LayoutRoundedRect&, WritingMode, float logicalMargin);
 
@@ -84,7 +88,7 @@ public:
 protected:
     float shapeMargin() const { return m_margin; }
     WritingMode writingMode() const { return m_writingMode; }
-    static bool shouldFlipStartAndEndPoints(WritingMode);
+    static bool NODELETE shouldFlipStartAndEndPoints(WritingMode);
 
 private:
     bool lineOverlapsBoundingBox(LayoutUnit lineTop, LayoutUnit lineHeight, const LayoutRect& rect) const

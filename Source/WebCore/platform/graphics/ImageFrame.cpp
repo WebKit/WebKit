@@ -40,7 +40,7 @@ ImageFrame::ImageFrame(Ref<NativeImage>&& nativeImage)
     m_hasAlpha = nativeImage->hasAlpha();
 
     m_source.headroom = nativeImage->headroom();
-    m_source.nativeImage = WTFMove(nativeImage);
+    m_source.nativeImage = WTF::move(nativeImage);
 }
 
 ImageFrame::~ImageFrame()

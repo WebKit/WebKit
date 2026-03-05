@@ -12,6 +12,11 @@ from resources.portabilityLayer import get_cookies
 cookies = get_cookies()
 test = cookies.get('TEST', None)
 
+sys.stdout.write(
+    'Access-Control-Allow-Origin: *\r\n'
+)
+
+
 filename = 'test.'
 if test is not None:
     extension = test.split('.')[-1]

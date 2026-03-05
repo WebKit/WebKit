@@ -45,17 +45,17 @@ using ResourceRequestData = Variant<ResourceRequestBase::RequestData, ResourceRe
 class ResourceRequest : public ResourceRequestBase {
 public:
     explicit ResourceRequest(String&& url)
-        : ResourceRequestBase(URL({ }, WTFMove(url)), ResourceRequestCachePolicy::UseProtocolCachePolicy)
+        : ResourceRequestBase(URL({ }, WTF::move(url)), ResourceRequestCachePolicy::UseProtocolCachePolicy)
     {
     }
 
     ResourceRequest(URL&& url)
-        : ResourceRequestBase(WTFMove(url), ResourceRequestCachePolicy::UseProtocolCachePolicy)
+        : ResourceRequestBase(WTF::move(url), ResourceRequestCachePolicy::UseProtocolCachePolicy)
     {
     }
 
     ResourceRequest(URL&& url, const String& referrer, ResourceRequestCachePolicy policy = ResourceRequestCachePolicy::UseProtocolCachePolicy)
-        : ResourceRequestBase(WTFMove(url), policy)
+        : ResourceRequestBase(WTF::move(url), policy)
     {
         setHTTPReferrer(referrer);
     }
@@ -66,12 +66,12 @@ public:
     }
 
     ResourceRequest(ResourceRequestBase&& base)
-        : ResourceRequestBase(WTFMove(base))
+        : ResourceRequestBase(WTF::move(base))
     {
     }
 
     explicit ResourceRequest(ResourceRequestPlatformData&& platformData)
-        : ResourceRequestBase(WTFMove(platformData.requestData))
+        : ResourceRequestBase(WTF::move(platformData.requestData))
         , m_acceptEncoding(platformData.acceptEncoding)
         , m_redirectCount(platformData.redirectCount)
     {
@@ -116,3 +116,11 @@ private:
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct MarkableTraits<WebCore::ResourceRequest> {
+    static bool isEmptyValue(const WebCore::ResourceRequest& request) { return request.isNull(); };
+    static WebCore::ResourceRequest emptyValue() { return WebCore::ResourceRequest { }; };
+};
+
+} // namespace WTF

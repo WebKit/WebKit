@@ -52,7 +52,7 @@
 // configuration is changed based on the parameter. Note that a aom_codec_err_t
 // is returned, which indicates if the operation was successful or not.
 //
-// Note that for the encoder, the aom_codec_alg_priv_t points to the
+// Note that for the encoder, the aom_codec_alg_priv_t points to
 // the aom_codec_alg_priv structure in av1/av1_cx_iface.c, and for the decoder,
 // the struct in av1/av1_dx_iface.c. Variables such as AV1_COMP cpi are stored
 // here and also used in the core algorithm.

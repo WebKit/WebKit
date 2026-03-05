@@ -29,6 +29,7 @@
 #include "PendingScriptClient.h"
 #include <WebCore/Timer.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -49,7 +50,7 @@ public:
     explicit ScriptRunner(Document&);
     ~ScriptRunner();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     // CheckedPtr interface
@@ -59,7 +60,7 @@ public:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
-    enum ExecutionType { ASYNC_EXECUTION, IN_ORDER_EXECUTION };
+    enum class ExecutionType : uint8_t { Async, InOrder };
     void queueScriptForExecution(ScriptElement&, LoadableScript&, ExecutionType);
     bool hasPendingScripts() const { return !m_scriptsToExecuteSoon.isEmpty() || !m_scriptsToExecuteInOrder.isEmpty() || !m_pendingAsyncScripts.isEmpty(); }
     void suspend();
@@ -79,8 +80,8 @@ private:
     void notifyFinished(PendingScript&) override;
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
-    Vector<Ref<PendingScript>> m_scriptsToExecuteInOrder;
-    Vector<RefPtr<PendingScript>> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
+    Deque<Ref<PendingScript>> m_scriptsToExecuteInOrder;
+    Vector<Ref<PendingScript>> m_scriptsToExecuteSoon; // https://html.spec.whatwg.org/#set-of-scripts-that-will-execute-as-soon-as-possible
     HashSet<Ref<PendingScript>> m_pendingAsyncScripts;
     Timer m_timer;
 };

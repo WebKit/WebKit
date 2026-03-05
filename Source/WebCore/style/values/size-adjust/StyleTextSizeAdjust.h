@@ -54,6 +54,8 @@ struct TextSizeAdjust {
     constexpr bool isNone() const { return m_value == None; }
     constexpr bool isPercentage() const { return m_value >= 0; }
 
+    constexpr std::optional<float> tryPercentage() const { return isPercentage() ? std::optional { percentage() } : std::nullopt; }
+
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);

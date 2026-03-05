@@ -53,7 +53,7 @@ struct NameScope {
 
     NameScope(CommaSeparatedListHashSet<CustomIdentifier>&& names, ScopeOrdinal scopeOrdinal)
         : type { Type::Ident }
-        , names { WTFMove(names) }
+        , names { WTF::move(names) }
         , scopeOrdinal { scopeOrdinal }
     {
     }

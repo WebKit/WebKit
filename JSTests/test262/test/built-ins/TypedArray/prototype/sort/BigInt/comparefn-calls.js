@@ -14,7 +14,7 @@ info: |
     a. Let v be ? Call(comparefn, undefined, « x, y »).
     ...
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -22,8 +22,8 @@ var expectedThis = (function() {
   return this;
 })();
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 42n, 42n, 42n, 42n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 42n, 42n, 42n, 42n]));
   var calls = [];
 
   var comparefn = function() {

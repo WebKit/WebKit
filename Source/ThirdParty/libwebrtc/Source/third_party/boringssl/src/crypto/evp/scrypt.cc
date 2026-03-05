@@ -183,7 +183,7 @@ int EVP_PBE_scrypt(const char *password, size_t password_len,
   size_t V_blocks = N * 2 * r;
   block_t *B = reinterpret_cast<block_t *>(
       OPENSSL_calloc(B_blocks + T_blocks + V_blocks, sizeof(block_t)));
-  if (B == NULL) {
+  if (B == nullptr) {
     return 0;
   }
 

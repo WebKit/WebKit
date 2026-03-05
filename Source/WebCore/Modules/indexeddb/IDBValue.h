@@ -46,11 +46,11 @@ public:
     void setAsIsolatedCopy(const IDBValue&);
     WEBCORE_EXPORT IDBValue isolatedCopy() const;
 
-    const ThreadSafeDataBuffer& data() const { return m_data; }
-    const Vector<String>& blobURLs() const { return m_blobURLs; }
-    const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
+    const ThreadSafeDataBuffer& data() const LIFETIME_BOUND { return m_data; }
+    const Vector<String>& blobURLs() const LIFETIME_BOUND { return m_blobURLs; }
+    const Vector<String>& blobFilePaths() const LIFETIME_BOUND { return m_blobFilePaths; }
 
-    size_t size() const;
+    size_t NODELETE size() const;
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;

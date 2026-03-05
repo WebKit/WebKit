@@ -39,8 +39,11 @@ class SVGLengthListAnimator final : public SVGValuePropertyListAnimator<SVGLengt
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return adoptRef(*new SVGLengthListAnimator(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Other));
+        return adoptRef(*new SVGLengthListAnimator(attributeName, WTF::move(property), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Other));
     }
+
+private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::CSSLengthList; }
 
     void start(SVGElement& targetElement) final
     {

@@ -39,6 +39,12 @@ class RewriteGlobalVariables;
 class TypeChecker;
 struct Type;
 
+enum class Evaluation : uint8_t {
+    Constant = 1,
+    Override = 2,
+    Runtime = 3,
+};
+
 namespace AST {
 
 class Expression : public Node {
@@ -62,6 +68,9 @@ public:
     const std::optional<ConstantValue>& constantValue() const { return m_constantValue; }
     void setConstantValue(ConstantValue value) { m_constantValue = value; }
 
+    const std::optional<Evaluation>& maybeEvaluation() const { return m_evaluation; }
+    Evaluation evaluation() const { return *m_evaluation; }
+
 protected:
     Expression(SourceSpan span)
         : Node(span)
@@ -70,6 +79,7 @@ protected:
     const Type* m_inferredType { nullptr };
 
 private:
+    std::optional<Evaluation> m_evaluation { std::nullopt };
     std::optional<ConstantValue> m_constantValue { std::nullopt };
 };
 

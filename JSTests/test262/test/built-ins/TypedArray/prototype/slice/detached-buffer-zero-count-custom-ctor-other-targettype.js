@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA) {
   sample.constructor = ctor;
   sample.slice(1, 1); // count = 0;
   assert.sameValue(counter, 2, 'The value of `counter` is 2');
-});
+}, null, ["passthrough"]);

@@ -36,6 +36,7 @@ enum class StyleAppearance : uint8_t {
     None,
     Auto,
     Base,
+    BaseSelect,
     Checkbox,
     Radio,
     PushButton,

@@ -25,11 +25,17 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
+#if !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules) || HAVE(WEBGPU_IOS_SIMULATOR_OPENGL_SUPPORT)
+
 DECLARE_SYSTEM_HEADER
 
 #if HAVE(VK_IMAGE_ANALYSIS)
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #if __has_include(<TextRecognition/CRRegion.h>)
 #import <TextRecognition/CRRegion.h>
@@ -194,7 +200,7 @@ NS_ASSUME_NONNULL_END
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-#if __has_include(<VisionKitCore/VKCImageAnalysisTranslation.h>)
+#if __has_include(<VisionKitCore/VKCImageAnalysisTranslation.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCImageAnalysisTranslation.h>
 #else
 
@@ -214,7 +220,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKCImageAnalysis.h>)
+#if __has_include(<VisionKitCore/VKCImageAnalysis.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCImageAnalysis.h>
 #else
 
@@ -230,21 +236,26 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKImageClass_Private.h>)
+#if __has_include(<VisionKitCore/VKImageClass_Private.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKImageClass_Private.h>
 #else
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^VKCGImageRemoveBackgroundCompletion)(CGImageRef, CGRect cropRect, NSError *);
-extern "C" void vk_cgImageRemoveBackground(CGImageRef, BOOL cropToFit, VKCGImageRemoveBackgroundCompletion);
-extern "C" void vk_cgImageRemoveBackgroundWithDownsizing(CGImageRef, BOOL canDownsize, BOOL cropToFit, void(^completion)(CGImageRef, NSError *));
+
+WTF_EXTERN_C_BEGIN
+
+void vk_cgImageRemoveBackground(CGImageRef, BOOL cropToFit, VKCGImageRemoveBackgroundCompletion);
+void vk_cgImageRemoveBackgroundWithDownsizing(CGImageRef, BOOL canDownsize, BOOL cropToFit, void(^completion)(CGImageRef, NSError *));
+
+WTF_EXTERN_C_END
 
 NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKCRemoveBackgroundRequestHandler.h>)
+#if __has_include(<VisionKitCore/VKCRemoveBackgroundRequestHandler.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCRemoveBackgroundRequest.h>
 #import <VisionKitCore/VKCRemoveBackgroundRequestHandler.h>
 #import <VisionKitCore/VKCRemoveBackgroundResult.h>
@@ -270,7 +281,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKCImageAnalyzer.h>)
+#if __has_include(<VisionKitCore/VKCImageAnalyzer.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCImageAnalyzer.h>
 #import <VisionKitCore/VKCImageAnalyzerRequest.h>
 #else
@@ -297,7 +308,7 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #if PLATFORM(MAC)
-#if __has_include(<VisionKitCore/VKCImageAnalysisOverlayView.h>)
+#if __has_include(<VisionKitCore/VKCImageAnalysisOverlayView.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCImageAnalysisOverlayView.h>
 #else
 
@@ -323,8 +334,8 @@ NS_ASSUME_NONNULL_END
 #endif
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-#if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>)
+#if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MACCATALYST)
+#if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCImageAnalysisInteraction.h>
 #else
 
@@ -354,8 +365,10 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif
-#endif // PLATFORM(IOS) || PLATFORM(VISION)
+#endif // PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MACCATALYST)
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)
+
+#endif // !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules)

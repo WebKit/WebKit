@@ -72,7 +72,7 @@ LegacyCustomProtocolID LegacyCustomProtocolManager::addCustomProtocol(CustomProt
 {
     Locker locker { m_customProtocolMapLock };
     auto customProtocolID = LegacyCustomProtocolID::generate();
-    m_customProtocolMap.add(customProtocolID, WTFMove(customProtocol));
+    m_customProtocolMap.add(customProtocolID, WTF::move(customProtocol));
     return customProtocolID;
 }
 

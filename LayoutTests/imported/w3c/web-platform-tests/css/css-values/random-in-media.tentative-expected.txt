@@ -1,0 +1,6 @@
+
+PASS Should be parseable: '(width > random(10px, 30px))'
+PASS Should be unknown: '(width > random(10px, 30px))'
+PASS Should be parseable: '(width > random(element-shared, 10px, 30px))'
+PASS Should be unknown: '(width > random(element-shared, 10px, 30px))'
+

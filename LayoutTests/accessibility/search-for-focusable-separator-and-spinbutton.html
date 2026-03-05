@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="focusable-separator" role="separator" tabindex="0" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Focusable Separator</div>
+<div id="non-focusable-separator" role="separator">Non-Focusable Separator</div>
+<div id="spinbutton" role="spinbutton" tabindex="0" aria-valuenow="5" aria-valuemin="0" aria-valuemax="10">Spinbutton</div>
+<div id="dynamic-separator" role="separator">Initially Non-Focusable</div>
+
+<script>
+var output = "This tests that focusable separators (splitters) and spinbuttons are found by AXControlSearchKey.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    function collectControlIds() {
+        var controls = [];
+        var searchResult = null;
+        while (true) {
+            searchResult = webArea.uiElementForSearchPredicate(searchResult, /* isForward */ true, "AXControlSearchKey", "", /* visibleOnly */ false);
+            if (!searchResult)
+                break;
+            var id = searchResult.domIdentifier;
+            if (id)
+                controls.push(id);
+        }
+        return controls;
+    }
+
+    var initialControls = collectControlIds();
+    output += expect("initialControls.includes('focusable-separator')", "true");
+    output += expect("initialControls.includes('non-focusable-separator')", "false");
+    output += expect("initialControls.includes('spinbutton')", "true");
+    output += expect("initialControls.includes('dynamic-separator')", "false");
+
+    var finalControls;
+    output += "\nMaking dynamic-separator focusable by adding tabindex...\n";
+    document.getElementById("dynamic-separator").setAttribute("tabindex", "0");
+    setTimeout(async function() {
+        await waitFor(() => collectControlIds().includes("dynamic-separator") );
+
+        output += "\nRemoving tabindex from focusable-separator...\n";
+        document.getElementById("focusable-separator").removeAttribute("tabindex");
+
+        await waitFor(() => {
+            finalControls = collectControlIds();
+            return !finalControls.includes("focusable-separator");
+        });
+
+        output += expect("finalControls.includes('focusable-separator')", "false");
+        output += expect("finalControls.includes('dynamic-separator')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

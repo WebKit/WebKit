@@ -115,7 +115,7 @@ void WebResourceLoadObserver::scheduleNotificationIfNeeded()
 void WebResourceLoadObserver::updateCentralStatisticsStore(CompletionHandler<void()>&& completionHandler)
 {
     m_notificationTimer.stop();
-    Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), WTFMove(completionHandler));
+    Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), WTF::move(completionHandler));
 }
 
 
@@ -131,7 +131,7 @@ String WebResourceLoadObserver::statisticsForURL(const URL& url)
 Vector<ResourceLoadStatistics> WebResourceLoadObserver::takeStatistics()
 {
     return WTF::map(std::exchange(m_resourceStatisticsMap, { }), [](auto&& entry) {
-        return ResourceLoadStatistics { WTFMove(*entry.value) };
+        return ResourceLoadStatistics { WTF::move(*entry.value) };
     });
 }
 

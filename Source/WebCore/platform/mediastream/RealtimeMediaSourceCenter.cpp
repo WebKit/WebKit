@@ -73,9 +73,9 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
 
     RefPtr<RealtimeMediaSource> audioSource;
     if (audioDevice && !audioDevice.isSpeakerDevice()) {
-        auto source = audioCaptureFactory().createAudioCaptureSource(WTFMove(audioDevice), MediaDeviceHashSalts { hashSalts }, &request.audioConstraints, request.pageIdentifier);
+        auto source = audioCaptureFactory().createAudioCaptureSource(WTF::move(audioDevice), MediaDeviceHashSalts { hashSalts }, &request.audioConstraints, request.pageIdentifier);
         if (!source) {
-            completionHandler(makeUnexpected(WTFMove(source.error)));
+            completionHandler(makeUnexpected(WTF::move(source.error)));
             return;
         }
         audioSource = source.source();
@@ -85,39 +85,39 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
     if (videoDevice) {
         CaptureSourceOrError source;
         if (videoDevice.type() == CaptureDevice::DeviceType::Camera)
-            source = videoCaptureFactory().createVideoCaptureSource(WTFMove(videoDevice), WTFMove(hashSalts), &request.videoConstraints, request.pageIdentifier);
+            source = videoCaptureFactory().createVideoCaptureSource(WTF::move(videoDevice), WTF::move(hashSalts), &request.videoConstraints, request.pageIdentifier);
         else
-            source = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), WTFMove(hashSalts), &request.videoConstraints, request.pageIdentifier);
+            source = displayCaptureFactory().createDisplayCaptureSource(WTF::move(videoDevice), WTF::move(hashSalts), &request.videoConstraints, request.pageIdentifier);
 
         if (!source) {
-            completionHandler(makeUnexpected(WTFMove(source.error)));
+            completionHandler(makeUnexpected(WTF::move(source.error)));
             return;
         }
         videoSource = source.source();
     }
 
-    CompletionHandler<void(CaptureSourceError&&)> whenAudioSourceReady = [audioSource, videoSource = WTFMove(videoSource), logger = WTFMove(logger), completionHandler = WTFMove(completionHandler)](auto&& error) mutable {
+    CompletionHandler<void(CaptureSourceError&&)> whenAudioSourceReady = [audioSource, videoSource = WTF::move(videoSource), logger = WTF::move(logger), completionHandler = WTF::move(completionHandler)](auto&& error) mutable {
         if (error)
             return completionHandler(makeUnexpected(error));
         if (!videoSource)
-            return completionHandler(MediaStreamPrivate::create(WTFMove(logger), WTFMove(audioSource), WTFMove(videoSource)));
+            return completionHandler(MediaStreamPrivate::create(WTF::move(logger), WTF::move(audioSource), WTF::move(videoSource)));
 
-        CompletionHandler<void(CaptureSourceError&&)> whenVideoSourceReady = [audioSource = WTFMove(audioSource), videoSource, logger = WTFMove(logger), completionHandler = WTFMove(completionHandler)](auto&& error) mutable {
+        CompletionHandler<void(CaptureSourceError&&)> whenVideoSourceReady = [audioSource = WTF::move(audioSource), videoSource, logger = WTF::move(logger), completionHandler = WTF::move(completionHandler)](auto&& error) mutable {
             if (error)
                 return completionHandler(makeUnexpected(error));
-            completionHandler(MediaStreamPrivate::create(WTFMove(logger), WTFMove(audioSource), WTFMove(videoSource)));
+            completionHandler(MediaStreamPrivate::create(WTF::move(logger), WTF::move(audioSource), WTF::move(videoSource)));
         };
-        videoSource->whenReady(WTFMove(whenVideoSourceReady));
+        videoSource->whenReady(WTF::move(whenVideoSourceReady));
     };
     if (!audioSource)
         return whenAudioSourceReady({ });
-    audioSource->whenReady(WTFMove(whenAudioSourceReady));
+    audioSource->whenReady(WTF::move(whenAudioSourceReady));
 }
 
 void RealtimeMediaSourceCenter::getMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
 {
     auto shouldEnumerateDisplay = displayCaptureFactory().displayCaptureDeviceManager().requiresCaptureDevicesEnumeration();
-    enumerateDevices(true, shouldEnumerateDisplay, true, true, [this, protectedThis = Ref { *this }, completion = WTFMove(completion)]() mutable {
+    enumerateDevices(true, shouldEnumerateDisplay, true, true, [this, protectedThis = Ref { *this }, completion = WTF::move(completion)]() mutable {
         Vector<CaptureDevice> results;
 
         results.appendVector(audioCaptureFactory().audioCaptureDeviceManager().captureDevices());
@@ -128,7 +128,7 @@ void RealtimeMediaSourceCenter::getMediaStreamDevices(CompletionHandler<void(Vec
         if (displayCaptureDeviceManager.requiresCaptureDevicesEnumeration())
             results.appendVector(displayCaptureDeviceManager.captureDevices());
 
-        completion(WTFMove(results));
+        completion(WTF::move(results));
     });
 }
 
@@ -295,7 +295,7 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
 
 void RealtimeMediaSourceCenter::enumerateDevices(bool shouldEnumerateCamera, bool shouldEnumerateDisplay, bool shouldEnumerateMicrophone, bool shouldEnumerateSpeakers, CompletionHandler<void()>&& callback)
 {
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(callback));
+    auto callbackAggregator = CallbackAggregator::create(WTF::move(callback));
     if (shouldEnumerateCamera)
         videoCaptureFactory().videoCaptureDeviceManager().computeCaptureDevices([callbackAggregator] { });
     if (shouldEnumerateDisplay)
@@ -312,7 +312,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidateHandler&& val
     bool shouldEnumerateDisplay = displayCaptureFactory().displayCaptureDeviceManager().requiresCaptureDevicesEnumeration();
     bool shouldEnumerateMicrophone = request.audioConstraints.isValid;
     bool shouldEnumerateSpeakers = false;
-    enumerateDevices(shouldEnumerateCamera, shouldEnumerateDisplay, shouldEnumerateMicrophone, shouldEnumerateSpeakers, [this, protectedThis = Ref { *this }, validateHandler = WTFMove(validateHandler), request, deviceIdentifierHashSalts = WTFMove(deviceIdentifierHashSalts)]() mutable {
+    enumerateDevices(shouldEnumerateCamera, shouldEnumerateDisplay, shouldEnumerateMicrophone, shouldEnumerateSpeakers, [this, protectedThis = Ref { *this }, validateHandler = WTF::move(validateHandler), request, deviceIdentifierHashSalts = WTF::move(deviceIdentifierHashSalts)]() mutable {
         validateHandler(validateRequestConstraintsAfterEnumeration(request, deviceIdentifierHashSalts));
     });
 }
@@ -367,7 +367,7 @@ Expected<RealtimeMediaSourceCenter::ValidDevices, MediaConstraintType> RealtimeM
         });
     }
 
-    return ValidDevices { WTFMove(audioDevices), WTFMove(videoDevices) };
+    return ValidDevices { WTF::move(audioDevices), WTF::move(videoDevices) };
 }
 
 void RealtimeMediaSourceCenter::setAudioCaptureFactory(AudioCaptureFactory& factory)
@@ -435,7 +435,7 @@ const String& RealtimeMediaSourceCenter::currentMediaEnvironment() const
 
 void RealtimeMediaSourceCenter::setCurrentMediaEnvironment(String&& mediaEnvironment)
 {
-    m_currentMediaEnvironment = WTFMove(mediaEnvironment);
+    m_currentMediaEnvironment = WTF::move(mediaEnvironment);
 }
 #endif
 

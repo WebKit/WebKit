@@ -150,7 +150,7 @@ TEST(WTF_HashCountedSet, MoveOnlyKeys)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyKeys.add(WTFMove(moveOnly));
+        moveOnlyKeys.add(WTF::move(moveOnly));
     }
 
     for (size_t i = 0; i < 100; ++i) {
@@ -177,7 +177,7 @@ TEST(WTF_HashCountedSet, MoveOnlyKeysInitialCount)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyKeys.add(WTFMove(moveOnly), i + 1);
+        moveOnlyKeys.add(WTF::move(moveOnly), i + 1);
     }
 
     for (size_t i = 0; i < 100; ++i) {
@@ -243,7 +243,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey)
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
-    hashCountedSet.add(WTFMove(uniquePtr));
+    hashCountedSet.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -261,7 +261,7 @@ TEST(WTF_HashCountedSet, UniquePtrKeyInitialCount)
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
-    hashCountedSet.add(WTFMove(uniquePtr), 12);
+    hashCountedSet.add(WTF::move(uniquePtr), 12);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -280,7 +280,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_CustomDeleter)
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>> hashCountedSet;
 
     std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>> uniquePtr(new ConstructorDestructorCounter(), DeleterCounter<ConstructorDestructorCounter>());
-    hashCountedSet.add(WTFMove(uniquePtr));
+    hashCountedSet.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -301,7 +301,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_FindUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    hashCountedSet.add(WTFMove(uniquePtr));
+    hashCountedSet.add(WTF::move(uniquePtr));
 
     auto it = hashCountedSet.find(ptr);
     ASSERT_TRUE(it != hashCountedSet.end());
@@ -315,7 +315,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_ContainsUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    hashCountedSet.add(WTFMove(uniquePtr));
+    hashCountedSet.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(true, hashCountedSet.contains(ptr));
 }
@@ -326,7 +326,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_GetUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    hashCountedSet.add(WTFMove(uniquePtr));
+    hashCountedSet.add(WTF::move(uniquePtr));
 
     int value = hashCountedSet.count(ptr);
     EXPECT_EQ(1, value);
@@ -340,7 +340,7 @@ TEST(WTF_HashCountedSet, UniquePtrKey_RemoveUsingRawPointer)
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    hashCountedSet.add(WTFMove(uniquePtr));
+    hashCountedSet.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -378,7 +378,7 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingRelease)
         HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
 
         RefPtr<RefLogger> ptr(&a);
-        hashCountedSet.add(WTFMove(ptr));
+        hashCountedSet.add(WTF::move(ptr));
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -392,7 +392,7 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingMove)
         HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
 
         RefPtr<RefLogger> ptr(&a);
-        hashCountedSet.add(WTFMove(ptr));
+        hashCountedSet.add(WTF::move(ptr));
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -458,7 +458,7 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 
         {
             RefPtr<RefLogger> ptr2(&a);
-            auto addResult = hashCountedSet.add(WTFMove(ptr2));
+            auto addResult = hashCountedSet.add(WTF::move(ptr2));
             EXPECT_FALSE(addResult.isNewEntry);
         }
 
@@ -484,7 +484,7 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 
         {
             RefPtr<RefLogger> ptr2(&a);
-            auto addResult = hashCountedSet.add(WTFMove(ptr2));
+            auto addResult = hashCountedSet.add(WTF::move(ptr2));
             EXPECT_FALSE(addResult.isNewEntry);
         }
 

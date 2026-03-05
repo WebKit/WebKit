@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,26 +27,51 @@
 
 #include "CSSBlurFunction.h"
 #include "CSSFilterFunctionDescriptor.h"
+#include "FEGaussianBlur.h"
 #include "FilterOperation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
 namespace Style {
 
-CSS::Blur toCSSBlur(Ref<BlurFilterOperation> operation, const RenderStyle& style)
+Blur Blur::passthroughForInterpolation()
 {
-    return { CSS::Blur::Parameter { toCSS(Length<CSS::Nonnegative> { operation->stdDeviation() }, style) } };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueBlur>::initialValueForInterpolation };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::Blur& filter, const BuilderState& state)
+IntOutsets Blur::calculateOutsets(ZoomFactor) const
 {
-    float stdDeviation = 0;
-    if (auto parameter = filter.value)
-        stdDeviation = toStyle(*parameter, state).resolveZoom(Style::ZoomNeeded { });
-    else
-        stdDeviation = filterFunctionDefaultValue<CSS::BlurFunction::name>().value;
+    auto stdDeviation = evaluate<float>(value, ZoomNeeded { });
+    return FEGaussianBlur::calculateOutsets({ stdDeviation, stdDeviation });
+}
 
-    return BlurFilterOperation::create(stdDeviation);
+// MARK: - Conversion
+
+auto ToCSS<Blur>::operator()(const Blur& value, const RenderStyle& style) -> CSS::Blur
+{
+    return { .value = toCSS(value.value, style) };
+}
+
+auto ToStyle<CSS::Blur>::operator()(const CSS::Blur& value, const BuilderState& state) -> Blur
+{
+    if (auto parameter = value.value)
+        return { .value = toStyle(*parameter, state) };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueBlur>::defaultValue };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<Blur, Ref<FilterEffect>>::operator()(const Blur& value, const RenderStyle&) -> Ref<FilterEffect>
+{
+    auto stdDeviation = evaluate<float>(value, ZoomNeeded { });
+    return FEGaussianBlur::create(stdDeviation, stdDeviation, EdgeModeType::None);
+}
+
+// MARK: - Platform
+
+auto ToPlatform<Blur>::operator()(const Blur& value, const RenderStyle&) -> Ref<FilterOperation>
+{
+    return BlurFilterOperation::create(Style::evaluate<float>(value, ZoomNeeded { }));
 }
 
 } // namespace Style

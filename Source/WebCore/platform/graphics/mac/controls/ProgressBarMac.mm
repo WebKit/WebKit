@@ -115,9 +115,9 @@ void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     CGContextRef cgContext = imageBuffer->context().platformContext();
 
-    auto& progressBarPart = owningProgressBarPart();
+    Ref progressBarPart = owningProgressBarPart();
     auto controlSize = controlSizeForFont(style);
-    bool isIndeterminate = progressBarPart.position() < 0;
+    bool isIndeterminate = progressBarPart->position() < 0;
     bool isActive = style.states.contains(ControlStyle::State::WindowActive);
 
     auto coreUISizeForProgressBarSize = [](NSControlSize size) -> CFStringRef {
@@ -137,13 +137,13 @@ void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     [[NSAppearance currentDrawingAppearance] _drawInRect:NSMakeRect(0, 0, inflatedRect.width(), inflatedRect.height()) context:cgContext options:@{
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)(isIndeterminate ? kCUIWidgetProgressIndeterminateBar : kCUIWidgetProgressBar),
-        (__bridge NSString *)kCUIValueKey: @(isIndeterminate ? 1 : std::min(nextafter(1.0, -1), progressBarPart.position())),
+        (__bridge NSString *)kCUIValueKey: @(isIndeterminate ? 1 : std::min(nextafter(1.0, -1), progressBarPart->position())),
         (__bridge NSString *)kCUISizeKey: (__bridge NSString *)coreUISizeForProgressBarSize(controlSize),
         (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
         (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
         (__bridge NSString *)kCUIPresentationStateKey: (__bridge NSString *)(isActive ? kCUIPresentationStateActiveKey : kCUIPresentationStateInactive),
         (__bridge NSString *)kCUIOrientationKey: (__bridge NSString *)kCUIOrientHorizontal,
-        (__bridge NSString *)kCUIAnimationStartTimeKey: @(progressBarPart.animationStartTime().seconds()),
+        (__bridge NSString *)kCUIAnimationStartTimeKey: @(progressBarPart->animationStartTime().seconds()),
         (__bridge NSString *)kCUIAnimationTimeKey: @(MonotonicTime::now().secondsSinceEpoch().seconds())
     }];
 
@@ -161,7 +161,7 @@ void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
         context.scale(FloatSize(-1, 1));
     }
 
-    context.drawConsumingImageBuffer(WTFMove(imageBuffer), inflatedRect.location());
+    context.drawConsumingImageBuffer(WTF::move(imageBuffer), inflatedRect.location());
 }
 
 } // namespace WebCore

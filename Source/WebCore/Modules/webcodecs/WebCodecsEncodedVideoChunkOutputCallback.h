@@ -45,6 +45,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSWebCodecsEncodedVideoChunkOutputCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(WebCodecsEncodedVideoChunk&, const WebCodecsEncodedVideoChunkMetadata&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(WebCodecsEncodedVideoChunk&, const WebCodecsEncodedVideoChunkMetadata&) = 0;
 

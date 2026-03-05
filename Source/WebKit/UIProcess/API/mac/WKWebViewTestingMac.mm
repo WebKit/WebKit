@@ -98,16 +98,6 @@
     return _page->editorState().postLayoutData->selectionBoundingRect;
 }
 
-- (void)viewDidChangeEffectiveAppearance
-{
-    // This can be called during [super initWithCoder:] and [super initWithFrame:].
-    // That is before _impl is ready to be used, so check. <rdar://problem/39611236>
-    if (!_impl)
-        return;
-
-    _impl->effectiveAppearanceDidChange();
-}
-
 - (NSSet<NSView *> *)_pdfHUDs
 {
     return _impl->pdfHUDs().autorelease();
@@ -125,7 +115,7 @@
 - (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler
 {
     _page->getAccessibilityTreeData([completionHandler = makeBlockPtr(completionHandler)] (API::Data* data) {
-        completionHandler(protectedWrapper(data).get(), nil);
+        completionHandler(protect(wrapper(data)).get(), nil);
     });
 }
 
@@ -141,7 +131,7 @@
 
 - (void)_setSelectedColorForColorPicker:(NSColor *)color
 {
-    _page->checkedColorPickerClient()->didChooseColor(WebCore::colorFromCocoaColor(color));
+    protect(_page->colorPickerClient())->didChooseColor(WebCore::colorFromCocoaColor(color));
 }
 
 - (void)_createFlagsChangedEventMonitorForTesting

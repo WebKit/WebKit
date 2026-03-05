@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
+#include <wtf/Compiler.h>
 #include <wtf/PrintStream.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

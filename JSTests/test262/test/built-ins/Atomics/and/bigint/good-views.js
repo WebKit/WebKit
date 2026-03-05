@@ -3,7 +3,7 @@
 /*---
 esid: sec-atomics.and
 description: Test Atomics.and on arrays that allow atomic operations
-includes: [testAtomics.js, testBigIntTypedArray.js]
+includes: [testAtomics.js, testTypedArray.js]
 features: [ArrayBuffer, Atomics, BigInt, DataView, SharedArrayBuffer, Symbol, TypedArray]
 ---*/
 const sab = new SharedArrayBuffer(1024);
@@ -80,4 +80,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     Atomics.store(view, Idx, 37n);
     assert.sameValue(Atomics.and(view, Idx, 0n), 37n, 'Atomics.and(view, Idx, 0n) returns 37n');
   });
-});
+}, null, ["passthrough"]);

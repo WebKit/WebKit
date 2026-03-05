@@ -50,7 +50,6 @@ private:
     String responseMIMEType() const;
     bool canUseSheet(MIMETypeCheckHint, bool* hasValidMIMEType, bool* hasHTTPStatusOK) const;
     bool mayTryReplaceEncodedData() const final { return true; }
-    Ref<TextResourceDecoder> protectedDecoder() const;
 
     void didAddClient(CachedResourceClient&) final;
 

@@ -55,7 +55,7 @@ class StorageAreaMap final : public RefCounted<StorageAreaMap>, public IPC::Mess
 public:
     static Ref<StorageAreaMap> create(StorageNamespaceImpl& storageNamespace, Ref<const WebCore::SecurityOrigin>&& securityOrigin)
     {
-        return adoptRef(*new StorageAreaMap(storageNamespace, WTFMove(securityOrigin)));
+        return adoptRef(*new StorageAreaMap(storageNamespace, WTF::move(securityOrigin)));
     }
 
     ~StorageAreaMap();
@@ -88,7 +88,7 @@ private:
 
     void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
-    void didClear(uint64_t mapSeed);
+    void NODELETE didClear(uint64_t mapSeed);
 
     // Message handlers.
     void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString, uint64_t messageIdentifier);
@@ -108,8 +108,6 @@ private:
     void sendConnectMessage(SendMode);
     void connectSync();
     void didConnect(std::optional<StorageAreaIdentifier>, HashMap<String, String>&&, uint64_t messageIdentifier);
-
-    Ref<StorageNamespaceImpl> protectedNamespace() const;
 
     uint64_t m_lastHandledMessageIdentifier { 0 };
     WeakRef<StorageNamespaceImpl> m_namespace;

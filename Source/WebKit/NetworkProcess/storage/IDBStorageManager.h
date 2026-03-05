@@ -56,9 +56,9 @@ public:
     static bool migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory);
 
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    IDBStorageManager(const String& path, IDBStorageRegistry&, QuotaCheckFunction&&);
+    IDBStorageManager(const String& path, IDBStorageRegistry&, QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
     ~IDBStorageManager();
-    bool isActive() const;
+    bool NODELETE isActive() const;
     bool hasDataInMemory() const;
     void closeDatabasesForDeletion();
     void stopDatabaseActivitiesForSuspend();
@@ -85,6 +85,7 @@ private:
     const CheckedRef<IDBStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<WebCore::IDBDatabaseIdentifier, std::unique_ptr<WebCore::IDBServer::UniqueIDBDatabase>> m_databases;
+    bool m_useSQLiteMemoryBackingStore { false };
 };
 
 } // namespace WebKit

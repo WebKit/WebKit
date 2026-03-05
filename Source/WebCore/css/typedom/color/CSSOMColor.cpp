@@ -30,15 +30,21 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSOMColor);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOMColor);
 
-void CSSOMColor::setColorSpace(CSSKeywordish)
+std::optional<CSSKeywordish> CSSOMColor::colorSpace() const
+{
+    // FIXME: Implement.
+    return std::nullopt;
+}
+
+void CSSOMColor::setColorSpace(std::optional<CSSKeywordish>)
 {
     // FIXME: Implement.
 }
 
 CSSOMColor::CSSOMColor(CSSKeywordish, Vector<CSSColorPercent>, CSSNumberish alpha)
-    : m_alpha(WTFMove(alpha))
+    : m_alpha(WTF::move(alpha))
 {
 }
 

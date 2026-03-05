@@ -26,26 +26,26 @@ info: |
       i. Let value be GetValueFromBuffer(srcBuffer, srcByteIndex, "Uint8").
       ii. Perform SetValueInBuffer(targetBuffer, targetByteIndex, "Uint8",
       value).
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample, src, result;
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   src = new TA(sample.buffer, 0, 2);
   result = sample.set(src, 0);
   assert(compareArray(sample, [1n, 2n, 3n, 4n]), "offset: 0, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   src = new TA(sample.buffer, 0, 2);
   result = sample.set(src, 1);
   assert(compareArray(sample, [1n, 1n, 2n, 4n]), "offset: 1, result: " + sample);
   assert.sameValue(result, undefined, "returns undefined");
 
-  sample = new TA([1n, 2n, 3n, 4n]);
+  sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   src = new TA(sample.buffer, 0, 2);
   result = sample.set(src, 2);
   assert(compareArray(sample, [1n, 2n, 1n, 2n]), "offset: 2, result: " + sample);

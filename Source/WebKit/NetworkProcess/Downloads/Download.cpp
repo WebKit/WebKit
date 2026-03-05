@@ -103,7 +103,7 @@ void Download::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& comple
     // completionHandler will inform the API that the cancellation succeeded.
     m_ignoreDidFailCallback = ignoreDidFailCallback;
 
-    auto completionHandlerWrapper = [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (std::span<const uint8_t> resumeData) mutable {
+    auto completionHandlerWrapper = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (std::span<const uint8_t> resumeData) mutable {
         completionHandler(resumeData);
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->m_ignoreDidFailCallback == IgnoreDidFailCallback::No)
@@ -120,7 +120,7 @@ void Download::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& comple
         completionHandlerWrapper({ });
         return;
     }
-    platformCancelNetworkLoad(WTFMove(completionHandlerWrapper));
+    platformCancelNetworkLoad(WTF::move(completionHandlerWrapper));
 }
 
 void Download::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
@@ -130,7 +130,7 @@ void Download::didReceiveChallenge(const WebCore::AuthenticationChallenge& chall
         return;
     }
 
-    m_client->protectedDownloadsAuthenticationManager()->didReceiveAuthenticationChallenge(*this, challenge, WTFMove(completionHandler));
+    protect(m_client->downloadsAuthenticationManager())->didReceiveAuthenticationChallenge(*this, challenge, WTF::move(completionHandler));
 }
 
 void Download::didCreateDestination(const String& path)
@@ -145,7 +145,7 @@ void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten,
         m_hasReceivedData = true;
     }
     
-    protectedMonitor()->downloadReceivedBytes(bytesWritten);
+    protect(m_monitor)->downloadReceivedBytes(bytesWritten);
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     updateProgress(totalBytesWritten, totalBytesExpectedToWrite);

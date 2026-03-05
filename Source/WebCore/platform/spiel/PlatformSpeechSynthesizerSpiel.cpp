@@ -51,7 +51,7 @@ public:
     explicit SpielSpeechWrapper(const PlatformSpeechSynthesizer&, Function<void()>&&);
     ~SpielSpeechWrapper();
 
-    Vector<RefPtr<PlatformSpeechSynthesisVoice>> initializeVoiceList();
+    Vector<Ref<PlatformSpeechSynthesisVoice>> initializeVoiceList();
     void pause();
     void resume();
     void speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>&&);
@@ -72,7 +72,7 @@ private:
 
 SpielSpeechWrapper::SpielSpeechWrapper(const PlatformSpeechSynthesizer& synthesizer, Function<void()>&& speakerCreatedCallback)
     : m_platformSynthesizer(synthesizer)
-    , m_speakerCreatedCallback(WTFMove(speakerCreatedCallback))
+    , m_speakerCreatedCallback(WTF::move(speakerCreatedCallback))
 {
     ensureGStreamerInitialized();
     registerWebKitGStreamerElements();
@@ -154,9 +154,9 @@ String SpielSpeechWrapper::generateVoiceURI(const GRefPtr<SpielVoice>& voice, co
     return makeString(URI_PREFIX, unsafeSpan(spiel_provider_get_well_known_name(provider.get())), '#', unsafeSpan(spiel_voice_get_identifier(voice.get())), '#', language);
 }
 
-Vector<RefPtr<PlatformSpeechSynthesisVoice>> SpielSpeechWrapper::initializeVoiceList()
+Vector<Ref<PlatformSpeechSynthesisVoice>> SpielSpeechWrapper::initializeVoiceList()
 {
-    Vector<RefPtr<PlatformSpeechSynthesisVoice>> platformVoices;
+    Vector<Ref<PlatformSpeechSynthesisVoice>> platformVoices;
     auto voices = spiel_speaker_get_voices(m_speaker.get());
     unsigned position = 0;
     m_voices.clear();
@@ -222,7 +222,7 @@ void SpielSpeechWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>
     spiel_utterance_set_volume(spielUtterance.get(), utterance->volume());
     spiel_utterance_set_pitch(spielUtterance.get(), utterance->pitch());
     spiel_utterance_set_rate(spielUtterance.get(), utterance->rate());
-    m_utterance = WTFMove(utterance);
+    m_utterance = WTF::move(utterance);
     spiel_speaker_speak(m_speaker.get(), spielUtterance.get());
 }
 
@@ -280,12 +280,12 @@ void PlatformSpeechSynthesizer::resume()
 void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     if (!m_platformSpeechWrapper) {
-        m_platformSpeechWrapper = makeUnique<SpielSpeechWrapper>(*this, [&, utterance = WTFMove(utterance)]() mutable {
-            m_platformSpeechWrapper->speakUtterance(WTFMove(utterance));
+        m_platformSpeechWrapper = makeUnique<SpielSpeechWrapper>(*this, [&, utterance = WTF::move(utterance)]() mutable {
+            m_platformSpeechWrapper->speakUtterance(WTF::move(utterance));
         });
         return;
     }
-    m_platformSpeechWrapper->speakUtterance(WTFMove(utterance));
+    m_platformSpeechWrapper->speakUtterance(WTF::move(utterance));
 }
 
 void PlatformSpeechSynthesizer::cancel()

@@ -119,8 +119,8 @@ void vp9_highbd_mbpost_proc_across_ip_c(uint16_t *src, int pitch, int rows,
   uint16_t d[16];
 
   for (r = 0; r < rows; r++) {
-    int sumsq = 0;
-    int sum = 0;
+    int64_t sumsq = 0;
+    int64_t sum = 0;
 
     for (i = -8; i <= 6; i++) {
       sumsq += s[i] * s[i];
@@ -157,8 +157,8 @@ void vp9_highbd_mbpost_proc_down_c(uint16_t *dst, int pitch, int rows, int cols,
 
   for (c = 0; c < cols; c++) {
     uint16_t *s = &dst[c];
-    int sumsq = 0;
-    int sum = 0;
+    int64_t sumsq = 0;
+    int64_t sum = 0;
     uint16_t d[16];
     const int16_t *rv2 = rv3 + ((c * 17) & 127);
 
@@ -254,8 +254,7 @@ void vp9_deblock(struct VP9Common *cm, const YV12_BUFFER_CONFIG *src,
 #endif  // CONFIG_VP9_HIGHBITDEPTH
     int mbr;
     const int mb_rows = cm->mb_rows;
-    const int mb_cols = cm->mb_cols;
-    memset(limits, (unsigned char)ppl, 16 * mb_cols);
+    memset(limits, (unsigned char)ppl, cm->postproc_state.limits_size);
 
     for (mbr = 0; mbr < mb_rows; mbr++) {
       vpx_post_proc_down_and_across_mb_row(
@@ -298,6 +297,7 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
   const int flags = ppflags->post_proc_flag;
   YV12_BUFFER_CONFIG *const ppbuf = &cm->post_proc_buffer;
   struct postproc_state *const ppstate = &cm->postproc_state;
+  ppstate->limits_size = unscaled_width;
 
   if (!cm->frame_to_show) return -1;
 
@@ -342,7 +342,7 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
       // Ensure that postproc is set to all 0s so that post proc
       // doesn't pull random data in from edge.
       memset(cm->post_proc_buffer_int.buffer_alloc, 128,
-             cm->post_proc_buffer.frame_size);
+             cm->post_proc_buffer_int.frame_size);
     }
   }
 
@@ -359,7 +359,7 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
   if (flags & (VP9D_DEMACROBLOCK | VP9D_DEBLOCK)) {
     if (!cm->postproc_state.limits) {
       cm->postproc_state.limits =
-          vpx_calloc(unscaled_width, sizeof(*cm->postproc_state.limits));
+          vpx_calloc(ppstate->limits_size, sizeof(*cm->postproc_state.limits));
       if (!cm->postproc_state.limits) return 1;
     }
   }

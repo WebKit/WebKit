@@ -80,7 +80,7 @@ public:
     }
     virtual ~VideoPresentationInterfaceContext();
 
-    LayerHostingContext* layerHostingContext() { return m_layerHostingContext.get(); }
+    LayerHostingContext* layerHostingContext() LIFETIME_BOUND { return m_layerHostingContext.get(); }
     void setLayerHostingContext(std::unique_ptr<LayerHostingContext>&&);
 
     enum class AnimationType { None, IntoFullscreen, FromFullscreen };
@@ -149,7 +149,7 @@ public:
 
     void invalidate();
 
-    bool hasVideoPlayingInPictureInPicture() const;
+    bool NODELETE hasVideoPlayingInPictureInPicture() const;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -161,7 +161,7 @@ public:
     // Interface to WebChromeClient
     bool canEnterVideoFullscreen(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
-    bool supportsVideoFullscreenStandby() const;
+    bool NODELETE supportsVideoFullscreenStandby() const;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
     void setPlayerIdentifierForVideoElement(WebCore::HTMLVideoElement&);
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
@@ -223,15 +223,15 @@ protected:
     void requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
     void ensureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier, WebCore::FloatSize existingVideoDimensions);
 
-    void setCurrentVideoFullscreenMode(VideoPresentationInterfaceContext&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void NODELETE setCurrentVideoFullscreenMode(VideoPresentationInterfaceContext&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setRequiresTextTrackRepresentation(WebCore::MediaPlayerClientIdentifier, bool);
     void setTextTrackRepresentationBounds(WebCore::MediaPlayerClientIdentifier, const WebCore::IntRect&);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const;
-    uint64_t logIdentifier() const;
+    const Logger& NODELETE logger() const;
+    uint64_t NODELETE logIdentifier() const;
     ASCIILiteral logClassName() const;
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     WeakPtr<WebPage> m_page;

@@ -53,7 +53,7 @@ using ImageBufferShareableBitmapBackendBase = WebCore::ImageBufferSkiaBackend;
 #endif
 
 class ImageBufferShareableBitmapBackend final : public ImageBufferShareableBitmapBackendBase, public ImageBufferBackendHandleSharing {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 
 public:

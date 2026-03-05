@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(B3_JIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include <JavaScriptCore/B3Common.h>
@@ -76,6 +78,7 @@ public:
     inline bool isFloat() const;
     inline bool isNumeric() const;
     inline bool isTuple() const;
+    inline bool isScalar() const;
     inline bool isVector() const;
 
     friend bool operator==(const Type&, const Type&) = default;
@@ -128,6 +131,11 @@ inline bool Type::isNumeric() const
 inline bool Type::isTuple() const
 {
     return kind() == Tuple;
+}
+
+inline bool Type::isScalar() const
+{
+    return isInt() || isFloat();
 }
 
 inline bool Type::isVector() const

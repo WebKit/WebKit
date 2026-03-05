@@ -59,7 +59,7 @@ template<typename CharacterType> static bool isParameterValueChar(CharacterType 
 }
 
 // Verify that the parameter is a link-extension which according to spec doesn't have to have a value.
-static bool isExtensionParameter(LinkHeader::LinkParameterName name)
+static bool NODELETE isExtensionParameter(LinkHeader::LinkParameterName name)
 {
     return name >= LinkHeader::LinkParameterUnknown;
 }
@@ -262,37 +262,37 @@ void LinkHeader::setValue(LinkParameterName name, String&& value)
     switch (name) {
     case LinkParameterRel:
         if (!m_rel)
-            m_rel = WTFMove(value);
+            m_rel = WTF::move(value);
         break;
     case LinkParameterAnchor:
         m_isValid = false;
         break;
     case LinkParameterCrossOrigin:
-        m_crossOrigin = WTFMove(value);
+        m_crossOrigin = WTF::move(value);
         break;
     case LinkParameterAs:
-        m_as = WTFMove(value);
+        m_as = WTF::move(value);
         break;
     case LinkParameterType:
-        m_mimeType = WTFMove(value);
+        m_mimeType = WTF::move(value);
         break;
     case LinkParameterMedia:
-        m_media = WTFMove(value);
+        m_media = WTF::move(value);
         break;
     case LinkParameterImageSrcSet:
-        m_imageSrcSet = WTFMove(value);
+        m_imageSrcSet = WTF::move(value);
         break;
     case LinkParameterImageSizes:
-        m_imageSizes = WTFMove(value);
+        m_imageSizes = WTF::move(value);
         break;
     case LinkParameterNonce:
-        m_nonce = WTFMove(value);
+        m_nonce = WTF::move(value);
         break;
     case LinkParameterReferrerPolicy:
-        m_referrerPolicy = WTFMove(value);
+        m_referrerPolicy = WTF::move(value);
         break;
     case LinkParameterFetchPriority:
-        m_fetchPriority = WTFMove(value);
+        m_fetchPriority = WTF::move(value);
         break;
     case LinkParameterTitle:
     case LinkParameterRev:
@@ -340,7 +340,7 @@ template<typename CharacterType> LinkHeader::LinkHeader(StringParsingBuffer<Char
             return;
         }
 
-        setValue(*parameterName, WTFMove(parameterValue));
+        setValue(*parameterName, WTF::move(parameterValue));
     }
     findNextHeader(buffer);
 }

@@ -20,3 +20,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/inheritance.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/script-common.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/script-content.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/use-instance-hover-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/use-instance-hover.html

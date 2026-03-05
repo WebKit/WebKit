@@ -1,0 +1,6 @@
+
+FAIL assert_not_equals(rectLeaf.width, 0, "leaf rect width should not be zero") assert_not_equals: leaf rect width should not be zero got disallowed value 0
+FAIL assert_not_equals(rectLeaf.height, 0, "leaf rect height should not be zero") assert_not_equals: leaf rect height should not be zero got disallowed value 0
+PASS assert_not_equals(rectRoot.width, 0, "root rect width should not be zero")
+PASS assert_not_equals(rectRoot.height, 0, "root rect height should not be zero")
+

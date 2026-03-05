@@ -34,6 +34,7 @@
     [NSDictionary] any getManifest();
     DOMString getVersion();
     double getFrameId(any target);
+    [RaisesException] DOMString getDocumentId(any target);
 
     [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
     [MainWorldOnly] void getBackgroundPage([Optional, CallbackHandler] function callback);

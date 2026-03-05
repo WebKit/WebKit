@@ -1,10 +1,11 @@
 {
   "base": {
       "exclusions": [
-          ".vpython",
           ".vpython3",
           "DEPS",
-          "infra/specs/.*"
+          "infra/specs/.*",
+          "tools_webrtc/mb/mb_config.pyl",
+          "tools_webrtc/mb/mb.py"
       ]
   }
 }

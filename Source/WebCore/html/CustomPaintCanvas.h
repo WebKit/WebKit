@@ -59,6 +59,7 @@ public:
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
     void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
+    void setSizeForControllingContext(IntSize) { };
 
     Image* copiedImage() const final;
     void clearCopiedImage() const final;
@@ -82,5 +83,8 @@ private:
     mutable RefPtr<Image> m_copiedImage;
 };
 
-}
-SPECIALIZE_TYPE_TRAITS_CANVAS(WebCore::CustomPaintCanvas, isCustomPaintCanvas())
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CustomPaintCanvas)
+    static bool isType(const WebCore::CanvasBase& base) { return base.isCustomPaintCanvas(); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -27,6 +27,7 @@
     LegacyNoInterfaceObject,
     SkipVTableValidation,
 ] interface WebKitBuffer {
+    DOMString asUTF8String();
     DOMString asUTF16String();
     DOMString asLatin1String();
 };

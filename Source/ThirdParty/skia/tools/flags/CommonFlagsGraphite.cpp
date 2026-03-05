@@ -26,6 +26,7 @@ static DEFINE_bool(useWGPUTextureView, false, "Run Graphite w/ a wrapped WGPU te
 DEFINE_int(internalMSAATileSize, 0, "Run Graphite w/ limited MSAA texture's size");
 DEFINE_int(minMSAAPathSize, -1,
            "Graphite uses raster atlas for paths smaller than this, or default value if negative");
+DEFINE_bool(useDrawListLayer, false, "Enable experimental layer-based draw ordering.");
 
 void SetTestOptions(skiatest::graphite::TestOptions* testOptions) {
     static std::unique_ptr<SkExecutor> gGpuExecutor =
@@ -35,7 +36,8 @@ void SetTestOptions(skiatest::graphite::TestOptions* testOptions) {
     testOptions->fContextOptions.fExecutor = gGpuExecutor.get();
 
     if (FLAGS_internalSamples >= 0) {
-        testOptions->fContextOptions.fInternalMultisampleCount = FLAGS_internalSamples;
+        testOptions->fContextOptions.fInternalMultisampleCount =
+                skgpu::graphite::ToSampleCount(FLAGS_internalSamples);
     }
     if (FLAGS_internalMSAATileSize > 0) {
         testOptions->fContextOptions.fInternalMSAATileSize = {FLAGS_internalMSAATileSize,
@@ -43,6 +45,9 @@ void SetTestOptions(skiatest::graphite::TestOptions* testOptions) {
     }
     if (FLAGS_minMSAAPathSize >= 0) {
         testOptions->fContextOptions.fMinimumPathSizeForMSAA = FLAGS_minMSAAPathSize;
+    }
+    if (FLAGS_useDrawListLayer) {
+        testOptions->fOptionsPriv.fDrawListLayer = FLAGS_useDrawListLayer;
     }
 
 #if defined(SK_DAWN)

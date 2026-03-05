@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(JIT)
 
 #include <JavaScriptCore/BytecodeIndex.h>
@@ -50,8 +52,8 @@ public:
     {
         ASSERT(indexes.size() == codeLocations.size());
         m_pointer = MallocPtr<uint8_t, JITCodeMapMalloc>::malloc(sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size + sizeof(BytecodeIndex) * m_size);
-        std::copy(codeLocations.begin(), codeLocations.end(), this->codeLocations());
-        std::copy(indexes.begin(), indexes.end(), this->indexes());
+        std::ranges::copy(codeLocations, this->codeLocations());
+        std::ranges::copy(indexes, this->indexes());
     }
 
     CodeLocationLabel<JSEntryPtrTag> find(BytecodeIndex bytecodeIndex) const
@@ -91,7 +93,7 @@ public:
 
     JITCodeMap finalize()
     {
-        return JITCodeMap(WTFMove(m_indexes), WTFMove(m_codeLocations));
+        return JITCodeMap(WTF::move(m_indexes), WTF::move(m_codeLocations));
     }
 
 private:

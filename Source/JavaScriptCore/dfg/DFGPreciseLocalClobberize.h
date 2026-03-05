@@ -186,7 +186,6 @@ private:
         case CreateClonedArguments:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
-        case GetRestLength:
         case CreateRest: {
             bool isForwardingNode = false;
             bool isPhantomNode = false;

@@ -18,6 +18,7 @@
  */
 
 [
+    ActiveDOMObject,
     Exposed=Window
 ] interface HTMLScriptElement : HTMLElement {
     [CEReactions=NotNeeded] attribute (TrustedScript or DOMString) text;

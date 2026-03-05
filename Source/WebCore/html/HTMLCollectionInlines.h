@@ -96,22 +96,17 @@ inline Document& HTMLCollection::document() const
     return m_ownerNode->document();
 }
 
-inline Ref<Document> HTMLCollection::protectedDocument() const
-{
-    return document();
-}
-
 inline void HTMLCollection::invalidateCacheForAttribute(const QualifiedName& attributeName)
 {
     if (shouldInvalidateTypeOnAttributeChange(invalidationType(), attributeName))
         invalidateCache();
     else if (hasNamedElementCache() && (attributeName == HTMLNames::idAttr || attributeName == HTMLNames::nameAttr))
-        invalidateNamedElementCache(protectedDocument().get());
+        invalidateNamedElementCache(protect(document()).get());
 }
 
 inline void HTMLCollection::invalidateCache()
 {
-    invalidateCacheForDocument(protectedDocument().get());
+    invalidateCacheForDocument(protect(document()).get());
 }
 
 inline bool HTMLCollection::hasNamedElementCache() const
@@ -126,12 +121,12 @@ inline void HTMLCollection::setNamedItemCache(std::unique_ptr<CollectionNamedEle
     cache->didPopulate();
     {
         Locker locker { m_namedElementCacheAssignmentLock };
-        m_namedElementCache = WTFMove(cache);
+        m_namedElementCache = WTF::move(cache);
     }
-    protectedDocument()->collectionCachedIdNameMap(*this);
+    protect(document())->collectionCachedIdNameMap(*this);
 }
 
-inline const CollectionNamedElementCache& HTMLCollection::namedItemCaches() const
+inline const CollectionNamedElementCache& HTMLCollection::namedItemCaches() const LIFETIME_BOUND
 {
     ASSERT(!!m_namedElementCache);
     return *m_namedElementCache;

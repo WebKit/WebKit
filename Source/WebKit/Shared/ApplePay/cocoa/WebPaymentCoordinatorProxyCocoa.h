@@ -47,7 +47,7 @@ RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePayShippingMe
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
 RetainPtr<PKShippingMethods> toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>&);
 #endif
-PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
+PKMerchantCapability NODELETE toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 
 } // namespace WebKit
 

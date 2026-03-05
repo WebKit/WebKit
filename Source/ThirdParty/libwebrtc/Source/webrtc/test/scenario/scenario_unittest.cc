@@ -87,7 +87,8 @@ void SetupVideoCall(Scenario& s, VideoQualityAnalyzer* analyzer) {
     video.encoder.codec = VideoStreamConfig::Encoder::Codec::kVideoCodecVP8;
     video.encoder.implementation =
         VideoStreamConfig::Encoder::Implementation::kSoftware;
-    video.hooks.frame_pair_handlers = {analyzer->Handler()};
+    video.hooks.frame_pair_handlers = {
+        analyzer->Handler(s.net()->time_controller()->GetClock())};
   }
   s.CreateVideoStream(route->forward(), video);
   s.CreateAudioStream(route->forward(), AudioStreamConfig());

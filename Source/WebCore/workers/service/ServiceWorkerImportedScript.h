@@ -36,6 +36,6 @@ struct ServiceWorkerImportedScript {
     String mimeType;
 
     ServiceWorkerImportedScript isolatedCopy() const & { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
-    ServiceWorkerImportedScript isolatedCopy() && { return { WTFMove(script).isolatedCopy(), WTFMove(responseURL).isolatedCopy(), WTFMove(mimeType).isolatedCopy() }; }
+    ServiceWorkerImportedScript isolatedCopy() && { return { WTF::move(script).isolatedCopy(), WTF::move(responseURL).isolatedCopy(), WTF::move(mimeType).isolatedCopy() }; }
 };
 } // namespace WebCore

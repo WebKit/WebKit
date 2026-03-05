@@ -47,39 +47,24 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRProjectionLayer);
 RemoteXRProjectionLayer::RemoteXRProjectionLayer(WebCore::WebGPU::XRProjectionLayer& xrProjectionLayer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(xrProjectionLayer)
     , m_objectHeap(objectHeap)
-    , m_streamConnection(WTFMove(streamConnection))
+    , m_streamConnection(WTF::move(streamConnection))
     , m_identifier(identifier)
     , m_gpu(gpu)
 {
-    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
+    protect(m_streamConnection)->startReceivingMessages(*this, Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteXRProjectionLayer::~RemoteXRProjectionLayer() = default;
 
-Ref<WebCore::WebGPU::XRProjectionLayer> RemoteXRProjectionLayer::protectedBacking()
-{
-    return m_backing;
-}
-
-Ref<IPC::StreamServerConnection> RemoteXRProjectionLayer::protectedStreamConnection()
-{
-    return m_streamConnection;
-}
-
-Ref<RemoteGPU> RemoteXRProjectionLayer::protectedGPU() const
-{
-    return m_gpu.get();
-}
-
 void RemoteXRProjectionLayer::destruct()
 {
-    Ref { m_objectHeap.get() }->removeObject(m_identifier);
+    protect(m_objectHeap)->removeObject(m_identifier);
 }
 
 #if PLATFORM(COCOA)
 void RemoteXRProjectionLayer::startFrame(uint64_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, uint64_t reusableTextureIndex, PlatformXR::RateMapDescription&& rateMapDescription)
 {
-    protectedBacking()->startFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex, WTFMove(rateMapDescription));
+    protect(m_backing)->startFrame(frameIndex, WTF::move(colorBuffer), WTF::move(depthBuffer), WTF::move(completionSyncEvent), reusableTextureIndex, WTF::move(rateMapDescription));
 }
 #endif
 
@@ -89,7 +74,7 @@ void RemoteXRProjectionLayer::endFrame()
 
 void RemoteXRProjectionLayer::stopListeningForIPC()
 {
-    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
+    protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
 }
 
 } // namespace WebKit

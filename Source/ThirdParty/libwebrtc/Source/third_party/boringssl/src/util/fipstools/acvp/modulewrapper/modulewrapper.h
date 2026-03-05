@@ -21,8 +21,7 @@
 #include <openssl/span.h>
 
 
-namespace bssl {
-namespace acvp {
+namespace bssl::acvp {
 
 // kMaxArgs is the maximum number of arguments (including the function name)
 // that an ACVP request can contain.
@@ -72,5 +71,7 @@ typedef bool (*Handler)(const Span<const uint8_t> args[],
 // a reason and returns |nullptr| if none is found.
 Handler FindHandler(Span<const Span<const uint8_t>> args);
 
-}  // namespace acvp
-}  // namespace bssl
+// Run the I/O loop until error or EOF. Returns the exit code for the binary.
+int RunModuleWrapper();
+
+}  // namespace bssl::acvp

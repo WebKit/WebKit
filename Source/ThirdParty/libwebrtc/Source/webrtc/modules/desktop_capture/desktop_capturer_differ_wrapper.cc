@@ -123,6 +123,7 @@ void CompareFrames(const DesktopFrame& old_frame,
                    DesktopRegion* const output) {
   RTC_DCHECK(old_frame.size().equals(new_frame.size()));
   RTC_DCHECK_EQ(old_frame.stride(), new_frame.stride());
+  RTC_CHECK_EQ(old_frame.pixel_format(), new_frame.pixel_format());
   rect.IntersectWith(DesktopRect::MakeSize(old_frame.size()));
 
   const int y_block_count = (rect.height() - 1) / kBlockSize;

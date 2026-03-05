@@ -37,14 +37,14 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSOMVariableReferenceValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOMVariableReferenceValue);
 
 ExceptionOr<Ref<CSSOMVariableReferenceValue>> CSSOMVariableReferenceValue::create(String&& variable, RefPtr<CSSUnparsedValue>&& fallback)
 {
     if (!variable.startsWith("--"_s))
         return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
     
-    return adoptRef(*new CSSOMVariableReferenceValue(WTFMove(variable), WTFMove(fallback)));
+    return adoptRef(*new CSSOMVariableReferenceValue(WTF::move(variable), WTF::move(fallback)));
 }
 
 ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
@@ -52,7 +52,7 @@ ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
     if (!variable.startsWith("--"_s))
         return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
     
-    m_variable = WTFMove(variable);
+    m_variable = WTF::move(variable);
     return { };
 }
 
@@ -68,7 +68,7 @@ void CSSOMVariableReferenceValue::serialize(StringBuilder& builder, OptionSet<Se
     builder.append("var("_s, m_variable);
     if (m_fallback) {
         builder.append(',');
-        m_fallback->serialize(builder, arguments);
+        protect(m_fallback)->serialize(builder, arguments);
     }
     builder.append(')');
 }

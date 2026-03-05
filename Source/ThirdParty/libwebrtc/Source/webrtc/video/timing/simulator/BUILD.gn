@@ -1,0 +1,106 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+if (rtc_enable_protobuf) {
+  rtc_library("simulator") {
+    # TODO: b/423646186 - Remove testonly when time controller is not testonly.
+    testonly = true
+    sources = [
+      "assembler.cc",
+      "assembler.h",
+      "decodability_tracker.cc",
+      "decodability_tracker.h",
+      "rendering_tracker.cc",
+      "rendering_tracker.h",
+      "rtc_event_log_driver.cc",
+      "rtc_event_log_driver.h",
+      "rtp_packet_simulator.cc",
+      "rtp_packet_simulator.h",
+    ]
+    deps = [
+      "../../../api:array_view",
+      "../../../api:field_trials",
+      "../../../api:rtp_headers",
+      "../../../api:rtp_parameters",
+      "../../../api:scoped_refptr",
+      "../../../api:sequence_checker",
+      "../../../api:time_controller",
+      "../../../api:transport_api",
+      "../../../api/environment",
+      "../../../api/environment:environment_factory",
+      "../../../api/task_queue",
+      "../../../api/task_queue:pending_task_safety_flag",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../api/video:encoded_frame",
+      "../../../api/video:frame_buffer",
+      "../../../api/video:video_frame",
+      "../../../api/video:video_rtp_headers",
+      "../../../call:video_receive_stream_api",
+      "../../../logging:rtc_event_log_parser",
+      "../../../logging:rtc_event_rtp_rtcp",
+      "../../../logging:rtc_event_video",
+      "../../../modules/rtp_rtcp",
+      "../../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../../modules/video_coding/timing:timing_module",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:macromagic",
+      "../../../test/time_controller",
+      "../../../video",
+      "../../../video:task_queue_frame_decode_scheduler",
+      "../../../video:video_stream_buffer_controller",
+      "../../../video/render:incoming_video_stream",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/container:flat_hash_map",
+      "//third_party/abseil-cpp/absl/container:flat_hash_set",
+      "//third_party/abseil-cpp/absl/container:inlined_vector",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    rtc_library("simulator_tests") {
+      testonly = true
+      sources = [
+        "assembler_unittest.cc",
+        "decodability_tracker_unittest.cc",
+        "rendering_tracker_unittest.cc",
+        "rtc_event_log_driver_unittest.cc",
+        "rtp_packet_simulator_unittest.cc",
+      ]
+      deps = [
+        ":simulator",
+        "../../../api:rtp_headers",
+        "../../../api:rtp_packet_info",
+        "../../../api:sequence_checker",
+        "../../../api/environment",
+        "../../../api/transport/rtp:dependency_descriptor",
+        "../../../api/units:time_delta",
+        "../../../api/units:timestamp",
+        "../../../api/video:encoded_frame",
+        "../../../api/video:video_frame",
+        "../../../logging:rtc_event_log_parser",
+        "../../../logging:rtc_event_rtp_rtcp",
+        "../../../modules/rtp_rtcp:rtp_rtcp_format",
+        "../../../modules/video_coding/timing:timing_module",
+        "../../../rtc_base:checks",
+        "../../../rtc_base:macromagic",
+        "../../../system_wrappers",
+        "../../../test:create_test_environment",
+        "../../../test:test_support",
+        "test",
+        "//third_party/abseil-cpp/absl/functional:any_invocable",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+    }
+  }
+}

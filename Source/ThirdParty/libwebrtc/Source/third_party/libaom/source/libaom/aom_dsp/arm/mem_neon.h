@@ -176,7 +176,7 @@ static inline uint8x8_t load_u8_4x1(const uint8_t *p) {
   return ret;
 }
 
-static inline uint8x8_t load_u8_4x2(const uint8_t *p, int stride) {
+static inline uint8x8_t load_u8_4x2(const uint8_t *p, ptrdiff_t stride) {
   uint8x8_t ret = vdup_n_u8(0);
   ret = vreinterpret_u8_u32(
       vld1_lane_u32((const uint32_t *)p, vreinterpret_u32_u8(ret), 0));
@@ -186,7 +186,7 @@ static inline uint8x8_t load_u8_4x2(const uint8_t *p, int stride) {
   return ret;
 }
 
-static inline uint16x4_t load_u16_2x2(const uint16_t *p, int stride) {
+static inline uint16x4_t load_u16_2x2(const uint16_t *p, ptrdiff_t stride) {
   uint16x4_t ret = vdup_n_u16(0);
   ret = vreinterpret_u16_u32(
       vld1_lane_u32((const uint32_t *)p, vreinterpret_u32_u16(ret), 0));
@@ -1194,7 +1194,8 @@ static inline void load_s16_8x3(const int16_t *s, ptrdiff_t p,
 #endif
 
 // Load 2 sets of 4 bytes when alignment is not guaranteed.
-static inline uint8x8_t load_unaligned_u8(const uint8_t *buf, int stride) {
+static inline uint8x8_t load_unaligned_u8(const uint8_t *buf,
+                                          ptrdiff_t stride) {
   uint32_t a;
   memcpy(&a, buf, 4);
   buf += stride;
@@ -1205,7 +1206,8 @@ static inline uint8x8_t load_unaligned_u8(const uint8_t *buf, int stride) {
 }
 
 // Load 4 sets of 4 bytes when alignment is not guaranteed.
-static inline uint8x16_t load_unaligned_u8q(const uint8_t *buf, int stride) {
+static inline uint8x16_t load_unaligned_u8q(const uint8_t *buf,
+                                            ptrdiff_t stride) {
   uint32_t a;
   uint32x4_t a_u32;
   if (stride == 4) return vld1q_u8(buf);
@@ -1223,7 +1225,8 @@ static inline uint8x16_t load_unaligned_u8q(const uint8_t *buf, int stride) {
   return vreinterpretq_u8_u32(a_u32);
 }
 
-static inline uint8x8_t load_unaligned_u8_2x2(const uint8_t *buf, int stride) {
+static inline uint8x8_t load_unaligned_u8_2x2(const uint8_t *buf,
+                                              ptrdiff_t stride) {
   uint16_t a;
   uint16x4_t a_u16;
 
@@ -1263,7 +1266,8 @@ static inline uint8x8_t load_unaligned_dup_u8_2x4(const uint8_t *buf) {
   return vreinterpret_u8_u16(a_u32);
 }
 
-static inline uint8x8_t load_unaligned_u8_4x2(const uint8_t *buf, int stride) {
+static inline uint8x8_t load_unaligned_u8_4x2(const uint8_t *buf,
+                                              ptrdiff_t stride) {
   uint32_t a;
   uint32x2_t a_u32;
 
@@ -1275,14 +1279,14 @@ static inline uint8x8_t load_unaligned_u8_4x2(const uint8_t *buf, int stride) {
   return vreinterpret_u8_u32(a_u32);
 }
 
-static inline void load_unaligned_u8_4x4(const uint8_t *buf, int stride,
+static inline void load_unaligned_u8_4x4(const uint8_t *buf, ptrdiff_t stride,
                                          uint8x8_t *tu0, uint8x8_t *tu1) {
   *tu0 = load_unaligned_u8_4x2(buf, stride);
   buf += 2 * stride;
   *tu1 = load_unaligned_u8_4x2(buf, stride);
 }
 
-static inline void load_unaligned_u8_3x8(const uint8_t *buf, int stride,
+static inline void load_unaligned_u8_3x8(const uint8_t *buf, ptrdiff_t stride,
                                          uint8x8_t *tu0, uint8x8_t *tu1,
                                          uint8x8_t *tu2) {
   load_unaligned_u8_4x4(buf, stride, tu0, tu1);
@@ -1290,7 +1294,7 @@ static inline void load_unaligned_u8_3x8(const uint8_t *buf, int stride,
   *tu2 = load_unaligned_u8_4x2(buf, stride);
 }
 
-static inline void load_unaligned_u8_4x8(const uint8_t *buf, int stride,
+static inline void load_unaligned_u8_4x8(const uint8_t *buf, ptrdiff_t stride,
                                          uint8x8_t *tu0, uint8x8_t *tu1,
                                          uint8x8_t *tu2, uint8x8_t *tu3) {
   load_unaligned_u8_4x4(buf, stride, tu0, tu1);
@@ -1397,7 +1401,7 @@ static inline void load_u16_16x4(const uint16_t *s, ptrdiff_t p,
 }
 
 static inline uint16x4_t load_unaligned_u16_2x2(const uint16_t *buf,
-                                                int stride) {
+                                                ptrdiff_t stride) {
   uint32_t a;
   uint32x2_t a_u32;
 
@@ -1418,7 +1422,7 @@ static inline uint16x4_t load_unaligned_u16_4x1(const uint16_t *buf) {
 }
 
 static inline uint16x8_t load_unaligned_u16_4x2(const uint16_t *buf,
-                                                uint32_t stride) {
+                                                ptrdiff_t stride) {
   uint64_t a;
   uint64x2_t a_u64;
 
@@ -1433,7 +1437,7 @@ static inline uint16x8_t load_unaligned_u16_4x2(const uint16_t *buf,
 }
 
 static inline int16x8_t load_unaligned_s16_4x2(const int16_t *buf,
-                                               uint32_t stride) {
+                                               ptrdiff_t stride) {
   int64_t a;
   int64x2_t a_s64;
   memcpy(&a, buf, 8);
@@ -1446,14 +1450,14 @@ static inline int16x8_t load_unaligned_s16_4x2(const int16_t *buf,
   return vreinterpretq_s16_s64(a_s64);
 }
 
-static inline void load_unaligned_u16_4x4(const uint16_t *buf, uint32_t stride,
+static inline void load_unaligned_u16_4x4(const uint16_t *buf, ptrdiff_t stride,
                                           uint16x8_t *tu0, uint16x8_t *tu1) {
   *tu0 = load_unaligned_u16_4x2(buf, stride);
   buf += 2 * stride;
   *tu1 = load_unaligned_u16_4x2(buf, stride);
 }
 
-static inline void load_s32_4x4(int32_t *s, int32_t p, int32x4_t *s1,
+static inline void load_s32_4x4(int32_t *s, ptrdiff_t p, int32x4_t *s1,
                                 int32x4_t *s2, int32x4_t *s3, int32x4_t *s4) {
   *s1 = vld1q_s32(s);
   s += p;
@@ -1464,7 +1468,7 @@ static inline void load_s32_4x4(int32_t *s, int32_t p, int32x4_t *s1,
   *s4 = vld1q_s32(s);
 }
 
-static inline void store_s32_4x4(int32_t *s, int32_t p, int32x4_t s1,
+static inline void store_s32_4x4(int32_t *s, ptrdiff_t p, int32x4_t s1,
                                  int32x4_t s2, int32x4_t s3, int32x4_t s4) {
   vst1q_s32(s, s1);
   s += p;
@@ -1475,7 +1479,7 @@ static inline void store_s32_4x4(int32_t *s, int32_t p, int32x4_t s1,
   vst1q_s32(s, s4);
 }
 
-static inline void load_u32_4x4(uint32_t *s, int32_t p, uint32x4_t *s1,
+static inline void load_u32_4x4(uint32_t *s, ptrdiff_t p, uint32x4_t *s1,
                                 uint32x4_t *s2, uint32x4_t *s3,
                                 uint32x4_t *s4) {
   *s1 = vld1q_u32(s);
@@ -1487,7 +1491,7 @@ static inline void load_u32_4x4(uint32_t *s, int32_t p, uint32x4_t *s1,
   *s4 = vld1q_u32(s);
 }
 
-static inline void store_u32_4x4(uint32_t *s, int32_t p, uint32x4_t s1,
+static inline void store_u32_4x4(uint32_t *s, ptrdiff_t p, uint32x4_t s1,
                                  uint32x4_t s2, uint32x4_t s3, uint32x4_t s4) {
   vst1q_u32(s, s1);
   s += p;
@@ -1578,14 +1582,14 @@ static inline void store_u8_4x1(uint8_t *dst, const uint8x8_t src) {
 }
 
 // Store two blocks of 16-bits from a single vector.
-static inline void store_u8x2_strided_x2(uint8_t *dst, uint32_t dst_stride,
+static inline void store_u8x2_strided_x2(uint8_t *dst, ptrdiff_t dst_stride,
                                          uint8x8_t src) {
   store_u8_2x1_lane(dst, src, 0);
   dst += dst_stride;
   store_u8_2x1_lane(dst, src, 1);
 }
 
-static inline void store_u8x2_strided_x4(uint8_t *dst, uint32_t dst_stride,
+static inline void store_u8x2_strided_x4(uint8_t *dst, ptrdiff_t dst_stride,
                                          uint8x8_t src) {
   store_u8_2x1_lane(dst, src, 0);
   dst += dst_stride;
@@ -1622,7 +1626,7 @@ static inline void store_u16_2x1(uint16_t *dst, const uint16x4_t src) {
 }
 
 // Store two blocks of 32-bits from a single vector.
-static inline void store_u16x2_strided_x2(uint16_t *dst, uint32_t dst_stride,
+static inline void store_u16x2_strided_x2(uint16_t *dst, ptrdiff_t dst_stride,
                                           uint16x4_t src) {
   store_u16_2x1_lane(dst, src, 0);
   dst += dst_stride;
@@ -1630,7 +1634,7 @@ static inline void store_u16x2_strided_x2(uint16_t *dst, uint32_t dst_stride,
 }
 
 // Store two blocks of 64-bits from a single vector.
-static inline void store_u16x4_strided_x2(uint16_t *dst, uint32_t dst_stride,
+static inline void store_u16x4_strided_x2(uint16_t *dst, ptrdiff_t dst_stride,
                                           uint16x8_t src) {
   store_u16_4x1_lane(dst, src, 0);
   dst += dst_stride;
@@ -1638,7 +1642,7 @@ static inline void store_u16x4_strided_x2(uint16_t *dst, uint32_t dst_stride,
 }
 
 // Store two blocks of 64-bits from a single vector.
-static inline void store_s16x4_strided_x2(int16_t *dst, int32_t dst_stride,
+static inline void store_s16x4_strided_x2(int16_t *dst, ptrdiff_t dst_stride,
                                           int16x8_t src) {
   store_s16_4x1_lane(dst, src, 0);
   dst += dst_stride;

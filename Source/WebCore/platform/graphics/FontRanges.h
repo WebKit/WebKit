@@ -48,7 +48,7 @@ public:
         Range(char32_t from, char32_t to, Ref<FontAccessor>&& fontAccessor)
             : m_from(from)
             , m_to(to)
-            , m_fontAccessor(WTFMove(fontAccessor))
+            , m_fontAccessor(WTF::move(fontAccessor))
         {
         }
 
@@ -78,7 +78,7 @@ public:
 
     bool isNull() const { return m_ranges.isEmpty(); }
 
-    void appendRange(Range&& range) { m_ranges.append(WTFMove(range)); }
+    void appendRange(Range&& range) { m_ranges.append(WTF::move(range)); }
     unsigned size() const { return m_ranges.size(); }
     const Range& rangeAt(unsigned i) const { return m_ranges[i]; }
 

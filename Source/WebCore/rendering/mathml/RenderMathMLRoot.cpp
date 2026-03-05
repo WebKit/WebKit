@@ -46,10 +46,10 @@ static const char16_t gRadicalCharacter = 0x221A;
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLRoot);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLRoot);
 
 RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, RenderStyle&& style)
-    : RenderMathMLRow(Type::MathMLRoot, element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLRoot, element, WTF::move(style))
 {
     m_radicalOperator.setOperator(RenderMathMLRoot::style(), gRadicalCharacter, MathOperator::Type::VerticalOperator);
     ASSERT(isRenderMathMLRoot());
@@ -76,7 +76,7 @@ bool RenderMathMLRoot::isValid() const
         return true;
 
     ASSERT(rootType() == RootType::RootWithIndex);
-    auto* child = firstInFlowChildBox();
+    CheckedPtr child = firstInFlowChildBox();
     if (!child)
         return false;
     child = child->nextInFlowSiblingBox();
@@ -97,10 +97,10 @@ RenderBox& RenderMathMLRoot::getIndex() const
     return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
-void RenderMathMLRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderMathMLRoot::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLRow::styleDidChange(diff, oldStyle);
-    m_radicalOperator.reset(style());
+    resetRadicalOperator();
 }
 
 RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters(LayoutUnit indexWidth)
@@ -112,8 +112,8 @@ RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters(La
     // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
     Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
-        parameters.kernBeforeDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernBeforeDegree);
-        parameters.kernAfterDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernAfterDegree);
+        parameters.kernBeforeDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalKernBeforeDegree);
+        parameters.kernAfterDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalKernAfterDegree);
     } else {
         // RadicalKernBeforeDegree: No suggested value provided. OT Math Illuminated mentions 5/18 em, Gecko uses 0.
         // RadicalKernAfterDegree: Suggested value is -10/18 of em.
@@ -132,11 +132,11 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters()
     // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
     Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
-        parameters.ruleThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalRuleThickness);
-        parameters.verticalGap = mathData->getMathConstant(primaryFont, style().mathStyle() == MathStyle::Normal ? OpenTypeMathData::RadicalDisplayStyleVerticalGap : OpenTypeMathData::RadicalVerticalGap);
-        parameters.extraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalExtraAscender);
+        parameters.ruleThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalRuleThickness);
+        parameters.verticalGap = mathData->getMathConstant(primaryFont, style().mathStyle() == MathStyle::Normal ? OpenTypeMathData::MathConstant::RadicalDisplayStyleVerticalGap : OpenTypeMathData::MathConstant::RadicalVerticalGap);
+        parameters.extraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalExtraAscender);
         if (rootType() == RootType::RootWithIndex)
-            parameters.degreeBottomRaisePercent = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalDegreeBottomRaisePercent);
+            parameters.degreeBottomRaisePercent = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalDegreeBottomRaisePercent);
     } else {
         // RadicalVerticalGap: Suggested value is 5/4 default rule thickness.
         // RadicalDisplayStyleVerticalGap: Suggested value is default rule thickness + 1/4 x-height.
@@ -264,7 +264,7 @@ void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
         horizontalOffset += horizontal.kernBeforeDegree + getIndex().logicalWidth() + getIndex().marginLogicalWidth() + horizontal.kernAfterDegree;
     if (rootType() == RootType::SquareRoot) {
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset, m_baseWidth), ascent - baseAscent);
-        for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+        for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->setLocation(child->location() + baseLocation);
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);
@@ -301,7 +301,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
         horizontalOffset += horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree;
     }
     radicalOperatorTopLeft.move(mirrorIfNeeded(horizontalOffset, m_radicalOperator.width()), m_radicalOperatorTop);
-    m_radicalOperator.paint(style(), info, radicalOperatorTopLeft);
+    m_radicalOperator.paint(style(), info, radicalOperatorTopLeft, protect(document())->deviceScaleFactor());
 
     // We draw the radical line.
     LayoutUnit ruleThickness = verticalParameters().ruleThickness;
@@ -311,7 +311,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
     info.context().setStrokeThickness(ruleThickness);
     info.context().setStrokeStyle(StrokeStyle::SolidStroke);
-    info.context().setStrokeColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
+    info.context().setStrokeColor(style().visitedDependentColorApplyingColorFilter());
     LayoutPoint ruleOffsetFrom = paintOffset + location() + LayoutPoint(0_lu, m_radicalOperatorTop + ruleThickness / 2);
     LayoutPoint ruleOffsetTo = ruleOffsetFrom;
     horizontalOffset += m_radicalOperator.width();

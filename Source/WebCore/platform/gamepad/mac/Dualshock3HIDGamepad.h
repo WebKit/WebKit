@@ -34,6 +34,7 @@ namespace WebCore {
 
 class Dualshock3HIDGamepad final : public HIDGamepad {
     WTF_MAKE_TZONE_ALLOCATED(Dualshock3HIDGamepad);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Dualshock3HIDGamepad);
 public:
     Dualshock3HIDGamepad(HIDDevice&&, unsigned index);
 };

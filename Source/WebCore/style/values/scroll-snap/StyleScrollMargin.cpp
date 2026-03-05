@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,8 @@
 #include "StyleScrollMargin.h"
 
 #include "LayoutRect.h"
-#include "StyleBuilderState.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
@@ -38,40 +36,40 @@ namespace Style {
 
 auto CSSValueConversion<ScrollMarginEdge>::operator()(BuilderState& state, const CSSValue& value) -> ScrollMarginEdge
 {
-    return ScrollMarginEdge { toStyleFromCSSValue<Length<>>(state, value) };
+    return ScrollMarginEdge { toStyleFromCSSValue<ScrollMarginEdge::Fixed>(state, value) };
 }
 
 // MARK: - Evaluation
 
-auto Evaluation<ScrollMarginEdge, LayoutUnit>::operator()(const ScrollMarginEdge& edge, LayoutUnit, ZoomNeeded token) -> LayoutUnit
+auto Evaluation<ScrollMarginEdge, LayoutUnit>::operator()(const ScrollMarginEdge& edge, LayoutUnit, ZoomFactor zoom) -> LayoutUnit
 {
-    return evaluate<LayoutUnit>(edge.m_value, token);
+    return evaluate<LayoutUnit>(edge.m_value, zoom);
 }
 
-auto Evaluation<ScrollMarginEdge, LayoutUnit>::operator()(const ScrollMarginEdge& edge, ZoomNeeded token) -> LayoutUnit
+auto Evaluation<ScrollMarginEdge, LayoutUnit>::operator()(const ScrollMarginEdge& edge, ZoomFactor zoom) -> LayoutUnit
 {
-    return evaluate<LayoutUnit>(edge.m_value, token);
+    return evaluate<LayoutUnit>(edge.m_value, zoom);
 }
 
-auto Evaluation<ScrollMarginEdge, float>::operator()(const ScrollMarginEdge& edge, float, ZoomNeeded token) -> float
+auto Evaluation<ScrollMarginEdge, float>::operator()(const ScrollMarginEdge& edge, float, ZoomFactor zoom) -> float
 {
-    return evaluate<float>(edge.m_value, token);
+    return evaluate<float>(edge.m_value, zoom);
 }
 
-auto Evaluation<ScrollMarginEdge, float>::operator()(const ScrollMarginEdge& edge, ZoomNeeded token) -> float
+auto Evaluation<ScrollMarginEdge, float>::operator()(const ScrollMarginEdge& edge, ZoomFactor zoom) -> float
 {
-    return evaluate<float>(edge.m_value, token);
+    return evaluate<float>(edge.m_value, zoom);
 }
 
 // MARK: - Extent
 
-LayoutBoxExtent extentForRect(const ScrollMarginBox& margin, const LayoutRect& rect)
+LayoutBoxExtent extentForRect(const ScrollMarginBox& margin, const LayoutRect& rect, ZoomFactor zoom)
 {
     return LayoutBoxExtent {
-        evaluate<LayoutUnit>(margin.top(), rect.height(), ZoomNeeded { }),
-        evaluate<LayoutUnit>(margin.right(), rect.width(), ZoomNeeded { }),
-        evaluate<LayoutUnit>(margin.bottom(), rect.height(), ZoomNeeded { }),
-        evaluate<LayoutUnit>(margin.left(), rect.width(), ZoomNeeded { }),
+        evaluate<LayoutUnit>(margin.top(), rect.height(), zoom),
+        evaluate<LayoutUnit>(margin.right(), rect.width(), zoom),
+        evaluate<LayoutUnit>(margin.bottom(), rect.height(), zoom),
+        evaluate<LayoutUnit>(margin.left(), rect.width(), zoom),
     };
 }
 

@@ -100,7 +100,7 @@ public:
     public:
         static Locker adopt(RetainPtr<IOSurfaceRef> surface)
         {
-            return Locker { WTFMove(surface) };
+            return Locker { WTF::move(surface) };
         }
 
         Locker(Locker&& other)
@@ -138,7 +138,7 @@ public:
 
     private:
         explicit Locker(RetainPtr<IOSurfaceRef> surface)
-            : m_surface(WTFMove(surface))
+            : m_surface(WTF::move(surface))
         {
         }
 
@@ -180,7 +180,6 @@ public:
     WEBCORE_EXPORT RetainPtr<id> asCAIOSurfaceLayerContents() const;
 
     IOSurfaceRef surface() const { return m_surface.get(); }
-    RetainPtr<IOSurfaceRef> protectedSurface() const { return surface(); }
 
     WEBCORE_EXPORT RetainPtr<CGContextRef> createPlatformContext(PlatformDisplayID = 0, std::optional<CGImageAlphaInfo> = std::nullopt);
 
@@ -195,7 +194,7 @@ public:
     // going to be used immediately, use the return value of setVolatile to
     // determine whether the data was purged, instead of first calling state() or isVolatile().
     SetNonVolatileResult state() const;
-    bool isVolatile() const;
+    WEBCORE_EXPORT bool isVolatile() const;
 
     WEBCORE_EXPORT SetNonVolatileResult setVolatile(bool);
 

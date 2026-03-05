@@ -16,7 +16,7 @@ info: |
   slot.
   12. If IsDetachedBuffer(srcBuffer) is true, throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -36,4 +36,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(calledOffset, 1);
-});
+}, null, ["passthrough"]);

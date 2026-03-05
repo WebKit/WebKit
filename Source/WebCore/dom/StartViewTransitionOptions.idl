@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-view-transitions-2/#dictdef-startviewtransitionoptions
 dictionary StartViewTransitionOptions {
     ViewTransitionUpdateCallback? update = null;
-    [EnabledBySetting=ViewTransitionTypesEnabled] sequence<[AtomString] DOMString>? types = null;
+    sequence<[AtomString] DOMString>? types = null;
 };

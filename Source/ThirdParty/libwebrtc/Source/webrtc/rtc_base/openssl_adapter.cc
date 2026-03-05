@@ -756,9 +756,18 @@ void OpenSSLAdapter::OnCloseEvent(Socket* socket, int err) {
 }
 
 bool OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, absl::string_view host) {
-  bool is_valid_cert_name =
-      openssl::VerifyPeerCertMatchesHost(ssl, host) &&
+  bool cert_verified = false;
+#ifdef WEBRTC_USE_CRYPTO_BUFFER_CALLBACK
+  // When using CRYPTO_BUFFER callback, SSL_get_verify_result cannot be called
+  // as it requires X509 method. Rely on custom_cert_verifier_status_ instead.
+  cert_verified = custom_cert_verifier_status_;
+#else
+  cert_verified =
       (SSL_get_verify_result(ssl) == X509_V_OK || custom_cert_verifier_status_);
+#endif
+
+  bool is_valid_cert_name =
+      openssl::VerifyPeerCertMatchesHost(ssl, host) && cert_verified;
 
   if (!is_valid_cert_name && ignore_bad_cert_) {
     RTC_DLOG(LS_WARNING) << "Other TLS post connection checks failed. "
@@ -834,14 +843,21 @@ enum ssl_verify_result_t OpenSSLAdapter::SSLVerifyInternal(SSL* ssl,
     return ssl_verify_invalid;
   }
 
-  BoringSSLCertificate cert(bssl::UpRef(sk_CRYPTO_BUFFER_value(chain, 0)));
-  if (!ssl_cert_verifier_->Verify(cert)) {
-    RTC_LOG(LS_WARNING) << "Failed to verify certificate using custom callback";
+  std::vector<std::unique_ptr<SSLCertificate>> certs;
+  for (size_t i = 0; i < sk_CRYPTO_BUFFER_num(chain); ++i) {
+    certs.emplace_back(new BoringSSLCertificate(
+        bssl::UpRef(sk_CRYPTO_BUFFER_value(chain, i))));
+  }
+
+  SSLCertChain cert_chain(std::move(certs));
+  if (!ssl_cert_verifier_->VerifyChain(cert_chain)) {
+    RTC_LOG(LS_WARNING)
+        << "Failed to verify certificate chain using custom callback";
     return ssl_verify_invalid;
   }
 
   custom_cert_verifier_status_ = true;
-  RTC_LOG(LS_INFO) << "Validated certificate using custom callback";
+  RTC_LOG(LS_INFO) << "Validated certificate chain using custom callback";
   return ssl_verify_ok;
 }
 #else  // WEBRTC_USE_CRYPTO_BUFFER_CALLBACK
@@ -891,32 +907,46 @@ int OpenSSLAdapter::SSLVerifyInternal(int previous_status,
   }
 
   RTC_LOG(LS_INFO) << "Invoking SSL Verify Callback.";
+
+  STACK_OF(X509)* chain = X509_STORE_CTX_get0_chain(store);
+  if (!chain || sk_X509_num(chain) == 0) {
+    RTC_LOG(LS_ERROR) << "Failed to get certificate chain from X509_STORE_CTX";
+    return previous_status;
+  }
+
+  std::vector<std::unique_ptr<SSLCertificate>> certs;
+  for (int i = 0; i < static_cast<int>(sk_X509_num(chain)); ++i) {
+    X509* x509_cert = sk_X509_value(chain, i);
 #ifdef OPENSSL_IS_BORINGSSL
-  // Convert X509 to CRYPTO_BUFFER.
-  uint8_t* data = nullptr;
-  int length = i2d_X509(X509_STORE_CTX_get_current_cert(store), &data);
-  if (length < 0) {
-    RTC_LOG(LS_ERROR) << "Failed to encode X509.";
-    return previous_status;
-  }
-  bssl::UniquePtr<uint8_t> owned_data(data);
-  bssl::UniquePtr<CRYPTO_BUFFER> crypto_buffer(
-      CRYPTO_BUFFER_new(data, length, openssl::GetBufferPool()));
-  if (!crypto_buffer) {
-    RTC_LOG(LS_ERROR) << "Failed to allocate CRYPTO_BUFFER.";
-    return previous_status;
-  }
-  const BoringSSLCertificate cert(std::move(crypto_buffer));
+    // Convert X509 to CRYPTO_BUFFER.
+    uint8_t* data = nullptr;
+    int length = i2d_X509(x509_cert, &data);
+    if (length <= 0) {
+      RTC_LOG(LS_ERROR) << "Failed to encode X509 certificate.";
+      return previous_status;
+    }
+    bssl::UniquePtr<uint8_t> owned_data(data);
+    bssl::UniquePtr<CRYPTO_BUFFER> crypto_buffer(
+        CRYPTO_BUFFER_new(data, length, openssl::GetBufferPool()));
+    if (!crypto_buffer) {
+      RTC_LOG(LS_ERROR) << "Failed to allocate CRYPTO_BUFFER.";
+      return previous_status;
+    }
+    certs.emplace_back(new BoringSSLCertificate(std::move(crypto_buffer)));
 #else
-  const OpenSSLCertificate cert(X509_STORE_CTX_get_current_cert(store));
+    certs.emplace_back(new OpenSSLCertificate(x509_cert));
 #endif
-  if (!ssl_cert_verifier_->Verify(cert)) {
-    RTC_LOG(LS_INFO) << "Failed to verify certificate using custom callback";
+  }
+
+  SSLCertChain cert_chain(std::move(certs));
+  if (!ssl_cert_verifier_->VerifyChain(cert_chain)) {
+    RTC_LOG(LS_INFO)
+        << "Failed to verify certificate chain using custom callback";
     return previous_status;
   }
 
   custom_cert_verifier_status_ = true;
-  RTC_LOG(LS_INFO) << "Validated certificate using custom callback";
+  RTC_LOG(LS_INFO) << "Validated certificate chain using custom callback";
   return 1;
 }
 #endif  // !defined(WEBRTC_USE_CRYPTO_BUFFER_CALLBACK)
@@ -1002,7 +1032,7 @@ std::string TransformAlpnProtocols(
   // each protocol.
   std::string transformed_alpn;
   for (const std::string& proto : alpn_protocols) {
-    if (proto.size() == 0 || proto.size() > 0xFF) {
+    if (proto.empty() || proto.size() > 0xFF) {
       RTC_LOG(LS_ERROR) << "OpenSSLAdapter::Error("
                            "TransformAlpnProtocols received proto with size "
                         << proto.size() << ")";

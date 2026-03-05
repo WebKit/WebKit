@@ -34,7 +34,7 @@ public:
     ~PageGroupLoadDeferrer();
 
 private:
-    Vector<RefPtr<LocalFrame>, 16> m_deferredFrames;
+    Vector<Ref<LocalFrame>, 16> m_deferredFrames;
 };
 
 } // namespace WebCore

@@ -50,7 +50,7 @@ public:
 
     static Ref<TextTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TextTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new TextTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTFMove(configuration)));
+        return adoptRef(*new TextTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTF::move(configuration)));
     }
 
     void addDataCue(MediaTime&& start, MediaTime&& end, std::span<const uint8_t>);

@@ -49,7 +49,7 @@ const MQ::MediaQueryList& CSSMediaRule::mediaQueries() const
 
 void CSSMediaRule::setMediaQueries(MQ::MediaQueryList&& queries)
 {
-    downcast<StyleRuleMedia>(protectedGroupRule())->setMediaQueries(WTFMove(queries));
+    downcast<StyleRuleMedia>(protect(groupRule()))->setMediaQueries(WTF::move(queries));
 }
 
 String CSSMediaRule::cssText() const
@@ -75,11 +75,11 @@ String CSSMediaRule::conditionText() const
     return builder.toString();
 }
 
-MediaList* CSSMediaRule::media() const
+MediaList& CSSMediaRule::media() const
 {
     if (!m_mediaCSSOMWrapper)
         m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSMediaRule*>(this));
-    return m_mediaCSSOMWrapper.get();
+    return *m_mediaCSSOMWrapper;
 }
 
 } // namespace WebCore

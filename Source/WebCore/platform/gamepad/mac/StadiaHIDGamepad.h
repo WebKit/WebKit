@@ -34,6 +34,7 @@ namespace WebCore {
 
 class StadiaHIDGamepad final : public HIDGamepad {
     WTF_MAKE_TZONE_ALLOCATED(StadiaHIDGamepad);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StadiaHIDGamepad);
 public:
     StadiaHIDGamepad(HIDDevice&&, unsigned index);
 };

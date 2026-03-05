@@ -86,6 +86,7 @@ struct CharacterClass {
     WTF_MAKE_TZONE_ALLOCATED(CharacterClass);
 public:
     using Table = const char*;
+    static constexpr unsigned tableSize = 65536;
 
     // All CharacterClass instances have to have the full set of matches and ranges,
     // they may have an optional m_table for faster lookups (which must match the

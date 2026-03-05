@@ -27,17 +27,25 @@ namespace webrtc {
 
 DesktopFrame::DesktopFrame(DesktopSize size,
                            int stride,
+                           FourCC pixel_format,
                            uint8_t* data,
                            SharedMemory* shared_memory)
     : data_(data),
       shared_memory_(shared_memory),
       size_(size),
       stride_(stride),
+      pixel_format_(pixel_format),
       capture_time_ms_(0),
       capturer_id_(DesktopCapturerId::kUnknown) {
   RTC_DCHECK(size_.width() >= 0);
   RTC_DCHECK(size_.height() >= 0);
 }
+
+DesktopFrame::DesktopFrame(DesktopSize size,
+                           int stride,
+                           uint8_t* data,
+                           SharedMemory* shared_memory)
+    : DesktopFrame(size, stride, FOURCC_ARGB, data, shared_memory) {}
 
 DesktopFrame::~DesktopFrame() = default;
 
@@ -58,6 +66,7 @@ void DesktopFrame::CopyPixelsFrom(const DesktopFrame& src_frame,
   RTC_CHECK(DesktopRect::MakeSize(src_frame.size())
                 .ContainsRect(
                     DesktopRect::MakeOriginSize(src_pos, dest_rect.size())));
+  RTC_CHECK_EQ(pixel_format(), src_frame.pixel_format());
 
   CopyPixelsFrom(src_frame.GetFrameDataAtPos(src_pos), src_frame.stride(),
                  dest_rect);
@@ -168,8 +177,12 @@ void DesktopFrame::SetFrameDataToBlack() {
 }
 
 BasicDesktopFrame::BasicDesktopFrame(DesktopSize size)
+    : BasicDesktopFrame(size, FOURCC_ARGB) {}
+
+BasicDesktopFrame::BasicDesktopFrame(DesktopSize size, FourCC pixel_format)
     : DesktopFrame(size,
                    kBytesPerPixel * size.width(),
+                   pixel_format,
                    new uint8_t[kBytesPerPixel * size.width() * size.height()](),
                    nullptr) {}
 
@@ -179,7 +192,8 @@ BasicDesktopFrame::~BasicDesktopFrame() {
 
 // static
 DesktopFrame* BasicDesktopFrame::CopyOf(const DesktopFrame& frame) {
-  DesktopFrame* result = new BasicDesktopFrame(frame.size());
+  DesktopFrame* result =
+      new BasicDesktopFrame(frame.size(), frame.pixel_format());
   // TODO(crbug.com/1330019): Temporary workaround for a known libyuv crash when
   // the height or width is 0. Remove this once this change has been merged.
   if (frame.size().width() && frame.size().height()) {
@@ -194,6 +208,7 @@ DesktopFrame* BasicDesktopFrame::CopyOf(const DesktopFrame& frame) {
 // static
 std::unique_ptr<DesktopFrame> SharedMemoryDesktopFrame::Create(
     DesktopSize size,
+    FourCC pixel_format,
     SharedMemoryFactory* shared_memory_factory) {
   RTC_DCHECK(shared_memory_factory);
 
@@ -204,22 +219,38 @@ std::unique_ptr<DesktopFrame> SharedMemoryDesktopFrame::Create(
     return nullptr;
 
   return std::make_unique<SharedMemoryDesktopFrame>(
-      size, size.width() * kBytesPerPixel, std::move(shared_memory));
+      size, size.width() * kBytesPerPixel, pixel_format,
+      std::move(shared_memory));
 }
+
+SharedMemoryDesktopFrame::SharedMemoryDesktopFrame(
+    DesktopSize size,
+    int stride,
+    std::unique_ptr<SharedMemory> shared_memory)
+    : SharedMemoryDesktopFrame(size,
+                               stride,
+                               FOURCC_ARGB,
+                               std::move(shared_memory)) {}
 
 SharedMemoryDesktopFrame::SharedMemoryDesktopFrame(DesktopSize size,
                                                    int stride,
+                                                   FourCC pixel_format,
                                                    SharedMemory* shared_memory)
     : DesktopFrame(size,
                    stride,
+                   pixel_format,
                    reinterpret_cast<uint8_t*>(shared_memory->data()),
                    shared_memory) {}
 
 SharedMemoryDesktopFrame::SharedMemoryDesktopFrame(
     DesktopSize size,
     int stride,
+    FourCC pixel_format,
     std::unique_ptr<SharedMemory> shared_memory)
-    : SharedMemoryDesktopFrame(size, stride, shared_memory.release()) {}
+    : SharedMemoryDesktopFrame(size,
+                               stride,
+                               pixel_format,
+                               shared_memory.release()) {}
 
 SharedMemoryDesktopFrame::~SharedMemoryDesktopFrame() {
   delete shared_memory_;

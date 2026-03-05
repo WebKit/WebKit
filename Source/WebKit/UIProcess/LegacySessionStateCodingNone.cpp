@@ -55,7 +55,7 @@ bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState& sessi
     *decoder >> backForwardListState;
     if (!backForwardListState)
         return false;
-    sessionState.backForwardListState = WTFMove(*backForwardListState);
+    sessionState.backForwardListState = WTF::move(*backForwardListState);
 
     std::optional<uint64_t> renderTreeSize;
     *decoder >> renderTreeSize;
@@ -67,7 +67,7 @@ bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState& sessi
     *decoder >> provisionalURL;
     if (!provisionalURL)
         return false;
-    sessionState.provisionalURL = WTFMove(*provisionalURL);
+    sessionState.provisionalURL = WTF::move(*provisionalURL);
 
     return true;
 }

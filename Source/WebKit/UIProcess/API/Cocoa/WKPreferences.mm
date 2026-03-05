@@ -37,11 +37,6 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 
-static Ref<WebKit::WebPreferences> protectedPreferences(WKPreferences *preferences)
-{
-    return *preferences->_preferences;
-}
-
 @implementation WKPreferences
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
@@ -111,96 +106,96 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [wrapper(protectedPreferences(self)->copy()) retain];
+    return [wrapper(protect(*_preferences)->copy()) retain];
 }
 
 - (CGFloat)minimumFontSize
 {
-    return protectedPreferences(self)->minimumFontSize();
+    return protect(*_preferences)->minimumFontSize();
 }
 
 - (void)setMinimumFontSize:(CGFloat)minimumFontSize
 {
-    protectedPreferences(self)->setMinimumFontSize(minimumFontSize);
+    protect(*_preferences)->setMinimumFontSize(minimumFontSize);
 }
 
 - (void)setFraudulentWebsiteWarningEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setSafeBrowsingEnabled(enabled);
+    protect(*_preferences)->setSafeBrowsingEnabled(enabled);
 }
 
 - (BOOL)isFraudulentWebsiteWarningEnabled
 {
-    return protectedPreferences(self)->safeBrowsingEnabled();
+    return protect(*_preferences)->safeBrowsingEnabled();
 }
 
 - (BOOL)javaScriptCanOpenWindowsAutomatically
 {
-    return protectedPreferences(self)->javaScriptCanOpenWindowsAutomatically();
+    return protect(*_preferences)->javaScriptCanOpenWindowsAutomatically();
 }
 
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)javaScriptCanOpenWindowsAutomatically
 {
-    protectedPreferences(self)->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
+    protect(*_preferences)->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
 }
 
 - (void)setShouldPrintBackgrounds:(BOOL)enabled
 {
-    protectedPreferences(self)->setShouldPrintBackgrounds(enabled);
+    protect(*_preferences)->setShouldPrintBackgrounds(enabled);
 }
 
 - (BOOL)shouldPrintBackgrounds
 {
-    return protectedPreferences(self)->shouldPrintBackgrounds();
+    return protect(*_preferences)->shouldPrintBackgrounds();
 }
 
 - (BOOL)isTextInteractionEnabled
 {
-    return protectedPreferences(self)->textInteractionEnabled();
+    return protect(*_preferences)->textInteractionEnabled();
 }
 
 - (void)setTextInteractionEnabled:(BOOL)textInteractionEnabled
 {
-    protectedPreferences(self)->setTextInteractionEnabled(textInteractionEnabled);
+    protect(*_preferences)->setTextInteractionEnabled(textInteractionEnabled);
 }
 
 - (BOOL)isSiteSpecificQuirksModeEnabled
 {
-    return protectedPreferences(self)->needsSiteSpecificQuirks();
+    return protect(*_preferences)->needsSiteSpecificQuirks();
 }
 
 - (void)setSiteSpecificQuirksModeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setNeedsSiteSpecificQuirks(enabled);
+    protect(*_preferences)->setNeedsSiteSpecificQuirks(enabled);
 }
 
 - (BOOL)isElementFullscreenEnabled
 {
-    return protectedPreferences(self)->fullScreenEnabled();
+    return protect(*_preferences)->fullScreenEnabled();
 }
 
 - (void)setElementFullscreenEnabled:(BOOL)elementFullscreenEnabled
 {
-    protectedPreferences(self)->setFullScreenEnabled(elementFullscreenEnabled);
+    protect(*_preferences)->setFullScreenEnabled(elementFullscreenEnabled);
 }
 
 - (void)setInactiveSchedulingPolicy:(WKInactiveSchedulingPolicy)policy
 {
     switch (policy) {
     case WKInactiveSchedulingPolicySuspend:
-        protectedPreferences(self)->setShouldTakeNearSuspendedAssertions(false);
-        protectedPreferences(self)->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
-        protectedPreferences(self)->setShouldDropNearSuspendedAssertionAfterDelay(WebKit::defaultShouldDropNearSuspendedAssertionAfterDelay());
+        protect(*_preferences)->setShouldTakeNearSuspendedAssertions(false);
+        protect(*_preferences)->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        protect(*_preferences)->setShouldDropNearSuspendedAssertionAfterDelay(WebKit::defaultShouldDropNearSuspendedAssertionAfterDelay());
         break;
     case WKInactiveSchedulingPolicyThrottle:
-        protectedPreferences(self)->setShouldTakeNearSuspendedAssertions(true);
-        protectedPreferences(self)->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
-        protectedPreferences(self)->setShouldDropNearSuspendedAssertionAfterDelay(false);
+        protect(*_preferences)->setShouldTakeNearSuspendedAssertions(true);
+        protect(*_preferences)->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        protect(*_preferences)->setShouldDropNearSuspendedAssertionAfterDelay(false);
         break;
     case WKInactiveSchedulingPolicyNone:
-        protectedPreferences(self)->setShouldTakeNearSuspendedAssertions(true);
-        protectedPreferences(self)->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
-        protectedPreferences(self)->setShouldDropNearSuspendedAssertionAfterDelay(false);
+        protect(*_preferences)->setShouldTakeNearSuspendedAssertions(true);
+        protect(*_preferences)->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
+        protect(*_preferences)->setShouldDropNearSuspendedAssertionAfterDelay(false);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -209,27 +204,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKInactiveSchedulingPolicy)inactiveSchedulingPolicy
 {
-    return protectedPreferences(self)->backgroundWebContentRunningBoardThrottlingEnabled() ? (protectedPreferences(self)->shouldTakeNearSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
+    return protect(*_preferences)->backgroundWebContentRunningBoardThrottlingEnabled() ? (protect(*_preferences)->shouldTakeNearSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
 }
 
 - (BOOL)tabFocusesLinks
 {
-    return protectedPreferences(self)->tabsToLinks();
+    return protect(*_preferences)->tabsToLinks();
 }
 
 - (void)setTabFocusesLinks:(BOOL)tabFocusesLinks
 {
-    protectedPreferences(self)->setTabsToLinks(tabFocusesLinks);
+    protect(*_preferences)->setTabsToLinks(tabFocusesLinks);
 }
 
 - (BOOL)_useSystemAppearance
 {
-    return protectedPreferences(self)->useSystemAppearance();
+    return protect(*_preferences)->useSystemAppearance();
 }
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
-    protectedPreferences(self)->setUseSystemAppearance(useSystemAppearance);
+    protect(*_preferences)->setUseSystemAppearance(useSystemAppearance);
 }
 
 #pragma mark WKObject protocol implementation
@@ -243,7 +238,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)setIsLookToScrollEnabled:(BOOL)enabled
 {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    protectedPreferences(self)->setOverlayRegionsEnabled(enabled);
+    protect(*_preferences)->setOverlayRegionsEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -252,7 +247,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)isLookToScrollEnabled
 {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    return protectedPreferences(self)->overlayRegionsEnabled();
+    return protect(*_preferences)->overlayRegionsEnabled();
 #else
     return NO;
 #endif
@@ -265,15 +260,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_telephoneNumberDetectionIsEnabled
 {
-    return protectedPreferences(self)->telephoneNumberParsingEnabled();
+    return protect(*_preferences)->telephoneNumberParsingEnabled();
 }
 
 - (void)_setTelephoneNumberDetectionIsEnabled:(BOOL)telephoneNumberDetectionIsEnabled
 {
-    protectedPreferences(self)->setTelephoneNumberParsingEnabled(telephoneNumberDetectionIsEnabled);
+    protect(*_preferences)->setTelephoneNumberParsingEnabled(telephoneNumberDetectionIsEnabled);
 }
 
-static WebCore::StorageBlockingPolicy toStorageBlockingPolicy(_WKStorageBlockingPolicy policy)
+static WebCore::StorageBlockingPolicy NODELETE toStorageBlockingPolicy(_WKStorageBlockingPolicy policy)
 {
     switch (policy) {
     case _WKStorageBlockingPolicyAllowAll:
@@ -288,7 +283,7 @@ static WebCore::StorageBlockingPolicy toStorageBlockingPolicy(_WKStorageBlocking
     return WebCore::StorageBlockingPolicy::AllowAll;
 }
 
-static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
+static _WKStorageBlockingPolicy NODELETE toAPI(WebCore::StorageBlockingPolicy policy)
 {
     switch (policy) {
     case WebCore::StorageBlockingPolicy::AllowAll:
@@ -305,310 +300,320 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 
 - (_WKStorageBlockingPolicy)_storageBlockingPolicy
 {
-    return toAPI(static_cast<WebCore::StorageBlockingPolicy>(protectedPreferences(self)->storageBlockingPolicy()));
+    return toAPI(static_cast<WebCore::StorageBlockingPolicy>(protect(*_preferences)->storageBlockingPolicy()));
 }
 
 - (void)_setStorageBlockingPolicy:(_WKStorageBlockingPolicy)policy
 {
-    protectedPreferences(self)->setStorageBlockingPolicy(static_cast<uint32_t>(toStorageBlockingPolicy(policy)));
+    protect(*_preferences)->setStorageBlockingPolicy(static_cast<uint32_t>(toStorageBlockingPolicy(policy)));
 }
 
 - (BOOL)_fullScreenEnabled
 {
-    return protectedPreferences(self)->fullScreenEnabled();
+    return protect(*_preferences)->fullScreenEnabled();
 }
 
 - (void)_setFullScreenEnabled:(BOOL)fullScreenEnabled
 {
-    protectedPreferences(self)->setFullScreenEnabled(fullScreenEnabled);
+    protect(*_preferences)->setFullScreenEnabled(fullScreenEnabled);
 }
 
 - (BOOL)_allowsPictureInPictureMediaPlayback
 {
-    return protectedPreferences(self)->allowsPictureInPictureMediaPlayback();
+    return protect(*_preferences)->allowsPictureInPictureMediaPlayback();
 }
 
 - (void)_setAllowsPictureInPictureMediaPlayback:(BOOL)allowed
 {
-    protectedPreferences(self)->setAllowsPictureInPictureMediaPlayback(allowed);
+    protect(*_preferences)->setAllowsPictureInPictureMediaPlayback(allowed);
 }
 
 - (BOOL)_compositingBordersVisible
 {
-    return protectedPreferences(self)->compositingBordersVisible();
+    return protect(*_preferences)->compositingBordersVisible();
 }
 
 - (void)_setCompositingBordersVisible:(BOOL)compositingBordersVisible
 {
-    protectedPreferences(self)->setCompositingBordersVisible(compositingBordersVisible);
+    protect(*_preferences)->setCompositingBordersVisible(compositingBordersVisible);
 }
 
 - (BOOL)_compositingRepaintCountersVisible
 {
-    return protectedPreferences(self)->compositingRepaintCountersVisible();
+    return protect(*_preferences)->compositingRepaintCountersVisible();
 }
 
 - (void)_setCompositingRepaintCountersVisible:(BOOL)repaintCountersVisible
 {
-    protectedPreferences(self)->setCompositingRepaintCountersVisible(repaintCountersVisible);
+    protect(*_preferences)->setCompositingRepaintCountersVisible(repaintCountersVisible);
 }
 
 - (BOOL)_tiledScrollingIndicatorVisible
 {
-    return protectedPreferences(self)->tiledScrollingIndicatorVisible();
+    return protect(*_preferences)->tiledScrollingIndicatorVisible();
 }
 
 - (void)_setTiledScrollingIndicatorVisible:(BOOL)tiledScrollingIndicatorVisible
 {
-    protectedPreferences(self)->setTiledScrollingIndicatorVisible(tiledScrollingIndicatorVisible);
+    protect(*_preferences)->setTiledScrollingIndicatorVisible(tiledScrollingIndicatorVisible);
 }
 
 - (BOOL)_resourceUsageOverlayVisible
 {
-    return protectedPreferences(self)->resourceUsageOverlayVisible();
+    return protect(*_preferences)->resourceUsageOverlayVisible();
 }
 
 - (void)_setResourceUsageOverlayVisible:(BOOL)resourceUsageOverlayVisible
 {
-    protectedPreferences(self)->setResourceUsageOverlayVisible(resourceUsageOverlayVisible);
+    protect(*_preferences)->setResourceUsageOverlayVisible(resourceUsageOverlayVisible);
 }
 
 - (_WKDebugOverlayRegions)_visibleDebugOverlayRegions
 {
-    return protectedPreferences(self)->visibleDebugOverlayRegions();
+    return protect(*_preferences)->visibleDebugOverlayRegions();
 }
 
 - (void)_setVisibleDebugOverlayRegions:(_WKDebugOverlayRegions)regionFlags
 {
-    protectedPreferences(self)->setVisibleDebugOverlayRegions(regionFlags);
+    protect(*_preferences)->setVisibleDebugOverlayRegions(regionFlags);
 }
 
 - (BOOL)_legacyLineLayoutVisualCoverageEnabled
 {
-    return protectedPreferences(self)->legacyLineLayoutVisualCoverageEnabled();
+    return protect(*_preferences)->legacyLineLayoutVisualCoverageEnabled();
 }
 
 - (void)_setLegacyLineLayoutVisualCoverageEnabled:(BOOL)legacyLineLayoutVisualCoverageEnabled
 {
-    protectedPreferences(self)->setLegacyLineLayoutVisualCoverageEnabled(legacyLineLayoutVisualCoverageEnabled);
+    protect(*_preferences)->setLegacyLineLayoutVisualCoverageEnabled(legacyLineLayoutVisualCoverageEnabled);
 }
 
 - (BOOL)_contentChangeObserverEnabled
 {
-    return protectedPreferences(self)->contentChangeObserverEnabled();
+    return protect(*_preferences)->contentChangeObserverEnabled();
 }
 
 - (void)_setContentChangeObserverEnabled:(BOOL)contentChangeObserverEnabled
 {
-    protectedPreferences(self)->setContentChangeObserverEnabled(contentChangeObserverEnabled);
+    protect(*_preferences)->setContentChangeObserverEnabled(contentChangeObserverEnabled);
 }
 
 - (BOOL)_acceleratedDrawingEnabled
 {
-    return protectedPreferences(self)->acceleratedDrawingEnabled();
+    return protect(*_preferences)->acceleratedDrawingEnabled();
 }
 
 - (void)_setAcceleratedDrawingEnabled:(BOOL)acceleratedDrawingEnabled
 {
-    protectedPreferences(self)->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
+    protect(*_preferences)->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
 }
 
 - (BOOL)_largeImageAsyncDecodingEnabled
 {
-    return protectedPreferences(self)->largeImageAsyncDecodingEnabled();
+    return protect(*_preferences)->largeImageAsyncDecodingEnabled();
 }
 
 - (void)_setLargeImageAsyncDecodingEnabled:(BOOL)_largeImageAsyncDecodingEnabled
 {
-    protectedPreferences(self)->setLargeImageAsyncDecodingEnabled(_largeImageAsyncDecodingEnabled);
+    protect(*_preferences)->setLargeImageAsyncDecodingEnabled(_largeImageAsyncDecodingEnabled);
 }
 
 - (BOOL)_needsInAppBrowserPrivacyQuirks
 {
-    return protectedPreferences(self)->needsInAppBrowserPrivacyQuirks();
+    return protect(*_preferences)->needsInAppBrowserPrivacyQuirks();
 }
 
 - (void)_setNeedsInAppBrowserPrivacyQuirks:(BOOL)enabled
 {
-    protectedPreferences(self)->setNeedsInAppBrowserPrivacyQuirks(enabled);
+    protect(*_preferences)->setNeedsInAppBrowserPrivacyQuirks(enabled);
 }
 
 - (BOOL)_animatedImageAsyncDecodingEnabled
 {
-    return protectedPreferences(self)->animatedImageAsyncDecodingEnabled();
+    return protect(*_preferences)->animatedImageAsyncDecodingEnabled();
 }
 
 - (void)_setAnimatedImageAsyncDecodingEnabled:(BOOL)_animatedImageAsyncDecodingEnabled
 {
-    protectedPreferences(self)->setAnimatedImageAsyncDecodingEnabled(_animatedImageAsyncDecodingEnabled);
+    protect(*_preferences)->setAnimatedImageAsyncDecodingEnabled(_animatedImageAsyncDecodingEnabled);
 }
 
 - (BOOL)_textAutosizingEnabled
 {
-    return protectedPreferences(self)->textAutosizingEnabled();
+    return protect(*_preferences)->textAutosizingEnabled();
 }
 
 - (void)_setTextAutosizingEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setTextAutosizingEnabled(enabled);
+    protect(*_preferences)->setTextAutosizingEnabled(enabled);
+}
+
+- (BOOL)_useUIProcessForBackForwardItemLoading
+{
+    return protect(*_preferences)->useUIProcessForBackForwardItemLoading();
+}
+
+- (void)_setUseUIProcessForBackForwardItemLoading:(BOOL)flag
+{
+    protect(*_preferences)->setUseUIProcessForBackForwardItemLoading(flag);
 }
 
 - (BOOL)_developerExtrasEnabled
 {
-    return protectedPreferences(self)->developerExtrasEnabled();
+    return protect(*_preferences)->developerExtrasEnabled();
 }
 
 - (void)_setDeveloperExtrasEnabled:(BOOL)developerExtrasEnabled
 {
-    protectedPreferences(self)->setDeveloperExtrasEnabled(developerExtrasEnabled);
+    protect(*_preferences)->setDeveloperExtrasEnabled(developerExtrasEnabled);
 }
 
 - (BOOL)_logsPageMessagesToSystemConsoleEnabled
 {
-    return protectedPreferences(self)->logsPageMessagesToSystemConsoleEnabled();
+    return protect(*_preferences)->logsPageMessagesToSystemConsoleEnabled();
 }
 
 - (void)_setLogsPageMessagesToSystemConsoleEnabled:(BOOL)logsPageMessagesToSystemConsoleEnabled
 {
-    protectedPreferences(self)->setLogsPageMessagesToSystemConsoleEnabled(logsPageMessagesToSystemConsoleEnabled);
+    protect(*_preferences)->setLogsPageMessagesToSystemConsoleEnabled(logsPageMessagesToSystemConsoleEnabled);
 }
 
 - (BOOL)_hiddenPageDOMTimerThrottlingEnabled
 {
-    return protectedPreferences(self)->hiddenPageDOMTimerThrottlingEnabled();
+    return protect(*_preferences)->hiddenPageDOMTimerThrottlingEnabled();
 }
 
 - (void)_setHiddenPageDOMTimerThrottlingEnabled:(BOOL)hiddenPageDOMTimerThrottlingEnabled
 {
-    protectedPreferences(self)->setHiddenPageDOMTimerThrottlingEnabled(hiddenPageDOMTimerThrottlingEnabled);
+    protect(*_preferences)->setHiddenPageDOMTimerThrottlingEnabled(hiddenPageDOMTimerThrottlingEnabled);
 }
 
 - (BOOL)_hiddenPageDOMTimerThrottlingAutoIncreases
 {
-    return protectedPreferences(self)->hiddenPageDOMTimerThrottlingAutoIncreases();
+    return protect(*_preferences)->hiddenPageDOMTimerThrottlingAutoIncreases();
 }
 
 - (void)_setHiddenPageDOMTimerThrottlingAutoIncreases:(BOOL)hiddenPageDOMTimerThrottlingAutoIncreases
 {
-    protectedPreferences(self)->setHiddenPageDOMTimerThrottlingAutoIncreases(hiddenPageDOMTimerThrottlingAutoIncreases);
+    protect(*_preferences)->setHiddenPageDOMTimerThrottlingAutoIncreases(hiddenPageDOMTimerThrottlingAutoIncreases);
 }
 
 - (BOOL)_pageVisibilityBasedProcessSuppressionEnabled
 {
-    return protectedPreferences(self)->pageVisibilityBasedProcessSuppressionEnabled();
+    return protect(*_preferences)->pageVisibilityBasedProcessSuppressionEnabled();
 }
 
 - (void)_setPageVisibilityBasedProcessSuppressionEnabled:(BOOL)pageVisibilityBasedProcessSuppressionEnabled
 {
-    protectedPreferences(self)->setPageVisibilityBasedProcessSuppressionEnabled(pageVisibilityBasedProcessSuppressionEnabled);
+    protect(*_preferences)->setPageVisibilityBasedProcessSuppressionEnabled(pageVisibilityBasedProcessSuppressionEnabled);
 }
 
 - (BOOL)_allowFileAccessFromFileURLs
 {
-    return protectedPreferences(self)->allowFileAccessFromFileURLs();
+    return protect(*_preferences)->allowFileAccessFromFileURLs();
 }
 
 - (void)_setAllowFileAccessFromFileURLs:(BOOL)allowFileAccessFromFileURLs
 {
-    protectedPreferences(self)->setAllowFileAccessFromFileURLs(allowFileAccessFromFileURLs);
+    protect(*_preferences)->setAllowFileAccessFromFileURLs(allowFileAccessFromFileURLs);
 }
 
 - (_WKJavaScriptRuntimeFlags)_javaScriptRuntimeFlags
 {
-    return protectedPreferences(self)->javaScriptRuntimeFlags();
+    return protect(*_preferences)->javaScriptRuntimeFlags();
 }
 
 - (void)_setJavaScriptRuntimeFlags:(_WKJavaScriptRuntimeFlags)javaScriptRuntimeFlags
 {
-    protectedPreferences(self)->setJavaScriptRuntimeFlags(javaScriptRuntimeFlags);
+    protect(*_preferences)->setJavaScriptRuntimeFlags(javaScriptRuntimeFlags);
 }
 
 - (BOOL)_isStandalone
 {
-    return protectedPreferences(self)->standalone();
+    return protect(*_preferences)->standalone();
 }
 
 - (void)_setStandalone:(BOOL)standalone
 {
-    protectedPreferences(self)->setStandalone(standalone);
+    protect(*_preferences)->setStandalone(standalone);
 }
 
 - (BOOL)_diagnosticLoggingEnabled
 {
-    return protectedPreferences(self)->diagnosticLoggingEnabled();
+    return protect(*_preferences)->diagnosticLoggingEnabled();
 }
 
 - (void)_setDiagnosticLoggingEnabled:(BOOL)diagnosticLoggingEnabled
 {
-    protectedPreferences(self)->setDiagnosticLoggingEnabled(diagnosticLoggingEnabled);
+    protect(*_preferences)->setDiagnosticLoggingEnabled(diagnosticLoggingEnabled);
 }
 
 - (NSUInteger)_defaultFontSize
 {
-    return protectedPreferences(self)->defaultFontSize();
+    return protect(*_preferences)->defaultFontSize();
 }
 
 - (void)_setDefaultFontSize:(NSUInteger)defaultFontSize
 {
-    protectedPreferences(self)->setDefaultFontSize(defaultFontSize);
+    protect(*_preferences)->setDefaultFontSize(defaultFontSize);
 }
 
 - (NSUInteger)_defaultFixedPitchFontSize
 {
-    return protectedPreferences(self)->defaultFixedFontSize();
+    return protect(*_preferences)->defaultFixedFontSize();
 }
 
 - (void)_setDefaultFixedPitchFontSize:(NSUInteger)defaultFixedPitchFontSize
 {
-    protectedPreferences(self)->setDefaultFixedFontSize(defaultFixedPitchFontSize);
+    protect(*_preferences)->setDefaultFixedFontSize(defaultFixedPitchFontSize);
 }
 
 - (NSString *)_fixedPitchFontFamily
 {
-    return protectedPreferences(self)->fixedFontFamily().createNSString().autorelease();
+    return protect(*_preferences)->fixedFontFamily().createNSString().autorelease();
 }
 
 - (void)_setFixedPitchFontFamily:(NSString *)fixedPitchFontFamily
 {
-    protectedPreferences(self)->setFixedFontFamily(fixedPitchFontFamily);
+    protect(*_preferences)->setFixedFontFamily(fixedPitchFontFamily);
 }
 
 + (NSArray<_WKFeature *> *)_features
 {
     auto features = WebKit::WebPreferences::features();
-    return wrapper(API::Array::create(WTFMove(features))).autorelease();
+    return wrapper(API::Array::create(WTF::move(features))).autorelease();
 }
 
 + (NSArray<_WKFeature *> *)_internalDebugFeatures
 {
     auto features = WebKit::WebPreferences::internalDebugFeatures();
-    return wrapper(API::Array::create(WTFMove(features))).autorelease();
+    return wrapper(API::Array::create(WTF::move(features))).autorelease();
 }
 
 - (BOOL)_isEnabledForInternalDebugFeature:(_WKFeature *)feature
 {
-    return protectedPreferences(self)->isFeatureEnabled(Ref { *feature->_wrappedFeature });
+    return protect(*_preferences)->isFeatureEnabled(Ref { *feature->_wrappedFeature });
 }
 
 - (void)_setEnabled:(BOOL)value forInternalDebugFeature:(_WKFeature *)feature
 {
-    protectedPreferences(self)->setFeatureEnabled(Ref { *feature->_wrappedFeature }, value);
+    protect(*_preferences)->setFeatureEnabled(Ref { *feature->_wrappedFeature }, value);
 }
 
 + (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures
 {
     auto features = WebKit::WebPreferences::experimentalFeatures();
-    return wrapper(API::Array::create(WTFMove(features))).autorelease();
+    return wrapper(API::Array::create(WTF::move(features))).autorelease();
 }
 
 - (BOOL)_isEnabledForFeature:(_WKFeature *)feature
 {
-    return protectedPreferences(self)->isFeatureEnabled(Ref { *feature->_wrappedFeature });
+    return protect(*_preferences)->isFeatureEnabled(Ref { *feature->_wrappedFeature });
 }
 
 - (void)_setEnabled:(BOOL)value forFeature:(_WKFeature *)feature
 {
-    protectedPreferences(self)->setFeatureEnabled(Ref { *feature->_wrappedFeature }, value);
+    protect(*_preferences)->setFeatureEnabled(Ref { *feature->_wrappedFeature }, value);
 }
 
 - (BOOL)_isEnabledForExperimentalFeature:(_WKFeature *)feature
@@ -623,18 +628,18 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 
 - (void)_disableRichJavaScriptFeatures
 {
-    protectedPreferences(self)->disableRichJavaScriptFeatures();
+    protect(*_preferences)->disableRichJavaScriptFeatures();
 }
 
 - (void)_disableMediaPlaybackRelatedFeatures
 {
-    protectedPreferences(self)->disableMediaPlaybackRelatedFeatures();
+    protect(*_preferences)->disableMediaPlaybackRelatedFeatures();
 }
 
 - (BOOL)_applePayCapabilityDisclosureAllowed
 {
 #if ENABLE(APPLE_PAY)
-    return protectedPreferences(self)->applePayCapabilityDisclosureAllowed();
+    return protect(*_preferences)->applePayCapabilityDisclosureAllowed();
 #else
     return NO;
 #endif
@@ -643,166 +648,166 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 - (void)_setApplePayCapabilityDisclosureAllowed:(BOOL)applePayCapabilityDisclosureAllowed
 {
 #if ENABLE(APPLE_PAY)
-    protectedPreferences(self)->setApplePayCapabilityDisclosureAllowed(applePayCapabilityDisclosureAllowed);
+    protect(*_preferences)->setApplePayCapabilityDisclosureAllowed(applePayCapabilityDisclosureAllowed);
 #endif
 }
 
 - (BOOL)_shouldSuppressKeyboardInputDuringProvisionalNavigation
 {
-    return protectedPreferences(self)->shouldSuppressTextInputFromEditingDuringProvisionalNavigation();
+    return protect(*_preferences)->shouldSuppressTextInputFromEditingDuringProvisionalNavigation();
 }
 
 - (void)_setShouldSuppressKeyboardInputDuringProvisionalNavigation:(BOOL)shouldSuppress
 {
-    protectedPreferences(self)->setShouldSuppressTextInputFromEditingDuringProvisionalNavigation(shouldSuppress);
+    protect(*_preferences)->setShouldSuppressTextInputFromEditingDuringProvisionalNavigation(shouldSuppress);
 }
 
 - (BOOL)_loadsImagesAutomatically
 {
-    return protectedPreferences(self)->loadsImagesAutomatically();
+    return protect(*_preferences)->loadsImagesAutomatically();
 }
 
 - (void)_setLoadsImagesAutomatically:(BOOL)loadsImagesAutomatically
 {
-    protectedPreferences(self)->setLoadsImagesAutomatically(loadsImagesAutomatically);
+    protect(*_preferences)->setLoadsImagesAutomatically(loadsImagesAutomatically);
 }
 
 - (BOOL)_peerConnectionEnabled
 {
-    return protectedPreferences(self)->peerConnectionEnabled();
+    return protect(*_preferences)->peerConnectionEnabled();
 }
 
 - (void)_setPeerConnectionEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setPeerConnectionEnabled(enabled);
+    protect(*_preferences)->setPeerConnectionEnabled(enabled);
 }
 
 - (BOOL)_mediaDevicesEnabled
 {
-    return protectedPreferences(self)->mediaDevicesEnabled();
+    return protect(*_preferences)->mediaDevicesEnabled();
 }
 
 - (void)_setMediaDevicesEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setMediaDevicesEnabled(enabled);
+    protect(*_preferences)->setMediaDevicesEnabled(enabled);
 }
 
 - (BOOL)_getUserMediaRequiresFocus
 {
-    return protectedPreferences(self)->getUserMediaRequiresFocus();
+    return protect(*_preferences)->getUserMediaRequiresFocus();
 }
 
 - (void)_setGetUserMediaRequiresFocus:(BOOL)enabled
 {
-    protectedPreferences(self)->setGetUserMediaRequiresFocus(enabled);
+    protect(*_preferences)->setGetUserMediaRequiresFocus(enabled);
 }
 
 - (BOOL)_screenCaptureEnabled
 {
-    return protectedPreferences(self)->screenCaptureEnabled();
+    return protect(*_preferences)->screenCaptureEnabled();
 }
 
 - (void)_setScreenCaptureEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setScreenCaptureEnabled(enabled);
+    protect(*_preferences)->setScreenCaptureEnabled(enabled);
 }
 
 - (BOOL)_mockCaptureDevicesEnabled
 {
-    return protectedPreferences(self)->mockCaptureDevicesEnabled();
+    return protect(*_preferences)->mockCaptureDevicesEnabled();
 }
 
 - (void)_setMockCaptureDevicesEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setMockCaptureDevicesEnabled(enabled);
+    protect(*_preferences)->setMockCaptureDevicesEnabled(enabled);
 }
 
 - (BOOL)_mockCaptureDevicesPromptEnabled
 {
-    return protectedPreferences(self)->mockCaptureDevicesPromptEnabled();
+    return protect(*_preferences)->mockCaptureDevicesPromptEnabled();
 }
 
 - (void)_setMockCaptureDevicesPromptEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setMockCaptureDevicesPromptEnabled(enabled);
+    protect(*_preferences)->setMockCaptureDevicesPromptEnabled(enabled);
 }
 
 - (BOOL)_mediaCaptureRequiresSecureConnection
 {
-    return protectedPreferences(self)->mediaCaptureRequiresSecureConnection();
+    return protect(*_preferences)->mediaCaptureRequiresSecureConnection();
 }
 
 - (void)_setMediaCaptureRequiresSecureConnection:(BOOL)requiresSecureConnection
 {
-    protectedPreferences(self)->setMediaCaptureRequiresSecureConnection(requiresSecureConnection);
+    protect(*_preferences)->setMediaCaptureRequiresSecureConnection(requiresSecureConnection);
 }
 
 - (double)_inactiveMediaCaptureStreamRepromptIntervalInMinutes
 {
-    return protectedPreferences(self)->inactiveMediaCaptureStreamRepromptIntervalInMinutes();
+    return protect(*_preferences)->inactiveMediaCaptureStreamRepromptIntervalInMinutes();
 }
 
 - (void)_setInactiveMediaCaptureStreamRepromptIntervalInMinutes:(double)interval
 {
-    protectedPreferences(self)->setInactiveMediaCaptureStreamRepromptIntervalInMinutes(interval);
+    protect(*_preferences)->setInactiveMediaCaptureStreamRepromptIntervalInMinutes(interval);
 }
 
 - (double)_inactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes
 {
-    return protectedPreferences(self)->inactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes();
+    return protect(*_preferences)->inactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes();
 }
 
 - (void)_setInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes:(double)interval
 {
-    protectedPreferences(self)->setInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes(interval);
+    protect(*_preferences)->setInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes(interval);
 }
 
 - (BOOL)_interruptAudioOnPageVisibilityChangeEnabled
 {
-    return protectedPreferences(self)->interruptAudioOnPageVisibilityChangeEnabled();
+    return protect(*_preferences)->interruptAudioOnPageVisibilityChangeEnabled();
 }
 
 - (void)_setInterruptAudioOnPageVisibilityChangeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setInterruptAudioOnPageVisibilityChangeEnabled(enabled);
+    protect(*_preferences)->setInterruptAudioOnPageVisibilityChangeEnabled(enabled);
 }
 
 - (BOOL)_enumeratingAllNetworkInterfacesEnabled
 {
-    return protectedPreferences(self)->enumeratingAllNetworkInterfacesEnabled();
+    return protect(*_preferences)->enumeratingAllNetworkInterfacesEnabled();
 }
 
 - (void)_setEnumeratingAllNetworkInterfacesEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setEnumeratingAllNetworkInterfacesEnabled(enabled);
+    protect(*_preferences)->setEnumeratingAllNetworkInterfacesEnabled(enabled);
 }
 
 - (BOOL)_iceCandidateFilteringEnabled
 {
-    return protectedPreferences(self)->iceCandidateFilteringEnabled();
+    return protect(*_preferences)->iceCandidateFilteringEnabled();
 }
 
 - (void)_setICECandidateFilteringEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setICECandidateFilteringEnabled(enabled);
+    protect(*_preferences)->setICECandidateFilteringEnabled(enabled);
 }
 
 - (void)_setJavaScriptCanAccessClipboard:(BOOL)javaScriptCanAccessClipboard
 {
-    protectedPreferences(self)->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
+    protect(*_preferences)->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
 }
 
 - (BOOL)_shouldAllowUserInstalledFonts
 {
-    return protectedPreferences(self)->shouldAllowUserInstalledFonts();
+    return protect(*_preferences)->shouldAllowUserInstalledFonts();
 }
 
 - (void)_setShouldAllowUserInstalledFonts:(BOOL)_shouldAllowUserInstalledFonts
 {
-    protectedPreferences(self)->setShouldAllowUserInstalledFonts(_shouldAllowUserInstalledFonts);
+    protect(*_preferences)->setShouldAllowUserInstalledFonts(_shouldAllowUserInstalledFonts);
 }
 
-static _WKEditableLinkBehavior toAPI(WebCore::EditableLinkBehavior behavior)
+static _WKEditableLinkBehavior NODELETE toAPI(WebCore::EditableLinkBehavior behavior)
 {
     switch (behavior) {
     case WebCore::EditableLinkBehavior::Default:
@@ -821,7 +826,7 @@ static _WKEditableLinkBehavior toAPI(WebCore::EditableLinkBehavior behavior)
     return _WKEditableLinkBehaviorNeverLive;
 }
 
-static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehavior wkBehavior)
+static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditableLinkBehavior wkBehavior)
 {
     switch (wkBehavior) {
     case _WKEditableLinkBehaviorDefault:
@@ -842,253 +847,253 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (_WKEditableLinkBehavior)_editableLinkBehavior
 {
-    return toAPI(static_cast<WebCore::EditableLinkBehavior>(protectedPreferences(self)->editableLinkBehavior()));
+    return toAPI(static_cast<WebCore::EditableLinkBehavior>(protect(*_preferences)->editableLinkBehavior()));
 }
 
 - (void)_setEditableLinkBehavior:(_WKEditableLinkBehavior)editableLinkBehavior
 {
-    protectedPreferences(self)->setEditableLinkBehavior(static_cast<uint32_t>(toEditableLinkBehavior(editableLinkBehavior)));
+    protect(*_preferences)->setEditableLinkBehavior(static_cast<uint32_t>(toEditableLinkBehavior(editableLinkBehavior)));
 }
 
 - (void)_setAVFoundationEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setAVFoundationEnabled(enabled);
+    protect(*_preferences)->setAVFoundationEnabled(enabled);
 }
 
 - (BOOL)_avFoundationEnabled
 {
-    return protectedPreferences(self)->isAVFoundationEnabled();
+    return protect(*_preferences)->isAVFoundationEnabled();
 }
 
 - (void)_setTextExtractionEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setTextExtractionEnabled(enabled);
+    protect(*_preferences)->setTextExtractionEnabled(enabled);
 }
 
 - (BOOL)_textExtractionEnabled
 {
-    return protectedPreferences(self)->textExtractionEnabled();
+    return protect(*_preferences)->textExtractionEnabled();
 }
 
 - (void)_setColorFilterEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setColorFilterEnabled(enabled);
+    protect(*_preferences)->setColorFilterEnabled(enabled);
 }
 
 - (BOOL)_colorFilterEnabled
 {
-    return protectedPreferences(self)->colorFilterEnabled();
+    return protect(*_preferences)->colorFilterEnabled();
 }
 
 - (void)_setPunchOutWhiteBackgroundsInDarkMode:(BOOL)punches
 {
-    protectedPreferences(self)->setPunchOutWhiteBackgroundsInDarkMode(punches);
+    protect(*_preferences)->setPunchOutWhiteBackgroundsInDarkMode(punches);
 }
 
 - (BOOL)_punchOutWhiteBackgroundsInDarkMode
 {
-    return protectedPreferences(self)->punchOutWhiteBackgroundsInDarkMode();
+    return protect(*_preferences)->punchOutWhiteBackgroundsInDarkMode();
 }
 
 - (void)_setLowPowerVideoAudioBufferSizeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setLowPowerVideoAudioBufferSizeEnabled(enabled);
+    protect(*_preferences)->setLowPowerVideoAudioBufferSizeEnabled(enabled);
 }
 
 - (BOOL)_lowPowerVideoAudioBufferSizeEnabled
 {
-    return protectedPreferences(self)->lowPowerVideoAudioBufferSizeEnabled();
+    return protect(*_preferences)->lowPowerVideoAudioBufferSizeEnabled();
 }
 
 - (void)_setShouldIgnoreMetaViewport:(BOOL)ignoreMetaViewport
 {
-    return protectedPreferences(self)->setShouldIgnoreMetaViewport(ignoreMetaViewport);
+    return protect(*_preferences)->setShouldIgnoreMetaViewport(ignoreMetaViewport);
 }
 
 - (BOOL)_shouldIgnoreMetaViewport
 {
-    return protectedPreferences(self)->shouldIgnoreMetaViewport();
+    return protect(*_preferences)->shouldIgnoreMetaViewport();
 }
 
 - (void)_setNeedsSiteSpecificQuirks:(BOOL)enabled
 {
-    protectedPreferences(self)->setNeedsSiteSpecificQuirks(enabled);
+    protect(*_preferences)->setNeedsSiteSpecificQuirks(enabled);
 }
 
 - (BOOL)_needsSiteSpecificQuirks
 {
-    return protectedPreferences(self)->needsSiteSpecificQuirks();
+    return protect(*_preferences)->needsSiteSpecificQuirks();
 }
 
 - (void)_setItpDebugModeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setItpDebugModeEnabled(enabled);
+    protect(*_preferences)->setItpDebugModeEnabled(enabled);
 }
 
 - (BOOL)_itpDebugModeEnabled
 {
-    return protectedPreferences(self)->itpDebugModeEnabled();
+    return protect(*_preferences)->itpDebugModeEnabled();
 }
 
 - (void)_setMediaSourceEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setMediaSourceEnabled(enabled);
+    protect(*_preferences)->setMediaSourceEnabled(enabled);
 }
 
 - (BOOL)_mediaSourceEnabled
 {
-    return protectedPreferences(self)->mediaSourceEnabled();
+    return protect(*_preferences)->mediaSourceEnabled();
 }
 
 - (void)_setManagedMediaSourceEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setManagedMediaSourceEnabled(enabled);
+    protect(*_preferences)->setManagedMediaSourceEnabled(enabled);
 }
 
 - (BOOL)_managedMediaSourceEnabled
 {
-    return protectedPreferences(self)->managedMediaSourceEnabled();
+    return protect(*_preferences)->managedMediaSourceEnabled();
 }
 
 - (void)_setManagedMediaSourceLowThreshold:(double)threshold
 {
-    protectedPreferences(self)->setManagedMediaSourceLowThreshold(threshold);
+    protect(*_preferences)->setManagedMediaSourceLowThreshold(threshold);
 }
 
 - (double)_managedMediaSourceLowThreshold
 {
-    return protectedPreferences(self)->managedMediaSourceLowThreshold();
+    return protect(*_preferences)->managedMediaSourceLowThreshold();
 }
 
 - (void)_setManagedMediaSourceHighThreshold:(double)threshold
 {
-    protectedPreferences(self)->setManagedMediaSourceHighThreshold(threshold);
+    protect(*_preferences)->setManagedMediaSourceHighThreshold(threshold);
 }
 
 - (double)_managedMediaSourceHighThreshold
 {
-    return protectedPreferences(self)->managedMediaSourceHighThreshold();
+    return protect(*_preferences)->managedMediaSourceHighThreshold();
 }
 
 - (BOOL)_secureContextChecksEnabled
 {
-    return protectedPreferences(self)->secureContextChecksEnabled();
+    return protect(*_preferences)->secureContextChecksEnabled();
 }
 
 - (void)_setSecureContextChecksEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setSecureContextChecksEnabled(enabled);
+    protect(*_preferences)->setSecureContextChecksEnabled(enabled);
 }
 
 - (void)_setWebAudioEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setWebAudioEnabled(enabled);
+    protect(*_preferences)->setWebAudioEnabled(enabled);
 }
 
 - (BOOL)_webAudioEnabled
 {
-    return protectedPreferences(self)->webAudioEnabled();
+    return protect(*_preferences)->webAudioEnabled();
 }
 
 - (void)_setAcceleratedCompositingEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setAcceleratedCompositingEnabled(enabled);
+    protect(*_preferences)->setAcceleratedCompositingEnabled(enabled);
 }
 
 - (BOOL)_acceleratedCompositingEnabled
 {
-    return protectedPreferences(self)->acceleratedCompositingEnabled();
+    return protect(*_preferences)->acceleratedCompositingEnabled();
 }
 
 - (BOOL)_remotePlaybackEnabled
 {
-    return protectedPreferences(self)->remotePlaybackEnabled();
+    return protect(*_preferences)->remotePlaybackEnabled();
 }
 
 - (void)_setRemotePlaybackEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setRemotePlaybackEnabled(enabled);
+    protect(*_preferences)->setRemotePlaybackEnabled(enabled);
 }
 
 - (BOOL)_serviceWorkerEntitlementDisabledForTesting
 {
-    return protectedPreferences(self)->serviceWorkerEntitlementDisabledForTesting();
+    return protect(*_preferences)->serviceWorkerEntitlementDisabledForTesting();
 }
 
 - (void)_setServiceWorkerEntitlementDisabledForTesting:(BOOL)disable
 {
-    protectedPreferences(self)->setServiceWorkerEntitlementDisabledForTesting(disable);
+    protect(*_preferences)->setServiceWorkerEntitlementDisabledForTesting(disable);
 }
 
 #if PLATFORM(MAC)
 - (void)_setCanvasUsesAcceleratedDrawing:(BOOL)enabled
 {
-    protectedPreferences(self)->setCanvasUsesAcceleratedDrawing(enabled);
+    protect(*_preferences)->setCanvasUsesAcceleratedDrawing(enabled);
 }
 
 - (BOOL)_canvasUsesAcceleratedDrawing
 {
-    return protectedPreferences(self)->canvasUsesAcceleratedDrawing();
+    return protect(*_preferences)->canvasUsesAcceleratedDrawing();
 }
 
 - (void)_setDefaultTextEncodingName:(NSString *)name
 {
-    protectedPreferences(self)->setDefaultTextEncodingName(name);
+    protect(*_preferences)->setDefaultTextEncodingName(name);
 }
 
 - (NSString *)_defaultTextEncodingName
 {
-    return protectedPreferences(self)->defaultTextEncodingName().createNSString().autorelease();
+    return protect(*_preferences)->defaultTextEncodingName().createNSString().autorelease();
 }
 
 - (void)_setAuthorAndUserStylesEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setAuthorAndUserStylesEnabled(enabled);
+    protect(*_preferences)->setAuthorAndUserStylesEnabled(enabled);
 }
 
 - (BOOL)_authorAndUserStylesEnabled
 {
-    return protectedPreferences(self)->authorAndUserStylesEnabled();
+    return protect(*_preferences)->authorAndUserStylesEnabled();
 }
 
 - (void)_setDOMTimersThrottlingEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setDOMTimersThrottlingEnabled(enabled);
+    protect(*_preferences)->setDOMTimersThrottlingEnabled(enabled);
 }
 
 - (BOOL)_domTimersThrottlingEnabled
 {
-    return protectedPreferences(self)->domTimersThrottlingEnabled();
+    return protect(*_preferences)->domTimersThrottlingEnabled();
 }
 
 - (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setWebArchiveDebugModeEnabled(enabled);
+    protect(*_preferences)->setWebArchiveDebugModeEnabled(enabled);
 }
 
 - (BOOL)_webArchiveDebugModeEnabled
 {
-    return protectedPreferences(self)->webArchiveDebugModeEnabled();
+    return protect(*_preferences)->webArchiveDebugModeEnabled();
 }
 
 - (void)_setLocalFileContentSniffingEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setLocalFileContentSniffingEnabled(enabled);
+    protect(*_preferences)->setLocalFileContentSniffingEnabled(enabled);
 }
 
 - (BOOL)_localFileContentSniffingEnabled
 {
-    return protectedPreferences(self)->localFileContentSniffingEnabled();
+    return protect(*_preferences)->localFileContentSniffingEnabled();
 }
 
 - (void)_setUsesPageCache:(BOOL)enabled
 {
-    protectedPreferences(self)->setUsesBackForwardCache(enabled);
+    protect(*_preferences)->setUsesBackForwardCache(enabled);
 }
 
 - (BOOL)_usesPageCache
 {
-    return protectedPreferences(self)->usesBackForwardCache();
+    return protect(*_preferences)->usesBackForwardCache();
 }
 
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
@@ -1103,292 +1108,292 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setWebSecurityEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setWebSecurityEnabled(enabled);
+    protect(*_preferences)->setWebSecurityEnabled(enabled);
 }
 
 - (BOOL)_webSecurityEnabled
 {
-    return protectedPreferences(self)->webSecurityEnabled();
+    return protect(*_preferences)->webSecurityEnabled();
 }
 
 - (void)_setUniversalAccessFromFileURLsAllowed:(BOOL)enabled
 {
-    protectedPreferences(self)->setAllowUniversalAccessFromFileURLs(enabled);
+    protect(*_preferences)->setAllowUniversalAccessFromFileURLs(enabled);
 }
 
 - (BOOL)_universalAccessFromFileURLsAllowed
 {
-    return protectedPreferences(self)->allowUniversalAccessFromFileURLs();
+    return protect(*_preferences)->allowUniversalAccessFromFileURLs();
 }
 
 - (void)_setTopNavigationToDataURLsAllowed:(BOOL)enabled
 {
-    protectedPreferences(self)->setAllowTopNavigationToDataURLs(enabled);
+    protect(*_preferences)->setAllowTopNavigationToDataURLs(enabled);
 }
 
 - (BOOL)_topNavigationToDataURLsAllowed
 {
-    return protectedPreferences(self)->allowTopNavigationToDataURLs();
+    return protect(*_preferences)->allowTopNavigationToDataURLs();
 }
 
 - (void)_setSuppressesIncrementalRendering:(BOOL)enabled
 {
-    protectedPreferences(self)->setSuppressesIncrementalRendering(enabled);
+    protect(*_preferences)->setSuppressesIncrementalRendering(enabled);
 }
 
 - (BOOL)_suppressesIncrementalRendering
 {
-    return protectedPreferences(self)->suppressesIncrementalRendering();
+    return protect(*_preferences)->suppressesIncrementalRendering();
 }
 
 - (void)_setCookieEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setCookieEnabled(enabled);
+    protect(*_preferences)->setCookieEnabled(enabled);
 }
 
 - (BOOL)_cookieEnabled
 {
-    return protectedPreferences(self)->cookieEnabled();
+    return protect(*_preferences)->cookieEnabled();
 }
 
 - (void)_setViewGestureDebuggingEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setViewGestureDebuggingEnabled(enabled);
+    protect(*_preferences)->setViewGestureDebuggingEnabled(enabled);
 }
 
 - (BOOL)_viewGestureDebuggingEnabled
 {
-    return protectedPreferences(self)->viewGestureDebuggingEnabled();
+    return protect(*_preferences)->viewGestureDebuggingEnabled();
 }
 
 - (void)_setStandardFontFamily:(NSString *)family
 {
-    protectedPreferences(self)->setStandardFontFamily(family);
+    protect(*_preferences)->setStandardFontFamily(family);
 }
 
 - (NSString *)_standardFontFamily
 {
-    return protectedPreferences(self)->standardFontFamily().createNSString().autorelease();
+    return protect(*_preferences)->standardFontFamily().createNSString().autorelease();
 }
 
 - (void)_setBackspaceKeyNavigationEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setBackspaceKeyNavigationEnabled(enabled);
+    protect(*_preferences)->setBackspaceKeyNavigationEnabled(enabled);
 }
 
 - (BOOL)_backspaceKeyNavigationEnabled
 {
-    return protectedPreferences(self)->backspaceKeyNavigationEnabled();
+    return protect(*_preferences)->backspaceKeyNavigationEnabled();
 }
 
 - (void)_setWebGLEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setWebGLEnabled(enabled);
+    protect(*_preferences)->setWebGLEnabled(enabled);
 }
 
 - (BOOL)_webGLEnabled
 {
-    return protectedPreferences(self)->webGLEnabled();
+    return protect(*_preferences)->webGLEnabled();
 }
 
 - (void)_setAllowsInlineMediaPlayback:(BOOL)enabled
 {
-    protectedPreferences(self)->setAllowsInlineMediaPlayback(enabled);
+    protect(*_preferences)->setAllowsInlineMediaPlayback(enabled);
 }
 
 - (BOOL)_allowsInlineMediaPlayback
 {
-    return protectedPreferences(self)->allowsInlineMediaPlayback();
+    return protect(*_preferences)->allowsInlineMediaPlayback();
 }
 
 - (void)_setApplePayEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setApplePayEnabled(enabled);
+    protect(*_preferences)->setApplePayEnabled(enabled);
 }
 
 - (BOOL)_applePayEnabled
 {
-    return protectedPreferences(self)->applePayEnabled();
+    return protect(*_preferences)->applePayEnabled();
 }
 
 - (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)enabled
 {
-    protectedPreferences(self)->setInlineMediaPlaybackRequiresPlaysInlineAttribute(enabled);
+    protect(*_preferences)->setInlineMediaPlaybackRequiresPlaysInlineAttribute(enabled);
 }
 
 - (BOOL)_inlineMediaPlaybackRequiresPlaysInlineAttribute
 {
-    return protectedPreferences(self)->inlineMediaPlaybackRequiresPlaysInlineAttribute();
+    return protect(*_preferences)->inlineMediaPlaybackRequiresPlaysInlineAttribute();
 }
 
 - (void)_setInvisibleMediaAutoplayNotPermitted:(BOOL)enabled
 {
-    protectedPreferences(self)->setInvisibleAutoplayNotPermitted(enabled);
+    protect(*_preferences)->setInvisibleAutoplayNotPermitted(enabled);
 }
 
 - (BOOL)_invisibleMediaAutoplayNotPermitted
 {
-    return protectedPreferences(self)->invisibleAutoplayNotPermitted();
+    return protect(*_preferences)->invisibleAutoplayNotPermitted();
 }
 
 - (void)_setLegacyEncryptedMediaAPIEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setLegacyEncryptedMediaAPIEnabled(enabled);
+    protect(*_preferences)->setLegacyEncryptedMediaAPIEnabled(enabled);
 }
 
 - (BOOL)_legacyEncryptedMediaAPIEnabled
 {
-    return protectedPreferences(self)->legacyEncryptedMediaAPIEnabled();
+    return protect(*_preferences)->legacyEncryptedMediaAPIEnabled();
 }
 
 - (void)_setMainContentUserGestureOverrideEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setMainContentUserGestureOverrideEnabled(enabled);
+    protect(*_preferences)->setMainContentUserGestureOverrideEnabled(enabled);
 }
 
 - (BOOL)_mainContentUserGestureOverrideEnabled
 {
-    return protectedPreferences(self)->mainContentUserGestureOverrideEnabled();
+    return protect(*_preferences)->mainContentUserGestureOverrideEnabled();
 }
 
 - (void)_setNeedsStorageAccessFromFileURLsQuirk:(BOOL)enabled
 {
-    protectedPreferences(self)->setNeedsStorageAccessFromFileURLsQuirk(enabled);
+    protect(*_preferences)->setNeedsStorageAccessFromFileURLsQuirk(enabled);
 }
 
 - (BOOL)_needsStorageAccessFromFileURLsQuirk
 {
-    return protectedPreferences(self)->needsStorageAccessFromFileURLsQuirk();
+    return protect(*_preferences)->needsStorageAccessFromFileURLsQuirk();
 }
 
 - (void)_setPDFPluginEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setPDFPluginEnabled(enabled);
+    protect(*_preferences)->setPDFPluginEnabled(enabled);
 }
 
 - (BOOL)_pdfPluginEnabled
 {
-    return protectedPreferences(self)->pdfPluginEnabled();
+    return protect(*_preferences)->pdfPluginEnabled();
 }
 
 - (void)_setRequiresUserGestureForAudioPlayback:(BOOL)enabled
 {
-    protectedPreferences(self)->setRequiresUserGestureForAudioPlayback(enabled);
+    protect(*_preferences)->setRequiresUserGestureForAudioPlayback(enabled);
 }
 
 - (BOOL)_requiresUserGestureForAudioPlayback
 {
-    return protectedPreferences(self)->requiresUserGestureForAudioPlayback();
+    return protect(*_preferences)->requiresUserGestureForAudioPlayback();
 }
 
 - (void)_setRequiresUserGestureForVideoPlayback:(BOOL)enabled
 {
-    protectedPreferences(self)->setRequiresUserGestureForVideoPlayback(enabled);
+    protect(*_preferences)->setRequiresUserGestureForVideoPlayback(enabled);
 }
 
 - (BOOL)_requiresUserGestureForVideoPlayback
 {
-    return protectedPreferences(self)->requiresUserGestureForVideoPlayback();
+    return protect(*_preferences)->requiresUserGestureForVideoPlayback();
 }
 
 - (void)_setServiceControlsEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setServiceControlsEnabled(enabled);
+    protect(*_preferences)->setServiceControlsEnabled(enabled);
 }
 
 - (BOOL)_serviceControlsEnabled
 {
-    return protectedPreferences(self)->serviceControlsEnabled();
+    return protect(*_preferences)->serviceControlsEnabled();
 }
 
 - (void)_setShowsToolTipOverTruncatedText:(BOOL)enabled
 {
-    protectedPreferences(self)->setShowsToolTipOverTruncatedText(enabled);
+    protect(*_preferences)->setShowsToolTipOverTruncatedText(enabled);
 }
 
 - (BOOL)_showsToolTipOverTruncatedText
 {
-    return protectedPreferences(self)->showsToolTipOverTruncatedText();
+    return protect(*_preferences)->showsToolTipOverTruncatedText();
 }
 
 - (void)_setTextAreasAreResizable:(BOOL)enabled
 {
-    protectedPreferences(self)->setTextAreasAreResizable(enabled);
+    protect(*_preferences)->setTextAreasAreResizable(enabled);
 }
 
 - (BOOL)_textAreasAreResizable
 {
-    return protectedPreferences(self)->textAreasAreResizable();
+    return protect(*_preferences)->textAreasAreResizable();
 }
 
 - (void)_setUseGiantTiles:(BOOL)enabled
 {
-    protectedPreferences(self)->setUseGiantTiles(enabled);
+    protect(*_preferences)->setUseGiantTiles(enabled);
 }
 
 - (BOOL)_useGiantTiles
 {
-    return protectedPreferences(self)->useGiantTiles();
+    return protect(*_preferences)->useGiantTiles();
 }
 
 - (void)_setWantsBalancedSetDefersLoadingBehavior:(BOOL)enabled
 {
-    protectedPreferences(self)->setWantsBalancedSetDefersLoadingBehavior(enabled);
+    protect(*_preferences)->setWantsBalancedSetDefersLoadingBehavior(enabled);
 }
 
 - (BOOL)_wantsBalancedSetDefersLoadingBehavior
 {
-    return protectedPreferences(self)->wantsBalancedSetDefersLoadingBehavior();
+    return protect(*_preferences)->wantsBalancedSetDefersLoadingBehavior();
 }
 
 - (void)_setAggressiveTileRetentionEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setAggressiveTileRetentionEnabled(enabled);
+    protect(*_preferences)->setAggressiveTileRetentionEnabled(enabled);
 }
 
 - (BOOL)_aggressiveTileRetentionEnabled
 {
-    return protectedPreferences(self)->aggressiveTileRetentionEnabled();
+    return protect(*_preferences)->aggressiveTileRetentionEnabled();
 }
 
 - (void)_setAppNapEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setPageVisibilityBasedProcessSuppressionEnabled(enabled);
+    protect(*_preferences)->setPageVisibilityBasedProcessSuppressionEnabled(enabled);
 }
 
 - (BOOL)_appNapEnabled
 {
-    return protectedPreferences(self)->pageVisibilityBasedProcessSuppressionEnabled();
+    return protect(*_preferences)->pageVisibilityBasedProcessSuppressionEnabled();
 }
 
 #endif // PLATFORM(MAC)
 
 - (BOOL)_javaScriptCanAccessClipboard
 {
-    return protectedPreferences(self)->javaScriptCanAccessClipboard();
+    return protect(*_preferences)->javaScriptCanAccessClipboard();
 }
 
 - (void)_setDOMPasteAllowed:(BOOL)domPasteAllowed
 {
-    protectedPreferences(self)->setDOMPasteAllowed(domPasteAllowed);
+    protect(*_preferences)->setDOMPasteAllowed(domPasteAllowed);
 }
 
 - (BOOL)_domPasteAllowed
 {
-    return protectedPreferences(self)->domPasteAllowed();
+    return protect(*_preferences)->domPasteAllowed();
 }
 
 - (void)_setShouldEnableTextAutosizingBoost:(BOOL)shouldEnableTextAutosizingBoost
 {
 #if ENABLE(TEXT_AUTOSIZING)
-    protectedPreferences(self)->setShouldEnableTextAutosizingBoost(shouldEnableTextAutosizingBoost);
+    protect(*_preferences)->setShouldEnableTextAutosizingBoost(shouldEnableTextAutosizingBoost);
 #endif
 }
 
 - (BOOL)_shouldEnableTextAutosizingBoost
 {
 #if ENABLE(TEXT_AUTOSIZING)
-    return protectedPreferences(self)->shouldEnableTextAutosizingBoost();
+    return protect(*_preferences)->shouldEnableTextAutosizingBoost();
 #else
     return NO;
 #endif
@@ -1396,35 +1401,35 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (BOOL)_isSafeBrowsingEnabled
 {
-    return protectedPreferences(self)->safeBrowsingEnabled();
+    return protect(*_preferences)->safeBrowsingEnabled();
 }
 
 - (void)_setSafeBrowsingEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setSafeBrowsingEnabled(enabled);
+    protect(*_preferences)->setSafeBrowsingEnabled(enabled);
 }
 
 - (void)_setVideoQualityIncludesDisplayCompositingEnabled:(BOOL)videoQualityIncludesDisplayCompositingEnabled
 {
-    protectedPreferences(self)->setVideoQualityIncludesDisplayCompositingEnabled(videoQualityIncludesDisplayCompositingEnabled);
+    protect(*_preferences)->setVideoQualityIncludesDisplayCompositingEnabled(videoQualityIncludesDisplayCompositingEnabled);
 }
 
 - (BOOL)_videoQualityIncludesDisplayCompositingEnabled
 {
-    return protectedPreferences(self)->videoQualityIncludesDisplayCompositingEnabled();
+    return protect(*_preferences)->videoQualityIncludesDisplayCompositingEnabled();
 }
 
 - (void)_setDeviceOrientationEventEnabled:(BOOL)enabled
 {
 #if ENABLE(DEVICE_ORIENTATION)
-    protectedPreferences(self)->setDeviceOrientationEventEnabled(enabled);
+    protect(*_preferences)->setDeviceOrientationEventEnabled(enabled);
 #endif
 }
 
 - (BOOL)_deviceOrientationEventEnabled
 {
 #if ENABLE(DEVICE_ORIENTATION)
-    return protectedPreferences(self)->deviceOrientationEventEnabled();
+    return protect(*_preferences)->deviceOrientationEventEnabled();
 #else
     return false;
 #endif
@@ -1433,14 +1438,14 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (void)_setAccessibilityIsolatedTreeEnabled:(BOOL)accessibilityIsolatedTreeEnabled
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    protectedPreferences(self)->setIsAccessibilityIsolatedTreeEnabled(accessibilityIsolatedTreeEnabled);
+    protect(*_preferences)->setIsAccessibilityIsolatedTreeEnabled(accessibilityIsolatedTreeEnabled);
 #endif
 }
 
 - (BOOL)_accessibilityIsolatedTreeEnabled
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    return protectedPreferences(self)->isAccessibilityIsolatedTreeEnabled();
+    return protect(*_preferences)->isAccessibilityIsolatedTreeEnabled();
 #else
     return false;
 #endif
@@ -1448,58 +1453,58 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (BOOL)_speechRecognitionEnabled
 {
-    return protectedPreferences(self)->speechRecognitionEnabled();
+    return protect(*_preferences)->speechRecognitionEnabled();
 }
 
 - (void)_setSpeechRecognitionEnabled:(BOOL)speechRecognitionEnabled
 {
-    protectedPreferences(self)->setSpeechRecognitionEnabled(speechRecognitionEnabled);
+    protect(*_preferences)->setSpeechRecognitionEnabled(speechRecognitionEnabled);
 }
 
 - (BOOL)_privateClickMeasurementEnabled
 {
-    return protectedPreferences(self)->privateClickMeasurementEnabled();
+    return protect(*_preferences)->privateClickMeasurementEnabled();
 }
 
 - (void)_setPrivateClickMeasurementEnabled:(BOOL)privateClickMeasurementEnabled
 {
-    protectedPreferences(self)->setPrivateClickMeasurementEnabled(privateClickMeasurementEnabled);
+    protect(*_preferences)->setPrivateClickMeasurementEnabled(privateClickMeasurementEnabled);
 }
 
 - (BOOL)_privateClickMeasurementDebugModeEnabled
 {
-    return protectedPreferences(self)->privateClickMeasurementDebugModeEnabled();
+    return protect(*_preferences)->privateClickMeasurementDebugModeEnabled();
 }
 
 - (void)_setPrivateClickMeasurementDebugModeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setPrivateClickMeasurementDebugModeEnabled(enabled);
+    protect(*_preferences)->setPrivateClickMeasurementDebugModeEnabled(enabled);
 }
 
 - (_WKPitchCorrectionAlgorithm)_pitchCorrectionAlgorithm
 {
-    return static_cast<_WKPitchCorrectionAlgorithm>(protectedPreferences(self)->pitchCorrectionAlgorithm());
+    return static_cast<_WKPitchCorrectionAlgorithm>(protect(*_preferences)->pitchCorrectionAlgorithm());
 }
 
 - (void)_setPitchCorrectionAlgorithm:(_WKPitchCorrectionAlgorithm)pitchCorrectionAlgorithm
 {
-    protectedPreferences(self)->setPitchCorrectionAlgorithm(pitchCorrectionAlgorithm);
+    protect(*_preferences)->setPitchCorrectionAlgorithm(pitchCorrectionAlgorithm);
 }
 
 - (BOOL)_mediaSessionEnabled
 {
-    return protectedPreferences(self)->mediaSessionEnabled();
+    return protect(*_preferences)->mediaSessionEnabled();
 }
 
 - (void)_setMediaSessionEnabled:(BOOL)mediaSessionEnabled
 {
-    protectedPreferences(self)->setMediaSessionEnabled(mediaSessionEnabled);
+    protect(*_preferences)->setMediaSessionEnabled(mediaSessionEnabled);
 }
 
 - (BOOL)_isExtensibleSSOEnabled
 {
 #if HAVE(APP_SSO)
-    return protectedPreferences(self)->isExtensibleSSOEnabled();
+    return protect(*_preferences)->isExtensibleSSOEnabled();
 #else
     return false;
 #endif
@@ -1508,194 +1513,194 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (void)_setExtensibleSSOEnabled:(BOOL)extensibleSSOEnabled
 {
 #if HAVE(APP_SSO)
-    protectedPreferences(self)->setExtensibleSSOEnabled(extensibleSSOEnabled);
+    protect(*_preferences)->setExtensibleSSOEnabled(extensibleSSOEnabled);
 #endif
 }
 
 - (BOOL)_requiresPageVisibilityToPlayAudio
 {
-    return protectedPreferences(self)->requiresPageVisibilityToPlayAudio();
+    return protect(*_preferences)->requiresPageVisibilityToPlayAudio();
 }
 
 - (void)_setRequiresPageVisibilityToPlayAudio:(BOOL)requiresVisibility
 {
-    protectedPreferences(self)->setRequiresPageVisibilityToPlayAudio(requiresVisibility);
+    protect(*_preferences)->setRequiresPageVisibilityToPlayAudio(requiresVisibility);
 }
 
 - (BOOL)_fileSystemAccessEnabled
 {
-    return protectedPreferences(self)->fileSystemEnabled();
+    return protect(*_preferences)->fileSystemEnabled();
 }
 
 - (void)_setFileSystemAccessEnabled:(BOOL)fileSystemAccessEnabled
 {
-    protectedPreferences(self)->setFileSystemEnabled(fileSystemAccessEnabled);
+    protect(*_preferences)->setFileSystemEnabled(fileSystemAccessEnabled);
 }
 
 - (BOOL)_storageAPIEnabled
 {
-    return protectedPreferences(self)->storageAPIEnabled();
+    return protect(*_preferences)->storageAPIEnabled();
 }
 
 - (void)_setStorageAPIEnabled:(BOOL)storageAPIEnabled
 {
-    protectedPreferences(self)->setStorageAPIEnabled(storageAPIEnabled);
+    protect(*_preferences)->setStorageAPIEnabled(storageAPIEnabled);
 }
 
 - (BOOL)_accessHandleEnabled
 {
-    return protectedPreferences(self)->accessHandleEnabled();
+    return protect(*_preferences)->accessHandleEnabled();
 }
 
 - (void)_setAccessHandleEnabled:(BOOL)accessHandleEnabled
 {
-    protectedPreferences(self)->setAccessHandleEnabled(accessHandleEnabled);
+    protect(*_preferences)->setAccessHandleEnabled(accessHandleEnabled);
 }
 
 - (void)_setNotificationsEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setNotificationsEnabled(enabled);
+    protect(*_preferences)->setNotificationsEnabled(enabled);
 }
 
 - (BOOL)_notificationsEnabled
 {
-    return protectedPreferences(self)->notificationsEnabled();
+    return protect(*_preferences)->notificationsEnabled();
 }
 
 - (void)_setNotificationEventEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setNotificationEventEnabled(enabled);
+    protect(*_preferences)->setNotificationEventEnabled(enabled);
 }
 
 - (BOOL)_notificationEventEnabled
 {
-    return protectedPreferences(self)->notificationEventEnabled();
+    return protect(*_preferences)->notificationEventEnabled();
 }
 
 - (BOOL)_pushAPIEnabled
 {
-    return protectedPreferences(self)->pushAPIEnabled();
+    return protect(*_preferences)->pushAPIEnabled();
 }
 
 - (void)_setPushAPIEnabled:(BOOL)pushAPIEnabled
 {
-    protectedPreferences(self)->setPushAPIEnabled(pushAPIEnabled);
+    protect(*_preferences)->setPushAPIEnabled(pushAPIEnabled);
 }
 
 - (void)_setModelDocumentEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setModelDocumentEnabled(enabled);
+    protect(*_preferences)->setModelDocumentEnabled(enabled);
 }
 
 - (BOOL)_modelDocumentEnabled
 {
-    return protectedPreferences(self)->modelDocumentEnabled();
+    return protect(*_preferences)->modelDocumentEnabled();
 }
 
 - (void)_setRequiresFullscreenToLockScreenOrientation:(BOOL)enabled
 {
-    protectedPreferences(self)->setFullscreenRequirementForScreenOrientationLockingEnabled(enabled);
+    protect(*_preferences)->setFullscreenRequirementForScreenOrientationLockingEnabled(enabled);
 }
 
 - (BOOL)_requiresFullscreenToLockScreenOrientation
 {
-    return protectedPreferences(self)->fullscreenRequirementForScreenOrientationLockingEnabled();
+    return protect(*_preferences)->fullscreenRequirementForScreenOrientationLockingEnabled();
 }
 
 - (void)_setInteractionRegionMinimumCornerRadius:(double)radius
 {
-    protectedPreferences(self)->setInteractionRegionMinimumCornerRadius(radius);
+    protect(*_preferences)->setInteractionRegionMinimumCornerRadius(radius);
 }
 
 - (double)_interactionRegionMinimumCornerRadius
 {
-    return protectedPreferences(self)->interactionRegionMinimumCornerRadius();
+    return protect(*_preferences)->interactionRegionMinimumCornerRadius();
 }
 
 - (void)_setInteractionRegionInlinePadding:(double)padding
 {
-    protectedPreferences(self)->setInteractionRegionInlinePadding(padding);
+    protect(*_preferences)->setInteractionRegionInlinePadding(padding);
 }
 
 - (double)_interactionRegionInlinePadding
 {
-    return protectedPreferences(self)->interactionRegionInlinePadding();
+    return protect(*_preferences)->interactionRegionInlinePadding();
 }
 
 - (void)_setMediaPreferredFullscreenWidth:(double)width
 {
-    protectedPreferences(self)->setMediaPreferredFullscreenWidth(width);
+    protect(*_preferences)->setMediaPreferredFullscreenWidth(width);
 }
 
 - (double)_mediaPreferredFullscreenWidth
 {
-    return protectedPreferences(self)->mediaPreferredFullscreenWidth();
+    return protect(*_preferences)->mediaPreferredFullscreenWidth();
 }
 
 - (void)_setAppBadgeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setAppBadgeEnabled(enabled);
+    protect(*_preferences)->setAppBadgeEnabled(enabled);
 }
 
 - (BOOL)_appBadgeEnabled
 {
-    return protectedPreferences(self)->appBadgeEnabled();
+    return protect(*_preferences)->appBadgeEnabled();
 }
 
 - (void)_setVerifyWindowOpenUserGestureFromUIProcess:(BOOL)enabled
 {
-    protectedPreferences(self)->setVerifyWindowOpenUserGestureFromUIProcess(enabled);
+    protect(*_preferences)->setVerifyWindowOpenUserGestureFromUIProcess(enabled);
 }
 
 - (BOOL)_verifyWindowOpenUserGestureFromUIProcess
 {
-    return protectedPreferences(self)->verifyWindowOpenUserGestureFromUIProcess();
+    return protect(*_preferences)->verifyWindowOpenUserGestureFromUIProcess();
 }
 
 - (BOOL)_mediaCapabilityGrantsEnabled
 {
-    return protectedPreferences(self)->mediaCapabilityGrantsEnabled();
+    return protect(*_preferences)->mediaCapabilityGrantsEnabled();
 }
 
 - (void)_setMediaCapabilityGrantsEnabled:(BOOL)mediaCapabilityGrantsEnabled
 {
-    protectedPreferences(self)->setMediaCapabilityGrantsEnabled(mediaCapabilityGrantsEnabled);
+    protect(*_preferences)->setMediaCapabilityGrantsEnabled(mediaCapabilityGrantsEnabled);
 }
 
 - (void)_setAllowPrivacySensitiveOperationsInNonPersistentDataStores:(BOOL)allowPrivacySensitiveOperationsInNonPersistentDataStores
 {
-    protectedPreferences(self)->setAllowPrivacySensitiveOperationsInNonPersistentDataStores(allowPrivacySensitiveOperationsInNonPersistentDataStores);
+    protect(*_preferences)->setAllowPrivacySensitiveOperationsInNonPersistentDataStores(allowPrivacySensitiveOperationsInNonPersistentDataStores);
 }
 
 - (BOOL)_allowPrivacySensitiveOperationsInNonPersistentDataStores
 {
-    return protectedPreferences(self)->allowPrivacySensitiveOperationsInNonPersistentDataStores();
+    return protect(*_preferences)->allowPrivacySensitiveOperationsInNonPersistentDataStores();
 }
 
 - (void)_setVideoFullscreenRequiresElementFullscreen:(BOOL)videoFullscreenRequiresElementFullscreen
 {
-    protectedPreferences(self)->setVideoFullscreenRequiresElementFullscreen(videoFullscreenRequiresElementFullscreen);
+    protect(*_preferences)->setVideoFullscreenRequiresElementFullscreen(videoFullscreenRequiresElementFullscreen);
 }
 
 - (BOOL)_videoFullscreenRequiresElementFullscreen
 {
-    return protectedPreferences(self)->videoFullscreenRequiresElementFullscreen();
+    return protect(*_preferences)->videoFullscreenRequiresElementFullscreen();
 }
 
 - (void)_setCSSTransformStyleSeparatedEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setCSSTransformStyleSeparatedEnabled(enabled);
+    protect(*_preferences)->setCSSTransformStyleSeparatedEnabled(enabled);
 }
 
 - (BOOL)_cssTransformStyleSeparatedEnabled
 {
-    return protectedPreferences(self)->cssTransformStyleSeparatedEnabled();
+    return protect(*_preferences)->cssTransformStyleSeparatedEnabled();
 }
 
 - (void)_setOverlayRegionsEnabled:(BOOL)enabled
 {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    protectedPreferences(self)->setOverlayRegionsEnabled(enabled);
+    protect(*_preferences)->setOverlayRegionsEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -1704,7 +1709,7 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_overlayRegionsEnabled
 {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    return protectedPreferences(self)->overlayRegionsEnabled();
+    return protect(*_preferences)->overlayRegionsEnabled();
 #else
     return NO;
 #endif
@@ -1712,45 +1717,55 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setModelElementEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setModelElementEnabled(enabled);
+    protect(*_preferences)->setModelElementEnabled(enabled);
 }
 
 - (BOOL)_modelProcessEnabled
 {
-    return protectedPreferences(self)->modelProcessEnabled();
+    return protect(*_preferences)->modelProcessEnabled();
 }
 
 - (void)_setModelProcessEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setModelProcessEnabled(enabled);
+    protect(*_preferences)->setModelProcessEnabled(enabled);
 }
 
 - (BOOL)_modelElementEnabled
 {
-    return protectedPreferences(self)->modelElementEnabled();
+    return protect(*_preferences)->modelElementEnabled();
 }
 
 - (void)_setModelNoPortalAttributeEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setModelNoPortalAttributeEnabled(enabled);
+    protect(*_preferences)->setModelNoPortalAttributeEnabled(enabled);
 }
 
 - (BOOL)_modelNoPortalAttributeEnabled
 {
-    return protectedPreferences(self)->modelNoPortalAttributeEnabled();
+    return protect(*_preferences)->modelNoPortalAttributeEnabled();
+}
+
+- (void)_setUpdateSceneGeometryEnabled:(BOOL)enabled
+{
+    protect(*_preferences)->setUpdateSceneGeometryEnabled(enabled);
+}
+
+- (BOOL)_updateSceneGeometryEnabled
+{
+    return protect(*_preferences)->updateSceneGeometryEnabled();
 }
 
 - (void)_setRequiresPageVisibilityForVideoToBeNowPlayingForTesting:(BOOL)enabled
 {
 #if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
-    protectedPreferences(self)->setRequiresPageVisibilityForVideoToBeNowPlaying(enabled);
+    protect(*_preferences)->setRequiresPageVisibilityForVideoToBeNowPlaying(enabled);
 #endif
 }
 
 - (BOOL)_requiresPageVisibilityForVideoToBeNowPlayingForTesting
 {
 #if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
-    return protectedPreferences(self)->requiresPageVisibilityForVideoToBeNowPlaying();
+    return protect(*_preferences)->requiresPageVisibilityForVideoToBeNowPlaying();
 #else
     return NO;
 #endif
@@ -1758,12 +1773,12 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (BOOL)_siteIsolationEnabled
 {
-    return protectedPreferences(self)->siteIsolationEnabled();
+    return protect(*_preferences)->siteIsolationEnabled();
 }
 
 - (void)_setSiteIsolationEnabled:(BOOL)enabled
 {
-    protectedPreferences(self)->setSiteIsolationEnabled(enabled);
+    protect(*_preferences)->setSiteIsolationEnabled(enabled);
 }
 
 @end
@@ -1796,12 +1811,12 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (BOOL)javaScriptEnabled
 {
-    return protectedPreferences(self)->javaScriptEnabled();
+    return protect(*_preferences)->javaScriptEnabled();
 }
 
 - (void)setJavaScriptEnabled:(BOOL)javaScriptEnabled
 {
-    protectedPreferences(self)->setJavaScriptEnabled(javaScriptEnabled);
+    protect(*_preferences)->setJavaScriptEnabled(javaScriptEnabled);
 }
 
 @end

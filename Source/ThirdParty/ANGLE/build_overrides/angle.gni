@@ -21,3 +21,7 @@ angle_vulkan_memory_allocator_dir = "//third_party/vulkan_memory_allocator"
 angle_clspv_dir = "//third_party/clspv"
 angle_llvm_dir = "//third_party/llvm/src"
 angle_dawn_dir = "//third_party/dawn"
+
+# Embedder override for `-fsanitize=array-bounds`
+# (see https://crbug.com/386992829)
+angle_sanitize_array_bounds = false

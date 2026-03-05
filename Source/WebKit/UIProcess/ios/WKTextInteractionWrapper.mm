@@ -151,7 +151,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
 #if USE(BROWSERENGINEKIT)
     [self stopShowEditMenuTimer];
     if (_asyncTextInteraction)
-        [_view removeInteraction:_asyncTextInteraction.get()];
+        [protect(_view) removeInteraction:_asyncTextInteraction.get()];
 #endif
 
     [super dealloc];
@@ -171,9 +171,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
         return [_asyncTextInteraction textSelectionDisplayInteraction];
 #endif
 
-    for (id<UIInteraction> interaction in _view.interactions) {
-        if (RetainPtr selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
-            return selectionInteraction.unsafeGet();
+    for (id<UIInteraction> interaction in [protect(_view) interactions]) {
+        if (auto* selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
+            return selectionInteraction;
     }
 
     return nil;
@@ -205,6 +205,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
 
 - (void)prepareToMoveSelectionContainer:(UIView *)newContainer
 {
+    RetainPtr contentView = _view;
+    if (!contentView)
+        return;
+
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     RetainPtr displayInteraction = [self textSelectionDisplayInteraction];
     RetainPtr highlightView = [displayInteraction highlightView];
@@ -216,9 +220,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
         // When the display interaction is in the activated state, calling these delegate methods tells it
         // to remove and reparent all internally managed views (e.g. selection highlight views, selection
         // handles) in the new selection container.
-        [self activateSelection];
-        [displayInteraction willMoveToView:_view];
-        [displayInteraction didMoveToView:_view];
+        if (![contentView _isSuppressingSelectionAssistant])
+            [self activateSelection];
+        [displayInteraction willMoveToView:contentView.get()];
+        [displayInteraction didMoveToView:contentView.get()];
 
         _managedTextSelectionViews = { };
         for (UIView *subview in newContainer.subviews) {
@@ -227,32 +232,32 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
         }
     }
 
-    if (newContainer == _view)
+    if (newContainer == contentView)
         return;
 
-    auto findParentViewBelowNewContainer = [&](UIView *view) -> UIView * {
+    auto findParentViewBelowNewContainer = [&](UIView *view) -> RetainPtr<UIView> {
         if (view == newContainer)
             return nil;
 
         for (RetainPtr foundView = view; foundView; foundView = [foundView superview]) {
-            if (foundView == _view)
+            if (foundView == contentView)
                 return nil;
 
             if ([foundView superview] == newContainer)
-                return foundView.unsafeGet();
+                return foundView;
         }
 
         return nil;
     };
 
-    RetainPtr viewsIntersectingSelection = [_view allViewsIntersectingSelectionRange];
+    RetainPtr viewsIntersectingSelection = [contentView allViewsIntersectingSelectionRange];
     RetainPtr subviewsBeforeSelection = adoptNS([NSMutableSet new]);
     for (UIView *view in viewsIntersectingSelection.get()) {
         if (RetainPtr parentBelowNewContainer = findParentViewBelowNewContainer(view))
             [subviewsBeforeSelection addObject:parentBelowNewContainer.get()];
     }
 
-    RefPtr page = [_view page];
+    RefPtr page = [contentView page];
     bool insertSelectionAfterCompositingViews = page && page->editorState().visualData->enclosingLayerUsesContentsLayer;
 
     // Ensure that the selection highlight is inserted after all `subviewsBeforeSelection`.
@@ -361,7 +366,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
     if (_hideEditMenuScope)
         return;
 
-    auto deactivateSelection = [_view _shouldHideSelectionDuringOverflowScroll:scrollView] ? WebKit::DeactivateSelection::Yes : WebKit::DeactivateSelection::No;
+    auto deactivateSelection = [protect(_view) _shouldHideSelectionDuringOverflowScroll:scrollView] ? WebKit::DeactivateSelection::Yes : WebKit::DeactivateSelection::No;
     _hideEditMenuScope = WTF::makeUnique<WebKit::HideEditMenuScope>(self, deactivateSelection);
 }
 
@@ -381,7 +386,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
     // FIXME: Adopt `HideEditMenuScope` here once `BETextInput` is used on all iOS-family platforms.
     [_textInteractionAssistant willStartScrollingOrZooming];
 #if USE(BROWSERENGINEKIT)
-    _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
+    _shouldRestoreEditMenuAfterOverflowScrolling = [protect(_view) isPresentingEditMenu];
     [_asyncTextInteraction dismissEditMenuForSelection];
 #endif
 }

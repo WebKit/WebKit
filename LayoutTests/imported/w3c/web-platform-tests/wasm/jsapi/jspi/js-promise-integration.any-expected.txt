@@ -1,15 +1,15 @@
 
 PASS Valid use of API
-FAIL Promising function always entered WebAssembly.promising is not a function. (In 'WebAssembly.promising(instance.exports.test)', 'WebAssembly.promising' is undefined)
-FAIL Always get a Promise promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.promising is not a function. (In 'WebAssembly.promising(instance.exports.test)', 'WebAssembly.promising' is undefined)"
-FAIL Suspend once promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => Promise.resolve(42))')"
-FAIL Suspend/resume in a loop promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(js_import)')"
-FAIL Suspending with mismatched args and via Proxy promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => Promise.resolve(42))')"
-FAIL Make sure we actually suspend promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => Promise.resolve(42))')"
-FAIL Do suspend even if the import's return value is not a Promise by wrapping it with Promise.resolve promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => 42)')"
-FAIL Catch rejected promise promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(js_import)')"
+PASS Promising function always entered
+PASS Always get a Promise
+PASS Suspend once
+PASS Suspend/resume in a loop
+PASS Suspending with mismatched args and via Proxy
+PASS Make sure we actually suspend
+PASS Do suspend even if the import's return value is not a Promise by wrapping it with Promise.resolve
+PASS Catch rejected promise
 PASS Test sandwich with suspension
 PASS Test sandwich with no suspension
-FAIL Promising with no return WebAssembly.promising is not a function. (In 'WebAssembly.promising(instance.exports.export)', 'WebAssembly.promising' is undefined)
-FAIL Suspend two modules promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => Promise.resolve(1))')"
+PASS Promising with no return
+PASS Suspend two modules
 

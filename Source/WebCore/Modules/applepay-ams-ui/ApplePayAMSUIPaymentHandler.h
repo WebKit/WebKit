@@ -69,8 +69,8 @@ private:
     friend class PaymentHandler;
     explicit ApplePayAMSUIPaymentHandler(Document&, const PaymentRequest::MethodIdentifier&, PaymentRequest&);
 
-    Document& document() const;
-    Page& page() const;
+    Document& NODELETE document() const;
+    Page& NODELETE page() const;
 
     // PaymentHandler
     ExceptionOr<void> convertData(Document&, JSC::JSValue) final;
@@ -78,8 +78,8 @@ private:
     bool canAbortSession() final { return false; }
     void hide() final;
     void canMakePayment(Document&, Function<void(bool)>&& completionHandler) final;
-    ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
-    ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
+    ExceptionOr<void> NODELETE detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
+    ExceptionOr<void> NODELETE merchantValidationCompleted(JSC::JSValue&&) final;
     ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData) final;
     ExceptionOr<void> retry(PaymentValidationErrors&&) final;
 

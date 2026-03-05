@@ -3,25 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x18
+      RenderBlock (anonymous) at (0,0) size 784x86
         RenderInline {FONT} at (0,0) size 91x18 [color=#FF0000]
           RenderInline {I} at (0,0) size 91x18
             RenderText {#text} at (0,0) size 91x18
               text run at (0,0) width 91: "Italic and Red"
-        RenderInline {I} at (90,0) size 0x18
-      RenderBlock (anonymous) at (0,34) size 784x18
-        RenderBlock {P} at (0,0) size 784x18
-          RenderInline {FONT} at (0,0) size 95x18 [color=#FF0000]
-            RenderText {#text} at (0,0) size 95x18
-              text run at (0,0) width 95: "Italic and Red "
-          RenderText {#text} at (94,0) size 68x18
-            text run at (94,0) width 68: "Just italic."
-      RenderBlock (anonymous) at (0,68) size 784x18
-        RenderInline {I} at (0,0) size 69x18
-          RenderText {#text} at (0,0) size 69x18
-            text run at (0,0) width 69: "Italic only."
-        RenderText {#text} at (68,0) size 38x18
-          text run at (68,0) width 38: " Plain"
+        RenderInline {I} at (0,0) size 784x86
+          RenderBlock {P} at (0,34) size 784x18
+            RenderInline {FONT} at (0,0) size 95x18 [color=#FF0000]
+              RenderText {#text} at (0,0) size 95x18
+                text run at (0,0) width 95: "Italic and Red "
+            RenderText {#text} at (94,0) size 68x18
+              text run at (94,0) width 68: "Just italic."
+          RenderText {#text} at (0,68) size 69x18
+            text run at (0,68) width 69: "Italic only."
+        RenderText {#text} at (68,68) size 38x18
+          text run at (68,68) width 38: " Plain"
       RenderBlock {P} at (0,102) size 784x18
         RenderText {#text} at (0,0) size 128x18
           text run at (0,0) width 128: "I should not be red. "

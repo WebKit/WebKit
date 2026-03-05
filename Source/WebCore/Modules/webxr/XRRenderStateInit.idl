@@ -27,6 +27,7 @@
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRRenderStateInit {
     double depthNear;
     double depthFar;

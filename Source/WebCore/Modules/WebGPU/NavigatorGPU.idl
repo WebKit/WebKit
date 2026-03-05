@@ -29,5 +29,6 @@
     EnabledBySetting=WebGPUEnabled,
 ]
 interface mixin NavigatorGPU {
-    [SameObject, SecureContext] readonly attribute GPU gpu;
+    // FIXME: `gpu` should not be nullable.
+    [SameObject, SecureContext] readonly attribute GPU? gpu;
 };

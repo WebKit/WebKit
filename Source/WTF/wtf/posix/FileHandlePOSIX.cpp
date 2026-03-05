@@ -140,9 +140,9 @@ bool FileHandle::lock(OptionSet<FileLockMode> lockMode)
     if (!m_handle)
         return false;
 
-    static_assert(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::Shared), "LockSharedEncoding is as expected");
-    static_assert(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::Exclusive), "LockExclusiveEncoding is as expected");
-    static_assert(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::Nonblocking), "LockNonblockingEncoding is as expected");
+    static_assert(LOCK_SH == std::to_underlying(FileLockMode::Shared), "LockSharedEncoding is as expected");
+    static_assert(LOCK_EX == std::to_underlying(FileLockMode::Exclusive), "LockExclusiveEncoding is as expected");
+    static_assert(LOCK_NB == std::to_underlying(FileLockMode::Nonblocking), "LockNonblockingEncoding is as expected");
 
     return flock(*m_handle, lockMode.toRaw()) != -1;
 }
@@ -186,7 +186,7 @@ std::optional<MappedFileData> FileHandle::map(MappedFileMode mapMode, FileOpenMo
     if (!fileData)
         return { };
 
-    return MappedFileData { WTFMove(fileData) };
+    return MappedFileData { WTF::move(fileData) };
 }
 #endif // HAVE(MMAP)
 

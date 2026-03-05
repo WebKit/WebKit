@@ -38,7 +38,7 @@ public:
         return adoptRef(*new URLResponse(response));
     }
 
-    const WebCore::ResourceResponse& resourceResponse() const { return m_response; }
+    const WebCore::ResourceResponse& resourceResponse() const LIFETIME_BOUND { return m_response; }
 
 private:
     explicit URLResponse(const WebCore::ResourceResponse& response)

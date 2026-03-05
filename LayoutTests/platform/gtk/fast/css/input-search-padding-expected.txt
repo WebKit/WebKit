@@ -7,23 +7,23 @@ layer at (0,0) size 800x600
         RenderFlexibleBox {DIV} at (3,3) size 455x45
           RenderBlock {DIV} at (0,22) size 0x0
           RenderBlock {DIV} at (0,0) size 415x45
-      RenderBR {BR} at (461,25) size 0x17
+      RenderBR {BR} at (461,25) size 0x18
       RenderTextControl {INPUT} at (0,80) size 461x80 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-      RenderBR {BR} at (461,105) size 0x17
+      RenderBR {BR} at (461,105) size 0x18
       RenderTextControl {INPUT} at (0,160) size 240x25 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderFlexibleBox {DIV} at (6,1) size 228x23
           RenderBlock {DIV} at (0,0) size 228x23
 layer at (11,11) size 415x45
   RenderBlock {DIV} at (0,0) size 415x45
-    RenderText {#text} at (0,0) size 362x44
+    RenderText {#text} at (0,0) size 362x45
       text run at (0,0) width 362: "value jgq not clipped"
 layer at (11,91) size 455x45
   RenderBlock {DIV} at (3,3) size 455x45
-    RenderText {#text} at (0,0) size 362x44
+    RenderText {#text} at (0,0) size 362x45
       text run at (0,0) width 362: "value jgq not clipped"
 layer at (14,169) size 228x23
   RenderBlock {DIV} at (0,0) size 228x23
-    RenderText {#text} at (0,0) size 118x22
+    RenderText {#text} at (0,0) size 118x23
       text run at (0,0) width 118: "Sample Input"
 layer at (426,14) size 40x40
   RenderBlock {DIV} at (415,2) size 40x41 [bgcolor=#000000]

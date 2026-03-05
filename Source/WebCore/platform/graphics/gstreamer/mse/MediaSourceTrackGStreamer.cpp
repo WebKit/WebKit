@@ -42,7 +42,7 @@ namespace WebCore {
 MediaSourceTrackGStreamer::MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::TrackType type, TrackID trackId, GRefPtr<GstCaps>&& initialCaps)
     : m_type(type)
     , m_id(trackId)
-    , m_initialCaps(WTFMove(initialCaps))
+    , m_initialCaps(WTF::move(initialCaps))
     , m_queueDataMutex(trackId)
 {
     static std::once_flag debugRegisteredFlag;
@@ -58,7 +58,7 @@ MediaSourceTrackGStreamer::~MediaSourceTrackGStreamer()
 
 Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType type, TrackID trackId, GRefPtr<GstCaps>&& initialCaps)
 {
-    return adoptRef(*new MediaSourceTrackGStreamer(type, trackId, WTFMove(initialCaps)));
+    return adoptRef(*new MediaSourceTrackGStreamer(type, trackId, WTF::move(initialCaps)));
 }
 
 bool MediaSourceTrackGStreamer::isReadyForMoreSamples()
@@ -72,14 +72,14 @@ void MediaSourceTrackGStreamer::notifyWhenReadyForMoreSamples(TrackQueue::LowLev
 {
     ASSERT(isMainThread());
     DataMutexLocker queue { m_queueDataMutex };
-    queue->notifyWhenLowLevel(WTFMove(handler));
+    queue->notifyWhenLowLevel(WTF::move(handler));
 }
 
 void MediaSourceTrackGStreamer::enqueueObject(GRefPtr<GstMiniObject>&& object)
 {
     ASSERT(isMainThread());
     DataMutexLocker queue { m_queueDataMutex };
-    queue->enqueueObject(WTFMove(object));
+    queue->enqueueObject(WTF::move(object));
 }
 
 void MediaSourceTrackGStreamer::clearQueue()

@@ -79,7 +79,7 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString()
 void GPUConnectionToWebProcess::setTCCIdentity()
 {
 #if !PLATFORM(MACCATALYST)
-    auto auditToken = gpuProcess().parentProcessConnection()->getAuditToken();
+    auto auditToken = protect(gpuProcess().parentProcessConnection())->getAuditToken();
     if (!auditToken) {
         RELEASE_LOG_ERROR(WebRTC, "getAuditToken returned null");
         return;
@@ -98,29 +98,43 @@ void GPUConnectionToWebProcess::setTCCIdentity()
         return;
     }
 
-    auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier.utf8().data()));
+    // FIXME: Adopting is needed here but static analysis is not able to tell.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier.utf8().data()));
     if (!identity) {
         RELEASE_LOG_ERROR(WebRTC, "tcc_identity_create returned null");
         return;
     }
 
-    WebCore::RealtimeMediaSourceCenter::singleton().setIdentity(WTFMove(identity));
+    WebCore::RealtimeMediaSourceCenter::singleton().setIdentity(WTF::move(identity));
 #endif // !PLATFORM(MACCATALYST)
 }
 #endif // ENABLE(APP_PRIVACY_REPORT)
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-String GPUConnectionToWebProcess::mediaEnvironment(WebCore::PageIdentifier pageIdentifier)
+String GPUConnectionToWebProcess::mediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier)
 {
-    return m_mediaEnvironments.get(pageIdentifier);
+    return m_mediaPlaybackEnvironments.get(pageIdentifier);
 }
 
-void GPUConnectionToWebProcess::setMediaEnvironment(WebCore::PageIdentifier pageIdentifier, const String& mediaEnvironment)
+void GPUConnectionToWebProcess::setMediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier, const String& mediaPlaybackEnvironment)
 {
-    if (mediaEnvironment.isEmpty())
-        m_mediaEnvironments.remove(pageIdentifier);
+    if (mediaPlaybackEnvironment.isEmpty())
+        m_mediaPlaybackEnvironments.remove(pageIdentifier);
     else
-        m_mediaEnvironments.set(pageIdentifier, mediaEnvironment);
+        m_mediaPlaybackEnvironments.set(pageIdentifier, mediaPlaybackEnvironment);
+}
+
+String GPUConnectionToWebProcess::displayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier)
+{
+    return m_displayCaptureEnvironments.get(pageIdentifier);
+}
+
+void GPUConnectionToWebProcess::setDisplayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier, const String& displayCaptureEnvironment)
+{
+    if (displayCaptureEnvironment.isEmpty())
+        m_displayCaptureEnvironments.remove(pageIdentifier);
+    else
+        m_displayCaptureEnvironments.set(pageIdentifier, displayCaptureEnvironment);
 }
 #endif
 

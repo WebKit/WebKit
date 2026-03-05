@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static inline ScriptExecutionContext* suitableScriptExecutionContext(ScriptExecutionContext* scriptExecutionContext)
+static inline ScriptExecutionContext* NODELETE suitableScriptExecutionContext(ScriptExecutionContext* scriptExecutionContext)
 {
     // For detached documents, make sure we observe their context document instead.
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext))
@@ -146,7 +146,7 @@ void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&
     RefPtr context = scriptExecutionContext();
     if (!context)
         return;
-    context->checkedEventLoop()->queueTask(source, WTFMove(function));
+    protect(context->eventLoop())->queueTask(source, WTF::move(function));
 }
 
 class ActiveDOMObjectEventDispatchTask : public EventLoopTask {
@@ -155,7 +155,7 @@ public:
     ActiveDOMObjectEventDispatchTask(TaskSource source, EventLoopTaskGroup& group, ActiveDOMObject& object, Function<void()>&& dispatchEvent)
         : EventLoopTask(source, group)
         , m_object(object)
-        , m_dispatchEvent(WTFMove(dispatchEvent))
+        , m_dispatchEvent(WTF::move(dispatchEvent))
     {
         ++m_object->m_pendingActivityInstanceCount;
     }
@@ -187,11 +187,11 @@ void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, Task
     RefPtr context = scriptExecutionContext();
     if (!context)
         return;
-    auto& eventLoopTaskGroup = context->eventLoop();
-    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = Ref { target }, event = WTFMove(event)] {
+    CheckedRef eventLoopTaskGroup = context->eventLoop();
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = Ref { target }, event = WTF::move(event)] {
         target->dispatchEvent(event);
     });
-    eventLoopTaskGroup.queueTask(WTFMove(task));
+    eventLoopTaskGroup->queueTask(WTF::move(task));
 }
 
 void ActiveDOMObject::queueCancellableTaskToDispatchEventInternal(EventTarget& target, TaskSource source, TaskCancellationGroup& cancellationGroup, Ref<Event>&& event)
@@ -200,11 +200,11 @@ void ActiveDOMObject::queueCancellableTaskToDispatchEventInternal(EventTarget& t
     RefPtr context = scriptExecutionContext();
     if (!context)
         return;
-    auto& eventLoopTaskGroup = context->eventLoop();
-    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = Ref { target }, event = WTFMove(event)] {
+    CheckedRef eventLoopTaskGroup = context->eventLoop();
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = Ref { target }, event = WTF::move(event)] {
         target->dispatchEvent(event);
     }));
-    eventLoopTaskGroup.queueTask(WTFMove(task));
+    eventLoopTaskGroup->queueTask(WTF::move(task));
 }
 
 } // namespace WebCore

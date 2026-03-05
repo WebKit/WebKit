@@ -12,7 +12,7 @@ info: |
   ...
   6. Let targetOffset be ? ToInteger(offset).
   7. If targetOffset < 0, throw a RangeError exception.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -30,4 +30,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(RangeError, function() {
     sample.set(sample, -Infinity);
   }, "-Infinity");
-});
+}, null, ["passthrough"]);

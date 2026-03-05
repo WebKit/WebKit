@@ -58,7 +58,7 @@ static const struct UTextFuncs textUTF16ContextAwareFuncs = {
     nullptr
 };
 
-static inline UTextProviderContext textUTF16ContextAwareGetCurrentContext(const UText* text)
+static inline UTextProviderContext NODELETE textUTF16ContextAwareGetCurrentContext(const UText* text)
 {
     if (!text->chunkContents)
         return UTextProviderContext::NoContext;
@@ -117,7 +117,7 @@ static UText* uTextUTF16ContextAwareClone(UText* destination, const UText* sourc
     return uTextCloneImpl(destination, source, deep, status);
 }
 
-static inline int64_t uTextUTF16ContextAwareNativeLength(UText* text)
+static inline int64_t NODELETE uTextUTF16ContextAwareNativeLength(UText* text)
 {
     return text->a + text->b;
 }
@@ -148,7 +148,7 @@ static UBool uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBoo
     return true;
 }
 
-static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode* errorCode)
+static int32_t NODELETE uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode* errorCode)
 {
     // In the present context, this text provider is used only with ICU functions
     // that do not perform an extract operation.
@@ -157,7 +157,7 @@ static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, char16_t*
     return 0;
 }
 
-static void uTextUTF16ContextAwareClose(UText* text)
+static void NODELETE uTextUTF16ContextAwareClose(UText* text)
 {
     text->context = nullptr;
 }

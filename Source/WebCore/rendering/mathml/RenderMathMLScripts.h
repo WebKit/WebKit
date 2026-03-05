@@ -36,7 +36,7 @@ namespace WebCore {
 
 // Render a base with scripts.
 class RenderMathMLScripts : public RenderMathMLRow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLScripts);
+    WTF_MAKE_TZONE_ALLOCATED(RenderMathMLScripts);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLScripts);
 public:
     RenderMathMLScripts(Type, MathMLScriptsElement&, RenderStyle&&);
@@ -47,12 +47,12 @@ public:
 protected:
     bool isRenderMathMLScripts() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLScripts"_s; }
-    MathMLScriptsElement::ScriptType scriptType() const;
+    MathMLScriptsElement::ScriptType NODELETE scriptType() const;
     void computePreferredLogicalWidths() override;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
 private:
-    MathMLScriptsElement& element() const;
+    MathMLScriptsElement& NODELETE element() const;
     std::optional<LayoutUnit> firstLineBaseline() const final;
     struct ReferenceChildren {
         RenderBox* base;

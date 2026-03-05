@@ -29,10 +29,13 @@
 #include "config.h"
 #include "Location.h"
 
+#include "DocumentQuirks.h"
+#include "ExceptionOr.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "LocalDOMWindowProperty.h"
 #include "LocalFrame.h"
+#include "Logging.h"
 #include "NavigationScheduler.h"
 #include "Quirks.h"
 #include "ScriptWrappableInlines.h"
@@ -45,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Location);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Location);
 
 Location::Location(DOMWindow& window)
     : m_window(window)
@@ -142,6 +145,7 @@ Ref<DOMStringList> Location::ancestorOrigins() const
 
 String Location::hash() const
 {
+    RELEASE_LOG_DEBUG(DOMAPI, "Location::hash length=%u frameID=%" PRIu64, url().fragmentIdentifier().length(), frame() ? protect(frame())->frameID().toUInt64() : 0);
     return url().fragmentIdentifier().isEmpty() ? emptyString() : url().fragmentIdentifierWithLeadingNumberSign().toString();
 }
 
@@ -249,7 +253,7 @@ ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow
         return { };
     ASSERT(frame->window());
 
-    RefPtr firstFrame = firstWindow.localFrame();
+    RefPtr firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
         return { };
 
@@ -282,7 +286,7 @@ void Location::reload(LocalDOMWindow& activeWindow)
     // FIXME: It's not clear this cross-origin security check is valuable.
     // We allow one page to change the location of another. Why block attempts to reload?
     // Other location operations simply block use of JavaScript URLs cross origin.
-    if (!activeDocument->protectedSecurityOrigin()->isSameOriginDomain(targetDocument->protectedSecurityOrigin())) {
+    if (!protect(activeDocument->securityOrigin())->isSameOriginDomain(protect(targetDocument->securityOrigin()))) {
         Ref targetWindow = *targetDocument->window();
         targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
         return;
@@ -294,13 +298,13 @@ void Location::reload(LocalDOMWindow& activeWindow)
     if (targetDocument->quirks().shouldDelayReloadWhenRegisteringServiceWorker()) {
         if (RefPtr container = targetDocument->serviceWorkerContainer()) {
             container->whenRegisterJobsAreFinished([localFrame, activeDocument] {
-                localFrame->protectedNavigationScheduler()->scheduleRefresh(activeDocument);
+                protect(localFrame->navigationScheduler())->scheduleRefresh(activeDocument);
             });
             return;
         }
     }
 
-    localFrame->protectedNavigationScheduler()->scheduleRefresh(activeDocument);
+    protect(localFrame->navigationScheduler())->scheduleRefresh(activeDocument);
 }
 
 ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& urlString)
@@ -308,7 +312,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     RefPtr frame = this->frame();
     ASSERT(frame);
 
-    RefPtr firstFrame = firstWindow.localFrame();
+    RefPtr firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
         return { };
 
@@ -329,11 +333,6 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     ASSERT(frame->window());
     frame->window()->setLocation(incumbentWindow, completedURL, historyHandling, SetLocationLocking::LockHistoryBasedOnGestureState, canNavigateState);
     return { };
-}
-
-RefPtr<DOMWindow> Location::protectedWindow()
-{
-    return m_window.get();
 }
 
 Location::~Location() = default;

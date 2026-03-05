@@ -23,8 +23,8 @@ includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  let sample = new TA(1);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  let sample = new TA(makeCtorArg(1));
 
   Object.defineProperty(sample, "foo", {
     get() {
@@ -35,4 +35,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, () => {
     sample.foo;
   });
-});
+}, null, ["passthrough"]);

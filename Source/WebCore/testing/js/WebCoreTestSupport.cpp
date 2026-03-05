@@ -72,7 +72,7 @@ void injectInternalsObject(JSContextRef context)
 {
     JSGlobalObject* lexicalGlobalObject = toJS(context);
     VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSLockHolder lock(vm);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
     if (RefPtr document = dynamicDowncast<Document>(*globalObject->scriptExecutionContext())) {
@@ -168,6 +168,13 @@ void setLinkedOnOrAfterEverythingForTesting()
 #endif
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void setAccessibilityIsolatedTreeEnabled(bool isEnabled)
+{
+    DeprecatedGlobalSettings::setIsAccessibilityIsolatedTreeEnabled(isEnabled);
+}
+#endif
+
 void installMockGamepadProvider()
 {
 #if ENABLE(GAMEPAD)
@@ -234,7 +241,7 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
 {
     auto identifier = AtomicObjectIdentifier<ServiceWorkerIdentifierType>(serviceWorkerIdentifier);
     SWContextManager::singleton().postTaskToServiceWorker(identifier, [identifier] (ServiceWorkerGlobalScope& globalScope) {
-        auto* script = globalScope.script();
+        CheckedPtr script = globalScope.script();
         if (!script)
             return;
 

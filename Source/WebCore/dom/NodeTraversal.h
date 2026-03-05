@@ -35,43 +35,43 @@ namespace NodeTraversal {
 // This uses the same order that tags appear in the source file. If the stayWithin
 // argument is non-null, the traversal will stop once the specified node is reached.
 // This can be used to restrict traversal to a particular sub-tree.
-Node* next(const Node&);
-Node* next(const Node&, const Node* stayWithin);
-Node* next(const ContainerNode&);
-Node* next(const ContainerNode&, const Node* stayWithin);
-Node* next(const Text&);
-Node* next(const Text&, const Node* stayWithin);
+inline Node* next(const Node&);
+inline Node* next(const Node&, const Node* stayWithin);
+inline Node* next(const ContainerNode&);
+inline Node* next(const ContainerNode&, const Node* stayWithin);
+inline Node* next(const Text&);
+inline Node* next(const Text&, const Node* stayWithin);
 
 // Like next, but skips children and starts with the next sibling.
-Node* nextSkippingChildren(const Node&);
-Node* nextSkippingChildren(const Node&, const Node* stayWithin);
+inline Node* nextSkippingChildren(const Node&);
+inline Node* nextSkippingChildren(const Node&, const Node* stayWithin);
 
 // Does a reverse pre-order traversal to find the node that comes before the current one in document order
-WEBCORE_EXPORT Node* last(const ContainerNode&);
-Node* previous(const Node&, const Node* stayWithin = nullptr);
+WEBCORE_EXPORT Node* NODELETE last(const ContainerNode&);
+inline Node* previous(const Node&, const Node* stayWithin = nullptr);
 
 // Like previous, but skips children and starts with the next sibling.
-Node* previousSkippingChildren(const Node&, const Node* stayWithin = nullptr);
+Node* NODELETE previousSkippingChildren(const Node&, const Node* stayWithin = nullptr);
 
 // Like next, but visits parents after their children.
-Node* nextPostOrder(const Node&, const Node* stayWithin = nullptr);
+Node* NODELETE nextPostOrder(const Node&, const Node* stayWithin = nullptr);
 
 // Like previous/previousSkippingChildren, but visits parents before their children.
-Node* previousPostOrder(const Node&, const Node* stayWithin = nullptr);
-Node* previousSkippingChildrenPostOrder(const Node&, const Node* stayWithin = nullptr);
+Node* NODELETE previousPostOrder(const Node&, const Node* stayWithin = nullptr);
+Node* NODELETE previousSkippingChildrenPostOrder(const Node&, const Node* stayWithin = nullptr);
 
 // Pre-order traversal including the pseudo-elements.
-Node* previousIncludingPseudo(const Node&, const Node* = nullptr);
-Node* nextIncludingPseudo(const Node&, const Node* = nullptr);
-Node* nextIncludingPseudoSkippingChildren(const Node&, const Node* = nullptr);
+Node* NODELETE previousIncludingPseudo(const Node&, const Node* = nullptr);
+Node* NODELETE nextIncludingPseudo(const Node&, const Node* = nullptr);
+Node* NODELETE nextIncludingPseudoSkippingChildren(const Node&, const Node* = nullptr);
 
 }
 
 namespace NodeTraversal {
 
-WEBCORE_EXPORT Node* nextAncestorSibling(const Node&);
-WEBCORE_EXPORT Node* nextAncestorSibling(const Node&, const Node* stayWithin);
-WEBCORE_EXPORT Node* deepLastChild(Node&);
+WEBCORE_EXPORT Node* NODELETE nextAncestorSibling(const Node&);
+WEBCORE_EXPORT Node* NODELETE nextAncestorSibling(const Node&, const Node* stayWithin);
+WEBCORE_EXPORT Node* NODELETE deepLastChild(Node&);
 
 template <class NodeType>
 inline Node* traverseNextTemplate(NodeType& current)
@@ -120,7 +120,7 @@ inline Node* next(const Text& current, const Node* stayWithin) { return nextSkip
 
 inline Node* previous(const Node& current, const Node* stayWithin)
 {
-    if (Node* previous = current.previousSibling())
+    if (RefPtr previous = current.previousSibling())
         return deepLastChild(*previous);
     if (current.parentNode() == stayWithin)
         return nullptr;

@@ -53,8 +53,8 @@ public:
     void requestSpace(uint64_t spaceRequested, RequestCallback&&);
     void didIncreaseQuota(QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
 
-    void resetQuotaUpdatedBasedOnUsageForTesting();
-    void resetQuotaForTesting();
+    void NODELETE resetQuotaUpdatedBasedOnUsageForTesting();
+    void NODELETE resetQuotaForTesting();
     void updateParametersForTesting(Parameters&&);
 
 private:

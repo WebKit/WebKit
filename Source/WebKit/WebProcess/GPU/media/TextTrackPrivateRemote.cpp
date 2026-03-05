@@ -48,7 +48,7 @@ TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessC
     , m_id(configuration.trackId)
     , m_playerIdentifier(playerIdentifier)
 {
-    updateConfiguration(WTFMove(configuration));
+    updateConfiguration(WTF::move(configuration));
 }
 
 void TextTrackPrivateRemote::setMode(TextTrackMode mode)
@@ -135,7 +135,7 @@ void TextTrackPrivateRemote::parseWebVTTFileHeader(String&& header)
     assertIsMainRunLoop();
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).parseWebVTTFileHeader(WTFMove(header));
+        downcast<InbandTextTrackPrivateClient>(client).parseWebVTTFileHeader(WTF::move(header));
     });
 }
 
@@ -153,7 +153,7 @@ void TextTrackPrivateRemote::parseWebVTTCueDataStruct(ISOWebVTTCue&& cueData)
     assertIsMainRunLoop();
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTFMove(cueData));
+        downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTF::move(cueData));
     });
 }
 
@@ -162,7 +162,7 @@ void TextTrackPrivateRemote::addDataCue(MediaTime&& start, MediaTime&& end, std:
     assertIsMainRunLoop();
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).addDataCue(WTFMove(start), WTFMove(end), data);
+        downcast<InbandTextTrackPrivateClient>(client).addDataCue(WTF::move(start), WTF::move(end), data);
     });
 }
 
@@ -172,7 +172,7 @@ void TextTrackPrivateRemote::addDataCueWithType(MediaTime&& start, MediaTime&& e
     assertIsMainRunLoop();
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).addDataCue(WTFMove(start), WTFMove(end), WebCore::SerializedPlatformDataCue::create(WTFMove(dataValue)), type);
+        downcast<InbandTextTrackPrivateClient>(client).addDataCue(WTF::move(start), WTF::move(end), WebCore::SerializedPlatformDataCue::create(WTF::move(dataValue)), type);
     });
 }
 
@@ -181,7 +181,7 @@ void TextTrackPrivateRemote::updateDataCue(MediaTime&& start, MediaTime&& end, S
     assertIsMainRunLoop();
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).updateDataCue(WTFMove(start), WTFMove(end), WebCore::SerializedPlatformDataCue::create(WTFMove(dataValue)));
+        downcast<InbandTextTrackPrivateClient>(client).updateDataCue(WTF::move(start), WTF::move(end), WebCore::SerializedPlatformDataCue::create(WTF::move(dataValue)));
     });
 }
 
@@ -190,7 +190,7 @@ void TextTrackPrivateRemote::removeDataCue(MediaTime&& start, MediaTime&& end, S
     assertIsMainRunLoop();
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).removeDataCue(WTFMove(start), WTFMove(end), WebCore::SerializedPlatformDataCue::create(WTFMove(dataValue)));
+        downcast<InbandTextTrackPrivateClient>(client).removeDataCue(WTF::move(start), WTF::move(end), WebCore::SerializedPlatformDataCue::create(WTF::move(dataValue)));
     });
 }
 #endif

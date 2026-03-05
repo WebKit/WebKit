@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+
+<title>WebKit doesn't crash when Intersection Observer is used with Site Isolation</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+
+<p>This test passes if it does not crash.</p>
+
+<iframe id="iframe"
+  src="http://localhost:8000/site-isolation/intersection-observer/resources/site-isolation-crash-subframe.html"
+  width="200" height="200"></iframe>
+<div style="height: 2000px"></div>
+
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  window.addEventListener("message", async (event) => {
+    if (event.data === "finished") {
+      await UIHelper.scrollDown();
+
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+  })
+</script>

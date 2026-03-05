@@ -263,6 +263,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-visited-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-visited.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/hash-collision.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/heading.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/historical-xmlid-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/historical-xmlid.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/hover-002.html

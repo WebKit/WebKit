@@ -9,16 +9,12 @@
 #define skgpu_VulkanMemoryAllocatorUtil_DEFINED
 
 #include "include/core/SkRefCnt.h"
-#include "include/gpu/GpuTypes.h"
 #include "include/private/base/SkAPI.h"
 #include "include/private/gpu/vk/SkiaVulkan.h"
-
-#include <optional>
 
 namespace skgpu {
 
 struct VulkanBackendContext;
-class VulkanExtensions;
 class VulkanMemoryAllocator;
 enum class ThreadSafe : bool;
 
@@ -26,8 +22,7 @@ namespace VulkanMemoryAllocators {
 // Returns a concrete implementation of a memory allocator. Because this has settings
 // which are done at compile time, we cannot really expose this to clients in a meaningful way.
 sk_sp<VulkanMemoryAllocator> Make(const skgpu::VulkanBackendContext&,
-                                  ThreadSafe,
-                                  std::optional<VkDeviceSize> blockSize);
+                                  ThreadSafe);
 
 }  // namespace VulkanMemoryAllocators
 }  // namespace skgpu

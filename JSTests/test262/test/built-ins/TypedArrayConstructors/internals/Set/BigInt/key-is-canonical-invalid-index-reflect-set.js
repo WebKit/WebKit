@@ -15,7 +15,7 @@ info: |
       i. If ! SameValue(O, Receiver) is true
         [...]
       ii. 1. Else if ! IsValidIntegerIndex(_O_, _numericIndex_) is *false*, return *true*.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray, Reflect]
 ---*/
 
@@ -27,7 +27,7 @@ var value = {
   },
 };
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var target, receiver;
 
   [1, 1.5, -1].forEach(function(key) {
@@ -38,21 +38,21 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     });
 
 
-    target = new TA([0n]);
+    target = new TA(makeCtorArg([0n]));
     receiver = {};
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should succeed (key: " + key + ", receiver: empty object)");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: empty object)");
     assert(!receiver.hasOwnProperty(key), "receiver[" + key + "] should not be created (receiver: empty object)");
 
 
-    target = new TA([0n]);
-    receiver = new TA([1n]);
+    target = new TA(makeCtorArg([0n]));
+    receiver = new TA(makeCtorArg([1n]));
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should succeed (key: " + key + ", receiver: another typed array of the same length)");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: another typed array of the same length)");
     assert(!receiver.hasOwnProperty(key), "receiver[" + key + "] should not be created (receiver: another typed array of the same length)");
 
 
-    target = new TA([0n]);
+    target = new TA(makeCtorArg([0n]));
     receiver = Object.defineProperty({}, key, {
       get: function() { return 1n; },
       set: function(_v) { throw new Test262Error(key + " setter should be unreachable!"); },
@@ -63,14 +63,14 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     assert.sameValue(receiver[key], 1n, "receiver[" + key + "] should remain unchanged (receiver: plain object with " + key + " accessor)");
 
 
-    target = new TA([0n]);
+    target = new TA(makeCtorArg([0n]));
     receiver = Object.defineProperty({}, key, { value: 1n, writable: false, configurable: true });
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should succeed (receiver: plain object with non-writable " + key + ")");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: plain object with non-writable " + key + ")");
     assert.sameValue(receiver[key], 1n, "receiver[" + key + "] should remain unchanged (receiver: plain object with non-writable " + key + ")");
 
 
-    target = new TA([0n]);
+    target = new TA(makeCtorArg([0n]));
     receiver = Object.preventExtensions({});
     assert(Reflect.set(target, key, value, receiver), "Reflect.set should fail (key: " + key + ", receiver: non-extensible empty object)");
     assert(!target.hasOwnProperty(key), "target[" + key + "] should not be created (receiver: non-extensible empty object)");
@@ -81,11 +81,11 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
 
-  target = new TA([0n]);
-  receiver = new TA([1n, 1n]);
+  target = new TA(makeCtorArg([0n]));
+  receiver = new TA(makeCtorArg([1n, 1n]));
   assert(Reflect.set(target, 1, value, receiver), "Reflect.set should succeed (receiver: another typed array of greater length)");
   assert(!target.hasOwnProperty(1), "target[1] should not be created (receiver: another typed array of greater length)");
   assert.sameValue(receiver[1], 1n, "receiver[1] should remain unchanged (receiver: another typed array of greater length)");
-});
+}, null, ["passthrough"]);
 
 assert.sameValue(valueOfCalls, 0, "value should not be coerced");

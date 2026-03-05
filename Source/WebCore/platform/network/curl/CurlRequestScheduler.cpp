@@ -71,7 +71,7 @@ void CurlRequestScheduler::callOnWorkerThread(Function<void()>&& task)
 {
     {
         Locker locker { m_mutex };
-        m_taskQueue.append(WTFMove(task));
+        m_taskQueue.append(WTF::move(task));
     }
 
     startOrWakeUpThread();
@@ -144,7 +144,7 @@ void CurlRequestScheduler::executeTasks()
 
     {
         Locker locker { m_mutex };
-        taskQueue = WTFMove(m_taskQueue);
+        taskQueue = WTF::move(m_taskQueue);
     }
 
     for (auto& task : taskQueue)
@@ -219,7 +219,7 @@ void CurlRequestScheduler::startTransfer(CurlRequestSchedulerClient* client)
 
     Locker locker { m_mutex };
     m_activeJobs.add(client);
-    m_taskQueue.append(WTFMove(task));
+    m_taskQueue.append(WTF::move(task));
 }
 
 void CurlRequestScheduler::completeTransfer(CurlRequestSchedulerClient* client, CURLcode result)
@@ -245,7 +245,7 @@ void CurlRequestScheduler::finalizeTransfer(CurlRequestSchedulerClient* client, 
 
     m_activeJobs.remove(client);
 
-    auto task = [this, client, completionHandler = WTFMove(completionHandler)]() {
+    auto task = [this, client, completionHandler = WTF::move(completionHandler)]() {
         if (client->handle()) {
             ASSERT(m_clientMaps.contains(client->handle()));
             m_clientMaps.remove(client->handle());
@@ -259,7 +259,7 @@ void CurlRequestScheduler::finalizeTransfer(CurlRequestSchedulerClient* client, 
         });
     };
 
-    m_taskQueue.append(WTFMove(task));
+    m_taskQueue.append(WTF::move(task));
 }
 
 }

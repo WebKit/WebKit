@@ -62,7 +62,7 @@ void CrossThreadQueue<DataType>::append(DataType&& message)
 {
     Locker locker { m_lock };
     ASSERT(!m_killed);
-    m_queue.append(WTFMove(message));
+    m_queue.append(WTF::move(message));
     m_condition.notifyOne();
 }
 

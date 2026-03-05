@@ -122,7 +122,6 @@ class Heap;
 
 #define FOR_EACH_JSC_COMMON_ISO_SUBSPACE(v) \
     v(arraySpace, cellHeapCellType, JSArray) \
-    v(bigIntSpace, cellHeapCellType, JSBigInt) \
     v(calleeSpace, cellHeapCellType, JSCallee) \
     v(clonedArgumentsSpace, cellHeapCellType, ClonedArguments) \
     v(customGetterSetterSpace, cellHeapCellType, CustomGetterSetter) \
@@ -188,6 +187,7 @@ class Heap;
 
 #if ENABLE(WEBASSEMBLY)
 #define FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_ISO_SUBSPACE(v) \
+    v(pinballCompletionSpace, destructibleCellHeapCellType, PinballCompletion) \
     v(webAssemblyExceptionSpace, webAssemblyExceptionHeapCellType, JSWebAssemblyException) \
     v(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType, WebAssemblyFunction) \
     v(webAssemblyGlobalSpace, webAssemblyGlobalHeapCellType, JSWebAssemblyGlobal) \
@@ -258,6 +258,7 @@ class Heap;
     v(javaScriptCallFrameSpace, javaScriptCallFrameHeapCellType, Inspector::JSJavaScriptCallFrame) \
     v(jsModuleRecordSpace, jsModuleRecordHeapCellType, JSModuleRecord) \
     v(syntheticModuleRecordSpace, syntheticModuleRecordHeapCellType, SyntheticModuleRecord) \
+    v(jsMicrotaskDispatcherSpace, destructibleCellHeapCellType, JSMicrotaskDispatcher) \
     v(mapIteratorSpace, cellHeapCellType, JSMapIterator) \
     v(mapSpace, cellHeapCellType, JSMap) \
     v(moduleNamespaceObjectSpace, moduleNamespaceObjectHeapCellType, JSModuleNamespaceObject) \
@@ -298,8 +299,8 @@ class Heap;
     v(weakSetSpace, weakSetHeapCellType, JSWeakSet) \
     v(withScopeSpace, cellHeapCellType, JSWithScope) \
     v(wrapForValidIteratorSpace, cellHeapCellType, JSWrapForValidIterator) \
-    v(promiseAllContextSpace, cellHeapCellType, JSPromiseAllContext) \
-    v(promiseAllGlobalContextSpace, cellHeapCellType, JSPromiseAllGlobalContext) \
+    v(promiseCombinatorsContextSpace, cellHeapCellType, JSPromiseCombinatorsContext) \
+    v(promiseCombinatorsGlobalContextSpace, cellHeapCellType, JSPromiseCombinatorsGlobalContext) \
     v(promiseReactionSpace, cellHeapCellType, JSPromiseReaction) \
     v(asyncFromSyncIteratorSpace, cellHeapCellType, JSAsyncFromSyncIterator) \
     v(regExpStringIteratorSpace, cellHeapCellType, JSRegExpStringIterator) \
@@ -357,9 +358,7 @@ public:
     SlotVisitor& collectorSlotVisitor() { return *m_collectorSlotVisitor; }
 
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
-    JS_EXPORT_PRIVATE RefPtr<GCActivityCallback> protectedFullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
-    JS_EXPORT_PRIVATE RefPtr<GCActivityCallback> protectedEdenActivityCallback();
 
     JS_EXPORT_PRIVATE void setFullActivityCallback(RefPtr<GCActivityCallback>&&);
     JS_EXPORT_PRIVATE void setEdenActivityCallback(RefPtr<GCActivityCallback>&&);
@@ -610,7 +609,7 @@ public:
 
     void appendPossiblyAccessedStringFromConcurrentThreads(String&& string)
     {
-        m_possiblyAccessedStringsFromConcurrentThreads.append(WTFMove(string));
+        m_possiblyAccessedStringsFromConcurrentThreads.append(WTF::move(string));
     }
 
     bool isInPhase(CollectorPhase phase) const { return m_currentPhase == phase; }
@@ -738,7 +737,7 @@ private:
     void prepareForMarking();
     
     void gatherStackRoots(ConservativeRoots&);
-    void gatherScratchBufferRoots(ConservativeRoots&);
+    void gatherVMRoots(ConservativeRoots&);
     void beginMarking();
     void visitCompilerWorklistWeakReferences();
     void removeDeadCompilerWorklistEntries();
@@ -810,7 +809,7 @@ private:
     void dumpHeapStatisticsAtVMDestruction();
 
     static bool useGenerationalGC();
-    static bool shouldSweepSynchronously();
+    bool shouldSweepSynchronously();
 
     void verifyGC();
     void verifierMark();
@@ -998,7 +997,7 @@ private:
     CurrentThreadState* m_currentThreadState { nullptr };
     Thread* m_currentThread { nullptr }; // It's OK if this becomes a dangling pointer.
 
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
+#if USE(MEMORY_FOOTPRINT_API)
     unsigned m_percentAvailableMemoryCachedCallCount { 0 };
     bool m_overCriticalMemoryThreshold { false };
 #endif

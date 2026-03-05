@@ -36,6 +36,13 @@ TEST(WTF, AtomStringCreationFromLiteral)
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate.length());
     ASSERT_TRUE(stringWithTemplate == "Template Literal"_s);
     ASSERT_TRUE(stringWithTemplate.string().is8Bit());
+
+    ASCIILiteral literal("Source literal");
+    AtomString stringFromLiteral(literal);
+    ASSERT_EQ(strlen("Source literal"), stringFromLiteral.length());
+    ASSERT_TRUE(stringFromLiteral == "Source literal"_s);
+    ASSERT_TRUE(stringFromLiteral.string().is8Bit());
+    ASSERT_TRUE(std::bit_cast<uintptr_t>(stringFromLiteral.impl()->span8().data()) == std::bit_cast<uintptr_t>(literal.span().data()));
 }
 
 TEST(WTF, AtomStringCreationFromLiteralUniqueness)

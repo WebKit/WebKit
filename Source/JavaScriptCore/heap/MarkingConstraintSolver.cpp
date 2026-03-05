@@ -151,7 +151,7 @@ void MarkingConstraintSolver::execute(MarkingConstraint& constraint)
 void MarkingConstraintSolver::addParallelTask(RefPtr<SharedTask<void(SlotVisitor&)>> task, MarkingConstraint& constraint)
 {
     Locker locker { m_lock };
-    m_toExecuteInParallel.append(TaskWithConstraint(WTFMove(task), &constraint));
+    m_toExecuteInParallel.append(TaskWithConstraint(WTF::move(task), &constraint));
 }
 
 void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, SchedulerPreference preference, ScopedLambda<std::optional<unsigned>()> pickNext)

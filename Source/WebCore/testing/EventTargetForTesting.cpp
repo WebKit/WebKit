@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EventTargetForTesting);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EventTargetForTesting);
 
 Ref<EventTargetForTesting> EventTargetForTesting::create(ScriptExecutionContext& context, MessageTargetForTesting& target)
 {

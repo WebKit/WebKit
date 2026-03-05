@@ -47,7 +47,7 @@ namespace WebKit {
 
 using PortChannelPortMap = HashMap<WebExtensionPortChannelIdentifier, HashSet<WeakRef<WebExtensionAPIPort>>>;
 
-static PortChannelPortMap& webExtensionPorts()
+static PortChannelPortMap& NODELETE webExtensionPorts()
 {
     static MainRunLoopNeverDestroyed<PortChannelPortMap> ports;
     return ports;

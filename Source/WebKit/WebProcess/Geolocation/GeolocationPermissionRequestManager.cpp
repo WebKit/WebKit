@@ -54,11 +54,6 @@ GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage
 
 GeolocationPermissionRequestManager::~GeolocationPermissionRequestManager() = default;
 
-Ref<WebPage> GeolocationPermissionRequestManager::protectedPage() const
-{
-    return m_page.get();
-}
-
 void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
     RefPtr frame = geolocation.frame();
@@ -77,12 +72,12 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
     RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    protectedPage()->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));
+    protect(m_page)->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));
 }
 
 void GeolocationPermissionRequestManager::revokeAuthorizationToken(const String& authorizationToken)
 {
-    protectedPage()->send(Messages::WebPageProxy::RevokeGeolocationAuthorizationToken(authorizationToken));
+    protect(m_page)->send(Messages::WebPageProxy::RevokeGeolocationAuthorizationToken(authorizationToken));
 }
 
 void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocation& geolocation)

@@ -25,6 +25,7 @@
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
 #include "media/base/stream_params.h"
+#include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_info.h"
 #include "pc/session_description.h"
@@ -39,8 +40,8 @@ SdpMungingType DetermineTransportModification(
     const TransportInfos& last_created_transport_infos,
     const TransportInfos& transport_infos_to_set) {
   if (last_created_transport_infos.size() != transport_infos_to_set.size()) {
-    RTC_LOG(LS_WARNING) << "SDP munging: Number of transport-infos does not "
-                           "match last created description.";
+    RTC_LOG(LS_ERROR) << "SDP munging: Number of transport-infos does not "
+                         "match last created description.";
     // Number of transports should always match number of contents so this
     // should never happen.
     return SdpMungingType::kNumberOfContents;
@@ -104,7 +105,7 @@ SdpMungingType DetermineTransportModification(
   return SdpMungingType::kNoModification;
 }
 
-SdpMungingType DetermineAudioSdpMungingType(
+SdpMungingType DetermineAudioSdpModification(
     const MediaContentDescription* last_created_media_description,
     const MediaContentDescription* media_description_to_set) {
   RTC_DCHECK(last_created_media_description);
@@ -281,7 +282,78 @@ SdpMungingType DetermineAudioSdpMungingType(
   return SdpMungingType::kNoModification;
 }
 
-SdpMungingType DetermineVideoSdpMungingType(
+SdpMungingType DetermineRtcpModification(
+    const MediaContentDescription* last_created_media_description,
+    const MediaContentDescription* media_description_to_set) {
+  // rtcp-mux.
+  if (last_created_media_description->rtcp_mux() !=
+      media_description_to_set->rtcp_mux()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: rtcp-mux modified.";
+    return SdpMungingType::kRtcpMux;
+  }
+
+  // rtcp-rsize.
+  if (last_created_media_description->rtcp_reduced_size() !=
+      media_description_to_set->rtcp_reduced_size()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: rtcp-rsize modified.";
+    return last_created_media_description->type() == MediaType::AUDIO
+               ? SdpMungingType::kAudioCodecsRtcpReducedSize
+               : SdpMungingType::kVideoCodecsRtcpReducedSize;
+  }
+  return SdpMungingType::kNoModification;
+}
+
+SdpMungingType DetermineCodecModification(
+    const MediaContentDescription* last_created_media_description,
+    const MediaContentDescription* media_description_to_set) {
+  MediaType media_type = last_created_media_description->type();
+  // Validate codecs. We should have bailed out earlier if codecs were added
+  // or removed.
+  auto last_created_codecs = last_created_media_description->codecs();
+  auto codecs_to_set = media_description_to_set->codecs();
+  if (last_created_codecs.size() == codecs_to_set.size()) {
+    for (size_t i = 0; i < last_created_codecs.size(); i++) {
+      if (last_created_codecs[i] == codecs_to_set[i]) {
+        continue;
+      }
+      // Codec position swapped.
+      for (size_t j = i + 1; j < last_created_codecs.size(); j++) {
+        if (last_created_codecs[i] == codecs_to_set[j]) {
+          return media_type == MediaType::AUDIO
+                     ? SdpMungingType::kAudioCodecsReordered
+                     : SdpMungingType::kVideoCodecsReordered;
+        }
+      }
+      // Same codec but id changed.
+      if (last_created_codecs[i].name == codecs_to_set[i].name &&
+          last_created_codecs[i].id != codecs_to_set[i].id) {
+        return SdpMungingType::kPayloadTypes;
+      }
+      if (last_created_codecs[i].params != codecs_to_set[i].params) {
+        return media_type == MediaType::AUDIO
+                   ? SdpMungingType::kAudioCodecsFmtp
+                   : SdpMungingType::kVideoCodecsFmtp;
+      }
+      if (last_created_codecs[i].feedback_params !=
+          codecs_to_set[i].feedback_params) {
+        return media_type == MediaType::AUDIO
+                   ? SdpMungingType::kAudioCodecsRtcpFb
+                   : SdpMungingType::kVideoCodecsRtcpFb;
+      }
+      // Nonstandard a=packetization:raw added by munging
+      if (media_type == MediaType::VIDEO &&
+          last_created_codecs[i].packetization !=
+              codecs_to_set[i].packetization) {
+        return SdpMungingType::kVideoCodecsModifiedWithRawPacketization;
+      }
+      // At this point clockrate or channels changed. This should already be
+      // rejected later in the process so ignore for munging.
+    }
+  }
+  return SdpMungingType::kNoModification;
+}
+
+SdpMungingType DetermineVideoSdpModification(
     const MediaContentDescription* last_created_media_description,
     const MediaContentDescription* media_description_to_set) {
   RTC_DCHECK(last_created_media_description);
@@ -359,52 +431,54 @@ SdpMungingType DetermineVideoSdpMungingType(
     RTC_LOG(LS_WARNING) << "SDP munging: sps-pps-idr-in-keyframe enabled.";
     return SdpMungingType::kVideoCodecsFmtpH264SpsPpsIdrInKeyframe;
   }
+  return SdpMungingType::kNoModification;
+}
+
+SdpMungingType DetermineDataSdpModification(
+    const MediaContentDescription* last_created_media_description,
+    const MediaContentDescription* media_description_to_set) {
+  RTC_DCHECK(last_created_media_description);
+  RTC_DCHECK(media_description_to_set);
+  auto last_created_sctp_description =
+      last_created_media_description->as_sctp();
+  auto sctp_description_to_set = media_description_to_set->as_sctp();
+  RTC_DCHECK(last_created_sctp_description);
+  RTC_DCHECK(sctp_description_to_set);
+
+  if (last_created_sctp_description->sctp_init() !=
+      sctp_description_to_set->sctp_init()) {
+    RTC_LOG(LS_ERROR) << "SDP munging: sctp-init does not match "
+                         "last created description.";
+    return SdpMungingType::kDataChannelSctpInit;
+  }
+
+  if (last_created_sctp_description->max_message_size() !=
+      sctp_description_to_set->max_message_size()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: max-message-size does not match "
+                           "last created description.";
+    return SdpMungingType::kDataChannelMaxMessageSize;
+  }
+
+  if (last_created_sctp_description->port() !=
+      sctp_description_to_set->port()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: sctp-port does not match "
+                           "last created description.";
+    return SdpMungingType::kDataChannelSctpPort;
+  }
 
   return SdpMungingType::kNoModification;
 }
 
-}  // namespace
-
-// Determine if the SDP was modified between createOffer and
-// setLocalDescription.
-SdpMungingType DetermineSdpMungingType(
-    const SessionDescriptionInterface* sdesc,
-    const SessionDescriptionInterface* last_created_desc) {
-  if (!sdesc || !sdesc->description()) {
-    RTC_LOG(LS_WARNING) << "SDP munging: Failed to parse session description.";
-    return SdpMungingType::kUnknownModification;
-  }
-
-  if (!last_created_desc || !last_created_desc->description()) {
-    RTC_LOG(LS_WARNING) << "SDP munging: SetLocalDescription called without "
-                           "CreateOffer or CreateAnswer.";
-    if (sdesc->GetType() == SdpType::kOffer) {
-      return SdpMungingType::kWithoutCreateOffer;
-    } else {  // answer or pranswer.
-      return SdpMungingType::kWithoutCreateAnswer;
-    }
-  }
-
-  // TODO: crbug.com/40567530 - we currently allow answer->pranswer
-  // so can not check sdesc->GetType() == last_created_desc->GetType().
-
+SdpMungingType DetermineContentsModification(
+    const ContentInfos& last_created_contents,
+    const ContentInfos& contents_to_set) {
   SdpMungingType type;
-
-  // TODO: crbug.com/40567530 - change Chromium so that pointer comparison works
-  // at least for implicit local description.
-  if (sdesc->description() == last_created_desc->description()) {
-    return SdpMungingType::kNoModification;
-  }
-
-  // Validate contents.
-  const auto& last_created_contents =
-      last_created_desc->description()->contents();
-  const auto& contents_to_set = sdesc->description()->contents();
   if (last_created_contents.size() != contents_to_set.size()) {
-    RTC_LOG(LS_WARNING) << "SDP munging: Number of m= sections does not match "
-                           "last created description.";
+    RTC_LOG(LS_ERROR) << "SDP munging: Number of m= sections does not match "
+                         "last created description.";
     return SdpMungingType::kNumberOfContents;
   }
+
   for (size_t content_index = 0; content_index < last_created_contents.size();
        content_index++) {
     // TODO: crbug.com/40567530 - more checks are needed here.
@@ -424,6 +498,13 @@ SdpMungingType DetermineSdpMungingType(
     }
     // Validate video and audio contents.
     MediaType media_type = last_created_media_description->type();
+    if (media_type == MediaType::DATA) {
+      type = DetermineDataSdpModification(last_created_media_description,
+                                          media_description_to_set);
+      if (type != SdpMungingType::kNoModification) {
+        return type;
+      }
+    }
     bool is_rtp =
         media_type == MediaType::AUDIO || media_type == MediaType::VIDEO;
     if (!is_rtp) {
@@ -431,80 +512,32 @@ SdpMungingType DetermineSdpMungingType(
       continue;
     }
     if (media_type == MediaType::VIDEO) {
-      type = DetermineVideoSdpMungingType(last_created_media_description,
-                                          media_description_to_set);
+      type = DetermineVideoSdpModification(last_created_media_description,
+                                           media_description_to_set);
       if (type != SdpMungingType::kNoModification) {
         return type;
       }
     } else if (media_type == MediaType::AUDIO) {
-      type = DetermineAudioSdpMungingType(last_created_media_description,
-                                          media_description_to_set);
+      type = DetermineAudioSdpModification(last_created_media_description,
+                                           media_description_to_set);
       if (type != SdpMungingType::kNoModification) {
         return type;
       }
     }
 
-    // rtcp-mux.
-    if (last_created_media_description->rtcp_mux() !=
-        media_description_to_set->rtcp_mux()) {
-      RTC_LOG(LS_WARNING) << "SDP munging: rtcp-mux modified.";
-      return SdpMungingType::kRtcpMux;
+    type = DetermineRtcpModification(last_created_media_description,
+                                     media_description_to_set);
+    if (type != SdpMungingType::kNoModification) {
+      return type;
     }
 
-    // rtcp-rsize.
-    if (last_created_media_description->rtcp_reduced_size() !=
-        media_description_to_set->rtcp_reduced_size()) {
-      RTC_LOG(LS_WARNING) << "SDP munging: rtcp-rsize modified.";
-      return media_type == MediaType::AUDIO
-                 ? SdpMungingType::kAudioCodecsRtcpReducedSize
-                 : SdpMungingType::kVideoCodecsRtcpReducedSize;
+    type = DetermineCodecModification(last_created_media_description,
+                                      media_description_to_set);
+    if (type != SdpMungingType::kNoModification) {
+      return type;
     }
 
-    // Validate codecs. We should have bailed out earlier if codecs were added
-    // or removed.
-    auto last_created_codecs = last_created_media_description->codecs();
-    auto codecs_to_set = media_description_to_set->codecs();
-    if (last_created_codecs.size() == codecs_to_set.size()) {
-      for (size_t i = 0; i < last_created_codecs.size(); i++) {
-        if (last_created_codecs[i] == codecs_to_set[i]) {
-          continue;
-        }
-        // Codec position swapped.
-        for (size_t j = i + 1; j < last_created_codecs.size(); j++) {
-          if (last_created_codecs[i] == codecs_to_set[j]) {
-            return media_type == MediaType::AUDIO
-                       ? SdpMungingType::kAudioCodecsReordered
-                       : SdpMungingType::kVideoCodecsReordered;
-          }
-        }
-        // Same codec but id changed.
-        if (last_created_codecs[i].name == codecs_to_set[i].name &&
-            last_created_codecs[i].id != codecs_to_set[i].id) {
-          return SdpMungingType::kPayloadTypes;
-        }
-        if (last_created_codecs[i].params != codecs_to_set[i].params) {
-          return media_type == MediaType::AUDIO
-                     ? SdpMungingType::kAudioCodecsFmtp
-                     : SdpMungingType::kVideoCodecsFmtp;
-        }
-        if (last_created_codecs[i].feedback_params !=
-            codecs_to_set[i].feedback_params) {
-          return media_type == MediaType::AUDIO
-                     ? SdpMungingType::kAudioCodecsRtcpFb
-                     : SdpMungingType::kVideoCodecsRtcpFb;
-        }
-        // Nonstandard a=packetization:raw added by munging
-        if (media_type == MediaType::VIDEO &&
-            last_created_codecs[i].packetization !=
-                codecs_to_set[i].packetization) {
-          return SdpMungingType::kVideoCodecsModifiedWithRawPacketization;
-        }
-        // At this point clockrate or channels changed. This should already be
-        // rejected later in the process so ignore for munging.
-      }
-    }
-
-    // sendrecv et al.
+    // Validate direction (sendrecv et al).
     if (last_created_media_description->direction() !=
         media_description_to_set->direction()) {
       RTC_LOG(LS_WARNING) << "SDP munging: transceiver direction modified.";
@@ -546,6 +579,60 @@ SdpMungingType DetermineSdpMungingType(
         return SdpMungingType::kRtpHeaderExtensionModified;
       }
     }
+
+    // Validate b= (which does not have an effect in the local description).
+    if (last_created_media_description->bandwidth() !=
+        media_description_to_set->bandwidth()) {
+      RTC_LOG(LS_WARNING) << "SDP munging: modifying bandwidth in SLD does not "
+                             "have an effect locally.";
+      return SdpMungingType::kBandwidth;
+    }
+  }
+  return SdpMungingType::kNoModification;
+}
+
+}  // namespace
+
+// Determine if the SDP was modified between createOffer and
+// setLocalDescription.
+SdpMungingType DetermineSdpMungingType(
+    const SessionDescriptionInterface* sdesc,
+    const SessionDescriptionInterface* last_created_desc) {
+  if (!sdesc || !sdesc->description()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: Failed to parse session description.";
+    // This is done to ensure the pointers are valid and should not happen at
+    // this point.
+    RTC_DCHECK_NOTREACHED();
+    return SdpMungingType::kCurrentDescriptionFailedToParse;
+  }
+
+  if (!last_created_desc || !last_created_desc->description()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: SetLocalDescription called without "
+                           "CreateOffer or CreateAnswer.";
+    if (sdesc->GetType() == SdpType::kOffer) {
+      return SdpMungingType::kWithoutCreateOffer;
+    } else {  // answer or pranswer.
+      return SdpMungingType::kWithoutCreateAnswer;
+    }
+  }
+
+  // TODO: crbug.com/40567530 - we currently allow answer->pranswer
+  // so can not check sdesc->GetType() == last_created_desc->GetType().
+
+  SdpMungingType type;
+
+  // TODO: crbug.com/40567530 - change Chromium so that pointer comparison works
+  // at least for implicit local description.
+  if (sdesc->description() == last_created_desc->description()) {
+    return SdpMungingType::kNoModification;
+  }
+
+  // Validate contents.
+  type = DetermineContentsModification(
+      last_created_desc->description()->contents(),
+      sdesc->description()->contents());
+  if (type != SdpMungingType::kNoModification) {
+    return type;
   }
 
   // Validate transport descriptions.
@@ -554,6 +641,42 @@ SdpMungingType DetermineSdpMungingType(
       sdesc->description()->transport_infos());
   if (type != SdpMungingType::kNoModification) {
     return type;
+  }
+
+  // Validate number of candidates.
+  for (size_t content_index = 0;
+       content_index < last_created_desc->description()->contents().size();
+       content_index++) {
+    // All contents have a (possibly empty) candidate set.
+    // Check that this holds.
+    RTC_DCHECK(sdesc->candidates(content_index));
+    if (sdesc->candidates(content_index)->count() !=
+        last_created_desc->candidates(content_index)->count()) {
+      RTC_LOG(LS_WARNING)
+          << "SDP munging: media section " << content_index << " changed from "
+          << last_created_desc->candidates(content_index)->count() << " to "
+          << sdesc->candidates(content_index)->count() << " candidates";
+      return SdpMungingType::kIceCandidateCount;
+    }
+  }
+
+  // Validate Bundle fields
+  std::vector<const ContentGroup*> old_bundles =
+      last_created_desc->description()->GetGroupsByName(GROUP_TYPE_BUNDLE);
+  std::vector<const ContentGroup*> new_bundles =
+      sdesc->description()->GetGroupsByName(GROUP_TYPE_BUNDLE);
+  if (old_bundles.size() != new_bundles.size()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: number of bundle groups changed from "
+                        << old_bundles.size() << " to " << new_bundles.size();
+    return SdpMungingType::kBundle;
+  }
+  for (size_t i = 0; i < old_bundles.size(); ++i) {
+    if (*new_bundles[i] != *old_bundles[i]) {
+      RTC_LOG(LS_WARNING) << "SDP munging: Content of bundle group " << i
+                          << " changed from " << old_bundles[i]->ToString()
+                          << " to " << new_bundles[i]->ToString();
+      return SdpMungingType::kBundle;
+    }
   }
 
   // TODO: crbug.com/40567530 - this serializes the descriptions back to a SDP
@@ -604,8 +727,16 @@ bool HasUfragSdpMunging(const SessionDescriptionInterface* sdesc,
 
 bool IsSdpMungingAllowed(SdpMungingType sdp_munging_type,
                          const FieldTrialsView& trials) {
-  if (sdp_munging_type == SdpMungingType::kNoModification) {
-    return true;
+  switch (sdp_munging_type) {
+    case SdpMungingType::kNoModification:
+      return true;
+    case SdpMungingType::kNumberOfContents:
+      return false;
+    case kDataChannelSctpInit:
+      return false;
+    default:
+      // Handled below.
+      break;
   }
   std::string type_as_string =
       std::to_string(static_cast<int>(sdp_munging_type));

@@ -149,11 +149,11 @@ CTR_DRBG_STATE *CTR_DRBG_new(const uint8_t entropy[CTR_DRBG_ENTROPY_LEN],
                              size_t personalization_len) {
   CTR_DRBG_STATE *drbg = reinterpret_cast<CTR_DRBG_STATE *>(
       OPENSSL_malloc(sizeof(CTR_DRBG_STATE)));
-  if (drbg == NULL ||
+  if (drbg == nullptr ||
       !CTR_DRBG_init(drbg, /*df=*/false, entropy, CTR_DRBG_ENTROPY_LEN,
                      /*nonce=*/nullptr, personalization, personalization_len)) {
     CTR_DRBG_free(drbg);
-    return NULL;
+    return nullptr;
   }
 
   return drbg;
@@ -165,11 +165,11 @@ CTR_DRBG_STATE *CTR_DRBG_new_df(const uint8_t *entropy, size_t entropy_len,
                                 size_t personalization_len) {
   CTR_DRBG_STATE *drbg = reinterpret_cast<CTR_DRBG_STATE *>(
       OPENSSL_malloc(sizeof(CTR_DRBG_STATE)));
-  if (drbg == NULL ||
+  if (drbg == nullptr ||
       !CTR_DRBG_init(drbg, /*df=*/true, entropy, entropy_len, nonce,
                      personalization, personalization_len)) {
     CTR_DRBG_free(drbg);
-    return NULL;
+    return nullptr;
   }
 
   return drbg;
@@ -227,7 +227,8 @@ int CTR_DRBG_init(CTR_DRBG_STATE *drbg, int df, const uint8_t *entropy,
   }
 
   drbg->df = df;
-  drbg->ctr = aes_ctr_set_key(&drbg->ks, NULL, &drbg->block, seed_material, 32);
+  drbg->ctr =
+      aes_ctr_set_key(&drbg->ks, nullptr, &drbg->block, seed_material, 32);
   OPENSSL_memcpy(drbg->counter, seed_material + 32, 16);
   drbg->reseed_counter = 1;
 
@@ -256,7 +257,7 @@ static int ctr_drbg_update(CTR_DRBG_STATE *drbg,
     temp[i] ^= data[i];
   }
 
-  drbg->ctr = aes_ctr_set_key(&drbg->ks, NULL, &drbg->block, temp, 32);
+  drbg->ctr = aes_ctr_set_key(&drbg->ks, nullptr, &drbg->block, temp, 32);
   OPENSSL_memcpy(drbg->counter, temp + 32, 16);
 
   return 1;

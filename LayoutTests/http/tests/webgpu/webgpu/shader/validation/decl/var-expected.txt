@@ -586,6 +586,8 @@ PASS :binding_point_on_function_var:group="";binding="%40binding(0)"
 PASS :binding_point_on_function_var:group="%40group(0)";binding=""
 PASS :binding_point_on_function_var:group="%40group(0)";binding="%40binding(0)"
 FAIL :binding_collisions:a_group=0;b_group=0;a_binding=0;b_binding=0;b_use="same" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -600,10 +602,11 @@ FAIL :binding_collisions:a_group=0;b_group=0;a_binding=0;b_binding=0;b_use="same
 
           _ = b;
         }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :binding_collisions:a_group=0;b_group=0;a_binding=0;b_binding=0;b_use="different"
 PASS :binding_collisions:a_group=0;b_group=0;a_binding=0;b_binding=1;b_use="same"
@@ -611,6 +614,8 @@ PASS :binding_collisions:a_group=0;b_group=0;a_binding=0;b_binding=1;b_use="diff
 PASS :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=0;b_use="same"
 PASS :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=0;b_use="different"
 FAIL :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=1;b_use="same" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -625,10 +630,11 @@ FAIL :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=1;b_use="same
 
           _ = b;
         }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=1;b_use="different"
 PASS :binding_collisions:a_group=0;b_group=1;a_binding=0;b_binding=0;b_use="same"
@@ -648,6 +654,8 @@ PASS :binding_collisions:a_group=1;b_group=0;a_binding=1;b_binding=0;b_use="diff
 PASS :binding_collisions:a_group=1;b_group=0;a_binding=1;b_binding=1;b_use="same"
 PASS :binding_collisions:a_group=1;b_group=0;a_binding=1;b_binding=1;b_use="different"
 FAIL :binding_collisions:a_group=1;b_group=1;a_binding=0;b_binding=0;b_use="same" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -662,10 +670,11 @@ FAIL :binding_collisions:a_group=1;b_group=1;a_binding=0;b_binding=0;b_use="same
 
           _ = b;
         }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :binding_collisions:a_group=1;b_group=1;a_binding=0;b_binding=0;b_use="different"
 PASS :binding_collisions:a_group=1;b_group=1;a_binding=0;b_binding=1;b_use="same"
@@ -673,6 +682,8 @@ PASS :binding_collisions:a_group=1;b_group=1;a_binding=0;b_binding=1;b_use="diff
 PASS :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=0;b_use="same"
 PASS :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=0;b_use="different"
 FAIL :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=1;b_use="same" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -687,10 +698,11 @@ FAIL :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=1;b_use="same
 
           _ = b;
         }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:519:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=1;b_use="different"
 PASS :binding_collision_unused_helper:
@@ -965,6 +977,8 @@ PASS :shader_stage:stage="compute";kind="uniform"
 PASS :shader_stage:stage="compute";kind="workgroup"
 PASS :shader_stage:stage="vertex";kind="handle_ro"
 FAIL :shader_stage:stage="vertex";kind="handle_wo" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -977,12 +991,15 @@ FAIL :shader_stage:stage="vertex";kind="handle_wo" assert_unreached:
               _ = v;
               return vec4f();
             }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 FAIL :shader_stage:stage="vertex";kind="handle_rw" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -995,15 +1012,18 @@ FAIL :shader_stage:stage="vertex";kind="handle_rw" assert_unreached:
               _ = v;
               return vec4f();
             }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :shader_stage:stage="vertex";kind="function"
 PASS :shader_stage:stage="vertex";kind="private"
 PASS :shader_stage:stage="vertex";kind="storage_ro"
 FAIL :shader_stage:stage="vertex";kind="storage_rw" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1016,13 +1036,16 @@ FAIL :shader_stage:stage="vertex";kind="storage_rw" assert_unreached:
               _ = v;
               return vec4f();
             }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :shader_stage:stage="vertex";kind="uniform"
 FAIL :shader_stage:stage="vertex";kind="workgroup" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1035,10 +1058,11 @@ FAIL :shader_stage:stage="vertex";kind="workgroup" assert_unreached:
               _ = v;
               return vec4f();
             }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :shader_stage:stage="fragment";kind="handle_ro"
 PASS :shader_stage:stage="fragment";kind="handle_wo"
@@ -1049,6 +1073,8 @@ PASS :shader_stage:stage="fragment";kind="storage_ro"
 PASS :shader_stage:stage="fragment";kind="storage_rw"
 PASS :shader_stage:stage="fragment";kind="uniform"
 FAIL :shader_stage:stage="fragment";kind="workgroup" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1060,9 +1086,10 @@ FAIL :shader_stage:stage="fragment";kind="workgroup" assert_unreached:
 
               _ = v;
             }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:857:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 

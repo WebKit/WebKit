@@ -85,7 +85,6 @@ public:
     WebExtensionAPIAction& pageAction() { return action(); }
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() const final;
-    Ref<WebExtensionAPIRuntime> protectedRuntime() const { return runtime(); }
     WebExtensionAPIScripting& scripting();
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     WebExtensionAPISidePanel& sidePanel();

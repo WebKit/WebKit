@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x546
-  RenderBlock {HTML} at (0,0) size 800x546
-    RenderBody {BODY} at (8,16) size 784x522
+layer at (0,0) size 800x545
+  RenderBlock {HTML} at (0,0) size 800x545
+    RenderBody {BODY} at (8,16) size 784x521
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 714x17
+        RenderText {#text} at (0,0) size 714x18
           text run at (0,0) width 714: "Test that setting currentTime is frame-accurate. The three videos below should be showing frames 12, 13, and 14."
-      RenderBlock (anonymous) at (0,34) size 784x488
+      RenderBlock (anonymous) at (0,34) size 784x487
         RenderText {#text} at (320,226) size 4x17
           text run at (320,226) width 4: " "
         RenderText {#text} at (0,0) size 0x0
@@ -16,4 +16,4 @@ layer at (8,50) size 320x240
 layer at (332,50) size 320x240
   RenderVideo {VIDEO} at (324,0) size 320x240
 layer at (8,294) size 320x240
-  RenderVideo {VIDEO} at (0,244) size 320x240
+  RenderVideo {VIDEO} at (0,243) size 320x241

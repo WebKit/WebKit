@@ -191,22 +191,22 @@ PASS Replaced elements outside a table cannot be table and are considered block 
 PASS Replaced elements outside a table cannot be table and are considered block -- img elements
 PASS Replaced elements outside a table cannot be table-row and are considered inline -- input=text elements
 PASS Replaced elements outside a table cannot be table-row and are considered inline -- input=button elements
-FAIL Replaced elements outside a table cannot be table-row and are considered inline -- input=file elements assert_equals: expected 3747.875 but got 3765.875
-FAIL Replaced elements outside a table cannot be table-row and are considered inline -- img elements assert_equals: expected 3879.875 but got 3911.875
+FAIL Replaced elements outside a table cannot be table-row and are considered inline -- input=file elements assert_equals: expected 3748.21875 but got 3766.21875
+FAIL Replaced elements outside a table cannot be table-row and are considered inline -- img elements assert_equals: expected 3880.21875 but got 3912.21875
 PASS Replaced elements outside a table cannot be table-row-group and are considered inline -- input=text elements
 PASS Replaced elements outside a table cannot be table-row-group and are considered inline -- input=button elements
-FAIL Replaced elements outside a table cannot be table-row-group and are considered inline -- input=file elements assert_equals: expected 4271.875 but got 4289.875
-FAIL Replaced elements outside a table cannot be table-row-group and are considered inline -- img elements assert_equals: expected 4403.875 but got 4435.875
+FAIL Replaced elements outside a table cannot be table-row-group and are considered inline -- input=file elements assert_equals: expected 4272.21875 but got 4290.21875
+FAIL Replaced elements outside a table cannot be table-row-group and are considered inline -- img elements assert_equals: expected 4404.21875 but got 4436.21875
 PASS Replaced elements outside a table cannot be table-column and are considered inline inline -- input=text elements
 PASS Replaced elements outside a table cannot be table-column and are considered inline -- input=button elements
-FAIL Replaced elements outside a table cannot be table-column and are considered inline -- input=file elements assert_equals: expected 4795.875 but got 4813.875
-FAIL Replaced elements outside a table cannot be table-column and are considered inline -- img elements assert_equals: expected 4927.875 but got 4959.875
+FAIL Replaced elements outside a table cannot be table-column and are considered inline -- input=file elements assert_equals: expected 4796.21875 but got 4814.21875
+FAIL Replaced elements outside a table cannot be table-column and are considered inline -- img elements assert_equals: expected 4928.21875 but got 4960.21875
 PASS Replaced elements outside a table cannot be table-cell and are considered inline -- input=text elements
 PASS Replaced elements outside a table cannot be table-cell and are considered inline -- input=button elements
-FAIL Replaced elements outside a table cannot be table-cell and are considered inline -- input=file elements assert_equals: expected 5319.875 but got 5337.875
-FAIL Replaced elements outside a table cannot be table-cell and are considered inline -- img elements assert_equals: expected 5451.875 but got 5483.875
+FAIL Replaced elements outside a table cannot be table-cell and are considered inline -- input=file elements assert_equals: expected 5320.21875 but got 5338.21875
+FAIL Replaced elements outside a table cannot be table-cell and are considered inline -- img elements assert_equals: expected 5452.21875 but got 5484.21875
 PASS Replaced elements outside a table cannot be table-caption and are considered inline -- input=text elements
 PASS Replaced elements outside a table cannot be table-caption and are considered inline -- input=button elements
-FAIL Replaced elements outside a table cannot be table-caption and are considered inline -- input=file elements assert_equals: expected 5843.875 but got 5861.875
-FAIL Replaced elements outside a table cannot be table-caption and are considered inline -- img elements assert_equals: expected 5975.875 but got 6007.875
+FAIL Replaced elements outside a table cannot be table-caption and are considered inline -- input=file elements assert_equals: expected 5844.21875 but got 5862.21875
+FAIL Replaced elements outside a table cannot be table-caption and are considered inline -- img elements assert_equals: expected 5976.21875 but got 6008.21875
 

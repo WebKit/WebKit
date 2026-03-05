@@ -1,0 +1,172 @@
+/*
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ *           (C) 2000 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "config.h"
+#include "StyleGeneratedImage.h"
+
+#include "Document.h"
+#include "GeneratedImage.h"
+#include "RenderElement.h"
+#include "RenderObjectInlines.h"
+#include "StyleResolver.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+namespace Style {
+
+static constexpr auto timeToKeepCachedGeneratedImages = 3_s;
+
+// MARK: - CachedGeneratedImage
+
+class GeneratedImage::CachedGeneratedImage {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedGeneratedImage);
+public:
+    CachedGeneratedImage(GeneratedImage&, FloatSize, WebCore::GeneratedImage&);
+    WebCore::GeneratedImage& NODELETE image() const { return m_image; }
+    void puntEvictionTimer() { m_evictionTimer.restart(); }
+
+private:
+    void evictionTimerFired();
+
+    GeneratedImage& m_owner;
+    const FloatSize m_size;
+    const Ref<WebCore::GeneratedImage> m_image;
+    DeferrableOneShotTimer m_evictionTimer;
+};
+
+inline GeneratedImage::CachedGeneratedImage::CachedGeneratedImage(GeneratedImage& owner, FloatSize size, WebCore::GeneratedImage& image)
+    : m_owner(owner)
+    , m_size(size)
+    , m_image(image)
+    , m_evictionTimer(*this, &GeneratedImage::CachedGeneratedImage::evictionTimerFired, timeToKeepCachedGeneratedImages)
+{
+    m_evictionTimer.restart();
+}
+
+void GeneratedImage::CachedGeneratedImage::evictionTimerFired()
+{
+    // NOTE: This is essentially a "delete this", the object is no longer valid after this line.
+    m_owner.evictCachedGeneratedImage(m_size);
+}
+
+// MARK: - GeneratedImage.
+
+GeneratedImage::GeneratedImage(Image::Type type, bool fixedSize)
+    : Image { type }
+    , m_fixedSize { fixedSize }
+{
+}
+
+GeneratedImage::~GeneratedImage() = default;
+
+WebCore::GeneratedImage* GeneratedImage::cachedImageForSize(FloatSize size)
+{
+    if (size.isEmpty())
+        return nullptr;
+
+    auto* cachedGeneratedImage = m_images.get(size);
+    if (!cachedGeneratedImage)
+        return nullptr;
+
+    cachedGeneratedImage->puntEvictionTimer();
+    return &cachedGeneratedImage->image();
+}
+
+void GeneratedImage::saveCachedImageForSize(FloatSize size, WebCore::GeneratedImage& image)
+{
+    ASSERT(!m_images.contains(size));
+    m_images.add(size, makeUnique<CachedGeneratedImage>(*this, size, image));
+}
+
+void GeneratedImage::evictCachedGeneratedImage(FloatSize size)
+{
+    ASSERT(m_images.contains(size));
+    m_images.remove(size);
+}
+
+FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType) const
+{
+    if (!m_fixedSize)
+        return m_containerSize;
+
+    if (!renderer)
+        return { };
+
+    FloatSize fixedSize = this->fixedSize(*renderer);
+    if (multiplier == 1.0f)
+        return fixedSize;
+
+    float width = fixedSize.width() * multiplier;
+    float height = fixedSize.height() * multiplier;
+
+    // Don't let images that have a width/height >= 1 shrink below 1 device pixel when zoomed.
+    float deviceScaleFactor = protect(renderer->document())->deviceScaleFactor();
+    if (fixedSize.width() > 0)
+        width = std::max<float>(1 / deviceScaleFactor, width);
+    if (fixedSize.height() > 0)
+        height = std::max<float>(1 / deviceScaleFactor, height);
+
+    return { width, height };
+}
+
+void GeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
+{
+    // At a zoom level of 1 the image is guaranteed to have a device pixel size.
+    FloatSize size = floorSizeToDevicePixels(LayoutSize(this->imageSize(renderer, 1)), renderer ? protect(renderer->document())->deviceScaleFactor() : 1);
+    intrinsicWidth = size.width();
+    intrinsicHeight = size.height();
+    intrinsicRatio = size;
+}
+
+// MARK: Client support.
+
+void GeneratedImage::addClient(RenderElement& renderer)
+{
+    if (m_clients.isEmptyIgnoringNullReferences())
+        ref();
+
+    m_clients.add(renderer);
+
+    this->didAddClient(renderer);
+}
+
+void GeneratedImage::removeClient(RenderElement& renderer)
+{
+    ASSERT(m_clients.contains(renderer));
+    if (!m_clients.remove(renderer))
+        return;
+
+    this->didRemoveClient(renderer);
+
+    if (m_clients.isEmptyIgnoringNullReferences())
+        deref();
+}
+
+bool GeneratedImage::hasClient(RenderElement& renderer) const
+{
+    return m_clients.contains(renderer);
+}
+
+} // namespace Style
+} // namespace WebCore

@@ -37,9 +37,4 @@ inline CachedResourceLoader& Document::cachedResourceLoader()
     return *m_cachedResourceLoader;
 }
 
-inline Ref<CachedResourceLoader> Document::protectedCachedResourceLoader() const
-{
-    return const_cast<Document&>(*this).cachedResourceLoader();
-}
-
 }

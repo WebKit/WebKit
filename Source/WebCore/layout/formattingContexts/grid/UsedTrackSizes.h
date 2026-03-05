@@ -24,7 +24,7 @@
  */
 #pragma once
 
-#include <WebCore/GridTypeAliases.h>
+#include "GridTypeAliases.h"
 
 namespace WebCore {
 namespace Layout {

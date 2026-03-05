@@ -47,7 +47,7 @@ public:
 
     bool isShifted() const { return m_isShifted; }
 
-    void createOverflow(const LayoutRect& layoutOverflow, const LayoutRect& visualOverflow) { m_overflow = makeUnique<RenderOverflow>(layoutOverflow, visualOverflow); }
+    void createOverflow(const LayoutRect& layoutOverflow, const LayoutRect& visualOverflow) { m_overflow = makeUnique<RenderOverflow>(layoutOverflow, visualOverflow, LayoutRect { }); }
     RenderOverflow* overflow() const { return m_overflow.get(); }
     void clearOverflow() { m_overflow = { }; }
 

@@ -59,7 +59,7 @@ protected:
 
     virtual FloatPoint layerTopLeft() const = 0;
     virtual bool hasViewportClippingLayer() const { return false; }
-    const ViewportConstraints& constraints() const final { return m_constraints; }
+    const ViewportConstraints& constraints() const LIFETIME_BOUND final { return m_constraints; }
 
     bool isCurrentlySticking(const FloatRect& constrainingRect) const;
 

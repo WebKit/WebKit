@@ -30,7 +30,6 @@ static int read_golomb(MACROBLOCKD *xd, aom_reader *r) {
     if (length > 20) {
       aom_internal_error(xd->error_info, AOM_CODEC_CORRUPT_FRAME,
                          "Invalid length in read_golomb");
-      break;
     }
   }
 
@@ -341,6 +340,8 @@ void av1_read_coeffs_txb(const AV1_COMMON *const cm, DecoderCodingBlock *dcb,
   TXB_CTX txb_ctx;
   get_txb_ctx(plane_bsize, tx_size, plane, pd->above_entropy_context + col,
               pd->left_entropy_context + row, &txb_ctx);
+
+  assert(dcb->xd.error_info->setjmp);
   const uint8_t cul_level =
       read_coeffs_txb(cm, dcb, r, row, col, plane, &txb_ctx, tx_size);
   av1_set_entropy_contexts(xd, pd, plane, plane_bsize, tx_size, cul_level, col,

@@ -15,21 +15,21 @@ info: |
   source data.
 
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n, 5n]).copyWithin(6, 0),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n, 5n])).copyWithin(6, 0),
       [0n, 1n, 2n, 3n, 4n, 5n]
     )
   );
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(Infinity, 0),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(Infinity, 0),
       [1n, 2n, 3n, 4n, 5n]
     ),
     '[1, 2, 3, 4, 5].copyWithin(Infinity, 0) -> [1, 2, 3, 4, 5]'
@@ -37,14 +37,14 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n, 5n]).copyWithin(0, 6),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n, 5n])).copyWithin(0, 6),
       [0n, 1n, 2n, 3n, 4n, 5n]
     )
   );
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(0, Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(0, Infinity),
       [1n, 2n, 3n, 4n, 5n]
     ),
     '[1, 2, 3, 4, 5].copyWithin(0, Infinity) -> [1, 2, 3, 4, 5]'
@@ -52,21 +52,21 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n, 5n]).copyWithin(6, 6),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n, 5n])).copyWithin(6, 6),
       [0n, 1n, 2n, 3n, 4n, 5n]
     )
   );
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n, 5n]).copyWithin(10, 10),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n, 5n])).copyWithin(10, 10),
       [0n, 1n, 2n, 3n, 4n, 5n]
     )
   );
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(Infinity, Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(Infinity, Infinity),
       [1n, 2n, 3n, 4n, 5n]
     ),
     '[1, 2, 3, 4, 5].copyWithin(Infinity, Infinity) -> [1, 2, 3, 4, 5]'

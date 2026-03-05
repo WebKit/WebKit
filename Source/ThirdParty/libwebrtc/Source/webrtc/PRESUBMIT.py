@@ -989,6 +989,8 @@ def CommonChecks(input_api, output_api):
             bot_allowlist=[
                 'chromium-webrtc-autoroll@webrtc-ci.iam.gserviceaccount.com',
                 'webrtc-version-updater@webrtc-ci.iam.gserviceaccount.com',
+                ('swarming-tasks'
+                 '@owners-cleanup-prod.google.com.iam.gserviceaccount.com'),
                 ('chrome-cherry-picker'
                  '@chops-service-accounts.iam.gserviceaccount.com'),
             ]))

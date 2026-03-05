@@ -31,9 +31,9 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var called = false;
-  var result = new TA([42]).reduce(function() {
+  var result = new TA(makeCtorArg([42])).reduce(function() {
     called = true;
   });
 

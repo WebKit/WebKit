@@ -75,30 +75,29 @@ var bottomTarget = elementWithStyle('bottom-target', block(100, 100, '#666'));
 
 document.body.appendChild(elementWithStyle('host-parent', block(500, 500, '#eee'), [leftHost, rightUpperHost, bottomTarget]));
 
-function getUIScript()
-{
-    function xCenter(element) { return element.offsetLeft + element.offsetWidth / 2; }
-    function yCenter(element) { return element.offsetTop + element.offsetHeight / 2; }
-
-    return `
-    (function() {
-        uiController.touchDownAtPoint(${xCenter(leftTarget)}, ${yCenter(leftTarget)}, 1, function() {
-            uiController.touchDownAtPoint(${xCenter(rightTarget)}, ${yCenter(rightTarget)}, 2, function() {
-                uiController.touchDownAtPoint(${xCenter(bottomTarget)}, ${yCenter(bottomTarget)}, 3, function() {
-                    uiController.liftUpAtPoint(${xCenter(leftTarget)}, ${yCenter(leftTarget)}, 2, function () {
-                        uiController.liftUpAtPoint(${xCenter(rightTarget)}, ${yCenter(rightTarget)}, 1, function () {
-                            uiController.liftUpAtPoint(${xCenter(bottomTarget)}, ${yCenter(bottomTarget)}, 0, function () {
-                                uiController.uiScriptComplete("Done");
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    })();`
+function issueTouchDownAt(x, y, identifier) {
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`
+            uiController.touchDownAtPoint(${x}, ${y}, ${identifier}, function() {
+                uiController.uiScriptComplete("Done");
+            });`, resolve);
+    });
 }
 
-window.onload = function runTest()
+function issueTouchUpAt(x, y, identifier) {
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`
+            uiController.liftUpAtPoint(${x}, ${y}, ${identifier}, function() {
+                uiController.uiScriptComplete("Done");
+            });`, resolve);
+    });
+}
+
+function timeout(milliseconds) {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+window.onload = async function runTest()
 {
     if (window.testRunner)
         testRunner.dumpAsText();
@@ -140,12 +139,24 @@ window.onload = function runTest()
 
     if (window.testRunner && testRunner.runUIScript) {
         testRunner.waitUntilDone();
-        testRunner.runUIScript(getUIScript(), function(result) {
-            var pre = document.createElement('pre');
-            pre.textContent = output;
-            document.body.appendChild(pre);
-            testRunner.notifyDone();
-        });
+
+        function xCenter(element) { return element.offsetLeft + element.offsetWidth / 2; }
+        function yCenter(element) { return -document.documentElement.scrollTop + element.offsetTop + element.offsetHeight / 2; }
+
+        await issueTouchDownAt(xCenter(leftTarget), yCenter(leftTarget), 1);
+        await issueTouchDownAt(xCenter(rightTarget), yCenter(rightTarget), 2);
+        await issueTouchUpAt(xCenter(leftTarget), yCenter(leftTarget), 2);
+        await issueTouchUpAt(xCenter(rightTarget), yCenter(rightTarget), 1);
+
+        await timeout(2000);
+
+        await issueTouchDownAt(xCenter(bottomTarget), yCenter(bottomTarget), 3);
+        await issueTouchUpAt(xCenter(bottomTarget), yCenter(bottomTarget), 3);
+
+        var pre = document.createElement('pre');
+        pre.textContent = output;
+        document.body.appendChild(pre);
+        testRunner.notifyDone();
     }
 }
 

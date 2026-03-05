@@ -36,8 +36,8 @@ namespace WebKit {
 
 class ModelServiceInitializerDelegate : public XPCServiceInitializerDelegate {
 public:
-    ModelServiceInitializerDelegate(XPCObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
-        : XPCServiceInitializerDelegate(WTFMove(connection), initializerMessage)
+    ModelServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+        : XPCServiceInitializerDelegate(WTF::move(connection), initializerMessage)
     {
     }
 };
@@ -45,7 +45,7 @@ public:
 template<>
 void initializeAuxiliaryProcess<ModelProcess>(AuxiliaryProcessInitializationParameters&& parameters)
 {
-    static NeverDestroyed<ModelProcess> modelProcess(WTFMove(parameters));
+    static NeverDestroyed<Ref<ModelProcess>> modelProcess = ModelProcess::create(WTF::move(parameters));
 }
 
 } // namespace WebKit

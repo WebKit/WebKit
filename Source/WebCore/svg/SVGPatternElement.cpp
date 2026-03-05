@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGPatternElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPatternElement);
 
 inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -156,8 +156,8 @@ void SVGPatternElement::childrenChanged(const ChildChange& change)
 RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGResourcePattern>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGResourcePattern>(*this, WTFMove(style));
+        return createRenderer<RenderSVGResourcePattern>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGResourcePattern>(*this, WTF::move(style));
 }
 
 void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const
@@ -193,14 +193,9 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
         attributes.setPatternContentElement(this);
 }
 
-Ref<const SVGTransformList> SVGPatternElement::protectedPatternTransform() const
-{
-    return m_patternTransform->currentValue();
-}
-
 AffineTransform SVGPatternElement::localCoordinateSpaceTransform(CTMScope) const
 {
-    return protectedPatternTransform()->concatenate();
+    return protect(patternTransform())->concatenate();
 }
 
 }

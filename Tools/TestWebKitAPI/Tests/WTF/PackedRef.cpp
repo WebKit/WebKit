@@ -99,7 +99,7 @@ TEST(WTF_PackedRef, Assignment)
 
 static PackedRef<RefLogger> passWithRef(PackedRef<RefLogger>&& reference)
 {
-    return WTFMove(reference);
+    return WTF::move(reference);
 }
 
 TEST(WTF_PackedRef, ReturnValue)
@@ -132,7 +132,7 @@ TEST(WTF_PackedRef, ReturnValue)
 
     {
         PackedRefPtr<DerivedRefLogger> ptr(&a);
-        PackedRefPtr<RefLogger> ptr2(WTFMove(ptr));
+        PackedRefPtr<RefLogger> ptr2(WTF::move(ptr));
         EXPECT_EQ(nullptr, ptr.get());
         EXPECT_EQ(&a, ptr2.get());
     }

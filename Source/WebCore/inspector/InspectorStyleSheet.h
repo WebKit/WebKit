@@ -29,8 +29,10 @@
 #include "CSSStyleDeclaration.h"
 #include "Settings.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -145,10 +147,10 @@ private:
 
     InspectorCSSId m_styleId;
     const Ref<CSSStyleDeclaration> m_style;
-    InspectorStyleSheet* m_parentStyleSheet;
+    WeakPtr<InspectorStyleSheet> m_parentStyleSheet;
 };
 
-class InspectorStyleSheet : public RefCounted<InspectorStyleSheet> {
+class InspectorStyleSheet : public RefCountedAndCanMakeWeakPtr<InspectorStyleSheet> {
 public:
     class Listener {
     public:
@@ -223,7 +225,7 @@ private:
     Vector<Ref<CSSStyleRule>> cssStyleRulesSplitFromSameRule(CSSStyleRule&);
     Vector<const CSSSelector*> selectorsForCSSStyleRule(CSSStyleRule&);
 
-    InspectorPageAgent* m_pageAgent;
+    CheckedPtr<InspectorPageAgent> m_pageAgent;
     String m_id;
     RefPtr<CSSStyleSheet> m_pageStyleSheet;
     Inspector::Protocol::CSS::StyleSheetOrigin m_origin;

@@ -1,0 +1,4 @@
+
+FAIL active ::scroll-marker doesn't have focus on scroll if previous ::scroll-marker didn't have it assert_equals: ::scroll-marker opacity should be 1 but was  expected "1" but got ""
+FAIL active ::scroll-marker saves focus on scroll if previous ::scroll-marker had it assert_equals: ::scroll-marker opacity should be 0.5 but was  expected "0.5" but got ""
+

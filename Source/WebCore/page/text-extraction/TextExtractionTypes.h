@@ -25,15 +25,27 @@
 
 #pragma once
 
+#include <JavaScriptCore/RegularExpression.h>
 #include <WebCore/CharacterRange.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/WebKitJSHandle.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
+#include <wtf/UniqueRef.h>
+
+#if ENABLE(DATA_DETECTION)
+#include <WebCore/DataDetectorType.h>
+#endif
 
 namespace WebCore {
+
+struct FrameIdentifierType;
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
+
 namespace TextExtraction {
 
 enum class Action : uint8_t {
@@ -43,7 +55,7 @@ enum class Action : uint8_t {
     TextInput,
     KeyPress,
     HighlightText,
-    ScrollBy,
+    Scroll,
 };
 
 struct Interaction {
@@ -78,18 +90,24 @@ enum class NodeIdentifierInclusion : uint8_t {
     None,
     EditableOnly,
     Interactive,
+    AllContainers,
 };
 
 struct Request {
     HashMap<String, HashMap<JSHandleIdentifier, String>> clientNodeAttributes;
     std::optional<FloatRect> collectionRectInRootView;
     std::optional<JSHandleIdentifier> targetNodeHandleIdentifier;
+    Vector<JSHandleIdentifier> handleIdentifiersOfNodesToSkip;
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
     NodeIdentifierInclusion nodeIdentifierInclusion { NodeIdentifierInclusion::None };
-    bool includeEventListeners { false };
+    OptionSet<EventListenerCategory> eventListenerCategories;
     bool includeAccessibilityAttributes { false };
     bool includeTextInAutoFilledControls { false };
+    bool includeOffscreenPasswordFields { false };
+#if ENABLE(DATA_DETECTION)
+    OptionSet<DataDetectorType> dataDetectorTypes;
+#endif
 };
 
 struct Editable {
@@ -108,16 +126,26 @@ struct TextItemData {
 
 struct ScrollableItemData {
     FloatSize contentSize;
+    IntPoint scrollPosition;
+    bool isRoot { false };
+    bool hasOverflowItems { false };
 };
 
 struct ImageItemData {
     URL completedSource;
+    String shortenedName;
     String altText;
 };
 
 struct LinkItemData {
     String target;
     URL completedURL;
+    String shortenedURLString;
+};
+
+struct IFrameData {
+    String origin;
+    FrameIdentifier identifier;
 };
 
 struct ContentEditableData {
@@ -125,22 +153,37 @@ struct ContentEditableData {
     bool isFocused { false };
 };
 
+struct FormData {
+    String autocomplete;
+    String name;
+};
+
 struct TextFormControlData {
     Editable editable;
     String controlType;
     String autocomplete;
+    String pattern;
+    String name;
+    std::optional<int> minLength;
+    std::optional<int> maxLength;
+    bool isRequired { false };
     bool isReadonly { false };
     bool isDisabled { false };
     bool isChecked { false };
 };
 
+struct SelectOptionData {
+    String value;
+    String label;
+    bool isSelected { false };
+};
+
 struct SelectData {
-    Vector<String> selectedValues;
+    Vector<SelectOptionData> options;
     bool isMultiple { false };
 };
 
 enum class ContainerType : uint8_t {
-    Root,
     ViewportConstrained,
     List,
     ListItem,
@@ -152,10 +195,11 @@ enum class ContainerType : uint8_t {
     Canvas,
     Subscript,
     Superscript,
+    Strikethrough,
     Generic,
 };
 
-using ItemData = Variant<ContainerType, TextItemData, ScrollableItemData, ImageItemData, SelectData, ContentEditableData, TextFormControlData, LinkItemData>;
+using ItemData = Variant<ContainerType, TextItemData, ScrollableItemData, ImageItemData, SelectData, ContentEditableData, TextFormControlData, FormData, LinkItemData, IFrameData>;
 
 struct Item {
     ItemData data;
@@ -163,17 +207,54 @@ struct Item {
     Vector<Item> children;
     String nodeName;
     std::optional<NodeIdentifier> nodeIdentifier;
+    std::optional<FrameIdentifier> frameIdentifier;
     OptionSet<EventListenerCategory> eventListeners;
     HashMap<String, String> ariaAttributes;
     String accessibilityRole;
+    String title;
     HashMap<String, String> clientAttributes;
+    unsigned enclosingBlockNumber { 0 };
+    bool hasLineThrough { false };
+
+    template<typename T> bool hasData() const
+    {
+        return std::holds_alternative<T>(data);
+    }
 
     template<typename T> std::optional<T> dataAs() const
     {
-        if (std::holds_alternative<T>(data))
+        if (hasData<T>())
             return std::get<T>(data);
         return std::nullopt;
     }
+};
+
+struct Result {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(Result, WEBCORE_EXPORT);
+
+    Item rootItem;
+    unsigned visibleTextLength { 0 };
+};
+
+struct PageResults {
+    Result mainFrameResult;
+    HashMap<FrameIdentifier, UniqueRef<Result>> subFrameResults;
+};
+
+WEBCORE_EXPORT Result collatePageResults(PageResults&&);
+
+struct FilterRuleData {
+    String name;
+    String urlPatternString;
+    String scriptSource;
+};
+
+enum class FilterRulePattern : uint8_t { Global };
+
+struct FilterRule {
+    String name;
+    Variant<FilterRulePattern, JSC::Yarr::RegularExpression> urlPattern;
+    String scriptSource;
 };
 
 } // namespace TextExtraction

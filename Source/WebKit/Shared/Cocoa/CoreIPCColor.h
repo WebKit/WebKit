@@ -40,7 +40,7 @@ public:
     }
 
     CoreIPCColor(WebCore::Color&& color)
-        : m_color(WTFMove(color))
+        : m_color(WTF::move(color))
     {
     }
 

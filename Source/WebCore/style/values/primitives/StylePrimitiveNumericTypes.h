@@ -38,16 +38,16 @@ template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> stru
 
     NumberOrPercentage(Variant<Number, Percentage>&& value)
     {
-        WTF::switchOn(WTFMove(value), [this](auto&& alternative) { this->value = WTFMove(alternative); });
+        WTF::switchOn(WTF::move(value), [this](auto&& alternative) { this->value = WTF::move(alternative); });
     }
 
     NumberOrPercentage(Number value)
-        : value { WTFMove(value) }
+        : value { WTF::move(value) }
     {
     }
 
     NumberOrPercentage(Percentage value)
-        : value { WTFMove(value) }
+        : value { WTF::move(value) }
     {
     }
 
@@ -73,7 +73,7 @@ template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> stru
 
 private:
     NumberOrPercentage(CSS::PrimitiveDataEmptyToken token)
-        : value { WTFMove(token) }
+        : value { WTF::move(token) }
     {
     }
 
@@ -94,7 +94,7 @@ template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> stru
     }
 
     constexpr NumberOrPercentageResolvedToNumber(Percentage percentage)
-        : value { percentage.value / 100.0 }
+        : value { percentage.value / static_cast<V>(100) }
     {
     }
 
@@ -128,28 +128,41 @@ using AngleAllFloat = Angle<CSS::All, float>;
 
 // Standard Lengths
 using LengthAll = Length<CSS::All>;
+using LengthAllUnzoomed = Length<CSS::AllUnzoomed>;
 using LengthNonnegative = Length<CSS::Nonnegative>;
+using LengthNonnegativeUnzoomed = Length<CSS::NonnegativeUnzoomed>;
 
 // Standard LengthPercentages
 using LengthPercentageAll = LengthPercentage<CSS::All>;
+using LengthPercentageAllUnzoomed = LengthPercentage<CSS::AllUnzoomed>;
 using LengthPercentageNonnegative = LengthPercentage<CSS::Nonnegative>;
+using LengthPercentageNonnegativeUnzoomed = LengthPercentage<CSS::NonnegativeUnzoomed>;
 
 // Standard Percentages
 using PercentageAll = Percentage<CSS::All>;
+using PercentageAllUnzoomed = Percentage<CSS::AllUnzoomed>;
 using PercentageNonnegative = Percentage<CSS::Nonnegative>;
+using PercentageNonnegativeUnzoomed = Percentage<CSS::NonnegativeUnzoomed>;
 using PercentageAllFloat = Percentage<CSS::All, float>;
+using PercentageAllUnzoomedFloat = Percentage<CSS::AllUnzoomed, float>;
 using PercentageNonnegativeFloat = Percentage<CSS::Nonnegative, float>;
-using Percentage0To100 = LengthPercentage<CSS::Range{0,100}>;
+using PercentageNonnegativeUnzoomedFloat = Percentage<CSS::NonnegativeUnzoomed, float>;
 
 // Standard Points
 using LengthPercentageSpaceSeparatedPointAll = SpaceSeparatedPoint<LengthPercentageAll>;
+using LengthPercentageSpaceSeparatedPointAllUnzoomed = SpaceSeparatedPoint<LengthPercentageAllUnzoomed>;
 using LengthPercentageSpaceSeparatedPointNonnegative = SpaceSeparatedPoint<LengthPercentageNonnegative>;
+using LengthPercentageSpaceSeparatedPointNonnegativeUnzoomed = SpaceSeparatedPoint<LengthPercentageNonnegativeUnzoomed>;
 
 // Standard Sizes
 using LengthPercentageSpaceSeparatedSizeAll = SpaceSeparatedSize<LengthPercentageAll>;
+using LengthPercentageSpaceSeparatedSizeAllUnzoomed = SpaceSeparatedSize<LengthPercentageAllUnzoomed>;
 using LengthPercentageSpaceSeparatedSizeNonnegative = SpaceSeparatedSize<LengthPercentageNonnegative>;
+using LengthPercentageSpaceSeparatedSizeNonnegativeUnzoomed = SpaceSeparatedSize<LengthPercentageNonnegativeUnzoomed>;
 using LengthPercentageMinimallySerializingSpaceSeparatedSizeAll = MinimallySerializingSpaceSeparatedSize<LengthPercentageAll>;
+using LengthPercentageMinimallySerializingSpaceSeparatedSizeAllUnzoomed = MinimallySerializingSpaceSeparatedSize<LengthPercentageAllUnzoomed>;
 using LengthPercentageMinimallySerializingSpaceSeparatedSizeNonnegative = MinimallySerializingSpaceSeparatedSize<LengthPercentageNonnegative>;
+using LengthPercentageMinimallySerializingSpaceSeparatedSizeNonnegativeUnzoomed = MinimallySerializingSpaceSeparatedSize<LengthPercentageNonnegativeUnzoomed>;
 
 // MARK: CSS -> Style
 

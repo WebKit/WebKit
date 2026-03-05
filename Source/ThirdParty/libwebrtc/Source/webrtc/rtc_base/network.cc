@@ -533,7 +533,7 @@ Network* NetworkManagerBase::GetNetworkFromAddress(const IPAddress& ip) const {
 }
 
 bool NetworkManagerBase::IsVpnMacAddress(ArrayView<const uint8_t> address) {
-  if (address.data() == nullptr && address.size() == 0) {
+  if (address.data() == nullptr && address.empty()) {
     return false;
   }
   for (const auto& vpn : kVpns) {
@@ -1117,7 +1117,28 @@ Network::Network(absl::string_view name,
       type_(type),
       preference_(0) {}
 
-Network::Network(const Network&) = default;
+Network::Network(const Network& o)
+    : default_local_address_provider_(o.default_local_address_provider_),
+      mdns_responder_provider_(o.mdns_responder_provider_),
+      name_(o.name_),
+      description_(o.description_),
+      prefix_(o.prefix_),
+      prefix_length_(o.prefix_length_),
+      key_(o.key_),
+      ips_(o.ips_),
+      scope_id_(o.scope_id_),
+      ignored_(o.ignored_),
+      type_(o.type_),
+      underlying_type_for_vpn_(o.underlying_type_for_vpn_),
+      preference_(o.preference_),
+      active_(o.active_),
+      id_(o.id_),
+      network_preference_(o.network_preference_) {
+  // Copying a Network with signals set is hard to reason about.
+  // So don't allow it.
+  RTC_CHECK(SignalTypeChanged.is_empty());
+  RTC_CHECK(SignalNetworkPreferenceChanged.is_empty());
+}
 
 Network::~Network() = default;
 
@@ -1142,7 +1163,7 @@ bool Network::SetIPs(const std::vector<InterfaceAddress>& ips, bool changed) {
 
 // Select the best IP address to use from this Network.
 IPAddress Network::GetBestIP() const {
-  if (ips_.size() == 0) {
+  if (ips_.empty()) {
     return IPAddress();
   }
 

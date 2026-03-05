@@ -105,7 +105,7 @@ inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSVal
 
     ASSERT(callLinkInfo->specializationKind() == CodeSpecializationKind::CodeForConstruct);
 
-    auto constructData = JSC::getConstructData(callee);
+    auto constructData = JSC::getConstructDataInline(callee);
     ASSERT(constructData.type != CallData::Type::JS);
 
     if (constructData.type == CallData::Type::Native) {

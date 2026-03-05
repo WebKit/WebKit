@@ -3175,6 +3175,11 @@ static int encode_without_recode(AV1_COMP *cpi) {
   // frame.
   if (!frame_is_intra_only(cm)) av1_pick_and_set_high_precision_mv(cpi, q);
 
+  if (svc->temporal_layer_id == 0) {
+    cpi->rc.num_col_blscroll_last_tl0 = 0;
+    cpi->rc.num_row_blscroll_last_tl0 = 0;
+  }
+
   // transform / motion compensation build reconstruction frame
   av1_encode_frame(cpi);
 
@@ -3981,6 +3986,7 @@ static void subtract_stats(FIRSTPASS_STATS *section,
   section->frame_avg_wavelet_energy -= frame->frame_avg_wavelet_energy;
   section->coded_error -= frame->coded_error;
   section->sr_coded_error -= frame->sr_coded_error;
+  section->lt_coded_error -= frame->lt_coded_error;
   section->pcnt_inter -= frame->pcnt_inter;
   section->pcnt_motion -= frame->pcnt_motion;
   section->pcnt_second_ref -= frame->pcnt_second_ref;
@@ -5073,6 +5079,25 @@ void av1_post_encode_updates(AV1_COMP *const cpi,
                              const AV1_COMP_DATA *const cpi_data) {
   AV1_PRIMARY *const ppi = cpi->ppi;
   AV1_COMMON *const cm = &cpi->common;
+
+  if (ppi->b_freeze_internal_state) {
+    // Should not update encoder state, just necessary work to get the
+    // expected output and then return early.
+
+    // Note *size = 0 indicates a dropped frame for which psnr is not calculated
+    if (ppi->b_calculate_psnr && cpi_data->frame_size > 0) {
+      if (cm->show_existing_frame ||
+          (!is_stat_generation_stage(cpi) && cm->show_frame)) {
+        generate_psnr_packet(cpi);
+      }
+    }
+
+    if (cpi_data->pop_lookahead == 1) {
+      av1_lookahead_pop(cpi->ppi->lookahead, cpi_data->flush,
+                        cpi->compressor_stage);
+    }
+    return;
+  }
 
   update_gm_stats(cpi);
 

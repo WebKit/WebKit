@@ -1,0 +1,38 @@
+CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Hello from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Warning from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Error from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/embedded-same-origin.html
+CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Hello from http://localhost:8000/site-isolation/inspector/console/resources/embedded-cross-origin.html
+CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+
+== Running test suite: MessageFromIFrame
+-- Running test case: MessageFromIFrame.SameOriginIFrame
+Got message from frame target: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+
+-- Running test case: MessageFromIFrame.CrossOriginIFrame
+Got message from frame target: Hello from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Warning from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Error from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+
+-- Running test case: MessageFromIFrame.GrandChildSameOriginIFrameInSameOrigin
+Got message from frame target: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/embedded-same-origin.html
+Got message from frame target: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+
+-- Running test case: MessageFromIFrame.GrandChildSameOriginIFrameInCrossOrigin
+Got message from frame target: Hello from http://localhost:8000/site-isolation/inspector/console/resources/embedded-cross-origin.html
+Got message from frame target: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+Got message from frame target: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+

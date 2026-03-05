@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
                       RenderTableSection {TBODY} at (0,0) size 260x317
                         RenderTableRow {TR} at (0,0) size 260x24
                           RenderTableCell {TD} at (0,0) size 6x24 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
-                            RenderBR {BR} at (2,2) size 0x19
+                            RenderBR {BR} at (2,2) size 0x20
                           RenderTableCell {TD} at (6,2) size 254x20 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
                             RenderInline {FONT} at (2,4) size 245x16
                               RenderInline {B} at (2,4) size 245x16
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
                                   text run at (2,2) width 245: "CHAMBERLAIN'S CAREER STATISTICS"
                         RenderTableRow {TR} at (0,24) size 260x293
                           RenderTableCell {TD} at (0,158) size 6x25 [bgcolor=#FFFFFF] [r=1 c=0 rs=1 cs=1]
-                            RenderBR {BR} at (2,136) size 0x20
+                            RenderBR {BR} at (2,137) size 0x19
                           RenderTableCell {TD} at (6,24) size 254x293 [r=1 c=1 rs=1 cs=1]
                             RenderTable {TABLE} at (2,2) size 250x272
                               RenderTableSection {TBODY} at (0,0) size 250x272
@@ -489,7 +489,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (4,2) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "30.1"
-                    RenderText {#text} at (0,0) size 179x239
+                    RenderText {#text} at (0,0) size 179x240
                       text run at (0,0) width 167: "Known as ``Wilt the Stilt''"
                       text run at (0,20) width 171: "and ``The Big Dipper,'' the"
                       text run at (0,40) width 140: "7-foot-1 Chamberlain"
@@ -503,18 +503,18 @@ layer at (0,0) size 800x600
                       text run at (0,200) width 165: "his career, averaging 30.1"
                       text run at (0,220) width 131: "points for his career."
                   RenderBlock {P} at (0,256) size 440x60
-                    RenderText {#text} at (0,0) size 158x59
+                    RenderText {#text} at (0,0) size 158x60
                       text run at (0,0) width 158: "He also led the league in"
                       text run at (0,20) width 149: "career rebounding with"
                       text run at (0,40) width 48: "23,924."
                   RenderBlock {P} at (0,332) size 440x80
-                    RenderText {#text} at (0,0) size 440x79
+                    RenderText {#text} at (0,0) size 440x80
                       text run at (0,0) width 406: "One of only two men named MVP and rookie of the year in the"
                       text run at (0,20) width 439: "same season (1959), he was also MVP in 1966 through 1968. He led"
                       text run at (0,40) width 440: "the NBA in scoring seven straight seasons, 1960 to 1966, and led the"
                       text run at (0,60) width 272: "league in rebounding 11 of his 14 seasons."
                   RenderBlock {P} at (0,428) size 440x60
-                    RenderText {#text} at (0,0) size 439x59
+                    RenderText {#text} at (0,0) size 439x60
                       text run at (0,0) width 406: "One of his most famous records is the 100 points he scored in a"
                       text run at (0,20) width 439: "single game in the Philadelphia Warriors' 169-147 defeat of the New"
                       text run at (0,40) width 304: "York Knicks on March 2, 1962, in Hershey, Pa."

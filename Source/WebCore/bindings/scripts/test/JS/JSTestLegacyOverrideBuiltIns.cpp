@@ -131,7 +131,7 @@ void JSTestLegacyOverrideBuiltInsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestLegacyOverrideBuiltIns::s_info = { "TestLegacyOverrideBuiltIns"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltIns) };
 
 JSTestLegacyOverrideBuiltIns::JSTestLegacyOverrideBuiltIns(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl)
-    : JSDOMWrapper<TestLegacyOverrideBuiltIns>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestLegacyOverrideBuiltIns>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -171,7 +171,7 @@ bool JSTestLegacyOverrideBuiltIns::legacyPlatformObjectGetOwnProperty(JSObject* 
             return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-            auto value = toJS<IDLInterface<Node>>(*lexicalGlobalObject, *thisObject->globalObject(), throwScope, WTFMove(namedProperty.value()));
+            auto value = toJS<IDLInterface<Node>>(*lexicalGlobalObject, *thisObject->globalObject(), throwScope, WTF::move(namedProperty.value()));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), value);
             return true;
@@ -198,7 +198,7 @@ bool JSTestLegacyOverrideBuiltIns::getOwnPropertySlotByIndex(JSObject* object, J
         return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-        auto value = toJS<IDLInterface<Node>>(*lexicalGlobalObject, *thisObject->globalObject(), throwScope, WTFMove(namedProperty.value()));
+        auto value = toJS<IDLInterface<Node>>(*lexicalGlobalObject, *thisObject->globalObject(), throwScope, WTF::move(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
         slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), value);
         return true;
@@ -242,7 +242,7 @@ bool JSTestLegacyOverrideBuiltIns::put(JSCell* cell, JSGlobalObject* lexicalGlob
         ownDescriptor.setPropertySlot(lexicalGlobalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(throwScope, false);
     }
-    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTFMove(ownDescriptor), putPropertySlot.isStrictMode()));
+    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTF::move(ownDescriptor), putPropertySlot.isStrictMode()));
 }
 
 bool JSTestLegacyOverrideBuiltIns::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
@@ -386,7 +386,7 @@ void JSTestLegacyOverrideBuiltInsOwner::finalize(JSC::Handle<JSC::Unknown> handl
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyOverrideBuiltIns = static_cast<JSTestLegacyOverrideBuiltIns*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestLegacyOverrideBuiltIns->protectedWrapped().ptr(), jsTestLegacyOverrideBuiltIns);
+    uncacheWrapper(world, protect(jsTestLegacyOverrideBuiltIns->wrapped()).ptr(), jsTestLegacyOverrideBuiltIns);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -424,7 +424,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestLegacyOverrideBuiltIns>(impl.ptr());
 #endif
-    return createWrapper<TestLegacyOverrideBuiltIns>(globalObject, WTFMove(impl));
+    return createWrapper<TestLegacyOverrideBuiltIns>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestLegacyOverrideBuiltIns& impl)

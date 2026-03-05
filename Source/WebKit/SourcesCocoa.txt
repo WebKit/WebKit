@@ -71,6 +71,8 @@ NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm @nonARC
 GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm @nonARC
 GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm @nonARC
 GPUProcess/cocoa/GPUProcessCocoa.mm @nonARC
+GPUProcess/graphics/Model/MeshImpl.cpp
+GPUProcess/graphics/Model/WebKitMesh.mm
 GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
 GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm @nonARC @no-unify
 GPUProcess/ios/GPUProcessIOS.mm @nonARC
@@ -108,9 +110,12 @@ Platform/cocoa/WebKitAdditions.mm @nonARC @no-unify
 Platform/cocoa/WebPrivacyHelpers.mm @nonARC
 
 Platform/ios/PaymentAuthorizationController.mm @nonARC
+Platform/ios/PlaybackSessionInterfaceAVKit.mm @nonARC @no-unify
 Platform/ios/PlaybackSessionInterfaceLMK.mm @nonARC @no-unify
+Platform/ios/VideoPresentationInterfaceAVKit.mm @nonARC @no-unify
 Platform/ios/VideoPresentationInterfaceLMK.mm @nonARC
 Platform/ios/VideoReceiverEndpointMessage.mm @nonARC
+Platform/ios/WKAVContentSource.mm @nonARC @no-unify
 
 Platform/mac/MenuUtilities.mm @nonARC
 Platform/mac/StringUtilities.mm @nonARC
@@ -180,6 +185,9 @@ Shared/Cocoa/AuxiliaryProcessCocoa.mm @nonARC
 Shared/Cocoa/CodeSigning.mm @nonARC
 Shared/Cocoa/CompletionHandlerCallChecker.mm @nonARC
 Shared/Cocoa/DefaultWebBrowserChecks.mm @nonARC
+Shared/Cocoa/EnhancedSecurityLinkUtilities.mm @nonARC
+Shared/Cocoa/InteractionInformationAtPosition.mm @nonARC
+Shared/Cocoa/InteractionInformationRequest.cpp
 Shared/Cocoa/LoadParametersCocoa.mm @nonARC
 Shared/Cocoa/PDFKitSoftLink.mm @nonARC
 Shared/Cocoa/RevealItem.mm @nonARC
@@ -211,8 +219,6 @@ Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm @nonARC
 
 Shared/ios/AuxiliaryProcessIOS.mm @nonARC
 Shared/ios/HardwareKeyboardState.cpp
-Shared/ios/InteractionInformationAtPosition.mm @nonARC
-Shared/ios/InteractionInformationRequest.cpp
 Shared/ios/NativeWebKeyboardEventIOS.mm @nonARC
 Shared/ios/NativeWebMouseEventIOS.mm @nonARC
 Shared/ios/NativeWebTouchEventIOS.mm @nonARC
@@ -247,6 +253,7 @@ Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm @nonARC
 Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp
 Shared/RemoteLayerTree/RemoteScrollingUIState.cpp
 
+WebProcess/Model/WebModelPlayer.mm
 WebProcess/GPU/webrtc/SharedVideoFrame.cpp
 
 UIProcess/_WKWebViewPrintFormatter.mm @nonARC
@@ -297,8 +304,6 @@ UIProcess/API/Cocoa/_WKInspectorExtension.mm @nonARC
 UIProcess/API/Cocoa/_WKInspectorTesting.mm @nonARC
 UIProcess/API/Cocoa/_WKInspectorWindow.mm @nonARC
 UIProcess/API/Cocoa/_WKInternalDebugFeature.mm @nonARC
-UIProcess/API/Cocoa/_WKJSBuffer.mm @nonARC
-UIProcess/API/Cocoa/_WKJSHandle.mm @nonARC
 UIProcess/API/Cocoa/_WKLinkIconParameters.mm @nonARC
 UIProcess/API/Cocoa/_WKModalContainerInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKNotificationData.mm @nonARC
@@ -308,12 +313,12 @@ UIProcess/API/Cocoa/_WKPageLoadTiming.mm @nonARC
 UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm @nonARC
 UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm @nonARC
 UIProcess/API/Cocoa/_WKResourceLoadInfo.mm @nonARC
-UIProcess/API/Cocoa/_WKSerializedNode.mm @nonARC
 UIProcess/API/Cocoa/_WKSessionState.mm @nonARC
 UIProcess/API/Cocoa/_WKSpatialBackdropSource.mm @nonARC
 UIProcess/API/Cocoa/_WKSystemPreferences.mm @nonARC
 UIProcess/API/Cocoa/_WKTargetedElementInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKTargetedElementRequest.mm @nonARC
+UIProcess/API/Cocoa/_WKTextExtraction.mm @nonARC
 UIProcess/API/Cocoa/_WKTextInputContext.mm @nonARC
 UIProcess/API/Cocoa/_WKTextManipulationConfiguration.mm @nonARC
 UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm @nonARC
@@ -356,8 +361,12 @@ UIProcess/API/Cocoa/WKDownload.mm @nonARC
 UIProcess/API/Cocoa/WKError.mm @nonARC
 UIProcess/API/Cocoa/WKFindConfiguration.mm @nonARC
 UIProcess/API/Cocoa/WKFindResult.mm @nonARC
+UIProcess/API/Cocoa/WKFormInfo.mm @nonARC
 UIProcess/API/Cocoa/WKFrameInfo.mm @nonARC
 UIProcess/API/Cocoa/WKHTTPCookieStore.mm @nonARC
+UIProcess/API/Cocoa/WKJSHandle.mm @nonARC
+UIProcess/API/Cocoa/WKJSScriptingBuffer.mm @nonARC
+UIProcess/API/Cocoa/WKJSSerializedNode.mm @nonARC
 UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm @nonARC
 UIProcess/API/Cocoa/WKNavigation.mm @nonARC
 UIProcess/API/Cocoa/WKNavigationAction.mm @nonARC
@@ -432,7 +441,6 @@ UIProcess/Cocoa/AppKitSoftLink.mm @nonARC
 UIProcess/Cocoa/AutomationClient.mm @nonARC
 UIProcess/Cocoa/AutomationSessionClient.mm @nonARC
 UIProcess/Cocoa/BrowsingWarningCocoa.mm @nonARC
-UIProcess/Cocoa/SafeBrowsingSoftLink.mm @nonARC
 UIProcess/Cocoa/CoreTelephonyUtilities.mm @nonARC
 UIProcess/Cocoa/DiagnosticLoggingClient.mm @nonARC
 UIProcess/Cocoa/DownloadProxyMapCocoa.mm @nonARC
@@ -454,6 +462,7 @@ UIProcess/Cocoa/PlatformXRCoordinator.mm @nonARC
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm @nonARC
 UIProcess/Cocoa/ProcessAssertionCocoa.mm @nonARC
 UIProcess/Cocoa/ResourceLoadDelegate.mm @nonARC
+UIProcess/Cocoa/SafeBrowsingUtilities.mm @nonARC
 UIProcess/Cocoa/SessionStateCoding.mm @nonARC
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm @nonARC
 UIProcess/Cocoa/TextCheckingController.mm @nonARC
@@ -639,7 +648,7 @@ UIProcess/mac/WebProcessProxyMac.mm @nonARC
 UIProcess/mac/WindowServerConnection.mm @nonARC
 UIProcess/mac/WKFullScreenWindowController.mm @nonARC
 UIProcess/mac/WKImmediateActionController.mm @nonARC
-UIProcess/mac/WKPanGestureController.mm @nonARC
+UIProcess/mac/WKAppKitGestureController.mm @nonARC
 UIProcess/mac/WKPrintingView.mm @nonARC
 UIProcess/mac/WKQuickLookPreviewController.mm @nonARC
 UIProcess/mac/WKRevealItemPresenter.mm @nonARC
@@ -731,6 +740,7 @@ WebProcess/cocoa/RemoteRealtimeAudioSource.cpp
 WebProcess/cocoa/RemoteRealtimeMediaSource.cpp
 WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp
 WebProcess/cocoa/RemoteRealtimeVideoSource.cpp
+WebProcess/cocoa/TextRecognitionRequest.cpp
 WebProcess/cocoa/UserMediaCaptureManager.cpp
 WebProcess/cocoa/VideoPresentationManager.mm @nonARC
 WebProcess/cocoa/WebProcessCocoa.mm @nonARC
@@ -971,7 +981,8 @@ RemoteLegacyCDMSessionProxyMessageReceiver.cpp
 RemoteMediaEngineConfigurationFactoryProxyMessageReceiver.cpp
 RemoteMediaPlayerManagerProxyMessageReceiver.cpp
 RemoteMediaPlayerProxyMessageReceiver.cpp
-RemoteMediaResourceManagerMessageReceiver.cpp
+RemoteMediaResourceLoaderMessageReceiver.cpp
+RemoteMediaResourceLoaderProxyMessageReceiver.cpp
 RemoteMediaSessionCoordinatorMessageReceiver.cpp
 RemoteMediaSessionCoordinatorProxyMessageReceiver.cpp
 RemoteMediaSessionHelperMessageReceiver.cpp

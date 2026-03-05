@@ -29,7 +29,7 @@
 namespace WebCore {
 
 GeolocationCoordinates::GeolocationCoordinates(GeolocationPositionData&& position)
-    : m_position(WTFMove(position))
+    : m_position(WTF::move(position))
 {
     ASSERT(m_position.isValid());
 }

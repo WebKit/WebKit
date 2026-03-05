@@ -67,7 +67,7 @@ WebSocketDeflater::~WebSocketDeflater()
         LOG(Network, "WebSocketDeflater %p Destructor deflateEnd() failed: %d is returned", this, result);
 }
 
-static void setStreamParameter(z_stream* stream, std::span<const uint8_t> inputData, std::span<uint8_t> outputData)
+static void NODELETE setStreamParameter(z_stream* stream, std::span<const uint8_t> inputData, std::span<uint8_t> outputData)
 {
     stream->next_in = const_cast<uint8_t*>(inputData.data());
     stream->avail_in = inputData.size();

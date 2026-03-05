@@ -573,8 +573,17 @@ class BitSetArray final
             updateIteratorBit(pos, true);
         }
 
+        void resetLaterBits(const BitSetArray &bits)
+        {
+            ASSERT(bits.first() > (mIndex * priv::kDefaultBitSetSize) + *mCurrentIterator);
+            prepareCopy();
+            mParentCopy &= ~bits;
+            updateIteratorBits(bits);
+        }
+
         void setLaterBits(const BitSetArray &bits)
         {
+            ASSERT(bits.first() > (mIndex * priv::kDefaultBitSetSize) + *mCurrentIterator);
             prepareCopy();
             mParentCopy |= bits;
             updateIteratorBits(bits);
@@ -690,6 +699,18 @@ class BitSetArray final
 
     constexpr value_type bits(size_t index) const;
     constexpr static size_t ArraySize() { return kArraySize; }
+
+    template <size_t M = N>
+    constexpr auto bits() const
+        -> std::enable_if_t<priv::kDefaultBitSetSize == 32 && M <= 64, uint64_t>
+    {
+        // This function should only exist when the default bitset size is 32 and N is not more
+        // than 64. When kDefaultBitSetSize is 32, BitSetArray is used for N > 32. This means N is
+        // in (32, 64], and kArraySize will be 2.
+        static_assert(kArraySize == 2);
+        uint64_t result = mBaseBitSetArray[1].bits();
+        return (result << 32) | mBaseBitSetArray[0].bits();
+    }
 
     // Produces a mask of ones up to the "x"th bit.
     constexpr static BitSetArray Mask(std::size_t x);

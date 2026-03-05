@@ -35,7 +35,7 @@ static ShaderInfo compile_shader_module(const DawnSharedContext* sharedContext,
 
     ShaderInfo info;
 
-    const Caps* caps = sharedContext->caps();
+    const DawnCaps* caps = static_cast<const DawnCaps*>(sharedContext->caps());
     const ComputeStep* step = pipelineDesc.computeStep();
     ShaderErrorHandler* errorHandler = caps->shaderErrorHandler();
 
@@ -52,6 +52,7 @@ static ShaderInfo compile_shader_module(const DawnSharedContext* sharedContext,
         SkSL::NativeShader wgsl;
         SkSL::Program::Interface interface;
         SkSL::ProgramSettings settings;
+        settings.fForceHighPrecision = !caps->supportsHalfPrecision();
 
         std::string sksl = BuildComputeSkSL(caps, step, BackendApi::kDawn);
         if (skgpu::SkSLToWGSL(caps->shaderCaps(),

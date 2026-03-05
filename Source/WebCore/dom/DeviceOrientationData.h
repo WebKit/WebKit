@@ -42,7 +42,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static Ref<DeviceOrientationData> create(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy);
 #else
-    WEBCORE_EXPORT static Ref<DeviceOrientationData> create(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute);
+    WEBCORE_EXPORT static Ref<DeviceOrientationData> NODELETE create(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute);
 #endif
 
     std::optional<double> alpha() const { return m_alpha; }

@@ -38,6 +38,7 @@
 
 #import <pal/spi/cocoa/AXSpeechManagerSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -157,7 +158,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     [avUtterance setPitchMultiplier:utterance->pitch()];
     [avUtterance setVoice:avVoice];
     utterance->setWrapper(avUtterance.get());
-    m_utterance = WTFMove(utterance);
+    m_utterance = WTF::move(utterance);
 
     // macOS won't send a did start speaking callback for empty strings.
 #if !HAVE(UNIFIED_SPEECHSYNTHESIS_FIX_FOR_81465164)
@@ -287,19 +288,44 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 {
 }
 
+void PlatformSpeechSynthesizer::appendVoices(NSArray *voices)
+{
+    for (AVSpeechSynthesisVoice *voice in voices) {
+        if (voice.isSystemVoice)
+            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, /* localService */ true, /* isDefault */ true));
+    }
+}
+
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
     if (!PAL::isAVFoundationFrameworkAvailable())
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    // SpeechSynthesis replaces on-device compact with higher quality compact voices. These
-    // are not available to WebKit so we're losing these default voices for WebSpeech.
-    // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
-    for (AVSpeechSynthesisVoice *voice in [PAL::getAVSpeechSynthesisVoiceClassSingleton() speechVoicesIncludingSuperCompact]) {
-        if (voice.isSystemVoice)
-            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, true, true));
+
+    Class avSpeechSynthesisVoiceClass = PAL::getAVSpeechSynthesisVoiceClassSingleton();
+
+    // Support older OS versions that don't have the asynchronous version yet.
+    // Remove this once 26.3 is the minimum OS version supported by Safari.
+    if (![avSpeechSynthesisVoiceClass respondsToSelector:@selector(speechVoicesIncludingSuperCompactWithCompletionHandler:)]) {
+        appendVoices([avSpeechSynthesisVoiceClass speechVoicesIncludingSuperCompact]);
+        return;
     }
+
+    WeakPtr weakThis { *this };
+    [avSpeechSynthesisVoiceClass speechVoicesIncludingSuperCompactWithCompletionHandler:^(NSArray<AVSpeechSynthesisVoice *> *voices) {
+        callOnMainThread([weakThis, voices = RetainPtr { voices }]() {
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            protectedThis->appendVoices(voices.get());
+            protectedThis->m_speechSynthesizerClient.voicesDidChange();
+            END_BLOCK_OBJC_EXCEPTIONS
+        });
+    }];
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

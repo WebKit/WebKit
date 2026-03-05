@@ -93,7 +93,7 @@ public:
                 data.m_scope = bytecode.m_scope;
                 data.m_symbolTable = bytecode.m_symbolTable;
                 data.m_initialValue = bytecode.m_initialValue;
-                m_generatorFrameData = WTFMove(data);
+                m_generatorFrameData = WTF::move(data);
                 break;
             }
 

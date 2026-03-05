@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <WebCore/JSDOMPromiseDeferredForward.h>
-#include <WebCore/PushPermissionState.h>
-#include <WebCore/PushSubscription.h>
-#include <WebCore/PushSubscriptionOptionsInit.h>
+#include "JSDOMPromiseDeferredForward.h"
+#include "PushPermissionState.h"
+#include "PushSubscription.h"
+#include "PushSubscriptionOptionsInit.h"
 #include <optional>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -39,12 +39,12 @@ class PushSubscriptionOwner;
 class ScriptExecutionContext;
 
 class PushManager {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushManager);
+    WTF_MAKE_TZONE_ALLOCATED(PushManager);
 public:
     explicit PushManager(PushSubscriptionOwner&);
     ~PushManager();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     static Vector<String> supportedContentEncodings();
@@ -54,7 +54,7 @@ public:
     void permissionState(ScriptExecutionContext&, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
 private:
-    PushSubscriptionOwner& m_pushSubscriptionOwner;
+    WeakRef<PushSubscriptionOwner> m_pushSubscriptionOwner;
 };
 
 } // namespace WebCore

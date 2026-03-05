@@ -57,7 +57,7 @@ public:
     void deleteLineBoxTree();
     void deleteLineBoxes();
 
-    void removeLineBox(LegacyInlineFlowBox*);
+    void NODELETE removeLineBox(LegacyInlineFlowBox*);
     
     void dirtyLineBoxes();
     void dirtyLineFromChangedChild(RenderBoxModelObject& parent);

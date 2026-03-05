@@ -46,7 +46,7 @@ template<typename CSSType> static bool styleImageIsUncacheable(const CSSType& va
 }
 
 template<> struct StyleImageIsUncacheable<GradientColorInterpolationMethod> {
-    constexpr bool operator()(const auto&) { return false; }
+    constexpr bool NODELETE operator()(const auto&) { return false; }
 };
 
 template<> struct StyleImageIsUncacheable<Color> {
@@ -54,7 +54,7 @@ template<> struct StyleImageIsUncacheable<Color> {
 };
 
 template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {
-    constexpr bool operator()(const auto&) { return false; }
+    constexpr bool NODELETE operator()(const auto&) { return false; }
 };
 
 template<UnitEnum CSSType> struct StyleImageIsUncacheable<CSSType> {
@@ -66,7 +66,7 @@ template<NumericRaw CSSType> struct StyleImageIsUncacheable<CSSType> {
 };
 
 template<Calc CSSType> struct StyleImageIsUncacheable<CSSType> {
-    constexpr bool operator()(const auto& value) { return value.protectedCalc()->requiresConversionData(); }
+    constexpr bool operator()(const auto& value) { return protect(value.calcValue())->requiresConversionData(); }
 };
 
 template<OptionalLike CSSType> struct StyleImageIsUncacheable<CSSType> {
@@ -90,12 +90,12 @@ template<VariantLike CSSType> struct StyleImageIsUncacheable<CSSType> {
 
 // MARK: -
 
-RefPtr<StyleImage> CSSGradientValue::createStyleImage(const Style::BuilderState& state) const
+RefPtr<Style::Image> CSSGradientValue::createStyleImage(const Style::BuilderState& state) const
 {
     if (m_cachedStyleImage)
         return m_cachedStyleImage;
 
-    auto styleImage = StyleGradientImage::create(
+    auto styleImage = Style::GradientImage::create(
         Style::toStyle(m_gradient, state)
     );
     if (!CSS::styleImageIsUncacheable(m_gradient))

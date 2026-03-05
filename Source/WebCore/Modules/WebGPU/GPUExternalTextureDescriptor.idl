@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpuexternaltexturedescriptor
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUExternalTextureDescriptor : GPUObjectDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUExternalTextureDescriptor : GPUObjectDescriptorBase {
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
 #if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
     required (HTMLVideoElement or WebCodecsVideoFrame) source;

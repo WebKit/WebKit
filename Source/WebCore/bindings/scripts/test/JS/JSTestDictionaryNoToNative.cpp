@@ -22,14 +22,27 @@
 #include "JSTestDictionaryNoToNative.h"
 
 #include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <type_traits>
+#include <wtf/IsIncreasing.h>
 
 
 
 namespace WebCore {
 using namespace JSC;
+
+IGNORE_WARNINGS_BEGIN("invalid-offsetof")
+
+static_assert(std::is_aggregate_v<TestDictionaryNoToNative>);
+static_assert(IsIncreasing<
+      0
+    , offsetof(TestDictionaryNoToNative, member)
+>);
+
+IGNORE_WARNINGS_END
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestDictionaryNoToNative& dictionary)
 {
@@ -46,6 +59,16 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
     return result;
 }
 
+IGNORE_WARNINGS_BEGIN("invalid-offsetof")
+
+static_assert(std::is_aggregate_v<TestDictionaryNoToNative::GenerateKeyword>);
+static_assert(IsIncreasing<
+      0
+    , offsetof(TestDictionaryNoToNative::GenerateKeyword, member)
+>);
+
+IGNORE_WARNINGS_END
+
 template<> ConversionResult<IDLDictionary<TestDictionaryNoToNative::GenerateKeyword>> convertDictionary<TestDictionaryNoToNative::GenerateKeyword>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
@@ -56,7 +79,6 @@ template<> ConversionResult<IDLDictionary<TestDictionaryNoToNative::GenerateKeyw
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestDictionaryNoToNative::GenerateKeyword result;
     JSValue memberValue;
     if (isNullOrUndefined)
         memberValue = jsUndefined();
@@ -64,13 +86,12 @@ template<> ConversionResult<IDLDictionary<TestDictionaryNoToNative::GenerateKeyw
         memberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "member"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!memberValue.isUndefined()) {
-        auto memberConversionResult = convert<IDLDouble>(lexicalGlobalObject, memberValue);
-        if (memberConversionResult.hasException(throwScope)) [[unlikely]]
-            return ConversionResultException { };
-        result.member = memberConversionResult.releaseReturnValue();
-    }
-    return result;
+    auto memberConversionResult = convert<IDLOptional<IDLDouble>>(lexicalGlobalObject, memberValue);
+    if (memberConversionResult.hasException(throwScope)) [[unlikely]]
+        return ConversionResultException { };
+    return TestDictionaryNoToNative::GenerateKeyword {
+        memberConversionResult.releaseReturnValue(),
+    };
 }
 
 } // namespace WebCore

@@ -21,6 +21,7 @@
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 #include "video/config/video_encoder_config.h"
@@ -50,9 +51,10 @@ struct ParamsWithLogging : public VideoQualityTest::Params {
  public:
   ParamsWithLogging() {
     // Use these logging flags by default, for everything.
-    logging = {absl::GetFlag(FLAGS_rtc_event_log_name),
-               absl::GetFlag(FLAGS_rtp_dump_name),
-               absl::GetFlag(FLAGS_encoded_frame_path)};
+    logging = {
+        .rtc_event_log_name = absl::GetFlag(FLAGS_rtc_event_log_name),
+        .rtp_dump_name = absl::GetFlag(FLAGS_rtp_dump_name),
+        .encoded_frame_base_path = absl::GetFlag(FLAGS_encoded_frame_path)};
     this->config = BuiltInNetworkBehaviorConfig();
   }
 };
@@ -77,13 +79,26 @@ TEST(FullStackTest, Foreman_Cif_Net_Delay_0_0_Plr_0_VP9) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,    288,    30,
-      700000, 700000, 700000, false,
-      "VP9",  1,      0,      0,
-      false,  false,  true,   ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_VP9", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 700000,
+                          .target_bitrate_bps = 700000,
+                          .max_bitrate_bps = 700000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP9",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {.test_label = "foreman_cif_net_delay_0_0_plr_0_VP9",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(foreman_cif);
 }
 
@@ -92,13 +107,27 @@ TEST(GenericDescriptorTest,
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP9", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_delay_50_0_plr_5_VP9_generic_descriptor",
-                          0.0, 0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP9",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_delay_50_0_plr_5_VP9_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
@@ -123,11 +152,29 @@ TEST(FullStackTest, Generator_Net_Delay_0_0_Plr_0_VP9Profile2) {
       {kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile2)}};
   ParamsWithLogging generator;
   generator.call.send_side_bwe = true;
-  generator.video[0] = {
-      true, 352, 288, 30,    700000, 700000, 700000,          false, "VP9",
-      1,    0,   0,   false, false,  true,   "GeneratorI010", 0,     vp92};
-  generator.analyzer = {"generator_net_delay_0_0_plr_0_VP9Profile2", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
+  generator.video[0] = {.enabled = true,
+                        .width = 352,
+                        .height = 288,
+                        .fps = 30,
+                        .min_bitrate_bps = 700000,
+                        .target_bitrate_bps = 700000,
+                        .max_bitrate_bps = 700000,
+                        .suspend_below_min_bitrate = false,
+                        .codec = "VP9",
+                        .num_temporal_layers = 1,
+                        .selected_tl = 0,
+                        .min_transmit_bps = 0,
+                        .ulpfec = false,
+                        .flexfec = false,
+                        .automatic_scaling = true,
+                        .clip_path = "GeneratorI010",
+                        .capture_device_index = 0,
+                        .sdp_params = vp92};
+  generator.analyzer = {
+      .test_label = "generator_net_delay_0_0_plr_0_VP9Profile2",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(generator);
 }
 
@@ -143,13 +190,26 @@ TEST(FullStackTest, MAYBE_Net_Delay_0_0_Plr_0) {
   VideoQualityTest fixture;
   ParamsWithLogging paris_qcif;
   paris_qcif.call.send_side_bwe = true;
-  paris_qcif.video[0] = {
-      true,   176,    144,    30,
-      300000, 300000, 300000, false,
-      "VP8",  1,      0,      0,
-      false,  false,  true,   ClipNameToClipPath("paris_qcif")};
-  paris_qcif.analyzer = {"net_delay_0_0_plr_0", 36.0, 0.96,
-                         kFullStackTestDurationSecs};
+  paris_qcif.video[0] = {.enabled = true,
+                         .width = 176,
+                         .height = 144,
+                         .fps = 30,
+                         .min_bitrate_bps = 300000,
+                         .target_bitrate_bps = 300000,
+                         .max_bitrate_bps = 300000,
+                         .suspend_below_min_bitrate = false,
+                         .codec = "VP8",
+                         .num_temporal_layers = 1,
+                         .selected_tl = 0,
+                         .min_transmit_bps = 0,
+                         .ulpfec = false,
+                         .flexfec = false,
+                         .automatic_scaling = true,
+                         .clip_path = ClipNameToClipPath("paris_qcif")};
+  paris_qcif.analyzer = {.test_label = "net_delay_0_0_plr_0",
+                         .avg_psnr_threshold = 36.0,
+                         .avg_ssim_threshold = 0.96,
+                         .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(paris_qcif);
 }
 
@@ -159,13 +219,27 @@ TEST(GenericDescriptorTest,
   // TODO(pbos): Decide on psnr/ssim thresholds for foreman_cif.
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,    288,    30,
-      700000, 700000, 700000, false,
-      "VP8",  1,      0,      0,
-      false,  false,  true,   ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_generic_descriptor",
-                          0.0, 0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 700000,
+                          .target_bitrate_bps = 700000,
+                          .max_bitrate_bps = 700000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_net_delay_0_0_plr_0_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.call.generic_descriptor = true;
   fixture.RunWithAnalyzer(foreman_cif);
 }
@@ -175,14 +249,27 @@ TEST(GenericDescriptorTest,
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,   288,   10,
-      30000, 30000, 30000, false,
-      "VP8", 1,     0,     0,
-      false, false, true,  ClipNameToClipPath("foreman_cif")};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 10,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 30000,
+                          .max_bitrate_bps = 30000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
   foreman_cif.analyzer = {
-      "foreman_cif_30kbps_net_delay_0_0_plr_0_generic_descriptor", 0.0, 0.0,
-      kFullStackTestDurationSecs};
+      .test_label = "foreman_cif_30kbps_net_delay_0_0_plr_0_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.call.generic_descriptor = true;
   fixture.RunWithAnalyzer(foreman_cif);
 }
@@ -192,13 +279,27 @@ TEST(FullStackTest, Foreman_Cif_Link_150kbps_Net_Delay_0_0_Plr_0) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_link_150kbps_net_delay_0_0_plr_0", 0.0,
-                          0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_link_150kbps_net_delay_0_0_plr_0",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(150);
   fixture.RunWithAnalyzer(foreman_cif);
 }
@@ -209,15 +310,31 @@ TEST(FullStackTest,
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif"),
-      0,     {},     1.30};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif"),
+                          .capture_device_index = 0,
+                          .sdp_params = {},
+                          .encoder_overshoot_factor = 1.30};
   foreman_cif.analyzer = {
-      "foreman_cif_link_150kbps_delay100ms_30pkts_queue_overshoot30", 0.0, 0.0,
-      kFullStackTestDurationSecs};
+      .test_label =
+          "foreman_cif_link_150kbps_delay100ms_30pkts_queue_overshoot30",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(150);
   foreman_cif.config->queue_length_packets = 30;
   foreman_cif.config->queue_delay_ms = 100;
@@ -232,14 +349,30 @@ TEST(FullStackTest, Foreman_Cif_Link_250kbps_Delay100ms_10pkts_Loss1) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif"),
-      0,     {},     1.30};
-  foreman_cif.analyzer = {"foreman_cif_link_250kbps_delay100ms_10pkts_loss1",
-                          0.0, 0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif"),
+                          .capture_device_index = 0,
+                          .sdp_params = {},
+                          .encoder_overshoot_factor = 1.30};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_link_250kbps_delay100ms_10pkts_loss1",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(250);
   foreman_cif.config->queue_length_packets = 10;
   foreman_cif.config->queue_delay_ms = 100;
@@ -251,13 +384,27 @@ TEST(GenericDescriptorTest, Foreman_Cif_Delay_50_0_Plr_5_Generic_Descriptor) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_delay_50_0_plr_5_generic_descriptor",
-                          0.0, 0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_delay_50_0_plr_5_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
@@ -269,14 +416,27 @@ TEST(GenericDescriptorTest,
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      true,  false,  true,    ClipNameToClipPath("foreman_cif")};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = true,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
   foreman_cif.analyzer = {
-      "foreman_cif_delay_50_0_plr_5_ulpfec_generic_descriptor", 0.0, 0.0,
-      kFullStackTestDurationSecs};
+      .test_label = "foreman_cif_delay_50_0_plr_5_ulpfec_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
@@ -287,13 +447,26 @@ TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_Flexfec) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, true,   true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_delay_50_0_plr_5_flexfec", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = true,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {.test_label = "foreman_cif_delay_50_0_plr_5_flexfec",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   fixture.RunWithAnalyzer(foreman_cif);
@@ -303,13 +476,27 @@ TEST(FullStackTest, Foreman_Cif_500kbps_Delay_50_0_Plr_3_Flexfec) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, true,   true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_500kbps_delay_50_0_plr_3_flexfec", 0.0,
-                          0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = true,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_500kbps_delay_50_0_plr_3_flexfec",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 3;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
   foreman_cif.config->queue_delay_ms = 50;
@@ -320,13 +507,27 @@ TEST(FullStackTest, Foreman_Cif_500kbps_Delay_50_0_Plr_3_Ulpfec) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      true,  false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_500kbps_delay_50_0_plr_3_ulpfec", 0.0,
-                          0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = true,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_500kbps_delay_50_0_plr_3_ulpfec",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 3;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
   foreman_cif.config->queue_delay_ms = 50;
@@ -339,13 +540,26 @@ TEST(FullStackTest, Foreman_Cif_Net_Delay_0_0_Plr_0_H264) {
   // TODO(pbos): Decide on psnr/ssim thresholds for foreman_cif.
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,    288,    30,
-      700000, 700000, 700000, false,
-      "H264", 1,      0,      0,
-      false,  false,  true,   ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_H264", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 700000,
+                          .target_bitrate_bps = 700000,
+                          .max_bitrate_bps = 700000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "H264",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {.test_label = "foreman_cif_net_delay_0_0_plr_0_H264",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(foreman_cif);
 }
 
@@ -353,13 +567,27 @@ TEST(FullStackTest, Foreman_Cif_30kbps_Net_Delay_0_0_Plr_0_H264) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,   288,   10,
-      30000,  30000, 30000, false,
-      "H264", 1,     0,     0,
-      false,  false, true,  ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_30kbps_net_delay_0_0_plr_0_H264", 0.0,
-                          0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 10,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 30000,
+                          .max_bitrate_bps = 30000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "H264",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_30kbps_net_delay_0_0_plr_0_H264",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(foreman_cif);
 }
 
@@ -368,14 +596,27 @@ TEST(GenericDescriptorTest,
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,    288,     30,
-      30000,  500000, 2000000, false,
-      "H264", 1,      0,       0,
-      false,  false,  true,    ClipNameToClipPath("foreman_cif")};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "H264",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
   foreman_cif.analyzer = {
-      "foreman_cif_delay_50_0_plr_5_H264_generic_descriptor", 0.0, 0.0,
-      kFullStackTestDurationSecs};
+      .test_label = "foreman_cif_delay_50_0_plr_5_H264_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
@@ -383,18 +624,31 @@ TEST(GenericDescriptorTest,
 }
 
 TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_H264_Sps_Pps_Idr) {
-  VideoQualityTest fixture(
-      {.field_trials = "WebRTC-SpsPpsIdrIsH264Keyframe/Enabled/"});
-
+  VideoQualityTest fixture({.field_trials_ptr = CreateTestFieldTrialsPtr(
+                                "WebRTC-SpsPpsIdrIsH264Keyframe/Enabled/")});
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,    288,     30,
-      30000,  500000, 2000000, false,
-      "H264", 1,      0,       0,
-      false,  false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_delay_50_0_plr_5_H264_sps_pps_idr", 0.0,
-                          0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "H264",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_delay_50_0_plr_5_H264_sps_pps_idr",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   fixture.RunWithAnalyzer(foreman_cif);
@@ -405,13 +659,27 @@ TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_H264_Flexfec) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,    288,     30,
-      30000,  500000, 2000000, false,
-      "H264", 1,      0,       0,
-      false,  true,   true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_delay_50_0_plr_5_H264_flexfec", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "H264",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = true,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_delay_50_0_plr_5_H264_flexfec",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   fixture.RunWithAnalyzer(foreman_cif);
@@ -423,13 +691,27 @@ TEST(FullStackTest, DISABLED_Foreman_Cif_Delay_50_0_Plr_5_H264_Ulpfec) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,   352,    288,     30,
-      30000,  500000, 2000000, false,
-      "H264", 1,      0,       0,
-      true,   false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_delay_50_0_plr_5_H264_ulpfec", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "H264",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = true,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_delay_50_0_plr_5_H264_ulpfec",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   fixture.RunWithAnalyzer(foreman_cif);
@@ -440,13 +722,26 @@ TEST(FullStackTest, Foreman_Cif_500kbps) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_500kbps", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {.test_label = "foreman_cif_500kbps",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->queue_length_packets = 0;
   foreman_cif.config->queue_delay_ms = 0;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -457,13 +752,26 @@ TEST(FullStackTest, Foreman_Cif_500kbps_32pkts_Queue) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_500kbps_32pkts_queue", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {.test_label = "foreman_cif_500kbps_32pkts_queue",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 0;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -474,13 +782,26 @@ TEST(FullStackTest, Foreman_Cif_500kbps_100ms) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_500kbps_100ms", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {.test_label = "foreman_cif_500kbps_100ms",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->queue_length_packets = 0;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -492,14 +813,27 @@ TEST(GenericDescriptorTest,
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
   foreman_cif.analyzer = {
-      "foreman_cif_500kbps_100ms_32pkts_queue_generic_descriptor", 0.0, 0.0,
-      kFullStackTestDurationSecs};
+      .test_label = "foreman_cif_500kbps_100ms_32pkts_queue_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -511,13 +845,27 @@ TEST(FullStackTest, Foreman_Cif_500kbps_100ms_32pkts_Queue_Recv_Bwe) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = false;
-  foreman_cif.video[0] = {
-      true,  352,    288,     30,
-      30000, 500000, 2000000, false,
-      "VP8", 1,      0,       0,
-      false, false,  true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_500kbps_100ms_32pkts_queue_recv_bwe",
-                          0.0, 0.0, kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 500000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_500kbps_100ms_32pkts_queue_recv_bwe",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -528,13 +876,27 @@ TEST(FullStackTest, Foreman_Cif_1000kbps_100ms_32pkts_Queue) {
   VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,  352,     288,     30,
-      30000, 2000000, 2000000, false,
-      "VP8", 1,       0,       0,
-      false, false,   true,    ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_1000kbps_100ms_32pkts_queue", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 30,
+                          .min_bitrate_bps = 30000,
+                          .target_bitrate_bps = 2000000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 0,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = true,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {
+      .test_label = "foreman_cif_1000kbps_100ms_32pkts_queue",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(1000);
@@ -547,16 +909,27 @@ TEST(FullStackTest, Conference_Motion_Hd_2000kbps_100ms_32pkts_Queue) {
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   1,
-      0,       0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
-  conf_motion_hd.analyzer = {"conference_motion_hd_2000kbps_100ms_32pkts_queue",
-                             0.0, 0.0, kFullStackTestDurationSecs};
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 50,
+      .min_bitrate_bps = 30000,
+      .target_bitrate_bps = 3000000,
+      .max_bitrate_bps = 3000000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP8",
+      .num_temporal_layers = 1,
+      .selected_tl = 0,
+      .min_transmit_bps = 0,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+  conf_motion_hd.analyzer = {
+      .test_label = "conference_motion_hd_2000kbps_100ms_32pkts_queue",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   conf_motion_hd.config->queue_length_packets = 32;
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
@@ -569,17 +942,28 @@ TEST(GenericDescriptorTest,
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   2,
-      -1,      0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 50,
+      .min_bitrate_bps = 30000,
+      .target_bitrate_bps = 3000000,
+      .max_bitrate_bps = 3000000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP8",
+      .num_temporal_layers = 2,
+      .selected_tl = -1,
+      .min_transmit_bps = 0,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
   conf_motion_hd.analyzer = {
-      "conference_motion_hd_2tl_moderate_limits_generic_descriptor", 0.0, 0.0,
-      kFullStackTestDurationSecs};
+      .test_label =
+          "conference_motion_hd_2tl_moderate_limits_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   conf_motion_hd.config->queue_length_packets = 50;
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
@@ -593,16 +977,27 @@ TEST(FullStackTest, Conference_Motion_Hd_3tl_Moderate_Limits) {
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   3,
-      -1,      0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
-  conf_motion_hd.analyzer = {"conference_motion_hd_3tl_moderate_limits", 0.0,
-                             0.0, kFullStackTestDurationSecs};
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 50,
+      .min_bitrate_bps = 30000,
+      .target_bitrate_bps = 3000000,
+      .max_bitrate_bps = 3000000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP8",
+      .num_temporal_layers = 3,
+      .selected_tl = -1,
+      .min_transmit_bps = 0,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+  conf_motion_hd.analyzer = {
+      .test_label = "conference_motion_hd_3tl_moderate_limits",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   conf_motion_hd.config->queue_length_packets = 50;
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
@@ -615,16 +1010,27 @@ TEST(FullStackTest, Conference_Motion_Hd_4tl_Moderate_Limits) {
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   4,
-      -1,      0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
-  conf_motion_hd.analyzer = {"conference_motion_hd_4tl_moderate_limits", 0.0,
-                             0.0, kFullStackTestDurationSecs};
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 50,
+      .min_bitrate_bps = 30000,
+      .target_bitrate_bps = 3000000,
+      .max_bitrate_bps = 3000000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP8",
+      .num_temporal_layers = 4,
+      .selected_tl = -1,
+      .min_transmit_bps = 0,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+  conf_motion_hd.analyzer = {
+      .test_label = "conference_motion_hd_4tl_moderate_limits",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   conf_motion_hd.config->queue_length_packets = 50;
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
@@ -744,17 +1150,27 @@ TEST(FullStackTest, Conference_Motion_Hd_2000kbps_100ms_32pkts_Queue_Vp9) {
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP9",   1,
-      0,       0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 50,
+      .min_bitrate_bps = 30000,
+      .target_bitrate_bps = 3000000,
+      .max_bitrate_bps = 3000000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP9",
+      .num_temporal_layers = 1,
+      .selected_tl = 0,
+      .min_transmit_bps = 0,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
   conf_motion_hd.analyzer = {
-      "conference_motion_hd_2000kbps_100ms_32pkts_queue_vp9", 0.0, 0.0,
-      kFullStackTestDurationSecs};
+      .test_label = "conference_motion_hd_2000kbps_100ms_32pkts_queue_vp9",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   conf_motion_hd.config->queue_length_packets = 32;
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
@@ -766,12 +1182,28 @@ TEST(FullStackTest, Screenshare_Slides) {
   VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
-  screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
-                          1000000, false, "VP8", 2, 1,     400000,
-                          false,   false, false, ""};
-  screenshare.screenshare[0] = {true, false, 10};
-  screenshare.analyzer = {"screenshare_slides", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  screenshare.video[0] = {.enabled = true,
+                          .width = 1850,
+                          .height = 1110,
+                          .fps = 5,
+                          .min_bitrate_bps = 50000,
+                          .target_bitrate_bps = 200000,
+                          .max_bitrate_bps = 1000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 2,
+                          .selected_tl = 1,
+                          .min_transmit_bps = 400000,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = false,
+                          .clip_path = ""};
+  screenshare.screenshare[0] = {
+      .enabled = true, .generate_slides = false, .slide_change_interval = 10};
+  screenshare.analyzer = {.test_label = "screenshare_slides",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(screenshare);
 }
 
@@ -781,27 +1213,73 @@ TEST(FullStackTest, Screenshare_Slides_Simulcast) {
   VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
-  screenshare.screenshare[0] = {true, false, 10};
-  screenshare.video[0] = {true,    1850,  1110,  30, 800000, 2500000,
-                          2500000, false, "VP8", 2,  1,      400000,
-                          false,   false, false, ""};
-  screenshare.analyzer = {"screenshare_slides_simulcast", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  screenshare.screenshare[0] = {
+      .enabled = true, .generate_slides = false, .slide_change_interval = 10};
+  screenshare.video[0] = {.enabled = true,
+                          .width = 1850,
+                          .height = 1110,
+                          .fps = 30,
+                          .min_bitrate_bps = 800000,
+                          .target_bitrate_bps = 2500000,
+                          .max_bitrate_bps = 2500000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 2,
+                          .selected_tl = 1,
+                          .min_transmit_bps = 400000,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = false,
+                          .clip_path = ""};
+  screenshare.analyzer = {.test_label = "screenshare_slides_simulcast",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   ParamsWithLogging screenshare_params_high;
-  screenshare_params_high.video[0] = {
-      true,  1850, 1110, 60,     600000, 1250000, 1250000, false,
-      "VP8", 2,    0,    400000, false,  false,   false,   ""};
+  screenshare_params_high.video[0] = {.enabled = true,
+                                      .width = 1850,
+                                      .height = 1110,
+                                      .fps = 60,
+                                      .min_bitrate_bps = 600000,
+                                      .target_bitrate_bps = 1250000,
+                                      .max_bitrate_bps = 1250000,
+                                      .suspend_below_min_bitrate = false,
+                                      .codec = "VP8",
+                                      .num_temporal_layers = 2,
+                                      .selected_tl = 0,
+                                      .min_transmit_bps = 400000,
+                                      .ulpfec = false,
+                                      .flexfec = false,
+                                      .automatic_scaling = false,
+                                      .clip_path = ""};
   VideoQualityTest::Params screenshare_params_low;
-  screenshare_params_low.video[0] = {true,    1850,  1110,  5, 30000, 200000,
-                                     1000000, false, "VP8", 2, 0,     400000,
-                                     false,   false, false, ""};
+  screenshare_params_low.video[0] = {.enabled = true,
+                                     .width = 1850,
+                                     .height = 1110,
+                                     .fps = 5,
+                                     .min_bitrate_bps = 30000,
+                                     .target_bitrate_bps = 200000,
+                                     .max_bitrate_bps = 1000000,
+                                     .suspend_below_min_bitrate = false,
+                                     .codec = "VP8",
+                                     .num_temporal_layers = 2,
+                                     .selected_tl = 0,
+                                     .min_transmit_bps = 400000,
+                                     .ulpfec = false,
+                                     .flexfec = false,
+                                     .automatic_scaling = false,
+                                     .clip_path = ""};
 
   std::vector<VideoStream> streams = {
       VideoQualityTest::DefaultVideoStream(screenshare_params_low, 0),
       VideoQualityTest::DefaultVideoStream(screenshare_params_high, 0)};
-  screenshare.ss[0] = {
-      streams, 1, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
-      false};
+  screenshare.ss[0] = {.streams = streams,
+                       .selected_stream = 1,
+                       .num_spatial_layers = 1,
+                       .selected_sl = 0,
+                       .inter_layer_pred = InterLayerPredMode::kOn,
+                       .spatial_layers = std::vector<SpatialLayer>(),
+                       .infer_streams = false};
   fixture.RunWithAnalyzer(screenshare);
 }
 
@@ -811,12 +1289,30 @@ TEST(FullStackTest, Screenshare_Slides_Scrolling) {
   VideoQualityTest fixture;
   ParamsWithLogging config;
   config.call.send_side_bwe = true;
-  config.video[0] = {true,    1850,  1110 / 2, 5, 50000, 200000,
-                     1000000, false, "VP8",    2, 1,     400000,
-                     false,   false, false,    ""};
-  config.screenshare[0] = {true, false, 10, 2};
-  config.analyzer = {"screenshare_slides_scrolling", 0.0, 0.0,
-                     kFullStackTestDurationSecs};
+  config.video[0] = {.enabled = true,
+                     .width = 1850,
+                     .height = 1110 / 2,
+                     .fps = 5,
+                     .min_bitrate_bps = 50000,
+                     .target_bitrate_bps = 200000,
+                     .max_bitrate_bps = 1000000,
+                     .suspend_below_min_bitrate = false,
+                     .codec = "VP8",
+                     .num_temporal_layers = 2,
+                     .selected_tl = 1,
+                     .min_transmit_bps = 400000,
+                     .ulpfec = false,
+                     .flexfec = false,
+                     .automatic_scaling = false,
+                     .clip_path = ""};
+  config.screenshare[0] = {.enabled = true,
+                           .generate_slides = false,
+                           .slide_change_interval = 10,
+                           .scroll_duration = 2};
+  config.analyzer = {.test_label = "screenshare_slides_scrolling",
+                     .avg_psnr_threshold = 0.0,
+                     .avg_ssim_threshold = 0.0,
+                     .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(config);
 }
 
@@ -824,12 +1320,29 @@ TEST(GenericDescriptorTest, Screenshare_Slides_Lossy_Net_Generic_Descriptor) {
   VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
-  screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
-                          1000000, false, "VP8", 2, 1,     400000,
-                          false,   false, false, ""};
-  screenshare.screenshare[0] = {true, false, 10};
-  screenshare.analyzer = {"screenshare_slides_lossy_net_generic_descriptor",
-                          0.0, 0.0, kFullStackTestDurationSecs};
+  screenshare.video[0] = {.enabled = true,
+                          .width = 1850,
+                          .height = 1110,
+                          .fps = 5,
+                          .min_bitrate_bps = 50000,
+                          .target_bitrate_bps = 200000,
+                          .max_bitrate_bps = 1000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 2,
+                          .selected_tl = 1,
+                          .min_transmit_bps = 400000,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = false,
+                          .clip_path = ""};
+  screenshare.screenshare[0] = {
+      .enabled = true, .generate_slides = false, .slide_change_interval = 10};
+  screenshare.analyzer = {
+      .test_label = "screenshare_slides_lossy_net_generic_descriptor",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   screenshare.config->loss_percent = 5;
   screenshare.config->queue_delay_ms = 200;
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -841,12 +1354,28 @@ TEST(FullStackTest, Screenshare_Slides_Very_Lossy) {
   VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
-  screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
-                          1000000, false, "VP8", 2, 1,     400000,
-                          false,   false, false, ""};
-  screenshare.screenshare[0] = {true, false, 10};
-  screenshare.analyzer = {"screenshare_slides_very_lossy", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  screenshare.video[0] = {.enabled = true,
+                          .width = 1850,
+                          .height = 1110,
+                          .fps = 5,
+                          .min_bitrate_bps = 50000,
+                          .target_bitrate_bps = 200000,
+                          .max_bitrate_bps = 1000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 2,
+                          .selected_tl = 1,
+                          .min_transmit_bps = 400000,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = false,
+                          .clip_path = ""};
+  screenshare.screenshare[0] = {
+      .enabled = true, .generate_slides = false, .slide_change_interval = 10};
+  screenshare.analyzer = {.test_label = "screenshare_slides_very_lossy",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   screenshare.config->loss_percent = 10;
   screenshare.config->queue_delay_ms = 200;
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(500);
@@ -857,12 +1386,28 @@ TEST(FullStackTest, Screenshare_Slides_Lossy_Limited) {
   VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
-  screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
-                          1000000, false, "VP8", 2, 1,     400000,
-                          false,   false, false, ""};
-  screenshare.screenshare[0] = {true, false, 10};
-  screenshare.analyzer = {"screenshare_slides_lossy_limited", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  screenshare.video[0] = {.enabled = true,
+                          .width = 1850,
+                          .height = 1110,
+                          .fps = 5,
+                          .min_bitrate_bps = 50000,
+                          .target_bitrate_bps = 200000,
+                          .max_bitrate_bps = 1000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 2,
+                          .selected_tl = 1,
+                          .min_transmit_bps = 400000,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = false,
+                          .clip_path = ""};
+  screenshare.screenshare[0] = {
+      .enabled = true, .generate_slides = false, .slide_change_interval = 10};
+  screenshare.analyzer = {.test_label = "screenshare_slides_lossy_limited",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
   screenshare.config->loss_percent = 5;
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(200);
   screenshare.config->queue_length_packets = 30;
@@ -874,12 +1419,29 @@ TEST(FullStackTest, Screenshare_Slides_Moderately_Restricted) {
   VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
-  screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
-                          1000000, false, "VP8", 2, 1,     400000,
-                          false,   false, false, ""};
-  screenshare.screenshare[0] = {true, false, 10};
-  screenshare.analyzer = {"screenshare_slides_moderately_restricted", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
+  screenshare.video[0] = {.enabled = true,
+                          .width = 1850,
+                          .height = 1110,
+                          .fps = 5,
+                          .min_bitrate_bps = 50000,
+                          .target_bitrate_bps = 200000,
+                          .max_bitrate_bps = 1000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP8",
+                          .num_temporal_layers = 2,
+                          .selected_tl = 1,
+                          .min_transmit_bps = 400000,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = false,
+                          .clip_path = ""};
+  screenshare.screenshare[0] = {
+      .enabled = true, .generate_slides = false, .slide_change_interval = 10};
+  screenshare.analyzer = {
+      .test_label = "screenshare_slides_moderately_restricted",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
   screenshare.config->loss_percent = 1;
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(1200);
   screenshare.config->queue_length_packets = 30;
@@ -891,50 +1453,82 @@ TEST(FullStackTest, Screenshare_Slides_Moderately_Restricted) {
 // store these structs as const globals.
 ParamsWithLogging::Video SvcVp9Video() {
   return ParamsWithLogging::Video{
-      true,    1280,
-      720,     30,
-      800000,  2500000,
-      2500000, false,
-      "VP9",   3,
-      2,       400000,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 30,
+      .min_bitrate_bps = 800000,
+      .target_bitrate_bps = 2500000,
+      .max_bitrate_bps = 2500000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP9",
+      .num_temporal_layers = 3,
+      .selected_tl = 2,
+      .min_transmit_bps = 400000,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
 }
 
 ParamsWithLogging::Video SimulcastVp8VideoHigh() {
   return ParamsWithLogging::Video{
-      true,    1280,
-      720,     30,
-      800000,  2500000,
-      2500000, false,
-      "VP8",   3,
-      2,       400000,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 30,
+      .min_bitrate_bps = 800000,
+      .target_bitrate_bps = 2500000,
+      .max_bitrate_bps = 2500000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP8",
+      .num_temporal_layers = 3,
+      .selected_tl = 2,
+      .min_transmit_bps = 400000,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
 }
 
 ParamsWithLogging::Video SimulcastVp8VideoMedium() {
   return ParamsWithLogging::Video{
-      true,   640,
-      360,    30,
-      150000, 500000,
-      700000, false,
-      "VP8",  3,
-      2,      400000,
-      false,  false,
-      false,  ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+      .enabled = true,
+      .width = 640,
+      .height = 360,
+      .fps = 30,
+      .min_bitrate_bps = 150000,
+      .target_bitrate_bps = 500000,
+      .max_bitrate_bps = 700000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP8",
+      .num_temporal_layers = 3,
+      .selected_tl = 2,
+      .min_transmit_bps = 400000,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
 }
 
 ParamsWithLogging::Video SimulcastVp8VideoLow() {
   return ParamsWithLogging::Video{
-      true,   320,
-      180,    30,
-      30000,  150000,
-      200000, false,
-      "VP8",  3,
-      2,      400000,
-      false,  false,
-      false,  ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+      .enabled = true,
+      .width = 320,
+      .height = 180,
+      .fps = 30,
+      .min_bitrate_bps = 30000,
+      .target_bitrate_bps = 150000,
+      .max_bitrate_bps = 200000,
+      .suspend_below_min_bitrate = false,
+      .codec = "VP8",
+      .num_temporal_layers = 3,
+      .selected_tl = 2,
+      .min_transmit_bps = 400000,
+      .ulpfec = false,
+      .flexfec = false,
+      .automatic_scaling = false,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
 }
 
 #if defined(RTC_ENABLE_VP9)
@@ -943,15 +1537,35 @@ TEST(FullStackTest, Screenshare_Slides_Vp9_3sl_High_Fps) {
   VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
-  screenshare.video[0] = {true,    1850,  1110,  30, 50000, 200000,
-                          2000000, false, "VP9", 1,  0,     400000,
-                          false,   false, false, ""};
-  screenshare.screenshare[0] = {true, false, 10};
-  screenshare.analyzer = {"screenshare_slides_vp9_3sl_high_fps", 0.0, 0.0,
-                          kFullStackTestDurationSecs};
-  screenshare.ss[0] = {
-      std::vector<VideoStream>(),  0,   3, 2, InterLayerPredMode::kOn,
-      std::vector<SpatialLayer>(), true};
+  screenshare.video[0] = {.enabled = true,
+                          .width = 1850,
+                          .height = 1110,
+                          .fps = 30,
+                          .min_bitrate_bps = 50000,
+                          .target_bitrate_bps = 200000,
+                          .max_bitrate_bps = 2000000,
+                          .suspend_below_min_bitrate = false,
+                          .codec = "VP9",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .min_transmit_bps = 400000,
+                          .ulpfec = false,
+                          .flexfec = false,
+                          .automatic_scaling = false,
+                          .clip_path = ""};
+  screenshare.screenshare[0] = {
+      .enabled = true, .generate_slides = false, .slide_change_interval = 10};
+  screenshare.analyzer = {.test_label = "screenshare_slides_vp9_3sl_high_fps",
+                          .avg_psnr_threshold = 0.0,
+                          .avg_ssim_threshold = 0.0,
+                          .test_durations_secs = kFullStackTestDurationSecs};
+  screenshare.ss[0] = {.streams = std::vector<VideoStream>(),
+                       .selected_stream = 0,
+                       .num_spatial_layers = 3,
+                       .selected_sl = 2,
+                       .inter_layer_pred = InterLayerPredMode::kOn,
+                       .spatial_layers = std::vector<SpatialLayer>(),
+                       .infer_streams = true};
   fixture.RunWithAnalyzer(screenshare);
 }
 
@@ -960,58 +1574,86 @@ TEST(FullStackTest, Screenshare_Slides_Vp9_3sl_High_Fps) {
 
 TEST(FullStackTest, Vp9ksvc_3sl_High) {
   VideoQualityTest fixture(
-      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
+      {.field_trials_ptr = CreateTestFieldTrialsPtr(
+           "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/")});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
-  simulcast.analyzer = {"vp9ksvc_3sl_high", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
-  simulcast.ss[0] = {
-      std::vector<VideoStream>(),  0,    3, 2, InterLayerPredMode::kOnKeyPic,
-      std::vector<SpatialLayer>(), false};
+  simulcast.analyzer = {.test_label = "vp9ksvc_3sl_high",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
+  simulcast.ss[0] = {.streams = std::vector<VideoStream>(),
+                     .selected_stream = 0,
+                     .num_spatial_layers = 3,
+                     .selected_sl = 2,
+                     .inter_layer_pred = InterLayerPredMode::kOnKeyPic,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = false};
   fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Low) {
   VideoQualityTest fixture(
-      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
+      {.field_trials_ptr = CreateTestFieldTrialsPtr(
+           "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/")});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
-  simulcast.analyzer = {"vp9ksvc_3sl_low", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
-  simulcast.ss[0] = {
-      std::vector<VideoStream>(),  0,    3, 0, InterLayerPredMode::kOnKeyPic,
-      std::vector<SpatialLayer>(), false};
+  simulcast.analyzer = {.test_label = "vp9ksvc_3sl_low",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
+  simulcast.ss[0] = {.streams = std::vector<VideoStream>(),
+                     .selected_stream = 0,
+                     .num_spatial_layers = 3,
+                     .selected_sl = 0,
+                     .inter_layer_pred = InterLayerPredMode::kOnKeyPic,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = false};
   fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Low_Bw_Limited) {
   VideoQualityTest fixture(
-      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
+      {.field_trials_ptr = CreateTestFieldTrialsPtr(
+           "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/")});
   ParamsWithLogging simulcast;
   simulcast.config->link_capacity = DataRate::KilobitsPerSec(500);
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
-  simulcast.analyzer = {"vp9ksvc_3sl_low_bw_limited", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
-  simulcast.ss[0] = {
-      std::vector<VideoStream>(),  0,    3, 0, InterLayerPredMode::kOnKeyPic,
-      std::vector<SpatialLayer>(), false};
+  simulcast.analyzer = {.test_label = "vp9ksvc_3sl_low_bw_limited",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
+  simulcast.ss[0] = {.streams = std::vector<VideoStream>(),
+                     .selected_stream = 0,
+                     .num_spatial_layers = 3,
+                     .selected_sl = 0,
+                     .inter_layer_pred = InterLayerPredMode::kOnKeyPic,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = false};
   fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted) {
   VideoQualityTest fixture(
-      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
+      {.field_trials_ptr = CreateTestFieldTrialsPtr(
+           "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/")});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
-  simulcast.analyzer = {"vp9ksvc_3sl_medium_network_restricted", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
-  simulcast.ss[0] = {
-      std::vector<VideoStream>(),  0,    3, -1, InterLayerPredMode::kOnKeyPic,
-      std::vector<SpatialLayer>(), false};
+  simulcast.analyzer = {.test_label = "vp9ksvc_3sl_medium_network_restricted",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
+  simulcast.ss[0] = {.streams = std::vector<VideoStream>(),
+                     .selected_stream = 0,
+                     .num_spatial_layers = 3,
+                     .selected_sl = -1,
+                     .inter_layer_pred = InterLayerPredMode::kOnKeyPic,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = false};
   simulcast.config->link_capacity = DataRate::KilobitsPerSec(1000);
   simulcast.config->queue_delay_ms = 100;
   fixture.RunWithAnalyzer(simulcast);
@@ -1020,15 +1662,23 @@ TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted) {
 // TODO(webrtc:9722): Remove when experiment is cleaned up.
 TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted_Trusted_Rate) {
   VideoQualityTest fixture(
-      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
+      {.field_trials_ptr = CreateTestFieldTrialsPtr(
+           "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/")});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
-  simulcast.analyzer = {"vp9ksvc_3sl_medium_network_restricted_trusted_rate",
-                        0.0, 0.0, kFullStackTestDurationSecs};
-  simulcast.ss[0] = {
-      std::vector<VideoStream>(),  0,    3, -1, InterLayerPredMode::kOnKeyPic,
-      std::vector<SpatialLayer>(), false};
+  simulcast.analyzer = {
+      .test_label = "vp9ksvc_3sl_medium_network_restricted_trusted_rate",
+      .avg_psnr_threshold = 0.0,
+      .avg_ssim_threshold = 0.0,
+      .test_durations_secs = kFullStackTestDurationSecs};
+  simulcast.ss[0] = {.streams = std::vector<VideoStream>(),
+                     .selected_stream = 0,
+                     .num_spatial_layers = 3,
+                     .selected_sl = -1,
+                     .inter_layer_pred = InterLayerPredMode::kOnKeyPic,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = false};
   simulcast.config->link_capacity = DataRate::KilobitsPerSec(1000);
   simulcast.config->queue_delay_ms = 100;
   fixture.RunWithAnalyzer(simulcast);
@@ -1047,24 +1697,43 @@ TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted_Trusted_Rate) {
 
 TEST(FullStackTest, MAYBE_Simulcast_HD_High) {
   VideoQualityTest fixture(
-      {.field_trials =
-           "WebRTC-ForceSimulatedOveruseIntervalMs/1000-50000-300/"});
+      {.field_trials_ptr = CreateTestFieldTrialsPtr(
+           "WebRTC-ForceSimulatedOveruseIntervalMs/1000-50000-300/")});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
-  simulcast.video[0] = {true,    1920,  1080,  30,         800000, 2500000,
-                        2500000, false, "VP8", 3,          2,      400000,
-                        false,   false, false, "Generator"};
-  simulcast.analyzer = {"simulcast_HD_high", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
+  simulcast.video[0] = {.enabled = true,
+                        .width = 1920,
+                        .height = 1080,
+                        .fps = 30,
+                        .min_bitrate_bps = 800000,
+                        .target_bitrate_bps = 2500000,
+                        .max_bitrate_bps = 2500000,
+                        .suspend_below_min_bitrate = false,
+                        .codec = "VP8",
+                        .num_temporal_layers = 3,
+                        .selected_tl = 2,
+                        .min_transmit_bps = 400000,
+                        .ulpfec = false,
+                        .flexfec = false,
+                        .automatic_scaling = false,
+                        .clip_path = "Generator"};
+  simulcast.analyzer = {.test_label = "simulcast_HD_high",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
   simulcast.config->loss_percent = 0;
   simulcast.config->queue_delay_ms = 100;
   std::vector<VideoStream> streams = {
       VideoQualityTest::DefaultVideoStream(simulcast, 0),
       VideoQualityTest::DefaultVideoStream(simulcast, 0),
       VideoQualityTest::DefaultVideoStream(simulcast, 0)};
-  simulcast.ss[0] = {
-      streams, 2, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
-      true};
+  simulcast.ss[0] = {.streams = streams,
+                     .selected_stream = 2,
+                     .num_spatial_layers = 1,
+                     .selected_sl = 0,
+                     .inter_layer_pred = InterLayerPredMode::kOn,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = true};
   fixture.RunWithAnalyzer(simulcast);
 }
 
@@ -1073,8 +1742,10 @@ TEST(FullStackTest, Simulcast_Vp8_3sl_High) {
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SimulcastVp8VideoHigh();
-  simulcast.analyzer = {"simulcast_vp8_3sl_high", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
+  simulcast.analyzer = {.test_label = "simulcast_vp8_3sl_high",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
   simulcast.config->loss_percent = 0;
   simulcast.config->queue_delay_ms = 100;
   ParamsWithLogging video_params_high;
@@ -1088,9 +1759,13 @@ TEST(FullStackTest, Simulcast_Vp8_3sl_High) {
       VideoQualityTest::DefaultVideoStream(video_params_low, 0),
       VideoQualityTest::DefaultVideoStream(video_params_medium, 0),
       VideoQualityTest::DefaultVideoStream(video_params_high, 0)};
-  simulcast.ss[0] = {
-      streams, 2, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
-      false};
+  simulcast.ss[0] = {.streams = streams,
+                     .selected_stream = 2,
+                     .num_spatial_layers = 1,
+                     .selected_sl = 0,
+                     .inter_layer_pred = InterLayerPredMode::kOn,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = false};
   fixture.RunWithAnalyzer(simulcast);
 }
 
@@ -1099,8 +1774,10 @@ TEST(FullStackTest, Simulcast_Vp8_3sl_Low) {
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SimulcastVp8VideoHigh();
-  simulcast.analyzer = {"simulcast_vp8_3sl_low", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
+  simulcast.analyzer = {.test_label = "simulcast_vp8_3sl_low",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
   simulcast.config->loss_percent = 0;
   simulcast.config->queue_delay_ms = 100;
   ParamsWithLogging video_params_high;
@@ -1114,9 +1791,13 @@ TEST(FullStackTest, Simulcast_Vp8_3sl_Low) {
       VideoQualityTest::DefaultVideoStream(video_params_low, 0),
       VideoQualityTest::DefaultVideoStream(video_params_medium, 0),
       VideoQualityTest::DefaultVideoStream(video_params_high, 0)};
-  simulcast.ss[0] = {
-      streams, 0, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
-      false};
+  simulcast.ss[0] = {.streams = streams,
+                     .selected_stream = 0,
+                     .num_spatial_layers = 1,
+                     .selected_sl = 0,
+                     .inter_layer_pred = InterLayerPredMode::kOn,
+                     .spatial_layers = std::vector<SpatialLayer>(),
+                     .infer_streams = false};
   fixture.RunWithAnalyzer(simulcast);
 }
 
@@ -1136,24 +1817,26 @@ TEST(FullStackTest, MAYBE_High_Bitrate_With_Fake_Codec) {
   generator.call.call_bitrate_config.min_bitrate_bps = target_bitrate;
   generator.call.call_bitrate_config.start_bitrate_bps = target_bitrate;
   generator.call.call_bitrate_config.max_bitrate_bps = target_bitrate;
-  generator.video[0] = {true,
-                        360,
-                        240,
-                        30,
-                        target_bitrate / 2,
-                        target_bitrate,
-                        target_bitrate * 2,
-                        false,
-                        "FakeCodec",
-                        1,
-                        0,
-                        0,
-                        false,
-                        false,
-                        false,
-                        "Generator"};
-  generator.analyzer = {"high_bitrate_with_fake_codec", 0.0, 0.0,
-                        kFullStackTestDurationSecs};
+  generator.video[0] = {.enabled = true,
+                        .width = 360,
+                        .height = 240,
+                        .fps = 30,
+                        .min_bitrate_bps = target_bitrate / 2,
+                        .target_bitrate_bps = target_bitrate,
+                        .max_bitrate_bps = target_bitrate * 2,
+                        .suspend_below_min_bitrate = false,
+                        .codec = "FakeCodec",
+                        .num_temporal_layers = 1,
+                        .selected_tl = 0,
+                        .min_transmit_bps = 0,
+                        .ulpfec = false,
+                        .flexfec = false,
+                        .automatic_scaling = false,
+                        .clip_path = "Generator"};
+  generator.analyzer = {.test_label = "high_bitrate_with_fake_codec",
+                        .avg_psnr_threshold = 0.0,
+                        .avg_ssim_threshold = 0.0,
+                        .test_durations_secs = kFullStackTestDurationSecs};
   fixture.RunWithAnalyzer(generator);
 }
 
@@ -1170,8 +1853,10 @@ TEST(FullStackTest, MAYBE_Largeroom_50thumb) {
   ParamsWithLogging large_room;
   large_room.call.send_side_bwe = true;
   large_room.video[0] = SimulcastVp8VideoHigh();
-  large_room.analyzer = {"largeroom_50thumb", 0.0, 0.0,
-                         kFullStackTestDurationSecs};
+  large_room.analyzer = {.test_label = "largeroom_50thumb",
+                         .avg_psnr_threshold = 0.0,
+                         .avg_ssim_threshold = 0.0,
+                         .test_durations_secs = kFullStackTestDurationSecs};
   large_room.config->loss_percent = 0;
   large_room.config->queue_delay_ms = 100;
   ParamsWithLogging video_params_high;
@@ -1186,9 +1871,13 @@ TEST(FullStackTest, MAYBE_Largeroom_50thumb) {
       VideoQualityTest::DefaultVideoStream(video_params_medium, 0),
       VideoQualityTest::DefaultVideoStream(video_params_high, 0)};
   large_room.call.num_thumbnails = 50;
-  large_room.ss[0] = {
-      streams, 2, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
-      false};
+  large_room.ss[0] = {.streams = streams,
+                      .selected_stream = 2,
+                      .num_spatial_layers = 1,
+                      .selected_sl = 0,
+                      .inter_layer_pred = InterLayerPredMode::kOn,
+                      .spatial_layers = std::vector<SpatialLayer>(),
+                      .infer_streams = false};
   fixture.RunWithAnalyzer(large_room);
 }
 

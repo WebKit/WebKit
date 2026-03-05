@@ -69,7 +69,7 @@ public:
     static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client, SocketProvider& provider) { return adoptRef(*new WebSocketChannel(document, client, provider)); }
     virtual ~WebSocketChannel();
 
-    // FileReaderLoaderClient.
+    // FileReaderLoaderClient, ThreadableWebSocketChannel.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
@@ -109,13 +109,10 @@ public:
     ResourceRequest clientHandshakeRequest(const CookieGetter&) const final;
     const ResourceResponse& serverHandshakeResponse() const final;
 
-    Document* document();
+    Document* NODELETE document();
     
 private:
     WEBCORE_EXPORT WebSocketChannel(Document&, WebSocketChannelClient&, SocketProvider&);
-
-    void refThreadableWebSocketChannel() override { ref(); }
-    void derefThreadableWebSocketChannel() override { deref(); }
 
     bool appendToBuffer(std::span<const uint8_t>);
     void skipBuffer(size_t len);
@@ -178,8 +175,6 @@ private:
         BlobLoaderFinished,
         BlobLoaderFailed
     };
-
-    RefPtr<WebSocketChannelClient> protectedClient() const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     ThreadSafeWeakPtr<WebSocketChannelClient> m_client;

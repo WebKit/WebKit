@@ -80,11 +80,11 @@ void RemoteCDMFactoryProxy::createCDM(const String& keySystem, const String& med
         return;
     }
 
-    auto proxy = RemoteCDMProxy::create(*this, WTFMove(privateCDM));
+    auto proxy = RemoteCDMProxy::create(*this, WTF::move(privateCDM));
     auto identifier = RemoteCDMIdentifier::generate();
     RemoteCDMConfiguration configuration = proxy->configuration();
-    addProxy(identifier, WTFMove(proxy));
-    completion(WTFMove(identifier), WTFMove(configuration));
+    addProxy(identifier, WTF::move(proxy));
+    completion(WTF::move(identifier), WTF::move(configuration));
 }
 
 void RemoteCDMFactoryProxy::supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&& completion)
@@ -149,7 +149,7 @@ void RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connect
 void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& identifier, RefPtr<RemoteCDMProxy>&& proxy)
 {
     ASSERT(!m_proxies.contains(identifier));
-    m_proxies.set(identifier, WTFMove(proxy));
+    m_proxies.set(identifier, WTF::move(proxy));
 }
 
 void RemoteCDMFactoryProxy::removeProxy(const RemoteCDMIdentifier& identifier)
@@ -161,7 +161,7 @@ void RemoteCDMFactoryProxy::removeProxy(const RemoteCDMIdentifier& identifier)
 void RemoteCDMFactoryProxy::addInstance(const RemoteCDMInstanceIdentifier& identifier, Ref<RemoteCDMInstanceProxy>&& instance)
 {
     ASSERT(!m_instances.contains(identifier));
-    m_instances.set(identifier, WTFMove(instance));
+    m_instances.set(identifier, WTF::move(instance));
 }
 
 void RemoteCDMFactoryProxy::removeInstance(const RemoteCDMInstanceIdentifier& identifier)
@@ -181,7 +181,7 @@ RemoteCDMInstanceProxy* RemoteCDMFactoryProxy::getInstance(const RemoteCDMInstan
 void RemoteCDMFactoryProxy::addSession(const RemoteCDMInstanceSessionIdentifier& identifier, Ref<RemoteCDMInstanceSessionProxy>&& session)
 {
     ASSERT(!m_sessions.contains(identifier));
-    m_sessions.set(identifier, WTFMove(session));
+    m_sessions.set(identifier, WTF::move(session));
 }
 
 void RemoteCDMFactoryProxy::removeSession(const RemoteCDMInstanceSessionIdentifier& identifier)
@@ -195,7 +195,7 @@ bool RemoteCDMFactoryProxy::allowsExitUnderMemoryPressure() const
     return m_instances.isEmpty();
 }
 
-const String& RemoteCDMFactoryProxy::mediaKeysStorageDirectory() const
+String RemoteCDMFactoryProxy::mediaKeysStorageDirectory() const
 {
     if (RefPtr connection = m_gpuConnectionToWebProcess.get())
         return connection->mediaKeysStorageDirectory();

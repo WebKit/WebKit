@@ -50,7 +50,7 @@ void GeolocationPermissionRequestManagerProxy::invalidateRequests()
 Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(GeolocationIdentifier geolocationID, WebProcessProxy& process)
 {
     Ref request = GeolocationPermissionRequestProxy::create(*this, geolocationID, process);
-    m_pendingRequests.add(geolocationID, request.ptr());
+    m_pendingRequests.add(geolocationID, request);
     return request;
 }
 

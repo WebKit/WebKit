@@ -35,15 +35,15 @@ namespace WebCore {
 IDBObjectStoreInfo::IDBObjectStoreInfo(IDBObjectStoreIdentifier identifier, const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& indexMap)
     : m_identifier(identifier)
     , m_name(name)
-    , m_keyPath(WTFMove(keyPath))
+    , m_keyPath(WTF::move(keyPath))
     , m_autoIncrement(autoIncrement)
-    , m_indexMap(WTFMove(indexMap))
+    , m_indexMap(WTF::move(indexMap))
 {
 }
 
 IDBIndexInfo IDBObjectStoreInfo::createNewIndex(IDBIndexIdentifier indexID, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
 {
-    IDBIndexInfo info(indexID, m_identifier, name, WTFMove(keyPath), unique, multiEntry);
+    IDBIndexInfo info(indexID, m_identifier, name, WTF::move(keyPath), unique, multiEntry);
     m_indexMap.set(info.identifier(), info);
     return info;
 }
@@ -99,8 +99,8 @@ IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const &
 
 IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() &&
 {
-    IDBObjectStoreInfo result = { m_identifier, WTFMove(m_name).isolatedCopy(), crossThreadCopy(WTFMove(m_keyPath)), m_autoIncrement };
-    result.m_indexMap = crossThreadCopy(WTFMove(m_indexMap));
+    IDBObjectStoreInfo result = { m_identifier, WTF::move(m_name).isolatedCopy(), crossThreadCopy(WTF::move(m_keyPath)), m_autoIncrement };
+    result.m_indexMap = crossThreadCopy(WTF::move(m_indexMap));
     return result;
 }
 

@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class MediaQueryListEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaQueryListEvent);
+    WTF_MAKE_TZONE_ALLOCATED(MediaQueryListEvent);
 public:
     struct Init : EventInit {
         String media;
@@ -38,14 +38,14 @@ public:
     };
 
     static Ref<MediaQueryListEvent> create(const AtomString& type, const String& media, bool matches);
-    static Ref<MediaQueryListEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<MediaQueryListEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
-    const String& media() const { return m_media; }
+    const String& media() const LIFETIME_BOUND { return m_media; }
     bool matches() const { return m_matches; }
 
 private:
     MediaQueryListEvent(const AtomString& type, const String& media, bool matches);
-    MediaQueryListEvent(const AtomString& type, const Init&, IsTrusted);
+    MediaQueryListEvent(const AtomString& type, Init&&, IsTrusted);
 
     String m_media;
     bool m_matches;

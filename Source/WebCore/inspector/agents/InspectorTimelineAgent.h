@@ -156,9 +156,9 @@ protected:
 
     struct TimelineRecordEntry {
         TimelineRecordEntry(Ref<JSON::Object>&& record, Ref<JSON::Object>&& data, RefPtr<JSON::Array>&& children, TimelineRecordType type)
-            : record(WTFMove(record))
-            , data(WTFMove(data))
-            , children(WTFMove(children))
+            : record(WTF::move(record))
+            , data(WTF::move(data))
+            , children(WTF::move(children))
             , type(type)
         {
         }

@@ -504,7 +504,7 @@ __bn_sqr8x_mont:
 	adc	$acc5,$acc5,$t1
 
 	adds	$acc5,$acc5,$t2
-	sub	$t0,$ap_end,$num	// rewinded ap
+	sub	$t0,$ap_end,$num	// rewound ap
 	adc	$acc6,xzr,xzr		// t[14]
 	add	$acc6,$acc6,$t3
 
@@ -854,7 +854,7 @@ $code.=<<___;
 					// to be zero at this point
 	ldp	$a0,$a1,[$tp,#8*0]
 	sub	$cnt,$np_end,$np	// done yet?
-	sub	$t2,$np_end,$num	// rewinded np
+	sub	$t2,$np_end,$num	// rewound np
 	ldp	$a2,$a3,[$tp,#8*2]
 	ldp	$a4,$a5,[$tp,#8*4]
 	ldp	$a6,$a7,[$tp,#8*6]
@@ -1212,7 +1212,7 @@ __bn_mul4x_mont:
 	//adc	$carry,$carry,xzr
 	cbnz	$cnt,.Loop_mul4x_1st_tail
 
-	sub	$t1,$ap_end,$num	// rewinded $ap
+	sub	$t1,$ap_end,$num	// rewound $ap
 	cbz	$t0,.Lmul4x_proceed
 
 	ldp	$a0,$a1,[$ap,#8*0]
@@ -1354,7 +1354,7 @@ __bn_mul4x_mont:
 	//adc	$carry,$carry,xzr
 	cbnz	$cnt,.Loop_mul4x_tail
 
-	sub	$t1,$np,$num		// rewinded np?
+	sub	$t1,$np,$num		// rewound np?
 	adc	$carry,$carry,xzr
 	cbz	$t0,.Loop_mul4x_break
 

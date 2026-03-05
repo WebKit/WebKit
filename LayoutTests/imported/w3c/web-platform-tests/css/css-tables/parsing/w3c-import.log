@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/parsing/border-collapse-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/parsing/border-collapse-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/parsing/border-collapse-valid.html

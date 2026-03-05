@@ -54,6 +54,7 @@ PACKAGES=(
     libgstreamer-plugins-base1.0-dev
     libinput-dev
     libjpeg-dev
+    libhyphen-dev
     libkate-dev
     liblcms2-dev
     libmanette-0.2-dev
@@ -88,6 +89,9 @@ PACKAGES=(
     apache2
     curl
     fonts-liberation
+    hyphen-de
+    hyphen-en-gb
+    hyphen-en-us
     gdb
     libcgi-pm-perl
     psmisc

@@ -65,7 +65,7 @@ ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const &
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() &&
 {
-    return { identifier, type, frameType, WTFMove(url).isolatedCopy(), WTFMove(ownerURL).isolatedCopy(), pageIdentifier, frameIdentifier, lastNavigationWasAppInitiated, advancedPrivacyProtections, isVisible, isFocused, focusOrder, crossThreadCopy(WTFMove(ancestorOrigins)) };
+    return { identifier, type, frameType, WTF::move(url).isolatedCopy(), WTF::move(ownerURL).isolatedCopy(), pageIdentifier, frameIdentifier, lastNavigationWasAppInitiated, advancedPrivacyProtections, isVisible, isFocused, focusOrder, crossThreadCopy(WTF::move(ancestorOrigins)) };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context)
@@ -94,7 +94,7 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
             !document->hidden(),
             document->hasFocus(),
             0,
-            WTFMove(ancestorOrigins)
+            WTF::move(ancestorOrigins)
         };
     }
 

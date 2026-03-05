@@ -32,12 +32,12 @@ BIO *BIO_new_mem_buf(const void *buf, ossl_ssize_t len) {
 
   if (!buf && len != 0) {
     OPENSSL_PUT_ERROR(BIO, BIO_R_NULL_PARAMETER);
-    return NULL;
+    return nullptr;
   }
 
   ret = BIO_new(BIO_s_mem());
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
 
   b = (BUF_MEM *)ret->ptr;
@@ -50,7 +50,7 @@ BIO *BIO_new_mem_buf(const void *buf, ossl_ssize_t len) {
 
   // |num| is used to store the value that this BIO will return when it runs
   // out of data. If it's negative then the retry flags will also be set. Since
-  // this is static data, retrying wont help
+  // this is static data, retrying won't help
   ret->num = 0;
 
   return ret;
@@ -60,7 +60,7 @@ static int mem_new(BIO *bio) {
   BUF_MEM *b;
 
   b = BUF_MEM_new();
-  if (b == NULL) {
+  if (b == nullptr) {
     return 0;
   }
 
@@ -75,16 +75,16 @@ static int mem_new(BIO *bio) {
 }
 
 static int mem_free(BIO *bio) {
-  if (!bio->shutdown || !bio->init || bio->ptr == NULL) {
+  if (!bio->shutdown || !bio->init || bio->ptr == nullptr) {
     return 1;
   }
 
   BUF_MEM *b = (BUF_MEM *)bio->ptr;
   if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
-    b->data = NULL;
+    b->data = nullptr;
   }
   BUF_MEM_free(b);
-  bio->ptr = NULL;
+  bio->ptr = nullptr;
   return 1;
 }
 
@@ -153,7 +153,7 @@ static int mem_gets(BIO *bio, char *buf, int size) {
   // Stop at the first newline.
   const char *newline =
       reinterpret_cast<char *>(OPENSSL_memchr(b->data, '\n', ret));
-  if (newline != NULL) {
+  if (newline != nullptr) {
     ret = (int)(newline - b->data + 1);
   }
 
@@ -168,7 +168,7 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
   BUF_MEM *b = static_cast<BUF_MEM *>(bio->ptr);
   switch (cmd) {
     case BIO_CTRL_RESET:
-      if (b->data != NULL) {
+      if (b->data != nullptr) {
         // For read only case reset to the start again
         if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
           b->data -= b->max - b->length;
@@ -198,7 +198,7 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       bio->ptr = ptr;
       return 1;
     case BIO_C_GET_BUF_MEM_PTR:
-      if (ptr != NULL) {
+      if (ptr != nullptr) {
         BUF_MEM **out = reinterpret_cast<BUF_MEM **>(ptr);
         *out = b;
       }
@@ -254,5 +254,5 @@ int BIO_set_mem_buf(BIO *bio, BUF_MEM *b, int take_ownership) {
 }
 
 int BIO_set_mem_eof_return(BIO *bio, int eof_value) {
-  return (int)BIO_ctrl(bio, BIO_C_SET_BUF_MEM_EOF_RETURN, eof_value, NULL);
+  return (int)BIO_ctrl(bio, BIO_C_SET_BUF_MEM_EOF_RETURN, eof_value, nullptr);
 }

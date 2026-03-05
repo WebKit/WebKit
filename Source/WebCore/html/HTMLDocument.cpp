@@ -85,7 +85,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLDocument);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDocument);
 
 using namespace HTMLNames;
 
@@ -110,24 +110,24 @@ Ref<DocumentParser> HTMLDocument::createParser()
 }
 
 // https://html.spec.whatwg.org/multipage/dom.html#dom-document-nameditem
-std::optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> HTMLDocument::namedItem(const AtomString& name)
+std::optional<Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>>> HTMLDocument::namedItem(const AtomString& name)
 {
     if (name.isNull() || !hasDocumentNamedItem(name))
         return std::nullopt;
 
     if (documentNamedItemContainsMultipleElements(name)) [[unlikely]] {
-        auto collection = documentNamedItems(name);
+        Ref collection = documentNamedItems(name);
         ASSERT(collection->length() > 1);
-        return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<HTMLCollection> { WTFMove(collection) } };
+        return Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>> { WTF::move(collection) };
     }
 
     Ref element = *documentNamedItem(name);
-    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element.get()); iframe) [[unlikely]] {
+    if (RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(element)) [[unlikely]] {
         if (RefPtr window = iframe->contentWindow())
-            return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(window) };
+            return Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>> { window.releaseNonNull() };
     }
 
-    return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { WTFMove(element) } };
+    return Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>> { WTF::move(element) };
 }
 
 bool HTMLDocument::isSupportedPropertyName(const AtomString& name) const

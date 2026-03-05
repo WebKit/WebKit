@@ -64,4 +64,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(
     Reflect.ownKeys(array).join(","), expected, "following shrink (out of bounds)"
   );
-});
+}, null, ["passthrough"]);

@@ -34,6 +34,7 @@
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
+#include "test/create_test_environment.h"
 #include "test/network/cross_traffic.h"
 #include "test/network/emulated_network_manager.h"
 #include "test/network/emulated_turn_server.h"
@@ -74,11 +75,12 @@ NetworkEmulationManagerImpl::NetworkEmulationManagerImpl(
       stats_gathering_mode_(config.stats_gathering_mode),
       time_controller_(
           CreateTimeController(config.time_mode, config.field_trials)),
-      clock_(time_controller_->GetClock()),
+      env_(CreateTestEnvironment({.field_trials = config.field_trials,
+                                  .time = time_controller_.get()})),
       fake_dtls_handshake_sizes_(config.fake_dtls_handshake_sizes),
       next_node_id_(1),
       next_ip4_address_(kMinIPv4Address),
-      task_queue_(time_controller_->GetTaskQueueFactory()->CreateTaskQueue(
+      task_queue_(env_.task_queue_factory().CreateTaskQueue(
           "NetworkEmulation",
           TaskQueueFactory::Priority::NORMAL)) {}
 
@@ -101,7 +103,7 @@ EmulatedNetworkNode* NetworkEmulationManagerImpl::CreateEmulatedNode(
 EmulatedNetworkNode* NetworkEmulationManagerImpl::CreateEmulatedNode(
     std::unique_ptr<NetworkBehaviorInterface> network_behavior) {
   auto node = std::make_unique<EmulatedNetworkNode>(
-      clock_, task_queue_.Get(), std::move(network_behavior),
+      &env_.clock(), task_queue_.Get(), std::move(network_behavior),
       stats_gathering_mode_, fake_dtls_handshake_sizes_);
   EmulatedNetworkNode* out = node.get();
   task_queue_.PostTask([this, node = std::move(node)]() mutable {
@@ -137,7 +139,7 @@ EmulatedEndpointImpl* NetworkEmulationManagerImpl::CreateEndpoint(
   auto node = std::make_unique<EmulatedEndpointImpl>(
       EmulatedEndpointImpl::Options(next_node_id_++, *ip, config,
                                     stats_gathering_mode_),
-      config.start_as_enabled, task_queue_.Get(), clock_);
+      config.start_as_enabled, task_queue_.Get(), &env_.clock());
   EmulatedEndpointImpl* out = node.get();
   endpoints_.push_back(std::move(node));
   return out;
@@ -242,7 +244,7 @@ TcpMessageRoute* NetworkEmulationManagerImpl::CreateTcpRoute(
     EmulatedRoute* send_route,
     EmulatedRoute* ret_route) {
   auto tcp_route = std::make_unique<TcpMessageRouteImpl>(
-      clock_, task_queue_.Get(), send_route, ret_route);
+      &env_.clock(), task_queue_.Get(), send_route, ret_route);
   auto* route_ptr = tcp_route.get();
   task_queue_.PostTask([this, tcp_route = std::move(tcp_route)]() mutable {
     tcp_message_routes_.push_back(std::move(tcp_route));
@@ -265,7 +267,8 @@ CrossTrafficRoute* NetworkEmulationManagerImpl::CreateCrossTrafficRoute(
   cur_node->router()->SetReceiver(endpoint->GetPeerLocalAddress(), endpoint);
 
   std::unique_ptr<CrossTrafficRoute> traffic_route =
-      std::make_unique<CrossTrafficRouteImpl>(clock_, via_nodes[0], endpoint);
+      std::make_unique<CrossTrafficRouteImpl>(&env_.clock(), via_nodes[0],
+                                              endpoint);
   CrossTrafficRoute* out = traffic_route.get();
   traffic_routes_.push_back(std::move(traffic_route));
   return out;
@@ -310,7 +313,7 @@ NetworkEmulationManagerImpl::CreateEmulatedNetworkManagerInterface(
     endpoint_impls.push_back(static_cast<EmulatedEndpointImpl*>(endpoint));
   }
   auto endpoints_container = std::make_unique<EndpointsContainer>(
-      endpoint_impls, stats_gathering_mode_);
+      &env_.clock(), endpoint_impls, stats_gathering_mode_);
   auto network_manager = std::make_unique<EmulatedNetworkManager>(
       time_controller_.get(), task_queue_.Get(), endpoints_container.get());
   for (auto* endpoint : endpoints) {
@@ -328,9 +331,10 @@ NetworkEmulationManagerImpl::CreateEmulatedNetworkManagerInterface(
 void NetworkEmulationManagerImpl::GetStats(
     ArrayView<EmulatedEndpoint* const> endpoints,
     std::function<void(EmulatedNetworkStats)> stats_callback) {
-  task_queue_.PostTask([endpoints, stats_callback,
+  task_queue_.PostTask([endpoints, stats_callback, env = env_,
                         stats_gathering_mode = stats_gathering_mode_]() {
-    EmulatedNetworkStatsBuilder stats_builder(stats_gathering_mode);
+    EmulatedNetworkStatsBuilder stats_builder(env.clock(),
+                                              stats_gathering_mode);
     for (auto* endpoint : endpoints) {
       // It's safe to cast here because EmulatedEndpointImpl can be the only
       // implementation of EmulatedEndpoint, because only it has access to
@@ -345,14 +349,15 @@ void NetworkEmulationManagerImpl::GetStats(
 void NetworkEmulationManagerImpl::GetStats(
     ArrayView<EmulatedNetworkNode* const> nodes,
     std::function<void(EmulatedNetworkNodeStats)> stats_callback) {
-  task_queue_.PostTask(
-      [nodes, stats_callback, stats_gathering_mode = stats_gathering_mode_]() {
-        EmulatedNetworkNodeStatsBuilder stats_builder(stats_gathering_mode);
-        for (auto* node : nodes) {
-          stats_builder.AddEmulatedNetworkNodeStats(node->stats());
-        }
-        stats_callback(stats_builder.Build());
-      });
+  task_queue_.PostTask([nodes, stats_callback, env = env_,
+                        stats_gathering_mode = stats_gathering_mode_]() {
+    EmulatedNetworkNodeStatsBuilder stats_builder(env.clock(),
+                                                  stats_gathering_mode);
+    for (auto* node : nodes) {
+      stats_builder.AddEmulatedNetworkNodeStats(node->stats());
+    }
+    stats_callback(stats_builder.Build());
+  });
 }
 
 std::optional<IPAddress> NetworkEmulationManagerImpl::GetNextIPv4Address() {
@@ -372,7 +377,7 @@ std::optional<IPAddress> NetworkEmulationManagerImpl::GetNextIPv4Address() {
 }
 
 Timestamp NetworkEmulationManagerImpl::Now() const {
-  return clock_->CurrentTime();
+  return env_.clock().CurrentTime();
 }
 
 EmulatedTURNServerInterface* NetworkEmulationManagerImpl::CreateTURNServer(
@@ -384,7 +389,7 @@ EmulatedTURNServerInterface* NetworkEmulationManagerImpl::CreateTURNServer(
   str.AppendFormat("turn_server_%u",
                    static_cast<unsigned>(turn_servers_.size()));
   auto turn = std::make_unique<EmulatedTURNServer>(
-      config, time_controller_->CreateThread(str.str()), client, peer);
+      env_, config, time_controller_->CreateThread(str.str()), client, peer);
   auto out = turn.get();
   turn_servers_.push_back(std::move(turn));
   return out;

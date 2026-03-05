@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 761x35
+        RenderText {#text} at (0,0) size 761x36
           text run at (0,0) width 718: "The following elements behave differently in different browsers. Our current behavior will cause them to overlap, "
           text run at (717,0) width 44: "but we"
           text run at (0,18) width 236: "may need to change this in the future."
@@ -18,11 +18,11 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (7,10) size 2x2 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,10) size 0x0
             RenderTableCell {TD} at (10,1) size 773x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x17
+              RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,58) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
-        RenderBR {BR} at (0,18) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,94) size 784x279
         RenderTableSection {TBODY} at (0,0) size 784x279
           RenderTableRow {TR} at (0,1) size 784x277
@@ -33,5 +33,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (435,1) size 216x277 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
             RenderTableCell {TD} at (652,129) size 131x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,129) size 4x18
-                text run at (1,1) width 4: " "
+              RenderText {#text} at (1,130) size 4x17
+                text run at (1,2) width 4: " "

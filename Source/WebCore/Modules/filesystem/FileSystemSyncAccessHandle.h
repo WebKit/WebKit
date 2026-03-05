@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <WebCore/ActiveDOMObject.h>
-#include <WebCore/BufferSource.h>
-#include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
-#include <WebCore/IDLTypes.h>
+#include "ActiveDOMObject.h"
+#include "BufferSource.h"
+#include "FileSystemSyncAccessHandleIdentifier.h"
+#include "IDLTypes.h"
 #include <wtf/Deque.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>

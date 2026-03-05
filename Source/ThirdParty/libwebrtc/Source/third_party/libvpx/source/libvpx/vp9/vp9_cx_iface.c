@@ -1552,7 +1552,6 @@ static vpx_codec_err_t encoder_encode(vpx_codec_alg_priv_t *ctx,
           PSNR_STATS psnr;
           if (vp9_get_psnr(cpi, &psnr)) {
             vpx_codec_cx_pkt_t psnr_pkt = get_psnr_pkt(&psnr);
-            psnr_pkt.data.psnr.spatial_layer_id = cpi->svc.spatial_layer_id;
             vpx_codec_pkt_list_add(&ctx->pkt_list.head, &psnr_pkt);
           }
         }

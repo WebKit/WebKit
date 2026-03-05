@@ -54,12 +54,12 @@ static JSValue *jsValueWithValueInContext(id, JSContext *);
 
 Ref<SerializedPlatformDataCue> SerializedPlatformDataCue::create(SerializedPlatformDataCueValue&& value)
 {
-    return adoptRef(*new SerializedPlatformDataCueMac(WTFMove(value)));
+    return adoptRef(*new SerializedPlatformDataCueMac(WTF::move(value)));
 }
 
 SerializedPlatformDataCueMac::SerializedPlatformDataCueMac(SerializedPlatformDataCueValue&& value)
     : SerializedPlatformDataCue()
-    , m_value(WTFMove(value))
+    , m_value(WTF::move(value))
 {
 }
 
@@ -131,7 +131,8 @@ static JSValue *jsValueWithDataInContext(NSData *data, JSContext *context)
     auto dataArray = ArrayBuffer::tryCreate(span(data));
 
     auto* lexicalGlobalObject = toJS([context JSGlobalContextRef]);
-    JSC::JSValue array = toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), dataArray.get());
+    // FIXME: It is a layering violation to use the JSDOMGlobalObject type in the platform directory.
+    JSC::JSValue array = dataArray ? toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), *dataArray) : JSC::jsNull();
 
     return [JSValue valueWithJSValueRef:toRef(lexicalGlobalObject, array) inContext:context];
 }

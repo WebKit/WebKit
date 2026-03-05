@@ -6,15 +6,15 @@ esid: sec-typedarray-typedarray
 description: >
   Passing a SharedArrayBuffer-backed TypedArray to a TypedArray constructor
   produces an ArrayBuffer-backed TypedArray.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, SharedArrayBuffer, TypedArray]
 ---*/
 
 var sab = new SharedArrayBuffer(8);
 
-testWithBigIntTypedArrayConstructors(function(View1) {
+testWithBigIntTypedArrayConstructors(function(View1, makeCtorArg) {
   var ta1 = new View1(sab);
-  testWithBigIntTypedArrayConstructors(function(View2) {
+  testWithBigIntTypedArrayConstructors(function(View2, makeCtorArg) {
     var ta2 = new View2(ta1);
     assert.sameValue(
       ta2.buffer.constructor,

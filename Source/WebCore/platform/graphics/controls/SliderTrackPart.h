@@ -42,7 +42,7 @@ public:
     void setTrackBounds(IntRect trackBounds) { m_trackBounds = trackBounds; }
 
     const Vector<double>& tickRatios() const { return m_tickRatios; }
-    void setTickRatios(Vector<double>&& tickRatios) { m_tickRatios = WTFMove(tickRatios); }
+    void setTickRatios(Vector<double>&& tickRatios) { m_tickRatios = WTF::move(tickRatios); }
 
     double thumbPosition() const { return m_thumbPosition; }
     void setThumbPosition(double thumbPosition) { m_thumbPosition = thumbPosition; }

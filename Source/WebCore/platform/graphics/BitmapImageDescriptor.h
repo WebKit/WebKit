@@ -70,6 +70,7 @@ public:
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool shouldUseQuickLookForFullscreen() const;
+    bool isPanorama() const;
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)

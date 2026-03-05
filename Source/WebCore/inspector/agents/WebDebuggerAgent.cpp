@@ -79,15 +79,15 @@ void WebDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString
         return;
 
     auto& registeredListener = eventListeners.at(position);
-    if (m_registeredEventListeners.contains(registeredListener.get()))
+    if (m_registeredEventListeners.contains(registeredListener.ptr()))
         return;
 
-    auto* globalObject = target.protectedScriptExecutionContext()->globalObject();
+    auto* globalObject = protect(target.scriptExecutionContext())->globalObject();
     if (!globalObject)
         return;
 
     int identifier = m_nextEventListenerIdentifier++;
-    m_registeredEventListeners.set(registeredListener.get(), identifier);
+    m_registeredEventListeners.set(registeredListener.ptr(), identifier);
 
     didScheduleAsyncCall(globalObject, InspectorDebuggerAgent::AsyncCallType::EventListener, identifier, registeredListener->isOnce());
 }
@@ -102,7 +102,7 @@ void WebDebuggerAgent::willRemoveEventListener(EventTarget& target, const AtomSt
     if (listenerIndex == notFound)
         return;
 
-    int identifier = m_registeredEventListeners.take(eventListeners[listenerIndex].get());
+    int identifier = m_registeredEventListeners.take(eventListeners[listenerIndex].ptr());
     didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::EventListener, identifier);
 }
 

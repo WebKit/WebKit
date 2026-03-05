@@ -35,9 +35,9 @@
 #import <wtf/CheckedRef.h>
 #import <wtf/Function.h>
 #import <wtf/Noncopyable.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/darwin/DispatchOSObject.h>
 
 namespace WebCore {
 

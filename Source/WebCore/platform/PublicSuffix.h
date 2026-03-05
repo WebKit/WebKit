@@ -34,7 +34,7 @@ namespace WebCore {
 
 class PublicSuffix {
 public:
-    static PublicSuffix fromRawString(String&& string) { return PublicSuffix(WTFMove(string)); }
+    static PublicSuffix fromRawString(String&& string) { return PublicSuffix(WTF::move(string)); }
     PublicSuffix() = default;
     bool isValid() const { return !m_string.isEmpty(); }
     const String& string() const { return m_string; }
@@ -53,7 +53,7 @@ public:
     };
 
 private:
-    explicit PublicSuffix(String&& string) : m_string(WTFMove(string)) { }
+    explicit PublicSuffix(String&& string) : m_string(WTF::move(string)) { }
 
     String m_string;
 };

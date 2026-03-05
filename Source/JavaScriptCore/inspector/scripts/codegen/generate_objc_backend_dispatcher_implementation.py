@@ -173,7 +173,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
                 else:
                     lines.append('        if (!!%s)' % out_param_name)
                     lines.append('            protocol_jsonMessage->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-        lines.append('        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);')
+        lines.append('        backendDispatcher()->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);')
 
         lines.append('    };')
         return '\n'.join(lines)
@@ -199,7 +199,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
             if CppGenerator.should_dereference_argument(_type, parameter.is_optional):
                 return '*' + param_name
             if CppGenerator.should_move_argument(_type, parameter.is_optional):
-                return 'WTFMove(%s)' % param_name
+                return 'WTF::move(%s)' % param_name
             return param_name
 
         for parameter in command.call_parameters:

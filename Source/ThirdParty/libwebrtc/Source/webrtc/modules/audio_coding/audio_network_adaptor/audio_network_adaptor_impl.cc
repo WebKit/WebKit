@@ -18,13 +18,13 @@
 #include <utility>
 
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/environment/environment.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
 #include "modules/audio_coding/audio_network_adaptor/event_log_writer.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -34,24 +34,18 @@ constexpr float kEventLogMinBitrateChangeFraction = 0.25;
 constexpr float kEventLogMinPacketLossChangeFraction = 0.5;
 }  // namespace
 
-AudioNetworkAdaptorImpl::Config::Config() : event_log(nullptr) {}
-
-AudioNetworkAdaptorImpl::Config::~Config() = default;
-
 AudioNetworkAdaptorImpl::AudioNetworkAdaptorImpl(
-    const Config& config,
+    const Environment& env,
     std::unique_ptr<ControllerManager> controller_manager,
     std::unique_ptr<DebugDumpWriter> debug_dump_writer)
-    : config_(config),
+    : env_(env),
       controller_manager_(std::move(controller_manager)),
       debug_dump_writer_(std::move(debug_dump_writer)),
-      event_log_writer_(
-          config.event_log
-              ? new EventLogWriter(config.event_log,
-                                   kEventLogMinBitrateChangeBps,
-                                   kEventLogMinBitrateChangeFraction,
-                                   kEventLogMinPacketLossChangeFraction)
-              : nullptr) {
+      event_log_writer_(std::make_unique<EventLogWriter>(
+          &env_.event_log(),
+          kEventLogMinBitrateChangeBps,
+          kEventLogMinBitrateChangeFraction,
+          kEventLogMinPacketLossChangeFraction)) {
   RTC_DCHECK(controller_manager_);
 }
 
@@ -140,11 +134,12 @@ AudioEncoderRuntimeConfig AudioNetworkAdaptorImpl::GetEncoderRuntimeConfig() {
   }
   prev_config_ = config;
 
-  if (debug_dump_writer_)
-    debug_dump_writer_->DumpEncoderRuntimeConfig(config, TimeMillis());
+  if (debug_dump_writer_) {
+    debug_dump_writer_->DumpEncoderRuntimeConfig(
+        config, env_.clock().TimeInMilliseconds());
+  }
 
-  if (event_log_writer_)
-    event_log_writer_->MaybeLogEncoderConfig(config);
+  event_log_writer_->MaybeLogEncoderConfig(config);
 
   return config;
 }
@@ -162,8 +157,10 @@ ANAStats AudioNetworkAdaptorImpl::GetStats() const {
 }
 
 void AudioNetworkAdaptorImpl::DumpNetworkMetrics() {
-  if (debug_dump_writer_)
-    debug_dump_writer_->DumpNetworkMetrics(last_metrics_, TimeMillis());
+  if (debug_dump_writer_) {
+    debug_dump_writer_->DumpNetworkMetrics(last_metrics_,
+                                           env_.clock().TimeInMilliseconds());
+  }
 }
 
 void AudioNetworkAdaptorImpl::UpdateNetworkMetrics(

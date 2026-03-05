@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,19 @@
 #include "config.h"
 #include "RenderTreeBuilderFormControls.h"
 
+#include "ContainerNodeInlines.h"
+#include "HTMLInputElement.h"
+#include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
+#include "InputType.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderButton.h"
 #include "RenderMenuList.h"
 #include "RenderTreeBuilderBlock.h"
+#include "RenderTreeUpdaterGeneratedContent.h"
+#include "SelectPopoverElement.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -44,22 +52,7 @@ RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::FormControls::attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::FormControls::attach(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    auto& newChild = *child.get();
-    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
-    parent.didAttachChild(newChild, beforeChild);
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderMenuList& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
-{
-    auto* innerRenderer = parent.innerRenderer();
-    if (!innerRenderer || &child == innerRenderer)
-        return m_builder.blockBuilder().detach(parent, child, willBeDestroyed);
-    return m_builder.detach(*innerRenderer, child, willBeDestroyed);
+    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
@@ -79,24 +72,87 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderB
     if (innerRenderer)
         return *innerRenderer;
 
-    auto wrapper = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
+    auto wrapper = Block::createAnonymousBlockWithStyle(protect(parent.document()), parent.style());
     innerRenderer = wrapper.get();
-    m_builder.blockBuilder().attach(parent, WTFMove(wrapper), nullptr);
+    m_builder.blockBuilder().attach(parent, WTF::move(wrapper), nullptr);
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
 
-RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderMenuList& parent)
+void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& renderer)
 {
-    auto* innerRenderer = parent.innerRenderer();
-    if (innerRenderer)
-        return *innerRenderer;
+    if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(renderer.element())) {
+        if (inputElement->isCheckable())
+            updatePseudoElement(PseudoElementType::Checkmark, renderer, renderer.style().usedAppearance());
+        return;
+    }
 
-    auto wrapper = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
-    innerRenderer = wrapper.get();
-    m_builder.blockBuilder().attach(parent, WTFMove(wrapper), nullptr);
-    parent.setInnerRenderer(*innerRenderer);
-    return *innerRenderer;
+    if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(renderer.element())) {
+        RefPtr selectElement = optionElement->ownerSelectElement();
+        if (!selectElement)
+            return;
+
+        RefPtr pickerElement = selectElement->pickerPopoverElement();
+        if (!pickerElement)
+            return;
+
+        if (CheckedPtr pickerElementRenderer = pickerElement->renderer())
+            updatePseudoElement(PseudoElementType::Checkmark, renderer, pickerElementRenderer->style().usedAppearance(), renderer.firstChild());
+
+        return;
+    }
+
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(renderer.element()); select && select->usesMenuList()) {
+        updatePseudoElement(PseudoElementType::PickerIcon, renderer, renderer.style().usedAppearance());
+        return;
+    }
 }
 
+void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type, RenderElement& renderer, StyleAppearance usedAppearance, RenderObject* beforeChild)
+{
+    CheckedPtr existingPseudoElement = renderer.pseudoElementRenderer(type).get();
+
+    if (usedAppearance != StyleAppearance::Base && !existingPseudoElement)
+        return;
+
+    auto pseudoStyle = renderer.getCachedPseudoStyle({ type });
+    if (!pseudoStyle)
+        return;
+
+    auto shouldHavePseudoElementRenderer = [&] -> bool {
+        return usedAppearance == StyleAppearance::Base && pseudoStyle->display() != Style::DisplayType::None;
+    };
+
+    if (!shouldHavePseudoElementRenderer()) {
+        if (existingPseudoElement)
+            m_builder.destroy(*existingPseudoElement);
+        return;
+    }
+
+    if (existingPseudoElement && existingPseudoElement->style().content() == pseudoStyle->content()) {
+        auto pseudoElementStyle = RenderStyle::clone(*pseudoStyle);
+        existingPseudoElement->setStyle(WTF::move(pseudoElementStyle));
+        RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(*existingPseudoElement, existingPseudoElement->style());
+        return;
+    }
+
+    if (existingPseudoElement) {
+        m_builder.destroy(*existingPseudoElement);
+        existingPseudoElement = nullptr;
+    }
+
+    Ref document = renderer.document();
+    auto pseudoElementStyle = RenderStyle::clone(*pseudoStyle);
+
+    RenderPtr<RenderBlockFlow> pseudoElement = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(pseudoElementStyle));
+    pseudoElement->initializeStyle();
+
+    if (pseudoElement->style().content().isData())
+        RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, *pseudoElement, pseudoElement->style(), type);
+
+    renderer.setPseudoElementRenderer(type, *pseudoElement.get());
+
+    m_builder.attach(renderer, WTF::move(pseudoElement), beforeChild);
 }
+
+} // namespace WebCore

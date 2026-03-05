@@ -158,10 +158,6 @@ int64_t TimeNanos() {
   return SystemTimeNanos();
 }
 
-uint32_t Time32() {
-  return static_cast<uint32_t>(TimeNanos() / kNumNanosecsPerMillisec);
-}
-
 int64_t TimeMillis() {
   return TimeNanos() / kNumNanosecsPerMillisec;
 }

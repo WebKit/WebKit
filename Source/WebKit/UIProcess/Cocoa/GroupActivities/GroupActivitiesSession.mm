@@ -37,11 +37,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GroupActivitiesSession);
 
 Ref<GroupActivitiesSession> GroupActivitiesSession::create(RetainPtr<WKGroupSession>&& session)
 {
-    return adoptRef(*new GroupActivitiesSession(WTFMove(session)));
+    return adoptRef(*new GroupActivitiesSession(WTF::move(session)));
 }
 
 GroupActivitiesSession::GroupActivitiesSession(RetainPtr<WKGroupSession>&& session)
-    : m_groupSession(WTFMove(session))
+    : m_groupSession(WTF::move(session))
 {
     m_groupSession.get().newActivityCallback = [this] (WKURLActivity *activity) {
         m_fallbackURLObservers.forEach([this, activity] (auto& observer) {

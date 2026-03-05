@@ -14,6 +14,7 @@ ocl_cts_source_set("cl_copy_images") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clCopyImage/main.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clCopyImage/test_copy_1D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clCopyImage/test_copy_1D_array.cpp",
+    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clCopyImage/test_copy_1D_buffer.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clCopyImage/test_copy_2D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clCopyImage/test_copy_2D_2D_array.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clCopyImage/test_copy_2D_3D.cpp",

@@ -135,7 +135,7 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     Operands<std::optional<JSValue>>&& mustHandleValues)
         : Base(mode, passedCodeBlock)
         , m_profiledDFGCodeBlock(profiledDFGCodeBlock)
-        , m_mustHandleValues(WTFMove(mustHandleValues))
+        , m_mustHandleValues(WTF::move(mustHandleValues))
         , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
         , m_compilation(m_vm->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_codeBlock), profilerCompilationKindForMode(mode))) : nullptr)
         , m_inlineCallFrames(adoptRef(new InlineCallFrameSet()))
@@ -558,7 +558,7 @@ bool Plan::reallyAdd(CommonData* commonData)
     if (!m_watchpoints.reallyAdd(m_codeBlock, m_identifiers, commonData))
         return false;
 
-    commonData->recordedStatuses = WTFMove(m_recordedStatuses);
+    commonData->recordedStatuses = WTF::move(m_recordedStatuses);
 
     ASSERT(m_vm->heap.isDeferred());
     for (auto* callLinkInfo : commonData->m_directCallLinkInfos)
@@ -741,7 +741,7 @@ std::unique_ptr<JITData> Plan::tryFinalizeJITData(const DFG::JITCode& jitCode)
 {
     auto osrExitThunk = m_vm->getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
     auto exits = JITData::ExitVector::createWithSizeAndConstructorArguments(jitCode.m_osrExit.size(), osrExitThunk);
-    return JITData::tryCreate(*m_vm, m_codeBlock, jitCode, WTFMove(exits));
+    return JITData::tryCreate(*m_vm, m_codeBlock, jitCode, WTF::move(exits));
 }
 
 } } // namespace JSC::DFG

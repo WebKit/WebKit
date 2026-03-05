@@ -45,9 +45,11 @@ constexpr bool kDav1dIsIncluded = false;
 constexpr bool kH265Enabled = false;
 
 constexpr VideoDecoderFactory::CodecSupport kSupported = {
-    /*is_supported=*/true, /*is_power_efficient=*/false};
+    .is_supported = true,
+    .is_power_efficient = false};
 constexpr VideoDecoderFactory::CodecSupport kUnsupported = {
-    /*is_supported=*/false, /*is_power_efficient=*/false};
+    .is_supported = false,
+    .is_power_efficient = false};
 
 MATCHER_P(Support, expected, "") {
   return arg.is_supported == expected.is_supported &&

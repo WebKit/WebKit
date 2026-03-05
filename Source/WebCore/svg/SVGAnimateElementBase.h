@@ -31,7 +31,7 @@ namespace WebCore {
 class SVGAttributeAnimator;
 
 class SVGAnimateElementBase : public SVGAnimationElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGAnimateElementBase);
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimateElementBase);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateElementBase);
 public:
     bool isDiscreteAnimator() const;
@@ -44,7 +44,7 @@ protected:
 
 private:
     SVGAttributeAnimator* animator() const;
-    SVGAttributeAnimator* animatorIfExists() const { return m_animator.get(); }
+    SVGAttributeAnimator* animatorIfExists() const { return m_animator; }
 
     void setTargetElement(SVGElement*) override;
     void setAttributeName(const QualifiedName&) override;

@@ -3,4 +3,37 @@ PASS offerer data channel in workers
 PASS answerer data channel in workers
 PASS data channel close event in worker
 PASS Failing to transfer a data channel
+PASS Sanity check worker shim: never initted
+PASS Sanity check worker shim: RTCDataChannel not transferable
+PASS Sanity check worker shim: Worker code throws on duplicate label
+PASS Sanity check worker shim: RTCDataChannel can throw
+PASS Check that transferred RTCDataChannel has correct initial (default) attributes
+PASS Check that transferred RTCDataChannel has correct initial (non-default) attributes
+PASS Check that transferred RTCDataChannel has correct initial (non-default) attributes (maxRetransmits variant)
+PASS Check that transferred RTCDataChannel can set bufferedAmountLowThreshold/binaryType
+PASS Check that transferred offerer RTCDataChannel open event works
+PASS Check that transferred offerer RTCDataChannel can send and receive string "hello"
+PASS Check that transferred offerer RTCDataChannel can send and receive string ""
+PASS Check that transferred offerer RTCDataChannel can send and receive string "世界你好"
+PASS Check that transferred offerer RTCDataChannel can send Blob that is received as Blob, and vice-versa
+PASS Check that transferred offerer RTCDataChannel can send ArrayBuffer that is received as Blob, and vice-versa
+PASS Check that transferred offerer RTCDataChannel can send Uint8Array that is received as Blob, and vice-versa
+PASS Check that transferred offerer RTCDataChannel can send Blob that is received as ArrayBuffer, and vice-versa
+PASS Check that transferred offerer RTCDataChannel can send ArrayBuffer that is received as ArrayBuffer, and vice-versa
+PASS Check that transferred offerer RTCDataChannel can send Uint8Array that is received as ArrayBuffer, and vice-versa
+PASS Check that transferred offerer RTCDataChannel onclose fires
+PASS Check that transferred offerer RTCDataChannel onclosing fires
+PASS Check that transferred answerer RTCDataChannel open event works
+PASS Check that transferred answerer RTCDataChannel can send and receive string "hello"
+PASS Check that transferred answerer RTCDataChannel can send and receive string ""
+PASS Check that transferred answerer RTCDataChannel can send and receive string "世界你好"
+PASS Check that transferred answerer RTCDataChannel can send Blob that is received as Blob, and vice-versa
+PASS Check that transferred answerer RTCDataChannel can send ArrayBuffer that is received as Blob, and vice-versa
+PASS Check that transferred answerer RTCDataChannel can send Uint8Array that is received as Blob, and vice-versa
+PASS Check that transferred answerer RTCDataChannel can send Blob that is received as ArrayBuffer, and vice-versa
+PASS Check that transferred answerer RTCDataChannel can send ArrayBuffer that is received as ArrayBuffer, and vice-versa
+PASS Check that transferred answerer RTCDataChannel can send Uint8Array that is received as ArrayBuffer, and vice-versa
+PASS Check that transferred answerer RTCDataChannel onclose fires
+PASS Check that transferred answerer RTCDataChannel onclosing fires
+PASS Check that a variety of kinds of worker/non-worker DataChannel can work simultaneously
 

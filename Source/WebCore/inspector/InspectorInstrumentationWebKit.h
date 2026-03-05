@@ -70,13 +70,13 @@ inline bool InspectorInstrumentationWebKit::shouldInterceptResponse(const LocalF
 inline void InspectorInstrumentationWebKit::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
     ASSERT(InspectorInstrumentationWebKit::shouldInterceptRequest(loader));
-    interceptRequestInternal(loader, WTFMove(handler));
+    interceptRequestInternal(loader, WTF::move(handler));
 }
 
 inline void InspectorInstrumentationWebKit::interceptResponse(const LocalFrame* frame, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
 {
     ASSERT(InspectorInstrumentationWebKit::shouldInterceptResponse(frame, response));
-    interceptResponseInternal(*frame, response, identifier, WTFMove(handler));
+    interceptResponseInternal(*frame, response, identifier, WTF::move(handler));
 }
 
 }

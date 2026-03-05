@@ -24,21 +24,21 @@
 
 namespace WTF {
 
-NumberToStringSpan numberToStringAndSize(float number, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringAndSize(float number, NumberToStringBuffer& buffer LIFETIME_BOUND)
 {
     static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary32>() + 1));
-    auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
-    return std::span { buffer }.first(result - buffer.data());
+    auto result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, std::span { buffer });
+    return std::span { buffer }.first(result.data() - buffer.data());
 }
 
-NumberToStringSpan numberToStringAndSize(double number, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringAndSize(double number, NumberToStringBuffer& buffer LIFETIME_BOUND)
 {
     static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary64>() + 1));
-    auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
-    return std::span { buffer }.first(result - buffer.data());
+    auto result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, std::span { buffer });
+    return std::span { buffer }.first(result.data() - buffer.data());
 }
 
-NumberToStringSpan numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer LIFETIME_BOUND)
 {
     double_conversion::StringBuilder builder(std::span<char> { buffer });
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverterWithTrailingPoint();
@@ -83,14 +83,14 @@ static inline void truncateTrailingZeros(std::span<const char> buffer, double_co
     builder.RemoveCharacters(truncatedLength, pastMantissa);
 }
 
-NumberToStringSpan numberToFixedPrecisionString(float number, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
+NumberToStringSpan numberToFixedPrecisionString(float number, unsigned significantFigures, NumberToStringBuffer& buffer LIFETIME_BOUND, bool shouldTruncateTrailingZeros)
 {
     // For now, just call the double precision version.
     // Do that here instead of at callers to pave the way to add a more efficient code path later.
     return numberToFixedPrecisionString(static_cast<double>(number), significantFigures, buffer, shouldTruncateTrailingZeros);
 }
 
-NumberToStringSpan numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
+NumberToStringSpan numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer LIFETIME_BOUND, bool shouldTruncateTrailingZeros)
 {
     // Mimic sprintf("%.[precision]g", ...).
     // "g": Signed value printed in f or e format, whichever is more compact for the given value and precision.
@@ -105,14 +105,14 @@ NumberToStringSpan numberToFixedPrecisionString(double d, unsigned significantFi
     return builder.Finalize();
 }
 
-NumberToStringSpan numberToFixedWidthString(float number, unsigned decimalPlaces, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToFixedWidthString(float number, unsigned decimalPlaces, NumberToStringBuffer& buffer LIFETIME_BOUND)
 {
     // For now, just call the double precision version.
     // Do that here instead of at callers to pave the way to add a more efficient code path later.
     return numberToFixedWidthString(static_cast<double>(number), decimalPlaces, buffer);
 }
 
-NumberToStringSpan numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer LIFETIME_BOUND)
 {
     // Mimic sprintf("%.[precision]f", ...).
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.
@@ -120,14 +120,14 @@ NumberToStringSpan numberToFixedWidthString(double d, unsigned decimalPlaces, Nu
     // the number of digits after the decimal point depends on the requested precision.
     // "precision": The precision value specifies the number of digits after the decimal point.
     // If a decimal point appears, at least one digit appears before it.
-    // The value is rounded to the appropriate number of digits.    
+    // The value is rounded to the appropriate number of digits.
     double_conversion::StringBuilder builder(std::span<char> { buffer });
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
     converter.ToFixed(d, decimalPlaces, &builder);
     return builder.Finalize();
 }
 
-NumberToStringSpan numberToCSSString(double d, NumberToCSSStringBuffer& buffer)
+NumberToStringSpan numberToCSSString(double d, NumberToCSSStringBuffer& buffer LIFETIME_BOUND)
 {
     // Mimic sprintf("%.[precision]f", ...).
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.

@@ -64,7 +64,9 @@ WebKitDOMBlob* wrapBlob(WebCore::Blob* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMBlob, webkit_dom_blob, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     PROP_0,

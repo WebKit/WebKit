@@ -55,7 +55,7 @@ class RemoteComputePassEncoder final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteComputePassEncoder> create(WebCore::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteComputePassEncoder(computePassEncoder, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteComputePassEncoder(computePassEncoder, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteComputePassEncoder();
@@ -75,10 +75,6 @@ private:
     RemoteComputePassEncoder& operator=(RemoteComputePassEncoder&&) = delete;
 
     WebCore::WebGPU::ComputePassEncoder& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::ComputePassEncoder> protectedBacking();
-
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
-    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -98,9 +94,9 @@ private:
     void setLabel(String&&);
     void destruct();
 
-    Ref<WebCore::WebGPU::ComputePassEncoder> m_backing;
+    const Ref<WebCore::WebGPU::ComputePassEncoder> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

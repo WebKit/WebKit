@@ -24,7 +24,6 @@
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/sctp_transport.h"
-#include "pc/sdp_utils.h"
 #include "pc/session_description.h"
 #include "pc/test/enable_fake_media.h"
 #include "pc/test/mock_peer_connection_observers.h"
@@ -216,8 +215,7 @@ TEST_P(PeerConnectionDataChannelTest, SctpContentAndTransportNameSetCorrectly) {
   ASSERT_EQ(MediaType::DATA, offer_contents[2].media_description()->type());
   auto data_mid = offer_contents[2].mid();
 
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  ASSERT_TRUE(caller->SetLocalDescription(offer->Clone()));
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
 
   ASSERT_TRUE(caller->sctp_mid());

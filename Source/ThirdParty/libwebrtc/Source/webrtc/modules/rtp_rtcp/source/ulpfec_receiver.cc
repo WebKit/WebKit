@@ -183,7 +183,7 @@ bool UlpfecReceiver::AddReceivedRedPacket(const RtpPacketReceived& rtp_packet) {
         rtp_packet.size() - rtp_packet.headers_size() - kRedHeaderLength);
   }
 
-  if (received_packet->pkt->data.size() > 0) {
+  if (!received_packet->pkt->data.empty()) {
     received_packets_.push_back(std::move(received_packet));
   }
   return true;

@@ -56,12 +56,12 @@ public:
 
     static Ref<BackgroundFetch> create(SWServerRegistration& sWServerRegistration, const String& identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
     {
-        return adoptRef(*new BackgroundFetch(sWServerRegistration, identifier, WTFMove(requests), WTFMove(options), WTFMove(store), WTFMove(notificationCallback)));
+        return adoptRef(*new BackgroundFetch(sWServerRegistration, identifier, WTF::move(requests), WTF::move(options), WTF::move(store), WTF::move(notificationCallback)));
     }
 
     static Ref<BackgroundFetch> create(SWServerRegistration& swServerRegistration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
     {
-        return adoptRef(*new BackgroundFetch(swServerRegistration, WTFMove(identifier), WTFMove(options), WTFMove(store), WTFMove(notificationCallback), pausedFlag));
+        return adoptRef(*new BackgroundFetch(swServerRegistration, WTF::move(identifier), WTF::move(options), WTF::move(store), WTF::move(notificationCallback), pausedFlag));
     }
 
     ~BackgroundFetch();
@@ -87,7 +87,7 @@ public:
         void ref() const final { RefCounted::ref(); }
         void deref() const final { RefCounted::deref(); }
 
-        static Ref<Record> create(BackgroundFetch& fetch, BackgroundFetchRequest&& request, size_t size) { return adoptRef(*new Record(fetch, WTFMove(request), size)); }
+        static Ref<Record> create(BackgroundFetch& fetch, BackgroundFetchRequest&& request, size_t size) { return adoptRef(*new Record(fetch, WTF::move(request), size)); }
         ~Record();
 
         void complete(const CreateLoaderCallback&);

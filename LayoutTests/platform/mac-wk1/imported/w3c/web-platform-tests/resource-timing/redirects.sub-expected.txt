@@ -1,7 +1,0 @@
-Description
-
-This test validates that redirects do not alter the URL.
-
-
-FAIL Testing resource entries assert_unreached: http://web-platform.test:8800/common/redirect.py?location=https://not-web-platform.test:9443/resource-timing/resources/blank_page_green.htm?id=xhr is expected to be in the Resource Timing buffer Reached unreachable code
-

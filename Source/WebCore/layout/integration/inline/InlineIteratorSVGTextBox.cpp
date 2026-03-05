@@ -37,7 +37,7 @@ namespace WebCore {
 namespace InlineIterator {
 
 SVGTextBox::SVGTextBox(PathVariant&& path)
-    : TextBox(WTFMove(path))
+    : TextBox(WTF::move(path))
 {
 }
 
@@ -69,7 +69,7 @@ LayoutRect SVGTextBox::localSelectionRect(unsigned start, unsigned end) const
     if (clampedStart >= clampedEnd)
         return LayoutRect();
 
-    auto& style = renderer().style();
+    CheckedRef style = renderer().style();
 
     AffineTransform fragmentTransform;
     FloatRect selectionRect;
@@ -106,7 +106,7 @@ const SVGInlineTextBox* SVGTextBox::legacyInlineBox() const
 }
 
 SVGTextBoxIterator::SVGTextBoxIterator(Box::PathVariant&& path)
-    : TextBoxIterator(WTFMove(path))
+    : TextBoxIterator(WTF::move(path))
 {
 }
 
@@ -117,7 +117,7 @@ SVGTextBoxIterator::SVGTextBoxIterator(const Box& box)
 
 SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText& text)
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(text)) {
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(text)) {
         auto box = lineLayout->textBoxesFor(text);
         if (!box)
             return { };
@@ -152,8 +152,16 @@ SVGTextBox::Key makeKey(const SVGTextBox& textBox)
 
 BoxRange<BoxIterator> boxesFor(const RenderSVGText& svgText)
 {
-    if (auto* lineLayout = svgText.inlineLayout())
+    if (CheckedPtr lineLayout = svgText.inlineLayout())
         return { BoxIterator { *lineLayout->firstRootInlineBox() } };
+
+    return { BoxIterator { BoxLegacyPath { svgText.legacyRootBox() } } };
+}
+
+BoxIterator lastBoxFor(const RenderSVGText& svgText)
+{
+    if (CheckedPtr lineLayout = svgText.inlineLayout())
+        return { BoxIterator { *lineLayout->lastRootInlineBox() } };
 
     return { BoxIterator { BoxLegacyPath { svgText.legacyRootBox() } } };
 }

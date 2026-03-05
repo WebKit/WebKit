@@ -12,8 +12,8 @@
 
       (interaction regions [
         (guard (30.50,30) width=40 height=43),
-        (guard (30.27,24.53) width=21.33 height=36),
-        (interaction (30.27,34.53) width=21.33 height=16)
+        (guard (30.77,24.53) width=21.33 height=36),
+        (interaction (30.77,34.53) width=21.33 height=16)
         (clipPath move to (1.20,0), add line to (20.13,0), add curve to (20.80,0) (21.33,0.54) (21.33,1.20), add line to (21.33,14.80), add curve to (21.33,15.46) (20.80,16) (20.13,16), add line to (1.20,16), add curve to (0.54,16) (0,15.46) (0,14.80), add line to (0,1.20), add curve to (0,0.54) (0.54,0) (1.20,0), close subpath),
         (guard (147,30) width=40 height=43),
         (guard (147.27,24.53) width=21.33 height=36),
@@ -32,19 +32,19 @@
         (interaction (699.50,0) width=100 height=103)
         (cornerRadius 8.00),
         (guard (0.50,119) width=100 height=103),
-        (interaction (0.67,130.33) width=53.33 height=40)
+        (interaction (1.17,130.33) width=53.33 height=40)
         (clipPath move to (3,0), add line to (50.33,0), add curve to (51.99,0) (53.33,1.34) (53.33,3), add line to (53.33,37), add curve to (53.33,38.66) (51.99,40) (50.33,40), add line to (3,40), add curve to (1.34,40) (0,38.66) (0,37), add line to (0,3), add curve to (0,1.34) (1.34,0) (3,0), close subpath),
         (guard (127,129) width=80 height=83),
         (interaction (127.53,138.07) width=42.67 height=32)
         (clipPath move to (2.40,0), add line to (40.27,0), add curve to (41.59,0) (42.67,1.07) (42.67,2.40), add line to (42.67,29.60), add curve to (42.67,30.93) (41.59,32) (40.27,32), add line to (2.40,32), add curve to (1.07,32) (0,30.93) (0,29.60), add line to (0,2.40), add curve to (0,1.07) (1.07,0) (2.40,0), close subpath),
         (guard (243.50,129) width=80 height=83),
-        (interaction (243.53,138.07) width=42.67 height=32)
+        (interaction (244.03,138.07) width=42.67 height=32)
         (clipPath move to (2.40,0), add line to (40.27,0), add curve to (41.59,0) (42.67,1.07) (42.67,2.40), add line to (42.67,29.60), add curve to (42.67,30.93) (41.59,32) (40.27,32), add line to (2.40,32), add curve to (1.07,32) (0,30.93) (0,29.60), add line to (0,2.40), add curve to (0,1.07) (1.07,0) (2.40,0), close subpath),
         (interaction (391,160) width=18 height=21)
         (cornerRadius 8.00),
         (guard (507.50,160) width=18 height=21),
-        (guard (501.50,153.50) width=31.50 height=31.50),
-        (interaction (511.50,163.50) width=11.50 height=11.50)
+        (guard (501,153.50) width=31.50 height=31.50),
+        (interaction (511,163.50) width=11.50 height=11.50)
         (clipPath move to (0,11.50), add line to (11.50,0))])
       )
     )

@@ -40,8 +40,8 @@ struct CGAffineTransform;
 namespace WebCore {
 
 class MediaSamplesBlock;
-struct AudioInfo;
-struct VideoInfo;
+class AudioInfo;
+class VideoInfo;
 
 class MediaRecorderPrivateWriterListener : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateWriterListener> {
 public:
@@ -63,6 +63,7 @@ public:
     WEBCORE_EXPORT MediaRecorderPrivateWriter();
     WEBCORE_EXPORT virtual ~MediaRecorderPrivateWriter();
 
+    virtual bool segmentsMustStartWithKeyframe() const = 0;
     virtual std::optional<uint8_t> addAudioTrack(const AudioInfo&) = 0;
     virtual std::optional<uint8_t> addVideoTrack(const VideoInfo&, const std::optional<CGAffineTransform>&) = 0;
     virtual bool allTracksAdded() = 0;
@@ -78,6 +79,7 @@ private:
     virtual Ref<GenericPromise> close(Deque<UniqueRef<MediaSamplesBlock>>&&, const MediaTime&) = 0;
     Deque<UniqueRef<MediaSamplesBlock>> m_pendingFrames;
     MediaTime m_lastEndTime { MediaTime::invalidTime() };
+    MediaTime m_lastSegmentEndTime { MediaTime::zeroTime() };
 };
 
 } // namespace WebCore

@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<script src=../editing.js ></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<body>
+<div id="edit" contenteditable="true">
+  <div><span><img src="abe.png"></span></div>
+  <div><span id="textSpan">text</span></div>
+</div>
+<script>
+Markup.description('When your cursor is after a block element, hitting delete should bring the cursor (and the content following the cursor) back at the end of the block, instead of placing the text before the block.');
+
+var edit = document.getElementById('edit');
+edit.focus();
+
+var text = document.getElementById('textSpan');
+getSelection().collapse(text, text.childNodes.length - 1);
+Markup.dump(edit, 'Before Deletion');
+
+deleteCommand();
+Markup.dump(edit, 'After Deletion');
+</script>
+</body>
+</html>

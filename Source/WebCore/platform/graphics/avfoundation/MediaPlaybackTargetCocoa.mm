@@ -30,15 +30,21 @@
 
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 
+#if HAVE(AVROUTING_FRAMEWORK)
+#import <WebKitAdditions/MediaPlaybackTargetCocoaAdditions.mm>
+#endif
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
 MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(RetainPtr<AVOutputContext>&& outputContext)
     : MediaPlaybackTarget { Type::AVOutputContext }
-    , m_outputContext { WTFMove(outputContext) }
+    , m_outputContext { WTF::move(outputContext) }
 {
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     ASSERT(m_outputContext);
+#endif
 }
 
 MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa() = default;
@@ -81,17 +87,18 @@ bool MediaPlaybackTargetCocoa::supportsRemoteVideoPlayback() const
 
 Ref<MediaPlaybackTargetCocoa> MediaPlaybackTargetCocoa::create(RetainPtr<AVOutputContext>&& outputContext)
 {
-    return adoptRef(*new MediaPlaybackTargetCocoa(WTFMove(outputContext)));
+    return adoptRef(*new MediaPlaybackTargetCocoa(WTF::move(outputContext)));
 }
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
 Ref<MediaPlaybackTargetCocoa> MediaPlaybackTargetCocoa::create()
 {
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     NSString *routingContextUID = [[PAL::getAVAudioSessionClassSingleton() sharedInstance] routingContextUID];
     return create([PAL::getAVOutputContextClassSingleton() outputContextForID:routingContextUID]);
-}
-
+#else
+    return create(nil);
 #endif
+}
 
 } // namespace WebCore
 

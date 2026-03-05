@@ -53,4 +53,6 @@ enum class PlatformVideoTransferCharacteristics : uint8_t {
     HLG = AribStdB67Hlg,
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformVideoTransferCharacteristics);
+
 } // namespace WebCore

@@ -41,10 +41,10 @@
 #include "FontSizeAdjust.h"
 #include "GraphicsTypes.h"
 #include "RenderStyleConstants.h"
-#include "SVGRenderStyleDefs.h"
 #include "ScrollAxis.h"
 #include "ScrollTypes.h"
 #include "StyleContain.h"
+#include "StyleDisplay.h"
 #include "StyleHangingPunctuation.h"
 #include "StyleImageOrientation.h"
 #include "StyleMarginTrim.h"
@@ -85,71 +85,6 @@ namespace WebCore {
 template<typename TargetType> TargetType fromCSSValue(const CSSValue& value)
 {
     return fromCSSValueID<TargetType>(value.valueID());
-}
-
-class TypeDeducingCSSValueMapper {
-public:
-    TypeDeducingCSSValueMapper(const Style::BuilderState& builderState, const CSSValue& value)
-        : m_builderState { builderState }
-        , m_value { value }
-    {
-    }
-
-    template<typename TargetType> operator TargetType() const
-    {
-        return fromCSSValue<TargetType>(m_value);
-    }
-
-    operator const CSSPrimitiveValue&() const
-    {
-        return downcast<CSSPrimitiveValue>(m_value).unsafeGet();
-    }
-
-    operator const CSSValue&() const
-    {
-        return m_value;
-    }
-
-    operator unsigned short() const
-    {
-        return protectedNumericValue()->resolveAsNumber<unsigned short>(m_builderState->cssToLengthConversionData());
-    }
-
-    operator int() const
-    {
-        return protectedNumericValue()->resolveAsNumber<int>(m_builderState->cssToLengthConversionData());
-    }
-
-    operator unsigned() const
-    {
-        return protectedNumericValue()->resolveAsNumber<unsigned>(m_builderState->cssToLengthConversionData());
-    }
-
-    operator float() const
-    {
-        return protectedNumericValue()->resolveAsNumber<float>(m_builderState->cssToLengthConversionData());
-    }
-
-    operator double() const
-    {
-        return protectedNumericValue()->resolveAsNumber<double>(m_builderState->cssToLengthConversionData());
-    }
-
-private:
-    Ref<const CSSPrimitiveValue> protectedNumericValue() const
-    {
-        Ref value = downcast<const CSSPrimitiveValue>(m_value);
-        ASSERT(value->isNumberOrInteger());
-        return value;
-    }
-
-    const CheckedRef<const Style::BuilderState> m_builderState;
-    Ref<const CSSValue> m_value;
-};
-
-inline TypeDeducingCSSValueMapper fromCSSValueDeducingType(const Style::BuilderState& builderState, const CSSValue& value)
-{
-    return { builderState, value };
 }
 
 #define EMIT_TO_CSS_SWITCH_CASE(VALUE) case TYPE::VALUE: return CSSValue##VALUE;
@@ -234,7 +169,6 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
-
 
 constexpr CSSValueID toCSSValueID(BorderStyle e)
 {
@@ -378,6 +312,8 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
         return CSSValueAuto;
     case StyleAppearance::Base:
         return CSSValueBase;
+    case StyleAppearance::BaseSelect:
+        return CSSValueBaseSelect;
     case StyleAppearance::Checkbox:
         return CSSValueCheckbox;
     case StyleAppearance::Radio:
@@ -747,140 +683,6 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #endif
-
-constexpr CSSValueID toCSSValueID(DisplayType e)
-{
-    switch (e) {
-    case DisplayType::Inline:
-        return CSSValueInline;
-    case DisplayType::Block:
-        return CSSValueBlock;
-    case DisplayType::ListItem:
-        return CSSValueListItem;
-    case DisplayType::InlineBlock:
-        return CSSValueInlineBlock;
-    case DisplayType::Table:
-        return CSSValueTable;
-    case DisplayType::InlineTable:
-        return CSSValueInlineTable;
-    case DisplayType::TableRowGroup:
-        return CSSValueTableRowGroup;
-    case DisplayType::TableHeaderGroup:
-        return CSSValueTableHeaderGroup;
-    case DisplayType::TableFooterGroup:
-        return CSSValueTableFooterGroup;
-    case DisplayType::TableRow:
-        return CSSValueTableRow;
-    case DisplayType::TableColumnGroup:
-        return CSSValueTableColumnGroup;
-    case DisplayType::TableColumn:
-        return CSSValueTableColumn;
-    case DisplayType::TableCell:
-        return CSSValueTableCell;
-    case DisplayType::TableCaption:
-        return CSSValueTableCaption;
-    case DisplayType::Box:
-        return CSSValueWebkitBox;
-    case DisplayType::InlineBox:
-        return CSSValueWebkitInlineBox;
-    case DisplayType::Flex:
-        return CSSValueFlex;
-    case DisplayType::InlineFlex:
-        return CSSValueInlineFlex;
-    case DisplayType::Grid:
-        return CSSValueGrid;
-    case DisplayType::InlineGrid:
-        return CSSValueInlineGrid;
-    case DisplayType::GridLanes:
-        return CSSValueGridLanes;
-    case DisplayType::InlineGridLanes:
-        return CSSValueInlineGridLanes;
-    case DisplayType::None:
-        return CSSValueNone;
-    case DisplayType::Contents:
-        return CSSValueContents;
-    case DisplayType::FlowRoot:
-        return CSSValueFlowRoot;
-    case DisplayType::Ruby:
-        return CSSValueRuby;
-    case DisplayType::RubyBlock:
-        return CSSValueBlockRuby;
-    case DisplayType::RubyBase:
-        return CSSValueRubyBase;
-    case DisplayType::RubyAnnotation:
-        return CSSValueRubyText;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
-}
-
-template<> constexpr DisplayType fromCSSValueID(CSSValueID valueID)
-{
-    switch (valueID) {
-    case CSSValueInline:
-        return DisplayType::Inline;
-    case CSSValueBlock:
-        return DisplayType::Block;
-    case CSSValueListItem:
-        return DisplayType::ListItem;
-    case CSSValueInlineBlock:
-        return DisplayType::InlineBlock;
-    case CSSValueTable:
-        return DisplayType::Table;
-    case CSSValueInlineTable:
-        return DisplayType::InlineTable;
-    case CSSValueTableRowGroup:
-        return DisplayType::TableRowGroup;
-    case CSSValueTableHeaderGroup:
-        return DisplayType::TableHeaderGroup;
-    case CSSValueTableFooterGroup:
-        return DisplayType::TableFooterGroup;
-    case CSSValueTableRow:
-        return DisplayType::TableRow;
-    case CSSValueTableColumnGroup:
-        return DisplayType::TableColumnGroup;
-    case CSSValueTableColumn:
-        return DisplayType::TableColumn;
-    case CSSValueTableCell:
-        return DisplayType::TableCell;
-    case CSSValueTableCaption:
-        return DisplayType::TableCaption;
-    case CSSValueWebkitBox:
-        return DisplayType::Box;
-    case CSSValueWebkitInlineBox:
-        return DisplayType::InlineBox;
-    case CSSValueFlex:
-        return DisplayType::Flex;
-    case CSSValueInlineFlex:
-        return DisplayType::InlineFlex;
-    case CSSValueGrid:
-        return DisplayType::Grid;
-    case CSSValueInlineGrid:
-        return DisplayType::InlineGrid;
-    case CSSValueGridLanes:
-        return DisplayType::GridLanes;
-    case CSSValueInlineGridLanes:
-        return DisplayType::InlineGridLanes;
-    case CSSValueNone:
-        return DisplayType::None;
-    case CSSValueContents:
-        return DisplayType::Contents;
-    case CSSValueFlowRoot:
-        return DisplayType::FlowRoot;
-    case CSSValueRuby:
-        return DisplayType::Ruby;
-    case CSSValueBlockRuby:
-        return DisplayType::RubyBlock;
-    case CSSValueRubyBase:
-        return DisplayType::RubyBase;
-    case CSSValueRubyText:
-        return DisplayType::RubyAnnotation;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return DisplayType::Inline;
-}
 
 #define TYPE EmptyCell
 #define FOR_EACH(CASE) CASE(Show) CASE(Hide)
@@ -1770,73 +1572,17 @@ template<> constexpr FontSizeAdjust::Metric fromCSSValueID(CSSValueID valueID)
     return FontSizeAdjust::Metric::ExHeight;
 }
 
-constexpr CSSValueID toCSSValueID(FontSmoothingMode smoothing)
-{
-    switch (smoothing) {
-    case FontSmoothingMode::AutoSmoothing:
-        return CSSValueAuto;
-    case FontSmoothingMode::NoSmoothing:
-        return CSSValueNone;
-    case FontSmoothingMode::Antialiased:
-        return CSSValueAntialiased;
-    case FontSmoothingMode::SubpixelAntialiased:
-        return CSSValueSubpixelAntialiased;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
-}
+#define TYPE FontSmoothingMode
+#define FOR_EACH(CASE) CASE(Auto) CASE(None) CASE(Antialiased) CASE(SubpixelAntialiased)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
-template<> constexpr FontSmoothingMode fromCSSValueID(CSSValueID valueID)
-{
-    switch (valueID) {
-    case CSSValueAuto:
-        return FontSmoothingMode::AutoSmoothing;
-    case CSSValueNone:
-        return FontSmoothingMode::NoSmoothing;
-    case CSSValueAntialiased:
-        return FontSmoothingMode::Antialiased;
-    case CSSValueSubpixelAntialiased:
-        return FontSmoothingMode::SubpixelAntialiased;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return FontSmoothingMode::AutoSmoothing;
-}
-
-constexpr CSSValueID toCSSValueID(TextRenderingMode e)
-{
-    switch (e) {
-    case TextRenderingMode::AutoTextRendering:
-        return CSSValueAuto;
-    case TextRenderingMode::OptimizeSpeed:
-        return CSSValueOptimizeSpeed;
-    case TextRenderingMode::OptimizeLegibility:
-        return CSSValueOptimizeLegibility;
-    case TextRenderingMode::GeometricPrecision:
-        return CSSValueGeometricPrecision;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
-}
-
-template<> constexpr TextRenderingMode fromCSSValueID(CSSValueID valueID)
-{
-    switch (valueID) {
-    case CSSValueAuto:
-        return TextRenderingMode::AutoTextRendering;
-    case CSSValueOptimizeSpeed:
-        return TextRenderingMode::OptimizeSpeed;
-    case CSSValueOptimizeLegibility:
-        return TextRenderingMode::OptimizeLegibility;
-    case CSSValueGeometricPrecision:
-        return TextRenderingMode::GeometricPrecision;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return TextRenderingMode::AutoTextRendering;
-}
+#define TYPE TextRenderingMode
+#define FOR_EACH(CASE) CASE(Auto) CASE(OptimizeSpeed) CASE(OptimizeLegibility) CASE(GeometricPrecision)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
 #define TYPE Hyphens
 #define FOR_EACH(CASE) CASE(None) CASE(Manual) CASE(Auto)
@@ -2460,31 +2206,11 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(FontOpticalSizing sizing)
-{
-    switch (sizing) {
-    case FontOpticalSizing::Enabled:
-        return CSSValueAuto;
-    case FontOpticalSizing::Disabled:
-        return CSSValueNone;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
-}
-
-template<> constexpr FontOpticalSizing fromCSSValueID(CSSValueID valueID)
-{
-    switch (valueID) {
-    case CSSValueAuto:
-        return FontOpticalSizing::Enabled;
-    case CSSValueNone:
-        return FontOpticalSizing::Disabled;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return FontOpticalSizing::Enabled;
-}
+#define TYPE FontOpticalSizing
+#define FOR_EACH(CASE) CASE(Auto) CASE(None)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
 template<> constexpr FontTechnology fromCSSValueID(CSSValueID valueID)
 {
@@ -2698,6 +2424,12 @@ constexpr CSSValueID toCSSValueIDForWebkitMaskSourceType(Style::MaskMode e)
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
 }
+
+#define TYPE VisualBox
+#define FOR_EACH(CASE) CASE(ContentBox) CASE(BorderBox) CASE(PaddingBox)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
 #if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
 

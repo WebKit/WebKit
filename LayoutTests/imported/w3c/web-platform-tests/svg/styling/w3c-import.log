@@ -16,10 +16,25 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/attr-style-media.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/attr-style-type.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-table-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-table-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-table-display.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/color-inherit-link-visited-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/color-inherit-link-visited-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/color-inherit-link-visited.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-selectors-case-sensitivity.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-dom-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-01-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-03-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-03.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-04.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-05.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-06-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-06.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-quirk-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-var-on-length-attributes-quirk.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/cx-sibling-index-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/font-size-number-calc-crash.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/image-sizing-min-content-expected.svg
@@ -81,6 +96,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/stroke-color-inherit-link-visited-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/stroke-color-inherit-link-visited.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/style-sheet-interfaces.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/symbol-g-graphics-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-animations-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-animations.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-attr-selector-expected.html
@@ -95,6 +111,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-id-selector-transition.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-id-selector-transition.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-id-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-non-rendered-has-selector-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-non-rendered-has-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-non-rendered-sibling-selector-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-non-rendered-sibling-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-selector-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-transitions-dom-mutation.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-transitions-dom-mutation.tentative.html

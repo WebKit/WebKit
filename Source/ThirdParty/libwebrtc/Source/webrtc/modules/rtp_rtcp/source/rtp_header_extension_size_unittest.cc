@@ -27,7 +27,8 @@ constexpr int kId = 1;
 constexpr int kIdForceTwoByteHeader = 15;
 
 TEST(RtpHeaderExtensionSizeTest, ReturnsZeroIfNoExtensionsAreRegistered) {
-  constexpr RtpExtensionSize kExtensionSizes[] = {{RtpMid::kId, 3}};
+  constexpr RtpExtensionSize kExtensionSizes[] = {
+      {.type = RtpMid::kId, .value_size = 3}};
   // Register different extension than ask size for.
   RtpHeaderExtensionMap registered;
   registered.Register<RtpStreamId>(kId);
@@ -36,7 +37,8 @@ TEST(RtpHeaderExtensionSizeTest, ReturnsZeroIfNoExtensionsAreRegistered) {
 }
 
 TEST(RtpHeaderExtensionSizeTest, IncludesSizeOfExtensionHeaders) {
-  constexpr RtpExtensionSize kExtensionSizes[] = {{RtpMid::kId, 3}};
+  constexpr RtpExtensionSize kExtensionSizes[] = {
+      {.type = RtpMid::kId, .value_size = 3}};
   RtpHeaderExtensionMap registered;
   registered.Register<RtpMid>(kId);
 
@@ -46,7 +48,8 @@ TEST(RtpHeaderExtensionSizeTest, IncludesSizeOfExtensionHeaders) {
 }
 
 TEST(RtpHeaderExtensionSizeTest, RoundsUpTo32bitAlignmant) {
-  constexpr RtpExtensionSize kExtensionSizes[] = {{RtpMid::kId, 5}};
+  constexpr RtpExtensionSize kExtensionSizes[] = {
+      {.type = RtpMid::kId, .value_size = 5}};
   RtpHeaderExtensionMap registered;
   registered.Register<RtpMid>(kId);
 
@@ -55,8 +58,9 @@ TEST(RtpHeaderExtensionSizeTest, RoundsUpTo32bitAlignmant) {
 }
 
 TEST(RtpHeaderExtensionSizeTest, SumsSeveralExtensions) {
-  constexpr RtpExtensionSize kExtensionSizes[] = {{RtpMid::kId, 16},
-                                                  {RtpStreamId::kId, 2}};
+  constexpr RtpExtensionSize kExtensionSizes[] = {
+      {.type = RtpMid::kId, .value_size = 16},
+      {.type = RtpStreamId::kId, .value_size = 2}};
   RtpHeaderExtensionMap registered;
   registered.Register<RtpMid>(kId);
   registered.Register<RtpStreamId>(14);
@@ -67,8 +71,9 @@ TEST(RtpHeaderExtensionSizeTest, SumsSeveralExtensions) {
 }
 
 TEST(RtpHeaderExtensionSizeTest, LargeIdForce2BytesHeader) {
-  constexpr RtpExtensionSize kExtensionSizes[] = {{RtpMid::kId, 3},
-                                                  {RtpStreamId::kId, 2}};
+  constexpr RtpExtensionSize kExtensionSizes[] = {
+      {.type = RtpMid::kId, .value_size = 3},
+      {.type = RtpStreamId::kId, .value_size = 2}};
   RtpHeaderExtensionMap registered;
   registered.Register<RtpMid>(kId);
   registered.Register<RtpStreamId>(kIdForceTwoByteHeader);
@@ -79,8 +84,9 @@ TEST(RtpHeaderExtensionSizeTest, LargeIdForce2BytesHeader) {
 }
 
 TEST(RtpHeaderExtensionSizeTest, LargeValueForce2BytesHeader) {
-  constexpr RtpExtensionSize kExtensionSizes[] = {{RtpMid::kId, 17},
-                                                  {RtpStreamId::kId, 4}};
+  constexpr RtpExtensionSize kExtensionSizes[] = {
+      {.type = RtpMid::kId, .value_size = 17},
+      {.type = RtpStreamId::kId, .value_size = 4}};
   RtpHeaderExtensionMap registered;
   registered.Register<RtpMid>(1);
   registered.Register<RtpStreamId>(2);

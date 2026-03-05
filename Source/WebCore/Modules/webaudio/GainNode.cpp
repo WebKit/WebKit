@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GainNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GainNode);
 
 ExceptionOr<Ref<GainNode>> GainNode::create(BaseAudioContext& context, const GainOptions& options)
 {
@@ -128,7 +128,7 @@ void GainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 
     if (!isInitialized()) {
         // This will propagate the channel count to any nodes connected further downstream in the graph.
-        checkedOutput(0)->setNumberOfChannels(numberOfChannels);
+        protect(output(0))->setNumberOfChannels(numberOfChannels);
         initialize();
     }
 

@@ -32,7 +32,7 @@ public:
     static JSTestOverloadedConstructorsWithSequence* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructorsWithSequence>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestOverloadedConstructorsWithSequence* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsWithSequence>(vm)) JSTestOverloadedConstructorsWithSequence(structure, *globalObject, WTFMove(impl));
+        JSTestOverloadedConstructorsWithSequence* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsWithSequence>(vm)) JSTestOverloadedConstructorsWithSequence(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestOverloadedConstructorsWithSequence* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestOverloadedConstructorsWithSequence&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestOverloadedConstructorsWithSequence* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestOverloadedConstructorsWithSequence>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestOverloadedConstructorsWithSequence& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestOverloadedConstructorsWithSequence>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestOverloadedConstructorsWithSequence> {
     using WrapperClass = JSTestOverloadedConstructorsWithSequence;

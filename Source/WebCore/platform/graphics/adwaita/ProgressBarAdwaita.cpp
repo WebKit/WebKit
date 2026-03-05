@@ -88,16 +88,16 @@ void ProgressBarAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
             fieldRect.move(offset, 0);
     };
 
-    auto& progressBarPart = owningProgressBarPart();
-    bool isDeterminate = progressBarPart.position() >= 0;
+    Ref progressBarPart = owningProgressBarPart();
+    bool isDeterminate = progressBarPart->position() >= 0;
     if (isDeterminate) {
-        auto progressSize = getPrimarySize() * progressBarPart.position();
+        auto progressSize = getPrimarySize() * progressBarPart->position();
         if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
             movePrimaryAxis(getPrimarySize() - progressSize);
 
         setPrimarySize(progressSize);
     } else {
-        double animationProgress = currentAnimationProgress(progressBarPart.animationStartTime());
+        double animationProgress = currentAnimationProgress(progressBarPart->animationStartTime());
 
         // Never let the progress rect shrink smaller than 2 pixels.
         setPrimarySize(std::max<float>(2, getPrimarySize() / progressActivityBlocks));

@@ -57,10 +57,7 @@
         consoleWrite('<br>Append first media segment')
         run(`sourceBuffer.appendBuffer(loader.mediaSegment(0))`);
 
-        await Promise.all([
-            waitFor(video, 'progress'),
-            waitFor(sourceBuffer, 'update')
-            ]);
+        await waitFor(sourceBuffer, 'update');
 
         await testExpectedEventually('internals.renderingUpdateCount()', initialRenderingUpdateCount, '>');
         initialRenderingUpdateCount = internals.renderingUpdateCount();
@@ -68,20 +65,14 @@
         consoleWrite('<br>Append second media segment')
         run(`sourceBuffer.appendBuffer(loader.mediaSegment(1))`);
 
-        await Promise.all([
-            waitFor(video, 'progress'),
-            waitFor(sourceBuffer, 'update')
-            ]);
+        await waitFor(sourceBuffer, 'update');
 
         testExpected('Math.abs(internals.renderingUpdateCount() - initialRenderingUpdateCount) <= maxUpdatesCausedByMediaSizeChangeLayout', true,);
 
         consoleWrite('<br>Append third media segment')
         run(`sourceBuffer.appendBuffer(loader.mediaSegment(2))`);
 
-        await Promise.all([
-            waitFor(video, 'progress'),
-            waitFor(sourceBuffer, 'update')
-            ]);
+        await waitFor(sourceBuffer, 'update');
 
         testExpected('Math.abs(internals.renderingUpdateCount() - initialRenderingUpdateCount) <= maxUpdatesCausedByMediaSizeChangeLayout', true);
     }

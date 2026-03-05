@@ -32,6 +32,7 @@
 #import <wtf/text/WTFString.h>
 #endif
 
+@class _WKContextMenuElementInfo;
 @class _WKFrameTreeNode;
 @class _WKJSHandle;
 @class _WKProcessPoolConfiguration;
@@ -114,6 +115,7 @@ class Color;
 #endif // PLATFORM(IOS_FAMILY)
 
 - (CALayer *)firstLayerWithName:(NSString *)layerName;
+- (CALayer *)firstLayerWithNameContaining:(NSString *)layerName;
 - (void)forEachCALayer:(IterationStatus(^)(CALayer *))visitor;
 
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
@@ -155,6 +157,7 @@ class Color;
 - (CGRect)elementRectFromSelector:(NSString *)selector;
 - (CGPoint)elementMidpointFromSelector:(NSString *)selector;
 - (_WKJSHandle *)querySelector:(NSString *)selector frame:(WKFrameInfo *)frame world:(WKContentWorld *)world;
+- (void)visitUnsafeSite;
 @end
 
 #endif // __cplusplus
@@ -208,6 +211,8 @@ class Color;
 - (Vector<WebCore::Color>)sampleColors;
 - (Vector<WebCore::Color>)sampleColorsWithInterval:(unsigned)interval;
 - (RetainPtr<_WKFrameTreeNode>)frameTree;
+- (void)typeCharacter:(char)character;
+- (void)setVisibility:(BOOL)isVisible;
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -250,7 +255,6 @@ class Color;
 - (BOOL)acceptsFirstMouseAtPoint:(NSPoint)pointInWindow;
 - (NSWindow *)hostWindow;
 - (void)typeCharacter:(char)character modifiers:(NSEventModifierFlags)modifiers;
-- (void)typeCharacter:(char)character;
 - (void)sendKey:(NSString *)characters code:(unsigned short)keyCode isDown:(BOOL)isDown modifiers:(NSEventModifierFlags)modifiers;
 - (void)setEventTimestampOffset:(NSTimeInterval)offset;
 @property (nonatomic, readonly) NSArray<NSString *> *collectLogsForNewConnections;
@@ -265,6 +269,17 @@ class Color;
 - (WKFrameInfo *)secondChildFrame;
 - (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler;
 - (WKFindResult *)findStringAndWait:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration;
+@end
+
+#if PLATFORM(MAC)
+using MenuItemFilter = BOOL(^)(NSMenuItem *);
+#endif
+
+@interface TestWKWebView (ContextMenu)
+#if PLATFORM(MAC)
+- (void)rightClick:(NSPoint)clickLocation andSelectItemMatching:(MenuItemFilter)filter;
+- (_WKContextMenuElementInfo *)rightClickAtPointAndWaitForContextMenu:(NSPoint)clickLocation;
+#endif
 @end
 
 #endif // __cplusplus

@@ -1,12 +1,15 @@
 framework module WebCore_Private [system] {
-    explicit module WebCoreVirtualLogFunctions {
-        textual header "WebCoreVirtualLogFunctions.h"
+    module PlatformExportMacros {
+        header "PlatformExportMacros.h"
+        export *
     }
 
-    explicit module Core {
+    module Core {
         umbrella "PrivateHeaders"
 
-        explicit module * {
+        requires cplusplus
+
+        module * {
             export *
         }
     }

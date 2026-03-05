@@ -40,12 +40,13 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
 
     virtual void destroy() = 0;
     virtual bool isRemoteQuerySetProxy() const { return false; }
+    virtual bool isQuerySetImpl() const { return false; }
 
 protected:
     QuerySet() = default;

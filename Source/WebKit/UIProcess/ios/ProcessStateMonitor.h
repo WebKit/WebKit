@@ -41,7 +41,7 @@ class ProcessStateMonitor : public RefCountedAndCanMakeWeakPtr<ProcessStateMonit
 public:
     static Ref<ProcessStateMonitor> create(Function<void(bool)>&& becomeSuspendedHandler)
     {
-        return adoptRef(*new ProcessStateMonitor(WTFMove(becomeSuspendedHandler)));
+        return adoptRef(*new ProcessStateMonitor(WTF::move(becomeSuspendedHandler)));
     }
 
     ~ProcessStateMonitor();

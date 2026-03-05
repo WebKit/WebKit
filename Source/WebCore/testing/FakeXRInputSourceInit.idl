@@ -26,6 +26,7 @@
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FakeXRInputSourceInit {
     required XRHandedness handedness;
     required XRTargetRayMode targetRayMode;

@@ -25,14 +25,10 @@
 
 #pragma once
 
-#include <variant>
-
 namespace WebCore {
 
-struct OpenID4VPRequest;
 struct MobileDocumentRequest;
 
-using UnvalidatedDigitalCredentialRequest = Variant<MobileDocumentRequest, OpenID4VPRequest>;
+using UnvalidatedDigitalCredentialRequest = MobileDocumentRequest;
 
 } // namespace WebCore
-

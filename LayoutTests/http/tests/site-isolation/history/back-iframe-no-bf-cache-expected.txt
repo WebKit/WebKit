@@ -1,0 +1,21 @@
+Nested iframe history navigation works correctly with same-site iframe when back/forward cache is disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Page1 loaded
+Page1 displayed first time.
+Page2 loaded
+Page2 displayed first time.
+Other page loaded
+Other page displayed.
+Page2 loaded
+PASS Page2 displayed twice.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Open a new window with back-iframe-popup.html. It has an iframe with page1 loaded initially.
+Navigate iframe to page2.
+Navigate main frame to other.
+Go back. (back-iframe-popup.html with iframe showing page2)
+... and ensures the nested iframe content is correctly restored to page2.

@@ -179,7 +179,7 @@ static constexpr SingleByteDecodeTable ibm866 {
 template<const SingleByteDecodeTable& decodeTable> SingleByteEncodeTable tableForEncoding()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static constexpr auto size = std::size(decodeTable) - std::count(std::begin(decodeTable), std::end(decodeTable), replacementCharacter);
+    static constexpr auto size = std::size(decodeTable) - std::ranges::count(decodeTable, replacementCharacter);
     static const NeverDestroyed<std::unique_ptr<std::array<SingleByteEncodeTableEntry, size>>> entries = [] {
         auto mutableEntries = std::make_unique<std::array<SingleByteEncodeTableEntry, size>>(); // NOLINT.
         size_t j = 0;

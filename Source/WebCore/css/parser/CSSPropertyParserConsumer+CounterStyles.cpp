@@ -46,7 +46,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static bool isPredefinedCounterStyle(CSSValueID valueID)
+static bool NODELETE isPredefinedCounterStyle(CSSValueID valueID)
 {
     // https://drafts.csswg.org/css-counter-styles-3/#predefined-counters
 

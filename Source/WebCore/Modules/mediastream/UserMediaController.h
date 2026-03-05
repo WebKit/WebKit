@@ -90,13 +90,13 @@ inline void UserMediaController::cancelUserMediaAccessRequest(UserMediaRequest& 
 inline void UserMediaController::enumerateMediaDevices(Document& document, UserMediaClient::EnumerateDevicesCallback&& completionHandler)
 {
     if (RefPtr mediaClient = m_client)
-        mediaClient->enumerateMediaDevices(document, WTFMove(completionHandler));
+        mediaClient->enumerateMediaDevices(document, WTF::move(completionHandler));
 }
 
 inline UserMediaClient::DeviceChangeObserverToken UserMediaController::addDeviceChangeObserver(Function<void()>&& observer)
 {
     if (RefPtr mediaClient = m_client)
-        return mediaClient->addDeviceChangeObserver(WTFMove(observer));
+        return mediaClient->addDeviceChangeObserver(WTF::move(observer));
     return UserMediaClient::DeviceChangeObserverToken { 0 };
 }
 
@@ -109,7 +109,7 @@ inline void UserMediaController::removeDeviceChangeObserver(UserMediaClient::Dev
 inline void UserMediaController::updateCaptureState(const Document& document, bool isActive, MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     if (RefPtr mediaClient = m_client)
-        mediaClient->updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
+        mediaClient->updateCaptureState(document, isActive, kind, WTF::move(completionHandler));
 }
 
 } // namespace WebCore

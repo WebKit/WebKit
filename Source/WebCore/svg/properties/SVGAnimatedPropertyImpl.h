@@ -82,18 +82,18 @@ public:
 
     SVGPathByteStream& currentPathByteStream()
     {
-        return isAnimating() ? animVal()->pathByteStream() : baseVal()->pathByteStream();
+        return isAnimating() ? animVal().pathByteStream() : baseVal()->pathByteStream();
     }
 
     Path currentPath()
     {
-        return isAnimating() ? animVal()->path() : baseVal()->path();
+        return isAnimating() ? animVal().path() : baseVal()->path();
     }
 
     size_t approximateMemoryCost() const
     {
         if (isAnimating())
-            return baseVal()->approximateMemoryCost() + animVal()->approximateMemoryCost();
+            return baseVal()->approximateMemoryCost() + animVal().approximateMemoryCost();
         return baseVal()->approximateMemoryCost();
     }
 };

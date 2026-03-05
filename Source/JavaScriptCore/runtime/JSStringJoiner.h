@@ -29,6 +29,7 @@
 #include "JSCJSValue.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 
@@ -110,7 +111,7 @@ ALWAYS_INLINE void JSStringJoiner::append(JSString* jsString, StringViewWithUnde
     }
     m_accumulatedStringsLength += string.view.length();
     m_isAll8Bit = m_isAll8Bit && string.view.is8Bit();
-    m_hasOverflowed |= !m_strings.tryAppend({ WTFMove(string), 0 });
+    m_hasOverflowed |= !m_strings.tryAppend({ WTF::move(string), 0 });
     m_lastString = jsString;
 }
 

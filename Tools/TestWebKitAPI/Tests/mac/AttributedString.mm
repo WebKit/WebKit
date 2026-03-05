@@ -81,10 +81,10 @@ void AttributedStringTest_Strikethrough::runSyncTest(View view)
 
     EXPECT_WK_STREQ("Lorem", [attrString string]);
     
-    NSDictionary *attributes = [attrString attributesAtIndex:0 effectiveRange:0];
-    ASSERT_NOT_NULL([attributes objectForKey:NSStrikethroughStyleAttributeName]);
-    ASSERT_TRUE([[attributes objectForKey:NSStrikethroughStyleAttributeName] isKindOfClass:[NSNumber class]]);
-    ASSERT_EQ(NSUnderlineStyleSingle, [(NSNumber *)[attributes objectForKey:NSStrikethroughStyleAttributeName] intValue]);
+    RetainPtr attributes = [attrString attributesAtIndex:0 effectiveRange:0];
+    ASSERT_NOT_NULL([attributes.get() objectForKey:NSStrikethroughStyleAttributeName]);
+    ASSERT_TRUE([[attributes.get() objectForKey:NSStrikethroughStyleAttributeName] isKindOfClass:[NSNumber class]]);
+    ASSERT_EQ(NSUnderlineStyleSingle, [(NSNumber *)[attributes.get() objectForKey:NSStrikethroughStyleAttributeName] intValue]);
 }
 
 TEST_F(AttributedStringTest_Strikethrough, WebKit)

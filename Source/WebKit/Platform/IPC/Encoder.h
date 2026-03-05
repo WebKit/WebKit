@@ -65,11 +65,11 @@ public:
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
 
-    void setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply);
+    void NODELETE setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply);
 
-    bool isFullySynchronousModeForTesting() const;
-    void setFullySynchronousModeForTesting();
-    void setShouldMaintainOrderingWithAsyncMessages();
+    bool NODELETE isFullySynchronousModeForTesting() const;
+    void NODELETE setFullySynchronousModeForTesting();
+    void NODELETE setShouldMaintainOrderingWithAsyncMessages();
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || isFullySynchronousModeForTesting(); }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
 
@@ -87,7 +87,7 @@ public:
 
     Encoder& operator<<(Attachment&& attachment)
     {
-        addAttachment(WTFMove(attachment));
+        addAttachment(WTF::move(attachment));
         return *this;
     }
 
@@ -103,13 +103,13 @@ public:
 private:
     std::span<uint8_t> grow(size_t alignment, size_t);
 
-    std::span<uint8_t> capacityBuffer();
+    std::span<uint8_t> NODELETE capacityBuffer();
     std::span<const uint8_t> capacityBuffer() const;
 
-    bool hasAttachments() const;
+    bool NODELETE hasAttachments() const;
 
     void encodeHeader();
-    const OptionSet<MessageFlags>& messageFlags() const;
+    const OptionSet<MessageFlags>& NODELETE messageFlags() const;
     OptionSet<MessageFlags>& messageFlags();
 
     void freeBufferIfNecessary();

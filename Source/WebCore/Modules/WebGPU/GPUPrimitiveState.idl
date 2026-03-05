@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpuprimitivestate
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUPrimitiveState {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUPrimitiveState {
     GPUPrimitiveTopology topology = "triangle-list";
     GPUIndexFormat stripIndexFormat;
     GPUFrontFace frontFace = "ccw";

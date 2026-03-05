@@ -46,14 +46,14 @@ protected:
     PropertyType insertAt(unsigned index, PropertyType&& newItem) override
     {
         ASSERT(index <= size());
-        m_items.insert(index, WTFMove(newItem));
+        m_items.insert(index, WTF::move(newItem));
         return at(index);
     }
 
     PropertyType replaceAt(unsigned index, PropertyType&& newItem) override
     {
         ASSERT(index < size());
-        m_items.at(index) = WTFMove(newItem);
+        m_items.at(index) = WTF::move(newItem);
         return at(index);
     }
 
@@ -67,7 +67,7 @@ protected:
 
     PropertyType append(PropertyType&& newItem) override
     {
-        m_items.append(WTFMove(newItem));
+        m_items.append(WTF::move(newItem));
         return at(size() - 1);
     }
 };

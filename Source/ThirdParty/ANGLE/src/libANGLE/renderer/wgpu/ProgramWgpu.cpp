@@ -37,6 +37,7 @@ class WgpuDefaultBlockEncoder : public sh::Std140BlockEncoder
 {
   public:
     void advanceOffset(GLenum type,
+                       const size_t bytesPerComponent,
                        const std::vector<unsigned int> &arraySizes,
                        bool isRowMajorMatrix,
                        int arrayStride,
@@ -47,8 +48,8 @@ class WgpuDefaultBlockEncoder : public sh::Std140BlockEncoder
             return;
         }
 
-        sh::Std140BlockEncoder::advanceOffset(type, arraySizes, isRowMajorMatrix, arrayStride,
-                                              matrixStride);
+        sh::Std140BlockEncoder::advanceOffset(type, bytesPerComponent, arraySizes, isRowMajorMatrix,
+                                              arrayStride, matrixStride);
     }
 };
 
@@ -130,13 +131,13 @@ class CreateWGPUShaderModuleTask : public LinkSubTask
         if (shaderType == gl::ShaderType::Vertex)
         {
             finalShaderSource = webgpu::WgslAssignLocationsAndSamplerBindings(
-                mExecutable, mCompiledShaderState->translatedSource, mExecutable.getProgramInputs(),
-                mMergedVaryings, shaderType);
+                mExecutable, *mCompiledShaderState->translatedSource,
+                mExecutable.getProgramInputs(), mMergedVaryings, shaderType);
         }
         else if (shaderType == gl::ShaderType::Fragment)
         {
             finalShaderSource = webgpu::WgslAssignLocationsAndSamplerBindings(
-                mExecutable, mCompiledShaderState->translatedSource,
+                mExecutable, *mCompiledShaderState->translatedSource,
                 mExecutable.getOutputVariables(), mMergedVaryings, shaderType);
         }
         else

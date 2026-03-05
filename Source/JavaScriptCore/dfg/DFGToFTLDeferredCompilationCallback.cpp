@@ -66,10 +66,12 @@ void ToFTLDeferredCompilationCallback::compilationDidComplete(
             "DFG code block ", profiledDFGCodeBlock, " was jettisoned.");
         return;
     }
-    
-    if (result == CompilationResult::CompilationSuccessful)
+
+    if (result == CompilationResult::CompilationSuccessful) {
         codeBlock->ownerExecutable()->installCode(codeBlock);
-    
+        codeBlock->didInstallFTLCode();
+    }
+
     profiledDFGCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(
         profiledDFGCodeBlock, result);
 

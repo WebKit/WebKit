@@ -312,6 +312,39 @@ TEST(InplaceVectorTest, ComplexType) {
   EXPECT_FALSE(vec_of_vecs5.TryPushBack(v));
 }
 
+TEST(InplaceVectorTest, MoveOnly) {
+  InplaceVector<std::unique_ptr<int>, 4> vec;
+  vec.PushBack(std::make_unique<int>(0));
+  vec.PushBack(std::make_unique<int>(1));
+  vec.PushBack(std::make_unique<int>(2));
+  EXPECT_EQ(vec.size(), 3u);
+  EXPECT_EQ(*vec[0], 0);
+  EXPECT_EQ(*vec[1], 1);
+  EXPECT_EQ(*vec[2], 2);
+
+  // Move-construct
+  InplaceVector<std::unique_ptr<int>, 4> vec2 = std::move(vec);
+  EXPECT_EQ(vec2.size(), 3u);
+  EXPECT_EQ(*vec2[0], 0);
+  EXPECT_EQ(*vec2[1], 1);
+  EXPECT_EQ(*vec2[2], 2);
+  EXPECT_EQ(vec.size(), 3u);
+  EXPECT_EQ(vec[0], nullptr);
+  EXPECT_EQ(vec[1], nullptr);
+  EXPECT_EQ(vec[2], nullptr);
+
+  // Move-assign
+  vec = std::move(vec2);
+  EXPECT_EQ(vec.size(), 3u);
+  EXPECT_EQ(*vec[0], 0);
+  EXPECT_EQ(*vec[1], 1);
+  EXPECT_EQ(*vec[2], 2);
+  EXPECT_EQ(vec2.size(), 3u);
+  EXPECT_EQ(vec2[0], nullptr);
+  EXPECT_EQ(vec2[1], nullptr);
+  EXPECT_EQ(vec2[2], nullptr);
+}
+
 TEST(InplaceVectorTest, EraseIf) {
   // Test that EraseIf never causes a self-move, and also correctly works with
   // a move-only type that cannot be default-constructed.

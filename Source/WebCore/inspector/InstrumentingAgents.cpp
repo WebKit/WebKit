@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include "InstrumentingAgents.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 namespace WebCore {
 
@@ -52,6 +53,11 @@ InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment, Inst
     : m_environment(environment)
     , m_fallbackAgents(fallbackAgents)
 {
+}
+
+bool InstrumentingAgents::developerExtrasEnabled() const
+{
+    return protect(m_environment)->developerExtrasEnabled();
 }
 
 void InstrumentingAgents::reset()

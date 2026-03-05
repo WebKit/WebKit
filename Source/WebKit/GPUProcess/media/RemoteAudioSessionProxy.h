@@ -74,7 +74,7 @@ public:
     void beginInterruption();
     void endInterruption(WebCore::AudioSession::MayResume);
 
-    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
     void setSceneIdentifier(const String&);
 
     WebCore::AudioSession::SoundStageSize soundStageSize() const { return m_soundStageSize; }
@@ -107,8 +107,7 @@ private:
     void endInterruptionRemote(WebCore::AudioSession::MayResume);
 
     RemoteAudioSessionProxyManager& audioSessionManager();
-    Ref<RemoteAudioSessionProxyManager> protectedAudioSessionManager();
-    Ref<IPC::Connection> protectedConnection() const;
+    IPC::Connection& connection() const;
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };

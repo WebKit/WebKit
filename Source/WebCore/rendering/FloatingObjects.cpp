@@ -47,7 +47,7 @@ struct SameSizeAsFloatingObject {
 };
 
 static_assert(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), "FloatingObject should stay small");
-#if !ASSERT_ENABLED
+#if !ASSERT_ENABLED && ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 static_assert(sizeof(SingleThreadWeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 static_assert(sizeof(CheckedPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
@@ -61,7 +61,7 @@ FloatingObject::FloatingObject(RenderBox& renderer)
         m_type = FloatLeft;
     else if (type == UsedFloat::Right)
         m_type = FloatRight;
-    if (auto* containingBlock = renderer.containingBlock())
+    if (CheckedPtr containingBlock = renderer.containingBlock())
         m_hasAncestorWithOverflowClip = containingBlock->effectiveOverflowX() == Overflow::Clip || containingBlock->effectiveOverflowY() == Overflow::Clip;
 }
 
@@ -165,11 +165,11 @@ public:
 
     virtual ~ComputeFloatOffsetAdapter() = default;
 
-    LayoutUnit lowValue() const { return m_lineTop; }
-    LayoutUnit highValue() const { return m_lineBottom; }
+    LayoutUnit NODELETE lowValue() const { return m_lineTop; }
+    LayoutUnit NODELETE highValue() const { return m_lineBottom; }
     void collectIfNeeded(const IntervalType&);
 
-    LayoutUnit offset() const { return m_offset; }
+    LayoutUnit NODELETE offset() const { return m_offset; }
 
 protected:
     virtual bool updateOffsetIfNeeded(const FloatingObject&) = 0;
@@ -221,12 +221,12 @@ public:
     {
     }
 
-    LayoutUnit lowValue() const { return m_belowLogicalHeight; }
-    LayoutUnit highValue() const { return LayoutUnit::max(); }
+    LayoutUnit NODELETE lowValue() const { return m_belowLogicalHeight; }
+    LayoutUnit NODELETE highValue() const { return LayoutUnit::max(); }
     void collectIfNeeded(const IntervalType&);
 
-    LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
-    LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
+    LayoutUnit NODELETE nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
+    LayoutUnit NODELETE nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
     SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
@@ -353,7 +353,7 @@ FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObj
     increaseObjectsCount(floatingObject->type());
     if (floatingObject->isPlaced())
         addPlacedObject(floatingObject.get());
-    return m_set.add(WTFMove(floatingObject)).iterator->get();
+    return m_set.add(WTF::move(floatingObject)).iterator->get();
 }
 
 void FloatingObjects::remove(FloatingObject* floatingObject)
@@ -431,14 +431,22 @@ LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUni
 
 void FloatingObjects::shiftFloatsBy(LayoutUnit blockShift)
 {
-    LayoutUnit shiftX = (m_horizontalWritingMode) ? 0_lu : -blockShift;
-    LayoutUnit shiftY = (m_horizontalWritingMode) ? blockShift : 0_lu;
+    auto shiftX = (m_horizontalWritingMode) ? 0_lu : -blockShift;
+    auto shiftY = (m_horizontalWritingMode) ? blockShift : 0_lu;
 
-    for (auto& floatingObject : m_set) {
-        if (!floatingObject->renderer())
+    for (auto& floatBox : m_set) {
+        if (!floatBox->renderer())
             continue;
-        floatingObject->m_frameRect.move(shiftX, shiftY);
-        floatingObject->renderer()->move(shiftX, shiftY);
+
+        auto isPlaced = floatBox->isPlaced();
+        if (isPlaced)
+            removePlacedObject(floatBox.get());
+
+        floatBox->m_frameRect.move(shiftX, shiftY);
+        floatBox->renderer()->move(shiftX, shiftY);
+
+        if (isPlaced)
+            addPlacedObject(floatBox.get());
     }
 }
 

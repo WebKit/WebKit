@@ -45,7 +45,7 @@ class DeviceImpl final : public Device {
 public:
     static Ref<DeviceImpl> create(WebGPUPtr<WGPUDevice>&& device, Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new DeviceImpl(WTFMove(device), WTFMove(features), WTFMove(limits), convertToBackingContext));
+        return adoptRef(*new DeviceImpl(WTF::move(device), WTF::move(features), WTF::move(limits), convertToBackingContext));
     }
 
     virtual ~DeviceImpl();
@@ -62,8 +62,9 @@ private:
     DeviceImpl& operator=(DeviceImpl&&) = delete;
 
     WGPUDevice backing() const { return m_backing.get(); }
+    bool isDeviceImpl() const final { return true; }
 
-    Ref<Queue> queue() final;
+    Ref<Queue> NODELETE queue() final;
 
     void destroy() final;
 
@@ -72,7 +73,7 @@ private:
     RefPtr<Texture> createTexture(const TextureDescriptor&) final;
     RefPtr<Sampler> createSampler(const SamplerDescriptor&) final;
     RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
-    void updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
+    void NODELETE updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
 
     RefPtr<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) final;
     RefPtr<PipelineLayout> createPipelineLayout(const PipelineLayoutDescriptor&) final;
@@ -97,11 +98,11 @@ private:
     void setLabelInternal(const String&) final;
     void pauseAllErrorReporting(bool pause) final;
 
-    [[noreturn]] Ref<CommandEncoder> invalidCommandEncoder() final;
-    [[noreturn]] Ref<CommandBuffer> invalidCommandBuffer() final;
-    [[noreturn]] Ref<RenderPassEncoder> invalidRenderPassEncoder() final;
-    [[noreturn]] Ref<ComputePassEncoder> invalidComputePassEncoder() final;
-    [[noreturn]] Ref<BindGroupLayout> emptyBindGroupLayout() const final;
+    [[noreturn]] Ref<CommandEncoder> NODELETE invalidCommandEncoder() final;
+    [[noreturn]] Ref<CommandBuffer> NODELETE invalidCommandBuffer() final;
+    [[noreturn]] Ref<RenderPassEncoder> NODELETE invalidRenderPassEncoder() final;
+    [[noreturn]] Ref<ComputePassEncoder> NODELETE invalidComputePassEncoder() final;
+    [[noreturn]] Ref<BindGroupLayout> NODELETE emptyBindGroupLayout() const final;
 
     WebGPUPtr<WGPUDevice> m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
@@ -109,5 +110,9 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::DeviceImpl)
+    static bool isType(const WebCore::WebGPU::Device& device) { return device.isDeviceImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

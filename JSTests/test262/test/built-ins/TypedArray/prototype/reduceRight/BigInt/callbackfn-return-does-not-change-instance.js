@@ -4,12 +4,12 @@
 esid: sec-%typedarray%.prototype.reduceright
 description: >
   The callbackfn return does not change the `this` instance
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([0n, 1n, 0n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([0n, 1n, 0n]));
 
   sample.reduceRight(function() {
     return 42;

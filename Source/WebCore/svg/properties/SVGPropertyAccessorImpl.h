@@ -80,7 +80,7 @@ class SVGTransformListAccessor final : public SVGPropertyAccessor<OwnerType, SVG
 
 public:
     using Base::Base;
-    template<Ref<SVGTransformList> OwnerType::*property>
+    template<auto property>
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGTransformListAccessor, property>(); }
 };
 

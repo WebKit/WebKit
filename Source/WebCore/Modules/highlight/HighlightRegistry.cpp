@@ -40,10 +40,11 @@ void HighlightRegistry::initializeMapLike(DOMMapAdapter& map)
 
 void HighlightRegistry::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
 {
-    auto addResult = m_map.set(key, WTFMove(value));
+    auto addResult = m_map.set(key, WTF::move(value));
     if (addResult.isNewEntry) {
         ASSERT(!m_highlightNames.contains(key));
-        m_highlightNames.append(WTFMove(key));
+        m_highlightNames.append(WTF::move(key));
+        protect(addResult.iterator->value)->repaint();
     }
 }
 
@@ -57,8 +58,13 @@ void HighlightRegistry::clear()
 
 bool HighlightRegistry::remove(const AtomString& key)
 {
+    auto highlight = m_map.take(key);
+    if (!highlight)
+        return false;
+
     m_highlightNames.removeFirst(key);
-    return m_map.remove(key);
+    highlight->repaint();
+    return true;
 }
 
 #if ENABLE(APP_HIGHLIGHTS)

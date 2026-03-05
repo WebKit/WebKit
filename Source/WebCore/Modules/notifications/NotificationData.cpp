@@ -35,7 +35,7 @@ NotificationData NotificationData::isolatedCopy() const &
 
 NotificationData NotificationData::isolatedCopy() &&
 {
-    return { WTFMove(navigateURL).isolatedCopy(), WTFMove(title).isolatedCopy(), WTFMove(body).isolatedCopy(), WTFMove(iconURL).isolatedCopy(), WTFMove(tag).isolatedCopy(), WTFMove(language).isolatedCopy(), direction, WTFMove(originString).isolatedCopy(), WTFMove(serviceWorkerRegistrationURL).isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, WTFMove(data), silent };
+    return { WTF::move(navigateURL).isolatedCopy(), WTF::move(title).isolatedCopy(), WTF::move(body).isolatedCopy(), WTF::move(iconURL).isolatedCopy(), WTF::move(tag).isolatedCopy(), WTF::move(language).isolatedCopy(), direction, WTF::move(originString).isolatedCopy(), WTF::move(serviceWorkerRegistrationURL).isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, WTF::move(data), silent };
 }
 
 } // namespace WebCore

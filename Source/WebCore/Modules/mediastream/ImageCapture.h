@@ -45,7 +45,7 @@ class ImageBitmap;
 class ImageCaptureVideoFrameObserver;
 
 class ImageCapture : public RefCounted<ImageCapture>, public ActiveDOMObject, public MediaStreamTrackPrivateObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageCapture);
+    WTF_MAKE_TZONE_ALLOCATED(ImageCapture);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -79,7 +79,7 @@ private:
     const Logger& logger() const { return m_logger.get(); }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "ImageCapture"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     const Ref<MediaStreamTrack> m_track;

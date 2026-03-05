@@ -25,16 +25,14 @@
 
 #include "config.h"
 #include "PASReportCrashPrivate.h"
+#include <bmalloc/BPlatform.h>
 #include <wtf/Compiler.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/BPlatform.h>
 #if BENABLE(LIBPAS)
 #include <bmalloc/pas_probabilistic_guard_malloc_allocator.h>
 #include <bmalloc/pas_report_crash.h>
-#endif
 #endif
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -45,10 +43,8 @@ using namespace JSC;
 
 kern_return_t PASReportCrashExtractResults(vm_address_t fault_address, mach_vm_address_t pas_dead_root, unsigned version, task_t task, pas_report_crash_pgm_report *report, crash_reporter_memory_reader_t crm_reader)
 {
-#if !USE(SYSTEM_MALLOC)
 #if BENABLE(LIBPAS)
     return pas_report_crash_extract_pgm_failure(fault_address, pas_dead_root, version, task, report, crm_reader);
-#endif
 #endif
     UNUSED_PARAM(fault_address);
     UNUSED_PARAM(pas_dead_root);

@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/post-to-303-target.py
 main frame - didHandleOnloadEventsForFrame

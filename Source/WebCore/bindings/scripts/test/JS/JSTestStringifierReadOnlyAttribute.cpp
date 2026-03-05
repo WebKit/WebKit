@@ -129,7 +129,7 @@ void JSTestStringifierReadOnlyAttributePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestStringifierReadOnlyAttribute::s_info = { "TestStringifierReadOnlyAttribute"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttribute) };
 
 JSTestStringifierReadOnlyAttribute::JSTestStringifierReadOnlyAttribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierReadOnlyAttribute>&& impl)
-    : JSDOMWrapper<TestStringifierReadOnlyAttribute>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestStringifierReadOnlyAttribute>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -227,7 +227,7 @@ void JSTestStringifierReadOnlyAttributeOwner::finalize(JSC::Handle<JSC::Unknown>
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifierReadOnlyAttribute = static_cast<JSTestStringifierReadOnlyAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestStringifierReadOnlyAttribute->protectedWrapped().ptr(), jsTestStringifierReadOnlyAttribute);
+    uncacheWrapper(world, protect(jsTestStringifierReadOnlyAttribute->wrapped()).ptr(), jsTestStringifierReadOnlyAttribute);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -265,7 +265,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestStringifierReadOnlyAttribute>(impl.ptr());
 #endif
-    return createWrapper<TestStringifierReadOnlyAttribute>(globalObject, WTFMove(impl));
+    return createWrapper<TestStringifierReadOnlyAttribute>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestStringifierReadOnlyAttribute& impl)

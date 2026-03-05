@@ -190,7 +190,7 @@ shaderModule5 = device0.createShaderModule({
              fn fn2(a0: VertexOutput4) -> i32 
              {
                  var out: i32;
-                 out &= bitcast<vec4i>(smoothstep(vec4f(), vec4f(), (vec2f(unconst_f32(0.1294))).rrrr))[2];
+                 out &= bitcast<vec4i>(smoothstep(vec4f(), vec4f(1), (vec2f(unconst_f32(0.1294))).rrrr))[2];
                  let vf108= select(vec2h(), vec2h(), vec2((false), ));
                  var vf109= a0;
                  out = bitcast<i32>((vec2f((0.1103), unconst_f32(0.04778)))[0]);
@@ -200,7 +200,7 @@ shaderModule5 = device0.createShaderModule({
                  vf109.f29 += (f32(vf112[u32()]));
                  var vf117= vf108[u32()];
                  let vf118f16 = override12;
-                 out &= bitcast<vec4i>(smoothstep(vec4f(), vec4f(), vec4f((0.03282), (0.3133), (0.01408), unconst_f32(0.01364))))[3];
+                 out &= bitcast<vec4i>(smoothstep(vec4f(), vec4f(1), vec4f((0.03282), (0.3133), (0.01408), unconst_f32(0.01364))))[3];
                  vf109 = VertexOutput4(vec4f(vf109.f29[u32()]));
                  vf117 = vec3h((*ptr54))[0];
                  return out;

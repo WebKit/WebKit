@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class SVGFEMergeNodeElement final : public SVGElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEMergeNodeElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGFEMergeNodeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEMergeNodeElement);
 public:
     static Ref<SVGFEMergeNodeElement> create(const QualifiedName&, Document&);
@@ -46,7 +46,7 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
 };
 
 } // namespace WebCore

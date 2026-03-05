@@ -27,6 +27,7 @@
 [
     Conditional=WEBXR_HIT_TEST,
     EnabledBySetting=WebXREnabled&WebXRHitTestModuleEnabled,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRRayDirectionInit {
     double x = 0;
     double y = 0;

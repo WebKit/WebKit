@@ -30,8 +30,8 @@ Object.defineProperty(proto, "1.1", {
   }
 });
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
 
   assert.sameValue(sample["1.1"], undefined);
-});
+}, null, ["passthrough"]);

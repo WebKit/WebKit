@@ -32,12 +32,15 @@
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/transport/rtp/rtp_source.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "audio/audio_state.h"
 #include "call/audio_receive_stream.h"
 #include "call/audio_state.h"
 #include "call/syncable.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 class PacketRouter;
@@ -118,11 +121,10 @@ class AudioReceiveStreamImpl final : public webrtc::AudioReceiveStreamInterface,
   // Syncable
   uint32_t id() const override;
   std::optional<Syncable::Info> GetInfo() const override;
-  bool GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
-                              int64_t* time_ms) const override;
-  void SetEstimatedPlayoutNtpTimestampMs(int64_t ntp_timestamp_ms,
-                                         int64_t time_ms) override;
-  bool SetMinimumPlayoutDelay(int delay_ms) override;
+  std::optional<Syncable::PlayoutInfo> GetPlayoutRtpTimestamp() const override;
+  void SetEstimatedPlayoutNtpTimestamp(NtpTime ntp_time,
+                                       Timestamp time) override;
+  bool SetMinimumPlayoutDelay(TimeDelta delay) override;
 
   void DeliverRtcp(ArrayView<const uint8_t> packet);
 
@@ -149,6 +151,7 @@ class AudioReceiveStreamImpl final : public webrtc::AudioReceiveStreamInterface,
  private:
   internal::AudioState* audio_state() const;
 
+  const Environment env_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_thread_checker_;
   // TODO(bugs.webrtc.org/11993): This checker conceptually represents
   // operations that belong to the network thread. The Call class is currently

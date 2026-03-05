@@ -28,7 +28,7 @@
 
 #include <wtf/DataLog.h>
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -73,8 +73,8 @@ SourceModule SourceModule::create()
 
 SourceModule& SourceModule::withFunctionType(Vector<uint8_t> params, Vector<uint8_t> results)
 {
-    m_params = WTFMove(params);
-    m_results = WTFMove(results);
+    m_params = WTF::move(params);
+    m_results = WTF::move(results);
     return *this;
 }
 
@@ -86,7 +86,7 @@ SourceModule& SourceModule::withAdditionalType(Vector<uint8_t> params, Vector<ui
     typeEntry.appendVector(params);
     typeEntry.append(static_cast<uint8_t>(results.size()));
     typeEntry.appendVector(results);
-    m_additionalTypes.append(WTFMove(typeEntry));
+    m_additionalTypes.append(WTF::move(typeEntry));
     return *this;
 }
 
@@ -241,7 +241,7 @@ SourceModule SourceModule::build()
     module.appendVector(m_functionBody);
 
     SourceModule result;
-    result.bytes = WTFMove(module);
+    result.bytes = WTF::move(module);
     result.functionDataStart = functionDataStart;
     result.bytecodeStart = bytecodeStart;
     result.m_vm = m_vm;
@@ -324,7 +324,7 @@ static OffsetToNextInstructions convertMappingsToAbsolute(uint32_t bytecodeStart
         UncheckedKeyHashSet<uint32_t> targets;
         for (uint32_t to : tos)
             targets.add(bytecodeStart + to);
-        expectedMappings.add(bytecodeStart + from, WTFMove(targets));
+        expectedMappings.add(bytecodeStart + from, WTF::move(targets));
     }
     return expectedMappings;
 }
@@ -459,7 +459,7 @@ bool SourceModule::parseAndVerifyDebugInfo(OpcodeType expectedOpcode, std::initi
 template bool SourceModule::parseAndVerifyDebugInfo(JSC::Wasm::OpType, std::initializer_list<std::pair<uint32_t, std::initializer_list<uint32_t>>>) const;
 template bool SourceModule::parseAndVerifyDebugInfo(JSC::Wasm::ExtGCOpType, std::initializer_list<std::pair<uint32_t, std::initializer_list<uint32_t>>>) const;
 
-static int test()
+UNUSED_FUNCTION static int test()
 {
     dataLogLn("Starting WASM Debug Info Test Suite");
     dataLogLn("===============================================");
@@ -506,9 +506,14 @@ static int test()
 
 int testWasmDebugInfo()
 {
+#if !CPU(ARM64)
+    dataLogLn("WASM Debug Info Tests SKIPPED (only supported on ARM64)");
+    return 0;
+#else
     return WasmDebugInfoTest::test();
+#endif
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

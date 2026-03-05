@@ -67,7 +67,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Performance);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Performance);
 
 static Seconds timePrecision { 1_ms };
 
@@ -151,47 +151,45 @@ ScriptExecutionContext* Performance::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
-EventCounts* Performance::eventCounts()
+EventCounts& Performance::eventCounts()
 {
-    if (!is<Document>(scriptExecutionContext()))
-        return nullptr;
-
+    ASSERT(is<Document>(scriptExecutionContext()));
     ASSERT(isMainThread());
+
     // FIXME: stop lazy-initializing m_eventCounts after event
     // timing stops being gated by a flag:
     if (!m_eventCounts)
         lazyInitialize(m_eventCounts, makeUniqueWithoutRefCountedCheck<EventCounts>(this));
 
-    return m_eventCounts.get();
+    return *m_eventCounts;
 }
 
 uint64_t Performance::interactionCount()
 {
     ASSERT(is<Document>(scriptExecutionContext()));
     ASSERT(isMainThread());
+
     return downcast<Document>(*scriptExecutionContext()).window()->interactionCount();
 }
 
-PerformanceNavigation* Performance::navigation()
+PerformanceNavigation& Performance::navigation()
 {
-    if (!is<Document>(scriptExecutionContext()))
-        return nullptr;
-
+    ASSERT(is<Document>(scriptExecutionContext()));
     ASSERT(isMainThread());
+
     if (!m_navigation)
         m_navigation = PerformanceNavigation::create(downcast<Document>(*scriptExecutionContext()).window());
-    return m_navigation.get();
+    return *m_navigation;
 }
 
-PerformanceTiming* Performance::timing()
+PerformanceTiming& Performance::timing()
 {
-    if (!is<Document>(scriptExecutionContext()))
-        return nullptr;
-
+    ASSERT(is<Document>(scriptExecutionContext()));
     ASSERT(isMainThread());
+
     if (!m_timing)
         m_timing = PerformanceTiming::create(downcast<Document>(*scriptExecutionContext()).window());
-    return m_timing.get();
+    return *m_timing;
 }
 
 Vector<Ref<PerformanceEntry>> Performance::getEntries() const
@@ -317,7 +315,7 @@ void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Re
 void Performance::countEvent(EventType type)
 {
     ASSERT(isMainThread());
-    eventCounts()->add(type);
+    eventCounts().add(type);
 }
 
 void Performance::processEventEntry(const PerformanceEventTimingCandidate& candidate)
@@ -387,7 +385,7 @@ void Performance::enqueueLargestContentfulPaint(Ref<LargestContentfulPaint>&& pa
     if (RefPtr context = scriptExecutionContext())
         InspectorInstrumentation::didEnqueueLargestContentfulPaint(*context, paintEntry.get());
 
-    m_largestContentfulPaint = RefPtr { WTFMove(paintEntry) };
+    m_largestContentfulPaint = RefPtr { WTF::move(paintEntry) };
     queueEntry(*m_largestContentfulPaint);
 }
 
@@ -417,10 +415,10 @@ void Performance::addResourceTiming(ResourceTiming&& resourceTiming)
 {
     ASSERT(scriptExecutionContext());
 
-    auto entry = PerformanceResourceTiming::create(m_timeOrigin, WTFMove(resourceTiming));
+    auto entry = PerformanceResourceTiming::create(m_timeOrigin, WTF::move(resourceTiming));
 
     if (m_waitingForBackupBufferToBeProcessed) {
-        m_backupResourceTimingBuffer.append(WTFMove(entry));
+        m_backupResourceTimingBuffer.append(WTF::move(entry));
         return;
     }
 
@@ -433,14 +431,14 @@ void Performance::addResourceTiming(ResourceTiming&& resourceTiming)
 
     if (isResourceTimingBufferFull()) {
         ASSERT(!m_resourceTimingBufferFullTimer.isActive());
-        m_backupResourceTimingBuffer.append(WTFMove(entry));
+        m_backupResourceTimingBuffer.append(WTF::move(entry));
         m_waitingForBackupBufferToBeProcessed = true;
         m_resourceTimingBufferFullTimer.startOneShot(0_s);
         return;
     }
 
     queueEntry(entry.get());
-    m_resourceTimingBuffer.append(WTFMove(entry));
+    m_resourceTimingBuffer.append(WTF::move(entry));
 }
 
 bool Performance::isResourceTimingBufferFull() const
@@ -498,7 +496,7 @@ ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalO
     if (!m_userTiming)
         m_userTiming = makeUnique<PerformanceUserTiming>(*this);
 
-    auto mark = m_userTiming->mark(globalObject, markName, WTFMove(markOptions));
+    auto mark = m_userTiming->mark(globalObject, markName, WTF::move(markOptions));
     if (mark.hasException())
         return mark.releaseException();
 
@@ -513,12 +511,12 @@ void Performance::clearMarks(const String& markName)
     m_userTiming->clearMarks(markName);
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, std::optional<StartOrMeasureOptions>&& startOrMeasureOptions, const String& endMark)
+ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, StartOrMeasureOptions&& startOrMeasureOptions, const String& endMark)
 {
     if (!m_userTiming)
         m_userTiming = makeUnique<PerformanceUserTiming>(*this);
 
-    auto measure = m_userTiming->measure(globalObject, measureName, WTFMove(startOrMeasureOptions), endMark);
+    auto measure = m_userTiming->measure(globalObject, measureName, WTF::move(startOrMeasureOptions), endMark);
     if (measure.hasException())
         return measure.releaseException();
 
@@ -545,7 +543,7 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
             auto timeOrigin = m_continuousTimeOrigin.approximateMonotonicTime();
             auto startTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime());
             auto endTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration());
-            JSC::ProfilerSupport::markInterval(entry.ptr(), JSC::ProfilerSupport::Category::WebKitPerformanceSignpost, startTime, endTime, WTFMove(message));
+            JSC::ProfilerSupport::markInterval(entry.ptr(), JSC::ProfilerSupport::Category::WebKitPerformanceSignpost, startTime, endTime, WTF::move(message));
         }
     }
 
@@ -569,12 +567,12 @@ void Performance::removeAllObservers()
 
 void Performance::registerPerformanceObserver(PerformanceObserver& observer)
 {
-    m_observers.add(&observer);
+    m_observers.add(observer);
 }
 
 void Performance::unregisterPerformanceObserver(PerformanceObserver& observer)
 {
-    m_observers.remove(&observer);
+    m_observers.remove(observer);
 }
 
 void Performance::queueEntry(PerformanceEntry& entry)

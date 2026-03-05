@@ -57,6 +57,7 @@ class WebTransportDatagramsWritable;
 class WebTransportError;
 class WebTransportReceiveStreamSource;
 class WebTransportSendGroup;
+class WebTransportSendStream;
 class WebTransportSendStreamSink;
 class WebTransportSession;
 class WorkerWebTransportSession;
@@ -79,28 +80,31 @@ public:
     void deref() const final { WebTransportSessionClient::deref(); }
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
-    DOMPromise& ready();
-    WebTransportReliabilityMode reliability();
-    WebTransportCongestionControl congestionControl();
-    std::optional<uint16_t> anticipatedConcurrentIncomingUnidirectionalStreams();
-    void setAnticipatedConcurrentIncomingUnidirectionalStreams(std::optional<uint16_t>);
-    std::optional<uint16_t> anticipatedConcurrentIncomingBidirectionalStreams();
-    void setAnticipatedConcurrentIncomingBidirectionalStreams(std::optional<uint16_t>);
-    String& protocol();
-    DOMPromise& closed();
-    DOMPromise& draining();
+    DOMPromise& NODELETE ready();
+    WebTransportReliabilityMode NODELETE reliability();
+    WebTransportCongestionControl NODELETE congestionControl();
+    std::optional<uint16_t> NODELETE anticipatedConcurrentIncomingUnidirectionalStreams();
+    void NODELETE setAnticipatedConcurrentIncomingUnidirectionalStreams(std::optional<uint16_t>);
+    std::optional<uint16_t> NODELETE anticipatedConcurrentIncomingBidirectionalStreams();
+    void NODELETE setAnticipatedConcurrentIncomingBidirectionalStreams(std::optional<uint16_t>);
+    String& NODELETE protocol();
+    DOMPromise& NODELETE closed();
+    DOMPromise& NODELETE draining();
     void close(WebTransportCloseInfo&&);
-    WebTransportDatagramDuplexStream& datagrams();
+    WebTransportDatagramDuplexStream& NODELETE datagrams();
     void createBidirectionalStream(ScriptExecutionContext&, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&&);
-    ReadableStream& incomingBidirectionalStreams();
+    ReadableStream& NODELETE incomingBidirectionalStreams();
     void createUnidirectionalStream(ScriptExecutionContext&, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&&);
-    ReadableStream& incomingUnidirectionalStreams();
+    ReadableStream& NODELETE incomingUnidirectionalStreams();
     Ref<WebTransportSendGroup> createSendGroup();
-    static bool supportsReliableOnly();
+    static bool NODELETE supportsReliableOnly();
 
-    RefPtr<WebTransportSession> session();
+    RefPtr<WebTransportSession> NODELETE session();
     void datagramsWritableCreated(WebTransportDatagramsWritable&);
     void cleanupContext(ScriptExecutionContext&);
+
+    void sendStreamClosed(WebTransportStreamIdentifier);
+    void receiveStreamClosed(WebTransportStreamIdentifier);
 
 private:
     WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, const WebTransportOptions&, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&);
@@ -110,16 +114,17 @@ private:
     void cleanupWithSessionError();
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
+    void suspend(ReasonForSuspension) final;
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
     void receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier) final;
-    void receiveBidirectionalStream(Ref<WebTransportSendStreamSink>&&) final;
+    void receiveBidirectionalStream(WebTransportStreamIdentifier) final;
     void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
-    void didFail(std::optional<unsigned>&&, String&&) final;
+    void streamReceiveError(WebTransportStreamIdentifier, uint64_t) final;
+    void streamSendError(WebTransportStreamIdentifier, uint64_t) final;
+    void didFail(std::optional<uint32_t>&&, String&&) final;
     void didDrain() final;
-
-    RefPtr<WebTransportSession> protectedSession();
 
     ListHashSet<Ref<WritableStream>> m_sendStreams;
     ListHashSet<Ref<ReadableStream>> m_receiveStreams;
@@ -151,6 +156,7 @@ private:
     const Ref<WebTransportReceiveStreamSource> m_receiveStreamSource;
     const Ref<WebTransportBidirectionalStreamSource> m_bidirectionalStreamSource;
     HashMap<WebTransportStreamIdentifier, Ref<WebTransportReceiveStreamSource>> m_readStreamSources;
+    HashMap<WebTransportStreamIdentifier, Ref<WebTransportSendStreamSink>> m_sendStreamSinks;
     WeakHashSet<WebTransportDatagramsWritable> m_datagramsWritables;
 };
 

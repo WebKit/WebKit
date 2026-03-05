@@ -40,7 +40,7 @@ struct SVGStrokeDasharrayValue {
 
     SVGStrokeDasharrayValueLength value;
 
-    SVGStrokeDasharrayValue(SVGStrokeDasharrayValueLength&& length) : value { WTFMove(length) } { }
+    SVGStrokeDasharrayValue(SVGStrokeDasharrayValueLength&& length) : value { WTF::move(length) } { }
     SVGStrokeDasharrayValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : value { literal } { }
     SVGStrokeDasharrayValue(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal) : value { literal } { }
 

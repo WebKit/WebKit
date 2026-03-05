@@ -42,7 +42,7 @@ typedef MediaSourcePrivateGStreamer::RegisteredTrack RegisteredTrack;
 #if !LOG_DISABLED || ENABLE(ENCRYPTED_MEDIA)
 struct PadProbeInformation {
     AppendPipeline* appendPipeline;
-    const char* description;
+    ASCIILiteral description;
     gulong probeId;
 };
 #endif
@@ -56,14 +56,11 @@ public:
     void pushNewBuffer(GRefPtr<GstBuffer>&&);
     void resetParserState();
     void stopParser();
+    void startChangingType();
     SourceBufferPrivateGStreamer& sourceBufferPrivate() { return m_sourceBufferPrivate; }
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
 
 private:
-#ifndef GST_DISABLE_GST_DEBUG
-    static const char * streamTypeToString(StreamType);
-#endif
-
     struct Track {
         // Track objects are created on pad-added for the first initialization segment, and destroyed after
         // the pipeline state has been set to GST_STATE_NULL.
@@ -83,6 +80,8 @@ private:
         GRefPtr<GstCaps> caps;
         GRefPtr<GstCaps> finalCaps;
         FloatSize presentationSize;
+
+        gboolean ongoingChangeType { false };
 
         // Needed by some formats. To simplify the code, parser/encoder can be a GstIdentity when not needed.
         GRefPtr<GstElement> parser;
@@ -106,6 +105,8 @@ private:
         bool isLinked() const { return gst_pad_is_linked(entryPad.get()); }
     };
 
+    void resetElementsForChangeType();
+    void setupDemuxing();
     void configureOptionalDemuxerFromAnyThread();
     void removeParserForDemuxerPad(const GRefPtr<GstPad>&);
     void handleErrorSyncMessage(GstMessage*);
@@ -150,6 +151,7 @@ private:
     Thread* m_streamingThread;
 
     bool m_hasReceivedFirstInitializationSegment { false };
+    bool m_pendingInitializationSegmentForChangeType { false };
     // Used only for asserting EOS events are only caused by demuxing errors.
     bool m_errorReceived { false };
 

@@ -32,12 +32,20 @@
 
 namespace WebCore {
 
-class KeepaliveRequestTracker final : public CachedRawResourceClient {
+class KeepaliveRequestTracker final : public CachedRawResourceClient, public RefCounted<KeepaliveRequestTracker> {
 public:
+    static Ref<KeepaliveRequestTracker> create();
     ~KeepaliveRequestTracker();
+
     bool tryRegisterRequest(CachedResource&);
 
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 private:
+    KeepaliveRequestTracker() = default;
+
     // CachedRawResourceClient.
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 

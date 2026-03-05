@@ -39,11 +39,14 @@
 using WebCore::CDMProxy;
 
 // Instances of this class are tied to the decryptor lifecycle. They can't be alive after the decryptor has been destroyed.
-class CDMProxyDecryptionClientImplementation : public WebCore::CDMProxyDecryptionClient {
+class CDMProxyDecryptionClientImplementation final : public WebCore::CDMProxyDecryptionClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(CDMProxyDecryptionClientImplementation);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMProxyDecryptionClientImplementation);
 public:
     CDMProxyDecryptionClientImplementation(WebKitMediaCommonEncryptionDecrypt* decryptor)
-        : m_decryptor(decryptor) { }
+        : m_decryptor(decryptor)
+    {
+    }
     virtual bool isAborting()
     {
         return webKitMediaCommonEncryptionDecryptIsAborting(m_decryptor);
@@ -171,13 +174,14 @@ static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction,
                 gst_structure_remove_fields(outgoingStructure.get(), "base-profile", "codec_data", "height", "framerate", "level", "pixel-aspect-ratio", "profile", "rate", "width", nullptr);
 
                 auto name = WebCore::gstStructureGetName(incomingStructure);
-                gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId(self),
+                gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId(self).characters(),
                     "original-media-type", G_TYPE_STRING, name.utf8() , nullptr);
 
                 // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID was added in the GStreamer
                 // developement git master which will ship as version 1.16.0.
-                gst_structure_set_name(outgoingStructure.get(), !g_strcmp0(klass->protectionSystemId(self),
-                    GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" : "application/x-cenc");
+                gst_structure_set_name(outgoingStructure.get(),
+                    WebCore::GStreamerEMEUtilities::isUnspecifiedUUID(klass->protectionSystemId(self))
+                    ? "application/x-webm-enc" : "application/x-cenc");
             }
         }
 
@@ -499,7 +503,8 @@ bool webKitMediaCommonEncryptionDecryptIsAborting(WebKitMediaCommonEncryptionDec
 WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    return *priv->cdmProxyDecryptionClientImplementation;
+    // FXIME: We should not need EnableWeakPtrThreadingAssertions::No here. This is likely indicative of a bug.
+    return WeakPtr { *priv->cdmProxyDecryptionClientImplementation, EnableWeakPtrThreadingAssertions::No };
 }
 
 static GstStateChangeReturn changeState(GstElement* element, GstStateChange transition)

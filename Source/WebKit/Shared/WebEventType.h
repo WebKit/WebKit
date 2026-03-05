@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/text/ASCIILiteral.h>
+
 namespace WebKit {
 
 enum class WebEventType : uint32_t {
@@ -59,5 +61,52 @@ enum class WebEventType : uint32_t {
     GestureEnd          = 1 << 17
 #endif
 };
+
+inline ASCIILiteral toString(WebEventType action)
+{
+    switch (action) {
+    case WebEventType::MouseDown:
+        return "MouseDown"_s;
+    case WebEventType::MouseUp:
+        return "MouseUp"_s;
+    case WebEventType::MouseMove:
+        return "MouseMove"_s;
+    case WebEventType::MouseForceChanged:
+        return "MouseForceChanged"_s;
+    case WebEventType::MouseForceDown:
+        return "MouseForceDown"_s;
+    case WebEventType::MouseForceUp:
+        return "MouseForceUp"_s;
+    case WebEventType::Wheel:
+        return "Wheel"_s;
+    case WebEventType::KeyDown:
+        return "KeyDown"_s;
+    case WebEventType::KeyUp:
+        return "KeyUp"_s;
+    case WebEventType::RawKeyDown:
+        return "RawKeyDown"_s;
+    case WebEventType::Char:
+        return "Char"_s;
+#if ENABLE(TOUCH_EVENTS)
+    case WebEventType::TouchStart:
+        return "TouchStart"_s;
+    case WebEventType::TouchMove:
+        return "TouchMove"_s;
+    case WebEventType::TouchEnd:
+        return "TouchEnd"_s;
+    case WebEventType::TouchCancel:
+        return "TouchCancel"_s;
+#endif
+#if ENABLE(MAC_GESTURE_EVENTS)
+    case WebEventType::GestureStart:
+        return "GestureStart"_s;
+    case WebEventType::GestureChange:
+        return "GestureChange"_s;
+    case WebEventType::GestureEnd:
+        return "GestureEnd"_s;
+#endif
+    }
+    return ""_s;
+}
 
 } // namespace WebKit

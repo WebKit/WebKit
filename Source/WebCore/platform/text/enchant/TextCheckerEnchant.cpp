@@ -165,7 +165,7 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
             }
         }
     }
-    m_enchantDictionaries = WTFMove(spellDictionaries);
+    m_enchantDictionaries = WTF::move(spellDictionaries);
 }
 
 Vector<String> TextCheckerEnchant::loadedSpellCheckingLanguages() const

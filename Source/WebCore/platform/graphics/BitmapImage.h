@@ -54,7 +54,7 @@ public:
     // Decoding
     bool isLargeForDecoding() const { return m_source->isLargeForDecoding(); }
     void stopDecodingWorkQueue() { m_source->stopDecodingWorkQueue(); }
-    void decode(Function<void(DecodingStatus)>&& decodeCallback) { m_source->decode(WTFMove(decodeCallback)); }
+    void decode(Function<void(DecodingStatus)>&& decodeCallback) { m_source->decode(WTF::move(decodeCallback)); }
 
     // Current ImageFrame
     unsigned currentFrameIndex() const { return m_source->currentFrameIndex(); }
@@ -103,6 +103,9 @@ private:
     EncodedDataStatus dataChanged(bool allDataReceived) final;
     void destroyDecodedData(bool destroyAll = true) final;
 
+    bool canReplaceData() const final { return m_source->canReplaceData(); }
+    void dataReplaced() final;
+
     // Current ImageFrame
     bool currentFrameKnownToBeOpaque() const final { return !currentFrameHasAlpha(); }
     bool currentFrameIsComplete() const final { return m_source->currentImageFrame().isComplete(); }
@@ -120,6 +123,7 @@ private:
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool shouldUseQuickLookForFullscreen() const final { return m_source->shouldUseQuickLookForFullscreen(); }
+    bool isPanorama() const final { return m_source->isPanorama(); }
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
@@ -142,7 +146,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    Ref<ImageSource> m_source;
+    const Ref<ImageSource> m_source;
 };
 
 } // namespace WebCore

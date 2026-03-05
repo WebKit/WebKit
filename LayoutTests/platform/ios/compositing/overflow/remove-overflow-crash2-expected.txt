@@ -5,7 +5,7 @@ layer at (0,0) size 800x218
     RenderBody {BODY} at (8,8) size 784x202
 layer at (8,8) size 103x202 clip at (9,9) size 86x185 scrollHeight 1680
   RenderBlock {DIV} at (0,0) size 103x202 [border: (1px solid #000000)]
-    RenderText {#text} at (1,1) size 86x1679
+    RenderText {#text} at (1,1) size 86x1680
       text run at (1,1) width 86: "Lorem ipsum"
       text run at (1,21) width 53: "dolor sit"
       text run at (1,41) width 36: "amet,"

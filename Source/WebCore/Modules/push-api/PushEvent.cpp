@@ -34,21 +34,21 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushEvent);
 
 static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
 {
-    return WTF::switchOn(data, [](RefPtr<JSC::ArrayBuffer>& value) -> Vector<uint8_t> {
-        if (!value)
-            return { };
-        return value->span();
-    }, [](RefPtr<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
-        if (!value)
-            return { };
-        return value->span();
-    }, [](String& value) -> Vector<uint8_t> {
-        return value.utf8().span();
-    });
+    return WTF::switchOn(data,
+        [](Ref<JSC::ArrayBuffer>& value) -> Vector<uint8_t> {
+            return value->span();
+        },
+        [](Ref<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
+            return value->span();
+        },
+        [](String& value) -> Vector<uint8_t> {
+            return value.utf8().span();
+        }
+    );
 }
 
 Ref<PushEvent> PushEvent::create(const AtomString& type, PushEventInit&& initializer, IsTrusted isTrusted)
@@ -56,19 +56,19 @@ Ref<PushEvent> PushEvent::create(const AtomString& type, PushEventInit&& initial
     std::optional<Vector<uint8_t>> data;
     if (initializer.data)
         data = dataFromPushMessageDataInit(*initializer.data);
-    return adoptRef(*new PushEvent(type, WTFMove(initializer), WTFMove(data), isTrusted));
+    return adoptRef(*new PushEvent(type, WTF::move(initializer), WTF::move(data), isTrusted));
 }
 
 Ref<PushEvent> PushEvent::create(const AtomString& type, ExtendableEventInit&& initializer, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
 {
-    return adoptRef(*new PushEvent(type, WTFMove(initializer), WTFMove(data), isTrusted));
+    return adoptRef(*new PushEvent(type, WTF::move(initializer), WTF::move(data), isTrusted));
 }
 
 static inline RefPtr<PushMessageData> pushMessageDataFromOptionalVector(std::optional<Vector<uint8_t>>&& data)
 {
     if (!data)
         return nullptr;
-    return PushMessageData::create(WTFMove(*data));
+    return PushMessageData::create(WTF::move(*data));
 }
 
 
@@ -76,10 +76,10 @@ PushEvent::~PushEvent() = default;
 
 PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
-    : PushEvent(type, WTFMove(eventInit), WTFMove(data), nullptr, std::nullopt, isTrusted)
+    : PushEvent(type, WTF::move(eventInit), WTF::move(data), nullptr, std::nullopt, isTrusted)
 #else
-    : ExtendableEvent(EventInterfaceType::PushEvent, type, WTFMove(eventInit), isTrusted)
-    , m_data(pushMessageDataFromOptionalVector(WTFMove(data)))
+    : ExtendableEvent(EventInterfaceType::PushEvent, type, WTF::move(eventInit), isTrusted)
+    , m_data(pushMessageDataFromOptionalVector(WTF::move(data)))
 #endif
 {
 }
@@ -88,12 +88,12 @@ PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, st
 
 Ref<PushEvent> PushEvent::create(const AtomString& type, ExtendableEventInit&& initializer, Ref<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
 {
-    return adoptRef(*new PushEvent(type, WTFMove(initializer), std::nullopt, WTFMove(proposedNotification), proposedAppBadge, isTrusted));
+    return adoptRef(*new PushEvent(type, WTF::move(initializer), std::nullopt, WTF::move(proposedNotification), proposedAppBadge, isTrusted));
 }
 
 PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, RefPtr<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
-    : ExtendableEvent(EventInterfaceType::PushEvent, type, WTFMove(eventInit), isTrusted)
-    , m_data(pushMessageDataFromOptionalVector(WTFMove(data)))
+    : ExtendableEvent(EventInterfaceType::PushEvent, type, WTF::move(eventInit), isTrusted)
+    , m_data(pushMessageDataFromOptionalVector(WTF::move(data)))
     , m_proposedNotification(proposedNotification)
     , m_proposedAppBadge(proposedAppBadge)
 {

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class EXTClipControl final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTClipControl);
+    WTF_MAKE_TZONE_ALLOCATED(EXTClipControl);
     WTF_MAKE_NONCOPYABLE(EXTClipControl);
 public:
     explicit EXTClipControl(WebGLRenderingContextBase&);
@@ -45,3 +45,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTClipControl)

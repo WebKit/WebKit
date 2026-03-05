@@ -1,0 +1,3 @@
+
+PASS A single legacy openid4vp protocol string request must be rejected with TypeError.
+

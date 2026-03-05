@@ -184,15 +184,14 @@
     if (!element)
         raiseTypeErrorException();
 
-    auto& coreElement = *core(element);
-    Variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
-    if (is<WebCore::HTMLOptionElement>(coreElement))
-        variantElement = downcast<WebCore::HTMLOptionElement>(coreElement);
-    else if (is<WebCore::HTMLOptGroupElement>(coreElement))
-        variantElement = downcast<WebCore::HTMLOptGroupElement>(coreElement);
+    Ref coreElement = *core(element);
+
+    if (RefPtr optionElement = dynamicDowncast<WebCore::HTMLOptionElement>(coreElement))
+        raiseOnDOMError(IMPL->add(optionElement.releaseNonNull(), WebCore::HTMLSelectElement::HTMLElementOrInt(*core(before))));
+    else if (RefPtr optGroupElement = dynamicDowncast<WebCore::HTMLOptGroupElement>(coreElement))
+        raiseOnDOMError(IMPL->add(optGroupElement.releaseNonNull(), WebCore::HTMLSelectElement::HTMLElementOrInt(*core(before))));
     else
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(core(before))));
 }
 
 - (void)remove:(int)index

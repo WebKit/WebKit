@@ -47,7 +47,7 @@ PlatformTimeRanges::PlatformTimeRanges(const MediaTime& start, const MediaTime& 
 }
 
 PlatformTimeRanges::PlatformTimeRanges(Vector<Range>&& ranges)
-    : m_ranges { WTFMove(ranges) }
+    : m_ranges { WTF::move(ranges) }
 {
 }
 
@@ -138,7 +138,7 @@ PlatformTimeRanges& PlatformTimeRanges::operator-=(const Range& range)
         ranges.append({ m_ranges[0].start, firstEnd });
     if (secondStart != m_ranges.last().end)
         ranges.append({ secondStart, m_ranges.last().end });
-    intersectWith(WTFMove(ranges));
+    intersectWith(WTF::move(ranges));
 
     return *this;
 }

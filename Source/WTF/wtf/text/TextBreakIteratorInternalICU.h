@@ -23,6 +23,8 @@
 // FIXME: Now that this handles locales for ICU, not just for text breaking,
 // this file and the various implementation files should be renamed.
 
+#include <wtf/ExportMacros.h>
+
 namespace WTF {
 
 WTF_EXPORT_PRIVATE const char* currentSearchLocaleID();

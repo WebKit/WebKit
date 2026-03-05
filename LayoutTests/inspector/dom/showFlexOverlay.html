@@ -120,17 +120,16 @@ function test()
     });
 
     suite.addTestCase({
-        name: "DOM.showFlexOverlay.HideBeforeShowShouldError",
-        description: "Return an error when requesting to hide a flex overlay when none is active for the node.",
+        name: "DOM.showFlexOverlay.HideBeforeShowShouldSucceed",
+        description: "No error when requesting to hide a flex overlay when none is active for the node.",
         async test() {
             let container = await getFlexContainerNode();
 
             await checkFlexOverlayCount(0);
 
-            InspectorTest.log("Requesting to hide flex overlay for .flex-container");
-            await InspectorTest.expectException(async () => {
-                await DOMAgent.hideFlexOverlay(container.id);
-            });
+            InspectorTest.log("Requesting to hide flex overlay for .flex-container (should silently succeed)");
+            await DOMAgent.hideFlexOverlay(container.id);
+            await checkFlexOverlayCount(0);
 
             InspectorTest.log("Requesting to hide all flex overlays. Hiding all flex overlays is idempotent and should not throw an error.");
             await DOMAgent.hideFlexOverlay();

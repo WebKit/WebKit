@@ -111,8 +111,8 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::CharSize charSize, s
     compile(&vm, charSize, sampleString);
 }
 
-template<typename VectorType, Yarr::MatchFrom matchFrom>
-ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm, StringView s, unsigned startOffset, VectorType& ovector)
+template<Yarr::MatchFrom matchFrom>
+ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm, StringView s, unsigned startOffset, std::span<int> ovector)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
@@ -136,8 +136,8 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     if (m_state == ParseError)
         return throwError();
 
-    ovector.resize(offsetVectorSize());
-    int* offsetVector = ovector.mutableSpan().data();
+    ASSERT(ovector.size() >= static_cast<size_t>(offsetVectorSize()));
+    int* offsetVector = ovector.data();
 
     if constexpr (matchFrom == Yarr::MatchFrom::VMThread) {
         if (hasValidAtom()) {
@@ -155,7 +155,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     if (m_state == JITCode) {
         {
             ASSERT(m_regExpJITCode);
-            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode->usesPatternContextBuffer(), this, matchFrom);
+            Yarr::MatchingContextHolder regExpContext(vm, this, matchFrom);
 
             if (s.is8Bit())
                 result = m_regExpJITCode->execute(s.span8(), startOffset, offsetVector, &regExpContext).start;
@@ -169,8 +169,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
             if (m_state == ParseError)
                 return throwError();
             {
-                constexpr bool usesPatternContextBuffer = false;
-                Yarr::MatchingContextHolder regExpContext(vm, usesPatternContextBuffer, this, matchFrom);
+                Yarr::MatchingContextHolder regExpContext(vm, this, matchFrom);
                 result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
             }
         }
@@ -186,8 +185,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     } else
 #endif
     {
-        constexpr bool usesPatternContextBuffer = false;
-        Yarr::MatchingContextHolder regExpContext(vm, usesPatternContextBuffer, this, matchFrom);
+        Yarr::MatchingContextHolder regExpContext(vm, this, matchFrom);
         result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
     }
 
@@ -275,7 +273,7 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
         MatchResult result;
         {
             ASSERT(m_regExpJITCode);
-            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode->usesPatternContextBuffer(), this, matchFrom);
+            Yarr::MatchingContextHolder regExpContext(vm, this, matchFrom);
 
             if (s.is8Bit())
                 result = m_regExpJITCode->execute(s.span8(), startOffset, &regExpContext);
@@ -303,8 +301,7 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
     nonReturnedOvector.grow(offsetVectorSize());
     offsetVector = nonReturnedOvector.mutableSpan().data();
     {
-        constexpr bool usesPatternContextBuffer = false;
-        Yarr::MatchingContextHolder regExpContext(vm, usesPatternContextBuffer, this, matchFrom);
+        Yarr::MatchingContextHolder regExpContext(vm, this, matchFrom);
         result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
     }
 #if REGEXP_FUNC_TEST_DATA_GEN

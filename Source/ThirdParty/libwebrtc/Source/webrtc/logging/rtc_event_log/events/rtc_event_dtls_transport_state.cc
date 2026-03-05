@@ -14,24 +14,17 @@
 
 #include "absl/memory/memory.h"
 #include "api/dtls_transport_interface.h"
-#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 
 RtcEventDtlsTransportState::RtcEventDtlsTransportState(DtlsTransportState state)
     : dtls_transport_state_(state) {}
 
-RtcEventDtlsTransportState::RtcEventDtlsTransportState(
-    const RtcEventDtlsTransportState& other)
-    : RtcEvent(other.timestamp_us_),
-      dtls_transport_state_(other.dtls_transport_state_) {}
-
 RtcEventDtlsTransportState::~RtcEventDtlsTransportState() = default;
 
 std::unique_ptr<RtcEventDtlsTransportState> RtcEventDtlsTransportState::Copy()
     const {
-  return absl::WrapUnique<RtcEventDtlsTransportState>(
-      new RtcEventDtlsTransportState(*this));
+  return absl::WrapUnique(new RtcEventDtlsTransportState(*this));
 }
 
 }  // namespace webrtc

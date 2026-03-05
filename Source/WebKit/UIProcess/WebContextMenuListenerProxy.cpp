@@ -43,7 +43,7 @@ WebContextMenuListenerProxy::~WebContextMenuListenerProxy() = default;
 void WebContextMenuListenerProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& items)
 {
     if (RefPtr client = m_client.get())
-        client->useContextMenuItems(WTFMove(items));
+        client->useContextMenuItems(WTF::move(items));
 }
 
 } // namespace WebKit

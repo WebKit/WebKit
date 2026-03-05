@@ -1,10 +1,10 @@
 
-FAIL Check scrollHeight with overflow: auto assert_equals: expected 950 but got 100
-FAIL Check scrollHeight with overflow: scroll assert_equals: expected 950 but got 85
-FAIL Check scrollHeight with overflow: hidden assert_equals: expected 950 but got 100
+PASS Check scrollHeight with overflow: auto
+PASS Check scrollHeight with overflow: scroll
+PASS Check scrollHeight with overflow: hidden
 PASS Check scrollHeight with overflow: clip
 PASS Check scrollHeight with overflow: visible
 PASS Check scrollHeight with overflowX: visible, overflowY: clip
-FAIL Check scrollHeight with overflowX: visible, overflowY: hidden assert_equals: expected 950 but got 100
-FAIL Check scrollHeight with overflowX: visible, overflowY: auto assert_equals: expected 950 but got 100
+PASS Check scrollHeight with overflowX: visible, overflowY: hidden
+PASS Check scrollHeight with overflowX: visible, overflowY: auto
 

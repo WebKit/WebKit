@@ -42,7 +42,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
 #include "RenderTheme.h"
@@ -53,10 +53,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentedFlow);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFragmentedFlow);
 
 RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, RenderStyle&& style)
-    : RenderBlockFlow(type, document, WTFMove(style), BlockFlowFlag::IsFragmentedFlow)
+    : RenderBlockFlow(type, document, WTF::move(style), BlockFlowFlag::IsFragmentedFlow)
     , m_currentFragmentMaintainer(nullptr)
     , m_fragmentsInvalidated(false)
     , m_fragmentsHaveUniformLogicalWidth(true)
@@ -68,7 +68,7 @@ RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, Render
 
 RenderFragmentedFlow::~RenderFragmentedFlow() = default;
 
-void RenderFragmentedFlow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderFragmentedFlow::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
@@ -174,18 +174,18 @@ void RenderFragmentedFlow::updateLogicalWidth()
 RenderBox::LogicalExtentComputedValues RenderFragmentedFlow::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
     LogicalExtentComputedValues computedValues;
-    computedValues.m_position = logicalTop;
-    computedValues.m_extent = 0;
+    computedValues.position = logicalTop;
+    computedValues.extent = 0;
 
     const LayoutUnit maxFlowSize = RenderFragmentedFlow::maxLogicalHeight();
     for (auto& fragment : m_fragmentList) {
         ASSERT(!fragment.needsLayout() || fragment.isRenderFragmentContainerSet());
 
-        LayoutUnit distanceToMaxSize = maxFlowSize - computedValues.m_extent;
-        computedValues.m_extent += std::min(distanceToMaxSize, fragment.logicalHeightOfAllFragmentedFlowContent());
+        LayoutUnit distanceToMaxSize = maxFlowSize - computedValues.extent;
+        computedValues.extent += std::min(distanceToMaxSize, fragment.logicalHeightOfAllFragmentedFlowContent());
 
         // If we reached the maximum size there's no point in going further.
-        if (computedValues.m_extent == maxFlowSize)
+        if (computedValues.extent == maxFlowSize)
             return computedValues;
     }
     return computedValues;
@@ -271,8 +271,8 @@ public:
     {
     }
 
-    const LayoutUnit& lowValue() const { return m_offset; }
-    const LayoutUnit& highValue() const { return m_offset; }
+    const LayoutUnit& NODELETE lowValue() const { return m_offset; }
+    const LayoutUnit& NODELETE highValue() const { return m_offset; }
 
     void collectIfNeeded(const PODInterval<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>>& interval)
     {
@@ -282,7 +282,7 @@ public:
             m_result = interval.data();
     }
 
-    RenderFragmentContainer* result() const { return m_result.get(); }
+    RenderFragmentContainer* NODELETE result() const { return m_result.get(); }
 
 private:
     LayoutUnit m_offset;

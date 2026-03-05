@@ -135,10 +135,10 @@ namespace WTF {
         static bool equal(std::add_const_t<UnderlyingType>* a, std::add_const_t<UnderlyingType>* b) { return a == b; }
         static constexpr bool safeToCompareToEmptyOrDeleted = true;
 
-        static unsigned hash(const T& key) { return hash(getPtr(key)); }
-        static bool equal(const T& a, const T& b) { return getPtr(a) == getPtr(b); }
-        static bool equal(std::add_const_t<UnderlyingType>* a, const T& b) { return a == getPtr(b); }
-        static bool equal(const T& a, std::add_const_t<UnderlyingType>* b) { return getPtr(a) == b; }
+        static unsigned hash(const T& key) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return hash(getPtr(key)); }
+        static bool equal(const T& a, const T& b) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return getPtr(a) == getPtr(b); }
+        static bool equal(std::add_const_t<UnderlyingType>* a, const T& b) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return a == getPtr(b); }
+        static bool equal(const T& a, std::add_const_t<UnderlyingType>* b) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return getPtr(a) == b; }
     };
 
     template<typename T> struct PtrHash : PtrHashBase<T, IsSmartPtr<T>::value> {

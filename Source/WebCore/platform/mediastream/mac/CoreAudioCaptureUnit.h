@@ -90,9 +90,9 @@ public:
     static void forNewUnit(Function<void(CoreAudioCaptureUnit&)>&&);
 
     using CreationCallback = Function<Expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;
-    void setInternalUnitCreationCallback(CreationCallback&& callback) { m_creationCallback = WTFMove(callback); }
+    void setInternalUnitCreationCallback(CreationCallback&& callback) { m_creationCallback = WTF::move(callback); }
     using GetSampleRateCallback = Function<int()>;
-    void setInternalUnitGetSampleRateCallback(GetSampleRateCallback&& callback) { m_getSampleRateCallback = WTFMove(callback); }
+    void setInternalUnitGetSampleRateCallback(GetSampleRateCallback&& callback) { m_getSampleRateCallback = WTF::move(callback); }
 
     void registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     void unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
@@ -101,7 +101,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     void setIsInBackground(bool);
-    void setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&& callback) { m_statusBarWasTappedCallback = WTFMove(callback); }
+    void setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&& callback) { m_statusBarWasTappedCallback = WTF::move(callback); }
 #endif
 
     bool canRenderAudio() const { return m_canRenderAudio; }

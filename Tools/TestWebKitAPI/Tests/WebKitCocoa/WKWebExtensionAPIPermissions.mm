@@ -109,7 +109,7 @@ TEST(WKWebExtensionAPIPermissions, Basics)
         @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['scripting']}))",
 
         // getAll() should return all named permissions and granted match patterns.
-        @"let permissions = {'origins': ['*://webkit.org/*'], 'permissions': ['alarms', 'activeTab']}",
+        @"let permissions = {'origins': ['*://webkit.org/*'], 'permissions': ['activeTab', 'alarms']}",
         @"const result = await browser.permissions.getAll()",
         @"browser.test.assertDeepEq(result, permissions)",
 

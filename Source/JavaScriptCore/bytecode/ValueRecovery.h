@@ -123,7 +123,7 @@ public:
             result.m_technique = InGPR;
         UnionType u;
         u.gpr = gpr;
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         return result;
     }
     
@@ -135,7 +135,7 @@ public:
         UnionType u;
         u.pair.tagGPR = tagGPR;
         u.pair.payloadGPR = payloadGPR;
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         return result;
     }
 #endif
@@ -150,7 +150,7 @@ public:
             result.m_technique = InFPR;
         UnionType u;
         u.fpr = fpr;
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         return result;
     }
     
@@ -189,7 +189,7 @@ public:
         }
         UnionType u;
         u.virtualReg = virtualReg.offset();
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         return result;
     }
 
@@ -199,7 +199,7 @@ public:
         ValueRecovery result;
         UnionType u;
         u.virtualReg = virtualReg.offset();
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         result.m_technique = inTag ? Int32TagDisplacedInJSStack : Int32DisplacedInJSStack;
         return result;
     }
@@ -211,7 +211,7 @@ public:
         result.m_technique = Constant;
         UnionType u;
         u.constant = JSValue::encode(value);
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         return result;
     }
     
@@ -221,7 +221,7 @@ public:
         result.m_technique = DirectArgumentsThatWereNotCreated;
         UnionType u;
         u.nodeID = id.bits();
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         return result;
     }
     
@@ -231,7 +231,7 @@ public:
         result.m_technique = ClonedArgumentsThatWereNotCreated;
         UnionType u;
         u.nodeID = id.bits();
-        result.m_source = WTFMove(u);
+        result.m_source = WTF::move(u);
         return result;
     }
 
@@ -393,7 +393,7 @@ public:
             result.m_technique = m_technique;
             UnionType u;
             u.virtualReg = m_source.get().virtualReg + offset;
-            result.m_source = WTFMove(u);
+            result.m_source = WTF::move(u);
             return result;
         }
             

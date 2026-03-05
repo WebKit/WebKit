@@ -104,8 +104,8 @@ public:
                 Workset::const_iterator m_sparceSetIterator;
             };
 
-            iterator begin() const { return iterator(m_liveness, m_liveness.m_workset.begin()); }
-            iterator end() const { return iterator(m_liveness, m_liveness.m_workset.end()); }
+            iterator begin() const LIFETIME_BOUND { return iterator(m_liveness, m_liveness.m_workset.begin()); }
+            iterator end() const LIFETIME_BOUND { return iterator(m_liveness, m_liveness.m_workset.end()); }
             
             bool contains(const typename Adapter::Thing& thing) const
             {
@@ -206,8 +206,8 @@ public:
             typename UnderlyingIterable::const_iterator m_iter;
         };
 
-        iterator begin() const { return iterator(m_liveness, m_iterable.begin()); }
-        iterator end() const { return iterator(m_liveness, m_iterable.end()); }
+        iterator begin() const LIFETIME_BOUND { return iterator(m_liveness, m_iterable.begin()); }
+        iterator end() const LIFETIME_BOUND { return iterator(m_liveness, m_iterable.end()); }
 
         bool contains(const typename Adapter::Thing& thing) const
         {
@@ -229,7 +229,7 @@ public:
         return Iterable<IndexVector>(*this, m_liveAtTail[block]);
     }
 
-    Workset& workset() { return m_workset; }
+    Workset& workset() LIFETIME_BOUND { return m_workset; }
     
     class LiveAtHead {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LiveAtHead);

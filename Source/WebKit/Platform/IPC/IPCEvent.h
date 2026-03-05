@@ -51,7 +51,7 @@ public:
 #if PLATFORM(COCOA)
     void signal();
 
-    MachSendRight takeSendRight() { return WTFMove(m_sendRight); }
+    MachSendRight takeSendRight() { return WTF::move(m_sendRight); }
 #else
     void signal()
     {
@@ -68,11 +68,11 @@ private:
 
 #if PLATFORM(COCOA)
     Signal(MachSendRight&& sendRight)
-        : m_sendRight(WTFMove(sendRight))
+        : m_sendRight(WTF::move(sendRight))
     { }
 #else
     Signal(Semaphore&& semaphore)
-        : m_semaphore(WTFMove(semaphore))
+        : m_semaphore(WTF::move(semaphore))
     { }
 #endif
 
@@ -90,14 +90,14 @@ public:
 #if PLATFORM(COCOA)
     ~Event();
     Event(Event&& other)
-        : m_receiveRight(WTFMove(other.m_receiveRight))
+        : m_receiveRight(WTF::move(other.m_receiveRight))
     {
         other.m_receiveRight = MACH_PORT_NULL;
     }
 
     Event& operator=(Event&& other)
     {
-        m_receiveRight = WTFMove(other.m_receiveRight);
+        m_receiveRight = WTF::move(other.m_receiveRight);
         other.m_receiveRight = MACH_PORT_NULL;
         return *this;
     }
@@ -128,7 +128,7 @@ private:
     { }
 #else
     Event(Semaphore&& semaphore)
-        : m_semaphore(WTFMove(semaphore))
+        : m_semaphore(WTF::move(semaphore))
     { }
 #endif
 
@@ -153,7 +153,7 @@ inline std::optional<EventSignalPair> createEventSignalPair()
 #else
     Semaphore signal(event.m_fd.duplicate());
 #endif
-    return EventSignalPair { Event { WTFMove(event) }, Signal { WTFMove(signal) } };
+    return EventSignalPair { Event { WTF::move(event) }, Signal { WTF::move(signal) } };
 }
 #endif
 

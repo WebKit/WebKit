@@ -61,7 +61,7 @@ public:
 
     static Ref<TemplateObjectDescriptor> create(StringVector&& rawStrings, OptionalStringVector&& cookedStrings)
     {
-        return adoptRef(*new TemplateObjectDescriptor(WTFMove(rawStrings), WTFMove(cookedStrings)));
+        return adoptRef(*new TemplateObjectDescriptor(WTF::move(rawStrings), WTF::move(cookedStrings)));
     }
 
 private:
@@ -73,8 +73,8 @@ private:
 };
 
 inline TemplateObjectDescriptor::TemplateObjectDescriptor(StringVector&& rawStrings, OptionalStringVector&& cookedStrings)
-    : m_rawStrings(WTFMove(rawStrings))
-    , m_cookedStrings(WTFMove(cookedStrings))
+    : m_rawStrings(WTF::move(rawStrings))
+    , m_cookedStrings(WTF::move(cookedStrings))
     , m_hash(calculateHash(m_rawStrings))
 {
 }

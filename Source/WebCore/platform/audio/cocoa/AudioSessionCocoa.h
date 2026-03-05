@@ -37,7 +37,7 @@ class WorkQueue;
 
 namespace WebCore {
 
-class AudioSessionCocoa : public AudioSession {
+class AudioSessionCocoa : public AudioSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSessionCocoa> {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionCocoa);
 public:
     virtual ~AudioSessionCocoa();
@@ -46,6 +46,9 @@ public:
 
     enum class ForceUpdate : bool { No, Yes };
     void setEligibleForSmartRouting(bool, ForceUpdate = ForceUpdate::No);
+
+    // AudioSession.
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
 protected:
     AudioSessionCocoa();

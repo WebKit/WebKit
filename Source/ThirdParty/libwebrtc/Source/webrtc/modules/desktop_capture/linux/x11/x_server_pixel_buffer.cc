@@ -334,6 +334,7 @@ bool XServerPixelBuffer::CaptureRect(const DesktopRect& rect,
                                      DesktopFrame* frame) {
   RTC_DCHECK_LE(rect.right(), window_rect_.width());
   RTC_DCHECK_LE(rect.bottom(), window_rect_.height());
+  RTC_CHECK_EQ(FOURCC_ARGB, frame->pixel_format());
 
   XImage* image;
   uint8_t* data;

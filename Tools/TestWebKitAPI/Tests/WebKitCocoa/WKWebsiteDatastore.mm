@@ -1325,6 +1325,27 @@ TEST(WKWebsiteDataStorePrivate, CompletionHandlerForRemovalFromNetworkProcess)
     EXPECT_EQ(completionHandlerNumber, 2u);
 }
 
+TEST(WKWebsiteDataStorePrivate, ThirdPartyCookieBlockingModeUnchangedBetweenViews)
+{
+    RetainPtr<NSString> thirdPartyCookieBlockingMode;
+    pid_t webProcessIdentifier = 0;
+    @autoreleasepool {
+        RetainPtr webView = adoptNS([[WKWebView alloc] init]);
+        RetainPtr navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+        [navigationDelegate waitForDidFinishNavigation];
+        thirdPartyCookieBlockingMode = [[WKWebsiteDataStore defaultDataStore] _thirdPartyCookieBlockingModeForTesting];
+        webProcessIdentifier = [webView _webProcessIdentifier];
+    }
+
+    // Make sure WKWebView goes away.
+    while (!kill(webProcessIdentifier, 0))
+        TestWebKitAPI::Util::spinRunLoop();
+
+    EXPECT_WK_STREQ([[WKWebsiteDataStore defaultDataStore] _thirdPartyCookieBlockingModeForTesting], thirdPartyCookieBlockingMode.get());
+}
+
 #if PLATFORM(MAC)
 
 TEST(WKWebsiteDataStore, DoNotLogNetworkConnectionsInEphemeralSessions)

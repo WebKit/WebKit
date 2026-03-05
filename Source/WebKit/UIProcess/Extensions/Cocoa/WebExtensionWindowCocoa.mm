@@ -93,7 +93,7 @@ WebExtensionWindowParameters WebExtensionWindow::parameters(PopulateTabs populat
         state(),
         type(),
 
-        populate == PopulateTabs::Yes ? std::optional(WTFMove(tabParameters)) : std::nullopt,
+        populate == PopulateTabs::Yes ? std::optional(WTF::move(tabParameters)) : std::nullopt,
         !CGRectIsNull(frame) ? std::optional(frame) : std::nullopt,
 
         isFocused(),
@@ -226,7 +226,7 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab(SkipValidation skipValidat
     return result;
 }
 
-WKWebExtensionWindowType toAPI(WebExtensionWindow::Type type)
+WKWebExtensionWindowType NODELETE toAPI(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:
@@ -239,7 +239,7 @@ WKWebExtensionWindowType toAPI(WebExtensionWindow::Type type)
     return WKWebExtensionWindowTypeNormal;
 }
 
-static inline WebExtensionWindow::Type toImpl(WKWebExtensionWindowType type)
+static inline WebExtensionWindow::Type NODELETE toImpl(WKWebExtensionWindowType type)
 {
     switch (type) {
     case WKWebExtensionWindowTypeNormal:
@@ -260,7 +260,7 @@ WebExtensionWindow::Type WebExtensionWindow::type() const
     return toImpl([m_delegate windowTypeForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-static inline WebExtensionWindow::State toImpl(WKWebExtensionWindowState state)
+static inline WebExtensionWindow::State NODELETE toImpl(WKWebExtensionWindowState state)
 {
     switch (state) {
     case WKWebExtensionWindowStateNormal:
@@ -285,7 +285,7 @@ WebExtensionWindow::State WebExtensionWindow::state() const
     return toImpl([m_delegate windowStateForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-WKWebExtensionWindowState toAPI(WebExtensionWindow::State state)
+WKWebExtensionWindowState NODELETE toAPI(WebExtensionWindow::State state)
 {
     switch (state) {
     case WebExtensionWindow::State::Normal:
@@ -311,7 +311,7 @@ void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHan
         return;
     }
 
-    [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setWindowState: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -360,7 +360,7 @@ void WebExtensionWindow::focus(CompletionHandler<void(Expected<void, WebExtensio
         return;
     }
 
-    [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window focus: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -427,7 +427,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Expected<
 
     frame = CGRectStandardize(frame);
 
-    [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setFrame: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
@@ -457,7 +457,7 @@ void WebExtensionWindow::close(CompletionHandler<void(Expected<void, WebExtensio
         return;
     }
 
-    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window close: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));

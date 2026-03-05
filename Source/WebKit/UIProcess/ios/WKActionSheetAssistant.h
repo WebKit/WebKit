@@ -29,8 +29,10 @@
 #import "WKActionSheet.h"
 #import <UIKit/UIPopoverController.h>
 #import <WebCore/ElementContext.h>
+#import <WebCore/ExceptionData.h>
 #import <WebCore/HTMLMediaElementIdentifier.h>
 #import <WebCore/MediaControlsContextMenuItem.h>
+#import <WebCore/ResolvedCaptionDisplaySettingsOptions.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
@@ -98,10 +100,15 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 #endif
 - (NSArray<UIMenuElement *> *)additionalMediaControlsContextMenuItemsForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+- (void)captionStyleMenuSetPreviewProfileID:(NSString *)profileID frameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier;
 - (void)captionStyleMenuWillOpenWithFrameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier;
 - (void)captionStyleMenuDidCloseWithFrameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier;
 #endif
 @end
+
+#if ENABLE(DATA_DETECTION)
+@protocol DDDetectionControllerInteractionDelegate;
+#endif
 
 #if USE(UICONTEXTMENU)
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate,

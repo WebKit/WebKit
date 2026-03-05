@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest URL resources/cache-expired-subresource.webarchive, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame

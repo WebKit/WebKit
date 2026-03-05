@@ -57,7 +57,7 @@ class MediaControlTextTrackContainerElement final
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaControlTextTrackContainerElement);
+    WTF_MAKE_TZONE_ALLOCATED(MediaControlTextTrackContainerElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaControlTextTrackContainerElement);
 public:
     static Ref<MediaControlTextTrackContainerElement> create(Document&, HTMLMediaElement&);
@@ -68,7 +68,7 @@ public:
     void updateSizes(ForceUpdate force = ForceUpdate::No);
     void updateDisplay();
 
-    TextTrackRepresentation* textTrackRepresentation() const { return m_textTrackRepresentation.get(); }
+    TextTrackRepresentation* textTrackRepresentation() const LIFETIME_BOUND { return m_textTrackRepresentation.get(); }
     void updateTextTrackRepresentationImageIfNeeded();
     void requiresTextTrackRepresentationChanged();
 
@@ -82,11 +82,11 @@ private:
     explicit MediaControlTextTrackContainerElement(Document&, HTMLMediaElement&);
 
     // Element
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     // TextTrackRepresentationClient
-    RefPtr<NativeImage> createTextTrackRepresentationImage() override;
-    void textTrackRepresentationBoundsChanged(const IntRect&) override;
+    RefPtr<NativeImage> createTextTrackRepresentationImage() final;
+    void textTrackRepresentationBoundsChanged(const IntRect&) final;
 
     void updateTextTrackRepresentationIfNeeded();
     void clearTextTrackRepresentation();
@@ -122,8 +122,8 @@ private:
     bool m_needsToGenerateTextTrackRepresentation { false };
     bool m_shouldShowCaptionPreviewCue { false };
 
-    mutable RefPtr<TextTrack> m_previewTrack;
-    mutable RefPtr<VTTCue> m_previewCue;
+    const RefPtr<TextTrack> m_previewTrack;
+    const RefPtr<VTTCue> m_previewCue;
 };
 
 } // namespace WebCore

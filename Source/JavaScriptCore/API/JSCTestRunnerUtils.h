@@ -27,6 +27,7 @@
 #define JSCTestRunnerUtils_h
 
 #include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <JavaScriptCore/JSValueRef.h>
 
 namespace JSC {

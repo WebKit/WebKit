@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -50,3 +53,5 @@ DECLARE_SYSTEM_HEADER
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
+
+#endif // !__has_feature(modules)

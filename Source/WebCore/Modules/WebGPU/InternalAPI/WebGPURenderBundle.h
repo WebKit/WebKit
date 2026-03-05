@@ -40,11 +40,12 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
 
     virtual bool isRemoteRenderBundleProxy() const { return false; }
+    virtual bool isRenderBundleImpl() const { return false; }
 
 protected:
     RenderBundle() = default;

@@ -41,33 +41,28 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePipelineLayout);
 RemotePipelineLayout::RemotePipelineLayout(WebCore::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(pipelineLayout)
     , m_objectHeap(objectHeap)
-    , m_streamConnection(WTFMove(streamConnection))
+    , m_streamConnection(WTF::move(streamConnection))
     , m_gpu(gpu)
     , m_identifier(identifier)
 {
-    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemotePipelineLayout::messageReceiverName(), m_identifier.toUInt64());
+    protect(m_streamConnection)->startReceivingMessages(*this, Messages::RemotePipelineLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemotePipelineLayout::~RemotePipelineLayout() = default;
 
 void RemotePipelineLayout::destruct()
 {
-    Ref { m_objectHeap.get() }->removeObject(m_identifier);
+    protect(m_objectHeap)->removeObject(m_identifier);
 }
 
 void RemotePipelineLayout::stopListeningForIPC()
 {
-    protectedStreamConnection()->stopReceivingMessages(Messages::RemotePipelineLayout::messageReceiverName(), m_identifier.toUInt64());
+    protect(m_streamConnection)->stopReceivingMessages(Messages::RemotePipelineLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemotePipelineLayout::setLabel(String&& label)
 {
-    Ref { m_backing }->setLabel(WTFMove(label));
-}
-
-Ref<IPC::StreamServerConnection> RemotePipelineLayout::protectedStreamConnection() const
-{
-    return m_streamConnection;
+    protect(m_backing)->setLabel(WTF::move(label));
 }
 
 } // namespace WebKit

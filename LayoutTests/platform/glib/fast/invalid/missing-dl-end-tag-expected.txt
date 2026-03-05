@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 52x17
+        RenderText {#text} at (0,0) size 52x18
           text run at (0,0) width 52: "Test for "
-        RenderInline {A} at (51,0) size 121x17 [color=#0000EE]
-          RenderText {#text} at (51,0) size 121x17
+        RenderInline {A} at (51,0) size 121x18 [color=#0000EE]
+          RenderText {#text} at (51,0) size 121x18
             text run at (51,0) width 121: "Bugzilla Bug 7724"
-        RenderText {#text} at (171,0) size 476x17
+        RenderText {#text} at (171,0) size 476x18
           text run at (171,0) width 476: " Minor refactoring to HTMLParser::handleError() to remove duplicate code"
       RenderBlock {DL} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 21x17
+        RenderText {#text} at (0,0) size 21x18
           text run at (0,0) width 21: "dltr"

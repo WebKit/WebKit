@@ -49,27 +49,27 @@ static const unsigned backgroundFetchCurrentVersion = 1;
 
 BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const String& identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
     : m_identifier(identifier)
-    , m_options(WTFMove(options))
+    , m_options(WTF::move(options))
     , m_registrationKey(registration.key())
     , m_registrationIdentifier(registration.identifier())
-    , m_store(WTFMove(store))
-    , m_notificationCallback(WTFMove(notificationCallback))
+    , m_store(WTF::move(store))
+    , m_notificationCallback(WTF::move(notificationCallback))
     , m_origin { m_registrationKey.topOrigin(), SecurityOriginData::fromURL(m_registrationKey.scope()) }
 {
     size_t index = 0;
-    m_records = WTF::map(WTFMove(requests), [&](auto&& request) {
-        return Record::create(*this, WTFMove(request), index++);
+    m_records = WTF::map(WTF::move(requests), [&](auto&& request) {
+        return Record::create(*this, WTF::move(request), index++);
     });
 }
 
 BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
-    : m_identifier(WTFMove(identifier))
-    , m_options(WTFMove(options))
+    : m_identifier(WTF::move(identifier))
+    , m_options(WTF::move(options))
     , m_registrationKey(registration.key())
     , m_registrationIdentifier(registration.identifier())
     , m_pausedFlag(pausedFlag)
-    , m_store(WTFMove(store))
-    , m_notificationCallback(WTFMove(notificationCallback))
+    , m_store(WTF::move(store))
+    , m_notificationCallback(WTF::move(notificationCallback))
     , m_origin { m_registrationKey.topOrigin(), SecurityOriginData::fromURL(m_registrationKey.scope()) }
 {
 }
@@ -94,7 +94,7 @@ void BackgroundFetch::match(const RetrieveRecordsOptions& options, MatchBackgrou
             records.append(record);
     }
 
-    callback(WTFMove(records));
+    callback(WTF::move(records));
 }
 
 void BackgroundFetch::pause()
@@ -231,7 +231,7 @@ void BackgroundFetch::updateBackgroundFetchStatus(BackgroundFetchResult result, 
 void BackgroundFetch::setRecords(Vector<Ref<Record>>&& records)
 {
     ASSERT(!m_currentDownloadSize);
-    m_records = WTFMove(records);
+    m_records = WTF::move(records);
     for (auto& record : m_records)
         m_currentDownloadSize += record->responseDataSize();
 }
@@ -250,7 +250,7 @@ BackgroundFetch::Record::Record(BackgroundFetch& fetch, BackgroundFetchRequest&&
     : m_fetch(fetch)
     , m_fetchIdentifier(fetch.m_identifier)
     , m_registrationKey(fetch.m_registrationKey)
-    , m_request(WTFMove(request))
+    , m_request(WTF::move(request))
     , m_index(index)
 {
 }
@@ -372,7 +372,7 @@ void BackgroundFetch::Record::didReceiveResponse(ResourceResponse&& response)
     for (auto& callback : callbacks)
         callback(ResourceResponse { m_response });
     if (RefPtr fetch = m_fetch.get())
-        fetch->storeResponse(m_index, shouldClearResponseBody, WTFMove(response));
+        fetch->storeResponse(m_index, shouldClearResponseBody, WTF::move(response));
 }
 
 void BackgroundFetch::Record::didReceiveResponseBodyChunk(const SharedBuffer& data)
@@ -425,7 +425,7 @@ void BackgroundFetch::Record::retrieveResponse(BackgroundFetchStore&, RetrieveRe
         return;
     }
 
-    m_responseCallbacks.append(WTFMove(callback));
+    m_responseCallbacks.append(WTF::move(callback));
 }
 
 void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& store, RetrieveRecordResponseBodyCallback&& callback)
@@ -437,13 +437,13 @@ void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& s
 
     ASSERT(!m_response.isNull());
 
-    store.retrieveResponseBody(m_registrationKey, m_fetchIdentifier, m_index, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& result) mutable {
+    store.retrieveResponseBody(m_registrationKey, m_fetchIdentifier, m_index, [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](auto&& result) mutable {
         if (!result.has_value()) {
-            callback(makeUnexpected(WTFMove(result.error())));
+            callback(makeUnexpected(WTF::move(result.error())));
             return;
         }
 
-        callback(WTFMove(result.value()));
+        callback(WTF::move(result.value()));
 
         if (!weakThis) {
             callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Record is gone"_s }));
@@ -459,7 +459,7 @@ void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& s
             callback(RefPtr<SharedBuffer> { });
             return;
         }
-        weakThis->m_responseBodyCallbacks.append(WTFMove(callback));
+        weakThis->m_responseBodyCallbacks.append(WTF::move(callback));
     });
 }
 
@@ -472,7 +472,7 @@ void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::Store
     encoder << m_identifier;
     encoder << m_options.downloadTotal;
     encoder << m_options.title;
-    encoder << m_options.icons;
+    encoder << m_options.icons.value_or(Vector<ImageResource> { });
 
     encoder << m_pausedFlag;
 
@@ -488,7 +488,7 @@ void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::Store
         encoder << record->isCompleted();
     }
 
-    m_store->storeFetch(m_registrationKey, m_identifier, m_options.downloadTotal, m_uploadTotal, responseBodyIndexToClear, { encoder.span() }, WTFMove(callback));
+    m_store->storeFetch(m_registrationKey, m_identifier, m_options.downloadTotal, m_uploadTotal, responseBodyIndexToClear, { encoder.span() }, WTF::move(callback));
 }
 
 RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t> data, SWServer& server, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
@@ -513,7 +513,7 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
     if (!registrationKeyScope)
         return nullptr;
 
-    RefPtr registration = server.getRegistration({ WTFMove(*registrationKeyOrigin), WTFMove(*registrationKeyScope) });
+    RefPtr registration = server.getRegistration({ WTF::move(*registrationKeyOrigin), WTF::move(*registrationKeyScope) });
     if (!registration) {
         RELEASE_LOG_ERROR(ServiceWorker, "BackgroundFetch::createFromStore missing registration");
         return nullptr;
@@ -536,14 +536,16 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
 
     std::optional<Vector<ImageResource>> icons;
     decoder >> icons;
+    if (!icons)
+        return nullptr;
 
     std::optional<bool> pausedFlag;
     decoder >> pausedFlag;
     if (!pausedFlag)
         return nullptr;
 
-    BackgroundFetchOptions options { WTFMove(*icons), WTFMove(*title), *downloadTotal };
-    auto fetch = BackgroundFetch::create(*registration, WTFMove(*identifier), WTFMove(options), WTFMove(store), WTFMove(notificationCallback), *pausedFlag);
+    BackgroundFetchOptions options { { WTF::move(*icons), WTF::move(*title) }, *downloadTotal };
+    auto fetch = BackgroundFetch::create(*registration, WTF::move(*identifier), WTF::move(options), WTF::move(store), WTF::move(notificationCallback), *pausedFlag);
 
     std::optional<uint64_t> recordSize;
     decoder >> recordSize;
@@ -593,14 +595,14 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
         if (!isCompleted)
             return nullptr;
 
-        auto record = Record::create(fetch.get(), { WTFMove(*internalRequest), WTFMove(options), *requestHeadersGuard, WTFMove(*httpHeaders), WTFMove(*referrer), WTFMove(*responseHeaders) }, index);
+        auto record = Record::create(fetch.get(), { WTF::move(*internalRequest), WTF::move(options), *requestHeadersGuard, WTF::move(*httpHeaders), WTF::move(*referrer), WTF::move(*responseHeaders) }, index);
         if (*isCompleted)
             record->setAsCompleted();
-        records.append(WTFMove(record));
+        records.append(WTF::move(record));
     }
-    fetch->setRecords(WTFMove(records));
+    fetch->setRecords(WTF::move(records));
 
-    return RefPtr { WTFMove(fetch) };
+    return RefPtr { WTF::move(fetch) };
 }
 
 } // namespace WebCore

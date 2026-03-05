@@ -294,6 +294,13 @@ WK_SWIFT_UI_ACTOR
  */
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macos(10.12), ios(18.4), visionos(2.4));
 
+/*! @abstract Allows your app to determine whether or not the given security origin should have access to geolocation APIs.
+ @param securityOrigin The security origin which requested access to the device's geolocation data.
+ @param frame The frame that initiated the request.
+ @param decisionHandler The decision handler to call once the app has made its decision.
+ */
+- (void)webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 #if TARGET_OS_IOS && !TARGET_OS_MACCATALYST && __IPHONE_OS_VERSION_MIN_REQUIRED >= 180400
 
 /*! @abstract Tells the delegate when the keyboard delivers an input suggestion.

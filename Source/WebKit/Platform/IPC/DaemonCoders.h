@@ -88,7 +88,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
             decoder >> element;
             if (!element)
                 return std::nullopt;
-            vector.append(WTFMove(*element));
+            vector.append(WTF::move(*element));
         }
         vector.shrinkToFit();
         return vector;
@@ -127,7 +127,7 @@ template<> struct Coder<WTF::URL> {
         decoder >> string;
         if (!string)
             return std::nullopt;
-        return { WTF::URL(WTFMove(*string)) };
+        return { WTF::URL(WTF::move(*string)) };
     }
 };
 

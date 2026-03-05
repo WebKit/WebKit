@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/ExecutionCounter.h>
@@ -61,7 +63,7 @@ public:
     };
 
     IPIntTierUpCounter(UncheckedKeyHashMap<IPIntPC, OSREntryData>&& osrEntryData)
-        : m_osrEntryData(WTFMove(osrEntryData))
+        : m_osrEntryData(WTF::move(osrEntryData))
     {
         optimizeAfterWarmUp();
         m_compilationStatus.fill(CompilationStatus::NotCompiled);

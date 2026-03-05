@@ -18,8 +18,8 @@ includes: [testTypedArray.js]
 features: [Symbol, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
 
   var s = Symbol("foo");
   Object.defineProperty(sample, s, { value: "baz" });
@@ -28,4 +28,4 @@ testWithTypedArrayConstructors(function(TA) {
     "baz",
     "return value from a Symbol key"
   );
-});
+}, null, ["passthrough"]);

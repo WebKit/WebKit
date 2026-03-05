@@ -35,7 +35,6 @@
 struct gbm_bo;
 struct gbm_device;
 typedef void* EGLImage;
-typedef intptr_t EGLAttrib;
 
 namespace WebCore {
 
@@ -44,16 +43,22 @@ class IntRect;
 // Use MemoryMappedGPUBuffer to create a OpenGL texture, that's baked by a dma-buf.
 class MemoryMappedGPUBuffer {
     WTF_MAKE_NONCOPYABLE(MemoryMappedGPUBuffer);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MemoryMappedGPUBuffer);
 public:
     ~MemoryMappedGPUBuffer();
 
     enum class BufferFlag : uint8_t {
-        ForceLinear = 1 << 0
+        ForceLinear = 1 << 0,
+        ForceVivanteSuperTiled = 1 << 1,
+        UseBGRALayout = 1 << 2
     };
 
     // Will only return a MemoryMappedGPUBuffer, if gbm_bo allocation + mapping to userland + EGLImage creation succeeded.
     static std::unique_ptr<MemoryMappedGPUBuffer> create(const IntSize&, OptionSet<BufferFlag>);
+
+    // Returns the actual allocated buffer size, which may be larger than size()
+    // due to GPU alignment requirements (e.g. tiled formats).
+    const IntSize& allocatedSize() const { return m_allocatedSize; }
 
     const IntSize& size() const { return m_size; }
     const OptionSet<BufferFlag>& flags() const { return m_flags; }
@@ -69,14 +74,13 @@ public:
     // You need to obtain an AccessScope, fencing the write operation.
     class AccessScope;
     void updateContents(AccessScope&, const void* srcData, const IntRect& targetRect, unsigned bytesPerLine);
-    void updateContents(AccessScope&, const MemoryMappedGPUBuffer& srcBuffer, const IntRect& targetRect);
 
     // You need to obtain an AccessScope, fencing the read operation.
     std::span<uint32_t> mappedDataSpan(AccessScope&) const;
 
     class AccessScope {
         WTF_MAKE_NONCOPYABLE(AccessScope);
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AccessScope);
     public:
         ~AccessScope();
 
@@ -99,6 +103,7 @@ public:
 
     bool isMapped() const { return !!m_mappedData; }
     bool isLinear() const;
+    bool isVivanteSuperTiled() const;
 
 private:
     MemoryMappedGPUBuffer(const IntSize&, OptionSet<BufferFlag>);
@@ -111,22 +116,25 @@ private:
     };
 
     bool performDMABufSyncSystemCall(OptionSet<DMABufSyncFlag> flags);
-    bool allocate(struct gbm_device*, const GLDisplay::BufferFormat&);
-    bool createDMABufFromGBMBufferObject();
-    UnixFileDescriptor exportGBMBufferObjectAsDMABuf(unsigned planeIndex);
+
+    struct gbm_bo* allocate(struct gbm_device*, const GLDisplay::BufferFormat&);
+    bool createDMABufFromGBMBufferObject(struct gbm_bo*);
+    UnixFileDescriptor exportGBMBufferObjectAsDMABuf(struct gbm_bo*, unsigned planeIndex);
+
+    void updateContentsInLinearFormat(const void* srcData, const IntRect& targetRect, unsigned bytesPerLine);
+    void updateContentsInVivanteSuperTiledFormat(const void* srcData, const IntRect& targetRect, unsigned bytesPerLine);
 
     int primaryPlaneDmaBufFD() const;
     uint32_t primaryPlaneDmaBufStride() const;
 
     IntSize m_size;
+    IntSize m_allocatedSize;
     OptionSet<BufferFlag> m_flags;
-    struct gbm_bo* m_bo { nullptr };
     uint64_t m_modifier { 0 };
-    Vector<EGLAttrib> m_eglAttributes;
     RefPtr<DMABufBuffer> m_dmaBuf;
 
     void* m_mappedData { nullptr };
-    uint32_t m_mappedLength { 0 };
+    size_t m_mappedLength { 0 };
 };
 
 inline std::unique_ptr<MemoryMappedGPUBuffer::AccessScope> makeGPUBufferReadScope(MemoryMappedGPUBuffer& buffer)

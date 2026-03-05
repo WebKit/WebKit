@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/JSDOMBindingSecurity.h>
-#include <WebCore/JSDOMWindow.h>
+#include "JSDOMBindingSecurity.h"
+#include "JSDOMWindow.h"
 
 namespace WebCore {
 namespace BindingSecurity {

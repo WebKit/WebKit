@@ -47,9 +47,9 @@ public:
 
 
     bool hasException() const;
-    const Exception& exception() const;
+    const Exception& exception() const LIFETIME_BOUND;
     Exception releaseException();
-    const ReturnType& returnValue() const;
+    const ReturnType& returnValue() const LIFETIME_BOUND;
     ReturnType releaseReturnValue();
     
 private:
@@ -68,9 +68,9 @@ public:
     ExceptionOr(ReturnReferenceType&);
 
     bool hasException() const;
-    const Exception& exception() const;
+    const Exception& exception() const LIFETIME_BOUND;
     Exception releaseException();
-    const ReturnReferenceType& returnValue() const;
+    const ReturnReferenceType& returnValue() const LIFETIME_BOUND;
     ReturnReferenceType& releaseReturnValue();
     
 private:
@@ -85,7 +85,7 @@ public:
     ExceptionOr() = default;
 
     bool hasException() const;
-    const Exception& exception() const;
+    const Exception& exception() const LIFETIME_BOUND;
     Exception releaseException();
 
 private:
@@ -96,12 +96,12 @@ private:
 };
 
 template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(Exception&& exception)
-    : m_value(makeUnexpected(WTFMove(exception)))
+    : m_value(makeUnexpected(WTF::move(exception)))
 {
 }
 
 template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(ReturnType&& returnValue)
-    : m_value(WTFMove(returnValue))
+    : m_value(WTF::move(returnValue))
 {
 }
 
@@ -127,7 +127,7 @@ template<typename ReturnType> inline const Exception& ExceptionOr<ReturnType>::e
 template<typename ReturnType> inline Exception ExceptionOr<ReturnType>::releaseException()
 {
     ASSERT(!std::exchange(m_wasReleased, true));
-    return WTFMove(m_value.error());
+    return WTF::move(m_value.error());
 }
 
 template<typename ReturnType> inline const ReturnType& ExceptionOr<ReturnType>::returnValue() const
@@ -139,11 +139,11 @@ template<typename ReturnType> inline const ReturnType& ExceptionOr<ReturnType>::
 template<typename ReturnType> inline ReturnType ExceptionOr<ReturnType>::releaseReturnValue()
 {
     ASSERT(!std::exchange(m_wasReleased, true));
-    return WTFMove(m_value.value());
+    return WTF::move(m_value.value());
 }
 
 template<typename ReturnReferenceType> inline ExceptionOr<ReturnReferenceType&>::ExceptionOr(Exception&& exception)
-    : m_value(WTFMove(exception))
+    : m_value(WTF::move(exception))
 {
 }
 
@@ -178,7 +178,7 @@ template<typename ReturnReferenceType> inline ReturnReferenceType& ExceptionOr<R
 }
 
 inline ExceptionOr<void>::ExceptionOr(Exception&& exception)
-    : m_value(makeUnexpected(WTFMove(exception)))
+    : m_value(makeUnexpected(WTF::move(exception)))
 {
 }
 
@@ -196,7 +196,7 @@ inline const Exception& ExceptionOr<void>::exception() const
 inline Exception ExceptionOr<void>::releaseException()
 {
     ASSERT(!std::exchange(m_wasReleased, true));
-    return WTFMove(m_value.error());
+    return WTF::move(m_value.error());
 }
 
 template <typename T> inline constexpr bool IsExceptionOr = WTF::IsTemplate<std::decay_t<T>, ExceptionOr>::value;

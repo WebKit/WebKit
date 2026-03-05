@@ -4,6 +4,8 @@ PASS :vertex_returns_position:case="nested_position"
 PASS :vertex_returns_position:case="no_bare_position"
 PASS :vertex_returns_position:case="no_nested_position"
 FAIL :entry_point_call_target:stage="%40fragment";entry_point="with" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -18,13 +20,16 @@ FAIL :entry_point_call_target:stage="%40fragment";entry_point="with" assert_unre
       bar();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :entry_point_call_target:stage="%40fragment";entry_point="without"
 FAIL :entry_point_call_target:stage="%40vertex";entry_point="with" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -39,13 +44,16 @@ FAIL :entry_point_call_target:stage="%40vertex";entry_point="with" assert_unreac
       let tmp = bar();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :entry_point_call_target:stage="%40vertex";entry_point="without"
 FAIL :entry_point_call_target:stage="%40compute%20%40workgroup_size(1,1,1)";entry_point="with" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -60,10 +68,11 @@ FAIL :entry_point_call_target:stage="%40compute%20%40workgroup_size(1,1,1)";entr
       bar();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :entry_point_call_target:stage="%40compute%20%40workgroup_size(1,1,1)";entry_point="without"
 PASS :function_return_types:case="u32"
@@ -159,6 +168,8 @@ PASS :function_parameter_types:case="invalid_ptr5"
 PASS :function_parameter_types:case="invalid_ptr6"
 PASS :function_parameter_types:case="invalid_ptr7"
 FAIL :function_parameter_types:case="invalid_ptr8" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -192,10 +203,11 @@ FAIL :function_parameter_types:case="invalid_ptr8" assert_unreached:
 
     fn foo(param : ptr<function, texture_external>) {
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:313:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :function_parameter_matching:decl="u32"
 PASS :function_parameter_matching:decl="i32"

@@ -50,7 +50,7 @@ public:
 
     static Ref<Data> createWithoutCopying(std::span<const uint8_t> bytes, FreeDataFunction&& freeDataFunction)
     {
-        return adoptRef(*new Data(bytes, WTFMove(freeDataFunction)));
+        return adoptRef(*new Data(bytes, WTF::move(freeDataFunction)));
     }
 
     static Ref<Data> create(std::span<const uint8_t> bytes)
@@ -63,7 +63,7 @@ public:
         }
 
         auto data = copiedBytes.span();
-        return createWithoutCopying(data, [copiedBytes = WTFMove(copiedBytes)] () { });
+        return createWithoutCopying(data, [copiedBytes = WTF::move(copiedBytes)] () { });
     }
     
     static Ref<Data> create(const Vector<unsigned char>& buffer)
@@ -75,7 +75,7 @@ public:
     {
         auto buffer = vector.releaseBuffer();
         auto span = buffer.span();
-        return createWithoutCopying(span, [buffer = WTFMove(buffer)] { });
+        return createWithoutCopying(span, [buffer = WTF::move(buffer)] { });
     }
 
 #if PLATFORM(COCOA)
@@ -87,7 +87,7 @@ public:
     {
         auto span = WTF::span(bytes);
         // The destroy function receives ownership of the GRefPtr, therefore destroying it
-        return createWithoutCopying(span, [bytes = WTFMove(bytes)] () { });
+        return createWithoutCopying(span, [bytes = WTF::move(bytes)] () { });
     }
 #endif
 
@@ -102,7 +102,7 @@ public:
 private:
     Data(std::span<const uint8_t> span, FreeDataFunction&& freeDataFunction)
         : m_span(span)
-        , m_freeDataFunction(WTFMove(freeDataFunction))
+        , m_freeDataFunction(WTF::move(freeDataFunction))
     {
     }
 

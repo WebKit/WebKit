@@ -45,7 +45,7 @@ using namespace WebCore;
 Ref<RemoteAudioSourceProvider> RemoteAudioSourceProvider::create(WebCore::MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
 {
     auto provider = adoptRef(*new RemoteAudioSourceProvider(identifier, helper));
-    provider->m_gpuProcessConnection.get()->protectedAudioSourceProviderManager()->addProvider(provider.copyRef());
+    protect(provider->m_gpuProcessConnection.get()->audioSourceProviderManager())->addProvider(provider.copyRef());
     return provider;
 }
 
@@ -72,7 +72,7 @@ void RemoteAudioSourceProvider::close()
 {
     ASSERT(isMainRunLoop());
     if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
-        gpuProcessConnection->protectedAudioSourceProviderManager()->removeProvider(m_identifier);
+        protect(gpuProcessConnection->audioSourceProviderManager())->removeProvider(m_identifier);
 }
 
 void RemoteAudioSourceProvider::hasNewClient(AudioSourceProviderClient* client)

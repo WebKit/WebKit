@@ -26,13 +26,13 @@ const unsigned int kCqLevel = 18;
 const double kSsimThreshold[] = { 83.4, 83.4, 83.4, 83.3, 83.3,
                                   83.0, 82.3, 81.1, 81.1 };
 
-typedef struct {
+struct TestVideoParam {
   const char *filename;
   unsigned int input_bit_depth;
   aom_img_fmt fmt;
   aom_bit_depth_t bit_depth;
   unsigned int profile;
-} TestVideoParam;
+};
 
 std::ostream &operator<<(std::ostream &os, const TestVideoParam &test_arg) {
   return os << "TestVideoParam { filename:" << test_arg.filename

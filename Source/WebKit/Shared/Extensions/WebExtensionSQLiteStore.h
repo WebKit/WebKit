@@ -81,7 +81,7 @@ protected:
 
 private:
     void vacuum();
-    bool isDatabaseOpen();
+    bool NODELETE isDatabaseOpen();
     String openDatabase(const URL& databaseURL, WebExtensionSQLiteDatabase::AccessType, bool deleteDatabaseFileOnError);
     String deleteDatabaseFileAtURL(const URL& databaseURL, bool reopenDatabase);
     String deleteDatabase();

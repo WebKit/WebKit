@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include <WebCore/ImageBuffer.h>
-#include <WebCore/RenderReplaced.h>
+#include "ImageBuffer.h"
+#include "RenderReplaced.h"
 
 namespace WebCore {
 
 class RenderViewTransitionCapture final : public RenderReplaced {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderViewTransitionCapture);
+    WTF_MAKE_TZONE_ALLOCATED(RenderViewTransitionCapture);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderViewTransitionCapture);
 public:
     RenderViewTransitionCapture(Type, Document&, RenderStyle&&, bool isRootElement);
@@ -43,7 +43,7 @@ public:
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
     void intrinsicSizeChanged() override;
 
-    void styleDidChange(StyleDifference, const RenderStyle*) override;
+    void styleDidChange(Style::Difference, const RenderStyle*) override;
 
     void layout() override;
 
@@ -55,11 +55,11 @@ public:
     LayoutRect captureLocalOverflowRect() const { return m_localOverflowRect; }
 
     // Inset of the scaled capture from the visualOverflowRect()
-    LayoutPoint captureContentInset() const;
+    LayoutPoint NODELETE captureContentInset() const;
 
     bool canUseExistingLayers() const { return !hasNonVisibleOverflow(); }
 
-    bool paintsContent() const final;
+    bool NODELETE paintsContent() const final;
 
     bool isRootElementCapture() const { return m_isRootElementCapture; }
 

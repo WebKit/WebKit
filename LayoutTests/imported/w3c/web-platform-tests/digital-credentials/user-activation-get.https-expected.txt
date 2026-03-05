@@ -1,0 +1,6 @@
+
+PASS navigator.credentials.get() calling the API without user activation should reject with NotAllowedError.
+PASS navigator.credentials.get() with empty protocol array and no user activation needed should reject with TypeError.
+PASS navigator.credentials.get() with early abort does not consume user activation.
+PASS navigator.credentials.get() with late abort consumes user activation.
+

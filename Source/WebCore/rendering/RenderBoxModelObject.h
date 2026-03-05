@@ -59,12 +59,15 @@ class Image;
 class ImageBuffer;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
-class StyleImage;
 class TransformationMatrix;
 
 namespace InlineIterator {
 class InlineBoxIterator;
 };
+
+namespace Style {
+class Image;
+}
 
 enum class BoxSide : uint8_t;
 enum class DecodingMode : uint8_t;
@@ -77,7 +80,7 @@ using BorderEdges = RectEdges<BorderEdge>;
 // at http://www.w3.org/TR/CSS21/box.html
 
 class RenderBoxModelObject : public RenderLayerModelObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderBoxModelObject);
+    WTF_MAKE_TZONE_ALLOCATED(RenderBoxModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBoxModelObject);
 public:
     virtual ~RenderBoxModelObject();
@@ -176,14 +179,14 @@ public:
     virtual LayoutUnit marginAfter(const WritingMode) const = 0;
     virtual LayoutUnit marginStart(const WritingMode) const = 0;
     virtual LayoutUnit marginEnd(const WritingMode) const = 0;
-    LayoutUnit marginBefore() const { return marginBefore(writingMode()); }
-    LayoutUnit marginAfter() const { return marginAfter(writingMode()); }
-    LayoutUnit marginStart() const { return marginStart(writingMode()); }
-    LayoutUnit marginEnd() const { return marginEnd(writingMode()); }
-    LayoutUnit verticalMarginExtent() const { return marginTop() + marginBottom(); }
-    LayoutUnit horizontalMarginExtent() const { return marginLeft() + marginRight(); }
-    LayoutUnit marginLogicalHeight() const { return marginBefore() + marginAfter(); }
-    LayoutUnit marginLogicalWidth() const { return marginStart() + marginEnd(); }
+    inline LayoutUnit marginBefore() const;
+    inline LayoutUnit marginAfter() const;
+    inline LayoutUnit marginStart() const;
+    inline LayoutUnit marginEnd() const;
+    inline LayoutUnit verticalMarginExtent() const;
+    inline LayoutUnit horizontalMarginExtent() const;
+    inline LayoutUnit marginLogicalHeight() const;
+    inline LayoutUnit marginLogicalWidth() const;
 
     BorderShape borderShapeForContentClipping(const LayoutRect& borderBoxRect, RectEdges<bool> closedEdges = { true }) const;
 
@@ -211,7 +214,7 @@ public:
 
     bool hasRunningAcceleratedAnimations() const;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
 protected:
     RenderBoxModelObject(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -219,7 +222,7 @@ protected:
 
     void willBeDestroyed() override;
 
-    void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
 
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 
@@ -240,7 +243,7 @@ public:
     void clearFirstLetterRemainingText();
 
     enum class ScaleByUsedZoom : bool { No, Yes };
-    LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByUsedZoom) const;
+    LayoutSize calculateImageIntrinsicDimensions(Style::Image*, const LayoutSize& scaledPositioningAreaSize, ScaleByUsedZoom) const;
 
     RenderBlock* containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const;
     RenderBlock* containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const;
@@ -258,7 +261,7 @@ public:
         ContinuationChainNode(RenderBoxModelObject&);
         ~ContinuationChainNode();
 
-        void insertAfter(ContinuationChainNode&);
+        void NODELETE insertAfter(ContinuationChainNode&);
     };
 
     ContinuationChainNode* continuationChainNode() const;

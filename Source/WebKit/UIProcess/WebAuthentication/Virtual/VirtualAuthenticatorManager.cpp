@@ -50,7 +50,7 @@ String VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticat
     auto id = createVersion4UUIDString();
     m_virtualAuthenticators.set(id, makeUniqueRef<VirtualAuthenticatorConfiguration>(config));
     Vector<VirtualCredential> credentials;
-    m_credentialsByAuthenticator.set(id, WTFMove(credentials));
+    m_credentialsByAuthenticator.set(id, WTF::move(credentials));
 
     return id;
 }
@@ -62,7 +62,7 @@ bool VirtualAuthenticatorManager::removeAuthenticator(const String& id)
 
 void VirtualAuthenticatorManager::addCredential(const String& authenticatorId, VirtualCredential& credential)
 {
-    m_credentialsByAuthenticator.find(authenticatorId)->value.append(WTFMove(credential));
+    m_credentialsByAuthenticator.find(authenticatorId)->value.append(WTF::move(credential));
 }
 
 Vector<VirtualCredential> VirtualAuthenticatorManager::credentialsMatchingList(const String& authenticatorId, const String& rpId, const Vector<Vector<uint8_t>>& credentialIds)

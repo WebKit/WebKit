@@ -27,6 +27,7 @@
 [
     Conditional=WEBXR_HIT_TEST,
     EnabledBySetting=WebXREnabled&WebXRHitTestModuleEnabled,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRTransientInputHitTestOptionsInit {
     required DOMString profile;
     sequence<XRHitTestTrackableType> entityTypes;

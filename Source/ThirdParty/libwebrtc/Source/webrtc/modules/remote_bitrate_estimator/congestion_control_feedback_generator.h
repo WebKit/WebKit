@@ -20,9 +20,11 @@
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/congestion_controller/rtp/congestion_controller_feedback_stats.h"
 #include "modules/remote_bitrate_estimator/congestion_control_feedback_tracker.h"
 #include "modules/remote_bitrate_estimator/rtp_transport_feedback_generator.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/containers/flat_map.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
@@ -61,6 +63,9 @@ class CongestionControlFeedbackGenerator
   void OnSendBandwidthEstimateChanged(DataRate estimate) override {}
 
   TimeDelta Process(Timestamp now) override;
+
+  flat_map<uint32_t, SentCongestionControllerFeedbackStats> GetStatsPerSsrc()
+      const;
 
  private:
   Timestamp NextFeedbackTime() const RTC_RUN_ON(sequence_checker_);

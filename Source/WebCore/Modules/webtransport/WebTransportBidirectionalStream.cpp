@@ -33,12 +33,12 @@ namespace WebCore {
 
 Ref<WebTransportBidirectionalStream> WebTransportBidirectionalStream::create(Ref<WebTransportReceiveStream>&& readable, Ref<WebTransportSendStream>&& writable)
 {
-    return adoptRef(*new WebTransportBidirectionalStream(WTFMove(readable), WTFMove(writable)));
+    return adoptRef(*new WebTransportBidirectionalStream(WTF::move(readable), WTF::move(writable)));
 }
 
 WebTransportBidirectionalStream::WebTransportBidirectionalStream(Ref<WebTransportReceiveStream>&& readable, Ref<WebTransportSendStream>&& writable)
-    : m_readable(WTFMove(readable))
-    , m_writable(WTFMove(writable)) { }
+    : m_readable(WTF::move(readable))
+    , m_writable(WTF::move(writable)) { }
 
 WebTransportBidirectionalStream::~WebTransportBidirectionalStream() = default;
 

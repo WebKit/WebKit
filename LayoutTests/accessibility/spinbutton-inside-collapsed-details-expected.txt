@@ -1,0 +1,43 @@
+This tests that the spin button inside a collapsed details element is properly ignored.
+
+=== COLLAPSED STATE ===
+
+{#details AXRole: AXGroup}
+
+{AXRole: AXDisclosureTriangle}
+
+{AXRole: AXStaticText AXValue: Number input}
+
+=== EXPANDED STATE ===
+
+{#details AXRole: AXGroup}
+
+{AXRole: AXDisclosureTriangle}
+
+{AXRole: AXStaticText AXValue: Number input}
+
+{AXRole: AXStaticText AXValue: Problems}
+
+{AXRole: AXStaticText AXValue: Problems}
+
+{#field-a AXRole: AXTextField}
+
+{AXRole: AXIncrementor}
+
+{AXRole: AXIncrementorArrow}
+
+{AXRole: AXIncrementorArrow}
+
+=== COLLAPSED AGAIN ===
+
+{#details AXRole: AXGroup}
+
+{AXRole: AXDisclosureTriangle}
+
+{AXRole: AXStaticText AXValue: Number input}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Number input
+

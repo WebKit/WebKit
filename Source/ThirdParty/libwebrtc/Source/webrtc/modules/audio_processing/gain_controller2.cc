@@ -85,8 +85,8 @@ AudioLevels ComputeAudioLevels(DeinterleavedView<float> frame,
     rms += x * x;
   }
   AudioLevels levels{
-      FloatS16ToDbfs(peak),
-      FloatS16ToDbfs(std::sqrt(rms / frame.samples_per_channel()))};
+      .peak_dbfs = FloatS16ToDbfs(peak),
+      .rms_dbfs = FloatS16ToDbfs(std::sqrt(rms / frame.samples_per_channel()))};
   data_dumper.DumpRaw("agc2_input_rms_dbfs", levels.rms_dbfs);
   data_dumper.DumpRaw("agc2_input_peak_dbfs", levels.peak_dbfs);
   return levels;

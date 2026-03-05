@@ -28,7 +28,7 @@
         root.removeEventListener("mouseup", stopMove, false);
 
         if (window.testRunner)
-            testRunner.notifyDone();
+            requestAnimationFrame(() => testRunner.notifyDone());
     }
 
     if (window.testRunner)

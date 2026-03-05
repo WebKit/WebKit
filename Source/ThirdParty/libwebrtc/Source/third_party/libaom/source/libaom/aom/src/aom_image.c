@@ -396,9 +396,9 @@ int aom_img_add_metadata(aom_image_t *img, uint32_t type, const uint8_t *data,
   aom_metadata_t *metadata =
       aom_img_metadata_alloc(type, data, sz, insert_flag);
   if (!metadata) return -1;
-  aom_metadata_t **metadata_array =
-      (aom_metadata_t **)realloc(img->metadata->metadata_array,
-                                 (img->metadata->sz + 1) * sizeof(metadata));
+  aom_metadata_t **metadata_array = (aom_metadata_t **)realloc(
+      img->metadata->metadata_array,
+      (img->metadata->sz + 1) * sizeof(*metadata_array));
   if (!metadata_array) {
     aom_img_metadata_free(metadata);
     return -1;

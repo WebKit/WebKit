@@ -45,7 +45,7 @@ struct WebCodecsEncodedVideoChunkMetadata;
 struct WebCodecsVideoEncoderEncodeOptions;
 
 class WebCodecsVideoEncoder : public WebCodecsBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsVideoEncoder);
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsVideoEncoder);
 public:
     ~WebCodecsVideoEncoder();
 
@@ -75,7 +75,7 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    void suspend(ReasonForSuspension) final;
+    void NODELETE suspend(ReasonForSuspension) final;
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsVideoEncoder; }
@@ -98,6 +98,8 @@ private:
     size_t m_encoderCount { 0 };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebCodecsVideoEncoder)
 
 #endif

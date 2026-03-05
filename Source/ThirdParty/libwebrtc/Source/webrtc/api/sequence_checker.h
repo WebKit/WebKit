@@ -59,10 +59,22 @@ class RTC_LOCKABLE SequenceChecker
   //
   // But the problem with that is having the call to `Current()` exist for
   // `SequenceCheckerDoNothing`.
-  explicit SequenceChecker(InitialState initial_state = kAttached)
+  explicit SequenceChecker(InitialState initial_state = kDetached)
       : Impl(initial_state) {}
   explicit SequenceChecker(TaskQueueBase* attached_queue)
       : Impl(attached_queue) {}
+
+  // Move constructor that allows an object with a sequence checker to be stored
+  // in a container such as std::vector<> that needs support for move semantics.
+  //
+  // Note:  The side effect (or perhaps, feature) of std::move(sequence_checker)
+  // will be that it will be detached from whatever context it was attached to.
+  // The newly constructed SequenceChecker will also be in a detached state.
+  SequenceChecker(SequenceChecker&& o) = default;
+
+  SequenceChecker(const SequenceChecker&) = delete;
+  SequenceChecker& operator=(const SequenceChecker&) = delete;
+  SequenceChecker& operator=(SequenceChecker&&) = delete;
 
   // Returns true if sequence checker is attached to the current sequence.
   bool IsCurrent() const { return Impl::IsCurrent(); }

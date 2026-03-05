@@ -36,7 +36,7 @@ namespace WebCore {
 
 enum class AlternativeTextType : uint8_t;
 
-WEBCORE_EXPORT NSCorrectionIndicatorType correctionIndicatorType(WebCore::AlternativeTextType);
+WEBCORE_EXPORT NSCorrectionIndicatorType NODELETE correctionIndicatorType(WebCore::AlternativeTextType);
 
 }
 

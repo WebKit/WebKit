@@ -30,6 +30,7 @@
 #include "ASTVisitor.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 
@@ -46,12 +47,20 @@ public:
         return std::nullopt;
     }
 
+    void visit(AST::Variable&) override;
     void visit(AST::IndexAccessExpression&) override;
 
 private:
     ShaderModule& m_shaderModule;
 };
 
+
+void BoundsCheckVisitor::visit(AST::Variable& variable)
+{
+    if (variable.flavor() == AST::VariableFlavor::Override)
+        return;
+    AST::Visitor::visit(variable);
+}
 
 void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
 {
@@ -60,72 +69,72 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
 
     AST::Visitor::visit(access);
 
-    const auto& constant = [&](unsigned size) -> AST::Expression& {
-        auto& sizeExpression =  m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
+    const auto& constant = [&shaderModule = m_shaderModule](unsigned size) -> AST::Expression& {
+        auto& sizeExpression =  shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
             SourceSpan::empty(),
             size
         );
-        sizeExpression.m_inferredType = m_shaderModule.types().u32Type();
+        sizeExpression.m_inferredType = shaderModule.types().u32Type();
         sizeExpression.setConstantValue(size);
         return sizeExpression;
     };
 
-    const auto& replace = [&](AST::Expression& size) {
+    const auto replace = [&shaderModule = m_shaderModule](AST::IndexAccessExpression& access, AST::Expression& size) {
         auto* index = &access.index();
-        if (index->inferredType() != m_shaderModule.types().u32Type()) {
-            auto& u32Target = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+        if (index->inferredType() != shaderModule.types().u32Type()) {
+            auto& u32Target = shaderModule.astBuilder().construct<AST::IdentifierExpression>(
                 SourceSpan::empty(),
                 AST::Identifier::make("u32"_s)
             );
-            u32Target.m_inferredType = m_shaderModule.types().u32Type();
+            u32Target.m_inferredType = shaderModule.types().u32Type();
 
-            auto& u32Call = m_shaderModule.astBuilder().construct<AST::CallExpression>(
+            auto& u32Call = shaderModule.astBuilder().construct<AST::CallExpression>(
                 SourceSpan::empty(),
                 u32Target,
                 AST::Expression::List { *index }
             );
-            u32Call.m_inferredType = m_shaderModule.types().u32Type();
+            u32Call.m_inferredType = shaderModule.types().u32Type();
             u32Call.m_isConstructor = true;
             index = &u32Call;
         }
 
-        auto& minTarget = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+        auto& minTarget = shaderModule.astBuilder().construct<AST::IdentifierExpression>(
             SourceSpan::empty(),
             AST::Identifier::make("__wgslMin"_s)
         );
-        minTarget.m_inferredType = m_shaderModule.types().u32Type();
+        minTarget.m_inferredType = shaderModule.types().u32Type();
 
-        auto& one =  m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
+        auto& one =  shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
             SourceSpan::empty(),
             1
         );
-        one.m_inferredType = m_shaderModule.types().u32Type();
+        one.m_inferredType = shaderModule.types().u32Type();
         one.setConstantValue(1u);
 
-        auto& upperBound = m_shaderModule.astBuilder().construct<AST::BinaryExpression>(
+        auto& upperBound = shaderModule.astBuilder().construct<AST::BinaryExpression>(
             SourceSpan::empty(),
             size,
             one,
             AST::BinaryOperation::Subtract
         );
-        upperBound.m_inferredType = m_shaderModule.types().u32Type();
+        upperBound.m_inferredType = shaderModule.types().u32Type();
 
-        auto& minCall = m_shaderModule.astBuilder().construct<AST::CallExpression>(
+        auto& minCall = shaderModule.astBuilder().construct<AST::CallExpression>(
             SourceSpan::empty(),
             minTarget,
             AST::Expression::List { *index, upperBound }
         );
         minCall.m_inferredType = upperBound.inferredType();
 
-        auto& newAccess = m_shaderModule.astBuilder().construct<AST::IndexAccessExpression>(
+        auto& newAccess = shaderModule.astBuilder().construct<AST::IndexAccessExpression>(
             access.span(),
             access.base(),
             minCall
         );
         newAccess.m_inferredType = access.inferredType();
 
-        m_shaderModule.replace(access, newAccess);
-        m_shaderModule.setUsesMin();
+        shaderModule.replace(access, newAccess);
+        shaderModule.setUsesMin();
     };
 
     auto* base = access.base().inferredType();
@@ -134,24 +143,40 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
     if (auto* pointer = std::get_if<Types::Pointer>(base))
         base = pointer->element;
 
+    const auto& checkBounds = [&shaderModule = m_shaderModule, &access](AST::Expression& indexExpression, unsigned size) {
+        shaderModule.addOverrideValidation([&shaderModule, &access, &indexExpression, size](auto& constantValues) -> std::optional<Error> {
+            auto index = evaluate(shaderModule, indexExpression, constantValues);
+
+            if (index && (index->integerValue() < 0 || index->integerValue() >= size)) [[unlikely]]
+                return Error(makeString("index "_s, index->integerValue(), " out of bounds[0.."_s, size - 1, "]"_s), access.span());
+
+            return std::nullopt;
+        });
+    };
+
     if (auto* vector = std::get_if<Types::Vector>(base)) {
-        replace(constant(vector->size));
+        checkBounds(access.index(), vector->size);
+        replace(access, constant(vector->size));
         return;
     }
 
     if (auto* matrix = std::get_if<Types::Matrix>(base)) {
-        replace(constant(matrix->columns));
+        checkBounds(access.index(), matrix->columns);
+        replace(access, constant(matrix->columns));
         return;
     }
 
     auto& array = std::get<Types::Array>(*base);
+    auto& indexExpression = access.index();
+    AST::Expression* sizeExpression = nullptr;
+    std::optional<unsigned> sizeConstant;
+
     WTF::switchOn(array.size,
         [&](unsigned size) {
-            replace(constant(size));
+            sizeConstant = size;
         },
         [&](AST::Expression* size) {
-            // FIXME: <rdar://150369771> this should be a pipeline-creation error, not a runtime error
-            replace(*size);
+            sizeExpression = size;
         },
         [&](std::monostate) {
             auto& target = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
@@ -184,7 +209,50 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
             );
             call.m_inferredType = m_shaderModule.types().u32Type();
 
-            replace(call);
+            replace(access, call);
+        });
+
+        m_shaderModule.addOverrideValidation([&shaderModule = m_shaderModule, &access, &indexExpression, constant, replace, sizeConstant, sizeExpression](auto& constantValues) -> std::optional<Error> {
+            auto index = evaluate(shaderModule, indexExpression, constantValues);
+            std::optional<int64_t> size;
+            if (sizeConstant)
+                size = sizeConstant;
+            else if (sizeExpression) {
+                if (auto maybeSize = evaluate(shaderModule, *sizeExpression, constantValues))
+                    size = maybeSize->integerValue();
+            }
+
+            if (size && *size < 1) [[unlikely]]
+                return Error("array count must be greater than 0"_s, access.span());
+
+            if (index && (index->integerValue() < 0 || (size && index->integerValue() >= *size))) [[unlikely]] {
+                String bounds = size ?  makeString(" [0.."_s, *size - 1, "]"_s) : ""_s;
+                return Error(makeString("index "_s, index->integerValue(), " out of bounds"_s, bounds), access.span());
+            }
+
+            if ((sizeExpression || sizeConstant) && (!index || !size)) {
+                auto* expression = sizeExpression ?: &constant(*sizeConstant);
+
+                AST::Expression* updatedAccess = &access;
+                if (updatedAccess->kind() == AST::NodeKind::IndexAccessExpression) {
+                    replace(access, *expression);
+                    return std::nullopt;
+                }
+
+                // This is a bit of hack, since global rewriting will run between we
+                // bounds check and override validation, this access might have been
+                // converted into a __pack call.
+                while (auto* identity = dynamicDowncast<AST::IdentityExpression>(*updatedAccess))
+                    updatedAccess = &identity->expression();
+                RELEASE_ASSERT(updatedAccess->kind() == AST::NodeKind::CallExpression);
+                auto& call = uncheckedDowncast<AST::CallExpression>(*updatedAccess);
+                RELEASE_ASSERT(call.arguments().size() == 1);
+                RELEASE_ASSERT(call.arguments()[0].kind() == AST::NodeKind::IndexAccessExpression);
+                auto& newAccess = uncheckedDowncast<AST::IndexAccessExpression>(call.arguments()[0]);
+                replace(newAccess, *expression);
+            }
+
+            return std::nullopt;
         });
 }
 

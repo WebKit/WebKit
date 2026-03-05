@@ -1,7 +1,10 @@
+Name: FAST feature detectors in C Version 2.0
 URL: https://github.com/edrosten/fast-C-src
 Version: 391d5e939eb1545d24c10533d7de424db8d9c191
-License: BSD
+License: BSD-3-Clause
 License File: LICENSE
+Shipped in Chromium: no
+Security Critical: yes
 
 Description:
 Library to compute FAST features with non-maximum suppression.

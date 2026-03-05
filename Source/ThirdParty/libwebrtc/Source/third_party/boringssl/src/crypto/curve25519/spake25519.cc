@@ -280,8 +280,8 @@ SPAKE2_CTX *SPAKE2_CTX_new(enum spake2_role_t my_role, const uint8_t *my_name,
                            size_t their_name_len) {
   SPAKE2_CTX *ctx =
       reinterpret_cast<SPAKE2_CTX *>(OPENSSL_zalloc(sizeof(SPAKE2_CTX)));
-  if (ctx == NULL) {
-    return NULL;
+  if (ctx == nullptr) {
+    return nullptr;
   }
 
   ctx->my_role = my_role;
@@ -292,14 +292,14 @@ SPAKE2_CTX *SPAKE2_CTX_new(enum spake2_role_t my_role, const uint8_t *my_name,
   if (!CBS_stow(&my_name_cbs, &ctx->my_name, &ctx->my_name_len) ||
       !CBS_stow(&their_name_cbs, &ctx->their_name, &ctx->their_name_len)) {
     SPAKE2_CTX_free(ctx);
-    return NULL;
+    return nullptr;
   }
 
   return ctx;
 }
 
 void SPAKE2_CTX_free(SPAKE2_CTX *ctx) {
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return;
   }
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>

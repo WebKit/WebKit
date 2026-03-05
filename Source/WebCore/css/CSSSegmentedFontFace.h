@@ -56,7 +56,7 @@ public:
 
     FontRanges fontRanges(const FontDescription&, const FontPaletteValues&, RefPtr<FontFeatureValues>);
 
-    Vector<Ref<CSSFontFace>, 1>& constituentFaces() { return m_fontFaces; }
+    Vector<Ref<CSSFontFace>, 1>& constituentFaces() LIFETIME_BOUND { return m_fontFaces; }
 
 private:
     CSSSegmentedFontFace();

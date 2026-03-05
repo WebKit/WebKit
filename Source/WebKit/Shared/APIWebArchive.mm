@@ -40,7 +40,7 @@ using namespace WebCore;
 
 Ref<WebArchive> WebArchive::create(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives)
 {
-    return adoptRef(*new WebArchive(mainResource, WTFMove(subresources), WTFMove(subframeArchives)));
+    return adoptRef(*new WebArchive(mainResource, WTF::move(subresources), WTF::move(subframeArchives)));
 }
 
 Ref<WebArchive> WebArchive::create(API::Data* data)
@@ -79,7 +79,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& su
         return Ref<LegacyWebArchive> { *subframeWebArchive->coreLegacyWebArchive() };
     });
 
-    lazyInitialize(m_legacyWebArchive, LegacyWebArchive::create(*coreMainResource, WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives), std::nullopt));
+    lazyInitialize(m_legacyWebArchive, LegacyWebArchive::create(*coreMainResource, WTF::move(coreArchiveResources), WTF::move(coreSubframeLegacyWebArchives), std::nullopt));
 }
 
 WebArchive::WebArchive(API::Data* data)
@@ -109,7 +109,7 @@ API::Array* WebArchive::subresources()
         auto subresources = WTF::map(m_legacyWebArchive->subresources(), [](auto& subresource) -> RefPtr<API::Object> {
             return WebArchiveResource::create(subresource.ptr());
         });
-        lazyInitialize(m_cachedSubresources, API::Array::create(WTFMove(subresources)));
+        lazyInitialize(m_cachedSubresources, API::Array::create(WTF::move(subresources)));
     }
 
     return m_cachedSubresources.get();
@@ -121,7 +121,7 @@ API::Array* WebArchive::subframeArchives()
         auto subframeWebArchives = WTF::map(m_legacyWebArchive->subframeArchives(), [](auto& subframeArchive) -> RefPtr<API::Object> {
             return WebArchive::create(downcast<LegacyWebArchive>(subframeArchive.ptr()));
         });
-        lazyInitialize(m_cachedSubframeArchives, API::Array::create(WTFMove(subframeWebArchives)));
+        lazyInitialize(m_cachedSubframeArchives, API::Array::create(WTF::move(subframeWebArchives)));
     }
 
     return m_cachedSubframeArchives.get();
@@ -131,7 +131,7 @@ Ref<API::Data> WebArchive::data()
 {
     RetainPtr rawDataRepresentation = m_legacyWebArchive->rawDataRepresentation();
     auto rawDataSpan = span(rawDataRepresentation.get());
-    return API::Data::createWithoutCopying(rawDataSpan, [rawDataRepresentation = WTFMove(rawDataRepresentation)] { });
+    return API::Data::createWithoutCopying(rawDataSpan, [rawDataRepresentation = WTF::move(rawDataRepresentation)] { });
 }
 
 LegacyWebArchive* WebArchive::coreLegacyWebArchive()

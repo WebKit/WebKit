@@ -46,7 +46,7 @@ CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, UR
     m_curlHandle = makeUnique<CurlHandle>();
 
     url.setProtocol(url.protocolIs("wss"_s) ? "https"_s : "http"_s);
-    m_curlHandle->setURL(WTFMove(url), localhostAlias);
+    m_curlHandle->setURL(WTF::move(url), localhostAlias);
 
     if (serverTrustEvaluation == ServerTrustEvaluation::Disable)
         m_curlHandle->disableServerTrustEvaluation();
@@ -85,7 +85,7 @@ void CurlStream::send(UniqueArray<uint8_t>&& buffer, size_t length)
     if (!m_curlHandle)
         return;
 
-    m_sendBuffers.append(std::make_pair(WTFMove(buffer), length));
+    m_sendBuffers.append(std::make_pair(WTF::move(buffer), length));
 }
 
 void CurlStream::appendMonitoringFd(fd_set& readfds, fd_set& writefds, fd_set& exceptfds, int& maxfd)
@@ -151,7 +151,7 @@ void CurlStream::tryToReceive()
         destroyHandle();
 
     receiveBuffer.resize(bytesReceived);
-    m_scheduler.callClientOnMainThread(m_streamID, [streamID = m_streamID, buffer = SharedBuffer::create(WTFMove(receiveBuffer))](Client& client) {
+    m_scheduler.callClientOnMainThread(m_streamID, [streamID = m_streamID, buffer = SharedBuffer::create(WTF::move(receiveBuffer))](Client& client) {
         client.didReceiveData(streamID, buffer);
     });
 }
@@ -187,12 +187,12 @@ void CurlStream::notifyFailure(CURLcode errorCode)
 {
     CertificateInfo certificateInfo;
     if (auto info = m_curlHandle->certificateInfo())
-        certificateInfo = WTFMove(*info);
+        certificateInfo = WTF::move(*info);
 
     destroyHandle();
 
-    m_scheduler.callClientOnMainThread(m_streamID, [streamID = m_streamID, errorCode, certificateInfo = WTFMove(certificateInfo)](Client& client) mutable {
-        client.didFail(streamID, errorCode, WTFMove(certificateInfo));
+    m_scheduler.callClientOnMainThread(m_streamID, [streamID = m_streamID, errorCode, certificateInfo = WTF::move(certificateInfo)](Client& client) mutable {
+        client.didFail(streamID, errorCode, WTF::move(certificateInfo));
     });
 }
 

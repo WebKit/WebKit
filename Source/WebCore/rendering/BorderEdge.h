@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +49,7 @@ public:
     bool isTransparent() const { return m_isTransparent; }
     bool isPresent() const { return m_isPresent; }
 
-    inline bool hasVisibleColorAndStyle() const { return m_style > BorderStyle::Hidden && !m_isTransparent; }
+    inline bool hasVisibleColorAndStyle() const { return isVisibleBorderStyle(m_style) && !m_isTransparent; }
     inline bool shouldRender() const { return m_isPresent && widthForPainting() && hasVisibleColorAndStyle(); }
     inline bool presentButInvisible() const { return widthForPainting() && !hasVisibleColorAndStyle(); }
     inline float widthForPainting() const { return m_isPresent ? m_flooredToDevicePixelWidth : 0; }

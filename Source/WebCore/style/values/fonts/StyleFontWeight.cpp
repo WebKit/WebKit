@@ -28,7 +28,7 @@
 
 #include "CSSPropertyParserConsumer+Font.h"
 #include "FontCascadeDescription.h"
-#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"

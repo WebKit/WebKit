@@ -66,6 +66,7 @@ public:
     virtual void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t bufferIndex) = 0;
     virtual void updateContentsHeadroom(float) = 0;
     virtual bool isRemoteCompositorIntegrationProxy() const { return false; }
+    virtual bool isCompositorIntegrationImpl() const { return false; }
 
 protected:
     CompositorIntegration() = default;

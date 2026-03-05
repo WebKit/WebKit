@@ -43,8 +43,8 @@ SecItemRequestData::SecItemRequestData(Type type, CFDictionaryRef query, CFDicti
 
 SecItemRequestData::SecItemRequestData(Type type, RetainPtr<CFDictionaryRef>&& query, RetainPtr<CFDictionaryRef>&& attributesToMatch)
     : m_type(type)
-    , m_queryDictionary(WTFMove(query))
-    , m_attributesToMatch(WTFMove(attributesToMatch))
+    , m_queryDictionary(WTF::move(query))
+    , m_attributesToMatch(WTF::move(attributesToMatch))
 {
 }
 

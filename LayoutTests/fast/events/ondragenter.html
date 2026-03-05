@@ -22,8 +22,8 @@ function runTest()
     
     // Find the element to drag
     var elementToDrag = document.getElementById("elementToDrag");
-    var x = elementToDrag.offsetLeft + elementToDrag.offsetWidth / 2;
-    var y = elementToDrag.offsetTop + elementToDrag.offsetHeight / 2;
+    var x = elementToDrag.offsetLeft + 10;
+    var y = elementToDrag.offsetTop + 5;
     // Double click on the element to select its text
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();

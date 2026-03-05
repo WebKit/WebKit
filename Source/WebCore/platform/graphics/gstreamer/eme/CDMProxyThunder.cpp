@@ -54,7 +54,7 @@ BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& 
 
     auto keyID = mappedKeyID.createVector();
 
-    auto keyHandle = getOrWaitForKeyHandle(keyID, WTFMove(in.cdmProxyDecryptionClient));
+    auto keyHandle = getOrWaitForKeyHandle(keyID, WTF::move(in.cdmProxyDecryptionClient));
     if (!keyHandle.has_value() || !keyHandle.value()->isStatusCurrentlyValid())
         return nullptr;
 

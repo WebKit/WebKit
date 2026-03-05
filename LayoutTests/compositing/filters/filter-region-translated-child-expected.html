@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.container {
+    position: relative;
+    width: 300px;
+    height: 100px;
+}
+
+.box1 {
+    will-change: transform;
+    background: thistle;
+    filter: invert(1);
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.box2 {
+    will-change: transform;
+    background: blueviolet;
+    filter: invert(1);
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    left: 150px;
+    top: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="box1"></div>
+    <div class="box2"></div>
+</div>
+</body>
+</html>

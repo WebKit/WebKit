@@ -15,7 +15,7 @@ info: |
 
   ...
   6. Return O.
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -54,4 +54,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert(
     compareArray(sample, [42n, 0n, 1n, 17n])
   );
-});
+}, null, ["passthrough"]);

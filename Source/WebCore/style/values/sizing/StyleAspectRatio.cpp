@@ -29,7 +29,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSRatioValue.h"
 #include "CSSValueList.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 

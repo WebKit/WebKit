@@ -40,7 +40,7 @@ class VideoCodecUnitTest : public ::testing::Test {
  public:
   VideoCodecUnitTest()
       : field_trials_(CreateTestFieldTrials()),
-        env_(CreateEnvironment(&field_trials_)),
+        env_(CreateEnvironment(field_trials_.CreateCopy())),
         encode_complete_callback_(this),
         decode_complete_callback_(this),
         wait_for_encoded_frames_threshold_(1),
@@ -109,7 +109,7 @@ class VideoCodecUnitTest : public ::testing::Test {
   size_t GetNumEncodedFrames();
 
   FieldTrials field_trials_;
-  const Environment env_;
+  Environment env_;
   VideoCodec codec_settings_;
 
   std::unique_ptr<VideoEncoder> encoder_;

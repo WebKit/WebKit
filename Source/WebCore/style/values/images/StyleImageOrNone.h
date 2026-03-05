@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,12 @@ struct ImageOrNone {
     }
 
     ImageOrNone(ImageWrapper&& image)
-        : m_value { WTFMove(image.value) }
+        : m_value { WTF::move(image.value) }
     {
     }
 
-    ImageOrNone(RefPtr<StyleImage>&& image)
-        : m_value { WTFMove(image) }
+    ImageOrNone(RefPtr<Image>&& image)
+        : m_value { WTF::move(image) }
     {
     }
 
@@ -49,7 +49,7 @@ struct ImageOrNone {
     bool isImage() const { return !!m_value; }
 
     std::optional<ImageWrapper> tryImage() const { return m_value ? std::make_optional(ImageWrapper { *m_value }) : std::nullopt; }
-    RefPtr<StyleImage> tryStyleImage() const { return m_value; }
+    RefPtr<Image> tryStyleImage() const { return m_value; }
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
@@ -66,7 +66,7 @@ struct ImageOrNone {
     }
 
 private:
-    RefPtr<StyleImage> m_value { };
+    RefPtr<Image> m_value { };
 };
 
 // MARK: - Conversion
@@ -77,7 +77,7 @@ template<> struct CSSValueConversion<ImageOrNone> { auto operator()(BuilderState
 
 template<> struct Blending<ImageOrNone> {
     auto canBlend(const ImageOrNone&, const ImageOrNone&) -> bool;
-    auto blend(const ImageOrNone&, const ImageOrNone&, const BlendingContext&) -> ImageOrNone;
+    auto blend(const ImageOrNone&, const ImageOrNone&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> ImageOrNone;
 };
 
 } // namespace Style

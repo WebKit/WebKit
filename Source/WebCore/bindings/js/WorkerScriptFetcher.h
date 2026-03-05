@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include "FetchOptions.h"
+#include "LoadableScript.h"
+#include "LoadableScriptError.h"
+#include "ModuleFetchParameters.h"
 #include <JavaScriptCore/ScriptFetcher.h>
-#include <WebCore/FetchOptions.h>
-#include <WebCore/LoadableScript.h>
-#include <WebCore/LoadableScriptError.h>
-#include <WebCore/ModuleFetchParameters.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ class WorkerScriptFetcher final : public JSC::ScriptFetcher {
 public:
     static Ref<WorkerScriptFetcher> create(Ref<ModuleFetchParameters>&& parameters, FetchOptions::Credentials credentials, FetchOptions::Destination destination, ReferrerPolicy referrerPolicy)
     {
-        return adoptRef(*new WorkerScriptFetcher(WTFMove(parameters), credentials, destination, referrerPolicy));
+        return adoptRef(*new WorkerScriptFetcher(WTF::move(parameters), credentials, destination, referrerPolicy));
     }
 
     FetchOptions::Credentials credentials() const { return m_credentials; }
@@ -56,7 +56,7 @@ public:
 
     void notifyLoadFailed(LoadableScript::Error&& error)
     {
-        m_error = WTFMove(error);
+        m_error = WTF::move(error);
         m_isLoaded = true;
     }
 
@@ -70,7 +70,6 @@ public:
     std::optional<LoadableScript::Error> error() const { return m_error; }
     bool wasCanceled() const { return m_wasCanceled; }
     UniquedStringImpl* moduleKey() const { return m_moduleKey.get(); }
-    RefPtr<UniquedStringImpl> protectedModuleKey() const { return m_moduleKey; }
     ModuleFetchParameters& parameters() { return m_parameters.get(); }
 
     void setReferrerPolicy(ReferrerPolicy referrerPolicy)
@@ -83,11 +82,13 @@ protected:
         : m_credentials(credentials)
         , m_destination(destination)
         , m_referrerPolicy(referrerPolicy)
-        , m_parameters(WTFMove(parameters))
+        , m_parameters(WTF::move(parameters))
     {
     }
 
 private:
+    bool isWorkerScriptFetcher() const final { return true; }
+
     FetchOptions::Credentials m_credentials;
     FetchOptions::Destination m_destination;
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
@@ -99,3 +100,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerScriptFetcher)
+    static bool isType(const JSC::ScriptFetcher& fetcher) { return fetcher.isWorkerScriptFetcher(); }
+SPECIALIZE_TYPE_TRAITS_END()

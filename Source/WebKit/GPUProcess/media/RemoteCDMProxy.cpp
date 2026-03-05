@@ -51,13 +51,13 @@ RefPtr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, st
         priv->supportsSessions()
     });
 
-    return adoptRef(new RemoteCDMProxy(factory, WTFMove(priv), WTFMove(configuration)));
+    return adoptRef(new RemoteCDMProxy(factory, WTF::move(priv), WTF::move(configuration)));
 }
 
 RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, std::unique_ptr<CDMPrivate>&& priv, UniqueRef<RemoteCDMConfiguration>&& configuration)
     : m_factory(factory)
-    , m_private(WTFMove(priv))
-    , m_configuration(WTFMove(configuration))
+    , m_private(WTF::move(priv))
+    , m_configuration(WTF::move(configuration))
 #if !RELEASE_LOG_DISABLED
     , m_logger(factory.logger())
 #endif
@@ -83,7 +83,7 @@ std::optional<String> RemoteCDMProxy::sanitizeSessionId(const String& sessionId)
 
 void RemoteCDMProxy::getSupportedConfiguration(WebCore::CDMKeySystemConfiguration&& configuration, WebCore::CDMPrivate::LocalStorageAccess access, CompletionHandler<void(std::optional<WebCore::CDMKeySystemConfiguration>)>&& callback)
 {
-    m_private->getSupportedConfiguration(WTFMove(configuration), access, WTFMove(callback));
+    m_private->getSupportedConfiguration(WTF::move(configuration), access, WTF::move(callback));
 }
 
 void RemoteCDMProxy::createInstance(CompletionHandler<void(std::optional<RemoteCDMInstanceIdentifier>, RemoteCDMInstanceConfiguration&&)>&& completion)
@@ -96,8 +96,8 @@ void RemoteCDMProxy::createInstance(CompletionHandler<void(std::optional<RemoteC
     auto identifier = RemoteCDMInstanceIdentifier::generate();
     auto instance = RemoteCDMInstanceProxy::create(*this, privateInstance.releaseNonNull(), identifier);
     RemoteCDMInstanceConfiguration configuration = instance->configuration();
-    protectedFactory()->addInstance(identifier, WTFMove(instance));
-    completion(identifier, WTFMove(configuration));
+    protect(factory())->addInstance(identifier, WTF::move(instance));
+    completion(identifier, WTF::move(configuration));
 }
 
 void RemoteCDMProxy::loadAndInitialize()

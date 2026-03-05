@@ -53,16 +53,15 @@ public:
 
     DECLARE_INFO;
 
-    JSDOMGlobalObject* window() const { return static_cast<JSDOMGlobalObject*>(target()); }
+    JSDOMGlobalObject* window() const { return JSC::jsCast<JSDOMGlobalObject*>(target()); }
 
     void setWindow(JSC::VM&, JSDOMGlobalObject&);
     void setWindow(DOMWindow&);
 
-    WindowProxy* windowProxy() const;
+    WindowProxy* NODELETE windowProxy() const;
 
-    DOMWindow& wrapped() const;
-    Ref<DOMWindow> protectedWrapped() const;
-    static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
+    DOMWindow& NODELETE wrapped() const;
+    static WindowProxy* NODELETE toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
 
@@ -75,7 +74,7 @@ private:
     JSWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
     ~JSWindowProxy();
     void finishCreation(JSC::VM&, DOMWindow&);
-    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);

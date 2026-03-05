@@ -16,7 +16,6 @@
 #include "api/create_modular_peer_connection_factory.h"
 #include "api/enable_media_with_defaults.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/jsep.h"
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
@@ -32,6 +31,7 @@
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/network/network_emulation.h"
@@ -64,7 +64,7 @@ bool AddIceCandidates(PeerConnectionWrapper* peer,
 scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     Thread* signaling_thread,
     EmulatedNetworkManagerInterface* network) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   PeerConnectionFactoryDependencies pcf_deps;
   pcf_deps.env = env;
   pcf_deps.event_log_factory = std::make_unique<RtcEventLogFactory>();
@@ -174,11 +174,8 @@ TEST(NetworkEmulationManagerPCTest, Run) {
     ASSERT_THAT(WaitUntil([&] { return alice->signaling_state(); },
                           Eq(PeerConnectionInterface::kStable)),
                 IsRtcOk());
-    ASSERT_THAT(
-        WaitUntil([&] { return alice->IsIceGatheringDone(); }, IsTrue()),
-        IsRtcOk());
-    ASSERT_THAT(WaitUntil([&] { return bob->IsIceGatheringDone(); }, IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return alice->IsIceGatheringDone(); }));
+    ASSERT_TRUE(WaitUntil([&] { return bob->IsIceGatheringDone(); }));
 
     // Connect an ICE candidate pairs.
     ASSERT_TRUE(
@@ -186,10 +183,8 @@ TEST(NetworkEmulationManagerPCTest, Run) {
     ASSERT_TRUE(
         AddIceCandidates(alice.get(), bob->observer()->GetAllCandidates()));
     // This means that ICE and DTLS are connected.
-    ASSERT_THAT(WaitUntil([&] { return bob->IsIceConnected(); }, IsTrue()),
-                IsRtcOk());
-    ASSERT_THAT(WaitUntil([&] { return alice->IsIceConnected(); }, IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return bob->IsIceConnected(); }));
+    ASSERT_TRUE(WaitUntil([&] { return alice->IsIceConnected(); }));
 
     // Close peer connections
     alice->pc()->Close();
@@ -285,11 +280,8 @@ TEST(NetworkEmulationManagerPCTest, RunTURN) {
     ASSERT_THAT(WaitUntil([&] { return alice->signaling_state(); },
                           Eq(PeerConnectionInterface::kStable)),
                 IsRtcOk());
-    ASSERT_THAT(
-        WaitUntil([&] { return alice->IsIceGatheringDone(); }, IsTrue()),
-        IsRtcOk());
-    ASSERT_THAT(WaitUntil([&] { return bob->IsIceGatheringDone(); }, IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return alice->IsIceGatheringDone(); }));
+    ASSERT_TRUE(WaitUntil([&] { return bob->IsIceGatheringDone(); }));
 
     // Connect an ICE candidate pairs.
     ASSERT_TRUE(
@@ -297,10 +289,8 @@ TEST(NetworkEmulationManagerPCTest, RunTURN) {
     ASSERT_TRUE(
         AddIceCandidates(alice.get(), bob->observer()->GetAllCandidates()));
     // This means that ICE and DTLS are connected.
-    ASSERT_THAT(WaitUntil([&] { return bob->IsIceConnected(); }, IsTrue()),
-                IsRtcOk());
-    ASSERT_THAT(WaitUntil([&] { return alice->IsIceConnected(); }, IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return bob->IsIceConnected(); }));
+    ASSERT_TRUE(WaitUntil([&] { return alice->IsIceConnected(); }));
 
     // Close peer connections
     alice->pc()->Close();

@@ -26,7 +26,9 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <limits.h>
+#include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 
 // This file contains a bunch of helper functions for decoding LEB numbers.
@@ -51,7 +53,7 @@ constexpr unsigned lastByteMask()
 }
 
 template<typename T>
-inline bool WARN_UNUSED_RETURN decodeUInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
+[[nodiscard]] inline bool decodeUInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
 {
     static_assert(std::is_unsigned_v<T>);
     if (bytes.size() <= offset)
@@ -73,7 +75,7 @@ inline bool WARN_UNUSED_RETURN decodeUInt(std::span<const uint8_t> bytes, size_t
 }
 
 template<typename T>
-inline bool WARN_UNUSED_RETURN decodeInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
+[[nodiscard]] inline bool decodeInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
 {
     static_assert(std::is_signed_v<T>);
     if (bytes.size() <= offset)
@@ -115,22 +117,22 @@ inline bool WARN_UNUSED_RETURN decodeInt(std::span<const uint8_t> bytes, size_t&
     return true;
 }
 
-inline bool WARN_UNUSED_RETURN decodeUInt32(std::span<const uint8_t> bytes, size_t& offset, uint32_t& result)
+[[nodiscard]] inline bool decodeUInt32(std::span<const uint8_t> bytes, size_t& offset, uint32_t& result)
 {
     return decodeUInt<uint32_t>(bytes, offset, result);
 }
 
-inline bool WARN_UNUSED_RETURN decodeUInt64(std::span<const uint8_t> bytes, size_t& offset, uint64_t& result)
+[[nodiscard]] inline bool decodeUInt64(std::span<const uint8_t> bytes, size_t& offset, uint64_t& result)
 {
     return decodeUInt<uint64_t>(bytes, offset, result);
 }
 
-inline bool WARN_UNUSED_RETURN decodeInt32(std::span<const uint8_t> bytes, size_t& offset, int32_t& result)
+[[nodiscard]] inline bool decodeInt32(std::span<const uint8_t> bytes, size_t& offset, int32_t& result)
 {
     return decodeInt<int32_t>(bytes, offset, result);
 }
 
-inline bool WARN_UNUSED_RETURN decodeInt64(std::span<const uint8_t> bytes, size_t& offset, int64_t& result)
+[[nodiscard]] inline bool decodeInt64(std::span<const uint8_t> bytes, size_t& offset, int64_t& result)
 {
     return decodeInt<int64_t>(bytes, offset, result);
 }

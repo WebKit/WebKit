@@ -39,10 +39,11 @@ int64_t vpx_highbd_get_y_sse(const YV12_BUFFER_CONFIG *a,
                              const YV12_BUFFER_CONFIG *b);
 void vpx_calc_highbd_psnr(const YV12_BUFFER_CONFIG *a,
                           const YV12_BUFFER_CONFIG *b, PSNR_STATS *psnr,
-                          unsigned int bit_depth, unsigned int in_bit_depth);
+                          unsigned int bit_depth, unsigned int in_bit_depth,
+                          int spatial_layer_id);
 #endif
 void vpx_calc_psnr(const YV12_BUFFER_CONFIG *a, const YV12_BUFFER_CONFIG *b,
-                   PSNR_STATS *psnr);
+                   PSNR_STATS *psnr, int spatial_layer_id);
 
 double vpx_psnrhvs(const YV12_BUFFER_CONFIG *source,
                    const YV12_BUFFER_CONFIG *dest, double *phvs_y,

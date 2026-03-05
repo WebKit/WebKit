@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/SelectionType.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/VisiblePosition.h>
 
@@ -69,17 +70,17 @@ public:
     // These functions return the values that were passed in, without the canonicalization done by VisiblePosition.
     // FIXME: When we expand granularity, we canonicalize as a side effect, so expanded values have been made canonical.
     // FIXME: Replace start/range/base/end/firstRange with these, renaming these to the shorter names.
-    const Position& uncanonicalizedStart() const;
-    const Position& uncanonicalizedEnd() const;
-    const Position& anchor() const { return m_anchor; }
-    const Position& focus() const { return m_focus; }
+    const Position& uncanonicalizedStart() const LIFETIME_BOUND;
+    const Position& uncanonicalizedEnd() const LIFETIME_BOUND;
+    const Position& anchor() const LIFETIME_BOUND { return m_anchor; }
+    const Position& focus() const LIFETIME_BOUND { return m_focus; }
     WEBCORE_EXPORT std::optional<SimpleRange> range() const;
 
     // FIXME: Rename these to include the word "canonical" or remove.
-    const Position& base() const { return m_base; }
-    const Position& extent() const { return m_extent; }
-    const Position& start() const { return m_start; }
-    const Position& end() const { return m_end; }
+    const Position& base() const LIFETIME_BOUND { return m_base; }
+    const Position& extent() const LIFETIME_BOUND { return m_extent; }
+    const Position& start() const LIFETIME_BOUND { return m_start; }
+    const Position& end() const LIFETIME_BOUND { return m_end; }
 
     VisiblePosition visibleStart() const { return VisiblePosition(m_start, isRange() ? Affinity::Downstream : affinity()); }
     VisiblePosition visibleEnd() const { return VisiblePosition(m_end, isRange() ? Affinity::Upstream : affinity()); }
@@ -88,13 +89,17 @@ public:
 
     operator VisiblePositionRange() const { return { visibleStart(), visibleEnd() }; }
 
-    bool isNone() const { return m_type == Type::None; }
-    bool isCaret() const { return m_type == Type::Caret; }
-    bool isRange() const { return m_type == Type::Range; }
+    SelectionType type() const { return m_type; }
+
+    bool isNone() const { return type() == SelectionType::None; }
+    bool isCaret() const { return type() == SelectionType::Caret; }
+    bool isRange() const { return type() == SelectionType::Range; }
+
     bool isCaretOrRange() const { return !isNone(); }
     bool isNonOrphanedRange() const { return isRange() && !start().isOrphan() && !end().isOrphan(); }
     bool isNoneOrOrphaned() const { return isNone() || start().isOrphan() || end().isOrphan(); }
     bool isOrphan() const;
+
     RefPtr<Document> document() const;
 
     bool isBaseFirst() const { return m_anchorIsFirst; }
@@ -117,7 +122,6 @@ public:
     WEBCORE_EXPORT std::optional<SimpleRange> toNormalizedRange() const;
 
     WEBCORE_EXPORT Element* rootEditableElement() const;
-    WEBCORE_EXPORT RefPtr<Element> protectedRootEditableElement() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     WEBCORE_EXPORT bool hasEditableStyle() const;
     WEBCORE_EXPORT bool isContentRichlyEditable() const;
@@ -169,8 +173,7 @@ private:
     Affinity m_affinity { defaultAffinity };
 
     // These are cached, can be recalculated by validate()
-    enum class Type : uint8_t { None, Caret, Range };
-    Type m_type { Type::None };
+    SelectionType m_type { SelectionType::None };
     bool m_anchorIsFirst { true }; // True if the anchor is before the focus. FIXME: Rename to m_anchorIsBeforeFocus since that's what the comment says.
     Directionality m_directionality { Directionality::None };
 };

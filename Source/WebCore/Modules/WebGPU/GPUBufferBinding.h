@@ -36,7 +36,6 @@ namespace WebCore {
 struct GPUBufferBinding {
     WebGPU::BufferBinding convertToBacking() const
     {
-        ASSERT(buffer);
         return {
             buffer->backing(),
             offset,
@@ -44,7 +43,7 @@ struct GPUBufferBinding {
         };
     }
 
-    WeakPtr<GPUBuffer> buffer;
+    Ref<GPUBuffer> buffer;
     GPUSize64 offset { 0 };
     std::optional<GPUSize64> size;
 };

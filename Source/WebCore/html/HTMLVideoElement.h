@@ -40,13 +40,14 @@ class HTMLImageLoader;
 class ImageBuffer;
 class RenderVideo;
 class PictureInPictureObserver;
+class ShareableBitmap;
 class VideoFrameRequestCallback;
 struct ImageBufferFormat;
 
 enum class RenderingMode : uint8_t;
 
 class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HTMLVideoElement> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLVideoElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLVideoElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLVideoElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLVideoElement> create(Document&);
@@ -86,7 +87,10 @@ public:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
     bool shouldGetNativeImageForCanvasDrawing() const;
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime();
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime() const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync() const;
+    using BitmapImagePromise = MediaPlayer::BitmapImagePromise;
+    WEBCORE_EXPORT Ref<BitmapImagePromise> bitmapImageForCurrentTime() const;
     std::optional<DestinationColorSpace> colorSpace() const;
 
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
@@ -97,22 +101,22 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture, InWindow };
-    static VideoPresentationMode toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode);
+    static VideoPresentationMode NODELETE toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT bool webkitSupportsPresentationMode(VideoPresentationMode) const;
-    VideoPresentationMode webkitPresentationMode() const;
-    VideoPresentationMode webkitPresentationModeForBindings() const;
+    VideoPresentationMode NODELETE webkitPresentationMode() const;
+    VideoPresentationMode NODELETE webkitPresentationModeForBindings() const;
     void webkitSetPresentationMode(VideoPresentationMode);
 
     WEBCORE_EXPORT void setPresentationMode(VideoPresentationMode);
     WEBCORE_EXPORT void didEnterFullscreenOrPictureInPicture(const FloatSize&);
     WEBCORE_EXPORT void didExitFullscreenOrPictureInPicture();
-    WEBCORE_EXPORT bool isChangingPresentationMode() const;
+    WEBCORE_EXPORT bool NODELETE isChangingPresentationMode() const;
     WEBCORE_EXPORT void setPresentationModeIgnoringPermissionsPolicy(VideoPresentationMode);
 
     void setVideoFullscreenFrame(const FloatRect&) final;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    void setPictureInPictureObserver(PictureInPictureObserver*);
+    void NODELETE setPictureInPictureObserver(PictureInPictureObserver*);
 #endif
 #endif
 
@@ -157,9 +161,9 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     bool isVideo() const final { return true; }
-    bool hasVideo() const final { return player() && protectedPlayer()->hasVideo(); }
+    bool hasVideo() const final { return player() && protect(player())->hasVideo(); }
     bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const final;
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     const AtomString& imageSourceURL() const final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
@@ -199,7 +203,7 @@ private:
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VideoFrameRequest);
         VideoFrameRequest(unsigned identifier, Ref<VideoFrameRequestCallback>&& callback)
             : identifier(identifier)
-            , callback(WTFMove(callback))
+            , callback(WTF::move(callback))
         {
         }
 

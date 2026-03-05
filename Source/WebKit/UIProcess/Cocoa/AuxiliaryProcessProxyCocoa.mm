@@ -96,24 +96,24 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
         return;
 
     Ref assertion = ProcessAndUIAssertion::create(processID(), reason, ProcessAssertionType::Background, environmentIdentifier(), extensionProcess());
-    auto terminationHandler = [assertion = WTFMove(assertion), extensionProcess = WTFMove(*maybeExtensionProcess)] {
+    auto terminationHandler = [assertion = WTF::move(assertion), extensionProcess = WTF::move(*maybeExtensionProcess)] {
         extensionProcess.invalidate();
     };
 #else
     if (!m_connection)
         return;
 
-    XPCObjectPtr<xpc_connection_t> xpcConnection = m_connection->xpcConnection();
+    OSObjectPtr<xpc_connection_t> xpcConnection = m_connection->xpcConnection();
     if (!xpcConnection)
         return;
 
     Ref assertion = ProcessAndUIAssertion::create(processID(), reason, ProcessAssertionType::Background, environmentIdentifier());
-    auto terminationHandler = [assertion = WTFMove(assertion), xpcConnection = WTFMove(xpcConnection)]() {
+    auto terminationHandler = [assertion = WTF::move(assertion), xpcConnection = WTF::move(xpcConnection)]() {
         terminateWithReason(xpcConnection.get(), ReasonCode::WatchdogTimerFired, reason);
     };
 #endif
 
-    RunLoop::mainSingleton().dispatchAfter(30_s, WTFMove(terminationHandler));
+    RunLoop::mainSingleton().dispatchAfter(30_s, WTF::move(terminationHandler));
 #endif // USE(RUNNINGBOARD)
 }
 

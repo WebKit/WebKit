@@ -261,14 +261,14 @@ static int ec_GFp_nistp256_point_get_affine_coordinates(
   fiat_p256_from_generic(z1, &point->Z);
   fiat_p256_inv_square(z2, z1);
 
-  if (x_out != NULL) {
+  if (x_out != nullptr) {
     fiat_p256_felem x;
     fiat_p256_from_generic(x, &point->X);
     fiat_p256_mul(x, x, z2);
     fiat_p256_to_generic(x_out, x);
   }
 
-  if (y_out != NULL) {
+  if (y_out != nullptr) {
     fiat_p256_felem y;
     fiat_p256_from_generic(y, &point->Y);
     fiat_p256_square(z2, z2);  // z^-4

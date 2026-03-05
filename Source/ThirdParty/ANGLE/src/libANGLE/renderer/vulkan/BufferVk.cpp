@@ -288,19 +288,19 @@ angle::Result CopyBuffers(ContextVk *contextVk,
     ASSERT(srcBuffer->valid() && dstBuffer->valid());
 
     // Enqueue a copy command on the GPU
-    vk::CommandBufferAccess access;
+    vk::CommandResources resources;
     if (srcBuffer->getBufferSerial() == dstBuffer->getBufferSerial())
     {
-        access.onBufferSelfCopy(srcBuffer);
+        resources.onBufferSelfCopy(srcBuffer);
     }
     else
     {
-        access.onBufferTransferRead(srcBuffer);
-        access.onBufferTransferWrite(dstBuffer);
+        resources.onBufferTransferRead(srcBuffer);
+        resources.onBufferTransferWrite(dstBuffer);
     }
 
     vk::OutsideRenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
     commandBuffer->copyBuffer(srcBuffer->getBuffer(), dstBuffer->getBuffer(), regionCount,
                               copyRegions);
@@ -669,7 +669,7 @@ angle::Result BufferVk::handleDeviceLocalBufferMap(ContextVk *contextVk,
     VkBufferCopy copyRegion = {mBuffer.getOffset() + offset, mStagingBuffer.getOffset(), size};
     ANGLE_TRY(CopyBuffers(contextVk, &mBuffer, &mStagingBuffer, 1, &copyRegion));
     ANGLE_TRY(mStagingBuffer.waitForIdle(contextVk, "GPU stall due to mapping device local buffer",
-                                         RenderPassClosureReason::DeviceLocalBufferMap));
+                                         QueueSubmitReason::DeviceLocalBufferMap));
     // Since coherent is prefer, we may end up getting non-coherent. Always call invalidate here (it
     // will check memory flag before it actually calls into driver).
     ANGLE_TRY(mStagingBuffer.invalidate(renderer));
@@ -817,8 +817,8 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
             // If there are unflushed write commands for the resource, flush them.
             if (contextVk->hasUnsubmittedUse(mBuffer.getWriteResourceUse()))
             {
-                ANGLE_TRY(contextVk->flushAndSubmitCommands(
-                    nullptr, nullptr, RenderPassClosureReason::BufferWriteThenMap));
+                ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, nullptr,
+                                                            QueueSubmitReason::BufferWriteThenMap));
             }
             ANGLE_TRY(renderer->finishResourceUse(contextVk, mBuffer.getWriteResourceUse()));
         }
@@ -877,7 +877,7 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
 
     // Write case (worst case, buffer in use for write)
     ANGLE_TRY(mBuffer.waitForIdle(contextVk, "GPU stall due to mapping buffer in use by the GPU",
-                                  RenderPassClosureReason::BufferInUseWhenSynchronizedMap));
+                                  QueueSubmitReason::BufferInUseWhenSynchronizedMap));
     return mapHostVisibleBuffer(contextVk, offset, access, mapPtrBytes);
 }
 
@@ -1078,19 +1078,19 @@ angle::Result BufferVk::stagedUpdate(ContextVk *contextVk,
     else
     {
         // Check for self-dependency.
-        vk::CommandBufferAccess access;
+        vk::CommandResources resources;
         if (dataSource.buffer->getBufferSerial() == mBuffer.getBufferSerial())
         {
-            access.onBufferSelfCopy(&mBuffer);
+            resources.onBufferSelfCopy(&mBuffer);
         }
         else
         {
-            access.onBufferTransferRead(dataSource.buffer);
-            access.onBufferTransferWrite(&mBuffer);
+            resources.onBufferTransferRead(dataSource.buffer);
+            resources.onBufferTransferWrite(&mBuffer);
         }
 
         vk::OutsideRenderPassCommandBuffer *commandBuffer;
-        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
         // Enqueue a copy command on the GPU.
         const VkBufferCopy copyRegion = {dataSource.bufferOffset + dataSource.buffer->getOffset(),
@@ -1404,10 +1404,8 @@ bool BufferVk::shouldRedefineStorage(vk::Renderer *renderer,
     }
     else
     {
-        size_t paddedBufferSize =
-            (renderer->getFeatures().padBuffersToMaxVertexAttribStride.enabled)
-                ? (size + static_cast<size_t>(renderer->getMaxVertexAttribStride()))
-                : size;
+        const size_t paddedBufferSize =
+            static_cast<size_t>(renderer->padVertexAttribBufferSizeIfNeeded(size));
         size_t sizeInBytes = roundUpPow2(paddedBufferSize, kBufferSizeGranularity);
         size_t alignedSize = roundUp(sizeInBytes, renderer->getDefaultBufferAlignment());
         if (alignedSize > mBuffer.getSize())

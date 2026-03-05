@@ -102,7 +102,7 @@ void webkitScriptWorldWindowObjectCleared(WebKitScriptWorld* world, WebKitWebPag
 static WebKitScriptWorld* webkitScriptWorldCreate(Ref<InjectedBundleScriptWorld>&& scriptWorld)
 {
     WebKitScriptWorld* world = WEBKIT_SCRIPT_WORLD(g_object_new(WEBKIT_TYPE_SCRIPT_WORLD, nullptr));
-    world->priv->scriptWorld = WTFMove(scriptWorld);
+    world->priv->scriptWorld = WTF::move(scriptWorld);
     world->priv->name = world->priv->scriptWorld->name().utf8();
 
     ASSERT(!scriptWorlds().contains(world->priv->scriptWorld.get()));

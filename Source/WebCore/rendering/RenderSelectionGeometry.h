@@ -39,7 +39,6 @@ class RenderSelectionGeometryBase {
 public:
     explicit RenderSelectionGeometryBase(RenderObject& renderer);
     const RenderLayerModelObject* repaintContainer() const { return m_repaintContainer; }
-    CheckedPtr<const RenderLayerModelObject> checkedRepaintContainer() const { return m_repaintContainer; }
     RenderObject::HighlightState state() const { return m_state; }
 
 protected:

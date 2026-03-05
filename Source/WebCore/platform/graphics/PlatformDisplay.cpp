@@ -63,7 +63,7 @@ IGNORE_CLANG_WARNINGS_END
 void PlatformDisplay::setSharedDisplay(std::unique_ptr<PlatformDisplay>&& display)
 {
     RELEASE_ASSERT(!s_sharedDisplay);
-    s_sharedDisplay = WTFMove(display);
+    s_sharedDisplay = WTF::move(display);
 }
 
 PlatformDisplay& PlatformDisplay::sharedDisplay()
@@ -85,7 +85,7 @@ static HashSet<PlatformDisplay*>& eglDisplays()
 }
 
 PlatformDisplay::PlatformDisplay(Ref<GLDisplay>&& glDisplay)
-    : m_eglDisplay(WTFMove(glDisplay))
+    : m_eglDisplay(WTF::move(glDisplay))
 {
     eglDisplays().add(this);
 
@@ -171,18 +171,18 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
     return m_eglDisplay->destroyImage(image);
 }
 
-#if USE(GBM)
+#if USE(GBM) || OS(ANDROID)
 const Vector<GLDisplay::BufferFormat>& PlatformDisplay::bufferFormats()
 {
     return m_eglDisplay->bufferFormats();
 }
+#endif // USE(GBM) || OS(ANDROID)
 
-#if USE(GSTREAMER)
+#if USE(GBM) && USE(GSTREAMER)
 const Vector<GLDisplay::BufferFormat>& PlatformDisplay::bufferFormatsForVideo()
 {
     return m_eglDisplay->bufferFormatsForVideo();
 }
-#endif
-#endif // USE(GBM)
+#endif // USE(GBM) && USE(GSTREAMER)
 
 } // namespace WebCore

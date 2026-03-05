@@ -44,7 +44,7 @@ struct aead_aes_gcm_siv_asm_ctx {
 
 // The assembly code assumes 8-byte alignment of the EVP_AEAD_CTX's state, and
 // aligns to 16 bytes itself.
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) + 8 >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) + 8 >=
                   sizeof(struct aead_aes_gcm_siv_asm_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >= 8,
@@ -504,13 +504,13 @@ const EVP_AEAD aead_aes_128_gcm_siv_asm = {
     0,                               // seal_scatter_supports_extra_in
 
     aead_aes_gcm_siv_asm_init,
-    NULL /* init_with_direction */,
+    nullptr /* init_with_direction */,
     aead_aes_gcm_siv_asm_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_aes_gcm_siv_asm_seal_scatter,
     aead_aes_gcm_siv_asm_open_gather,
-    NULL /* get_iv */,
-    NULL /* tag_len */,
+    nullptr /* get_iv */,
+    nullptr /* tag_len */,
 };
 
 const EVP_AEAD aead_aes_256_gcm_siv_asm = {
@@ -521,13 +521,13 @@ const EVP_AEAD aead_aes_256_gcm_siv_asm = {
     0,                               // seal_scatter_supports_extra_in
 
     aead_aes_gcm_siv_asm_init,
-    NULL /* init_with_direction */,
+    nullptr /* init_with_direction */,
     aead_aes_gcm_siv_asm_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_aes_gcm_siv_asm_seal_scatter,
     aead_aes_gcm_siv_asm_open_gather,
-    NULL /* get_iv */,
-    NULL /* tag_len */,
+    nullptr /* get_iv */,
+    nullptr /* tag_len */,
 };
 
 #endif  // X86_64 && !NO_ASM && !WINDOWS
@@ -542,7 +542,7 @@ struct aead_aes_gcm_siv_ctx {
   unsigned is_256 : 1;
 };
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_aes_gcm_siv_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=
@@ -570,7 +570,7 @@ int aead_aes_gcm_siv_init(EVP_AEAD_CTX *ctx, const uint8_t *key, size_t key_len,
       (struct aead_aes_gcm_siv_ctx *)&ctx->state;
   OPENSSL_memset(gcm_siv_ctx, 0, sizeof(struct aead_aes_gcm_siv_ctx));
 
-  aes_ctr_set_key(&gcm_siv_ctx->ks.ks, NULL, &gcm_siv_ctx->kgk_block, key,
+  aes_ctr_set_key(&gcm_siv_ctx->ks.ks, nullptr, &gcm_siv_ctx->kgk_block, key,
                   key_len);
   gcm_siv_ctx->is_256 = (key_len == 32);
   ctx->tag_len = tag_len;
@@ -772,7 +772,7 @@ void gcm_siv_keys(const struct aead_aes_gcm_siv_ctx *gcm_siv_ctx,
   // We currently do not consider AES-GCM-SIV to be performance-sensitive on
   // client hardware. If this changes, we can write little-endian |ctr128_f|
   // functions.
-  aes_ctr_set_key(&out_keys->enc_key.ks, NULL, &out_keys->enc_block,
+  aes_ctr_set_key(&out_keys->enc_key.ks, nullptr, &out_keys->enc_block,
                   key_material + 16, gcm_siv_ctx->is_256 ? 32 : 16);
 }
 
@@ -870,13 +870,13 @@ const EVP_AEAD aead_aes_128_gcm_siv = {
     0,                               // seal_scatter_supports_extra_in
 
     aead_aes_gcm_siv_init,
-    NULL /* init_with_direction */,
+    nullptr /* init_with_direction */,
     aead_aes_gcm_siv_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_aes_gcm_siv_seal_scatter,
     aead_aes_gcm_siv_open_gather,
-    NULL /* get_iv */,
-    NULL /* tag_len */,
+    nullptr /* get_iv */,
+    nullptr /* tag_len */,
 };
 
 const EVP_AEAD aead_aes_256_gcm_siv = {
@@ -887,13 +887,13 @@ const EVP_AEAD aead_aes_256_gcm_siv = {
     0,                               // seal_scatter_supports_extra_in
 
     aead_aes_gcm_siv_init,
-    NULL /* init_with_direction */,
+    nullptr /* init_with_direction */,
     aead_aes_gcm_siv_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_aes_gcm_siv_seal_scatter,
     aead_aes_gcm_siv_open_gather,
-    NULL /* get_iv */,
-    NULL /* tag_len */,
+    nullptr /* get_iv */,
+    nullptr /* tag_len */,
 };
 }  // namespace
 

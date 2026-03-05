@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/CallLinkInfo.h>
@@ -99,13 +101,37 @@ public:
     
     WebAssemblyModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
-    JSWebAssemblyMemory* memory() const { return m_memory.get(); }
-    void setMemory(VM& vm, JSWebAssemblyMemory* value)
+    // FIXME(wasm-multimemory): eventually get rid of memory() with no parameters
+    // Temporarily keep memory() so the code still compiles
+    JSWebAssemblyMemory* memory() const { return m_memories[0].get(); }
+
+    JSWebAssemblyMemory* memory(unsigned i) const { return m_memories[i].get(); }
+
+    void setMemory(VM& vm, unsigned i, JSWebAssemblyMemory* value)
     {
-        m_memory.set(vm, this, value);
-        memory()->memory().registerInstance(*this);
-        updateCachedMemory();
+        if (!i)
+            RELEASE_ASSERT(!m_wasmMemory);
+
+        m_memories[i].set(vm, this, value);
+        if (!i) {
+            WTF::storeStoreFence();
+            m_wasmMemory = value->memory();
+            m_wasmMemory->registerInstance(*this);
+        }
     }
+
+    // FIXME: is setDummyMemory necessary at all?
+    void setDummyMemory(VM& vm, JSWebAssemblyMemory* value)
+    {
+        // Do not set m_wasmMemory.
+        RELEASE_ASSERT(!m_wasmMemory);
+
+        // If there are any imported memories, they will be filled in later
+        // If there are zero memories then there will be space for a dummy memory (handled in constructor)
+
+        m_memories[0].set(vm, this, value);
+    }
+
     MemoryMode memoryMode() const { return memory()->memory().mode(); }
 
     JSWebAssemblyTable* jsTable(unsigned i) { return m_tables[i].get(); }
@@ -131,7 +157,6 @@ public:
     void finalizeUnconditionally(VM&, CollectionScope);
 
     static constexpr ptrdiff_t offsetOfJSModule() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_jsModule); }
-    static constexpr ptrdiff_t offsetOfJSMemory() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_memory); }
     static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_vm); }
     static constexpr ptrdiff_t offsetOfModuleRecord() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_moduleRecord); }
 
@@ -163,7 +188,7 @@ public:
 
     void elemDrop(uint32_t elementIndex);
 
-    bool memoryInit(uint32_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex);
+    bool memoryInit(uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex);
 
     void dataDrop(uint32_t dataSegmentIndex);
 
@@ -173,7 +198,7 @@ public:
 
     void updateCachedMemory()
     {
-        if (m_memory) {
+        if (m_wasmMemory) {
             // Note: In MemoryMode::BoundsChecking, mappedCapacity() == size().
             // We assert this in the constructor of MemoryHandle.
 #if CPU(ARM)
@@ -183,20 +208,24 @@ public:
             // the actual size here, but this means we cannot grow the shared
             // memory safely in case it's used by multiple threads. Once the
             // signal handler are available, m_cachedBoundsCheckingSize should
-            // be set to use memory()->mappedCapacity() like other platforms,
+            // be set to use m_wasmMemory->mappedCapacity() like other platforms,
             // and at that point growing the shared memory will be safe.
-            m_cachedBoundsCheckingSize = memory()->memory().size();
+            m_cachedBoundsCheckingSize = m_wasmMemory->size();
 #else
-            m_cachedBoundsCheckingSize = memory()->memory().mappedCapacity();
+            m_cachedBoundsCheckingSize = m_wasmMemory->mappedCapacity();
 #endif
-            m_cachedMemorySize = memory()->memory().size();
-            m_cachedMemory = CagedPtr<Gigacage::Primitive, void>(memory()->memory().basePointer());
-            ASSERT(memory()->memory().basePointer() == cachedMemory());
+            // only memory 0 is cached
+            m_cachedMemorySize = m_wasmMemory->size();
+            m_cachedMemory = CagedPtr<Gigacage::Primitive, void>(m_wasmMemory->basePointer());
+            m_cachedIsMemory64 = moduleInformation().memory(0).isMemory64();
+            ASSERT(m_wasmMemory->basePointer() == cachedMemory());
         }
     }
 
     uint32_t cachedTable0Length() const { return m_cachedTable0Length; }
     Wasm::FuncRefTable::Function* cachedTable0Buffer() const { return m_cachedTable0Buffer; }
+
+    bool cachedIsMemory64() const { return m_cachedIsMemory64; }
 
     void updateCachedTable0();
 
@@ -276,6 +305,7 @@ public:
     static constexpr ptrdiff_t offsetOfCachedTable0Length() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedTable0Length); }
     static constexpr ptrdiff_t offsetOfTemporaryCallFrame() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_temporaryCallFrame); }
     static constexpr ptrdiff_t offsetOfBuiltinCalleeBits() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_builtinCalleeBits); }
+    static constexpr ptrdiff_t offsetOfCachedIsMemory64() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedIsMemory64); }
 
     // Tail accessors.
     static_assert(sizeof(WasmOrJSImportableFunctionCallLinkInfo) == WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(WasmOrJSImportableFunctionCallLinkInfo)), "We rely on this for the alignment to be correct");
@@ -394,6 +424,8 @@ public:
     void setDebugId(uint32_t id) { m_debugId = id; }
     uint32_t debugId() const { return m_debugId; }
 
+    RefPtr<Wasm::InstanceAnchor> anchor() const { return m_anchor; }
+
 private:
     JSWebAssemblyInstance(VM&, Structure*, JSWebAssemblyModule*, WebAssemblyModuleRecord*, RefPtr<SourceProvider>&&);
     ~JSWebAssemblyInstance();
@@ -405,10 +437,10 @@ private:
     VM* const m_vm;
     WriteBarrier<JSWebAssemblyModule> m_jsModule;
     WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
-    WriteBarrier<JSWebAssemblyMemory> m_memory;
+    FixedVector<WriteBarrier<JSWebAssemblyMemory>> m_memories;
     FixedVector<WriteBarrier<JSWebAssemblyTable>> m_tables;
     StackManager::Mirror m_stackMirror;
-    CagedPtr<Gigacage::Primitive, void> m_cachedMemory;
+    CagedPtr<Gigacage::Primitive, void> m_cachedMemory; // only memory 0 is cached
     size_t m_cachedBoundsCheckingSize { 0 };
     size_t m_cachedMemorySize { 0 };
     Wasm::FuncRefTable::Function* m_cachedTable0Buffer { nullptr };
@@ -417,7 +449,9 @@ private:
     const Ref<const Wasm::ModuleInformation> m_moduleInformation;
     RefPtr<Wasm::InstanceAnchor> m_anchor;
     RefPtr<SourceProvider> m_sourceProvider;
+    bool m_cachedIsMemory64 { false };
 
+    RefPtr<Wasm::Memory> m_wasmMemory;
     CallFrame* m_temporaryCallFrame { nullptr };
     Wasm::Global::Value* m_globals { nullptr };
     FunctionWrapperMap m_functionWrappers;

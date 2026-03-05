@@ -50,7 +50,7 @@ bool RealtimeIncomingSourceGStreamer::setBin(GRefPtr<GstElement>&& bin)
         return false;
     }
 
-    m_bin = WTFMove(bin);
+    m_bin = WTF::move(bin);
     m_sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), "sink"));
     g_object_set(m_sink.get(), "signal-handoffs", TRUE, nullptr);
 
@@ -60,8 +60,8 @@ bool RealtimeIncomingSourceGStreamer::setBin(GRefPtr<GstElement>&& bin)
         auto sample = adoptGRef(gst_sample_new(buffer, caps.get(), nullptr, nullptr));
         // dispatchSample might trigger RealtimeMediaSource::notifySettingsDidChangeObservers()
         // which expects to run in the main thread.
-        callOnMainThread([source, sample = WTFMove(sample)]() mutable {
-            source->dispatchSample(WTFMove(sample));
+        callOnMainThread([source, sample = WTF::move(sample)]() mutable {
+            source->dispatchSample(WTF::move(sample));
         });
     });
     g_signal_connect(m_sink.get(), "preroll-handoff", handoffCallback, this);
@@ -72,7 +72,7 @@ bool RealtimeIncomingSourceGStreamer::setBin(GRefPtr<GstElement>&& bin)
         auto self = reinterpret_cast<RealtimeIncomingSourceGStreamer*>(userData);
         if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM) {
             GRefPtr event = GST_PAD_PROBE_INFO_EVENT(info);
-            return self->handleDownstreamEvent(WTFMove(event));
+            return self->handleDownstreamEvent(WTF::move(event));
         }
 
         auto query = GST_PAD_PROBE_INFO_QUERY(info);
@@ -121,7 +121,7 @@ int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc
     static Atomic<int> counter = 1;
     auto clientId = counter.exchangeAdd(1);
 
-    m_clients.add(clientId, WTFMove(appsrc));
+    m_clients.add(clientId, WTF::move(appsrc));
     return clientId;
 }
 

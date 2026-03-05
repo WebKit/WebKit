@@ -307,7 +307,7 @@ aesgcmsiv_htable_polyval:
 .Lhtable_polyval_no_prefix:
     # At this point we know the number of blocks is a multiple of 8. However,
     # the reduction in the main loop includes a multiplication by x^(-128). In
-    # order to counter this, the existing tag needs to be multipled by x^128.
+    # order to counter this, the existing tag needs to be multiplied by x^128.
     # In practice, this just means that it is loaded into $Xhi, not $T.
     vpxor $T, $T, $T
     vmovdqa ($Tp), $Xhi

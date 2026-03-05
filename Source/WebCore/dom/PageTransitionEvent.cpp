@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PageTransitionEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageTransitionEvent);
 
 PageTransitionEvent::PageTransitionEvent(const AtomString& type, bool persisted)
     : Event(EventInterfaceType::PageTransitionEvent, type, CanBubble::Yes, IsCancelable::Yes)

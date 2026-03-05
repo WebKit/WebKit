@@ -111,6 +111,9 @@ public:
 
     virtual bool isMockTheme() const { return false; }
     virtual bool isScrollbarThemeMac() const { return false; }
+#if USE(THEME_ADWAITA)
+    virtual bool isScrollbarThemeAdwaita() const { return false; }
+#endif
 
     WEBCORE_EXPORT static ScrollbarTheme& theme();
 

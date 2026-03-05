@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BlurFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Blur;
@@ -36,10 +38,44 @@ struct Blur;
 
 namespace Style {
 
-class BuilderState;
+struct ZoomFactor;
 
-CSS::Blur toCSSBlur(Ref<BlurFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Blur&, const BuilderState&);
+// blur() = blur( <length [0,∞]>?@(default=0px) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-blur
+struct Blur {
+    using Parameter = Length<CSS::Nonnegative>;
+
+    Parameter value;
+
+    static Blur passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return true; }
+    constexpr bool movesPixels() const { return true; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value.isZero(); }
+
+    IntOutsets calculateOutsets(ZoomFactor) const;
+
+    bool operator==(const Blur&) const = default;
+};
+using BlurFunction = FunctionNotation<CSSValueBlur, Blur>;
+DEFINE_TYPE_WRAPPER_GET(Blur, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<Blur> { auto operator()(const Blur&, const RenderStyle&) -> CSS::Blur; };
+template<> struct ToStyle<CSS::Blur> { auto operator()(const CSS::Blur&, const BuilderState&) -> Blur; };
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<Blur, Ref<FilterEffect>> { auto operator()(const Blur&, const RenderStyle&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<Blur> { auto operator()(const Blur&, const RenderStyle&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Blur, 1)

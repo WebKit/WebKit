@@ -47,11 +47,7 @@ public:
         return adoptRef(*new WebExtensionLocalization(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionLocalization(WebKit::WebExtension&);
-    explicit WebExtensionLocalization(RefPtr<JSON::Object> localizedJSON, const String& uniqueIdentifier);
-    explicit WebExtensionLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, const String& withBestLocale, const String& uniqueIdentifier);
-
-    const String& uniqueIdentifier() { return m_uniqueIdentifier; };
+    const String& uniqueIdentifier() LIFETIME_BOUND { return m_uniqueIdentifier; };
     RefPtr<JSON::Object> localizationJSON() { return m_localizationJSON; };
 
     RefPtr<JSON::Object> localizedJSONforJSON(RefPtr<JSON::Object>);
@@ -59,6 +55,10 @@ public:
     String localizedStringForString(String);
 
 private:
+    explicit WebExtensionLocalization(WebKit::WebExtension&);
+    explicit WebExtensionLocalization(RefPtr<JSON::Object> localizedJSON, const String& uniqueIdentifier);
+    explicit WebExtensionLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, const String& withBestLocale, const String& uniqueIdentifier);
+
     void loadRegionalLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, const String& withBestLocale = { }, const String& uniqueIdentifier = { });
 
     RefPtr<JSON::Object> localizationJSONForWebExtension(WebKit::WebExtension&, const String& withLocale);

@@ -36,14 +36,6 @@
 namespace WebCore {
 
 struct MediaEncryptedEventInit : EventInit {
-    MediaEncryptedEventInit() = default;
-
-    MediaEncryptedEventInit(const String& initDataType, RefPtr<JSC::ArrayBuffer>&& initData)
-        : EventInit()
-        , initDataType(initDataType)
-        , initData(WTFMove(initData))
-    { }
-
     String initDataType;
     RefPtr<JSC::ArrayBuffer> initData;
 };

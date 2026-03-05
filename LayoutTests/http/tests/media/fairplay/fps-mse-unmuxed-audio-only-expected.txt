@@ -24,6 +24,9 @@ EVENT(updateend)
 Playing
 RUN(audio.play())
 Promise resolved OK
-EXPECTED (audio.currentTime > '0.1') OK
+EXPECTED (audio.currentTime > '0.2') OK
+-
+Verifying audio is producing audible sound
+EXPECTED (isPlayingAudio == 'true') OK
 END OF TEST
 

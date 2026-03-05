@@ -55,6 +55,16 @@ PASS list-style-type (type: discrete) has testInterpolation function
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with linear easing
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with effect easing
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with keyframe easing
+PASS math-depth (type: integer) has testInterpolation function
+PASS math-depth supports animating as an integer
+PASS math-shift (type: discrete) has testInterpolation function
+PASS math-shift uses discrete animation when animating between "normal" and "compact" with linear easing
+PASS math-shift uses discrete animation when animating between "normal" and "compact" with effect easing
+PASS math-shift uses discrete animation when animating between "normal" and "compact" with keyframe easing
+PASS math-style (type: discrete) has testInterpolation function
+PASS math-style uses discrete animation when animating between "normal" and "compact" with linear easing
+PASS math-style uses discrete animation when animating between "normal" and "compact" with effect easing
+PASS math-style uses discrete animation when animating between "normal" and "compact" with keyframe easing
 PASS marker-end (type: discrete) has testInterpolation function
 PASS marker-end uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing
 PASS marker-end uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing

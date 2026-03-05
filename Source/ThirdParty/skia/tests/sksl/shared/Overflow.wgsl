@@ -1,17 +1,18 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  colorGreen: vec4<f32>,
+  colorGreen: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
-fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
   {
-    const h: f32 = 1e+09;
-    let _skTemp0 = 1e+36;
-    let hugeH: f32 = ((((((((((_skTemp0 * h) * h) * h) * h) * h) * h) * h) * h) * h) * h) * h;
+    const h: f16 = 65503.9h;
+    let _skTemp0 = h;
+    let hugeH: f16 = (((((((((((((_skTemp0 * h) * h) * h) * h) * h) * h) * h) * h) * h) * h) * h) * h) * h) * h;
     const f: f32 = 1e+09;
     let _skTemp1 = 1e+36;
     let hugeF: f32 = ((((((((((_skTemp1 * f) * f) * f) * f) * f) * f) * f) * f) * f) * f) * f;
@@ -39,20 +40,7 @@ fn _skslMain(coords: vec2<f32>) -> vec4<f32> {
     let hugeMxV: vec4<f32> = _skTemp11 * vec4<f32>(1e+20);
     let _skTemp12 = vec4<f32>(1e+20);
     let hugeVxM: vec4<f32> = _skTemp12 * mat4x4<f32>(1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20, 1e+20);
-    let _skTemp13 = saturate(hugeH);
-    let _skTemp14 = saturate(f32(hugeF));
-    let _skTemp15 = saturate(f32(hugeI));
-    let _skTemp16 = saturate(f32(hugeU));
-    let _skTemp17 = saturate(f32(hugeS));
-    let _skTemp18 = saturate(f32(hugeUS));
-    let _skTemp19 = saturate(f32(hugeNI));
-    let _skTemp20 = saturate(f32(hugeNS));
-    let _skTemp21 = saturate(vec4<f32>(hugeIvec));
-    let _skTemp22 = saturate(vec4<f32>(hugeUvec));
-    let _skTemp23 = saturate(vec4<f32>(hugeMxM[0]));
-    let _skTemp24 = saturate(vec4<f32>(hugeMxV));
-    let _skTemp25 = saturate(vec4<f32>(hugeVxM));
-    return ((((((((((((_globalUniforms.colorGreen * _skTemp13) * _skTemp14) * _skTemp15) * _skTemp16) * _skTemp17) * _skTemp18) * _skTemp19) * _skTemp20) * _skTemp21) * _skTemp22) * _skTemp23) * _skTemp24) * _skTemp25;
+    return ((((((((((((_globalUniforms.colorGreen * saturate(hugeH)) * saturate(f16(hugeF))) * saturate(f16(hugeI))) * saturate(f16(hugeU))) * saturate(f16(hugeS))) * saturate(f16(hugeUS))) * saturate(f16(hugeNI))) * saturate(f16(hugeNS))) * saturate(vec4<f16>(hugeIvec))) * saturate(vec4<f16>(hugeUvec))) * saturate(vec4<f16>(hugeMxM[0]))) * saturate(vec4<f16>(hugeMxV))) * saturate(vec4<f16>(hugeVxM));
   }
 }
 @fragment fn main() -> FSOut {

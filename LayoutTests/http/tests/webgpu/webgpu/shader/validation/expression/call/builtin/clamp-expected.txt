@@ -1,3 +1,804 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS :values:stage="constant";type="abstract-int"
+PASS :values:stage="constant";type="abstract-float"
+PASS :values:stage="constant";type="f32"
+PASS :values:stage="constant";type="f16"
+PASS :values:stage="constant";type="vec2%3Cabstract-int%3E"
+PASS :values:stage="constant";type="vec3%3Cabstract-int%3E"
+PASS :values:stage="constant";type="vec4%3Cabstract-int%3E"
+PASS :values:stage="constant";type="vec2%3Cabstract-float%3E"
+PASS :values:stage="constant";type="vec2%3Cf32%3E"
+PASS :values:stage="constant";type="vec2%3Cf16%3E"
+PASS :values:stage="constant";type="vec3%3Cabstract-float%3E"
+PASS :values:stage="constant";type="vec3%3Cf32%3E"
+PASS :values:stage="constant";type="vec3%3Cf16%3E"
+PASS :values:stage="constant";type="vec4%3Cabstract-float%3E"
+PASS :values:stage="constant";type="vec4%3Cf32%3E"
+PASS :values:stage="constant";type="vec4%3Cf16%3E"
+PASS :values:stage="constant";type="i32"
+PASS :values:stage="constant";type="vec2%3Ci32%3E"
+PASS :values:stage="constant";type="vec3%3Ci32%3E"
+PASS :values:stage="constant";type="vec4%3Ci32%3E"
+PASS :values:stage="constant";type="u32"
+PASS :values:stage="constant";type="vec2%3Cu32%3E"
+PASS :values:stage="constant";type="vec3%3Cu32%3E"
+PASS :values:stage="constant";type="vec4%3Cu32%3E"
+PASS :values:stage="override";type="f32"
+PASS :values:stage="override";type="f16"
+PASS :values:stage="override";type="vec2%3Cf32%3E"
+PASS :values:stage="override";type="vec2%3Cf16%3E"
+PASS :values:stage="override";type="vec3%3Cf32%3E"
+PASS :values:stage="override";type="vec3%3Cf16%3E"
+PASS :values:stage="override";type="vec4%3Cf32%3E"
+PASS :values:stage="override";type="vec4%3Cf16%3E"
+PASS :values:stage="override";type="i32"
+PASS :values:stage="override";type="vec2%3Ci32%3E"
+PASS :values:stage="override";type="vec3%3Ci32%3E"
+PASS :values:stage="override";type="vec4%3Ci32%3E"
+PASS :values:stage="override";type="u32"
+PASS :values:stage="override";type="vec2%3Cu32%3E"
+PASS :values:stage="override";type="vec3%3Cu32%3E"
+PASS :values:stage="override";type="vec4%3Cu32%3E"
+PASS :mismatched:e="abstract-int"
+PASS :mismatched:e="abstract-float"
+PASS :mismatched:e="f32"
+PASS :mismatched:e="f16"
+PASS :mismatched:e="vec2%3Cabstract-int%3E"
+PASS :mismatched:e="vec3%3Cabstract-int%3E"
+PASS :mismatched:e="vec4%3Cabstract-int%3E"
+PASS :mismatched:e="vec2%3Cabstract-float%3E"
+PASS :mismatched:e="vec2%3Cf32%3E"
+PASS :mismatched:e="vec2%3Cf16%3E"
+PASS :mismatched:e="vec3%3Cabstract-float%3E"
+PASS :mismatched:e="vec3%3Cf32%3E"
+PASS :mismatched:e="vec3%3Cf16%3E"
+PASS :mismatched:e="vec4%3Cabstract-float%3E"
+PASS :mismatched:e="vec4%3Cf32%3E"
+PASS :mismatched:e="vec4%3Cf16%3E"
+PASS :mismatched:e="i32"
+PASS :mismatched:e="vec2%3Ci32%3E"
+PASS :mismatched:e="vec3%3Ci32%3E"
+PASS :mismatched:e="vec4%3Ci32%3E"
+PASS :mismatched:e="u32"
+PASS :mismatched:e="vec2%3Cu32%3E"
+PASS :mismatched:e="vec3%3Cu32%3E"
+PASS :mismatched:e="vec4%3Cu32%3E"
+PASS :low_high:type="f32";lowStage="constant";highStage="constant"
+FAIL :low_high:type="f32";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="f32";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="f32";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="f32";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="f32";lowStage="override";highStage="runtime"
+PASS :low_high:type="f32";lowStage="runtime";highStage="constant"
+PASS :low_high:type="f32";lowStage="runtime";highStage="override"
+PASS :low_high:type="f32";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="f16";lowStage="constant";highStage="constant"
+FAIL :low_high:type="f16";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="f16";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="f16";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="f16";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="f16";lowStage="override";highStage="runtime"
+PASS :low_high:type="f16";lowStage="runtime";highStage="constant"
+PASS :low_high:type="f16";lowStage="runtime";highStage="override"
+PASS :low_high:type="f16";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec2%3Cf32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec2%3Cf32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Cf32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec2%3Cf32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec2%3Cf32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Cf32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec2%3Cf32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec2%3Cf32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec2%3Cf32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec2%3Cf16%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec2%3Cf16%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Cf16%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec2%3Cf16%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec2%3Cf16%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Cf16%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec2%3Cf16%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec2%3Cf16%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec2%3Cf16%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec3%3Cf32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec3%3Cf32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Cf32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec3%3Cf32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec3%3Cf32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Cf32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec3%3Cf32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec3%3Cf32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec3%3Cf32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec3%3Cf16%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec3%3Cf16%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Cf16%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec3%3Cf16%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec3%3Cf16%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Cf16%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec3%3Cf16%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec3%3Cf16%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec3%3Cf16%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec4%3Cf32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec4%3Cf32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Cf32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec4%3Cf32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec4%3Cf32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Cf32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec4%3Cf32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec4%3Cf32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec4%3Cf32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec4%3Cf16%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec4%3Cf16%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Cf16%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec4%3Cf16%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec4%3Cf16%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Cf16%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec4%3Cf16%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec4%3Cf16%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec4%3Cf16%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="i32";lowStage="constant";highStage="constant"
+FAIL :low_high:type="i32";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="i32";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="i32";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="i32";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="i32";lowStage="override";highStage="runtime"
+PASS :low_high:type="i32";lowStage="runtime";highStage="constant"
+PASS :low_high:type="i32";lowStage="runtime";highStage="override"
+PASS :low_high:type="i32";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec2%3Ci32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec2%3Ci32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Ci32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec2%3Ci32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec2%3Ci32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Ci32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec2%3Ci32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec2%3Ci32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec2%3Ci32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec3%3Ci32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec3%3Ci32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Ci32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec3%3Ci32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec3%3Ci32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Ci32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec3%3Ci32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec3%3Ci32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec3%3Ci32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec4%3Ci32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec4%3Ci32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Ci32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec4%3Ci32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec4%3Ci32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Ci32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec4%3Ci32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec4%3Ci32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec4%3Ci32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="u32";lowStage="constant";highStage="constant"
+FAIL :low_high:type="u32";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="u32";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="u32";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="u32";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="u32";lowStage="override";highStage="runtime"
+PASS :low_high:type="u32";lowStage="runtime";highStage="constant"
+PASS :low_high:type="u32";lowStage="runtime";highStage="override"
+PASS :low_high:type="u32";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec2%3Cu32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec2%3Cu32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Cu32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec2%3Cu32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec2%3Cu32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec2%3Cu32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec2%3Cu32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec2%3Cu32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec2%3Cu32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec3%3Cu32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec3%3Cu32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Cu32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec3%3Cu32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec3%3Cu32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec3%3Cu32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec3%3Cu32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec3%3Cu32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec3%3Cu32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high:type="vec4%3Cu32%3E";lowStage="constant";highStage="constant"
+FAIL :low_high:type="vec4%3Cu32%3E";lowStage="constant";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Cu32%3E";lowStage="constant";highStage="runtime"
+FAIL :low_high:type="vec4%3Cu32%3E";lowStage="override";highStage="constant" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :low_high:type="vec4%3Cu32%3E";lowStage="override";highStage="override" assert_unreached:
+  - (in subcase: low=0;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=0;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=1;in_shader=true) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=false) INFO: subcase ran
+  - (in subcase: low=1;high=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.spec.js:171:27
+  - (in subcase: low=1;high=0;in_shader=true) INFO: subcase ran
+ Reached unreachable code
+PASS :low_high:type="vec4%3Cu32%3E";lowStage="override";highStage="runtime"
+PASS :low_high:type="vec4%3Cu32%3E";lowStage="runtime";highStage="constant"
+PASS :low_high:type="vec4%3Cu32%3E";lowStage="runtime";highStage="override"
+PASS :low_high:type="vec4%3Cu32%3E";lowStage="runtime";highStage="runtime"
+PASS :low_high_abstract:type="abstract-int"
+PASS :low_high_abstract:type="abstract-float"
+PASS :arguments:type="f32"
+PASS :arguments:type="bool"
+PASS :arguments:type="mat2x2%3Cf32%3E"
+PASS :arguments:type="alias"
+PASS :arguments:type="vec_bool"
+PASS :arguments:type="atomic"
+PASS :arguments:type="array"
+PASS :arguments:type="array_runtime"
+PASS :arguments:type="struct"
+PASS :arguments:type="enumerant"
+PASS :arguments:type="ptr"
+PASS :arguments:type="ptr_deref"
+PASS :arguments:type="sampler"
+PASS :arguments:type="texture"
+PASS :must_use:use=true
+PASS :must_use:use=false
 

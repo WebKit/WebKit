@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <initializer_list>
 #include <limits>
 #include <optional>
@@ -37,6 +38,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
+#include <wtf/RangeAdaptors.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/ValueCheck.h>
@@ -51,9 +53,8 @@ class LLIntOffsetsExtractor;
 }
 
 namespace WTF {
-
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Vector);
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VectorBuffer);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(Vector, WTF_EXPORT_PRIVATE);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(VectorBuffer, WTF_EXPORT_PRIVATE);
 
 enum class NulloptBehavior : bool { Ignore, Abort };
 
@@ -61,17 +62,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 template<typename T>
 struct VectorCopier {
-    template<typename U>
-    static void uninitializedCopy(const U* src, const U* srcEnd, T* dst)
+    template<typename U, std::size_t Extent>
+    static void uninitializedCopy(std::span<const U, Extent> src, std::span<T> dst)
     {
         if constexpr (std::is_trivial_v<T> && std::same_as<T, U>)
-            memcpy(static_cast<void*>(dst), static_cast<void*>(const_cast<T*>(src)), reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
+            memcpySpan(dst, src);
         else {
-            while (src != srcEnd) {
-                new (NotNull, dst) T(*src);
-                ++dst;
-                ++src;
-            }
+            for (size_t i = 0; i < src.size(); ++i)
+                new (NotNull, &dst[i]) T(src[i]);
         }
     }
 };
@@ -124,7 +122,7 @@ struct VectorTypeOperations
             memcpy(static_cast<void*>(dst), static_cast<void*>(const_cast<T*>(src)), reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
         else {
             while (src != srcEnd) {
-                new (NotNull, dst) T(WTFMove(*src));
+                new (NotNull, dst) T(WTF::move(*src));
                 src->~T();
                 ++dst;
                 ++src;
@@ -149,7 +147,7 @@ struct VectorTypeOperations
                 while (src != srcEnd) {
                     --srcEnd;
                     --dstEnd;
-                    new (NotNull, dstEnd) T(WTFMove(*srcEnd));
+                    new (NotNull, dstEnd) T(WTF::move(*srcEnd));
                     srcEnd->~T();
                 }
             }
@@ -161,22 +159,15 @@ struct VectorTypeOperations
         moveOverlapping(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
     }
 
-    static void uninitializedCopy(const T* src, const T* srcEnd, T* dst)
+    template<std::size_t Extent>
+    static void uninitializedCopy(std::span<const T, Extent> src, std::span<T> dst)
     {
         if constexpr (VectorTraits<T>::canCopyWithMemcpy)
-            memcpy(static_cast<void*>(dst), static_cast<void*>(const_cast<T*>(src)), reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
+            memcpySpan(asMutableByteSpan(dst), asByteSpan(src));
         else {
-            while (src != srcEnd) {
-                new (NotNull, dst) T(*src);
-                ++dst;
-                ++src;
-            }
+            for (size_t i = 0; i < src.size(); ++i)
+                new (NotNull, &dst[i]) T(src[i]);
         }
-    }
-
-    static void uninitializedCopy(std::span<const T> src, std::span<T> dst)
-    {
-        uninitializedCopy(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
     }
 
     static void uninitializedFill(T* dst, T* dstEnd, const T& val)
@@ -602,6 +593,20 @@ public:
     {
     }
 
+    template<typename Range>
+        requires std::ranges::input_range<Range> && std::convertible_to<std::ranges::range_value_t<Range>, T>
+    explicit Vector(FromRange, Range&& range)
+    {
+        if constexpr (std::ranges::sized_range<Range>)
+            reserveInitialCapacity(std::ranges::size(range));
+        for (auto&& item : range) {
+            if constexpr (std::is_rvalue_reference_v<Range&&>)
+                append(WTF::move(item));
+            else
+                append(item);
+        }
+    }
+
     // Unlike in std::vector, this constructor does not initialize POD types.
     explicit Vector(size_t size)
         : Base(size, size)
@@ -643,7 +648,7 @@ public:
 
         for (size_t i = 0; i < size; ++i) {
             if (auto item = valueGenerator(i))
-                unsafeAppendWithoutCapacityCheck(WTFMove(*item));
+                unsafeAppendWithoutCapacityCheck(WTF::move(*item));
             else if (nulloptBehavior == NulloptBehavior::Abort)
                 break;
         }
@@ -652,7 +657,7 @@ public:
 
     template<typename U, size_t Extent>
     Vector(std::array<U, Extent> array)
-        : Vector(std::span { array }) { }
+        : Vector(std::span<const U, Extent> { array }) { }
 
     template<typename U, size_t Extent> Vector(std::span<U, Extent> span)
         : Base(span.size(), span.size())
@@ -660,7 +665,7 @@ public:
         asanSetInitialBufferSizeTo(span.size());
 
         if (begin())
-            VectorCopier<T>::uninitializedCopy(span.data(), span.data() + span.size(), begin());
+            VectorCopier<T>::uninitializedCopy(spanConstCast<const U>(span), mutableSpan());
     }
 
     Vector(std::initializer_list<T> initializerList)
@@ -711,13 +716,13 @@ public:
     Vector(Vector&&);
     Vector& operator=(Vector&&);
 
-    size_t size() const { return m_size; }
-    size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
+    [[nodiscard]] size_t size() const { return m_size; }
+    [[nodiscard]] size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
     static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
-    size_t capacity() const { return Base::capacity(); }
-    bool isEmpty() const { return !size(); }
-    std::span<const T> span() const LIFETIME_BOUND { return { data(), size() }; }
-    std::span<T> mutableSpan() LIFETIME_BOUND { return { data(), size() }; }
+    [[nodiscard]] size_t capacity() const { return Base::capacity(); }
+    [[nodiscard]] bool isEmpty() const { return !size(); }
+    [[nodiscard]] std::span<const T> span() const LIFETIME_BOUND { return { data(), size() }; }
+    [[nodiscard]] std::span<T> mutableSpan() LIFETIME_BOUND { return { data(), size() }; }
 
     Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
     {
@@ -729,52 +734,60 @@ public:
         return span().subspan(offset, length);
     }
 
-    T& at(size_t i) LIFETIME_BOUND
+    [[nodiscard]] T& at(size_t i) LIFETIME_BOUND
     {
         if (i >= size()) [[unlikely]]
             OverflowHandler::overflowed();
         return Base::buffer()[i];
     }
-    const T& at(size_t i) const LIFETIME_BOUND
+    [[nodiscard]] const T& at(size_t i) const LIFETIME_BOUND
     {
         if (i >= size()) [[unlikely]]
             OverflowHandler::overflowed();
         return Base::buffer()[i];
     }
 
-    T& operator[](size_t i) LIFETIME_BOUND { return at(i); }
-    const T& operator[](size_t i) const LIFETIME_BOUND { return at(i); }
+    [[nodiscard]] T& operator[](size_t i) LIFETIME_BOUND { return at(i); }
+    [[nodiscard]] const T& operator[](size_t i) const LIFETIME_BOUND { return at(i); }
 
     static constexpr ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
 
-    iterator begin() LIFETIME_BOUND { return data(); }
-    iterator end() LIFETIME_BOUND { return begin() + m_size; }
-    const_iterator begin() const LIFETIME_BOUND { return data(); }
-    const_iterator end() const LIFETIME_BOUND { return begin() + m_size; }
+    [[nodiscard]] iterator begin() LIFETIME_BOUND { return data(); }
+    [[nodiscard]] iterator end() LIFETIME_BOUND { return begin() + m_size; }
+    [[nodiscard]] const_iterator begin() const LIFETIME_BOUND { return data(); }
+    [[nodiscard]] const_iterator end() const LIFETIME_BOUND { return begin() + m_size; }
 
-    reverse_iterator rbegin() LIFETIME_BOUND { return reverse_iterator(end()); }
-    reverse_iterator rend() LIFETIME_BOUND { return reverse_iterator(begin()); }
-    const_reverse_iterator rbegin() const LIFETIME_BOUND { return const_reverse_iterator(end()); }
-    const_reverse_iterator rend() const LIFETIME_BOUND { return const_reverse_iterator(begin()); }
+    [[nodiscard]] reverse_iterator rbegin() LIFETIME_BOUND { return reverse_iterator(end()); }
+    [[nodiscard]] reverse_iterator rend() LIFETIME_BOUND { return reverse_iterator(begin()); }
+    [[nodiscard]] const_reverse_iterator rbegin() const LIFETIME_BOUND { return const_reverse_iterator(end()); }
+    [[nodiscard]] const_reverse_iterator rend() const LIFETIME_BOUND { return const_reverse_iterator(begin()); }
 
-    T& first() LIFETIME_BOUND { return at(0); }
-    const T& first() const LIFETIME_BOUND { return at(0); }
-    T& last() LIFETIME_BOUND { return at(size() - 1); }
-    const T& last() const LIFETIME_BOUND { return at(size() - 1); }
+    [[nodiscard]] T& first() LIFETIME_BOUND { return at(0); }
+    [[nodiscard]] const T& first() const LIFETIME_BOUND { return at(0); }
+    [[nodiscard]] T& last() LIFETIME_BOUND { return at(size() - 1); }
+    [[nodiscard]] const T& last() const LIFETIME_BOUND { return at(size() - 1); }
     
     T takeLast()
     {
-        T result = WTFMove(last());
+        T result = WTF::move(last());
         removeLast();
         return result;
     }
-    
+
     bool contains(const auto&) const;
     bool containsIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
     size_t find(const auto&) const;
     size_t findIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
     size_t reverseFind(const auto&) const;
     size_t reverseFindIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
+
+    // Overloads for smart pointer element types that take raw pointer parameters.
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    bool contains(V*) const;
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    size_t find(V*) const;
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    size_t reverseFind(V*) const;
 
     bool appendIfNotContains(const auto&);
 
@@ -821,6 +834,8 @@ public:
     void removeAt(size_t position);
     void removeAt(size_t position, size_t length);
     bool removeFirst(const auto&);
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    bool removeFirst(V*);
     bool removeFirstMatching(NOESCAPE const Invocable<bool(T&)> auto&, size_t startIndex = 0);
     bool removeLast(const auto&);
     bool removeLastMatching(NOESCAPE const Invocable<bool(T&)> auto&);
@@ -915,8 +930,8 @@ private:
         new (NotNull, begin() + position) T(std::forward<U>(value));
     }
 
-    T* data() LIFETIME_BOUND { return Base::buffer(); }
-    const T* data() const LIFETIME_BOUND { return Base::buffer(); }
+    [[nodiscard]] T* data() LIFETIME_BOUND { return Base::buffer(); }
+    [[nodiscard]] const T* data() const LIFETIME_BOUND { return Base::buffer(); }
 
     void asanSetInitialBufferSizeTo(size_t);
     void asanSetBufferSizeToFullCapacity(size_t);
@@ -947,7 +962,7 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::Vector(const Ve
     asanSetInitialBufferSizeTo(other.size());
 
     if (begin())
-        TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
+        TypeOperations::uninitializedCopy(other.span(), mutableSpan());
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -958,7 +973,7 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::Vector(const Ve
     asanSetInitialBufferSizeTo(other.size());
 
     if (begin())
-        TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
+        TypeOperations::uninitializedCopy(other.span(), mutableSpan());
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -978,8 +993,8 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlin
     asanBufferSizeWillChangeTo(other.size());
 
     std::copy_n(other.begin(), size(), begin());
-    TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
-    m_size = other.size();
+    auto oldSize = std::exchange(m_size, other.size());
+    TypeOperations::uninitializedCopy(other.span().subspan(oldSize), mutableSpan().subspan(oldSize));
 
     return *this;
 }
@@ -1006,8 +1021,8 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlin
     asanBufferSizeWillChangeTo(other.size());
 
     std::copy_n(other.begin(), size(), begin());
-    TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
-    m_size = other.size();
+    auto oldSize = std::exchange(m_size, other.size());
+    TypeOperations::uninitializedCopy(other.span().subspan(oldSize), mutableSpan().subspan(oldSize));
 
     return *this;
 }
@@ -1099,6 +1114,40 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendIfNo
         return false;
     append(value);
     return true;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::contains(V* ptr) const
+{
+    return find(ptr) != notFound;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::find(V* ptr) const
+{
+    return findIf([&](auto& item) {
+        return GetPtrHelper<U>::getPtr(item) == ptr;
+    });
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFind(V* ptr) const
+{
+    return reverseFindIf([&](auto& item) {
+        return GetPtrHelper<U>::getPtr(item) == ptr;
+    });
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeFirst(V* ptr)
+{
+    return removeFirstMatching([&](auto& item) {
+        return GetPtrHelper<U>::getPtr(item) == ptr;
+    });
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1402,9 +1451,8 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
             return false;
     }
     asanBufferSizeWillChangeTo(newSize);
-    T* dest = end();
-    VectorCopier<T>::uninitializedCopy(dataPtr, std::addressof(dataPtr[dataSize]), dest);
-    m_size = newSize;
+    auto oldSize = std::exchange(m_size, newSize);
+    VectorCopier<T>::uninitializedCopy(unsafeMakeSpan(dataPtr, dataSize), mutableSpan().subspan(oldSize));
     return true;
 }
 
@@ -1419,9 +1467,8 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
 
     size_t newSize = m_size + dataSize;
     asanBufferSizeWillChangeTo(newSize);
-    T* dest = end();
-    VectorCopier<T>::uninitializedCopy(data, std::addressof(data[dataSize]), dest);
-    m_size = newSize;
+    auto oldSize = std::exchange(m_size, newSize);
+    VectorCopier<T>::uninitializedCopy(unsafeMakeSpan(data, dataSize), mutableSpan().subspan(oldSize));
     return true;
 }
 
@@ -1525,7 +1572,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::app
     if (newSize > capacity())
         expandCapacity<FailureAction::Crash>(newSize);
     for (auto& item : val)
-        unsafeAppendWithoutCapacityCheck(WTFMove(item));
+        unsafeAppendWithoutCapacityCheck(WTF::move(item));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1540,10 +1587,10 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::insertSpan
     if (newSize < m_size)
         CRASH();
     asanBufferSizeWillChangeTo(newSize);
-    T* spot = mutableSpan().subspan(position).data();
-    TypeOperations::moveOverlapping(spot, end(), spot + data.size());
-    VectorCopier<T>::uninitializedCopy(std::to_address(data.begin()), std::to_address(data.end()), spot);
-    m_size = newSize;
+    auto oldSize = std::exchange(m_size, newSize);
+    auto spot = mutableSpan().subspan(position);
+    TypeOperations::moveOverlapping(spot.data(), spot.data() + oldSize - position, spot.data() + data.size());
+    VectorCopier<T>::uninitializedCopy(spanConstCast<const U>(data), spot);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1846,7 +1893,7 @@ template<typename T>
 struct CompactMapTraits<std::optional<T>> {
     using ItemType = T;
     static bool hasValue(const std::optional<T>& returnValue) { return !!returnValue; }
-    static ItemType extractValue(std::optional<T>&& returnValue) { return WTFMove(*returnValue); }
+    static ItemType extractValue(std::optional<T>&& returnValue) { return WTF::move(*returnValue); }
 };
 
 template<typename T>
@@ -1867,7 +1914,7 @@ template<typename T>
 struct CompactMapTraits<RetainPtr<T>> {
     using ItemType = RetainPtr<T>;
     static bool hasValue(const RetainPtr<T>& returnValue) { return !!returnValue; }
-    static ItemType extractValue(RetainPtr<T>&& returnValue) { return WTFMove(returnValue); }
+    static ItemType extractValue(RetainPtr<T>&& returnValue) { return WTF::move(returnValue); }
 };
 
 template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable = void>
@@ -1880,7 +1927,7 @@ struct CompactMapper {
         for (auto&& item : source) {
             auto itemResult = mapFunction(item);
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
-                result.append(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
+                result.append(CompactMapTraits<ResultItemType>::extractValue(WTF::move(itemResult)));
         }
         result.shrinkToFit();
     }
@@ -1895,9 +1942,9 @@ struct CompactMapper<MapFunction, DestinationVectorType, SourceType> {
     static void compactMap(DestinationVectorType& result, SourceType&& source, NOESCAPE const MapFunction& mapFunction)
     {
         for (auto&& item : source) {
-            auto itemResult = mapFunction(WTFMove(item));
+            auto itemResult = mapFunction(WTF::move(item));
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
-                result.unsafeAppendWithoutCapacityCheck(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
+                result.unsafeAppendWithoutCapacityCheck(CompactMapTraits<ResultItemType>::extractValue(WTF::move(itemResult)));
         }
         result.shrinkToFit();
     }
@@ -1956,7 +2003,7 @@ struct FlatMapper<MapFunction, SourceType> {
     {
         Vector<DestinationItemType> result;
         for (auto&& item : source)
-            result.appendVector(mapFunction(WTFMove(item)));
+            result.appendVector(mapFunction(WTF::move(item)));
         result.shrinkToFit();
         return result;
     }

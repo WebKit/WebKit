@@ -20,6 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/balancing-flex-item-trailing-margin-freeze.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/balancing-tall-borders-freeze.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/block-in-inline-become-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/block-in-inline-with-spanner-in-overflowed-parent-nested-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/block-in-inline-with-spanner-in-overflowed-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/body-becomes-spanner-html-becomes-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/break-before-multicol-caption.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/chrome-bug-1293905.html
@@ -102,6 +104,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/relpos-spanner-with-spanner-child-becomes-regular.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/remove-spanner-after-spanner-in-inline-before-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/remove-spanner-in-table-caption-nested-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/remove-transform-descendant-becomes-spanner-remove-spanner-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-section-in-nested-table-nested-multicol.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-table-column.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-table-footer-in-caption-nested-multicol.html
@@ -114,6 +117,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/spanner-in-overflowed-clipped-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/spanner-in-overflowed-container-before-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/spanner-in-overflowed-container-before-inline-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/spanner-in-relpos-in-abspos-multicol-in-multicol.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/spanner-inside-inline-in-overflowed-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/specified-height-with-just-spanner-and-oof.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/sticky-in-abs-in-sticky.html
@@ -126,3 +130,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/trailing-parent-padding-between-spanners.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/vertical-rl-column-rules-wide-columns.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/video-container-become-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/zero-column-height.html

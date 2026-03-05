@@ -33,7 +33,7 @@ public:
     static JSTestDefaultToJSONIndirectInheritance* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONIndirectInheritance>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestDefaultToJSONIndirectInheritance* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONIndirectInheritance>(vm)) JSTestDefaultToJSONIndirectInheritance(structure, *globalObject, WTFMove(impl));
+        JSTestDefaultToJSONIndirectInheritance* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONIndirectInheritance>(vm)) JSTestDefaultToJSONIndirectInheritance(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -62,8 +62,6 @@ public:
         return static_cast<TestDefaultToJSONIndirectInheritance&>(Base::wrapped());
     }
 
-    Ref<TestDefaultToJSONIndirectInheritance> protectedWrapped() const;
-
 protected:
     JSTestDefaultToJSONIndirectInheritance(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONIndirectInheritance>&&);
 
@@ -71,10 +69,8 @@ protected:
 };
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestDefaultToJSONIndirectInheritance&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONIndirectInheritance* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestDefaultToJSONIndirectInheritance>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONIndirectInheritance& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestDefaultToJSONIndirectInheritance>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestDefaultToJSONIndirectInheritance> {
     using WrapperClass = JSTestDefaultToJSONIndirectInheritance;

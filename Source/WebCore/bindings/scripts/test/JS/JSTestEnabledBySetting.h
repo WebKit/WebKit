@@ -32,7 +32,7 @@ public:
     static JSTestEnabledBySetting* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEnabledBySetting>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestEnabledBySetting* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledBySetting>(vm)) JSTestEnabledBySetting(structure, *globalObject, WTFMove(impl));
+        JSTestEnabledBySetting* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledBySetting>(vm)) JSTestEnabledBySetting(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -84,10 +84,8 @@ inline void* wrapperKey(TestEnabledBySetting* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestEnabledBySetting&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestEnabledBySetting* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestEnabledBySetting>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestEnabledBySetting& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestEnabledBySetting>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestEnabledBySetting> {
     using WrapperClass = JSTestEnabledBySetting;

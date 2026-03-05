@@ -86,7 +86,7 @@ public:
     {
     }
 
-    BidiRange(Vector<T>& data, bool isLTR)
+    BidiRange(Vector<T>& data LIFETIME_BOUND, bool isLTR)
         : m_data(data.data())
         , m_length(data.size())
         , m_isLTR(isLTR)
@@ -119,8 +119,8 @@ public:
         unsigned m_logicalIndex;
     };
 
-    Iterator begin() const { return { *this, 0 }; }
-    Iterator end() const { return { *this, m_length }; }
+    Iterator begin() const LIFETIME_BOUND { return { *this, 0 }; }
+    Iterator end() const LIFETIME_BOUND { return { *this, m_length }; }
 
     Iterator fromIndex(unsigned index) const { return { *this, m_isLTR ? index : m_length - index - 1 }; }
 

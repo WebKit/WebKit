@@ -1910,7 +1910,7 @@ func (hs *serverHandshakeState) doFullHandshake() error {
 	c := hs.c
 
 	isPSK := hs.suite.flags&suitePSK != 0
-	if !isPSK && hs.clientHello.ocspStapling && len(hs.cert.OCSPStaple) > 0 && !c.config.Bugs.NoOCSPStapling {
+	if !isPSK && hs.clientHello.ocspStapling && hs.cert.OCSPStaple != nil && !c.config.Bugs.NoOCSPStapling {
 		hs.hello.extensions.ocspStapling = true
 	}
 

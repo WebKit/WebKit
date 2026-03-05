@@ -12,7 +12,13 @@
 
 #include <libdrm/drm_fourcc.h>
 #include <pipewire/pipewire.h>
-#include <spa/param/video/format-utils.h>
+#include <spa/param/format.h>
+#include <spa/param/param.h>
+#include <spa/pod/builder.h>
+#include <spa/pod/iter.h>
+#include <spa/pod/pod.h>
+#include <spa/pod/vararg.h>
+#include <spa/utils/type.h>
 
 #include <cstdint>
 #include <optional>
@@ -48,7 +54,8 @@ PipeWireVersion PipeWireVersion::Parse(const absl::string_view& version) {
     return {};
   }
 
-  return {major.value(), minor.value(), micro.value()};
+  return {
+      .major = major.value(), .minor = minor.value(), .micro = micro.value()};
 }
 
 bool PipeWireVersion::operator>=(const PipeWireVersion& other) {
@@ -75,8 +82,9 @@ spa_pod* BuildFormat(spa_pod_builder* builder,
                      const struct spa_rectangle* resolution,
                      const struct spa_fraction* frame_rate) {
   spa_pod_frame frames[2];
-  spa_rectangle pw_min_screen_bounds = spa_rectangle{1, 1};
-  spa_rectangle pw_max_screen_bounds = spa_rectangle{UINT32_MAX, UINT32_MAX};
+  spa_rectangle pw_min_screen_bounds = spa_rectangle{.width = 1, .height = 1};
+  spa_rectangle pw_max_screen_bounds =
+      spa_rectangle{.width = UINT32_MAX, .height = UINT32_MAX};
   spa_pod_builder_push_object(builder, &frames[0], SPA_TYPE_OBJECT_Format,
                               SPA_PARAM_EnumFormat);
   spa_pod_builder_add(builder, SPA_FORMAT_mediaType,
@@ -85,7 +93,7 @@ spa_pod* BuildFormat(spa_pod_builder* builder,
                       SPA_POD_Id(SPA_MEDIA_SUBTYPE_raw), 0);
   spa_pod_builder_add(builder, SPA_FORMAT_VIDEO_format, SPA_POD_Id(format), 0);
 
-  if (modifiers.size()) {
+  if (!modifiers.empty()) {
     if (modifiers.size() == 1 && modifiers[0] == DRM_FORMAT_MOD_INVALID) {
       spa_pod_builder_prop(builder, SPA_FORMAT_VIDEO_modifier,
                            SPA_POD_PROP_FLAG_MANDATORY);
@@ -122,7 +130,8 @@ spa_pod* BuildFormat(spa_pod_builder* builder,
                         0);
   }
   if (frame_rate) {
-    static const spa_fraction pw_min_frame_rate = spa_fraction{0, 1};
+    static const spa_fraction pw_min_frame_rate =
+        spa_fraction{.num = 0, .denom = 1};
     spa_pod_builder_add(builder, SPA_FORMAT_VIDEO_framerate,
                         SPA_POD_CHOICE_RANGE_Fraction(
                             frame_rate, &pw_min_frame_rate, frame_rate),

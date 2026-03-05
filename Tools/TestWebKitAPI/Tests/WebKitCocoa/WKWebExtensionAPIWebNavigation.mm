@@ -460,7 +460,7 @@ TEST(WKWebExtensionAPIWebNavigation, ErrorOccurredEventDuringLoad)
                     "Connection: close\r\n"
                     "\r\n"_s, body
                 );
-                co_await connection.awaitableSend(WTFMove(reply));
+                co_await connection.awaitableSend(WTF::move(reply));
                 continue;
             }
             if (path == "/frame.html"_s) {
@@ -470,7 +470,7 @@ TEST(WKWebExtensionAPIWebNavigation, ErrorOccurredEventDuringLoad)
                     "\r\n"_s, longString<500000>(' ')
                 );
 
-                co_await connection.awaitableSend(WTFMove(response));
+                co_await connection.awaitableSend(WTF::move(response));
                 connection.terminate();
                 continue;
             }

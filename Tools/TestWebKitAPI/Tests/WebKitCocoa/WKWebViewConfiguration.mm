@@ -155,7 +155,7 @@ TEST(WebKit, ConfigurationHTTPSUpgrade)
     Vector<char> requestBytes;
     HTTPServer server([&] (Connection connection) {
         connection.receiveHTTPRequest([&, connection](Vector<char>&& bytes) mutable {
-            requestBytes = WTFMove(bytes);
+            requestBytes = WTF::move(bytes);
             done = true;
         });
     });

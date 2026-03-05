@@ -34,7 +34,7 @@ namespace {
 RtpExtension GetCorruptionExtension() {
   return RtpExtension(RtpExtension::kCorruptionDetectionUri,
                       /*extension_id=*/1,
-                      /*encrypted=*/true);
+                      /*encrypt=*/true);
 }
 }  // namespace
 

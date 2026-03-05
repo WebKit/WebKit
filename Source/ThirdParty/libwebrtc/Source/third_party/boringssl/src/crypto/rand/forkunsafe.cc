@@ -22,7 +22,7 @@
 
 // g_buffering_enabled is one if fork-unsafe buffering has been enabled and zero
 // otherwise.
-static CRYPTO_atomic_u32 g_buffering_enabled;
+static bssl::Atomic<uint32_t> g_buffering_enabled;
 
 #if !defined(OPENSSL_WINDOWS)
 void RAND_enable_fork_unsafe_buffering(int fd) {
@@ -31,14 +31,12 @@ void RAND_enable_fork_unsafe_buffering(int fd) {
     abort();
   }
 
-  CRYPTO_atomic_store_u32(&g_buffering_enabled, 1);
+  g_buffering_enabled.store(1);
 }
 
-void RAND_disable_fork_unsafe_buffering(void) {
-  CRYPTO_atomic_store_u32(&g_buffering_enabled, 0);
-}
+void RAND_disable_fork_unsafe_buffering(void) { g_buffering_enabled.store(0); }
 #endif
 
 int rand_fork_unsafe_buffering_enabled(void) {
-  return CRYPTO_atomic_load_u32(&g_buffering_enabled) != 0;
+  return g_buffering_enabled.load() != 0;
 }

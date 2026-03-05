@@ -40,12 +40,30 @@ RemoteFrameView::RemoteFrameView(RemoteFrame& frame)
 {
 }
 
+void RemoteFrameView::setFrameRectWithoutSync(const IntRect& newRect)
+{
+    FrameView::setFrameRect(newRect);
+}
+
 void RemoteFrameView::setFrameRect(const IntRect& newRect)
 {
     IntRect oldRect = frameRect();
-    if (newRect.size() != oldRect.size())
-        m_frame->client().sizeDidChange(newRect.size());
-    FrameView::setFrameRect(newRect);
+    setFrameRectWithoutSync(newRect);
+    if (newRect != oldRect)
+        m_frame->client().frameRectDidChange(newRect);
+}
+
+LayoutRect RemoteFrameView::layoutViewportRect() const
+{
+    return m_frame->frameTreeSyncData().frameLayoutViewportRect;
+}
+
+std::optional<LayoutRect> RemoteFrameView::visibleRectOfChild(const Frame& child) const
+{
+    auto maybeInfo = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.getOptional(child.frameID());
+    return maybeInfo.and_then([] (auto& info) {
+        return info.visibleRectInParent;
+    });
 }
 
 // FIXME: Implement all the stubs below.

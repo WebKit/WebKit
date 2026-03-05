@@ -54,7 +54,7 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
 
     bool checked = false;
     unsigned indentationLevel = 0;
-    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, WebCore::ContextMenuItemTagNoAction, String { title }, enabled, checked, indentationLevel, WTFMove(submenu)))).leakRef();
+    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, WebCore::ContextMenuItemTagNoAction, String { title }, enabled, checked, indentationLevel, WTF::move(submenu)))).leakRef();
 }
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()
@@ -71,7 +71,7 @@ Ref<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
     auto submenuItems = m_webContextMenuItemData.submenu().map([](auto& item) -> RefPtr<API::Object> {
         return WebContextMenuItem::create(item);
     });
-    return API::Array::create(WTFMove(submenuItems));
+    return API::Array::create(WTF::move(submenuItems));
 }
 
 API::Object* WebContextMenuItem::userData() const

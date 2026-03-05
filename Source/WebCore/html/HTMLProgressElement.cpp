@@ -29,14 +29,15 @@
 #include "ProgressShadowElement.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderProgress.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLProgressElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLProgressElement);
 
 using namespace HTMLNames;
 
@@ -61,21 +62,16 @@ Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagNam
 RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (!style.hasUsedAppearance())
-        return RenderElement::createFor(*this, WTFMove(style));
+        return RenderElement::createFor(*this, WTF::move(style));
 
-    return createRenderer<RenderProgress>(*this, WTFMove(style));
+    return createRenderer<RenderProgress>(*this, WTF::move(style));
 }
 
 RenderProgress* HTMLProgressElement::renderProgress() const
 {
     if (auto* renderProgress = dynamicDowncast<RenderProgress>(renderer()))
         return renderProgress;
-    return downcast<RenderProgress>(descendantsOfType<Element>(*protectedUserAgentShadowRoot()).first()->renderer());
-}
-
-RefPtr<ProgressValueElement> HTMLProgressElement::protectedValueElement()
-{
-    return m_valueElement.get();
+    return downcast<RenderProgress>(descendantsOfType<Element>(*protect(userAgentShadowRoot())).first()->renderer());
 }
 
 void HTMLProgressElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -131,11 +127,11 @@ void HTMLProgressElement::updateDeterminateState()
 
 void HTMLProgressElement::didElementStateChange()
 {
-    protectedValueElement()->setInlineSizePercentage(position() * 100);
+    protect(m_valueElement)->setInlineSizePercentage(position() * 100);
     if (CheckedPtr renderer = renderProgress())
         renderer->updateFromElement();
 
-    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->valueChanged(*this);
 }
 
@@ -145,13 +141,16 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
     Ref document = this->document();
     Ref inner = ProgressInnerElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(inner);
 
     Ref bar = ProgressBarElement::create(document);
     Ref valueElement = ProgressValueElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope valueElementScope { valueElement };
     valueElement->setInlineSizePercentage(HTMLProgressElement::IndeterminatePosition * 100);
+    ScriptDisallowedScope::EventAllowedScope barScope { bar };
     bar->appendChild(valueElement);
-    m_valueElement = WTFMove(valueElement);
+    m_valueElement = WTF::move(valueElement);
 
     inner->appendChild(bar);
 }

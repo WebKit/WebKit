@@ -17,7 +17,7 @@ info: |
   4. If argument fromIndex was passed, let n be ? ToInteger(fromIndex); else let
   n be len-1.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -27,10 +27,10 @@ var obj = {
   }
 };
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample;
 
-  sample = new TA([42n, 43n]);
+  sample = new TA(makeCtorArg([42n, 43n]));
   assert.sameValue(sample.lastIndexOf(42n, "1"), 0, "string [0]");
   assert.sameValue(sample.lastIndexOf(43n, "1"), 1, "string [1]");
 

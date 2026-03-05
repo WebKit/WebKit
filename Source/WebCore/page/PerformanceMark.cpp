@@ -46,7 +46,7 @@ static double performanceNow(ScriptExecutionContext& scriptExecutionContext)
     // the ScriptExecutionContext to avoid this.
 
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
-        if (auto window = document->window())
+        if (RefPtr window = document->window())
             return window->performance().now();
     } else if (RefPtr workerGlobal = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
         return workerGlobal->performance().now();
@@ -88,7 +88,7 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& g
 
 PerformanceMark::PerformanceMark(const String& name, double startTime, Ref<SerializedScriptValue>&& serializedDetail)
     : PerformanceEntry(name, startTime, startTime)
-    , m_serializedDetail(WTFMove(serializedDetail))
+    , m_serializedDetail(WTF::move(serializedDetail))
 {
 }
 

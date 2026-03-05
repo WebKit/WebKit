@@ -97,8 +97,11 @@ DECLARE_SYSTEM_HEADER
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UIApplicationBSActionHandler.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
+#import <UIKit/_UIClickInteractionDriving.h>
+#import <UIKit/_UILayerHostView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
+#import <UIKit/_UINonHostingVisibilityPropagationView_RequiresApproval.h>
 #import <UIKit/_UISheetPresentationController.h>
 #import <UIKitServices/UISApplicationState.h>
 
@@ -640,6 +643,8 @@ extern NSString * const UIPresentationControllerDismissalTransitionDidEndComplet
 @end
 @interface UIView ()
 - (void)_requestRemoteEffects:(NSArray *)effects forKey:(NSString *)key;
+- (void)_removeRemoteEffectsForKey:(NSString *)key;
+- (NSArray *)_remoteEffectsForKey:(NSString *)key;
 @end
 #endif // PLATFORM(VISION)
 
@@ -1076,7 +1081,39 @@ extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserIn
 @property (nonatomic, copy) id badgeValue;
 @end
 
+@protocol _UIClickInteractionDriverDelegate;
+@protocol _UIClickInteractionDriving <NSObject>
+@property (nonatomic, weak) id <_UIClickInteractionDriverDelegate> delegate;
+@end
+
+@class CALayerHost;
+
+@interface _UILayerHostView : UIView
+- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID;
+@property (nonatomic, readonly, retain) CALayerHost *layerHost;
+@end
+
+@interface _UIVisibilityPropagationView : UIView
+@end
+
+#if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
+@interface _UINonHostingVisibilityPropagationView : _UIVisibilityPropagationView
+- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid environmentIdentifier:(NSString *)environmentIdentifier;
+@end
+#endif
+
 #endif // USE(APPLE_INTERNAL_SDK)
+
+@class _UIHostedWindowHostingHandle;
+@interface _UIRemoteView : _UILayerHostView
+- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID;
++ (instancetype)viewWithHostedWindowHostingHandle:(_UIHostedWindowHostingHandle *)hostedWindowHostingHandle;
+@property (readwrite, nonatomic, retain) _UIHostedWindowHostingHandle *hostedWindowHostingHandle;
+@end
+
+@interface UITextChecker (Staging_165842824)
+- (void)requestProofreadingReviewOfString:(NSString *)stringToCheck range:(NSRange)range language:(NSString *)language options:(NSDictionary<NSString *, id> *)options completionHandler:(void (^)(NSArray<NSTextCheckingResult *> *results))completionHandler;
+@end
 
 #if HAVE(UITOOLTIPINTERACTION)
 @interface NSObject (NSViewDynamicToolTipManager)
@@ -1084,9 +1121,108 @@ extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserIn
 - (void)windowChangedKeyState;
 @end
 
+typedef CGRect NSRect;
+
+@protocol UINSWindow;
+@protocol UINSUserInterfaceTheme;
+@protocol UINSPDFDocument;
+@protocol UINSDropSession;
+@class UIPrintInfo;
+@class UINSEvent;
+@class UIScene;
+@class UIView;
+@class UIApplicationSceneTransitionContext;
+@class FBSWorkspaceSceneRequestOptions;
+
+@protocol WTTextViewDelegate_Proposed_v1;
+
+#if !__has_feature(modules)
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
 @protocol UINSApplicationDelegate <NSObject>
-- (id<UINSWindow>)hostWindowForUIWindow:(id)window;
+
+- (void)didReceiveLaunchActions;
+
+- (void)didOpenURLs:(NSArray<NSURL *> *)urls;
+- (void)noteNewRecentDocumentURL:(NSURL *)url;
+@property (readonly) NSUInteger maximumRecentItemsMenuCount;
+
+@property (nonatomic) BOOL applicationShouldAutomaticallyLocalizeKeyEquivalents;
+
+- (nullable id<UINSWindow>)hostWindowForUIWindow:(id)window;
+- (nullable id<UINSWindow>)_hostWindowForUIWindow:(id)window;
+
+- (nullable id<UINSWindow>)hostWindowForSceneIdentifier:(NSString *)sceneIdentifier;
+- (nullable id<UINSUserInterfaceTheme>)aquaTheme;
+
+- (void)willRequestSceneWithOptions:(FBSWorkspaceSceneRequestOptions*)requestOptions;
+- (void)didRequestSceneWithOptions:(FBSWorkspaceSceneRequestOptions*)requestOptions sceneIdentifier:(NSString * _Nullable)sceneIdentifier orError:(NSError * _Nullable)error;
+
+- (void)didCreateUIScene:(UIScene *)scene transitionContext:(UIApplicationSceneTransitionContext *)transitionContext;
+- (void)willDestroyUIScene:(UIScene *)scene;
+- (BOOL)shouldCloseWindowWithScene:(UIScene *)scene;
+- (void)closeWindowControllerForScene:(UIScene *)scene;
+
+@property (nonatomic, readwrite, copy, nullable) BOOL (^appSupportsMultiwindowCallback)(void);
+@property (nonatomic, readwrite, copy, nullable) BOOL (^appSupportsTabbedWindowsCallback)(void);
+
+@property (nonatomic, readwrite, copy, nullable) BOOL (^handleEventByInputMethod)(UINSEvent *);
+@property (nonatomic, readwrite, copy, nullable) BOOL (^performDefaultBehaviorForEvent)(UINSEvent *);
+
+- (void)didCompleteAllBackgroundTasksAfterBackgrounding;
+
+@property (nonatomic, nullable, readwrite, copy) BOOL (^appIsInBackgroundStateCallback)(void);
+
+@property (nonatomic, nullable, readwrite, copy) NSUInteger (^backgroundTaskCountCallback)(void);
+
+@property (nonatomic, readwrite, copy, nullable) void (^ensureBackgroundTaskCountReachedZeroHandlerCallback)(void);
+
+@property (nonatomic, readwrite, copy, nullable) void (^beginTerminationBackgroundTaskCallback)(void);
+@property (nonatomic, readwrite, copy, nullable) void (^endTerminationBackgroundTaskCallback)(void);
+
+@property (nonatomic, readwrite, copy, nullable) void (^backgroundTasksWillExpireCallback)(void);
+
+@property (nonatomic, readwrite, copy, nullable) void (^appWillTerminateCallback)(void);
+
+- (void)uiKitWantsToExitProcessWithStatus:(int)status;
+
+- (void)uiKitWantsToTerminateProcessExplicitly;
+
+typedef void (^UINSPrintingDocumentGenerator)(NSDictionary *printInfoDict, void (^completionBlock)(id<UINSPDFDocument> _Nullable pdfDocumentOrNil));
+
+@property (nonatomic, readwrite, assign) BOOL nextPrintJobShouldExport;
+
+- (void)showPrintOrExportPanelWithPrintInfo:(UIPrintInfo*)printInfo andPDFDocumentGenerator:(UINSPrintingDocumentGenerator)pdfDocumentGenerator;
+
+- (void)dismissPrintOrExportPanel;
+
+- (void)discardMarkedText;
+
+@property (nonatomic, readwrite, copy, nullable) void (^printOrExportPanelWasDismissedCallback)(BOOL didSucceed);
+
+@property (nonatomic, readwrite, copy, nullable) BOOL (^acceptsActivatingTouchCallback)(UInt32 contextID, CGPoint locationInScene);
+
+- (void)iterateWindowsForDropSessionWithID:(uint32_t)sessionID reply:(void (^)(id<UINSDropSession> _Nullable))replyHandler;
+
+@property (nonatomic, readonly) BOOL hasNonUserSettableSettings;
+@property (nonatomic, readonly) BOOL hasUserSettableSettings;
+@property (nonatomic, readonly) BOOL almondTouchAlternativesConfigureUIFeatureEnabled;
+@property (nonatomic, readonly) BOOL hasSystemInfoCreditsFile;
+
+@property (nonatomic, readwrite, copy, nullable) void (^requestProofreadingSessionWithDelegate)(id <WTTextViewDelegate_Proposed_v1> delegate, NSUUID *sessionUUID, NSUUID *suggestionUUID, NSRect rect, UIView *uiView);
+
+- (void)abortAllToolTips;
+
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
+
+#else
+
+@protocol UINSApplicationDelegate;
+
+#endif
 
 WTF_EXTERN_C_BEGIN
 extern id<UINSApplicationDelegate> UINSSharedApplicationDelegate(void);
@@ -1114,11 +1250,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UIContextMenuConfiguration (IPI)
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
 @property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
-@end
-
-@protocol _UIClickInteractionDriverDelegate;
-@protocol _UIClickInteractionDriving <NSObject>
-@property (nonatomic, weak) id <_UIClickInteractionDriverDelegate> delegate;
 @end
 
 @interface _UIClickPresentationInteraction (IPI)
@@ -1168,26 +1299,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UIKeyboardImpl (IPI)
 - (void)setInitialDirection;
 @end
-
-@class CALayerHost;
-
-@interface _UILayerHostView : UIView
-- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID;
-@property (nonatomic, readonly, retain) CALayerHost *layerHost;
-@end
-
-@interface _UIRemoteView : _UILayerHostView
-- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID;
-@end
-
-@interface _UIVisibilityPropagationView : UIView
-@end
-
-#if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
-@interface _UINonHostingVisibilityPropagationView : _UIVisibilityPropagationView
-- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid environmentIdentifier:(NSString *)environmentIdentifier;
-@end
-#endif
 
 #if __has_include(<UIKit/UITextInputMultiDocument.h>)
 #import <UIKit/UITextInputMultiDocument.h>
@@ -1291,6 +1402,15 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 #endif // HAVE(LIQUID_GLASS)
 
+#if PLATFORM(VISION)
+
+@interface UIScrollView ()
+@property (nonatomic, setter=_setUseVisionAlternateScrollIndicatorRendering:) BOOL _useVisionAlternateScrollIndicatorRendering;
+@property (readonly) NSString *_lookToScrollGroupName;
+@end
+
+#endif // PLATFORM(VISION)
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
@@ -1341,3 +1461,4 @@ extern CGRect UIRectInsetEdges(CGRect, UIRectEdge edges, CGFloat v);
 extern CGRect UIRectInset(CGRect, CGFloat top, CGFloat right, CGFloat bottom, CGFloat left);
 
 WTF_EXTERN_C_END
+

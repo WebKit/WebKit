@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 233x19
+        RenderText {#text} at (0,0) size 233x20
           text run at (0,0) width 233: "cell split with color (standard mode)"
       RenderTable {TABLE} at (0,20) size 32x30 [border: (1px outset #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
@@ -13,12 +13,12 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 30x28
           RenderTableRow {TR} at (0,2) size 30x24
             RenderTableCell {TD} at (2,2) size 26x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 22x19
+              RenderText {#text} at (2,2) size 22x20
                 text run at (2,2) width 22: "foo"
       RenderBlock (anonymous) at (0,50) size 784x20
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x20
       RenderBlock (anonymous) at (0,88) size 784x20
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x20
       RenderTable {TABLE} at (0,108) size 600x116
         RenderTableSection {TBODY} at (0,0) size 600x116
           RenderTableRow {TR} at (0,2) size 600x44
@@ -29,12 +29,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,50) size 243x38 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,3) size 232x36 [border: (1px solid #000000)]
             RenderTableCell {TD} at (246,48) size 143x42 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (32,1) size 78x39
+              RenderText {#text} at (32,1) size 78x40
                 text run at (32,1) width 78: "Hassle-Free"
                 text run at (40,21) width 62: "Upgrades"
           RenderTableRow {TR} at (0,92) size 600x22
             RenderTableCell {TD} at (2,92) size 597x22 [bgcolor=#99CCCC] [r=2 c=0 rs=1 cs=4]
-              RenderText {#text} at (1,1) size 8x19
+              RenderText {#text} at (1,1) size 8x20
                 text run at (1,1) width 8: "x"
 layer at (8,86) size 602x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,78) size 602x2 [color=#808080] [border: (1px inset #808080)]

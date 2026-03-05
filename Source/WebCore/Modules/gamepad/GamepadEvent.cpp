@@ -31,17 +31,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GamepadEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GamepadEvent);
 
-GamepadEvent::GamepadEvent(const AtomString& eventType, Gamepad& gamepad)
+GamepadEvent::GamepadEvent(const AtomString& eventType, Ref<Gamepad>&& gamepad)
     : Event(EventInterfaceType::GamepadEvent, eventType, CanBubble::No, IsCancelable::No)
-    , m_gamepad(&gamepad)
+    , m_gamepad(WTF::move(gamepad))
 {
 }
 
-GamepadEvent::GamepadEvent(const AtomString& eventType, const Init& initializer, IsTrusted isTrusted)
+GamepadEvent::GamepadEvent(const AtomString& eventType, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::GamepadEvent, eventType, initializer, isTrusted)
-    , m_gamepad(initializer.gamepad)
+    , m_gamepad(WTF::move(initializer.gamepad))
 {
 }
 

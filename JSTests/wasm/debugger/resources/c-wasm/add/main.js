@@ -1,3 +1,5 @@
+// WASM Generation:
+//     emcc -g -O0 -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main","_add"]' add.c -o add.wasm
 var wasm_code = read('add.wasm', 'binary');
 var wasm_module = new WebAssembly.Module(wasm_code);
 var imports = {

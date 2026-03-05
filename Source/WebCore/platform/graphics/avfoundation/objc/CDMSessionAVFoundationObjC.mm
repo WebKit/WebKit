@@ -142,13 +142,14 @@ RefPtr<ArrayBuffer> CDMSessionAVFoundationObjC::cachedKeyForKeyID(const String&)
 
 void CDMSessionAVFoundationObjC::playerDidReceiveError(NSError *error)
 {
-    if (!m_client)
+    RefPtr client = m_client.get();
+    if (!client)
         return;
 
     ERROR_LOG(LOGIDENTIFIER, error);
 
     unsigned long code = mediaKeyErrorSystemCode(error);
-    m_client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);
+    client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);
 }
 
 #if !RELEASE_LOG_DISABLED

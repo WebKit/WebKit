@@ -37,11 +37,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MockAuthenticatorManager);
 
 Ref<MockAuthenticatorManager> MockAuthenticatorManager::create(WebCore::MockWebAuthenticationConfiguration&& configuration)
 {
-    return adoptRef(*new MockAuthenticatorManager(WTFMove(configuration)));
+    return adoptRef(*new MockAuthenticatorManager(WTF::move(configuration)));
 }
 
 MockAuthenticatorManager::MockAuthenticatorManager(WebCore::MockWebAuthenticationConfiguration&& configuration)
-    : m_testConfiguration(WTFMove(configuration))
+    : m_testConfiguration(WTF::move(configuration))
 {
 }
 
@@ -54,7 +54,7 @@ void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond, bool s
 {
     validateHidExpectedCommands();
     if (shouldComplete) {
-        invokePendingCompletionHandler(WTFMove(respond));
+        invokePendingCompletionHandler(WTF::move(respond));
         clearStateAsync();
         requestTimeOutTimer().stop();
         return;
@@ -63,7 +63,7 @@ void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond, bool s
     if (m_testConfiguration.silentFailure)
         return;
 
-    invokePendingCompletionHandler(WTFMove(respond));
+    invokePendingCompletionHandler(WTF::move(respond));
     clearStateAsync();
     requestTimeOutTimer().stop();
 }

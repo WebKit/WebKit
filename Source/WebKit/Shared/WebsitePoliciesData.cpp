@@ -41,10 +41,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebsitePoliciesData);
 
 void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies, WebCore::DocumentLoader& documentLoader)
 {
-    documentLoader.setCustomHeaderFields(WTFMove(websitePolicies.customHeaderFields));
-    documentLoader.setCustomUserAgent(WTFMove(websitePolicies.customUserAgent));
-    documentLoader.setCustomUserAgentAsSiteSpecificQuirks(WTFMove(websitePolicies.customUserAgentAsSiteSpecificQuirks));
-    documentLoader.setCustomNavigatorPlatform(WTFMove(websitePolicies.customNavigatorPlatform));
+    documentLoader.setCustomHeaderFields(WTF::move(websitePolicies.customHeaderFields));
+    documentLoader.setCustomUserAgent(WTF::move(websitePolicies.customUserAgent));
+    documentLoader.setCustomUserAgentAsSiteSpecificQuirks(WTF::move(websitePolicies.customUserAgentAsSiteSpecificQuirks));
+    documentLoader.setCustomNavigatorPlatform(WTF::move(websitePolicies.customNavigatorPlatform));
     documentLoader.setAllowPrivacyProxy(websitePolicies.allowPrivacyProxy);
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -55,10 +55,10 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     // Only disable content blockers if it hasn't already been disabled by reloading without content blockers.
     auto& [defaultEnablement, exceptions] = documentLoader.contentExtensionEnablement();
     if (defaultEnablement == WebCore::ContentExtensionDefaultEnablement::Enabled && exceptions.isEmpty())
-        documentLoader.setContentExtensionEnablement(WTFMove(websitePolicies.contentExtensionEnablement));
+        documentLoader.setContentExtensionEnablement(WTF::move(websitePolicies.contentExtensionEnablement));
 
     documentLoader.setActiveContentRuleListActionPatterns(websitePolicies.activeContentRuleListActionPatterns);
-    documentLoader.setVisibilityAdjustmentSelectors(WTFMove(websitePolicies.visibilityAdjustmentSelectors));
+    documentLoader.setVisibilityAdjustmentSelectors(WTF::move(websitePolicies.visibilityAdjustmentSelectors));
 
     OptionSet<WebCore::AutoplayQuirk> quirks;
     const auto& allowedQuirks = websitePolicies.allowedAutoplayQuirks;
@@ -186,7 +186,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         documentLoader.willContinueMainResourceLoadAfterRedirect(websitePolicies.alternateRequest);
 
     documentLoader.setPreferences(WebCore::DocumentLoader::WebpagePreferences {
-        websitePolicies.userContentControllerParameters ? RefPtr { WebUserContentController::getOrCreate(WTFMove(*websitePolicies.userContentControllerParameters)) } : nullptr,
+        websitePolicies.userContentControllerParameters ? RefPtr { WebUserContentController::getOrCreate(WTF::move(*websitePolicies.userContentControllerParameters)) } : nullptr,
         websitePolicies.overrideReferrerForAllRequests,
     });
 

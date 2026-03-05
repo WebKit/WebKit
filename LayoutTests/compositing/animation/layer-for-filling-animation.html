@@ -13,32 +13,26 @@
         }
         
         .animating {
-            -webkit-animation: spin 1 0.1s forwards;
+            animation: spin 1 0.1s forwards;
         }
 
-        @-webkit-keyframes spin {
-            from { -webkit-transform: rotate(0); }
-            to   { -webkit-transform: rotate(3deg); }
+        @keyframes spin {
+            from { transform: rotate(0); }
+            to   { transform: rotate(3deg); }
         }
     </style>
+    <script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
             
-        function doTest()
-        {
-            document.getElementById('box').addEventListener('webkitAnimationEnd', function() {
-                requestAnimationFrame(() => {
-                    if (window.testRunner) {
-                        document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
-                        testRunner.notifyDone();
-                    }
-                });
-            })
-        }
-        window.addEventListener('load', doTest, false);
+        window.addEventListener('load', async () => {
+            const animation = document.getElementById('box').getAnimations()[0];
+            await animation.finished;
+            await threadedAnimationsCommit();
+            document.getElementById('results').innerText = window.internals?.layerTreeAsText(document);
+            window.testRunner?.notifyDone();
+        });
     </script>
 </head>
 <body>

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Assertions.h>
+
 namespace WTF {
 
 template <typename Node>

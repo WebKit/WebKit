@@ -34,7 +34,7 @@
 namespace WebCore {
 
 ShareDataReader::ShareDataReader(CompletionHandler<void(ExceptionOr<ShareDataWithParsedURL&>)>&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
+    : m_completionHandler(WTF::move(completionHandler))
 {
 
 }
@@ -47,7 +47,7 @@ ShareDataReader::~ShareDataReader()
 void ShareDataReader::start(Document* document, ShareDataWithParsedURL&& shareData)
 {
     m_filesReadSoFar = 0;
-    m_shareData = WTFMove(shareData);
+    m_shareData = WTF::move(shareData);
     int count = 0;
     m_pendingFileLoads.reserveInitialCapacity(m_shareData.shareData.files.size());
     for (auto& blob : m_shareData.shareData.files) {
@@ -83,7 +83,7 @@ void ShareDataReader::didFinishLoading(int loadIndex, const String& fileName)
     RawFile file;
     file.fileName = fileName;
     file.fileData = SharedBuffer::create(arrayBuffer->span());
-    m_shareData.files.append(WTFMove(file));
+    m_shareData.files.append(WTF::move(file));
     m_filesReadSoFar++;
 
     if (m_filesReadSoFar == static_cast<int>(m_pendingFileLoads.size())) {

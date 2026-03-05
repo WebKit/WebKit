@@ -25,4 +25,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   sample[s] = 1;
   assert.sameValue(delete sample[s], true, 'The value of `delete sample[s]` is true');
-});
+}, null, ["passthrough"]);

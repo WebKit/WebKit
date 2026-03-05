@@ -1,8 +1,5 @@
 API/JSAPIGlobalObject.mm
 API/JSValue.mm
 API/JSVirtualMachine.mm
-API/JSWrapperMap.mm
 API/ObjCCallbackFunction.mm
-API/ObjcRuntimeExtras.h
 API/tests/testapi.c
-[ iOS ] runtime/ObjectPrototype.cpp

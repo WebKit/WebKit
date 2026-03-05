@@ -42,7 +42,7 @@ public:
 
     virtual ~DowncastConvertToBackingContext() = default;
 
-    WGPUAdapter convertToBacking(const Adapter&) final;
+    WGPUAdapter NODELETE convertToBacking(const Adapter&) final;
     WGPUBindGroup convertToBacking(const BindGroup&) final;
     WGPUBindGroupLayout convertToBacking(const BindGroupLayout&) final;
     WGPUBuffer convertToBacking(const Buffer&) final;

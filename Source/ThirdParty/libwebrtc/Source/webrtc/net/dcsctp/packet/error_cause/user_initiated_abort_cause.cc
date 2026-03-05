@@ -31,7 +31,6 @@ namespace dcsctp {
 //  /                    Upper Layer Abort Reason                   /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int UserInitiatedAbortCause::kType;
 
 std::optional<UserInitiatedAbortCause> UserInitiatedAbortCause::Parse(
     webrtc::ArrayView<const uint8_t> data) {

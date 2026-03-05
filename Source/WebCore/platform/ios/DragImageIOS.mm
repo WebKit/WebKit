@@ -99,7 +99,7 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
     buffer->context().scale({ adjustedImageScale, -adjustedImageScale });
     buffer->context().drawImage(*image, FloatPoint { }, { orientation });
 
-    RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
+    RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
     if (!nativeImage)
         return nil;
 
@@ -210,7 +210,7 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
 DragImageRef createDragImageForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
 {
     FloatRect imageRect { 0, 0, elementRect.width() * pageScaleFactor, elementRect.height() * pageScaleFactor };
-    FloatRoundedRect swatch { imageRect, FloatRoundedRect::Radii(ColorSwatchCornerRadius * pageScaleFactor) };
+    FloatRoundedRect swatch { imageRect, CornerRadii(ColorSwatchCornerRadius * pageScaleFactor) };
 
     auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
     UIImage *image = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {

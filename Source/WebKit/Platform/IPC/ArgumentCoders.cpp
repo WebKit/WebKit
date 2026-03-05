@@ -67,7 +67,7 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, unsigned 
 }
 
 template<typename Decoder>
-WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
+[[nodiscard]] std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
     auto length = decoder.template decode<unsigned>();
     if (!length)

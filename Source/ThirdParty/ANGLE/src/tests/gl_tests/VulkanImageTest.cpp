@@ -29,6 +29,27 @@ class VulkanImageTest : public ANGLETest<>
 {
   protected:
     VulkanImageTest() { setRobustResourceInit(true); }
+
+    GLenum expectedGLLayoutAfterTransfer(const VulkanHelper &helper)
+    {
+        return helper.useUnifiedImageLayouts() ? GL_LAYOUT_GENERAL_EXT : GL_LAYOUT_TRANSFER_DST_EXT;
+    }
+    VkImageLayout expectedVKLayoutAfterTransfer(const VulkanHelper &helper)
+    {
+        return helper.useUnifiedImageLayouts() ? VK_IMAGE_LAYOUT_GENERAL
+                                               : VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    }
+
+    GLenum expectedGLLayoutAfterColorWrite(const VulkanHelper &helper)
+    {
+        return helper.useUnifiedImageLayouts() ? GL_LAYOUT_GENERAL_EXT
+                                               : GL_LAYOUT_COLOR_ATTACHMENT_EXT;
+    }
+    VkImageLayout expectedVKLayoutAfterColorWrite(const VulkanHelper &helper)
+    {
+        return helper.useUnifiedImageLayouts() ? VK_IMAGE_LAYOUT_GENERAL
+                                               : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    }
 };
 
 class VulkanMemoryTest : public ANGLETest<>
@@ -241,11 +262,11 @@ TEST_P(VulkanImageTest, PixelTestTexImage2D)
     GLuint textures[1] = {texture};
     GLenum layouts[1]  = {GL_NONE};
     glReleaseTexturesANGLE(1, textures, layouts);
-    EXPECT_EQ(layouts[0], static_cast<GLenum>(GL_LAYOUT_TRANSFER_DST_EXT));
+    EXPECT_EQ(layouts[0], expectedGLLayoutAfterTransfer(helper));
 
     {
         std::vector<GLuint> pixels(kWidth * kHeight);
-        helper.readPixels(vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, info.format, {},
+        helper.readPixels(vkImage, expectedVKLayoutAfterTransfer(helper), info.format, {},
                           info.extent, pixels.data(), pixels.size() * sizeof(GLuint));
         EXPECT_EQ(pixels, std::vector<GLuint>(kWidth * kHeight, kColor));
     }
@@ -297,10 +318,10 @@ TEST_P(VulkanImageTest, PixelTestClear)
     GLuint textures[1] = {texture};
     GLenum layouts[1]  = {GL_NONE};
     glReleaseTexturesANGLE(1, textures, layouts);
-    EXPECT_EQ(layouts[0], static_cast<GLenum>(GL_LAYOUT_TRANSFER_DST_EXT));
+    EXPECT_EQ(layouts[0], expectedGLLayoutAfterTransfer(helper));
 
     std::vector<GLuint> pixels(kWidth * kHeight);
-    helper.readPixels(vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, info.format, {}, info.extent,
+    helper.readPixels(vkImage, expectedVKLayoutAfterTransfer(helper), info.format, {}, info.extent,
                       pixels.data(), pixels.size() * sizeof(GLuint));
     EXPECT_EQ(pixels, std::vector<GLuint>(kWidth * kHeight, kWhite));
 
@@ -312,9 +333,9 @@ TEST_P(VulkanImageTest, PixelTestClear)
     glClear(GL_COLOR_BUFFER_BIT);
 
     glReleaseTexturesANGLE(1, textures, layouts);
-    EXPECT_EQ(layouts[0], static_cast<GLenum>(GL_LAYOUT_TRANSFER_DST_EXT));
+    EXPECT_EQ(layouts[0], expectedGLLayoutAfterTransfer(helper));
 
-    helper.readPixels(vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, info.format, {}, info.extent,
+    helper.readPixels(vkImage, expectedVKLayoutAfterTransfer(helper), info.format, {}, info.extent,
                       pixels.data(), pixels.size() * sizeof(GLuint));
     EXPECT_EQ(pixels, std::vector<GLuint>(kWidth * kHeight, kRed));
 
@@ -365,7 +386,7 @@ TEST_P(VulkanImageTest, PixelTestDrawQuad)
     GLuint textures[1] = {texture};
     GLenum layouts[1]  = {GL_NONE};
     glReleaseTexturesANGLE(1, textures, layouts);
-    EXPECT_EQ(layouts[0], static_cast<GLenum>(GL_LAYOUT_COLOR_ATTACHMENT_EXT));
+    EXPECT_EQ(layouts[0], expectedGLLayoutAfterColorWrite(helper));
 
     VkImage vkImage        = VK_NULL_HANDLE;
     VkImageCreateInfo info = {};
@@ -373,7 +394,7 @@ TEST_P(VulkanImageTest, PixelTestDrawQuad)
     EXPECT_NE(vkImage, static_cast<VkImage>(VK_NULL_HANDLE));
 
     std::vector<GLuint> pixels(kWidth * kHeight);
-    helper.readPixels(vkImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, info.format, {},
+    helper.readPixels(vkImage, expectedVKLayoutAfterColorWrite(helper), info.format, {},
                       info.extent, pixels.data(), pixels.size() * sizeof(GLuint));
     EXPECT_EQ(pixels, std::vector<GLuint>(kWidth * kHeight, kRed));
 
@@ -446,10 +467,10 @@ TEST_P(VulkanImageTest, ClientBuffer)
     textures[0] = texture;
     layouts[0]  = GL_NONE;
     glReleaseTexturesANGLE(1, textures, layouts);
-    EXPECT_EQ(layouts[0], static_cast<GLenum>(GL_LAYOUT_TRANSFER_DST_EXT));
+    EXPECT_EQ(layouts[0], expectedGLLayoutAfterTransfer(helper));
 
     std::vector<GLuint> pixels(kWidth * kHeight);
-    helper.readPixels(vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageCreateInfo.format, {},
+    helper.readPixels(vkImage, expectedVKLayoutAfterTransfer(helper), imageCreateInfo.format, {},
                       imageCreateInfo.extent, pixels.data(), pixels.size() * sizeof(GLuint));
     EXPECT_EQ(pixels, std::vector<GLuint>(kWidth * kHeight, kWhite));
 
@@ -461,9 +482,9 @@ TEST_P(VulkanImageTest, ClientBuffer)
     glClear(GL_COLOR_BUFFER_BIT);
 
     glReleaseTexturesANGLE(1, textures, layouts);
-    EXPECT_EQ(layouts[0], static_cast<GLenum>(GL_LAYOUT_TRANSFER_DST_EXT));
+    EXPECT_EQ(layouts[0], expectedGLLayoutAfterTransfer(helper));
 
-    helper.readPixels(vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageCreateInfo.format, {},
+    helper.readPixels(vkImage, expectedVKLayoutAfterTransfer(helper), imageCreateInfo.format, {},
                       imageCreateInfo.extent, pixels.data(), pixels.size() * sizeof(GLuint));
     EXPECT_EQ(pixels, std::vector<GLuint>(kWidth * kHeight, kRed));
 

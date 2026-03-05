@@ -26,19 +26,44 @@
 #pragma once
 
 #include "LayoutBox.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 
 namespace Layout {
 
+inline bool Box::isRuby() const { return style().display() == Style::DisplayType::InlineRuby; }
+inline bool Box::isRubyBase() const { return style().display() == Style::DisplayType::RubyBase; }
+inline bool Box::isRubyInlineBox() const { return isRuby() || isRubyBase(); }
+inline bool Box::isTableCaption() const { return style().display() == Style::DisplayType::TableCaption; }
+inline bool Box::isTableHeader() const { return style().display() == Style::DisplayType::TableHeaderGroup; }
+inline bool Box::isTableBody() const { return style().display() == Style::DisplayType::TableRowGroup; }
+inline bool Box::isTableFooter() const { return style().display() == Style::DisplayType::TableFooterGroup; }
+inline bool Box::isTableRow() const { return style().display() == Style::DisplayType::TableRow; }
+inline bool Box::isTableColumnGroup() const { return style().display() == Style::DisplayType::TableColumnGroup; }
+inline bool Box::isTableColumn() const { return style().display() == Style::DisplayType::TableColumn; }
+inline bool Box::isTableCell() const { return style().display() == Style::DisplayType::TableCell; }
+inline bool Box::isFlexBox() const { return style().display() == Style::DisplayType::BlockFlex || style().display() == Style::DisplayType::InlineFlex || m_nodeType == NodeType::ImplicitFlexBox; }
+inline bool Box::isGridFormattingContext() const { return isGridBox() || isGridLanesBox(); }
+inline bool Box::isGridBox() const { return style().display() == Style::DisplayType::BlockGrid || style().display() == Style::DisplayType::InlineGrid; }
+inline bool Box::isGridLanesBox() const { return style().display() == Style::DisplayType::BlockGridLanes || style().display() == Style::DisplayType::InlineGridLanes; }
+inline bool Box::isListItem() const { return style().display() == Style::DisplayType::BlockFlowListItem; }
+
 inline bool Box::isContainingBlockForFixedPosition() const
 {
-    return isInitialContainingBlock() || isLayoutContainmentBox() || style().hasTransform();
+    return isInitialContainingBlock()
+        || isLayoutContainmentBox()
+        || !style().transform().isNone()
+        || !style().offsetPath().isNone();
 }
 
 inline bool Box::isContainingBlockForOutOfFlowPosition() const
 {
-    return isInitialContainingBlock() || isPositioned() || isLayoutContainmentBox() || style().hasTransform();
+    return isInitialContainingBlock()
+        || isPositioned()
+        || isLayoutContainmentBox()
+        || !style().transform().isNone()
+        || !style().offsetPath().isNone();
 }
 
 }

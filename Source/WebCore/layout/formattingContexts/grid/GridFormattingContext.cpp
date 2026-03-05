@@ -28,11 +28,13 @@
 
 #include "GridItemRect.h"
 #include "GridLayout.h"
+#include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
+#include "NotImplemented.h"
 #include "PlacedGridItem.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleGapGutter.h"
 #include "StylePrimitiveNumeric.h"
 #include "UnplacedGridItem.h"
@@ -105,81 +107,124 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
     return unplacedGridItems;
 }
 
-void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
+static Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize& trackSize)
+{
+    return WTF::switchOn(trackSize,
+        [&trackSize](const Style::GridTrackBreadth& breadth) {
+            if (breadth.isPercentOrCalculated())
+                return Style::GridTrackSize { CSS::Keyword::Auto { } };
+            return trackSize;
+        },
+        [&trackSize](const Style::GridTrackSize::FitContent& fitContent) {
+            if (fitContent->isPercentOrCalculated())
+                return Style::GridTrackSize { CSS::Keyword::Auto { } };
+            return trackSize;
+        },
+        [&trackSize](const Style::GridTrackBreadth::Flex&) {
+            return trackSize;
+        },
+        [](const Style::GridTrackSize::MinMax& minMax) {
+            auto minTrackSizingFunction = !minMax->min.isPercentOrCalculated() ? minMax->min : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
+            auto maxTrackSizingFunction = !minMax->max.isPercentOrCalculated() ? minMax->max : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
+            return Style::GridTrackSize { Style::GridTrackSize::MinMax { minTrackSizingFunction, maxTrackSizingFunction } };
+        });
+}
+
+static Style::RepeatTrackList repeatTrackListWithPercentagesConvertedToAuto(const Style::RepeatTrackList& repeatList)
+{
+    return repeatList.map([](const Style::RepeatEntry& entry) {
+        return WTF::switchOn(entry,
+            [](const Style::GridTrackSize& trackSize) -> Style::RepeatEntry {
+                return trackSizeWithPercentagesConvertedToAuto(trackSize);
+            },
+            [](const Vector<String>& lineNames) -> Style::RepeatEntry {
+                return lineNames;
+            });
+    });
+}
+
+static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(const Style::GridTemplateList& computedGridTemplateList)
+{
+    Style::GridTrackList transformedList = computedGridTemplateList.list.map([](const Style::GridTrackEntry& entry) {
+        return WTF::switchOn(entry,
+            [](const Style::GridTrackSize& trackSize) -> Style::GridTrackEntry {
+                return trackSizeWithPercentagesConvertedToAuto(trackSize);
+            },
+            [](const Vector<String>& lineNames) -> Style::GridTrackEntry {
+                return lineNames;
+            },
+            [](const Style::GridTrackEntryRepeat& repeat) -> Style::GridTrackEntry {
+                return Style::GridTrackEntryRepeat { repeat.repeats, repeatTrackListWithPercentagesConvertedToAuto(repeat.list) };
+            },
+            [](const Style::GridTrackEntryAutoRepeat& autoRepeat) -> Style::GridTrackEntry {
+                return Style::GridTrackEntryAutoRepeat { autoRepeat.type, repeatTrackListWithPercentagesConvertedToAuto(autoRepeat.list) };
+            },
+            [](const Style::GridTrackEntrySubgrid& subgrid) -> Style::GridTrackEntry {
+                return subgrid;
+            });
+    });
+    return Style::GridTemplateList { WTF::move(transformedList) };
+}
+
+UsedTrackSizes GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto unplacedGridItems = constructUnplacedGridItems();
-    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(layoutConstraints, unplacedGridItems);
+    CheckedRef gridStyle = root().style();
+
+    GridAutoFlowOptions autoFlowOptions {
+        .strategy = gridStyle->gridAutoFlow().isDense() ? PackingStrategy::Dense : PackingStrategy::Sparse,
+        .direction = gridStyle->gridAutoFlow().isRow() ? GridAutoFlowDirection::Row : GridAutoFlowDirection::Column
+    };
+
+    // https://drafts.csswg.org/css-grid-1/#track-sizes
+    // If the size of the grid container depends on the size of its tracks, then the
+    // <percentage> must be treated as auto, for the purpose of calculating the intrinsic
+    // sizes of the grid container and then resolve against that resulting grid container
+    // size for the purpose of laying out the grid and its items.
+    // This is evaluated per-axis: percentages in column tracks depend on inline-axis constraints,
+    // and percentages in row tracks depend on block-axis constraints.
+    auto inlineAxisDependsOnTracks = layoutConstraints.inlineAxis.scenario() != AxisConstraint::FreeSpaceScenario::Definite;
+    auto blockAxisDependsOnTracks = layoutConstraints.blockAxis.scenario() != AxisConstraint::FreeSpaceScenario::Definite;
+
+    auto gridTemplateColumns = inlineAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()) : gridStyle->gridTemplateColumns();
+    auto gridTemplateRows = blockAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()) : gridStyle->gridTemplateRows();
+
+    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, gridStyle->gridAutoColumns(), gridStyle->gridAutoRows(), autoFlowOptions };
+
+    auto usedJustifyContent = gridStyle->justifyContent().resolve();
+    auto usedAlignContent = gridStyle->alignContent().resolve();
+
+    GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedGapValue(gridStyle->columnGap()), usedGapValue(gridStyle->rowGap()) };
+
+    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(unplacedGridItems, layoutState);
 
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
     auto mapGridItemLocationsToGrid = [&] {
 
-        // Compute gap values for columns and rows.
-        // For now, we handle fixed gaps only (not percentages or calc).
-        CheckedRef gridStyle = root().style();
-
-        auto computeGapValue = [](const Style::GapGutter& gap) -> LayoutUnit {
-            if (gap.isNormal())
-                return 0_lu;
-            // Only handle fixed length gaps for now
-            if (auto fixedGap = gap.tryFixed())
-                return Style::evaluate<LayoutUnit>(*fixedGap, 0_lu, Style::ZoomNeeded { });
-            ASSERT_NOT_REACHED();
-            return 0_lu;
-        };
-
-        auto columnGap = computeGapValue(gridStyle->columnGap());
-        auto rowGap = computeGapValue(gridStyle->rowGap());
-
         for (auto& gridItemRect : gridItemRects) {
             auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
-            auto columnPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.columnStartLine, usedTrackSizes.columnSizes, columnGap);
-            auto rowPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.rowStartLine, usedTrackSizes.rowSizes, rowGap);
+            auto columnPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.columnStartLine, usedTrackSizes.columnSizes, layoutState.usedColumnGap);
+            auto rowPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.rowStartLine, usedTrackSizes.rowSizes, layoutState.usedRowGap);
 
             gridItemRect.borderBoxRect.moveBy({ columnPosition, rowPosition });
         }
     };
     mapGridItemLocationsToGrid();
     setGridItemGeometries(gridItemRects);
+    return usedTrackSizes;
 }
 
 PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas& gridAreas) const
 {
     PlacedGridItems placedGridItems;
     placedGridItems.reserveInitialCapacity(gridAreas.size());
+    CheckedRef formattingContextStyle = root().style();
     for (auto [ unplacedGridItem, gridAreaLines ] : gridAreas) {
-
-        CheckedRef gridItemStyle = unplacedGridItem.m_layoutBox->style();
-
-        auto usedJustifySelf = [&] {
-            if (auto gridItemJustifySelf = gridItemStyle->justifySelf(); !gridItemJustifySelf.isAuto())
-                return gridItemJustifySelf.resolve();
-            return root().style().justifyItems().resolve();
-        };
-
-        auto usedAlignSelf = [&] {
-            if (auto gridItemAlignSelf = gridItemStyle->alignSelf(); !gridItemAlignSelf.isAuto())
-                return gridItemAlignSelf.resolve();
-            return root().style().alignItems().resolve();
-        };
-
-        PlacedGridItem::ComputedSizes inlineAxisSizes {
-            gridItemStyle->width(),
-            gridItemStyle->minWidth(),
-            gridItemStyle->maxWidth(),
-            gridItemStyle->marginLeft(),
-            gridItemStyle->marginRight()
-        };
-
-        PlacedGridItem::ComputedSizes blockAxisSizes {
-            gridItemStyle->height(),
-            gridItemStyle->minHeight(),
-            gridItemStyle->maxHeight(),
-            gridItemStyle->marginTop(),
-            gridItemStyle->marginBottom()
-        };
-
-        placedGridItems.constructAndAppend(unplacedGridItem, gridAreaLines, inlineAxisSizes, blockAxisSizes, usedJustifySelf(), usedAlignSelf(), gridItemStyle->usedZoomForLength());
+        CheckedRef gridItem = unplacedGridItem.m_layoutBox;
+        CheckedRef gridContainerStyle = this->gridContainerStyle();
+        auto& boxGeometry = geometryForGridItem(gridItem);
+        placedGridItems.constructAndAppend(gridItem, gridAreaLines, boxGeometry, gridContainerStyle);
     }
     return placedGridItems;
 }
@@ -212,6 +257,72 @@ void GridFormattingContext::setGridItemGeometries(const GridItemRects& gridItemR
 
         boxGeometry.setContentBoxSize({ contentBoxInlineSize, contentBoxBlockSize });
     }
+}
+
+// https://drafts.csswg.org/css-grid-1/#intrinsic-sizes
+// The max-content size (min-content size) of a grid container is the sum of
+// the grid container's track sizes (including gutters) in the appropriate axis,
+// when the grid is sized under a max-content constraint (min-content constraint).
+GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWidths()
+{
+    auto unplacedGridItems = constructUnplacedGridItems();
+
+    CheckedRef gridStyle = root().style();
+    GridAutoFlowOptions autoFlowOptions {
+        .strategy = gridStyle->gridAutoFlow().isDense() ? PackingStrategy::Dense : PackingStrategy::Sparse,
+        .direction = gridStyle->gridAutoFlow().isRow() ? GridAutoFlowDirection::Row : GridAutoFlowDirection::Column
+    };
+
+    // https://drafts.csswg.org/css-grid-1/#track-sizes
+    // For intrinsic sizing, percentages in track sizes must be treated as auto
+    GridDefinition gridDefinition {
+        gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()),
+        gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()),
+        gridStyle->gridAutoColumns(),
+        gridStyle->gridAutoRows(),
+        autoFlowOptions
+    };
+
+    // Clone items for second pass since layout() consumes them
+    auto unplacedGridItemsForMaxContent = unplacedGridItems;
+
+    auto usedJustifyContent = gridStyle->justifyContent().resolve();
+    auto usedAlignContent = gridStyle->alignContent().resolve();
+
+    auto usedColumnGap = usedGapValue(gridStyle->columnGap());
+    auto usedRowGap = usedGapValue(gridStyle->rowGap());
+
+    // Compute min-content width by running the full grid sizing algorithm with MinContent scenario
+    GridLayoutConstraints minContentConstraints {
+        .inlineAxis = AxisConstraint::minContent(),
+        .blockAxis = AxisConstraint::minContent()
+    };
+    GridLayoutState minContentLayoutState { minContentConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
+    auto [minContentTrackSizes, minContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItems, minContentLayoutState);
+    UNUSED_PARAM(minContentGridItemRects);
+
+    // Compute max-content width by running the full grid sizing algorithm with MaxContent scenario
+    GridLayoutConstraints maxContentConstraints {
+        .inlineAxis = AxisConstraint::maxContent(),
+        .blockAxis = AxisConstraint::maxContent()
+    };
+    GridLayoutState maxContentLayoutState { maxContentConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
+    auto [maxContentTrackSizes, maxContentGridItemRects] = GridLayout { *this }.layout(unplacedGridItemsForMaxContent, maxContentLayoutState);
+    UNUSED_PARAM(maxContentGridItemRects);
+
+    // Sum track sizes and add gaps
+    auto computeIntrinsicWidth = [&](const TrackSizes& trackSizes) -> LayoutUnit {
+        auto sumOfTrackSizes = 0_lu;
+        for (auto trackSize : trackSizes)
+            sumOfTrackSizes += trackSize;
+        auto totalGutters = trackSizes.size() > 1 ? usedColumnGap * LayoutUnit(trackSizes.size() - 1) : 0_lu;
+        return sumOfTrackSizes + totalGutters;
+    };
+
+    return IntrinsicWidths {
+        .minimum = computeIntrinsicWidth(minContentTrackSizes.columnSizes),
+        .maximum = computeIntrinsicWidth(maxContentTrackSizes.columnSizes)
+    };
 }
 
 } // namespace Layout

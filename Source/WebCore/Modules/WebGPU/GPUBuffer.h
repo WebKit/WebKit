@@ -52,15 +52,15 @@ class GPUBuffer : public RefCountedAndCanMakeWeakPtr<GPUBuffer> {
 public:
     static Ref<GPUBuffer> create(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
     {
-        return adoptRef(*new GPUBuffer(WTFMove(backing), bufferSize, usage, mappedAtCreation, device));
+        return adoptRef(*new GPUBuffer(WTF::move(backing), bufferSize, usage, mappedAtCreation, device));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     using MapAsyncPromise = DOMPromiseDeferred<IDLNull>;
-    void mapAsync(GPUMapModeFlags, std::optional<GPUSize64> offset, std::optional<GPUSize64> sizeForMap, MapAsyncPromise&&);
-    ExceptionOr<Ref<JSC::ArrayBuffer>> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
+    void mapAsync(GPUMapModeFlags, GPUSize64 offset, std::optional<GPUSize64> sizeForMap, MapAsyncPromise&&);
+    ExceptionOr<Ref<JSC::ArrayBuffer>> getMappedRange(GPUSize64 offset, std::optional<GPUSize64> rangeSize);
     void unmap(ScriptExecutionContext&);
 
     void destroy(ScriptExecutionContext&);

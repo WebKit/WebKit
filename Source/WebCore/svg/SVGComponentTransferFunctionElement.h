@@ -33,7 +33,7 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<ComponentTransferType> {
-    static unsigned highestEnumValue() { return enumToUnderlyingType(ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA); }
+    static unsigned highestEnumValue() { return std::to_underlying(ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA); }
 
     static String toString(ComponentTransferType type)
     {
@@ -58,27 +58,26 @@ struct SVGPropertyTraits<ComponentTransferType> {
 
     static ComponentTransferType fromString(SVGElement&, const String& value)
     {
-        static constexpr std::pair<PackedASCIILiteral<uint64_t>, ComponentTransferType> mappings[] = {
+        static constexpr SortedArrayMap map { std::to_array<std::pair<PackedASCIILiteral<uint64_t>, ComponentTransferType>>({
             { "discrete"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE },
             { "gamma"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA },
             { "identity"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY },
             { "linear"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR },
             { "table"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE }
-        };
-        static constexpr SortedArrayMap map { mappings };
+        }) };
         return map.get(value, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN);
     }
 };
 
 class SVGComponentTransferFunctionElement : public SVGElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGComponentTransferFunctionElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGComponentTransferFunctionElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGComponentTransferFunctionElement);
 public:
     virtual ComponentTransferChannel channel() const = 0;
     ComponentTransferFunction transferFunction() const;
 
     ComponentTransferType type() const { return m_type->currentValue<ComponentTransferType>(); }
-    const SVGNumberList& tableValues() const { return m_tableValues->currentValue(); }
+    const SVGNumberList& tableValues() const LIFETIME_BOUND { return m_tableValues->currentValue(); }
     float slope() const { return m_slope->currentValue(); }
     float intercept() const { return m_intercept->currentValue(); }
     float amplitude() const { return m_amplitude->currentValue(); }
@@ -104,13 +103,13 @@ protected:
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
     
 private:
-    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY) };
-    Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
-    Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
-    Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };
-    Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, 1) };
-    Ref<SVGAnimatedNumber> m_exponent { SVGAnimatedNumber::create(this, 1) };
-    Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY) };
+    const Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
+    const Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_exponent { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

@@ -32,7 +32,7 @@ namespace WPE {
 
 class GestureDetector final {
 public:
-    void handleEvent(WPEEvent*);
+    bool handleEvent(WPEEvent*);
     WPEGesture gesture() const { return m_gesture; }
     void reset();
 

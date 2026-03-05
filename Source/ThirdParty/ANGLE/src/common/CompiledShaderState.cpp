@@ -17,6 +17,7 @@
 #include <cstring>
 
 #include "common/BinaryStream.h"
+#include "common/span.h"
 #include "common/utilities.h"
 
 namespace gl
@@ -241,6 +242,7 @@ std::string JoinShaderSources(GLsizei count, const char *const *string, const GL
 CompiledShaderState::CompiledShaderState(gl::ShaderType type)
     : shaderType(type),
       shaderVersion(100),
+      translatedSource(std::make_shared<std::string>()),
       numViews(-1),
       geometryShaderInputPrimitiveType(gl::PrimitiveMode::Triangles),
       geometryShaderOutputPrimitiveType(gl::PrimitiveMode::Triangles),
@@ -257,8 +259,13 @@ CompiledShaderState::CompiledShaderState(gl::ShaderType type)
 
 CompiledShaderState::~CompiledShaderState() {}
 
+void CompiledShaderState::buildPassthroughCompiledShaderState(
+    std::shared_ptr<const std::string> inputShaderSource)
+{
+    translatedSource = inputShaderSource;
+}
+
 void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle,
-                                                   const std::string &inputShaderSource,
                                                    ShShaderOutput outputType)
 {
     switch (outputType)
@@ -266,11 +273,8 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
         case SH_SPIRV_VULKAN_OUTPUT:
             compiledBinary = sh::GetObjectBinaryBlob(compilerHandle);
             break;
-        case SH_NULL_OUTPUT:
-            translatedSource = inputShaderSource;
-            break;
         default:
-            translatedSource = sh::GetObjectCode(compilerHandle);
+            translatedSource = std::make_shared<std::string>(sh::GetObjectCode(compilerHandle));
             break;
     }
 
@@ -450,8 +454,7 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             }
             stream.writeInt(advancedBlendEquations.bits());
             stream.writeInt<size_t>(pixelLocalStorageFormats.size());
-            stream.writeBytes(reinterpret_cast<const uint8_t *>(pixelLocalStorageFormats.data()),
-                              pixelLocalStorageFormats.size());
+            stream.writeBytes(angle::as_byte_span(pixelLocalStorageFormats));
             break;
         }
         case gl::ShaderType::Geometry:
@@ -469,11 +472,11 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
 
             {
                 unsigned char value = static_cast<unsigned char>(geometryShaderInputPrimitiveType);
-                stream.writeBytes(&value, 1);
+                stream.writeBytes(angle::byte_span_from_ref(value));
             }
             {
                 unsigned char value = static_cast<unsigned char>(geometryShaderOutputPrimitiveType);
-                stream.writeBytes(&value, 1);
+                stream.writeBytes(angle::byte_span_from_ref(value));
             }
             {
                 int value = static_cast<int>(geometryShaderMaxVertices);
@@ -530,7 +533,7 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             UNREACHABLE();
     }
 
-    stream.writeString(translatedSource);
+    stream.writeString(*translatedSource);
     stream.writeVector(compiledBinary);
 }
 
@@ -625,8 +628,7 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             stream.readInt(&advancedBlendEquationBits);
             advancedBlendEquations = gl::BlendEquationBitSet(advancedBlendEquationBits);
             pixelLocalStorageFormats.resize(stream.readInt<size_t>());
-            stream.readBytes(reinterpret_cast<uint8_t *>(pixelLocalStorageFormats.data()),
-                             pixelLocalStorageFormats.size());
+            stream.readBytes(angle::as_writable_byte_span(pixelLocalStorageFormats));
             break;
         }
         case gl::ShaderType::Geometry:
@@ -646,13 +648,13 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
 
             {
                 unsigned char value;
-                stream.readBytes(&value, 1);
+                stream.readBytes(angle::byte_span_from_ref(value));
                 geometryShaderInputPrimitiveType = static_cast<gl::PrimitiveMode>(value);
             }
 
             {
                 unsigned char value;
-                stream.readBytes(&value, 1);
+                stream.readBytes(angle::byte_span_from_ref(value));
                 geometryShaderOutputPrimitiveType = static_cast<gl::PrimitiveMode>(value);
             }
 
@@ -716,7 +718,11 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             UNREACHABLE();
     }
 
-    stream.readString(&translatedSource);
+    {
+        std::string src;
+        stream.readString(&src);
+        translatedSource = std::make_shared<std::string>(std::move(src));
+    }
     stream.readVector(&compiledBinary);
 }
 }  // namespace gl

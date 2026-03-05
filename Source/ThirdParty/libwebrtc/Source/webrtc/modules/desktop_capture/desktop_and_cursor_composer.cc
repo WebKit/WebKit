@@ -30,17 +30,6 @@ namespace webrtc {
 
 namespace {
 
-// Global reference counter which is increased when a DesktopFrameWithCursor is
-// created and decreased when the same object is destructed. Only used for
-// debugging purposes to ensure that we never end up in state where
-// `g_ref_count` is larger than one since that could indicate a flickering
-// cursor (cursor-less version of the frame is not restored properly and it can
-// can lead to visible trails of old cursors).
-// See https://crbug.com/1421656#c99 for more details.
-int g_ref_count = 0;
-
-uint64_t g_num_flicker_warnings = 0;
-
 // Helper function that blends one image into another. Source image must be
 // pre-multiplied with the alpha channel. Destination is assumed to be opaque.
 void AlphaBlend(uint8_t* dest,
@@ -107,10 +96,10 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
     bool cursor_changed)
     : DesktopFrame(frame->size(),
                    frame->stride(),
+                   frame->pixel_format(),
                    frame->data(),
                    frame->shared_memory()),
       original_frame_(std::move(frame)) {
-  ++g_ref_count;
   MoveFrameInfoFrom(original_frame_.get());
 
   DesktopVector image_pos = position.subtract(cursor.hotspot());
@@ -136,7 +125,7 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
 
   // Copy original screen content under cursor to `restore_frame_`.
   restore_position_ = cursor_rect_.top_left();
-  restore_frame_.reset(new BasicDesktopFrame(cursor_rect_.size()));
+  restore_frame_.reset(new BasicDesktopFrame(cursor_rect_.size(), FOURCC_ARGB));
   restore_frame_->CopyPixelsFrom(*this, cursor_rect_.top_left(),
                                  DesktopRect::MakeSize(restore_frame_->size()));
 
@@ -153,11 +142,6 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
 }
 
 DesktopFrameWithCursor::~DesktopFrameWithCursor() {
-  if (--g_ref_count > 0) {
-    ++g_num_flicker_warnings;
-    RTC_LOG(LS_WARNING) << "Cursor might be flickering; number of warnings="
-                        << g_num_flicker_warnings;
-  }
   // Restore original content of the frame.
   if (restore_frame_) {
     DesktopRect target_rect = DesktopRect::MakeSize(restore_frame_->size());

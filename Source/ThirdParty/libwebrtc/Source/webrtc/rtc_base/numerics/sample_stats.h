@@ -13,6 +13,7 @@
 #include "api/numerics/samples_stats_counter.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 template <typename T>
@@ -35,7 +36,10 @@ class SampleStats<double> : public SamplesStatsCounter {
 template <>
 class SampleStats<TimeDelta> {
  public:
+  void AddSample(TimeDelta delta, Timestamp time);
+  [[deprecated("Use AddSample(TimeDelta, Timestamp) instead.")]]
   void AddSample(TimeDelta delta);
+  [[deprecated("Use AddSample(TimeDelta, Timestamp) instead.")]]
   void AddSampleMs(double delta_ms);
   void AddSamples(const SampleStats<TimeDelta>& other);
   bool IsEmpty();
@@ -55,7 +59,10 @@ class SampleStats<TimeDelta> {
 template <>
 class SampleStats<DataRate> {
  public:
+  void AddSample(DataRate rate, Timestamp time);
+  [[deprecated("Use AddSample(DataRate, Timestamp) instead.")]]
   void AddSample(DataRate rate);
+  [[deprecated("Use AddSample(DataRate, Timestamp) instead.")]]
   void AddSampleBps(double rate_bps);
   void AddSamples(const SampleStats<DataRate>& other);
   bool IsEmpty();

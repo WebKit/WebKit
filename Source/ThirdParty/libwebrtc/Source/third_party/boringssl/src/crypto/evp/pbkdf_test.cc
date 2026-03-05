@@ -29,7 +29,7 @@ TEST(PBKDFTest, EmptyPassword) {
                           0x5d, 0x36, 0xea, 0x43, 0x63, 0xa2};
   uint8_t key[sizeof(kKey)];
 
-  ASSERT_TRUE(PKCS5_PBKDF2_HMAC(NULL, 0, (const uint8_t *)"salt", 4, 1,
+  ASSERT_TRUE(PKCS5_PBKDF2_HMAC(nullptr, 0, (const uint8_t *)"salt", 4, 1,
                                 EVP_sha1(), sizeof(kKey), key));
   EXPECT_EQ(Bytes(kKey), Bytes(key));
 
@@ -47,7 +47,7 @@ TEST(PBKDFTest, EmptySalt) {
                           0x5e, 0x22, 0xdb, 0xea, 0xfa, 0x46, 0x34, 0xf6};
   uint8_t key[sizeof(kKey)];
 
-  ASSERT_TRUE(PKCS5_PBKDF2_HMAC("password", 8, NULL, 0, 2, EVP_sha256(),
+  ASSERT_TRUE(PKCS5_PBKDF2_HMAC("password", 8, nullptr, 0, 2, EVP_sha256(),
                                 sizeof(kKey), key));
   EXPECT_EQ(Bytes(kKey), Bytes(key));
 

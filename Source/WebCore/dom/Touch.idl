@@ -35,7 +35,8 @@
     readonly attribute double              screenY;
     readonly attribute double              pageX;
     readonly attribute double              pageY;
-    readonly attribute EventTarget         target;
+    // FIXME: `target` should not be nullable.
+    readonly attribute EventTarget?        target;
     readonly attribute long                identifier;
     readonly attribute double              webkitRadiusX;
     readonly attribute double              webkitRadiusY;

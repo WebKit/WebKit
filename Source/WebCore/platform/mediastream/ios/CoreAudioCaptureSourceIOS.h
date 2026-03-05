@@ -36,10 +36,12 @@ namespace WebCore {
 
 class CoreAudioCaptureSourceFactoryIOS final : public CoreAudioCaptureSourceFactory  {
 public:
-    CoreAudioCaptureSourceFactoryIOS();
+    static Ref<CoreAudioCaptureSourceFactoryIOS> create();
     ~CoreAudioCaptureSourceFactoryIOS();
 
 private:
+    CoreAudioCaptureSourceFactoryIOS();
+
     RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
 };
 

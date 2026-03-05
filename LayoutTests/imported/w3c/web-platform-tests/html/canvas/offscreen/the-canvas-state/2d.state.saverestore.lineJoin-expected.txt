@@ -1,7 +1,8 @@
 2d.state.saverestore.lineJoin
 
-save()/restore() works for lineJoin
 
-
-PASS save()/restore() works for lineJoin
+PASS save()/restore() restores lineJoin, for a canvas of size (300, 150).
+PASS save() does not modify lineJoin, for a canvas of size (300, 150).
+PASS save()/restore() restores lineJoin, for a canvas of size (0, 0).
+PASS save() does not modify lineJoin, for a canvas of size (0, 0).
 

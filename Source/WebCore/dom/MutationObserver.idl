@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://dom.spec.whatwg.org/#mutationobserver
 [
     CustomIsReachable,
     LegacyWindowAlias=WebKitMutationObserver,
@@ -36,11 +37,12 @@
 ] interface MutationObserver {
     constructor(MutationCallback callback);
 
-    undefined observe(Node target, optional MutationObserverInit options);
+    undefined observe(Node target, optional MutationObserverInit options = {});
     undefined disconnect();
     [ResultField=records] sequence<MutationRecord> takeRecords();
 };
 
+// https://dom.spec.whatwg.org/#dictdef-mutationobserverinit
 dictionary MutationObserverInit {
     boolean childList = false;
     boolean attributes;

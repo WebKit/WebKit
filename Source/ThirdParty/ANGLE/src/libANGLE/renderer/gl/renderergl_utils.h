@@ -63,7 +63,7 @@ struct SwapControlData
 };
 
 VendorID GetVendorID(const FunctionsGL *functions);
-ShShaderOutput GetShaderOutputType(const FunctionsGL *functions);
+ShShaderOutput GetShaderOutputType(const angle::FeaturesGL &features, const FunctionsGL *functions);
 
 // Helpers for extracting the GL helper objects out of a context
 const FunctionsGL *GetFunctionsGL(const gl::Context *context);

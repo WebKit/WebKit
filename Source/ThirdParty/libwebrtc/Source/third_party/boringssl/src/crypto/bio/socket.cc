@@ -47,7 +47,7 @@ static int sock_free(BIO *bio) {
 }
 
 static int sock_read(BIO *b, char *out, int outl) {
-  if (out == NULL) {
+  if (out == nullptr) {
     return 0;
   }
 
@@ -129,8 +129,8 @@ BIO *BIO_new_socket(int fd, int close_flag) {
   BIO *ret;
 
   ret = BIO_new(BIO_s_socket());
-  if (ret == NULL) {
-    return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
   BIO_set_fd(ret, fd, close_flag);
   return ret;

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGMetadataElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGMetadataElement);
 
 inline SVGMetadataElement::SVGMetadataElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

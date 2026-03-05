@@ -102,7 +102,7 @@ void LinkBuffer::logJITCodeForJITDump(CodeRef<LinkBufferPtrTag>& codeRef, ASCIIL
     case Profile::WasmOMG:
     case Profile::WasmBBQ: {
         if (m_ownerUID)
-            out.print(makeString(uncheckedDowncast<Wasm::Callee>(reinterpret_cast<NativeCallee*>(m_ownerUID))->indexOrName()));
+            uncheckedDowncast<Wasm::Callee>(reinterpret_cast<NativeCallee*>(m_ownerUID))->dumpSimpleName(out);
         else
             dumpSimpleName(out, simpleName);
         break;
@@ -158,7 +158,7 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         vsnprintf(buffer.subspan(prefix.length()).data(), stringLength + 1, format, argList);
         out.printf("%s", buffer.data());
 
-        registerLabel(result.code().untaggedPtr(), WTFMove(label));
+        registerLabel(result.code().untaggedPtr(), WTF::move(label));
     } else
         out.vprintf(format, argList);
 
@@ -497,8 +497,8 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
 UNUSED_PARAM(effort);
 #endif // ENABLE(JIT)
 
-    m_linkTasks = WTFMove(macroAssembler.m_linkTasks);
-    m_lateLinkTasks = WTFMove(macroAssembler.m_lateLinkTasks);
+    m_linkTasks = WTF::move(macroAssembler.m_linkTasks);
+    m_lateLinkTasks = WTF::move(macroAssembler.m_lateLinkTasks);
 
     linkComments(macroAssembler);
 }
@@ -552,7 +552,7 @@ void LinkBuffer::linkComments(MacroAssembler& assembler)
             addResult.iterator->value = makeString(addResult.iterator->value, "\n; "_s, string);
     }
 
-    AssemblyCommentRegistry::singleton().registerCodeRange(m_executableMemory->start().untaggedPtr(), m_executableMemory->end().untaggedPtr(), WTFMove(map));
+    AssemblyCommentRegistry::singleton().registerCodeRange(m_executableMemory->start().untaggedPtr(), m_executableMemory->end().untaggedPtr(), WTF::move(map));
 }
 
 void LinkBuffer::performFinalization()

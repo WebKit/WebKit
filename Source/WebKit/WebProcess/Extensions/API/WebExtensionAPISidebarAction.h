@@ -48,7 +48,7 @@ template<typename OptType, typename... Types>
 std::optional<OptType> toOptional(Variant<Types...>& variant)
 {
     if (std::holds_alternative<OptType>(variant))
-        return WTFMove(std::get<OptType>(variant));
+        return WTF::move(std::get<OptType>(variant));
     return std::nullopt;
 }
 
@@ -58,7 +58,7 @@ SidebarError indicatesError(const VariantType& variant)
     static_assert(isVariantMember<SidebarError, VariantType>::value);
 
     if (std::holds_alternative<SidebarError>(variant))
-        return WTFMove(std::get<SidebarError>(variant));
+        return WTF::move(std::get<SidebarError>(variant));
     return nil;
 }
 

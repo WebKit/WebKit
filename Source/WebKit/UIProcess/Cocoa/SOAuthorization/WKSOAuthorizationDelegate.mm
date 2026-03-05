@@ -146,6 +146,14 @@
         ASSERT_NOT_REACHED();
         return;
     }
+
+    NSString *authenticationErrorDomain = @"AKAuthenticationError"; // AKAppleIDAuthenticationErrorDomain
+    constexpr NSInteger userCanceled = -7003; // AKAuthenticationErrorUserCanceled
+    if ([error.domain isEqualToString:authenticationErrorDomain] && error.code == userCanceled) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: User cancelled");
+        return session->fallBackToWebPath(WebKit::SOAuthorizationSession::UserCancel::Yes);
+    }
+
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: Falling back to web path.");
     session->fallBackToWebPath();
 }

@@ -38,12 +38,12 @@ public:
     ResourceResponse() = default;
 
     ResourceResponse(URL&& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
-        : ResourceResponseBase(WTFMove(url), WTFMove(mimeType), expectedLength, WTFMove(textEncodingName))
+        : ResourceResponseBase(WTF::move(url), WTF::move(mimeType), expectedLength, WTF::move(textEncodingName))
     {
     }
 
     ResourceResponse(ResourceResponseBase&& base)
-        : ResourceResponseBase(WTFMove(base))
+        : ResourceResponseBase(WTF::move(base))
     {
     }
 

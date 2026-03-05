@@ -63,12 +63,12 @@ void UserMediaCaptureManager::deref() const
 
 void UserMediaCaptureManager::validateUserMediaRequestConstraints(const WebCore::MediaStreamRequest& request, WebCore::MediaDeviceHashSalts&& deviceIdentifierHashSalts, WebCore::RealtimeMediaSourceCenter::ValidateHandler&& validateHandler)
 {
-    RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validateHandler), request, WTFMove(deviceIdentifierHashSalts));
+    RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTF::move(validateHandler), request, WTF::move(deviceIdentifierHashSalts));
 }
 
 void UserMediaCaptureManager::getMediaStreamDevices(bool revealIdsAndLabels, GetMediaStreamDevicesCallback&& completionHandler)
 {
-    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([completionHandler = WTFMove(completionHandler), revealIdsAndLabels](auto&& devices) mutable {
+    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([completionHandler = WTF::move(completionHandler), revealIdsAndLabels](auto&& devices) mutable {
         auto devicesWithCapabilities = WTF::compactMap(devices, [&](auto& device) -> std::optional<CaptureDeviceWithCapabilities> {
             RealtimeMediaSourceCapabilities deviceCapabilities;
 
@@ -81,10 +81,10 @@ void UserMediaCaptureManager::getMediaStreamDevices(bool revealIdsAndLabels, Get
                     deviceCapabilities = *capabilities;
             }
 
-            return CaptureDeviceWithCapabilities { WTFMove(device), WTFMove(deviceCapabilities) };
+            return CaptureDeviceWithCapabilities { WTF::move(device), WTF::move(deviceCapabilities) };
         });
 
-        completionHandler(WTFMove(devicesWithCapabilities));
+        completionHandler(WTF::move(devicesWithCapabilities));
     });
 }
 

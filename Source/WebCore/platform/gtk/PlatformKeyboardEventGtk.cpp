@@ -50,12 +50,4 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     }
 }
 
-OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
-{
-    if (s_currentModifiers)
-        return *s_currentModifiers;
-
-    return { };
-}
-
 } // namespace WebCore

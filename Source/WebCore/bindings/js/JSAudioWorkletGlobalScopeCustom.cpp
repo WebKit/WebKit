@@ -37,7 +37,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSAudioWorkletGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
-    // This function may get called on the GC thread so we cannot ref the object.
+    // This function may get called on a GC thread so we cannot ref the object.
     SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
     SUPPRESS_UNCOUNTED_ARG wrapped().visitProcessors(visitor);
 }

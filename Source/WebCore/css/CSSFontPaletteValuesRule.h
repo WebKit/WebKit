@@ -39,7 +39,7 @@ public:
 
     virtual ~CSSFontPaletteValuesRule();
 
-    String name() const;
+    String NODELETE name() const;
     String fontFamily() const;
     String basePalette() const;
     String overrideColors() const;
@@ -49,7 +49,7 @@ private:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontPaletteValues; }
     String cssText() const final;
-    void reattach(StyleRuleBase&) final;
+    void NODELETE reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontPaletteValues> m_fontPaletteValuesRule;
 };

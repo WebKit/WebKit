@@ -123,8 +123,6 @@ size_t BufferToIndex(Vp8BufferReference buffer) {
 
 }  // namespace
 
-constexpr size_t DefaultTemporalLayers::kNumReferenceBuffers;
-
 std::vector<DefaultTemporalLayers::DependencyInfo>
 DefaultTemporalLayers::GetDependencyInfo(size_t num_layers) {
   // For indexing in the patterns described below (which temporal layers they

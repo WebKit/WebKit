@@ -143,7 +143,7 @@ protected:
                     stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
                     stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
                     stackTrace[m_depth].callSiteIndex = m_callFrame->unsafeCallSiteIndex();
-#if ENABLE(JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
                     // FIXME: We should be able to add all stack traces including inlined ones in SamplingProfiler.
                     if (wasmCallee->compilationMode() == Wasm::CompilationMode::OMGMode) {
                         auto* omgCallee = uncheckedDowncast<const Wasm::OptimizingJITCallee>(wasmCallee);
@@ -319,7 +319,7 @@ SamplingProfiler::SamplingProfiler(VM& vm, Ref<Stopwatch>&& stopwatch)
     , m_isShutDown(false)
     , m_vm(vm)
     , m_weakRandom()
-    , m_stopwatch(WTFMove(stopwatch))
+    , m_stopwatch(WTF::move(stopwatch))
     , m_timingInterval(Seconds::fromMicroseconds(Options::sampleInterval()))
 {
     if (sReportStats) {
@@ -462,7 +462,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
                     stackTrace.append(UnprocessedStackFrame { machinePC });
                 stackTrace.appendRange(m_currentFrames.begin(), m_currentFrames.begin() + walkSize);
 
-                m_unprocessedStackTraces.append(UnprocessedStackTrace { timestamp, nowTime, machinePC, topFrameIsLLInt, llintPC, regExp, WTFMove(stackTrace) });
+                m_unprocessedStackTraces.append(UnprocessedStackTrace { timestamp, nowTime, machinePC, topFrameIsLLInt, llintPC, regExp, WTF::move(stackTrace) });
 
                 if (didRunOutOfVectorSpace)
                     m_currentFrames.grow(m_currentFrames.size() * 1.25);
@@ -805,7 +805,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
     }
 
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSGlobalObject* globalObject = callee->globalObject();
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry, &vm);
@@ -973,7 +973,7 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces()
         processUnverifiedStackTraces();
     }
 
-    Vector<StackTrace> result(WTFMove(m_stackTraces));
+    Vector<StackTrace> result(WTF::move(m_stackTraces));
     clearData();
     return result;
 }
@@ -1121,7 +1121,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
             inliner->setDouble("line"_s, machineLocation->first.lineColumn.line);
             inliner->setDouble("column"_s, machineLocation->first.lineColumn.column);
             inliner->setString("category"_s, tierName(stackFrame));
-            result->setValue("inliner"_s, WTFMove(inliner));
+            result->setValue("inliner"_s, WTF::move(inliner));
         }
         return result;
     };
@@ -1133,7 +1133,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
             auto frames = JSON::Array::create();
             for (StackFrame& stackFrame : stackTrace.frames)
                 frames->pushValue(stackFrameAsJSON(stackFrame));
-            result->setValue("frames"_s, WTFMove(frames));
+            result->setValue("frames"_s, WTF::move(frames));
         }
         return result;
     };
@@ -1155,12 +1155,12 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
     auto traces = JSON::Array::create();
     for (StackTrace& stackTrace : m_stackTraces)
         traces->pushValue(stackTraceAsJSON(stackTrace));
-    result->setValue("traces"_s, WTFMove(traces));
+    result->setValue("traces"_s, WTF::move(traces));
 
     auto sourcesArray = JSON::Array::create();
     for (auto& [ sourceID, sourceProvider ] : sources)
         sourcesArray->pushValue(sourceAsJSON(sourceProvider.get()));
-    result->setValue("sources"_s, WTFMove(sourcesArray));
+    result->setValue("sources"_s, WTF::move(sourcesArray));
 
     clearData();
 

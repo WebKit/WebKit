@@ -36,7 +36,7 @@ namespace WebCore {
 template <typename Visitor>
 void JSMediaSession::visitAdditionalChildren(Visitor& visitor)
 {
-    wrapped().visitActionHandlers(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitActionHandlers(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMediaSession);

@@ -34,12 +34,12 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TransformOperations);
 
 TransformOperations::TransformOperations(Ref<TransformOperation>&& operation)
-    : m_operations({ WTFMove(operation) })
+    : m_operations({ WTF::move(operation) })
 {
 }
 
 TransformOperations::TransformOperations(Vector<Ref<TransformOperation>>&& operations)
-    : m_operations(WTFMove(operations))
+    : m_operations(WTF::move(operations))
 {
 }
 
@@ -115,7 +115,7 @@ TransformOperations blend(const TransformOperations& from, const TransformOperat
                 operations.append(createBlendedMatrixOperationFromOperationsSuffix(i));
                 operations.shrinkToFit();
 
-                return TransformOperations { WTFMove(operations) };
+                return TransformOperations { WTF::move(operations) };
             }
         }
 
@@ -133,7 +133,7 @@ TransformOperations blend(const TransformOperations& from, const TransformOperat
         operations.append(blendedOperation.releaseNonNull());
     }
 
-    return TransformOperations { WTFMove(operations) };
+    return TransformOperations { WTF::move(operations) };
 }
 
 TextStream& operator<<(TextStream& ts, const TransformOperations& ops)

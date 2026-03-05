@@ -30,7 +30,7 @@ namespace WebCore {
 class HTMLOListElement;
 
 class RenderListItem final : public RenderBlockFlow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderListItem);
+    WTF_MAKE_TZONE_ALLOCATED(RenderListItem);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
 public:
     RenderListItem(Element&, RenderStyle&&);
@@ -40,7 +40,7 @@ public:
     void updateValue();
 
     WEBCORE_EXPORT String markerTextWithoutSuffix() const;
-    String markerTextWithSuffix() const;
+    String NODELETE markerTextWithSuffix() const;
 
     void updateListMarkerNumbers();
 
@@ -59,18 +59,18 @@ private:
     
     void paint(PaintInfo&, const LayoutPoint&) final;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
 
     void computePreferredLogicalWidths() final;
 
     void updateValueNow() const;
-    void counterDirectivesChanged();
+    void usedCounterDirectivesChanged();
 
     SingleThreadWeakPtr<RenderListMarker> m_marker;
     mutable std::optional<int> m_value;
 };
 
-bool isHTMLListElement(const Node&);
+bool NODELETE isHTMLListElement(const Node&);
 
 inline int RenderListItem::value() const
 {

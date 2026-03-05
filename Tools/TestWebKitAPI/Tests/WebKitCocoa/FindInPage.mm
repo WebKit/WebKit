@@ -352,95 +352,10 @@ TEST(WebKit, FindTextInImageOverlay)
 
 #if HAVE(UIFINDINTERACTION)
 
-static BOOL swizzledIsEmbeddedScreen(id, SEL, UIScreen *)
-{
-    return NO;
-}
-
 // FIXME: (rdar://95125552) Remove conformance to _UITextSearching.
 @interface WKWebView () <UITextSearching>
 - (void)didBeginTextSearchOperation;
 - (void)didEndTextSearchOperation;
-@end
-
-@interface TestScrollViewDelegate : NSObject<UIScrollViewDelegate>  {
-    @public bool _finishedScrolling;
-
-    std::unique_ptr<InstanceMethodSwizzler> _isEmbeddedScreenSwizzler;
-}
-@end
-
-@implementation TestScrollViewDelegate
-
-- (instancetype)init
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _finishedScrolling = false;
-
-    // Force UIKit to use a `CADisplayLink` rather than its own update cycle for `UIAnimation`s.
-    // UIKit's own update cycle does not work in TestWebKitAPIApp, as it is started in
-    // UIApplicationMain(), and TestWebKitAPIApp is not a real UIApplication. Without this,
-    // scroll view animations would not be completed.
-    _isEmbeddedScreenSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
-        UIScreen.class,
-        @selector(_isEmbeddedScreen),
-        reinterpret_cast<IMP>(swizzledIsEmbeddedScreen)
-    );
-
-    return self;
-}
-
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-{
-    _finishedScrolling = true;
-}
-
-@end
-
-@interface TestFindDelegate : NSObject<_WKFindDelegate>
-@property (nonatomic, copy) void (^didAddLayerForFindOverlayHandler)(void);
-@property (nonatomic, copy) void (^didRemoveLayerForFindOverlayHandler)(void);
-@end
-
-@implementation TestFindDelegate {
-    BlockPtr<void()> _didAddLayerForFindOverlayHandler;
-    BlockPtr<void()> _didRemoveLayerForFindOverlayHandler;
-}
-
-- (void)setDidAddLayerForFindOverlayHandler:(void (^)(void))didAddLayerForFindOverlayHandler
-{
-    _didAddLayerForFindOverlayHandler = makeBlockPtr(didAddLayerForFindOverlayHandler);
-}
-
-- (void (^)(void))didAddLayerForFindOverlayHandler
-{
-    return _didAddLayerForFindOverlayHandler.get();
-}
-
-- (void)setDidRemoveLayerForFindOverlayHandler:(void (^)(void))didRemoveLayerForFindOverlayHandler
-{
-    _didRemoveLayerForFindOverlayHandler = makeBlockPtr(didRemoveLayerForFindOverlayHandler);
-}
-
-- (void (^)(void))didRemoveLayerForFindOverlayHandler
-{
-    return _didRemoveLayerForFindOverlayHandler.get();
-}
-
-- (void)_webView:(WKWebView *)webView didAddLayerForFindOverlay:(CALayer *)layer
-{
-    if (_didAddLayerForFindOverlayHandler)
-        _didAddLayerForFindOverlayHandler();
-}
-
-- (void)_webViewDidRemoveLayerForFindOverlay:(WKWebView *)webView
-{
-    if (_didRemoveLayerForFindOverlayHandler)
-        _didRemoveLayerForFindOverlayHandler();
-}
-
 @end
 
 @interface FindInPageTestWKWebView : TestWKWebView
@@ -595,11 +510,15 @@ TEST(WebKit, FindAndReplace)
     for (UITextRange *range in [ranges reverseObjectEnumerator])
         [webView replaceFoundTextInRange:range inDocument:nil withText:replacementString];
 
+    [webView waitForNextPresentationUpdate];
+
     EXPECT_WK_STREQ(originalContent, [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
 
     [webView _setEditable:YES];
     for (UITextRange *range in [ranges reverseObjectEnumerator])
         [webView replaceFoundTextInRange:range inDocument:nil withText:replacementString];
+
+    [webView waitForNextPresentationUpdate];
 
     EXPECT_WK_STREQ(replacedContent, [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
 }

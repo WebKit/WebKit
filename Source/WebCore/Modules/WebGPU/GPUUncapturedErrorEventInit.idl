@@ -30,8 +30,7 @@
 typedef (GPUOutOfMemoryError or GPUValidationError or GPUInternalError) GPUError;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUUncapturedErrorEventInit : EventInit {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUUncapturedErrorEventInit : EventInit {
     required GPUError error;
 };

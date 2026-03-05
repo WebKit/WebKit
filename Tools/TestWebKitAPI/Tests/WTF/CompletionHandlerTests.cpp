@@ -112,7 +112,7 @@ TEST_F(CompletionHandlerTest, CalledHandlerCanBeDestroyedOffThread)
 
     bool didDestroy = false;
     Thread::create("CalledHandlerCanBeDestroyedOffThread"_s, [&] {
-        auto ch = WTFMove(ch3);
+        auto ch = WTF::move(ch3);
         didDestroy = true;
     })->waitForCompletion();
     EXPECT_TRUE(didDestroy);

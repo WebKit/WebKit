@@ -65,7 +65,7 @@ public:
 
             SubscribeOptions options;
             options.signal = subscriber.signal();
-            m_sourceObservable->subscribeInternal(*context, InternalObserverMap::create(*context, subscriber, m_mapper), options);
+            m_sourceObservable->subscribeInternal(*context, InternalObserverMap::create(*context, subscriber, m_mapper), WTF::move(options));
 
             return { };
         }
@@ -102,31 +102,31 @@ private:
         // error handler.
         JSC::Exception* previousException = nullptr;
         {
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            auto result = protectedMapper()->invokeRethrowingException(value, m_idx);
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+            auto result = protect(m_mapper)->invokeRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {
                 catchScope.clearException();
-                protectedSubscriber()->error(previousException->value());
+                protect(m_subscriber)->error(previousException->value());
                 return;
             }
 
             m_idx += 1;
 
             if (result.type() == CallbackResultType::Success)
-                protectedSubscriber()->next(result.releaseReturnValue());
+                protect(m_subscriber)->next(result.releaseReturnValue());
         }
     }
 
     void error(JSC::JSValue value) final
     {
-        protectedSubscriber()->error(value);
+        protect(m_subscriber)->error(value);
     }
 
     void complete() final
     {
         InternalObserver::complete();
-        protectedSubscriber()->complete();
+        protect(m_subscriber)->complete();
     }
 
     void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
@@ -134,9 +134,6 @@ private:
         m_subscriber->visitAdditionalChildren(visitor);
         m_mapper->visitJSFunction(visitor);
     }
-
-    Ref<Subscriber> protectedSubscriber() const { return m_subscriber; }
-    Ref<MapperCallback> protectedMapper() const { return m_mapper; }
 
     InternalObserverMap(ScriptExecutionContext& context, Ref<Subscriber> subscriber, Ref<MapperCallback> mapper)
         : InternalObserver(context)

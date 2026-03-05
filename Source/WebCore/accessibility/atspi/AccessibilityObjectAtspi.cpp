@@ -323,9 +323,9 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::LandmarkSearch:
         return Atspi::Role::Landmark;
     case AccessibilityRole::SectionFooter:
-        return Atspi::Role::SectionFooter;
+        return Atspi::Role::Footer;
     case AccessibilityRole::SectionHeader:
-        return Atspi::Role::SectionHeader;
+        return Atspi::Role::Header;
     case AccessibilityRole::DescriptionList:
         return Atspi::Role::DescriptionList;
     case AccessibilityRole::Term:
@@ -493,7 +493,7 @@ bool AccessibilityObjectAtspi::registerObject()
     if (m_interfaces.contains(Interface::Collection))
         interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_collection_interface), &s_collectionFunctions });
 
-    m_path = AccessibilityAtspi::singleton().registerObject(*this, WTFMove(interfaces));
+    m_path = AccessibilityAtspi::singleton().registerObject(*this, WTF::move(interfaces));
     return true;
 }
 
@@ -1030,7 +1030,7 @@ RelationMap AccessibilityObjectAtspi::relationMap() const
                 wrappers.append(*wrapper);
         }
         if (!wrappers.isEmpty())
-            map.add(relation, WTFMove(wrappers));
+            map.add(relation, WTF::move(wrappers));
     };
 
     AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;

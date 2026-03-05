@@ -130,7 +130,7 @@ void DisplayVBlankMonitorThreaded::setHandler(Function<void()>&& handler)
 {
     Locker locker { m_lock };
     ASSERT(m_state == State::Stop);
-    DisplayVBlankMonitor::setHandler(WTFMove(handler));
+    DisplayVBlankMonitor::setHandler(WTF::move(handler));
 }
 
 void DisplayVBlankMonitorThreaded::destroyThreadTimerFired()

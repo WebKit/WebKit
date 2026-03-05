@@ -3,17 +3,7 @@ Tests that lazy image loading doesn't cause Document leaks.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS internals.isDocumentAlive(frameDocumentID) is true
-PASS The popup document didn't leak.
+PASS The iframe document didn't leak.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -34,20 +34,18 @@ namespace InlineIterator {
 
 inline bool BoxModernPath::isHorizontal() const { return box().isHorizontal(); }
 
-inline WritingMode BoxModernPath::writingMode() const { return box().writingMode(); }
-
 inline TextRun BoxModernPath::textRun(TextRunMode mode) const
 {
-    auto& style = box().style();
+    CheckedRef style = box().style();
     auto expansion = box().expansion();
     auto logicalLeft = [&] {
-        if (style.writingMode().isBidiLTR())
+        if (style->writingMode().isBidiLTR())
             return visualRectIgnoringBlockDirection().x() - (line().lineBoxLeft() + line().contentLogicalLeft());
         return line().lineBoxRight() - (visualRectIgnoringBlockDirection().maxX() + line().contentLogicalLeft());
     };
     auto characterScanForCodePath = isText() && !renderText().canUseSimpleFontCodePath();
-    auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
-    textRun.setTabSize(!style.collapseWhiteSpace(), Style::toPlatform(style.tabSize()));
+    auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style->rtlOrdering() == Order::Visual, characterScanForCodePath };
+    textRun.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize()));
     return textRun;
 }
 

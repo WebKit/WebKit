@@ -24,24 +24,18 @@
 #include "internal.h"
 
 
-// This file computes the X.509 policy tree, as described in RFC 5280, section
-// 6.1. It differs in that:
+// This file computes the X.509 policy graph, as described in RFC 9618.
+// Implementation notes:
 //
 //  (1) It does not track "qualifier_set". This is not needed as it is not
 //      output by this implementation.
 //
-//  (2) It builds a directed acyclic graph, rather than a tree. When a given
-//      policy matches multiple parents, RFC 5280 makes a separate node for
-//      each parent. This representation condenses them into one node with
-//      multiple parents. Thus we refer to this structure as a "policy graph",
-//      rather than a "policy tree".
-//
-//  (3) "expected_policy_set" is not tracked explicitly and built temporarily
+//  (2) "expected_policy_set" is not tracked explicitly and built temporarily
 //      as part of building the graph.
 //
-//  (4) anyPolicy nodes are not tracked explicitly.
+//  (3) anyPolicy nodes are not tracked explicitly.
 //
-//  (5) Some pruning steps are deferred to when policies are evaluated, as a
+//  (4) Some pruning steps are deferred to when policies are evaluated, as a
 //      reachability pass.
 
 // An X509_POLICY_NODE is a node in the policy graph. It corresponds to a node
@@ -96,7 +90,7 @@ static int is_any_policy(const ASN1_OBJECT *obj) {
 }
 
 static void x509_policy_node_free(X509_POLICY_NODE *node) {
-  if (node != NULL) {
+  if (node != nullptr) {
     ASN1_OBJECT_free(node->policy);
     sk_ASN1_OBJECT_pop_free(node->parent_policies, ASN1_OBJECT_free);
     OPENSSL_free(node);
@@ -107,14 +101,14 @@ static X509_POLICY_NODE *x509_policy_node_new(const ASN1_OBJECT *policy) {
   assert(!is_any_policy(policy));
   X509_POLICY_NODE *node = reinterpret_cast<X509_POLICY_NODE *>(
       OPENSSL_zalloc(sizeof(X509_POLICY_NODE)));
-  if (node == NULL) {
-    return NULL;
+  if (node == nullptr) {
+    return nullptr;
   }
   node->policy = OBJ_dup(policy);
   node->parent_policies = sk_ASN1_OBJECT_new_null();
-  if (node->policy == NULL || node->parent_policies == NULL) {
+  if (node->policy == nullptr || node->parent_policies == nullptr) {
     x509_policy_node_free(node);
-    return NULL;
+    return nullptr;
   }
   return node;
 }
@@ -125,7 +119,7 @@ static int x509_policy_node_cmp(const X509_POLICY_NODE *const *a,
 }
 
 static void x509_policy_level_free(X509_POLICY_LEVEL *level) {
-  if (level != NULL) {
+  if (level != nullptr) {
     sk_X509_POLICY_NODE_pop_free(level->nodes, x509_policy_node_free);
     OPENSSL_free(level);
   }
@@ -134,13 +128,13 @@ static void x509_policy_level_free(X509_POLICY_LEVEL *level) {
 static X509_POLICY_LEVEL *x509_policy_level_new(void) {
   X509_POLICY_LEVEL *level = reinterpret_cast<X509_POLICY_LEVEL *>(
       OPENSSL_zalloc(sizeof(X509_POLICY_LEVEL)));
-  if (level == NULL) {
-    return NULL;
+  if (level == nullptr) {
+    return nullptr;
   }
   level->nodes = sk_X509_POLICY_NODE_new(x509_policy_node_cmp);
-  if (level->nodes == NULL) {
+  if (level->nodes == nullptr) {
     x509_policy_level_free(level);
-    return NULL;
+    return nullptr;
   }
   return level;
 }
@@ -166,7 +160,7 @@ static X509_POLICY_NODE *x509_policy_level_find(X509_POLICY_LEVEL *level,
   node.policy = (ASN1_OBJECT *)policy;
   size_t idx;
   if (!sk_X509_POLICY_NODE_find(level->nodes, &idx, &node)) {
-    return NULL;
+    return nullptr;
   }
   return sk_X509_POLICY_NODE_value(level->nodes, idx);
 }
@@ -185,7 +179,7 @@ static int x509_policy_level_add_nodes(X509_POLICY_LEVEL *level,
     if (!sk_X509_POLICY_NODE_push(level->nodes, node)) {
       return 0;
     }
-    sk_X509_POLICY_NODE_set(nodes, i, NULL);
+    sk_X509_POLICY_NODE_set(nodes, i, nullptr);
   }
   sk_X509_POLICY_NODE_sort(level->nodes);
 
@@ -210,7 +204,7 @@ static int delete_if_not_in_policies(X509_POLICY_NODE *node, void *data) {
   assert(sk_POLICYINFO_is_sorted(policies));
   POLICYINFO info;
   info.policyid = node->policy;
-  if (sk_POLICYINFO_find(policies, NULL, &info)) {
+  if (sk_POLICYINFO_find(policies, nullptr, &info)) {
     return 0;
   }
   x509_policy_node_free(node);
@@ -229,12 +223,12 @@ static int process_certificate_policies(const X509 *x509,
                                         int any_policy_allowed) {
   int ret = 0;
   int critical;
-  STACK_OF(X509_POLICY_NODE) *new_nodes = NULL;
+  STACK_OF(X509_POLICY_NODE) *new_nodes = nullptr;
   CERTIFICATEPOLICIES *policies = reinterpret_cast<CERTIFICATEPOLICIES *>(
-      X509_get_ext_d2i(x509, NID_certificate_policies, &critical, NULL));
+      X509_get_ext_d2i(x509, NID_certificate_policies, &critical, nullptr));
 
   {
-    if (policies == NULL) {
+    if (policies == nullptr) {
       if (critical != -1) {
         return 0;  // Syntax error in the extension.
       }
@@ -268,7 +262,7 @@ static int process_certificate_policies(const X509 *x509,
     }
 
     // This does the same thing as RFC 5280, section 6.1.3, step (d), though in
-    // a slighty different order. |level| currently contains
+    // a slightly different order. |level| currently contains
     // "expected_policy_set" values of the previous level. See
     // |process_policy_mappings| for details.
     const int previous_level_has_any_policy = level->has_any_policy;
@@ -286,7 +280,7 @@ static int process_certificate_policies(const X509 *x509,
     // node.
     if (previous_level_has_any_policy) {
       new_nodes = sk_X509_POLICY_NODE_new_null();
-      if (new_nodes == NULL) {
+      if (new_nodes == nullptr) {
         goto err;
       }
       for (size_t i = 0; i < sk_POLICYINFO_num(policies); i++) {
@@ -294,9 +288,9 @@ static int process_certificate_policies(const X509 *x509,
         // Though we've reordered the steps slightly, |policy| is in |level| if
         // and only if it would have been a match in step (d.1.ii).
         if (!is_any_policy(policy->policyid) &&
-            x509_policy_level_find(level, policy->policyid) == NULL) {
+            x509_policy_level_find(level, policy->policyid) == nullptr) {
           X509_POLICY_NODE *node = x509_policy_node_new(policy->policyid);
-          if (node == NULL ||  //
+          if (node == nullptr ||  //
               !sk_X509_POLICY_NODE_push(new_nodes, node)) {
             x509_policy_node_free(node);
             goto err;
@@ -333,7 +327,7 @@ static int delete_if_mapped(X509_POLICY_NODE *node, void *data) {
   assert(sk_POLICY_MAPPING_is_sorted(mappings));
   POLICY_MAPPING mapping;
   mapping.issuerDomainPolicy = node->policy;
-  if (!sk_POLICY_MAPPING_find(mappings, /*out_index=*/NULL, &mapping)) {
+  if (!sk_POLICY_MAPPING_find(mappings, /*out_index=*/nullptr, &mapping)) {
     return 0;
   }
   x509_policy_node_free(node);
@@ -354,25 +348,25 @@ static int delete_if_mapped(X509_POLICY_NODE *node, void *data) {
 // with P1 in |parent_policies|.
 //
 // This is equivalent to the |X509_POLICY_LEVEL| that would result if the next
-// certificats contained anyPolicy. |process_certificate_policies| will filter
+// certificates contained anyPolicy. |process_certificate_policies| will filter
 // this result down to compute the actual level.
 static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
                                                   X509_POLICY_LEVEL *level,
                                                   int mapping_allowed) {
   int ok = 0;
-  STACK_OF(X509_POLICY_NODE) *new_nodes = NULL;
-  X509_POLICY_LEVEL *next = NULL;
+  STACK_OF(X509_POLICY_NODE) *new_nodes = nullptr;
+  X509_POLICY_LEVEL *next = nullptr;
   int critical;
   POLICY_MAPPINGS *mappings = reinterpret_cast<POLICY_MAPPINGS *>(
-      X509_get_ext_d2i(cert, NID_policy_mappings, &critical, NULL));
+      X509_get_ext_d2i(cert, NID_policy_mappings, &critical, nullptr));
 
   {
-    if (mappings == NULL && critical != -1) {
+    if (mappings == nullptr && critical != -1) {
       // Syntax error in the policy mappings extension.
       goto err;
     }
 
-    if (mappings != NULL) {
+    if (mappings != nullptr) {
       // PolicyMappings may not be empty. See RFC 5280, section 4.2.1.5.
       // TODO(https://crbug.com/boringssl/443): Move this check into the parser.
       if (sk_POLICY_MAPPING_num(mappings) == 0) {
@@ -397,14 +391,14 @@ static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
         // Mark nodes as mapped, and add any nodes to |level| which may be
         // needed as part of RFC 5280, section 6.1.4, step (b.1).
         new_nodes = sk_X509_POLICY_NODE_new_null();
-        if (new_nodes == NULL) {
+        if (new_nodes == nullptr) {
           goto err;
         }
-        const ASN1_OBJECT *last_policy = NULL;
+        const ASN1_OBJECT *last_policy = nullptr;
         for (size_t i = 0; i < sk_POLICY_MAPPING_num(mappings); i++) {
           const POLICY_MAPPING *mapping = sk_POLICY_MAPPING_value(mappings, i);
           // There may be multiple mappings with the same |issuerDomainPolicy|.
-          if (last_policy != NULL &&
+          if (last_policy != nullptr &&
               OBJ_cmp(mapping->issuerDomainPolicy, last_policy) == 0) {
             continue;
           }
@@ -412,12 +406,12 @@ static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
 
           X509_POLICY_NODE *node =
               x509_policy_level_find(level, mapping->issuerDomainPolicy);
-          if (node == NULL) {
+          if (node == nullptr) {
             if (!level->has_any_policy) {
               continue;
             }
             node = x509_policy_node_new(mapping->issuerDomainPolicy);
-            if (node == NULL ||  //
+            if (node == nullptr ||  //
                 !sk_X509_POLICY_NODE_push(new_nodes, node)) {
               x509_policy_node_free(node);
               goto err;
@@ -433,15 +427,15 @@ static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
         // all mapped nodes.
         sk_X509_POLICY_NODE_delete_if(level->nodes, delete_if_mapped, mappings);
         sk_POLICY_MAPPING_pop_free(mappings, POLICY_MAPPING_free);
-        mappings = NULL;
+        mappings = nullptr;
       }
     }
 
     // If a node was not mapped, it retains the original "explicit_policy_set"
     // value, itself. Add those to |mappings|.
-    if (mappings == NULL) {
+    if (mappings == nullptr) {
       mappings = sk_POLICY_MAPPING_new_null();
-      if (mappings == NULL) {
+      if (mappings == nullptr) {
         goto err;
       }
     }
@@ -449,13 +443,13 @@ static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
       X509_POLICY_NODE *node = sk_X509_POLICY_NODE_value(level->nodes, i);
       if (!node->mapped) {
         POLICY_MAPPING *mapping = POLICY_MAPPING_new();
-        if (mapping == NULL) {
+        if (mapping == nullptr) {
           goto err;
         }
         mapping->issuerDomainPolicy = OBJ_dup(node->policy);
         mapping->subjectDomainPolicy = OBJ_dup(node->policy);
-        if (mapping->issuerDomainPolicy == NULL ||
-            mapping->subjectDomainPolicy == NULL ||
+        if (mapping->issuerDomainPolicy == nullptr ||
+            mapping->subjectDomainPolicy == nullptr ||
             !sk_POLICY_MAPPING_push(mappings, mapping)) {
           POLICY_MAPPING_free(mapping);
           goto err;
@@ -469,24 +463,25 @@ static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
 
     // Convert |mappings| to our "expected_policy_set" representation.
     next = x509_policy_level_new();
-    if (next == NULL) {
+    if (next == nullptr) {
       goto err;
     }
     next->has_any_policy = level->has_any_policy;
 
-    X509_POLICY_NODE *last_node = NULL;
+    X509_POLICY_NODE *last_node = nullptr;
     for (size_t i = 0; i < sk_POLICY_MAPPING_num(mappings); i++) {
       POLICY_MAPPING *mapping = sk_POLICY_MAPPING_value(mappings, i);
       // Skip mappings where |issuerDomainPolicy| does not appear in the graph.
       if (!level->has_any_policy &&
-          x509_policy_level_find(level, mapping->issuerDomainPolicy) == NULL) {
+          x509_policy_level_find(level, mapping->issuerDomainPolicy) ==
+              nullptr) {
         continue;
       }
 
-      if (last_node == NULL ||
+      if (last_node == nullptr ||
           OBJ_cmp(last_node->policy, mapping->subjectDomainPolicy) != 0) {
         last_node = x509_policy_node_new(mapping->subjectDomainPolicy);
-        if (last_node == NULL ||
+        if (last_node == nullptr ||
             !sk_X509_POLICY_NODE_push(next->nodes, last_node)) {
           x509_policy_node_free(last_node);
           goto err;
@@ -497,7 +492,7 @@ static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
                                mapping->issuerDomainPolicy)) {
         goto err;
       }
-      mapping->issuerDomainPolicy = NULL;
+      mapping->issuerDomainPolicy = nullptr;
     }
 
     sk_X509_POLICY_NODE_sort(next->nodes);
@@ -507,7 +502,7 @@ static X509_POLICY_LEVEL *process_policy_mappings(const X509 *cert,
 err:
   if (!ok) {
     x509_policy_level_free(next);
-    next = NULL;
+    next = nullptr;
   }
 
   sk_POLICY_MAPPING_pop_free(mappings, POLICY_MAPPING_free);
@@ -519,7 +514,7 @@ err:
 // of its current value and |skip_certs|. It returns one on success and zero if
 // |skip_certs| is negative.
 static int apply_skip_certs(const ASN1_INTEGER *skip_certs, size_t *value) {
-  if (skip_certs == NULL) {
+  if (skip_certs == nullptr) {
     return 1;
   }
 
@@ -547,13 +542,13 @@ static int process_policy_constraints(const X509 *x509, size_t *explicit_policy,
                                       size_t *inhibit_any_policy) {
   int critical;
   POLICY_CONSTRAINTS *constraints = reinterpret_cast<POLICY_CONSTRAINTS *>(
-      X509_get_ext_d2i(x509, NID_policy_constraints, &critical, NULL));
-  if (constraints == NULL && critical != -1) {
+      X509_get_ext_d2i(x509, NID_policy_constraints, &critical, nullptr));
+  if (constraints == nullptr && critical != -1) {
     return 0;
   }
-  if (constraints != NULL) {
-    if (constraints->requireExplicitPolicy == NULL &&
-        constraints->inhibitPolicyMapping == NULL) {
+  if (constraints != nullptr) {
+    if (constraints->requireExplicitPolicy == nullptr &&
+        constraints->inhibitPolicyMapping == nullptr) {
       // Per RFC 5280, section 4.2.1.11, at least one of the fields must be
       // present.
       OPENSSL_PUT_ERROR(X509, X509_R_INVALID_POLICY_EXTENSION);
@@ -570,8 +565,8 @@ static int process_policy_constraints(const X509 *x509, size_t *explicit_policy,
   }
 
   ASN1_INTEGER *inhibit_any_policy_ext = reinterpret_cast<ASN1_INTEGER *>(
-      X509_get_ext_d2i(x509, NID_inhibit_any_policy, &critical, NULL));
-  if (inhibit_any_policy_ext == NULL && critical != -1) {
+      X509_get_ext_d2i(x509, NID_inhibit_any_policy, &critical, nullptr));
+  if (inhibit_any_policy_ext == nullptr && critical != -1) {
     return 0;
   }
   int ok = apply_skip_certs(inhibit_any_policy_ext, inhibit_any_policy);
@@ -586,7 +581,7 @@ static int process_policy_constraints(const X509 *x509, size_t *explicit_policy,
 // evaluation.
 static int has_explicit_policy(STACK_OF(X509_POLICY_LEVEL) *levels,
                                const STACK_OF(ASN1_OBJECT) *user_policies) {
-  assert(user_policies == NULL || sk_ASN1_OBJECT_is_sorted(user_policies));
+  assert(user_policies == nullptr || sk_ASN1_OBJECT_is_sorted(user_policies));
 
   // Step (g.i). If the policy graph is empty, the intersection is empty.
   size_t num_levels = sk_X509_POLICY_LEVEL_num(levels);
@@ -637,7 +632,7 @@ static int has_explicit_policy(STACK_OF(X509_POLICY_LEVEL) *levels,
         // |node|'s parent is anyPolicy and is part of "valid_policy_node_set".
         // If it exists in |user_policies|, the intersection is non-empty and we
         // can return immediately.
-        if (sk_ASN1_OBJECT_find(user_policies, /*out_index=*/NULL,
+        if (sk_ASN1_OBJECT_find(user_policies, /*out_index=*/nullptr,
                                 node->policy)) {
           return 1;
         }
@@ -648,7 +643,7 @@ static int has_explicit_policy(STACK_OF(X509_POLICY_LEVEL) *levels,
         for (size_t k = 0; k < sk_ASN1_OBJECT_num(node->parent_policies); k++) {
           X509_POLICY_NODE *parent = x509_policy_level_find(
               prev, sk_ASN1_OBJECT_value(node->parent_policies, k));
-          if (parent != NULL) {
+          if (parent != nullptr) {
             parent->reachable = 1;
           }
         }
@@ -667,11 +662,11 @@ static int asn1_object_cmp(const ASN1_OBJECT *const *a,
 int X509_policy_check(const STACK_OF(X509) *certs,
                       const STACK_OF(ASN1_OBJECT) *user_policies,
                       unsigned long flags, X509 **out_current_cert) {
-  *out_current_cert = NULL;
+  *out_current_cert = nullptr;
   int ret = X509_V_ERR_OUT_OF_MEM;
-  X509_POLICY_LEVEL *level = NULL;
-  STACK_OF(X509_POLICY_LEVEL) *levels = NULL;
-  STACK_OF(ASN1_OBJECT) *user_policies_sorted = NULL;
+  X509_POLICY_LEVEL *level = nullptr;
+  STACK_OF(X509_POLICY_LEVEL) *levels = nullptr;
+  STACK_OF(ASN1_OBJECT) *user_policies_sorted = nullptr;
   size_t num_certs = sk_X509_num(certs);
 
   // Skip policy checking if the chain is just the trust anchor.
@@ -687,7 +682,7 @@ int X509_policy_check(const STACK_OF(X509) *certs,
   size_t policy_mapping = (flags & X509_V_FLAG_INHIBIT_MAP) ? 0 : num_certs + 1;
 
   levels = sk_X509_POLICY_LEVEL_new_null();
-  if (levels == NULL) {
+  if (levels == nullptr) {
     goto err;
   }
 
@@ -698,10 +693,10 @@ int X509_policy_check(const STACK_OF(X509) *certs,
     }
     const int is_self_issued = (cert->ex_flags & EXFLAG_SI) != 0;
 
-    if (level == NULL) {
+    if (level == nullptr) {
       assert(i == num_certs - 2);
       level = x509_policy_level_new();
-      if (level == NULL) {
+      if (level == nullptr) {
         goto err;
       }
       level->has_any_policy = 1;
@@ -728,14 +723,14 @@ int X509_policy_check(const STACK_OF(X509) *certs,
       goto err;
     }
     X509_POLICY_LEVEL *current_level = level;
-    level = NULL;
+    level = nullptr;
 
     // If this is not the leaf certificate, we go to section 6.1.4. If it
     // is the leaf certificate, we go to section 6.1.5 instead.
     if (i != 0) {
       // RFC 5280, section 6.1.4, steps (a) and (b).
       level = process_policy_mappings(cert, current_level, policy_mapping > 0);
-      if (level == NULL) {
+      if (level == nullptr) {
         ret = X509_V_ERR_INVALID_POLICY_EXTENSION;
         *out_current_cert = cert;
         goto err;
@@ -769,9 +764,9 @@ int X509_policy_check(const STACK_OF(X509) *certs,
   // is only necessary to check if the user-constrained-policy-set is not empty.
   if (explicit_policy == 0) {
     // Build a sorted copy of |user_policies| for more efficient lookup.
-    if (user_policies != NULL) {
+    if (user_policies != nullptr) {
       user_policies_sorted = sk_ASN1_OBJECT_dup(user_policies);
-      if (user_policies_sorted == NULL) {
+      if (user_policies_sorted == nullptr) {
         goto err;
       }
       sk_ASN1_OBJECT_set_cmp_func(user_policies_sorted, asn1_object_cmp);

@@ -98,11 +98,12 @@ using JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsD
 
 /* Hash table */
 
-static const struct CompactHashIndex JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTableIndex[4] = {
+static const struct CompactHashIndex JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTableIndex[5] = {
+    { -1, -1 },
+    { 0, 4 },
+    { -1, -1 },
     { -1, -1 },
     { 1, -1 },
-    { -1, -1 },
-    { 0, -1 },
 };
 
 
@@ -147,7 +148,7 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPr
 const ClassInfo JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::s_info = { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns"_s, &Base::s_info, &JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns) };
 
 JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>&& impl)
-    : JSDOMWrapper<TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -187,7 +188,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
             return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -214,7 +215,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
         return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
         slot.setValue(thisObject, 0, value);
         return true;
@@ -259,7 +260,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
         ownDescriptor.setPropertySlot(lexicalGlobalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(throwScope, false);
     }
-    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTFMove(ownDescriptor), putPropertySlot.isStrictMode()));
+    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTF::move(ownDescriptor), putPropertySlot.isStrictMode()));
 }
 
 bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool)
@@ -417,7 +418,7 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsOw
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = static_cast<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns->protectedWrapped().ptr(), jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
+    uncacheWrapper(world, protect(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns->wrapped()).ptr(), jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -455,7 +456,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>(impl.ptr());
 #endif
-    return createWrapper<TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>(globalObject, WTFMove(impl));
+    return createWrapper<TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns& impl)

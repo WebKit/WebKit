@@ -67,21 +67,21 @@ H264SpsPpsTracker::FixedBitstream H264SpsPpsTracker::CopyAndFixBitstream(
         if (video_header->is_first_packet_in_frame) {
           if (nalu.pps_id == -1) {
             RTC_LOG(LS_WARNING) << "No PPS id in IDR nalu.";
-            return {kRequestKeyframe};
+            return {.action = kRequestKeyframe};
           }
 
           pps = pps_data_.find(nalu.pps_id);
           if (pps == pps_data_.end()) {
             RTC_LOG(LS_WARNING)
                 << "No PPS with id << " << nalu.pps_id << " received";
-            return {kRequestKeyframe};
+            return {.action = kRequestKeyframe};
           }
 
           sps = sps_data_.find(pps->second.sps_id);
           if (sps == sps_data_.end()) {
             RTC_LOG(LS_WARNING)
                 << "No SPS with id << " << pps->second.sps_id << " received";
-            return {kRequestKeyframe};
+            return {.action = kRequestKeyframe};
           }
 
           // Since the first packet of every keyframe should have its width and
@@ -122,9 +122,9 @@ H264SpsPpsTracker::FixedBitstream H264SpsPpsTracker::CopyAndFixBitstream(
       // The first two bytes describe the length of a segment.
       uint16_t segment_length;
       if (!nalu.ReadUInt16(&segment_length))
-        return {kDrop};
+        return {.action = kDrop};
       if (segment_length == 0 || segment_length > nalu.Length()) {
-        return {kDrop};
+        return {.action = kDrop};
       }
       required_size += segment_length;
       nalu.Consume(segment_length);
@@ -166,9 +166,9 @@ H264SpsPpsTracker::FixedBitstream H264SpsPpsTracker::CopyAndFixBitstream(
       // The first two bytes describe the length of a segment.
       uint16_t segment_length;
       if (!nalu.ReadUInt16(&segment_length))
-        return {kDrop};
+        return {.action = kDrop};
       if (segment_length == 0 || segment_length > nalu.Length()) {
-        return {kDrop};
+        return {.action = kDrop};
       }
       fixed.bitstream.AppendData(nalu.Data(), segment_length);
       nalu.Consume(segment_length);

@@ -41,7 +41,7 @@ public:
     // string from the |header_field| input. Return |true| on success. Return
     // |false| if the separator character, the token or the quoted string is
     // missing or invalid.
-    bool consume(char16_t);
+    bool NODELETE consume(char16_t);
     String consumeToken();
     String consumeTokenOrQuotedString();
 
@@ -49,13 +49,13 @@ public:
     // the Vector parameter are found.
     // Because we potentially have to iterate through the entire Vector for each
     // character of the base string, the Vector should be small (< 3 members).
-    void consumeBeforeAnyCharMatch(const Vector<char16_t>&);
+    void NODELETE consumeBeforeAnyCharMatch(const Vector<char16_t>&);
 
     bool isConsumed() const { return m_index >= m_input.length(); }
 
 private:
     String consumeQuotedString();
-    void skipSpaces();
+    void NODELETE skipSpaces();
 
     unsigned m_index = 0;
     const String m_input;

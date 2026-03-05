@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WPEDisplayHeadless.h"
 
-#include "WPEBufferDMABufFormats.h"
 #include "WPEDRMDevicePrivate.h"
 #include "WPEExtensions.h"
 #include "WPEToplevelHeadless.h"
@@ -83,12 +82,12 @@ static gboolean wpeDisplayHeadlessConnect(WPEDisplay*, GError**)
 
 static WPEView* wpeDisplayHeadlessCreateView(WPEDisplay* display)
 {
-    auto* view = WPE_VIEW(g_object_new(WPE_TYPE_VIEW_HEADLESS, "display", display, nullptr));
-    if (wpe_settings_get_boolean(wpe_display_get_settings(display), WPE_SETTING_CREATE_VIEWS_WITH_A_TOPLEVEL, nullptr)) {
-        GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_headless_new(WPE_DISPLAY_HEADLESS(display)));
-        wpe_view_set_toplevel(view, toplevel.get());
-    }
-    return view;
+    return WPE_VIEW(g_object_new(WPE_TYPE_VIEW_HEADLESS, "display", display, nullptr));
+}
+
+static WPEToplevel* wpeDisplayHeadlessCreateToplevel(WPEDisplay* display, guint)
+{
+    return WPE_TOPLEVEL(g_object_new(WPE_TYPE_TOPLEVEL_HEADLESS, "display", display, nullptr));
 }
 
 static gpointer wpeDisplayHeadlessGetEGLDisplay(WPEDisplay* display, GError** error)
@@ -123,7 +122,7 @@ static gpointer wpeDisplayHeadlessGetEGLDisplay(WPEDisplay* display, GError** er
 
         if (eglDisplay != EGL_NO_DISPLAY) {
             auto* priv = WPE_DISPLAY_HEADLESS(display)->priv;
-            priv->gbmDeviceFD = WTFMove(fd);
+            priv->gbmDeviceFD = WTF::move(fd);
             priv->gbmDevice = device;
             return eglDisplay;
         }
@@ -170,6 +169,7 @@ static void wpe_display_headless_class_init(WPEDisplayHeadlessClass* displayHead
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayHeadlessClass);
     displayClass->connect = wpeDisplayHeadlessConnect;
     displayClass->create_view = wpeDisplayHeadlessCreateView;
+    displayClass->create_toplevel = wpeDisplayHeadlessCreateToplevel;
     displayClass->get_egl_display = wpeDisplayHeadlessGetEGLDisplay;
     displayClass->get_drm_device = wpeDisplayHeadlessGetDRMDevice;
 }
@@ -206,7 +206,7 @@ WPEDisplay* wpe_display_headless_new_for_device(const char* name, GError** error
 
     auto* display = WPE_DISPLAY_HEADLESS(wpe_display_headless_new());
     auto* priv = display->priv;
-    priv->drmDevice = WTFMove(drmDevice);
+    priv->drmDevice = WTF::move(drmDevice);
     return WPE_DISPLAY(display);
 #else
     UNUSED_PARAM(name);

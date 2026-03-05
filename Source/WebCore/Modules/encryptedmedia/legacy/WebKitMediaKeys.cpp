@@ -56,12 +56,12 @@ ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(const String& keySyste
     // 5. Create a new MediaKeys object.
     // 5.1 Let the keySystem attribute be keySystem.
     // 6. Return the new object to the caller.
-    return adoptRef(*new WebKitMediaKeys(keySystem, WTFMove(cdm)));
+    return adoptRef(*new WebKitMediaKeys(keySystem, WTF::move(cdm)));
 }
 
 WebKitMediaKeys::WebKitMediaKeys(const String& keySystem, Ref<LegacyCDM>&& cdm)
     : m_keySystem(keySystem)
-    , m_cdm(WTFMove(cdm))
+    , m_cdm(WTF::move(cdm))
 {
     m_cdm->setClient(this);
 }
@@ -106,8 +106,8 @@ ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document&
 
     // 5. Schedule a task to initialize the session, providing contentType, initData, and the new object.
     auto request = MediaKeySystemRequest::create(document, m_keySystem, { });
-    request->setAllowCallback([session = session.copyRef(), type = type, initData = WTFMove(initData)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&) mutable {
-        session->generateKeyRequest(type, WTFMove(initData), mediaKeysHashSalt);
+    request->setAllowCallback([session = session.copyRef(), type = type, initData = WTF::move(initData)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&) mutable {
+        session->generateKeyRequest(type, WTF::move(initData), mediaKeysHashSalt);
     });
     request->start();
 

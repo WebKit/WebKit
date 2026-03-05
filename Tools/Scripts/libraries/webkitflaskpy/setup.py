@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitflaskpy',
-    version='0.7.1',
+    version='0.7.2',
     description="Library supporting the WebKit Team's flask based web services.",
     long_description=readme(),
     long_description_content_type='text/markdown',

@@ -140,6 +140,8 @@ class RTPSender {
 
   uint32_t SSRC() const RTC_LOCKS_EXCLUDED(send_mutex_) { return ssrc_; }
 
+  std::string Rid() const RTC_LOCKS_EXCLUDED(send_mutex_) { return rid_; }
+
   std::optional<uint32_t> FlexfecSsrc() const RTC_LOCKS_EXCLUDED(send_mutex_) {
     return flexfec_ssrc_;
   }

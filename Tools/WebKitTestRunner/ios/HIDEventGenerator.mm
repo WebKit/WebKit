@@ -556,7 +556,7 @@ static InterpolationType interpolationFromString(NSString *string)
         kIOHIDEventOptionNone));
     
     if (markerEvent) {
-        dispatch_async(mainDispatchQueueSingleton(), [markerEvent = WTFMove(markerEvent)] {
+        dispatch_async(mainDispatchQueueSingleton(), [markerEvent = WTF::move(markerEvent)] {
             auto contextID = [UIApplication sharedApplication].keyWindow._contextId;
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextID, false, false, NULL, 0, 0);

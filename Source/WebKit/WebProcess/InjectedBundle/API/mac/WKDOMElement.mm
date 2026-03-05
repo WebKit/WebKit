@@ -30,31 +30,26 @@
 #import <WebCore/Element.h>
 #import <WebCore/ExceptionOr.h>
 
-static Ref<WebCore::Element> protectedImpl(WKDOMElement *element)
-{
-    return downcast<WebCore::Element>(*element->_impl);
-}
-
 @implementation WKDOMElement
 
 - (BOOL)hasAttribute:(NSString *)attribute
 {
-    return protectedImpl(self)->hasAttribute(attribute);
+    return protect(downcast<WebCore::Element>(*_impl))->hasAttribute(attribute);
 }
 
 - (NSString *)getAttribute:(NSString *)attribute
 {
-    return protectedImpl(self)->getAttribute(attribute).createNSString().autorelease();
+    return protect(downcast<WebCore::Element>(*_impl))->getAttribute(attribute).createNSString().autorelease();
 }
 
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
-    protectedImpl(self)->setAttribute(name, AtomString { value });
+    protect(downcast<WebCore::Element>(*_impl))->setAttribute(name, AtomString { value });
 }
 
 - (NSString *)tagName
 {
-    return protectedImpl(self)->tagName().createNSString().autorelease();
+    return protect(downcast<WebCore::Element>(*_impl))->tagName().createNSString().autorelease();
 }
 
 @end

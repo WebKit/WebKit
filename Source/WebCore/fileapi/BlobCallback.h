@@ -43,6 +43,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSBlobCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(Blob*) = 0;
     virtual CallbackResult<void> invokeRethrowingException(Blob*) = 0;
 

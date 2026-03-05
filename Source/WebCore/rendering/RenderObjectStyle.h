@@ -39,9 +39,4 @@ inline const RenderStyle& RenderObject::style() const
     return downcast<RenderElement>(*this).style();
 }
 
-inline CheckedRef<const RenderStyle> RenderObject::checkedStyle() const
-{
-    return style();
-}
-
 } // namespace WebCore

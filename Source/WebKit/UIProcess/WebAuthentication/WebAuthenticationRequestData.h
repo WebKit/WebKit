@@ -64,7 +64,7 @@ struct WebAuthenticationRequestData {
     std::optional<WebCore::SecurityOriginData> parentOrigin;
 };
 
-WebCore::ClientDataType getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
+WebCore::ClientDataType NODELETE getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
 WebCore::UserVerificationRequirement getUserVerificationRequirement(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
 
 } // namespace WebKit

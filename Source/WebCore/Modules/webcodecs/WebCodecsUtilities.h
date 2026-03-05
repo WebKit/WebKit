@@ -32,11 +32,11 @@ namespace WebCore {
 template<typename Codec>
 void postTaskToCodec(ScriptExecutionContextIdentifier identifier, ThreadSafeWeakPtr<Codec> codec, Function<void(Codec&)>&& task)
 {
-    ScriptExecutionContext::postTaskTo(identifier, [codec = WTFMove(codec), task = WTFMove(task)](auto&) mutable {
+    ScriptExecutionContext::postTaskTo(identifier, [codec = WTF::move(codec), task = WTF::move(task)](auto&) mutable {
         RefPtr protectedCodec = codec.get();
         if (!protectedCodec)
             return;
-        Codec::queueTaskKeepingObjectAlive(*protectedCodec, TaskSource::MediaElement, [task = WTFMove(task)](auto& codec) mutable {
+        Codec::queueTaskKeepingObjectAlive(*protectedCodec, TaskSource::MediaElement, [task = WTF::move(task)](auto& codec) mutable {
             task(codec);
         });
     });

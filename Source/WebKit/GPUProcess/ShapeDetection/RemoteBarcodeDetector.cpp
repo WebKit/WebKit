@@ -44,7 +44,7 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBarcodeDetector);
 
 RemoteBarcodeDetector::RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier)
-    : m_backing(WTFMove(barcodeDetector))
+    : m_backing(WTF::move(barcodeDetector))
     , m_renderingBackend(backend)
     , m_identifier(identifier)
 {
@@ -61,7 +61,7 @@ void RemoteBarcodeDetector::detect(WebCore::RenderingResourceIdentifier renderin
 {
     RefPtr sourceImage = m_renderingBackend.get().remoteResourceCache().cachedNativeImage(renderingResourceIdentifier);
     MESSAGE_CHECK(sourceImage);
-    m_backing->detect(*sourceImage, WTFMove(completionHandler));
+    m_backing->detect(*sourceImage, WTF::move(completionHandler));
 }
 
 } // namespace WebKit

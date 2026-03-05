@@ -82,7 +82,7 @@ static std::pair<RefPtr<Node>, size_t> findNodeStartingAtPathComponentIndex(cons
         if (chararacterData && chararacterData->data() != component.textData)
             return { nullptr, currentPathIndex };
 
-        currentNode = WTFMove(nextNode);
+        currentNode = WTF::move(nextNode);
     }
     return { currentNode, currentPathIndex };
 }
@@ -127,8 +127,8 @@ static std::optional<SimpleRange> findRangeByIdentifyingStartAndEndPositions(con
     if (!endContainer)
         return std::nullopt;
 
-    auto start = makeContainerOffsetPosition(WTFMove(startContainer), range.startOffset());
-    auto end = makeContainerOffsetPosition(WTFMove(endContainer), range.endOffset());
+    auto start = makeContainerOffsetPosition(WTF::move(startContainer), range.startOffset());
+    auto end = makeContainerOffsetPosition(WTF::move(endContainer), range.endOffset());
     if (start.isOrphan() || end.isOrphan())
         return std::nullopt;
 
@@ -199,7 +199,7 @@ static AppHighlightRangeData::NodePathComponent createNodePathComponent(const No
 static AppHighlightRangeData::NodePath makeNodePath(RefPtr<Node>&& node)
 {
     AppHighlightRangeData::NodePath components;
-    RefPtr body = node->protectedDocument()->body();
+    RefPtr body = protect(node->document())->body();
     for (RefPtr ancestor = node; ancestor && ancestor != body; ancestor = ancestor->parentNode())
         components.append(createNodePathComponent(*ancestor));
     components.reverse();
@@ -249,7 +249,7 @@ void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range, Completion
         text = data.text();
 
     AppHighlight highlight = { data.toSharedBuffer(), text, CreateNewGroupForHighlight::No, HighlightRequestOriginatedInApp::No };
-    completionHandler(WTFMove(highlight));
+    completionHandler(WTF::move(highlight));
 }
 
 void AppHighlightStorage::restoreAndScrollToAppHighlight(Ref<SharedBuffer>&& buffer, ScrollToHighlight scroll)
@@ -278,12 +278,12 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     if (!range)
         return false;
 
-    document->protectedAppHighlightRegistry()->addAnnotationHighlightWithRange(StaticRange::create(*range));
+    protect(document->appHighlightRegistry())->addAnnotationHighlightWithRange(StaticRange::create(*range));
 
     if (scroll == ScrollToHighlight::Yes) {
         auto textIndicator = TextIndicator::createWithRange(range.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
         if (textIndicator)
-            m_document->page()->chrome().client().setTextIndicator(WTFMove(textIndicator));
+            m_document->page()->chrome().client().setTextIndicator(WTF::move(textIndicator));
 
         TemporarySelectionChange selectionChange(*document, { *range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::SmoothScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
     }
@@ -305,7 +305,7 @@ void AppHighlightStorage::restoreUnrestoredAppHighlights()
     }
         
     m_timeAtLastRangeSearch = MonotonicTime::now();
-    m_unrestoredHighlights = WTFMove(remainingRanges);
+    m_unrestoredHighlights = WTF::move(remainingRanges);
 }
 
 #endif

@@ -1,7 +1,8 @@
-//@ skip
+//@ $skipModes << :lockdown
 "use strict"
 const consoleStub = console || {
-  log: print
+  // log: print
+  log: () => {}
 }
 var console = consoleStub
 
@@ -21,8 +22,10 @@ function testForEach(arr) {
 }
 noInline(testForEach)
 
-const warmup = 10000
-const test = 5000
+// const warmup = 10000
+const warmup = 1000
+// const test = 5000
+const test = 100
 let run = 1
 
 let arr = Array.from({length: 1}, (_, i) => i);

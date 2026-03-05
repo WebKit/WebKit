@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RemoteProgressBasedTimeline);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteProgressBasedTimeline);
 
 Ref<RemoteProgressBasedTimeline> RemoteProgressBasedTimeline::create(TimelineID identifier, const WebCore::ProgressResolutionData& resolutionData)
 {
@@ -49,10 +49,18 @@ RemoteProgressBasedTimeline::RemoteProgressBasedTimeline(TimelineID identifier, 
     updateCurrentTime();
 }
 
+void RemoteProgressBasedTimeline::setResolutionData(const WebCore::ScrollingTreeScrollingNode* node, WebCore::ProgressResolutionData resolutionData)
+{
+    m_resolutionData = resolutionData;
+    if (node)
+        updateCurrentTime(*node);
+    else
+        updateCurrentTime();
+}
+
 void RemoteProgressBasedTimeline::updateCurrentTime(const WebCore::ScrollingTreeScrollingNode& node)
 {
-    auto unconstrainedScrollOffset = m_resolutionData.isVertical ? node.currentScrollOffset().y() : node.currentScrollOffset().x();
-    m_resolutionData.scrollOffset = std::clamp(unconstrainedScrollOffset, m_resolutionData.rangeStart, m_resolutionData.rangeEnd);
+    m_resolutionData.scrollOffset = m_resolutionData.isVertical ? node.clampedCurrentScrollOffset().y() : node.clampedCurrentScrollOffset().x();
     updateCurrentTime();
 }
 

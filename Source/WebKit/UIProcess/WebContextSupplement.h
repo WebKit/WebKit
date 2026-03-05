@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebProcessPool.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -33,33 +34,22 @@ namespace WebKit {
 class NetworkProcessProxy;
 class WebProcessProxy;
 
-class WebContextSupplement {
+class WebContextSupplement : public AbstractRefCounted {
 public:
-    WebContextSupplement(WebProcessPool* processPool)
+    virtual ~WebContextSupplement() = default;
+
+    virtual void processPoolDestroyed() { }
+
+    WebProcessPool* processPool() { return m_processPool.get(); }
+    void clearProcessPool() { m_processPool = nullptr; }
+
+protected:
+    explicit WebContextSupplement(WebProcessPool* processPool)
         : m_processPool(processPool)
     {
     }
 
-    virtual ~WebContextSupplement()
-    {
-    }
-
-    virtual void processPoolDestroyed()
-    {
-    }
-
-    WebProcessPool* processPool() { return m_processPool.get(); }
-    RefPtr<WebProcessPool> protectedProcessPool() { return processPool(); }
-
-    void clearProcessPool() { m_processPool = nullptr; }
-
-    void ref() { refWebContextSupplement(); }
-    void deref() { derefWebContextSupplement(); }
-
 private:
-    virtual void refWebContextSupplement() = 0;
-    virtual void derefWebContextSupplement() = 0;
-
     WeakPtr<WebProcessPool> m_processPool;
 };
 

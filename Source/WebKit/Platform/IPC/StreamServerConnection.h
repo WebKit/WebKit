@@ -42,8 +42,8 @@ class StreamConnectionWorkQueue;
 struct StreamServerConnectionHandle {
     WTF_MAKE_NONCOPYABLE(StreamServerConnectionHandle);
     StreamServerConnectionHandle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle)
-        : outOfStreamConnection(WTFMove(connection))
-        , buffer(WTFMove(bufferHandle))
+        : outOfStreamConnection(WTF::move(connection))
+        , buffer(WTF::move(bufferHandle))
     { }
     StreamServerConnectionHandle(StreamServerConnectionHandle&&) = default;
     StreamServerConnectionHandle& operator=(StreamServerConnectionHandle&&) = default;
@@ -98,14 +98,13 @@ public:
     void stopReceivingMessages(ReceiverName, uint64_t destinationID);
 
     Connection& connection() { return m_connection; }
-    Ref<Connection> protectedConnection() { return m_connection; }
 
     enum DispatchResult : bool {
         HasNoMessages,
         HasMoreMessages
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
-    void markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
+    void NODELETE markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
 
     void open(Client&, StreamConnectionWorkQueue&);
     void invalidate();
@@ -122,7 +121,7 @@ public:
     template<typename T, typename... Arguments>
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
-    Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
+    Semaphore& clientWaitSemaphore() LIFETIME_BOUND { return m_clientWaitSemaphore; }
 
 private:
     StreamServerConnection(Ref<Connection>, StreamServerConnectionBuffer&&);
@@ -141,8 +140,6 @@ private:
     bool processOutOfStreamMessage(Decoder&);
     bool dispatchStreamMessage(Decoder&, StreamMessageReceiver&);
     void dispatchDidReceiveInvalidMessage(Decoder&);
-
-    RefPtr<StreamConnectionWorkQueue> protectedWorkQueue() const;
 
     using WakeUpClient = StreamServerConnectionBuffer::WakeUpClient;
     const Ref<IPC::Connection> m_connection;
@@ -196,7 +193,7 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
     } else {
         // Asynchronously replying from the current thread is supported. Note: This is not thread safe,
         // as any other thread might execute before the buffer release.
-        m_connection->sendSyncReply(WTFMove(encoder));
+        m_connection->sendSyncReply(WTF::move(encoder));
     }
 }
 

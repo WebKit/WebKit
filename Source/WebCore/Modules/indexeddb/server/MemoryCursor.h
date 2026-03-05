@@ -26,7 +26,9 @@
 #pragma once
 
 #include "IDBCursorInfo.h"
+#include "MemoryBackingStoreTransaction.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -47,7 +49,7 @@ public:
     virtual void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) = 0;
 
     IDBCursorInfo info() const { return m_info; }
-    MemoryBackingStoreTransaction* transaction() const;
+    MemoryBackingStoreTransaction* NODELETE transaction() const;
 
 protected:
     MemoryCursor(const IDBCursorInfo&, MemoryBackingStoreTransaction&);

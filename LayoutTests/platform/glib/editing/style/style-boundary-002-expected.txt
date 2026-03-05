@@ -12,27 +12,27 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x152 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x54
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 600x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 600x27
             text run at (0,27) width 600: "Style checks performed on boundaries between style changes."
         RenderBlock {DIV} at (14,84) size 756x54
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 442x26
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 442x27
             text run at (0,27) width 442: "Should see this content in the red box below: "
-          RenderInline {B} at (442,27) size 25x26
-            RenderText {#text} at (442,27) size 25x26
+          RenderInline {B} at (442,27) size 25x27
+            RenderText {#text} at (442,27) size 25x27
               text run at (442,27) width 25: "ab"
-          RenderText {#text} at (467,27) size 11x26
+          RenderText {#text} at (467,27) size 11x27
             text run at (467,27) width 11: "c"
       RenderBlock {DIV} at (0,176) size 784x31
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
-          RenderInline {B} at (2,2) size 25x26
-            RenderText {#text} at (2,2) size 25x26
+          RenderInline {B} at (2,2) size 25x27
+            RenderText {#text} at (2,2) size 25x27
               text run at (2,2) width 25: "ab"
-          RenderText {#text} at (27,2) size 11x26
+          RenderText {#text} at (27,2) size 11x27
             text run at (27,2) width 11: "c"
 caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

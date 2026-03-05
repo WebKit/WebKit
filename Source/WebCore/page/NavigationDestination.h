@@ -38,13 +38,13 @@ class JSValue;
 namespace WebCore {
 
 class NavigationDestination final : public RefCounted<NavigationDestination>, public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationDestination);
+    WTF_MAKE_TZONE_ALLOCATED(NavigationDestination);
 public:
-    static Ref<NavigationDestination> create(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument) { return adoptRef(*new NavigationDestination(url, WTFMove(entry), isSameDocument)); };
+    static Ref<NavigationDestination> create(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument) { return adoptRef(*new NavigationDestination(url, WTF::move(entry), isSameDocument)); };
 
     ~NavigationDestination();
 
-    const URL& url() const { return m_url; };
+    const URL& url() const LIFETIME_BOUND { return m_url; };
     String key() const { return m_entry ? m_entry->key() : String(); };
     String id() const { return m_entry ? m_entry->id() : String(); };
     int64_t index() const { return m_entry ? m_entry->index() : -1; };

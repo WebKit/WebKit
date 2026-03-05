@@ -91,7 +91,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     size_t size = script.size();
 
     auto iterateOverBufferAndWriteData = [&](NOESCAPE const Function<bool(std::span<const uint8_t>)>& writeData) {
-        script.protectedBuffer()->forEachSegment([&](std::span<const uint8_t> span) {
+        protect(script.buffer())->forEachSegment([&](std::span<const uint8_t> span) {
             writeData(span);
         });
     };
@@ -114,12 +114,12 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
         return script;
     }
 
-    auto mappedFile = FileSystem::mapToFile(scriptPath, size, WTFMove(iterateOverBufferAndWriteData));
+    auto mappedFile = FileSystem::mapToFile(scriptPath, size, WTF::move(iterateOverBufferAndWriteData));
     if (!mappedFile) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::store: Failure to store %s, FileSystem::mapToFile() failed", scriptPath.utf8().data());
         return { };
     }
-    return ScriptBuffer { SharedBuffer::create(WTFMove(mappedFile)) };
+    return ScriptBuffer { SharedBuffer::create(WTF::move(mappedFile)) };
 }
 
 ScriptBuffer SWScriptStorage::retrieve(const ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL)
@@ -134,8 +134,10 @@ ScriptBuffer SWScriptStorage::retrieve(const ServiceWorkerRegistrationKey& regis
     }
 
     // FIXME: Do we need to disable file mapping in more cases to avoid having too many file descriptors open?
-    RefPtr<FragmentedSharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(scriptPath, FileSystem::MappedFileMode::Private, shouldUseFileMapping(*fileSize) ? SharedBuffer::MayUseFileMapping::Yes : SharedBuffer::MayUseFileMapping::No);
-    return buffer;
+    RefPtr buffer = SharedBuffer::createWithContentsOfFile(scriptPath, FileSystem::MappedFileMode::Private, shouldUseFileMapping(*fileSize) ? SharedBuffer::MayUseFileMapping::Yes : SharedBuffer::MayUseFileMapping::No);
+    if (!buffer)
+        return { };
+    return ScriptBuffer { *buffer };
 }
 
 void SWScriptStorage::clear(const ServiceWorkerRegistrationKey& registrationKey)

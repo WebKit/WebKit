@@ -35,9 +35,4 @@ ScrollableArea& Scrollbar::scrollableArea() const
     return m_scrollableArea.get();
 }
 
-CheckedRef<ScrollableArea> Scrollbar::checkedScrollableArea() const
-{
-    return scrollableArea();
-}
-
 } // namespace WebCore

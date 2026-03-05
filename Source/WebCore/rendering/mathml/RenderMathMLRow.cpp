@@ -42,10 +42,10 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLRow);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLRow);
 
 RenderMathMLRow::RenderMathMLRow(Type type, MathMLRowElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(type, element, WTFMove(style))
+    : RenderMathMLBlock(type, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLRow());
 }
@@ -61,9 +61,10 @@ std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
 {
     auto* baselineChild = firstInFlowChildBox();
     if (!baselineChild)
-        return std::optional<LayoutUnit>();
+        return { };
 
-    return LayoutUnit { static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->marginBefore() + baselineChild->logicalTop())) };
+    auto baseline = settings().subpixelInlineLayoutEnabled() ? baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild) : LayoutUnit(roundf(baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild)));
+    return { baseline };
 }
 
 static RenderMathMLOperator* toVerticalStretchyOperator(RenderBox* box)

@@ -58,7 +58,7 @@ template<typename CharacterType>
 static inline void appendStringToData(std::span<CharacterType>& data, int32_t value)
 {
     if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
-        auto result = std::to_chars(std::bit_cast<char*>(data.data()), std::bit_cast<char*>(data.data() + data.size()), value);
+        auto result = std::to_chars(std::bit_cast<char*>(data.data()), std::bit_cast<char*>(std::to_address(data.end())), value);
         ASSERT(result.ec != std::errc::value_too_large);
         skip(data, result.ptr - std::bit_cast<char*>(data.data()));
     } else {
@@ -293,7 +293,7 @@ JSString* JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
         return { };
     }
 
-    return jsString(vm, WTFMove(result));
+    return jsString(vm, WTF::move(result));
 }
 
 JSString* JSOnlyStringsAndInt32sJoiner::joinImpl(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* data, unsigned length)
@@ -324,7 +324,7 @@ JSString* JSOnlyStringsAndInt32sJoiner::joinImpl(JSGlobalObject* globalObject, c
 
     RETURN_IF_EXCEPTION(scope, { });
 
-    return jsString(vm, WTFMove(result));
+    return jsString(vm, WTF::move(result));
 }
 
 } // namespace JSC

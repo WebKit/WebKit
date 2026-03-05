@@ -167,8 +167,6 @@ private:
 
     static bool collectTimeStamp(VTTScanner& input, MediaTime& timeStamp);
 
-    Ref<Document> protectedDocument() const;
-
     const WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     ParseState m_state { Initial };
 

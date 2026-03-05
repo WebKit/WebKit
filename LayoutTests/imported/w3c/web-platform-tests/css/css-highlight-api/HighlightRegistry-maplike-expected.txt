@@ -1,4 +1,4 @@
 
-FAIL HighlightRegistry initializes as it should. assert_throws_js: HighlightRegistry constructor throws function "function () { var x = new HighlightRegistry(); }" did not throw
+PASS HighlightRegistry initializes as it should.
 PASS HighlightRegistry has a maplike interface.
 

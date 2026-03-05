@@ -23,6 +23,8 @@
 #include <stack>
 #include <type_traits>
 
+#include "common/span.h"
+
 namespace angle
 {
 
@@ -53,17 +55,14 @@ class JsonSerializer : public angle::NonCopyable
     ~JsonSerializer();
 
     void addCString(const std::string &name, const char *value);
-
     void addString(const std::string &name, const std::string &value);
 
-    void addBlob(const std::string &name, const uint8_t *value, size_t length);
+    void addBlob(const std::string &name, angle::Span<const uint8_t> value);
     void addBlobWithMax(const std::string &name,
-                        const uint8_t *value,
-                        size_t length,
+                        angle::Span<const uint8_t> value,
                         size_t maxSerializedLength);
 
     void startGroup(const std::string &name);
-
     void endGroup();
 
     template <typename T>
@@ -92,7 +91,7 @@ class JsonSerializer : public angle::NonCopyable
     {
         if (!value.empty())
         {
-            addBlob(name, reinterpret_cast<const uint8_t *>(&value[0]), value.size() * sizeof(T));
+            addBlob(name, angle::as_byte_span(value));
         }
         else
         {

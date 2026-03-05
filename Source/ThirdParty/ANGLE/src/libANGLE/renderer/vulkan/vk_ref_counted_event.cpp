@@ -104,7 +104,7 @@ void RefCountedEvent::releaseImpl(Renderer *renderer, RecyclerT *recycler)
         ASSERT(recycler != nullptr);
         if (renderer->getFeatures().recycleVkEvent.enabled)
         {
-            recycler->recycle(std::move(*this));
+            recycler->recycle(std::move(*this), renderer->getDevice());
         }
         else
         {
@@ -342,6 +342,24 @@ bool RefCountedEventRecycler::fetchEventsToReuse(RefCountedEventCollector *event
     return true;
 }
 
+void RefCountedEventRecycler::recycle(RefCountedEventCollector &&garbageObjects, VkDevice device)
+{
+    ASSERT(!garbageObjects.empty());
+    for (const RefCountedEvent &event : garbageObjects)
+    {
+        ASSERT(event.validAndNoReference());
+    }
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
+    if (mEventsToReset.size() >= kMaxEventToKeepCount)
+    {
+        DestroyRefCountedEvents(device, garbageObjects);
+    }
+    else
+    {
+        mEventsToReset.emplace_back(std::move(garbageObjects));
+    }
+}
+
 // RefCountedEventsGarbageRecycler implementation.
 RefCountedEventsGarbageRecycler::~RefCountedEventsGarbageRecycler()
 {
@@ -381,7 +399,8 @@ void RefCountedEventsGarbageRecycler::cleanup(Renderer *renderer)
     // Move mEventsToReset to the renderer so that it can be reset.
     if (!mEventsToReset.empty())
     {
-        renderer->getRefCountedEventRecycler()->recycle(std::move(mEventsToReset));
+        renderer->getRefCountedEventRecycler()->recycle(std::move(mEventsToReset),
+                                                        renderer->getDevice());
     }
 }
 
@@ -484,12 +503,16 @@ void EventBarrierArray::execute(Renderer *renderer, PrimaryCommandBuffer *primar
 
 void EventBarrierArray::addDiagnosticsString(std::ostringstream &out) const
 {
-    out << "Event Barrier: ";
+    std::ostringstream eventStream;
+    eventStream << "Event Barrier: ";
     for (const EventBarrier &barrier : mBarriers)
     {
-        barrier.addDiagnosticsString(out);
+        barrier.addDiagnosticsString(eventStream);
     }
-    out << "\\l";
+    if (!mBarriers.empty())
+    {
+        out << eventStream.str() << "\\l";
+    }
 }
 }  // namespace vk
 }  // namespace rx

@@ -146,7 +146,7 @@ private:
 };
 
 #if PLATFORM(COCOA)
-RetainPtr<NSArray> makeNSArray(const PlatformTimeRanges&);
+WEBCORE_EXPORT RetainPtr<NSArray> makeNSArray(const PlatformTimeRanges&);
 #endif
 
 inline String toString(const PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }

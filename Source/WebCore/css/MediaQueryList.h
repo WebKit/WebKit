@@ -37,7 +37,7 @@ class MediaQueryEvaluator;
 // will be called whenever the value of the query changes.
 
 class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaQueryList);
+    WTF_MAKE_TZONE_ALLOCATED(MediaQueryList);
 public:
     static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, MQ::MediaQueryList&&, bool matches);
     ~MediaQueryList();
@@ -60,16 +60,16 @@ public:
 private:
     MediaQueryList(Document&, MediaQueryMatcher&, MQ::MediaQueryList&&, bool matches);
 
-    void setMatches(bool);
+    void NODELETE setMatches(bool);
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaQueryList; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     RefPtr<MediaQueryMatcher> m_matcher;
     const MQ::MediaQueryList m_mediaQueries;
@@ -81,4 +81,6 @@ private:
     bool m_needsNotification { false };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(MediaQueryList)

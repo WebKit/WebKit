@@ -125,7 +125,7 @@ bool isARM64E_FPAC()
         uint32_t val = 0;
         size_t valSize = sizeof(val);
         int rc = sysctlbyname("hw.optional.arm.FEAT_FPAC", &val, &valSize, nullptr, 0);
-        g_jscConfig.canUseFPAC = rc < 0 ? false : !!val;
+        g_jscConfig.canUseFPAC = rc >= 0 && val;
     });
     return g_jscConfig.canUseFPAC;
 #else

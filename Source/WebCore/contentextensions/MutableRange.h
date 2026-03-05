@@ -53,7 +53,7 @@ public:
     }
 
     MutableRange(DataType&& data, uint32_t nextRangeIndex, CharacterType first, CharacterType last)
-        : data(WTFMove(data))
+        : data(WTF::move(data))
         , nextRangeIndex(nextRangeIndex)
         , first(first)
         , last(last)
@@ -62,7 +62,7 @@ public:
     }
 
     MutableRange(MutableRange&& other)
-        : data(WTFMove(other.data))
+        : data(WTF::move(other.data))
         , nextRangeIndex(other.nextRangeIndex)
         , first(other.first)
         , last(other.last)
@@ -72,10 +72,10 @@ public:
 
     TypedMutableRange& operator=(TypedMutableRange&& other)
     {
-        data = WTFMove(other.data);
-        nextRangeIndex = WTFMove(other.nextRangeIndex);
-        first = WTFMove(other.first);
-        last = WTFMove(other.last);
+        data = WTF::move(other.data);
+        nextRangeIndex = WTF::move(other.nextRangeIndex);
+        first = WTF::move(other.first);
+        last = WTF::move(other.last);
         return *this;
     }
 

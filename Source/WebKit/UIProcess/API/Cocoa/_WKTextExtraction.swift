@@ -21,18 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_TEXT_EXTRACTION
+#if USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))
 
 import Foundation
-#if compiler(>=6.0)
 internal import WebKit_Internal
-#else
-@_implementationOnly import WebKit_Internal
-#endif
 
-// FIXME: Adopt `@objc @implementation` when support for macOS Sonoma is no longer needed.
-// FIXME: (rdar://110719676) Remove all `@objc deinit`s when support for macOS Sonoma is no longer needed.
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionItem {
     let rectInWebView: CGRect
     let children: [WKTextExtractionItem]
@@ -57,14 +52,40 @@ extension WKTextExtractionItem {
         self.ariaAttributes = ariaAttributes
         self.accessibilityRole = accessibilityRole
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
+extension WKTextExtractionFormItem {
+    let autocomplete: String
+    let name: String
+
+    init(
+        autocomplete: String,
+        name: String,
+        rectInWebView: CGRect,
+        children: [WKTextExtractionItem],
+        eventListeners: WKTextExtractionEventListenerTypes,
+        ariaAttributes: [String: String],
+        accessibilityRole: String,
+        nodeIdentifier: String?
+    ) {
+        self.autocomplete = autocomplete
+        self.name = name
+        super
+            .init(
+                with: rectInWebView,
+                children: children,
+                eventListeners: eventListeners,
+                ariaAttributes: ariaAttributes,
+                accessibilityRole: accessibilityRole,
+                nodeIdentifier: nodeIdentifier
+            )
+    }
+}
+
+@objc
+@implementation
 extension WKTextExtractionContainerItem {
     let container: WKTextExtractionContainer
 
@@ -88,14 +109,10 @@ extension WKTextExtractionContainerItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionContentEditableItem {
     let contentEditableType: WKTextExtractionEditableType
 
@@ -129,16 +146,12 @@ extension WKTextExtractionContentEditableItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionTextFormControlItem {
-    final private let editable: WKTextExtractionEditable
+    fileprivate let editable: WKTextExtractionEditable
 
     @objc(secure)
     var isSecure: Bool {
@@ -217,14 +230,10 @@ extension WKTextExtractionTextFormControlItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionEditable {
     let label: String
     let placeholder: String
@@ -253,14 +262,10 @@ extension WKTextExtractionEditable {
         self.backingIsSecure = isSecure
         self.backingIsFocused = isFocused
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionLinkItem {
     let target: String
     @nonobjc
@@ -290,16 +295,12 @@ extension WKTextExtractionLinkItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionLink {
-    // Used to workaround the fact that `@_objcImplementation` does not support stored properties whose size can change
+    // Used to workaround the fact that `@objc @implementation` does not support stored properties whose size can change
     // due to Library Evolution. Do not use this property directly.
     @nonobjc
     private let backingURL: NSURL
@@ -313,14 +314,37 @@ extension WKTextExtractionLink {
         self.backingURL = url as NSURL
         self.range = range
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
+extension WKTextExtractionIFrameItem {
+    let origin: String
+
+    init(
+        origin: String,
+        rectInWebView: CGRect,
+        children: [WKTextExtractionItem],
+        eventListeners: WKTextExtractionEventListenerTypes,
+        ariaAttributes: [String: String],
+        accessibilityRole: String,
+        nodeIdentifier: String?
+    ) {
+        self.origin = origin
+        super
+            .init(
+                with: rectInWebView,
+                children: children,
+                eventListeners: eventListeners,
+                ariaAttributes: ariaAttributes,
+                accessibilityRole: accessibilityRole,
+                nodeIdentifier: nodeIdentifier
+            )
+    }
+}
+
+@objc
+@implementation
 extension WKTextExtractionTextItem {
     var content: String
     var selectedRange: NSRange
@@ -353,14 +377,10 @@ extension WKTextExtractionTextItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionScrollableItem {
     let contentSize: CGSize
 
@@ -384,14 +404,10 @@ extension WKTextExtractionScrollableItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionSelectItem {
     let selectedValues: [String]
     let supportsMultiple: Bool
@@ -418,14 +434,10 @@ extension WKTextExtractionSelectItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionImageItem {
     let name: String
     let altText: String
@@ -452,149 +464,6 @@ extension WKTextExtractionImageItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
-extension _WKTextExtractionInteractionResult {
-    let error: (any Error)?
-
-    init(errorDescription: String?) {
-        self.error = errorDescription.map {
-            NSError(
-                domain: WKErrorDomain,
-                code: WKError.unknown.rawValue,
-                userInfo: [
-                    NSDebugDescriptionErrorKey: $0
-                ]
-            )
-        }
-    }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
-}
-
-@_objcImplementation
-extension _WKTextExtractionInteraction {
-    let action: _WKTextExtractionAction
-
-    var nodeIdentifier: String? = nil
-    var text: String? = nil
-    var replaceAll: Bool = false
-    var scrollToVisible: Bool = false
-    var scrollDelta: CGSize = .zero
-
-    private final var backingLocation: CGPoint? = nil
-
-    var location: CGPoint {
-        get { backingLocation ?? .zero }
-        set { backingLocation = newValue }
-    }
-
-    var hasSetLocation: Bool {
-        backingLocation != nil
-    }
-
-    init(action: _WKTextExtractionAction) {
-        self.action = action
-    }
-
-    @objc(debugDescriptionInWebView:completionHandler:)
-    func debugDescription(in webView: WKWebView) async throws -> String {
-        try await webView._describe(interaction: self)
-    }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
-}
-
-@_objcImplementation
-extension _WKTextExtractionResult {
-    let textContent: String
-    let filteredOutAnyText: Bool
-
-    init(textContent: String, filteredOutAnyText: Bool) {
-        self.textContent = textContent
-        self.filteredOutAnyText = filteredOutAnyText
-    }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
-}
-
-@_objcImplementation
-extension _WKTextExtractionConfiguration {
-    @objc(configurationForVisibleTextOnly)
-    class var visibleTextOnly: _WKTextExtractionConfiguration {
-        .init(onlyVisibleText: true)
-    }
-
-    var outputFormat: _WKTextExtractionOutputFormat = .textTree
-    var nodeIdentifierInclusion: _WKTextExtractionNodeIdentifierInclusion
-    var filterOptions: _WKTextExtractionFilterOptions = .all
-    var targetNode: _WKJSHandle? = nil
-
-    var targetRect: CGRect = CGRectNull
-
-    var includeURLs: Bool
-    var includeRects: Bool
-    var includeEventListeners: Bool
-    var includeAccessibilityAttributes: Bool
-    var includeTextInAutoFilledControls: Bool
-
-    var mergeParagraphs: Bool = false
-    var skipNearlyTransparentContent: Bool = false
-    var onlyIncludeVisibleText: Bool
-
-    var maxWordsPerParagraph: Int = .max
-
-    var replacementStrings: [String: String]? = nil
-
-    final private var clientNodeAttributes: [String: [_WKJSHandle: String]] = [:]
-
-    @objc
-    private init(onlyVisibleText: Bool) {
-        self.includeURLs = !onlyVisibleText
-        self.includeRects = !onlyVisibleText
-        self.nodeIdentifierInclusion = onlyVisibleText ? .none : .interactive
-        self.includeEventListeners = !onlyVisibleText
-        self.includeAccessibilityAttributes = !onlyVisibleText
-        self.includeTextInAutoFilledControls = !onlyVisibleText
-        self.onlyIncludeVisibleText = onlyVisibleText
-        self.targetRect = CGRectNull
-    }
-
-    override convenience init() {
-        self.init(onlyVisibleText: false)
-    }
-
-    func forEachClientNodeAttribute(_ block: (String, String, _WKJSHandle) -> Void) {
-        for (attribute, values) in clientNodeAttributes {
-            for (handle, value) in values {
-                block(attribute, value, handle)
-            }
-        }
-    }
-
-    func addClientAttribute(_ attributeName: String, value attributeValue: String, forNode node: _WKJSHandle) {
-        clientNodeAttributes[attributeName, default: [:]][node] = attributeValue
-    }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
-}
-
-#endif // ENABLE_TEXT_EXTRACTION
+#endif // USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicComponentTransferFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Invert;
@@ -36,10 +38,44 @@ struct Invert;
 
 namespace Style {
 
-class BuilderState;
+// invert() = invert( [ <number [0,1(clamp upper)] > | <percentage [0,100(clamp upper)]> ]?@(default=1) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-invert
+struct Invert {
+    using Parameter = Number<CSS::ClosedUnitRangeClampUpper>;
 
-CSS::Invert toCSSInvert(Ref<BasicComponentTransferFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Invert&, const BuilderState&);
+    Parameter value;
+
+    static Invert passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value.isZero(); }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const Invert&) const = default;
+};
+using InvertFunction = FunctionNotation<CSSValueInvert, Invert>;
+DEFINE_TYPE_WRAPPER_GET(Invert, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<Invert> { auto operator()(const Invert&, const RenderStyle&) -> CSS::Invert; };
+template<> struct ToStyle<CSS::Invert> { auto operator()(const CSS::Invert&, const BuilderState&) -> Invert; };
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<Invert, Ref<FilterEffect>> { auto operator()(const Invert&) -> Ref<FilterEffect>; };
+
+
+// MARK: - Platform
+
+template<> struct ToPlatform<Invert> { auto operator()(const Invert&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Invert, 1)

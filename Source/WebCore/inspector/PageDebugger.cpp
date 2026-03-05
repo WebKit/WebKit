@@ -150,15 +150,15 @@ void PageDebugger::reportException(JSGlobalObject* state, JSC::Exception* except
 
 void PageDebugger::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 {
-    for (auto& page : pageGroup.pages()) {
-        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (Ref page : pageGroup.pages()) {
+        for (RefPtr<Frame> frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
             setJavaScriptPaused(*localFrame, paused);
         }
 
-        if (auto* frontendClient = page.inspectorController().inspectorFrontendClient()) {
+        if (auto* frontendClient = page->inspectorController().inspectorFrontendClient()) {
             if (paused)
                 frontendClient->pagePaused();
             else
@@ -175,13 +175,13 @@ void PageDebugger::setJavaScriptPaused(LocalFrame& frame, bool paused)
     frame.script().setPaused(paused);
 
     ASSERT(frame.document());
-    auto& document = *frame.document();
+    Ref document = *frame.document();
     if (paused) {
-        document.suspendScriptedAnimationControllerCallbacks();
-        document.suspendActiveDOMObjects(ReasonForSuspension::JavaScriptDebuggerPaused);
+        document->suspendScriptedAnimationControllerCallbacks();
+        document->suspendActiveDOMObjects(ReasonForSuspension::JavaScriptDebuggerPaused);
     } else {
-        document.resumeActiveDOMObjects(ReasonForSuspension::JavaScriptDebuggerPaused);
-        document.resumeScriptedAnimationControllerCallbacks();
+        document->resumeActiveDOMObjects(ReasonForSuspension::JavaScriptDebuggerPaused);
+        document->resumeScriptedAnimationControllerCallbacks();
     }
 }
 

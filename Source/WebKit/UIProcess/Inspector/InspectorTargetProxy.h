@@ -26,10 +26,13 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorTarget.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class InspectorTargetProxy : public Inspector::InspectorTarget {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorTargetProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorTargetProxy);
 public:
     virtual ~InspectorTargetProxy() = default;
 

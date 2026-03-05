@@ -98,7 +98,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainTime, (JSGlobalObject* globalObje
         if (!std::isfinite(duration[durationIndex]))
             return throwVMRangeError(globalObject, scope, "Temporal.PlainTime properties must be finite"_s);
     }
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::tryCreateIfValid(globalObject, structure, WTFMove(duration))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::tryCreateIfValid(globalObject, structure, WTF::move(duration))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainTime, (JSGlobalObject* globalObject, CallFrame*))
@@ -118,15 +118,18 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimeConstructorFuncFrom, (JSGlobalObject* 
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-
     JSValue itemValue = callFrame->argument(0);
 
-    if (itemValue.inherits<TemporalPlainTime>())
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainTime*>(itemValue)->plainTime())));
+    if (itemValue.inherits<TemporalPlainTime>()) {
+        // Validate overflow -- see step 2(a)(ii) of ToTemporalTime
+        if (options)
+            toTemporalOverflow(globalObject, options);
+        RETURN_IF_EXCEPTION(scope, { });
+        return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(),
+            jsCast<TemporalPlainTime*>(itemValue)->plainTime()));
+    }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::from(globalObject, itemValue, overflow)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::from(globalObject, itemValue, options)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaintime.compare
@@ -135,10 +138,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimeConstructorFuncCompare, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* one = TemporalPlainTime::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* one = TemporalPlainTime::from(globalObject, callFrame->argument(0), nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* two = TemporalPlainTime::from(globalObject, callFrame->argument(1), std::nullopt);
+    auto* two = TemporalPlainTime::from(globalObject, callFrame->argument(1), nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsNumber(TemporalPlainTime::compare(one->plainTime(), two->plainTime())));

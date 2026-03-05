@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,9 @@
 
 #include "CSSFilterFunctionDescriptor.h"
 #include "CSSInvertFunction.h"
+#include "ColorMatrix.h"
+#include "ColorUtilities.h"
+#include "FEColorMatrix.h"
 #include "FilterOperation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -34,19 +37,56 @@
 namespace WebCore {
 namespace Style {
 
-CSS::Invert toCSSInvert(Ref<BasicComponentTransferFilterOperation> operation, const RenderStyle& style)
+Invert Invert::passthroughForInterpolation()
 {
-    return { CSS::Invert::Parameter { toCSS(Number<CSS::ClosedUnitRangeClampUpper> { operation->amount() }, style) } };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueInvert>::initialValueForInterpolation };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::Invert& filter, const BuilderState& state)
+bool Invert::transformColor(SRGBA<float>& color) const
 {
-    double value;
-    if (auto parameter = filter.value)
-        value = evaluate<double>(toStyle(*parameter, state));
-    else
-        value = filterFunctionDefaultValue<CSS::InvertFunction::name>().value;
-    return BasicComponentTransferFilterOperation::create(value, filterFunctionOperationType<CSS::InvertFunction::name>());
+    auto amount = evaluate<float>(value);
+    auto oneMinusAmount = 1.0f - amount;
+    color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
+        return 1.0f - (oneMinusAmount + component * (amount - oneMinusAmount));
+    });
+    return true;
+}
+
+// MARK: - Conversion
+
+auto ToCSS<Invert>::operator()(const Invert& value, const RenderStyle& style) -> CSS::Invert
+{
+    return { .value = CSS::Invert::Parameter { toCSS(value.value, style) } };
+}
+
+auto ToStyle<CSS::Invert>::operator()(const CSS::Invert& value, const BuilderState& state) -> Invert
+{
+    if (auto parameter = value.value) {
+        return { .value = WTF::switchOn(*parameter,
+            [&](const CSS::Invert::Parameter::Number& number) -> Invert::Parameter {
+                return { toStyle(number, state) };
+            },
+            [&](const CSS::Invert::Parameter::Percentage& percentage) -> Invert::Parameter {
+                return { toStyle(percentage, state).value / 100 };
+            }
+        ) };
+    }
+    return { .value = CSSFilterFunctionDescriptor<CSSValueInvert>::defaultValue };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<Invert, Ref<FilterEffect>>::operator()(const Invert& value) -> Ref<FilterEffect>
+{
+    ColorMatrix<5, 4> invertMatrix = invertColorMatrix(evaluate<float>(value));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX, invertMatrix);
+}
+
+// MARK: - Platform
+
+auto ToPlatform<Invert>::operator()(const Invert& value) -> Ref<FilterOperation>
+{
+    return BasicComponentTransferFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<InvertFunction::name>());
 }
 
 } // namespace Style

@@ -31,74 +31,74 @@ includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
-    compareArray(new TA([0, 0]).fill(1, undefined), [1, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, undefined), [1, 1]),
     '`undefined` start coerced to 0'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 0, undefined), [1, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 0, undefined), [1, 1]),
     'If end is undefined, let relativeEnd be len'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, null), [1, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, null), [1, 1]),
     '`null` start coerced to 0'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 0, null), [0, 0]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 0, null), [0, 0]),
     '`null` end coerced to 0'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, true), [0, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, true), [0, 1]),
     '`true` start coerced to 1'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 0, true), [1, 0]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 0, true), [1, 0]),
     '`true` end coerced to 1'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, false), [1, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, false), [1, 1]),
     '`false` start coerced to 0'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 0, false), [0, 0]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 0, false), [0, 0]),
     '`false` end coerced to 0'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, NaN), [1, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, NaN), [1, 1]),
     '`NaN` start coerced to 0'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 0, NaN), [0, 0]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 0, NaN), [0, 0]),
     '`NaN` end coerced to 0'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, '1'), [0, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, '1'), [0, 1]),
     'string start coerced'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 0, '1'), [1, 0]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 0, '1'), [1, 0]),
     'string end coerced'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 1.5), [0, 1]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 1.5), [0, 1]),
     'start as a float number coerced'
   );
 
   assert(
-    compareArray(new TA([0, 0]).fill(1, 0, 1.5), [1, 0]),
+    compareArray(new TA(makeCtorArg([0, 0])).fill(1, 0, 1.5), [1, 0]),
     'end as a float number coerced'
   );
 });

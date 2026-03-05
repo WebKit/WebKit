@@ -14,7 +14,10 @@ onmessage = e => {
     const routes = [];
     for (let i = 0; i < e.data; i++) {
         routes.push({
-            condition: {urlPattern: new URLPattern({pathname: 'direct.txt' + i})},
+            condition: {
+                urlPattern: new URLPattern({pathname: 'direct.txt' + i}),
+                get _or() {  throw "_or should not be used"; }
+            },
             source: 'network'
         });
     }

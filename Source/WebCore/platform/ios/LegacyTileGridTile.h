@@ -48,7 +48,7 @@ public:
     }
     ~LegacyTileGridTile();
 
-    LegacyTileLayer* tileLayer() const { return m_tileLayer.get(); }
+    LegacyTileLayer* tileLayer() const LIFETIME_BOUND { return m_tileLayer.get(); }
     void invalidateRect(const IntRect& rectInSurface);
     IntRect rect() const { return m_rect; }
     void setRect(const IntRect& tileRect);

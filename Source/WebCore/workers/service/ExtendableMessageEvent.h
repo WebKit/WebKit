@@ -40,13 +40,14 @@ class JSValue;
 namespace WebCore {
 
 class MessagePort;
+class SecurityOrigin;
 class ServiceWorker;
 class ServiceWorkerClient;
 
-using ExtendableMessageEventSource = Variant<RefPtr<ServiceWorkerClient>, RefPtr<ServiceWorker>, RefPtr<MessagePort>>;
+using ExtendableMessageEventSource = Variant<Ref<ServiceWorkerClient>, Ref<ServiceWorker>, Ref<MessagePort>>;
 
 class ExtendableMessageEvent final : public ExtendableEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ExtendableMessageEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ExtendableMessageEvent);
 public:
     struct Init : ExtendableEventInit {
         JSC::JSValue data;
@@ -62,26 +63,25 @@ public:
     };
 
     static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
-    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, Vector<Ref<MessagePort>>&&, Ref<SerializedScriptValue>&&, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&);
+    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, Vector<Ref<MessagePort>>&&, Ref<SerializedScriptValue>&&, Ref<SecurityOrigin>&&, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&);
 
     ~ExtendableMessageEvent();
 
     JSValueInWrappedObject& data() { return m_data; }
     JSValueInWrappedObject& cachedPorts() { return m_cachedPorts; }
 
-    const String& origin() const { return m_origin; }
+    String origin() const;
+    const RefPtr<SecurityOrigin> securityOrigin() const;
     const String& lastEventId() const { return m_lastEventId; }
     const std::optional<ExtendableMessageEventSource>& source() const { return m_source; }
     const Vector<Ref<MessagePort>>& ports() const { return m_ports; }
 
 private:
     ExtendableMessageEvent(const AtomString&, const Init&, IsTrusted);
-    ExtendableMessageEvent(const AtomString&, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
-
-    bool isExtendableMessageEvent() const final { return true; }
+    ExtendableMessageEvent(const AtomString&, Ref<SecurityOrigin>&&, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
 
     JSValueInWrappedObject m_data;
-    String m_origin;
+    const Variant<String, Ref<SecurityOrigin>> m_origin;
     String m_lastEventId;
     std::optional<ExtendableMessageEventSource> m_source;
     Vector<Ref<MessagePort>> m_ports;
@@ -90,6 +90,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ExtendableMessageEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isExtendableMessageEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(ExtendableMessageEvent)

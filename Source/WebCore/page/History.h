@@ -38,7 +38,7 @@ namespace WebCore {
 class Document;
 
 class History final : public ScriptWrappable, public RefCounted<History>, public LocalDOMWindowProperty {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(History);
+    WTF_MAKE_TZONE_ALLOCATED(History);
 public:
     static Ref<History> create(LocalDOMWindow& window) { return adoptRef(*new History(window)); }
 
@@ -57,8 +57,8 @@ public:
     void setTotalStateObjectPayloadLimitOverride(std::optional<uint32_t> limit) { m_totalStateObjectPayloadLimitOverride = limit; }
 
     ExceptionOr<SerializedScriptValue*> state();
-    JSValueInWrappedObject& cachedState();
-    JSValueInWrappedObject& cachedStateForGC() { return m_cachedState; }
+    JSValueInWrappedObject& cachedState() LIFETIME_BOUND;
+    JSValueInWrappedObject& cachedStateForGC() LIFETIME_BOUND { return m_cachedState; }
 
     ExceptionOr<void> back();
     ExceptionOr<void> forward();
@@ -81,7 +81,7 @@ private:
     bool stateChanged() const;
 
     SerializedScriptValue* stateInternal() const;
-    uint32_t totalStateObjectPayloadLimit() const;
+    uint32_t NODELETE totalStateObjectPayloadLimit() const;
 
     RefPtr<SerializedScriptValue> m_lastStateObjectRequested;
     JSValueInWrappedObject m_cachedState;
@@ -99,12 +99,12 @@ private:
 
 inline ExceptionOr<void> History::pushState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Push);
+    return stateObjectAdded(WTF::move(data), urlString, NavigationHistoryBehavior::Push);
 }
 
 inline ExceptionOr<void> History::replaceState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Replace);
+    return stateObjectAdded(WTF::move(data), urlString, NavigationHistoryBehavior::Replace);
 }
 
 } // namespace WebCore

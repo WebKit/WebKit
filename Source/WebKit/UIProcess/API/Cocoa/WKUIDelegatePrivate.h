@@ -191,6 +191,8 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView didChangeFontAttributes:(NSDictionary<NSString *, id> *)fontAttributes WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 - (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macos(10.13.4), ios(12.2));
+- (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+- (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
 
 - (void)_webView:(WKWebView *)webView requestWebAuthenticationConditionalMediationRegistrationForUser:(NSString *)user completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
@@ -213,8 +215,6 @@ struct UIEdgeInsets;
 - (void)_webViewEndXRSession:(WKWebView *)webView WK_API_AVAILABLE(macos(13.0), ios(16.0));
 - (void)_webViewEndXRSession:(WKWebView *)webView withReason:(_WKXRSessionEndReason)endReason WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
-- (void)_webView:(WKWebView *)webView requestCookieConsentWithMoreInfoHandler:(void (^)(void))moreInfoHandler decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
-
 - (void)_webView:(WKWebView *)webView updatedAppBadge:(NSNumber *)badge fromSecurityOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 - (void)_webView:(WKWebView *)webView didAdjustVisibilityWithSelectors:(NSArray<NSString *> *)selectors WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
@@ -227,6 +227,8 @@ struct UIEdgeInsets;
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 - (void)_webView:(WKWebView *)webView setRecentlyAccessedGamepads:(BOOL)recentlyAccessedGamepads WK_API_AVAILABLE(visionos(2.0));
 - (void)_webView:(WKWebView *)webView gamepadsConnectedStateDidChange:(BOOL)gamepadsConnected WK_API_AVAILABLE(visionos(2.0));
+
+- (void)_webViewWillPresentModalUI:(WKWebView *)webView WK_API_AVAILABLE(visionos(WK_XROS_TBA));
 #endif
 
 #if TARGET_OS_IPHONE
@@ -302,7 +304,11 @@ struct UIEdgeInsets;
 - (BOOL)_webView:(WKWebView *)webView touchEventsMustRequireGestureRecognizerToFail:(UIGestureRecognizer *)gestureRecognizer WK_API_AVAILABLE(ios(15.0));
 - (BOOL)_webView:(WKWebView *)webView gestureRecognizerCanBePreventedByTouchEvents:(UIGestureRecognizer *)gestureRecognizer WK_API_AVAILABLE(ios(16.5));
 
+#if TARGET_OS_WATCH
+- (void)_webView:(WKWebView *)webView startXRSessionWithFeatures:(_WKXRSessionFeatureFlags)features colorFormat:(NSUInteger)pixelFormat depthFormat:(NSUInteger)depthFormat completionHandler:(void (^)(id, UIViewController *))completionHandler WK_API_AVAILABLE(ios(17.4), visionos(1.1));
+#else
 - (void)_webView:(WKWebView *)webView startXRSessionWithFeatures:(_WKXRSessionFeatureFlags)features colorFormat:(MTLPixelFormat)pixelFormat depthFormat:(MTLPixelFormat)depthFormat completionHandler:(void (^)(id, UIViewController *))completionHandler WK_API_AVAILABLE(ios(17.4), visionos(1.1));
+#endif
 
 - (void)_webViewDidEnterStandbyForTesting:(WKWebView *)webView WK_API_AVAILABLE(ios(26.0));
 - (void)_webViewDidExitStandbyForTesting:(WKWebView *)webView WK_API_AVAILABLE(ios(26.0));
@@ -315,8 +321,6 @@ struct UIEdgeInsets;
 - (void)_cancelImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_completeImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_showWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
-- (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
-- (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webViewDidScroll:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webViewRunModal:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macos(10.13.4));

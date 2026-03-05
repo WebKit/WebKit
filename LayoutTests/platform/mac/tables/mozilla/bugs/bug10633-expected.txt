@@ -22,10 +22,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,1) size 19x22 [r=1 c=0 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 18x22
             RenderTableCell {TD} at (18,3) size 188x18 [bgcolor=#FFCC00] [r=1 c=3 rs=1 cs=1]
-              RenderInline {A} at (33,2) size 121x18 [color=#0000EE]
-                RenderInline {B} at (33,2) size 121x18
-                  RenderInline {FONT} at (33,2) size 121x17
-                    RenderText {#text} at (33,2) size 121x17
+              RenderInline {A} at (33,2) size 121x19 [color=#0000EE]
+                RenderInline {B} at (33,2) size 121x19
+                  RenderInline {FONT} at (33,2) size 121x18
+                    RenderText {#text} at (33,2) size 121x18
                       text run at (33,0) width 121: "Detailed Search"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (205,1) size 21x22 [r=1 c=4 rs=1 cs=1]
@@ -36,10 +36,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (243,1) size 19x22 [r=1 c=6 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 18x22
             RenderTableCell {TD} at (261,3) size 188x18 [bgcolor=#FFCC00] [r=1 c=9 rs=1 cs=1]
-              RenderInline {A} at (18,2) size 151x18 [color=#0000EE]
-                RenderInline {B} at (18,2) size 151x18
-                  RenderInline {FONT} at (18,2) size 151x17
-                    RenderText {#text} at (18,2) size 151x17
+              RenderInline {A} at (18,2) size 151x19 [color=#0000EE]
+                RenderInline {B} at (18,2) size 151x19
+                  RenderInline {FONT} at (18,2) size 151x18
+                    RenderText {#text} at (18,2) size 151x18
                       text run at (18,0) width 151: "Search By Distance"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (448,1) size 21x22 [r=1 c=10 rs=1 cs=1]

@@ -18,4 +18,5 @@ PASS invalid: @keyframes one, unset { }
 PASS invalid: @keyframes default, two { }
 PASS invalid: @keyframes revert, three { }
 PASS invalid: @keyframes revert-layer, four { }
+PASS invalid: @keyframes "" { }
 

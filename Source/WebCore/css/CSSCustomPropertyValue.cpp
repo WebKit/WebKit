@@ -40,12 +40,12 @@ Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(const AtomString
 
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createUnresolved(const AtomString& name, Ref<CSSVariableReferenceValue>&& value)
 {
-    return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSVariableReferenceValue>>, WTFMove(value) }));
+    return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSVariableReferenceValue>>, WTF::move(value) }));
 }
 
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&& value)
 {
-    return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSVariableData>>, WTFMove(value) }));
+    return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSVariableData>>, WTF::move(value) }));
 }
 
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithCSSWideKeyword(const AtomString& name, CSSWideKeyword keyword)

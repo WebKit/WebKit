@@ -284,6 +284,7 @@ enum TestConfidence { "high", "kinda-low" };
     undefined    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
     undefined    methodWithOptionalRecord(optional record<DOMString, long>? record = null);
     undefined    methodWithOptionalPromise(optional Promise<undefined> promise);
+    undefined    methodWithOptionalDictNoDefault(optional TestDictionaryThatShouldNotTolerateNull dict);
     undefined    methodWithOptionalDictIsDefault(optional TestDictionary dict = {});
 
     // Callback interface parameters.
@@ -524,8 +525,8 @@ typedef any AnyTypedef;
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject
-] dictionary TestDictionary {
-    TestEnumType enumerationValueWithoutDefault;
+] dictionary _TestDictionary {
+    TestEnumType _enumerationValueWithoutDefault;
     TestEnumType enumerationValueWithDefault = "enumValue1";
     TestEnumType enumerationValueWithEmptyStringDefault = "";
     DOMString stringWithDefault = "defaultString";
@@ -572,6 +573,16 @@ typedef any AnyTypedef;
     required BufferSource requiredBufferSourceValue;
     (DOMString or [Clamp] long) annotatedTypeInUnionMember;
     sequence<[Clamp] long> annotatedTypeInSequenceMember;
+    [ImplementationDefaultValue=0] long integerWithImplementationDefaultValue;
+    [ImplementationDefaultValue=[]] sequence<DOMString> sequenceWithImplementationDefaultValue;
+    [ImplementationDefaultValue={}] ParentDictionary dictionaryWithImplementationDefaultValue;
+    [ImplementationDefaultValue=null] long? nullableIntegerWithImplementationDefaultValue;
+    [ImplementationDefaultValue=null] Node? nullableNodeWithImplementationDefaultValue;
+    [ImplementationRequired] long integerWithImplementationRequired;
+    [ImplementationRequired] sequence<DOMString> sequenceWithImplementationRequired;
+    [ImplementationRequired] ParentDictionary dictionaryWithImplementationRequired;
+    [ImplementationRequired] long? nullableIntegerWithImplementationRequired;
+    [ImplementationRequired] Node? nullableNodeWithImplementationRequired;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {
@@ -601,6 +612,11 @@ dictionary ParentDictionary {
 dictionary ChildDictionary : ParentDictionary {
     boolean childMember2;
     boolean childMember1;
+};
+
+dictionary GrandchildDictionary : ChildDictionary {
+    boolean grandchildMember2;
+    boolean grandchildMember1;
 };
 
 [

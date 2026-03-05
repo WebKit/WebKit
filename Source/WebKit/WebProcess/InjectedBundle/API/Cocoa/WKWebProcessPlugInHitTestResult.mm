@@ -38,7 +38,7 @@
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInHitTestResult.class, self))
         return;
-    _hitTestResult->~InjectedBundleHitTestResult();
+    SUPPRESS_UNCOUNTED_ARG _hitTestResult->~InjectedBundleHitTestResult();
     [super dealloc];
 }
 

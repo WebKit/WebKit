@@ -36,7 +36,7 @@ namespace JSC { namespace B3 { namespace Air {
 void InsertionSet::insertInsts(size_t index, Vector<Inst>&& insts)
 {
     for (Inst& inst : insts)
-        insertInst(index, WTFMove(inst));
+        insertInst(index, WTF::move(inst));
 }
 
 void InsertionSet::execute(BasicBlock* block)

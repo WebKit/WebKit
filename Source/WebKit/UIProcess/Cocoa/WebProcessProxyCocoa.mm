@@ -106,7 +106,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platform
     return platformPathsWithAssumedReadAccess;
 }
 
-static Vector<String>& mediaTypeCache()
+static Vector<String>& NODELETE mediaTypeCache()
 {
     ASSERT(RunLoop::isMain());
     static NeverDestroyed<Vector<String>> typeCache;
@@ -187,7 +187,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     handleArray = SandboxExtension::createHandlesForMachLookup({ }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 #endif
 
-    send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(WTFMove(handleArray)), 0);
+    send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(WTF::move(handleArray)), 0);
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
 
@@ -217,11 +217,11 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (!registrations)
             return;
         
-        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
+        RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis), registrations = WTF::move(registrations)] () mutable {
             if (!weakThis)
                 return;
 
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrations))), 0);
+            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTF::move(registrations))), 0);
         });
     });
 }
@@ -262,7 +262,7 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     if (!hasConnection())
         return std::nullopt;
     
-    return protectedConnection()->getAuditToken();
+    return protect(connection())->getAuditToken();
 }
 
 std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()
@@ -286,15 +286,15 @@ bool WebProcessProxy::shouldDisableJITCage() const
 void WebProcessProxy::createLogStream(IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
 {
     MESSAGE_CHECK(!m_logStream.get());
-    m_logStream = LogStream::create(*this, WTFMove(serverConnection), identifier, WTFMove(completionHandler));
+    m_logStream = LogStream::create(*this, WTF::move(serverConnection), identifier, WTF::move(completionHandler));
 }
 #else
 void WebProcessProxy::createLogStream(LogStreamIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK(!m_logStream.get());
-    Ref logStream = LogStream::create(*this, protectedConnection(), identifier);
+    Ref logStream = LogStream::create(*this, protect(connection()), identifier);
     addMessageReceiver(Messages::LogStream::messageReceiverName(), logStream->identifier(), logStream);
-    m_logStream = WTFMove(logStream);
+    m_logStream = WTF::move(logStream);
     completionHandler();
 }
 #endif
@@ -340,7 +340,7 @@ void WebProcessProxy::sendMessageToInspector(WebCore::ServiceWorkerIdentifier id
         return;
     if (RefPtr serviceWorkerDebuggableProxy = m_serviceWorkerDebuggableProxies.get(identifier)) {
         auto targetID = serviceWorkerDebuggableProxy->targetIdentifier();
-        Inspector::RemoteInspector::singleton().sendMessageToRemote(targetID, WTFMove(message));
+        Inspector::RemoteInspector::singleton().sendMessageToRemote(targetID, WTF::move(message));
     }
 }
 #endif
@@ -371,14 +371,14 @@ void WebProcessProxy::platformResumeProcess()
 {
     if (m_platformSuspendDidReleaseNearSuspendedAssertion) {
         m_platformSuspendDidReleaseNearSuspendedAssertion = false;
-        protectedThrottler()->setShouldTakeNearSuspendedAssertion(true);
+        protect(throttler())->setShouldTakeNearSuspendedAssertion(true);
     }
 }
 
 void WebProcessProxy::platformSuspendProcess()
 {
     m_platformSuspendDidReleaseNearSuspendedAssertion = throttler().isHoldingNearSuspendedAssertion();
-    protectedThrottler()->setShouldTakeNearSuspendedAssertion(false);
+    protect(throttler())->setShouldTakeNearSuspendedAssertion(false);
 }
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
@@ -401,14 +401,15 @@ bool WebProcessProxy::WebProcessXPCEventHandler::handleXPCEvent(xpc_object_t eve
         auto category = xpcDictionaryGetString(event, categoryKey);
         auto messageString = xpcDictionaryGetString(event, messageStringKey);
         auto logType = xpc_dictionary_get_uint64(event, logTypeKey);
-        auto pid = xpc_connection_get_pid(xpc_dictionary_get_remote_connection(event));
+        auto pid = xpc_connection_get_pid(protect(xpc_dictionary_get_remote_connection(event)));
 
         OSObjectPtr<os_log_t> osLog;
         if (!subsystem.isEmpty() && !category.isEmpty())
             osLog = adoptOSObject(os_log_create(subsystem.utf8().data(), category.utf8().data()));
 
-        auto osLogPointer = osLog ? osLog.get() : OS_LOG_DEFAULT;
-        os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WebContent[%d] %{public}s", static_cast<int>(pid), messageString.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        os_log_with_type(osLog ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[%d] %{public}s", static_cast<int>(pid), messageString.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         webProcess->m_didReceiveLogsDuringLaunchForTesting = true;
     } else if (messageName == disableLogMessageName) {
         RefPtr webProcess = m_webProcess.get();

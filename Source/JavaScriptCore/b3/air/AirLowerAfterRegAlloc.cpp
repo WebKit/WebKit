@@ -79,7 +79,7 @@ void lowerAfterRegAlloc(Code& code)
 
     padInterference(code);
 
-    UncheckedKeyHashMap<Inst*, RegisterSetBuilder> usedRegisters;
+    UncheckedKeyHashMap<Inst*, RegisterSet> usedRegisters;
     
     RegLiveness liveness(code);
     for (BasicBlock* block : code) {
@@ -88,7 +88,7 @@ void lowerAfterRegAlloc(Code& code)
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
             
-            RegisterSetBuilder set;
+            RegisterSet set;
 
             if (isRelevant(inst))
                 set = { localCalc.live() };
@@ -112,13 +112,13 @@ void lowerAfterRegAlloc(Code& code)
     // kind of slop is OK.
     ScalarRegisterSet disallowedCalleeSaves;
     if (code.stackIsAllocated()) {
-        RegisterSetBuilder disallowed = RegisterSetBuilder::calleeSaveRegisters();
+        RegisterSet disallowed = RegisterSet::calleeSaveRegisters();
         ASSERT(!disallowed.hasAnyWideRegisters());
-        RegisterSetBuilder usedCalleeSaves = code.calleeSaveRegisters();
+        RegisterSet usedCalleeSaves = code.calleeSaveRegisters();
         ASSERT(!usedCalleeSaves.hasAnyWideRegisters());
 
         disallowed.exclude(usedCalleeSaves);
-        disallowedCalleeSaves = disallowed.buildScalarRegisterSet();
+        disallowedCalleeSaves = disallowed.toScalarRegisterSet();
     }
 
     auto getScratches = [&] (ScalarRegisterSet set, Bank bank) -> std::array<Arg, 2> {
@@ -151,7 +151,7 @@ void lowerAfterRegAlloc(Code& code)
 
             switch (inst.kind.opcode) {
             case Shuffle: {
-                ScalarRegisterSet set = usedRegisters.get(&inst).buildScalarRegisterSet();
+                ScalarRegisterSet set = usedRegisters.get(&inst).toScalarRegisterSet();
                 Vector<ShufflePair> pairs;
                 for (unsigned i = 0; i < inst.args.size(); i += 3) {
                     Arg src = inst.args[i + 0];
@@ -184,14 +184,14 @@ void lowerAfterRegAlloc(Code& code)
                 CCallValue* value = inst.origin->as<CCallValue>();
                 Kind oldKind = inst.kind;
 
-                RegisterSetBuilder liveRegs = usedRegisters.get(&inst);
-                RegisterSetBuilder unsavedRegs = liveRegs;
-                unsavedRegs.exclude(RegisterSetBuilder::calleeSaveRegisters());
-                unsavedRegs.exclude(RegisterSetBuilder::stackRegisters());
-                unsavedRegs.exclude(RegisterSetBuilder::reservedHardwareRegisters());
-                auto regsToSave = unsavedRegs.buildWithLowerBits();
+                RegisterSet liveRegs = usedRegisters.get(&inst);
+                RegisterSet unsavedRegs = liveRegs;
+                unsavedRegs.exclude(RegisterSet::calleeSaveRegisters());
+                unsavedRegs.exclude(RegisterSet::stackRegisters());
+                unsavedRegs.exclude(RegisterSet::reservedHardwareRegisters());
+                auto regsToSave = unsavedRegs.normalizeWidths();
 
-                ScalarRegisterSet preUsed = liveRegs.buildScalarRegisterSet();
+                ScalarRegisterSet preUsed = liveRegs.toScalarRegisterSet();
                 ScalarRegisterSet postUsed = preUsed;
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
                 Vector<Tmp, 2> results;

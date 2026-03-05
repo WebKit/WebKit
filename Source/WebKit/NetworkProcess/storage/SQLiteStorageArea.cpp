@@ -72,13 +72,13 @@ ASCIILiteral SQLiteStorageArea::statementString(StatementType type) const
 
 Ref<SQLiteStorageArea> SQLiteStorageArea::create(unsigned quota, const WebCore::ClientOrigin& origin, const String& path, Ref<WorkQueue>&& workQueue)
 {
-    return adoptRef(*new SQLiteStorageArea(quota, origin, path, WTFMove(workQueue)));
+    return adoptRef(*new SQLiteStorageArea(quota, origin, path, WTF::move(workQueue)));
 }
 
 SQLiteStorageArea::SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin& origin, const String& path, Ref<WorkQueue>&& workQueue)
     : StorageAreaBase(quota, origin)
     , m_path(path)
-    , m_queue(WTFMove(workQueue))
+    , m_queue(WTF::move(workQueue))
     , m_cachedStatements(static_cast<size_t>(StatementType::Invalid))
 {
     assertIsCurrent(m_queue.get());
@@ -206,7 +206,7 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
 
     // Since a WorkQueue isn't bound to a specific thread, we need to disable threading check.
     // We will never access the database from different threads simultaneously.
-    checkedDatabase()->disableThreadingChecks();
+    protect(m_database)->disableThreadingChecks();
 
     if (!createTableIfNecessary()) {
         m_database = nullptr;
@@ -226,7 +226,7 @@ void SQLiteStorageArea::startTransactionIfNecessary()
     ASSERT(m_database);
 
     if (!m_transaction || m_transaction->wasRolledBackBySqlite())
-        m_transaction = makeUnique<WebCore::SQLiteTransaction>(*checkedDatabase());
+        m_transaction = makeUnique<WebCore::SQLiteTransaction>(*protect(m_database));
 
     if (m_transaction->inProgress())
         return;
@@ -245,16 +245,11 @@ WebCore::SQLiteStatementAutoResetScope SQLiteStorageArea::cachedStatement(Statem
 
     auto index = static_cast<uint8_t>(type);
     if (!m_cachedStatements[index]) {
-        if (auto result = checkedDatabase()->prepareStatement(statementString(type)))
-            m_cachedStatements[index] = WTFMove(result);
+        if (auto result = protect(m_database)->prepareStatement(statementString(type)))
+            m_cachedStatements[index] = WTF::move(result);
     }
 
     return WebCore::SQLiteStatementAutoResetScope { m_cachedStatements[index].get() };
-}
-
-CheckedPtr<WebCore::SQLiteDatabase> SQLiteStorageArea::checkedDatabase() const
-{
-    return m_database.get();
 }
 
 Expected<String, StorageError> SQLiteStorageArea::getItem(const String& key)
@@ -334,7 +329,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
             if (result.has_value())
                 items.add(key, result.value());
             else {
-                RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed during read from cache (%hhu)" PUBLIC_LOG_STRING, result.error());
+                RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed during read from cache (%hhu)" PUBLIC_LOG_STRING, static_cast<uint8_t>(result.error()));
                 return { };
             }
         }
@@ -359,7 +354,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
             String value = statement->columnBlobAsString(1);
             if (!key.isNull() && !value.isNull()) {
                 items.add(key, value);
-                updateCacheIfNeeded(WTFMove(key), WTFMove(value));
+                updateCacheIfNeeded(WTF::move(key), WTF::move(value));
             }
 
             result = statement->step();
@@ -500,7 +495,7 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
         return makeUnexpected(StorageError::Database);
     }
 
-    if (checkedDatabase()->lastChanges() <= 0)
+    if (protect(m_database)->lastChanges() <= 0)
         return makeUnexpected(StorageError::ItemNotFound);
 
     dispatchEvents(connection, storageAreaImplID, String(), String(), String(), urlString);

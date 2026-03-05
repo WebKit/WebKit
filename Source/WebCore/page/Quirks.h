@@ -84,44 +84,46 @@ public:
 #endif
     bool shouldDisablePointerEventsQuirk() const;
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
-    WEBCORE_EXPORT bool inputMethodUsesCorrectKeyEventOrder() const;
+    WEBCORE_EXPORT bool NODELETE inputMethodUsesCorrectKeyEventOrder() const;
     bool shouldExposeShowModalDialog() const;
+    bool shouldIgnoreInputModeNone() const;
     bool shouldNavigatorPluginsBeEmpty() const;
     bool returnNullPictureInPictureElementDuringFullscreenChange() const;
 
     bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const;
-    bool shouldFlipScreenDimensions() const;
-    bool requirePageVisibilityToPlayAudioQuirk() const;
+    bool NODELETE shouldFlipScreenDimensions() const;
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
-    WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const;
+    WEBCORE_EXPORT bool NODELETE shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSuppressedForHiddenContentEditable() const;
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
     WEBCORE_EXPORT bool shouldAvoidResizingWhenInputViewBoundsChange() const;
     WEBCORE_EXPORT bool shouldAvoidScrollingWhenFocusedContentIsVisible() const;
+    WEBCORE_EXPORT bool shouldUseLayoutViewportForClientRects() const;
     WEBCORE_EXPORT bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation() const;
-    WEBCORE_EXPORT bool shouldIgnoreAriaForFastPathContentObservationCheck() const;
-    WEBCORE_EXPORT bool shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const;
-    WEBCORE_EXPORT bool shouldIgnoreViewportArgumentsToAvoidEnlargedView() const;
+    WEBCORE_EXPORT bool NODELETE shouldIgnoreAriaForFastPathContentObservationCheck() const;
+    WEBCORE_EXPORT bool NODELETE shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const;
+    WEBCORE_EXPORT bool NODELETE shouldIgnoreViewportArgumentsToAvoidEnlargedView() const;
     WEBCORE_EXPORT bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const;
+    WEBCORE_EXPORT bool shouldAllowNotificationPermissionWithoutUserGesture() const;
     WEBCORE_EXPORT static bool shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin);
 
-    WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
+    WEBCORE_EXPORT bool NODELETE needsYouTubeMouseOutQuirk() const;
 
     WEBCORE_EXPORT bool shouldDisableWritingSuggestionsByDefault() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
     WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
     WEBCORE_EXPORT static bool needsIPadMiniUserAgent(const URL&);
-    WEBCORE_EXPORT static bool needsIPhoneUserAgent(const URL&);
-    WEBCORE_EXPORT static bool needsDesktopUserAgent(const URL&);
-    WEBCORE_EXPORT static std::optional<String> needsCustomUserAgentOverride(const URL&, const String& applicationNameForUserAgent);
+    WEBCORE_EXPORT static bool NODELETE needsIPhoneUserAgent(const URL&);
+    WEBCORE_EXPORT static bool NODELETE needsDesktopUserAgent(const URL&);
+    WEBCORE_EXPORT static std::optional<String> needsCustomUserAgentOverride(const URL&, const String& applicationNameForUserAgent, const String& currentUserAgent);
 
     WEBCORE_EXPORT static bool needsPartitionedCookies(const ResourceRequest&);
 
-    WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> defaultVisibilityAdjustmentSelectors(const URL&);
+    WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> NODELETE defaultVisibilityAdjustmentSelectors(const URL&);
 
-    WEBCORE_EXPORT bool static shouldDisableBlobFileAccessEnforcement();
+    WEBCORE_EXPORT bool static NODELETE shouldDisableBlobFileAccessEnforcement();
 
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
@@ -130,6 +132,7 @@ public:
     bool needsZomatoEmailLoginLabelQuirk() const;
     bool needsGoogleMapsScrollingQuirk() const;
     bool needsGoogleTranslateScrollingQuirk() const;
+    bool needsGeforcenowWarningDisplayNoneQuirk() const;
 
     bool needsPrimeVideoUserSelectNoneQuirk() const;
 
@@ -174,8 +177,8 @@ public:
 
     void triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&&) const;
     StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*, bool isParentProcessAFullWebBrowser, IsSyntheticClick) const;
-    void setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTFMove(domains); }
-    const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const { return m_subFrameDomainsForStorageAccessQuirk; }
+    void setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTF::move(domains); }
+    const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const LIFETIME_BOUND { return m_subFrameDomainsForStorageAccessQuirk; }
 
     bool needsVP9FullRangeFlagQuirk() const;
 
@@ -192,7 +195,7 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     WEBCORE_EXPORT static bool shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL&);
-    bool shouldDispatchPointerOutAfterHandlingSyntheticClick() const;
+    bool shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick() const;
 #endif
 
     WEBCORE_EXPORT void setTopDocumentURLForTesting(URL&&);
@@ -248,6 +251,8 @@ public:
 #endif
 
     bool needsLaxSameSiteCookieQuirk(const URL&) const;
+    WEBCORE_EXPORT bool needsConsistentQueryParameterFilteringQuirk(const URL&) const;
+    bool mayBenefitFromFingerprintingProtectionQuirk(const URL&) const;
     static String standardUserAgentWithApplicationNameIncludingCompatOverrides(const String&, const String&, UserAgentType);
 
     String scriptToEvaluateBeforeRunningScriptFromURL(const URL&);
@@ -259,14 +264,21 @@ public:
     bool needsZeroMaxTouchPointsQuirk() const;
     bool needsChromeMediaControlsPseudoElement() const;
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(TWO_PHASE_CLICKS)
     WEBCORE_EXPORT bool shouldIgnoreContentObservationForClick(const Node&) const;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT bool shouldSynthesizeTouchEventsAfterNonSyntheticClick(const Element&) const;
     WEBCORE_EXPORT bool needsPointerTouchCompatibility(const Element&) const;
-    bool shouldTreatAddingMouseOutEventListenerAsContentChange() const;
     WEBCORE_EXPORT bool shouldHideSoftTopScrollEdgeEffectDuringFocus(const Element&) const;
 
     bool needsClaudeSidebarViewportUnitQuirk(Element&, const RenderStyle&) const;
+    bool needsChromeOSNavigatorUserAgentQuirk(const Document&) const;
+#endif
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    bool shouldTreatAddingMouseOutEventListenerAsContentChange() const;
 #endif
 
     bool needsMozillaFileTypeForDataTransfer() const;
@@ -284,16 +296,19 @@ public:
 
     WEBCORE_EXPORT bool needsNowPlayingFullscreenSwapQuirk() const;
 
-
     enum class TikTokOverflowingContentQuirkType : bool { VideoSectionQuirk, CommentsSectionQuirk };
     std::optional<TikTokOverflowingContentQuirkType> needsTikTokOverflowingContentQuirk(const Element&, const RenderStyle& parentStyle) const;
 
+    bool needsInstagramResizingReelsQuirk(const Element&, const RenderStyle& elementStyle, const RenderStyle& parentStyle) const;
+
     bool needsWebKitMediaTextTrackDisplayQuirk() const;
 
-    bool shouldSupportHoverMediaQueries() const;
+    bool NODELETE shouldSupportHoverMediaQueries() const;
 
     bool shouldRewriteMediaRangeRequestForURL(const URL&) const;
     bool shouldDelayReloadWhenRegisteringServiceWorker() const;
+
+    bool ensureCaptionVisibilityInFullscreenAndPictureInPicture() const;
 
     bool shouldPreventKeyframeEffectAcceleration(const KeyframeEffect&) const;
 
@@ -303,7 +318,11 @@ public:
 
     bool needsSuppressPostLayoutBoundaryEventsQuirk() const;
 
-    bool shouldExposeCredentialsContainerQuirk() const;
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    bool shouldReportVisibleDueToActivePictureInPictureContent() const;
+#endif
+
+    bool shouldComparareUsedValuesForBorderWidthForTriggeringTransitions() const;
 
     void determineRelevantQuirks();
 
@@ -319,8 +338,6 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     static bool domainShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk(const URL&, QuirksData&);
 #endif
-
-    RefPtr<Document> protectedDocument() const;
 
     URL topDocumentURL() const;
 

@@ -36,18 +36,8 @@
 
 namespace WebCore {
 
-MediaEndpointConfiguration::MediaEndpointConfiguration(Vector<IceServerInfo>&& iceServers, RTCIceTransportPolicy iceTransportPolicy, RTCBundlePolicy bundlePolicy, RTCPMuxPolicy rtcpMuxPolicy, unsigned short iceCandidatePoolSize, Vector<CertificatePEM>&& certificates)
-    : iceServers(WTFMove(iceServers))
-    , iceTransportPolicy(iceTransportPolicy)
-    , bundlePolicy(bundlePolicy)
-    , rtcpMuxPolicy(rtcpMuxPolicy)
-    , iceCandidatePoolSize(iceCandidatePoolSize)
-    , certificates(WTFMove(certificates))
-{
-}
-
 MediaEndpointConfiguration::IceServerInfo::IceServerInfo(Vector<URL>&& urls, const String& credential, const String& username)
-    : urls(WTFMove(urls))
+    : urls(WTF::move(urls))
     , credential(credential)
     , username(username)
 {

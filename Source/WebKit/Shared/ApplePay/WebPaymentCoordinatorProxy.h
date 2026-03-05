@@ -105,6 +105,7 @@ public:
         virtual UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) = 0;
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
         virtual void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) = 0;
+        virtual void notifyWillPresentPaymentUI(WebPageProxyIdentifier) = 0;
 #endif
         virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
         virtual Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
@@ -122,7 +123,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void webProcessExited();
+    void NODELETE webProcessExited();
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const
     {
         CheckedPtr client = m_client.get();
@@ -131,8 +132,6 @@ public:
 
 private:
     explicit WebPaymentCoordinatorProxy(Client&);
-    Ref<WorkQueue> protectedCanMakePaymentsQueue() const;
-    CheckedPtr<Client> checkedClient() const { return m_client.get(); }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -176,10 +175,10 @@ private:
     void platformBeginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
     void platformEndApplePaySetup();
 
-    bool canBegin() const;
-    bool canCancel() const;
-    bool canCompletePayment() const;
-    bool canAbort() const;
+    bool NODELETE canBegin() const;
+    bool NODELETE canCancel() const;
+    bool NODELETE canCompletePayment() const;
+    bool NODELETE canAbort() const;
 
     void didReachFinalState(WebCore::PaymentSessionError&& = { });
 
@@ -200,8 +199,6 @@ private:
     RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
     void platformSetPaymentRequestUserAgent(PKPaymentRequest *, const String& userAgent);
 #endif
-
-    RefPtr<PaymentAuthorizationPresenter> protectedAuthorizationPresenter() { return m_authorizationPresenter; }
 
     WeakPtr<Client> m_client;
     std::optional<WebCore::PageIdentifier> m_destinationID;

@@ -1,0 +1,60 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that MacOSInlineMediaControls uses CSS flexbox positioning.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 700, height: 400 });
+document.body.appendChild(mediaControls.element);
+
+const mockHost = {
+    isMediaControlsMacInlineSizeSpecsEnabled: true
+};
+
+Object.defineProperty(mediaControls, 'mediaControlsHost', {
+    get: function() { return mockHost; },
+    configurable: true
+});
+
+mediaControls.element.classList.remove('audio');
+
+mediaControls.layout();
+
+const iconButtons = [
+    mediaControls.playPauseButton,
+    mediaControls.skipBackButton,
+    mediaControls.skipForwardButton,
+    mediaControls.airplayButton,
+    mediaControls.tracksButton,
+    mediaControls.overflowButton
+];
+
+let numberOfFrames = 0;
+
+scheduler.frameDidFire = function()
+{
+    if (iconButtons.some(button => button.width == 0))
+        return;
+
+    numberOfFrames++;
+
+    switch (numberOfFrames) {
+    case 1:
+        shouldBe("mediaControls.rightContainer.element.style.left", "''");
+        mediaControls.width += 100;
+        break;
+
+    case 2:
+        shouldBe("mediaControls.rightContainer.element.style.left", "''");
+        mediaControls.element.remove();
+        finishMediaControlsTest();
+        break;
+    }
+};
+
+</script>
+</body>

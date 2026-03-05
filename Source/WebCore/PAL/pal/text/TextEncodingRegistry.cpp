@@ -139,7 +139,7 @@ static HashSet<ASCIILiteral>& nonBackslashEncodings()
     return nonBackslashEncodings;
 }
 
-static constexpr ASCIILiteral textEncodingNameBlocklist[] = { "UTF-7"_s, "BOCU-1"_s, "SCSU"_s };
+static constexpr std::array textEncodingNameBlocklist { "UTF-7"_s, "BOCU-1"_s, "SCSU"_s };
 
 static bool isUndesiredAlias(ASCIILiteral alias)
 {
@@ -174,7 +174,7 @@ static void addToTextCodecMap(ASCIILiteral name, NewTextCodecFunction&& function
 {
     ASCIILiteral atomName = textEncodingNameMap().get(name);
     ASSERT(!atomName.isNull());
-    textCodecMap().add(atomName, WTFMove(function));
+    textCodecMap().add(atomName, WTF::move(function));
 }
 
 static void pruneBlocklistedCodecs() WTF_REQUIRES_LOCK(encodingRegistryLock)

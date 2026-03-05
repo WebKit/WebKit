@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webcrypto/#dfn-AesKeyAlgorithm
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
 ] dictionary CryptoAesKeyAlgorithm : CryptoKeyAlgorithm {
     // The length, in bits, of the key.
     required unsigned short length;

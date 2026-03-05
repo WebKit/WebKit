@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEGaussianBlurElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEGaussianBlurElement);
 
 inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -80,7 +80,7 @@ void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const
         if (propertyValue != EdgeModeType::Unknown)
             Ref { m_edgeMode }->setBaseValInternal<EdgeModeType>(propertyValue);
         else
-            protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feGaussianBlur: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feGaussianBlur: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     }
     default:

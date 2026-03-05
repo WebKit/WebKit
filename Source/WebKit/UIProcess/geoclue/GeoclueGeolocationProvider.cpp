@@ -71,7 +71,7 @@ void GeoclueGeolocationProvider::start(UpdateNotifyFunction&& updateNotifyFuncti
         return;
 
     m_destroyLaterTimer.stop();
-    m_updateNotifyFunction = WTFMove(updateNotifyFunction);
+    m_updateNotifyFunction = WTF::move(updateNotifyFunction);
     m_isRunning = true;
     m_cancellable = adoptGRef(g_cancellable_new());
 
@@ -171,7 +171,7 @@ void GeoclueGeolocationProvider::acquirePortalProxy()
                 provider.createGeoclueManager();
                 return;
             }
-            provider.setupPortalProxy(WTFMove(proxy));
+            provider.setupPortalProxy(WTF::move(proxy));
         }, this);
 }
 
@@ -179,7 +179,7 @@ void GeoclueGeolocationProvider::setupPortalProxy(GRefPtr<GDBusProxy>&& proxy)
 {
     m_sourceType = LocationProviderSource::Portal;
 
-    m_portal.locationPortal = WTFMove(proxy);
+    m_portal.locationPortal = WTF::move(proxy);
 
     auto* connection = g_dbus_proxy_get_connection(m_portal.locationPortal.get());
     auto uniqueName = String::fromUTF8(g_dbus_connection_get_unique_name(connection));
@@ -300,7 +300,7 @@ void GeoclueGeolocationProvider::portalLocationUpdated(GVariant* variant)
     if (g_variant_lookup(variant, "Timestamp", "(tt)", &timestamp, nullptr))
         position.timestamp = static_cast<double>(timestamp);
 
-    m_updateNotifyFunction(WTFMove(position), std::nullopt);
+    m_updateNotifyFunction(WTF::move(position), std::nullopt);
 }
 
 void GeoclueGeolocationProvider::stopPortalSession()
@@ -347,7 +347,7 @@ void GeoclueGeolocationProvider::createGeoclueManager()
                 provider.didFail(_("Failed to connect to geolocation service"));
                 return;
             }
-            provider.setupGeoclueManager(WTFMove(proxy));
+            provider.setupGeoclueManager(WTF::move(proxy));
         }, this);
 }
 
@@ -355,7 +355,7 @@ void GeoclueGeolocationProvider::setupGeoclueManager(GRefPtr<GDBusProxy>&& proxy
 {
     m_sourceType = LocationProviderSource::Geoclue;
 
-    m_geoclue.manager = WTFMove(proxy);
+    m_geoclue.manager = WTF::move(proxy);
     if (!m_isRunning) {
         destroyStateLater();
         return;
@@ -399,13 +399,13 @@ void GeoclueGeolocationProvider::createGeoclueClient(const char* clientPath)
                 provider.didFail(_("Failed to connect to geolocation service"));
                 return;
             }
-            provider.setupGeoclueClient(WTFMove(proxy));
+            provider.setupGeoclueClient(WTF::move(proxy));
         }, this);
 }
 
 void GeoclueGeolocationProvider::setupGeoclueClient(GRefPtr<GDBusProxy>&& proxy)
 {
-    m_geoclue.client = WTFMove(proxy);
+    m_geoclue.client = WTF::move(proxy);
     if (!m_isRunning) {
         destroyStateLater();
         return;
@@ -528,7 +528,7 @@ void GeoclueGeolocationProvider::createLocation(const char* locationPath)
                 provider.didFail(_("Failed to determine position from geolocation service"));
                 return;
             }
-            provider.locationUpdated(WTFMove(proxy));
+            provider.locationUpdated(WTF::move(proxy));
         }, this);
 }
 
@@ -551,7 +551,7 @@ void GeoclueGeolocationProvider::locationUpdated(GRefPtr<GDBusProxy>&& proxy)
     guint64 timestamp;
     g_variant_get(property.get(), "(tt)", &timestamp, nullptr);
     position.timestamp = static_cast<double>(timestamp);
-    m_updateNotifyFunction(WTFMove(position), std::nullopt);
+    m_updateNotifyFunction(WTF::move(position), std::nullopt);
 }
 
 void GeoclueGeolocationProvider::didFail(CString errorMessage)

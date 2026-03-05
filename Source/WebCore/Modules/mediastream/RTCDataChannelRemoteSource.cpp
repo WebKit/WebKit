@@ -36,21 +36,77 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteSource);
 
-Ref<RTCDataChannelRemoteSource> RTCDataChannelRemoteSource::create(RTCDataChannelIdentifier identifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection)
+Ref<RTCDataChannelRemoteSource> RTCDataChannelRemoteSource::create(RTCDataChannelIdentifier localIdentifier, RTCDataChannelIdentifier remoteIdentifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection)
 {
-    return adoptRef(*new RTCDataChannelRemoteSource(identifier, WTFMove(handler), WTFMove(connection)));
+    return adoptRef(*new RTCDataChannelRemoteSource(localIdentifier, remoteIdentifier, WTF::move(handler), WTF::move(connection)));
 }
 
-RTCDataChannelRemoteSource::RTCDataChannelRemoteSource(RTCDataChannelIdentifier identifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection)
-    : m_identifier(identifier)
-    , m_handler(WTFMove(handler))
-    , m_connection(WTFMove(connection))
+RTCDataChannelRemoteSource::RTCDataChannelRemoteSource(RTCDataChannelIdentifier localIdentifier, RTCDataChannelIdentifier remoteIdentifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection)
+    : RTCDataChannelHandlerClient(std::nullopt, localIdentifier)
+    , m_remoteIdentifier(remoteIdentifier)
+    , m_handler(WTF::move(handler))
+    , m_connection(WTF::move(connection))
 {
+    ASSERT(isMainThread());
     // FIXME: We should ask m_handler to call us on its own background thread.
     m_handler->setClient(*this, std::nullopt);
 }
 
 RTCDataChannelRemoteSource::~RTCDataChannelRemoteSource() = default;
+
+void RTCDataChannelRemoteSource::didChangeReadyState(RTCDataChannelState state)
+{
+    ASSERT(isMainThread());
+    if (m_isClosed)
+        return;
+    if (state == RTCDataChannelState::Closed)
+        m_isClosed = true;
+    m_connection->didChangeReadyState(m_remoteIdentifier, state);
+}
+
+void RTCDataChannelRemoteSource::didReceiveStringData(const String& text)
+{
+    ASSERT(isMainThread());
+    if (m_isClosed)
+        return;
+    m_connection->didReceiveStringData(m_remoteIdentifier, text);
+}
+
+void RTCDataChannelRemoteSource::didReceiveRawData(std::span<const uint8_t> data)
+{
+    ASSERT(isMainThread());
+    if (m_isClosed)
+        return;
+    m_connection->didReceiveRawData(m_remoteIdentifier, data);
+}
+
+void RTCDataChannelRemoteSource::didDetectError(Ref<RTCError>&& error)
+{
+    ASSERT(isMainThread());
+    if (m_isClosed)
+        return;
+    m_connection->didDetectError(m_remoteIdentifier, error->errorDetail(), error->message());
+}
+
+void RTCDataChannelRemoteSource::bufferedAmountIsDecreasing(size_t amount)
+{
+    ASSERT(isMainThread());
+    if (m_isClosed)
+        return;
+    m_connection->bufferedAmountIsDecreasing(m_remoteIdentifier, amount);
+}
+
+size_t RTCDataChannelRemoteSource::bufferedAmount() const
+{
+    ASSERT(isMainThread());
+    return 0;
+}
+
+void RTCDataChannelRemoteSource::peerConnectionIsClosing()
+{
+    ASSERT(isMainThread());
+    didChangeReadyState(RTCDataChannelState::Closed);
+}
 
 } // namespace WebCore
 

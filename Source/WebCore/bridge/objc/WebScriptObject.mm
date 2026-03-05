@@ -42,13 +42,13 @@
 #import "runtime_root.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/CallFrame.h>
-#import <JavaScriptCore/CatchScope.h>
 #import <JavaScriptCore/Completion.h>
 #import <JavaScriptCore/InitializeThreading.h>
 #import <JavaScriptCore/JSContextInternal.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/JSValueInternal.h>
+#import <JavaScriptCore/TopExceptionScope.h>
 #import <wtf/HashMap.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
@@ -74,7 +74,7 @@ static Lock wrapperCacheLock;
 static CreateWrapperFunction createDOMWrapperFunction;
 static DisconnectWindowWrapperFunction disconnectWindowWrapperFunction;
 
-static HashMap<JSObject*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
+static HashMap<JSObject*, NSObject *>& NODELETE wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
 {
     static NeverDestroyed<HashMap<JSObject*, NSObject *>> map;
     return map;
@@ -85,8 +85,8 @@ NSObject *getJSWrapper(JSObject* impl)
     ASSERT(isMainThread());
     Locker locker { wrapperCacheLock };
 
-    NSObject* wrapper = wrapperCache().get(impl);
-    return wrapper ? retainPtr(wrapper).autorelease() : nil;
+    RetainPtr<id> wrapper = wrapperCache().get(impl);
+    return wrapper.autorelease();
 }
 
 void addJSWrapper(NSObject *wrapper, JSObject* impl)
@@ -116,7 +116,7 @@ id createJSWrapper(JSC::JSObject* object, RefPtr<JSC::Bindings::RootObject>&& or
 {
     if (id wrapper = getJSWrapper(object))
         return wrapper;
-    return adoptNS([[WebScriptObject alloc] _initWithJSObject:object originRootObject:WTFMove(origin) rootObject:WTFMove(root)]).autorelease();
+    return adoptNS([[WebScriptObject alloc] _initWithJSObject:object originRootObject:WTF::move(origin) rootObject:WTF::move(root)]).autorelease();
 }
 
 static void addExceptionToConsole(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Exception* exception)
@@ -131,7 +131,7 @@ static void addExceptionToConsole(JSC::JSGlobalObject* lexicalGlobalObject, JSC:
 static void addExceptionToConsole(JSC::JSGlobalObject* lexicalGlobalObject)
 {
     JSC::VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::Exception* exception = scope.exception();
     scope.clearException();
     addExceptionToConsole(lexicalGlobalObject, exception);
@@ -177,10 +177,10 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     auto& wrapped = *toJS(jsObject);
 
     if (WebCore::createDOMWrapperFunction) {
-        if (auto wrapper = WebCore::createDOMWrapperFunction(wrapped)) {
-            if (![wrapper _hasImp]) // new wrapper, not from cache
-                [wrapper _setImp:&wrapped originRootObject:originRootObject rootObject:rootObject];
-            return wrapper;
+        if (RetainPtr wrapper = WebCore::createDOMWrapperFunction(wrapped)) {
+            if (![wrapper.get() _hasImp]) // new wrapper, not from cache
+                [wrapper.get() _setImp:&wrapped originRootObject:originRootObject rootObject:rootObject];
+            return wrapper.autorelease();
         }
     }
 
@@ -231,7 +231,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 
     self = [super init];
     _private = [[WebScriptObjectPrivate alloc] init];
-    [self _setImp:imp originRootObject:WTFMove(originRootObject) rootObject:WTFMove(rootObject)];
+    [self _setImp:imp originRootObject:WTF::move(originRootObject) rootObject:WTF::move(rootObject)];
     
     return self;
 }
@@ -279,7 +279,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     // JavaScript. Instead, we should use JSGlobalObject, like we do elsewhere.
     JSC::JSGlobalObject* globalObject = root->globalObject();
     JSC::VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto* target = JSC::jsDynamicCast<JSDOMWindowBase*>(globalObject);
     if (!target)
@@ -346,7 +346,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto globalObject = [self _rootObject]->globalObject();
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
     UNUSED_PARAM(scope);
 
@@ -384,7 +384,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto globalObject = [self _rootObject]->globalObject();
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     UNUSED_PARAM(scope);
 
     JSC::JSValue returnValue = JSExecState::profiledEvaluate(globalObject, JSC::ProfilingReason::Other, makeSource(String(script), { }, JSC::SourceTaintedOrigin::Untainted), JSC::JSValue());
@@ -402,7 +402,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto globalObject = [self _rootObject]->globalObject();
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
     JSObject* object = JSC::jsDynamicCast<JSObject*>([self _imp]);
@@ -430,7 +430,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
         // leaving the lock permanently held
         JSLockHolder lock(vm);
 
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
         JSC::JSValue result = [self _imp]->get(lexicalGlobalObject, Identifier::fromString(vm, String(key)));
@@ -458,7 +458,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto globalObject = [self _rootObject]->globalObject();
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
     JSC::JSCell::deleteProperty([self _imp], lexicalGlobalObject, Identifier::fromString(vm, String(key)));
@@ -477,7 +477,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto globalObject = [self _rootObject]->globalObject();
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
     BOOL result = [self _imp]->hasProperty(lexicalGlobalObject, Identifier::fromString(vm, String(key)));
@@ -509,7 +509,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto globalObject = [self _rootObject]->globalObject();
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
     JSC::JSValue result = [self _imp]->get(lexicalGlobalObject, index);
@@ -533,7 +533,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto globalObject = [self _rootObject]->globalObject();
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
     [self _imp]->methodTable()->putByIndex([self _imp], lexicalGlobalObject, index, convertObjcValueToValue(lexicalGlobalObject, &value, ObjcObjectType, [self _rootObject]), false);
@@ -568,16 +568,15 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
         JSC::VM& vm = rootObject->globalObject()->vm();
         JSLockHolder lock(vm);
 
-        if (object->inherits<JSHTMLElement>()) {
+        if (auto* jsHTMLElement = JSC::jsDynamicCast<JSHTMLElement*>(object)) {
             // Plugin elements cache the instance internally.
-            if (RefPtr instance = static_cast<ObjcInstance*>(pluginInstance(jsCast<JSHTMLElement*>(object)->wrapped())))
+            if (RefPtr instance = downcast<ObjcInstance>(pluginInstance(jsHTMLElement->wrapped())))
                 return instance->getObject();
-        } else if (object->inherits<ObjCRuntimeObject>()) {
-            ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(object);
+        } else if (auto* runtimeObject = JSC::jsDynamicCast<ObjCRuntimeObject*>(object)) {
             RefPtr instance = runtimeObject->getInternalObjCInstance();
-            if (instance)
-                return instance->getObject();
-            return nil;
+            if (!instance)
+                return nil;
+            return instance->getObject();
         }
 
         return [WebScriptObject scriptObjectForJSObject:toRef(object) originRootObject:originRootObject rootObject:rootObject];

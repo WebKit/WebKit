@@ -89,9 +89,6 @@ public:
     // Should be called whenever the given frame view has been laid out.
     virtual void frameViewLayoutUpdated(LocalFrameView&) { }
 
-    using LayoutViewportOriginOrOverrideRect = Variant<std::optional<FloatPoint>, std::optional<FloatRect>>;
-    virtual void reconcileScrollingState(LocalFrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) { }
-
     // Should be called whenever the set of fixed objects changes.
     void frameViewFixedObjectsDidChange(LocalFrameView&);
 
@@ -156,15 +153,15 @@ public:
     virtual void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) { }
 
     struct NodeLayers {
-        GraphicsLayer* layer { nullptr };
-        GraphicsLayer* scrollContainerLayer { nullptr };
-        GraphicsLayer* scrolledContentsLayer { nullptr };
-        GraphicsLayer* counterScrollingLayer { nullptr };
-        GraphicsLayer* insetClipLayer { nullptr };
-        GraphicsLayer* rootContentsLayer { nullptr };
-        GraphicsLayer* horizontalScrollbarLayer { nullptr };
-        GraphicsLayer* verticalScrollbarLayer { nullptr };
-        GraphicsLayer* viewportAnchorLayer { nullptr };
+        RefPtr<GraphicsLayer> layer { nullptr };
+        RefPtr<GraphicsLayer> scrollContainerLayer { nullptr };
+        RefPtr<GraphicsLayer> scrolledContentsLayer { nullptr };
+        RefPtr<GraphicsLayer> counterScrollingLayer { nullptr };
+        RefPtr<GraphicsLayer> insetClipLayer { nullptr };
+        RefPtr<GraphicsLayer> rootContentsLayer { nullptr };
+        RefPtr<GraphicsLayer> horizontalScrollbarLayer { nullptr };
+        RefPtr<GraphicsLayer> verticalScrollbarLayer { nullptr };
+        RefPtr<GraphicsLayer> viewportAnchorLayer { nullptr };
     };
     virtual void setNodeLayers(ScrollingNodeID, const NodeLayers&) { }
 
@@ -176,7 +173,7 @@ public:
     virtual void setSynchronousScrollingReasons(std::optional<ScrollingNodeID>, OptionSet<SynchronousScrollingReason>) { }
     virtual OptionSet<SynchronousScrollingReason> synchronousScrollingReasons(std::optional<ScrollingNodeID>) const { return { }; }
     bool hasSynchronousScrollingReasons(std::optional<ScrollingNodeID> nodeID) const { return !!synchronousScrollingReasons(nodeID); }
-    WEBCORE_EXPORT virtual void applyScrollUpdate(ScrollUpdate&&, ScrollType = ScrollType::User) { }
+    virtual void applyScrollUpdate(ScrollUpdate&&, ScrollType = ScrollType::User, ViewportRectStability = ViewportRectStability::Stable) { }
 
     virtual void reconcileViewportConstrainedLayerPositions(std::optional<ScrollingNodeID>, const LayoutRect&, ScrollingLayerPositionAction) { }
     virtual String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
@@ -215,14 +212,21 @@ public:
 
     WEBCORE_EXPORT virtual void setMouseIsOverContentArea(ScrollableArea&, bool) { }
     WEBCORE_EXPORT virtual void setMouseMovedInContentArea(ScrollableArea&) { }
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    virtual void setHoveredAndPressedScrollbarParts(ScrollableArea&) { }
+#else
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
+#endif
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
     WEBCORE_EXPORT virtual void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) { }
     WEBCORE_EXPORT virtual void setScrollbarLayoutDirection(ScrollableArea&, UserInterfaceLayoutDirection) { }
     WEBCORE_EXPORT virtual void setScrollbarWidth(ScrollableArea&, ScrollbarWidth) { }
     WEBCORE_EXPORT virtual void setScrollbarColor(ScrollableArea&, std::optional<ScrollbarColor>);
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    virtual void setScrollbarOpacity(ScrollableArea&) { }
+#endif
 
-    FrameIdentifier mainFrameIdentifier() const;
+    FrameIdentifier NODELETE mainFrameIdentifier() const;
 
 protected:
     explicit ScrollingCoordinator(Page*);
@@ -238,8 +242,7 @@ protected:
 
     virtual void willCommitTree(FrameIdentifier) { }
 
-    WEBCORE_EXPORT Page* page() const;
-    WEBCORE_EXPORT RefPtr<Page> protectedPage() const;
+    WEBCORE_EXPORT Page* NODELETE page() const;
 
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const;

@@ -104,20 +104,20 @@ GPUProcess::~GPUProcess()
 
 GPUProcess& GPUProcess::singleton()
 {
-    static NeverDestroyed<GPUProcess> gpuProcess;
-    return gpuProcess.get();
+    static NeverDestroyed<Ref<GPUProcess>> gpuProcess = adoptRef(*new GPUProcess);
+    return gpuProcess.get().get();
 }
 
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
 
-    auto reply = makeScopeExit(WTFMove(completionHandler));
+    auto reply = makeScopeExit(WTF::move(completionHandler));
     // If sender exited before we received the handle, the handle may not be valid.
     if (!connectionHandle)
         return;
 
-    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, WTFMove(connectionHandle), WTFMove(parameters));
+    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, WTF::move(connectionHandle), WTF::move(parameters));
 
 #if ENABLE(MEDIA_STREAM)
     // FIXME: We should refactor code to go from WebProcess -> GPUProcess -> UIProcess when getUserMedia is called instead of going from WebProcess -> UIProcess directly.
@@ -132,13 +132,13 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
 #endif
 
     ASSERT(!m_webProcessConnections.contains(identifier));
-    m_webProcessConnections.add(identifier, WTFMove(newConnection));
+    m_webProcessConnections.add(identifier, WTF::move(newConnection));
 }
 
 void GPUProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr connection = m_webProcessConnections.get(identifier))
-        connection->updateSharedPreferencesForWebProcess(WTFMove(sharedPreferencesForWebProcess));
+        connection->updateSharedPreferencesForWebProcess(WTF::move(sharedPreferencesForWebProcess));
     completionHandler();
 }
 
@@ -201,7 +201,7 @@ void GPUProcess::tryExitIfUnused()
     m_idleExitTimer.stop();
 
     RELEASE_LOG(Process, "GPUProcess::tryExitIfUnused: GPUProcess is exiting because we are under memory pressure and the process is no longer useful.");
-    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
+    protect(parentProcessConnection())->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
 }
 
 void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
@@ -217,9 +217,9 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 
 void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
-    CompletionHandlerCallingScope callCompletionHandler(WTFMove(completionHandler));
+    CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
 
-    applyProcessCreationParameters(WTFMove(parameters.auxiliaryProcessParameters));
+    applyProcessCreationParameters(WTF::move(parameters.auxiliaryProcessParameters));
     RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
     WebCore::initializeCommonAtomStrings();
@@ -254,7 +254,7 @@ CoreAudioCaptureUnit::defaultSingleton().setStatusBarWasTappedCallback([weakProc
     grantAccessToContainerTempDirectory(parameters.containerTemporaryDirectoryExtensionHandle);
 #endif
 
-    populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
+    populateMobileGestaltCache(WTF::move(parameters.mobileGestaltExtensionHandle));
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     SandboxExtension::consumePermanently(parameters.gpuToolsExtensionHandles);
@@ -264,7 +264,7 @@ CoreAudioCaptureUnit::defaultSingleton().setStatusBarWasTappedCallback([weakProc
     WebCore::setImageSourceAllowableTypes({ });
 #endif
 
-    m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);
+    m_applicationVisibleName = WTF::move(parameters.applicationVisibleName);
 
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
@@ -306,7 +306,7 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
 bool GPUProcess::updatePreference(std::optional<bool>& oldPreference, std::optional<bool>& newPreference)
 {
     if (newPreference.has_value() && oldPreference != newPreference) {
-        oldPreference = WTFMove(newPreference);
+        oldPreference = WTF::move(newPreference);
         return true;
     }
     
@@ -386,7 +386,7 @@ void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier,
         ASSERT_NOT_REACHED();
         return;
     }
-    completionHandler(WTFMove(*result));
+    completionHandler(WTF::move(*result));
 }
 
 #endif
@@ -436,7 +436,7 @@ void GPUProcess::enableMicrophoneMuteStatusAPI()
 #if PLATFORM(COCOA)
     CoreAudioCaptureUnit::defaultSingleton().setMuteStatusChangedCallback([weakProcess = WeakPtr { *this }] (bool isMuting) {
         if (RefPtr process = weakProcess.get())
-            process->protectedParentProcessConnection()->send(Messages::GPUProcessProxy::MicrophoneMuteStatusChanged(isMuting), 0);
+            protect(process->parentProcessConnection())->send(Messages::GPUProcessProxy::MicrophoneMuteStatusChanged(isMuting), 0);
     });
 #endif
 }
@@ -518,7 +518,7 @@ void GPUProcess::setShouldListenToVoiceActivity(bool shouldListen)
     }
 
     RealtimeMediaSourceCenter::singleton().audioCaptureFactory().enableMutedSpeechActivityEventListener([] {
-        GPUProcess::singleton().protectedParentProcessConnection()->send(Messages::GPUProcessProxy::VoiceActivityDetected { }, 0);
+        protect(GPUProcess::singleton().parentProcessConnection())->send(Messages::GPUProcessProxy::VoiceActivityDetected { }, 0);
     });
 #endif
 }
@@ -527,7 +527,7 @@ void GPUProcess::setShouldListenToVoiceActivity(bool shouldListen)
 #if HAVE(SCREEN_CAPTURE_KIT)
 void GPUProcess::promptForGetDisplayMedia(WebCore::DisplayCapturePromptType type, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(type, WTFMove(completionHandler));
+    WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(type, WTF::move(completionHandler));
 }
 
 void GPUProcess::cancelGetDisplayMediaPrompt()
@@ -546,9 +546,9 @@ void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameter
 #endif
 
     m_sessions.add(sessionID, GPUSession {
-        WTFMove(parameters.mediaCacheDirectory)
+        WTF::move(parameters.mediaCacheDirectory)
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-        , WTFMove(parameters.mediaKeysStorageDirectory)
+        , WTF::move(parameters.mediaKeysStorageDirectory)
 #endif
     });
 }
@@ -599,11 +599,6 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
         m_audioSessionManager = RemoteAudioSessionProxyManager::create(const_cast<GPUProcess&>(*this));
     return *m_audioSessionManager;
 }
-
-Ref<RemoteAudioSessionProxyManager> GPUProcess::protectedAudioSessionManager() const
-{
-    return audioSessionManager();
-}
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
@@ -631,7 +626,7 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
 
 void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier)
 {
-    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(identifier), 0);
+    protect(parentProcessConnection())->send(Messages::GPUProcessProxy::TerminateWebProcess(identifier), 0);
 }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -639,19 +634,6 @@ void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& proc
 {
     for (auto& connection : m_webProcessConnections.values())
         connection->processIsStartingToCaptureAudio(process);
-}
-#endif
-
-#if ENABLE(VIDEO)
-void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completion)
-{
-    RefPtr connection = m_webProcessConnections.get(processIdentifier);
-    if (!connection) {
-        completion(std::nullopt);
-        return;
-    }
-
-    completion(connection->protectedRemoteMediaPlayerManagerProxy()->bitmapImageForCurrentTime(playerIdentifier));
 }
 #endif
 
@@ -672,7 +654,7 @@ void GPUProcess::webXRPromptAccepted(std::optional<WebCore::ProcessIdentity> pro
 void GPUProcess::setPresentingApplicationAuditToken(WebCore::ProcessIdentifier processIdentifier, WebCore::PageIdentifier pageIdentifier, std::optional<WebKit::CoreIPCAuditToken>&& auditToken)
 {
     if (RefPtr connection = m_webProcessConnections.get(processIdentifier))
-        connection->setPresentingApplicationAuditToken(pageIdentifier, WTFMove(auditToken));
+        connection->setPresentingApplicationAuditToken(pageIdentifier, WTF::move(auditToken));
 }
 #endif
 

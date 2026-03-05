@@ -35,7 +35,7 @@ namespace Style {
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Calc auto const& value)
 {
-    return ts << value.protectedCalculation().get();
+    return ts << protect(value.calculation()).get();
 }
 
 template<auto R, typename V> WTF::TextStream& operator<<(WTF::TextStream& ts, const Length<R, V>& value)

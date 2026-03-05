@@ -28,6 +28,8 @@
 #ifndef ParallelJobsGeneric_h
 #define ParallelJobsGeneric_h
 
+#include <wtf/Platform.h>
+
 #if ENABLE(THREADING_GENERIC)
 
 #include <wtf/Condition.h>
@@ -49,7 +51,7 @@ public:
         return m_numberOfJobs;
     }
 
-    WTF_EXPORT_PRIVATE void execute(void* parameters);
+    WTF_EXPORT_PRIVATE void execute(std::span<uint8_t> parameters);
 
     class ThreadPrivate : public RefCounted<ThreadPrivate> {
     public:

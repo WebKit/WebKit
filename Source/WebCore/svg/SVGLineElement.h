@@ -28,15 +28,15 @@
 namespace WebCore {
 
 class SVGLineElement final : public SVGGeometryElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGLineElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGLineElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGLineElement);
 public:
     static Ref<SVGLineElement> create(const QualifiedName&, Document&);
 
-    const SVGLengthValue& x1() const { return m_x1->currentValue(); }
-    const SVGLengthValue& y1() const { return m_y1->currentValue(); }
-    const SVGLengthValue& x2() const { return m_x2->currentValue(); }
-    const SVGLengthValue& y2() const { return m_y2->currentValue(); }
+    const SVGLengthValue& x1() const LIFETIME_BOUND { return m_x1->currentValue(); }
+    const SVGLengthValue& y1() const LIFETIME_BOUND { return m_y1->currentValue(); }
+    const SVGLengthValue& x2() const LIFETIME_BOUND { return m_x2->currentValue(); }
+    const SVGLengthValue& y2() const LIFETIME_BOUND { return m_y2->currentValue(); }
 
     SVGAnimatedLength& x1Animated() { return m_x1; }
     SVGAnimatedLength& y1Animated() { return m_y1; }
@@ -55,10 +55,10 @@ private:
     bool supportsMarkers() const final { return true; }
     bool selfHasRelativeLengths() const final;
 
-    Ref<SVGAnimatedLength> m_x1 { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
-    Ref<SVGAnimatedLength> m_y1 { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
-    Ref<SVGAnimatedLength> m_x2 { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
-    Ref<SVGAnimatedLength> m_y2 { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
+    const Ref<SVGAnimatedLength> m_x1 { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
+    const Ref<SVGAnimatedLength> m_y1 { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
+    const Ref<SVGAnimatedLength> m_x2 { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
+    const Ref<SVGAnimatedLength> m_y2 { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
 };
 
 } // namespace WebCore

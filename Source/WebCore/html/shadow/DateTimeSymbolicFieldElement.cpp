@@ -31,15 +31,15 @@
 #include "FontCascade.h"
 #include "KeyboardEvent.h"
 #include "RenderBlock.h"
-#include "RenderStyleInlines.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeSymbolicFieldElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DateTimeSymbolicFieldElement);
 
 DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& symbols, int placeholderIndex)
     : DateTimeFieldElement(document, fieldOwner)
@@ -55,9 +55,10 @@ void DateTimeSymbolicFieldElement::adjustMinInlineSize(RenderStyle& style) const
     CheckedRef font = style.fontCascade();
 
     float inlineSize = 0;
-    for (auto& symbol : m_symbols)
-        inlineSize = std::max(inlineSize, font->width(RenderBlock::constructTextRun(symbol, style)));
-
+    for (auto& symbol : m_symbols) {
+        auto textRun = RenderBlock::constructTextRun(symbol, style);
+        inlineSize = std::max(inlineSize, font->width(protect(textRun)));
+    }
     style.setLogicalMinWidth(Style::MinimumSize::Fixed { inlineSize / style.usedZoomForLength().value });
 }
 

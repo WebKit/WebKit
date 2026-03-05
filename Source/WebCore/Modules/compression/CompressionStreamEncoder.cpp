@@ -44,7 +44,7 @@ ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::encode(const BufferSou
     if (!compressedData->byteLength())
         return nullptr;
 
-    return RefPtr { Uint8Array::create(WTFMove(compressedData)) };
+    return RefPtr { Uint8Array::create(WTF::move(compressedData)) };
 }
 
 ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::flush()
@@ -59,7 +59,7 @@ ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::flush()
     if (!compressedData->byteLength())
         return nullptr;
 
-    return RefPtr { Uint8Array::create(WTFMove(compressedData)) };
+    return RefPtr { Uint8Array::create(WTF::move(compressedData)) };
 }
 
 // The compression algorithm is broken up into 2 steps.
@@ -74,7 +74,7 @@ bool CompressionStreamEncoder::didDeflateFinish(int result) const
 }
 
 // See https://www.zlib.net/manual.html#Constants
-static bool didDeflateFail(int result)
+static bool NODELETE didDeflateFail(int result)
 {
     return result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR;
 }
@@ -88,7 +88,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(std::span<
     return compressZlib(input);
 }
 
-static ZStream::Algorithm compressionAlgorithm(Formats::CompressionFormat format)
+static ZStream::Algorithm NODELETE compressionAlgorithm(Formats::CompressionFormat format)
 {
     switch (format) {
     case Formats::CompressionFormat::Brotli:
@@ -150,7 +150,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressZlib(std::s
         storage.append(output);
     }
 
-    RefPtr compressedData = storage.takeAsArrayBuffer();
+    RefPtr compressedData = storage.takeBufferAsArrayBuffer();
     if (!compressedData)
         return Exception { ExceptionCode::OutOfMemoryError };
 

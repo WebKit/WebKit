@@ -53,15 +53,25 @@ NavigatorBeacon::~NavigatorBeacon()
         beacon->removeClient(*this);
 }
 
-NavigatorBeacon* NavigatorBeacon::from(Navigator& navigator)
+void NavigatorBeacon::ref() const
 {
-    auto* supplement = downcast<NavigatorBeacon>(Supplement<Navigator>::from(&navigator, supplementName()));
+    m_navigator->ref();
+}
+
+void NavigatorBeacon::deref() const
+{
+    m_navigator->deref();
+}
+
+Ref<NavigatorBeacon> NavigatorBeacon::from(Navigator& navigator)
+{
+    RefPtr supplement = downcast<NavigatorBeacon>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = makeUnique<NavigatorBeacon>(navigator);
+        auto newSupplement = makeUniqueWithoutRefCountedCheck<NavigatorBeacon>(navigator);
         supplement = newSupplement.get();
-        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTF::move(newSupplement));
     }
-    return supplement;
+    return supplement.releaseNonNull();
 }
 
 void NavigatorBeacon::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
@@ -113,12 +123,12 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     if (!document.frame())
         return false;
 
-    if (!document.shouldBypassMainWorldContentSecurityPolicy() && !document.checkedContentSecurityPolicy()->allowConnectToSource(parsedUrl)) {
+    if (!document.shouldBypassMainWorldContentSecurityPolicy() && !protect(document.contentSecurityPolicy())->allowConnectToSource(parsedUrl)) {
         // We simulate a network error so we return true here. This is consistent with Blink.
         return true;
     }
 
-    ResourceRequest request(WTFMove(parsedUrl));
+    ResourceRequest request(WTF::move(parsedUrl));
     request.setHTTPMethod("POST"_s);
     request.setRequester(ResourceRequestRequester::Beacon);
     if (RefPtr documentLoader = document.loader())
@@ -133,7 +143,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     if (body) {
         options.mode = FetchOptions::Mode::NoCors;
         String mimeType;
-        auto result = FetchBody::extract(WTFMove(body.value()), mimeType);
+        auto result = FetchBody::extract(WTF::move(body.value()), mimeType);
         if (result.hasException())
             return result.releaseException();
         auto fetchBody = result.releaseReturnValue();
@@ -150,7 +160,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
         }
     }
 
-    auto cachedResource = document.protectedCachedResourceLoader()->requestBeaconResource({ WTFMove(request), options });
+    auto cachedResource = protect(document.cachedResourceLoader())->requestBeaconResource({ WTF::move(request), options });
     if (!cachedResource) {
         logError(cachedResource.error());
         return false;
@@ -164,7 +174,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
 
 ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator& navigator, Document& document, const String& url, std::optional<FetchBody::Init>&& body)
 {
-    return NavigatorBeacon::from(navigator)->sendBeacon(document, url, WTFMove(body));
+    return NavigatorBeacon::from(navigator)->sendBeacon(document, url, WTF::move(body));
 }
 
 }

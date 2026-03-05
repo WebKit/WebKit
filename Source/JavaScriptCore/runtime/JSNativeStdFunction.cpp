@@ -35,18 +35,13 @@ const ClassInfo JSNativeStdFunction::s_info = { "Function"_s, &Base::s_info, nul
 
 static JSC_DECLARE_HOST_FUNCTION(runStdFunction);
 
-JSNativeStdFunction::JSNativeStdFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, NativeStdFunction&& function)
-    : Base(vm, executable, globalObject, structure)
-    , m_function(WTFMove(function))
-{
-}
-
 template<typename Visitor>
 void JSNativeStdFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSNativeStdFunction* thisObject = jsCast<JSNativeStdFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_captures.begin(), thisObject->m_captures.end());
 }
 
 DEFINE_VISIT_CHILDREN(JSNativeStdFunction);
@@ -55,6 +50,11 @@ void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, u
 {
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(info()));
+}
+
+NativeExecutable* JSNativeStdFunction::getHostFunction(VM& vm, Intrinsic intrinsic, NativeFunction nativeConstructor, const String& name)
+{
+    return vm.getHostFunction(runStdFunction, ImplementationVisibility::Private, intrinsic, nativeConstructor, nullptr, name);
 }
 
 JSC_DEFINE_HOST_FUNCTION(runStdFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -68,7 +68,7 @@ JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalO
 {
     NativeExecutable* executable = vm.getHostFunction(runStdFunction, ImplementationVisibility::Private, intrinsic, nativeConstructor, nullptr, name);
     Structure* structure = globalObject->nativeStdFunctionStructure();
-    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm)) JSNativeStdFunction(vm, executable, globalObject, structure, WTFMove(nativeStdFunction));
+    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm)) JSNativeStdFunction(vm, executable, globalObject, structure, WTF::move(nativeStdFunction));
     function->finishCreation(vm, executable, length, name);
     return function;
 }

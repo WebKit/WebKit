@@ -52,6 +52,7 @@
 namespace WebCore {
 
 constexpr unsigned maximumURLSize = 0x04000000;
+constexpr unsigned maximumFragmentIdentifierSize = 2u * 1024u * 1024u;
 
 bool SecurityOrigin::shouldIgnoreHost(const URL& url)
 {
@@ -133,7 +134,7 @@ SecurityOrigin::SecurityOrigin(const URL& url)
 }
 
 SecurityOrigin::SecurityOrigin(SecurityOriginData&& data)
-    : m_data(WTFMove(data))
+    : m_data(WTF::move(data))
 {
     initializeShared(m_data.toURL());
 }
@@ -365,12 +366,16 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const URL& url)
 bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patterns) const
 {
     ASSERT(!isInNetworkProcess());
+
+    if (url.string().length() > maximumURLSize)
+        return false;
+
+    if (url.fragmentIdentifier().length() > maximumFragmentIdentifierSize)
+        return false;
+
     if (m_universalAccess)
         return true;
 
-    if (url.pathEnd() > maximumURLSize)
-        return false;
-    
 #if !PLATFORM(IOS_FAMILY) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (m_data.protocol() == "file"_s && url.protocolIsFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
@@ -569,15 +574,15 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
 
 Ref<SecurityOrigin> SecurityOrigin::create(SecurityOriginData&& data)
 {
-    return adoptRef(*new SecurityOrigin(WTFMove(data)));
+    return adoptRef(*new SecurityOrigin(WTF::move(data)));
 }
 
 Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, String&& domain, String&& filePath, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal)
 {
     auto origin = adoptRef(*new SecurityOrigin);
-    origin->m_data = WTFMove(data);
-    origin->m_domain = WTFMove(domain);
-    origin->m_filePath = WTFMove(filePath);
+    origin->m_data = WTF::move(data);
+    origin->m_domain = WTF::move(domain);
+    origin->m_filePath = WTF::move(filePath);
     origin->m_universalAccess = universalAccess;
     origin->m_domainWasSetInDOM = domainWasSetInDOM;
     origin->m_canLoadLocalResources = canLoadLocalResources;

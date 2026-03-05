@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <WebCore/RouterCondition.h>
-#include <WebCore/RouterSourceDict.h>
-#include <WebCore/RouterSourceEnum.h>
+#include "RouterCondition.h"
+#include "RouterSourceDict.h"
+#include "RouterSourceEnum.h"
 
 namespace WebCore {
 

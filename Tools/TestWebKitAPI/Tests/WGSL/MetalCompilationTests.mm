@@ -513,6 +513,11 @@ TEST_F(WGSLMetalCompilationTests, Override)
     expectGenerateError(file("override.wgsl"_s), "array count must be greater than 0"_s);
 }
 
+TEST_F(WGSLMetalCompilationTests, OverrideComplexExpression)
+{
+    testCompilation(file("override-complex-expression.wgsl"_s));
+}
+
 TEST_F(WGSLMetalCompilationTests, PackUnpack)
 {
     testCompilation(file("pack-unpack.wgsl"_s),
@@ -665,9 +670,9 @@ TEST_F(WGSLMetalCompilationTests, Packing)
             "at2[0] = at[0];"
             "at2[index] = at[index];"_s))),
         check("local\\d+ = __unpack\\(global\\d+\\);"_s),
-        check("local\\d+\\[__wgslMin\\(unsigned\\(0\\), \\(2u - 1u\\)\\)\\] = __unpack\\(global\\d+\\[__wgslMin\\(unsigned\\(0\\), \\(2u - 1u\\)\\)\\]\\);"_s),
-        check("global\\d+\\[__wgslMin\\(unsigned\\(0\\), \\(2u - 1u\\)\\)\\] = global\\d+\\[__wgslMin\\(unsigned\\(0\\), \\(2u - 1u\\)\\)\\];"_s),
-        check("global\\d+\\[__wgslMin\\(unsigned\\(0\\), \\(2u - 1u\\)\\)\\] = __pack\\(local\\d+\\[__wgslMin\\(unsigned\\(0\\), \\(2u - 1u\\)\\)\\]\\);"_s),
+        check("local\\d+\\[0\\] = __unpack\\(global\\d+\\[0\\]\\);"_s),
+        check("global\\d+\\[0\\] = global\\d+\\[0\\];"_s),
+        check("global\\d+\\[0\\] = __pack\\(local\\d+\\[0\\]\\);"_s),
         check("global\\d+\\[__wgslMin\\(unsigned\\(global\\d+\\), \\(2u - 1u\\)\\)\\] = __pack\\(local\\d+\\[__wgslMin\\(unsigned\\(global\\d+\\), \\(2u - 1u\\)\\)\\]\\);"_s));
 
     // Test binary operations

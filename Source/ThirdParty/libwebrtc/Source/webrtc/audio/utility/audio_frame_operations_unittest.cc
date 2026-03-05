@@ -26,7 +26,7 @@ class AudioFrameOperationsTest : public ::testing::Test {
   AudioFrameOperationsTest() = default;
 
   // Set typical values.
-  AudioFrame frame_{/*sample_rate=*/32000, /*num_channels*/ 2};
+  AudioFrame frame_{/*sample_rate_hz=*/32000, /*num_channels=*/2};
 };
 
 class AudioFrameOperationsDeathTest : public AudioFrameOperationsTest {};

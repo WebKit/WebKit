@@ -45,7 +45,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebServiceWorkerFetchTaskClient::BlobLoader);
 
 WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, bool needsContinueDidReceiveResponseMessage)
-    : m_connection(WTFMove(connection))
+    : m_connection(WTF::move(connection))
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_serviceWorkerIdentifier(serviceWorkerIdentifier)
     , m_fetchIdentifier(fetchIdentifier)
@@ -81,7 +81,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveResponse(ResourceResponse&& resp
     if (m_needsContinueDidReceiveResponseMessage)
         m_waitingForContinueDidReceiveResponseMessage = true;
 
-    connection->send(Messages::ServiceWorkerFetchTask::DidReceiveResponse { WTFMove(response), m_needsContinueDidReceiveResponseMessage }, m_fetchIdentifier);
+    connection->send(Messages::ServiceWorkerFetchTask::DidReceiveResponse { WTF::move(response), m_needsContinueDidReceiveResponseMessage }, m_fetchIdentifier);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveData(const SharedBuffer& buffer)
@@ -112,7 +112,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveDataInternal(const SharedBuffer&
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)
 {
     Locker lock(m_connectionLock);
-    didReceiveFormDataAndFinishInternal(WTFMove(formData));
+    didReceiveFormDataAndFinishInternal(WTF::move(formData));
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinishInternal(Ref<FormData>&& formData)
@@ -137,13 +137,13 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinishInternal(Ref<Fo
     URL blobURL = formData->asBlobURL();
     if (blobURL.isNull()) {
         if (m_isDownload)
-            connection->send(Messages::ServiceWorkerDownloadTask::DidReceiveFormData { IPC::FormDataReference { WTFMove(formData) } }, m_fetchIdentifier);
+            connection->send(Messages::ServiceWorkerDownloadTask::DidReceiveFormData { IPC::FormDataReference { WTF::move(formData) } }, m_fetchIdentifier);
         else
-            connection->send(Messages::ServiceWorkerFetchTask::DidReceiveFormData { IPC::FormDataReference { WTFMove(formData) } }, m_fetchIdentifier);
+            connection->send(Messages::ServiceWorkerFetchTask::DidReceiveFormData { IPC::FormDataReference { WTF::move(formData) } }, m_fetchIdentifier);
         return;
     }
 
-    callOnMainRunLoop([this, protectedThis = Ref { *this }, blobURL = WTFMove(blobURL).isolatedCopy()] () {
+    callOnMainRunLoop([this, protectedThis = Ref { *this }, blobURL = WTF::move(blobURL).isolatedCopy()] () {
         RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
         if (!serviceWorkerThreadProxy) {
             didFail(internalError(blobURL));
@@ -159,7 +159,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinishInternal(Ref<Fo
             return;
         }
 
-        m_blobLoader->loader = WTFMove(loader);
+        m_blobLoader->loader = WTF::move(loader);
     });
 }
 
@@ -258,10 +258,13 @@ void WebServiceWorkerFetchTaskClient::didNotHandleInternal()
 
 void WebServiceWorkerFetchTaskClient::doCancel()
 {
-    Locker lock(m_connectionLock);
-
     ASSERT(!isMainRunLoop());
-    m_connection = nullptr;
+
+    {
+        Locker lock(m_connectionLock);
+        m_connection = nullptr;
+    }
+
     if (m_cancelledCallback)
         m_cancelledCallback();
 }
@@ -275,7 +278,7 @@ void WebServiceWorkerFetchTaskClient::convertFetchToDownload()
 void WebServiceWorkerFetchTaskClient::setCancelledCallback(Function<void()>&& callback)
 {
     ASSERT(!m_cancelledCallback);
-    m_cancelledCallback = WTFMove(callback);
+    m_cancelledCallback = WTF::move(callback);
 }
 
 void WebServiceWorkerFetchTaskClient::usePreload()
@@ -308,12 +311,12 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
             didFinishInternal(m_networkLoadMetrics);
     }, [this](const SharedBufferBuilder& buffer) {
         assertIsHeld(m_connectionLock);
-        didReceiveDataInternal(buffer.copy()->makeContiguous());
+        didReceiveDataInternal(buffer.copyBuffer()->makeContiguous());
         if (m_didFinish)
             didFinishInternal(m_networkLoadMetrics);
     }, [this](Ref<FormData>& formData) {
         assertIsHeld(m_connectionLock);
-        didReceiveFormDataAndFinishInternal(WTFMove(formData));
+        didReceiveFormDataAndFinishInternal(WTF::move(formData));
     }, [this](UniqueRef<ResourceError>& error) {
         assertIsHeld(m_connectionLock);
         didFailInternal(error.get());

@@ -52,8 +52,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchBodyOwner::BlobLoader);
 
 FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(context)
-    , m_body(WTFMove(body))
-    , m_headers(WTFMove(headers))
+    , m_body(WTF::move(body))
+    , m_headers(WTF::move(headers))
 {
 }
 
@@ -114,7 +114,7 @@ void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
     }
 
     if (isBodyNullOrOpaque()) {
-        fulfillPromiseWithArrayBufferFromSpan(WTFMove(promise), { });
+        fulfillPromiseWithArrayBufferFromSpan(WTF::move(promise), { });
         return;
     }
     if (isDisturbedOrLocked()) {
@@ -122,7 +122,7 @@ void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
         return;
     }
     m_isDisturbed = true;
-    m_body->arrayBuffer(*this, WTFMove(promise));
+    m_body->arrayBuffer(*this, WTF::move(promise));
 }
 
 void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
@@ -143,7 +143,7 @@ void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
         return;
     }
     m_isDisturbed = true;
-    m_body->blob(*this, WTFMove(promise));
+    m_body->blob(*this, WTF::move(promise));
 }
 
 void FetchBodyOwner::bytes(Ref<DeferredPromise>&& promise)
@@ -154,7 +154,7 @@ void FetchBodyOwner::bytes(Ref<DeferredPromise>&& promise)
     }
 
     if (isBodyNullOrOpaque()) {
-        fulfillPromiseWithUint8ArrayFromSpan(WTFMove(promise), { });
+        fulfillPromiseWithUint8ArrayFromSpan(WTF::move(promise), { });
         return;
     }
     if (isDisturbedOrLocked()) {
@@ -162,7 +162,7 @@ void FetchBodyOwner::bytes(Ref<DeferredPromise>&& promise)
         return;
     }
     m_isDisturbed = true;
-    m_body->bytes(*this, WTFMove(promise));
+    m_body->bytes(*this, WTF::move(promise));
 }
 
 void FetchBodyOwner::cloneBody(JSDOMGlobalObject& globalObject, FetchBodyOwner& owner)
@@ -177,7 +177,7 @@ ExceptionOr<void> FetchBodyOwner::extractBody(FetchBody::Init&& value)
 {
     auto currentContentType = contentType();
     bool isContentTypeSet = !currentContentType.isNull();
-    auto result = FetchBody::extract(WTFMove(value), currentContentType);
+    auto result = FetchBody::extract(WTF::move(value), currentContentType);
 
     // Initialize the Content-Type header if it didn't exist.
     if (!isContentTypeSet && !currentContentType.isNull())
@@ -196,7 +196,7 @@ void FetchBodyOwner::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Re
         return;
     }
     m_isDisturbed = true;
-    m_body->consumeOnceLoadingFinished(type, WTFMove(promise));
+    m_body->consumeOnceLoadingFinished(type, WTF::move(promise));
 }
 
 void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
@@ -214,7 +214,7 @@ void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
     if (isBodyNullOrOpaque()) {
         if (isBodyNull()) {
             // If the content-type is 'application/x-www-form-urlencoded', a body is not required and we should package an empty byte sequence as per the specification.
-            if (auto formData = FetchBodyConsumer::packageFormData(promise->protectedScriptExecutionContext().get(), contentType(), { })) {
+            if (auto formData = FetchBodyConsumer::packageFormData(protect(promise->scriptExecutionContext()).get(), contentType(), { })) {
                 promise->resolve<IDLInterface<DOMFormData>>(*formData);
                 return;
             }
@@ -225,7 +225,7 @@ void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
     }
 
     m_isDisturbed = true;
-    m_body->formData(*this, WTFMove(promise));
+    m_body->formData(*this, WTF::move(promise));
 }
 
 void FetchBodyOwner::json(Ref<DeferredPromise>&& promise)
@@ -244,7 +244,7 @@ void FetchBodyOwner::json(Ref<DeferredPromise>&& promise)
         return;
     }
     m_isDisturbed = true;
-    m_body->json(*this, WTFMove(promise));
+    m_body->json(*this, WTF::move(promise));
 }
 
 void FetchBodyOwner::text(Ref<DeferredPromise>&& promise)
@@ -263,7 +263,7 @@ void FetchBodyOwner::text(Ref<DeferredPromise>&& promise)
         return;
     }
     m_isDisturbed = true;
-    m_body->text(*this, WTFMove(promise));
+    m_body->text(*this, WTF::move(promise));
 }
 
 void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
@@ -282,7 +282,7 @@ void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
     Ref loader = FetchLoader::create(blobLoader.get(), consumer);
     blobLoader->loader = loader.copyRef();
 
-    loader->start(*protectedScriptExecutionContext(), blob);
+    loader->start(*protect(scriptExecutionContext()), blob);
     if (!loader->isStarted()) {
         m_body->loadingFailed(Exception { ExceptionCode::TypeError, "Blob loading failed"_s });
         m_blobLoader = nullptr;
@@ -392,7 +392,7 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
         if (streamOrException.hasException()) [[unlikely]]
             return streamOrException.releaseException();
         m_body->setReadableStream(streamOrException.releaseReturnValue());
-        m_body->protectedReadableStream()->lock();
+        protect(m_body->readableStream())->lock();
         return { };
     }
 
@@ -402,22 +402,22 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
         Ref readableStream = ReadableStream::createReadableByteStream(globalObject, [readableStreamSource](auto& globalObject, auto& controller) {
             return readableStreamSource->pull(globalObject, controller);
         }, [readableStreamSource](auto& globalObject, auto& controller, auto&& value) {
-            return readableStreamSource->cancel(globalObject, controller, WTFMove(value));
+            return readableStreamSource->cancel(globalObject, controller, WTF::move(value));
         }, {
             .highwaterMark = 1,
             .startSynchronously = ReadableStream::StartSynchronously::Yes,
-            .isReachableFromOpaqueRootIfPulling = ReadableStream::IsReachableFromOpaqueRootIfPulling::Yes
+            .isSourceReachableFromOpaqueRoot = ReadableStream::IsSourceReachableFromOpaqueRoot::Yes
         });
 
         m_readableStreamSource = readableStreamSource.ptr();
         readableStreamSource->setByteController(*readableStream->controller());
-        m_body->setReadableStream(WTFMove(readableStream));
+        m_body->setReadableStream(WTF::move(readableStream));
 
         return { };
     }
 
     auto [fetchBodySource, readableStreamSource] = FetchBodySource::createNonByteSource(*this);
-    m_readableStreamSource = WTFMove(fetchBodySource);
+    m_readableStreamSource = WTF::move(fetchBodySource);
 
     auto streamOrException = ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&state), readableStreamSource);
     if (streamOrException.hasException()) [[unlikely]] {
@@ -486,7 +486,7 @@ void FetchBodyOwner::setLoadingError(Exception&& exception)
     if (hasLoadingError())
         return;
 
-    m_loadingError = WTFMove(exception);
+    m_loadingError = WTF::move(exception);
 }
 
 void FetchBodyOwner::setLoadingError(ResourceError&& error)
@@ -494,7 +494,7 @@ void FetchBodyOwner::setLoadingError(ResourceError&& error)
     if (hasLoadingError())
         return;
 
-    m_loadingError = WTFMove(error);
+    m_loadingError = WTF::move(error);
 }
 
 } // namespace WebCore

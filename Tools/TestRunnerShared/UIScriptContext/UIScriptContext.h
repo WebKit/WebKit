@@ -76,7 +76,7 @@ class UIScriptContext : public RefCounted<UIScriptContext>, public CanMakeWeakPt
 public:
     using UIScriptControllerFactory = Ref<UIScriptController> (*)(UIScriptContext&);
 
-    static Ref<UIScriptContext> create(UIScriptContextDelegate& delegate, UIScriptControllerFactory factory) { return adoptRef(*new UIScriptContext(delegate, WTFMove(factory))); }
+    static Ref<UIScriptContext> create(UIScriptContextDelegate& delegate, UIScriptControllerFactory factory) { return adoptRef(*new UIScriptContext(delegate, WTF::move(factory))); }
 
     ~UIScriptContext();
 

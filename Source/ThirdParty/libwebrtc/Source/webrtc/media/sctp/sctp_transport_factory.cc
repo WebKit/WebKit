@@ -10,7 +10,9 @@
 
 #include "media/sctp/sctp_transport_factory.h"
 
+#include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "api/environment/environment.h"
 #include "media/sctp/sctp_transport_internal.h"
@@ -36,6 +38,15 @@ SctpTransportFactory::CreateSctpTransport(const Environment& env,
 #ifdef WEBRTC_HAVE_DCSCTP
   result = std::unique_ptr<SctpTransportInternal>(
       new DcSctpTransport(env, network_thread_, transport));
+#endif
+  return result;
+}
+
+std::vector<uint8_t> SctpTransportFactory::GenerateConnectionToken(
+    const Environment& env) {
+  std::vector<uint8_t> result;
+#ifdef WEBRTC_HAVE_DCSCTP
+  result = DcSctpTransport::GenerateConnectionToken(env);
 #endif
   return result;
 }

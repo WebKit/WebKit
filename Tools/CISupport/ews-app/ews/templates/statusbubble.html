@@ -107,13 +107,6 @@ window.addEventListener("message", function(e) {
   </form>
 {% endif %}
 
-{% if show_retry_button %}
-  <form name="retry" method="POST" action="/retry/">{% csrf_token %}
-    <input type="hidden" name="change_id" value="{{ change_id }}">
-    <input class="status" type="submit" value="&#8635; Retry failed builds">
-  </form>
-{% endif %}
-
 <script>
 // Convert from UTC dates to local.
 var bubbles = document.getElementsByClassName("status")

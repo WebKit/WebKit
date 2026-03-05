@@ -36,25 +36,24 @@ namespace WebCore {
 XPathResult::XPathResult(Document& document, const XPath::Value& value)
     : m_value(value)
 {
-    switch (m_value.type()) {
-    case XPath::Value::Type::Boolean:
-        m_resultType = BOOLEAN_TYPE;
-        return;
-    case XPath::Value::Type::Number:
-        m_resultType = NUMBER_TYPE;
-        return;
-    case XPath::Value::Type::String:
-        m_resultType = STRING_TYPE;
-        return;
-    case XPath::Value::Type::NodeSet:
-        m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
-        m_nodeSetPosition = 0;
-        m_nodeSet = m_value.toNodeSet();
-        m_document = document;
-        m_domTreeVersion = document.domTreeVersion();
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    WTF::switchOn(m_value,
+        [&](bool) {
+            m_resultType = BOOLEAN_TYPE;
+        },
+        [&](double) {
+            m_resultType = NUMBER_TYPE;
+        },
+        [&](const String&) {
+            m_resultType = STRING_TYPE;
+        },
+        [&](const XPath::NodeSet& nodeSet) {
+            m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
+            m_nodeSetPosition = 0;
+            m_nodeSet = nodeSet;
+            m_document = document;
+            m_domTreeVersion = document.domTreeVersion();
+        }
+    );
 }
 
 XPathResult::~XPathResult() = default;

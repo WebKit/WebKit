@@ -33,7 +33,7 @@ class UnlinkCommand : public CompositeEditCommand {
 public:
     static Ref<UnlinkCommand> create(Ref<Document>&& document)
     {
-        return adoptRef(*new UnlinkCommand(WTFMove(document)));
+        return adoptRef(*new UnlinkCommand(WTF::move(document)));
     }
 
 private:

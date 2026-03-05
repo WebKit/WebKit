@@ -34,11 +34,11 @@ namespace WebCore {
 
 Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage)
 {
-    return adoptRef(*new CoordinatedImageBackingStore(WTFMove(nativeImage)));
+    return adoptRef(*new CoordinatedImageBackingStore(WTF::move(nativeImage)));
 }
 
 CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& nativeImage)
-    : m_buffer(CoordinatedPlatformLayerBufferNativeImage::create(WTFMove(nativeImage), nullptr))
+    : m_buffer(CoordinatedPlatformLayerBufferNativeImage::create(WTF::move(nativeImage), nullptr))
 {
 }
 
@@ -46,7 +46,8 @@ CoordinatedImageBackingStore::~CoordinatedImageBackingStore() = default;
 
 bool CoordinatedImageBackingStore::isSameNativeImage(const NativeImage& nativeImage)
 {
-    return nativeImage.uniqueID() == downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image().uniqueID();
+    auto* image = downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image();
+    return image && nativeImage.uniqueID() == image->uniqueID();
 }
 
 } // namespace WebCore

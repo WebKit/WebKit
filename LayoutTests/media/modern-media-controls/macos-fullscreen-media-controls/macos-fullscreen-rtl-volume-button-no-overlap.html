@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+description("Testing that fullscreen media controls mute button and volume slider do not overlap in RTL mode.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSFullscreenMediaControls({ width: 458, height: 100 });
+
+mediaControls.element.style.position = "relative";
+document.body.appendChild(mediaControls.element);
+
+step();
+
+function step()
+{
+    debug("");
+    debug("Testing RTL mode");
+    debug("usesLTRUserInterfaceLayoutDirection = false");
+    mediaControls.usesLTRUserInterfaceLayoutDirection = false;
+    
+    setTimeout(() => {
+        const container = mediaControls.element.querySelector('.buttons-container.left');
+        const muteButton = container.querySelector('.mute, .mute.bar, button');
+        const volumeSlider = container.querySelector('.slider');
+        
+        const muteRect = muteButton.getBoundingClientRect();
+        const sliderRect = volumeSlider.getBoundingClientRect();
+        
+        debug("Element positions in RTL:");
+        debug(`  Mute button: left=${muteRect.left.toFixed(2)}, right=${muteRect.right.toFixed(2)}`);
+        debug(`  Volume slider: left=${sliderRect.left.toFixed(2)}, right=${sliderRect.right.toFixed(2)}`);
+
+        if (muteRect.left >= sliderRect.right) {
+            testPassed("Mute button is positioned to the right of slider in RTL mode");
+        } else {
+            testFailed(`Mute button should be to the right of slider in RTL mode. Mute.left (${muteRect.left.toFixed(2)}) should be >= Slider.right (${sliderRect.right.toFixed(2)})`);
+        }
+
+        const hasOverlap = muteRect.left < sliderRect.right && muteRect.right > sliderRect.left;
+        if (!hasOverlap) {
+            testPassed("Mute button and volume slider do not overlap in RTL mode");
+        } else {
+            testFailed("Mute button and volume slider should not overlap in RTL mode");
+        }
+
+        const gap = muteRect.left - sliderRect.right;
+        if (gap > 0) {
+            testPassed(`Gap between mute and slider is ${gap.toFixed(2)}px in RTL mode`);
+        } else {
+            testFailed(`Should have positive gap between elements in RTL mode, got ${gap.toFixed(2)}px`);
+        }
+        
+        done();
+    }, 100);
+}
+
+function done()
+{
+    debug("");
+    mediaControls.element.remove();
+    finishJSTest();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

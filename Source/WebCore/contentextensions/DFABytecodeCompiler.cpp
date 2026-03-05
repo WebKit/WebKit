@@ -68,14 +68,14 @@ static void appendZeroes(Vector<DFABytecode>& bytecode, DFABytecodeJumpSize jump
 }
 
 template <typename IntType>
-void setBits(Vector<DFABytecode>& bytecode, uint32_t index, IntType value)
+void NODELETE setBits(Vector<DFABytecode>& bytecode, uint32_t index, IntType value)
 {
     RELEASE_ASSERT(index + sizeof(IntType) <= bytecode.size());
     ASSERT_WITH_MESSAGE(!*reinterpret_cast<IntType*>(&bytecode[index]), "Right now we should only be using setBits to overwrite values that were zero as a placeholder.");
     *reinterpret_cast<IntType*>(&bytecode[index]) = value;
 }
 
-static DFABytecodeFlagsSize bytecodeFlagsSize(ResourceFlags flags)
+static DFABytecodeFlagsSize NODELETE bytecodeFlagsSize(ResourceFlags flags)
 {
     if (flags <= std::numeric_limits<uint8_t>::max())
         return DFABytecodeFlagsSize::UInt8;
@@ -86,7 +86,7 @@ static DFABytecodeFlagsSize bytecodeFlagsSize(ResourceFlags flags)
     return DFABytecodeFlagsSize::UInt32;
 }
 
-static DFABytecodeActionSize bytecodeActionSize(uint32_t actionWithoutFlags)
+static DFABytecodeActionSize NODELETE bytecodeActionSize(uint32_t actionWithoutFlags)
 {
     if (actionWithoutFlags <= std::numeric_limits<uint8_t>::max())
         return DFABytecodeActionSize::UInt8;
@@ -97,7 +97,7 @@ static DFABytecodeActionSize bytecodeActionSize(uint32_t actionWithoutFlags)
     return DFABytecodeActionSize::UInt32;
 }
 
-static size_t toSizeT(DFABytecodeFlagsSize size)
+static size_t NODELETE toSizeT(DFABytecodeFlagsSize size)
 {
     switch (size) {
     case DFABytecodeFlagsSize::UInt8:
@@ -112,7 +112,7 @@ static size_t toSizeT(DFABytecodeFlagsSize size)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static size_t toSizeT(DFABytecodeActionSize size)
+static size_t NODELETE toSizeT(DFABytecodeActionSize size)
 {
     switch (size) {
     case DFABytecodeActionSize::UInt8:
@@ -127,7 +127,7 @@ static size_t toSizeT(DFABytecodeActionSize size)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static size_t appendActionBytecodeSize(uint64_t action)
+static size_t NODELETE appendActionBytecodeSize(uint64_t action)
 {
     auto flags = static_cast<ResourceFlags>((action & ActionFlagMask) >> 32);
     return sizeof(DFABytecodeInstruction)
@@ -185,7 +185,7 @@ int32_t DFABytecodeCompiler::longestPossibleJump(uint32_t instructionLocation, u
     return m_nodeStartOffsets[destinationNodeIndex] - instructionLocation;
 }
 
-static DFABytecodeJumpSize smallestPossibleJumpSize(int32_t longestPossibleJump)
+static DFABytecodeJumpSize NODELETE smallestPossibleJumpSize(int32_t longestPossibleJump)
 {
     if (longestPossibleJump <= std::numeric_limits<int8_t>::max() && longestPossibleJump >= std::numeric_limits<int8_t>::min())
         return DFABytecodeJumpSize::Int8;

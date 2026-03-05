@@ -44,7 +44,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBIndex);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBIndex);
 
 UniqueRef<IDBIndex> IDBIndex::create(ScriptExecutionContext& context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
 {
@@ -113,11 +113,6 @@ IDBObjectStore& IDBIndex::objectStore()
     return m_objectStore;
 }
 
-Ref<IDBObjectStore> IDBIndex::protectedObjectStore()
-{
-    return objectStore();
-}
-
 const IDBKeyPath& IDBIndex::keyPath() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
@@ -182,7 +177,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenCursor(IDBCursorDirection direction
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
 {
-    return doOpenCursor(direction, [range = WTFMove(range)]() {
+    return doOpenCursor(direction, [range = WTF::move(range)]() {
         return range;
     });
 }
@@ -221,7 +216,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenKeyCursor(IDBCursorDirection direct
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::openKeyCursor(RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
 {
-    return doOpenKeyCursor(direction, [range = WTFMove(range)]() {
+    return doOpenKeyCursor(direction, [range = WTF::move(range)]() {
         return range;
     });
 }
@@ -371,7 +366,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAll(std::optional<uint32_t> count, F
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::getAll(RefPtr<IDBKeyRange>&& range, std::optional<uint32_t> count)
 {
-    return doGetAll(count, [range = WTFMove(range)]() {
+    return doGetAll(count, [range = WTF::move(range)]() {
         return range;
     });
 }
@@ -409,7 +404,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllKeys(std::optional<uint32_t> coun
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::getAllKeys(RefPtr<IDBKeyRange>&& range, std::optional<uint32_t> count)
 {
-    return doGetAllKeys(count, [range = WTFMove(range)]() {
+    return doGetAllKeys(count, [range = WTF::move(range)]() {
         return range;
     });
 }

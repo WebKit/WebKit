@@ -55,6 +55,7 @@
     right: 0;
     overflow-x: hidden;
     overflow-y: scroll;
+    overflow-anchor: none;
 }
 
 .data-grid.inline .data-container {

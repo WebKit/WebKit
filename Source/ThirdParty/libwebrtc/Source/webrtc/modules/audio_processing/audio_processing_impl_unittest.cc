@@ -972,4 +972,27 @@ INSTANTIATE_TEST_SUITE_P(
                                  .input_volume_controller = {.enabled = true},
                                  .adaptive_digital = {.enabled = true}}}));
 
+TEST(AudioProcessingImplTest, DoesNotFailProcessReverseStreamAfterApplyConfig) {
+  AudioProcessing::Config apm_config;
+  apm_config.echo_canceller.enabled = true;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumChannels = 1;
+  std::array<int16_t, kNumChannels * kSampleRateHz / 100> frame;
+  StreamConfig stream_config(kSampleRateHz, kNumChannels);
+
+  scoped_refptr<AudioProcessing> apm =
+      BuiltinAudioProcessingBuilder().Build(CreateEnvironment());
+  apm->Initialize({{
+      StreamConfig(16000, /*num_channels=*/1),
+      StreamConfig(16000, /*num_channels=*/1),
+      stream_config,
+      stream_config,
+  }});
+  apm->ApplyConfig(apm_config);
+  frame.fill(0);
+  ASSERT_EQ(AudioProcessing::Error::kNoError,
+            apm->ProcessReverseStream(frame.data(), stream_config,
+                                      stream_config, frame.data()));
+}
+
 }  // namespace webrtc

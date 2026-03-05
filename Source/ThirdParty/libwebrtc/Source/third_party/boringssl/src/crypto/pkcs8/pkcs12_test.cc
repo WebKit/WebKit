@@ -369,7 +369,7 @@ static void TestRoundTrip(const char *password, const char *name,
     int actual_name_len;
     const uint8_t *actual_name =
         X509_alias_get0(sk_X509_value(certs2.get(), 0), &actual_name_len);
-    if (name == NULL) {
+    if (name == nullptr) {
       EXPECT_EQ(nullptr, actual_name);
     } else {
       EXPECT_EQ(name, bssl::BytesAsStringView(

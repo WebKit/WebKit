@@ -74,9 +74,9 @@ void RTCController::remove(RTCPeerConnection& connection)
 
 static inline bool matchDocumentOrigin(Document& document, SecurityOrigin& topOrigin, SecurityOrigin& clientOrigin)
 {
-    if (topOrigin.isSameOriginAs(document.protectedSecurityOrigin()))
+    if (topOrigin.isSameOriginAs(protect(document.securityOrigin())))
         return true;
-    return topOrigin.isSameOriginAs(document.protectedTopOrigin()) && clientOrigin.isSameOriginAs(document.protectedSecurityOrigin());
+    return topOrigin.isSameOriginAs(protect(document.topOrigin())) && clientOrigin.isSameOriginAs(protect(document.securityOrigin()));
 }
 
 bool RTCController::shouldDisableICECandidateFiltering(Document& document)
@@ -95,7 +95,7 @@ void RTCController::add(RTCPeerConnection& connection)
         networkManager->setICECandidateFiltering(!shouldDisableICECandidateFiltering(document));
 
     m_peerConnections.add(connection);
-    if (shouldDisableICECandidateFiltering(downcast<Document>(*connection.scriptExecutionContext())))
+    if (shouldDisableICECandidateFiltering(document))
         connection.disableICECandidateFiltering();
 
     if (m_gatheringLogsDocument && connection.scriptExecutionContext() == m_gatheringLogsDocument.get())
@@ -125,10 +125,12 @@ void RTCController::disableICECandidateFilteringForDocument(Document& document)
     if (RefPtr networkManager = document.rtcNetworkManager())
         networkManager->setICECandidateFiltering(false);
 
-    m_filteringDisabledOrigins.append(PeerConnectionOrigin { document.topOrigin(), document.securityOrigin() });
+    Ref topOrigin = document.topOrigin();
+    Ref securityOrigin = document.securityOrigin();
+    m_filteringDisabledOrigins.append(PeerConnectionOrigin { topOrigin.get(), securityOrigin.get() });
     for (Ref connection : m_peerConnections) {
         if (RefPtr peerConnectionDocument = downcast<Document>(connection->scriptExecutionContext())) {
-            if (matchDocumentOrigin(*peerConnectionDocument, document.topOrigin(), document.securityOrigin())) {
+            if (matchDocumentOrigin(*peerConnectionDocument, topOrigin.get(), securityOrigin.get())) {
                 if (RefPtr networkManager = peerConnectionDocument->rtcNetworkManager())
                     networkManager->setICECandidateFiltering(false);
                 connection->disableICECandidateFiltering();
@@ -176,7 +178,7 @@ static String toWebRTCLogLevel(webrtc::LoggingSeverity severity)
 void RTCController::startGatheringLogs(Document& document, LogCallback&& callback)
 {
     m_gatheringLogsDocument = document;
-    m_callback = WTFMove(callback);
+    m_callback = WTF::move(callback);
     for (Ref connection : m_peerConnections) {
         if (connection->scriptExecutionContext() != &document) {
             connection->stopGatheringStatLogs();
@@ -186,10 +188,10 @@ void RTCController::startGatheringLogs(Document& document, LogCallback&& callbac
     }
 #if USE(LIBWEBRTC)
     if (!m_logSink) {
-        m_logSink = makeUnique<LibWebRTCLogSink>([weakThis = WeakPtr { *this }] (auto&& logLevel, auto&& logMessage) {
-            ensureOnMainThread([weakThis, logMessage = fromStdString(logMessage).isolatedCopy(), logLevel] () mutable {
-                if (auto protectedThis = weakThis.get())
-                    protectedThis->m_callback("backend-logs"_s, WTFMove(logMessage), toWebRTCLogLevel(logLevel), nullptr);
+        m_logSink = makeUnique<LibWebRTCLogSink>([weakThis = WeakPtr { *this }](auto&& logLevel, auto&& logMessage) {
+            ensureOnMainThread([weakThis, logMessage = fromStdString(logMessage).isolatedCopy(), logLevel] mutable {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->m_callback("backend-logs"_s, WTF::move(logMessage), toWebRTCLogLevel(logLevel), nullptr);
             });
         });
         m_logSink->start();
@@ -199,9 +201,9 @@ void RTCController::startGatheringLogs(Document& document, LogCallback&& callbac
 #if USE(GSTREAMER_WEBRTC)
     if (!m_logSink) {
         m_logSink = makeUnique<GStreamerWebRTCLogSink>([weakThis = WeakPtr { *this }](const auto& logLevel, const auto& logMessage) {
-            ensureOnMainThread([weakThis, logMessage = logMessage.isolatedCopy(), logLevel = logLevel.isolatedCopy()]() mutable {
-                if (auto protectedThis = weakThis.get())
-                    protectedThis->m_callback("backend-logs"_s, WTFMove(logMessage), WTFMove(logLevel), nullptr);
+            ensureOnMainThread([weakThis, logMessage = logMessage.isolatedCopy(), logLevel = logLevel.isolatedCopy()] mutable {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->m_callback("backend-logs"_s, WTF::move(logMessage), WTF::move(logLevel), nullptr);
             });
         });
         m_logSink->start();
@@ -226,7 +228,7 @@ void RTCController::startGatheringStatLogs(RTCPeerConnection& connection)
 {
     connection.startGatheringStatLogs([weakThis = WeakPtr { *this }, connection = WeakPtr { connection }] (auto&& stats) {
         if (weakThis)
-            weakThis->m_callback("stats"_s, WTFMove(stats), { }, connection.get());
+            weakThis->m_callback("stats"_s, WTF::move(stats), { }, connection.get());
     });
 }
 

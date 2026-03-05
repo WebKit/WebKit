@@ -520,6 +520,9 @@ class SingleTestRunner(object):
             output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(driver_input.test_name))
             output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
 
+        if expected_driver_output.text:
+            expected_driver_output.text = self._get_normalized_output_text(expected_driver_output.text)
+
         test_result = self._compare_output(expected_driver_output, driver_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, driver_output, expected_driver_output, test_result.failures)
         return test_result

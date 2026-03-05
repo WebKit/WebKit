@@ -22,7 +22,7 @@
 #include "internal.h"
 
 int X509_CRL_set_version(X509_CRL *x, long version) {
-  if (x == NULL) {
+  if (x == nullptr) {
     return 0;
   }
 
@@ -34,21 +34,21 @@ int X509_CRL_set_version(X509_CRL *x, long version) {
   // v1(0) is default and is represented by omitting the version.
   if (version == X509_CRL_VERSION_1) {
     ASN1_INTEGER_free(x->crl->version);
-    x->crl->version = NULL;
+    x->crl->version = nullptr;
     return 1;
   }
 
-  if (x->crl->version == NULL) {
+  if (x->crl->version == nullptr) {
     x->crl->version = ASN1_INTEGER_new();
-    if (x->crl->version == NULL) {
+    if (x->crl->version == nullptr) {
       return 0;
     }
   }
   return ASN1_INTEGER_set_int64(x->crl->version, version);
 }
 
-int X509_CRL_set_issuer_name(X509_CRL *x, X509_NAME *name) {
-  if ((x == NULL) || (x->crl == NULL)) {
+int X509_CRL_set_issuer_name(X509_CRL *x, const X509_NAME *name) {
+  if ((x == nullptr) || (x->crl == nullptr)) {
     return 0;
   }
   return (X509_NAME_set(&x->crl->issuer, name));
@@ -57,35 +57,35 @@ int X509_CRL_set_issuer_name(X509_CRL *x, X509_NAME *name) {
 int X509_CRL_set1_lastUpdate(X509_CRL *x, const ASN1_TIME *tm) {
   ASN1_TIME *in;
 
-  if (x == NULL) {
+  if (x == nullptr) {
     return 0;
   }
   in = x->crl->lastUpdate;
   if (in != tm) {
     in = ASN1_STRING_dup(tm);
-    if (in != NULL) {
+    if (in != nullptr) {
       ASN1_TIME_free(x->crl->lastUpdate);
       x->crl->lastUpdate = in;
     }
   }
-  return in != NULL;
+  return in != nullptr;
 }
 
 int X509_CRL_set1_nextUpdate(X509_CRL *x, const ASN1_TIME *tm) {
   ASN1_TIME *in;
 
-  if (x == NULL) {
+  if (x == nullptr) {
     return 0;
   }
   in = x->crl->nextUpdate;
   if (in != tm) {
     in = ASN1_STRING_dup(tm);
-    if (in != NULL) {
+    if (in != nullptr) {
       ASN1_TIME_free(x->crl->nextUpdate);
       x->crl->nextUpdate = in;
     }
   }
-  return in != NULL;
+  return in != nullptr;
 }
 
 int X509_CRL_sort(X509_CRL *c) {
@@ -132,10 +132,10 @@ const STACK_OF(X509_EXTENSION) *X509_CRL_get0_extensions(const X509_CRL *crl) {
 
 void X509_CRL_get0_signature(const X509_CRL *crl, const ASN1_BIT_STRING **psig,
                              const X509_ALGOR **palg) {
-  if (psig != NULL) {
+  if (psig != nullptr) {
     *psig = crl->signature;
   }
-  if (palg != NULL) {
+  if (palg != nullptr) {
     *palg = crl->sig_alg;
   }
 }
@@ -152,18 +152,18 @@ int X509_REVOKED_set_revocationDate(X509_REVOKED *revoked,
                                     const ASN1_TIME *tm) {
   ASN1_TIME *in;
 
-  if (revoked == NULL) {
+  if (revoked == nullptr) {
     return 0;
   }
   in = revoked->revocationDate;
   if (in != tm) {
     in = ASN1_STRING_dup(tm);
-    if (in != NULL) {
+    if (in != nullptr) {
       ASN1_TIME_free(revoked->revocationDate);
       revoked->revocationDate = in;
     }
   }
-  return in != NULL;
+  return in != nullptr;
 }
 
 const ASN1_INTEGER *X509_REVOKED_get0_serialNumber(
@@ -180,18 +180,18 @@ int X509_REVOKED_set_serialNumber(X509_REVOKED *revoked,
     return 0;
   }
 
-  if (revoked == NULL) {
+  if (revoked == nullptr) {
     return 0;
   }
   in = revoked->serialNumber;
   if (in != serial) {
     in = ASN1_INTEGER_dup(serial);
-    if (in != NULL) {
+    if (in != nullptr) {
       ASN1_INTEGER_free(revoked->serialNumber);
       revoked->serialNumber = in;
     }
   }
-  return in != NULL;
+  return in != nullptr;
 }
 
 const STACK_OF(X509_EXTENSION) *X509_REVOKED_get0_extensions(
@@ -209,19 +209,8 @@ int i2d_X509_CRL_tbs(X509_CRL *crl, unsigned char **outp) {
 }
 
 int X509_CRL_set1_signature_algo(X509_CRL *crl, const X509_ALGOR *algo) {
-  X509_ALGOR *copy1 = X509_ALGOR_dup(algo);
-  X509_ALGOR *copy2 = X509_ALGOR_dup(algo);
-  if (copy1 == NULL || copy2 == NULL) {
-    X509_ALGOR_free(copy1);
-    X509_ALGOR_free(copy2);
-    return 0;
-  }
-
-  X509_ALGOR_free(crl->sig_alg);
-  crl->sig_alg = copy1;
-  X509_ALGOR_free(crl->crl->sig_alg);
-  crl->crl->sig_alg = copy2;
-  return 1;
+  return X509_ALGOR_copy(crl->sig_alg, algo) &&
+         X509_ALGOR_copy(crl->crl->sig_alg, algo);
 }
 
 int X509_CRL_set1_signature_value(X509_CRL *crl, const uint8_t *sig,

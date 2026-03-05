@@ -952,6 +952,8 @@ EXPORTS
 
     ; GL_EXT_shader_texture_lod
 
+    ; GL_EXT_shader_texture_samples
+
     ; GL_EXT_shadow_samplers
 
     ; GL_EXT_tessellation_shader
@@ -1289,6 +1291,9 @@ EXPORTS
     glFramebufferTextureMultiviewOVR
 
     ; GL_OVR_multiview2
+
+    ; GL_OVR_multiview_multisampled_render_to_texture
+    glFramebufferTextureMultisampleMultiviewOVR
 
     ; GL_QCOM_framebuffer_foveated
     glFramebufferFoveationConfigQCOM

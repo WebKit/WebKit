@@ -25,5 +25,6 @@
 
 // https://html.spec.whatwg.org/multipage/webstorage.html#the-localstorage-attribute
 interface mixin WindowLocalStorage {
-    [EnabledBySetting=LocalStorageEnabled] readonly attribute Storage localStorage;
+    // FIXME: `localStorage` should not be nullable.
+    [EnabledBySetting=LocalStorageEnabled] readonly attribute Storage? localStorage;
 };

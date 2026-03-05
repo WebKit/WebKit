@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include <WebCore/Logging.h>
-#include <WebCore/MediaSourceConfiguration.h>
-#include <WebCore/SourceBufferParser.h>
+#include "Logging.h"
+#include "MediaSourceConfiguration.h"
+#include "SourceBufferParser.h"
 #include <wtf/Box.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TypeCasts.h>

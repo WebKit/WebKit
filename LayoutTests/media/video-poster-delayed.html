@@ -1,53 +1,65 @@
 <!DOCTYPE HTML5>
+<title>Delayed load of poster should overwrite intrinsic size of video.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<video></video>
+<script>
+function findSupportedVideoFormat() {
+    var video = document.createElement('video');
+    var formats = [
+        { file: 'content/test.mp4', type: 'video/mp4' },
+        { file: 'content/test.ogv', type: 'video/ogg' }
+    ];
+    
+    for (var i = 0; i < formats.length; i++) {
+        if (video.canPlayType(formats[i].type)) {
+            return formats[i].file;
+        }
+    }
+    
+    // Default to ogv if no format is explicitly supported.
+    return 'content/test.ogv';
+}
 
-<html>
-    <head>
-        <title>Delayed load of poster should not overwrite intrinsic size of video</title>
-        <script src=video-test.js></script>
-        <script src=media-file.js></script>
-        <style>
-            video {
-                border: 3px solid red;
-                background-color: magenta;
-            }
-        </style>
-        <script>
-            function start()
-            {
-                video = document.getElementById('video');
+async_test(function(t) {
+    var video = document.querySelector("video");
 
-                video.addEventListener("loadeddata", function(ev) {
-
-                    consoleWrite("<br><b>Video loaded</b><br>");
-
-                    testExpected("video.clientWidth", 320);
-                    testExpected("video.clientHeight", 240);
-                    testExpected("video.videoWidth", 320);
-                    testExpected("video.videoHeight", 240);
-
-                    video.poster = "content/abe.png";
-                    setTimeout(testAfterLoadingPoster, 100);
+    video.onloadeddata = t.step_func(function() {
+        testVideoSize({
+            clientWidth: 320,
+            clientHeight: 240,
+            videoWidth: 320,
+            videoHeight: 240,
+        });
+        
+        video.poster = "content/abe.png";
+        
+        // Wait for the video element itself to resize
+        const clientWidthAfterResize = 76;
+        const clientHeightAfterResize = 103;
+        var checkResize = function() {
+            if (video.clientWidth === clientWidthAfterResize && video.clientHeight === clientHeightAfterResize) {
+                testVideoSize({
+                    clientWidth: clientWidthAfterResize,
+                    clientHeight: clientHeightAfterResize,
+                    videoWidth: 320,
+                    videoHeight: 240,
                 });
-
-                video.src = findMediaFile("video", "content/test");
+                t.done();
+            } else {
+                requestAnimationFrame(checkResize);
             }
+        };
+        requestAnimationFrame(checkResize);
+    });
 
-            function testAfterLoadingPoster()
-            {
-                consoleWrite("<br><b>Poster loaded</b><br>");
+    function testVideoSize(size) {
+        assert_equals(video.clientWidth, size.clientWidth);
+        assert_equals(video.clientHeight, size.clientHeight);
+        assert_equals(video.videoWidth, size.videoWidth);
+        assert_equals(video.videoHeight, size.videoHeight);
+    }
 
-                testExpected("video.clientWidth", 320);
-                testExpected("video.clientHeight", 240);
-                testExpected("video.videoWidth", 320);
-                testExpected("video.videoHeight", 240);
-
-                endTest();
-            }
-        </script>
-    </head>
-
-
-    <body onload="start()">
-        <video id=video></video>
-    </body>
-</html>
+    video.src = findSupportedVideoFormat();
+});
+</script>

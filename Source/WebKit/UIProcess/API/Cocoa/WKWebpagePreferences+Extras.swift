@@ -21,10 +21,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI && compiler(>=6.0)
+#if ENABLE_SWIFTUI
 
 import Foundation
-internal import WebKit_Internal
 
 extension WKWebpagePreferences.ContentMode {
     init(_ wrapped: WebPage.NavigationPreferences.ContentMode) {
@@ -60,6 +59,9 @@ extension WKWebpagePreferences {
         if let isLockdownModeEnabled = wrapped.backingIsLockdownModeEnabled, self.isLockdownModeEnabled != isLockdownModeEnabled {
             self.isLockdownModeEnabled = isLockdownModeEnabled
         }
+
+        self.alternateRequest = wrapped.alternateRequest
+        self.overrideReferrer = wrapped.overrideReferrer
     }
 }
 

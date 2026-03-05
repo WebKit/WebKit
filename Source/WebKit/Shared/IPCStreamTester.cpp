@@ -46,14 +46,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(IPCStreamTester);
 
 RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle, bool ignoreInvalidMessageForTesting)
 {
-    auto tester = adoptRef(*new IPCStreamTester(identifier, WTFMove(connectionHandle), ignoreInvalidMessageForTesting));
+    auto tester = adoptRef(*new IPCStreamTester(identifier, WTF::move(connectionHandle), ignoreInvalidMessageForTesting));
     tester->initialize();
     return tester;
 }
 
 IPCStreamTester::IPCStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle, bool ignoreInvalidMessageForTesting)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("IPCStreamTester work queue"_s))
-    , m_streamConnection(IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), { ignoreInvalidMessageForTesting }).releaseNonNull())
+    , m_streamConnection(IPC::StreamServerConnection::tryCreate(WTF::move(connectionHandle), { ignoreInvalidMessageForTesting }).releaseNonNull())
     , m_identifier(identifier)
 {
 }
@@ -62,8 +62,8 @@ IPCStreamTester::~IPCStreamTester() = default;
 
 void IPCStreamTester::initialize()
 {
-    protectedWorkQueue()->dispatch([this] {
-        m_streamConnection->open(*this, protectedWorkQueue());
+    protect(workQueue())->dispatch([this] {
+        m_streamConnection->open(*this, protect(workQueue()));
         m_streamConnection->startReceivingMessages(*this, Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
         m_streamConnection->send(Messages::IPCStreamTesterProxy::WasCreated(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_identifier);
     });
@@ -96,9 +96,9 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
         auto data = sharedMemory->mutableSpan();
         for (size_t i = 0; i < data.size(); ++i)
             data[i] = i;
-        return WTFMove(*handle);
+        return WTF::move(*handle);
     }();
-    completionHandler(WTFMove(result));
+    completionHandler(WTF::move(result));
 }
 
 void IPCStreamTester::syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&& completionHandler)

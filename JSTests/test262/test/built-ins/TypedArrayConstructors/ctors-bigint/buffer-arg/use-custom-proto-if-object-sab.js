@@ -31,7 +31,7 @@ info: |
   10. Set the [[Prototype]] internal slot of A to prototype.
   ...
   12. Return A.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, SharedArrayBuffer, Reflect, TypedArray]
 ---*/
 
@@ -46,4 +46,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.sameValue(ta.constructor, Object);
   assert.sameValue(Object.getPrototypeOf(ta), proto);
-});
+}, null, ["passthrough"]);

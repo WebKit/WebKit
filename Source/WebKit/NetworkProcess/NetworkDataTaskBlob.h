@@ -51,7 +51,7 @@ class NetworkProcess;
 
 class NetworkDataTaskBlob final : public NetworkDataTask, public WebCore::BlobResourceHandleBase {
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences, const RefPtr<WebCore::SecurityOrigin>& topOrigin)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, const Vector<Ref<WebCore::BlobDataFileReference>>& fileReferences, const RefPtr<WebCore::SecurityOrigin>& topOrigin)
     {
         return adoptRef(*new NetworkDataTaskBlob(session, client, request, fileReferences, topOrigin));
     }
@@ -63,7 +63,7 @@ public:
     void deref() const final { NetworkDataTask::deref(); }
 
 private:
-    NetworkDataTaskBlob(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, const Vector<RefPtr<WebCore::BlobDataFileReference>>&, const RefPtr<WebCore::SecurityOrigin>& topOrigin);
+    NetworkDataTaskBlob(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, const Vector<Ref<WebCore::BlobDataFileReference>>&, const RefPtr<WebCore::SecurityOrigin>& topOrigin);
 
     // NetworkDataTask.
     void cancel() final;
@@ -91,7 +91,7 @@ private:
     State m_state { State::Suspended };
     uint64_t m_downloadBytesWritten { 0 };
     FileSystem::FileHandle m_downloadFile;
-    Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
+    Vector<Ref<WebCore::BlobDataFileReference>> m_fileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
     const Ref<NetworkProcess> m_networkProcess;
 };

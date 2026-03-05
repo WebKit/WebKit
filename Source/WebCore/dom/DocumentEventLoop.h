@@ -27,12 +27,3 @@
 
 #include <WebCore/Document.h>
 #include <WebCore/EventLoop.h>
-
-namespace WebCore {
-
-inline CheckedRef<EventLoopTaskGroup> Document::checkedEventLoop()
-{
-    return eventLoop();
-}
-
-}

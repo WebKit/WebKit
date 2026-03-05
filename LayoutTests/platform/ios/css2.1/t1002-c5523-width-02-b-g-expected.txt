@@ -4,11 +4,11 @@ layer at (0,0) size 800x660
   RenderBlock {HTML} at (0,0) size 800x660
     RenderBody {BODY} at (8,16) size 784x636
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 423x19
+        RenderText {#text} at (0,0) size 423x20
           text run at (0,0) width 381: "The blue text should not go past the 50% mark on the ruler "
           text run at (380,0) width 43: "below."
       RenderBlock {DIV} at (0,36) size 392x560 [color=#0000FF]
-        RenderText {#text} at (0,0) size 387x559
+        RenderText {#text} at (0,0) size 387x560
           text run at (0,0) width 387: "a bit of dummy text a bit of dummy text a bit of dummy text"
           text run at (0,20) width 12: "a "
           text run at (11,20) width 376: "bit of dummy text a bit of dummy text a bit of dummy text"

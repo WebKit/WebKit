@@ -74,7 +74,17 @@ extern "C" void tailCallWithoutUntagJSEntryTrampoline(void);
 extern "C" void wasmTailCallTrampoline(void);
 extern "C" void exceptionHandlerTrampoline(void);
 extern "C" void returnFromLLIntTrampoline(void);
-#endif
+#if ENABLE(WEBASSEMBLY)
+extern "C" void relocate_jit_return_pc_return_location(void);
+extern "C" void relocate_jit_return_pc_trampoline(void);
+extern "C" void exit_implanted_slice(void);
+extern "C" void get_sentinel_frame_return_pc_return_location(void);
+extern "C" void get_sentinel_frame_return_pc_trampoline(void);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(relocate_jit_return_pc_return_location);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(exit_implanted_slice);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(get_sentinel_frame_return_pc_return_location);
+#endif // ENABLE(WEBASSEMBLY)
+#endif // CPU(ARM64E)
 
 #if ENABLE(CSS_SELECTOR_JIT) && CPU(ARM64E) && !ENABLE(C_LOOP)
 extern "C" void SYSV_ABI vmEntryToCSSJITAfter(void);
@@ -332,6 +342,34 @@ void initialize()
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::entryOSREntry)] = nullptr;
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmOSREntry)] = nullptr;
     }
+
+#if ENABLE(WEBASSEMBLY)
+    {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
+        if (Options::useJITCage() && Options::useJSPI())
+            codeRef.construct(relocateJITReturnPCThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&relocate_jit_return_pc_return_location)));
+        else
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&relocate_jit_return_pc_trampoline))));
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::relocateJITReturnPC)] = codeRef.get().code().taggedPtr();
+    }
+    {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
+        if (Options::useJITCage() && Options::useJSPI())
+            codeRef.construct(exitImplantedSliceGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&exit_implanted_slice)));
+        else
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&exit_implanted_slice))));
+        // Store untagged so it can be signed with IB + sp for use with retab
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::exitImplantedSliceGate)] = codeRef.get().code().untaggedPtr();
+    }
+    {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
+        if (Options::useJITCage() && Options::useJSPI())
+            codeRef.construct(getSentinelFrameReturnPCGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&get_sentinel_frame_return_pc_return_location)));
+        else
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&get_sentinel_frame_return_pc_trampoline))));
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::getSentinelFrameReturnPCGate)] = codeRef.get().code().taggedPtr();
+    }
+#endif
 
 #define INITIALIZE_TAG_AND_UNTAG_THUNKS(name) \
     do { \

@@ -13,14 +13,11 @@
 // limitations under the License.
 
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 #include <gtest/gtest.h>
 
 #include <openssl/curve25519.h>
 
-#include "internal.h"
 #include "../internal.h"
 #include "../test/abi_test.h"
 #include "../test/file_test.h"
@@ -207,25 +204,30 @@ TEST(X25519Test, DISABLED_IteratedLarge) {
 }
 
 TEST(X25519Test, Wycheproof) {
-  FileTestGTest("third_party/wycheproof_testvectors/x25519_test.txt",
-                [](FileTest *t) {
-      t->IgnoreInstruction("curve");
-      t->IgnoreAttribute("curve");
+  FileTestGTest(
+      "third_party/wycheproof_testvectors/x25519_test.txt", [](FileTest *t) {
+        t->IgnoreInstruction("curve");
+        t->IgnoreAttribute("curve");
 
-      WycheproofResult result;
-      ASSERT_TRUE(GetWycheproofResult(t, &result));
-      std::vector<uint8_t> priv, pub, shared;
-      ASSERT_TRUE(t->GetBytes(&priv, "private"));
-      ASSERT_TRUE(t->GetBytes(&pub, "public"));
-      ASSERT_TRUE(t->GetBytes(&shared, "shared"));
-      ASSERT_EQ(32u, priv.size());
-      ASSERT_EQ(32u, pub.size());
+        WycheproofResult result;
+        ASSERT_TRUE(GetWycheproofResult(t, &result));
+        std::vector<uint8_t> priv, pub, shared;
+        ASSERT_TRUE(t->GetBytes(&priv, "private"));
+        ASSERT_TRUE(t->GetBytes(&pub, "public"));
+        ASSERT_TRUE(t->GetBytes(&shared, "shared"));
+        ASSERT_EQ(32u, priv.size());
+        ASSERT_EQ(32u, pub.size());
 
-      uint8_t secret[32];
-      int ret = ctwrapX25519(secret, priv.data(), pub.data());
-      EXPECT_EQ(ret, result.IsValid({"NonCanonicalPublic", "Twist"}) ? 1 : 0);
-      EXPECT_EQ(Bytes(secret), Bytes(shared));
-  });
+        uint8_t secret[32];
+        int ret = ctwrapX25519(secret, priv.data(), pub.data());
+        EXPECT_EQ(ret, result.IsValid({"NonCanonicalPublic", "Twist",
+                                       "SpecialPublicKey", "EdgeCaseShared",
+                                       "EdgeCaseMultiplication",
+                                       "SmallPublicKey", "LowOrderPublic"})
+                           ? 1
+                           : 0);
+        EXPECT_EQ(Bytes(secret), Bytes(shared));
+      });
 }
 
 #if defined(BORINGSSL_X25519_NEON) && defined(SUPPORTS_ABI_TEST)

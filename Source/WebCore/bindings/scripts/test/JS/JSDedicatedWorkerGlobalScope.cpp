@@ -59,12 +59,11 @@ using JSDedicatedWorkerGlobalScopeDOMConstructor = JSDOMConstructorNotConstructa
 
 /* Hash table */
 
-static const struct CompactHashIndex JSDedicatedWorkerGlobalScopeTableIndex[5] = {
+static const struct CompactHashIndex JSDedicatedWorkerGlobalScopeTableIndex[4] = {
     { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 0, 4 },
     { 1, -1 },
+    { -1, -1 },
+    { 0, -1 },
 };
 
 
@@ -115,13 +114,8 @@ void JSDedicatedWorkerGlobalScopePrototype::finishCreation(VM& vm)
 const ClassInfo JSDedicatedWorkerGlobalScope::s_info = { "DedicatedWorkerGlobalScope"_s, &Base::s_info, &JSDedicatedWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScope) };
 
 JSDedicatedWorkerGlobalScope::JSDedicatedWorkerGlobalScope(VM& vm, Structure* structure, Ref<DedicatedWorkerGlobalScope>&& impl)
-    : JSWorkerGlobalScope(vm, structure, WTFMove(impl))
+    : JSWorkerGlobalScope(vm, structure, WTF::move(impl))
 {
-}
-
-Ref<DedicatedWorkerGlobalScope> JSDedicatedWorkerGlobalScope::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, DedicatedWorkerGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");

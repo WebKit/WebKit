@@ -44,8 +44,11 @@
 #pragma once
 
 #include <JavaScriptCore/DateInstanceCache.h>
+#include <JavaScriptCore/JSExportMacros.h>
+#include <wtf/Compiler.h>
 #include <wtf/DateMath.h>
 #include <wtf/GregorianDateTime.h>
+#include <wtf/Platform.h>
 #include <wtf/SaturatedArithmetic.h>
 #include <wtf/TZoneMalloc.h>
 

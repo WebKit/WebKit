@@ -206,11 +206,11 @@ void JSFinalizationRegistry::registerTarget(VM& vm, JSCell* target, JSValue hold
     registration.target = target;
     registration.holdings.setWithoutWriteBarrier(holdings);
     if (token.isUndefined())
-        m_noUnregistrationLive.append(WTFMove(registration));
+        m_noUnregistrationLive.append(WTF::move(registration));
     else {
         RELEASE_ASSERT(token.isCell());
         auto result = m_liveRegistrations.add(token.asCell(), LiveRegistrations());
-        result.iterator->value.append(WTFMove(registration));
+        result.iterator->value.append(WTF::move(registration));
     }
     vm.writeBarrier(this);
 }

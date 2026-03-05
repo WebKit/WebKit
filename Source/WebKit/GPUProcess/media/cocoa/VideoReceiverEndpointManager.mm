@@ -164,13 +164,13 @@ void VideoReceiverEndpointManager::setVideoTargetIfValidIdentifier(std::optional
     if (!playerIdentifier)
         return;
 
-    if (RefPtr player = protectedConnection()->protectedRemoteMediaPlayerManagerProxy()->mediaPlayer(playerIdentifier)) {
+    if (RefPtr player = protect(protect(m_gpuConnection)->remoteMediaPlayerManagerProxy())->mediaPlayer(playerIdentifier)) {
         ALWAYS_LOG(LOGIDENTIFIER, "Update entry; ", !videoTarget ? "removing target" : "setting target", " on player ", playerIdentifier->loggingString());
         player->setVideoTarget(videoTarget);
         return;
     }
 
-    if (RefPtr renderer = protectedConnection()->protectedRemoteAudioVideoRendererProxyManager()->rendererFor(playerIdentifier)) {
+    if (RefPtr renderer = protect(protect(m_gpuConnection)->remoteAudioVideoRendererProxyManager())->rendererFor(playerIdentifier)) {
         ALWAYS_LOG(LOGIDENTIFIER, "Update entry; ", !videoTarget ? "removing target" : "setting target", " on A/V renderer ", playerIdentifier->loggingString());
         renderer->setVideoTarget(videoTarget);
     }

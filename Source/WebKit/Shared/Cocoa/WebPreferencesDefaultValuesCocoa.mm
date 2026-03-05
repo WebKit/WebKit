@@ -40,13 +40,60 @@
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPreferencesDefaultValuesCocoaAdditions.mm>)
 #import <WebKitAdditions/WebPreferencesDefaultValuesCocoaAdditions.mm>
 #else
+
 #if HAVE(LIQUID_GLASS)
 static bool platformIsLiquidGlassEnabled()
 {
     return true;
 }
 #endif
+
+namespace WebKit {
+
+#if ENABLE(VIDEO)
+
+bool NODELETE defaultCaptionDisplaySettingsEnabled()
+{
+    return false;
+}
+
 #endif
+
+#if PLATFORM(MAC)
+
+bool NODELETE defaultUseAppKitGestures()
+{
+    return false;
+}
+
+bool NODELETE defaultTextInputClientSelectionUpdatesEnabled()
+{
+    return false;
+}
+
+#endif // PLATFORM(MAC)
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+bool defaultContentChangeObserverEnabled()
+{
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+bool NODELETE defaultWebContentRestrictionsAskToEnabled()
+{
+    return false;
+}
+#endif
+
+}
+
+#endif // namespace WebKit
 
 namespace WebKit {
 
@@ -77,6 +124,11 @@ bool defaultScrollAnimatorEnabled()
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
 }
 #endif
+
+bool defaultExtendedProofreadingEnabled()
+{
+    return os_feature_enabled(TextComposer, PostEditingProofreadingReview);
+}
 
 #if ENABLE(IMAGE_ANALYSIS)
 
@@ -121,7 +173,7 @@ bool defaultTopContentInsetBackgroundCanChangeAfterScrolling()
 #endif
 }
 
-bool defaultContentInsetBackgroundFillEnabled()
+bool NODELETE defaultContentInsetBackgroundFillEnabled()
 {
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
     return isLiquidGlassEnabled();
@@ -137,7 +189,7 @@ bool defaultHostedBlurMaterialInMediaControlsEnabled()
 }
 #endif
 
-bool defaultIOSurfaceLosslessCompressionEnabled()
+bool NODELETE defaultIOSurfaceLosslessCompressionEnabled()
 {
 #if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES) && HAVE(LOSSLESS_COMPRESSED_IOSURFACE_CG_SUPPORT)
 #define WK_CA_FEATURE_CG_COMPRESSED_IOSURFACES 15
@@ -149,7 +201,7 @@ bool defaultIOSurfaceLosslessCompressionEnabled()
 }
 
 #if ENABLE(UNIFIED_PDF)
-bool defaultUnifiedPDFEnabled()
+bool NODELETE defaultUnifiedPDFEnabled()
 {
 #if ENABLE(UNIFIED_PDF_BY_DEFAULT)
     return true;

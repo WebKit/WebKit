@@ -65,7 +65,9 @@ WebKitDOMClientRectList* wrapDOMRectList(WebCore::DOMRectList* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMClientRectList, webkit_dom_client_rect_list, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_CLIENT_RECT_LIST_PROP_0,

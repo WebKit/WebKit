@@ -70,7 +70,8 @@
         (allow network-outbound (literal "/private/var/run/mDNSResponder"))
         (allow mach-lookup (global-name "com.apple.dnssd.service"))) ;; <rdar://problem/55562091>
 #else
-    (allow network-outbound (literal "/private/var/run/mDNSResponder"))
+    (with-filter (require-not (state-flag "BlockNetworkAccess"))
+        (allow network-outbound (literal "/private/var/run/mDNSResponder")))
     (allow mach-lookup (global-name "com.apple.dnssd.service")) ;; <rdar://problem/55562091>
 #endif
 
@@ -104,7 +105,7 @@
     ;; <rdar://problem/30452093>
     (multipath-tcp))
 
-(define-once (network-client . filters)
+(define-once (network-client)
     (allow-network-common)
 
     (allow file-issue-extension
@@ -154,10 +155,8 @@
     ;; <rdar://problem/33277999>
     (mobile-preferences-read "com.apple.CFNetwork")
 
-    (if (null? filters)
-        (allow network-outbound)
-    ; else
-        (allow network-outbound (apply require-any filters))))
+    (with-filter (require-not (state-flag "BlockNetworkAccess"))
+        (allow network-outbound (remote tcp) (remote udp))))
 
 (define-once (multipath-tcp)
     (allow system-socket (socket-domain 39)))

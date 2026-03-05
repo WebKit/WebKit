@@ -52,7 +52,7 @@ struct Contain {
     constexpr Contain(CSS::Keyword::None) : m_value { } { }
     constexpr Contain(CSS::Keyword::Strict) : m_value { strict } { }
     constexpr Contain(CSS::Keyword::Content) : m_value { content } { }
-    constexpr Contain(EnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr Contain(EnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr Contain(value_type value) : Contain { EnumSet { value } } { }
     constexpr Contain(std::initializer_list<value_type> initializerList) : Contain { EnumSet { initializerList } } { }
 

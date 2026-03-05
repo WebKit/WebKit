@@ -234,7 +234,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestInputDelegate>> setUpEd
 
     [webView synchronouslyLoadTestPageNamed:@"editable-responsive-body"];
     TestWebKitAPI::Util::run(&didStartInputSession);
-    return { WTFMove(webView), WTFMove(inputDelegate) };
+    return { WTF::move(webView), WTF::move(inputDelegate) };
 }
 
 TEST(UIWKInteractionViewProtocol, TextInteractionCanBeginInExistingSelection)

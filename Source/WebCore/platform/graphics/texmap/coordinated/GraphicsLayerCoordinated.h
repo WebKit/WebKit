@@ -35,6 +35,7 @@
 namespace WebCore {
 class CoordinatedPlatformLayer;
 class CoordinatedPlatformLayerBufferProxy;
+class GraphicsLayerKeyframeValueList;
 class NativeImage;
 
 class GraphicsLayerCoordinated final : public GraphicsLayer {
@@ -108,7 +109,7 @@ private:
     bool setBackdropFilters(const FilterOperations&) override;
     void setBackdropFiltersRect(const FloatRoundedRect&) override;
 
-    bool addAnimation(const KeyframeValueList&, const GraphicsLayerAnimation*, const String&, double) override;
+    bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String&, double) override;
     void removeAnimation(const String&, std::optional<AnimatedProperty>) override;
     void pauseAnimation(const String& animationName, double timeOffset) override;
     void suspendAnimations(MonotonicTime) override;

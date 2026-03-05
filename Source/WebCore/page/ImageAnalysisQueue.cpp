@@ -143,12 +143,12 @@ void ImageAnalysisQueue::enqueueAllImagesRecursive(Frame& frame)
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
     if (localFrame) {
         if (RefPtr document = localFrame->document()) {
-            for (auto& image : descendantsOfType<HTMLImageElement>(*document))
-                enqueueIfNeeded(image);
+            for (Ref image : descendantsOfType<HTMLImageElement>(*document))
+                enqueueIfNeeded(image.get());
         }
     }
 
-    for (auto* nextFrame = frame.tree().firstChild(); nextFrame; nextFrame = nextFrame->tree().nextSibling())
+    for (RefPtr nextFrame = frame.tree().firstChild(); nextFrame; nextFrame = nextFrame->tree().nextSibling())
         enqueueAllImagesRecursive(*nextFrame);
 }
 
@@ -163,14 +163,15 @@ void ImageAnalysisQueue::resumeProcessing()
             continue;
 
         m_pendingRequestCount++;
-        m_page->resetTextRecognitionResult(*element);
+        Ref page = *m_page;
+        page->resetTextRecognitionResult(*element);
 
         if (auto* image = element->cachedImage(); image && !image->errorOccurred())
             m_queuedElements.set(*element, image->url());
 
         auto allowSnapshots = m_languageIdentifiers.target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
-        m_page->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, page = m_page] (auto&&) {
-            if (!page || page->imageAnalysisQueueIfExists() != this)
+        page->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }](auto&&) {
+            if (RefPtr page = weakPage.get(); !page || page->imageAnalysisQueueIfExists() != this)
                 return;
 
             if (m_pendingRequestCount)
@@ -186,7 +187,7 @@ void ImageAnalysisQueue::resumeProcessing()
 
 void ImageAnalysisQueue::setDidBecomeEmptyCallback(Function<void()>&& callback)
 {
-    m_imageQueueEmptyHysteresis = makeUnique<PAL::HysteresisActivity>([callback = WTFMove(callback)] (PAL::HysteresisState state) {
+    m_imageQueueEmptyHysteresis = makeUnique<PAL::HysteresisActivity>([callback = WTF::move(callback)] (PAL::HysteresisState state) {
         if (state == PAL::HysteresisState::Stopped)
             callback();
     }, 1_s);

@@ -54,7 +54,7 @@ class FragmentedSharedBuffer;
 class ProcessIdentity;
 class SharedBuffer;
 
-enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
+enum class MemoryLedger : uint8_t { None, Default, Network, Media, Graphics, Neural };
 enum class SharedMemoryProtection : bool { ReadOnly, ReadWrite };
 
 WEBCORE_EXPORT bool isMemoryAttributionDisabled();
@@ -99,6 +99,8 @@ public:
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor releaseHandle();
+#elif OS(DARWIN)
+    MachSendRight releaseHandle() { return std::exchange(m_handle, MachSendRight { }); }
 #endif
 
 private:
@@ -113,11 +115,12 @@ class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
 public:
     using Handle = SharedMemoryHandle;
     using Protection = SharedMemoryProtection;
+    enum class CopyOnWrite : bool { No, Yes };
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     WEBCORE_EXPORT static RefPtr<SharedMemory> allocate(size_t);
     WEBCORE_EXPORT static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
-    WEBCORE_EXPORT static RefPtr<SharedMemory> map(Handle&&, Protection);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> map(Handle&&, Protection, CopyOnWrite = CopyOnWrite::No);
 #if USE(UNIX_DOMAIN_SOCKETS)
     WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)

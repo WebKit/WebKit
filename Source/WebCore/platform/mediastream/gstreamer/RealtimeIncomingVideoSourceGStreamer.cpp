@@ -34,7 +34,7 @@ GST_DEBUG_CATEGORY(webkit_webrtc_incoming_video_debug);
 namespace WebCore {
 
 RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
-    : RealtimeIncomingSourceGStreamer(CaptureDevice { WTFMove(videoTrackId), CaptureDevice::DeviceType::Camera, "remote video"_s })
+    : RealtimeIncomingSourceGStreamer(CaptureDevice { WTF::move(videoTrackId), CaptureDevice::DeviceType::Camera, "remote video"_s })
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -65,7 +65,7 @@ const RealtimeMediaSourceSettings& RealtimeIncomingVideoSourceGStreamer::setting
 
     settings.setSupportedConstraints(constraints);
 
-    m_currentSettings = WTFMove(settings);
+    m_currentSettings = WTF::move(settings);
     return m_currentSettings.value();
 }
 
@@ -108,7 +108,7 @@ void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& s
     options.rotation = rotation;
     options.isMirrored = isMirrored;
     options.contentHint = VideoFrameContentHint::WebRTC;
-    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), options), { });
+    videoFrameAvailable(VideoFrameGStreamer::create(WTF::move(sample), options), { });
 }
 
 const GstStructure* RealtimeIncomingVideoSourceGStreamer::stats()

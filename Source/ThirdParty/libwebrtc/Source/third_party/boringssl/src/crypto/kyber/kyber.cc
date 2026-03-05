@@ -244,7 +244,7 @@ static void scalar_sub(scalar *lhs, const scalar *rhs) {
 // the 2*ith and (2*i+1)th entries of the scalar as elements of GF(3329)[X]/(X^2
 // - 17^(2*bitreverse(i)+1)) The value of 17^(2*bitreverse(i)+1) mod 3329 is
 // stored in the precomputed |kModRoots| table. Note that our Barrett transform
-// only allows us to multipy two reduced numbers together, so we need some
+// only allows us to multiply two reduced numbers together, so we need some
 // intermediate reduction steps, even if an uint64_t could hold 3 multiplied
 // numbers.
 static void scalar_mult(scalar *out, const scalar *lhs, const scalar *rhs) {

@@ -57,7 +57,7 @@ static void callOnDelegateThread(Function<void()>&& function)
 {
     if (shouldCallOnNetworkThread())
         function();
-    callOnMainThread(WTFMove(function));
+    callOnMainThread(WTF::move(function));
 }
 
 template<typename Callable>
@@ -123,7 +123,7 @@ using namespace WebCore;
         ASSERT(isMainThread());
         returnValue = [realDelegate download:download willSendRequest:request redirectResponse:redirectResponse];
     };
-    callOnDelegateThreadAndWait(WTFMove(work));
+    callOnDelegateThreadAndWait(WTF::move(work));
     return returnValue.autorelease();
 }
 
@@ -132,9 +132,9 @@ using namespace WebCore;
 #if !PLATFORM(IOS_FAMILY)
     // Try previously stored credential first.
     if (![challenge previousFailureCount]) {
-        NSURLCredential *credential = NetworkStorageSessionMap::defaultStorageSession().credentialStorage().get(emptyString(), ProtectionSpace([challenge protectionSpace])).nsCredential();
+        RetainPtr credential = NetworkStorageSessionMap::defaultStorageSession().credentialStorage().get(emptyString(), ProtectionSpace([challenge protectionSpace])).nsCredential();
         if (credential) {
-            [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+            [[challenge sender] useCredential:credential.get() forAuthenticationChallenge:challenge];
             return;
         }
     }
@@ -175,7 +175,7 @@ using namespace WebCore;
     auto work = [&] {
         returnValue = [realDelegate download:download shouldDecodeSourceDataOfMIMEType:encodingType];
     };
-    callOnDelegateThreadAndWait(WTFMove(work));
+    callOnDelegateThreadAndWait(WTF::move(work));
     return returnValue;
 }
 

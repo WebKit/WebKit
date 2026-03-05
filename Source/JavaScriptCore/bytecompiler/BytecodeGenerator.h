@@ -334,7 +334,7 @@ namespace JSC {
         using OpNop = ::JSC::OpNop;
         using CodeBlock = std::unique_ptr<UnlinkedCodeBlockGenerator>;
         using InstructionType = JSInstruction;
-        static constexpr OpcodeID opcodeForDisablingOptimizations = op_end;
+        static constexpr OpcodeID opcodeForDisablingOptimizations = op_debug;
     };
 
     class BytecodeGenerator : public BytecodeGeneratorBase<JSGeneratorTraits> {
@@ -370,6 +370,7 @@ namespace JSC {
         bool usesThis() const { return m_scopeNode->usesThis(); }
         bool isFunctionNode() const { return m_scopeNode->isFunctionNode(); }
         bool hasShadowsArgumentsCodeFeature() const { return m_scopeNode->hasShadowsArgumentsFeature(); }
+        bool isAsyncFunctionWithoutAwait() const { return m_scopeNode->isAsyncFunctionWithoutAwait(); }
         LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_scopeNode->lexicallyScopedFeatures(); }
         PrivateBrandRequirement privateBrandRequirement() const { return m_codeBlock->privateBrandRequirement(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
@@ -775,7 +776,6 @@ namespace JSC {
         RegisterID* emitInc(RegisterID* srcDst);
         RegisterID* emitDec(RegisterID* srcDst);
 
-        RegisterID* emitOverridesHasInstance(RegisterID* dst, RegisterID* constructor, RegisterID* hasInstanceValue);
         RegisterID* emitInstanceof(RegisterID* dst, RegisterID* value, RegisterID* constructor, RegisterID* hasInstanceOrPrototype);
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src);
         RegisterID* emitInByVal(RegisterID* dst, RegisterID* property, RegisterID* base);
@@ -855,7 +855,6 @@ namespace JSC {
         RegisterID* emitCallDirectEval(RegisterID* dst, RegisterID* func, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
         RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
         RegisterID* emitCallVarargsInTailPosition(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
-        RegisterID* emitCallForwardArgumentsInTailPosition(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
 
         void emitCallIgnoreResult(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
 
@@ -877,7 +876,6 @@ namespace JSC {
         RegisterID* emitGetGlobalPrivate(RegisterID* dst, const Identifier& property);
 
         RegisterID* emitReturn(RegisterID* src);
-        RegisterID* emitEnd(RegisterID* src);
 
         RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, RegisterID* lazyThis, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitSuperConstruct(RegisterID* dst, RegisterID* func, RegisterID* lazyThis, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
@@ -928,7 +926,6 @@ namespace JSC {
         RegisterID* emitIsAsyncGenerator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSAsyncGeneratorType); }
         RegisterID* emitIsJSArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, ArrayType); }
         RegisterID* emitIsPromise(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSPromiseType); }
-        RegisterID* emitIsPromiseAllContext(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSPromiseAllContextType); }
         RegisterID* emitIsProxyObject(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, ProxyObjectType); }
         RegisterID* emitIsRegExpObject(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, RegExpObjectType); }
         RegisterID* emitIsMap(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSMapType); }
@@ -1047,6 +1044,8 @@ namespace JSC {
         void pushFinallyControlFlowScope(FinallyContext&);
         void popFinallyControlFlowScope();
 
+        bool hasFinallyScopes() const { return m_currentFinallyContext; }
+
         void pushOptionalChainTarget();
         void popOptionalChainTarget();
         void popOptionalChainTarget(RegisterID* dst, bool isDelete);
@@ -1117,9 +1116,9 @@ namespace JSC {
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
     public:
-        void disablePeepholeOptimization() { m_lastOpcodeID = op_end; }
+        void disablePeepholeOptimization() { m_lastOpcodeID = op_debug; }
     private:
-        bool canDoPeepholeOptimization() const { return m_lastOpcodeID != op_end; }
+        bool canDoPeepholeOptimization() const { return m_lastOpcodeID != op_debug; }
 
     public:
         bool isSuperUsedInInnerArrowFunction();
@@ -1220,7 +1219,7 @@ namespace JSC {
             if (isGeneratorOrAsyncFunctionWrapperParseMode(m_codeBlock->parseMode()) && isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
                 generatorOrAsyncWrapperFunctionParameterNames = getParameterNames();
 
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, InlineAttribute::None, scriptMode(), WTFMove(optionalVariablesUnderTDZ), WTFMove(generatorOrAsyncWrapperFunctionParameterNames), WTFMove(parentPrivateNameEnvironment), newDerivedContextType, needsClassFieldInitializer, privateBrandRequirement);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, InlineAttribute::None, scriptMode(), WTF::move(optionalVariablesUnderTDZ), WTF::move(generatorOrAsyncWrapperFunctionParameterNames), WTF::move(parentPrivateNameEnvironment), newDerivedContextType, needsClassFieldInitializer, privateBrandRequirement);
         }
 
         RefPtr<TDZEnvironmentLink> getVariablesUnderTDZ();

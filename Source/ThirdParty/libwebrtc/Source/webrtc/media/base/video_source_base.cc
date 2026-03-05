@@ -10,7 +10,6 @@
 
 #include "media/base/video_source_base.h"
 
-#include <algorithm>
 #include <vector>
 
 #include "absl/algorithm/container.h"
@@ -40,11 +39,9 @@ void VideoSourceBase::AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
 void VideoSourceBase::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   RTC_DCHECK(sink != nullptr);
   RTC_DCHECK(FindSinkPair(sink));
-  sinks_.erase(std::remove_if(sinks_.begin(), sinks_.end(),
-                              [sink](const SinkPair& sink_pair) {
-                                return sink_pair.sink == sink;
-                              }),
-               sinks_.end());
+  std::erase_if(sinks_, [sink](const SinkPair& sink_pair) {
+    return sink_pair.sink == sink;
+  });
 }
 
 VideoSourceBase::SinkPair* VideoSourceBase::FindSinkPair(
@@ -79,11 +76,9 @@ void VideoSourceBaseGuarded::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   RTC_DCHECK_RUN_ON(&source_sequence_);
   RTC_DCHECK(sink != nullptr);
   RTC_DCHECK(FindSinkPair(sink));
-  sinks_.erase(std::remove_if(sinks_.begin(), sinks_.end(),
-                              [sink](const SinkPair& sink_pair) {
-                                return sink_pair.sink == sink;
-                              }),
-               sinks_.end());
+  std::erase_if(sinks_, [sink](const SinkPair& sink_pair) {
+    return sink_pair.sink == sink;
+  });
 }
 
 VideoSourceBaseGuarded::SinkPair* VideoSourceBaseGuarded::FindSinkPair(

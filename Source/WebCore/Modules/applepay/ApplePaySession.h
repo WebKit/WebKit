@@ -60,7 +60,7 @@ struct ApplePayShippingMethodUpdate;
 template<typename> class ExceptionOr;
 
 class ApplePaySession final : public PaymentSession, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ApplePaySession);
+    WTF_MAKE_TZONE_ALLOCATED(ApplePaySession);
 public:
     static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, ApplePayPaymentRequest&&);
     virtual ~ApplePaySession();
@@ -101,7 +101,7 @@ public:
     ExceptionOr<void> completePaymentMethodSelection(ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems);
     ExceptionOr<void> completePayment(unsigned short status);
 
-    const ApplePaySessionPaymentRequest& paymentRequest() const { return m_paymentRequest; }
+    const ApplePaySessionPaymentRequest& paymentRequest() const LIFETIME_BOUND { return m_paymentRequest; }
 
 private:
     ApplePaySession(Document&, unsigned version, ApplePaySessionPaymentRequest&&);
@@ -109,16 +109,16 @@ private:
     // ActiveDOMObject.
     void stop() override;
     void suspend(ReasonForSuspension) override;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::ApplePaySession; }
-    ScriptExecutionContext* scriptExecutionContext() const override;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const override;
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
     // PaymentSession
-    unsigned version() const override;
+    unsigned version() const override { return m_version; }
     void validateMerchant(URL&&) override;
     void didAuthorizePayment(const Payment&) override;
     void didSelectShippingMethod(const ApplePayShippingMethod&) override;
@@ -129,23 +129,22 @@ private:
 #endif
     void didCancelPaymentSession(PaymentSessionError&&) override;
 
-    PaymentCoordinator& paymentCoordinator() const;
-    Ref<PaymentCoordinator> protectedPaymentCoordinator() const;
+    PaymentCoordinator& NODELETE paymentCoordinator() const;
 
-    bool canBegin() const;
-    bool canAbort() const;
-    bool canCancel() const;
-    bool canCompleteMerchantValidation() const;
-    bool canCompleteShippingMethodSelection() const;
-    bool canCompleteShippingContactSelection() const;
-    bool canCompletePaymentMethodSelection() const;
+    bool NODELETE canBegin() const;
+    bool NODELETE canAbort() const;
+    bool NODELETE canCancel() const;
+    bool NODELETE canCompleteMerchantValidation() const;
+    bool NODELETE canCompleteShippingMethodSelection() const;
+    bool NODELETE canCompleteShippingContactSelection() const;
+    bool NODELETE canCompletePaymentMethodSelection() const;
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    bool canCompleteCouponCodeChange() const;
+    bool NODELETE canCompleteCouponCodeChange() const;
 #endif
-    bool canCompletePayment() const;
-    bool canSuspendWithoutCanceling() const;
+    bool NODELETE canCompletePayment() const;
+    bool NODELETE canSuspendWithoutCanceling() const;
 
-    bool isFinalState() const;
+    bool NODELETE isFinalState() const;
 
     enum class State {
         Idle,
@@ -175,6 +174,8 @@ private:
     unsigned m_version;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(ApplePaySession)
 
 #endif

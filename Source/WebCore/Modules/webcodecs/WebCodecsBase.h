@@ -46,7 +46,7 @@ class WebCodecsBase
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsBase>
     , public ActiveDOMObject
     , public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsBase);
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsBase);
 public:
     virtual ~WebCodecsBase();
 
@@ -55,13 +55,12 @@ public:
     // ActiveDOMObject.
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
 protected:
     WebCodecsBase(ScriptExecutionContext&);
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void setState(WebCodecsCodecState state) { m_state = state; }
 
@@ -71,7 +70,7 @@ protected:
     void processControlMessageQueue();
     void clearControlMessageQueue();
     void clearControlMessageQueueAndMaybeScheduleDequeueEvent();
-    void blockControlMessageQueue();
+    void NODELETE blockControlMessageQueue();
     void unblockControlMessageQueue();
 
     virtual size_t maximumCodecOperationsEnqueued() const { return 1; }
@@ -84,7 +83,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     // Equivalent to spec's "Increment [[encodeQueueSize]]." or "Increment [[decodeQueueSize]]"
-    void incrementCodecQueueSize();
+    void NODELETE incrementCodecQueueSize();
     // Equivalent to spec's "Decrement [[encodeQueueSize]] or "Decrement [[decodeQueueSize]]" and run the Schedule Dequeue Event algorithm"
     void decrementCodecQueueSizeAndScheduleDequeueEvent();
     bool isCodecSaturated() const { return m_codecOperationsPending >= maximumCodecOperationsEnqueued(); }

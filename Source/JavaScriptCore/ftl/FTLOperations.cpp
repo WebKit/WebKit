@@ -39,19 +39,20 @@
 #include "JSArrayIterator.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCellButterfly.h"
 #include "JSCInlines.h"
+#include "JSGenerator.h"
 #include "JSGeneratorFunction.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMapIterator.h"
-#include "JSPromiseAllContext.h"
-#include "JSPromiseAllGlobalContext.h"
 #include "JSPromiseReaction.h"
 #include "JSRegExpStringIterator.h"
 #include "JSSetIterator.h"
+#include "JSStringIterator.h"
 #include "JSWrapForValidIterator.h"
 #include "RegExpObject.h"
 #include "ResourceExhaustion.h"
@@ -180,6 +181,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
         case JSSetIteratorType:
             materialize(jsCast<JSSetIterator*>(target));
             break;
+        case JSStringIteratorType:
+            materialize(jsCast<JSStringIterator*>(target));
+            break;
         case JSIteratorHelperType:
             materialize(jsCast<JSIteratorHelper*>(target));
             break;
@@ -189,14 +193,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
         case JSAsyncFromSyncIteratorType:
             materialize(jsCast<JSAsyncFromSyncIterator*>(target));
             break;
-        case JSPromiseAllContextType:
-            materialize(jsCast<JSPromiseAllContext*>(target));
-            break;
-        case JSPromiseAllGlobalContextType:
-            materialize(jsCast<JSPromiseAllGlobalContext*>(target));
-            break;
         case JSRegExpStringIteratorType:
             materialize(jsCast<JSRegExpStringIterator*>(target));
+            break;
+        case JSGeneratorType:
+            materialize(jsCast<JSGenerator*>(target));
+            break;
+        case JSAsyncGeneratorType:
+            materialize(jsCast<JSAsyncGenerator*>(target));
             break;
         case JSPromiseType:
             if (target->classInfo() == JSInternalPromise::info())
@@ -486,18 +490,20 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             return create.operator()<JSMapIterator>();
         case JSSetIteratorType:
             return create.operator()<JSSetIterator>();
+        case JSStringIteratorType:
+            return create.operator()<JSStringIterator>();
         case JSIteratorHelperType:
             return create.operator()<JSIteratorHelper>();
         case JSWrapForValidIteratorType:
             return create.operator()<JSWrapForValidIterator>();
         case JSAsyncFromSyncIteratorType:
             return create.operator()<JSAsyncFromSyncIterator>();
-        case JSPromiseAllContextType:
-            return create.operator()<JSPromiseAllContext>();
-        case JSPromiseAllGlobalContextType:
-            return create.operator()<JSPromiseAllGlobalContext>();
         case JSRegExpStringIteratorType:
             return create.operator()<JSRegExpStringIterator>();
+        case JSGeneratorType:
+            return create.operator()<JSGenerator>();
+        case JSAsyncGeneratorType:
+            return create.operator()<JSAsyncGenerator>();
         case JSPromiseType:
             if (structure->classInfoForCells() == JSInternalPromise::info())
                 return create.operator()<JSInternalPromise>();

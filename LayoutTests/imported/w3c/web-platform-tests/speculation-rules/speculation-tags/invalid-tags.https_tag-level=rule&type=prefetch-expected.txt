@@ -1,7 +1,7 @@
 
-FAIL Sec-Speculation-Tags [rule-based]: integer tag assert_false: expected false got true
-FAIL Sec-Speculation-Tags [rule-based]: object tag assert_false: expected false got true
-FAIL Sec-Speculation-Tags [rule-based]: null value tag assert_false: expected false got true
+PASS Sec-Speculation-Tags [rule-based]: integer tag
+PASS Sec-Speculation-Tags [rule-based]: object tag
+PASS Sec-Speculation-Tags [rule-based]: null value tag
 PASS Sec-Speculation-Tags [rule-based]: non-printable character tag
 PASS Sec-Speculation-Tags [rule-based]: string with non-printable character tag
 PASS Sec-Speculation-Tags [rule-based]: non-ascii string tag

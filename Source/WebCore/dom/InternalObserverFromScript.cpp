@@ -39,9 +39,9 @@ Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecuti
     return internalObserver;
 }
 
-Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecutionContext& context, SubscriptionObserver& subscription)
+Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecutionContext& context, SubscriptionObserver&& subscription)
 {
-    Ref internalObserver = adoptRef(*new InternalObserverFromScript(context, subscription));
+    Ref internalObserver = adoptRef(*new InternalObserverFromScript(context, WTF::move(subscription)));
     internalObserver->suspendIfNeeded();
     return internalObserver;
 }
@@ -86,12 +86,16 @@ InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& c
     : InternalObserver(context)
     , m_next(callback)
     , m_error(nullptr)
-    , m_complete(nullptr) { }
+    , m_complete(nullptr)
+{
+}
 
-InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, SubscriptionObserver& subscription)
+InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, SubscriptionObserver&& subscription)
     : InternalObserver(context)
-    , m_next(subscription.next)
-    , m_error(subscription.error)
-    , m_complete(subscription.complete) { }
+    , m_next(WTF::move(subscription.next))
+    , m_error(WTF::move(subscription.error))
+    , m_complete(WTF::move(subscription.complete))
+{
+}
 
 } // namespace WebCore

@@ -93,7 +93,7 @@ ThreadGlobalData& threadGlobalDataSlow()
 
     // No need to ref clientData here as we've just constructed it.
     SUPPRESS_UNCOUNTED_LOCAL auto* clientData = data.ptr();
-    thread.m_clientData = WTFMove(data);
+    thread.m_clientData = WTF::move(data);
     return *clientData;
 }
 
@@ -109,7 +109,7 @@ ThreadGlobalData& threadGlobalDataSlow()
     Ref data = adoptRef(*new ThreadGlobalData);
     // No need to ref clientData here as we've just constructed it.
     SUPPRESS_UNCOUNTED_LOCAL auto* clientData = data.ptr();
-    thread.m_clientData = WTFMove(data);
+    thread.m_clientData = WTF::move(data);
     return *clientData;
 }
 

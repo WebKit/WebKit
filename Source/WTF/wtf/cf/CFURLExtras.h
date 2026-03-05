@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
 
 typedef const struct __CFData* CFDataRef;

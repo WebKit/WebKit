@@ -47,24 +47,19 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSampleBufferDisplayLayer);
 
 RefPtr<RemoteSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::create(GPUConnectionToWebProcess& gpuConnection, SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection, RemoteSampleBufferDisplayLayerManager& remoteSampleBufferDisplayLayerManager)
 {
-    RefPtr layer = adoptRef(*new RemoteSampleBufferDisplayLayer(gpuConnection, identifier, WTFMove(connection), remoteSampleBufferDisplayLayerManager));
-    return layer->m_sampleBufferDisplayLayer ? WTFMove(layer) : nullptr;
+    RefPtr layer = adoptRef(*new RemoteSampleBufferDisplayLayer(gpuConnection, identifier, WTF::move(connection), remoteSampleBufferDisplayLayerManager));
+    return layer->m_sampleBufferDisplayLayer ? WTF::move(layer) : nullptr;
 }
 
 RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess& gpuConnection, SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection, RemoteSampleBufferDisplayLayerManager& remoteSampleBufferDisplayLayerManager)
     : m_gpuConnection(gpuConnection)
     , m_identifier(identifier)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
     , m_sampleBufferDisplayLayer(LocalSampleBufferDisplayLayer::create(*this))
     , m_sharedVideoFrameReader(Ref { gpuConnection.videoFrameObjectHeap() }, gpuConnection.webProcessIdentity())
     , m_remoteSampleBufferDisplayLayerManager(remoteSampleBufferDisplayLayerManager)
 {
     ASSERT(m_sampleBufferDisplayLayer);
-}
-
-RefPtr<WebCore::LocalSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::protectedSampleBufferDisplayLayer() const
-{
-    return m_sampleBufferDisplayLayer;
 }
 
 void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&& callback)
@@ -78,13 +73,13 @@ void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size
 #else
     UNUSED_PARAM(canShowWhileLocked);
 #endif
-    protectedSampleBufferDisplayLayer()->initialize(hideRootLayer, size, shouldMaintainAspectRatio, [weakThis = WeakPtr { *this }, contextOptions, callback = WTFMove(callback)](bool didSucceed) mutable {
+    protect(m_sampleBufferDisplayLayer)->initialize(hideRootLayer, size, shouldMaintainAspectRatio, [weakThis = WeakPtr { *this }, contextOptions, callback = WTF::move(callback)](bool didSucceed) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !didSucceed)
             return callback({ });
 
         protectedThis->m_layerHostingContext = LayerHostingContext::create(contextOptions);
-        protectedThis->m_layerHostingContext->setRootLayer(protectedThis->protectedSampleBufferDisplayLayer()->protectedRootLayer().get());
+        protectedThis->m_layerHostingContext->setRootLayer(protect(protect(protectedThis->m_sampleBufferDisplayLayer)->rootLayer()).get());
         callback(protectedThis->m_layerHostingContext->hostingContext());
     });
 }
@@ -102,12 +97,12 @@ RemoteSampleBufferDisplayLayer::~RemoteSampleBufferDisplayLayer()
 
 CGRect RemoteSampleBufferDisplayLayer::bounds() const
 {
-    return protectedSampleBufferDisplayLayer()->bounds();
+    return protect(m_sampleBufferDisplayLayer)->bounds();
 }
 
 void RemoteSampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
 {
-    protectedSampleBufferDisplayLayer()->updateDisplayMode(hideDisplayLayer, hideRootLayer);
+    protect(m_sampleBufferDisplayLayer)->updateDisplayMode(hideDisplayLayer, hideRootLayer);
 }
 
 void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRightAnnotated>&& fence)
@@ -116,7 +111,7 @@ void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std:
     RetainPtr<BELayerHierarchyHostingTransactionCoordinator> hostingUpdateCoordinator;
     if (fence && fence->sendRight.sendRight()) {
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
-        hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(WTFMove(*fence));
+        hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(WTF::move(*fence));
 #else
         hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(fence->sendRight.sendRight());
 #endif // ENABLE(MACH_PORT_LAYER_HOSTING)
@@ -125,25 +120,25 @@ void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std:
         else
             RELEASE_LOG_ERROR(Media, "Could not create hosting update coordinator");
     }
-    protectedSampleBufferDisplayLayer()->updateBoundsAndPosition(bounds, { });
+    protect(m_sampleBufferDisplayLayer)->updateBoundsAndPosition(bounds, { });
     if (hostingUpdateCoordinator)
         [hostingUpdateCoordinator commit];
 #else
     if (fence && fence->sendRight.sendRight())
         m_layerHostingContext->setFencePort(fence->sendRight.sendRight());
 
-    protectedSampleBufferDisplayLayer()->updateBoundsAndPosition(bounds, { });
+    protect(m_sampleBufferDisplayLayer)->updateBoundsAndPosition(bounds, { });
 #endif // USE(EXTENSIONKIT)
 }
 
 void RemoteSampleBufferDisplayLayer::flush()
 {
-    protectedSampleBufferDisplayLayer()->flush();
+    protect(m_sampleBufferDisplayLayer)->flush();
 }
 
 void RemoteSampleBufferDisplayLayer::flushAndRemoveImage()
 {
-    protectedSampleBufferDisplayLayer()->flushAndRemoveImage();
+    protect(m_sampleBufferDisplayLayer)->flushAndRemoveImage();
 }
 
 void RemoteSampleBufferDisplayLayer::play()
@@ -158,13 +153,13 @@ void RemoteSampleBufferDisplayLayer::pause()
 
 void RemoteSampleBufferDisplayLayer::enqueueVideoFrame(SharedVideoFrame&& frame)
 {
-    if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame)))
-        protectedSampleBufferDisplayLayer()->enqueueVideoFrame(*videoFrame);
+    if (auto videoFrame = m_sharedVideoFrameReader.read(WTF::move(frame)))
+        protect(m_sampleBufferDisplayLayer)->enqueueVideoFrame(*videoFrame);
 }
 
 void RemoteSampleBufferDisplayLayer::clearVideoFrames()
 {
-    protectedSampleBufferDisplayLayer()->clearVideoFrames();
+    protect(m_sampleBufferDisplayLayer)->clearVideoFrames();
 }
 
 IPC::Connection* RemoteSampleBufferDisplayLayer::messageSenderConnection() const
@@ -174,22 +169,22 @@ IPC::Connection* RemoteSampleBufferDisplayLayer::messageSenderConnection() const
 
 void RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidFail()
 {
-    send(Messages::SampleBufferDisplayLayer::SetDidFail { protectedSampleBufferDisplayLayer()->didFail() });
+    send(Messages::SampleBufferDisplayLayer::SetDidFail { protect(m_sampleBufferDisplayLayer)->didFail() });
 }
 
 void RemoteSampleBufferDisplayLayer::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
 {
-    m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
+    m_sharedVideoFrameReader.setSemaphore(WTF::move(semaphore));
 }
 
 void RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
+    m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
 }
 
 void RemoteSampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
 {
-    protectedSampleBufferDisplayLayer()->setShouldMaintainAspectRatio(shouldMaintainAspectRatio);
+    protect(m_sampleBufferDisplayLayer)->setShouldMaintainAspectRatio(shouldMaintainAspectRatio);
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteSampleBufferDisplayLayer::sharedPreferencesForWebProcess() const

@@ -13,10 +13,13 @@
 #include <cerrno>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
+#include <utility>
 
+#include "absl/base/nullability.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/transport/stun.h"
-#include "api/units/timestamp.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/byte_order.h"
@@ -25,7 +28,6 @@
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -42,20 +44,10 @@ inline bool IsStunMessage(uint16_t msg_type) {
   return (msg_type & 0xC000) ? false : true;
 }
 
-// AsyncStunTCPSocket
-// Binds and connects `socket` and creates AsyncTCPSocket for
-// it. Takes ownership of `socket`. Returns NULL if bind() or
-// connect() fail (`socket` is destroyed in that case).
-AsyncStunTCPSocket* AsyncStunTCPSocket::Create(
-    Socket* socket,
-    const SocketAddress& bind_address,
-    const SocketAddress& remote_address) {
-  return new AsyncStunTCPSocket(
-      AsyncTCPSocketBase::ConnectSocket(socket, bind_address, remote_address));
-}
-
-AsyncStunTCPSocket::AsyncStunTCPSocket(Socket* socket)
-    : AsyncTCPSocketBase(socket, kBufSize) {}
+AsyncStunTCPSocket::AsyncStunTCPSocket(
+    const Environment& env,
+    absl_nonnull std::unique_ptr<Socket> socket)
+    : AsyncTCPSocketBase(std::move(socket), kBufSize), env_(env) {}
 
 int AsyncStunTCPSocket::Send(const void* pv,
                              size_t cb,
@@ -89,7 +81,8 @@ int AsyncStunTCPSocket::Send(const void* pv,
     return res;
   }
 
-  SentPacketInfo sent_packet(options.packet_id, TimeMillis());
+  SentPacketInfo sent_packet(options.packet_id,
+                             env_.clock().TimeInMilliseconds());
   SignalSentPacket(this, sent_packet);
 
   // We claim to have sent the whole thing, even if we only sent partial
@@ -126,7 +119,7 @@ size_t AsyncStunTCPSocket::ProcessInput(ArrayView<const uint8_t> data) {
 
     ReceivedIpPacket received_packet(
         data.subview(processed_bytes, expected_pkt_len), remote_addr,
-        Timestamp::Micros(TimeMicros()));
+        env_.clock().CurrentTime());
     NotifyPacketReceived(received_packet);
     processed_bytes += actual_length;
   }

@@ -76,7 +76,7 @@ static void ssl_get_client_disabled(const SSL_HANDSHAKE *hs,
   *out_mask_k = 0;
 
   // PSK requires a client callback.
-  if (hs->config->psk_client_callback == NULL) {
+  if (hs->config->psk_client_callback == nullptr) {
     *out_mask_a |= SSL_aPSK;
     *out_mask_k |= SSL_kPSK;
   }
@@ -111,19 +111,19 @@ static bool ssl_write_client_cipher_list(const SSL_HANDSHAKE *hs, CBB *out,
   // hardware support.
   if (hs->max_version >= TLS1_3_VERSION) {
     static const uint16_t kCiphersNoAESHardware[] = {
-        TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
-        TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff,
-        TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff,
+        SSL_CIPHER_CHACHA20_POLY1305_SHA256,
+        SSL_CIPHER_AES_128_GCM_SHA256,
+        SSL_CIPHER_AES_256_GCM_SHA384,
     };
     static const uint16_t kCiphersAESHardware[] = {
-        TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff,
-        TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff,
-        TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
+        SSL_CIPHER_AES_128_GCM_SHA256,
+        SSL_CIPHER_AES_256_GCM_SHA384,
+        SSL_CIPHER_CHACHA20_POLY1305_SHA256,
     };
     static const uint16_t kCiphersCNSA[] = {
-        TLS1_3_CK_AES_256_GCM_SHA384 & 0xffff,
-        TLS1_3_CK_AES_128_GCM_SHA256 & 0xffff,
-        TLS1_3_CK_CHACHA20_POLY1305_SHA256 & 0xffff,
+        SSL_CIPHER_AES_256_GCM_SHA384,
+        SSL_CIPHER_AES_128_GCM_SHA256,
+        SSL_CIPHER_CHACHA20_POLY1305_SHA256,
     };
 
     const bool has_aes_hw = ssl->config->aes_hw_override
@@ -169,7 +169,7 @@ static bool ssl_write_client_cipher_list(const SSL_HANDSHAKE *hs, CBB *out,
   }
 
   if (ssl->mode & SSL_MODE_SEND_FALLBACK_SCSV) {
-    if (!CBB_add_u16(&child, SSL3_CK_FALLBACK_SCSV & 0xffff)) {
+    if (!CBB_add_u16(&child, SSL_CIPHER_FALLBACK_SCSV)) {
       return false;
     }
   }
@@ -240,7 +240,7 @@ bool ssl_add_client_hello(SSL_HANDSHAKE *hs) {
     // ClientHellOuterAAD computation would break.
     assert(type != ssl_client_hello_outer);
     if (!tls13_write_psk_binder(hs, hs->transcript, Span(msg),
-                                /*out_binder_len=*/0)) {
+                                /*out_binder_len=*/nullptr)) {
       return false;
     }
   }
@@ -665,8 +665,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
   }
 
   // Clear some TLS 1.3 state that no longer needs to be retained.
-  hs->key_shares[0].reset();
-  hs->key_shares[1].reset();
+  hs->key_shares.clear();
   ssl_done_writing_client_hello(hs);
 
   // TLS 1.2 handshakes cannot accept ECH.
@@ -688,7 +687,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
         sizeof(kJDK11DowngradeRandom) == sizeof(kTLS13DowngradeRandom),
         "downgrade signals have different size");
     auto suffix =
-        Span(ssl->s3->server_random).last(sizeof(kTLS13DowngradeRandom));
+        Span(ssl->s3->server_random).last<sizeof(kTLS13DowngradeRandom)>();
     if (suffix == kTLS12DowngradeRandom || suffix == kTLS13DowngradeRandom ||
         suffix == kJDK11DowngradeRandom) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_TLS13_DOWNGRADE);
@@ -750,7 +749,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
     ssl->s3->session_reused = true;
   } else {
     // The session wasn't resumed. Create a fresh SSL_SESSION to fill out.
-    ssl_set_session(ssl, NULL);
+    ssl_set_session(ssl, nullptr);
     if (!ssl_get_new_session(hs)) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
       return ssl_hs_error;
@@ -774,7 +773,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
   // If doing a full handshake, the server may request a client certificate
   // which requires hashing the handshake transcript. Otherwise, the handshake
   // buffer may be released.
-  if (ssl->session != NULL ||
+  if (ssl->session != nullptr ||
       !ssl_cipher_uses_certificate_auth(hs->new_cipher)) {
     hs->transcript.FreeBuffer();
   }
@@ -791,7 +790,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  if (ssl->session != NULL &&
+  if (ssl->session != nullptr &&
       hs->extended_master_secret != ssl->session->extended_master_secret) {
     if (ssl->session->extended_master_secret) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_RESUMED_EMS_SESSION_WITHOUT_EMS_EXTENSION);
@@ -804,7 +803,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
 
   ssl->method->next_message(ssl);
 
-  if (ssl->session != NULL) {
+  if (ssl->session != nullptr) {
     if (ssl->ctx->reverify_on_resume &&
         ssl_cipher_uses_certificate_auth(hs->new_cipher)) {
       hs->state = state_reverify_server_certificate;
@@ -849,7 +848,7 @@ static enum ssl_hs_wait_t do_read_server_certificate(SSL_HANDSHAKE *hs) {
   CBS body = msg.body;
   uint8_t alert = SSL_AD_DECODE_ERROR;
   if (!ssl_parse_cert_chain(&alert, &hs->new_session->certs, &hs->peer_pubkey,
-                            NULL, &body, ssl->ctx->pool)) {
+                            nullptr, &body, ssl->ctx->pool)) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
     return ssl_hs_error;
   }
@@ -1380,7 +1379,7 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
   unsigned psk_len = 0;
   uint8_t psk[PSK_MAX_PSK_LEN];
   if (alg_a & SSL_aPSK) {
-    if (hs->config->psk_client_callback == NULL) {
+    if (hs->config->psk_client_callback == nullptr) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_PSK_NO_CLIENT_CB);
       return ssl_hs_error;
     }
@@ -1415,7 +1414,7 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
   // Depending on the key exchange method, compute |pms|.
   if (alg_k & SSL_kRSA) {
     RSA *rsa = EVP_PKEY_get0_RSA(hs->peer_pubkey.get());
-    if (rsa == NULL) {
+    if (rsa == nullptr) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return ssl_hs_error;
     }
@@ -1647,7 +1646,7 @@ static bool can_false_start(const SSL_HANDSHAKE *hs) {
 
 static enum ssl_hs_wait_t do_finish_flight(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
-  if (ssl->session != NULL) {
+  if (ssl->session != nullptr) {
     hs->state = state_finish_client_handshake;
     return ssl_hs_ok;
   }
@@ -1758,7 +1757,7 @@ static enum ssl_hs_wait_t do_read_server_finished(SSL_HANDSHAKE *hs) {
     return wait;
   }
 
-  if (ssl->session != NULL) {
+  if (ssl->session != nullptr) {
     hs->state = state_send_client_finished;
     return ssl_hs_ok;
   }

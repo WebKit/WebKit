@@ -44,7 +44,7 @@
     if (!(self = [super init]))
         return nil;
 
-    m_service = WTFMove(service);
+    m_service = WTF::move(service);
 
     return self;
 }
@@ -82,7 +82,7 @@ void MockCcidService::platformStartDiscovery()
 {
     if (!!m_configuration.ccid) {
         auto card = adoptNS([[_WKMockTKSmartCard alloc] initWithService:this]);
-        onValidCard(WTFMove(card));
+        onValidCard(WTF::move(card), nullptr);
         return;
     }
     LOG_ERROR("No ccid authenticators is available.");

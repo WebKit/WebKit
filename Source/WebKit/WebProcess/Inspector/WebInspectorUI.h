@@ -107,6 +107,8 @@ public:
     void setDiagnosticLoggingAvailable(bool);
 #endif
 
+    void systemAppearanceDidChange();
+
     // WebCore::InspectorFrontendClient
     void windowObjectCleared() override;
     void frontendLoaded() override;
@@ -192,13 +194,13 @@ private:
     template<typename T>
     IPC::Error sendToParentProcess(T&& message)
     {
-        return WebProcess::singleton().protectedParentProcessConnection()->send(std::forward<T>(message), m_inspectedPageIdentifier ? m_inspectedPageIdentifier->toUInt64() : 0);
+        return protect(WebProcess::singleton().parentProcessConnection())->send(std::forward<T>(message), m_inspectedPageIdentifier ? m_inspectedPageIdentifier->toUInt64() : 0);
     }
 
     template<typename T, typename C>
     std::optional<IPC::AsyncReplyID> sendToParentProcessWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), m_inspectedPageIdentifier ? m_inspectedPageIdentifier->toUInt64() : 0);
+        return protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), m_inspectedPageIdentifier ? m_inspectedPageIdentifier->toUInt64() : 0);
     }
 
     WeakRef<WebPage> m_page;

@@ -37,13 +37,13 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 class PushSubscriptionOptions : public RefCounted<PushSubscriptionOptions> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushSubscriptionOptions);
+    WTF_MAKE_TZONE_ALLOCATED(PushSubscriptionOptions);
 public:
     template<typename... Args> static Ref<PushSubscriptionOptions> create(Args&&... args) { return adoptRef(*new PushSubscriptionOptions(std::forward<Args>(args)...)); }
     ~PushSubscriptionOptions();
 
-    bool userVisibleOnly() const;
-    const Vector<uint8_t>& serverVAPIDPublicKey() const;
+    bool NODELETE userVisibleOnly() const;
+    const Vector<uint8_t>& NODELETE serverVAPIDPublicKey() const;
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> applicationServerKey() const;
 
 private:

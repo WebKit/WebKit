@@ -36,7 +36,7 @@ class ValidationBubbleGtk final : public WebCore::ValidationBubble {
 public:
     static Ref<ValidationBubbleGtk> create(GtkWidget* webView, String&& message, const WebCore::ValidationBubble::Settings& settings)
     {
-        return adoptRef(*new ValidationBubbleGtk(webView, WTFMove(message), settings));
+        return adoptRef(*new ValidationBubbleGtk(webView, WTF::move(message), settings));
     }
 
     ~ValidationBubbleGtk();

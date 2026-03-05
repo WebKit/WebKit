@@ -34,6 +34,11 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+#include <WebCore/ParentalControlsContentFilter.h>
+#include <WebCore/ParentalControlsURLFilter.h>
+#endif
+
 namespace IPC {
 class Connection;
 }
@@ -58,12 +63,12 @@ class PendingDownload : public RefCounted<PendingDownload>, public NetworkLoadCl
 public:
     static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessId)
     {
-        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute, webProcessId));
+        return adoptRef(*new PendingDownload(connection, WTF::move(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute, webProcessId));
     }
 
     static Ref<PendingDownload> create(IPC::Connection* connection, Ref<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& responseCompletionHandler, DownloadID downloadID, const WebCore::ResourceRequest& resourceRequest, const WebCore::ResourceResponse& resourceResponse)
     {
-        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoad), WTFMove(responseCompletionHandler), downloadID, resourceRequest, resourceResponse));
+        return adoptRef(*new PendingDownload(connection, WTF::move(networkLoad), WTF::move(responseCompletionHandler), downloadID, resourceRequest, resourceResponse));
     }
 
     void ref() const final { RefCounted::ref(); }
@@ -95,14 +100,21 @@ private:
     void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&) override { };
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) override { };
     void didFailLoading(const WebCore::ResourceError&) override;
-    bool isDownloadTriggeredWithDownloadAttribute() const;
+    bool NODELETE isDownloadTriggeredWithDownloadAttribute() const;
 
     // MessageSender.
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    void blockDueToContentFilter(const WebCore::ResourceResponse&, CompletionHandler<void()>&& postBlockHandler);
+#endif
+
 private:
+    URL mainDocumentURL() const;
+
     const Ref<NetworkLoad> m_networkLoad;
+    DownloadID m_downloadID;
     RefPtr<IPC::Connection> m_parentProcessConnection;
     bool m_isAllowedToAskUserForCredentials;
     bool m_isDownloadCancelled = false;
@@ -118,6 +130,11 @@ private:
 #else
     SandboxExtension::Handle m_progressSandboxExtension;
 #endif
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    RefPtr<WebCore::ParentalControlsURLFilter> m_urlFilter;
+    bool m_wasBlockedDueToContentFilter : 1 { false };
 #endif
 };
 

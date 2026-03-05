@@ -24,6 +24,7 @@
 #include "api/candidate.h"
 #include "api/field_trials_view.h"
 #include "api/packet_socket_factory.h"
+#include "api/units/time_delta.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/port.h"
 #include "p2p/base/port_interface.h"
@@ -39,10 +40,9 @@
 
 namespace webrtc {
 
-// Lifetime chosen for STUN ports on low-cost networks.
-static const int INFINITE_LIFETIME = -1;
 // Lifetime for STUN ports on high-cost networks: 2 minutes
-static const int HIGH_COST_PORT_KEEPALIVE_LIFETIME = 2 * 60 * 1000;
+inline constexpr TimeDelta kHighCostPortKeepaliveLifetime =
+    TimeDelta::Seconds(2 * 60);
 
 // Communicates using the address on the outside of a NAT.
 class RTC_EXPORT UDPPort : public Port {
@@ -51,7 +51,7 @@ class RTC_EXPORT UDPPort : public Port {
       const PortParametersRef& args,
       AsyncPacketSocket* socket,
       bool emit_local_for_anyaddress,
-      std::optional<int> stun_keepalive_interval) {
+      std::optional<TimeDelta> stun_keepalive_interval) {
     // Using `new` to access a non-public constructor.
     auto port = absl::WrapUnique(new UDPPort(
         args, IceCandidateType::kHost, socket, emit_local_for_anyaddress));
@@ -67,7 +67,7 @@ class RTC_EXPORT UDPPort : public Port {
       uint16_t min_port,
       uint16_t max_port,
       bool emit_local_for_anyaddress,
-      std::optional<int> stun_keepalive_interval) {
+      std::optional<TimeDelta> stun_keepalive_interval) {
     // Using `new` to access a non-public constructor.
     auto port =
         absl::WrapUnique(new UDPPort(args, IceCandidateType::kHost, min_port,
@@ -104,12 +104,12 @@ class RTC_EXPORT UDPPort : public Port {
 
   void GetStunStats(std::optional<StunStats>* stats) override;
 
-  void set_stun_keepalive_delay(const std::optional<int>& delay);
-  int stun_keepalive_delay() const { return stun_keepalive_delay_; }
+  void set_stun_keepalive_delay(const std::optional<TimeDelta>& delay);
+  TimeDelta stun_keepalive_delay() const { return stun_keepalive_delay_; }
 
   // Visible for testing.
-  int stun_keepalive_lifetime() const { return stun_keepalive_lifetime_; }
-  void set_stun_keepalive_lifetime(int lifetime) {
+  TimeDelta stun_keepalive_lifetime() const { return stun_keepalive_lifetime_; }
+  void set_stun_keepalive_lifetime(TimeDelta lifetime) {
     stun_keepalive_lifetime_ = lifetime;
   }
 
@@ -201,7 +201,7 @@ class RTC_EXPORT UDPPort : public Port {
   void SendStunBindingRequest(const SocketAddress& stun_addr);
 
   // Below methods handles binding request responses.
-  void OnStunBindingRequestSucceeded(int rtt_ms,
+  void OnStunBindingRequestSucceeded(TimeDelta rtt,
                                      const SocketAddress& stun_server_addr,
                                      const SocketAddress& stun_reflected_addr);
   void OnStunBindingOrResolveRequestFailed(
@@ -220,24 +220,25 @@ class RTC_EXPORT UDPPort : public Port {
 
   // If this is a low-cost network, it will keep on sending STUN binding
   // requests indefinitely to keep the NAT binding alive. Otherwise, stop
-  // sending STUN binding requests after HIGH_COST_PORT_KEEPALIVE_LIFETIME.
-  int GetStunKeepaliveLifetime() {
-    return (network_cost() >= kNetworkCostHigh)
-               ? HIGH_COST_PORT_KEEPALIVE_LIFETIME
-               : INFINITE_LIFETIME;
+  // sending STUN binding requests after kHighCostPortKeepaliveLifetime.
+  TimeDelta GetStunKeepaliveLifetime() {
+    return (network_cost() >= kNetworkCostHigh) ? kHighCostPortKeepaliveLifetime
+                                                : TimeDelta::PlusInfinity();
   }
 
   ServerAddresses server_addresses_;
   ServerAddresses bind_request_succeeded_servers_;
   ServerAddresses bind_request_failed_servers_;
   StunRequestManager request_manager_;
+
   AsyncPacketSocket* socket_;
+  std::unique_ptr<AsyncPacketSocket> owned_socket_;
   int error_;
   int send_error_count_ = 0;
   std::unique_ptr<AddressResolver> resolver_;
   bool ready_;
-  int stun_keepalive_delay_;
-  int stun_keepalive_lifetime_ = INFINITE_LIFETIME;
+  TimeDelta stun_keepalive_delay_;
+  TimeDelta stun_keepalive_lifetime_ = TimeDelta::PlusInfinity();
   DiffServCodePoint dscp_;
 
   StunStats stats_;
@@ -256,7 +257,7 @@ class StunPort : public UDPPort {
       uint16_t min_port,
       uint16_t max_port,
       const ServerAddresses& servers,
-      std::optional<int> stun_keepalive_interval);
+      std::optional<TimeDelta> stun_keepalive_interval);
 
   void PrepareAddress() override;
 

@@ -50,6 +50,7 @@
 #include "InlineIteratorLineBox.h"
 #include "LineSelection.h"
 #include "LocalFrame.h"
+#include "LogicalSelectionOffsetCachesInlines.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
@@ -58,25 +59,21 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFragmentedFlow.h"
-#include "RenderImageResourceStyleImage.h"
+#include "RenderImageResource.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SVGSVGElement.h"
+#include "SelectionGeometry.h"
 #include "Settings.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "TextPainter.h"
 #include <wtf/StackStats.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/TZoneMallocInlines.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include "LogicalSelectionOffsetCachesInlines.h"
-#include "SelectionGeometry.h"
-#endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 #include "MultiRepresentationHEICMetrics.h"
@@ -93,9 +90,8 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderImage);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderImage);
 
-#if PLATFORM(IOS_FAMILY)
 // FIXME: This doesn't behave correctly for floating or positioned images, but WebCore doesn't handle those well
 // during selection creation yet anyway.
 // FIXME: We can't tell whether or not we contain the start or end of the selected Range using only the offsets
@@ -153,13 +149,12 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
     // an auxiliary struct to simplify its initialization.
     geometries.append(SelectionGeometry(absoluteQuad, SelectionRenderingBehavior::CoalesceBoundingRects, containingBlock->writingMode().bidiDirection(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->writingMode().isHorizontal(), isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
 }
-#endif
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags, StyleImage* styleImage, const float imageDevicePixelRatio)
-    : RenderReplaced(type, element, WTFMove(style), IntSize(), flags | ReplacedFlag::IsImage)
-    , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
+RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags, Style::Image* styleImage, const float imageDevicePixelRatio)
+    : RenderReplaced(type, element, WTF::move(style), IntSize(), flags | ReplacedFlag::IsImage)
+    , m_imageResource(makeUnique<RenderImageResource>(styleImage))
     , m_hasImageOverlay([&] {
         auto* htmlElement = dynamicDowncast<HTMLElement>(element);
         return htmlElement && ImageOverlay::hasOverlay(*htmlElement);
@@ -177,14 +172,14 @@ RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Optio
 #endif
 }
 
-RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
-    : RenderImage(type, element, WTFMove(style), ReplacedFlag::IsImage, styleImage, imageDevicePixelRatio)
+RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Style::Image* styleImage, const float imageDevicePixelRatio)
+    : RenderImage(type, element, WTF::move(style), ReplacedFlag::IsImage, styleImage, imageDevicePixelRatio)
 {
 }
 
-RenderImage::RenderImage(Type type, Document& document, RenderStyle&& style, StyleImage* styleImage)
-    : RenderReplaced(type, document, WTFMove(style), IntSize(), ReplacedFlag::IsImage)
-    , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
+RenderImage::RenderImage(Type type, Document& document, RenderStyle&& style, Style::Image* styleImage)
+    : RenderReplaced(type, document, WTF::move(style), IntSize(), ReplacedFlag::IsImage)
+    , m_imageResource(makeUnique<RenderImageResource>(styleImage))
 {
 }
 
@@ -193,7 +188,7 @@ RenderImage::~RenderImage() = default;
 
 void RenderImage::willBeDestroyed()
 {
-    imageResource().shutdown();
+    imageResource().willBeDestroyed();
     RenderReplaced::willBeDestroyed();
 }
 
@@ -250,14 +245,14 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     return ImageSizeChangeForAltText;
 }
 
-void RenderImage::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
+void RenderImage::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     if (!hasInitializedStyle())
         imageResource().initialize(*this);
     RenderReplaced::styleWillChange(diff, newStyle);
 }
 
-void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderImage::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
     if (m_needsToSetSizeForAltText) {
@@ -266,7 +261,7 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         m_needsToSetSizeForAltText = false;
     }
 
-    if (oldStyle && diff == StyleDifference::Layout) {
+    if (oldStyle && diff == Style::DifferenceResult::Layout) {
         if (oldStyle->imageOrientation() != style().imageOrientation())
             return repaintOrMarkForLayout(ImageSizeChangeNone);
 
@@ -348,7 +343,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (auto* image = cachedImage(); image && image->currentFrameIsComplete(this)) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protectedDocument()->didLoadImage(styleable->protectedElement().get(), image);
+            protect(document())->didLoadImage(protect(styleable->element).get(), image);
     }
 }
 
@@ -362,10 +357,13 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 void RenderImage::updateInnerContentRect()
 {
     // Propagate container size to image resource.
-    IntSize containerSize(replacedContentRect().size());
+    IntSize containerSize = isDimensionlessSVG()
+        ? flooredIntSize(contentBoxRect().size())
+        : flooredIntSize(replacedContentRect().size());
+
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
-        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
             imageSourceURL = imageElement->currentURL();
         imageResource().setContainerContext(containerSize, imageSourceURL);
     }
@@ -402,7 +400,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     }
 
     if (parent()) {
-        auto repaintRect = contentBoxRect();
+        auto repaintRect = replacedContentRect();
         if (rect) {
             // The image changed rect is in source image coordinates (pre-zooming),
             // so map from the bounds of the image to the contentsBox.
@@ -455,6 +453,20 @@ bool RenderImage::isShowingAltText() const
     return isShowingMissingOrImageError() && !m_altText.isEmpty();
 }
 
+bool RenderImage::isDimensionlessSVG() const
+{
+    auto* cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return false;
+    RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image());
+    if (!svgImage)
+        return false;
+    RefPtr rootElement = svgImage->rootElement();
+    if (!rootElement)
+        return false;
+    return !rootElement->hasIntrinsicDimensions();
+}
+
 bool RenderImage::shouldDisplayBrokenImageIcon() const
 {
     return imageResource().errorOccurred();
@@ -467,7 +479,7 @@ bool RenderImage::shouldRespectZeroIntrinsicWidth() const
     auto* cachedImage = this->cachedImage();
     if (!cachedImage)
         return false;
-    if (auto* svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
+    if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
         if (auto rootElement = svgImage->rootElement())
             return rootElement->hasIntrinsicWidth();
     }
@@ -516,7 +528,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(*this))
+        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
             cachedImage()->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
@@ -594,22 +606,24 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                     if (availableLogicalWidth < textWidth)
                         return false;
                     auto availableLogicalHeight = isHorizontal ? (errorPictureDrawn ? imageOffset.height() : usableSize.height()) : usableSize.width();
-                    return availableLogicalHeight >= fontMetrics.intHeight();
+                    return availableLogicalHeight >= (settings().subpixelInlineLayoutEnabled() ? fontMetrics.height() : fontMetrics.intHeight());
                 };
                 if (hasRoomForAltText()) {
-                    context.setFillColor(style.visitedDependentColorWithColorFilter(CSSPropertyColor));
+                    context.setFillColor(style.visitedDependentColorApplyingColorFilter());
                     if (isHorizontal) {
                         auto altTextLocation = [&]() -> LayoutPoint {
                             auto contentHorizontalOffset = LayoutUnit { leftBorder + leftPadding + (paddingWidth / 2) - missingImageBorderWidth };
-                            auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.intAscent() + (paddingHeight / 2) - missingImageBorderWidth };
+                            auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + (settings().subpixelInlineLayoutEnabled() ? fontMetrics.ascent() : fontMetrics.intAscent()) + (paddingHeight / 2) - missingImageBorderWidth };
                             if (!style.writingMode().isInlineLeftToRight())
                                 contentHorizontalOffset += contentSize.width() - textWidth;
                             return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
                         };
-                        context.drawBidiText(fontCascade, textRun, altTextLocation());
+                        auto textOrigin = altTextLocation();
+                        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, document().deviceScaleFactor()));
+                        context.drawBidiText(fontCascade, textRun, textOrigin);
                     } else {
                         // FIXME: TextBoxPainter has this logic already, maybe we should transition to some painter class.
-                        auto contentLogicalHeight = fontMetrics.intHeight();
+                        auto contentLogicalHeight = settings().subpixelInlineLayoutEnabled() ? fontMetrics.height() : fontMetrics.intHeight();
                         auto adjustedPaintOffset = LayoutPoint { paintOffset.x(), paintOffset.y() - contentLogicalHeight };
 
                         auto visualLeft = size().width() / 2 - contentLogicalHeight / 2;
@@ -618,10 +632,13 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                             visualLeft = size().width() - visualRight;
                         visualLeft += adjustedPaintOffset.x();
 
+                        visualLeft = roundToDevicePixel(visualLeft, document().deviceScaleFactor());
+                        adjustedPaintOffset.setY(roundToDevicePixel(adjustedPaintOffset.y(), document().deviceScaleFactor()));
+
                         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
                         context.concatCTM(rotation(rotationRect, RotationDirection::Clockwise));
-                        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().intAscent() };
-                        context.drawBidiText(fontCascade, textRun, textOrigin);
+                        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + (settings().subpixelInlineLayoutEnabled() ? fontCascade.metricsOfPrimaryFont().ascent() : fontCascade.metricsOfPrimaryFont().intAscent()) };
+                        context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, document().deviceScaleFactor()));
                         context.concatCTM(rotation(rotationRect, RotationDirection::Counterclockwise));
                     }
                 }
@@ -647,8 +664,18 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     LayoutRect contentBoxRect = this->contentBoxRect();
     contentBoxRect.moveBy(paintOffset);
-    LayoutRect replacedContentRect = this->replacedContentRect();
-    replacedContentRect.moveBy(paintOffset);
+
+    // For SVGs without intrinsic dimensions (no width/height/viewBox), use
+    // contentBoxRect for painting. Images without intrinsic dimensions
+    // fill the object area, so object-fit should have no effect.
+    LayoutRect replacedContentRect;
+    if (isDimensionlessSVG())
+        replacedContentRect = contentBoxRect;
+    else {
+        replacedContentRect = this->replacedContentRect();
+        replacedContentRect.moveBy(paintOffset);
+    }
+
     bool clip = !contentBoxRect.contains(replacedContentRect);
     GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)
@@ -672,7 +699,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             if (auto styleable = Styleable::fromRenderer(*this)) {
                 auto localVisibleRect = visibleRect;
                 localVisibleRect.moveBy(-paintOffset);
-                protectedDocument()->didPaintImage(styleable->element, cachedImage(), localVisibleRect);
+                protect(document())->didPaintImage(styleable->element, cachedImage(), localVisibleRect);
             }
         }
     }
@@ -702,7 +729,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (!areaElementStyle)
         return;
 
-    auto outlineWidth = Style::evaluate<float>(areaElementStyle->outlineWidth(), areaElementStyle->usedZoomForLength());
+    auto outlineWidth = Style::evaluate<float>(areaElementStyle->usedOutlineWidth(), Style::ZoomNeeded { });
     if (!outlineWidth)
         return;
 
@@ -725,7 +752,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
     paintInfo.context().drawFocusRing(path, outlineWidth, RenderTheme::singleton().focusRingColor(styleOptions));
 #else
-    paintInfo.context().drawFocusRing(path, outlineWidth, areaElementStyle->visitedDependentColorWithColorFilter(CSSPropertyOutlineColor));
+    paintInfo.context().drawFocusRing(path, outlineWidth, areaElementStyle->visitedDependentOutlineColorApplyingColorFilter());
 #endif // PLATFORM(MAC)
 }
 
@@ -749,13 +776,13 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         return ImageDrawResult::DidNothing;
 
     // FIXME: Document when image != img.get().
-    auto* image = imageResource().image().unsafeGet();
+    RefPtr image = imageResource().image();
 
     ImagePaintingOptions options = {
         CompositeOperator::SourceOver,
         decodingModeForImageDraw(*image, paintInfo),
         imageOrientation(),
-        image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationQuality::Default,
+        image ? chooseInterpolationQuality(paintInfo.context(), *image, image.get(), LayoutSize(rect.size())) : InterpolationQuality::Default,
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
 #if USE(SKIA)
@@ -775,7 +802,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         drawResult = paintInfo.context().drawImage(*img, rect, options);
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
+        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(cachedImageClient());
 
 #if USE(SYSTEM_PREVIEW)
     auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
@@ -800,7 +827,7 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
     auto backgroundClip = style().backgroundLayers().usedFirst().clip();
     // Background paints under borders.
-    if (backgroundClip == FillBox::BorderBox && style().hasBorder() && !borderObscuresBackground())
+    if (backgroundClip == FillBox::BorderBox && style().border().hasBorder() && !borderObscuresBackground())
         return false;
     // Background shows in padding area.
     if ((backgroundClip == FillBox::BorderBox || backgroundClip == FillBox::PaddingBox) && !Style::isKnownZero(style().paddingBox()))
@@ -809,7 +836,7 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     if (auto objectFit = style().objectFit(); objectFit != ObjectFit::Fill && objectFit != ObjectFit::Cover)
         return false;
 
-    if (style().objectPosition() != RenderStyle::initialObjectPosition())
+    if (style().objectPosition() != Style::ComputedStyle::initialObjectPosition())
         return false;
 
     // Check for image with alpha.
@@ -834,7 +861,7 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
 
 RefPtr<HTMLMapElement> RenderImage::imageMap() const
 {
-    auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
+    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
     return imageElement ? imageElement->associatedMapElement() : nullptr;
 }
 
@@ -867,15 +894,15 @@ void RenderImage::updateAltText()
     if (!element())
         return;
 
-    if (auto* input = dynamicDowncast<HTMLInputElement>(*element()))
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element()))
         m_altText = input->altText();
-    else if (auto* image = dynamicDowncast<HTMLImageElement>(*element()))
+    else if (RefPtr image = dynamicDowncast<HTMLImageElement>(*element()))
         m_altText = image->altText();
 
     if (m_altText.isNull()) {
         // We check isNull() and not isEmpty() because we don't want to override empty-string
         // alt text provided by either of the above branches.
-        m_altText = style().altFromContent();
+        m_altText = style().content().altText();
     }
 }
 
@@ -944,15 +971,10 @@ bool RenderImage::shouldInvalidatePreferredWidths() const
 RenderBox* RenderImage::embeddedContentBox() const
 {
     if (auto* cachedImage = this->cachedImage()) {
-        if (auto* image = dynamicDowncast<SVGImage>(cachedImage->image()))
+        if (RefPtr image = dynamicDowncast<SVGImage>(cachedImage->image()))
             return image->embeddedContentBox();
     }
     return nullptr;
-}
-
-CheckedRef<RenderImageResource> RenderImage::checkedImageResource() const
-{
-    return *m_imageResource;
 }
 
 } // namespace WebCore

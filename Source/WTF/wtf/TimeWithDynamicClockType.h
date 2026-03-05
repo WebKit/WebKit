@@ -92,11 +92,11 @@ public:
     }
     
     // Asserts that the time is of the type you want.
-    WTF_EXPORT_PRIVATE WallTime wallTime() const;
-    WTF_EXPORT_PRIVATE MonotonicTime monotonicTime() const;
-    WTF_EXPORT_PRIVATE ApproximateTime approximateTime() const;
-    WTF_EXPORT_PRIVATE ContinuousTime continuousTime() const;
-    WTF_EXPORT_PRIVATE ContinuousApproximateTime continuousApproximateTime() const;
+    WTF_EXPORT_PRIVATE WallTime NODELETE wallTime() const;
+    WTF_EXPORT_PRIVATE MonotonicTime NODELETE monotonicTime() const;
+    WTF_EXPORT_PRIVATE ApproximateTime NODELETE approximateTime() const;
+    WTF_EXPORT_PRIVATE ContinuousTime NODELETE continuousTime() const;
+    WTF_EXPORT_PRIVATE ContinuousApproximateTime NODELETE continuousApproximateTime() const;
 
     WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
     WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;

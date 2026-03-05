@@ -43,7 +43,7 @@ public:
     static Ref<FileSystemStorageManager> create(String&& path, FileSystemStorageHandleRegistry&, QuotaCheckFunction&&);
     ~FileSystemStorageManager();
 
-    bool isActive() const;
+    bool NODELETE isActive() const;
     uint64_t allocatedUnusedCapacity() const;
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
     const String& getPath(WebCore::FileSystemHandleIdentifier);
@@ -68,7 +68,7 @@ private:
     WeakPtr<FileSystemStorageHandleRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
-    HashMap<WebCore::FileSystemHandleIdentifier, RefPtr<FileSystemStorageHandle>> m_handles;
+    HashMap<WebCore::FileSystemHandleIdentifier, Ref<FileSystemStorageHandle>> m_handles;
     HashMap<String, Lock> m_lockMap;
 };
 

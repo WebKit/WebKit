@@ -85,6 +85,7 @@ messages -> NetworkProcessProxy WantsDispatchMessage {
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     GetWindowSceneAndBundleIdentifierForPaymentPresentation(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String sceneIdentifier, String bundleIdentifier)
+    NotifyWillPresentPaymentUI(WebKit::WebPageProxyIdentifier webPageProxyIdentifier)
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)

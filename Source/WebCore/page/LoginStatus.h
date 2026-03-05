@@ -38,7 +38,7 @@ template<typename> class ExceptionOr;
 enum class LoginStatusAuthenticationType : uint8_t { WebAuthn, PasswordManager, Unmanaged };
 
 class LoginStatus {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(LoginStatus, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LoginStatus, WEBCORE_EXPORT);
 public:
     static constexpr uint32_t UsernameMaxLength = 64;
     static constexpr Seconds TimeToLiveAuthentication { 30_s };
@@ -56,8 +56,8 @@ public:
     WEBCORE_EXPORT bool hasExpired() const;
     WEBCORE_EXPORT WallTime expiry() const;
 
-    const RegistrableDomain& domain() const { return m_domain; }
-    const String& username() const { return m_username; }
+    const RegistrableDomain& domain() const LIFETIME_BOUND { return m_domain; }
+    const String& username() const LIFETIME_BOUND { return m_username; }
     CredentialTokenType tokenType() const { return m_tokenType; }
     AuthenticationType authType() const { return m_authType; }
     WallTime loggedInTime() const { return m_loggedInTime; }

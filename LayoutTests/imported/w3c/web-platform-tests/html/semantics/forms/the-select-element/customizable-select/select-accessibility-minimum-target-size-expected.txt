@@ -1,9 +1,9 @@
 
 
-FAIL horizontal-tb "": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button height must be at least 24 pixels. expected a number greater than or equal to 24 but got 20
-FAIL vertical-lr "": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 20
-FAIL vertical-rl "": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 20
-FAIL horizontal-tb "i": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button height must be at least 24 pixels. expected a number greater than or equal to 24 but got 20
-FAIL vertical-lr "i": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 20
-FAIL vertical-rl "i": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 20
+FAIL horizontal-tb "": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 2
+FAIL vertical-lr "": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 15
+FAIL vertical-rl "": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 15
+FAIL horizontal-tb "i": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 4.796875
+FAIL vertical-lr "i": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 15
+FAIL vertical-rl "i": Select with appearance:base-select should have targets for pointer inputs be at least 24x24 CSS pixels. assert_greater_than_equal: Button width must be at least 24 pixels. expected a number greater than or equal to 24 but got 15
 

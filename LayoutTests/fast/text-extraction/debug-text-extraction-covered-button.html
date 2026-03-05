@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <button id="covered-button" aria-label="Covered Button">Click Me</button>
+    <h1 class="click-count">0</h1>
+    <div class="overlay"></div>
+    <div class="popup">
+        <p>This popup covers the button.</p>
+    </div>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        clickCount = document.querySelector(".click-count");
+
+        document.getElementById("covered-button").addEventListener("click", () => {
+            clickCount.textContent = parseInt(clickCount.textContent) + 1;
+        });
+
+        if (!window.testRunner)
+            return;
+
+        const debugText = await UIHelper.requestDebugText({
+            nodeIdentifierInclusion: "interactive",
+            includeAccessibilityAttributes: true,
+            eventListenerCategories: ["all"],
+        });
+
+        clickError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Covered Button")
+        });
+
+        shouldBeEqualToString("clickError", "");
+        shouldBeEqualToString("clickCount.textContent", "1");
+
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

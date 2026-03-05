@@ -80,6 +80,18 @@ cl_int IcdGetPlatformIDsKHR(cl_uint num_entries, cl_platform_id *platforms, cl_u
     CL_RETURN_ERROR((Platform::GetPlatformIDs(num_entries, platforms, num_platforms)));
 }
 
+void *IcdGetFunctionAddressForPlatformKHR(cl_platform_id platform, const char *func_name)
+{
+    WARN_NOT_SUPPORTED(IcdGetFunctionAddressForPlatformKHR);
+    return 0;
+}
+
+cl_int IcdSetPlatformDispatchDataKHR(cl_platform_id platform, void *dispatch_data)
+{
+    WARN_NOT_SUPPORTED(IcdSetPlatformDispatchDataKHR);
+    return CL_INVALID_OPERATION;
+}
+
 cl_int GetPlatformIDs(cl_uint num_entries, cl_platform_id *platforms, cl_uint *num_platforms)
 {
     CL_RETURN_ERROR(Platform::GetPlatformIDs(num_entries, platforms, num_platforms));
@@ -755,9 +767,9 @@ cl_int EnqueueReadBufferRect(cl_command_queue command_queue,
                              cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueReadBufferRect(
-        buffer, blocking_read, cl::MemOffsets{buffer_origin[0], buffer_origin[1], buffer_origin[2]},
-        cl::MemOffsets{host_origin[0], host_origin[1], host_origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, buffer_row_pitch, buffer_slice_pitch,
+        buffer, blocking_read, cl::Offset{buffer_origin[0], buffer_origin[1], buffer_origin[2]},
+        cl::Offset{host_origin[0], host_origin[1], host_origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, buffer_row_pitch, buffer_slice_pitch,
         host_row_pitch, host_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event));
 }
 
@@ -792,10 +804,9 @@ cl_int EnqueueWriteBufferRect(cl_command_queue command_queue,
                               cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueWriteBufferRect(
-        buffer, blocking_write,
-        cl::MemOffsets{buffer_origin[0], buffer_origin[1], buffer_origin[2]},
-        cl::MemOffsets{host_origin[0], host_origin[1], host_origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, buffer_row_pitch, buffer_slice_pitch,
+        buffer, blocking_write, cl::Offset{buffer_origin[0], buffer_origin[1], buffer_origin[2]},
+        cl::Offset{host_origin[0], host_origin[1], host_origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, buffer_row_pitch, buffer_slice_pitch,
         host_row_pitch, host_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event));
 }
 
@@ -844,10 +855,10 @@ cl_int EnqueueCopyBufferRect(cl_command_queue command_queue,
                              cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyBufferRect(
-        src_buffer, dst_buffer, cl::MemOffsets{src_origin[0], src_origin[1], src_origin[2]},
-        cl::MemOffsets{dst_origin[0], dst_origin[1], dst_origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, src_row_pitch, src_slice_pitch,
-        dst_row_pitch, dst_slice_pitch, num_events_in_wait_list, event_wait_list, event));
+        src_buffer, dst_buffer, cl::Offset{src_origin[0], src_origin[1], src_origin[2]},
+        cl::Offset{dst_origin[0], dst_origin[1], dst_origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, src_row_pitch, src_slice_pitch, dst_row_pitch,
+        dst_slice_pitch, num_events_in_wait_list, event_wait_list, event));
 }
 
 cl_int EnqueueReadImage(cl_command_queue command_queue,
@@ -863,8 +874,8 @@ cl_int EnqueueReadImage(cl_command_queue command_queue,
                         cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueReadImage(
-        image, blocking_read, cl::MemOffsets{origin[0], origin[1], origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, row_pitch, slice_pitch, ptr,
+        image, blocking_read, cl::Offset{origin[0], origin[1], origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, row_pitch, slice_pitch, ptr,
         num_events_in_wait_list, event_wait_list, event));
 }
 
@@ -881,8 +892,8 @@ cl_int EnqueueWriteImage(cl_command_queue command_queue,
                          cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueWriteImage(
-        image, blocking_write, cl::MemOffsets{origin[0], origin[1], origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, input_row_pitch, input_slice_pitch, ptr,
+        image, blocking_write, cl::Offset{origin[0], origin[1], origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, input_row_pitch, input_slice_pitch, ptr,
         num_events_in_wait_list, event_wait_list, event));
 }
 
@@ -896,8 +907,8 @@ cl_int EnqueueFillImage(cl_command_queue command_queue,
                         cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueFillImage(
-        image, fill_color, cl::MemOffsets{origin[0], origin[1], origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
+        image, fill_color, cl::Offset{origin[0], origin[1], origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
         event));
 }
 
@@ -912,9 +923,9 @@ cl_int EnqueueCopyImage(cl_command_queue command_queue,
                         cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyImage(
-        src_image, dst_image, cl::MemOffsets{src_origin[0], src_origin[1], src_origin[2]},
-        cl::MemOffsets{dst_origin[0], dst_origin[1], dst_origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
+        src_image, dst_image, cl::Offset{src_origin[0], src_origin[1], src_origin[2]},
+        cl::Offset{dst_origin[0], dst_origin[1], dst_origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
         event));
 }
 
@@ -929,8 +940,8 @@ cl_int EnqueueCopyImageToBuffer(cl_command_queue command_queue,
                                 cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyImageToBuffer(
-        src_image, dst_buffer, cl::MemOffsets{src_origin[0], src_origin[1], src_origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, dst_offset, num_events_in_wait_list,
+        src_image, dst_buffer, cl::Offset{src_origin[0], src_origin[1], src_origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, dst_offset, num_events_in_wait_list,
         event_wait_list, event));
 }
 
@@ -945,9 +956,8 @@ cl_int EnqueueCopyBufferToImage(cl_command_queue command_queue,
                                 cl_event *event)
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueCopyBufferToImage(
-        src_buffer, dst_image, src_offset,
-        cl::MemOffsets{dst_origin[0], dst_origin[1], dst_origin[2]},
-        cl::Coordinate{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
+        src_buffer, dst_image, src_offset, cl::Offset{dst_origin[0], dst_origin[1], dst_origin[2]},
+        cl::Extents{region[0], region[1], region[2]}, num_events_in_wait_list, event_wait_list,
         event));
 }
 
@@ -978,11 +988,11 @@ void *EnqueueMapImage(cl_command_queue command_queue,
                       const cl_event *event_wait_list,
                       cl_event *event)
 {
-    CL_RETURN_PTR(
-        ptrOut, command_queue->cast<CommandQueue>().enqueueMapImage(
-                    image, blocking_map, map_flags, cl::MemOffsets{origin[0], origin[1], origin[2]},
-                    cl::Coordinate{region[0], region[1], region[2]}, image_row_pitch,
-                    image_slice_pitch, num_events_in_wait_list, event_wait_list, event, ptrOut));
+    CL_RETURN_PTR(ptrOut,
+                  command_queue->cast<CommandQueue>().enqueueMapImage(
+                      image, blocking_map, map_flags, cl::Offset{origin[0], origin[1], origin[2]},
+                      cl::Extents{region[0], region[1], region[2]}, image_row_pitch,
+                      image_slice_pitch, num_events_in_wait_list, event_wait_list, event, ptrOut));
 }
 
 cl_int EnqueueUnmapMemObject(cl_command_queue command_queue,
@@ -1155,6 +1165,17 @@ cl_int EnqueueReleaseExternalMemObjectsKHR(cl_command_queue command_queue,
 {
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueReleaseExternalMemObjectsKHR(
         num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list, event));
+}
+
+cl_mem ImportMemoryARM(cl_context context,
+                       MemFlags flags,
+                       const cl_import_properties_arm *properties,
+                       void *memory,
+                       size_t size)
+{
+    Memory::PropArray convertedProperties = Context::ConvertArmMemPropToMemProp(properties, memory);
+    CL_RETURN_OBJ(
+        context->cast<Context>().createBuffer(convertedProperties.data(), flags, size, nullptr));
 }
 
 void *GetExtensionFunctionAddressForPlatform(cl_platform_id platform, const char *func_name)

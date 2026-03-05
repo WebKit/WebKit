@@ -87,6 +87,8 @@ bool runAndLog(PhaseType& phase)
 
     if (result && logCompilationChanges(phase.graph().m_plan.mode()))
         dataLogLn(phase.graph().prefix(), "Phase ", phase.name(), " changed the IR.\n");
+    if (Options::dumpIonGraph()) [[unlikely]]
+        phase.graph().appendIonGraphPass(phase.name());
     return result;
 }
 

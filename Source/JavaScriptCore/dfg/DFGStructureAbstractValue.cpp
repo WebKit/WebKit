@@ -64,10 +64,9 @@ void StructureAbstractValue::clobber()
             makeTopWhenThin();
         return;
     }
-    
-    RegisteredStructureSet::OutOfLineList* list = m_set.list();
-    for (unsigned i = list->m_length; i--;) {
-        if (!list->list()[i]->dfgShouldWatch()) {
+
+    for (auto& item : m_set.list()->lengthSpan() | std::views::reverse) {
+        if (!item->dfgShouldWatch()) {
             makeTop();
             return;
         }

@@ -174,6 +174,8 @@ WI.updateDockingAvailability = () => {};
 WI.updateVisibilityState = () => {};
 WI.updateFindString = () => {};
 
+WI.isSiteIsolationEnabled = () => WI.targets.some((x) => x instanceof WI.FrameTarget);
+
 // FIXME: <https://webkit.org/b/201149> Web Inspector: replace all uses of `window.*Agent` with a target-specific call
 (function() {
     function makeAgentGetter(domainName) {

@@ -94,6 +94,8 @@ enum LocationKind {
     MapIterationEntryLoc,
     MapIterationEntryKeyLoc,
     MapIterationEntryValueLoc,
+    MapOrSetSizeLoc,
+    GetRegExpFlagLoc,
     MapEntryKeyLoc,
     MapEntryValueLoc,
     LoadMapValueLoc,

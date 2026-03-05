@@ -28,7 +28,9 @@
 
 #include <optional>
 #include <span>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/SystemFree.h>
 
 #if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
@@ -40,7 +42,6 @@
 #endif
 
 #if HAVE(DLADDR)
-#include <cxxabi.h>
 #include <dlfcn.h>
 #endif
 
@@ -101,7 +102,7 @@ public:
     public:
         friend class StackTraceSymbolResolver;
         const char* mangledName() const { return m_mangledName; }
-        const char* demangledName() const { return m_demangledName.get(); }
+        const char* demangledName() const LIFETIME_BOUND { return m_demangledName.get(); }
 
     private:
         DemangleEntry(const char* mangledName, const char* demangledName)

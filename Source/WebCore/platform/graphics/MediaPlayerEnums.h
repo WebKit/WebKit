@@ -164,6 +164,14 @@ enum class VideoRendererPreference : uint8_t {
 };
 using VideoRendererPreferences = OptionSet<VideoRendererPreference>;
 
+enum class MediaPlaybackTargetType : uint8_t {
+    None = 0,
+    AVOutputContext = 1 << 0,
+    Mock = 1 << 1,
+    WirelessPlayback = 1 << 2,
+    Serialized = 1 << 3,
+};
+
 } // namespace WebCore
 
 

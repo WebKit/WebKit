@@ -26,6 +26,7 @@
 #include "JSDOMConvertVariadic.h"
 #include "TestCallbackFunctionWithVariadic.h"
 #include <wtf/Forward.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -50,6 +51,8 @@ private:
 
     bool hasCallback() const final { return m_data && m_data->callback(); }
 
+    bool isJSTestCallbackFunctionWithVariadic() const final { return true; }
+
     void visitJSFunction(JSC::AbstractSlotVisitor&) override;
 
     void visitJSFunction(JSC::SlotVisitor&) override;
@@ -64,3 +67,7 @@ template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionWithVariadi
     using Base = TestCallbackFunctionWithVariadic;
 };
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::JSTestCallbackFunctionWithVariadic)
+    static bool isType(const WebCore::TestCallbackFunctionWithVariadic& callback) { return callback.isJSTestCallbackFunctionWithVariadic(); }
+SPECIALIZE_TYPE_TRAITS_END()

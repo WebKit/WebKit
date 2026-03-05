@@ -19,6 +19,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-L3.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-L4.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-L5.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-details-content-pseudo-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-selector-detecting-invalid-in-logical-combinations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-selector-picker.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/conditional-CSSGroupingRule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/supports-at-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/js/supports-conditionText.html

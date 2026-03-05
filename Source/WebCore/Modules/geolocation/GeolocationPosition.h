@@ -36,7 +36,7 @@ class GeolocationPosition : public RefCounted<GeolocationPosition> {
 public:
     static Ref<GeolocationPosition> create(Ref<GeolocationCoordinates>&& coordinates, EpochTimeStamp timestamp)
     {
-        return adoptRef(*new GeolocationPosition(WTFMove(coordinates), timestamp));
+        return adoptRef(*new GeolocationPosition(WTF::move(coordinates), timestamp));
     }
 
     Ref<GeolocationPosition> isolatedCopy() const
@@ -49,7 +49,7 @@ public:
     
 private:
     GeolocationPosition(Ref<GeolocationCoordinates>&& coordinates, EpochTimeStamp timestamp)
-        : m_coordinates(WTFMove(coordinates))
+        : m_coordinates(WTF::move(coordinates))
         , m_timestamp(timestamp)
     {
     }

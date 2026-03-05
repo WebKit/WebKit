@@ -34,7 +34,8 @@
 ] interface FileReaderSync {
     constructor();
 
-    [CallWith=CurrentScriptExecutionContext] ArrayBuffer readAsArrayBuffer(Blob blob);
+    // FIXME: `readAsArrayBuffer` should not return a nullable type.
+    [CallWith=CurrentScriptExecutionContext] ArrayBuffer? readAsArrayBuffer(Blob blob);
     [CallWith=CurrentScriptExecutionContext] DOMString readAsBinaryString(Blob blob);
     [CallWith=CurrentScriptExecutionContext] DOMString readAsText(Blob blob, optional DOMString encoding = "");
     [CallWith=CurrentScriptExecutionContext] DOMString readAsDataURL(Blob blob);

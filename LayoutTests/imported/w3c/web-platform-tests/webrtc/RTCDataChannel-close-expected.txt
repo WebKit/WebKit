@@ -10,5 +10,5 @@ PASS Close negotiated datachannel causes closing and close event to be called
 PASS Repeated open/send/echo/close negotiated datachannel works
 PASS Close peerconnection causes close event and error to be called on negotiated datachannel
 PASS Close peerconnection after negotiated datachannel close causes no events
-FAIL Close peerconnection causes close event and error on many channels, negotiated datachannel promise_test: Unhandled rejection with value: object "OperationError: The operation failed for an operation-specific reason."
+PASS Close peerconnection causes close event and error on many channels, negotiated datachannel
 

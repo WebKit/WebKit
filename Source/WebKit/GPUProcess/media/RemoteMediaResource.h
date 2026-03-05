@@ -43,20 +43,20 @@ class SharedBuffer;
 namespace WebKit {
 
 class RemoteMediaPlayerProxy;
-class RemoteMediaResourceManager;
+class RemoteMediaResourceLoader;
 
 class RemoteMediaResource : public WebCore::PlatformMediaResource {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaResource);
 public:
     // Called on the main thread.
-    static Ref<RemoteMediaResource> create(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
+    static Ref<RemoteMediaResource> create(RemoteMediaResourceLoader&, RemoteMediaResourceIdentifier);
 
     // Thread-safe
     ~RemoteMediaResource();
     void shutdown() final;
 
     // PlatformMediaResource, called on the main thread.
-    bool didPassAccessControlCheck() const final;
+    bool didPassAccessControlCheck() const final { return m_didPassAccessControlCheck; }
 
     // Called on MediaResourceLoader's WorkQueue.
     void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
@@ -68,9 +68,9 @@ public:
     void loadFinished(const WebCore::NetworkLoadMetrics&);
 
 private:
-    RemoteMediaResource(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
+    RemoteMediaResource(RemoteMediaResourceLoader&, RemoteMediaResourceIdentifier);
 
-    ThreadSafeWeakPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
+    const ThreadSafeWeakPtr<RemoteMediaResourceLoader> m_remoteMediaResourceLoader;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
     RemoteMediaResourceIdentifier m_id;
     std::atomic<bool> m_didPassAccessControlCheck { false };

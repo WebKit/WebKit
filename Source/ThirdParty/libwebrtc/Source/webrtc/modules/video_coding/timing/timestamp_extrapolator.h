@@ -106,7 +106,7 @@ class TimestampExtrapolator {
     // If set, will reject outliers based on this number of standard deviations
     // of the filtered residuals.
     // Setting this field to non-nullopt enables hard outlier rejection.
-    std::optional<double> outlier_rejection_stddev = std::nullopt;
+    std::optional<double> outlier_rejection_stddev = 2.0;
 
     // -- Soft outlier attenuation --
 

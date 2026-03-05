@@ -26,7 +26,9 @@
 #include "config.h"
 #include "LLIntThunks.h"
 
+#include "Gate.h"
 #include "InPlaceInterpreter.h"
+#include "JSCConfig.h"
 #include "JSCJSValueInlines.h"
 #include "JSInterfaceJIT.h"
 #include "LLIntCLoop.h"
@@ -50,6 +52,9 @@ JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith0Arguments);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith1Arguments);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith2Arguments);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith3Arguments);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith4Arguments);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith5Arguments);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScriptWith6Arguments);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryToNative);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToJavaScriptGateAfter);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_call_arity_checkUntagGateAfter);
@@ -807,6 +812,48 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
     });
     return codeRef;
 }
+
+#if CPU(ARM64E)
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> relocateJITReturnPCThunk(void* returnLocation)
+{
+    CCallHelpers jit;
+
+    jit.untagPtr(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0);
+    jit.validateUntaggedPtr(GPRInfo::argumentGPR0, GPRInfo::wasmScratchGPR0);
+    jit.tagPtr(GPRInfo::argumentGPR2, GPRInfo::argumentGPR0);
+    jit.move(CCallHelpers::TrustedImmPtr(returnLocation), GPRInfo::wasmScratchGPR1);
+    jit.farJump(GPRInfo::wasmScratchGPR1, OperationPtrTag);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "relocateJITReturnPC"_s, "relocate JIT return PC thunk");
+}
+
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> exitImplantedSliceGateThunk(void* target)
+{
+    CCallHelpers jit;
+
+    jit.move(CCallHelpers::TrustedImmPtr(target), GPRInfo::wasmScratchGPR0);
+    jit.farJump(GPRInfo::wasmScratchGPR0, OperationPtrTag);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "exitImplantedSliceGate"_s, "exit implanted slice gate thunk");
+}
+
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> getSentinelFrameReturnPCGateThunk(void* returnLocation)
+{
+    CCallHelpers jit;
+
+    jit.move(CCallHelpers::TrustedImmPtr(&g_jscConfig), GPRInfo::wasmScratchGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmScratchGPR0, offsetof(JSC::Config, llint.gateMap) + static_cast<unsigned>(Gate::exitImplantedSliceGate) * sizeof(void*)), GPRInfo::wasmScratchGPR0);
+    jit.tagPtr(GPRInfo::argumentGPR0, GPRInfo::wasmScratchGPR0);
+    jit.move(GPRInfo::wasmScratchGPR0, GPRInfo::argumentGPR0);
+    jit.move(CCallHelpers::TrustedImmPtr(returnLocation), GPRInfo::wasmScratchGPR1);
+    jit.farJump(GPRInfo::wasmScratchGPR1, OperationPtrTag);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "getSentinelFrameReturnPCGate"_s, "sign exit implanted slice gate thunk");
+}
+#endif // CPU(ARM64E)
 
 #define DEFINE_IPINT_THUNK_FOR_CATCH(funcName, target) \
     MacroAssemblerCodeRef<JITThunkPtrTag> funcName() \

@@ -10,8 +10,8 @@ layer at (0,0) size 800x100
             RenderSVGInlineText {#text} at (0,0) size 124x11
               chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 30 width 123.33: "FAIL (This should not render.)"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,40) size 784x36 [color=#008000]
-        RenderText {#text} at (0,0) size 748x35
+      RenderBlock {p} at (0,39) size 784x37 [color=#008000]
+        RenderText {#text} at (0,0) size 748x36
           text run at (0,0) width 416: "This line should be green, the word \"FAIL\" should not appear on "
           text run at (415,0) width 333: "this page, but a highly perceivable indication of error"
           text run at (0,18) width 65: "should be "

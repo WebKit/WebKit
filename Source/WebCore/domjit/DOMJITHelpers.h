@@ -57,7 +57,7 @@ inline CCallHelpers::Jump branchIfNotWeakIsLive(CCallHelpers& jit, GPRReg weakIm
 template<typename WrappedNode>
 JSC::EncodedJSValue toWrapperSlowImpl(JSC::JSGlobalObject* globalObject, void* result)
 {
-    return JSC::JSValue::encode(toJS(globalObject, static_cast<JSDOMGlobalObject*>(globalObject), *static_cast<WrappedNode*>(result)));
+    return JSC::JSValue::encode(toJS(globalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), *static_cast<WrappedNode*>(result)));
 }
 
 template<typename WrappedType>

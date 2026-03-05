@@ -35,6 +35,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -91,15 +92,15 @@ private:
     bool m_inProgress { true };
     bool m_isAborting { false };
 
-    HashSet<RefPtr<MemoryObjectStore>> m_objectStores;
-    HashSet<RefPtr<MemoryObjectStore>> m_versionChangeAddedObjectStores;
-    HashSet<RefPtr<MemoryIndex>> m_indexes;
-    HashSet<RefPtr<MemoryIndex>> m_versionChangeAddedIndexes;
+    HashSet<Ref<MemoryObjectStore>> m_objectStores;
+    HashSet<Ref<MemoryObjectStore>> m_versionChangeAddedObjectStores;
+    HashSet<Ref<MemoryIndex>> m_indexes;
+    HashSet<Ref<MemoryIndex>> m_versionChangeAddedIndexes;
 
-    HashMap<String, RefPtr<MemoryObjectStore>> m_deletedObjectStores;
-    HashSet<RefPtr<MemoryIndex>> m_deletedIndexes;
+    HashMap<String, Ref<MemoryObjectStore>> m_deletedObjectStores;
+    HashSet<Ref<MemoryIndex>> m_deletedIndexes;
     HashMap<MemoryObjectStore*, String> m_originalObjectStoreNames;
-    HashMap<RefPtr<MemoryIndex>, String> m_originalIndexNames;
+    HashMap<Ref<MemoryIndex>, String> m_originalIndexNames;
 
     HashMap<IDBResourceIdentifier, WeakPtr<MemoryCursor>> m_cursors;
 };

@@ -1,3 +1,6 @@
 
-PASS save()/restore() works for shadowOffsetY
+PASS save()/restore() restores shadowOffsetY, for a canvas of size (300, 150).
+PASS save() does not modify shadowOffsetY, for a canvas of size (300, 150).
+PASS save()/restore() restores shadowOffsetY, for a canvas of size (0, 0).
+PASS save() does not modify shadowOffsetY, for a canvas of size (0, 0).
 

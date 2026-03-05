@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x28
-        RenderText {#text} at (0,0) size 758x27
+        RenderText {#text} at (0,0) size 758x28
           text run at (0,0) width 758: "Text inside input field should not be cut off at the bottom when its font is larger than the body font size. If the descenders in \"something gjpqy\" below are all visible, the test"
           text run at (0,14) width 309: "passes. If they are cut off by the bottom of the input box, the test fails."
       RenderBlock (anonymous) at (0,39) size 784x23

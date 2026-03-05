@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLSpace);
 
 RenderMathMLSpace::RenderMathMLSpace(MathMLSpaceElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(Type::MathMLSpace, element, WTFMove(style))
+    : RenderMathMLBlock(Type::MathMLSpace, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLSpace());
 }

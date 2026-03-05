@@ -42,12 +42,6 @@ public:
     static constexpr unsigned maskHash = (1U << (sizeof(unsigned) * 8 - flagCount)) - 1;
     static constexpr unsigned numberOfCharactersInLargestBulkForWYHash = 24; // Don't change this value. It's fixed for WYhash algorithm.
 
-    // Things need to do to update this threshold:
-    // 1. This threshold must stay in sync with the threshold in the scripts create_hash_table, Hasher.pm, and hasher.py.
-    // 2. Run script `run-bindings-tests --reset-results` to update all CompactHashIndex's under path `WebCore/bindings/scripts/test/JS/`.
-    // 3. Manually update all CompactHashIndex's in JSDollarVM.cpp by using createHashTable in hasher.py.
-    static constexpr unsigned smallStringThreshold = numberOfCharactersInLargestBulkForWYHash * 2;
-
     struct DefaultConverter {
         template<typename CharType>
         static constexpr char16_t convert(CharType character)
@@ -109,7 +103,6 @@ private:
         return 0x80000000 >> flagCount;
     }
 
-#if ENABLE(WYHASH_STRING_HASHER)
     bool m_pendingHashValue { false };
     unsigned m_numberOfProcessedCharacters { 0 };
     uint64_t m_seed { 0 };
@@ -117,12 +110,7 @@ private:
     uint64_t m_see2 { 0 };
 
     unsigned m_bufferSize { 0 };
-    std::array<char16_t, smallStringThreshold> m_buffer;
-#else
-    unsigned m_hash { stringHashingStartValue };
-    char16_t m_pendingCharacter { 0 };
-    bool m_hasPendingCharacter { false };
-#endif
+    std::array<char16_t, numberOfCharactersInLargestBulkForWYHash * 2> m_buffer;
 };
 
 } // namespace WTF

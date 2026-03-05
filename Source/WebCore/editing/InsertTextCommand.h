@@ -50,12 +50,12 @@ public:
     static Ref<InsertTextCommand> create(Ref<Document>&& document, const String& text, AllowPasswordEcho allowPasswordEcho
         , bool selectInsertedText = false, RebalanceType rebalanceType = RebalanceLeadingAndTrailingWhitespaces, EditAction editingAction = EditAction::Insert)
     {
-        return adoptRef(*new InsertTextCommand(WTFMove(document), text, allowPasswordEcho, selectInsertedText, rebalanceType, editingAction));
+        return adoptRef(*new InsertTextCommand(WTF::move(document), text, allowPasswordEcho, selectInsertedText, rebalanceType, editingAction));
     }
 
     static Ref<InsertTextCommand> createWithMarkerSupplier(Ref<Document>&& document, const String& text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction = EditAction::Insert)
     {
-        return adoptRef(*new InsertTextCommand(WTFMove(document), text, WTFMove(markerSupplier), editingAction));
+        return adoptRef(*new InsertTextCommand(WTF::move(document), text, WTF::move(markerSupplier), editingAction));
     }
 
 protected:

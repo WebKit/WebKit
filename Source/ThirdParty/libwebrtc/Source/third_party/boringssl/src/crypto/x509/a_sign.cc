@@ -18,11 +18,15 @@
 #include <openssl/evp.h>
 #include <openssl/mem.h>
 #include <openssl/obj.h>
+#include <openssl/span.h>
 #include <openssl/x509.h>
 
 #include <limits.h>
 
+#include "../internal.h"
+#include "../mem_internal.h"
 #include "internal.h"
+
 
 int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1, X509_ALGOR *algor2,
                    ASN1_BIT_STRING *signature, void *asn, EVP_PKEY *pkey,
@@ -41,55 +45,56 @@ int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1, X509_ALGOR *algor2,
 int ASN1_item_sign_ctx(const ASN1_ITEM *it, X509_ALGOR *algor1,
                        X509_ALGOR *algor2, ASN1_BIT_STRING *signature,
                        void *asn, EVP_MD_CTX *ctx) {
-  int ret = 0;
-  uint8_t *in = NULL, *out = NULL;
+  // Historically, this function called |EVP_MD_CTX_cleanup| on return. Some
+  // callers rely on this to avoid memory leaks.
+  bssl::Cleanup cleanup = [&] { EVP_MD_CTX_cleanup(ctx); };
 
-  {
-    if (signature->type != V_ASN1_BIT_STRING) {
-      OPENSSL_PUT_ERROR(ASN1, ASN1_R_WRONG_TYPE);
-      goto err;
-    }
-
-    // Write out the requested copies of the AlgorithmIdentifier.
-    if (algor1 && !x509_digest_sign_algorithm(ctx, algor1)) {
-      goto err;
-    }
-    if (algor2 && !x509_digest_sign_algorithm(ctx, algor2)) {
-      goto err;
-    }
-
-    int in_len = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(asn), &in, it);
-    if (in_len < 0) {
-      goto err;
-    }
-
-    EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pctx);
-    size_t out_len = EVP_PKEY_size(pkey);
-    if (out_len > INT_MAX) {
-      OPENSSL_PUT_ERROR(X509, ERR_R_OVERFLOW);
-      goto err;
-    }
-
-    out = reinterpret_cast<uint8_t *>(OPENSSL_malloc(out_len));
-    if (out == NULL) {
-      goto err;
-    }
-
-    if (!EVP_DigestSign(ctx, out, &out_len, in, in_len)) {
-      OPENSSL_PUT_ERROR(X509, ERR_R_EVP_LIB);
-      goto err;
-    }
-
-    ASN1_STRING_set0(signature, out, (int)out_len);
-    out = NULL;
-    signature->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);
-    signature->flags |= ASN1_STRING_FLAG_BITS_LEFT;
-    ret = (int)out_len;
+  // Write out the requested copies of the AlgorithmIdentifier. This may modify
+  // |asn|, so we must do it first.
+  if ((algor1 != nullptr && !x509_digest_sign_algorithm(ctx, algor1)) ||
+      (algor2 != nullptr && !x509_digest_sign_algorithm(ctx, algor2))) {
+    return 0;
   }
 
-err:
-  EVP_MD_CTX_cleanup(ctx);
-  OPENSSL_free(in);
-  OPENSSL_free(out);
-  return ret;
+  uint8_t *in = nullptr;
+  int in_len = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(asn), &in, it);
+  if (in_len < 0) {
+    return 0;
+  }
+  bssl::UniquePtr<uint8_t> free_in(in);
+
+  return x509_sign_to_bit_string(ctx, signature, bssl::Span(in, in_len));
+}
+
+int x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
+                            bssl::Span<const uint8_t> in) {
+  if (out->type != V_ASN1_BIT_STRING) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_WRONG_TYPE);
+    return 0;
+  }
+
+  EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pctx);
+  size_t sig_len = EVP_PKEY_size(pkey);
+  if (sig_len > INT_MAX) {
+    // Ensure the signature will fit in |out|.
+    OPENSSL_PUT_ERROR(X509, ERR_R_OVERFLOW);
+    return 0;
+  }
+  bssl::Array<uint8_t> sig;
+  if (!sig.Init(sig_len)) {
+    return 0;
+  }
+
+  if (!EVP_DigestSign(ctx, sig.data(), &sig_len, in.data(), in.size())) {
+    OPENSSL_PUT_ERROR(X509, ERR_R_EVP_LIB);
+    return 0;
+  }
+  sig.Shrink(sig_len);
+
+  uint8_t *sig_data;
+  sig.Release(&sig_data, &sig_len);
+  ASN1_STRING_set0(out, sig_data, static_cast<int>(sig_len));
+  out->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);
+  out->flags |= ASN1_STRING_FLAG_BITS_LEFT;
+  return static_cast<int>(sig_len);
 }

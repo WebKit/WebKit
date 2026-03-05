@@ -45,7 +45,7 @@ TEST(WebCore, BitmapImageEmptyFrameTest)
     auto bmp = adoptGDIObject(CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, 0, 0, 0));
     auto nativeImage = ImageAdapter::nativeImageOfHBITMAP(bmp.get());
 
-    RefPtr<Image> bitmapImageTest = BitmapImage::create(WTFMove(nativeImage));
+    RefPtr<Image> bitmapImageTest = BitmapImage::create(WTF::move(nativeImage));
     if (!bitmapImageTest)
         return;
 

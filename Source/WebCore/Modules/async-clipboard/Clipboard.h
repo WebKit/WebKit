@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EventTarget.h"
+#include "EventTargetInterfaces.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -40,16 +41,16 @@ class Pasteboard;
 class PasteboardCustomData;
 
 class Clipboard final : public RefCounted<Clipboard>, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Clipboard);
+    WTF_MAKE_TZONE_ALLOCATED(Clipboard);
 public:
     static Ref<Clipboard> create(Navigator&);
     ~Clipboard();
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     LocalFrame* frame() const;
-    Navigator* navigator();
+    Navigator* NODELETE navigator();
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -74,7 +75,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    Pasteboard& activePasteboard();
+    Pasteboard& NODELETE activePasteboard();
 
     enum class SessionIsValid : bool { No, Yes };
     SessionIsValid updateSessionValidity();
@@ -83,7 +84,7 @@ private:
     public:
         static Ref<ItemWriter> create(Clipboard& clipboard, Ref<DeferredPromise>&& promise)
         {
-            return adoptRef(*new ItemWriter(clipboard, WTFMove(promise)));
+            return adoptRef(*new ItemWriter(clipboard, WTF::move(promise)));
         }
 
         ~ItemWriter();
@@ -115,3 +116,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(Clipboard)

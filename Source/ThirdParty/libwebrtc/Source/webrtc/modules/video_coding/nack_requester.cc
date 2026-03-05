@@ -52,8 +52,6 @@ TimeDelta GetSendNackDelay(const FieldTrialsView& field_trials) {
 }
 }  // namespace
 
-constexpr TimeDelta NackPeriodicProcessor::kUpdateInterval;
-
 NackPeriodicProcessor::NackPeriodicProcessor(TimeDelta update_interval)
     : update_interval_(update_interval) {}
 

@@ -42,7 +42,7 @@ class GraphicsContextStateSaver;
 class SVGGraphicsElement;
 
 class RenderSVGShape : public RenderSVGModelObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGShape);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGShape);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGShape);
 public:
     friend FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement&);
@@ -65,7 +65,6 @@ public:
     virtual ~RenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
-    inline Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
 
@@ -93,10 +92,11 @@ public:
     FloatRect strokeBoundingBox() const final;
     FloatRect approximateStrokeBoundingBox() const;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect decoratedBoundingBox() const final { return SVGBoundingBoxComputation::computeDecoratedBoundingBox(*this); }
 
     bool needsHasSVGTransformFlags() const final;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
     AffineTransform nonScalingStrokeTransform() const;
 
@@ -106,10 +106,11 @@ protected:
     Path& ensurePath();
 
     virtual void updateShapeFromElement() = 0;
-    virtual bool isEmpty() const;
+    virtual bool NODELETE isEmpty() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
+    float strokeWidthForMarkerUnits() const;
 
     inline bool hasNonScalingStroke() const;
     Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
@@ -141,7 +142,7 @@ private:
     void fillStrokeMarkers(PaintInfo&);
     virtual void drawMarkers(PaintInfo&) { }
 
-    void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
 
     FloatRect calculateApproximateStrokeBoundingBox() const;
 

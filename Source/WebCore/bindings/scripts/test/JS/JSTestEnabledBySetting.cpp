@@ -239,7 +239,7 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestEnabledBySetting::s_info = { "TestEnabledBySetting"_s, &Base::s_info, &JSTestEnabledBySettingTable, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySetting) };
 
 JSTestEnabledBySetting::JSTestEnabledBySetting(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEnabledBySetting>&& impl)
-    : JSDOMWrapper<TestEnabledBySetting>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestEnabledBySetting>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -492,7 +492,7 @@ void JSTestEnabledBySettingOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestEnabledBySetting = static_cast<JSTestEnabledBySetting*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestEnabledBySetting->protectedWrapped().ptr(), jsTestEnabledBySetting);
+    uncacheWrapper(world, protect(jsTestEnabledBySetting->wrapped()).ptr(), jsTestEnabledBySetting);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -530,7 +530,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestEnabledBySetting>(impl.ptr());
 #endif
-    return createWrapper<TestEnabledBySetting>(globalObject, WTFMove(impl));
+    return createWrapper<TestEnabledBySetting>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestEnabledBySetting& impl)

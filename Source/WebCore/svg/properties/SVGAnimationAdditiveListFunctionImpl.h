@@ -57,16 +57,16 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement& targetElement, float progress, unsigned repeatCount, RefPtr<SVGLengthList>& animated)
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount, SVGLengthList& animated)
     {
         if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
 
-        const Vector<Ref<SVGLength>>& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
+        const Vector<Ref<SVGLength>>& fromItems = m_animationMode == AnimationMode::To ? animated.items() : m_from->items();
         const Vector<Ref<SVGLength>>& toItems = m_to->items();
         const Vector<Ref<SVGLength>>& toAtEndOfDurationItems = toAtEndOfDuration()->items();
-        Vector<Ref<SVGLength>>& animatedItems = animated->items();
-        SVGLengthMode lengthMode = animated->lengthMode();
+        Vector<Ref<SVGLength>>& animatedItems = animated.items();
+        SVGLengthMode lengthMode = animated.lengthMode();
 
         SVGLengthContext lengthContext(&targetElement);
         for (unsigned i = 0; i < toItems.size(); ++i) {
@@ -116,15 +116,15 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement&, float progress, unsigned repeatCount, RefPtr<SVGNumberList>& animated)
+    void animate(SVGElement&, float progress, unsigned repeatCount, SVGNumberList& animated)
     {
         if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
 
-        auto& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
+        auto& fromItems = m_animationMode == AnimationMode::To ? animated.items() : m_from->items();
         auto& toItems = m_to->items();
         auto& toAtEndOfDurationItems = toAtEndOfDuration()->items();
-        auto& animatedItems = animated->items();
+        auto& animatedItems = animated.items();
 
         for (unsigned i = 0; i < toItems.size(); ++i) {
             float from = i < fromItems.size() ? fromItems[i]->value() : 0;
@@ -166,15 +166,15 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement&, float progress, unsigned repeatCount, RefPtr<SVGPointList>& animated)
+    void animate(SVGElement&, float progress, unsigned repeatCount, SVGPointList& animated)
     {
         if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
 
-        auto& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
+        auto& fromItems = m_animationMode == AnimationMode::To ? animated.items() : m_from->items();
         auto& toItems = m_to->items();
         auto& toAtEndOfDurationItems = toAtEndOfDuration()->items();
-        auto& animatedItems = animated->items();
+        auto& animatedItems = animated.items();
 
         for (unsigned i = 0; i < toItems.size(); ++i) {
             FloatPoint from = i < fromItems.size() ? fromItems[i]->value() : FloatPoint();
@@ -219,7 +219,7 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement&, float progress, unsigned repeatCount, RefPtr<SVGTransformList>& animated)
+    void animate(SVGElement&, float progress, unsigned repeatCount, SVGTransformList& animated)
     {
         // Pass false to 'resizeAnimatedIfNeeded', as the special post-multiplication behavior of <animateTransform> needs to be respected below.
         if (!adjustAnimatedList(m_animationMode, progress, animated, false))
@@ -232,7 +232,7 @@ public:
         const Vector<Ref<SVGTransform>>& fromItems = m_from->items();
         const Vector<Ref<SVGTransform>>& toItems = m_to->items();
         const Vector<Ref<SVGTransform>>& toAtEndOfDurationItems = toAtEndOfDuration()->items();
-        Vector<Ref<SVGTransform>>& animatedItems = animated->items();
+        Vector<Ref<SVGTransform>>& animatedItems = animated.items();
 
         // Never resize the animatedList to the m_to size, instead either clear the list
         // or append to it.

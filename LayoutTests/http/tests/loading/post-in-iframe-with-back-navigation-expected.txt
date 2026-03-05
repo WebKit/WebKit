@@ -1,5 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
 main frame - didReceiveTitle: Resending form on back navigation from POST submissions
 frame "frame" - didStartProvisionalLoadForFrame
 frame "frame" - didCommitLoadForFrame

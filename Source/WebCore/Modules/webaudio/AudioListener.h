@@ -71,7 +71,7 @@ public:
     FloatPoint3D upVector() const;
 
     bool hasSampleAccurateValues() const;
-    bool shouldUseARate() const;
+    bool NODELETE shouldUseARate() const;
 
     std::span<const float> positionXValues(size_t framesToProcess);
     std::span<const float> positionYValues(size_t framesToProcess);

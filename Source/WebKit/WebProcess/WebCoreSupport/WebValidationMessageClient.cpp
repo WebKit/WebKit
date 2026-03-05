@@ -66,7 +66,7 @@ void WebValidationMessageClient::showValidationMessage(const Element& anchor, St
 
     m_currentAnchor = anchor;
     m_currentAnchorRect = anchor.boundingBoxInRootViewCoordinates();
-    Ref { *m_page }->send(Messages::WebPageProxy::ShowValidationMessage(m_currentAnchorRect, WTFMove(message)));
+    Ref { *m_page }->send(Messages::WebPageProxy::ShowValidationMessage(m_currentAnchorRect, WTF::move(message)));
 }
 
 void WebValidationMessageClient::hideValidationMessage(const Element& anchor)

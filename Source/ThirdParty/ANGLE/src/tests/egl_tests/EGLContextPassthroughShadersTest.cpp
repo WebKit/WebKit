@@ -13,6 +13,7 @@
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_instantiate.h"
 #include "test_utils/angle_test_platform.h"
+#include "test_utils/gl_raii.h"
 #include "util/gles_loader_autogen.h"
 
 using namespace angle;
@@ -122,7 +123,7 @@ TEST_P(EGLContextPassthroughShadersTest, ShaderRegressionTest)
 
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mSurface, mSurface, context));
 
-    constexpr const char kShader[] = R"(#version 300 es
+    constexpr const char kVS[] = R"(#version 300 es
 
 precision mediump float;
 precision mediump sampler2D;
@@ -209,8 +210,16 @@ gl_Position = vec4(vertexpos, 0.0, 1.0);
 gl_Position = vec4(gl_Position.xy * sk_RTAdjust.xz + gl_Position.ww * sk_RTAdjust.yw, 0.0, gl_Position.w);
 }
 )";
-    GLuint shader                  = CompileShader(GL_VERTEX_SHADER, kShader);
-    EXPECT_NE(0u, shader);
+
+    constexpr const char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLContextPassthroughShadersTest);

@@ -47,5 +47,4 @@ enum class WebCore::SupportsAirPlayVideo : bool
 enum class WebCore::PlayingToAutomotiveHeadUnit : bool
 enum class WebCore::SuspendedUnderLock : bool
 enum class WebCore::SupportsSpatialAudioPlayback : bool
-enum class WebKit::RespectSelectionAnchor : bool
 #endif

@@ -58,7 +58,7 @@ private:
             endpointReceivedMessageFromClient = true;
 
             // FIXME: This is a false positive. <rdar://164843889>
-            SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+            SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
             xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromEndpoint);
             xpc_connection_send_message(connection, message.get());
         }
@@ -76,7 +76,7 @@ private:
     void didConnect() final
     {
         // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromClient);
         xpc_connection_send_message(connection().get(), message.get());
 

@@ -19,6 +19,7 @@
 #include "api/scoped_refptr.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_logger.h"
+#include "api/units/timestamp.h"
 #include "api/video/video_frame_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_tools/video_file_reader.h"
@@ -125,7 +126,7 @@ int GetTotalNumberOfSkippedFrames(const std::vector<Cluster>& clusters) {
 void PrintAnalysisResults(const std::string& label,
                           ResultsContainer& results,
                           MetricsLogger& logger) {
-  if (results.frames.size() > 0u) {
+  if (!results.frames.empty()) {
     logger.LogSingleValueMetric("Unique_frames_count", label,
                                 results.frames.size(), Unit::kUnitless,
                                 ImprovementDirection::kNeitherIsBetter);
@@ -133,8 +134,10 @@ void PrintAnalysisResults(const std::string& label,
     SamplesStatsCounter psnr_values;
     SamplesStatsCounter ssim_values;
     for (const auto& frame : results.frames) {
-      psnr_values.AddSample(frame.psnr_value);
-      ssim_values.AddSample(frame.ssim_value);
+      psnr_values.AddSample(
+          {.value = frame.psnr_value, .time = Timestamp::Zero()});
+      ssim_values.AddSample(
+          {.value = frame.ssim_value, .time = Timestamp::Zero()});
     }
 
     logger.LogMetric("PSNR_dB", label, psnr_values, Unit::kUnitless,

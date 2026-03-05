@@ -54,4 +54,4 @@ testWithTypedArrayConstructors(function(TA) {
       "For index " + index
     );
   }
-});
+}, null, ["passthrough"]);

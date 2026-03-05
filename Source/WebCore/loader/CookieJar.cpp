@@ -56,7 +56,7 @@ static ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking(c
 
 Ref<CookieJar> CookieJar::create(Ref<StorageSessionProvider>&& storageSessionProvider)
 {
-    return adoptRef(*new CookieJar(WTFMove(storageSessionProvider)));
+    return adoptRef(*new CookieJar(WTF::move(storageSessionProvider)));
 }
 
 IncludeSecureCookies CookieJar::shouldIncludeSecureCookies(const URL& url)
@@ -78,7 +78,7 @@ SameSiteInfo CookieJar::sameSiteInfo(const Document& document, IsForDOMCookieAcc
 }
 
 CookieJar::CookieJar(Ref<StorageSessionProvider>&& storageSessionProvider)
-    : m_storageSessionProvider(WTFMove(storageSessionProvider))
+    : m_storageSessionProvider(WTF::move(storageSessionProvider))
 {
 }
 
@@ -204,7 +204,7 @@ void CookieJar::setRawCookie(const Document&, const Cookie& cookie, ShouldPartit
 void CookieJar::deleteCookie(const Document& document, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr session = m_storageSessionProvider->storageSession())
-        session->deleteCookie(document.firstPartyForCookies(), url, cookieName, WTFMove(completionHandler));
+        session->deleteCookie(document.firstPartyForCookies(), url, cookieName, WTF::move(completionHandler));
     else {
         ASSERT_NOT_REACHED();
         completionHandler();

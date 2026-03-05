@@ -25,7 +25,13 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
+
+#include <wtf/Platform.h>
+
+#if USE(APPKIT)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -45,3 +51,5 @@ DECLARE_SYSTEM_HEADER
 @end
 
 #endif /* USE(APPLE_INTERNAL_SDK) */
+
+#endif // USE(APPKIT)

@@ -83,32 +83,32 @@ Ref<CSSValue> makePrimitiveCSSValue(const WTF::String& value)
 
 Ref<CSSValue> makeFunctionCSSValue(CSSValueID name, Ref<CSSValue>&& value)
 {
-    return CSSFunctionValue::create(name, WTFMove(value));
+    return CSSFunctionValue::create(name, WTF::move(value));
 }
 
 template<> Ref<CSSValue> makeCoalescingPairCSSValue<SerializationSeparatorType::Space>(Ref<CSSValue>&& first, Ref<CSSValue>&& second)
 {
-    return CSSValuePair::create(WTFMove(first), WTFMove(second));
+    return CSSValuePair::create(WTF::move(first), WTF::move(second));
 }
 
 template<> Ref<CSSValue> makeCoalescingQuadCSSValue<SerializationSeparatorType::Space>(Ref<CSSValue>&& first, Ref<CSSValue>&& second, Ref<CSSValue>&& third, Ref<CSSValue>&& fourth)
 {
-    return CSSQuadValue::create(WTFMove(first), WTFMove(second), WTFMove(third), WTFMove(fourth));
+    return CSSQuadValue::create(WTF::move(first), WTF::move(second), WTF::move(third), WTF::move(fourth));
 }
 
 template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Space>(CSSValueListBuilder&& builder)
 {
-    return CSSValueList::createSpaceSeparated(WTFMove(builder));
+    return CSSValueList::createSpaceSeparated(WTF::move(builder));
 }
 
 template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Comma>(CSSValueListBuilder&& builder)
 {
-    return CSSValueList::createCommaSeparated(WTFMove(builder));
+    return CSSValueList::createCommaSeparated(WTF::move(builder));
 }
 
 template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Slash>(CSSValueListBuilder&& builder)
 {
-    return CSSValueList::createSlashSeparated(WTFMove(builder));
+    return CSSValueList::createSlashSeparated(WTF::move(builder));
 }
 
 } // namespace CSS

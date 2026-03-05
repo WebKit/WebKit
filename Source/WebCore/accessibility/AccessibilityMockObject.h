@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AccessibilityObject.h"
+#include <WebCore/AccessibilityObject.h>
 
 namespace WebCore {
 

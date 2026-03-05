@@ -2195,6 +2195,7 @@ TEST(DragAndDropTests, SuggestedNameContainsDot)
 TEST(DragAndDropTests, CanStartDragOnModel)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ModelElementEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];
@@ -2220,6 +2221,7 @@ TEST(DragAndDropTests, CanStartDragOnModel)
 TEST(DragAndDropTests, CheckModelDragPreview)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ModelElementEnabled"] || [feature.key isEqualToString:@"ModelProcessEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];
@@ -2267,6 +2269,7 @@ TEST(DragAndDropTests, CheckModelDragPreview)
 TEST(DragAndDropTests, IgnoreHitTestStageModeModel)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ModelElementEnabled"] || [feature.key isEqualToString:@"ModelProcessEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];

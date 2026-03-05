@@ -142,7 +142,7 @@ static const CBS_ASN1_TAG kResumableAcrossNamesTag =
 
 static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
                                      int for_ticket) {
-  if (in == NULL || in->cipher == NULL) {
+  if (in == nullptr || in->cipher == nullptr) {
     return 0;
   }
 
@@ -151,7 +151,7 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
       !CBB_add_asn1_uint64(&session, kVersion) ||
       !CBB_add_asn1_uint64(&session, in->ssl_version) ||
       !CBB_add_asn1(&session, &child, CBS_ASN1_OCTETSTRING) ||
-      !CBB_add_u16(&child, (uint16_t)(in->cipher->id & 0xffff)) ||
+      !CBB_add_u16(&child, in->cipher->protocol_id) ||
       // The session ID is irrelevant for a session ticket.
       !CBB_add_asn1_octet_string(&session, in->session_id.data(),
                                  for_ticket ? 0 : in->session_id.size()) ||
@@ -262,7 +262,7 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
 
   // The certificate chain is only serialized if the leaf's SHA-256 isn't
   // serialized instead.
-  if (in->certs != NULL &&       //
+  if (in->certs != nullptr &&    //
       !in->peer_sha256_valid &&  //
       sk_CRYPTO_BUFFER_num(in->certs.get()) >= 2) {
     if (!CBB_add_asn1(&session, &child, kCertChainTag)) {
@@ -389,7 +389,7 @@ static int SSL_SESSION_parse_string(CBS *cbs, UniquePtr<char> *out,
 static bool SSL_SESSION_parse_octet_string(CBS *cbs, Array<uint8_t> *out,
                                            CBS_ASN1_TAG tag) {
   CBS value;
-  if (!CBS_get_optional_asn1_octet_string(cbs, &value, NULL, tag)) {
+  if (!CBS_get_optional_asn1_octet_string(cbs, &value, nullptr, tag)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return false;
   }
@@ -492,7 +492,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
     return nullptr;
   }
   ret->cipher = SSL_get_cipher_by_value(cipher_value);
-  if (ret->cipher == NULL) {
+  if (ret->cipher == nullptr) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_UNSUPPORTED_CIPHER);
     return nullptr;
   }
@@ -592,7 +592,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
   }
 
   CBS cert_chain;
-  CBS_init(&cert_chain, NULL, 0);
+  CBS_init(&cert_chain, nullptr, 0);
   int has_cert_chain;
   if (!CBS_get_optional_asn1(&session, &cert_chain, &has_cert_chain,
                              kCertChainTag) ||
@@ -620,7 +620,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
 
     while (CBS_len(&cert_chain) > 0) {
       CBS cert;
-      if (!CBS_get_any_asn1_element(&cert_chain, &cert, NULL, NULL) ||
+      if (!CBS_get_any_asn1_element(&cert_chain, &cert, nullptr, nullptr) ||
           CBS_len(&cert) == 0) {
         OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
         return nullptr;
@@ -726,7 +726,7 @@ int SSL_SESSION_to_bytes(const SSL_SESSION *in, uint8_t **out_data,
 
     *out_len = strlen(kNotResumableSession);
     *out_data = (uint8_t *)OPENSSL_memdup(kNotResumableSession, *out_len);
-    if (*out_data == NULL) {
+    if (*out_data == nullptr) {
       return 0;
     }
 
@@ -785,11 +785,11 @@ SSL_SESSION *SSL_SESSION_from_bytes(const uint8_t *in, size_t in_len,
   UniquePtr<SSL_SESSION> ret =
       SSL_SESSION_parse(&cbs, ctx->x509_method, ctx->pool);
   if (!ret) {
-    return NULL;
+    return nullptr;
   }
   if (CBS_len(&cbs) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
-    return NULL;
+    return nullptr;
   }
   return ret.release();
 }

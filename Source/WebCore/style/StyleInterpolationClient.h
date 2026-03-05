@@ -37,7 +37,7 @@ namespace Style::Interpolation {
 
 class Client {
 public:
-    virtual Document* document() const = 0;
+    virtual Document& document() const = 0;
     virtual RenderElement* renderer() const = 0;
     virtual const RenderStyle& currentStyle() const = 0;
     virtual std::optional<unsigned> transformFunctionListPrefix() const = 0;

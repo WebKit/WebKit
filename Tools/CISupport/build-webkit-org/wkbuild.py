@@ -93,7 +93,7 @@ def _should_file_trigger_build(target_platform, file):
         ("LayoutTests/platform/mac-wk1", ["mac"]),
         ("LayoutTests/platform/mac", ["mac"]),
         ("LayoutTests/platform/wk2", ["mac", "ios", "visionos"]),
-        ("cairo", ["gtk", "win"]),
+        ("cairo", ["win"]),
         ("cf", ["mac", "ios", "visionos", "tvos", "watchos"]),
         ("cocoa", ["mac", "ios", "visionos", "tvos", "watchos"]),
         ("curl", ["win"]),

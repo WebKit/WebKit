@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,17 @@ typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 namespace WebCore {
 
 class FloatSize;
+struct ImmersiveVideoMetadata;
 struct PlatformVideoColorSpace;
-struct SpatialVideoMetadata;
-struct VideoProjectionMetadata;
 
 TrackInfoTrackType typeFromFormatDescription(CMFormatDescriptionRef);
 FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef);
 std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatDescriptionRef);
 String codecFromFormatDescription(CMFormatDescriptionRef);
 bool formatDescriptionIsProtected(CMFormatDescriptionRef);
-std::optional<SpatialVideoMetadata> spatialVideoMetadataFromFormatDescription(CMFormatDescriptionRef);
-std::optional<VideoProjectionMetadata> videoProjectionMetadataFromFormatDescription(CMFormatDescriptionRef);
-
+WEBCORE_EXPORT std::optional<ImmersiveVideoMetadata> immersiveVideoMetadataFromFormatDescription(CMFormatDescriptionRef);
+#if HAVE(IMMERSIVE_VIDEO_METADATA_SUPPORT)
+RetainPtr<CFDictionaryRef> extractImmersiveVideoMetadata(CMFormatDescriptionRef);
+WEBCORE_EXPORT RetainPtr<CFDictionaryRef> formatDescriptionDictionaryFromImmersiveVideoMetadata(const ImmersiveVideoMetadata&);
+#endif
 } // namespace WebCore

@@ -9,7 +9,6 @@
  */
 #include "api/test/network_emulation/dual_pi2_network_queue.h"
 
-#include <algorithm>
 #include <cstddef>
 #include <optional>
 #include <queue>
@@ -30,8 +29,7 @@ DualPi2NetworkQueue::DualPi2NetworkQueue(const Config& config)
       step_threshold_(config.link_rate.IsInfinite()
                           ? DataSize::Infinity()
                           : config_.target_delay * config_.link_rate * 2),
-      random_(config.seed),
-      distribution_(0.0, 1.0) {
+      random_(config.seed) {
   sequence_checker_.Detach();
 }
 
@@ -45,7 +43,6 @@ void DualPi2NetworkQueue::SetMaxPacketCapacity(size_t max_packet_capacity) {
 
 bool DualPi2NetworkQueue::EnqueuePacket(const PacketInFlightInfo& packet_info) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  UpdateBaseMarkingProbability(packet_info.send_time());
   if (max_packet_capacity_.has_value() &&
       l4s_queue_.size() + classic_queue_.size() >= *max_packet_capacity_) {
     RTC_LOG(LS_WARNING)
@@ -99,7 +96,6 @@ std::optional<PacketInFlightInfo> DualPi2NetworkQueue::PeekNextPacket() const {
 std::optional<PacketInFlightInfo> DualPi2NetworkQueue::DequeuePacket(
     Timestamp time_now) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  UpdateBaseMarkingProbability(time_now);
   std::queue<PacketInFlightInfo>& queue =
       l4s_queue_.empty() ? classic_queue_ : l4s_queue_;
   if (queue.empty()) {
@@ -107,6 +103,7 @@ std::optional<PacketInFlightInfo> DualPi2NetworkQueue::DequeuePacket(
   }
 
   PacketInFlightInfo packet_info = queue.front();
+  UpdateBaseMarkingProbability(time_now, time_now - packet_info.send_time());
   queue.pop();
   total_queued_size_ -= packet_info.packet_size();
   if (packet_info.ecn == EcnMarking::kEct1 &&
@@ -121,14 +118,13 @@ bool DualPi2NetworkQueue::empty() const {
   return classic_queue_.empty() && l4s_queue_.empty();
 }
 
-void DualPi2NetworkQueue::UpdateBaseMarkingProbability(Timestamp time_now) {
+void DualPi2NetworkQueue::UpdateBaseMarkingProbability(Timestamp time_now,
+                                                       TimeDelta sojourn_time) {
   if (time_now - config_.probability_update_interval <
       last_probability_update_time_) {
     return;
   }
   last_probability_update_time_ = time_now;
-  TimeDelta sojourn_time =
-      std::max(l4s_queue_delay(time_now), classic_queue_delay(time_now));
   TimeDelta proportional_update =
       config_.alpha * (sojourn_time - config_.target_delay);
   TimeDelta integral_update =
@@ -151,7 +147,7 @@ bool DualPi2NetworkQueue::ShouldTakeAction(double marking_probability) {
   if (total_queued_size_ > step_threshold_) {
     return true;
   }
-  return distribution_(random_) < marking_probability;
+  return random_.Rand<double>() < marking_probability;
 }
 
 }  // namespace webrtc

@@ -21,4 +21,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/range-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/stash-take.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/video-with-aged-proxy-cache.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/video-with-range.py

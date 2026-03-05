@@ -98,13 +98,14 @@ public:
 
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
-    uint64_t WARN_UNUSED_RETURN retainCounterSampleBuffer(CommandEncoder&);
+    [[nodiscard]] uint64_t retainCounterSampleBuffer(CommandEncoder&);
     void releaseCounterSampleBuffer(uint64_t);
     void retainTimestampsForOneUpdate(NSMutableSet<id<MTLCounterSampleBuffer>> *);
     void waitForAllCommitedWorkToComplete();
     void synchronizeResourceAndWait(id<MTLBuffer>);
     id<MTLIndirectCommandBuffer> trimICB(id<MTLIndirectCommandBuffer> dest, id<MTLIndirectCommandBuffer> src, NSUInteger newSize);
     id<MTLDevice> _Nullable metalDevice() const;
+    std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
 
 private:
     Queue(id<MTLCommandQueue>, Adapter&, Device&);
@@ -120,8 +121,6 @@ private:
     void clearTextureIfNeeded(Texture&, uint32_t mipLevelCount, uint32_t arrayLayerCount, uint32_t baseMipLevel, uint32_t baseArrayLayer);
 
     NSString * _Nullable errorValidatingWriteTexture(const WGPUImageCopyTexture&, const WGPUTextureDataLayout&, const WGPUExtent3D&, size_t, const Texture&) const;
-
-    std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
 
     id<MTLCommandQueue> _Nullable m_commandQueue { nil };
     id<MTLCommandBuffer> _Nullable m_commandBuffer { nil };

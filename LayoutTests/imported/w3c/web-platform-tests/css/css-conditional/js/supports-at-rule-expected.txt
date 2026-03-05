@@ -1,0 +1,13 @@
+
+FAIL @supports at-rule assert_equals: CSS.supports(at-rule(@supports)) expected true but got false
+FAIL @supports at-rule 1 assert_equals: CSS.supports(at-rule( @supports)) expected true but got false
+FAIL @supports at-rule 2 assert_equals: CSS.supports(at-rule(@supports )) expected true but got false
+FAIL @supports at-rule 3 assert_equals: CSS.supports(at-rule(@media)) expected true but got false
+FAIL @supports at-rule 4 assert_equals: CSS.supports(at-rule(@counter-style)) expected true but got false
+PASS @supports at-rule 5
+FAIL @supports at-rule 6 assert_equals: CSS.supports(at-rule(@import)) expected true but got false
+FAIL @supports at-rule 7 assert_equals: CSS.supports(at-rule(@swash)) expected true but got false
+FAIL @supports at-rule 8 assert_equals: CSS.supports(at-rule(@starting-style)) expected true but got false
+PASS @supports at-rule 9
+PASS @supports at-rule 10
+

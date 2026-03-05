@@ -138,8 +138,6 @@ private:
     void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarkerType>);
     AlternativeTextClient* alternativeTextClient();
 #endif
-    Ref<Document> protectedDocument() const { return m_document.get(); }
-
     void removeCorrectionIndicatorMarkers();
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;

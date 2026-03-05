@@ -66,6 +66,7 @@
 #include "RenderView.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
+#include "StyleImage.h"
 #include "Styleable.h"
 #include "TextBoxPainter.h"
 #include "TransformState.h"
@@ -83,7 +84,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderBoxModelObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBoxModelObject);
 
 // The HashMap for storing continuation pointers.
 // An inline can be split with blocks occuring in between the inline content.
@@ -138,7 +139,7 @@ static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
     return map;
 }
 
-void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
+void RenderBoxModelObject::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
 
@@ -183,13 +184,13 @@ bool RenderBoxModelObject::hasAcceleratedCompositing() const
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
-    : RenderLayerModelObject(type, element, WTFMove(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
+    : RenderLayerModelObject(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
-    : RenderLayerModelObject(type, document, WTFMove(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
+    : RenderLayerModelObject(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
 }
@@ -210,7 +211,10 @@ void RenderBoxModelObject::willBeDestroyed()
 
 bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
 {
-    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasUsedAppearance() || style().hasBoxShadow();
+    return hasBackground()
+        || style().border().hasVisibleBorderDecoration()
+        || style().hasUsedAppearance()
+        || !style().boxShadow().isNone();
 }
 
 void RenderBoxModelObject::updateFromStyle()
@@ -221,7 +225,7 @@ void RenderBoxModelObject::updateFromStyle()
     // we only check for bits that could possibly be set to true.
     const auto& styleToUse = style();
     setHasVisibleBoxDecorations(hasVisibleBoxDecorationStyle());
-    setInline(styleToUse.isDisplayInlineType());
+    setInline(styleToUse.display().isInlineType());
     setPositionState(styleToUse.position());
     setHorizontalWritingMode(styleToUse.writingMode().isHorizontal());
     setPaintContainmentApplies(shouldApplyPaintContainment());
@@ -244,7 +248,7 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderBoxModelObject& ch
     return offset;
 }
     
-static inline bool isOutOfFlowPositionedWithImplicitHeight(const RenderBoxModelObject& child)
+static inline bool NODELETE isOutOfFlowPositionedWithImplicitHeight(const RenderBoxModelObject& child)
 {
     return child.isOutOfFlowPositioned() && !child.style().logicalTop().isAuto() && !child.style().logicalBottom().isAuto();
 }
@@ -513,7 +517,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
 std::pair<const RenderBox&, const RenderLayer*> RenderBoxModelObject::enclosingClippingBoxForStickyPosition() const
 {
     ASSERT(isStickilyPositioned());
-    RenderLayer* clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+    CheckedPtr clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
     const RenderBox& box = clipLayer ? downcast<RenderBox>(clipLayer->renderer()) : view();
     return { box, clipLayer };
 }
@@ -624,11 +628,33 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
         constraints.setBottomOffset(Style::evaluate<float>(style().bottom(), constrainingRect.height(), style().usedZoomForLength()));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeBottom);
     }
+
+    if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight) && constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft)) {
+        float availableSpace = constrainingRect.width() - constraints.leftOffset() - constraints.rightOffset();
+        if (constraints.stickyBoxRect().width() > availableSpace) {
+            float delta = constraints.stickyBoxRect().width() - availableSpace;
+            if (containingBlock->writingMode().isAnyLeftToRight())
+                constraints.setRightOffset(constraints.rightOffset() - delta);
+            else
+                constraints.setLeftOffset(constraints.leftOffset() - delta);
+        }
+    }
+
+    if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom) && constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop)) {
+        float availableSpace = constrainingRect.height() - constraints.topOffset() - constraints.bottomOffset();
+        if (constraints.stickyBoxRect().height() > availableSpace) {
+            float delta = constraints.stickyBoxRect().height() - availableSpace;
+            if (containingBlock->writingMode().isAnyTopToBottom())
+                constraints.setBottomOffset(constraints.bottomOffset() - delta);
+            else
+                constraints.setTopOffset(constraints.topOffset() - delta);
+        }
+    }
 }
 
 FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 {
-    RenderLayer* enclosingClippingLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+    CheckedPtr enclosingClippingLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
 
     if (enclosingClippingLayer) {
         RenderBox& enclosingClippingBox = downcast<RenderBox>(enclosingClippingLayer->renderer());
@@ -715,17 +741,17 @@ void RenderBoxModelObject::paintMaskForTextFillBox(GraphicsContext& context, con
     paint(maskInfo, scrolledPaintRect.location() - localOffset);
 }
 
-static inline LayoutUnit resolveWidthForRatio(LayoutUnit height, const LayoutSize& intrinsicRatio)
+static inline LayoutUnit NODELETE resolveWidthForRatio(LayoutUnit height, const LayoutSize& intrinsicRatio)
 {
     return height * intrinsicRatio.width() / intrinsicRatio.height();
 }
 
-static inline LayoutUnit resolveHeightForRatio(LayoutUnit width, const LayoutSize& intrinsicRatio)
+static inline LayoutUnit NODELETE resolveHeightForRatio(LayoutUnit width, const LayoutSize& intrinsicRatio)
 {
     return width * intrinsicRatio.height() / intrinsicRatio.width();
 }
 
-static inline LayoutSize resolveAgainstIntrinsicWidthOrHeightAndRatio(const LayoutSize& size, const LayoutSize& intrinsicRatio, LayoutUnit useWidth, LayoutUnit useHeight)
+static inline LayoutSize NODELETE resolveAgainstIntrinsicWidthOrHeightAndRatio(const LayoutSize& size, const LayoutSize& intrinsicRatio, LayoutUnit useWidth, LayoutUnit useHeight)
 {
     if (intrinsicRatio.isEmpty()) {
         if (useWidth)
@@ -764,7 +790,7 @@ static inline LayoutSize resolveAgainstIntrinsicRatio(const LayoutSize& size, co
     return LayoutSize(size.width(), solutionHeight);
 }
 
-LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const LayoutSize& positioningAreaSize, ScaleByUsedZoom scaleByUsedZoom) const
+LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(Style::Image* image, const LayoutSize& positioningAreaSize, ScaleByUsedZoom scaleByUsedZoom) const
 {
     // A generated image without a fixed size, will always return the container size as intrinsic size.
     if (!image->imageHasNaturalDimensions())
@@ -811,7 +837,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
     if (view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers))
         return false;
 
-    RenderLayer* rootLayer = view().layer();
+    CheckedPtr rootLayer = view().layer();
     if (!rootLayer || !rootLayer->isComposited())
         return false;
 
@@ -835,11 +861,11 @@ bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& context
 
 bool RenderBoxModelObject::borderObscuresBackground() const
 {
-    if (!style().hasBorder())
+    if (!style().border().hasBorder())
         return false;
 
     // Bail if we have any border-image for now. We could look at the image alpha to improve this.
-    if (!style().borderImage().source().isNone())
+    if (!style().borderImageSource().isNone())
         return false;
 
     auto edges = borderEdges(style(), document().deviceScaleFactor());
@@ -944,7 +970,7 @@ RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
 {
     if (!isFirstLetter())
         return nullptr;
-    return firstLetterRemainingTextMap().get(*this).get();
+    return firstLetterRemainingTextMap().get(*this);
 }
 
 void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment& remainingText)
@@ -995,7 +1021,7 @@ void RenderBoxModelObject::collectAbsoluteQuadsForContinuation(Vector<FloatQuad>
     }
 }
 
-void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const
+void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<Style::TransformResolverOption>) const
 {
     // applyTransform() is only used through RenderLayer*, which only invokes this for RenderBox derived renderers, thus not for
     // RenderInline/RenderLineBreak - the other two renderers that inherit from RenderBoxModelObject.

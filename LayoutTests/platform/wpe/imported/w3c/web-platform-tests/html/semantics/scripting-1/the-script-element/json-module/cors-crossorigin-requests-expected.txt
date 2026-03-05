@@ -1,8 +1,0 @@
-json-module-crossorigin
-
-
-
-PASS Imported JSON module, cross-origin with CORS
-PASS Imported JSON module, cross-origin, missing CORS ACAO header
-FAIL Imported JSON module with parse error, cross-origin, with CORS assert_equals: Unexpected _log value expected "SyntaxError" but got "0-0"
-

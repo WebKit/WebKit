@@ -158,7 +158,7 @@ public:
 
     struct gbm_bo* bufferObject() const { return m_bufferObject; }
     uint32_t frameBufferID() const { return m_frameBufferID; }
-    void setFenceFD(WTF::UnixFileDescriptor&& fenceFD) { m_fenceFD = WTFMove(fenceFD); }
+    void setFenceFD(WTF::UnixFileDescriptor&& fenceFD) { m_fenceFD = WTF::move(fenceFD); }
     const WTF::UnixFileDescriptor& fenceFD() const { return m_fenceFD; }
 
 private:

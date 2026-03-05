@@ -128,14 +128,14 @@ void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page& page)
 
     m_visitedLinksPopulated = true;
 
-    WebView *webView = kit(&page);
+    RetainPtr webView = kit(&page);
     ASSERT(webView);
 
-    if (webView.historyDelegate) {
-        WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(webView);
+    if (webView.get().historyDelegate) {
+        WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(webView.get());
 
         if (implementations->populateVisitedLinksFunc)
-            CallHistoryDelegate(implementations->populateVisitedLinksFunc, webView, @selector(populateVisitedLinksForWebView:));
+            CallHistoryDelegate(implementations->populateVisitedLinksFunc, webView.get(), @selector(populateVisitedLinksForWebView:));
 
         return;
     }

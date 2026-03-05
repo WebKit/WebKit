@@ -28,9 +28,9 @@
 
 #if ENABLE(VIDEO)
 
+#include "SerializedPlatformDataCue.h"
+#include "TextTrackCue.h"
 #include <JavaScriptCore/Strong.h>
-#include <WebCore/SerializedPlatformDataCue.h>
-#include <WebCore/TextTrackCue.h>
 #include <wtf/MediaTime.h>
 #include <wtf/TypeCasts.h>
 
@@ -44,7 +44,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class DataCue final : public TextTrackCue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DataCue);
+    WTF_MAKE_TZONE_ALLOCATED(DataCue);
 public:
     static Ref<DataCue> create(Document&, double start, double end, ArrayBuffer& data);
     static Ref<DataCue> create(Document&, double start, double end, JSC::JSValue, const String& type);
@@ -54,10 +54,9 @@ public:
     virtual ~DataCue();
 
     RefPtr<JSC::ArrayBuffer> data() const;
-    void setData(JSC::ArrayBuffer&);
+    ExceptionOr<void> setData(JSC::ArrayBuffer*);
 
     const SerializedPlatformDataCue* platformValue() const { return m_platformValue.get(); }
-    RefPtr<const SerializedPlatformDataCue> protectedPlatformValue() const { return m_platformValue.get(); }
 
     JSC::JSValue value(JSC::JSGlobalObject&) const;
     void setValue(JSC::JSGlobalObject&, JSC::JSValue);
@@ -71,7 +70,7 @@ private:
     DataCue(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
     DataCue(Document&, const MediaTime& start, const MediaTime& end, JSC::JSValue, const String&);
 
-    JSC::JSValue valueOrNull() const;
+    JSC::JSValue NODELETE valueOrNull() const;
     CueType cueType() const final { return Data; }
     bool cueContentsMatch(const TextTrackCue&) const final;
     void toJSON(JSON::Object&) const final;

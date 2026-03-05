@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 #include <glib.h>
+#include <skia/core/SkGraphics.h>
 
 #if USE(GCRYPT)
 #include <pal/crypto/gcrypt/Initialization.h>
@@ -39,18 +40,14 @@
 #include <WebCore/GStreamerCommon.h>
 #endif
 
-#if USE(SKIA)
-#include <skia/core/SkGraphics.h>
-#endif
-
 #if USE(SYSPROF_CAPTURE)
 #include <wtf/SystemTracing.h>
 #endif
 
 #if USE(SKIA_OPENTYPE_SVG)
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/modules/svg/SkSVGOpenTypeSVGDecoder.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebKit {
@@ -68,15 +65,13 @@ public:
         PAL::GCrypt::initialize();
 #endif
 
-#if USE(SKIA)
         SkGraphics::Init();
 #if USE(SKIA_OPENTYPE_SVG)
         SkGraphics::SetOpenTypeSVGDecoderFactory(SkSVGOpenTypeSVGDecoder::Make);
 #endif
-#endif
 
 #if ENABLE(DEVELOPER_MODE)
-        if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
+        if (g_getenv("WEBKIT_PAUSE_WEB_PROCESS_ON_LAUNCH"))
             WTF::sleep(30_s);
 #endif
 

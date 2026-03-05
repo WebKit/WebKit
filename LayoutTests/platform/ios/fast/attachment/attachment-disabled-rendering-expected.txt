@@ -4,7 +4,7 @@ layer at (0,0) size 800x52
   RenderBlock {HTML} at (0,0) size 800x52
     RenderBody {BODY} at (8,16) size 784x20
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 766x19
+        RenderText {#text} at (0,0) size 766x20
           text run at (0,0) width 766: "This tests that attachments don't have a custom renderer when they are disabled. This test must be run in the test runner."
       RenderBlock (anonymous) at (0,36) size 784x0
         RenderInline {ATTACHMENT} at (0,0) size 0x0

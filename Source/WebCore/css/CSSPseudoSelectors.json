@@ -50,6 +50,8 @@
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-media-document": {},
+        "-internal-select-popover": {},
+        "-internal-uses-menulist": {},
         "-webkit-any": {
             "argument": "required",
             "comment": "Alias of :is() with different specificity rules.",
@@ -77,7 +79,7 @@
         },
         "active-view-transition-type": {
             "argument": "required",
-            "settings-flag": "viewTransitionTypesEnabled"
+            "settings-flag": "viewTransitionsEnabled"
         },
         "any-link": {
             "aliases": [
@@ -117,6 +119,9 @@
             "comment": "For scrollbar styling.",
             "status": "non-standard"
         },
+        "even-less-good": {
+            "settings-flag": "cssAppearanceBaseEnabled"
+        },
         "first-child": {},
         "first-of-type": {},
         "focus": {},
@@ -133,6 +138,9 @@
         },
         "has": {
             "argument": "required"
+        },
+        "heading": {
+            "argument": "optional"
         },
         "horizontal": {
             "comment": "For scrollbar styling.",
@@ -189,6 +197,12 @@
         },
         "only-child": {},
         "only-of-type": {},
+        "open": {
+            "settings-flag": "openPseudoClassEnabled"
+        },
+        "optimum": {
+            "settings-flag": "cssAppearanceBaseEnabled"
+        },
         "optional": {},
         "out-of-range": {},
         "past": {
@@ -228,6 +242,9 @@
         "start": {
             "comment": "For scrollbar styling.",
             "status": "non-standard"
+        },
+        "suboptimum": {
+            "settings-flag": "cssAppearanceBaseEnabled"
         },
         "target": {},
         "user-invalid": {},
@@ -508,6 +525,9 @@
         "before": {
             "supports-single-colon-for-compatibility": true
         },
+        "checkmark": {
+            "settings-flag": "htmlEnhancedSelectEnabled || cssAppearanceBaseEnabled"
+        },
         "cue": {
             "argument": "optional",
             "conditional": "ENABLE(VIDEO)",
@@ -541,6 +561,13 @@
         "part": {
             "argument": "required"
         },
+        "picker": {
+            "argument": "required",
+            "settings-flag": "htmlEnhancedSelectEnabled && cssPickerPseudoElementEnabled"
+        },
+        "picker-icon": {
+            "settings-flag": "htmlEnhancedSelectEnabled"
+        },
         "placeholder": {
             "aliases": [
                 "-webkit-input-placeholder"
@@ -548,20 +575,24 @@
             "user-agent-part": true
         },
         "selection": {},
+        "slider-fill": {
+            "settings-flag": "cssAppearanceBaseEnabled",
+            "user-agent-part": true
+        },
+        "slider-thumb": {
+            "settings-flag": "cssAppearanceBaseEnabled",
+            "user-agent-part": true
+        },
+        "slider-track": {
+            "settings-flag": "cssAppearanceBaseEnabled",
+            "user-agent-part": true
+        },
         "slotted": {
             "argument": "required"
         },
         "spelling-error": {},
         "target-text": {
             "settings-flag": "targetTextPseudoElementEnabled"
-        },
-        "thumb": {
-            "settings-flag": "thumbAndTrackPseudoElementsEnabled",
-            "user-agent-part": true
-        },
-        "track": {
-            "settings-flag": "thumbAndTrackPseudoElementsEnabled",
-            "user-agent-part": true
         },
         "view-transition": {
             "settings-flag": "viewTransitionsEnabled"

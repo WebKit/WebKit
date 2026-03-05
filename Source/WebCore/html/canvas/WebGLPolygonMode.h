@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLPolygonMode final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLPolygonMode);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLPolygonMode);
     WTF_MAKE_NONCOPYABLE(WebGLPolygonMode);
 public:
     explicit WebGLPolygonMode(WebGLRenderingContextBase&);
@@ -45,3 +45,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLPolygonMode)

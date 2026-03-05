@@ -43,6 +43,10 @@ rtc_library("fifo_buffer") {
   ]
 }
 
+rtc_source_set("less_unique_ptr") {
+  sources = [ "less_unique_ptr.h" ]
+}
+
 rtc_library("unittests") {
   testonly = true
   sources = [

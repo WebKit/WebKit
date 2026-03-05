@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/IntersectionObserver/
-
 typedef double DOMHighResTimeStamp;
 
+// https://w3c.github.io/IntersectionObserver/#intersectionobserverentry
 [
     JSCustomMarkFunction,
     Exposed=Window
@@ -42,6 +41,7 @@ typedef double DOMHighResTimeStamp;
     readonly attribute Element target;
 };
 
+// https://w3c.github.io/IntersectionObserver/#dictdef-intersectionobserverentryinit
 dictionary IntersectionObserverEntryInit {
     required DOMHighResTimeStamp time;
     required DOMRectInit? rootBounds;

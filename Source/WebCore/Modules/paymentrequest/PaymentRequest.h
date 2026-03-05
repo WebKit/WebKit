@@ -53,7 +53,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
 
 class PaymentRequest final : public ActiveDOMObject, public EventTarget, public RefCounted<PaymentRequest> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaymentRequest);
+    WTF_MAKE_TZONE_ALLOCATED(PaymentRequest);
 public:
     using AbortPromise = DOMPromiseDeferred<void>;
     using CanMakePaymentPromise = DOMPromiseDeferred<IDLBoolean>;
@@ -71,10 +71,10 @@ public:
     void abort(AbortPromise&&);
     void canMakePayment(Document&, CanMakePaymentPromise&&);
 
-    const String& id() const;
+    const String& NODELETE id() const;
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
-    const String& shippingOption() const { return m_shippingOption; }
-    std::optional<PaymentShippingType> shippingType() const;
+    const String& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
+    std::optional<PaymentShippingType> NODELETE shippingType() const;
 
     enum class State {
         Created,
@@ -91,9 +91,9 @@ public:
 
     State state() const { return m_state; }
 
-    const PaymentOptions& paymentOptions() const { return m_options; }
-    const PaymentDetailsInit& paymentDetails() const { return m_details; }
-    const Vector<String>& serializedModifierData() const { return m_serializedModifierData; }
+    const PaymentOptions& paymentOptions() const LIFETIME_BOUND { return m_options; }
+    const PaymentDetailsInit& paymentDetails() const LIFETIME_BOUND { return m_details; }
+    const Vector<String>& serializedModifierData() const LIFETIME_BOUND { return m_serializedModifierData; }
 
     void shippingAddressChanged(Ref<PaymentAddress>&&);
     void shippingOptionChanged(const String& shippingOption);
@@ -127,7 +127,6 @@ private:
     void whenDetailsSettled(std::function<void()>&&);
     void abortWithException(Exception&&);
     PaymentHandler* activePaymentHandler() { return m_activePaymentHandler ? m_activePaymentHandler->paymentHandler.ptr() : nullptr; }
-    RefPtr<PaymentHandler> protectedActivePaymentHandler();
     void settleShowPromise(ExceptionOr<PaymentResponse&>&&);
     void closeActivePaymentHandler();
 
@@ -137,8 +136,7 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::PaymentRequest; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     bool isPaymentRequest() const final { return true; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

@@ -56,16 +56,6 @@ CSSGroupingRule::~CSSGroupingRule()
     }
 }
 
-Ref<const StyleRuleGroup> CSSGroupingRule::protectedGroupRule() const
-{
-    return m_groupRule;
-}
-
-Ref<StyleRuleGroup> CSSGroupingRule::protectedGroupRule()
-{
-    return m_groupRule;
-}
-
 ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
@@ -163,7 +153,7 @@ void CSSGroupingRule::cssTextForRules(StringBuilder& rules) const
     for (unsigned index = 0; index < childRules.size(); ++index) {
         auto ruleText = item(index)->cssText();
         if (!ruleText.isEmpty())
-            rules.append("\n  "_s, WTFMove(ruleText));
+            rules.append("\n  "_s, WTF::move(ruleText));
     }
 }
 
@@ -178,7 +168,7 @@ void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, c
 {
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0; index < childRules.size(); index++) {
-        auto wrappedRule = item(index);
+        RefPtr wrappedRule = item(index);
         rules.append("\n  "_s, wrappedRule->cssText(context));
     }
 }
@@ -189,7 +179,7 @@ RefPtr<StyleRuleWithNesting> CSSGroupingRule::prepareChildStyleRuleForNesting(St
     auto& rules = m_groupRule->m_childRules;
     for (size_t i = 0 ; i < rules.size() ; i++) {
         if (rules[i].ptr() == &styleRule) {
-            auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
+            auto styleRuleWithNesting = StyleRuleWithNesting::create(WTF::move(styleRule));
             rules[i] = styleRuleWithNesting;
             return styleRuleWithNesting;
         }        

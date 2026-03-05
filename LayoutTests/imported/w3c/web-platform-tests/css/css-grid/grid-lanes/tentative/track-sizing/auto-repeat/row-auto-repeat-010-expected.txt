@@ -1,22 +1,6 @@
 
-FAIL .grid-lanes 1 assert_equals:
-<div class="grid-lanes" data-expected-width="300" data-expected-height="200">
-    <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-  </div>
-height expected 200 but got 0
-FAIL .grid-lanes 2 assert_equals:
-<div class="grid-lanes" style="width: 200px; height: 100px;" data-expected-width="200" data-expected-height="100">
-    <div class="item" data-offset-x="0" data-offset-y="50" data-expected-width="300" data-expected-height="50"></div>
-  </div>
-height expected 50 but got 0
-FAIL .grid-lanes 3 assert_equals:
-<div class="grid-lanes" style="width: min-content; height: min-content;" data-expected-width="300" data-expected-height="200">
-    <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-  </div>
-height expected 200 but got 0
-FAIL .grid-lanes 4 assert_equals:
-<div class="grid-lanes" style="width: max-content; height: max-content;" data-expected-width="300" data-expected-height="200">
-    <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-  </div>
-height expected 200 but got 0
+PASS .grid-lanes 1
+PASS .grid-lanes 2
+PASS .grid-lanes 3
+PASS .grid-lanes 4
 

@@ -86,7 +86,8 @@ TEST_F(UlpfecGeneratorTest, NoEmptyFecWithSeqNumGaps) {
   protected_packets.push_back({12, 3, 54, 0});
   protected_packets.push_back({21, 0, 55, 0});
   protected_packets.push_back({13, 3, 57, 1});
-  FecProtectionParams params = {117, 3, kFecMaskBursty};
+  FecProtectionParams params = {
+      .fec_rate = 117, .max_fec_frames = 3, .fec_mask_type = kFecMaskBursty};
   ulpfec_generator_.SetProtectionParameters(params, params);
   for (Packet p : protected_packets) {
     RtpPacketToSend packet(nullptr);
@@ -115,7 +116,8 @@ TEST_F(UlpfecGeneratorTest, OneFrameFec) {
   // of packets is within `kMaxExcessOverhead`, and (2) the total number of
   // media packets for 1 frame is at least `minimum_media_packets_fec_`.
   constexpr size_t kNumPackets = 4;
-  FecProtectionParams params = {15, 3, kFecMaskRandom};
+  FecProtectionParams params = {
+      .fec_rate = 15, .max_fec_frames = 3, .fec_mask_type = kFecMaskRandom};
   packet_generator_.NewFrame(kNumPackets);
   // Expecting one FEC packet.
   ulpfec_generator_.SetProtectionParameters(params, params);
@@ -150,7 +152,8 @@ TEST_F(UlpfecGeneratorTest, TwoFrameFec) {
   constexpr size_t kNumPackets = 2;
   constexpr size_t kNumFrames = 2;
 
-  FecProtectionParams params = {15, 3, kFecMaskRandom};
+  FecProtectionParams params = {
+      .fec_rate = 15, .max_fec_frames = 3, .fec_mask_type = kFecMaskRandom};
   // Expecting one FEC packet.
   ulpfec_generator_.SetProtectionParameters(params, params);
   uint32_t last_timestamp = 0;
@@ -178,7 +181,8 @@ TEST_F(UlpfecGeneratorTest, MixedMediaRtpHeaderLengths) {
   constexpr size_t kLongRtpHeaderLength = 16;
 
   // Only one frame required to generate FEC.
-  FecProtectionParams params = {127, 1, kFecMaskRandom};
+  FecProtectionParams params = {
+      .fec_rate = 127, .max_fec_frames = 1, .fec_mask_type = kFecMaskRandom};
   ulpfec_generator_.SetProtectionParameters(params, params);
 
   // Fill up internal buffer with media packets with short RTP header length.
@@ -216,10 +220,10 @@ TEST_F(UlpfecGeneratorTest, MixedMediaRtpHeaderLengths) {
 }
 
 TEST_F(UlpfecGeneratorTest, UpdatesProtectionParameters) {
-  const FecProtectionParams kKeyFrameParams = {25, /*max_fec_frames=*/2,
-                                               kFecMaskRandom};
-  const FecProtectionParams kDeltaFrameParams = {25, /*max_fec_frames=*/5,
-                                                 kFecMaskRandom};
+  const FecProtectionParams kKeyFrameParams = {
+      .fec_rate = 25, .max_fec_frames = 2, .fec_mask_type = kFecMaskRandom};
+  const FecProtectionParams kDeltaFrameParams = {
+      .fec_rate = 25, .max_fec_frames = 5, .fec_mask_type = kFecMaskRandom};
 
   ulpfec_generator_.SetProtectionParameters(kDeltaFrameParams, kKeyFrameParams);
 

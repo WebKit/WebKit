@@ -58,8 +58,6 @@
             }).then(function () {
                 testPassed("Local description set");
                 testPassed("End of test promise chain");
-                if (window.internals)
-                    window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "dispatch-fake-ice-candidates");
                 shouldDoChecking = true;
                 checkCandidates();
                 stream.getTracks().forEach(track => track.stop());

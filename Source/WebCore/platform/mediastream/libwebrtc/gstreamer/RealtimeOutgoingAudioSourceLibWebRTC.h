@@ -39,7 +39,7 @@ class RealtimeOutgoingAudioSourceLibWebRTC final : public RealtimeOutgoingAudioS
 public:
     static Ref<RealtimeOutgoingAudioSourceLibWebRTC> create(Ref<MediaStreamTrackPrivate>&& audioTrackPrivate)
     {
-        return adoptRef(*new RealtimeOutgoingAudioSourceLibWebRTC(WTFMove(audioTrackPrivate)));
+        return adoptRef(*new RealtimeOutgoingAudioSourceLibWebRTC(WTF::move(audioTrackPrivate)));
     }
 
 private:

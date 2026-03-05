@@ -39,9 +39,20 @@ OBJC_CLASS NSScrollerImp;
 
 namespace WebCore {
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+class ScrollerImpAdwaita;
+#endif
+
 struct ScrollbarHoverState {
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    ScrollbarPart hoveredPartInHorizontalScrollbar { NoPart };
+    ScrollbarPart hoveredPartInVerticalScrollbar { NoPart };
+    ScrollbarPart pressedPartInHorizontalScrollbar { NoPart };
+    ScrollbarPart pressedPartInVerticalScrollbar { NoPart };
+#else
     bool mouseIsOverHorizontalScrollbar { false };
     bool mouseIsOverVerticalScrollbar { false };
+#endif
 
     friend bool operator==(const ScrollbarHoverState&, const ScrollbarHoverState&) = default;
 };
@@ -61,22 +72,22 @@ class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
     virtual ~ScrollingStateScrollingNode();
 
-    const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
+    const FloatSize& scrollableAreaSize() const LIFETIME_BOUND { return m_scrollableAreaSize; }
     WEBCORE_EXPORT void setScrollableAreaSize(const FloatSize&);
 
-    const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
+    const FloatSize& totalContentsSize() const LIFETIME_BOUND { return m_totalContentsSize; }
     WEBCORE_EXPORT void setTotalContentsSize(const FloatSize&);
 
-    const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
+    const FloatSize& reachableContentsSize() const LIFETIME_BOUND { return m_reachableContentsSize; }
     WEBCORE_EXPORT void setReachableContentsSize(const FloatSize&);
 
-    const FloatPoint& scrollPosition() const { return m_scrollPosition; }
+    const FloatPoint& scrollPosition() const LIFETIME_BOUND { return m_scrollPosition; }
     WEBCORE_EXPORT void setScrollPosition(const FloatPoint&);
 
-    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    const IntPoint& scrollOrigin() const LIFETIME_BOUND { return m_scrollOrigin; }
     WEBCORE_EXPORT void setScrollOrigin(const IntPoint&);
 
-    const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const { return m_snapOffsetsInfo; }
+    const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const LIFETIME_BOUND { return m_snapOffsetsInfo; }
     WEBCORE_EXPORT void setSnapOffsetsInfo(const FloatScrollSnapOffsetsInfo& newOffsetsInfo);
 
     std::optional<unsigned> currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
@@ -85,7 +96,7 @@ public:
     std::optional<unsigned> currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }
     WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
 
-    const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
+    const ScrollableAreaParameters& scrollableAreaParameters() const LIFETIME_BOUND { return m_scrollableAreaParameters; }
     WEBCORE_EXPORT void setScrollableAreaParameters(const ScrollableAreaParameters& params);
 
 #if ENABLE(SCROLLING_THREAD)
@@ -94,35 +105,37 @@ public:
     bool hasSynchronousScrollingReasons() const { return !m_synchronousScrollingReasons.isEmpty(); }
 #endif
 
-    const RequestedKeyboardScrollData& keyboardScrollData() const { return m_keyboardScrollData; }
+    const RequestedKeyboardScrollData& keyboardScrollData() const LIFETIME_BOUND { return m_keyboardScrollData; }
     WEBCORE_EXPORT void setKeyboardScrollData(const RequestedKeyboardScrollData&);
 
-    const RequestedScrollData& requestedScrollData() const { return m_requestedScrollData; }
+    const ScrollRequestData& requestedScrollData() const LIFETIME_BOUND { return m_requestedScrollData; }
 
-    enum class CanMergeScrollData : bool { No, Yes };
-    WEBCORE_EXPORT void setRequestedScrollData(RequestedScrollData&&, CanMergeScrollData = CanMergeScrollData::Yes);
+    WEBCORE_EXPORT void setRequestedScrollData(RequestedScrollData&&);
 
-    WEBCORE_EXPORT bool hasScrollPositionRequest() const;
+    WEBCORE_EXPORT bool NODELETE hasScrollPositionRequest() const;
 
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
     WEBCORE_EXPORT void setIsMonitoringWheelEvents(bool);
 
-    const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
+    const LayerRepresentation& scrollContainerLayer() const LIFETIME_BOUND { return m_scrollContainerLayer; }
     WEBCORE_EXPORT void setScrollContainerLayer(const LayerRepresentation&);
 
     // This is a layer with the contents that move.
-    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
+    const LayerRepresentation& scrolledContentsLayer() const LIFETIME_BOUND { return m_scrolledContentsLayer; }
     WEBCORE_EXPORT void setScrolledContentsLayer(const LayerRepresentation&);
 
-    const LayerRepresentation& horizontalScrollbarLayer() const { return m_horizontalScrollbarLayer; }
+    const LayerRepresentation& horizontalScrollbarLayer() const LIFETIME_BOUND { return m_horizontalScrollbarLayer; }
     WEBCORE_EXPORT void setHorizontalScrollbarLayer(const LayerRepresentation&);
 
-    const LayerRepresentation& verticalScrollbarLayer() const { return m_verticalScrollbarLayer; }
+    const LayerRepresentation& verticalScrollbarLayer() const LIFETIME_BOUND { return m_verticalScrollbarLayer; }
     WEBCORE_EXPORT void setVerticalScrollbarLayer(const LayerRepresentation&);
 
 #if PLATFORM(MAC)
     NSScrollerImp *verticalScrollerImp() const { return m_verticalScrollerImp.get(); }
     NSScrollerImp *horizontalScrollerImp() const { return m_horizontalScrollerImp.get(); }
+#elif USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    ScrollerImpAdwaita* verticalScrollerImp() const { return m_verticalScrollerImp; }
+    ScrollerImpAdwaita* horizontalScrollerImp() const { return m_horizontalScrollerImp; }
 #endif
     ScrollbarHoverState scrollbarHoverState() const { return m_scrollbarHoverState; }
     WEBCORE_EXPORT void setScrollbarHoverState(ScrollbarHoverState);
@@ -130,7 +143,7 @@ public:
     ScrollbarEnabledState scrollbarEnabledState() const { return m_scrollbarEnabledState; }
     WEBCORE_EXPORT void setScrollbarEnabledState(ScrollbarOrientation, bool);
 
-    const std::optional<ScrollbarColor>& scrollbarColor() const { return m_scrollbarColor; }
+    const std::optional<ScrollbarColor>& scrollbarColor() const LIFETIME_BOUND { return m_scrollbarColor; }
     WEBCORE_EXPORT void setScrollbarColor(std::optional<ScrollbarColor>);
 
     void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
@@ -139,7 +152,7 @@ public:
     bool mouseIsOverContentArea() const { return m_mouseIsOverContentArea; }
 
     WEBCORE_EXPORT void setMouseMovedInContentArea(const MouseLocationState&);
-    const MouseLocationState& mouseLocationState() const { return m_mouseLocationState; }
+    const MouseLocationState& mouseLocationState() const LIFETIME_BOUND { return m_mouseLocationState; }
 
     WEBCORE_EXPORT void setScrollbarLayoutDirection(UserInterfaceLayoutDirection);
     UserInterfaceLayoutDirection scrollbarLayoutDirection() const { return m_scrollbarLayoutDirection; }
@@ -149,6 +162,11 @@ public:
 
     WEBCORE_EXPORT void setUseDarkAppearanceForScrollbars(bool);
     bool useDarkAppearanceForScrollbars() const { return m_useDarkAppearanceForScrollbars; }
+
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void setScrollbarOpacity(float);
+    float scrollbarOpacity() const { return m_scrollbarOpacity; };
+#endif
 
 protected:
     ScrollingStateScrollingNode(
@@ -166,7 +184,7 @@ protected:
 #if ENABLE(SCROLLING_THREAD)
         OptionSet<SynchronousScrollingReason>,
 #endif
-        RequestedScrollData&&,
+        ScrollRequestData&&,
         FloatScrollSnapOffsetsInfo&&,
         std::optional<unsigned> currentHorizontalSnapPointIndex,
         std::optional<unsigned> currentVerticalSnapPointIndex,
@@ -192,6 +210,8 @@ protected:
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
+    void mergeOrAppendScrollRequest(RequestedScrollData&&);
+
     FloatSize m_scrollableAreaSize;
     FloatSize m_totalContentsSize;
     FloatSize m_reachableContentsSize;
@@ -214,11 +234,14 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
+#elif USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    RefPtr<ScrollerImpAdwaita> m_verticalScrollerImp;
+    RefPtr<ScrollerImpAdwaita> m_horizontalScrollerImp;
 #endif
 
     std::optional<ScrollbarColor> m_scrollbarColor;
     ScrollableAreaParameters m_scrollableAreaParameters;
-    RequestedScrollData m_requestedScrollData;
+    ScrollRequestData m_requestedScrollData;
     RequestedKeyboardScrollData m_keyboardScrollData;
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
@@ -229,7 +252,9 @@ private:
     bool m_useDarkAppearanceForScrollbars { false };
     bool m_isMonitoringWheelEvents { false };
     bool m_mouseIsOverContentArea { false };
-
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    float m_scrollbarOpacity { 1 };
+#endif
 };
 
 } // namespace WebCore

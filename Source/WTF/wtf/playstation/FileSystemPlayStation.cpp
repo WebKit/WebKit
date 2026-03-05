@@ -107,7 +107,7 @@ Vector<String> listDirectorySub(const String& path, bool fullPath)
             // Some file system representations cannot be represented as a UTF-16 string,
             // so this newEntry might be null.
             if (!newEntry.isNull())
-                entries.append(WTFMove(newEntry));
+                entries.append(WTF::move(newEntry));
         }
         closedir(dir);
     }

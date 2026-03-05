@@ -4,10 +4,10 @@ layer at (0,0) size 800x347
   RenderBlock {html} at (0,0) size 800x347
     RenderBody {body} at (48,8) size 772x331
       RenderBlock {h1} at (10,40) size 692x32
-        RenderText {#text} at (0,0) size 315x30
+        RenderText {#text} at (0,0) size 315x31
           text run at (0,0) width 315: "scalable CSS background"
       RenderBlock {h4} at (10,71) size 752x20
-        RenderText {#text} at (0,0) size 127x18
+        RenderText {#text} at (0,0) size 127x19
           text run at (0,0) width 127: "WICD Core 1.0 #11"
       RenderBlock {p} at (10,109) size 712x39
         RenderText {#text} at (10,10) size 514x18

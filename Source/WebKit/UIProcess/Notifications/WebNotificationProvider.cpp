@@ -78,7 +78,7 @@ void WebNotificationProvider::clearNotifications(const Vector<WebNotificationIde
     auto arrayIDs = notificationIDs.map([](auto& notificationID) -> RefPtr<API::Object> {
         return API::UInt64::create(notificationID.toUInt64());
     });
-    m_client.clearNotifications(toAPI(API::Array::create(WTFMove(arrayIDs)).ptr()), m_client.base.clientInfo);
+    m_client.clearNotifications(toAPI(API::Array::create(WTF::move(arrayIDs)).ptr()), m_client.base.clientInfo);
 }
 
 void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy& manager)

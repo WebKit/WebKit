@@ -34,6 +34,7 @@
 #include "DocumentSecurityOrigin.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "HTTPStatusCodes.h"
 #include "LegacySchemeRegistry.h"
 #include "OriginAccessPatterns.h"
 #include "Page.h"
@@ -163,7 +164,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
 
     if (crossOriginAttribute.isNull()) {
-        CachedResourceRequest cachedRequest { WTFMove(request), WTFMove(options) };
+        CachedResourceRequest cachedRequest { WTF::move(request), WTF::move(options) };
         cachedRequest.setOrigin(document.securityOrigin());
         return cachedRequest;
     }
@@ -177,14 +178,14 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         options.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
         break;
     case FetchOptions::Credentials::SameOrigin:
-        options.storedCredentialsPolicy = document.protectedSecurityOrigin()->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+        options.storedCredentialsPolicy = protect(document.securityOrigin())->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
         break;
     case FetchOptions::Credentials::Omit:
         options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
     }
 
-    CachedResourceRequest cachedRequest { WTFMove(request), WTFMove(options) };
-    updateRequestForAccessControl(cachedRequest.resourceRequest(), document.protectedSecurityOrigin().get(), options.storedCredentialsPolicy);
+    CachedResourceRequest cachedRequest { WTF::move(request), WTF::move(options) };
+    updateRequestForAccessControl(cachedRequest.resourceRequest(), protect(document.securityOrigin()).get(), options.storedCredentialsPolicy);
     return cachedRequest;
 }
 
@@ -305,14 +306,14 @@ Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const
 
     auto result = CrossOriginPreflightResultCacheItem::create(storedCredentialsPolicy, response);
     if (!result.has_value())
-        return makeUnexpected(WTFMove(result.error()));
+        return makeUnexpected(WTF::move(result.error()));
 
-    auto entry = WTFMove(result.value());
+    auto entry = WTF::move(result.value());
     auto errorDescription = entry->validateMethodAndHeaders(request.httpMethod(), request.httpHeaderFields());
     CrossOriginPreflightResultCache::singleton().appendEntry(sessionID, { topOrigin.data(), securityOrigin.data(), }, request.url(), entry.moveToUniquePtr());
 
     if (errorDescription)
-        return makeUnexpected(WTFMove(*errorDescription));
+        return makeUnexpected(WTF::move(*errorDescription));
 
     return { };
 }
@@ -364,7 +365,7 @@ std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedd
 
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest& request, const ResourceResponse& response)
 {
-    if (response.isRangeRequested() && response.httpStatusCode() == 206 && response.type() == ResourceResponse::Type::Opaque && !request.hasHTTPHeaderField(HTTPHeaderName::Range))
+    if (response.isRangeRequested() && (response.httpStatusCode() == httpStatus206PartialContent || response.httpStatusCode() == httpStatus416RangeNotSatisfiable) && response.type() == ResourceResponse::Type::Opaque && !request.hasHTTPHeaderField(HTTPHeaderName::Range))
         return ResourceError({ }, 0, response.url(), { }, ResourceError::Type::General);
     return std::nullopt;
 }

@@ -84,12 +84,9 @@ bool PerSenderRtpEncodingParameterHasValue(
 void RemoveEncodingLayers(const std::vector<std::string>& rids,
                           std::vector<RtpEncodingParameters>* encodings) {
   RTC_DCHECK(encodings);
-  encodings->erase(
-      std::remove_if(encodings->begin(), encodings->end(),
-                     [&rids](const RtpEncodingParameters& encoding) {
-                       return absl::c_linear_search(rids, encoding.rid);
-                     }),
-      encodings->end());
+  std::erase_if(*encodings, [&rids](const RtpEncodingParameters& encoding) {
+    return absl::c_linear_search(rids, encoding.rid);
+  });
 }
 
 RtpParameters RestoreEncodingLayers(

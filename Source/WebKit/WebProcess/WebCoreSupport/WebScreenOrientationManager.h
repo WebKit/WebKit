@@ -57,8 +57,6 @@ private:
     void addObserver(WebCore::ScreenOrientationManagerObserver&) final;
     void removeObserver(WebCore::ScreenOrientationManagerObserver&) final;
 
-    Ref<WebPage> protectedPage() const;
-
     WeakRef<WebPage> m_page;
     WeakHashSet<WebCore::ScreenOrientationManagerObserver> m_observers;
     mutable std::optional<WebCore::ScreenOrientationType> m_currentOrientation;

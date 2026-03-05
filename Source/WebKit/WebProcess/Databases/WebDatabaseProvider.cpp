@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>& databaseProviders()
+static HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>& NODELETE databaseProviders()
 {
     static NeverDestroyed<HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>> databaseProviders;
 
@@ -67,7 +67,7 @@ WebDatabaseProvider::~WebDatabaseProvider()
 
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(PAL::SessionID)
 {
-    return WebProcess::singleton().ensureProtectedNetworkProcessConnection()->idbConnectionToServer().coreConnectionToServer();
+    return protect(WebProcess::singleton().ensureNetworkProcessConnection())->idbConnectionToServer().coreConnectionToServer();
 }
 
 }

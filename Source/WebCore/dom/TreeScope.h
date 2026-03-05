@@ -74,7 +74,7 @@ public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
     void setParentTreeScope(TreeScope&);
 
-    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     Element* focusedElementInScope();
@@ -100,14 +100,13 @@ public:
     void removeElementByName(const AtomString&, Element&);
 
     Document& documentScope() const { return m_documentScope.get(); }
-    Ref<Document> protectedDocumentScope() const;
     static constexpr ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
 
     // https://dom.spec.whatwg.org/#retarget
-    Ref<Node> retargetToScope(Node&) const;
+    Ref<Node> NODELETE retargetToScope(Node&) const;
 
-    WEBCORE_EXPORT Node* ancestorNodeInThisScope(Node*) const;
-    WEBCORE_EXPORT Element* ancestorElementInThisScope(Element*) const;
+    WEBCORE_EXPORT Node* NODELETE ancestorNodeInThisScope(Node*) const;
+    WEBCORE_EXPORT Element* NODELETE ancestorElementInThisScope(Element*) const;
 
     void addImageMap(HTMLMapElement&);
     void removeImageMap(HTMLMapElement&);
@@ -124,7 +123,7 @@ public:
     const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* labelElementsForId(const AtomString& forAttributeValue);
 
     WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
-    WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
+    WEBCORE_EXPORT Vector<Ref<Element>> elementsFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
 
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks
@@ -142,11 +141,11 @@ public:
     RadioButtonGroups& radioButtonGroups();
 
     JSC::JSValue adoptedStyleSheetWrapper(JSDOMGlobalObject&);
-    std::span<const Ref<CSSStyleSheet>> adoptedStyleSheets() const;
+    std::span<const Ref<CSSStyleSheet>> NODELETE adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&&);
 
     void addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
-    void removeSVGResource(const AtomString& id);
+    void removeSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
     LegacyRenderSVGResourceContainer* lookupLegacySVGResoureById(const AtomString& id) const;
 
     void addPendingSVGResource(const AtomString& id, SVGElement&);

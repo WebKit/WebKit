@@ -198,9 +198,9 @@ bool DataSocket::ParseMethodAndPath(const char* begin, size_t len) {
     size_t method_name_len;
     RequestMethod id;
   } supported_methods[] = {
-      {"GET", 3, GET},
-      {"POST", 4, POST},
-      {"OPTIONS", 7, OPTIONS},
+      {.method_name = "GET", .method_name_len = 3, .id = GET},
+      {.method_name = "POST", .method_name_len = 4, .id = POST},
+      {.method_name = "OPTIONS", .method_name_len = 7, .id = OPTIONS},
   };
 
   const char* path = nullptr;
@@ -277,7 +277,7 @@ bool ListeningSocket::Listen(unsigned short port) {
     printf("setsockopt failed\n");
     return false;
   }
-  struct sockaddr_in addr = {0};
+  struct sockaddr_in addr = {};
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
   addr.sin_port = htons(port);
@@ -291,7 +291,7 @@ bool ListeningSocket::Listen(unsigned short port) {
 
 DataSocket* ListeningSocket::Accept() const {
   RTC_DCHECK(valid());
-  struct sockaddr_in addr = {0};
+  struct sockaddr_in addr = {};
   socklen_t size = sizeof(addr);
   NativeSocket client =
       accept(socket_, reinterpret_cast<sockaddr*>(&addr), &size);

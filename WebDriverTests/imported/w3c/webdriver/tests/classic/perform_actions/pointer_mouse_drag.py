@@ -33,34 +33,20 @@ def test_drag_and_drop(session,
         .pointer_move(80, 50, duration=100, origin="pointer") \
         .perform()
 
-    # mouseup that ends the drag is at the expected destination
-    e = get_events(session)[1]
-    assert e["type"] == "mouseup"
-    assert e["pageX"] == pytest.approx(initial_center["x"] + dx, abs=1.0)
-    assert e["pageY"] == pytest.approx(initial_center["y"] + dy, abs=1.0)
-
-    final_rect = None
+    # `mouseup` that ends the drag is at the expected destination
+    events = get_events(session)
+    assert events[1]["type"] == "mouseup"
+    assert events[1]["pageX"] == pytest.approx(initial_center["x"] + dx, abs=1.0)
+    assert events[1]["pageY"] == pytest.approx(initial_center["y"] + dy, abs=1.0)
 
     def check_final_position(_):
-        nonlocal final_rect
+        assert drag_target.rect["x"] == pytest.approx(
+            initial_rect["x"] + dx, abs=1.0), "Dragged element did not reach final x position"
+        assert drag_target.rect["y"] == pytest.approx(
+            initial_rect["y"] + dy, abs=1.0), "Dragged element did not reach final y position"
 
-        final_rect = drag_target.rect
-        return (
-            final_rect["x"] == pytest.approx(
-                initial_rect["x"] + dx, abs=1.0) and
-            final_rect["y"] == pytest.approx(
-                initial_rect["y"] + dy, abs=1.0)
-
-        )
-
-    wait = Poll(
-        session, message="""Dragged element did not reach target position""")
+    wait = Poll(session)
     wait.until(check_final_position)
-
-    assert final_rect["x"] == pytest.approx(
-        initial_rect["x"] + dx, abs=1.0)
-    assert final_rect["y"] == pytest.approx(
-        initial_rect["y"] + dy, abs=1.0)
 
 
 @pytest.mark.parametrize("drag_duration", [0, 300, 800])
@@ -84,12 +70,12 @@ def test_drag_and_drop_with_draggable_element(session_new_window,
         .pointer_move(80, 50, duration=100, origin="pointer") \
         .perform()
     # mouseup that ends the drag is at the expected destination
-    e = get_events(new_session)
-    assert len(e) >= 5
-    assert e[1]["type"] == "dragstart", "Events captured were {}".format(e)
-    assert e[2]["type"] == "dragover", "Events captured were {}".format(e)
+    events = get_events(session_new_window)
+    assert len(events) >= 5
+    assert events[1]["type"] == "dragstart", "Events captured were {}".format(events)
+    assert events[2]["type"] == "dragover", "Events captured were {}".format(events)
     drag_events_captured = [
-        ev["type"] for ev in e if ev["type"].startswith("drag") or ev["type"].startswith("drop")
+        ev["type"] for ev in events if ev["type"].startswith("drag") or ev["type"].startswith("drop")
     ]
     assert "dragend" in drag_events_captured
     assert "dragenter" in drag_events_captured

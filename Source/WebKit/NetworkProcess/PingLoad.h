@@ -47,18 +47,18 @@ public:
 
     static void create(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkResourceLoadParameters&& networkResourceLoadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
     {
-        Ref pingLoad = adoptRef(*new PingLoad(networkProcess, sessionID, WTFMove(networkResourceLoadParameters), WTFMove(completionHandler)));
+        Ref pingLoad = adoptRef(*new PingLoad(networkProcess, sessionID, WTF::move(networkResourceLoadParameters), WTF::move(completionHandler)));
 
         // Keep the load alive until didFinish.
-        pingLoad->m_selfReference = WTFMove(pingLoad);
+        pingLoad->m_selfReference = WTF::move(pingLoad);
     }
 
     static void create(NetworkConnectionToWebProcess& networkConnectionToWebProcess, NetworkResourceLoadParameters&& networkResourceLoadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
     {
-        Ref pingLoad = adoptRef(*new PingLoad(networkConnectionToWebProcess, WTFMove(networkResourceLoadParameters), WTFMove(completionHandler)));
+        Ref pingLoad = adoptRef(*new PingLoad(networkConnectionToWebProcess, WTF::move(networkResourceLoadParameters), WTF::move(completionHandler)));
 
         // Keep the load alive until didFinish.
-        pingLoad->m_selfReference = WTFMove(pingLoad);
+        pingLoad->m_selfReference = WTF::move(pingLoad);
     }
 
     ~PingLoad();
@@ -69,7 +69,7 @@ private:
 
     void initialize(NetworkProcess&);
 
-    const URL& currentURL() const;
+    const URL& NODELETE currentURL() const;
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final;
@@ -94,7 +94,7 @@ private:
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
     const Ref<NetworkLoadChecker> m_networkLoadChecker;
-    Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;
+    Vector<Ref<WebCore::BlobDataFileReference>> m_blobFiles;
 };
 
 }

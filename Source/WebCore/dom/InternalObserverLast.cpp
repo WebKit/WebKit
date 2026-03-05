@@ -46,7 +46,7 @@ class InternalObserverLast final : public InternalObserver {
 public:
     static Ref<InternalObserverLast> create(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
     {
-        Ref internalObserver = adoptRef(*new InternalObserverLast(context, WTFMove(promise)));
+        Ref internalObserver = adoptRef(*new InternalObserverLast(context, WTF::move(promise)));
         internalObserver->suspendIfNeeded();
         return internalObserver;
     }
@@ -59,7 +59,7 @@ private:
 
     void error(JSC::JSValue value) final
     {
-        protectedPromise()->reject<IDLAny>(value);
+        protect(m_promise)->reject<IDLAny>(value);
     }
 
     void complete() final
@@ -67,9 +67,9 @@ private:
         InternalObserver::complete();
 
         if (!m_lastValue) [[unlikely]]
-            return protectedPromise()->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
+            return protect(m_promise)->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
 
-        protectedPromise()->resolve<IDLAny>(m_lastValue.getValue());
+        protect(m_promise)->resolve<IDLAny>(m_lastValue.getValue());
     }
 
     void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
@@ -77,11 +77,9 @@ private:
         m_lastValue.visit(visitor);
     }
 
-    Ref<DeferredPromise> protectedPromise() const { return m_promise; }
-
     InternalObserverLast(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
         : InternalObserver(context)
-        , m_promise(WTFMove(promise))
+        , m_promise(WTF::move(promise))
     {
     }
 
@@ -89,7 +87,7 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observable& observable, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observable& observable, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr signal = options.signal) {
         if (signal->aborted())
@@ -100,9 +98,9 @@ void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observa
         });
     }
 
-    Ref observer = InternalObserverLast::create(context, WTFMove(promise));
+    Ref observer = InternalObserverLast::create(context, WTF::move(promise));
 
-    observable.subscribeInternal(context, WTFMove(observer), options);
+    observable.subscribeInternal(context, WTF::move(observer), WTF::move(options));
 }
 
 } // namespace WebCore

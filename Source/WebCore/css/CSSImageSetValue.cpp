@@ -38,11 +38,11 @@ namespace WebCore {
 
 Ref<CSSImageSetValue> CSSImageSetValue::create(CSSValueListBuilder builder)
 {
-    return adoptRef(*new CSSImageSetValue(WTFMove(builder)));
+    return adoptRef(*new CSSImageSetValue(WTF::move(builder)));
 }
 
 CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
-    : CSSValueContainingVector(ClassType::ImageSet, CommaSeparator, WTFMove(builder))
+    : CSSValueContainingVector(ClassType::ImageSet, CommaSeparator, WTF::move(builder))
 {
 }
 
@@ -54,19 +54,23 @@ String CSSImageSetValue::customCSSText(const CSS::SerializationContext& context)
         if (i > 0)
             result.append(", "_s);
         ASSERT(is<CSSImageSetOptionValue>(item(i)));
-        result.append(item(i)->cssText(context));
+        result.append(protect(item(i))->cssText(context));
     }
     result.append(')');
     return result.toString();
 }
 
-RefPtr<StyleImage> CSSImageSetValue::createStyleImage(const Style::BuilderState& state) const
+RefPtr<Style::Image> CSSImageSetValue::createStyleImage(const Style::BuilderState& state) const
 {
     size_t length = this->length();
 
-    Vector<ImageWithScale> images(length, [&](size_t i) {
-        auto option = downcast<CSSImageSetOptionValue>(item(i));
-        return ImageWithScale { state.createStyleImage(option->image()), option->protectedResolution()->resolveAsResolution<float>(state.cssToLengthConversionData()), option->type() };
+    Vector<Style::ImageWithScale> images(length, [&](size_t i) {
+        RefPtr<const CSSImageSetOptionValue> option = downcast<CSSImageSetOptionValue>(item(i));
+        return Style::ImageWithScale {
+            .image = state.createStyleImage(option->image()),
+            .scaleFactor = protect(option->resolution())->resolveAsResolution<float>(state.cssToLengthConversionData()),
+            .mimeType = option->type(),
+        };
     });
 
     // Sort the images so that they are stored in order from lowest resolution to highest.
@@ -78,7 +82,7 @@ RefPtr<StyleImage> CSSImageSetValue::createStyleImage(const Style::BuilderState&
         return images[lhs].scaleFactor < images[rhs].scaleFactor;
     });
 
-    return StyleImageSet::create(WTFMove(images), WTFMove(sortedIndices));
+    return Style::ImageSet::create(WTF::move(images), WTF::move(sortedIndices));
 }
 
 } // namespace WebCore

@@ -382,13 +382,13 @@ TEST(TimestampExtrapolatorTest, DoesNotSetInvalidConfig) {
   // clang-format on
 
   TimestampExtrapolator::Config config = ts_extrapolator.GetConfigForTest();
-  EXPECT_FALSE(config.OutlierRejectionEnabled());
+  EXPECT_TRUE(config.OutlierRejectionEnabled());
   EXPECT_EQ(config.hard_reset_timeout, TimeDelta::Seconds(10));
   EXPECT_EQ(config.hard_reset_rtp_timestamp_jump_threshold, 900000);
   EXPECT_EQ(config.outlier_rejection_startup_delay, 300);
   EXPECT_EQ(config.outlier_rejection_max_consecutive, 150);
   EXPECT_EQ(config.outlier_rejection_forgetting_factor, 0.999);
-  EXPECT_FALSE(config.outlier_rejection_stddev.has_value());
+  EXPECT_EQ(config.outlier_rejection_stddev, 2.0);
   EXPECT_EQ(config.alarm_threshold, 60000);
   EXPECT_EQ(config.acc_drift, 6600);
   EXPECT_EQ(config.acc_max_error, 7000);

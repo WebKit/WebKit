@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,8 @@
  */
 
 #pragma once
+
+#include <wtf/Platform.h>
 
 #if ENABLE(JIT)
 
@@ -476,7 +478,7 @@ public:
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR, GPRReg scratchGPR);
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrame, const RegisterSet& skipList);
 
-    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSetBuilder::stubUnavailableRegisters());
+    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSet::stubUnavailableRegisters());
 
     void emitMaterializeTagCheckRegisters()
     {
@@ -1018,16 +1020,14 @@ public:
     }
 
 #if USE(JSVALUE64)
-    void toBigInt64(GPRReg cellGPR, GPRReg destGPR, GPRReg scratchGPR, GPRReg scratch2GPR)
+    void toBigInt64(GPRReg cellGPR, GPRReg destGPR)
     {
-        ASSERT(noOverlap(cellGPR, destGPR, scratchGPR, scratch2GPR));
+        ASSERT(noOverlap(cellGPR, destGPR));
         load32(Address(cellGPR, JSBigInt::offsetOfLength()), destGPR);
         JumpList doneCases;
         doneCases.append(branchTest32(Zero, destGPR));
-        loadPtr(Address(cellGPR, JSBigInt::offsetOfData()), scratchGPR);
-        cageConditionally(Gigacage::Primitive, scratchGPR, destGPR, scratch2GPR);
-        load64(Address(scratchGPR), destGPR);
-        doneCases.append(branchTest8(Zero, Address(cellGPR, JSBigInt::offsetOfSign())));
+        load64(Address(cellGPR, JSBigInt::offsetOfData()), destGPR);
+        doneCases.append(branchTest8(Zero, Address(cellGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(TypeInfoPerCellBit)));
         neg64(destGPR);
         doneCases.link(this);
     }
@@ -1507,9 +1507,13 @@ public:
         jitAssertIsJSDouble(gpr);
         return unboxDoubleWithoutAssertions(gpr, resultGPR, fpr, mode);
     }
+    void unboxDouble(JSValueRegs regs, GPRReg resultGPR, FPRReg fpr)
+    {
+        unboxDouble(regs.payloadGPR(), resultGPR, fpr);
+    }
     void unboxDouble(JSValueRegs regs, FPRReg fpr)
     {
-        unboxDouble(regs.tagGPR(), regs.payloadGPR(), fpr);
+        unboxDouble(regs.payloadGPR(), regs.payloadGPR(), fpr);
     }
     void boxDouble(FPRReg fpr, JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
@@ -1829,6 +1833,7 @@ public:
         return branch8(Above, AbsoluteAddress(address), TrustedImm32(blackThreshold));
     }
     
+    // FIXME: We should name this something more obvious like branchIfCellIsRememberedOrEden. barrierBranch could mean many things.
     // Branch taken if the cell does not need a memory fence or store barrier.
     // When reverse is true, branch taken when the memory barrier or store barrier is needed.
     Jump barrierBranch(VM& vm, GPRReg cell, GPRReg scratchGPR, bool reverse = false)
@@ -2112,29 +2117,6 @@ public:
     {
         ptrdiff_t initialOffset = -sizeof(IndexingHeader) - outOfLineCapacity * sizeof(EncodedJSValue);
         emitFillStorageWithJSEmpty(butterflyGPR, initialOffset, outOfLineCapacity, scratchGPR);
-    }
-
-    void loadCompactPtr(Address address, GPRReg dest)
-    {
-#if HAVE(36BIT_ADDRESS)
-        load32(address, dest);
-        lshift64(TrustedImm32(4), dest);
-#else
-        loadPtr(address, dest);
-#endif
-    }
-
-    Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
-    {
-#if HAVE(36BIT_ADDRESS)
-        ASSERT(left != scratch);
-        load32(right, scratch);
-        lshift64(TrustedImm32(4), scratch);
-        return branchPtr(cond, left, Address(scratch));
-#else
-        UNUSED_PARAM(scratch);
-        return branchPtr(cond, left, right);
-#endif
     }
 
 #if USE(JSVALUE64)

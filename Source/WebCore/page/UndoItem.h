@@ -38,37 +38,36 @@ class Document;
 class UndoManager;
 
 class UndoItem : public RefCountedAndCanMakeWeakPtr<UndoItem> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UndoItem);
+    WTF_MAKE_TZONE_ALLOCATED(UndoItem);
 public:
     struct Init {
         String label;
-        RefPtr<VoidCallback> undo;
-        RefPtr<VoidCallback> redo;
+        Ref<VoidCallback> undo;
+        Ref<VoidCallback> redo;
     };
 
     static Ref<UndoItem> create(Init&& init)
     {
-        return adoptRef(*new UndoItem(WTFMove(init)));
+        return adoptRef(*new UndoItem(WTF::move(init)));
     }
 
     bool isValid() const { return !!m_undoManager; }
     void invalidate();
 
-    Document* document() const;
-    RefPtr<Document> protectedDocument() const;
+    Document* NODELETE document() const;
 
-    UndoManager* undoManager() const;
+    UndoManager* NODELETE undoManager() const;
     void setUndoManager(UndoManager*);
 
-    const String& label() const { return m_label; }
+    const String& label() const LIFETIME_BOUND { return m_label; }
     VoidCallback& undoHandler() const { return m_undoHandler.get(); }
     VoidCallback& redoHandler() const { return m_redoHandler.get(); }
 
 private:
-    UndoItem(Init&& init)
-        : m_label(WTFMove(init.label))
-        , m_undoHandler(init.undo.releaseNonNull())
-        , m_redoHandler(init.redo.releaseNonNull())
+    explicit UndoItem(Init&& init)
+        : m_label(WTF::move(init.label))
+        , m_undoHandler(WTF::move(init.undo))
+        , m_redoHandler(WTF::move(init.redo))
     {
     }
 

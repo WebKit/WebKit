@@ -40,16 +40,17 @@
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
+#include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGGraphicsElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGGraphicsElement);
 
 SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
-    : SVGElement(tagName, document, WTFMove(propertyRegistry), typeFlags)
+    : SVGElement(tagName, document, WTF::move(propertyRegistry), typeFlags)
     , SVGTests(this)
     , m_shouldIsolateBlending(false)
     , m_transform(SVGAnimatedTransformList::create(this))
@@ -83,32 +84,26 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
     return SVGLocatable::computeCTM(this, CTMScope::ScreenScope, styleUpdateStrategy);
 }
 
-Ref<const SVGTransformList> SVGGraphicsElement::protectedTransform() const
-{
-    return m_transform->currentValue();
-}
-
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
     // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (m_supplementalTransform)
             return *m_supplementalTransform * transform().concatenate();
-        return protectedTransform()->concatenate();
+        return protect(transform())->concatenate();
     }
 
     AffineTransform matrix;
 
     CheckedPtr renderer = this->renderer();
     CheckedPtr style = renderer ? &renderer->style() : nullptr;
-    bool hasSpecifiedTransform = style && style->hasTransform();
+    bool hasSpecifiedTransform = style && (!style->transform().isNone() || !style->offsetPath().isNone());
 
     // Honor any of the transform-related CSS properties if set.
-    if (hasSpecifiedTransform || (style && (style->hasTranslate() || style->hasScale() || style->hasRotate()))) {
+    if (hasSpecifiedTransform || (style && (!style->translate().isNone() || !style->scale().isNone() || !style->rotate().isNone()))) {
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.
         // See the "Object bounding box units" section of http://dev.w3.org/csswg/css3-transforms/
-        TransformationMatrix transform;
-        style->applyTransform(transform, TransformOperationData(renderer->transformReferenceBoxRect(), renderer.get()));
+        auto transform = Style::TransformResolver::computeTransform(*style, TransformOperationData(renderer->transformReferenceBoxRect(), renderer.get()));
 
         // Flatten any 3D transform.
         matrix = transform.toAffineTransform();
@@ -116,7 +111,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
     // If we didn't have the CSS "transform" property set, we must account for the "transform" attribute.
     if (!hasSpecifiedTransform && style && !transform().isEmpty()) {
-        auto t = style->computeTransformOrigin(renderer->transformReferenceBoxRect()).xy();
+        auto t = Style::TransformResolver::computeTransformOrigin(*style, renderer->transformReferenceBoxRect()).xy();
         matrix.translate(t);
         matrix *= transform().concatenate();
         matrix.translate(-t.x(), -t.y());
@@ -155,24 +150,15 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
             return;
         }
 
-        if (CheckedPtr renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer()) {
             renderer->setNeedsTransformUpdate();
-        updateSVGRendererForElementChange();
+            updateSVGRendererForElementChange();
+        }
         return;
     }
 
     SVGElement::svgAttributeChanged(attrName);
     SVGTests::svgAttributeChanged(attrName);
-}
-
-SVGElement* SVGGraphicsElement::nearestViewportElement() const
-{
-    return SVGTransformable::nearestViewportElement(this);
-}
-
-SVGElement* SVGGraphicsElement::farthestViewportElement() const
-{
-    return SVGTransformable::farthestViewportElement(this);
 }
 
 Ref<SVGRect> SVGGraphicsElement::getBBoxForBindings()
@@ -188,8 +174,8 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGPath>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
+        return createRenderer<RenderSVGPath>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGPath>(*this, WTF::move(style));
 }
 
 void SVGGraphicsElement::didAttachRenderers()

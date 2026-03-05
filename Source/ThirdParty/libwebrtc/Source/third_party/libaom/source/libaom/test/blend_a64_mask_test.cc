@@ -157,11 +157,11 @@ class BlendA64MaskTest : public FunctionEquivalenceTest<BlendA64Func> {
 // 8 bit version
 //////////////////////////////////////////////////////////////////////////////
 
-typedef void (*F8B)(uint8_t *dst, uint32_t dst_stride, const uint8_t *src0,
-                    uint32_t src0_stride, const uint8_t *src1,
-                    uint32_t src1_stride, const uint8_t *mask,
-                    uint32_t mask_stride, int w, int h, int subx, int suby);
-typedef libaom_test::FuncParam<F8B> TestFuncs;
+using F8B = void (*)(uint8_t *dst, uint32_t dst_stride, const uint8_t *src0,
+                     uint32_t src0_stride, const uint8_t *src1,
+                     uint32_t src1_stride, const uint8_t *mask,
+                     uint32_t mask_stride, int w, int h, int subx, int suby);
+using TestFuncs = libaom_test::FuncParam<F8B>;
 
 class BlendA64MaskTest8B : public BlendA64MaskTest<F8B, uint8_t, uint8_t> {
  protected:
@@ -266,12 +266,13 @@ INSTANTIATE_TEST_SUITE_P(NEON, BlendA64MaskTest8B,
 // 8 bit _d16 version
 //////////////////////////////////////////////////////////////////////////////
 
-typedef void (*F8B_D16)(uint8_t *dst, uint32_t dst_stride, const uint16_t *src0,
-                        uint32_t src0_stride, const uint16_t *src1,
-                        uint32_t src1_stride, const uint8_t *mask,
-                        uint32_t mask_stride, int w, int h, int subx, int suby,
-                        ConvolveParams *conv_params);
-typedef libaom_test::FuncParam<F8B_D16> TestFuncs_d16;
+using F8B_D16 = void (*)(uint8_t *dst, uint32_t dst_stride,
+                         const uint16_t *src0, uint32_t src0_stride,
+                         const uint16_t *src1, uint32_t src1_stride,
+                         const uint8_t *mask, uint32_t mask_stride, int w,
+                         int h, int subx, int suby,
+                         ConvolveParams *conv_params);
+using TestFuncs_d16 = libaom_test::FuncParam<F8B_D16>;
 
 class BlendA64MaskTest8B_d16
     : public BlendA64MaskTest<F8B_D16, uint16_t, uint8_t> {
@@ -387,12 +388,12 @@ INSTANTIATE_TEST_SUITE_P(
 // High bit-depth version
 //////////////////////////////////////////////////////////////////////////////
 #if CONFIG_AV1_HIGHBITDEPTH
-typedef void (*FHBD)(uint8_t *dst, uint32_t dst_stride, const uint8_t *src0,
-                     uint32_t src0_stride, const uint8_t *src1,
-                     uint32_t src1_stride, const uint8_t *mask,
-                     uint32_t mask_stride, int w, int h, int subx, int suby,
-                     int bd);
-typedef libaom_test::FuncParam<FHBD> TestFuncsHBD;
+using FHBD = void (*)(uint8_t *dst, uint32_t dst_stride, const uint8_t *src0,
+                      uint32_t src0_stride, const uint8_t *src1,
+                      uint32_t src1_stride, const uint8_t *mask,
+                      uint32_t mask_stride, int w, int h, int subx, int suby,
+                      int bd);
+using TestFuncsHBD = libaom_test::FuncParam<FHBD>;
 
 class BlendA64MaskTestHBD : public BlendA64MaskTest<FHBD, uint16_t, uint16_t> {
  protected:
@@ -490,13 +491,13 @@ INSTANTIATE_TEST_SUITE_P(
 // HBD _d16 version
 //////////////////////////////////////////////////////////////////////////////
 
-typedef void (*FHBD_D16)(uint8_t *dst, uint32_t dst_stride,
-                         const CONV_BUF_TYPE *src0, uint32_t src0_stride,
-                         const CONV_BUF_TYPE *src1, uint32_t src1_stride,
-                         const uint8_t *mask, uint32_t mask_stride, int w,
-                         int h, int subx, int suby, ConvolveParams *conv_params,
-                         const int bd);
-typedef libaom_test::FuncParam<FHBD_D16> TestFuncsHBD_d16;
+using FHBD_D16 = void (*)(uint8_t *dst, uint32_t dst_stride,
+                          const CONV_BUF_TYPE *src0, uint32_t src0_stride,
+                          const CONV_BUF_TYPE *src1, uint32_t src1_stride,
+                          const uint8_t *mask, uint32_t mask_stride, int w,
+                          int h, int subx, int suby,
+                          ConvolveParams *conv_params, const int bd);
+using TestFuncsHBD_d16 = libaom_test::FuncParam<FHBD_D16>;
 
 class BlendA64MaskTestHBD_d16
     : public BlendA64MaskTest<FHBD_D16, uint16_t, uint16_t> {

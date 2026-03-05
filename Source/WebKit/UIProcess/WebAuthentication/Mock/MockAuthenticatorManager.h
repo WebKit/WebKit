@@ -38,7 +38,7 @@ public:
     static Ref<MockAuthenticatorManager> create(WebCore::MockWebAuthenticationConfiguration&&);
 
     bool isMock() const final { return true; }
-    void setTestConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration) { m_testConfiguration = WTFMove(configuration); }
+    void setTestConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration) { m_testConfiguration = WTF::move(configuration); }
 
 private:
     explicit MockAuthenticatorManager(WebCore::MockWebAuthenticationConfiguration&&);

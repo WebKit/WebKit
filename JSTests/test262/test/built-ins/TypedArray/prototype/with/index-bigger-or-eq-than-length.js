@@ -19,8 +19,8 @@ includes: [testTypedArray.js]
 features: [TypedArray, change-array-by-copy]
 ---*/
 
-testWithTypedArrayConstructors(TA => {
-  var arr = new TA([0, 1, 2]);
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
+  var arr = new TA(makeCtorArg([0, 1, 2]));
 
   assert.throws(RangeError, function() {
     arr.with(3, 7);

@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -795,7 +795,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         log_environ=False,
-                        command=['python3', 'runUnittests.py', 'ews-build', '--autoinstall'],
+                        command=['python3', './run-tests', 'ews-build'],
                         )
             .exit(0),
         )
@@ -808,7 +808,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         log_environ=False,
-                        command=['python3', 'runUnittests.py', 'ews-build', '--autoinstall'],
+                        command=['python3', './run-tests', 'ews-build'],
                         )
             .log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             .exit(2),
@@ -867,7 +867,7 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         log_environ=False,
-                        command=['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall'],
+                        command=['python3', './run-tests', 'build-webkit-org'],
                         )
             .exit(0),
         )
@@ -880,12 +880,48 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         log_environ=False,
-                        command=['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall'],
+                        command=['python3', './run-tests', 'build-webkit-org'],
                         )
             .log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             .exit(2),
         )
         self.expect_outcome(result=FAILURE, state_string='Failed build.webkit.org unit tests')
+        return self.run_step()
+
+
+class TestRunSharedUnitTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_success(self):
+        self.setup_step(RunSharedUnitTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/CISupport',
+                        timeout=120,
+                        log_environ=False,
+                        command=['python3', './run-tests', 'Shared'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed Shared unit tests')
+        return self.run_step()
+
+    def test_failure(self):
+        self.setup_step(RunSharedUnitTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/CISupport',
+                        timeout=120,
+                        log_environ=False,
+                        command=['python3', './run-tests', 'Shared'],
+                        )
+            .log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed Shared unit tests')
         return self.run_step()
 
 
@@ -3261,7 +3297,6 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
     def test_pre_existent_failures(self):
         self.configureStep()
         self.configureCommonProperties()
-        # MARK HERE
         self.setProperty('first_run_failures', ["test/pre-existent/failure.html", "test/pre-existent/flaky.html"])
         self.setProperty('first_run_flakies', ["test/pre-existent/flaky2.html", "test/pre-existent/flaky3.html"])
         self.setProperty('with_change_repeat_failures_results_nonflaky_failures', ["test/pre-existent/failure.html"])
@@ -3322,8 +3357,8 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('clean_tree_run_status', FAILURE)
         expected_infrastructure_error = 'The layout-test run with change generated no list of results and exited with error, and the clean_tree without change run did the same thing.'
         self.expect_outcome(
-            result=WARNINGS,
-            state_string=f'{expected_infrastructure_error}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (warnings)')
+            result=FAILURE,
+            state_string=f'{expected_infrastructure_error}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (failure)')
         step_result = self.run_step()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -3343,6 +3378,20 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         step_result = self.run_step()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
+        return step_result
+
+    def test_first_step_error_exit_code_with_only_flakies(self):
+        self.configureStep()
+        self.configureCommonProperties()
+        first_run_flakies = ["test/flaky1.html", "test/flaky2.html"]
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        step_result = self.run_step()
+        self.assertEqual(len(self._emails_list), 1)
+        self.assertTrue('Subject: Info about 2 flaky failures' in self._emails_list[0])
+        for flaky_test in first_run_flakies:
+            self.assertTrue(f'Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/{flaky_test}">{flaky_test}</a>' in self._emails_list[0])
         return step_result
 
     def test_step_retry_with_change_exits_early_error(self):
@@ -3377,6 +3426,60 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         step_result = self.run_step()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
+        return step_result
+
+    def test_step_retry_with_change_pass(self):
+        self.configureStep()
+        self.configureCommonProperties()
+        first_run_failures = ["test/failure1.html", "test/failure2.html", "test/pre-existent/flaky1.html", "test/pre-existent/flaky2.html"]
+        first_run_flakies = ["test/flaky1.html", "test/flaky2.html"]
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', [])
+        self.setProperty('with_change_repeat_failures_results_flakies', [])
+        self.setProperty('with_change_repeat_failures_retcode', SUCCESS)
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        step_result = self.run_step()
+        self.assertEqual(len(self._emails_list), 1)
+        self.assertTrue('Subject: Info about 6 flaky failures' in self._emails_list[0])
+        for flaky_test in first_run_failures + first_run_flakies:
+            self.assertTrue(f'Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/{flaky_test}">{flaky_test}</a>' in self._emails_list[0])
+        return step_result
+
+    def test_step_retry_with_change_warnings(self):
+        self.configureStep()
+        self.configureCommonProperties()
+        first_run_failures = ["test/failure1.html", "test/failure2.html", "test/pre-existent/flaky1.html", "test/pre-existent/flaky2.html"]
+        first_run_flakies = ["test/flaky1.html", "test/flaky2.html"]
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', [])
+        self.setProperty('with_change_repeat_failures_results_flakies', ["test/pre-existent/flaky1.html"])
+        self.setProperty('with_change_repeat_failures_retcode', WARNINGS)
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        step_result = self.run_step()
+        self.assertEqual(len(self._emails_list), 1)
+        self.assertTrue('Subject: Info about 6 flaky failures' in self._emails_list[0])
+        for flaky_test in first_run_failures + first_run_flakies:
+            self.assertTrue(f'Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/{flaky_test}">{flaky_test}</a>' in self._emails_list[0])
+        return step_result
+
+    def test_step_retry_with_change_error_with_flakies(self):
+        self.configureStep()
+        self.configureCommonProperties()
+        first_run_failures = ["test/failure1.html", "test/failure2.html", "test/pre-existent/flaky1.html", "test/pre-existent/flaky2.html"]
+        first_run_flakies = ["test/flaky1.html", "test/flaky2.html"]
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', [])
+        self.setProperty('with_change_repeat_failures_results_flakies', ["test/pre-existent/flaky1.html"])
+        self.setProperty('with_change_repeat_failures_retcode', FAILURE)
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        step_result = self.run_step()
+        self.assertEqual(len(self._emails_list), 1)
+        self.assertTrue('Subject: Info about 6 flaky failures' in self._emails_list[0])
+        for flaky_test in first_run_failures + first_run_flakies:
+            self.assertTrue(f'Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/{flaky_test}">{flaky_test}</a>' in self._emails_list[0])
         return step_result
 
     def test_step_retry_with_change_timeouts(self):
@@ -3485,7 +3588,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('without_change_repeat_failures_timedout', True)
         self.setProperty('retry_count', 3)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-without-change" was interrumped because it reached the timeout.'
-        self.expect_outcome(result=WARNINGS, state_string=f'{expected_infrastructure_error}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (warnings)')
+        self.expect_outcome(result=FAILURE, state_string=f'{expected_infrastructure_error}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (failure)')
         step_result = self.run_step()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -3607,7 +3710,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
                         ).exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['git', 'checkout', '--progress', '-b', 'main'],
+                        command=['git', 'checkout', '--progress', '-B', 'main'],
                         ).exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='Updated working directory')
@@ -3628,7 +3731,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
                         ).exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['git', 'checkout', '--progress', '-b', 'safari-xxx-branch'],
+                        command=['git', 'checkout', '--progress', '-B', 'safari-xxx-branch'],
                         ).exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -3657,7 +3760,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
                         ).exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['git', 'checkout', '--progress', '-b', 'main'],
+                        command=['git', 'checkout', '--progress', '-B', 'main'],
                         ).exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='Updated working directory')
@@ -3679,7 +3782,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
                         ).exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['git', 'checkout', '--progress', '-b', 'safari-xxx-branch'],
+                        command=['git', 'checkout', '--progress', '-B', 'safari-xxx-branch'],
                         ).exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -3948,7 +4051,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 log_environ=False,
                 env=self.ENV,
-                command=['git', 'checkout', '--progress', '-b', 'eng/pull-request-branch'],
+                command=['git', 'checkout', '--progress', '-B', 'eng/pull-request-branch'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',
@@ -4005,7 +4108,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 log_environ=False,
                 env=self.ENV,
-                command=['git', 'checkout', '--progress', '-b', 'eng/pull-request-branch'],
+                command=['git', 'checkout', '--progress', '-B', 'eng/pull-request-branch'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',
@@ -4062,7 +4165,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 log_environ=False,
                 env=self.ENV,
-                command=['git', 'checkout', '--progress', '-b', 'integration/ci/1234'],
+                command=['git', 'checkout', '--progress', '-B', 'integration/ci/1234'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',
@@ -4119,7 +4222,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 log_environ=False,
                 env=self.ENV,
-                command=['git', 'checkout', '--progress', '-b', 'eng/pull-request-branch'],
+                command=['git', 'checkout', '--progress', '-B', 'eng/pull-request-branch'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',
@@ -4426,6 +4529,18 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     @expectedFailure
+    def test_relevant_safer_cpp_pull_request(self):
+        file_names = ['Tools/CISupport/safer-cpp-llvm-version', 'Tools/CISupport/safer-cpp-swift-version']
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'Safer-CPP-Checks-EWS')
+        self.setProperty('github.number', 1234)
+        for file_name in file_names:
+            CheckChangeRelevance._get_patch = lambda x: file_name
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
+            rc = self.run_step()
+        return rc
+
+    @expectedFailure
     def test_relevant_bindings_tests_patch(self):
         file_names = ['Source/WebCore', 'Tools']
         self.setup_step(CheckChangeRelevance())
@@ -4454,7 +4569,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         queues = ['Commit-Queue', 'Style-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
                   'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
-                  'PlayStation-Build-EWS', 'Win-Build-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS', 'WPE-Cairo-LibWebRTC-Build-EWS']
+                  'PlayStation-Build-EWS', 'Win-Build-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS', 'GTK-GTK3-LibWebRTC-Build-EWS']
         for queue in queues:
             self.setup_step(CheckChangeRelevance())
             self.setProperty('buildername', queue)
@@ -4573,7 +4688,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'
         self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', ['LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'])
@@ -4586,7 +4701,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'
         self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', ['LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'])
@@ -4599,7 +4714,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/fast/table/037.xml'
         self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', ['LayoutTests/fast/table/037.xml'])
@@ -4612,7 +4727,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.html'.encode('utf-8')
         self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', None)
@@ -4625,7 +4740,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.svg'.encode('utf-8')
         self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', None)
@@ -4638,7 +4753,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.xml'.encode('utf-8')
         self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', None)
@@ -4650,7 +4765,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/http/tests/events/device-motion-expected-mismatch.html'.encode('utf-8')
         self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', None)
@@ -4662,7 +4777,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/html/test.txt'.encode('utf-8')
         self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', None)
@@ -4674,7 +4789,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'Sample patch which does not modify any layout test'
         self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', None)
@@ -4686,7 +4801,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b''
         self.expect_outcome(result=WARNINGS, state_string='Patch could not be accessed')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', log_environ=False, command=['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']).exit(0)
+            ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
         rc = self.run_step()
         self.expect_property('modified_tests', None)
@@ -4833,6 +4948,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
         self.setProperty('change_id', '1234')
+        self.assertTrue(DownloadBuiltProduct.haltOnFailure)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -4873,6 +4989,14 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SKIPPED)
         with current_hostname('test-ews-deployment.igalia.com'):
             return self.run_step()
+
+    def test_halt_on_failure_with_suffix(self):
+        step = DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE)
+        self.assertFalse(step.haltOnFailure)
+
+    def test_step_name_with_suffix(self):
+        step = DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE)
+        self.assertEqual(step.name, 'download-built-product' + SUFFIX_WITHOUT_CHANGE)
 
 
 class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestCase):
@@ -5984,6 +6108,7 @@ BuildVersion:	23F79'''),
             .log('stdio', stdout='''Linux kodama-ews 5.0.4-arch1-1-ARCH #1 SMP PREEMPT Sat Mar 23 21:00:33 UTC 2019 x86_64 GNU/Linux'''),
             ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, log_environ=False).exit(0)
             .log('stdio', stdout=' 6:31  up 22 seconds, 12:05, 2 users, load averages: 3.17 7.23 5.45'),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'if test -f /etc/build-info; then cat /etc/build-info; else cat /etc/os-release; fi'], workdir='wkdir', timeout=60, log_environ=False).exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='Printed configuration')
         return self.run_step()
@@ -5998,6 +6123,7 @@ BuildVersion:	23F79'''),
             ExpectShell(command=['date'], workdir='wkdir', timeout=60, log_environ=False).exit(0),
             ExpectShell(command=['uname', '-a'], workdir='wkdir', timeout=60, log_environ=False).exit(0),
             ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, log_environ=False).exit(0),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'if test -f /etc/build-info; then cat /etc/build-info; else cat /etc/os-release; fi'], workdir='wkdir', timeout=60, log_environ=False).exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='Printed configuration')
         return self.run_step()
@@ -6433,7 +6559,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setup_step(RetrievePRDataFromLabel(project='WebKit/WebKit'))
         GitHubMixin.get_number_of_prs_with_label = lambda self, label, retry=0: 4
-        query_result = {'data': {'repository': {'pullRequests': {'edges': [
+        query_result = {'data': {'search': {'edges': [
             {'node':
                 {'title': 'Fix `test-webkitpy webkitflaskpy`', 'number': 17412, 'commits':
                     {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/582fb8b4f85cc9f385c0e0809170cadc48c7fed5', 'status': {'state': 'SUCCESS', 'contexts': [
@@ -6533,7 +6659,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
                         {'context': 'watch-sim', 'state': 'SUCCESS'},
                         {'context': 'webkitperl', 'state': 'SUCCESS'},
                         {'context': 'webkitpy', 'state': 'SUCCESS'},
-                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}}]}}}}
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}}]}}}
         GitHubMixin.query_graph_ql = lambda self, query: query_result
         self.expect_outcome(result=SUCCESS, state_string="Successfully retrieved pull request data")
         rc = self.run_step()
@@ -6545,7 +6671,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
     def test_success_project(self):
         self.setup_step(RetrievePRDataFromLabel(project='testRepo/WebKit'))
         GitHubMixin.get_number_of_prs_with_label = lambda self, label, retry=0: 4
-        query_result = {'data': {'repository': {'pullRequests': {'edges': [
+        query_result = {'data': {'search': {'edges': [
             {'node':
                 {'title': 'Fix `test-webkitpy webkitflaskpy`', 'number': 17412, 'commits':
                     {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/582fb8b4f85cc9f385c0e0809170cadc48c7fed5',
@@ -6643,7 +6769,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
                         {'context': 'watch-sim', 'state': 'SUCCESS'},
                         {'context': 'webkitperl', 'state': 'SUCCESS'},
                         {'context': 'webkitpy', 'state': 'SUCCESS'},
-                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}}]}}}}
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}}]}}}
         GitHubMixin.query_graph_ql = lambda self, query: query_result
         self.expect_outcome(result=SUCCESS, state_string="Successfully retrieved pull request data")
         rc = self.run_step()
@@ -8249,7 +8375,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
                         command=[
                             'git', 'filter-branch', '-f',
                             '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(date=date),
-                            '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/WebKit Reviewer and Other Reviewer/g"',
+                            '--msg-filter', 'sed -E "s/by NOBODY( \\(OO*PP*S!*\\))?/by WebKit Reviewer and Other Reviewer/g"',
                             'eng/pull-request-branch...main',
                         ])
             .exit(0)
@@ -8278,7 +8404,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
                         command=[
                             'git', 'filter-branch', '-f',
                             '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(date=date),
-                            '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/WebKit Reviewer, Other Reviewer, and Another Reviewer/g"',
+                            '--msg-filter', 'sed -E "s/by NOBODY( \\(OO*PP*S!*\\))?/by WebKit Reviewer, Other Reviewer, and Another Reviewer/g"',
                             'eng/pull-request-branch...main',
                         ])
             .exit(0)
@@ -8307,7 +8433,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
                         command=[
                             'git', 'filter-branch', '-f',
                             '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(date=date),
-                            '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/WebKit Reviewer and Other Reviewer/g"',
+                            '--msg-filter', 'sed -E "s/by NOBODY( \\(OO*PP*S!*\\))?/by WebKit Reviewer and Other Reviewer/g"',
                             'eng/pull-request-branch...main',
                         ])
             .exit(2)
@@ -8350,6 +8476,12 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
+                                 "git log eng/pull-request-branch ^main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
                                  "git log eng/pull-request-branch ^main > commit_msg.txt; grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
@@ -8383,6 +8515,11 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log HEAD ^origin/main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log HEAD ^origin/main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -8445,6 +8582,11 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and Web Kit is not a reviewer' || test $? -eq 1"])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log eng/pull-request-branch ^main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and Web Kit is not a reviewer' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -9381,9 +9523,173 @@ Date:   Tue Mar 29 16:04:35 2023 -0700
             return rc
 
 
+class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(BuildSwift())
+        self.setProperty('archForUpload', 'arm64')
+        self.setProperty('builddir', 'webkit')
+        self.setProperty('canonical_swift_tag', 'swift-6.0.3-RELEASE')
+
+    def expectedShellCommand(self):
+        builddir = 'webkit'
+        swift_install_dir = f'{builddir}/{SWIFT_DIR}/swift-nightly-install'
+        swift_symroot_dir = f'{builddir}/{SWIFT_DIR}/swift-nightly-symroot'
+        return (
+            f"utils/build-script "
+            f"'--swift-install-components=autolink-driver;back-deployment;compiler;clang-resource-dir-symlink;libexec;stdlib;sdk-overlay;static-mirror-lib;toolchain-tools;license;sourcekit-xpc-service;sourcekit-inproc;swift-remote-mirror;swift-remote-mirror-headers' "
+            f"'--llvm-install-components=llvm-ar;llvm-nm;llvm-ranlib;llvm-cov;llvm-profdata;llvm-objdump;llvm-objcopy;llvm-symbolizer;IndexStore;clang;clang-resource-headers;builtins;runtimes;clangd;libclang;dsymutil;LTO;clang-features-file;lld' "
+            f"--ios --release --no-assertions --compiler-vendor=apple --infer-cross-compile-hosts-on-darwin --build-ninja --skip-build-benchmarks --skip-tvos --skip-watchos --skip-xros --build-subdir=buildbot_osx "
+            f"--install-llvm --install-swift "
+            f"--install-destdir={swift_install_dir} "
+            f"--install-prefix=/Library/Developer/Toolchains/{SWIFT_TOOLCHAIN_NAME}.xctoolchain/usr "
+            f"--darwin-install-extract-symbols "
+            f"--install-symroot={swift_symroot_dir} "
+            f"--installable-package={swift_install_dir}/{SWIFT_TOOLCHAIN_NAME}-osx.tar.gz "
+            f"--symbols-package={swift_install_dir}/{SWIFT_TOOLCHAIN_NAME}-osx-symbols.tar.gz "
+            f"--darwin-toolchain-bundle-identifier={SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER} "
+            f"'--darwin-toolchain-display-name=WebKit Swift Toolchain' "
+            f"'--darwin-toolchain-display-name-short=WebKit Swift' "
+            f"--darwin-toolchain-name={SWIFT_TOOLCHAIN_NAME} "
+            f"--darwin-toolchain-version=6.0.0 --darwin-toolchain-alias=webkit --darwin-toolchain-require-use-os-runtime=0 "
+            f"--swift-testing=1 --install-swift-testing=1 --swift-testing-macros=1 --install-swift-testing-macros=1 --swift-driver=1 --install-swift-driver=1 "
+            f"2>&1 | python3 {builddir}/build/Tools/Scripts/filter-test-logs swift --output {builddir}/build/swift-build-log.txt"
+        )
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('has_swift_toolchain', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf ../build'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf /Users/buildbot/Library/Developer/Xcode/DerivedData'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', self.expectedShellCommand()])
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Successfully built Swift')
+        return self.run_step()
+
+    def test_skipped_toolchain_exists_same_tag(self):
+        self.configureStep()
+        self.setProperty('has_swift_toolchain', True)
+        self.setProperty('canonical_swift_tag', 'swift-6.0.3-RELEASE')
+        self.setProperty('current_swift_tag', 'swift-6.0.3-RELEASE')
+        self.expect_outcome(result=SKIPPED, state_string='Swift toolchain already exists')
+        return self.run_step()
+
+    def test_build_when_tag_changed(self):
+        self.configureStep()
+        self.setProperty('has_swift_toolchain', True)
+        self.setProperty('canonical_swift_tag', 'swift-6.0.3-RELEASE')
+        self.setProperty('current_swift_tag', 'swift-6.0.2-RELEASE')
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf ../build'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf /Users/buildbot/Library/Developer/Xcode/DerivedData'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', self.expectedShellCommand()])
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Successfully built Swift')
+        return self.run_step()
+
+    def test_failure_with_previous_checkout(self):
+        self.configureStep()
+        self.setProperty('has_swift_toolchain', True)
+        self.setProperty('current_swift_tag', 'swift-6.0.2-RELEASE')
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf ../build'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf /Users/buildbot/Library/Developer/Xcode/DerivedData'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', self.expectedShellCommand()])
+            .exit(1),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Failed to update swift, using previous checkout')
+        return self.run_step()
+
+    def test_failure_without_previous_checkout(self):
+        self.configureStep()
+        self.setProperty('has_swift_toolchain', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf ../build'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf /Users/buildbot/Library/Developer/Xcode/DerivedData'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', self.expectedShellCommand()])
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to build Swift')
+        return self.run_step()
+
+
 class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
     WORK_DIR = 'wkdir'
-    EXPECTED_BUILD_COMMAND = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
+    EXPECTED_BUILD_COMMAND = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
+    EXPECTED_IOS_BUILD_COMMAND = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --toolchains=org.webkit.swift --swift-conditions=SWIFT_WEBKIT_TOOLCHAIN --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=iphonesimulator 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
 
     def setUp(self):
         return self.setup_test_build_step()
@@ -9485,10 +9791,31 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(expected_steps, next_steps)
         return rc
 
+    def test_success_ios(self):
+        self.configureStep()
+        self.setProperty('platform', 'ios')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .exit(0),
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_IOS_BUILD_COMMAND,
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
+            .exit(0)
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Found 0 issues')
+        return self.run_step()
+
 
 class TestScanBuildWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     WORK_DIR = 'wkdir'
-    EXPECTED_BUILD_COMMAND = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR}-baseline --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
+    EXPECTED_BUILD_COMMAND = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR}-baseline --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
 
     def setUp(self):
         self.maxDiff = None
@@ -9784,7 +10111,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations', '--platform', 'mac'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             .log('stdio', stdout='Total new issues: 19\nTotal fixed files: 3\n')
             .exit(0)
@@ -9806,7 +10133,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations', '--platform', 'mac'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             .log('stdio', stdout='Total new issues: 19\nTotal new files: 3\n')
             .exit(0),
@@ -9827,7 +10154,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations', '--platform', 'mac'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             .log('stdio', stdout='Total new issues: 19\nTotal fixed files: 3\n')
             .exit(0),
@@ -9850,7 +10177,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations', '--platform', 'mac'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             .log('stdio', stdout='Total new issues: 1\nTotal fixed files: 1\n')
             .exit(0),
@@ -9872,7 +10199,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations', '--platform', 'mac'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             .log('stdio', stdout='Total new issues: 1\nTotal fixed files: 2\n')
             .exit(0),
@@ -10035,7 +10362,9 @@ class TestGenerateSaferCPPResultsIndex(BuildStepMixinAdditions, unittest.TestCas
 
 
 class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
-    HEADER = '### Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13) (https://github.com/WebKit/WebKit/commit/7e4dc83588490a785f71acac4724e4e43a705077)\n'
+    HEADER = 'Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13) (https://github.com/WebKit/WebKit/commit/7e4dc83588490a785f71acac4724e4e43a705077)\n'
+    IOS_HEADER = '### iOS ' + HEADER
+    MACOS_HEADER = '### macOS ' + HEADER
 
     def setUp(self):
         return self.setup_test_build_step()
@@ -10093,12 +10422,29 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expect_outcome(result=SUCCESS, state_string='Ignored 10 pre-existing failures')
         rc = self.run_step()
-        self.expect_property('build_summary', 'Ignored 10 pre-existing failures')
-        self.expect_property('comment_text', None)
+        self.assertEqual(self.getProperty('build_summary'), 'Ignored 10 pre-existing failures')
+        self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual([], next_steps)
         return rc
 
     def test_success_only_fixes(self):
+        self.configureStep()
+        self.setProperty('num_passing_files', 1)
+        self.setProperty('platform', 'ios')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+
+        self.expect_outcome(result=SUCCESS, state_string='Found 1 fixed file: File17.cpp')
+        rc = self.run_step()
+        self.assertEqual(self.getProperty('passes'), ['File17.cpp'])
+        expected_comment = self.IOS_HEADER + "\n:warning: Found 1 fixed file! Please update expectations in `Source/[Project]/SaferCPPExpectations` by running the following command and update your pull request:\n"
+        expected_comment += "- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp --platform iOS`"
+        self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
+        self.assertEqual(self.getProperty('comment_text'), expected_comment)
+        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
+        return rc
+
+    def test_success_no_platform(self):
         self.configureStep()
         self.setProperty('num_passing_files', 1)
         next_steps = []
@@ -10106,28 +10452,30 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expect_outcome(result=SUCCESS, state_string='Found 1 fixed file: File17.cpp')
         rc = self.run_step()
-        self.expect_property('passes', ['File17.cpp'])
-        expected_comment = self.HEADER + "\n:warning: Found 1 fixed file! Please update expectations in `Source/[Project]/SaferCPPExpectations` by running the following command and update your pull request:\n"
+        self.assertEqual(self.getProperty('passes'), ['File17.cpp'])
+        expected_comment = '###  ' + self.HEADER + "\n:warning: Found 1 fixed file! Please update expectations in `Source/[Project]/SaferCPPExpectations` by running the following command and update your pull request:\n"
         expected_comment += "- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp`"
-        self.expect_property('comment_text', expected_comment)
-        self.expect_property('build_summary', 'Found 1 fixed file: File17.cpp')
-        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
+        expected_comment += '\nUnable to find associated platform. See build for details.'
+        self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
+        self.assertEqual(self.getProperty('comment_text'), expected_comment)
+        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
         return rc
 
     def test_failure_new_failures(self):
         self.configureStep()
         self.setProperty('num_unexpected_issues', 10)
         self.setProperty('num_failing_files', 1)
+        self.setProperty('platform', 'mac')
         next_steps = []
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expect_outcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp')
         rc = self.run_step()
-        expected_comment = self.HEADER + ":x: Found [1 failing file with 10 issues](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html). "
+        expected_comment = self.MACOS_HEADER + ":x: Found [1 failing file with 10 issues](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html). "
         expected_comment += "Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n"
-        self.expect_property('comment_text', expected_comment)
-        self.expect_property('build_finish_summary', 'Found 10 new failures in File1.cpp')
-        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
+        self.assertEqual(self.getProperty('comment_text'), expected_comment)
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
+        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
         return rc
 
     def test_failure_mixed(self):
@@ -10135,18 +10483,187 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('num_unexpected_issues', 10)
         self.setProperty('num_passing_files', 1)
         self.setProperty('num_failing_files', 1)
+        self.setProperty('platform', 'mac')
         next_steps = []
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expect_outcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp and found 1 fixed file: File17.cpp')
         rc = self.run_step()
-        expected_comment = self.HEADER + ":x: Found [1 failing file with 10 issues](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html). "
+        expected_comment = self.MACOS_HEADER + ":x: Found [1 failing file with 10 issues](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html). "
         expected_comment += "Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n"
         expected_comment += "\n:warning: Found 1 fixed file! Please update expectations in `Source/[Project]/SaferCPPExpectations` by running the following command and update your pull request:\n"
-        expected_comment += '- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp`'
-        self.expect_property('comment_text', expected_comment)
-        self.expect_property('build_finish_summary', 'Found 10 new failures in File1.cpp')
-        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
+        expected_comment += '- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp --platform macOS`'
+        self.assertEqual(self.getProperty('comment_text'), expected_comment)
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
+        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
+
+
+class TestCheckParentBuildStatus(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_no_parent_build_info(self):
+        self.setup_step(CheckParentBuildStatus())
+        self.expect_outcome(result=FAILURE, state_string='No parent build information available')
+        return self.run_step()
+
+    def test_missing_parent_buildnumber(self):
+        self.setup_step(CheckParentBuildStatus())
+        self.setProperty('parent_builderid', 1)
+        self.expect_outcome(result=FAILURE, state_string='No parent build information available')
+        return self.run_step()
+
+    def test_missing_parent_builderid(self):
+        self.setup_step(CheckParentBuildStatus())
+        self.setProperty('parent_buildnumber', 100)
+        self.expect_outcome(result=FAILURE, state_string='No parent build information available')
+        return self.run_step()
+
+    def test_invalid_parent_builderid(self):
+        self.setup_step(CheckParentBuildStatus())
+        self.setProperty('parent_buildnumber', 100)
+        self.setProperty('parent_builderid', 'invalid')
+        self.expect_outcome(result=FAILURE, state_string='Invalid parent build information')
+        return self.run_step()
+
+    def test_after_waiting_default(self):
+        step = CheckParentBuildStatus()
+        self.assertFalse(step.after_waiting)
+
+    def test_after_waiting_true(self):
+        step = CheckParentBuildStatus(after_waiting=True)
+        self.assertTrue(step.after_waiting)
+
+    def test_wait_duration_constant(self):
+        self.assertEqual(CheckParentBuildStatus.WAIT_DURATION_SECONDS, 300)
+
+    def test_flunk_on_failure_false(self):
+        step = CheckParentBuildStatus()
+        self.assertFalse(step.flunkOnFailure)
+        self.assertFalse(step.haltOnFailure)
+
+    def test_parent_build_ongoing_returns_success(self):
+        self.setup_step(CheckParentBuildStatus())
+        self.setProperty('parent_buildnumber', 100)
+        self.setProperty('parent_builderid', 1)
+
+        original_get = self.master.data.get
+
+        def mock_data_get(path):
+            if path == ('builders', 1, 'builds', 100):
+                return defer.succeed({'results': None})
+            return original_get(path)
+
+        self.patch(self.master.data, 'get', mock_data_get)
+
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+
+        self.expect_outcome(result=SUCCESS, state_string='Parent build is still in progress, waiting to re-check')
+        rc = self.run_step()
+
+        def check_steps(result):
+            self.assertEqual(len(next_steps), 2)
+            self.assertIsInstance(next_steps[0], WaitForDuration)
+            self.assertEqual(next_steps[0].duration, CheckParentBuildStatus.WAIT_DURATION_SECONDS)
+            self.assertIsInstance(next_steps[1], CheckParentBuildStatus)
+            self.assertTrue(next_steps[1].after_waiting)
+            return result
+
+        rc.addCallback(check_steps)
+        return rc
+
+    def test_parent_build_success_after_waiting_returns_success(self):
+        self.setup_step(CheckParentBuildStatus(after_waiting=True))
+        self.setProperty('parent_buildnumber', 100)
+        self.setProperty('parent_builderid', 1)
+
+        original_get = self.master.data.get
+
+        def mock_data_get(path):
+            if path == ('builders', 1, 'builds', 100):
+                return defer.succeed({'results': SUCCESS})
+            return original_get(path)
+
+        self.patch(self.master.data, 'get', mock_data_get)
+
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+
+        self.expect_outcome(result=SUCCESS, state_string='Parent build succeeded, downloading built product')
+        rc = self.run_step()
+
+        def check_steps(result):
+            self.assertEqual(len(next_steps), 1)
+            self.assertIsInstance(next_steps[0], DownloadBuiltProduct)
+            self.assertEqual(next_steps[0].suffix, SUFFIX_WITHOUT_CHANGE)
+            return result
+
+        rc.addCallback(check_steps)
+        return rc
+
+
+class TestTrigger(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_defaults(self):
+        step = Trigger(schedulerNames=['test-scheduler'])
+        props = step.propertiesToPassToTriggers()
+        self.assertIn('configuration', props)
+        self.assertIn('platform', props)
+        self.assertIn('fullPlatform', props)
+        self.assertIn('architecture', props)
+        self.assertIn('codebase', props)
+        self.assertIn('retry_count', props)
+        self.assertIn('os_version_builder', props)
+        self.assertIn('xcode_version_builder', props)
+        self.assertIn('ews_revision', props)
+        self.assertIn('parent_buildnumber', props)
+        self.assertIn('parent_builderid', props)
+        self.assertIn('rebuild_without_change_on_builder', props)
+        self.assertNotIn('github.number', props)
+        self.assertNotIn('github.head.sha', props)
+        self.assertNotIn('repository', props)
+        self.assertFalse(step.updateSourceStamp)
+        self.assertNotIn('triggers', props)
+
+    def test_pull_request_properties_included_when_enabled(self):
+        step = Trigger(schedulerNames=['test-scheduler'], pull_request=True)
+        props = step.propertiesToPassToTriggers(pull_request=True)
+        self.assertIn('github.base.ref', props)
+        self.assertIn('github.head.ref', props)
+        self.assertIn('github.head.sha', props)
+        self.assertIn('github.head.repo.full_name', props)
+        self.assertIn('github.number', props)
+        self.assertIn('github.title', props)
+        self.assertIn('repository', props)
+        self.assertIn('project', props)
+        self.assertIn('owners', props)
+        self.assertIn('classification', props)
+        self.assertIn('identifier', props)
+
+    def test_triggers_property_included_when_triggers_set(self):
+        step = Trigger(schedulerNames=['test-scheduler'], triggers=['trigger1', 'trigger2'])
+        props = step.propertiesToPassToTriggers()
+        self.assertIn('triggers', props)
+
+    def test_ews_revision_excluded_when_include_revision_false(self):
+        step = Trigger(schedulerNames=['test-scheduler'], include_revision=False)
+        props = step.propertiesToPassToTriggers()
+        self.assertNotIn('ews_revision', props)
+
+    def test_scheduler_names_set(self):
+        step = Trigger(schedulerNames=['scheduler1', 'scheduler2'])
+        self.assertEqual(step.schedulerNames, ['scheduler1', 'scheduler2'])
 
 
 if __name__ == '__main__':

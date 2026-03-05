@@ -97,7 +97,7 @@ void ThreadedScrollingTreeScrollingNodeDelegate::serviceScrollAnimation(Monotoni
 std::unique_ptr<ScrollingEffectsControllerTimer> ThreadedScrollingTreeScrollingNodeDelegate::createTimer(Function<void()>&& function)
 {
     // This is only used for a scroll snap timer.
-    return WTF::makeUnique<ScrollingEffectsControllerTimer>(RunLoop::currentSingleton(), [function = WTFMove(function), scrollingNode = this->scrollingNode()] {
+    return WTF::makeUnique<ScrollingEffectsControllerTimer>(RunLoop::currentSingleton(), [function = WTF::move(function), scrollingNode = this->scrollingNode()] {
         Locker locker { scrollingNode->scrollingTree()->treeLock() };
         function();
     });

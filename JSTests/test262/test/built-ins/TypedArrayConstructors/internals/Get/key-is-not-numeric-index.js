@@ -19,8 +19,8 @@ features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 
 TypedArray.prototype.baz = "test262";
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
 
   assert.sameValue(
     sample.foo, undefined,
@@ -36,4 +36,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(sample.bar, "baz", "return value from get accessor");
 
   assert.sameValue(sample.baz, "test262", "return value from inherited key");
-});
+}, null, ["passthrough"]);

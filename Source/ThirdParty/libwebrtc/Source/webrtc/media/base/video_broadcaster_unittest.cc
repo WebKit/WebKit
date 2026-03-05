@@ -265,8 +265,8 @@ TEST(VideoBroadcasterTest, ConstraintsChangedNotCalledOnSinkAddition) {
 TEST(VideoBroadcasterTest, ForwardsLastConstraintsOnAdd) {
   MockSink sink;
   VideoBroadcaster broadcaster;
-  broadcaster.ProcessConstraints(webrtc::VideoTrackSourceConstraints{2, 3});
-  broadcaster.ProcessConstraints(webrtc::VideoTrackSourceConstraints{1, 4});
+  broadcaster.ProcessConstraints({.min_fps = 2, .max_fps = 3});
+  broadcaster.ProcessConstraints({.min_fps = 1, .max_fps = 4});
   EXPECT_CALL(
       sink,
       OnConstraintsChanged(AllOf(
@@ -279,7 +279,7 @@ TEST(VideoBroadcasterTest, UpdatesOnlyNewSinksWithConstraints) {
   MockSink sink1;
   VideoBroadcaster broadcaster;
   broadcaster.AddOrUpdateSink(&sink1, VideoSinkWants());
-  broadcaster.ProcessConstraints(webrtc::VideoTrackSourceConstraints{1, 4});
+  broadcaster.ProcessConstraints({.min_fps = 1, .max_fps = 4});
   Mock::VerifyAndClearExpectations(&sink1);
   EXPECT_CALL(sink1, OnConstraintsChanged).Times(0);
   MockSink sink2;
@@ -304,7 +304,7 @@ TEST(VideoBroadcasterTest, ForwardsConstraintsToSink) {
                         Field(&webrtc::VideoTrackSourceConstraints::max_fps,
                               Eq(std::nullopt)))));
   broadcaster.ProcessConstraints(
-      webrtc::VideoTrackSourceConstraints{std::nullopt, std::nullopt});
+      {.min_fps = std::nullopt, .max_fps = std::nullopt});
   Mock::VerifyAndClearExpectations(&sink);
 
   EXPECT_CALL(
@@ -313,8 +313,7 @@ TEST(VideoBroadcasterTest, ForwardsConstraintsToSink) {
           Field(&webrtc::VideoTrackSourceConstraints::min_fps,
                 Eq(std::nullopt)),
           Field(&webrtc::VideoTrackSourceConstraints::max_fps, Optional(3)))));
-  broadcaster.ProcessConstraints(
-      webrtc::VideoTrackSourceConstraints{std::nullopt, 3});
+  broadcaster.ProcessConstraints({.min_fps = std::nullopt, .max_fps = 3});
   Mock::VerifyAndClearExpectations(&sink);
 
   EXPECT_CALL(
@@ -323,8 +322,7 @@ TEST(VideoBroadcasterTest, ForwardsConstraintsToSink) {
           Field(&webrtc::VideoTrackSourceConstraints::min_fps, Optional(2)),
           Field(&webrtc::VideoTrackSourceConstraints::max_fps,
                 Eq(std::nullopt)))));
-  broadcaster.ProcessConstraints(
-      webrtc::VideoTrackSourceConstraints{2, std::nullopt});
+  broadcaster.ProcessConstraints({.min_fps = 2, .max_fps = std::nullopt});
   Mock::VerifyAndClearExpectations(&sink);
 
   EXPECT_CALL(
@@ -332,7 +330,7 @@ TEST(VideoBroadcasterTest, ForwardsConstraintsToSink) {
       OnConstraintsChanged(AllOf(
           Field(&webrtc::VideoTrackSourceConstraints::min_fps, Optional(2)),
           Field(&webrtc::VideoTrackSourceConstraints::max_fps, Optional(3)))));
-  broadcaster.ProcessConstraints(webrtc::VideoTrackSourceConstraints{2, 3});
+  broadcaster.ProcessConstraints({.min_fps = 2, .max_fps = 3});
 }
 
 TEST(VideoBroadcasterTest, AppliesMaxOfSinkWantsScaleResolutionDownTo) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +24,13 @@
 
 #pragma once
 
-#include <WebCore/StyleValueTypes.h>
-#include <WebCore/ViewTimeline.h>
+#include <WebCore/StyleCoordinatedValueList.h>
+#include <WebCore/StyleViewTimeline.h>
 
 namespace WebCore {
 namespace Style {
 
-// <'view-timeline'> = [ <'view-timeline-name'> <'view-timeline-axis'>? ]#
-// https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline
-struct ViewTimelines : CommaSeparatedFixedVector<Ref<ViewTimeline>> { using CommaSeparatedFixedVector<Ref<ViewTimeline>>::CommaSeparatedFixedVector; };
+using ViewTimelines = CoordinatedValueList<ViewTimeline>;
 
 } // namespace Style
 } // namespace WebCore

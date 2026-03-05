@@ -105,7 +105,7 @@ class PeerScenario {
   struct PeerVideoQualityPair {
    public:
     PeerVideoQualityPair(Clock* capture_clock, VideoQualityAnalyzer* analyzer)
-        : matcher_({analyzer->Handler()}),
+        : matcher_({analyzer->Handler(capture_clock)}),
           capture_tap_(capture_clock, &matcher_),
           decode_tap_(capture_clock, &matcher_, 0) {}
     VideoFrameMatcher matcher_;

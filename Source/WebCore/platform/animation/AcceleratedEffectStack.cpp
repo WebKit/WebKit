@@ -82,7 +82,7 @@ void AcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
 
 void AcceleratedEffectStack::setBaseValues(AcceleratedEffectValues&& values)
 {
-    m_baseValues = WTFMove(values);
+    m_baseValues = WTF::move(values);
 }
 
 } // namespace WebCore

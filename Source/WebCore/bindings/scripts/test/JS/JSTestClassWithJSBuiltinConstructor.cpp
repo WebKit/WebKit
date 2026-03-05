@@ -125,7 +125,7 @@ void JSTestClassWithJSBuiltinConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestClassWithJSBuiltinConstructor::s_info = { "TestClassWithJSBuiltinConstructor"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructor) };
 
 JSTestClassWithJSBuiltinConstructor::JSTestClassWithJSBuiltinConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestClassWithJSBuiltinConstructor>&& impl)
-    : JSDOMWrapper<TestClassWithJSBuiltinConstructor>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestClassWithJSBuiltinConstructor>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -195,7 +195,7 @@ void JSTestClassWithJSBuiltinConstructorOwner::finalize(JSC::Handle<JSC::Unknown
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestClassWithJSBuiltinConstructor = static_cast<JSTestClassWithJSBuiltinConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestClassWithJSBuiltinConstructor->protectedWrapped().ptr(), jsTestClassWithJSBuiltinConstructor);
+    uncacheWrapper(world, protect(jsTestClassWithJSBuiltinConstructor->wrapped()).ptr(), jsTestClassWithJSBuiltinConstructor);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -233,7 +233,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestClassWithJSBuiltinConstructor>(impl.ptr());
 #endif
-    return createWrapper<TestClassWithJSBuiltinConstructor>(globalObject, WTFMove(impl));
+    return createWrapper<TestClassWithJSBuiltinConstructor>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestClassWithJSBuiltinConstructor& impl)

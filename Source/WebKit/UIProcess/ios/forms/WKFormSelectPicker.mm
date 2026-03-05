@@ -41,6 +41,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <numbers>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/WeakObjCPtr.h>
 
 using namespace WebKit;
 
@@ -138,7 +139,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 
 @implementation WKMultipleSelectPicker {
-    WKContentView *_view;
+    WeakObjCPtr<WKContentView> _view;
     NSTextAlignment _textAlignment;
     NSUInteger _singleSelectionIndex;
     bool _allowsMultipleSelection;
@@ -153,7 +154,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
         return nil;
 
     _view = view;
-    _allowsMultipleSelection = _view.focusedElementInformation.isMultiSelect;
+    _allowsMultipleSelection = [view focusedElementInformation].isMultiSelect;
     _singleSelectionIndex = NSNotFound;
     [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     [self setDataSource:self];
@@ -174,7 +175,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [self reloadAllComponents];
 
     if (!_allowsMultipleSelection) {
-        const Vector<OptionItem>& selectOptions = [_view focusedSelectElementOptions];
+        const Vector<OptionItem>& selectOptions = [_view.get() focusedSelectElementOptions];
         for (size_t i = 0; i < selectOptions.size(); ++i) {
             const OptionItem& item = selectOptions[i];
             if (item.isGroup)
@@ -233,7 +234,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)rowIndex forComponent:(NSInteger)columnIndex reusingView:(UIView *)view
 {
-    auto& item = [_view focusedSelectElementOptions][rowIndex];
+    auto& item = [_view.get() focusedSelectElementOptions][rowIndex];
     RetainPtr<WKOptionPickerCell> pickerItem;
     if (item.isGroup)
         pickerItem = adoptNS([[WKOptionGroupPickerCell alloc] initWithOptionItem:item]);
@@ -253,7 +254,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     UIFont *font = titleTextLabel.font;
     if (width != _maximumTextWidth || _fontSize == 0) {
         _maximumTextWidth = width;
-        _fontSize = adjustedFontSize(_maximumTextWidth, font, titleTextLabel.font.pointSize, [_view focusedSelectElementOptions]);
+        _fontSize = adjustedFontSize(_maximumTextWidth, font, titleTextLabel.font.pointSize, [_view.get() focusedSelectElementOptions]);
     }
 
     [titleTextLabel setFont:[font fontWithSize:_fontSize]];
@@ -271,15 +272,16 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)columnIndex
 {
-    return [_view focusedSelectElementOptions].size();
+    return [_view.get() focusedSelectElementOptions].size();
 }
 
 - (NSInteger)findItemIndexAt:(int)rowIndex
 {
-    ASSERT(rowIndex >= 0 && (size_t)rowIndex < [_view focusedSelectElementOptions].size());
+    RetainPtr view = _view.get();
+    ASSERT(rowIndex >= 0 && (size_t)rowIndex < [view focusedSelectElementOptions].size());
     NSInteger itemIndex = 0;
     for (int i = 0; i < rowIndex; ++i) {
-        if ([_view focusedSelectElementOptions][i].isGroup)
+        if ([view focusedSelectElementOptions][i].isGroup)
             continue;
         itemIndex++;
     }
@@ -292,11 +294,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    auto numberOfOptions = static_cast<NSUInteger>([_view focusedSelectElementOptions].size());
+    RetainPtr view = _view.get();
+    auto numberOfOptions = static_cast<NSUInteger>([view focusedSelectElementOptions].size());
     if (numberOfOptions <= static_cast<NSUInteger>(rowIndex))
         return;
 
-    auto& item = [_view focusedSelectElementOptions][rowIndex];
+    auto& item = [view focusedSelectElementOptions][rowIndex];
 
     // FIXME: Remove this workaround once <rdar://problem/18745253> is fixed.
     // Group rows and disabled rows should not be checkable, but we are getting
@@ -304,25 +307,25 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // for a group or disabled row, reset the styles for the content view so it
     // still appears unselected.
     if (item.isGroup || item.disabled) {
-        UIPickerContentView *view = (UIPickerContentView *)[self viewForRow:rowIndex forComponent:columnIndex];
-        [view setChecked:NO];
-        [[view titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:item.isGroup ? GroupOptionTextColorAlpha : DisabledOptionAlpha]];
+        RetainPtr viewForRow = (UIPickerContentView *)[self viewForRow:rowIndex forComponent:columnIndex];
+        [viewForRow setChecked:NO];
+        [[viewForRow titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:item.isGroup ? GroupOptionTextColorAlpha : DisabledOptionAlpha]];
         return;
     }
 
     if ([self allowsMultipleSelection]) {
-        [_view updateFocusedElementSelectedIndex:[self findItemIndexAt:rowIndex] allowsMultipleSelection:true];
+        [view updateFocusedElementSelectedIndex:[self findItemIndexAt:rowIndex] allowsMultipleSelection:true];
         item.isSelected = isChecked;
     } else if (isChecked) {
         // Single selection.
         if (_singleSelectionIndex < numberOfOptions)
-            [_view focusedSelectElementOptions][_singleSelectionIndex].isSelected = false;
+            [view focusedSelectElementOptions][_singleSelectionIndex].isSelected = false;
 
         _singleSelectionIndex = rowIndex;
 
         // This private delegate often gets called for multiple rows in the picker,
         // so we only activate and set as selected the checked item in single selection.
-        [_view updateFocusedElementSelectedIndex:[self findItemIndexAt:rowIndex] allowsMultipleSelection:false];
+        [view updateFocusedElementSelectedIndex:[self findItemIndexAt:rowIndex] allowsMultipleSelection:false];
         item.isSelected = true;
     } else
         item.isSelected = false;
@@ -351,7 +354,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 @implementation WKSelectSinglePicker {
-    WKContentView *_view;
+    WeakObjCPtr<WKContentView> _view;
     NSInteger _selectedIndex;
 }
 
@@ -368,7 +371,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _selectedIndex = NSNotFound;
 
     for (size_t i = 0; i < [view focusedSelectElementOptions].size(); ++i) {
-        if ([_view focusedSelectElementOptions][i].isSelected) {
+        if ([view focusedSelectElementOptions][i].isSelected) {
             _selectedIndex = i;
             break;
         }
@@ -409,9 +412,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_selectedIndex == NSNotFound)
         return;
 
-    if (_selectedIndex < (NSInteger)[_view focusedSelectElementOptions].size()) {
-        [_view focusedSelectElementOptions][_selectedIndex].isSelected = true;
-        [_view updateFocusedElementSelectedIndex:_selectedIndex allowsMultipleSelection:false];
+    RetainPtr view = _view.get();
+    if (_selectedIndex < (NSInteger)[view focusedSelectElementOptions].size()) {
+        [view focusedSelectElementOptions][_selectedIndex].isSelected = true;
+        [view updateFocusedElementSelectedIndex:_selectedIndex allowsMultipleSelection:false];
     }
 }
 
@@ -422,15 +426,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)columnIndex
 {
-    return _view.focusedElementInformation.selectOptions.size();
+    return [_view.get() focusedElementInformation].selectOptions.size();
 }
 
 - (NSAttributedString *)pickerView:(UIPickerView *)pickerView attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    if (row < 0 || row >= (NSInteger)[_view focusedSelectElementOptions].size())
+    RetainPtr view = _view.get();
+    if (row < 0 || row >= (NSInteger)[view focusedSelectElementOptions].size())
         return nil;
 
-    const OptionItem& option = [_view focusedSelectElementOptions][row];
+    const OptionItem& option = [view focusedSelectElementOptions][row];
     RetainPtr trimmedText = adoptNS([option.text.createNSString() mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
@@ -443,16 +448,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    if (row < 0 || row >= (NSInteger)[_view focusedSelectElementOptions].size())
+    RetainPtr view = _view.get();
+    if (row < 0 || row >= (NSInteger)[view focusedSelectElementOptions].size())
         return;
 
-    const OptionItem& newSelectedOption = [_view focusedSelectElementOptions][row];
+    const OptionItem& newSelectedOption = [view focusedSelectElementOptions][row];
     if (newSelectedOption.disabled) {
         NSInteger rowToSelect = NSNotFound;
 
         // Search backwards for the previous enabled option.
         for (NSInteger i = row - 1; i >= 0; --i) {
-            const OptionItem& earlierOption = [_view focusedSelectElementOptions][i];
+            const OptionItem& earlierOption = [view focusedSelectElementOptions][i];
             if (!earlierOption.disabled) {
                 rowToSelect = i;
                 break;
@@ -461,8 +467,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         // If nothing previous, search forwards for the next enabled option.
         if (rowToSelect == NSNotFound) {
-            for (size_t i = row + 1; i < [_view focusedSelectElementOptions].size(); ++i) {
-                const OptionItem& laterOption = [_view focusedSelectElementOptions][i];
+            for (size_t i = row + 1; i < [view focusedSelectElementOptions].size(); ++i) {
+                const OptionItem& laterOption = [view focusedSelectElementOptions][i];
                 if (!laterOption.disabled) {
                     rowToSelect = i;
                     break;
@@ -494,7 +500,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #pragma mark - Form Control Refresh
 
 @implementation WKSelectPicker {
-    __weak WKContentView *_view;
+    WeakObjCPtr<WKContentView> _view;
     CGPoint _interactionPoint;
 
 #if USE(UICONTEXTMENU)
@@ -510,7 +516,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     _view = view;
-    _interactionPoint = [_view lastInteractionLocation];
+    _interactionPoint = [view lastInteractionLocation];
 
     return self;
 }
@@ -522,11 +528,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)controlBeginEditing
 {
+    RetainPtr view = _view.get();
     // Don't show the menu if the element is entirely offscreen.
-    if (!CGRectIntersectsRect(_view.focusedElementInformation.interactionRect, _view.bounds))
+    if (!CGRectIntersectsRect([view focusedElementInformation].interactionRect, [view bounds]))
         return;
 
-    [_view startRelinquishingFirstResponderToFocusedElement];
+    [view startRelinquishingFirstResponderToFocusedElement];
 
 #if USE(UICONTEXTMENU)
     _selectMenu = [self createMenu];
@@ -549,7 +556,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)controlEndEditing
 {
-    [_view stopRelinquishingFirstResponderToFocusedElement];
+    [_view.get() stopRelinquishingFirstResponderToFocusedElement];
 
 #if USE(UICONTEXTMENU)
     [self resetContextMenuPresenter];
@@ -567,7 +574,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)didSelectOptionIndex:(NSInteger)index
 {
     NSInteger optionIndex = 0;
-    for (auto& option : _view.focusedSelectElementOptions) {
+    RetainPtr view = _view.get();
+    for (auto& option : [view focusedSelectElementOptions]) {
         if (option.isGroup)
             continue;
 
@@ -575,7 +583,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         optionIndex++;
     }
 
-    [_view updateFocusedElementSelectedIndex:index allowsMultipleSelection:false];
+    [view updateFocusedElementSelectedIndex:index allowsMultipleSelection:false];
 }
 
 #if USE(UICONTEXTMENU)
@@ -584,26 +592,27 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (UIMenu *)createMenu
 {
-    if (!_view.focusedSelectElementOptions.size()) {
-        UIAction *emptyAction = [UIAction actionWithTitle:WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list").createNSString().get() image:nil identifier:nil handler:^(__kindof UIAction *action) { }];
-        emptyAction.attributes = UIMenuElementAttributesDisabled;
-        return [UIMenu menuWithTitle:@"" children:@[emptyAction]];
+    RetainPtr view = _view.get();
+    if (![view focusedSelectElementOptions].size()) {
+        RetainPtr emptyAction = [UIAction actionWithTitle:WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list").createNSString().get() image:nil identifier:nil handler:^(__kindof UIAction *action) { }];
+        emptyAction.get().attributes = UIMenuElementAttributesDisabled;
+        return [UIMenu menuWithTitle:@"" children:@[emptyAction.get()]];
     }
 
     NSMutableArray *items = [NSMutableArray array];
     NSInteger optionIndex = 0;
 
     size_t currentIndex = 0;
-    while (currentIndex < _view.focusedSelectElementOptions.size()) {
-        auto& optionItem = _view.focusedSelectElementOptions[currentIndex];
+    while (currentIndex < [view focusedSelectElementOptions].size()) {
+        auto& optionItem = [view focusedSelectElementOptions][currentIndex];
         if (optionItem.isGroup) {
             auto groupID = optionItem.parentGroupID;
             RetainPtr groupText = optionItem.text.createNSString();
             NSMutableArray *groupedItems = [NSMutableArray array];
 
             currentIndex++;
-            while (currentIndex < _view.focusedSelectElementOptions.size()) {
-                auto& childOptionItem = _view.focusedSelectElementOptions[currentIndex];
+            while (currentIndex < [view focusedSelectElementOptions].size()) {
+                auto& childOptionItem = [view focusedSelectElementOptions][currentIndex];
                 if (childOptionItem.isGroup || childOptionItem.parentGroupID != groupID)
                     break;
 
@@ -629,17 +638,17 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (UIAction *)actionForOptionItem:(const OptionItem&)option withIndex:(NSInteger)optionIndex
 {
-    UIAction *optionAction = [UIAction actionWithTitle:option.text.createNSString().get() image:nil identifier:nil handler:^(__kindof UIAction *action) {
+    RetainPtr optionAction = [UIAction actionWithTitle:option.text.createNSString().get() image:nil identifier:nil handler:^(__kindof UIAction *action) {
         [self didSelectOptionIndex:optionIndex];
     }];
 
     if (option.disabled)
-        optionAction.attributes = UIMenuElementAttributesDisabled;
+        optionAction.get().attributes = UIMenuElementAttributesDisabled;
 
     if (option.isSelected)
-        optionAction.state = UIMenuElementStateOn;
+        optionAction.get().state = UIMenuElementStateOn;
 
-    return optionAction;
+    return optionAction.autorelease();
 }
 
 - (UIAction *)actionForOptionIndex:(NSInteger)optionIndex
@@ -650,19 +659,19 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     for (UIMenuElement *menuElement in menuElements) {
         if ([menuElement isKindOfClass:UIAction.class]) {
             if (currentIndex == optionIndex)
-                return (UIAction *)menuElement;
+                return checked_objc_cast<UIAction>(menuElement);
 
-            currentIndex++;
+            ++currentIndex;
             continue;
         }
 
-        UIMenu *groupedMenu = (UIMenu *)menuElement;
-        NSUInteger numGroupedOptions = groupedMenu.children.count;
+        RetainPtr groupedMenu = checked_objc_cast<UIMenu>(menuElement);
+        NSUInteger numGroupedOptions = [groupedMenu children].count;
 
         if (currentIndex + numGroupedOptions <= (NSUInteger)optionIndex)
             currentIndex += numGroupedOptions;
         else
-            return (UIAction *)[groupedMenu.children objectAtIndex:(groupedMenu.children.count - numGroupedOptions) + (optionIndex - currentIndex)];
+            return checked_objc_cast<UIAction>([[groupedMenu children] objectAtIndex:([groupedMenu children].count - numGroupedOptions) + (optionIndex - currentIndex)]);
     }
 
     return nil;
@@ -670,7 +679,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
-    return [_view _createTargetedContextMenuHintPreviewForFocusedElement:WebKit::TargetedPreviewPositioning::Default];
+    return [_view.get() _createTargetedContextMenuHintPreviewForFocusedElement:WebKit::TargetedPreviewPositioning::Default];
 }
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
@@ -688,21 +697,29 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
+    RetainPtr view = _view.get();
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, true);
+
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
         auto strongSelf = weakSelf.get();
         if (strongSelf)
-            [strongSelf->_view.webView _didShowContextMenu];
+            [[strongSelf->_view.get() webView] _didShowContextMenu];
     }];
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
+    RetainPtr view = _view.get();
+    auto elementContext = [view focusedElementInformation].elementContext;
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen(elementContext, false);
+
     _isAnimatingContextMenuDismissal = YES;
-    [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), elementContext = _view.focusedElementInformation.elementContext] {
-        auto strongSelf = weakSelf.get();
-        if (strongSelf) {
-            RetainPtr view = strongSelf->_view;
-            if (elementContext.isSameElement([view focusedElementInformation].elementContext))
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), elementContext] {
+        if (RetainPtr strongSelf = weakSelf.get()) {
+            RetainPtr view = strongSelf->_view.get();
+            if ([view _isSameAsFocusedElement:elementContext])
                 [view accessoryDone];
             [[view webView] _didDismissContextMenu];
             strongSelf->_isAnimatingContextMenuDismissal = NO;
@@ -716,16 +733,19 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
         return;
 
     _selectContextMenuPresenter = nullptr;
-    [_view _removeContextMenuHintContainerIfPossible];
+    RetainPtr view = _view.get();
+    [view _removeContextMenuHintContainerIfPossible];
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, false);
 
     if (!_isAnimatingContextMenuDismissal)
-        [_view.webView _didDismissContextMenu];
+        [[view webView] _didDismissContextMenu];
 }
 
 - (void)showSelectPicker
 {
     if (!_selectContextMenuPresenter)
-        _selectContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(_view, self);
+        _selectContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(_view.get().get(), self);
     _selectContextMenuPresenter->present(_interactionPoint);
 }
 
@@ -739,7 +759,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     UIAction *optionAction = [self actionForOptionIndex:rowIndex];
     if (optionAction) {
         [optionAction performWithSender:nil target:nil];
-        [_view accessoryDone];
+        [_view.get() accessoryDone];
     }
 #endif
 }
@@ -760,12 +780,12 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 #if USE(UICONTEXTMENU)
     NSMutableArray<NSString *> *itemTitles = [NSMutableArray array];
     for (UIMenuElement *menuElement in [_selectMenu children]) {
-        if (auto *action = dynamic_objc_cast<UIAction>(menuElement)) {
-            [itemTitles addObject:action.title];
+        if (RetainPtr action = dynamic_objc_cast<UIAction>(menuElement)) {
+            [itemTitles addObject:action.get().title];
             continue;
         }
 
-        if (auto *menu = dynamic_objc_cast<UIMenu>(menuElement)) {
+        if (RetainPtr menu = dynamic_objc_cast<UIMenu>(menuElement)) {
             for (UIMenuElement *groupedMenuElement in [menu children])
                 [itemTitles addObject:groupedMenuElement.title];
         }
@@ -877,7 +897,7 @@ static const CGFloat groupHeaderCollapseButtonTransitionDuration = 0.3f;
 
 - (void)didTapHeader:(id)sender
 {
-    [_tableViewController didTapSelectPickerGroupHeaderView:self];
+    [protect(_tableViewController) didTapSelectPickerGroupHeaderView:self];
     [self setCollapsed:!_collapsed animated:YES];
 }
 
@@ -956,7 +976,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     _collapsedSections = adoptNS([[NSMutableSet alloc] init]);
 
     _numberOfSections = 1;
-    for (auto& option : _contentView.focusedSelectElementOptions) {
+    for (auto& option : protect(_contentView).get().focusedSelectElementOptions) {
         if (option.isGroup)
             _numberOfSections++;
     }
@@ -978,14 +998,15 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 {
     [super viewWillAppear:animated];
 
-    [_previousButton setEnabled:_contentView.focusedElementInformation.hasPreviousNode];
-    [_nextButton setEnabled:_contentView.focusedElementInformation.hasNextNode];
+    RetainPtr protectedContentView = _contentView;
+    [_previousButton setEnabled:[protectedContentView focusedElementInformation].hasPreviousNode];
+    [_nextButton setEnabled:[protectedContentView focusedElementInformation].hasNextNode];
 }
 
 - (NSInteger)numberOfRowsInGroup:(NSInteger)groupID
 {
     NSInteger rowCount = 0;
-    for (auto& option : _contentView.focusedSelectElementOptions) {
+    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
         if (option.isGroup)
             continue;
 
@@ -1006,7 +1027,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (_contentView.focusedSelectElementOptions.isEmpty())
+    if ([protect(_contentView) focusedSelectElementOptions].isEmpty())
         return 1;
 
     if ([_collapsedSections containsObject:@(section)])
@@ -1037,7 +1058,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
         return nil;
 
     NSInteger groupCount = 0;
-    for (auto& option : _contentView.focusedSelectElementOptions) {
+    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
         if (!option.isGroup)
             continue;
 
@@ -1084,12 +1105,12 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     for (NSInteger i = 0; i < rowCount; i++)
         [indexPaths addObject:[NSIndexPath indexPathForRow:i inSection:section]];
 
-    NSNumber *object = @(section);
-    if ([_collapsedSections containsObject:object]) {
-        [_collapsedSections removeObject:object];
+    RetainPtr object = @(section);
+    if ([_collapsedSections containsObject:object.get()]) {
+        [_collapsedSections removeObject:object.get()];
         [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
     } else {
-        [_collapsedSections addObject:object];
+        [_collapsedSections addObject:object.get()];
         [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
     }
 }
@@ -1099,7 +1120,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     int optionIndex = 0;
     int rowIndex = 0;
 
-    for (auto& option : _contentView.focusedSelectElementOptions) {
+    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
         if (option.isGroup) {
             rowIndex = 0;
             continue;
@@ -1118,7 +1139,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 - (OptionItem *)optionItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger index = 0;
-    for (auto& option : _contentView.focusedSelectElementOptions) {
+    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
         if (option.isGroup || option.parentGroupID != indexPath.section)
             continue;
 
@@ -1133,11 +1154,11 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    auto cell = retainPtr([tableView dequeueReusableCellWithIdentifier:optionCellReuseIdentifier]);
+    auto cell = retainPtr([tableView dequeueReusableCellWithIdentifier:protect(optionCellReuseIdentifier)]);
     if (!cell)
-        cell = adoptNS([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:optionCellReuseIdentifier]);
+        cell = adoptNS([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:protect(optionCellReuseIdentifier)]);
 
-    if (_contentView.focusedSelectElementOptions.isEmpty()) {
+    if ([protect(_contentView) focusedSelectElementOptions].isEmpty()) {
         [cell textLabel].enabled = NO;
         [cell textLabel].text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list").createNSString().get();
         [cell setUserInteractionEnabled:NO];
@@ -1184,7 +1205,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.tertiaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [_contentView updateFocusedElementSelectedIndex:[self findItemIndexAt:indexPath] allowsMultipleSelection:true];
+    [protect(_contentView) updateFocusedElementSelectedIndex:[self findItemIndexAt:indexPath] allowsMultipleSelection:true];
     option->isSelected = !option->isSelected;
 }
 
@@ -1233,7 +1254,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 @implementation WKSelectMultiplePicker {
-    __weak WKContentView *_view;
+    WeakObjCPtr<WKContentView> _view;
 
     RetainPtr<UINavigationController> _navigationController;
     RetainPtr<WKSelectPickerTableViewController> _tableViewController;
@@ -1245,7 +1266,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     _view = view;
-    _tableViewController = adoptNS([[WKSelectPickerTableViewController alloc] initWithView:_view]);
+    _tableViewController = adoptNS([[WKSelectPickerTableViewController alloc] initWithView:view]);
     _navigationController = adoptNS([[UINavigationController alloc] initWithRootViewController:_tableViewController.get()]);
 
     return self;
@@ -1263,10 +1284,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
 
-        if (auto sheetPresentationController = dynamic_objc_cast<UISheetPresentationController>(presentationController)) {
-            sheetPresentationController.detents = @[UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent];
-            sheetPresentationController.widthFollowsPreferredContentSizeWhenEdgeAttached = YES;
-            sheetPresentationController.prefersEdgeAttachedInCompactHeight = YES;
+        if (RetainPtr sheetPresentationController = dynamic_objc_cast<UISheetPresentationController>(presentationController)) {
+            sheetPresentationController.get().detents = @[UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent];
+            sheetPresentationController.get().widthFollowsPreferredContentSizeWhenEdgeAttached = YES;
+            sheetPresentationController.get().prefersEdgeAttachedInCompactHeight = YES;
         }
     } else {
         [_navigationController setModalPresentationStyle:UIModalPresentationPopover];
@@ -1275,8 +1296,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         UIPopoverPresentationController *presentationController = [_navigationController popoverPresentationController];
         presentationController.delegate = self;
-        presentationController.sourceView = _view;
-        presentationController.sourceRect = CGRectIntegral(_view.focusedElementInformation.interactionRect);
+        RetainPtr view = _view.get();
+        presentationController.sourceView = view.get();
+        presentationController.sourceRect = CGRectIntegral([view focusedElementInformation].interactionRect);
     }
 }
 
@@ -1289,11 +1311,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)controlBeginEditing
 {
-    [_view startRelinquishingFirstResponderToFocusedElement];
+    RetainPtr view = _view.get();
+    [view startRelinquishingFirstResponderToFocusedElement];
 
     [self configurePresentation];
-    auto presentingViewController = _view._wk_viewControllerForFullScreenPresentation;
-    [presentingViewController presentViewController:_navigationController.get() animated:YES completion:nil];
+    RetainPtr<UIViewController> presentingViewController = [view _wk_viewControllerForFullScreenPresentation];
+#if PLATFORM(VISION)
+    [view page]->dispatchWillPresentModalUI();
+#endif
+    [presentingViewController.get() presentViewController:_navigationController.get() animated:YES completion:nil];
 }
 
 - (void)controlUpdateEditing
@@ -1303,7 +1329,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)controlEndEditing
 {
-    [_view stopRelinquishingFirstResponderToFocusedElement];
+    [_view.get() stopRelinquishingFirstResponderToFocusedElement];
     [_tableViewController dismissViewControllerAnimated:NO completion:nil];
 }
 
@@ -1311,7 +1337,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-    [_view accessoryDone];
+    [_view.get() accessoryDone];
 }
 
 #pragma mark WKTesting
@@ -1322,7 +1348,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSInteger currentRow = 0;
     NSInteger totalRows = 0;
 
-    for (auto& option : _view.focusedSelectElementOptions) {
+    for (auto& option : [_view.get() focusedSelectElementOptions]) {
         if (option.isGroup) {
             currentSection++;
             currentRow = 0;

@@ -147,7 +147,7 @@ public:
         UniqueRef<ChromeClient>&&,
         UniqueRef<CryptoClient>&&,
         UniqueRef<DocumentSyncClient>&&
-#if HAVE(DIGITAL_CREDENTIALS_UI)
+#if ENABLE(WEB_AUTHN)
         , Ref<CredentialRequestCoordinatorClient>&&
 #endif
     );
@@ -248,14 +248,14 @@ public:
     String presentingApplicationBundleIdentifier;
 #endif
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
-    Ref<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;
-#endif
-
     std::optional<MediaSessionManagerFactory> mediaSessionManagerFactory;
 
 #if ENABLE(IMAGE_ANALYSIS)
     std::optional<ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers;
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    Ref<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;
 #endif
 };
 

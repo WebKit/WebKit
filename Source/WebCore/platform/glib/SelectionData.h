@@ -31,29 +31,29 @@ class SelectionData {
     WTF_MAKE_TZONE_ALLOCATED(SelectionData);
 public:
     void setText(const String&);
-    const String& text() const { return m_text; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
     bool hasText() const { return !m_text.isEmpty(); }
     void clearText() { m_text = emptyString(); }
 
     void setMarkup(const String& newMarkup) { m_markup = newMarkup; }
-    const String& markup() const { return m_markup; }
+    const String& markup() const LIFETIME_BOUND { return m_markup; }
     bool hasMarkup() const { return !m_markup.isEmpty(); }
     void clearMarkup() { m_markup = emptyString(); }
 
     void setURL(const URL&, const String&);
-    const URL& url() const { return m_url; }
-    const String& urlLabel() const;
+    const URL& url() const LIFETIME_BOUND { return m_url; }
+    const String& urlLabel() const LIFETIME_BOUND;
     bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
     void clearURL() { m_url = URL(); }
 
     void setURIList(const String&);
-    const String& uriList() const { return m_uriList; }
-    const Vector<String>& filenames() const { return m_filenames; }
+    const String& uriList() const LIFETIME_BOUND { return m_uriList; }
+    const Vector<String>& filenames() const LIFETIME_BOUND { return m_filenames; }
     bool hasURIList() const { return !m_uriList.isEmpty(); }
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
     void clearURIList() { m_uriList = emptyString(); }
 
-    void setImage(RefPtr<Image>&& newImage) { m_image = WTFMove(newImage); }
+    void setImage(RefPtr<Image>&& newImage) { m_image = WTF::move(newImage); }
     const RefPtr<Image>& image() const { return m_image; }
     bool hasImage() const { return m_image; }
     void clearImage() { m_image = nullptr; }
@@ -62,11 +62,11 @@ public:
     bool canSmartReplace() const { return m_canSmartReplace; }
 
     void addBuffer(const String& type, const Ref<SharedBuffer>& buffer) { m_buffers.add(type, buffer.get()); }
-    const HashMap<String, Ref<SharedBuffer>>& buffers() const { return m_buffers; }
+    const HashMap<String, Ref<SharedBuffer>>& buffers() const LIFETIME_BOUND { return m_buffers; }
     SharedBuffer* buffer(const String& type) { return m_buffers.get(type); }
     void clearBuffers() { m_buffers.clear(); }
 
-    void setCustomData(Ref<SharedBuffer>&& buffer) { m_customData = WTFMove(buffer); }
+    void setCustomData(Ref<SharedBuffer>&& buffer) { m_customData = WTF::move(buffer); }
     const RefPtr<SharedBuffer>& customData() const { return m_customData; }
     bool hasCustomData() const { return !!m_customData; }
     void clearCustomData() { m_customData = nullptr; }

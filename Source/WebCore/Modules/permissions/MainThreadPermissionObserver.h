@@ -61,7 +61,7 @@ private:
     // PermissionObserver
     PermissionState currentState() const final { return m_state; }
     void stateChanged(PermissionState) final;
-    const ClientOrigin& origin() const final { return m_origin; }
+    const ClientOrigin& origin() const LIFETIME_BOUND final { return m_origin; }
     PermissionDescriptor descriptor() const final { return m_descriptor; }
     PermissionQuerySource source() const final { return m_source; }
     const WeakPtr<Page>& page() const final { return m_page; }

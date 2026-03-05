@@ -1795,6 +1795,244 @@ TEST_P(FramebufferTest_ES3, RenderSharedExponent)
     EXPECT_PIXEL_COLOR32F_EQ(0, 0, kFloatRed);
 }
 
+// Test that glBlitFramebuffer within same renderbuffer is illegal.
+TEST_P(FramebufferTest_ES3, BlitWithinRenderBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    GLRenderbuffer ds;
+    glBindRenderbuffer(GL_RENDERBUFFER, ds);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1, 1);
+
+    GLFramebuffer readFbo;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+    glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              ds);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer drawFbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              ds);
+    ASSERT_GL_NO_ERROR();
+
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that glBlitFramebuffer within same 2D texture is illegal, while it's legal for different
+// levels.
+TEST_P(FramebufferTest_ES3, BlitWithin2DTexture)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    GLFramebuffer readFbo, drawFbo;
+    GLTexture texColor, texDepthStencil;
+    glBindTexture(GL_TEXTURE_2D, texColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texDepthStencil);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 4, 4, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColor, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           texDepthStencil, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColor, 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           texDepthStencil, 0);
+
+    ASSERT_GL_NO_ERROR();
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColor, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+
+    // Depth/stencil format cannot be used to generate mipmap, so skip depth/stencil blit.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColor, 2);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColor, 1);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+    ASSERT_GL_NO_ERROR();
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    // blit with stretch
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 2, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that glBlitFramebuffer within same 3D texture is illegal, while it's legal for different
+// layers.
+TEST_P(FramebufferTest_ES3, BlitWithinLayeredTexture)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    GLFramebuffer readFbo, drawFbo;
+    GLTexture texColor, texDepthStencil;
+    glBindTexture(GL_TEXTURE_3D, texColor);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 4, 4, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texDepthStencil);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH24_STENCIL8, 4, 4, 3, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texColor, 0, 1);
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texDepthStencil, 0,
+                              1);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texColor, 0, 1);
+    glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texDepthStencil, 0,
+                              1);
+    ASSERT_GL_NO_ERROR();
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texColor, 0, 1);
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texColor, 0, 1);
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texDepthStencil, 0,
+                              1);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texColor, 0, 2);
+    glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texDepthStencil, 0,
+                              2);
+    ASSERT_GL_NO_ERROR();
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1,
+                      GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                      GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    // blit with stretch
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 2,
+                      GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor::blue);
+}
+
+// Test that glBlitFramebuffer within same cubemap texture is illegal, while it's legal for
+// different faces.
+TEST_P(FramebufferTest_ES3, BlitWithinCubeMapTexture)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    GLTexture texColor, texDepthStencil;
+    GLFramebuffer readFbo, drawFbo;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texColor);
+    for (GLenum faceIdx = 0; faceIdx < 6; faceIdx++)
+    {
+        glTexImage2D(faceIdx + GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, 4, 4, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+    }
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texDepthStencil);
+    for (GLenum faceIdx = 0; faceIdx < 6; faceIdx++)
+    {
+        glTexImage2D(faceIdx + GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_DEPTH24_STENCIL8, 4, 4, 0,
+                     GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+    }
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X, texColor, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X, texDepthStencil, 0);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X, texColor, 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X, texDepthStencil, 0);
+    ASSERT_GL_NO_ERROR();
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                           texColor, 0);
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X, texColor, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X, texDepthStencil, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_CUBE_MAP_NEGATIVE_X, texColor, 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                           GL_TEXTURE_CUBE_MAP_NEGATIVE_X, texDepthStencil, 0);
+    ASSERT_GL_NO_ERROR();
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1,
+                      GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                      GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    // blit with stretch
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 2,
+                      GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor::blue);
+}
+
 // Test color write masks with GL_RGB9_E5 color buffers.
 TEST_P(FramebufferTest_ES3, RenderSharedExponentWithMask)
 {

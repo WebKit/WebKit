@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_STRING_UTILS_H_
 #define LIBANGLE_STRING_UTILS_H_
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -45,7 +46,7 @@ std::string TrimString(const std::string &input, const std::string &trimChars);
 std::string GetPrefix(const std::string &input, size_t offset, const char *delimiter);
 std::string GetPrefix(const std::string &input, size_t offset, char delimiter);
 
-bool HexStringToUInt(const std::string &input, unsigned int *uintOut);
+bool HexStringToUInt(const std::string_view &input, unsigned int *uintOut);
 
 bool ReadFileToString(const std::string &path, std::string *stringOut);
 
@@ -120,6 +121,8 @@ std::vector<std::string> GetCachedStringsFromEnvironmentVarOrAndroidProperty(
 
 // glob can have * as wildcard
 bool NamesMatchWithWildcard(const char *glob, const char *name);
+
+std::vector<uint8_t> HexStringToUintVector(const std::string_view &hexStr);
 }  // namespace angle
 
 #endif  // LIBANGLE_STRING_UTILS_H_

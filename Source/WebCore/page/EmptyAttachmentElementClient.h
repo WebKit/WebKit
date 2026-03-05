@@ -27,7 +27,7 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include <WebCore/AttachmentElementClient.h>
+#include "AttachmentElementClient.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

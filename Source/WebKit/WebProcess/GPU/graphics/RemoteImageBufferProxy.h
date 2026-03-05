@@ -67,7 +67,7 @@ public:
     }
 
     ~RemoteImageBufferProxy();
-    bool isValid() const;
+    bool NODELETE isValid() const;
 
     void disconnect();
 
@@ -107,7 +107,7 @@ private:
 
     void prepareForBackingStoreChange();
 
-    void assertDispatcherIsCurrent() const;
+    void NODELETE assertDispatcherIsCurrent() const;
     template<typename T> void send(T&& message) const;
     template<typename T> auto sendSync(T&& message) const;
     RefPtr<IPC::StreamClientConnection> connection() const;

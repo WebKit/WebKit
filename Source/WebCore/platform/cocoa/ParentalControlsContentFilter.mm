@@ -54,7 +54,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ParentalControlsContentFilter);
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
-Ref<ParentalControlsURLFilter> ParentalControlsContentFilter::protectedImpl() const
+Ref<ParentalControlsURLFilter> ParentalControlsContentFilter::urlFilter() const
 {
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     return ParentalControlsURLFilter::filterWithConfigurationPath(m_webContentRestrictionsConfigurationPath);
@@ -68,7 +68,7 @@ Ref<ParentalControlsURLFilter> ParentalControlsContentFilter::protectedImpl() co
 bool ParentalControlsContentFilter::enabled() const
 {
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    return protectedImpl()->isEnabled();
+    return urlFilter()->isEnabled();
 #elif HAVE(WEBCONTENTANALYSIS_FRAMEWORK)
     return [getWebFilterEvaluatorClassSingleton() isManagedSession];
 #else
@@ -82,8 +82,11 @@ Ref<ParentalControlsContentFilter> ParentalControlsContentFilter::create(const P
 }
 
 ParentalControlsContentFilter::ParentalControlsContentFilter(const PlatformContentFilter::FilterParameters& params)
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    : m_mainDocumentURL(params.mainDocumentURL)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    : m_webContentRestrictionsConfigurationPath(params.webContentRestrictionsConfigurationPath)
+    , m_webContentRestrictionsConfigurationPath(params.webContentRestrictionsConfigurationPath)
+#endif
 #endif
 {
     UNUSED_PARAM(params);
@@ -110,10 +113,10 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
     ASSERT(!m_evaluatedURL);
     m_evaluatedURL = response.url();
     m_state = State::Filtering;
-    protectedImpl()->isURLAllowed(*m_evaluatedURL, *this);
+    urlFilter()->isURLAllowed(m_mainDocumentURL, *m_evaluatedURL, *this);
 #elif HAVE(WEBCONTENTANALYSIS_FRAMEWORK)
     ASSERT(!m_webFilterEvaluator);
-    m_webFilterEvaluator = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.protectedNSURLResponse().get()]);
+    m_webFilterEvaluator = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:protect(response.nsURLResponse()).get()]);
 #if HAVE(WEBFILTEREVALUATOR_AUDIT_TOKEN)
     if (m_hostProcessAuditToken)
         m_webFilterEvaluator.get().browserAuditToken = *m_hostProcessAuditToken;
@@ -144,8 +147,10 @@ void ParentalControlsContentFilter::finishedAddingData()
 
     // Callers expect state is ready after finishing adding data.
     Locker resultLocker { m_resultLock };
-    while (!m_isAllowdByWebContentRestrictions)
-        m_resultCondition.wait(m_resultLock);
+    while (!m_isAllowdByWebContentRestrictions) {
+        if (!m_resultCondition.waitFor(m_resultLock, 250_ms))
+            RELEASE_LOG_ERROR(ContentFiltering, "ParentalControlsContentFilter::finishedAddingData timed out waiting for result after 250 ms");
+    }
 
     m_state = *m_isAllowdByWebContentRestrictions ? State::Allowed : State::Blocked;
     m_replacementData = std::exchange(m_webContentRestrictionsReplacementData, nullptr);

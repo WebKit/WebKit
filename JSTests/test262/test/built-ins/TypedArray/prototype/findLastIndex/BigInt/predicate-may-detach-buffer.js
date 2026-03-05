@@ -19,7 +19,7 @@ info: |
     Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
     If IsDetachedBuffer(buffer) is true, return undefined.
 
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [BigInt, TypedArray, array-find-from-last]
 ---*/
 
@@ -34,4 +34,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     loops++;
   });
   assert.sameValue(loops, 2, "predicate is called once");
-});
+}, null, ["passthrough"]);

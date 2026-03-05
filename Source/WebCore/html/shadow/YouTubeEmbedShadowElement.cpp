@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(YouTubeEmbedShadowElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(YouTubeEmbedShadowElement);
 
 Ref<YouTubeEmbedShadowElement> YouTubeEmbedShadowElement::create(Document& document)
 {
@@ -41,13 +41,13 @@ Ref<YouTubeEmbedShadowElement> YouTubeEmbedShadowElement::create(Document& docum
 }
 
 YouTubeEmbedShadowElement::YouTubeEmbedShadowElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(document)
 {
 }
 
 RenderPtr<RenderElement> YouTubeEmbedShadowElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTFMove(style));
+    return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTF::move(style));
 }
 
 }

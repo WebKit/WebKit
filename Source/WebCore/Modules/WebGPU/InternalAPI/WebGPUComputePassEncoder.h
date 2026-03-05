@@ -49,7 +49,7 @@ public:
 
     void setLabel(String&& label)
     {
-        m_label = WTFMove(label);
+        m_label = WTF::move(label);
         setLabelInternal(m_label);
     }
 
@@ -71,6 +71,7 @@ public:
     virtual void popDebugGroup() = 0;
     virtual void insertDebugMarker(String&& markerLabel) = 0;
     virtual bool isRemoteComputePassEncoderProxy() const { return false; }
+    virtual bool isComputePassEncoderImpl() const { return false; }
 
 protected:
     ComputePassEncoder() = default;

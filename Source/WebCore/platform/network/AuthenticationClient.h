@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include <wtf/WeakPtr.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
 class AuthenticationChallenge;
 class Credential;
 
-class AuthenticationClient : public CanMakeWeakPtr<AuthenticationClient> {
+class AuthenticationClient : public AbstractRefCountedAndCanMakeWeakPtr<AuthenticationClient> {
 public:
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) = 0;
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) = 0;
@@ -40,15 +40,8 @@ public:
     virtual void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) = 0;
     virtual void receivedChallengeRejection(const AuthenticationChallenge&) = 0;
 
-    void ref() { refAuthenticationClient(); }
-    void deref() { derefAuthenticationClient(); }
-
 protected:
     virtual ~AuthenticationClient() = default;
-
-private:
-    virtual void refAuthenticationClient() = 0;
-    virtual void derefAuthenticationClient() = 0;
 };
 
 } // namespace WebCore

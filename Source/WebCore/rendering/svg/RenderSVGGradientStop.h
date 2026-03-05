@@ -30,7 +30,7 @@ class SVGStopElement;
 
 // This class exists mostly so we can hear about gradient stop style changes
 class RenderSVGGradientStop final : public RenderElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGGradientStop);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGGradientStop);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGGradientStop);
 public:
     RenderSVGGradientStop(SVGStopElement&, RenderStyle&&);
@@ -39,7 +39,7 @@ public:
     inline SVGStopElement& element() const;
 
 private:
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void layout() override;
 

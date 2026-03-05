@@ -51,7 +51,7 @@ public:
 
     static JSJavaScriptCallFrame* create(JSC::VM& vm, JSC::Structure* structure, Ref<JavaScriptCallFrame>&& impl)
     {
-        JSJavaScriptCallFrame* instance = new (NotNull, JSC::allocateCell<JSJavaScriptCallFrame>(vm)) JSJavaScriptCallFrame(vm, structure, WTFMove(impl));
+        JSJavaScriptCallFrame* instance = new (NotNull, JSC::allocateCell<JSJavaScriptCallFrame>(vm)) JSJavaScriptCallFrame(vm, structure, WTF::move(impl));
         instance->finishCreation(vm);
         return instance;
     }

@@ -160,7 +160,7 @@ void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin codeOrigin, JSValueReg
 {
     UNUSED_PARAM(node);
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 1>(
@@ -185,14 +185,14 @@ void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin codeOrigin, JSValueReg
         resultRegs, BaselineJITRegisters::GetById::baseJSR, BaselineJITRegisters::GetById::stubInfoGPR);
 
     addGetById(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 }
 
 void SpeculativeJIT::cachedGetByIdWithThis(Node* node, CodeOrigin codeOrigin, JSValueRegs baseRegs, JSValueRegs thisRegs, JSValueRegs resultRegs, CacheableIdentifier identifier, bool needsBaseAndThisCellCheck)
 {
     UNUSED_PARAM(node);
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 2>(
@@ -221,7 +221,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node, CodeOrigin codeOrigin, JS
         resultRegs, BaselineJITRegisters::GetByIdWithThis::baseJSR, BaselineJITRegisters::GetByIdWithThis::thisJSR, BaselineJITRegisters::GetByIdWithThis::stubInfoGPR);
 
     addGetByIdWithThis(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 }
 
 void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand)
@@ -1126,7 +1126,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 if (callTargetGPR != InvalidGPRReg)
                     preserved.add(callTargetGPR, IgnoreVectors);
                 preserved.add(BaselineJITRegisters::Call::calleeGPR, IgnoreVectors);
-                prepareForTailCallSlow(WTFMove(preserved));
+                prepareForTailCallSlow(WTF::move(preserved));
             }
         }));
         abortWithReason(JITDidReturnFromTailCall);
@@ -2704,7 +2704,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSetBuilder usedRegisters = this->usedRegisters();
+        RegisterSet usedRegisters = this->usedRegisters();
 
         JSValueRegs baseRegs { baseGPR };
         JSValueRegs propertyRegs { propertyGPR };
@@ -2742,7 +2742,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             resultRegs, BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, BaselineJITRegisters::GetByVal::stubInfoGPR, BaselineJITRegisters::GetByVal::profileGPR);
 
         addGetByVal(gen, slowPath.get());
-        addSlowPathGenerator(WTFMove(slowPath));
+        addSlowPathGenerator(WTF::move(slowPath));
         jsValueResult(resultRegs, node);
         break;
     }
@@ -3782,6 +3782,12 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringStartsWith:
+    case StringEndsWith: {
+        compileStringStartsOrEndsWith(node);
+        break;
+    }
+
     case StringAt:
     case StringCharAt: {
         // Relies on StringCharAt and StringAt node having same basic layout as GetByVal
@@ -4662,16 +4668,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case NewGenerator: {
-        compileNewGenerator(node);
-        break;
-    }
-
-    case NewAsyncGenerator: {
-        compileNewAsyncGenerator(node);
-        break;
-    }
-
     case NewInternalFieldObject: {
         compileNewInternalFieldObject(node);
         break;
@@ -4695,11 +4691,6 @@ void SpeculativeJIT::compile(Node* node)
     case SetArgumentCountIncludingThis:
         compileSetArgumentCountIncludingThis(node);
         break;
-
-    case GetRestLength: {
-        compileGetRestLength(node);
-        break;
-    }
         
     case GetScope:
     case GetEvalScope:
@@ -5064,6 +5055,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case DefineDataProperty: {
         compileDefineDataProperty(node);
+        break;
+    }
+
+    case ObjectDefineProperty: {
+        compileObjectDefineProperty(node);
         break;
     }
 
@@ -5527,6 +5523,14 @@ void SpeculativeJIT::compile(Node* node)
         compileExtractValueFromWeakMapGet(node);
         break;
 
+    case MapOrSetSize:
+        compileMapOrSetSize(node);
+        break;
+
+    case GetRegExpFlag:
+        compileGetRegExpFlag(node);
+        break;
+
     case SetAdd:
         compileSetAdd(node);
         break;
@@ -5911,7 +5915,7 @@ void SpeculativeJIT::compile(Node* node)
 
             CodeOrigin codeOrigin = node->origin.semantic;
             CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-            RegisterSetBuilder usedRegisters = this->usedRegisters();
+            RegisterSet usedRegisters = this->usedRegisters();
 
             auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
             shuffleRegisters<GPRReg, 2>(
@@ -5941,7 +5945,7 @@ void SpeculativeJIT::compile(Node* node)
                 resultRegs, BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, BaselineJITRegisters::InByVal::stubInfoGPR, BaselineJITRegisters::InByVal::profileGPR);
 
             addInByVal(gen, slowPath.get());
-            addSlowPathGenerator(WTFMove(slowPath));
+            addSlowPathGenerator(WTF::move(slowPath));
 
             blessedBooleanResult(resultRegs.payloadGPR(), node);
             break;
@@ -6507,6 +6511,10 @@ void SpeculativeJIT::compile(Node* node)
         compilePromiseThen(node);
         break;
 
+    case PerformPromiseThen:
+        compilePerformPromiseThen(node);
+        break;
+
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {
         Jump callTierUp = branchAdd32(PositiveOrZero, TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()), Address(GPRInfo::jitDataRegister, JITData::offsetOfTierUpCounter()));
@@ -6528,9 +6536,10 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg tempGPR = temp.gpr();
 
         BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
-        auto triggerIterator = jitCode()->tierUpEntryTriggers.find(bytecodeIndex);
-        DFG_ASSERT(m_graph, node, triggerIterator != jitCode()->tierUpEntryTriggers.end());
-        JITCode::TriggerReason* forceEntryTrigger = &(jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
+        RefPtr jitCode = this->jitCode();
+        auto triggerIterator = jitCode->tierUpEntryTriggers.find(bytecodeIndex);
+        DFG_ASSERT(m_graph, node, triggerIterator != jitCode->tierUpEntryTriggers.end());
+        JITCode::TriggerReason* forceEntryTrigger = &(jitCode->tierUpEntryTriggers.find(bytecodeIndex)->value);
         static_assert(!static_cast<uint8_t>(JITCode::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
         static_assert(sizeof(JITCode::TriggerReason) == 1, "branchTest8 assumes this size");
 
@@ -6542,7 +6551,7 @@ void SpeculativeJIT::compile(Node* node)
         silentSpillAllRegistersImpl(false, savePlans, tempGPR);
 
         unsigned streamIndex = m_stream.size();
-        jitCode()->bytecodeIndexToStreamIndex.add(bytecodeIndex, streamIndex);
+        jitCode->bytecodeIndexToStreamIndex.add(bytecodeIndex, streamIndex);
 
         addSlowPathGeneratorLambda([=, this]() {
             forceOSREntry.link(this);
@@ -6926,7 +6935,7 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     JSValueRegs baseRegs { baseGPR };
     JSValueRegs propertyRegs { propertyGPR };
@@ -6967,7 +6976,7 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
         resultRegs.payloadGPR(), BaselineJITRegisters::GetByValWithThis::baseJSR, BaselineJITRegisters::GetByValWithThis::propertyJSR, BaselineJITRegisters::GetByValWithThis::thisJSR, BaselineJITRegisters::GetByValWithThis::stubInfoGPR, BaselineJITRegisters::GetByValWithThis::profileGPR);
 
     addGetByValWithThis(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     jsValueResult(resultRegs, node);
 }
@@ -7036,7 +7045,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSetBuilder usedRegisters = this->usedRegisters();
+        RegisterSet usedRegisters = this->usedRegisters();
 
         auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
         shuffleRegisters<GPRReg, 1>(
@@ -7060,7 +7069,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
             resultRegs.payloadGPR(), BaselineJITRegisters::DelById::baseJSR, BaselineJITRegisters::DelById::stubInfoGPR);
 
         addDelById(gen, slowPath.get());
-        addSlowPathGenerator(WTFMove(slowPath));
+        addSlowPathGenerator(WTF::move(slowPath));
 
         unblessedBooleanResult(resultRegs.payloadGPR(), node);
         return;
@@ -7098,7 +7107,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSetBuilder usedRegisters = this->usedRegisters();
+        RegisterSet usedRegisters = this->usedRegisters();
 
         auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
         shuffleRegisters<GPRReg, 2>(
@@ -7127,7 +7136,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
             resultRegs.payloadGPR(), BaselineJITRegisters::DelByVal::baseJSR, BaselineJITRegisters::DelByVal::propertyJSR, BaselineJITRegisters::DelByVal::stubInfoGPR);
 
         addDelByVal(gen, slowPath.get());
-        addSlowPathGenerator(WTFMove(slowPath));
+        addSlowPathGenerator(WTF::move(slowPath));
 
         unblessedBooleanResult(resultRegs.payloadGPR(), node);
         return;
@@ -7161,7 +7170,7 @@ void SpeculativeJIT::compileInById(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 1>(
@@ -7185,7 +7194,7 @@ void SpeculativeJIT::compileInById(Node* node)
         resultRegs, BaselineJITRegisters::InById::baseJSR, BaselineJITRegisters::InById::stubInfoGPR);
 
     addInById(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
@@ -7204,7 +7213,7 @@ void SpeculativeJIT::compileInByVal(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 2>(
@@ -7231,7 +7240,7 @@ void SpeculativeJIT::compileInByVal(Node* node)
         resultRegs, BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, BaselineJITRegisters::InByVal::stubInfoGPR, BaselineJITRegisters::InByVal::profileGPR);
 
     addInByVal(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
@@ -7252,7 +7261,7 @@ void SpeculativeJIT::compileHasPrivate(Node* node, AccessType type)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 2>(
@@ -7283,7 +7292,7 @@ void SpeculativeJIT::compileHasPrivate(Node* node, AccessType type)
         resultRegs, BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, BaselineJITRegisters::InByVal::stubInfoGPR);
 
     addInByVal(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
@@ -7369,7 +7378,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         ECMAMode ecmaMode = node->ecmaMode();
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSetBuilder usedRegisters = this->usedRegisters();
+        RegisterSet usedRegisters = this->usedRegisters();
 
         auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
         shuffleRegisters<GPRReg, 3>(
@@ -7406,7 +7415,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
             NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, BaselineJITRegisters::PutByVal::profileGPR);
 
         addPutByVal(gen, slowPath.get());
-        addSlowPathGenerator(WTFMove(slowPath));
+        addSlowPathGenerator(WTF::move(slowPath));
 
         noResult(node);
         break;
@@ -7530,7 +7539,7 @@ void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs baseRegs
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 2>(
@@ -7561,7 +7570,7 @@ void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs baseRegs
         result.regs(), BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, BaselineJITRegisters::GetByVal::stubInfoGPR);
 
     addGetByVal(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     jsValueResult(result.regs(), node, DataFormatJS);
 }
@@ -7645,7 +7654,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 3>(
@@ -7677,7 +7686,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
         NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, BaselineJITRegisters::PutByVal::profileGPR);
 
     addPutByVal(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     noResult(node);
 }
@@ -7696,7 +7705,7 @@ void SpeculativeJIT::compileCheckPrivateBrand(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 2>(
@@ -7726,7 +7735,7 @@ void SpeculativeJIT::compileCheckPrivateBrand(Node* node)
         BaselineJITRegisters::PrivateBrand::baseJSR, BaselineJITRegisters::PrivateBrand::propertyJSR, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
 
     addPrivateBrandAccess(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     noResult(node);
 }
@@ -7746,7 +7755,7 @@ void SpeculativeJIT::compileSetPrivateBrand(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 2>(
@@ -7774,7 +7783,7 @@ void SpeculativeJIT::compileSetPrivateBrand(Node* node)
         BaselineJITRegisters::PrivateBrand::baseJSR, BaselineJITRegisters::PrivateBrand::propertyJSR, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
 
     addPrivateBrandAccess(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 
     noResult(node);
 }
@@ -7786,7 +7795,7 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
         bool prototypeIsKnownObject = m_state.forNode(node->child2()).isType(SpecObject | ~SpecCell);
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSiteIndex = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSetBuilder usedRegisters = this->usedRegisters();
+        RegisterSet usedRegisters = this->usedRegisters();
 
         auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
         shuffleRegisters<GPRReg, 2>(
@@ -7810,7 +7819,7 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
         auto slowPath = slowPathICCall(slowCases, this, stubInfoConstant, BaselineJITRegisters::Instanceof::stubInfoGPR, Address(BaselineJITRegisters::Instanceof::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInstanceOfOptimize, resultGPR, BaselineJITRegisters::Instanceof::valueJSR, BaselineJITRegisters::Instanceof::protoJSR, BaselineJITRegisters::Instanceof::stubInfoGPR);
 
         addInstanceOf(gen, slowPath.get());
-        addSlowPathGenerator(WTFMove(slowPath));
+        addSlowPathGenerator(WTF::move(slowPath));
     };
 
     if (node->child1().useKind() == CellUse
@@ -7896,7 +7905,7 @@ void SpeculativeJIT::compileInstanceOfMegamorphic(Node* node)
 void SpeculativeJIT::cachedPutById(Node*, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, CacheableIdentifier identifier, AccessType accessType)
 {
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     shuffleRegisters<GPRReg, 2>(
@@ -7919,7 +7928,7 @@ void SpeculativeJIT::cachedPutById(Node*, CodeOrigin codeOrigin, GPRReg baseGPR,
     auto slowPath = slowPathICCall(slowCases, this, stubInfoConstant, BaselineJITRegisters::PutById::stubInfoGPR, Address(BaselineJITRegisters::PutById::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation, NoResult, BaselineJITRegisters::PutById::valueJSR, BaselineJITRegisters::PutById::baseJSR, BaselineJITRegisters::PutById::stubInfoGPR);
 
     addPutById(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    addSlowPathGenerator(WTF::move(slowPath));
 }
 
 void SpeculativeJIT::compilePutPrivateNameById(Node* node)
@@ -8261,7 +8270,7 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
         {
             CodeOrigin codeOrigin = node->origin.semantic;
             CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-            RegisterSetBuilder usedRegisters = this->usedRegisters();
+            RegisterSet usedRegisters = this->usedRegisters();
 
             auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
             shuffleRegisters<GPRReg, 3>(
@@ -8298,7 +8307,7 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
                 NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, BaselineJITRegisters::PutByVal::profileGPR);
 
             addPutByVal(gen, slowPath.get());
-            addSlowPathGenerator(WTFMove(slowPath));
+            addSlowPathGenerator(WTF::move(slowPath));
         }
 
         if (!recoverGenericCase.empty()) {
@@ -8373,7 +8382,7 @@ void SpeculativeJIT::compilePutByValMegamorphic(Node* node)
     slowCases.append(branchTest32(Zero, Address(scratch4GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
 
     auto [slow, reallocating] = storeMegamorphicProperty(vm(), baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratch1GPR, scratch2GPR, scratch3GPR);
-    slowCases.append(WTFMove(slow));
+    slowCases.append(WTF::move(slow));
 
     addSlowPathGenerator(slowPathCall(slowCases, this, node->ecmaMode().isStrict() ? operationPutByValStrictMegamorphicGeneric : operationPutByValSloppyMegamorphicGeneric, NoResult, LinkableConstant::globalObject(*this, node), baseGPR, subscriptGPR, valueRegs));
     addSlowPathGenerator(slowPathCall(reallocating, this, operationPutByMegamorphicReallocating, NoResult, TrustedImmPtr(&vm()), baseGPR, valueRegs, scratch3GPR));
@@ -8399,7 +8408,7 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
 
         JumpList slowCases;
 
-        emitGetLength(node->origin.semantic, sizeGPR);
+        emitGetArgumentCount(node->origin.semantic, sizeGPR);
 
         move(TrustedImmPtr(nullptr), storageGPR);
         slowCases.append(branch32(AboveOrEqual, sizeGPR, TrustedImm32(MAX_STORAGE_VECTOR_LENGTH)));
@@ -8438,13 +8447,13 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
         Vector<SilentRegisterSavePlan> savePlans;
         silentSpillAllRegistersImpl(false, savePlans, resultGPR);
         auto doneFromSlowPath = label();
-        addSlowPathGeneratorLambda([=, this, savePlans = WTFMove(savePlans), slowCases = WTFMove(slowCases)] () {
+        addSlowPathGeneratorLambda([=, this, savePlans = WTF::move(savePlans), slowCases = WTF::move(slowCases)] () {
             slowCases.link(this);
             silentSpill(savePlans);
 
             setupArgument(5, [&] (GPRReg destGPR) { move(storageGPR, destGPR); });
             setupArgument(4, [&] (GPRReg destGPR) { emitGetCallee(node->origin.semantic, destGPR); });
-            setupArgument(3, [&] (GPRReg destGPR) { emitGetLength(node->origin.semantic, destGPR); });
+            setupArgument(3, [&] (GPRReg destGPR) { emitGetArgumentCount(node->origin.semantic, destGPR); });
             setupArgument(2, [&] (GPRReg destGPR) { emitGetArgumentStart(node->origin.semantic, destGPR); });
             setupArgument(
                 1, [&] (GPRReg destGPR) {
@@ -8482,7 +8491,7 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
     // Arguments: 0:JSGlobalObject*, 1:structure, 2:start, 3:length, 4:callee, 5:butterfly
     setupArgument(5, [&] (GPRReg destGPR) { move(TrustedImm32(0), destGPR); });
     setupArgument(4, [&] (GPRReg destGPR) { emitGetCallee(node->origin.semantic, destGPR); });
-    setupArgument(3, [&] (GPRReg destGPR) { emitGetLength(node->origin.semantic, destGPR); });
+    setupArgument(3, [&] (GPRReg destGPR) { emitGetArgumentCount(node->origin.semantic, destGPR); });
     setupArgument(2, [&] (GPRReg destGPR) { emitGetArgumentStart(node->origin.semantic, destGPR); });
     setupArgument(
         1, [&] (GPRReg destGPR) {

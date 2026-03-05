@@ -4,27 +4,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x17
+        RenderText {#text} at (0,0) size 212x18
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 717x35
-          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x17
+        RenderInline {I} at (0,0) size 717x36
+          RenderInline {A} at (212,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (212,0) size 348x18
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6618"
-          RenderText {#text} at (0,0) size 717x35
+          RenderText {#text} at (0,0) size 717x36
             text run at (559,0) width 5: " "
             text run at (563,0) width 154: "Inline in RTL block with"
             text run at (0,18) width 343: "overflow:auto and left border makes scroll bar appear"
-        RenderText {#text} at (342,18) size 5x17
+        RenderText {#text} at (342,18) size 5x18
           text run at (342,18) width 5: "."
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,70) size 784x18 clip at (18,70) size 774x18
   RenderBlock {DIV} at (0,62) size 784x18 [border: none (10px solid #0000FF)]
-    RenderText {#text} at (469,0) size 315x17
+    RenderText {#text} at (469,0) size 315x18
       text run at (469,0) width 117: "This block should "
       text run at (780,0) width 4 RTL: "."
-    RenderInline {EM} at (586,0) size 20x17
-      RenderText {#text} at (586,0) size 20x17
+    RenderInline {EM} at (586,0) size 20x18
+      RenderText {#text} at (586,0) size 20x18
         text run at (586,0) width 20: "not"
-    RenderText {#text} at (606,0) size 174x17
+    RenderText {#text} at (606,0) size 174x18
       text run at (606,0) width 174: " have a horizontal scroll bar"

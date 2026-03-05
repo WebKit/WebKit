@@ -35,36 +35,31 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushSubscriptionData.class, self))
         return;
 
-    _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
+    SUPPRESS_UNRETAINED_ARG _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
     [super dealloc];
 }
 
 - (NSURL *)endpoint
 {
-    return self._protectedData->endpoint().createNSURL().autorelease();
+    return protect(*_data)->endpoint().createNSURL().autorelease();
 }
 
 - (NSData *)applicationServerKey
 {
-    return toNSData(self._protectedData->applicationServerKey()).unsafeGet();
+    return toNSData(protect(*_data)->applicationServerKey()).autorelease();
 }
 
 - (NSData *)authenticationSecret
 {
-    return toNSData(self._protectedData->sharedAuthenticationSecret()).unsafeGet();
+    return toNSData(protect(*_data)->sharedAuthenticationSecret()).autorelease();
 }
 
 - (NSData *)ecdhPublicKey
 {
-    return toNSData(self._protectedData->clientECDHPublicKey()).unsafeGet();
+    return toNSData(protect(*_data)->clientECDHPublicKey()).autorelease();
 }
 
 - (API::Object&)_apiObject
-{
-    return *_data;
-}
-
-- (Ref<API::WebPushSubscriptionData>)_protectedData
 {
     return *_data;
 }

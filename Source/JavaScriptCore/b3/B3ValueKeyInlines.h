@@ -30,6 +30,7 @@
 #include "B3Procedure.h"
 #include "B3Value.h"
 #include "B3ValueKey.h"
+#include "WasmTypeDefinition.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -112,6 +113,29 @@ inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a, Val
     u.indices[0] = a ? a->index() : UINT32_MAX;
     u.indices[1] = b ? b->index() : UINT32_MAX;
     u.indices[2] = immediate;
+}
+
+inline ValueKey::ValueKey(Kind kind, Type type, Value* child, unsigned packedFlags, const Wasm::RTT* rtt)
+    : m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = child->index();
+    u.indices[1] = packedFlags;
+    if (rtt) {
+        uint64_t rttPtr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(rtt));
+        u.indices[2] = static_cast<unsigned>(rttPtr);
+        u.indices[3] = static_cast<unsigned>(rttPtr >> 32);
+    }
+}
+
+inline ValueKey::ValueKey(Kind kind, Type type, Value* child, unsigned packedFlags, int32_t targetHeapType)
+    : m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = child->index();
+    u.indices[1] = packedFlags;
+    u.indices[2] = static_cast<unsigned>(targetHeapType);
+    u.indices[3] = 0;
 }
 
 inline Value* ValueKey::child(Procedure& proc, unsigned index) const

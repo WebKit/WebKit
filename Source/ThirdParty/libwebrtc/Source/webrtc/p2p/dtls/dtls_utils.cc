@@ -10,7 +10,6 @@
 
 #include "p2p/dtls/dtls_utils.h"
 
-#include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -83,11 +82,8 @@ void PacketStash::Prune(const absl::flat_hash_set<uint32_t>& hashes) {
     return;
   }
   uint32_t before = packets_.size();
-  packets_.erase(std::remove_if(packets_.begin(), packets_.end(),
-                                [&](const auto& val) {
-                                  return hashes.contains(val.hash);
-                                }),
-                 packets_.end());
+  std::erase_if(packets_,
+                [&](const auto& val) { return hashes.contains(val.hash); });
   uint32_t after = packets_.size();
   uint32_t removed = before - after;
   if (pos_ >= removed) {

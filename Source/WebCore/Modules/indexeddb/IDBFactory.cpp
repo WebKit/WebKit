@@ -43,7 +43,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBFactory);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBFactory);
 
 static bool shouldThrowSecurityException(ScriptExecutionContext& context)
 {
@@ -147,28 +147,28 @@ void IDBFactory::databases(ScriptExecutionContext& context, IDBDatabasesResponse
 
     ASSERT(context.securityOrigin());
 
-    m_connectionProxy->getAllDatabaseNamesAndVersions(context, [promise = WTFMove(promise)](auto&& result) mutable {
+    m_connectionProxy->getAllDatabaseNamesAndVersions(context, [promise = WTF::move(promise)](auto&& result) mutable {
         if (!result) {
             promise.reject(Exception { ExceptionCode::UnknownError });
             return;
         }
 
         promise.resolve(WTF::map(*result, [](auto&& info) {
-            return IDBFactory::DatabaseInfo { WTFMove(info.name), info.version };
+            return IDBFactory::DatabaseInfo { WTF::move(info.name), info.version };
         }));
     });
 }
 
 void IDBFactory::getAllDatabaseNames(ScriptExecutionContext& context, Function<void(const Vector<String>&)>&& callback)
 {
-    m_connectionProxy->getAllDatabaseNamesAndVersions(context, [callback = WTFMove(callback)](auto&& result) mutable {
+    m_connectionProxy->getAllDatabaseNamesAndVersions(context, [callback = WTF::move(callback)](auto&& result) mutable {
         if (!result) {
             callback({ });
             return;
         }
 
         callback(WTF::map(*result, [](auto&& info) {
-            return WTFMove(info.name);
+            return WTF::move(info.name);
         }));
     });
 }

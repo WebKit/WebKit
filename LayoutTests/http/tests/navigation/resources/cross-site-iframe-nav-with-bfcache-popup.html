@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="navigation-utils.js"></script>
+<script>
+
+const page = "popup";
+const iframeId = "test-iframe"
+
+window.onload = () => sendMessageToOpener("load");
+window.onpageshow = () => sendMessageToOpener("pageshow", event.persisted ? "persisted" : "not-persisted");
+
+window.onmessage = (event) => dispatchMessage(event.data, {
+    opener: {
+        'navigate-to-cross-site': () => navigateIframeTo(`http://${crossSiteHostname}:8000/navigation/resources/cross-site-iframe-nav-with-bfcache-page.html`),
+        'navigate-to-other': () => navigateTo("cross-site-iframe-nav-with-bfcache-other.html"),
+        back2: () => history.back(),
+    },
+    samesite: () => forwardMessageToOpener(event.data),
+    crosssite: () => forwardMessageToOpener(event.data),
+    other: () => forwardMessageToOpener(event.data),
+});
+
+
+</script>
+</head>
+<body>
+<h1>Popup page</h1>
+<iframe src="cross-site-iframe-nav-with-bfcache-page.html" id="test-iframe"></iframe>
+</body>
+</html>

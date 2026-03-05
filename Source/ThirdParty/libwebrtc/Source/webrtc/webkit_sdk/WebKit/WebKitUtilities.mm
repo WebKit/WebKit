@@ -116,11 +116,11 @@ static bool copyI420BufferToPixelBuffer(CVPixelBufferRef pixelBuffer, const uint
 
 }
 
-CVPixelBufferRef createPixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout layout)
+CVPixelBufferRef createPixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout layout, bool isFullRange)
 {
     CVPixelBufferRef pixelBuffer = nullptr;
 
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, nullptr, &pixelBuffer);
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, nullptr, &pixelBuffer);
     if (status != noErr || !pixelBuffer)
         return nullptr;
 

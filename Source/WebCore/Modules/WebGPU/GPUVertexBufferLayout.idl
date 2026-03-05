@@ -29,9 +29,8 @@
 typedef [EnforceRange] unsigned long long GPUSize64;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUVertexBufferLayout {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUVertexBufferLayout {
     required GPUSize64 arrayStride;
     GPUVertexStepMode stepMode = "vertex";
     required sequence<GPUVertexAttribute> attributes;

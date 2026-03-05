@@ -50,14 +50,14 @@ struct MetaResolver : Base {
 
     static ResultType resolve(Variant<T, Ts...>&& consumeResult, CSSPropertyParserOptions options = { }) requires (sizeof...(Ts) > 0)
     {
-        return WTF::switchOn(WTFMove(consumeResult), [&](auto&& value) -> ResultType {
-            return Base::resolve(WTFMove(value), options);
+        return WTF::switchOn(WTF::move(consumeResult), [&](auto&& value) -> ResultType {
+            return Base::resolve(WTF::move(value), options);
         });
     }
 
     static ResultType resolve(T&& consumeResult, CSSPropertyParserOptions options = { }) requires (sizeof...(Ts) == 0)
     {
-        return Base::resolve(WTFMove(consumeResult), options);
+        return Base::resolve(WTF::move(consumeResult), options);
     }
 
     static ResultType consumeAndResolve(CSSParserTokenRange& range, CSS::PropertyParserState& state, CSSPropertyParserOptions options = { })
@@ -65,7 +65,7 @@ struct MetaResolver : Base {
         auto result = MetaConsumer<T, Ts...>::consume(range, state, options);
         if (!result)
             return { };
-        return resolve(WTFMove(*result), options);
+        return resolve(WTF::move(*result), options);
     }
 };
 

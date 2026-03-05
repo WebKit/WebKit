@@ -39,7 +39,7 @@ public:
     friend class WorkerPool;
 
     Worker(const AbstractLocker& locker, WorkerPool& pool, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, Seconds timeout)
-        : AutomaticThread(locker, lock, WTFMove(condition), timeout)
+        : AutomaticThread(locker, lock, WTF::move(condition), timeout)
         , m_pool(pool)
     {
     }
@@ -77,7 +77,7 @@ public:
     }
 
     // Called with the lock held.
-    void threadIsStopping(const AbstractLocker&) final
+    void NODELETE threadIsStopping(const AbstractLocker&) final
     {
         ASSERT(m_pool);
         m_pool->m_numberOfActiveWorkers--;
@@ -90,7 +90,7 @@ public:
         return Ref { *m_pool }->shouldSleep(locker);
     }
 
-    ASCIILiteral name() const final
+    ASCIILiteral NODELETE name() const final
     {
         ASSERT(m_pool);
         return m_pool->name();
@@ -141,7 +141,7 @@ bool WorkerPool::shouldSleep(const AbstractLocker&)
 void WorkerPool::postTask(Function<void()>&& task)
 {
     Locker locker { *m_lock };
-    m_tasks.append(WTFMove(task));
+    m_tasks.append(WTF::move(task));
     m_condition->notifyOne(locker);
 }
 

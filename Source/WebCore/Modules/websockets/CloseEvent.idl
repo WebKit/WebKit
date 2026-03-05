@@ -28,16 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://websockets.spec.whatwg.org/#closeevent
 [
     Exposed=(Window,Worker),
 ] interface CloseEvent : Event {
-    constructor([AtomString] DOMString type, optional CloseEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional CloseEventInit eventInitDict = {});
 
     readonly attribute boolean wasClean;
     readonly attribute unsigned short code;
     readonly attribute USVString reason;
 };
 
+// https://websockets.spec.whatwg.org/#dictdef-closeeventinit
 dictionary CloseEventInit : EventInit {
     boolean wasClean = false;
     unsigned short code = 0;

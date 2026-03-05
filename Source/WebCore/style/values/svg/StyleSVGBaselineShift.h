@@ -53,7 +53,7 @@ struct SVGBaselineShift {
     }
 
     SVGBaselineShift(Length&& length)
-        : m_value { WTFMove(length) }
+        : m_value { WTF::move(length) }
     {
     }
 

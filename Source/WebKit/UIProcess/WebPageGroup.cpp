@@ -42,7 +42,7 @@ namespace WebKit {
 
 using WebPageGroupMap = HashMap<PageGroupIdentifier, WeakRef<WebPageGroup>>;
 
-static WebPageGroupMap& webPageGroupMap()
+static WebPageGroupMap& NODELETE webPageGroupMap()
 {
     static NeverDestroyed<WebPageGroupMap> map;
     return map;
@@ -72,7 +72,7 @@ static WebPageGroupData pageGroupData(const String& identifier)
         validIdentifier = makeString("__uniquePageGroupID-"_s, pageGroupID.toUInt64());
 
     return {
-        WTFMove(validIdentifier),
+        WTF::move(validIdentifier),
         pageGroupID
     };
 }

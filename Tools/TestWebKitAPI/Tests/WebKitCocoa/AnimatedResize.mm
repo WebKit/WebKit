@@ -737,4 +737,56 @@ TEST(AnimatedResize, ScaleDuringAnimatedResizeDoesNotMoveContentViewFrameOrigin)
     EXPECT_EQ(frameOrigin.y, 0);
 }
 
+TEST(AnimatedResize, AnimatedResizeDoesNotFreezeFixedElements)
+{
+    auto webView = createAnimatedResizeWebView();
+    [webView setFrame:CGRectMake(0, 0, 500, 200)];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'>"
+        "<style>"
+        "body { margin: 0; height: 10000px; }"
+        "#footer { position: fixed; top: 0; left: 0; width: 320px; height: 47px; background: blue; }"
+        "</style>"
+        "<div id='footer'>text</div>"];
+    [[webView scrollView] setContentOffset:CGPointMake(0, 5000)];
+    [webView waitForNextPresentationUpdate];
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 500, 500)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    auto footerIsPinned = ^{
+        __block CALayer *footerLayer = nil;
+
+        [webView forEachCALayer:^(CALayer *layer) {
+            if (CGSizeEqualToSize(layer.bounds.size, CGSizeMake(320, 47))) {
+                footerLayer = layer;
+                return IterationStatus::Done;
+            }
+
+            return IterationStatus::Continue;
+        }];
+
+        auto rect = [footerLayer convertRect:footerLayer.bounds toLayer:[webView layer]];
+        return !CGRectGetMinY(rect);
+    };
+
+    EXPECT_TRUE(footerIsPinned());
+
+    [webView _beginAnimatedResizeWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, 500, 400)];
+    }];
+
+    EXPECT_TRUE(footerIsPinned());
+
+    dispatch_async(mainDispatchQueueSingleton(), ^{
+        [webView _endAnimatedResize];
+    });
+
+    TestWebKitAPI::Util::run(&didEndAnimatedResize);
+    didEndAnimatedResize = false;
+
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(footerIsPinned());
+}
+
 #endif

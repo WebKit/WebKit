@@ -23,22 +23,22 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 162x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 162x27
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (162,27) size 260x26 [color=#0000EE]
-            RenderText {#text} at (162,27) size 260x26
+          RenderInline {A} at (162,27) size 260x27 [color=#0000EE]
+            RenderText {#text} at (162,27) size 260x27
               text run at (162,27) width 260: "<rdar://problem/4045513>"
-          RenderText {#text} at (0,27) size 721x53
+          RenderText {#text} at (0,27) size 721x54
             text run at (422,27) width 299: " Copying and pasting selection"
             text run at (0,54) width 601: "starting at end of paragraph can incorrectly remove line break"
         RenderBlock {DIV} at (14,111) size 756x108
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 747x80
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 747x81
             text run at (0,27) width 707: "Should see two lines of text below, self-documenting themselves as \"line"
             text run at (0,54) width 747: "one\" and \"line two\". The insertion point must be after the first character (\"l\")"
             text run at (0,81) width 131: "of \"line two\"."
@@ -46,10 +46,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (2,2) size 780x54
             RenderBlock (anonymous) at (0,0) size 780x27
-              RenderText {#text} at (0,0) size 78x26
+              RenderText {#text} at (0,0) size 78x27
                 text run at (0,0) width 78: "line one"
-              RenderBR {BR} at (78,0) size 0x26
+              RenderBR {BR} at (78,0) size 0x27
             RenderBlock {DIV} at (0,27) size 780x27
-              RenderText {#text} at (0,0) size 79x26
+              RenderText {#text} at (0,0) size 79x27
                 text run at (0,0) width 79: "line two"
 caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

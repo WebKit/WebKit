@@ -6,11 +6,11 @@
 <!-- WARNING: The interaction of writing-mode and min-content sizing seems to be a bit hazy. It's not clear if this is a correct reference. -->
 <html>
   <meta charset="utf-8">
-  <title>Reference: Masonry layout min-content sizing</title>
+  <title>Reference: Grid Lanes layout min-content sizing</title>
   <link rel="author" title="Mats Palmgren" href="mailto:mats@mozilla.com">
   <style>
 
-@import "support/masonry-intrinsic-sizing-visual.css";
+@import "support/grid-lanes-intrinsic-sizing-visual.css";
 
 grid {
   display: inline-grid;
@@ -38,7 +38,7 @@ item {
 <body>
 
 <section>
-<grid>
+<grid style="width: calc(2em + 2px)">
   <item style="height:2ch">1</item>
   <item style="grid-column: span 2">2 2</item>
   <item style="grid-column: span 2">3 3</item>
@@ -68,7 +68,7 @@ item {
   <item class="hidden" style="grid-area: 4/2">0 0</item>
 </grid>
 
-<grid>
+<grid style="width: calc(2em + 2px)">
   <item>1</item>
   <item>2 2</item>
   <item>3 3</item>
@@ -78,7 +78,7 @@ item {
   <item class="hidden" style="grid-area: 4/2">0 0</item>
 </grid>
 
-<grid>
+<grid style="width: calc(3em + 4px)">
   <item>1</item>
   <item>2 2</item>
   <item>3 3</item>
@@ -89,7 +89,7 @@ item {
   <item class="hidden" style="grid-area: 4/2">0 0</item>
 </grid>
 
-<grid>
+<grid style="width: calc(3em + 4px)">
   <item>1</item>
   <item>2 2</item>
   <item>3 3</item>
@@ -100,7 +100,7 @@ item {
   <item class="hidden" style="grid-area: 4/2">0 0</item>
 </grid>
 
-<grid>
+<grid style="width: calc(2em + 2px)">
   <item>1</item>
   <item style="grid-column: span 2">2 2</item>
   <item style="grid-column: span 2">3 3</item>
@@ -110,7 +110,7 @@ item {
   <item class="hidden" style="grid-area: 4/3">0 0</item>
 </grid>
 
-<grid>
+<grid style="width: calc(2em + 2px)">
   <item>1</item>
   <item style="grid-column: span 2">2 2</item>
   <item style="grid-column: span 2">3 3</item>
@@ -120,7 +120,7 @@ item {
   <item class="hidden" style="grid-area: 4/3">0 0</item>
 </grid>
 
-<grid>
+<grid style="width: calc(2em + 2px)">
   <item>1</item>
   <item style="grid-column: span 2">2 2</item>
   <item style="grid-column: span 2">3 3</item>

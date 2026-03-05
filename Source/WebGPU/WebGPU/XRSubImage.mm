@@ -101,10 +101,10 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
             .viewFormatCount = 1,
             .viewFormats = &targetColorFormat,
         };
-        auto newTexture = Texture::create(colorTexture, colorTextureDescriptor, { colorFormat }, *device);
+        Ref newTexture = Texture::create(colorTexture, colorTextureDescriptor, { colorFormat }, *device);
         newTexture->updateCompletionEvent(sharedEvent);
         newTexture->setRasterizationRateMaps(projectionLayer.rasterizationRateMaps());
-        m_colorTextures.set(currentTextureIndex, newTexture.ptr());
+        m_colorTextures.set(currentTextureIndex, WTF::move(newTexture));
     } else
         texture->updateCompletionEvent(sharedEvent);
 
@@ -136,16 +136,12 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
 
 Texture* XRSubImage::colorTexture()
 {
-    if (auto it = m_colorTextures.find(m_currentTextureIndex); it != m_colorTextures.end())
-        return it->value.get();
-    return nullptr;
+    return m_colorTextures.get(m_currentTextureIndex);
 }
 
 Texture* XRSubImage::depthTexture()
 {
-    if (auto it = m_depthTextures.find(m_currentTextureIndex); it != m_depthTextures.end())
-        return it->value.get();
-    return nullptr;
+    return m_depthTextures.get(m_currentTextureIndex);
 }
 
 RefPtr<XRSubImage> XRBinding::getViewSubImage(XRProjectionLayer& projectionLayer)
@@ -169,10 +165,10 @@ void wgpuXRSubImageRelease(WGPUXRSubImage subImage)
 
 WGPUTexture wgpuXRSubImageGetColorTexture(WGPUXRSubImage subImage)
 {
-    return WebGPU::protectedFromAPI(subImage)->colorTexture();
+    return protect(WebGPU::fromAPI(subImage))->colorTexture();
 }
 
 WGPUTexture wgpuXRSubImageGetDepthStencilTexture(WGPUXRSubImage subImage)
 {
-    return WebGPU::protectedFromAPI(subImage)->depthTexture();
+    return protect(WebGPU::fromAPI(subImage))->depthTexture();
 }

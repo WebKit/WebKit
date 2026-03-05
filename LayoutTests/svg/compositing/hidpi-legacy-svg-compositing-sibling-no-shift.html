@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test that legacy SVG does not shift when sibling becomes composited</title>
+<meta name="fuzzy" content="maxDifference=0-5;totalPixels=0-100">
+<script src="../repaint/resources/reftest-repaint.js"></script>
+<style>
+    body {
+        margin: 0;
+        padding: 40px;
+    }
+    .container {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        /* Use awkward padding to create subpixel position at 2x scale */
+        padding: 9.53px;
+        background: #eee;
+        margin: 20px;
+        display: inline-block;
+    }
+    .container > svg {
+        position: relative;
+        z-index: 2;
+    }
+    .overlay {
+        position: absolute;
+        inset: 0;
+        background: black;
+        z-index: 1;
+        opacity: 0.1;
+    }
+</style>
+</head>
+<body onload="runRepaintRefTest()">
+<p>Test passes if the green circle does not shift when the sibling becomes composited.</p>
+<div class="container">
+    <svg viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="20" fill="green" />
+    </svg>
+    <div id="overlay" class="overlay"></div>
+</div>
+<script>
+function repaintRefTest() {
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.getElementById("overlay").style.transform = "translateZ(0)";
+        });
+    });
+}
+</script>
+</body>
+</html>

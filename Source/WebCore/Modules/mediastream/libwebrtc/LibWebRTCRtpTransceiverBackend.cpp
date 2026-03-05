@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,9 @@ std::unique_ptr<LibWebRTCRtpReceiverBackend> LibWebRTCRtpTransceiverBackend::cre
     return makeUnique<LibWebRTCRtpReceiverBackend>(toRef(m_rtcTransceiver->receiver()));
 }
 
-std::unique_ptr<LibWebRTCRtpSenderBackend> LibWebRTCRtpTransceiverBackend::createSenderBackend(LibWebRTCPeerConnectionBackend& backend, LibWebRTCRtpSenderBackend::Source&& source)
+Ref<LibWebRTCRtpSenderBackend> LibWebRTCRtpTransceiverBackend::createSenderBackend(LibWebRTCPeerConnectionBackend& backend, LibWebRTCRtpSenderBackend::Source&& source)
 {
-    return makeUnique<LibWebRTCRtpSenderBackend>(backend, toRefPtr(m_rtcTransceiver->sender()), WTFMove(source));
+    return LibWebRTCRtpSenderBackend::create(backend, toRefPtr(m_rtcTransceiver->sender()), WTF::move(source));
 }
 
 RTCRtpTransceiverDirection LibWebRTCRtpTransceiverBackend::direction() const
@@ -88,9 +88,9 @@ bool LibWebRTCRtpTransceiverBackend::stopped() const
 static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const RTCRtpCodecCapability& codec)
 {
     webrtc::RtpCodecCapability rtcCodec;
-    if (codec.mimeType.startsWith("video/"_s))
+    if (codec.mimeType.startsWithIgnoringASCIICase("video/"_s))
         rtcCodec.kind = webrtc::MediaType::VIDEO;
-    else if (codec.mimeType.startsWith("audio/"_s))
+    else if (codec.mimeType.startsWithIgnoringASCIICase("audio/"_s))
         rtcCodec.kind = webrtc::MediaType::AUDIO;
     else
         return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };

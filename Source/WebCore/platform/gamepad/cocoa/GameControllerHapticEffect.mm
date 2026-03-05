@@ -106,14 +106,14 @@ RefPtr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameContro
         RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEffect: Failed to create the haptic effect players");
         return nullptr;
     }
-    return adoptRef(new GameControllerHapticEffect(WTFMove(leftEngine), WTFMove(rightEngine), WTFMove(leftPlayer), WTFMove(rightPlayer)));
+    return adoptRef(new GameControllerHapticEffect(WTF::move(leftEngine), WTF::move(rightEngine), WTF::move(leftPlayer), WTF::move(rightPlayer)));
 }
 
 GameControllerHapticEffect::GameControllerHapticEffect(RetainPtr<CHHapticEngine>&& leftEngine, RetainPtr<CHHapticEngine>&& rightEngine, RetainPtr<id>&& leftPlayer, RetainPtr<id>&& rightPlayer)
-    : m_leftEngine(WTFMove(leftEngine))
-    , m_rightEngine(WTFMove(rightEngine))
-    , m_leftPlayer(WTFMove(leftPlayer))
-    , m_rightPlayer(WTFMove(rightPlayer))
+    : m_leftEngine(WTF::move(leftEngine))
+    , m_rightEngine(WTF::move(rightEngine))
+    , m_leftPlayer(WTF::move(leftPlayer))
+    , m_rightPlayer(WTF::move(rightPlayer))
 {
 }
 
@@ -127,7 +127,7 @@ void GameControllerHapticEffect::start(CompletionHandler<void(bool)>&& completio
     ASSERT(isMainThread());
     ASSERT(!m_completionHandler);
 
-    m_completionHandler = WTFMove(completionHandler);
+    m_completionHandler = WTF::move(completionHandler);
 
     Ref callbackAggregator = MainRunLoopCallbackAggregator::create([weakThis = WeakPtr { *this }]() mutable {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_completionHandler)
@@ -170,7 +170,7 @@ void GameControllerHapticEffect::start(CompletionHandler<void(bool)>&& completio
 
 void GameControllerHapticEffect::ensureStarted(Function<void(bool)>&& completionHandler)
 {
-    Ref callbackAggregator = MainRunLoopCallbackAggregator::create([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    Ref callbackAggregator = MainRunLoopCallbackAggregator::create([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         bool success = weakThis && weakThis->m_engineStarted == 2;
         completionHandler(success);
     });
@@ -187,8 +187,8 @@ void GameControllerHapticEffect::ensureStarted(Function<void(bool)>&& completion
 
 void GameControllerHapticEffect::startEngine(CHHapticEngine *engine, Function<void(bool)>&& completionHandler)
 {
-    [engine startWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError* error) mutable {
-        ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), success = !error]() mutable {
+    [engine startWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError* error) mutable {
+        ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), success = !error]() mutable {
             completionHandler(success);
         });
         if (error)
@@ -198,8 +198,8 @@ void GameControllerHapticEffect::startEngine(CHHapticEngine *engine, Function<vo
 
 void GameControllerHapticEffect::registerNotification(CHHapticEngine *engine, Function<void(bool)>&& completionHandler)
 {
-    [engine notifyWhenPlayersFinished:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
-        ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), success = !error] mutable {
+    [engine notifyWhenPlayersFinished:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+        ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), success = !error] mutable {
             completionHandler(success);
         });
         if (error)

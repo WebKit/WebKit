@@ -7,6 +7,7 @@ PACKAGES+=(
     gnutls
     icu
     libxml2
+    qt6-declarative
     ru
     unifdef
     zlib

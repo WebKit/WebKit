@@ -47,7 +47,7 @@ private:
 
     void sendMessageToFrontend(const String& message) override
     {
-        if (auto* workerDebuggerProxy = m_globalScope->workerOrWorkletThread()->workerDebuggerProxy())
+        if (CheckedPtr workerDebuggerProxy = m_globalScope->workerOrWorkletThread()->workerDebuggerProxy())
             workerDebuggerProxy->postMessageToDebugger(message);
     }
 

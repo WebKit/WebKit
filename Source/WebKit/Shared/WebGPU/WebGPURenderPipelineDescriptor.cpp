@@ -74,7 +74,7 @@ std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBackin
     if (renderPipelineDescriptor.fragment && !fragment)
         return std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(*vertex), WTFMove(primitive), WTFMove(depthStencil), WTFMove(multisample), WTFMove(fragment) } };
+    return { { WTF::move(*base), WTF::move(*vertex), WTF::move(primitive), WTF::move(depthStencil), WTF::move(multisample), WTF::move(fragment) } };
 }
 
 std::optional<WebCore::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor)
@@ -116,7 +116,7 @@ std::optional<WebCore::WebGPU::RenderPipelineDescriptor> ConvertFromBackingConte
     if (renderPipelineDescriptor.fragment && !fragment)
         return std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(*vertex), WTFMove(primitive), WTFMove(depthStencil), WTFMove(multisample), WTFMove(fragment) } };
+    return { { WTF::move(*base), WTF::move(*vertex), WTF::move(primitive), WTF::move(depthStencil), WTF::move(multisample), WTF::move(fragment) } };
 }
 
 } // namespace WebKit

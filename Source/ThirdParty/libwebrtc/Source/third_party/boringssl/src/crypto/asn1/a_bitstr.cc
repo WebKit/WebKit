@@ -20,6 +20,7 @@
 #include <openssl/bytestring.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
+#include <openssl/span.h>
 
 #include "../internal.h"
 #include "internal.h"
@@ -69,7 +70,7 @@ int ASN1_BIT_STRING_num_bytes(const ASN1_BIT_STRING *str, size_t *out) {
 }
 
 int i2c_ASN1_BIT_STRING(const ASN1_BIT_STRING *a, unsigned char **pp) {
-  if (a == NULL) {
+  if (a == nullptr) {
     return 0;
   }
 
@@ -80,7 +81,7 @@ int i2c_ASN1_BIT_STRING(const ASN1_BIT_STRING *a, unsigned char **pp) {
     return 0;
   }
   int ret = 1 + len;
-  if (pp == NULL) {
+  if (pp == nullptr) {
     return ret;
   }
 
@@ -110,76 +111,96 @@ int asn1_marshal_bit_string(CBB *out, const ASN1_BIT_STRING *in,
          CBB_flush(out);
 }
 
-ASN1_BIT_STRING *c2i_ASN1_BIT_STRING(ASN1_BIT_STRING **a,
-                                     const unsigned char **pp, long len) {
-  ASN1_BIT_STRING *ret = NULL;
-  const unsigned char *p;
-  unsigned char *s;
-  int padding;
-  uint8_t padding_mask;
-
-  if (len < 1) {
+static int asn1_parse_bit_string_contents(bssl::Span<const uint8_t> in,
+                                          ASN1_BIT_STRING *out) {
+  CBS cbs = in;
+  uint8_t padding;
+  if (!CBS_get_u8(&cbs, &padding)) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_STRING_TOO_SHORT);
-    goto err;
+    return 0;
   }
 
-  if (len > INT_MAX) {
-    OPENSSL_PUT_ERROR(ASN1, ASN1_R_STRING_TOO_LONG);
-    goto err;
-  }
-
-  if ((a == NULL) || ((*a) == NULL)) {
-    if ((ret = ASN1_BIT_STRING_new()) == NULL) {
-      return NULL;
-    }
-  } else {
-    ret = (*a);
-  }
-
-  p = *pp;
-  padding = *(p++);
-  len--;
   if (padding > 7) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_BIT_STRING_BITS_LEFT);
-    goto err;
+    return 0;
   }
 
   // Unused bits in a BIT STRING must be zero.
-  padding_mask = (1 << padding) - 1;
-  if (padding != 0 && (len < 1 || (p[len - 1] & padding_mask) != 0)) {
-    OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_BIT_STRING_PADDING);
-    goto err;
-  }
-
-  // We do this to preserve the settings.  If we modify the settings, via
-  // the _set_bit function, we will recalculate on output
-  ret->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);    // clear
-  ret->flags |= (ASN1_STRING_FLAG_BITS_LEFT | padding);  // set
-
-  if (len > 0) {
-    s = reinterpret_cast<uint8_t *>(OPENSSL_memdup(p, len));
-    if (s == NULL) {
-      goto err;
+  uint8_t padding_mask = (1 << padding) - 1;
+  if (padding != 0) {
+    CBS copy = cbs;
+    uint8_t last;
+    if (!CBS_get_last_u8(&copy, &last) || (last & padding_mask) != 0) {
+      OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_BIT_STRING_PADDING);
+      return 0;
     }
-    p += len;
-  } else {
-    s = NULL;
   }
 
-  ret->length = (int)len;
-  OPENSSL_free(ret->data);
-  ret->data = s;
-  ret->type = V_ASN1_BIT_STRING;
-  if (a != NULL) {
-    (*a) = ret;
+  if (!ASN1_STRING_set(out, CBS_data(&cbs), CBS_len(&cbs))) {
+    return 0;
   }
-  *pp = p;
+
+  out->type = V_ASN1_BIT_STRING;
+  // |ASN1_STRING_FLAG_BITS_LEFT| and the bottom 3 bits encode |padding|.
+  out->flags &= ~0x07;
+  out->flags |= ASN1_STRING_FLAG_BITS_LEFT | padding;
+  return 1;
+}
+
+ASN1_BIT_STRING *c2i_ASN1_BIT_STRING(ASN1_BIT_STRING **a,
+                                     const unsigned char **pp, long len) {
+  if (len < 0) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_STRING_TOO_SHORT);
+    return nullptr;
+  }
+
+  ASN1_BIT_STRING *ret = nullptr;
+  if (a == nullptr || *a == nullptr) {
+    if ((ret = ASN1_BIT_STRING_new()) == nullptr) {
+      return nullptr;
+    }
+  } else {
+    ret = *a;
+  }
+
+  if (!asn1_parse_bit_string_contents(bssl::Span(*pp, len), ret)) {
+    if (ret != nullptr && (a == nullptr || *a != ret)) {
+      ASN1_BIT_STRING_free(ret);
+    }
+    return nullptr;
+  }
+
+  if (a != nullptr) {
+    *a = ret;
+  }
+  *pp += len;
   return ret;
-err:
-  if ((ret != NULL) && ((a == NULL) || (*a != ret))) {
-    ASN1_BIT_STRING_free(ret);
+}
+
+int asn1_parse_bit_string(CBS *cbs, ASN1_BIT_STRING *out, CBS_ASN1_TAG tag) {
+  tag = tag == 0 ? CBS_ASN1_BITSTRING : tag;
+  CBS child;
+  if (!CBS_get_asn1(cbs, &child, tag)) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
+    return 0;
   }
-  return NULL;
+  return asn1_parse_bit_string_contents(child, out);
+}
+
+int asn1_parse_bit_string_with_bad_length(CBS *cbs, ASN1_BIT_STRING *out) {
+  CBS child;
+  CBS_ASN1_TAG tag;
+  size_t header_len;
+  int indefinite;
+  if (!CBS_get_any_ber_asn1_element(cbs, &child, &tag, &header_len,
+                                    /*out_ber_found=*/nullptr,
+                                    &indefinite) ||
+      tag != CBS_ASN1_BITSTRING || indefinite ||  //
+      !CBS_skip(&child, header_len)) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
+    return 0;
+  }
+  return asn1_parse_bit_string_contents(child, out);
 }
 
 // These next 2 functions from Goetz Babin-Ebell <babinebell@trustcenter.de>
@@ -194,22 +215,22 @@ int ASN1_BIT_STRING_set_bit(ASN1_BIT_STRING *a, int n, int value) {
     v = 0;
   }
 
-  if (a == NULL) {
+  if (a == nullptr) {
     return 0;
   }
 
   a->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);  // clear, set on write
 
-  if ((a->length < (w + 1)) || (a->data == NULL)) {
+  if ((a->length < (w + 1)) || (a->data == nullptr)) {
     if (!value) {
       return 1;  // Don't need to set
     }
-    if (a->data == NULL) {
+    if (a->data == nullptr) {
       c = (unsigned char *)OPENSSL_malloc(w + 1);
     } else {
       c = (unsigned char *)OPENSSL_realloc(a->data, w + 1);
     }
-    if (c == NULL) {
+    if (c == nullptr) {
       return 0;
     }
     if (w + 1 - a->length > 0) {
@@ -230,7 +251,7 @@ int ASN1_BIT_STRING_get_bit(const ASN1_BIT_STRING *a, int n) {
 
   w = n / 8;
   v = 1 << (7 - (n & 0x07));
-  if ((a == NULL) || (a->length < (w + 1)) || (a->data == NULL)) {
+  if ((a == nullptr) || (a->length < (w + 1)) || (a->data == nullptr)) {
     return 0;
   }
   return ((a->data[w] & v) != 0);

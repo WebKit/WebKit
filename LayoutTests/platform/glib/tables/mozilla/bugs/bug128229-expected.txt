@@ -7,10 +7,10 @@ layer at (0,0) size 800x248
         RenderTableSection {TBODY} at (1,1) size 704x230
           RenderTableRow {TR} at (0,2) size 704x226
             RenderTableCell {TD} at (2,2) size 700x226 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (2,2) size 108x36 [color=#0000EE]
-                RenderText {#text} at (2,2) size 108x36
+              RenderInline {A} at (2,2) size 108x37 [color=#0000EE]
+                RenderText {#text} at (2,2) size 108x37
                   text run at (2,2) width 108: "Xandros"
-              RenderText {#text} at (2,2) size 664x221
+              RenderText {#text} at (2,2) size 664x222
                 text run at (110,2) width 8: " "
                 text run at (118,2) width 545: "in the news. text text text text text text text"
                 text run at (2,39) width 280: "text text text text text "

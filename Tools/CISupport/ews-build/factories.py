@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,9 +33,9 @@ class Factory(factory.BuildFactory):
     branches = None
     requiresUserValidation = False
 
-    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, **kwargs):
         factory.BuildFactory.__init__(self)
-        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments, rebuild_without_change_on_builder=rebuild_without_change_on_builder))
         if checkRelevance:
             self.addStep(CheckChangeRelevance())
         self.addStep(ValidateChange(branches=self.branches))
@@ -101,7 +101,15 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(GetLLVMVersion())
         self.addStep(PrintClangVersion())
         self.addStep(CheckOutLLVMProject())
-        self.addStep(UpdateClang())
+        if platform.startswith('ios'):
+            self.addStep(GetSwiftTagName())
+            self.addStep(PrintSwiftVersion())
+            self.addStep(CheckOutSwiftProject())
+            self.addStep(UpdateSwiftCheckouts())
+            self.addStep(BuildSwift())
+            self.addStep(InstallMetalToolchain())
+        else:
+            self.addStep(UpdateClang())
         self.addStep(FindModifiedSaferCPPExpectations())
         self.addStep(ScanBuild())
 
@@ -131,8 +139,8 @@ class WebKitPyFactory(Factory):
 class BuildFactory(Factory):
     skipUpload = False
 
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=False, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, rebuild_without_change_on_builder=rebuild_without_change_on_builder)
         self.addStep(KillOldProcesses())
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
@@ -204,6 +212,16 @@ class JSCBuildAndTestsFactory(Factory):
         self.addStep(CompileJSC(skipUpload=True))
         if runTests.lower() == 'true':
             self.addStep(RunJavaScriptCoreTests())
+
+
+class JSCBuildO3AndTestsFactory(Factory):
+    def __init__(self, platform, configuration='debug', architectures=None, remotes=None, additionalArguments=None, runTests='true', **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(SetO3OptimizationLevel())
+        self.addStep(CompileJSC(skipUpload=True))
+        self.addStep(RunJavaScriptCoreTests())
 
 
 class JSCTestsFactory(Factory):
@@ -308,7 +326,7 @@ class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
 
 
-class WPECairoLibWebRTCBuildFactory(WPEBuildFactory):
+class GTK3LibWebRTCBuildFactory(GTKBuildFactory):
     skipUpload = True
 
 
@@ -325,6 +343,7 @@ class ServicesFactory(Factory):
         self.addStep(RunBuildbotCheckConfigForBuildWebKit())
         self.addStep(RunEWSUnitTests())
         self.addStep(RunBuildbotCheckConfigForEWS())
+        self.addStep(RunSharedUnitTests())
         self.addStep(RunResultsdbpyTests())
 
 

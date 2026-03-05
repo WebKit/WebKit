@@ -1,0 +1,4 @@
+
+
+PASS ::checkmark pseudo-element animates
+

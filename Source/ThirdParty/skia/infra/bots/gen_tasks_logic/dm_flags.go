@@ -531,6 +531,14 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 					// b/425434638 - PaintParamsKeyTest failing on Release Dawn_Vulkan
 					skip(ALL, "test", ALL, "PaintParamsKeyTest")
 
+					// b/485161482 - Compute_SampledTexture fails with an access violation
+					if b.GPU("IntelIris540") {
+						skip(ALL, "test", ALL, "Compute_SampledTexture")
+						skip(ALL, "test", ALL, "Compute_StorageTextureMultipleComputeSteps")
+						skip(ALL, "test", ALL, "Compute_ReadOnlyStorageBuffer")
+						skip(ALL, "test", ALL, "Compute_StorageTextureReadAndWrite")
+					}
+
 					if b.ExtraConfig("TSAN") {
 						// The TSAN_Graphite_Dawn_Vulkan job goes off into space on this test
 						skip(ALL, "test", ALL, "BigImageTest_Graphite")
@@ -591,6 +599,19 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 						// VK_PIPELINE_COMPILE_REQUIRED from CreateGraphicsPipelines)
 						skip(ALL, "test", ALL, "PersistentPipelineStorageTest")
 					}
+
+					if b.MatchOs("Win11") &&
+						b.GPU("RTX3060", "GTX1660", "IntelIrisXe", "IntelUHDGraphics770", "IntelIris540") {
+						// These GPUs are failing this test on Win11 (b/462240488)
+						skip(ALL, "test", ALL, "PersistentPipelineStorageTest")
+					}
+					if b.MatchOs("Win11") && b.GPU("IntelIris540") {
+						skip(ALL, "test", ALL, "NotifyInUseTestLayer") // b/485241813
+					}
+					if b.MatchOs("Win11") && b.GPU("IntelIrisXe", "IntelUHDGraphics770") {
+						// skbug.com/470073298
+						skip(ALL, "gm", ALL, "ycbcrimage")
+					}
 				}
 			}
 		} else {
@@ -603,22 +624,19 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 					skip(ALL, "test", ALL, "SkRuntimeBlender_Ganesh")
 				}
 			}
-
+			if b.GPU("IntelUHDGraphics770") && b.Os("Win11") && b.ExtraConfig("Vulkan") {
+				// skbug.com/40045530
+				skip(ALL, "test", ALL, "VkYCbcrSampler_DrawImageWithYcbcrSampler")
+			}
 		}
 
-		// ANGLE bot *only* runs the angle configs
+		// ANGLE bot *only* runs the angle ES3 configs
 		if b.ExtraConfig("ANGLE") {
 			if b.MatchOs("Win") {
-				configs = []string{"angle_d3d11_es2", "angle_d3d11_es3"}
+				configs = []string{"angle_d3d11_es3"}
 				if sampleCount > 0 {
-					configs = append(configs, fmt.Sprintf("angle_d3d11_es2_msaa%d", sampleCount))
-					configs = append(configs, fmt.Sprintf("angle_d3d11_es2_dmsaa"))
 					configs = append(configs, fmt.Sprintf("angle_d3d11_es3_msaa%d", sampleCount))
 					configs = append(configs, fmt.Sprintf("angle_d3d11_es3_dmsaa"))
-				}
-				if !b.MatchGpu("GTX", "Quadro", "GT610") {
-					// See skbug.com/40041499
-					configs = append(configs, "angle_d3d9_es2")
 				}
 				if b.Model("NUC5i7RYH") {
 					// skbug.com/40038570
@@ -633,7 +651,7 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 					skip(ALL, "test", ALL, "FilterResult")
 				}
 			} else if b.MatchOs("Mac") {
-				configs = []string{"angle_mtl_es2", "angle_mtl_es3"}
+				configs = []string{"angle_mtl_es3"}
 
 				// anglebug.com/7245
 				skip("angle_mtl_es3", "gm", ALL, "runtime_intrinsics_common_es3")
@@ -1133,7 +1151,7 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 		skip(ALL, "image", "gen_platf", "rle4-height-negative.bmp")
 	}
 
-	if b.MatchOs("Mac14") {
+	if b.MatchOs("Mac14", "Mac15") {
 		// These images are very large
 		skip(ALL, "image", "gen_platf", "rgb24largepal.bmp")
 		skip(ALL, "image", "gen_platf", "pal8oversizepal.bmp")
@@ -1447,6 +1465,17 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 		skip(ALL, "test", ALL, "VkYCbcrSampler_DrawImageWithYcbcrSampler") // skbug.com/40044345
 	}
 
+	if b.GPU("RadeonVega8") && b.ExtraConfig("ANGLE") {
+		// skbug.com/470037199
+		skip(ALL, "test", ALL, "TransferPixelsFromTextureTest")
+		skip(ALL, "test", ALL, "ES2BlendWithNoTexture")
+		skip(ALL, "test", ALL, "SkRuntimeBlender_Ganesh")
+		skip(ALL, "test", ALL, "SkImage_MakeCrossContextFromPixmapRelease")
+		skip(ALL, "test", ALL, "Programs")
+		skip(ALL, "test", ALL, "BlendRequiringDstReadWithLargeCoordinates")
+		skip(ALL, "test", ALL, "ColorTypeBackendAllocationTest")
+	}
+
 	match := []string{}
 
 	if b.ExtraConfig("Graphite") {
@@ -1564,6 +1593,26 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 		skip("angle_d3d9_es2", "gm", ALL, "lighting")
 	}
 
+	if b.GPU("IntelHD4400") && b.ExtraConfig("ANGLE") {
+		// skbug.com/470037196
+		skip(ALL, "test", ALL, "BigImageTest_Ganesh")
+		skip(ALL, "test", ALL, "DDLMakeRenderTargetTest")
+		skip(ALL, "test", ALL, "DDLNonTextureabilityTest")
+		skip(ALL, "test", ALL, "DDLSurfaceCharacterizationTest")
+		skip(ALL, "test", ALL, "DefaultPathRendererTest")
+		skip(ALL, "test", ALL, "DMSAA_dst_read_with_existing_barrier")
+		skip(ALL, "test", ALL, "DMSAA_aa_dst_read_after_dmsaa")
+		skip(ALL, "test", ALL, "DMSAA_dst_read")
+		skip(ALL, "test", ALL, "DMSAA_preserve_contents")
+		skip(ALL, "test", ALL, "ES2BlendWithNoTexture")
+		skip(ALL, "test", ALL, "GrContext_colorTypeSupportedAsSurface")
+		skip(ALL, "test", ALL, "Programs")
+		skip(ALL, "test", ALL, "ReplaceSurfaceBackendTexture")
+		skip(ALL, "test", ALL, "ResourceCacheStencilBuffers")
+		skip(ALL, "test", ALL, "SurfaceAttachStencil_Gpu")
+		skip(ALL, "test", ALL, "SurfaceClear_Gpu")
+	}
+
 	if b.GPU("PowerVRGX6250") {
 		match = append(match, "~gradients_view_perspective_nodither") //skbug.com/40038203
 	}
@@ -1582,6 +1631,11 @@ func (b *TaskBuilder) dmFlags(internalHardwareLabel string) {
 		// HWASAN adds tag bytes to pointers. That's incompatible with this test -- it compares
 		// pointers from unrelated stack frames to check that RP isn't growing the stack.
 		skip(ALL, "test", ALL, "SkRasterPipeline_stack_rewind")
+
+		if b.MatchGpu("Adreno618") && b.ExtraConfig("Vulkan") && b.ExtraConfig("Graphite") {
+			// b/485830988
+			skip(ALL, "test", ALL, "SkSLMatrixToVectorCast_Graphite")
+		}
 	}
 
 	if b.MatchOs("Mac") && b.GPU("IntelHD6000") {

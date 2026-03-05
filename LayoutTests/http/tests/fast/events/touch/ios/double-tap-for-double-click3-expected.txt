@@ -1,0 +1,7 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS if 'double click' text is NOT shown below.
+[click][click]

@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
+#include <cstdint>
+
 namespace JSC {
 
 class VM;

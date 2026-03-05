@@ -49,7 +49,7 @@ struct LinkTypeDetails {
     void (*updateRel)(LinkRelAttribute&);
 };
 
-static constexpr std::pair<ComparableLettersLiteral, LinkTypeDetails> linkTypesArray[] = {
+static constexpr SortedArrayMap linkTypes { std::to_array<std::pair<ComparableLettersLiteral, LinkTypeDetails>>({
     { "alternate"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.isAlternate = true; } } },
     { "apple-touch-icon"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.iconType = LinkIconType::TouchIcon; } } },
     { "apple-touch-icon-precomposed"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.iconType = LinkIconType::TouchPrecomposedIcon; } } },
@@ -72,9 +72,7 @@ static constexpr std::pair<ComparableLettersLiteral, LinkTypeDetails> linkTypesA
     } },
 #endif
     { "stylesheet"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.isStyleSheet = true; } } },
-};
-
-static constexpr SortedArrayMap linkTypes { linkTypesArray };
+}) };
 
 LinkRelAttribute::LinkRelAttribute(Document& document, StringView rel)
 {

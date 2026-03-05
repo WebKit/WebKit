@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include <WebCore/CSSPrimitiveValue.h>
-#include <WebCore/CSSValue.h>
+#include "CSSPrimitiveValue.h"
+#include "CSSValue.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
 
 class CSSReflectValue final : public CSSValue {
 public:
-    static Ref<CSSReflectValue> create(CSSValueID direction, Ref<CSSValue> offset, RefPtr<CSSValue> mask);
+    static Ref<CSSReflectValue> NODELETE create(CSSValueID direction, Ref<CSSValue>&& offset, RefPtr<CSSValue>&& mask);
 
     CSSValueID direction() const { return m_direction; }
     const CSSValue& offset() const { return m_offset.get(); }
@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    CSSReflectValue(CSSValueID direction, Ref<CSSValue> offset, RefPtr<CSSValue> mask);
+    CSSReflectValue(CSSValueID direction, Ref<CSSValue>&& offset, RefPtr<CSSValue>&& mask);
 
     CSSValueID m_direction;
     const Ref<CSSValue> m_offset;

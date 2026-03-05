@@ -179,7 +179,7 @@ WebKitWebHitTestResult* webkitWebHitTestResultCreate(const HitTestResult& hitTes
 
 #if ENABLE(2022_GLIB_API)
     auto* result = WEBKIT_WEB_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_WEB_HIT_TEST_RESULT, nullptr));
-    result->priv->hitTestResult = WTFMove(webkitHitTestResult);
+    result->priv->hitTestResult = WTF::move(webkitHitTestResult);
     result->priv->node = hitTestResult.innerNonSharedNode();
 #endif
     return result;
@@ -428,7 +428,7 @@ JSCValue* webkit_web_hit_test_result_get_js_node(WebKitWebHitTestResult* webHitT
     JSValueRef jsValue = nullptr;
     {
         JSC::JSLockHolder lock(globalObject);
-        jsValue = toRef(globalObject, toJS(globalObject, globalObject, webHitTestResult->priv->node.get()));
+        jsValue = toRef(globalObject, toJS(globalObject, globalObject, *webHitTestResult->priv->node));
     }
 
     return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue).leakRef() : nullptr;

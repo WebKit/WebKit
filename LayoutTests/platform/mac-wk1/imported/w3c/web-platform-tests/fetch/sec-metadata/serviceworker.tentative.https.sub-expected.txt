@@ -1,3 +1,0 @@
-
-PASS Browser does not support serviceworker
-

@@ -39,28 +39,6 @@ class TextureStorage11_2DMultisample;
 template <typename T>
 using CubeFaceArray = std::array<T, gl::kCubeFaceCount>;
 
-struct MultisampledRenderToTextureInfo
-{
-    MultisampledRenderToTextureInfo(const GLsizei samples,
-                                    const gl::ImageIndex &indexSS,
-                                    const gl::ImageIndex &indexMS);
-    ~MultisampledRenderToTextureInfo();
-
-    // How many samples the multisampled texture contains
-    GLsizei samples;
-    // This is the image index for the single sampled texture
-    // This will hold the relevant level information
-    gl::ImageIndex indexSS;
-    // This is the image index for the multisampled texture
-    // For multisampled indexes, there is no level Index since they should
-    // account for the entire level.
-    gl::ImageIndex indexMS;
-    // True when multisampled texture has been written to and needs to be
-    // resolved to the single sampled texture
-    bool msTextureNeedsResolve;
-    std::unique_ptr<TextureStorage11_2DMultisample> msTex;
-};
-
 class TextureStorage11 : public TextureStorage
 {
   public:
@@ -144,8 +122,6 @@ class TextureStorage11 : public TextureStorage
                                                  const gl::ImageIndex &index,
                                                  Image11 *incomingImage)                = 0;
 
-    GLsizei getRenderToTextureSamples() const override;
-
   protected:
     TextureStorage11(Renderer11 *renderer,
                      UINT bindFlags,
@@ -200,28 +176,29 @@ class TextureStorage11 : public TextureStorage
                                             DXGI_FORMAT format,
                                             const TextureHelper11 &texture,
                                             d3d11::SharedSRV *outSRV)   = 0;
+
+    struct ImageKey
+    {
+        ImageKey();
+        ImageKey(int level, bool layered, int layer, GLenum access, GLenum format);
+        bool operator<(const ImageKey &rhs) const;
+        int level;
+        bool layered;
+        int layer;
+        GLenum access;
+        GLenum format;
+    };
+
     virtual angle::Result createUAVForImage(const gl::Context *context,
-                                            int level,
+                                            const ImageKey &key,
                                             DXGI_FORMAT format,
                                             const TextureHelper11 &texture,
-                                            d3d11::SharedUAV *outUAV)   = 0;
+                                            d3d11::SharedUAV *outUAV) = 0;
 
     void verifySwizzleExists(const gl::SwizzleState &swizzleState);
 
     // Clear all cached non-swizzle SRVs and invalidate the swizzle cache.
     void clearSRVCache();
-
-    // Helper for resolving MS shadowed texture
-    angle::Result resolveTextureHelper(const gl::Context *context, const TextureHelper11 &texture);
-    angle::Result releaseMultisampledTexStorageForLevel(size_t level) override;
-    angle::Result findMultisampledRenderTarget(const gl::Context *context,
-                                               const gl::ImageIndex &index,
-                                               GLsizei samples,
-                                               RenderTargetD3D **outRT) const;
-    angle::Result getMultisampledRenderTarget(const gl::Context *context,
-                                              const gl::ImageIndex &index,
-                                              GLsizei samples,
-                                              RenderTargetD3D **outRT);
 
     Renderer11 *mRenderer;
     int mTopLevel;
@@ -234,8 +211,6 @@ class TextureStorage11 : public TextureStorage
 
     gl::TexLevelArray<gl::SwizzleState> mSwizzleCache;
     TextureHelper11 mDropStencilTexture;
-
-    std::unique_ptr<MultisampledRenderToTextureInfo> mMSTexInfo;
 
   private:
     const UINT mBindFlags;
@@ -265,18 +240,6 @@ class TextureStorage11 : public TextureStorage
 
     using SRVCacheForSampler = std::map<SamplerKey, d3d11::SharedSRV>;
     SRVCacheForSampler mSrvCacheForSampler;
-
-    struct ImageKey
-    {
-        ImageKey();
-        ImageKey(int level, bool layered, int layer, GLenum access, GLenum format);
-        bool operator<(const ImageKey &rhs) const;
-        int level;
-        bool layered;
-        int layer;
-        GLenum access;
-        GLenum format;
-    };
 
     angle::Result getCachedOrCreateSRVForImage(const gl::Context *context,
                                                const ImageKey &key,
@@ -317,13 +280,10 @@ class TextureStorage11_2D : public TextureStorage11
                                     const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
                                   RenderTargetD3D **outRT) override;
-
     angle::Result copyToStorage(const gl::Context *context, TextureStorage *destStorage) override;
 
     void associateImage(Image11 *image, const gl::ImageIndex &index) override;
@@ -349,8 +309,6 @@ class TextureStorage11_2D : public TextureStorage11
 
     angle::Result ensureTextureExists(const gl::Context *context, int mipLevels);
 
-    angle::Result resolveTexture(const gl::Context *context) override;
-
   private:
     angle::Result createSRVForSampler(const gl::Context *context,
                                       int baseLevel,
@@ -364,7 +322,7 @@ class TextureStorage11_2D : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -412,11 +370,11 @@ class TextureStorage11_External : public TextureStorage11
                                     const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     angle::Result copyToStorage(const gl::Context *context, TextureStorage *destStorage) override;
@@ -449,7 +407,7 @@ class TextureStorage11_External : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -485,7 +443,7 @@ class TextureStorage11ImmutableBase : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -515,11 +473,11 @@ class TextureStorage11_EGLImage final : public TextureStorage11ImmutableBase
                                     const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     angle::Result copyToStorage(const gl::Context *context, TextureStorage *destStorage) override;
@@ -590,11 +548,11 @@ class TextureStorage11_Cube : public TextureStorage11
                                     const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     angle::Result copyToStorage(const gl::Context *context, TextureStorage *destStorage) override;
@@ -622,8 +580,6 @@ class TextureStorage11_Cube : public TextureStorage11
 
     angle::Result ensureTextureExists(const gl::Context *context, int mipLevels);
 
-    angle::Result resolveTexture(const gl::Context *context) override;
-
   private:
     angle::Result createSRVForSampler(const gl::Context *context,
                                       int baseLevel,
@@ -637,7 +593,7 @@ class TextureStorage11_Cube : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -683,11 +639,11 @@ class TextureStorage11_3D : public TextureStorage11
     // Handles both layer and non-layer RTs
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     void associateImage(Image11 *image, const gl::ImageIndex &index) override;
@@ -718,7 +674,7 @@ class TextureStorage11_3D : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -754,11 +710,11 @@ class TextureStorage11_2DArray : public TextureStorage11
                               const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     void associateImage(Image11 *image, const gl::ImageIndex &index) override;
@@ -814,7 +770,7 @@ class TextureStorage11_2DArray : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -854,11 +810,11 @@ class TextureStorage11_2DMultisample final : public TextureStorage11ImmutableBas
                               const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     angle::Result copyToStorage(const gl::Context *context, TextureStorage *destStorage) override;
@@ -911,11 +867,11 @@ class TextureStorage11_2DMultisampleArray final : public TextureStorage11Immutab
                               const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     angle::Result copyToStorage(const gl::Context *context, TextureStorage *destStorage) override;
@@ -970,11 +926,11 @@ class TextureStorage11_Buffer : public TextureStorage11
                                     const TextureHelper11 **outResource) override;
     angle::Result findRenderTarget(const gl::Context *context,
                                    const gl::ImageIndex &index,
-                                   GLsizei samples,
+
                                    RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
-                                  GLsizei samples,
+
                                   RenderTargetD3D **outRT) override;
 
     void onLabelUpdate() override;
@@ -1006,7 +962,7 @@ class TextureStorage11_Buffer : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;

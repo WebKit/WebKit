@@ -28,9 +28,8 @@
 
 #if ENABLE(DATA_DETECTION)
 
-#import "ArgumentCoders.h"
-
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 OBJC_CLASS DDScannerResult;
 

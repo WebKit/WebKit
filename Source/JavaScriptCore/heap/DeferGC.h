@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/DisallowScope.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
 

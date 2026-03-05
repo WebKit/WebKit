@@ -31,8 +31,23 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
+#include <wtf/UniquelyOwned.h>
+#include <wtf/UniquelyOwnedPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
+
+namespace {
+
+class UniquelyOwnedObject : public UniquelyOwned<UniquelyOwnedObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(UniquelyOwnedObject);
+public:
+    static UniquelyOwnedPtr<UniquelyOwnedObject> create()
+    {
+        return adoptUniquelyOwned(new UniquelyOwnedObject);
+    }
+};
+
+}
 
 namespace TestWebKitAPI {
 
@@ -114,7 +129,7 @@ TEST(WTF_CheckedPtr, Basic)
         EXPECT_EQ(ptr2.get(), checkedObject.get());
         EXPECT_EQ(ptr3.get(), checkedObject.get());
 
-        ptr1 = WTFMove(ptr3);
+        ptr1 = WTF::move(ptr3);
         EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
         EXPECT_EQ(ptr1.get(), checkedObject.get());
         EXPECT_EQ(ptr2.get(), checkedObject.get());
@@ -168,7 +183,7 @@ TEST(WTF_CheckedPtr, CheckedRef)
             EXPECT_EQ(ref.ptr(), checkedObject.get());
             EXPECT_EQ(ref->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
-            CheckedPtr ptr { WTFMove(ref) };
+            CheckedPtr ptr { WTF::move(ref) };
             EXPECT_EQ(ptr.get(), checkedObject.get());
             EXPECT_EQ(ptr->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
@@ -184,7 +199,7 @@ TEST(WTF_CheckedPtr, CheckedRef)
             EXPECT_EQ(ref.ptr(), checkedObject.get());
             EXPECT_EQ(ref->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
-            CheckedPtr<CheckedObject> ptr { WTFMove(ref) };
+            CheckedPtr<CheckedObject> ptr { WTF::move(ref) };
             EXPECT_EQ(ptr.get(), checkedObject.get());
             EXPECT_EQ(ptr->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
@@ -256,7 +271,7 @@ TEST(WTF_CheckedPtr, DerivedClass)
         EXPECT_EQ(ptr2.get(), checkedObject.get());
         EXPECT_EQ(ptr3.get(), checkedObject.get());
 
-        CheckedPtr<CheckedObject> ptr4 = WTFMove(ptr3);
+        CheckedPtr<CheckedObject> ptr4 = WTF::move(ptr3);
         EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
         EXPECT_EQ(ptr1.get(), nullptr);
         EXPECT_EQ(ptr2.get(), checkedObject.get());
@@ -395,5 +410,37 @@ TEST(WTF_CheckedPtr, CanMakeThreadSafeCheckedPtr)
     for (auto& thread : threads)
         thread->waitForCompletion();
 }
+
+#if !PLATFORM(PLAYSTATION)
+TEST(WTF_CheckedPtrDeathTest, CheckedPtrCheckFailure)
+{
+    auto shouldCrash = [&] {
+        CheckedPtr<CheckedObject> checkedPtr;
+        {
+            auto checkedObject = makeUnique<CheckedObject>();
+            checkedPtr = checkedObject.get();
+        }
+    };
+
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
+
+TEST(WTF_CheckedPtrDeathTest, UniquelyOwnedCheckedPtrCheckFailure)
+{
+    auto shouldCrashInDebug = [&] {
+        CheckedPtr<UniquelyOwnedObject> checkedPtr;
+        {
+            auto uniquelyOwnedObject = UniquelyOwnedObject::create();
+            checkedPtr = uniquelyOwnedObject.get();
+        }
+    };
+
+#if ASSERT_ENABLED
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrashInDebug(), "");
+#else
+    shouldCrashInDebug(); // No crash in release builds
+#endif
+}
+#endif
 
 } // namespace TestWebKitAPI

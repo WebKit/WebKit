@@ -73,8 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpStringIteratorPrivateFuncCreate, (JSGlobalObject*
 
     regExpStringIterator->setRegExp(vm, asObject(callFrame->uncheckedArgument(0)));
     regExpStringIterator->setString(vm, callFrame->uncheckedArgument(1));
-    regExpStringIterator->setGlobal(vm, callFrame->argument(2));
-    regExpStringIterator->setFullUnicode(vm, callFrame->argument(3));
+    regExpStringIterator->setFlags(callFrame->argument(2).asBoolean(), callFrame->argument(3).asBoolean());
 
     return JSValue::encode(regExpStringIterator);
 }

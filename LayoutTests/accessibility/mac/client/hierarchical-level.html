@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="tree" role="tree" tabindex="0">
+    <li id="item1" role="treeitem" aria-level="1">Level 1 item</li>
+    <li id="item2" role="treeitem" aria-level="2">Level 2 item</li>
+</ul>
+
+<script>
+var output = "Test hierarchicalLevel via the client accessibility APIs.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForElements([
+            (element) => element.role.includes("AXOutline"),
+        ]);
+
+        var tree = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        output += `Tree role: ${tree.role}\n`;
+
+        var item1 = tree.childAtIndex(0);
+        output += `Item 1 hierarchicalLevel: ${item1.hierarchicalLevel}\n`;
+
+        var item2 = tree.childAtIndex(1);
+        output += `Item 2 hierarchicalLevel: ${item2.hierarchicalLevel}\n`;
+
+        debug(output);
+        document.getElementById("tree").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

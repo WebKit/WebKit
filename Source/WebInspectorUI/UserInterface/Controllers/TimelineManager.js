@@ -931,7 +931,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 break;
             }
 
-            this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.getOrInitialize(target, []).push(record);
+            this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.getOrInsert(target, []).push(record);
             return record;
 
         case InspectorBackend.Enum.Timeline.EventType.ConsoleProfile:
@@ -1026,7 +1026,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             }
 
             if (record) {
-                this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.getOrInitialize(target, []).push(record);
+                this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.getOrInsert(target, []).push(record);
                 return record;
             }
             break;

@@ -28,6 +28,7 @@
 
 [
     Conditional=ENCRYPTED_MEDIA,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaKeyMessageEventInit : EventInit {
     required MediaKeyMessageType messageType;
     required ArrayBuffer message;

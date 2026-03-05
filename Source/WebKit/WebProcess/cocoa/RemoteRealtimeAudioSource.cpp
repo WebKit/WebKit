@@ -38,15 +38,15 @@ using namespace WebCore;
 
 Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)
 {
-    auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
+    auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTF::move(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
-    manager.protectedRemoteCaptureSampleManager()->addSource(source.copyRef());
+    protect(manager.remoteCaptureSampleManager())->addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
 RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)
-    : RemoteRealtimeMediaSource(identifier, device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier)
+    : RemoteRealtimeMediaSource(identifier, device, constraints, WTF::move(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
 }

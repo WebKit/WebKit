@@ -38,7 +38,7 @@ class WorkletPendingTasks : public ThreadSafeRefCounted<WorkletPendingTasks> {
 public:
     static Ref<WorkletPendingTasks> create(Worklet& worklet, DOMPromiseDeferred<void>&& promise, int counter)
     {
-        return adoptRef(*new WorkletPendingTasks(worklet, WTFMove(promise), counter));
+        return adoptRef(*new WorkletPendingTasks(worklet, WTF::move(promise), counter));
     }
 
     void abort(Exception&&);

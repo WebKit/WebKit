@@ -25,11 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <Network/Network.h>
 
 typedef void (^nw_webtransport_drain_handler_t)(void);
+typedef void (^nw_webtransport_receive_error_handler_t)(uint64_t receive_error_code);
+typedef void (^nw_webtransport_send_error_handler_t)(uint64_t send_error_code);
 typedef void (^nw_http_optional_string_accessor_t)(const char * _Nullable string);
 
 #if OS_OBJECT_USE_OBJC
@@ -96,6 +101,9 @@ void nw_parameters_set_traffic_class(nw_parameters_t, uint32_t traffic_class);
 OS_OBJECT_RETURNS_RETAINED nw_interface_t nw_path_copy_interface(nw_path_t);
 
 bool nw_settings_get_unified_http_enabled(void);
+#if HAVE(NWSETTINGS_UNIFIED_HTTP_WEBKIT)
+bool nw_settings_get_unified_http_enabled_webkit(void);
+#endif
 
 void nw_parameters_set_server_mode(nw_parameters_t, bool);
 OS_OBJECT_RETURNS_RETAINED nw_parameters_t nw_parameters_create_webtransport_http(nw_parameters_configure_protocol_block_t, nw_parameters_configure_protocol_block_t, nw_parameters_configure_protocol_block_t, nw_parameters_configure_protocol_block_t);
@@ -110,6 +118,7 @@ void nw_webtransport_options_set_allow_joining_before_ready(nw_protocol_options_
 void nw_webtransport_options_set_initial_max_streams_uni(nw_protocol_options_t, uint64_t);
 void nw_webtransport_options_set_initial_max_streams_bidi(nw_protocol_options_t, uint64_t);
 
+bool nw_webtransport_metadata_get_is_peer_initiated(nw_protocol_metadata_t);
 bool nw_webtransport_metadata_get_is_unidirectional(nw_protocol_metadata_t);
 uint32_t nw_webtransport_metadata_get_session_error_code(nw_protocol_metadata_t);
 void nw_webtransport_metadata_set_session_error_code(nw_protocol_metadata_t, uint32_t);
@@ -120,6 +129,11 @@ void nw_webtransport_metadata_set_remote_drain_handler(nw_protocol_metadata_t, n
 void nw_webtransport_metadata_set_local_draining(nw_protocol_metadata_t);
 OS_OBJECT_RETURNS_RETAINED nw_http_response_t nw_webtransport_metadata_copy_connect_response(nw_protocol_metadata_t);
 nw_webtransport_transport_mode_t nw_webtransport_metadata_get_transport_mode(nw_protocol_metadata_t);
+void nw_webtransport_metadata_set_remote_receive_error_handler(nw_protocol_metadata_t, nw_webtransport_receive_error_handler_t, dispatch_queue_t);
+void nw_webtransport_metadata_set_remote_send_error_handler(nw_protocol_metadata_t, nw_webtransport_send_error_handler_t, dispatch_queue_t);
+
+void nw_connection_abort_reads(nw_connection_t, uint64_t);
+void nw_connection_abort_writes(nw_connection_t, uint64_t);
 
 void nw_http_fields_access_value_by_name(nw_http_fields_t, const char*, nw_http_optional_string_accessor_t);
 

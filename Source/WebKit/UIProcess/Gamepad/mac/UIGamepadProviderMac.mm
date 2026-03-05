@@ -39,8 +39,7 @@ namespace WebKit {
 WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    // This is a safer cpp false positive (<rdar://problem/161068288>).
-    SUPPRESS_UNRETAINED_ARG RetainPtr responder = [[NSApp keyWindow] firstResponder];
+    RetainPtr responder = [[NSApp keyWindow] firstResponder];
 
     if (RetainPtr view = dynamic_objc_cast<WKWebView>(responder.get()))
         return view->_page.get();

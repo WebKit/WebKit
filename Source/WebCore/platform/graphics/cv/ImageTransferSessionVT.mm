@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -33,6 +33,7 @@
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if !PLATFORM(MACCATALYST)
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
@@ -44,35 +45,37 @@
 
 namespace WebCore {
 
-ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface)
-    : m_shouldUseIOSurface(shouldUseIOSurface)
+static RetainPtr<VTPixelTransferSessionRef> createTransferSession(bool shouldUseHWAcceleratedTransfer)
 {
-    VTPixelTransferSessionRef transferSession;
-    VTPixelTransferSessionCreate(kCFAllocatorDefault, &transferSession);
-    ASSERT(transferSession);
-    m_transferSession = adoptCF(transferSession);
-
-    auto status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_ScalingMode, kVTScalingMode_Trim);
+    VTPixelTransferSessionRef rawTransferSession = nullptr;
+    auto status = VTPixelTransferSessionCreate(kCFAllocatorDefault, &rawTransferSession);
     if (status != kCVReturnSuccess)
-        RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_ScalingMode) failed with error %d", static_cast<int>(status));
-
-    // FIXME: This is a safer cpp false positive (rdar://160851489).
-    SUPPRESS_UNRETAINED_ARG status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_EnableHighSpeedTransfer, @YES);
-    if (status != kCVReturnSuccess)
-        RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_EnableHighSpeedTransfer) failed with error %d", static_cast<int>(status));
-
-    // FIXME: This is a safer cpp false positive (rdar://160851489).
-    SUPPRESS_UNRETAINED_ARG status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_RealTime, @YES);
-    if (status != kCVReturnSuccess)
-        RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_RealTime) failed with error %d", static_cast<int>(status));
-
+        return nullptr;
+    RetainPtr transferSession = adoptCF(rawTransferSession);
+    auto setProperty = [&](CFStringRef key, CFTypeRef value) {
+        auto status = VTSessionSetProperty(transferSession.get(), key, value);
+        RELEASE_LOG_ERROR_IF(status != kCVReturnSuccess, Media, "VTSessionSetProperty(%{public}@) error: %d", key, static_cast<int>(status));
+    };
+    setProperty(kVTPixelTransferPropertyKey_ScalingMode, kVTScalingMode_Trim);
+    setProperty(kVTPixelTransferPropertyKey_EnableHighSpeedTransfer, @YES);
+    setProperty(kVTPixelTransferPropertyKey_RealTime, @YES);
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer, @YES);
-    if (status != kCVReturnSuccess)
-        RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer) failed with error %d", static_cast<int>(status));
+    if (shouldUseHWAcceleratedTransfer)
+        setProperty(kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer, @YES);
+#else
+    UNUSED_PARAM(shouldUseHWAcceleratedTransfer);
 #endif
+    return transferSession;
+}
 
-    m_pixelFormat = pixelFormat;
+// FIXME: maybe we should use createTransferSession(shouldUseIOSurface). Clarify what
+// kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer does, why is it not enabled
+// on all platforms.
+ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface)
+    : m_transferSession(createTransferSession(true))
+    , m_shouldUseIOSurface(shouldUseIOSurface)
+    , m_pixelFormat(pixelFormat)
+{
 }
 
 void ImageTransferSessionVT::setCroppingRectangle(std::optional<FloatRect> rectangle, FloatSize size)
@@ -113,7 +116,7 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
     auto bufferPool = createCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6, false, m_shouldUseIOSurface);
     if (!bufferPool)
         return false;
-    m_outputBufferPool = WTFMove(*bufferPool);
+    m_outputBufferPool = WTF::move(*bufferPool);
     m_size = size;
     return true;
 }
@@ -134,7 +137,7 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertPixelBuffer, createCVPixelBufferFromPool failed with error %d", static_cast<int>(result.error()));
         return nullptr;
     }
-    auto outputBuffer = WTFMove(*result);
+    auto outputBuffer = WTF::move(*result);
 
     auto err = VTPixelTransferSessionTransferImage(m_transferSession.get(), sourceBuffer, outputBuffer.get());
     if (err) {
@@ -299,11 +302,11 @@ RefPtr<VideoFrame> ImageTransferSessionVT::convertVideoFrame(VideoFrame& videoFr
     if (size == expandedIntSize(videoFrame.presentationSize()))
         return &videoFrame;
 
-    auto resizedBuffer = convertPixelBuffer(videoFrame.protectedPixelBuffer().get(), size);
+    auto resizedBuffer = convertPixelBuffer(protect(videoFrame.pixelBuffer()).get(), size);
     if (!resizedBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), WTFMove(resizedBuffer));
+    return VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), WTF::move(resizedBuffer));
 }
 
 RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CGImageRef image, const WTF::MediaTime& time, const IntSize& size)
@@ -347,6 +350,28 @@ RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CMSampleBufferRef bu
         return nullptr;
 
     return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
+}
+
+RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBufferRef source, uint32_t targetPixelFormat)
+{
+    if (!source)
+        return nullptr;
+    if (CVPixelBufferGetPixelFormatType(source) == targetPixelFormat)
+        return source;
+    NSDictionary *targetOptions = nullptr;
+    const bool shouldUseIOSurface = CVPixelBufferGetIOSurface(source);
+    if (shouldUseIOSurface)
+        targetOptions = @{ bridge_cast(kCVPixelBufferIOSurfacePropertiesKey) : @{ } };
+    RetainPtr transferSession = createTransferSession(shouldUseIOSurface);
+    CVPixelBufferRef rawTarget = nullptr;
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, CVPixelBufferGetWidth(source), CVPixelBufferGetHeight(source), targetPixelFormat, bridge_cast(targetOptions), &rawTarget);
+    if (status != kCVReturnSuccess)
+        return nullptr;
+    RetainPtr target = adoptCF(rawTarget);
+    status = VTPixelTransferSessionTransferImage(transferSession.get(), source, target.get());
+    if (status != kCVReturnSuccess)
+        return nullptr;
+    return target;
 }
 
 } // namespace WebCore

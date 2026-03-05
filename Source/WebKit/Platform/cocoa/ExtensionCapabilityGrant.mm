@@ -44,13 +44,13 @@ static void platformInvalidate(const PlatformGrant& platformGrant)
 }
 
 ExtensionCapabilityGrant::ExtensionCapabilityGrant(String environmentIdentifier)
-    : m_environmentIdentifier { WTFMove(environmentIdentifier) }
+    : m_environmentIdentifier { WTF::move(environmentIdentifier) }
 {
 }
 
 ExtensionCapabilityGrant::ExtensionCapabilityGrant(String&& environmentIdentifier, PlatformGrant&& platformGrant)
-    : m_environmentIdentifier { WTFMove(environmentIdentifier) }
-    , m_platformGrant { WTFMove(platformGrant) }
+    : m_environmentIdentifier { WTF::move(environmentIdentifier) }
+    , m_platformGrant { WTF::move(platformGrant) }
 {
 }
 
@@ -62,8 +62,8 @@ ExtensionCapabilityGrant::~ExtensionCapabilityGrant()
 ExtensionCapabilityGrant ExtensionCapabilityGrant::isolatedCopy() &&
 {
     return {
-        crossThreadCopy(WTFMove(m_environmentIdentifier)),
-        WTFMove(m_platformGrant)
+        crossThreadCopy(WTF::move(m_environmentIdentifier)),
+        WTF::move(m_platformGrant)
     };
 }
 
@@ -79,7 +79,7 @@ bool ExtensionCapabilityGrant::isValid() const
 
 void ExtensionCapabilityGrant::setPlatformGrant(PlatformGrant&& platformGrant)
 {
-    platformInvalidate(std::exchange(m_platformGrant, WTFMove(platformGrant)));
+    platformInvalidate(std::exchange(m_platformGrant, WTF::move(platformGrant)));
 }
 
 void ExtensionCapabilityGrant::invalidate()

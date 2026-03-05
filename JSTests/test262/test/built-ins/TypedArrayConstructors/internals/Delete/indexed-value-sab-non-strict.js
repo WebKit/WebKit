@@ -29,4 +29,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(delete sample[0], false, 'The value of `delete sample["0"]` is false');
   assert.sameValue(delete sample["1"], false, 'The value of `delete sample["1"]` is false');
   assert.sameValue(delete sample[1], false, 'The value of `delete sample["1"]` is false');
-});
+}, null, ["passthrough"]);

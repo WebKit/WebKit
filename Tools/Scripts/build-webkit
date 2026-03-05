@@ -60,6 +60,7 @@ if (shouldBuildForCrossTarget()) {
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
     runInFlatpak(@command);
 }
+maybeUseContainerSDKRootDir();
 
 my $originalWorkingDirectory = getcwd();
 chdirWebKit();
@@ -216,11 +217,6 @@ if (isAppleCocoaWebKit()) {
     if ($onlyWebKitProject) {
         die "--only-webkit cannot be combined with --only\n" if defined $xcodeScheme;
         $xcodeScheme = "WebKit";
-    }
-    if (xcodeVersion() ge "14.0" && xcodeVersion() lt "15.0" && !defined($ENV{UseSRCROOTSupportForTAPI})) {
-        # The call to XcodeOptions below checks this environment variable and
-        # sets TAPI_USE_SRCROOT for xcconfigs.
-        $ENV{UseSRCROOTSupportForTAPI} = "YES";
     }
 
     push @options, XcodeOptions();

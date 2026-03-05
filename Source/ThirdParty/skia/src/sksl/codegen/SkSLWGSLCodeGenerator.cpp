@@ -60,6 +60,7 @@
 #include "src/sksl/ir/SkSLLayout.h"
 #include "src/sksl/ir/SkSLLiteral.h"
 #include "src/sksl/ir/SkSLModifierFlags.h"
+#include "src/sksl/ir/SkSLModifiers.h"
 #include "src/sksl/ir/SkSLModifiersDeclaration.h"
 #include "src/sksl/ir/SkSLPostfixExpression.h"
 #include "src/sksl/ir/SkSLPrefixExpression.h"
@@ -159,7 +160,6 @@ public:
 
         // These flags track extensions that will need to be enabled.
         bool fPixelLocalExtension = false;
-        bool fPushConstantExtension = false;
     };
 
     WGSLCodeGenerator(const Context* context,
@@ -176,6 +176,7 @@ public:
 
 private:
     using Precedence = OperatorPrecedence;
+    class AutoConstEvalWorkaround;
 
     // Called by generateCode() as the first step.
     void preprocessProgram();
@@ -241,10 +242,17 @@ private:
 
     bool binaryOpNeedsComponentwiseMatrixPolyfill(const Type& left, const Type& right, Operator op);
 
+    enum AssembleMode {
+        kAuto,              // Will either be inlined expression or let to avoid const-eval
+        kUsedMultipleTimes, // Will be inlined if trivial, or a let so reuse by caller is free
+        kForceLet,          // Will be written to a let
+    };
     // Writers for expressions. These return the final expression text as a string, and emit any
     // necessary setup code directly into the program as necessary. The returned expression may be
     // a `let`-alias that cannot be assigned-into; use `makeLValue` for an assignable expression.
-    std::string assembleExpression(const Expression& e, Precedence parentPrecedence);
+    std::string assembleExpression(const Expression& e, Precedence parentPrecedence,
+                                   AssembleMode mode = kAuto);
+
     std::string assembleBinaryExpression(const BinaryExpression& b, Precedence parentPrecedence);
     std::string assembleBinaryExpression(const Expression& left,
                                          Operator op,
@@ -268,7 +276,9 @@ private:
     std::string assembleIntrinsicCall(const FunctionCall& call,
                                       IntrinsicKind kind,
                                       Precedence parentPrecedence);
-    std::string assembleSimpleIntrinsic(std::string_view intrinsicName, const FunctionCall& call);
+    std::string assembleSimpleIntrinsic(std::string_view intrinsicName,
+                                        const FunctionCall& call,
+                                        bool wgslOnlySupportsHighPrecision=false);
     std::string assembleUnaryOpIntrinsic(Operator op,
                                          const FunctionCall& call,
                                          Precedence parentPrecedence);
@@ -281,10 +291,14 @@ private:
                                              std::string_view returnFieldName,
                                              std::string_view outFieldName,
                                              const FunctionCall& call);
-    std::string assemblePartialSampleCall(std::string_view intrinsicName,
-                                          const Expression& sampler,
-                                          const Expression& coords);
+    // Returns the beginning of the expression and the closing parentheses string to append once
+    // any additional arguments are added.
+    std::pair<std::string, const char*> assemblePartialSampleCall(std::string_view intrinsicName,
+                                                                  const Type& type,
+                                                                  const Expression& sampler,
+                                                                  const Expression& coords);
     std::string assembleInversePolyfill(const FunctionCall& call);
+    std::string assembleOuterProductPolyfill(const FunctionCall& call);
     std::string assembleComponentwiseMatrixBinary(const Type& leftType,
                                                   const Type& rightType,
                                                   const std::string& left,
@@ -298,6 +312,8 @@ private:
     std::string assembleConstructorCompoundMatrix(const ConstructorCompound& c);
     std::string assembleConstructorDiagonalMatrix(const ConstructorDiagonalMatrix& c);
     std::string assembleConstructorMatrixResize(const ConstructorMatrixResize& ctor);
+    std::string assembleConstructorArrayCast(const ConstructorArrayCast& c,
+                                             Precedence parentPrecedence);
 
     // Synthesized helper functions for comparison operators that are not supported by WGSL.
     std::string assembleEqualityExpression(const Type& left,
@@ -315,14 +331,12 @@ private:
     std::string writeScratchVar(const Type& type, const std::string& value = "");
 
     // Writes a scratch let-variable into the program, gives it the value of `expr`, and returns its
-    // name (e.g. `_skTemp123`).
+    // name (e.g. `_skTemp123`). This can be `const` instead of `let` when isCompileTimeConstant is
+    // true and at function scope.
+    //
+    // Prefer using assembleExpression() with an AssembleMode to control when scratch lets should
+    // be created automatically.
     std::string writeScratchLet(const std::string& expr, bool isCompileTimeConstant = false);
-    std::string writeScratchLet(const Expression& expr, Precedence parentPrecedence);
-
-    // Converts `expr` into a string and returns a scratch let-variable associated with the
-    // expression. Compile-time constants and plain variable references will return the expression
-    // directly and omit the let-variable.
-    std::string writeNontrivialScratchLet(const Expression& expr, Precedence parentPrecedence);
 
     // Generic recursive ProgramElement visitor.
     void writeProgramElement(const ProgramElement& e);
@@ -342,6 +356,8 @@ private:
     bool needsStageOutputStruct() const;
     void writeStageOutputStruct();
     void writeUniformsAndBuffers();
+    void writeInterfaceBlock(const InterfaceBlock& ib);
+
     void prepareUniformPolyfillsForInterfaceBlock(const InterfaceBlock* interfaceBlock,
                                                   std::string_view instanceName,
                                                   MemoryLayout::Standard nativeLayout);
@@ -385,16 +401,25 @@ private:
     skia_private::TArray<const Variable*> fPipelineOutputs;
 
     // These fields track whether we have written the polyfill for `inverse()` for a given matrix
-    // type.
-    bool fWrittenInverse2 = false;
-    bool fWrittenInverse3 = false;
-    bool fWrittenInverse4 = false;
+    // type. Indexed by row or column count - 2, i.e. [2,3,4] -> idx [0,1,2]
+    struct WrittenPolyfills {
+        std::array<bool, 3> fInverse;
+        std::array<std::array<bool, 3>, 3> fOuterProduct;
+
+        WrittenPolyfills() : fInverse({false, false, false})
+                           , fOuterProduct({std::array{false, false, false},
+                                            std::array{false, false, false},
+                                            std::array{false, false, false}}) {}
+    };
+    WrittenPolyfills fF32Polyfills;
+    WrittenPolyfills fF16Polyfills;
+
     PrettyPrint fPrettyPrint;
     IncludeSyntheticCode fGenSyntheticCode;
 
     // These fields control uniform polyfill support in cases where WGSL and std140 disagree.
-    // In std140 layout, matrices need to be represented as arrays of @size(16)-aligned vectors, and
-    // array elements are wrapped in a struct containing a single @size(16)-aligned element. Arrays
+    // In std140 layout, matrices need to be represented as arrays of @align(16) vectors, and
+    // array elements are wrapped in a struct containing a single @align(16) element. Arrays
     // of matrices combine both wrappers. These wrapper structs are unpacked into natively-typed
     // globals at the shader entrypoint.
     struct FieldPolyfillInfo {
@@ -407,11 +432,14 @@ private:
     using FieldPolyfillMap = skia_private::THashMap<const Field*, FieldPolyfillInfo>;
     FieldPolyfillMap fFieldPolyfillMap;
 
+    std::unique_ptr<InterfaceBlock> fSyntheticGlobalUniformsBlock;
+
     // Output processing state.
     int fIndentation = 0;
     bool fAtLineStart = false;
     bool fHasUnconditionalReturn = false;
     bool fAtFunctionScope = false;
+    bool fNeedsConstEvalWorkaround = false; // See skbug.com/40045457
     int fConditionalScopeDepth = 0;
     int fLocalSizeX = 1;
     int fLocalSizeY = 1;
@@ -737,14 +765,22 @@ std::string_view address_space_to_str(PtrAddressSpace addressSpace) {
     return "unsupported";
 }
 
-std::string_view to_scalar_type(const Type& type) {
+bool type_is_low_precision(const Type& type, bool f16Available) {
+    // For now only consider half vs. float, not short vs int
+    return f16Available && (type.componentType().isFloat() && !type.highPrecision());
+}
+
+bool type_is_low_precision(const Type& type, const Context& context) {
+    return type_is_low_precision(type, !context.fConfig->fSettings.fForceHighPrecision);
+}
+
+std::string_view to_scalar_type(const Type& type, bool f16Available) {
     SkASSERT(type.typeKind() == Type::TypeKind::kScalar);
     switch (type.numberKind()) {
-        // Floating-point numbers in WebGPU currently always have 32-bit footprint and
-        // relaxed-precision is not supported without extensions. f32 is the only floating-point
-        // number type in WGSL (see the discussion on https://github.com/gpuweb/gpuweb/issues/658).
         case Type::NumberKind::kFloat:
-            return "f32";
+            // Floating point numbers can map to f32 or f16 depending on whether or not the
+            // shader-f16 wgsl extension is supported.
+            return type_is_low_precision(type, f16Available) ? "f16" : "f32";
         case Type::NumberKind::kSigned:
             return "i32";
         case Type::NumberKind::kUnsigned:
@@ -761,22 +797,26 @@ std::string_view to_scalar_type(const Type& type) {
 
 // Convert a SkSL type to a WGSL type. Handles all plain types except structure types
 // (see https://www.w3.org/TR/WGSL/#plain-types-section).
-std::string to_wgsl_type(const Context& context, const Type& raw, const Layout* layout = nullptr) {
+std::string to_wgsl_type(const Context& context, const Type& raw,
+                         const Layout* layout = nullptr, bool forceHighPrecision=false) {
     const Type& type = raw.resolve().scalarTypeForLiteral();
+    const bool f16Available = !context.fConfig->fSettings.fForceHighPrecision &&
+                              !forceHighPrecision;
+
     switch (type.typeKind()) {
         case Type::TypeKind::kScalar:
-            return std::string(to_scalar_type(type));
+            return std::string(to_scalar_type(type, f16Available));
 
         case Type::TypeKind::kAtomic:
             SkASSERT(type.matches(*context.fTypes.fAtomicUInt));
             return "atomic<u32>";
 
         case Type::TypeKind::kVector: {
-            std::string_view ct = to_scalar_type(type.componentType());
+            std::string_view ct = to_scalar_type(type.componentType(), f16Available);
             return String::printf("vec%d<%.*s>", type.columns(), (int)ct.length(), ct.data());
         }
         case Type::TypeKind::kMatrix: {
-            std::string_view ct = to_scalar_type(type.componentType());
+            std::string_view ct = to_scalar_type(type.componentType(), f16Available);
             return String::printf("mat%dx%d<%.*s>",
                                   type.columns(), type.rows(), (int)ct.length(), ct.data());
         }
@@ -866,7 +906,7 @@ std::string_view wgsl_builtin_name(WGSLCodeGenerator::Builtin builtin) {
     return "unsupported";
 }
 
-std::string_view wgsl_builtin_type(WGSLCodeGenerator::Builtin builtin) {
+std::string_view wgsl_builtin_type(WGSLCodeGenerator::Builtin builtin, const Context& context) {
     using Builtin = WGSLCodeGenerator::Builtin;
     switch (builtin) {
         case Builtin::kVertexIndex:
@@ -876,7 +916,9 @@ std::string_view wgsl_builtin_type(WGSLCodeGenerator::Builtin builtin) {
         case Builtin::kPosition:
             return "vec4<f32>";
         case Builtin::kLastFragColor:
-            return "vec4<f32>";
+            // The last frag color is declared as a half4 in SkSL, so its type depends on f16
+            // being available or not.
+            return context.fConfig->fSettings.fForceHighPrecision ? "vec4<f32>" : "vec4<f16>";
         case Builtin::kFrontFacing:
             return "bool";
         case Builtin::kSampleIndex:
@@ -977,6 +1019,36 @@ const char* delimiter_to_str(WGSLCodeGenerator::Delimiter delimiter) {
     return "";
 }
 
+bool all_arguments_constant(const ExpressionArray& arguments) {
+    // Returns true if all arguments in the ExpressionArray are compile-time constants. If we are
+    // calling an intrinsic and all of its inputs are constant, but we didn't constant-fold it, this
+    // generally indicates that constant-folding resulted in an infinity or nan. The WGSL compiler
+    // will reject such an expression with a compile-time error. We can dodge the error, taking on
+    // the risk of indeterminate behavior instead, by replacing one of the constant values with a
+    // scratch let-variable. (skbug.com/40045457)
+    for (const std::unique_ptr<Expression>& arg : arguments) {
+        if (!ConstantFolder::GetConstantValueOrNull(*arg)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool is_nontrivial_expression(const Expression& expr) {
+    // We consider a "trivial expression" one which we can repeat multiple times in the output
+    // without being dangerous or spammy. We avoid emitting temporary variables for very trivial
+    // expressions: literals, unadorned variable references, or constant vectors.
+    if (expr.is<VariableReference>() || expr.is<Literal>()) {
+        // Variables and literals are trivial; adding a let-declaration won't simplify anything.
+        return false;
+    }
+    if (expr.type().isVector() && Analysis::IsConstantExpression(expr)) {
+        // Compile-time constant vectors are also considered trivial; they're short and sweet.
+        return false;
+    }
+    return true;
+}
+
 // FunctionDependencyResolver visits the IR tree rooted at a particular function definition and
 // computes that function's dependencies on pipeline stage IO parameters. These are later used to
 // synthesize arguments when writing out function definitions.
@@ -1075,14 +1147,6 @@ WGSLCodeGenerator::ProgramRequirements resolve_program_requirements(const Progra
                 }
                 break;
             }
-            case ProgramElement::Kind::kInterfaceBlock: {
-                const InterfaceBlock& ib = e->as<InterfaceBlock>();
-                const Layout& layout = ib.var()->layout();
-                if (layout.fFlags & LayoutFlag::kPushConstant) {
-                    requirements.fPushConstantExtension = true;
-                }
-                break;
-            }
             default:
                 break;
         }
@@ -1110,8 +1174,8 @@ void collect_pipeline_io_vars(const Program* program,
 }
 
 bool is_in_global_uniforms(const Variable& var) {
-    SkASSERT(var.storage() == VariableStorage::kGlobal);
-    return  var.modifierFlags().isUniform() &&
+    return  var.storage() == VariableStorage::kGlobal &&
+            var.modifierFlags().isUniform() &&
            !var.type().isOpaque() &&
            !var.interfaceBlock();
 }
@@ -1298,6 +1362,54 @@ private:
     bool fReintegrateNewValueFirst = false;
 };
 
+class WGSLCodeGenerator::AutoConstEvalWorkaround {
+public:
+    AutoConstEvalWorkaround(WGSLCodeGenerator* generator, const Expression& parent)
+            : fGenerator(generator)
+            , fOriginalValue(generator->fNeedsConstEvalWorkaround) {
+        // Each scope can apply the workaround separately from the parent scope, so default to
+        // not requiring it
+        fGenerator->fNeedsConstEvalWorkaround = false;
+
+        // Intrinsic function calls and operators can be const-evaluated by the WGSL compiler,
+        // which may cause it complain if said evaluation would produce non-finite values.
+        if (parent.kind() == ExpressionKind::kFunctionCall) {
+            const FunctionCall& call = parent.as<FunctionCall>();
+            // User-defined functions can never be const-evaluated.
+            if (call.function().isIntrinsic() && all_arguments_constant(call.arguments())) {
+                fGenerator->fNeedsConstEvalWorkaround = true;
+            }
+        } else if (parent.kind() == ExpressionKind::kBinary) {
+            const BinaryExpression& op = parent.as<BinaryExpression>();
+            fGenerator->fNeedsConstEvalWorkaround =
+                    op_needs_workaround(*op.left(), *op.right(), op.getOperator().kind());
+
+        }
+    }
+
+    ~AutoConstEvalWorkaround() {
+        fGenerator->fNeedsConstEvalWorkaround = fOriginalValue;
+    }
+
+private:
+    static bool op_needs_workaround(const Expression& l, const Expression& r, OperatorKind op) {
+        // Only ops that produce overflows or non-finite values need to be worked round: +,-,*,/
+        switch (op) {
+            case Operator::Kind::MINUS:
+            case Operator::Kind::PLUS:
+            case Operator::Kind::STAR:
+            case Operator::Kind::SLASH:
+                return ConstantFolder::GetConstantValueOrNull(l) &&
+                       ConstantFolder::GetConstantValueOrNull(r);
+            default:
+                return false;
+        }
+    }
+
+    WGSLCodeGenerator* fGenerator;
+    bool fOriginalValue;
+};
+
 bool WGSLCodeGenerator::generateCode() {
     // The resources of a WGSL program are structured in the following way:
     // - Stage attribute inputs and outputs are bundled inside synthetic structs called
@@ -1367,8 +1479,8 @@ void WGSLCodeGenerator::writeUniformPolyfills() {
               });
 
     THashSet<const Type*> writtenArrayElementPolyfill;
-    bool writtenUniformMatrixPolyfill[5][5] = {};  // m[column][row] for each matrix type
-    bool writtenUniformRowPolyfill[5] = {};        // for each matrix row-size
+    bool writtenUniformMatrixPolyfill[2][5][5] = {};  // {h,f} x m[column][row] for each matrix type
+    bool writtenUniformRowPolyfill[2][5] = {};        // {h,f} x for each matrix row-size
     bool anyFieldAccessed = false;
     for (const FieldPolyfillMap::Pair* pair : orderedFields) {
         const auto& [field, info] = *pair;
@@ -1387,10 +1499,11 @@ void WGSLCodeGenerator::writeUniformPolyfills() {
                     // Create a struct representing the array containing std140-padded matrices.
                     this->write("  e : _skMatrix");
                     this->write(std::to_string(fieldType->columns()));
-                    this->writeLine(std::to_string(fieldType->rows()));
+                    this->write(std::to_string(fieldType->rows()));
+                    this->writeLine(type_is_low_precision(*fieldType, fContext) ? "h" : "f");
                 } else {
                     // Create a struct representing the array with extra padding between elements.
-                    this->write("  @size(16) e : ");
+                    this->write("  @align(16) e : ");
                     this->writeLine(to_wgsl_type(fContext, *fieldType, fieldLayout));
                 }
                 this->writeLine("};");
@@ -1401,15 +1514,18 @@ void WGSLCodeGenerator::writeUniformPolyfills() {
             // Create structs representing the matrix as an array of vectors, whether or not the
             // matrix is ever accessed by the SkSL. (The struct itself is mentioned in the list of
             // uniforms.)
+            const bool useF16 = type_is_low_precision(*fieldType, fContext);
+            int t = useF16 ? 0 : 1;
             int c = fieldType->columns();
             int r = fieldType->rows();
-            if (!writtenUniformRowPolyfill[r]) {
-                writtenUniformRowPolyfill[r] = true;
+            if (!writtenUniformRowPolyfill[t][r]) {
+                writtenUniformRowPolyfill[t][r] = true;
 
                 this->write("struct _skRow");
                 this->write(std::to_string(r));
+                this->write(useF16 ? "h" : "f");
                 this->writeLine(" {");
-                this->write("  @size(16) r : vec");
+                this->write("  @align(16) r : vec");
                 this->write(std::to_string(r));
                 this->write("<");
                 this->write(to_wgsl_type(fContext, fieldType->componentType(), fieldLayout));
@@ -1417,15 +1533,17 @@ void WGSLCodeGenerator::writeUniformPolyfills() {
                 this->writeLine("};");
             }
 
-            if (!writtenUniformMatrixPolyfill[c][r]) {
-                writtenUniformMatrixPolyfill[c][r] = true;
+            if (!writtenUniformMatrixPolyfill[t][c][r]) {
+                writtenUniformMatrixPolyfill[t][c][r] = true;
 
                 this->write("struct _skMatrix");
                 this->write(std::to_string(c));
                 this->write(std::to_string(r));
+                this->write(useF16 ? "h" : "f");
                 this->writeLine(" {");
                 this->write("  c : array<_skRow");
                 this->write(std::to_string(r));
+                this->write(useF16 ? "h" : "f");
                 this->write(", ");
                 this->write(std::to_string(c));
                 this->writeLine(">");
@@ -1681,7 +1799,7 @@ void WGSLCodeGenerator::writeBuiltinIODecl(const Type& type,
     this->write(" ");
     this->write(this->assembleName(name));
     this->write(": ");
-    this->write(wgsl_builtin_type(builtin));
+    this->write(wgsl_builtin_type(builtin, fContext));
     this->writeLine(delimiter_to_str(delimiter));
 }
 
@@ -1824,14 +1942,27 @@ void WGSLCodeGenerator::writeEntryPoint(const FunctionDefinition& main) {
     SkASSERT(main.declaration().isMain());
     const ProgramKind programKind = fProgram.fConfig->fKind;
 
+    bool initPolyfill = false;
+    for (const auto& [field, info] : fFieldPolyfillMap) {
+        if (info.fWasAccessed) {
+            initPolyfill = true;
+            break;
+        }
+    }
+
     if (fGenSyntheticCode == IncludeSyntheticCode::kYes &&
         ProgramConfig::IsRuntimeShader(programKind)) {
         // Synthesize a basic entrypoint which just calls straight through to main.
         // This is only used by skslc and just needs to pass the WGSL validator; Skia won't ever
         // emit functions like this.
-        this->writeLine("@fragment fn main(@location(0) _coords: vec2<f32>) -> "
-                                     "@location(0) vec4<f32> {");
+        this->write("@fragment fn main(@location(0) _coords: vec2<f32>) -> @location(0) ");
+        this->write(to_wgsl_type(fContext, main.declaration().returnType()));
+        this->writeLine(" {");
+
         ++fIndentation;
+        if (initPolyfill) {
+            this->writeLine("_skInitializePolyfilledUniforms();");
+        }
         this->writeLine("return _skslMain(_coords);");
         --fIndentation;
         this->writeLine("}");
@@ -1876,12 +2007,10 @@ void WGSLCodeGenerator::writeEntryPoint(const FunctionDefinition& main) {
     }
     // Initialize polyfilled matrix uniforms if any were used.
     fIndentation++;
-    for (const auto& [field, info] : fFieldPolyfillMap) {
-        if (info.fWasAccessed) {
-            this->writeLine("_skInitializePolyfilledUniforms();");
-            break;
-        }
+    if (initPolyfill) {
+        this->writeLine("_skInitializePolyfilledUniforms();");
     }
+
     // Declare the stage output struct.
     if (this->needsStageOutputStruct()) {
         this->write("var _stageOut: ");
@@ -2330,7 +2459,8 @@ void WGSLCodeGenerator::writeSwitchStatement(const SwitchStatement& s) {
     // should give us good performance in the common case, since most switches naturally conform.
 
     // First, let's emit the switch itself.
-    std::string valueExpr = this->writeNontrivialScratchLet(*s.value(), Precedence::kExpression);
+    std::string valueExpr = this->assembleExpression(*s.value(), Precedence::kExpression,
+                                                     kUsedMultipleTimes);
     this->write("switch ");
     this->write(valueExpr);
     this->writeLine(" {");
@@ -2479,7 +2609,31 @@ std::unique_ptr<WGSLCodeGenerator::LValue> WGSLCodeGenerator::makeLValue(const E
 }
 
 std::string WGSLCodeGenerator::assembleExpression(const Expression& e,
-                                                  Precedence parentPrecedence) {
+                                                  Precedence parentPrecedence,
+                                                  AssembleMode mode) {
+    // Determine if we need to introduce a scratch let for this expression. There are three
+    // situations that require this:
+    //   1. Explicitly requested by caller.
+    //   2. outer context would reference it multiple reasons for *reasons*, and the expression is
+    //      not trivial
+    //   3. skbug.com/asdf, where the first child const expression needs to be lifted to avoid
+    //      WGSL's stricter const eval rules.
+    if (mode == kForceLet ||
+        (mode == kUsedMultipleTimes && is_nontrivial_expression(e)) ||
+        /* mode == kAuto && */ fNeedsConstEvalWorkaround) {
+        // Allow the scratch let to be considered const as long as we don't have to force it to
+        // a let for the const-eval workaround or by `mode`.
+        const bool canBeConst = !fNeedsConstEvalWorkaround &&
+                                mode != kForceLet &&
+                                Analysis::IsCompileTimeConstant(e);
+        // Setting this to false and not overriding the AssembleMode means this next call to
+        // assembleExpression gives us the original expression value.
+        fNeedsConstEvalWorkaround = false;
+        std::string expr = this->assembleExpression(e, Precedence::kAssignment);
+        return this->writeScratchLet(expr, canBeConst);
+    }
+
+    AutoConstEvalWorkaround constEval{this, e};
     switch (e.kind()) {
         case Expression::Kind::kBinary:
             return this->assembleBinaryExpression(e.as<BinaryExpression>(), parentPrecedence);
@@ -2488,10 +2642,8 @@ std::string WGSLCodeGenerator::assembleExpression(const Expression& e,
             return this->assembleConstructorCompound(e.as<ConstructorCompound>());
 
         case Expression::Kind::kConstructorArrayCast:
-            // This is a no-op, since WGSL 1.0 doesn't have any concept of precision qualifiers.
-            // When we add support for f16, this will need to copy the array contents.
-            return this->assembleExpression(*e.as<ConstructorArrayCast>().argument(),
-                                            parentPrecedence);
+            return this->assembleConstructorArrayCast(e.as<ConstructorArrayCast>(),
+                                                      parentPrecedence);
 
         case Expression::Kind::kConstructorArray:
         case Expression::Kind::kConstructorCompoundCast:
@@ -2545,21 +2697,6 @@ std::string WGSLCodeGenerator::assembleExpression(const Expression& e,
     }
 }
 
-static bool is_nontrivial_expression(const Expression& expr) {
-    // We consider a "trivial expression" one which we can repeat multiple times in the output
-    // without being dangerous or spammy. We avoid emitting temporary variables for very trivial
-    // expressions: literals, unadorned variable references, or constant vectors.
-    if (expr.is<VariableReference>() || expr.is<Literal>()) {
-        // Variables and literals are trivial; adding a let-declaration won't simplify anything.
-        return false;
-    }
-    if (expr.type().isVector() && Analysis::IsConstantExpression(expr)) {
-        // Compile-time constant vectors are also considered trivial; they're short and sweet.
-        return false;
-    }
-    return true;
-}
-
 static bool binary_op_is_ambiguous_in_wgsl(Operator op) {
     // WGSL always requires parentheses for some operators which are deemed to be ambiguous.
     // (8.19. Operator Precedence and Associativity)
@@ -2587,6 +2724,7 @@ bool WGSLCodeGenerator::binaryOpNeedsComponentwiseMatrixPolyfill(const Type& lef
                                                                  Operator op) {
     switch (op.kind()) {
         case OperatorKind::SLASH:
+        case OperatorKind::SLASHEQ:
             // WGSL does not natively support componentwise matrix-op-matrix for division.
             if (left.isMatrix() && right.isMatrix()) {
                 return true;
@@ -2594,7 +2732,9 @@ bool WGSLCodeGenerator::binaryOpNeedsComponentwiseMatrixPolyfill(const Type& lef
             [[fallthrough]];
 
         case OperatorKind::PLUS:
+        case OperatorKind::PLUSEQ:
         case OperatorKind::MINUS:
+        case OperatorKind::MINUSEQ:
             // WGSL does not natively support componentwise matrix-op-scalar or scalar-op-matrix for
             // addition, subtraction or division.
             return (left.isMatrix() && right.isScalar()) ||
@@ -2711,6 +2851,9 @@ std::string WGSLCodeGenerator::assembleBinaryExpression(const Expression& left,
     }
 
     // Handle assignment-expressions.
+    const bool compMatrixOp =
+            this->binaryOpNeedsComponentwiseMatrixPolyfill(left.type(), right.type(), op);
+
     if (op.isAssignment()) {
         std::unique_ptr<LValue> lvalue = this->makeLValue(left);
         if (!lvalue) {
@@ -2725,13 +2868,10 @@ std::string WGSLCodeGenerator::assembleBinaryExpression(const Expression& left,
             op = op.removeAssignment();
 
             std::string lhs = lvalue->load();
-            std::string rhs = this->assembleExpression(right, op.getBinaryPrecedence());
+            std::string rhs = this->assembleExpression(right, op.getBinaryPrecedence(),
+                                                       compMatrixOp ? kUsedMultipleTimes : kAuto);
 
-            if (this->binaryOpNeedsComponentwiseMatrixPolyfill(left.type(), right.type(), op)) {
-                if (is_nontrivial_expression(right)) {
-                    rhs = this->writeScratchLet(rhs);
-                }
-
+            if (compMatrixOp) {
                 expr = this->assembleComponentwiseMatrixBinary(left.type(), right.type(),
                                                                lhs, rhs, op);
             } else {
@@ -2759,32 +2899,13 @@ std::string WGSLCodeGenerator::assembleBinaryExpression(const Expression& left,
         expr = "(";
     }
 
-    // If we are emitting `constant + constant`, this generally indicates that the values could not
-    // be constant-folded. This happens when the values overflow or become nan. WGSL will refuse to
-    // compile such expressions, as WGSL 1.0 has no infinity/nan support. However, the WGSL
-    // compile-time check can be dodged by putting one side into a let-variable. This technically
-    // gives us an indeterminate result, but the vast majority of backends will just calculate an
-    // infinity or nan here, as we would expect. (skbug.com/40045457)
-    bool bothSidesConstant = ConstantFolder::GetConstantValueOrNull(left) &&
-                             ConstantFolder::GetConstantValueOrNull(right);
-
-    std::string lhs = this->assembleExpression(left, precedence);
-    std::string rhs = this->assembleExpression(right, precedence);
-
-    if (this->binaryOpNeedsComponentwiseMatrixPolyfill(left.type(), right.type(), op)) {
-        if (bothSidesConstant || is_nontrivial_expression(left)) {
-            lhs = this->writeScratchLet(lhs);
-        }
-        if (is_nontrivial_expression(right)) {
-            rhs = this->writeScratchLet(rhs);
-        }
-
+    std::string lhs = this->assembleExpression(left, precedence,
+                                               compMatrixOp ? kUsedMultipleTimes : kAuto);
+    std::string rhs = this->assembleExpression(right, precedence,
+                                               compMatrixOp ? kUsedMultipleTimes : kAuto);
+    if (compMatrixOp) {
         expr += this->assembleComponentwiseMatrixBinary(left.type(), right.type(), lhs, rhs, op);
     } else {
-        if (bothSidesConstant) {
-            lhs = this->writeScratchLet(lhs);
-        }
-
         expr += lhs + operator_name(op) + rhs;
     }
 
@@ -2844,53 +2965,43 @@ std::string WGSLCodeGenerator::assembleFieldAccess(const FieldAccess& f) {
     return expr;
 }
 
-static bool all_arguments_constant(const ExpressionArray& arguments) {
-    // Returns true if all arguments in the ExpressionArray are compile-time constants. If we are
-    // calling an intrinsic and all of its inputs are constant, but we didn't constant-fold it, this
-    // generally indicates that constant-folding resulted in an infinity or nan. The WGSL compiler
-    // will reject such an expression with a compile-time error. We can dodge the error, taking on
-    // the risk of indeterminate behavior instead, by replacing one of the constant values with a
-    // scratch let-variable. (skbug.com/40045457)
-    for (const std::unique_ptr<Expression>& arg : arguments) {
-        if (!ConstantFolder::GetConstantValueOrNull(*arg)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 std::string WGSLCodeGenerator::assembleSimpleIntrinsic(std::string_view intrinsicName,
-                                                       const FunctionCall& call) {
+                                                       const FunctionCall& call,
+                                                       bool wgslOnlySupportsHighPrecision) {
     // Invoke the function, passing each function argument.
     std::string expr = std::string(intrinsicName);
     expr.push_back('(');
     const ExpressionArray& args = call.arguments();
     auto separator = SkSL::String::Separator();
-    bool allConstant = all_arguments_constant(call.arguments());
     for (int index = 0; index < args.size(); ++index) {
         expr += separator();
 
         std::string argument = this->assembleExpression(*args[index], Precedence::kSequence);
-        if (args[index]->type().isAtomic()) {
+        if (wgslOnlySupportsHighPrecision && type_is_low_precision(args[index]->type(), fContext)) {
+            // Add a cast to high precision
+            SkASSERT(!args[index]->type().isAtomic());
+            const std::string highPType = to_wgsl_type(fContext,
+                                                       args[index]->type(),
+                                                       /*layout=*/nullptr,
+                                                       /*forceHighPrecision=*/true);
+            expr += highPType + "(" + argument + ")";
+        } else if (args[index]->type().isAtomic()) {
             // WGSL passes atomic values to intrinsics as pointers.
             expr += '&';
             expr += argument;
-        } else if (allConstant && index == 0) {
-            // We can use a scratch-let for argument 0 to dodge WGSL overflow errors. (skbug.com/40045457)
-            expr += this->writeScratchLet(argument);
         } else {
             expr += argument;
         }
     }
     expr.push_back(')');
 
-    if (call.type().isVoid()) {
-        this->write(expr);
-        this->writeLine(";");
-        return std::string();
-    } else {
-        return this->writeScratchLet(expr);
+    // Wrap the call expression in a cast back to its low precision type if necessary.
+    if (wgslOnlySupportsHighPrecision && type_is_low_precision(call.type(), fContext)) {
+        const std::string lowPType = to_wgsl_type(fContext, call.type());
+        expr = lowPType + "(" + expr + ")";
     }
+
+    return expr;
 }
 
 std::string WGSLCodeGenerator::assembleVectorizedIntrinsic(std::string_view intrinsicName,
@@ -2904,7 +3015,6 @@ std::string WGSLCodeGenerator::assembleVectorizedIntrinsic(std::string_view intr
     auto separator = SkSL::String::Separator();
     const ExpressionArray& args = call.arguments();
     bool returnsVector = call.type().isVector();
-    bool allConstant = all_arguments_constant(call.arguments());
     for (int index = 0; index < args.size(); ++index) {
         expr += separator();
 
@@ -2914,17 +3024,14 @@ std::string WGSLCodeGenerator::assembleVectorizedIntrinsic(std::string_view intr
             expr.push_back('(');
         }
 
-        // We can use a scratch-let for argument 0 to dodge WGSL overflow errors. (skbug.com/40045457)
-        std::string argument = this->assembleExpression(*args[index], Precedence::kSequence);
-        expr += (allConstant && index == 0) ? this->writeScratchLet(argument)
-                                            : argument;
+        expr += this->assembleExpression(*args[index], Precedence::kSequence);
         if (vectorize) {
             expr.push_back(')');
         }
     }
     expr.push_back(')');
 
-    return this->writeScratchLet(expr);
+    return expr;
 }
 
 std::string WGSLCodeGenerator::assembleUnaryOpIntrinsic(Operator op,
@@ -2962,10 +3069,7 @@ std::string WGSLCodeGenerator::assembleBinaryOpIntrinsic(Operator op,
         expr.push_back('(');
     }
 
-    // We can use a scratch-let for argument 0 to dodge WGSL overflow errors. (skbug.com/40045457)
-    std::string argument = this->assembleExpression(*call.arguments()[0], precedence);
-    expr += all_arguments_constant(call.arguments()) ? this->writeScratchLet(argument)
-                                                     : argument;
+    expr += this->assembleExpression(*call.arguments()[0], precedence);
     expr += operator_name(op);
     expr += this->assembleExpression(*call.arguments()[1], precedence);
 
@@ -2987,14 +3091,10 @@ std::string WGSLCodeGenerator::assembleOutAssignedIntrinsic(std::string_view int
     SkASSERT(call.arguments().size() == 2);
     SkASSERT(call.function().parameters()[1]->modifierFlags() & ModifierFlag::kOut);
 
+    // Invoke the intrinsic with the first parameter.
     std::string expr = std::string(intrinsicName);
     expr += "(";
-
-    // Invoke the intrinsic with the first parameter. Use a scratch-let if argument is a constant
-    // to dodge WGSL overflow errors. (skbug.com/40045457)
-    std::string argument = this->assembleExpression(*call.arguments()[0], Precedence::kSequence);
-    expr += ConstantFolder::GetConstantValueOrNull(*call.arguments()[0])
-            ? this->writeScratchLet(argument) : argument;
+    expr += this->assembleExpression(*call.arguments()[0], Precedence::kSequence);
     expr += ")";
     // In WGSL the intrinsic returns a struct; assign it to a local so that its fields can be
     // accessed multiple times.
@@ -3015,26 +3115,40 @@ std::string WGSLCodeGenerator::assembleOutAssignedIntrinsic(std::string_view int
     return expr;
 }
 
-std::string WGSLCodeGenerator::assemblePartialSampleCall(std::string_view functionName,
-                                                         const Expression& sampler,
-                                                         const Expression& coords) {
+std::pair<std::string, const char*> WGSLCodeGenerator::assemblePartialSampleCall(
+        std::string_view functionName,
+        const Type& type,
+        const Expression& sampler,
+        const Expression& coords) {
     // This function returns `functionName(inSampler_texture, inSampler_sampler, coords` without a
     // terminating comma or close-parenthesis. This allows the caller to add more arguments as
     // needed.
-    SkASSERT(sampler.type().typeKind() == Type::TypeKind::kSampler);
     std::string expr = std::string(functionName) + '(';
-    expr += this->assembleExpression(sampler, Precedence::kSequence);
-    expr += kTextureSuffix;
-    expr += ", ";
-    expr += this->assembleExpression(sampler, Precedence::kSequence);
-    expr += kSamplerSuffix;
-    expr += ", ";
+    if (sampler.type().typeKind() == Type::TypeKind::kSampler) {
+        // Split combined texture+sampler into two args with suffixes.
+        expr += this->assembleExpression(sampler, Precedence::kSequence);
+        expr += kTextureSuffix;
+        expr += ", ";
+        expr += this->assembleExpression(sampler, Precedence::kSequence);
+        expr += kSamplerSuffix;
+        expr += ", ";
+    } else {
+        SkASSERT(sampler.type().typeKind() == Type::TypeKind::kTexture);
+        // Pass through the texture expression without any extra suffix
+        expr += this->assembleExpression(sampler, Precedence::kSequence);
+        expr += ", ";
+    }
 
     // Compute the sample coordinates, dividing out the Z if a vec3 was provided.
     SkASSERT(coords.type().isVector());
     if (coords.type().columns() == 3) {
         // The coordinates were passed as a vec3, so we need to emit `coords.xy / coords.z`.
-        std::string vec3Coords = this->writeScratchLet(coords, Precedence::kMultiplicative);
+        // This is a binary op applied to `coords` twice, so explicitly reapply the const eval
+        // workaround with just it in mind.
+        const bool coordsConst = ConstantFolder::GetConstantValueOrNull(coords);
+        std::string vec3Coords = this->assembleExpression(coords, Precedence::kMultiplicative,
+                                                          coordsConst ? kForceLet
+                                                                      : kUsedMultipleTimes);
         expr += vec3Coords + ".xy / " + vec3Coords + ".z";
     } else {
         // The coordinates should be a plain vec2; emit the expression as-is.
@@ -3042,7 +3156,14 @@ std::string WGSLCodeGenerator::assemblePartialSampleCall(std::string_view functi
         expr += this->assembleExpression(coords, Precedence::kSequence);
     }
 
-    return expr;
+    // WGSL does not support f16 textures while all of SkSL's sample functions return "half4", so
+    // add a cast back to f16 if necessary.
+    if (type_is_low_precision(type, fContext)) {
+        std::string lowPType = to_wgsl_type(fContext, type);
+        return {lowPType + "(" + expr, "))"};
+    } else {
+        return {expr, ")"};
+    }
 }
 
 std::string WGSLCodeGenerator::assembleComponentwiseMatrixBinary(const Type& leftType,
@@ -3083,7 +3204,8 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
     // infinity or nan with a compile error. If all arguments to an intrinsic are compile-time
     // constants (`all_arguments_constant`), it is safest to copy one argument into a scratch-let so
     // that the call will be seen as runtime-evaluated, which defuses the overflow checks.
-    // Don't worry; a competent driver should still optimize it away.
+    // Don't worry; a competent driver should still optimize it away. This was automatically handled
+    // in appendExpression()'s AutoConstEvalWorkaround before this was reached.
 
     const ExpressionArray& arguments = call.arguments();
     switch (kind) {
@@ -3091,12 +3213,18 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
             const char* name = (arguments.size() == 1) ? "atan" : "atan2";
             return this->assembleSimpleIntrinsic(name, call);
         }
+
+        // Derivative functions in WGSL are only defined for full precision types
         case k_dFdx_IntrinsicKind:
-            return this->assembleSimpleIntrinsic("dpdx", call);
+            return this->assembleSimpleIntrinsic("dpdx", call,
+                                                 /*wgslOnlySupportsHighPrecision=*/true);
 
         case k_dFdy_IntrinsicKind:
-            // TODO(b/294274678): apply RTFlip here
-            return this->assembleSimpleIntrinsic("dpdy", call);
+            // WSGL is only generated for Graphite, which does not use RTFlip so there's no need
+            // to flip the Y derivatives either.
+            SkASSERT(fContext.fConfig->fSettings.fForceNoRTFlip);
+            return this->assembleSimpleIntrinsic("dpdy", call,
+                                                 /*wgslOnlySupportsHighPrecision=*/true);
 
         case k_dot_IntrinsicKind: {
             if (arguments[0]->type().isScalar()) {
@@ -3110,16 +3238,17 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
         case k_faceforward_IntrinsicKind: {
             if (arguments[0]->type().isScalar()) {
                 // select(-N, N, (I * Nref) < 0)
-                std::string N = this->writeNontrivialScratchLet(*arguments[0],
-                                                                Precedence::kAssignment);
-                return this->writeScratchLet(
-                        "select(-" + N + ", " + N + ", " +
-                        this->assembleBinaryExpression(*arguments[1],
-                                                       OperatorKind::STAR,
-                                                       *arguments[2],
-                                                       arguments[1]->type(),
-                                                       Precedence::kRelational) +
-                        " < 0)");
+                fNeedsConstEvalWorkaround = false; // Disable for N, we'll handle it in I*Nref
+                std::string N = this->assembleExpression(*arguments[0], Precedence::kPrefix,
+                                                         kUsedMultipleTimes);
+                const bool INrefConst = ConstantFolder::GetConstantValueOrNull(*arguments[1]) &&
+                                        ConstantFolder::GetConstantValueOrNull(*arguments[2]);
+                std::string I = this->assembleExpression(*arguments[1],
+                                                         Precedence::kMultiplicative,
+                                                         INrefConst ? kForceLet : kAuto);
+                std::string Nref = this->assembleExpression(*arguments[2],
+                                                            Precedence::kMultiplicative);
+                return "select(-" + N + ", " + N + ", " + I + " * " + Nref + " < 0)";
             }
             return this->assembleSimpleIntrinsic("faceForward", call);
         }
@@ -3137,6 +3266,9 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
         case k_inverse_IntrinsicKind:
             return this->assembleInversePolyfill(call);
 
+        case k_outerProduct_IntrinsicKind:
+            return this->assembleOuterProductPolyfill(call);
+
         case k_inversesqrt_IntrinsicKind:
             return this->assembleSimpleIntrinsic("inverseSqrt", call);
 
@@ -3147,17 +3279,15 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
             return this->assembleBinaryOpIntrinsic(OperatorKind::LTEQ, call, parentPrecedence);
 
         case k_matrixCompMult_IntrinsicKind: {
-            // We use a scratch-let for arg0 to avoid the potential for WGSL overflow. (skbug.com/40045457)
-            std::string arg0 = all_arguments_constant(arguments)
-                            ? this->writeScratchLet(*arguments[0], Precedence::kPostfix)
-                            : this->writeNontrivialScratchLet(*arguments[0], Precedence::kPostfix);
-            std::string arg1 = this->writeNontrivialScratchLet(*arguments[1], Precedence::kPostfix);
-            return this->writeScratchLet(
-                    this->assembleComponentwiseMatrixBinary(arguments[0]->type(),
-                                                            arguments[1]->type(),
-                                                            arg0,
-                                                            arg1,
-                                                            OperatorKind::STAR));
+            std::string arg0 = this->assembleExpression(*arguments[0], Precedence::kPostfix,
+                                                        kUsedMultipleTimes);
+            std::string arg1 = this->assembleExpression(*arguments[1], Precedence::kPostfix,
+                                                        kUsedMultipleTimes);
+            return this->assembleComponentwiseMatrixBinary(arguments[0]->type(),
+                                                           arguments[1]->type(),
+                                                           arg0,
+                                                           arg1,
+                                                           OperatorKind::STAR);
         }
         case k_mix_IntrinsicKind: {
             const char* name = arguments[2]->type().componentType().isBoolean() ? "select" : "mix";
@@ -3165,15 +3295,14 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
         }
         case k_mod_IntrinsicKind: {
             // WGSL has no intrinsic equivalent to `mod`. Synthesize `x - y * floor(x / y)`.
-            // We can use a scratch-let on one side to dodge WGSL overflow errors.  In practice, I
-            // can't find any values of x or y which would overflow, but it can't hurt. (skbug.com/40045457)
-            std::string arg0 = all_arguments_constant(arguments)
-                            ? this->writeScratchLet(*arguments[0], Precedence::kAdditive)
-                            : this->writeNontrivialScratchLet(*arguments[0], Precedence::kAdditive);
-            std::string arg1 = this->writeNontrivialScratchLet(*arguments[1],
-                                                               Precedence::kAdditive);
-            return this->writeScratchLet(arg0 + " - " + arg1 + " * floor(" +
-                                         arg0 + " / " + arg1 + ")");
+            // NOTE: While we are introducing a new binary op between two possible constant
+            // expressions, it is consistent with the const-ness already handled by
+            // AutoConstEvalWorkaround.
+            std::string arg0 = this->assembleExpression(*arguments[0], Precedence::kAdditive,
+                                                        kUsedMultipleTimes);
+            std::string arg1 = this->assembleExpression(*arguments[1], Precedence::kAdditive,
+                                                        kUsedMultipleTimes);
+            return "(" + arg0 + " - " + arg1 + " * floor(" + arg0 + " / " + arg1 + "))";
         }
 
         case k_modf_IntrinsicKind:
@@ -3206,18 +3335,64 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
         case k_packUnorm4x8_IntrinsicKind:
             return this->assembleSimpleIntrinsic("pack4x8unorm", call);
 
+        case k_findLSB_IntrinsicKind: {
+            // firstTrailingBit (and firstLeadingBit) return a type matching their input, but
+            // findLSB and findMSB in SkSL return signed types. Add a cast if needed.
+            std::string lsb = this->assembleSimpleIntrinsic("firstTrailingBit", call);
+            return arguments[0]->type().componentType().isSigned() ? lsb :
+                    (to_wgsl_type(fContext, call.type()) + "(" + lsb + ")");
+        }
+
+        case k_findMSB_IntrinsicKind: {
+            std::string msb = this->assembleSimpleIntrinsic("firstLeadingBit", call);
+            return arguments[0]->type().componentType().isSigned() ? msb :
+                    (to_wgsl_type(fContext, call.type()) + "(" + msb + ")");
+        }
+
+        case k_bitCount_IntrinsicKind: {
+            // countOneBits returns a type matching its input, but bitCount in SkSL returns a
+            // signed type. Add a cast if needed.
+            std::string bitCount = this->assembleSimpleIntrinsic("countOneBits", call);
+            return arguments[0]->type().componentType().isSigned() ? bitCount :
+                    (to_wgsl_type(fContext, call.type()) + "(" + bitCount + ")");
+        }
+
+        case k_floatBitsToInt_IntrinsicKind:
+        case k_floatBitsToUint_IntrinsicKind:
+        case k_intBitsToFloat_IntrinsicKind:
+        case k_uintBitsToFloat_IntrinsicKind: {
+            std::string outputType = to_wgsl_type(fContext, call.type());
+            return this->assembleSimpleIntrinsic("bitcast<" + outputType + ">", call);
+        }
+
+        case k_roundEven_IntrinsicKind:
+        case k_round_IntrinsicKind:
+            // WGSL has no built-in roundEven(), but its round() is defined as:
+            //     "When e lies halfway between integers k and k + 1, the result is k when k is
+            //      even, and k + 1 when k is odd."
+            // This is equivalent to GLSL's roundEven(). GLSL's round() is allowed to just match
+            // roundEven().
+            return this->assembleSimpleIntrinsic("round", call);
+
         case k_reflect_IntrinsicKind:
             if (arguments[0]->type().isScalar()) {
                 // I - 2 * N * I * N
-                // We can use a scratch-let for N to dodge WGSL overflow errors. (skbug.com/40045457)
-                std::string I = this->writeNontrivialScratchLet(*arguments[0],
-                                                                Precedence::kAdditive);
-                std::string N = all_arguments_constant(arguments)
-                      ? this->writeScratchLet(*arguments[1], Precedence::kMultiplicative)
-                      : this->writeNontrivialScratchLet(*arguments[1], Precedence::kMultiplicative);
-                return this->writeScratchLet(String::printf("%s - 2 * %s * %s * %s",
-                                                            I.c_str(), N.c_str(),
-                                                            I.c_str(), N.c_str()));
+                // Manually override the auto const-eval workaround since both I and N are used
+                // multiple times in new binary expressions.
+                fNeedsConstEvalWorkaround = false;
+                std::string I = this->assembleExpression(*arguments[0], Precedence::kMultiplicative,
+                                                         kUsedMultipleTimes);
+                // We force N into a let when it is constant, ensuring (2*N), (N*I), and (I*N)
+                // avoid issues with const eval compilation failures. Technically if we were already
+                // lifting I to a let, we could skip lifting N if we knew (2*N) would not overflow,
+                // but this keeps logic simpler.
+                AssembleMode mode = ConstantFolder::GetConstantValueOrNull(*arguments[1]) ?
+                        kForceLet : kUsedMultipleTimes;
+                std::string N = this->assembleExpression(*arguments[1], Precedence::kMultiplicative,
+                                                         mode);
+                return String::printf("(%s - 2 * %s * %s * %s)",
+                                      I.c_str(), N.c_str(),
+                                      I.c_str(), N.c_str());
             }
             return this->assembleSimpleIntrinsic("reflect", call);
 
@@ -3225,21 +3400,15 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
             if (arguments[0]->type().isScalar()) {
                 // WGSL only implements refract for vectors; rather than reimplementing refract from
                 // scratch, we can replace the call with `refract(float2(I,0), float2(N,0), eta).x`.
-                std::string I = this->writeNontrivialScratchLet(*arguments[0],
-                                                                Precedence::kSequence);
-                std::string N = this->writeNontrivialScratchLet(*arguments[1],
-                                                                Precedence::kSequence);
-                // We can use a scratch-let for Eta to avoid WGSL overflow errors. (skbug.com/40045457)
-                std::string Eta = all_arguments_constant(arguments)
-                      ? this->writeScratchLet(*arguments[2], Precedence::kSequence)
-                      : this->writeNontrivialScratchLet(*arguments[2], Precedence::kSequence);
-                return this->writeScratchLet(
-                        String::printf("refract(vec2<%s>(%s, 0), vec2<%s>(%s, 0), %s).x",
-                                       to_wgsl_type(fContext, arguments[0]->type()).c_str(),
-                                       I.c_str(),
-                                       to_wgsl_type(fContext, arguments[1]->type()).c_str(),
-                                       N.c_str(),
-                                       Eta.c_str()));
+                std::string I = this->assembleExpression(*arguments[0], Precedence::kSequence);
+                std::string N = this->assembleExpression(*arguments[1], Precedence::kSequence);
+                std::string Eta = this->assembleExpression(*arguments[2], Precedence::kSequence);
+                return String::printf("refract(vec2<%s>(%s, 0), vec2<%s>(%s, 0), %s).x",
+                                      to_wgsl_type(fContext, arguments[0]->type()).c_str(),
+                                      I.c_str(),
+                                      to_wgsl_type(fContext, arguments[1]->type()).c_str(),
+                                      N.c_str(),
+                                      Eta.c_str());
             }
             return this->assembleSimpleIntrinsic("refract", call);
 
@@ -3247,12 +3416,14 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
             // Determine if a bias argument was passed in.
             SkASSERT(arguments.size() == 2 || arguments.size() == 3);
             bool callIncludesBias = (arguments.size() == 3);
-
+            std::string expr;
+            const char* close;
             if (fProgram.fConfig->fSettings.fSharpenTextures || callIncludesBias) {
                 // We need to supply a bias argument; this is a separate intrinsic in WGSL.
-                std::string expr = this->assemblePartialSampleCall("textureSampleBias",
-                                                                   *arguments[0],
-                                                                   *arguments[1]);
+                std::tie(expr, close) = this->assemblePartialSampleCall("textureSampleBias",
+                                                                        call.type(),
+                                                                        *arguments[0],
+                                                                        *arguments[1]);
                 expr += ", ";
                 if (callIncludesBias) {
                     expr += this->assembleExpression(*arguments[2], Precedence::kAdditive) +
@@ -3261,28 +3432,35 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
                 expr += skstd::to_string(fProgram.fConfig->fSettings.fSharpenTextures
                                                  ? kSharpenTexturesBias
                                                  : 0.0f);
-                return expr + ')';
+            } else {
+                // No bias is necessary, so we can call `textureSample` directly.
+                std::tie(expr, close) = this->assemblePartialSampleCall("textureSample",
+                                                                        call.type(),
+                                                                        *arguments[0],
+                                                                        *arguments[1]);
+
             }
 
-            // No bias is necessary, so we can call `textureSample` directly.
-            return this->assemblePartialSampleCall("textureSample",
-                                                   *arguments[0],
-                                                   *arguments[1]) + ')';
+            return expr + close;
         }
         case k_sampleLod_IntrinsicKind: {
-            std::string expr = this->assemblePartialSampleCall("textureSampleLevel",
-                                                               *arguments[0],
-                                                               *arguments[1]);
+            auto [expr, close] = this->assemblePartialSampleCall("textureSampleLevel",
+                                                                 call.type(),
+                                                                 *arguments[0],
+                                                                 *arguments[1]);
             expr += ", " + this->assembleExpression(*arguments[2], Precedence::kSequence);
-            return expr + ')';
+
+            return expr + close;
         }
         case k_sampleGrad_IntrinsicKind: {
-            std::string expr = this->assemblePartialSampleCall("textureSampleGrad",
-                                                               *arguments[0],
-                                                               *arguments[1]);
+            auto [expr, close] = this->assemblePartialSampleCall("textureSampleGrad",
+                                                                 call.type(),
+                                                                 *arguments[0],
+                                                                 *arguments[1]);
+
             expr += ", " + this->assembleExpression(*arguments[2], Precedence::kSequence);
             expr += ", " + this->assembleExpression(*arguments[3], Precedence::kSequence);
-            return expr + ')';
+            return expr + close;
         }
         case k_textureHeight_IntrinsicKind:
             return this->assembleSimpleIntrinsic("textureDimensions", call) + ".y";
@@ -3290,15 +3468,19 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
         case k_textureRead_IntrinsicKind: {
             // We need to inject an extra argument for the mip-level. We don't plan on using mipmaps
             // in our storage textures, so we can just pass zero.
-            std::string tex = this->assembleExpression(*arguments[0], Precedence::kSequence);
-            std::string pos = this->writeScratchLet(*arguments[1], Precedence::kSequence);
-            return std::string("textureLoad(") + tex + ", " + pos + ", 0)";
+            auto [expr, close] = this->assemblePartialSampleCall("textureLoad",
+                                                                 call.type(),
+                                                                 *arguments[0],
+                                                                 *arguments[1]);
+            expr += ", 0";
+            return expr + close;
         }
         case k_textureWidth_IntrinsicKind:
             return this->assembleSimpleIntrinsic("textureDimensions", call) + ".x";
 
         case k_textureWrite_IntrinsicKind:
-            return this->assembleSimpleIntrinsic("textureStore", call);
+            return this->assembleSimpleIntrinsic("textureStore", call,
+                                                 /*wgslOnlySupportsHighPrecision=*/true);
 
         case k_unpackHalf2x16_IntrinsicKind:
             return this->assembleSimpleIntrinsic("unpack2x16float", call);
@@ -3356,64 +3538,83 @@ std::string WGSLCodeGenerator::assembleIntrinsicCall(const FunctionCall& call,
     }
 }
 
-static constexpr char kInverse2x2[] =
-     "fn mat2_inverse(m: mat2x2<f32>) -> mat2x2<f32> {"
-"\n"     "return mat2x2<f32>(m[1].y, -m[0].y, -m[1].x, m[0].x) * (1/determinant(m));"
-"\n" "}"
-"\n";
+static std::string generate_inverse2x2(const char* scalarName, const char* suffix) {
+    return SkSL::String::printf(
+            "fn inverse_2x2%s(m: mat2x2<%s>) -> mat2x2<%s> {\n"
+                "return mat2x2<%s>(m[1].y, -m[0].y, -m[1].x, m[0].x) * (1/determinant(m));\n"
+            "}\n", suffix, scalarName, scalarName, scalarName);
+}
 
-static constexpr char kInverse3x3[] =
-     "fn mat3_inverse(m: mat3x3<f32>) -> mat3x3<f32> {"
-"\n"     "let a00 = m[0].x; let a01 = m[0].y; let a02 = m[0].z;"
-"\n"     "let a10 = m[1].x; let a11 = m[1].y; let a12 = m[1].z;"
-"\n"     "let a20 = m[2].x; let a21 = m[2].y; let a22 = m[2].z;"
-"\n"     "let b01 =  a22*a11 - a12*a21;"
-"\n"     "let b11 = -a22*a10 + a12*a20;"
-"\n"     "let b21 =  a21*a10 - a11*a20;"
-"\n"     "let det = a00*b01 + a01*b11 + a02*b21;"
-"\n"     "return mat3x3<f32>(b01, (-a22*a01 + a02*a21), ( a12*a01 - a02*a11),"
-"\n"                        "b11, ( a22*a00 - a02*a20), (-a12*a00 + a02*a10),"
-"\n"                        "b21, (-a21*a00 + a01*a20), ( a11*a00 - a01*a10)) * (1/det);"
-"\n" "}"
-"\n";
+static std::string generate_inverse3x3(const char* scalarName, const char* suffix) {
+    return SkSL::String::printf(
+            "fn inverse_3x3%s(m: mat3x3<%s>) -> mat3x3<%s> {\n"
+                "let a00 = m[0].x; let a01 = m[0].y; let a02 = m[0].z;\n"
+                "let a10 = m[1].x; let a11 = m[1].y; let a12 = m[1].z;\n"
+                "let a20 = m[2].x; let a21 = m[2].y; let a22 = m[2].z;\n"
+                "let b01 =  a22*a11 - a12*a21;\n"
+                "let b11 = -a22*a10 + a12*a20;\n"
+                "let b21 =  a21*a10 - a11*a20;\n"
+                "let det = a00*b01 + a01*b11 + a02*b21;\n"
+                "return mat3x3<%s>(b01, (-a22*a01 + a02*a21), ( a12*a01 - a02*a11),\n"
+                                  "b11, ( a22*a00 - a02*a20), (-a12*a00 + a02*a10),\n"
+                                  "b21, (-a21*a00 + a01*a20), ( a11*a00 - a01*a10)) * (1/det);\n"
+            "}\n", suffix, scalarName, scalarName, scalarName);
+}
 
-static constexpr char kInverse4x4[] =
-     "fn mat4_inverse(m: mat4x4<f32>) -> mat4x4<f32>{"
-"\n"     "let a00 = m[0].x; let a01 = m[0].y; let a02 = m[0].z; let a03 = m[0].w;"
-"\n"     "let a10 = m[1].x; let a11 = m[1].y; let a12 = m[1].z; let a13 = m[1].w;"
-"\n"     "let a20 = m[2].x; let a21 = m[2].y; let a22 = m[2].z; let a23 = m[2].w;"
-"\n"     "let a30 = m[3].x; let a31 = m[3].y; let a32 = m[3].z; let a33 = m[3].w;"
-"\n"     "let b00 = a00*a11 - a01*a10;"
-"\n"     "let b01 = a00*a12 - a02*a10;"
-"\n"     "let b02 = a00*a13 - a03*a10;"
-"\n"     "let b03 = a01*a12 - a02*a11;"
-"\n"     "let b04 = a01*a13 - a03*a11;"
-"\n"     "let b05 = a02*a13 - a03*a12;"
-"\n"     "let b06 = a20*a31 - a21*a30;"
-"\n"     "let b07 = a20*a32 - a22*a30;"
-"\n"     "let b08 = a20*a33 - a23*a30;"
-"\n"     "let b09 = a21*a32 - a22*a31;"
-"\n"     "let b10 = a21*a33 - a23*a31;"
-"\n"     "let b11 = a22*a33 - a23*a32;"
-"\n"     "let det = b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06;"
-"\n"     "return mat4x4<f32>(a11*b11 - a12*b10 + a13*b09,"
-"\n"                        "a02*b10 - a01*b11 - a03*b09,"
-"\n"                        "a31*b05 - a32*b04 + a33*b03,"
-"\n"                        "a22*b04 - a21*b05 - a23*b03,"
-"\n"                        "a12*b08 - a10*b11 - a13*b07,"
-"\n"                        "a00*b11 - a02*b08 + a03*b07,"
-"\n"                        "a32*b02 - a30*b05 - a33*b01,"
-"\n"                        "a20*b05 - a22*b02 + a23*b01,"
-"\n"                        "a10*b10 - a11*b08 + a13*b06,"
-"\n"                        "a01*b08 - a00*b10 - a03*b06,"
-"\n"                        "a30*b04 - a31*b02 + a33*b00,"
-"\n"                        "a21*b02 - a20*b04 - a23*b00,"
-"\n"                        "a11*b07 - a10*b09 - a12*b06,"
-"\n"                        "a00*b09 - a01*b07 + a02*b06,"
-"\n"                        "a31*b01 - a30*b03 - a32*b00,"
-"\n"                        "a20*b03 - a21*b01 + a22*b00) * (1/det);"
-"\n" "}"
-"\n";
+static std::string generate_inverse4x4(const char* scalarName, const char* suffix) {
+    return SkSL::String::printf(
+            "fn inverse_4x4%s(m: mat4x4<%s>) -> mat4x4<%s>{\n"
+                "let a00 = m[0].x; let a01 = m[0].y; let a02 = m[0].z; let a03 = m[0].w;\n"
+                "let a10 = m[1].x; let a11 = m[1].y; let a12 = m[1].z; let a13 = m[1].w;\n"
+                "let a20 = m[2].x; let a21 = m[2].y; let a22 = m[2].z; let a23 = m[2].w;\n"
+                "let a30 = m[3].x; let a31 = m[3].y; let a32 = m[3].z; let a33 = m[3].w;\n"
+                "let b00 = a00*a11 - a01*a10;\n"
+                "let b01 = a00*a12 - a02*a10;\n"
+                "let b02 = a00*a13 - a03*a10;\n"
+                "let b03 = a01*a12 - a02*a11;\n"
+                "let b04 = a01*a13 - a03*a11;\n"
+                "let b05 = a02*a13 - a03*a12;\n"
+                "let b06 = a20*a31 - a21*a30;\n"
+                "let b07 = a20*a32 - a22*a30;\n"
+                "let b08 = a20*a33 - a23*a30;\n"
+                "let b09 = a21*a32 - a22*a31;\n"
+                "let b10 = a21*a33 - a23*a31;\n"
+                "let b11 = a22*a33 - a23*a32;\n"
+                "let det = b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06;\n"
+                "return mat4x4<%s>(a11*b11 - a12*b10 + a13*b09,\n"
+                                  "a02*b10 - a01*b11 - a03*b09,\n"
+                                  "a31*b05 - a32*b04 + a33*b03,\n"
+                                  "a22*b04 - a21*b05 - a23*b03,\n"
+                                  "a12*b08 - a10*b11 - a13*b07,\n"
+                                  "a00*b11 - a02*b08 + a03*b07,\n"
+                                  "a32*b02 - a30*b05 - a33*b01,\n"
+                                  "a20*b05 - a22*b02 + a23*b01,\n"
+                                  "a10*b10 - a11*b08 + a13*b06,\n"
+                                  "a01*b08 - a00*b10 - a03*b06,\n"
+                                  "a30*b04 - a31*b02 + a33*b00,\n"
+                                  "a21*b02 - a20*b04 - a23*b00,\n"
+                                  "a11*b07 - a10*b09 - a12*b06,\n"
+                                  "a00*b09 - a01*b07 + a02*b06,\n"
+                                  "a31*b01 - a30*b03 - a32*b00,\n"
+                                  "a20*b03 - a21*b01 + a22*b00) * (1/det);\n"
+            "}\n", suffix, scalarName, scalarName, scalarName);
+}
+
+// Generates outer_product_$Cx$R(vec$R<f32}>, vec$C<f32>) -> mat$Cx$R<f32> or its f16 variant.
+static std::string gen_outer_product_fn(const char* scalarName, const char* suffix, int c, int r) {
+    return String::printf(
+            "fn outer_product_%dx%d%s(a: vec%d<%s>, b: vec%d<%s>) -> mat%dx%d<%s> {\n"
+                "var m : mat%dx%d<%s>;\n"
+                "for (var c = 0; c < %d; c++) { m[c] = a * b[c]; }\n"
+                "return m;\n"
+            "}\n",
+            /* outer_product_$Cx$R$s */ c, r, suffix,
+            /* vec$R */ r, scalarName,
+            /* vec$C */ c, scalarName,
+            /* mat$Cx$R */ c, r, scalarName,
+            /* mat$Cx$R */ c, r, scalarName,
+            /* c < $C */ c);
+}
 
 std::string WGSLCodeGenerator::assembleInversePolyfill(const FunctionCall& call) {
     const ExpressionArray& arguments = call.arguments();
@@ -3426,32 +3627,50 @@ std::string WGSLCodeGenerator::assembleInversePolyfill(const FunctionCall& call)
     SkASSERT(type.isMatrix());
     SkASSERT(type.rows() == type.columns());
 
-    switch (type.slotCount()) {
-        case 4:
-            if (!fWrittenInverse2) {
-                fWrittenInverse2 = true;
-                fHeader.writeText(kInverse2x2);
-            }
-            return this->assembleSimpleIntrinsic("mat2_inverse", call);
+    const bool useF16 = type_is_low_precision(type, fContext);
+    WrittenPolyfills* polyfill = useF16 ? &fF16Polyfills : &fF32Polyfills;
+    const char* typeName       = useF16 ? "f16"          : "f32";
+    const char* suffix         = useF16 ? "h"            : "f";
 
-        case 9:
-            if (!fWrittenInverse3) {
-                fWrittenInverse3 = true;
-                fHeader.writeText(kInverse3x3);
-            }
-            return this->assembleSimpleIntrinsic("mat3_inverse", call);
-
-        case 16:
-            if (!fWrittenInverse4) {
-                fWrittenInverse4 = true;
-                fHeader.writeText(kInverse4x4);
-            }
-            return this->assembleSimpleIntrinsic("mat4_inverse", call);
-
-        default:
-            // We only support square matrices.
-            SkUNREACHABLE;
+    const int idx = type.rows() - 2;
+    if (!polyfill->fInverse[idx]) {
+        using InverseGenFn = std::string(*)(const char*, const char*);
+        static constexpr std::array<InverseGenFn, 3> kTemplates{generate_inverse2x2,
+                                                                generate_inverse3x3,
+                                                                generate_inverse4x4};
+        polyfill->fInverse[idx] = true;
+        fHeader.writeText(kTemplates[idx](typeName, suffix).c_str());
     }
+    return this->assembleSimpleIntrinsic(String::printf("inverse_%dx%d%s",
+                                                        type.rows(), type.columns(), suffix), call);
+}
+
+std::string WGSLCodeGenerator::assembleOuterProductPolyfill(const FunctionCall& call) {
+    // The outer product should take two vector arguments, with the first type's component count
+    // defining R and the second type's component count defining C.
+    const ExpressionArray& arguments = call.arguments();
+    SkASSERT(arguments.size() == 2);
+    SkASSERT(arguments[0]->type().isVector() && arguments[1]->type().isVector());
+    SkASSERT(call.type().isMatrix());
+
+    const int r = arguments[0]->type().columns();
+    const int c = arguments[1]->type().columns();
+    SkASSERT(r == call.type().rows() && c == call.type().columns());
+
+    const bool useF16 = type_is_low_precision(call.type(), fContext);
+    WrittenPolyfills* polyfill = useF16 ? &fF16Polyfills : &fF32Polyfills;
+    const char* typeName       = useF16 ? "f16"          : "f32";
+    const char* suffix         = useF16 ? "h"            : "f";
+
+    const int cIdx = c - 2;
+    const int rIdx = r - 2;
+    if (!polyfill->fOuterProduct[cIdx][rIdx]) {
+        polyfill->fOuterProduct[cIdx][rIdx] = true;
+        fHeader.writeText(gen_outer_product_fn(typeName, suffix, c, r).c_str());
+    }
+
+    return this->assembleSimpleIntrinsic(String::printf("outer_product_%dx%d%s",
+                                                        c, r, suffix), call);
 }
 
 std::string WGSLCodeGenerator::assembleFunctionCall(const FunctionCall& call,
@@ -3459,9 +3678,28 @@ std::string WGSLCodeGenerator::assembleFunctionCall(const FunctionCall& call,
     const FunctionDeclaration& func = call.function();
     std::string result;
 
+    // Helper for wrapping user and intrinsic function calls that might have side effects.
+    auto emitCall = [&](const std::string& expr, bool forceLet=false) {
+        if (call.type().isVoid() || parentPrecedence >= Precedence::kStatement) {
+            // If this is true, the assembled expression won't be used directly by the caller, so we
+            // need to write it out as its own statement to preserve any side effects.
+            SkASSERT(parentPrecedence >= Precedence::kSequence);
+            this->write(expr);
+            this->writeLine(";");
+            return std::string(); // Will be unused
+        } else if (forceLet) {
+            // The function call is used by the caller, but we need to write the actual call *now*
+            // before additional statements.
+            return this->writeScratchLet(expr);
+        } else {
+            // Can inline the call's expression into the caller's expression
+            return expr;
+        }
+    };
+
     // Many intrinsics need to be rewritten in WGSL.
     if (func.isIntrinsic()) {
-        return this->assembleIntrinsicCall(call, func.intrinsicKind(), parentPrecedence);
+        return emitCall(this->assembleIntrinsicCall(call, func.intrinsicKind(), parentPrecedence));
     }
 
     // We implement function out-parameters by declaring them as pointers. SkSL follows GLSL's
@@ -3486,6 +3724,7 @@ std::string WGSLCodeGenerator::assembleFunctionCall(const FunctionCall& call,
     writeback.reserve_exact(args.size());
     substituteArgument.reserve_exact(args.size());
 
+    bool needsWriteback = false;
     for (int index = 0; index < args.size(); ++index) {
         if (params[index]->modifierFlags() & ModifierFlag::kOut) {
             std::unique_ptr<LValue> lvalue = this->makeLValue(*args[index]);
@@ -3498,6 +3737,7 @@ std::string WGSLCodeGenerator::assembleFunctionCall(const FunctionCall& call,
                 substituteArgument.push_back(this->writeScratchVar(args[index]->type()));
             }
             writeback.push_back(std::move(lvalue));
+            needsWriteback = true;
         } else {
             substituteArgument.push_back(std::string());
             writeback.push_back(nullptr);
@@ -3547,21 +3787,15 @@ std::string WGSLCodeGenerator::assembleFunctionCall(const FunctionCall& call,
     }
     expr += ')';
 
-    if (call.type().isVoid()) {
-        // Making function calls that result in `void` is only valid in on the left side of a
-        // comma-sequence, or in a top-level statement. Emit the function call as a top-level
-        // statement and return an empty string, as the result will not be used.
-        SkASSERT(parentPrecedence >= Precedence::kSequence);
-        this->write(expr);
-        this->writeLine(";");
-    } else {
-        result = this->writeScratchLet(expr);
-    }
+    // If we have to write substitutions after the function call, we have to force the function call
+    // into a scratch let so that variable can be returned as the expression.
+    result = emitCall(expr, /*forceLet=*/needsWriteback);
 
-    // Write the substitute arguments back into their lvalues.
-    for (int index = 0; index < args.size(); ++index) {
-        if (!substituteArgument[index].empty()) {
-            this->writeLine(writeback[index]->store(substituteArgument[index]));
+    if (needsWriteback) {
+        for (int index = 0; index < args.size(); ++index) {
+            if (!substituteArgument[index].empty()) {
+                this->writeLine(writeback[index]->store(substituteArgument[index]));
+            }
         }
     }
 
@@ -3571,14 +3805,20 @@ std::string WGSLCodeGenerator::assembleFunctionCall(const FunctionCall& call,
 
 std::string WGSLCodeGenerator::assembleIndexExpression(const IndexExpression& i) {
     // Put the index value into a let-expression.
-    std::string idx = this->writeNontrivialScratchLet(*i.index(), Precedence::kExpression);
+    std::string idx = this->assembleExpression(*i.index(), Precedence::kExpression,
+                                               kUsedMultipleTimes);
     return this->assembleExpression(*i.base(), Precedence::kPostfix) + "[" + idx + "]";
 }
 
 std::string WGSLCodeGenerator::assembleLiteral(const Literal& l) {
     const Type& type = l.type();
     if (type.isFloat() || type.isBoolean()) {
-        return l.description(OperatorPrecedence::kExpression);
+        std::string value = l.description(OperatorPrecedence::kExpression);
+        if (type_is_low_precision(type, fContext)) {
+            SkASSERT(type.isFloat());
+            value += "h";
+        }
+        return value;
     }
     SkASSERT(type.isInteger());
     if (type.matches(*fContext.fTypes.fUInt)) {
@@ -3717,19 +3957,6 @@ std::string WGSLCodeGenerator::writeScratchLet(const std::string& expr,
     return scratchVarName;
 }
 
-std::string WGSLCodeGenerator::writeScratchLet(const Expression& expr,
-                                               Precedence parentPrecedence) {
-    return this->writeScratchLet(this->assembleExpression(expr, parentPrecedence));
-}
-
-std::string WGSLCodeGenerator::writeNontrivialScratchLet(const Expression& expr,
-                                                         Precedence parentPrecedence) {
-    std::string result = this->assembleExpression(expr, parentPrecedence);
-    return is_nontrivial_expression(expr)
-                   ? this->writeScratchLet(result, Analysis::IsCompileTimeConstant(expr))
-                   : result;
-}
-
 std::string WGSLCodeGenerator::assembleTernaryExpression(const TernaryExpression& t,
                                                          Precedence parentPrecedence) {
     std::string expr;
@@ -3844,6 +4071,30 @@ std::string WGSLCodeGenerator::variableReferenceNameForLValue(const VariableRefe
         return "(*" + this->assembleName(v.mangledName()) + ')';
     }
 
+    if (is_in_global_uniforms(v)) {
+        // Assemble polyfill access (see assembleFieldAccess)
+        SkASSERT(fSyntheticGlobalUniformsBlock);
+        FieldPolyfillInfo* polyfillInfo = nullptr;
+        const Type& globalStruct = fSyntheticGlobalUniformsBlock->var()->type().componentType();
+        for (const Field& f : globalStruct.fields()) {
+            if (f.fName == v.name()) {
+                polyfillInfo = fFieldPolyfillMap.find(&f);
+                SkASSERT(polyfillInfo);
+                break;
+            }
+        }
+
+        if (polyfillInfo) {
+            // We found a global variable declaration that had to be polyfilled, so switch to its
+            // replacement expression. This is simpler than assembleFieldAccess() because we don't
+            // need to worry about index expressions.
+            polyfillInfo->fWasAccessed = true;
+            return polyfillInfo->fReplacementName;
+        }
+
+        // Fall through for a regular global variable access
+    }
+
     return this->variablePrefix(v) + this->assembleName(v.mangledName());
 }
 
@@ -3903,7 +4154,8 @@ std::string WGSLCodeGenerator::assembleConstructorCompoundVector(const Construct
             SkASSERT(arg.type().columns() == 2);
             SkASSERT(arg.type().rows() == 2);
 
-            std::string matrix = this->writeNontrivialScratchLet(arg, Precedence::kPostfix);
+            std::string matrix = this->assembleExpression(arg, Precedence::kPostfix,
+                                                          kUsedMultipleTimes);
             return String::printf("%s(%s[0], %s[1])", to_wgsl_type(fContext, c.type()).c_str(),
                                                       matrix.c_str(),
                                                       matrix.c_str());
@@ -3924,7 +4176,8 @@ std::string WGSLCodeGenerator::assembleConstructorCompoundMatrix(const Construct
             expr += separator();
             expr += this->assembleExpression(*arg, Precedence::kSequence);
         } else {
-            std::string inner = this->writeNontrivialScratchLet(*arg, Precedence::kSequence);
+            std::string inner = this->assembleExpression(*arg, Precedence::kSequence,
+                                                         kUsedMultipleTimes);
             int numSlots = arg->type().slotCount();
             for (int slot = 0; slot < numSlots; ++slot) {
                 String::appendf(&expr, "%s%s[%d]", separator().c_str(), inner.c_str(), slot);
@@ -3941,7 +4194,8 @@ std::string WGSLCodeGenerator::assembleConstructorDiagonalMatrix(
     SkASSERT(c.argument()->type().isScalar());
 
     // Evaluate the inner-expression, creating a scratch variable if necessary.
-    std::string inner = this->writeNontrivialScratchLet(*c.argument(), Precedence::kAssignment);
+    std::string inner = this->assembleExpression(*c.argument(), Precedence::kAssignment,
+                                                 kUsedMultipleTimes);
 
     // Assemble a diagonal-matrix expression.
     std::string expr = to_wgsl_type(fContext, type) + '(';
@@ -3961,7 +4215,8 @@ std::string WGSLCodeGenerator::assembleConstructorDiagonalMatrix(
 
 std::string WGSLCodeGenerator::assembleConstructorMatrixResize(
         const ConstructorMatrixResize& ctor) {
-    std::string source = this->writeNontrivialScratchLet(*ctor.argument(), Precedence::kSequence);
+    std::string source = this->assembleExpression(*ctor.argument(), Precedence::kSequence,
+                                                  kUsedMultipleTimes);
     int columns = ctor.type().columns();
     int rows = ctor.type().rows();
     int sourceColumns = ctor.argument()->type().columns();
@@ -3983,6 +4238,39 @@ std::string WGSLCodeGenerator::assembleConstructorMatrixResize(
     }
 
     return expr + ')';
+}
+
+std::string WGSLCodeGenerator::assembleConstructorArrayCast(const ConstructorArrayCast& ctor,
+                                                            Precedence parentPrecedence) {
+    SkASSERT(!ctor.type().isUnsizedArray()); // Can't iterate over unbounded elements
+
+    // Our SkSL -> WGSL conversion only distinguishes f16 and f32, so any other array cast turns
+    // into equivalent types in WGSL. Check the component type of the ctor and arg, since those are
+    // both array types, which has to be peeled away.
+    if (to_wgsl_type(fContext, ctor.type().componentType()) ==
+        to_wgsl_type(fContext, ctor.argument()->type().componentType())) {
+        return this->assembleExpression(*ctor.argument(), parentPrecedence);
+    }
+
+    // Construct a new array of the ctor's type
+    std::string expr = to_wgsl_type(fContext, ctor.type());
+    expr += "(";
+
+    std::string elemType = to_wgsl_type(fContext, ctor.type().componentType());
+    std::string arrayArg = this->assembleExpression(*ctor.argument(),
+                                                    Precedence::kPostfix,
+                                                    AssembleMode::kUsedMultipleTimes);
+
+    // Each value of the new array is a cast of an element from the ctor's argument.
+    int arrayLen = ctor.type().columns();
+    auto separator = String::Separator();
+    for (int i = 0; i < arrayLen; ++i) {
+        expr += separator();
+        String::appendf(&expr, "%s(%s[%d])", elemType.c_str(), arrayArg.c_str(), i);
+    }
+
+    expr += ")";
+    return expr;
 }
 
 std::string WGSLCodeGenerator::assembleEqualityExpression(const Type& left,
@@ -4078,16 +4366,13 @@ std::string WGSLCodeGenerator::assembleEqualityExpression(const Expression& left
                                                           const Expression& right,
                                                           Operator op,
                                                           Precedence parentPrecedence) {
-    std::string leftName, rightName;
-    if (left.type().isScalar() || left.type().isVector()) {
-        // WGSL supports scalar and vector comparisons natively. We know the expressions will only
-        // be emitted once, so there isn't a benefit to creating a let-declaration.
-        leftName = this->assembleExpression(left, Precedence::kParentheses);
-        rightName = this->assembleExpression(right, Precedence::kParentheses);
-    } else {
-        leftName = this->writeNontrivialScratchLet(left, Precedence::kAssignment);
-        rightName = this->writeNontrivialScratchLet(right, Precedence::kAssignment);
-    }
+    // WGSL supports scalar and vector comparisons natively. We know the expressions will only
+    // be emitted once in that case. Every other case will be poly-filled, resulting in referencing
+    // the left and right expressions multiple times.
+    AssembleMode mode = !left.type().isScalar() && !left.type().isVector() ?
+            kUsedMultipleTimes : kAuto;
+    std::string leftName = this->assembleExpression(left, Precedence::kParentheses, mode);
+    std::string rightName = this->assembleExpression(right, Precedence::kParentheses, mode);
     return this->assembleEqualityExpression(left.type(), leftName, right.type(), rightName,
                                             op, parentPrecedence);
 }
@@ -4239,8 +4524,6 @@ void WGSLCodeGenerator::writeModifiersDeclaration(const ModifiersDeclaration& mo
 void WGSLCodeGenerator::writeFields(SkSpan<const Field> fields, const MemoryLayout* memoryLayout) {
     fIndentation++;
 
-    // TODO(skbug.com/40045444): array uniforms may need manual fixup for std140 padding. (Those uniforms
-    // will also need special handling when they are accessed, or passed to functions.)
     for (size_t index = 0; index < fields.size(); ++index) {
         const Field& field = fields[index];
         if (memoryLayout && !memoryLayout->isSupported(*field.fType)) {
@@ -4281,6 +4564,7 @@ void WGSLCodeGenerator::writeFields(SkSpan<const Field> fields, const MemoryLayo
                 this->write("_skMatrix");
                 this->write(std::to_string(field.fType->columns()));
                 this->write(std::to_string(field.fType->rows()));
+                this->write(type_is_low_precision(*field.fType, fContext) ? "h" : "f");
             } else {
                 SkDEBUGFAILF("need polyfill for %s", info->fReplacementName.c_str());
             }
@@ -4297,11 +4581,12 @@ void WGSLCodeGenerator::writeEnables() {
     this->writeLine("diagnostic(off, derivative_uniformity);");
     this->writeLine("diagnostic(off, chromium.unreachable_code);");
 
+    if (!fContext.fConfig->fSettings.fForceHighPrecision) {
+        // Always turn on f16, even if technically a given program might not use half values.
+        this->writeLine("enable f16;");
+    }
     if (fRequirements.fPixelLocalExtension) {
         this->writeLine("enable chromium_experimental_pixel_local;");
-    }
-    if (fRequirements.fPushConstantExtension) {
-        this->writeLine("enable chromium_experimental_immediate;");
     }
     if (fProgram.fInterface.fUseLastFragColor) {
         this->writeLine("enable chromium_experimental_framebuffer_fetch;");
@@ -4462,99 +4747,117 @@ void WGSLCodeGenerator::writeUniformsAndBuffers() {
         if (!e->is<InterfaceBlock>()) {
             continue;
         }
-        const InterfaceBlock& ib = e->as<InterfaceBlock>();
-
-        // Determine if this interface block holds uniforms, buffers, or something else (skip it).
-        std::string_view addressSpace;
-        std::string_view accessMode;
-        MemoryLayout::Standard nativeLayout;
-        const bool isPushConstant =
-                static_cast<bool>(ib.var()->layout().fFlags & LayoutFlag::kPushConstant);
-        if (ib.var()->modifierFlags().isUniform()) {
-            if (isPushConstant) {
-                addressSpace = "immediate";
-            } else {
-                addressSpace = "uniform";
-            }
-            nativeLayout = MemoryLayout::Standard::kWGSLUniform_Base;
-        } else if (ib.var()->modifierFlags().isBuffer()) {
-            addressSpace = "storage";
-            nativeLayout = MemoryLayout::Standard::kWGSLStorage_Base;
-            accessMode = ib.var()->modifierFlags().isReadOnly() ? ", read" : ", read_write";
-        } else {
-            continue;
-        }
-
-        // If we have an anonymous interface block, assign a name like `_uniform0` or `_storage1`.
-        std::string instanceName;
-        if (ib.instanceName().empty()) {
-            instanceName = "_" + std::string(addressSpace) + std::to_string(fScratchCount++);
-            fInterfaceBlockNameMap[&ib.var()->type().componentType()] = instanceName;
-        } else {
-            instanceName = std::string(ib.instanceName());
-        }
-
-        this->prepareUniformPolyfillsForInterfaceBlock(&ib, instanceName, nativeLayout);
-
-        // Create a struct to hold all of the fields from this InterfaceBlock.
-        SkASSERT(!ib.typeName().empty());
-        this->write("struct ");
-        this->write(ib.typeName());
-        this->writeLine(" {");
-
-        // Find the struct type and fields used by this interface block.
-        const Type& ibType = ib.var()->type().componentType();
-        SkASSERT(ibType.isStruct());
-
-        SkSpan<const Field> ibFields = ibType.fields();
-        SkASSERT(!ibFields.empty());
-
-        MemoryLayout layout(MemoryLayout::Standard::k140);
-        this->writeFields(ibFields, &layout);
-        this->writeLine("};");
-        if (!isPushConstant) {
-            this->write("@group(");
-            this->write(std::to_string(std::max(0, ib.var()->layout().fSet)));
-            this->write(") @binding(");
-            this->write(std::to_string(std::max(0, ib.var()->layout().fBinding)));
-            this->write(") ");
-        }
-        this->write("var<");
-        this->write(addressSpace);
-        this->write(accessMode);
-        this->write("> ");
-        this->write(instanceName);
-        this->write(" : ");
-        this->write(to_wgsl_type(fContext, ib.var()->type(), &ib.var()->layout()));
-        this->writeLine(";");
+        this->writeInterfaceBlock(e->as<InterfaceBlock>());
     }
 }
 
-void WGSLCodeGenerator::writeNonBlockUniformsForTests() {
-    bool declaredUniformsStruct = false;
+void WGSLCodeGenerator::writeInterfaceBlock(const InterfaceBlock& ib) {
+    // Determine if this interface block holds uniforms, buffers, or something else (skip it).
+    std::string_view addressSpace;
+    std::string_view accessMode;
+    MemoryLayout::Standard nativeLayout;
+    const bool isPushConstant =
+            static_cast<bool>(ib.var()->layout().fFlags & LayoutFlag::kPushConstant);
+    if (ib.var()->modifierFlags().isUniform()) {
+        if (isPushConstant) {
+            addressSpace = "immediate";
+        } else {
+            addressSpace = "uniform";
+        }
+        nativeLayout = fContext.fConfig->fSettings.fForceHighPrecision
+                ? MemoryLayout::Standard::kWGSLUniform_Base
+                : MemoryLayout::Standard::kWGSLUniform_EnableF16;
+    } else if (ib.var()->modifierFlags().isBuffer()) {
+        addressSpace = "storage";
+        nativeLayout = fContext.fConfig->fSettings.fForceHighPrecision
+                ? MemoryLayout::Standard::kWGSLStorage_Base
+                : MemoryLayout::Standard::kWGSLStorage_EnableF16;
+        accessMode = ib.var()->modifierFlags().isReadOnly() ? ", read" : ", read_write";
+    } else {
+        return;
+    }
 
+    // If we have an anonymous interface block, assign a name like `_uniform0` or `_storage1`.
+    std::string instanceName;
+    if (ib.instanceName().empty()) {
+        instanceName = "_" + std::string(addressSpace) + std::to_string(fScratchCount++);
+        fInterfaceBlockNameMap[&ib.var()->type().componentType()] = instanceName;
+    } else {
+        instanceName = std::string(ib.instanceName());
+    }
+
+    this->prepareUniformPolyfillsForInterfaceBlock(&ib, instanceName, nativeLayout);
+
+    // Create a struct to hold all of the fields from this InterfaceBlock.
+    SkASSERT(!ib.typeName().empty());
+    this->write("struct ");
+    this->write(ib.typeName());
+    this->writeLine(" {");
+
+    // Find the struct type and fields used by this interface block.
+    const Type& ibType = ib.var()->type().componentType();
+    SkASSERT(ibType.isStruct());
+
+    SkSpan<const Field> ibFields = ibType.fields();
+    SkASSERT(!ibFields.empty());
+
+    MemoryLayout layout(MemoryLayout::Standard::k140);
+    this->writeFields(ibFields, &layout);
+    this->writeLine("};");
+    if (!isPushConstant) {
+        this->write("@group(");
+        this->write(std::to_string(std::max(0, ib.var()->layout().fSet)));
+        this->write(") @binding(");
+        this->write(std::to_string(std::max(0, ib.var()->layout().fBinding)));
+        this->write(") ");
+    }
+    this->write("var<");
+    this->write(addressSpace);
+    this->write(accessMode);
+    this->write("> ");
+    this->write(instanceName);
+    this->write(" : ");
+    this->write(to_wgsl_type(fContext, ib.var()->type(), &ib.var()->layout()));
+    this->writeLine(";");
+}
+
+void WGSLCodeGenerator::writeNonBlockUniformsForTests() {
+    TArray<Field> globalVarFields;
+    Position globalVarPos;
     for (const ProgramElement* e : fProgram.elements()) {
         if (e->is<GlobalVarDeclaration>()) {
             const GlobalVarDeclaration& decls = e->as<GlobalVarDeclaration>();
             const Variable& var = *decls.varDeclaration().var();
+
             if (is_in_global_uniforms(var)) {
-                if (!declaredUniformsStruct) {
-                    this->write("struct _GlobalUniforms {\n");
-                    declaredUniformsStruct = true;
+                if (globalVarFields.empty()) {
+                    globalVarPos = var.position();
                 }
-                this->write("  ");
-                this->writeVariableDecl(var.layout(), var.type(), var.mangledName(),
-                                        Delimiter::kComma);
+                globalVarFields.push_back(Field(var.position(), var.layout(), ModifierFlag::kNone,
+                                                var.name(), &var.type()));
             }
         }
     }
-    if (declaredUniformsStruct) {
-        int binding = fProgram.fConfig->fSettings.fDefaultUniformBinding;
-        int set = fProgram.fConfig->fSettings.fDefaultUniformSet;
-        this->write("};\n");
-        this->write("@binding(" + std::to_string(binding) + ") ");
-        this->write("@group(" + std::to_string(set) + ") ");
-        this->writeLine("var<uniform> _globalUniforms: _GlobalUniforms;");
+
+    if (!globalVarFields.empty()) {
+        Layout layout{LayoutFlag::kNone, 0, 0, fProgram.fConfig->fSettings.fDefaultUniformBinding, 0,
+                fProgram.fConfig->fSettings.fDefaultUniformSet, 0, 0};
+        Modifiers modifiers{globalVarPos, layout, ModifierFlag::kUniform};
+
+        // Interface blocks (for SkSL) are normally only allowed in fragment, vertex, or compute
+        // programs and not the synthetic SkSL files that are allowed to declare non-block uniforms
+        // Arbitrarily pick kFragment to temporarily override the config kind to pass validations.
+        ProgramKind orig = fContext.fConfig->fKind;
+        fContext.fConfig->fKind = ProgramKind::kFragment;
+        fSyntheticGlobalUniformsBlock = InterfaceBlock::Convert(fContext,
+                                                                globalVarPos,
+                                                                modifiers,
+                                                                "_GlobalUniforms",
+                                                                std::move(globalVarFields),
+                                                                "_globalUniforms",
+                                                                /*arraySize=*/0);
+        this->writeInterfaceBlock(*fSyntheticGlobalUniformsBlock);
+        fContext.fConfig->fKind = orig;
     }
 }
 

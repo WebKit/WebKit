@@ -81,6 +81,12 @@ public:
 #if USE(CAIRO)
     const cairo_font_options_t* fontOptions() const { return m_fontOptions.get(); }
 #elif USE(SKIA)
+    // Custom text settings make text look better at the expense of incorrect blending which is industry standard.
+    static constexpr SkScalar s_textContrast { 0 };
+    static constexpr SkScalar s_textGamma { 1 };
+
+    SkSurfaceProps createSurfaceProps(uint32_t flags = 0) const { return { flags, subpixelOrder(), s_textContrast, s_textGamma }; }
+
     SkFontHinting hinting() const;
     SkFont::Edging antialias() const;
     SkPixelGeometry subpixelOrder() const;

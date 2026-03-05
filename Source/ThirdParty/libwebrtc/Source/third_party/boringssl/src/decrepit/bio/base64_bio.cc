@@ -50,7 +50,7 @@ typedef struct b64_struct {
 static int b64_new(BIO *bio) {
   BIO_B64_CTX *ctx =
       reinterpret_cast<BIO_B64_CTX *>(OPENSSL_zalloc(sizeof(*ctx)));
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return 0;
   }
 
@@ -63,11 +63,11 @@ static int b64_new(BIO *bio) {
 }
 
 static int b64_free(BIO *bio) {
-  if (bio == NULL) {
+  if (bio == nullptr) {
     return 0;
   }
   OPENSSL_free(bio->ptr);
-  bio->ptr = NULL;
+  bio->ptr = nullptr;
   bio->init = 0;
   bio->flags = 0;
   return 1;
@@ -78,12 +78,12 @@ static int b64_read(BIO *b, char *out, int outl) {
   BIO_B64_CTX *ctx;
   uint8_t *p, *q;
 
-  if (out == NULL) {
+  if (out == nullptr) {
     return 0;
   }
   ctx = (BIO_B64_CTX *)b->ptr;
 
-  if (ctx == NULL || b->next_bio == NULL) {
+  if (ctx == nullptr || b->next_bio == nullptr) {
     return 0;
   }
 
@@ -310,7 +310,7 @@ static int b64_write(BIO *b, const char *in, int inl) {
   ctx->buf_off = 0;
   ctx->buf_len = 0;
 
-  if (in == NULL || inl <= 0) {
+  if (in == nullptr || inl <= 0) {
     return 0;
   }
 
@@ -430,7 +430,7 @@ static long b64_ctrl(BIO *b, int cmd, long num, void *ptr) {
     // do a final write
     again:
       while (ctx->buf_len != ctx->buf_off) {
-        i = b64_write(b, NULL, 0);
+        i = b64_write(b, nullptr, 0);
         if (i < 0) {
           return i;
         }
@@ -470,7 +470,7 @@ static long b64_ctrl(BIO *b, int cmd, long num, void *ptr) {
 }
 
 static long b64_callback_ctrl(BIO *b, int cmd, BIO_info_cb *fp) {
-  if (b->next_bio == NULL) {
+  if (b->next_bio == nullptr) {
     return 0;
   }
   return BIO_callback_ctrl(b->next_bio, cmd, fp);

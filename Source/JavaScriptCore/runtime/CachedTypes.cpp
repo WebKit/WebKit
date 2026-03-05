@@ -171,7 +171,7 @@ public:
         for (const auto& page : m_pages)
             memcpySpan(consumeSpan(bufferSpan, page.size()), page.span());
         RELEASE_ASSERT(bufferSpan.empty());
-        return CachedBytecode::create(WTFMove(buffer), WTFMove(m_leafExecutables));
+        return CachedBytecode::create(WTF::move(buffer), WTF::move(m_leafExecutables));
     }
 
 private:
@@ -202,7 +202,7 @@ private:
             return nullptr;
         }
 
-        return CachedBytecode::create(WTFMove(*mappedFileData), WTFMove(m_leafExecutables));
+        return CachedBytecode::create(WTF::move(*mappedFileData), WTF::move(m_leafExecutables));
     }
 
     class Page {
@@ -286,7 +286,7 @@ private:
 
 Decoder::Decoder(VM& vm, Ref<CachedBytecode> cachedBytecode, RefPtr<SourceProvider> provider)
     : m_vm(vm)
-    , m_cachedBytecode(WTFMove(cachedBytecode))
+    , m_cachedBytecode(WTF::move(cachedBytecode))
     , m_provider(provider)
 {
 }
@@ -299,7 +299,7 @@ Decoder::~Decoder()
 
 Ref<Decoder> Decoder::create(VM& vm, Ref<CachedBytecode> cachedBytecode, RefPtr<SourceProvider> provider)
 {
-    return adoptRef(*new Decoder(vm, WTFMove(cachedBytecode), WTFMove(provider)));
+    return adoptRef(*new Decoder(vm, WTF::move(cachedBytecode), WTF::move(provider)));
 }
 
 size_t Decoder::size() const
@@ -311,7 +311,7 @@ ptrdiff_t Decoder::offsetOf(const void* ptr)
 {
     auto* addr = static_cast<const uint8_t*>(ptr);
     auto cachedBytecodeSpan = m_cachedBytecode->span();
-    ASSERT(addr >= cachedBytecodeSpan.data() && addr < cachedBytecodeSpan.data() + cachedBytecodeSpan.size());
+    ASSERT(addr >= cachedBytecodeSpan.data() && addr < std::to_address(cachedBytecodeSpan.end()));
     return addr - cachedBytecodeSpan.data();
 }
 
@@ -756,9 +756,9 @@ public:
             if (m_isRegistered) {
                 String str(buffer);
                 if (m_isPrivate)
-                    symbol = static_cast<SymbolImpl*>(&vm.checkedPrivateSymbolRegistry()->symbolForKey(str).leakRef());
+                    symbol = static_cast<SymbolImpl*>(&protect(vm.privateSymbolRegistry())->symbolForKey(str).leakRef());
                 else
-                    symbol = static_cast<SymbolImpl*>(&vm.checkedSymbolRegistry()->symbolForKey(str).leakRef());
+                    symbol = static_cast<SymbolImpl*>(&protect(vm.symbolRegistry())->symbolForKey(str).leakRef());
             } else if (m_isWellKnownSymbol)
                 symbol = vm.propertyNames->builtinNames().lookUpWellKnownSymbol(buffer);
             else
@@ -783,8 +783,8 @@ public:
         return m_is8Bit ? create(span8()) : create(span16());
     }
 
-    std::span<const Latin1Character> span8() const { return { this->template buffer<Latin1Character>(), m_length }; }
-    std::span<const char16_t> span16() const { return { this->template buffer<char16_t>(), m_length }; }
+    std::span<const Latin1Character> span8() const LIFETIME_BOUND { return { this->template buffer<Latin1Character>(), m_length }; }
+    std::span<const char16_t> span16() const LIFETIME_BOUND { return { this->template buffer<char16_t>(), m_length }; }
 
 private:
     bool m_is8Bit : 1;
@@ -1113,7 +1113,7 @@ public:
             CompactTDZEnvironment::Compact compact;
             m_variables.decode(decoder, compact);
             CompactTDZEnvironment::sortCompact(compact);
-            env.m_variables = CompactTDZEnvironment::Variables(WTFMove(compact));
+            env.m_variables = CompactTDZEnvironment::Variables(WTF::move(compact));
         }
         env.m_hash = m_hash;
     }
@@ -1334,7 +1334,7 @@ public:
         TemplateObjectDescriptor::OptionalStringVector decodedCookedStrings;
         m_rawStrings.decode(decoder, decodedRawStrings);
         m_cookedStrings.decode(decoder, decodedCookedStrings);
-        return JSTemplateObjectDescriptor::create(decoder.vm(), TemplateObjectDescriptor::create(WTFMove(decodedRawStrings), WTFMove(decodedCookedStrings)), m_endOffset);
+        return JSTemplateObjectDescriptor::create(decoder.vm(), TemplateObjectDescriptor::create(WTF::move(decodedRawStrings), WTF::move(decodedCookedStrings)), m_endOffset);
     }
 
 private:
@@ -1486,7 +1486,7 @@ public:
     {
         Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamBufferMalloc> instructionsVector;
         m_instructions.decode(decoder, instructionsVector);
-        return new JSInstructionStream(WTFMove(instructionsVector));
+        return new JSInstructionStream(WTF::move(instructionsVector));
     }
 
 private:
@@ -1649,7 +1649,7 @@ public:
 
         m_data.decode(decoder, decodedData);
 
-        Ref<WebAssemblySourceProvider> sourceProvider = WebAssemblySourceProvider::create(WTFMove(decodedData), decodedSourceOrigin, decodedSourceURL);
+        Ref<WebAssemblySourceProvider> sourceProvider = WebAssemblySourceProvider::create(WTF::move(decodedData), decodedSourceOrigin, decodedSourceURL);
         Base::decode(decoder, sourceProvider.get());
 
         return &sourceProvider.leakRef();
@@ -1789,7 +1789,7 @@ public:
     {
         CompactTDZEnvironmentMap::Handle handle = m_handle.decode(decoder);
         RefPtr<TDZEnvironmentLink> parent = m_parent.decode(decoder);
-        return new TDZEnvironmentLink(WTFMove(handle), WTFMove(parent));
+        return new TDZEnvironmentLink(WTF::move(handle), WTF::move(parent));
     }
 
 private:
@@ -2258,6 +2258,7 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_binaryArithProfiles(cachedCodeBlock.numBinaryArithProfiles())
     , m_unaryArithProfiles(cachedCodeBlock.numUnaryArithProfiles())
 {
+    m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITAfterWarmUp()));
 }
 
 template<typename CodeBlockType>
@@ -2545,7 +2546,7 @@ private:
         ASSERT(tag() == CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag);
         SourceCodeKey decodedKey;
         m_key.decode(decoder, decodedKey);
-        result = { WTFMove(decodedKey), m_codeBlock.decode(decoder) };
+        result = { WTF::move(decodedKey), m_codeBlock.decode(decoder) };
         return true;
     }
 
@@ -2631,8 +2632,13 @@ RefPtr<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCod
 
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
 {
+    MonotonicTime before;
+    size_t cachedBytecodeSize = cachedBytecode->size();
+    if (Options::reportBytecodeCacheDecodeTimes()) [[unlikely]]
+        before = MonotonicTime::now();
+
     auto* cachedEntry = std::bit_cast<const GenericCacheEntry*>(cachedBytecode->span().data());
-    Ref decoder = Decoder::create(vm, WTFMove(cachedBytecode), &key.source().provider());
+    Ref decoder = Decoder::create(vm, WTF::move(cachedBytecode), &key.source().provider());
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
         DeferGC deferGC(vm);
@@ -2641,6 +2647,12 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<Cac
     }
     if (entry.first != key)
         return nullptr;
+
+    if (Options::reportBytecodeCacheDecodeTimes()) [[unlikely]] {
+        MonotonicTime after = MonotonicTime::now();
+        dataLogLn("BytecodeCache: decoded ", key.source().provider().sourceURL(), " (", cachedBytecodeSize, " bytes) in ", (after - before).milliseconds(), " ms.");
+    }
+
     return entry.second;
 }
 
@@ -2650,7 +2662,7 @@ bool isCachedBytecodeStillValid(VM& vm, Ref<CachedBytecode> cachedBytecode, cons
     if (span.empty())
         return false;
     auto* cachedEntry = std::bit_cast<const GenericCacheEntry*>(span.data());
-    Ref decoder = Decoder::create(vm, WTFMove(cachedBytecode));
+    Ref decoder = Decoder::create(vm, WTF::move(cachedBytecode));
     return cachedEntry->isStillValid(decoder.get(), key, tagFromSourceCodeType(type));
 }
 

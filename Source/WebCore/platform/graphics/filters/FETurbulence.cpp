@@ -30,6 +30,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FETurbulenceCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FETurbulence> FETurbulence::create(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace colorSpace)
@@ -110,6 +114,24 @@ bool FETurbulence::setStitchTiles(bool stitch)
 FloatRect FETurbulence::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
+}
+
+OptionSet<FilterRenderingMode> FETurbulence::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FETurbulence::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FETurbulenceCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FETurbulence::createSoftwareApplier() const

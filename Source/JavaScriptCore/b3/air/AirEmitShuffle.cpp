@@ -207,7 +207,7 @@ Vector<Inst> emitShuffle(
                     currentPairs.appendVector(shifts.take(src));
                     continue;
                 }
-                Vector<ShufflePair> pairs = WTFMove(iter->value);
+                Vector<ShufflePair> pairs = WTF::move(iter->value);
                 mapping.remove(iter);
 
                 for (const ShufflePair& pair : pairs) {
@@ -247,7 +247,7 @@ Vector<Inst> emitShuffle(
                     ok = false;
                 
                 if (ok)
-                    rotate.loop = WTFMove(currentPairs);
+                    rotate.loop = WTF::move(currentPairs);
                 else {
                     // This is the slow path. The rotate has fringe.
                     
@@ -281,12 +281,12 @@ Vector<Inst> emitShuffle(
                 // pair list has to have a very particular shape.
                 for (unsigned i = rotate.loop.size() - 1; i--;)
                     ASSERT(rotate.loop[i].dst() == rotate.loop[i + 1].src());
-                rotates.append(WTFMove(rotate));
+                rotates.append(WTF::move(rotate));
                 currentPairs.shrink(0);
             } else {
                 if (AirEmitShuffleInternal::verbose)
                     dataLog("It's a shift.\n");
-                shifts.add(originalSrc, WTFMove(currentPairs));
+                shifts.add(originalSrc, WTF::move(currentPairs));
             }
         }
     }
@@ -324,7 +324,7 @@ Vector<Inst> emitShuffle(
     Vector<Inst> result;
 
     auto commitResult = [&] () {
-        resultPacks.append(WTFMove(result));
+        resultPacks.append(WTF::move(result));
     };
 
     auto getScratch = [&] (unsigned index, Tmp possibleScratch) -> Tmp {

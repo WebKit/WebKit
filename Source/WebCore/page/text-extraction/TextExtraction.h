@@ -39,13 +39,18 @@ enum class ExceptionCode : uint8_t;
 
 namespace TextExtraction {
 
-WEBCORE_EXPORT Item extractItem(Request&&, Page&);
+WEBCORE_EXPORT Result extractItem(Request&&, LocalFrame&);
+
 WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
 
-WEBCORE_EXPORT void handleInteraction(Interaction&&, Page&, CompletionHandler<void(bool, String&&)>&&);
-WEBCORE_EXPORT InteractionDescription interactionDescription(const Interaction&, Page&);
+WEBCORE_EXPORT void handleInteraction(Interaction&&, LocalFrame&, CompletionHandler<void(bool, String&&)>&&);
+WEBCORE_EXPORT InteractionDescription interactionDescription(const Interaction&, LocalFrame&);
 
 WEBCORE_EXPORT std::optional<SimpleRange> rangeForExtractedText(const LocalFrame&, ExtractedText&&);
+WEBCORE_EXPORT RefPtr<Element> elementForExtractedText(const LocalFrame&, ExtractedText&&);
+
+WEBCORE_EXPORT Vector<FilterRule> extractRules(Vector<FilterRuleData>&&);
+WEBCORE_EXPORT void applyRules(const String&, std::optional<NodeIdentifier>&& containerNodeID, const Vector<FilterRule>&, Page&, CompletionHandler<void(const String&)>&&);
 
 struct RenderedText {
     String textWithReplacedContent;

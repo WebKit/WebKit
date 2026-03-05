@@ -34,10 +34,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRProjectionLayer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRProjectionLayer);
 
 XRProjectionLayer::XRProjectionLayer(ScriptExecutionContext& scriptExecutionContext, Ref<XRLayerBacking>&& backing)
-    : XRCompositionLayer(&scriptExecutionContext, WTFMove(backing))
+    : XRCompositionLayer(&scriptExecutionContext, WTF::move(backing))
 {
 }
 
@@ -58,7 +58,7 @@ void XRProjectionLayer::startFrame(PlatformXR::FrameData& data)
     if (frameData->layerSetup && frameData->textureData) {
         m_layerData = frameData;
         auto& textureData = frameData->textureData;
-        m_backing->startFrame(frameData->renderingFrameIndex, WTFMove(textureData->colorTexture.handle), WTFMove(textureData->depthStencilBuffer.handle), WTFMove(frameData->layerSetup->completionSyncEvent), textureData->reusableTextureIndex, WTFMove(frameData->layerSetup->foveationRateMapDesc));
+        m_backing->startFrame(frameData->renderingFrameIndex, WTF::move(textureData->colorTexture.handle), WTF::move(textureData->depthStencilBuffer.handle), WTF::move(frameData->layerSetup->completionSyncEvent), textureData->reusableTextureIndex, WTF::move(frameData->layerSetup->foveationRateMapDesc));
     }
 #else
     UNUSED_PARAM(data);

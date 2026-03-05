@@ -27,7 +27,7 @@
 #include "InlineContentConstrainer.h"
 
 #include "InlineLineBuilder.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <limits>
 #include <ranges>
 #include <wtf/MathExtras.h>
@@ -56,7 +56,7 @@ static const float textWrapPrettyMaxShrink = 3;
 // We would like 2 or more items on the last line for text-wrap-style:pretty to avoid orphans.
 static const size_t lastLinePreferredInlineItemCount = 2;
 
-static size_t lastLineBreakingPointOffset()
+static size_t NODELETE lastLineBreakingPointOffset()
 {
     return 2 * lastLinePreferredInlineItemCount + 1;
 }
@@ -106,7 +106,7 @@ static LayoutUnit computeLineWidthFromSlidingWidth(InlineLayoutUnit indentWidth,
     return LayoutUnit::fromFloatCeil(indentWidth + slidingWidth.width() + LayoutUnit::epsilon());
 }
 
-static bool containsTrailingSoftHyphen(const InlineItem& inlineItem)
+static bool NODELETE containsTrailingSoftHyphen(const InlineItem& inlineItem)
 {
     if (inlineItem.style().hyphens() == Hyphens::None)
         return false;
@@ -123,12 +123,12 @@ static bool containsPreservedTab(const InlineItem& inlineItem)
         return false;
     if (!textItem->isWhitespace())
         return false;
-    const auto& textBox = textItem->inlineTextBox();
+    CheckedRef textBox = textItem->inlineTextBox();
     if (!TextUtil::shouldPreserveSpacesAndTabs(textBox))
         return false;
     auto start = textItem->start();
     auto length = textItem->length();
-    const auto& textContent = textBox.content();
+    const auto& textContent = textBox->content();
     for (size_t index = start; index < start + length; index++) {
         if (textContent[index] == tabCharacter)
             return true;
@@ -138,10 +138,10 @@ static bool containsPreservedTab(const InlineItem& inlineItem)
 
 static bool cannotConstrainInlineItem(const InlineItem& inlineItem)
 {
-    // Opaque items are ignored by inline layout and do not affect constraint calculations.
-    if (inlineItem.isOpaque())
+    // Out-of-flow items are ignored by inline layout and do not affect constraint calculations.
+    if (inlineItem.isOutOfFlow())
         return false;
-    if (!inlineItem.layoutBox().isInlineLevelBox())
+    if (!inlineItem.isText() && !inlineItem.isSoftLineBreak() && !inlineItem.layoutBox().isInlineLevelBox())
         return true;
     if (containsTrailingSoftHyphen(inlineItem))
         return true;
@@ -154,7 +154,7 @@ static bool cannotConstrainInlineItem(const InlineItem& inlineItem)
 
 static PreviousLine buildPreviousLine(size_t lineIndex, LineLayoutResult lineLayoutResult)
 {
-    return PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+    return PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
 }
 
 InlineContentConstrainer::InlineContentConstrainer(InlineFormattingContext& inlineFormattingContext, const InlineItemList& inlineItemList, HorizontalConstraints horizontalConstraints)
@@ -177,8 +177,8 @@ void InlineContentConstrainer::updateCachedWidths()
         auto isWordSeparator = false;
         if (auto* textItem = dynamicDowncast<InlineTextItem>(item))
             isWordSeparator = textItem->isWordSeparator();
-        // Opaque items are ignored by inline layout. Skip over these items.
-        if (!item.isOpaque()) {
+        // Out-of-flow items are ignored by inline layout. Skip over these items.
+        if (!item.isOutOfFlow()) {
             m_inlineItemWidths[i] = m_inlineFormattingContext.formattingUtils().inlineItemWidth(item, 0, false) +  (isWordSeparator ? item.style().usedWordSpacing() : 0.0f);
             m_inlineItemWidthsMax = std::max(m_inlineItemWidthsMax, m_inlineItemWidths[i]);
             m_firstLineStyleInlineItemWidths[i] = m_inlineFormattingContext.formattingUtils().inlineItemWidth(item, 0, true) + (isWordSeparator ? item.firstLineStyle().usedWordSpacing() : 0.0f);
@@ -288,7 +288,7 @@ void InlineContentConstrainer::initialize()
 
         layoutRange.start = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, !lineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !lineLayoutResult.floatContent.placedFloats.isEmpty(), layoutRange.end);
         previousLineEnd = layoutRange.start;
-        isFirstFormattedLineCandidate &= !lineLayoutResult.hasInflowContent();
+        isFirstFormattedLineCandidate &= !lineLayoutResult.hasContentfulInFlowContent();
         previousLine = buildPreviousLine(lineIndex, lineLayoutResult);
         lineIndex++;
     }
@@ -637,13 +637,16 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
                 return { };
             }
 
-            auto newEntry = layoutSingleLineForPretty({ breakOpportunities[lastValidStateIndex.value()], range.endIndex() }, idealLineWidth, state[lastValidStateIndex.value()], lastValidStateIndex.value());
+            auto newEntry = layoutSingleLineForPretty({ breakOpportunities[state[lastValidStateIndex.value()].lineEnd.index], range.endIndex() }, idealLineWidth, state[lastValidStateIndex.value()], lastValidStateIndex.value());
             auto it = std::ranges::find(breakOpportunities, newEntry.lineEnd.index);
             // If hyphenation does not create a valid solution, we should return early.
             if (it == breakOpportunities.end())
                 return { };
             lastValidStateIndex = std::distance(breakOpportunities.begin(), it);
             state[lastValidStateIndex.value()] = newEntry;
+            // If hyphenation does not create a valid solution, we should return early.
+            if (lastValidStateIndex.value() == state[lastValidStateIndex.value()].previousBreakIndex)
+                return { };
         }
 
         // Evaluate all possible lines that break before m_inlineItemList[end]
@@ -698,8 +701,8 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
 
 InlineLayoutUnit InlineContentConstrainer::inlineItemWidth(size_t inlineItemIndex, bool useFirstLineStyle) const
 {
-    // Opaque items are ignored by inline layout. Skip over this item by setting its width to 0.
-    if (m_inlineItemList[inlineItemIndex].isOpaque())
+    // Out-of-flow items are ignored by inline layout. Skip over this item by setting its width to 0.
+    if (m_inlineItemList[inlineItemIndex].isOutOfFlow())
         return { };
     if (m_hasValidInlineItemWidthCache)
         return useFirstLineStyle ? m_firstLineStyleInlineItemWidths[inlineItemIndex] : m_inlineItemWidths[inlineItemIndex];
@@ -710,7 +713,7 @@ InlineLayoutUnit InlineContentConstrainer::inlineItemWidth(size_t inlineItemInde
 bool InlineContentConstrainer::shouldTrimLeading(size_t inlineItemIndex, bool useFirstLineStyle, bool isFirstLineInChunk) const
 {
     auto& inlineItem = m_inlineItemList[inlineItemIndex];
-    auto& style = useFirstLineStyle ? inlineItem.firstLineStyle() : inlineItem.style();
+    CheckedRef style = useFirstLineStyle ? inlineItem.firstLineStyle() : inlineItem.style();
 
     // Handle line break first so we can focus on other types of white space
     if (inlineItem.isLineBreak())
@@ -718,8 +721,8 @@ bool InlineContentConstrainer::shouldTrimLeading(size_t inlineItemIndex, bool us
 
     if (auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
         if (textItem->isWhitespace()) {
-            bool isFirstLineLeadingPreservedWhiteSpace = style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && isFirstLineInChunk;
-            return !isFirstLineLeadingPreservedWhiteSpace && style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
+            bool isFirstLineLeadingPreservedWhiteSpace = style->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && isFirstLineInChunk;
+            return !isFirstLineLeadingPreservedWhiteSpace && style->whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
         }
         return false;
     }
@@ -733,7 +736,7 @@ bool InlineContentConstrainer::shouldTrimLeading(size_t inlineItemIndex, bool us
 bool InlineContentConstrainer::shouldTrimTrailing(size_t inlineItemIndex, bool useFirstLineStyle) const
 {
     auto& inlineItem = m_inlineItemList[inlineItemIndex];
-    auto& style = useFirstLineStyle ? inlineItem.firstLineStyle() : inlineItem.style();
+    CheckedRef style = useFirstLineStyle ? inlineItem.firstLineStyle() : inlineItem.style();
 
     // Handle line break first so we can focus on other types of white space
     if (inlineItem.isLineBreak())
@@ -741,7 +744,7 @@ bool InlineContentConstrainer::shouldTrimTrailing(size_t inlineItemIndex, bool u
 
     if (auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
         if (textItem->isWhitespace())
-            return style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
+            return style->whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
         return false;
     }
 

@@ -33,12 +33,12 @@ namespace WebCore {
 
 Ref<CSSPositionValue> CSSPositionValue::create(CSS::Position&& position)
 {
-    return adoptRef(*new CSSPositionValue(WTFMove(position)));
+    return adoptRef(*new CSSPositionValue(WTF::move(position)));
 }
 
 CSSPositionValue::CSSPositionValue(CSS::Position&& position)
     : CSSValue(ClassType::Position)
-    , m_position(WTFMove(position))
+    , m_position(WTF::move(position))
 {
 }
 
@@ -61,12 +61,12 @@ IterationStatus CSSPositionValue::customVisitChildren(NOESCAPE const Function<It
 
 Ref<CSSPositionXValue> CSSPositionXValue::create(CSS::PositionX&& position)
 {
-    return adoptRef(*new CSSPositionXValue(WTFMove(position)));
+    return adoptRef(*new CSSPositionXValue(WTF::move(position)));
 }
 
 CSSPositionXValue::CSSPositionXValue(CSS::PositionX&& position)
     : CSSValue(ClassType::PositionX)
-    , m_position(WTFMove(position))
+    , m_position(WTF::move(position))
 {
 }
 
@@ -89,12 +89,12 @@ IterationStatus CSSPositionXValue::customVisitChildren(NOESCAPE const Function<I
 
 Ref<CSSPositionYValue> CSSPositionYValue::create(CSS::PositionY&& position)
 {
-    return adoptRef(*new CSSPositionYValue(WTFMove(position)));
+    return adoptRef(*new CSSPositionYValue(WTF::move(position)));
 }
 
 CSSPositionYValue::CSSPositionYValue(CSS::PositionY&& position)
     : CSSValue(ClassType::PositionY)
-    , m_position(WTFMove(position))
+    , m_position(WTF::move(position))
 {
 }
 

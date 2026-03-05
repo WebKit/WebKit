@@ -67,15 +67,18 @@ public:
     };
     const Extensions& extensions() const { return m_extensions; }
 
-#if USE(GBM)
+#if USE(GBM) || OS(ANDROID)
     struct BufferFormat {
         FourCC fourcc { 0 };
+#if USE(GBM)
         Vector<uint64_t, 1> modifiers;
+#endif
     };
     const Vector<BufferFormat>& bufferFormats();
-#if USE(GSTREAMER)
-    const Vector<BufferFormat>& bufferFormatsForVideo();
 #endif
+
+#if USE(GBM) && USE(GSTREAMER)
+    const Vector<BufferFormat>& bufferFormatsForVideo();
 #endif
 
 private:

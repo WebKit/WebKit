@@ -27,7 +27,7 @@
 #include "HTMLInterchange.h"
 
 #include "Editing.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "Text.h"
 #include <wtf/text/MakeString.h>

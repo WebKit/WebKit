@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "Algorithm.h"
 #include "BAssert.h"
 #include "BExport.h"
@@ -40,14 +42,6 @@
 #include <mach/vm_param.h>
 #endif
 
-#if ((BOS(DARWIN) || BOS(LINUX)) && \
-    (BCPU(X86_64) || (BCPU(ARM64) && !defined(__ILP32__) && (!BPLATFORM(IOS_FAMILY) || BPLATFORM(IOS)))))
-#define GIGACAGE_ENABLED 1
-#else
-#define GIGACAGE_ENABLED 0
-#endif
-
-
 namespace Gigacage {
 
 BINLINE const char* name(Kind kind)
@@ -62,7 +56,11 @@ BINLINE const char* name(Kind kind)
     return nullptr;
 }
 
-constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
+#if BPLATFORM(IOS_FAMILY) || BCPU(ADDRESS32)
+constexpr bool hasCapacityToUseLargeGigacage = false;
+#else
+constexpr bool hasCapacityToUseLargeGigacage = true;
+#endif
 
 #if GIGACAGE_ENABLED
 
@@ -128,8 +126,10 @@ BINLINE void* basePtr(Kind kind)
 
 BINLINE void* addressOfBasePtr(Kind kind)
 {
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     RELEASE_BASSERT(kind < NumberOfKinds);
     return &g_gigacageConfig.basePtrs[static_cast<size_t>(kind)];
+BALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 BINLINE constexpr size_t maxSize(Kind kind)
@@ -225,3 +225,5 @@ BINLINE void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 #endif // GIGACAGE_ENABLED
 
 } // namespace Gigacage
+
+#endif

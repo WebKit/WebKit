@@ -23,7 +23,7 @@ layer at (11,93) size 417x47
       text run at (0,1) width 337: "value jgq not clipped"
 layer at (14,173) size 209x23
   RenderBlock {DIV} at (0,0) size 209x23
-    RenderText {#text} at (0,0) size 109x22
+    RenderText {#text} at (0,0) size 109x23
       text run at (0,0) width 109: "Sample Input"
 layer at (388,15) size 40x40
   RenderBlock {DIV} at (377,3) size 40x41 [bgcolor=#000000]

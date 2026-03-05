@@ -53,12 +53,12 @@ ClientKeys ClientKeys::generate()
     };
 }
 
-static bool areClientKeyLengthsValid(const ClientKeys& clientKeys)
+static bool NODELETE areClientKeyLengthsValid(const ClientKeys& clientKeys)
 {
     return clientKeys.clientP256DHKeyPair.publicKey.size() == p256dhPublicKeyLength && clientKeys.clientP256DHKeyPair.privateKey.size() == p256dhPrivateKeyLength && clientKeys.sharedAuthSecret.size() == sharedAuthSecretLength;
 }
 
-static size_t computeAES128GCMPaddingLength(std::span<const uint8_t> data)
+static size_t NODELETE computeAES128GCMPaddingLength(std::span<const uint8_t> data)
 {
     /*
      * Compute padding length as defined in RFC8188 Section 2:
@@ -170,7 +170,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
     if (!plainTextResult)
         return std::nullopt;
 
-    auto plainText = WTFMove(plainTextResult.value());
+    auto plainText = WTF::move(plainTextResult.value());
     size_t paddingLength = computeAES128GCMPaddingLength(plainText.span());
     if (paddingLength == SIZE_MAX)
         return std::nullopt;
@@ -291,7 +291,7 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
     if (!plainTextResult)
         return std::nullopt;
 
-    auto plainText = WTFMove(plainTextResult.value());
+    auto plainText = WTF::move(plainTextResult.value());
     size_t paddingLength = computeAESGCMPaddingLength(plainText.span());
     if (paddingLength == SIZE_MAX)
         return std::nullopt;

@@ -45,7 +45,7 @@ public:
     virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate) = 0;
     virtual ~AbstractLineBuilder() { };
 
-    void setIntrinsicWidthMode(IntrinsicWidthMode);
+    void NODELETE setIntrinsicWidthMode(IntrinsicWidthMode);
 
 protected:
     AbstractLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
@@ -64,9 +64,10 @@ protected:
     InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const HorizontalConstraints& rootHorizontalConstraints() const { return m_rootHorizontalConstraints; }
-    const InlineLayoutState& layoutState() const;
-    InlineLayoutState& layoutState();
+    const InlineLayoutState& NODELETE layoutState() const;
+    InlineLayoutState& NODELETE layoutState();
     const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
+    BlockLayoutState& blockLayoutState() { return layoutState().parentBlockLayoutState(); }
     const ElementBox& root() const { return m_rootBox; }
     const RenderStyle& rootStyle() const;
 

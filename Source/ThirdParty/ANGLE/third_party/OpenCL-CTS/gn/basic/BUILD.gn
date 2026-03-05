@@ -38,7 +38,6 @@ ocl_cts_source_set("basic") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/basic/test_image_param.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/basic/test_image_r8.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/basic/test_imagearraycopy.cpp",
-    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/basic/test_imagearraycopy3d.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/basic/test_imagecopy.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/basic/test_imagecopy3d.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/basic/test_imagedim.cpp",

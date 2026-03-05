@@ -24,6 +24,6 @@
  */
 
 [
-    Conditional=PAYMENT_REQUEST
+    Conditional=PAYMENT_REQUEST,
 ] dictionary PaymentRequestUpdateEventInit : EventInit {
 };

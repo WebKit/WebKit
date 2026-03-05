@@ -234,7 +234,7 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GtkEventControllerKey* 
 
     gtk_event_controller_key_forward(GTK_EVENT_CONTROLLER_KEY(controller), m_nativeWidget.get());
     if (!m_pendingEditorCommands.isEmpty())
-        return WTFMove(m_pendingEditorCommands);
+        return WTF::move(m_pendingEditorCommands);
 
     auto* event = gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(controller));
     return handleCustomKeyBindings(gdk_key_event_get_keyval(event), gdk_event_get_modifier_state(event));
@@ -246,7 +246,7 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 
     gtk_bindings_activate_event(G_OBJECT(m_nativeWidget.get()), event);
     if (!m_pendingEditorCommands.isEmpty())
-        return WTFMove(m_pendingEditorCommands);
+        return WTF::move(m_pendingEditorCommands);
 
     guint keyval;
     gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);

@@ -1,16 +1,12 @@
 Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
-Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediasession/MediaMetadata.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCRtpSender.cpp
-Modules/paymentrequest/PaymentRequest.cpp
 Modules/push-api/PushDatabase.cpp
-Modules/webaudio/AudioWorkletThread.cpp
-Modules/webaudio/OfflineAudioContext.cpp
 Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webcodecs/WebCodecsAudioDecoder.cpp
 Modules/webcodecs/WebCodecsAudioEncoder.cpp
@@ -18,49 +14,31 @@ Modules/webcodecs/WebCodecsBase.cpp
 Modules/webcodecs/WebCodecsVideoDecoder.cpp
 Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webdatabase/DatabaseThread.cpp
-[ Mac ] accessibility/isolatedtree/AXIsolatedObject.cpp
-[ Mac ] accessibility/isolatedtree/AXIsolatedObject.h
-[ Mac ] accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
 animation/KeyframeEffect.cpp
-bindings/js/JSDOMPromiseDeferred.cpp
 contentextensions/ContentExtensionsBackend.cpp
 crypto/SubtleCrypto.cpp
-css/CSSPendingSubstitutionValue.cpp
 css/CSSValue.cpp
-css/CSSVariableReferenceValue.cpp
 dom/ContentVisibilityDocumentState.cpp
 dom/CustomElementDefaultARIA.cpp
 dom/RejectedPromiseTracker.cpp
-[ Mac ] editing/Editor.cpp
-html/FormAssociatedCustomElement.cpp
-inspector/InspectorOverlay.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp
 loader/NetscapePlugInStreamLoader.cpp
-loader/WorkerThreadableLoader.cpp
-page/ImageAnalysisQueue.cpp
+[ iOS ] loader/ios/LegacyPreviewLoader.mm
 page/IntelligenceTextEffectsSupport.cpp
 page/ShareDataReader.cpp
 page/cocoa/ResourceUsageOverlayCocoa.mm
-[ iOS ] page/ios/FrameIOS.mm
 page/writing-tools/WritingToolsController.mm
 [ iOS ] platform/PreviewConverter.cpp
 platform/ScrollableArea.cpp
 platform/cocoa/NetworkExtensionContentFilter.mm
-platform/encryptedmedia/CDMProxy.cpp
-platform/encryptedmedia/clearkey/CDMClearKey.cpp
-platform/graphics/ShadowBlur.cpp
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm
-[ iOS ] platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
-platform/graphics/filters/FilterOperation.cpp
 [ iOS ] platform/ios/DragImageIOS.mm
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
-[ iOS ] platform/mediastream/ios/ReplayKitCaptureSource.mm
-[ iOS ] platform/mediastream/mac/CoreAudioCaptureUnit.cpp
 platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
 platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
 rendering/BackgroundPainter.cpp
@@ -74,22 +52,17 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderListBox.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderText.cpp
-rendering/style/StyleCustomPropertyData.cpp
-rendering/svg/RenderSVGResourceGradient.cpp
 rendering/svg/RenderSVGText.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
-rendering/svg/legacy/SVGResourcesCycleSolver.cpp
-rendering/updating/RenderTreeUpdater.cpp
 style/StyleCustomProperty.cpp
 style/Styleable.cpp
+style/computed/data/StyleCustomPropertyData.cpp
 style/values/StyleValueTypes.h
 style/values/backgrounds/StyleFillLayers.h
-style/values/fonts/StyleFontVariationSettings.cpp
+style/values/filter-effects/StyleFilterInterpolation.h
 style/values/images/StyleGradient.cpp
 style/values/primitives/StylePrimitiveKeyword+CSSValueCreation.h
 style/values/primitives/StylePrimitiveKeyword+Serialization.h
 [ Mac ] testing/MockMediaSessionCoordinator.cpp
-workers/Worker.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerOrWorkletThread.cpp
 workers/shared/SharedWorkerObjectConnection.cpp

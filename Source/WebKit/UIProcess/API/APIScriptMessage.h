@@ -50,13 +50,13 @@ public:
     virtual ~ScriptMessage();
 
 #if PLATFORM(COCOA)
-    const RetainPtr<id>& body() const { return m_body; }
-    const RetainPtr<NSString> cocoaName() const { return m_cocoaName; }
+    const RetainPtr<id>& body() const LIFETIME_BOUND { return m_body; }
+    NSString *cocoaName() const { return m_cocoaName.get(); }
 #endif
     API::Object* apiBody() const { return m_apiBody.get(); }
-    WebKit::WebPageProxy* page() const;
+    WebKit::WebPageProxy* NODELETE page() const;
     API::FrameInfo& frame() const { return m_frame.get(); }
-    const WTF::String& name() const { return m_name; }
+    const WTF::String& name() const LIFETIME_BOUND { return m_name; }
     API::ContentWorld& world() const { return m_world.get(); }
 
 private:

@@ -24,7 +24,7 @@
 [
     Exposed=Window
 ] interface KeyboardEvent : UIEvent {
-    constructor([AtomString] DOMString type, optional KeyboardEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional KeyboardEventInit eventInitDict = {});
 
     const unsigned long DOM_KEY_LOCATION_STANDARD = 0x00;
     const unsigned long DOM_KEY_LOCATION_LEFT = 0x01;
@@ -57,7 +57,6 @@
 };
 
 // https://w3c.github.io/uievents/#idl-keyboardeventinit
-
 dictionary KeyboardEventInit : EventModifierInit {
     DOMString key = "";
     DOMString code = "";

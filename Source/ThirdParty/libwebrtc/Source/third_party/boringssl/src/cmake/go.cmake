@@ -25,37 +25,19 @@ endfunction()
 function(go_executable dest package)
   require_go()
   set(godeps "${PROJECT_SOURCE_DIR}/util/godeps.go")
-  if(NOT CMAKE_GENERATOR STREQUAL "Ninja")
-    # The DEPFILE parameter to add_custom_command only works with Ninja. Query
-    # the sources at configure time. Additionally, everything depends on go.mod.
-    # That affects what external packages to use.
-    #
-    # TODO(davidben): Starting CMake 3.20, it also works with Make. Starting
-    # 3.21, it works with Visual Studio and Xcode too.
-    execute_process(COMMAND ${GO_EXECUTABLE} run ${godeps} -format cmake
-                            -pkg ${package}
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                    OUTPUT_VARIABLE sources
-                    RESULT_VARIABLE godeps_result)
-    add_custom_command(OUTPUT ${dest}
-                       COMMAND ${GO_EXECUTABLE} build
-                               -o ${CMAKE_CURRENT_BINARY_DIR}/${dest} ${package}
-                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                       DEPENDS ${sources} ${PROJECT_SOURCE_DIR}/go.mod)
-  else()
-    # Ninja expects the target in the depfile to match the output. This is a
-    # relative path from the build directory.
-    binary_dir_relative_path(${dest} target)
+  # Ninja expects the target in the depfile to match the output. This is a
+  # relative path from the build directory.
+  set(target "${CMAKE_CURRENT_BINARY_DIR}/${dest}")
+  cmake_path(RELATIVE_PATH target BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-    set(depfile "${CMAKE_CURRENT_BINARY_DIR}/${dest}.d")
-    add_custom_command(OUTPUT ${dest}
-                       COMMAND ${GO_EXECUTABLE} build
-                               -o ${CMAKE_CURRENT_BINARY_DIR}/${dest} ${package}
-                       COMMAND ${GO_EXECUTABLE} run ${godeps} -format depfile
-                               -target ${target} -pkg ${package} -out ${depfile}
-                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                       DEPENDS ${godeps} ${PROJECT_SOURCE_DIR}/go.mod
-                       DEPFILE ${depfile})
-  endif()
+  set(depfile "${CMAKE_CURRENT_BINARY_DIR}/${dest}.d")
+  add_custom_command(OUTPUT ${dest}
+                      COMMAND ${GO_EXECUTABLE} build
+                              -o ${CMAKE_CURRENT_BINARY_DIR}/${dest} ${package}
+                      COMMAND ${GO_EXECUTABLE} run ${godeps} -format depfile
+                              -target ${target} -pkg ${package} -out ${depfile}
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                      DEPENDS ${godeps} ${PROJECT_SOURCE_DIR}/go.mod
+                      DEPFILE ${depfile})
 endfunction()
 

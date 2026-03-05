@@ -83,8 +83,6 @@ for file_path in to_rewrite():
       'tests/sksl/' in file_path or
       'third_party/skcms' in file_path or
       'modules/skcms' in file_path or
-      # transitional
-      'jetski' in file_path or
       'tools/window' in file_path or
       file_path.startswith('bazel/rbe') or
       'example/external_client/' in file_path or
@@ -102,7 +100,7 @@ for file_path in to_rewrite():
     lines = open(file_path).readlines()
 
     # Write it back out again line by line with substitutions for #includes.
-    output = StringIO() if args.dry_run else open(file_path, 'w')
+    output = StringIO() if args.dry_run else open(file_path, 'w', newline='\n')
 
     includes = []
     for line in lines:

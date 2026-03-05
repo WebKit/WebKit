@@ -25,16 +25,18 @@
 
 #pragma once
 
+#include <WebCore/Exception.h>
+
 namespace WebCore {
 
 class DeferredPromise;
 class JSDOMGlobalObject;
 class ReadableStream;
 class WritableStream;
-class ReadableStreamDefaultReader;
-class InternalWritableStreamWriter;
 
 struct StreamPipeOptions;
 
-void readableStreamPipeTo(JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<WritableStream>&&, Ref<ReadableStreamDefaultReader>&&, Ref<InternalWritableStreamWriter>&&, StreamPipeOptions&&, RefPtr<DeferredPromise>&&);
+// https://streams.spec.whatwg.org/#readable-stream-pipe-to
+std::optional<Exception> readableStreamPipeTo(JSDOMGlobalObject&, ReadableStream&, WritableStream&, StreamPipeOptions&&, RefPtr<DeferredPromise>&&);
+
 }

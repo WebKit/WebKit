@@ -33,19 +33,19 @@
 namespace JSC {
 
 DataView::DataView(RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> byteLength)
-    : ArrayBufferView(TypeDataView, WTFMove(buffer), byteOffset, byteLength)
+    : ArrayBufferView(TypeDataView, WTF::move(buffer), byteOffset, byteLength)
 {
 }
 
 Ref<DataView> DataView::create(RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> byteLength)
 {
-    return adoptRef(*new DataView(WTFMove(buffer), byteOffset, byteLength));
+    return adoptRef(*new DataView(WTF::move(buffer), byteOffset, byteLength));
 }
 
 Ref<DataView> DataView::create(RefPtr<ArrayBuffer>&& buffer)
 {
     size_t byteLength = buffer->byteLength();
-    return create(WTFMove(buffer), 0, byteLength);
+    return create(WTF::move(buffer), 0, byteLength);
 }
 
 RefPtr<DataView> DataView::wrappedAs(Ref<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> byteLength)
@@ -64,7 +64,7 @@ RefPtr<DataView> DataView::wrappedAs(Ref<ArrayBuffer>&& buffer, size_t byteOffse
             return nullptr;
     }
 
-    return adoptRef(*new DataView(WTFMove(buffer), byteOffset, byteLength));
+    return adoptRef(*new DataView(WTF::move(buffer), byteOffset, byteLength));
 }
 
 JSArrayBufferView* DataView::wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject)

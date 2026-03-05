@@ -29,17 +29,23 @@
 #if USE(AVFOUNDATION)
 #include "CMUtilities.h"
 #include "MediaSampleAVFObjC.h"
+#include <CoreMedia/CMFormatDescription.h>
+
+#include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
 namespace WebCore {
 
-RefPtr<MediaSample> MediaSamplesBlock::toMediaSample() const
+RefPtr<MediaSample> MediaSamplesBlock::toMediaSample(const MediaSample* referenceSample) const
 {
 #if USE(AVFOUNDATION)
-    auto result = toCMSampleBuffer(*this);
+    RetainPtr cmSample = referenceSample ? referenceSample->platformSample().cmSampleBuffer() : nullptr;
+    RetainPtr description = cmSample ? PAL::CMSampleBufferGetFormatDescription(cmSample.get()) : nullptr;
+    auto result = toCMSampleBuffer(*this, description.get());
     ASSERT(!!result);
     return result ? RefPtr { MediaSampleAVFObjC::create(result->get(), trackID()) } : nullptr;
 #else
+    UNUSED_PARAM(referenceSample);
     ASSERT_NOT_REACHED();
     return nullptr;
 #endif

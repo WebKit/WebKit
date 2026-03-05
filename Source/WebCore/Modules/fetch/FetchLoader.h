@@ -46,7 +46,6 @@ class FragmentedSharedBuffer;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchLoader);
 class WEBCORE_EXPORT FetchLoader final : public RefCounted<FetchLoader>, public ThreadableLoaderClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchLoader, FetchLoader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchLoader);
 public:
     static Ref<FetchLoader> create(FetchLoaderClient&, FetchBodyConsumer*);
     ~FetchLoader();
@@ -59,6 +58,10 @@ public:
     void stop();
 
     bool isStarted() const { return m_isStarted; }
+
+    // ThreadableLoaderClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);

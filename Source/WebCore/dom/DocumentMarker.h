@@ -167,7 +167,7 @@ public:
 
     String description() const;
 
-    const Data& data() const { return m_data; }
+    const Data& data() const LIFETIME_BOUND { return m_data; }
     void clearData() { m_data = String { }; }
 
     // Offset modifications are done by DocumentMarkerController.
@@ -217,7 +217,7 @@ constexpr auto DocumentMarker::allMarkers() -> OptionSet<DocumentMarkerType>
 inline DocumentMarker::DocumentMarker(DocumentMarkerType type, OffsetRange range, Data&& data)
     : m_type(type)
     , m_range(range)
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
 {
 }
 
@@ -234,7 +234,7 @@ inline String DocumentMarker::description() const
 
 #if ENABLE(WRITING_TOOLS)
     if (auto* data = std::get_if<DocumentMarker::WritingToolsTextSuggestionData>(&m_data))
-        return makeString("('"_s, data->originalText, "', state: "_s, enumToUnderlyingType(data->state), ')');
+        return makeString("('"_s, data->originalText, "', state: "_s, std::to_underlying(data->state), ')');
 #endif
 
     return emptyString();

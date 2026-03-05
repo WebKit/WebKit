@@ -3,8 +3,10 @@
 A comprehensive debugging solution that enables LLDB debugging of WebAssembly code running in JavaScriptCore's IPInt (In-Place Interpreter) tier through the GDB Remote Serial Protocol.
 
 > **Related Documentation:**
+>
 > - **This document**: JSC debug server implementation (both Standalone and RWI modes)
 > - **[RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md)**: WebKit integration architecture (RWI mode details)
+> - **[Debugger-Mutator-Protocol.md](./Debugger-Mutator-Protocol.md)**: Thread synchronization protocol and control flow diagrams
 
 ## What is this project?
 
@@ -137,6 +139,7 @@ for WebAssembly opcodes:
 ```
 
 **Opcode Coverage (Base OpType):**
+
 - **[DONE]** Special Ops (FOR_EACH_WASM_SPECIAL_OP)
 - **[DONE]** Control Flow Ops (FOR_EACH_WASM_CONTROL_FLOW_OP)
 - **[DONE]** Unary Ops (FOR_EACH_WASM_UNARY_OP)
@@ -145,6 +148,7 @@ for WebAssembly opcodes:
 - **[DONE]** Memory Store Ops (FOR_EACH_WASM_MEMORY_STORE_OP)
 
 **Extended Opcode Coverage:**
+
 - **[TODO]** Ext1OpType (FOR_EACH_WASM_EXT1_OP)
 - **[PARTIAL]** ExtGCOpType (FOR_EACH_WASM_GC_OP) - 2 control flow ops fully tested (BrOnCast, BrOnCastFail), 29 non-control-flow ops have stub tests
 - **[TODO]** ExtAtomicOpType (FOR_EACH_WASM_EXT_ATOMIC_OP)
@@ -182,17 +186,12 @@ lldb -o 'log enable gdb-remote packets' -o 'process connect --plugin wasm connec
 **RWI Mode (WebKit/WebContent):**
 
 See [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md) for complete setup instructions including:
+
 - Starting Safari/MiniBrowser with `--wasm-debugger` flag
 - Using WasmDebuggerRWIClient to relay LLDB commands
 - Debugging WebContent processes via Remote Web Inspector
 
 ## Known Issues and Future Improvements
-
-### Multi-VM Debugging Support
-
-- **Issue**: Current implementation only stops a single VM when hitting breakpoints
-- **Location**: `WasmExecutionHandler.cpp:65-66`
-- **Solution**: When ANY VM hits a WebAssembly breakpoint, stop ALL execution across ALL VMs in the process for comprehensive debugging
 
 ### WASM Stack Value Type Support
 
@@ -225,6 +224,27 @@ See [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md) for complete setup instructions
 - **Issue**: LLDB is not notified when new modules are loaded or unloaded
 - **Location**: `WasmDebugServer.cpp:472, 484`
 - **Solution**: Implement proper LLDB notifications for dynamic module loading/unloading
+
+### Multi-Thread Display in LLDB
+
+- **Issue**: Thread select and stop reply protocol handlers need improvement to correctly display multi-VM data in LLDB
+- **Current Status**: Multi-VM stop-the-world is implemented, but thread information may not display correctly in LLDB UI
+
+### VM Lifecycle and Synchronization Testing
+
+- **Issue**: ExecutionHandler stress tests need additional coverage for VM lifecycle edge cases and race conditions
+- **Current Test Limitations**: Tests wait for VM construction and instance registration, but this doesn't guarantee VMs are actively running code that checks traps
+- **Missing Test Coverage**:
+  - VM lifecycle edge cases (construction, initialization, instance registration)
+  - `interrupt()` race conditions when VMs are not yet executing code
+  - Synchronization between VM construction and actual code execution
+
+### X86_64 Support
+
+- **Issue**: The WebAssembly debugger is currently restricted to ARM64 platforms only
+- **Known Problems on Other Platforms**:
+  - x86_64: VMTraps race condition causes register corruption during interrupt handling
+  - ARM32, iOS: Untested
 
 ## Protocol References
 

@@ -124,9 +124,14 @@ public:
         map.addSample(TestSample::create(MediaTime(27, 1), MediaTime(26, 1), MediaTime(1, 1), MediaSample::None));
         map.addSample(TestSample::create(MediaTime(26, 1), MediaTime(27, 1), MediaTime(1, 1), MediaSample::None));
         map.addSample(TestSample::create(MediaTime(25, 1), MediaTime(28, 1), MediaTime(1, 1), MediaSample::None));
+
+        mapWithNan.addSample(TestSample::create(MediaTime(0, 1), MediaTime::invalidTime(), MediaTime(1, 1), MediaSample::IsSync));
+        mapWithNan.addRange(map.decodeOrder().begin(), map.decodeOrder().end());
+        mapWithNan.addSample(TestSample::create(MediaTime::invalidTime(), MediaTime(29, 1), MediaTime(1, 1), MediaSample::IsSync));
     }
 
     SampleMap map;
+    SampleMap mapWithNan;
 };
 
 TEST_F(SampleMapTest, findSampleWithPresentationTime)
@@ -278,7 +283,6 @@ TEST_F(SampleMapTest, reverseFindSampleBeforePresentationTime)
 TEST_F(SampleMapTest, findSamplesBetweenDecodeKeys)
 {
     auto& decodeMap = map.decodeOrder();
-    DecodeOrderSampleMap::MapType dependentSamples;
     DecodeOrderSampleMap::KeyType decodeKeyStart(MediaTime(0, 1), MediaTime(0, 1));
     DecodeOrderSampleMap::KeyType decodeKeyEnd(MediaTime(28, 1), MediaTime(25, 1));
 
@@ -343,6 +347,15 @@ TEST_F(SampleMapTest, findSamplesBetweenDecodeKeys)
     samplesWithHigherDecodeTimes = decodeMap.findSamplesBetweenDecodeKeys(decodeKeyStart, decodeKeyEnd);
     EXPECT_FALSE(samplesWithHigherDecodeTimes.isEmpty());
     EXPECT_EQ(*decodeMap.rbegin(), *samplesWithHigherDecodeTimes.rbegin());
+}
+
+TEST_F(SampleMapTest, findSamplesBetweenDecodeKeysWithNaN)
+{
+    auto& decodeMap = mapWithNan.decodeOrder();
+    DecodeOrderSampleMap::KeyType decodeKey(MediaTime::invalidTime(), MediaTime::invalidTime());
+
+    auto samplesWithHigherDecodeTimes = decodeMap.findSamplesBetweenDecodeKeys(decodeKey, mapWithNan.decodeOrder().rbegin()->first);
+    EXPECT_TRUE(samplesWithHigherDecodeTimes.isEmpty());
 }
 
 }

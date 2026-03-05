@@ -47,10 +47,10 @@ struct CryptoKeyData {
         , algorithmIdentifier(algorithmIdentifier)
         , extractable(extractable)
         , usages(usages)
-        , key(WTFMove(key))
-        , jwk(WTFMove(jwk))
+        , key(WTF::move(key))
+        , jwk(WTF::move(jwk))
         , hashAlgorithmIdentifier(hashAlgorithmIdentifier)
-        , namedCurveString(WTFMove(namedCurveString))
+        , namedCurveString(WTF::move(namedCurveString))
         , lengthBits(lengthBits)
         , type(type)
     {
@@ -62,9 +62,9 @@ struct CryptoKeyData {
             extractable,
             usages,
             key,
-            crossThreadCopy(WTFMove(jwk)),
+            crossThreadCopy(WTF::move(jwk)),
             hashAlgorithmIdentifier,
-            crossThreadCopy(WTFMove(namedCurveString)),
+            crossThreadCopy(WTF::move(namedCurveString)),
             lengthBits,
             type
         };

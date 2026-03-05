@@ -90,8 +90,8 @@ public:
     void append(const VariantList&);
     void append(VariantList&&);
 
-    auto begin() const { return const_iterator(spanToSize()); }
-    auto end() const   { return const_iterator(spanFromSizeToSize()); }
+    auto begin() const LIFETIME_BOUND { return const_iterator(spanToSize()); }
+    auto end() const LIFETIME_BOUND { return const_iterator(spanFromSizeToSize()); }
 
     template<typename...F> void forEach(F&&...) const;
 
@@ -238,7 +238,7 @@ template<typename V, size_t inlineCapacity> VariantList<V, inlineCapacity>& Vari
 }
 
 template<typename V, size_t inlineCapacity> VariantList<V, inlineCapacity>::VariantList(VariantList<V, inlineCapacity>&& other) requires std::is_move_constructible_v<V>
-    : Base(WTFMove(other))
+    : Base(WTF::move(other))
 {
 }
 
@@ -247,7 +247,7 @@ template<typename V, size_t inlineCapacity> VariantList<V, inlineCapacity>& Vari
     if (m_size)
         Operations::destruct(spanToSize());
 
-    Base::adopt(WTFMove(other));
+    Base::adopt(WTF::move(other));
     return *this;
 }
 
@@ -289,7 +289,7 @@ template<typename V, size_t inlineCapacity> void VariantList<V, inlineCapacity>:
 
 template<typename V, size_t inlineCapacity> void VariantList<V, inlineCapacity>::append(V&& arg)
 {
-    WTF::switchOn(WTFMove(arg), [&](auto&& alternative) { appendImpl(WTFMove(alternative)); });
+    WTF::switchOn(WTF::move(arg), [&](auto&& alternative) { appendImpl(WTF::move(alternative)); });
 }
 
 template<typename V, size_t inlineCapacity> void VariantList<V, inlineCapacity>::append(const Proxy& arg)
@@ -299,7 +299,7 @@ template<typename V, size_t inlineCapacity> void VariantList<V, inlineCapacity>:
 
 template<typename V, size_t inlineCapacity> void VariantList<V, inlineCapacity>::append(Proxy&& arg)
 {
-    WTF::switchOn(WTFMove(arg), [&](auto&& alternative) { appendImpl(WTFMove(alternative)); });
+    WTF::switchOn(WTF::move(arg), [&](auto&& alternative) { appendImpl(WTF::move(alternative)); });
 }
 
 template<typename V, size_t inlineCapacity> void VariantList<V, inlineCapacity>::append(const VariantList<V, inlineCapacity>& arg)

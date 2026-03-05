@@ -58,12 +58,12 @@ std::unique_ptr<Session> SessionLogind::create()
 
     GUniquePtr<char> path(g_strdup_printf("/org/freedesktop/login1/session/%s", session.get()));
     GRefPtr<GDBusProxy> sessionProxy = adoptGRef(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START, nullptr, "org.freedesktop.login1", path.get(), "org.freedesktop.login1.Session", nullptr, nullptr));
-    return makeUnique<SessionLogind>(WTFMove(sessionProxy), GUniquePtr<char>(seat.release()));
+    return makeUnique<SessionLogind>(WTF::move(sessionProxy), GUniquePtr<char>(seat.release()));
 }
 
 SessionLogind::SessionLogind(GRefPtr<GDBusProxy>&& sessionProxy, GUniquePtr<char>&& seatID)
-    : m_sessionProxy(WTFMove(sessionProxy))
-    , m_seatID(WTFMove(seatID))
+    : m_sessionProxy(WTF::move(sessionProxy))
+    , m_seatID(WTF::move(seatID))
 {
     GUniqueOutPtr<GError> error;
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(m_sessionProxy.get(), "TakeControl", g_variant_new("(b)", FALSE),

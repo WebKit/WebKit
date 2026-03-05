@@ -13,16 +13,16 @@ info: |
     b. If numericIndex is not undefined, then
   ...
   3. Return ? OrdinarySet(O, P, V, Receiver).
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n]));
 
   assert.sameValue(
     Reflect.set(sample, 'test262', 'ecma262'),
     true,
-    'Reflect.set("new TA([42n])", "test262", "ecma262") must return true'
+    'Reflect.set("new TA(makeCtorArg([42n]))", "test262", "ecma262") must return true'
   );
 
   assert.sameValue(sample.test262, 'ecma262', 'The value of sample.test262 is "ecma262"');
@@ -30,7 +30,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(
     Reflect.set(sample, 'test262', 'es3000'),
     true,
-    'Reflect.set("new TA([42n])", "test262", "es3000") must return true'
+    'Reflect.set("new TA(makeCtorArg([42n]))", "test262", "es3000") must return true'
   );
 
   assert.sameValue(sample.test262, 'es3000', 'The value of sample.test262 is "es3000"');
@@ -40,6 +40,6 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     value: undefined
   });
 
-  assert.sameValue(Reflect.set(sample, 'foo', 42), false, 'Reflect.set("new TA([42n])", "foo", 42) must return false');
+  assert.sameValue(Reflect.set(sample, 'foo', 42), false, 'Reflect.set("new TA(makeCtorArg([42n]))", "foo", 42) must return false');
   assert.sameValue(sample.foo, undefined, 'The value of sample.foo is expected to equal `undefined`');
-});
+}, null, ["passthrough"]);

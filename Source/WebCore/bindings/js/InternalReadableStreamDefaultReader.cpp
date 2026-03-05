@@ -37,7 +37,7 @@ static ExceptionOr<JSC::JSValue> invokeReadableStreamDefaultReaderFunction(JSC::
     Ref vm = globalObject.vm();
     JSC::JSLockHolder lock(vm.get());
 
-    auto scope = DECLARE_CATCH_SCOPE(vm.get());
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm.get());
 
     auto function = globalObject.get(&globalObject, identifier);
     ASSERT(!!scope.exception() || function.isCallable());
@@ -159,10 +159,10 @@ void InternalReadableStreamDefaultReader::onClosedPromiseRejection(Function<void
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
-    domPromise->whenSettled([domPromise, callback = WTFMove(callback)] {
-        if (domPromise->status() != DOMPromise::Status::Rejected || !domPromise->globalObject())
+    domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto* globalObject, bool isFulfilled, auto result) {
+        if (isFulfilled || !globalObject)
             return;
-        callback(*domPromise->globalObject(), domPromise->result());
+        callback(*globalObject, result);
     });
 }
 
@@ -189,8 +189,8 @@ void InternalReadableStreamDefaultReader::onClosedPromiseResolution(Function<voi
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
-    domPromise->whenSettled([domPromise, callback = WTFMove(callback)] {
-        if (domPromise->status() == DOMPromise::Status::Fulfilled)
+    domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto*, bool isFulfilled, auto) {
+        if (isFulfilled)
             callback();
     });
 }

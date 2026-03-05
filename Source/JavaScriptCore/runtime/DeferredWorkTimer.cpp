@@ -26,10 +26,10 @@
 #include "config.h"
 #include "DeferredWorkTimer.h"
 
-#include "CatchScope.h"
 #include "DeferredWorkTimerInlines.h"
 #include "GlobalObjectMethodTable.h"
 #include "JSGlobalObject.h"
+#include "TopExceptionScope.h"
 #include "VM.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
@@ -45,7 +45,7 @@ static constexpr bool verbose = false;
 
 inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies)
     : m_type(type)
-    , m_dependencies(WTFMove(dependencies))
+    , m_dependencies(WTF::move(dependencies))
     , m_scriptExecutionOwner(scriptExecutionOwner)
 {
     ASSERT_WITH_MESSAGE(!m_dependencies.isEmpty(), "dependencies shouldn't be empty since it should contain the target");
@@ -55,7 +55,7 @@ inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSObject* script
 
 inline Ref<DeferredWorkTimer::TicketData> DeferredWorkTimer::TicketData::create(WorkType type, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies)
 {
-    return adoptRef(*new TicketData(type, scriptExecutionOwner, WTFMove(dependencies)));
+    return adoptRef(*new TicketData(type, scriptExecutionOwner, WTF::move(dependencies)));
 }
 
 inline VM& DeferredWorkTimer::TicketData::vm()
@@ -127,7 +127,7 @@ void DeferredWorkTimer::doWork(VM& vm)
         auto globalObject = ticket->target()->globalObject();
         switch (globalObject->globalObjectMethodTable()->scriptExecutionStatus(globalObject, ticket->scriptExecutionOwner())) {
         case ScriptExecutionStatus::Suspended:
-            suspendedTasks.append(std::make_tuple(ticket, WTFMove(task)));
+            suspendedTasks.append(std::make_tuple(ticket, WTF::move(task)));
             continue;
         case ScriptExecutionStatus::Stopped:
             m_pendingTickets.remove(pendingTicket);
@@ -148,7 +148,7 @@ void DeferredWorkTimer::doWork(VM& vm)
             // This is the start of a runloop turn, we can release any weakrefs here.
             vm.finalizeSynchronousJSExecution();
 
-            auto scope = DECLARE_CATCH_SCOPE(vm);
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             task(ticket);
             ticketData = nullptr;
             if (Exception* exception = scope.exception()) {
@@ -196,11 +196,11 @@ DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(WorkType type, VM& v
     JSObject* scriptExecutionOwner = globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
     dependencies.append(target);
 
-    auto ticketData = TicketData::create(type, scriptExecutionOwner, WTFMove(dependencies));
+    auto ticketData = TicketData::create(type, scriptExecutionOwner, WTF::move(dependencies));
     Ticket ticket = ticketData.ptr();
 
     dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new pending ticket: ", RawPointer(ticket));
-    auto result = m_pendingTickets.add(WTFMove(ticketData));
+    auto result = m_pendingTickets.add(WTF::move(ticketData));
     RELEASE_ASSERT(result.isNewEntry);
 
     return ticket;
@@ -227,7 +227,7 @@ bool DeferredWorkTimer::hasDependencyInPendingWork(Ticket ticket, JSCell* depend
 void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
 {
     Locker locker { m_taskLock };
-    m_tasks.append(std::make_tuple(ticket, WTFMove(task)));
+    m_tasks.append(std::make_tuple(ticket, WTF::move(task)));
     if (!isScheduled() && !m_currentlyRunningTask)
         setTimeUntilFire(0_s);
 }

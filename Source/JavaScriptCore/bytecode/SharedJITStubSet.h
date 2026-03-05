@@ -107,8 +107,8 @@ public:
         };
 
         Searcher(StructureStubInfoKey&& stubInfoKey, Ref<AccessCase>&& accessCase)
-            : m_stubInfoKey(WTFMove(stubInfoKey))
-            , m_accessCase(WTFMove(accessCase))
+            : m_stubInfoKey(WTF::move(stubInfoKey))
+            , m_accessCase(WTF::move(accessCase))
             , m_hash(m_accessCase->hash())
         {
         }
@@ -132,7 +132,7 @@ public:
 
     void add(Hash::Key&& key)
     {
-        m_stubs.add(WTFMove(key));
+        m_stubs.add(WTF::move(key));
     }
 
     void remove(PolymorphicAccessJITStubRoutine* stub)

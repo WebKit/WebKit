@@ -55,7 +55,7 @@ GRefPtr<GProxyResolver> webkitAutoconfigProxyResolverNew(const CString& autoconf
     }
 
     auto* proxyResolver = WEBKIT_AUTOCONFIG_PROXY_RESOLVER(g_object_new(WEBKIT_TYPE_AUTOCONFIG_PROXY_RESOLVER, nullptr));
-    proxyResolver->priv->pacRunner = WTFMove(pacRunner);
+    proxyResolver->priv->pacRunner = WTF::move(pacRunner);
     proxyResolver->priv->autoconfigURL = autoconfigURL;
 
     return adoptGRef(G_PROXY_RESOLVER(proxyResolver));

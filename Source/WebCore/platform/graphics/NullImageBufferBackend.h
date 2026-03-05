@@ -27,7 +27,7 @@
 
 #include <WebCore/ImageBufferBackend.h>
 #include <WebCore/NullGraphicsContext.h>
-#include <memory.h>
+#include <memory>
 
 namespace WebCore {
 

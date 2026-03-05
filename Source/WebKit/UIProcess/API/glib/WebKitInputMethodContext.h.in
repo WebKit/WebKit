@@ -29,7 +29,6 @@
 #include <gdk/gdk.h>
 #elif PLATFORM(WPE)
 #include <wpe/WebKitColor.h>
-#include <wpe/wpe.h>
 #endif
 
 G_BEGIN_DECLS

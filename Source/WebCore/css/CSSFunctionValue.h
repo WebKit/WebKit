@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/CSSValueList.h>
+#include "CSSValueList.h"
 
 namespace WebCore {
 
@@ -35,10 +35,10 @@ class CSSFunctionValue final : public CSSValueContainingVector {
 public:
     static Ref<CSSFunctionValue> create(CSSValueID name, CSSValueListBuilder arguments);
     static Ref<CSSFunctionValue> create(CSSValueID name);
-    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> argument);
-    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> firstArgument, Ref<CSSValue> secondArgument);
-    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> firstArgument, Ref<CSSValue> secondArgument, Ref<CSSValue> thirdArgument);
-    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> firstArgument, Ref<CSSValue> secondArgument, Ref<CSSValue> thirdArgument, Ref<CSSValue> fourthArgument);
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue>&& argument);
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue>&& firstArgument, Ref<CSSValue>&& secondArgument);
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue>&& firstArgument, Ref<CSSValue>&& secondArgument, Ref<CSSValue>&& thirdArgument);
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue>&& firstArgument, Ref<CSSValue>&& secondArgument, Ref<CSSValue>&& thirdArgument, Ref<CSSValue>&& fourthArgument);
 
     CSSValueID name() const { return m_name; }
 
@@ -50,10 +50,10 @@ private:
 
     CSSFunctionValue(CSSValueID name, CSSValueListBuilder);
     explicit CSSFunctionValue(CSSValueID name);
-    CSSFunctionValue(CSSValueID name, Ref<CSSValue>);
-    CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>);
-    CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
-    CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>&&);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>&&, Ref<CSSValue>&&);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>&&, Ref<CSSValue>&&, Ref<CSSValue>&&);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>&&, Ref<CSSValue>&&, Ref<CSSValue>&&, Ref<CSSValue>&&);
 
     bool addDerivedHash(Hasher&) const;
 

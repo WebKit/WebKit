@@ -159,6 +159,16 @@ TEST(ScrollViewScrollabilityTests, ScrollableAfterNavigateToPDF)
     EXPECT_EQ([[webView scrollView] isScrollEnabled], YES);
 }
 
+TEST(ScrollViewScrollabilityTests, TouchActionPanAPI)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewHeight, 414)]);
+
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'><body style='margin: 0'><div style='width: 100px; height: 100px; display: inline-block;'></div><div style='width: 100px; height: 100px; display: inline-block; touch-action: none;'></div></body>"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ([webView _allowsTouchPanningAtPoint:CGPointMake(10, 10)], YES);
+    EXPECT_EQ([webView _allowsTouchPanningAtPoint:CGPointMake(110, 10)], NO);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

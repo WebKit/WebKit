@@ -48,10 +48,10 @@ struct NotificationPayload {
     NotificationPayload isolatedCopy() &&
     {
         return NotificationPayload {
-            WTFMove(defaultActionURL).isolatedCopy(),
-            WTFMove(title).isolatedCopy(),
+            WTF::move(defaultActionURL).isolatedCopy(),
+            WTF::move(title).isolatedCopy(),
             appBadge,
-            crossThreadCopy(WTFMove(options)),
+            crossThreadCopy(WTF::move(options)),
             isMutable
         };
     }
@@ -59,7 +59,7 @@ struct NotificationPayload {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     WEBCORE_EXPORT static bool hasDeclarativeMessageHeader(const String& message);
     WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseJSON(const String&);
-    NotificationPayload static fromNotificationData(const NotificationData&);
+    NotificationPayload static NODELETE fromNotificationData(const NotificationData&);
 
     WEBCORE_EXPORT NotificationData toNotificationData() const;
 

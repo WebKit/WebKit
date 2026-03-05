@@ -26,9 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpipelinedescriptor
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
     required GPUVertexState vertex;
     GPUPrimitiveState primitive;
     GPUDepthStencilState depthStencil;

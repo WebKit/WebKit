@@ -64,7 +64,7 @@ std::unique_ptr<SubresourcesEntry> SubresourcesEntry::decodeStorageRecord(const 
     decoder >> subresources;
     if (!subresources)
         return nullptr;
-    entry->m_subresources = WTFMove(*subresources);
+    entry->m_subresources = WTF::move(*subresources);
 
     if (!decoder.verifyChecksum()) {
         LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");
@@ -128,7 +128,7 @@ static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::uniqu
 }
 
 SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
-    : m_key(WTFMove(key))
+    : m_key(WTF::move(key))
     , m_timeStamp(WallTime::now())
     , m_subresources(makeSubresourceInfoVector(subresourceLoads, nullptr))
 {

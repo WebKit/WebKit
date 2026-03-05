@@ -62,7 +62,7 @@ public:
     // FIXME: Remove this deprecated constructor.
     static std::unique_ptr<ConsumerSharedCARingBuffer> map(const WebCore::CAAudioStreamDescription& format, Handle&& handle)
     {
-        return map(format.bytesPerFrame(), format.numberOfChannelStreams(), WTFMove(handle));
+        return map(format.bytesPerFrame(), format.numberOfChannelStreams(), WTF::move(handle));
     }
     static std::unique_ptr<ConsumerSharedCARingBuffer> map(uint32_t bytesPerFrame, uint32_t numChannelStreams, Handle&&);
 protected:

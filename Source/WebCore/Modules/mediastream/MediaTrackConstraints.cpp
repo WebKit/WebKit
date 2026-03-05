@@ -54,7 +54,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
                 constraint.setIdeal(range.ideal.value());
         }
     );
-    map.set(type, WTFMove(constraint));
+    map.set(type, WTF::move(constraint));
 }
 
 static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainDouble& value)
@@ -78,7 +78,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
                 constraint.setIdeal(range.ideal.value());
         }
     );
-    map.set(type, WTFMove(constraint));
+    map.set(type, WTF::move(constraint));
 }
 
 static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainBoolean& value)
@@ -98,7 +98,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
                 constraint.setIdeal(parameters.ideal.value());
         }
     );
-    map.set(type, WTFMove(constraint));
+    map.set(type, WTF::move(constraint));
 }
 
 static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainDOMString& value)
@@ -145,7 +145,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
             }
         }
     );
-    map.set(type, WTFMove(constraint));
+    map.set(type, WTF::move(constraint));
 }
 
 template<typename T> static inline void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const std::optional<T>& value)

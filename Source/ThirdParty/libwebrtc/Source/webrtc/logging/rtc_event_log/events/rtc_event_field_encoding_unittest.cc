@@ -184,26 +184,57 @@ class RtcTestEvent final : public RtcEvent {
   bool IsConfigEvent() const override { return false; }
 
   static constexpr EventParameters event_params{
-      "TestEvent", static_cast<RtcEvent::Type>(4711)};
+      .name = "TestEvent",
+      .id = static_cast<RtcEvent::Type>(4711)};
   static constexpr FieldParameters timestamp_params{
-      "timestamp_ms", FieldParameters::kTimestampField, FieldType::kVarInt, 64};
-  static constexpr FieldParameters bool_params{"b", 2, FieldType::kFixed8, 1};
-  static constexpr FieldParameters signed32_params{"signed32", 3,
-                                                   FieldType::kVarInt, 32};
-  static constexpr FieldParameters unsigned32_params{"unsigned32", 4,
-                                                     FieldType::kFixed32, 32};
-  static constexpr FieldParameters signed64_params{"signed64", 5,
-                                                   FieldType::kFixed64, 64};
-  static constexpr FieldParameters unsigned64_params{"unsigned64", 6,
-                                                     FieldType::kVarInt, 64};
-  static constexpr FieldParameters optional32_params{"optional_signed32", 7,
-                                                     FieldType::kFixed32, 32};
-  static constexpr FieldParameters optional64_params{"optional_signed64", 8,
-                                                     FieldType::kVarInt, 64};
-  static constexpr FieldParameters wrapping21_params{"wrapping21", 9,
-                                                     FieldType::kFixed32, 21};
+      .name = "timestamp_ms",
+      .field_id = FieldParameters::kTimestampField,
+      .field_type = FieldType::kVarInt,
+      .value_width = 64};
+  static constexpr FieldParameters bool_params{.name = "b",
+                                               .field_id = 2,
+                                               .field_type = FieldType::kFixed8,
+                                               .value_width = 1};
+  static constexpr FieldParameters signed32_params{
+      .name = "signed32",
+      .field_id = 3,
+      .field_type = FieldType::kVarInt,
+      .value_width = 32};
+  static constexpr FieldParameters unsigned32_params{
+      .name = "unsigned32",
+      .field_id = 4,
+      .field_type = FieldType::kFixed32,
+      .value_width = 32};
+  static constexpr FieldParameters signed64_params{
+      .name = "signed64",
+      .field_id = 5,
+      .field_type = FieldType::kFixed64,
+      .value_width = 64};
+  static constexpr FieldParameters unsigned64_params{
+      .name = "unsigned64",
+      .field_id = 6,
+      .field_type = FieldType::kVarInt,
+      .value_width = 64};
+  static constexpr FieldParameters optional32_params{
+      .name = "optional_signed32",
+      .field_id = 7,
+      .field_type = FieldType::kFixed32,
+      .value_width = 32};
+  static constexpr FieldParameters optional64_params{
+      .name = "optional_signed64",
+      .field_id = 8,
+      .field_type = FieldType::kVarInt,
+      .value_width = 64};
+  static constexpr FieldParameters wrapping21_params{
+      .name = "wrapping21",
+      .field_id = 9,
+      .field_type = FieldType::kFixed32,
+      .value_width = 21};
   static constexpr FieldParameters string_params{
-      "string", 10, FieldType::kString, /*value_width = */ 0};
+      .name = "string",
+      .field_id = 10,
+      .field_type = FieldType::kString,
+      .value_width = 0};
 
   static constexpr Type kType = static_cast<RtcEvent::Type>(4711);
 
@@ -217,21 +248,6 @@ class RtcTestEvent final : public RtcEvent {
   const uint32_t wrapping21_ = 0;
   const std::string string_;
 };
-
-constexpr EventParameters RtcTestEvent::event_params;
-constexpr FieldParameters RtcTestEvent::timestamp_params;
-constexpr FieldParameters RtcTestEvent::bool_params;
-constexpr FieldParameters RtcTestEvent::signed32_params;
-constexpr FieldParameters RtcTestEvent::unsigned32_params;
-constexpr FieldParameters RtcTestEvent::signed64_params;
-constexpr FieldParameters RtcTestEvent::unsigned64_params;
-
-constexpr FieldParameters RtcTestEvent::optional32_params;
-constexpr FieldParameters RtcTestEvent::optional64_params;
-constexpr FieldParameters RtcTestEvent::wrapping21_params;
-constexpr FieldParameters RtcTestEvent::string_params;
-
-constexpr RtcEvent::Type RtcTestEvent::kType;
 
 class RtcEventFieldTest : public ::testing::Test {
  protected:

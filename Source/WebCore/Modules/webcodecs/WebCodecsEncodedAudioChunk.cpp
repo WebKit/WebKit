@@ -35,13 +35,13 @@
 namespace WebCore {
 
 WebCodecsEncodedAudioChunk::WebCodecsEncodedAudioChunk(Init&& init)
-    : m_storage { WebCodecsEncodedAudioChunkStorage::create(init.type, init.timestamp, init.duration, init.data.span()) }
+    : m_storage { WebCodecsEncodedAudioChunkStorage::create(init.type, init.timestamp.value_or(0), init.duration, init.data.span()) }
 {
 }
 
 ExceptionOr<void> WebCodecsEncodedAudioChunk::copyTo(BufferSource&& source)
 {
-    if (source.length() < byteLength())
+    if (source.byteLength() < byteLength())
         return Exception { ExceptionCode::TypeError, "buffer is too small"_s };
 
     memcpySpan(source.mutableSpan(), span());

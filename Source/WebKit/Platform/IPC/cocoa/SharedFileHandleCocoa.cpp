@@ -37,7 +37,7 @@ namespace IPC {
 
 std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::FileHandle&& handle)
 {
-    return SharedFileHandle { WTFMove(handle) };
+    return SharedFileHandle { WTF::move(handle) };
 }
 
 SharedFileHandle::SharedFileHandle(MachSendRight&& fileport)

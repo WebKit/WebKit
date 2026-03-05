@@ -117,7 +117,13 @@ public:
         ASSERT(m_jitCodeForConstruct);
         return *m_jitCodeForConstruct;
     }
-        
+
+    void* generatedJITCodeAddressForCall() const
+    {
+        ASSERT(m_jitCodeForCall);
+        return m_jitCodeForCall->addressForCall();
+    }
+
     Ref<JSC::JITCode> generatedJITCodeFor(CodeSpecializationKind kind) const
     {
         if (kind == CodeSpecializationKind::CodeForCall)

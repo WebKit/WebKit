@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-calendarsupportsera
+esid: sec-temporal.plaindate.from
 description: Calendar era code is canonicalized (non-Gregorian calendars)
 features: [Temporal, Intl.Era-monthcode]
 ---*/

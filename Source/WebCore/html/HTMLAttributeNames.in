@@ -16,6 +16,7 @@ alpha
 alt
 archive
 aria-activedescendant
+aria-actions
 aria-atomic
 aria-autocomplete
 aria-braillelabel
@@ -86,6 +87,7 @@ axis
 background
 behavior
 bgcolor
+bottommargin
 blocking
 border
 bordercolor
@@ -385,6 +387,7 @@ required
 results
 rev
 reversed
+rightmargin
 role
 rows
 rowspan
@@ -446,6 +449,7 @@ webkitattachmentid
 webkitattachmentpath
 webkitdirectory
 webkitdropzone
+webkitsmartlistmarker
 width
 wrap
 writingsuggestions

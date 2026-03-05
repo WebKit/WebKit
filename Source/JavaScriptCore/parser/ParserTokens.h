@@ -27,6 +27,8 @@
 
 #include <limits.h>
 #include <stdint.h>
+#include <wtf/Assertions.h>
+#include <wtf/Compiler.h>
 
 namespace WTF {
 class PrintStream;

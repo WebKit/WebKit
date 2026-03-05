@@ -42,7 +42,7 @@ void HTTPCookieStore::setCookiePersistentStorage(const WTF::String& storagePath,
 void HTTPCookieStore::replaceCookies(Vector<WebCore::Cookie>&& cookies, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkProcess = networkProcessIfExists())
-        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::ReplaceCookies(m_sessionID, cookies), WTFMove(completionHandler));
+        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::ReplaceCookies(m_sessionID, cookies), WTF::move(completionHandler));
     else
         completionHandler();
 }
@@ -50,7 +50,7 @@ void HTTPCookieStore::replaceCookies(Vector<WebCore::Cookie>&& cookies, Completi
 void HTTPCookieStore::getAllCookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
 {
     if (auto* networkProcess = networkProcessIfExists())
-        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::GetAllCookies(m_sessionID), WTFMove(completionHandler));
+        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::GetAllCookies(m_sessionID), WTF::move(completionHandler));
     else
         completionHandler({ });
 }

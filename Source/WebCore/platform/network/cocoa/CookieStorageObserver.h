@@ -55,6 +55,8 @@ public:
 
     void cookiesDidChange();
 
+    void registerInternalsForNotifications(bool isReregistering);
+
 private:
     RetainPtr<NSHTTPCookieStorage> m_cookieStorage;
     bool m_hasRegisteredInternalsForNotifications { false };

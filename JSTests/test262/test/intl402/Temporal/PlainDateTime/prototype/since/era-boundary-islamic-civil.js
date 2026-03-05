@@ -23,12 +23,12 @@ const tests = [
   [
     bh5, ah5,
     [-9, 0, 0, 0, "-9y backwards  from 5 BH to 5 AH (no year 0)"],
-    [0, -108, 0, 0, 0, "-108mo backwards  from 5 BH to 5 AH (no year 0)"],
+    [0, -108, 0, 0, "-108mo backwards  from 5 BH to 5 AH (no year 0)"],
   ],
   [
     ah5, bh5,
     [9, 0, 0, 0, "9y  from 5 BH to 5 AH (no year 0)"],
-    [0, 108, 0, 0, 0, "108mo  from 5 BH to 5 AH (no year 0)"],
+    [0, 108, 0, 0, "108mo  from 5 BH to 5 AH (no year 0)"],
   ],
   // AH-BH boundary
   [

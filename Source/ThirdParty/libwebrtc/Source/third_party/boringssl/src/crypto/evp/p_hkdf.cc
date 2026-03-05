@@ -37,7 +37,7 @@ typedef struct {
 static int pkey_hkdf_init(EVP_PKEY_CTX *ctx) {
   HKDF_PKEY_CTX *hctx =
       reinterpret_cast<HKDF_PKEY_CTX *>(OPENSSL_zalloc(sizeof(HKDF_PKEY_CTX)));
-  if (hctx == NULL) {
+  if (hctx == nullptr) {
     return 0;
   }
 
@@ -64,7 +64,7 @@ static int pkey_hkdf_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) {
   if (hctx_src->key_len != 0) {
     hctx_dst->key = reinterpret_cast<uint8_t *>(
         OPENSSL_memdup(hctx_src->key, hctx_src->key_len));
-    if (hctx_dst->key == NULL) {
+    if (hctx_dst->key == nullptr) {
       return 0;
     }
     hctx_dst->key_len = hctx_src->key_len;
@@ -73,7 +73,7 @@ static int pkey_hkdf_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) {
   if (hctx_src->salt_len != 0) {
     hctx_dst->salt = reinterpret_cast<uint8_t *>(
         OPENSSL_memdup(hctx_src->salt, hctx_src->salt_len));
-    if (hctx_dst->salt == NULL) {
+    if (hctx_dst->salt == nullptr) {
       return 0;
     }
     hctx_dst->salt_len = hctx_src->salt_len;
@@ -89,18 +89,18 @@ static int pkey_hkdf_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) {
 
 static void pkey_hkdf_cleanup(EVP_PKEY_CTX *ctx) {
   HKDF_PKEY_CTX *hctx = reinterpret_cast<HKDF_PKEY_CTX *>(ctx->data);
-  if (hctx != NULL) {
+  if (hctx != nullptr) {
     OPENSSL_free(hctx->key);
     OPENSSL_free(hctx->salt);
     CBB_cleanup(&hctx->info);
     OPENSSL_free(hctx);
-    ctx->data = NULL;
+    ctx->data = nullptr;
   }
 }
 
 static int pkey_hkdf_derive(EVP_PKEY_CTX *ctx, uint8_t *out, size_t *out_len) {
   HKDF_PKEY_CTX *hctx = reinterpret_cast<HKDF_PKEY_CTX *>(ctx->data);
-  if (hctx->md == NULL) {
+  if (hctx->md == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_MISSING_PARAMETERS);
     return 0;
   }
@@ -109,7 +109,7 @@ static int pkey_hkdf_derive(EVP_PKEY_CTX *ctx, uint8_t *out, size_t *out_len) {
     return 0;
   }
 
-  if (out == NULL) {
+  if (out == nullptr) {
     if (hctx->mode == EVP_PKEY_HKDEF_MODE_EXTRACT_ONLY) {
       *out_len = EVP_MD_size(hctx->md);
     }
@@ -184,26 +184,22 @@ static int pkey_hkdf_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2) {
 }
 
 const EVP_PKEY_CTX_METHOD hkdf_pkey_meth = {
-    /*pkey_id=*/EVP_PKEY_HKDF,
-    pkey_hkdf_init,
-    pkey_hkdf_copy,
+    /*pkey_id=*/EVP_PKEY_HKDF,  pkey_hkdf_init,   pkey_hkdf_copy,
     pkey_hkdf_cleanup,
-    /*keygen=*/NULL,
-    /*sign=*/NULL,
-    /*sign_message=*/NULL,
-    /*verify=*/NULL,
-    /*verify_message=*/NULL,
-    /*verify_recover=*/NULL,
-    /*encrypt=*/NULL,
-    /*decrypt=*/NULL,
-    pkey_hkdf_derive,
-    /*paramgen=*/NULL,
-    pkey_hkdf_ctrl,
+    /*keygen=*/nullptr,
+    /*sign=*/nullptr,
+    /*sign_message=*/nullptr,
+    /*verify=*/nullptr,
+    /*verify_message=*/nullptr,
+    /*verify_recover=*/nullptr,
+    /*encrypt=*/nullptr,
+    /*decrypt=*/nullptr,        pkey_hkdf_derive,
+    /*paramgen=*/nullptr,       pkey_hkdf_ctrl,
 };
 
 int EVP_PKEY_CTX_hkdf_mode(EVP_PKEY_CTX *ctx, int mode) {
   return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_HKDF, EVP_PKEY_OP_DERIVE,
-                           EVP_PKEY_CTRL_HKDF_MODE, mode, NULL);
+                           EVP_PKEY_CTRL_HKDF_MODE, mode, nullptr);
 }
 
 int EVP_PKEY_CTX_set_hkdf_md(EVP_PKEY_CTX *ctx, const EVP_MD *md) {

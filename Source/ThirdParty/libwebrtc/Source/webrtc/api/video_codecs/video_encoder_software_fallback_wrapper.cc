@@ -421,8 +421,11 @@ int32_t VideoEncoderSoftwareFallbackWrapper::EncodeWithMainEncoder(
       }
       VideoFrame scaled_frame = frame;
       scaled_frame.set_video_frame_buffer(dst_buffer);
-      scaled_frame.set_update_rect(VideoFrame::UpdateRect{
-          0, 0, scaled_frame.width(), scaled_frame.height()});
+      scaled_frame.set_update_rect(
+          VideoFrame::UpdateRect{.offset_x = 0,
+                                 .offset_y = 0,
+                                 .width = scaled_frame.width(),
+                                 .height = scaled_frame.height()});
       return fallback_encoder_->Encode(scaled_frame, frame_types);
     }
   }

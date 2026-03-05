@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSHWB);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSHWB);
 
 ExceptionOr<Ref<CSSHWB>> CSSHWB::create(Ref<CSSNumericValue>&& hue, CSSNumberish&& whiteness, CSSNumberish&& blackness, CSSNumberish&& alpha)
 {
-    auto rectifiedHue = rectifyCSSColorAngle(RefPtr { WTFMove(hue) });
+    auto rectifiedHue = rectifyCSSColorAngle(WTF::move(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
     auto rectifiedWhiteness = rectifyCSSColorPercent(toCSSColorPercent(whiteness));
@@ -48,17 +48,17 @@ ExceptionOr<Ref<CSSHWB>> CSSHWB::create(Ref<CSSNumericValue>&& hue, CSSNumberish
     auto rectifiedAlpha = rectifyCSSColorPercent(toCSSColorPercent(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
-    return adoptRef(*new CSSHWB(std::get<RefPtr<CSSNumericValue>>(rectifiedHue.releaseReturnValue()).releaseNonNull()
-        , std::get<RefPtr<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue()).releaseNonNull()
-        , std::get<RefPtr<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue()).releaseNonNull()
-        , std::get<RefPtr<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue()).releaseNonNull()));
+    return adoptRef(*new CSSHWB(std::get<Ref<CSSNumericValue>>(rectifiedHue.releaseReturnValue())
+        , std::get<Ref<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue())
+        , std::get<Ref<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue())
+        , std::get<Ref<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue())));
 }
 
 CSSHWB::CSSHWB(Ref<CSSNumericValue>&& hue, Ref<CSSNumericValue>&& whiteness, Ref<CSSNumericValue>&& blackness, Ref<CSSNumericValue>&& alpha)
-    : m_hue(WTFMove(hue))
-    , m_whiteness(WTFMove(whiteness))
-    , m_blackness(WTFMove(blackness))
-    , m_alpha(WTFMove(alpha))
+    : m_hue(WTF::move(hue))
+    , m_whiteness(WTF::move(whiteness))
+    , m_blackness(WTF::move(blackness))
+    , m_alpha(WTF::move(alpha))
 {
 }
 
@@ -69,16 +69,16 @@ CSSNumericValue& CSSHWB::h() const
 
 ExceptionOr<void> CSSHWB::setH(Ref<CSSNumericValue>&& hue)
 {
-    auto rectifiedHue = rectifyCSSColorAngle(RefPtr { WTFMove(hue) });
+    auto rectifiedHue = rectifyCSSColorAngle(WTF::move(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
-    m_hue = std::get<RefPtr<CSSNumericValue>>(rectifiedHue.releaseReturnValue()).releaseNonNull();
+    m_hue = std::get<Ref<CSSNumericValue>>(rectifiedHue.releaseReturnValue());
     return { };
 }
 
 CSSNumberish CSSHWB::w() const
 {
-    return RefPtr { m_whiteness.copyRef() };
+    return m_whiteness;
 }
 
 ExceptionOr<void> CSSHWB::setW(CSSNumberish&& whiteness)
@@ -86,13 +86,13 @@ ExceptionOr<void> CSSHWB::setW(CSSNumberish&& whiteness)
     auto rectifiedWhiteness = rectifyCSSColorPercent(toCSSColorPercent(whiteness));
     if (rectifiedWhiteness.hasException())
         return rectifiedWhiteness.releaseException();
-    m_whiteness = std::get<RefPtr<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue()).releaseNonNull();
+    m_whiteness = std::get<Ref<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue());
     return { };
 }
 
 CSSNumberish CSSHWB::b() const
 {
-    return RefPtr { m_blackness.copyRef() };
+    return m_blackness;
 }
 
 ExceptionOr<void> CSSHWB::setB(CSSNumberish&& blackness)
@@ -100,13 +100,13 @@ ExceptionOr<void> CSSHWB::setB(CSSNumberish&& blackness)
     auto rectifiedBlackness = rectifyCSSColorPercent(toCSSColorPercent(blackness));
     if (rectifiedBlackness.hasException())
         return rectifiedBlackness.releaseException();
-    m_blackness = std::get<RefPtr<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue()).releaseNonNull();
+    m_blackness = std::get<Ref<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue());
     return { };
 }
 
 CSSNumberish CSSHWB::alpha() const
 {
-    return RefPtr { m_alpha.copyRef() };
+    return m_alpha;
 }
 
 ExceptionOr<void> CSSHWB::setAlpha(CSSNumberish&& alpha)
@@ -114,7 +114,7 @@ ExceptionOr<void> CSSHWB::setAlpha(CSSNumberish&& alpha)
     auto rectifiedAlpha = rectifyCSSColorPercent(toCSSColorPercent(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
-    m_alpha = std::get<RefPtr<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue()).releaseNonNull();
+    m_alpha = std::get<Ref<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue());
     return { };
 }
 

@@ -43,8 +43,8 @@ namespace WebCore {
 
 static bool populateFontFaceWithArrayBuffer(CSSFontFace& fontFace, Ref<JSC::ArrayBufferView>&& arrayBufferView)
 {
-    auto source = makeUnique<CSSFontFaceSource>(fontFace, WTFMove(arrayBufferView));
-    fontFace.adoptSource(WTFMove(source));
+    auto source = makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(fontFace, WTF::move(arrayBufferView));
+    fontFace.adoptSource(WTF::move(source));
     return false;
 }
 
@@ -75,27 +75,27 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
 
     auto fontTrustedTypes = context.settingsValues().downloadableBinaryFontTrustedTypes;
     auto sourceConversionResult = WTF::switchOn(source,
-        [&] (String& string) -> ExceptionOr<void> {
+        [&](String& string) -> ExceptionOr<void> {
             auto value = CSSPropertyParserHelpers::parseFontFaceSrc(string, context);
             if (!value)
                 return Exception { ExceptionCode::SyntaxError };
             CSSFontFace::appendSources(result->backing(), *value, &context, false);
             return { };
         },
-        [&, fontTrustedTypes] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
-            if (!arrayBufferView || fontBinaryParsingPolicy(arrayBufferView->span(), fontTrustedTypes) == FontParsingPolicy::Deny)
+        [&, fontTrustedTypes](Ref<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
+            if (fontBinaryParsingPolicy(arrayBufferView->span(), fontTrustedTypes) == FontParsingPolicy::Deny)
                 return { };
 
-            dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
+            dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), WTF::move(arrayBufferView));
             return { };
         },
-        [&, fontTrustedTypes] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
-            if (!arrayBuffer || fontBinaryParsingPolicy(arrayBuffer->span(), fontTrustedTypes) == FontParsingPolicy::Deny)
+        [&, fontTrustedTypes](Ref<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
+            if (fontBinaryParsingPolicy(arrayBuffer->span(), fontTrustedTypes) == FontParsingPolicy::Deny)
                 return { };
 
             unsigned byteLength = arrayBuffer->byteLength();
-            auto arrayBufferView = JSC::Uint8Array::create(WTFMove(arrayBuffer), 0, byteLength);
-            dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), WTFMove(arrayBufferView));
+            auto arrayBufferView = JSC::Uint8Array::create(WTF::move(arrayBuffer), 0, byteLength);
+            dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), WTF::move(arrayBufferView));
             return { };
         }
     );

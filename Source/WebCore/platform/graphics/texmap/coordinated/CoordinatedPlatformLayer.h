@@ -47,7 +47,6 @@ class CoordinatedPlatformLayerBuffer;
 class CoordinatedTileBuffer;
 class GraphicsLayerCoordinated;
 class NativeImage;
-class TextureMapper;
 class TextureMapperLayer;
 
 #if USE(SKIA)
@@ -102,7 +101,7 @@ public:
 
 #if ENABLE(DAMAGE_TRACKING)
     void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
-    void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTFMove(damage); }
+    void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTF::move(damage); }
 #endif
 
     void setPosition(FloatPoint&&);
@@ -160,6 +159,10 @@ public:
     void setContentsTilePhase(const FloatSize&);
     void setDirtyRegion(Damage&&);
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void setContentsScrollbarImageForScrolling(NativeImage*);
+#endif
+
     void setFilters(const FilterOperations&);
     void setMask(CoordinatedPlatformLayer*);
     void setReplica(CoordinatedPlatformLayer*);
@@ -180,7 +183,7 @@ public:
     void updateContents(bool affectedByTransformAnimation);
     void updateBackingStore();
 
-    void flushCompositingState(const OptionSet<CompositionReason>&, TextureMapper&);
+    void flushCompositingState(const OptionSet<CompositionReason>&);
 
     bool hasPendingTilesCreation() const { return m_pendingTilesCreation; }
     bool isCompositionRequiredOrOngoing() const;

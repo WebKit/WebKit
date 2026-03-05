@@ -33,19 +33,13 @@ namespace WebKit {
 
 void WebPreferences::platformInitializeStore()
 {
-    struct {
-        bool acceleratedCompositingEnabled { true };
-        bool forceCompositingMode { false };
-    } compositingState;
+    const bool canUseHardwareAcceleration = HardwareAccelerationManager::singleton().canUseHardwareAcceleration();
+    const bool acceleratedCompositingEnabled = HardwareAccelerationManager::singleton().acceleratedCompositingModeEnabled();
 
-    if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
-        compositingState = { false, false };
-    else if (HardwareAccelerationManager::singleton().forceHardwareAcceleration())
-        compositingState = { true, true };
-
-    setAcceleratedCompositingEnabled(compositingState.acceleratedCompositingEnabled);
-    setForceCompositingMode(compositingState.forceCompositingMode);
-    setThreadedScrollingEnabled(compositingState.forceCompositingMode);
+    setHardwareAccelerationEnabled(canUseHardwareAcceleration);
+    setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
+    setForceCompositingMode(acceleratedCompositingEnabled);
+    setThreadedScrollingEnabled(acceleratedCompositingEnabled);
 }
 
 } // namespace WebKit

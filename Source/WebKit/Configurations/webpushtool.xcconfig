@@ -32,6 +32,9 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = *;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = *;
 
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO; // Disable PGO profile generation
+WK_PGO_GEN_FLAGS = ; // Disable IR PGO profile generation
+WK_PGO_USE_CFLAGS = ; // Disable IR PGO profile use
+WK_PGO_USE_LDFLAGS = ; // Disable IR PGO profile use
 OTHER_LDFLAGS = $(WK_COMMON_OTHER_LDFLAGS) -framework WebKit $(SOURCE_VERSION_LDFLAGS);
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
 

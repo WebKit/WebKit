@@ -55,7 +55,9 @@ WebKitDOMWheelEvent* wrapWheelEvent(WebCore::WheelEvent* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMWheelEvent, webkit_dom_wheel_event, WEBKIT_DOM_TYPE_MOUSE_EVENT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_WHEEL_EVENT_PROP_0,

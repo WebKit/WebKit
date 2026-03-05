@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 
 namespace JSC { namespace Wasm {

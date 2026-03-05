@@ -1,0 +1,93 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false UseUIProcessForBackForwardItemLoading=true dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/navigation/resources/navigation-utils.js"></script>
+<script>
+
+description("Nested iframe history navigation works correctly with same-site iframe when back/forward cache is disabled.");
+jsTestIsAsync = true;
+
+const page = "opener";
+var popup = null;
+
+window.onload = function() {
+    popup = window.open("/navigation/resources/back-iframe-popup.html");
+}
+
+var page1ShowCount = 0;
+var page2ShowCount = 0;
+
+window.onmessage = (event) => dispatchMessage(event.data, {
+    popup: {
+        pageshow: ({arg}) => {
+            if (arg !== "not-persisted") {
+                testFailed("Popup should not be loaded from back/forward cache.");
+                finishJSTest();
+                return;
+            }
+        },
+    },
+    page1: {
+        load: () => debug("Page1 loaded"),
+        pageshow: ({arg}) => {
+            if (arg !== "not-persisted") {
+                testFailed("Page1 should not be loaded from back/forward cache.");
+                finishJSTest();
+                return;
+            }
+
+            page1ShowCount++;
+            if (page1ShowCount == 1) {
+                debug("Page1 displayed first time.");
+                sendMessageToPopup("navigate-to-page2");
+            } else if (page1ShowCount == 2) {
+                testFailed("Page1 should be displayed only once.");
+                finishJSTest();
+            }
+        }
+    },
+    page2: {
+        load: () => debug("Page2 loaded"),
+        pageshow: ({arg}) => {
+            if (arg !== "not-persisted") {
+                testFailed("Page2 should not be loaded from back/forward cache.");
+                finishJSTest();
+                return;
+            }
+
+            page2ShowCount++;
+            if (page2ShowCount == 1) {
+                debug("Page2 displayed first time.");
+                sendMessageToPopup("navigate-to-other");
+            } else if (page2ShowCount == 2) {
+                testPassed("Page2 displayed twice.");
+                finishJSTest();
+            } else {
+                testFailed("Page2 should be displayed only twice.");
+                finishJSTest();
+            }
+        }
+    },
+    other: {
+        load: () => debug("Other page loaded"),
+        pageshow: ({arg}) => {
+            debug("Other page displayed.");
+            sendMessageToPopup("back1");
+        }
+    },
+});
+
+</script>
+</head>
+<body>
+<ul>
+    <li>Open a new window with back-iframe-popup.html. It has an iframe with page1 loaded initially.</li>
+    <li>Navigate iframe to page2.</li>
+    <li>Navigate main frame to other.</li>
+    <li>Go back. (back-iframe-popup.html with iframe showing page2)</li>
+</ul>
+<p>... and ensures the nested iframe content is correctly restored to page2.</p>
+</body>
+</html>

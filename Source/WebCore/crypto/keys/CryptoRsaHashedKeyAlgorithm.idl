@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webcrypto/#dfn-RsaHashedKeyAlgorithm
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
 ] dictionary CryptoRsaHashedKeyAlgorithm : CryptoRsaKeyAlgorithm {
     // The hash algorithm that is used with this key
     required CryptoKeyAlgorithm hash;

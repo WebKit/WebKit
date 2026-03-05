@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if OS(DARWIN)
 
 #include <wtf/Lock.h>

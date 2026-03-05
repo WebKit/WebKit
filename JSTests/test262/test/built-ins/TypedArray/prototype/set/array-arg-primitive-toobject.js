@@ -27,20 +27,20 @@ includes: [testTypedArray.js, compareArray.js]
 features: [TypedArray, Symbol]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var ta1 = new TA([1, 2, 3, 4, 5]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var ta1 = new TA(makeCtorArg([1, 2, 3, 4, 5]));
   ta1.set("678", 1);
   assert.compareArray(ta1, [1, 6, 7, 8, 5], "string");
 
-  var ta2 = new TA([1, 2, 3]);
+  var ta2 = new TA(makeCtorArg([1, 2, 3]));
   ta2.set(0);
   assert.compareArray(ta2, [1, 2, 3], "number");
 
-  var ta3 = new TA([1, 2, 3]);
+  var ta3 = new TA(makeCtorArg([1, 2, 3]));
   ta3.set(true, 2);
   assert.compareArray(ta3, [1, 2, 3], "boolean");
 
-  var ta4 = new TA([1]);
+  var ta4 = new TA(makeCtorArg([1]));
   ta4.set(Symbol());
   assert.compareArray(ta4, [1], "symbol");
 });

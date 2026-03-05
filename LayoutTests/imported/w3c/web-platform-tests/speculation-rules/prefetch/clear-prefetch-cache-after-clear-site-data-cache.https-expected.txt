@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/dispatcher/dispatcher.py?uuid=2f958f30-2590-4c7f-8c48-2d27061bc962 due to access control checks.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/dispatcher/dispatcher.py?uuid=2aa4c567-6ca0-45a6-96d8-6846ef6822c6 due to access control checks.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/dispatcher/dispatcher.py?uuid=2f958f30-2590-4c7f-8c48-2d27061bc962 due to access control checks.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/dispatcher/dispatcher.py?uuid=11e644f8-fb6a-4c3c-9266-91c4978d8e0b due to access control checks.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/dispatcher/dispatcher.py?uuid=2f958f30-2590-4c7f-8c48-2d27061bc962 due to access control checks.
-FAIL: Timed out waiting for notifyDone to be called
 
+FAIL clear-site-data prefetchCache headers should prevent it from being fetched assert_equals: expected (undefined) undefined but got (string) "prefetch"
+PASS clear-site-data cache headers should prevent it from being fetched
+PASS clear-site-data prefetchCache in same window should clear its prefetch cache
 

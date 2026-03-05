@@ -65,7 +65,7 @@ public:
 #else
     static Ref<ValidationBubble> create(PlatformView* view, String&& message, const Settings& settings)
     {
-        return adoptRef(*new ValidationBubble(view, WTFMove(message), settings));
+        return adoptRef(*new ValidationBubble(view, WTF::move(message), settings));
     }
 
     WEBCORE_EXPORT ~ValidationBubble();

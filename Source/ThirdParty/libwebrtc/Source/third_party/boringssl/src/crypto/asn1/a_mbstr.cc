@@ -184,7 +184,7 @@ int ASN1_mbstring_ncopy(ASN1_STRING **out, const unsigned char *in,
   CBB cbb;
   CBB_zero(&cbb);
   // If both the same type just copy across
-  uint8_t *data = NULL;
+  uint8_t *data = nullptr;
   size_t data_len = 0;
   if (inform == outform) {
     if (!ASN1_STRING_set(dest, in, len)) {

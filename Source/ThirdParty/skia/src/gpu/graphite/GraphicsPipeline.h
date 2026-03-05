@@ -12,6 +12,9 @@
 #include "src/gpu/graphite/Resource.h"
 #include "src/gpu/graphite/UniquePaintParamsID.h"
 
+#include <optional>
+#include <string>
+
 namespace skgpu::graphite {
 
 class ShaderInfo;
@@ -43,8 +46,7 @@ public:
     DstReadStrategy dstReadStrategy() const { return fPipelineInfo.fDstReadStrategy; }
 
     int  numFragTexturesAndSamplers() const { return fPipelineInfo.fNumFragTexturesAndSamplers; }
-    bool hasPaintUniforms()           const { return fPipelineInfo.fHasPaintUniforms;           }
-    bool hasStepUniforms()            const { return fPipelineInfo.fHasStepUniforms;            }
+    bool hasCombinedUniforms()        const { return fPipelineInfo.fHasCombinedUniforms;        }
     bool hasGradientBuffer()          const { return fPipelineInfo.fHasGradientBuffer;          }
 
     struct PipelineInfo {
@@ -56,8 +58,7 @@ public:
 
         DstReadStrategy fDstReadStrategy = DstReadStrategy::kNoneRequired;
         int  fNumFragTexturesAndSamplers = 0;
-        bool fHasPaintUniforms  = false;
-        bool fHasStepUniforms   = false;
+        bool fHasCombinedUniforms = false;
         bool fHasGradientBuffer = false;
 
         // In test-enabled builds, we preserve the generated shader code to display in the viewer
@@ -88,9 +89,9 @@ public:
     uint16_t epoch() const { return fPipelineInfo.fEpoch; }
 
     // GraphicsPipeline compiles can take a while. If the underlying compilation is performed
-    // asynchronously, we may create a GraphicsPipeline object that later "fails" and need to remove
-    // it from the GlobalCache.
-    virtual bool didAsyncCompilationFail() const { return false; }
+    // asynchronously, we may create a GraphicsPipeline object that later "fails".
+    // If the compilation failed, this will return an error message.
+    virtual std::optional<std::string> didAsyncCompilationFail() const { return std::nullopt; }
 
 protected:
     // GraphicsPipeline labels are often provided to the description of what needs to be compiled,

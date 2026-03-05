@@ -113,7 +113,7 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(const C
             switch (access.type()) {
             case AccessCase::DeleteMiss:
             case AccessCase::DeleteNonConfigurable: {
-                DeleteByVariant variant(access.identifier(), access.type() == AccessCase::DeleteMiss ? true : false, structure, nullptr, invalidOffset);
+                DeleteByVariant variant(access.identifier(), access.type() == AccessCase::DeleteMiss, structure, nullptr, invalidOffset);
                 if (!result.appendVariant(variant))
                     return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
                 break;

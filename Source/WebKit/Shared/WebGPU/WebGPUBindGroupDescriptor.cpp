@@ -41,7 +41,7 @@ std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(con
     if (!base)
         return std::nullopt;
 
-    auto identifier = convertToBacking(bindGroupDescriptor.protectedLayout().get());
+    auto identifier = convertToBacking(protect(bindGroupDescriptor.layout).get());
 
     Vector<BindGroupEntry> entries;
     entries.reserveInitialCapacity(bindGroupDescriptor.entries.size());
@@ -49,10 +49,10 @@ std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(con
         auto convertedEntry = convertToBacking(entry);
         if (!convertedEntry)
             return std::nullopt;
-        entries.append(WTFMove(*convertedEntry));
+        entries.append(WTF::move(*convertedEntry));
     }
 
-    return { { WTFMove(*base), identifier, WTFMove(entries) } };
+    return { { WTF::move(*base), identifier, WTF::move(entries) } };
 }
 
 std::optional<WebCore::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::convertFromBacking(const BindGroupDescriptor& bindGroupDescriptor)
@@ -71,10 +71,10 @@ std::optional<WebCore::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::c
         auto entry = convertFromBacking(backingEntry);
         if (!entry)
             return std::nullopt;
-        entries.append(WTFMove(*entry));
+        entries.append(WTF::move(*entry));
     }
 
-    return { { WTFMove(*base), *bindGroupLayout, WTFMove(entries) } };
+    return { { WTF::move(*base), *bindGroupLayout, WTF::move(entries) } };
 }
 
 } // namespace WebKit

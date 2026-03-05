@@ -15,12 +15,12 @@ info: |
       ...
       ii. Perform ? Call(callbackfn, T, « kValue, k, O »).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([7n, 8n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([7n, 8n]));
 
   var results = [];
 

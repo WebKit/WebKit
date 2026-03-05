@@ -33,28 +33,27 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaRecorderErrorEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderErrorEvent);
 
 Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& type, Exception&& exception)
 {
-    return adoptRef(*new MediaRecorderErrorEvent(type, WTFMove(exception)));
+    return adoptRef(*new MediaRecorderErrorEvent(type, WTF::move(exception)));
 }
 
 Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto domError = init.error.releaseNonNull();
-    return adoptRef(*new MediaRecorderErrorEvent(type, WTFMove(init), WTFMove(domError), isTrusted));
+    return adoptRef(*new MediaRecorderErrorEvent(type, WTF::move(init), isTrusted));
 }
 
-MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Init&& init, Ref<DOMException>&& exception, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MediaRecorderErrorEvent, type, WTFMove(init), isTrusted)
-    , m_domError(WTFMove(exception))
+MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : Event(EventInterfaceType::MediaRecorderErrorEvent, type, WTF::move(init), isTrusted)
+    , m_error(WTF::move(init.error))
 {
 }
 
 MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Exception&& exception)
     : Event(EventInterfaceType::MediaRecorderErrorEvent, type, Event::CanBubble::No, Event::IsCancelable::No)
-    , m_domError(DOMException::create(exception))
+    , m_error(DOMException::create(exception))
 {
 }
 

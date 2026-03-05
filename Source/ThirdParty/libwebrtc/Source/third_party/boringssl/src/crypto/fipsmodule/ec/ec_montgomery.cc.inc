@@ -105,11 +105,11 @@ static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
   ec_GFp_mont_felem_inv0(group, &z2, &point->Z);
   ec_GFp_mont_felem_sqr(group, &z1, &z2);
 
-  if (x != NULL) {
+  if (x != nullptr) {
     ec_GFp_mont_felem_mul(group, x, &point->X, &z1);
   }
 
-  if (y != NULL) {
+  if (y != nullptr) {
     ec_GFp_mont_felem_mul(group, &z1, &z1, &z2);
     ec_GFp_mont_felem_mul(group, y, &point->Y, &z1);
   }

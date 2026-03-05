@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include "Overload.h"
 #include "Types.h"
 #include <wtf/OptionSet.h>
 
@@ -51,8 +52,12 @@ public:
     using Ref = std::reference_wrapper<CallExpression>;
 
     NodeKind kind() const override;
+
     Expression& target() { return m_target.get(); }
+    const Expression& target() const { return m_target.get(); }
+
     Expression::List& arguments() { return m_arguments; }
+    const Expression::List& arguments() const { return m_arguments; }
 
     bool isConstructor() const { return m_isConstructor; }
 
@@ -90,11 +95,15 @@ public:
 
     const OptionSet<ShaderStage>& visibility() const { return m_visibility; }
 
+    const String& resolvedTarget() const { return m_resolvedTarget; }
+
+    ValidationFunction validationFunction() const { return m_validationFunction; }
+
 private:
     CallExpression(SourceSpan span, Expression::Ref&& target, Expression::List&& arguments)
         : Expression(span)
-        , m_target(WTFMove(target))
-        , m_arguments(WTFMove(arguments))
+        , m_target(WTF::move(target))
+        , m_arguments(WTF::move(arguments))
     { }
 
     // If m_target is a NamedType, it could either be a:
@@ -103,9 +112,11 @@ private:
     //   * Identifier that refers to a function.
     Expression::Ref m_target;
     Expression::List m_arguments;
+    String m_resolvedTarget;
 
     bool m_isConstructor { false };
     OptionSet<ShaderStage> m_visibility { ShaderStage::Compute, ShaderStage::Vertex, ShaderStage::Fragment };
+    ValidationFunction m_validationFunction { nullptr };
 };
 
 } // namespace AST

@@ -25,11 +25,17 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/WasmBaselineData.h>
 #include <wtf/Expected.h>
 #include <wtf/text/WTFString.h>
+
+namespace JSC {
+class JSWebAssemblyInstance;
+}
 
 namespace JSC::Wasm {
 

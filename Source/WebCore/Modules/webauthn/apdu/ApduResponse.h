@@ -60,8 +60,8 @@ public:
 
     Vector<uint8_t> getEncodedResponse() const;
 
-    const Vector<uint8_t>& data() const { return m_data; }
-    Vector<uint8_t>& data() { return m_data; }
+    const Vector<uint8_t>& data() const LIFETIME_BOUND { return m_data; }
+    Vector<uint8_t>& data() LIFETIME_BOUND { return m_data; }
     Status status() const { return m_responseStatus; }
 
 private:

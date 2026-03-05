@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
       RenderBlock {P} at (0,59) size 800x54
-        RenderText {#text} at (0,0) size 207x17
+        RenderText {#text} at (0,0) size 207x18
           text run at (0,0) width 207: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 789x35
-          RenderText {#text} at (0,0) size 789x35
+        RenderInline {I} at (0,0) size 789x36
+          RenderText {#text} at (0,0) size 789x36
             text run at (207,0) width 448: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5921 Hit-testing text "
             text run at (654,0) width 135: "in overflows does not"
             text run at (0,18) width 167: "take scrolling into account"
-        RenderText {#text} at (0,18) size 764x35
+        RenderText {#text} at (0,18) size 764x36
           text run at (166,18) width 83: " by scrolling "
           text run at (248,18) width 409: "the above text all the way to the right, clicking the last letter, and "
           text run at (656,18) width 108: "verifying that the"
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
           text run at (291,36) width 56: "delegate."
 layer at (0,0) size 210x33 clip at (0,0) size 210x18 scrollX 33 scrollWidth 243
   RenderBlock {DIV} at (0,0) size 210x33
-    RenderText {#text} at (0,0) size 243x17
+    RenderText {#text} at (0,0) size 243x18
       text run at (0,0) width 243: "Seals and caribou live in the arctic, too"
 layer at (0,41) size 800x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,41) size 800x2 [color=#808080] [border: (1px inset #808080)]

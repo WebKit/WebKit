@@ -17,6 +17,7 @@
 #include "absl/base/nullability.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "api/audio/neural_residual_echo_estimator.h"
 #include "api/environment/environment.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -43,6 +44,16 @@ class RTC_EXPORT EchoCanceller3Factory : public EchoControlFactory {
       int sample_rate_hz,
       int num_render_channels,
       int num_capture_channels) override;
+
+  // Creates an EchoCanceller3 with a specified channel count and sampling rate.
+  // If provided, `neural_residual_echo_estimator` is used to estimate the
+  // residual echo.
+  absl_nonnull std::unique_ptr<EchoControl> Create(
+      const Environment& env,
+      int sample_rate_hz,
+      int num_render_channels,
+      int num_capture_channels,
+      NeuralResidualEchoEstimator* neural_residual_echo_estimator) override;
 
  private:
   const EchoCanceller3Config config_;

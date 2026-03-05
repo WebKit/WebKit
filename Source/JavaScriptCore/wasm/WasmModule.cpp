@@ -45,14 +45,18 @@ Module::Module(IPIntPlan& plan)
     , m_ipintCallees(IPIntCallees::createFromVector(plan.takeCallees()))
     , m_wasmToJSExitStubs(plan.takeWasmToJSExitStubs())
 {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
         Wasm::DebugServer::singleton().trackModule(*this);
+#endif
 }
 
 Module::~Module()
 {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
         Wasm::DebugServer::singleton().untrackModule(*this);
+#endif
 }
 
 Wasm::TypeIndex Module::typeIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const
@@ -70,7 +74,7 @@ static Module::ValidationResult makeValidationResult(IPIntPlan& plan)
 
 static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallback&& callback)
 {
-    return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (Plan& plan) {
+    return createSharedTask<Plan::CallbackType>([callback = WTF::move(callback)] (Plan& plan) {
         ASSERT(!plan.hasWork());
         callback->run(makeValidationResult(static_cast<IPIntPlan&>(plan)));
     });
@@ -78,7 +82,7 @@ static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallba
 
 Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source)
 {
-    Ref<IPIntPlan> plan = adoptRef(*new IPIntPlan(vm, WTFMove(source), CompilerMode::Validation, Plan::dontFinalize()));
+    Ref<IPIntPlan> plan = adoptRef(*new IPIntPlan(vm, WTF::move(source), CompilerMode::Validation, Plan::dontFinalize()));
     Wasm::ensureWorklist().enqueue(plan.get());
     plan->waitForCompletion();
     return makeValidationResult(plan.get());
@@ -86,8 +90,8 @@ Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source)
 
 void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
 {
-    Ref<Plan> plan = adoptRef(*new IPIntPlan(vm, WTFMove(source), CompilerMode::Validation, makeValidationCallback(WTFMove(callback))));
-    Wasm::ensureWorklist().enqueue(WTFMove(plan));
+    Ref<Plan> plan = adoptRef(*new IPIntPlan(vm, WTF::move(source), CompilerMode::Validation, makeValidationCallback(WTF::move(callback))));
+    Wasm::ensureWorklist().enqueue(WTF::move(plan));
 }
 
 Ref<CalleeGroup> Module::getOrCreateCalleeGroup(VM& vm, MemoryMode mode)
@@ -121,7 +125,7 @@ Ref<CalleeGroup> Module::compileSync(VM& vm, MemoryMode mode)
 void Module::compileAsync(VM& vm, MemoryMode mode, CalleeGroup::AsyncCompilationCallback&& task)
 {
     Ref<CalleeGroup> calleeGroup = getOrCreateCalleeGroup(vm, mode);
-    calleeGroup->compileAsync(vm, WTFMove(task));
+    calleeGroup->compileAsync(vm, WTF::move(task));
 }
 
 void Module::copyInitialCalleeGroupToAllMemoryModes(MemoryMode initialMode)
@@ -165,8 +169,10 @@ std::unique_ptr<MergedProfile> Module::createMergedProfile(const IPIntCallee& ca
     return result;
 }
 
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 uint32_t Module::debugId() const { return m_moduleInformation->debugInfo->id; }
 void Module::setDebugId(uint32_t id) { m_moduleInformation->debugInfo->id = id; }
+#endif
 
 } } // namespace JSC::Wasm
 

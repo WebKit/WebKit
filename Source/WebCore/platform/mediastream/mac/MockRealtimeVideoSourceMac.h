@@ -48,7 +48,7 @@ class ImageTransferSessionVT;
 class MockRealtimeVideoSourceMac final : public MockRealtimeVideoSource {
 public:
     static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
-    static Ref<MockRealtimeVideoSource> create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& salt, std::optional<PageIdentifier> pageIdentifier) { return adoptRef(*new MockRealtimeVideoSourceMac(WTFMove(deviceID), WTFMove(name), WTFMove(salt), WTFMove(pageIdentifier))); }
+    static Ref<MockRealtimeVideoSource> create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& salt, std::optional<PageIdentifier> pageIdentifier) { return adoptRef(*new MockRealtimeVideoSourceMac(WTF::move(deviceID), WTF::move(name), WTF::move(salt), WTF::move(pageIdentifier))); }
 
     ~MockRealtimeVideoSourceMac();
 

@@ -19,32 +19,34 @@
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
-#include "rtc_base/time_utils.h"
 #include "rtc_tools/network_tester/config_reader.h"
 #include "rtc_tools/network_tester/test_controller.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 namespace {
 
 absl::AnyInvocable<void() &&> SendPacketTask(
+    Clock* clock,
     PacketSender* packet_sender,
     scoped_refptr<PendingTaskSafetyFlag> task_safety_flag,
-    int64_t target_time_ms = TimeMillis()) {
-  return [target_time_ms, packet_sender,
+    int64_t target_time_ms) {
+  return [clock, target_time_ms, packet_sender,
           task_safety_flag = std::move(task_safety_flag)]() mutable {
     if (task_safety_flag->alive() && packet_sender->IsSending()) {
       packet_sender->SendPacket();
       target_time_ms += packet_sender->GetSendIntervalMs();
-      int64_t delay_ms =
-          std::max(static_cast<int64_t>(0), target_time_ms - TimeMillis());
+      int64_t delay_ms = std::max(static_cast<int64_t>(0),
+                                  target_time_ms - clock->TimeInMilliseconds());
       TaskQueueBase::Current()->PostDelayedTask(
-          SendPacketTask(packet_sender, std::move(task_safety_flag),
+          SendPacketTask(clock, packet_sender, std::move(task_safety_flag),
                          target_time_ms),
           TimeDelta::Millis(delay_ms));
     }
@@ -77,11 +79,13 @@ absl::AnyInvocable<void() &&> UpdateTestSettingTask(
 }  // namespace
 
 PacketSender::PacketSender(
+    const Environment& env,
     TestController* test_controller,
     TaskQueueBase* worker_queue,
     scoped_refptr<PendingTaskSafetyFlag> task_safety_flag,
     const std::string& config_file_path)
-    : packet_size_(0),
+    : env_(env),
+      packet_size_(0),
       send_interval_ms_(0),
       sequence_number_(0),
       sending_(false),
@@ -101,7 +105,8 @@ void PacketSender::StartSending() {
   worker_queue_->PostTask(UpdateTestSettingTask(
       this, std::make_unique<ConfigReader>(config_file_path_),
       task_safety_flag_));
-  worker_queue_->PostTask(SendPacketTask(this, task_safety_flag_));
+  worker_queue_->PostTask(SendPacketTask(&env_.clock(), this, task_safety_flag_,
+                                         env_.clock().TimeInMilliseconds()));
 }
 
 void PacketSender::StopSending() {
@@ -120,7 +125,7 @@ void PacketSender::SendPacket() {
   NetworkTesterPacket packet;
   packet.set_type(NetworkTesterPacket::TEST_DATA);
   packet.set_sequence_number(sequence_number_++);
-  packet.set_send_timestamp(TimeMicros());
+  packet.set_send_timestamp(env_.clock().TimeInMicroseconds());
   test_controller_->SendData(packet, packet_size_);
 }
 

@@ -95,7 +95,7 @@ TEST(MediaReorderQueue, MediaSample)
     while (!queue.isEmpty()) {
         RefPtr nextSample = queue.takeFirst();
         ASSERT_LE(currentSample->presentationTime(), nextSample->presentationTime());
-        currentSample = WTFMove(nextSample);
+        currentSample = WTF::move(nextSample);
     }
 }
 

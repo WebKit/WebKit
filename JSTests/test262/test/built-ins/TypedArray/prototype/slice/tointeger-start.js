@@ -19,8 +19,8 @@ var obj = {
   }
 };
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([40, 41, 42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([40, 41, 42, 43]));
 
   assert(compareArray(sample.slice(false), [40, 41, 42, 43]), "false");
   assert(compareArray(sample.slice(true), [41, 42, 43]), "true");

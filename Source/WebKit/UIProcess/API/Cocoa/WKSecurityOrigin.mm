@@ -40,7 +40,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKSecurityOrigin.class, self))
         return;
 
-    _securityOrigin->~SecurityOrigin();
+    SUPPRESS_UNCOUNTED_ARG _securityOrigin->~SecurityOrigin();
 
     [super dealloc];
 }

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaymentRequestUpdateEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaymentRequestUpdateEvent);
 
 PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(enum EventInterfaceType eventInterface, const AtomString& type, const PaymentRequestUpdateEventInit& eventInit)
     : Event { eventInterface, type, eventInit, IsTrusted::No }
@@ -73,7 +73,7 @@ ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detail
         return Exception { ExceptionCode::TypeError };
     }
 
-    auto exception = downcast<PaymentRequest>(protectedTarget())->updateWith(reason, WTFMove(detailsPromise));
+    auto exception = downcast<PaymentRequest>(protect(target()))->updateWith(reason, WTF::move(detailsPromise));
     if (exception.hasException())
         return exception.releaseException();
 

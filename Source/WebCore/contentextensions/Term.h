@@ -319,17 +319,17 @@ inline Term::Term(const Term& other)
 }
 
 inline Term::Term(Term&& other)
-    : m_termType(WTFMove(other.m_termType))
-    , m_quantifier(WTFMove(other.m_quantifier))
+    : m_termType(WTF::move(other.m_termType))
+    , m_quantifier(WTF::move(other.m_quantifier))
 {
     switch (m_termType) {
     case TermType::Empty:
         break;
     case TermType::CharacterSet:
-        new (NotNull, &m_atomData.characterSet) CharacterSet(WTFMove(other.m_atomData.characterSet));
+        new (NotNull, &m_atomData.characterSet) CharacterSet(WTF::move(other.m_atomData.characterSet));
         break;
     case TermType::Group:
-        new (NotNull, &m_atomData.group) Group(WTFMove(other.m_atomData.group));
+        new (NotNull, &m_atomData.group) Group(WTF::move(other.m_atomData.group));
         break;
     }
     other.destroy();
@@ -384,7 +384,7 @@ inline ImmutableCharNFANodeBuilder Term::generateGraph(NFA& nfa, ImmutableCharNF
 {
     ImmutableCharNFANodeBuilder newEnd(nfa);
     generateGraph(nfa, source, newEnd.nodeId());
-    newEnd.setActions(WTFMove(finalActions));
+    newEnd.setActions(WTF::move(finalActions));
     return newEnd;
 }
 
@@ -526,7 +526,7 @@ inline Term& Term::operator=(const Term& other)
 inline Term& Term::operator=(Term&& other)
 {
     destroy();
-    new (NotNull, this) Term(WTFMove(other));
+    new (NotNull, this) Term(WTF::move(other));
     return *this;
 }
 
@@ -629,7 +629,7 @@ inline void Term::generateSubgraphForAtom(NFA& nfa, ImmutableCharNFANodeBuilder&
         for (unsigned i = 1; i < m_atomData.group.terms.size() - 1; ++i) {
             const Term& currentTerm = m_atomData.group.terms[i];
             ImmutableCharNFANodeBuilder newNode = currentTerm.generateGraph(nfa, lastTarget, ActionList());
-            lastTarget = WTFMove(newNode);
+            lastTarget = WTF::move(newNode);
         }
         const Term& lastTerm = m_atomData.group.terms.last();
         lastTerm.generateGraph(nfa, lastTarget, destination);

@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-view-transitions/#additions-to-document-api
 partial interface Document {
-    [EnabledBySetting=ViewTransitionsEnabled] ViewTransition startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions) callbackOptions = {});
+    // FIXME: startViewTransition() should not be nullable.
+    [EnabledBySetting=ViewTransitionsEnabled] ViewTransition? startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions) callbackOptions = {});
     [EnabledBySetting=ViewTransitionsEnabled] readonly attribute ViewTransition? activeViewTransition;
 };

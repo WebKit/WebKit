@@ -1,0 +1,28 @@
+Test that Runtime.evaluate and callFunctionOn work correctly in cross-origin iframes under site isolation.
+
+
+== Running test suite: SiteIsolation.Runtime.CrossOriginEvaluate
+-- Running test case: SiteIsolation.Runtime.CrossOrigin.FrameTargetCreated
+PASS: Added target should have Frame type.
+PASS: Cross-origin frame target should have a RuntimeAgent.
+PASS: Cross-origin frame target should eventually have an ExecutionContext.
+
+-- Running test case: SiteIsolation.Runtime.CrossOrigin.EvaluatePassphrase
+PASS: Cross-origin frame should have passphrase 'cross-origin-secret'.
+PASS: Main page should have passphrase 'main-page-value'.
+PASS: Cross-origin frame and main page should have different passphrase values.
+
+-- Running test case: SiteIsolation.Runtime.CrossOrigin.EvaluateHostname
+PASS: Cross-origin frame hostname should differ from main page hostname.
+Main page hostname: 127.0.0.1
+Cross-origin frame hostname: localhost
+
+-- Running test case: SiteIsolation.Runtime.CrossOrigin.CallFunctionOn
+PASS: Creating object in cross-origin frame should not throw.
+PASS: Created object should have an objectId.
+PASS: callFunctionOn should return the object's key value.
+PASS: callFunctionOn should not throw.
+
+-- Running test case: SiteIsolation.Runtime.CrossOrigin.RemoveIframe
+PASS: Removed target should have Frame type.
+

@@ -7,6 +7,7 @@ set(PAL_PUBLIC_HEADERS
     ThreadGlobalData.h
 
     crypto/CryptoDigest.h
+    crypto/CryptoDigestHashFunction.h
 
     system/Clock.h
     system/ClockGeneric.h
@@ -68,10 +69,10 @@ set(PAL_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_DIR}/pal/text"
 )
 
-set(PAL_FRAMEWORKS WTF)
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND PAL_FRAMEWORKS bmalloc)
-endif ()
+set(PAL_FRAMEWORKS
+    WTF
+    bmalloc
+)
 
 set(PAL_INTERFACE_LIBRARIES PAL)
 set(PAL_INTERFACE_INCLUDE_DIRECTORIES ${PAL_FRAMEWORK_HEADERS_DIR})

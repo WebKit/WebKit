@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-44; totalPixels=0-17320" />
+    <style>
+        .box {
+            margin: 20px;
+            width: 400px;
+            border: 1px solid black;
+            padding: 20px;
+            font-size: 40pt;
+            font-weight: 900;
+            font-family: sans-serif;
+            text-align: center;
+            color: transparent;
+        }
+
+        .single-background {
+            background-clip: text;
+            background-image: url('../images/resources/green-400x400.png');
+            background-color: blue;
+            background-blend-mode: lighten;
+        }
+
+        .middle-background {
+            background-clip: text, border-box;
+            background-image: url('../images/resources/green-400x400.png'), url('../images/resources/green-256x256.png');
+            background-color: blue;
+            background-blend-mode: difference, lighten;
+        }
+
+        .last-background {
+            background-clip: border-box, text;
+            background-image: url('../images/resources/green-400x400.png'), url('../images/resources/green-256x256.png');
+            background-color: blue;
+            background-blend-mode: difference, lighten;
+        }
+    </style>    
+</head>
+<body>
+    <div class="box single-background">Blue text on white</div>
+    <div class="box middle-background">Blue text on cyan</div>
+    <div class="box last-background">Blue text on green</div>
+</body>
+</html>

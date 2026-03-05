@@ -17,12 +17,12 @@
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/CLSamplerVk.h"
-#include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/CLBuffer.h"
+#include "libANGLE/CLCommandQueue.h"
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLEvent.h"
 #include "libANGLE/CLImage.h"
@@ -193,6 +193,25 @@ angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
             supportedFormats.push_back(format);
         }
     }
+
+    if (cl::Is2DImage(imageType))
+    {
+        CLExtensions::SupportedDepthOrderTypes supportedDepthOrderTypesUnion;
+        for (const cl::DevicePtr &device : mContext.getDevices())
+        {
+            // clGetSupportedImageFormats returns a union of image formats supported by all devices
+            // in the context
+            supportedDepthOrderTypesUnion |= device->getInfo().supportedDepthOrderTypes;
+        }
+        for (const cl::ImageChannelType imageChannelType : angle::AllEnums<cl::ImageChannelType>())
+        {
+            if (supportedDepthOrderTypesUnion.test(imageChannelType))
+            {
+                supportedFormats.push_back({CL_DEPTH, cl::ToCLenum(imageChannelType)});
+            }
+        }
+    }
+
     if (numImageFormats != nullptr)
     {
         *numImageFormats = static_cast<cl_uint>(supportedFormats.size());
@@ -338,8 +357,8 @@ angle::Result CLContextVk::linkProgram(const cl::Program &program,
 
 angle::Result CLContextVk::createUserEvent(const cl::Event &event, CLEventImpl::Ptr *eventOut)
 {
-    *eventOut = CLEventImpl::Ptr(
-        new (std::nothrow) CLEventVk(event, cl::ExecutionStatus::Submitted, QueueSerial()));
+    *eventOut =
+        CLEventImpl::Ptr(new (std::nothrow) CLEventVk(event, cl::ExecutionStatus::Submitted));
     if (*eventOut == nullptr)
     {
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
@@ -377,6 +396,42 @@ angle::Result CLContextVk::allocateDescriptorSet(
     std::lock_guard<angle::SimpleMutex> lock(mDescriptorSetMutex);
 
     return kernelVk->allocateDescriptorSet(index, layoutIndex, computePassCommands);
+}
+
+angle::Result CLContextVk::initializeDescriptorPools(CLKernelVk *kernelVk)
+{
+    std::lock_guard<angle::SimpleMutex> lock(mDescriptorSetMutex);
+
+    return kernelVk->initializeDescriptorPools();
+}
+
+void CLContextVk::addCommandBufferDiagnostics(const std::string &commandBufferDiagnostics)
+{
+    mCommandBufferDiagnostics.push_back(commandBufferDiagnostics);
+}
+
+void CLContextVk::dumpCommandStreamDiagnostics()
+{
+    std::ostream &out = std::cout;
+    if (mCommandBufferDiagnostics.empty())
+    {
+        return;
+    }
+
+    out << "digraph {\n" << "    node [shape=box fontname=\"Consolas\"]\n";
+
+    for (size_t index = 0; index < mCommandBufferDiagnostics.size(); ++index)
+    {
+        std::string_view payload = mCommandBufferDiagnostics[index];
+        out << "    cb" << index << " [label =\"" << payload << "\"];\n";
+    }
+    for (size_t index = 0; index < mCommandBufferDiagnostics.size() - 1; ++index)
+    {
+        out << "    cb" << index << " -> cb" << index + 1 << "\n";
+    }
+    mCommandBufferDiagnostics.clear();
+
+    out << "}\n";
 }
 
 }  // namespace rx

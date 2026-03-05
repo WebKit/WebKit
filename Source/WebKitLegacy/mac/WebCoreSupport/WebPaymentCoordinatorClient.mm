@@ -56,14 +56,14 @@ bool WebPaymentCoordinatorClient::canMakePayments()
 
 void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(false);
     });
 }
 
 void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(false);
     });
 }

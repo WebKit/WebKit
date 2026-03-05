@@ -44,7 +44,7 @@ enum SkipEmptySectionsValue { DoNotSkipEmptySections, SkipEmptySections };
 enum class TableIntrinsics : uint8_t { ForLayout, ForKeyword };
 
 class RenderTable : public RenderBlock {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTable);
+    WTF_MAKE_TZONE_ALLOCATED(RenderTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTable);
 public:
     RenderTable(Type, Element&, RenderStyle&&);
@@ -69,7 +69,7 @@ public:
     inline LayoutUnit borderTop() const final;
     inline LayoutUnit borderBottom() const final;
 
-    Color bgColor() const { return checkedStyle()->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor); }
+    Color bgColor() const { return protect(style())->visitedDependentBackgroundColorApplyingColorFilter(); }
 
     LayoutUnit outerBorderBefore() const;
     LayoutUnit outerBorderAfter() const;
@@ -104,12 +104,12 @@ public:
         m_columnPos[index] = position;
     }
 
-    RenderTableSection* header() const;
-    RenderTableSection* footer() const;
-    RenderTableSection* firstBody() const;
+    RenderTableSection* NODELETE header() const;
+    RenderTableSection* NODELETE footer() const;
+    RenderTableSection* NODELETE firstBody() const;
 
     // This function returns 0 if the table has no section.
-    RenderTableSection* topSection() const;
+    RenderTableSection* NODELETE topSection() const;
     RenderTableSection* bottomSection() const;
 
     // This function returns 0 if the table has no non-empty sections.
@@ -146,13 +146,7 @@ public:
         return c;
     }
 
-    LayoutUnit borderSpacingInRowDirection() const
-    {
-        if (unsigned effectiveColumnCount = numEffCols())
-            return (effectiveColumnCount + 1) * hBorderSpacing();
-
-        return 0;
-    }
+    LayoutUnit borderSpacingInRowDirection() const;
 
     // The collapsing border model dissallows paddings on table, which is why we
     // override those functions.
@@ -217,7 +211,7 @@ public:
     
     void markForPaginationRelayoutIfNeeded() final;
 
-    void willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
+    void NODELETE willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
     void willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild);
 
     LayoutUnit sumCaptionsLogicalHeight() const;
@@ -227,7 +221,7 @@ public:
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect&, unsigned) const override { return false; }
 
 protected:
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
     void simplifiedNormalFlowLayout() final;
 
     ASCIILiteral renderName() const override { return "RenderTable"_s; }

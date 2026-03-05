@@ -62,7 +62,7 @@ RefPtr<WebCore::WebGPU::XRProjectionLayer> RemoteXRBindingProxy::createProjectio
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteXRProjectionLayerProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+    auto result = RemoteXRProjectionLayerProxy::create(protect(root()), m_convertToBackingContext, identifier);
     return result;
 }
 
@@ -79,7 +79,7 @@ RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(WebCor
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteXRSubImageProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+    auto result = RemoteXRSubImageProxy::create(protect(root()), m_convertToBackingContext, identifier);
     return result;
 }
 

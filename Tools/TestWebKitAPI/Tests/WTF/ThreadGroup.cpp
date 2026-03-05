@@ -58,7 +58,7 @@ static void testThreadGroup(Mode mode)
             });
             if (mode == Mode::Add)
                 EXPECT_TRUE(threadGroup->add(thread.get()) == ThreadGroupAddResult::NewlyAdded);
-            threads.append(WTFMove(thread));
+            threads.append(WTF::move(thread));
         }
 
         condition.wait(lock, [&] {
@@ -174,7 +174,7 @@ TEST(WTF, ThreadGroupRemove)
             });
         });
         threadGroup->add(thread.get());
-        threads.append(WTFMove(thread));
+        threads.append(WTF::move(thread));
     }
 
     EXPECT_EQ(NumberOfThreads, countThreadGroups(threads));

@@ -87,12 +87,12 @@ IPC::Connection* DrawingAreaProxy::messageSenderConnection() const
 
 bool DrawingAreaProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions)
 {
-    return m_webProcessProxy->sendMessage(WTFMove(encoder), sendOptions);
+    return m_webProcessProxy->sendMessage(WTF::move(encoder), sendOptions);
 }
 
 bool DrawingAreaProxy::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& encoder, AsyncReplyHandler handler, OptionSet<IPC::SendOption> sendOptions)
 {
-    return m_webProcessProxy->sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler));
+    return m_webProcessProxy->sendMessage(WTF::move(encoder), sendOptions, WTF::move(handler));
 }
 
 uint64_t DrawingAreaProxy::messageSenderDestinationID() const
@@ -121,11 +121,6 @@ WebPageProxy* DrawingAreaProxy::page() const
     return m_webPageProxy.get();
 }
 
-RefPtr<WebPageProxy> DrawingAreaProxy::protectedPage() const
-{
-    return page();
-}
-
 #if PLATFORM(COCOA)
 MachSendRight DrawingAreaProxy::createFence()
 {
@@ -136,7 +131,7 @@ MachSendRight DrawingAreaProxy::createFence()
 #if PLATFORM(MAC)
 void DrawingAreaProxy::didChangeViewExposedRect()
 {
-    if (!protectedPage()->hasRunningProcess())
+    if (!protect(page())->hasRunningProcess())
         return;
 
     if (!m_viewExposedRectChangedTimer.isActive())

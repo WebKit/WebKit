@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "WordTrailingSpace.h"
 

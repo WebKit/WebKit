@@ -31,6 +31,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include <WebCore/IntSize.h>
 #include <WebCore/PixelBufferConformerCV.h>
+#include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/MediaTime.h>
@@ -61,6 +62,7 @@ struct SharedVideoFrame {
     MediaTime time;
     bool mirrored { false };
     WebCore::VideoFrameRotation rotation { };
+    WebCore::PlatformVideoColorSpace colorSpace;
     using Buffer = Variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize>;
     Buffer buffer;
 };
@@ -109,7 +111,7 @@ public:
     explicit SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&&, const WebCore::ProcessIdentity& = { }, UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
     SharedVideoFrameReader();
 
-    void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTFMove(semaphore); }
+    void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTF::move(semaphore); }
     bool setSharedMemory(WebCore::SharedMemory::Handle&&);
 
     RefPtr<WebCore::VideoFrame> read(SharedVideoFrame&&);
@@ -117,7 +119,6 @@ public:
 
 private:
     CVPixelBufferPoolRef pixelBufferPool(const WebCore::SharedVideoFrameInfo&);
-    RetainPtr<CVPixelBufferPoolRef> protectedPixelBufferPool(const WebCore::SharedVideoFrameInfo&);
     RetainPtr<CVPixelBufferRef> readBufferFromSharedMemory();
 
     const RefPtr<RemoteVideoFrameObjectHeap> m_objectHeap;

@@ -44,15 +44,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerJob);
 
-Ref<ServiceWorkerJob> ServiceWorkerJob::create(ServiceWorkerJobClient& client, RefPtr<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
+Ref<ServiceWorkerJob> ServiceWorkerJob::create(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
 {
-    return adoptRef(*new ServiceWorkerJob(client, WTFMove(promise), WTFMove(jobData)));
+    return adoptRef(*new ServiceWorkerJob(client, WTF::move(promise), WTF::move(jobData)));
 }
 
-ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, RefPtr<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
+ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
     : m_client(client)
-    , m_jobData(WTFMove(jobData))
-    , m_promise(WTFMove(promise))
+    , m_jobData(WTF::move(jobData))
+    , m_promise(WTF::move(promise))
     , m_contextIdentifier(client.contextIdentifier())
 {
 }
@@ -62,9 +62,9 @@ ServiceWorkerJob::~ServiceWorkerJob()
     ASSERT(m_creationThread.ptr() == &Thread::currentSingleton());
 }
 
-RefPtr<DeferredPromise> ServiceWorkerJob::takePromise()
+Ref<DeferredPromise> ServiceWorkerJob::takePromise()
 {
-    return WTFMove(m_promise);
+    return WTF::move(m_promise);
 }
 
 void ServiceWorkerJob::failedWithException(const Exception& exception)
@@ -84,7 +84,7 @@ void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& 
 
     m_completed = true;
     if (RefPtr client = m_client.get())
-        client->jobResolvedWithRegistration(*this, WTFMove(data), shouldNotifyWhenResolved);
+        client->jobResolvedWithRegistration(*this, WTF::move(data), shouldNotifyWhenResolved);
 }
 
 void ServiceWorkerJob::resolvedWithUnregistrationResult(bool unregistrationResult)
@@ -136,7 +136,7 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
     auto request = scriptResourceRequest(context, m_jobData.scriptURL);
     request.addHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
 
-    scriptLoader->loadAsynchronously(context, WTFMove(request), source, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Serviceworker), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
+    scriptLoader->loadAsynchronously(context, WTF::move(request), source, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Serviceworker), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
 }
 
 ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorkerJobData& jobData, const ResourceResponse& response)
@@ -179,7 +179,7 @@ void ServiceWorkerJob::didReceiveResponse(ScriptExecutionContextIdentifier, std:
 
     if (RefPtr client = m_client.get()) {
         Exception exception { ExceptionCode::SecurityError, error.localizedDescription() };
-        client->jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
+        client->jobFailedLoadingScript(*this, WTF::move(error), WTF::move(exception));
     }
 }
 

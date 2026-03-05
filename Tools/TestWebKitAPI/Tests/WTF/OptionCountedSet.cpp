@@ -30,7 +30,7 @@
 
 namespace TestWebKitAPI {
 
-enum class ExampleFlags : uint32_t {
+enum class OptionCountedSetTestFlags : uint32_t {
     A = 1 << 0,
     B = 1 << 1,
     C = 1 << 2,
@@ -38,69 +38,69 @@ enum class ExampleFlags : uint32_t {
 
 TEST(WTF_OptionCountedSet, EmptySet)
 {
-    OptionCountedSet<ExampleFlags> set;
+    OptionCountedSet<OptionCountedSetTestFlags> set;
     EXPECT_TRUE(set.isEmpty());
-    EXPECT_FALSE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_FALSE(set.contains(ExampleFlags::C));
-    set.add({ ExampleFlags::C, ExampleFlags::B });
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::C));
+    set.add({ OptionCountedSetTestFlags::C, OptionCountedSetTestFlags::B });
     EXPECT_FALSE(set.isEmpty());
-    EXPECT_FALSE(set.contains(ExampleFlags::A));
-    EXPECT_TRUE(set.contains(ExampleFlags::B));
-    EXPECT_TRUE(set.contains(ExampleFlags::C));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::C));
 }
 
 TEST(WTF_OptionCountedSet, AddAndRemove)
 {
-    OptionCountedSet<ExampleFlags> set;
-    set.add(ExampleFlags::A);
-    EXPECT_TRUE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_FALSE(set.contains(ExampleFlags::C));
+    OptionCountedSet<OptionCountedSetTestFlags> set;
+    set.add(OptionCountedSetTestFlags::A);
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::C));
 
     // Adding the same flag increments the counter.
-    set.add(ExampleFlags::A);
-    EXPECT_TRUE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_FALSE(set.contains(ExampleFlags::C));
+    set.add(OptionCountedSetTestFlags::A);
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::C));
 
     // Removing the flag added twice decrements the counter.
-    set.remove(ExampleFlags::A);
-    EXPECT_TRUE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_FALSE(set.contains(ExampleFlags::C));
+    set.remove(OptionCountedSetTestFlags::A);
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::C));
 
     // Removing again makes the flag not present anymore.
-    set.remove(ExampleFlags::A);
-    EXPECT_FALSE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_FALSE(set.contains(ExampleFlags::C));
+    set.remove(OptionCountedSetTestFlags::A);
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::C));
 
     // Remove again does nothing.
-    set.remove(ExampleFlags::A);
-    EXPECT_FALSE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_FALSE(set.contains(ExampleFlags::C));
+    set.remove(OptionCountedSetTestFlags::A);
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::C));
 
     // Add multiple flags.
-    set.add({ ExampleFlags::B, ExampleFlags::C });
-    EXPECT_FALSE(set.contains(ExampleFlags::A));
-    EXPECT_TRUE(set.contains(ExampleFlags::B));
-    EXPECT_TRUE(set.contains(ExampleFlags::C));
-    set.add({ ExampleFlags::A, ExampleFlags::C });
-    EXPECT_TRUE(set.contains(ExampleFlags::A));
-    EXPECT_TRUE(set.contains(ExampleFlags::B));
-    EXPECT_TRUE(set.contains(ExampleFlags::C));
+    set.add({ OptionCountedSetTestFlags::B, OptionCountedSetTestFlags::C });
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::C));
+    set.add({ OptionCountedSetTestFlags::A, OptionCountedSetTestFlags::C });
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::C));
 
     // Remove multiple flags.
-    set.remove({ ExampleFlags::B, ExampleFlags::C });
-    EXPECT_TRUE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_TRUE(set.contains(ExampleFlags::C));
-    set.remove({ ExampleFlags::A, ExampleFlags::C });
-    EXPECT_FALSE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_FALSE(set.contains(ExampleFlags::C));
+    set.remove({ OptionCountedSetTestFlags::B, OptionCountedSetTestFlags::C });
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_TRUE(set.contains(OptionCountedSetTestFlags::C));
+    set.remove({ OptionCountedSetTestFlags::A, OptionCountedSetTestFlags::C });
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::A));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::B));
+    EXPECT_FALSE(set.contains(OptionCountedSetTestFlags::C));
 }
 
 } // namespace TestWebKitAPI

@@ -45,19 +45,20 @@ ScriptRunner::ScriptRunner(Document& document)
 
 ScriptRunner::~ScriptRunner()
 {
+    Ref document = m_document.get();
     for (auto& pendingScript : m_scriptsToExecuteSoon) {
         UNUSED_PARAM(pendingScript);
-        m_document->decrementLoadEventDelayCount();
+        document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_scriptsToExecuteInOrder) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document->decrementLoadEventDelayCount();
+        document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_pendingAsyncScripts) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document->decrementLoadEventDelayCount();
+        document->decrementLoadEventDelayCount();
     }
 }
 
@@ -79,10 +80,10 @@ void ScriptRunner::queueScriptForExecution(ScriptElement& scriptElement, Loadabl
 
     Ref pendingScript = PendingScript::create(scriptElement, loadableScript);
     switch (executionType) {
-    case ASYNC_EXECUTION:
+    case ExecutionType::Async:
         m_pendingAsyncScripts.add(pendingScript.copyRef());
         break;
-    case IN_ORDER_EXECUTION:
+    case ExecutionType::InOrder:
         m_scriptsToExecuteInOrder.append(pendingScript.copyRef());
         break;
     }
@@ -122,7 +123,7 @@ void ScriptRunner::timerFired()
 {
     Ref document = m_document.get();
 
-    Vector<RefPtr<PendingScript>> scripts;
+    Vector<Ref<PendingScript>> scripts;
 
     if (document->shouldDeferAsynchronousScriptsUntilParsingFinishes()) {
         // Scripts not added by the parser are executed asynchronously and yet do not have the 'async' attribute set.
@@ -130,26 +131,18 @@ void ScriptRunner::timerFired()
         m_scriptsToExecuteSoon.removeAllMatching([&](auto& pendingScript) {
             if (pendingScript->element().hasAsyncAttribute())
                 return false;
-            scripts.append(WTFMove(pendingScript));
+            scripts.append(WTF::move(pendingScript));
             return true;
         });
     } else
         scripts.swap(m_scriptsToExecuteSoon);
 
-    size_t numInOrderScriptsToExecute = 0;
-    for (; numInOrderScriptsToExecute < m_scriptsToExecuteInOrder.size() && m_scriptsToExecuteInOrder[numInOrderScriptsToExecute]->isLoaded(); ++numInOrderScriptsToExecute)
-        scripts.append(m_scriptsToExecuteInOrder[numInOrderScriptsToExecute].ptr());
-    if (numInOrderScriptsToExecute)
-        m_scriptsToExecuteInOrder.removeAt(0, numInOrderScriptsToExecute);
+    while (!m_scriptsToExecuteInOrder.isEmpty() && Ref { m_scriptsToExecuteInOrder.first() }->isLoaded())
+        scripts.append(m_scriptsToExecuteInOrder.takeFirst());
 
-    for (auto& currentScript : scripts) {
-        RefPtr script = WTFMove(currentScript);
-        ASSERT(script);
-        // Paper over https://bugs.webkit.org/show_bug.cgi?id=144050
-        if (!script)
-            continue;
+    for (Ref script : scripts) {
         ASSERT(script->needsLoading());
-        script->element().executePendingScript(*script);
+        script->element().executePendingScript(script);
         document->decrementLoadEventDelayCount();
     }
 }

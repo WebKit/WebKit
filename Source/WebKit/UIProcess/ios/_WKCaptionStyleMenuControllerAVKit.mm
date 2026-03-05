@@ -26,7 +26,7 @@
 #import "config.h"
 #import "_WKCaptionStyleMenuControllerAVKit.h"
 
-#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
+#if PLATFORM(IOS_FAMILY) && HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
 
 #import "_WKCaptionStyleMenuControllerInternal.h"
 
@@ -50,6 +50,12 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVLegibleMediaOptionsMenuController)
 
 using namespace WebCore;
 using namespace WTF;
+
+// CLEANUP(rdar://164667890)
+@interface AVLegibleMediaOptionsMenuController (WebKitSPI)
+- (nullable UIMenu *)buildMenuOfType:(NSInteger)type;
+- (nullable UIMenu *)menuWithContents:(NSInteger)contents;
+@end
 
 @interface _WKCaptionStyleMenuControllerAVKit () <AVLegibleMediaOptionsMenuControllerDelegate> {
     RetainPtr<AVLegibleMediaOptionsMenuController> _menuController;
@@ -75,52 +81,34 @@ using namespace WTF;
 
 - (void)rebuildMenu
 {
-    self.menu = [_menuController buildMenuOfType:AVLegibleMediaOptionsMenuTypeCaptionAppearance];
-}
-
-- (BOOL)isAncestorOf:(PlatformMenu*)menu
-{
-    if (!self.menu)
-        return NO;
-    return [menu isEqual:self.menu];
+    if ([_menuController respondsToSelector:@selector(menuWithContents:)])
+        self.menu = [_menuController menuWithContents:AVLegibleMediaOptionsMenuContentsCaptionAppearance];
+    else
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        self.menu = [_menuController buildMenuOfType:AVLegibleMediaOptionsMenuTypeCaptionAppearance];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #pragma mark - AVLegibleMediaOptionsMenuControllerDelegate
 
 - (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didRequestCaptionPreviewForProfileID:(NSString *)profileID
 {
-    dispatch_async(mainDispatchQueueSingleton(), ^{
-        [self findAndDismissContextMenus];
-    });
+    [self setPreviewProfileID:profileID];
+    [self rebuildMenu];
+
+    // UIMenu does not have the ability to notify clients when a submenu opens or closes.
+    // Provide a similar functionality for previewing subtitle changes by triggering the
+    // preview of subtitle styles when the first profile menu item is selected.
+    [self notifyMenuWillOpen];
+
+    if (auto delegate = self.delegate; delegate && [delegate respondsToSelector:@selector(captionStyleMenu:didSelectProfile:)])
+        [delegate captionStyleMenu:self.menu didSelectProfile:profileID];
 }
 
-- (void)findAndDismissContextMenus
+- (void)legibleMenuControllerDidRequestStoppingSubtitleCaptionPreview:(AVLegibleMediaOptionsMenuController *)menuController
 {
-    UIApplication *app = [UIApplication sharedApplication];
-
-    for (UIScene *scene in app.connectedScenes) {
-        if ([scene isKindOfClass:[UIWindowScene class]]) {
-            UIWindowScene *windowScene = (UIWindowScene *)scene;
-            for (UIWindow *window in windowScene.windows)
-                [self searchForContextMenuInteractionsInView:window];
-        }
-    }
+    [self setPreviewProfileID:nil];
 }
-
-- (void)searchForContextMenuInteractionsInView:(UIView *)view
-{
-    for (id<UIInteraction> interaction in view.interactions) {
-        if ([interaction isKindOfClass:[UIContextMenuInteraction class]]) {
-            RetainPtr<UIContextMenuInteraction> contextInteraction = interaction;
-            [contextInteraction dismissMenu];
-            break;
-        }
-    }
-
-    for (UIView *subview in view.subviews)
-        [self searchForContextMenuInteractionsInView:subview];
-}
-
 @end
 
 #endif

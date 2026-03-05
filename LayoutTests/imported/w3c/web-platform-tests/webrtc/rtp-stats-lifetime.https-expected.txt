@@ -1,0 +1,13 @@
+
+PASS RTCOutboundRtpStreamStats does not exist as early as have-local-offer
+PASS RTCOutboundRtpStreamStats exists after returning to stable
+PASS RTCOutboundRtpStreamStats exists per simulcast encoding
+PASS RTCInboundRtpStreamStats are created by packet reception
+PASS RTCOutboundRtpStreamStats exist in pc.getStats() after created with a null track through pc.addTransceiver("audio")
+PASS RTCOutboundRtpStreamStats exist in sender.getStats() after created with a null track through pc.addTransceiver("audio")
+PASS RTCOutboundRtpStreamStats exist in pc.getStats() after created with a null track through pc.addTransceiver("video")
+PASS RTCOutboundRtpStreamStats exist in sender.getStats() after created with a null track through pc.addTransceiver("video")
+PASS RTCOutboundRtpStreamStats remain in pc.getStats() after sender.replaceTrack(null)
+PASS RTCOutboundRtpStreamStats remain in sender.getStats() after sender.replaceTrack(null)
+PASS RTCInboundRtpStreamStats exists for early media
+

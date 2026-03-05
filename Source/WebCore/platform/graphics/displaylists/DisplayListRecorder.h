@@ -89,7 +89,7 @@ protected:
             std::optional<GraphicsContextState> lastDrawingStateClone;
             if (lastDrawingStateClone)
                 lastDrawingStateClone = lastDrawingState->clone(GraphicsContextState::Purpose::TransparencyLayer);
-            return ContextState { WTFMove(stateClone), ctm, clipBounds, WTFMove(lastDrawingStateClone) };
+            return ContextState { WTF::move(stateClone), ctm, clipBounds, WTF::move(lastDrawingStateClone) };
         }
 
         void translate(float x, float y);

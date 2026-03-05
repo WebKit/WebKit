@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace Layout {
 
-static Phase& phase()
+static Phase& NODELETE phase()
 {
     static NeverDestroyed<Phase> phase;
     return phase;

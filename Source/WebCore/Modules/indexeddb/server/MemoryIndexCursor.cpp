@@ -80,8 +80,9 @@ void MemoryIndexCursor::currentData(IDBGetResult& getResult)
     if (info().cursorType() == IndexedDB::CursorType::KeyOnly)
         getResult = { m_currentKey, m_currentPrimaryKey };
     else {
-        IDBValue value = { m_index->protectedObjectStore()->valueForKey(m_currentPrimaryKey), { }, { } };
-        getResult = { m_currentKey, m_currentPrimaryKey, WTFMove(value), m_index->protectedObjectStore()->info().keyPath() };
+        RefPtr objectStore = m_index->objectStore();
+        IDBValue value = { objectStore->valueForKey(m_currentPrimaryKey), { }, { } };
+        getResult = { m_currentKey, m_currentPrimaryKey, WTF::move(value), objectStore->info().keyPath() };
     }
 }
 
@@ -89,7 +90,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
 {
     LOG(IndexedDB, "MemoryIndexCursor::iterate to key %s, %u count", key.loggingString().utf8().data(), count);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     if (primaryKey.isValid())
         ASSERT(key.isValid());
 #endif

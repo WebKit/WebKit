@@ -34,7 +34,7 @@ namespace Style {
 struct PageSize {
     using Lengths = MinimallySerializingSpaceSeparatedSize<Length<CSS::Nonnegative>>;
 
-    PageSize(Lengths&& lengths) : m_value { WTFMove(lengths) } { }
+    PageSize(Lengths&& lengths) : m_value { WTF::move(lengths) } { }
     PageSize(CSS::Keyword::Auto keyword) : m_value { keyword } { }
     PageSize(CSS::Keyword::Portrait keyword) : m_value { keyword } { }
     PageSize(CSS::Keyword::Landscape keyword) : m_value { keyword } { }

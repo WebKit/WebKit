@@ -46,12 +46,12 @@
 namespace WebCore {
 using namespace Inspector;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkletGlobalScope);
 
 static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTFMove(vm), parameters.referrerPolicy, &thread, parameters.noiseInjectionHashSalt, parameters.advancedPrivacyProtections)
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTF::move(vm), parameters.referrerPolicy, &thread, parameters.noiseInjectionHashSalt, parameters.advancedPrivacyProtections)
     , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
@@ -65,12 +65,12 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::V
 }
 
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTFMove(vm), document.referrerPolicy(), nullptr, document.noiseInjectionHashSalt(), document.advancedPrivacyProtections())
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTF::move(vm), document.referrerPolicy(), nullptr, document.noiseInjectionHashSalt(), document.advancedPrivacyProtections())
     , m_document(document)
     , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(code.url())
     , m_jsRuntimeFlags(document.settings().javaScriptRuntimeFlags())
-    , m_code(WTFMove(code))
+    , m_code(WTF::move(code))
     , m_settingsValues(document.settingsValues().isolatedCopy())
 {
     ++gNumberOfWorkletGlobalScopes;
@@ -139,7 +139,7 @@ void WorkletGlobalScope::logExceptionToConsole(const String& errorMessage, const
 
     if (!m_document || isJSExecutionForbidden())
         return;
-    m_document->logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(stack));
+    m_document->logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTF::move(stack));
 }
 
 void WorkletGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
@@ -163,13 +163,13 @@ void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, co
 {
     if (!m_document || isJSExecutionForbidden())
         return;
-    m_document->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTFMove(callStack), nullptr, requestIdentifier);
+    m_document->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTF::move(callStack), nullptr, requestIdentifier);
 }
 
 void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(!isMainThread());
-    script()->loadAndEvaluateModule(moduleURL, credentials, WTFMove(completionHandler));
+    script()->loadAndEvaluateModule(moduleURL, credentials, WTF::move(completionHandler));
 }
 
 MessagePortChannelProvider& WorkletGlobalScope::messagePortChannelProvider()

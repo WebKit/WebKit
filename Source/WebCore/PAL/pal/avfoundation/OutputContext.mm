@@ -40,7 +40,7 @@
 namespace PAL {
 
 OutputContext::OutputContext(RetainPtr<AVOutputContext>&& context)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
 {
 }
 

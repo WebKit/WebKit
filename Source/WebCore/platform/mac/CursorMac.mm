@@ -39,148 +39,88 @@
 #import <pal/spi/mac/HIServicesSPI.h>
 #endif
 
-@interface WebCoreCursorBundle : NSObject { }
+#if HAVE(HISERVICES)
+
+@interface WebCustomCursor : NSCursor
+
+- (instancetype)initWithType:(CoreCursorType)cursorType;
+
+@property (nonatomic) CoreCursorType cursorType;
+
 @end
 
-@implementation WebCoreCursorBundle
+@implementation WebCustomCursor
+
+- (instancetype)initWithType:(CoreCursorType)cursorType
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _cursorType = cursorType;
+    return self;
+}
+
+- (NSInteger)_coreCursorType
+{
+    return static_cast<NSInteger>(_cursorType);
+}
+
 @end
+
+#endif
 
 namespace WebCore {
 
 #if HAVE(HISERVICES)
 
-static NSCursor *busyButClickableNSCursor;
-static NSCursor *makeAliasNSCursor;
-static NSCursor *moveNSCursor;
-static NSCursor *resizeEastNSCursor;
-static NSCursor *resizeEastWestNSCursor;
-static NSCursor *resizeNorthNSCursor;
-static NSCursor *resizeNorthSouthNSCursor;
-static NSCursor *resizeNortheastNSCursor;
-static NSCursor *resizeNortheastSouthwestNSCursor;
-static NSCursor *resizeNorthwestNSCursor;
-static NSCursor *resizeNorthwestSoutheastNSCursor;
-static NSCursor *resizeSouthNSCursor;
-static NSCursor *resizeSoutheastNSCursor;
-static NSCursor *resizeSouthwestNSCursor;
-static NSCursor *resizeWestNSCursor;
-
-static NSCursor *cellNSCursor;
-static NSCursor *helpNSCursor;
-static NSCursor *zoomInNSCursor;
-static NSCursor *zoomOutNSCursor;
-
-static NSInteger WKCoreCursor_coreCursorType(id self, SEL)
-{
-    if (self == busyButClickableNSCursor)
-        return kCoreCursorBusyButClickable;
-    if (self == makeAliasNSCursor)
-        return kCoreCursorMakeAlias;
-    if (self == moveNSCursor)
-        return kCoreCursorWindowMove;
-    if (self == resizeEastNSCursor)
-        return kCoreCursorWindowResizeEast;
-    if (self == resizeEastWestNSCursor)
-        return kCoreCursorWindowResizeEastWest;
-    if (self == resizeNorthNSCursor)
-        return kCoreCursorWindowResizeNorth;
-    if (self == resizeNorthSouthNSCursor)
-        return kCoreCursorWindowResizeNorthSouth;
-    if (self == resizeNortheastNSCursor)
-        return kCoreCursorWindowResizeNorthEast;
-    if (self == resizeNortheastSouthwestNSCursor)
-        return kCoreCursorWindowResizeNorthEastSouthWest;
-    if (self == resizeNorthwestNSCursor)
-        return kCoreCursorWindowResizeNorthWest;
-    if (self == resizeNorthwestSoutheastNSCursor)
-        return kCoreCursorWindowResizeNorthWestSouthEast;
-    if (self == resizeSouthNSCursor)
-        return kCoreCursorWindowResizeSouth;
-    if (self == resizeSoutheastNSCursor)
-        return kCoreCursorWindowResizeSouthEast;
-    if (self == resizeSouthwestNSCursor)
-        return kCoreCursorWindowResizeSouthWest;
-    if (self == resizeWestNSCursor)
-        return kCoreCursorWindowResizeWest;
-    if (self == cellNSCursor)
-        return kCoreCursorCell;
-    if (self == helpNSCursor)
-        return kCoreCursorHelp;
-    if (self == zoomInNSCursor)
-        return kCoreCursorZoomIn;
-    if (self == zoomOutNSCursor)
-        return kCoreCursorZoomOut;
-    
-    return NSNotFound;
-}
-
-static Class createCoreCursorClassSingleton()
-{
-    // Class is immortable so no need to ref here.
-    SUPPRESS_UNRETAINED_LOCAL Class coreCursorClass = objc_allocateClassPair([NSCursor class], "WKCoreCursor", 0);
-    SEL coreCursorType = NSSelectorFromString(@"_coreCursorType");
-    class_addMethod(coreCursorClass, coreCursorType, (IMP)WKCoreCursor_coreCursorType, method_getTypeEncoding(class_getInstanceMethod([NSCursor class], coreCursorType)));
-    objc_registerClassPair(coreCursorClass);
-    return coreCursorClass;
-}
-
-static Class coreCursorClassSingleton()
-{
-    // Class is immortable so no need to ref here.
-    SUPPRESS_UNRETAINED_LOCAL Class coreCursorClass = objc_lookUpClass("WKCoreCursor");
-    if (!coreCursorClass)
-        coreCursorClass = createCoreCursorClassSingleton();
-    return coreCursorClass;
-}
-
 static RetainPtr<NSCursor> cursor(ASCIILiteral name)
 {
-    RetainPtr<NSCursor> slot;
-    
-    if (name == "BusyButClickable"_s)
-        slot = busyButClickableNSCursor;
-    else if (name == "MakeAlias"_s)
-        slot = makeAliasNSCursor;
-    else if (name == "Move"_s)
-        slot = moveNSCursor;
-    else if (name == "ResizeEast"_s)
-        slot = resizeEastNSCursor;
-    else if (name == "ResizeEastWest"_s)
-        slot = resizeEastWestNSCursor;
-    else if (name == "ResizeNorth"_s)
-        slot = resizeNorthNSCursor;
-    else if (name == "ResizeNorthSouth"_s)
-        slot = resizeNorthSouthNSCursor;
-    else if (name == "ResizeNortheast"_s)
-        slot = resizeNortheastNSCursor;
-    else if (name == "ResizeNortheastSouthwest"_s)
-        slot = resizeNortheastSouthwestNSCursor;
-    else if (name == "ResizeNorthwest"_s)
-        slot = resizeNorthwestNSCursor;
-    else if (name == "ResizeNorthwestSoutheast"_s)
-        slot = resizeNorthwestSoutheastNSCursor;
-    else if (name == "ResizeSouth"_s)
-        slot = resizeSouthNSCursor;
-    else if (name == "ResizeSoutheast"_s)
-        slot = resizeSoutheastNSCursor;
-    else if (name == "ResizeSouthwest"_s)
-        slot = resizeSouthwestNSCursor;
-    else if (name == "ResizeWest"_s)
-        slot = resizeWestNSCursor;
-    else if (name == "Cell"_s)
-        slot = cellNSCursor;
-    else if (name == "Help"_s)
-        slot = helpNSCursor;
-    else if (name == "ZoomIn"_s)
-        slot = zoomInNSCursor;
-    else if (name == "ZoomOut"_s)
-        slot = zoomOutNSCursor;
-    else
-        return nil;
-    
-    if (!slot)
-        return adoptNS([[coreCursorClassSingleton() alloc] init]);
-    return slot;
+    auto cursorTypeFromName = [](ASCIILiteral name) {
+        if (name == "BusyButClickable"_s)
+            return kCoreCursorBusyButClickable;
+        if (name == "MakeAlias"_s)
+            return kCoreCursorMakeAlias;
+        if (name == "Move"_s)
+            return kCoreCursorWindowMove;
+        if (name == "ResizeEast"_s)
+            return kCoreCursorWindowResizeEast;
+        if (name == "ResizeEastWest"_s)
+            return kCoreCursorWindowResizeEastWest;
+        if (name == "ResizeNorth"_s)
+            return kCoreCursorWindowResizeNorth;
+        if (name == "ResizeNorthSouth"_s)
+            return kCoreCursorWindowResizeNorthSouth;
+        if (name == "ResizeNortheast"_s)
+            return kCoreCursorWindowResizeNorthEast;
+        if (name == "ResizeNortheastSouthwest"_s)
+            return kCoreCursorWindowResizeNorthEastSouthWest;
+        if (name == "ResizeNorthwest"_s)
+            return kCoreCursorWindowResizeNorthWest;
+        if (name == "ResizeNorthwestSoutheast"_s)
+            return kCoreCursorWindowResizeNorthWestSouthEast;
+        if (name == "ResizeSouth"_s)
+            return kCoreCursorWindowResizeSouth;
+        if (name == "ResizeSoutheast"_s)
+            return kCoreCursorWindowResizeSouthEast;
+        if (name == "ResizeSouthwest"_s)
+            return kCoreCursorWindowResizeSouthWest;
+        if (name == "ResizeWest"_s)
+            return kCoreCursorWindowResizeWest;
+        if (name == "Cell"_s)
+            return kCoreCursorCell;
+        if (name == "Help"_s)
+            return kCoreCursorHelp;
+        if (name == "ZoomIn"_s)
+            return kCoreCursorZoomIn;
+        if (name == "ZoomOut"_s)
+            return kCoreCursorZoomOut;
+
+        ASSERT_NOT_REACHED();
+        return kCoreCursorFirstCursor;
+    };
+
+    return adoptNS([[WebCustomCursor alloc] initWithType:cursorTypeFromName(name)]);
 }
 
 #else

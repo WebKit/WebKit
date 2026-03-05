@@ -84,6 +84,7 @@ skia_filegroup(
         "SkDebug.cpp",
         "SkDeque.cpp",
         "SkFloatingPoint.cpp",
+        "SkLog.cpp",
         "SkQuads.cpp",
         "SkSharedMutex.cpp",
         "SkSpinlock.cpp",
@@ -107,7 +108,9 @@ skia_cc_library(
     features = ["layering_check"],
     visibility = [
         "//bench:__subpackages__",
+        "//experimental:__subpackages__",
         "//modules:__subpackages__",
+        "//rust:__subpackages__",
         "//src:__subpackages__",
         "//tests:__subpackages__",
         "//tools:__subpackages__",

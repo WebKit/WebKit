@@ -58,7 +58,7 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     IPC::Connection& connection() { return m_connection.get(); }
-    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
+    IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return WebProcess::singleton().sharedPreferencesForWebProcess(); }
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const { return WebProcess::singleton().sharedPreferencesForWebProcessValue(); }

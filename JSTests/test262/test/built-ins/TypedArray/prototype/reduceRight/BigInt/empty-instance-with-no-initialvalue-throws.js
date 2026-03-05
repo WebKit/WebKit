@@ -17,7 +17,7 @@ info: |
   ...
   4. If len is 0 and initialValue is not present, throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -31,4 +31,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(called, 0);
-});
+}, null, ["passthrough"]);

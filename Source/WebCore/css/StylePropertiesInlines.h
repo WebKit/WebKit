@@ -45,7 +45,7 @@ inline StyleProperties::StyleProperties(CSSParserMode mode, unsigned immutableAr
 {
 }
 
-inline StyleProperties::PropertyReference StyleProperties::propertyAt(unsigned index) const
+inline StyleProperties::PropertyReference StyleProperties::propertyAt(unsigned index) const LIFETIME_BOUND
 {
     if (m_isMutable)
         return uncheckedDowncast<MutableStyleProperties>(*this).propertyAt(index);

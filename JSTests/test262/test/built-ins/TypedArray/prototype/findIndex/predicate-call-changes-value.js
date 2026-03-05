@@ -25,12 +25,12 @@ includes: [compareArray.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var arr = [10, 20, 30];
   var sample;
   var result;
 
-  sample = new TA(3);
+  sample = new TA(makeCtorArg(3));
   sample.findIndex(function(val, i) {
     sample[i] = arr[i];
 

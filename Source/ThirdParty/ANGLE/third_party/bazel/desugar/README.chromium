@@ -2,7 +2,8 @@ Name: Desugar, transforming Java 8 bytecode to be Java 7 compatible
 Short Name: desugar
 URL: https://github.com/bazelbuild/bazel
 Version: 1.1.0
-License: Apache 2.0
+Update Mechanism: Manual
+License: Apache-2.0
 Security Critical: no
 Shipped: yes
 

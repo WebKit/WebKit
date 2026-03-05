@@ -16,7 +16,7 @@ info: |
     Unless otherwise specified, the name property of a built-in Function
     object, if it exists, has the attributes { [[Writable]]: false,
     [[Enumerable]]: false, [[Configurable]]: true }.
-includes: [propertyHelper.js, testBigIntTypedArray.js]
+includes: [propertyHelper.js, testTypedArray.js]
 features: [BigInt, Symbol.toStringTag]
 ---*/
 

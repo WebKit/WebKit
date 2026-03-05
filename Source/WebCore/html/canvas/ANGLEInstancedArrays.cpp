@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ANGLEInstancedArrays);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ANGLEInstancedArrays);
 
 ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::ANGLEInstancedArrays)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::ANGLE_instanced_arrays);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::ANGLE_instanced_arrays);
 }
 
 ANGLEInstancedArrays::~ANGLEInstancedArrays() = default;

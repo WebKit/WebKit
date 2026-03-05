@@ -52,7 +52,7 @@ public:
 
     // Returns the allowed numeric value range for a length value if the property supports a single length value.
     // FIXME: This should be generated from CSSProperties.json
-    static std::optional<CSS::Range> lengthValueRangeForPropertiesSupportingSimpleLengths(CSSPropertyID);
+    static std::optional<CSS::Range> NODELETE lengthValueRangeForPropertiesSupportingSimpleLengths(CSSPropertyID);
 
     // Parses numeric and named colors.
     static WEBCORE_EXPORT std::optional<SRGBA<uint8_t>> parseSimpleColor(StringView, const CSSParserContext&);

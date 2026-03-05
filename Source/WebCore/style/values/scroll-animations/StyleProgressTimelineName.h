@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,29 +30,15 @@ namespace WebCore {
 namespace Style {
 
 // <single-progress-timeline-name> = none | <dashed-ident>
-// FIXME: This should actually model the union of CSS::Keyword::None and CustomIdentifier to match the spec - https://bugs.webkit.org/show_bug.cgi?id=295467.
-struct ProgressTimelineName {
-    CustomIdentifier value;
+// https://drafts.csswg.org/scroll-animations/#propdef-scroll-timeline-name
+struct ProgressTimelineName : ValueOrKeyword<CustomIdentifier, CSS::Keyword::None> {
+    using Base::Base;
 
-    bool operator==(const ProgressTimelineName&) const = default;
+    bool isNone() const { return isKeyword(); }
+    bool isDashedIdentifier() const { return isValue(); }
 };
-DEFINE_TYPE_WRAPPER_GET(ProgressTimelineName, value);
-
-// <progress-timeline-name-list> = <single-progress-timeline-name>#
-using ProgressTimelineNameList = CommaSeparatedFixedVector<ProgressTimelineName>;
-
-// <'scroll-timeline-name'> = <progress-timeline-name-list>
-// https://drafts.csswg.org/scroll-animations-1/#propdef-scroll-timeline-name
-// <'view-timeline-name'> = <progress-timeline-name-list>
-// https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-name
-struct ProgressTimelineNames : ListOrNone<ProgressTimelineNameList> { using ListOrNone<ProgressTimelineNameList>::ListOrNone; };
-
-// MARK: - Conversion
-
-template<> struct CSSValueConversion<ProgressTimelineName> { auto operator()(BuilderState&, const CSSValue&) -> ProgressTimelineName; };
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ProgressTimelineName, 1)
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ProgressTimelineNames)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ProgressTimelineName)

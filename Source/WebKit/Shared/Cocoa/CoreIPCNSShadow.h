@@ -47,7 +47,7 @@ public:
     CoreIPCNSShadow(WebCore::DoubleSize shadowOffset, double shadowBlurRadius, RetainPtr<WebCore::CocoaColor>&& shadowColor)
         : m_shadowOffset(shadowOffset)
         , m_shadowBlurRadius(shadowBlurRadius)
-        , m_shadowColor(WTFMove(shadowColor))
+        , m_shadowColor(WTF::move(shadowColor))
     {
     }
 

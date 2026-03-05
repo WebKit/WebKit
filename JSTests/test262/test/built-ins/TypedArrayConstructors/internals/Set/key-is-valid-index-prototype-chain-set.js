@@ -26,7 +26,7 @@ var value = {
   },
 };
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var target, receiver;
 
   Object.defineProperty(TA.prototype, 0, {
@@ -36,7 +36,7 @@ testWithTypedArrayConstructors(function(TA) {
   });
 
 
-  target = new TA([0]);
+  target = new TA(makeCtorArg([0]));
   receiver = Object.create(target);
   receiver[0] = value;
   assert.sameValue(target[0], 0, "target[0] should remain unchanged (receiver: empty object)");
@@ -44,7 +44,7 @@ testWithTypedArrayConstructors(function(TA) {
 
 
   var proxyTrapCalls = 0;
-  target = new TA([0]);
+  target = new TA(makeCtorArg([0]));
   receiver = new Proxy(Object.create(target), {
     defineProperty(_target, key, desc) {
       ++proxyTrapCalls;
@@ -58,7 +58,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(proxyTrapCalls, 1, "Proxy's [[DefineOwnProperty]] exotic method should be called");
 
 
-  target = new TA([0]);
+  target = new TA(makeCtorArg([0]));
   receiver = Object.preventExtensions(Object.create(target));
   assert.throws(TypeError, function() { "use strict"; receiver[0] = value; },
     "setting receiver[0] should throw in strict mode (receiver: non-extensible empty object)");
@@ -66,7 +66,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert(!receiver.hasOwnProperty(0), "receiver[0] should not be created (receiver: non-extensible empty object)");
 
 
-  target = new TA([0]);
+  target = new TA(makeCtorArg([0]));
   receiver = Object.setPrototypeOf([], target);
   receiver[0] = value;
   assert.sameValue(target[0], 0, "target[0] should remain unchanged (receiver: regular array)");
@@ -74,7 +74,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(receiver.length, 1, "Array's [[DefineOwnProperty]] exotic method should be called");
 
 
-  target = new TA([0]);
+  target = new TA(makeCtorArg([0]));
   receiver = Object.setPrototypeOf(new String(""), target);
   receiver[0] = value;
   assert.sameValue(target[0], 0, "target[0] should remain unchanged (receiver: empty String object)");
@@ -82,6 +82,6 @@ testWithTypedArrayConstructors(function(TA) {
 
 
   assert(delete TA.prototype[0]);
-});
+}, null, ["passthrough"]);
 
 assert.sameValue(valueOfCalls, 0, "value should not be coerced");

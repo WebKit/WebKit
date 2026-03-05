@@ -32,7 +32,6 @@
 #include "api/local_network_access_permission.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
-#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/transport/data_channel_transport_interface.h"
@@ -42,7 +41,6 @@
 #include "media/base/codec.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "p2p/base/ice_transport_internal.h"
-#include "p2p/base/p2p_transport_channel.h"
 #include "p2p/base/packet_transport_internal.h"
 #include "p2p/base/port.h"
 #include "p2p/base/port_allocator.h"
@@ -58,21 +56,18 @@
 #include "pc/rtp_transport_internal.h"
 #include "pc/sctp_transport.h"
 #include "pc/session_description.h"
-#include "pc/srtp_transport.h"
 #include "pc/transport_stats.h"
 #include "rtc_base/callback_list.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_stream_adapter.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
-class JsepTransportController : public PayloadTypeSuggester,
-                                public sigslot::has_slots<> {
+class JsepTransportController : public PayloadTypeSuggester {
  public:
   // Used when the RtpTransport/DtlsTransport of the m= section is changed
   // because the section is rejected or BUNDLE is enabled.
@@ -130,7 +125,6 @@ class JsepTransportController : public PayloadTypeSuggester,
     // Initial value for whether DtlsTransport reset causes a reset
     // of SRTP parameters.
     bool active_reset_srtp_params = false;
-    RtcEventLog* event_log = nullptr;
 
     // Factory for SCTP transports.
     SctpTransportFactoryInterface* sctp_factory = nullptr;
@@ -427,10 +421,6 @@ class JsepTransportController : public PayloadTypeSuggester,
       const std::string& transport_name,
       PacketTransportInternal* rtp_packet_transport,
       PacketTransportInternal* rtcp_packet_transport);
-  std::unique_ptr<SrtpTransport> CreateSdesTransport(
-      const std::string& transport_name,
-      DtlsTransportInternal* rtp_dtls_transport,
-      DtlsTransportInternal* rtcp_dtls_transport);
   std::unique_ptr<DtlsSrtpTransport> CreateDtlsSrtpTransport(
       const std::string& transport_name,
       DtlsTransportInternal* rtp_dtls_transport,

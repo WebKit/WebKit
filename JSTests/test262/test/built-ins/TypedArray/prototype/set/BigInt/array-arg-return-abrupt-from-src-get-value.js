@@ -18,11 +18,11 @@ info: |
     d. Perform SetValueInBuffer(targetBuffer, targetByteIndex, targetType,
     kNumber).
   ...
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var obj = {
       length: 4,
       "0": 42n,
@@ -35,7 +35,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
       }
     });
 
-  var sample = new TA([1n, 2n, 3n, 4n]);
+  var sample = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
 
   assert.throws(Test262Error, function() {
     sample.set(obj);
@@ -45,4 +45,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     compareArray(sample, [42n, 43n, 3n, 4n]),
     "values are set until exception"
   );
-});
+}, null, ["passthrough"]);

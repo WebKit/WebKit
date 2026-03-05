@@ -25,6 +25,7 @@
 
 enum MediaStreamTrackState { "live", "ended" };
 
+// https://w3c.github.io/mediacapture-main/#dom-mediastreamtrack
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
@@ -45,27 +46,34 @@ enum MediaStreamTrackState { "live", "ended" };
     readonly attribute MediaStreamTrackState readyState;
     attribute EventHandler onended;
 
-    MediaStreamTrack clone();
+    // FIXME: `clone` should not return a nullable type.
+    MediaStreamTrack? clone();
     [ImplementedAs=stopTrack] undefined stop();
 
     MediaTrackCapabilities getCapabilities();
     MediaTrackConstraints getConstraints();
     MediaTrackSettings getSettings();
-    Promise<undefined> applyConstraints(optional MediaTrackConstraints constraints);
+    Promise<undefined> applyConstraints(optional MediaTrackConstraints constraints = {});
 };
 
+// https://w3c.github.io/mediacapture-main/#dom-mediatracksettings
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
 ] dictionary MediaTrackSettings {
+    // FIXME: `width` should be of type `unsigned long`.
     long width;
+    // FIXME: `height` should be of type `unsigned long`.
     long height;
     double aspectRatio;
     double frameRate;
     DOMString facingMode;
     double volume;
+    // FIXME: `sampleRate` should be of type `unsigned long`.
     long sampleRate;
+    // FIXME: `sampleSize` should be of type `unsigned long`.
     long sampleSize;
+    // FIXME: `echoCancellation` should be of type `(boolean or DOMString)`.
     boolean echoCancellation;
     // FIXME 169871: add latency
     // FIXME 169871: add channelCount

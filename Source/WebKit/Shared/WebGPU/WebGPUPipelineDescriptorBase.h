@@ -30,6 +30,7 @@
 #include "WebGPUIdentifier.h"
 #include "WebGPUObjectDescriptorBase.h"
 #include <optional>
+#include <wtf/Markable.h>
 
 namespace WebKit::WebGPU {
 

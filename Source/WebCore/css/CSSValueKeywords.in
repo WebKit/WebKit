@@ -165,6 +165,7 @@ xxx-large
 smaller
 larger
 -webkit-xxx-large
+//math
 
 //
 // CSS_PROP_FONT_STRETCH:
@@ -508,7 +509,6 @@ ethiopic-numeric
 //none
 //
 // CSS_PROP_DISPLAY:
-// The order here must match the order of the DisplayType enum in RenderStyleConstants.h.
 //
 inline
 block
@@ -529,6 +529,7 @@ table-caption
 flex
 inline-flex
 contents
+// none
 grid
 inline-grid
 grid-lanes
@@ -538,7 +539,6 @@ flow
 -webkit-inline-flex
 -webkit-flex
 // ruby
-block-ruby
 ruby-base
 ruby-text
 // none
@@ -908,8 +908,9 @@ anywhere
 
 // -webkit-appearance
 // The order here must match the order in the StyleAppearance enum in StyleAppearance.h.
-// All appearance values that should be accepted by the parser should be listed between 'base' and 'textarea':
+// All appearance values that should be accepted by the parser should be listed between 'base' and 'textfield':
 base
+base-select
 checkbox
 radio
 push-button
@@ -980,14 +981,11 @@ intersect
 exclude
 
 //
-// Variables Implementation
+// Global substitution functions
 //
 var
-
-//
-// Environment Variables
-//
 env
+-internal-auto-base
 
 //
 // CSS_PROP_BREAK_BEFORE/AFTER/INSIDE
@@ -1091,6 +1089,7 @@ entry
 exit
 entry-crossing
 exit-crossing
+// scroll
 
 //
 // CSS_PROP_ZOOM

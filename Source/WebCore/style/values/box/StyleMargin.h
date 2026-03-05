@@ -39,11 +39,6 @@ struct MarginEdge : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>, CSS::K
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }
 };
 
-template<> struct CSSValueConversion<MarginEdge> {
-    auto operator()(BuilderState&, const CSSValue&) -> MarginEdge;
-    auto operator()(BuilderState&, const CSSPrimitiveValue&) -> MarginEdge;
-};
-
 // <'margin'> = <'margin-top'>{1,4}
 // https://drafts.csswg.org/css-box/#propdef-margin
 using MarginBox = MinimallySerializingSpaceSeparatedRectEdges<MarginEdge>;

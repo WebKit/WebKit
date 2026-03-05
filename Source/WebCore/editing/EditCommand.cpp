@@ -136,7 +136,7 @@ bool isInputMethodComposingForEditingAction(EditAction action)
 }
 
 EditCommand::EditCommand(Ref<Document>&& document, EditAction editingAction)
-    : m_document { WTFMove(document) }
+    : m_document { WTF::move(document) }
     , m_startingSelection { m_document->selection().selection() }
     , m_endingSelection { m_startingSelection }
     , m_editingAction { editingAction }
@@ -144,7 +144,7 @@ EditCommand::EditCommand(Ref<Document>&& document, EditAction editingAction)
 }
 
 EditCommand::EditCommand(Ref<Document>&& document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
-    : m_document { WTFMove(document) }
+    : m_document { WTF::move(document) }
     , m_startingSelection { startingSelection }
     , m_endingSelection { endingSelection }
 {
@@ -191,7 +191,7 @@ void EditCommand::setEndingSelection(const VisibleSelection& selection)
 void EditCommand::setParent(RefPtr<CompositeEditCommand>&& parent)
 {
     ASSERT((parent && !m_parent) || (!parent && m_parent));
-    m_parent = WTFMove(parent);
+    m_parent = WTF::move(parent);
     if (m_parent) {
         m_startingSelection = m_parent->m_endingSelection;
         m_endingSelection = m_parent->m_endingSelection;
@@ -219,7 +219,7 @@ void EditCommand::postTextStateChangeNotification(AXTextEditType type, const Str
 }
 
 SimpleEditCommand::SimpleEditCommand(Ref<Document>&& document, EditAction editingAction)
-    : EditCommand(WTFMove(document), editingAction)
+    : EditCommand(WTF::move(document), editingAction)
 {
 }
 

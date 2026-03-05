@@ -34,7 +34,7 @@ const int kThreads = 0;
 const int kFileName = 1;
 const int kRowMT = 2;
 
-typedef std::tuple<int, const char *, int> DecodeParam;
+using DecodeParam = std::tuple<int, const char *, int>;
 
 class TestVectorTest : public ::libaom_test::DecoderTest,
                        public ::libaom_test::CodecTestWithParam<DecodeParam> {

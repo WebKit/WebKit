@@ -26,6 +26,6 @@
 
 namespace WebCore {
 
-enum class RTCIceProtocol { Udp, Tcp };
+enum class RTCIceProtocol : uint8_t { Udp, Tcp };
 
 } // namespace WebCore

@@ -19,10 +19,8 @@
 #include <vector>
 
 #include <assert.h>
-#include <errno.h>
 #include <limits.h>
 #include <string.h>
-#include <sys/uio.h>
 #include <unistd.h>
 #include <cstdarg>
 
@@ -64,212 +62,6 @@ namespace acvp {
 #else
 #define LOG_ERROR(...) fprintf(stderr, __VA_ARGS__)
 #endif  // OPENSSL_TRUSTY
-
-constexpr size_t kMaxArgLength = (1 << 20);
-
-RequestBuffer::~RequestBuffer() = default;
-
-class RequestBufferImpl : public RequestBuffer {
- public:
-  ~RequestBufferImpl() = default;
-
-  std::vector<uint8_t> buf;
-  Span<const uint8_t> args[kMaxArgs];
-};
-
-// static
-std::unique_ptr<RequestBuffer> RequestBuffer::New() {
-  return std::make_unique<RequestBufferImpl>();
-}
-
-static bool ReadAll(int fd, void *in_data, size_t data_len) {
-  uint8_t *data = reinterpret_cast<uint8_t *>(in_data);
-  size_t done = 0;
-
-  while (done < data_len) {
-    ssize_t r;
-    do {
-      r = read(fd, &data[done], data_len - done);
-    } while (r == -1 && errno == EINTR);
-
-    if (r <= 0) {
-      return false;
-    }
-
-    done += r;
-  }
-
-  return true;
-}
-
-Span<const Span<const uint8_t>> ParseArgsFromFd(int fd,
-                                                RequestBuffer *in_buffer) {
-  RequestBufferImpl *buffer = reinterpret_cast<RequestBufferImpl *>(in_buffer);
-  uint32_t nums[1 + kMaxArgs];
-  const Span<const Span<const uint8_t>> empty_span;
-
-  if (!ReadAll(fd, nums, sizeof(uint32_t) * 2)) {
-    return empty_span;
-  }
-
-  const size_t num_args = nums[0];
-  if (num_args == 0) {
-    LOG_ERROR("Invalid, zero-argument operation requested.\n");
-    return empty_span;
-  } else if (num_args > kMaxArgs) {
-    LOG_ERROR("Operation requested with %zu args, but %zu is the limit.\n",
-              num_args, kMaxArgs);
-    return empty_span;
-  }
-
-  if (num_args > 1 &&
-      !ReadAll(fd, &nums[2], sizeof(uint32_t) * (num_args - 1))) {
-    return empty_span;
-  }
-
-  size_t need = 0;
-  for (size_t i = 0; i < num_args; i++) {
-    const size_t arg_length = nums[i + 1];
-    if (i == 0 && arg_length > kMaxNameLength) {
-      LOG_ERROR("Operation with name of length %zu exceeded limit of %zu.\n",
-                arg_length, kMaxNameLength);
-      return empty_span;
-    } else if (arg_length > kMaxArgLength) {
-      LOG_ERROR(
-          "Operation with argument of length %zu exceeded limit of %zu.\n",
-          arg_length, kMaxArgLength);
-      return empty_span;
-    }
-
-    // This static_assert confirms that the following addition doesn't
-    // overflow.
-    static_assert((kMaxArgs - 1 * kMaxArgLength) + kMaxNameLength > (1 << 30),
-                  "Argument limits permit excessive messages");
-    need += arg_length;
-  }
-
-  if (need > buffer->buf.size()) {
-    size_t alloced = need + (need >> 1);
-    if (alloced < need) {
-      abort();
-    }
-    buffer->buf.resize(alloced);
-  }
-
-  if (!ReadAll(fd, buffer->buf.data(), need)) {
-    return empty_span;
-  }
-
-  size_t offset = 0;
-  for (size_t i = 0; i < num_args; i++) {
-    buffer->args[i] = Span<const uint8_t>(&buffer->buf[offset], nums[i + 1]);
-    offset += nums[i + 1];
-  }
-
-  return Span<const Span<const uint8_t>>(buffer->args, num_args);
-}
-
-// g_reply_buffer contains buffered replies which will be flushed when acvp
-// requests.
-static std::vector<uint8_t> g_reply_buffer;
-
-bool WriteReplyToBuffer(const std::vector<Span<const uint8_t>> &spans) {
-  if (spans.size() > kMaxArgs) {
-    abort();
-  }
-
-  uint8_t buf[4];
-  CRYPTO_store_u32_le(buf, spans.size());
-  g_reply_buffer.insert(g_reply_buffer.end(), buf, buf + sizeof(buf));
-  for (const auto &span : spans) {
-    CRYPTO_store_u32_le(buf, span.size());
-    g_reply_buffer.insert(g_reply_buffer.end(), buf, buf + sizeof(buf));
-  }
-  for (const auto &span : spans) {
-    g_reply_buffer.insert(g_reply_buffer.end(), span.begin(), span.end());
-  }
-
-  return true;
-}
-
-bool FlushBuffer(int fd) {
-  size_t done = 0;
-
-  while (done < g_reply_buffer.size()) {
-    ssize_t n;
-    do {
-      n = write(fd, g_reply_buffer.data() + done, g_reply_buffer.size() - done);
-    } while (n < 0 && errno == EINTR);
-
-    if (n < 0) {
-      return false;
-    }
-    done += static_cast<size_t>(n);
-  }
-
-  g_reply_buffer.clear();
-
-  return true;
-}
-
-bool WriteReplyToFd(int fd, const std::vector<Span<const uint8_t>> &spans) {
-  if (spans.size() > kMaxArgs) {
-    abort();
-  }
-
-  uint32_t nums[1 + kMaxArgs];
-  iovec iovs[kMaxArgs + 1];
-  nums[0] = spans.size();
-  iovs[0].iov_base = nums;
-  iovs[0].iov_len = sizeof(uint32_t) * (1 + spans.size());
-
-  size_t num_iov = 1;
-  for (size_t i = 0; i < spans.size(); i++) {
-    const auto &span = spans[i];
-    nums[i + 1] = span.size();
-    if (span.empty()) {
-      continue;
-    }
-
-    iovs[num_iov].iov_base = const_cast<uint8_t *>(span.data());
-    iovs[num_iov].iov_len = span.size();
-    num_iov++;
-  }
-
-  size_t iov_done = 0;
-  while (iov_done < num_iov) {
-    ssize_t r;
-    do {
-      r = writev(fd, &iovs[iov_done], num_iov - iov_done);
-    } while (r == -1 && errno == EINTR);
-
-    if (r <= 0) {
-      return false;
-    }
-
-    size_t written = r;
-    for (size_t i = iov_done; i < num_iov && written > 0; i++) {
-      iovec &iov = iovs[i];
-
-      size_t done = written;
-      if (done > iov.iov_len) {
-        done = iov.iov_len;
-      }
-
-      iov.iov_base = reinterpret_cast<uint8_t *>(iov.iov_base) + done;
-      iov.iov_len -= done;
-      written -= done;
-
-      if (iov.iov_len == 0) {
-        iov_done++;
-      }
-    }
-
-    assert(written == 0);
-  }
-
-  return true;
-}
 
 static bool GetConfig(const Span<const uint8_t> args[],
                       ReplyCallback write_reply) {
@@ -1088,7 +880,7 @@ template <uint8_t *(*OneShotHash)(const uint8_t *, size_t, uint8_t *),
 static bool Hash(const Span<const uint8_t> args[], ReplyCallback write_reply) {
   uint8_t digest[DigestLength];
   OneShotHash(args[0].data(), args[0].size(), digest);
-  return write_reply({Span<const uint8_t>(digest)});
+  return write_reply({MakeConstSpan(digest)});
 }
 
 template <uint8_t *(*OneShotHash)(const uint8_t *, size_t, uint8_t *),
@@ -2254,7 +2046,7 @@ template <typename PrivateKey, size_t PublicKeyBytes,
 static bool MLDSAKeyGen(const Span<const uint8_t> args[],
                         ReplyCallback write_reply) {
   const Span<const uint8_t> seed = args[0];
-  if (seed.size() != BCM_MLDSA_SEED_BYTES) {
+  if (seed.size() != MLDSA_SEED_BYTES) {
     LOG_ERROR("Bad seed size.\n");
     return false;
   }
@@ -2352,7 +2144,7 @@ template <typename PrivateKey, size_t PublicKeyBytes,
 static bool MLKEMKeyGen(const Span<const uint8_t> args[],
                         ReplyCallback write_reply) {
   const Span<const uint8_t> seed = args[0];
-  if (seed.size() != BCM_MLKEM_SEED_BYTES) {
+  if (seed.size() != MLKEM_SEED_BYTES) {
     LOG_ERROR("Bad seed size.\n");
     return false;
   }
@@ -2394,7 +2186,7 @@ static bool MLKEMEncap(const Span<const uint8_t> args[],
   }
 
   uint8_t ciphertext[CiphertextBytes];
-  uint8_t shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t shared_secret[MLKEM_SHARED_SECRET_BYTES];
   Encap(ciphertext, shared_secret, pub.get(), entropy.data());
 
   return write_reply({ciphertext, shared_secret});
@@ -2415,7 +2207,7 @@ static bool MLKEMDecap(const Span<const uint8_t> args[],
     return false;
   }
 
-  uint8_t shared_secret[BCM_MLKEM_SHARED_SECRET_BYTES];
+  uint8_t shared_secret[MLKEM_SHARED_SECRET_BYTES];
   if (!bcm_success(Decap(shared_secret, ciphertext.data(), ciphertext.size(),
                          priv.get()))) {
     LOG_ERROR("ML-KEM decapsulation failed.\n");
@@ -2585,56 +2377,56 @@ static constexpr struct {
     {"ECDH/P-521", 3, ECDH<NID_secp521r1>},
     {"FFDH", 6, FFDH},
     {"ML-DSA-44/keyGen", 1,
-     MLDSAKeyGen<BCM_mldsa44_private_key, BCM_MLDSA44_PUBLIC_KEY_BYTES,
+     MLDSAKeyGen<MLDSA44_private_key, MLDSA44_PUBLIC_KEY_BYTES,
                  BCM_mldsa44_generate_key_external_entropy_fips,
                  BCM_mldsa44_marshal_private_key>},
     {"ML-DSA-65/keyGen", 1,
-     MLDSAKeyGen<BCM_mldsa65_private_key, BCM_MLDSA65_PUBLIC_KEY_BYTES,
+     MLDSAKeyGen<MLDSA65_private_key, MLDSA65_PUBLIC_KEY_BYTES,
                  BCM_mldsa65_generate_key_external_entropy_fips,
                  BCM_mldsa65_marshal_private_key>},
     {"ML-DSA-87/keyGen", 1,
-     MLDSAKeyGen<BCM_mldsa87_private_key, BCM_MLDSA87_PUBLIC_KEY_BYTES,
+     MLDSAKeyGen<MLDSA87_private_key, MLDSA87_PUBLIC_KEY_BYTES,
                  BCM_mldsa87_generate_key_external_entropy_fips,
                  BCM_mldsa87_marshal_private_key>},
     {"ML-DSA-44/sigGen", 3,
-     MLDSASigGen<BCM_mldsa44_private_key, BCM_MLDSA44_SIGNATURE_BYTES,
+     MLDSASigGen<MLDSA44_private_key, MLDSA44_SIGNATURE_BYTES,
                  BCM_mldsa44_parse_private_key, BCM_mldsa44_sign_internal>},
     {"ML-DSA-65/sigGen", 3,
-     MLDSASigGen<BCM_mldsa65_private_key, BCM_MLDSA65_SIGNATURE_BYTES,
+     MLDSASigGen<MLDSA65_private_key, MLDSA65_SIGNATURE_BYTES,
                  BCM_mldsa65_parse_private_key, BCM_mldsa65_sign_internal>},
     {"ML-DSA-87/sigGen", 3,
-     MLDSASigGen<BCM_mldsa87_private_key, BCM_MLDSA87_SIGNATURE_BYTES,
+     MLDSASigGen<MLDSA87_private_key, MLDSA87_SIGNATURE_BYTES,
                  BCM_mldsa87_parse_private_key, BCM_mldsa87_sign_internal>},
     {"ML-DSA-44/sigVer", 3,
-     MLDSASigVer<BCM_mldsa44_public_key, BCM_MLDSA44_SIGNATURE_BYTES,
+     MLDSASigVer<MLDSA44_public_key, MLDSA44_SIGNATURE_BYTES,
                  BCM_mldsa44_parse_public_key, BCM_mldsa44_verify_internal>},
     {"ML-DSA-65/sigVer", 3,
-     MLDSASigVer<BCM_mldsa65_public_key, BCM_MLDSA65_SIGNATURE_BYTES,
+     MLDSASigVer<MLDSA65_public_key, MLDSA65_SIGNATURE_BYTES,
                  BCM_mldsa65_parse_public_key, BCM_mldsa65_verify_internal>},
     {"ML-DSA-87/sigVer", 3,
-     MLDSASigVer<BCM_mldsa87_public_key, BCM_MLDSA87_SIGNATURE_BYTES,
+     MLDSASigVer<MLDSA87_public_key, MLDSA87_SIGNATURE_BYTES,
                  BCM_mldsa87_parse_public_key, BCM_mldsa87_verify_internal>},
     {"ML-KEM-768/keyGen", 1,
-     MLKEMKeyGen<BCM_mlkem768_private_key, BCM_MLKEM768_PUBLIC_KEY_BYTES,
+     MLKEMKeyGen<MLKEM768_private_key, MLKEM768_PUBLIC_KEY_BYTES,
                  BCM_mlkem768_generate_key_external_seed,
                  BCM_mlkem768_marshal_private_key>},
     {"ML-KEM-1024/keyGen", 1,
-     MLKEMKeyGen<BCM_mlkem1024_private_key, BCM_MLKEM1024_PUBLIC_KEY_BYTES,
+     MLKEMKeyGen<MLKEM1024_private_key, MLKEM1024_PUBLIC_KEY_BYTES,
                  BCM_mlkem1024_generate_key_external_seed,
                  BCM_mlkem1024_marshal_private_key>},
     {"ML-KEM-768/encap", 2,
-     MLKEMEncap<BCM_mlkem768_public_key, BCM_mlkem768_parse_public_key,
-                BCM_MLKEM768_CIPHERTEXT_BYTES,
+     MLKEMEncap<MLKEM768_public_key, BCM_mlkem768_parse_public_key,
+                MLKEM768_CIPHERTEXT_BYTES,
                 BCM_mlkem768_encap_external_entropy>},
     {"ML-KEM-1024/encap", 2,
-     MLKEMEncap<BCM_mlkem1024_public_key, BCM_mlkem1024_parse_public_key,
-                BCM_MLKEM1024_CIPHERTEXT_BYTES,
+     MLKEMEncap<MLKEM1024_public_key, BCM_mlkem1024_parse_public_key,
+                MLKEM1024_CIPHERTEXT_BYTES,
                 BCM_mlkem1024_encap_external_entropy>},
     {"ML-KEM-768/decap", 2,
-     MLKEMDecap<BCM_mlkem768_private_key, BCM_mlkem768_parse_private_key,
+     MLKEMDecap<MLKEM768_private_key, BCM_mlkem768_parse_private_key,
                 BCM_mlkem768_decap>},
     {"ML-KEM-1024/decap", 2,
-     MLKEMDecap<BCM_mlkem1024_private_key, BCM_mlkem1024_parse_private_key,
+     MLKEMDecap<MLKEM1024_private_key, BCM_mlkem1024_parse_private_key,
                 BCM_mlkem1024_decap>},
     {"SLH-DSA-SHA2-128s/keyGen", 1, SLHDSAKeyGen},
     {"SLH-DSA-SHA2-128s/sigGen", 3, SLHDSASigGen},

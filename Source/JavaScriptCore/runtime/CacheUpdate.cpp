@@ -29,12 +29,12 @@
 namespace JSC {
 
 CacheUpdate::CacheUpdate(GlobalUpdate&& update)
-    : m_update(WTFMove(update))
+    : m_update(WTF::move(update))
 {
 }
 
 CacheUpdate::CacheUpdate(FunctionUpdate&& update)
-    : m_update(WTFMove(update))
+    : m_update(WTF::move(update))
 {
 }
 
@@ -43,7 +43,7 @@ CacheUpdate::CacheUpdate(CacheUpdate&&) = default;
 CacheUpdate& CacheUpdate::operator=(CacheUpdate&& other)
 {
     this->~CacheUpdate();
-    return *new (this) CacheUpdate(WTFMove(other));
+    return *new (this) CacheUpdate(WTF::move(other));
 }
 
 bool CacheUpdate::isGlobal() const

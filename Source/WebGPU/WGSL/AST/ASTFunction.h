@@ -70,12 +70,12 @@ public:
 private:
     Function(SourceSpan span, Identifier&& name, Parameter::List&& parameters, Expression::Ptr returnType, CompoundStatement::Ref&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
         : Declaration(span)
-        , m_name(WTFMove(name))
-        , m_parameters(WTFMove(parameters))
-        , m_attributes(WTFMove(attributes))
-        , m_returnAttributes(WTFMove(returnAttributes))
+        , m_name(WTF::move(name))
+        , m_parameters(WTF::move(parameters))
+        , m_attributes(WTF::move(attributes))
+        , m_returnAttributes(WTF::move(returnAttributes))
         , m_returnType(returnType)
-        , m_body(WTFMove(body))
+        , m_body(WTF::move(body))
     { }
 
     Identifier m_name;

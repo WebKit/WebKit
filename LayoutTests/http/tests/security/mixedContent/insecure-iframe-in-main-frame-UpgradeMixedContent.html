@@ -5,12 +5,14 @@
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpFrameLoadCallbacks();
 }
 
 window.addEventListener("message", function (e) {
-  if (window.testRunner)
-      testRunner.notifyDone();
+    if (e.data !== 'blocked')
+        console.log('FAIL: Insecure iframe was NOT blocked');
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, false);
 
 </script>

@@ -44,6 +44,10 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
     int64_t payload_bytes_received = 0;
     int64_t header_and_padding_bytes_received = 0;
     uint32_t packets_received = 0;
+    // https://w3c.github.io/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetsreceivedwithect1
+    int64_t packets_received_with_ect1 = 0;
+    // https://w3c.github.io/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetsreceivedwithce
+    int64_t packets_received_with_ce = 0;
     uint64_t fec_packets_received = 0;
     uint64_t fec_packets_discarded = 0;
     int32_t packets_lost = 0;

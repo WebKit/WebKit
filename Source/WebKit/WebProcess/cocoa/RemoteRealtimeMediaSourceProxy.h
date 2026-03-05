@@ -54,7 +54,7 @@ public:
     IPC::Connection& connection() { return m_connection.get(); }
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
     WebCore::CaptureDevice::DeviceType deviceType() const { return m_device.type(); }
-    const WebCore::CaptureDevice& device() const { return m_device; }
+    const WebCore::CaptureDevice& device() const LIFETIME_BOUND { return m_device; }
     bool shouldCaptureInGPUProcess() const { return m_shouldCaptureInGPUProcess; }
 
     using CreateCallback = CompletionHandler<void(WebCore::CaptureSourceError&&, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&)>;
@@ -94,7 +94,6 @@ public:
 
 private:
     struct PromiseConverter;
-    Ref<IPC::Connection> protectedConnection() const;
 
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;

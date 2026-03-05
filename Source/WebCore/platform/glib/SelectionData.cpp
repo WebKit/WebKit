@@ -41,7 +41,7 @@ SelectionData::SelectionData(const String& text, const String& markup, const URL
     if (!uriList.isEmpty())
         setURIList(uriList);
     if (image)
-        setImage(WTFMove(image));
+        setImage(WTF::move(image));
     if (buffer)
         setCustomData(buffer.releaseNonNull());
     setCanSmartReplace(canSmartReplace);

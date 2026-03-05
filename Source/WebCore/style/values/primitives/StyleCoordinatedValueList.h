@@ -44,12 +44,12 @@ struct CoordinatedValueList {
     }
 
     CoordinatedValueList(T&& value)
-        : CoordinatedValueList { Container { WTFMove(value) } }
+        : CoordinatedValueList { Container { WTF::move(value) } }
     {
     }
 
     CoordinatedValueList(std::initializer_list<T>&& values)
-        : CoordinatedValueList { Container { WTFMove(values) } }
+        : CoordinatedValueList { Container { WTF::move(values) } }
     {
     }
 
@@ -65,7 +65,7 @@ struct CoordinatedValueList {
     // Must be called after modifying the list or its values, before any of the used*() functions are called.
     void prepareForUse();
 
-    void append(T&& value) { m_data->container.append(WTFMove(value)); }
+    void append(T&& value) { m_data->container.append(WTF::move(value)); }
 
     value_type& usedFirst() LIFETIME_BOUND { return m_data->container.first(); }
     const value_type& usedFirst() const LIFETIME_BOUND { return m_data->container.first(); }
@@ -95,7 +95,7 @@ struct CoordinatedValueList {
 
 private:
     CoordinatedValueList(Container&& container)
-        : m_data { Data::create(WTFMove(container)) }
+        : m_data { Data::create(WTF::move(container)) }
     {
     }
 
@@ -105,7 +105,7 @@ private:
 
     class Data : public RefCounted<Data> {
     public:
-        static Ref<Data> create(Container&& container) { return adoptRef(*new Data(WTFMove(container))); }
+        static Ref<Data> create(Container&& container) { return adoptRef(*new Data(WTF::move(container))); }
 
         Ref<Data> clone() const
         {
@@ -121,7 +121,7 @@ private:
             return container == other.container;
         }
 
-        Data(Container&& container) : container { WTFMove(container) } { RELEASE_ASSERT(this->container.size() > 0); }
+        Data(Container&& container) : container { WTF::move(container) } { RELEASE_ASSERT(this->container.size() > 0); }
 
         Container container;
         unsigned usedLength { 1 };

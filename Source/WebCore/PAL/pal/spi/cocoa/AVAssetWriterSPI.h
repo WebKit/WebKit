@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -32,6 +35,8 @@ DECLARE_SYSTEM_HEADER
 #import <AVFoundation/AVAssetWriter_Private.h>
 
 #else
+
+#import <AVFoundation/AVAssetWriter.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -46,3 +51,5 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // !__has_feature(modules)

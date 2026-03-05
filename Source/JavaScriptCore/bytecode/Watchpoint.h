@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/Atomics.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/FastMalloc.h>
@@ -340,7 +341,7 @@ public:
     void startWatching()
     {
         if (isFat()) {
-            protectedFat()->startWatching();
+            protect(fat())->startWatching();
             return;
         }
         ASSERT(decodeState(m_data) != IsInvalidated);
@@ -351,7 +352,7 @@ public:
     void fireAll(VM& vm, T fireDetails)
     {
         if (isFat()) {
-            protectedFat()->fireAll(vm, fireDetails);
+            protect(fat())->fireAll(vm, fireDetails);
             return;
         }
         if (decodeState(m_data) == ClearWatchpoint)
@@ -363,7 +364,7 @@ public:
     void invalidate(VM& vm, const FireDetail& detail)
     {
         if (isFat())
-            protectedFat()->invalidate(vm, detail);
+            protect(fat())->invalidate(vm, detail);
         else
             m_data = encodeState(IsInvalidated);
     }
@@ -373,7 +374,7 @@ public:
     void touch(VM& vm, const FireDetail& detail)
     {
         if (isFat()) {
-            protectedFat()->touch(vm, detail);
+            protect(fat())->touch(vm, detail);
             return;
         }
         uintptr_t data = m_data;
@@ -481,9 +482,6 @@ private:
         return fat(m_data);
     }
 
-    RefPtr<WatchpointSet> protectedFat() { return fat(); }
-    RefPtr<const WatchpointSet> protectedFat() const { return fat(); }
-    
     JS_EXPORT_PRIVATE WatchpointSet* inflateSlow();
     JS_EXPORT_PRIVATE void freeFat();
     

@@ -63,8 +63,8 @@ PASS ToASCII("öbb")
 PASS ToASCII("Öbb")
 PASS ToASCII("Öbb")
 PASS ToASCII("xn--bb-eka")
-FAIL ToASCII("FAẞ.de") assert_equals: expected "xn--fa-hia.de" but got "fass.de"
-FAIL ToASCII("FAẞ.DE") assert_equals: expected "xn--fa-hia.de" but got "fass.de"
+PASS ToASCII("FAẞ.de")
+PASS ToASCII("FAẞ.DE")
 PASS ToASCII("βόλος.com")
 PASS ToASCII("βόλος.com")
 PASS ToASCII("ΒΌΛΟΣ.COM")

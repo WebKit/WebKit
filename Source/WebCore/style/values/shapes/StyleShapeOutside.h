@@ -28,6 +28,7 @@
 #include <WebCore/StyleBasicShape.h>
 #include <WebCore/StyleImageWrapper.h>
 #include <WebCore/StyleValueTypes.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 namespace Style {
@@ -53,10 +54,10 @@ struct ShapeOutside {
     };
 
     ShapeOutside(CSS::Keyword::None) { }
-    ShapeOutside(Shape&& value) : m_value { Value::create(WTFMove(value)) } { }
-    ShapeOutside(ShapeBox&& value) : m_value { Value::create(WTFMove(value)) } { }
-    ShapeOutside(ShapeAndShapeBox&& value) : m_value { Value::create(WTFMove(value)) } { }
-    ShapeOutside(Image&& value) : m_value { Value::create(WTFMove(value)) } { }
+    ShapeOutside(Shape&& value) : m_value { Value::create(WTF::move(value)) } { }
+    ShapeOutside(ShapeBox&& value) : m_value { Value::create(WTF::move(value)) } { }
+    ShapeOutside(ShapeAndShapeBox&& value) : m_value { Value::create(WTF::move(value)) } { }
+    ShapeOutside(Image&& value) : m_value { Value::create(WTF::move(value)) } { }
 
     bool isNone() const { return !m_value; }
 
@@ -85,7 +86,7 @@ struct ShapeOutside {
 
     const BasicShape* shape() const { RefPtr value = m_value; return value ? value->shape() : nullptr; }
     CSSBoxType effectiveCSSBox() const { RefPtr value = m_value; return value ? value->effectiveCSSBox() : CSSBoxType::BoxMissing; }
-    RefPtr<StyleImage> image() const { RefPtr value = m_value; return value ? value->image() : nullptr; }
+    RefPtr<Style::Image> image() const { RefPtr value = m_value; return value ? value->image() : nullptr; }
 
     bool operator==(const ShapeOutside& other) const
     {
@@ -101,17 +102,17 @@ private:
 
         static Ref<Value> create(Kind&& value)
         {
-            return adoptRef(*new Value(WTFMove(value)));
+            return adoptRef(*new Value(WTF::move(value)));
         }
 
         explicit Value(Kind&& value)
-            : value { WTFMove(value) }
+            : value { WTF::move(value) }
         {
         }
 
         inline const BasicShape* shape() const;
         inline CSSBoxType effectiveCSSBox() const;
-        inline RefPtr<StyleImage> image() const;
+        inline RefPtr<Style::Image> image() const;
 
         bool operator==(const Value& other) const
         {
@@ -144,13 +145,13 @@ inline const BasicShape* ShapeOutside::Value::shape() const
     );
 }
 
-inline RefPtr<StyleImage> ShapeOutside::Value::image() const
+inline RefPtr<Style::Image> ShapeOutside::Value::image() const
 {
     return WTF::switchOn(value,
-        [](const ShapeOutside::Shape&) -> RefPtr<StyleImage> { return nullptr; },
-        [](const ShapeOutside::ShapeBox&) -> RefPtr<StyleImage> { return nullptr; },
-        [](const ShapeOutside::ShapeAndShapeBox&) -> RefPtr<StyleImage> { return nullptr; },
-        [](const ShapeOutside::Image& image) -> RefPtr<StyleImage> { return image.image.value.ptr(); }
+        [](const ShapeOutside::Shape&) -> RefPtr<Style::Image> { return nullptr; },
+        [](const ShapeOutside::ShapeBox&) -> RefPtr<Style::Image> { return nullptr; },
+        [](const ShapeOutside::ShapeAndShapeBox&) -> RefPtr<Style::Image> { return nullptr; },
+        [](const ShapeOutside::Image& image) -> RefPtr<Style::Image> { return image.image.value.ptr(); }
     );
 }
 

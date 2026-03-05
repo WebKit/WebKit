@@ -54,7 +54,7 @@ public:
     void clear(WebCore::LocalFrame& sourceFrame) override;
     bool contains(const String& key) override;
 
-    WebCore::StorageType storageType() const override;
+    WebCore::StorageType storageType() const override { return m_storageType; }
 
     size_t memoryBytesUsedByCache() override;
 

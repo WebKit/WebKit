@@ -175,18 +175,18 @@ static void compute_stats_opt_c(int wiener_win, const uint8_t *dgd,
 }
 
 static const int kIterations = 100;
-typedef void (*compute_stats_Func)(int wiener_win, const uint8_t *dgd,
-                                   const uint8_t *src, int16_t *dgd_avg,
-                                   int16_t *src_avg, int h_start, int h_end,
-                                   int v_start, int v_end, int dgd_stride,
-                                   int src_stride, int64_t *M, int64_t *H,
-                                   int use_downsampled_wiener_stats);
+using compute_stats_Func = void (*)(int wiener_win, const uint8_t *dgd,
+                                    const uint8_t *src, int16_t *dgd_avg,
+                                    int16_t *src_avg, int h_start, int h_end,
+                                    int v_start, int v_end, int dgd_stride,
+                                    int src_stride, int64_t *M, int64_t *H,
+                                    int use_downsampled_wiener_stats);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 8 bit
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef std::tuple<const compute_stats_Func> WienerTestParam;
+using WienerTestParam = std::tuple<const compute_stats_Func>;
 
 class WienerTest : public ::testing::TestWithParam<WienerTestParam> {
  public:
@@ -537,14 +537,14 @@ static void compute_stats_highbd_opt_c(int wiener_win, const uint8_t *dgd,
 }
 
 static const int kIterations = 100;
-typedef void (*compute_stats_Func)(int wiener_win, const uint8_t *dgd,
-                                   const uint8_t *src, int16_t *d, int16_t *s,
-                                   int h_start, int h_end, int v_start,
-                                   int v_end, int dgd_stride, int src_stride,
-                                   int64_t *M, int64_t *H,
-                                   aom_bit_depth_t bit_depth);
+using compute_stats_Func = void (*)(int wiener_win, const uint8_t *dgd,
+                                    const uint8_t *src, int16_t *d, int16_t *s,
+                                    int h_start, int h_end, int v_start,
+                                    int v_end, int dgd_stride, int src_stride,
+                                    int64_t *M, int64_t *H,
+                                    aom_bit_depth_t bit_depth);
 
-typedef std::tuple<const compute_stats_Func> WienerTestParam;
+using WienerTestParam = std::tuple<const compute_stats_Func>;
 
 class WienerTestHighbd : public ::testing::TestWithParam<WienerTestParam> {
  public:

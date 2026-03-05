@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(UndoManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UndoManager);
 
 UndoManager::UndoManager(Document& document)
     : m_document(document)
@@ -57,15 +57,15 @@ ExceptionOr<void> UndoManager::addItem(Ref<UndoItem>&& item)
         return Exception { ExceptionCode::SecurityError, "A browsing context is required to add an UndoItem"_s };
 
     item->setUndoManager(this);
-    frame->protectedEditor()->registerCustomUndoStep(CustomUndoStep::create(item));
-    m_items.add(WTFMove(item));
+    protect(frame->editor())->registerCustomUndoStep(CustomUndoStep::create(item));
+    m_items.add(WTF::move(item));
     return { };
 }
 
 void UndoManager::removeItem(UndoItem& item)
 {
-    if (auto foundItem = m_items.take(&item))
-        foundItem->setUndoManager(nullptr);
+    if (m_items.remove(item))
+        item.setUndoManager(nullptr);
 }
 
 void UndoManager::removeAllItems()

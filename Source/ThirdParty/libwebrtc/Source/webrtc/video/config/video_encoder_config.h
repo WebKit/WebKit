@@ -85,6 +85,11 @@ struct VideoStream {
   // e.g. if source only provides lower resolution or
   // if resource adaptation is active.
   std::optional<Resolution> scale_resolution_down_to;
+
+  // The video format for the stream
+  // This should be set for mixed-codec simulcast, while for other cases,
+  // it is optional and can be unset.
+  std::optional<SdpVideoFormat> video_format;
 };
 
 class VideoEncoderConfig {
@@ -169,6 +174,10 @@ class VideoEncoderConfig {
   std::string ToString() const;
 
   bool HasScaleResolutionDownTo() const;
+
+  bool HasScaleResolutionDownBy() const;
+
+  SdpVideoFormat GetSimulcastVideoFormat(size_t stream_index) const;
 
   // TODO(bugs.webrtc.org/6883): Consolidate on one of these.
   VideoCodecType codec_type;

@@ -23,7 +23,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |     Cause Code=4              |      Cause Length=4           |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int OutOfResourceErrorCause::kType;
 
 std::optional<OutOfResourceErrorCause> OutOfResourceErrorCause::Parse(
     webrtc::ArrayView<const uint8_t> data) {

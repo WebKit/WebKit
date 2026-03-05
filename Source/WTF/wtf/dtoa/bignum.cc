@@ -91,7 +91,7 @@ void Bignum::AssignBignum(const Bignum& other) {
 }
 
 
-static uint64_t ReadUInt64(BufferReference<const char> buffer,
+static uint64_t NODELETE ReadUInt64(BufferReference<const char> buffer,
                            int from,
                            int digits_to_read) {
   uint64_t result = 0;
@@ -560,7 +560,7 @@ static int SizeInHexChars(S number) {
 }
 
 
-static char HexCharOfValue(int value) {
+static char NODELETE HexCharOfValue(int value) {
   ASSERT(0 <= value && value <= 16);
   if (value < 10) return static_cast<char>(value + '0');
   return static_cast<char>(value - 10 + 'A');

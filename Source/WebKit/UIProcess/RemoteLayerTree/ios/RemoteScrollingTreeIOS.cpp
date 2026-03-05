@@ -75,7 +75,7 @@ void RemoteScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNo
 void RemoteScrollingTreeIOS::scrollingTreeNodeWillStartPanGesture(ScrollingNodeID nodeID)
 {
     if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->scrollingTreeNodeWillStartPanGesture(nodeID);
+        protect(m_scrollingCoordinatorProxy)->scrollingTreeNodeWillStartPanGesture(nodeID);
 }
 
 Ref<ScrollingTreeNode> RemoteScrollingTreeIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

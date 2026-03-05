@@ -67,7 +67,9 @@ WebKitDOMTreeWalker* wrapTreeWalker(WebCore::TreeWalker* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMTreeWalker, webkit_dom_tree_walker, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_TREE_WALKER_PROP_0,

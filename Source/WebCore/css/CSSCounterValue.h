@@ -32,11 +32,11 @@ namespace WebCore {
 
 class CSSCounterValue final : public CSSValue {
 public:
-    static Ref<CSSCounterValue> create(AtomString identifier, AtomString separator, Ref<CSSValue> counterStyle);
+    static Ref<CSSCounterValue> NODELETE create(AtomString&& identifier, AtomString&& separator, Ref<CSSValue>&& counterStyle);
 
-    const AtomString& identifier() const { return m_identifier; }
-    const AtomString& separator() const { return m_separator; }
-    Ref<CSSValue> counterStyle() const { return m_counterStyle; }
+    const AtomString& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const AtomString& separator() const LIFETIME_BOUND { return m_separator; }
+    CSSValue& counterStyle() const { return m_counterStyle; }
     String counterStyleCSSText() const;
 
     String customCSSText(const CSS::SerializationContext&) const;
@@ -54,7 +54,7 @@ private:
 
     AtomString m_identifier;
     AtomString m_separator;
-    Ref<CSSValue> m_counterStyle;
+    const Ref<CSSValue> m_counterStyle;
 };
 
 } // namespace WebCore

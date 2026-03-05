@@ -143,6 +143,8 @@ public:
     // Unparks every thread from the queue associated with the given address, which cannot be null.
     WTF_EXPORT_PRIVATE static void unparkAll(const void* address);
 
+    static uintptr_t currentThreadID();
+
     // Locks the parking lot and walks all of the parked threads and the addresses they are waiting
     // on. Threads that are on the same queue are guaranteed to be walked from first to last, but the
     // queues may be randomly interleaved. For example, if the queue for address A1 has T1 and T2 and
@@ -159,7 +161,9 @@ public:
     template<typename Func>
     static void forEach(const Func& func)
     {
-        forEachImpl(scopedLambdaRef<void(Thread&, const void*)>(func));
+        // FIXME: Static analysis is complaining about `const ScopedLambda<void (uintptr_t, const void *)> &`
+        // being forward-declared but ScopedLambda.h is included at the top of this file.
+        SUPPRESS_FORWARD_DECL_ARG forEachImpl(scopedLambdaRef<void(uintptr_t, const void*)>(func));
     }
 
 private:
@@ -172,7 +176,7 @@ private:
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
         const void* address, const ScopedLambda<intptr_t(UnparkResult)>& callback);
 
-    WTF_EXPORT_PRIVATE static void forEachImpl(const ScopedLambda<void(Thread&, const void*)>&);
+    WTF_EXPORT_PRIVATE static void forEachImpl(const ScopedLambda<void(uintptr_t, const void*)>&);
 };
 
 } // namespace WTF

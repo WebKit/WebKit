@@ -35,7 +35,7 @@ class DeleteFromTextNodeCommand : public SimpleEditCommand {
 public:
     static Ref<DeleteFromTextNodeCommand> create(Ref<Text>&& node, unsigned offset, unsigned count, EditAction editingAction = EditAction::Delete)
     {
-        return adoptRef(*new DeleteFromTextNodeCommand(WTFMove(node), offset, count, editingAction));
+        return adoptRef(*new DeleteFromTextNodeCommand(WTF::move(node), offset, count, editingAction));
     }
 
 protected:

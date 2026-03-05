@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-HTMLNameCollection<HTMLCollectionClass, traversalType>::~HTMLNameCollection()
+template <typename HTMLCollectionClass>
+HTMLNameCollection<HTMLCollectionClass>::~HTMLNameCollection()
 {
     ASSERT(this->type() == CollectionType::WindowNamedItems || this->type() == CollectionType::DocumentNamedItems);
 

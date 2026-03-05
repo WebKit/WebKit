@@ -37,18 +37,18 @@ public:
 
     const URL& url() const { return m_url; }
     const ResourceResponse& response() const { return m_response; }
-    FragmentedSharedBuffer& data() const { return *m_data.get().unsafeGet(); }
-    Ref<FragmentedSharedBuffer> protectedData() const { return data(); }
+    FragmentedSharedBuffer& data() const LIFETIME_BOUND { return *m_data.buffer(); }
+    Ref<FragmentedSharedBuffer> dataForSerialization() const { return m_data.copyBuffer(); }
     void append(const SharedBuffer& buffer) { m_data.append(buffer); }
     void clear() { m_data.empty(); }
 
-    virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(ResourceResponse { m_response }, m_data.copy()); }
+    virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(ResourceResponse { m_response }, m_data.copyBuffer()); }
 
 protected:
     SubstituteResource(URL&& url, ResourceResponse&& response, Ref<FragmentedSharedBuffer>&& data)
-        : m_url(WTFMove(url))
-        , m_response(WTFMove(response))
-        , m_data(WTFMove(data))
+        : m_url(WTF::move(url))
+        , m_response(WTF::move(response))
+        , m_data(data)
     {
     }
 

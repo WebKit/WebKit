@@ -51,7 +51,7 @@ class Storage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Storage, 
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Storage);
 public:
     enum class Mode { Normal, AvoidRandomness };
-    static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity);
+    static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit);
 
     enum class ReadOperationIdentifierType { };
     using ReadOperationIdentifier = ObjectIdentifier<ReadOperationIdentifierType>;
@@ -71,7 +71,7 @@ public:
         {
         }
         Record isolatedCopy() const & { return { crossThreadCopy(key), timeStamp, header, body, bodyHash }; }
-        Record isolatedCopy() && { return { crossThreadCopy(WTFMove(key)), timeStamp, WTFMove(header), WTFMove(body), WTFMove(bodyHash) }; }
+        Record isolatedCopy() && { return { crossThreadCopy(WTF::move(key)), timeStamp, WTF::move(header), WTF::move(body), WTF::move(bodyHash) }; }
         bool isNull() const { return key.isNull(); }
 
         Key key;
@@ -103,7 +103,7 @@ public:
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
     using MappedBodyHandler = Function<void (const Data& mappedBody)>;
-    void store(const Record&, MappedBodyHandler&&);
+    void store(const Record&, MappedBodyHandler&&, bool storeBlobInMemoryCache = false);
 
     void remove(const Key&);
     void remove(const Vector<Key>&, CompletionHandler<void()>&&);
@@ -126,7 +126,7 @@ public:
 
     void setCapacity(size_t);
     size_t capacity() const { return m_capacity; }
-    size_t approximateSize() const;
+    size_t NODELETE approximateSize() const;
 
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
     static const unsigned version = 17;
@@ -135,14 +135,14 @@ public:
     String versionPath() const;
     String recordsPathIsolatedCopy() const;
 
-    const Salt& salt() const { return m_salt; }
+    const Salt& salt() const LIFETIME_BOUND { return m_salt; }
 
     ~Storage();
 
     void writeWithoutWaiting() { m_initialWriteDelay = 0_s; };
 
 private:
-    Storage(const String& directoryPath, Mode, Salt, size_t capacity);
+    Storage(const String& directoryPath, Mode, Salt, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit);
 
     String recordDirectoryPathForKey(const Key&) const;
     String recordPathForKey(const Key&) const;
@@ -169,7 +169,7 @@ private:
     void finishWriteOperationActivity(WriteOperationIdentifier);
 
     bool shouldStoreBodyAsBlob(const Data& bodyData);
-    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperationIdentifier, const Storage::Record&);
+    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperationIdentifier, const Storage::Record&, bool);
     Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
     Record readRecord(const Data&);
     void readRecordFromData(Storage::ReadOperationIdentifier, MonotonicTime, std::optional<Vector<uint8_t>>&&);
@@ -182,8 +182,8 @@ private:
     ConcurrentWorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
-    bool mayContain(const Key&) const;
-    bool mayContainBlob(const Key&) const;
+    bool NODELETE mayContain(const Key&) const;
+    bool NODELETE mayContainBlob(const Key&) const;
 
     void addToRecordFilter(const Key&);
     void deleteFiles(const Key&);

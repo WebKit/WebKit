@@ -1,0 +1,200 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 300.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (anchor 0.00 0.00)
+              (bounds 300.00 300.00)
+              (backgroundColor #808080)
+              (children 2
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 2
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [11.00 7.00 0.00 1.00])
+                          (children 1
+                            (GraphicsLayer
+                              (position 34.55 38.86)
+                              (anchor 0.00 0.00)
+                              (bounds 215.91 215.91)
+                              (children 1
+                                (GraphicsLayer
+                                  (anchor 0.00 0.00)
+                                  (bounds 100.00 100.00)
+                                  (drawsContent 1)
+                                  (backgroundColor #FFFFFF)
+                                  (transform [2.16 0.00 0.00 0.00] [0.00 2.16 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 285.00 294.00)
+                          (drawsContent 1)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [11.00 7.00 0.00 1.00])
+                        )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 300.00 300.00)
+        )
+      )
+    )
+  )
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1046.00 1388.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1046.00 1388.00)
+      (contentsOpaque 1)
+      (children 4
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 300.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (anchor 0.00 0.00)
+              (bounds 300.00 300.00)
+              (backgroundColor #808080)
+              (children 2
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 2
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [11.00 7.00 0.00 1.00])
+                          (children 1
+                            (GraphicsLayer
+                              (position 34.55 38.86)
+                              (anchor 0.00 0.00)
+                              (bounds 215.91 215.91)
+                              (children 1
+                                (GraphicsLayer
+                                  (anchor 0.00 0.00)
+                                  (bounds 100.00 100.00)
+                                  (drawsContent 1)
+                                  (backgroundColor #FFFFFF)
+                                  (transform [2.16 0.00 0.00 0.00] [0.00 2.16 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 285.00 294.00)
+                          (drawsContent 1)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [11.00 7.00 0.00 1.00])
+                        )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 312.00 8.00)
+          (bounds 300.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (anchor 0.00 0.00)
+              (bounds 300.00 300.00)
+              (backgroundColor #808080)
+              (children 2
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 2
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [11.00 7.00 0.00 1.00])
+                          (children 1
+                            (GraphicsLayer
+                              (position 34.55 38.86)
+                              (anchor 0.00 0.00)
+                              (bounds 215.91 215.91)
+                              (children 1
+                                (GraphicsLayer
+                                  (anchor 0.00 0.00)
+                                  (bounds 100.00 100.00)
+                                  (drawsContent 1)
+                                  (backgroundColor #FFFFFF)
+                                  (transform [2.16 0.00 0.00 0.00] [0.00 2.16 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 285.00 294.00)
+                          (drawsContent 1)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [11.00 7.00 0.00 1.00])
+                        )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 300.00 300.00)
+        )
+        (GraphicsLayer
+          (position 312.00 8.00)
+          (bounds 300.00 300.00)
+        )
+      )
+    )
+  )
+)
+

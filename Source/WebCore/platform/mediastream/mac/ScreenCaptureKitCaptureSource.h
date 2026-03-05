@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
@@ -43,7 +43,6 @@ OBJC_CLASS SCDisplay;
 OBJC_CLASS SCShareableContent;
 OBJC_CLASS SCStream;
 OBJC_CLASS SCContentFilter;
-OBJC_CLASS SCContentSharingSession;
 OBJC_CLASS SCStreamConfiguration;
 OBJC_CLASS SCWindow;
 OBJC_CLASS WebCoreScreenCaptureKitHelper;
@@ -70,7 +69,6 @@ public:
     static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
 
-    using Content = Variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     void streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef>);
     void sessionFailedWithError(RetainPtr<NSError>&&, const String&);
     void outputVideoEffectDidStartForStream() { m_isVideoEffectEnabled = true; }
@@ -82,6 +80,10 @@ public:
     void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+
+#if HAVE(WINDOW_CAPTURE)
+    using Content = Variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
+#endif
 
 private:
     // DisplayCaptureSourceCocoa::Capturer
@@ -116,9 +118,10 @@ private:
 
     void clearSharingSession();
 
+#if HAVE(WINDOW_CAPTURE)
     std::optional<Content> m_content;
+#endif
     RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
-    RetainPtr<SCContentSharingSession> m_sharingSession;
     RetainPtr<SCContentFilter> m_contentFilter;
     RetainPtr<CMSampleBufferRef> m_currentFrame;
     RefPtr<ScreenCaptureSessionSource> m_sessionSource;

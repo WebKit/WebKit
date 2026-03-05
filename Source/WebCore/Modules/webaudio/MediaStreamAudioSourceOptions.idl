@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO&MEDIA_STREAM
+    Conditional=WEB_AUDIO&MEDIA_STREAM,
 ] dictionary MediaStreamAudioSourceOptions {
     required MediaStream mediaStream;
 };

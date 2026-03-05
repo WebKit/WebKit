@@ -77,7 +77,7 @@ void benchmark()
     auto* _4317 = new HashSet<::JSC::DFG::Node*>();
     auto* _4318 = new HashSet<::JSC::DFG::Node*>();
     auto* _4319 = new HashSet<::JSC::DFG::Node*>();
-    *_4281 = WTFMove(*_4319);
+    *_4281 = WTF::move(*_4319);
     delete _4319;
     auto* _4320 = new HashSet<::JSC::DFG::Node*>();
     _4320->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -108,7 +108,7 @@ void benchmark()
     _4320->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4320->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fbb8lu));
     _4320->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4282 = WTFMove(*_4320);
+    *_4282 = WTF::move(*_4320);
     delete _4320;
     auto* _4321 = new HashSet<::JSC::DFG::Node*>();
     _4321->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -139,7 +139,7 @@ void benchmark()
     _4321->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4321->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fac8lu));
     _4321->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4283 = WTFMove(*_4321);
+    *_4283 = WTF::move(*_4321);
     delete _4321;
     auto* _4322 = new HashSet<::JSC::DFG::Node*>();
     _4322->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -168,7 +168,7 @@ void benchmark()
     _4322->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
     _4322->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4322->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4284 = WTFMove(*_4322);
+    *_4284 = WTF::move(*_4322);
     delete _4322;
     auto* _4323 = new HashSet<::JSC::DFG::Node*>();
     _4323->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -209,7 +209,7 @@ void benchmark()
     _4323->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4323->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4323->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4285 = WTFMove(*_4323);
+    *_4285 = WTF::move(*_4323);
     delete _4323;
     auto* _4324 = new HashSet<::JSC::DFG::Node*>();
     _4324->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -250,7 +250,7 @@ void benchmark()
     _4324->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4324->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4324->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4286 = WTFMove(*_4324);
+    *_4286 = WTF::move(*_4324);
     delete _4324;
     auto* _4325 = new HashSet<::JSC::DFG::Node*>();
     _4325->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -303,7 +303,7 @@ void benchmark()
     _4325->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4325->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4325->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4287 = WTFMove(*_4325);
+    *_4287 = WTF::move(*_4325);
     delete _4325;
     auto* _4326 = new HashSet<::JSC::DFG::Node*>();
     _4326->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -355,7 +355,7 @@ void benchmark()
     _4326->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4326->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4326->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4288 = WTFMove(*_4326);
+    *_4288 = WTF::move(*_4326);
     delete _4326;
     auto* _4327 = new HashSet<::JSC::DFG::Node*>();
     _4327->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -406,7 +406,7 @@ void benchmark()
     _4327->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4327->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4327->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4289 = WTFMove(*_4327);
+    *_4289 = WTF::move(*_4327);
     delete _4327;
     auto* _4328 = new HashSet<::JSC::DFG::Node*>();
     _4328->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -456,7 +456,7 @@ void benchmark()
     _4328->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4328->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4328->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4290 = WTFMove(*_4328);
+    *_4290 = WTF::move(*_4328);
     delete _4328;
     auto* _4329 = new HashSet<::JSC::DFG::Node*>();
     _4329->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -506,7 +506,7 @@ void benchmark()
     _4329->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4329->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4329->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4291 = WTFMove(*_4329);
+    *_4291 = WTF::move(*_4329);
     delete _4329;
     auto* _4330 = new HashSet<::JSC::DFG::Node*>();
     _4330->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e9c90lu));
@@ -556,7 +556,7 @@ void benchmark()
     _4330->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4330->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4330->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4292 = WTFMove(*_4330);
+    *_4292 = WTF::move(*_4330);
     delete _4330;
     auto* _4331 = new HashSet<::JSC::DFG::Node*>();
     _4331->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e2df0lu));
@@ -595,7 +595,7 @@ void benchmark()
     _4331->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4331->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4331->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4293 = WTFMove(*_4331);
+    *_4293 = WTF::move(*_4331);
     delete _4331;
     auto* _4332 = new HashSet<::JSC::DFG::Node*>();
     _4332->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e1608lu));
@@ -630,13 +630,13 @@ void benchmark()
     _4332->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4332->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4332->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4294 = WTFMove(*_4332);
+    *_4294 = WTF::move(*_4332);
     delete _4332;
     auto* _4333 = new HashSet<::JSC::DFG::Node*>();
     _4333->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4333->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63fc30lu));
     _4333->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4295 = WTFMove(*_4333);
+    *_4295 = WTF::move(*_4333);
     delete _4333;
     auto* _4334 = new HashSet<::JSC::DFG::Node*>();
     _4334->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e02d0lu));
@@ -666,25 +666,25 @@ void benchmark()
     _4334->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e10e0lu));
     _4334->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6eae60lu));
     _4334->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4296 = WTFMove(*_4334);
+    *_4296 = WTF::move(*_4334);
     delete _4334;
     auto* _4335 = new HashSet<::JSC::DFG::Node*>();
     _4335->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e02d0lu));
     _4335->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e13b0lu));
     _4335->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4297 = WTFMove(*_4335);
+    *_4297 = WTF::move(*_4335);
     delete _4335;
     auto* _4336 = new HashSet<::JSC::DFG::Node*>();
     _4336->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e02d0lu));
     _4336->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e13b0lu));
     _4336->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4298 = WTFMove(*_4336);
+    *_4298 = WTF::move(*_4336);
     delete _4336;
     auto* _4337 = new HashSet<::JSC::DFG::Node*>();
     _4337->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e02d0lu));
     _4337->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e13b0lu));
     _4337->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6e0d20lu));
-    *_4299 = WTFMove(*_4337);
+    *_4299 = WTF::move(*_4337);
     delete _4337;
     _4300->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c63fac8lu));
     _4300->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6e1608lu));
@@ -4306,7 +4306,7 @@ void benchmark()
     auto* _4515 = new HashSet<::JSC::DFG::Node*>();
     auto* _4516 = new HashSet<::JSC::DFG::Node*>();
     auto* _4517 = new HashSet<::JSC::DFG::Node*>();
-    *_4485 = WTFMove(*_4517);
+    *_4485 = WTF::move(*_4517);
     delete _4517;
     auto* _4518 = new HashSet<::JSC::DFG::Node*>();
     _4518->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4347,7 +4347,7 @@ void benchmark()
     _4518->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4518->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4518->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4486 = WTFMove(*_4518);
+    *_4486 = WTF::move(*_4518);
     delete _4518;
     auto* _4519 = new HashSet<::JSC::DFG::Node*>();
     _4519->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4389,7 +4389,7 @@ void benchmark()
     _4519->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4519->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4519->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4487 = WTFMove(*_4519);
+    *_4487 = WTF::move(*_4519);
     delete _4519;
     auto* _4520 = new HashSet<::JSC::DFG::Node*>();
     _4520->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4429,7 +4429,7 @@ void benchmark()
     _4520->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4520->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4520->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4488 = WTFMove(*_4520);
+    *_4488 = WTF::move(*_4520);
     delete _4520;
     auto* _4521 = new HashSet<::JSC::DFG::Node*>();
     _4521->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4468,7 +4468,7 @@ void benchmark()
     _4521->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4521->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4521->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4489 = WTFMove(*_4521);
+    *_4489 = WTF::move(*_4521);
     delete _4521;
     auto* _4522 = new HashSet<::JSC::DFG::Node*>();
     _4522->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4507,7 +4507,7 @@ void benchmark()
     _4522->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4522->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4522->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4490 = WTFMove(*_4522);
+    *_4490 = WTF::move(*_4522);
     delete _4522;
     auto* _4523 = new HashSet<::JSC::DFG::Node*>();
     _4523->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4546,7 +4546,7 @@ void benchmark()
     _4523->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4523->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4523->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4491 = WTFMove(*_4523);
+    *_4491 = WTF::move(*_4523);
     delete _4523;
     auto* _4524 = new HashSet<::JSC::DFG::Node*>();
     _4524->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4584,7 +4584,7 @@ void benchmark()
     _4524->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4524->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4524->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4492 = WTFMove(*_4524);
+    *_4492 = WTF::move(*_4524);
     delete _4524;
     auto* _4525 = new HashSet<::JSC::DFG::Node*>();
     _4525->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4621,7 +4621,7 @@ void benchmark()
     _4525->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4525->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4525->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4493 = WTFMove(*_4525);
+    *_4493 = WTF::move(*_4525);
     delete _4525;
     auto* _4526 = new HashSet<::JSC::DFG::Node*>();
     _4526->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4655,7 +4655,7 @@ void benchmark()
     _4526->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4526->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4526->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4494 = WTFMove(*_4526);
+    *_4494 = WTF::move(*_4526);
     delete _4526;
     auto* _4527 = new HashSet<::JSC::DFG::Node*>();
     _4527->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4684,7 +4684,7 @@ void benchmark()
     _4527->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4527->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4527->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4495 = WTFMove(*_4527);
+    *_4495 = WTF::move(*_4527);
     delete _4527;
     auto* _4528 = new HashSet<::JSC::DFG::Node*>();
     _4528->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4712,7 +4712,7 @@ void benchmark()
     _4528->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4528->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4528->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4496 = WTFMove(*_4528);
+    *_4496 = WTF::move(*_4528);
     delete _4528;
     auto* _4529 = new HashSet<::JSC::DFG::Node*>();
     _4529->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4739,7 +4739,7 @@ void benchmark()
     _4529->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630168lu));
     _4529->add(std::bit_cast<::JSC::DFG::Node*>(0x10c631590lu));
     _4529->add(std::bit_cast<::JSC::DFG::Node*>(0x10c6309d8lu));
-    *_4497 = WTFMove(*_4529);
+    *_4497 = WTF::move(*_4529);
     delete _4529;
     auto* _4530 = new HashSet<::JSC::DFG::Node*>();
     _4530->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
@@ -4750,14 +4750,14 @@ void benchmark()
     _4530->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630ca8lu));
     _4530->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63f348lu));
     _4530->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63a8c0lu));
-    *_4498 = WTFMove(*_4530);
+    *_4498 = WTF::move(*_4530);
     delete _4530;
     auto* _4531 = new HashSet<::JSC::DFG::Node*>();
     _4531->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c636bd0lu));
     _4531->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c6355c8lu));
     _4531->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630ca8lu));
     _4531->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63a8c0lu));
-    *_4499 = WTFMove(*_4531);
+    *_4499 = WTF::move(*_4531);
     delete _4531;
     auto* _4532 = new HashSet<::JSC::DFG::Node*>();
     _4532->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c63f078lu));
@@ -4765,7 +4765,7 @@ void benchmark()
     _4532->add(std::bit_cast<::JSC::DFG::Node*>(0x10c630ca8lu));
     _4532->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63f348lu));
     _4532->add(std::bit_cast<::JSC::DFG::Node*>(0x10c63a8c0lu));
-    *_4500 = WTFMove(*_4532);
+    *_4500 = WTF::move(*_4532);
     delete _4532;
     _4501->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c634038lu));
     _4501->addVoid(std::bit_cast<::JSC::DFG::Node*>(0x10c636bd0lu));

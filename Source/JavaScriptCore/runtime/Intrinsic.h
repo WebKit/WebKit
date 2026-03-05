@@ -105,25 +105,28 @@ namespace JSC {
     macro(RegExpSearchIntrinsic) \
     macro(ObjectAssignIntrinsic) \
     macro(ObjectCreateIntrinsic) \
+    macro(ObjectDefinePropertyIntrinsic) \
     macro(ObjectGetOwnPropertyNamesIntrinsic) \
     macro(ObjectGetOwnPropertySymbolsIntrinsic) \
     macro(ObjectGetPrototypeOfIntrinsic) \
+    macro(ObjectHasOwnIntrinsic) \
     macro(ObjectIsIntrinsic) \
     macro(ObjectKeysIntrinsic) \
     macro(ObjectToStringIntrinsic) \
     macro(ReflectGetPrototypeOfIntrinsic) \
     macro(ReflectOwnKeysIntrinsic) \
     macro(StringConstructorIntrinsic) \
+    macro(StringPrototypeConcatIntrinsic) \
     macro(StringPrototypeAtIntrinsic) \
     macro(StringPrototypeCodePointAtIntrinsic) \
     macro(StringPrototypeIndexOfIntrinsic) \
+    macro(StringPrototypeIncludesIntrinsic) \
+    macro(StringPrototypeStartsWithIntrinsic) \
+    macro(StringPrototypeEndsWithIntrinsic) \
     macro(StringPrototypeLocaleCompareIntrinsic) \
     macro(StringPrototypeValueOfIntrinsic) \
     macro(StringPrototypeReplaceIntrinsic) \
     macro(StringPrototypeReplaceAllIntrinsic) \
-    macro(StringPrototypeReplaceRegExpIntrinsic) \
-    macro(StringPrototypeReplaceStringIntrinsic) \
-    macro(StringPrototypeReplaceAllStringIntrinsic) \
     macro(StringPrototypeSliceIntrinsic) \
     macro(StringPrototypeSubstringIntrinsic) \
     macro(StringPrototypeToLowerCaseIntrinsic) \
@@ -173,6 +176,7 @@ namespace JSC {
     macro(JSSetDeleteIntrinsic) \
     macro(JSSetValuesIntrinsic) \
     macro(JSSetEntriesIntrinsic) \
+    macro(JSStringIteratorIntrinsic) \
     macro(JSWeakMapGetIntrinsic) \
     macro(JSWeakMapHasIntrinsic) \
     macro(JSWeakMapSetIntrinsic) \
@@ -199,8 +203,6 @@ namespace JSC {
     macro(IteratorHelperCreateIntrinsic) \
     macro(WrapForValidIteratorCreateIntrinsic) \
     macro(AsyncFromSyncIteratorCreateIntrinsic) \
-    macro(PromiseAllContextCreateIntrinsic) \
-    macro(PromiseAllGlobalContextCreateIntrinsic) \
     macro(RegExpStringIteratorCreateIntrinsic) \
     macro(ResolvePromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
     macro(RejectPromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
@@ -220,6 +222,16 @@ namespace JSC {
     macro(UnderscoreProtoIntrinsic) \
     macro(SpeciesGetterIntrinsic) \
     macro(WebAssemblyInstanceExportsIntrinsic) \
+    macro(JSSetSizeIntrinsic) \
+    macro(JSMapSizeIntrinsic) \
+    macro(RegExpHasIndicesIntrinsic) \
+    macro(RegExpGlobalIntrinsic) \
+    macro(RegExpIgnoreCaseIntrinsic) \
+    macro(RegExpMultilineIntrinsic) \
+    macro(RegExpDotAllIntrinsic) \
+    macro(RegExpUnicodeIntrinsic) \
+    macro(RegExpUnicodeSetsIntrinsic) \
+    macro(RegExpStickyIntrinsic) \
     \
     /* Debugging intrinsics. These are meant to be used as testing hacks within jsc.cpp and should never be exposed to users.*/ \
     macro(DFGTrueIntrinsic) \

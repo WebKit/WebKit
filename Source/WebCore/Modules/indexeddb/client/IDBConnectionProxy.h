@@ -65,7 +65,7 @@ namespace IDBClient {
 class IDBConnectionToServer;
 
 class IDBConnectionProxy final {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBConnectionProxy, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBConnectionProxy, WEBCORE_EXPORT);
 public:
     IDBConnectionProxy(IDBConnectionToServer&, PAL::SessionID);
 
@@ -120,7 +120,7 @@ public:
 
     IDBConnectionIdentifier serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
 
-    void ref();
+    void NODELETE ref();
     void deref();
 
     void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
@@ -129,12 +129,12 @@ public:
     void registerDatabaseConnection(IDBDatabase&, ScriptExecutionContextIdentifier);
     void unregisterDatabaseConnection(IDBDatabase&);
 
-    void forgetActiveOperations(const Vector<RefPtr<TransactionOperation>>&);
+    void forgetActiveOperations(const Vector<Ref<TransactionOperation>>&);
     void forgetTransaction(IDBTransaction&);
     void abortActivitiesForCurrentThread();
     void setContextSuspended(ScriptExecutionContext& currentContext, bool isContextSuspended);
 
-    PAL::SessionID sessionID() const;
+    PAL::SessionID NODELETE sessionID() const;
 
 private:
     void completeOpenDBRequest(const IDBResultData&);
@@ -156,7 +156,7 @@ private:
     void postMainThreadTask(Arguments&&... arguments)
     {
         auto task = createCrossThreadTask(arguments...);
-        m_mainThreadQueue.append(WTFMove(task));
+        m_mainThreadQueue.append(WTF::move(task));
 
         scheduleMainThreadTasks();
     }
@@ -179,11 +179,11 @@ private:
         std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
     };
     HashMap<IDBDatabaseConnectionIdentifier, WeakIDBDatabase> m_databaseConnectionMap WTF_GUARDED_BY_LOCK(m_databaseConnectionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap WTF_GUARDED_BY_LOCK(m_openDBRequestMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations WTF_GUARDED_BY_LOCK(m_transactionOperationLock);
+    HashMap<IDBResourceIdentifier, Ref<IDBOpenDBRequest>> m_openDBRequestMap WTF_GUARDED_BY_LOCK(m_openDBRequestMapLock);
+    HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_pendingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_committingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_abortingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    HashMap<IDBResourceIdentifier, Ref<TransactionOperation>> m_activeOperations WTF_GUARDED_BY_LOCK(m_transactionOperationLock);
     HashMap<IDBResourceIdentifier, Ref<IDBDatabaseNameAndVersionRequest>> m_databaseInfoCallbacks WTF_GUARDED_BY_LOCK(m_databaseInfoMapLock);
 
     CrossThreadQueue<CrossThreadTask> m_mainThreadQueue;

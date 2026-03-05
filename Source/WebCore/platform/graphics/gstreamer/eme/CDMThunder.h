@@ -77,6 +77,7 @@ private:
 
 class CDMPrivateThunder final : public CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(CDMPrivateThunder);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivateThunder);
 public:
     CDMPrivateThunder(const String& keySystem);
     virtual ~CDMPrivateThunder() = default;
@@ -109,6 +110,8 @@ private:
 };
 
 class CDMInstanceThunder final : public CDMInstanceProxy {
+    WTF_MAKE_TZONE_ALLOCATED(CDMInstanceThunder);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMInstanceThunder);
 public:
     CDMInstanceThunder(const String& keySystem);
     virtual ~CDMInstanceThunder() = default;
@@ -141,7 +144,7 @@ public:
 
     bool isValid() const { return m_session && m_message && !m_message->isEmpty(); }
 
-    void setClient(WeakPtr<CDMInstanceSessionClient>&& client) final { m_client = WTFMove(client); }
+    void setClient(WeakPtr<CDMInstanceSessionClient>&& client) final { m_client = WTF::move(client); }
     void clearClient() final { m_client.clear(); }
 
 private:
@@ -156,7 +159,12 @@ private:
     void keysUpdateDoneCallback();
     void errorCallback(RefPtr<SharedBuffer>&&);
     CDMInstanceSession::KeyStatus status(const KeyIDType&) const;
-    void sessionFailure();
+
+    enum class SessionChangedResult : bool {
+        Failure,
+        Success
+    };
+    void sessionChanged(SessionChangedResult);
 
     // FIXME: Check all original uses of these attributes.
     String m_sessionID;

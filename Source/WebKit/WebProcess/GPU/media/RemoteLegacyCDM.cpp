@@ -48,14 +48,9 @@ RemoteLegacyCDM::RemoteLegacyCDM(RemoteLegacyCDMFactory& factory, RemoteLegacyCD
 
 RemoteLegacyCDM::~RemoteLegacyCDM() = default;
 
-Ref<RemoteLegacyCDMFactory> RemoteLegacyCDM::protectedFactory() const
-{
-    return m_factory.get();
-}
-
 bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType) const
 {
-    auto sendResult = protectedFactory()->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
+    auto sendResult = protect(m_factory)->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
     auto [supported] = sendResult.takeReplyOr(false);
     return supported;
 }
@@ -72,12 +67,12 @@ RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::Legacy
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
-    return RemoteLegacyCDMSession::create(factory, WTFMove(*identifier), client);
+    return RemoteLegacyCDMSession::create(factory, WTF::move(*identifier), client);
 }
 
 void RemoteLegacyCDM::setPlayerId(std::optional<MediaPlayerIdentifier> identifier)
 {
-    protectedFactory()->gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMProxy::SetPlayerId(identifier), m_identifier);
+    protect(m_factory)->gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMProxy::SetPlayerId(identifier), m_identifier);
 }
 
 void RemoteLegacyCDM::ref() const

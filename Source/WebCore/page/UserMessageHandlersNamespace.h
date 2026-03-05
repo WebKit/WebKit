@@ -51,9 +51,13 @@ public:
 
     virtual ~UserMessageHandlersNamespace();
 
-    Vector<AtomString> supportedPropertyNames() const;
-    UserMessageHandler* namedItem(DOMWrapperWorld&, const AtomString&);
-    bool isSupportedPropertyName(const AtomString&);
+    Vector<AtomString> NODELETE supportedPropertyNames() const;
+    RefPtr<UserMessageHandler> namedItem(DOMWrapperWorld&, const AtomString&);
+    bool NODELETE isSupportedPropertyName(const AtomString&);
+
+    // UserContentProviderInvalidationClient, FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit UserMessageHandlersNamespace(LocalFrame&, UserContentProvider&);
@@ -63,9 +67,7 @@ private:
 
     const Ref<UserContentProvider> m_userContentProvider;
 
-    // FIXME: This could be a Ref<const DOMWrapperWorld> but PairHashTraits doesn't have hasIsEmptyValueFunction,
-    // so HashTraitsEmptyValueChecker calls operator== with a null Ref which asserts.
-    HashMap<std::pair<AtomString, RefPtr<const DOMWrapperWorld>>, Ref<UserMessageHandler>> m_messageHandlers;
+    HashMap<std::pair<AtomString, Ref<const DOMWrapperWorld>>, Ref<UserMessageHandler>> m_messageHandlers;
 };
 
 } // namespace WebCore

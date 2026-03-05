@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/MockContentFilterSettings.h>
-#include <WebCore/PlatformContentFilter.h>
+#include "MockContentFilterSettings.h"
+#include "PlatformContentFilter.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 

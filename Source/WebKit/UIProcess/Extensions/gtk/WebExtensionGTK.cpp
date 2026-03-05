@@ -78,7 +78,7 @@ Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(const
 
     GRefPtr<GIcon> image = adoptGRef(g_bytes_icon_new(gimageBytes.get()));
 
-    if (RefPtr iconResult = WebCore::Icon::create(WTFMove(image)))
+    if (RefPtr iconResult = WebCore::Icon::create(WTF::move(image)))
         return iconResult.releaseNonNull();
     return makeUnexpected(nullptr);
 }

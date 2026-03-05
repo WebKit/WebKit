@@ -559,7 +559,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
         if (priv->totalStorageRatio >= 0.0)
             configuration->setTotalQuotaRatio(priv->totalStorageRatio);
 
-        priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
+        priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTF::move(configuration), PAL::SessionID::generatePersistentSessionID());
 #if !ENABLE(2022_GLIB_API)
         priv->websiteDataStore->setIgnoreTLSErrors(priv->tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 #endif
@@ -572,8 +572,8 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(CString&& baseDataDirectory, CString&& baseCacheDirectory)
 {
     auto* manager = WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, nullptr));
-    manager->priv->baseDataDirectory = WTFMove(baseDataDirectory);
-    manager->priv->baseCacheDirectory = WTFMove(baseCacheDirectory);
+    manager->priv->baseDataDirectory = WTF::move(baseDataDirectory);
+    manager->priv->baseCacheDirectory = WTF::move(baseCacheDirectory);
     return manager;
 }
 #else
@@ -1071,7 +1071,7 @@ void webkit_website_data_manager_set_network_proxy_settings(WebKitWebsiteDataMan
             g_warning("Invalid attempt to set custom network proxy settings with an empty WebKitNetworkProxySettings. Use "
                 "WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to not use any proxy or WEBKIT_NETWORK_PROXY_MODE_DEFAULT to use the default system settings");
         } else
-            dataStore.setNetworkProxySettings(WTFMove(settings));
+            dataStore.setNetworkProxySettings(WTF::move(settings));
         break;
     }
 }
@@ -1204,7 +1204,7 @@ void webkit_website_data_manager_fetch(WebKitWebsiteDataManager* manager, WebKit
     g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->websiteDataStore->fetchData(toWebsiteDataTypes(types), WebsiteDataFetchOption::ComputeSizes, [task = WTFMove(task)] (Vector<WebsiteDataRecord> records) {
+    manager->priv->websiteDataStore->fetchData(toWebsiteDataTypes(types), WebsiteDataFetchOption::ComputeSizes, [task = WTF::move(task)] (Vector<WebsiteDataRecord> records) {
         GList* dataList = nullptr;
         while (!records.isEmpty()) {
             if (auto* data = webkitWebsiteDataCreate(records.takeLast()))
@@ -1280,7 +1280,7 @@ void webkit_website_data_manager_remove(WebKitWebsiteDataManager* manager, WebKi
         return;
     }
 
-    manager->priv->websiteDataStore->removeData(toWebsiteDataTypes(types), records, [task = WTFMove(task)] {
+    manager->priv->websiteDataStore->removeData(toWebsiteDataTypes(types), records, [task = WTF::move(task)] {
         g_task_return_boolean(task.get(), TRUE);
     });
 }
@@ -1333,7 +1333,7 @@ void webkit_website_data_manager_clear(WebKitWebsiteDataManager* manager, WebKit
 
     WallTime timePoint = timeSpan ? WallTime::now() - Seconds::fromMicroseconds(timeSpan) : WallTime::fromRawSeconds(0);
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->websiteDataStore->removeData(toWebsiteDataTypes(types), timePoint, [task = WTFMove(task)] {
+    manager->priv->websiteDataStore->removeData(toWebsiteDataTypes(types), timePoint, [task = WTF::move(task)] {
         g_task_return_boolean(task.get(), TRUE);
     });
 }
@@ -1412,7 +1412,7 @@ G_DEFINE_BOXED_TYPE(WebKitITPFirstParty, webkit_itp_first_party, webkit_itp_firs
 static WebKitITPFirstParty* webkitITPFirstPartyCreate(ITPThirdPartyDataForSpecificFirstParty&& data)
 {
     auto* firstParty = static_cast<WebKitITPFirstParty*>(fastMalloc(sizeof(WebKitITPFirstParty)));
-    new (firstParty) WebKitITPFirstParty(WTFMove(data));
+    new (firstParty) WebKitITPFirstParty(WTF::move(data));
     return firstParty;
 }
 
@@ -1547,7 +1547,7 @@ G_DEFINE_BOXED_TYPE(WebKitITPThirdParty, webkit_itp_third_party, webkit_itp_thir
 WebKitITPThirdParty* webkitITPThirdPartyCreate(ITPThirdPartyData&& data)
 {
     auto* thirdParty = static_cast<WebKitITPThirdParty*>(fastMalloc(sizeof(WebKitITPThirdParty)));
-    new (thirdParty) WebKitITPThirdParty(WTFMove(data));
+    new (thirdParty) WebKitITPThirdParty(WTF::move(data));
     return thirdParty;
 }
 
@@ -1649,7 +1649,7 @@ void webkit_website_data_manager_get_itp_summary(WebKitWebsiteDataManager* manag
     g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
+    manager->priv->websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTF::move(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
         GList* result = nullptr;
         while (!thirdPartyList.isEmpty())
             result = g_list_prepend(result, webkitITPThirdPartyCreate(thirdPartyList.takeLast()));

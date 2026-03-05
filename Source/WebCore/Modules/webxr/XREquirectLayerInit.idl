@@ -27,8 +27,8 @@
 [
     Conditional=WEBXR_LAYERS,
     EnabledBySetting=WebXRLayersAPIEnabled,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XREquirectLayerInit : XRLayerInit {
-    XRTextureType textureType = "texture";
     WebXRRigidTransform? transform;
     float radius = 0;
     float centralHorizontalAngle = 6.28318;

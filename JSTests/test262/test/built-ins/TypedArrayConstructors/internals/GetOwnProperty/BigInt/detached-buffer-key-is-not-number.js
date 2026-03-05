@@ -13,7 +13,7 @@ info: |
     b. If numericIndex is not undefined, then
       ...
   4. Return OrdinaryGetOwnProperty(O, P).
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -35,4 +35,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     "bar",
     "return value from a String key"
   );
-});
+}, null, ["passthrough"]);

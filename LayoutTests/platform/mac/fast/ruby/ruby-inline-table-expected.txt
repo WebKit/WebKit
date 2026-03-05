@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderTableSection {SPAN} at (0,0) size 39x10
             RenderTableRow (anonymous) at (0,0) size 39x10
               RenderTableCell (anonymous) at (0,0) size 39x10 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 39x10
+                RenderText {#text} at (0,-1) size 39x12
                   text run at (0,0) width 39: "guide text"
         RenderText {#text} at (273,19) size 58x18
           text run at (273,19) width 58: " markup."
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
           RenderTableSection {RT} at (0,0) size 39x10
             RenderTableRow (anonymous) at (0,0) size 39x10
               RenderTableCell (anonymous) at (0,0) size 39x10 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 39x10
+                RenderText {#text} at (0,-1) size 39x12
                   text run at (0,0) width 39: "guide text"
         RenderText {#text} at (273,19) size 58x18
           text run at (273,19) width 58: " markup."

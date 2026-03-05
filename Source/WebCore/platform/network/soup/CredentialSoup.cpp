@@ -52,7 +52,7 @@ bool Credential::platformCompare(const Credential& a, const Credential& b)
 
 Credential Credential::fromIPCData(IPCData&& ipcData)
 {
-    return WTF::switchOn(WTFMove(ipcData), [](NonPlatformData&& data) {
+    return WTF::switchOn(WTF::move(ipcData), [](NonPlatformData&& data) {
         return Credential { data.user, data.password, data.persistence };
     }, [](PlatformData&& data) {
         return Credential { data.certificate.get(), data.persistence };

@@ -27,6 +27,7 @@
 #include "SleepDisablerGLib.h"
 
 #include <gio/gio.h>
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 
@@ -64,7 +65,7 @@ SleepDisablerGLib::SleepDisablerGLib(const String& reason, Type type)
         if (proxy) {
             GUniquePtr<char> nameOwner(g_dbus_proxy_get_name_owner(proxy.get()));
             if (nameOwner) {
-                self->m_screenSaverProxy = WTFMove(proxy);
+                self->m_screenSaverProxy = WTF::move(proxy);
                 self->acquireInhibitor();
                 return;
             }
@@ -91,8 +92,13 @@ void SleepDisablerGLib::acquireInhibitor()
         g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
         g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(m_reason.utf8().data()));
         parameters = g_variant_new("(su@a{sv})", "" /* no window */, 8 /* idle */, g_variant_builder_end(&builder));
+    } else if (const gchar* prgname = g_get_prgname()) {
+        parameters = g_variant_new("(ss)", prgname, m_reason.utf8().data());
+    } else if (const auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
+        GUniquePtr<char> executableName(g_path_get_basename(executablePath.data()));
+        parameters = g_variant_new("(ss)", executableName.get(), m_reason.utf8().data());
     } else
-        parameters = g_variant_new("(ss)", g_get_prgname(), m_reason.utf8().data());
+        return;
 
     g_dbus_proxy_call(m_screenSaverProxy.get(), "Inhibit", parameters, G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(), [](GObject* proxy, GAsyncResult* result, gpointer userData) {
         GUniqueOutPtr<GError> error;

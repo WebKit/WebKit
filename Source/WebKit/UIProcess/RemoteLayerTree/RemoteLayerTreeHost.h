@@ -64,14 +64,11 @@ public:
 
     RemoteLayerTreeNode* nodeForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RemoteLayerTreeNode* rootNode() const { return m_rootNode.get(); }
-    RefPtr<RemoteLayerTreeNode> protectedRootNode() const { return m_rootNode.get(); }
 
     CALayer *layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
-    RetainPtr<CALayer> protectedLayerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
-    CALayer *rootLayer() const;
-    RetainPtr<CALayer> protectedRootLayer() const;
+    CALayer *NODELETE rootLayer() const;
 
-    RemoteLayerTreeDrawingAreaProxy& drawingArea() const;
+    RemoteLayerTreeDrawingAreaProxy& NODELETE drawingArea() const;
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, float indicatorScaleFactor  = 1);
@@ -81,7 +78,7 @@ public:
     bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
     typedef HashMap<WebCore::PlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
-    LayerAnimationDelegateMap& animationDelegates() { return m_animationDelegates; }
+    LayerAnimationDelegateMap& animationDelegates() LIFETIME_BOUND { return m_animationDelegates; }
 
     void animationDidStart(std::optional<WebCore::PlatformLayerIdentifier>, CAAnimation *, MonotonicTime startTime);
     void animationDidEnd(std::optional<WebCore::PlatformLayerIdentifier>, CAAnimation *);
@@ -101,7 +98,7 @@ public:
 
     CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
-    bool replayDynamicContentScalingDisplayListsIntoBackingStore() const;
+    bool NODELETE replayDynamicContentScalingDisplayListsIntoBackingStore() const;
     bool threadedAnimationsEnabled() const;
 
     bool cssUnprefixedBackdropFilterEnabled() const;
@@ -109,7 +106,6 @@ public:
     void remotePageProcessDidTerminate(WebCore::ProcessIdentifier);
 
 private:
-    Ref<RemoteLayerTreeDrawingAreaProxy> protectedDrawingArea() const;
 
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     RefPtr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);

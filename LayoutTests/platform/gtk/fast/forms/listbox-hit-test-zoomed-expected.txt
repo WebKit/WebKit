@@ -8,15 +8,15 @@ layer at (0,0) size 800x585
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,162) size 781x118
         RenderBlock (anonymous) at (0,0) size 781x66
-          RenderText {#text} at (0,0) size 61x21
+          RenderText {#text} at (0,0) size 61x22
             text run at (0,0) width 61: "Results:"
-          RenderBR {BR} at (61,0) size 0x21
-          RenderText {#text} at (0,22) size 105x21
+          RenderBR {BR} at (61,0) size 0x22
+          RenderText {#text} at (0,22) size 105x22
             text run at (0,22) width 105: "Test 1 Passed"
-          RenderBR {BR} at (104,22) size 1x21
-          RenderText {#text} at (0,44) size 101x21
+          RenderBR {BR} at (104,22) size 1x22
+          RenderText {#text} at (0,44) size 101x22
             text run at (0,44) width 101: "Test 2 Failed"
-          RenderBR {BR} at (100,44) size 1x21
+          RenderBR {BR} at (100,44) size 1x22
         RenderBlock {PRE} at (0,81) size 781x37
           RenderText {#text} at (0,0) size 1035x18
             text run at (0,0) width 1035: "     Expected: false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false"

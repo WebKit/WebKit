@@ -90,7 +90,7 @@ FAIL serialization check - @font-feature-values bongo {
 @styleset
   { blah: 3; super-blah: 4 5;
   more-blah: 5 6 7;
- } } assert_equals: canonical cssText serialization doesn't match expected "@styleset { blah: 3; super-blah: 4 5; more-blah: 5 6 7; }" but got "@styleset { blah: 3; more-blah: 5 6 7; super-blah: 4 5; }"
+ } } assert_equals: canonical cssText serialization doesn't match expected "@styleset { blah: 3; super-blah: 4 5; more-blah: 5 6 7; }" but got "@styleset { super-blah: 4 5; more-blah: 5 6 7; blah: 3; }"
 PASS serialization round-trip - @font-feature-values bongo {
 @styleset
   { blah: 3; super-blah: 4 5;
@@ -123,7 +123,7 @@ FAIL serialization check - @font-feature-values bongo {
   more-blah:
  5 6
  7;
- } } assert_equals: canonical cssText serialization doesn't match expected "@styleset { blah: 3; super-blah: 4 5; more-blah: 5 6 7; }" but got "@styleset { blah: 3; more-blah: 5 6 7; super-blah: 4 5; }"
+ } } assert_equals: canonical cssText serialization doesn't match expected "@styleset { blah: 3; super-blah: 4 5; more-blah: 5 6 7; }" but got "@styleset { super-blah: 4 5; more-blah: 5 6 7; blah: 3; }"
 PASS serialization round-trip - @font-feature-values bongo {
 @styleset
   {
@@ -290,7 +290,7 @@ PASS basic parse tests - @font-feature-values bongo { @styleset { blah: 1; blah:
 FAIL serialization check - @font-feature-values bongo { @styleset { blah: 1; blah: 1; } } assert_equals: canonical cssText serialization doesn't match expected "@styleset { blah: 1; blah: 1; }" but got "@styleset { blah: 1; }"
 PASS serialization round-trip - @font-feature-values bongo { @styleset { blah: 1; blah: 1; } }
 PASS basic parse tests - @font-feature-values bongo { @styleset { blah: 1; de-blah: 1; blah: 2; } }
-FAIL serialization check - @font-feature-values bongo { @styleset { blah: 1; de-blah: 1; blah: 2; } } assert_equals: canonical cssText serialization doesn't match expected "@styleset { blah: 1; de-blah: 1; blah: 2; }" but got "@styleset { blah: 2; de-blah: 1; }"
+FAIL serialization check - @font-feature-values bongo { @styleset { blah: 1; de-blah: 1; blah: 2; } } assert_equals: canonical cssText serialization doesn't match expected "@styleset { blah: 1; de-blah: 1; blah: 2; }" but got "@styleset { de-blah: 1; blah: 2; }"
 PASS serialization round-trip - @font-feature-values bongo { @styleset { blah: 1; de-blah: 1; blah: 2; } }
 PASS basic parse tests - @font-feature-values bongo { @styleset { \tra-la: 1; } }
 PASS serialization check - @font-feature-values bongo { @styleset { \tra-la: 1; } }

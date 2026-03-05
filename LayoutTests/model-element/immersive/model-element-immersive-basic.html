@@ -1,0 +1,208 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ModelElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> immersive</title>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../resources/testdriver-vendor.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="../resources/model-utils.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    assert_true('requestImmersive' in model, 'requestImmersive should exist');
+    assert_equals(typeof model.requestImmersive, 'function', 'requestImmersive should be a function');
+
+    assert_true('immersiveEnabled' in document, 'document.immersiveEnabled should exist');
+    assert_true('immersiveElement' in document, 'document.immersiveElement should exist');
+    assert_true('exitImmersive' in document, 'document.exitImmersive should exist');
+    assert_equals(typeof document.exitImmersive, 'function', 'exitImmersive should be a function');
+
+}, 'Immersive API exists on model and document');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    await promise_rejects_js(t, TypeError, 
+        model.requestImmersive(),
+        'Should reject without user activation'
+    );
+    
+    assert_equals(document.immersiveElement, null, 'No immersive element without user gesture');
+}, 'Model immersive request fails without user activation');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+
+    await test_driver.bless("immersive");
+    await model.requestImmersive();
+    
+    assert_equals(document.immersiveElement, model, 'Document should reference immersive model');
+}, 'Model enters immersive mode with user activation');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    await test_driver.bless("immersive");
+    await model.requestImmersive();
+    
+    assert_equals(document.immersiveElement, model, 'Model should be immersive');
+    
+    await document.exitImmersive();
+    
+    assert_equals(document.immersiveElement, null, 'No immersive element after exit');
+}, 'Document.exitImmersive() exits immersive model');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    await test_driver.bless("immersive");
+    await model.requestImmersive();
+    assert_equals(document.immersiveElement, model, 'Model is immersive after request');
+
+    if (window.testRunner)
+        testRunner.exitImmersive();
+
+    await t.step_wait(() => document.immersiveElement === null, "Waiting for immersive element to be null");
+    assert_equals(document.immersiveElement, null, 'No immersive element after exit');
+}, 'WKWebview._exitImmersive() exits immersive model');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    let modelChangeEvents = [];
+    let documentChangeEvents = [];
+    const modelHandler = () => { modelChangeEvents.push(document.immersiveElement); };
+    const documentHandler = () => { documentChangeEvents.push(document.immersiveElement); };
+    
+    await test_driver.bless("immersive");
+
+    model.addEventListener('immersivechange', modelHandler);
+    document.addEventListener('immersivechange', documentHandler);
+
+    await model.requestImmersive();
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    model.removeEventListener('immersivechange', modelHandler);
+    document.removeEventListener('immersivechange', documentHandler);
+    
+    assert_equals(modelChangeEvents.length, 1, 'Model should fire one immersivechange event');
+    assert_equals(modelChangeEvents[0], model, 'Model event should occur when model is immersive');
+
+    assert_equals(documentChangeEvents.length, 1, 'Document should fire one immersivechange event');
+    assert_equals(documentChangeEvents[0], model, 'Document event should reference model');
+}, 'Immersivechange events fire when entering immersive');
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/heart.usdz");
+    
+    await test_driver.bless("immersive");
+    await model1.requestImmersive();
+    
+    assert_equals(document.immersiveElement, model1, 'Document should reference first model');
+    
+    await test_driver.bless("immersive");
+    await model2.requestImmersive();
+    
+    assert_equals(document.immersiveElement, model2, 'Document should reference second model');
+}, 'Only one model can be immersive at a time');
+
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/heart.usdz");
+    
+    await test_driver.bless("immersive");
+    await model1.requestImmersive();
+    
+    assert_equals(document.immersiveElement, model1, 'Document should reference first model');
+    
+    await test_driver.bless("immersive");
+    await model2.requestImmersive();
+    
+    assert_equals(document.immersiveElement, model2, 'Document should reference second model');
+
+    await document.exitImmersive();
+    
+    assert_equals(document.immersiveElement, null, 'Document immersive element should be null');
+}, 'Exiting immersive model after an immersive update exits immersive mode');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    await test_driver.bless("immersive");
+    await model.requestImmersive();
+    
+    assert_equals(document.immersiveElement, model, 'Model should be immersive');
+    
+    model.remove();
+    
+    await t.step_wait(() => document.immersiveElement === null, 'Waiting for immersive element to be cleared after removal');
+}, 'Removing immersive model from DOM exits immersive mode');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    let errorFired = false;
+    const errorHandler = () => { errorFired = true; };
+    model.addEventListener('immersiveerror', errorHandler);
+    
+    await promise_rejects_js(t, TypeError, 
+        model.requestImmersive(),
+        'Should reject without user activation'
+    );
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    model.removeEventListener('immersiveerror', errorHandler);
+    
+    assert_true(errorFired, 'immersiveerror event should fire on failed request');
+}, 'Immersiveerror event fires when request fails');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    assert_false(model.matches(':immersive'), 'Should not match :immersive initially');
+    
+    await test_driver.bless("immersive");
+    await model.requestImmersive();
+    
+    assert_true(model.matches(':immersive'), 'Should match :immersive when immersive');
+    
+    await document.exitImmersive();
+    
+    assert_false(model.matches(':immersive'), 'Should not match :immersive after exit');
+}, 'CSS :immersive pseudo-class matches correctly');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    
+    await test_driver.bless("immersive");
+    await model.requestImmersive();
+    
+    assert_equals(model.complete, true, 'Model should be complete when immersive');
+}, 'Model is complete once presented as immersive');
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/heart.usdz");
+    
+    await test_driver.bless("immersive");
+    const promise1 = model1.requestImmersive();
+    const promise2 = promise_rejects_js(t, TypeError, 
+        model2.requestImmersive(),
+        'Should reject without user activation'
+    );
+    
+    await Promise.all([promise1, promise2]);
+    
+    assert_equals(document.immersiveElement, model1, 'Model should be immersive after multiple requests');
+}, 'Multiple concurrent requestImmersive calls are handled correctly');
+
+</script>
+</body>
+
+

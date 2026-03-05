@@ -36,10 +36,10 @@ namespace WebCore {
 enum class PseudoId : uint8_t;
 
 class AnimationEventBase;
-class Document;
 class Element;
 class RenderStyle;
 class WebAnimation;
+struct CSSSelectorParserContext;
 
 namespace Style {
 struct PseudoElementIdentifier;
@@ -64,7 +64,7 @@ const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
 bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&);
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase&, const AnimationEventBase&);
 String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementIdentifier>&);
-std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String&, Document*);
+std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String&, const CSSSelectorParserContext&);
 AtomString animatablePropertyAsString(AnimatableCSSProperty);
 bool animatablePropertiesContainTransformRelatedProperty(const HashSet<AnimatableCSSProperty>&);
 

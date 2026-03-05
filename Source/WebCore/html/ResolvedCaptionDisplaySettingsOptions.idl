@@ -38,9 +38,9 @@ enum ResolvedCaptionDisplaySettingsOptionsYPositionArea {
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
-    ImplementedAs=ResolvedCaptionDisplaySettingsOptionsWrapper
-]
-dictionary ResolvedCaptionDisplaySettingsOptions {
+    ImplementedAs=ResolvedCaptionDisplaySettingsOptionsWrapper,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
+] dictionary ResolvedCaptionDisplaySettingsOptions {
     DOMRect? anchorBounds;
     ResolvedCaptionDisplaySettingsOptionsXPositionArea? xPositionArea;
     ResolvedCaptionDisplaySettingsOptionsYPositionArea? yPositionArea;

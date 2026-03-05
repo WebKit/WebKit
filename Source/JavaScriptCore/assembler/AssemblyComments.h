@@ -72,7 +72,7 @@ public:
         (void) newStart;
 #endif
 
-        m_comments.emplace(orderedKey(start), std::pair { newEnd, WTFMove(map) });
+        m_comments.emplace(orderedKey(start), std::pair { newEnd, WTF::move(map) });
     }
 
     void unregisterCodeRange(void* start, void* end)

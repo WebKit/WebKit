@@ -30,14 +30,16 @@
 namespace WebCore {
 
 class SVGScriptElement final : public SVGElement, public SVGURIReference, public ScriptElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGScriptElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGScriptElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGScriptElement);
 public:
-    static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
+    static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGScriptElement, SVGElement, SVGURIReference>;
-    using SVGElement::ref;
-    using SVGElement::deref;
+
+    // ActiveDOMObject
+    void ref() const final { SVGElement::ref(); }
+    void deref() const final { SVGElement::deref(); }
 
     bool async() const;
 
@@ -51,8 +53,9 @@ private:
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
     void finishParsingChildren() final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    bool isURLAttribute(const Attribute& attribute) const final { return attribute.name() == AtomString { sourceAttributeValue() }; }
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;
@@ -69,12 +72,11 @@ private:
     bool hasNoModuleAttribute() const final { return false; }
     ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }
     bool hasSourceAttribute() const final { return hasAttribute(SVGNames::hrefAttr) || hasAttribute(XLinkNames::hrefAttr); }
-    void dispatchLoadEvent() final { SVGURIReference::dispatchLoadEvent(); }
+    void dispatchLoadEvent() final;
     void dispatchErrorEvent() final;
 
     // SVGElement
     bool haveLoadedRequiredResources() final { return SVGURIReference::haveLoadedRequiredResources(); }
-    Timer* loadEventTimer() final { return &m_loadEventTimer; }
 
     // SVGURIReference
     bool haveFiredLoadEvent() const final { return ScriptElement::haveFiredLoadEvent(); }
@@ -82,11 +84,12 @@ private:
     bool errorOccurred() const final { return ScriptElement::errorOccurred(); }
     void setErrorOccurred(bool errorOccurred) final { ScriptElement::setErrorOccurred(errorOccurred); }
 
+    // EventTarget
+    void eventListenersDidChange() final;
+
 #ifndef NDEBUG
     bool filterOutAnimatableAttribute(const QualifiedName& name) const final { return name == SVGNames::typeAttr; }
 #endif
-
-    Timer m_loadEventTimer;
 };
 
 } // namespace WebCore

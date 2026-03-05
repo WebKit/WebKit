@@ -62,7 +62,6 @@ class WebExtensionAPIRuntime : public WebExtensionAPIObject, public WebExtension
 
 public:
     WebExtensionAPIRuntime& runtime() const final { return const_cast<WebExtensionAPIRuntime&>(*this); }
-    Ref<WebExtensionAPIRuntime> protectedRuntime() const { return runtime(); }
 
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
@@ -73,6 +72,7 @@ public:
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
     double getFrameId(JSValue *);
+    String getDocumentId(JSValue *, NSString **outExceptionString);
 
     void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
 
@@ -115,7 +115,6 @@ class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebEx
 
 public:
     WebExtensionAPIWebPageRuntime& runtime() const final { return const_cast<WebExtensionAPIWebPageRuntime&>(*this); }
-    Ref<WebExtensionAPIWebPageRuntime> protectedRuntime() const { return runtime(); }
 
 #if PLATFORM(COCOA)
     void sendMessage(WebPage&, WebFrame&, const String& extensionID, const String& messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

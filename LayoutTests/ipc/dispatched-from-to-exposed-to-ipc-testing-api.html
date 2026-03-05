@@ -26,8 +26,8 @@ if (window.IPC) {
     assert_equals(IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.dispatchedTo, "GPU");
     assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedFrom, "Networking");
     assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedTo, "UI");
-    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceived.dispatchedFrom, "WebContent");
-    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceived.dispatchedTo, "GPU");
+    assert_equals(IPC.messages.RemoteMediaResourceLoader_ResponseReceived.dispatchedFrom, "WebContent");
+    assert_equals(IPC.messages.RemoteMediaResourceLoader_ResponseReceived.dispatchedTo, "GPU");
 
     // Check Reply Messages
     assert_equals(IPC.messages.IPCTester_AsyncOptionalExceptionDataReply.dispatchedFrom, "Unknown");
@@ -38,8 +38,8 @@ if (window.IPC) {
     assert_equals(IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsyncReply.dispatchedTo, "WebContent");
     assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedFrom, "Networking");
     assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedTo, "UI");
-    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceivedReply.dispatchedFrom, "GPU");
-    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceivedReply.dispatchedTo, "WebContent");
+    assert_equals(IPC.messages.RemoteMediaResourceLoader_ResponseReceivedReply.dispatchedFrom, "GPU");
+    assert_equals(IPC.messages.RemoteMediaResourceLoader_ResponseReceivedReply.dispatchedTo, "WebContent");
 }
 
 document.write("PASS");

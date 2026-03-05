@@ -97,6 +97,9 @@ void BindFramebufferAttachment(const FunctionsGL *functions,
             {
                 if (attachment->isRenderToTexture())
                 {
+                    // GL_OVR_multiview_multisampled_render_to_texture is not supported on GL
+                    // backend
+                    ASSERT(!attachment->isMultiview());
                     if (functions->framebufferTexture2DMultisampleEXT)
                     {
                         functions->framebufferTexture2DMultisampleEXT(
@@ -143,6 +146,9 @@ void BindFramebufferAttachment(const FunctionsGL *functions,
             {
                 if (attachment->isMultiview())
                 {
+                    // GL_OVR_multiview_multisampled_render_to_texture is not supported on GL
+                    // backend
+                    ASSERT(!attachment->isRenderToTexture());
                     ASSERT(functions->framebufferTexture);
                     functions->framebufferTexture(GL_FRAMEBUFFER, attachmentPoint,
                                                   textureGL->getTextureID(),
@@ -212,6 +218,8 @@ bool RequiresMultiviewClear(const FramebufferState &state, bool scissorTestEnabl
             {
                 return false;
             }
+            // GL_OVR_multiview_multisampled_render_to_texture is not supported on GL backend
+            ASSERT(!colorAttachment.isRenderToTexture());
             attachment = &colorAttachment;
             allTextureArraysAreFullyAttached =
                 allTextureArraysAreFullyAttached && AreAllLayersActive(*attachment);
@@ -225,6 +233,8 @@ bool RequiresMultiviewClear(const FramebufferState &state, bool scissorTestEnabl
         {
             return false;
         }
+        // GL_OVR_multiview_multisampled_render_to_texture is not supported on GL backend
+        ASSERT(!depthAttachment->isRenderToTexture());
         attachment = depthAttachment;
         allTextureArraysAreFullyAttached =
             allTextureArraysAreFullyAttached && AreAllLayersActive(*attachment);
@@ -236,6 +246,8 @@ bool RequiresMultiviewClear(const FramebufferState &state, bool scissorTestEnabl
         {
             return false;
         }
+        // GL_OVR_multiview_multisampled_render_to_texture is not supported on GL backend
+        ASSERT(!stencilAttachment->isRenderToTexture());
         attachment = stencilAttachment;
         allTextureArraysAreFullyAttached =
             allTextureArraysAreFullyAttached && AreAllLayersActive(*attachment);
@@ -362,13 +374,10 @@ angle::Result RearrangeEXTTextureNorm16Pixels(const gl::Context *context,
         gl::GetInternalFormatInfo(originalReadFormat, type);
 
     GLuint originalReadFormatRowBytes = 0;
-    ANGLE_CHECK_GL_MATH(
-        contextGL, glFormatOriginal.computeRowPitch(type, area.width, pack.alignment,
-                                                    pack.rowLength, &originalReadFormatRowBytes));
     GLuint originalReadFormatSkipBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextGL,
-                        glFormatOriginal.computeSkipBytes(type, originalReadFormatRowBytes, 0, pack,
-                                                          false, &originalReadFormatSkipBytes));
+    ANGLE_CHECK_GL_MATH(contextGL, glFormatOriginal.computeRowSkipBytes(
+                                       type, area.width, pack, &originalReadFormatRowBytes,
+                                       &originalReadFormatSkipBytes));
 
     GLuint originalReadFormatPixelBytes = glFormatOriginal.computePixelBytes(type);
     GLuint alphaChannelBytes            = glFormatOriginal.alphaBits / 8;
@@ -1595,11 +1604,9 @@ angle::Result FramebufferGL::readPixelsRowByRow(const gl::Context *context,
     const gl::InternalFormat &glFormat = gl::GetInternalFormatInfo(format, type);
 
     GLuint rowBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextGL, glFormat.computeRowPitch(type, area.width, pack.alignment,
-                                                            pack.rowLength, &rowBytes));
     GLuint skipBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextGL,
-                        glFormat.computeSkipBytes(type, rowBytes, 0, pack, false, &skipBytes));
+    ANGLE_CHECK_GL_MATH(
+        contextGL, glFormat.computeRowSkipBytes(type, area.width, pack, &rowBytes, &skipBytes));
 
     ScopedEXTTextureNorm16ReadbackWorkaround workaround;
     angle::Result result =
@@ -1650,11 +1657,9 @@ angle::Result FramebufferGL::readPixelsAllAtOnce(const gl::Context *context,
     const gl::InternalFormat &glFormat = gl::GetInternalFormatInfo(format, type);
 
     GLuint rowBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextGL, glFormat.computeRowPitch(type, area.width, pack.alignment,
-                                                            pack.rowLength, &rowBytes));
     GLuint skipBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextGL,
-                        glFormat.computeSkipBytes(type, rowBytes, 0, pack, false, &skipBytes));
+    ANGLE_CHECK_GL_MATH(
+        contextGL, glFormat.computeRowSkipBytes(type, area.width, pack, &rowBytes, &skipBytes));
 
     ScopedEXTTextureNorm16ReadbackWorkaround workaround;
     angle::Result result =

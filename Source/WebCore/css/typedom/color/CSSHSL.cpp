@@ -32,30 +32,30 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSHSL);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSHSL);
 
 ExceptionOr<Ref<CSSHSL>> CSSHSL::create(CSSColorAngle&& hue, CSSColorPercent&& saturation, CSSColorPercent&& lightness, CSSColorPercent&& alpha)
 {
-    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    auto rectifiedHue = rectifyCSSColorAngle(WTF::move(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
-    auto rectifiedSaturation = rectifyCSSColorPercent(WTFMove(saturation));
+    auto rectifiedSaturation = rectifyCSSColorPercent(WTF::move(saturation));
     if (rectifiedSaturation.hasException())
         return rectifiedSaturation.releaseException();
-    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
     if (rectifiedLightness.hasException())
         return rectifiedLightness.releaseException();
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
     return adoptRef(*new CSSHSL(rectifiedHue.releaseReturnValue(), rectifiedSaturation.releaseReturnValue(), rectifiedLightness.releaseReturnValue(), rectifiedAlpha.releaseReturnValue()));
 }
 
 CSSHSL::CSSHSL(RectifiedCSSColorAngle&& hue, RectifiedCSSColorPercent&& saturation, RectifiedCSSColorPercent&& lightness, RectifiedCSSColorPercent&& alpha)
-    : m_hue(WTFMove(hue))
-    , m_saturation(WTFMove(saturation))
-    , m_lightness(WTFMove(lightness))
-    , m_alpha(WTFMove(alpha))
+    : m_hue(WTF::move(hue))
+    , m_saturation(WTF::move(saturation))
+    , m_lightness(WTF::move(lightness))
+    , m_alpha(WTF::move(alpha))
 {
 }
 
@@ -66,7 +66,7 @@ CSSColorAngle CSSHSL::h() const
 
 ExceptionOr<void> CSSHSL::setH(CSSColorAngle&& hue)
 {
-    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    auto rectifiedHue = rectifyCSSColorAngle(WTF::move(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
     m_hue = rectifiedHue.releaseReturnValue();
@@ -80,7 +80,7 @@ CSSColorPercent CSSHSL::s() const
 
 ExceptionOr<void> CSSHSL::setS(CSSColorPercent&& saturation)
 {
-    auto rectifiedSaturation = rectifyCSSColorPercent(WTFMove(saturation));
+    auto rectifiedSaturation = rectifyCSSColorPercent(WTF::move(saturation));
     if (rectifiedSaturation.hasException())
         return rectifiedSaturation.releaseException();
     m_saturation = rectifiedSaturation.releaseReturnValue();
@@ -94,7 +94,7 @@ CSSColorPercent CSSHSL::l() const
 
 ExceptionOr<void> CSSHSL::setL(CSSColorPercent&& lightness)
 {
-    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
     if (rectifiedLightness.hasException())
         return rectifiedLightness.releaseException();
     m_lightness = rectifiedLightness.releaseReturnValue();
@@ -108,7 +108,7 @@ CSSColorPercent CSSHSL::alpha() const
 
 ExceptionOr<void> CSSHSL::setAlpha(CSSColorPercent&& alpha)
 {
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
     m_alpha = rectifiedAlpha.releaseReturnValue();

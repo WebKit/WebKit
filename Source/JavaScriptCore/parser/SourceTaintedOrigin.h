@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
+#include <utility>
 #include <wtf/Forward.h>
 #include <wtf/TriState.h>
 

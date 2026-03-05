@@ -42,7 +42,7 @@ class HTMLImageElement;
 class ValidatedFormListedElement;
 
 class HTMLFormElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLFormElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLFormElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFormElement);
 public:
     static Ref<HTMLFormElement> create(Document&);
@@ -57,8 +57,8 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     WEBCORE_EXPORT unsigned length() const;
     HTMLElement* item(unsigned index);
-    std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItem(const AtomString&);
-    Vector<AtomString> supportedPropertyNames() const;
+    std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> namedItem(const AtomString&);
+    Vector<AtomString> NODELETE supportedPropertyNames() const;
 
     String enctype() const { return m_attributes.encodingType(); }
 
@@ -99,7 +99,7 @@ public:
     AtomString target() const final;
     AtomString effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
 
-    bool wasUserSubmitted() const;
+    bool NODELETE wasUserSubmitted() const;
 
     HTMLFormControlElement* findSubmitter(const Event*) const;
 
@@ -109,19 +109,19 @@ public:
     WEBCORE_EXPORT bool checkValidity();
     bool reportValidity();
 
-    RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
+    RadioButtonGroups& radioButtonGroups() LIFETIME_BOUND { return m_radioButtonGroups; }
 
-    WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& unsafeListedElements() const;
+    WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& NODELETE unsafeListedElements() const;
     WEBCORE_EXPORT Vector<Ref<FormListedElement>> copyListedElementsVector() const;
     Vector<Ref<ValidatedFormListedElement>> copyValidatedListedElementsVector() const;
-    const Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>>& imageElements() const { return m_imageElements; }
+    const Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>>& imageElements() const LIFETIME_BOUND { return m_imageElements; }
 
     StringPairVector textFieldValues() const;
 
     static HTMLFormElement* findClosestFormAncestor(const Element&);
     
     RefPtr<DOMFormData> constructEntryList(RefPtr<HTMLFormControlElement>&&, Ref<DOMFormData>&&, StringPairVector*);
-    const FormSubmission::Attributes& attributes() const { return m_attributes; }
+    const FormSubmission::Attributes& attributes() const LIFETIME_BOUND { return m_attributes; }
     
 private:
     HTMLFormElement(const QualifiedName&, Document&);
@@ -131,7 +131,7 @@ private:
     void finishParsingChildren() final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 
     void resumeFromDocumentSuspension() final;
 
@@ -149,7 +149,7 @@ private:
     // Validates each of the controls, and stores controls of which 'invalid'
     // event was not canceled to the specified vector. Returns true if there
     // are any invalid controls in this form.
-    bool checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<ValidatedFormListedElement>>&);
+    bool checkInvalidControlsAndCollectUnhandled(Vector<Ref<ValidatedFormListedElement>>&);
 
     RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
     void addToPastNamesMap(FormAssociatedElement&, const AtomString& pastName);

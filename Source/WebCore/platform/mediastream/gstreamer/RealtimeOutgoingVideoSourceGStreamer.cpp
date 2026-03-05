@@ -44,11 +44,6 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const
     : RealtimeOutgoingMediaSourceGStreamer(RealtimeOutgoingMediaSourceGStreamer::Type::Video, ssrcGenerator)
 {
     initialize();
-
-    m_outgoingSource = gst_element_factory_make("videotestsrc", nullptr);
-    gst_util_set_object_arg(G_OBJECT(m_outgoingSource.get()), "pattern", "black");
-    g_object_set(m_outgoingSource.get(), "is-live", TRUE, "do-timestamp", TRUE, nullptr);
-    gst_bin_add(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
 }
 
 RealtimeOutgoingVideoSourceGStreamer::~RealtimeOutgoingVideoSourceGStreamer() = default;
@@ -63,6 +58,12 @@ void RealtimeOutgoingVideoSourceGStreamer::initialize()
 
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(m_bin.get(), makeString("outgoing-video-source-"_s, sourceCounter.exchangeAdd(1)).ascii().data());
+
+    m_fallbackSource = gst_element_factory_make("videotestsrc", nullptr);
+    gst_util_set_object_arg(G_OBJECT(m_fallbackSource.get()), "pattern", "black");
+    g_object_set(m_fallbackSource.get(), "is-live", TRUE, "do-timestamp", TRUE, nullptr);
+    gst_bin_add(GST_BIN_CAST(m_bin.get()), m_fallbackSource.get());
+    gst_element_link(m_fallbackSource.get(), m_inputSelector.get());
 }
 
 RTCRtpCapabilities RealtimeOutgoingVideoSourceGStreamer::rtpCapabilities() const
@@ -75,12 +76,12 @@ GRefPtr<GstPad> RealtimeOutgoingVideoSourceGStreamer::outgoingSourcePad() const
 {
     if (WEBKIT_IS_MEDIA_STREAM_SRC(m_outgoingSource.get()))
         return adoptGRef(gst_element_get_static_pad(m_outgoingSource.get(), "video_src0"));
-    return adoptGRef(gst_element_get_static_pad(m_outgoingSource.get(), "src"));
+    return adoptGRef(gst_element_get_static_pad(m_fallbackSource.get(), "src"));
 }
 
 RefPtr<GStreamerRTPPacketizer> RealtimeOutgoingVideoSourceGStreamer::createPacketizer(RefPtr<UniqueSSRCGenerator> ssrcGenerator, const GstStructure* codecParameters, GUniquePtr<GstStructure>&& encodingParameters)
 {
-    return GStreamerVideoRTPPacketizer::create(ssrcGenerator, codecParameters, WTFMove(encodingParameters));
+    return GStreamerVideoRTPPacketizer::create(ssrcGenerator, codecParameters, WTF::move(encodingParameters));
 }
 
 void RealtimeOutgoingVideoSourceGStreamer::dispatchBitrateRequest(uint32_t bitrate)

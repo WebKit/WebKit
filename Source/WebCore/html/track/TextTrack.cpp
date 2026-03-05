@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrack);
 
 static const AtomString& descriptionsKeyword()
 {
@@ -77,22 +77,22 @@ static const AtomString& forcedKeyword()
     return forced;
 }
 
-TextTrack& TextTrack::captionMenuOffItem()
+TextTrack& TextTrack::captionMenuOffItemSingleton()
 {
-    static TextTrack& off = TextTrack::create(nullptr, "off menu item"_s, emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return off;
+    static NeverDestroyed<Ref<TextTrack>> off = TextTrack::create(nullptr, "off menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    return off->get();
 }
 
-TextTrack& TextTrack::captionMenuOnItem()
+TextTrack& TextTrack::captionMenuOnItemSingleton()
 {
-    static TextTrack& on = TextTrack::create(nullptr, "on menu item"_s, emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return on;
+    static NeverDestroyed<Ref<TextTrack>> on = TextTrack::create(nullptr, "on menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    return on->get();
 }
 
-TextTrack& TextTrack::captionMenuAutomaticItem()
+TextTrack& TextTrack::captionMenuAutomaticItemSingleton()
 {
-    static TextTrack& automatic = TextTrack::create(nullptr, "automatic menu item"_s, emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return automatic;
+    static NeverDestroyed<Ref<TextTrack>> automatic = TextTrack::create(nullptr, "automatic menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    return automatic->get();
 }
 
 TextTrack::Kind TextTrack::convertKind(const AtomString& kind)
@@ -143,25 +143,20 @@ Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, const AtomStri
 TextTrack::~TextTrack()
 {
     if (m_cues) {
-        m_clients.forEach([this] (auto& client) {
+        m_clients.forEach([this](auto& client) {
             client.textTrackRemoveCues(*this, *m_cues);
         });
         for (size_t i = 0; i < m_cues->length(); ++i)
-            m_cues->item(i)->setTrack(nullptr);
+            protect(m_cues->item(i))->setTrack(nullptr);
     }
-}
-
-inline RefPtr<TextTrackCueList> TextTrack::protectedCues() const
-{
-    return m_cues.copyRef();
 }
 
 void TextTrack::didMoveToNewDocument(Document& newDocument)
 {
     TrackBase::didMoveToNewDocument(newDocument);
     ActiveDOMObject::didMoveToNewDocument(newDocument);
-    if (RefPtr cues = this->cues())
-        cues->didMoveToNewDocument(newDocument);
+    if (m_cues)
+        m_cues->didMoveToNewDocument(newDocument);
 }
 
 TextTrackList* TextTrack::textTrackList() const
@@ -244,7 +239,7 @@ void TextTrack::setKind(Kind newKind)
 
     if (oldKind != m_kind) {
         ALWAYS_LOG(LOGIDENTIFIER, m_kind);
-        m_clients.forEach([this] (auto& client) {
+        m_clients.forEach([this](auto& client) {
             client.textTrackKindChanged(*this);
         });
     }
@@ -287,19 +282,19 @@ void TextTrack::setMode(Mode mode)
     // If mode changes to disabled, remove this track's cues from the client
     // because they will no longer be accessible from the cues() function.
     if (mode == Mode::Disabled && m_cues) {
-        m_clients.forEach([this] (auto& client) {
+        m_clients.forEach([this](auto& client) {
             client.textTrackRemoveCues(*this, *m_cues);
         });
     }
 
     if (mode != Mode::Showing && m_cues) {
         for (size_t i = 0; i < m_cues->length(); ++i)
-            m_cues->item(i)->removeDisplayTree();
+            protect(m_cues->item(i))->removeDisplayTree();
     }
 
     m_mode = mode;
 
-    m_clients.forEach([this] (auto& client) {
+    m_clients.forEach([this](auto& client) {
         client.textTrackModeChanged(*this);
     });
 }
@@ -316,11 +311,6 @@ TextTrackCueList* TextTrack::cues()
     return &ensureTextTrackCueList();
 }
 
-RefPtr<TextTrackCueList> TextTrack::protectedCues()
-{
-    return cues();
-}
-
 void TextTrack::removeAllCues()
 {
     if (!m_cues)
@@ -328,17 +318,17 @@ void TextTrack::removeAllCues()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_clients.forEach([this] (auto& client) {
+    m_clients.forEach([this](auto& client) {
         client.textTrackRemoveCues(*this, *m_cues);
     });
 
     for (size_t i = 0; i < m_cues->length(); ++i)
-        m_cues->item(i)->setTrack(nullptr);
-    
+        protect(m_cues->item(i))->setTrack(nullptr);
+
     m_cues->clear();
 }
 
-TextTrackCueList* TextTrack::activeCues() const
+TextTrackCueList* TextTrack::activeCues() const LIFETIME_BOUND
 {
     // 4.8.10.12.5 If the text track mode ... is not the text track disabled mode,
     // then the activeCues attribute must return a live TextTrackCueList object ...
@@ -348,6 +338,7 @@ TextTrackCueList* TextTrack::activeCues() const
     // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-activecues
     if (!m_cues || m_mode == Mode::Disabled)
         return nullptr;
+
     return &m_cues->activeCues();
 }
 
@@ -382,9 +373,9 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
 
     // 2. Add cue to the method's TextTrack object's text track's text track list of cues.
     cue->setTrack(this);
-    ensureTextTrackCueList().add(cue.copyRef());
+    protect(ensureTextTrackCueList())->add(cue.copyRef());
 
-    m_clients.forEach([this, cue] (auto& client) {
+    m_clients.forEach([this, cue](auto& client) {
         client.textTrackAddCue(*this, cue);
     });
 
@@ -410,7 +401,7 @@ ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
     m_cues->remove(cue);
     cue.setIsActive(false);
     cue.setTrack(nullptr);
-    m_clients.forEach([&] (auto& client) {
+    m_clients.forEach([&](auto& client) {
         client.textTrackRemoveCue(*this, cue);
     });
 
@@ -465,14 +456,9 @@ VTTRegionList* TextTrack::regions()
     return &ensureVTTRegionList();
 }
 
-RefPtr<VTTRegionList> TextTrack::protectedRegions()
-{
-    return regions();
-}
-
 void TextTrack::cueWillChange(TextTrackCue& cue)
 {
-    m_clients.forEach([&] (auto& client) {
+    m_clients.forEach([&](auto& client) {
         // The cue may need to be repositioned in the media element's interval tree, may need to
         // be re-rendered, etc, so remove it before the modification...
         client.textTrackRemoveCue(*this, cue);
@@ -483,10 +469,10 @@ void TextTrack::cueDidChange(TextTrackCue& cue, bool updateCueOrder)
 {
     // Make sure the TextTrackCueList order is up-to-date.
     if (updateCueOrder)
-        ensureTextTrackCueList().updateCueIndex(cue);
+        protect(ensureTextTrackCueList())->updateCueIndex(cue);
 
     // ... and add it back again.
-    m_clients.forEach([&] (auto& client) {
+    m_clients.forEach([&](auto& client) {
         client.textTrackAddCue(*this, cue);
     });
 }
@@ -494,10 +480,11 @@ void TextTrack::cueDidChange(TextTrackCue& cue, bool updateCueOrder)
 int TextTrack::trackIndex()
 {
     if (!m_trackIndex) {
-        if (!textTrackList())
+        RefPtr textTrackList = this->textTrackList();
+        if (!textTrackList)
             return 0;
 
-        m_trackIndex = textTrackList()->getTrackIndex(*this);
+        m_trackIndex = textTrackList->getTrackIndex(*this);
     }
     return m_trackIndex.value();
 }
@@ -516,17 +503,18 @@ bool TextTrack::isSpoken()
 TextTrackCueList& TextTrack::ensureTextTrackCueList()
 {
     if (!m_cues)
-        m_cues = TextTrackCueList::create();
+        lazyInitialize(m_cues, TextTrackCueList::create());
     return *m_cues;
 }
 
 int TextTrack::trackIndexRelativeToRenderedTracks()
 {
     if (!m_renderedTrackIndex) {
-        if (!textTrackList())
+        RefPtr textTrackList = this->textTrackList();
+        if (!textTrackList)
             return 0;
 
-        m_renderedTrackIndex = textTrackList()->getTrackIndexRelativeToRenderedTracks(*this);
+        m_renderedTrackIndex = textTrackList->getTrackIndexRelativeToRenderedTracks(*this);
     }
     return m_renderedTrackIndex.value();
 }
@@ -555,7 +543,7 @@ RefPtr<TextTrackCue> TextTrack::matchCue(TextTrackCue& cue, TextTrackCue::CueMat
 
             // If there is more than one cue with the same start time, back up to first one so we
             // consider all of them.
-            while (searchStart >= 2 && cue.hasEquivalentStartTime(*m_cues->item(searchStart - 2)))
+            while (searchStart >= 2 && cue.hasEquivalentStartTime(*protect(m_cues->item(searchStart - 2))))
                 --searchStart;
             
             bool firstCompare = true;
@@ -595,8 +583,8 @@ bool TextTrack::isMainProgramContent() const
     // "Main program" content is intrinsic to the presentation of the media file, regardless of locale. Content such as
     // directors commentary is not "main program" because it is not essential for the presentation. HTML5 doesn't have
     // a way to express this in a machine-reable form, it is typically done with the track label, so we assume that caption
-    // tracks are main content and all other track types are not.
-    return m_kind == Kind::Captions;
+    // and subtitle tracks are main content and all other track types are not.
+    return m_kind == Kind::Captions || m_kind == Kind::Subtitles;
 }
 
 bool TextTrack::containsOnlyForcedSubtitles() const
@@ -619,7 +607,7 @@ void TextTrack::setLanguage(const AtomString& language)
     // event named change at sourceBuffer.textTracks.
     // 4. Queue a task to fire a simple event named change at the TextTrackList object referenced by
     // the textTracks attribute on the HTMLMediaElement.
-    m_clients.forEach([&] (auto& client) {
+    m_clients.forEach([&](auto& client) {
         client.textTrackLanguageChanged(*this);
     });
 }
@@ -627,7 +615,7 @@ void TextTrack::setLanguage(const AtomString& language)
 void TextTrack::setId(TrackID id)
 {
     TrackBase::setId(id);
-    m_clients.forEach([this] (auto& client) {
+    m_clients.forEach([this](auto& client) {
         client.textTrackIdChanged(*this);
     });
 }
@@ -635,14 +623,14 @@ void TextTrack::setId(TrackID id)
 void TextTrack::setLabel(const AtomString& label)
 {
     TrackBase::setLabel(label);
-    m_clients.forEach([this] (auto& client) {
+    m_clients.forEach([this](auto& client) {
         client.textTrackLabelChanged(*this);
     });
 }
 
 void TextTrack::newCuesAvailable(const TextTrackCueList& list)
 {
-    m_clients.forEach([&] (auto& client) {
+    m_clients.forEach([&](auto& client) {
         client.textTrackAddCues(*this, list);
     });
 }

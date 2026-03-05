@@ -88,43 +88,41 @@ using JSDOMWindowDOMConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
 /* Hash table */
 
-static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
+static const struct CompactHashIndex JSDOMWindowTableIndex[35] = {
+    { 4, 33 },
+    { 7, -1 },
+    { 3, 32 },
     { -1, -1 },
-    { 7, 35 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 6, 33 },
-    { -1, -1 },
-    { 4, -1 },
-    { 2, 32 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 1, -1 },
     { -1, -1 },
     { 11, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
+    { 2, -1 },
     { -1, -1 },
-    { 3, -1 },
-    { 5, 34 },
-    { 8, 36 },
-    { 9, -1 },
     { 10, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { 9, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 6, 34 },
+    { 8, -1 },
     { 12, -1 },
 };
 
@@ -191,13 +189,8 @@ void JSDOMWindowPrototype::finishCreation(VM& vm)
 const ClassInfo JSDOMWindow::s_info = { "DOMWindow"_s, &Base::s_info, &JSDOMWindowTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindow) };
 
 JSDOMWindow::JSDOMWindow(VM& vm, Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
-    : JSEventTarget(vm, structure, WTFMove(impl), proxy)
+    : JSEventTarget(vm, structure, WTF::move(impl), proxy)
 {
-}
-
-Ref<DOMWindow> JSDOMWindow::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, DOMWindow>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");

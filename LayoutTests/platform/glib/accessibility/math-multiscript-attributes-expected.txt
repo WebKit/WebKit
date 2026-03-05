@@ -11,7 +11,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 AXRole: AXStatic
 AXParent: AXSection
 AXChildren: 0
-AXPosition:  { 17.0000, -33.0000 }
+AXPosition:  { 16.0000, -33.0000 }
 AXSize: { 14.0000, 106.000 }
 AXTitle:
 AXDescription:
@@ -30,8 +30,8 @@ AXPlatformAttributes: tag:mi
 AXRole: AXSubscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition:  { 30.0000, -12.0000 }
-AXSize: { 10.0000, 76.0000 }
+AXPosition:  { 29.0000, -12.0000 }
+AXSize: { 10.0000, 75.0000 }
 AXTitle:
 AXDescription:
 AXValue: D
@@ -49,8 +49,8 @@ AXPlatformAttributes: multiscript-type:post, tag:mi
 AXRole: AXSuperscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition:  { 30.0000, -23.0000 }
-AXSize: { 9.00000, 75.0000 }
+AXPosition:  { 29.0000, -23.0000 }
+AXSize: { 9.00000, 74.0000 }
 AXTitle:
 AXDescription:
 AXValue: C
@@ -65,11 +65,29 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: multiscript-type:post, tag:mi
 ------------
+AXRole: AXGroup
+AXParent: AXSection
+AXChildren: 0
+AXPosition:  { 8.00000, -33.0000 }
+AXSize: { 32.0000, 10.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: tag:mprescripts
+------------
 AXRole: AXSubscript
 AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 8.00000, -12.0000 }
-AXSize: { 10.0000, 76.0000 }
+AXSize: { 9.00000, 75.0000 }
 AXTitle:
 AXDescription:
 AXValue: B
@@ -88,7 +106,7 @@ AXRole: AXSuperscript
 AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 8.00000, -23.0000 }
-AXSize: { 10.0000, 75.0000 }
+AXSize: { 9.00000, 74.0000 }
 AXTitle:
 AXDescription:
 AXValue: A

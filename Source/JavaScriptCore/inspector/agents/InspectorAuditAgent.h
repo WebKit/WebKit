@@ -28,6 +28,7 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -72,7 +73,7 @@ protected:
 
 private:
     const Ref<AuditBackendDispatcher> m_backendDispatcher;
-    InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<InjectedScriptManager> m_injectedScriptManager;
     JSC::Debugger& m_debugger;
 
     JSC::Strong<JSC::JSObject> m_injectedWebInspectorAuditValue;

@@ -9,8 +9,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([41, 42, 43, 44]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([41, 42, 43, 44]));
   sample.foo = 42;
 
   var result = sample.slice();

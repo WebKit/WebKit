@@ -35,7 +35,7 @@ class MediaKeySystemPermissionRequest : public RefCounted<MediaKeySystemPermissi
 public:
     static Ref<MediaKeySystemPermissionRequest> create(const String& keySystem, CompletionHandler<void(bool)>&& completionHandler)
     {
-        return adoptRef(*new MediaKeySystemPermissionRequest(keySystem, WTFMove(completionHandler)));
+        return adoptRef(*new MediaKeySystemPermissionRequest(keySystem, WTF::move(completionHandler)));
     }
 
     void complete(bool success)
@@ -44,12 +44,12 @@ public:
         completionHandler(success);
     }
 
-    const String& keySystem() const { return m_keySystem; }
+    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
 private:
     MediaKeySystemPermissionRequest(const String& keySystem, CompletionHandler<void(bool)>&& completionHandler)
         : m_keySystem(keySystem)
-        , m_completionHandler(WTFMove(completionHandler))
+        , m_completionHandler(WTF::move(completionHandler))
     { }
 
     String m_keySystem;
@@ -60,14 +60,14 @@ class MediaKeySystemPermissionCallback : public API::ObjectImpl<API::Object::Typ
 public:
     static Ref<MediaKeySystemPermissionCallback> create(CompletionHandler<void(bool)>&& completionHandler)
     {
-        return adoptRef(*new MediaKeySystemPermissionCallback(WTFMove(completionHandler)));
+        return adoptRef(*new MediaKeySystemPermissionCallback(WTF::move(completionHandler)));
     }
 
     void complete(bool granted) { m_completionHandler(granted); }
 
 private:
     MediaKeySystemPermissionCallback(CompletionHandler<void(bool)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
     { }
 
     CompletionHandler<void(bool)> m_completionHandler;

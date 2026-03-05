@@ -140,14 +140,14 @@ GroupActivitiesCoordinator::GroupActivitiesCoordinator(GroupActivitiesSession& s
             protectedThis->sessionStateChanged(session, state);
     }))
 {
-    [session.protectedGroupSession() coordinateWithCoordinator:m_playbackCoordinator.get()];
+    [protect(session.groupSession()) coordinateWithCoordinator:m_playbackCoordinator.get()];
     session.addStateChangeObserver(m_stateChangeObserver);
 }
 
 GroupActivitiesCoordinator::~GroupActivitiesCoordinator()
 {
-    m_session->protectedGroupSession().get().newActivityCallback = nil;
-    m_session->protectedGroupSession().get().stateChangedCallback = nil;
+    protect(m_session->groupSession()).get().newActivityCallback = nil;
+    protect(m_session->groupSession()).get().stateChangedCallback = nil;
 }
 
 void GroupActivitiesCoordinator::sessionStateChanged(const GroupActivitiesSession& session, GroupActivitiesSession::State state)
@@ -243,7 +243,7 @@ void GroupActivitiesCoordinator::issuePlayCommand(AVDelegatingPlaybackCoordinato
     if (CMTIME_IS_NUMERIC(playCommand.hostClockTime))
         hostTime = MonotonicTime::fromMachAbsoluteTime(PAL::CMClockConvertHostTimeToSystemUnits(playCommand.hostClockTime));
 
-    client->playSession(itemTime, hostTime, [callback = WTFMove(callback)] (bool) {
+    client->playSession(itemTime, hostTime, [callback = WTF::move(callback)] (bool) {
         callback();
     });
 }
@@ -256,7 +256,7 @@ void GroupActivitiesCoordinator::issuePauseCommand(AVDelegatingPlaybackCoordinat
         return;
     }
 
-    client->pauseSession([callback = WTFMove(callback)] (bool) {
+    client->pauseSession([callback = WTF::move(callback)] (bool) {
         callback();
     });
 }
@@ -275,7 +275,7 @@ void GroupActivitiesCoordinator::issueSeekCommand(AVDelegatingPlaybackCoordinato
         return;
     }
 
-    client->seekSessionToTime(PAL::CMTimeGetSeconds(seekCommand.itemTime), [callback = WTFMove(callback)] (bool) mutable {
+    client->seekSessionToTime(PAL::CMTimeGetSeconds(seekCommand.itemTime), [callback = WTF::move(callback)] (bool) mutable {
         callback();
     });
 }

@@ -50,6 +50,6 @@ void setCrashLogMessage(const char* message)
 
     // Delete the message from last time, so we don't keep leaking messages.
     static NeverDestroyed<CString> previousCopiedCrashLogMessage;
-    previousCopiedCrashLogMessage.get() = WTFMove(copiedMessage);
+    previousCopiedCrashLogMessage.get() = WTF::move(copiedMessage);
 }
 }

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/IDLTypes.h>
-#include <WebCore/JSDOMConvertBase.h>
+#include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 #include <wtf/FixedVector.h>
 
 namespace WebCore {

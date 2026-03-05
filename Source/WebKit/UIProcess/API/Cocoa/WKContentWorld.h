@@ -27,6 +27,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKContentWorldConfiguration;
+
 /*! @abstract A WKContentWorld object allows you to separate your application's interaction with content displayed in a WKWebView into different roles that cannot interfere with one another.
 @discussion WKContentWorld objects should be treated as namespaces. This is useful for keeping your application's web content environment separate from the environment of the web page content itself,
 as well as managing multiple different environments within your own application.
@@ -58,6 +60,12 @@ Repeated calls will retrieve the same WKContentWorld instance.
 */
 @property (class, nonatomic, readonly) WKContentWorld *defaultClientWorld;
 
+/*! @abstract Creates a world with the given WKContentWorldConfiguration
+@discussion Unlike all other worlds, worlds created with this factory method cannot be retrieved later.
+Clients therefore need to take care to reference them for as long as they are needed.
+*/
++ (WKContentWorld *)worldWithConfiguration:(WKContentWorldConfiguration *)configuration NS_SWIFT_NAME(world(with:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 /*! @abstract Retrieves a named content world for API client use.
 @param name The name of the WKContentWorld to retrieve.
 @discussion When using a content world different from the page content world you can still manipulate the DOM and built-in DOM APIs but without conflicting with other aspects of the page content (e.g. JavaScript from the web page content itself)
@@ -69,6 +77,7 @@ The name can be used to keep distinct worlds identifiable anywhere a world might
 
 /*! @abstract The name of the WKContentWorld
 @discussion The pageWorld and defaultClientWorld instances will have a nil name.
+Instances created with `worldWithConfiguration` will also have a nil name.
 All other instances will have the non-nil name they were accessed by.
 */
 @property (nullable, nonatomic, readonly, copy) NSString *name;

@@ -201,7 +201,7 @@ static std::pair<RetainPtr<NSAttributedString>, RetainPtr<NSError>> copyAndLoadA
     }];
     TestWebKitAPI::Util::run(&done);
 
-    return { WTFMove(resultString), WTFMove(resultError) };
+    return { WTF::move(resultString), WTF::move(resultError) };
 }
 
 TEST(CopyHTML, SanitizationPreservesRelativeURLInAttributedString)

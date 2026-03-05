@@ -92,7 +92,7 @@ void ARKitCoordinator::getPrimaryDeviceInfo(WebPageProxy&, DeviceInfoCallback&& 
     deviceInfo.arFeatures.append(PlatformXR::SessionFeature::ReferenceSpaceTypeLocal);
     deviceInfo.arFeatures.append(PlatformXR::SessionFeature::ReferenceSpaceTypeViewer);
 
-    callback(WTFMove(deviceInfo));
+    callback(WTF::move(deviceInfo));
 }
 
 void ARKitCoordinator::requestPermissionOnSessionFeatures(WebPageProxy& page, const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, const PlatformXR::Device::FeatureList& requiredFeaturesRequested, const PlatformXR::Device::FeatureList& optionalFeaturesRequested, FeatureListCallback&& callback)
@@ -103,8 +103,8 @@ void ARKitCoordinator::requestPermissionOnSessionFeatures(WebPageProxy& page, co
         return;
     }
 
-    page.uiClient().requestPermissionOnXRSessionFeatures(page, securityOriginData, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested, [callback = WTFMove(callback)](std::optional<Vector<PlatformXR::SessionFeature>> userGranted) mutable {
-        callback(WTFMove(userGranted));
+    page.uiClient().requestPermissionOnXRSessionFeatures(page, securityOriginData, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested, [callback = WTF::move(callback)](std::optional<Vector<PlatformXR::SessionFeature>> userGranted) mutable {
+        callback(WTF::move(userGranted));
     });
 }
 
@@ -133,11 +133,11 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
             auto presentationSession = adoptNS(createPresentationSession(m_session.get(), presentationSessionDesc.get()));
 
             auto renderState = Box<RenderState>::create();
-            renderState->presentationSession = WTFMove(presentationSession);
+            renderState->presentationSession = WTF::move(presentationSession);
             renderState->terminateRequested = false;
 
             m_state = Active {
-                .sessionEventClient = WTFMove(sessionEventClient),
+                .sessionEventClient = WTF::move(sessionEventClient),
                 .pageIdentifier = page.webPageIDInMainFrameProcess(),
                 .renderState = renderState,
                 .renderThread = Thread::create("ARKitCoordinator session renderer"_s, [this, renderState] { renderLoop(renderState); }),
@@ -208,7 +208,7 @@ void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, std::optional<
                 onFrameUpdateCallback({ });
             }
 
-            active.renderState->onFrameUpdate = WTFMove(onFrameUpdateCallback);
+            active.renderState->onFrameUpdate = WTF::move(onFrameUpdateCallback);
         });
 }
 
@@ -300,15 +300,15 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
             auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
                 .framebufferSize = IntSize(colorTexture.width, colorTexture.height),
                 .textureData = PlatformXR::FrameData::ExternalTextureData {
-                    .colorTexture = WTFMove(colorTextureSendRight),
+                    .colorTexture = WTF::move(colorTextureSendRight),
                     .completionSyncEvent = { MachSendRight(completionPort), renderingFrameIndex }
                 },
             });
-            frameData.layers.set(defaultLayerHandle(), WTFMove(layerData));
+            frameData.layers.set(defaultLayerHandle(), WTF::move(layerData));
             frameData.shouldRender = true;
 
-            callOnMainRunLoop([callback = WTFMove(active->onFrameUpdate), frameData = WTFMove(frameData)]() mutable {
-                callback(WTFMove(frameData));
+            callOnMainRunLoop([callback = WTF::move(active->onFrameUpdate), frameData = WTF::move(frameData)]() mutable {
+                callback(WTF::move(frameData));
             });
 
             active->presentFrame.wait();

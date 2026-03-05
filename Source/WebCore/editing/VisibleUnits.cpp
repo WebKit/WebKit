@@ -43,7 +43,7 @@
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderedPosition.h"
 #include "Text.h"
 #include "TextBoundaries.h"
@@ -944,10 +944,10 @@ bool isLogicalEndOfLine(const VisiblePosition& p)
 
 static inline LayoutPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIterator::LineBoxIterator& lineBox, LayoutUnit lineDirectionPoint)
 {
-    auto& root = lineBox->formattingContextRoot();
-    auto absoluteBlockPoint = root.localToAbsolute(FloatPoint()) - toFloatSize(root.scrollPosition());
+    CheckedRef root = lineBox->formattingContextRoot();
+    auto absoluteBlockPoint = root->localToAbsolute(FloatPoint()) - toFloatSize(root->scrollPosition());
 
-    if (root.isHorizontalWritingMode())
+    if (root->isHorizontalWritingMode())
         return LayoutPoint(lineDirectionPoint - absoluteBlockPoint.x(), contentStartInBlockDirection(*lineBox));
 
     return LayoutPoint(contentStartInBlockDirection(*lineBox), lineDirectionPoint - absoluteBlockPoint.y());
@@ -968,7 +968,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
     if (!node)
         return VisiblePosition();
     
-    node->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(node->document())->updateLayoutIgnorePendingStylesheets();
     
     CheckedPtr renderer = node->renderer();
     if (!renderer)
@@ -1005,11 +1005,11 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
             return positionInParentBeforeNode(node.get());
         // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
         // For the time being, just err on the side of passing in `Bindings`.
-        auto* renderBox = dynamicDowncast<RenderBox>(renderer.get());
+        CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer.get());
         auto localOffset = renderBox ? renderBox->locationOffset() : LayoutSize { };
         return const_cast<RenderObject&>(renderer.get()).visiblePositionForPoint(pointInLine - localOffset, HitTestSource::Script);
     }
-    
+
     // Could not find a previous line. This means we must already be on the first line.
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
@@ -1026,7 +1026,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
     if (!node)
         return VisiblePosition();
     
-    node->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(node->document())->updateLayoutIgnorePendingStylesheets();
 
     if (!node->renderer())
         return VisiblePosition();
@@ -1043,7 +1043,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
     if (!lineBox) {
         // FIXME: We need do the same in previousLinePosition.
         if (RefPtr child = node->traverseToChildAt(p.deprecatedEditingOffset()))
-            node = WTFMove(child);
+            node = WTF::move(child);
         else
             node = node->lastDescendant();
         Position position = nextLineCandidatePosition(node.get(), visiblePosition, editableType);
@@ -1067,7 +1067,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
             return positionInParentBeforeNode(node.get());
         // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
         // For the time being, just err on the side of passing in `Bindings`.
-        auto* renderBox = dynamicDowncast<RenderBox>(renderer.get());
+        CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer.get());
         auto localOffset = renderBox ? renderBox->locationOffset() : LayoutSize { };
         return const_cast<RenderObject&>(renderer.get()).visiblePositionForPoint(pointInLine - localOffset, HitTestSource::Script);
     }
@@ -1148,8 +1148,8 @@ RefPtr<Node> findStartOfParagraph(Node* startNode, Node* highestRoot, Node* star
             n = NodeTraversal::previousPostOrder(*n, startBlock);
             continue;
         }
-        const RenderStyle& style = r->style();
-        if (style.visibility() != Visibility::Visible) {
+        CheckedRef style = r->style();
+        if (style->visibility() != Visibility::Visible) {
             n = NodeTraversal::previousPostOrder(*n, startBlock);
             continue;
         }
@@ -1160,7 +1160,7 @@ RefPtr<Node> findStartOfParagraph(Node* startNode, Node* highestRoot, Node* star
         if (CheckedPtr renderText = dynamicDowncast<RenderText>(*r); renderText && renderText->hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
-            if (style.preserveNewline()) {
+            if (style->preserveNewline()) {
                 auto& text = renderText->text();
                 int i = text.length();
                 int o = offset;
@@ -1207,8 +1207,8 @@ RefPtr<Node> findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayIn
             n = NodeTraversal::next(*n, stayInsideBlock);
             continue;
         }
-        const RenderStyle& style = r->style();
-        if (style.visibility() != Visibility::Visible) {
+        CheckedRef style = r->style();
+        if (style->visibility() != Visibility::Visible) {
             n = NodeTraversal::next(*n, stayInsideBlock);
             continue;
         }
@@ -1221,7 +1221,7 @@ RefPtr<Node> findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayIn
         if (CheckedPtr renderText = dynamicDowncast<RenderText>(*r); renderText && renderText->hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
-            if (style.preserveNewline()) {
+            if (style->preserveNewline()) {
                 auto& text = renderText->text();
                 int o = n == startNode ? offset : 0;
                 int length = text.length();
@@ -1265,14 +1265,14 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
     RefPtr node = findStartOfParagraph(startNode.get(), highestRoot.get(), startBlock.get(), offset, type, boundaryCrossingRule);
 
     if (RefPtr textNode = dynamicDowncast<Text>(node))
-        return Position(WTFMove(textNode), offset);
+        return Position(WTF::move(textNode), offset);
 
     if (type == Position::PositionIsOffsetInAnchor) {
         ASSERT(type == Position::PositionIsOffsetInAnchor || !offset);
-        return Position(WTFMove(node), offset, type);
+        return Position(WTF::move(node), offset, type);
     }
 
-    return Position(WTFMove(node), type);
+    return Position(WTF::move(node), type);
 }
 
 VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
@@ -1295,12 +1295,12 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
     RefPtr node = findEndOfParagraph(startNode.get(), highestRoot.get(), stayInsideBlock.get(), offset, type, boundaryCrossingRule);
 
     if (RefPtr textNode = dynamicDowncast<Text>(node))
-        return Position(WTFMove(textNode), offset);
+        return Position(WTF::move(textNode), offset);
 
     if (type == Position::PositionIsOffsetInAnchor)
-        return Position(WTFMove(node), offset, type);
+        return Position(WTF::move(node), offset, type);
 
-    return Position(WTFMove(node), type);
+    return Position(WTF::move(node), type);
 }
 
 // FIXME: isStartOfParagraph(startOfNextParagraph(pos)) is not always true
@@ -1365,7 +1365,7 @@ VisiblePosition startOfBlock(const VisiblePosition& visiblePosition, EditingBoun
 {
     Position position = visiblePosition.deepEquivalent();
     RefPtr<Node> startBlock;
-    if (!position.containerNode() || !(startBlock = enclosingBlock(position.protectedContainerNode(), rule)))
+    if (!position.containerNode() || !(startBlock = enclosingBlock(protect(position.containerNode()), rule)))
         return VisiblePosition();
     return firstPositionInNode(startBlock.get());
 }
@@ -1374,14 +1374,14 @@ VisiblePosition endOfBlock(const VisiblePosition& visiblePosition, EditingBounda
 {
     Position position = visiblePosition.deepEquivalent();
     RefPtr<Node> endBlock;
-    if (!position.containerNode() || !(endBlock = enclosingBlock(position.protectedContainerNode(), rule)))
+    if (!position.containerNode() || !(endBlock = enclosingBlock(protect(position.containerNode()), rule)))
         return VisiblePosition();
     return lastPositionInNode(endBlock.get());
 }
 
 bool inSameBlock(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return !a.isNull() && enclosingBlock(a.deepEquivalent().protectedContainerNode()) == enclosingBlock(b.deepEquivalent().protectedContainerNode());
+    return !a.isNull() && enclosingBlock(protect(a.deepEquivalent().containerNode())) == enclosingBlock(protect(b.deepEquivalent().containerNode()));
 }
 
 bool isStartOfBlock(const VisiblePosition& pos)
@@ -1413,7 +1413,7 @@ VisiblePosition startOfDocument(const Node* node)
 
 VisiblePosition startOfDocument(const VisiblePosition& c)
 {
-    return startOfDocument(c.deepEquivalent().protectedDeprecatedNode().get());
+    return startOfDocument(protect(c.deepEquivalent().deprecatedNode()).get());
 }
 
 VisiblePosition endOfDocument(const Node* node)
@@ -1434,7 +1434,7 @@ VisiblePosition endOfDocument(const Node* node)
 
 VisiblePosition endOfDocument(const VisiblePosition& c)
 {
-    return endOfDocument(c.deepEquivalent().protectedDeprecatedNode().get());
+    return endOfDocument(protect(c.deepEquivalent().deprecatedNode()).get());
 }
 
 bool isStartOfDocument(const VisiblePosition& p)
@@ -1703,7 +1703,7 @@ static VisiblePosition nextSentenceBoundaryInDirection(const VisiblePosition& vp
             if (newResult == result)
                 break;
 
-            result = WTFMove(newResult);
+            result = WTF::move(newResult);
         }
     } while (areVisiblePositionsInSameTreeScope(result, vp) && (useDownstream ? (result < vp) : (result > vp)));
 

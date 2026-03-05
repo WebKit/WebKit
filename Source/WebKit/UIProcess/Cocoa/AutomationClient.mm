@@ -91,7 +91,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
     // Force clients to create and register a session asynchronously. Otherwise,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
-    RunLoop::mainSingleton().dispatch([this, requestedSessionIdentifier = sessionIdentifier.createNSString(), configuration = WTFMove(configuration)] {
+    RunLoop::mainSingleton().dispatch([this, requestedSessionIdentifier = sessionIdentifier.createNSString(), configuration = WTF::move(configuration)] {
         if (m_delegateMethods.requestAutomationSession)
             [m_delegate.get() _processPool:m_processPool.get().get() didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier.get() configuration:configuration.get()];
     });

@@ -75,13 +75,11 @@ private:
 
     std::optional<bool> canTrickleIceCandidates() const final;
 
-    void emulatePlatformEvent(const String&) final { }
     void applyRotationForOutgoingVideoSources() final;
 
     friend class LibWebRTCMediaEndpoint;
     friend class LibWebRTCRtpSenderBackend;
     RTCPeerConnection& connection() { return m_peerConnection; }
-    Ref<RTCPeerConnection> protectedConnection() { return m_peerConnection.get(); }
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 
@@ -99,6 +97,8 @@ private:
 
 private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
+
+    bool shouldEnableServiceClass() const final;
 
     void startGatheringStatLogs(Function<void(String&&)>&&) final;
     void stopGatheringStatLogs() final;

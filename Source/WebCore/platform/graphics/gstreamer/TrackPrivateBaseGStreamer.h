@@ -64,7 +64,7 @@ public:
 
     // Used for MSE, where the initial caps of the pad are relevant for initializing the matching pad in the
     // playback pipeline.
-    void setInitialCaps(GRefPtr<GstCaps>&& caps) { m_initialCaps = WTFMove(caps); }
+    void setInitialCaps(GRefPtr<GstCaps>&& caps) { m_initialCaps = WTF::move(caps); }
     const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
 
     TrackID streamId() const { return m_id; }
@@ -114,11 +114,10 @@ protected:
     bool updateTrackIDFromTags(const GRefPtr<GstTagList>&);
 
 private:
-    bool getLanguageCode(GstTagList* tags, String& value);
+    std::optional<String> getLanguageCode(GstTagList*);
     static String generateUniquePlaybin2StreamID(TrackType, unsigned index);
     static char prefixForType(TrackType);
-    template<class StringType>
-    bool getTag(GstTagList* tags, const gchar* tagName, StringType& value);
+    std::optional<String> getTag(GstTagList* tags, ASCIILiteral tagName);
 
     void streamChanged();
     void tagsChanged();

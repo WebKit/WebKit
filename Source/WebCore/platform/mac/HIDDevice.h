@@ -43,7 +43,7 @@ class HIDDevice {
 public:
     explicit HIDDevice(IOHIDDeviceRef);
 
-    IOHIDDeviceRef rawElement() const { return m_rawDevice.get(); }
+    IOHIDDeviceRef rawElement() const LIFETIME_BOUND { return m_rawDevice.get(); }
 
     // Walks the collection tree of all elements in the device as presented by IOKit.
     // Adds each unique input element to the vector in the tree traversal order it was encountered.
@@ -53,7 +53,7 @@ public:
     uint16_t vendorID() const { return m_vendorID; }
     uint16_t productID() const { return m_productID; }
     uint32_t fullProductIdentifier() const { return m_vendorID << 16 | m_productID; }
-    const String& productName() const { return m_productName; }
+    const String& productName() const LIFETIME_BOUND { return m_productName; }
 
 private:
     RetainPtr<IOHIDDeviceRef> m_rawDevice;

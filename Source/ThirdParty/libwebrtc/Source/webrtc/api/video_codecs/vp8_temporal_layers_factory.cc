@@ -15,6 +15,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/fec_controller_override.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
@@ -28,6 +29,7 @@
 namespace webrtc {
 
 std::unique_ptr<Vp8FrameBufferController> Vp8TemporalLayersFactory::Create(
+    const Environment& env,
     const VideoCodec& codec,
     const VideoEncoder::Settings& /* settings */,
     FecControllerOverride* fec_controller_override) {
@@ -44,7 +46,7 @@ std::unique_ptr<Vp8FrameBufferController> Vp8TemporalLayersFactory::Create(
       // Legacy screenshare layers supports max 2 layers.
       num_temporal_layers = std::max(2, num_temporal_layers);
       controllers.push_back(
-          std::make_unique<ScreenshareLayers>(num_temporal_layers));
+          std::make_unique<ScreenshareLayers>(env, num_temporal_layers));
     } else {
       controllers.push_back(
           std::make_unique<DefaultTemporalLayers>(num_temporal_layers));

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSummaryElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSummaryElement);
 
 using namespace HTMLNames;
 
@@ -95,7 +95,7 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
 {
     if (isActiveSummary()) {
         auto& eventNames = WebCore::eventNames();
-        if (event.type() == eventNames.DOMActivateEvent && !isInSummaryInteractiveContent(event.protectedTarget().get())) {
+        if (event.type() == eventNames.DOMActivateEvent && !isInSummaryInteractiveContent(protect(event.target()).get())) {
             if (RefPtr<HTMLDetailsElement> details = detailsElement())
                 details->toggleOpen();
             event.setDefaultHandled();

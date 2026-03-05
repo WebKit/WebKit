@@ -1,41 +1,136 @@
 <script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../../../inspector/resources/stable-id-map.js"></script>
+
 <script>
-function appendAndRemoveIframe() {
-    let iframe = document.createElement("iframe");
-    iframe.src = "http://localhost:8000/site-isolation/inspector/target/resources/middle-iframe.html";
-    iframe.addEventListener("load", () => {
-        setTimeout(() => {
+    function addIframe(url) {
+        let iframe = document.createElement("iframe");
+        iframe.src = url;
+        document.body.append(iframe);
+    }
+
+    function addAndRemoveIframe() {
+        let iframe = document.createElement("iframe");
+        iframe.src = "http://localhost:8000/resources/network-simulator.py?test=inspector-target-remove&path=/site-isolation/inspector/target/resources/leaf-iframe.html&initialdelay=2000";
+        document.body.append(iframe);
+        requestAnimationFrame(function () {
+            // Remove before it has a chance to load.
             iframe.remove();
-        }, 0);
-    });
-    document.body.append(iframe);
-}
+        });
+    }
 
-function test() {
-    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target");
+    function addAndNavigateAwayIframe() {
+        let iframe = document.createElement("iframe");
+        iframe.src = "http://localhost:8000/resources/network-simulator.py?test=inspector-target-navigate&path=/site-isolation/inspector/target/resources/leaf-iframe.html&initialdelay=2000";
+        document.body.append(iframe);
+        requestAnimationFrame(function () {
+            // Navigate same-origin, cancelling the provisional cross-origin load.
+            iframe.src = "resources/leaf-iframe.html";
+        });
+    }
 
-    suite.addTestCase({
-        name: "SiteIsolation.Target.FrameTargetLifecycleEvents",
-        description: "Target lifecycle events for frame creation and deletion.",
-        test(resolve) {
-            let eventsSeen = 0;
-            const eventsExpected = 4;
+    function test() {
+        let stableTargetIds = new StableIdMap;
 
-            let handleTargetManagerEvent = (event) => {
-                InspectorTest.log({ eventType: event.type, targetType: event.data.target.type });
-                ++eventsSeen;
-                if (eventsSeen == eventsExpected)
-                    resolve();
+        // Run JS in testScript, wait for a number of callbacksExpected, and then resolve.
+        function runCallbackCountingTest(resolve, callbacksExpected, testScript) {
+            function handleTargetEvent(event) {
+                let { identifier, type, isProvisional } = event.data.target;
+                InspectorTest.log({
+                    event: event.type,
+                    target: stableTargetIds.get(identifier),
+                    type,
+                    isProvisional,
+                });
+                callback();
             }
-            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, handleTargetManagerEvent);
-            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetManagerEvent);
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, handleTargetEvent);
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetEvent);
+            WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handleTargetEvent);
 
-            InspectorTest.evaluateInPage(`appendAndRemoveIframe();`);
+            // Also wait for a console message confirming leaf-iframe's loading to ensure the test case completes
+            // before moving on.
+            function handleMessageAdded(event) {
+                InspectorTest.log({
+                    event: event.type,
+                    target: stableTargetIds.get(event.data.message.target.identifier),
+                    message: event.data.message.messageText,
+                });
+                callback();
+            }
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handleMessageAdded);
+
+            let callbacksSeen = 0;
+            function callback() {
+                ++callbacksSeen;
+                if (callbacksSeen === callbacksExpected) {
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, handleTargetEvent);
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetEvent);
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handleTargetEvent);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handleMessageAdded);
+
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(testScript);
         }
-    });
 
-    suite.runTestCasesAndFinish();
-}
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target");
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.SameOriginIframe",
+            description: "Same-origin iframe creates non-provisional frame target.",
+            test(resolve) {
+                runCallbackCountingTest(resolve, 2, `addIframe("resources/leaf-iframe.html");`);
+            },
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.CrossOriginIframe",
+            description: "Cross-origin iframe creates provisional frame target that commits.",
+            test(resolve) {
+                runCallbackCountingTest(resolve, 5, `
+                    addIframe("http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html");
+                `);
+            },
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.GrandChildCrossOriginIframeInSameOrigin",
+            description: "Same-origin parent with cross-origin grandchild creates provisional grandchild target.",
+            test(resolve) {
+                runCallbackCountingTest(resolve, 6, `addIframe("resources/middle-iframe.html");`);
+            },
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.GrandChildSameOriginIframeInCrossOrigin",
+            description: "Cross-origin parent with same-origin grandchild creates provisional child target and grandchild target.",
+            test(resolve) {
+                runCallbackCountingTest(resolve, 9, `
+                    addIframe("http://localhost:8000/site-isolation/inspector/target/resources/middle-iframe.html");
+                `);
+            },
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.ProvisionalFrameCancelledByRemoval",
+            description: "Removing cross-origin iframe before loading completes destroys both targets.",
+            test(resolve) {
+                runCallbackCountingTest(resolve, 4, `addAndRemoveIframe();`);
+            },
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.ProvisionalFrameCancelledByNavigation",
+            description: "Cancelling cross-origin load destroys provisional target but keeps committed target.",
+            test(resolve) {
+                runCallbackCountingTest(resolve, 4, `addAndNavigateAwayIframe();`);
+            },
+        });
+
+        suite.runTestCasesAndFinish();
+    }
 </script>
 
 <body onload="runTest()"></body>

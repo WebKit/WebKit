@@ -46,7 +46,7 @@
 #endif
 #endif
 
-#if PLATFORM(WPE) && USE(SKIA)
+#if PLATFORM(WPE)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkImage.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -72,7 +72,7 @@ public:
     static Ref<ViewSnapshot> create(RefPtr<cairo_surface_t>&&);
 #endif
 #endif
-#if PLATFORM(WPE) && USE(SKIA)
+#if PLATFORM(WPE)
     static Ref<ViewSnapshot> create(sk_sp<SkImage>&&);
 #endif
 
@@ -83,7 +83,6 @@ public:
 
 #if HAVE(IOSURFACE)
     id asLayerContents();
-    RetainPtr<id> asProtectedLayerContents();
     RetainPtr<CGImageRef> asImageForTesting();
 #endif
 
@@ -96,13 +95,13 @@ public:
     void setViewScrollPosition(WebCore::IntPoint scrollPosition) { m_viewScrollPosition = scrollPosition; }
     WebCore::IntPoint viewScrollPosition() const { return m_viewScrollPosition; }
 
-    void setComputedObscuredInset(WebCore::FloatBoxExtent&& inset) { m_computedObscuredInset = WTFMove(inset); }
+    void setComputedObscuredInset(WebCore::FloatBoxExtent&& inset) { m_computedObscuredInset = WTF::move(inset); }
     const WebCore::FloatBoxExtent computedObscuredInset() const { return m_computedObscuredInset; }
 
     void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-    void setOrigin(WebCore::SecurityOriginData&& origin) { m_origin = WTFMove(origin); }
+    void setOrigin(WebCore::SecurityOriginData&& origin) { m_origin = WTF::move(origin); }
     const WebCore::SecurityOriginData& origin() const { return m_origin; }
 
 #if HAVE(IOSURFACE)
@@ -127,7 +126,7 @@ public:
     WebCore::IntSize size() const;
 #endif
 
-#if PLATFORM(WPE) && USE(SKIA)
+#if PLATFORM(WPE)
     SkImage* image() const { return m_image.get(); }
 
     size_t estimatedImageSizeInBytes() const;
@@ -153,7 +152,7 @@ private:
 #endif
 #endif
 
-#if PLATFORM(WPE) && USE(SKIA)
+#if PLATFORM(WPE)
     explicit ViewSnapshot(sk_sp<SkImage>&&);
 
     sk_sp<SkImage> m_image;
@@ -167,7 +166,7 @@ private:
     WebCore::SecurityOriginData m_origin;
 };
 
-#if !(PLATFORM(WPE) && USE(CAIRO))
+using RefPtrViewSnapshot = RefPtr<ViewSnapshot>;
 
 class ViewSnapshotStore {
     WTF_MAKE_NONCOPYABLE(ViewSnapshotStore);
@@ -196,7 +195,5 @@ private:
     ListHashSet<WeakRef<ViewSnapshot>> m_snapshotsWithImages;
     bool m_disableSnapshotVolatility { false };
 };
-
-#endif // !(PLATFORM(WPE) && USE(CAIRO))
 
 } // namespace WebKit

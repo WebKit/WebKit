@@ -54,14 +54,16 @@
 #
 # Each entry can have a number of options in a [bracket enclosed, space delimited list]
 # These options currently include:
-#   - A compile time condition for inclusion of the data type
-#   - A header required to declare/define the type
+#   - `Conditional`: A compile time condition for inclusion of the data type
+#                    e.g: `Conditional=ENABLE(FEATURE_NAME)`
+#   - `Headers`: Comma-separated list of headers required to declare/define the type
+#                e.g: `Headers=<WebCore/Header.h>,<WebCore/AnotherHeader.h>`
 
-AudioSessionType : WebCore::DOMAudioSessionType [Conditional=ENABLE(DOM_AUDIO_SESSION) Header=<WebCore/DOMAudioSession.h>]
+AudioSessionType : WebCore::DOMAudioSessionType [Conditional=ENABLE(DOM_AUDIO_SESSION) Headers=<WebCore/DOMAudioSession.h>]
 IsAutofocusProcessed : bool
 UserDidInteractWithPage : bool
 IsClosing : bool
-DocumentURL : URL [Header=<wtf/URL.h>]
-DocumentSecurityOrigin : RefPtr<WebCore::SecurityOrigin> [Header=<WebCore/SecurityOrigin.h>]
-DocumentClasses : OptionSet<WebCore::DocumentClass> [Header=<WebCore/DocumentClasses.h>]
+DocumentURL : URL [Headers=<wtf/URL.h>]
+DocumentSecurityOrigin : RefPtr<WebCore::SecurityOrigin> [Headers=<WebCore/SecurityOrigin.h>]
+DocumentClasses : OptionSet<WebCore::DocumentClass> [Headers=<WebCore/DocumentClasses.h>]
 HasInjectedUserScript : bool

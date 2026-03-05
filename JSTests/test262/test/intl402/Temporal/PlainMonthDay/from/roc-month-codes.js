@@ -12,10 +12,14 @@ includes: [temporalHelpers.js]
 
 const calendar = "roc";
 
-for (const { monthCode, daysInMonth } of TemporalHelpers.ISOMonths) {
+for (const { month, monthCode, daysInMonth } of TemporalHelpers.ISOMonths) {
   // Test creation with monthCode and day 1
   const pmd = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 1 });
   TemporalHelpers.assertPlainMonthDay(pmd, monthCode, 1, `monthCode ${monthCode} should be preserved`);
+
+  // Test creation with month and day 1
+  const pmdMonth = Temporal.PlainMonthDay.from({ calendar, year: 61, month, day: 1 });
+  TemporalHelpers.assertPlainMonthDay(pmdMonth, monthCode, 1, `Equivalent monthCode ${monthCode} and month ${month} are resolved to the same PlainMonthDay`);
 
   // Test with maximum day value for this month (minimum for PlainMonthDay)
   const pmdMax = Temporal.PlainMonthDay.from({ calendar, monthCode, day: daysInMonth });

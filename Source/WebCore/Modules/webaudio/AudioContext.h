@@ -49,9 +49,11 @@ class AudioContext final
     , public MediaProducer
     , public MediaCanStartListener
     , private PlatformMediaSessionClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioContext);
+    WTF_MAKE_TZONE_ALLOCATED(AudioContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioContext);
 public:
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
     // Create an AudioContext for rendering to the audio hardware.
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     virtual ~AudioContext();
@@ -59,14 +61,12 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    WEBCORE_EXPORT static void setDefaultSampleRateForTesting(std::optional<float>);
+    WEBCORE_EXPORT static void NODELETE setDefaultSampleRateForTesting(std::optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
 
     DefaultAudioDestinationNode& destination() final { return m_destinationNode.get(); }
-    Ref<DefaultAudioDestinationNode> protectedDestination() { return destination(); }
     const DefaultAudioDestinationNode& destination() const final { return m_destinationNode.get(); }
-    Ref<const DefaultAudioDestinationNode> protectedDestination() const { return destination(); }
 
     double baseLatency();
     double outputLatency();
@@ -104,13 +104,13 @@ public:
     void defaultDestinationWillBecomeConnected();
 
 #if PLATFORM(IOS_FAMILY)
-    const String& sceneIdentifier() const final;
+    const String& sceneIdentifier() const LIFETIME_BOUND final;
 #endif
 
 private:
     AudioContext(Document&, const AudioContextOptions&);
 
-    bool willBeginPlayback();
+    void willBeginPlayback(CompletionHandler<void(bool)>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
@@ -147,7 +147,7 @@ private:
     std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final;
     bool isSuspended() const final;
-    bool isPlaying() const final;
+    bool NODELETE isPlaying() const final;
     bool isAudible() const final;
     bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
@@ -159,7 +159,7 @@ private:
     // ActiveDOMObject
     void suspend(ReasonForSuspension) final;
     void resume() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     const UniqueRef<DefaultAudioDestinationNode> m_destinationNode;
     const Ref<PlatformMediaSession> m_mediaSession;

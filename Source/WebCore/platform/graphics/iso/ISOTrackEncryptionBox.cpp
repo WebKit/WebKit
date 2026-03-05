@@ -102,7 +102,7 @@ bool ISOTrackEncryptionBox::parsePayload(DataView& view, unsigned& offset)
                 return false;
             defaultConstantIV.append(character);
         }
-        m_defaultConstantIV = WTFMove(defaultConstantIV);
+        m_defaultConstantIV = WTF::move(defaultConstantIV);
     }
 
     return true;

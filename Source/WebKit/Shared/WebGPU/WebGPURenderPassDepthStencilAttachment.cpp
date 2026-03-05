@@ -39,10 +39,10 @@ namespace WebKit::WebGPU {
 
 static WebGPUIdentifier getIdentifier(ConvertToBackingContext& convertToBacking, const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
-    if (RefPtr view = renderPassDepthStencilAttachment.protectedView().get())
+    if (RefPtr view = renderPassDepthStencilAttachment.textureView())
         return convertToBacking.convertToBacking(*view);
 
-    return convertToBacking.convertToBacking(*renderPassDepthStencilAttachment.protectedTexture().get());
+    return convertToBacking.convertToBacking(*protect(renderPassDepthStencilAttachment.texture()));
 }
 std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {

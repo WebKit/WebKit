@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitDOMAttr.h"
 
-#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
@@ -94,7 +93,9 @@ static void webkit_dom_attr_dom_event_target_init(WebKitDOMEventTargetIface* ifa
     iface->remove_event_listener = webkit_dom_attr_remove_event_listener;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMAttr, webkit_dom_attr, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_attr_dom_event_target_init))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_ATTR_PROP_0,

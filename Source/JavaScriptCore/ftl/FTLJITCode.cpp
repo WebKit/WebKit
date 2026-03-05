@@ -58,7 +58,7 @@ void JITCode::initializeB3Code(CodeRef<JSEntryPtrTag> b3Code)
 
 void JITCode::initializeB3Byproducts(std::unique_ptr<OpaqueByproducts> byproducts)
 {
-    m_b3Byproducts = WTFMove(byproducts);
+    m_b3Byproducts = WTF::move(byproducts);
 }
 
 void JITCode::initializeAddressForCall(CodePtr<JSEntryPtrTag> address)
@@ -152,7 +152,7 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
         exit.m_descriptor->validateReferences(trackedReferences);
 }
 
-RegisterSetBuilder JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
+RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
 {
     for (OSRExit& exit : m_osrExit) {
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {

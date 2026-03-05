@@ -69,12 +69,12 @@ WebCore::Color createColor(const ColorMix& unresolved, PlatformColorResolutionSt
         ColorMixResolver {
             unresolved.colorInterpolationMethod,
             ColorMixResolver::Component {
-                WTFMove(component1Color),
-                WTFMove(percentage1),
+                WTF::move(component1Color),
+                WTF::move(percentage1),
             },
             ColorMixResolver::Component {
-                WTFMove(component2Color),
-                WTFMove(percentage2),
+                WTF::move(component2Color),
+                WTF::move(percentage2),
             }
         }
     );

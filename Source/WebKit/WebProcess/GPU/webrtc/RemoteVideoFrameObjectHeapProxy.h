@@ -46,18 +46,17 @@ class RemoteVideoFrameProxy;
 // Wrapper around RemoteVideoFrameObjectHeapProxyProcessor that will always be destroyed on main thread.
 class RemoteVideoFrameObjectHeapProxy : public ThreadSafeRefCounted<RemoteVideoFrameObjectHeapProxy, WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<RemoteVideoFrameObjectHeapProxy> create() { return adoptRef(*new RemoteVideoFrameObjectHeapProxy()); }
+    static Ref<RemoteVideoFrameObjectHeapProxy> create(GPUProcessConnection& connection) { return adoptRef(*new RemoteVideoFrameObjectHeapProxy(connection)); }
 
-    void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
 #if PLATFORM(COCOA)
-    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, canUseIOSurface, WTFMove(callback)); }
+    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, canUseIOSurface, WTF::move(callback)); }
     RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame) { return m_processor->getNativeImage(frame); }
 #endif
 
 private:
-    explicit RemoteVideoFrameObjectHeapProxy()
+    explicit RemoteVideoFrameObjectHeapProxy(GPUProcessConnection& connection)
 #if PLATFORM(COCOA)
-        : m_processor(RemoteVideoFrameObjectHeapProxyProcessor::create())
+        : m_processor(RemoteVideoFrameObjectHeapProxyProcessor::create(connection))
 #endif
     {
     }
@@ -65,14 +64,6 @@ private:
     const Ref<RemoteVideoFrameObjectHeapProxyProcessor> m_processor;
 #endif
 };
-
-inline void RemoteVideoFrameObjectHeapProxy::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
-{
-    UNUSED_PARAM(gpuProcessConnection);
-#if PLATFORM(COCOA)
-    m_processor->gpuProcessConnectionDidBecomeAvailable(gpuProcessConnection);
-#endif
-}
 
 } // namespace WebKit
 

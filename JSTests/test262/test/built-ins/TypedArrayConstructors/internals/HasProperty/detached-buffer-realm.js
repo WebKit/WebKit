@@ -27,4 +27,4 @@ testWithTypedArrayConstructors(function(TA) {
   $DETACHBUFFER(sample.buffer);
 
   assert.sameValue(Reflect.has(sample, '0'), false, 'Reflect.has(sample, "0") must return false');
-});
+}, null, ["passthrough"]);

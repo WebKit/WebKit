@@ -13,7 +13,9 @@
 #include <optional>
 
 #include "api/test/simulated_network.h"
+#include "api/transport/ecn_marking.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -68,6 +70,61 @@ TEST(LeakyBucketNetworkQueueTest, DequeueDoesNotChangePacketInfo) {
           Field(&PacketInFlightInfo::packet_id, packet_info.packet_id),
           Property(&PacketInFlightInfo::packet_size, packet_info.packet_size()),
           Property(&PacketInFlightInfo::send_time, packet_info.send_time()))));
+}
+
+TEST(LeakyBucketNetworkQueueTest,
+     Ect1PacketMarkedCeIfSoujournEqualOrGreaterThanMax) {
+  LeakyBucketNetworkQueue queue(
+      {.max_ect1_sojourn_time = TimeDelta::Millis(10),
+       .target_ect1_sojourn_time = TimeDelta::Millis(5)});
+
+  PacketInFlightInfo packet_info(DataSize::Bytes(123), Timestamp::Seconds(123),
+                                 /*packet_id=*/1, EcnMarking::kEct1);
+  queue.EnqueuePacket(packet_info);
+
+  EXPECT_THAT(
+      queue.DequeuePacket(Timestamp::Seconds(123) + TimeDelta::Millis(10)),
+      Optional(Field(&PacketInFlightInfo::ecn, EcnMarking::kCe)));
+
+  // Sojourn time greater than max.
+  queue.EnqueuePacket(packet_info);
+  EXPECT_THAT(
+      queue.DequeuePacket(Timestamp::Seconds(123) + TimeDelta::Millis(11)),
+      Optional(Field(&PacketInFlightInfo::ecn, EcnMarking::kCe)));
+}
+
+TEST(LeakyBucketNetworkQueueTest, Ect0PacketNeverMarkedCe) {
+  LeakyBucketNetworkQueue queue(
+      {.max_ect1_sojourn_time = TimeDelta::Millis(10),
+       .target_ect1_sojourn_time = TimeDelta::Millis(5)});
+
+  PacketInFlightInfo packet_info(DataSize::Bytes(123), Timestamp::Seconds(123),
+                                 /*packet_id=*/1, EcnMarking::kEct0);
+  queue.EnqueuePacket(packet_info);
+
+  EXPECT_THAT(
+      queue.DequeuePacket(Timestamp::Seconds(123) + TimeDelta::Millis(10)),
+      Optional(Field(&PacketInFlightInfo::ecn, EcnMarking::kEct0)));
+}
+
+TEST(LeakyBucketNetworkQueueTest,
+     Ect1PacketNotMarkedAsCeIfSoujournTimeLessOrEqualTarget) {
+  LeakyBucketNetworkQueue queue(
+      {.max_ect1_sojourn_time = TimeDelta::Millis(10),
+       .target_ect1_sojourn_time = TimeDelta::Millis(5)});
+
+  PacketInFlightInfo packet_info(DataSize::Bytes(123), Timestamp::Seconds(123),
+                                 /*packet_id=*/1, EcnMarking::kEct1);
+  queue.EnqueuePacket(packet_info);
+
+  EXPECT_THAT(
+      queue.DequeuePacket(Timestamp::Seconds(123) + TimeDelta::Millis(5)),
+      Optional(Field(&PacketInFlightInfo::ecn, EcnMarking::kEct1)));
+
+  queue.EnqueuePacket(packet_info);
+  EXPECT_THAT(
+      queue.DequeuePacket(Timestamp::Seconds(123) + TimeDelta::Millis(3)),
+      Optional(Field(&PacketInFlightInfo::ecn, EcnMarking::kEct1)));
 }
 
 }  // namespace

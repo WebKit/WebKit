@@ -34,6 +34,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/NowPlayingManager.h>
+#include <WebCore/PlatformMediaDecodingType.h>
 #include <wtf/BitSet.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
@@ -45,13 +46,14 @@ class AudioDestination;
 class AudioIOCallback;
 class AudioVideoRenderer;
 class CDMFactory;
+class ContentType;
 class NowPlayingManager;
 class VideoFrame;
 
 struct AudioDestinationCreationOptions;
 
 class WEBCORE_EXPORT MediaStrategy : public CanMakeThreadSafeCheckedPtr<MediaStrategy> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStrategy);
+    WTF_MAKE_TZONE_ALLOCATED(MediaStrategy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaStrategy);
 public:
 #if ENABLE(WEB_AUDIO)
@@ -71,14 +73,36 @@ public:
     static void addMockMediaSourceEngine();
 #endif
 
+#if ENABLE(VIDEO)
+    virtual void nativeImageFromVideoFrame(const VideoFrame&, CompletionHandler<void(std::optional<RefPtr<NativeImage>>&&)>&&);
+    virtual bool canDecodeExtendedType(PlatformMediaDecodingType, const ContentType&) { return false; }
+#endif
+
     virtual bool enableWebMMediaPlayer() const { return true; }
     virtual bool isWebMediaStrategy() const { return false; }
+
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    void setWirelessPlaybackMediaPlayerEnabled(bool);
+    bool wirelessPlaybackMediaPlayerEnabled() const;
+#endif
 
 protected:
     MediaStrategy();
     virtual ~MediaStrategy();
     bool m_mockMediaSourceEnabled { false };
     WTF::BitSet<16> m_remoteRenderersEnabled;
+
+private:
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    bool m_wirelessPlaybackMediaPlayerEnabled { false };
+#endif
 };
+
+#if ENABLE(VIDEO)
+inline void MediaStrategy::nativeImageFromVideoFrame(const VideoFrame&, CompletionHandler<void(std::optional<RefPtr<NativeImage>>&&)>&& completionHandler)
+{
+    completionHandler(std::nullopt);
+}
+#endif
 
 } // namespace WebCore

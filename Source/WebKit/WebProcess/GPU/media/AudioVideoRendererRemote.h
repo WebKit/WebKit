@@ -36,6 +36,7 @@
 #include <WebCore/AudioVideoRenderer.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/MediaSampleConverter.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
@@ -130,6 +131,7 @@ private:
     RefPtr<WebCore::VideoFrame> currentVideoFrame() const final;
     void paintCurrentVideoFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     RefPtr<WebCore::NativeImage> currentNativeImage() const final;
+    Ref<BitmapImagePromise> currentBitmapImage() const final;
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     PlatformLayer* platformVideoLayer() const final;
 
@@ -152,7 +154,7 @@ private:
     void setPreferences(WebCore::VideoRendererPreferences) final;
     void setHasProtectedVideoContent(bool) final;
 
-    TrackIdentifier addTrack(TrackType) final;
+    std::optional<TrackIdentifier> addTrack(TrackType) final;
     void removeTrack(TrackIdentifier) final;
 
     void enqueueSample(TrackIdentifier, Ref<WebCore::MediaSample>&&, std::optional<MediaTime>) final;
@@ -184,6 +186,7 @@ private:
     void setLayerHostingContext(WebCore::HostingContext&&);
 #if PLATFORM(COCOA)
     WebCore::FloatSize videoLayerSize() const;
+    void setVideoLayerSize(const WebCore::FloatSize&) final;
     void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) final;
 #endif
     void notifyVideoLayerSizeChanged(Function<void(const MediaTime&, WebCore::FloatSize)>&& callback) final;
@@ -203,7 +206,6 @@ private:
     // Logger
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    Ref<const Logger> protectedLogger() const { return logger(); }
     ASCIILiteral logClassName() const final { return "AudioVideoRendererRemote"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
@@ -258,6 +260,7 @@ private:
     HashMap<TrackIdentifier, ReadyForMoreDataState> m_readyForMoreDataStates WTF_GUARDED_BY_LOCK(m_lock);
     HashMap<TrackIdentifier, std::unique_ptr<RequestPromise::AutoRejectProducer>> m_requestMediaDataWhenReadyDataPromises WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     HashMap<TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>> m_trackNeedsReenqueuingCallbacks WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    HashMap<TrackIdentifier, WebCore::MediaSampleConverter> m_mediaSampleConverters WTF_GUARDED_BY_CAPABILITY(queueSingleton());
 
     Vector<LayerHostingContextCallback> m_layerHostingContextRequests WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     WebCore::HostingContext m_layerHostingContext WTF_GUARDED_BY_LOCK(m_lock);

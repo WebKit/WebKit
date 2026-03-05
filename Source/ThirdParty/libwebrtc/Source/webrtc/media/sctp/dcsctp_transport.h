@@ -17,11 +17,13 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/dtls_transport_interface.h"
 #include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/priority.h"
 #include "api/rtc_error.h"
 #include "api/sctp_transport_interface.h"
@@ -29,6 +31,7 @@
 #include "api/transport/data_channel_transport_interface.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "net/dcsctp/public/dcsctp_message.h"
+#include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/dcsctp_socket_factory.h"
 #include "net/dcsctp/public/timeout.h"
@@ -40,15 +43,13 @@
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/random.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
 class DcSctpTransport : public SctpTransportInternal,
-                        public dcsctp::DcSctpSocketCallbacks,
-                        public sigslot::has_slots<> {
+                        public dcsctp::DcSctpSocketCallbacks {
  public:
   DcSctpTransport(const Environment& env,
                   Thread* network_thread,
@@ -77,6 +78,8 @@ class DcSctpTransport : public SctpTransportInternal,
   size_t buffered_amount_low_threshold(int sid) const override;
   void SetBufferedAmountLowThreshold(int sid, size_t bytes) override;
   void set_debug_name_for_testing(const char* debug_name) override;
+
+  static std::vector<uint8_t> GenerateConnectionToken(const Environment& env);
 
  private:
   // dcsctp::DcSctpSocketCallbacks
@@ -146,6 +149,10 @@ class DcSctpTransport : public SctpTransportInternal,
   bool ready_to_send_data_ RTC_GUARDED_BY(network_thread_) = false;
   std::function<void()> on_connected_callback_ RTC_GUARDED_BY(network_thread_);
   DataChannelSink* data_channel_sink_ RTC_GUARDED_BY(network_thread_) = nullptr;
+
+  static dcsctp::DcSctpOptions CreateDcSctpOptions(
+      const SctpOptions& options,
+      const FieldTrialsView& field_trials);
 };
 
 }  // namespace webrtc

@@ -415,19 +415,22 @@ public:
                     SSACalculator::Variable* ssaVariable = phiDef->variable();
                     VariableAccessData* variable = m_variableForSSAIndex[ssaVariable->index()];
                     FlushFormat format = variable->flushFormat();
+                    Node* incoming = valueForOperand.operand(variable->operand());
 
                     // We can use an unchecked use kind because the SetLocal was turned into a Check.
                     // We have to use an unchecked use because at least sometimes, the end of the block
                     // is not exitOK.
                     UseKind useKind = uncheckedUseKindFor(format);
+                    // We differentiate between storage and other cells at in FTL lowering so we want to make sure we use the correct
+                    // UseKind to we look up the incoming node from the correct place.
+                    if (incoming->hasStorageResult())
+                        useKind = KnownStorageUse;
 
-                    dataLogLnIf(verbose, "Inserting Upsilon for ", variable->operand(), " propagating ", valueForOperand.operand(variable->operand()), " to ", phiNode);
+                    dataLogLnIf(verbose, "Inserting Upsilon for ", variable->operand(), " propagating ", incoming, " to ", phiNode);
                     
                     m_insertionSet.insertNode(
                         upsilonInsertionPoint, SpecNone, Upsilon, upsilonOrigin,
-                        OpInfo(phiNode), Edge(
-                            valueForOperand.operand(variable->operand()),
-                            useKind));
+                        OpInfo(phiNode), Edge(incoming, useKind));
                 }
             }
             
@@ -459,7 +462,7 @@ public:
                 return node->stackAccessData()->format;
             });
 
-            m_graph.m_argumentFormats[entrypointIndex] = WTFMove(argumentFormats);
+            m_graph.m_argumentFormats[entrypointIndex] = WTF::move(argumentFormats);
         }
 
         m_graph.m_rootToArguments.clear();

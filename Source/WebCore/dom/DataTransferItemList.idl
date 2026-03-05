@@ -29,13 +29,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/dnd.html#datatransferitemlist
 [
     EnabledBySetting=DataTransferItemsEnabled,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface DataTransferItemList {
     readonly attribute long length;
-    getter DataTransferItem item(unsigned long index);
+    // FIXME: The spec says this should be anonymous. If the name gets removed, the nullable annotation should also be removed, as it is implicit for anonymous getters.
+    getter DataTransferItem? item(unsigned long index);
 
     [CallWith=CurrentDocument] DataTransferItem? add(DOMString data, DOMString type);
     DataTransferItem? add(File file);

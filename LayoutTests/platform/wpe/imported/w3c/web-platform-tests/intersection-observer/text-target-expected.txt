@@ -1,0 +1,7 @@
+
+
+PASS IntersectionObserver observing a br element.
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.bottom expected 725 +/- 0 but got 726
+FAIL document.scrollingElement.scrollTop = 300 assert_approx_equals: entries[1].boundingClientRect.bottom expected 425 +/- 0 but got 426
+FAIL document.scrollingElement.scrollTop = 100 assert_approx_equals: entries[2].boundingClientRect.bottom expected 625 +/- 0 but got 626
+

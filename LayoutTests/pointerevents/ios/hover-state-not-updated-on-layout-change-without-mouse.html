@@ -1,0 +1,102 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+#spacer {
+    height: 0px;
+}
+
+#item1, #item2 {
+    position: absolute;
+    left: 100px;
+    width: 200px;
+    height: 100px;
+    background-color: lightblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+#item1 {
+    top: 100px;
+}
+
+#item2 {
+    top: 220px;
+}
+
+#item1:hover, #item2:hover {
+    background-color: yellow;
+}
+</style>
+</head>
+<body>
+<div id="spacer"></div>
+<div id="item1">Item 1</div>
+<div id="item2">Item 2</div>
+
+<script>
+description("Test that hover states are not updated after layout changes on iOS when no mouse device is connected.");
+window.jsTestIsAsync = true;
+
+if (!window.testRunner || !window.eventSender) {
+    testFailed("This test requires testRunner and eventSender");
+    finishJSTest();
+}
+
+function checkHovered(elementId) {
+    const elem = document.getElementById(elementId);
+    const bgColor = window.getComputedStyle(elem).backgroundColor;
+    return bgColor === 'rgb(255, 255, 0)';
+}
+
+async function runTest() {
+    try {
+        testRunner.setHasMouseDeviceForTesting(false);
+        await UIHelper.renderingUpdate();
+
+        const item1 = document.getElementById('item1');
+        const rect1 = item1.getBoundingClientRect();
+        const pointerX = rect1.left + rect1.width / 2;
+        const pointerY = rect1.top + rect1.height / 2;
+
+        await eventSender.asyncMouseMoveTo(pointerX, pointerY);
+        await UIHelper.renderingUpdate();
+
+        debug("\nTriggering layout change (expanding spacer by 120px)...");
+        const spacer = document.getElementById('spacer');
+        spacer.style.height = '120px';
+        window.internals?.updateLayoutAndStyleForAllFrames();
+        await UIHelper.renderingUpdate();
+
+        const item1HoveredAfter = checkHovered('item1');
+        const item2HoveredAfter = checkHovered('item2');
+
+        if (!item1HoveredAfter && !item2HoveredAfter) {
+            testPassed("Hover states correctly remained unchanged during layout change without mouse device");
+        } else {
+            if (item2HoveredAfter) {
+                testFailed("item2 incorrectly gained hover state after moving under pointer position");
+            }
+            if (item1HoveredAfter) {
+                testFailed("item1 unexpectedly hovered");
+            }
+        }
+
+    } catch (error) {
+        testFailed(`Test error: ${error}`);
+    } finally {
+        finishJSTest();
+    }
+}
+
+window.addEventListener('load', async () => {
+    runTest();
+});
+</script>
+</body>
+</html>

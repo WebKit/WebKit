@@ -34,8 +34,6 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
-#include "StyleInheritedData.h"
-#include "StyleProperties.h"
 #include "TextControlInnerElements.h"
 #include "VisiblePosition.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -43,25 +41,20 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControl);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlInnerContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControl);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlInnerContainer);
 
 RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, RenderStyle&& style)
-    : RenderBlockFlow(type, element, WTFMove(style), BlockFlowFlag::IsTextControl)
+    : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsTextControl)
 {
     ASSERT(isRenderTextControl());
 }
 
 RenderTextControl::~RenderTextControl() = default;
 
-HTMLTextFormControlElement& RenderTextControl::textFormControlElement() const
+HTMLTextFormControlElement& NODELETE RenderTextControl::textFormControlElement() const
 {
     return downcast<HTMLTextFormControlElement>(nodeForNonAnonymous());
-}
-
-Ref<HTMLTextFormControlElement> RenderTextControl::protectedTextFormControlElement() const
-{
-    return textFormControlElement();
 }
 
 RefPtr<TextControlInnerTextElement> RenderTextControl::innerTextElement() const
@@ -69,7 +62,7 @@ RefPtr<TextControlInnerTextElement> RenderTextControl::innerTextElement() const
     return textFormControlElement().innerTextElement();
 }
 
-void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderTextControl::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
     auto innerText = innerTextElement();
@@ -82,8 +75,8 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         auto newInnerTextStyle = textFormControlElement().createInnerTextStyle(style());
         auto oldInnerTextStyle = textFormControlElement().createInnerTextStyle(*oldStyle);
         if (newInnerTextStyle != oldInnerTextStyle)
-            innerTextRenderer->setStyle(WTFMove(newInnerTextStyle));
-        else if (diff == StyleDifference::RepaintIfText || diff == StyleDifference::Repaint) {
+            innerTextRenderer->setStyle(WTF::move(newInnerTextStyle));
+        else if (diff == Style::DifferenceResult::RepaintIfText || diff == Style::DifferenceResult::Repaint) {
             // Repaint is expected to be propagated down to the shadow tree when non-inherited style property changes
             // (e.g. text-decoration-color) since that's where the value actually takes effect.
             innerTextRenderer->repaint();
@@ -116,9 +109,9 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
             CheckedPtr placeholderBox = placeholder->renderBox();
             if (!placeholderBox)
                 return { };
-            return placeholderBox->computeLogicalHeight(placeholderBox->logicalHeight(), placeholderBox->logicalTop()).m_extent;
+            return placeholderBox->computeLogicalHeight(placeholderBox->logicalHeight(), placeholderBox->logicalTop()).extent;
         };
-        logicalHeightExtent.m_extent = std::max(logicalHeightExtent.m_extent, placeholderLogicalHeight());
+        logicalHeightExtent.extent = std::max(logicalHeightExtent.extent, placeholderLogicalHeight());
         return logicalHeightExtent;
     }
 
@@ -222,17 +215,11 @@ void RenderTextControl::computePreferredLogicalWidths()
     clearNeedsPreferredWidthsUpdate();
 }
 
-void RenderTextControl::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) const
-{
-    if (!size().isEmpty())
-        rects.append(LayoutRect(additionalOffset, size()));
-}
-
 void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 
-    auto* placeholder = textFormControlElement().placeholderElement();
+    RefPtr placeholder = textFormControlElement().placeholderElement();
     if (!placeholder)
         return;
 
@@ -273,7 +260,7 @@ int RenderTextControl::innerLineHeight() const
 #endif
 
 RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& element, RenderStyle&& style)
-    : RenderFlexibleBox(Type::TextControlInnerContainer, element, WTFMove(style))
+    : RenderFlexibleBox(Type::TextControlInnerContainer, element, WTF::move(style))
 {
 
 }

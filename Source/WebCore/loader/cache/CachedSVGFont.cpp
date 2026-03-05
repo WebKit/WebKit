@@ -47,13 +47,13 @@
 namespace WebCore {
 
 CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, const Settings& settings)
-    : CachedFont(WTFMove(request), sessionID, cookieJar, Type::SVGFontResource)
+    : CachedFont(WTF::move(request), sessionID, cookieJar, Type::SVGFontResource)
     , m_settings(settings)
 {
 }
 
 CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, CachedSVGFont& resource)
-    : CachedSVGFont(WTFMove(request), resource.sessionID(), resource.protectedCookieJar().get(), resource.m_settings.copyRef())
+    : CachedSVGFont(WTF::move(request), resource.sessionID(), protect(resource.cookieJar()).get(), resource.m_settings.copyRef())
 {
 }
 
@@ -74,6 +74,10 @@ FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription
 
 bool CachedSVGFont::ensureCustomFontData()
 {
+    // SafeFontParser does not support OpenType (OTF) fonts, so we can fail early here instead of having it converted and failing later at the parsing.
+    if (m_settings->downloadableBinaryFontTrustedTypes() == DownloadableBinaryFontTrustedTypes::SafeFontParser)
+        return false;
+
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
         bool sawError = false;
         {
@@ -86,7 +90,7 @@ bool CachedSVGFont::ensureCustomFontData()
 
             externalSVGDocument->setMarkupUnsafe(decoder->decodeAndFlush(m_data->makeContiguous()->span()), { ParserContentPolicy::AllowDeclarativeShadowRoots });
             sawError = decoder->sawError();
-            m_externalSVGDocument = WTFMove(externalSVGDocument);
+            m_externalSVGDocument = WTF::move(externalSVGDocument);
         }
 
         if (sawError)
@@ -96,7 +100,7 @@ bool CachedSVGFont::ensureCustomFontData()
         if (!m_externalSVGFontElement || !firstFontFace())
             return false;
         if (auto convertedFont = convertSVGToOTFFont(Ref { *m_externalSVGFontElement }))
-            m_convertedFont = SharedBuffer::create(WTFMove(convertedFont.value()));
+            m_convertedFont = SharedBuffer::create(WTF::move(convertedFont.value()));
         else {
             m_externalSVGDocument = nullptr;
             m_externalSVGFontElement = nullptr;

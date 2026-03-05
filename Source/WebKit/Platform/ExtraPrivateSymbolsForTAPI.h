@@ -28,6 +28,17 @@
 #include <wtf/spi/darwin/XPCSPI.h>
 
 #ifdef __cplusplus
+
+#if !defined(__swift__)
+// IPC::MessageLog accessor functions for TAPI verification
+namespace IPC {
+template<size_t> class MessageLog;
+struct MessageLogMetadata;
+MessageLog<256>& messageLog();
+const MessageLogMetadata& messageLogMetadata();
+}
+#endif
+
 extern "C" {
 #endif
 

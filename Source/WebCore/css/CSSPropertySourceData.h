@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <WebCore/StyleRuleType.h>
+#include "StyleRuleType.h"
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -45,7 +45,7 @@ class StyleRuleBase;
 struct SourceRange {
     SourceRange();
     SourceRange(unsigned start, unsigned end);
-    unsigned length() const;
+    unsigned NODELETE length() const;
 
     unsigned start;
     unsigned end;

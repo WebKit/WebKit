@@ -918,6 +918,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isShowingContextMenu()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.isShowingContextMenu`, result => resolve(result === "true"));
+        });
+    }
+
     static dismissMenu()
     {
         if (!this.isWebKit2())
@@ -971,7 +978,7 @@ window.UIHelper = class UIHelper {
             return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {
                     uiController.doAfterNextStablePresentationUpdate(function() {
-                        uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${scrollingNodeID[0]}, ${scrollingNodeID[1]}, ${isVertical}));
+                        uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${scrollingNodeID.nodeIdentifier}, ${scrollingNodeID.processIdentifier}, ${isVertical}));
                     });
                 })()`, state => {
                     resolve(state);
@@ -1290,6 +1297,40 @@ window.UIHelper = class UIHelper {
     {
         const selectColorScript = `uiController.setSelectedColorForColorPicker(${red}, ${green}, ${blue})`;
         return new Promise(resolve => testRunner.runUIScript(selectColorScript, resolve));
+    }
+
+    static isShowingColorPicker()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.isShowingColorPicker);
+            })()`, result => resolve(result === "true"));
+        });
+    }
+
+    static waitForColorPickerToPresent()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        if (this.isIOSFamily()) {
+            return new Promise(resolve => {
+                testRunner.runUIScript(`
+                    (function() {
+                        if (uiController.isShowingColorPicker)
+                            uiController.uiScriptComplete();
+                        else
+                            uiController.willPresentPopoverCallback = () => uiController.uiScriptComplete();
+                    })()`, resolve);
+            });
+        }
+
+        // macOS: poll for color picker in subview hierarchy.
+        return new Promise(async resolve => {
+            while (!await this.isShowingColorPicker())
+                continue;
+            resolve();
+        });
     }
 
     static enterText(text)
@@ -1791,6 +1832,11 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setHardwareKeyboardAttached(${attached ? "true" : "false"})`, resolve));
     }
 
+    static setShowKeyboardAfterElementFocusDelay(delay)
+    {
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setShowKeyboardAfterElementFocusDelay(${delay})`, resolve));
+    }
+
     static setWebViewEditable(editable)
     {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setWebViewEditable(${editable ? "true" : "false"})`, resolve));
@@ -2051,6 +2097,37 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async remoteTimeline(timeline)
+    {
+        if (!this.isWebKit2() || !(timeline instanceof ScrollTimeline))
+            return;
+
+        const scrollingNodeID = window.internals?.scrollingNodeIDForTimeline(timeline);
+        if (!scrollingNodeID.nodeIdentifier || !scrollingNodeID.processIdentifier)
+            return;
+
+        const identifier = window.internals?.identifierForTimeline(timeline);
+
+        const script = `uiController.uiScriptComplete(uiController.progressBasedTimelinesForScrollingNodeID(${scrollingNodeID.nodeIdentifier}, ${scrollingNodeID.processIdentifier}))`;
+        const result = await new Promise(resolve => {
+            testRunner.runUIScript(script, result => resolve(JSON.parse(result)));
+        });
+        const timelines = result.timelines;
+        for (const timeline of timelines) {
+            if (timeline.identifier == identifier)
+                return timeline;
+        }
+    }
+
+    static async displayLinkWantsHighFrameRate()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve(false);
+
+        const script = `uiController.displayLinkWantsHighFrameRate()`;
+        return new Promise(resolve => testRunner.runUIScript(script, result => resolve(result === "true")));
+    }
+
     static dragFromPointToPoint(fromX, fromY, toX, toY, duration)
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {
@@ -2241,6 +2318,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    // When setting expected results, if your test includes
+    // a return after the string as a part of the test,
+    // make sure to include two entries for the string,
+    // one with the '\n' and one without.
+    // Mac and iOS have different tokenizing behavior
+    // which can lead to different results when looking
+    // for the key string in this dictionary.
     static async setSpellCheckerResults(results)
     {
         if (!this.isMac() && !this.isIOSFamily())
@@ -2555,8 +2639,10 @@ window.UIHelper = class UIHelper {
             })()`, debugText => {
                 if (options.normalize) {
                     debugText = debugText
-                        .replace(/uid=\d+/g, "uid=…")
-                        .replace(/\[\d+,\d+;\d+x\d+\]/g, "[…]")
+                        .replace(/uid=((\d+_)+)?(\d+)/g, "uid=…")
+                        .replace(/"uid":\"((\d+_)+)?(\d+)\"/g, "\"uid\":\"…\"")
+                        .replace(/contentSize=\[\d+×\d+\]/g, "contentSize=[…]")
+                        .replace(/\[\d+,\d+;\d+×\d+\]/g, "[…]")
                         .replace(/\t/g, "    ");
                 }
                 resolve(debugText);

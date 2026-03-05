@@ -70,7 +70,7 @@ void StyleRuleKeyframes::parserAppendKeyframe(RefPtr<StyleRuleKeyframe>&& keyfra
 
 void StyleRuleKeyframes::wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&& keyframe)
 {
-    m_keyframes.append(WTFMove(keyframe));
+    m_keyframes.append(WTF::move(keyframe));
 }
 
 void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)

@@ -79,7 +79,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderListBox);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderListBox);
  
 const int itemBlockSpacing = 1;
 
@@ -89,7 +89,7 @@ const int optionsSpacingInlineStart = 2;
 const int defaultSize = 4;
 
 RenderListBox::RenderListBox(HTMLSelectElement& element, RenderStyle&& style)
-    : RenderBlockFlow(Type::ListBox, element, WTFMove(style))
+    : RenderBlockFlow(Type::ListBox, element, WTF::move(style))
 {
     view().frameView().addScrollableArea(this);
 }
@@ -104,7 +104,7 @@ void RenderListBox::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
-HTMLSelectElement& RenderListBox::selectElement() const
+HTMLSelectElement& NODELETE RenderListBox::selectElement() const
 {
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
@@ -113,7 +113,7 @@ static FontCascade bolder(Document& document, const FontCascade& font)
 {
     auto description = font.fontDescription();
     description.setWeight(description.bolderWeight());
-    FontCascade result(WTFMove(description), font);
+    FontCascade result(WTF::move(description), font);
     result.update(&document.fontSelector());
     return result;
 }
@@ -202,7 +202,7 @@ void RenderListBox::layout()
     }
 }
 
-void RenderListBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderListBox::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
@@ -310,7 +310,7 @@ LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffse
     LayoutUnit x = additionalOffset.x() + borderLeft() + paddingLeft();
     LayoutUnit y = additionalOffset.y() + borderTop() + paddingTop();
 
-    if (auto* vBar = verticalScrollbar(); vBar && shouldPlaceVerticalScrollbarOnLeft())
+    if (RefPtr vBar = verticalScrollbar(); vBar && shouldPlaceVerticalScrollbarOnLeft())
         x += vBar->occupiedWidth();
 
     auto itemOffset = itemLogicalHeight() * (index - indexOffset());
@@ -416,30 +416,6 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 }
 
-void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer) const
-{
-    if (!selectElement().allowsNonContiguousSelection())
-        return RenderBlockFlow::addFocusRingRects(rects, additionalOffset, paintContainer);
-
-    // Focus the last selected item.
-    int selectedItem = selectElement().activeSelectionEndListIndex();
-    if (selectedItem >= 0) {
-        rects.append(snappedIntRect(itemBoundingBoxRect(additionalOffset, selectedItem)));
-        return;
-    }
-
-    // No selected items, find the first non-disabled item.
-    int indexOfFirstEnabledOption = 0;
-    for (auto& item : selectElement().listItems()) {
-        if (is<HTMLOptionElement>(item.get()) && !item->isDisabledFormControl()) {
-            selectElement().setActiveSelectionEndIndex(indexOfFirstEnabledOption);
-            rects.append(itemBoundingBoxRect(additionalOffset, indexOfFirstEnabledOption));
-            return;
-        }
-        indexOfFirstEnabledOption++;
-    }
-}
-
 bool RenderListBox::useDarkAppearance() const
 {
     return RenderBlockFlow::useDarkAppearance();
@@ -510,7 +486,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     if (itemText.isNull())
         return;
 
-    Color textColor = itemStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
+    Color textColor = itemStyle->visitedDependentColorApplyingColorFilter();
     if (optionElement && optionElement->selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             textColor = theme().activeListBoxSelectionForegroundColor(styleColorOptions());
@@ -542,7 +518,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     if (optGroupElement) {
         auto description = itemFont.fontDescription();
         description.setWeight(description.bolderWeight());
-        itemFont = FontCascade(WTFMove(description), itemFont);
+        itemFont = FontCascade(WTF::move(description), itemFont);
         itemFont.update(&document().fontSelector());
     }
 
@@ -559,13 +535,13 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     Color backColor;
-    if (auto* option = dynamicDowncast<HTMLOptionElement>(*listItemElement); option && option->selected()) {
+    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*listItemElement); option && option->selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             backColor = theme().activeListBoxSelectionBackgroundColor(styleColorOptions());
         else
             backColor = theme().inactiveListBoxSelectionBackgroundColor(styleColorOptions());
     } else
-        backColor = itemStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        backColor = itemStyle->visitedDependentBackgroundColorApplyingColorFilter();
 
     // Draw the background for this list box item
     if (itemStyle->usedVisibility() == Visibility::Hidden)
@@ -578,7 +554,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
 
 bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset)
 {
-    auto* activeScrollbar = verticalScrollbar();
+    RefPtr activeScrollbar = verticalScrollbar();
     if (!activeScrollbar)
         activeScrollbar = horizontalScrollbar();
 
@@ -591,7 +567,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const Layout
     if (!scrollbarRect.contains(locationInContainer))
         return false;
 
-    result.setScrollbar(activeScrollbar);
+    result.setScrollbar(WTF::move(activeScrollbar));
     return true;
 }
 
@@ -601,14 +577,14 @@ int RenderListBox::listIndexAtOffset(const LayoutSize& offset) const
         return -1;
 
     int scrollbarHeight = 0;
-    if (auto* hBar = horizontalScrollbar())
+    if (RefPtr hBar = horizontalScrollbar())
         scrollbarHeight = hBar->height();
 
     if (offset.height() < borderTop() || offset.height() > height() - borderBottom() - scrollbarHeight)
         return -1;
 
     int scrollbarWidth = 0;
-    if (auto* vBar = verticalScrollbar())
+    if (RefPtr vBar = verticalScrollbar())
         scrollbarWidth = vBar->width();
 
     if (shouldPlaceVerticalScrollbarOnLeft() && (offset.width() < borderLeft() + paddingLeft() + scrollbarWidth || offset.width() > width() - borderRight() - paddingRight()))
@@ -855,7 +831,7 @@ LayoutUnit RenderListBox::itemLogicalHeight() const
 
 int RenderListBox::verticalScrollbarWidth() const
 {
-    if (auto* vBar = verticalScrollbar())
+    if (RefPtr vBar = verticalScrollbar())
         return vBar->occupiedWidth();
 
     return 0;
@@ -863,7 +839,7 @@ int RenderListBox::verticalScrollbarWidth() const
 
 int RenderListBox::horizontalScrollbarHeight() const
 {
-    if (auto* hBar = horizontalScrollbar())
+    if (RefPtr hBar = horizontalScrollbar())
         return hBar->occupiedHeight();
 
     return 0;
@@ -1118,11 +1094,11 @@ bool RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() con
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const
 {
-    auto* layer = enclosingLayer();
+    CheckedPtr layer = enclosingLayer();
     if (!layer)
         return nullptr;
 
-    auto* enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No);
+    CheckedPtr enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No);
     if (!enclosingScrollableLayer)
         return nullptr;
 
@@ -1225,7 +1201,7 @@ void RenderListBox::scrollDidEnd()
 {
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator(); scrollAnimator && !scrollAnimator->isUserScrollInProgress() && !isAwaitingScrollend()) {
         setIsAwaitingScrollend(false);
-        selectElement().protectedDocument()->addPendingScrollEventTarget(selectElement(), ScrollEventType::Scrollend);
+        protect(selectElement().document())->addPendingScrollEventTarget(selectElement(), ScrollEventType::Scrollend);
     }
 }
 

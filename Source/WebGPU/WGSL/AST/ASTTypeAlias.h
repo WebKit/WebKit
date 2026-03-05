@@ -40,7 +40,7 @@ public:
 private:
     TypeAlias(SourceSpan span, Identifier&& name, Expression::Ref type)
         : Declaration(span)
-        , m_name(WTFMove(name))
+        , m_name(WTF::move(name))
         , m_type(type)
     { }
 

@@ -54,7 +54,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandTextTrackPrivateAVFObjC);
 
 InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC(AVMediaSelectionGroup *group, AVMediaSelectionOption *selection, TrackID trackID, InbandTextTrackPrivate::CueFormat format, ModeChangedCallback&& callback)
-    : InbandTextTrackPrivateAVF(trackID, format, WTFMove(callback))
+    : InbandTextTrackPrivateAVF(trackID, format, WTF::move(callback))
     , m_mediaSelectionGroup(group)
     , m_mediaSelectionOption(selection)
 {

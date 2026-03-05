@@ -39,7 +39,7 @@ namespace WebCore {
 
 static std::optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    static constexpr std::pair<PlatformMediaSession::RemoteControlCommandType, MRMediaRemoteCommand> mappings[] = {
+    static constexpr SortedArrayMap map { std::to_array<std::pair<PlatformMediaSession::RemoteControlCommandType, MRMediaRemoteCommand>>({
         { PlatformMediaSession::RemoteControlCommandType::PlayCommand, MRMediaRemoteCommandPlay },
         { PlatformMediaSession::RemoteControlCommandType::PauseCommand, MRMediaRemoteCommandPause },
         { PlatformMediaSession::RemoteControlCommandType::StopCommand, MRMediaRemoteCommandStop },
@@ -53,8 +53,7 @@ static std::optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(
         { PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand, MRMediaRemoteCommandSkipBackward },
         { PlatformMediaSession::RemoteControlCommandType::NextTrackCommand, MRMediaRemoteCommandNextTrack },
         { PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand, MRMediaRemoteCommandPreviousTrack },
-    };
-    static constexpr SortedArrayMap map { mappings };
+    }) };
     return makeOptionalFromPointer(map.tryGet(command));
 }
 

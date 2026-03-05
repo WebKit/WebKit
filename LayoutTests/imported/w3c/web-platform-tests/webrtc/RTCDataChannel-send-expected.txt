@@ -22,4 +22,6 @@ PASS Negotiated datachannel should be able to send Blob message and receive as A
 PASS Negotiated datachannel should be able to send ArrayBuffer message and receive as Blob
 PASS Negotiated datachannel binaryType should receive message as ArrayBuffer by default
 PASS Negotiated datachannel sending multiple messages with different types should succeed and be received
+FAIL Sending multiple messages simultaneously in unordered mode works reliably promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL Sending before the other side is open should work promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: negotiate"
 

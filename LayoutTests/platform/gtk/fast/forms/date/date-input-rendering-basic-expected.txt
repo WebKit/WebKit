@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (94,5) size 4x17
+      RenderText {#text} at (94,5) size 4x18
         text run at (94,5) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 94x28 clip at (10,10) size 90x24
@@ -12,19 +12,19 @@ layer at (11,11) size 88x22
   RenderBlock {DIV} at (3,3) size 88x22
     RenderBlock {DIV} at (1,1) size 86x20
       RenderBlock {DIV} at (0,0) size 20x20
-        RenderText {#text} at (1,1) size 18x17
+        RenderText {#text} at (1,1) size 18x18
           text run at (1,1) width 18: "04"
-      RenderInline {DIV} at (20,1) size 4x17
-        RenderText {#text} at (20,1) size 4x17
+      RenderInline {DIV} at (20,1) size 4x18
+        RenderText {#text} at (20,1) size 4x18
           text run at (20,1) width 4: "/"
       RenderBlock {DIV} at (24,0) size 20x20
-        RenderText {#text} at (1,1) size 18x17
+        RenderText {#text} at (1,1) size 18x18
           text run at (1,1) width 18: "01"
-      RenderInline {DIV} at (44,1) size 4x17
-        RenderText {#text} at (44,1) size 4x17
+      RenderInline {DIV} at (44,1) size 4x18
+        RenderText {#text} at (44,1) size 4x18
           text run at (44,1) width 4: "/"
       RenderBlock {DIV} at (48,0) size 38x20
-        RenderText {#text} at (1,1) size 36x17
+        RenderText {#text} at (1,1) size 36x18
           text run at (1,1) width 36: "1976"
 layer at (106,8) size 94x28 clip at (108,10) size 90x24
   RenderFlexibleBox {INPUT} at (98,0) size 94x28 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
@@ -32,17 +32,17 @@ layer at (109,11) size 88x22
   RenderBlock {DIV} at (3,3) size 88x22
     RenderBlock {DIV} at (1,1) size 86x20
       RenderBlock {DIV} at (66,0) size 20x20
-        RenderText {#text} at (1,1) size 18x17
+        RenderText {#text} at (1,1) size 18x18
           text run at (1,1) width 18: "04"
-      RenderInline {DIV} at (62,1) size 4x17
-        RenderText {#text} at (62,1) size 4x17
+      RenderInline {DIV} at (62,1) size 4x18
+        RenderText {#text} at (62,1) size 4x18
           text run at (62,1) width 4 RTL: "/"
       RenderBlock {DIV} at (42,0) size 20x20
-        RenderText {#text} at (1,1) size 18x17
+        RenderText {#text} at (1,1) size 18x18
           text run at (1,1) width 18: "01"
-      RenderInline {DIV} at (38,1) size 4x17
-        RenderText {#text} at (38,1) size 4x17
+      RenderInline {DIV} at (38,1) size 4x18
+        RenderText {#text} at (38,1) size 4x18
           text run at (38,1) width 4 RTL: "/"
       RenderBlock {DIV} at (0,0) size 38x20
-        RenderText {#text} at (1,1) size 36x17
+        RenderText {#text} at (1,1) size 36x18
           text run at (1,1) width 36: "1976"

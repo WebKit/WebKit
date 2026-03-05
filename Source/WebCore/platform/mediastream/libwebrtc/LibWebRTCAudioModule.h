@@ -36,7 +36,10 @@
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
+// FIXME: Modularize WebRTC
+IGNORE_CLANG_WARNINGS_BEGIN("non-modular-include-in-module")
 #include <webrtc/modules/audio_device/include/audio_device.h>
+IGNORE_CLANG_WARNINGS_END
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 

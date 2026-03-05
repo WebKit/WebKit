@@ -12,7 +12,10 @@
 #define RTC_BASE_SERVER_SOCKET_ADAPTERS_H_
 
 #include <cstddef>
+#include <utility>
 
+#include "absl/functional/any_invocable.h"
+#include "rtc_base/sigslot_trampoline.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_adapters.h"
 #include "rtc_base/socket_address.h"
@@ -27,7 +30,23 @@ class AsyncProxyServerSocket : public BufferedReadAdapter {
   ~AsyncProxyServerSocket() override;
   sigslot::signal2<AsyncProxyServerSocket*, const SocketAddress&>
       SignalConnectRequest;
+
+  void SubscribeConnectRequest(
+      absl::AnyInvocable<void(AsyncProxyServerSocket*, const SocketAddress&)>
+          callback) {
+    connect_request_trampoline_.Subscribe(std::move(callback));
+  }
+  void NotifyConnectRequest(AsyncProxyServerSocket* socket,
+                            const SocketAddress& socket_address) {
+    SignalConnectRequest(socket, socket_address);
+  }
+
   virtual void SendConnectResult(int err, const SocketAddress& addr) = 0;
+
+ private:
+  SignalTrampoline<AsyncProxyServerSocket,
+                   &AsyncProxyServerSocket::SignalConnectRequest>
+      connect_request_trampoline_;
 };
 
 // Implements a socket adapter that performs the server side of a

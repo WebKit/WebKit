@@ -15,7 +15,7 @@ info: |
   ...
   17. If srcLength + targetOffset > targetLength, throw a RangeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -29,8 +29,8 @@ var desc = {
 
 Object.defineProperty(TypedArray.prototype, "length", desc);
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(2);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(2));
 
   Object.defineProperty(TA.prototype, "length", desc);
   Object.defineProperty(sample, "length", desc);
@@ -38,4 +38,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   sample.set([42n, 43n]);
 
   assert.sameValue(getCalls, 0, "ignores length properties");
-});
+}, null, ["passthrough"]);

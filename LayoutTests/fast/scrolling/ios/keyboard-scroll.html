@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useHardwareKeyboardMode=true useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    async function pressKey(keyName) {
+        await UIHelper.rawKeyDown(keyName);
+        await UIHelper.renderingUpdate();
+        await UIHelper.rawKeyUp(keyName);
+    }
+
+    async function scrollWithKeyboard() {
+        await UIHelper.activateElement(list);
+        await UIHelper.activateElement(list);
+        await UIHelper.activateElement(list);
+        await pressKey("downArrow");
+
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+    }
+
+    async function runTest() {
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        const originalScrollTop = list.scrollTop;
+        await scrollWithKeyboard();
+
+        expectTrue(list.scrollTop > originalScrollTop, "expect keyboard to scroll list");
+
+        testRunner.notifyDone();
+    }
+
+</script>
+
+<html lang="en">
+  <body onload="runTest()">
+    <ul id="list">
+      <li style="height: 100%; background-color: red">target text to select</li>
+      <li style="height: 100%; background-color: blue">
+        target text to select
+      </li>
+      <li style="height: 100%; background-color: red">target text to select</li>
+      <li style="height: 100%; background-color: blue">
+        target text to select
+      </li>
+      <li style="height: 100%; background-color: red">target text to select</li>
+      <li style="height: 100%; background-color: blue">
+        target text to select
+      </li>
+    </ul>
+  </body>
+</html>
+
+<style>
+  body {
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+  }
+
+  #list {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+</style>
+

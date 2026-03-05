@@ -35,7 +35,7 @@ String GPURenderBundle::label() const
 
 void GPURenderBundle::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    m_backing->setLabel(WTF::move(label));
 }
 
 }

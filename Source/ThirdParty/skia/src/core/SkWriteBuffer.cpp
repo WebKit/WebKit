@@ -24,16 +24,6 @@
 #include "src/core/SkPtrRecorder.h"
 #include "src/image/SkImage_Base.h"
 
-#if !defined(SK_DISABLE_LEGACY_PNG_WRITEBUFFER)
-#include "include/core/SkBitmap.h"
-#include "include/core/SkStream.h"
-#if defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
-#include "include/encode/SkPngRustEncoder.h"
-#else
-#include "include/encode/SkPngEncoder.h"
-#endif  // defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
-#endif  // !defined(SK_DISABLE_LEGACY_PNG_WRITEBUFFER)
-
 #include <cstring>
 #include <utility>
 
@@ -163,8 +153,8 @@ bool SkBinaryWriteBuffer::writeToStream(SkWStream* stream) const {
     return fWriter.writeToStream(stream);
 }
 
-static sk_sp<SkData> serialize_image(const SkImage* image, SkSerialProcs procs) {
-    sk_sp<SkData> data;
+static sk_sp<const SkData> serialize_image(const SkImage* image, SkSerialProcs procs) {
+    sk_sp<const SkData> data;
     if (procs.fImageProc) {
         data = procs.fImageProc(const_cast<SkImage*>(image), procs.fImageCtx);
     }
@@ -177,21 +167,6 @@ static sk_sp<SkData> serialize_image(const SkImage* image, SkSerialProcs procs) 
     if (data) {
         return data;
     }
-#if !defined(SK_DISABLE_LEGACY_PNG_WRITEBUFFER)
-    SkBitmap bm;
-    auto ib = as_IB(image);
-    if (!ib->getROPixels(ib->directContext(), &bm)) {
-        return nullptr;
-    }
-#if defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
-    auto result = SkPngRustEncoder::Encode(bm.pixmap(), {});
-#else
-    auto result = SkPngEncoder::Encode(bm.pixmap(), {});
-#endif  // defined(SK_CODEC_ENCODES_PNG_WITH_RUST)
-    if (result) {
-        return result;
-    }
-#endif  // !(defined(SK_DISABLE_LEGACY_PNG_WRITEBUFFER)
     return nullptr;
 }
 
@@ -211,7 +186,7 @@ static sk_sp<SkData> serialize_mipmap(const SkMipmap* mipmap, SkSerialProcs proc
         SkMipmap::Level level;
         if (mipmap->getLevel(i, &level)) {
             sk_sp<SkImage> levelImage = SkImages::RasterFromPixmap(level.fPixmap, nullptr, nullptr);
-            sk_sp<SkData> levelData = serialize_image(levelImage.get(), procs);
+            sk_sp<const SkData> levelData = serialize_image(levelImage.get(), procs);
             buffer.writeDataAsByteArray(levelData.get());
         } else {
             return nullptr;
@@ -238,7 +213,7 @@ void SkBinaryWriteBuffer::writeImage(const SkImage* image) {
 
     this->write32(flags);
 
-    sk_sp<SkData> data = serialize_image(image, fProcs);
+    sk_sp<const SkData> data = serialize_image(image, fProcs);
     SkASSERT(data);
     this->writeDataAsByteArray(data.get());
 

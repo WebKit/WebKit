@@ -28,7 +28,7 @@
 #include "LegacyRenderSVGEllipse.h"
 
 #include "LegacyRenderSVGShapeInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGEllipse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGEllipse);
 
 LegacyRenderSVGEllipse::LegacyRenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
-    : LegacyRenderSVGShape(Type::LegacySVGEllipse, element, WTFMove(style))
+    : LegacyRenderSVGShape(Type::LegacySVGEllipse, element, WTF::move(style))
 {
 }
 
@@ -76,7 +76,7 @@ void LegacyRenderSVGEllipse::updateShapeFromElement()
 
     m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
     m_strokeBoundingBox = m_fillBoundingBox;
-    if (style().hasStroke())
+    if (!style().stroke().isNone())
         m_strokeBoundingBox->inflate(strokeWidth() / 2);
 }
 
@@ -117,7 +117,7 @@ void LegacyRenderSVGEllipse::fillShape(GraphicsContext& context) const
 
 void LegacyRenderSVGEllipse::strokeShape(GraphicsContext& context) const
 {
-    if (!style().hasStroke() || !style().strokeWidth().isPossiblyPositive())
+    if (style().stroke().isNone() || !style().strokeWidth().isPossiblyPositive())
         return;
     if (hasPath()) {
         LegacyRenderSVGShape::strokeShape(context);

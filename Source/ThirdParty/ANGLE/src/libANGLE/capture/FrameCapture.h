@@ -35,7 +35,6 @@
 
 namespace gl
 {
-enum class BigGLEnum;
 enum class GLESEnum;
 }  // namespace gl
 
@@ -362,7 +361,6 @@ class ResourceTracker final : angle::NonCopyable
         mBufferBindingCalls.clear();
         mStartingBuffersMappedInitial.clear();
         mStartingBuffersMappedCurrent.clear();
-        mMaxShaderPrograms = 0;
         mStartingFenceSyncs.clear();
         mFenceSyncRegenCalls.clear();
         mFenceSyncsToRegen.clear();
@@ -847,7 +845,8 @@ class FrameCaptureShared final : angle::NonCopyable
                             GLintptr offset,
                             GLsizeiptr length,
                             bool writable,
-                            bool coherent);
+                            bool coherent,
+                            bool persistent);
 
     void trackTextureUpdate(const gl::Context *context, const CallCapture &call);
     void trackImageUpdate(const gl::Context *context, const CallCapture &call);
@@ -1007,6 +1006,7 @@ class FrameCaptureShared final : angle::NonCopyable
 
     void reset();
     void resetMidExecutionCapture(gl::Context *context);
+    void maybeSetSyncPoint(CallCapture &inCall);
     void maybeOverrideEntryPoint(const gl::Context *context,
                                  CallCapture &call,
                                  std::vector<CallCapture> &newCalls);

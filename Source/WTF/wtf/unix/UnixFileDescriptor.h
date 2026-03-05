@@ -64,7 +64,7 @@ public:
             return *this;
 
         this->~UnixFileDescriptor();
-        new (this) UnixFileDescriptor(WTFMove(o));
+        new (this) UnixFileDescriptor(WTF::move(o));
         return *this;
     }
 
@@ -83,7 +83,7 @@ public:
         return UnixFileDescriptor { m_value, Duplicate };
     }
 
-    int release() WARN_UNUSED_RETURN { return std::exchange(m_value, -1); }
+    [[nodiscard]] int release() { return std::exchange(m_value, -1); }
 
 private:
     int m_value { -1 };

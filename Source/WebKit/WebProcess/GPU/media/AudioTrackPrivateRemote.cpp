@@ -45,7 +45,7 @@ AudioTrackPrivateRemote::AudioTrackPrivateRemote(GPUProcessConnection& gpuProces
     , m_id(configuration.trackId)
     , m_playerIdentifier(playerIdentifier)
 {
-    updateConfiguration(WTFMove(configuration));
+    updateConfiguration(WTF::move(configuration));
 }
 
 void AudioTrackPrivateRemote::setEnabled(bool enabled)
@@ -92,7 +92,7 @@ void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfigu
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
     m_kind = configuration.kind;
-    setConfiguration(WTFMove(configuration.trackConfiguration));
+    setConfiguration(WTF::move(configuration.trackConfiguration));
     
     AudioTrackPrivate::setEnabled(configuration.enabled);
 }

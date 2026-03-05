@@ -92,7 +92,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> PageCanvasA
     if (!inspectorCanvas)
         return makeUnexpected(errorString);
 
-    auto* node = inspectorCanvas->canvasElement();
+    RefPtr node = inspectorCanvas->canvasElement();
     if (!node)
         return makeUnexpected("Missing element of canvas for given canvasId"_s);
 
@@ -109,7 +109,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::N
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -135,9 +135,9 @@ void PageCanvasAgent::frameNavigated(LocalFrame& frame)
 
     Vector<InspectorCanvas*> inspectorCanvases;
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
-        if (auto* canvasElement = inspectorCanvas->canvasElement()) {
+        if (RefPtr canvasElement = inspectorCanvas->canvasElement()) {
             if (canvasElement->document().frame() == &frame)
-                inspectorCanvases.append(inspectorCanvas.get());
+                inspectorCanvases.append(inspectorCanvas.ptr());
         }
     }
     for (auto* inspectorCanvas : inspectorCanvases)

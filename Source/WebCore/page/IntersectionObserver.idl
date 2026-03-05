@@ -23,19 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/IntersectionObserver/
-
+// https://w3c.github.io/IntersectionObserver/#intersectionobserver
 [
     Exposed=Window,
     JSCustomMarkFunction,
     CustomIsReachable,
 ] interface IntersectionObserver {
-    [CallWith=CurrentDocument] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
+    [CallWith=CurrentDocument] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options = {});
 
+    // FIXME: `root` should have type `(Element or Document)?`.
     readonly attribute Node? root;
     readonly attribute DOMString rootMargin;
     readonly attribute DOMString scrollMargin;
     readonly attribute FrozenArray<double> thresholds;
+    // FIXME: Add support for `delay`.
+    // readonly attribute long delay;
+    // FIXME: Add support for `trackVisibility`.
+    // readonly attribute boolean trackVisibility;
 
     undefined observe(Element target);
     undefined unobserve(Element target);
@@ -43,9 +47,14 @@
     [ResultField=records] sequence<IntersectionObserverEntry> takeRecords();
 };
 
+// https://w3c.github.io/IntersectionObserver/#dictdef-intersectionobserverinit
 dictionary IntersectionObserverInit {
     (Element or Document)? root = null;
     DOMString rootMargin = "0px";
     DOMString scrollMargin = "0px";
     (double or sequence<double>) threshold = 0.0;
+    // FIXME: Add support for `delay`.
+    // long delay = 0;
+    // FIXME: Add support for `trackVisibility`.
+    // boolean trackVisibility = false;
 };

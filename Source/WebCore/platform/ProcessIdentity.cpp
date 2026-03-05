@@ -57,7 +57,7 @@ ProcessIdentity::operator bool() const
 
 #if HAVE(TASK_IDENTITY_TOKEN)
 ProcessIdentity::ProcessIdentity(MachSendRight&& taskIdToken)
-    : m_taskIdToken(WTFMove(taskIdToken))
+    : m_taskIdToken(WTF::move(taskIdToken))
 {
 }
 #endif

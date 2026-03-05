@@ -42,7 +42,7 @@ static bool isValidVPProfile(uint8_t profile)
 
 static bool isValidVPLevel(uint8_t level)
 {
-    constexpr uint8_t validLevels[] = {
+    constexpr auto validLevels = std::to_array<uint8_t>({
         VPConfigurationLevel::Level_1,
         VPConfigurationLevel::Level_1_1,
         VPConfigurationLevel::Level_2,
@@ -57,7 +57,7 @@ static bool isValidVPLevel(uint8_t level)
         VPConfigurationLevel::Level_6,
         VPConfigurationLevel::Level_6_1,
         VPConfigurationLevel::Level_6_2,
-    };
+    });
 
     ASSERT(std::is_sorted(std::begin(validLevels), std::end(validLevels)));
     return std::binary_search(std::begin(validLevels), std::end(validLevels), level);
@@ -84,7 +84,7 @@ static bool isValidChromaSubsampling(uint8_t subsampling)
 
 static bool isValidVPColorPrimaries(uint8_t colorPrimaries)
 {
-    constexpr uint8_t validColorPrimaries[] = {
+    constexpr auto validColorPrimaries = std::to_array<uint8_t>({
         VPConfigurationColorPrimaries::BT_709_6,
         VPConfigurationColorPrimaries::Unspecified,
         VPConfigurationColorPrimaries::BT_470_6_M,
@@ -97,7 +97,7 @@ static bool isValidVPColorPrimaries(uint8_t colorPrimaries)
         VPConfigurationColorPrimaries::SMPTE_RP_431_2,
         VPConfigurationColorPrimaries::SMPTE_EG_432_1,
         VPConfigurationColorPrimaries::EBU_Tech_3213_E,
-    };
+    });
 
     ASSERT(std::is_sorted(std::begin(validColorPrimaries), std::end(validColorPrimaries)));
     return std::binary_search(std::begin(validColorPrimaries), std::end(validColorPrimaries), colorPrimaries);
@@ -105,7 +105,7 @@ static bool isValidVPColorPrimaries(uint8_t colorPrimaries)
 
 static bool isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
 {
-    constexpr uint8_t validTransferCharacteristics[] = {
+    constexpr auto validTransferCharacteristics = std::to_array<uint8_t>({
         VPConfigurationTransferCharacteristics::BT_709_6,
         VPConfigurationTransferCharacteristics::Unspecified,
         VPConfigurationTransferCharacteristics::BT_470_6_M,
@@ -123,14 +123,14 @@ static bool isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
         VPConfigurationTransferCharacteristics::SMPTE_ST_2084,
         VPConfigurationTransferCharacteristics::SMPTE_ST_428_1,
         VPConfigurationTransferCharacteristics::BT_2100_HLG,
-    };
+    });
     ASSERT(std::is_sorted(std::begin(validTransferCharacteristics), std::end(validTransferCharacteristics)));
     return std::binary_search(std::begin(validTransferCharacteristics), std::end(validTransferCharacteristics), transferCharacteristics);
 }
 
 static bool isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
 {
-    constexpr uint8_t validMatrixCoefficients[] = {
+    constexpr auto validMatrixCoefficients = std::to_array<uint8_t>({
         VPConfigurationMatrixCoefficients::Identity,
         VPConfigurationMatrixCoefficients::BT_709_6,
         VPConfigurationMatrixCoefficients::Unspecified,
@@ -145,7 +145,7 @@ static bool isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
         VPConfigurationMatrixCoefficients::Chromacity_Constant_Luminance,
         VPConfigurationMatrixCoefficients::Chromacity_Nonconstant_Luminance,
         VPConfigurationMatrixCoefficients::BT_2100_ICC,
-    };
+    });
     ASSERT(std::is_sorted(std::begin(validMatrixCoefficients), std::end(validMatrixCoefficients)));
     return std::binary_search(std::begin(validMatrixCoefficients), std::end(validMatrixCoefficients), matrixCoefficients);
 }

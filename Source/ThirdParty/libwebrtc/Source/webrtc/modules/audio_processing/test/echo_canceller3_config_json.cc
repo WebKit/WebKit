@@ -411,6 +411,15 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
                 &cfg.suppressor.high_bands_suppression.anti_howling_gain);
     }
 
+    if (GetValueFromJsonObject(section, "high_frequency_suppression",
+                               &subsection)) {
+      ReadParam(subsection, "limiting_gain_band",
+                &cfg.suppressor.high_frequency_suppression.limiting_gain_band);
+      ReadParam(
+          subsection, "bands_in_limiting_gain",
+          &cfg.suppressor.high_frequency_suppression.bands_in_limiting_gain);
+    }
+
     ReadParam(section, "floor_first_increase",
               &cfg.suppressor.floor_first_increase);
     ReadParam(section, "conservative_hf_suppression",

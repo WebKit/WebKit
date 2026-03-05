@@ -31,7 +31,7 @@
 #include "GeometryUtilities.h"
 #include "Path.h"
 #include "RenderStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGPathUtilities.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
@@ -44,7 +44,7 @@ namespace Style {
 // MARK: - Path Caching
 
 struct SVGPathTransformedByteStream {
-    bool isEmpty() const
+    bool NODELETE isEmpty() const
     {
         return rawStream.isEmpty();
     }
@@ -66,7 +66,7 @@ struct SVGPathTransformedByteStream {
 };
 
 struct TransformedByteStreamPathPolicy : TinyLRUCachePolicy<SVGPathTransformedByteStream, WebCore::Path> {
-    static bool isKeyNull(const SVGPathTransformedByteStream& stream)
+    static bool NODELETE isKeyNull(const SVGPathTransformedByteStream& stream)
     {
         return stream.isEmpty();
     }
@@ -136,7 +136,7 @@ void Serialize<Path>::operator()(StringBuilder& builder, const CSS::Serializatio
 
 // MARK: - Path
 
-WebCore::Path PathComputation<Path>::operator()(const Path& value, const FloatRect& boundingBox)
+WebCore::Path PathComputation<Path>::operator()(const Path& value, const FloatRect& boundingBox, ZoomFactor)
 {
     return cachedTransformedByteStreamPath(value.data.byteStream, value.zoom, boundingBox.location());
 }
@@ -163,7 +163,7 @@ auto Blending<Path>::blend(const Path& a, const Path& b, const BlendingContext& 
 
     return {
         .fillRule = a.fillRule,
-        .data = { WTFMove(resultingPathBytes) },
+        .data = { WTF::move(resultingPathBytes) },
         .zoom = a.zoom
     };
 }

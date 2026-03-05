@@ -23,19 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKJSScriptingBuffer.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-@interface _WKJSBuffer : NSObject
-
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
-
-- (nullable instancetype)initWithData:(NSData *)data;
-- (nullable instancetype)initWithDataInFile:(NSURL *)fileURL;
-
+@interface _WKJSBuffer : WKJSScriptingBuffer
 @end
 
 NS_ASSUME_NONNULL_END

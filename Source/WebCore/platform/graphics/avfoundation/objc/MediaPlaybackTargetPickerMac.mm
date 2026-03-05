@@ -64,15 +64,15 @@ MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac()
 
 bool MediaPlaybackTargetPickerMac::externalOutputDeviceAvailable()
 {
-    return routePicker().externalOutputDeviceAvailable();
+    return routePicker()->externalOutputDeviceAvailable();
 }
 
 Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMac::playbackTarget()
 {
-    return MediaPlaybackTargetCocoa::create(routePicker().outputContext());
+    return MediaPlaybackTargetCocoa::create(routePicker()->outputContext());
 }
 
-AVPlaybackTargetPicker& MediaPlaybackTargetPickerMac::routePicker()
+CheckedRef<AVPlaybackTargetPicker> MediaPlaybackTargetPickerMac::routePicker()
 {
     if (m_routePicker)
         return *m_routePicker;
@@ -89,20 +89,20 @@ AVPlaybackTargetPicker& MediaPlaybackTargetPickerMac::routePicker()
 
 void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(CocoaView* view, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance)
 {
-    routePicker().showPlaybackTargetPicker(view, location, hasActiveRoute, useDarkAppearance);
+    routePicker()->showPlaybackTargetPicker(view, location, hasActiveRoute, useDarkAppearance);
 }
 
 void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets");
 
-    routePicker().startingMonitoringPlaybackTargets();
+    routePicker()->startingMonitoringPlaybackTargets();
 }
 
 void MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets");
-    routePicker().stopMonitoringPlaybackTargets();
+    routePicker()->stopMonitoringPlaybackTargets();
 }
 
 void MediaPlaybackTargetPickerMac::invalidatePlaybackTargets()

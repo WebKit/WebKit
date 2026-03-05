@@ -70,7 +70,7 @@ struct( IDLInterface => {
     isMixin => '$', # Used for mixin interfaces
     isPartial => '$', # Used for partial interfaces
     iterable => '$', # Used for iterable interfaces, of type 'IDLIterable'
-    asyncIterable => '$', # Used for asycn iterable interfaces, of type 'IDLAsyncIterable'
+    asyncIterable => '$', # Used for async_iterable interfaces, of type 'IDLAsyncIterable'
     mapLike => '$', # Used for mapLike interfaces, of type 'IDLMapLike'
     setLike => '$', # Used for setLike interfaces, of type 'IDLSetLike'
     extendedAttributes => '%',
@@ -287,7 +287,7 @@ sub assertExtendedAttributesValidForContext
     my @contexts = @_;
 
     for my $extendedAttribute (keys %{$extendedAttributeList}) {
-        # FIXME: Should this be done here, or when parsing the exteded attribute itself?
+        # FIXME: Should this be done here, or when parsing the extended attribute itself?
         # Either way, we should add validation of the values, if any, at the same place.
 
         if (!exists $self->{ExtendedAttributeMap}->{$extendedAttribute}) {
@@ -630,7 +630,7 @@ my $nextMixinMembers_1 = '^(\(|attribute|ByteString|DOMString|USVString|any|bool
 my $nextNamespaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|const|double|float|long|object|octet|readonly|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextSingleType_1 = '^(ByteString|DOMString|USVString|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
-my $nextArgumentName_1 = '^(async|attribute|callback|const|constructor|deleter|dictionary|enum|getter|includes|inherit|interface|iterable|maplike|mixin|namespace|partial|readonly|required|setlike|setter|static|stringifier|typedef|unrestricted)$';
+my $nextArgumentName_1 = '^(async_iterable|attribute|callback|const|constructor|deleter|dictionary|enum|getter|includes|inherit|interface|iterable|maplike|mixin|namespace|partial|readonly|required|setlike|setter|static|stringifier|typedef|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
 my $nextConstValue_2 = '^(-|Infinity|NaN)$';
 my $nextCallbackOrInterface = '^(callback|interface)$';
@@ -1273,7 +1273,7 @@ sub parsePartialInterfaceMember
     if ($next->value() eq "iterable") {
         return $self->parseIterableRest($extendedAttributeList);
     }
-    if ($next->value() eq "async") {
+    if ($next->value() eq "async_iterable") {
         return $self->parseAsyncIterable($extendedAttributeList);
     }
     if ($next->value() eq "readonly") {
@@ -1359,7 +1359,7 @@ sub parseDictionary
         my $nameToken = $self->getToken();
         $self->assertTokenType($nameToken, IdentifierToken);
 
-        my $name = $nameToken->value();
+        my $name = identifierRemoveNullablePrefix($nameToken->value());
         $dictionary->type(makeSimpleType($name));
 
         $next = $self->nextToken();
@@ -1411,6 +1411,16 @@ sub parseDictionaryMember
 
             my $type = $self->parseTypeWithExtendedAttributes();
             $member->type($type);
+
+            my $nameToken = $self->getToken();
+            $self->assertTokenType($nameToken, IdentifierToken);
+            $member->name(identifierRemoveNullablePrefix($nameToken->value));
+
+            $self->assertExtendedAttributesValidForContext($extendedAttributeList, "dictionary-member");
+            $member->extendedAttributes($extendedAttributeList);
+
+            $self->assertTokenValue($self->getToken(), ";", __LINE__);
+            return $member;
         } else {
             $member->isRequired(0);
 
@@ -1418,17 +1428,29 @@ sub parseDictionaryMember
             $self->moveExtendedAttributesApplicableToTypes($type, $extendedAttributeList);
             
             $member->type($type);
+
+            my $nameToken = $self->getToken();
+            $self->assertTokenType($nameToken, IdentifierToken);
+            $member->name(identifierRemoveNullablePrefix($nameToken->value));
+            $member->default($self->parseDefault());
+
+            $self->assertExtendedAttributesValidForContext($extendedAttributeList, "dictionary-member");
+
+            # Override `isRequired` if the `ImplementationRequired` extended attribute is set.
+            if (defined($extendedAttributeList->{ImplementationRequired})) {
+                $member->isRequired(1);
+            }
+
+            # Override `default` if the `ImplementationDefaultValue` extended attribute is set.
+            if (!defined($member->default) && defined($extendedAttributeList->{ImplementationDefaultValue})) {
+                $member->default($extendedAttributeList->{ImplementationDefaultValue});
+            }
+
+            $member->extendedAttributes($extendedAttributeList);
+
+            $self->assertTokenValue($self->getToken(), ";", __LINE__);
+            return $member;
         }
-
-        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "dictionary-member");
-        $member->extendedAttributes($extendedAttributeList);
-
-        my $nameToken = $self->getToken();
-        $self->assertTokenType($nameToken, IdentifierToken);
-        $member->name($nameToken->value);
-        $member->default($self->parseDefault());
-        $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return $member;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1460,10 +1482,9 @@ sub parseDefaultValue
         return "[]";
     }
     if ($next->value() eq "{") {
-        # Accept {} but just ignore it.
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
-        return undef;
+        return "{}";
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2026,9 +2047,8 @@ sub parseAsyncIterable
     my $extendedAttributeList = shift;
 
     my $next = $self->nextToken();
-    if ($next->value() eq "async") {
-        $self->assertTokenValue($self->getToken(), "async", __LINE__);
-        $self->assertTokenValue($self->getToken(), "iterable", __LINE__);
+    if ($next->value() eq "async_iterable") {
+        $self->assertTokenValue($self->getToken(), "async_iterable", __LINE__);
 
         my $asyncIterable = IDLAsyncIterable->new();
 
@@ -2247,6 +2267,12 @@ sub parseArgumentsRest
         $argument->default($self->parseDefault());
 
         $self->assertExtendedAttributesValidForContext($extendedAttributeList, "argument");
+
+        # Substitute a value specified by the `ImplementationDefaultValue` extended attribute if necessary.
+        if (!defined($argument->default) && defined($extendedAttributeList->{ImplementationDefaultValue})) {
+            $argument->default($extendedAttributeList->{ImplementationDefaultValue});
+        }
+
         $argument->extendedAttributes($extendedAttributeList);
 
         return $argument;
@@ -2396,6 +2422,16 @@ sub parseExtendedAttributeRest2
         my @arguments = $self->parseIdentifierList();
         $self->assertTokenValue($self->getToken(), ")", __LINE__);
         return \@arguments;
+    }
+    if ($next->value() eq "[") {
+        $self->assertTokenValue($self->getToken(), "[", __LINE__);
+        $self->assertTokenValue($self->getToken(), "]", __LINE__);
+        return "[]";
+    }
+    if ($next->value() eq "{") {
+        $self->assertTokenValue($self->getToken(), "{", __LINE__);
+        $self->assertTokenValue($self->getToken(), "}", __LINE__);
+        return "{}";
     }
     if ($next->value() eq "*") {
         $self->assertTokenValue($self->getToken(), "*", __LINE__);

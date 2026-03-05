@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <cstdint>
@@ -58,6 +60,7 @@ constexpr size_t maxFunctionParams = 1000;
 constexpr size_t maxFunctionReturns = 1000;
 
 constexpr size_t maxTableEntries = 10000000;
+constexpr size_t maxTableInitializationEntries = 10000000;
 constexpr unsigned maxTables = 1000000;
 
 // Limit of GC arrays in bytes. This is not included in the limits in the

@@ -46,7 +46,7 @@ public:
 protected:
     ScrollingTreeFixedNode(ScrollingTree&, ScrollingNodeID);
 
-    const ViewportConstraints& constraints() const final { return m_constraints; }
+    const ViewportConstraints& constraints() const LIFETIME_BOUND final { return m_constraints; }
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;

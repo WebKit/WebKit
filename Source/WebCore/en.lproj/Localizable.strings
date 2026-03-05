@@ -292,6 +292,9 @@
 /* Cancel displaying QuickLook Preview of 3D model */
 "Cancel (usdz QuickLook Preview)" = "Cancel";
 
+/* Cancel displaying QuickLook Preview of 3D object */
+"Cancel (QuickLook Preview)" = "Cancel";
+
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
 
@@ -369,6 +372,12 @@
 
 /* Undo action name */
 "Convert to Ordered List (Undo action name)" = "Convert to Ordered List";
+
+/* Convert to Simplified Chinese context menu item */
+"Convert to Simplified Chinese" = "Convert to Simplified Chinese";
+
+/* Convert to Traditional Chinese context menu item */
+"Convert to Traditional Chinese" = "Convert to Traditional Chinese";
 
 /* Undo action name */
 "Convert to Unordered List (Undo action name)" = "Convert to Unordered List";
@@ -802,6 +811,9 @@
 /* Undo action name */
 "Italics (Undo action name)" = "Italics";
 
+/* Inspector Grid/Flex Item DOM order label */
+"Item %lu" = "Item %lu";
+
 /* WebKitErrorJavaUnavailable description */
 "Java is unavailable" = "Java is unavailable";
 
@@ -1152,6 +1164,9 @@
 
 /* Codec Strings */
 "Opus Codec String" = "Opus";
+
+/* Inspector Grid/Flex Item CSS order property label */
+"order: %d" = "order: %d";
 
 /* Label for the order with Apple Pay button. */
 "Order with Apple Pay" = "Order with Apple Pay";
@@ -1567,6 +1582,9 @@
 /* This is the %s subtitle style (Caption User Preferences) */
 "This is the %s subtitle style" = "This is the %s subtitle style";
 
+/* Caption Style Preview String */
+"This is a preview style" = "This is a preview style";
+
 /* Not Secure Connection warning text */
 "This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
 
@@ -1755,6 +1773,15 @@
 
 /* View in AR? description */
 "You can view this object in 3D and place it in your surroundings using augmented reality." = "You can view this object in 3D and place it in your surroundings using augmented reality.";
+
+/* Allow displaying QuickLook Preview of 3D object */
+"View 3D Object (QuickLook Preview)" = "View 3D Object";
+
+/* View 3D Object? */
+"View 3D Object?" = "View 3D Object?";
+
+/* View 3D Object description */
+"You can see a preview of this object before viewing in 3D." = "You can see a preview of this object before viewing in 3D.";
 
 /* Title for View Spatial Photo action button */
 "View Spatial Photo" = "View Spatial Photo";

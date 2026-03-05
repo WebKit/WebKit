@@ -31,6 +31,10 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
 
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+#include <WebCore/AXObjectCache.h>
+#endif
+
 namespace WebCore {
 
 class IntPoint;
@@ -43,18 +47,19 @@ enum class AdvancedPrivacyProtections : uint16_t;
 enum class AutoplayPolicy : uint8_t;
 enum class RenderAsTextFlag : uint16_t;
 
+struct AccessibilityRemoteToken;
+
 class RemoteFrame final : public Frame {
 public:
     using ClientCreator = CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>;
     WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, Frame* opener, Ref<FrameTreeSyncData>&&);
-    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, Frame& parent, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree);
-    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement&, std::optional<LayerHostingContextIdentifier>, Ref<FrameTreeSyncData>&&);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, Frame& parent, Frame* opener, std::optional<LayerHostingContextIdentifier>, Ref<FrameTreeSyncData>&&, AddToFrameTree);
     ~RemoteFrame();
 
-    RemoteDOMWindow& window() const;
+    RemoteDOMWindow& NODELETE window() const;
 
-    const RemoteFrameClient& client() const { return m_client.get(); }
-    RemoteFrameClient& client() { return m_client.get(); }
+    const RemoteFrameClient& client() const LIFETIME_BOUND { return m_client.get(); }
+    RemoteFrameClient& client() LIFETIME_BOUND { return m_client.get(); }
 
     RemoteFrameView* view() const { return m_view.get(); }
     WEBCORE_EXPORT void setView(RefPtr<RemoteFrameView>&&);
@@ -62,45 +67,52 @@ public:
     Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
-    void bindRemoteAccessibilityFrames(int processIdentifier, Vector<uint8_t>&&, CompletionHandler<void(Vector<uint8_t>, int)>&&);
+    void bindRemoteAccessibilityFrames(int processIdentifier, AccessibilityRemoteToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&&);
     void updateRemoteFrameAccessibilityOffset(IntPoint);
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    void updateRemoteFrameAccessibilityInheritedState(const InheritedFrameState&);
+#endif
     void unbindRemoteAccessibilityFrames(int);
 
-    void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTFMove(customUserAgent); }
-    String customUserAgent() const final;
-    void setCustomUserAgentAsSiteSpecificQuirks(String&& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = WTFMove(customUserAgentAsSiteSpecificQuirks); }
-    String customUserAgentAsSiteSpecificQuirks() const final;
+    void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
+    String NODELETE customUserAgent() const final;
+    void setCustomUserAgentAsSiteSpecificQuirks(String&& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = WTF::move(customUserAgentAsSiteSpecificQuirks); }
+    String NODELETE customUserAgentAsSiteSpecificQuirks() const final;
 
-    void setCustomNavigatorPlatform(String&& customNavigatorPlatform) { m_customNavigatorPlatform = WTFMove(customNavigatorPlatform); }
-    String customNavigatorPlatform() const final;
+    void setCustomNavigatorPlatform(String&& customNavigatorPlatform) { m_customNavigatorPlatform = WTF::move(customNavigatorPlatform); }
+    String NODELETE customNavigatorPlatform() const final;
 
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections) { m_advancedPrivacyProtections = advancedPrivacyProtections; }
-    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
+    OptionSet<AdvancedPrivacyProtections> NODELETE advancedPrivacyProtections() const final;
 
     void setAutoplayPolicy(AutoplayPolicy autoplayPolicy) { m_autoplayPolicy = autoplayPolicy; }
-    AutoplayPolicy autoplayPolicy() const final;
+    AutoplayPolicy NODELETE autoplayPolicy() const final;
 
     void updateScrollingMode() final;
     void reportMixedContentViolation(bool blocked, const URL& target) const final;
+
+    String debugDescription() const final;
     const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
 
     void frameDetached() final;
-    bool preventsParentFromBeingComplete() const final;
+    bool NODELETE preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void loadFrameRequest(FrameLoadRequest&&, Event*) final;
     void didFinishLoadInAnotherProcess() final;
     bool isRootFrame() const final { return false; }
     void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
-    RefPtr<SecurityOrigin> frameDocumentSecurityOrigin() const final;
-    String frameURLProtocol() const final;
+    SecurityOrigin* NODELETE frameDocumentSecurityOrigin() const final;
+    std::optional<DocumentSecurityPolicy> NODELETE frameDocumentSecurityPolicy() const final;
+    String NODELETE frameURLProtocol() const final;
+    float usedZoomForChild(const Frame&) const final;
 
-    FrameView* virtualView() const final;
+    FrameView* NODELETE virtualView() const final;
     void disconnectView() final;
-    DOMWindow* virtualWindow() const final;
-    FrameLoaderClient& loaderClient() final;
+    DOMWindow* NODELETE virtualWindow() const final;
+    FrameLoaderClient& NODELETE loaderClient() LIFETIME_BOUND final;
     void reinitializeDocumentSecurityContext() final { }
 
     const Ref<RemoteDOMWindow> m_window;

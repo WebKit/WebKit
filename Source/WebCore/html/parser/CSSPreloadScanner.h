@@ -59,7 +59,7 @@ private:
 
     inline void tokenize(char16_t);
     void emitRule();
-    bool hasFinishedRuleValue() const;
+    bool NODELETE hasFinishedRuleValue() const;
 
     State m_state;
     Vector<char16_t> m_rule;

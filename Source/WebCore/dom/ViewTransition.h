@@ -195,15 +195,14 @@ public:
 
     UniqueRef<ViewTransitionParams> takeViewTransitionParams();
 
-    DOMPromise& ready();
-    DOMPromise& updateCallbackDone();
-    DOMPromise& finished();
+    DOMPromise& NODELETE ready();
+    DOMPromise& NODELETE updateCallbackDone();
+    DOMPromise& NODELETE finished();
 
     ViewTransitionPhase phase() const { return m_phase; }
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
-    Document* document() const;
-    RefPtr<Document> protectedDocument() const { return document(); }
+    Document* NODELETE document() const;
 
     bool documentElementIsCaptured() const;
 

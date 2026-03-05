@@ -38,7 +38,6 @@ WTF_EXTERN_C_BEGIN
 typedef struct CGSVGDocument *CGSVGDocumentRef;
 
 CGSVGDocumentRef CGSVGDocumentCreateFromData(CFDataRef, CFDictionaryRef);
-void CGSVGDocumentRelease(CGSVGDocumentRef);
 
 WTF_EXTERN_C_END
 

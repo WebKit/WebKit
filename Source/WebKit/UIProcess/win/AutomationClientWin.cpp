@@ -44,14 +44,6 @@ AutomationClient::~AutomationClient()
     Inspector::RemoteInspector::singleton().setClient(nullptr);
 }
 
-RefPtr<WebProcessPool> AutomationClient::protectedProcessPool() const
-{
-    if (RefPtr processPool = m_processPool.get())
-        return processPool;
-
-    return nullptr;
-}
-
 void AutomationClient::requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
     ASSERT(isMainRunLoop());
@@ -59,13 +51,13 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
     auto session = adoptRef(new WebAutomationSession());
     session->setSessionIdentifier(sessionIdentifier);
     session->setClient(WTF::makeUnique<AutomationSessionClient>(sessionIdentifier, capabilities));
-    m_processPool->setAutomationSession(WTFMove(session));
+    m_processPool->setAutomationSession(WTF::move(session));
 }
 
 void AutomationClient::closeAutomationSession()
 {
     RunLoop::mainSingleton().dispatch([this] {
-        auto processPool = protectedProcessPool();
+        RefPtr processPool = m_processPool;
         if (!processPool || !processPool->automationSession())
             return;
 

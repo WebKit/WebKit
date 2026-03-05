@@ -112,7 +112,7 @@ void AudioMediaStreamTrackRendererUnit::addSource(const String& deviceID, Ref<Au
     setLastDeviceUsed(deviceID);
 
     Ref unit = ensureDeviceUnit(deviceID);
-    unit->addSource(WTFMove(source));
+    unit->addSource(WTF::move(source));
 }
 
 void AudioMediaStreamTrackRendererUnit::removeSource(const String& deviceID, AudioSampleDataSource& source)
@@ -139,7 +139,7 @@ void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHand
     assertIsMainThread();
 
     Ref unit = ensureDeviceUnit(AudioMediaStreamTrackRenderer::defaultDeviceID());
-    unit->retrieveFormatDescription(WTFMove(callback));
+    unit->retrieveFormatDescription(WTF::move(callback));
 }
 
 AudioMediaStreamTrackRendererUnit::Unit::Unit(const String& deviceID)
@@ -162,13 +162,13 @@ void AudioMediaStreamTrackRendererUnit::Unit::close()
 void AudioMediaStreamTrackRendererUnit::Unit::addSource(Ref<AudioSampleDataSource>&& source)
 {
 #if !RELEASE_LOG_DISABLED
-    source->logger().logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
+    protect(source->logger())->logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
 #endif
     assertIsMainThread();
 
     ASSERT(!m_sources.contains(source.get()));
     bool shouldStart = m_sources.isEmpty();
-    m_sources.add(WTFMove(source));
+    m_sources.add(WTF::move(source));
 
     {
         Locker locker { m_pendingRenderSourcesLock };
@@ -183,7 +183,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::addSource(Ref<AudioSampleDataSourc
 bool AudioMediaStreamTrackRendererUnit::Unit::removeSource(AudioSampleDataSource& source)
 {
 #if !RELEASE_LOG_DISABLED
-    source.logger().logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
+    protect(source.logger())->logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
 #endif
     assertIsMainThread();
 
@@ -217,7 +217,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::setLastDeviceUsed(const String& de
 void AudioMediaStreamTrackRendererUnit::Unit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
 {
     assertIsMainThread();
-    m_internalUnit->retrieveFormatDescription(WTFMove(callback));
+    m_internalUnit->retrieveFormatDescription(WTF::move(callback));
 }
 
 void AudioMediaStreamTrackRendererUnit::Unit::start()
@@ -263,7 +263,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::updateRenderSourcesIfNecessary()
         return;
 
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    m_renderSources = WTFMove(m_pendingRenderSources);
+    m_renderSources = WTF::move(m_pendingRenderSources);
     m_hasPendingRenderSources = false;
 }
 

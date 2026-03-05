@@ -1504,7 +1504,7 @@ class JSValueMirror:
     VALUE_DELETED   = 4
 
     def __init__(self, valobj, bits=None):
-        assert valobj.GetTypeName() == "JSC::JSValue" or valobj.GetTypeName() == "JSC::EncodedJSValue"
+        assert bits is not None or valobj.GetTypeName() == "JSC::JSValue"
         self.valobj = valobj
         self.bits = bits if bits is not None else valobj.GetChildMemberWithName("u").GetChildMemberWithName("asInt64").GetValueAsUnsigned(0)
 

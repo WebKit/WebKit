@@ -47,8 +47,6 @@ constexpr TimeDelta kSendTimeGroupLength = TimeDelta::Millis(5);
 constexpr uint32_t kFixedSsrc = 0;
 }  // namespace
 
-constexpr char BweSeparateAudioPacketsSettings::kKey[];
-
 BweSeparateAudioPacketsSettings::BweSeparateAudioPacketsSettings(
     const FieldTrialsView* key_value_config) {
   Parser()->Parse(

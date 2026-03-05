@@ -86,8 +86,8 @@ void Image::invalidateAdapter()
 Image& Image::nullImage()
 {
     ASSERT(isMainThread());
-    static Image& nullImage = BitmapImage::create().leakRef();
-    return nullImage;
+    static NeverDestroyed<Ref<BitmapImage>> nullImage = BitmapImage::create();
+    return nullImage->get();
 }
 
 static bool isPDFResource(const String& mimeType, const URL& url)
@@ -141,20 +141,28 @@ void Image::subresourcesAreFinished(Document*, CompletionHandler<void()>&& compl
     completionHandler();
 }
 
-RefPtr<FragmentedSharedBuffer> Image::protectedData() const
-{
-    return m_encodedImageData;
-}
-
 EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived)
 {
-    m_encodedImageData = WTFMove(data);
+    m_encodedImageData = WTF::move(data);
 
     // Don't do anything; it is an empty image.
     if (!m_encodedImageData.get() || !m_encodedImageData->size())
         return EncodedDataStatus::Complete;
 
     return dataChanged(allDataReceived);
+}
+
+bool Image::tryReplaceData(Ref<FragmentedSharedBuffer>&& data)
+{
+    if (!canReplaceData())
+        return false;
+
+    // replaceData should only be called with an identical copy of previously set encoded data.
+    ASSERT(m_encodedImageData && *m_encodedImageData == data.get());
+    m_encodedImageData = WTF::move(data);
+    dataReplaced();
+
+    return true;
 }
 
 URL Image::sourceURL() const
@@ -248,9 +256,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
         return draw(ctxt, destRect, visibleSrcRect, options);
     }
 
-#if PLATFORM(IOS_FAMILY)
-    // FIXME: We should re-test this and remove this iOS behavior difference if possible.
-    // When using accelerated drawing on iOS, it's faster to stretch an image than to tile it.
+    // When using accelerated drawing, it's faster to stretch an image than to tile it.
     if (ctxt.renderingMode() == RenderingMode::Accelerated) {
         if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
             FloatRect visibleSrcRect;
@@ -258,7 +264,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
             visibleSrcRect.setWidth(1);
             visibleSrcRect.setHeight(destRect.height() / scale.height());
-            return draw(ctxt, destRect, visibleSrcRect, { options, BlendMode::Normal });
+            return draw(ctxt, destRect, visibleSrcRect, options);
         }
         if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
             FloatRect visibleSrcRect;
@@ -266,10 +272,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY(0);
             visibleSrcRect.setWidth(destRect.width() / scale.width());
             visibleSrcRect.setHeight(1);
-            return draw(ctxt, destRect, visibleSrcRect, { options, BlendMode::Normal });
+            return draw(ctxt, destRect, visibleSrcRect, options);
         }
     }
-#endif
 
     // Patterned images and gradients can use lots of memory for caching when the
     // tile size is large (<rdar://problem/4691859>, <rdar://problem/6239505>).
@@ -298,7 +303,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
                 FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
                 fromRect.scale(1 / scale.width(), 1 / scale.height());
 
-                result = draw(ctxt, toRect, fromRect, { options, BlendMode::Normal });
+                result = draw(ctxt, toRect, fromRect, options);
                 if (result == ImageDrawResult::DidRequestDecoding)
                     return result;
                 toX += currentTileRect.width();

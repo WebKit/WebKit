@@ -23,13 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/cssom-view/#caretposition
 [
     EnabledBySetting=CaretPositionFromPointEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window),
     TaggedWrapper,
 ] interface CaretPosition {
-    readonly attribute Node offsetNode;
+    // FIXME: `offsetNode` should not be nullable.
+    readonly attribute Node? offsetNode;
     readonly attribute unsigned long offset;
     [NewObject] DOMRect? getClientRect();
 };

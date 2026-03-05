@@ -149,8 +149,6 @@ private:
     bool m_isChildOfElementFullscreen { false };
     FloatSize m_videoDimensions;
     FloatRect m_videoFrame;
-    Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
-    Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 #if !RELEASE_LOG_DISABLED

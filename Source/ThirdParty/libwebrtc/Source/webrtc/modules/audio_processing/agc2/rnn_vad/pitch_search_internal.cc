@@ -118,9 +118,9 @@ constexpr int kPitchNeighborhoodRadius = 2;
 // radius. Clipping is applied so that the interval is always valid for a 24 kHz
 // pitch buffer.
 Range CreateInvertedLagRange(int inverted_lag) {
-  return {std::max(inverted_lag - kPitchNeighborhoodRadius, 0),
-          std::min(inverted_lag + kPitchNeighborhoodRadius,
-                   kInitialNumLags24kHz - 1)};
+  return {.min = std::max(inverted_lag - kPitchNeighborhoodRadius, 0),
+          .max = std::min(inverted_lag + kPitchNeighborhoodRadius,
+                          kInitialNumLags24kHz - 1)};
 }
 
 constexpr int kNumPitchCandidates = 2;  // Best and second best.
@@ -344,9 +344,10 @@ CandidatePitchPeriods ComputePitchPeriod12kHz(
     // A pitch candidate must have positive correlation.
     if (auto_correlation[inverted_lag] > 0.f) {
       PitchCandidate candidate{
-          inverted_lag,
-          auto_correlation[inverted_lag] * auto_correlation[inverted_lag],
-          denominator};
+          .period_inverted_lag = inverted_lag,
+          .strength_numerator =
+              auto_correlation[inverted_lag] * auto_correlation[inverted_lag],
+          .strength_denominator = denominator};
       if (candidate.HasStrongerPitchThan(second_best)) {
         if (candidate.HasStrongerPitchThan(best)) {
           second_best = best;
@@ -363,7 +364,8 @@ CandidatePitchPeriods ComputePitchPeriod12kHz(
     denominator += y_new * y_new;
     denominator = std::max(0.f, denominator);
   }
-  return {best.period_inverted_lag, second_best.period_inverted_lag};
+  return {.best = best.period_inverted_lag,
+          .second_best = second_best.period_inverted_lag};
 }
 
 int ComputePitchPeriod48kHz(
@@ -391,8 +393,8 @@ int ComputePitchPeriod48kHz(
   VectorMath vector_math(cpu_features);
   if (r1.max + 1 >= r2.min) {
     // Overlapping or adjacent ranges.
-    ComputeAutoCorrelation({r1.min, r2.max}, pitch_buffer, auto_correlation,
-                           inverted_lags_index, vector_math);
+    ComputeAutoCorrelation({.min = r1.min, .max = r2.max}, pitch_buffer,
+                           auto_correlation, inverted_lags_index, vector_math);
   } else {
     // Disjoint ranges.
     ComputeAutoCorrelation(r1, pitch_buffer, auto_correlation,
@@ -438,10 +440,11 @@ PitchInfo ComputeExtendedPitchPeriod48kHz(
   best_pitch.y_energy = y_energy[kMaxPitch24kHz - best_pitch.period];
   best_pitch.strength = pitch_strength(best_pitch.xy, best_pitch.y_energy);
   // Keep a copy of the initial pitch candidate.
-  const PitchInfo initial_pitch{best_pitch.period, best_pitch.strength};
+  const PitchInfo initial_pitch{.period = best_pitch.period,
+                                .strength = best_pitch.strength};
   // 24 kHz version of the last estimated pitch.
-  const PitchInfo last_pitch{last_pitch_48kHz.period / 2,
-                             last_pitch_48kHz.strength};
+  const PitchInfo last_pitch{.period = last_pitch_48kHz.period / 2,
+                             .strength = last_pitch_48kHz.strength};
 
   // Find `max_period_divisor` such that the result of
   // `GetAlternativePitchPeriod(initial_pitch_period, 1, max_period_divisor)`
@@ -486,8 +489,10 @@ PitchInfo ComputeExtendedPitchPeriod48kHz(
     // Maybe update best period.
     if (IsAlternativePitchStrongerThanInitial(
             last_pitch, initial_pitch, alternative_pitch, period_divisor)) {
-      best_pitch = {alternative_pitch.period, alternative_pitch.strength, xy,
-                    yy};
+      best_pitch = {.period = alternative_pitch.period,
+                    .strength = alternative_pitch.strength,
+                    .xy = xy,
+                    .y_energy = yy};
     }
   }
 
@@ -503,7 +508,7 @@ PitchInfo ComputeExtendedPitchPeriod48kHz(
       kMinPitch48kHz, PitchPseudoInterpolationLagPitchBuf(
                           best_pitch.period, pitch_buffer, vector_math));
 
-  return {final_pitch_period_48kHz, final_pitch_strength};
+  return {.period = final_pitch_period_48kHz, .strength = final_pitch_strength};
 }
 
 }  // namespace rnn_vad

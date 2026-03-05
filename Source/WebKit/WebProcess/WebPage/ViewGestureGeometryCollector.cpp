@@ -42,7 +42,7 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/Range.h>
-#include <WebCore/RenderStyleInlines.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/TextIterator.h>
 #include <ranges>
@@ -138,7 +138,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
     if (RefPtr mainFrame = dynamicDowncast<WebCore::LocalFrame>(webPage->mainFrame()))
-        mainFrame->protectedDocument()->hitTest(HitTestRequest(), hitTestResult);
+        protect(mainFrame->document())->hitTest(HitTestRequest(), hitTestResult);
 
     RefPtr node = hitTestResult.innerNode();
     if (!node) {
@@ -246,7 +246,7 @@ void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, Flo
 {
     absoluteBoundingRect = node.absoluteBoundingRect(&isReplaced);
     if (node.document().isImageDocument()) {
-        if (RefPtr imageElement = downcast<ImageDocument>(node.protectedDocument())->imageElement()) {
+        if (RefPtr imageElement = downcast<ImageDocument>(protect(node.document()))->imageElement()) {
             if (&node != imageElement.get()) {
                 absoluteBoundingRect = imageElement->absoluteBoundingRect(&isReplaced);
                 FloatPoint newOrigin = origin;

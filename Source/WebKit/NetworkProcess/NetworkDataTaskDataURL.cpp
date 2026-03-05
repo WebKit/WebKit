@@ -81,7 +81,7 @@ void NetworkDataTaskDataURL::resume()
         if (m_state == State::Canceling || m_state == State::Completed)
             return;
 
-        didDecodeDataURL(WTFMove(decodeResult));
+        didDecodeDataURL(WTF::move(decodeResult));
     });
 }
 
@@ -106,7 +106,7 @@ NetworkDataTask::State NetworkDataTaskDataURL::state() const
 
 void NetworkDataTaskDataURL::setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
-    NetworkDataTask::setPendingDownloadLocation(filename, WTFMove(sandboxExtensionHandle), allowOverwrite);
+    NetworkDataTask::setPendingDownloadLocation(filename, WTF::move(sandboxExtensionHandle), allowOverwrite);
     m_allowOverwriteDownload = allowOverwrite;
 }
 
@@ -134,7 +134,7 @@ void NetworkDataTaskDataURL::didDecodeDataURL(std::optional<WebCore::DataURLDeco
 
     m_response = ResourceResponse::dataURLResponse(firstRequest().url(), result.value());
 
-    didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, PrivateRelayed::No, std::nullopt, [this, protectedThis = Ref { *this }, data = WTFMove(result.value().data)](PolicyAction policyAction) mutable {
+    didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, PrivateRelayed::No, std::nullopt, [this, protectedThis = Ref { *this }, data = WTF::move(result.value().data)](PolicyAction policyAction) mutable {
         if (m_state == State::Canceling || m_state == State::Completed)
             return;
 
@@ -148,7 +148,7 @@ void NetworkDataTaskDataURL::didDecodeDataURL(std::optional<WebCore::DataURLDeco
             invalidateAndCancel();
             break;
         case PolicyAction::Download:
-            downloadDecodedData(WTFMove(data));
+            downloadDecodedData(WTF::move(data));
             break;
         case PolicyAction::LoadWillContinueInAnotherProcess:
             ASSERT_NOT_REACHED();

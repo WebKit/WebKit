@@ -40,8 +40,8 @@ struct Scale {
     };
 
     Scale(CSS::Keyword::None) : value { nullptr } { }
-    Scale(Function&& value) : value { WTFMove(value.value) } { }
-    Scale(Ref<const ScaleTransformFunction>&& value) : value { WTFMove(value) } { }
+    Scale(Function&& value) : value { WTF::move(value.value) } { }
+    Scale(Ref<const ScaleTransformFunction>&& value) : value { WTF::move(value) } { }
 
     bool affectedByTransformOrigin() const { return value && !value->isIdentity(); }
     bool isRepresentableIn2D() const { return !value || value->isRepresentableIn2D(); }

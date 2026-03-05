@@ -65,7 +65,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    WebSharedWorkerServer* server();
+    WebSharedWorkerServer* NODELETE server();
     const WebSharedWorkerServer* server() const;
 
     NetworkSession* session();

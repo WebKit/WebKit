@@ -98,8 +98,9 @@ class CallbackArgumentJSValue final : public CallbackArgument {
 class CallbackArgumentId final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
     {
-        id value = valueToObject(context, argument);
-        [invocation setArgument:&value atIndex:argumentNumber];
+        const RetainPtr<id> value = valueToObject(context, argument);
+        id rawValue = value.get();
+        [invocation setArgument:&rawValue atIndex:argumentNumber];
     }
 };
 
@@ -138,10 +139,11 @@ class CallbackArgumentNSNumber final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToNumber([context JSGlobalContextRef], argument, exception);
+        const RetainPtr<id> value = valueToNumber([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
-        [invocation setArgument:&value atIndex:argumentNumber];
+        id rawValue = value.get();
+        [invocation setArgument:&rawValue atIndex:argumentNumber];
     }
 };
 
@@ -149,10 +151,11 @@ class CallbackArgumentNSString final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToString([context JSGlobalContextRef], argument, exception);
+        const RetainPtr<id> value = valueToString([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
-        [invocation setArgument:&value atIndex:argumentNumber];
+        id rawValue = value.get();
+        [invocation setArgument:&rawValue atIndex:argumentNumber];
     }
 };
 
@@ -160,10 +163,11 @@ class CallbackArgumentNSDate final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToDate([context JSGlobalContextRef], argument, exception);
+        const RetainPtr<id> value = valueToDate([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
-        [invocation setArgument:&value atIndex:argumentNumber];
+        id rawValue = value.get();
+        [invocation setArgument:&rawValue atIndex:argumentNumber];
     }
 };
 
@@ -171,10 +175,11 @@ class CallbackArgumentNSArray final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToArray([context JSGlobalContextRef], argument, exception);
+        const RetainPtr<id> value = valueToArray([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
-        [invocation setArgument:&value atIndex:argumentNumber];
+        id rawValue = value.get();
+        [invocation setArgument:&rawValue atIndex:argumentNumber];
     }
 };
 
@@ -182,10 +187,11 @@ class CallbackArgumentNSDictionary final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToDictionary([context JSGlobalContextRef], argument, exception);
+        const RetainPtr<id> value = valueToDictionary([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
-        [invocation setArgument:&value atIndex:argumentNumber];
+        id rawValue = value.get();
+        [invocation setArgument:&rawValue atIndex:argumentNumber];
     }
 };
 
@@ -273,8 +279,8 @@ public:
     static ResultType typeStruct(const char* begin, const char* end)
     {
         StringRange copy(begin, end);
-        if (NSInvocation *invocation = valueToTypeInvocationFor(copy))
-            return makeUnique<CallbackArgumentStruct>(invocation, copy);
+        if (RetainPtr invocation = valueToTypeInvocationFor(copy))
+            return makeUnique<CallbackArgumentStruct>(invocation.get(), copy);
         return nullptr;
     }
 };
@@ -394,8 +400,8 @@ public:
     static ResultType typeStruct(const char* begin, const char* end)
     {
         StringRange copy(begin, end);
-        if (NSInvocation *invocation = typeToValueInvocationFor(copy))
-            return makeUnique<CallbackResultStruct>(invocation, copy);
+        if (RetainPtr invocation = typeToValueInvocationFor(copy))
+            return makeUnique<CallbackResultStruct>(invocation.get(), copy);
         return nullptr;
     }
 };
@@ -416,8 +422,8 @@ public:
         : m_type(type)
         , m_instanceClass(instanceClass)
         , m_invocation(invocation)
-        , m_arguments(WTFMove(arguments))
-        , m_result(WTFMove(result))
+        , m_arguments(WTF::move(arguments))
+        , m_result(WTF::move(result))
     {
         ASSERT((type != CallbackInstanceMethod && type != CallbackInitMethod) || instanceClass);
     }
@@ -552,14 +558,14 @@ ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::Structure* structur
     : Base(vm, structure, callObjCCallbackFunction, impl->isConstructible() ? constructObjCCallbackFunction : nullptr)
     , m_functionCallback(functionCallback)
     , m_constructCallback(constructCallback)
-    , m_impl(WTFMove(impl))
+    , m_impl(WTF::move(impl))
 {
 }
 
 ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
 {
     Structure* structure = globalObject->objcCallbackFunctionStructure();
-    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm)) ObjCCallbackFunction(vm, structure, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTFMove(impl));
+    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm)) ObjCCallbackFunction(vm, structure, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTF::move(impl));
     function->finishCreation(vm, 0, name);
     return function;
 }
@@ -702,16 +708,16 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
         if (!argument || !skipNumber(position))
             return nullptr;
 
-        *nextArgument = WTFMove(argument);
+        *nextArgument = WTF::move(argument);
         nextArgument = &(*nextArgument)->m_next;
     }
 
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTFMove(arguments), WTFMove(result));
+    auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTF::move(arguments), WTF::move(result));
     const String& name = impl->name();
-    return toRef(JSC::ObjCCallbackFunction::create(vm, globalObject, name, WTFMove(impl)));
+    return toRef(JSC::ObjCCallbackFunction::create(vm, globalObject, name, WTF::move(impl)));
 }
 
 JSObjectRef objCCallbackFunctionForInit(JSContext *context, Class cls, Protocol *protocol, SEL sel, const char* types)

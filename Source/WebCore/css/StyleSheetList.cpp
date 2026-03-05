@@ -45,12 +45,12 @@ StyleSheetList::StyleSheetList(ShadowRoot& shadowRoot)
 
 StyleSheetList::~StyleSheetList() = default;
 
-inline const Vector<RefPtr<StyleSheet>>& StyleSheetList::styleSheets() const
+inline const Vector<Ref<StyleSheet>>& StyleSheetList::styleSheets() const
 {
     if (RefPtr document = m_document.get())
         return document->styleScope().styleSheetsForStyleSheetList();
     if (RefPtr shadowRoot = m_shadowRoot.get())
-        return shadowRoot->checkedStyleScope()->styleSheetsForStyleSheetList();
+        return protect(shadowRoot->styleScope())->styleSheetsForStyleSheetList();
     return m_detachedStyleSheets;
 }
 
@@ -69,7 +69,7 @@ void StyleSheetList::detach()
         m_document = nullptr;
     } else if (RefPtr shadowRoot = m_shadowRoot.get()) {
         ASSERT(!m_document);
-        m_detachedStyleSheets = shadowRoot->checkedStyleScope()->styleSheetsForStyleSheetList();
+        m_detachedStyleSheets = protect(shadowRoot->styleScope())->styleSheetsForStyleSheetList();
         m_shadowRoot = nullptr;
     } else
         ASSERT_NOT_REACHED();
@@ -82,8 +82,8 @@ unsigned StyleSheetList::length() const
 
 StyleSheet* StyleSheetList::item(unsigned index)
 {
-    const Vector<RefPtr<StyleSheet>>& sheets = styleSheets();
-    return index < sheets.size() ? sheets[index].get() : 0;
+    const Vector<Ref<StyleSheet>>& sheets = styleSheets();
+    return index < sheets.size() ? sheets[index].ptr() : nullptr;
 }
 
 CSSStyleSheet* StyleSheetList::namedItem(const AtomString& name) const

@@ -330,7 +330,7 @@ template<typename V> void VariantListOperations<V>::move(std::span<std::byte> ne
                 if constexpr (VectorTraits<T>::canMoveWithMemcpy) {
                     memcpySpan(newBuffer.first(sizeof(T)), oldBuffer.first(sizeof(T)));
                 } else {
-                    new (NotNull, newBuffer.data()) T(WTFMove(value));
+                    new (NotNull, newBuffer.data()) T(WTF::move(value));
                     value.~T();
                 }
 

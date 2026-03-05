@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InbandWebVTTTextTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandWebVTTTextTrack);
 
 inline InbandWebVTTTextTrack::InbandWebVTTTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
     : InbandTextTrack(context, trackPrivate)
@@ -60,13 +60,13 @@ WebVTTParser& InbandWebVTTTextTrack::parser()
 {
     ASSERT(is<Document>(scriptExecutionContext()));
     if (!m_webVTTParser)
-        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), downcast<Document>(*scriptExecutionContext()));
+        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), downcast<Document>(*protect(scriptExecutionContext())));
     return *m_webVTTParser;
 }
 
 void InbandWebVTTTextTrack::parseWebVTTFileHeader(String&& header)
 {
-    parser().parseFileHeader(WTFMove(header));
+    parser().parseFileHeader(WTF::move(header));
 }
 
 void InbandWebVTTTextTrack::parseWebVTTCueData(std::span<const uint8_t> data)
@@ -76,7 +76,7 @@ void InbandWebVTTTextTrack::parseWebVTTCueData(std::span<const uint8_t> data)
 
 void InbandWebVTTTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)
 {
-    parser().parseCueData(WTFMove(cueData));
+    parser().parseCueData(WTF::move(cueData));
 }
 
 void InbandWebVTTTextTrack::newCuesParsed()
@@ -86,11 +86,11 @@ void InbandWebVTTTextTrack::newCuesParsed()
         return;
 
     for (auto&& cueData : parser().takeCues()) {
-        auto cue = VTTCue::create(*document, WTFMove(cueData));
+        auto cue = VTTCue::create(*document, WTF::move(cueData));
         auto existingCue = matchCue(cue, TextTrackCue::IgnoreDuration);
         if (!existingCue) {
             INFO_LOG(LOGIDENTIFIER, cue.get());
-            addCue(WTFMove(cue));
+            addCue(WTF::move(cue));
             continue;
         }
 
@@ -106,8 +106,9 @@ void InbandWebVTTTextTrack::newCuesParsed()
     
 void InbandWebVTTTextTrack::newRegionsParsed()
 {
+    RefPtr regions = this->regions();
     for (auto& region : parser().takeRegions())
-        regions()->add(WTFMove(region));
+        regions->add(WTF::move(region));
 }
 
 void InbandWebVTTTextTrack::newStyleSheetsParsed()

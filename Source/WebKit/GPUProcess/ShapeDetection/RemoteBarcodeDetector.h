@@ -59,7 +59,7 @@ public:
 public:
     static Ref<RemoteBarcodeDetector> create(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, RemoteRenderingBackend& renderingBackend, ShapeDetectionIdentifier identifier)
     {
-        return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), renderingBackend, identifier));
+        return adoptRef(*new RemoteBarcodeDetector(WTF::move(barcodeDetector), renderingBackend, identifier));
     }
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;

@@ -22,14 +22,14 @@ info: |
   6. If relativeStart < 0, let from be max((len + relativeStart), 0); else let
   from be min(relativeStart, len).
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(0, -10),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(0, -10),
       [0n, 1n, 2n, 3n]
     ),
     '[0, 1, 2, 3]).copyWithin(0, -10) -> [0, 1, 2, 3]'
@@ -37,7 +37,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(0, -Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(0, -Infinity),
       [1n, 2n, 3n, 4n, 5n]
     ),
     '[1, 2, 3, 4, 5]).copyWithin(0, -Infinity) -> [1, 2, 3, 4, 5]'
@@ -45,7 +45,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n]).copyWithin(2, -10),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n])).copyWithin(2, -10),
       [0n, 1n, 0n, 1n, 2n]
     ),
     '[0, 1, 2, 3, 4]).copyWithin(2, -2) -> [0, 1, 0, 1, 2]'
@@ -53,7 +53,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(2, -Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(2, -Infinity),
       [1n, 2n, 1n, 2n, 3n]
     ),
     '[1, 2, 3, 4, 5]).copyWithin(2, -Infinity) -> [1, 2, 1, 2, 3]'
@@ -61,7 +61,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n]).copyWithin(10, -10),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n])).copyWithin(10, -10),
       [0n, 1n, 2n, 3n, 4n]
     ),
     '[0, 1, 2, 3, 4]).copyWithin(10, -10) -> [0, 1, 2, 3, 4]'
@@ -69,7 +69,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(10, -Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(10, -Infinity),
       [1n, 2n, 3n, 4n, 5n]
     ),
     '[1, 2, 3, 4, 5]).copyWithin(10, -Infinity) -> [1, 2, 3, 4, 5]'
@@ -77,7 +77,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(-9, -10),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(-9, -10),
       [0n, 1n, 2n, 3n]
     ),
     '[0, 1, 2, 3].copyWithin(-9, -10) -> [0, 1, 2, 3]'
@@ -85,7 +85,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(-9, -Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(-9, -Infinity),
       [1n, 2n, 3n, 4n, 5n]
     ),
     '[1, 2, 3, 4, 5].copyWithin(-9, -Infinity) -> [1, 2, 3, 4, 5]'

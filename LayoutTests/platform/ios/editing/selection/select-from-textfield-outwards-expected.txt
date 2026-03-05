@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 108x19
+        RenderText {#text} at (0,0) size 108x20
           text run at (0,0) width 108: "This is a test for "
-        RenderInline {I} at (0,0) size 767x39
-          RenderInline {A} at (107,0) size 353x19 [color=#0000EE]
-            RenderText {#text} at (107,0) size 353x19
+        RenderInline {I} at (0,0) size 767x40
+          RenderInline {A} at (107,0) size 353x20 [color=#0000EE]
+            RenderText {#text} at (107,0) size 353x20
               text run at (107,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9312"
-          RenderText {#text} at (0,0) size 767x39
+          RenderText {#text} at (0,0) size 767x40
             text run at (459,0) width 5: " "
             text run at (463,0) width 304: "REGRESSION: Selection bug in new text fields"
             text run at (0,20) width 217: "when selecting past the first letter"
-        RenderText {#text} at (216,20) size 5x19
+        RenderText {#text} at (216,20) size 5x20
           text run at (216,20) width 5: "."
       RenderBlock {P} at (0,74) size 784x60
-        RenderText {#text} at (0,0) size 771x59
+        RenderText {#text} at (0,0) size 771x60
           text run at (0,0) width 761: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed neque. Quisque eu"
           text run at (0,20) width 771: "nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien. Phasellus vehicula, sem"
           text run at (0,40) width 569: "at posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate pede."
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (20,20) size 319x51 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,257) size 784x80
-        RenderText {#text} at (0,0) size 772x79
+        RenderText {#text} at (0,0) size 772x80
           text run at (0,0) width 772: "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris viverra augue vitae purus."
           text run at (0,20) width 728: "Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros"
           text run at (0,40) width 767: "pharetra rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a,"

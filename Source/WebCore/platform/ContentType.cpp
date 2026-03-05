@@ -35,7 +35,7 @@
 namespace WebCore {
 
 ContentType::ContentType(String&& contentType)
-    : m_type(WTFMove(contentType))
+    : m_type(WTF::move(contentType))
 {
 }
 
@@ -60,7 +60,7 @@ ContentType ContentType::fromURL(const URL& url)
         auto extension = lastPathComponent.substring(pos + 1);
         String mediaType = MIMETypeRegistry::mediaMIMETypeForExtension(extension);
         if (!mediaType.isEmpty())
-            return ContentType(WTFMove(mediaType), true);
+            return ContentType(WTF::move(mediaType), true);
     }
     return ContentType();
 }

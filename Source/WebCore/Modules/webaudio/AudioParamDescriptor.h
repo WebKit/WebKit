@@ -43,7 +43,7 @@ struct AudioParamDescriptor {
     AutomationRate automationRate { AutomationRate::ARate };
 
     AudioParamDescriptor isolatedCopy() const & { return { name.isolatedCopy(), defaultValue, minValue, maxValue, automationRate }; }
-    AudioParamDescriptor isolatedCopy() && { return { WTFMove(name).isolatedCopy(), defaultValue, minValue, maxValue, automationRate }; }
+    AudioParamDescriptor isolatedCopy() && { return { WTF::move(name).isolatedCopy(), defaultValue, minValue, maxValue, automationRate }; }
 };
 
 } // namespace WebCore

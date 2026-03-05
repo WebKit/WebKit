@@ -52,12 +52,12 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Compiler.h>
 #import <wtf/MainThread.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/darwin/DispatchOSObject.h>
 
 using namespace WebCore;
 
@@ -387,7 +387,7 @@ public:
 {
     WebCore::initializeMainThreadIfNeeded();
 
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+    RetainPtr dict = [NSDictionary dictionaryWithObjectsAndKeys:
         INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES
 
         @NO, WebKitUserStyleSheetEnabledPreferenceKey,
@@ -428,7 +428,7 @@ public:
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
     ASSERT(kPDFDisplaySinglePageContinuous == 1);
 #endif
-    [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:dict.get()];
 }
 
 - (void)dealloc
@@ -492,13 +492,13 @@ public:
     if (![value isKindOfClass:[NSArray class]])
         return nil;
 
-    NSArray *array = (NSArray *)value;
-    for (id object in array) {
+    RetainPtr array = (NSArray *)value;
+    for (id object in array.get()) {
         if (![object isKindOfClass:[NSString class]])
             return nil;
     }
 
-    return (NSArray<NSString *> *)array;
+    return (NSArray<NSString *> *)array.autorelease();
 }
 
 - (void)_setStringArrayValueForKey:(NSArray<NSString *> *)value forKey:(NSString *)key

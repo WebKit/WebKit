@@ -46,36 +46,37 @@ using namespace fido;
 
 PublicKeyCredentialCreationOptions constructMakeCredentialRequest()
 {
-    PublicKeyCredentialRpEntity rp;
-    rp.id = "acme.com"_s;
-    rp.name = "acme.com"_s;
-
-    PublicKeyCredentialUserEntity user;
-    user.id = WebCore::toBufferSource(TestData::kUserId);
-    user.name = "johnpsmith@example.com"_s;
-    user.displayName = "John P. Smith"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-
-    PublicKeyCredentialParameters params;
-    params.type = PublicKeyCredentialType::PublicKey;
-    params.alg = COSE::ES256;
-
-    AuthenticationExtensionsClientInputs extensions;
-
-    PublicKeyCredentialCreationOptions options;
-    options.rp = WTFMove(rp);
-    options.user = WTFMove(user);
-    options.pubKeyCredParams.append(WTFMove(params));
-    options.extensions = WTFMove(extensions);
-
-    return options;
+    return PublicKeyCredentialCreationOptions {
+        .rp = PublicKeyCredentialRpEntity {
+            PublicKeyCredentialEntity { "acme.com"_s, { } },
+            "acme.com"_s
+        },
+        .user = PublicKeyCredentialUserEntity {
+            PublicKeyCredentialEntity { "johnpsmith@example.com"_s, "https://pics.acme.com/00/p/aBjjjpqPb.png"_s },
+            WebCore::toBufferSource(TestData::kUserId),
+            "John P. Smith"_s
+        },
+        .challenge = JSC::ArrayBuffer::create(static_cast<size_t>(0U), 1),
+        .pubKeyCredParams = { PublicKeyCredentialParameters { PublicKeyCredentialType::PublicKey, COSE::ES256 } },
+        .timeout = { },
+        .excludeCredentials = { },
+        .authenticatorSelection = { },
+        .attestation = AttestationConveyancePreference::None,
+        .extensions = { },
+    };
 }
 
 PublicKeyCredentialRequestOptions constructGetAssertionRequest()
 {
-    PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com"_s;
-    return options;
+    return PublicKeyCredentialRequestOptions {
+        .challenge = JSC::ArrayBuffer::create(static_cast<size_t>(0U), 1),
+        .timeout = { },
+        .rpId = "acme.com"_s,
+        .allowCredentials = { },
+        .userVerification = UserVerificationRequirement::Preferred,
+        .extensions = { },
+        .authenticatorAttachment = { },
+    };
 }
 
 TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fRegister)
@@ -92,12 +93,14 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fRegister)
 TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySign)
 {
     auto makeCredentialParam = constructMakeCredentialRequest();
-    PublicKeyCredentialDescriptor credentialDescriptor;
-    credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle).variant();
-    Vector<PublicKeyCredentialDescriptor> excludeList;
-    excludeList.append(credentialDescriptor);
-    makeCredentialParam.excludeCredentials = WTFMove(excludeList);
+
+    auto credentialDescriptor = PublicKeyCredentialDescriptor {
+        .type = PublicKeyCredentialType::PublicKey,
+        .id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle),
+        .transports = { },
+    };
+    makeCredentialParam.excludeCredentials = { credentialDescriptor };
+
     EXPECT_TRUE(isConvertibleToU2fRegisterCommand(makeCredentialParam));
 
     const auto u2fCheckOnlySign = convertToU2fCheckOnlySignCommand(std::array { TestData::kClientDataHash }, makeCredentialParam, credentialDescriptor);
@@ -108,12 +111,14 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySign)
 TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySignWithInvalidCredentialType)
 {
     auto makeCredentialParam = constructMakeCredentialRequest();
-    PublicKeyCredentialDescriptor credentialDescriptor;
-    credentialDescriptor.type = static_cast<PublicKeyCredentialType>(-1);
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle).variant();
-    Vector<PublicKeyCredentialDescriptor> excludeList;
-    excludeList.append(credentialDescriptor);
-    makeCredentialParam.excludeCredentials = WTFMove(excludeList);
+
+    auto credentialDescriptor = PublicKeyCredentialDescriptor {
+        .type = static_cast<PublicKeyCredentialType>(-1),
+        .id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle),
+        .transports = { },
+    };
+    makeCredentialParam.excludeCredentials = { credentialDescriptor };
+
     EXPECT_TRUE(isConvertibleToU2fRegisterCommand(makeCredentialParam));
 
     const auto u2fCheckOnlySign = convertToU2fCheckOnlySignCommand(std::span { TestData::kClientDataHash }, makeCredentialParam, credentialDescriptor);
@@ -122,24 +127,24 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySignW
 
 TEST(U2fCommandConstructorTest, TestU2fRegisterCredentialAlgorithmRequirement)
 {
-    PublicKeyCredentialRpEntity rp;
-    rp.id = "acme.com"_s;
-    rp.name = "acme.com"_s;
-
-    PublicKeyCredentialUserEntity user;
-    user.id = WebCore::toBufferSource(TestData::kUserId);
-    user.name = "johnpsmith@example.com"_s;
-    user.displayName = "John P. Smith"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-
-    PublicKeyCredentialParameters params;
-    params.type = PublicKeyCredentialType::PublicKey;
-    params.alg = -257;
-
-    PublicKeyCredentialCreationOptions makeCredentialParam;
-    makeCredentialParam.rp = WTFMove(rp);
-    makeCredentialParam.user = WTFMove(user);
-    makeCredentialParam.pubKeyCredParams.append(WTFMove(params));
+    PublicKeyCredentialCreationOptions makeCredentialParam {
+        .rp = PublicKeyCredentialRpEntity {
+            PublicKeyCredentialEntity { "acme.com"_s, { } },
+            "acme.com"_s
+        },
+        .user = PublicKeyCredentialUserEntity {
+            PublicKeyCredentialEntity { "johnpsmith@example.com"_s, "https://pics.acme.com/00/p/aBjjjpqPb.png"_s },
+            WebCore::toBufferSource(TestData::kUserId),
+            "John P. Smith"_s
+        },
+        .challenge = JSC::ArrayBuffer::create(static_cast<size_t>(0U), 1),
+        .pubKeyCredParams = { PublicKeyCredentialParameters { PublicKeyCredentialType::PublicKey, -257 } },
+        .timeout = { },
+        .excludeCredentials = { },
+        .authenticatorSelection = { },
+        .attestation = AttestationConveyancePreference::None,
+        .extensions = { },
+    };
 
     EXPECT_FALSE(isConvertibleToU2fRegisterCommand(makeCredentialParam));
 }
@@ -148,8 +153,8 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterUserVerificationRequirement)
 {
     auto makeCredentialParam = constructMakeCredentialRequest();
     AuthenticatorSelectionCriteria selection;
-    selection.userVerificationString = "required"_s;
-    makeCredentialParam.authenticatorSelection = WTFMove(selection);
+    selection.userVerification = UserVerificationRequirement::Required;
+    makeCredentialParam.authenticatorSelection = WTF::move(selection);
 
     EXPECT_FALSE(isConvertibleToU2fRegisterCommand(makeCredentialParam));
 }
@@ -159,7 +164,7 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterResidentKeyRequirement)
     auto makeCredentialParam = constructMakeCredentialRequest();
     AuthenticatorSelectionCriteria selection;
     selection.requireResidentKey = true;
-    makeCredentialParam.authenticatorSelection = WTFMove(selection);
+    makeCredentialParam.authenticatorSelection = WTF::move(selection);
 
     EXPECT_FALSE(isConvertibleToU2fRegisterCommand(makeCredentialParam));
 }
@@ -167,12 +172,15 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterResidentKeyRequirement)
 TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionToU2fSignRequest)
 {
     auto getAssertionReq = constructGetAssertionRequest();
-    PublicKeyCredentialDescriptor credentialDescriptor;
-    credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
-    Vector<PublicKeyCredentialDescriptor> allowedList;
-    allowedList.append(WTFMove(credentialDescriptor));
-    getAssertionReq.allowCredentials = WTFMove(allowedList);
+
+    getAssertionReq.allowCredentials = {
+        PublicKeyCredentialDescriptor {
+            .type = PublicKeyCredentialType::PublicKey,
+            .id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle),
+            .transports = { },
+        }
+    };
+
     EXPECT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
 
     const auto u2fSignCommand = convertToU2fSignCommand(std::span { TestData::kClientDataHash }, getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle));
@@ -183,18 +191,21 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionToU2fSignRequest)
 TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignRequest)
 {
     auto getAssertionReq = constructGetAssertionRequest();
-    PublicKeyCredentialDescriptor credentialDescriptor;
-    credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
-    Vector<PublicKeyCredentialDescriptor> allowedList;
-    allowedList.append(WTFMove(credentialDescriptor));
-    getAssertionReq.allowCredentials = WTFMove(allowedList);
+
+    getAssertionReq.allowCredentials = {
+        PublicKeyCredentialDescriptor {
+            .type = PublicKeyCredentialType::PublicKey,
+            .id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle),
+            .transports = { },
+        }
+    };
+
     EXPECT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
 
     // AppID
     WebCore::AuthenticationExtensionsClientInputs extensions;
     extensions.appid = "https://www.example.com/appid"_s;
-    getAssertionReq.extensions = WTFMove(extensions);
+    getAssertionReq.extensions = WTF::move(extensions);
 
     const auto u2fSignCommand = convertToU2fSignCommand(std::span { TestData::kClientDataHash }, getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle), true);
     ASSERT_TRUE(u2fSignCommand);
@@ -210,13 +221,15 @@ TEST(U2fCommandConstructorTest, TestU2fSignAllowListRequirement)
 TEST(U2fCommandConstructorTest, TestU2fSignUserVerificationRequirement)
 {
     auto getAssertionReq = constructGetAssertionRequest();
-    PublicKeyCredentialDescriptor credentialDescriptor;
-    credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
-    Vector<PublicKeyCredentialDescriptor> allowedList;
-    allowedList.append(WTFMove(credentialDescriptor));
-    getAssertionReq.allowCredentials = WTFMove(allowedList);
-    getAssertionReq.userVerificationString = "required"_s;
+
+    getAssertionReq.allowCredentials = {
+        PublicKeyCredentialDescriptor {
+            .type = PublicKeyCredentialType::PublicKey,
+            .id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle),
+            .transports = { },
+        }
+    };
+    getAssertionReq.userVerification = UserVerificationRequirement::Required;
 
     EXPECT_FALSE(isConvertibleToU2fSignCommand(getAssertionReq));
 }
@@ -224,12 +237,15 @@ TEST(U2fCommandConstructorTest, TestU2fSignUserVerificationRequirement)
 TEST(U2fCommandConstructorTest, TestCreateSignWithIncorrectKeyHandle)
 {
     auto getAssertionReq = constructGetAssertionRequest();
-    PublicKeyCredentialDescriptor credentialDescriptor;
-    credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
-    Vector<PublicKeyCredentialDescriptor> allowedList;
-    allowedList.append(WTFMove(credentialDescriptor));
-    getAssertionReq.allowCredentials = WTFMove(allowedList);
+
+    getAssertionReq.allowCredentials = {
+        PublicKeyCredentialDescriptor {
+            .type = PublicKeyCredentialType::PublicKey,
+            .id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle),
+            .transports = { },
+        }
+    };
+
     ASSERT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
 
     Vector<uint8_t> keyHandle(kMaxKeyHandleLength, 0xff);

@@ -1,4 +1,4 @@
 
-FAIL Ensures hit test result returns null pose w/unlocalizable space - viewer space - webgl assert_true: Results should not be empty! expected true got false
-FAIL Ensures hit test result returns null pose w/unlocalizable space - viewer space - webgl2 assert_true: Results should not be empty! expected true got false
+FAIL Ensures hit test result returns null pose w/unlocalizable space - viewer space - webgl assert_true: Pose should be null since input source is not localizable expected true got false
+FAIL Ensures hit test result returns null pose w/unlocalizable space - viewer space - webgl2 assert_true: Pose should be null since input source is not localizable expected true got false
 

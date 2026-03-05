@@ -39,12 +39,9 @@ LocalDOMWindowProperty::LocalDOMWindowProperty(LocalDOMWindow* window)
 
 LocalFrame* LocalDOMWindowProperty::frame() const
 {
-    return m_window ? protectedWindow()->localFrame() : nullptr;
-}
-
-RefPtr<LocalFrame> LocalDOMWindowProperty::protectedFrame() const
-{
-    return frame();
+    // FIXME: LocalDOMWindow::frame() is marked as NODELETE but it is not taking effect
+    // due to also being WEBCORE_EXPORT.
+    SUPPRESS_UNCOUNTED_ARG return m_window ? window()->frame() : nullptr;
 }
 
 LocalDOMWindow* LocalDOMWindowProperty::window() const

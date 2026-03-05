@@ -34,6 +34,7 @@
 #include <WebCore/JSDOMConvertBufferSource.h>
 #include <WebCore/JSDOMConvertInterface.h>
 #include <WebCore/JSDOMConvertNull.h>
+#include <WebCore/JSDOMConvertNullable.h>
 #include <WebCore/JSDOMConvertUndefined.h>
 
 namespace WebCore {
@@ -190,11 +191,11 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 if (!castedValue)
                     return;
 
-                returnValue = functor(ConversionResult<Type> { castedValue });
+                returnValue = functor(ConversionResult<Type> { *castedValue });
             });
 
             if (returnValue)
-                return FunctorResultType { WTFMove(*returnValue) };
+                return FunctorResultType { WTF::move(*returnValue) };
         }
 
         // 6. If V is an Object, V has an [[ArrayBufferData]] internal slot, and IsSharedArrayBuffer(V) is false, then:
@@ -202,10 +203,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         constexpr bool hasArrayBufferType = brigand::any<TypeList, IsIDLArrayBuffer<brigand::_1>>::value;
         if constexpr (hasArrayBufferType || hasObjectType) {
-            auto arrayBuffer = (brigand::any<TypeList, IsIDLArrayBufferAllowShared<brigand::_1>>::value) ? JSC::JSArrayBuffer::toWrappedAllowShared(vm, value) : JSC::JSArrayBuffer::toWrapped(vm, value);
+            RefPtr arrayBuffer = (brigand::any<TypeList, IsIDLArrayBufferAllowShared<brigand::_1>>::value) ? JSC::JSArrayBuffer::toWrappedAllowShared(vm, value) : JSC::JSArrayBuffer::toWrapped(vm, value);
             if (arrayBuffer) {
                 if constexpr (hasArrayBufferType) {
-                    return functor(WTFMove(arrayBuffer));
+                    return functor(arrayBuffer.releaseNonNull());
                 } else if constexpr (hasObjectType) {
                     scope.release();
                     return functor(Converter<ObjectType>::convert(lexicalGlobalObject, value));
@@ -215,10 +216,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
 
         constexpr bool hasArrayBufferViewType = brigand::any<TypeList, IsIDLArrayBufferView<brigand::_1>>::value;
         if constexpr (hasArrayBufferViewType || hasObjectType) {
-            auto arrayBufferView = (brigand::any<TypeList, IsIDLArrayBufferViewAllowShared<brigand::_1>>::value) ? JSC::JSArrayBufferView::toWrappedAllowShared(vm, value) : JSC::JSArrayBufferView::toWrapped(vm, value);
+            RefPtr arrayBufferView = (brigand::any<TypeList, IsIDLArrayBufferViewAllowShared<brigand::_1>>::value) ? JSC::JSArrayBufferView::toWrappedAllowShared(vm, value) : JSC::JSArrayBufferView::toWrapped(vm, value);
             if (arrayBufferView) {
                 if constexpr (hasArrayBufferViewType) {
-                    return functor(WTFMove(arrayBufferView));
+                    return functor(arrayBufferView.releaseNonNull());
                 } else if constexpr (hasObjectType) {
                     scope.release();
                     return functor(Converter<ObjectType>::convert(lexicalGlobalObject, value));
@@ -237,10 +238,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         constexpr bool hasDataViewType = brigand::any<TypeList, std::is_same<IDLDataView, brigand::_1>>::value;
         if constexpr (hasDataViewType || hasObjectType) {
-            auto dataView = JSC::JSDataView::toWrapped(vm, value);
+            RefPtr dataView = JSC::JSDataView::toWrapped(vm, value);
             if (dataView) {
                 if constexpr (hasDataViewType) {
-                    return functor(WTFMove(dataView));
+                    return functor(dataView.releaseNonNull());
                 } else if constexpr (hasObjectType) {
                     scope.release();
                     return functor(Converter<ObjectType>::convert(lexicalGlobalObject, value));
@@ -261,7 +262,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
 
                 using WrapperType = typename Converter<Type>::WrapperType;
 
-                auto castedValue = (brigand::any<TypeList, IsIDLTypedArrayAllowShared<brigand::_1>>::value) ? WrapperType::toWrappedAllowShared(vm, value) : WrapperType::toWrapped(vm, value);
+                RefPtr castedValue = (brigand::any<TypeList, IsIDLTypedArrayAllowShared<brigand::_1>>::value) ? WrapperType::toWrappedAllowShared(vm, value) : WrapperType::toWrapped(vm, value);
                 if (!castedValue)
                     return;
 
@@ -269,7 +270,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             });
 
             if (returnValue)
-                return FunctorResultType { WTFMove(*returnValue) };
+                return FunctorResultType { WTF::move(*returnValue) };
         }
 
         // 10. If IsCallable(V) is true, then:
@@ -402,7 +403,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
 
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convert(lexicalGlobalObject, value, [](auto&& result) -> Result { return Result(WTFMove(result)); });
+        return convert(lexicalGlobalObject, value, [](auto&& result) -> Result { return Result(WTF::move(result)); });
     }
 };
 

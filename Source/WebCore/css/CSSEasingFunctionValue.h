@@ -34,7 +34,7 @@ class CSSEasingFunctionValue final : public CSSValue {
 public:
     static Ref<CSSEasingFunctionValue> create(CSS::EasingFunction);
 
-    const CSS::EasingFunction& easingFunction() const { return m_easingFunction; }
+    const CSS::EasingFunction& easingFunction() const LIFETIME_BOUND { return m_easingFunction; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSEasingFunctionValue&) const;

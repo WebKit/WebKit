@@ -92,7 +92,9 @@ static void webkit_dom_html_document_dom_event_target_init(WebKitDOMEventTargetI
     iface->remove_event_listener = webkit_dom_html_document_remove_event_listener;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLDocument, webkit_dom_html_document, WEBKIT_DOM_TYPE_DOCUMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_document_dom_event_target_init))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_HTML_DOCUMENT_PROP_0,

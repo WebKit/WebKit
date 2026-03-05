@@ -141,7 +141,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         URL urlWithCredentials(firstRequest().url());
         urlWithCredentials.setUser(d->m_user);
         urlWithCredentials.setPassword(d->m_password);
-        firstRequest().setURL(WTFMove(urlWithCredentials));
+        firstRequest().setURL(WTF::move(urlWithCredentials));
     }
 
     if (shouldUseCredentialStorage && firstRequest().url().protocolIsInHTTPFamily()) {
@@ -316,9 +316,9 @@ id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage, RefPtr<Synchron
     ASSERT(!d->m_delegate);
 
     if (shouldUseCredentialStorage)
-        d->m_delegate = adoptNS([[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTFMove(queue)]);
+        d->m_delegate = adoptNS([[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTF::move(queue)]);
     else
-        d->m_delegate = adoptNS([[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTFMove(queue)]);
+        d->m_delegate = adoptNS([[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTF::move(queue)]);
 
     return d->m_delegate.get();
 }
@@ -416,7 +416,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     
             auto body = previousRequest.httpBody();
             if (!equalLettersIgnoringASCIICase(lastHTTPMethod, "get"_s) && body && !body->isEmpty())
-                request.setHTTPBody(WTFMove(body));
+                request.setHTTPBody(WTF::move(body));
 
             String originalContentType = previousRequest.httpContentType();
             if (!originalContentType.isEmpty())
@@ -466,12 +466,12 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         }
     }
 
-    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+    client()->willSendRequestAsync(this, WTF::move(request), WTF::move(redirectResponse), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (ResourceRequest&& request) mutable {
         // Client call may not preserve the session, especially if the request is sent over IPC.
         if (!request.isNull())
             request.setStorageSession(d->m_storageSession.get());
         d->m_previousRequest = request;
-        completionHandler(WTFMove(request));
+        completionHandler(WTF::move(request));
     });
 }
 
@@ -574,7 +574,7 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
 void ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (ResourceHandleClient* client = this->client())
-        client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace, WTFMove(completionHandler));
+        client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace, WTF::move(completionHandler));
     else
         completionHandler(false);
 }

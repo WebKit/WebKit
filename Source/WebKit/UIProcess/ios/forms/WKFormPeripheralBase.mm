@@ -33,6 +33,7 @@
 #import <pal/spi/cocoa/IOKitSPI.h>
 
 @implementation WKFormPeripheralBase {
+    WeakObjCPtr<WKContentView> _view;
     RetainPtr<NSObject <WKFormControl>> _control;
 }
 
@@ -42,7 +43,7 @@
         return nil;
 
     _view = view;
-    _control = WTFMove(control);
+    _control = WTF::move(control);
     return self;
 }
 
@@ -82,6 +83,11 @@
     return _control.get();
 }
 
+- (WKContentView *)view
+{
+    return _view.getAutoreleased();
+}
+
 - (BOOL)handleKeyEvent:(UIEvent *)event
 {
     ASSERT(event._hidEvent);
@@ -91,15 +97,16 @@
     }
     if (!event._isKeyDown)
         return NO;
-    UIPhysicalKeyboardEvent *keyEvent = (UIPhysicalKeyboardEvent *)event;
-    if (keyEvent._inputFlags & kUIKeyboardInputModifierFlagsChanged)
+    // FIXME: `checked_objc_cast<UIPhysicalKeyboardEvent>(event)` causes a linking error.
+    SUPPRESS_MEMORY_UNSAFE_CAST RetainPtr keyEvent = (UIPhysicalKeyboardEvent *)event;
+    if (keyEvent.get()._inputFlags & kUIKeyboardInputModifierFlagsChanged)
         return NO;
-    if (_editing && (keyEvent._keyCode == kHIDUsage_KeyboardEscape || [keyEvent._unmodifiedInput isEqualToString:UIKeyInputEscape])) {
-        [_view accessoryDone];
+    if (_editing && (keyEvent.get()._keyCode == kHIDUsage_KeyboardEscape || [keyEvent.get()._unmodifiedInput isEqualToString:UIKeyInputEscape])) {
+        [_view.get() accessoryDone];
         return YES;
     }
-    if (!_editing && keyEvent._keyCode == kHIDUsage_KeyboardSpacebar) {
-        [_view accessoryOpen];
+    if (!_editing && keyEvent.get()._keyCode == kHIDUsage_KeyboardSpacebar) {
+        [_view.get() accessoryOpen];
         return YES;
     }
     return NO;

@@ -57,9 +57,9 @@ bool GlyphPage::fill(std::span<const char16_t> buffer)
     unsigned glyphStep = buffer.size() / GlyphPage::size;
 
     if (shouldFillWithVerticalGlyphs(buffer, font))
-        CTFontGetVerticalGlyphsForCharacters(font->platformData().protectedCTFont().get(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.mutableSpan().data(), buffer.size());
+        CTFontGetVerticalGlyphsForCharacters(protect(font->platformData().ctFont()).get(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.mutableSpan().data(), buffer.size());
     else
-        CTFontGetGlyphsForCharacters(font->platformData().protectedCTFont().get(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.mutableSpan().data(), buffer.size());
+        CTFontGetGlyphsForCharacters(protect(font->platformData().ctFont()).get(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.mutableSpan().data(), buffer.size());
 
     bool haveGlyphs = false;
     for (unsigned i = 0; i < GlyphPage::size; ++i) {

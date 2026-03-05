@@ -94,7 +94,6 @@ private:
     void pageWasNotifiedOfNotificationPermission() final { }
     void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
-    RefPtr<WebPushD::Connection> protectedConnection() const;
 
     RefPtr<WebPushD::Connection> m_connection;
     const Ref<NetworkProcess> m_networkProcess;

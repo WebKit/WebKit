@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(DFG_JIT)
 
+#include "DFGRegisteredStructure.h"
 #include <JavaScriptCore/ArrayProfile.h>
-#include <JavaScriptCore/DFGRegisteredStructure.h>
 #include <JavaScriptCore/StructureSet.h>
 #include <wtf/TinyPtrSet.h>
 

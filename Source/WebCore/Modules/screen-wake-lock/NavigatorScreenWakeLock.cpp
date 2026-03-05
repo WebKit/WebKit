@@ -49,7 +49,7 @@ NavigatorScreenWakeLock* NavigatorScreenWakeLock::from(Navigator& navigator)
     if (!supplement) {
         auto newSupplement = makeUnique<NavigatorScreenWakeLock>(navigator);
         supplement = newSupplement.get();
-        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }
@@ -62,7 +62,7 @@ WakeLock& NavigatorScreenWakeLock::wakeLock(Navigator& navigator)
 WakeLock& NavigatorScreenWakeLock::wakeLock()
 {
     if (!m_wakeLock)
-        lazyInitialize(m_wakeLock, WakeLock::create(downcast<Document>(m_navigator->protectedScriptExecutionContext().get())));
+        lazyInitialize(m_wakeLock, WakeLock::create(downcast<Document>(protect(m_navigator->scriptExecutionContext()).get())));
     return *m_wakeLock;
 }
 

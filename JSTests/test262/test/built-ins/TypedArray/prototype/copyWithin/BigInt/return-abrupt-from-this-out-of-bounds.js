@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.copywithin
 description: Return abrupt when "this" value fails buffer boundary checks
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [ArrayBuffer, BigInt, TypedArray, arrow-function, resizable-arraybuffer]
 ---*/
 
@@ -56,4 +56,4 @@ testWithBigIntTypedArrayConstructors(TA => {
     array.copyWithin(0, 0);
     throw new Test262Error('copyWithin completed successfully');
   });
-});
+}, null, ["passthrough"]);

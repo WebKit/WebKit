@@ -71,8 +71,7 @@ public:
 
     void stop();
 
-    RefPtr<IPC::Connection> protectedIPCConnection() const;
-    IPC::Connection* ipcConnection() const;
+    IPC::Connection* NODELETE ipcConnection() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -91,8 +90,7 @@ public:
     void unregisterDownload(ServiceWorkerDownloadTask&);
 
     WebCore::ProcessIdentifier webProcessIdentifier() const final { return m_webProcessIdentifier; }
-    NetworkProcess* networkProcess();
-    RefPtr<NetworkProcess> protectedNetworkProcess();
+    NetworkProcess* NODELETE networkProcess();
 
     void didFinishInstall(const std::optional<WebCore::ServiceWorkerJobDataIdentifier>&, WebCore::ServiceWorkerIdentifier, bool wasSuccessful);
     void didFinishActivation(WebCore::ServiceWorkerIdentifier);
@@ -107,8 +105,6 @@ public:
 private:
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier>, WebCore::SWServer&);
 
-    RefPtr<NetworkConnectionToWebProcess> protectedConnection() const;
-
     template<typename T> void sendToParentProcess(T&&);
     template<typename T, typename C> void sendWithAsyncReplyToParentProcess(T&&, C&&);
 
@@ -116,7 +112,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const WebCore::SecurityOriginData& sourceOrigin);
     void skipWaiting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
 
     // Messages back from the SW host process

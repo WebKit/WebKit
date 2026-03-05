@@ -119,11 +119,6 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
     return m_nsResponse.get();
 }
 
-RetainPtr<NSURLResponse> ResourceResponse::protectedNSURLResponse() const
-{
-    return nsURLResponse();
-}
-
 static void addToHTTPHeaderMap(const void* key, const void* value, void* context)
 {
     HTTPHeaderMap* httpHeaderMap = (HTTPHeaderMap*)context;
@@ -194,7 +189,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
 
 String ResourceResponse::platformSuggestedFilename() const
 {
-    return [protectedNSURLResponse() suggestedFilename];
+    return [protect(nsURLResponse()) suggestedFilename];
 }
 
 bool ResourceResponse::platformCompare(const ResourceResponse& a, const ResourceResponse& b)

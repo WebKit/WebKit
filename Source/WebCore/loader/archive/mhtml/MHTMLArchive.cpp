@@ -202,7 +202,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     asciiString = makeString("--"_s, boundary, "--\r\n"_s).utf8();
     mhtmlData.append(asciiString.span());
 
-    return mhtmlData.take();
+    return mhtmlData.takeBuffer();
 }
 
 }

@@ -33,7 +33,7 @@
 namespace IPC {
 
 // Version of round_msg() using CheckedSize for extra safety.
-static inline CheckedSize safeRoundMsg(CheckedSize value)
+static inline CheckedSize NODELETE safeRoundMsg(CheckedSize value)
 {
     constexpr size_t alignment = sizeof(natural_t);
     return ((value + (alignment - 1)) / alignment) * alignment;

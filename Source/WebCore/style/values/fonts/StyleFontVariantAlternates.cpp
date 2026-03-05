@@ -155,7 +155,7 @@ Ref<CSSValue> CSSValueCreation<FontVariantAlternates>::operator()(CSSValuePool& 
             CSSValueListBuilder functionArguments;
             for (auto& argument : value)
                 functionArguments.append(createCSSValue(pool, style, CustomIdentifier { AtomString { argument } }));
-            valueList.append(CSSFunctionValue::create(name.value, WTFMove(functionArguments)));
+            valueList.append(CSSFunctionValue::create(name.value, WTF::move(functionArguments)));
         }
     };
 
@@ -168,8 +168,8 @@ Ref<CSSValue> CSSValueCreation<FontVariantAlternates>::operator()(CSSValuePool& 
     appendSingleItemFunction(CSS::Keyword::Annotation { }, alternates.platform().values().annotation);
 
     if (valueList.size() == 1)
-        return WTFMove(valueList[0]);
-    return CSSValueList::createSpaceSeparated(WTFMove(valueList));
+        return WTF::move(valueList[0]);
+    return CSSValueList::createSpaceSeparated(WTF::move(valueList));
 }
 
 void Serialize<FontVariantAlternates>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const FontVariantAlternates& alternates)

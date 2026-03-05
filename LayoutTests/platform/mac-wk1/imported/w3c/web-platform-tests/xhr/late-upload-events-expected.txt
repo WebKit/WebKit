@@ -1,6 +1,0 @@
-Adding upload event listeners after send()
-
-
-FAIL Late listeners: No preflight assert_equals: expected 200 but got 0
-FAIL Late listeners: Preflight assert_equals: expected 200 but got 0
-

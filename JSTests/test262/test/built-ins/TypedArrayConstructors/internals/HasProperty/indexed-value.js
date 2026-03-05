@@ -20,9 +20,9 @@ includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, Reflect, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
 
-  assert.sameValue(Reflect.has(sample, 0), true, 'Reflect.has("new TA([42, 43])", 0) must return true');
-  assert.sameValue(Reflect.has(sample, 1), true, 'Reflect.has("new TA([42, 43])", 1) must return true');
+  assert.sameValue(Reflect.has(sample, 0), true, 'Reflect.has("new TA(makeCtorArg([42, 43]))", 0) must return true');
+  assert.sameValue(Reflect.has(sample, 1), true, 'Reflect.has("new TA(makeCtorArg([42, 43]))", 1) must return true');
 });

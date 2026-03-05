@@ -33,17 +33,17 @@ namespace Style {
 
 // MARK: - Evaluation
 
-auto Evaluation<ScrollPaddingEdge, LayoutUnit>::operator()(const ScrollPaddingEdge& edge, LayoutUnit referenceLength, ZoomNeeded token) -> LayoutUnit
+auto Evaluation<ScrollPaddingEdge, LayoutUnit>::operator()(const ScrollPaddingEdge& edge, LayoutUnit referenceLength, ZoomFactor zoom) -> LayoutUnit
 {
     return WTF::switchOn(edge,
         [&](const ScrollPaddingEdge::Fixed& fixed) {
-            return evaluate<LayoutUnit>(fixed, token);
+            return evaluate<LayoutUnit>(fixed, zoom);
         },
         [&](const ScrollPaddingEdge::Percentage& percentage) {
             return evaluate<LayoutUnit>(percentage, referenceLength);
         },
         [&](const ScrollPaddingEdge::Calc& calculated) {
-            return evaluate<LayoutUnit>(calculated, referenceLength, token);
+            return evaluate<LayoutUnit>(calculated, referenceLength, zoom);
         },
         [&](const CSS::Keyword::Auto&) {
             return 0_lu;
@@ -51,17 +51,17 @@ auto Evaluation<ScrollPaddingEdge, LayoutUnit>::operator()(const ScrollPaddingEd
     );
 }
 
-auto Evaluation<ScrollPaddingEdge, float>::operator()(const ScrollPaddingEdge& edge, float referenceLength, ZoomNeeded token) -> float
+auto Evaluation<ScrollPaddingEdge, float>::operator()(const ScrollPaddingEdge& edge, float referenceLength, ZoomFactor zoom) -> float
 {
     return WTF::switchOn(edge,
         [&](const ScrollPaddingEdge::Fixed& fixed) {
-            return evaluate<float>(fixed, token);
+            return evaluate<float>(fixed, zoom);
         },
         [&](const ScrollPaddingEdge::Percentage& percentage) {
             return evaluate<float>(percentage, referenceLength);
         },
         [&](const ScrollPaddingEdge::Calc& calculated) {
-            return evaluate<float>(calculated, referenceLength, token);
+            return evaluate<float>(calculated, referenceLength, zoom);
         },
         [&](const CSS::Keyword::Auto&) {
             return 0.0f;
@@ -69,13 +69,13 @@ auto Evaluation<ScrollPaddingEdge, float>::operator()(const ScrollPaddingEdge& e
     );
 }
 
-LayoutBoxExtent extentForRect(const ScrollPaddingBox& padding, const LayoutRect& rect, ZoomNeeded token)
+LayoutBoxExtent extentForRect(const ScrollPaddingBox& padding, const LayoutRect& rect, ZoomFactor zoom)
 {
     return LayoutBoxExtent {
-        evaluate<LayoutUnit>(padding.top(), rect.height(), token),
-        evaluate<LayoutUnit>(padding.right(), rect.width(), token),
-        evaluate<LayoutUnit>(padding.bottom(), rect.height(), token),
-        evaluate<LayoutUnit>(padding.left(), rect.width(), token),
+        evaluate<LayoutUnit>(padding.top(), rect.height(), zoom),
+        evaluate<LayoutUnit>(padding.right(), rect.width(), zoom),
+        evaluate<LayoutUnit>(padding.bottom(), rect.height(), zoom),
+        evaluate<LayoutUnit>(padding.left(), rect.width(), zoom),
     };
 }
 

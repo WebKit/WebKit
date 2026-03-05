@@ -35,12 +35,12 @@ namespace WebCore {
 class FormData;
 
 class TestReportBody final : public ReportBody {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TestReportBody);
+    WTF_MAKE_TZONE_ALLOCATED(TestReportBody);
 public:
     WEBCORE_EXPORT static Ref<TestReportBody> create(String&& message);
 
     WEBCORE_EXPORT const String& type() const final;
-    WEBCORE_EXPORT const String& message() const;
+    WEBCORE_EXPORT const String& NODELETE message() const;
 
 private:
     TestReportBody(String&& message);

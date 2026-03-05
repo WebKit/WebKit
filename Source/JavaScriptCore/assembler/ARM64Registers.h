@@ -41,7 +41,7 @@
 // beyond what you would save by the platform-agnostic "preserve return address" and "restore
 // return address" operations in CCallHelpers.
 
-#if !OS(DARWIN)
+#if OS(LINUX)
 #define FOR_EACH_GP_REGISTER(macro)                             \
     /* Parameter/result registers. */                           \
     macro(x0,  "x0"_s,  0, 0)                                     \

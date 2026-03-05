@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/color-interpolation-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/color-interpolation-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/color-interpolation-animation.html

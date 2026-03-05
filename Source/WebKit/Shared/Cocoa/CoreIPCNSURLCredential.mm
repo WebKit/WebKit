@@ -37,7 +37,7 @@
     id NAME = dict[@#NAME];                 \
     if ([NAME isKindOfClass:CLASS.class]) { \
         auto var = WRAPPER(NAME);           \
-        m_data.NAME = WTFMove(var);         \
+        m_data.NAME = WTF::move(var);         \
     }
 
 namespace WebKit {
@@ -94,10 +94,10 @@ CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
                 option = CoreIPCDate(value);
             if (option) {
                 auto k = CoreIPCString(key);
-                vector.append(std::make_pair(WTFMove(k), WTFMove(*option)));
+                vector.append(std::make_pair(WTF::move(k), WTF::move(*option)));
             }
         }
-        m_data.attributes = WTFMove(vector);
+        m_data.attributes = WTF::move(vector);
     }
 
     SET_MDATA(identifier, NSString, CoreIPCString);
@@ -128,9 +128,9 @@ CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
             }
             auto k = CoreIPCString(key);
             auto v = CoreIPCString(value);
-            vector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
         }
-        m_data.flags = WTFMove(vector);
+        m_data.flags = WTF::move(vector);
     }
 
     SET_MDATA(uuid, NSString, CoreIPCString);
@@ -168,7 +168,7 @@ CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
 }
 
 CoreIPCNSURLCredential::CoreIPCNSURLCredential(CoreIPCNSURLCredentialData&& data)
-    : m_data(WTFMove(data)) { }
+    : m_data(WTF::move(data)) { }
 
 RetainPtr<id> CoreIPCNSURLCredential::toID() const
 {

@@ -108,7 +108,7 @@ typedef NSString *AVContentKeySystem;
 
     NSData* identifier = [session contentProtectionSessionIdentifier];
     RetainPtr<NSString> sessionIdentifierString = identifier ? adoptNS([[NSString alloc] initWithData:identifier encoding:NSUTF8StringEncoding]) : nil;
-    callOnMainThread([self, protectedSelf = RetainPtr { self }, sessionIdentifierString = WTFMove(sessionIdentifierString)] {
+    callOnMainThread([self, protectedSelf = RetainPtr { self }, sessionIdentifierString = WTF::move(sessionIdentifierString)] {
         RefPtr parent = m_parent.get();
         if (!parent)
             return;
@@ -130,7 +130,7 @@ CDMSessionAVContentKeySession::CDMSessionAVContentKeySession(Vector<int>&& proto
     , m_contentKeySessionDelegate(adoptNS([[WebCDMSessionAVContentKeySessionDelegate alloc] initWithParent:this]))
     , m_delegateQueue(WorkQueue::create("CDMSessionAVContentKeySession delegate queue"_s))
     , m_hasKeyRequestSemaphore(0)
-    , m_protocolVersions(WTFMove(protocolVersions))
+    , m_protocolVersions(WTF::move(protocolVersions))
     , m_cdmVersion(cdmVersion)
     , m_mode(Normal)
 #if !RELEASE_LOG_DISABLED
@@ -188,7 +188,7 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const Strin
     auto array = Uint8Array::create(certificateString.length());
     for (unsigned i = 0, length = certificateString.length(); i < length; ++i)
         array->set(i, certificateString[i]);
-    return WTFMove(array);
+    return WTF::move(array);
 }
 
 void CDMSessionAVContentKeySession::releaseKeys()
@@ -224,7 +224,7 @@ void CDMSessionAVContentKeySession::releaseKeys()
             if (m_sessionId == String(playbackSessionIdValue.get())) {
                 ALWAYS_LOG(LOGIDENTIFIER, "found session, sending expiration message");
                 m_expiredSession = expiredSessionData;
-                m_client->sendMessage(Uint8Array::create(span(m_expiredSession.get())).ptr(), emptyString());
+                Ref { *m_client }->sendMessage(Uint8Array::create(span(m_expiredSession.get())).ptr(), emptyString());
                 break;
             }
         }
@@ -311,7 +311,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         ASSERT(contentKeyRequest);
         RetainPtr certificateData = toNSData(m_certificate->span());
 
-        RetainPtr options = CDMInstanceSessionFairPlayStreamingAVFObjC::optionsForKeyRequestWithHashSalt(m_client->mediaKeysHashSalt());
+        RetainPtr options = CDMInstanceSessionFairPlayStreamingAVFObjC::optionsForKeyRequestWithHashSalt(Ref { *m_client }->mediaKeysHashSalt());
 
         if (!m_protocolVersions.isEmpty() && PAL::canLoad_AVFoundation_AVContentKeyRequestProtocolVersionsKey()) {
             RetainPtr mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
@@ -319,7 +319,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
             [mutableOptions setValue:createNSArray(m_protocolVersions, [] (int version) -> NSNumber * {
                 return version ? @(version) : nil;
             }).get() forKey:AVContentKeyRequestProtocolVersionsKey];
-            options = WTFMove(mutableOptions);
+            options = WTF::move(mutableOptions);
         }
 
         errorCode = MediaPlayer::NoError;
@@ -491,10 +491,11 @@ void CDMSessionAVContentKeySession::setInitData(SharedBuffer& initData)
 
 String CDMSessionAVContentKeySession::storagePath() const
 {
-    if (!m_client)
+    RefPtr client = m_client.get();
+    if (!client)
         return emptyString();
 
-    String storageDirectory = m_client->mediaKeysStorageDirectory();
+    String storageDirectory = client->mediaKeysStorageDirectory();
     if (storageDirectory.isEmpty())
         return emptyString();
 

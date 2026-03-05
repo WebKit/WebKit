@@ -251,7 +251,7 @@ struct OPENSSL_EXPORT ParsedTbsCertificate {
   //
   // Parsing guarantees that notBefore (validity_not_before) and notAfter
   // (validity_not_after) are valid DER-encoded dates, however it DOES NOT
-  // gurantee anything about their values. For instance notAfter could be
+  // guarantee anything about their values. For instance notAfter could be
   // before notBefore, or the dates could indicate an expired certificate.
   // Consumers are responsible for testing expiration.
   der::GeneralizedTime validity_not_before;

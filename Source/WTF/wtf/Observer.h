@@ -41,7 +41,7 @@ class Observer<Out(In...)> final : public CanMakeWeakPtr<Observer<Out(In...)>>, 
 public:
     static Ref<Observer> create(Function<Out(In...)>&& callback)
     {
-        return adoptRef(*new Observer(WTFMove(callback)));
+        return adoptRef(*new Observer(WTF::move(callback)));
     }
 
     Out operator()(In... in) const
@@ -52,7 +52,7 @@ public:
 
 private:
     Observer(Function<Out(In...)>&& callback)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
     {
         ASSERT(m_callback);
     }

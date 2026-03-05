@@ -36,9 +36,9 @@ public:
     static Ref<CSSPropertyRule> create(StyleRuleProperty&, CSSStyleSheet* parent);
     virtual ~CSSPropertyRule();
 
-    String name() const;
-    String syntax() const;
-    bool inherits() const;
+    String NODELETE name() const;
+    String NODELETE syntax() const;
+    bool NODELETE inherits() const;
     String initialValue() const;
 
     String cssText() const final;
@@ -46,7 +46,7 @@ public:
 private:
     CSSPropertyRule(StyleRuleProperty&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Property; }
-    void reattach(StyleRuleBase&) final;
+    void NODELETE reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleProperty> m_propertyRule;
 };

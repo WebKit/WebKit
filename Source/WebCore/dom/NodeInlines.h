@@ -26,6 +26,7 @@
 #include <WebCore/InspectorInstrumentationPublic.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/Node.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/PseudoElement.h>
 #include <WebCore/RenderBox.h>
 #include <WebCore/ShadowRoot.h>
@@ -48,16 +49,6 @@ inline ContainerNode* Node::parentOrShadowHostNode() const
     return parentNode();
 }
 
-inline RefPtr<ContainerNode> Node::protectedParentOrShadowHostNode() const
-{
-    return parentOrShadowHostNode();
-}
-
-inline RefPtr<ScriptExecutionContext> Node::protectedScriptExecutionContext() const
-{
-    return scriptExecutionContext();
-}
-
 inline WebCoreOpaqueRoot Node::opaqueRoot() const
 {
     if (isConnected()) {
@@ -68,19 +59,15 @@ inline WebCoreOpaqueRoot Node::opaqueRoot() const
     return traverseToOpaqueRoot();
 }
 
-inline Ref<TreeScope> Node::protectedTreeScope() const
+inline Document* Node::ownerDocument() const
 {
-    return treeScope();
+    auto* document = &this->document();
+    return document == this ? nullptr : document;
 }
 
 inline RenderBox* Node::renderBox() const
 {
     return dynamicDowncast<RenderBox>(renderer());
-}
-
-inline CheckedPtr<RenderBox> Node::checkedRenderBox() const
-{
-    return renderBox();
 }
 
 inline RenderBoxModelObject* Node::renderBoxModelObject() const
@@ -101,11 +88,6 @@ inline NamedNodeMap* Node::attributesMap() const
     return nullptr;
 }
 
-CheckedPtr<RenderObject> Node::checkedRenderer() const
-{
-    return renderer();
-}
-
 inline void Node::setRenderer(RenderObject* renderer)
 {
     m_renderer = renderer;
@@ -117,11 +99,6 @@ inline void Node::setRenderer(RenderObject* renderer)
 inline Element* Node::parentElement() const
 {
     return dynamicDowncast<Element>(parentNode());
-}
-
-inline RefPtr<Element> Node::protectedParentElement() const
-{
-    return parentElement();
 }
 
 bool Node::isBeforePseudoElement() const
@@ -153,7 +130,7 @@ std::optional<Style::PseudoElementIdentifier> Node::pseudoElementIdentifier() co
 inline void Node::setTabIndexState(TabIndexState state)
 {
     auto bitfields = rareDataBitfields();
-    bitfields.tabIndexState = enumToUnderlyingType(state);
+    bitfields.tabIndexState = std::to_underlying(state);
     setRareDataBitfields(bitfields);
 }
 
@@ -182,20 +159,10 @@ inline Node* Node::firstChild() const
     return containerNode ? containerNode->firstChild() : nullptr;
 }
 
-inline RefPtr<Node> Node::protectedFirstChild() const
-{
-    return firstChild();
-}
-
 inline Node* Node::lastChild() const
 {
     auto* containerNode = dynamicDowncast<ContainerNode>(*this);
     return containerNode ? containerNode->lastChild() : nullptr;
-}
-
-inline RefPtr<Node> Node::protectedLastChild() const
-{
-    return lastChild();
 }
 
 inline bool Node::hasChildNodes() const
@@ -215,11 +182,6 @@ inline void Node::setParentNode(ContainerNode* parent)
     ASSERT(isMainThread());
     m_parentNode = parent;
     m_refCountAndParentBit = (m_refCountAndParentBit & s_refCountMask) | !!parent;
-}
-
-inline RefPtr<ContainerNode> Node::protectedParentNode() const
-{
-    return parentNode();
 }
 
 ALWAYS_INLINE bool Node::hasOneRef() const

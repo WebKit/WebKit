@@ -22,14 +22,14 @@ info: |
   7. If end is undefined, let relativeEnd be len; else let relativeEnd be ?
   ToInteger(end).
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(1, 0, null),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(1, 0, null),
       [0n, 1n, 2n, 3n]
     ),
     'null value coerced to 0'
@@ -37,7 +37,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(1, 0, NaN),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(1, 0, NaN),
       [0n, 1n, 2n, 3n]
     ),
     'NaN value coerced to 0'
@@ -45,7 +45,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(1, 0, false),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(1, 0, false),
       [0n, 1n, 2n, 3n]
     ),
     'false value coerced to 0'
@@ -53,7 +53,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(1, 0, true),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(1, 0, true),
       [0n, 0n, 2n, 3n]
     ),
     'true value coerced to 1'
@@ -61,7 +61,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(1, 0, '-2'),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(1, 0, '-2'),
       [0n, 0n, 1n, 3n]
     ),
     'string "-2" value coerced to integer -2'
@@ -69,7 +69,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(1, 0, -2.5),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(1, 0, -2.5),
       [0n, 0n, 1n, 3n]
     ),
     'float -2.5 value coerced to integer -2'

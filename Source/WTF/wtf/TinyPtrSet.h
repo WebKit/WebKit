@@ -28,8 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <wtf/ZippedRange.h>
 
 namespace JSC { namespace DFG {
 class StructureAbstractValue;
@@ -91,10 +90,10 @@ public:
     {
         if (isThin())
             return singleEntry();
-        OutOfLineList* list = this->list();
-        if (list->m_length != 1)
+        auto list = this->list()->lengthSpan();
+        if (list.size() != 1)
             return T();
-        return list->list()[0];
+        return list[0];
     }
     
     bool isEmpty() const
@@ -119,8 +118,9 @@ public:
             
             OutOfLineList* list = OutOfLineList::create(defaultStartingSize);
             list->m_length = 2;
-            list->list()[0] = singleEntry();
-            list->list()[1] = value;
+            auto listSpan = list->lengthSpan();
+            listSpan[0] = singleEntry();
+            listSpan[1] = value;
             set(list);
             return true;
         }
@@ -139,10 +139,11 @@ public:
         }
         
         OutOfLineList* list = this->list();
+        auto listSpan = list->lengthSpan();
         for (unsigned i = 0; i < list->m_length; ++i) {
-            if (list->list()[i] != value)
+            if (listSpan[i] != value)
                 continue;
-            list->list()[i] = list->list()[--list->m_length];
+            listSpan[i] = listSpan[--list->m_length];
             if (!list->m_length) {
                 OutOfLineList::destroy(list);
                 setEmpty();
@@ -178,10 +179,9 @@ public:
             functor(singleEntry());
             return;
         }
-        
-        OutOfLineList* list = this->list();
-        for (unsigned i = 0; i < list->m_length; ++i)
-            functor(list->list()[i]);
+
+        for (auto& item : list()->lengthSpan())
+            functor(item);
     }
         
     void genericFilter(NOESCAPE const Invocable<bool(const T&)> auto& functor)
@@ -196,10 +196,11 @@ public:
         }
         
         OutOfLineList* list = this->list();
+        auto listSpan = list->lengthSpan();
         for (unsigned i = 0; i < list->m_length; ++i) {
-            if (functor(list->list()[i]))
+            if (functor(listSpan[i]))
                 continue;
-            list->list()[i--] = list->list()[--list->m_length];
+            listSpan[i--] = listSpan[--list->m_length];
         }
         if (!list->m_length)
             clear();
@@ -242,17 +243,16 @@ public:
         if (other.isThin()) {
             if (!other.singleEntry())
                 return false;
-            OutOfLineList* list = this->list();
-            if (list->m_length >= 2)
+            auto list = this->list()->lengthSpan();
+            if (list.size() >= 2)
                 return false;
-            if (list->list()[0] == other.singleEntry())
+            if (list[0] == other.singleEntry())
                 return true;
             return false;
         }
-        
-        OutOfLineList* list = this->list();
-        for (unsigned i = 0; i < list->m_length; ++i) {
-            if (!other.containsOutOfLine(list->list()[i]))
+
+        for (auto& item : list()->lengthSpan()) {
+            if (!other.containsOutOfLine(item))
                 return false;
         }
         return true;
@@ -276,10 +276,9 @@ public:
                 return false;
             return containsOutOfLine(other.singleEntry());
         }
-        
-        OutOfLineList* list = this->list();
-        for (unsigned i = 0; i < list->m_length; ++i) {
-            if (other.containsOutOfLine(list->list()[i]))
+
+        for (auto& item : list()->lengthSpan()) {
+            if (other.containsOutOfLine(item))
                 return true;
         }
         return false;
@@ -299,8 +298,7 @@ public:
             ASSERT(singleEntry());
             return singleEntry();
         }
-        ASSERT(i < list()->m_length);
-        return list()->list()[i];
+        return list()->lengthSpan()[i];
     }
     
     T operator[](size_t i) const { return at(i); }
@@ -311,7 +309,7 @@ public:
             ASSERT(singleEntry());
             return singleEntry();
         }
-        return list()->list()[list()->m_length - 1];
+        return list()->lengthSpan().back();
     }
     
     class iterator {
@@ -364,21 +362,22 @@ private:
     NEVER_INLINE bool addOutOfLine(T value)
     {
         OutOfLineList* list = this->list();
-        for (unsigned i = 0; i < list->m_length; ++i) {
-            if (list->list()[i] == value)
+        for (auto& item : list->lengthSpan()) {
+            if (item == value)
                 return false;
         }
-        
+
         if (list->m_length < list->m_capacity) {
-            list->list()[list->m_length++] = value;
+            list->capacitySpan()[list->m_length++] = value;
             return true;
         }
         
         OutOfLineList* newList = OutOfLineList::create(list->m_capacity * 2);
         newList->m_length = list->m_length + 1;
-        for (unsigned i = list->m_length; i--;)
-            newList->list()[i] = list->list()[i];
-        newList->list()[list->m_length] = value;
+        auto newListSpan = newList->lengthSpan();
+        for (auto [source, destination] : zippedRange(list->lengthSpan(), newListSpan.first(list->m_length)))
+            destination = source;
+        newListSpan.back() = value;
         OutOfLineList::destroy(list);
         set(newList);
         return true;
@@ -393,28 +392,22 @@ private:
                     list->m_length + !!singleEntry());
                 if (singleEntry()) {
                     myNewList->m_length = 1;
-                    myNewList->list()[0] = singleEntry();
+                    myNewList->lengthSpan()[0] = singleEntry();
                 }
                 set(myNewList);
             }
             bool changed = false;
-            for (unsigned i = 0; i < list->m_length; ++i)
-                changed |= addOutOfLine(list->list()[i]);
+            for (auto& item : list->lengthSpan())
+                changed |= addOutOfLine(item);
             return changed;
         }
-        
-        ASSERT(list->m_length);
-        return add(list->list()[0]);
+        return add(list->lengthSpan()[0]);
     }
     
     bool containsOutOfLine(T value) const
     {
-        OutOfLineList* list = this->list();
-        for (unsigned i = 0; i < list->m_length; ++i) {
-            if (list->list()[i] == value)
-                return true;
-        }
-        return false;
+        auto list = this->list()->lengthSpan();
+        return std::ranges::find(list, value) != list.end();
     }
     
     ALWAYS_INLINE void copyFrom(const TinyPtrSet& other)
@@ -434,8 +427,8 @@ private:
         OutOfLineList* otherList = other.list();
         OutOfLineList* myList = OutOfLineList::create(otherList->m_length);
         myList->m_length = otherList->m_length;
-        for (unsigned i = otherList->m_length; i--;)
-            myList->list()[i] = otherList->list()[i];
+        for (auto [source, destination] : zippedRange(otherList->lengthSpan(), myList->lengthSpan()))
+            destination = source;
         set(myList);
     }
     
@@ -451,7 +444,8 @@ private:
             fastFree(list);
         }
         
-        T* list() { return m_list; }
+        std::span<T> capacitySpan() { return unsafeMakeSpan(m_list, m_capacity); }
+        std::span<T> lengthSpan() { return capacitySpan().first(m_length); }
         
         OutOfLineList(unsigned length, unsigned capacity)
             : m_length(length)
@@ -522,5 +516,3 @@ private:
 } // namespace WTF
 
 using WTF::TinyPtrSet;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

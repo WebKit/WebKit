@@ -43,25 +43,27 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface WebInterruptionObserverHelper : NSObject {
-    WebCore::AudioSession* _callback;
+    WebCore::AudioSessionIOS* _callback;
 }
 
-- (id)initWithCallback:(WebCore::AudioSession*)callback;
+- (id)initWithCallback:(WebCore::AudioSessionIOS*)callback;
 - (void)clearCallback;
 - (void)interruption:(NSNotification *)notification;
 @end
 
 @implementation WebInterruptionObserverHelper
 
-- (id)initWithCallback:(WebCore::AudioSession*)callback
+- (id)initWithCallback:(WebCore::AudioSessionIOS*)callback
 {
     if (!(self = [super init]))
         return nil;
 
     _callback = callback;
 
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:[PAL::getAVAudioSessionClassSingleton() sharedInstance]];
+    NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
+    AVAudioSession* session = [PAL::getAVAudioSessionClassSingleton() sharedInstance];
+    [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:session];
+    [center addObserver:self selector:@selector(sessionMediaServicesWereReset:) name:AVAudioSessionMediaServicesWereResetNotification object:session];
 
     return self;
 }
@@ -82,6 +84,8 @@
     if (!_callback)
         return;
 
+    // FIXME: Migrate to AVAudioSessionDidBecomeInactiveNotification and AVAudioSessionResumptionRecommendationNotification (rdar://168264893).
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSUInteger type = [[[notification userInfo] objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     auto flags = (type == AVAudioSessionInterruptionTypeEnded && [[[notification userInfo] objectForKey:AVAudioSessionInterruptionOptionKey] unsignedIntegerValue] == AVAudioSessionInterruptionOptionShouldResume) ? WebCore::AudioSession::MayResume::Yes : WebCore::AudioSession::MayResume::No;
 
@@ -95,6 +99,13 @@
         else
             callback->endInterruption(flags);
     });
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+- (void)sessionMediaServicesWereReset:(NSNotification *)notification
+{
+    if (_callback)
+        _callback->sessionMediaServicesWereReset();
 }
 @end
 
@@ -377,21 +388,30 @@ size_t AudioSessionIOS::maximumNumberOfOutputChannels() const
 
 size_t AudioSessionIOS::preferredBufferSize() const
 {
-// FIXME: rdar://138773933
-IGNORE_WARNINGS_BEGIN("objc-multiple-method-names")
-     return [[PAL::getAVAudioSessionClassSingleton() sharedInstance] preferredIOBufferDuration] * sampleRate();
-IGNORE_WARNINGS_END
+    if (!m_preferredBufferSize) {
+        // FIXME: rdar://138773933
+        IGNORE_WARNINGS_BEGIN("objc-multiple-method-names")
+        m_preferredBufferSize = [[PAL::getAVAudioSessionClassSingleton() sharedInstance] preferredIOBufferDuration] * sampleRate();
+        IGNORE_WARNINGS_END
+    }
+    return *m_preferredBufferSize;
 }
 
 void AudioSessionIOS::setPreferredBufferSize(size_t bufferSize)
 {
+    if (m_preferredBufferSize == bufferSize)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, bufferSize);
 
     NSError *error = nil;
     float duration = bufferSize / sampleRate();
     [[PAL::getAVAudioSessionClassSingleton() sharedInstance] setPreferredIOBufferDuration:duration error:&error];
-    RELEASE_LOG_ERROR_IF(error, Media, "failed to set preferred buffer duration to %f with error: %@", duration, error.localizedDescription);
-    ASSERT(!error);
+    if (!error)
+        m_preferredBufferSize = bufferSize;
+    else {
+        ASSERT_NOT_REACHED();
+        RELEASE_LOG_ERROR(Media, "failed to set preferred buffer duration to %f with error: %@", duration, error.localizedDescription);
+    }
 }
 
 size_t AudioSessionIOS::outputLatency() const
@@ -464,6 +484,12 @@ void AudioSessionIOS::setSoundStageSize(SoundStageSize size)
     ALWAYS_LOG(LOGIDENTIFIER, size);
 
     updateSpatialExperience();
+}
+
+void AudioSessionIOS::sessionMediaServicesWereReset()
+{
+    if (auto preferredBufferSize = std::exchange(m_preferredBufferSize, std::nullopt))
+        setPreferredBufferSize(*preferredBufferSize);
 }
 
 }

@@ -112,8 +112,8 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     bool isRenderingMask = isRenderingMaskImage(*m_renderer);
     // RenderLayer takes care of root opacity.
     float opacity = (renderer.isLegacyRenderSVGRoot() || isRenderingMask) ? 1 : style.opacity().value.value;
-    bool hasBlendMode = style.hasBlendMode();
-    bool hasIsolation = style.hasIsolation();
+    bool hasBlendMode = style.blendMode() != BlendMode::Normal;
+    bool hasIsolation = style.isolation() != Isolation::Auto;
     bool isolateMaskForBlending = false;
 
     if (style.hasPositionedMask()) {
@@ -121,21 +121,23 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
             isolateMaskForBlending = graphicsElement->shouldIsolateBlending();
     }
 
-    if (opacity < 1 || hasBlendMode || isolateMaskForBlending || hasIsolation) {
-        FloatRect repaintRect = m_renderer->repaintRectInLocalCoordinates();
-        m_paintInfo->context().clip(repaintRect);
-
+    if (!(renderer.document().settings().layerBasedSVGEngineEnabled() && is<RenderSVGText>(renderer))) {
         if (opacity < 1 || hasBlendMode || isolateMaskForBlending || hasIsolation) {
+            FloatRect repaintRect = m_renderer->repaintRectInLocalCoordinates();
+            m_paintInfo->context().clip(repaintRect);
 
-            if (hasBlendMode)
-                m_paintInfo->context().setCompositeOperation(m_paintInfo->context().compositeOperation(), style.blendMode());
+            if (opacity < 1 || hasBlendMode || isolateMaskForBlending || hasIsolation) {
 
-            m_paintInfo->context().beginTransparencyLayer(opacity);
+                if (hasBlendMode)
+                    m_paintInfo->context().setCompositeOperation(m_paintInfo->context().compositeOperation(), style.blendMode());
 
-            if (hasBlendMode)
-                m_paintInfo->context().setCompositeOperation(m_paintInfo->context().compositeOperation(), BlendMode::Normal);
+                m_paintInfo->context().beginTransparencyLayer(opacity);
 
-            m_renderingFlags |= EndOpacityLayer;
+                if (hasBlendMode)
+                    m_paintInfo->context().setCompositeOperation(m_paintInfo->context().compositeOperation(), BlendMode::Normal);
+
+                m_renderingFlags |= EndOpacityLayer;
+            }
         }
     }
 
@@ -202,7 +204,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     m_renderingFlags |= RenderingPrepared;
 }
 
-static AffineTransform& currentContentTransformation()
+static AffineTransform& NODELETE currentContentTransformation()
 {
     static NeverDestroyed<AffineTransform> s_currentContentTransformation;
     return s_currentContentTransformation;
@@ -218,7 +220,7 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
 {
     AffineTransform absoluteTransform = currentContentTransformation();
 
-    float deviceScaleFactor = renderer.document().deviceScaleFactor();
+    float deviceScaleFactor = protect(renderer.document())->deviceScaleFactor();
     // Walk up the render tree, accumulating SVG transforms.
     const RenderObject* ancestor = &renderer;
     while (ancestor) {
@@ -229,7 +231,7 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
     }
 
     // Continue walking up the layer tree, accumulating CSS transforms.
-    RenderLayer* layer = ancestor ? ancestor->enclosingLayer() : nullptr;
+    CheckedPtr layer = ancestor ? ancestor->enclosingLayer() : nullptr;
     while (layer) {
         if (TransformationMatrix* layerTransform = layer->transform())
             absoluteTransform = layerTransform->toAffineTransform() * absoluteTransform;

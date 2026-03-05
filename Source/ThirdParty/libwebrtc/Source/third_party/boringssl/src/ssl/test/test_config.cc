@@ -53,12 +53,17 @@ namespace {
 template <typename Config>
 struct Flag {
   const char *name;
+  // has_param, if true, causes the parser to look for a param value following
+  // this flag's name.
   bool has_param;
   // skip_handshaker, if true, causes this flag to be skipped when
   // forwarding flags to the handshaker. This should be used with flags
   // that only impact connecting to the runner.
   bool skip_handshaker;
-  // If |has_param| is false, |param| will be nullptr.
+  // set_param is called after parsing to interpret and set the result on
+  // `config`. If `has_param` is false for this flag, `param` will be nullptr.
+  // This function should return whether the param value (or lack thereof) was
+  // valid for this flag.
   std::function<bool(Config *config, const char *param)> set_param;
 };
 
@@ -164,6 +169,39 @@ Flag<Config> IntVectorFlag(const char *name, std::vector<T> Config::*field,
                           return false;
                         }
                         (config->*field).push_back(value);
+                        return true;
+                      }};
+}
+
+// Defines a flag which adds an integer param value to an optional vector of
+// integers.
+template <typename Config, typename T>
+Flag<Config> OptionalIntVectorFlag(const char *name,
+                                   std::optional<std::vector<T>> Config::*field,
+                                   bool skip_handshaker = false) {
+  return Flag<Config>{name, true, skip_handshaker,
+                      [=](Config *config, const char *param) -> bool {
+                        if (!(config->*field)) {
+                          (config->*field).emplace();
+                        }
+                        T value;
+                        if (!StringToInt(&value, param)) {
+                          return false;
+                        }
+                        (config->*field)->push_back(value);
+                        return true;
+                      }};
+}
+
+// Defines a flag which resets a std::optional field to its default constructed
+// value.
+template <typename Config, typename T>
+Flag<Config> OptionalDefaultInitFlag(const char *name,
+                                     std::optional<T> Config::*field,
+                                     bool skip_handshaker = false) {
+  return Flag<Config>{name, false, skip_handshaker,
+                      [=](Config *config, const char *) -> bool {
+                        (config->*field).emplace();
                         return true;
                       }};
 }
@@ -327,6 +365,10 @@ const Flag<TestConfig> *FindFlag(const char *name) {
         IntVectorFlag("-expect-peer-verify-pref",
                       &TestConfig::expect_peer_verify_prefs),
         IntVectorFlag("-curves", &TestConfig::curves),
+        OptionalIntVectorFlag("-key-shares", &TestConfig::key_shares),
+        OptionalDefaultInitFlag("-no-key-shares", &TestConfig::key_shares),
+        IntVectorFlag("-server-supported-groups-hint",
+                      &TestConfig::server_supported_groups_hint),
         StringFlag("-trust-cert", &TestConfig::trust_cert),
         StringFlag("-expect-server-name", &TestConfig::expect_server_name),
         BoolFlag("-enable-ech-grease", &TestConfig::enable_ech_grease),
@@ -679,6 +721,9 @@ bool ParseConfig(int argc, char **argv, bool is_shim, TestConfig *out_initial,
     if (!skip) {
       if (out != nullptr) {
         if (!flag->set_param(out, param)) {
+          if (!param) {
+            param = "(no parameter)";
+          }
           fprintf(stderr, "Invalid parameter for %s: %s\n", name, param);
           return false;
         }
@@ -687,6 +732,9 @@ bool ParseConfig(int argc, char **argv, bool is_shim, TestConfig *out_initial,
         if (!flag->set_param(out_initial, param) ||
             !flag->set_param(out_resume, param) ||
             !flag->set_param(out_retry, param)) {
+          if (!param) {
+            param = "(no parameter)";
+          }
           fprintf(stderr, "Invalid parameter for %s: %s\n", name, param);
           return false;
         }
@@ -958,8 +1006,9 @@ static int TicketKeyCallback(SSL *ssl, uint8_t *key_name, uint8_t *iv,
     return 0;
   }
 
-  if (!HMAC_Init_ex(hmac_ctx, kZeros, sizeof(kZeros), EVP_sha256(), NULL) ||
-      !EVP_CipherInit_ex(ctx, EVP_aes_128_cbc(), NULL, kZeros, iv, encrypt)) {
+  if (!HMAC_Init_ex(hmac_ctx, kZeros, sizeof(kZeros), EVP_sha256(), nullptr) ||
+      !EVP_CipherInit_ex(ctx, EVP_aes_128_cbc(), nullptr, kZeros, iv,
+                         encrypt)) {
     return -1;
   }
 
@@ -1020,7 +1069,7 @@ static SSL_SESSION *GetSessionCallback(SSL *ssl, const uint8_t *data, int len,
   } else if (async_state->pending_session) {
     return SSL_magic_pending_session_ptr();
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -1187,7 +1236,7 @@ bssl::UniquePtr<EVP_PKEY> LoadPrivateKey(const std::string &file) {
     return nullptr;
   }
   return bssl::UniquePtr<EVP_PKEY>(
-      PEM_read_bio_PrivateKey(bio.get(), NULL, NULL, NULL));
+      PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr));
 }
 
 static bssl::UniquePtr<CRYPTO_BUFFER> X509ToBuffer(X509 *x509) {
@@ -1278,7 +1327,7 @@ static ssl_private_key_result_t AsyncPrivateKeyDecrypt(SSL *ssl, uint8_t *out,
 
   EVP_PKEY *private_key = GetPrivateKey(ssl);
   RSA *rsa = EVP_PKEY_get0_RSA(private_key);
-  if (rsa == NULL) {
+  if (rsa == nullptr) {
     fprintf(stderr, "AsyncPrivateKeyDecrypt called with incorrect key type.\n");
     abort();
   }
@@ -1982,15 +2031,15 @@ bssl::UniquePtr<SSL_CTX> TestConfig::SetupCtx(SSL_CTX *old_ctx) const {
   }
 
   SSL_CTX_set_next_protos_advertised_cb(ssl_ctx.get(),
-                                        NextProtosAdvertisedCallback, NULL);
+                                        NextProtosAdvertisedCallback, nullptr);
   if (!select_next_proto.empty() || select_empty_next_proto) {
     SSL_CTX_set_next_proto_select_cb(ssl_ctx.get(), NextProtoSelectCallback,
-                                     NULL);
+                                     nullptr);
   }
 
   if (!select_alpn.empty() || decline_alpn || reject_alpn ||
       select_empty_alpn) {
-    SSL_CTX_set_alpn_select_cb(ssl_ctx.get(), AlpnSelectCallback, NULL);
+    SSL_CTX_set_alpn_select_cb(ssl_ctx.get(), AlpnSelectCallback, nullptr);
   }
 
   SSL_CTX_set_current_time_cb(ssl_ctx.get(), CurrentTimeCallback);
@@ -2008,7 +2057,8 @@ bssl::UniquePtr<SSL_CTX> TestConfig::SetupCtx(SSL_CTX *old_ctx) const {
   }
 
   if (!use_custom_verify_callback) {
-    SSL_CTX_set_cert_verify_callback(ssl_ctx.get(), CertVerifyCallback, NULL);
+    SSL_CTX_set_cert_verify_callback(ssl_ctx.get(), CertVerifyCallback,
+                                     nullptr);
   }
 
   if (!signed_cert_timestamps.empty() &&
@@ -2291,7 +2341,7 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   if (use_custom_verify_callback) {
     SSL_set_custom_verify(ssl.get(), mode, CustomVerifyCallback);
   } else if (mode != SSL_VERIFY_NONE) {
-    SSL_set_verify(ssl.get(), mode, NULL);
+    SSL_set_verify(ssl.get(), mode, nullptr);
   }
   if (false_start) {
     SSL_set_mode(ssl.get(), SSL_MODE_ENABLE_FALSE_START);
@@ -2481,6 +2531,17 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
       !SSL_set1_group_ids(ssl.get(), curves.data(), curves.size())) {
     return nullptr;
   }
+  if (key_shares.has_value() &&
+      !SSL_set1_client_key_shares(ssl.get(), key_shares->data(),
+                                  key_shares->size())) {
+    return nullptr;
+  }
+  if (!server_supported_groups_hint.empty() &&
+      !SSL_set1_server_supported_groups_hint(
+          ssl.get(), server_supported_groups_hint.data(),
+          server_supported_groups_hint.size())) {
+    return nullptr;
+  }
   if (initial_timeout_duration_ms > 0) {
     DTLSv1_set_initial_timeout_duration(ssl.get(), initial_timeout_duration_ms);
   }
@@ -2511,7 +2572,7 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
     SSL_set_jdk11_workaround(ssl.get(), 1);
   }
 
-  if (session != NULL) {
+  if (session != nullptr) {
     if (!is_server) {
       if (SSL_set_session(ssl.get(), session) != 1) {
         return nullptr;

@@ -28,9 +28,9 @@
 #include <wtf/Assertions.h>
 
 // Called from the AXObjectCache constructor.
-void setAccessibilityLogChannelEnabled(bool);
+void NODELETE setAccessibilityLogChannelEnabled(bool);
 
-bool isAccessibilityLogChannelEnabled();
+bool NODELETE isAccessibilityLogChannelEnabled();
 
 // Use AX_BROKEN_ASSERT when a non-fatal assertion is failing even though it should never happen.
 // It will change it to a release log, but only if the accessibility log channel is enabled. On macOS:
@@ -42,13 +42,19 @@ bool isAccessibilityLogChannelEnabled();
         RELEASE_LOG_ERROR_IF(!(assertion), Accessibility, "BROKEN ASSERTION FAILED in %s(%d) : %s\n", __FILE__, __LINE__, WTF_PRETTY_FUNCTION); \
     } \
 } while (0)
+#define AX_BROKEN_ASSERT_NOT_REACHED() AX_BROKEN_ASSERT(false)
 
-// Enable this in order to get debug asserts, which are called too frequently to be enabled
-// by default.
-#define AX_DEBUG_ASSERTS_ENABLED 0
+#ifndef AX_ASSERTS_ENABLED
+#define AX_ASSERTS_ENABLED 0
+#endif
 
-#if AX_DEBUG_ASSERTS_ENABLED
-#define AX_DEBUG_ASSERT(assertion) ASSERT(assertion)
+#if AX_ASSERTS_ENABLED
+// Prefer these asserts to the debug assert equivalents.
+// RELEASE_ASSERT and similar are preferable to these asserts for cases where we want to assert
+// in all configurations.
+#define AX_ASSERT(assertion) RELEASE_ASSERT(assertion)
+#define AX_ASSERT_NOT_REACHED(assertion) RELEASE_ASSERT_NOT_REACHED(assertion)
 #else
-#define AX_DEBUG_ASSERT(assertion) ((void)0)
+#define AX_ASSERT(assertion) ASSERT(assertion)
+#define AX_ASSERT_NOT_REACHED(assertion) ASSERT_NOT_REACHED(assertion)
 #endif

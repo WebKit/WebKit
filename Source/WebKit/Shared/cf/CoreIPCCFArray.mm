@@ -35,7 +35,7 @@
 namespace WebKit {
 
 CoreIPCCFArray::CoreIPCCFArray(Vector<CoreIPCCFType>&& array)
-    : m_array(WTFMove(array)) { }
+    : m_array(WTF::move(array)) { }
 
 CoreIPCCFArray::~CoreIPCCFArray() = default;
 

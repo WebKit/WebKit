@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<MapLike>;
     static JSMapLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<MapLike>&& impl)
     {
-        JSMapLike* ptr = new (NotNull, JSC::allocateCell<JSMapLike>(globalObject->vm().heap)) JSMapLike(structure, *globalObject, WTFMove(impl));
+        JSMapLike* ptr = new (NotNull, JSC::allocateCell<JSMapLike>(globalObject->vm().heap)) JSMapLike(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

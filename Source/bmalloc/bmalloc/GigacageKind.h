@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 namespace Gigacage {
 
 enum class Kind {
@@ -35,3 +37,5 @@ enum class Kind {
 using enum Kind;
 
 } // namespace Gigacage
+
+#endif // __cplusplus

@@ -26,8 +26,7 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpushadermodulecompilationhint
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUShaderModuleCompilationHint {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUShaderModuleCompilationHint {
     required (GPUPipelineLayout or GPUAutoLayoutMode) layout;
 };

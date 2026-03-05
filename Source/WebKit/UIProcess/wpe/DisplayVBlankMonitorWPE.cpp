@@ -47,17 +47,13 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorWPE::create(PlatformDi
         return nullptr;
     }
 
-    return makeUnique<DisplayVBlankMonitorWPE>(wpe_screen_get_refresh_rate(screen) / 1000, WTFMove(observer));
+    return makeUnique<DisplayVBlankMonitorWPE>(wpe_screen_get_refresh_rate(screen) / 1000, WTF::move(observer));
 }
 
 DisplayVBlankMonitorWPE::DisplayVBlankMonitorWPE(unsigned refreshRate, GRefPtr<WPEScreenSyncObserver>&& observer)
     : DisplayVBlankMonitor(refreshRate)
-    , m_observer(WTFMove(observer))
+    , m_observer(WTF::move(observer))
 {
-    wpe_screen_sync_observer_set_callback(m_observer.get(), +[](WPEScreenSyncObserver* observer, gpointer userData) {
-        auto* monitor = static_cast<DisplayVBlankMonitorWPE*>(userData);
-        monitor->m_handler();
-    }, this, nullptr);
 }
 
 DisplayVBlankMonitorWPE::~DisplayVBlankMonitorWPE()
@@ -65,36 +61,67 @@ DisplayVBlankMonitorWPE::~DisplayVBlankMonitorWPE()
     ASSERT(!m_observer);
 }
 
+WPEScreenSyncObserver* DisplayVBlankMonitorWPE::observer() const
+{
+    Locker locker { m_lock };
+    return m_observer.get();
+}
+
+void DisplayVBlankMonitorWPE::addCallbackIfNeeded()
+{
+    if (m_callbackID)
+        return;
+
+    m_callbackID = wpe_screen_sync_observer_add_callback(m_observer.get(), +[](WPEScreenSyncObserver* observer, gpointer userData) {
+        auto* monitor = static_cast<DisplayVBlankMonitorWPE*>(userData);
+        if (!monitor->observer())
+            return;
+
+        monitor->m_handler();
+    }, this, nullptr);
+}
+
+void DisplayVBlankMonitorWPE::removeCallbackIfNeeded()
+{
+    if (!m_callbackID)
+        return;
+
+    wpe_screen_sync_observer_remove_callback(m_observer.get(), m_callbackID);
+    m_callbackID = 0;
+}
+
 void DisplayVBlankMonitorWPE::start()
 {
+    Locker locker { m_lock };
     if (!m_observer)
         return;
 
-    wpe_screen_sync_observer_start(m_observer.get());
+    addCallbackIfNeeded();
 }
 
 void DisplayVBlankMonitorWPE::stop()
 {
+    Locker locker { m_lock };
     if (!m_observer)
         return;
 
-    wpe_screen_sync_observer_stop(m_observer.get());
+    removeCallbackIfNeeded();
 }
 
 void DisplayVBlankMonitorWPE::invalidate()
 {
+    Locker locker { m_lock };
     if (!m_observer)
         return;
 
-    if (isActive())
-        stop();
-
+    removeCallbackIfNeeded();
     m_observer = nullptr;
 }
 
 bool DisplayVBlankMonitorWPE::isActive()
 {
-    return m_observer && wpe_screen_sync_observer_is_active(m_observer.get());
+    Locker locker { m_lock };
+    return m_observer && m_callbackID;
 }
 
 } // namespace WebKit

@@ -147,11 +147,15 @@ static unsigned __stdcall wtfThreadEntryPoint(void* data)
     return 0;
 }
 
-bool Thread::establishHandle(NewThreadContext& data, std::optional<size_t> stackSize, QOS, SchedulingPolicy)
+bool Thread::establishHandle(NewThreadContext& data, StackAllocationSpecification stackSpec, QOS, SchedulingPolicy)
 {
+    RELEASE_ASSERT(stackSpec.kind() != StackAllocationSpecification::Kind::SizeAndLocation && "Custom stacks not supported on windows");
     unsigned threadIdentifier = 0;
+    size_t stackSize = 0;
+    if (stackSpec.kind() == StackAllocationSpecification::Kind::SizeOnly)
+        stackSize = stackSpec.sizeBytes();
     unsigned initFlag = stackSize ? STACK_SIZE_PARAM_IS_A_RESERVATION : 0;
-    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, stackSize.value_or(0), wtfThreadEntryPoint, &data, initFlag, &threadIdentifier));
+    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, stackSize, wtfThreadEntryPoint, &data, initFlag, &threadIdentifier));
     if (!threadHandle) {
         LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", wtfThreadEntryPoint, &data, errno);
         return false;
@@ -241,7 +245,7 @@ Thread& Thread::initializeCurrentTLS()
     thread->initializeInThread();
     initializeCurrentThreadEvenIfNonWTFCreated();
 
-    return initializeTLS(WTFMove(thread));
+    return initializeTLS(WTF::move(thread));
 }
 
 ThreadIdentifier Thread::currentID()
@@ -284,7 +288,7 @@ Thread* Thread::currentMayBeNull()
 
 Thread& Thread::initializeTLS(Ref<Thread>&& thread)
 {
-    s_threadHolder.thread = WTFMove(thread);
+    s_threadHolder.thread = WTF::move(thread);
     return *s_threadHolder.thread;
 }
 

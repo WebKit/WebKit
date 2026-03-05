@@ -27,17 +27,39 @@
 
 namespace WebCore {
 
+class Path;
+class RenderInline;
+class RenderListBox;
 struct PaintInfo;
+
+namespace Style {
+struct BorderRadius;
+}
 
 class OutlinePainter {
 public:
-    OutlinePainter(const RenderElement&, const PaintInfo&);
+    OutlinePainter(const PaintInfo&);
 
-    void paintOutline(const LayoutRect&) const;
-    void paintOutline(const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects) const;
+    void paintOutline(const RenderElement&, const LayoutRect& paintRect) const;
+    void paintOutline(const RenderInline&, const LayoutPoint& paintOffset) const;
+
+    static Vector<LayoutRect> collectFocusRingRects(const RenderElement&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer);
 
 private:
-    CheckedRef<const RenderElement> m_renderer;
+    void paintOutlineWithLineRects(const RenderInline&, const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects) const;
+    void paintFocusRing(const RenderElement&, const Vector<LayoutRect>&) const;
+
+    static void collectFocusRingRects(const RenderElement&, Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer);
+    static void collectFocusRingRectsForInline(const RenderInline&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
+    static bool collectFocusRingRectsForListBox(const RenderListBox&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
+    static bool collectFocusRingRectsForBlock(const RenderBlock&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
+    static void collectFocusRingRectsForInlineChildren(const RenderBlockFlow&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
+    static void collectFocusRingRectsForChildBox(const RenderBox&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
+
+    static Path pathWithShrinkWrappedRects(const Vector<FloatRect>&, const Style::BorderRadius&, float outlineOffset, WritingMode, Style::ZoomFactor, float deviceScaleFactor);
+
+    void addPDFURLAnnotationForLink(const RenderElement&, const LayoutPoint& paintOffset) const;
+
     const PaintInfo& m_paintInfo;
 };
 

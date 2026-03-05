@@ -235,7 +235,7 @@ void SessionHost::receivedSetTargetList(const struct Event& event)
 
     auto targetList = parseTargetList(event);
     if (targetList)
-        setTargetList(*event.connectionID, WTFMove(*targetList));
+        setTargetList(*event.connectionID, WTF::move(*targetList));
 }
 
 void SessionHost::receivedSendMessageToFrontend(const struct Event& event)
@@ -260,7 +260,7 @@ void SessionHost::receivedStartAutomationSessionReturn(const struct Event&)
 void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
 {
     ASSERT(!m_startSessionCompletionHandler);
-    m_startSessionCompletionHandler = WTFMove(completionHandler);
+    m_startSessionCompletionHandler = WTF::move(completionHandler);
     m_sessionID = createVersion4UUIDString();
 
     auto capabilitiesObject = JSON::Object::create();

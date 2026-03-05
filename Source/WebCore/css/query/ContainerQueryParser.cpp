@@ -52,8 +52,13 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
     auto name = consumeName();
 
     auto condition = consumeCondition(range, context);
-    if (!condition)
-        return { };
+
+    if (!condition) {
+        if (name.isEmpty())
+            return { };
+        // it's valid to have a named container query without a condition, like "@container --name {}"
+        condition = MQ::Condition { };
+    }
 
     OptionSet<Axis> requiredAxes;
     auto containsUnknownFeature = ContainsUnknownFeature::No;

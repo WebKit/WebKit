@@ -1,0 +1,3 @@
+
+FAIL Negotiated datachannel should be able to send and receive all blob messages on close assert_equals: All the pending sent messages are received after calling close() expected 20971520 but got 0
+

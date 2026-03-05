@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include <WebCore/FloatRect.h>
-#include <WebCore/SVGLengthValue.h>
-#include <WebCore/SVGUnitTypes.h>
+#include "FloatRect.h"
+#include "SVGLengthValue.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
@@ -73,7 +73,7 @@ public:
     float valueForLength(const Style::SVGRadiusComponent&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
     float valueForLength(const Style::SVGStrokeDasharrayValue&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
     float valueForLength(const Style::SVGStrokeDashoffset&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
-    float valueForLength(const Style::StrokeWidth&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::StrokeWidth&, Style::ZoomFactor usedZoom, SVGLengthMode = SVGLengthMode::Other);
 
     ExceptionOr<float> resolveValueToUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
     ExceptionOr<CSS::LengthPercentage<>> resolveValueFromUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
@@ -93,7 +93,6 @@ private:
     float removeZoomFromFontOrRootFontRelativeLength(float value, CSS::LengthUnit) const;
 
     std::optional<CSSToLengthConversionData> cssConversionData() const;
-    RefPtr<const SVGElement> protectedContext() const;
 
     template<typename SizeType> float valueForSizeType(const SizeType&, Style::ZoomFactor usedZoom, SVGLengthMode = SVGLengthMode::Other) requires (SizeType::Fixed::zoomOptions == CSS::RangeZoomOptions::Unzoomed || SizeType::Calc::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed);
     template<typename SizeType> float valueForSizeType(const SizeType&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);

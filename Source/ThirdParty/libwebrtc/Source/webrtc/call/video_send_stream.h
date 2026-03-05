@@ -27,6 +27,7 @@
 #include "api/rtp_sender_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
+#include "api/video/encoded_image.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
@@ -94,6 +95,8 @@ class VideoSendStream {
     double encode_frame_rate = 0.0;
     int frames_encoded = 0;
     std::optional<uint64_t> qp_sum;
+    EncodedImage::Psnr psnr_sum;
+    uint64_t psnr_measurements = 0;
     uint64_t total_encode_time_ms = 0;
     uint64_t total_encoded_bytes_target = 0;
     uint32_t huge_frames_sent = 0;

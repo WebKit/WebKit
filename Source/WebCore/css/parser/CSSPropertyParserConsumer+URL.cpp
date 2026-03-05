@@ -156,7 +156,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
 RefPtr<CSSValue> consumeURL(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<AllowedURLModifiers> allowedURLModifiers)
 {
     if (auto rawURL = consumeURLRaw(range, state, allowedURLModifiers))
-        return CSSURLValue::create(WTFMove(*rawURL));
+        return CSSURLValue::create(WTF::move(*rawURL));
     return nullptr;
 }
 

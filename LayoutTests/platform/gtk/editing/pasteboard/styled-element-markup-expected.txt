@@ -18,13 +18,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 772x35
+        RenderText {#text} at (0,0) size 772x36
           text run at (0,0) width 334: "This tests copy/paste of styled elements, like images. "
           text run at (334,0) width 438: "The image in the region below should be centered after its copied and"
           text run at (0,18) width 44: "pasted."
       RenderBlock {P} at (0,52) size 784x36
-        RenderInline {B} at (0,0) size 778x35
-          RenderText {#text} at (0,0) size 778x35
+        RenderInline {B} at (0,0) size 778x36
+          RenderText {#text} at (0,0) size 778x36
             text run at (0,0) width 778: "This demonstrates a bug: createMarkup puts the text-align property on the image, which doesn't center it, so its left"
             text run at (0,18) width 113: "aligned on paste."
       RenderBlock {DIV} at (0,104) size 784x103

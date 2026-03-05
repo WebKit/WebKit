@@ -42,7 +42,7 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap&, ASCIILiteral ke
 static std::optional<float> floatFeature(const DialogFeaturesMap&, ASCIILiteral key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
-static bool isSeparator(char16_t character, FeatureMode mode)
+static bool NODELETE isSeparator(char16_t character, FeatureMode mode)
 {
     if (mode == FeatureMode::Viewport)
         return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '=' || character == ',';
@@ -260,7 +260,7 @@ static DialogFeaturesMap parseDialogFeaturesMap(StringView string)
             value = valueView.left(valueView.find(' ')).toString();
         }
 
-        features.set(WTFMove(key), WTFMove(value));
+        features.set(WTF::move(key), WTF::move(value));
     }
 
     return features;

@@ -30,7 +30,7 @@ window.setTimeout(async () => {
         renderingMode: 0,
         renderingPurpose: 0,
         resolutionScale: 1.0,
-        colorSpace: {serializableColorSpace: {alias: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}},
+        colorSpace: {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}},
         bufferFormat: { pixelFormat: 1, useLosslessCompression: 0 },
         identifier: imageBufferIdentifier,
         contextIdentifier: contextIdentifier
@@ -45,10 +45,6 @@ window.setTimeout(async () => {
                 subclasses: {
                     variantType: 'WebCore::SVGFilterRenderer',
                     variant: {
-                        targetBoundingBox: {
-                            location: {x: 0, y: 0},
-                            size: {width: 0, height: 0},
-                        },
                         primitiveUnits: 0,
                         expression: {
                             alias: [
@@ -61,18 +57,40 @@ window.setTimeout(async () => {
                                     variantType: 'WebCore::FEBlend',
                                     variant: {
                                         blendMode: 8,
-                                        operatingColorSpace: {serializableColorSpace: {alias: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}
+                                        operatingColorSpace: {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}}
                                     }
                                 }
                             }
                         ],
-                        renderingResourceIdentifierIfExists: {},
-                        filterRenderingModes: 1,
-                        filterScale: {width: 0, height: 0},
-                        filterRegion: {
-                            location: {x: 0, y: 0},
-                            size: {width: 0, height: 0}
+                        geometry: {
+                            referenceBox : {
+                                location : {
+                                    x: 0,
+                                    y: 0
+                                },
+                                size : {
+                                    width: 0,
+                                    height: 0
+                                }
+                            },
+                            filterRegion : {
+                                location : {
+                                    x: 0,
+                                    y: 0
+                                },
+                                size : {
+                                    width: 0,
+                                    height: 0
+                                }
+                            },
+                            scale : {
+                                width : 0,
+                                height : 0
+                            }
                         },
+                        filterRenderingModes: 1,
+                        isShowingDebugOverlay : false,
+                        renderingResourceIdentifierIfExists: {},
                     }
                 },
             }

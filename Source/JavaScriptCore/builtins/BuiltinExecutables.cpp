@@ -103,7 +103,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     unsigned asyncOffset = isAsyncFunction ? strlen("async ") : 0;
     unsigned parametersStart = strlen("function (") + asyncOffset;
     unsigned startColumn = parametersStart;
-    int functionKeywordStart = strlen("(") + asyncOffset;
+    int functionKeywordStart = strlen("(");
     int functionNameStart = parametersStart;
     bool isInStrictContext = false;
     bool isArrowFunctionBodyExpression = false;

@@ -52,15 +52,12 @@ public:
     static Ref<WebSocketChannel> create(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&);
     ~WebSocketChannel();
 
+    // IPC::MessageReceiver, WebCore::ThreadableWebSocketChannel.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
     void networkProcessCrashed();
-
-    using RefCounted<WebSocketChannel>::ref;
-    using RefCounted<WebSocketChannel>::deref;
 
 private:
     WebSocketChannel(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&);
@@ -79,8 +76,6 @@ private:
     void disconnect() final;
     void suspend() final;
     void resume() final;
-    void refThreadableWebSocketChannel() final { ref(); }
-    void derefThreadableWebSocketChannel() final { deref(); }
 
     void notifySendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);
     void logErrorMessage(const String&);

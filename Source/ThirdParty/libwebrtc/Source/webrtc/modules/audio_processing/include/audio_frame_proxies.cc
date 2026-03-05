@@ -31,11 +31,15 @@ int ProcessAudioFrame(AudioProcessing* ap, AudioFrame* frame) {
 
   AudioProcessingStats stats = ap->GetStatistics();
 
+  // TODO: https://issues.webrtc.org/42221314 - remove when deleted
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   if (stats.voice_detected) {
     frame->vad_activity_ = *stats.voice_detected
                                ? AudioFrame::VADActivity::kVadActive
                                : AudioFrame::VADActivity::kVadPassive;
   }
+#pragma clang diagnostic pop
 
   return result;
 }

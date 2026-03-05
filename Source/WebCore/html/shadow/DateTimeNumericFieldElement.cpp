@@ -34,7 +34,7 @@
 #include "PathOperation.h"
 #include "PlatformLocale.h"
 #include "RenderBlock.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -53,7 +53,7 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
     return value >= minimum && value <= maximum;
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeNumericFieldElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DateTimeNumericFieldElement);
 
 DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Range& range, int placeholder)
     : DateTimeFieldElement(document, fieldOwner)
@@ -73,12 +73,13 @@ void DateTimeNumericFieldElement::adjustMinInlineSize(RenderStyle& style) const
     else if (m_range.maximum > 99)
         length = 3;
 
-    auto& locale = localeForOwner();
+    CheckedRef locale = localeForOwner();
 
     float inlineSize = 0;
     for (char c = '0'; c <= '9'; ++c) {
-        auto numberString = locale.convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
-        inlineSize = std::max(inlineSize, font->width(RenderBlock::constructTextRun(numberString, style)));
+        auto numberString = locale->convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
+        auto textRun = RenderBlock::constructTextRun(numberString, style);
+        inlineSize = std::max(inlineSize, font->width(protect(textRun)));
     }
 
     style.setLogicalMinWidth(Style::MinimumSize::Fixed { inlineSize / style.usedZoomForLength().value });
@@ -91,13 +92,13 @@ int DateTimeNumericFieldElement::maximum() const
 
 String DateTimeNumericFieldElement::formatValue(int value) const
 {
-    Locale& locale = localeForOwner();
+    CheckedRef locale = localeForOwner();
 
     if (m_range.maximum > 999)
-        return locale.convertToLocalizedNumber(makeString(pad('0', 4, value)));
+        return locale->convertToLocalizedNumber(makeString(pad('0', 4, value)));
     if (m_range.maximum > 99)
-        return locale.convertToLocalizedNumber(makeString(pad('0', 3, value)));
-    return locale.convertToLocalizedNumber(makeString(pad('0', 2, value)));
+        return locale->convertToLocalizedNumber(makeString(pad('0', 3, value)));
+    return locale->convertToLocalizedNumber(makeString(pad('0', 2, value)));
 }
 
 bool DateTimeNumericFieldElement::hasValue() const
@@ -169,7 +170,7 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEve
         return;
 
     auto charCode = static_cast<char16_t>(keyboardEvent.charCode());
-    String number = localeForOwner().convertFromLocalizedNumber(span(charCode));
+    String number = protect(localeForOwner())->convertFromLocalizedNumber(span(charCode));
     int digit = number[0] - '0';
     if (digit < 0 || digit > 9)
         return;

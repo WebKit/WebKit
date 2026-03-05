@@ -35,6 +35,7 @@
 #include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarsControllerInlines.h"
 
 namespace WebCore {
 
@@ -50,6 +51,10 @@ ScrollbarsControllerGeneric::ScrollbarsControllerGeneric(ScrollableArea& scrolla
     : ScrollbarsController(scrollableArea)
     , m_overlayScrollbarAnimationTimer(*this, &ScrollbarsControllerGeneric::overlayScrollbarAnimationTimerFired)
 {
+    if (RefPtr verticalScrollbar = scrollableArea.verticalScrollbar())
+        didAddVerticalScrollbar(verticalScrollbar);
+    if (RefPtr horizontalScrollbar = scrollableArea.horizontalScrollbar())
+        didAddHorizontalScrollbar(horizontalScrollbar);
 }
 
 ScrollbarsControllerGeneric::~ScrollbarsControllerGeneric() = default;
@@ -111,6 +116,9 @@ void ScrollbarsControllerGeneric::updateOverlayScrollbarsOpacity()
         if (m_horizontalOverlayScrollbar->hoveredPart() == NoPart)
             m_horizontalOverlayScrollbar->invalidate();
     }
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    scrollbarOpacityChanged();
+#endif
 }
 
 static inline double easeOutCubic(double t)

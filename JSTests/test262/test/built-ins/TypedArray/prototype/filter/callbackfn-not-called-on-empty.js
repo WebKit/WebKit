@@ -24,4 +24,4 @@ testWithTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(called, 0);
-});
+}, null, ["passthrough"]);

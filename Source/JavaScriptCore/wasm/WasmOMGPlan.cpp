@@ -51,8 +51,8 @@ static constexpr bool verbose = false;
 }
 
 OMGPlan::OMGPlan(VM& vm, Ref<Module>&& module, FunctionCodeIndex functionIndex, MemoryMode mode, CompletionTask&& task)
-    : Base(vm, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
-    , m_module(WTFMove(module))
+    : Base(vm, const_cast<ModuleInformation&>(module->moduleInformation()), WTF::move(task))
+    , m_module(WTF::move(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
     , m_functionIndex(functionIndex)
 {
@@ -75,9 +75,9 @@ FunctionAllowlist& OMGPlan::ensureGlobalOMGAllowlist()
     return omgAllowlist;
 }
 
-void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
+void OMGPlan::dumpDisassembly(const Callee& callee, CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
-    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
+    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", callee.nameWithHash(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
     if (shouldDumpDisassemblyFor(CompilationMode::OMGMode)) [[unlikely]] {
         ScopedPrintStream out;
         UncheckedKeyHashSet<B3::Value*> printedValues;
@@ -131,7 +131,7 @@ void OMGPlan::work()
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
     Ref<IPIntCallee> profiledCallee = m_calleeGroup->ipintCalleeFromFunctionIndexSpace(functionIndexSpace);
-    Ref<OMGCallee> callee = OMGCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
+    Ref<OMGCallee> callee = OMGCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), Ref { profiledCallee });
 
     beginCompilerSignpost(callee.get());
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
@@ -160,23 +160,23 @@ void OMGPlan::work()
     auto samplingProfilerMap = callee->materializePCToOriginMap(context.procedure->releasePCToOriginMap(), linkBuffer);
     {
         ScopedPrintStream out;
-        dumpDisassembly(context, linkBuffer, signature, functionIndexSpace);
+        dumpDisassembly(callee.get(), context, linkBuffer, signature, functionIndexSpace);
         omgEntrypoint.compilation = makeUnique<Compilation>(
             FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
-            WTFMove(context.wasmEntrypointByproducts));
+            WTF::move(context.wasmEntrypointByproducts));
     }
 
-    omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);
+    omgEntrypoint.calleeSaveRegisters = WTF::move(internalFunction->entrypoint.calleeSaveRegisters);
 
     bool newlyInstalled = false;
     CodePtr<WasmEntryPtrTag> entrypoint;
     {
         ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
-        callee->setEntrypoint(WTFMove(omgEntrypoint), WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
+        callee->setEntrypoint(WTF::move(omgEntrypoint), WTF::move(unlinkedCalls), WTF::move(internalFunction->stackmaps), WTF::move(internalFunction->exceptionHandlers), WTF::move(exceptionHandlerLocations));
         entrypoint = callee->entrypoint();
 
         if (samplingProfilerMap)
-            NativeCalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(samplingProfilerMap));
+            NativeCalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTF::move(samplingProfilerMap));
 
         Locker locker { m_calleeGroup->m_lock };
         newlyInstalled = m_calleeGroup->installOptimizedCallee(locker, m_moduleInformation, m_functionIndex, callee.copyRef(), internalFunction->outgoingJITDirectCallees);

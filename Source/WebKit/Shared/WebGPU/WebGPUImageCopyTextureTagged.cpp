@@ -40,7 +40,7 @@ std::optional<ImageCopyTextureTagged> ConvertToBackingContext::convertToBacking(
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
+    return { { WTF::move(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
 }
 
 std::optional<WebCore::WebGPU::ImageCopyTextureTagged> ConvertFromBackingContext::convertFromBacking(const ImageCopyTextureTagged& imageCopyTextureTagged)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::ImageCopyTextureTagged> ConvertFromBackingContext
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
+    return { { WTF::move(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
 }
 
 } // namespace WebKit

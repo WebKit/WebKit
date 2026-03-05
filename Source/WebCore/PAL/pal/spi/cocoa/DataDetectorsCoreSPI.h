@@ -25,6 +25,9 @@
 
 #pragma once
 
+#import <wtf/Compiler.h>
+#import <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if ENABLE(DATA_DETECTION)
@@ -47,8 +50,6 @@ typedef struct CF_BRIDGED_TYPE(id) __DDResult *DDResultRef;
 #endif // PLATFORM(IOS_FAMILY)
 
 #else // !USE(APPLE_INTERNAL_SDK)
-
-#import <wtf/Compiler.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
@@ -91,6 +92,7 @@ typedef enum {
     DDResultCategoryAddress = 3,
     DDResultCategoryCalendarEvent = 4,
     DDResultCategoryMisc = 5,
+    DDResultCategoryMoney = 6,
 } DDResultCategory;
 
 typedef enum __DDTextFragmentType {
@@ -179,10 +181,10 @@ static inline CFIndex _DDScanQueryGetNumberOfFragments(DDScanQueryRef query)
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
-#endif
-
 typedef CFIndex DDScannerCopyResultsOptions;
 typedef CFIndex DDScannerOptions;
+
+#endif // !USE(APPLE_INTERNAL_SDK)
 
 enum {
     DDScannerSourceSpotlight = 1<<1,

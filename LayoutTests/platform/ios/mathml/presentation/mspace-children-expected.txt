@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x375
-  RenderBlock {HTML} at (0,0) size 800x375
-    RenderBody {BODY} at (8,16) size 784x351
+layer at (0,0) size 800x376
+  RenderBlock {HTML} at (0,0) size 800x376
+    RenderBody {BODY} at (8,16) size 784x352
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 387x19
+        RenderText {#text} at (0,0) size 387x20
           text run at (0,0) width 387: "This test passes if <mspace> does not create child renderers."
-      RenderBlock (anonymous) at (0,36) size 784x315
-        RenderMathMLMath {math} at (0,15) size 100x300
+      RenderBlock (anonymous) at (0,36) size 784x316
+        RenderMathMLMath {math} at (0,15) size 100x301
           RenderMathMLSpace {mspace} at (0,0) size 100x300
         RenderText {#text} at (0,0) size 0x0

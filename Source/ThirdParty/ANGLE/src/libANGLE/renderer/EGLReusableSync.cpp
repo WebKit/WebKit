@@ -8,6 +8,8 @@
 
 #include "libANGLE/renderer/EGLReusableSync.h"
 
+#include <ratio>
+
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ContextImpl.h"
 

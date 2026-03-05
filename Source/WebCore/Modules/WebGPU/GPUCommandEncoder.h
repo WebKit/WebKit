@@ -54,10 +54,10 @@ class GPUCommandEncoder : public RefCounted<GPUCommandEncoder> {
 public:
     static Ref<GPUCommandEncoder> create(Ref<WebGPU::CommandEncoder>&& backing, WebGPU::Device& device)
     {
-        return adoptRef(*new GPUCommandEncoder(WTFMove(backing), device));
+        return adoptRef(*new GPUCommandEncoder(WTF::move(backing), device));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     ExceptionOr<Ref<GPURenderPassEncoder>> beginRenderPass(const GPURenderPassDescriptor&);
@@ -92,7 +92,7 @@ public:
 
     void clearBuffer(
         const GPUBuffer&,
-        std::optional<GPUSize64> offset,
+        GPUSize64 offset,
         std::optional<GPUSize64>);
 
     void pushDebugGroup(String&& groupLabel);
@@ -116,8 +116,6 @@ public:
 
 private:
     GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, WebGPU::Device&);
-
-    Ref<WebGPU::CommandEncoder> protectedBacking() { return m_backing; }
 
     Ref<WebGPU::CommandEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;

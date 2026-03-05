@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+.target {
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<div class="target" id="a"></div>
+<div class="target" id="b"></div>
+<div class="target" id="c"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const duration = 1000 * 1000;
+const animate = id => document.getElementById(id).animate({ opacity: 0 }, { duration, id });
+
+const assertRemoteAnimationExists = async animation => {
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(animation.effect.target);
+    assert_equals(remoteAnimationStack.animations.length, 1, `We have a remote animation for the target of animation ${animation.id}`);
+};
+
+promise_test(async t => {
+    const a = animate("a");
+    await animationAcceleration(a);
+    await assertRemoteAnimationExists(a);
+
+    // Create an update where the existing animation will first be removed and a new animation
+    // will be started, both using the same timeline (the default document timeline).
+    a.cancel();
+    const b = animate("b");
+    await animationAcceleration(b);
+    await assertRemoteAnimationExists(b);
+}, "Removing an animation and creating an animation that both used the same timeline in the same update preserves the shared timeline.");
+
+</script>
+</body>

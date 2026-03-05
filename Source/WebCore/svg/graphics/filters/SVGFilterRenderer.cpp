@@ -26,6 +26,7 @@
 #include "ElementChildIteratorInlines.h"
 #include "FilterResults.h"
 #include "GeometryUtilities.h"
+#include "Logging.h"
 #include "SVGFilterEffectGraph.h"
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveGraph.h"
@@ -36,9 +37,9 @@ namespace WebCore {
 
 static constexpr unsigned maxCountChildNodes = 200;
 
-RefPtr<SVGFilterRenderer> SVGFilterRenderer::create(SVGElement *contextElement, SVGFilterElement& filterElement, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+RefPtr<SVGFilterRenderer> SVGFilterRenderer::create(SVGElement *contextElement, SVGFilterElement& filterElement, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
-    auto filter = adoptRef(*new SVGFilterRenderer(filterScale, filterRegion, targetBoundingBox, filterElement.primitiveUnits(), renderingResourceIdentifier));
+    auto filter = adoptRef(*new SVGFilterRenderer(geometry, filterElement.primitiveUnits(), renderingResourceIdentifier));
 
     auto result = buildExpression(contextElement, filterElement, filter, destinationContext);
     if (!result)
@@ -49,35 +50,36 @@ RefPtr<SVGFilterRenderer> SVGFilterRenderer::create(SVGElement *contextElement, 
 
     ASSERT(!expression.isEmpty());
     ASSERT(!effects.isEmpty());
-    filter->setExpression(WTFMove(expression));
-    filter->setEffects(WTFMove(effects));
+    filter->setExpression(WTF::move(expression));
+    filter->setEffects(WTF::move(effects));
 
-    filter->setFilterRenderingModes(preferredFilterRenderingModes);
+    filter->setFilterRenderingModes(preferredRenderingModes);
+
+    LOG_WITH_STREAM(Filters, stream << "SVGFilterRenderer::create - rendering modes " << filter->filterRenderingModes());
     return filter;
 }
 
-Ref<SVGFilterRenderer> SVGFilterRenderer::create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, OptionSet<FilterRenderingMode> filterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion)
+Ref<SVGFilterRenderer> SVGFilterRenderer::create(SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, bool showDebugOverlay, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
-    Ref filter = adoptRef(*new SVGFilterRenderer(targetBoundingBox, primitiveUnits, WTFMove(expression), WTFMove(effects), renderingResourceIdentifier, filterScale, filterRegion));
+    Ref filter = adoptRef(*new SVGFilterRenderer(geometry, primitiveUnits, WTF::move(expression), WTF::move(effects), renderingResourceIdentifier));
     // Setting filter rendering modes cannot be moved to the constructor because it ends up
     // calling supportedFilterRenderingModes() which is a virtual function.
-    filter->setFilterRenderingModes(filterRenderingModes);
+    filter->setFilterRenderingModes(preferredRenderingModes);
+    filter->setIsShowingDebugOverlay(showDebugOverlay);
     return filter;
 }
 
-SVGFilterRenderer::SVGFilterRenderer(const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
-    : Filter(Filter::Type::SVGFilterRenderer, filterScale, filterRegion, renderingResourceIdentifier)
-    , m_targetBoundingBox(targetBoundingBox)
+SVGFilterRenderer::SVGFilterRenderer(const FilterGeometry& geometry, SVGUnitTypes::SVGUnitType primitiveUnits, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : Filter(Filter::Type::SVGFilterRenderer, geometry, renderingResourceIdentifier)
     , m_primitiveUnits(primitiveUnits)
 {
 }
 
-SVGFilterRenderer::SVGFilterRenderer(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, const FloatSize& filterScale, const FloatRect& filterRegion)
-    : Filter(Filter::Type::SVGFilterRenderer, filterScale, filterRegion, renderingResourceIdentifier)
-    , m_targetBoundingBox(targetBoundingBox)
+SVGFilterRenderer::SVGFilterRenderer(const FilterGeometry& geometry, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : Filter(Filter::Type::SVGFilterRenderer, geometry, renderingResourceIdentifier)
     , m_primitiveUnits(primitiveUnits)
-    , m_expression(WTFMove(expression))
-    , m_effects(WTFMove(effects))
+    , m_expression(WTF::move(expression))
+    , m_effects(WTF::move(effects))
 {
 }
 
@@ -105,7 +107,7 @@ static std::optional<std::tuple<SVGFilterEffectGraph, FilterEffectGeometryMap>> 
             return std::nullopt;
 
         if (auto flags = effectElement->effectGeometryFlags()) {
-            auto effectBoundaries = SVGLengthContext::resolveRectangle(contextElement, effectElement.get(), filter.primitiveUnits(), filter.targetBoundingBox());
+            auto effectBoundaries = SVGLengthContext::resolveRectangle(contextElement, effectElement.get(), filter.primitiveUnits(), filter.referenceBox());
             effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
         }
 
@@ -113,10 +115,10 @@ static std::optional<std::tuple<SVGFilterEffectGraph, FilterEffectGeometryMap>> 
             effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
 
         graph.addNamedNode(AtomString { effectElement->result() }, { *effect });
-        graph.setNodeInputs(*effect, WTFMove(*inputs));
+        graph.setNodeInputs(*effect, WTF::move(*inputs));
     }
 
-    return { { WTFMove(graph), WTFMove(effectGeometryMap) } };
+    return { { WTF::move(graph), WTF::move(effectGeometryMap) } };
 }
 
 std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> SVGFilterRenderer::buildExpression(SVGElement *contextElement, SVGFilterElement& filterElement, const SVGFilterRenderer& filter, const GraphicsContext& destinationContext)
@@ -151,7 +153,7 @@ std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> SVGFilterRend
 
     expression.reverse();
     expression.shrinkToFit();
-    return { { WTFMove(expression), WTFMove(effects) } };
+    return { { WTF::move(expression), WTF::move(effects) } };
 }
 
 static std::optional<SVGFilterPrimitiveGraph> buildFilterPrimitiveGraph(SVGFilterElement& filterElement)
@@ -166,7 +168,7 @@ static std::optional<SVGFilterPrimitiveGraph> buildFilterPrimitiveGraph(SVGFilte
         // We should not be strict about not finding the input primitives here because SourceGraphic and SourceAlpha do not have primitives.
         auto inputs = graph.getNamedNodes(effectElement->filterEffectInputsNames()).value_or(SVGFilterPrimitiveGraph::NodeVector());
         graph.addNamedNode(AtomString { effectElement->result() }, effectElement.copyRef());
-        graph.setNodeInputs(effectElement, WTFMove(inputs));
+        graph.setNodeInputs(effectElement, WTF::move(inputs));
     }
 
     return graph;
@@ -237,7 +239,7 @@ FloatSize SVGFilterRenderer::calculateResolvedSize(const FloatSize& size, const 
 
 FloatSize SVGFilterRenderer::resolvedSize(const FloatSize& size) const
 {
-    return calculateResolvedSize(size, m_targetBoundingBox, m_primitiveUnits);
+    return calculateResolvedSize(size, referenceBox(), m_primitiveUnits);
 }
 
 FloatPoint3D SVGFilterRenderer::resolvedPoint3D(const FloatPoint3D& point) const
@@ -245,12 +247,13 @@ FloatPoint3D SVGFilterRenderer::resolvedPoint3D(const FloatPoint3D& point) const
     if (m_primitiveUnits != SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         return point;
 
+    auto referenceBox = this->referenceBox();
     FloatPoint3D resolvedPoint;
-    resolvedPoint.setX(m_targetBoundingBox.x() + point.x() * m_targetBoundingBox.width());
-    resolvedPoint.setY(m_targetBoundingBox.y() + point.y() * m_targetBoundingBox.height());
+    resolvedPoint.setX(referenceBox.x() + point.x() * referenceBox.width());
+    resolvedPoint.setY(referenceBox.y() + point.y() * referenceBox.height());
 
     // https://www.w3.org/TR/SVG/filters.html#fePointLightZAttribute and https://www.w3.org/TR/SVG/coords.html#Units_viewport_percentage
-    resolvedPoint.setZ(point.z() * euclidianDistance(m_targetBoundingBox.minXMinYCorner(), m_targetBoundingBox.maxXMaxYCorner()) / std::numbers::sqrt2_v<float>);
+    resolvedPoint.setZ(point.z() * euclidianDistance(referenceBox.minXMinYCorner(), referenceBox.maxXMaxYCorner()) / std::numbers::sqrt2_v<float>);
 
     return resolvedPoint;
 }
@@ -259,8 +262,14 @@ OptionSet<FilterRenderingMode> SVGFilterRenderer::supportedFilterRenderingModes(
 {
     OptionSet<FilterRenderingMode> modes = allFilterRenderingModes;
 
-    for (auto& effect : m_effects)
-        modes = modes & effect->supportedFilterRenderingModes(preferredFilterRenderingModes);
+    for (auto& effect : m_effects) {
+        auto effectModes = effect->supportedFilterRenderingModes(preferredFilterRenderingModes);
+#if !LOG_DISABLED
+        if (preferredFilterRenderingModes.contains(FilterRenderingMode::Accelerated) && !effectModes.contains(FilterRenderingMode::Accelerated))
+            LOG_WITH_STREAM(Filters, stream << "SVGFilterRenderer::supportedFilterRenderingModes: accelerated rendering not supported by " << effect.get());
+#endif
+        modes = modes & effectModes;
+    }
 
     ASSERT(modes);
     return modes;
@@ -314,6 +323,8 @@ RefPtr<FilterImage> SVGFilterRenderer::apply(FilterImage* sourceImage, FilterRes
     ASSERT(!m_expression.isEmpty());
     ASSERT(filterRenderingModes().contains(FilterRenderingMode::Software));
     ASSERT(isValidSVGFilterExpression(m_expression, m_effects));
+
+    LOG_WITH_STREAM(Filters, stream << "\nSVGFilterRenderer " << this << " apply - filterRegion " << filterRegion() << " scale " << filterScale());
 
     FilterImageVector stack;
 

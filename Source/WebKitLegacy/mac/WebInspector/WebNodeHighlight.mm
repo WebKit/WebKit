@@ -146,9 +146,9 @@ using namespace WebCore;
     // the entire superview hierarchy to handle scrolling, bars coming and going, etc. 
     // (without making concrete assumptions about the view hierarchy).
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    for (NSView *v = _targetView; v; v = [v superview]) {
-        [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewFrameDidChangeNotification object:v];
-        [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewBoundsDidChangeNotification object:v];
+    for (RetainPtr view = _targetView; view; view = [view.get() superview]) {
+        [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewFrameDidChangeNotification object:view.get()];
+        [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewBoundsDidChangeNotification object:view.get()];
     }
 #else
     ASSERT(_highlightLayer);

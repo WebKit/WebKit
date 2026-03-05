@@ -27,7 +27,7 @@
 #include "WPEToplevelWayland.h"
 
 #include "GRefPtrWPE.h"
-#include "WPEBufferDMABufFormats.h"
+#include "WPEBufferFormats.h"
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEToplevelWaylandPrivate.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
@@ -63,7 +63,7 @@ struct DMABufFeedback {
         FormatTable& operator=(const FormatTable&) = delete;
         FormatTable(FormatTable&& other)
         {
-            *this = WTFMove(other);
+            *this = WTF::move(other);
         }
 
         FormatTable(unsigned size, Data* data)
@@ -122,9 +122,9 @@ struct DMABufFeedback {
     DMABufFeedback& operator=(const DMABufFeedback&) = delete;
 
     DMABufFeedback(DMABufFeedback&& other)
-        : formatTable(WTFMove(other.formatTable))
-        , pendingTranche(WTFMove(other.pendingTranche))
-        , tranches(WTFMove(other.tranches))
+        : formatTable(WTF::move(other.formatTable))
+        , pendingTranche(WTF::move(other.pendingTranche))
+        , tranches(WTF::move(other.tranches))
     {
 #if USE(LIBDRM)
         memcpy(&mainDevice, &other.mainDevice, sizeof(dev_t));
@@ -176,7 +176,7 @@ struct DMABufFeedback {
         Tranche& operator=(const Tranche&) = delete;
         Tranche(Tranche&& other)
             : flags(other.flags)
-            , formats(WTFMove(other.formats))
+            , formats(WTF::move(other.formats))
         {
             other.flags = 0;
 #if USE(LIBDRM)
@@ -235,7 +235,7 @@ struct _WPEToplevelWaylandPrivate {
     struct zwp_linux_surface_synchronization_v1* surfaceSync;
     std::unique_ptr<DMABufFeedback> pendingDMABufFeedback;
     std::unique_ptr<DMABufFeedback> committedDMABufFeedback;
-    GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
+    GRefPtr<WPEBufferFormats> preferredBufferFormats;
 
     bool hasPointer;
     bool isFocused;
@@ -460,16 +460,16 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
         // one. Return early and skip emitting the signal if there is no usable formats table in the end.
         if (!priv->pendingDMABufFeedback->formatTable) {
             if (priv->committedDMABufFeedback && priv->committedDMABufFeedback->formatTable)
-                priv->pendingDMABufFeedback->formatTable = WTFMove(priv->committedDMABufFeedback->formatTable);
+                priv->pendingDMABufFeedback->formatTable = WTF::move(priv->committedDMABufFeedback->formatTable);
             else {
                 priv->pendingDMABufFeedback.reset();
                 return;
             }
         }
 
-        priv->committedDMABufFeedback = WTFMove(priv->pendingDMABufFeedback);
-        priv->preferredDMABufFormats = nullptr;
-        wpe_toplevel_preferred_dma_buf_formats_changed(toplevel);
+        priv->committedDMABufFeedback = WTF::move(priv->pendingDMABufFeedback);
+        priv->preferredBufferFormats = nullptr;
+        wpe_toplevel_preferred_buffer_formats_changed(toplevel);
     },
     // format_table
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, int32_t fd, uint32_t size)
@@ -501,7 +501,7 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
         if (!priv->pendingDMABufFeedback)
             return;
 
-        priv->pendingDMABufFeedback->tranches.append(WTFMove(priv->pendingDMABufFeedback->pendingTranche));
+        priv->pendingDMABufFeedback->tranches.append(WTF::move(priv->pendingDMABufFeedback->pendingTranche));
     },
     // tranche_target_device
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* device)
@@ -697,31 +697,31 @@ static GRefPtr<WPEDRMDevice> wpeToplevelWaylandGetDRMDevice(WPEToplevel* topleve
 #endif
 }
 
-static WPEBufferDMABufFormats* wpeToplevelWaylandGetPreferredDMABufFormats(WPEToplevel* toplevel)
+static WPEBufferFormats* wpeToplevelWaylandGetPreferredBufferFormats(WPEToplevel* toplevel)
 {
     auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
-    if (priv->preferredDMABufFormats)
-        return priv->preferredDMABufFormats.get();
+    if (priv->preferredBufferFormats)
+        return priv->preferredBufferFormats.get();
 
     if (!priv->committedDMABufFeedback)
         return nullptr;
 
     auto mainDevice = wpeToplevelWaylandGetDRMDevice(toplevel, priv->committedDMABufFeedback->device());
-    auto* builder = wpe_buffer_dma_buf_formats_builder_new(mainDevice.get());
+    auto* builder = wpe_buffer_formats_builder_new(mainDevice.get());
     for (const auto& tranche : priv->committedDMABufFeedback->tranches) {
-        WPEBufferDMABufFormatUsage usage = tranche.flags & ZWP_LINUX_DMABUF_FEEDBACK_V1_TRANCHE_FLAGS_SCANOUT ? WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT : WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
+        WPEBufferFormatUsage usage = tranche.flags & ZWP_LINUX_DMABUF_FEEDBACK_V1_TRANCHE_FLAGS_SCANOUT ? WPE_BUFFER_FORMAT_USAGE_SCANOUT : WPE_BUFFER_FORMAT_USAGE_RENDERING;
         auto targetDevice = wpeToplevelWaylandGetDRMDevice(toplevel, tranche.device());
-        wpe_buffer_dma_buf_formats_builder_append_group(builder, targetDevice.get(), usage);
+        wpe_buffer_formats_builder_append_group(builder, targetDevice.get(), usage);
 
         for (const auto& format : tranche.formats) {
             auto [fourcc, modifier] = priv->committedDMABufFeedback->format(format);
             if (fourcc) [[likely]]
-                wpe_buffer_dma_buf_formats_builder_append_format(builder, fourcc, modifier);
+                wpe_buffer_formats_builder_append_format(builder, fourcc, modifier);
         }
     }
 
-    priv->preferredDMABufFormats = adoptGRef(wpe_buffer_dma_buf_formats_builder_end(builder));
-    return priv->preferredDMABufFormats.get();
+    priv->preferredBufferFormats = adoptGRef(wpe_buffer_formats_builder_end(builder));
+    return priv->preferredBufferFormats.get();
 }
 
 static void wpeToplevelWaylandSetTitle(WPEToplevel* toplevel, const char* title)
@@ -765,7 +765,7 @@ static void wpe_toplevel_wayland_class_init(WPEToplevelWaylandClass* toplevelWay
     toplevelClass->set_fullscreen = wpeToplevelWaylandSetFullscreen;
     toplevelClass->set_maximized = wpeToplevelWaylandSetMaximized;
     toplevelClass->set_minimized = wpeToplevelWaylandSetMinimized;
-    toplevelClass->get_preferred_dma_buf_formats = wpeToplevelWaylandGetPreferredDMABufFormats;
+    toplevelClass->get_preferred_buffer_formats = wpeToplevelWaylandGetPreferredBufferFormats;
     toplevelClass->set_title = wpeToplevelWaylandSetTitle;
 }
 
@@ -920,20 +920,6 @@ void wpeToplevelWaylandViewVisibilityChanged(WPEToplevelWayland* toplevel, WPEVi
 struct zwp_linux_surface_synchronization_v1* wpeToplevelWaylandGetSurfaceSync(WPEToplevelWayland* toplevel)
 {
     return toplevel->priv->surfaceSync;
-}
-
-/**
- * wpe_toplevel_wayland_new:
- * @display: a #WPEDisplayWayland
- * @max_views: the maximum number of views allowed, or 0 for no limit
- *
- * Create a new #WPEToplevel on @display with @max_views allowed
- *
- * Returns: (transfer full): a #WPEToplevel
- */
-WPEToplevel* wpe_toplevel_wayland_new(WPEDisplayWayland* display, guint maxViews)
-{
-    return WPE_TOPLEVEL(g_object_new(WPE_TYPE_TOPLEVEL_WAYLAND, "display", display, "max-views", maxViews, nullptr));
 }
 
 /**

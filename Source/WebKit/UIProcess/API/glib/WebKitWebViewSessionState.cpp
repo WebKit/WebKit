@@ -37,7 +37,7 @@ using namespace WebKit;
 
 struct _WebKitWebViewSessionState {
     _WebKitWebViewSessionState(SessionState&& state)
-        : sessionState(WTFMove(state))
+        : sessionState(WTF::move(state))
         , referenceCount(1)
     {
     }
@@ -228,9 +228,10 @@ static inline void encodeBackForwardListItemState(GVariantBuilder* sessionBuilde
 
 static inline void encodeBackForwardListState(GVariantBuilder* sessionBuilder, const BackForwardListState& backForwardListState)
 {
+    // FIXME: Encode navigatedFrameID for each item to support site isolation back/forward navigation after session restore.
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("a" BACK_FORWARD_LIST_ITEM_TYPE_STRING_V2));
     for (const auto& item : backForwardListState.items)
-        encodeBackForwardListItemState(sessionBuilder, item);
+        encodeBackForwardListItemState(sessionBuilder, item.frameState);
     g_variant_builder_close(sessionBuilder);
 
     if (backForwardListState.currentIndex)
@@ -281,7 +282,7 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
                 guchar dataValue;
                 while (g_variant_iter_next(dataIter, "y", &dataValue))
                     data.append(dataValue);
-                httpBody.elements.append({ WTFMove(data) });
+                httpBody.elements.append({ WTF::move(data) });
             }
             break;
         case WTF::alternativeIndexV<HTTPBody::Element::FileData, HTTPBody::Element::Data>: {
@@ -292,7 +293,7 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
                 fileData.fileLength = fileLength;
             if (hasFileModificationTime)
                 fileData.expectedFileModificationTime = WallTime::fromRawSeconds(fileModificationTime);
-            httpBody.elements.append({ WTFMove(fileData) });
+            httpBody.elements.append({ WTF::move(fileData) });
             break;
         }
         case WTF::alternativeIndexV<String, HTTPBody::Element::Data>:
@@ -325,12 +326,10 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     frameState.originalURLString = String::fromUTF8(originalURLString);
     // frameState.referrer must not be an empty string since we never want to
     // send an empty Referer header. Bug #159606.
-    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-    if (strlen(referrer))
-        frameState.referrer = String::fromUTF8(referrer);
-    if (strlen(target))
-        frameState.target = AtomString::fromUTF8(target);
-    IGNORE_CLANG_WARNINGS_END
+    if (auto referrerString = String::fromUTF8(referrer); !referrerString.isEmpty())
+        frameState.referrer = WTF::move(referrerString);
+    if (auto targetString = AtomString::fromUTF8(target); !targetString.isEmpty())
+        frameState.target = WTF::move(targetString);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
         Vector<AtomString> documentState;
         documentState.reserveInitialCapacity(documentStateLength);
@@ -347,7 +346,7 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
             while (g_variant_iter_next(stateObjectDataIter.get(), "y", &stateObjectDataValue))
                 stateObjectVector.append(stateObjectDataValue);
         }
-        frameState.stateObjectData = WTFMove(stateObjectVector);
+        frameState.stateObjectData = WTF::move(stateObjectVector);
     }
     frameState.documentSequenceNumber = documentSequenceNumber;
     frameState.itemSequenceNumber = itemSequenceNumber;
@@ -356,13 +355,13 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     frameState.pageScaleFactor = pageScaleFactor;
     HTTPBody httpBody;
     if (decodeHTTPBody(httpBodyVariant, httpBody))
-        frameState.httpBody = WTFMove(httpBody);
+        frameState.httpBody = WTF::move(httpBody);
     g_variant_unref(httpBodyVariant);
     while (GRefPtr<GVariant> child = adoptGRef(g_variant_iter_next_value(childrenIter.get()))) {
         Ref childFrameState = FrameState::create();
         GRefPtr<GVariant> childVariant = adoptGRef(g_variant_get_variant(child.get()));
         decodeFrameState(childVariant.get(), childFrameState);
-        frameState.children.append(WTFMove(childFrameState));
+        frameState.children.append(WTF::move(childFrameState));
     }
 }
 
@@ -377,7 +376,7 @@ static inline void decodeBackForwardListItemStateV1(GVariantIter* backForwardLis
         mainFrameState->title = String::fromUTF8(title);
         decodeFrameState(frameStateVariant, mainFrameState);
         mainFrameState->shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
-        backForwardListState.items.append(WTFMove(mainFrameState));
+        backForwardListState.items.append({ WTF::move(mainFrameState), std::nullopt });
     }
 }
 
@@ -401,28 +400,25 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
         mainFrameState->title = String::fromUTF8(title);
         decodeFrameState(frameStateVariant, mainFrameState);
         mainFrameState->shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
-        backForwardListState.items.append(WTFMove(mainFrameState));
+        backForwardListState.items.append({ WTF::move(mainFrameState), std::nullopt });
     }
 }
 
 static bool decodeSessionState(GBytes* data, SessionState& sessionState)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    static const char* sessionStateTypeStringVersions[] = {
+    static constexpr std::array<ASCIILiteral, 2> sessionStateTypeStringVersions = {
         SESSION_STATE_TYPE_STRING_V2,
         SESSION_STATE_TYPE_STRING_V1,
-        nullptr
     };
-    const char* sessionStateTypeString = nullptr;
+
     GRefPtr<GVariant> variant;
-    for (unsigned i = 0; sessionStateTypeStringVersions[i]; ++i) {
-        sessionStateTypeString = sessionStateTypeStringVersions[i];
-        variant = g_variant_new_from_bytes(G_VARIANT_TYPE(sessionStateTypeString), data, FALSE);
-        if (g_variant_is_normal_form(variant.get()))
+    for (const auto& typeString : sessionStateTypeStringVersions) {
+        GRefPtr<GVariant> variantToCheck = g_variant_new_from_bytes(G_VARIANT_TYPE(typeString), data, FALSE);
+        if (g_variant_is_normal_form(variantToCheck.get())) {
+            variant = WTF::move(variantToCheck);
             break;
-        variant = nullptr;
+        }
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (!variant)
         return false;
@@ -431,7 +427,7 @@ static bool decodeSessionState(GBytes* data, SessionState& sessionState)
     GUniqueOutPtr<GVariantIter> backForwardListStateIter;
     gboolean hasCurrentIndex;
     guint32 currentIndex;
-    g_variant_get(variant.get(), sessionStateTypeString, &version, &backForwardListStateIter.outPtr(), &hasCurrentIndex, &currentIndex);
+    g_variant_get(variant.get(), g_variant_get_type_string(variant.get()) , &version, &backForwardListStateIter.outPtr(), &hasCurrentIndex, &currentIndex);
     if (!version || version > g_sessionStateVersion)
         return false;
 
@@ -445,7 +441,7 @@ static bool decodeSessionState(GBytes* data, SessionState& sessionState)
 WebKitWebViewSessionState* webkitWebViewSessionStateCreate(SessionState&& sessionState)
 {
     WebKitWebViewSessionState* state = static_cast<WebKitWebViewSessionState*>(fastMalloc(sizeof(WebKitWebViewSessionState)));
-    new (state) WebKitWebViewSessionState(WTFMove(sessionState));
+    new (state) WebKitWebViewSessionState(WTF::move(sessionState));
     return state;
 }
 
@@ -472,7 +468,7 @@ WebKitWebViewSessionState* webkit_web_view_session_state_new(GBytes* data)
     SessionState sessionState;
     if (!decodeSessionState(data, sessionState))
         return nullptr;
-    return webkitWebViewSessionStateCreate(WTFMove(sessionState));
+    return webkitWebViewSessionStateCreate(WTF::move(sessionState));
 }
 
 /**

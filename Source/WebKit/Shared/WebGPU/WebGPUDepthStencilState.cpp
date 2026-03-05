@@ -44,7 +44,7 @@ std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const
     if (!stencilBack)
         return std::nullopt;
 
-    return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTFMove(*stencilFront), WTFMove(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
+    return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTF::move(*stencilFront), WTF::move(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
 }
 
 std::optional<WebCore::WebGPU::DepthStencilState> ConvertFromBackingContext::convertFromBacking(const DepthStencilState& depthStencilState)
@@ -57,7 +57,7 @@ std::optional<WebCore::WebGPU::DepthStencilState> ConvertFromBackingContext::con
     if (!stencilBack)
         return std::nullopt;
 
-    return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTFMove(*stencilFront), WTFMove(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
+    return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTF::move(*stencilFront), WTF::move(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
 }
 
 } // namespace WebKit

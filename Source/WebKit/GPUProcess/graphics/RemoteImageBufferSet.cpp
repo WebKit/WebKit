@@ -92,6 +92,13 @@ void RemoteImageBufferSet::updateConfiguration(const RemoteImageBufferSetConfigu
     clearBuffers();
 }
 
+void RemoteImageBufferSet::submitDrawingCommands()
+{
+    RefPtr frontBuffer = m_frontBuffer;
+    if (frontBuffer)
+        frontBuffer->submitDrawingCommands();
+}
+
 void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdateID, CompletionHandler<void(ImageBufferSetPrepareBufferForDisplayOutputData, RenderingUpdateID)>&& completionHandler)
 {
     m_context.reset();
@@ -113,7 +120,7 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
     }
 
     outputData.bufferCacheIdentifiers = BufferIdentifierSet { bufferIdentifier(frontBuffer), bufferIdentifier(m_backBuffer), bufferIdentifier(m_secondaryBackBuffer) };
-    completionHandler(WTFMove(outputData), renderingUpdateID);
+    completionHandler(WTF::move(outputData), renderingUpdateID);
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
@@ -121,9 +128,9 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
 {
     assertIsCurrent(workQueue());
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ::ensureFrontBufferForDisplay " << " - front "
-        << m_frontBuffer << " (in-use " << (m_frontBuffer && protectedFrontBuffer()->isInUse()) << ") "
-        << m_backBuffer << " (in-use " << (m_backBuffer && protectedBackBuffer()->isInUse()) << ") "
-        << m_secondaryBackBuffer << " (in-use " << (m_secondaryBackBuffer && protectedSecondaryBackBuffer()->isInUse()) << ") ");
+        << m_frontBuffer << " (in-use " << (m_frontBuffer && protect(m_frontBuffer)->isInUse()) << ") "
+        << m_backBuffer << " (in-use " << (m_backBuffer && protect(m_backBuffer)->isInUse()) << ") "
+        << m_secondaryBackBuffer << " (in-use " << (m_secondaryBackBuffer && protect(m_secondaryBackBuffer)->isInUse()) << ") ");
 
     displayRequirement = swapBuffersForDisplay(inputData.hasEmptyDirtyRegion, inputData.supportsPartialRepaint && !isSmallLayerBacking({ m_configuration.logicalSize, m_configuration.resolutionScale, m_configuration.colorSpace, m_configuration.bufferFormat, m_configuration.renderingPurpose }));
     if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay) {
@@ -138,7 +145,7 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
         if (m_configuration.includeDisplayList == WebCore::IncludeDynamicContentScalingDisplayList::Yes)
             creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
 #endif
-        m_frontBuffer = m_renderingBackend->allocateImageBuffer(m_configuration.logicalSize, m_configuration.renderingMode, m_configuration.renderingPurpose, m_configuration.resolutionScale, m_configuration.colorSpace, m_configuration.bufferFormat, WTFMove(creationContext));
+        m_frontBuffer = m_renderingBackend->allocateImageBuffer(m_configuration.logicalSize, m_configuration.renderingMode, m_configuration.renderingPurpose, m_configuration.resolutionScale, m_configuration.colorSpace, m_configuration.bufferFormat, WTF::move(creationContext));
         m_frontBufferIsCleared = true;
     }
 
@@ -198,7 +205,7 @@ void RemoteImageBufferSet::dynamicContentScalingDisplayList(CompletionHandler<vo
     std::optional<WebCore::DynamicContentScalingDisplayList> displayList;
     if (m_frontBuffer)
         displayList = m_frontBuffer->dynamicContentScalingDisplayList();
-    completionHandler({ WTFMove(displayList) });
+    completionHandler({ WTF::move(displayList) });
 }
 
 DynamicContentScalingResourceCache RemoteImageBufferSet::ensureDynamicContentScalingResourceCache()

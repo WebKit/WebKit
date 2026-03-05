@@ -32,8 +32,8 @@
 #include "DynamicsCompressorKernel.h"
 #include "ZeroPole.h"
 #include <memory>
+#include <wtf/FixedVector.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -92,13 +92,13 @@ protected:
     std::array<float, ParamLast> m_parameters;
     void initializeParameters();
 
-    std::span<std::span<const float>> sourceChannels() const { return unsafeMakeSpan(m_sourceChannels.get(), m_numberOfChannels); }
-    std::span<std::span<float>> destinationChannels() const { return unsafeMakeSpan(m_destinationChannels.get(), m_numberOfChannels); }
+    std::span<const std::span<const float>> sourceChannels() const { return m_sourceChannels.span(); }
+    std::span<std::span<float>> destinationChannels() { return m_destinationChannels.mutableSpan(); }
 
     float m_sampleRate;
 
-    UniqueArray<std::span<const float>> m_sourceChannels;
-    UniqueArray<std::span<float>> m_destinationChannels;
+    FixedVector<std::span<const float>> m_sourceChannels;
+    FixedVector<std::span<float>> m_destinationChannels;
 
     // The core compressor.
     DynamicsCompressorKernel m_compressor;

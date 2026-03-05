@@ -28,10 +28,6 @@
 namespace WebCore {
 
 struct EventListenerOptions {
-    EventListenerOptions(bool capture = false)
-        : capture(capture)
-    { }
-
     bool capture { false };
 };
 

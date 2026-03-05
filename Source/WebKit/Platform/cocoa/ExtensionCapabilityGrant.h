@@ -47,7 +47,7 @@ public:
     ExtensionCapabilityGrant& operator=(ExtensionCapabilityGrant&&) = default;
     ExtensionCapabilityGrant isolatedCopy() &&;
 
-    const String& environmentIdentifier() const { return m_environmentIdentifier; }
+    const String& environmentIdentifier() const LIFETIME_BOUND { return m_environmentIdentifier; }
     bool isEmpty() const;
     bool isValid() const;
 

@@ -154,7 +154,7 @@ void CommonData::finalizeCatchEntrypoints(Vector<CatchEntrypointData>&& catchEnt
 {
     std::ranges::sort(catchEntrypoints, { }, &CatchEntrypointData::bytecodeIndex);
     ASSERT(m_catchEntrypoints.isEmpty());
-    m_catchEntrypoints = WTFMove(catchEntrypoints);
+    m_catchEntrypoints = WTF::move(catchEntrypoints);
 
 #if ASSERT_ENABLED
     for (unsigned i = 0; i + 1 < m_catchEntrypoints.size(); ++i)

@@ -41,22 +41,22 @@ void AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc(IPC::C
     ASSERT(secKeyProxyStore.isInitialized());
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), ClientCertificateAuthentication::XPCMessageNameKey, ClientCertificateAuthentication::XPCMessageNameValue);
     xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCChallengeIDKey, challengeID.toUInt64());
-    xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, XPCObjectPtr<xpc_endpoint_t> { RetainPtr { secKeyProxyStore.get() }.get().endpoint._endpoint }.get());
+    xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, OSObjectPtr<xpc_endpoint_t> { RetainPtr { secKeyProxyStore.get() }.get().endpoint._endpoint }.get());
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto certificateDataArray = adoptXPCObject(xpc_array_create(nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto certificateDataArray = adoptOSObject(xpc_array_create(nullptr, 0));
     RetainPtr nsCredential = credential.nsCredential();
     for (id certificate in nsCredential.get().certificates) {
         auto data = adoptCF(SecCertificateCopyData((SecCertificateRef)certificate));
         // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT xpc_array_append_value(certificateDataArray.get(), adoptXPCObject(xpc_data_create(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()))).get());
+        SUPPRESS_RETAINPTR_CTOR_ADOPT xpc_array_append_value(certificateDataArray.get(), adoptOSObject(xpc_data_create(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()))).get());
     }
     xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCCertificatesKey, certificateDataArray.get());
     xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCPersistenceKey, static_cast<uint64_t>(nsCredential.get().persistence));
 
-    xpc_connection_send_message(connection.protectedXPCConnection().get(), message.get());
+    xpc_connection_send_message(protect(connection.xpcConnection()).get(), message.get());
 }
 
 } // namespace WebKit

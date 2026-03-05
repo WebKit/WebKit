@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #include <WebCore/ScrollingTreeFixedNode.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -49,6 +47,9 @@ private:
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) final;
     void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
+#if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
+    void willBeDestroyed() final;
+#endif
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
 
@@ -58,5 +59,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeFixedNodeCocoa, isFixedNodeCocoa())
-
-#endif // ENABLE(ASYNC_SCROLLING)

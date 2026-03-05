@@ -332,6 +332,69 @@ class TestImporterTest(unittest.TestCase):
         tests_options = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
         self.assertIn("slow", tests_options["imported/w3c/web-platform-tests/a/existing-test.html"])
 
+    def test_remove_resource_file_after_it_becomes_test(self):
+        existing_resource_files = {
+            'directories': [],
+            'files': [
+                'web-platform-tests/b/existing-path.html',
+            ],
+        }
+
+        FAKE_FILES = {}
+        FAKE_FILES.update(FAKE_RESOURCES)
+        FAKE_FILES.update(
+            {
+                '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-path.html': '4',
+                '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': json.dumps(existing_resource_files),
+                f'{FAKE_WPT_DIR}/b/existing-path.html': MINIMAL_TESTHARNESS,
+            }
+        )
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', 'web-platform-tests/b'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-path.html'))
+
+        resource_files = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json'))
+        self.assertEqual(
+            resource_files,
+            {
+                'directories': [],
+                'files': [],
+            },
+        )
+
+    def test_resource_file_in_resource_directory(self):
+        existing_resource_files = {
+            'directories': [
+                'web-platform-tests/b',
+            ],
+            'files': [],
+        }
+
+        FAKE_FILES = {}
+        FAKE_FILES.update(FAKE_RESOURCES)
+        FAKE_FILES.update(
+            {
+                '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': json.dumps(existing_resource_files),
+                f'{FAKE_WPT_DIR}/b/existing-path.html': '4',
+            }
+        )
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', 'web-platform-tests/b'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-path.html'))
+
+        resource_files = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json'))
+        self.assertEqual(
+            resource_files,
+            {
+                'directories': [
+                    'web-platform-tests/b',
+                ],
+                'files': [],
+            },
+        )
+
     def test_clean_directory_option_partial_import(self):
         existing_resource_files = {
             "directories": [],

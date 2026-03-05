@@ -132,4 +132,4 @@ testWithTypedArrayConstructors(function(TA) {
   }).join(separator);
   result = sample.join(separator);
   assert.sameValue(result, expected, "using: " + separator);
-});
+}, null, ["passthrough"]);

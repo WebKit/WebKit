@@ -27,6 +27,7 @@
 
 #include "ExceptionOr.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class ArrayBufferView;
@@ -41,12 +42,12 @@ class ReadableStreamBYOBRequest : public RefCounted<ReadableStreamBYOBRequest> {
 public:
     static Ref<ReadableStreamBYOBRequest> create();
 
-    JSC::ArrayBufferView* view() const;
+    JSC::ArrayBufferView* NODELETE view() const;
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
 
     void setController(ReadableByteStreamController*);
-    void setView(JSC::ArrayBufferView*);
+    void NODELETE setView(JSC::ArrayBufferView*);
 
     template<typename Visitor> void visitAdditionalChildren(Visitor&);
 

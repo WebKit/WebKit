@@ -40,19 +40,19 @@ public:
     Inspector::DebuggableType debuggableType() const { return m_data.debuggableType; }
     void setDebuggableType(Inspector::DebuggableType debuggableType) { m_data.debuggableType = debuggableType; }
 
-    const WTF::String& targetPlatformName() const { return m_data.targetPlatformName; }
+    const WTF::String& targetPlatformName() const LIFETIME_BOUND { return m_data.targetPlatformName; }
     void setTargetPlatformName(const WTF::String& targetPlatformName) { m_data.targetPlatformName = targetPlatformName; }
 
-    const WTF::String& targetBuildVersion() const { return m_data.targetBuildVersion; }
+    const WTF::String& targetBuildVersion() const LIFETIME_BOUND { return m_data.targetBuildVersion; }
     void setTargetBuildVersion(const WTF::String& targetBuildVersion) { m_data.targetBuildVersion = targetBuildVersion; }
 
-    const WTF::String& targetProductVersion() const { return m_data.targetProductVersion; }
+    const WTF::String& targetProductVersion() const LIFETIME_BOUND { return m_data.targetProductVersion; }
     void setTargetProductVersion(const WTF::String& targetProductVersion) { m_data.targetProductVersion = targetProductVersion; }
 
     bool targetIsSimulator() const { return m_data.targetIsSimulator; }
     void setTargetIsSimulator(bool targetIsSimulator) { m_data.targetIsSimulator = targetIsSimulator; }
 
-    const WebKit::DebuggableInfoData& debuggableInfoData() const { return m_data; }
+    const WebKit::DebuggableInfoData& debuggableInfoData() const LIFETIME_BOUND { return m_data; }
 
 private:
     explicit DebuggableInfo(const WebKit::DebuggableInfoData&);

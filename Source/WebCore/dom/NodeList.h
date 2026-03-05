@@ -34,7 +34,7 @@ class Node;
 class ScriptExecutionContext;
 
 class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(NodeList, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NodeList, WEBCORE_EXPORT);
 public:
     virtual ~NodeList();
 

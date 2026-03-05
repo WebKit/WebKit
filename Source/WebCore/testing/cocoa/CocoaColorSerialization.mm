@@ -42,7 +42,7 @@ String serializationForCSS(WebCore::CocoaColor *color)
     return WebCore::serializationForCSS([color = RetainPtr { color }] -> WebCore::Color {
         RetainPtr cgColor = [color CGColor];
         if (auto colorComponents = WebCore::roundAndClampToSRGBALossy(cgColor.get()))
-            return { WTFMove(*colorComponents) };
+            return { WTF::move(*colorComponents) };
         return WebCore::colorFromCocoaColor(color.get());
     }());
 }

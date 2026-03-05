@@ -39,9 +39,9 @@ WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(
     WPEGestureControllerImpl, wpe_gesture_controller_impl, G_TYPE_OBJECT, GObject,
     G_IMPLEMENT_INTERFACE(WPE_TYPE_GESTURE_CONTROLLER, wpe_gesture_controller_interface_init))
 
-static void wpeHandleEvent(WPEGestureController* controller, WPEEvent* event)
+static gboolean wpeHandleEvent(WPEGestureController* controller, WPEEvent* event)
 {
-    WPE_GESTURE_CONTROLLER_IMPL(controller)->priv->detector.handleEvent(event);
+    return WPE_GESTURE_CONTROLLER_IMPL(controller)->priv->detector.handleEvent(event);
 }
 
 static void wpeCancel(WPEGestureController* controller)

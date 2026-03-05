@@ -1,3 +1,5 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS Make sure the page is ready for animation.
+PASS Instant scrolling while doing history navigation.
+FAIL Smooth scrolling while doing history navigation. assert_not_equals: Shouldn't be scrolled back to top yet. got disallowed value 0
 

@@ -106,23 +106,23 @@ static void WebAVPlayerView_exitFullScreen(id aSelf, SEL, id sender)
 
 static WebAVPlayerView *allocWebAVPlayerViewInstance()
 {
-    static Class theClass = [] {
+    static NeverDestroyed<RetainPtr<Class>> theClass = [] {
         ASSERT(getAVPlayerViewClassSingleton());
-        Class aClass = objc_allocateClassPair(getAVPlayerViewClassSingleton(), "WebAVPlayerView", 0);
-        Class theClass = aClass;
-        class_addMethod(theClass, @selector(setWebDelegate:), (IMP)WebAVPlayerView_setWebDelegate, "v@:@");
-        class_addMethod(theClass, @selector(webDelegate), (IMP)WebAVPlayerView_webDelegate, "@@:");
-        class_addMethod(theClass, @selector(isFullScreen), (IMP)WebAVPlayerView_isFullScreen, "B@:");
-        class_addMethod(theClass, @selector(enterFullScreen:), (IMP)WebAVPlayerView_enterFullScreen, "v@:@");
-        class_addMethod(theClass, @selector(exitFullScreen:), (IMP)WebAVPlayerView_exitFullScreen, "v@:@");
+        RetainPtr aClass = objc_allocateClassPair(getAVPlayerViewClassSingleton(), "WebAVPlayerView", 0);
+        RetainPtr theClass = aClass;
+        class_addMethod(theClass.get(), @selector(setWebDelegate:), (IMP)WebAVPlayerView_setWebDelegate, "v@:@");
+        class_addMethod(theClass.get(), @selector(webDelegate), (IMP)WebAVPlayerView_webDelegate, "@@:");
+        class_addMethod(theClass.get(), @selector(isFullScreen), (IMP)WebAVPlayerView_isFullScreen, "B@:");
+        class_addMethod(theClass.get(), @selector(enterFullScreen:), (IMP)WebAVPlayerView_enterFullScreen, "v@:@");
+        class_addMethod(theClass.get(), @selector(exitFullScreen:), (IMP)WebAVPlayerView_exitFullScreen, "v@:@");
 
-        class_addIvar(theClass, "_webDelegate", sizeof(id), log2(sizeof(id)), "@");
-        class_addIvar(theClass, "_webIsFullScreen", sizeof(BOOL), log2(sizeof(BOOL)), "B");
+        class_addIvar(theClass.get(), "_webDelegate", sizeof(id), log2(sizeof(id)), "@");
+        class_addIvar(theClass.get(), "_webIsFullScreen", sizeof(BOOL), log2(sizeof(BOOL)), "B");
 
-        objc_registerClassPair(theClass);
+        objc_registerClassPair(theClass.get());
         return theClass;
     }();
-    return (WebAVPlayerView *)[theClass alloc];
+    return (WebAVPlayerView *)[theClass->get() alloc];
 }
 
 @interface WebVideoFullscreenController () <WebAVPlayerViewDelegate, NSWindowDelegate> {

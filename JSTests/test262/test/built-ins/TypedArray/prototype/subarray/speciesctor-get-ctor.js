@@ -25,8 +25,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([40, 41, 42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([40, 41, 42, 43]));
   var calls = 0;
   var result;
 
@@ -50,4 +50,4 @@ testWithTypedArrayConstructors(function(TA) {
     TA,
     "use defaultCtor on an undefined return - .constructor check"
   );
-});
+}, null, ["passthrough"]);

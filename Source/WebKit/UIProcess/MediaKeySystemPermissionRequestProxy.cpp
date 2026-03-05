@@ -40,8 +40,8 @@ MediaKeySystemPermissionRequestProxy::MediaKeySystemPermissionRequestProxy(Media
     , m_mediaKeySystemID(mediaKeySystemID)
     , m_mainFrameID(mainFrameID)
     , m_frameID(frameID)
-    , m_mediaKeyRequestSecurityOrigin(WTFMove(userMediaSecurityOrigin))
-    , m_topLevelDocumentSecurityOrigin(WTFMove(topLevelDocumentOrigin))
+    , m_mediaKeyRequestSecurityOrigin(WTF::move(userMediaSecurityOrigin))
+    , m_topLevelDocumentSecurityOrigin(WTF::move(topLevelDocumentOrigin))
     , m_keySystem(keySystem)
 {
 }

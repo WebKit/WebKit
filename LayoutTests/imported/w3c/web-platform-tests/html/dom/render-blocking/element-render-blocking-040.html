@@ -1,40 +1,50 @@
 <!DOCTYPE html>
+<meta name="timeout" content="long">
 <head>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="support/utils.js"></script>
-<title>Frames starts after href element is parsed, and not on the open stack of elements before the end</title>
+<title>`link rel=expect` is unblocked for dynamically inserted element</title>
 
-<link rel=expect href="#second" blocking="render">
+<link rel=expect href="#target" blocking="render">
 <script>
 async_test((t) => {
   requestAnimationFrame(() => {
-    t.step(() => assert_true(!!document.getElementById("first"), "first"));
-    t.step(() => assert_true(!!document.getElementById("second"), "second"));
-    t.step(() => assert_true(!!document.getElementById("third"), "third"));
-    t.step(() => assert_false(!!document.getElementById("last")));
+    t.step(() => assert_true(!!document.getElementById("target"), "The target element should be present when rendering is unblocked"));
+    t.step(() => assert_false(!!document.getElementById("last"), "the target element should unblock rendering"));
     t.done();
   });
-}, "blocking defers until needed element is parsed");
+}, "blocking defers frames until full parsing");
 </script>
 </head>
 <body>
-  <div id="first"></div>
-  <script>
-          generateParserDelay();
-  </script>
-  <div id="second">
-    <script>
-            generateParserDelay();
-    </script>
-    <div id="third"></div>
+  <div id="first">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum augue
+    nibh, venenatis a ligula in, tempus pharetra urna. Fusce semper, velit
+    tincidunt lobortis sollicitudin, sapien velit fermentum odio, ultricies
+    tempor mi est eget ipsum egestas.
   </div>
   <script>
-          generateParserDelay();
+    generateParserDelay();
   </script>
-  <div id="fourth"></div>
+  <a id="fold">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum augue
+    nibh, venenatis a ligula in, tempus pharetra urna. Fusce semper, velit
+    tincidunt lobortis sollicitudin, sapien velit fermentum odio, ultricies
+    tempor mi est eget ipsum egestas.
+  </a>
   <script>
-          generateParserDelay();
+    const target = document.createElement("div");
+    target.id = "target";
+    document.body.append(target);
   </script>
-  <div id="last"></div>
+  <script>
+    generateParserDelay();
+  </script>
+  <div id="last">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum augue
+    nibh, venenatis a ligula in, tempus pharetra urna. Fusce semper, velit
+    tincidunt lobortis sollicitudin, sapien velit fermentum odio, ultricies
+    tempor mi est eget ipsum egestas.
+  </div>
 </body>

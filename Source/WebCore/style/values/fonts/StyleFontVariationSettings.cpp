@@ -68,7 +68,7 @@ auto CSSValueConversion<FontVariationSettings>::operator()(BuilderState& state, 
         });
     }
 
-    return { WTFMove(platformSettings) };
+    return { WTF::move(platformSettings) };
 }
 
 Ref<CSSValue> CSSValueCreation<FontVariationSettings>::operator()(CSSValuePool& pool, const RenderStyle& style, const FontVariationSettings& value)
@@ -83,7 +83,7 @@ Ref<CSSValue> CSSValueCreation<FontVariationSettings>::operator()(CSSValuePool& 
             createCSSValue(pool, style, FontVariationSettings::Value { setting.value() })
         ));
     }
-    return CSSValueList::createCommaSeparated(WTFMove(list));
+    return CSSValueList::createCommaSeparated(WTF::move(list));
 
 }
 
@@ -138,7 +138,7 @@ auto Blending<FontVariationSettings>::blend(const FontVariationSettings& a, cons
         });
     }
 
-    return { WTFMove(platformSettingsResult) };
+    return { WTF::move(platformSettingsResult) };
 }
 
 // MARK: - Logging

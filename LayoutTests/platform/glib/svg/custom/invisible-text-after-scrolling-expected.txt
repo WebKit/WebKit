@@ -4,7 +4,7 @@ layer at (0,0) size 800x68
   RenderBlock {html} at (0,0) size 800x68
     RenderBody {body} at (8,16) size 784x36
       RenderBlock {p} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 750x35
+        RenderText {#text} at (0,0) size 750x36
           text run at (0,0) width 750: "In the div below the text is distributed over the whole SVG area. But when you scroll around the invisible text does not"
           text run at (0,18) width 131: "appear (Bug 12163)."
 layer at (10,68) size 502x502 clip at (11,69) size 485x485 scrollY 550 scrollWidth 5000 scrollHeight 5004

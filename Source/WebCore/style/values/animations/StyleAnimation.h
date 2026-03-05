@@ -104,7 +104,7 @@ struct Animation {
     static SingleAnimationRangeEnd initialRangeEnd() { return CSS::Keyword::Normal { }; }
 
     const std::optional<EasingFunction>& defaultTimingFunctionForKeyframes() const { return m_data->m_defaultTimingFunctionForKeyframes; }
-    void setDefaultTimingFunctionForKeyframes(std::optional<EasingFunction>&& function) { m_data->m_defaultTimingFunctionForKeyframes = WTFMove(function); }
+    void setDefaultTimingFunctionForKeyframes(std::optional<EasingFunction>&& function) { m_data->m_defaultTimingFunctionForKeyframes = WTF::move(function); }
 
     FOR_EACH_ANIMATION_REFERENCE(DECLARE_COORDINATED_VALUE_LIST_GETTER_AND_SETTERS_REFERENCE)
     FOR_EACH_ANIMATION_VALUE(DECLARE_COORDINATED_VALUE_LIST_GETTER_AND_SETTERS_VALUE)
@@ -113,8 +113,8 @@ struct Animation {
     // Support for the `animation-range` shorthand.
     static SingleAnimationRange initialRange() { return { initialRangeStart(), initialRangeEnd() }; }
     SingleAnimationRange range() const { return { rangeStart(), rangeEnd() }; }
-    void setRange(SingleAnimationRange&& range) { setRangeStart(WTFMove(range.start)); setRangeEnd(WTFMove(range.end)); }
-    void fillRange(SingleAnimationRange&& range) { fillRangeStart(WTFMove(range.start)); fillRangeEnd(WTFMove(range.end)); }
+    void setRange(SingleAnimationRange&& range) { setRangeStart(WTF::move(range.start)); setRangeEnd(WTF::move(range.end)); }
+    void fillRange(SingleAnimationRange&& range) { fillRangeStart(WTF::move(range.start)); fillRangeEnd(WTF::move(range.end)); }
     void clearRange() { clearRangeStart(); clearRangeEnd(); }
     bool isRangeUnset() const { return isRangeStartUnset() && isRangeEndUnset(); }
     bool isRangeSet() const { return isRangeStartSet() || isRangeEndSet(); }
@@ -169,7 +169,7 @@ private:
     const Data& data() const { return m_data.get(); }
 
     Animation(Ref<Data>&& data)
-        : m_data { WTFMove(data) }
+        : m_data { WTF::move(data) }
     {
     }
 

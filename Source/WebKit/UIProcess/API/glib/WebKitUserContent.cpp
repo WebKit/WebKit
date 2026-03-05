@@ -23,6 +23,7 @@
 #include "WebKitUserContentPrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -79,13 +80,10 @@ static inline Vector<String> toStringVector(const char* const* strv)
     if (!strv)
         return Vector<String>();
 
-    Vector<String> result;
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    for (auto str = strv; *str; ++str)
-        result.append(String::fromUTF8(*str));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
+    const auto strvSpan = span(strv);
+    Vector<String> result(strvSpan.size(), [&strvSpan](size_t i) {
+        return String::fromUTF8(strvSpan[i]);
+    });
     return result;
 }
 
@@ -352,7 +350,7 @@ API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
 
 struct _WebKitUserContentFilter {
     _WebKitUserContentFilter(RefPtr<API::ContentRuleList>&& contentRuleList)
-        : contentRuleList(WTFMove(contentRuleList))
+        : contentRuleList(WTF::move(contentRuleList))
 #if ENABLE(CONTENT_EXTENSIONS)
         , identifier(this->contentRuleList->name().utf8())
 #endif
@@ -429,7 +427,7 @@ const char* webkit_user_content_filter_get_identifier(WebKitUserContentFilter* u
 WebKitUserContentFilter* webkitUserContentFilterCreate(RefPtr<API::ContentRuleList>&& contentRuleList)
 {
     WebKitUserContentFilter* userContentFilter = static_cast<WebKitUserContentFilter*>(fastMalloc(sizeof(WebKitUserContentFilter)));
-    new (userContentFilter) WebKitUserContentFilter(WTFMove(contentRuleList));
+    new (userContentFilter) WebKitUserContentFilter(WTF::move(contentRuleList));
     return userContentFilter;
 }
 

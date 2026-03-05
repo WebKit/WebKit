@@ -24,7 +24,9 @@
 
 #pragma once
 
-#include <WebCore/CSSPrimitiveNumericRange.h>
+#include "CSSPrimitiveNumericRange.h"
+#include "StylePrimitiveNumericTypes+Rounding.h"
+#include <concepts>
 
 namespace WebCore {
 
@@ -54,13 +56,33 @@ namespace Style {
 // If `RenderView` is nullptr, the following LengthUnits will all cause a return value of zero:
 //    Vw, Vh, Vmin, Vmax, Vb, Vi, Svw, Svh, Svmin, Svmax, Svb, Svi, Lvw, Lvh, Lvmin, Lvmax, Lvb, Lvi, Dvw, Dvh, Dvmin, Dvmax, Dvb, Dvi (viewport-percentage units)
 double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade* fontCascadeForUnit = nullptr, CSS::RangeZoomOptions = CSS::RangeZoomOptions::Default, const RenderView* = nullptr);
-
 double computeNonCalcLengthDouble(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
-
 double computeCanonicalNonCalcLengthDouble(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
 // True if `computeNonCalcLengthDouble` would produce identical results when resolved against both these styles.
 bool equalForLengthResolution(const RenderStyle&, const RenderStyle&);
+
+// Utilities for common conversions.
+
+double emToPxDouble(double value, const CSSToLengthConversionData&);
+double emToPxDouble(double value, const RenderStyle&);
+
+template<typename T> inline T emToPx(double value, const CSSToLengthConversionData& conversionData)
+{
+    if constexpr (std::floating_point<T>)
+        return static_cast<T>(emToPxDouble(value, conversionData));
+    else if constexpr (std::integral<T>)
+        return roundForImpreciseConversion<T>(emToPxDouble(value, conversionData));
+}
+
+template<typename T> inline T emToPx(double value, const RenderStyle& style)
+{
+    // For `em`, we only need the element's style, so we can overload this to take just a `RenderStyle`.
+    if constexpr (std::floating_point<T>)
+        return static_cast<T>(emToPxDouble(value, style));
+    else if constexpr (std::integral<T>)
+        return roundForImpreciseConversion<T>(emToPxDouble(value, style));
+}
 
 } // namespace Style
 } // namespace WebCore

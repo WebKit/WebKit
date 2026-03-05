@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <WebKit/_WKFindDelegate.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
 
 #if HAVE(UIFINDINTERACTION)
+
+class InstanceMethodSwizzler;
 
 @interface TestSearchAggregator : NSObject <UITextSearchAggregator>
 
@@ -37,6 +40,16 @@
 
 - (instancetype)initWithCompletionHandler:(dispatch_block_t)completionHandler;
 
+@end
+
+@interface TestScrollViewDelegate : NSObject<UIScrollViewDelegate>  {
+    @public bool _finishedScrolling;
+}
+@end
+
+@interface TestFindDelegate : NSObject<_WKFindDelegate>
+@property (nonatomic, copy) void (^didAddLayerForFindOverlayHandler)(void);
+@property (nonatomic, copy) void (^didRemoveLayerForFindOverlayHandler)(void);
 @end
 
 void testPerformTextSearchWithQueryStringInWebView(WKWebView *, NSString *query, UITextSearchOptions *, NSUInteger expectedMatches);

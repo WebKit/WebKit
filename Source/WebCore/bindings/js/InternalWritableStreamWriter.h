@@ -41,7 +41,7 @@ public:
         return adoptRef(*new InternalWritableStreamWriter(globalObject, writer));
     }
 
-    void whenReady(Function<void()>&&);
+    void whenReady(Function<void(bool)>&&);
     void onClosedPromiseRejection(Function<void(JSDOMGlobalObject&, JSC::JSValue)>&&);
     void onClosedPromiseResolution(Function<void()>&&);
 
@@ -53,7 +53,6 @@ private:
 };
 
 ExceptionOr<Ref<InternalWritableStreamWriter>> acquireWritableStreamDefaultWriter(JSDOMGlobalObject&, WritableStream&);
-int writableStreamDefaultWriterGetDesiredSize(InternalWritableStreamWriter&);
 RefPtr<DOMPromise> writableStreamDefaultWriterCloseWithErrorPropagation(InternalWritableStreamWriter&);
 void writableStreamDefaultWriterRelease(InternalWritableStreamWriter&);
 RefPtr<DOMPromise> writableStreamDefaultWriterWrite(InternalWritableStreamWriter&, JSC::JSValue);

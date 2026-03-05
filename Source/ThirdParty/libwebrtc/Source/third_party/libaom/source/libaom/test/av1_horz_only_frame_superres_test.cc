@@ -257,14 +257,14 @@ class ConvolveHorizRSTestBase : public ::testing::Test {
   TestImage<Pixel> *image_;
 };
 
-typedef void (*LowBDConvolveHorizRsFunc)(const uint8_t *src, int src_stride,
-                                         uint8_t *dst, int dst_stride, int w,
-                                         int h, const int16_t *x_filters,
-                                         const int x0_qn, const int x_step_qn);
+using LowBDConvolveHorizRsFunc = void (*)(const uint8_t *src, int src_stride,
+                                          uint8_t *dst, int dst_stride, int w,
+                                          int h, const int16_t *x_filters,
+                                          const int x0_qn, const int x_step_qn);
 
 // Test parameter list:
 //  <tst_fun_>
-typedef tuple<LowBDConvolveHorizRsFunc> LowBDParams;
+using LowBDParams = tuple<LowBDConvolveHorizRsFunc>;
 
 class LowBDConvolveHorizRSTest
     : public ConvolveHorizRSTestBase<uint8_t>,
@@ -322,15 +322,15 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, LowBDConvolveHorizRSTest,
 #endif
 
 #if CONFIG_AV1_HIGHBITDEPTH
-typedef void (*HighBDConvolveHorizRsFunc)(const uint16_t *src, int src_stride,
-                                          uint16_t *dst, int dst_stride, int w,
-                                          int h, const int16_t *x_filters,
-                                          const int x0_qn, const int x_step_qn,
-                                          int bd);
+using HighBDConvolveHorizRsFunc = void (*)(const uint16_t *src, int src_stride,
+                                           uint16_t *dst, int dst_stride, int w,
+                                           int h, const int16_t *x_filters,
+                                           const int x0_qn, const int x_step_qn,
+                                           int bd);
 
 // Test parameter list:
 //  <tst_fun_, bd_>
-typedef tuple<HighBDConvolveHorizRsFunc, int> HighBDParams;
+using HighBDParams = tuple<HighBDConvolveHorizRsFunc, int>;
 
 class HighBDConvolveHorizRSTest
     : public ConvolveHorizRSTestBase<uint16_t>,

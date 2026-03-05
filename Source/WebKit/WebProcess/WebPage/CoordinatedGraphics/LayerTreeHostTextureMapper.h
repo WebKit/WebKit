@@ -59,7 +59,7 @@ public:
     explicit LayerTreeHost(WebPage&);
     ~LayerTreeHost();
 
-    const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
+    const LayerTreeContext& layerTreeContext() const LIFETIME_BOUND { return m_layerTreeContext; }
     void setLayerTreeStateIsFrozen(bool);
     void setShouldNotifyAfterNextScheduledLayerFlush(bool);
     void scheduleRenderingUpdate();

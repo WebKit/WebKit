@@ -35,6 +35,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/text/MakeString.h>
 
 using namespace WebCore;
@@ -125,37 +126,37 @@ TEST_F(GStreamerTest, hevcProfileParsing)
 {
     using namespace GStreamerCodecUtilities;
 
-    ASSERT_STREQ(parseHEVCProfile("hev1.1.6.L93.B0"_s), "main");
-    ASSERT_STREQ(parseHEVCProfile("hev1.2.4.L93.B0"_s), "main-10");
-    ASSERT_STREQ(parseHEVCProfile("hev1.3.E.L93.B0"_s), "main-still-picture");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L186.BF.C8"_s), "monochrome");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.BD.C8"_s), "monochrome-10");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.B9.C8"_s), "monochrome-12");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.B1.C8"_s), "monochrome-16");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.B9.88"_s), "main-12");
+    ASSERT_EQ(parseHEVCProfile("hev1.1.6.L93.B0"_s), "main"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.2.4.L93.B0"_s), "main-10"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.3.E.L93.B0"_s), "main-still-picture"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L186.BF.C8"_s), "monochrome"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.BD.C8"_s), "monochrome-10"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.B9.C8"_s), "monochrome-12"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.B1.C8"_s), "monochrome-16"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.B9.88"_s), "main-12"_s);
 
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.BE.08"_s), "main-444");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.BC.08"_s), "main-444-10");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.B8.08"_s), "main-444-12");
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.BE.08"_s), "main-444"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.BC.08"_s), "main-444-10"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.B8.08"_s), "main-444-12"_s);
 
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.BF.A8"_s), "main-intra");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.BD.A8"_s), "main-10-intra");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.B9.A8"_s), "main-12-intra");
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.BF.A8"_s), "main-intra"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.BD.A8"_s), "main-10-intra"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.B9.A8"_s), "main-12-intra"_s);
 
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.BE.28"_s), "main-444-intra");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L60.BC.28"_s), "main-444-10-intra");
-    ASSERT_STREQ(parseHEVCProfile("hev1.4.10.L30.B0.20"_s), "main-444-16-intra");
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.BE.28"_s), "main-444-intra"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L60.BC.28"_s), "main-444-10-intra"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.4.10.L30.B0.20"_s), "main-444-16-intra"_s);
 
-    ASSERT_STREQ(parseHEVCProfile("hev1.5.20.L30.BE.0C"_s), "high-throughput-444");
-    ASSERT_STREQ(parseHEVCProfile("hev1.5.20.L30.BC.0C"_s), "high-throughput-444-10");
-    ASSERT_STREQ(parseHEVCProfile("hev1.5.20.L30.B0.0C"_s), "high-throughput-444-14");
-    ASSERT_STREQ(parseHEVCProfile("hev1.5.20.L30.B0.24"_s), "high-throughput-444-16-intra");
+    ASSERT_EQ(parseHEVCProfile("hev1.5.20.L30.BE.0C"_s), "high-throughput-444"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.5.20.L30.BC.0C"_s), "high-throughput-444-10"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.5.20.L30.B0.0C"_s), "high-throughput-444-14"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.5.20.L30.B0.24"_s), "high-throughput-444-16-intra"_s);
 
-    ASSERT_STREQ(parseHEVCProfile("hev1.9.200.L30.BF.8C"_s), "screen-extended-main");
-    ASSERT_STREQ(parseHEVCProfile("hev1.9.200.L30.BD.8C"_s), "screen-extended-main-10");
-    ASSERT_STREQ(parseHEVCProfile("hev1.9.200.L30.BE.0C"_s), "screen-extended-main-444");
-    ASSERT_STREQ(parseHEVCProfile("hev1.9.200.L30.BC.0C"_s), "screen-extended-main-444-10");
-    ASSERT_STREQ(parseHEVCProfile("hev1.9.200.L30.B0.0C"_s), "screen-extended-high-throughput-444-14");
+    ASSERT_EQ(parseHEVCProfile("hev1.9.200.L30.BF.8C"_s), "screen-extended-main"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.9.200.L30.BD.8C"_s), "screen-extended-main-10"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.9.200.L30.BE.0C"_s), "screen-extended-main-444"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.9.200.L30.BC.0C"_s), "screen-extended-main-444-10"_s);
+    ASSERT_EQ(parseHEVCProfile("hev1.9.200.L30.B0.0C"_s), "screen-extended-high-throughput-444-14"_s);
 }
 
 TEST_F(GStreamerTest, capsFromCodecString)
@@ -167,16 +168,16 @@ TEST_F(GStreamerTest, capsFromCodecString)
         auto inputStructure = gst_caps_get_structure(input.get(), 0);   \
         const char* inputFormat = gst_structure_get_string(inputStructure, "format"); \
         ASSERT_STREQ(inputFormat, expectedInputFormat);                 \
-        GUniquePtr<char> outputCaps(gst_caps_to_string(output.get()));  \
-        ASSERT_STREQ(outputCaps.get(), expectedOutputCaps);             \
+        auto outputCaps = GMallocString::unsafeAdoptFromUTF8(gst_caps_to_string(output.get())); \
+        ASSERT_STREQ(outputCaps.utf8(), expectedOutputCaps);             \
     } G_STMT_END
 
 #define TEST_CAPS_FROM_CODEC_FULL(codecString, expectedInputCaps, expectedOutputCaps) G_STMT_START { \
         auto [input, output] = capsFromCodecString(codecString, { });   \
-        GUniquePtr<char> inputCaps(gst_caps_to_string(input.get()));    \
-        ASSERT_STREQ(inputCaps.get(), expectedInputCaps);               \
-        GUniquePtr<char> outputCaps(gst_caps_to_string(output.get()));  \
-        ASSERT_STREQ(outputCaps.get(), expectedOutputCaps);             \
+        auto inputCaps = GMallocString::unsafeAdoptFromUTF8(gst_caps_to_string(input.get())); \
+        ASSERT_STREQ(inputCaps.utf8(), expectedInputCaps);               \
+        auto outputCaps = GMallocString::unsafeAdoptFromUTF8(gst_caps_to_string(output.get())); \
+        ASSERT_STREQ(outputCaps.utf8(), expectedOutputCaps);             \
     } G_STMT_END
 
     TEST_CAPS_FROM_CODEC("av01.0.01M.08"_s, "I420", "video/x-av1, profile=(string)main, bit-depth-luma=(uint)8, bit-depth-chroma=(uint)8, chroma-format=(string)4:2:0");
@@ -185,8 +186,8 @@ TEST_F(GStreamerTest, capsFromCodecString)
 
     // AV1 levels, per spec valid values range from 00 to 31, but we support only up to 23.
     for (unsigned i = 0; i < 23; i++) {
-        GUniquePtr<char> codecString(g_strdup_printf("av01.0.%02dM.08", i));
-        TEST_CAPS_FROM_CODEC(makeString(unsafeSpan(codecString.get())), "I420", "video/x-av1, profile=(string)main, bit-depth-luma=(uint)8, bit-depth-chroma=(uint)8, chroma-format=(string)4:2:0");
+        auto codecString = GMallocString::unsafeAdoptFromUTF8(g_strdup_printf("av01.0.%02dM.08", i));
+        TEST_CAPS_FROM_CODEC(String(codecString.span()), "I420", "video/x-av1, profile=(string)main, bit-depth-luma=(uint)8, bit-depth-chroma=(uint)8, chroma-format=(string)4:2:0");
     }
 
     // AV1 monochrome.

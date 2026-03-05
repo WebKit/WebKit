@@ -15,12 +15,12 @@ info: |
     d. Perform ? Set(A, Pk, mappedValue, true).
     ...
   9. Return A.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([1n, 2n, 4n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([1n, 2n, 4n]));
   var result = sample.map(function(v) {
     return v * 3n;
   });

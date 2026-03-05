@@ -102,6 +102,8 @@
 
 - (UIView *)_colorExtensionViewForTesting:(UIRectEdge)edge;
 
+@property (nonatomic, readonly) BOOL _hasPendingVisibleContentRectUpdateTimerForTesting;
+
 @end
 
 #endif // TARGET_OS_IPHONE

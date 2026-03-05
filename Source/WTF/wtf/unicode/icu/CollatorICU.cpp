@@ -149,7 +149,7 @@ Collator::~Collator()
     cachedCollatorShouldSortLowercaseFirst = m_shouldSortLowercaseFirst;
 }
 
-static int32_t getIndexLatin1(UCharIterator* iterator, UCharIteratorOrigin origin)
+static int32_t NODELETE getIndexLatin1(UCharIterator* iterator, UCharIteratorOrigin origin)
 {
     switch (origin) {
     case UITER_START:
@@ -167,23 +167,23 @@ static int32_t getIndexLatin1(UCharIterator* iterator, UCharIteratorOrigin origi
     return U_SENTINEL;
 }
 
-static int32_t moveLatin1(UCharIterator* iterator, int32_t delta, UCharIteratorOrigin origin)
+static int32_t NODELETE moveLatin1(UCharIterator* iterator, int32_t delta, UCharIteratorOrigin origin)
 {
     return iterator->index = getIndexLatin1(iterator, origin) + delta;
 }
 
-static UBool hasNextLatin1(UCharIterator* iterator)
+static UBool NODELETE hasNextLatin1(UCharIterator* iterator)
 {
     return iterator->index < iterator->limit;
 }
 
-static UBool hasPreviousLatin1(UCharIterator* iterator)
+static UBool NODELETE hasPreviousLatin1(UCharIterator* iterator)
 {
     return iterator->index > iterator->start;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static UChar32 currentLatin1(UCharIterator* iterator)
+static UChar32 NODELETE currentLatin1(UCharIterator* iterator)
 {
     ASSERT(iterator->index >= iterator->start);
     if (iterator->index >= iterator->limit)
@@ -191,7 +191,7 @@ static UChar32 currentLatin1(UCharIterator* iterator)
     return static_cast<const Latin1Character*>(iterator->context)[iterator->index];
 }
 
-static UChar32 nextLatin1(UCharIterator* iterator)
+static UChar32 NODELETE nextLatin1(UCharIterator* iterator)
 {
     ASSERT(iterator->index >= iterator->start);
     if (iterator->index >= iterator->limit)
@@ -199,7 +199,7 @@ static UChar32 nextLatin1(UCharIterator* iterator)
     return static_cast<const Latin1Character*>(iterator->context)[iterator->index++];
 }
 
-static UChar32 previousLatin1(UCharIterator* iterator)
+static UChar32 NODELETE previousLatin1(UCharIterator* iterator)
 {
     if (iterator->index <= iterator->start)
         return U_SENTINEL;
@@ -207,17 +207,17 @@ static UChar32 previousLatin1(UCharIterator* iterator)
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-static uint32_t getStateLatin1(const UCharIterator* iterator)
+static uint32_t NODELETE getStateLatin1(const UCharIterator* iterator)
 {
     return iterator->index;
 }
 
-static void setStateLatin1(UCharIterator* iterator, uint32_t state, UErrorCode*)
+static void NODELETE setStateLatin1(UCharIterator* iterator, uint32_t state, UErrorCode*)
 {
     iterator->index = state;
 }
 
-static UCharIterator createLatin1Iterator(std::span<const Latin1Character> characters)
+static UCharIterator NODELETE createLatin1Iterator(std::span<const Latin1Character> characters)
 {
     UCharIterator iterator;
     iterator.context = characters.data();

@@ -29,3 +29,8 @@
 OBJC_CLASS TestWKWebView;
 
 RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled(bool colorFilterEnabled = false);
+
+NSString *readURLFromPasteboard();
+NSString *readTitleFromPasteboard();
+
+void clearPasteboard();

@@ -48,7 +48,12 @@ static auto *dataRecordTestTwoManifest = @{
 
 static auto *allDataTypesSet = [NSSet setWithArray:@[ WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession, WKWebExtensionDataTypeSynchronized ]];
 
+// FIXME rdar://167044676 for macOS
+#if PLATFORM(MAC)
+TEST(WKWebExtensionDataRecord, DISABLED_GetDataRecords)
+#else
 TEST(WKWebExtensionDataRecord, GetDataRecords)
+#endif
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
@@ -94,12 +99,8 @@ TEST(WKWebExtensionDataRecord, GetDataRecords)
     TestWebKitAPI::Util::run(&fetchComplete);
 }
 
-// FIXME rdar://147858640
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// FIXME rdar://147858640 for iOS Debug and rdar://167044676 for macOS
 TEST(WKWebExtensionDataRecord, DISABLED_GetDataRecordsForMultipleContexts)
-#else
-TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
-#endif
 {
     auto *backgroundScriptOne = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",

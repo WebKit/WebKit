@@ -33,6 +33,7 @@
 #include "DownloadManager.h"
 #include "NetworkContentRuleListManager.h"
 #include "QuotaIncreaseRequestIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "UseDownloadPlaceholder.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -70,7 +71,8 @@
 
 #if PLATFORM(COCOA)
 #include <notify.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
+#include <wtf/darwin/NetworkOSObject.h>
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
 
@@ -155,7 +157,7 @@ public:
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
 
-    NetworkProcess(AuxiliaryProcessInitializationParameters&&);
+    static Ref<NetworkProcess> create(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
     static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::Network;
 
@@ -170,12 +172,6 @@ public:
     T* supplement()
     {
         return static_cast<T*>(m_supplements.get(T::supplementName()));
-    }
-
-    template<typename T>
-    RefPtr<T> protectedSupplement()
-    {
-        return supplement<T>();
     }
 
     template<typename T>
@@ -197,13 +193,10 @@ public:
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess&);
 
     AuthenticationManager& authenticationManager();
-    Ref<AuthenticationManager> protectedAuthenticationManager();
-    DownloadManager& downloadManager();
-    CheckedRef<DownloadManager> checkedDownloadManager();
+    DownloadManager& NODELETE downloadManager();
 
     void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
     NetworkSession* networkSession(PAL::SessionID) const final;
-    CheckedPtr<NetworkSession> checkedNetworkSession(PAL::SessionID) const;
     void destroySession(PAL::SessionID, CompletionHandler<void()>&& = [] { });
     void ensureSessionWithDataStoreIdentifierRemoved(WTF::UUID, CompletionHandler<void()>&&);
 
@@ -211,7 +204,6 @@ public:
 
     void forEachNetworkStorageSession(NOESCAPE const Function<void(WebCore::NetworkStorageSession&)>&);
     WebCore::NetworkStorageSession* storageSession(PAL::SessionID) const;
-    CheckedPtr<WebCore::NetworkStorageSession> checkedStorageSession(PAL::SessionID) const;
     std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(PAL::SessionID);
     void addStorageSession(PAL::SessionID, const WebsiteDataStoreParameters&);
 
@@ -222,13 +214,15 @@ public:
 
     CacheModel cacheModel() const { return m_cacheModel; }
 
-    const HashSet<String>& localhostAliasesForTesting() const { return m_localhostAliasesForTesting; }
+    const HashSet<String>& localhostAliasesForTesting() const LIFETIME_BOUND { return m_localhostAliasesForTesting; }
 
     // Diagnostic messages logging.
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(WebPageProxyIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
-
+#if PLATFORM(MAC)
+    void systemDidWake();
+#endif
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     std::optional<audit_token_t> sourceApplicationAuditToken() const;
@@ -267,6 +261,7 @@ public:
     void setPruneEntriesDownTo(PAL::SessionID, uint64_t pruneTargetCount, CompletionHandler<void()>&&);
     void hadUserInteraction(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void isRelationshipOnlyInDatabaseOnce(PAL::SessionID, RegistrableDomain&& subDomain, RegistrableDomain&& topDomain, CompletionHandler<void(bool)>&&);
+    void hasLocalStorageOrCookies(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void hasLocalStorage(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String> domains)>&&);
     void logFrameNavigation(PAL::SessionID, NavigatedToDomain&&, TopFrameDomain&&, NavigatedFromDomain&&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser);
@@ -325,9 +320,14 @@ public:
 
     void notifyMediaStreamingActivity(bool);
 
-    void setPrivateClickMeasurementEnabled(bool);
-    bool privateClickMeasurementEnabled() const;
+    void NODELETE setPrivateClickMeasurementEnabled(bool);
+    bool NODELETE privateClickMeasurementEnabled() const;
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
+
+#if HAVE(ENHANCED_SECURITY_LINKS)
+    void setIsEnhancedSecurityLinksEnabled(bool);
+    bool isEnhancedSecurityLinksEnabled() const;
+#endif
 
     void setShouldSendPrivateTokenIPCForTesting(PAL::SessionID, bool) const;
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
@@ -337,13 +337,12 @@ public:
     void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>, uint64_t requiredCookiesVersion);
 
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
-    bool sessionIsControlledByAutomation(PAL::SessionID) const;
+    bool NODELETE sessionIsControlledByAutomation(PAL::SessionID) const;
 
     void connectionToWebProcessClosed(IPC::Connection&, PAL::SessionID);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
-    Ref<NetworkContentRuleListManager> protectedNetworkContentRuleListManager() { return m_networkContentRuleListManager; }
+    NetworkContentRuleListManager& networkContentRuleListManager() LIFETIME_BOUND { return m_networkContentRuleListManager; }
 #endif
 
     void syncLocalStorage(CompletionHandler<void()>&&);
@@ -368,7 +367,7 @@ public:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-    const String& uiProcessBundleIdentifier() const;
+    const String& uiProcessBundleIdentifier() const LIFETIME_BOUND;
 
     void ref() const final { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const final { ThreadSafeRefCounted<NetworkProcess>::deref(); }
@@ -377,7 +376,7 @@ public:
     void simulatePrivateClickMeasurementConversion(PAL::SessionID, int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);
     void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);
     void clearPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void()>&&);
-    bool allowsPrivateClickMeasurementTestFunctionality() const;
+    bool NODELETE allowsPrivateClickMeasurementTestFunctionality() const;
     void setPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementEphemeralMeasurementForTesting(PAL::SessionID, bool value, CompletionHandler<void()>&&);
@@ -393,13 +392,11 @@ public:
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
-    const OptionSet<NetworkCache::CacheOption>& cacheOptions() const { return m_cacheOptions; }
+    const OptionSet<NetworkCache::CacheOption>& cacheOptions() const LIFETIME_BOUND { return m_cacheOptions; }
 
     NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
-    RefPtr<NetworkConnectionToWebProcess> protectedWebProcessConnection(WebCore::ProcessIdentifier) const;
-    RefPtr<NetworkConnectionToWebProcess> protectedWebProcessConnection(const IPC::Connection&) const;
+    NetworkConnectionToWebProcess* webProcessConnection(const IPC::Connection&) const;
     WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
-    CheckedRef<WebCore::MessagePortChannelRegistry> checkedMessagePortChannelRegistry() { return m_messagePortChannelRegistry; }
 
     void setServiceWorkerFetchTimeoutForTesting(Seconds, CompletionHandler<void()>&&);
     void resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&&);
@@ -431,7 +428,6 @@ public:
 
 #if ENABLE(WEB_RTC)
     RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy();
-    Ref<RTCDataChannelRemoteManagerProxy> protectedRTCDataChannelProxy();
 #endif
 
     bool ftpEnabled() const { return m_ftpEnabled; }
@@ -490,7 +486,13 @@ public:
     void allowEvaluatedURL(const WebCore::ParentalControlsURLFilterParameters&, CompletionHandler<void(bool)>&&);
 #endif
 
+#if HAVE(ENHANCED_SECURITY_LINKS)
+    void isEnhancedSecurityLink(const URL&, CompletionHandler<void(bool)>&&);
+#endif
+
 private:
+    explicit NetworkProcess(AuxiliaryProcessInitializationParameters&&);
+
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
@@ -671,6 +673,9 @@ private:
     bool m_isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
     bool m_enableModernDownloadProgress { false };
+#if HAVE(ENHANCED_SECURITY_LINKS)
+    bool m_isEnhancedSecurityLinksEnabled { false };
+#endif
 
     struct DeleteWebsiteDataTask {
         std::optional<PAL::SessionID> sessionID;

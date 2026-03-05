@@ -32,7 +32,7 @@ namespace WebCore {
 class SVGInlineTextBox;
 
 class RenderSVGInlineText final : public RenderText {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGInlineText);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGInlineText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
 public:
     RenderSVGInlineText(Text&, const String&);
@@ -69,7 +69,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderSVGInlineText"_s; }
 
     String originalText() const override;
-    void styleDidChange(StyleDifference, const RenderStyle*) override;
+    void styleDidChange(Style::Difference, const RenderStyle*) override;
 
     FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }
 

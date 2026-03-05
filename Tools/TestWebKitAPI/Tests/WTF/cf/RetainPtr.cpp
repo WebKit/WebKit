@@ -58,7 +58,7 @@ TEST(RetainPtr, ConstructionFromMutableCFType)
     RetainPtr<CFMutableStringRef> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<CFStringRef> ptr2(WTFMove(temp));
+    RetainPtr<CFStringRef> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((CFStringRef)nullptr, temp.get());
@@ -78,7 +78,7 @@ TEST(RetainPtr, ConstructionFromSameCFType)
     RetainPtr<CFStringRef> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<CFStringRef> ptr2(WTFMove(temp));
+    RetainPtr<CFStringRef> ptr2(WTF::move(temp));
 
     EXPECT_EQ(string, ptr2);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((CFStringRef)nullptr, temp.get());
@@ -100,7 +100,7 @@ TEST(RetainPtr, MoveAssignmentFromMutableCFType)
     RetainPtr<CFMutableStringRef> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTFMove(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((CFStringRef)nullptr, temp.get());
@@ -122,7 +122,7 @@ TEST(RetainPtr, MoveAssignmentFromSameCFType)
     RetainPtr<CFStringRef> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTFMove(temp);
+    ptr = WTF::move(temp);
 
     EXPECT_EQ(string, ptr);
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((CFStringRef)nullptr, temp.get());
@@ -162,7 +162,7 @@ TEST(RetainPtr, OptionalRetainPtrCF)
 
     // Test move from std::optional<RetainPtr<CFNumberRef>>.
     EXPECT_EQ(2, CFGetRetainCount(object2.get()));
-    optionalObject1 = WTFMove(optionalObject2);
+    optionalObject1 = WTF::move(optionalObject2);
     EXPECT_EQ(2, CFGetRetainCount(object2.get()));
     EXPECT_TRUE(optionalObject1.value());
     EXPECT_TRUE(optionalObject1.value().get());

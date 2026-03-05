@@ -29,7 +29,7 @@ void OPENSSL_cpuid_setup(void) {
   uint64_t cpu_id = 0;
   size_t len = sizeof(cpu_id);
 
-  if (sysctl(isar0_mib, 2, &cpu_id, &len, NULL, 0) < 0) {
+  if (sysctl(isar0_mib, 2, &cpu_id, &len, nullptr, 0) < 0) {
     return;
   }
 

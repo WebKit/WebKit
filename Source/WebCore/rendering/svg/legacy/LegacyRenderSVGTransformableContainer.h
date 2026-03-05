@@ -28,7 +28,7 @@ namespace WebCore {
 class SVGGraphicsElement;
 
 class LegacyRenderSVGTransformableContainer final : public LegacyRenderSVGContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGTransformableContainer);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGTransformableContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGTransformableContainer);
 public:
     LegacyRenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
@@ -41,7 +41,7 @@ public:
     const FloatSize& additionalTranslation() const { return m_additionalTranslation; }
 
 private:
-    SVGGraphicsElement& graphicsElement();
+    SVGGraphicsElement& NODELETE graphicsElement();
 
     void element() const = delete;
     bool calculateLocalTransform() override;

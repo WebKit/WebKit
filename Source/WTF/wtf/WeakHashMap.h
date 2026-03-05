@@ -32,24 +32,13 @@
 namespace WTF {
 
 // Value will be deleted lazily upon rehash or amortized over time. For manual cleanup, call removeNullReferences().
-template<typename KeyType, typename ValueType, typename WeakPtrImpl>
+template<typename KeyType, typename ValueType, typename WeakPtrImplType>
 class WeakHashMap final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakHashMap);
 public:
-
-    using RefType = Ref<WeakPtrImpl>;
-    using KeyTraits = HashTraits<KeyType>;
+    using WeakKeyType = WeakPtr<KeyType, WeakPtrImplType>;
     using ValueTraits = HashTraits<ValueType>;
-    using WeakHashImplMap = HashMap<RefType, ValueType>;
-
-    struct PeekKeyValuePairTraits : KeyValuePairHashTraits<HashTraits<KeyType&>, HashTraits<ValueType&>> {
-        static constexpr bool hasIsEmptyValueFunction = true;
-        static bool isEmptyValue(const typename KeyValuePairHashTraits<HashTraits<KeyType&>, HashTraits<ValueType&>>::TraitType& value)
-        {
-            return isHashTraitsEmptyValue<KeyTraits>(value.key);
-        }
-    };
-    using PeekKeyValuePairType = typename PeekKeyValuePairTraits::TraitType;
+    using MapType = HashMap<WeakKeyType, ValueType>;
 
     struct PeekType {
         KeyType& key;
@@ -71,7 +60,7 @@ public:
         PeekType m_peek;
     };
 
-    template <typename MapType, typename IteratorType, typename IteratorPeekPtrType, typename IteratorPeekType>
+    template<typename MapType, typename IteratorType, typename IteratorPeekPtrType, typename IteratorPeekType>
     class WeakHashMapIteratorBase {
     public:
         using iterator_category = std::forward_iterator_tag;
@@ -86,7 +75,6 @@ public:
             , m_position { position }
             , m_endPosition { weakHashMap.m_map.end() }
         {
-            skipEmptyBuckets();
         }
     
         ~WeakHashMapIteratorBase() = default;
@@ -94,15 +82,13 @@ public:
         ALWAYS_INLINE IteratorPeekType makePeek()
         {
             auto* entry = m_position.get();
-            auto* key = static_cast<KeyType*>(entry->key->template get<KeyType>());
-            return IteratorPeekType { *key, entry->value };
+            return IteratorPeekType { *entry->key.get(), entry->value };
         }
 
         ALWAYS_INLINE IteratorPeekType makePeek() const
         {
             auto* entry = m_position.get();
-            auto* key = static_cast<KeyType*>(entry->key->template get<KeyType>());
-            return IteratorPeekType { *key, const_cast<ValueType&>(entry->value) };
+            return IteratorPeekType { *entry->key.get(), const_cast<ValueType&>(entry->value) };
         }
 
         void advance()
@@ -110,14 +96,7 @@ public:
             ASSERT(m_position != m_endPosition);
             ++m_position;
             ++m_advanceCount;
-            skipEmptyBuckets();
             m_weakHashMap.increaseOperationCountSinceLastCleanup();
-        }
-
-        void skipEmptyBuckets()
-        {
-            while (m_position != m_endPosition && !m_position->key.get())
-                ++m_position;
         }
 
         const MapType& m_weakHashMap;
@@ -126,9 +105,9 @@ public:
         unsigned m_advanceCount { 0 };
     };
 
-    class WeakHashMapIterator : public WeakHashMapIteratorBase<WeakHashMap, typename WeakHashImplMap::iterator, PeekPtrType, PeekType> {
+    class WeakHashMapIterator : public WeakHashMapIteratorBase<WeakHashMap, typename MapType::iterator, PeekPtrType, PeekType> {
     public:
-        using Base = WeakHashMapIteratorBase<WeakHashMap, typename WeakHashImplMap::iterator, PeekPtrType, PeekType>;
+        using Base = WeakHashMapIteratorBase<WeakHashMap, typename MapType::iterator, PeekPtrType, PeekType>;
 
         bool operator==(const WeakHashMapIterator& other) const { return Base::m_position == other.Base::m_position; }
 
@@ -143,16 +122,16 @@ public:
         }
 
     private:
-        WeakHashMapIterator(WeakHashMap& map, typename WeakHashImplMap::iterator position)
+        WeakHashMapIterator(WeakHashMap& map, typename MapType::iterator position)
             : Base { map, position }
         { }
 
-        template <typename, typename, typename> friend class WeakHashMap;
+        template<typename, typename, typename> friend class WeakHashMap;
     };
 
-    class WeakHashMapConstIterator : public WeakHashMapIteratorBase<const WeakHashMap, typename WeakHashImplMap::const_iterator, const PeekPtrType, const PeekType> {
+    class WeakHashMapConstIterator : public WeakHashMapIteratorBase<const WeakHashMap, typename MapType::const_iterator, const PeekPtrType, const PeekType> {
     public:
-        using Base = WeakHashMapIteratorBase<const WeakHashMap, typename WeakHashImplMap::const_iterator, const PeekPtrType, const PeekType>;
+        using Base = WeakHashMapIteratorBase<const WeakHashMap, typename MapType::const_iterator, const PeekPtrType, const PeekType>;
 
         bool operator==(const WeakHashMapConstIterator& other) const { return Base::m_position == other.Base::m_position; }
 
@@ -167,17 +146,17 @@ public:
         }
 
     private:
-        WeakHashMapConstIterator(const WeakHashMap& map, typename WeakHashImplMap::const_iterator position)
+        WeakHashMapConstIterator(const WeakHashMap& map, typename MapType::const_iterator position)
             : Base { map, position }
         { }
 
-        template <typename, typename, typename> friend class WeakHashMap;
+        template<typename, typename, typename> friend class WeakHashMap;
     };
 
     struct AddResult {
         AddResult() : isNewEntry(false) { }
         AddResult(WeakHashMapIterator&& it, bool isNewEntry)
-            : iterator(WTFMove(it))
+            : iterator(WTF::move(it))
             , isNewEntry(isNewEntry)
         { }
         WeakHashMapIterator iterator;
@@ -194,91 +173,123 @@ public:
     const_iterator begin() const { return WeakHashMapConstIterator(*this, m_map.begin()); }
     const_iterator end() const { return WeakHashMapConstIterator(*this, m_map.end()); }
 
-    template <typename Functor>
-    AddResult ensure(const KeyType& key, NOESCAPE Functor&& functor)
+    template<typename Functor>
+    AddResult ensure(const KeyType* key, NOESCAPE Functor&& functor)
     {
         amortizedCleanupIfNeeded();
-        auto result = m_map.ensure(makeKeyImpl(key), functor);
+        auto result = m_map.ensure(key, std::forward<Functor>(functor));
         return AddResult { WeakHashMapIterator(*this, result.iterator), result.isNewEntry };
+    }
+
+    template<typename Functor>
+    AddResult ensure(const KeyType& key, NOESCAPE Functor&& functor)
+    {
+        return ensure(&key, std::forward<Functor>(functor));
+    }
+
+    template<typename T>
+    AddResult add(const KeyType* key, T&& value)
+    {
+        amortizedCleanupIfNeeded();
+        auto addResult = m_map.add(key, std::forward<T>(value));
+        return AddResult { WeakHashMapIterator(*this, addResult.iterator), addResult.isNewEntry };
     }
 
     template<typename T>
     AddResult add(const KeyType& key, T&& value)
     {
+        return add(&key, std::forward<T>(value));
+    }
+
+    template<typename V>
+    AddResult set(const KeyType* key, V&& value)
+    {
         amortizedCleanupIfNeeded();
-        auto addResult = m_map.add(makeKeyImpl(key), std::forward<T>(value));
+        auto addResult = m_map.set(key, std::forward<V>(value));
         return AddResult { WeakHashMapIterator(*this, addResult.iterator), addResult.isNewEntry };
     }
 
-    template<typename T, typename V>
-    AddResult set(const T& key, V&& value)
+    template<typename V>
+    AddResult set(const KeyType& key, V&& value)
     {
-        amortizedCleanupIfNeeded();
-        auto addResult = m_map.set(makeKeyImpl(key), std::forward<V>(value));
-        return AddResult { WeakHashMapIterator(*this, addResult.iterator), addResult.isNewEntry };
+        return set(&key, std::forward<V>(value));
+    }
+
+    iterator find(const KeyType* key)
+    {
+        increaseOperationCountSinceLastCleanup();
+        return WeakHashMapIterator(*this, m_map.find(key));
     }
 
     iterator find(const KeyType& key)
     {
+        return find(&key);
+    }
+
+    const_iterator find(const KeyType* key) const
+    {
         increaseOperationCountSinceLastCleanup();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return end();
-        return WeakHashMapIterator(*this, m_map.find(*keyImpl));
+        return WeakHashMapConstIterator(*this, m_map.find(key));
     }
 
     const_iterator find(const KeyType& key) const
     {
+        return find(&key);
+    }
+
+    bool contains(const KeyType* key) const
+    {
         increaseOperationCountSinceLastCleanup();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return end();
-        return WeakHashMapConstIterator(*this, m_map.find(*keyImpl));
+        return m_map.contains(key);
     }
 
     bool contains(const KeyType& key) const
     {
-        increaseOperationCountSinceLastCleanup();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return false;
-        return m_map.contains(*keyImpl);
+        return contains(&key);
+    }
+
+    typename ValueTraits::TakeType take(const KeyType* key)
+    {
+        amortizedCleanupIfNeeded();
+        return m_map.take(key);
     }
 
     typename ValueTraits::TakeType take(const KeyType& key)
     {
+        return take(&key);
+    }
+
+    std::optional<ValueType> takeOptional(const KeyType* key)
+    {
         amortizedCleanupIfNeeded();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return ValueTraits::take(ValueTraits::emptyValue());
-        return m_map.take(*keyImpl);
+        return m_map.takeOptional(key);
     }
 
     std::optional<ValueType> takeOptional(const KeyType& key)
     {
-        amortizedCleanupIfNeeded();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return std::nullopt;
-        return m_map.takeOptional(*keyImpl);
+        return takeOptional(&key);
+    }
+
+    typename ValueTraits::PeekType get(const KeyType* key) const
+    {
+        increaseOperationCountSinceLastCleanup();
+        return m_map.get(key);
     }
 
     typename ValueTraits::PeekType get(const KeyType& key) const
     {
+        return get(&key);
+    }
+
+    std::optional<ValueType> getOptional(const KeyType* key) const
+    {
         increaseOperationCountSinceLastCleanup();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return ValueTraits::peek(ValueTraits::emptyValue());
-        return m_map.get(*keyImpl);
+        return m_map.getOptional(key);
     }
 
     std::optional<ValueType> getOptional(const KeyType& key) const
     {
-        increaseOperationCountSinceLastCleanup();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return std::nullopt;
-        return m_map.getOptional(*keyImpl);
+        return getOptional(&key);
     }
 
     bool remove(iterator it)
@@ -288,22 +299,23 @@ public:
         return didRemove;
     }
 
-    bool remove(const KeyType& key)
+    bool remove(const KeyType* key)
     {
         amortizedCleanupIfNeeded();
-        auto* keyImpl = keyImplIfExists(key);
-        if (!keyImpl)
-            return false;
-        return m_map.remove(keyImpl);
+        return m_map.remove(key);
+    }
+
+    bool remove(const KeyType& key)
+    {
+        return remove(&key);
     }
 
     template<typename Functor>
     bool removeIf(NOESCAPE Functor&& functor)
     {
         bool result = m_map.removeIf([&](auto& entry) {
-            auto* key = static_cast<KeyType*>(entry.key->template get<KeyType>());
-            bool isReleasedWeakKey = !key;
-            if (isReleasedWeakKey)
+            auto* key = entry.key.get();
+            if (!key)
                 return true;
             PeekType peek { *key, entry.value };
             return functor(peek);
@@ -334,10 +346,13 @@ public:
     bool hasNullReferences() const
     {
         unsigned count = 0;
-        auto result = std::ranges::any_of(m_map, [&](auto& iterator) {
+        for (auto _ : m_map) {
+            UNUSED_VARIABLE(_);
             ++count;
-            return !iterator.key.get();
-        });
+        }
+
+        bool result = count != m_map.size();
+
         if (result)
             increaseOperationCountSinceLastCleanup(count);
         else
@@ -351,11 +366,10 @@ public:
         return m_map.size();
     }
 
-    NEVER_INLINE bool removeNullReferences()
+    NEVER_INLINE void removeNullReferences()
     {
-        bool result = m_map.removeIf([](auto& iterator) { return !iterator.key.get(); });
+        m_map.removeWeakNullEntries();
         cleanupHappened();
-        return result;
     }
 
 #if ASSERT_ENABLED
@@ -385,25 +399,11 @@ private:
             const_cast<WeakHashMap&>(*this).removeNullReferences();
     }
 
-    template <typename T>
-    static RefType makeKeyImpl(const T& key)
-    {
-        return WeakRef<T, WeakPtrImpl>(key).releaseImpl();
-    }
-
-    template <typename T>
-    static WeakPtrImpl* keyImplIfExists(const T& key)
-    {
-        if (auto* impl = key.weakImplIfExists(); impl && *impl)
-            return impl;
-        return nullptr;
-    }
-
-    WeakHashImplMap m_map;
+    MapType m_map;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
     mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 
-    template <typename, typename, typename, typename> friend class WeakHashMapIteratorBase;
+    template<typename, typename, typename, typename> friend class WeakHashMapIteratorBase;
 };
 
 } // namespace WTF

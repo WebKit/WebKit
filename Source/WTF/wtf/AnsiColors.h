@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(WIN)
 
 #define RESET

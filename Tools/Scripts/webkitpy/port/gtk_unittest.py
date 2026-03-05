@@ -84,18 +84,46 @@ class GtkPortTest(port_testcase.PortTestCase):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release', leaks=True, wrapper="valgrind")).default_timeout_ms(), 300000)
         self.assertEqual(self.make_port(options=MockOptions(configuration='Debug', leaks=True, wrapper="valgrind")).default_timeout_ms(), 600000)
 
+    def test_architecture_default(self):
+        port = self.make_port()
+        self.assertEqual(port.architecture(), port.host.platform.architecture())
+
+    def test_architecture_cli_override(self):
+        port = self.make_port(options=MockOptions(configuration='Release', architecture='custom_arch'))
+        self.assertEqual(port.architecture(), 'custom_arch')
+
+    def test_architecture_aarch64_normalization(self):
+        port = self.make_port()
+        port.host.platform._architecture = 'aarch64'
+        self.assertEqual(port.architecture(), 'arm64')
+
+    def test_architecture_cli_override_aarch64(self):
+        port = self.make_port(options=MockOptions(configuration='Release', architecture='aarch64'))
+        self.assertEqual(port.architecture(), 'arm64')
+
+    def test_all_test_configurations_architectures(self):
+        port = self.make_port()
+        configurations = port.all_test_configurations()
+        architectures = {config.architecture for config in configurations}
+        self.assertEqual(architectures, {'x86_64', 'arm64'})
+
     def test_get_crash_log(self):
         # This function tested in linux_get_crash_log_unittest.py
         pass
 
     def test_default_upload_configuration(self):
         port = self.make_port()
+        port.host.filesystem.write_text_file(
+            '/mock-checkout/Source/cmake/OptionsGTK.cmake',
+            'SET_PROJECT_VERSION(2 51 4)\n'
+        )
         configuration = port.configuration_for_upload()
         self.assertEqual(configuration['architecture'], port.architecture())
         self.assertEqual(configuration['is_simulator'], False)
         self.assertEqual(configuration['platform'], 'GTK')
         self.assertEqual(configuration['style'], 'release')
-        self.assertEqual(configuration['version_name'], 'Xvfb')
+        self.assertNotIn('version_name', configuration)
+        self.assertEqual(configuration['version'], '2.51')
 
     def test_gtk4_expectations_binary_only(self):
         port = self.make_port()

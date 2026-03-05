@@ -47,7 +47,7 @@ class Factory(factory.BuildFactory):
         if self.shouldInstallDependencies:
             if platform.startswith("gtk"):
                 self.addStep(InstallGtkDependencies())
-            if platform == "wpe":
+            if platform.startswith("wpe"):
                 self.addStep(InstallWpeDependencies())
 
 
@@ -109,7 +109,7 @@ class TestFactory(Factory):
             self.addStep(ExtractTestResults())
             self.addStep(SetPermissions())
 
-        if platform.startswith(('win', 'mac', 'ios-simulator')) and self.LayoutTestClass != RunWorldLeaksTests:
+        if platform.startswith(('win', 'mac', 'ios-simulator', 'gtk', 'wpe')) and self.LayoutTestClass != RunWorldLeaksTests:
             self.addStep(RunAPITests())
 
         if platform.startswith('mac'):
@@ -122,11 +122,6 @@ class TestFactory(Factory):
 
         if platform.startswith(('mac', 'ios-simulator', 'visionos-simulator')):
             self.addStep(TriggerCrashLogSubmission())
-
-        if platform.startswith("gtk"):
-            self.addStep(RunGtkAPITests())
-        if platform == "wpe":
-            self.addStep(RunWPEAPITests())
 
 
 class BuildAndTestFactory(TestFactory):
@@ -279,12 +274,7 @@ class TestLayoutAndAPIOnlyFactory(Factory):
         self.addStep(UploadTestResults())
         self.addStep(ExtractTestResults())
         self.addStep(SetPermissions())
-        if platform.startswith("gtk"):
-            self.addStep(RunGtkAPITests())
-        elif platform == "wpe":
-            self.addStep(RunWPEAPITests())
-        else:
-            self.addStep(RunAPITests())
+        self.addStep(RunAPITests())
 
 
 class TestWebKit1Factory(TestFactory):
@@ -316,9 +306,9 @@ class DownloadAndPerfTestFactory(Factory):
             self.addStep(CheckIfNeededUpdateRunningCrossTargetImage())
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
-        if platform != "wpe":
+        if not platform.startswith("wpe"):
             self.addStep(RunAndUploadPerfTests())
-        if platform in ["gtk", "wpe"]:
+        if any(platform.startswith(p) for p in ["gtk", "wpe"]):
             self.addStep(RunBenchmarkTests(timeout=2000))
 
 
@@ -330,7 +320,15 @@ class SaferCPPStaticAnalyzerFactory(Factory):
         self.addStep(GetLLVMVersion())
         self.addStep(PrintClangVersion())
         self.addStep(CheckOutLLVMProject())
-        self.addStep(UpdateClang())
+        if platform.startswith('ios'):
+            self.addStep(GetSwiftTagName())
+            self.addStep(PrintSwiftVersion())
+            self.addStep(CheckOutSwiftProject())
+            self.addStep(UpdateSwiftCheckouts())
+            self.addStep(BuildSwift())
+            self.addStep(InstallMetalToolchain())
+        else:
+            self.addStep(UpdateClang())
         self.addStep(ScanBuild())
 
 

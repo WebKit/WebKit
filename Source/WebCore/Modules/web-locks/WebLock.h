@@ -39,7 +39,7 @@ public:
     static constexpr unsigned maxNameLength = { 1024 };
 
     WebLockIdentifier identifier() const { return m_identifier; }
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     WebLockMode mode() const { return m_mode; }
 
 private:

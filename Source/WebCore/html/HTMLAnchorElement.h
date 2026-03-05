@@ -28,6 +28,7 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/SharedStringHash.h>
+#include <WebCore/SpeculationRules.h>
 #include <WebCore/URLDecomposition.h>
 #include <wtf/OptionSet.h>
 
@@ -45,7 +46,7 @@ enum class Relation : uint8_t {
 };
 
 class HTMLAnchorElement : public HTMLElement, public URLDecomposition {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAnchorElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLAnchorElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAnchorElement);
 public:
     static Ref<HTMLAnchorElement> create(Document&);
@@ -68,7 +69,7 @@ public:
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
-    bool hasRel(Relation) const;
+    bool NODELETE hasRel(Relation) const;
     
     inline SharedStringHash visitedLinkHash() const;
 
@@ -82,10 +83,11 @@ public:
     ReferrerPolicy referrerPolicy() const;
 
     Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) override;
+    void didFinishInsertingNode() override;
 
     AtomString target() const override;
 
-    void setShouldBePrefetched(bool conservative, Vector<String>&& tags, std::optional<ReferrerPolicy>&&);
+    void setShouldBePrefetched(SpeculationRules::Eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&&);
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
@@ -98,7 +100,7 @@ private:
     bool isKeyboardFocusable(const FocusEventData&) const override;
     void defaultEventHandler(Event&) final;
     void setActive(bool active, Style::InvalidationScope) final;
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
     int defaultTabIndex() const final;
     bool draggable() const final;
@@ -121,10 +123,10 @@ private:
         MouseEventWithShiftKey,
         NonMouseEvent,
     };
-    static EventType eventType(Event&);
+    static EventType NODELETE eventType(Event&);
     bool treatLinkAsLiveForEventType(EventType) const;
 
-    Element* rootEditableElementForSelectionOnMouseDown() const;
+    Element* NODELETE rootEditableElementForSelectionOnMouseDown() const;
     void setRootEditableElementForSelectionOnMouseDown(Element*);
     void clearRootEditableElementForSelectionOnMouseDown();
 

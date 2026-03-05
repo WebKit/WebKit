@@ -34,11 +34,11 @@ class WebPushMessage final : public ObjectImpl<Object::Type::WebPushMessage> {
 public:
     static Ref<WebPushMessage> create(WebKit::WebPushMessage&& message)
     {
-        return adoptRef(*new WebPushMessage(WTFMove(message)));
+        return adoptRef(*new WebPushMessage(WTF::move(message)));
     }
 
     explicit WebPushMessage(WebKit::WebPushMessage&& message)
-        : m_message(WTFMove(message)) { }
+        : m_message(WTF::move(message)) { }
 
     std::optional<Vector<uint8_t>> data() const { return m_message.pushData; };
     WTF::URL scope() const { return m_message.registrationURL; }

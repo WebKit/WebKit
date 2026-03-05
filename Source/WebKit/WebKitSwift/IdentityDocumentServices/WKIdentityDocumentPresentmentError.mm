@@ -26,4 +26,8 @@
 #import "config.h"
 #import "WKIdentityDocumentPresentmentError.h"
 
+#if ENABLE(WEB_AUTHN)
+
 NSErrorDomain const WKIdentityDocumentPresentmentErrorDomain = @"WebKit.IdentityDocumentPresentmentError";
+
+#endif // ENABLE(WEB_AUTHN)

@@ -52,21 +52,21 @@ public:
 #define URLTextEncodingSentinelAllowingC0AtEnd reinterpret_cast<const URLTextEncoding*>(-1)
 
     WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
-    WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);
+    WTF_EXPORT_PRIVATE static bool NODELETE internalValuesConsistent(const URL&);
     
     using URLEncodedForm = Vector<KeyValuePair<String, String>>;
     WTF_EXPORT_PRIVATE static URLEncodedForm parseURLEncodedForm(StringView);
     WTF_EXPORT_PRIVATE static std::optional<KeyValuePair<String, String>> parseQueryNameAndValue(StringView);
     WTF_EXPORT_PRIVATE static String serialize(const URLEncodedForm&);
 
-    WTF_EXPORT_PRIVATE static bool isSpecialScheme(StringView);
+    WTF_EXPORT_PRIVATE static bool NODELETE isSpecialScheme(StringView);
     WTF_EXPORT_PRIVATE static std::optional<String> maybeCanonicalizeScheme(StringView scheme);
 
     static const UIDNA& internationalDomainNameTranscoder();
-    static bool isInUserInfoEncodeSet(char16_t);
-    static bool isSpecialCharacterForFragmentDirective(char16_t);
+    static bool NODELETE isInUserInfoEncodeSet(char16_t);
+    static bool NODELETE isSpecialCharacterForFragmentDirective(char16_t);
 
-    static std::optional<uint16_t> defaultPortForProtocol(StringView);
+    static std::optional<uint16_t> NODELETE defaultPortForProtocol(StringView);
     WTF_EXPORT_PRIVATE static std::optional<String> formURLDecode(StringView input);
 
 private:
@@ -108,7 +108,7 @@ private:
     template<typename CharacterType> bool shouldCopyFileURL(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool checkLocalhostCodePoint(CodePointIterator<CharacterType>&, char32_t);
     template<typename CharacterType> bool isAtLocalhost(CodePointIterator<CharacterType>);
-    bool isLocalhost(StringView);
+    bool NODELETE isLocalhost(StringView);
     template<typename CharacterType> void consumeSingleDotPathSegment(CodePointIterator<CharacterType>&);
     template<typename CharacterType> void consumeDoubleDotPathSegment(CodePointIterator<CharacterType>&);
     template<typename CharacterType> void appendWindowsDriveLetter(CodePointIterator<CharacterType>&);
@@ -119,7 +119,7 @@ private:
     template<typename CharacterType> std::optional<Latin1Buffer> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     template<typename CharacterType> Latin1Buffer percentDecode(std::span<const Latin1Character>, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     static Latin1Buffer percentDecode(std::span<const Latin1Character>);
-    bool hasForbiddenHostCodePoint(const Latin1Buffer&);
+    bool NODELETE hasForbiddenHostCodePoint(const Latin1Buffer&);
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(char32_t);
     void appendToASCIIBuffer(std::span<const Latin1Character>);
@@ -131,7 +131,7 @@ private:
     template<typename CharacterType> bool subdomainStartsWithXNDashDash(CodePointIterator<CharacterType>);
     bool subdomainStartsWithXNDashDash(StringImpl&);
 
-    bool needsNonSpecialDotSlash() const;
+    bool NODELETE needsNonSpecialDotSlash() const;
     void addNonSpecialDotSlash();
 
     using IPv4Address = uint32_t;
@@ -151,9 +151,9 @@ private:
     template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&, const URLTextEncoding*&);
     template<typename CharacterType> bool isForbiddenHostCodePoint(CharacterType);
     template<typename CharacterType> bool isForbiddenDomainCodePoint(CharacterType);
-    static size_t urlLengthUntilPart(const URL&, URLPart);
+    static size_t NODELETE urlLengthUntilPart(const URL&, URLPart);
     void popPath();
-    bool shouldPopPath(unsigned);
+    bool NODELETE shouldPopPath(unsigned);
 };
 
 WTF_EXPORT_PRIVATE bool isForbiddenHostCodePoint(char16_t);

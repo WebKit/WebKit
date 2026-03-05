@@ -42,7 +42,7 @@ namespace WebCore {
 // These response headers are not copied from a revalidated response to the
 // cached response headers. For compatibility, this list is based on Chromium's
 // net/http/http_response_headers.cc.
-static constexpr ASCIILiteral headersToIgnoreAfterRevalidation[] = {
+static constexpr std::array headersToIgnoreAfterRevalidation {
     "allow"_s,
     "connection"_s,
     "etag"_s,
@@ -61,7 +61,7 @@ static constexpr ASCIILiteral headersToIgnoreAfterRevalidation[] = {
 // Some header prefixes mean "Don't copy this header from a 304 response.".
 // Rather than listing all the relevant headers, we can consolidate them into
 // this list, also grabbed from Chromium's net/http/http_response_headers.cc.
-static constexpr ASCIILiteral headerPrefixesToIgnoreAfterRevalidation[] = {
+static constexpr std::array headerPrefixesToIgnoreAfterRevalidation {
     "content-"_s,
     "x-content-"_s,
     "x-webkit-"_s

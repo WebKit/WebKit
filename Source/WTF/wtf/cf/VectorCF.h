@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if USE(CF)
 
 #include <wtf/CheckedArithmetic.h>
@@ -119,7 +121,7 @@ template<typename CollectionType, typename MapFunctionType> RetainPtr<CFMutableA
 {
     auto array = adoptCF(CFArrayCreateMutable(nullptr, Checked<CFIndex>(std::size(collection)), &kCFTypeArrayCallBacks));
     for (auto&& element : collection)
-        addUnlessNil(array.get(), getPtr(std::invoke(std::forward<MapFunctionType>(function), std::forward<decltype(element)>(element))));
+        addUnlessNil(array.get(), getPtr(std::invoke(function, std::forward<decltype(element)>(element))));
     return array;
 }
 
@@ -156,12 +158,27 @@ inline std::span<const char> CFStringGetASCIICStringSpan(CFStringRef string)
     return unsafeMakeSpan(characters, CFStringGetLength(string));
 }
 
-inline std::span<const char> CFStringGetLatin1CStringSpan(CFStringRef string)
+inline std::span<const Latin1Character> CFStringGetLatin1CStringSpan(CFStringRef string)
 {
     auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1);
     if (!characters)
         return { };
-    return unsafeMakeSpan(characters, CFStringGetLength(string));
+    return unsafeMakeSpan(reinterpret_cast<const Latin1Character*>(characters), CFStringGetLength(string));
+}
+
+inline std::span<const char16_t> CFStringGetCharactersSpan(CFStringRef string)
+{
+    auto* characters = CFStringGetCharactersPtr(string);
+    if (!characters)
+        return { };
+    return unsafeMakeSpan(reinterpret_cast<const char16_t*>(characters), CFStringGetLength(string));
+}
+
+inline void CFStringCopyCharactersSpan(CFStringRef string, std::span<char16_t> span)
+{
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    CFStringGetCharacters(string, CFRangeMake(0, std::min<CFIndex>(span.size(), CFStringGetLength(string))), reinterpret_cast<UniChar*>(span.data()));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 inline std::span<const uint8_t> span(CFDataRef data)
@@ -207,6 +224,8 @@ inline std::optional<float> makeVectorElement(const float*, CFNumberRef cfNumber
 
 using WTF::CFStringGetASCIICStringSpan;
 using WTF::CFStringGetLatin1CStringSpan;
+using WTF::CFStringGetCharactersSpan;
+using WTF::CFStringCopyCharactersSpan;
 using WTF::createCFArray;
 using WTF::makeVector;
 using WTF::mutableSpan;

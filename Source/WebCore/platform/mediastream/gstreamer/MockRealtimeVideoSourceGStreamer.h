@@ -33,7 +33,7 @@ class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource, G
 public:
     static Ref<MockRealtimeVideoSourceGStreamer> create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& salts, std::optional<PageIdentifier> pageID)
     {
-        return adoptRef(*new MockRealtimeVideoSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(salts), pageID));
+        return adoptRef(*new MockRealtimeVideoSourceGStreamer(WTF::move(deviceID), WTF::move(name), WTF::move(salts), pageID));
     }
 
     ~MockRealtimeVideoSourceGStreamer();

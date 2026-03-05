@@ -46,8 +46,11 @@ public:
     virtual void cancelMainResourceLoadForContentFilter(const ResourceError&) = 0;
     virtual void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&&) = 0;
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     virtual String webContentRestrictionsConfigurationPath() const = 0;
+#endif
+    virtual URL mainDocumentURL() const = 0;
 #endif
 };
 

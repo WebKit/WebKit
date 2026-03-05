@@ -23,6 +23,11 @@
 namespace WebCore {
 namespace Atspi {
 
+// These enum values are passed over DBus as integers and must correspond
+// to the definitions in at-spi2-core
+// (https://gitlab.gnome.org/GNOME/at-spi2-core). Do not modify them without
+// a corresponding change in at-spi2-core.
+
 enum class Role {
     InvalidRole,
     AcceleratorLabel,
@@ -96,6 +101,7 @@ enum class Role {
     Window,
     Extended,
     Header,
+    Footer,
     Paragraph,
     Ruler,
     Application,
@@ -139,8 +145,6 @@ enum class Role {
     Math,
     Rating,
     Timer,
-    SectionFooter,
-    SectionHeader,
     Static,
     MathFraction,
     MathRoot,
@@ -154,7 +158,13 @@ enum class Role {
     ContentInsertion,
     Mark,
     Suggestion,
+    PushButtonMenu,
+    Switch,
 };
+
+static_assert((int)Atspi::Role::Paragraph == 73);
+static_assert((int)Atspi::Role::Section == 85);
+static_assert((int)Atspi::Role::Switch == 130);
 
 enum class State : uint64_t {
     InvalidState            = 1LLU << 0,

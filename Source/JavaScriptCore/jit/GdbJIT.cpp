@@ -277,7 +277,7 @@ public:
 
     const void* codeStart() const { return reinterpret_cast<const void*>(m_codeRegion.data()); }
 
-    const void* codeEnd() const { return reinterpret_cast<const void*>(m_codeRegion.data() + m_codeRegion.size()); }
+    const void* codeEnd() const { return reinterpret_cast<const void*>(std::to_address(m_codeRegion.end())); }
 
     uintptr_t codeSize() const { return m_codeRegion.size(); }
 
@@ -650,7 +650,7 @@ class MachO {
 public:
     size_t addSection(std::unique_ptr<MachOSection> section)
     {
-        m_sections.append(WTFMove(section));
+        m_sections.append(WTF::move(section));
         return m_sections.size() - 1;
     }
 
@@ -842,7 +842,7 @@ public:
     size_t addSection(std::unique_ptr<ELFSection> section)
     {
         section->setIndex(m_sections.size());
-        m_sections.append(WTFMove(section));
+        m_sections.append(WTF::move(section));
         return m_sections.size() - 1;
     }
 
@@ -1109,8 +1109,8 @@ static void createSymbolsTable(Ref<CodeDescription> desc, ELF* elf, size_t textS
         ELFSymbol::BindGlobal, ELFSymbol::TypeFunction, textSectionIndex));
 
     // Symbol table should be followed by the linked string table.
-    elf->addSection(WTFMove(symtab));
-    elf->addSection(WTFMove(strtab));
+    elf->addSection(WTF::move(symtab));
+    elf->addSection(WTF::move(strtab));
 }
 #endif // OS(LINUX)
 
@@ -1364,8 +1364,6 @@ static JITCodeEntry* createELFObject(Ref<CodeDescription> desc)
 static std::optional<std::pair<GdbJITCodeMap::iterator, GdbJITCodeMap::iterator>>
 getOverlappingRegions(GdbJITCodeMap& map, const std::span<const uint8_t> region)
 {
-    ASSERT(region.data() < region.data() + region.size());
-
     if (map.empty())
         return std::nullopt;
 
@@ -1380,16 +1378,16 @@ getOverlappingRegions(GdbJITCodeMap& map, const std::span<const uint8_t> region)
         startIt = map.begin();
         // Find the first overlapping entry.
         for (; startIt != map.end(); ++startIt) {
-            if (startIt->first.data() + startIt->first.size() > region.data())
+            if (std::to_address(startIt->first.end()) > region.data())
                 break;
         }
     } else if (it != map.begin()) {
         for (--it; it != map.begin(); --it) {
-            if (it->first.data() + it->first.size() <= region.data())
+            if (std::to_address(it->first.end()) <= region.data())
                 break;
             startIt = it;
         }
-        if (it == map.begin() && it->first.data() + it->first.size() > region.data())
+        if (it == map.begin() && std::to_address(it->first.end()) > region.data())
             startIt = it;
     }
 
@@ -1398,7 +1396,7 @@ getOverlappingRegions(GdbJITCodeMap& map, const std::span<const uint8_t> region)
 
     // Find the first non-overlapping entry after `region`.
 
-    const auto endIt = map.lower_bound({ region.data() + region.size(), 0 });
+    const auto endIt = map.lower_bound({ std::to_address(region.end()), 0 });
 
     // Return a range containing intersecting regions.
 
@@ -1439,7 +1437,7 @@ static void addJITCodeEntry(GdbJITCodeMap& map, std::span<const uint8_t> region,
 
         fwrite(entry->symfileAddr, entry->symfileSize, 1, file);
         fflush(file);
-        dataLogLnIf(GdbJITInternal::verbose, "GDBInfo dumped: ", nameHint, " ", RawPointer(region.data()), "-", RawPointer(region.data() + region.size()), " ", region.size(), " ", filename.toCString().data());
+        dataLogLnIf(GdbJITInternal::verbose, "GDBInfo dumped: ", nameHint, " ", RawPointer(region.data()), "-", RawPointer(std::to_address(region.end())), " ", region.size(), " ", filename.toCString().data());
     }
 
     auto result = map.emplace(region, entry);

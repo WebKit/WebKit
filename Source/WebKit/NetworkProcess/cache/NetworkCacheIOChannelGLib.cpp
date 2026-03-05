@@ -74,14 +74,14 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
 {
     Locker locker { m_lock };
     if (!m_inputStream) {
-        queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] {
+        queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] {
             Data data;
-            completionHandler(WTFMove(data), -1);
+            completionHandler(WTF::move(data), -1);
         });
         return;
     }
 
-    Thread::create("IOChannel::read"_s, [this, protectedThis = Ref { *this }, offset, size, queue = Ref { queue }, completionHandler = WTFMove(completionHandler)]() mutable {
+    Thread::create("IOChannel::read"_s, [this, protectedThis = Ref { *this }, offset, size, queue = Ref { queue }, completionHandler = WTF::move(completionHandler)]() mutable {
         Locker locker { m_lock };
         GRefPtr<GFileInfo> info = adoptGRef(g_file_input_stream_query_info(G_FILE_INPUT_STREAM(m_inputStream.get()), G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
         if (info) {
@@ -96,15 +96,15 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
                 gsize bytesRead;
                 if (g_input_stream_read_all(m_inputStream.get(), bufferData, bufferSize, &bytesRead, nullptr, nullptr)) {
                     GRefPtr<GBytes> bytes = bufferSize == bytesRead ? buffer : adoptGRef(g_bytes_new_from_bytes(buffer.get(), 0, bytesRead));
-                    queue->dispatch([protectedThis = WTFMove(protectedThis), bytes = WTFMove(bytes), completionHandler = WTFMove(completionHandler)]() mutable {
-                        Data data(WTFMove(bytes));
-                        completionHandler(WTFMove(data), 0);
+                    queue->dispatch([protectedThis = WTF::move(protectedThis), bytes = WTF::move(bytes), completionHandler = WTF::move(completionHandler)]() mutable {
+                        Data data(WTF::move(bytes));
+                        completionHandler(WTF::move(data), 0);
                     });
                     return;
                 }
             }
         }
-        queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] {
+        queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] {
             completionHandler(Data { }, -1);
         });
     }, ThreadType::Unknown, m_qos)->detach();
@@ -115,19 +115,19 @@ void IOChannel::write(size_t offset, const Data& data, Ref<WTF::WorkQueueBase>&&
 {
     Locker locker { m_lock };
     if (!m_outputStream) {
-        queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] {
+        queue->dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] {
             completionHandler(-1);
         });
         return;
     }
 
     GRefPtr<GBytes> buffer = offset ? adoptGRef(g_bytes_new_from_bytes(data.bytes(), offset, data.size() - offset)) : data.bytes();
-    Thread::create("IOChannel::write"_s, [this, protectedThis = Ref { *this }, buffer = WTFMove(buffer), queue = WTFMove(queue), completionHandler = WTFMove(completionHandler)]() mutable {
+    Thread::create("IOChannel::write"_s, [this, protectedThis = Ref { *this }, buffer = WTF::move(buffer), queue = WTF::move(queue), completionHandler = WTF::move(completionHandler)]() mutable {
         Locker locker { m_lock };
         gsize buffersize;
         const auto* bufferData = g_bytes_get_data(buffer.get(), &buffersize);
         auto success = g_output_stream_write_all(m_outputStream.get(), bufferData, buffersize, nullptr, nullptr, nullptr);
-        queue->dispatch([protectedThis = Ref { *this }, success, completionHandler = WTFMove(completionHandler)] {
+        queue->dispatch([protectedThis = Ref { *this }, success, completionHandler = WTF::move(completionHandler)] {
             completionHandler(success ? 0 : -1);
         });
     }, ThreadType::Unknown, m_qos)->detach();

@@ -42,6 +42,7 @@
 #import <wtf/Deque.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 // FIXME: Implement scrollFindMatchToVisible.
@@ -197,11 +198,6 @@ private:
     _view = nil;
 }
 
-- (RefPtr<WebKit::WebPageProxy>)_protectedPage
-{
-    return _page.get();
-}
-
 #pragma mark - NSTextFinderClient SPI
 
 - (void)replaceMatches:(NSArray *)matches withString:(NSString *)replacementText inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector
@@ -212,7 +208,7 @@ private:
         if ([match isKindOfClass:WKTextFinderMatch.class])
             matchIndices.append([(WKTextFinderMatch *)match index]);
     }
-    self._protectedPage->replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements) {
+    protect(_page)->replaceMatches(WTF::move(matchIndices), replacementText, selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements) {
         collector(numberOfReplacements);
     });
 }
@@ -250,16 +246,16 @@ private:
     });
 
     if (maxResults == 1)
-        self._protectedPage->findString(targetString, kitFindOptions, maxResults);
+        protect(_page)->findString(targetString, kitFindOptions, maxResults);
     else
-        self._protectedPage->findStringMatches(targetString, kitFindOptions, maxResults);
+        protect(_page)->findStringMatches(targetString, kitFindOptions, maxResults);
 }
 
 - (void)getSelectedText:(void (^)(NSString *selectedTextString))completionHandler
 {
     void (^copiedCompletionHandler)(NSString *) = Block_copy(completionHandler);
 
-    self._protectedPage->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string) {
+    protect(_page)->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string) {
         copiedCompletionHandler(string.createNSString().get());
         Block_release(copiedCompletionHandler);
     });
@@ -271,7 +267,7 @@ private:
     ASSERT(!completionHandler);
 
     WKTextFinderMatch *textFinderMatch = static_cast<WKTextFinderMatch *>(findMatch);
-    self._protectedPage->selectFindMatch(textFinderMatch.index);
+    protect(_page)->selectFindMatch(textFinderMatch.index);
 }
 
 - (void)scrollFindMatchToVisible:(id <NSTextFinderAsynchronousDocumentFindMatch>)findMatch
@@ -282,7 +278,7 @@ private:
     ASSERT([findMatch isKindOfClass:[WKTextFinderMatch class]]);
 
     WKTextFinderMatch *textFinderMatch = static_cast<WKTextFinderMatch *>(findMatch);
-    self._protectedPage->indicateFindMatch(textFinderMatch.index);
+    protect(_page)->indicateFindMatch(textFinderMatch.index);
 }
 
 #pragma mark - FindMatchesClient
@@ -312,7 +308,7 @@ private:
         return;
 
     auto size = image->size();
-    size.scale(1 / self._protectedPage->deviceScaleFactor());
+    size.scale(1 / protect(_page)->deviceScaleFactor());
     
     auto nativeImage = image->copyNativeImage(WebCore::DontCopyBackingStore);
     if (!nativeImage)
@@ -344,7 +340,7 @@ private:
     // FIXME: There is no guarantee that this will ever result in didGetImageForMatchResult
     // being called (and thus us calling our completion handler); we should harden this
     // against all of the early returns in FindController::getImageForFindMatch.
-    self._protectedPage->getImageForFindMatch(textFinderMatch.index);
+    protect(_page)->getImageForFindMatch(textFinderMatch.index);
 }
 
 @end

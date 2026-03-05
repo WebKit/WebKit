@@ -38,14 +38,14 @@ public:
     CoordinatedPlatformLayerBufferNativeImage(Ref<NativeImage>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     virtual ~CoordinatedPlatformLayerBufferNativeImage();
 
-    const NativeImage& image() const { return m_image.get(); }
+    const NativeImage* image() const { return m_image.get(); }
 
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
-    bool tryEnsureBuffer(TextureMapper&);
+    bool tryEnsureBuffer();
 
-    const Ref<NativeImage> m_image;
+    RefPtr<NativeImage> m_image;
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 

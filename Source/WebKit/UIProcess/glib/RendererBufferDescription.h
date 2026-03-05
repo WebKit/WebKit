@@ -31,7 +31,13 @@
 namespace WebKit {
 
 struct RendererBufferDescription {
-    enum class Type : bool { DMABuf, SharedMemory };
+    enum class Type : uint8_t {
+        DMABuf,
+        SharedMemory,
+#if OS(ANDROID)
+        AHardwareBuffer,
+#endif
+    };
 
     Type type { Type::DMABuf };
     RendererBufferFormat::Usage usage { RendererBufferFormat::Usage::Rendering };

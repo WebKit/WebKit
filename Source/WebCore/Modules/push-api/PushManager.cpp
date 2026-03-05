@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PushManager.h"
 
+#include "DocumentQuirks.h"
 #include "DocumentSecurityOrigin.h"
 #include "EventLoop.h"
 #include "Exception.h"
@@ -47,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushManager);
 
 PushManager::PushManager(PushSubscriptionOwner& pushSubscriptionOwner)
     : m_pushSubscriptionOwner(pushSubscriptionOwner)
@@ -63,19 +64,19 @@ Vector<String> PushManager::supportedContentEncodings()
 
 void PushManager::ref() const
 {
-    m_pushSubscriptionOwner.ref();
+    m_pushSubscriptionOwner->ref();
 }
 
 void PushManager::deref() const
 {
-    m_pushSubscriptionOwner.deref();
+    m_pushSubscriptionOwner->deref();
 }
 
 void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
 {
     RELEASE_ASSERT(context.isSecureContext());
 
-    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = Ref { context }, options = WTFMove(options), promise = WTFMove(promise)]() mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = Ref { context }, options = WTF::move(options), promise = WTF::move(promise)]() mutable {
         if (!options || !options->userVisibleOnly) {
             promise.reject(Exception { ExceptionCode::NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_s });
             return;
@@ -87,16 +88,20 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
         }
 
         using KeyDataResult = ExceptionOr<Vector<uint8_t>>;
-        auto keyDataResult = WTF::switchOn(*options->applicationServerKey, [](RefPtr<JSC::ArrayBuffer>& value) -> KeyDataResult {
-            return value ? value->toVector() : Vector<uint8_t>();
-        }, [](RefPtr<JSC::ArrayBufferView>& value) -> KeyDataResult {
-            return value ? value->toVector() : Vector<uint8_t>();
-        }, [](String& value) -> KeyDataResult {
-            auto decoded = base64URLDecode(value);
-            if (!decoded)
-                return Exception { ExceptionCode::InvalidCharacterError, "applicationServerKey is not properly base64url-encoded"_s };
-            return WTFMove(decoded.value());
-        });
+        auto keyDataResult = WTF::switchOn(*options->applicationServerKey,
+            [](Ref<JSC::ArrayBuffer>& value) -> KeyDataResult {
+                return value->toVector();
+            },
+            [](Ref<JSC::ArrayBufferView>& value) -> KeyDataResult {
+                return value->toVector();
+            },
+            [](String& value) -> KeyDataResult {
+                auto decoded = base64URLDecode(value);
+                if (!decoded)
+                    return Exception { ExceptionCode::InvalidCharacterError, "applicationServerKey is not properly base64url-encoded"_s };
+                return WTF::move(decoded.value());
+            }
+        );
 
         if (keyDataResult.hasException()) {
             promise.reject(keyDataResult.releaseException());
@@ -108,7 +113,7 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
             return;
         }
 
-        if (!m_pushSubscriptionOwner.isActive()) {
+        if (!m_pushSubscriptionOwner->isActive()) {
             // Only PushSubscriptionOwner objects related to service workers will ever return `false` for isActive(),
             // so this error message is correct.
             promise.reject(Exception { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_s });
@@ -139,7 +144,7 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
             }
 
             RefPtr window = document.frame() ? document.frame()->window() : nullptr;
-            if (!window || !window->consumeTransientActivation()) {
+            if (!window || (!window->consumeTransientActivation() && !document.quirks().shouldAllowNotificationPermissionWithoutUserGesture())) {
 #if !RELEASE_LOG_DISABLED
                 Seconds lastActivationDuration = window ? MonotonicTime::now() - window->lastActivationTimestamp() : Seconds::infinity();
                 RELEASE_LOG_ERROR(Push, "Failing PushManager.subscribe call due to failed transient activation check; last activated %.2f sec ago", lastActivationDuration.value());
@@ -151,32 +156,32 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
                 return;
             }
 
-            client->requestPermission(context, [protectedThis = WTFMove(protectedThis), keyData = keyDataResult.releaseReturnValue(), promise = WTFMove(promise)](auto permission) mutable {
+            client->requestPermission(context, [protectedThis = WTF::move(protectedThis), keyData = keyDataResult.releaseReturnValue(), promise = WTF::move(promise)](auto permission) mutable {
                 if (permission != NotificationPermission::Granted) {
                     promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_s });
                     return;
                 }
 
-                protectedThis->m_pushSubscriptionOwner.subscribeToPushService(WTFMove(keyData), WTFMove(promise));
+                protectedThis->m_pushSubscriptionOwner->subscribeToPushService(WTF::move(keyData), WTF::move(promise));
             });
             return;
         }
 
         RELEASE_ASSERT(permission == NotificationPermission::Granted);
-        m_pushSubscriptionOwner.subscribeToPushService(keyDataResult.releaseReturnValue(), WTFMove(promise));
+        m_pushSubscriptionOwner->subscribeToPushService(keyDataResult.releaseReturnValue(), WTF::move(promise));
     });
 }
 
 void PushManager::getSubscription(ScriptExecutionContext& context, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
-    context.eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
-        protectedThis->m_pushSubscriptionOwner.getPushSubscription(WTFMove(promise));
+    context.eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, promise = WTF::move(promise)] mutable {
+        protectedThis->m_pushSubscriptionOwner->getPushSubscription(WTF::move(promise));
     });
 }
 
 void PushManager::permissionState(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
 {
-    context.eventLoop().queueTask(TaskSource::Networking, [context = Ref { context }, promise = WTFMove(promise)]() mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, [context = Ref { context }, promise = WTF::move(promise)] mutable {
         auto client = context->notificationClient();
         auto permission = client ? client->checkPermission(context.ptr()) : NotificationPermission::Denied;
 

@@ -152,7 +152,7 @@ DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
     , m_fileNames(fileNames)
-    , m_promisedFileMIMETypes(WTFMove(promisedFileMIMETypes))
+    , m_promisedFileMIMETypes(WTF::move(promisedFileMIMETypes))
     , m_dragDestinationActionMask(destinationActionMask)
     , m_pageID(pageID)
     , m_pasteboardName(dragStorageName)

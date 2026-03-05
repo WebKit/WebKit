@@ -95,8 +95,7 @@ class OPENSSL_EXPORT Input {
   constexpr uint8_t operator[](size_t idx) const { return data_[idx]; }
   constexpr uint8_t front() const { return data_.front(); }
   constexpr uint8_t back() const { return data_.back(); }
-  constexpr Input subspan(size_t pos = 0,
-                          size_t len = Span<const uint8_t>::npos) const {
+  constexpr Input subspan(size_t pos = 0, size_t len = dynamic_extent) const {
     return Input(data_.subspan(pos, len));
   }
   constexpr Input first(size_t len) const { return Input(data_.first(len)); }

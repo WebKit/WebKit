@@ -1,7 +1,8 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct testStorageBuffer {
   testArr: array<f32>,
@@ -44,27 +45,25 @@ fn unsizedInParameterF_fS(_skParam0: ptr<storage, array<S>, read>) -> f32 {
     return 0.0;
   }
 }
-fn getColor_h4f(arr: ptr<storage, array<f32>, read>) -> vec4<f32> {
+fn getColor_h4f(arr: ptr<storage, array<f32>, read>) -> vec4<f16> {
   {
-    return vec4<f32>(f32((*arr)[0]), f32((*arr)[1]), f32((*arr)[2]), f32((*arr)[3]));
+    return vec4<f16>(f16((*arr)[0]), f16((*arr)[1]), f16((*arr)[2]), f16((*arr)[3]));
   }
 }
-fn getColor_helper_h4f(arr: ptr<storage, array<f32>, read>) -> vec4<f32> {
+fn getColor_helper_h4f(arr: ptr<storage, array<f32>, read>) -> vec4<f16> {
   {
-    let _skTemp2 = getColor_h4f(arr);
-    return _skTemp2;
+    return getColor_h4f(arr);
   }
 }
 fn _skslMain(_stageOut: ptr<function, FSOut>) {
   {
-    let _skTemp3 = getColor_helper_h4f(&(_storage0.testArr));
-    (*_stageOut).sk_FragColor = _skTemp3;
-    let _skTemp4 = unsizedInParameterA_ff(&(_storage0.testArr));
-    let _skTemp5 = unsizedInParameterB_fS(&(_storage1.testArrStruct));
-    let _skTemp6 = unsizedInParameterC_ff(&(_storage0.testArr));
-    let _skTemp7 = unsizedInParameterD_fS(&(_storage1.testArrStruct));
-    let _skTemp8 = unsizedInParameterE_ff(&(_storage0.testArr));
-    let _skTemp9 = unsizedInParameterF_fS(&(_storage1.testArrStruct));
+    (*_stageOut).sk_FragColor = getColor_helper_h4f(&(_storage0.testArr));
+    unsizedInParameterA_ff(&(_storage0.testArr));
+    unsizedInParameterB_fS(&(_storage1.testArrStruct));
+    unsizedInParameterC_ff(&(_storage0.testArr));
+    unsizedInParameterD_fS(&(_storage1.testArrStruct));
+    unsizedInParameterE_ff(&(_storage0.testArr));
+    unsizedInParameterF_fS(&(_storage1.testArrStruct));
   }
 }
 @fragment fn main() -> FSOut {

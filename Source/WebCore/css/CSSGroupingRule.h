@@ -46,8 +46,6 @@ protected:
     CSSGroupingRule(StyleRuleGroup&, CSSStyleSheet* parent);
     const StyleRuleGroup& groupRule() const { return m_groupRule; }
     StyleRuleGroup& groupRule() { return m_groupRule; }
-    Ref<const StyleRuleGroup> protectedGroupRule() const;
-    Ref<StyleRuleGroup> protectedGroupRule();
     void reattach(StyleRuleBase&) override;
     void appendCSSTextForItems(StringBuilder&) const;
     void appendCSSTextWithReplacementURLsForItems(StringBuilder&, const CSS::SerializationContext&) const;

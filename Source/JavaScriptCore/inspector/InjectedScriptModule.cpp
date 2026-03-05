@@ -59,7 +59,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
 
     // FIXME: Make the InjectedScript a module itself.
     JSC::JSLockHolder locker(injectedScript.globalObject());
-    ScriptFunctionCall function(injectedScript.globalObject(), injectedScript.injectedScriptObject(), "hasInjectedModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
+    ScriptFunctionCall function(injectedScript.globalObject(), injectedScript.injectedScriptObject(), "hasInjectedModule"_s, protect(injectedScriptManager->inspectorEnvironment())->functionCallHandler());
     function.appendArgument(name());
     auto hasInjectedModuleResult = injectedScript.callFunctionWithEvalEnabled(function);
     ASSERT(hasInjectedModuleResult);
@@ -78,7 +78,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         RELEASE_ASSERT_NOT_REACHED();
     }
     if (!hasInjectedModuleResult.value().isBoolean() || !hasInjectedModuleResult.value().asBoolean()) {
-        ScriptFunctionCall function(injectedScript.globalObject(), injectedScript.injectedScriptObject(), "injectModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
+        ScriptFunctionCall function(injectedScript.globalObject(), injectedScript.injectedScriptObject(), "injectModule"_s, protect(injectedScriptManager->inspectorEnvironment())->functionCallHandler());
         function.appendArgument(name());
         function.appendArgument(JSC::JSValue(injectModuleFunction(injectedScript.globalObject())));
         function.appendArgument(host(injectedScriptManager, injectedScript.globalObject()));

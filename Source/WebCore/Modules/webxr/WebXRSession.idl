@@ -40,7 +40,7 @@
     [SameObject] readonly attribute sequence<DOMString> enabledFeatures;
 
     // Methods
-    undefined updateRenderState(optional XRRenderStateInit stateInit);
+    undefined updateRenderState(optional XRRenderStateInit stateInit = {});
     [NewObject] Promise<WebXRReferenceSpace> requestReferenceSpace(XRReferenceSpaceType type);
 
     unsigned long requestAnimationFrame(XRFrameRequestCallback callback);

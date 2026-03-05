@@ -42,5 +42,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/parsing/column-width-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/parsing/column-width-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/parsing/column-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/parsing/columns-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/parsing/columns-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/parsing/columns-valid.html

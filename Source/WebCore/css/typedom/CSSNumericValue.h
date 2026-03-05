@@ -43,10 +43,10 @@ class CSSMathSum;
 
 template<typename> class ExceptionOr;
 
-using CSSNumberish = Variant<double, RefPtr<CSSNumericValue>>;
+using CSSNumberish = Variant<double, Ref<CSSNumericValue>>;
 
 class CSSNumericValue : public CSSStyleValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSNumericValue);
+    WTF_MAKE_TZONE_ALLOCATED(CSSNumericValue);
 public:
 
     ExceptionOr<Ref<CSSNumericValue>> add(FixedVector<CSSNumberish>&&);
@@ -62,7 +62,7 @@ public:
     ExceptionOr<Ref<CSSUnitValue>> to(CSSUnitType);
     ExceptionOr<Ref<CSSMathSum>> toSum(FixedVector<String>&&);
 
-    const CSSNumericType& type() const { return m_type; }
+    const CSSNumericType& type() const LIFETIME_BOUND { return m_type; }
     
     static ExceptionOr<Ref<CSSNumericValue>> parse(Document&, String&&);
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
@@ -89,7 +89,7 @@ protected:
     template<typename T> Vector<Ref<CSSNumericValue>> prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&&);
 
     CSSNumericValue(CSSNumericType type = { })
-        : m_type(WTFMove(type)) { }
+        : m_type(WTF::move(type)) { }
 
     CSSNumericType m_type;
 };

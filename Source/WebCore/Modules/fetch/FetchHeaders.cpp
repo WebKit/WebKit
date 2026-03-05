@@ -150,7 +150,7 @@ ExceptionOr<Ref<FetchHeaders>> FetchHeaders::create(std::optional<Init>&& header
             return result.releaseException();
     }
 
-    return adoptRef(*new FetchHeaders { Guard::None, WTFMove(headers), WTFMove(setCookieValues) });
+    return adoptRef(*new FetchHeaders { Guard::None, WTF::move(headers), WTF::move(setCookieValues) });
 }
 
 ExceptionOr<void> FetchHeaders::fill(const Init& headerInit)
@@ -317,7 +317,7 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
             if (m_setCookieIndex < m_headers->m_setCookieValues.size()) {
                 String value = m_headers->m_setCookieValues[m_setCookieIndex++];
                 ASSERT(!value.isNull());
-                return KeyValuePair<String, String> { "set-cookie"_s, WTFMove(value) };
+                return KeyValuePair<String, String> { "set-cookie"_s, WTF::move(value) };
             }
             m_currentIndex++;
             continue;
@@ -325,7 +325,7 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
         m_currentIndex++;
         String value = m_headers->m_headers.get(key);
         if (!value.isNull())
-            return KeyValuePair<String, String> { WTFMove(key), WTFMove(value) };
+            return KeyValuePair<String, String> { WTF::move(key), WTF::move(value) };
     }
     return std::nullopt;
 }

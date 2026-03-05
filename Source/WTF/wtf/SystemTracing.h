@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
+#include <wtf/Platform.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <sys/kdebug_private.h>
 #define HAVE_KDEBUG_H 1
@@ -122,6 +125,8 @@ enum TracePointCode {
     ThreadTimersEnd,
     TimerFiredStart,
     TimerFiredEnd,
+    CoreImageRenderStart,
+    CoreImageRenderEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,
@@ -157,6 +162,8 @@ enum TracePointCode {
     SyntheticMomentumEvent,
     RemoteLayerTreeScheduleRenderingUpdate,
     DisplayLinkUpdate,
+    ProcessInitializeStart,
+    ProcessInitializeEnd,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,
@@ -171,6 +178,8 @@ enum TracePointCode {
     WebXRCPFrameStartSubmissionEnd,
     WebXRCPFrameEndSubmissionStart,
     WebXRCPFrameEndSubmissionEnd,
+    TextExtractionStart,
+    TextExtractionEnd,
 
     GPUProcessRange = 16000,
     WakeUpAndApplyDisplayListStart,
@@ -179,8 +188,8 @@ enum TracePointCode {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     GTKWPEPortRange = 20000,
 
-    UpdateRenderingStart,
-    UpdateRenderingEnd,
+    LayerTreeHostRenderingUpdateStart,
+    LayerTreeHostRenderingUpdateEnd,
     WaitForCompositionCompletionStart,
     WaitForCompositionCompletionEnd,
     RenderLayerTreeStart,
@@ -287,6 +296,7 @@ WTF_EXTERN_C_END
     M(NetworkCacheMiss) \
     M(PLTSubresourceLoading) \
     M(EvaluateJavaScript) \
+    M(EvaluateJavaScriptFromBuffer) \
 
 #define DECLARE_WTF_SIGNPOST_NAME_ENUM(name) WTFOSSignpostName ## name,
 
@@ -396,11 +406,13 @@ enum WTFOSSignpostType {
         RetainPtr<os_log_t> wtfHandle = WTFSignpostLogHandle(); \
         const void* wtfPointer = (const void *)(pointer); \
         os_signpost_id_t wtfSignpostID = wtfPointer ? os_signpost_id_make_with_pointer(wtfHandle.get(), wtfPointer) : OS_SIGNPOST_ID_EXCLUSIVE; \
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
         emitMacro(wtfHandle.get(), wtfSignpostID, #name, format, ##__VA_ARGS__); \
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
     } while (0)
 
 #define WTFEmitSignpostIndirectlyWithType(type, pointer, name, specificTime, format, ...) \
-    SUPPRESS_UNCOUNTED_LOCAL os_log(WTFSignpostLogHandle(), "type=%d name=%d p=%" PRIuPTR " ts=%llu " format, type, WTFOSSignpostName ## name, reinterpret_cast<uintptr_t>(pointer), specificTime, ##__VA_ARGS__)
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN SUPPRESS_UNCOUNTED_LOCAL os_log(WTFSignpostLogHandle(), "type=%d name=%d p=%" PRIuPTR " ts=%llu " format, type, WTFOSSignpostName ## name, reinterpret_cast<uintptr_t>(pointer), specificTime, ##__VA_ARGS__) WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #define WTFSetCounter(name, value) do { } while (0)
 
@@ -418,7 +430,7 @@ enum WTFOSSignpostType {
     do { \
         IGNORE_WARNINGS_BEGIN("format-zero-length") \
         if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
-            annotator->beginMark(pointer, std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
+            annotator->beginMark(reinterpret_cast<const void*>(pointer), std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
         IGNORE_WARNINGS_END \
     } while (0)
 
@@ -426,7 +438,7 @@ enum WTFOSSignpostType {
     do { \
         IGNORE_WARNINGS_BEGIN("format-zero-length") \
         if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
-            annotator->endMark(pointer, std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
+            annotator->endMark(reinterpret_cast<const void*>(pointer), std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
         IGNORE_WARNINGS_END \
     } while (0)
 

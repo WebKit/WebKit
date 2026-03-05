@@ -33,11 +33,11 @@ namespace Inspector {
 
 Ref<AsyncStackTrace> AsyncStackTrace::create(Ref<ScriptCallStack>&& callStack, bool singleShot, RefPtr<AsyncStackTrace> parent)
 {
-    return adoptRef(*new AsyncStackTrace(WTFMove(callStack), singleShot, WTFMove(parent)));
+    return adoptRef(*new AsyncStackTrace(WTF::move(callStack), singleShot, WTF::move(parent)));
 }
 
 AsyncStackTrace::AsyncStackTrace(Ref<ScriptCallStack>&& callStack, bool singleShot, RefPtr<AsyncStackTrace> parent)
-    : m_callStack(WTFMove(callStack))
+    : m_callStack(WTF::move(callStack))
     , m_parent(parent)
     , m_singleShot(singleShot)
 {
@@ -143,7 +143,7 @@ RefPtr<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() co
         if (previousStackTrace)
             previousStackTrace->setParentStackTrace(protocolObject.copyRef());
 
-        previousStackTrace = WTFMove(protocolObject);
+        previousStackTrace = WTF::move(protocolObject);
     }
 
     return topStackTrace;

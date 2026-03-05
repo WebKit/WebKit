@@ -25,7 +25,7 @@ conventions are validated using unit tests.
 # Bedrock
 
 Routines for which assembly-level optimization is not necessary are written in
-[Bedrock2](https://github.com/mit-plv/bedrock2) and tranlated to C. The file
+[Bedrock2](https://github.com/mit-plv/bedrock2) and translated to C. The file
 `bedrock_unverified_platform.c.inc` provides the platform functionality code
 thus translated expects.
 

@@ -33,6 +33,7 @@
 #include "MediaPlayerPrivateGStreamer.h"
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
@@ -49,16 +50,16 @@ static void ensureDebugCategoryInitialized()
 }
 
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
-    , m_player(WTFMove(player))
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTF::move(pad), shouldHandleStreamStartEvent)
+    , m_player(WTF::move(player))
 {
     ensureDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 }
 
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(pad), trackId)
-    , m_player(WTFMove(player))
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTF::move(pad), trackId)
+    , m_player(WTF::move(player))
 {
     ensureDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
@@ -66,22 +67,22 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
 
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, stream)
-    , m_player(WTFMove(player))
+    , m_player(WTF::move(player))
 {
     ensureDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
-    updateConfigurationFromCaps(WTFMove(caps));
+    updateConfigurationFromCaps(WTF::move(caps));
 
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-    updateConfigurationFromTags(WTFMove(tags));
+    updateConfigurationFromTags(WTF::move(tags));
 }
 
 void AudioTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
-    updateConfigurationFromCaps(WTFMove(caps));
+    updateConfigurationFromCaps(WTF::move(caps));
 
     RefPtr player = m_player.get();
     if (!player)
@@ -93,8 +94,8 @@ void AudioTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&
 
     GST_DEBUG_OBJECT(objectForLogging(), "Setting codec to %s", codec.ascii().data());
     auto configuration = this->configuration();
-    configuration.codec = WTFMove(codec);
-    setConfiguration(WTFMove(configuration));
+    configuration.codec = WTF::move(codec);
+    setConfiguration(WTF::move(configuration));
 }
 
 void AudioTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>&& tags)
@@ -118,7 +119,7 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>
     GST_DEBUG_OBJECT(objectForLogging(), "Setting bitrate to %u", bitrate);
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
-    setConfiguration(WTFMove(configuration));
+    setConfiguration(WTF::move(configuration));
 }
 
 void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& caps)
@@ -130,13 +131,13 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
     GST_DEBUG_OBJECT(objectForLogging(), "Updating audio configuration from %" GST_PTR_FORMAT, caps.get());
     auto configuration = this->configuration();
     auto scopeExit = makeScopeExit([&] {
-        setConfiguration(WTFMove(configuration));
+        setConfiguration(WTF::move(configuration));
     });
 
 #if GST_CHECK_VERSION(1, 20, 0)
-    GUniquePtr<char> mimeCodec(gst_codec_utils_caps_get_mime_codec(caps.get()));
+    auto mimeCodec = GMallocString::unsafeAdoptFromUTF8(gst_codec_utils_caps_get_mime_codec(caps.get()));
     if (mimeCodec)
-        configuration.codec = unsafeSpan(mimeCodec.get());
+        configuration.codec = mimeCodec.span();
 #endif
 
     if (areEncryptedCaps(caps.get())) {

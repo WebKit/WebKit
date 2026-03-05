@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "Algorithm.h"
 #include "BPlatform.h"
 #include <algorithm>
@@ -69,7 +71,6 @@ static constexpr size_t deallocatorLogCapacity = 512;
 static constexpr size_t bumpRangeCacheCapacity = 3;
 
 static constexpr size_t scavengerBytesPerMemoryPressureCheck = 16 * MB;
-static constexpr double memoryPressureThreshold = 0.75;
 
 static constexpr size_t maskSizeClassCount = maskSizeClassMax / alignment;
 
@@ -133,3 +134,5 @@ constexpr size_t smallLineCount(size_t vmPageSize)
 using namespace Sizes;
 
 } // namespace bmalloc
+
+#endif // __cplusplus

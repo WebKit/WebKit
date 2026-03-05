@@ -1,0 +1,3 @@
+
+FAIL The revert-rule works in an attr() fallback assert_true: expected true got false
+

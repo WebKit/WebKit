@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StorageManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageManager);
 
 Ref<StorageManager> StorageManager::create(NavigatorBase& navigator)
 {
@@ -58,7 +58,7 @@ StorageManager::StorageManager(NavigatorBase& navigator)
 StorageManager::~StorageManager() = default;
 
 struct ConnectionInfo {
-    StorageConnection& connection;
+    ThreadSafeWeakPtr<StorageConnection> connection;
     ClientOrigin origin;
 };
 
@@ -92,48 +92,48 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator, Exce
 
 void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
+    auto connectionInfoOrException = connectionInfo(protect(m_navigator).get(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.getPersisted(WTFMove(connectionInfo.origin), [promise = WTFMove(promise)](bool persisted) mutable {
+    connectionInfo.connection.get()->getPersisted(WTF::move(connectionInfo.origin), [promise = WTF::move(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
 }
 
 void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
+    auto connectionInfoOrException = connectionInfo(protect(m_navigator).get(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.persist(connectionInfo.origin, [promise = WTFMove(promise)](bool persisted) mutable {
+    connectionInfo.connection.get()->persist(connectionInfo.origin, [promise = WTF::move(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
 }
 
 void StorageManager::estimate(DOMPromiseDeferred<IDLDictionary<StorageEstimate>>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
+    auto connectionInfoOrException = connectionInfo(protect(m_navigator).get(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.getEstimate(WTFMove(connectionInfo.origin), [promise = WTFMove(promise)](ExceptionOr<StorageEstimate>&& result) mutable {
-        promise.settle(WTFMove(result));
+    connectionInfo.connection.get()->getEstimate(WTF::move(connectionInfo.origin), [promise = WTF::move(promise)](ExceptionOr<StorageEstimate>&& result) mutable {
+        promise.settle(WTF::move(result));
     });
 }
 
 void StorageManager::fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::SecurityError);
+    auto connectionInfoOrException = connectionInfo(protect(m_navigator).get(), ExceptionCode::SecurityError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.fileSystemGetDirectory(WTFMove(connectionInfo.origin), [promise = WTFMove(promise), weakNavigator = m_navigator](auto&& result) mutable {
+    connectionInfo.connection.get()->fileSystemGetDirectory(WTF::move(connectionInfo.origin), [promise = WTF::move(promise), weakNavigator = m_navigator](auto&& result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 

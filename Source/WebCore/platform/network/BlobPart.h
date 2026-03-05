@@ -51,12 +51,12 @@ public:
     }
 
     explicit BlobPart(Vector<uint8_t>&& data)
-        : m_dataOrURL(WTFMove(data))
+        : m_dataOrURL(WTF::move(data))
     {
     }
 
     explicit BlobPart(Ref<SharedBuffer>&& data)
-        : m_dataOrURL(WTFMove(data))
+        : m_dataOrURL(WTF::move(data))
     {
     }
 
@@ -73,10 +73,10 @@ public:
     Vector<uint8_t> takeData()
     {
         auto blobPartVariant = std::exchange(m_dataOrURL, Vector<uint8_t> { });
-        return switchOn(WTFMove(blobPartVariant), [](Ref<SharedBuffer>&& buffer) {
+        return switchOn(WTF::move(blobPartVariant), [](Ref<SharedBuffer>&& buffer) {
             return buffer->extractData();
         }, [](Vector<uint8_t>&& vector) {
-            return WTFMove(vector);
+            return WTF::move(vector);
         }, [](URL&&) {
             ASSERT_NOT_REACHED();
             return Vector<uint8_t> { };
@@ -97,7 +97,7 @@ public:
 
 private:
     explicit BlobPart(VariantType&& dataOrURL)
-        : m_dataOrURL(WTFMove(dataOrURL))
+        : m_dataOrURL(WTF::move(dataOrURL))
     {
     }
 

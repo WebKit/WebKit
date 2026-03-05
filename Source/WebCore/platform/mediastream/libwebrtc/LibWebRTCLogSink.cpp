@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCLogSink);
 
 LibWebRTCLogSink::LibWebRTCLogSink(LogCallback&& callback)
-    : m_callback(WTFMove(callback))
+    : m_callback(WTF::move(callback))
 {
 }
 

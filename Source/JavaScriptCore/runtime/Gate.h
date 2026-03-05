@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <cstdint>
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 namespace JSC {
 
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY) || CPU(ARM64E)
@@ -61,10 +65,16 @@ namespace JSC {
 
 #if ENABLE(WEBASSEMBLY)
 
+#define JSC_WASM_UTILITY_GATES(v) \
+    v(relocateJITReturnPC, NoPtrTag) \
+    v(exitImplantedSliceGate, NoPtrTag) \
+    v(getSentinelFrameReturnPCGate, NoPtrTag) \
+
 #define JSC_WASM_GATE_OPCODES(v) \
     v(wasm_ipint_call, WasmEntryPtrTag) \
 
 #else
+#define JSC_WASM_UTILITY_GATES(v)
 #define JSC_WASM_GATE_OPCODES(v)
 #endif
 
@@ -74,12 +84,14 @@ enum class Gate : uint8_t {
     JSC_UTILITY_GATES(JSC_DEFINE_GATE_ENUM)
     JSC_JS_GATE_OPCODES(JSC_DEFINE_OPCODE_GATE_ENUM)
     JSC_WASM_GATE_OPCODES(JSC_DEFINE_OPCODE_GATE_ENUM)
+    // Keep the hot gates above together for better cache locality
+    JSC_WASM_UTILITY_GATES(JSC_DEFINE_OPCODE_GATE_ENUM)
 #undef JSC_DEFINE_GATE_ENUM
 };
 
 #define JSC_COUNT(gateName, tag) + 1
 #define JSC_OPCODE_COUNT(gateName, tag) + 3
-static constexpr unsigned numberOfGates = 0 JSC_UTILITY_GATES(JSC_COUNT) JSC_JS_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_GATE_OPCODES(JSC_OPCODE_COUNT);
+static constexpr unsigned numberOfGates = 0 JSC_UTILITY_GATES(JSC_COUNT) JSC_JS_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_UTILITY_GATES(JSC_OPCODE_COUNT);
 #undef JSC_COUNT
 #undef JSC_OPCODE_COUNT
 

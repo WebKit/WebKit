@@ -36,7 +36,7 @@ namespace WTF {
 template <DestructionThread destructionThread>
 class CallbackAggregatorOnThread : public ThreadSafeRefCounted<CallbackAggregatorOnThread<destructionThread>, destructionThread> {
 public:
-    static auto create(CompletionHandler<void()>&& callback) { return adoptRef(*new CallbackAggregatorOnThread(WTFMove(callback))); }
+    static auto create(CompletionHandler<void()>&& callback) { return adoptRef(*new CallbackAggregatorOnThread(WTF::move(callback))); }
 
     ~CallbackAggregatorOnThread()
     {
@@ -47,7 +47,7 @@ public:
 
 private:
     explicit CallbackAggregatorOnThread(CompletionHandler<void()>&& callback)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
 #if ASSERT_ENABLED
         , m_wasConstructedOnMainThread(isMainThread())
 #endif
@@ -89,7 +89,7 @@ public:
     ~EagerCallbackAggregator()
     {
         if (m_callback)
-            std::apply(m_callback, WTFMove(m_defaultArgs));
+            std::apply(m_callback, WTF::move(m_defaultArgs));
     }
 
 private:
@@ -108,7 +108,7 @@ private:
 template <DestructionThread destructionThread>
 class SuccessCallbackAggregatorOnThread : public ThreadSafeRefCounted<SuccessCallbackAggregatorOnThread<destructionThread>, destructionThread> {
 public:
-    static auto create(CompletionHandler<void(bool)>&& callback) { return adoptRef(*new SuccessCallbackAggregatorOnThread(WTFMove(callback))); }
+    static auto create(CompletionHandler<void(bool)>&& callback) { return adoptRef(*new SuccessCallbackAggregatorOnThread(WTF::move(callback))); }
 
     ~SuccessCallbackAggregatorOnThread()
     {
@@ -131,7 +131,7 @@ public:
 
 private:
     explicit SuccessCallbackAggregatorOnThread(CompletionHandler<void(bool)>&& callback)
-        : m_callback(WTFMove(callback))
+        : m_callback(WTF::move(callback))
 #if ASSERT_ENABLED
         , m_wasConstructedOnMainThread(isMainThread())
 #endif

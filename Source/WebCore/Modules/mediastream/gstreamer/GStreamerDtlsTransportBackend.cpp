@@ -26,6 +26,7 @@
 #include "GStreamerWebRTCUtils.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ GST_DEBUG_CATEGORY(webkit_webrtc_dtls_transport_debug);
 class GStreamerDtlsTransportBackendObserver final : public ThreadSafeRefCounted<GStreamerDtlsTransportBackendObserver> {
     WTF_MAKE_NONCOPYABLE(GStreamerDtlsTransportBackendObserver);
 public:
-    static Ref<GStreamerDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend) { return adoptRef(*new GStreamerDtlsTransportBackendObserver(client, WTFMove(backend))); }
+    static Ref<GStreamerDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend) { return adoptRef(*new GStreamerDtlsTransportBackendObserver(client, WTF::move(backend))); }
 
     void start();
     void stop();
@@ -51,7 +52,7 @@ private:
 };
 
 GStreamerDtlsTransportBackendObserver::GStreamerDtlsTransportBackendObserver(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend)
-    : m_backend(WTFMove(backend))
+    : m_backend(WTF::move(backend))
     , m_client(client)
 {
     ASSERT(m_backend);
@@ -70,8 +71,8 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
         g_object_get(m_backend.get(), "state", &state, nullptr);
 
 #ifndef GST_DISABLE_GST_DEBUG
-        GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_DTLS_TRANSPORT_STATE, state));
-        GST_DEBUG_OBJECT(m_backend.get(), "DTLS transport state changed to %s", desc.get());
+        auto desc = GMallocString::unsafeAdoptFromUTF8(g_enum_to_string(GST_TYPE_WEBRTC_DTLS_TRANSPORT_STATE, state));
+        GST_DEBUG_OBJECT(m_backend.get(), "DTLS transport state changed to %s", desc.utf8());
 #endif
 
         Vector<Ref<JSC::ArrayBuffer>> certificates;
@@ -87,7 +88,7 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
             if (certificate)
                 certificates.append(JSC::ArrayBuffer::create(byteCast<uint8_t>(unsafeSpan(certificate.get()))));
         }
-        m_client->onStateChanged(toRTCDtlsTransportState(state), WTFMove(certificates));
+        m_client->onStateChanged(toRTCDtlsTransportState(state), WTF::move(certificates));
     });
 }
 
@@ -105,7 +106,7 @@ void GStreamerDtlsTransportBackendObserver::stop()
 }
 
 GStreamerDtlsTransportBackend::GStreamerDtlsTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
-    : m_backend(WTFMove(transport))
+    : m_backend(WTF::move(transport))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {

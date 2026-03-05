@@ -167,7 +167,7 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
         }
     }
 
-    return NotificationPayload { WTFMove(navigationURL), WTFMove(title), WTFMove(appBadge), WTFMove(notificationOptions), isMutable };
+    return NotificationPayload { WTF::move(navigationURL), WTF::move(title), WTF::move(appBadge), WTF::move(notificationOptions), isMutable };
 }
 
 ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificationOptions(const JSON::Object& object)
@@ -224,7 +224,7 @@ ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificatio
     RefPtr<JSON::Value> dataValue = object.getValue(dataKey);
     String dataString = dataValue ? dataValue->toJSONString() : nullString();
 
-    return NotificationOptionsPayload { direction, WTFMove(lang), WTFMove(body), WTFMove(tag), iconURL.string(), WTFMove(dataString), WTFMove(silent) };
+    return NotificationOptionsPayload { direction, WTF::move(lang), WTF::move(body), WTF::move(tag), iconURL.string(), WTF::move(dataString), WTF::move(silent) };
 }
 
 } // namespace WebCore

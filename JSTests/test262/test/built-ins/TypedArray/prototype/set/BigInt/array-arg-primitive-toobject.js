@@ -22,28 +22,28 @@ info: |
     [...]
     f. Perform SetValueInBuffer(targetBuffer, targetByteIndex, targetType, value, true, Unordered).
     [...]
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, TypedArray, Symbol]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var ta1 = new TA([1n, 2n, 3n, 4n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var ta1 = new TA(makeCtorArg([1n, 2n, 3n, 4n]));
   ta1.set("567");
   assert.compareArray(ta1, [5n, 6n, 7n, 4n], "string");
 
-  var ta2 = new TA([1n, 2n, 3n]);
+  var ta2 = new TA(makeCtorArg([1n, 2n, 3n]));
   ta2.set(-10, 2);
   assert.compareArray(ta2, [1n, 2n, 3n], "number");
 
-  var ta3 = new TA([1n]);
+  var ta3 = new TA(makeCtorArg([1n]));
   ta3.set(false);
   assert.compareArray(ta3, [1n], "boolean");
 
-  var ta4 = new TA([1n, 2n]);
+  var ta4 = new TA(makeCtorArg([1n, 2n]));
   ta4.set(Symbol("desc"), 0);
   assert.compareArray(ta4, [1n, 2n], "symbol");
 
-  var ta5 = new TA([1n, 2n]);
+  var ta5 = new TA(makeCtorArg([1n, 2n]));
   ta5.set(4n, 1);
   assert.compareArray(ta5, [1n, 2n], "bigint");
 });

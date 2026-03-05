@@ -35,7 +35,7 @@ class MoveSelectionCommand : public CompositeEditCommand {
 public:
     static Ref<MoveSelectionCommand> create(Ref<DocumentFragment>&& fragment, const Position& position, bool smartInsert = false, bool smartDelete = false)
     {
-        return adoptRef(*new MoveSelectionCommand(WTFMove(fragment), position, smartInsert, smartDelete));
+        return adoptRef(*new MoveSelectionCommand(WTF::move(fragment), position, smartInsert, smartDelete));
     }
 
 private:

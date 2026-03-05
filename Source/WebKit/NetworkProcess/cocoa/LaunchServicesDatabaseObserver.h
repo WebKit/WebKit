@@ -44,7 +44,7 @@ public:
     static ASCIILiteral supplementName();
 
 private:
-    void startObserving(XPCObjectPtr<xpc_connection_t>);
+    void startObserving(OSObjectPtr<xpc_connection_t>);
 
     // XPCEndpoint
     ASCIILiteral xpcEndpointMessageNameKey() const override;
@@ -57,7 +57,7 @@ private:
 
     RetainPtr<id> m_observer;
     Lock m_connectionsLock;
-    Vector<XPCObjectPtr<xpc_connection_t>> m_connections WTF_GUARDED_BY_LOCK(m_connectionsLock);
+    Vector<OSObjectPtr<xpc_connection_t>> m_connections WTF_GUARDED_BY_LOCK(m_connectionsLock);
 };
 
 }

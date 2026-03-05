@@ -36,5 +36,5 @@ interface GPUAdapter {
     [SameObject] readonly attribute GPUAdapterInfo info;
     readonly attribute boolean isFallbackAdapter;
 
-    [CallWith=CurrentScriptExecutionContext] Promise<GPUDevice> requestDevice(optional GPUDeviceDescriptor descriptor);
+    [CallWith=CurrentScriptExecutionContext] Promise<GPUDevice> requestDevice(optional GPUDeviceDescriptor descriptor = {});
 };

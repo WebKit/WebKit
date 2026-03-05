@@ -34,16 +34,16 @@ void generate_warped_model(libaom_test::ACMRandom *rnd, int32_t *mat,
 
 namespace AV1WarpFilter {
 
-typedef void (*warp_affine_func)(const int32_t *mat, const uint8_t *ref,
-                                 int width, int height, int stride,
-                                 uint8_t *pred, int p_col, int p_row,
-                                 int p_width, int p_height, int p_stride,
-                                 int subsampling_x, int subsampling_y,
-                                 ConvolveParams *conv_params, int16_t alpha,
-                                 int16_t beta, int16_t gamma, int16_t delta);
+using warp_affine_func = void (*)(const int32_t *mat, const uint8_t *ref,
+                                  int width, int height, int stride,
+                                  uint8_t *pred, int p_col, int p_row,
+                                  int p_width, int p_height, int p_stride,
+                                  int subsampling_x, int subsampling_y,
+                                  ConvolveParams *conv_params, int16_t alpha,
+                                  int16_t beta, int16_t gamma, int16_t delta);
 
-typedef std::tuple<int, int, int, warp_affine_func> WarpTestParam;
-typedef std::tuple<WarpTestParam, int, int, int, int> WarpTestParams;
+using WarpTestParam = std::tuple<int, int, int, warp_affine_func>;
+using WarpTestParams = std::tuple<WarpTestParam, int, int, int, int>;
 
 ::testing::internal::ParamGenerator<WarpTestParams> BuildParams(
     warp_affine_func filter);
@@ -64,19 +64,17 @@ class AV1WarpFilterTest : public ::testing::TestWithParam<WarpTestParams> {
 
 #if CONFIG_AV1_HIGHBITDEPTH
 namespace AV1HighbdWarpFilter {
-typedef void (*highbd_warp_affine_func)(const int32_t *mat, const uint16_t *ref,
-                                        int width, int height, int stride,
-                                        uint16_t *pred, int p_col, int p_row,
-                                        int p_width, int p_height, int p_stride,
-                                        int subsampling_x, int subsampling_y,
-                                        int bd, ConvolveParams *conv_params,
-                                        int16_t alpha, int16_t beta,
-                                        int16_t gamma, int16_t delta);
+using highbd_warp_affine_func =
+    void (*)(const int32_t *mat, const uint16_t *ref, int width, int height,
+             int stride, uint16_t *pred, int p_col, int p_row, int p_width,
+             int p_height, int p_stride, int subsampling_x, int subsampling_y,
+             int bd, ConvolveParams *conv_params, int16_t alpha, int16_t beta,
+             int16_t gamma, int16_t delta);
 
-typedef std::tuple<int, int, int, int, highbd_warp_affine_func>
-    HighbdWarpTestParam;
-typedef std::tuple<HighbdWarpTestParam, int, int, int, int>
-    HighbdWarpTestParams;
+using HighbdWarpTestParam =
+    std::tuple<int, int, int, int, highbd_warp_affine_func>;
+using HighbdWarpTestParams =
+    std::tuple<HighbdWarpTestParam, int, int, int, int>;
 
 ::testing::internal::ParamGenerator<HighbdWarpTestParams> BuildParams(
     highbd_warp_affine_func filter);

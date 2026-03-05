@@ -313,13 +313,13 @@ TEST(X509TimeTest, TestCmpTime) {
 }
 
 TEST(X509TimeTest, TestCmpTimeCurrent) {
-  time_t now = time(NULL);
+  time_t now = time(nullptr);
   // Pick a day earlier and later, relative to any system clock.
-  bssl::UniquePtr<ASN1_TIME> asn1_before(ASN1_TIME_adj(NULL, now, -1, 0));
-  bssl::UniquePtr<ASN1_TIME> asn1_after(ASN1_TIME_adj(NULL, now, 1, 0));
+  bssl::UniquePtr<ASN1_TIME> asn1_before(ASN1_TIME_adj(nullptr, now, -1, 0));
+  bssl::UniquePtr<ASN1_TIME> asn1_after(ASN1_TIME_adj(nullptr, now, 1, 0));
 
-  ASSERT_EQ(-1, X509_cmp_time(asn1_before.get(), NULL));
-  ASSERT_EQ(1, X509_cmp_time(asn1_after.get(), NULL));
+  ASSERT_EQ(-1, X509_cmp_time(asn1_before.get(), nullptr));
+  ASSERT_EQ(1, X509_cmp_time(asn1_after.get(), nullptr));
 }
 
 }  // namespace

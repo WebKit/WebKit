@@ -41,10 +41,10 @@ var obj = {
   }
 };
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42]));
 
   assert.throws(Test262Error, function() {
     Object.defineProperty(sample, "0", {value: obj});
   });
-});
+}, null, ["passthrough"]);

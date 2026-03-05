@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_RECORDER)
 
+#include "Logging.h"
 #include "MediaRecorderPrivateWriterAVFObjC.h"
 #include "MediaRecorderPrivateWriterWebM.h"
 #include "MediaSample.h"
@@ -78,12 +79,23 @@ Ref<MediaRecorderPrivateWriter::WriterPromise> MediaRecorderPrivateWriter::write
     while (!samples.isEmpty())
         m_pendingFrames.append(samples.takeFirst());
 
-    auto result = Result::Success;
-    while (!m_pendingFrames.isEmpty() && result == Result::Success)
-        result = writeFrame(m_pendingFrames.takeFirst().get());
+    // We generate 10s long segment.
+    static const MediaTime maxSegmentDuration = MediaTime::createWithDouble(10);
 
-    // End the segment if we succeded in writing all frames, otherwise we will retry them on the next call.
-    if (m_pendingFrames.isEmpty())
+    auto result = Result::Success;
+    while (!m_pendingFrames.isEmpty() && result == Result::Success) {
+        auto sample = m_pendingFrames.takeFirst();
+        result = writeFrame(sample.get());
+        // End the segment if we succeded in writing all frames, otherwise we will retry them on the next call.
+        MediaTime endSampleTime = m_pendingFrames.isEmpty() ? endTime : m_pendingFrames.first()->presentationTime();
+        if (!segmentsMustStartWithKeyframe() && result == Result::Success && endSampleTime - m_lastSegmentEndTime >= maxSegmentDuration) {
+            LOG(MediaStream, "MediaRecorderPrivateWriter::writeFrames forceNewSegment at time:%f", endTime.toDouble());
+            forceNewSegment(endSampleTime);
+            m_lastSegmentEndTime = endSampleTime;
+        }
+    }
+
+    if (segmentsMustStartWithKeyframe() && m_pendingFrames.isEmpty())
         forceNewSegment(endTime);
 
     m_lastEndTime = endTime;

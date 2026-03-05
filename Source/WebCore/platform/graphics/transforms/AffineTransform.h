@@ -249,7 +249,7 @@ constexpr AffineTransform::AffineTransform(std::span<const double, 6> transform)
 {
 }
 
-constexpr std::span<const double, 6> AffineTransform::span() const
+constexpr std::span<const double, 6> AffineTransform::span() const LIFETIME_BOUND
 {
     return m_transform;
 }

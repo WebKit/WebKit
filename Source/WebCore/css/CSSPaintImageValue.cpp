@@ -36,8 +36,8 @@ namespace WebCore {
 
 CSSPaintImageValue::CSSPaintImageValue(String&& name, Ref<CSSVariableData>&& arguments)
     : CSSValue { ClassType::PaintImage }
-    , m_name { WTFMove(name) }
-    , m_arguments { WTFMove(arguments) }
+    , m_name { WTF::move(name) }
+    , m_arguments { WTF::move(arguments) }
 {
 }
 
@@ -49,9 +49,9 @@ String CSSPaintImageValue::customCSSText(const CSS::SerializationContext&) const
     return makeString("paint("_s, m_name, ')');
 }
 
-RefPtr<StyleImage> CSSPaintImageValue::createStyleImage(const Style::BuilderState&) const
+RefPtr<Style::Image> CSSPaintImageValue::createStyleImage(const Style::BuilderState&) const
 {
-    return StylePaintImage::create(m_name, m_arguments);
+    return Style::PaintImage::create(m_name, m_arguments);
 }
 
 } // namespace WebCore

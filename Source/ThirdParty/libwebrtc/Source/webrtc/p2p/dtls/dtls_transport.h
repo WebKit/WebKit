@@ -13,6 +13,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -23,8 +24,9 @@
 #include "api/array_view.h"
 #include "api/crypto/crypto_options.h"
 #include "api/dtls_transport_interface.h"
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/rtc_error.h"
-#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
@@ -65,6 +67,14 @@ class StreamInterfaceChannel : public StreamInterface {
   // Push in a packet; this gets pulled out from Read().
   bool OnPacketReceived(const char* data, size_t size);
 
+  // Sets the options for the next packet to be written to ice_transport,
+  // corresponding to the next Write() call. Safe since BoringSSL guarantees
+  // that "In DTLS ... a single call to |SSL_write| only ever writes a single
+  // record in a single packet" - see comment on SSL_write in
+  // third_party/boringssl/src/include/openssl/ssl.h.
+  void SetNextPacketOptions(const AsyncSocketPacketOptions& options);
+  void ClearNextPacketOptions();
+
   // Implementations of StreamInterface
   StreamState GetState() const override;
   void Close() override;
@@ -83,6 +93,8 @@ class StreamInterfaceChannel : public StreamInterface {
       nullptr;  // owned by DtlsTransport
   StreamState state_ RTC_GUARDED_BY(callback_sequence_);
   BufferQueue packets_ RTC_GUARDED_BY(callback_sequence_);
+  std::optional<AsyncSocketPacketOptions> next_packet_options_
+      RTC_GUARDED_BY(callback_sequence_);
 };
 
 // This class provides a DTLS SSLStreamAdapter inside a TransportChannel-style
@@ -115,19 +127,23 @@ class StreamInterfaceChannel : public StreamInterface {
 // as the constructor.
 class DtlsTransportInternalImpl : public DtlsTransportInternal {
  public:
+  // For testing purposes only.
+  using SslStreamFactory = std::function<std::unique_ptr<SSLStreamAdapter>(
+      std::unique_ptr<StreamInterface>,
+      absl::AnyInvocable<void(SSLHandshakeError)> handshake_error_callback,
+      const FieldTrialsView* field_trials)>;
+
   // `ice_transport` is the ICE transport this DTLS transport is wrapping.  It
   // must outlive this DTLS transport.
   //
   // `crypto_options` are the options used for the DTLS handshake. This affects
   // whether GCM crypto suites are negotiated.
-  //
-  // `event_log` is an optional RtcEventLog for logging state changes. It should
-  // outlive the DtlsTransport.
   DtlsTransportInternalImpl(
+      const Environment& env,
       IceTransportInternal* ice_transport,
       const CryptoOptions& crypto_options,
-      RtcEventLog* event_log,
-      SSLProtocolVersion max_version = SSL_PROTOCOL_DTLS_12);
+      SSLProtocolVersion max_version = SSL_PROTOCOL_DTLS_12,
+      SslStreamFactory ssl_stream_factory = nullptr);
 
   ~DtlsTransportInternalImpl() override;
 
@@ -271,6 +287,8 @@ class DtlsTransportInternalImpl : public DtlsTransportInternal {
                               const ReceivedIpPacket& packet)> callback);
   void PeriodicRetransmitDtlsPacketUntilDtlsConnected();
 
+  SslStreamFactory ssl_stream_factory_;
+  const Environment env_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker thread_checker_;
 
   const int component_;
@@ -303,8 +321,6 @@ class DtlsTransportInternalImpl : public DtlsTransportInternal {
   // where DTLS can become writable before ICE. This can confuse other parts
   // of the stack.
   bool ice_has_been_writable_ = false;
-
-  RtcEventLog* const event_log_;
 
   // Initialized in constructor based on WebRTC-IceHandshakeDtls,
   // (so that we return PIGGYBACK_ACK to client if we get STUN_BINDING_REQUEST

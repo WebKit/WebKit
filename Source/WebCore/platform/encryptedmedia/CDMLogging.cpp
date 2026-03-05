@@ -28,6 +28,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMKeyID.h"
 #include "CDMKeySystemConfiguration.h"
 #include "CDMMediaCapability.h"
 #include "CDMMessageType.h"
@@ -60,7 +61,7 @@ static Ref<JSON::Object> toJSONObject(const CDMRestrictions& restrictions)
     auto deniedSessionTypes = JSON::Array::create();
     for (auto type : restrictions.deniedSessionTypes)
         deniedSessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("deniedSessionTypes"_s, WTFMove(deniedSessionTypes));
+    object->setArray("deniedSessionTypes"_s, WTF::move(deniedSessionTypes));
     return object;
 }
 
@@ -72,17 +73,17 @@ static Ref<JSON::Object> toJSONObject(const CDMKeySystemConfiguration& configura
     auto initDataTypes = JSON::Array::create();
     for (auto initDataType : configuration.initDataTypes)
         initDataTypes->pushString(initDataType);
-    object->setArray("initDataTypes"_s, WTFMove(initDataTypes));
+    object->setArray("initDataTypes"_s, WTF::move(initDataTypes));
 
     auto audioCapabilities = JSON::Array::create();
     for (auto capability : configuration.audioCapabilities)
         audioCapabilities->pushObject(toJSONObject(capability));
-    object->setArray("audioCapabilities"_s, WTFMove(audioCapabilities));
+    object->setArray("audioCapabilities"_s, WTF::move(audioCapabilities));
 
     auto videoCapabilities = JSON::Array::create();
     for (auto capability : configuration.videoCapabilities)
         videoCapabilities->pushObject(toJSONObject(capability));
-    object->setArray("videoCapabilities"_s, WTFMove(videoCapabilities));
+    object->setArray("videoCapabilities"_s, WTF::move(videoCapabilities));
 
     object->setString("distinctiveIdentifier"_s, convertEnumerationToString(configuration.distinctiveIdentifier));
     object->setString("persistentState"_s, convertEnumerationToString(configuration.persistentState));
@@ -90,7 +91,7 @@ static Ref<JSON::Object> toJSONObject(const CDMKeySystemConfiguration& configura
     auto sessionTypes = JSON::Array::create();
     for (auto type : configuration.sessionTypes)
         sessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("sessionTypes"_s, WTFMove(sessionTypes));
+    object->setArray("sessionTypes"_s, WTF::move(sessionTypes));
 
     return object;
 }
@@ -152,6 +153,18 @@ String LogArgument<WebCore::CDMRequirement>::toString(const WebCore::CDMRequirem
 String LogArgument<WebCore::CDMSessionType>::toString(const WebCore::CDMSessionType& type)
 {
     return convertEnumerationToString(type);
+}
+
+String LogArgument<WebCore::CDMKeyID>::toString(const WebCore::CDMKeyID& keyID)
+{
+    return keyID->toHexString();
+}
+
+String LogArgument<WebCore::CDMKeyIDs>::toString(const WebCore::CDMKeyIDs& keys)
+{
+    StringBuilder builder;
+    builder.append('[', interleave(keys, LogArgument<WebCore::CDMKeyID>::toString, ", "_s), ']');
+    return builder.toString();
 }
 
 }

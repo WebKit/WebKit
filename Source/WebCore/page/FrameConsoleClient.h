@@ -50,7 +50,7 @@ class Document;
 class LocalFrame;
 class StringCallback;
 
-class WEBCORE_EXPORT FrameConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr<FrameConsoleClient> {
+class WEBCORE_EXPORT FrameConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameConsoleClient, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameConsoleClient);
 public:
@@ -62,11 +62,11 @@ public:
     FrameConsoleClient(FrameConsoleClient&&) = delete;
     FrameConsoleClient& operator=(FrameConsoleClient&&) = delete;
 
-    static bool shouldPrintExceptions();
-    static void setShouldPrintExceptions(bool);
+    static bool NODELETE shouldPrintExceptions();
+    static void NODELETE setShouldPrintExceptions(bool);
 
-    static void mute();
-    static void unmute();
+    static void NODELETE mute();
+    static void NODELETE unmute();
 
     void addMessage(std::unique_ptr<Inspector::ConsoleMessage>&&);
 

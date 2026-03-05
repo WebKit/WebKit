@@ -152,6 +152,7 @@ async function problematicFunction() {
 
     nop();
     throw new Error("error");
+    await 30;
 }
 
 for (let i = 0; i < testLoopCount; i++) {
@@ -161,7 +162,6 @@ for (let i = 0; i < testLoopCount; i++) {
         }, Error, "error",
         [
             ["problematicFunction", "154:20"],
-            ["problematicFunction", "150:36"],
             ["level10", "141:30"],
             ["async level9", "130:18"],
             ["async level8", "124:17"],
@@ -172,10 +172,10 @@ for (let i = 0; i < testLoopCount; i++) {
             ["async level3", "85:17"],
             ["async level2", "77:17"],
             ["async level1", "69:17"],
-            ["async test", "160:25"],
+            ["async test", "161:25"],
             ["drainMicrotasks", "[native code]"],
             ["shouldThrowAsync", "19:20"],
-            ["global code", "158:21"]
+            ["global code", "159:21"]
         ],
     );
     drainMicrotasks();

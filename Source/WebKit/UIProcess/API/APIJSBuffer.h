@@ -38,7 +38,7 @@ public:
     explicit JSBuffer(Ref<WebCore::SharedMemory>&&);
     virtual ~JSBuffer();
 
-    Ref<WebCore::SharedMemory> sharedMemory();
+    Ref<WebCore::SharedMemory> NODELETE sharedMemory();
 
 private:
     Ref<WebCore::SharedMemory> m_sharedMemory;

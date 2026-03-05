@@ -26,16 +26,14 @@
 #include "config.h"
 #include "StyleOriginatedAnimationEvent.h"
 
-#include "Node.h"
-#include "NodeDocument.h"
-#include "NodeInlines.h"
+#include "CSSSelectorParserContext.h"
 #include "WebAnimationUtilities.h"
 
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyleOriginatedAnimationEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleOriginatedAnimationEvent);
 
 StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : AnimationEventBase(eventInterface, type, animation, scheduledTime)
@@ -44,13 +42,13 @@ StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterface
 {
 }
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
-    : AnimationEventBase(eventInterface, type, init, isTrusted)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, EventInit&& init, IsTrusted isTrusted, double elapsedTime, String&& pseudoElement, Document& document)
+    : AnimationEventBase(eventInterface, type, WTF::move(init), isTrusted)
     , m_elapsedTime(elapsedTime)
-    , m_pseudoElement(pseudoElement)
+    , m_pseudoElement(WTF::move(pseudoElement))
 {
     RefPtr node = dynamicDowncast<Node>(target());
-    auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(m_pseudoElement, node ? &node->document() : nullptr);
+    auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(m_pseudoElement, CSSSelectorParserContext { node ? protect(node->document()).get() : document });
     m_pseudoElementIdentifier = parsed ? pseudoElementIdentifier : std::nullopt;
 }
 

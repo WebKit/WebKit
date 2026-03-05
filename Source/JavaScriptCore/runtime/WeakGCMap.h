@@ -37,6 +37,7 @@ namespace JSC {
 template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap final : public WeakGCHashTable {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakGCMap);
+    WTF_MAKE_NONCOPYABLE(WeakGCMap);
     typedef Weak<ValueArg> ValueType;
     typedef UncheckedKeyHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
 
@@ -56,7 +57,7 @@ public:
 
     AddResult set(const KeyType& key, ValueType value)
     {
-        return m_map.set(key, WTFMove(value));
+        return m_map.set(key, WTF::move(value));
     }
 
     template<typename Functor>
@@ -69,7 +70,7 @@ public:
         ValueArg* value = result.iterator->value.get();
         if (!result.isNewEntry && !value) {
             value = functor();
-            result.iterator->value = WTFMove(value);
+            result.iterator->value = WTF::move(value);
         }
         return value;
     }

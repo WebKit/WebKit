@@ -15,9 +15,12 @@ rtc_library("rtp_replayer") {
     "rtp_replayer.h",
   ]
   deps = [
+    "../../../api:rtp_parameters",
     "../../../api:transport_api",
+    "../../../api/environment",
     "../../../api/environment:environment_factory",
     "../../../api/test/video:function_video_factory",
+    "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../api/video:video_frame",
     "../../../api/video_codecs:video_codecs_api",
@@ -28,6 +31,7 @@ rtc_library("rtp_replayer") {
     "../../../media:rtc_internal_video_codecs",
     "../../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
     "../../../rtc_base:rtc_base_tests_utils",
     "../../../rtc_base:rtc_json",
     "../../../rtc_base:timeutils",
@@ -45,5 +49,18 @@ rtc_library("rtp_replayer") {
     "../../../test:test_video_capturer",
     "../../../test:video_test_common",
     "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_library("validate_rtp_packetizer") {
+  testonly = true
+  sources = [
+    "validate_rtp_packetizer.cc",
+    "validate_rtp_packetizer.h",
+  ]
+  deps = [
+    "..:fuzz_data_helper",
+    "../../../modules/rtp_rtcp",
+    "../../../modules/rtp_rtcp:rtp_rtcp_format",
   ]
 }

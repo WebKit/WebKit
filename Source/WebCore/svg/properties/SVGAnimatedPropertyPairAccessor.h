@@ -36,14 +36,14 @@ class SVGAnimatedPropertyPairAccessor : public SVGMemberAccessor<OwnerType> {
     using Base = SVGMemberAccessor<OwnerType>;
 
 public:
-    SVGAnimatedPropertyPairAccessor(Ref<AnimatedPropertyType1> OwnerType::*property1, Ref<AnimatedPropertyType2> OwnerType::*property2)
+    SVGAnimatedPropertyPairAccessor(const Ref<AnimatedPropertyType1> OwnerType::*property1, const Ref<AnimatedPropertyType2> OwnerType::*property2)
         : m_accessor1(property1)
         , m_accessor2(property2)
     {
     }
 
 protected:
-    template<typename AccessorType, Ref<AnimatedPropertyType1> OwnerType::*property1, Ref<AnimatedPropertyType2> OwnerType::*property2>
+    template<typename AccessorType, auto property1, auto property2>
     static SVGMemberAccessor<OwnerType>& singleton()
     {
         static NeverDestroyed<AccessorType> propertyAccessor { property1, property2 };
@@ -52,10 +52,10 @@ protected:
 
     bool isAnimatedProperty() const override { return true; }
 
-    Ref<AnimatedPropertyType1>& property1(OwnerType& owner) const { return m_accessor1.property(owner); }
+    const Ref<AnimatedPropertyType1>& property1(OwnerType& owner) const { return m_accessor1.property(owner); }
     const Ref<AnimatedPropertyType1>& property1(const OwnerType& owner) const { return m_accessor1.property(owner); }
 
-    Ref<AnimatedPropertyType2>& property2(OwnerType& owner) const { return m_accessor2.property(owner); }
+    const Ref<AnimatedPropertyType2>& property2(OwnerType& owner) const { return m_accessor2.property(owner); }
     const Ref<AnimatedPropertyType2>& property2(const OwnerType& owner) const { return m_accessor2.property(owner); }
 
     Ref<AnimatedPropertyType1> propertyProperty1(const OwnerType& owner) const
@@ -74,7 +74,7 @@ protected:
         propertyProperty2(owner)->detach();
     }
 
-    bool matches(const OwnerType& owner, const SVGAnimatedProperty& animatedProperty) const override
+    bool matches(const OwnerType& owner, const SVGAnimatedPropertyBase& animatedProperty) const override
     {
         return m_accessor1.matches(owner, animatedProperty) || m_accessor2.matches(owner, animatedProperty);
     }

@@ -30,12 +30,14 @@
 #include "GraphicsTypesGL.h"
 #include "WebXRSpace.h"
 #include "XRLayerLayout.h"
+#include "XRTextureType.h"
 
 namespace WebCore {
 
 // https://immersive-web.github.io/layers/#xrlayerinittype
 struct XRLayerInit {
     RefPtr<WebXRSpace> space;
+    XRTextureType textureType;
     GCGLenum colorFormat;
     std::optional<GCGLenum> depthFormat;
     uint32_t mipLevels;

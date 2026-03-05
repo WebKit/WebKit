@@ -39,22 +39,22 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBKeyRange);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBKeyRange);
 
 Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen)
 {
-    return adoptRef(*new IDBKeyRange(WTFMove(lower), WTFMove(upper), isLowerOpen, isUpperOpen));
+    return adoptRef(*new IDBKeyRange(WTF::move(lower), WTF::move(upper), isLowerOpen, isUpperOpen));
 }
 
 Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& key)
 {
     auto upper = key;
-    return create(WTFMove(key), WTFMove(upper), false, false);
+    return create(WTF::move(key), WTF::move(upper), false, false);
 }
 
 IDBKeyRange::IDBKeyRange(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen)
-    : m_lower(WTFMove(lower))
-    , m_upper(WTFMove(upper))
+    : m_lower(WTF::move(lower))
+    , m_upper(WTF::move(upper))
     , m_isLowerOpen(isLowerOpen)
     , m_isUpperOpen(isUpperOpen)
 {
@@ -67,7 +67,7 @@ ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::only(RefPtr<IDBKey>&& key)
     if (!key || !key->isValid())
         return Exception { ExceptionCode::DataError };
 
-    return create(WTFMove(key));
+    return create(WTF::move(key));
 }
 
 ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::only(JSGlobalObject& state, JSValue keyValue)
@@ -76,7 +76,7 @@ ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::only(JSGlobalObject& state, JSValue k
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto key = scriptValueToIDBKey(state, keyValue);
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || !key->isValid());
-    return only(WTFMove(key));
+    return only(WTF::move(key));
 }
 
 ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::lowerBound(JSGlobalObject& state, JSValue boundValue, bool open)
@@ -89,7 +89,7 @@ ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::lowerBound(JSGlobalObject& state, JSV
     if (!bound->isValid())
         return Exception { ExceptionCode::DataError };
 
-    return create(WTFMove(bound), nullptr, open, true);
+    return create(WTF::move(bound), nullptr, open, true);
 }
 
 ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::upperBound(JSGlobalObject& state, JSValue boundValue, bool open)
@@ -102,7 +102,7 @@ ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::upperBound(JSGlobalObject& state, JSV
     if (!bound->isValid())
         return Exception { ExceptionCode::DataError };
 
-    return create(nullptr, WTFMove(bound), true, open);
+    return create(nullptr, WTF::move(bound), true, open);
 }
 
 ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::bound(JSGlobalObject& state, JSValue lowerValue, JSValue upperValue, bool lowerOpen, bool upperOpen)
@@ -123,7 +123,7 @@ ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::bound(JSGlobalObject& state, JSValue 
     if (upper->isEqual(lower.get()) && (lowerOpen || upperOpen))
         return Exception { ExceptionCode::DataError };
 
-    return create(WTFMove(lower), WTFMove(upper), lowerOpen, upperOpen);
+    return create(WTF::move(lower), WTF::move(upper), lowerOpen, upperOpen);
 }
 
 bool IDBKeyRange::isOnlyKey() const

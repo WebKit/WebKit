@@ -44,8 +44,8 @@ std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePagePseudoSelector(
         return nullptr;
 
     auto selector = makeUnique<MutableCSSSelector>();
-    selector->m_selector->setMatch(CSSSelector::Match::PagePseudoClass);
-    selector->m_selector->setPagePseudoClass(pseudoType);
+    selector->m_selector.setMatch(CSSSelector::Match::PagePseudoClass);
+    selector->m_selector.setPagePseudoClass(pseudoType);
     return selector;
 }
 
@@ -56,14 +56,14 @@ std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePseudoElementSelect
         return nullptr;
 
     auto selector = makeUnique<MutableCSSSelector>();
-    selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-    selector->m_selector->setPseudoElement(*pseudoType);
+    selector->m_selector.setMatch(CSSSelector::Match::PseudoElement);
+    selector->m_selector.setPseudoElement(*pseudoType);
     AtomString name;
     if (*pseudoType == CSSSelector::PseudoElement::UserAgentPartLegacyAlias)
         name = CSSSelector::nameForUserAgentPartLegacyAlias(pseudoTypeString);
     else
         name = pseudoTypeString.convertToASCIILowercaseAtom();
-    selector->m_selector->setValue(name);
+    selector->m_selector.setValue(name);
     return selector;
 }
 
@@ -74,40 +74,37 @@ std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePseudoClassSelector
         if (!CSSSelector::isPseudoClassEnabled(*pseudoType.pseudoClass, context))
             return nullptr;
         auto selector = makeUnique<MutableCSSSelector>();
-        selector->m_selector->setMatch(CSSSelector::Match::PseudoClass);
-        selector->m_selector->setPseudoClass(*pseudoType.pseudoClass);
+        selector->m_selector.setMatch(CSSSelector::Match::PseudoClass);
+        selector->m_selector.setPseudoClass(*pseudoType.pseudoClass);
         return selector;
     }
     if (pseudoType.compatibilityPseudoElement) {
         ASSERT(CSSSelector::isPseudoElementEnabled(*pseudoType.compatibilityPseudoElement, pseudoTypeString, context));
         auto selector = makeUnique<MutableCSSSelector>();
-        selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-        selector->m_selector->setPseudoElement(*pseudoType.compatibilityPseudoElement);
-        selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercaseAtom());
+        selector->m_selector.setMatch(CSSSelector::Match::PseudoElement);
+        selector->m_selector.setPseudoElement(*pseudoType.compatibilityPseudoElement);
+        selector->m_selector.setValue(pseudoTypeString.convertToASCIILowercaseAtom());
         return selector;
     }
     return nullptr;
 }
 
-MutableCSSSelector::MutableCSSSelector()
-    : m_selector(makeUnique<CSSSelector>())
-{
-}
+MutableCSSSelector::MutableCSSSelector() = default;
 
 MutableCSSSelector::MutableCSSSelector(const QualifiedName& tagQName)
-    : m_selector(makeUnique<CSSSelector>(tagQName))
+    : m_selector(tagQName)
 {
 }
 
 MutableCSSSelector::MutableCSSSelector(const CSSSelector& selector)
-    : m_selector(makeUnique<CSSSelector>(selector, CSSSelector::MutableSelectorCopy))
+    : m_selector(selector, CSSSelector::MutableSelectorCopy)
 {
     if (auto preceding = selector.precedingInComplexSelector())
         m_precedingInComplexSelector = makeUnique<MutableCSSSelector>(*preceding);
 }
 
 MutableCSSSelector::MutableCSSSelector(const CSSSelector& selector, SimpleSelectorTag)
-    : m_selector(makeUnique<CSSSelector>(selector, CSSSelector::MutableSelectorCopy))
+    : m_selector(selector, CSSSelector::MutableSelectorCopy)
 {
 }
 
@@ -117,36 +114,42 @@ MutableCSSSelector::~MutableCSSSelector()
     if (!m_precedingInComplexSelector)
         return;
     Vector<std::unique_ptr<MutableCSSSelector>, 16> toDelete;
-    std::unique_ptr<MutableCSSSelector> selector = WTFMove(m_precedingInComplexSelector);
+    std::unique_ptr<MutableCSSSelector> selector = WTF::move(m_precedingInComplexSelector);
     while (true) {
-        std::unique_ptr<MutableCSSSelector> next = WTFMove(selector->m_precedingInComplexSelector);
-        toDelete.append(WTFMove(selector));
+        std::unique_ptr<MutableCSSSelector> next = WTF::move(selector->m_precedingInComplexSelector);
+        toDelete.append(WTF::move(selector));
         if (!next)
             break;
-        selector = WTFMove(next);
+        selector = WTF::move(next);
     }
 }
 
 void MutableCSSSelector::adoptSelectorVector(MutableCSSSelectorList&& selectorVector)
 {
-    m_selector->setSelectorList(makeUnique<CSSSelectorList>(WTFMove(selectorVector)));
+    m_selector.setSelectorList(makeUnique<CSSSelectorList>(WTF::move(selectorVector)));
 }
 
-void MutableCSSSelector::setArgumentList(FixedVector<AtomString> list)
+void MutableCSSSelector::setIntegerList(FixedVector<int> list)
 {
     ASSERT(!list.isEmpty());
-    m_selector->setArgumentList(WTFMove(list));
+    m_selector.setIntegerList(WTF::move(list));
+}
+
+void MutableCSSSelector::setStringList(FixedVector<AtomString> list)
+{
+    ASSERT(!list.isEmpty());
+    m_selector.setStringList(WTF::move(list));
 }
 
 void MutableCSSSelector::setLangList(FixedVector<PossiblyQuotedIdentifier> list)
 {
     ASSERT(!list.isEmpty());
-    m_selector->setLangList(WTFMove(list));
+    m_selector.setLangList(WTF::move(list));
 }
 
 void MutableCSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
-    m_selector->setSelectorList(WTFMove(selectorList));
+    m_selector.setSelectorList(WTF::move(selectorList));
 }
 
 const MutableCSSSelector* MutableCSSSelector::leftmostSimpleSelector() const
@@ -169,7 +172,7 @@ bool MutableCSSSelector::hasExplicitNestingParent() const
 {
     auto selector = this;
     while (selector) {
-        if (selector->selector()->hasExplicitNestingParent())
+        if (selector->selector().hasExplicitNestingParent())
             return true;
 
         selector = selector->precedingInComplexSelector();
@@ -181,7 +184,7 @@ bool MutableCSSSelector::hasExplicitPseudoClassScope() const
 {
     auto selector = this;
     while (selector) {
-        if (selector->selector()->hasExplicitPseudoClassScope())
+        if (selector->selector().hasExplicitPseudoClassScope())
             return true;
 
         selector = selector->precedingInComplexSelector();
@@ -209,7 +212,7 @@ static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList
 
 bool MutableCSSSelector::matchesPseudoElement() const
 {
-    return m_selector->matchesPseudoElement() || selectorListMatchesPseudoElement(m_selector->selectorList());
+    return m_selector.matchesPseudoElement() || selectorListMatchesPseudoElement(m_selector.selectorList());
 }
 
 void MutableCSSSelector::prependInComplexSelector(CSSSelector::Relation relation, std::unique_ptr<MutableCSSSelector> selector)
@@ -219,44 +222,43 @@ void MutableCSSSelector::prependInComplexSelector(CSSSelector::Relation relation
         first = first->precedingInComplexSelector();
 
     first->setRelation(relation);
-    first->setPrecedingInComplexSelector(WTFMove(selector));
+    first->setPrecedingInComplexSelector(WTF::move(selector));
 }
 
 void MutableCSSSelector::prependInComplexSelectorAsRelative(std::unique_ptr<MutableCSSSelector> selector)
 {
-    auto firstSelector = leftmostSimpleSelector()->selector();
-    ASSERT(firstSelector);
+    auto& firstSelector = leftmostSimpleSelector()->selector();
 
     // Relation is Descendant by default.
-    auto relation = firstSelector->relation();
+    auto relation = firstSelector.relation();
     if (relation == CSSSelector::Relation::Subselector)
         relation = CSSSelector::Relation::DescendantSpace;
 
-    prependInComplexSelector(relation, WTFMove(selector));
+    prependInComplexSelector(relation, WTF::move(selector));
 }
 
 void MutableCSSSelector::appendTagInComplexSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
 {
     // Make the current last selector the second to last.
     auto currentLast = makeUnique<MutableCSSSelector>();
-    currentLast->m_selector = WTFMove(m_selector);
-    currentLast->m_precedingInComplexSelector = WTFMove(m_precedingInComplexSelector);
-    m_precedingInComplexSelector = WTFMove(currentLast);
+    currentLast->m_selector = WTF::move(m_selector);
+    currentLast->m_precedingInComplexSelector = WTF::move(m_precedingInComplexSelector);
+    m_precedingInComplexSelector = WTF::move(currentLast);
 
     // Change the last selector to be the tag selector.
-    m_selector = makeUnique<CSSSelector>(tagQName, tagIsForNamespaceRule);
-    m_selector->setRelation(CSSSelector::Relation::Subselector);
+    m_selector = CSSSelector(tagQName, tagIsForNamespaceRule);
+    m_selector.setRelation(CSSSelector::Relation::Subselector);
 }
 
 std::unique_ptr<MutableCSSSelector> MutableCSSSelector::releaseFromComplexSelector()
 {
     setRelation(CSSSelector::Relation::Subselector);
-    return WTFMove(m_precedingInComplexSelector);
+    return WTF::move(m_precedingInComplexSelector);
 }
 
 bool MutableCSSSelector::startsWithExplicitCombinator() const
 {
-    auto relation = leftmostSimpleSelector()->selector()->relation();
+    auto relation = leftmostSimpleSelector()->selector().relation();
     return relation != CSSSelector::Relation::Subselector && relation != CSSSelector::Relation::DescendantSpace;
 }
 

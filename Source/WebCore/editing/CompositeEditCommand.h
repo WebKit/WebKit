@@ -81,11 +81,11 @@ public:
     void unapply(AddToUndoStack);
     void reapply() override;
     EditAction editingAction() const override { return m_editAction; }
-    void append(SimpleEditCommand*);
+    void append(SimpleEditCommand&);
     bool wasCreateLinkCommand() const { return m_editAction == EditAction::CreateLink; }
 
-    const VisibleSelection& startingSelection() const { return m_startingSelection; }
-    const VisibleSelection& endingSelection() const { return m_endingSelection; }
+    const VisibleSelection& startingSelection() const LIFETIME_BOUND { return m_startingSelection; }
+    const VisibleSelection& endingSelection() const LIFETIME_BOUND { return m_endingSelection; }
     void setStartingSelection(const VisibleSelection&);
     void setEndingSelection(const VisibleSelection&);
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
@@ -106,7 +106,7 @@ private:
     const Ref<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;
-    Vector<RefPtr<SimpleEditCommand>> m_commands;
+    Vector<Ref<SimpleEditCommand>> m_commands;
     RefPtr<Element> m_startingRootEditableElement;
     RefPtr<Element> m_endingRootEditableElement;
     AccessibilityUndoReplacedText m_replacedText;
@@ -120,8 +120,7 @@ public:
     void apply();
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
     EditCommandComposition* composition() const;
-    RefPtr<EditCommandComposition> protectedComposition() const { return composition(); }
-    EditCommandComposition& ensureComposition();
+    Ref<EditCommandComposition> ensureComposition();
 
     virtual bool isTypingCommand() const;
     virtual bool isDictationCommand() const { return false; }
@@ -134,7 +133,7 @@ public:
     virtual String inputEventData() const { return { }; }
     virtual bool isBeforeInputEventCancelable() const { return true; }
     virtual bool shouldDispatchInputEvents() const { return true; }
-    Vector<RefPtr<StaticRange>> targetRangesForBindings() const;
+    Vector<Ref<StaticRange>> targetRangesForBindings() const;
     virtual RefPtr<DataTransfer> inputEventDataTransfer() const;
 
 protected:
@@ -144,7 +143,7 @@ protected:
     virtual bool willApplyCommand();
     virtual void didApplyCommand();
 
-    virtual Vector<RefPtr<StaticRange>> targetRanges() const;
+    virtual Vector<Ref<StaticRange>> targetRanges() const;
 
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
@@ -216,9 +215,12 @@ protected:
     void moveParagraphWithClones(const VisiblePosition& startOfParagraphToMove, const VisiblePosition& endOfParagraphToMove, Element* blockElement, Node* outerNode);
     void cloneParagraphUnderNewElement(const Position& start, const Position& end, Node* outerNode, Element* blockElement);
     void cleanupAfterDeletion(VisiblePosition destination = VisiblePosition());
-    
+
+    enum class ReconstitutePlainTextListIfNeeded : bool { No, Yes };
+
     VisibleSelection shouldBreakOutOfEmptyListItem() const;
-    bool breakOutOfEmptyListItem();
+    bool hasSmartListMarkerAttribute() const;
+    bool breakOutOfEmptyListItem(ReconstitutePlainTextListIfNeeded = ReconstitutePlainTextListIfNeeded::No);
     bool breakOutOfEmptyMailBlockquotedParagraph();
     
     Position positionAvoidingSpecialElementBoundary(const Position&);

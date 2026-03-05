@@ -29,6 +29,7 @@
 #import "WebInspectorClient.h"
 
 #import "DOMNodeInternal.h"
+#import "LegacyWebPageInspectorController.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
@@ -113,14 +114,17 @@ FrontendChannel* WebInspectorClient::openLocalFrontend(PageInspectorController* 
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() frontendWebView]);
-    m_frontendClient = makeUnique<WebInspectorFrontendClient>(m_inspectedWebView.get().get(), windowController.get(), inspectedPageController, m_frontendPage.get(), createFrontendSettings());
+
+    RefPtr webPageInspectorController = [m_inspectedWebView.get() inspectorController];
+    m_frontendClient = makeUnique<WebInspectorFrontendClient>(m_inspectedWebView.get().get(), *webPageInspectorController, windowController.get(), inspectedPageController, m_frontendPage.get(), createFrontendSettings());
 
     RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:m_frontendClient.get()]);
     [[m_inspectedWebView.get() inspector] setFrontend:webInspectorFrontend.get()];
 
     m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
 
-    return this;
+    webPageInspectorController->connectFrontend(*this);
+    return nullptr;
 }
 
 void WebInspectorClient::bringFrontendToFront()
@@ -158,16 +162,16 @@ void WebInspectorClient::hideHighlight()
 
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
-    WebInspector *inspector = [m_inspectedWebView.get() inspector];
+    RetainPtr inspector = [m_inspectedWebView.get() inspector];
 
     ASSERT(isMainThread());
 
     if (enabled) {
         [[m_inspectedWebView.get() window] makeKeyAndOrderFront:nil];
         [[m_inspectedWebView.get() window] makeFirstResponder:m_inspectedWebView.get().get()];
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStartSearchingForNode object:inspector];
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStartSearchingForNode object:inspector.get()];
     } else
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStopSearchingForNode object:inspector];
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStopSearchingForNode object:inspector.get()];
 }
 
 void WebInspectorClient::releaseFrontend()
@@ -176,10 +180,10 @@ void WebInspectorClient::releaseFrontend()
     m_frontendPage = nullptr;
 }
 
-
-WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* frontendWindowController, PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
-    : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTFMove(settings))
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, LegacyWebPageInspectorController& webPageInspectorController, WebInspectorWindowController* frontendWindowController, PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
+    : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTF::move(settings))
     , m_inspectedWebView(inspectedWebView)
+    , m_webPageInspectorController(&webPageInspectorController)
     , m_frontendWindowController(frontendWindowController)
 {
     [frontendWindowController setFrontendClient:this];
@@ -207,12 +211,12 @@ void WebInspectorFrontendClient::frontendLoaded()
 
     InspectorFrontendClientLocal::frontendLoaded();
 
-    WebFrame *frame = [m_inspectedWebView.get() mainFrame];
+    RetainPtr frame = [m_inspectedWebView.get() mainFrame];
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(m_inspectedWebView.get().get());
     if (implementations->didClearInspectorWindowObjectForFrameFunc)
         CallFrameLoadDelegate(implementations->didClearInspectorWindowObjectForFrameFunc, m_inspectedWebView.get().get(),
-                              @selector(webView:didClearInspectorWindowObject:forFrame:), [frame windowObject], frame);
+                              @selector(webView:didClearInspectorWindowObject:forFrame:), [frame.get() windowObject], frame.get());
 
     bool attached = [m_frontendWindowController.get() attached];
     setAttachedWindow(attached ? DockSide::Bottom : DockSide::Undocked);
@@ -255,9 +259,9 @@ void WebInspectorFrontendClient::closeWindow()
 
 void WebInspectorFrontendClient::reopen()
 {
-    WebInspector* inspector = [m_inspectedWebView.get() inspector];
-    [inspector close:nil];
-    [inspector show:nil];
+    RetainPtr inspector = [m_inspectedWebView.get() inspector];
+    [inspector.get() close:nil];
+    [inspector.get() show:nil];
 }
 
 void WebInspectorFrontendClient::resetState()
@@ -377,8 +381,8 @@ void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, con
 
 void WebInspectorFrontendClient::updateWindowTitle() const
 {
-    NSString *title = [NSString stringWithFormat:UI_STRING_INTERNAL("Web Inspector — %@", "Web Inspector window title"), m_inspectedURL.createNSString().get()];
-    [[m_frontendWindowController.get() window] setTitle:title];
+    RetainPtr title = [NSString stringWithFormat:UI_STRING_INTERNAL("Web Inspector — %@", "Web Inspector window title"), m_inspectedURL.createNSString().get()];
+    [[m_frontendWindowController.get() window] setTitle:title.get()];
 }
 
 bool WebInspectorFrontendClient::canSave(InspectorFrontendClient::SaveMode saveMode)
@@ -404,7 +408,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     auto suggestedURL = saveDatas[0].url;
     ASSERT(!suggestedURL.isEmpty());
 
-    NSURL *platformURL = m_suggestedToActualURLMap.get(suggestedURL).unsafeGet();
+    RetainPtr<NSURL> platformURL = m_suggestedToActualURLMap.get(suggestedURL);
     if (!platformURL) {
         platformURL = [NSURL URLWithString:suggestedURL.createNSString().get()];
         // The user must confirm new filenames before we can save to them.
@@ -436,17 +440,17 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     };
 
     if (!forceSaveAs) {
-        saveToURL(platformURL);
+        saveToURL(platformURL.get());
         return;
     }
 
     NSSavePanel *panel = [NSSavePanel savePanel];
-    panel.nameFieldStringValue = platformURL.lastPathComponent;
+    panel.nameFieldStringValue = platformURL.get().lastPathComponent;
 
     // If we have a file URL we've already saved this file to a path and
     // can provide a good directory to show. Otherwise, use the system's
     // default behavior for the initial directory to show in the dialog.
-    if (platformURL.isFileURL)
+    if (platformURL.get().isFileURL)
         panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
     auto completionHandler = ^(NSInteger result) {
@@ -457,11 +461,17 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     };
 
     NSWindow *frontendWindow = [[m_frontendWindowController frontendWebView] window];
-    NSWindow *window = frontendWindow ? frontendWindow : [NSApp keyWindow];
+    RetainPtr window = frontendWindow ? frontendWindow : [NSApp keyWindow];
     if (window)
-        [panel beginSheetModalForWindow:window completionHandler:completionHandler];
+        [panel beginSheetModalForWindow:window.get() completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
+}
+
+void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
+{
+    if (RefPtr controller = m_webPageInspectorController.get())
+        controller->dispatchMessageFromFrontend(message);
 }
 
 // MARK: -
@@ -739,8 +749,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 
     if (Page* frontendPage = _frontendClient->frontendPage())
         frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
-    if (Page* inspectedPage = [_inspectedWebView.get() page])
-        inspectedPage->inspectorController().disconnectFrontend(*_inspectorClient);
+    RefPtr { [_inspectedWebView.get() inspectorController] }->disconnectFrontend(*_inspectorClient);
 
     [[_inspectedWebView.get() inspector] releaseFrontend];
     _inspectorClient->releaseFrontend();

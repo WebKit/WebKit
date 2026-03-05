@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#window
 [
     CheckSecurity,
     CustomDefineOwnProperty,
@@ -52,7 +53,7 @@
     [DoNotCheckSecurity, CallWith=IncumbentWindow] undefined focus();
     [DoNotCheckSecurity] undefined blur();
     [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, optional WindowPostMessageOptions options);
+    [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, optional WindowPostMessageOptions options = {});
     [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
     [DoNotCheckSecurity, LegacyUnforgeable, CustomGetter] readonly attribute WindowProxy window;
     [DoNotCheckSecurityOnGetter, Replaceable, CustomGetter] readonly attribute WindowProxy self;
@@ -63,7 +64,8 @@
     [DoNotCheckSecurityOnGetter, Replaceable] readonly attribute WindowProxy? parent;
 
     // the current browsing context
-    [LegacyUnforgeable] readonly attribute Document document;
+    // FIXME: `document` should not be nullable.
+    [LegacyUnforgeable] readonly attribute Document? document;
     attribute [AtomString] DOMString name;
     readonly attribute History history;
     [EnabledBySetting=NavigationAPIEnabled, Replaceable] readonly attribute Navigation navigation;
@@ -111,11 +113,11 @@
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
     // Non-standard: For now we expose this to user worlds since Safari is using it, but we plan to remove it.
-    [EnabledForWorld=isUser] CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
+    [EnabledForWorld=isUser] CSSRuleList? getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
 
     // Non-standard: Blink has already dropped these (https://bugs.chromium.org/p/chromium/issues/detail?id=398352).
-    WebKitPoint webkitConvertPointFromPageToNode(optional Node? node = null, optional WebKitPoint? p = null);
-    WebKitPoint webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
+    WebKitPoint? webkitConvertPointFromPageToNode(optional Node? node = null, optional WebKitPoint? p = null);
+    WebKitPoint? webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
 
     // Internal operations, not exposed to the Web.
     [EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);

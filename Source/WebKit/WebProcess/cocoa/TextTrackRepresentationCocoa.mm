@@ -75,7 +75,7 @@ void WebTextTrackRepresentationCocoa::update()
     if (!handle)
         return;
     Ref videoElement = downcast<WebCore::HTMLVideoElement>(*m_mediaElement);
-    fullscreenManager->updateTextTrackRepresentationForVideoElement(videoElement, WTFMove(*handle));
+    fullscreenManager->updateTextTrackRepresentationForVideoElement(videoElement, WTF::move(*handle));
 }
 
 void WebTextTrackRepresentationCocoa::setContentScale(float scale)

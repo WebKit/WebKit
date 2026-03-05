@@ -49,12 +49,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSlider);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSlider);
 
 const int RenderSlider::defaultTrackLength = 129;
 
 RenderSlider::RenderSlider(HTMLInputElement& element, RenderStyle&& style)
-    : RenderFlexibleBox(Type::Slider, element, WTFMove(style))
+    : RenderFlexibleBox(Type::Slider, element, WTF::move(style))
 {
     // We assume RenderSlider works only with <input type=range>.
     ASSERT(element.isRangeControl());
@@ -63,12 +63,7 @@ RenderSlider::RenderSlider(HTMLInputElement& element, RenderStyle&& style)
 
 RenderSlider::~RenderSlider() = default;
 
-HTMLInputElement& RenderSlider::element() const
-{
-    return downcast<HTMLInputElement>(nodeForNonAnonymous());
-}
-
-Ref<HTMLInputElement> RenderSlider::protectedElement() const
+HTMLInputElement& NODELETE RenderSlider::element() const
 {
     return downcast<HTMLInputElement>(nodeForNonAnonymous());
 }
@@ -107,7 +102,7 @@ void RenderSlider::computePreferredLogicalWidths()
 
 bool RenderSlider::inDragMode() const
 {
-    return protectedElement()->protectedSliderThumbElement()->active();
+    return protect(protect(element())->sliderThumbElement())->active();
 }
 
 double RenderSlider::valueRatio() const

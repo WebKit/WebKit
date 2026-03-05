@@ -1,17 +1,17 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,9 +27,9 @@
 #pragma once
 
 #include <WebCore/XPathNodeSet.h>
+#include <wtf/Variant.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 class Value {
 public:
@@ -38,38 +38,27 @@ public:
     Value() = delete;
 
     Value(bool value)
-        : m_type(Type::Boolean), m_bool(value)
+        : m_value(value)
     { }
     Value(unsigned value)
-        : m_type(Type::Number), m_number(value)
+        : m_value(static_cast<double>(value))
     { }
     Value(double value)
-        : m_type(Type::Number), m_number(value)
+        : m_value(value)
     { }
 
     Value(const String& value)
-        : m_type(Type::String), m_data(Data::create(value))
-    { }
-    Value(const char* value)
-        : m_type(Type::String), m_data(Data::create(String::fromLatin1(value)))
+        : m_value(value)
     { }
 
     explicit Value(NodeSet&& value)
-        : m_type(Type::NodeSet), m_data(Data::create(WTFMove(value)))
-    { }
-    explicit Value(Node* value)
-        : m_type(Type::NodeSet), m_data(Data::create(value))
-    { }
-    explicit Value(RefPtr<Node>&& value)
-        : m_type(Type::NodeSet), m_data(Data::create(WTFMove(value)))
+        : m_value(NodeSetHolder::create(WTF::move(value)))
     { }
 
-    Type type() const { return m_type; }
-
-    bool isNodeSet() const { return m_type == Type::NodeSet; }
-    bool isBoolean() const { return m_type == Type::Boolean; }
-    bool isNumber() const { return m_type == Type::Number; }
-    bool isString() const { return m_type == Type::String; }
+    bool isBoolean() const { return WTF::holdsAlternative<bool>(m_value); }
+    bool isNumber() const { return WTF::holdsAlternative<double>(m_value); }
+    bool isString() const { return WTF::holdsAlternative<String>(m_value); }
+    bool isNodeSet() const { return WTF::holdsAlternative<Ref<NodeSetHolder>>(m_value); }
 
     const NodeSet& toNodeSet() const;
     bool toBoolean() const;
@@ -79,37 +68,39 @@ public:
     // Note that the NodeSet is shared with other Values that this one was copied from or that are copies of this one.
     NodeSet& modifiableNodeSet();
 
+    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        return WTF::switchOn(m_value,
+            [&](bool value) {
+                return visitor(value);
+            },
+            [&](double value) {
+                return visitor(value);
+            },
+            [&](const String& string) {
+                return visitor(string);
+            },
+            [&](const Ref<NodeSetHolder>& holder) {
+                return visitor(holder->nodeSet);
+            }
+        );
+    }
+
 private:
     // This constructor creates ambiguity so that we don't accidentally call the boolean overload for pointer types.
     Value(void*) = delete;
 
-    struct Data : public RefCounted<Data> {
-        static Ref<Data> create() { return adoptRef(*new Data); }
-        static Ref<Data> create(const String& string) { return adoptRef(*new Data(string)); }
-        static Ref<Data> create(NodeSet&& nodeSet) { return adoptRef(*new Data(WTFMove(nodeSet))); }
-        static Ref<Data> create(RefPtr<Node>&& node) { return adoptRef(*new Data(WTFMove(node))); }
-
-        String string;
+    struct NodeSetHolder : public RefCounted<NodeSetHolder> {
+        static Ref<NodeSetHolder> create(NodeSet&& nodeSet) { return adoptRef(*new NodeSetHolder(WTF::move(nodeSet))); }
         NodeSet nodeSet;
-
     private:
-        Data() { }
-        explicit Data(const String& string)
-            : string(string)
-        { }
-        explicit Data(NodeSet&& nodeSet)
-            : nodeSet(WTFMove(nodeSet))
-        { }
-        explicit Data(RefPtr<Node>&& node)
-            : nodeSet(WTFMove(node))
+        explicit NodeSetHolder(NodeSet&& ns)
+            : nodeSet(WTF::move(ns))
         { }
     };
 
-    Type m_type;
-    bool m_bool { false };
-    double m_number { 0 };
-    RefPtr<Data> m_data;
+    Variant<bool, double, String, Ref<NodeSetHolder>> m_value;
 };
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

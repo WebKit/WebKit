@@ -17,9 +17,9 @@ PASS (reason: 'error1: error1') abort should prevent further reads
 PASS (reason: 'null') all pending writes should complete on abort
 PASS (reason: 'undefined') all pending writes should complete on abort
 PASS (reason: 'error1: error1') all pending writes should complete on abort
-FAIL (reason: 'null') underlyingSource.cancel() should called when abort, even with pending pull assert_equals: cancel should have been called expected 2 but got 0
-FAIL (reason: 'undefined') underlyingSource.cancel() should called when abort, even with pending pull assert_equals: cancel should have been called expected 2 but got 0
-FAIL (reason: 'error1: error1') underlyingSource.cancel() should called when abort, even with pending pull assert_equals: cancel should have been called expected 2 but got 0
+PASS (reason: 'null') underlyingSource.cancel() should called when abort, even with pending pull
+PASS (reason: 'undefined') underlyingSource.cancel() should called when abort, even with pending pull
+PASS (reason: 'error1: error1') underlyingSource.cancel() should called when abort, even with pending pull
 PASS a rejection from underlyingSource.cancel() should be returned by pipeTo()
 PASS a rejection from underlyingSink.abort() should be returned by pipeTo()
 FAIL a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel() promise_rejects_exactly: pipeTo should reject function "function() { throw e; }" threw object "error1: error1" but we expected it to throw object "error2: error2"

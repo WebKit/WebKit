@@ -96,24 +96,6 @@ GLDisplay* Display::glDisplay() const
     return nullptr;
 }
 
-String Display::accessibilityBusAddress() const
-{
-    if (!m_gdkDisplay)
-        return { };
-
-#if USE(GTK4)
-    if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(m_gdkDisplay.get()), "-gtk-atspi-bus-address")))
-        return String::fromUTF8(atspiBusAddress);
-#endif
-
-#if PLATFORM(X11)
-    if (isX11())
-        return accessibilityBusAddressX11();
-#endif
-
-    return { };
-}
-
 #if !PLATFORM(X11)
 bool Display::isX11() const
 {

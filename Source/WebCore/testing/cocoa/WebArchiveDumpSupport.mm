@@ -147,7 +147,7 @@ static void normalizeWebResourceURL(CFMutableStringRef webResourceURL)
 
     auto oldResourceURL = adoptCF(CFStringCreateCopy(kCFAllocatorDefault, webResourceURL));
     CFStringReplace(webResourceURL, CFRangeMake(quickLookSchemeLength, replacementEnd - quickLookSchemeLength), CFSTR("resource"));
-    quickLookURLReplacements().append(std::make_pair(WTFMove(oldResourceURL), webResourceURL));
+    quickLookURLReplacements().append(std::make_pair(WTF::move(oldResourceURL), webResourceURL));
 #endif
 }
 

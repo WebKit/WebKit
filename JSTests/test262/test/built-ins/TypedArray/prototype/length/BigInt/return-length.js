@@ -15,14 +15,14 @@ info: |
 
   The current tests on `prop-desc.js` and `length.js` already assert `length` is
   not a dynamic property as in regular arrays.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var ta1 = new TA();
   assert.sameValue(ta1.length, 0);
 
-  var ta2 = new TA(42);
+  var ta2 = new TA(makeCtorArg(42));
   assert.sameValue(ta2.length, 42);
 });

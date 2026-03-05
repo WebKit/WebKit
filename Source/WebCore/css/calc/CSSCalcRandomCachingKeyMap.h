@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/CSSCalcRandomCachingKey.h>
+#include "CSSCalcRandomCachingKey.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>

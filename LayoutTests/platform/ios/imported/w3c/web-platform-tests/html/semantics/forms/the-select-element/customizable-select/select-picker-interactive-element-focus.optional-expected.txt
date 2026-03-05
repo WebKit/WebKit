@@ -1,0 +1,4 @@
+invoker
+
+FAIL Clicking interactive elements inside the select picker should focus them. assert_true: select should open after being clicked. expected true got false
+

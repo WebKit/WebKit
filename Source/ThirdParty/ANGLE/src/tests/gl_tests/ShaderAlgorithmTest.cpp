@@ -27,35 +27,33 @@ class ShaderAlgorithmTest : public ANGLETest<>
 // Simplied version of dEQP test dEQP?GLES2.functional.shaders.algorithm.rgb_to_hsl_vertex
 TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
 {
-    const char kVS[] =
-        "attribute highp vec3 a_position;\n"
-        "attribute highp vec3 a_unitCoords;\n"
-        "varying mediump vec3 v_color;\n"
+    const char kVS[] = R"(attribute highp vec3 a_position;
+attribute highp vec3 a_unitCoords;
+varying mediump vec3 v_color;
 
-        "void main()\n"
-        "{\n"
-        "    gl_Position =vec4(a_position.x, a_position.y, a_position.z, 1.0);\n"
-        "    mediump vec3 coords = a_unitCoords;\n"
-        "    mediump vec3 res = vec3(0.0);\n"
-        "    mediump float r = coords.x, g = coords.y, b = coords.z;\n"
-        "    mediump float minVal = min(min(r, g), b);\n"
-        "    mediump float maxVal = max(max(r, g), b);\n"
-        "    mediump float H = 0.0; \n"
-        "    mediump float S = 0.0; \n"
-        "    if (r == maxVal)\n"
-        "       H = 1.0;\n"
-        "    else\n"
-        "       S = 1.0;\n"
-        "    res = vec3(H, S, 0);\n"
-        "    v_color = res;\n"
-        "}\n";
+void main()
+{
+    gl_Position =vec4(a_position.x, a_position.y, a_position.z, 1.0);
+    mediump vec3 coords = a_unitCoords;
+    mediump vec3 res = vec3(0.0);
+    mediump float r = coords.x, g = coords.y, b = coords.z;
+    mediump float minVal = min(min(r, g), b);
+    mediump float maxVal = max(max(r, g), b);
+    mediump float H = 0.0;
+    mediump float S = 0.0;
+    if (r == maxVal)
+       H = 1.0;
+    else
+       S = 1.0;
+    res = vec3(H, S, 0);
+    v_color = res;
+})";
 
-    const char kFS[] =
-        "varying mediump vec3 v_color;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_FragColor = vec4(v_color, 1.0);\n"
-        "}\n";
+    const char kFS[] = R"(varying mediump vec3 v_color;
+void main()
+{
+    gl_FragColor = vec4(v_color, 1.0);
+})";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
 

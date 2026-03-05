@@ -196,6 +196,14 @@ class RTC_EXPORT RTCReceivedRtpStreamStats : public RTCRtpStreamStats {
 
   std::optional<double> jitter;
   std::optional<int32_t> packets_lost;  // Signed per RFC 3550
+  // https://w3c.github.io/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetsreceivedwithect1
+  std::optional<int64_t> packets_received_with_ect1;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetsreceivedwithce
+  std::optional<int64_t> packets_received_with_ce;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetsreportedaslost
+  std::optional<int64_t> packets_reported_as_lost;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetsreportedaslostbutrecovered
+  std::optional<int64_t> packets_reported_as_lost_but_recovered;
 
  protected:
   RTCReceivedRtpStreamStats(std::string id, Timestamp timestamp);
@@ -361,7 +369,10 @@ class RTC_EXPORT RTCOutboundRtpStreamStats final
   std::optional<uint32_t> fir_count;
   std::optional<uint32_t> pli_count;
   std::optional<uint32_t> nack_count;
+  // QP and PSNR are only defined for video.
   std::optional<uint64_t> qp_sum;
+  std::optional<std::map<std::string, double>> psnr_sum;  // y, u, v.
+  std::optional<uint32_t> psnr_measurements;
   std::optional<bool> active;
   // In JavaScript, this is only exposed if HW exposure is allowed.
   std::optional<bool> power_efficient_encoder;
@@ -369,6 +380,9 @@ class RTC_EXPORT RTCOutboundRtpStreamStats final
 
   // RTX ssrc. Only present if RTX is negotiated.
   std::optional<uint32_t> rtx_ssrc;
+
+  // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-packetssentwithect1
+  std::optional<int64_t> packets_sent_with_ect1;
 };
 
 // https://w3c.github.io/webrtc-stats/#remoteinboundrtpstats-dict*
@@ -466,6 +480,8 @@ class RTC_EXPORT RTCTransportStats final : public RTCStats {
   std::optional<std::string> ice_role;
   std::optional<std::string> ice_local_username_fragment;
   std::optional<std::string> ice_state;
+  // https://w3c.github.io/webrtc-stats/#dom-rtctransportstats-ccfbmessagesreceived
+  std::optional<int> ccfb_messages_received;
 };
 
 // https://w3c.github.io/webrtc-stats/#playoutstats-dict*

@@ -58,7 +58,7 @@ public:
 
     virtual ~SpeculativeLoad();
 
-    const WebCore::ResourceRequest& originalRequest() const { return m_originalRequest; }
+    const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
 
     void cancel();
 

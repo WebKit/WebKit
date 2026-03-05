@@ -38,7 +38,7 @@ public:
 private:
     PointerDereferenceExpression(SourceSpan span, Expression::Ref&& target)
         : Expression(span)
-        , m_target(WTFMove(target))
+        , m_target(WTF::move(target))
     { }
 
     Expression::Ref m_target;

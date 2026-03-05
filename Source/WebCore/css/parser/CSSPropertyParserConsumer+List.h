@@ -86,7 +86,7 @@ auto consumeListSeparatedByIntoBuilder(CSSParserTokenRange& range, SubConsumer&&
             return { };
     }
 
-    return { WTFMove(list) };
+    return { WTF::move(list) };
 }
 
 template<char separator, ListBounds bounds, ListOptimization optimization = ListOptimization::None, typename ListType = CSSValueList, typename SubConsumer, typename... Args>
@@ -98,18 +98,18 @@ auto consumeListSeparatedBy(CSSParserTokenRange& range, SubConsumer&& subConsume
 
     if constexpr (optimization == ListOptimization::SingleValue) {
         if (list->size() == 1)
-            return WTFMove((*list)[0]);
+            return WTF::move((*list)[0]);
     }
 
     if constexpr (std::is_same_v<ListType, CSSValueList>) {
         if constexpr (separator == ',')
-            return CSSValueList::createCommaSeparated(WTFMove(*list));
+            return CSSValueList::createCommaSeparated(WTF::move(*list));
         else if constexpr (separator == '/')
-            return CSSValueList::createSlashSeparated(WTFMove(*list));
+            return CSSValueList::createSlashSeparated(WTF::move(*list));
         else if constexpr (separator == ' ')
-            return CSSValueList::createSpaceSeparated(WTFMove(*list));
+            return CSSValueList::createSpaceSeparated(WTF::move(*list));
     } else {
-        return ListType::create(WTFMove(*list));
+        return ListType::create(WTF::move(*list));
     }
 }
 

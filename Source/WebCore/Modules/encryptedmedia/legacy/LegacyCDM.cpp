@@ -87,7 +87,7 @@ void LegacyCDM::clearFactories()
 
 void LegacyCDM::registerCDMFactory(CreateCDM&& constructor, CDMSupportsKeySystem&& supportsKeySystem, CDMSupportsKeySystemAndMimeType&& supportsKeySystemAndMimeType)
 {
-    installedCDMFactories().append({ WTFMove(constructor), WTFMove(supportsKeySystem), WTFMove(supportsKeySystemAndMimeType) });
+    installedCDMFactories().append({ WTF::move(constructor), WTF::move(supportsKeySystem), WTF::move(supportsKeySystemAndMimeType) });
 }
 
 static LegacyCDMFactory* CDMFactoryForKeySystem(const String& keySystem)
@@ -129,17 +129,12 @@ LegacyCDM::~LegacyCDM() = default;
 
 bool LegacyCDM::supportsMIMEType(const String& mimeType) const
 {
-    return protectedCDMPrivate()->supportsMIMEType(mimeType);
-}
-
-RefPtr<CDMPrivateInterface> LegacyCDM::protectedCDMPrivate() const
-{
-    return cdmPrivate();
+    return protect(cdmPrivate())->supportsMIMEType(mimeType);
 }
 
 RefPtr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
 {
-    RefPtr session = protectedCDMPrivate()->createSession(client);
+    RefPtr session = protect(cdmPrivate())->createSession(client);
     if (mediaPlayer())
         mediaPlayer()->setCDMSession(session.get());
     return session;

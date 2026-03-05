@@ -13,6 +13,7 @@
 
 #include <optional>
 
+#include "api/units/timestamp.h"
 #include "common_audio/smoothing_filter.h"
 #include "test/gmock.h"
 
@@ -20,8 +21,8 @@ namespace webrtc {
 
 class MockSmoothingFilter : public SmoothingFilter {
  public:
-  MOCK_METHOD(void, AddSample, (float), (override));
-  MOCK_METHOD(std::optional<float>, GetAverage, (), (override));
+  MOCK_METHOD(void, AddSample, (float, Timestamp), (override));
+  MOCK_METHOD(std::optional<float>, GetAverage, (Timestamp), (override));
   MOCK_METHOD(bool, SetTimeConstantMs, (int), (override));
 };
 

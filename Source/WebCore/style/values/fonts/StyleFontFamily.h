@@ -74,18 +74,18 @@ struct SingleFontFamily {
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-family
 struct FontFamilies {
     FontFamilies(Ref<RefCountedFixedVector<AtomString>>&& families, FontFamilyKind firstFontKind)
-        : m_families { WTFMove(families) }
+        : m_families { WTF::move(families) }
         , m_firstFontKind { firstFontKind }
     {
     }
 
     FontFamilies(Ref<RefCountedFixedVector<AtomString>>&& families, bool isSpecifiedFont)
-        : FontFamilies { WTFMove(families), isSpecifiedFont ? FontFamilyKind::Specified : FontFamilyKind::Generic }
+        : FontFamilies { WTF::move(families), isSpecifiedFont ? FontFamilyKind::Specified : FontFamilyKind::Generic }
     {
     }
 
     FontFamilies(AtomString family, FontFamilyKind firstFontKind)
-        : FontFamilies { RefCountedFixedVector<AtomString>::create({ WTFMove(family) }), firstFontKind }
+        : FontFamilies { RefCountedFixedVector<AtomString>::create({ WTF::move(family) }), firstFontKind }
     {
     }
 
@@ -121,7 +121,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     RefCountedFixedVector<AtomString>& toPlatform() LIFETIME_BOUND { return m_families.get(); }
     const RefCountedFixedVector<AtomString>& toPlatform() const LIFETIME_BOUND { return m_families.get(); }
-    Ref<RefCountedFixedVector<AtomString>> takePlatform() { return WTFMove(m_families); }
+    Ref<RefCountedFixedVector<AtomString>> takePlatform() { return WTF::move(m_families); }
 
     FontFamilyKind firstFontKind() const { return m_firstFontKind; }
     bool isSpecifiedFont() const { return m_firstFontKind == FontFamilyKind::Specified; }

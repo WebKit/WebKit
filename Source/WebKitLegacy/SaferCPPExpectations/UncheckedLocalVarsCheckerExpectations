@@ -1,20 +1,23 @@
 WebCoreSupport/SocketStreamHandleImplCFNet.cpp
 WebCoreSupport/WebResourceLoadScheduler.cpp
+[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
+[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
 mac/DOM/DOM.mm
 mac/DOM/DOMDocument.mm
 mac/DOM/DOMElement.mm
 mac/DOM/DOMHTML.mm
-mac/DOM/DOMHTMLSelectElement.mm
 mac/DOM/DOMInternal.mm
 mac/DOM/DOMMouseEvent.mm
 mac/DOM/DOMNamedNodeMap.mm
+[ iOS ] mac/DOM/DOMUIKitExtensions.mm
 mac/DOM/DOMUtility.mm
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
+[ iOS ] mac/Plugins/WebPluginController.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
+[ iOS ] mac/WebCoreSupport/WebEditorClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
-mac/WebCoreSupport/WebFrameNetworkingContext.mm
 [ Mac ] mac/WebView/WebClipView.mm
 [ Mac ] mac/WebView/WebDynamicScrollBarsView.mm
 mac/WebView/WebFrame.mm
@@ -23,8 +26,3 @@ mac/WebView/WebHTMLRepresentation.mm
 mac/WebView/WebHTMLView.mm
 [ Mac ] mac/WebView/WebImmediateActionController.mm
 mac/WebView/WebView.mm
-[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
-[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
-[ iOS ] mac/DOM/DOMUIKitExtensions.mm
-[ iOS ] mac/Plugins/WebPluginController.mm
-[ iOS ] mac/WebCoreSupport/WebEditorClient.mm

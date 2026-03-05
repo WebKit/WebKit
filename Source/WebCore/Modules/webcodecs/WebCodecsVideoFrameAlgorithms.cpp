@@ -130,7 +130,7 @@ size_t videoPixelFormatToSampleByteSizePerPlane()
     return 1;
 }
 
-static inline size_t sampleCountPerPixel(VideoPixelFormat format, size_t planeNumber)
+static inline size_t NODELETE sampleCountPerPixel(VideoPixelFormat format, size_t planeNumber)
 {
     switch (format) {
     case VideoPixelFormat::I420:
@@ -229,7 +229,7 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
         computedLayouts.append(computedLayout);
     }
 
-    return CombinedPlaneLayout { minAllocationSize, WTFMove(computedLayouts) };
+    return CombinedPlaneLayout { minAllocationSize, WTF::move(computedLayouts) };
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-parse-videoframecopytooptions

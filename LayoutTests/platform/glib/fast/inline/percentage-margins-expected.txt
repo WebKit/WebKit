@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (196,0) size 265x17
-        RenderText {#text} at (196,0) size 265x17
+      RenderInline {SPAN} at (196,0) size 265x18
+        RenderText {#text} at (196,0) size 265x18
           text run at (196,0) width 265: "This span has 25% margins on either side."
-      RenderText {#text} at (656,0) size 31x17
+      RenderText {#text} at (656,0) size 31x18
         text run at (656,0) width 31: "See?"

@@ -38,11 +38,13 @@
 #include "DFGPlan.h"
 #include "DFGPropertyTypeKey.h"
 #include "FullBytecodeLiveness.h"
+#include "FunctionAllowlist.h"
 #include "JITScannable.h"
 #include "MethodOfGettingAValueProfile.h"
 #include <wtf/BitVector.h>
 #include <wtf/GenericHashKey.h>
 #include <wtf/HashMap.h>
+#include <wtf/JSONValues.h>
 #include <wtf/StackCheck.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -314,13 +316,16 @@ public:
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
     void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext*);
     void dump(PrintStream&, Edge);
-    void dump(PrintStream&, const char* prefix, Node*, DumpContext* = nullptr);
+    void dump(PrintStream&, const char* prefix, Node*, DumpContext* = nullptr, bool inIonGraph = false);
     static int amountOfNodeWhiteSpace(Node*);
     static void printNodeWhiteSpace(PrintStream&, Node*);
 
     // Dump the code origin of the given node as a diff from the code origin of the
     // preceding node. Returns true if anything was printed.
     bool dumpCodeOrigin(PrintStream&, const char* prefix, Node*& previousNode, Node* currentNode, DumpContext*);
+
+    void dumpAndReleaseIonGraph();
+    void appendIonGraphPass(const String& passName);
 
     AddSpeculationMode addSpeculationMode(Node* add, bool leftShouldSpeculateInt32, bool rightShouldSpeculateInt32, PredictionPass pass)
     {
@@ -413,7 +418,37 @@ public:
 
         return shouldSpeculateInt52ForAdd(left) && shouldSpeculateInt52ForAdd(right);
     }
-    
+
+    bool modShouldSpeculateInt52(Node* node)
+    {
+        // This is much more relaxed compared to addShouldSpeculateInt52.
+        // The reason is double mod is so costly, so it is worth trying with much more aggressively compared to addShouldSpeculateInt52.
+        if (!enableInt52())
+            return false;
+
+        Node* left = node->child1().node();
+        Node* right = node->child2().node();
+
+        if (hasExitSite(node, Int52Overflow))
+            return false;
+
+        if (hasExitSite(node, NegativeZero))
+            return false;
+
+        if (Node::shouldSpeculateInt52(left, right))
+            return true;
+
+        auto shouldSpeculateInt52ForMod = [](Node* node) {
+            // When DoubleConstant node appears, it means that users explicitly write a constant in their code with double form instead of integer form (1.0 instead of 1).
+            // In that case, we should honor this decision: using it as integer is not appropriate.
+            if (node->op() == DoubleConstant)
+                return false;
+            return isIntAnyFormat(node->prediction());
+        };
+
+        return shouldSpeculateInt52ForMod(left) && shouldSpeculateInt52ForMod(right);
+    }
+
     bool binaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)
     {
         Node* left = node->child1().node();
@@ -470,6 +505,35 @@ public:
         return node->child1()->shouldSpeculateBigInt32();
     }
 #endif
+
+    bool binaryArithShouldSpeculateHeapBigInt(Node* node)
+    {
+        if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child2().node()))
+            return true;
+
+        if (hasExitSite(node, BadType))
+            return false;
+
+        auto isHeapBigIntOrOther = [](Node* n) {
+            SpeculatedType prediction = n->prediction();
+            return prediction && !(prediction & ~(SpecHeapBigInt | SpecOther));
+        };
+
+        return (node->child1()->shouldSpeculateHeapBigInt() && isHeapBigIntOrOther(node->child2().node()))
+            || (node->child2()->shouldSpeculateHeapBigInt() && isHeapBigIntOrOther(node->child1().node()));
+    }
+
+    bool unaryArithShouldSpeculateHeapBigInt(Node* node)
+    {
+        if (node->child1()->shouldSpeculateHeapBigInt())
+            return true;
+
+        if (hasExitSite(node, BadType))
+            return false;
+
+        SpeculatedType prediction = node->child1()->prediction();
+        return prediction && !(prediction & ~(SpecHeapBigInt | SpecOther));
+    }
 
     bool variadicArithShouldSpeculateInt32(Node* node, PredictionPass pass)
     {
@@ -567,7 +631,7 @@ public:
     void appendBlock(std::unique_ptr<BasicBlock>&& basicBlock)
     {
         basicBlock->index = m_blocks.size();
-        m_blocks.append(WTFMove(basicBlock));
+        m_blocks.append(WTF::move(basicBlock));
     }
     
     void killBlock(BlockIndex blockIndex)
@@ -896,6 +960,13 @@ public:
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpointSet();
         return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ArrayIteratorProtocolWatchpointSet);
+    }
+
+    bool isWatchingSetIteratorProtocolWatchpoint(Node* node)
+    {
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->setIteratorProtocolWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::SetIteratorProtocolWatchpointSet);
     }
 
     bool isWatchingNumberToStringWatchpoint(Node* node)
@@ -1236,7 +1307,7 @@ public:
 
     void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, CodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
     {
-        m_catchEntrypoints.append(CatchEntrypointData { machineCode, FixedVector<FlushFormat>(WTFMove(argumentFormats)), bytecodeIndex });
+        m_catchEntrypoints.append(CatchEntrypointData { machineCode, FixedVector<FlushFormat>(WTF::move(argumentFormats)), bytecodeIndex });
     }
 
     void freeDFGIRAfterLowering();
@@ -1247,6 +1318,8 @@ public:
     const ConcatKeyAtomStringCache* tryAddConcatKeyAtomStringCache(const String&, const String&, ConcatKeyAtomStringCache::Mode);
 
     bool afterFixup() { return m_planStage >= PlanStage::AfterFixup; }
+
+    RefPtr<JSON::Array> ionGraphPasses() const { return m_ionGraphPasses; }
 
     StackCheck m_stackChecker;
     VM& m_vm;
@@ -1444,7 +1517,29 @@ private:
     B3::SparseCollection<Node> m_nodes;
     SegmentedVector<RegisteredStructureSet, 16> m_structureSets;
     Prefix m_prefix;
+    RefPtr<JSON::Object> m_ionGraphFunction;
+    RefPtr<JSON::Array> m_ionGraphPasses;
 };
+
+inline FunctionAllowlist& ensureGlobalDumpAllowlist()
+{
+    static LazyNeverDestroyed<FunctionAllowlist> dumpGraphAllowlist;
+    static std::once_flag initializeAllowlistFlag;
+    std::call_once(initializeAllowlistFlag, [] {
+        const char* allowlistFile = Options::dumpGraphAllowlist();
+        dumpGraphAllowlist.construct(allowlistFile);
+    });
+    return dumpGraphAllowlist;
+}
+
+inline bool shouldDumpGraphAtEachPhase(Graph& graph)
+{
+    JITCompilationMode mode = graph.m_plan.mode();
+    if (!(isFTL(mode) ? (Options::dumpGraphAtEachPhase() || Options::dumpDFGFTLGraphAtEachPhase()) : (Options::dumpGraphAtEachPhase() || Options::dumpDFGGraphAtEachPhase())))
+        return false;
+
+    return ensureGlobalDumpAllowlist().contains(graph.m_codeBlock);
+}
 
 } } // namespace JSC::DFG
 

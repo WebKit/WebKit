@@ -32,7 +32,7 @@ public:
     static JSTestCEReactionsStringifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestCEReactionsStringifier* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifier>(vm)) JSTestCEReactionsStringifier(structure, *globalObject, WTFMove(impl));
+        JSTestCEReactionsStringifier* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifier>(vm)) JSTestCEReactionsStringifier(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestCEReactionsStringifier* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestCEReactionsStringifier&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestCEReactionsStringifier* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestCEReactionsStringifier>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestCEReactionsStringifier& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestCEReactionsStringifier>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestCEReactionsStringifier> {
     using WrapperClass = JSTestCEReactionsStringifier;

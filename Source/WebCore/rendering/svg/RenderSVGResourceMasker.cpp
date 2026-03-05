@@ -41,10 +41,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceMasker);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceMasker);
 
 RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, RenderStyle&& style)
-    : RenderSVGResourceContainer(Type::SVGResourceMasker, element, WTFMove(style))
+    : RenderSVGResourceContainer(Type::SVGResourceMasker, element, WTF::move(style))
 {
 }
 
@@ -97,9 +97,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     if (!coordinateSystemOriginTranslation.isZero())
         context.translate(coordinateSystemOriginTranslation);
 
-    // FIXME: This needs to be bounding box and should not use repaint rect.
-    // https://bugs.webkit.org/show_bug.cgi?id=278551
-    auto repaintBoundingBox = targetRenderer.repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+    auto decoratedBounds = targetRenderer.decoratedBoundingBox();
     auto absoluteTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
 
     auto maskColorSpace = DestinationColorSpace::SRGB();
@@ -116,7 +114,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     bool missingMaskerData = !maskImage;
     if (missingMaskerData) {
         // FIXME: try to use GraphicsContext::createScaledImageBuffer instead.
-        maskImage = createImageBuffer(repaintBoundingBox, absoluteTransform, maskColorSpace, &context);
+        maskImage = createImageBuffer(decoratedBounds, absoluteTransform, maskColorSpace, &context);
         if (!maskImage)
             return;
     }
@@ -141,7 +139,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 
     // The mask image has been created in the absolute coordinate space, as the image should not be scaled.
     // So the actual masking process has to be done in the absolute coordinate space as well.
-    FloatRect absoluteTargetRect = enclosingIntRect(absoluteTransform.mapRect(repaintBoundingBox));
+    FloatRect absoluteTargetRect = enclosingIntRect(absoluteTransform.mapRect(decoratedBounds));
     context.concatCTM(absoluteTransform.inverse().value_or(AffineTransform()));
     context.drawImageBuffer(*maskImage, absoluteTargetRect);
     context.endTransparencyLayer();
@@ -185,13 +183,13 @@ bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, c
     // Eventually adjust the mask image context according to the target objectBoundingBox.
     AffineTransform maskContentTransformation;
 
-    if (protectedMaskElement()->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    if (protect(maskElement())->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskContentTransformation.translate(objectBoundingBox.location());
         maskContentTransformation.scale(objectBoundingBox.size());
     }
 
     // Draw the content into the ImageBuffer.
-    checkedLayer()->paintSVGResourceLayer(context, maskContentTransformation);
+    protect(layer())->paintSVGResourceLayer(context, maskContentTransformation);
     return true;
 }
 

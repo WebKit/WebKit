@@ -50,12 +50,12 @@ public:
         FirstLayoutDone
     };
 
-    WEBCORE_EXPORT bool committingFirstRealLoad() const;
-    bool committedFirstRealDocumentLoad() const;
-    WEBCORE_EXPORT bool creatingInitialEmptyDocument() const;
-    WEBCORE_EXPORT bool isDisplayingInitialEmptyDocument() const;
-    WEBCORE_EXPORT bool firstLayoutDone() const;
-    void advanceTo(State);
+    WEBCORE_EXPORT bool NODELETE committingFirstRealLoad() const;
+    bool NODELETE committedFirstRealDocumentLoad() const;
+    WEBCORE_EXPORT bool NODELETE creatingInitialEmptyDocument() const;
+    WEBCORE_EXPORT bool NODELETE isDisplayingInitialEmptyDocument() const;
+    WEBCORE_EXPORT bool NODELETE firstLayoutDone() const;
+    void NODELETE advanceTo(State);
 
     State stateForDebugging() const { return m_state; }
 

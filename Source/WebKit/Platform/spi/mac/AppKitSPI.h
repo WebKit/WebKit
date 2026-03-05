@@ -25,6 +25,9 @@
 
 #pragma once
 
+#import <wtf/Compiler.h>
+#import <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(MAC)
@@ -48,7 +51,17 @@ DECLARE_SYSTEM_HEADER
 #import <AppKit/NSScrollPocket_Private.h>
 #endif
 
+#import <AppKit/NSGestureRecognizer_Private.h>
 #import <AppKit/NSPanGestureRecognizer_Private.h>
+#import <AppKit/NSPressGestureRecognizer_Private.h>
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+#import <AppKit/NSViewCornerConfiguration_Private.h>
+#endif
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+#import <AppKit/NSTextSelectionManager.h>
+#endif
 
 #else
 
@@ -133,6 +146,53 @@ typedef NS_ENUM(NSInteger, NSScrollPocketEdge) {
 @property (readonly) NSTimeInterval timestamp;
 @end
 
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+
+@interface _NSCornerRadius : NSObject
+@property (class, copy, readonly) _NSCornerRadius *containerConcentricRadius;
++ (_NSCornerRadius *)fixedRadius:(CGFloat)radius;
+@end
+
+@interface NSViewCornerRadii : NSObject
+@property CGFloat topLeft;
+@property CGFloat topRight;
+@property CGFloat bottomLeft;
+@property CGFloat bottomRight;
+@property (copy) CALayerCornerCurve cornerCurve;
+@end
+
+@interface NSViewCornerConfiguration : NSObject
++ (NSViewCornerConfiguration *)configurationWithRadius:(_NSCornerRadius *)radius;
++ (instancetype)configurationWithTopLeftRadius:(nullable _NSCornerRadius *)topLeftRadius topRightRadius:(nullable _NSCornerRadius *)topRightRadius bottomLeftRadius:(nullable _NSCornerRadius *)bottomLeftRadius bottomRightRadius:(nullable _NSCornerRadius *)bottomRightRadius;
+@end
+
+@interface NSPressGestureRecognizer (SPI)
+@property BOOL cancelPastAllowableMovement;
+@end
+
+@interface NSView (NSViewCornerConfiguration)
+@property (nullable, readonly) NSViewCornerRadii *_effectiveCornerRadii;
+@property (readonly, nullable, copy) NSViewCornerConfiguration *_cornerConfiguration;
+- (void)_viewDidChangeEffectiveCornerRadii;
+- (void)_invalidateCornerConfiguration;
+@end
+
+#endif
+
+#if !HAVE(NSGESTURERECOGNIZER_MODIFIER_FLAGS)
+@interface NSGestureRecognizer (SPI)
+- (NSEventModifierFlags)modifierFlags;
+@end
+#endif
+
+@protocol NSGestureRecognizerDelegatePrivate <NSGestureRecognizerDelegate>
+
+@optional
+
+- (BOOL)_gestureRecognizer:(NSGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(NSGestureRecognizer *)preventedGestureRecognizer;
+
+@end
+
 #endif
 
 @interface NSPopover (IPI)
@@ -159,5 +219,17 @@ typedef void (^NSWindowSnapshotReadinessHandler) (void);
 - (NSWindowSnapshotReadinessHandler)_holdResizeSnapshotWithReason:(NSString *)reason;
 @end
 #endif
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+@interface NSTextSelectionManager (WebKit_SPI)
+@property (weak) id /* <NSTextSelectionManagerDelegate> */ _webkitDelegate;
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
+
+#endif // HAVE(APPKIT_GESTURES_SUPPORT)
 
 #endif // PLATFORM(MAC)

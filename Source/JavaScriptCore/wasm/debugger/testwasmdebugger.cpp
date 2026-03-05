@@ -27,10 +27,18 @@
 
 #include <wtf/DataLog.h>
 
-#if ENABLE(WEBASSEMBLY)
+#if OS(WINDOWS)
+#include <windows.h>
+#include <wtf/win/WTFCRTDebug.h>
+#endif
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#include "ExecutionHandlerIdleStopTest.h"
+#include "ExecutionHandlerTest.h"
+#include "GDBPacketParserTest.h"
 #include "InitializeThreading.h"
 #include "Options.h"
 #include "TestUtilities.h"
@@ -39,16 +47,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
-#if OS(WINDOWS)
-#include <wtf/win/WTFCRTDebug.h>
-#endif
-
 using namespace JSC;
 using namespace JSC::Wasm;
 
-// Test counters for VirtualAddress tests
-static int testsRun = 0;
-static int testsPassed = 0;
+// Test counter for VirtualAddress tests (assertion-based, crash on failure)
 static int testsFailed = 0;
 
 static void testWASMVirtualAddressConstants()
@@ -292,7 +294,9 @@ static int runAllTests()
     dataLogLn("Starting WASM Debugger Test Suite");
     dataLogLn("===============================================");
 
-    // VirtualAddress infrastructure tests
+    dataLogLn("\n--- GDB Packet Parser Tests ---");
+    testGDBPacketParser();
+
     dataLogLn("\n--- VirtualAddress Infrastructure Tests ---");
     testWASMVirtualAddressConstants();
     testWASMVirtualAddressEncoding();
@@ -302,18 +306,24 @@ static int runAllTests()
     testWASMVirtualAddressHashTraits();
     testWASMVirtualAddressOperators();
 
-    // WASM Debug Info Tests (in separate file)
     dataLogLn("\n--- WASM Debug Info Tests ---");
     int debugInfoTestsFailed = testWasmDebugInfo();
 
-    // Summary combining both test suites
+    dataLogLn("\n--- WASM Debugger Execution Handler Tests ---");
+    int executionHandlerTestsFailed = testExecutionHandler();
+
+    dataLogLn("\n--- WASM Debugger Idle VM Stress Tests ---");
+    int idleStopTestsFailed = testExecutionHandlerIdleStop();
+
     dataLogLn("===============================================");
     dataLogLn("Combined Test Results:");
-    dataLogLn("  VirtualAddress Tests - Passed: ", testsPassed, " / ", testsRun);
+    dataLogLn("  VirtualAddress Tests - PASSED (assertion-based)");
     dataLogLn("  WASM Debug Info Tests - See detailed results above");
-    dataLogLn("  Total Failures: ", testsFailed, " (VirtualAddress) + ", debugInfoTestsFailed, " (Debug Info) = ", testsFailed + debugInfoTestsFailed);
+    dataLogLn("  WASM Debugger Stress Tests - See detailed results above");
+    dataLogLn("  WASM Debugger Idle VM Tests - See detailed results above");
+    dataLogLn("  Total Failures: ", testsFailed, " (VirtualAddress) + ", debugInfoTestsFailed, " (Debug Info) + ", executionHandlerTestsFailed, " (Stress) + ", idleStopTestsFailed, " (Idle VM) = ", testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed + idleStopTestsFailed);
 
-    int totalFailures = testsFailed + debugInfoTestsFailed;
+    int totalFailures = testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed + idleStopTestsFailed;
     if (!totalFailures) {
         dataLogLn("All tests PASSED!");
         dataLogLn("WASM debugger infrastructure is working correctly");
@@ -340,6 +350,7 @@ int main(int argc, char** argv)
     WTF::disableCRTDebugAssertDialog();
 #endif
 
+    JSC::Config::configureForTesting();
     JSC::initialize();
     JSC::Options::setOption("enableWasmDebugger=true");
     return runAllTests();
@@ -354,7 +365,7 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#else // !ENABLE(WEBASSEMBLY)
+#else // !ENABLE(WEBASSEMBLY_DEBUGGER)
 
 int main(int argc, char** argv)
 {
@@ -373,4 +384,4 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
 }
 #endif
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

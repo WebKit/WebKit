@@ -49,6 +49,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
+#include "ImageUtilities.h"
 #include "InspectorBackendClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorNetworkAgent.h"
@@ -99,7 +100,7 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorPageAgent);
 
-Ref<InspectorOverlay> InspectorPageAgent::protectedOverlay() const
+InspectorOverlay& InspectorPageAgent::overlay() const
 {
     return m_overlay.get();
 }
@@ -122,7 +123,7 @@ void InspectorPageAgent::didCreateFrontendAndBackend()
 
 void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    disable();
+    std::ignore = disable();
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
@@ -133,7 +134,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
 
     agents->setEnabledPageAgent(this);
 
-    auto& stopwatch = m_environment.executionStopwatch();
+    auto& stopwatch = protect(environment())->executionStopwatch();
     stopwatch.reset();
     stopwatch.start();
 
@@ -146,12 +147,12 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 {
     Ref { m_instrumentingAgents.get() }->setEnabledPageAgent(nullptr);
 
-    setShowPaintRects(false);
+    std::ignore = setShowPaintRects(false);
 #if !PLATFORM(IOS_FAMILY)
-    setShowRulers(false);
+    std::ignore = setShowRulers(false);
 #endif
-    overrideUserAgent(nullString());
-    setEmulatedMedia(emptyString());
+    std::ignore = overrideUserAgent(nullString());
+    std::ignore = setEmulatedMedia(emptyString());
     overridePrefersColorScheme(std::nullopt);
 
     auto& inspectedPageSettings = m_inspectedPage->settings();
@@ -178,7 +179,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 
 double InspectorPageAgent::timestamp()
 {
-    return m_environment.executionStopwatch().elapsedTime().seconds();
+    return protect(environment())->executionStopwatch().elapsedTime().seconds();
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::reload(std::optional<bool>&& ignoreCache, std::optional<bool>&& revalidateAllResources)
@@ -268,15 +269,15 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserPrefere
 {
     switch (preference) {
     case Inspector::Protocol::Page::UserPreferenceName::PrefersReducedMotion:
-        overridePrefersReducedMotion(WTFMove(value));
+        overridePrefersReducedMotion(WTF::move(value));
         return { };
 
     case Inspector::Protocol::Page::UserPreferenceName::PrefersContrast:
-        overridePrefersContrast(WTFMove(value));
+        overridePrefersContrast(WTF::move(value));
         return { };
 
     case Inspector::Protocol::Page::UserPreferenceName::PrefersColorScheme:
-        overridePrefersColorScheme(WTFMove(value));
+        overridePrefersColorScheme(WTF::move(value));
         return { };
     }
 
@@ -387,7 +388,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        auto* document = localFrame->document();
+        RefPtr document = localFrame->document();
         if (!document || !document->page())
             continue;
 
@@ -492,7 +493,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON:
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto cookie = parseCookieObject(errorString, WTFMove(cookieObject));
+    auto cookie = parseCookieObject(errorString, WTF::move(cookieObject));
     if (!cookie)
         return makeUnexpected(errorString);
 
@@ -501,7 +502,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON:
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        auto* document = localFrame->document();
+        RefPtr document = localFrame->document();
         if (!document)
             continue;
         auto* page = document->page();
@@ -520,7 +521,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const 
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        auto* document = localFrame->document();
+        RefPtr document = localFrame->document();
         if (!document)
             continue;
         auto* page = document->page();
@@ -645,7 +646,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
 #if !PLATFORM(IOS_FAMILY)
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowRulers(bool showRulers)
 {
-    protectedOverlay()->setShowRulers(showRulers);
+    protect(overlay())->setShowRulers(showRulers);
 
     return { };
 }
@@ -659,7 +660,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowPaintRects(b
     if (m_client->overridesShowPaintRects())
         return { };
 
-    protectedOverlay()->setShowPaintRects(show);
+    protect(overlay())->setShowPaintRects(show);
 
     return { };
 }
@@ -691,7 +692,7 @@ void InspectorPageAgent::frameDetached(LocalFrame& frame)
 
 Frame* InspectorPageAgent::frameForId(const Inspector::Protocol::Network::FrameId& frameId)
 {
-    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId).get();
+    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId);
 }
 
 String InspectorPageAgent::frameId(Frame* frame)
@@ -743,7 +744,7 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
         .setValue(prefersReducedMotion ? Inspector::Protocol::Page::UserPreferenceValue::Reduce : Inspector::Protocol::Page::UserPreferenceValue::NoPreference)
         .release();
 
-    defaultUserPreferences->addItem(WTFMove(prefersReducedMotionUserPreference));
+    defaultUserPreferences->addItem(WTF::move(prefersReducedMotionUserPreference));
 
     bool prefersContrast = Theme::singleton().userPrefersContrast();
 
@@ -752,7 +753,7 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
         .setValue(prefersContrast ? Inspector::Protocol::Page::UserPreferenceValue::More : Inspector::Protocol::Page::UserPreferenceValue::NoPreference)
         .release();
 
-    defaultUserPreferences->addItem(WTFMove(prefersContrastUserPreference));
+    defaultUserPreferences->addItem(WTF::move(prefersContrastUserPreference));
 
 #if ENABLE(DARK_MODE_CSS)
     auto prefersColorSchemeUserPreference = Inspector::Protocol::Page::UserPreference::create()
@@ -760,10 +761,10 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
         .setValue(m_inspectedPage->defaultUseDarkAppearance() ? Inspector::Protocol::Page::UserPreferenceValue::Dark : Inspector::Protocol::Page::UserPreferenceValue::Light)
         .release();
 
-    defaultUserPreferences->addItem(WTFMove(prefersColorSchemeUserPreference));
+    defaultUserPreferences->addItem(WTF::move(prefersColorSchemeUserPreference));
 #endif
 
-    m_frontendDispatcher->defaultUserPreferencesDidChange(WTFMove(defaultUserPreferences));
+    m_frontendDispatcher->defaultUserPreferencesDidChange(WTF::move(defaultUserPreferences));
 }
 
 #if ENABLE(DARK_MODE_CSS)
@@ -790,7 +791,7 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
         return;
 
     LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
-    auto* view = renderer.document().view();
+    RefPtr view = renderer.document().view();
 
     LayoutRect rootRect = absoluteRect;
     Ref localFrame = view->frame();
@@ -804,7 +805,7 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
         return;
     }
 
-    protectedOverlay()->showPaintRect(rootRect);
+    protect(overlay())->showPaintRect(rootRect);
 }
 
 void InspectorPageAgent::didLayout()
@@ -813,7 +814,7 @@ void InspectorPageAgent::didLayout()
     if (isFirstLayout)
         m_isFirstLayoutAfterOnLoad = false;
 
-    protectedOverlay()->update();
+    protect(overlay())->update();
 }
 
 void InspectorPageAgent::didScroll()
@@ -823,7 +824,7 @@ void InspectorPageAgent::didScroll()
 
 void InspectorPageAgent::didRecalculateStyle()
 {
-    protectedOverlay()->update();
+    protect(overlay())->update();
 }
 
 Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(LocalFrame* frame)
@@ -856,7 +857,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
     auto frameObject = buildObjectForFrame(frame);
     auto subresources = JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>::create();
     auto result = Inspector::Protocol::Page::FrameResourceTree::create()
-        .setFrame(WTFMove(frameObject))
+        .setFrame(WTF::move(frameObject))
         .setResources(subresources.copyRef())
         .release();
 
@@ -876,7 +877,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
         String targetId = cachedResource->resourceRequest().initiatorIdentifier();
         if (!targetId.isEmpty())
             resourceObject->setTargetId(targetId);
-        subresources->addItem(WTFMove(resourceObject));
+        subresources->addItem(WTF::move(resourceObject));
     }
 
     RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::FrameResourceTree>> childrenArray;
@@ -929,9 +930,9 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
 {
     Inspector::Protocol::ErrorString errorString;
 
-    InspectorDOMAgent* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
     ASSERT(domAgent);
-    Node* node = domAgent->assertNode(errorString, nodeId);
+    RefPtr node = domAgent->assertNode(errorString, nodeId);
     if (!node)
         return makeUnexpected(errorString);
     
@@ -942,8 +943,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
     auto snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);
-
-    return snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+    return encodeDataURL(WTF::move(snapshot), "image/png"_s);
 }
 
 Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Inspector::Protocol::Page::CoordinateSystem coordinateSystem)
@@ -956,12 +956,11 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int 
     RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return makeUnexpected("Main frame isn't local"_s);
-    auto snapshot = snapshotFrameRect(*localMainFrame, rectangle, WTFMove(options));
+    auto snapshot = snapshotFrameRect(*localMainFrame, rectangle, WTF::move(options));
 
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);
-
-    return snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+    return encodeDataURL(WTF::move(snapshot), "image/png"_s);
 }
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)

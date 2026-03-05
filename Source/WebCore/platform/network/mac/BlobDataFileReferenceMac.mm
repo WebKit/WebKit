@@ -42,7 +42,7 @@ void BlobDataFileReference::generateReplacementFile()
 
     auto generatedFile = FileSystem::createTemporaryZipArchive(m_path);
     if (!generatedFile.isNull())
-        m_replacementPath = WTFMove(generatedFile);
+        m_replacementPath = WTF::move(generatedFile);
 
     m_replacementShouldBeGenerated = false;
     if (!m_replacementPath.isNull()) {

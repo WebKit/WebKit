@@ -1,0 +1,61 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+
+if (rtc_enable_protobuf) {
+  if (rtc_include_tests) {
+    rtc_library("test") {
+      testonly = true
+      sources = [
+        "encoded_frame_generators.cc",
+        "encoded_frame_generators.h",
+        "matchers.h",
+        "parsed_rtc_event_log_builder.cc",
+        "parsed_rtc_event_log_builder.h",
+        "simulated_time_test_fixture.cc",
+        "simulated_time_test_fixture.h",
+      ]
+      deps = [
+        "../../../../api:libjingle_logging_api",
+        "../../../../api:rtp_packet_info",
+        "../../../../api/environment",
+        "../../../../api/rtc_event_log",
+        "../../../../api/rtc_event_log:rtc_event_log_factory",
+        "../../../../api/task_queue",
+        "../../../../api/units:time_delta",
+        "../../../../api/units:timestamp",
+        "../../../../api/video:encoded_frame",
+        "../../../../api/video:video_frame",
+        "../../../../logging:rtc_event_log_parser",
+        "../../../../logging:rtc_event_rtp_rtcp",
+        "../../../../logging:rtc_event_video",
+        "../../../../logging:rtc_stream_config",
+        "../../../../modules/rtp_rtcp:rtp_rtcp_format",
+        "../../../../rtc_base:checks",
+        "../../../../system_wrappers",
+        "../../../../test:create_test_environment",
+        "../../../../test:fake_encoded_frame",
+        "../../../../test:test_support",
+        "../../../../test/time_controller",
+        "//third_party/abseil-cpp/absl/functional:any_invocable",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+    }
+
+    rtc_library("test_tests") {
+      testonly = true
+      sources = [ "encoded_frame_generators_unittest.cc" ]
+      deps = [
+        ":test",
+        "../../../../test:create_test_environment",
+        "../../../../test:test_support",
+      ]
+    }
+  }
+}

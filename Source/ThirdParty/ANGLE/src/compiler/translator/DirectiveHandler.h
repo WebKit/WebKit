@@ -17,13 +17,14 @@
 namespace sh
 {
 class TDiagnostics;
+class TParseContext;
 
 class TDirectiveHandler : public angle::pp::DirectiveHandler, angle::NonCopyable
 {
   public:
     TDirectiveHandler(TExtensionBehavior &extBehavior,
                       TDiagnostics &diagnostics,
-                      int &shaderVersion,
+                      TParseContext &context,
                       sh::GLenum shaderType);
     ~TDirectiveHandler() override;
 
@@ -50,7 +51,7 @@ class TDirectiveHandler : public angle::pp::DirectiveHandler, angle::NonCopyable
     TPragma mPragma;
     TExtensionBehavior &mExtensionBehavior;
     TDiagnostics &mDiagnostics;
-    int &mShaderVersion;
+    TParseContext &mContext;
     sh::GLenum mShaderType;
 };
 

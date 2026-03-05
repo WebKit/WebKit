@@ -50,6 +50,7 @@
 @property (nonatomic, copy) void (^navigationActionDidBecomeDownload)(WKNavigationAction *, WKDownload *);
 @property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKNavigationResponse *, WKDownload *);
 @property (nonatomic, copy) void (^didGeneratePageLoadTiming)(_WKPageLoadTiming *);
+@property (nonatomic, copy) void (^willSubmitForm)(WKFormInfo*);
 
 - (void)allowAnyTLSCertificate;
 - (void)waitForDidStartProvisionalNavigation;

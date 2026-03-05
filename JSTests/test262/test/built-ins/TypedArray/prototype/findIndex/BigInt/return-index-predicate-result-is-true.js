@@ -23,12 +23,12 @@ info: |
     c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
     d. If testResult is true, return k.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([39n, 3n, 9n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([39n, 3n, 9n]));
   var called = 0;
 
   var result = sample.findIndex(function() {

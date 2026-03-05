@@ -75,10 +75,10 @@ RetainPtr<CFURLStorageSessionRef> NetworkStorageSession::createCFStorageSessionF
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage, IsInMemoryCookieStore isInMemoryCookieStore)
     : m_sessionID(sessionID)
     , m_isInMemoryCookieStore(isInMemoryCookieStore == IsInMemoryCookieStore::Yes)
-    , m_platformSession(WTFMove(platformSession))
+    , m_platformSession(WTF::move(platformSession))
 {
     ASSERT(processMayUseCookieAPI() || !platformCookieStorage || m_isInMemoryCookieStore);
-    m_platformCookieStorage = platformCookieStorage ? WTFMove(platformCookieStorage) : cookieStorage();
+    m_platformCookieStorage = platformCookieStorage ? WTF::move(platformCookieStorage) : cookieStorage();
 }
 
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)

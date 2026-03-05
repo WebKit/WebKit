@@ -68,16 +68,16 @@ TEST(AbsoluteCaptureTimeReceiverTest, ConvertClockOffset) {
       kPositive.ms() * (NtpTime::kFractionsPerSecond / 1000);
   constexpr TimeDelta kEpsilon = TimeDelta::Millis(1);
   std::optional<TimeDelta> converted =
-      CaptureClockOffsetUpdater::ConvertsToTimeDela(kNegativeQ32x32);
+      CaptureClockOffsetUpdater::ConvertToTimeDelta(kNegativeQ32x32);
   EXPECT_GT(converted, kNegative - kEpsilon);
   EXPECT_LT(converted, kNegative + kEpsilon);
 
-  converted = CaptureClockOffsetUpdater::ConvertsToTimeDela(kPositiveQ32x32);
+  converted = CaptureClockOffsetUpdater::ConvertToTimeDelta(kPositiveQ32x32);
   EXPECT_GT(converted, kPositive - kEpsilon);
   EXPECT_LT(converted, kPositive + kEpsilon);
 
   EXPECT_FALSE(
-      CaptureClockOffsetUpdater::ConvertsToTimeDela(std::nullopt).has_value());
+      CaptureClockOffsetUpdater::ConvertToTimeDelta(std::nullopt).has_value());
 }
 
 }  // namespace webrtc

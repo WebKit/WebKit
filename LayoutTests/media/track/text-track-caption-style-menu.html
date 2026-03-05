@@ -20,13 +20,13 @@
             video.src = findMediaFile('video', '../content/test') + '#t=0.5';
 
             run('video.textTracks[0].mode = "showing"');
-            await testExpectedEventually('allCueElements().length', 1);
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
             testExpected('firstCueElement().textContent', 'Lorem');
 
             consoleWrite('');
             consoleWrite('Pretend to show the subtitle style menu:');
             run('internals.showCaptionDisplaySettingsPreviewForMediaElement(video)');
-            await testExpectedEventually('allCueElements().length', 1);
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
             testExpected('firstCueElement().textContent', 'This is a preview');
 
             consoleWrite('');
@@ -36,8 +36,24 @@
             consoleWrite('');
             consoleWrite('Pretend to hide the subtitle style menu:');
             run('internals.hideCaptionDisplaySettingsPreviewForMediaElement(video)');
-            await testExpectedEventually('allCueElements().length', 1);
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
             testExpected('firstCueElement().textContent', 'Lorem');
+
+            consoleWrite('');
+            consoleWrite('Disable the text track:');
+            run('video.textTracks[0].mode = "disabled"');
+            await testExpectedEventually('allCueElements().length', 0, '==', 500);
+
+            consoleWrite('');
+            consoleWrite('Pretend to show the subtitle style menu:');
+            run('internals.showCaptionDisplaySettingsPreviewForMediaElement(video)');
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
+            testExpected('firstCueElement().textContent', 'This is a preview');
+
+            consoleWrite('');
+            consoleWrite('Pretend to hide the subtitle style menu:');
+            run('internals.hideCaptionDisplaySettingsPreviewForMediaElement(video)');
+            await testExpectedEventually('allCueElements().length', 0, '==', 500);
         }
 
 

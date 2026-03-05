@@ -27,6 +27,8 @@
 #include "config.h"
 #include "CredentialsContainer.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "CredentialCreationOptions.h"
 #include "CredentialRequestCoordinator.h"
 #include "CredentialRequestOptions.h"
@@ -41,7 +43,7 @@
 namespace WebCore {
 
 CredentialsContainer::CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
-    : m_document(WTFMove(document))
+    : m_document(WTF::move(document))
 {
 }
 
@@ -53,16 +55,16 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-#if ENABLE(WEB_AUTHN)
+    Ref document = *this->document();
     if (options.digital) {
-        DigitalCredential::discoverFromExternalSource(*document(), WTFMove(promise), WTFMove(options));
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+        DigitalCredential::discoverFromExternalSource(document, WTF::move(promise), WTF::move(options));
+#else
+        promise.resolve(nullptr);
+#endif
         return;
     }
-
-    document()->page()->authenticatorCoordinator().discoverFromExternalSource(*document(), WTFMove(options), WTFMove(promise));
-#else
-    promise.resolve(nullptr);
-#endif
+    document->page()->authenticatorCoordinator().discoverFromExternalSource(document, WTF::move(options), WTF::move(promise));
 }
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
@@ -76,17 +78,16 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         return;
 
     // Extra.
-    if (!document()->hasFocus()) {
+    Ref document = *this->document();
+    if (!document->hasFocus()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
         return;
     }
 
-#if ENABLE(WEB_AUTHN)
     if (options.publicKey) {
-        document()->page()->authenticatorCoordinator().create(*document(), WTFMove(options), WTFMove(options.signal), WTFMove(promise));
+        document->page()->authenticatorCoordinator().create(document, WTF::move(options), WTF::move(options.signal), WTF::move(promise));
         return;
     }
-#endif
 
     promise.resolve(nullptr);
 }
@@ -125,6 +126,7 @@ bool CredentialsContainer::performCommonChecks(const Options& options, Credentia
     }
 
     if constexpr (std::is_same_v<Options, CredentialRequestOptions>) {
+#if ENABLE(WEB_AUTHN)
         if (!options.publicKey && !options.digital) {
             promise.reject(Exception { ExceptionCode::NotSupportedError, "Missing request type."_s });
             return false;
@@ -134,6 +136,12 @@ bool CredentialsContainer::performCommonChecks(const Options& options, Credentia
             promise.reject(Exception { ExceptionCode::NotSupportedError, "Only one request type is supported at a time."_s });
             return false;
         }
+#else
+        if (!options.publicKey) {
+            promise.reject(Exception { ExceptionCode::NotSupportedError, "Missing request type."_s });
+            return false;
+        }
+#endif
     }
 
     ASSERT(document->isSecureContext());
@@ -141,3 +149,5 @@ bool CredentialsContainer::performCommonChecks(const Options& options, Credentia
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

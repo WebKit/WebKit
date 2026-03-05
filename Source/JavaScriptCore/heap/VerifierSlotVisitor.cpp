@@ -51,7 +51,7 @@ constexpr int maxMarkingStackFramesToCapture = 100;
 
 MarkerData::MarkerData(ReferrerToken referrer, std::unique_ptr<StackTrace>&& stack)
     : m_referrer(referrer)
-    , m_stack(WTFMove(stack))
+    , m_stack(WTF::move(stack))
 {
 }
 
@@ -64,7 +64,7 @@ void VerifierSlotVisitor::MarkedBlockData::addMarkerData(unsigned atomNumber, Ma
 {
     if (m_markers.isEmpty())
         m_markers.grow(MarkedBlock::atomsPerBlock);
-    m_markers[atomNumber] = WTFMove(marker);
+    m_markers[atomNumber] = WTF::move(marker);
 }
 
 const MarkerData* VerifierSlotVisitor::MarkedBlockData::markerData(unsigned atomNumber) const
@@ -89,7 +89,7 @@ const MarkerData* VerifierSlotVisitor::PreciseAllocationData::markerData() const
 
 void VerifierSlotVisitor::PreciseAllocationData::addMarkerData(MarkerData&& marker)
 {
-    m_marker = WTFMove(marker);
+    m_marker = WTF::move(marker);
 }
 
 const MarkerData* VerifierSlotVisitor::OpaqueRootData::markerData() const
@@ -101,7 +101,7 @@ const MarkerData* VerifierSlotVisitor::OpaqueRootData::markerData() const
 
 void VerifierSlotVisitor::OpaqueRootData::addMarkerData(MarkerData&& marker)
 {
-    m_marker = WTFMove(marker);
+    m_marker = WTF::move(marker);
 }
 
 VerifierSlotVisitor::VerifierSlotVisitor(JSC::Heap& heap)
@@ -120,7 +120,7 @@ VerifierSlotVisitor::~VerifierSlotVisitor()
 
 void VerifierSlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(AbstractSlotVisitor&)>> task)
 {
-    m_constraintTasks.append(WTFMove(task));
+    m_constraintTasks.append(WTF::move(task));
 }
 
 NO_RETURN_DUE_TO_CRASH void VerifierSlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)>>)

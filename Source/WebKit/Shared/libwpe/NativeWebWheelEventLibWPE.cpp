@@ -26,8 +26,8 @@
 #include "config.h"
 #include "NativeWebWheelEvent.h"
 
+#if USE(LIBWPE)
 #include "WebEventFactory.h"
-
 #include <cstdio>
 
 namespace WebKit {
@@ -38,3 +38,5 @@ NativeWebWheelEvent::NativeWebWheelEvent(struct wpe_input_axis_event* event, flo
 }
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE)

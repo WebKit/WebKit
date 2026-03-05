@@ -38,7 +38,7 @@ class ReportingScope;
 class ScriptExecutionContext;
 
 class ReportingObserver final : public RefCounted<ReportingObserver>, public ActiveDOMObject  {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ReportingObserver);
+    WTF_MAKE_TZONE_ALLOCATED(ReportingObserver);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -58,7 +58,7 @@ public:
 
     void appendQueuedReportIfCorrectType(const Ref<Report>&);
 
-    ReportingObserverCallback& callbackConcurrently();
+    ReportingObserverCallback& NODELETE callbackConcurrently();
 
     bool virtualHasPendingActivity() const final;
 

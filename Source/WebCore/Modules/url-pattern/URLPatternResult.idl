@@ -31,24 +31,24 @@
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    ImplementedAs=URLPatternComponentResult
+    ImplementedAs=URLPatternComponentResult,
 ] dictionary URLPatternComponentResult {
-    USVString input;
-    record<USVString, (undefined or USVString)> groups;
+    [ImplementationRequired] USVString input;
+    [ImplementationRequired] record<USVString, (undefined or USVString)> groups;
 };
 
 [
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary URLPatternResult {
-    sequence<URLPatternInput> inputs;
+    [ImplementationRequired] sequence<URLPatternInput> inputs;
 
-    URLPatternComponentResult protocol;
-    URLPatternComponentResult username;
-    URLPatternComponentResult password;
-    URLPatternComponentResult hostname;
-    URLPatternComponentResult port;
-    URLPatternComponentResult pathname;
-    URLPatternComponentResult search;
-    URLPatternComponentResult hash;
+    [ImplementationRequired] URLPatternComponentResult protocol;
+    [ImplementationRequired] URLPatternComponentResult username;
+    [ImplementationRequired] URLPatternComponentResult password;
+    [ImplementationRequired] URLPatternComponentResult hostname;
+    [ImplementationRequired] URLPatternComponentResult port;
+    [ImplementationRequired] URLPatternComponentResult pathname;
+    [ImplementationRequired] URLPatternComponentResult search;
+    [ImplementationRequired] URLPatternComponentResult hash;
 };

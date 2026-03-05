@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://w3c.github.io/FileAPI/#dfn-filelist
 [
     Exposed=(Window,Worker),
 ] interface FileList {
     readonly attribute unsigned long length;
-    getter File item(unsigned long index);
+    getter File? item(unsigned long index);
 };
 

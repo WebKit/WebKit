@@ -42,17 +42,21 @@ public:
 
     void start(ReadableStreamDefaultController&&, DOMPromiseDeferred<void>&&);
     void pull(DOMPromiseDeferred<void>&&);
-    void cancel(JSC::JSValue);
+    void cancel(JSC::JSValue, DOMPromiseDeferred<void>&&);
+
+    void error(JSC::JSGlobalObject&, JSC::JSValue);
+    void error(const Exception&);
 
     bool isPulling() const { return !!m_promise; }
 
 protected:
-    ReadableStreamDefaultController& controller() { return m_controller.value(); }
-    const ReadableStreamDefaultController& controller() const { return m_controller.value(); }
+    ReadableStreamDefaultController& controller() LIFETIME_BOUND { return m_controller.value(); }
+    const ReadableStreamDefaultController& controller() const LIFETIME_BOUND { return m_controller.value(); }
 
     void startFinished();
     void pullFinished();
-    void cancelFinished();
+    void cancelFinished(std::optional<Exception>&& = { });
+    void cancelFinishedWithError(JSC::JSValue);
     WEBCORE_EXPORT void clean();
 
     virtual void setActive() = 0;
@@ -60,7 +64,7 @@ protected:
 
     virtual void doStart() = 0;
     virtual void doPull() = 0;
-    virtual void doCancel() = 0;
+    virtual void doCancel(JSC::JSValue) { cancelFinished(); }
 
 private:
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
@@ -92,7 +96,7 @@ private:
     void setInactive() final { }
     void doStart() final { }
     void doPull() final { }
-    void doCancel() final;
+    void doCancel(JSC::JSValue) final;
 
     bool m_isCancelled { false };
 };

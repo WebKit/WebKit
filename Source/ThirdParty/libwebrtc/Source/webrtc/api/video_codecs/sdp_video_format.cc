@@ -59,28 +59,6 @@ bool H264IsSamePacketizationMode(const CodecParameterMap& left,
          H264GetPacketizationModeOrDefault(right);
 }
 
-std::string AV1GetTierOrDefault(const CodecParameterMap& params) {
-  // If the parameter is not present, the tier MUST be inferred to be 0.
-  // https://aomediacodec.github.io/av1-rtp-spec/#72-sdp-parameters
-  return GetFmtpParameterOrDefault(params, kAv1FmtpTier, "0");
-}
-
-bool AV1IsSameTier(const CodecParameterMap& left,
-                   const CodecParameterMap& right) {
-  return AV1GetTierOrDefault(left) == AV1GetTierOrDefault(right);
-}
-
-std::string AV1GetLevelIdxOrDefault(const CodecParameterMap& params) {
-  // If the parameter is not present, it MUST be inferred to be 5 (level 3.1).
-  // https://aomediacodec.github.io/av1-rtp-spec/#72-sdp-parameters
-  return GetFmtpParameterOrDefault(params, kAv1FmtpLevelIdx, "5");
-}
-
-bool AV1IsSameLevelIdx(const CodecParameterMap& left,
-                       const CodecParameterMap& right) {
-  return AV1GetLevelIdxOrDefault(left) == AV1GetLevelIdxOrDefault(right);
-}
-
 #ifdef RTC_ENABLE_H265
 #ifdef RTC_ENABLE_H265_TIGHT_CHECKS
 std::string GetH265TxModeOrDefault(const CodecParameterMap& params) {
@@ -115,9 +93,12 @@ bool IsSameCodecSpecific(const std::string& name1,
     case kVideoCodecVP9:
       return VP9IsSameProfile(params1, params2);
     case kVideoCodecAV1:
-      return AV1IsSameProfile(params1, params2) &&
-             AV1IsSameTier(params1, params2) &&
-             AV1IsSameLevelIdx(params1, params2);
+      // https://aomediacodec.github.io/av1-rtp-spec/#723-usage-with-the-sdp-offeranswer-model
+      //   These media configuration parameters are asymmetrical and the
+      //   answerer MAY declare its own media configuration
+      // TODO(bugs.webrtc.org/396434695): for backward compability we currently
+      // compare profile.
+      return AV1IsSameProfile(params1, params2);
 #ifdef RTC_ENABLE_H265
     case kVideoCodecH265:
 #ifdef RTC_ENABLE_H265_TIGHT_CHECKS

@@ -42,7 +42,7 @@ public:
     ~ProgressBarMac();
 
 private:
-    const ProgressBarPart& owningProgressBarPart() const { return downcast<ProgressBarPart>(m_owningPart); }
+    Ref<const ProgressBarPart> owningProgressBarPart() const { return downcast<ProgressBarPart>(m_owningPart.get()); }
 
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
     IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;

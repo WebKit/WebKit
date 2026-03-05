@@ -67,8 +67,8 @@ void SuspendableWorkQueue::suspend(Function<void()>&& suspendFunction, Completio
         return completionHandler();
 
     // Last suspend function will be the one that is used.
-    m_suspendFunction = WTFMove(suspendFunction);
-    m_suspensionCompletionHandlers.append(WTFMove(completionHandler));
+    m_suspendFunction = WTF::move(suspendFunction);
+    m_suspensionCompletionHandlers.append(WTF::move(completionHandler));
     if (m_state == State::WillSuspend)
         return;
 
@@ -97,7 +97,7 @@ void SuspendableWorkQueue::resume()
 void SuspendableWorkQueue::dispatch(Function<void()>&& function)
 {
     RELEASE_ASSERT(function);
-    WorkQueue::dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
+    WorkQueue::dispatch([protectedThis = Ref { *this }, function = WTF::move(function)] {
         protectedThis->suspendIfNeeded();
         function();
     });
@@ -106,7 +106,7 @@ void SuspendableWorkQueue::dispatch(Function<void()>&& function)
 void SuspendableWorkQueue::dispatchAfter(Seconds seconds, Function<void()>&& function)
 {
     RELEASE_ASSERT(function);
-    WorkQueue::dispatchAfter(seconds, [protectedThis = Ref { *this }, function = WTFMove(function)] {
+    WorkQueue::dispatchAfter(seconds, [protectedThis = Ref { *this }, function = WTF::move(function)] {
         protectedThis->suspendIfNeeded();
         function();
     });
@@ -120,7 +120,7 @@ void SuspendableWorkQueue::dispatchSync(Function<void()>&& function)
         Locker suspensionLocker { m_suspensionLock };
         RELEASE_ASSERT(m_state == State::Running);
     }
-    WorkQueue::dispatchSync(WTFMove(function));
+    WorkQueue::dispatchSync(WTF::move(function));
 }
 
 void SuspendableWorkQueue::invokeAllSuspensionCompletionHandlers()

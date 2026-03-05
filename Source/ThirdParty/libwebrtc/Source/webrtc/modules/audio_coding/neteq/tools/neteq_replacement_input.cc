@@ -17,9 +17,9 @@
 #include <set>
 #include <utility>
 
-#include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/tools/fake_decode_from_file.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -40,9 +40,7 @@ NetEqReplacementInput::NetEqReplacementInput(
 }
 
 std::optional<int64_t> NetEqReplacementInput::NextPacketTime() const {
-  return packet_
-             ? std::optional<int64_t>(static_cast<int64_t>(packet_->time_ms))
-             : std::nullopt;
+  return packet_ ? std::optional(packet_->arrival_time().ms()) : std::nullopt;
 }
 
 std::optional<int64_t> NetEqReplacementInput::NextOutputEventTime() const {
@@ -54,13 +52,13 @@ NetEqReplacementInput::NextSetMinimumDelayInfo() const {
   return source_->NextSetMinimumDelayInfo();
 }
 
-std::unique_ptr<NetEqInput::PacketData> NetEqReplacementInput::PopPacket() {
-  std::unique_ptr<PacketData> to_return = std::move(packet_);
+std::unique_ptr<RtpPacketReceived> NetEqReplacementInput::PopPacket() {
+  std::unique_ptr<RtpPacketReceived> to_return = std::move(packet_);
   while (true) {
     packet_ = source_->PopPacket();
     if (!packet_)
       break;
-    if (packet_->payload.size() > packet_->header.paddingLength) {
+    if (!packet_->payload().empty()) {
       // Not padding only. Good to go. Skip this packet otherwise.
       break;
     }
@@ -81,8 +79,8 @@ bool NetEqReplacementInput::ended() const {
   return source_->ended();
 }
 
-std::optional<RTPHeader> NetEqReplacementInput::NextHeader() const {
-  return source_->NextHeader();
+const RtpPacketReceived* NetEqReplacementInput::NextPacket() const {
+  return source_->NextPacket();
 }
 
 void NetEqReplacementInput::ReplacePacket() {
@@ -95,30 +93,30 @@ void NetEqReplacementInput::ReplacePacket() {
 
   RTC_DCHECK(packet_);
 
-  RTC_CHECK_EQ(forbidden_types_.count(packet_->header.payloadType), 0)
-      << "Payload type " << static_cast<int>(packet_->header.payloadType)
+  RTC_CHECK_EQ(forbidden_types_.count(packet_->PayloadType()), 0)
+      << "Payload type " << static_cast<int>(packet_->PayloadType())
       << " is forbidden.";
 
   // Check if this packet is comfort noise.
-  if (comfort_noise_types_.count(packet_->header.payloadType) != 0) {
+  if (comfort_noise_types_.count(packet_->PayloadType()) != 0) {
     // If CNG, simply insert a zero-energy one-byte payload.
     uint8_t cng_payload[1] = {127};  // Max attenuation of CNG.
-    packet_->payload.SetData(cng_payload);
+    packet_->SetPayload(cng_payload);
     return;
   }
 
-  std::optional<RTPHeader> next_hdr = source_->NextHeader();
-  RTC_DCHECK(next_hdr);
+  const RtpPacketReceived* next_packet = source_->NextPacket();
+  RTC_DCHECK(next_packet);
   uint8_t payload[12];
   constexpr uint32_t kMaxFrameSize = 120 * 48;
   const uint32_t timestamp_diff =
-      next_hdr->timestamp - packet_->header.timestamp;
+      next_packet->Timestamp() - packet_->Timestamp();
   uint32_t frame_size = last_frame_size_timestamps_;
   if (timestamp_diff > 0) {
     frame_size = std::min(frame_size, timestamp_diff);
   }
-  const bool opus_dtx = packet_->payload.size() <= 2;
-  if (next_hdr->sequenceNumber == packet_->header.sequenceNumber + 1 &&
+  const bool opus_dtx = packet_->payload_size() <= 2;
+  if (next_packet->SequenceNumber() == packet_->SequenceNumber() + 1 &&
       timestamp_diff <= kMaxFrameSize && timestamp_diff > 0 && !opus_dtx) {
     // Packets are in order and the timestamp diff is valid.
     frame_size = timestamp_diff;
@@ -126,10 +124,10 @@ void NetEqReplacementInput::ReplacePacket() {
   }
   RTC_DCHECK_LE(frame_size, kMaxFrameSize);
   RTC_DCHECK_GT(frame_size, 0);
-  FakeDecodeFromFile::PrepareEncoded(packet_->header.timestamp, frame_size,
-                                     packet_->payload.size(), payload);
-  packet_->payload.SetData(payload);
-  packet_->header.payloadType = replacement_payload_type_;
+  FakeDecodeFromFile::PrepareEncoded(packet_->Timestamp(), frame_size,
+                                     packet_->payload_size(), payload);
+  packet_->SetPayload(payload);
+  packet_->SetPayloadType(replacement_payload_type_);
   return;
 }
 

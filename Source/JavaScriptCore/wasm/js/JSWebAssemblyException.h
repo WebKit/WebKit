@@ -53,7 +53,7 @@ public:
 
     static JSWebAssemblyException* create(VM& vm, Structure* structure, Ref<const Wasm::Tag>&& tag, FixedVector<uint64_t>&& payload)
     {
-        JSWebAssemblyException* exception = new (NotNull, allocateCell<JSWebAssemblyException>(vm)) JSWebAssemblyException(vm, structure, WTFMove(tag), WTFMove(payload));
+        JSWebAssemblyException* exception = new (NotNull, allocateCell<JSWebAssemblyException>(vm)) JSWebAssemblyException(vm, structure, WTF::move(tag), WTF::move(payload));
         exception->finishCreation(vm);
         return exception;
     }

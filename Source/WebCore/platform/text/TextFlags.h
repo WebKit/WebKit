@@ -40,7 +40,7 @@ namespace WebCore {
 class FontFeatureValues;
 
 enum class TextRenderingMode : uint8_t {
-    AutoTextRendering,
+    Auto,
     OptimizeSpeed,
     OptimizeLegibility,
     GeometricPrecision
@@ -49,8 +49,8 @@ enum class TextRenderingMode : uint8_t {
 WTF::TextStream& operator<<(WTF::TextStream&, TextRenderingMode);
 
 enum class FontSmoothingMode : uint8_t {
-    AutoSmoothing,
-    NoSmoothing,
+    Auto,
+    None,
     Antialiased,
     SubpixelAntialiased
 };
@@ -372,14 +372,14 @@ enum class Kerning : uint8_t {
 WTF::TextStream& operator<<(WTF::TextStream&, Kerning);
 
 enum class FontOpticalSizing : bool {
-    Enabled,
-    Disabled
+    None,
+    Auto
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FontOpticalSizing);
 
 // https://www.microsoft.com/typography/otspec/fvar.htm#VAT
-enum class FontStyleAxis : uint8_t {
+enum class FontStyleAxis : bool {
     slnt,
     ital
 };

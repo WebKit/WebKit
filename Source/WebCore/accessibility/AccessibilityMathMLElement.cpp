@@ -61,7 +61,7 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
     if (m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
-    if (WebCore::elementName(m_renderer->protectedNode().get()) == ElementName::MathML_math)
+    if (WebCore::elementName(protect(m_renderer->node()).get()) == ElementName::MathML_math)
         return AccessibilityRole::DocumentMath;
 
     // It's not clear which role a platform should choose for a math element.
@@ -83,7 +83,7 @@ void AccessibilityMathMLElement::addChildren()
     // browsers, so it's already unlikely to be used by web developers, even more so with `display:contents` mixed in.
     m_childrenInitialized = true;
     for (Ref object : AXChildIterator(*this))
-        addChild(WTFMove(object));
+        addChild(WTF::move(object));
 
     m_subtreeDirty = false;
 
@@ -173,13 +173,13 @@ bool AccessibilityMathMLElement::isMathOperator() const
 
 bool AccessibilityMathMLElement::isMathFenceOperator() const
 {
-    auto* mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
+    CheckedPtr mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
     return mathMLOperator && mathMLOperator->hasOperatorFlag(MathMLOperatorDictionary::Fence);
 }
 
 bool AccessibilityMathMLElement::isMathSeparatorOperator() const
 {
-    auto* mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
+    CheckedPtr mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
     return mathMLOperator && mathMLOperator->hasOperatorFlag(MathMLOperatorDictionary::Separator);
 }
 
@@ -465,7 +465,7 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
 
 int AccessibilityMathMLElement::mathLineThickness() const
 {
-    auto* fraction = dynamicDowncast<RenderMathMLFraction>(renderer());
+    CheckedPtr fraction = dynamicDowncast<RenderMathMLFraction>(renderer());
     if (!fraction)
         return -1;
 

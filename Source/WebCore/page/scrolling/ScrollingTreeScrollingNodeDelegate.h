@@ -27,6 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include <WebCore/RubberbandingState.h>
 #include <WebCore/ScrollingTreeScrollingNode.h>
 
 #include <wtf/TZoneMalloc.h>
@@ -39,8 +40,8 @@ public:
     WEBCORE_EXPORT explicit ScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode&);
     WEBCORE_EXPORT virtual ~ScrollingTreeScrollingNodeDelegate();
 
-    Ref<ScrollingTreeScrollingNode> scrollingNode() { return m_scrollingNode.get().releaseNonNull(); }
-    Ref<const ScrollingTreeScrollingNode> scrollingNode() const { return m_scrollingNode.get().releaseNonNull(); }
+    Ref<ScrollingTreeScrollingNode> scrollingNode() { return m_scrollingNode; }
+    Ref<const ScrollingTreeScrollingNode> scrollingNode() const { return m_scrollingNode; }
 
     virtual bool startAnimatedScrollToPosition(FloatPoint) = 0;
     virtual void stopAnimatedScroll() = 0;
@@ -62,6 +63,10 @@ public:
 
     virtual FloatPoint adjustedScrollPosition(const FloatPoint& scrollPosition) const { return scrollPosition; }
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
+
+#if HAVE(RUBBER_BANDING)
+    virtual std::optional<RubberbandingState> captureRubberbandingState() const { return std::nullopt; }
+#endif
 
 protected:
     WEBCORE_EXPORT RefPtr<ScrollingTree> scrollingTree() const;
@@ -85,7 +90,7 @@ protected:
     ScrollElasticity verticalScrollElasticity() const { return scrollingNode()->verticalScrollElasticity(); }
 
 private:
-    ThreadSafeWeakPtr<ScrollingTreeScrollingNode> m_scrollingNode; // m_scrollingNode is expected never be null
+    ThreadSafeWeakRef<ScrollingTreeScrollingNode> m_scrollingNode;
 };
 
 } // namespace WebCore

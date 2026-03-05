@@ -47,17 +47,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProcessingInstruction);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessingInstruction);
 
 inline ProcessingInstruction::ProcessingInstruction(Document& document, String&& target, String&& data)
-    : CharacterData(document, WTFMove(data), PROCESSING_INSTRUCTION_NODE)
-    , m_target(WTFMove(target))
+    : CharacterData(document, WTF::move(data), NodeType::ProcessingInstruction)
+    , m_target(WTF::move(target))
 {
 }
 
 Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, String&& target, String&& data)
 {
-    return adoptRef(*new ProcessingInstruction(document, WTFMove(target), WTFMove(data)));
+    return adoptRef(*new ProcessingInstruction(document, WTF::move(target), WTF::move(data)));
 }
 
 ProcessingInstruction::~ProcessingInstruction()
@@ -147,14 +147,14 @@ void ProcessingInstruction::checkStyleSheet()
             if (m_isXSL) {
                 auto options = CachedResourceLoader::defaultCachedResourceOptions();
                 options.mode = FetchOptions::Mode::SameOrigin;
-                m_cachedSheet = document->protectedCachedResourceLoader()->requestXSLStyleSheet({ ResourceRequest(document->completeURL(href)), options }).value_or(nullptr);
+                m_cachedSheet = protect(document->cachedResourceLoader())->requestXSLStyleSheet({ ResourceRequest(document->completeURL(href)), options }).value_or(nullptr);
             } else
 #endif
             {
                 String charset = attributes->get<HashTranslatorASCIILiteral>("charset"_s);
-                CachedResourceRequest request(document->completeURL(href), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, charset.isEmpty() ? String::fromLatin1(document->charset()) : WTFMove(charset));
+                CachedResourceRequest request(document->completeURL(href), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, charset.isEmpty() ? String::fromLatin1(document->charset()) : WTF::move(charset));
 
-                m_cachedSheet = document->protectedCachedResourceLoader()->requestCSSStyleSheet(WTFMove(request)).value_or(nullptr);
+                m_cachedSheet = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)).value_or(nullptr);
             }
             if (CachedResourceHandle cachedSheet = m_cachedSheet)
                 cachedSheet->addClient(*this);
@@ -211,7 +211,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
     cssSheet->setTitle(m_title);
     cssSheet->setMediaQueries(MQ::MediaQueryParser::parse(m_media, document->cssParserContext()));
 
-    m_sheet = WTFMove(cssSheet);
+    m_sheet = WTF::move(cssSheet);
 
     // We don't need the cross-origin security check here because we are
     // getting the sheet text in "strict" mode. This enforces a valid CSS MIME
@@ -229,16 +229,11 @@ void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& base
 }
 #endif
 
-RefPtr<StyleSheet> ProcessingInstruction::protectedSheet() const
-{
-    return m_sheet;
-}
-
 void ProcessingInstruction::parseStyleSheet(const String& sheet)
 {
     Ref styleSheet = *m_sheet;
     if (m_isCSS)
-        downcast<CSSStyleSheet>(styleSheet.get()).protectedContents()->parseString(sheet);
+        protect(downcast<CSSStyleSheet>(styleSheet.get()).contents())->parseString(sheet);
 #if ENABLE(XSLT)
     else if (m_isXSL)
         downcast<XSLStyleSheet>(styleSheet.get()).parseString(sheet);
@@ -250,7 +245,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_loading = false;
 
     if (m_isCSS)
-        downcast<CSSStyleSheet>(styleSheet.get()).protectedContents()->checkLoaded();
+        protect(downcast<CSSStyleSheet>(styleSheet.get()).contents())->checkLoaded();
 #if ENABLE(XSLT)
     else if (m_isXSL)
         downcast<XSLStyleSheet>(styleSheet.get()).checkLoaded();
@@ -270,7 +265,7 @@ Node::InsertedIntoAncestorResult ProcessingInstruction::insertedIntoAncestor(Ins
     CharacterData::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
-    protectedDocument()->styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
+    protect(document())->styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 

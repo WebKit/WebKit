@@ -247,8 +247,8 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         }
         EXPECT_EQ(underline, fontPanel.hasUnderline);
         EXPECT_EQ(strikeThrough, fontPanel.hasStrikeThrough);
-        checkColor([fontPanel.foregroundColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace], { WTFMove(expectedColor) });
-        checkFont(fontManager.selectedFont, WTFMove(expectedFont));
+        checkColor([fontPanel.foregroundColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace], { WTF::move(expectedColor) });
+        checkFont(fontManager.selectedFont, WTF::move(expectedFont));
         EXPECT_EQ(expectMultipleFonts, fontManager.multiple);
 #else
         UNUSED_PARAM(expectedFont);

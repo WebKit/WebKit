@@ -27,7 +27,7 @@
 
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGShape.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGGraphicsElement.h"
 
 namespace WebCore {
@@ -40,11 +40,6 @@ inline bool RenderSVGShape::hasNonScalingStroke() const
 inline SVGGraphicsElement& RenderSVGShape::graphicsElement() const
 {
     return downcast<SVGGraphicsElement>(RenderSVGModelObject::element());
-}
-
-inline Ref<SVGGraphicsElement> RenderSVGShape::protectedGraphicsElement() const
-{
-    return graphicsElement();
 }
 
 } // namespace WebCore

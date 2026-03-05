@@ -37,4 +37,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     ta.slice();
   });
-});
+}, null, ["passthrough"]);

@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
 #include "api/sequence_checker.h"
 #include "modules/audio_device/audio_device_buffer.h"
@@ -87,12 +88,12 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
     NUM_STATUSES = 4
   };
 
-  WindowsAudioDeviceModule(std::unique_ptr<AudioInput> audio_input,
-                           std::unique_ptr<AudioOutput> audio_output,
-                           TaskQueueFactory* task_queue_factory)
-      : input_(std::move(audio_input)),
-        output_(std::move(audio_output)),
-        task_queue_factory_(task_queue_factory) {
+  WindowsAudioDeviceModule(const Environment& env,
+                           std::unique_ptr<AudioInput> audio_input,
+                           std::unique_ptr<AudioOutput> audio_output)
+      : env_(env),
+        input_(std::move(audio_input)),
+        output_(std::move(audio_output)) {
     RTC_CHECK(input_);
     RTC_CHECK(output_);
     RTC_DLOG(LS_INFO) << __FUNCTION__;
@@ -132,8 +133,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
     if (initialized_) {
       return 0;
     }
-    audio_device_buffer_ =
-        std::make_unique<AudioDeviceBuffer>(task_queue_factory_);
+    audio_device_buffer_ = std::make_unique<AudioDeviceBuffer>(env_);
     AttachAudioBuffer();
     InitStatus status;
     if (output_->Init() != 0) {
@@ -485,6 +485,8 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
  private:
+  const Environment env_;
+
   // Ensures that the class is used on the same thread as it is constructed
   // and destroyed on.
   SequenceChecker thread_checker_;
@@ -494,8 +496,6 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   // Implements the AudioOutput interface and deals with audio rendering parts.
   const std::unique_ptr<AudioOutput> output_;
-
-  TaskQueueFactory* const task_queue_factory_;
 
   // The AudioDeviceBuffer (ADB) instance is needed for sending/receiving audio
   // to/from the WebRTC layer. Created and owned by this object. Used by
@@ -510,12 +510,12 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
 webrtc::scoped_refptr<AudioDeviceModuleForTest>
 CreateWindowsCoreAudioAudioDeviceModuleFromInputAndOutput(
+    const Environment& env,
     std::unique_ptr<AudioInput> audio_input,
-    std::unique_ptr<AudioOutput> audio_output,
-    TaskQueueFactory* task_queue_factory) {
+    std::unique_ptr<AudioOutput> audio_output) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
-  return webrtc::make_ref_counted<WindowsAudioDeviceModule>(
-      std::move(audio_input), std::move(audio_output), task_queue_factory);
+  return make_ref_counted<WindowsAudioDeviceModule>(env, std::move(audio_input),
+                                                    std::move(audio_output));
 }
 
 }  // namespace webrtc_win

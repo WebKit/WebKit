@@ -26,7 +26,7 @@
 
 #include <WebCore/ScrollAxis.h>
 #include <WebCore/StyleValueTypes.h>
-#include <WebCore/StyleViewTimelineInsets.h>
+#include <WebCore/StyleViewTimelineInsetItem.h>
 
 namespace WebCore {
 

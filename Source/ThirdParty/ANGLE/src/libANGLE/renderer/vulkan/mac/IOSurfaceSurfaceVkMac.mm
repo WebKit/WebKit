@@ -134,7 +134,7 @@ egl::Error IOSurfaceSurfaceVkMac::unMakeCurrent(const gl::Context *context)
     ASSERT(context != nullptr);
     ContextVk *contextVk = vk::GetImpl(context);
     angle::Result result =
-        contextVk->flushAndSubmitCommands(nullptr, nullptr, RenderPassClosureReason::ContextChange);
+        contextVk->flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::ContextChange);
     return angle::ToEGL(result, EGL_BAD_SURFACE);
 }
 
@@ -185,7 +185,7 @@ egl::Error IOSurfaceSurfaceVkMac::bindTexImage(const gl::Context *context,
         contextVk, gl::ImageIndex::Make2D(0),
         gl::Extents(static_cast<int>(width), pixelUnpack.imageHeight, 1), gl::Offset(),
         internalFormatInfo, pixelUnpack, kIOSurfaceFormats[mFormatIndex].type,
-        reinterpret_cast<uint8_t *>(source), format, vk::ImageAccess::Renderable,
+        reinterpret_cast<uint8_t *>(source), format, vk::ImageFormatSupport::Renderable,
         vk::ApplyImageUpdate::Defer, &updateAppliedImmediately);
 
     IOSurfaceUnlock(mIOSurface, 0, nullptr);

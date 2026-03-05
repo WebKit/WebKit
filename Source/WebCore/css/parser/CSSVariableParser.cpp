@@ -51,7 +51,7 @@ bool CSSVariableParser::isValidVariableName(const CSSParserToken& token)
     return isCustomPropertyName(token.value());
 }
 
-static bool isValidConstantName(const CSSParserToken& token)
+static bool NODELETE isValidConstantName(const CSSParserToken& token)
 {
     return token.type() == IdentToken;
 }
@@ -208,34 +208,6 @@ bool isValidDashedFunction(CSSParserTokenRange range, const CSSParserContext& pa
     // <dashed-function> --*( <declaration-value>#? )
     range.consumeWhitespace();
 
-    bool consumeComma = false;
-
-    auto consumeArgument = [&] -> std::optional<CSSParserTokenRange> {
-        if (range.atEnd())
-            return { };
-
-        if (std::exchange(consumeComma, false)) {
-            ASSERT(range.peek().type() == CommaToken);
-            range.consume();
-        }
-
-        range.consumeWhitespace();
-
-        auto argumentStart = range;
-        while (!range.atEnd()) {
-            if (range.peek().type() == CommaToken) {
-                consumeComma = true;
-                break;
-            }
-            if (range.peek().getBlockType() == CSSParserToken::BlockStart) {
-                range.consumeBlock();
-                continue;
-            }
-            range.consume();
-        }
-        return argumentStart.rangeUntil(range);
-    };
-
     auto validateArgument = [&](auto argumentRange) {
         if (argumentRange.atEnd())
             return false;
@@ -246,9 +218,11 @@ bool isValidDashedFunction(CSSParserTokenRange range, const CSSParserContext& pa
         return result && !result->hasTopLevelBraceBlockMixedWithOtherValues && !result->hasEmptyTopLevelBraceBlock;
     };
 
-    while (auto argumentRange = consumeArgument()) {
+    unsigned index = 0;
+    while (auto argumentRange = CSSPropertyParserHelpers::consumeArgument(range, index)) {
         if (!validateArgument(*argumentRange))
             return false;
+        ++index;
     }
     return true;
 }
@@ -275,7 +249,7 @@ static std::optional<VariableType> classifyVariableRange(CSSParserTokenRange ran
     if (!classifyBlockResult)
         return { };
 
-    return VariableType { { }, WTFMove(*classifyBlockResult) };
+    return VariableType { { }, WTF::move(*classifyBlockResult) };
 }
 
 bool CSSVariableParser::containsValidVariableReferences(CSSParserTokenRange range, const CSSParserContext& parserContext)
@@ -289,9 +263,6 @@ bool CSSVariableParser::containsValidVariableReferences(CSSParserTokenRange rang
 
 RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const AtomString& variableName, CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
-    if (range.atEnd())
-        return nullptr;
-
     auto type = classifyVariableRange(range, parserContext);
     if (!type)
         return nullptr;
@@ -307,9 +278,6 @@ RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const At
 
 RefPtr<const Style::CustomProperty> CSSVariableParser::parseInitialValueForUniversalSyntax(const AtomString& variableName, CSSParserTokenRange range)
 {
-    if (range.atEnd())
-        return nullptr;
-
     auto type = classifyVariableRange(range, strictCSSParserContext());
 
     if (!type || type->cssWideKeyword || type->classifyBlockResult.hasReferences)

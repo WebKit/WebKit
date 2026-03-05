@@ -80,9 +80,7 @@ public:
         virtual void didDestroyDownload() = 0;
         virtual IPC::Connection* downloadProxyConnection() = 0;
         virtual IPC::Connection* parentProcessConnectionForDownloads() = 0;
-        RefPtr<IPC::Connection> protectedParentProcessConnectionForDownloads();
         virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
-        Ref<AuthenticationManager> protectedDownloadsAuthenticationManager();
         virtual NetworkSession* networkSession(PAL::SessionID) const = 0;
     };
 
@@ -91,7 +89,7 @@ public:
 
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No, std::optional<WebCore::FrameIdentifier> frameID = std::nullopt, std::optional<WebCore::PageIdentifier> = std::nullopt, std::optional<WebCore::ProcessIdentifier> = std::nullopt);
     void dataTaskBecameDownloadTask(DownloadID, Ref<Download>&&);
-    void convertNetworkLoadToDownload(DownloadID, Ref<NetworkLoad>&&, ResponseCompletionHandler&&,  Vector<RefPtr<WebCore::BlobDataFileReference>>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void convertNetworkLoadToDownload(DownloadID, Ref<NetworkLoad>&&, ResponseCompletionHandler&&,  Vector<Ref<WebCore::BlobDataFileReference>>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void downloadDestinationDecided(DownloadID, Ref<NetworkDataTask>&&);
 
     void resumeDownload(PAL::SessionID, DownloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&&, CallDownloadDidStart, std::span<const uint8_t> activityAccessToken);
@@ -118,14 +116,13 @@ public:
 
     IPC::Connection* downloadProxyConnection();
     AuthenticationManager& downloadsAuthenticationManager();
-    
+
     Client& client() { return m_client; }
-    Ref<Client> protectedClient() { return m_client.get(); }
 
 private:
-    CheckedRef<Client> m_client;
+    const CheckedRef<Client> m_client;
     HashMap<DownloadID, Ref<PendingDownload>> m_pendingDownloads;
-    HashMap<DownloadID, RefPtr<NetworkDataTask>> m_downloadsAfterDestinationDecided;
+    HashMap<DownloadID, Ref<NetworkDataTask>> m_downloadsAfterDestinationDecided;
     DownloadMap m_downloads;
 };
 

@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x582
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 54x19
+        RenderText {#text} at (0,0) size 54x20
           text run at (0,0) width 54: "Test for "
-        RenderInline {I} at (53,0) size 641x19
-          RenderInline {A} at (53,0) size 156x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 156x19
+        RenderInline {I} at (53,0) size 641x20
+          RenderInline {A} at (53,0) size 156x20 [color=#0000EE]
+            RenderText {#text} at (53,0) size 156x20
               text run at (53,0) width 156: "rdar://problem/6059648"
-          RenderText {#text} at (208,0) size 486x19
+          RenderText {#text} at (208,0) size 486x20
             text run at (208,0) width 5: " "
             text run at (212,0) width 482: "Some content not visible when the window is short at courtneyalbright.com"
-        RenderText {#text} at (693,0) size 5x19
+        RenderText {#text} at (693,0) size 5x20
           text run at (693,0) width 5: "."
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 650x19
+        RenderText {#text} at (0,0) size 650x20
           text run at (0,0) width 479: "Each black box below should have a scroll bar allowing the blue square to "
           text run at (478,0) width 172: "be scrolled fully into view."
 layer at (18,80) size 102x102 clip at (19,81) size 100x85 scrollWidth 125

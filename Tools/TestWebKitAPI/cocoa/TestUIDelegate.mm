@@ -71,6 +71,24 @@
         _webViewDidAdjustVisibilityWithSelectors(webView, selectors);
 }
 
+- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction
+{
+    if (_takeFocus)
+        _takeFocus(webView, direction);
+}
+
+- (void)_focusWebView:(WKWebView *)webView
+{
+    if (_focusWebView)
+        _focusWebView(webView);
+}
+
+- (void)_unfocusWebView:(WKWebView *)webView
+{
+    if (_unfocusWebView)
+        _unfocusWebView(webView);
+}
+
 #if PLATFORM(MAC)
 - (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler
 {
@@ -88,28 +106,10 @@
         completionHandler(CGRectZero);
 }
 
-- (void)_focusWebView:(WKWebView *)webView
-{
-    if (_focusWebView)
-        _focusWebView(webView);
-}
-
-- (void)_unfocusWebView:(WKWebView *)webView
-{
-    if (_unfocusWebView)
-        _unfocusWebView(webView);
-}
-
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
 {
     if (_runOpenPanelWithParameters)
         _runOpenPanelWithParameters(webView, parameters, frame, completionHandler);
-}
-
-- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction
-{
-    if (_takeFocus)
-        _takeFocus(webView, direction);
 }
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
@@ -160,6 +160,18 @@
 {
     if (_insertInputSuggestion)
         _insertInputSuggestion(webView, suggestion);
+}
+
+#endif
+
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+
+- (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+{
+    if (_requestDeviceOrientationAndMotionPermissionForOrigin)
+        _requestDeviceOrientationAndMotionPermissionForOrigin(origin, requestingFrame, decisionHandler);
+    else
+        decisionHandler(WKPermissionDecisionPrompt);
 }
 
 #endif

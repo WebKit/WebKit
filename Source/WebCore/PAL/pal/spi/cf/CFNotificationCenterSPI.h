@@ -25,10 +25,14 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <CoreFoundation/CFNotificationCenterPriv.h>
 #else
+#include <CoreFoundation/CoreFoundation.h>
 static const CFIndex _CFNotificationObserverIsObjC = 1 << 10;
 #endif

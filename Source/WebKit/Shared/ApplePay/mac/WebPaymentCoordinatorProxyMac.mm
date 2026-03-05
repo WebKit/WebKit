@@ -47,8 +47,8 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
 #endif
         return completionHandler(false);
 
-    protectedCanMakePaymentsQueue()->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationViewControllerClassSingleton()), completionHandler = WTFMove(completionHandler)]() mutable {
-        RunLoop::mainSingleton().dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTFMove(completionHandler)]() mutable {
+    protect(m_canMakePaymentsQueue)->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationViewControllerClassSingleton()), completionHandler = WTF::move(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(canMakePayments);
         });
     });
@@ -75,7 +75,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 #endif
         paymentRequest = platformPaymentRequest(originatingURL, linkIconURLs, request);
 
-    checkedClient()->getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [weakThis = WeakPtr { *this }, paymentRequest, completionHandler = WTFMove(completionHandler)](const String& userAgent) mutable {
+    protect(m_client)->getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [weakThis = WeakPtr { *this }, paymentRequest, completionHandler = WTF::move(completionHandler)](const String& userAgent) mutable {
         RefPtr paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)
             return completionHandler(false);
@@ -84,7 +84,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 
         auto showPaymentUIRequestSeed = weakThis->m_showPaymentUIRequestSeed;
 
-        [PAL::getPKPaymentAuthorizationViewControllerClassSingleton() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:makeBlockPtr([paymentRequest, showPaymentUIRequestSeed, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) mutable {
+        [PAL::getPKPaymentAuthorizationViewControllerClassSingleton() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:makeBlockPtr([paymentRequest, showPaymentUIRequestSeed, weakThis = WTF::move(weakThis), completionHandler = WTF::move(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) mutable {
             RefPtr paymentCoordinatorProxy = weakThis.get();
             if (!paymentCoordinatorProxy)
                 return completionHandler(false);
@@ -100,7 +100,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
             if (showPaymentUIRequestSeed != paymentCoordinatorProxy->m_showPaymentUIRequestSeed)
                 return completionHandler(false);
 
-            RetainPtr presentingWindow = paymentCoordinatorProxy->checkedClient()->paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
+            RetainPtr presentingWindow = protect(paymentCoordinatorProxy->m_client)->paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
             if (!presentingWindow)
                 return completionHandler(false);
 

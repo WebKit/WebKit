@@ -31,21 +31,21 @@ namespace WebCore {
 namespace Style {
 
 UnevaluatedCalculationBase::UnevaluatedCalculationBase(Calculation::Value& value)
-    : calc { value }
+    : m_calc { value }
 {
 }
 
 UnevaluatedCalculationBase::UnevaluatedCalculationBase(Ref<Calculation::Value>&& value)
-    : calc { WTFMove(value) }
+    : m_calc { WTF::move(value) }
 {
 }
 
 UnevaluatedCalculationBase::UnevaluatedCalculationBase(Calculation::Child&& root, CSS::Category category, CSS::Range range)
-    : calc {
+    : m_calc {
         Calculation::Value::create(
             category,
             CSS::Range { range.min, range.max },
-            Calculation::Tree { WTFMove(root) }
+            Calculation::Tree { WTF::move(root) }
         )
     }
 {
@@ -58,14 +58,9 @@ UnevaluatedCalculationBase& UnevaluatedCalculationBase::operator=(UnevaluatedCal
 
 UnevaluatedCalculationBase::~UnevaluatedCalculationBase() = default;
 
-Ref<Calculation::Value> UnevaluatedCalculationBase::protectedCalculation() const
-{
-    return calc;
-}
-
 bool UnevaluatedCalculationBase::equal(const UnevaluatedCalculationBase& other) const
 {
-    return arePointingToEqualData(calc, other.calc);
+    return arePointingToEqualData(m_calc, other.m_calc);
 }
 
 } // namespace Style

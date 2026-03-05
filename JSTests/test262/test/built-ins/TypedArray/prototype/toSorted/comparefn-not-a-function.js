@@ -17,8 +17,8 @@ features: [TypedArray, change-array-by-copy]
 
 var invalidComparators = [null, true, false, "", /a/g, 42, 42n, [], {}, Symbol()];
 
-testWithTypedArrayConstructors(TA => {
-  const ta = new TA([1]);
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
+  const ta = new TA(makeCtorArg([1]));
   for (var i = 0; i < invalidComparators.length; i++) {
     assert.throws(TypeError, function() {
       ta.toSorted(invalidComparators[i]);

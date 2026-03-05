@@ -57,12 +57,12 @@ struct XRQuadLayerInit;
 
 // https://immersive-web.github.io/layers/#XRWebGLBindingtype
 class XRWebGLBinding : public RefCounted<XRWebGLBinding> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRWebGLBinding);
+    WTF_MAKE_TZONE_ALLOCATED(XRWebGLBinding);
 public:
 
     using WebXRWebGLRenderingContext = Variant<
-        RefPtr<WebGLRenderingContext>,
-        RefPtr<WebGL2RenderingContext>
+        Ref<WebGLRenderingContext>,
+        Ref<WebGL2RenderingContext>
     >;
 
     static ExceptionOr<Ref<XRWebGLBinding>> create(Ref<WebXRSession>&&, WebXRWebGLRenderingContext&&);
@@ -82,7 +82,7 @@ public:
 private:
     XRWebGLBinding(Ref<WebXRSession>&&, WebXRWebGLRenderingContext&&);
 
-    RefPtr<WebXRSession> m_session;
+    Ref<WebXRSession> m_session;
     WebXRWebGLRenderingContext m_context;
 };
 

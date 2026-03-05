@@ -57,6 +57,28 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
     // Public
 
+    static stringIdForStyleId(styleId, {inherited, pseudoId, type, node} = {})
+    {
+        if (!styleId)
+            return "";
+
+        let result = styleId.styleSheetId + "/" + styleId.ordinal;
+
+        if (pseudoId)
+            result += ":" + pseudoId;
+
+        if (inherited !== undefined)
+            result += ":" + (inherited ? "I" : "N");
+
+        if (node)
+            result += ":" + node.id;
+
+        if (type === WI.CSSStyleDeclaration.Type.Attribute && node)
+            result += ":attribute";
+
+        return result;
+    }
+
     get initialState() { return this._initialState; }
 
     get id()
@@ -66,10 +88,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
     get stringId()
     {
-        if (this._id)
-            return this._id.styleSheetId + "/" + this._id.ordinal;
-        else
-            return "";
+        return WI.CSSStyleDeclaration.stringIdForStyleId(this._id);
     }
 
     get ownerStyleSheet()

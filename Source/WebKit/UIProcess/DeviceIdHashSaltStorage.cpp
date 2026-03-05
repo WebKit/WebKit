@@ -63,8 +63,8 @@ void DeviceIdHashSaltStorage::completePendingHandler(CompletionHandler<void(Hash
         origins.add(hashSaltForOrigin.value->parentOrigin);
     }
 
-    RunLoop::mainSingleton().dispatch([origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(WTFMove(origins));
+    RunLoop::mainSingleton().dispatch([origins = WTF::move(origins), completionHandler = WTF::move(completionHandler)]() mutable {
+        completionHandler(WTF::move(origins));
     });
 }
 
@@ -79,10 +79,10 @@ DeviceIdHashSaltStorage::DeviceIdHashSaltStorage(const String& deviceIdHashSaltS
 
     loadStorageFromDisk([this, protectedThis = Ref { *this }] (auto&& deviceIdHashSaltForOrigins) {
         ASSERT(RunLoop::isMain());
-        m_deviceIdHashSaltForOrigins = WTFMove(deviceIdHashSaltForOrigins);
+        m_deviceIdHashSaltForOrigins = WTF::move(deviceIdHashSaltForOrigins);
         m_isLoaded = true;
 
-        auto pendingCompletionHandlers = WTFMove(m_pendingCompletionHandlers);
+        auto pendingCompletionHandlers = WTF::move(m_pendingCompletionHandlers);
         for (auto& completionHandler : pendingCompletionHandlers)
             completionHandler();
     });
@@ -92,7 +92,7 @@ DeviceIdHashSaltStorage::~DeviceIdHashSaltStorage()
 {
     m_isClosed = true;
 
-    auto pendingCompletionHandlers = WTFMove(m_pendingCompletionHandlers);
+    auto pendingCompletionHandlers = WTF::move(m_pendingCompletionHandlers);
     for (auto& completionHandler : pendingCompletionHandlers)
         completionHandler();
 }
@@ -113,7 +113,7 @@ static std::optional<SecurityOriginData> getSecurityOriginData(ASCIILiteral name
 
 void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap<String, std::unique_ptr<HashSaltForOrigin>>&&)>&& completionHandler)
 {
-    m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         ASSERT(!RunLoop::isMain());
 
         FileSystem::makeAllDirectories(m_deviceIdHashSaltStorageDirectory);
@@ -140,19 +140,19 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
                 continue;
             }
 
-            auto hashSaltForOrigin = getDataFromDecoder(decoder.get(), WTFMove(deviceIdHashSalt));
+            auto hashSaltForOrigin = getDataFromDecoder(decoder.get(), WTF::move(deviceIdHashSalt));
             if (!hashSaltForOrigin)
                 continue;
 
             auto origins = makeString(hashSaltForOrigin->documentOrigin.toString(), hashSaltForOrigin->parentOrigin.toString());
-            auto deviceIdHashSaltForOrigin = deviceIdHashSaltForOrigins.add(origins, WTFMove(hashSaltForOrigin));
+            auto deviceIdHashSaltForOrigin = deviceIdHashSaltForOrigins.add(origins, WTF::move(hashSaltForOrigin));
 
             if (!deviceIdHashSaltForOrigin.isNewEntry)
                 RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: There are two files with different hash salts for the same origin: '%s'", originPath.utf8().data());
         }
 
-        RunLoop::mainSingleton().dispatch([deviceIdHashSaltForOrigins = WTFMove(deviceIdHashSaltForOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(WTFMove(deviceIdHashSaltForOrigins));
+        RunLoop::mainSingleton().dispatch([deviceIdHashSaltForOrigins = WTF::move(deviceIdHashSaltForOrigins), completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(WTF::move(deviceIdHashSaltForOrigins));
         });
     });
 }
@@ -177,7 +177,7 @@ std::unique_ptr<DeviceIdHashSaltStorage::HashSaltForOrigin> DeviceIdHashSaltStor
         return nullptr;
     }
 
-    auto hashSaltForOrigin = makeUnique<HashSaltForOrigin>(WTFMove(securityOriginData.value()), WTFMove(parentSecurityOriginData.value()), WTFMove(deviceIdHashSalt));
+    auto hashSaltForOrigin = makeUnique<HashSaltForOrigin>(WTF::move(securityOriginData.value()), WTF::move(parentSecurityOriginData.value()), WTF::move(deviceIdHashSalt));
 
     hashSaltForOrigin->lastTimeUsed = WallTime::fromRawSeconds(lastTimeUsed);
 
@@ -200,7 +200,7 @@ void DeviceIdHashSaltStorage::storeHashSaltToDisk(const HashSaltForOrigin& hashS
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, hashSaltForOrigin = hashSaltForOrigin.isolatedCopy()]() mutable {
         auto encoder = createEncoderFromData(hashSaltForOrigin);
-        writeToDisk(WTFMove(encoder), FileSystem::pathByAppendingComponent(m_deviceIdHashSaltStorageDirectory, hashSaltForOrigin.deviceIdHashSalt));
+        writeToDisk(WTF::move(encoder), FileSystem::pathByAppendingComponent(m_deviceIdHashSaltStorageDirectory, hashSaltForOrigin.deviceIdHashSalt));
     });
 }
 
@@ -218,7 +218,7 @@ void DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall(SecurityOrig
 
         String deviceIdHashSalt = builder.toString();
 
-        auto newHashSaltForOrigin = makeUnique<HashSaltForOrigin>(WTFMove(documentOrigin), WTFMove(parentOrigin), WTFMove(deviceIdHashSalt));
+        auto newHashSaltForOrigin = makeUnique<HashSaltForOrigin>(WTF::move(documentOrigin), WTF::move(parentOrigin), WTF::move(deviceIdHashSalt));
 
         return newHashSaltForOrigin;
     }).iterator->value;
@@ -235,14 +235,14 @@ void DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(const SecurityOrigin& do
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, documentOrigin = documentOrigin.data().isolatedCopy(), parentOrigin = parentOrigin.data().isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, documentOrigin = documentOrigin.data().isolatedCopy(), parentOrigin = parentOrigin.data().isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->completeDeviceIdHashSaltForOriginCall(WTFMove(documentOrigin), WTFMove(parentOrigin), WTFMove(completionHandler));
+                protectedThis->completeDeviceIdHashSaltForOriginCall(WTF::move(documentOrigin), WTF::move(parentOrigin), WTF::move(completionHandler));
         });
         return;
     }
 
-    completeDeviceIdHashSaltForOriginCall(SecurityOriginData(documentOrigin.data()), SecurityOriginData(parentOrigin.data()), WTFMove(completionHandler));
+    completeDeviceIdHashSaltForOriginCall(SecurityOriginData(documentOrigin.data()), SecurityOriginData(parentOrigin.data()), WTF::move(completionHandler));
 }
 
 void DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins(CompletionHandler<void(HashSet<SecurityOriginData>&&)>&& completionHandler)
@@ -250,14 +250,14 @@ void DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins(CompletionHandler<void(
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->completePendingHandler(WTFMove(completionHandler));
+                protectedThis->completePendingHandler(WTF::move(completionHandler));
         });
         return;
     }
 
-    completePendingHandler(WTFMove(completionHandler));
+    completePendingHandler(WTF::move(completionHandler));
 }
 
 void DeviceIdHashSaltStorage::deleteHashSaltFromDisk(const HashSaltForOrigin& hashSaltForOrigin)
@@ -275,7 +275,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, origins, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, origins, completionHandler = WTF::move(completionHandler)]() mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -283,7 +283,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
             if (protectedThis->m_isClosed)
                 return completionHandler();
 
-            protectedThis->deleteDeviceIdHashSaltForOrigins(origins, WTFMove(completionHandler));
+            protectedThis->deleteDeviceIdHashSaltForOrigins(origins, WTF::move(completionHandler));
         });
         return;
     }
@@ -297,7 +297,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
         return needsRemoval;
     });
 
-    RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+    RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
 }
 
 void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTime time, CompletionHandler<void()>&& completionHandler)
@@ -305,7 +305,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTim
     ASSERT(RunLoop::isMain());
 
     if (!m_isLoaded) {
-        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, time, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, time, completionHandler = WTF::move(completionHandler)]() mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -313,7 +313,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTim
             if (protectedThis->m_isClosed)
                 return completionHandler();
 
-            protectedThis->deleteDeviceIdHashSaltOriginsModifiedSince(time, WTFMove(completionHandler));
+            protectedThis->deleteDeviceIdHashSaltOriginsModifiedSince(time, WTF::move(completionHandler));
         });
         return;
     }
@@ -327,7 +327,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTim
         return needsRemoval;
     });
 
-    RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+    RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
 }
 
 } // namespace WebKit

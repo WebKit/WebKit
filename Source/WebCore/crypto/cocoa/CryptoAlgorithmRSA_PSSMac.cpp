@@ -58,7 +58,7 @@ static ExceptionOr<Vector<uint8_t>> signRSA_PSS(CryptoAlgorithmIdentifier hash, 
     if (status)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(signature);
+    return WTF::move(signature);
 }
 
 static ExceptionOr<bool> verifyRSA_PSS(CryptoAlgorithmIdentifier hash, const PlatformRSAKey key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, size_t saltLength)

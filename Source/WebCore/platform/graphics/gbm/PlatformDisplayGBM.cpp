@@ -54,7 +54,7 @@ std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device
 }
 
 PlatformDisplayGBM::PlatformDisplayGBM(Ref<GLDisplay>&& glDisplay, struct gbm_device* device)
-    : PlatformDisplay(WTFMove(glDisplay))
+    : PlatformDisplay(WTF::move(glDisplay))
 {
 #if ENABLE(WEBGL)
     m_anglePlatform = EGL_PLATFORM_GBM_KHR;

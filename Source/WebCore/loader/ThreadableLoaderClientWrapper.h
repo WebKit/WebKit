@@ -56,40 +56,40 @@ public:
 
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
     {
-        if (m_client)
-            m_client->didSendData(bytesSent, totalBytesToBeSent);
+        if (RefPtr client = m_client.get())
+            client->didSendData(bytesSent, totalBytesToBeSent);
     }
 
     void didReceiveResponse(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse& response)
     {
-        if (m_client)
-            m_client->didReceiveResponse(mainContext, identifier, response);
+        if (RefPtr client = m_client.get())
+            client->didReceiveResponse(mainContext, identifier, response);
     }
 
     void didReceiveData(const SharedBuffer& buffer)
     {
-        if (m_client)
-            m_client->didReceiveData(buffer);
+        if (RefPtr client = m_client.get())
+            client->didReceiveData(buffer);
     }
 
     void didFinishLoading(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
     {
         m_done = true;
-        if (m_client)
-            m_client->didFinishLoading(mainContext, identifier, metrics);
+        if (RefPtr client = m_client.get())
+            client->didFinishLoading(mainContext, identifier, metrics);
     }
 
     void notifyIsDone(bool isDone)
     {
-        if (m_client)
-            m_client->notifyIsDone(isDone);
+        if (RefPtr client = m_client.get())
+            client->notifyIsDone(isDone);
     }
 
     void didFail(std::optional<ScriptExecutionContextIdentifier> mainContext, const ResourceError& error)
     {
         m_done = true;
-        if (m_client)
-            m_client->didFail(mainContext, error);
+        if (RefPtr client = m_client.get())
+            client->didFail(mainContext, error);
     }
 
     const String& initiator() const { return m_initiator; }

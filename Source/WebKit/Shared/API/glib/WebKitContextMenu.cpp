@@ -22,9 +22,11 @@
 
 #include "APIArray.h"
 #include "WebContextMenuItem.h"
+#include "WebKitContextMenuGAction.h"
 #include "WebKitContextMenuItem.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
+#include <WebCore/IntPoint.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -67,6 +69,7 @@ struct _WebKitContextMenuPrivate {
     GUniquePtr<GdkEvent> event;
 #endif
 #endif
+    std::optional<WebCore::IntPoint> position;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitContextMenu, webkit_context_menu, G_TYPE_OBJECT, GObject)
@@ -100,6 +103,21 @@ void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<WebContextMenuIte
     }
 }
 
+void webkitContextMenuSetPage(WebKitContextMenu* menu, WebPageProxy* page)
+{
+    for (auto* item = menu->priv->items; item; item = g_list_next(item)) {
+        auto* menuItem = WEBKIT_CONTEXT_MENU_ITEM(item->data);
+        if (auto* subMenu = webkit_context_menu_item_get_submenu(menuItem)) {
+            webkitContextMenuSetPage(subMenu, page);
+            continue;
+        }
+
+        auto* action = webkit_context_menu_item_get_gaction(menuItem);
+        if (WEBKIT_IS_CONTEXT_MENU_GACTION(action))
+            webkitContextMenuGActionSetPage(WEBKIT_CONTEXT_MENU_GACTION(action), page);
+    }
+}
+
 WebKitContextMenu* webkitContextMenuCreate(const Vector<WebContextMenuItemData>& items)
 {
     WebKitContextMenu* menu = webkit_context_menu_new();
@@ -117,7 +135,7 @@ void webkitContextMenuSetEvent(WebKitContextMenu* menu, GRefPtr<GdkEvent>&& even
 void webkitContextMenuSetEvent(WebKitContextMenu* menu, GUniquePtr<GdkEvent>&& event)
 #endif
 {
-    menu->priv->event = WTFMove(event);
+    menu->priv->event = WTF::move(event);
 }
 #endif
 
@@ -129,6 +147,11 @@ void webkitContextMenuSetParentItem(WebKitContextMenu* menu, WebKitContextMenuIt
 WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu* menu)
 {
     return menu->priv->parentItem;
+}
+
+void webkitContextMenuSetPosition(WebKitContextMenu* menu, const WebCore::IntPoint& position)
+{
+    menu->priv->position = position;
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -434,3 +457,33 @@ GdkEvent* webkit_context_menu_get_event(WebKitContextMenu* menu)
     return menu->priv->event.get();
 }
 #endif
+
+/**
+ * webkit_context_menu_get_position:
+ * @menu: a #WebKitContextMenu
+ * @x: (out) (optional): return location for the x coordinate
+ * @y: (out) (optional): return location for the y coordinate
+ *
+ * Gets the position in view coordinates where the context menu was triggered.
+ *
+ * This function only returns valid coordinates when called for a #WebKitContextMenu
+ * passed to #WebKitWebView::context-menu signal.
+ *
+ * Returns: %TRUE if valid position coordinates are available, %FALSE otherwise
+ *
+ * Since: 2.52
+ */
+gboolean webkit_context_menu_get_position(WebKitContextMenu* menu, gint* x, gint* y)
+{
+    g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU(menu), FALSE);
+
+    if (!menu->priv->position)
+        return FALSE;
+
+    if (x)
+        *x = menu->priv->position->x();
+    if (y)
+        *y = menu->priv->position->y();
+
+    return TRUE;
+}

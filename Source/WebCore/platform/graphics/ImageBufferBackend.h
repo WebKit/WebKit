@@ -121,6 +121,7 @@ public:
 
     virtual GraphicsContext& context() = 0;
     virtual void flushContext() { }
+    virtual void submitDrawingCommands() { }
 
     virtual RefPtr<NativeImage> copyNativeImage() = 0;
     virtual RefPtr<NativeImage> createNativeImageReference() = 0;
@@ -183,6 +184,11 @@ protected:
     float resolutionScale() const { return m_parameters.resolutionScale; }
     const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.bufferFormat.pixelFormat; }
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    void convertToLuminanceMaskFloat16();
+#endif
+    void convertToLuminanceMaskUint8();
 
     WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, std::span<const uint8_t> data, PixelBuffer& destination);
     WEBCORE_EXPORT void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, std::span<uint8_t> destination);

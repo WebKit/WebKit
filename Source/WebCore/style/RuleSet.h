@@ -36,6 +36,7 @@ namespace WebCore {
 
 class CSSSelector;
 class StyleSheetContents;
+class StyleRuleFunction;
 class StyleRulePositionTry;
 class StyleRuleViewTransition;
 
@@ -67,7 +68,7 @@ struct DynamicMediaQueryEvaluationChanges {
         if (type == Type::ResetStyle)
             invalidationRuleSets.clear();
         else
-            invalidationRuleSets.appendVector(WTFMove(other.invalidationRuleSets));
+            invalidationRuleSets.appendVector(WTF::move(other.invalidationRuleSets));
     };
 };
 
@@ -83,8 +84,8 @@ public:
 
     void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex);
     void addPageRule(StyleRulePage&);
-    void setViewTransitionRule(StyleRuleViewTransition&);
-    RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
+    void NODELETE setViewTransitionRule(StyleRuleViewTransition&);
+    RefPtr<StyleRuleViewTransition> NODELETE viewTransitionRule() const;
 
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();
@@ -100,7 +101,7 @@ public:
     const RuleDataVector* attributeRules(const AtomString& key, bool isHTMLName) const;
     const RuleDataVector* tagRules(const AtomString& key, bool isHTMLName) const;
     const RuleDataVector* userAgentPartRules(const AtomString& key) const { return m_userAgentPartRules.get(key); }
-    const RuleDataVector* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
+    const RuleDataVector& linkPseudoClassRules() const { return m_linkPseudoClassRules; }
     const RuleDataVector* namedPseudoElementRules(const AtomString& key) const { return m_namedPseudoElementRules.get(key); }
 #if ENABLE(VIDEO)
     const RuleDataVector& cuePseudoRules() const { return m_cuePseudoRules; }
@@ -108,9 +109,17 @@ public:
     const RuleDataVector& hostPseudoClassRules() const { return m_hostPseudoClassRules; }
     const RuleDataVector& slottedPseudoElementRules() const { return m_slottedPseudoElementRules; }
     const RuleDataVector& partPseudoElementRules() const { return m_partPseudoElementRules; }
-    const RuleDataVector* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
-    const RuleDataVector* rootElementRules() const { return &m_rootElementRules; }
-    const RuleDataVector* universalRules() const { return &m_universalRules; }
+    const RuleDataVector& focusPseudoClassRules() const { return m_focusPseudoClassRules; }
+    const RuleDataVector& focusVisiblePseudoClassRules() const { return m_focusVisiblePseudoClassRules; }
+    const RuleDataVector& fullscreenPseudoClassRules() const { return m_fullscreenPseudoClassRules; }
+    const RuleDataVector& rootElementRules() const { return m_rootElementRules; }
+    const RuleDataVector& universalRules() const { return m_universalRules; }
+    // For pseudo-element rules that apply to all elements or all HTML elements like "::marker".
+    const RuleDataVector& universalPseudoElementRules() const { return m_universalPseudoElementRules; }
+    // Pseudo element types applying to all elements in HTML namespace.
+    EnumSet<PseudoElementType> universalHTMLPseudoElementTypes() const { return m_universalHTMLPseudoElementTypes; }
+    // Pseudo element types applying to all elements.
+    EnumSet<PseudoElementType> universalPseudoElementTypes() const { return m_universalPseudoElementTypes; }
 
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
 
@@ -133,7 +142,7 @@ public:
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
 
-    const RefPtr<const StyleRulePositionTry> positionTryRuleForName(const AtomString&) const;
+    const RefPtr<const StyleRulePositionTry> NODELETE positionTryRuleForName(const AtomString&) const;
 
     String selectorsForDebugging() const;
 
@@ -146,7 +155,7 @@ private:
     using ContainerQueryIdentifier = unsigned;
     using ScopeRuleIdentifier = unsigned;
 
-    void addRule(RuleData&&, CascadeLayerIdentifier, ContainerQueryIdentifier, ScopeRuleIdentifier);
+    void addRule(RuleData&&, CascadeLayerIdentifier, ContainerQueryIdentifier, ScopeRuleIdentifier, RuleFeatureSet::CollectionContext*);
 
     struct ResolverMutatingRule {
         Ref<StyleRuleBase> rule;
@@ -213,8 +222,13 @@ private:
     RuleDataVector m_slottedPseudoElementRules;
     RuleDataVector m_partPseudoElementRules;
     RuleDataVector m_focusPseudoClassRules;
+    RuleDataVector m_focusVisiblePseudoClassRules;
+    RuleDataVector m_fullscreenPseudoClassRules;
     RuleDataVector m_rootElementRules;
     RuleDataVector m_universalRules;
+    RuleDataVector m_universalPseudoElementRules;
+    EnumSet<PseudoElementType> m_universalHTMLPseudoElementTypes;
+    EnumSet<PseudoElementType> m_universalPseudoElementTypes;
     Vector<StyleRulePage*> m_pageRules;
     RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
     RuleFeatureSet m_features;
@@ -236,7 +250,7 @@ private:
     Vector<ScopeRuleIdentifier> m_scopeRuleIdentifierForRulePosition;
 
     // @position-try
-    HashMap<AtomString, RefPtr<const StyleRulePositionTry>> m_positionTryRules;
+    HashMap<AtomString, Ref<const StyleRulePositionTry>> m_positionTryRules;
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };

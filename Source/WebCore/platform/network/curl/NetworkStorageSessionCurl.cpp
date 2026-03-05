@@ -105,7 +105,7 @@ NetworkStorageSession::~NetworkStorageSession()
 
 void NetworkStorageSession::setCookieDatabase(UniqueRef<CookieJarDB>&& cookieDatabase)
 {
-    m_cookieDatabase = WTFMove(cookieDatabase);
+    m_cookieDatabase = WTF::move(cookieDatabase);
 }
 
 CookieJarDB& NetworkStorageSession::cookieDatabase() const
@@ -240,7 +240,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
     if (!cookies)
         return false;
 
-    rawCookies = WTFMove(*cookies);
+    rawCookies = WTF::move(*cookies);
     return true;
 }
 

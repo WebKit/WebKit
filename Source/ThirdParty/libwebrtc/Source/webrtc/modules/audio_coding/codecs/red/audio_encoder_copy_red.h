@@ -17,9 +17,9 @@
 #include <list>
 #include <memory>
 #include <optional>
-#include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/call/bitrate_allocation.h"
@@ -67,8 +67,7 @@ class AudioEncoderCopyRed final : public AudioEncoder {
 
   bool SetApplication(Application application) override;
   void SetMaxPlaybackRate(int frequency_hz) override;
-  bool EnableAudioNetworkAdaptor(const std::string& config_string,
-                                 RtcEventLog* event_log) override;
+  bool EnableAudioNetworkAdaptor(absl::string_view config) override;
   void DisableAudioNetworkAdaptor() override;
   void OnReceivedUplinkPacketLossFraction(
       float uplink_packet_loss_fraction) override;

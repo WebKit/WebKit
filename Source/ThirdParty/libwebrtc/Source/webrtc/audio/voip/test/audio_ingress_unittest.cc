@@ -42,7 +42,6 @@
 namespace webrtc {
 namespace {
 
-using ::testing::Invoke;
 using ::testing::NiceMock;
 using ::testing::Unused;
 
@@ -131,7 +130,7 @@ TEST_F(AudioIngressTest, GetAudioFrameAfterRtpReceived) {
     event.Set();
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(handle_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(handle_rtp);
   egress_->SendAudioData(GetAudioFrame(0));
   egress_->SendAudioData(GetAudioFrame(1));
   time_controller_.AdvanceTime(TimeDelta::Zero());
@@ -163,7 +162,7 @@ TEST_F(AudioIngressTest, TestSpeechOutputLevelAndEnergyDuration) {
     }
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(handle_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(handle_rtp);
   for (int i = 0; i < kNumRtp * 2; i++) {
     egress_->SendAudioData(GetAudioFrame(i));
     time_controller_.AdvanceTime(TimeDelta::Millis(10));
@@ -192,7 +191,7 @@ TEST_F(AudioIngressTest, PreferredSampleRate) {
     event.Set();
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(handle_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(handle_rtp);
   egress_->SendAudioData(GetAudioFrame(0));
   egress_->SendAudioData(GetAudioFrame(1));
   time_controller_.AdvanceTime(TimeDelta::Zero());
@@ -223,7 +222,7 @@ TEST_F(AudioIngressTest, GetMutedAudioFrameAfterRtpReceivedAndStopPlay) {
     }
     return true;
   };
-  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(handle_rtp));
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(handle_rtp);
   for (int i = 0; i < kNumRtp * 2; i++) {
     egress_->SendAudioData(GetAudioFrame(i));
     time_controller_.AdvanceTime(TimeDelta::Millis(10));

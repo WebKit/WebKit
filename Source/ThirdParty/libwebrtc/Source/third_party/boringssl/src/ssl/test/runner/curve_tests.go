@@ -370,7 +370,7 @@ func addCurveTests() {
 		resumeSession: true,
 	})
 
-	// TLS 1.3 allows resuming at a differet curve. If this happens, the new
+	// TLS 1.3 allows resuming at a different curve. If this happens, the new
 	// one should be reported.
 	testCases = append(testCases, testCase{
 		name: "CurveID-Resume-Client-TLS13",

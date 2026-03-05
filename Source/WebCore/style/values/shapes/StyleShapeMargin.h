@@ -31,7 +31,7 @@ namespace Style {
 
 // <'shape-margin'> = <length-percentage [0,∞]>
 // https://www.w3.org/TR/css-shapes/#propdef-shape-margin
-struct ShapeMargin : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
+struct ShapeMargin : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
     using Base::Base;
 };
 

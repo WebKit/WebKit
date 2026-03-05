@@ -79,7 +79,7 @@ class RtcEventFrameDecoded final : public RtcEvent {
   }
 
  private:
-  RtcEventFrameDecoded(const RtcEventFrameDecoded& other);
+  RtcEventFrameDecoded(const RtcEventFrameDecoded&) = default;
 
   const int64_t render_time_ms_;
   const uint32_t ssrc_;

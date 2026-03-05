@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 
 #include "CSSFilterFunctionDescriptor.h"
 #include "CSSGrayscaleFunction.h"
+#include "ColorMatrix.h"
+#include "FEColorMatrix.h"
 #include "FilterOperation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -34,20 +36,52 @@
 namespace WebCore {
 namespace Style {
 
-CSS::Grayscale toCSSGrayscale(Ref<BasicColorMatrixFilterOperation> operation, const RenderStyle& style)
+Grayscale Grayscale::passthroughForInterpolation()
 {
-    return { CSS::Grayscale::Parameter { toCSS(Number<CSS::ClosedUnitRangeClampUpper> { operation->amount() }, style) } };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueGrayscale>::initialValueForInterpolation };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::Grayscale& filter, const BuilderState& state)
+bool Grayscale::transformColor(SRGBA<float>& color) const
 {
-    double value;
-    if (auto parameter = filter.value)
-        value = evaluate<double>(toStyle(*parameter, state));
-    else
-        value = filterFunctionDefaultValue<CSS::GrayscaleFunction::name>().value;
+    color = makeFromComponentsClamping<SRGBA<float>>(grayscaleColorMatrix(evaluate<float>(value)).transformedColorComponents(asColorComponents(color.resolved())));
+    return true;
+}
 
-    return BasicColorMatrixFilterOperation::create(value, filterFunctionOperationType<CSS::GrayscaleFunction::name>());
+// MARK: - Conversion
+
+auto ToCSS<Grayscale>::operator()(const Grayscale& value, const RenderStyle& style) -> CSS::Grayscale
+{
+    return { .value = CSS::Grayscale::Parameter { toCSS(value.value, style) } };
+}
+
+auto ToStyle<CSS::Grayscale>::operator()(const CSS::Grayscale& value, const BuilderState& state) -> Grayscale
+{
+    if (auto parameter = value.value) {
+        return { .value = WTF::switchOn(*parameter,
+            [&](const CSS::Grayscale::Parameter::Number& number) -> Grayscale::Parameter {
+                return { toStyle(number, state) };
+            },
+            [&](const CSS::Grayscale::Parameter::Percentage& percentage) -> Grayscale::Parameter {
+                return { toStyle(percentage, state).value / 100 };
+            }
+        ) };
+    }
+    return { .value = CSSFilterFunctionDescriptor<CSSValueGrayscale>::defaultValue };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<Grayscale, Ref<FilterEffect>>::operator()(const Grayscale& value) -> Ref<FilterEffect>
+{
+    ColorMatrix<5, 4> grayscaleMatrix = grayscaleColorMatrix(evaluate<float>(value));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX, grayscaleMatrix);
+}
+
+// MARK: - Platform
+
+auto ToPlatform<Grayscale>::operator()(const Grayscale& value) -> Ref<FilterOperation>
+{
+    return BasicColorMatrixFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<GrayscaleFunction::name>());
 }
 
 } // namespace Style

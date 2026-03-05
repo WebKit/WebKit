@@ -42,14 +42,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WKPreviewAction *action = [super copyWithZone:zone];
+    // We are in a copy function so we intentionally do not adopt.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT WKPreviewAction *action = [super copyWithZone:zone];
     action->_identifier = self.identifier;
     return action;
 }
 
 - (void)dealloc
 {
-    [_identifier release];
+    SUPPRESS_UNRETAINED_ARG [_identifier release];
     [super dealloc];
 }
 

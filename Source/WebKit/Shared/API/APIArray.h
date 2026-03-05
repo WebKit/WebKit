@@ -51,12 +51,10 @@ public:
     }
 
     Object* at(size_t i) const { return m_elements[i].get(); }
-    RefPtr<Object> protectedAt(size_t i) const { return m_elements[i]; }
-
     size_t size() const { return m_elements.size(); }
 
-    const Vector<RefPtr<Object>>& elements() const { return m_elements; }
-    Vector<RefPtr<Object>>& elements() { return m_elements; }
+    const Vector<RefPtr<Object>>& elements() const LIFETIME_BOUND { return m_elements; }
+    Vector<RefPtr<Object>>& elements() LIFETIME_BOUND { return m_elements; }
 
     template<typename T>
     decltype(auto) elementsOfType() const
@@ -81,16 +79,18 @@ public:
         });
     }
 
-    void append(RefPtr<Object>&& element) { m_elements.append(WTFMove(element)); }
+    void append(RefPtr<Object>&& element) { m_elements.append(WTF::move(element)); }
 
 private:
     explicit Array(Vector<RefPtr<Object>>&& elements)
-        : m_elements(WTFMove(elements))
+        : m_elements(WTF::move(elements))
     {
     }
 
     Vector<RefPtr<Object>> m_elements;
 } SWIFT_SHARED_REFERENCE(refArray, derefArray);
+
+using RefAPIArray = Ref<Array>;
 
 } // namespace API
 

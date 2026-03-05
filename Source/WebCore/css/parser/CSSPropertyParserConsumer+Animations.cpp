@@ -129,6 +129,10 @@ RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, CSS::PropertyP
 
     if (range.peek().type() == StringToken) {
         auto& token = range.consumeIncludingWhitespace();
+
+        if (token.value().isEmpty())
+            return nullptr;
+
         auto valueId = cssValueKeywordID(token.value());
         if (isValidCustomIdentifier(valueId) && valueId != CSSValueNone)
             return CSSPrimitiveValue::createCustomIdent(token.value().toString());

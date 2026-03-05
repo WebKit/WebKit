@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a truncated SPKI RSA-OAEP key that triggers bounds check failure");
+
+// This test verifies that importing a malformed SPKI key with a truncated
+// ASN.1 structure is rejected gracefully rather than crashing.
+//
+// The malformed key is crafted so that:
+// 1. The first two size checks in importSpki() pass
+// 2. But the final computed headerSize exceeds the buffer size
+// 3. Without the fix, keyData.subspan(headerSize) crashes
+//
+// Key structure (19 bytes):
+// - Offset 0: 0x30 (SequenceMark)
+// - Offset 1: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 2-17: 16 placeholder bytes
+// - Offset 18: 0x82 (length byte, bytesUsedToEncodedLength returns 3)
+//
+// headerSize computation:
+// 1. headerSize = 1
+// 2. Check: 19 >= 2 (pass)
+// 3. headerSize = 1 + 1 + 15 + 1 = 18
+// 4. Check: 19 >= 19 (pass)
+// 5. headerSize = 18 + 3 + 1 = 22
+// 6. subspan(22) on 19-byte buffer -> CRASH (before fix)
+
+var extractable = true;
+
+// 19 bytes: 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 82
+var truncatedSpkiKey = hexStringToUint8Array("30000000000000000000000000000000000082");
+
+// Should reject with DataError, not crash
+shouldReject('crypto.subtle.importKey("spki", truncatedSpkiKey, {name: "RSA-OAEP", hash: "sha-256"}, extractable, ["encrypt"])');
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

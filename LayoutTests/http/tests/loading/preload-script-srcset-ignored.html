@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
+}
 </script>
 <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=1000"></script>
 <script src="http://127.0.0.1:8000/resources/checkPreload.js"></script>

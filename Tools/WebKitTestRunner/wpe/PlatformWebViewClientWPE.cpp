@@ -30,14 +30,10 @@
 #include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if USE(CAIRO)
-#include <cairo.h>
-#elif USE(SKIA)
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
-#endif
 
 namespace WTR {
 
@@ -48,8 +44,9 @@ PlatformWebViewClientWPE::PlatformWebViewClientWPE(WKPageConfigurationRef config
         g_error("Failed to get the default WPE display\n");
     m_view = WKViewCreate(display, configuration);
     auto* wpeView = WKViewGetView(m_view);
+    m_toplevel = wpe_view_get_toplevel(wpeView);
     wpe_view_focus_in(wpeView);
-    wpe_toplevel_resize(wpe_view_get_toplevel(wpeView), 800, 600);
+    wpe_toplevel_resize(m_toplevel.get(), 800, 600);
     g_signal_connect(wpeView, "buffer-rendered", G_CALLBACK(+[](WPEView*, WPEBuffer* buffer, gpointer userData) {
         auto& view = *static_cast<PlatformWebViewClientWPE*>(userData);
         view.m_buffer = buffer;
@@ -61,26 +58,53 @@ PlatformWebViewClientWPE::~PlatformWebViewClientWPE()
     g_signal_handlers_disconnect_by_data(WKViewGetView(m_view), this);
 }
 
+static bool toplevelContainsView(WPEToplevel* toplevel, WPEView* view)
+{
+    struct Context {
+        WPEView* view;
+        bool found;
+    } context = { view, false };
+
+    wpe_toplevel_foreach_view(toplevel, +[](WPEToplevel* toplevel, WPEView* item, gpointer userData) -> gboolean {
+        auto& context = *static_cast<Context*>(userData);
+        if (context.view == item) {
+            context.found = true;
+            return TRUE;
+        }
+        return FALSE;
+    }, &context);
+
+    return context.found;
+}
+
 void PlatformWebViewClientWPE::addToWindow()
 {
-    // FIXME: implement.
+    auto* wpeView = WKViewGetView(m_view);
+    if (toplevelContainsView(m_toplevel.get(), wpeView))
+        return;
+
+    wpe_view_set_toplevel(wpeView, m_toplevel.get());
 }
 
 void PlatformWebViewClientWPE::removeFromWindow()
 {
-    // FIXME: implement.
+    auto* wpeView = WKViewGetView(m_view);
+    if (!toplevelContainsView(m_toplevel.get(), wpeView))
+        return;
+
+    wpe_view_set_toplevel(wpeView, nullptr);
 }
 
 WKSize PlatformWebViewClientWPE::size()
 {
     int width, height;
-    wpe_toplevel_get_size(wpe_view_get_toplevel(WKViewGetView(m_view)), &width, &height);
+    wpe_toplevel_get_size(m_toplevel.get(), &width, &height);
     return { static_cast<double>(width), static_cast<double>(height) };
 }
 
 void PlatformWebViewClientWPE::resize(WKSize size)
 {
-    wpe_toplevel_resize(wpe_view_get_toplevel(WKViewGetView(m_view)), size.width, size.height);
+    wpe_toplevel_resize(m_toplevel.get(), size.width, size.height);
 }
 
 void PlatformWebViewClientWPE::focus()
@@ -104,24 +128,11 @@ PlatformImage PlatformWebViewClientWPE::snapshot()
 
     auto width = wpe_buffer_get_width(m_buffer.get());
     auto height = wpe_buffer_get_height(m_buffer.get());
-#if USE(CAIRO)
-    auto stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, width);
-    auto* data = static_cast<unsigned char*>(const_cast<void*>(g_bytes_get_data(bytes.get(), nullptr)));
-    cairo_surface_t* surface = cairo_image_surface_create_for_data(data, CAIRO_FORMAT_ARGB32, width, height, stride);
-    static cairo_user_data_key_t s_surfaceDataKey;
-    cairo_surface_set_user_data(surface, &s_surfaceDataKey, bytes.leakRef(), [](void* data) {
-        g_bytes_unref(static_cast<GBytes*>(data));
-    });
-    cairo_surface_mark_dirty(surface);
-
-    return surface;
-#elif USE(SKIA)
     auto info = SkImageInfo::MakeN32Premul(width, height, SkColorSpace::MakeSRGB());
     SkPixmap pixmap(info, g_bytes_get_data(bytes.get(), nullptr), info.minRowBytes());
     return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         g_bytes_unref(static_cast<GBytes*>(context));
     }, bytes.leakRef()).release();
-#endif
 }
 
 } // namespace WTR

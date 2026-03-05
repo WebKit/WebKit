@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DelayNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DelayNode);
 
 constexpr double maximumAllowedDelayTime = 180;
 
@@ -63,7 +63,7 @@ ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, const D
     if (result.hasException())
         return result.releaseException();
 
-    delayNode->checkedDelayTime()->setValue(options.delayTime);
+    protect(delayNode->delayTime())->setValue(options.delayTime);
 
     return delayNode;
 }
@@ -71,11 +71,6 @@ ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, const D
 AudioParam& DelayNode::delayTime()
 {
     return downcast<DelayProcessor>(*m_processor).delayTime();
-}
-
-CheckedRef<AudioParam> DelayNode::checkedDelayTime()
-{
-    return delayTime();
 }
 
 } // namespace WebCore

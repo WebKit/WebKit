@@ -28,7 +28,6 @@
 #include "JSModuleLoader.h"
 
 #include "BuiltinNames.h"
-#include "CatchScope.h"
 #include "GlobalObjectMethodTable.h"
 #include "JSCInlines.h"
 #include "JSInternalPromise.h"
@@ -44,6 +43,7 @@
 #include "Parser.h"
 #include "ParserError.h"
 #include "SyntheticModuleRecord.h"
+#include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"
 #include <wtf/text/MakeString.h>
 
@@ -112,7 +112,7 @@ void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 static String printableModuleKey(JSGlobalObject* globalObject, JSValue key)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     if (key.isString() || key.isSymbol()) {
         auto propertyName = key.toPropertyKey(globalObject);
         scope.assertNoExceptionExceptTermination(); // This is OK since this function is just for debugging purpose.
@@ -154,7 +154,7 @@ JSValue JSModuleLoader::provideFetch(JSGlobalObject* globalObject, JSValue key, 
     SourceCode source { sourceCode };
     MarkedArgumentBuffer arguments;
     arguments.append(key);
-    arguments.append(JSSourceCode::create(vm, WTFMove(source)));
+    arguments.append(JSSourceCode::create(vm, WTF::move(source)));
     ASSERT(!arguments.hasOverflowed());
 
     RELEASE_AND_RETURN(scope, call(globalObject, function, callData, this, arguments));
@@ -358,10 +358,10 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
 
     // https://tc39.es/proposal-json-modules/#sec-parse-json-module
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::JSON) {
-        auto* moduleRecord = SyntheticModuleRecord::parseJSONModule(globalObject, moduleKey, WTFMove(sourceCode));
+        auto* moduleRecord = SyntheticModuleRecord::parseJSONModule(globalObject, moduleKey, WTF::move(sourceCode));
         RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
         scope.release();
-        promise->resolve(globalObject, moduleRecord);
+        promise->resolve(globalObject, vm, moduleRecord);
         return JSValue::encode(promise);
     }
 
@@ -378,12 +378,12 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
 
     auto result = moduleAnalyzer.analyze(*moduleProgramNode);
     if (!result) {
-        auto [ errorType, message ] = WTFMove(result.error());
+        auto [ errorType, message ] = WTF::move(result.error());
         RELEASE_AND_RETURN(scope, JSValue::encode(rejectWithError(createError(globalObject, errorType, message))));
     }
 
     scope.release();
-    promise->resolve(globalObject, result.value());
+    promise->resolve(globalObject, vm, result.value());
     return JSValue::encode(promise);
 }
 

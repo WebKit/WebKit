@@ -56,9 +56,13 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 #if PLATFORM(COCOA)
     bool enableModernDownloadProgress
 #endif
+#if HAVE(ENHANCED_SECURITY_LINKS)
+    bool enableEnhancedSecurityLinks
+#endif
 
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
+    HashMap<WebCore::ProcessIdentifier, Vector<String>> allowedFilePaths;
     HashSet<String> localhostAliasesForTesting;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 

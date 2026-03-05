@@ -34,17 +34,17 @@ namespace WebCore {
 namespace Layout {
 
 class InlineTextBox : public Box {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineTextBox);
+    WTF_MAKE_TZONE_ALLOCATED(InlineTextBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InlineTextBox);
 public:
     enum class ContentCharacteristic : uint8_t {
-        CanUseSimplifiedContentMeasuring         = 1 << 0,
-        CanUseSimpleFontCodepath                 = 1 << 1,
-        ShouldUseSimpleGlyphOverflowCodePath     = 1 << 2,
-        HasPositionDependentContentWidth         = 1 << 3,
-        HasStrongDirectionalityContent           = 1 << 4
+        CanUseSimplifiedContentMeasuring,
+        CanUseSimpleFontCodepath,
+        ShouldUseSimpleGlyphOverflowCodePath,
+        HasPositionDependentContentWidth,
+        HasStrongDirectionalityContent
     };
-    InlineTextBox(String, bool isCombined, OptionSet<ContentCharacteristic>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    InlineTextBox(String, bool isCombined, EnumSet<ContentCharacteristic>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
     const String& content() const { return m_content; }
@@ -56,16 +56,16 @@ public:
     bool hasPositionDependentContentWidth() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasPositionDependentContentWidth); }
     bool hasStrongDirectionalityContent() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasStrongDirectionalityContent); }
 
-    void setContent(String newContent, OptionSet<ContentCharacteristic>);
-    void setContentCharacteristic(OptionSet<ContentCharacteristic> contentCharacteristicSet) { m_contentCharacteristicSet = contentCharacteristicSet; }
+    void setContent(String newContent, EnumSet<ContentCharacteristic>);
+    void setContentCharacteristic(EnumSet<ContentCharacteristic> contentCharacteristicSet) { m_contentCharacteristicSet = contentCharacteristicSet; }
 
 private:
     String m_content;
     bool m_isCombined { false };
-    OptionSet<ContentCharacteristic> m_contentCharacteristicSet;
+    EnumSet<ContentCharacteristic> m_contentCharacteristicSet;
 };
 
-inline void InlineTextBox::setContent(String newContent, OptionSet<ContentCharacteristic> contentCharacteristicSet)
+inline void InlineTextBox::setContent(String newContent, EnumSet<ContentCharacteristic> contentCharacteristicSet)
 {
     m_content = newContent;
     m_contentCharacteristicSet = contentCharacteristicSet;

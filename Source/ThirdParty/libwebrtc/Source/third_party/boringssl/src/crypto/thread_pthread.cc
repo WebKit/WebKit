@@ -24,7 +24,7 @@
 #include <string.h>
 
 void CRYPTO_MUTEX_init(CRYPTO_MUTEX *lock) {
-  if (pthread_rwlock_init(lock, NULL) != 0) {
+  if (pthread_rwlock_init(lock, nullptr) != 0) {
     abort();
   }
 }
@@ -67,7 +67,7 @@ static thread_local_destructor_t g_destructors[NUM_OPENSSL_THREAD_LOCALS];
 // thread_local_destructor is called when a thread exits. It releases thread
 // local data for that thread only.
 static void thread_local_destructor(void *arg) {
-  if (arg == NULL) {
+  if (arg == nullptr) {
     return;
   }
 
@@ -81,7 +81,7 @@ static void thread_local_destructor(void *arg) {
   unsigned i;
   void **pointers = reinterpret_cast<void **>(arg);
   for (i = 0; i < NUM_OPENSSL_THREAD_LOCALS; i++) {
-    if (destructors[i] != NULL) {
+    if (destructors[i] != nullptr) {
       destructors[i](pointers[i]);
     }
   }
@@ -101,13 +101,13 @@ static void thread_local_init(void) {
 void *CRYPTO_get_thread_local(thread_local_data_t index) {
   CRYPTO_once(&g_thread_local_init_once, thread_local_init);
   if (!g_thread_local_key_created) {
-    return NULL;
+    return nullptr;
   }
 
   void **pointers =
       reinterpret_cast<void **>(pthread_getspecific(g_thread_local_key));
-  if (pointers == NULL) {
-    return NULL;
+  if (pointers == nullptr) {
+    return nullptr;
   }
   return pointers[index];
 }
@@ -122,10 +122,10 @@ int CRYPTO_set_thread_local(thread_local_data_t index, void *value,
 
   void **pointers =
       reinterpret_cast<void **>(pthread_getspecific(g_thread_local_key));
-  if (pointers == NULL) {
+  if (pointers == nullptr) {
     pointers = reinterpret_cast<void **>(
         malloc(sizeof(void *) * NUM_OPENSSL_THREAD_LOCALS));
-    if (pointers == NULL) {
+    if (pointers == nullptr) {
       destructor(value);
       return 0;
     }

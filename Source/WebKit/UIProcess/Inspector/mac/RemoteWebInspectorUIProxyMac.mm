@@ -56,11 +56,6 @@
 
 @implementation WKRemoteWebInspectorUIProxyObjCAdapter
 
-- (RefPtr<WebKit::RemoteWebInspectorUIProxy>)protectedInspectorProxy
-{
-    return _inspectorProxy.get();
-}
-
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
     if (_inspectorProxy)
@@ -80,17 +75,17 @@
 
 - (void)inspectorWKWebViewDidBecomeActive:(WKInspectorViewController *)inspectorViewController
 {
-    self.protectedInspectorProxy->didBecomeActive();
+    protect(_inspectorProxy)->didBecomeActive();
 }
 
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController
 {
-    self.protectedInspectorProxy->closeFromCrash();
+    protect(_inspectorProxy)->closeFromCrash();
 }
 
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController
 {
-    return self.protectedInspectorProxy->isUnderTest();
+    return protect(_inspectorProxy)->isUnderTest();
 }
 
 - (BOOL)inspectorViewControllerInspectorIsHorizontallyAttached:(WKInspectorViewController *)inspectorViewController
@@ -110,15 +105,15 @@ WKWebView *RemoteWebInspectorUIProxy::webView() const
 
 void RemoteWebInspectorUIProxy::didBecomeActive()
 {
-    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
+    protect(protect(m_inspectorPage)->legacyMainFrameProcess())->send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     m_objCAdapter = adoptNS([[WKRemoteWebInspectorUIProxyObjCAdapter alloc] initWithRemoteWebInspectorUIProxy:this]);
 
-    Ref<API::InspectorConfiguration> configuration = checkedClient()->configurationForRemoteInspector(*this);
-    m_inspectorView = adoptNS([[WKInspectorViewController alloc] initWithConfiguration:protectedWrapper(configuration.get()).get() inspectedPage:nullptr]);
+    Ref<API::InspectorConfiguration> configuration = protect(m_client)->configurationForRemoteInspector(*this);
+    m_inspectorView = adoptNS([[WKInspectorViewController alloc] initWithConfiguration:protect(wrapper(configuration.get())).get() inspectedPage:nullptr]);
     [m_inspectorView.get() setDelegate:m_objCAdapter.get()];
 
     m_window = WebInspectorUIProxy::createFrontendWindow(NSZeroRect, WebInspectorUIProxy::InspectionTargetType::Remote);
@@ -158,7 +153,7 @@ void RemoteWebInspectorUIProxy::platformResetState()
 void RemoteWebInspectorUIProxy::platformBringToFront()
 {
     [m_window makeKeyAndOrderFront:nil];
-    [m_window makeFirstResponder:protectedWebView().get()];
+    [m_window makeFirstResponder:protect(webView()).get()];
 }
 
 void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -180,7 +175,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
         forceSaveAs = true;
     }
 
-    WebInspectorUIProxy::showSavePanel(m_window.get(), platformURL.get(), WTFMove(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
+    WebInspectorUIProxy::showSavePanel(m_window.get(), platformURL.get(), WTF::move(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
         protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
     });
 }
@@ -196,7 +191,7 @@ void RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandl
 void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
 {
     auto sampler = adoptNS([[NSColorSampler alloc] init]);
-    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSColor *selectedColor) mutable {
+    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSColor *selectedColor) mutable {
         if (!selectedColor) {
             completionHandler(std::nullopt);
             return;
@@ -228,7 +223,7 @@ void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendCli
         break;
     }
 
-    protectedWebView().get().appearance = platformAppearance;
+    protect(webView()).get().appearance = platformAppearance;
 
     RetainPtr window = m_window.get();
     ASSERT(window);
@@ -237,7 +232,7 @@ void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendCli
 
 void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 {
-    protectedWebView().get()._protectedPage->startWindowDrag();
+    protect(*protect(webView()).get()._page)->startWindowDrag();
 }
 
 void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String& url)
@@ -265,11 +260,6 @@ void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo& c
     [certificateView setEditableTrust:NO];
     [certificateView setDisplayDetails:YES];
     [certificateView setDetailsDisclosed:YES];
-}
-
-RetainPtr<WKWebView> RemoteWebInspectorUIProxy::protectedWebView() const
-{
-    return webView();
 }
 
 } // namespace WebKit

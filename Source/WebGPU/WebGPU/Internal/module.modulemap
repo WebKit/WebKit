@@ -22,8 +22,175 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 module WebGPU_Internal [system] {
-    umbrella header "WebGPUSwiftInternal.h"
-    module * {
+    explicit module APIConversions {
+        header "../APIConversions.h"
         export *
     }
+
+    explicit module Adapter {
+        header "../Adapter.h"
+        export *
+    }
+
+    explicit module BindGroup {
+        header "../BindGroup.h"
+        export *
+    }
+
+    explicit module BindGroupLayout {
+        header "../BindGroupLayout.h"
+        export *
+    }
+
+    explicit module BindableResource {
+        header "../BindableResource.h"
+        export *
+    }
+
+    explicit module Buffer {
+        header "../Buffer.h"
+        export *
+    }
+
+    explicit module CommandBuffer {
+        header "../CommandBuffer.h"
+        export *
+    }
+
+    explicit module CommandEncoder {
+        header "../CommandEncoder.h"
+        export *
+    }
+
+    explicit module CommandsMixin {
+        header "../CommandsMixin.h"
+        export *
+    }
+
+    explicit module ComputePassEncoder {
+        header "../ComputePassEncoder.h"
+        export *
+    }
+
+    explicit module ComputePipeline {
+        header "../ComputePipeline.h"
+        export *
+    }
+
+    explicit module CxxBridging {
+        header "../CxxBridging.h"
+        export *
+    }
+
+    explicit module Device {
+        header "../Device.h"
+        export *
+    }
+
+    explicit module ExternalTexture {
+        header "../ExternalTexture.h"
+        export *
+    }
+
+    explicit module HardwareCapabilities {
+        header "../HardwareCapabilities.h"
+        export *
+    }
+
+    explicit module Instance {
+        header "../Instance.h"
+        export *
+    }
+
+    explicit module IsValidToUseWith {
+        header "../IsValidToUseWith.h"
+        export *
+    }
+
+    explicit module PipelineLayout {
+        header "../PipelineLayout.h"
+        export *
+    }
+
+    explicit module PresentationContext {
+        header "../PresentationContext.h"
+        export *
+    }
+
+    explicit module QuerySet {
+        header "../QuerySet.h"
+        export *
+    }
+
+    explicit module Queue {
+        header "../Queue.h"
+        export *
+    }
+
+    explicit module RenderBundle {
+        header "../RenderBundle.h"
+        export *
+    }
+
+    explicit module RenderBundleEncoder {
+        header "../RenderBundleEncoder.h"
+        export *
+    }
+
+    explicit module RenderPassEncoder {
+        header "../RenderPassEncoder.h"
+        export *
+    }
+
+    explicit module RenderPipeline {
+        header "../RenderPipeline.h"
+        export *
+    }
+
+    explicit module Sampler {
+        header "../Sampler.h"
+        export *
+    }
+
+    explicit module ShaderModule {
+        header "../ShaderModule.h"
+        export *
+    }
+
+    explicit module Texture {
+        header "../Texture.h"
+        export *
+    }
+
+    explicit module TextureOrTextureView {
+        header "../TextureOrTextureView.h"
+        export *
+    }
+
+    explicit module TextureView {
+        header "../TextureView.h"
+        export *
+    }
+
+    explicit module XRBinding {
+        header "../XRBinding.h"
+        export *
+    }
+
+    explicit module XRProjectionLayer {
+        header "../XRProjectionLayer.h"
+        export *
+    }
+
+    explicit module XRSubImage {
+        header "../XRSubImage.h"
+        export *
+    }
+
+    explicit module XRView {
+        header "../XRView.h"
+        export *
+    }
+
+    export *
 }

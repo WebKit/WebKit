@@ -58,7 +58,7 @@ public:
     void adoptVariables(Vector<Identifier, 0, UnsafeVectorOverflow>&& variables)
     {
         ASSERT(m_variables.isEmpty());
-        m_variables = FixedVector<Identifier>(WTFMove(variables));
+        m_variables = FixedVector<Identifier>(WTF::move(variables));
     }
 
     const Identifier& functionHoistingCandidate(unsigned index) { return m_functionHoistingCandidates[index]; }
@@ -67,7 +67,7 @@ public:
     void adoptFunctionHoistingCandidates(Vector<Identifier, 0, UnsafeVectorOverflow>&& functionHoistingCandidates)
     {
         ASSERT(m_functionHoistingCandidates.isEmpty());
-        m_functionHoistingCandidates = FixedVector<Identifier>(WTFMove(functionHoistingCandidates));
+        m_functionHoistingCandidates = FixedVector<Identifier>(WTF::move(functionHoistingCandidates));
     }
 private:
     friend CachedEvalCodeBlock;

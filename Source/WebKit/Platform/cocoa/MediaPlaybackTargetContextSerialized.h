@@ -30,6 +30,7 @@
 #include "CoreIPCAVOutputContext.h"
 #include <WebCore/MediaPlaybackTarget.h>
 #include <wtf/Forward.h>
+#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -53,12 +54,13 @@ public:
     WebCore::MediaPlaybackTargetMockState mockState() const { return m_state; }
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
     CoreIPCAVOutputContext context() const { return m_context; }
-    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, CoreIPCAVOutputContext&&);
+    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, CoreIPCAVOutputContext&&, std::optional<WTF::UUID>&&);
 #else
     String contextID() const { return m_contextID; }
     String contextType() const { return m_contextType; }
-    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, String&&, String&&);
+    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, String&&, String&&, std::optional<WTF::UUID>&&);
 #endif
+    const std::optional<WTF::UUID>& identifier() const { return m_identifier; }
 
 private:
     String m_deviceName;
@@ -73,6 +75,7 @@ private:
     String m_contextID;
     String m_contextType;
 #endif
+    std::optional<WTF::UUID> m_identifier;
 };
 
 } // namespace WebKit

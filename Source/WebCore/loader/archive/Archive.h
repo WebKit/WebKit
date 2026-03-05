@@ -52,14 +52,14 @@ public:
 protected:
     // These methods are meant for subclasses for different archive types to add resources in to the archive,
     // and should not be exposed as archives should be immutable to clients
-    void setMainResource(Ref<ArchiveResource>&& mainResource) { m_mainResource = WTFMove(mainResource); }
-    void addSubresource(Ref<ArchiveResource>&& resource) { m_subresources.append(WTFMove(resource)); }
-    void addSubframeArchive(Ref<Archive>&& subframeArchive) { m_subframeArchives.append(WTFMove(subframeArchive)); }
+    void setMainResource(Ref<ArchiveResource>&& mainResource) { m_mainResource = WTF::move(mainResource); }
+    void addSubresource(Ref<ArchiveResource>&& resource) { m_subresources.append(WTF::move(resource)); }
+    void addSubframeArchive(Ref<Archive>&& subframeArchive) { m_subframeArchives.append(WTF::move(subframeArchive)); }
 
     void clearAllSubframeArchives();
 
 private:
-    void clearAllSubframeArchives(HashSet<RefPtr<Archive>>&);
+    void clearAllSubframeArchives(HashSet<Ref<Archive>>&);
 
     RefPtr<ArchiveResource> m_mainResource;
     Vector<Ref<ArchiveResource>> m_subresources;

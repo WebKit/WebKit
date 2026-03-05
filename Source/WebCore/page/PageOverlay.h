@@ -78,13 +78,13 @@ public:
     WEBCORE_EXPORT static Ref<PageOverlay> create(PageOverlayClient&, OverlayType = OverlayType::View, AlwaysTileOverlayLayer = AlwaysTileOverlayLayer::No);
     WEBCORE_EXPORT ~PageOverlay();
 
-    WEBCORE_EXPORT PageOverlayController* controller() const;
+    WEBCORE_EXPORT PageOverlayController* NODELETE controller() const LIFETIME_BOUND;
 
     typedef uint64_t PageOverlayID;
     PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
 
     void setPage(Page*);
-    WEBCORE_EXPORT Page* page() const;
+    WEBCORE_EXPORT Page* NODELETE page() const;
     WEBCORE_EXPORT void setNeedsDisplay(const IntRect& dirtyRect);
     WEBCORE_EXPORT void setNeedsDisplay();
 
@@ -102,7 +102,7 @@ public:
 
     WEBCORE_EXPORT void clear();
 
-    PageOverlayClient& client() const { return m_client; }
+    PageOverlayClient& client() const LIFETIME_BOUND { return m_client; }
 
     enum class FadeMode : bool { DoNotFade, Fade };
 
@@ -115,14 +115,13 @@ public:
 
     WEBCORE_EXPORT IntSize viewToOverlayOffset() const;
 
-    const Color& backgroundColor() const { return m_backgroundColor; }
+    const Color& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
     void setBackgroundColor(const Color&);
 
     void setShouldIgnoreMouseEventsOutsideBounds(bool flag) { m_shouldIgnoreMouseEventsOutsideBounds = flag; }
 
     // FIXME: PageOverlay should own its layer, instead of PageOverlayController.
     WEBCORE_EXPORT GraphicsLayer& layer() const;
-    WEBCORE_EXPORT Ref<GraphicsLayer> protectedLayer() const;
 
     bool needsSynchronousScrolling() const { return m_needsSynchronousScrolling; }
     void setNeedsSynchronousScrolling(bool needsSynchronousScrolling) { m_needsSynchronousScrolling = needsSynchronousScrolling; }

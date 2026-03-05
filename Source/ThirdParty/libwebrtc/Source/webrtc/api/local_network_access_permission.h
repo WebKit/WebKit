@@ -36,9 +36,8 @@ namespace webrtc {
 // permission->RequestPermission(
 //     target_address,
 //     [&, r = permission.get()](LocalNetworkAccessPermissionStatus status) {
-//       permission_list.erase(std::remove_if(
-//           permission_list.begin(), permission_list.end(),
-//           [&](const auto& refptr) { return refptr.get() == r; }));
+//       std::erase_if(permission_list,
+//           [&](const auto& refptr) { return refptr.get() == r; });
 //
 //       if (status == LocalNetworkAccessPermissionStatus::kGranted) {
 //         // Permission was granted.
@@ -61,6 +60,15 @@ enum class LocalNetworkAccessPermissionStatus {
 class LocalNetworkAccessPermissionInterface {
  public:
   virtual ~LocalNetworkAccessPermissionInterface() = default;
+
+  // Returns whether or not the caller should request permission. Depending
+  // on the originator's address space, sometimes it's not necessary to request
+  // permission.
+  // TODO(crbug.com/421223919): Make this method pure virtual once all
+  // implementations implement it.
+  virtual bool ShouldRequestPermission(const SocketAddress& addr) {
+    return addr.IsPrivateIP() || addr.IsLoopbackIP();
+  }
 
   // The callback will be called when the permission is granted or denied. The
   // callback will be called on the sequence that the caller runs on.

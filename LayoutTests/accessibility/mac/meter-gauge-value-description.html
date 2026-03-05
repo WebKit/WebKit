@@ -19,20 +19,21 @@
 
     if (window.accessibilityController) {
 
-          // Test that we are not exposing the gauge value description if author 
+          // Test that we are not exposing the gauge value description if author
           // didn't specify low, high or optimum attribute.
+          // Value 83.5 gets clamped to 1 since the default max is 1.
           var meter1 = accessibilityController.accessibleElementById("meter");
-          shouldBe("meter1.valueDescription", "'AXValueDescription: '");
+          shouldBe("meter1.valueDescription", "'AXValueDescription: 1'");
 
           var meter2 = accessibilityController.accessibleElementById("meter2");
-          shouldBe("meter2.valueDescription", "'AXValueDescription: suboptimal value'");
-          
+          shouldBe("meter2.valueDescription", "'AXValueDescription: 5, suboptimal value'");
+
           var meter3 = accessibilityController.accessibleElementById("meter3");
-          shouldBe("meter3.valueDescription", "'AXValueDescription: optimal value'");
-          
+          shouldBe("meter3.valueDescription", "'AXValueDescription: 50, optimal value'");
+
           var meter4 = accessibilityController.accessibleElementById("meter4");
-          shouldBe("meter4.valueDescription", "'AXValueDescription: critical value'");
-          
+          shouldBe("meter4.valueDescription", "'AXValueDescription: 90, critical value'");
+
           // Test meter with inner text.
           var meter5 = accessibilityController.accessibleElementById("meter5");
           shouldBe("meter5.valueDescription", "'AXValueDescription: 50 hours, optimal value'");

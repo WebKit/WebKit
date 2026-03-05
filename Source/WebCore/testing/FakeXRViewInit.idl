@@ -28,6 +28,7 @@
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FakeXRDeviceResolution {
     required long width;
     required long height;
@@ -37,6 +38,7 @@
 [
     EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FakeXRFieldOfViewInit {
     required float upDegrees;
     required float downDegrees;
@@ -48,6 +50,7 @@
 [
     EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FakeXRViewInit {
     required XREye eye;
     // https://immersive-web.github.io/webxr/#view-projection-matrix

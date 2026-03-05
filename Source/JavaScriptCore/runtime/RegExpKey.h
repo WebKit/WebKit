@@ -56,7 +56,7 @@ struct RegExpKey {
 
     RegExpKey(OptionSet<Yarr::Flags> flags, RefPtr<StringImpl>&& pattern)
         : flagsValue(flags)
-        , pattern(WTFMove(pattern))
+        , pattern(WTF::move(pattern))
     {
     }
 

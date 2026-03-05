@@ -81,6 +81,8 @@ public:
     void transformToColorSpace(const DestinationColorSpace&);
 
 #if USE(CORE_IMAGE)
+    ImageBuffer* filterResultImageBuffer(const Filter&);
+
     RetainPtr<CIImage> ciImage() const { return m_ciImage; }
     void setCIImage(RetainPtr<CIImage>&&);
     size_t memoryCostOfCIImage() const;
@@ -93,10 +95,6 @@ private:
     RefPtr<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
     ImageBuffer* imageBufferFromPixelBuffer();
-
-#if USE(CORE_IMAGE)
-    ImageBuffer* imageBufferFromCIImage();
-#endif
 
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
 

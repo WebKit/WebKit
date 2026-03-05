@@ -67,7 +67,10 @@ namespace angle
 
 static constexpr rx::FastCopyFunctionMap::Entry BGRAEntry = {{angle::FormatID::R8G8B8A8_UNORM,
                                                              CopyBGRA8ToRGBA8}};
+static constexpr rx::FastCopyFunctionMap::Entry RGBAEntry = {{angle::FormatID::R8G8B8A8_UNORM,
+                                                             CopyRGBA8ToRGBA8}};
 static constexpr rx::FastCopyFunctionMap BGRACopyFunctions = {{&BGRAEntry, 1}};
+static constexpr rx::FastCopyFunctionMap RGBACopyFunctions = {{&RGBAEntry, 1}};
 static constexpr rx::FastCopyFunctionMap NoCopyFunctions;
 
 const Format gFormatInfoTable[] = {{
@@ -402,6 +405,12 @@ def json_to_table_data(format_id, json, angle_to_gl):
 
     if format_id == "B8G8R8A8_UNORM":
         parsed["fastCopyFunctions"] = "BGRACopyFunctions"
+
+    if format_id == "R8G8B8A8_UNORM":
+        parsed["fastCopyFunctions"] = "RGBACopyFunctions"
+
+    if format_id == "R8G8B8A8_UNORM_SRGB":
+        parsed["fastCopyFunctions"] = "RGBACopyFunctions"
 
     is_block = format_id.endswith("_BLOCK")
 

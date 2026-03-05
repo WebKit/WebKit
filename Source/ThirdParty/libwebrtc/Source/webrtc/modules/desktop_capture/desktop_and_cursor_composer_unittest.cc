@@ -242,11 +242,19 @@ TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfNoFrameCaptured) {
     int hotspot_x, hotspot_y;
     bool inside;
   } tests[] = {
-      {0, 0, 0, 0, true},    {50, 50, 0, 0, true},   {100, 50, 0, 0, true},
-      {50, 100, 0, 0, true}, {100, 100, 0, 0, true}, {0, 0, 2, 5, true},
-      {1, 1, 2, 5, true},    {50, 50, 2, 5, true},   {100, 100, 2, 5, true},
-      {0, 0, 5, 2, true},    {50, 50, 5, 2, true},   {100, 100, 5, 2, true},
-      {0, 0, 0, 0, false},
+      {.x = 0, .y = 0, .hotspot_x = 0, .hotspot_y = 0, .inside = true},
+      {.x = 50, .y = 50, .hotspot_x = 0, .hotspot_y = 0, .inside = true},
+      {.x = 100, .y = 50, .hotspot_x = 0, .hotspot_y = 0, .inside = true},
+      {.x = 50, .y = 100, .hotspot_x = 0, .hotspot_y = 0, .inside = true},
+      {.x = 100, .y = 100, .hotspot_x = 0, .hotspot_y = 0, .inside = true},
+      {.x = 0, .y = 0, .hotspot_x = 2, .hotspot_y = 5, .inside = true},
+      {.x = 1, .y = 1, .hotspot_x = 2, .hotspot_y = 5, .inside = true},
+      {.x = 50, .y = 50, .hotspot_x = 2, .hotspot_y = 5, .inside = true},
+      {.x = 100, .y = 100, .hotspot_x = 2, .hotspot_y = 5, .inside = true},
+      {.x = 0, .y = 0, .hotspot_x = 5, .hotspot_y = 2, .inside = true},
+      {.x = 50, .y = 50, .hotspot_x = 5, .hotspot_y = 2, .inside = true},
+      {.x = 100, .y = 100, .hotspot_x = 5, .hotspot_y = 2, .inside = true},
+      {.x = 0, .y = 0, .hotspot_x = 0, .hotspot_y = 0, .inside = false},
   };
 
   for (size_t i = 0; i < std::size(tests); i++) {
@@ -282,10 +290,10 @@ TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfFrameMayContainIt) {
     int y;
     bool may_contain_cursor;
   } tests[] = {
-      {100, 200, true},
-      {100, 200, false},
-      {150, 250, true},
-      {150, 250, false},
+      {.x = 100, .y = 200, .may_contain_cursor = true},
+      {.x = 100, .y = 200, .may_contain_cursor = false},
+      {.x = 150, .y = 250, .may_contain_cursor = true},
+      {.x = 150, .y = 250, .may_contain_cursor = false},
   };
   for (size_t i = 0; i < std::size(tests); i++) {
     SCOPED_TRACE(i);

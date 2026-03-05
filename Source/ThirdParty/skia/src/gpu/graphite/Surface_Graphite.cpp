@@ -146,7 +146,7 @@ sk_sp<Surface> Surface::Make(Recorder* recorder,
                                         backingFit,
                                         SkSurfacePropsCopyOrDefault(props),
                                         initialLoadOp,
-                                        std::move(label),
+                                        label,
                                         registerWithRecorder);
     if (!device) {
         return nullptr;
@@ -237,8 +237,22 @@ sk_sp<SkSurface> RenderTarget(Recorder* recorder,
         label = "SkSurfaceRenderTarget";
     }
     // The client is getting the ref on this surface so it must be unbudgeted.
-    return skgpu::graphite::Surface::Make(recorder, info, std::move(label), skgpu::Budgeted::kNo,
+    return skgpu::graphite::Surface::Make(recorder, info, label, skgpu::Budgeted::kNo,
                                           mipmapped, SkBackingFit::kExact, props);
+}
+
+sk_sp<SkSurface> WrapBackendTexture(Recorder* recorder,
+                                    const BackendTexture& backendTex,
+                                    sk_sp<SkColorSpace> cs,
+                                    const SkSurfaceProps* props,
+                                    TextureReleaseProc releaseP,
+                                    ReleaseContext releaseC,
+                                    std::string_view label) {
+    // TODO(476410476): When the SkColorType-taking WrapBackendTexture goes away, we can move its
+    // function body here and construct the SkColorInfo from this getDefaultColorType call.
+    SkColorType colorType = recorder->priv().caps()->getDefaultColorType(backendTex.info());
+    return WrapBackendTexture(recorder, backendTex, colorType, std::move(cs), props,
+                              releaseP, releaseC, label);
 }
 
 sk_sp<SkSurface> WrapBackendTexture(Recorder* recorder,
@@ -271,7 +285,7 @@ sk_sp<SkSurface> WrapBackendTexture(Recorder* recorder,
     }
 
     sk_sp<Texture> texture =
-            recorder->priv().resourceProvider()->createWrappedTexture(backendTex, std::move(label));
+            recorder->priv().resourceProvider()->createWrappedTexture(backendTex, label);
     if (!texture) {
         return nullptr;
     }

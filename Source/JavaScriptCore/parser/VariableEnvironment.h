@@ -149,9 +149,9 @@ public:
 
     VariableEnvironment() { }
     VariableEnvironment(VariableEnvironment&& other)
-        : m_map(WTFMove(other.m_map))
+        : m_map(WTF::move(other.m_map))
         , m_isEverythingCaptured(other.m_isEverythingCaptured)
-        , m_rareData(WTFMove(other.m_rareData))
+        , m_rareData(WTF::move(other.m_rareData))
     {
     }
     VariableEnvironment(const VariableEnvironment& other)
@@ -304,7 +304,7 @@ public:
 
         RareData() { }
         RareData(RareData&& other)
-            : m_privateNames(WTFMove(other.m_privateNames))
+            : m_privateNames(WTF::move(other.m_privateNames))
         {
         }
         RareData(const RareData&) = default;
@@ -442,7 +442,7 @@ public:
         }
         Handle& operator=(Handle&& other)
         {
-            Handle handle(WTFMove(other));
+            Handle handle(WTF::move(other));
             swap(handle);
             return *this;
         }
@@ -488,14 +488,14 @@ private:
 
 class TDZEnvironmentLink : public RefCounted<TDZEnvironmentLink> {
     TDZEnvironmentLink(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent)
-        : m_handle(WTFMove(handle))
-        , m_parent(WTFMove(parent))
+        : m_handle(WTF::move(handle))
+        , m_parent(WTF::move(parent))
     { }
 
 public:
     static RefPtr<TDZEnvironmentLink> create(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent)
     {
-        return adoptRef(new TDZEnvironmentLink(WTFMove(handle), WTFMove(parent)));
+        return adoptRef(new TDZEnvironmentLink(WTF::move(handle), WTF::move(parent)));
     }
 
     bool contains(UniquedStringImpl* impl) const { return m_handle.environment().toTDZEnvironment().contains(impl); }

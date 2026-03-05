@@ -47,7 +47,10 @@ class CrashLogs(object):
 
     def __init__(self, host, crash_log_directory, crash_logs_to_skip=[]):
         self._host = host
-        self._crash_log_directory = crash_log_directory
+        if isinstance(crash_log_directory, (list, tuple, set)):
+            self._crash_log_directories = list(crash_log_directory)
+        else:
+            self._crash_log_directories = [crash_log_directory]
         self._crash_logs_to_skip = crash_logs_to_skip
 
     def find_newest_log(self, process_name, pid=None, include_errors=False, newer_than=None):
@@ -95,7 +98,9 @@ class CrashLogs(object):
             return (basename.startswith(process_name + '_') and (basename.endswith('.crash')) or
                     (process_name in basename and basename.endswith('.ips')))
 
-        logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
+        logs = []
+        for directory in self._crash_log_directories:
+            logs.extend(self._host.filesystem.files_under(directory, file_filter=is_crash_log))
         errors = ''
         for path in reversed(sorted(logs)):
             try:
@@ -120,7 +125,9 @@ class CrashLogs(object):
                 return False
             return basename.startswith("CrashLog")
 
-        logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
+        logs = []
+        for directory in self._crash_log_directories:
+            logs.extend(self._host.filesystem.files_under(directory, file_filter=is_crash_log))
         errors = u''
         for path in reversed(sorted(logs)):
             try:
@@ -156,7 +163,9 @@ class CrashLogs(object):
                 return False
             return basename.endswith('.crash') or basename.endswith('.ips')
 
-        logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
+        logs = []
+        for directory in self._crash_log_directories:
+            logs.extend(self._host.filesystem.files_under(directory, file_filter=is_crash_log))
         errors = ''
         crash_logs = {}
         for path in reversed(sorted(logs)):

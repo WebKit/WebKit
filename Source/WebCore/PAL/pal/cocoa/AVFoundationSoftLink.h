@@ -25,6 +25,12 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 #if USE(AVFOUNDATION)
 
 #import <AVFoundation/AVFoundation.h>
@@ -449,3 +455,5 @@ SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferVideoRenderer, PAL::getAVSampleBufferV
 SPECIALIZE_OBJC_TYPE_TRAITS(AVOutputContext, PAL::getAVOutputContextClassSingleton())
 
 #endif // USE(AVFOUNDATION)
+
+#endif // !__has_feature(modules)

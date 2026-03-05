@@ -52,7 +52,7 @@ std::unique_ptr<PlatformDisplaySurfaceless> PlatformDisplaySurfaceless::create()
 }
 
 PlatformDisplaySurfaceless::PlatformDisplaySurfaceless(Ref<GLDisplay>&& glDisplay)
-    : PlatformDisplay(WTFMove(glDisplay))
+    : PlatformDisplay(WTF::move(glDisplay))
 {
 #if ENABLE(WEBGL)
     m_anglePlatform = EGL_PLATFORM_SURFACELESS_MESA;

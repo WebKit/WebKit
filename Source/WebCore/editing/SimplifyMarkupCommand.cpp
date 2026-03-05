@@ -32,11 +32,12 @@
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include "StyleDifference.h"
 
 namespace WebCore {
 
 SimplifyMarkupCommand::SimplifyMarkupCommand(Ref<Document>&& document, Node* firstNode, Node* nodeAfterLast)
-    : CompositeEditCommand(WTFMove(document))
+    : CompositeEditCommand(WTF::move(document))
     , m_firstNode(firstNode)
     , m_nodeAfterLast(nodeAfterLast)
 {
@@ -58,7 +59,7 @@ void SimplifyMarkupCommand::doApply()
             continue;
         
         RefPtr startingNode = node->parentNode();
-        auto* startingStyle = startingNode->renderStyle();
+        CheckedPtr startingStyle = startingNode->renderStyle();
         if (!startingStyle)
             continue;
         RefPtr currentNode = startingNode;
@@ -86,10 +87,8 @@ void SimplifyMarkupCommand::doApply()
                 break;
             }
             
-            OptionSet<StyleDifferenceContextSensitiveProperty> contextSensitiveProperties;
-            if (currentNode->renderStyle()->diff(*startingStyle, contextSensitiveProperties) == StyleDifference::Equal)
+            if (Style::difference(*currentNode->renderStyle(), *startingStyle) == Style::DifferenceResult::Equal)
                 topNodeWithStartingStyle = currentNode;
-            
         }
         if (topNodeWithStartingStyle) {
             for (RefPtr node = startingNode; node && node != topNodeWithStartingStyle; node = node->parentNode())

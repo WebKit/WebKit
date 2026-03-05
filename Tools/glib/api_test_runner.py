@@ -210,7 +210,7 @@ class TestRunner(object):
     def _run_test_qt(self, test_program):
         env = self._test_env
         env['XDG_SESSION_TYPE'] = 'wayland'
-        env['QML2_IMPORT_PATH'] = common.library_build_path(self._port, 'qt5', 'qml')
+        env['QML_IMPORT_PATH'] = common.library_build_path(self._port, 'qt6', 'qml')
 
         name = os.path.basename(test_program)
         if not hasattr(subprocess, 'TimeoutExpired'):

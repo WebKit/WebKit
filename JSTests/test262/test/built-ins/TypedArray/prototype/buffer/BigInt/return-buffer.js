@@ -10,7 +10,7 @@ info: |
   ...
   4. Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
   5. Return buffer.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -19,4 +19,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   var ta = new TA(buffer);
 
   assert.sameValue(ta.buffer, buffer);
-});
+}, null, ["passthrough"]);

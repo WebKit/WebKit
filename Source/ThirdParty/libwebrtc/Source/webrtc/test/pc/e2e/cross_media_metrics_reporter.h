@@ -23,6 +23,7 @@
 #include "api/test/track_id_stream_info_map.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -30,7 +31,7 @@ namespace webrtc_pc_e2e {
 class CrossMediaMetricsReporter
     : public PeerConnectionE2EQualityTestFixture::QualityMetricsReporter {
  public:
-  explicit CrossMediaMetricsReporter(test::MetricsLogger* metrics_logger);
+  CrossMediaMetricsReporter(Clock& clock, test::MetricsLogger* metrics_logger);
   ~CrossMediaMetricsReporter() override = default;
 
   void Start(absl::string_view test_case_name,
@@ -54,6 +55,7 @@ class CrossMediaMetricsReporter
   std::string GetTestCaseName(const std::string& stream_label,
                               const std::string& sync_group) const;
 
+  Clock& clock_;
   test::MetricsLogger* const metrics_logger_;
 
   std::string test_case_name_;

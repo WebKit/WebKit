@@ -66,7 +66,7 @@ public:
         cancelTask();
 
         m_isPending = true;
-        callOnMainThread([weakThis = WeakPtr { *this }, task = WTFMove(task)] {
+        callOnMainThread([weakThis = WeakPtr { *this }, task = WTF::move(task)] {
             if (!weakThis)
                 return;
             ASSERT(weakThis->isPending());

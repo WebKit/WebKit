@@ -27,13 +27,18 @@
 #define PAS_CONFIG_H
 
 #include "pas_config_prefix.h"
+#include "pas_platform.h"
 
 #include "stdbool.h"
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
 #if defined(__has_include)
 #if __has_include(<WebKitAdditions/pas_mte_additions.h>)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/pas_mte_additions.h>
+#pragma clang diagnostic pop
 #endif // __has_include(<WebKitAdditions/pas_mte_additions.h>) && !PAS_ENABLE_TESTING
 #endif // defined(__has_include)
 #endif // defined(PAS_BMALLOC) && PAS_BMALLOC
@@ -72,14 +77,22 @@
 #endif
 #define PAS_ENABLE_TESTING __PAS_ENABLE_TESTING
 
+#ifndef PAS_ENABLE_STATS
+#define PAS_ENABLE_STATS 0
+#endif
+
 #define PAS_ARM64 __PAS_ARM64
 #define PAS_ARM32 __PAS_ARM32
 
 #define PAS_ARM __PAS_ARM
 
 #ifndef PAS_ENABLE_MTE
-#define PAS_ENABLE_MTE (PAS_USE_APPLE_INTERNAL_SDK && __PAS_ARM64E)
-#endif
+#if defined(PAS_BMALLOC)
+#define PAS_ENABLE_MTE (PAS_USE_APPLE_INTERNAL_SDK && __PAS_ARM64E && !PAS_ASAN_ENABLED)
+#else /* !defined(PAS_BMALLOC) */
+#define PAS_ENABLE_MTE 0
+#endif /* defined(PAS_BMALLOC) */
+#endif /* PAS_ENABLE_MTE */
 
 #define PAS_RISCV __PAS_RISCV
 
@@ -129,12 +142,6 @@
                                                        << (PAS_COMPACT_PTR_BITS & 63)) - 1))
 
 #define PAS_ALLOCATOR_INDEX_BYTES        4
-
-#if PAS_OS(DARWIN) || PAS_PLATFORM(PLAYSTATION)
-#define PAS_USE_SPINLOCKS                0
-#else
-#define PAS_USE_SPINLOCKS                1
-#endif
 
 #endif /* PAS_CONFIG_H */
 

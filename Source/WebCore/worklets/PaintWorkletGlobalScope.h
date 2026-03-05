@@ -29,16 +29,8 @@
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Lock.h>
-
-namespace WebCore {
-struct PaintDefinition;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PaintDefinition> : std::true_type { };
-}
 
 namespace JSC {
 class JSObject;
@@ -49,8 +41,10 @@ namespace WebCore {
 class JSDOMGlobalObject;
 
 // All paint definitions must be destroyed before the vm is destroyed, because otherwise they will point to freed memory.
-struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
+struct PaintDefinition final : public CanMakeWeakPtr<PaintDefinition>, public CanMakeCheckedPtr<PaintDefinition> {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PaintDefinition);
+    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(PaintDefinition);
+
     PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments);
 
     const AtomString name;
@@ -61,7 +55,7 @@ struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
 };
 
 class PaintWorkletGlobalScope final : public WorkletGlobalScope {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaintWorkletGlobalScope);
+    WTF_MAKE_TZONE_ALLOCATED(PaintWorkletGlobalScope);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PaintWorkletGlobalScope);
 public:
     static RefPtr<PaintWorkletGlobalScope> tryCreate(Document&, ScriptSourceCode&&);

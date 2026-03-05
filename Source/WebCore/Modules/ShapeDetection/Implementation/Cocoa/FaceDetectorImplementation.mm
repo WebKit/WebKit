@@ -37,8 +37,6 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <pal/cocoa/VisionSoftLink.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore::ShapeDetection {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FaceDetectorImpl);
@@ -50,9 +48,14 @@ FaceDetectorImpl::FaceDetectorImpl(const FaceDetectorOptions& faceDetectorOption
 
 FaceDetectorImpl::~FaceDetectorImpl() = default;
 
+static std::span<const CGPoint> pointsInImageOfSize(VNFaceLandmarkRegion2D *landmark, const FloatSize& imageSize)
+{
+    return unsafeMakeSpan([landmark pointsInImageOfSize:imageSize], landmark.pointCount);
+}
+
 static Vector<FloatPoint> convertLandmark(VNFaceLandmarkRegion2D *landmark, const FloatSize& imageSize)
 {
-    return Vector(std::span { [landmark pointsInImageOfSize:imageSize], landmark.pointCount }).map([&imageSize](const CGPoint& point) {
+    return WTF::map(pointsInImageOfSize(landmark, imageSize), [&imageSize](const CGPoint& point) {
         return convertPointFromUnnormalizedVisionToWeb(imageSize, point);
     });
 }
@@ -105,11 +108,9 @@ void FaceDetectorImpl::detect(const NativeImage& image, CompletionHandler<void(V
             break;
     }
 
-    completionHandler(WTFMove(results));
+    completionHandler(WTF::move(results));
 }
 
 } // namespace WebCore::ShapeDetection
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)

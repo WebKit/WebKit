@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/LocalFrameViewLayoutContext.h>
+#include "LocalFrameViewLayoutContext.h"
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ public:
     TextBoxTrimmer(const RenderBlockFlow& blockContainer, const RenderBlockFlow& lastFormattedLineRoot);
     ~TextBoxTrimmer();
 
-    static RenderBlockFlow* lastInlineFormattingContextRootForTrimEnd(const RenderBlockFlow& blockContainer);
+    static CheckedPtr<RenderBlockFlow> lastInlineFormattingContextRootForTrimEnd(const RenderBlockFlow& blockContainer);
 
 private:
     void adjustTextBoxTrimStatusBeforeLayout(const RenderBlockFlow* lastFormattedLineRoot);

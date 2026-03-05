@@ -76,7 +76,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestInputDelegate>> createW
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
     [webView _setInputDelegate:inputDelegate.get()];
-    return { WTFMove(webView), WTFMove(inputDelegate) };
+    return { WTF::move(webView), WTF::move(inputDelegate) };
 }
 
 TEST(EnterKeyHintTests, EnterKeyHintInContentEditableElement)

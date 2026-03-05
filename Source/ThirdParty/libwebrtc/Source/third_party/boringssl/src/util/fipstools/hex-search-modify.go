@@ -17,13 +17,13 @@
 // This trivial program is used to corrupt the FIPS module. This is done as
 // part of FIPS testing to show that the integrity check is effective.
 //
-// It finds the (sole) occurance of a given hex pattern in a file and flips the
+// It finds the (sole) occurrence of a given hex pattern in a file and flips the
 // first bit. The hex pattern is intended to be the output of running
 // `BORINGSSL_FIPS_SHOW_HASH=1 ninja bcm.o`, i.e. the integrity hash value of
 // the module. By flipping the first bit we ensure that the check will
 // mismatch.
 //
-// This is a simplier version of `break-hash.go` for when we're building with
+// This is a simpler version of `break-hash.go` for when we're building with
 // BORINGSSL_FIPS_SHOW_HASH. (But we don't do that in all cases.)
 
 package main

@@ -48,7 +48,7 @@ enum ReadyState {
     EnabledForContext,
     Exposed=(Window,DedicatedWorker)
 ] interface MediaSource : EventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional MediaSourceInit init = { });
+    [CallWith=CurrentScriptExecutionContext] constructor(optional MediaSourceInit init = {});
 
     [EnabledBySetting=DetachableMediaSourceEnabled] readonly attribute boolean detachable;
 

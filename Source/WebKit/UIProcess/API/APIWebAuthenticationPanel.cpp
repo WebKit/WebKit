@@ -46,17 +46,7 @@ WebAuthenticationPanel::WebAuthenticationPanel()
     : m_manager(AuthenticatorManager::create())
     , m_client(WebAuthenticationPanelClient::create())
 {
-    protectedManager()->enableNativeSupport();
-}
-
-RefPtr<WebKit::AuthenticatorManager> WebAuthenticationPanel::protectedManager() const
-{
-    return m_manager;
-}
-
-Ref<WebAuthenticationPanelClient> WebAuthenticationPanel::protectedClient() const
-{
-    return m_client;
+    protect(m_manager)->enableNativeSupport();
 }
 
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
@@ -81,7 +71,7 @@ void WebAuthenticationPanel::handleRequest(WebAuthenticationRequestData&& reques
 {
     ASSERT(m_manager);
     request.weakPanel = *this;
-    protectedManager()->handleRequest(WTFMove(request), WTFMove(callback));
+    protect(m_manager)->handleRequest(WTF::move(request), WTF::move(callback));
 }
 
 void WebAuthenticationPanel::cancel() const
@@ -91,7 +81,7 @@ void WebAuthenticationPanel::cancel() const
         return;
     }
 
-    protectedManager()->cancel();
+    protect(m_manager)->cancel();
 }
 
 void WebAuthenticationPanel::setMockConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)
@@ -99,18 +89,18 @@ void WebAuthenticationPanel::setMockConfiguration(WebCore::MockWebAuthentication
     ASSERT(m_manager);
 
     if (RefPtr mockManager = dynamicDowncast<MockAuthenticatorManager>(*m_manager)) {
-        mockManager->setTestConfiguration(WTFMove(configuration));
+        mockManager->setTestConfiguration(WTF::move(configuration));
         return;
     }
 
-    Ref manager = MockAuthenticatorManager::create(WTFMove(configuration));
+    Ref manager = MockAuthenticatorManager::create(WTF::move(configuration));
     manager->enableNativeSupport();
-    m_manager = WTFMove(manager);
+    m_manager = WTF::move(manager);
 }
 
 void WebAuthenticationPanel::setClient(Ref<WebAuthenticationPanelClient>&& client)
 {
-    m_client = WTFMove(client);
+    m_client = WTF::move(client);
 }
 
 } // namespace API

@@ -140,7 +140,7 @@ RefPtr<CSSValue> consumeClipPath(CSSParserTokenRange& range, CSS::PropertyParser
     if (list.isEmpty())
         return nullptr;
 
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 } // namespace CSSPropertyParserHelpers

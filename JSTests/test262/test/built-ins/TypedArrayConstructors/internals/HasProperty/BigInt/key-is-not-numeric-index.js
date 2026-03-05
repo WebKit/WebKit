@@ -14,16 +14,16 @@ info: |
     ...
   4. Return ? OrdinaryHasProperty(O, P).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Reflect, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(1);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(1));
 
   assert.sameValue(Reflect.has(sample, "foo"), false);
 
   Object.defineProperty(sample, "foo", { value: 42 });
 
   assert.sameValue(Reflect.has(sample, "foo"), true);
-});
+}, null, ["passthrough"]);

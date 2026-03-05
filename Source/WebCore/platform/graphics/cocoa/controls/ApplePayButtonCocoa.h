@@ -37,10 +37,10 @@ class ApplePayButtonPart;
 class ApplePayButtonCocoa final : public PlatformControl {
     WTF_MAKE_TZONE_ALLOCATED(ApplePayButtonCocoa);
 public:
-    ApplePayButtonCocoa(ApplePayButtonPart& owningMeterPart);
+    explicit ApplePayButtonCocoa(ApplePayButtonPart&);
 
 private:
-    const ApplePayButtonPart& owningApplePayButtonPart() const { return downcast<ApplePayButtonPart>(m_owningPart); }
+    Ref<const ApplePayButtonPart> owningApplePayButtonPart() const { return downcast<ApplePayButtonPart>(m_owningPart.get()); }
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };

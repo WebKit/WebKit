@@ -34,10 +34,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CaretPosition);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CaretPosition);
 
 CaretPosition::CaretPosition(RefPtr<Node>&& offsetNode, unsigned offset)
-    : m_offsetNode(WTFMove(offsetNode))
+    : m_offsetNode(WTF::move(offsetNode))
     , m_offset(offset)
 {
 }

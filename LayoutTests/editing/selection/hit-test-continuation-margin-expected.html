@@ -2,24 +2,26 @@
 <html>
 <head>
 <style>
-#test { width: 300px; font-size: 50px; border: solid 1px black; padding: 5px; }
-#test span { color: green; }
+#test { width: 300px; font-size: 50px; border: solid 1px black; padding: 5px; color: green; }
 #test div { border: solid 2px blue; margin-top: 100px;}
 </style>
 </head>
 <body>
-<p>Double-clicking in the empty space (margin) after the second line should select the second line, not the first.</p>
+<p>Double-clicking in the empty space (margin) after the second line should select the third line.</p>
 <div style="padding: 50px;">
-<div id="test"><span><div>first</div><div id="target">second</div><div>third</div></span></div>
+<div id="test"><div>first</div><div id="target">second</div><div>third</div></div>
 </div>
 <script>
 
 const target = document.querySelector('#target');
 
-var range = document.createRange();
-range.setStart(target, 0);
-range.setEnd(target, 1);
-window.getSelection().addRange(range);
+if (window.eventSender) {
+    eventSender.mouseMoveTo(target.offsetLeft + 10, target.offsetTop + target.offsetHeight + 10);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
 </script>
 </body>
 </html>

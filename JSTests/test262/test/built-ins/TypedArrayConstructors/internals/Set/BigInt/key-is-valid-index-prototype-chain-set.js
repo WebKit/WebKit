@@ -14,7 +14,7 @@ info: |
     b. If numericIndex is not undefined, then
       [...]
   3. Return ? OrdinarySet(O, P, V, Receiver).
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray, Proxy]
 ---*/
 
@@ -26,7 +26,7 @@ var value = {
   },
 };
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var target, receiver;
 
   Object.defineProperty(TA.prototype, 0, {
@@ -36,7 +36,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
 
-  target = new TA([0n]);
+  target = new TA(makeCtorArg([0n]));
   receiver = Object.create(target);
   receiver[0] = value;
   assert.sameValue(target[0], 0n, "target[0] should remain unchanged (receiver: empty object)");
@@ -44,7 +44,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
 
   var proxyTrapCalls = 0;
-  target = new TA([0n]);
+  target = new TA(makeCtorArg([0n]));
   receiver = new Proxy(Object.create(target), {
     defineProperty(_target, key, desc) {
       ++proxyTrapCalls;
@@ -58,7 +58,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(proxyTrapCalls, 1, "Proxy's [[DefineOwnProperty]] exotic method should be called");
 
 
-  target = new TA([0n]);
+  target = new TA(makeCtorArg([0n]));
   receiver = Object.preventExtensions(Object.create(target));
   assert.throws(TypeError, function() { "use strict"; receiver[0] = value; },
     "setting receiver[0] should throw in strict mode (receiver: non-extensible empty object)");
@@ -66,7 +66,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert(!receiver.hasOwnProperty(0), "receiver[0] should not be created (receiver: non-extensible empty object)");
 
 
-  target = new TA([0n]);
+  target = new TA(makeCtorArg([0n]));
   receiver = Object.setPrototypeOf([], target);
   receiver[0] = value;
   assert.sameValue(target[0], 0n, "target[0] should remain unchanged (receiver: regular array)");
@@ -74,7 +74,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(receiver.length, 1, "Array's [[DefineOwnProperty]] exotic method should be called");
 
 
-  target = new TA([0n]);
+  target = new TA(makeCtorArg([0n]));
   receiver = Object.setPrototypeOf(new String(""), target);
   receiver[0] = value;
   assert.sameValue(target[0], 0n, "target[0] should remain unchanged (receiver: empty String object)");
@@ -82,6 +82,6 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
 
   assert(delete TA.prototype[0]);
-});
+}, null, ["passthrough"]);
 
 assert.sameValue(valueOfCalls, 0, "value should not be coerced");

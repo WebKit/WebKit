@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLUnderOverElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLUnderOverElement);
 
 using namespace MathMLNames;
 
@@ -87,7 +87,7 @@ void MathMLUnderOverElement::attributeChanged(const QualifiedName& name, const A
 RenderPtr<RenderElement> MathMLUnderOverElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(munderTag) || hasTagName(moverTag) || hasTagName(munderoverTag));
-    return createRenderer<RenderMathMLUnderOver>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLUnderOver>(*this, WTF::move(style));
 }
 
 }

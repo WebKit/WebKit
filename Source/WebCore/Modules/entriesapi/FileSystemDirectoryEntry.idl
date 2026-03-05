@@ -30,12 +30,12 @@
     [CallWith=CurrentScriptExecutionContext] FileSystemDirectoryReader createReader();
 
     [CallWith=CurrentScriptExecutionContext] undefined getFile(optional USVString? path,
-        optional FileSystemFlags options,
+        optional FileSystemFlags options = {},
         optional FileSystemEntryCallback? successCallback,
         optional ErrorCallback? errorCallback);
 
     [CallWith=CurrentScriptExecutionContext] undefined getDirectory(optional USVString? path,
-        optional FileSystemFlags options,
+        optional FileSystemFlags options = {},
         optional FileSystemEntryCallback? successCallback,
         optional ErrorCallback? errorCallback);
 };

@@ -5,10 +5,17 @@ tommi@webrtc.org
 
 # For approvals that absolutely must be done on US Pacific time
 deadbeef@webrtc.org
-tkchin@webrtc.org
 
 per-file peer_connection*=hbos@webrtc.org
 
 per-file DEPS=mbonadei@webrtc.org
 
 per-file uma_metrics.h=kron@webrtc.org
+
+# Adding features via SDP munging requires approval from SDP owners
+per-file webrtc_sdp.cc = set noparent
+per-file webrtc_sdp.cc = hta@webrtc.org
+per-file webrtc_sdp.cc = hbos@webrtc.org
+# If none of the above are present, may also try one of these
+per-file webrtc_sdp.cc = tommi@webrtc.org
+per-file webrtc_sdp.cc = guidou@webrtc.org

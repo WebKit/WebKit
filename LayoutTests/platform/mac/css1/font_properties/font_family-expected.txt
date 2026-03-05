@@ -37,7 +37,7 @@ layer at (0,0) size 785x1313
           RenderText {#text} at (0,0) size 314x18
             text run at (0,0) width 314: "This sentence should be in a sans-serif font."
         RenderBlock {P} at (0,102) size 769x25
-          RenderText {#text} at (0,0) size 266x25
+          RenderText {#text} at (0,-1) size 266x27
             text run at (0,0) width 266: "This sentence should be in a cursive font."
         RenderBlock {P} at (0,143) size 769x25
           RenderText {#text} at (0,0) size 296x25
@@ -63,7 +63,7 @@ layer at (0,0) size 785x1313
           RenderText {#text} at (0,0) size 314x18
             text run at (0,0) width 314: "This sentence should be in a sans-serif font."
         RenderBlock {P} at (0,114) size 769x25
-          RenderText {#text} at (0,0) size 266x25
+          RenderText {#text} at (0,-1) size 266x27
             text run at (0,0) width 266: "This sentence should be in a cursive font."
         RenderBlock {P} at (0,155) size 769x25
           RenderText {#text} at (0,0) size 296x25
@@ -94,7 +94,7 @@ layer at (0,0) size 785x1313
                   RenderText {#text} at (0,0) size 314x18
                     text run at (0,0) width 314: "This sentence should be in a sans-serif font."
                 RenderBlock {P} at (0,102) size 747x25
-                  RenderText {#text} at (0,0) size 266x25
+                  RenderText {#text} at (0,-1) size 266x27
                     text run at (0,0) width 266: "This sentence should be in a cursive font."
                 RenderBlock {P} at (0,143) size 747x25
                   RenderText {#text} at (0,0) size 296x25
@@ -120,7 +120,7 @@ layer at (0,0) size 785x1313
                   RenderText {#text} at (0,0) size 314x18
                     text run at (0,0) width 314: "This sentence should be in a sans-serif font."
                 RenderBlock {P} at (0,114) size 747x25
-                  RenderText {#text} at (0,0) size 266x25
+                  RenderText {#text} at (0,-1) size 266x27
                     text run at (0,0) width 266: "This sentence should be in a cursive font."
                 RenderBlock {P} at (0,155) size 747x25
                   RenderText {#text} at (0,0) size 296x25

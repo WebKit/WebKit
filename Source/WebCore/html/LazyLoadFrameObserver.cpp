@@ -53,7 +53,7 @@ private:
     {
     }
 
-    bool hasCallback() const final { return true; }
+    bool NODELETE hasCallback() const final { return true; }
 
     CallbackResult<void> invoke(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
     {
@@ -84,7 +84,7 @@ LazyLoadFrameObserver::LazyLoadFrameObserver(HTMLIFrameElement& element)
 void LazyLoadFrameObserver::observe(const AtomString& frameURL, const ReferrerPolicy& referrerPolicy)
 {
     auto& frameObserver = m_element->lazyLoadFrameObserver();
-    auto* intersectionObserver = frameObserver.intersectionObserver(m_element->protectedDocument());
+    RefPtr intersectionObserver = frameObserver.intersectionObserver(protect(m_element->document()));
     if (!intersectionObserver)
         return;
     m_frameURL = frameURL;
@@ -110,7 +110,7 @@ IntersectionObserver* LazyLoadFrameObserver::intersectionObserver(Document& docu
     if (!m_observer) {
         auto callback = LazyFrameLoadIntersectionObserverCallback::create(document);
         IntersectionObserver::Init options { std::nullopt, emptyString(), emptyString(), { } };
-        auto observer = IntersectionObserver::create(document, WTFMove(callback), WTFMove(options));
+        auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options));
         if (observer.hasException())
             return nullptr;
         m_observer = observer.releaseReturnValue();

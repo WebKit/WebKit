@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BufferMemoryHandle.h"
 
+#include "JSWebAssemblyInstance.h"
 #include "Options.h"
 #include "WasmFaultSignalHandler.h"
 #include <cstring>
@@ -286,6 +287,24 @@ NEVER_INLINE void* BufferMemoryHandle::memory() const
     ASSERT(m_memory.getMayBeNull() == m_memory.getUnsafe());
     return m_memory.getMayBeNull();
 }
+
+#if ENABLE(WEBASSEMBLY)
+void BufferMemoryHandle::transferAnchors(BufferMemoryHandle& newHandle)
+{
+    RELEASE_ASSERT(sharingMode() == MemorySharingMode::Default); // This function should be usable only when this handle is not shared with the other thread.
+    std::scoped_lock locker(m_lock, newHandle.m_lock); // Locks are automatically ordered.
+    newHandle.m_anchors = std::exchange(m_anchors, { });
+}
+
+void BufferMemoryHandle::registerInstance(JSWebAssemblyInstance& instance)
+{
+    Locker locker { m_lock };
+    RefPtr anchor = instance.anchor();
+    RELEASE_ASSERT(anchor);
+    m_anchors.add(*anchor);
+    instance.updateCachedMemory();
+}
+#endif
 
 } // namespace JSC
 

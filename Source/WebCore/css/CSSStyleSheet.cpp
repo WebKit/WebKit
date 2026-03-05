@@ -50,7 +50,7 @@
 
 namespace WebCore {
 
-static Style::Scope& styleScopeFor(ContainerNode& treeScope)
+static Style::Scope& NODELETE styleScopeFor(ContainerNode& treeScope)
 {
     ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope))
@@ -65,13 +65,13 @@ public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
 private:
-    void ref() const final { m_styleSheet->ref(); }
+    void NODELETE ref() const final { m_styleSheet->ref(); }
     void deref() const final { m_styleSheet->deref(); }
 
     unsigned length() const final { return m_styleSheet->length(); }
     CSSRule* item(unsigned index) const final { return m_styleSheet->item(index); }
 
-    CSSStyleSheet* styleSheet() const final { return m_styleSheet.get(); }
+    CSSStyleSheet* NODELETE styleSheet() const final { return m_styleSheet.get(); }
 
     SingleThreadWeakPtr<CSSStyleSheet> m_styleSheet;
 };
@@ -86,23 +86,23 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
         || is<HTMLLinkElement>(*parentNode)
         || is<HTMLStyleElement>(*parentNode)
         || is<SVGStyleElement>(*parentNode)
-        || parentNode->nodeType() == Node::PROCESSING_INSTRUCTION_NODE;
+        || parentNode->nodeType() == NodeType::ProcessingInstruction;
 }
 #endif // ASSERT_ENABLED
 
 Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, CSSImportRule* ownerRule, std::optional<bool> isOriginClean)
 {
-    return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerRule, isOriginClean));
+    return adoptRef(*new CSSStyleSheet(WTF::move(sheet), ownerRule, isOriginClean));
 }
 
 Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, Node& ownerNode, const std::optional<bool>& isCleanOrigin)
 {
-    return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerNode, TextPosition(), false, isCleanOrigin));
+    return adoptRef(*new CSSStyleSheet(WTF::move(sheet), ownerNode, TextPosition(), false, isCleanOrigin));
 }
 
 Ref<CSSStyleSheet> CSSStyleSheet::createInline(Ref<StyleSheetContents>&& sheet, Element& owner, const TextPosition& startPosition)
 {
-    return adoptRef(*new CSSStyleSheet(WTFMove(sheet), owner, startPosition, true, true));
+    return adoptRef(*new CSSStyleSheet(WTF::move(sheet), owner, startPosition, true, true));
 }
 
 ExceptionOr<Ref<CSSStyleSheet>> CSSStyleSheet::create(Document& document, Init&& init)
@@ -118,22 +118,22 @@ ExceptionOr<Ref<CSSStyleSheet>> CSSStyleSheet::create(Document& document, Init&&
 
     CSSParserContext parserContext(document, baseURL);
     parserContext.shouldIgnoreImportRules = true;
-    return adoptRef(*new CSSStyleSheet(StyleSheetContents::create(parserContext), document, WTFMove(init)));
+    return adoptRef(*new CSSStyleSheet(StyleSheetContents::create(parserContext), document, WTF::move(init)));
 }
 
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* ownerRule, std::optional<bool> isOriginClean)
-    : m_contents(WTFMove(contents))
+    : m_contents(WTF::move(contents))
     , m_isOriginClean(isOriginClean)
     , m_ownerRule(ownerRule)
 {
-    if (auto* parent = parentStyleSheet())
+    if (RefPtr parent = parentStyleSheet())
         m_styleScope = parent->styleScope();
 
     m_contents->registerClient(this);
 }
 
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const std::optional<bool>& isOriginClean)
-    : m_contents(WTFMove(contents))
+    : m_contents(WTF::move(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isOriginClean(isOriginClean)
     , m_styleScope(Style::Scope::forNode(ownerNode))
@@ -146,7 +146,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode
 
 // https://w3c.github.io/csswg-drafts/cssom-1/#dom-cssstylesheet-cssstylesheet
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Document& document, Init&& options)
-    : m_contents(WTFMove(contents))
+    : m_contents(WTF::move(contents))
     , m_isDisabled(options.disabled)
     , m_wasConstructedByJS(true)
     , m_isOriginClean(true)
@@ -155,12 +155,15 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Document& docum
     m_contents->registerClient(this);
     m_contents->checkLoaded();
 
-    WTF::switchOn(WTFMove(options.media), [this](RefPtr<MediaList>&& mediaList) {
-        if (auto queries = mediaList->mediaQueries(); !queries.isEmpty())
-            setMediaQueries(WTFMove(queries));
-    }, [this](String&& mediaString) {
-        setMediaQueries(MQ::MediaQueryParser::parse(mediaString, strictCSSParserContext()));
-    });
+    WTF::switchOn(WTF::move(options.media),
+        [this](Ref<MediaList>&& mediaList) {
+            if (auto queries = mediaList->mediaQueries(); !queries.isEmpty())
+                setMediaQueries(WTF::move(queries));
+        },
+        [this](String&& mediaString) {
+            setMediaQueries(MQ::MediaQueryParser::parse(mediaString, strictCSSParserContext()));
+        }
+    );
 }
 
 CSSStyleSheet::~CSSStyleSheet()
@@ -189,7 +192,7 @@ RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(Styl
     auto& rules = m_contents->m_childRules;
     for (size_t i = 0 ; i < rules.size() ; i++) {
         if (rules[i].ptr() == &styleRule) {
-            auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
+            auto styleRuleWithNesting = StyleRuleWithNesting::create(WTF::move(styleRule));
             rules[i] = styleRuleWithNesting;
             return styleRuleWithNesting;
         }
@@ -236,7 +239,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
     forEachStyleScope([&](Style::Scope& scope) {
         if ((mutationType == RuleInsertion || mutationType == RuleReplace) && contentsClonedForMutation == ContentsClonedForMutation::No && !scope.activeStyleSheetsContains(*this)) {
             if (insertedKeyframesRule) {
-                if (auto* resolver = scope.resolverIfExists())
+                if (RefPtr resolver = scope.resolverIfExists())
                     resolver->addKeyframeStyle(*insertedKeyframesRule);
                 return;
             }
@@ -245,7 +248,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
         }
 
         if (mutationType == KeyframesRuleMutation) {
-            if (auto* ownerDocument = this->ownerDocument())
+            if (RefPtr ownerDocument = this->ownerDocument())
                 ownerDocument->keyframesRuleDidChange(modifiedKeyframesRuleName);
         }
 
@@ -266,11 +269,11 @@ void CSSStyleSheet::didMutate()
 
 void CSSStyleSheet::forEachStyleScope(NOESCAPE const Function<void(Style::Scope&)>& apply)
 {
-    if (auto* scope = styleScope()) {
+    if (CheckedPtr scope = styleScope()) {
         apply(*scope);
         return;
     }
-    for (auto& treeScope : m_adoptingTreeScopes)
+    for (Ref treeScope : m_adoptingTreeScopes)
         apply(styleScopeFor(treeScope));
 }
 
@@ -306,7 +309,7 @@ void CSSStyleSheet::setDisabled(bool disabled)
 
 void CSSStyleSheet::setMediaQueries(MQ::MediaQueryList&& mediaQueries)
 {
-    m_mediaQueries = WTFMove(mediaQueries);
+    m_mediaQueries = WTF::move(mediaQueries);
 }
 
 unsigned CSSStyleSheet::length() const
@@ -339,11 +342,11 @@ bool CSSStyleSheet::canAccessRules() const
     if (baseURL.isEmpty())
         return true;
 
-    Document* document = ownerDocument();
+    RefPtr document = ownerDocument();
     if (!document)
         return false;
 
-    return document->protectedSecurityOrigin()->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
+    return protect(document->securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)
@@ -512,7 +515,7 @@ String CSSStyleSheet::cssText(const CSS::SerializationContext& context)
 
     StringBuilder result;
     for (unsigned index = 0; index < ruleList->length(); ++index) {
-        auto rule = ruleList->item(index);
+        RefPtr rule = ruleList->item(index);
         if (!rule)
             continue;
 
@@ -528,7 +531,7 @@ String CSSStyleSheet::cssText(const CSS::SerializationContext& context)
 // https://w3c.github.io/csswg-drafts/cssom-1/#dom-cssstylesheet-replace
 void CSSStyleSheet::replace(String&& text, Ref<DeferredPromise>&& promise)
 {
-    auto result = replaceSync(WTFMove(text));
+    auto result = replaceSync(WTF::move(text));
     if (result.hasException())
         promise->reject(result.releaseException());
     promise->resolve<IDLInterface<CSSStyleSheet>>(*this);
@@ -549,9 +552,9 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
             m_contents = *cachedContents;
             m_contents->registerClient(this);
         } else {
-            m_contents->parseString(WTFMove(text));
+            m_contents->parseString(WTF::move(text));
             if (m_contents->isCacheable())
-                Style::StyleSheetContentsCache::singleton().add(WTFMove(key), m_contents);
+                Style::StyleSheetContentsCache::singleton().add(WTF::move(key), m_contents);
         }
         return { };
     }
@@ -563,7 +566,7 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
             childRuleWrapper->setParentStyleSheet(nullptr);
     m_childRuleCSSOMWrappers.clear();
 
-    m_contents->parseString(WTFMove(text));
+    m_contents->parseString(WTF::move(text));
     return { };
 }
 
@@ -593,12 +596,7 @@ void CSSStyleSheet::removeAdoptingTreeScope(ContainerNode& treeScope)
     styleScopeFor(treeScope).didChangeStyleSheetContents();
 }
 
-Ref<StyleSheetContents> CSSStyleSheet::protectedContents()
-{
-    return m_contents;
-}
-
-void CSSStyleSheet::getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
+void CSSStyleSheet::getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>& childStyleSheets)
 {
     RefPtr ruleList = cssRules();
     if (!ruleList)

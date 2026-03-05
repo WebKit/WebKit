@@ -37,19 +37,9 @@ inline ContainerNode& ContainerNode::rootNode() const
     return traverseToRootNode();
 }
 
-inline Ref<ContainerNode> ContainerNode::protectedRootNode() const
-{
-    return rootNode();
-}
-
 inline RenderElement* ContainerNode::renderer() const
 {
     return downcast<RenderElement>(Node::renderer());
-}
-
-inline CheckedPtr<RenderElement> ContainerNode::checkedRenderer() const
-{
-    return renderer();
 }
 
 } // namespace WebCore

@@ -32,35 +32,35 @@ namespace WebCore {
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution)
     : CSSValue(ClassType::ImageSetOption)
-    , m_image(WTFMove(image))
-    , m_resolution(WTFMove(resolution))
+    , m_image(WTF::move(image))
+    , m_resolution(WTF::move(resolution))
 {
 }
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution, String&& type)
     : CSSValue(ClassType::ImageSetOption)
-    , m_image(WTFMove(image))
-    , m_resolution(WTFMove(resolution))
-    , m_mimeType(WTFMove(type))
+    , m_image(WTF::move(image))
+    , m_resolution(WTF::move(resolution))
+    , m_mimeType(WTF::move(type))
 {
 }
 
 Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image)
 {
     ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
-    return adoptRef(*new CSSImageSetOptionValue(WTFMove(image), CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_X)));
+    return adoptRef(*new CSSImageSetOptionValue(WTF::move(image), CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_X)));
 }
 
 Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution)
 {
     ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
-    return adoptRef(*new CSSImageSetOptionValue(WTFMove(image), WTFMove(resolution)));
+    return adoptRef(*new CSSImageSetOptionValue(WTF::move(image), WTF::move(resolution)));
 }
 
 Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution, String type)
 {
     ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
-    return adoptRef(*new CSSImageSetOptionValue(WTFMove(image), WTFMove(resolution), WTFMove(type)));
+    return adoptRef(*new CSSImageSetOptionValue(WTF::move(image), WTF::move(resolution), WTF::move(type)));
 }
 
 bool CSSImageSetOptionValue::equals(const CSSImageSetOptionValue& other) const
@@ -90,12 +90,12 @@ String CSSImageSetOptionValue::customCSSText(const CSS::SerializationContext& co
 
 void CSSImageSetOptionValue::setResolution(Ref<CSSPrimitiveValue>&& resolution)
 {
-    m_resolution = WTFMove(resolution);
+    m_resolution = WTF::move(resolution);
 }
 
 void CSSImageSetOptionValue::setType(String type)
 {
-    m_mimeType = WTFMove(type);
+    m_mimeType = WTF::move(type);
 }
 
 bool CSSImageSetOptionValue::customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const

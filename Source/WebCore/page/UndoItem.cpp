@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(UndoItem);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UndoItem);
 
 UndoManager* UndoItem::undoManager() const
 {
@@ -56,11 +56,6 @@ void UndoItem::invalidate()
 Document* UndoItem::document() const
 {
     return m_document.get();
-}
-
-RefPtr<Document> UndoItem::protectedDocument() const
-{
-    return document();
 }
 
 } // namespace WebCore

@@ -38,11 +38,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 
-static Ref<API::InspectorExtension> protectedExtension(_WKInspectorExtension *extension)
-{
-    return *extension->_extension;
-}
-
 @implementation _WKInspectorExtension
 
 - (void)dealloc
@@ -50,7 +45,7 @@ static Ref<API::InspectorExtension> protectedExtension(_WKInspectorExtension *ex
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInspectorExtension.class, self))
         return;
 
-    _extension->API::InspectorExtension::~InspectorExtension();
+    SUPPRESS_UNRETAINED_ARG _extension->API::InspectorExtension::~InspectorExtension();
 
     [super dealloc];
 }
@@ -77,7 +72,7 @@ static Ref<API::InspectorExtension> protectedExtension(_WKInspectorExtension *ex
 
 - (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError *, NSString *))completionHandler
 {
-    protectedExtension(self)->createTab(tabName, { tabIconURL.baseURL, tabIconURL.relativeString }, { tabIconURL.baseURL, sourceURL.relativeString }, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
+    protect(*_extension)->createTab(tabName, { tabIconURL.baseURL, tabIconURL.relativeString }, { tabIconURL.baseURL, sourceURL.relativeString }, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
             return;
@@ -91,7 +86,7 @@ static Ref<API::InspectorExtension> protectedExtension(_WKInspectorExtension *ex
 {
     std::optional<URL> optionalFrameURL = frameURL ? std::make_optional(URL(frameURL)) : std::nullopt;
     std::optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? std::make_optional(URL(contextSecurityOrigin)) : std::nullopt;
-    protectedExtension(self)->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
+    protect(*_extension)->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
             return;
@@ -109,7 +104,7 @@ static Ref<API::InspectorExtension> protectedExtension(_WKInspectorExtension *ex
 
 - (void)evaluateScript:(NSString *)scriptSource inTabWithIdentifier:(NSString *)extensionTabIdentifier completionHandler:(void(^)(NSError *, id))completionHandler
 {
-    protectedExtension(self)->evaluateScriptInExtensionTab(extensionTabIdentifier, scriptSource, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
+    protect(*_extension)->evaluateScriptInExtensionTab(extensionTabIdentifier, scriptSource, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
             return;
@@ -127,7 +122,7 @@ static Ref<API::InspectorExtension> protectedExtension(_WKInspectorExtension *ex
 
 - (void)navigateToURL:(NSURL *)url inTabWithIdentifier:(NSString *)extensionTabIdentifier completionHandler:(void(^)(NSError *))completionHandler
 {
-    protectedExtension(self)->navigateTab(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (const std::optional<Inspector::ExtensionError> result) mutable {
+    protect(*_extension)->navigateTab(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (const std::optional<Inspector::ExtensionError> result) mutable {
         if (result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.value()).createNSString().get() }]).get());
             return;
@@ -141,7 +136,7 @@ static Ref<API::InspectorExtension> protectedExtension(_WKInspectorExtension *ex
 {
     std::optional<String> optionalUserAgent = userAgent ? std::make_optional(String(userAgent)) : std::nullopt;
     std::optional<String> optionalInjectedScript = injectedScript ? std::make_optional(String(injectedScript)) : std::nullopt;
-    protectedExtension(self)->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionVoidResult&& result) mutable {
+    protect(*_extension)->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionVoidResult&& result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
             return;

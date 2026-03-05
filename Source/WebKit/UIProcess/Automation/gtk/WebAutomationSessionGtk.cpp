@@ -56,14 +56,16 @@ static unsigned modifiersToEventState(OptionSet<WebEventModifier> modifiers)
 
 static unsigned mouseButtonToGdkButton(MouseButton button)
 {
+    // FIXME: Add support for the forward and backward mouse buttons.
+
     switch (button) {
     case MouseButton::None:
     case MouseButton::Left:
         return GDK_BUTTON_PRIMARY;
-    case MouseButton::Middle:
-        return GDK_BUTTON_MIDDLE;
     case MouseButton::Right:
         return GDK_BUTTON_SECONDARY;
+    default:
+        return GDK_BUTTON_MIDDLE;
     }
     return GDK_BUTTON_PRIMARY;
 }

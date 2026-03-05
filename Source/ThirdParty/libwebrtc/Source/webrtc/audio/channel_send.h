@@ -39,13 +39,15 @@ namespace webrtc {
 class FrameEncryptorInterface;
 class RtpTransportControllerSendInterface;
 
-struct CallSendStatistics {
-  int64_t rttMs;
+struct ChannelSendStatistics {
+  TimeDelta round_trip_time;
   int64_t payload_bytes_sent;
   int64_t header_and_padding_bytes_sent;
   // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-retransmittedbytessent
   uint64_t retransmitted_bytes_sent;
-  int packetsSent;
+  int packets_sent;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-packetssentwithect1
+  int packets_sent_with_ect1;
   // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalpacketsenddelay
   TimeDelta total_packet_send_delay = TimeDelta::Zero();
   // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-retransmittedpacketssent
@@ -66,7 +68,7 @@ class ChannelSendInterface {
 
   virtual void ReceivedRTCPPacket(const uint8_t* packet, size_t length) = 0;
 
-  virtual CallSendStatistics GetRTCPStatistics() const = 0;
+  virtual ChannelSendStatistics GetRTCPStatistics() const = 0;
 
   virtual void SetEncoder(int payload_type,
                           const SdpAudioFormat& encoder_format,

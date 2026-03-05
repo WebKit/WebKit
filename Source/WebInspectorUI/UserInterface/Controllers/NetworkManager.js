@@ -213,6 +213,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             target.NetworkAgent.enable();
             target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 
+            if (target.hasCommand("Network.setClearResourceDataOnNavigate"))
+                target.NetworkAgent.setClearResourceDataOnNavigate(WI.settings.clearNetworkOnNavigate.value);
+
             // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
             if (target.hasCommand("Network.setInterceptionEnabled")) {
                 if (this._interceptionEnabled)
@@ -1161,7 +1164,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     executionContextCreated(payload)
     {
         let frame = this.frameForIdentifier(payload.frameId);
-        console.assert(frame);
+        // Under site isolation, FrameTargets report their own contexts.
+        // PageTarget should only handle contexts for frames in its own frame tree.
         if (!frame)
             return;
 

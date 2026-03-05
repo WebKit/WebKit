@@ -20,8 +20,4 @@ PASS Testing click events when clicking child of disabled button.
 PASS Testing click events when clicking child of disabled my-control.
 PASS Testing click events when clicking disabled button.
 PASS Testing click events when clicking disabled my-control.
-PASS Testing dblclick events when clicking child of disabled button.
-PASS Testing dblclick events when clicking child of disabled my-control.
-PASS Testing dblclick events when clicking disabled button.
-PASS Testing dblclick events when clicking disabled my-control.
 

@@ -36,7 +36,7 @@
 namespace WebCore {
 
 VideoTrackList::VideoTrackList(ScriptExecutionContext* context)
-    : TrackListBase(context, TrackListBase::VideoTrackList)
+    : TrackListBase(context)
 {
 }
 
@@ -48,29 +48,34 @@ void VideoTrackList::append(Ref<VideoTrack>&& track)
     size_t index = track->inbandTrackIndex();
     size_t insertionIndex;
     for (insertionIndex = 0; insertionIndex < m_inbandTracks.size(); ++insertionIndex) {
-        Ref otherTrack = downcast<VideoTrack>(*m_inbandTracks[insertionIndex]);
+        Ref otherTrack = downcast<VideoTrack>(m_inbandTracks[insertionIndex]);
         if (otherTrack->inbandTrackIndex() > index)
             break;
     }
-    m_inbandTracks.insert(insertionIndex, track.ptr());
+    m_inbandTracks.insert(insertionIndex, track.copyRef());
 
     if (!track->trackList())
         track->setTrackList(*this);
 
-    scheduleAddTrackEvent(WTFMove(track));
+    scheduleAddTrackEvent(WTF::move(track));
 }
 
-VideoTrack* VideoTrackList::item(unsigned index) const
+VideoTrack& VideoTrackList::item(unsigned index) const
+{
+    return downcast<VideoTrack>(m_inbandTracks[index].get());
+}
+
+VideoTrack* VideoTrackList::itemForBindings(unsigned index) const
 {
     if (index < m_inbandTracks.size())
-        return downcast<VideoTrack>(m_inbandTracks[index].get());
+        return &item(index);
     return nullptr;
 }
 
 RefPtr<VideoTrack> VideoTrackList::getTrackById(const AtomString& id) const
 {
-    for (auto& inbandTracks : m_inbandTracks) {
-        Ref track = downcast<VideoTrack>(*inbandTracks);
+    for (auto& inbandTrack : m_inbandTracks) {
+        Ref track = downcast<VideoTrack>(inbandTrack);
         if (track->id() == id)
             return track;
     }
@@ -79,8 +84,8 @@ RefPtr<VideoTrack> VideoTrackList::getTrackById(const AtomString& id) const
 
 RefPtr<VideoTrack> VideoTrackList::getTrackById(TrackID id) const
 {
-    for (auto& inbandTracks : m_inbandTracks) {
-        Ref track = downcast<VideoTrack>(*inbandTracks);
+    for (auto& inbandTrack : m_inbandTracks) {
+        Ref track = downcast<VideoTrack>(inbandTrack);
         if (track->trackId() == id)
             return track;
     }
@@ -95,7 +100,7 @@ int VideoTrackList::selectedIndex() const
     // currently represent any tracks, or if none of the tracks are selected,
     // it must instead return −1.
     for (unsigned i = 0; i < length(); ++i) {
-        if (downcast<VideoTrack>(*m_inbandTracks[i]).selected())
+        if (downcast<VideoTrack>(m_inbandTracks[i].get()).selected())
             return i;
     }
     return -1;
@@ -107,7 +112,7 @@ VideoTrack* VideoTrackList::selectedItem() const
     if (selectedIndex < 0)
         return nullptr;
 
-    return item(selectedIndex);
+    return &item(selectedIndex);
 }
 
 enum EventTargetInterfaceType VideoTrackList::eventTargetInterface() const

@@ -3,42 +3,42 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 467x19
+      RenderText {#text} at (0,0) size 467x20
         text run at (0,0) width 467: "The white text and grey backgrounds should all clip to the border-radius."
-      RenderBR {BR} at (466,0) size 1x19
+      RenderBR {BR} at (466,0) size 1x20
       RenderText {#text} at (240,145) size 4x19
         text run at (240,145) width 4: " "
       RenderText {#text} at (484,145) size 4x19
         text run at (484,145) width 4: " "
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (240,290) size 0x19
+      RenderBR {BR} at (240,289) size 0x20
       RenderText {#text} at (0,0) size 0x0
 layer at (18,38) size 220x120 clip at (28,48) size 200x100
   RenderBlock {DIV} at (10,30) size 220x120 [border: (10px solid #000000)]
     RenderBlock {DIV} at (10,10) size 200x100 [color=#FFFFFF] [bgcolor=#808080]
-      RenderText {#text} at (0,0) size 85x19
+      RenderText {#text} at (0,0) size 85x20
         text run at (0,0) width 85: "static > static"
 layer at (262,38) size 220x120 clip at (272,48) size 200x100
   RenderBlock {DIV} at (254,30) size 220x120 [border: (10px solid #000000)]
 layer at (272,48) size 200x100
   RenderBlock (relative positioned) {DIV} at (10,10) size 200x100 [color=#FFFFFF] [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 99x19
+    RenderText {#text} at (0,0) size 99x20
       text run at (0,0) width 99: "static > relative"
 layer at (506,38) size 220x120 clip at (516,48) size 200x100
   RenderBlock (relative positioned) {DIV} at (498,30) size 220x120 [border: (10px solid #000000)]
     RenderBlock {DIV} at (10,10) size 200x100 [color=#FFFFFF] [bgcolor=#808080]
-      RenderText {#text} at (0,0) size 99x19
+      RenderText {#text} at (0,0) size 99x20
         text run at (0,0) width 99: "relative > static"
 layer at (18,183) size 220x120 clip at (28,193) size 200x100
-  RenderBlock (relative positioned) {DIV} at (10,175) size 220x120 [border: (10px solid #000000)]
+  RenderBlock (relative positioned) {DIV} at (10,174) size 220x121 [border: (10px solid #000000)]
 layer at (28,193) size 200x100
   RenderBlock (relative positioned) {DIV} at (10,10) size 200x100 [color=#FFFFFF] [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 113x19
+    RenderText {#text} at (0,0) size 113x20
       text run at (0,0) width 113: "relative > relative"
 layer at (18,323) size 220x120 clip at (28,333) size 200x100
-  RenderBlock (relative positioned) {DIV} at (10,315) size 220x120 [border: (10px solid #000000)]
+  RenderBlock (relative positioned) {DIV} at (10,314) size 220x121 [border: (10px solid #000000)]
 layer at (28,333) size 200x100
   RenderBlock (positioned) {DIV} at (10,10) size 200x100 [color=#FFFFFF] [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 119x19
+    RenderText {#text} at (0,0) size 119x20
       text run at (0,0) width 119: "relative > absolute"

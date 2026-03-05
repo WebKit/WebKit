@@ -68,7 +68,7 @@ public:
 
     static Ref<SessionHost> create(Capabilities&& capabilities)
     {
-        return adoptRef(*new SessionHost(WTFMove(capabilities)));
+        return adoptRef(*new SessionHost(WTF::move(capabilities)));
     }
 
     ~SessionHost();
@@ -97,13 +97,13 @@ public:
     long sendCommandToBackend(const String&, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void setBidiHandler(WeakPtr<BidiMessageHandler>&& handler) { m_bidiHandler = WTFMove(handler); }
+    void setBidiHandler(WeakPtr<BidiMessageHandler>&& handler) { m_bidiHandler = WTF::move(handler); }
 #endif
 
 private:
 
     explicit SessionHost(Capabilities&& capabilities)
-        : m_capabilities(WTFMove(capabilities))
+        : m_capabilities(WTF::move(capabilities))
     {
     }
 

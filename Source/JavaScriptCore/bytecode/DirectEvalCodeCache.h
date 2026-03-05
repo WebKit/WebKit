@@ -63,7 +63,7 @@ namespace JSC {
 
             CacheKey() = default;
 
-            unsigned hash() const { return m_source->hash() + m_bytecodeIndex.asBits() + enumToUnderlyingType(m_ropeSuffix); }
+            unsigned hash() const { return m_source->hash() + m_bytecodeIndex.asBits() + std::to_underlying(m_ropeSuffix); }
 
             bool isEmptyValue() const { return !m_source; }
 
@@ -95,7 +95,7 @@ namespace JSC {
 
             CacheLookupKey() = default;
 
-            unsigned hash() const { return m_source->hash() + m_bytecodeIndex.asBits() + enumToUnderlyingType(m_ropeSuffix); }
+            unsigned hash() const { return m_source->hash() + m_bytecodeIndex.asBits() + std::to_underlying(m_ropeSuffix); }
 
             bool operator==(const CacheKey& other) const
             {

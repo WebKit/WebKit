@@ -109,7 +109,7 @@ public:
     }
     VMAllocSpan(VMAllocSpan&& other)
     {
-        *this = WTFMove(other);
+        *this = WTF::move(other);
     }
     VMAllocSpan& operator=(VMAllocSpan&& other)
     {
@@ -155,13 +155,13 @@ std::span<uint8_t> SharedMemoryFromMemoryTest::allocate()
     if (memorySource() == MemorySource::Malloc) {
         if (auto source = std::unique_ptr<uint8_t[]> { new (std::nothrow) uint8_t[size] }) {
             data = { source.get(), size };
-            m_source = WTFMove(source);
+            m_source = WTF::move(source);
         }
     }
     if (memorySource() == MemorySource::SharedMemory) {
         if (auto shm = SharedMemory::allocate(size)) {
             data = shm->mutableSpan();
-            m_source = WTFMove(shm);
+            m_source = WTF::move(shm);
         }
     }
 #if PLATFORM(COCOA)
@@ -214,7 +214,7 @@ TEST_P(SharedMemoryFromMemoryTest, CreateHandleFromMemory)
     ASSERT_FALSE(handle.has_value());
 #endif
     ASSERT_TRUE(handle.has_value());
-    auto shm2 = SharedMemory::map(WTFMove(*handle), protection());
+    auto shm2 = SharedMemory::map(WTF::move(*handle), protection());
     ASSERT_NOT_NULL(shm2);
     auto data2 = shm2->mutableSpan();
     expectTestPattern(data2, 1);
@@ -256,7 +256,7 @@ TEST_P(SharedMemoryFromMemoryTest, CreateHandleVMCopyFromMemory)
     ASSERT_FALSE(handle.has_value());
 #endif
     ASSERT_TRUE(handle.has_value());
-    auto shm2 = SharedMemory::map(WTFMove(*handle), protection());
+    auto shm2 = SharedMemory::map(WTF::move(*handle), protection());
     ASSERT_NOT_NULL(shm2);
     auto data2 = shm2->mutableSpan();
     expectTestPattern(data2, 1);
@@ -287,7 +287,7 @@ TEST_P(SharedMemoryFromMemoryTest, CreateHandleCopyFromMemory)
 
     auto handle = SharedMemory::Handle::createCopy(data, protection());
     ASSERT_TRUE(handle.has_value());
-    auto shm2 = SharedMemory::map(WTFMove(*handle), protection());
+    auto shm2 = SharedMemory::map(WTF::move(*handle), protection());
     ASSERT_NOT_NULL(shm2);
     auto data2 = shm2->mutableSpan();
     expectTestPattern(data2, 1);
@@ -299,6 +299,39 @@ TEST_P(SharedMemoryFromMemoryTest, CreateHandleCopyFromMemory)
         expectTestPattern(data, 2);
     }
 }
+
+#if OS(DARWIN)
+// Tests mapping shared memory as CoW
+// Tests that:
+//   * Changes made to the original mapping aren't visible in the secondary mapping
+//   * Changes made to the secondary mapping aren't visible in the original mapping
+TEST_P(SharedMemoryFromMemoryTest, CreateCOWFromMemory)
+{
+    if (memorySize() > std::numeric_limits<size_t>::max())
+        return;
+    auto data = allocate();
+    if (data.empty() && memorySize() >= sizeOkToSkip)
+        return;
+    ASSERT_FALSE(data.empty());
+    ASSERT_EQ(data.size(), memorySize());
+    fillTestPattern(data, 1);
+    expectTestPattern(data, 1);
+
+    auto handle = SharedMemory::Handle::createVMShare(data, protection());
+    ASSERT_TRUE(handle.has_value());
+    auto shm2 = SharedMemory::map(WTF::move(*handle), protection(), SharedMemory::CopyOnWrite::Yes);
+    ASSERT_NOT_NULL(shm2);
+    auto data2 = shm2->mutableSpan();
+    expectTestPattern(data2, 1);
+    fillTestPattern(data, 2);
+    expectTestPattern(data2, 1);
+    if (protection() == SharedMemory::Protection::ReadWrite) {
+        fillTestPattern(data2, 3);
+        expectTestPattern(data2, 3);
+        expectTestPattern(data, 2);
+    }
+}
+#endif // OS(DARWIN)
 
 #if PLATFORM(COCOA)
 #define ANY_MEMORY_SOURCE testing::Values(MemorySource::Malloc, MemorySource::SharedMemory, MemorySource::ExplicitMapping)

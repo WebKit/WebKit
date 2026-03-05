@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <optional>
 #include <span>
 #include <unicode/utypes.h>
 #include <wtf/ASCIICType.h>
@@ -34,7 +35,7 @@ namespace WTF {
 WTF_EXPORT_PRIVATE double parseDouble(std::span<const Latin1Character> string, size_t& parsedLength);
 WTF_EXPORT_PRIVATE double parseDouble(std::span<const char16_t> string, size_t& parsedLength);
 
-WTF_EXPORT_PRIVATE double parseHexDouble(std::span<const Latin1Character> string, size_t& parsedLength);
-WTF_EXPORT_PRIVATE double parseHexDouble(std::span<const char16_t> string, size_t& parsedLength);
+WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const Latin1Character> string, size_t& parsedLength);
+WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const char16_t> string, size_t& parsedLength);
 
 } // namespace WTF

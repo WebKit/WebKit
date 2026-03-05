@@ -104,7 +104,7 @@ bool RtpHeaderExtensionMap::RegisterByUri(int id, absl::string_view uri) {
     if (uri == extension.uri)
       return Register(id, extension.type, extension.uri);
   RTC_LOG(LS_WARNING) << "Unknown extension uri:'" << uri << "', id: " << id
-                      << '.';
+                      << ".";
   return false;
 }
 

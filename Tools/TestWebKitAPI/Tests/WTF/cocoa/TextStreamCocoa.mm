@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import <wtf/text/TextStreamCocoa.h>
+#import <wtf/text/TextStream.h>
 
 #import <Foundation/Foundation.h>
 

@@ -59,7 +59,7 @@ public:
 
     void setArgumentFlushFormats(FixedVector<DFG::FlushFormat>&& argumentFlushFormats)
     {
-        m_argumentFlushFormats = WTFMove(argumentFlushFormats);
+        m_argumentFlushFormats = WTF::move(argumentFlushFormats);
     }
     const FixedVector<DFG::FlushFormat>& argumentFlushFormats() { return m_argumentFlushFormats; }
 

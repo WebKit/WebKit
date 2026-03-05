@@ -1,16 +1,16 @@
 
-PASS circle(at +50px) - inline
-PASS circle(at -50px) - inline
-PASS circle(at +50%) - inline
-PASS circle(at -50%) - inline
-PASS circle(at left +50px) - inline
-PASS circle(at left +50%) - inline
-PASS circle(at right -50px) - inline
-PASS circle(at right -50%) - inline
-PASS circle(at +50px top) - inline
-PASS circle(at +50% top) - inline
-PASS circle(at -50px bottom) - inline
-PASS circle(at -50% bottom) - inline
+FAIL circle(at +50px) - inline assert_equals: expected "circle(at 50px 50%)" but got "circle(at 50px center)"
+FAIL circle(at -50px) - inline assert_equals: expected "circle(at -50px 50%)" but got "circle(at -50px center)"
+FAIL circle(at +50%) - inline assert_equals: expected "circle(at 50% 50%)" but got "circle(at 50% center)"
+FAIL circle(at -50%) - inline assert_equals: expected "circle(at -50% 50%)" but got "circle(at -50% center)"
+FAIL circle(at left +50px) - inline assert_equals: expected "circle(at 0% 50px)" but got "circle(at left 50px)"
+FAIL circle(at left +50%) - inline assert_equals: expected "circle(at 0% 50%)" but got "circle(at left 50%)"
+FAIL circle(at right -50px) - inline assert_equals: expected "circle(at 100% -50px)" but got "circle(at right -50px)"
+FAIL circle(at right -50%) - inline assert_equals: expected "circle(at 100% -50%)" but got "circle(at right -50%)"
+FAIL circle(at +50px top) - inline assert_equals: expected "circle(at 50px 0%)" but got "circle(at 50px top)"
+FAIL circle(at +50% top) - inline assert_equals: expected "circle(at 50% 0%)" but got "circle(at 50% top)"
+FAIL circle(at -50px bottom) - inline assert_equals: expected "circle(at -50px 100%)" but got "circle(at -50px bottom)"
+FAIL circle(at -50% bottom) - inline assert_equals: expected "circle(at -50% 100%)" but got "circle(at -50% bottom)"
 PASS circle(at +50px +50px) - inline
 PASS circle(at +50% +50%) - inline
 PASS circle(at -50px -50px) - inline

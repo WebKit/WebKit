@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-canvas-state/2d.state.saverestore.bitmap.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-canvas-state/2d.state.saverestore.bitmap.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-canvas-state/2d.state.saverestore.clip.2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-canvas-state/2d.state.saverestore.clip.2.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-canvas-state/2d.state.saverestore.clip.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-canvas-state/2d.state.saverestore.clip.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-canvas-state/2d.state.saverestore.fillStyle.html

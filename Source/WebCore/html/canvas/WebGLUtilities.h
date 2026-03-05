@@ -114,14 +114,14 @@ public:
     {
         if (!m_context)
             return;
-        context.graphicsContextGL()->disable(GraphicsContextGL::RASTERIZER_DISCARD);
+        protect(context.graphicsContextGL())->disable(GraphicsContextGL::RASTERIZER_DISCARD);
     }
 
     ~ScopedDisableRasterizerDiscard()
     {
         if (!m_context)
             return;
-        m_context->graphicsContextGL()->enable(GraphicsContextGL::RASTERIZER_DISCARD);
+        protect(m_context->graphicsContextGL())->enable(GraphicsContextGL::RASTERIZER_DISCARD);
     }
 
 private:
@@ -138,9 +138,9 @@ public:
             return;
         GCGLenum value[1] { GraphicsContextGL::COLOR_ATTACHMENT0 };
         if (context.isWebGL2())
-            context.graphicsContextGL()->drawBuffers(value);
+            protect(context.graphicsContextGL())->drawBuffers(value);
         else
-            context.graphicsContextGL()->drawBuffersEXT(value);
+            protect(context.graphicsContextGL())->drawBuffersEXT(value);
     }
 
     ~ScopedEnableBackbuffer()
@@ -149,9 +149,9 @@ public:
             return;
         GCGLenum value[1] { GraphicsContextGL::NONE };
         if (m_context->isWebGL2())
-            m_context->graphicsContextGL()->drawBuffers(value);
+            protect(m_context->graphicsContextGL())->drawBuffers(value);
         else
-            m_context->graphicsContextGL()->drawBuffersEXT(value);
+            protect(m_context->graphicsContextGL())->drawBuffersEXT(value);
     }
 
 private:
@@ -166,14 +166,14 @@ public:
     {
         if (!m_context)
             return;
-        context.graphicsContextGL()->disable(GraphicsContextGL::SCISSOR_TEST);
+        protect(context.graphicsContextGL())->disable(GraphicsContextGL::SCISSOR_TEST);
     }
 
     ~ScopedDisableScissorTest()
     {
         if (!m_context)
             return;
-        m_context->graphicsContextGL()->enable(GraphicsContextGL::SCISSOR_TEST);
+        protect(m_context->graphicsContextGL())->enable(GraphicsContextGL::SCISSOR_TEST);
     }
 
 private:

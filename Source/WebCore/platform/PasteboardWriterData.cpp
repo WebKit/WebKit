@@ -45,14 +45,14 @@ void PasteboardWriterData::setPlainText(PlainText plainText)
 {
     ASSERT(!m_plainText);
 
-    m_plainText = WTFMove(plainText);
+    m_plainText = WTF::move(plainText);
 }
 
 void PasteboardWriterData::setURLData(URLData url)
 {
     ASSERT(!m_url);
 
-    m_url = WTFMove(url);
+    m_url = WTF::move(url);
 }
 
 void PasteboardWriterData::setWebContent(WebContent webContent)

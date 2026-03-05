@@ -54,6 +54,8 @@ public:
     // Encoded and decoded data
     void destroyDecodedData(bool destroyAll) final;
     void resetData();
+    bool canReplaceData() const { return true; }
+    void dataReplaced(FragmentedSharedBuffer*) final;
     unsigned decodedSize() const { return m_decodedSize; }
     void didDecodeProperties(unsigned decodedPropertiesSize);
 
@@ -69,7 +71,7 @@ public:
     // ImageFrame
     unsigned primaryFrameIndex() const final { return m_descriptor.primaryFrameIndex(); }
 
-    const Vector<ImageFrame>& frames() const { return m_frames; }
+    const Vector<ImageFrame>& frames() const LIFETIME_BOUND { return m_frames; }
     const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& subsamplingLevel = std::nullopt) final { return frameAtIndexCacheIfNeeded(primaryFrameIndex(), subsamplingLevel); }
 
     // NativeImage
@@ -107,6 +109,7 @@ private:
     void decodedSizeDecreased(unsigned decodedSize);
     void decodedSizeReset(unsigned decodedSize);
     bool canDestroyDecodedData() const;
+    void destroyDecodedFrames(bool destroyAll);
 
     void clearFrameBufferCache();
 
@@ -173,6 +176,7 @@ private:
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool shouldUseQuickLookForFullscreen() const final { return m_descriptor.shouldUseQuickLookForFullscreen(); }
+    bool isPanorama() const final { return m_descriptor.isPanorama(); }
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)

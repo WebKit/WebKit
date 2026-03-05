@@ -36,7 +36,7 @@ class Renderer;
 // VkFormat values in range [0, kNumVkFormats) are used as indices in various tables.
 constexpr uint32_t kNumVkFormats = 185;
 
-enum ImageAccess
+enum ImageFormatSupport
 {
     SampleOnly,
     Renderable,
@@ -85,9 +85,9 @@ class Format final : private angle::NonCopyable
     const angle::Format &getIntendedFormat() const { return angle::Format::Get(mIntendedFormatID); }
 
     // The actual Image format is used to implement the front-end format for Texture/Renderbuffers.
-    const angle::Format &getActualImageFormat(ImageAccess access) const
+    const angle::Format &getActualImageFormat(ImageFormatSupport support) const
     {
-        return angle::Format::Get(getActualImageFormatID(access));
+        return angle::Format::Get(getActualImageFormatID(support));
     }
 
     angle::FormatID getActualRenderableImageFormatID() const
@@ -103,47 +103,39 @@ class Format final : private angle::NonCopyable
         return GetVkFormatFromFormatID(renderer, mActualRenderableImageFormatID);
     }
 
-    angle::FormatID getActualImageFormatID(ImageAccess access) const
+    angle::FormatID getActualImageFormatID(ImageFormatSupport support) const
     {
-        return ImageAccess::Renderable == access ? mActualRenderableImageFormatID
-                                                 : mActualSampleOnlyImageFormatID;
+        return support == ImageFormatSupport::Renderable ? mActualRenderableImageFormatID
+                                                         : mActualSampleOnlyImageFormatID;
     }
-    VkFormat getActualImageVkFormat(const Renderer *renderer, ImageAccess access) const
+    VkFormat getActualImageVkFormat(const Renderer *renderer, ImageFormatSupport support) const
     {
-        return GetVkFormatFromFormatID(renderer, getActualImageFormatID(access));
+        return GetVkFormatFromFormatID(renderer, getActualImageFormatID(support));
     }
 
-    LoadImageFunctionInfo getTextureLoadFunction(ImageAccess access, GLenum type) const
+    LoadImageFunctionInfo getTextureLoadFunction(ImageFormatSupport support, GLenum type) const
     {
-        return ImageAccess::Renderable == access ? mRenderableTextureLoadFunctions(type)
-                                                 : mTextureLoadFunctions(type);
+        return support == ImageFormatSupport::Renderable ? mRenderableTextureLoadFunctions(type)
+                                                         : mTextureLoadFunctions(type);
     }
 
     // The actual Buffer format is used to implement the front-end format for Buffers.  This format
     // is used by vertex buffers as well as texture buffers.  Note that all formats required for
     // GL_EXT_texture_buffer have mandatory support for vertex buffers in Vulkan, so they won't be
     // using an emulated format.
-    const angle::Format &getActualBufferFormat(bool compressed) const
+    const angle::Format &getActualBufferFormat() const
     {
-        return angle::Format::Get(compressed ? mActualCompressedBufferFormatID
-                                             : mActualBufferFormatID);
+        return angle::Format::Get(mActualBufferFormatID);
     }
 
-    VkFormat getActualBufferVkFormat(const Renderer *renderer, bool compressed) const
+    VkFormat getActualBufferVkFormat(const Renderer *renderer) const
     {
-        return GetVkFormatFromFormatID(
-            renderer, compressed ? mActualCompressedBufferFormatID : mActualBufferFormatID);
+        return GetVkFormatFromFormatID(renderer, mActualBufferFormatID);
     }
 
-    VertexCopyFunction getVertexLoadFunction(bool compressed) const
-    {
-        return compressed ? mCompressedVertexLoadFunction : mVertexLoadFunction;
-    }
+    VertexCopyFunction getVertexLoadFunction() const { return mVertexLoadFunction; }
 
-    bool getVertexLoadRequiresConversion(bool compressed) const
-    {
-        return compressed ? mCompressedVertexLoadRequiresConversion : mVertexLoadRequiresConversion;
-    }
+    bool getVertexLoadRequiresConversion() const { return mVertexLoadRequiresConversion; }
 
     // |intendedGLFormat| always correponds to a valid GLenum type. For types that don't have a
     // corresponding GLenum we do our best to specify a GLenum that is "close".
@@ -157,16 +149,10 @@ class Format final : private angle::NonCopyable
         return mActualSampleOnlyImageFormatID != mActualRenderableImageFormatID;
     }
 
-    bool canCompressBufferData() const
-    {
-        return mActualCompressedBufferFormatID != angle::FormatID::NONE &&
-               mActualBufferFormatID != mActualCompressedBufferFormatID;
-    }
-
     // Returns the alignment for a buffer to be used with the vertex input stage in Vulkan. This
     // calculation is listed in the Vulkan spec at the end of the section 'Vertex Input
     // Description'.
-    size_t getVertexInputAlignment(bool compressed) const;
+    size_t getVertexInputAlignment() const;
 
   private:
     friend class FormatTable;
@@ -186,7 +172,6 @@ class Format final : private angle::NonCopyable
     angle::FormatID mActualSampleOnlyImageFormatID;
     angle::FormatID mActualRenderableImageFormatID;
     angle::FormatID mActualBufferFormatID;
-    angle::FormatID mActualCompressedBufferFormatID;
 
     InitializeTextureDataFunction mImageInitializerFunction;
     LoadFunctionMap mTextureLoadFunctions;
@@ -282,6 +267,8 @@ bool HasFullTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatI
 bool HasNonRenderableTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID);
 // Checks if it is a ETC texture format
 bool IsETCFormat(angle::FormatID formatID);
+// Checks if it is an ASTC texture format
+bool IsASTC3DFormat(angle::FormatID formatID);
 // Checks if it is a BC texture format
 bool IsBCFormat(angle::FormatID formatID);
 

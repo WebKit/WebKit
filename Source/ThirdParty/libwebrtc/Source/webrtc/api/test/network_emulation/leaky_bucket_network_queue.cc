@@ -10,15 +10,30 @@
 
 #include "api/test/network_emulation/leaky_bucket_network_queue.h"
 
+#include <algorithm>
 #include <cstddef>
 #include <optional>
 #include <vector>
 
 #include "api/test/simulated_network.h"
+#include "api/transport/ecn_marking.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
+
+LeakyBucketNetworkQueue::LeakyBucketNetworkQueue(const Config& config)
+    : max_ect1_sojourn_time_(config.max_ect1_sojourn_time),
+      target_ect1_sojourn_time_(config.target_ect1_sojourn_time),
+      random_(config.seed) {
+  RTC_DCHECK_LE(config.target_ect1_sojourn_time, config.max_ect1_sojourn_time);
+}
+
+void LeakyBucketNetworkQueue::SetMaxPacketCapacity(size_t max_capactiy) {
+  max_packet_capacity_ = max_capactiy;
+}
 
 bool LeakyBucketNetworkQueue::EnqueuePacket(
     const PacketInFlightInfo& packet_info) {
@@ -45,16 +60,31 @@ std::optional<PacketInFlightInfo> LeakyBucketNetworkQueue::DequeuePacket(
   RTC_DCHECK_LE(queue_.front().send_time(), time_now);
   PacketInFlightInfo packet_info = queue_.front();
   queue_.pop();
+  MaybeMarkAsCe(time_now, packet_info);
   return packet_info;
 }
 
-void LeakyBucketNetworkQueue::SetMaxPacketCapacity(size_t max_capactiy) {
-  max_packet_capacity_ = max_capactiy;
+void LeakyBucketNetworkQueue::MaybeMarkAsCe(Timestamp time_now,
+                                            PacketInFlightInfo& packet_info) {
+  if (packet_info.ecn != EcnMarking::kEct1 ||
+      target_ect1_sojourn_time_.IsInfinite() ||
+      max_ect1_sojourn_time_.IsInfinite()) {
+    return;
+  }
+  TimeDelta sojourn_time = time_now - packet_info.send_time();
+  double p_mark =
+      std::clamp((sojourn_time - target_ect1_sojourn_time_) /
+                     (max_ect1_sojourn_time_ - target_ect1_sojourn_time_),
+                 0.0, 1.0);
+  if (random_.Rand<double>() < p_mark) {
+    RTC_LOG(LS_VERBOSE) << "Marking packet " << packet_info.packet_id
+                        << " as CE. p_mark: " << p_mark
+                        << " sojourn_time: " << sojourn_time;
+    packet_info.ecn = EcnMarking::kCe;
+  }
 }
 
-bool LeakyBucketNetworkQueue::empty() const {
-  return queue_.empty();
-}
+bool LeakyBucketNetworkQueue::empty() const { return queue_.empty(); }
 
 void LeakyBucketNetworkQueue::DropOldestPacket() {
   dropped_packets_.push_back(queue_.front());

@@ -42,8 +42,8 @@ public:
 
     IDBIndexIdentifier identifier() const { return m_identifier; }
     IDBObjectStoreIdentifier objectStoreIdentifier() const { return m_objectStoreIdentifier; }
-    const String& name() const { return m_name; }
-    const IDBKeyPath& keyPath() const { return m_keyPath; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const IDBKeyPath& keyPath() const LIFETIME_BOUND { return m_keyPath; }
     bool unique() const { return m_unique; }
     bool multiEntry() const { return m_multiEntry; }
 

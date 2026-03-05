@@ -70,7 +70,7 @@ struct BackgroundSize {
     }
 
     BackgroundSize(LengthSize&& value)
-        : m_value { WTFMove(value) }
+        : m_value { WTF::move(value) }
     {
     }
 

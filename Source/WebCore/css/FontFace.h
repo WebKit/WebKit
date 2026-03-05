@@ -53,11 +53,8 @@ public:
         String display;
         String sizeAdjust;
     };
-
-    using RefCounted::ref;
-    using RefCounted::deref;
     
-    using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
+    using Source = Variant<String, Ref<JSC::ArrayBuffer>, Ref<JSC::ArrayBufferView>>;
     static Ref<FontFace> create(ScriptExecutionContext&, const String& family, Source&&, const Descriptors&);
     static Ref<FontFace> create(ScriptExecutionContext*, CSSFontFace&);
     virtual ~FontFace();
@@ -86,10 +83,10 @@ public:
     String sizeAdjust() const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
-    LoadStatus status() const;
+    LoadStatus NODELETE status() const;
 
     using LoadedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFace>>;
-    LoadedPromise& loadedForBindings();
+    LoadedPromise& NODELETE loadedForBindings();
     LoadedPromise& loadForBindings();
 
     void adopt(CSSFontFace&);
@@ -103,10 +100,10 @@ private:
     explicit FontFace(ScriptExecutionContext*, CSSFontFace&);
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // Callback for LoadedPromise.
-    FontFace& loadedPromiseResolve();
+    FontFace& NODELETE loadedPromiseResolve();
     void setErrorState();
 
     Ref<CSSFontFace> m_backing;

@@ -19,12 +19,17 @@ if (WIN32)
         win/PathWalker.cpp
         win/SignalsWin.cpp
         win/ThreadingWin.cpp
+        win/WTFCRTDebug.cpp
         win/Win32Handle.cpp
     )
     list(APPEND WTF_LIBRARIES
         DbgHelp
         shlwapi
+        synchronization
         winmm
+    )
+    list(APPEND WTF_PUBLIC_HEADERS
+        win/WTFCRTDebug.h
     )
 else ()
     list(APPEND WTF_SOURCES
@@ -113,6 +118,7 @@ endif ()
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_PUBLIC_HEADERS
         glib/GRefPtr.h
+        glib/GSpanExtras.h
         glib/GTypedefs.h
         glib/RunLoopSourcePriority.h
     )
@@ -123,7 +129,6 @@ if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     if (ENABLE_REMOTE_INSPECTOR)
         list(APPEND WTF_PUBLIC_HEADERS
             glib/GSocketMonitor.h
-            glib/GSpanExtras.h
             glib/GUniquePtr.h
             glib/SocketConnection.h
         )

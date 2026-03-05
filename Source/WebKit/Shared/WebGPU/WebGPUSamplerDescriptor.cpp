@@ -40,7 +40,7 @@ std::optional<SamplerDescriptor> ConvertToBackingContext::convertToBacking(const
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), samplerDescriptor.addressModeU, samplerDescriptor.addressModeV, samplerDescriptor.addressModeW, samplerDescriptor.magFilter, samplerDescriptor.minFilter, samplerDescriptor.mipmapFilter, samplerDescriptor.lodMinClamp, samplerDescriptor.lodMaxClamp, samplerDescriptor.compare, samplerDescriptor.maxAnisotropy } };
+    return { { WTF::move(*base), samplerDescriptor.addressModeU, samplerDescriptor.addressModeV, samplerDescriptor.addressModeW, samplerDescriptor.magFilter, samplerDescriptor.minFilter, samplerDescriptor.mipmapFilter, samplerDescriptor.lodMinClamp, samplerDescriptor.lodMaxClamp, samplerDescriptor.compare, samplerDescriptor.maxAnisotropy } };
 }
 
 std::optional<WebCore::WebGPU::SamplerDescriptor> ConvertFromBackingContext::convertFromBacking(const SamplerDescriptor& samplerDescriptor)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::SamplerDescriptor> ConvertFromBackingContext::con
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), samplerDescriptor.addressModeU, samplerDescriptor.addressModeV, samplerDescriptor.addressModeW, samplerDescriptor.magFilter, samplerDescriptor.minFilter, samplerDescriptor.mipmapFilter, samplerDescriptor.lodMinClamp, samplerDescriptor.lodMaxClamp, samplerDescriptor.compare, samplerDescriptor.maxAnisotropy } };
+    return { { WTF::move(*base), samplerDescriptor.addressModeU, samplerDescriptor.addressModeV, samplerDescriptor.addressModeW, samplerDescriptor.magFilter, samplerDescriptor.minFilter, samplerDescriptor.mipmapFilter, samplerDescriptor.lodMinClamp, samplerDescriptor.lodMaxClamp, samplerDescriptor.compare, samplerDescriptor.maxAnisotropy } };
 }
 
 } // namespace WebKit

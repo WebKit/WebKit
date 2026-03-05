@@ -39,7 +39,8 @@ int BN_sqrt(BIGNUM *out_sqrt, const BIGNUM *in, BN_CTX *ctx) {
   tmp = BN_CTX_get(ctx);
   last_delta = BN_CTX_get(ctx);
   delta = BN_CTX_get(ctx);
-  if (estimate == NULL || tmp == NULL || last_delta == NULL || delta == NULL) {
+  if (estimate == nullptr || tmp == nullptr || last_delta == nullptr ||
+      delta == nullptr) {
     goto err;
   }
 
@@ -52,9 +53,8 @@ int BN_sqrt(BIGNUM *out_sqrt, const BIGNUM *in, BN_CTX *ctx) {
   // |in| = 0.
   for (;;) {
     // |estimate| = 1/2 * (|estimate| + |in|/|estimate|)
-    if (!BN_div(tmp, NULL, in, estimate, ctx) ||
-        !BN_add(tmp, tmp, estimate) ||
-        !BN_rshift1(estimate, tmp) ||
+    if (!BN_div(tmp, nullptr, in, estimate, ctx) ||
+        !BN_add(tmp, tmp, estimate) || !BN_rshift1(estimate, tmp) ||
         // |tmp| = |estimate|^2
         !BN_sqr(tmp, estimate, ctx) ||
         // |delta| = |in| - |tmp|

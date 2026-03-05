@@ -32,11 +32,11 @@
 namespace {
 using libaom_test::ACMRandom;
 
-typedef void (*GetNzMapContextsFunc)(const uint8_t *const levels,
-                                     const int16_t *const scan,
-                                     const uint16_t eob, const TX_SIZE tx_size,
-                                     const TX_CLASS tx_class,
-                                     int8_t *const coeff_contexts);
+using GetNzMapContextsFunc = void (*)(const uint8_t *const levels,
+                                      const int16_t *const scan,
+                                      const uint16_t eob, const TX_SIZE tx_size,
+                                      const TX_CLASS tx_class,
+                                      int8_t *const coeff_contexts);
 
 class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
  public:
@@ -202,11 +202,11 @@ INSTANTIATE_TEST_SUITE_P(NEON, EncodeTxbTest,
                          ::testing::Values(av1_get_nz_map_contexts_neon));
 #endif
 
-typedef void (*av1_txb_init_levels_func)(const tran_low_t *const coeff,
-                                         const int width, const int height,
-                                         uint8_t *const levels);
+using av1_txb_init_levels_func = void (*)(const tran_low_t *const coeff,
+                                          const int width, const int height,
+                                          uint8_t *const levels);
 
-typedef std::tuple<av1_txb_init_levels_func, int> TxbInitLevelParam;
+using TxbInitLevelParam = std::tuple<av1_txb_init_levels_func, int>;
 
 class EncodeTxbInitLevelTest
     : public ::testing::TestWithParam<TxbInitLevelParam> {

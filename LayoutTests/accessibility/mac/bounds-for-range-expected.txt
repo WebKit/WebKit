@@ -71,6 +71,7 @@ AXLineTextMarkerRangeForTextMarker
 AXSelectTextWithCriteria
 AXSearchTextWithCriteria
 AXTextOperation
+AXIntersectTextMarkerRanges
 
 ----------------------
 PASS: textChild.boundsForRange(6, 10) was equal or approximately equal to (x: -1, y: -1, w: 60, h: 18).

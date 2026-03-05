@@ -86,8 +86,14 @@ webkit_context_menu_item_get_action                       (WebKitContextMenuItem
 WEBKIT_API GAction *
 webkit_context_menu_item_get_gaction                      (WebKitContextMenuItem  *item);
 
+WEBKIT_API GVariant *
+webkit_context_menu_item_get_gaction_target               (WebKitContextMenuItem  *item);
+
 WEBKIT_API WebKitContextMenuAction
 webkit_context_menu_item_get_stock_action                 (WebKitContextMenuItem  *item);
+
+WEBKIT_API const gchar *
+webkit_context_menu_item_get_title                        (WebKitContextMenuItem  *item);
 
 WEBKIT_API gboolean
 webkit_context_menu_item_is_separator                     (WebKitContextMenuItem  *item);

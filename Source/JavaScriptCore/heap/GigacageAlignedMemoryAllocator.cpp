@@ -58,7 +58,7 @@ void GigacageAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.free(basePtr);
 #else
-    Gigacage::alignedFree(m_kind, basePtr);
+    Gigacage::free(m_kind, basePtr);
 #endif
 }
 

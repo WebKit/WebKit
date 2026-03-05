@@ -28,7 +28,7 @@ namespace WebCore {
 
 
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback)
-    : m_callback(WTFMove(callback))
+    : m_callback(WTF::move(callback))
     , m_powerProfileMonitor(adoptGRef(g_power_profile_monitor_dup_default()))
     , m_lowPowerModeEnabled(g_power_profile_monitor_get_power_saver_enabled(m_powerProfileMonitor.get()))
 {

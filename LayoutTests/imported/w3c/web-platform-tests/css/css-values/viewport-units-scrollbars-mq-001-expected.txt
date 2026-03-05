@@ -1,0 +1,5 @@
+Pass condition: 100x100 green square below.
+
+
+PASS #square 1
+

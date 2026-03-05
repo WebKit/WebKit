@@ -25,8 +25,12 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 #if CPU(ARM64E) && ENABLE(JIT)
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/Atomics.h>
 #include <wtf/BitSet.h>
 

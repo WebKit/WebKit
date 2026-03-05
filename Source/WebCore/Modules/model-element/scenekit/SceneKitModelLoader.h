@@ -39,7 +39,7 @@ class SceneKitModelLoader : public RefCounted<SceneKitModelLoader> {
 public:
     virtual ~SceneKitModelLoader();
 
-    virtual void cancel() = 0;
+    virtual void NODELETE cancel() = 0;
 };
 
 Ref<SceneKitModelLoader> loadSceneKitModel(Model&, SceneKitModelLoaderClient&);

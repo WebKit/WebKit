@@ -385,7 +385,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         // FIXME <https://webkit.org/b/298909> Add Debugger support for frame targets.
         if (!target.hasDomain("Debugger"))
-            return null;
+            return this.dataForTarget(WI.assumingMainTarget());
 
         let targetData = this._targetDebuggerDataMap.get(target);
         if (targetData)

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Reference: dimensionless SVG should fill content box</title>
+  <style>
+    img {
+      width: 300px;
+      height: 300px;
+      border: 5px solid purple;
+    }
+  </style>
+</head>
+<body>
+  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+</body>
+</html>

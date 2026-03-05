@@ -43,8 +43,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace XPath {
+namespace WebCore::XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Function);
 
@@ -72,184 +71,184 @@ private:
 
 class FunLast final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLast);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 public:
     FunLast() { setIsContextSizeSensitive(true); }
 };
 
 class FunPosition final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunPosition);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 public:
     FunPosition() { setIsContextPositionSensitive(true); }
 };
 
 class FunCount final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunCount);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 };
 
 class FunId final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunId);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::NodeSet; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::NodeSet; }
 };
 
 class FunLocalName final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLocalName);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 public:
     FunLocalName() { setIsContextNodeSensitive(true); } // local-name() with no arguments uses context node. 
 };
 
 class FunNamespaceURI final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNamespaceURI);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 public:
     FunNamespaceURI() { setIsContextNodeSensitive(true); } // namespace-uri() with no arguments uses context node. 
 };
 
 class FunName final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunName);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 public:
     FunName() { setIsContextNodeSensitive(true); } // name() with no arguments uses context node. 
 };
 
 class FunString final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunString);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 public:
     FunString() { setIsContextNodeSensitive(true); } // string() with no arguments uses context node. 
 };
 
 class FunConcat final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunConcat);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 };
 
 class FunStartsWith final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunStartsWith);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunContains final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunContains);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunSubstringBefore final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstringBefore);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 };
 
 class FunSubstringAfter final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstringAfter);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 };
 
 class FunSubstring final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstring);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 };
 
 class FunStringLength final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunStringLength);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 public:
     FunStringLength() { setIsContextNodeSensitive(true); } // string-length() with no arguments uses context node. 
 };
 
 class FunNormalizeSpace final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNormalizeSpace);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 public:
     FunNormalizeSpace() { setIsContextNodeSensitive(true); } // normalize-space() with no arguments uses context node. 
 };
 
 class FunTranslate final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunTranslate);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::String; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::String; }
 };
 
 class FunBoolean final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunBoolean);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunNot : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNot);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunTrue final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunTrue);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunFalse final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunFalse);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunLang final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLang);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Boolean; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Boolean; }
 public:
     FunLang() { setIsContextNodeSensitive(true); } // lang() always works on context node. 
 };
 
 class FunNumber final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNumber);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 public:
     FunNumber() { setIsContextNodeSensitive(true); } // number() with no arguments uses context node. 
 };
 
 class FunSum final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSum);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 };
 
 class FunFloor final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunFloor);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 };
 
 class FunCeiling final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunCeiling);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 };
 
 class FunRound final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunRound);
-    Value evaluate() const override;
-    Value::Type resultType() const override { return Value::Type::Number; }
+    Value evaluate() const final;
+    Value::Type resultType() const final { return Value::Type::Number; }
 public:
     static double round(double);
 };
@@ -326,7 +325,7 @@ void Function::setArguments(const String& name, Vector<std::unique_ptr<Expressio
     if (name != "lang"_s && !arguments.isEmpty())
         setIsContextNodeSensitive(false);
 
-    setSubexpressions(WTFMove(arguments));
+    setSubexpressions(WTF::move(arguments));
 }
 
 Value FunLast::evaluate() const
@@ -374,14 +373,14 @@ Value FunId::evaluate() const
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
         RefPtr node = contextScope->getElementById(StringView(idList).substring(startPos, endPos - startPos));
         if (node && resultSet.add(*node).isNewEntry)
-            result.append(WTFMove(node));
+            result.append(node.releaseNonNull());
         
         startPos = endPos;
     }
     
     result.markSorted(false);
     
-    return Value(WTFMove(result));
+    return Value(WTF::move(result));
 }
 
 static inline String expandedNameLocalPart(Node& node)
@@ -408,7 +407,7 @@ Value FunLocalName::evaluate() const
         return node ? expandedNameLocalPart(*node) : emptyString();
     }
 
-    return expandedNameLocalPart(*evaluationContext().protectedNode());
+    return expandedNameLocalPart(*protect(evaluationContext().node));
 }
 
 Value FunNamespaceURI::evaluate() const
@@ -422,7 +421,7 @@ Value FunNamespaceURI::evaluate() const
         return node ? node->namespaceURI().string() : emptyString();
     }
 
-    return evaluationContext().protectedNode()->namespaceURI().string();
+    return protect(evaluationContext().node)->namespaceURI().string();
 }
 
 Value FunName::evaluate() const
@@ -436,7 +435,7 @@ Value FunName::evaluate() const
         return node ? expandedName(*node) : emptyString();
     }
 
-    return expandedName(*evaluationContext().protectedNode());
+    return expandedName(*protect(evaluationContext().node));
 }
 
 Value FunCount::evaluate() const
@@ -449,7 +448,7 @@ Value FunCount::evaluate() const
 Value FunString::evaluate() const
 {
     if (!argumentCount())
-        return Value(Expression::evaluationContext().node.get()).toString();
+        return Value(NodeSet(*Expression::evaluationContext().node)).toString();
     return argument(0).evaluate().toString();
 }
 
@@ -602,7 +601,7 @@ Value FunSubstring::evaluate() const
 Value FunStringLength::evaluate() const
 {
     if (!argumentCount())
-        return Value(Expression::evaluationContext().node.get()).toString().length();
+        return Value(NodeSet(*Expression::evaluationContext().node)).toString().length();
     return argument(0).evaluate().toString().length();
 }
 
@@ -610,7 +609,7 @@ Value FunNormalizeSpace::evaluate() const
 {
     // https://www.w3.org/TR/1999/REC-xpath-19991116/#function-normalize-space
     if (!argumentCount()) {
-        String s = Value(Expression::evaluationContext().node.get()).toString();
+        String s = Value(NodeSet(*Expression::evaluationContext().node)).toString();
         return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<char16_t>);
     }
     String s = argument(0).evaluate().toString();
@@ -705,7 +704,7 @@ Value FunFalse::evaluate() const
 Value FunNumber::evaluate() const
 {
     if (!argumentCount())
-        return Value(Expression::evaluationContext().node.get()).toNumber();
+        return Value(NodeSet(*Expression::evaluationContext().node)).toNumber();
     return argument(0).evaluate().toNumber();
 }
 
@@ -764,7 +763,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createF
         FunctionMapValue function;
     };
 
-    static const FunctionMapping functions[] = {
+    static const auto functions = std::to_array<FunctionMapping>({
         { "boolean"_s, { createFunctionBoolean, 1 } },
         { "ceiling"_s, { createFunctionCeiling, 1 } },
         { "concat"_s, { createFunctionConcat, Interval(2, Interval::Inf) } },
@@ -792,7 +791,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createF
         { "sum"_s, { createFunctionSum, 1 } },
         { "translate"_s, { createFunctionTranslate, 3 } },
         { "true"_s, { createFunctionTrue, 0 } },
-    };
+    });
 
     MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> map;
     for (auto& function : functions)
@@ -823,9 +822,8 @@ std::unique_ptr<Function> Function::create(const String& name, Vector<std::uniqu
 {
     auto function = create(name, arguments.size());
     if (function)
-        function->setArguments(name, WTFMove(arguments));
+        function->setArguments(name, WTF::move(arguments));
     return function;
 }
 
-} // namespace XPath
-} // namespace WebCore
+} // namespace WebCore::XPath

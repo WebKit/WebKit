@@ -95,7 +95,6 @@ BEGIN {
        &configuration
        &configuredXcodeWorkspace
        &coverageIsEnabled
-       &fuzzilliIsEnabled
        &currentPerlPath
        &currentSVNRevision
        &debugMiniBrowser
@@ -110,6 +109,7 @@ BEGIN {
        &extractNonMacOSHostConfiguration
        &forceOptimizationLevel
        &formatBuildTime
+       &fuzzilliIsEnabled
        &generateBuildSystemFromCMakeProject
        &getCrossTargetName
        &getJhbuildPath
@@ -146,6 +146,7 @@ BEGIN {
        &libFuzzerIsEnabled
        &ltoMode
        &markBaseProductDirectoryAsCreatedByXcodeBuildSystem
+       &maybeUseContainerSDKRootDir
        &maxCPULoad
        &nativeArchitecture
        &nmPath
@@ -1407,9 +1408,6 @@ sub XcodeOptions
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $didUserSpecifyArchitecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
-    if (xcodeVersion() lt "15.0") {
-        push @options, "TAPI_USE_SRCROOT=YES" if $ENV{UseSRCROOTSupportForTAPI};
-    }
 
     my @features = webkitperl::FeatureList::getFeatureOptionList();
     foreach (@features) {
@@ -1673,7 +1671,7 @@ sub commandExists($)
     my $command = shift;
     my $devnull = File::Spec->devnull();
 
-    if (isAnyWindows()) {
+    if (isWindows()) {
         return exitStatus(system("where /q $command >$devnull 2>&1")) == 0;
     }
     return exitStatus(system("which $command >$devnull 2>&1")) == 0;
@@ -1866,9 +1864,14 @@ sub isCygwin()
     return ($^O eq "cygwin") || 0;
 }
 
+sub isMsys()
+{
+    return ($^O eq "msys") || 0;
+}
+
 sub isAnyWindows()
 {
-    return isWindows() || isCygwin();
+    return isWindows() || isCygwin() || isMsys();
 }
 
 sub determineWinVersion()
@@ -1928,7 +1931,7 @@ sub isX86_64()
 
 sub isARM64()
 {
-    return (architecture() eq "arm64") || 0;
+    return (lc(architecture()) eq "arm64") || 0;
 }
 
 sub isCrossCompilation()
@@ -2527,6 +2530,39 @@ sub runInCrossTargetEnvironment(@)
     exec @prefix, @command, argumentsForConfiguration(), @ARGV or die;
 }
 
+sub maybeUseContainerSDKRootDir()
+{
+    return if not isLinux();
+    return if (shouldUseFlatpak() or shouldBuildForCrossTarget() or inCrossTargetEnvironment());
+    return if ($ENV{'WEBKIT_CONTAINER_SDK'} // '') ne '1';
+    return if ($ENV{'WEBKIT_CONTAINER_SDK_INSIDE_MOUNT_NAMESPACE'} // '') eq '1';
+
+    my $sourceDir = sourceDir();
+    my @wrapperScript = (File::Spec->catfile($sourceDir, "Tools", "Scripts", "container-sdk-rootdir-wrapper"));
+
+    if (system(@wrapperScript, "--create-symlink") != 0) {
+        print STDERR "WARNING: Unable to create symlink at /sdk/webkit. Skipping setting up SDK common root dir feature\n";
+        return 1;
+    }
+
+    my @checkCommand = ('test', '-f', '/sdk/webkit/Tools/Scripts/build-webkit');
+    my $command = $0;
+    if (system(@wrapperScript, @checkCommand) == 0) {
+        if (index($command, $sourceDir) == 0) {
+            $command = '/sdk/webkit' . substr($command, length($sourceDir));
+        }
+        print "Running in private mount namespace at /sdk/webkit\n";
+        exec @wrapperScript, $command, argumentsForConfiguration(), @ARGV or die;
+    }
+    print STDERR "WARNING: Unable to create /sdk/webkit private mount namespace. Continuing only with symlink support.\n";
+    if ($command =~ /\/build-webkit$/) {
+        # This can allow remote ccache to hit even when the bind-mount was not possible, however it won't work for sccache.
+        $ENV{"CFLAGS"} = "-ffile-prefix-map=$sourceDir=/sdk/webkit" . ($ENV{"CFLAGS"} || "");
+        $ENV{"CXXFLAGS"} = "-ffile-prefix-map=$sourceDir=/sdk/webkit" . ($ENV{"CXXFLAGS"} || "");
+    }
+}
+
+
 sub runInFlatpak(@)
 {
     if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
@@ -2643,7 +2679,7 @@ sub shouldUseFlatpak()
 
 sub shouldUseVcpkg()
 {
-    return isWin() || (isJSCOnly() && isWindows());
+    return isWin() || (isJSCOnly() && isAnyWindows());
 }
 
 sub cmakeCachePath()
@@ -2667,7 +2703,8 @@ sub shouldRemoveCMakeCache(@)
                              "CFLAGS", "CXXFLAGS", "CPPFLAGS", "LDFLAGS", # Compiler and linker flags
                              "PKG_CONFIG_LIBDIR", "PKG_CONFIG_PATH", # pkg-config
                              "CPATH", "LIBRARY_PATH", # GCC/Clang include/lib helpers
-                             "CMAKE_MODULE_PATH", "CMAKE_PREFIX_PATH"); # CMake-specific
+                             "CMAKE_MODULE_PATH", "CMAKE_PREFIX_PATH", # CMake-specific
+                             "WEBKIT_USE_SCCACHE"); # sccache
     for my $envFlag (@relevantEnvFlags) {
         my $flagValue = $ENV{$envFlag} || "";
             $buildArgsEnv .= "\n" . $envFlag . "=" . $flagValue;
@@ -2820,7 +2857,11 @@ sub generateBuildSystemFromCMakeProject
 
     if (shouldUseVcpkg()) {
         push @args, '-DCMAKE_TOOLCHAIN_FILE="' . $ENV{VCPKG_ROOT} . '\\scripts\\buildsystems\\vcpkg.cmake"';
-        push @args, '-DVCPKG_TARGET_TRIPLET=x64-windows-webkit'
+        if (architecture() eq "ARM64") {
+            push @args, '-DVCPKG_TARGET_TRIPLET=arm64-windows-static-md';
+        } else {
+            push @args, '-DVCPKG_TARGET_TRIPLET=x64-windows-webkit'
+        }
     } elsif (isPlayStation()) {
         my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation5";
         push @args, '-DCMAKE_TOOLCHAIN_FILE=' . $toolChainFile;
@@ -3485,9 +3526,9 @@ sub commandLineArgumentsForRestrictedEnvironmentVariables($)
     return map { ($prefix, "$_=$ENV{$_}") } grep { /^DYLD_/ } keys %ENV;
 }
 
-sub runMacWebKitApp($;$)
+sub runMacWebKitApp($;$$)
 {
-    my ($appPath, $useOpenCommand) = @_;
+    my ($appPath, $useOpenCommand, $openDocumentPath) = @_;
     my $productDir = productDir();
     print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 
@@ -3495,7 +3536,15 @@ sub runMacWebKitApp($;$)
     setupMacWebKitEnvironment($productDir);
 
     if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
-        return system("open", "-W", "-a", $appPath, commandLineArgumentsForRestrictedEnvironmentVariables("--env"), "--args", argumentsForRunAndDebugMacWebKitApp());
+        my $appPathForOpen = $appPath;
+        if ($appPathForOpen =~ m#^(.*\.app)/Contents/MacOS/[^/]+$#) {
+            $appPathForOpen = $1;
+        }
+
+        my @openCommand = ("open", "-W", "-a", $appPathForOpen);
+        push(@openCommand, $openDocumentPath) if defined($openDocumentPath);
+        push(@openCommand, commandLineArgumentsForRestrictedEnvironmentVariables("--env"), "--args", argumentsForRunAndDebugMacWebKitApp());
+        return system(@openCommand);
     }
     if (architecture()) {
         return system "arch", "-" . architecture(), commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
@@ -3568,6 +3617,10 @@ sub runSafari
     }
 
     if (isAppleMacWebKit()) {
+        my $openDocumentPath;
+        if (checkForArgumentAndRemoveFromARGVGettingValue("-NSOpen", \$openDocumentPath)) {
+            return runMacWebKitApp(safariPath(), USE_OPEN_COMMAND, $openDocumentPath);
+        }
         return runMacWebKitApp(safariPath());
     }
 

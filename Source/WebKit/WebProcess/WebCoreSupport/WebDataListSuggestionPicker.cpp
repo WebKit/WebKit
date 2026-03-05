@@ -53,7 +53,7 @@ void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
     if (!page)
         return;
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::HandleKeydownInDataList(key), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::HandleKeydownInDataList(key), page->identifier());
 }
 
 void WebDataListSuggestionPicker::didSelectOption(const String& selectedOption)
@@ -74,7 +74,7 @@ void WebDataListSuggestionPicker::close()
     if (!page)
         return;
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::EndDataListSuggestions(), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::EndDataListSuggestions(), page->identifier());
 }
 
 void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSuggestionActivationType type)
@@ -102,8 +102,8 @@ void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSug
 
     page->setActiveDataListSuggestionPicker(*this);
 
-    WebCore::DataListSuggestionInformation info { type, WTFMove(suggestions), WTFMove(elementRectInRootViewCoordinates) };
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::ShowDataListSuggestions(info), page->identifier());
+    WebCore::DataListSuggestionInformation info { type, WTF::move(suggestions), WTF::move(elementRectInRootViewCoordinates) };
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowDataListSuggestions(info), page->identifier());
 }
 
 void WebDataListSuggestionPicker::detach()

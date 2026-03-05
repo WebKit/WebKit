@@ -3,10 +3,8 @@ set(testmem_LIBRARIES ${CMAKE_DL_LIBS})
 set(testmem_FRAMEWORKS
     JavaScriptCore
     WTF
+    bmalloc
 )
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND testmem_FRAMEWORKS bmalloc)
-endif ()
 
 set(testmem_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>

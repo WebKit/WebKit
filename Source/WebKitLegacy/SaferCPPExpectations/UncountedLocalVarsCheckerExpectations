@@ -2,16 +2,20 @@ Storage/StorageAreaImpl.cpp
 Storage/WebDatabaseProvider.cpp
 WebCoreSupport/WebResourceLoadScheduler.cpp
 WebCoreSupport/WebSocketChannel.cpp
+[ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
+[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
+[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
+[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
 mac/DOM/DOM.mm
 mac/DOM/DOMAbstractView.mm
 mac/DOM/DOMDocument.mm
 mac/DOM/DOMElement.mm
 mac/DOM/DOMHTML.mm
-mac/DOM/DOMHTMLSelectElement.mm
 mac/DOM/DOMInternal.mm
 mac/DOM/DOMMouseEvent.mm
 mac/DOM/DOMNamedNodeMap.mm
 mac/DOM/DOMObject.mm
+[ iOS ] mac/DOM/DOMUIKitExtensions.mm
 mac/DOM/DOMUtility.mm
 mac/DOM/WebDOMOperations.mm
 mac/History/HistoryPropertyList.mm
@@ -46,8 +50,3 @@ mac/WebView/WebResource.mm
 mac/WebView/WebScriptDebugDelegate.mm
 mac/WebView/WebScriptDebugger.mm
 mac/WebView/WebView.mm
-[ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
-[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
-[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
-[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
-[ iOS ] mac/DOM/DOMUIKitExtensions.mm

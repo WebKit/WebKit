@@ -84,10 +84,6 @@ LimiterDbGainCurve::LimiterDbGainCurve()
   RTC_CHECK_GE(max_input_level_db_, knee_start_dbfs_ + knee_smoothness_db_);
 }
 
-constexpr double LimiterDbGainCurve::max_input_level_db_;
-constexpr double LimiterDbGainCurve::knee_smoothness_db_;
-constexpr double LimiterDbGainCurve::compression_ratio_;
-
 double LimiterDbGainCurve::GetOutputLevelDbfs(double input_level_dbfs) const {
   if (input_level_dbfs < knee_start_dbfs_) {
     return input_level_dbfs;

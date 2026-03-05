@@ -30,59 +30,84 @@
 
 #include "CachedImage.h"
 #include "Image.h"
+#include "NullGraphicsContext.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
-#include "RenderImageResourceStyleImage.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "StyleCachedImage.h"
+#include "StyleInvalidImage.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderImageResource);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderImageResource);
 
 RenderImageResource::RenderImageResource() = default;
 
-RenderImageResource::~RenderImageResource() = default;
-
-void RenderImageResource::initialize(RenderElement& renderer, CachedImage* styleCachedImage)
+RenderImageResource::RenderImageResource(Style::Image* styleImage)
+    : m_styleImage { styleImage }
 {
-    ASSERT(!m_renderer);
-    ASSERT(!m_cachedImage);
-    m_renderer = renderer;
-    m_cachedImage = styleCachedImage;
-    m_cachedImageRemoveClientIsNeeded = !styleCachedImage;
 }
 
-void RenderImageResource::shutdown()
+RenderImageResource::~RenderImageResource() = default;
+
+void RenderImageResource::initialize(RenderElement& renderer)
+{
+    ASSERT(!m_renderer);
+
+    m_renderer = renderer;
+    if (m_styleImage)
+        m_styleImage->addClient(renderer);
+}
+
+void RenderImageResource::willBeDestroyed()
 {
     image()->stopAnimation();
-    setCachedImage(nullptr);
+    if (m_styleImage && m_renderer)
+        m_styleImage->removeClient(*m_renderer);
+}
+
+void RenderImageResource::clearCachedImage()
+{
+    if (!m_styleImage)
+        return;
+
+    if (m_renderer)
+        m_styleImage->removeClient(*m_renderer);
+
+    m_styleImage = nullptr;
 }
 
 void RenderImageResource::setCachedImage(CachedResourceHandle<CachedImage>&& newImage)
 {
-    if (m_cachedImage == newImage)
+    auto existingCachedImage = this->cachedImage();
+    if (existingCachedImage == newImage)
         return;
 
-    if (m_cachedImage && m_renderer && m_cachedImageRemoveClientIsNeeded)
-        m_cachedImage->removeClient(*m_renderer);
+    if (m_styleImage && m_renderer)
+        m_styleImage->removeClient(*m_renderer);
+
     if (!m_renderer) {
         // removeClient may have destroyed the renderer.
+        // FIXME: Document under what circumstances this can happen.
         return;
     }
-    m_cachedImage = WTFMove(newImage);
-    m_cachedImageRemoveClientIsNeeded = true;
-    if (!m_cachedImage)
-        return;
 
-    m_cachedImage->addClient(*renderer());
-    if (m_cachedImage->errorOccurred())
-        renderer()->imageChanged(m_cachedImage.get());
+    if (!newImage)
+        m_styleImage = nullptr;
+    else {
+        m_styleImage = Style::CachedImage::create(*newImage);
+
+        m_styleImage->addClient(*m_renderer);
+
+        if (m_styleImage->errorOccurred())
+            m_renderer->imageChanged(m_styleImage->cachedImage());
+    }
 }
 
 void RenderImageResource::resetAnimation()
 {
-    if (!m_cachedImage)
+    if (!m_styleImage)
         return;
 
     image()->resetAnimation();
@@ -91,35 +116,35 @@ void RenderImageResource::resetAnimation()
         m_renderer->repaint();
 }
 
-RefPtr<Image> RenderImageResource::image(const IntSize&) const
+Ref<Image> RenderImageResource::image(const IntSize& size) const
 {
-    if (!m_cachedImage)
-        return &Image::nullImage();
-    if (auto image = m_cachedImage->imageForRenderer(m_renderer.get()))
-        return image;
-    return &Image::nullImage();
+    // Generated content may trigger calls to image() while we're still pending, don't assert but gracefully exit.
+    if (!m_styleImage || m_styleImage->isPending())
+        return Image::nullImage();
+    if (RefPtr image = m_styleImage->image(m_renderer.get(), size, NullGraphicsContext()))
+        return image.releaseNonNull();
+    return Image::nullImage();
 }
 
 bool RenderImageResource::currentFrameIsComplete() const
 {
-    if (!m_cachedImage)
+    if (!m_styleImage)
         return false;
-
-    return m_cachedImage->currentFrameIsComplete(m_renderer.get());
+    return m_styleImage->currentFrameIsComplete(m_renderer.get());
 }
 
-void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& imageURL)
+void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& url)
 {
-    if (!m_cachedImage || !m_renderer)
+    if (!m_styleImage || !m_renderer)
         return;
-    m_cachedImage->setContainerContextForClient(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), imageURL);
+    m_styleImage->setContainerContextForRenderer(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), url);
 }
 
 LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const
 {
-    if (!m_cachedImage)
-        return LayoutSize();
-    LayoutSize size = m_cachedImage->imageSizeForRenderer(m_renderer.get(), multiplier, type);
+    if (!m_styleImage)
+        return { };
+    auto size = LayoutSize(m_styleImage->imageSize(m_renderer.get(), multiplier, type));
     if (auto* renderImage = dynamicDowncast<RenderImage>(m_renderer.get()))
         size.scale(renderImage->imageDevicePixelRatio());
     return size;

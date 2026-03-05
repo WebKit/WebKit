@@ -141,7 +141,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendCl
     // Currently, file saving is only possible with SaveMode::SingleFile.
     // This is determined in RemoteWebInspectorUI::canSave().
     ASSERT(saveDatas.size() == 1);
-    WebInspectorUIProxy::showSavePanelForSingleFile(m_frontendHandle, WTFMove(saveDatas));
+    WebInspectorUIProxy::showSavePanelForSingleFile(m_frontendHandle, WTF::move(saveDatas));
 }
 
 void RemoteWebInspectorUIProxy::platformResetState() { }

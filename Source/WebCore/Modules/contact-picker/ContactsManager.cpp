@@ -32,6 +32,7 @@
 #include "ContactsRequestData.h"
 #include "ContactsSelectOptions.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "JSContactInfo.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrameInlines.h"
@@ -44,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ContactsManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContactsManager);
 
 Ref<ContactsManager> ContactsManager::create(Navigator& navigator)
 {
@@ -105,7 +106,7 @@ void ContactsManager::select(const Vector<ContactProperty>& properties, const Co
 
     m_contactPickerIsShowing = true;
 
-    frame->page()->chrome().showContactPicker(WTFMove(requestData), [promise = WTFMove(promise), weakThis = WeakPtr { *this }] (std::optional<Vector<ContactInfo>>&& info) {
+    frame->page()->chrome().showContactPicker(WTF::move(requestData), [promise = WTF::move(promise), weakThis = WeakPtr { *this }] (std::optional<Vector<ContactInfo>>&& info) {
         if (weakThis)
             weakThis->m_contactPickerIsShowing = false;
 

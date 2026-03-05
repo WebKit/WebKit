@@ -39,6 +39,8 @@ messages -> RemoteRenderingBackend Stream {
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheNativeImageFromSharedNativeImage(WebCore::RenderingResourceIdentifier sharedNativeImageIdentifier)
     ReleaseNativeImage(WebCore::RenderingResourceIdentifier identifier)
+    CachePathImpl(Ref<WebCore::PathImpl> path, WebKit::RemotePathImplIdentifier identifier)
+    ReleasePathImpl(WebKit::RemotePathImplIdentifier identifier)
     CacheFont(struct WebCore::FontInternalAttributes data, struct WebCore::FontPlatformDataAttributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
     ReleaseFont(WebCore::RenderingResourceIdentifier identifier)
     CacheFontCustomPlatformData(struct WebCore::FontCustomPlatformSerializedData fontCustomPlatformData) NotStreamEncodable

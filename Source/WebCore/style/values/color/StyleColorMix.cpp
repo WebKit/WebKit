@@ -59,12 +59,12 @@ Color toStyleColor(const CSS::ColorMix& unresolved, ColorResolutionState& state)
             ColorMix {
                 unresolved.colorInterpolationMethod,
                 ColorMix::Component {
-                    WTFMove(component1Color),
-                    WTFMove(percentage1)
+                    WTF::move(component1Color),
+                    WTF::move(percentage1)
                 },
                 ColorMix::Component {
-                    WTFMove(component2Color),
-                    WTFMove(percentage2)
+                    WTF::move(component2Color),
+                    WTF::move(percentage2)
                 }
             }
         };
@@ -75,11 +75,11 @@ Color toStyleColor(const CSS::ColorMix& unresolved, ColorResolutionState& state)
             unresolved.colorInterpolationMethod,
             CSS::ColorMixResolver::Component {
                 component1Color.resolvedColor(),
-                WTFMove(percentage1)
+                WTF::move(percentage1)
             },
             CSS::ColorMixResolver::Component {
                 component2Color.resolvedColor(),
-                WTFMove(percentage2)
+                WTF::move(percentage2)
             }
         }
     );
@@ -117,7 +117,7 @@ bool containsCurrentColor(const ColorMix& colorMix)
 
 namespace ColorMixSerializationDetails {
 
-static bool sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
+static bool NODELETE sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
 {
     return a.value + b.value == 100.0;
 }

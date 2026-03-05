@@ -60,11 +60,8 @@ webkit.org/b/156717 transforms/3d/hit-testing/rotated-hit-test2.html [ Failure ]
 webkit.org/b/156717 transforms/3d/hit-testing/rotated-hit-test.html [ Failure ]
 webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
 webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-3.html [ Failure ]
-webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-coplanar.html [ Failure ]
 webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ]
 webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping.html [ Failure ]
-webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-origins.html [ Failure ]
-webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Failure ]
 webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Failure ]
 
 # Diff of failures (and passes) related with WebGL and Compositing tests (compared to --display-server=xvfb)

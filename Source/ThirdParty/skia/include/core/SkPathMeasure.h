@@ -65,16 +65,13 @@ public:
     [[nodiscard]] bool getMatrix(SkScalar distance, SkMatrix* matrix,
                                  MatrixFlags flags = kGetPosAndTan_MatrixFlag);
 
-    /** Given a start and stop distance, return in dst the intervening segment(s).
+    /** Given a start and stop distance, append to dst the intervening segment(s).
         If the segment is zero-length, return false, else return true.
         startD and stopD are pinned to legal values (0..getLength()). If startD > stopD
         then return false (and leave dst untouched).
         Begin the segment with a moveTo if startWithMoveTo is true
     */
     bool getSegment(SkScalar startD, SkScalar stopD, SkPathBuilder* dst, bool startWithMoveTo);
-#ifdef SK_SUPPORT_MUTABLE_PATHEFFECT
-    bool getSegment(SkScalar startD, SkScalar stopD, SkPath* dst, bool startWithMoveTo);
-#endif
 
     /** Return true if the current contour is closed()
     */

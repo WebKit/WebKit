@@ -25,7 +25,14 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
+
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS_FAMILY)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -73,3 +80,7 @@ typedef void (^SBSStatusBarStyleOverridesAssertionAcquisitionHandler)(BOOL acqui
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#endif // !__has_feature(modules)

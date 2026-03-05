@@ -44,11 +44,11 @@ namespace WebKit {
 
 void Download::resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, std::span<const uint8_t> activityAccessToken)
 {
-    m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
+    m_sandboxExtension = SandboxExtension::create(WTF::move(sandboxExtensionHandle));
     if (RefPtr extension = m_sandboxExtension)
         extension->consume();
 
-    CheckedPtr networkSession = m_downloadManager->protectedClient()->networkSession(m_sessionID);
+    CheckedPtr networkSession = m_downloadManager->client().networkSession(m_sessionID);
     if (!networkSession) {
         DOWNLOAD_RELEASE_LOG("resume: Could not find network session with given session ID");
         return;
@@ -109,8 +109,8 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
 {
     ASSERT(isMainRunLoop());
     ASSERT(m_downloadTask);
-    [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTFMove(completionHandler), placeholderURL = m_placeholderURL] (NSData *resumeData) mutable {
-        ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTFMove(completionHandler), placeholderURL = WTFMove(placeholderURL)] () mutable  {
+    [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTF::move(completionHandler), placeholderURL = m_placeholderURL] (NSData *resumeData) mutable {
+        ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTF::move(completionHandler), placeholderURL = WTF::move(placeholderURL)] () mutable  {
 #if HAVE(MODERN_DOWNLOADPROGRESS)
             auto resumeDataWithPlaceholder = updateResumeDataWithPlaceholderURL(placeholderURL.get(), span(resumeData.get()));
             completionHandler(resumeDataWithPlaceholder.span());
@@ -198,7 +198,7 @@ void Download::setPlaceholderURL(NSURL *placeholderURL, NSData *bookmarkData)
 
     SandboxExtension::Handle sandboxExtensionHandle;
     if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(String::fromUTF8(placeholderURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
-        sandboxExtensionHandle = WTFMove(*handle);
+        sandboxExtensionHandle = WTF::move(*handle);
 
     if (usingSecurityScopedURL)
         [placeholderURL stopAccessingSecurityScopedResource];
@@ -211,7 +211,7 @@ void Download::setPlaceholderURL(NSURL *placeholderURL, NSData *bookmarkData)
         startUpdatingProgress();
     };
 
-    sendWithAsyncReply(Messages::DownloadProxy::DidReceivePlaceholderURL(placeholderURL, span(bookmarkData), WTFMove(sandboxExtensionHandle)), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::DownloadProxy::DidReceivePlaceholderURL(placeholderURL, span(bookmarkData), WTF::move(sandboxExtensionHandle)), WTF::move(completionHandler));
 }
 
 void Download::setFinalURL(NSURL *finalURL, NSData *bookmarkData)
@@ -225,12 +225,12 @@ void Download::setFinalURL(NSURL *finalURL, NSData *bookmarkData)
 
     SandboxExtension::Handle sandboxExtensionHandle;
     if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(String::fromUTF8(finalURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
-        sandboxExtensionHandle = WTFMove(*handle);
+        sandboxExtensionHandle = WTF::move(*handle);
 
     if (usingSecurityScopedURL)
         [finalURL stopAccessingSecurityScopedResource];
 
-    send(Messages::DownloadProxy::DidReceiveFinalURL(finalURL, span(bookmarkData), WTFMove(sandboxExtensionHandle)));
+    send(Messages::DownloadProxy::DidReceiveFinalURL(finalURL, span(bookmarkData), WTF::move(sandboxExtensionHandle)));
 }
 
 void Download::startUpdatingProgress()
@@ -312,7 +312,7 @@ void Download::publishProgress(const URL& url, SandboxExtension::Handle&& sandbo
     ASSERT(!m_progress);
     ASSERT(url.isValid());
 
-    auto sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
+    auto sandboxExtension = SandboxExtension::create(WTF::move(sandboxExtensionHandle));
 
     ASSERT(sandboxExtension);
     if (!sandboxExtension)
@@ -332,7 +332,7 @@ void Download::platformDidFinish(CompletionHandler<void()>&& completionHandler)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     if (m_progress && [m_progress isKindOfClass:WKModernDownloadProgress.class]) {
         auto *progress = (WKModernDownloadProgress *)m_progress;
-        [progress didFinish:makeBlockPtr(WTFMove(completionHandler)).get()];
+        [progress didFinish:makeBlockPtr(WTF::move(completionHandler)).get()];
         return;
     }
 #endif

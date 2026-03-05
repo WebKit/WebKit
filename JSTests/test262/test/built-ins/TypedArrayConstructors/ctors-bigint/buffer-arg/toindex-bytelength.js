@@ -17,7 +17,7 @@ info: |
   12. Else,
     a. Let newLength be ? ToIndex(length).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -69,4 +69,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
       name + " prototype"
     );
   });
-});
+}, null, ["passthrough"]);

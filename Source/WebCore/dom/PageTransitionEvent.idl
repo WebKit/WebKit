@@ -23,14 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#pagetransitionevent
 [
     Exposed=Window
 ] interface PageTransitionEvent : Event {
-    constructor([AtomString] DOMString type, optional PageTransitionEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional PageTransitionEventInit eventInitDict = {});
 
     readonly attribute boolean persisted;
 };
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#pagetransitioneventinit
 dictionary PageTransitionEventInit : EventInit {
     boolean persisted = false;
 };

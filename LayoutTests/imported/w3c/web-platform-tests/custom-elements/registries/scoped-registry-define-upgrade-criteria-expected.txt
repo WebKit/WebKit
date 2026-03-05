@@ -4,8 +4,8 @@ PASS Adding definition to global registry should affect shadow roots also using 
 PASS Adding definition to scoped registry should affect all associated shadow roots
 PASS Adding definition to scoped registry should not affect document tree scope
 PASS Adding definition to scoped registry should not affect shadow roots using other registries
-PASS Adding definition to global registry should not upgrade nodes no longer using a scoped registry
-PASS Adding definition to scoped registry should not upgrade nodes no longer using the registry
+FAIL Adding definition to global registry should upgrade nodes even after the node is moved into a separate shadow tree. assert_true: expected true got false
+PASS Adding definition to scoped registry should upgrade nodes even after the node is moved to a separate shadow tree using a different registry.
 PASS Adding definition to scoped registry affects associated shadow roots in all iframes
 PASS Adding definition to scoped registry affects associated shadow roots in other frame trees
 PASS Adding definition to scoped registry should not upgrade disconnected elements

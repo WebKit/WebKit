@@ -499,6 +499,7 @@ void av1_rc_init(const AV1EncoderConfig *oxcf, RATE_CONTROL *rc) {
   rc->force_max_q = 0;
   rc->postencode_drop = 0;
   rc->frames_since_scene_change = 0;
+  rc->last_frame_low_source_sad = 0;
 }
 
 static bool check_buffer_below_thresh(AV1_COMP *cpi, int64_t buffer_level,
@@ -1209,7 +1210,26 @@ static int calc_active_worst_quality_no_stats_cbr(const AV1_COMP *cpi) {
   int adjustment = 0;
   int active_worst_quality;
   int ambient_qp;
-  if (frame_is_intra_only(cm)) return rc->worst_quality;
+  if (frame_is_intra_only(cm)) {
+    // Allow for active_worst_quality to go lower than rc->worst_quality (max)
+    // under certain conditions: that the frame spatial variance is below
+    // threshold and the buffer is full/stable. Also check the encoded vs target
+    // size for the last keyframe.
+    if (cpi->sf.rt_sf.rc_compute_spatial_var_sc_kf &&
+        svc->number_spatial_layers == 1 && rc->frame_spatial_variance < 1000 &&
+        p_rc->buffer_level > p_rc->optimal_buffer_level &&
+        p_rc->optimal_buffer_level > (rc->avg_frame_bandwidth << 3) &&
+        rc->last_encoded_size_keyframe < (rc->last_target_size_keyframe << 3)) {
+      if (p_rc->buffer_level > ((9 * p_rc->optimal_buffer_level) >> 3))
+        ambient_qp = p_rc->avg_frame_qindex[INTER_FRAME];
+      else
+        ambient_qp =
+            (rc->worst_quality + p_rc->avg_frame_qindex[INTER_FRAME]) >> 1;
+      return AOMMIN(rc->worst_quality, AOMMAX(ambient_qp, rc->best_quality));
+    } else {
+      return rc->worst_quality;
+    }
+  }
   // For ambient_qp we use minimum of avg_frame_qindex[KEY_FRAME/INTER_FRAME]
   // for the first few frames following key frame. These are both initialized
   // to worst_quality and updated with (3/4, 1/4) average in postencode_update.
@@ -1843,8 +1863,8 @@ static void adjust_active_best_and_worst_quality(const AV1_COMP *cpi,
     }
 #else
     (void)is_intrl_arf_boost;
-    active_best_quality -= cpi->ppi->twopass.extend_minq / 8;
-    active_worst_quality += cpi->ppi->twopass.extend_maxq / 4;
+    active_best_quality -= cpi->ppi->twopass.extend_minq / 4;
+    active_worst_quality += cpi->ppi->twopass.extend_maxq;
 #endif
   }
 
@@ -2466,6 +2486,8 @@ void av1_rc_postencode_update(AV1_COMP *cpi, uint64_t bytes_used) {
   rc->frame_number_encoded++;
   rc->prev_frame_is_dropped = 0;
   rc->drop_count_consec = 0;
+  if (rc->frame_source_sad < 10000)
+    rc->last_frame_low_source_sad = current_frame->frame_number;
 }
 
 void av1_rc_postencode_update_drop_frame(AV1_COMP *cpi) {
@@ -3176,8 +3198,14 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
     width = cpi->oxcf.frm_dim_cfg.width;
     height = cpi->oxcf.frm_dim_cfg.height;
   }
+  // Set src_sad_blk_64x64 to NULL also for number_spatial layers > 1, as
+  // it is never allocated for number_spatial_layers > 1 (see the condition
+  // under which we allocate cpi->src_sad_blk_64x64 later in this function).
+  // This is guard against the case where the number_spatial_layers
+  // is changed dynamically without re-alloc of encoder.
   if (width != cm->render_width || height != cm->render_height ||
-      unscaled_src == NULL || unscaled_last_src == NULL) {
+      cpi->svc.number_spatial_layers > 1 || unscaled_src == NULL ||
+      unscaled_last_src == NULL) {
     aom_free(cpi->src_sad_blk_64x64);
     cpi->src_sad_blk_64x64 = NULL;
   }
@@ -3301,11 +3329,13 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   // between current and previous frame value(s). Use minimum threshold
   // for cases where there is small change from content that is completely
   // static.
+  const int thresh_zero_sad_samples =
+      avg_sad > 8 * min_thresh ? 3 * (num_samples >> 2) : num_samples >> 1;
   if (!light_change &&
       avg_sad >
           AOMMAX(min_thresh, (unsigned int)(rc->avg_source_sad * thresh)) &&
       rc->frames_since_key > 1 + cpi->svc.number_spatial_layers &&
-      num_zero_temp_sad < 3 * (num_samples >> 2))
+      num_zero_temp_sad < thresh_zero_sad_samples)
     rc->high_source_sad = 1;
   else
     rc->high_source_sad = 0;
@@ -3321,14 +3351,23 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   }
   // Update the high_motion_content_screen_rtc flag on TL0. Avoid the update
   // if too many consecutive frame drops occurred.
-  const uint64_t thresh_high_motion = 9 * 64 * 64;
+  // The threshold_high_motion is kept to a large value, to account for
+  // mis-detection for scroll for scaled input (where scroll motion can be
+  // subpel and not detected below). The threshold may be improved when better
+  // scroll detection (for subpel) is added.
+  const int scale =
+      (unscaled_src->y_width * unscaled_src->y_height > 1920 * 1080) ? 30 : 10;
+  const uint64_t thresh_high_motion = scale * 64 * 64;
   if (cpi->svc.temporal_layer_id == 0 && rc->drop_count_consec < 3) {
     cpi->rc.high_motion_content_screen_rtc = 0;
     if (cpi->oxcf.speed >= 11 &&
         cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN &&
+        rc->num_col_blscroll_last_tl0 == 0 &&
+        rc->num_row_blscroll_last_tl0 == 0 &&
         rc->percent_blocks_with_motion > 40 &&
         rc->prev_avg_source_sad > thresh_high_motion &&
         rc->avg_source_sad > thresh_high_motion &&
+        cm->current_frame.frame_number - rc->last_frame_low_source_sad > 10 &&
         rc->avg_frame_low_motion < 60 && unscaled_src->y_width >= 1280 &&
         unscaled_src->y_height >= 720) {
       cpi->rc.high_motion_content_screen_rtc = 1;
@@ -3806,9 +3845,9 @@ void av1_get_one_pass_rt_params(AV1_COMP *cpi, FRAME_TYPE *const frame_type,
       cpi->src_sad_blk_64x64 = NULL;
     }
   }
-  if (((*frame_type == KEY_FRAME && cpi->sf.rt_sf.rc_adjust_keyframe) ||
-       (cpi->sf.rt_sf.rc_compute_spatial_var_sc && rc->high_source_sad)) &&
-      svc->spatial_layer_id == 0 && cm->seq_params->bit_depth == 8 &&
+  if (cpi->sf.rt_sf.rc_compute_spatial_var_sc_kf &&
+      (*frame_type == KEY_FRAME || rc->high_source_sad) &&
+      svc->spatial_layer_id == 0 && !cm->seq_params->use_highbitdepth &&
       cpi->oxcf.rc_cfg.max_intra_bitrate_pct > 0)
     rc_spatial_act_onepass_rt(cpi, frame_input->source->y_buffer,
                               frame_input->source->y_stride);
@@ -3831,10 +3870,6 @@ void av1_get_one_pass_rt_params(AV1_COMP *cpi, FRAME_TYPE *const frame_type,
   } else if (is_frame_resize_pending(cpi)) {
     resize_reset_rc(cpi, resize_pending_params->width,
                     resize_pending_params->height, cm->width, cm->height);
-  }
-  if (svc->temporal_layer_id == 0) {
-    rc->num_col_blscroll_last_tl0 = 0;
-    rc->num_row_blscroll_last_tl0 = 0;
   }
   // Set the GF interval and update flag.
   if (!rc->rtc_external_ratectrl)
@@ -3904,7 +3939,7 @@ int av1_encodedframe_overshoot_cbr(AV1_COMP *cpi, int *q) {
     // For easy scene changes used lower QP, otherwise set max-q.
     // If rt_sf->compute_spatial_var_sc is enabled relax the max-q
     // condition based on frame spatial variance.
-    if (cpi->sf.rt_sf.rc_compute_spatial_var_sc) {
+    if (cpi->sf.rt_sf.rc_compute_spatial_var_sc_kf) {
       if (cpi->rc.frame_spatial_variance < 100) {
         *q = (cpi->rc.worst_quality + *q) >> 1;
       } else if (cpi->rc.frame_spatial_variance < 400 ||

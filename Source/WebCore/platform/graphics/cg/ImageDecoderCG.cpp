@@ -69,6 +69,10 @@ const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSource
 const CFStringRef kCGImageSourceCreateUnpremultipliedPNG = CFSTR("kCGImageSourceCreateUnpremultipliedPNG");
 #endif
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+constexpr float panoramicImageAspectRatioThreshold = 2.0;
+#endif
+
 static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 {
     RetainPtr<CFMutableDictionaryRef> options = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -768,8 +772,20 @@ bool ImageDecoderCG::isMaybePanoramic() const
     auto imageSize = FloatSize(frameSizeAtIndex(0));
     auto aspectRatio = imageSize.aspectRatio();
 
-    constexpr float panoramicImageAspectRatioThreshold = 2.0;
     return aspectRatio > panoramicImageAspectRatioThreshold;
+}
+
+bool ImageDecoderCG::isPanorama() const
+{
+    auto imageSize = FloatSize(frameSizeAtIndex(0));
+    auto aspectRatio = imageSize.aspectRatio();
+
+    if (aspectRatio <= panoramicImageAspectRatioThreshold)
+        return false;
+
+    constexpr float panoramicImageMinDimension = 800;
+    constexpr float panoramicImageMaxDimension = 30000;
+    return imageSize.minDimension() > panoramicImageMinDimension && imageSize.maxDimension() < panoramicImageMaxDimension;
 }
 
 bool ImageDecoderCG::isSpatial() const

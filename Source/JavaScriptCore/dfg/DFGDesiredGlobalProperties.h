@@ -45,7 +45,7 @@ class DesiredGlobalProperties {
 public:
     void addLazily(DesiredGlobalProperty&& property)
     {
-        m_set.add(WTFMove(property));
+        m_set.add(WTF::move(property));
     }
 
     bool isStillValidOnMainThread(VM&, DesiredIdentifiers&);

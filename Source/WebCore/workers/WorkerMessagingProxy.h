@@ -34,10 +34,12 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class DedicatedWorkerThread;
+class WeakPtrImplWithEventTargetData;
 class WorkerInspectorProxy;
 class WorkerUserGestureForwarder;
 
@@ -94,17 +96,17 @@ private:
     bool askedToTerminate() const final { return m_askedToTerminate; }
 
     void workerGlobalScopeDestroyedInternal();
-    Worker* workerObject() const { return m_workerObject; }
+    Worker* workerObject() const { return m_workerObject.get(); }
 
     // WorkerBadgeProxy
     void setAppBadge(std::optional<uint64_t>) final;
-    
+
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     Markable<ScriptExecutionContextIdentifier> m_scriptExecutionContextIdentifier;
     ScriptExecutionContextIdentifier m_loaderContextIdentifier;
     const Ref<WorkerInspectorProxy> m_inspectorProxy;
     RefPtr<WorkerUserGestureForwarder> m_userGestureForwarder;
-    Worker* m_workerObject;
+    WeakPtr<Worker, WeakPtrImplWithEventTargetData> m_workerObject;
     bool m_mayBeDestroyed { false };
     RefPtr<DedicatedWorkerThread> m_workerThread;
     URL m_scriptURL;

@@ -1,0 +1,113 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<body>
+  <p>This test passes if it does not crash.</p>
+  <script>
+    testRunner?.waitUntilDone();
+    testRunner?.dumpAsText();
+    const nodes = new Map();
+    const stuff = new Map();
+    const keep = [];
+    const indexedDbHelpers = {};
+    try {
+      function storeObject(key, o) {
+        if (o === null || o === undefined) {
+          return;
+        }
+        let weak = new WeakRef(o);
+        let entriesForKey = stuff.get(key) ?? [];
+        entriesForKey.push(weak);
+        stuff.set(key, entriesForKey);
+      }
+      function getObject(key) {
+        let entriesForKey = stuff.get(key);
+        while (entriesForKey.length) {
+          let nextEntry = entriesForKey.shift();
+          let theObject = nextEntry.deref();
+          if (theObject) {
+            entriesForKey.push(nextEntry);
+            return theObject;
+          }
+        }
+        return undefined;
+      }
+
+      function storeNode(key, node) {
+        let weak = new WeakRef(node);
+        nodes.set(key, weak);
+      }
+      function getNode(key) {
+        let weak = nodes.get(key);
+        if (!weak) {
+          throw new Error(`weak ref for ${key} is gone`);
+        }
+        return node;
+      }
+      function getNodeSafe(key) {
+        let weak = nodes.get(key);
+        if (!weak) {
+        }
+        let node = weak.deref();
+        if (!node) {
+          return undefined;
+        }
+        return node;
+      }
+
+      function toDataUrl(mediaType, payload) {
+        return toBlobUrl(mediaType, payload);
+      }
+      function toBlobUrl(mediaType, payload) {
+        let blob = new Blob([payload], { type: mediaType });
+      }
+      function cssBlobUrl(cssContents) {
+        return anUrl(type, `image/svg+xml`, contents);
+      }
+      function anUrl(type, mediaType, contents) {
+        switch (type) {
+          case 'blob':
+          case 'data':
+            return toDataUrl(mediaType, contents);
+        }
+      }
+    } catch (e) {
+      $vm.print('error during initialization: ' + e);
+    }
+    (async () => {
+
+      try {
+        (() => {
+          let n4 = document.createElement('video');
+          n4.src = '/resources/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.mp4';
+          n4.controls = true;
+          document.body.appendChild(n4);
+          storeNode('n4', n4);
+        })();
+      } catch { }
+      try {
+        (() => {
+          let n10 = document.createElementNS('http://www.w3.org/1999/xhtml', 'iframe');
+
+          document.body.prepend(n10);
+        })();
+      } catch { }
+      try { await (() => { let value = {}; return trustedTypes.isScript(value) })() } catch { }
+      try { await (() => { let options = { info: {} }; return frames[0].navigation.back(options) })(); } catch { }
+      try { await (() => { let request = `\u76b8\u0891\u0453\u{1fbce}\u45be`; return window.caches.match(request) })() } catch { }
+      try { await (() => { return frames.history.pushState({}, '') })() } catch { }
+      try { storeObject('ServiceWorker', await navigator.serviceWorker.controller); } catch { }
+      try { let z = await (() => { return getObject('TrustedTypePolicy').createScript('tv', {}) })(); keep.push(z); } catch { }
+      try { await (() => { let options = { state: {} }; return frames[0].navigation.reload(options) })(); } catch { }
+      try { await (() => { return CSS.paintWorklet.addModule('foo') })() } catch { }
+      try { await (() => { let grantedCallback = () => { }; return navigator.locks.request('b', grantedCallback) })() } catch { }
+      try { await (() => { let grantedCallback = () => { }; return navigator.locks.request('c', grantedCallback) })() } catch { }
+      $vm.gc();
+      try { await (() => { let options = { info: {} }; return frames[0].navigation.back(options) })(); } catch { }
+      try { await (() => { let options = { info: {} }; return frames[0].navigation.traverseTo(`\u828f`, options) })(); } catch { }
+      try { await (() => { let first = {}; return indexedDB.cmp({}, document.adoptedStyleSheets) })() } catch { }
+      try { await (() => { let options = { info: {} }; return frames[0].navigation.forward(options) })(); } catch { }
+      testRunner?.notifyDone();
+    })();
+  </script>
+</body>
+</html>

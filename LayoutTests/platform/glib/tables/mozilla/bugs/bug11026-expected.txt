@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600 [bgcolor=#FFFFFF]
       RenderBlock (anonymous) at (0,0) size 800x18
-        RenderText {#text} at (0,0) size 328x17
+        RenderText {#text} at (0,0) size 328x18
           text run at (0,0) width 328: "The bug showed horizontal scroll bars when resized"
-        RenderBR {BR} at (328,0) size 0x17
+        RenderBR {BR} at (328,0) size 0x18
       RenderTable {TABLE} at (0,18) size 800x90
         RenderTableSection {TBODY} at (0,0) size 800x90
           RenderTableRow {TR} at (0,0) size 800x90

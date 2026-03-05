@@ -23,10 +23,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/long-variable-reference-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/missing-closing-nested-fallback-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/missing-closing-nested-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-layer-in-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-rule-in-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-rule-to-var.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/test_variable_legal_values.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/url-syntax-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/var-ident-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/var-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-from-to.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-over-transition.html

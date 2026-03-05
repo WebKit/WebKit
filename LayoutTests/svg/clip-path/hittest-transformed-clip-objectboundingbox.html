@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hit testing with transformed clipPath using objectBoundingBox units</title>
+<script src="../../resources/js-test.js"></script>
+<style>
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<svg width="400" height="400">
+    <defs>
+        <clipPath id="clip" clipPathUnits="objectBoundingBox" transform="translate(50, 50)">
+            <rect width="0.5" height="0.5"/>
+        </clipPath>
+    </defs>
+
+    <rect id="target" width="200" height="200" fill="green" clip-path="url(#clip)"/>
+</svg>
+
+<script>
+description('Test that hit-testing correctly handles clipPath with objectBoundingBox units and a local transform. The clip should be at (50, 50) with size 100x100.');
+
+shouldBeEqualToString("document.elementFromPoint(75, 75).id", "target");
+shouldBeEqualToString("document.elementFromPoint(100, 100).id", "target");
+shouldBeEqualToString("document.elementFromPoint(140, 140).id", "target");
+
+// Points outside the clipped region but inside the original rect bounds
+// These should NOT hit the target because they're clipped away
+shouldBe("document.elementFromPoint(25, 25).id", "''");
+shouldBe("document.elementFromPoint(175, 175).id", "''");
+shouldBe("document.elementFromPoint(10, 100).id", "''");
+shouldBe("document.elementFromPoint(100, 10).id", "''");
+
+// Edge cases - just inside the clip boundary
+shouldBeEqualToString("document.elementFromPoint(51, 51).id", "target");
+shouldBeEqualToString("document.elementFromPoint(149, 149).id", "target");
+
+// Edge cases - just outside the clip boundary
+shouldBe("document.elementFromPoint(49, 49).id", "''");
+</script>
+</body>
+</html>

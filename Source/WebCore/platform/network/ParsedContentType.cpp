@@ -200,7 +200,7 @@ std::optional<ParsedContentType> ParsedContentType::create(const String& content
     ParsedContentType parsedContentType(contentType.trim(isASCIIWhitespaceWithoutFF<char16_t>));
     if (!parsedContentType.parseContentType())
         return std::nullopt;
-    return { WTFMove(parsedContentType) };
+    return { WTF::move(parsedContentType) };
 }
 
 bool isValidContentType(const String& contentType)
@@ -220,7 +220,7 @@ String ParsedContentType::charset() const
 
 void ParsedContentType::setCharset(String&& charset)
 {
-    m_parameterValues.set("charset"_s, WTFMove(charset));
+    m_parameterValues.set("charset"_s, WTF::move(charset));
 }
 
 String ParsedContentType::parameterValueForName(const String& name) const
@@ -235,7 +235,7 @@ size_t ParsedContentType::parameterCount() const
 
 void ParsedContentType::setContentType(String&& contentRange)
 {
-    m_mimeType = StringView(WTFMove(contentRange)).trim(isASCIIWhitespaceWithoutFF<char16_t>).convertToASCIILowercase();
+    m_mimeType = StringView(WTF::move(contentRange)).trim(isASCIIWhitespaceWithoutFF<char16_t>).convertToASCIILowercase();
 }
 
 static bool containsNonQuoteStringTokenCharacters(const String& input)

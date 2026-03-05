@@ -577,6 +577,8 @@ class OpaqueIPCTypes(object):
 
 try:
     opaque_ipc_types = OpaqueIPCTypes()
+    # Add all tracked aliases to OPAQUE_TYPES for transitive opaqueness
+    OPAQUE_TYPES.update(opaque_ipc_types.alias_params.keys())
 except FileNotFoundError as e:
     raise Exception(f"opaque_ipc_types.tracking.in file not found: {e}")
 
@@ -588,11 +590,12 @@ def is_opaque_type(type):
     1. Direct opaque types (MachSendRight, CFDataRef, etc.)
     2. Opaque containers with ODT concerns (Vector<uint8_t>, std::span<char>, etc.)
     3. Transparent containers containing opaque data (std::pair<Vector<uint8_t>, String>)
+    4. Tracked aliases and aliases wrapped in containers (transitive opaqueness)
 
     Returns False otherwise:
-    4. Transparent containers without opaque data (std::pair<uint8_t, String>)
-    5. Non-opaque types (String, int, etc.)
-    6. Non-containers (uint8_t, WTF::UUID, etc.)
+    5. Transparent containers without opaque data (std::pair<uint8_t, String>)
+    6. Non-opaque types (String, int, etc.)
+    7. Non-containers (uint8_t, WTF::UUID, etc.)
     """
     return _contains_opaque_data(type) is not None
 
@@ -783,6 +786,13 @@ if __name__ == '__main__':
 
         def test_production_tracking_file_parses(self):
             ot = OpaqueIPCTypes()
+
+            # Verify tracked aliases are treated as opaque (transitive opaqueness)
+            self.assertTrue(is_opaque_type("IPC::TransferString::IPCData"))
+            self.assertTrue(is_opaque_type("WebKit::CFObjectValue"))
+            self.assertTrue(is_opaque_type("UniqueRef<WebKit::CFObjectValue>"))
+            self.assertTrue(is_opaque_type("std::optional<IPC::TransferString::IPCData>"))
+            self.assertTrue(is_opaque_type("Vector<WebKit::CFObjectValue>"))
 
             total_entries = sum(len(e) for e in ot.message_params.values())
             total_entries += sum(len(e) for e in ot.message_param_replies.values())

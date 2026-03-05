@@ -35,13 +35,13 @@ namespace WebCore {
 
 static void scheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {
-    for (RefPtr loader : copyToVector(loaders))
+    for (Ref loader : copyToVector(loaders))
         loader->schedule(pair);
 }
 
 static void unscheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {
-    for (RefPtr loader : copyToVector(loaders))
+    for (Ref loader : copyToVector(loaders))
         loader->unschedule(pair);
 }
 

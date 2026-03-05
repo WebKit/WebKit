@@ -39,11 +39,11 @@ class DeferredPromise;
 class ScriptExecutionContext;
 
 class InstallEvent final : public ExtendableEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InstallEvent);
+    WTF_MAKE_TZONE_ALLOCATED(InstallEvent);
 public:
     static Ref<InstallEvent> create(const AtomString& type, ExtendableEventInit&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new InstallEvent(type, WTFMove(initializer), isTrusted));
+        return adoptRef(*new InstallEvent(type, WTF::move(initializer), isTrusted));
     }
     ~InstallEvent();
 
@@ -51,12 +51,8 @@ public:
 
 private:
     WEBCORE_EXPORT InstallEvent(const AtomString&, ExtendableEventInit&&, IsTrusted);
-
-    bool isInstallEvent() const final { return true; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InstallEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isInstallEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(InstallEvent)

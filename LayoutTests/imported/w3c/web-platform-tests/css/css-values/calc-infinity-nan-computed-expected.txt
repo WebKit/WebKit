@@ -44,4 +44,7 @@ PASS Property rotate(calc(NaN * 1rad)) value expected same with rotate(0deg) in 
 PASS Property rotate(calc(infinity * 1grad)) value expected same with rotate(0deg) in +/-0.0001
 PASS Property rotate(calc(-infinity * 1grad)) value expected same with rotate(0deg) in +/-0.0001
 PASS Property rotate(calc(NaN * 1grad)) value expected same with rotate(0deg) in +/-0.0001
+PASS Property scale value 'calc(max(infinity, 10))'
+PASS Property scale value 'calc(infinity)'
+PASS Property scale value 'calc(-infinity * 10)'
 

@@ -1,0 +1,3 @@
+
+PASS The speculation rules set should be decoded as UTF-8 even when no charset is declared.
+

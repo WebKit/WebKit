@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/FileSystemWritableFileStreamIdentifier.h>
-#include <WebCore/WritableStreamSink.h>
+#include "FileSystemWritableFileStreamIdentifier.h"
+#include "WritableStreamSink.h"
 
 namespace WebCore {
 class FileSystemFileHandle;
@@ -38,12 +38,11 @@ public:
 
 private:
     FileSystemWritableFileStreamSink(FileSystemWritableFileStreamIdentifier, FileSystemFileHandle&);
-    Ref<FileSystemFileHandle> protectedSource() const { return m_source; }
 
     // WritableStreamSink
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close() final;
-    void error(String&&) final;
+    void close(JSDOMGlobalObject&) final;
+    void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
 
     FileSystemWritableFileStreamIdentifier m_identifier;
     const Ref<FileSystemFileHandle> m_source;

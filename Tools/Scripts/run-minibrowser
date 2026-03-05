@@ -19,6 +19,8 @@
 """Wrapper around webkitpy/minibrowser/run_webkit_app.py"""
 import sys
 from webkitpy.minibrowser import run_webkit_app
+from webkitpy.port.linux_container_sdk_utils import maybe_use_container_sdk_root_dir
+maybe_use_container_sdk_root_dir()
 
 if __name__ == '__main__':
     sys.exit(run_webkit_app.main(sys.argv[1:]))

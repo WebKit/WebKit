@@ -76,7 +76,7 @@ public:
     void resume(WebCore::SharedWorkerObjectIdentifier);
     unsigned sharedWorkerObjectsCount() const { return m_sharedWorkerObjects.size(); }
     void forEachSharedWorkerObject(NOESCAPE const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>&) const;
-    std::optional<WebCore::ProcessIdentifier> firstSharedWorkerObjectProcess() const;
+    std::optional<WebCore::ProcessIdentifier> NODELETE firstSharedWorkerObjectProcess() const;
 
     void didCreateContextConnection(WebSharedWorkerServerToContextConnection&);
 
@@ -84,7 +84,7 @@ public:
     void markAsRunning() { m_isRunning = true; }
 
     const WebCore::WorkerInitializationData& initializationData() const { return m_initializationData; }
-    void setInitializationData(WebCore::WorkerInitializationData&& initializationData) { m_initializationData = WTFMove(initializationData); }
+    void setInitializationData(WebCore::WorkerInitializationData&& initializationData) { m_initializationData = WTF::move(initializationData); }
 
     const WebCore::WorkerFetchResult& fetchResult() const { return m_fetchResult; }
     void setFetchResult(WebCore::WorkerFetchResult&&);

@@ -55,9 +55,9 @@ public:
 
     ImmutableNFANodeBuilder(ImmutableNFANodeBuilder&& other)
         : m_immutableNFA(other.m_immutableNFA)
-        , m_ranges(WTFMove(other.m_ranges))
-        , m_epsilonTransitionTargets(WTFMove(other.m_epsilonTransitionTargets))
-        , m_actions(WTFMove(other.m_actions))
+        , m_ranges(WTF::move(other.m_ranges))
+        , m_epsilonTransitionTargets(WTF::move(other.m_epsilonTransitionTargets))
+        , m_actions(WTF::move(other.m_actions))
         , m_nodeId(other.m_nodeId)
         , m_finalized(other.m_finalized)
     {
@@ -145,7 +145,7 @@ public:
         ASSERT(!m_finalized);
         ASSERT(m_immutableNFA);
 
-        m_actions.addAll(WTFMove(actions));
+        m_actions.addAll(WTF::move(actions));
     }
 
     ImmutableNFANodeBuilder& operator=(ImmutableNFANodeBuilder&& other)
@@ -154,9 +154,9 @@ public:
             finalize();
 
         m_immutableNFA = other.m_immutableNFA;
-        m_ranges = WTFMove(other.m_ranges);
-        m_epsilonTransitionTargets = WTFMove(other.m_epsilonTransitionTargets);
-        m_actions = WTFMove(other.m_actions);
+        m_ranges = WTF::move(other.m_ranges);
+        m_epsilonTransitionTargets = WTF::move(other.m_epsilonTransitionTargets);
+        m_actions = WTF::move(other.m_actions);
         m_nodeId = other.m_nodeId;
         m_finalized = other.m_finalized;
 

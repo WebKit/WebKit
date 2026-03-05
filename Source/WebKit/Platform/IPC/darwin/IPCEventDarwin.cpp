@@ -92,7 +92,7 @@ std::optional<EventSignalPair> createEventSignalPair()
     auto sendRight = MachSendRight::createFromReceiveRight(listeningPort);
     requestNoSenderNotifications(listeningPort);
 
-    return EventSignalPair { Event { listeningPort }, Signal { WTFMove(sendRight) } };
+    return EventSignalPair { Event { listeningPort }, Signal { WTF::move(sendRight) } };
 }
 
 Event::~Event()

@@ -26,26 +26,33 @@
 #include "config.h"
 #include "AccessibilitySpinButton.h"
 
+#include "AXLoggerBase.h"
 #include "AXObjectCache.h"
+#include "AXUtilities.h"
 #include "AccessibilityObjectInlines.h"
 #include "ContainerNodeInlines.h"
 #include "RenderElement.h"
 
 namespace WebCore {
 
-AccessibilitySpinButton::AccessibilitySpinButton(AXID axID, AXObjectCache& cache)
+AccessibilitySpinButton::AccessibilitySpinButton(AXID axID, SpinButtonElement& spinButtonElement, AXObjectCache& cache)
     : AccessibilityMockObject(axID, cache)
-    , m_spinButtonElement(nullptr)
-    , m_incrementor(downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)))
-    , m_decrementor(downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)))
+    , m_spinButtonElement(spinButtonElement)
 {
+    // Eagerly initialize our role because it influences the result of the is-ignored
+    // computation for us and our child spin-button-parts, which are also created as
+    // part of this constructor (thus not allowing us to wait for the normal AccessibilityObject::init()).
+    m_role = determineAccessibilityRole();
+
+    lazyInitialize(m_incrementor, Ref { downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)) });
     m_incrementor->setIsIncrementor(true);
+    lazyInitialize(m_decrementor, Ref { downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)) });
     m_decrementor->setIsIncrementor(false);
 }
 
-Ref<AccessibilitySpinButton> AccessibilitySpinButton::create(AXID axID, AXObjectCache& cache)
+Ref<AccessibilitySpinButton> AccessibilitySpinButton::create(AXID axID, SpinButtonElement& spinButtonElement, AXObjectCache& cache)
 {
-    Ref spinButton = adoptRef(*new AccessibilitySpinButton(axID, cache));
+    Ref spinButton = adoptRef(*new AccessibilitySpinButton(axID, spinButtonElement, cache));
     // We have to do this setup here and not in the constructor to avoid an
     // adoptionIsRequired ASSERT in RefCounted.h.
     spinButton->m_incrementor->setParent(spinButton.ptr());
@@ -57,26 +64,11 @@ Ref<AccessibilitySpinButton> AccessibilitySpinButton::create(AXID axID, AXObject
     return spinButton;
 }
 
-
 AccessibilitySpinButton::~AccessibilitySpinButton() = default;
-
-AccessibilitySpinButtonPart* AccessibilitySpinButton::incrementButton()
-{
-    ASSERT(m_childrenInitialized);
-    RELEASE_ASSERT(m_children.size() == 2);
-    return &downcast<AccessibilitySpinButtonPart>(m_children[0].get());
-}
-
-AccessibilitySpinButtonPart* AccessibilitySpinButton::decrementButton()
-{
-    ASSERT(m_childrenInitialized);
-    RELEASE_ASSERT(m_children.size() == 2);
-    return &downcast<AccessibilitySpinButtonPart>(m_children[1].get());
-}
 
 LayoutRect AccessibilitySpinButton::elementRect() const
 {
-    ASSERT(m_spinButtonElement);
+    AX_ASSERT(m_spinButtonElement);
 
     CheckedPtr renderer = m_spinButtonElement ? m_spinButtonElement->renderer() : nullptr;
     if (!renderer)
@@ -91,16 +83,27 @@ void AccessibilitySpinButton::addChildren()
 {
     // This class sets its children once in the create function, and should never
     // have dirty or uninitialized children afterwards.
-    ASSERT(m_childrenInitialized);
-    ASSERT(!m_subtreeDirty);
-    ASSERT(!m_childrenDirty);
+    AX_ASSERT(m_childrenInitialized);
+    AX_ASSERT(!m_subtreeDirty);
+    AX_ASSERT(!m_childrenDirty);
 }
 
 void AccessibilitySpinButton::step(int amount)
 {
-    ASSERT(m_spinButtonElement);
-    if (m_spinButtonElement)
-        m_spinButtonElement->step(amount);
+    AX_ASSERT(m_spinButtonElement);
+    if (RefPtr element = m_spinButtonElement.get())
+        element->step(amount);
+}
+
+bool AccessibilitySpinButton::computeIsIgnored() const
+{
+    if (isIgnoredByDefault())
+        return true;
+    // If the spin button element has no renderer, or is render-hidden (e.g.,
+    // inside a collapsed <details> element with content-visibility: hidden),
+    // the spin button is not visible.
+    CheckedPtr renderer = m_spinButtonElement ? m_spinButtonElement->renderer() : nullptr;
+    return !renderer || WebCore::isRenderHidden(protect(renderer->style()).get());
 }
 
 } // namespace WebCore

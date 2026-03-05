@@ -71,7 +71,7 @@ public:
     static RefPtr<Value> parse(CSSParserTokenRange&, CSS::PropertyParserState&, CSS::Category, CSS::Range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
     static Ref<Value> create(const Style::Calculation::Value&, const RenderStyle&);
-    static Ref<Value> create(CSS::Category, CSS::Range, CSSCalc::Tree&&);
+    static Ref<Value> NODELETE create(CSS::Category, CSS::Range, CSSCalc::Tree&&);
 
     ~Value();
 
@@ -84,7 +84,7 @@ public:
     CSS::Category category() const { return m_category; }
     CSS::Range range() const { return m_range; }
 
-    CSSUnitType primitiveType() const;
+    CSSUnitType NODELETE primitiveType() const;
 
     // Returns whether the CSSCalc::Tree requires `CSSToLengthConversionData` to fully resolve.
     bool requiresConversionData() const { return m_tree.requiresConversionData; };
@@ -110,7 +110,7 @@ public:
 
     void dump(TextStream&) const;
 
-    const CSSCalc::Tree& tree() const { return m_tree; }
+    const CSSCalc::Tree& tree() const LIFETIME_BOUND { return m_tree; }
 
 private:
     explicit Value(CSS::Category, CSS::Range, CSSCalc::Tree&&);

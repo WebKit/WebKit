@@ -368,7 +368,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetLocalOffer) {
     auto wrapper_for_offer =
         CreatePeerConnectionInState(SignalingState::kHaveLocalOffer);
     std::unique_ptr<SessionDescriptionInterface> offer =
-        CloneSessionDescription(wrapper_for_offer->pc()->local_description());
+        wrapper_for_offer->pc()->local_description()->Clone();
 
     std::string error;
     ASSERT_FALSE(wrapper->SetLocalDescription(std::move(offer), &error));
@@ -381,8 +381,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetLocalOffer) {
 TEST_P(PeerConnectionSignalingStateTest, SetLocalPrAnswer) {
   auto wrapper_for_pranswer =
       CreatePeerConnectionInState(SignalingState::kHaveLocalPrAnswer);
-  auto pranswer =
-      CloneSessionDescription(wrapper_for_pranswer->pc()->local_description());
+  auto pranswer = wrapper_for_pranswer->pc()->local_description()->Clone();
 
   auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kHaveLocalPrAnswer ||
@@ -420,7 +419,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemoteOffer) {
   auto wrapper_for_offer =
       CreatePeerConnectionInState(SignalingState::kHaveRemoteOffer);
   std::unique_ptr<SessionDescriptionInterface> offer =
-      CloneSessionDescription(wrapper_for_offer->pc()->remote_description());
+      wrapper_for_offer->pc()->remote_description()->Clone();
 
   auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kStable ||
@@ -438,8 +437,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemoteOffer) {
 TEST_P(PeerConnectionSignalingStateTest, SetRemotePrAnswer) {
   auto wrapper_for_pranswer =
       CreatePeerConnectionInState(SignalingState::kHaveRemotePrAnswer);
-  auto pranswer =
-      CloneSessionDescription(wrapper_for_pranswer->pc()->remote_description());
+  auto pranswer = wrapper_for_pranswer->pc()->remote_description()->Clone();
 
   auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kHaveLocalOffer ||
@@ -830,8 +828,7 @@ TEST_P(PeerConnectionSignalingTest,
       MockSetSessionDescriptionObserver::Create();
   callee->pc()->SetRemoteDescription(
       callee_set_remote_description_observer.get(),
-      CloneSessionDescription(caller->pc()->pending_local_description())
-          .release());
+      caller->pc()->pending_local_description()->Clone().release());
 
   // SetLocalDescription(), implicitly creating an answer.
   auto callee_set_local_description_observer =
@@ -853,8 +850,7 @@ TEST_P(PeerConnectionSignalingTest,
       MockSetSessionDescriptionObserver::Create();
   caller->pc()->SetRemoteDescription(
       caller_set_remote_description_observer.get(),
-      CloneSessionDescription(callee->pc()->current_local_description())
-          .release());
+      callee->pc()->current_local_description()->Clone().release());
   EXPECT_THAT(
       WaitUntil(
           [&] { return caller_set_remote_description_observer->called(); },
@@ -1211,13 +1207,13 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest,
   EXPECT_FALSE(HasDtlsTransport(callee));
   std::unique_ptr<SessionDescriptionInterface> offer =
       caller->CreateOffer(RTCOfferAnswerOptions());
-  caller->SetLocalDescription(CloneSessionDescription(offer.get()));
+  caller->SetLocalDescription(offer->Clone());
   EXPECT_TRUE(HasDtlsTransport(caller));
   callee->SetRemoteDescription(std::move(offer));
   EXPECT_FALSE(HasDtlsTransport(callee));
   std::unique_ptr<SessionDescriptionInterface> answer =
       callee->CreateAnswer(RTCOfferAnswerOptions());
-  callee->SetLocalDescription(CloneSessionDescription(answer.get()));
+  callee->SetLocalDescription(answer->Clone());
   EXPECT_TRUE(HasDtlsTransport(callee));
   caller->SetRemoteDescription(std::move(answer));
   EXPECT_TRUE(HasDtlsTransport(caller));
@@ -1233,12 +1229,12 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest, DtlsTransportsMergeWhenBundled) {
   EXPECT_FALSE(HasDtlsTransport(callee));
   std::unique_ptr<SessionDescriptionInterface> offer =
       caller->CreateOffer(RTCOfferAnswerOptions());
-  caller->SetLocalDescription(CloneSessionDescription(offer.get()));
+  caller->SetLocalDescription(offer->Clone());
   EXPECT_EQ(2, NumberOfDtlsTransports(caller));
   callee->SetRemoteDescription(std::move(offer));
   std::unique_ptr<SessionDescriptionInterface> answer =
       callee->CreateAnswer(RTCOfferAnswerOptions());
-  callee->SetLocalDescription(CloneSessionDescription(answer.get()));
+  callee->SetLocalDescription(answer->Clone());
   caller->SetRemoteDescription(std::move(answer));
   EXPECT_EQ(1, NumberOfDtlsTransports(caller));
 
@@ -1256,12 +1252,12 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest,
   unbundle_options.use_rtp_mux = false;
   std::unique_ptr<SessionDescriptionInterface> offer =
       caller->CreateOffer(unbundle_options);
-  caller->SetLocalDescription(CloneSessionDescription(offer.get()));
+  caller->SetLocalDescription(offer->Clone());
   EXPECT_EQ(2, NumberOfDtlsTransports(caller));
   callee->SetRemoteDescription(std::move(offer));
   std::unique_ptr<SessionDescriptionInterface> answer =
       callee->CreateAnswer(RTCOfferAnswerOptions());
-  callee->SetLocalDescription(CloneSessionDescription(answer.get()));
+  callee->SetLocalDescription(answer->Clone());
   EXPECT_EQ(2, NumberOfDtlsTransports(callee));
   caller->SetRemoteDescription(std::move(answer));
   EXPECT_EQ(2, NumberOfDtlsTransports(caller));
@@ -1329,7 +1325,7 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest,
 
   // Upon rolling back to "stable", a new negotiation needed event will be
   // generated that is not suppressed.
-  callee->SetLocalDescription(CreateSessionDescription(SdpType::kRollback, ""));
+  callee->SetLocalDescription(CreateRollbackSessionDescription());
   EXPECT_TRUE(callee->observer()->has_negotiation_needed_event());
   EXPECT_TRUE(callee->pc()->ShouldFireNegotiationNeededEvent(
       callee->observer()->latest_negotiation_needed_event()));
@@ -1372,8 +1368,7 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest, RtxReofferApt) {
 
   std::unique_ptr<SessionDescriptionInterface> answer =
       callee->CreateAnswer(RTCOfferAnswerOptions());
-  EXPECT_TRUE(
-      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  EXPECT_TRUE(callee->SetLocalDescription(answer->Clone()));
 
   callee->pc()->GetTransceivers()[0]->StopStandard();
   auto reoffer = callee->CreateOffer(RTCOfferAnswerOptions());

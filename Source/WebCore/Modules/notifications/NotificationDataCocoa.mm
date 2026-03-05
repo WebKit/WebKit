@@ -95,7 +95,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
     }
 
     NotificationData data { URL { String { defaultActionURL.get() } }, title.get(), body.get(), iconURL.get(), tag.get(), language.get(), direction, originString.get(), URL { String { serviceWorkerRegistrationURL.get() } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.get().unsignedLongLongValue }, { }, makeVector(notificationData.get()), nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
-    return WTFMove(data);
+    return WTF::move(data);
 }
 
 NSDictionary *NotificationData::dictionaryRepresentation() const
@@ -122,11 +122,6 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         result.get()[WebNotificationSilentKey] = @(*silent);
 
     return result.autorelease();
-}
-
-RetainPtr<NSDictionary> NotificationData::protectedDictionaryRepresentation() const
-{
-    return dictionaryRepresentation();
 }
 
 } // namespace WebKit

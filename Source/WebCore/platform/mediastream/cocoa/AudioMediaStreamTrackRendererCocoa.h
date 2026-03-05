@@ -45,7 +45,7 @@ class BaseAudioMediaStreamTrackRendererUnit;
 class AudioMediaStreamTrackRendererCocoa final : public AudioMediaStreamTrackRenderer {
     WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererCocoa);
 public:
-    static Ref<AudioMediaStreamTrackRenderer> create(Init&& init) { return adoptRef(*new AudioMediaStreamTrackRendererCocoa(WTFMove(init))); }
+    static Ref<AudioMediaStreamTrackRenderer> create(Init&& init) { return adoptRef(*new AudioMediaStreamTrackRendererCocoa(WTF::move(init))); }
     ~AudioMediaStreamTrackRendererCocoa();
 
 private:

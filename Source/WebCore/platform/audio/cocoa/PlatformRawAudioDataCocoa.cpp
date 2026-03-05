@@ -49,7 +49,7 @@ namespace WebCore {
 
 Ref<PlatformRawAudioData> PlatformRawAudioData::create(Ref<MediaSample>&& sample)
 {
-    return PlatformRawAudioDataCocoa::create(downcast<MediaSampleAVFObjC>(WTFMove(sample)));
+    return PlatformRawAudioDataCocoa::create(downcast<MediaSampleAVFObjC>(WTF::move(sample)));
 }
 
 static AudioStreamDescription::PCMFormat audioSampleFormatToPCMFormat(AudioSampleFormat format)
@@ -101,7 +101,7 @@ static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescri
     if (!result)
         return nullptr;
 
-    auto [newList, blockBuffer] = WTFMove(*result);
+    auto [newList, blockBuffer] = WTF::move(*result);
     if (PAL::CMSampleBufferSetDataBuffer(rawSampleBuffer, blockBuffer.get()))
         return nullptr;
     return sampleBuffer;
@@ -144,16 +144,16 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
 }
 
 PlatformRawAudioDataCocoa::PlatformRawAudioDataCocoa(Ref<MediaSampleAVFObjC>&& sample)
-    : m_sample(WTFMove(sample))
+    : m_sample(WTF::move(sample))
     , m_description(asbd())
 {
 }
 
 const AudioStreamBasicDescription& PlatformRawAudioDataCocoa::asbd() const
 {
-    auto description = PAL::CMSampleBufferGetFormatDescription(m_sample->sampleBuffer());
+    RetainPtr description = PAL::CMSampleBufferGetFormatDescription(RetainPtr { m_sample->sampleBuffer() }.get());
     ASSERT(description);
-    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(description);
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(description.get());
     ASSERT(asbd);
     return *asbd;
 }
@@ -187,7 +187,7 @@ size_t PlatformRawAudioDataCocoa::numberOfChannels() const
 
 size_t PlatformRawAudioDataCocoa::numberOfFrames() const
 {
-    return PAL::CMSampleBufferGetNumSamples(m_sample->sampleBuffer());
+    return PAL::CMSampleBufferGetNumSamples(RetainPtr { m_sample->sampleBuffer() }.get());
 }
 
 std::optional<uint64_t> PlatformRawAudioDataCocoa::duration() const
@@ -287,7 +287,7 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
 
     auto copyElements = []<typename T>(std::span<T> destination, auto sourcePlane, size_t sampleOffset, size_t sampleIndexIncrement, size_t samples) {
         RELEASE_ASSERT(destination.size() >= samples);
-        RELEASE_ASSERT(sourcePlane.size() >= sampleIndexIncrement * samples + sampleOffset - 1);
+        RELEASE_ASSERT(sourcePlane.size() > sampleOffset + (samples - 1) * sampleIndexIncrement);
         size_t sourceSampleIndex = sampleOffset;
         for (size_t sample = 0; sample < samples; sample++) {
             destination[sample] = convertAudioSample<T>(sourcePlane[sourceSampleIndex]);

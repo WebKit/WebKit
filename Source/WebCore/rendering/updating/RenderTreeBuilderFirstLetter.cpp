@@ -31,7 +31,7 @@
 #include "RenderInline.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGText.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
@@ -53,7 +53,7 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
     auto firstLetterStyle = RenderStyle::clone(*style);
 
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
-    if (firstLetterStyle.initialLetter().drop() >= 1 && !firstLetterStyle.isFloating())
+    if (firstLetterStyle.initialLetter().drop() >= 1 && firstLetterStyle.floating() == Float::None)
         firstLetterStyle.setFloating(firstLetterStyle.writingMode().isBidiLTR() ? Float::Left : Float::Right);
 
     // We have to compute the correct font-size for the first-letter if it has an initial letter height set.
@@ -74,7 +74,7 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
         float startingFontSize = ((firstLetterStyle.initialLetter().height() - 1) * lineHeight + paragraph->style().metricsOfPrimaryFont().intCapHeight()) / capRatio;
         newFontDescription.setSpecifiedSize(startingFontSize);
         newFontDescription.setComputedSize(startingFontSize);
-        firstLetterStyle.setFontDescription(WTFMove(newFontDescription));
+        firstLetterStyle.setFontDescription(WTF::move(newFontDescription));
 
         int desiredCapHeight = (firstLetterStyle.initialLetter().height() - 1) * lineHeight + paragraph->style().metricsOfPrimaryFont().intCapHeight();
         int actualCapHeight = firstLetterStyle.metricsOfPrimaryFont().intCapHeight();
@@ -82,14 +82,14 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
             auto newFontDescription = firstLetterStyle.fontDescription();
             newFontDescription.setSpecifiedSize(newFontDescription.specifiedSize() - 1);
             newFontDescription.setComputedSize(newFontDescription.computedSize() -1);
-            firstLetterStyle.setFontDescription(WTFMove(newFontDescription));
+            firstLetterStyle.setFontDescription(WTF::move(newFontDescription));
             actualCapHeight = firstLetterStyle.metricsOfPrimaryFont().intCapHeight();
         }
     }
 
     firstLetterStyle.setPseudoElementIdentifier({ { PseudoElementType::FirstLetter } });
     // Force inline display (except for floating first-letters).
-    firstLetterStyle.setDisplay(firstLetterStyle.isFloating() ? DisplayType::Block : DisplayType::Inline);
+    firstLetterStyle.setDisplay(firstLetterStyle.floating() != Float::None ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
     // CSS2 says first-letter can't be positioned.
     firstLetterStyle.setPosition(PositionType::Static);
 
@@ -178,23 +178,23 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
     }
 
     if (!Style::determineChanges(firstLetter->style(), *pseudoStyle).contains(Style::Change::Renderer)) {
-        firstLetter->setStyle(WTFMove(*pseudoStyle));
+        firstLetter->setStyle(WTF::move(*pseudoStyle));
         return;
     }
 
     // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
     RenderPtr<RenderBoxModelObject> newFirstLetter;
-    if (pseudoStyle->display() == DisplayType::Inline)
-        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, firstLetterBlock.document(), WTFMove(*pseudoStyle));
+    if (pseudoStyle->display() == Style::DisplayType::InlineFlow)
+        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, firstLetterBlock.document(), WTF::move(*pseudoStyle));
     else
-        newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, firstLetterBlock.document(), WTFMove(*pseudoStyle));
+        newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, firstLetterBlock.document(), WTF::move(*pseudoStyle));
     newFirstLetter->initializeStyle();
     newFirstLetter->setIsFirstLetter();
 
     // Move the first letter into the new renderer.
     while (RenderObject* child = firstLetter->firstChild()) {
         auto toMove = m_builder.detach(*firstLetter, *child, WillBeDestroyed::No);
-        m_builder.attach(*newFirstLetter, WTFMove(toMove));
+        m_builder.attach(*newFirstLetter, WTF::move(toMove));
     }
 
     WeakPtr remainingText = downcast<RenderBoxModelObject>(*firstLetter).firstLetterRemainingText();
@@ -206,7 +206,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
         remainingText->setFirstLetter(*newFirstLetter);
         newFirstLetter->setFirstLetterRemainingText(*remainingText);
     }
-    m_builder.attach(firstLetterContainer, WTFMove(newFirstLetter), nextSibling.get());
+    m_builder.attach(firstLetterContainer, WTF::move(newFirstLetter), nextSibling.get());
 }
 
 void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChild)
@@ -225,10 +225,10 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         return;
 
     RenderPtr<RenderBoxModelObject> newFirstLetter;
-    if (pseudoStyle->display() == DisplayType::Inline)
-        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, currentTextChild.document(), WTFMove(*pseudoStyle));
+    if (pseudoStyle->display() == Style::DisplayType::InlineFlow)
+        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, currentTextChild.document(), WTF::move(*pseudoStyle));
     else
-        newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, currentTextChild.document(), WTFMove(*pseudoStyle));
+        newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, currentTextChild.document(), WTF::move(*pseudoStyle));
     newFirstLetter->initializeStyle();
     newFirstLetter->setIsFirstLetter();
 
@@ -263,7 +263,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
                 length = scanLength + numCodeUnits;
         }
 
-        auto* textNode = currentTextChild.textNode();
+        RefPtr textNode = currentTextChild.textNode();
         WeakPtr beforeChild = currentTextChild.nextSibling();
         WeakPtr inlineWrapperForDisplayContents = currentTextChild.inlineWrapperForDisplayContents();
         auto hasInlineWrapperForDisplayContents = inlineWrapperForDisplayContents.get();
@@ -281,17 +281,17 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         RenderTextFragment& remainingText = *newRemainingText;
         ASSERT_UNUSED(hasInlineWrapperForDisplayContents, hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContents.get());
         remainingText.setInlineWrapperForDisplayContents(inlineWrapperForDisplayContents.get());
-        m_builder.attach(*textContentParent, WTFMove(newRemainingText), beforeChild.get());
+        m_builder.attach(*textContentParent, WTF::move(newRemainingText), beforeChild.get());
 
         // FIXME: Make attach the final step so that we don't need to keep firstLetter around.
         auto& firstLetter = *newFirstLetter;
         remainingText.setFirstLetter(firstLetter);
         firstLetter.setFirstLetterRemainingText(remainingText);
-        m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), &remainingText);
+        m_builder.attach(*firstLetterContainer, WTF::move(newFirstLetter), &remainingText);
 
         // Construct text fragment for the first letter.
         auto letter = createRenderer<RenderTextFragment>(m_builder.m_view.document(), oldText, 0, length);
-        m_builder.attach(firstLetter, WTFMove(letter));
+        m_builder.attach(firstLetter, WTF::move(letter));
     }
 }
 

@@ -361,7 +361,7 @@ public:
 
     void connect(Function<void (const char*)>&& completionHandler)
     {
-        m_completionHandler = WTFMove(completionHandler);
+        m_completionHandler = WTF::move(completionHandler);
         GRefPtr<GSocketClient> client = adoptGRef(g_socket_client_new());
         auto* uri = soup_server_message_get_uri(m_message.get());
         const char* host = g_uri_get_host(uri);
@@ -394,7 +394,7 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         g_assert_cmpuint(port, ==, gProxyServerPort);
         auto tunnel = makeUnique<Tunnel>(server, message);
         auto* tunnelPtr = tunnel.get();
-        tunnelPtr->connect([tunnel = WTFMove(tunnel)](const char* errorMessage) {
+        tunnelPtr->connect([tunnel = WTF::move(tunnel)](const char* errorMessage) {
             if (errorMessage) {
                 soup_server_message_set_status(tunnel->m_message.get(), SOUP_STATUS_BAD_GATEWAY, nullptr);
                 soup_server_message_set_response(tunnel->m_message.get(), "text/plain", SOUP_MEMORY_COPY, errorMessage, strlen(errorMessage));

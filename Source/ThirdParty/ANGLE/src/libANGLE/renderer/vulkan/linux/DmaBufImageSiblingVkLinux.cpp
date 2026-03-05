@@ -557,11 +557,11 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
                               linearFilterSupported);
     }
 
-    ANGLE_TRY(mImage->initExternal(displayVk, gl::TextureType::_2D, vkExtents, intendedFormatID,
-                                   actualImageFormatID, 1, usageFlags, createFlags,
-                                   vk::ImageLayout::ExternalPreInitialized, imageCreateInfoPNext,
-                                   gl::LevelIndex(0), 1, 1, kIsRobustInitEnabled,
-                                   hasProtectedContent(), conversionDesc, nullptr));
+    ANGLE_TRY(mImage->initExternal(
+        displayVk, gl::TextureType::_2D, vkExtents, intendedFormatID, actualImageFormatID, 1,
+        usageFlags, createFlags, vk::ImageAccess::ExternalPreInitialized, imageCreateInfoPNext,
+        gl::LevelIndex(0), 1, 1, kIsRobustInitEnabled, hasProtectedContent(),
+        vk::TileMemory::Prohibited, conversionDesc, nullptr));
 
     VkMemoryRequirements externalMemoryRequirements;
     mImage->getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);
@@ -584,8 +584,9 @@ angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
 {
     vk::Renderer *renderer = displayVk->getRenderer();
 
-    const vk::Format &vkFormat  = renderer->getFormat(mFormat.info->sizedInternalFormat);
-    const angle::Format &format = vkFormat.getActualImageFormat(rx::vk::ImageAccess::SampleOnly);
+    const vk::Format &vkFormat = renderer->getFormat(mFormat.info->sizedInternalFormat);
+    const angle::Format &format =
+        vkFormat.getActualImageFormat(rx::vk::ImageFormatSupport::SampleOnly);
 
     InitResult initResult;
 

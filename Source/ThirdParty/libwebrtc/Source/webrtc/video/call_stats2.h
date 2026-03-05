@@ -19,7 +19,6 @@
 #include "api/units/time_delta.h"
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
@@ -43,10 +42,6 @@ class CallStats {
   void EnsureStarted();
 
   // Expose an RtcpRttStats implementation without inheriting from RtcpRttStats.
-  // That allows us to separate the threading model of how RtcpRttStats is
-  // used (mostly on a process thread) and how CallStats is used (mostly on
-  // the TQ/worker thread). Since for both cases, there is a LastProcessedRtt()
-  // method, this separation allows us to not need a lock for either.
   RtcpRttStats* AsRtcpRttStats() { return &rtcp_rtt_stats_impl_; }
 
   // Registers/deregisters a new observer to receive statistics updates.
@@ -54,8 +49,6 @@ class CallStats {
   void RegisterStatsObserver(CallStatsObserver* observer);
   void DeregisterStatsObserver(CallStatsObserver* observer);
 
-  // Expose `LastProcessedRtt()` from RtcpRttStats to the public interface, as
-  // it is the part of the API that is needed by direct users of CallStats.
   int64_t LastProcessedRtt() const;
 
   // Exposed for tests to test histogram support.
@@ -90,15 +83,6 @@ class CallStats {
       // thread - which is what happens in other cases. We should probably fix
       // that so that the call consistently comes in on the right thread.
       owner_->OnRttUpdate(rtt);
-    }
-
-    int64_t LastProcessedRtt() const override {
-      // This call path shouldn't be used anymore. This impl is only for
-      // propagating the rtt from the RtpRtcp module, which does not call
-      // LastProcessedRtt(). Down the line we should consider removing
-      // LastProcessedRtt() and use the interface for event notifications only.
-      RTC_DCHECK_NOTREACHED() << "Legacy call path";
-      return 0;
     }
 
     CallStats* const owner_;

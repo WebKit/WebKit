@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/MarginTypes.h>
+#include "MarginTypes.h"
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -64,14 +64,14 @@ public:
 
 private:
     enum class MarginType { Before, After };
-    UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeValues(const ElementBox&, MarginType) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values NODELETE positiveNegativeValues(const ElementBox&, MarginType) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginBefore(const ElementBox&, UsedVerticalMargin::NonCollapsedValues) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginAfter(const ElementBox&, UsedVerticalMargin::NonCollapsedValues) const;
 
     UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const ElementBox&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const ElementBox&, const BlockFormattingGeometry&) const;
 
-    std::optional<LayoutUnit> marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
+    std::optional<LayoutUnit> NODELETE marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
     bool hasClearance(const ElementBox&) const;
 

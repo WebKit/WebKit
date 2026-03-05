@@ -33,7 +33,7 @@ namespace WebKit {
 
 WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver(WebCore::LocalDOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
     : m_window(window)
-    , m_callback(WTFMove(callback))
+    , m_callback(WTF::move(callback))
 {
     ASSERT(window.frame());
     window.registerObserver(*this);

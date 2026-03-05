@@ -46,7 +46,7 @@ struct FileInformation {
     String displayName;
 
     FileInformation isolatedCopy() const & { return { path.isolatedCopy(), relativePath.isolatedCopy(), displayName.isolatedCopy() }; }
-    FileInformation isolatedCopy() && { return { WTFMove(path).isolatedCopy(), relativePath.isolatedCopy(), WTFMove(displayName).isolatedCopy() }; }
+    FileInformation isolatedCopy() && { return { WTF::move(path).isolatedCopy(), relativePath.isolatedCopy(), WTF::move(displayName).isolatedCopy() }; }
 };
 
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)
@@ -90,12 +90,12 @@ static Ref<FileList> toFileList(Document* document, const Vector<FileInformation
             return File::create(document, file.path, { }, file.displayName);
         return File::createWithRelativePath(document, file.path, file.relativePath);
     });
-    return FileList::create(WTFMove(fileObjects));
+    return FileList::create(WTF::move(fileObjects));
 }
 
 DirectoryFileListCreator::DirectoryFileListCreator(CompletionHandler&& completionHandler)
     : m_workQueue(WorkQueue::create("DirectoryFileListCreator Work Queue"_s))
-    , m_completionHandler(WTFMove(completionHandler))
+    , m_completionHandler(WTF::move(completionHandler))
 {
 }
 
@@ -104,7 +104,7 @@ void DirectoryFileListCreator::start(Document* document, const Vector<FileChoose
     // Resolve directories on a background thread to avoid blocking the main thread.
     m_workQueue->dispatch([this, protectedThis = Ref { *this }, document = RefPtr { document }, paths = crossThreadCopy(paths)]() mutable {
         auto files = gatherFileInformation(paths);
-        callOnMainThread([this, protectedThis = WTFMove(protectedThis), document = WTFMove(document), files = crossThreadCopy(files)]() mutable {
+        callOnMainThread([this, protectedThis = WTF::move(protectedThis), document = WTF::move(document), files = crossThreadCopy(files)]() mutable {
             if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
                 completionHandler(toFileList(document.get(), files));
         });

@@ -72,7 +72,10 @@ template<typename Numeric, CSS::PrimitiveKeyword... Ks> struct LengthWrapperBase
     LengthWrapperBase(Fixed fixed) : m_value(indexForFixed, fixed.unresolvedValue()) { }
     LengthWrapperBase(Fixed fixed, bool hasQuirk) : m_value(indexForFixed, fixed.unresolvedValue(), hasQuirk) { }
     LengthWrapperBase(Percentage percent) : m_value(indexForPercentage, percent.value) { }
-    LengthWrapperBase(Calc&& calc) : m_value(indexForCalc, calc.protectedCalculation()) { }
+    LengthWrapperBase(Calc&& calc)
+        : m_value(indexForCalc, protect(calc.calculation()))
+    {
+    }
     LengthWrapperBase(Specified&& specified) : m_value(toData(specified)) { }
     LengthWrapperBase(const Specified& specified) : m_value(toData(specified)) { }
 
@@ -82,7 +85,7 @@ template<typename Numeric, CSS::PrimitiveKeyword... Ks> struct LengthWrapperBase
     explicit LengthWrapperBase(WTF::HashTableEmptyValueType token) : m_value(token) { }
 
     // IPC Support
-    explicit LengthWrapperBase(LengthWrapperData::IPCData&& data) : m_value { toData(WTFMove(data)) } { }
+    explicit LengthWrapperBase(LengthWrapperData::IPCData&& data) : m_value { toData(WTF::move(data)) } { }
     LengthWrapperData::IPCData ipcData() const { return m_value.ipcData(); }
 
     ALWAYS_INLINE bool isFixed() const { return holdsAlternative<Fixed>(); }
@@ -169,7 +172,7 @@ private:
                 return LengthWrapperData { indexForPercentage, percentage.value };
             },
             [](const Calc& calc) {
-                return LengthWrapperData { indexForCalc, calc.protectedCalculation() };
+                return LengthWrapperData { indexForCalc, protect(calc.calculation()) };
             }
         );
     }
@@ -186,7 +189,7 @@ private:
             RELEASE_ASSERT(CSS::isWithinRange<Percentage::range>(ipcData.value));
         }
 
-        return LengthWrapperData { WTFMove(ipcData) };
+        return LengthWrapperData { WTF::move(ipcData) };
     }
 
     LengthWrapperDataEvaluationKind evaluationKind() const

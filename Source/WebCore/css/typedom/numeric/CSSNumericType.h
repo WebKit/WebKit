@@ -53,10 +53,10 @@ public:
     static std::optional<CSSNumericType> addTypes(CSSNumericType, CSSNumericType);
     static std::optional<CSSNumericType> multiplyTypes(const Vector<Ref<CSSNumericValue>>&);
     static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType&, const CSSNumericType&);
-    BaseTypeStorage& valueForType(CSSNumericBaseType);
+    BaseTypeStorage& NODELETE valueForType(CSSNumericBaseType);
     const BaseTypeStorage& valueForType(CSSNumericBaseType type) const { return const_cast<CSSNumericType*>(this)->valueForType(type); }
-    void applyPercentHint(CSSNumericBaseType);
-    size_t nonZeroEntryCount() const;
+    void NODELETE applyPercentHint(CSSNumericBaseType);
+    size_t NODELETE nonZeroEntryCount() const;
 
     template<CSSNumericBaseType type>
     bool matches() const

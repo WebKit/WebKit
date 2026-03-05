@@ -1,6 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
-main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 This test makes sure that calls to pushState() and replaceState() with URLs that violate the security origin check fail as expected.

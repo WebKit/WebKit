@@ -155,7 +155,7 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
 
         // Bail if the last `paddingValue` bytes don't have the value of `paddingValue`.
         auto padding = output.subspan(size - paddingValue, paddingValue);
-        if (std::count(padding.begin(), padding.end(), paddingValue) != paddingValue)
+        if (std::ranges::count(padding, paddingValue) != paddingValue)
             return std::nullopt;
 
         // Shrink the output Vector object to drop the PKCS#7 padding.
@@ -170,7 +170,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformEncrypt(const Crypto
     auto output = gcryptEncrypt(key.key(), parameters.ivVector(), Vector<uint8_t>(plainText));
     if (!output)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding)
@@ -178,7 +178,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const Crypto
     auto output = gcryptDecrypt(key.key(), parameters.ivVector(), cipherText);
     if (!output)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 } // namespace WebCore

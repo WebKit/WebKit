@@ -34,7 +34,7 @@ namespace WTF {
 RetainPtr<CFStringRef> createContextualizedCFString(StringView string, StringView priorContext)
 {
     RetainPtr<NSString> result = adoptNS([[WTFContextualizedNSString alloc] initWithContext:priorContext contents:string]);
-    return bridge_cast(WTFMove(result));
+    return bridge_cast(WTF::move(result));
 }
 
 } // namespace WTF

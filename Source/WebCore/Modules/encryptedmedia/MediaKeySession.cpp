@@ -34,6 +34,7 @@
 #include "CDM.h"
 #include "CDMInstance.h"
 #include "CDMKeyGroupingStrategy.h"
+#include "CDMLogging.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMPromiseProxy.h"
 #include "DocumentPage.h"
@@ -58,11 +59,11 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaKeySession);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySession);
 
 Ref<MediaKeySession> MediaKeySession::create(Document& document, WeakPtr<MediaKeys>&& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstanceSession>&& instanceSession)
 {
-    auto session = adoptRef(*new MediaKeySession(document, WTFMove(keys), sessionType, useDistinctiveIdentifier, WTFMove(implementation), WTFMove(instanceSession)));
+    auto session = adoptRef(*new MediaKeySession(document, WTF::move(keys), sessionType, useDistinctiveIdentifier, WTF::move(implementation), WTF::move(instanceSession)));
     session->suspendIfNeeded();
     return session;
 }
@@ -73,14 +74,14 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     , m_logger(document.logger())
     , m_logIdentifier(keys ? keys->nextChildIdentifier() : 0)
 #endif
-    , m_keys(WTFMove(keys))
+    , m_keys(WTF::move(keys))
     , m_expiration(std::numeric_limits<double>::quiet_NaN())
     , m_closedPromise(makeUniqueRef<ClosedPromise>())
     , m_keyStatuses(MediaKeyStatusMap::create(*this))
     , m_useDistinctiveIdentifier(useDistinctiveIdentifier)
     , m_sessionType(sessionType)
-    , m_implementation(WTFMove(implementation))
-    , m_instanceSession(WTFMove(instanceSession))
+    , m_implementation(WTF::move(implementation))
+    , m_instanceSession(WTF::move(instanceSession))
     , m_displayChangedObserver(DisplayChangedObserver::create([weakThis = WeakPtr { *this }] (auto displayID) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->displayChanged(displayID);
@@ -147,7 +148,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's uninitialized value is false, return a promise rejected with an InvalidStateError.
     auto identifier = LOGIDENTIFIER;
-    ALWAYS_LOG(identifier, "initDataType(", initDataType, "), initData.length(", initData.length(), ")");
+    ALWAYS_LOG(identifier, "initDataType(", initDataType, "), initData.byteLength(", initData.byteLength(), ")");
 
     if (m_closed || !m_uninitialized) {
         ERROR_LOG(identifier, "Rejected: closed(", m_closed, ") or !uninitialized(", !m_uninitialized, ")");
@@ -160,8 +161,8 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
 
     // 4. If initDataType is the empty string, return a promise rejected with a newly created TypeError.
     // 5. If initData is an empty array, return a promise rejected with a newly created TypeError.
-    if (initDataType.isEmpty() || !initData.length()) {
-        ERROR_LOG(identifier, "Rejected: initDataType empty(", initDataType.isEmpty(), ") or initData empty(", !initData.length(), ")");
+    if (initDataType.isEmpty() || !initData.byteLength()) {
+        ERROR_LOG(identifier, "Rejected: initDataType empty(", initDataType.isEmpty(), ") or initData empty(", !initData.byteLength(), ")");
         promise->reject(ExceptionCode::TypeError);
         return;
     }
@@ -179,7 +180,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     // 8. Let session type be this object's session type.
     // 9. Let promise be a new promise.
     // 10. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [initData = SharedBuffer::create(initData.span()), initDataType, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto& session) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [initData = SharedBuffer::create(initData.span()), initDataType, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto& session) mutable {
         // 10.1. If the init data is not valid for initDataType, reject promise with a newly created TypeError.
         // 10.2. Let sanitized init data be a validated and sanitized version of init data.
         RefPtr<SharedBuffer> sanitizedInitData = session.m_implementation->sanitizeInitData(initDataType, initData);
@@ -229,7 +230,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             session.m_latestDecryptTime = 0;
         }
 
-        session.m_instanceSession->requestLicense(session.m_sessionType, session.keyGroupingStrategy(), initDataType, sanitizedInitData.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+        session.m_instanceSession->requestLicense(session.m_sessionType, session.keyGroupingStrategy(), initDataType, sanitizedInitData.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -251,7 +252,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             }
 
             // 10.10. Queue a task to run the following steps:
-            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [promise = WTFMove(promise), message = WTFMove(message), messageType, sessionId, succeeded, identifier = WTFMove(identifier)](auto& session) mutable {
+            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [promise = WTF::move(promise), message = WTF::move(message), messageType, sessionId, succeeded, identifier = WTF::move(identifier)](auto& session) mutable {
                 // 10.10.1. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
                 if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
                     ERROR_LOG_WITH_THIS(&session, identifier, "::task() Rejected: failed to request license");
@@ -309,7 +310,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
     // 7. Let promise be a new promise.
     // 8. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [sessionId, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto& session) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [sessionId, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto& session) mutable {
         // 8.1. Let sanitized session ID be a validated and/or sanitized version of sessionId.
         // 8.2. If the preceding step failed, or if sanitized session ID is empty, reject promise with a newly created TypeError.
         std::optional<String> sanitizedSessionId = session.m_implementation->sanitizeSessionId(sessionId);
@@ -331,7 +332,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
         // 8.6. Let message type be null.
         // 8.7. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 8.8. Use the cdm to execute the following steps:
-        session.m_instanceSession->loadSession(session.m_sessionType, *sanitizedSessionId, origin, [weakThis = WeakPtr { session }, promise = WTFMove(promise), sanitizedSessionId = *sanitizedSessionId, identifier = WTFMove(identifier)] (std::optional<CDMInstanceSession::KeyStatusVector>&& knownKeys, std::optional<double>&& expiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded, CDMInstanceSession::SessionLoadFailure failure) mutable {
+        session.m_instanceSession->loadSession(session.m_sessionType, *sanitizedSessionId, origin, [weakThis = WeakPtr { session }, promise = WTF::move(promise), sanitizedSessionId = *sanitizedSessionId, identifier = WTF::move(identifier)] (std::optional<CDMInstanceSession::KeyStatusVector>&& knownKeys, std::optional<double>&& expiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded, CDMInstanceSession::SessionLoadFailure failure) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 promise->reject(ExceptionCode::InvalidStateError);
@@ -371,7 +372,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
             }
 
             // 8.9. Queue a task to run the following steps:
-            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [knownKeys = WTFMove(knownKeys), expiration = WTFMove(expiration), message = WTFMove(message), sanitizedSessionId, succeeded, promise = WTFMove(promise), identifier = WTFMove(identifier)](auto& session) mutable {
+            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [knownKeys = WTF::move(knownKeys), expiration = WTF::move(expiration), message = WTF::move(message), sanitizedSessionId, succeeded, promise = WTF::move(promise), identifier = WTF::move(identifier)](auto& session) mutable {
                 // 8.9.1. If any of the preceding steps failed, reject promise with a the appropriate error name.
                 if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
                     ERROR_LOG_WITH_THIS(&session, identifier, "::task() Rejected: Other failure");
@@ -386,7 +387,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
                 // 8.9.4. If the loaded session contains information about any keys (there are known keys), run the Update Key Statuses algorithm on the session, providing each key's key ID along with the appropriate MediaKeyStatus.
                 if (knownKeys)
-                    session.updateKeyStatuses(WTFMove(*knownKeys));
+                    session.updateKeyStatuses(WTF::move(*knownKeys));
 
                 // 8.9.5. Run the Update Expiration algorithm on the session, providing expiration time.
                 // This must be run, and NaN is the default value if the CDM instance doesn't provide one.
@@ -394,7 +395,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
                 // 8.9.6. If message is not null, run the Queue a "message" Event algorithm on the session, providing message type and message.
                 if (message)
-                    session.enqueueMessage(message->first, WTFMove(message->second));
+                    session.enqueueMessage(message->first, WTF::move(message->second));
 
                 // 8.9.7. Resolve promise with true.
                 ALWAYS_LOG_WITH_THIS(&session, identifier, "::task() Resolved");
@@ -415,7 +416,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's callable value is false, return a promise rejected with an InvalidStateError.
     auto identifier = LOGIDENTIFIER;
-    ALWAYS_LOG(identifier, "response.length(", response.length(), ")");
+    ALWAYS_LOG(identifier, "response.byteLength(", response.byteLength(), ")");
 
     if (m_closed || !m_callable) {
         ERROR_LOG(identifier, "Rejected: closed(", m_closed, ") or !callable(", !m_callable, ")");
@@ -424,7 +425,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     }
 
     // 3. If response is an empty array, return a promise rejected with a newly created TypeError.
-    if (!response.length()) {
+    if (!response.byteLength()) {
         ERROR_LOG(identifier, "Rejected: empty response");
         promise->reject(ExceptionCode::TypeError);
         return;
@@ -433,7 +434,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 4. Let response copy be a copy of the contents of the response parameter.
     // 5. Let promise be a new promise.
     // 6. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [response = SharedBuffer::create(response.span()), promise = WTFMove(promise), identifier = WTFMove(identifier)](auto& session) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [response = SharedBuffer::create(response.span()), promise = WTF::move(promise), identifier = WTF::move(identifier)](auto& session) mutable {
         // 6.1. Let sanitized response be a validated and/or sanitized version of response copy.
         RefPtr<SharedBuffer> sanitizedResponse = session.m_implementation->sanitizeResponse(response);
 
@@ -449,7 +450,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
         // 6.5. Let session closed be false.
         // 6.6. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 6.7. Use the cdm to execute the following steps:
-        session.m_instanceSession->updateLicense(session.m_sessionId, session.m_sessionType, sanitizedResponse.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (bool sessionWasClosed, std::optional<CDMInstanceSession::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+        session.m_instanceSession->updateLicense(session.m_sessionId, session.m_sessionType, sanitizedResponse.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (bool sessionWasClosed, std::optional<CDMInstanceSession::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -486,7 +487,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
             //   6.7.3.1. Let message be that message.
             //   6.7.3.2. Let message type be the appropriate MediaKeyMessageType for the message.
             // 6.8. Queue a task to run the following steps:
-            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [sessionWasClosed, changedKeys = WTFMove(changedKeys), changedExpiration = WTFMove(changedExpiration), message = WTFMove(message), promise = WTFMove(promise), identifier = WTFMove(identifier)](auto& session) mutable {
+            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [sessionWasClosed, changedKeys = WTF::move(changedKeys), changedExpiration = WTF::move(changedExpiration), message = WTF::move(message), promise = WTF::move(promise), identifier = WTF::move(identifier)](auto& session) mutable {
                 // 6.8.1.
                 if (sessionWasClosed) {
                     // ↳ If session closed is true:
@@ -500,7 +501,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
                     //              processing be necessary to determine with certainty the status of a key, use "status-pending". Once the additional processing
                     //              for one or more keys has completed, run the Update Key Statuses algorithm again with the actual status(es).
                     if (changedKeys)
-                        session.updateKeyStatuses(WTFMove(*changedKeys));
+                        session.updateKeyStatuses(WTF::move(*changedKeys));
 
                     //     6.8.1.2. If the expiration time for the session changed, run the Update Expiration algorithm on the session, providing the new expiration time.
                     if (changedExpiration)
@@ -527,7 +528,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
                             break;
                         }
 
-                        session.enqueueMessage(messageType, WTFMove(message->second));
+                        session.enqueueMessage(messageType, WTF::move(message->second));
                     }
                 }
 
@@ -567,16 +568,16 @@ void MediaKeySession::close(Ref<DeferredPromise>&& promise)
 
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [promise = WTFMove(promise), identifier = WTFMove(identifier)](auto& session) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [promise = WTF::move(promise), identifier = WTF::move(identifier)](auto& session) mutable {
         // 5.1. Let cdm be the CDM instance represented by session's cdm instance value.
         // 5.2. Use cdm to close the key session associated with session.
-        session.m_instanceSession->closeSession(session.m_sessionId, [weakThis = WeakPtr { session }, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
+        session.m_instanceSession->closeSession(session.m_sessionId, [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] () mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
 
             // 5.3. Queue a task to run the following steps:
-            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [promise = WTFMove(promise), identifier = WTFMove(identifier)](auto& session) mutable {
+            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [promise = WTF::move(promise), identifier = WTF::move(identifier)](auto& session) mutable {
                 // 5.3.1. Run the Session Closed algorithm on the session.
                 session.sessionClosed();
 
@@ -609,13 +610,13 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
 
     // 3. Let promise be a new promise.
     // 4. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [promise = WTFMove(promise), identifier = WTFMove(identifier)](auto& session) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [promise = WTF::move(promise), identifier = WTF::move(identifier)](auto& session) mutable {
         // 4.1. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 4.2. Let message be null.
         // 4.3. Let message type be null.
 
         // 4.4. Use the cdm to execute the following steps:
-        session.m_instanceSession->removeSessionData(session.m_sessionId, session.m_sessionType, [weakThis = WeakPtr { session }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, RefPtr<SharedBuffer>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+        session.m_instanceSession->removeSessionData(session.m_sessionId, session.m_sessionType, [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, RefPtr<SharedBuffer>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -635,9 +636,9 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
             // NOTE: Step 4.4.1. should be implemented in CDMInstance.
 
             // 4.5. Queue a task to run the following steps:
-            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [keys = WTFMove(keys), message = WTFMove(message), succeeded, promise = WTFMove(promise), identifier = WTFMove(identifier)](auto& session) mutable {
+            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [keys = WTF::move(keys), message = WTF::move(message), succeeded, promise = WTF::move(promise), identifier = WTF::move(identifier)](auto& session) mutable {
                 // 4.5.1. Run the Update Key Statuses algorithm on the session, providing all key ID(s) in the session along with the "released" MediaKeyStatus value for each.
-                session.updateKeyStatuses(WTFMove(keys));
+                session.updateKeyStatuses(WTF::move(keys));
 
                 // 4.5.2. Run the Update Expiration algorithm on the session, providing NaN.
                 session.updateExpiration(std::numeric_limits<double>::quiet_NaN());
@@ -676,7 +677,7 @@ void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const Shar
     //    interface with its type attribute set to message and its isTrusted attribute initialized to true, and dispatch it at the
     //    session.
     auto messageEvent = MediaKeyMessageEvent::create(eventNames().messageEvent, {messageType, message.tryCreateArrayBuffer()}, Event::IsTrusted::Yes);
-    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(messageEvent));
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(messageEvent));
 }
 
 void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& inputStatuses)
@@ -716,26 +717,26 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
     };
 
 #if !RELEASE_LOG_DISABLED
-    HashCountedSet<MediaKeyStatus, IntHash<MediaKeyStatus>, WTF::StrongEnumHashTraits<MediaKeyStatus>> statusCounts;
+    using StatusMap = HashMap<MediaKeyStatus, CDMKeyIDs, IntHash<MediaKeyStatus>, WTF::StrongEnumHashTraits<MediaKeyStatus>>;
+    StatusMap statusMap;
 #endif
 
-    m_statuses = WTF::map(WTFMove(inputStatuses), [&](auto&& inputStatus) {
-        auto status = std::pair { WTFMove(inputStatus.first), toMediaKeyStatus(inputStatus.second) };
+    m_statuses = WTF::map(WTF::move(inputStatuses), [&](auto&& inputStatus) {
+        auto status = std::pair { WTF::move(inputStatus.first), toMediaKeyStatus(inputStatus.second) };
 #if !RELEASE_LOG_DISABLED
-        statusCounts.add(status.second);
+        statusMap.add(status.second, CDMKeyIDs { }).iterator->value.append(status.first);
 #endif
         return status;
     });
 
 #if !RELEASE_LOG_DISABLED
+    auto buildStatus = [](auto& builder, auto& pair) {
+        builder.append(convertEnumerationToString(pair.key), ": "_s, WTF::LogArgument<CDMKeyIDs>::toString(pair.value));
+    };
     StringBuilder statusString;
-    for (auto& statusCount : statusCounts) {
-        if (!statusCount.value)
-            continue;
-        if (!statusString.isEmpty())
-            statusString.append(", "_s);
-        statusString.append(convertEnumerationToString(statusCount.key), ": "_s, statusCount.value);
-    }
+    if (statusMap.size() > 1)
+        statusString.append('\n');
+    statusString.append(interleave(statusMap, buildStatus, '\n'));
     ALWAYS_LOG(LOGIDENTIFIER, "statuses: {", statusString.toString(), "}");
 #endif
 

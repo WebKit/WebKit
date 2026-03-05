@@ -28,6 +28,7 @@
 #include <array>
 #include <span>
 #include <unicode/ucsdet.h>
+#include <wtf/ExportMacros.h>
 
 namespace WTF {
 

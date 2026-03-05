@@ -158,6 +158,16 @@ void AbstractHeapRepository::decorateFencedAccess(const AbstractHeap* heap, Valu
     m_heapForFencedAccess.append(HeapForValue(heap, value));
 }
 
+void AbstractHeapRepository::decorateWasmStructGet(const AbstractHeap* heap, Value* value)
+{
+    m_heapForWasmStructGet.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::decorateWasmStructSet(const AbstractHeap* heap, Value* value)
+{
+    m_heapForWasmStructSet.append(HeapForValue(heap, value));
+}
+
 void AbstractHeapRepository::computeRangesAndDecorateInstructions()
 {
     root.compute();
@@ -195,6 +205,14 @@ void AbstractHeapRepository::computeRangesAndDecorateInstructions()
         entry.value->as<FenceValue>()->write = rangeFor(entry.heap);
     for (HeapForValue entry : m_heapForFencedAccess)
         entry.value->as<MemoryValue>()->setFenceRange(rangeFor(entry.heap));
+    for (HeapForValue entry : m_heapForWasmStructGet) {
+        auto* wasmStructGet = entry.value->as<WasmStructGetValue>();
+        wasmStructGet->setRange(rangeFor(entry.heap));
+    }
+    for (HeapForValue entry : m_heapForWasmStructSet) {
+        auto* wasmStructSet = entry.value->as<WasmStructSetValue>();
+        wasmStructSet->setRange(rangeFor(entry.heap));
+    }
 }
 
 } // namespace JSC::B3

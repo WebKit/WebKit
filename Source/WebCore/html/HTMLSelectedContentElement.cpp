@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,16 @@
 #include "config.h"
 #include "HTMLSelectedContentElement.h"
 
+#include "ElementAncestorIteratorInlines.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSelectedContentElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSelectedContentElement);
 
 using namespace HTMLNames;
 
@@ -44,6 +48,59 @@ HTMLSelectedContentElement::HTMLSelectedContentElement(Document& document)
 Ref<HTMLSelectedContentElement> HTMLSelectedContentElement::create(const QualifiedName&, Document& document)
 {
     return adoptRef(*new HTMLSelectedContentElement(document));
+}
+
+auto HTMLSelectedContentElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> InsertedIntoAncestorResult
+{
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+
+    ASSERT(document().settings().htmlEnhancedSelectParsingEnabled());
+    ASSERT(document().settings().htmlEnhancedSelectEnabled());
+    ASSERT(!document().settings().mutationEventsEnabled());
+
+    if (insertionType.connectedToDocument)
+        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::Done;
+}
+
+void HTMLSelectedContentElement::didFinishInsertingNode()
+{
+    RefPtr<HTMLSelectElement> nearestAncestorSelect;
+    m_isDisabled = false;
+    for (Ref ancestor : ancestorsOfType<HTMLElement>(*this)) {
+        if (auto* select = dynamicDowncast<HTMLSelectElement>(ancestor.get())) {
+            if (!nearestAncestorSelect) {
+                nearestAncestorSelect = select;
+                continue;
+            }
+            m_isDisabled = true;
+            break;
+        }
+        if (is<HTMLOptionElement>(ancestor) || is<HTMLSelectedContentElement>(ancestor)) {
+            m_isDisabled = true;
+            break;
+        }
+    }
+    if (m_isDisabled || !nearestAncestorSelect || nearestAncestorSelect->multiple())
+        return;
+
+    if (m_owningSelect != nearestAncestorSelect) {
+        if (RefPtr oldSelect = m_owningSelect)
+            oldSelect->unregisterSelectedContentElement();
+        m_owningSelect = nearestAncestorSelect;
+        nearestAncestorSelect->registerSelectedContentElement();
+    }
+    nearestAncestorSelect->updateSelectedContent();
+}
+
+void HTMLSelectedContentElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+    if (RefPtr select = m_owningSelect; select && !isInclusiveDescendantOf(*select)) {
+        select->unregisterSelectedContentElement();
+        m_owningSelect = nullptr;
+    }
 }
 
 } // namespace WebCore

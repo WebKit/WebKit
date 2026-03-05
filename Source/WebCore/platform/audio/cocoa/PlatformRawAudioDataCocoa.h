@@ -42,7 +42,7 @@ class PlatformRawAudioDataCocoa final : public PlatformRawAudioData {
 public:
     static Ref<PlatformRawAudioData> create(Ref<MediaSampleAVFObjC>&& sample)
     {
-        return adoptRef(*new PlatformRawAudioDataCocoa(WTFMove(sample)));
+        return adoptRef(*new PlatformRawAudioDataCocoa(WTF::move(sample)));
     }
     AudioSampleFormat format() const final;
     size_t sampleRate() const final;
@@ -54,7 +54,7 @@ public:
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
 
-    const CAAudioStreamDescription& description() const;
+    const CAAudioStreamDescription& description() const LIFETIME_BOUND;
     CMSampleBufferRef sampleBuffer() const;
 
 private:

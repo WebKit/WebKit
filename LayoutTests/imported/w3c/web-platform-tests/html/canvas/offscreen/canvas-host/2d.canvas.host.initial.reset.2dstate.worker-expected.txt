@@ -1,0 +1,14 @@
+
+PASS Resetting the canvas state resets strokeStyle
+PASS Resetting the canvas state resets fillStyle
+PASS Resetting the canvas state resets globalAlpha
+PASS Resetting the canvas state resets lineWidth
+PASS Resetting the canvas state resets lineCap
+PASS Resetting the canvas state resets lineJoin
+PASS Resetting the canvas state resets miterLimit
+PASS Resetting the canvas state resets shadowOffsetX
+PASS Resetting the canvas state resets shadowOffsetY
+PASS Resetting the canvas state resets shadowBlur
+PASS Resetting the canvas state resets shadowColor
+PASS Resetting the canvas state resets globalCompositeOperation
+

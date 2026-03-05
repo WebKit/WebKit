@@ -135,7 +135,7 @@ bool AudioSession::tryToSetActive(bool active)
     if (!tryToSetActiveInternal(active))
         return false;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "is active = ", m_active, ", previousIsActive = ", previousIsActive);
+    ALWAYS_LOG(LOGIDENTIFIER, "is active = ", active, ", previousIsActive = ", previousIsActive);
 
     bool hasActiveChanged = previousIsActive != isActive();
     m_active = active;
@@ -176,8 +176,8 @@ void AudioSession::beginInterruption()
         return;
     }
     m_isInterrupted = true;
-    for (auto& observer : audioSessionInterruptionObserversSingleton())
-        observer.beginAudioSessionInterruption();
+    for (Ref observer : audioSessionInterruptionObserversSingleton())
+        observer->beginAudioSessionInterruption();
 }
 
 void AudioSession::endInterruption(MayResume mayResume)
@@ -189,14 +189,14 @@ void AudioSession::endInterruption(MayResume mayResume)
     }
     m_isInterrupted = false;
 
-    for (auto& observer : audioSessionInterruptionObserversSingleton())
-        observer.endAudioSessionInterruption(mayResume);
+    for (Ref observer : audioSessionInterruptionObserversSingleton())
+        observer->endAudioSessionInterruption(mayResume);
 }
 
 void AudioSession::activeStateChanged()
 {
-    for (auto& observer : audioSessionInterruptionObserversSingleton())
-        observer.audioSessionActiveStateChanged();
+    for (Ref observer : audioSessionInterruptionObserversSingleton())
+        observer->audioSessionActiveStateChanged();
 }
 
 void AudioSession::setCategory(CategoryType, Mode, RouteSharingPolicy)

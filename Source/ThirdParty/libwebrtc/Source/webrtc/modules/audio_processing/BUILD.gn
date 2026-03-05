@@ -185,6 +185,7 @@ rtc_library("audio_processing") {
     "../../api/audio:audio_processing",
     "../../api/audio:audio_processing_statistics",
     "../../api/audio:echo_control",
+    "../../api/audio:neural_residual_echo_estimator_api",
     "../../api/environment",
     "../../api/task_queue",
     "../../audio/utility:audio_frame_operations",
@@ -453,6 +454,7 @@ if (rtc_include_tests) {
           ":runtime_settings_protobuf_utils",
           "../../api/audio:audio_frame_api",
           "../../api/audio:echo_control",
+          "../../api/audio:neural_residual_echo_estimator_api",
           "../../rtc_base:rtc_base_tests_utils",
           "aec_dump",
           "aec_dump:aec_dump_unittests",
@@ -533,7 +535,10 @@ if (rtc_include_tests) {
   if (rtc_enable_protobuf && !build_with_chromium) {
     rtc_library("audioproc_f_impl") {
       testonly = true
-      configs += [ ":apm_debug_dump" ]
+      configs += [
+        ":apm_debug_dump",
+        "//third_party/tflite:tflite_config_no_undef",
+      ]
       sources = [
         "test/aec_dump_based_simulator.cc",
         "test/aec_dump_based_simulator.h",
@@ -562,6 +567,8 @@ if (rtc_include_tests) {
         "../../api/audio:audio_processing",
         "../../api/audio:builtin_audio_processing_builder",
         "../../api/audio:echo_detector_creator",
+        "../../api/audio:neural_residual_echo_estimator_api",
+        "../../api/audio:neural_residual_echo_estimator_creator",
         "../../api/environment",
         "../../api/environment:environment_factory",
         "../../common_audio",
@@ -577,6 +584,8 @@ if (rtc_include_tests) {
         "//third_party/abseil-cpp/absl/flags:flag",
         "//third_party/abseil-cpp/absl/flags:parse",
         "//third_party/abseil-cpp/absl/strings:string_view",
+        "//third_party/tflite:tflite_builtin_op_resolver_standalone",
+        "//third_party/tflite:tflite_standalone",
       ]
     }  # audioproc_f_impl
   }

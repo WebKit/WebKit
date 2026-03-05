@@ -158,154 +158,168 @@ FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimi
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 PASS :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false
 PASS :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true
@@ -482,154 +496,168 @@ FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overL
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: DID NOT REJECT
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:697:24
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 PASS :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false
 PASS :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true
@@ -813,11 +841,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -825,11 +854,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -837,11 +867,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -849,11 +880,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -861,11 +893,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -873,11 +906,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -885,11 +919,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -897,11 +932,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -909,11 +945,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -921,11 +958,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -933,11 +971,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -945,11 +984,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -957,11 +997,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -969,11 +1010,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -981,11 +1023,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -993,11 +1036,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1005,11 +1049,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1017,11 +1062,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1029,11 +1075,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1041,11 +1088,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1053,11 +1101,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1065,11 +1114,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1077,11 +1127,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1089,11 +1140,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1101,11 +1153,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1113,11 +1166,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1125,11 +1179,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1137,11 +1192,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1149,11 +1205,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1161,11 +1218,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1173,11 +1231,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1185,11 +1244,12 @@ FAIL :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValu
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 PASS :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=false;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false
 PASS :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=false;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true
@@ -1421,11 +1481,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1433,11 +1494,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1445,11 +1507,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1457,11 +1520,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1469,11 +1533,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1481,11 +1546,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1493,11 +1559,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1505,11 +1572,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1517,11 +1585,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1529,11 +1598,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1541,11 +1611,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1553,11 +1624,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1565,11 +1637,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1577,11 +1650,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1589,11 +1663,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=false;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1601,11 +1676,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1613,11 +1689,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1625,11 +1702,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1637,11 +1715,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1649,11 +1728,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1661,11 +1741,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1673,11 +1754,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1685,11 +1767,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=false;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1697,11 +1780,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1709,11 +1793,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1721,11 +1806,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1733,11 +1819,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=false;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1745,11 +1832,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1757,11 +1845,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=false;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1769,11 +1858,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=false assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1781,11 +1871,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true;pointList=true;frontFacing=true;sampleIndex=true;sampleMaskIn=true;sampleMaskOut=true assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -1793,11 +1884,12 @@ FAIL :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit"
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
     shouldResolve@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:280:34
     shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:699:25
-    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:690:40
     testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:938:43
-    testCreateRenderPipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:930:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:134:39
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:123:16
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:657:17
+    _testThenDestroyDevice@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:580:13
+    testDeviceWithRequestedMaximumLimits@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:653:38
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.spec.js:120:47
  Reached unreachable code
 PASS :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=false;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=false
 PASS :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=false;pointList=false;frontFacing=false;sampleIndex=false;sampleMaskIn=false;sampleMaskOut=true

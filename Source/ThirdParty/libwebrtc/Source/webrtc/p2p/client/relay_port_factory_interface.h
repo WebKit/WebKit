@@ -40,6 +40,7 @@ struct CreateRelayPortArgs {
   const RelayServerConfig* config;
   std::string username;
   std::string password;
+  std::string content_name;
   TurnCustomizer* turn_customizer = nullptr;
   // Relative priority of candidates from this TURN server in relation
   // to the candidates from other servers. Required because ICE priorities

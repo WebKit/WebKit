@@ -100,6 +100,7 @@ public:
     void flushCompositingState(const WebCore::FloatRect& clipRect) override;
     void flushCompositingStateForThisLayerOnly() override;
     WebCore::TiledBacking* tiledBacking() const override;
+    void setShadowPath(const WebCore::Path&) override { }
 
 protected:
     friend WCTiledBacking;

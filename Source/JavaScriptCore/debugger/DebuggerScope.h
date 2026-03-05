@@ -108,14 +108,14 @@ private:
     friend class DebuggerCallFrame;
 };
 
-inline DebuggerScope::iterator DebuggerScope::begin()
+inline DebuggerScope::iterator DebuggerScope::begin() LIFETIME_BOUND
 {
-    return iterator(this); 
+    return iterator(this);
 }
 
-inline DebuggerScope::iterator DebuggerScope::end()
-{ 
-    return iterator(nullptr); 
+inline DebuggerScope::iterator DebuggerScope::end() LIFETIME_BOUND
+{
+    return iterator(nullptr);
 }
 
 } // namespace JSC

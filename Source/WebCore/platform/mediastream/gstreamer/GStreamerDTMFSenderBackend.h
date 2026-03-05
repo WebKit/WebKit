@@ -36,7 +36,7 @@ public:
     ~GStreamerDTMFSenderPrivate();
 
     using OnTonePlayedCallback = Function<void()>;
-    void setOnTonePlayedCallback(OnTonePlayedCallback&& callback) { m_onTonePlayed = WTFMove(callback); }
+    void setOnTonePlayedCallback(OnTonePlayedCallback&& callback) { m_onTonePlayed = WTF::move(callback); }
     void playTone(const RefPtr<RealtimeOutgoingAudioSourceGStreamer>&, const char tone, size_t duration);
 
 private:

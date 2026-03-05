@@ -32,8 +32,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(B3_JIT)
 
-static const char* const dmbIsh = "dmb      ish";
-static const char* const dmbIshst = "dmb      ishst";
+static const char* const dmbIsh = "dmb	ish";
+static const char* const dmbIshst = "dmb	ishst";
 
 void testBitAndSExt32(int32_t value, int64_t mask)
 {
@@ -861,7 +861,7 @@ void testCheckSelectAndCSE()
     CHECK_EQ(invoke<int>(*code, false), 666);
 }
 
-double b3Pow(double x, int y)
+double NODELETE b3Pow(double x, int y)
 {
     if (y < 0 || y > 1000)
         return pow(x, y);
@@ -1409,9 +1409,9 @@ void testSpillDefSmallerThanUse()
 
     // Make sure arg64 is on the stack.
     PatchpointValue* forceSpill = root->appendNew<PatchpointValue>(proc, Int64, Origin());
-    RegisterSetBuilder clobberSet = RegisterSetBuilder::allGPRs();
-    clobberSet.exclude(RegisterSetBuilder::stackRegisters());
-    clobberSet.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    RegisterSet clobberSet = RegisterSet::allGPRs();
+    clobberSet.exclude(RegisterSet::stackRegisters());
+    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
     clobberSet.remove(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
     forceSpill->clobberLate(clobberSet);
 #if !CPU(ARM_THUMB2)
@@ -1441,9 +1441,9 @@ void testSpillUseLargerThanDef()
     BasicBlock* tail = proc.addBlock();
     auto arguments = cCallArgumentValues<int, int64_t>(proc, root);
 
-    RegisterSetBuilder clobberSet = RegisterSetBuilder::allGPRs();
-    clobberSet.exclude(RegisterSetBuilder::stackRegisters());
-    clobberSet.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    RegisterSet clobberSet = RegisterSet::allGPRs();
+    clobberSet.exclude(RegisterSet::stackRegisters());
+    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
 
     Value* condition = arguments[0];
     Value* argument = arguments[1];
@@ -1472,7 +1472,7 @@ void testSpillUseLargerThanDef()
     forceSpill->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            clobberSet.buildAndValidate().forEach([&] (Reg reg) {
+            clobberSet.forEach([&] (Reg reg) {
                 jit.move(CCallHelpers::TrustedImm64(0xffffffffffffffff), reg.gpr());
             });
         });
@@ -1513,13 +1513,13 @@ void testLateRegister()
     // to use that LateRegister as the result for the first patchpoint. But of course it can not do that.
     // So it must issue a mov after the first patchpoint from the first's result into the second's input.
 
-    RegisterSetBuilder regs = RegisterSetBuilder::allGPRs();
-    regs.exclude(RegisterSetBuilder::stackRegisters());
-    regs.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    RegisterSet regs = RegisterSet::allGPRs();
+    regs.exclude(RegisterSet::stackRegisters());
+    regs.exclude(RegisterSet::reservedHardwareRegisters());
     Vector<Value*> lateUseArgs;
     unsigned result = 0;
     for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-        if (!regs.buildAndValidate().contains(reg, IgnoreVectors))
+        if (!regs.contains(reg, IgnoreVectors))
             continue;
         result++;
         if (reg == GPRInfo::regT0)
@@ -1532,7 +1532,7 @@ void testLateRegister()
     {
         unsigned i = 0;
         for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-            if (!regs.buildAndValidate().contains(reg, IgnoreVectors))
+            if (!regs.contains(reg, IgnoreVectors))
                 continue;
             if (reg == GPRInfo::regT0)
                 continue;
@@ -1621,7 +1621,7 @@ void testInterpreter()
     polyJump->effects = Effects();
     polyJump->effects.terminal = true;
     polyJump->appendSomeRegister(opcode);
-    polyJump->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    polyJump->clobber(RegisterSet::macroClobberedGPRs());
     polyJump->numGPScratchRegisters = 2;
     dispatch->appendSuccessor(FrequentedBlock(addToDataPointer));
     dispatch->appendSuccessor(FrequentedBlock(addToCodePointer));
@@ -2309,7 +2309,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
 
     root->appendSuccessor(success);
     root->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
@@ -2334,7 +2334,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
 
     Vector<Value*> args;
     {
-        RegisterSetBuilder fillAllGPRsSet = proc.mutableGPRs();
+        RegisterSet fillAllGPRsSet = proc.mutableGPRs();
         for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
             args.append(success->appendNew<Const32Value>(proc, Origin(), i));
     }
@@ -2389,7 +2389,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled2()
 
     PatchpointValue* patchpoint = one->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->append(arg, ValueRep::SomeRegister);
 
     one->appendSuccessor(success);
@@ -2417,7 +2417,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled2()
 
     Vector<Value*> args;
     {
-        RegisterSetBuilder fillAllGPRsSet = proc.mutableGPRs();
+        RegisterSet fillAllGPRsSet = proc.mutableGPRs();
         for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
             args.append(success->appendNew<Const32Value>(proc, Origin(), i));
     }
@@ -2473,7 +2473,7 @@ void testPatchpointTerminalReturnValue(bool successIsRare)
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
 
     if (successIsRare) {
         root->appendSuccessor(FrequentedBlock(success, FrequencyClass::Rare));

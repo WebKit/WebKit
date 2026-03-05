@@ -84,6 +84,11 @@ using namespace WebCore;
 
 namespace WebCore {
 
+Ref<CoreAudioCaptureSourceFactoryIOS> CoreAudioCaptureSourceFactoryIOS::create()
+{
+    return adoptRef(*new CoreAudioCaptureSourceFactoryIOS);
+}
+
 CoreAudioCaptureSourceFactoryIOS::CoreAudioCaptureSourceFactoryIOS()
     : m_listener(adoptNS([[WebCoreAudioCaptureSourceIOSListener alloc] initWithCallback:this]))
 {
@@ -97,7 +102,7 @@ CoreAudioCaptureSourceFactoryIOS::~CoreAudioCaptureSourceFactoryIOS()
 
 CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
 {
-    static NeverDestroyed<CoreAudioCaptureSourceFactoryIOS> factory;
+    static NeverDestroyed<Ref<CoreAudioCaptureSourceFactoryIOS>> factory = CoreAudioCaptureSourceFactoryIOS::create();
     return factory.get();
 }
 

@@ -1544,6 +1544,8 @@ static void save_extra_coding_context(AV1_COMP *cpi) {
   cc->cdef_info = cm->cdef_info;
   cc->rc = cpi->rc;
   cc->mv_stats = cpi->ppi->mv_stats;
+  cc->frame_number = cpi->common.current_frame.frame_number;
+  cc->frame_index_set = cpi->frame_index_set;
 }
 
 void av1_save_all_coding_context(AV1_COMP *cpi) {

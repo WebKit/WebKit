@@ -158,7 +158,7 @@ static WebCore::CertificateInfo::CertificateChain pemDataFromCtx(StackOfX509&& c
         BIO bio(certs.item(i));
 
         if (auto certificate = bio.getDataAsVector())
-            result.append(WTFMove(*certificate));
+            result.append(WTF::move(*certificate));
         else
             return { };
     }
@@ -296,7 +296,7 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
         if (value->type == GEN_DNS) {
             auto dnsName = toString(value->d.dNSName);
             if (!dnsName.isNull())
-                dnsNames.append(WTFMove(dnsName));
+                dnsNames.append(WTF::move(dnsName));
         } else if (value->type == GEN_IPADD) {
             auto data = value->d.iPAddress->data;
             if (value->d.iPAddress->length == 4)

@@ -18,4 +18,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/iframe1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/iframe2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/matchMedia.js
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/scrollIntoView-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/simultaneousScrollIntoViews.js

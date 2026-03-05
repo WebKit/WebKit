@@ -51,7 +51,6 @@ struct GlyphData {
     }
 
     bool isValid() const { return !!font; }
-    RefPtr<const Font> protectedFont() const { return font.get(); }
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;

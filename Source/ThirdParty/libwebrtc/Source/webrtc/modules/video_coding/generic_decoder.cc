@@ -17,13 +17,13 @@
 #include <optional>
 #include <tuple>
 #include <utility>
-#include <variant>
 
 #include "absl/algorithm/container.h"
 #include "api/field_trials_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_content_type.h"
@@ -31,7 +31,6 @@
 #include "api/video/video_frame_type.h"
 #include "api/video/video_timing.h"
 #include "api/video_codecs/video_decoder.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "common_video/include/corruption_score_calculator.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/video_coding/encoded_frame.h"
@@ -58,28 +57,28 @@ VCMDecodedFrameCallback::VCMDecodedFrameCallback(
     Clock* clock,
     const FieldTrialsView& /* field_trials */,
     CorruptionScoreCalculator* corruption_score_calculator)
-    : _clock(clock),
-      _timing(timing),
-      corruption_score_calculator_(corruption_score_calculator) {
-  ntp_offset_ =
-      _clock->CurrentNtpInMilliseconds() - _clock->TimeInMilliseconds();
-}
+    : clock_(clock),
+      ntp_offset_(clock_->CurrentNtpInMilliseconds() -
+                  clock_->TimeInMilliseconds()),
+      receive_callback_(nullptr),
+      timing_(timing),
+      corruption_score_calculator_(corruption_score_calculator) {}
 
 VCMDecodedFrameCallback::~VCMDecodedFrameCallback() {}
 
 void VCMDecodedFrameCallback::SetUserReceiveCallback(
     VCMReceiveCallback* receiveCallback) {
   RTC_DCHECK(construction_thread_.IsCurrent());
-  RTC_DCHECK((!_receiveCallback && receiveCallback) ||
-             (_receiveCallback && !receiveCallback));
-  _receiveCallback = receiveCallback;
+  RTC_DCHECK((!receive_callback_ && receiveCallback) ||
+             (receive_callback_ && !receiveCallback));
+  receive_callback_ = receiveCallback;
 }
 
 VCMReceiveCallback* VCMDecodedFrameCallback::UserReceiveCallback() {
   // Called on the decode thread via VCMCodecDataBase::GetDecoder.
   // The callback must always have been set before this happens.
-  RTC_DCHECK(_receiveCallback);
-  return _receiveCallback;
+  RTC_DCHECK(receive_callback_);
+  return receive_callback_;
 }
 
 int32_t VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage) {
@@ -120,7 +119,7 @@ VCMDecodedFrameCallback::FindFrameInfo(uint32_t rtp_timestamp) {
 void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
                                       std::optional<int32_t> decode_time_ms,
                                       std::optional<uint8_t> qp) {
-  RTC_DCHECK(_receiveCallback) << "Callback must not be null at this point";
+  RTC_DCHECK(receive_callback_) << "Callback must not be null at this point";
   TRACE_EVENT(
       "webrtc", "VCMDecodedFrameCallback::Decoded",
       perfetto::TerminatingFlow::ProcessScoped(decodedImage.rtp_timestamp()));
@@ -136,7 +135,7 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
     timestamp_map_size = frame_infos_.size();
   }
   if (dropped_frames > 0) {
-    _receiveCallback->OnDroppedFrames(dropped_frames);
+    receive_callback_->OnDroppedFrames(dropped_frames);
   }
 
   if (!frame_info) {
@@ -150,7 +149,7 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   decodedImage.set_packet_infos(frame_info->packet_infos);
   decodedImage.set_rotation(frame_info->rotation);
   decodedImage.set_color_space(frame_info->color_space);
-  VideoFrame::RenderParameters render_parameters = _timing->RenderParameters();
+  VideoFrame::RenderParameters render_parameters = timing_->RenderParameters();
   if (render_parameters.max_composition_delay_in_frames) {
     // Subtract frames that are in flight.
     render_parameters.max_composition_delay_in_frames =
@@ -160,13 +159,14 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   decodedImage.set_render_parameters(render_parameters);
 
   RTC_DCHECK(frame_info->decode_start);
-  const Timestamp now = _clock->CurrentTime();
+  const Timestamp now = clock_->CurrentTime();
   const TimeDelta decode_time = decode_time_ms
                                     ? TimeDelta::Millis(*decode_time_ms)
                                     : now - *frame_info->decode_start;
-  _timing->StopDecodeTimer(decode_time, now);
+  timing_->StopDecodeTimer(decode_time, now);
   decodedImage.set_processing_time(
-      {*frame_info->decode_start, *frame_info->decode_start + decode_time});
+      {.start = *frame_info->decode_start,
+       .finish = *frame_info->decode_start + decode_time});
 
   // Report timing information.
   TimingFrameInfo timing_frame_info;
@@ -235,30 +235,27 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   RTC_HISTOGRAM_COUNTS_1000(
       "WebRTC.Video.GenericDecoder.DecodeDelay",
       timing_frame_info.decode_finish_ms - timing_frame_info.decode_start_ms);
-  _timing->SetTimingFrameInfo(timing_frame_info);
+  timing_->SetTimingFrameInfo(timing_frame_info);
 
   decodedImage.set_timestamp_us(
       frame_info->render_time ? frame_info->render_time->us() : -1);
-  _receiveCallback->OnFrameToRender({.video_frame = decodedImage,
-                                     .qp = qp,
-                                     .decode_time = decode_time,
-                                     .content_type = frame_info->content_type,
-                                     .frame_type = frame_info->frame_type});
+  receive_callback_->OnFrameToRender({.video_frame = decodedImage,
+                                      .qp = qp,
+                                      .decode_time = decode_time,
+                                      .content_type = frame_info->content_type,
+                                      .frame_type = frame_info->frame_type});
 
   if (corruption_score_calculator_ &&
       frame_info->frame_instrumentation_data.has_value()) {
-    if (const FrameInstrumentationData* data =
-            std::get_if<FrameInstrumentationData>(
-                &*frame_info->frame_instrumentation_data)) {
-      corruption_score_calculator_->CalculateCorruptionScore(
-          decodedImage, *data, frame_info->content_type);
-    }
+    corruption_score_calculator_->CalculateCorruptionScore(
+        decodedImage, *frame_info->frame_instrumentation_data,
+        frame_info->content_type);
   }
 }
 
 void VCMDecodedFrameCallback::OnDecoderInfoChanged(
     const VideoDecoder::DecoderInfo& decoder_info) {
-  _receiveCallback->OnDecoderInfoChanged(decoder_info);
+  receive_callback_->OnDecoderInfoChanged(decoder_info);
 }
 
 void VCMDecodedFrameCallback::Map(FrameInfo frameInfo) {
@@ -274,7 +271,7 @@ void VCMDecodedFrameCallback::Map(FrameInfo frameInfo) {
     // If no frame is dropped, the new size should be `initial_size` + 1
   }
   if (dropped_frames > 0) {
-    _receiveCallback->OnDroppedFrames(dropped_frames);
+    receive_callback_->OnDroppedFrames(dropped_frames);
   }
 }
 
@@ -286,14 +283,14 @@ void VCMDecodedFrameCallback::ClearTimestampMap() {
     frame_infos_.clear();
   }
   if (dropped_frames > 0) {
-    _receiveCallback->OnDroppedFrames(dropped_frames);
+    receive_callback_->OnDroppedFrames(dropped_frames);
   }
 }
 
 VCMGenericDecoder::VCMGenericDecoder(VideoDecoder* decoder)
-    : _callback(nullptr),
+    : callback_(nullptr),
       decoder_(decoder),
-      _last_keyframe_content_type(VideoContentType::UNSPECIFIED) {
+      last_keyframe_content_type_(VideoContentType::UNSPECIFIED) {
   RTC_DCHECK(decoder_);
 }
 
@@ -307,8 +304,8 @@ bool VCMGenericDecoder::Configure(const VideoDecoder::Settings& settings) {
   bool ok = decoder_->Configure(settings);
   decoder_info_ = decoder_->GetDecoderInfo();
   RTC_LOG(LS_INFO) << "Decoder implementation: " << decoder_info_.ToString();
-  if (_callback) {
-    _callback->OnDecoderInfoChanged(decoder_info_);
+  if (callback_) {
+    callback_->OnDecoderInfoChanged(decoder_info_);
   }
   return ok;
 }
@@ -327,9 +324,7 @@ int32_t VCMGenericDecoder::Decode(
     const EncodedImage& frame,
     Timestamp now,
     int64_t render_time_ms,
-    const std::optional<
-        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>&
-        frame_instrumentation_data) {
+    const std::optional<FrameInstrumentationData>& frame_instrumentation_data) {
   TRACE_EVENT("webrtc", "VCMGenericDecoder::Decode",
               perfetto::Flow::ProcessScoped(frame.RtpTimestamp()));
   FrameInfo frame_info;
@@ -353,12 +348,12 @@ int32_t VCMGenericDecoder::Decode(
   // and content type will be ignored.
   if (frame.FrameType() == VideoFrameType::kVideoFrameKey) {
     frame_info.content_type = frame.contentType();
-    _last_keyframe_content_type = frame.contentType();
+    last_keyframe_content_type_ = frame.contentType();
   } else {
-    frame_info.content_type = _last_keyframe_content_type;
+    frame_info.content_type = last_keyframe_content_type_;
   }
   frame_info.frame_type = frame.FrameType();
-  _callback->Map(std::move(frame_info));
+  callback_->Map(std::move(frame_info));
 
   int32_t ret = decoder_->Decode(frame, render_time_ms);
   VideoDecoder::DecoderInfo decoder_info = decoder_->GetDecoderInfo();
@@ -369,17 +364,17 @@ int32_t VCMGenericDecoder::Decode(
     if (decoder_info.implementation_name.empty()) {
       decoder_info.implementation_name = "unknown";
     }
-    _callback->OnDecoderInfoChanged(std::move(decoder_info));
+    callback_->OnDecoderInfoChanged(std::move(decoder_info));
   }
   if (ret < WEBRTC_VIDEO_CODEC_OK || ret == WEBRTC_VIDEO_CODEC_NO_OUTPUT) {
-    _callback->ClearTimestampMap();
+    callback_->ClearTimestampMap();
   }
   return ret;
 }
 
 int32_t VCMGenericDecoder::RegisterDecodeCompleteCallback(
     VCMDecodedFrameCallback* callback) {
-  _callback = callback;
+  callback_ = callback;
   int32_t ret = decoder_->RegisterDecodeCompleteCallback(callback);
   if (callback && !decoder_info_.implementation_name.empty()) {
     callback->OnDecoderInfoChanged(decoder_info_);

@@ -15,9 +15,9 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
 #include "rtc_base/race_checker.h"
@@ -28,7 +28,7 @@ namespace webrtc {
 
 class IncomingVideoStream : public VideoSinkInterface<VideoFrame> {
  public:
-  IncomingVideoStream(TaskQueueFactory* task_queue_factory,
+  IncomingVideoStream(const Environment& env,
                       int32_t delay_ms,
                       VideoSinkInterface<VideoFrame>* callback);
   ~IncomingVideoStream() override;

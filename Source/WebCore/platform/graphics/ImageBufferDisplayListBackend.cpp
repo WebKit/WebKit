@@ -64,7 +64,7 @@ RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
     auto& context = buffer->context();
     context.drawDisplayList(m_drawingContext.copyDisplayList());
 
-    return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }
 
 RefPtr<SharedBuffer> ImageBufferDisplayListBackend::sinkIntoPDFDocument()
@@ -76,7 +76,7 @@ RefPtr<SharedBuffer> ImageBufferDisplayListBackend::sinkIntoPDFDocument()
     auto& context = buffer->context();
     context.drawDisplayList(m_drawingContext.copyDisplayList(), m_controlFactory);
 
-    return ImageBuffer::sinkIntoPDFDocument(WTFMove(buffer));
+    return ImageBuffer::sinkIntoPDFDocument(WTF::move(buffer));
 }
 
 String ImageBufferDisplayListBackend::debugDescription() const

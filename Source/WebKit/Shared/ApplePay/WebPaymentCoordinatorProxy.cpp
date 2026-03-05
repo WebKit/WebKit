@@ -48,15 +48,10 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPaymentCoordinatorProxy);
 
-static WeakPtr<WebPaymentCoordinatorProxy>& activePaymentCoordinatorProxy()
+static WeakPtr<WebPaymentCoordinatorProxy>& NODELETE activePaymentCoordinatorProxy()
 {
     static NeverDestroyed<WeakPtr<WebPaymentCoordinatorProxy>> activePaymentCoordinatorProxy;
     return activePaymentCoordinatorProxy.get();
-}
-
-Ref<WorkQueue> WebPaymentCoordinatorProxy::protectedCanMakePaymentsQueue() const
-{
-    return m_canMakePaymentsQueue;
 }
 
 IPC::Connection* WebPaymentCoordinatorProxy::messageSenderConnection() const
@@ -72,21 +67,21 @@ uint64_t WebPaymentCoordinatorProxy::messageSenderDestinationID() const
 
 void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&& reply)
 {
-    platformCanMakePayments(WTFMove(reply));
+    platformCanMakePayments(WTF::move(reply));
 }
 
 void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!merchantIdentifier.isNull(), completionHandler(false));
     MESSAGE_CHECK_COMPLETION(!domainName.isNull(), completionHandler(false));
-    platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTFMove(completionHandler));
+    platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTF::move(completionHandler));
 }
 
 void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!merchantIdentifier.isNull(), completionHandler(false));
     MESSAGE_CHECK_COMPLETION(!domainName.isNull(), completionHandler(false));
-    platformOpenPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
+    platformOpenPaymentSetup(merchantIdentifier, domainName, WTF::move(completionHandler));
 }
 
 void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
@@ -146,7 +141,7 @@ void WebPaymentCoordinatorProxy::completeShippingMethodSelection(std::optional<W
 
     MESSAGE_CHECK(m_state == State::ShippingMethodSelected);
 
-    platformCompleteShippingMethodSelection(WTFMove(update));
+    platformCompleteShippingMethodSelection(WTF::move(update));
     m_state = State::Active;
 }
 
@@ -158,7 +153,7 @@ void WebPaymentCoordinatorProxy::completeShippingContactSelection(std::optional<
 
     MESSAGE_CHECK(m_state == State::ShippingContactSelected);
 
-    platformCompleteShippingContactSelection(WTFMove(update));
+    platformCompleteShippingContactSelection(WTF::move(update));
     m_state = State::Active;
 }
 
@@ -170,7 +165,7 @@ void WebPaymentCoordinatorProxy::completePaymentMethodSelection(std::optional<We
 
     MESSAGE_CHECK(m_state == State::PaymentMethodSelected);
 
-    platformCompletePaymentMethodSelection(WTFMove(update));
+    platformCompletePaymentMethodSelection(WTF::move(update));
     m_state = State::Active;
 }
 
@@ -184,7 +179,7 @@ void WebPaymentCoordinatorProxy::completeCouponCodeChange(std::optional<WebCore:
 
     MESSAGE_CHECK(m_state == State::CouponCodeChanged);
 
-    platformCompleteCouponCodeChange(WTFMove(update));
+    platformCompleteCouponCodeChange(WTF::move(update));
     m_state = State::Active;
 }
 
@@ -198,7 +193,7 @@ void WebPaymentCoordinatorProxy::completePaymentSession(WebCore::ApplePayPayment
 
     bool isFinalState = result.isFinalState();
 
-    platformCompletePaymentSession(WTFMove(result));
+    platformCompletePaymentSession(WTF::move(result));
 
     if (!isFinalState) {
         m_state = State::Active;
@@ -241,7 +236,7 @@ void WebPaymentCoordinatorProxy::presenterDidAuthorizePayment(PaymentAuthorizati
 
 void WebPaymentCoordinatorProxy::presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&& error)
 {
-    didReachFinalState(WTFMove(error));
+    didReachFinalState(WTF::move(error));
 }
 
 void WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePayShippingMethod& shippingMethod)

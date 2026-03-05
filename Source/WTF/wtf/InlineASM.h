@@ -52,9 +52,9 @@
 #endif
 
 #if HAVE(INTERNAL_VISIBILITY)
-#define LOCAL_REFERENCE(name) SYMBOL_STRING(name)
+#define LABEL_REFERENCE(name) SYMBOL_STRING(name)
 #else
-#define LOCAL_REFERENCE(name) GLOBAL_REFERENCE(name)
+#define LABEL_REFERENCE(name) GLOBAL_REFERENCE(name)
 #endif
 
 #if OS(DARWIN)

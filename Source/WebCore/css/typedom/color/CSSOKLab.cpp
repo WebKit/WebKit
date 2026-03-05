@@ -31,20 +31,20 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSOKLab);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOKLab);
 
 ExceptionOr<Ref<CSSOKLab>> CSSOKLab::create(CSSColorPercent&& lightness, CSSColorNumber&& a, CSSColorNumber&& b, CSSColorPercent&& alpha)
 {
-    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
     if (rectifiedLightness.hasException())
         return rectifiedLightness.releaseException();
-    auto rectifiedA = rectifyCSSColorNumber(WTFMove(a));
+    auto rectifiedA = rectifyCSSColorNumber(WTF::move(a));
     if (rectifiedA.hasException())
         return rectifiedA.releaseException();
-    auto rectifiedB = rectifyCSSColorNumber(WTFMove(b));
+    auto rectifiedB = rectifyCSSColorNumber(WTF::move(b));
     if (rectifiedB.hasException())
         return rectifiedB.releaseException();
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
 
@@ -52,10 +52,10 @@ ExceptionOr<Ref<CSSOKLab>> CSSOKLab::create(CSSColorPercent&& lightness, CSSColo
 }
 
 CSSOKLab::CSSOKLab(RectifiedCSSColorPercent&& lightness, RectifiedCSSColorNumber&& a, RectifiedCSSColorNumber&& b, RectifiedCSSColorPercent&& alpha)
-    : m_lightness(WTFMove(lightness))
-    , m_a(WTFMove(a))
-    , m_b(WTFMove(b))
-    , m_alpha(WTFMove(alpha))
+    : m_lightness(WTF::move(lightness))
+    , m_a(WTF::move(a))
+    , m_b(WTF::move(b))
+    , m_alpha(WTF::move(alpha))
 {
 }
 
@@ -66,7 +66,7 @@ CSSColorPercent CSSOKLab::l() const
 
 ExceptionOr<void> CSSOKLab::setL(CSSColorPercent&& lightness)
 {
-    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
     if (rectifiedLightness.hasException())
         return rectifiedLightness.releaseException();
     m_lightness = rectifiedLightness.releaseReturnValue();
@@ -80,7 +80,7 @@ CSSColorNumber CSSOKLab::a() const
 
 ExceptionOr<void> CSSOKLab::setA(CSSColorNumber&& a)
 {
-    auto rectifiedA = rectifyCSSColorNumber(WTFMove(a));
+    auto rectifiedA = rectifyCSSColorNumber(WTF::move(a));
     if (rectifiedA.hasException())
         return rectifiedA.releaseException();
     m_a = rectifiedA.releaseReturnValue();
@@ -94,7 +94,7 @@ CSSColorNumber CSSOKLab::b() const
 
 ExceptionOr<void> CSSOKLab::setB(CSSColorNumber&& b)
 {
-    auto rectifiedB = rectifyCSSColorNumber(WTFMove(b));
+    auto rectifiedB = rectifyCSSColorNumber(WTF::move(b));
     if (rectifiedB.hasException())
         return rectifiedB.releaseException();
     m_b = rectifiedB.releaseReturnValue();
@@ -108,7 +108,7 @@ CSSColorPercent CSSOKLab::alpha() const
 
 ExceptionOr<void> CSSOKLab::setAlpha(CSSColorPercent&& alpha)
 {
-    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
     m_alpha = rectifiedAlpha.releaseReturnValue();

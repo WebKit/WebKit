@@ -23,7 +23,6 @@ set ( ly_common_source_files
   ${ly_src_dir}/compare.cc
   ${ly_src_dir}/compare_common.cc
   ${ly_src_dir}/compare_gcc.cc
-  ${ly_src_dir}/compare_msa.cc
   ${ly_src_dir}/compare_win.cc
   ${ly_src_dir}/convert_argb.cc
   ${ly_src_dir}/convert.cc
@@ -42,14 +41,12 @@ set ( ly_common_source_files
   ${ly_src_dir}/rotate_common.cc
   ${ly_src_dir}/rotate_gcc.cc
   ${ly_src_dir}/rotate_lsx.cc
-  ${ly_src_dir}/rotate_msa.cc
   ${ly_src_dir}/rotate_win.cc
   ${ly_src_dir}/row_any.cc
   ${ly_src_dir}/row_common.cc
   ${ly_src_dir}/row_gcc.cc
   ${ly_src_dir}/row_lasx.cc
   ${ly_src_dir}/row_lsx.cc
-  ${ly_src_dir}/row_msa.cc
   ${ly_src_dir}/row_rvv.cc
   ${ly_src_dir}/row_win.cc
   ${ly_src_dir}/scale_any.cc
@@ -58,7 +55,6 @@ set ( ly_common_source_files
   ${ly_src_dir}/scale_common.cc
   ${ly_src_dir}/scale_gcc.cc
   ${ly_src_dir}/scale_lsx.cc
-  ${ly_src_dir}/scale_msa.cc
   ${ly_src_dir}/scale_rgb.cc
   ${ly_src_dir}/scale_rvv.cc
   ${ly_src_dir}/scale_uv.cc

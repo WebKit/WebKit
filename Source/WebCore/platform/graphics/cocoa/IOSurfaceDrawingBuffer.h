@@ -65,21 +65,21 @@ private:
 };
 
 inline IOSurfaceDrawingBuffer::IOSurfaceDrawingBuffer(IOSurfaceDrawingBuffer&& other)
-    : m_surface(WTFMove(other.m_surface))
-    , m_copyOnWriteContext(WTFMove(other.m_copyOnWriteContext))
+    : m_surface(WTF::move(other.m_surface))
+    , m_copyOnWriteContext(WTF::move(other.m_copyOnWriteContext))
     , m_needCopy(std::exchange(other.m_needCopy, false))
 {
 }
 
 inline IOSurfaceDrawingBuffer::IOSurfaceDrawingBuffer(std::unique_ptr<IOSurface>&& surface)
-    : m_surface(WTFMove(surface))
+    : m_surface(WTF::move(surface))
 {
 }
 
 inline IOSurfaceDrawingBuffer& IOSurfaceDrawingBuffer::operator=(IOSurfaceDrawingBuffer&& other)
 {
-    m_surface = WTFMove(other.m_surface);
-    m_copyOnWriteContext = WTFMove(other.m_copyOnWriteContext);
+    m_surface = WTF::move(other.m_surface);
+    m_copyOnWriteContext = WTF::move(other.m_copyOnWriteContext);
     m_needCopy = std::exchange(other.m_needCopy, false);
     return *this;
 }

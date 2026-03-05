@@ -8,29 +8,29 @@ FAIL grid-lanes: "a" 10px reverse should be valid. assert_not_equals: property s
 FAIL grid-lanes: "a b" 10px 20px row normal should be valid. assert_not_equals: property should be set got disallowed value ""
 FAIL grid-lanes: "a b c" 10% 20% 30% row-reverse should be valid. assert_not_equals: property should be set got disallowed value ""
 FAIL grid-lanes: repeat(5, auto) row reverse should be valid. assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes'] = "none" should set grid-lanes-direction assert_equals: grid-lanes-direction should be canonical expected (string) "column" but got (undefined) undefined
+FAIL e.style['grid-lanes'] = "none" should set grid-lanes-fill assert_equals: grid-lanes-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "none" should set grid-template-areas assert_equals: grid-template-areas should be canonical expected "none" but got ""
 FAIL e.style['grid-lanes'] = "none" should set grid-template-columns assert_equals: grid-template-columns should be canonical expected "none" but got ""
-FAIL e.style['grid-lanes'] = "none" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "column" but got (undefined) undefined
-FAIL e.style['grid-lanes'] = "none" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "none" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes'] = "10px reverse" should set grid-lanes-direction assert_equals: grid-lanes-direction should be canonical expected (string) "column" but got (undefined) undefined
+FAIL e.style['grid-lanes'] = "10px reverse" should set grid-lanes-fill assert_equals: grid-lanes-fill should be canonical expected (string) "reverse" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "10px reverse" should set grid-template-areas assert_equals: grid-template-areas should be canonical expected "none" but got ""
 FAIL e.style['grid-lanes'] = "10px reverse" should set grid-template-columns assert_equals: grid-template-columns should be canonical expected "10px" but got ""
-FAIL e.style['grid-lanes'] = "10px reverse" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "column" but got (undefined) undefined
-FAIL e.style['grid-lanes'] = "10px reverse" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "reverse" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "10px reverse" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes'] = "\"b a\" 20% 40% column normal" should set grid-lanes-direction assert_equals: grid-lanes-direction should be canonical expected (string) "column" but got (undefined) undefined
+FAIL e.style['grid-lanes'] = "\"b a\" 20% 40% column normal" should set grid-lanes-fill assert_equals: grid-lanes-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "\"b a\" 20% 40% column normal" should set grid-template-areas assert_equals: grid-template-areas should be canonical expected "\"b a\"" but got ""
 FAIL e.style['grid-lanes'] = "\"b a\" 20% 40% column normal" should set grid-template-columns assert_equals: grid-template-columns should be canonical expected "20% 40%" but got ""
-FAIL e.style['grid-lanes'] = "\"b a\" 20% 40% column normal" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "column" but got (undefined) undefined
-FAIL e.style['grid-lanes'] = "\"b a\" 20% 40% column normal" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "\"b a\" 20% 40% column normal" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes'] = "\"b b a\" 1fr 2fr 3fr row" should set grid-lanes-direction assert_equals: grid-lanes-direction should be canonical expected (string) "row" but got (undefined) undefined
+FAIL e.style['grid-lanes'] = "\"b b a\" 1fr 2fr 3fr row" should set grid-lanes-fill assert_equals: grid-lanes-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "\"b b a\" 1fr 2fr 3fr row" should set grid-template-areas assert_equals: grid-template-areas should be canonical expected "\"b\" \"b\" \"a\"" but got ""
 FAIL e.style['grid-lanes'] = "\"b b a\" 1fr 2fr 3fr row" should set grid-template-rows assert_equals: grid-template-rows should be canonical expected "1fr 2fr 3fr" but got ""
-FAIL e.style['grid-lanes'] = "\"b b a\" 1fr 2fr 3fr row" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "row" but got (undefined) undefined
-FAIL e.style['grid-lanes'] = "\"b b a\" 1fr 2fr 3fr row" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "\"b b a\" 1fr 2fr 3fr row" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes'] = "repeat(2, auto) row-reverse" should set grid-lanes-direction assert_equals: grid-lanes-direction should be canonical expected (string) "row-reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes'] = "repeat(2, auto) row-reverse" should set grid-lanes-fill assert_equals: grid-lanes-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "repeat(2, auto) row-reverse" should set grid-template-areas assert_equals: grid-template-areas should be canonical expected "none" but got ""
 FAIL e.style['grid-lanes'] = "repeat(2, auto) row-reverse" should set grid-template-rows assert_equals: grid-template-rows should be canonical expected "repeat(2, auto)" but got ""
-FAIL e.style['grid-lanes'] = "repeat(2, auto) row-reverse" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "row-reverse" but got (undefined) undefined
-FAIL e.style['grid-lanes'] = "repeat(2, auto) row-reverse" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
 FAIL e.style['grid-lanes'] = "repeat(2, auto) row-reverse" should not set unrelated longhands assert_true: expected true got false
 

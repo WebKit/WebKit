@@ -22,10 +22,10 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 (define (lockdown-mode)
-    (require-entitlement "com.apple.private.webkit.lockdown-mode"))
+    (signing-identifier "com.apple.WebKit.WebContent.CaptivePortal"))
 
 (define (enhanced-security)
-    (require-entitlement "com.apple.private.webkit.enhanced-security"))
+    (signing-identifier "com.apple.WebKit.WebContent.EnhancedSecurity"))
 
 (define-once (framebuffer-access)
     ; IOMobileFramebuffer
@@ -498,7 +498,6 @@
 (define (kernel-mig-routine-in-use)
     (kernel-mig-routine
         (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
-        clock_get_time
         host_get_clock_service ;; After <rdar://85931614> has been fixed, we should evaluate if this is only used on launch.
         host_get_io_master
         io_registry_entry_from_path
@@ -536,7 +535,6 @@
 
 (define (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode)
     (kernel-mig-routine
-        ;; rdar://131735906 - we should see if we can modify the dependent library to remove the clock_get_time call
         clock_get_time
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
         io_connect_add_client

@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 298x108
                   RenderTableRow {TR} at (0,2) size 298x104
                     RenderTableCell {TD} at (2,2) size 294x104 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-                      RenderText {#text} at (2,2) size 281x99
+                      RenderText {#text} at (2,2) size 281x100
                         text run at (2,2) width 252: "Welcome to PlanDepot.com, the fastest"
                         text run at (2,22) width 139: "growing resource for "
                         text run at (140,22) width 138: "Construction Data on"
@@ -20,5 +20,5 @@ layer at (0,0) size 800x600
                         text run at (2,82) width 60: "covering "
                         text run at (61,82) width 62: "13 states!"
             RenderTableCell {TD} at (326,2) size 311x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 208x19
+              RenderText {#text} at (2,2) size 208x20
                 text run at (2,2) width 208: "Expanded Geographic Coverage"

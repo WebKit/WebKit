@@ -22,10 +22,12 @@
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/packet_socket_factory.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/transport/ecn_marking.h"
 #include "api/transport/stun.h"
 #include "api/units/time_delta.h"
 #include "p2p/base/async_stun_tcp_socket.h"
@@ -38,13 +40,13 @@
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
+#include "rtc_base/net_helper.h"
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace {
@@ -86,8 +88,9 @@ static void InitErrorResponse(int code,
       STUN_ATTR_ERROR_CODE, code, std::string(reason)));
 }
 
-TurnServer::TurnServer(TaskQueueBase* thread)
-    : thread_(thread),
+TurnServer::TurnServer(const Environment& env, TaskQueueBase* thread)
+    : env_(env),
+      thread_(thread),
       nonce_key_(CreateRandomString(kNonceKeySize)),
       auth_hook_(nullptr),
       redirect_hook_(nullptr),
@@ -95,25 +98,14 @@ TurnServer::TurnServer(TaskQueueBase* thread)
 
 TurnServer::~TurnServer() {
   RTC_DCHECK_RUN_ON(thread_);
-  for (InternalSocketMap::iterator it = server_sockets_.begin();
-       it != server_sockets_.end(); ++it) {
-    AsyncPacketSocket* socket = it->first;
-    delete socket;
-  }
-
-  for (ServerSocketMap::iterator it = server_listen_sockets_.begin();
-       it != server_listen_sockets_.end(); ++it) {
-    Socket* socket = it->first;
-    delete socket;
-  }
 }
 
-void TurnServer::AddInternalSocket(AsyncPacketSocket* socket,
-                                   ProtocolType proto) {
+void TurnServer::AddInternalSocket(std::unique_ptr<AsyncPacketSocket> socket,
+                                   ProtocolType protocol) {
   RTC_DCHECK_RUN_ON(thread_);
-  RTC_DCHECK(server_sockets_.end() == server_sockets_.find(socket));
-  server_sockets_[socket] = proto;
-  socket->RegisterReceivedPacketCallback(
+  auto [it, inserted] = server_sockets_.emplace(std::move(socket), protocol);
+  RTC_DCHECK(inserted);
+  it->first->RegisterReceivedPacketCallback(
       [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
         RTC_DCHECK_RUN_ON(thread_);
         OnInternalPacket(socket, packet);
@@ -121,15 +113,17 @@ void TurnServer::AddInternalSocket(AsyncPacketSocket* socket,
 }
 
 void TurnServer::AddInternalServerSocket(
-    Socket* socket,
-    ProtocolType proto,
+    std::unique_ptr<Socket> socket,
+    ProtocolType protocol,
     std::unique_ptr<SSLAdapterFactory> ssl_adapter_factory) {
   RTC_DCHECK_RUN_ON(thread_);
-
-  RTC_DCHECK(server_listen_sockets_.end() ==
-             server_listen_sockets_.find(socket));
-  server_listen_sockets_[socket] = {proto, std::move(ssl_adapter_factory)};
-  socket->SignalReadEvent.connect(this, &TurnServer::OnNewInternalConnection);
+  auto [iter, inserted] = server_listen_sockets_.emplace(
+      std::move(socket),
+      ServerSocketInfo{.proto = protocol,
+                       .ssl_adapter_factory = std::move(ssl_adapter_factory)});
+  RTC_DCHECK(inserted);
+  iter->first->SignalReadEvent.connect(this,
+                                       &TurnServer::OnNewInternalConnection);
 }
 
 void TurnServer::SetExternalSocketFactory(PacketSocketFactory* factory,
@@ -141,39 +135,38 @@ void TurnServer::SetExternalSocketFactory(PacketSocketFactory* factory,
 
 void TurnServer::OnNewInternalConnection(Socket* socket) {
   RTC_DCHECK_RUN_ON(thread_);
-  RTC_DCHECK(server_listen_sockets_.find(socket) !=
-             server_listen_sockets_.end());
-  AcceptConnection(socket);
-}
-
-void TurnServer::AcceptConnection(Socket* server_socket) {
-  RTC_DCHECK_RUN_ON(thread_);
+  auto iter = server_listen_sockets_.find(socket);
+  RTC_DCHECK(iter != server_listen_sockets_.end());
 
   // Check if someone is trying to connect to us.
   SocketAddress accept_addr;
-  Socket* accepted_socket = server_socket->Accept(&accept_addr);
+  std::unique_ptr<Socket> accepted_socket =
+      absl::WrapUnique(socket->Accept(&accept_addr));
   if (accepted_socket != nullptr) {
-    const ServerSocketInfo& info = server_listen_sockets_[server_socket];
+    const ServerSocketInfo& info = iter->second;
     if (info.ssl_adapter_factory) {
-      SSLAdapter* ssl_adapter =
-          info.ssl_adapter_factory->CreateAdapter(accepted_socket);
+      std::unique_ptr<SSLAdapter> ssl_adapter = absl::WrapUnique(
+          info.ssl_adapter_factory->CreateAdapter(accepted_socket.release()));
       ssl_adapter->StartSSL("");
-      accepted_socket = ssl_adapter;
+      accepted_socket = std::move(ssl_adapter);
     }
-    AsyncStunTCPSocket* tcp_socket = new AsyncStunTCPSocket(accepted_socket);
+    auto tcp_socket =
+        std::make_unique<AsyncStunTCPSocket>(env_, std::move(accepted_socket));
 
     tcp_socket->SubscribeCloseEvent(this,
                                     [this](AsyncPacketSocket* s, int err) {
                                       OnInternalSocketClose(s, err);
                                     });
     // Finally add the socket so it can start communicating with the client.
-    AddInternalSocket(tcp_socket, info.proto);
+    AddInternalSocket(std::move(tcp_socket), info.proto);
   }
 }
 
 void TurnServer::OnInternalSocketClose(AsyncPacketSocket* socket, int err) {
   RTC_DCHECK_RUN_ON(thread_);
-  DestroyInternalSocket(socket);
+  if (auto iter = server_sockets_.find(socket); iter != server_sockets_.end()) {
+    DestroyInternalSocket(iter);
+  }
 }
 
 void TurnServer::OnInternalPacket(AsyncPacketSocket* socket,
@@ -183,18 +176,18 @@ void TurnServer::OnInternalPacket(AsyncPacketSocket* socket,
   if (packet.payload().size() < TURN_CHANNEL_HEADER_SIZE) {
     return;
   }
-  InternalSocketMap::iterator iter = server_sockets_.find(socket);
+  auto iter = server_sockets_.find(socket);
   RTC_DCHECK(iter != server_sockets_.end());
   TurnServerConnection conn(packet.source_address(), iter->second, socket);
   uint16_t msg_type = GetBE16(packet.payload().data());
   if (!IsTurnChannelData(msg_type)) {
     // This is a STUN message.
-    HandleStunMessage(&conn, packet.payload());
+    HandleStunMessage(&conn, packet.payload(), packet.ecn());
   } else {
     // This is a channel message; let the allocation handle it.
     TurnServerAllocation* allocation = FindAllocation(&conn);
     if (allocation) {
-      allocation->HandleChannelData(packet.payload());
+      allocation->HandleChannelData(packet.payload(), packet.ecn());
     }
     if (stun_message_observer_ != nullptr) {
       stun_message_observer_->ReceivedChannelData(packet.payload());
@@ -203,7 +196,8 @@ void TurnServer::OnInternalPacket(AsyncPacketSocket* socket,
 }
 
 void TurnServer::HandleStunMessage(TurnServerConnection* conn,
-                                   ArrayView<const uint8_t> payload) {
+                                   ArrayView<const uint8_t> payload,
+                                   EcnMarking ecn) {
   RTC_DCHECK_RUN_ON(thread_);
   TurnMessage msg;
   ByteBufferReader buf(payload);
@@ -248,7 +242,7 @@ void TurnServer::HandleStunMessage(TurnServerConnection* conn,
   }
 
   if (!allocation && msg.type() == STUN_ALLOCATE_REQUEST) {
-    HandleAllocateRequest(conn, &msg, key);
+    HandleAllocateRequest(conn, &msg, key, ecn);
   } else if (allocation &&
              (msg.type() != STUN_ALLOCATE_REQUEST ||
               msg.transaction_id() == allocation->transaction_id())) {
@@ -261,7 +255,7 @@ void TurnServer::HandleStunMessage(TurnServerConnection* conn,
                         STUN_ERROR_REASON_WRONG_CREDENTIALS);
       return;
     }
-    allocation->HandleTurnMessage(&msg);
+    allocation->HandleTurnMessage(&msg, ecn);
   } else {
     // Allocation mismatch.
     SendErrorResponse(conn, &msg, STUN_ERROR_ALLOCATION_MISMATCH,
@@ -349,12 +343,13 @@ void TurnServer::HandleBindingRequest(TurnServerConnection* conn,
       STUN_ATTR_XOR_MAPPED_ADDRESS, conn->src());
   response.AddAttribute(std::move(mapped_addr_attr));
 
-  SendStun(conn, &response);
+  SendStun(conn, &response, EcnMarking::kNotEct);
 }
 
 void TurnServer::HandleAllocateRequest(TurnServerConnection* conn,
                                        const TurnMessage* msg,
-                                       absl::string_view key) {
+                                       absl::string_view key,
+                                       EcnMarking ecn) {
   // Check the parameters in the request.
   const StunUInt32Attribute* transport_attr =
       msg->GetUInt32(STUN_ATTR_REQUESTED_TRANSPORT);
@@ -376,7 +371,7 @@ void TurnServer::HandleAllocateRequest(TurnServerConnection* conn,
   // If the actual socket allocation fails, send an internal error.
   TurnServerAllocation* alloc = CreateAllocation(conn, proto, key);
   if (alloc) {
-    alloc->HandleTurnMessage(msg);
+    alloc->HandleTurnMessage(msg, ecn);
   } else {
     SendErrorResponse(conn, msg, STUN_ERROR_SERVER_ERROR,
                       "Failed to allocate socket");
@@ -415,7 +410,8 @@ bool TurnServer::ValidateNonce(absl::string_view nonce) const {
   }
 
   // Validate the timestamp.
-  return TimeDelta::Millis(TimeMillis() - then) < kNonceTimeout;
+  return TimeDelta::Millis(env_.clock().TimeInMilliseconds() - then) <
+         kNonceTimeout;
 }
 
 TurnServerAllocation* TurnServer::FindAllocation(TurnServerConnection* conn) {
@@ -426,17 +422,18 @@ TurnServerAllocation* TurnServer::FindAllocation(TurnServerConnection* conn) {
 TurnServerAllocation* TurnServer::CreateAllocation(TurnServerConnection* conn,
                                                    int proto,
                                                    absl::string_view key) {
-  AsyncPacketSocket* external_socket =
-      (external_socket_factory_)
-          ? external_socket_factory_->CreateUdpSocket(external_addr_, 0, 0)
-          : nullptr;
+  std::unique_ptr<AsyncPacketSocket> external_socket =
+      (external_socket_factory_) ? external_socket_factory_->CreateUdpSocket(
+                                       env_, external_addr_, 0, 0)
+                                 : nullptr;
   if (!external_socket) {
     return nullptr;
   }
+  external_socket->SetOption(Socket::OPT_RECV_ECN, 1);
 
   // The Allocation takes ownership of the socket.
-  TurnServerAllocation* allocation =
-      new TurnServerAllocation(this, thread_, *conn, external_socket, key);
+  TurnServerAllocation* allocation = new TurnServerAllocation(
+      this, thread_, *conn, std::move(external_socket), key);
   allocations_[*conn].reset(allocation);
   return allocation;
 }
@@ -451,7 +448,7 @@ void TurnServer::SendErrorResponse(TurnServerConnection* conn,
 
   RTC_LOG(LS_INFO) << "Sending error response, type=" << resp.type()
                    << ", code=" << code << ", reason=" << reason;
-  SendStun(conn, &resp);
+  SendStun(conn, &resp, EcnMarking::kNotEct);
 }
 
 void TurnServer::SendErrorResponseWithRealmAndNonce(TurnServerConnection* conn,
@@ -461,7 +458,7 @@ void TurnServer::SendErrorResponseWithRealmAndNonce(TurnServerConnection* conn,
   TurnMessage resp(GetStunErrorResponseTypeOrZero(*msg), msg->transaction_id());
   InitErrorResponse(code, reason, &resp);
 
-  int64_t timestamp = TimeMillis();
+  int64_t timestamp = env_.clock().TimeInMilliseconds();
   if (ts_for_next_nonce_) {
     timestamp = ts_for_next_nonce_;
     ts_for_next_nonce_ = 0;
@@ -470,7 +467,7 @@ void TurnServer::SendErrorResponseWithRealmAndNonce(TurnServerConnection* conn,
       STUN_ATTR_NONCE, GenerateNonce(timestamp)));
   resp.AddAttribute(
       std::make_unique<StunByteStringAttribute>(STUN_ATTR_REALM, realm_));
-  SendStun(conn, &resp);
+  SendStun(conn, &resp, EcnMarking::kNotEct);
 }
 
 void TurnServer::SendErrorResponseWithAlternateServer(
@@ -482,10 +479,12 @@ void TurnServer::SendErrorResponseWithAlternateServer(
                     STUN_ERROR_REASON_TRY_ALTERNATE_SERVER, &resp);
   resp.AddAttribute(
       std::make_unique<StunAddressAttribute>(STUN_ATTR_ALTERNATE_SERVER, addr));
-  SendStun(conn, &resp);
+  SendStun(conn, &resp, EcnMarking::kNotEct);
 }
 
-void TurnServer::SendStun(TurnServerConnection* conn, StunMessage* msg) {
+void TurnServer::SendStun(TurnServerConnection* conn,
+                          StunMessage* msg,
+                          EcnMarking ecn) {
   RTC_DCHECK_RUN_ON(thread_);
   ByteBufferWriter buf;
   // Add a SOFTWARE attribute if one is set.
@@ -494,44 +493,48 @@ void TurnServer::SendStun(TurnServerConnection* conn, StunMessage* msg) {
         STUN_ATTR_SOFTWARE, software_));
   }
   msg->Write(&buf);
-  Send(conn, buf);
+  Send(conn, buf, ecn);
 }
 
-void TurnServer::Send(TurnServerConnection* conn, const ByteBufferWriter& buf) {
+void TurnServer::Send(TurnServerConnection* conn,
+                      const ByteBufferWriter& buf,
+                      EcnMarking ecn) {
   RTC_DCHECK_RUN_ON(thread_);
   AsyncSocketPacketOptions options;
+  // TODO: bugs.webrtc.org/453581251  - If we want to properly test with TURN,
+  // the server must copy `ecn`.
+  RTC_LOG_IF(LS_WARNING, ecn == EcnMarking::kCe)
+      << "TurnServer does not properly support forwarding "
+         "ECN.";
+  options.ect_1 = (ecn == EcnMarking::kEct1);
   conn->socket()->SendTo(buf.Data(), buf.Length(), conn->src(), options);
 }
 
 void TurnServer::DestroyAllocation(TurnServerAllocation* allocation) {
   // Removing the internal socket if the connection is not udp.
   AsyncPacketSocket* socket = allocation->conn()->socket();
-  InternalSocketMap::iterator iter = server_sockets_.find(socket);
+  auto iter = server_sockets_.find(socket);
   // Skip if the socket serving this allocation is UDP, as this will be shared
   // by all allocations.
   // Note: We may not find a socket if it's a TCP socket that was closed, and
   // the allocation is only now timing out.
   if (iter != server_sockets_.end() && iter->second != PROTO_UDP) {
-    DestroyInternalSocket(socket);
+    DestroyInternalSocket(iter);
   }
 
   allocations_.erase(*(allocation->conn()));
 }
 
-void TurnServer::DestroyInternalSocket(AsyncPacketSocket* socket) {
-  InternalSocketMap::iterator iter = server_sockets_.find(socket);
-  if (iter != server_sockets_.end()) {
-    AsyncPacketSocket* server_socket = iter->first;
-    server_socket->UnsubscribeCloseEvent(this);
-    server_socket->DeregisterReceivedPacketCallback();
-    server_sockets_.erase(iter);
-    std::unique_ptr<AsyncPacketSocket> socket_to_delete =
-        absl::WrapUnique(server_socket);
-    // We must destroy the socket async to avoid invalidating the sigslot
-    // callback list iterator inside a sigslot callback. (In other words,
-    // deleting an object from within a callback from that object).
-    thread_->PostTask([socket_to_delete = std::move(socket_to_delete)] {});
-  }
+void TurnServer::DestroyInternalSocket(ServerSocketMap::iterator iter) {
+  RTC_DCHECK(iter != server_sockets_.end());
+  auto node = server_sockets_.extract(iter);
+  AsyncPacketSocket* server_socket = node.key().get();
+  server_socket->UnsubscribeCloseEvent(this);
+  server_socket->DeregisterReceivedPacketCallback();
+  // We must destroy the socket async to avoid invalidating the callback list
+  // iterator. (In other words, deleting an object from within a callback from
+  // that object).
+  thread_->PostTask([node = std::move(node)] {});
 }
 
 TurnServerConnection::TurnServerConnection(const SocketAddress& src,
@@ -558,15 +561,16 @@ std::string TurnServerConnection::ToString() const {
   return ost.Release();
 }
 
-TurnServerAllocation::TurnServerAllocation(TurnServer* server,
-                                           TaskQueueBase* thread,
-                                           const TurnServerConnection& conn,
-                                           AsyncPacketSocket* socket,
-                                           absl::string_view key)
+TurnServerAllocation::TurnServerAllocation(
+    TurnServer* server,
+    TaskQueueBase* thread,
+    const TurnServerConnection& conn,
+    std::unique_ptr<AsyncPacketSocket> server_socket,
+    absl::string_view key)
     : server_(server),
       thread_(thread),
       conn_(conn),
-      external_socket_(socket),
+      external_socket_(std::move(server_socket)),
       key_(key) {
   external_socket_->RegisterReceivedPacketCallback(
       [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
@@ -587,7 +591,8 @@ std::string TurnServerAllocation::ToString() const {
   return ost.Release();
 }
 
-void TurnServerAllocation::HandleTurnMessage(const TurnMessage* msg) {
+void TurnServerAllocation::HandleTurnMessage(const TurnMessage* msg,
+                                             EcnMarking ecn) {
   RTC_DCHECK_RUN_ON(thread_);
   RTC_DCHECK(msg != nullptr);
   switch (msg->type()) {
@@ -598,7 +603,7 @@ void TurnServerAllocation::HandleTurnMessage(const TurnMessage* msg) {
       HandleRefreshRequest(msg);
       break;
     case TURN_SEND_INDICATION:
-      HandleSendIndication(msg);
+      HandleSendIndication(msg, ecn);
       break;
     case TURN_CREATE_PERMISSION_REQUEST:
       HandleCreatePermissionRequest(msg);
@@ -668,7 +673,8 @@ void TurnServerAllocation::HandleRefreshRequest(const TurnMessage* msg) {
   SendResponse(&response);
 }
 
-void TurnServerAllocation::HandleSendIndication(const TurnMessage* msg) {
+void TurnServerAllocation::HandleSendIndication(const TurnMessage* msg,
+                                                EcnMarking ecn) {
   // Check mandatory attributes.
   const StunByteStringAttribute* data_attr = msg->GetByteString(STUN_ATTR_DATA);
   const StunAddressAttribute* peer_attr =
@@ -681,7 +687,7 @@ void TurnServerAllocation::HandleSendIndication(const TurnMessage* msg) {
   // If a permission exists, send the data on to the peer.
   if (HasPermission(peer_attr->GetAddress().ipaddr())) {
     SendExternal(reinterpret_cast<char*>(data_attr->array_view().data()),
-                 data_attr->length(), peer_attr->GetAddress());
+                 data_attr->length(), peer_attr->GetAddress(), ecn);
   } else {
     RTC_LOG(LS_WARNING) << ToString()
                         << ": Received send indication without permission"
@@ -778,14 +784,15 @@ void TurnServerAllocation::HandleChannelBindRequest(const TurnMessage* msg) {
   SendResponse(&response);
 }
 
-void TurnServerAllocation::HandleChannelData(ArrayView<const uint8_t> payload) {
+void TurnServerAllocation::HandleChannelData(ArrayView<const uint8_t> payload,
+                                             EcnMarking ecn) {
   // Extract the channel number from the data.
   uint16_t channel_id = GetBE16(payload.data());
   auto channel = FindChannel(channel_id);
   if (channel != channels_.end()) {
     // Send the data to the peer address.
     SendExternal(payload.data() + TURN_CHANNEL_HEADER_SIZE,
-                 payload.size() - TURN_CHANNEL_HEADER_SIZE, channel->peer);
+                 payload.size() - TURN_CHANNEL_HEADER_SIZE, channel->peer, ecn);
   } else {
     RTC_LOG(LS_WARNING) << ToString()
                         << ": Received channel data for invalid channel, id="
@@ -803,7 +810,7 @@ void TurnServerAllocation::OnExternalPacket(AsyncPacketSocket* socket,
     buf.WriteUInt16(channel->id);
     buf.WriteUInt16(static_cast<uint16_t>(packet.payload().size()));
     buf.Write(ArrayView<const uint8_t>(packet.payload()));
-    server_->Send(&conn_, buf);
+    server_->Send(&conn_, buf, packet.ecn());
   } else if (!server_->enable_permission_checks_ ||
              HasPermission(packet.source_address().ipaddr())) {
     // No channel, but a permission exists. Send as a data indication.
@@ -812,7 +819,7 @@ void TurnServerAllocation::OnExternalPacket(AsyncPacketSocket* socket,
         STUN_ATTR_XOR_PEER_ADDRESS, packet.source_address()));
     msg.AddAttribute(std::make_unique<StunByteStringAttribute>(
         STUN_ATTR_DATA, packet.payload().data(), packet.payload().size()));
-    server_->SendStun(&conn_, &msg);
+    server_->SendStun(&conn_, &msg, packet.ecn());
   } else {
     RTC_LOG(LS_WARNING)
         << ToString() << ": Received external packet without permission, peer="
@@ -865,7 +872,7 @@ TurnServerAllocation::ChannelList::iterator TurnServerAllocation::FindChannel(
 void TurnServerAllocation::SendResponse(TurnMessage* msg) {
   // Success responses always have M-I.
   msg->AddMessageIntegrity(key_);
-  server_->SendStun(&conn_, msg);
+  server_->SendStun(&conn_, msg, EcnMarking::kNotEct);
 }
 
 void TurnServerAllocation::SendBadRequestResponse(const TurnMessage* req) {
@@ -880,8 +887,15 @@ void TurnServerAllocation::SendErrorResponse(const TurnMessage* req,
 
 void TurnServerAllocation::SendExternal(const void* data,
                                         size_t size,
-                                        const SocketAddress& peer) {
+                                        const SocketAddress& peer,
+                                        EcnMarking ecn) {
   AsyncSocketPacketOptions options;
+  // TODO: bugs.webrtc.org/453581251  - If we want to properly test with TURN,
+  // it must copy `ecn`.
+  RTC_LOG_IF(LS_WARNING, ecn == EcnMarking::kCe)
+      << "TurnServerAllocation does not properly support forwarding "
+         "ECN.";
+  options.ect_1 = (ecn == EcnMarking::kEct1);
   external_socket_->SendTo(data, size, peer, options);
 }
 

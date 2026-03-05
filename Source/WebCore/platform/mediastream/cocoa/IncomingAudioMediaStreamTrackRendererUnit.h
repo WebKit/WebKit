@@ -81,7 +81,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper.
-    const Logger& logger() const final;
+    const Logger& NODELETE logger() const final;
     ASCIILiteral logClassName() const final { return "IncomingAudioMediaStreamTrackRendererUnit"_s; }
     WTFLogChannel& logChannel() const final;
     uint64_t logIdentifier() const final;

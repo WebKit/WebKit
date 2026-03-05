@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AccessibilityListBoxOption.h"
 
+#include "AXLoggerBase.h"
 #include "AXObjectCacheInlines.h"
 #include "AccessibilityObjectInlines.h"
 #include "ContainerNodeInlines.h"
@@ -88,9 +89,14 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
     if (!listBoxParentNode)
         return { };
 
-    auto* listBoxRenderer = dynamicDowncast<RenderListBox>(listBoxParentNode->renderer());
-    if (!listBoxRenderer)
+    CheckedPtr listBoxRenderer = dynamicDowncast<RenderListBox>(listBoxParentNode->renderer());
+    if (!listBoxRenderer) {
+        // For HTMLSelectElement with arbitrary renderer use the option element's bounding box.
+        if (CheckedPtr optionRenderer = m_node->renderer())
+            return optionRenderer->absoluteBoundingBoxRect();
+
         return { };
+    }
 
     WeakPtr cache = listBoxRenderer->document().axObjectCache();
     RefPtr listbox = cache ? cache->getOrCreate(*listBoxRenderer) : nullptr;
@@ -146,7 +152,7 @@ String AccessibilityListBoxOption::stringValue() const
 
 Element* AccessibilityListBoxOption::actionElement() const
 {
-    ASSERT(is<HTMLElement>(m_node.get()));
+    AX_ASSERT(is<HTMLElement>(m_node.get()));
     return dynamicDowncast<Element>(m_node.get());
 }
 
@@ -156,7 +162,7 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
     if (!parentNode)
         return nullptr;
 
-    auto* cache = m_node->document().axObjectCache();
+    CheckedPtr cache = m_node->document().axObjectCache();
     return cache ? cache->getOrCreate(*parentNode) : nullptr;
 }
 

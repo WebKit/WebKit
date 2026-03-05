@@ -58,6 +58,10 @@ static StringView extractCharset(StringView value)
         while (pos < length && value[pos] <= ' ')
             ++pos;
 
+        // Ensure we're in bounds before checking for '='.
+        if (pos >= length)
+            break;
+
         if (value[pos] != '=')
             continue;
 

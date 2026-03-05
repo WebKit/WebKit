@@ -1,5 +1,5 @@
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 82397)
-FAIL: Timed out waiting for notifyDone to be called
 
-#EOF
-#EOF
+PASS scroll-behavior: smooth on DIV element
+PASS HTML element scroll-behavior should propagate to viewport
+PASS BODY element scroll-behavior should not propagate to viewport
+

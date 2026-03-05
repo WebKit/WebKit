@@ -90,7 +90,7 @@ std::optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vec
     if (!initPacket)
         return std::nullopt;
 
-    return FidoHidMessage(WTFMove(initPacket), remainingSize);
+    return FidoHidMessage(WTF::move(initPacket), remainingSize);
 }
 
 bool FidoHidMessage::messageComplete() const
@@ -134,7 +134,7 @@ bool FidoHidMessage::addContinuationPacket(const Vector<uint8_t>& buf)
         return false;
 
     m_remainingSize = remainingSize;
-    m_packets.append(WTFMove(contPacket));
+    m_packets.append(WTF::move(contPacket));
     return true;
 }
 
@@ -160,7 +160,7 @@ FidoHidMessage::FidoHidMessage(std::unique_ptr<FidoHidInitPacket> initPacket, si
 {
     m_channelId = initPacket->channelId();
     m_cmd = initPacket->command();
-    m_packets.append(WTFMove(initPacket));
+    m_packets.append(WTF::move(initPacket));
 }
 
 } // namespace fido

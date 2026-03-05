@@ -85,7 +85,7 @@ public:
     Profiler::Compilation* compilation() const { return m_compilation.get(); }
 
     Finalizer* finalizer() const { return m_finalizer.get(); }
-    void setFinalizer(std::unique_ptr<Finalizer>&& finalizer) { m_finalizer = WTFMove(finalizer); }
+    void setFinalizer(std::unique_ptr<Finalizer>&& finalizer) { m_finalizer = WTF::move(finalizer); }
 
     RefPtr<InlineCallFrameSet> inlineCallFrames() const { return m_inlineCallFrames; }
     DesiredWatchpoints& watchpoints() { return m_watchpoints; }
@@ -101,7 +101,7 @@ public:
     Vector<BytecodeIndex>& tierUpAndOSREnterBytecodes() { return m_tierUpAndOSREnterBytecodes; }
 
     DeferredCompilationCallback* callback() const { return m_callback.get(); }
-    void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTFMove(callback); }
+    void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTF::move(callback); }
 
     std::unique_ptr<JITData> tryFinalizeJITData(const DFG::JITCode&);
 

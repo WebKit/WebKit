@@ -44,10 +44,10 @@ Vector<Ref<SharedBuffer>> CDMPrivateFairPlayStreaming::keyIDsForRequest(AVConten
         return { SharedBuffer::create(identifierData.get()) };
     if (request.initializationData) {
         if (auto sinfKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(retainPtr(request.initializationData).get())))
-            return WTFMove(sinfKeyIDs.value());
+            return WTF::move(sinfKeyIDs.value());
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
         if (auto mptsKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsMpts(SharedBuffer::create(retainPtr(request.initializationData).get())))
-            return WTFMove(mptsKeyIDs.value());
+            return WTF::move(mptsKeyIDs.value());
 #endif
     }
     return { };

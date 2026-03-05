@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-#include "absl/memory/memory.h"
+#include "api/environment/environment.h"
 #include "api/transport/stun.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/byte_buffer.h"
@@ -22,6 +22,7 @@
 #include "rtc_base/test_client.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -33,28 +34,18 @@ const SocketAddress client_addr("1.2.3.4", 1234);
 
 class StunServerTest : public ::testing::Test {
  public:
-  StunServerTest() : ss_(new VirtualSocketServer()) {
-    ss_->SetMessageQueue(&main_thread);
-    server_.reset(
-        new StunServer(AsyncUDPSocket::Create(ss_.get(), server_addr)));
-    client_.reset(new TestClient(
-        absl::WrapUnique(AsyncUDPSocket::Create(ss_.get(), client_addr))));
-  }
-
   void Send(const StunMessage& msg) {
     ByteBufferWriter buf;
     msg.Write(&buf);
     Send(reinterpret_cast<const char*>(buf.Data()),
          static_cast<int>(buf.Length()));
   }
-  void Send(const char* buf, int len) {
-    client_->SendTo(buf, len, server_addr);
-  }
-  bool ReceiveFails() { return (client_->CheckNoPacket()); }
+  void Send(const char* buf, int len) { client_.SendTo(buf, len, server_addr); }
+  bool ReceiveFails() { return client_.CheckNoPacket(); }
   StunMessage* Receive() {
     StunMessage* msg = nullptr;
     std::unique_ptr<TestClient::Packet> packet =
-        client_->NextPacket(TestClient::kTimeoutMs);
+        client_.NextPacket(TestClient::kTimeoutMs);
     if (packet) {
       ByteBufferReader buf(packet->buf);
       msg = new StunMessage();
@@ -64,10 +55,11 @@ class StunServerTest : public ::testing::Test {
   }
 
  private:
-  AutoThread main_thread;
-  std::unique_ptr<VirtualSocketServer> ss_;
-  std::unique_ptr<StunServer> server_;
-  std::unique_ptr<TestClient> client_;
+  const Environment env_ = CreateTestEnvironment();
+  VirtualSocketServer ss_;
+  AutoSocketServerThread main_thread_{&ss_};
+  StunServer server_{AsyncUDPSocket::Create(env_, server_addr, ss_)};
+  TestClient client_{AsyncUDPSocket::Create(env_, client_addr, ss_)};
 };
 
 TEST_F(StunServerTest, TestGood) {

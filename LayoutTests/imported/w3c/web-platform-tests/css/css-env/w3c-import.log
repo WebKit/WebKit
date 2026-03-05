@@ -15,9 +15,11 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-env/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-env/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-env/at-supports.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-env/env-in-custom-properties.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-env/env-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-env/env-revert-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-env/fallback-nested-var.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-env/indexed-env.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-env/seralization-round-tripping.tentative.html

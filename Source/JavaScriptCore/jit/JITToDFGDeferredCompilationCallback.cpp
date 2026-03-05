@@ -58,10 +58,12 @@ void JITToDFGDeferredCompilationCallback::compilationDidComplete(
     ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
     
     dataLogLnIf(Options::verboseOSR(), "Optimizing compilation of ", *codeBlock, " result: ", result);
-    
-    if (result == CompilationResult::CompilationSuccessful)
+
+    if (result == CompilationResult::CompilationSuccessful) {
         codeBlock->ownerExecutable()->installCode(codeBlock);
-    
+        codeBlock->didInstallDFGCode();
+    }
+
     codeBlock->alternative()->setOptimizationThresholdBasedOnCompilationResult(result);
 
     DeferredCompilationCallback::compilationDidComplete(codeBlock, profiledDFGCodeBlock, result);

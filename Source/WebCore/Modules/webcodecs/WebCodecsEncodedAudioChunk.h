@@ -38,8 +38,8 @@ template<typename> class ExceptionOr;
 
 class WebCodecsEncodedAudioChunkStorage : public ThreadSafeRefCounted<WebCodecsEncodedAudioChunkStorage> {
 public:
-    static Ref<WebCodecsEncodedAudioChunkStorage> create(WebCodecsEncodedAudioChunkType type, int64_t timestamp, std::optional<uint64_t> duration, Vector<uint8_t>&& buffer) { return create(WebCodecsEncodedAudioChunkData { type, timestamp, duration, WTFMove(buffer) }); }
-    static Ref<WebCodecsEncodedAudioChunkStorage> create(WebCodecsEncodedAudioChunkData&& data) { return adoptRef(* new WebCodecsEncodedAudioChunkStorage(WTFMove(data))); }
+    static Ref<WebCodecsEncodedAudioChunkStorage> create(WebCodecsEncodedAudioChunkType type, int64_t timestamp, std::optional<uint64_t> duration, Vector<uint8_t>&& buffer) { return create(WebCodecsEncodedAudioChunkData { type, timestamp, duration, WTF::move(buffer) }); }
+    static Ref<WebCodecsEncodedAudioChunkStorage> create(WebCodecsEncodedAudioChunkData&& data) { return adoptRef(* new WebCodecsEncodedAudioChunkStorage(WTF::move(data))); }
 
     const WebCodecsEncodedAudioChunkData& data() const LIFETIME_BOUND { return m_data; }
     uint64_t memoryCost() const { return m_data.buffer.size(); }
@@ -54,13 +54,13 @@ class WebCodecsEncodedAudioChunk : public RefCounted<WebCodecsEncodedAudioChunk>
 public:
     struct Init {
         WebCodecsEncodedAudioChunkType type { WebCodecsEncodedAudioChunkType::Key };
-        int64_t timestamp { 0 };
+        std::optional<int64_t> timestamp { 0 };
         std::optional<uint64_t> duration;
         BufferSource data;
     };
 
-    static Ref<WebCodecsEncodedAudioChunk> create(Init&& init) { return adoptRef(*new WebCodecsEncodedAudioChunk(WTFMove(init))); }
-    static Ref<WebCodecsEncodedAudioChunk> create(Ref<WebCodecsEncodedAudioChunkStorage>&& storage) { return adoptRef(*new WebCodecsEncodedAudioChunk(WTFMove(storage))); }
+    static Ref<WebCodecsEncodedAudioChunk> create(Init&& init) { return adoptRef(*new WebCodecsEncodedAudioChunk(WTF::move(init))); }
+    static Ref<WebCodecsEncodedAudioChunk> create(Ref<WebCodecsEncodedAudioChunkStorage>&& storage) { return adoptRef(*new WebCodecsEncodedAudioChunk(WTF::move(storage))); }
 
     WebCodecsEncodedAudioChunkType type() const { return m_storage->data().type; };
     int64_t timestamp() const { return m_storage->data().timestamp; }
@@ -80,12 +80,12 @@ private:
 };
 
 inline WebCodecsEncodedAudioChunkStorage::WebCodecsEncodedAudioChunkStorage(WebCodecsEncodedAudioChunkData&& data)
-    : m_data { WTFMove(data) }
+    : m_data { WTF::move(data) }
 {
 }
 
 inline WebCodecsEncodedAudioChunk::WebCodecsEncodedAudioChunk(Ref<WebCodecsEncodedAudioChunkStorage>&& storage)
-    : m_storage(WTFMove(storage))
+    : m_storage(WTF::move(storage))
 {
 }
 

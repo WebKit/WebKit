@@ -31,17 +31,16 @@
 #include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyGCObjectBase.h"
 #include <wtf/Ref.h>
-#include <wtf/TrailingArray.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
 class JSWebAssemblyInstance;
 
-class alignas(sizeof(uint64_t)) JSWebAssemblyStruct final : public WebAssemblyGCObjectBase, private TrailingArray<JSWebAssemblyStruct, uint8_t> {
+class alignas(sizeof(uint64_t)) JSWebAssemblyStruct final : public WebAssemblyGCObjectBase {
 public:
     using Base = WebAssemblyGCObjectBase;
-    using TrailingArrayType = TrailingArray<JSWebAssemblyStruct, uint8_t>;
-    friend TrailingArrayType;
     static_assert(StructureFlags == WebAssemblyGCObjectBase::StructureFlags, "WebAssemblyGCObjectBase must have the same StructureFlags as us");
 
     template<typename CellType, SubspaceAccess mode>
@@ -67,16 +66,26 @@ public:
     const Wasm::StructType& structType() const { return *typeDefinition().as<Wasm::StructType>(); }
     Wasm::FieldType fieldType(uint32_t fieldIndex) const { return structType().field(fieldIndex); }
 
-    uint8_t* fieldPointer(uint32_t fieldIndex) { return &at(structType().offsetOfFieldInPayload(fieldIndex)); }
+    uint8_t* fieldPointer(uint32_t fieldIndex) { return payload() + structType().offsetOfFieldInPayload(fieldIndex); }
     const uint8_t* fieldPointer(uint32_t fieldIndex) const { return const_cast<JSWebAssemblyStruct*>(this)->fieldPointer(fieldIndex); }
 
-    using TrailingArrayType::offsetOfData;
-    using TrailingArrayType::offsetOfSize;
-    using TrailingArrayType::allocationSize;
+    static constexpr ptrdiff_t offsetOfData()
+    {
+        return WTF::roundUpToMultipleOf<alignof(uint64_t)>(sizeof(JSWebAssemblyStruct));
+    }
+
+    static constexpr size_t allocationSize(unsigned payloadSize)
+    {
+        return offsetOfData() + payloadSize;
+    }
 
 protected:
-    JSWebAssemblyStruct(VM&, WebAssemblyGCStructure*);
+    JSWebAssemblyStruct(VM&, WebAssemblyGCStructure*, unsigned payloadSize);
     DECLARE_DEFAULT_FINISH_CREATION;
+
+private:
+    uint8_t* payload() { return std::bit_cast<uint8_t*>(this) + offsetOfData(); }
+    const uint8_t* payload() const { return std::bit_cast<const uint8_t*>(this) + offsetOfData(); }
 };
 
 
@@ -85,13 +94,16 @@ TypeInfoBlob JSWebAssemblyStruct::typeInfoBlob()
     return TypeInfoBlob(0, TypeInfo(WebAssemblyGCObjectType, StructureFlags));
 }
 
-WebAssemblyGCStructure* JSWebAssemblyStruct::createStructure(VM& vm, JSGlobalObject* globalObject, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
+WebAssemblyGCStructure* JSWebAssemblyStruct::createStructure(VM& vm, JSGlobalObject* globalObject, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::RTT>&& rtt)
 {
-    RELEASE_ASSERT(rtt->kind() == Wasm::RTTKind::Struct);
+    Ref<const Wasm::TypeDefinition> type { unexpandedType->expand() };
     RELEASE_ASSERT(type->is<Wasm::StructType>());
-    return WebAssemblyGCStructure::create(vm, globalObject, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info(), WTFMove(type), WTFMove(rtt));
+    RELEASE_ASSERT(rtt->kind() == Wasm::RTTKind::Struct);
+    return WebAssemblyGCStructure::create(vm, globalObject, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info(), WTF::move(unexpandedType), WTF::move(type), WTF::move(rtt));
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

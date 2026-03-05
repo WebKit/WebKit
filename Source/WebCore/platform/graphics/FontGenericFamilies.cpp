@@ -83,14 +83,14 @@ FontGenericFamilies FontGenericFamilies::isolatedCopy() const &
 FontGenericFamilies FontGenericFamilies::isolatedCopy() &&
 {
     FontGenericFamilies copy;
-    copy.m_standardFontFamilyMap = crossThreadCopy(WTFMove(m_standardFontFamilyMap));
-    copy.m_serifFontFamilyMap = crossThreadCopy(WTFMove(m_serifFontFamilyMap));
-    copy.m_fixedFontFamilyMap = crossThreadCopy(WTFMove(m_fixedFontFamilyMap));
-    copy.m_sansSerifFontFamilyMap = crossThreadCopy(WTFMove(m_sansSerifFontFamilyMap));
-    copy.m_cursiveFontFamilyMap = crossThreadCopy(WTFMove(m_cursiveFontFamilyMap));
-    copy.m_fantasyFontFamilyMap = crossThreadCopy(WTFMove(m_fantasyFontFamilyMap));
-    copy.m_pictographFontFamilyMap = crossThreadCopy(WTFMove(m_pictographFontFamilyMap));
-    copy.m_mathFontFamilyMap = crossThreadCopy(WTFMove(m_mathFontFamilyMap));
+    copy.m_standardFontFamilyMap = crossThreadCopy(WTF::move(m_standardFontFamilyMap));
+    copy.m_serifFontFamilyMap = crossThreadCopy(WTF::move(m_serifFontFamilyMap));
+    copy.m_fixedFontFamilyMap = crossThreadCopy(WTF::move(m_fixedFontFamilyMap));
+    copy.m_sansSerifFontFamilyMap = crossThreadCopy(WTF::move(m_sansSerifFontFamilyMap));
+    copy.m_cursiveFontFamilyMap = crossThreadCopy(WTF::move(m_cursiveFontFamilyMap));
+    copy.m_fantasyFontFamilyMap = crossThreadCopy(WTF::move(m_fantasyFontFamilyMap));
+    copy.m_pictographFontFamilyMap = crossThreadCopy(WTF::move(m_pictographFontFamilyMap));
+    copy.m_mathFontFamilyMap = crossThreadCopy(WTF::move(m_mathFontFamilyMap));
     return copy;
 }
 

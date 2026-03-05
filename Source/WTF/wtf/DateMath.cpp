@@ -73,6 +73,7 @@
 #include <wtf/DateMath.h>
 
 #include <algorithm>
+#include <charconv>
 #include <limits>
 #include <stdint.h>
 #include <time.h>
@@ -95,7 +96,7 @@
 namespace WTF {
 
 static Lock innerTimeZoneOverrideLock;
-static Vector<char16_t>& innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
+static Vector<char16_t>& NODELETE innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
 {
     static NeverDestroyed<Vector<char16_t>> timeZoneOverride;
     return timeZoneOverride;
@@ -147,7 +148,7 @@ static inline double msToMilliseconds(double ms)
 
 // There is a hard limit at 2038 that we currently do not have a workaround
 // for (rdar://problem/5052975).
-static inline int maximumYearForDST()
+static inline int NODELETE maximumYearForDST()
 {
     return 2037;
 }
@@ -371,10 +372,11 @@ static inline double ymdhmsToMilliseconds(int year, long mon, long day, long hou
 
 // We follow the recommendation of RFC 2822 to consider all
 // obsolete time zones not listed here equivalent to "-0000".
-static constexpr struct KnownZone {
+struct KnownZone {
     ASCIILiteral tzName;
     int tzOffset;
-} knownZones[] = {
+};
+static constexpr auto knownZones = std::to_array<KnownZone>({
     { "ut"_s, 0 },
     { "gmt"_s, 0 },
     { "est"_s, -300 },
@@ -385,9 +387,9 @@ static constexpr struct KnownZone {
     { "mdt"_s, -360 },
     { "pst"_s, -480 },
     { "pdt"_s, -420 }
-};
+});
 
-inline static void skipSpacesAndComments(std::span<const Latin1Character>& s)
+inline static void NODELETE skipSpacesAndComments(std::span<const Latin1Character>& s)
 {
     int nesting = 0;
     while (!s.empty()) {
@@ -421,31 +423,35 @@ static int findMonth(std::span<const Latin1Character> monthStr)
     return -1;
 }
 
+template<typename T, typename ValidateLongLambda>
+static bool safeStringToInteger(std::span<const Latin1Character>& string, int base, const ValidateLongLambda& validateResult, T* result)
+{
+    auto charSpan = byteCast<char>(string);
+    // strtol() skips leading whitespace ('\t', '\n', '\v', '\f', '\r', ' ') while std::from_chars() does not.
+    skipWhile<isUnicodeCompatibleASCIIWhitespace>(charSpan);
+    // strtol() skips leading '+' sign.
+    skipExactly(charSpan, '+');
+    long value;
+    auto [ptr, ec] = std::from_chars(std::to_address(charSpan.begin()), std::to_address(charSpan.end()), value, base);
+    if (ec != std::errc { } || !validateResult(value))
+        return false;
+    string = byteCast<Latin1Character>(charSpan.subspan(ptr - std::to_address(charSpan.begin())));
+    *result = static_cast<T>(value);
+    return true;
+}
+
 static bool parseInt(std::span<const Latin1Character>& string, int base, int* result)
 {
-    char* stopPosition;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    long longResult = strtol(byteCast<char>(string.data()), &stopPosition, base);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    // Avoid the use of errno as it is not available on Windows CE
-    if (byteCast<char>(string.data()) == stopPosition || longResult <= std::numeric_limits<int>::min() || longResult >= std::numeric_limits<int>::max())
-        return false;
-    skip(string, stopPosition - byteCast<char>(string.data()));
-    *result = longResult;
-    return true;
+    return safeStringToInteger(string, base, [](long value) {
+        return value > std::numeric_limits<int>::min() && value < std::numeric_limits<int>::max();
+    }, result);
 }
 
 static bool parseLong(std::span<const Latin1Character>& string, int base, long* result)
 {
-    char* stopPosition;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    *result = strtol(byteCast<char>(string.data()), &stopPosition, base);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    // Avoid the use of errno as it is not available on Windows CE
-    if (byteCast<char>(string.data()) == stopPosition || *result == std::numeric_limits<long>::min() || *result == std::numeric_limits<long>::max())
-        return false;
-    skip(string, stopPosition - byteCast<char>(string.data()));
-    return true;
+    return safeStringToInteger(string, base, [](long value) {
+        return value != std::numeric_limits<long>::min() && value != std::numeric_limits<long>::max();
+    }, result);
 }
 
 // Parses a date with the format YYYY[-MM[-DD]].
@@ -1039,7 +1045,7 @@ bool setTimeZoneOverride(StringView timeZone)
 
     {
         Locker locker { innerTimeZoneOverrideLock };
-        innerTimeZoneOverride() = WTFMove(*canonicalBuffer);
+        innerTimeZoneOverride() = WTF::move(*canonicalBuffer);
     }
     return true;
 }

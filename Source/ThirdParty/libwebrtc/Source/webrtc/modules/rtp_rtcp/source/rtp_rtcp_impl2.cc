@@ -12,12 +12,12 @@
 
 #include <cstdint>
 #include <cstring>
-#include <functional>
 #include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/environment/environment.h"
@@ -57,15 +57,6 @@ namespace webrtc {
 namespace {
 constexpr TimeDelta kDefaultExpectedRetransmissionTime = TimeDelta::Millis(125);
 constexpr TimeDelta kRttUpdateInterval = TimeDelta::Millis(1000);
-
-RTCPSender::Configuration AddRtcpSendEvaluationCallback(
-    RTCPSender::Configuration config,
-    std::function<void(TimeDelta)> send_evaluation_callback) {
-  config.schedule_next_rtcp_send_evaluation_function =
-      std::move(send_evaluation_callback);
-  return config;
-}
-
 }  // namespace
 
 ModuleRtpRtcpImpl2::RtpSenderContext::RtpSenderContext(
@@ -89,13 +80,25 @@ ModuleRtpRtcpImpl2::ModuleRtpRtcpImpl2(const Environment& env,
                                        const Configuration& configuration)
     : env_(env),
       worker_queue_(TaskQueueBase::Current()),
-      rtcp_sender_(env_,
-                   AddRtcpSendEvaluationCallback(
-                       RTCPSender::Configuration::FromRtpRtcpConfiguration(
-                           configuration),
-                       [this](TimeDelta duration) {
-                         ScheduleRtcpSendEvaluation(duration);
-                       })),
+      rtcp_sender_(
+          env_,
+          {.audio = configuration.audio,
+           .local_media_ssrc = configuration.local_media_ssrc,
+           .outgoing_transport = configuration.outgoing_transport,
+           .non_sender_rtt_measurement =
+               configuration.non_sender_rtt_measurement,
+           .schedule_next_rtcp_send_evaluation =
+               [this](TimeDelta duration) {
+                 ScheduleRtcpSendEvaluation(duration);
+               },
+           .rtcp_report_interval =
+               configuration.rtcp_report_interval_ms > 0
+                   ? TimeDelta::Millis(configuration.rtcp_report_interval_ms)
+                   : (configuration.audio ? TimeDelta::Seconds(5)
+                                          : TimeDelta::Seconds(1)),
+           .receive_statistics = configuration.receive_statistics,
+           .rtcp_packet_type_counter_observer =
+               configuration.rtcp_packet_type_counter_observer}),
       rtcp_receiver_(env_, configuration, this),
       packet_overhead_(28),  // IPV4 UDP.
       nack_last_time_sent_full_ms_(0),
@@ -541,9 +544,10 @@ ModuleRtpRtcpImpl2::GetNonSenderRttStats() const {
   RTCPReceiver::NonSenderRttStats non_sender_rtt_stats =
       rtcp_receiver_.GetNonSenderRTT();
   return {{
-      non_sender_rtt_stats.round_trip_time(),
-      non_sender_rtt_stats.total_round_trip_time(),
-      non_sender_rtt_stats.round_trip_time_measurements(),
+      .round_trip_time = non_sender_rtt_stats.round_trip_time(),
+      .total_round_trip_time = non_sender_rtt_stats.total_round_trip_time(),
+      .round_trip_time_measurements =
+          non_sender_rtt_stats.round_trip_time_measurements(),
   }};
 }
 

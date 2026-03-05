@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/Threading.h>
 
+#include <bmalloc/BPlatform.h>
 #include <cstring>
 #include <wtf/DateMath.h>
 #include <wtf/Gigacage.h>
@@ -51,8 +52,6 @@
 #include <wtf/darwin/LibraryPathDiagnostics.h>
 #endif
 
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/BPlatform.h>
 #if BENABLE(LIBPAS)
 #define USE_LIBPAS_THREAD_SUSPEND_LOCK 1
 #include <bmalloc/pas_thread_suspend_lock.h>
@@ -64,7 +63,6 @@
 #error USE(TZONE_MALLOC) requires BUSE(TZONE)
 #endif
 #endif // USE(TZONE_MALLOC)
-#endif // !USE(SYSTEM_MALLOC)
 
 namespace WTF {
 
@@ -103,7 +101,7 @@ ThreadSuspendLocker::~ThreadSuspendLocker()
 }
 #endif
 
-static std::optional<size_t> stackSize(ThreadType threadType)
+static std::optional<size_t> NODELETE stackSize(ThreadType threadType)
 {
     // Return the stack size for the created thread based on its type.
     // If the stack size is not specified, then use the system default. Platforms can tune the values here.
@@ -153,8 +151,8 @@ struct Thread::NewThreadContext : public ThreadSafeRefCounted<NewThreadContext> 
 public:
     NewThreadContext(ASCIILiteral name, Function<void()>&& entryPoint, Ref<Thread>&& thread)
         : name(name)
-        , entryPoint(WTFMove(entryPoint))
-        , thread(WTFMove(thread))
+        , entryPoint(WTF::move(entryPoint))
+        , thread(WTF::move(thread))
     {
     }
 
@@ -242,12 +240,12 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
 #endif
 
         Thread::initializeCurrentThreadInternal(context->name);
-        function = WTFMove(context->entryPoint);
+        function = WTF::move(context->entryPoint);
 
-        Ref thread = WTFMove(context->thread);
+        Ref thread = WTF::move(context->thread);
         thread->initializeInThread();
 
-        Thread::initializeTLS(WTFMove(thread));
+        Thread::initializeTLS(WTF::move(thread));
 
 #if !HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
         // Ack completion of initialization to the creating thread.
@@ -260,17 +258,22 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
     function();
 }
 
-Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos, SchedulingPolicy schedulingPolicy)
+Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos, SchedulingPolicy schedulingPolicy, StackAllocationSpecification stackSpec)
 {
     WTF::initialize();
 
     Ref thread = adoptRef(*new Thread(schedulingPolicy));
 
-    Ref context = adoptRef(*new NewThreadContext { name, WTFMove(entryPoint), thread.get() });
+    Ref context = adoptRef(*new NewThreadContext { name, WTF::move(entryPoint), thread.get() });
     {
         MutexLocker locker(context->mutex);
         context->ref(); // Adopted by Thread::entryPoint
-        bool success = thread->establishHandle(context.get(), stackSize(threadType), qos, schedulingPolicy);
+        if (stackSpec.kind() == StackAllocationSpecification::Kind::Default) {
+            auto maybeSize = stackSize(threadType);
+            if (maybeSize)
+                stackSpec = StackAllocationSpecification::RequestSize(maybeSize.value());
+        }
+        bool success = thread->establishHandle(context.get(), stackSpec, qos, schedulingPolicy);
         RELEASE_ASSERT(success);
 
 #if HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
@@ -292,7 +295,7 @@ Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, Thr
     return thread;
 }
 
-static bool shouldRemoveThreadFromThreadGroup()
+static bool NODELETE shouldRemoveThreadFromThreadGroup()
 {
 #if OS(WINDOWS)
     // On Windows the thread specific destructor is also called when the
@@ -405,7 +408,7 @@ void Thread::setCurrentThreadIsUserInitiated(int relativePriority)
 }
 
 #if HAVE(QOS_CLASSES)
-static Thread::QOS toQOS(qos_class_t qosClass)
+static Thread::QOS NODELETE toQOS(qos_class_t qosClass)
 {
     switch (qosClass) {
     case QOS_CLASS_USER_INTERACTIVE:

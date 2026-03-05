@@ -1427,7 +1427,7 @@ TEST(RSATest, Threads) {
 }
 
 // This test might be excessively slow on slower CPUs or platforms that do not
-// expect server workloads. It is disabled by default and reenabled on some
+// expect server workloads. It is disabled by default and re-enabled on some
 // platforms when running tests standalone via all_tests.go.
 //
 // Additionally, even when running disabled tests standalone, limit this to

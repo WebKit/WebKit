@@ -32,6 +32,10 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
+#if HAVE(DLADDR)
+#include <cxxabi.h>
+#endif
+
 #if USE(LIBBACKTRACE)
 #include <string.h>
 #include <wtf/NeverDestroyed.h>

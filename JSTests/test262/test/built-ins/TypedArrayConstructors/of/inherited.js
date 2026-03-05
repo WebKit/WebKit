@@ -22,4 +22,4 @@ testWithTypedArrayConstructors(function(TA) {
     TA.hasOwnProperty("of"), false,
     "constructor does not define an own property named 'of'"
   );
-});
+}, null, ["passthrough"]);

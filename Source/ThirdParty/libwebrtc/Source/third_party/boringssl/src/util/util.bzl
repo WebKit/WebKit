@@ -28,6 +28,7 @@ gcc_copts = [
     "-Wwrite-strings",
     "-Wshadow",
     "-fno-common",
+    "-fno-strict-aliasing",
 ]
 
 gcc_copts_cxx = [

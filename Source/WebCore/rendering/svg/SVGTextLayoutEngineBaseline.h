@@ -20,7 +20,6 @@
 #pragma once
 
 #include "FontCascade.h"
-#include "SVGRenderStyleDefs.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -29,6 +28,8 @@ class RenderElement;
 class RenderSVGInlineText;
 class RenderStyle;
 class SVGTextMetrics;
+
+enum class AlignmentBaseline : uint8_t;
 
 // Helper class used by SVGTextLayoutEngine to handle 'alignment-baseline' / 'dominant-baseline' and 'baseline-shift'.
 class SVGTextLayoutEngineBaseline {
@@ -39,10 +40,10 @@ public:
     float calculateBaselineShift(const RenderStyle&) const;
     float calculateAlignmentBaselineShift(bool isVerticalText, const RenderSVGInlineText& textRenderer) const;
     float calculateGlyphOrientationAngle(bool isVerticalText, const RenderStyle&, const char16_t& character) const;
-    float calculateGlyphAdvanceAndOrientation(bool isVerticalText, SVGTextMetrics&, float angle, float& xOrientationShift, float& yOrientationShift) const;
+    float calculateGlyphAdvanceAndOrientation(bool isVerticalText, const SVGTextMetrics&, float angle, float& xOrientationShift, float& yOrientationShift) const;
 
 private:
-    AlignmentBaseline dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderElement& textRenderer) const;
+    AlignmentBaseline NODELETE dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderElement& textRenderer) const;
 
     CheckedRef<const FontCascade> m_font;
 };

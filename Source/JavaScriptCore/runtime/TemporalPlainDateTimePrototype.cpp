@@ -191,7 +191,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncAdd, (JSGlobalObject*
     ISO8601::PlainDate plainDate = TemporalCalendar::isoDateAdd(globalObject, plainDateTime->plainDate(), dateDuration, overflow);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTF::move(plainDate), WTF::move(plainTime))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.subtract
@@ -223,7 +223,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncSubtract, (JSGlobalOb
     ISO8601::PlainDate plainDate = TemporalCalendar::isoDateAdd(globalObject, plainDateTime->plainDate(), dateDuration, overflow);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTF::move(plainDate), WTF::move(plainTime))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.with
@@ -256,7 +256,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWithPlainTime, (JSGlo
     TemporalPlainTime* plainTime = nullptr;
     JSValue plainTimeLike = callFrame->argument(0);
     if (!plainTimeLike.isUndefined()) {
-        plainTime = TemporalPlainTime::from(globalObject, plainTimeLike, std::nullopt);
+        plainTime = TemporalPlainTime::from(globalObject, plainTimeLike, nullptr);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
@@ -290,7 +290,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncEquals, (JSGlobalObje
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.equals called on value that's not a PlainDateTime"_s);
 
-    auto* other = TemporalPlainDateTime::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* other = TemporalPlainDateTime::from(globalObject, callFrame->argument(0), nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (plainDateTime->plainDate() != other->plainDate() || plainDateTime->plainTime() != other->plainTime())

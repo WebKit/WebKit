@@ -100,7 +100,7 @@ TEST(WTF_Ref, Assignment)
 
 static Ref<RefLogger> passWithRef(Ref<RefLogger>&& reference)
 {
-    return WTFMove(reference);
+    return WTF::move(reference);
 }
 
 TEST(WTF_Ref, ReturnValue)
@@ -133,7 +133,7 @@ TEST(WTF_Ref, ReturnValue)
 
     {
         RefPtr<DerivedRefLogger> ptr(&a);
-        RefPtr<RefLogger> ptr2(WTFMove(ptr));
+        RefPtr<RefLogger> ptr2(WTF::move(ptr));
         EXPECT_EQ(nullptr, ptr.get());
         EXPECT_EQ(&a, ptr2.get());
     }
@@ -289,7 +289,7 @@ TEST(WTF_Ref, StaticReferenceCastFromRValueReference)
     {
         DerivedRefCheckingRefLogger a("a");
         Ref<DerivedRefCheckingRefLogger> ref(a);
-        auto ref2 = upcast<RefCheckingRefLogger>(WTFMove(ref));
+        auto ref2 = upcast<RefCheckingRefLogger>(WTF::move(ref));
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }

@@ -272,7 +272,7 @@ const struct wl_registry_listener registryListener = {
         else if (interfaceName == "wl_output"_s) {
             GRefPtr<WPEScreen> screen = adoptGRef(wpeScreenWaylandCreate(name, static_cast<struct wl_output*>(wl_registry_bind(registry, name, &wl_output_interface, std::min<uint32_t>(version, 2)))));
             auto* screenPtr = screen.get();
-            priv->screens.append(WTFMove(screen));
+            priv->screens.append(WTF::move(screen));
             wpe_display_screen_added(WPE_DISPLAY(display), screenPtr);
         } else if (interfaceName == "wl_shm"_s)
             priv->wlSHM = static_cast<struct wl_shm*>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
@@ -496,14 +496,12 @@ static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
 
 static WPEView* wpeDisplayWaylandCreateView(WPEDisplay* display)
 {
-    auto* view = WPE_VIEW(g_object_new(WPE_TYPE_VIEW_WAYLAND, "display", display, nullptr));
+    return WPE_VIEW(g_object_new(WPE_TYPE_VIEW_WAYLAND, "display", display, nullptr));
+}
 
-    if (wpe_settings_get_boolean(wpe_display_get_settings(display), WPE_SETTING_CREATE_VIEWS_WITH_A_TOPLEVEL, nullptr)) {
-        GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_wayland_new(WPE_DISPLAY_WAYLAND(display), 1));
-        wpe_view_set_toplevel(view, toplevel.get());
-    }
-
-    return view;
+static WPEToplevel* wpeDisplayWaylandCreateToplevel(WPEDisplay* display, guint maxViews)
+{
+    return WPE_TOPLEVEL(g_object_new(WPE_TYPE_TOPLEVEL_WAYLAND, "display", display, "max-views", maxViews, nullptr));
 }
 
 static WPEInputMethodContext* wpeDisplayWaylandCreateInputMethodContext(WPEDisplay* display, WPEView* view)
@@ -547,18 +545,18 @@ static WPEClipboard* wpeDisplayWaylandGetClipboard(WPEDisplay* display)
     return priv->clipboard.get();
 }
 
-static WPEBufferDMABufFormats* wpeDisplayWaylandGetPreferredDMABufFormats(WPEDisplay* display)
+static WPEBufferFormats* wpeDisplayWaylandGetPreferredBufferFormats(WPEDisplay* display)
 {
     auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
     if (!priv->linuxDMABuf)
         return nullptr;
 
-    auto* builder = wpe_buffer_dma_buf_formats_builder_new(priv->drmDevice.get());
-    wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING);
+    auto* builder = wpe_buffer_formats_builder_new(priv->drmDevice.get());
+    wpe_buffer_formats_builder_append_group(builder, nullptr, WPE_BUFFER_FORMAT_USAGE_RENDERING);
     for (const auto& format : priv->linuxDMABufFormats)
-        wpe_buffer_dma_buf_formats_builder_append_format(builder, format.first, format.second);
+        wpe_buffer_formats_builder_append_format(builder, format.first, format.second);
 
-    return wpe_buffer_dma_buf_formats_builder_end(builder);
+    return wpe_buffer_formats_builder_end(builder);
 }
 
 static guint wpeDisplayWaylandGetNScreens(WPEDisplay* display)
@@ -667,11 +665,12 @@ static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylan
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayWaylandClass);
     displayClass->connect = wpeDisplayWaylandConnect;
     displayClass->create_view = wpeDisplayWaylandCreateView;
+    displayClass->create_toplevel = wpeDisplayWaylandCreateToplevel;
     displayClass->create_input_method_context = wpeDisplayWaylandCreateInputMethodContext;
     displayClass->get_egl_display = wpeDisplayWaylandGetEGLDisplay;
     displayClass->get_keymap = wpeDisplayWaylandGetKeymap;
     displayClass->get_clipboard = wpeDisplayWaylandGetClipboard;
-    displayClass->get_preferred_dma_buf_formats = wpeDisplayWaylandGetPreferredDMABufFormats;
+    displayClass->get_preferred_buffer_formats = wpeDisplayWaylandGetPreferredBufferFormats;
     displayClass->get_n_screens = wpeDisplayWaylandGetNScreens;
     displayClass->get_screen = wpeDisplayWaylandGetScreen;
     displayClass->get_drm_device = wpeDisplayWaylandGetDRMDevice;

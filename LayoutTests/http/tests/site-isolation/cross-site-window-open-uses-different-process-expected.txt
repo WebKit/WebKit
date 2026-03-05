@@ -1,0 +1,3 @@
+
+PASS Cross-site window.open uses a different process
+

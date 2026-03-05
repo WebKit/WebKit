@@ -98,7 +98,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::Bool unexpected type for key "_s, (String)optionKey);
             NSNumber *value = optionValue;
             CoreIPCSecTrustData::PolicyVariant v = static_cast<bool>([value boolValue]);
-            policyVector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::String: {
@@ -106,7 +106,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::String unexpected type for key "_s, (String)optionKey);
             NSString *value = optionValue;
             CoreIPCSecTrustData::PolicyVariant v = CoreIPCString(value);
-            policyVector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers: {
@@ -121,10 +121,10 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             vector.reserveCapacity(value.count);
             for (NSNumber *element in value) {
                 CoreIPCNumber n { element };
-                vector.append(WTFMove(n));
+                vector.append(WTF::move(n));
             }
-            CoreIPCSecTrustData::PolicyVariant v = WTFMove(vector);
-            policyVector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            CoreIPCSecTrustData::PolicyVariant v = WTF::move(vector);
+            policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings: {
@@ -139,10 +139,10 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             vector.reserveCapacity(value.count);
             for (NSString *element in value) {
                 CoreIPCString s { element };
-                vector.append(WTFMove(s));
+                vector.append(WTF::move(s));
             }
-            CoreIPCSecTrustData::PolicyVariant v = WTFMove(vector);
-            policyVector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            CoreIPCSecTrustData::PolicyVariant v = WTF::move(vector);
+            policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData: {
@@ -157,10 +157,10 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             vector.reserveCapacity(value.count);
             for (NSData *element in value) {
                 CoreIPCData d { element };
-                vector.append(WTFMove(d));
+                vector.append(WTF::move(d));
             }
-            CoreIPCSecTrustData::PolicyVariant v = WTFMove(vector);
-            policyVector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            CoreIPCSecTrustData::PolicyVariant v = WTF::move(vector);
+            policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber: {
@@ -186,18 +186,18 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                     if ([element isKindOfClass:NSNumber.class]) {
                         NSNumber *e = element;
                         Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCNumber(e);
-                        innerVector.append(WTFMove(v));
+                        innerVector.append(WTF::move(v));
                     } else if ([element isKindOfClass:NSDate.class]) {
                         NSDate *d = element;
                         Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCDate(d);
-                        innerVector.append(WTFMove(v));
+                        innerVector.append(WTF::move(v));
                     } else
                         return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array contents unexpected type for key "_s, (String)optionKey);
                 }
-                outerVector.append(WTFMove(innerVector));
+                outerVector.append(WTF::move(innerVector));
             }
-            CoreIPCSecTrustData::PolicyVariant v = WTFMove(outerVector);
-            policyVector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            CoreIPCSecTrustData::PolicyVariant v = WTF::move(outerVector);
+            policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber: {
@@ -214,10 +214,10 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
                     return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected dictionary value type for key "_s, (String)optionKey, " (expecting NSNumber)"_s);
                 CoreIPCString s { key };
                 CoreIPCNumber n { value };
-                vector.append(std::make_pair(WTFMove(s), WTFMove(n)));
+                vector.append(std::make_pair(WTF::move(s), WTF::move(n)));
             }
-            CoreIPCSecTrustData::PolicyVariant v = WTFMove(vector);
-            policyVector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+            CoreIPCSecTrustData::PolicyVariant v = WTF::move(vector);
+            policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         default:
@@ -246,9 +246,9 @@ static String optionalArrayOfDataHelper(std::optional<Vector<CoreIPCData>>& toSe
             if (![item isKindOfClass:NSData.class])
                 return makeString("optionalArrayOfDataHelper had invalid type in array"_s);
             CoreIPCData c { item };
-            vector.append(WTFMove(c));
+            vector.append(WTF::move(c));
         }
-        toSet = { WTFMove(vector) };
+        toSet = { WTF::move(vector) };
     }
     return { }; // no error
 }
@@ -270,7 +270,7 @@ CoreIPCSecTrust::CoreIPCSecTrust(SecTrustRef trust)
     RetainPtr<NSDate> verifyDate = [dict objectForKey:@"verifyDate"];
     if ([verifyDate isKindOfClass:NSDate.class]) {
         CoreIPCDate d { verifyDate.get() };
-        secTrustData.verifyDate = WTFMove(d);
+        secTrustData.verifyDate = WTF::move(d);
     }
 
     RetainPtr<NSNumber> result = [dict objectForKey:@"result"];
@@ -329,9 +329,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 return;
             }
             CoreIPCData c { item };
-            vector.append(WTFMove(c));
+            vector.append(WTF::move(c));
         }
-        secTrustData.certificates = WTFMove(vector);
+        secTrustData.certificates = WTF::move(vector);
     }
 
     RetainPtr<NSArray> chain = [dict objectForKey:@"chain"];
@@ -345,9 +345,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 return;
             }
             CoreIPCData c { item };
-            vector.append(WTFMove(c));
+            vector.append(WTF::move(c));
         }
-        secTrustData.chain = WTFMove(vector);
+        secTrustData.chain = WTF::move(vector);
     }
 
     RetainPtr<NSArray> details = [dict objectForKey:@"details"];
@@ -375,11 +375,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     return;
                 }
                 CoreIPCString k { key };
-                d.append(std::make_pair(WTFMove(k), [value boolValue]));
+                d.append(std::make_pair(WTF::move(k), [value boolValue]));
             }
-            vector.append(WTFMove(d));
+            vector.append(WTF::move(d));
         }
-        secTrustData.details = WTFMove(vector);
+        secTrustData.details = WTF::move(vector);
     }
 
     RetainPtr<NSDictionary> info = [dict objectForKey:@"info"];
@@ -396,29 +396,105 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             id value = [info objectForKey:key];
             if ([value isKindOfClass:NSDate.class]) {
                 CoreIPCDate date { value };
-                CoreIPCSecTrustData::InfoOption v = WTFMove(date);
-                vector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+                CoreIPCSecTrustData::InfoOption v = WTF::move(date);
+                vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             } else if ([value isKindOfClass:NSString.class]) {
                 CoreIPCString s { value };
-                CoreIPCSecTrustData::InfoOption v = WTFMove(s);
-                vector.append(std::make_pair(WTFMove(k), WTFMove(v)));
+                CoreIPCSecTrustData::InfoOption v = WTF::move(s);
+                vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             } else if ([value isKindOfClass:NSNumber.class]) {
                 NSNumber *candidateBool = value;
                 if ([candidateBool isEqualToNumber:@YES] || [candidateBool isEqualToNumber:@NO]) {
                     bool v = [candidateBool boolValue];
-                    vector.append(std::make_pair(WTFMove(k), v));
+                    vector.append(std::make_pair(WTF::move(k), v));
                 } else {
                     RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'info' dictionary value contains unexpected NSNumber value");
                     ASSERT_NOT_REACHED();
                     return;
                 }
+            } else if ([value isKindOfClass:NSArray.class]) {
+                NSArray *revocationInfoArray = value;
+                CoreIPCSecTrustData::RevocationInfoArray revocationInfo;
+                revocationInfo.reserveCapacity([revocationInfoArray count]);
+
+                for (NSDictionary *entry in revocationInfoArray) {
+                    if (![entry isKindOfClass:NSDictionary.class]) {
+                        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' array contains non-dictionary element");
+                        ASSERT_NOT_REACHED();
+                        return;
+                    }
+
+                    CoreIPCSecTrustData::RevocationInfoEntry revocationEntry;
+                    revocationEntry.reserveCapacity([entry count]);
+
+                    for (NSString *entryKey in entry) {
+                        if (![entryKey isKindOfClass:NSString.class]) {
+                            RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' entry key is not a string");
+                            ASSERT_NOT_REACHED();
+                            return;
+                        }
+
+                        NSDictionary *subDict = [entry objectForKey:entryKey];
+                        if (![subDict isKindOfClass:NSDictionary.class]) {
+                            RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' entry value is not a dictionary");
+                            ASSERT_NOT_REACHED();
+                            return;
+                        }
+
+                        CoreIPCSecTrustData::RevocationInfoSubDict revocationSubDict;
+                        revocationSubDict.reserveCapacity([subDict count]);
+
+                        for (NSString *subKey in subDict) {
+                            if (![subKey isKindOfClass:NSString.class]) {
+                                RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' sub-dictionary key is not a string");
+                                ASSERT_NOT_REACHED();
+                                return;
+                            }
+
+                            CoreIPCString subKeyString { subKey };
+                            id subValue = [subDict objectForKey:subKey];
+
+                            if ([subValue isKindOfClass:NSNumber.class]) {
+                                NSNumber *number = subValue;
+                                if ([number isEqualToNumber:@YES] || [number isEqualToNumber:@NO]) {
+                                    CoreIPCSecTrustData::RevocationInfoSubDictValue v = [number boolValue];
+                                    revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                                } else {
+                                    CoreIPCNumber n { number };
+                                    CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(n);
+                                    revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                                }
+                            } else if ([subValue isKindOfClass:NSData.class]) {
+                                CoreIPCData data { subValue };
+                                CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(data);
+                                revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                            } else if ([subValue isKindOfClass:NSDate.class]) {
+                                CoreIPCDate date { subValue };
+                                CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(date);
+                                revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                            } else {
+                                RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' sub-dictionary value has unexpected type");
+                                ASSERT_NOT_REACHED();
+                                return;
+                            }
+                        }
+
+                        CoreIPCString entryKeyString { entryKey };
+                        revocationEntry.append(std::make_pair(WTF::move(entryKeyString), WTF::move(revocationSubDict)));
+                    }
+
+                    revocationInfo.append(WTF::move(revocationEntry));
+                }
+
+                CoreIPCSecTrustData::InfoOption v = WTF::move(revocationInfo);
+                vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             } else {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'info' dictionary contains unexpected type");
                 ASSERT_NOT_REACHED();
                 return;
             }
         }
-        secTrustData.info = WTFMove(vector);
+        secTrustData.info = WTF::move(vector);
     }
 
     RetainPtr<NSNumber> keychainsAllowed = [dict objectForKey:@"keychainsAllowed"];
@@ -450,8 +526,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 if ([value isKindOfClass:NSString.class]) {
                     CoreIPCString k { key };
                     CoreIPCSecTrustData::PolicyValue v = CoreIPCString(value);
-                    auto p = std::make_pair(WTFMove(k), WTFMove(v));
-                    innerVector.append(WTFMove(p));
+                    auto p = std::make_pair(WTF::move(k), WTF::move(v));
+                    innerVector.append(WTF::move(p));
                 } else if ([value isKindOfClass:NSDictionary.class]) {
                     CoreIPCSecTrustData::PolicyOption policyVector;
                     String error = updatePolicyVector((NSDictionary *)value, policyVector);
@@ -461,18 +537,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                         return;
                     }
                     CoreIPCString k { key };
-                    CoreIPCSecTrustData::PolicyValue v = WTFMove(policyVector);
-                    auto p = std::make_pair(WTFMove(k), WTFMove(v));
-                    innerVector.append(WTFMove(p));
+                    CoreIPCSecTrustData::PolicyValue v = WTF::move(policyVector);
+                    auto p = std::make_pair(WTF::move(k), WTF::move(v));
+                    innerVector.append(WTF::move(p));
                 } else {
                     RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust policy value is unexpected type");
                     ASSERT_NOT_REACHED();
                     return;
                 }
             }
-            outerVector.append(WTFMove(innerVector));
+            outerVector.append(WTF::move(innerVector));
         }
-        secTrustData.policies = WTFMove(outerVector);
+        secTrustData.policies = WTF::move(outerVector);
     }
 
     String optionalDataError;
@@ -510,19 +586,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 id value = [exception objectForKey:key];
                 if ([value isKindOfClass:NSData.class]) {
                     CoreIPCData data { value };
-                    Variant<CoreIPCNumber, CoreIPCData, bool> v = WTFMove(data);
-                    auto p = std::make_pair(WTFMove(k), WTFMove(v));
-                    innerVector.append(WTFMove(p));
+                    Variant<CoreIPCNumber, CoreIPCData, bool> v = WTF::move(data);
+                    auto p = std::make_pair(WTF::move(k), WTF::move(v));
+                    innerVector.append(WTF::move(p));
                 } else if ([value isKindOfClass:NSNumber.class]) {
                     NSNumber *number = value;
                     if ([number isEqualToNumber:@YES] || [number isEqualToNumber:@NO]) {
                         bool v = [number boolValue];
-                        auto p = std::make_pair(WTFMove(k), v);
-                        innerVector.append(WTFMove(p));
+                        auto p = std::make_pair(WTF::move(k), v);
+                        innerVector.append(WTF::move(p));
                     } else {
                         CoreIPCNumber n { number };
-                        auto p = std::make_pair(WTFMove(k), n);
-                        innerVector.append(WTFMove(p));
+                        auto p = std::make_pair(WTF::move(k), n);
+                        innerVector.append(WTF::move(p));
                     }
                 } else {
                     RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'exceptions' dictionary contains unexpected type");
@@ -530,12 +606,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     return;
                 }
             }
-            vector.append(WTFMove(innerVector));
+            vector.append(WTF::move(innerVector));
         }
-        secTrustData.exceptions = { WTFMove(vector) };
+        secTrustData.exceptions = { WTF::move(vector) };
     }
 
-    m_data = WTFMove(secTrustData);
+    m_data = WTF::move(secTrustData);
 }
 
 static RetainPtr<NSDictionary> createPolicyDictionary(const CoreIPCSecTrustData::PolicyOption& options)
@@ -749,6 +825,36 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 },
                 [&] (const CoreIPCString& s) {
                     value = s.toID();
+                },
+                [&] (const CoreIPCSecTrustData::RevocationInfoArray& revocationInfoArray) {
+                    RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:revocationInfoArray.size()]);
+                    for (const auto& revocationEntry : revocationInfoArray) {
+                        RetainPtr entryDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:revocationEntry.size()]);
+                        for (const auto& entryPair : revocationEntry) {
+                            RetainPtr subDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:entryPair.second.size()]);
+                            for (const auto& subPair : entryPair.second) {
+                                RetainPtr<id> subValue;
+                                WTF::switchOn(subPair.second,
+                                    [&] (const bool& b) {
+                                        subValue = @(b);
+                                    },
+                                    [&] (const CoreIPCNumber& n) {
+                                        subValue = n.toID();
+                                    },
+                                    [&] (const CoreIPCData& d) {
+                                        subValue = d.toID();
+                                    },
+                                    [&] (const CoreIPCDate& d) {
+                                        subValue = d.toID();
+                                    }
+                                );
+                                [subDict setObject:subValue.get() forKey:subPair.first.toID().get()];
+                            }
+                            [entryDict setObject:subDict.get() forKey:entryPair.first.toID().get()];
+                        }
+                        [array addObject:entryDict.get()];
+                    }
+                    value = array;
                 }
             );
             [info setObject:value.get() forKey:key.get()];

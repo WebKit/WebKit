@@ -25,15 +25,23 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(COCOA)
 
 #include <CoreAudio/CoreAudioTypes.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://167375656) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #include <CoreAudio/AudioHardwarePriv.h>
 #else
+
+enum {
+    kAudioHardwarePropertyProcessIsRunning = 'prun'
+};
 
 #if PLATFORM(MAC)
 #include <CoreAudio/AudioHardware.h>

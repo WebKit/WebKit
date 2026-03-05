@@ -155,11 +155,10 @@ void DispatchComputePerfBenchmark::drawBenchmark()
     ASSERT_GL_NO_ERROR();
 }
 
-DispatchComputePerfParams DispatchComputePerfOpenGLOrGLESParams(bool useNullDevice)
+DispatchComputePerfParams DispatchComputePerfOpenGLOrGLESParams()
 {
     DispatchComputePerfParams params;
-    params.eglParameters = useNullDevice ? angle::egl_platform::OPENGL_OR_GLES_NULL()
-                                         : angle::egl_platform::OPENGL_OR_GLES();
+    params.eglParameters = angle::egl_platform::OPENGL_OR_GLES();
     return params;
 }
 
@@ -169,8 +168,6 @@ TEST_P(DispatchComputePerfBenchmark, Run)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DispatchComputePerfBenchmark);
-ANGLE_INSTANTIATE_TEST(DispatchComputePerfBenchmark,
-                       DispatchComputePerfOpenGLOrGLESParams(true),
-                       DispatchComputePerfOpenGLOrGLESParams(false));
+ANGLE_INSTANTIATE_TEST(DispatchComputePerfBenchmark, DispatchComputePerfOpenGLOrGLESParams());
 
 }  // namespace

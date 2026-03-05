@@ -38,15 +38,16 @@ struct PropertyParserState;
 
 namespace CSSPropertyParserHelpers {
 
-enum class PathParsingOption : uint8_t {
-    None = 0,
-    RejectPathFillRule = 1 << 0,
-    RejectPath = 1 << 1,
+enum class BasicShapeParsingOptions : uint8_t {
+    None                       = 0,
+    RejectPathFunctionFillRule = 1 << 0,
+    RejectPathFunction         = 1 << 1,
+    RejectShapeFunction        = 1 << 2,
 };
 
 // <basic-shape> = <circle()> | <ellipse() | <inset()> | <path()> | <polygon()> | <rect()> | <shape()> | <xywh()>
 // https://drafts.csswg.org/css-shapes/#typedef-basic-shape
-RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange&, CSS::PropertyParserState&, OptionSet<PathParsingOption>);
+RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange&, CSS::PropertyParserState&, OptionSet<BasicShapeParsingOptions>);
 
 // <path()> = path( <'fill-rule'>? , <string> )
 // https://drafts.csswg.org/css-shapes/#funcdef-basic-shape-path

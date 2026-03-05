@@ -39,23 +39,31 @@ import AVKit_SPI
 import LinearMediaKit
 #endif
 
-private extension Logger {
-    static let linearMediaPlayer = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
+extension Logger {
+    fileprivate static let linearMediaPlayer = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
 }
 
 private class SwiftOnlyData: NSObject {
-    @Published var renderingConfiguration: RenderingConfiguration?
-    @Published var thumbnailMaterial: VideoMaterial?
-    @Published var videoMaterial: VideoMaterial?
-    @Published var peculiarEntity: PeculiarEntity?
+    @Published
+    var renderingConfiguration: RenderingConfiguration?
+    @Published
+    var thumbnailMaterial: VideoMaterial?
+    @Published
+    var videoMaterial: VideoMaterial?
+    @Published
+    var peculiarEntity: PeculiarEntity?
 
     // FIXME: It should be possible to store these directly on WKSLinearMediaPlayer since they are
     // bridged to NSDate, but a bug prevents that from compiling (rdar://121877511).
-    @Published var startDate: Date?
-    @Published var endDate: Date?
+    @Published
+    var startDate: Date?
+    @Published
+    var endDate: Date?
 
-    @Published var presentationMode: PresentationMode = .inline
-    @Published var presentationState: WKSLinearMediaPresentationState = .inline
+    @Published
+    var presentationMode: PresentationMode = .inline
+    @Published
+    var presentationState: WKSLinearMediaPresentationState = .inline
 
     // FIXME: Publish fullscreenSceneBehaviors once rdar://122435030 is resolved
     var fullscreenBehaviorsSubject = CurrentValueSubject<[FullscreenBehaviors], Never>(FullscreenBehaviors.default)
@@ -75,7 +83,9 @@ enum LinearMediaPlayerErrors: Error {
     case invalidStateError
 }
 
-@objc @implementation extension WKSLinearMediaPlayer {
+@objc
+@implementation
+extension WKSLinearMediaPlayer {
     weak var delegate: WKSLinearMediaPlayerDelegate?
 
     var selectedPlaybackRate = 1.0
@@ -146,7 +156,7 @@ enum LinearMediaPlayerErrors: Error {
             swiftOnlyData.isImmersiveVideo = newValue
             // FIXME: Should limit ContentTypePublisher to only publish changes to contentType if we have already created a default entity
             // rather than having to use a isImmersive attribute.
-            if !swiftOnlyData.enteredFromInline && swiftOnlyData.defaultEntity != nil && swiftOnlyData.presentationState != .external  {
+            if !swiftOnlyData.enteredFromInline && swiftOnlyData.defaultEntity != nil && swiftOnlyData.presentationState != .external {
                 contentType = newValue ? .immersive : .planar
             }
         }
@@ -169,16 +179,21 @@ enum LinearMediaPlayerErrors: Error {
         swiftOnlyData.presentationState
     }
 
-    @nonobjc private var enterFullscreenCompletionHandler: ((Bool, (any Error)?) -> Void)?
-    @nonobjc private var exitFullscreenCompletionHandler: ((Bool, (any Error)?) -> Void)?
+    @nonobjc
+    private var enterFullscreenCompletionHandler: ((Bool, (any Error)?) -> Void)?
+    @nonobjc
+    private var exitFullscreenCompletionHandler: ((Bool, (any Error)?) -> Void)?
 
     @nonobjc
     private var enterExternalCompletionHandler: ((Bool, (any Error)?) -> Void)?
 
-    @nonobjc private var swiftOnlyData: SwiftOnlyData
-    @nonobjc private var cancellables: [AnyCancellable] = []
+    @nonobjc
+    private var swiftOnlyData: SwiftOnlyData
+    @nonobjc
+    private var cancellables: [AnyCancellable] = []
 
-    @nonobjc private final var logIdentifier: String {
+    @nonobjc
+    private final var logIdentifier: String {
         String(delegate?.linearMediaPlayerLogIdentifier?(self) ?? 0, radix: 16, uppercase: true)
     }
 
@@ -238,7 +253,7 @@ enum LinearMediaPlayerErrors: Error {
         case .enteringExternal:
             contentType = .planar
             showsPlaybackControls = true
-            swiftOnlyData.fullscreenBehaviorsSubject.send([ .hostContentInline ])
+            swiftOnlyData.fullscreenBehaviorsSubject.send([.hostContentInline])
             swiftOnlyData.presentationState = .external
             contentOverlay = .init(frame: .zero)
             completionHandler?(true, nil)
@@ -277,7 +292,9 @@ enum LinearMediaPlayerErrors: Error {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
 
         if let enterFullscreenCompletionHandler = enterFullscreenCompletionHandler {
-            Logger.linearMediaPlayer.error("\(#function)(\(self.logIdentifier, privacy: .public)): invalidating existing enterFullscreenCompletionHandler")
+            Logger.linearMediaPlayer.error(
+                "\(#function)(\(self.logIdentifier, privacy: .public)): invalidating existing enterFullscreenCompletionHandler"
+            )
             enterFullscreenCompletionHandler(false, LinearMediaPlayerErrors.invalidStateError)
             self.enterFullscreenCompletionHandler = nil
         }
@@ -301,7 +318,9 @@ enum LinearMediaPlayerErrors: Error {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
 
         if let exitFullscreenCompletionHandler = exitFullscreenCompletionHandler {
-            Logger.linearMediaPlayer.error("\(#function)(\(self.logIdentifier, privacy: .public)): invalidating existing exitFullscreenCompletionHandler")
+            Logger.linearMediaPlayer.error(
+                "\(#function)(\(self.logIdentifier, privacy: .public)): invalidating existing exitFullscreenCompletionHandler"
+            )
             exitFullscreenCompletionHandler(false, LinearMediaPlayerErrors.invalidStateError)
             self.exitFullscreenCompletionHandler = nil
         }
@@ -343,43 +362,60 @@ extension WKSLinearMediaPlayer {
     private func maybeCreateSpatialOrImmersiveEntity() {
         if swiftOnlyData.peculiarEntity != nil || contentType == .immersive { return }
         if swiftOnlyData.isImmersiveVideo {
-            Logger.linearMediaPlayer.log("\(#function)\(self.logIdentifier, privacy: .public): isImmersiveVideo; setting contentType = .immersive")
+            Logger.linearMediaPlayer.log(
+                "\(#function)\(self.logIdentifier, privacy: .public): isImmersiveVideo; setting contentType = .immersive"
+            )
             contentType = .immersive
             return
         }
         if swiftOnlyData.enteredFromInline || swiftOnlyData.spatialVideoMetadata == nil {
             if swiftOnlyData.enteredFromInline {
-                Logger.linearMediaPlayer.log("\(#function)\(self.logIdentifier, privacy: .public): enteredFromInline; setting contentType = .planar")
+                Logger.linearMediaPlayer.log(
+                    "\(#function)\(self.logIdentifier, privacy: .public): enteredFromInline; setting contentType = .planar"
+                )
             } else {
-                Logger.linearMediaPlayer.log("\(#function)\(self.logIdentifier, privacy: .public): !spatialVideoMetadata; setting contentType = .planar")
+                Logger.linearMediaPlayer.log(
+                    "\(#function)\(self.logIdentifier, privacy: .public): !spatialVideoMetadata; setting contentType = .planar"
+                )
             }
 
             contentType = .planar
             return
         }
+
+        // FIXME: (rdar://170930694) There is no guarantee that `spatialVideoMetadata` is non-nil here, and therefore can cause a crash.
+        // swift-format-ignore: NeverForceUnwrap
         let metadata = swiftOnlyData.spatialVideoMetadata!
         swiftOnlyData.peculiarEntity = ContentType.makeSpatialEntity(videoMetadata: metadata.metadata, extruded: true)
-        Logger.linearMediaPlayer.log("\(#function)\(self.logIdentifier, privacy: .public): spatialVideoMetadata; making peculiar spatial entity")
+        Logger.linearMediaPlayer.log(
+            "\(#function)\(self.logIdentifier, privacy: .public): spatialVideoMetadata; making peculiar spatial entity"
+        )
 
         swiftOnlyData.peculiarEntity?.screenMode = spatialImmersive ? .immersive : .portal
-// FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
-#if canImport(XPC)
-        swiftOnlyData.videoReceiverEndpointObserver = swiftOnlyData.peculiarEntity?.videoReceiverEndpointPublisher.sink {
-            [weak self] in guard let endpoint = $0 else { return }
-            self?.setVideoReceiverEndpoint(endpoint)
-        }
-#endif
+        // FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
+        #if canImport(XPC)
+        swiftOnlyData.videoReceiverEndpointObserver = swiftOnlyData.peculiarEntity?.videoReceiverEndpointPublisher
+            .sink {
+                [weak self] in
+                guard let endpoint = $0 else { return }
+                self?.setVideoReceiverEndpoint(endpoint)
+            }
+        #endif
         contentType = .spatial
     }
 
     private func maybeClearSpatialOrImmersiveEntity() {
         if swiftOnlyData.isImmersiveVideo && contentType == .immersive {
-            Logger.linearMediaPlayer.log("\(#function)\(self.logIdentifier, privacy: .public): isImmersiveVideo; setting contentType = .none")
+            Logger.linearMediaPlayer.log(
+                "\(#function)\(self.logIdentifier, privacy: .public): isImmersiveVideo; setting contentType = .none"
+            )
             contentType = .none
             return
         }
         if swiftOnlyData.peculiarEntity == nil { return }
-        Logger.linearMediaPlayer.log("\(#function)\(self.logIdentifier, privacy: .public): clearing peculiarEntity; setting contentType = .none")
+        Logger.linearMediaPlayer.log(
+            "\(#function)\(self.logIdentifier, privacy: .public): clearing peculiarEntity; setting contentType = .none"
+        )
         swiftOnlyData.videoReceiverEndpointObserver = nil
         swiftOnlyData.peculiarEntity = nil
         contentType = .none // this causes a call to makeDefaultEntity
@@ -388,81 +424,108 @@ extension WKSLinearMediaPlayer {
 
 #endif // os(visionOS)
 
-#if compiler(>=6.0)
 #if os(visionOS)
-@_spi(Internal) extension WKSLinearMediaPlayer: @preconcurrency Playable {
+@_spi(Internal)
+extension WKSLinearMediaPlayer: @preconcurrency Playable {
 }
-#endif
-#else
-#if os(visionOS)
-@_spi(Internal) extension WKSLinearMediaPlayer: Playable {
-}
-#endif
 #endif
 
 #if os(visionOS)
 
-@_spi(Internal) extension WKSLinearMediaPlayer {
+@_spi(Internal)
+extension WKSLinearMediaPlayer {
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var selectedPlaybackRatePublisher: AnyPublisher<Double, Never> {
         publisher(for: \.selectedPlaybackRate).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var presentationModePublisher: AnyPublisher<PresentationMode, Never> {
         swiftOnlyData.$presentationMode.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var errorPublisher: AnyPublisher<Error?, Never> {
         publisher(for: \.error).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var canTogglePlaybackPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.canTogglePlayback).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var requiresLinearPlaybackPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.requiresLinearPlayback).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var interstitialRangesPublisher: AnyPublisher<[Range<TimeInterval>], Never> {
         publisher(for: \.interstitialRanges).map { $0.map { $0.range } }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isInterstitialActivePublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isInterstitialActive).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var durationPublisher: AnyPublisher<TimeInterval, Never> {
         publisher(for: \.duration).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var currentTimePublisher: AnyPublisher<TimeInterval, Never> {
         publisher(for: \.currentTime).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var remainingTimePublisher: AnyPublisher<TimeInterval, Never> {
         publisher(for: \.remainingTime).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var playbackRatePublisher: AnyPublisher<Double, Never> {
         publisher(for: \.playbackRate).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var playbackRatesPublisher: AnyPublisher<[Double], Never> {
         publisher(for: \.playbackRates).map { $0.map { $0.doubleValue } }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isPlayingPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.playbackRate).map { $0 != 0.0 }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isLoadingPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isLoading).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isTrimmingPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isTrimming).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var forwardPlaybackEndTimePublisher: AnyPublisher<CMTime?, Never> {
         publisher(for: \.endTime)
             .dropFirst()
@@ -470,6 +533,8 @@ extension WKSLinearMediaPlayer {
             .eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var reversePlaybackEndTimePublisher: AnyPublisher<CMTime?, Never> {
         publisher(for: \.startTime)
             .dropFirst()
@@ -477,285 +542,423 @@ extension WKSLinearMediaPlayer {
             .eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var trimViewPublisher: AnyPublisher<UIView?, Never> {
         publisher(for: \.trimView).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var thumbnailLayerPublisher: AnyPublisher<CALayer?, Never> {
         publisher(for: \.thumbnailLayer).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var thumbnailMaterialPublisher: AnyPublisher<VideoMaterial?, Never> {
         swiftOnlyData.$thumbnailMaterial.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var captionLayerPublisher: AnyPublisher<CALayer?, Never> {
         Just(nil).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var captionContentInsetsPublisher: AnyPublisher<UIEdgeInsets, Never> {
         publisher(for: \.captionContentInsets).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var showsPlaybackControlsPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.showsPlaybackControls).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var canSeekPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.canSeek).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var seekableTimeRangesPublisher: AnyPublisher<[ClosedRange<TimeInterval>], Never> {
         publisher(for: \.seekableTimeRanges).map { $0.map { $0.closedRange } }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isSeekingPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isSeeking).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var canScanBackwardPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.canScanBackward).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var canScanForwardPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.canScanForward).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contentInfoViewControllersPublisher: AnyPublisher<[UIViewController], Never> {
         publisher(for: \.contentInfoViewControllers).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contextualActionsPublisher: AnyPublisher<[UIAction], Never> {
         publisher(for: \.contextualActions).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contextualActionsInfoViewPublisher: AnyPublisher<UIView?, Never> {
         publisher(for: \.contextualActionsInfoView).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contentDimensionsPublisher: AnyPublisher<CGSize, Never> {
         publisher(for: \.contentDimensions).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contentModePublisher: AnyPublisher<ContentMode, Never> {
         publisher(for: \.contentMode).compactMap { $0.contentMode }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var videoLayerPublisher: AnyPublisher<CALayer?, Never> {
         publisher(for: \.videoLayer).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var videoMaterialPublisher: AnyPublisher<VideoMaterial?, Never> {
         swiftOnlyData.$videoMaterial.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var peculiarEntityPublisher: AnyPublisher<PeculiarEntity?, Never> {
         swiftOnlyData.$peculiarEntity.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var anticipatedViewingModePublisher: AnyPublisher<ViewingMode?, Never> {
         publisher(for: \.anticipatedViewingMode).compactMap { $0.viewingMode }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contentOverlayPublisher: AnyPublisher<UIView?, Never> {
         publisher(for: \.contentOverlay).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contentOverlayViewControllerPublisher: AnyPublisher<UIViewController?, Never> {
         publisher(for: \.contentOverlayViewController).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var volumePublisher: AnyPublisher<Double, Never> {
         publisher(for: \.volume).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isMutedPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isMuted).eraseToAnyPublisher()
     }
-#if !canImport(AVKit, _version: 1270)
+
+    #if !canImport(AVKit, _version: 1270)
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var sessionDisplayTitlePublisher: AnyPublisher<String?, Never> {
         publisher(for: \.sessionDisplayTitle).eraseToAnyPublisher()
     }
-#endif
+    #endif
+
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var sessionThumbnailPublisher: AnyPublisher<UIImage?, Never> {
         publisher(for: \.sessionThumbnail).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isSessionExtendedPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isSessionExtended).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var hasAudioContentPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.hasAudioContent).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var currentAudioTrackPublisher: AnyPublisher<Track?, Never> {
         publisher(for: \.currentAudioTrack).map { $0 }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var audioTracksPublisher: AnyPublisher<[Track]?, Never> {
         publisher(for: \.audioTracks).map { $0 }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var currentLegibleTrackPublisher: AnyPublisher<Track?, Never> {
         publisher(for: \.currentLegibleTrack).map { $0 }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var legibleTracksPublisher: AnyPublisher<[Track]?, Never> {
         publisher(for: \.legibleTracks).map { $0 }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contentTypePublisher: AnyPublisher<ContentType?, Never> {
         publisher(for: \.contentType).map { $0.contentType }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var contentMetadataPublisher: AnyPublisher<ContentMetadataContainer, Never> {
         publisher(for: \.contentMetadata).map { $0.contentMetadata }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var transportBarIncludesTitleViewPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.transportBarIncludesTitleView).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var artworkPublisher: AnyPublisher<Data?, Never> {
         publisher(for: \.artwork).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isPlayableOfflinePublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isPlayableOffline).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var allowPipPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.allowPip).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var allowFullScreenFromInlinePublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.allowFullScreenFromInline).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var isLiveStreamPublisher: AnyPublisher<Bool, Never> {
         publisher(for: \.isLiveStream).eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var startDatePublisher: AnyPublisher<Date, Never> {
         swiftOnlyData.$startDate.compactMap { $0 }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var endDatePublisher: AnyPublisher<Date, Never> {
         swiftOnlyData.$endDate.compactMap { $0 }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var recommendedViewingRatioPublisher: AnyPublisher<Double?, Never> {
         publisher(for: \.recommendedViewingRatio).compactMap { $0?.doubleValue }.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var fullscreenSceneBehaviorsPublisher: AnyPublisher<[FullscreenBehaviors], Never> {
         // FIXME: Publish fullscreenSceneBehaviors once rdar://122435030 is resolved
         swiftOnlyData.fullscreenBehaviorsSubject.eraseToAnyPublisher()
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func updateRenderingConfiguration(_ config: RenderingConfiguration) {
         swiftOnlyData.renderingConfiguration = config
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func play() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerPlay?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func pause() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerPause?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func togglePlayback() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerTogglePlayback?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setPlaybackRate(_ rate: Double) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(rate)")
         delegate?.linearMediaPlayer?(self, setPlaybackRate: rate)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func seek(to time: TimeInterval) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(time)")
         delegate?.linearMediaPlayer?(self, seekToTime: time)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func seek(delta: TimeInterval) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(delta)")
         delegate?.linearMediaPlayer?(self, seekByDelta: delta)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func seek(to destination: TimeInterval, from source: TimeInterval, metadata: SeekMetadata) -> TimeInterval {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) destination=\(destination) source=\(source)")
         return delegate?.linearMediaPlayer?(self, seekToDestination: destination, fromSource: source) ?? TimeInterval.zero
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func completeTrimming(commitChanges: Bool) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(commitChanges)")
         delegate?.linearMediaPlayer?(self, completeTrimming: commitChanges)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func updateStartTime(_ time: TimeInterval) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(time)")
         delegate?.linearMediaPlayer?(self, updateStartTime: time)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func updateEndTime(_ time: TimeInterval) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(time)")
         delegate?.linearMediaPlayer?(self, updateEndTime: time)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func beginEditingVolume() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerBeginEditingVolume?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func endEditingVolume() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerEndEditingVolume?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setAudioTrack(_ newTrack: Track?) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(newTrack?.localizedDisplayName ?? "nil")")
         delegate?.linearMediaPlayer?(self, setAudioTrack: newTrack as? WKSLinearMediaTrack)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setLegibleTrack(_ newTrack: Track?) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(newTrack?.localizedDisplayName ?? "nil")")
         delegate?.linearMediaPlayer?(self, setLegibleTrack: newTrack as? WKSLinearMediaTrack)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func skipActiveInterstitial() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerSkipActiveInterstitial?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setCaptionContentInsets(_ insets: UIEdgeInsets) {
-        Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(NSCoder.string(for: insets), privacy: .public)")
+        Logger.linearMediaPlayer.log(
+            "\(#function)(\(self.logIdentifier, privacy: .public)) \(NSCoder.string(for: insets), privacy: .public)"
+        )
         delegate?.linearMediaPlayer?(self, setCaptionContentInsets: insets)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func updateVideoBounds(_ bounds: CGRect) {
-        Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(NSCoder.string(for: bounds), privacy: .public)")
+        Logger.linearMediaPlayer.log(
+            "\(#function)(\(self.logIdentifier, privacy: .public)) \(NSCoder.string(for: bounds), privacy: .public)"
+        )
         delegate?.linearMediaPlayer?(self, updateVideoBounds: bounds)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func updateViewingMode(_ mode: ViewingMode?) {
         let viewingMode = WKSLinearMediaViewingMode(mode)
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(viewingMode)")
         delegate?.linearMediaPlayer?(self, update: viewingMode)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func togglePip() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerTogglePip?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func toggleInlineMode() {
-        Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)): presentationState=\(self.presentationState, privacy: .public)")
+        Logger.linearMediaPlayer.log(
+            "\(#function)(\(self.logIdentifier, privacy: .public)): presentationState=\(self.presentationState, privacy: .public)"
+        )
 
         switch presentationState {
         case .inline:
@@ -769,8 +972,12 @@ extension WKSLinearMediaPlayer {
         }
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func willEnterFullscreen() {
-        Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)): presentationState=\(self.presentationState, privacy: .public)")
+        Logger.linearMediaPlayer.log(
+            "\(#function)(\(self.logIdentifier, privacy: .public)): presentationState=\(self.presentationState, privacy: .public)"
+        )
 
         switch presentationState {
         case .inline:
@@ -783,6 +990,8 @@ extension WKSLinearMediaPlayer {
         }
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func didCompleteEnterFullscreen(result: Result<Void, any Error>) {
         let completionHandler = enterFullscreenCompletionHandler
         enterFullscreenCompletionHandler = nil
@@ -797,8 +1006,12 @@ extension WKSLinearMediaPlayer {
         }
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func willExitFullscreen() {
-        Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)): presentationState=\(self.presentationState, privacy: .public)")
+        Logger.linearMediaPlayer.log(
+            "\(#function)(\(self.logIdentifier, privacy: .public)): presentationState=\(self.presentationState, privacy: .public)"
+        )
 
         switch presentationState {
         case .fullscreen:
@@ -810,6 +1023,8 @@ extension WKSLinearMediaPlayer {
         }
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func didCompleteExitFullscreen(result: Result<Void, any Error>) {
         let completionHandler = exitFullscreenCompletionHandler
         exitFullscreenCompletionHandler = nil
@@ -826,6 +1041,8 @@ extension WKSLinearMediaPlayer {
         }
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func makeDefaultEntity() -> Entity? {
         // This gets called from maybeCreateSpatialOrImmersiveEntity through the KVO when setting
         // peculiarEntity. As such, we can't check if the peculiarEntity is set or not.
@@ -846,78 +1063,106 @@ extension WKSLinearMediaPlayer {
             return entity
         }
 
-        Logger.linearMediaPlayer.error("\(#function)(\(self.logIdentifier, privacy: .public)): failed to find spatialVideoMetadata and captionLayer")
+        Logger.linearMediaPlayer.error(
+            "\(#function)(\(self.logIdentifier, privacy: .public)): failed to find spatialVideoMetadata and captionLayer"
+        )
         swiftOnlyData.defaultEntity = nil
         return nil
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setTimeResolverInterval(_ interval: TimeInterval) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(interval)")
         delegate?.linearMediaPlayer?(self, setTimeResolverInterval: interval)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setTimeResolverResolution(_ resolution: TimeInterval) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(resolution)")
         delegate?.linearMediaPlayer?(self, setTimeResolverResolution: resolution)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setThumbnailSize(_ size: CGSize) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(NSCoder.string(for: size), privacy: .public)")
         delegate?.linearMediaPlayer?(self, setThumbnailSize: size)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func seekThumbnail(to time: TimeInterval) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(time)")
         delegate?.linearMediaPlayer?(self, seekThumbnailToTime: time)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func beginScrubbing() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerBeginScrubbing?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func endScrubbing() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerEndScrubbing?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func beginScanningForward() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerBeginScanningForward?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func endScanningForward() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerEndScanningForward?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func beginScanningBackward() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerBeginScanningBackward?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func endScanningBackward() {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayerEndScanningBackward?(self)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setVolume(_ volume: Double) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(volume)")
         delegate?.linearMediaPlayer?(self, setVolume: volume)
     }
 
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setIsMuted(_ value: Bool) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(value)")
         delegate?.linearMediaPlayer?(self, setMuted: value)
     }
 
-// FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
-#if canImport(XPC)
+    // FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
+    #if canImport(XPC)
+    // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setVideoReceiverEndpoint(_ endpoint: xpc_object_t) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public))")
         delegate?.linearMediaPlayer?(self, setVideoReceiverEndpoint: endpoint)
     }
-#endif
+    #endif
 }
 
 #endif // os(visionOS)

@@ -102,7 +102,7 @@ void CSSParserTokenRange::trimTrailingWhitespace()
     dropLast(m_tokens, m_tokens.size() - i);
 }
 
-const CSSParserToken& CSSParserTokenRange::consumeLast()
+const CSSParserToken& CSSParserTokenRange::consumeLast() LIFETIME_BOUND
 {
     if (atEnd())
         eofToken();

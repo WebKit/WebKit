@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
 #import <pal/spi/cocoa/WebContentRestrictionsSPI.h>

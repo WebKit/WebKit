@@ -29,6 +29,7 @@
 #include <atomic>
 #include <wtf/MainThread.h>
 #include <wtf/PrintStream.h>
+#include <wtf/text/TextStream.h>
 
 namespace WTF {
 
@@ -37,12 +38,6 @@ uint64_t ObjectIdentifierMainThreadAccessTraits<uint64_t>::generateIdentifierInt
     ASSERT(isMainThread()); // You should use AtomicObjectIdentifier if you're hitting this assertion.
     static uint64_t current = 0;
     return ++current;
-}
-
-TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<uint64_t>& identifier)
-{
-    ts << identifier.toRawValue();
-    return ts;
 }
 
 void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<uint64_t>& identifier)
@@ -65,12 +60,6 @@ UUID ObjectIdentifierMainThreadAccessTraits<UUID>::generateIdentifierInternal()
 UUID ObjectIdentifierThreadSafeAccessTraits<UUID>::generateIdentifierInternal()
 {
     return UUID::createVersion4();
-}
-
-TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<UUID>& identifier)
-{
-    ts << identifier.toRawValue();
-    return ts;
 }
 
 void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<UUID>& identifier)

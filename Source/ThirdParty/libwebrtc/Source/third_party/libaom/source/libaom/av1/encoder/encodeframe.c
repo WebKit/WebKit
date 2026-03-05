@@ -175,6 +175,8 @@ static const uint8_t *get_var_offs(int use_hbd, int bd) {
 void av1_init_rtc_counters(MACROBLOCK *const x) {
   av1_init_cyclic_refresh_counters(x);
   x->cnt_zeromv = 0;
+  x->sb_col_scroll = 0;
+  x->sb_row_scroll = 0;
 }
 
 void av1_accumulate_rtc_counters(AV1_COMP *cpi, const MACROBLOCK *const x) {
@@ -1281,8 +1283,6 @@ static inline void encode_sb_row(AV1_COMP *cpi, ThreadData *td,
     x->sb_me_block = 0;
     x->sb_me_partition = 0;
     x->sb_me_mv.as_int = 0;
-    x->sb_col_scroll = 0;
-    x->sb_row_scroll = 0;
     x->sb_force_fixed_part = 1;
     x->color_palette_thresh = 64;
     x->force_color_check_block_level = 0;

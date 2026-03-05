@@ -100,6 +100,7 @@ bool isCtapDeviceResponseCode(CtapDeviceResponseCode code)
     case CtapDeviceResponseCode::kCtap2ErrKeepAliveCancel:
     case CtapDeviceResponseCode::kCtap2ErrNoCredentials:
     case CtapDeviceResponseCode::kCtap2ErrUserActionTimeout:
+    case CtapDeviceResponseCode::kCtap2ErrUserPresenceRequired:
     case CtapDeviceResponseCode::kCtap2ErrNotAllowed:
     case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
     case CtapDeviceResponseCode::kCtap2ErrPinBlocked:

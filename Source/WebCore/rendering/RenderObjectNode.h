@@ -51,11 +51,6 @@ inline Node* RenderObject::node() const
     return m_node.ptr();
 }
 
-inline RefPtr<Node> RenderObject::protectedNode() const
-{
-    return node();
-}
-
 inline bool RenderObject::isBody() const { return node() && node()->hasTagName(HTMLNames::bodyTag); }
 inline bool RenderObject::isHR() const { return node() && node()->hasTagName(HTMLNames::hrTag); }
 inline bool RenderObject::isPseudoElement() const { return node() && node()->isPseudoElement(); }

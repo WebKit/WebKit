@@ -35,7 +35,8 @@ typedef (CSSNumberish or CSSKeywordish) CSSColorPercent;
     JSGenerateToNativeObject,
 ] interface CSSOMColor : CSSOMColorValue {
     constructor(CSSKeywordish colorSpace, sequence<CSSColorPercent> channels, optional CSSNumberish alpha = 1.0);
-    attribute CSSKeywordish colorSpace;
+    // FIXME: `colorSpace` should not be nullable.
+    attribute CSSKeywordish? colorSpace;
     // FIXME: Add support for ObservableArray and add this.
     // https://bugs.webkit.org/show_bug.cgi?id=238281
     // attribute ObservableArray<CSSColorPercent> channels;

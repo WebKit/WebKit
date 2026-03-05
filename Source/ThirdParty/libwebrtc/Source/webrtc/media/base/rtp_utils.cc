@@ -353,7 +353,7 @@ bool UpdateRtpAbsSendTimeExtension(ArrayView<uint8_t> packet,
 bool ApplyPacketOptions(ArrayView<uint8_t> data,
                         const PacketTimeUpdateParams& packet_time_params,
                         uint64_t time_us) {
-  RTC_DCHECK(data.size() > 0);
+  RTC_DCHECK(!data.empty());
 
   // if there is no valid `rtp_sendtime_extension_id` and `srtp_auth_key` in
   // PacketOptions, nothing to be updated in this packet.

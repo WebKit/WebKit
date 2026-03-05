@@ -31,6 +31,7 @@
 #include "JSCValuePrivate.h"
 #include "JSCallbackObject.h"
 #include "JSRetainPtr.h"
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -260,13 +261,10 @@ static void getPropertyNames(JSContextRef callerContext, JSObjectRef object, JSP
         if (auto* enumeratePropertiesFunction = jscClass->priv->vtable->enumerate_properties) {
             GUniquePtr<char*> properties(enumeratePropertiesFunction(jscClass, context.get(), instance));
             if (properties) {
-                unsigned i = 0;
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-                while (const auto* name = properties.get()[i++]) {
+                for (auto* name : span(properties)) {
                     JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
                     JSPropertyNameAccumulatorAddName(propertyNames, propertyName.get());
                 }
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             }
         }
     }
@@ -555,7 +553,7 @@ static GRefPtr<JSCValue> jscClassCreateConstructor(JSCClass* jscClass, const cha
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     auto* functionObject = JSC::JSCCallbackFunction::create(vm, globalObject, String::fromUTF8(name),
-        JSC::JSCCallbackFunction::Type::Constructor, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
+        JSC::JSCCallbackFunction::Type::Constructor, jscClass, WTF::move(closure), returnType, WTF::move(parameters));
     auto context = jscContextGetOrCreate(priv->context);
     auto constructor = jscContextGetOrCreateValue(context.get(), toRef(functionObject));
     GRefPtr<JSCValue> prototype = jscContextGetOrCreateValue(context.get(), toRef(priv->prototype.get()));
@@ -607,7 +605,7 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
     });
     va_end(args);
 
-    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
+    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
 
 }
 
@@ -647,13 +645,11 @@ JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCall
     if (!name)
         name = priv->name.data();
 
-    Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+    Vector<GType> parameters(parametersCount, [parameterTypes = unsafeMakeSpan(parameterTypes, parametersCount)](size_t i) -> GType {
         return parameterTypes[i];
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     });
 
-    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
+    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
 }
 
 /**
@@ -700,7 +696,7 @@ static void jscClassAddMethod(JSCClass* jscClass, const char* name, GCallback ca
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, globalObject, String::fromUTF8(name),
-        JSC::JSCCallbackFunction::Type::Method, jscClass, WTFMove(closure), returnType, WTFMove(parameters)));
+        JSC::JSCCallbackFunction::Type::Method, jscClass, WTF::move(closure), returnType, WTF::move(parameters)));
     auto context = jscContextGetOrCreate(priv->context);
     auto method = jscContextGetOrCreateValue(context.get(), functionObject);
     GRefPtr<JSCValue> prototype = jscContextGetOrCreateValue(context.get(), toRef(priv->prototype.get()));
@@ -743,7 +739,7 @@ void jsc_class_add_method(JSCClass* jscClass, const char* name, GCallback callba
     });
     va_end(args);
 
-    jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTFMove(parameters));
+    jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTF::move(parameters));
 }
 
 /**
@@ -775,13 +771,11 @@ void jsc_class_add_methodv(JSCClass* jscClass, const char* name, GCallback callb
     g_return_if_fail(!parametersCount || parameterTypes);
     g_return_if_fail(jscClass->priv->context);
 
-    Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+    Vector<GType> parameters(parametersCount, [parameterTypes = unsafeMakeSpan(parameterTypes, parametersCount)](size_t i) -> GType {
         return parameterTypes[i];
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     });
 
-    jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTFMove(parameters));
+    jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTF::move(parameters));
 }
 
 /**

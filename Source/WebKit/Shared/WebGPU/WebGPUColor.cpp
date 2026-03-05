@@ -47,7 +47,7 @@ std::optional<Color> ConvertToBackingContext::convertToBacking(const WebCore::We
         auto color = convertToBacking(colorDict);
         if (!color)
             return std::nullopt;
-        return { { WTFMove(*color) } };
+        return { { WTF::move(*color) } };
     });
 }
 
@@ -64,7 +64,7 @@ std::optional<WebCore::WebGPU::Color> ConvertFromBackingContext::convertFromBack
         auto color = convertFromBacking(colorDict);
         if (!color)
             return std::nullopt;
-        return { { WTFMove(*color) } };
+        return { { WTF::move(*color) } };
     });
 }
 

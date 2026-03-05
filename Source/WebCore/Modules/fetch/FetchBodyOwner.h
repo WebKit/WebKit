@@ -82,12 +82,12 @@ public:
 
     String contentType() const { return m_headers->fastGet(HTTPHeaderName::ContentType); }
 
-    FetchBody& body() { return *m_body; }
+    FetchBody& body() LIFETIME_BOUND { return *m_body; }
 
 protected:
     FetchBodyOwner(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
 
-    const FetchBody& body() const { return *m_body; }
+    const FetchBody& body() const LIFETIME_BOUND { return *m_body; }
     bool isBodyNull() const { return !m_body; }
     bool isBodyNullOrOpaque() const { return !m_body || m_isBodyOpaque; }
     void cloneBody(JSDOMGlobalObject&, FetchBodyOwner&);
@@ -95,7 +95,7 @@ protected:
     ExceptionOr<void> extractBody(FetchBody::Init&&);
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 
-    void setBody(FetchBody&& body) { m_body = WTFMove(body); }
+    void setBody(FetchBody&& body) { m_body = WTF::move(body); }
     ExceptionOr<void> createReadableStream(JSC::JSGlobalObject&);
 
     // ActiveDOMObject.
@@ -117,7 +117,7 @@ private:
     void finishBlobLoading();
 
     // ActiveDOMObject API
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     class BlobLoader final : public RefCounted<BlobLoader>, public FetchLoaderClient {
         WTF_MAKE_TZONE_ALLOCATED(BlobLoader);

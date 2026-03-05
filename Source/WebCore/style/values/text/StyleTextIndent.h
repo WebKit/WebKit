@@ -48,24 +48,24 @@ struct TextIndent {
     }
 
     TextIndent(TextIndentLength&& length)
-        : length { WTFMove(length) }
+        : length { WTF::move(length) }
     {
     }
 
     TextIndent(TextIndentLength&& length, CSS::Keyword::Hanging hanging)
-        : length { WTFMove(length) }
+        : length { WTF::move(length) }
         , hanging { hanging }
     {
     }
 
     TextIndent(TextIndentLength&& length, CSS::Keyword::EachLine eachLine)
-        : length { WTFMove(length) }
+        : length { WTF::move(length) }
         , eachLine { eachLine }
     {
     }
 
     TextIndent(TextIndentLength&& length, std::optional<CSS::Keyword::Hanging> hanging, std::optional<CSS::Keyword::EachLine> eachLine)
-        : length { WTFMove(length) }
+        : length { WTF::move(length) }
         , hanging { hanging }
         , eachLine { eachLine }
     {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/CompletionHandler.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -48,18 +49,24 @@ using WebTransportStreamErrorCode = uint64_t;
 }
 
 namespace WebKit {
+
+constexpr uint64_t webTransportSessionGoneErrorCode = 0x170d7b68;
+
 enum class NetworkTransportStreamType : uint8_t { Bidirectional, OutgoingUnidirectional, IncomingUnidirectional };
-enum class NetworkTransportStreamState : uint8_t { Ready, ReadClosed, WriteClosed };
+enum class NetworkTransportStreamState : uint8_t { Ready, ReadClosed, WriteClosed, Complete };
 
 class NetworkTransportSession;
 
 class NetworkTransportStream : public RefCounted<NetworkTransportStream>, public CanMakeWeakPtr<NetworkTransportStream> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkTransportStream);
 public:
+    using NetworkTransportStreamReadyHandler = CompletionHandler<void(std::optional<NetworkTransportStreamType>)>;
+
     template<typename... Args> static Ref<NetworkTransportStream> create(Args&&... args) { return adoptRef(*new NetworkTransportStream(std::forward<Args>(args)...)); }
 
     WebCore::WebTransportStreamIdentifier identifier() const { return m_identifier; }
 
+    void start(NetworkTransportStreamReadyHandler&&);
     void sendBytes(std::span<const uint8_t>, bool, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancelSend(std::optional<WebCore::WebTransportStreamErrorCode>);
@@ -67,23 +74,21 @@ public:
     WebCore::WebTransportSendStreamStats getSendStreamStats();
     WebCore::WebTransportReceiveStreamStats getReceiveStreamStats();
 
-protected:
+private:
 #if PLATFORM(COCOA)
-    NetworkTransportStream(NetworkTransportSession&, nw_connection_t, NetworkTransportStreamType);
+    NetworkTransportStream(NetworkTransportSession&, nw_connection_t);
+    void initializeReadyConnection();
 #else
     NetworkTransportStream();
 #endif
-
-private:
     void receiveLoop();
-    void setErrorCodeForStream(std::optional<WebCore::WebTransportStreamErrorCode>);
 
     const WebCore::WebTransportStreamIdentifier m_identifier;
     WeakPtr<NetworkTransportSession> m_session;
 #if PLATFORM(COCOA)
     const RetainPtr<nw_connection_t> m_connection;
 #endif
-    const NetworkTransportStreamType m_streamType;
+    NetworkTransportStreamType m_streamType;
     NetworkTransportStreamState m_streamState;
     uint64_t m_bytesSent { 0 };
     uint64_t m_bytesReceived { 0 };

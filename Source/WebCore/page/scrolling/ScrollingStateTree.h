@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT ScrollingStateTree(ScrollingStateTree&&);
     WEBCORE_EXPORT ~ScrollingStateTree();
 
-    WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> rootStateNode() const;
+    WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> NODELETE rootStateNode() const;
     WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(std::optional<ScrollingNodeID>) const;
 
     ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
@@ -76,7 +76,7 @@ public:
     unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
 
     using StateNodeMap = HashMap<ScrollingNodeID, Ref<ScrollingStateNode>>;
-    const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
+    const StateNodeMap& nodeMap() const LIFETIME_BOUND { return m_stateNodeMap; }
 
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
@@ -119,7 +119,7 @@ private:
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
     StateNodeMap m_stateNodeMap;
     // Owns roots of unparented subtrees.
-    HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
+    HashMap<ScrollingNodeID, Ref<ScrollingStateNode>> m_unparentedNodes;
 
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     unsigned m_scrollingNodeCount { 0 };

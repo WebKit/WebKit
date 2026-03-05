@@ -25,42 +25,102 @@
 
 #pragma once
 
+#if !__has_feature(modules)
+
+#import <wtf/Compiler.h>
+#import <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <objc/runtime.h>
-#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <AVFoundation/AVPlayer.h>
 #import <AVKit/AVKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && USE(APPLE_INTERNAL_SDK)
+#endif // !__has_feature(modules)
+
+@class AVPlayer;
+
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #import <AVKit/AVValueTiming.h>
 #else
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
+@interface AVValueTiming : NSObject <NSSecureCoding, NSCopying, NSMutableCopying>
+
+@property (NS_NONATOMIC_IOSONLY, readonly) double anchorValue;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) NSTimeInterval anchorTimeStamp;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) double rate;
+
 @end
 
 @interface AVValueTiming ()
+
 + (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
+
 @property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
-@property (NS_NONATOMIC_IOSONLY, readonly) double rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) NSTimeInterval anchorTimeStamp;
-@property (NS_NONATOMIC_IOSONLY, readonly) double anchorValue;
 
 + (NSTimeInterval)currentTimeStamp;
 - (double)valueForTimeStamp:(NSTimeInterval)timeStamp;
 @end
 
 NS_ASSUME_NONNULL_END
-#endif
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
+#if !USE(APPLE_INTERNAL_SDK) || __has_feature(modules) || PLATFORM(APPLETV)
 
-#if USE(APPLE_INTERNAL_SDK)
+typedef NSString * AVMediaType NS_EXTENSIBLE_STRING_ENUM;
+
+@class AVPlayer;
+
+typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
+    AVPlayerControllerExternalPlaybackTypeNone,
+    AVPlayerControllerExternalPlaybackTypeAirPlay,
+    AVPlayerControllerExternalPlaybackTypeTVOut
+};
+
+typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
+    AVPlayerControllerStatusUnknown,
+    AVPlayerControllerStatusLoading,
+    AVPlayerControllerStatusReadyToPlay,
+    AVPlayerControllerStatusFailed
+};
+
+#endif // !USE(APPLE_INTERNAL_SDK) || __has_feature(modules) || PLATFORM(APPLETV)
+
+#if !USE(APPLE_INTERNAL_SDK) || PLATFORM(APPLETV)
+
+@interface AVPlayerController : NSObject
+
+- (instancetype)initWithPlayer:(AVPlayer *)player;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) AVPlayer *player;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) AVPlayerControllerStatus status;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL isCurrentItemReadyForInspection;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) NSError *error;
+
+@property (NS_NONATOMIC_IOSONLY, readonly, getter=isAtLiveEdge) BOOL atLiveEdge;
+
+- (void)startUsingNetworkResourcesForLiveStreamingWhilePaused;
+
+- (void)stopUsingNetworkResourcesForLiveStreamingWhilePaused;
+
+@end
+
+#endif // !USE(APPLE_INTERNAL_SDK) || PLATFORM(APPLETV)
+
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -137,7 +197,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
 @end
 NS_ASSUME_NONNULL_END
-#endif
+#endif // PLATFORM(APPLETV)
 
 #if PLATFORM(MAC)
 #import <AVKit/AVPlayerView_Private.h>
@@ -145,38 +205,14 @@ NS_ASSUME_NONNULL_END
 
 #else
 
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIResponder.h>
-@interface AVPlayerController : UIResponder
-@end
-#else
-#import <AppKit/NSResponder.h>
-@protocol NSUserInterfaceValidations;
-@interface AVPlayerController : NSResponder <NSUserInterfaceValidations>
-@end
-#endif
-
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) && !__has_feature(modules)
 #import <AVKit/AVPlayerViewController.h> // not part of AVKit's umbrella header
 #endif
 
-@interface AVPlayerController ()
-typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
-    AVPlayerControllerStatusUnknown = 0,
-    AVPlayerControllerStatusReadyToPlay = 2,
-};
-
-typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
-    AVPlayerControllerExternalPlaybackTypeNone = 0,
-    AVPlayerControllerExternalPlaybackTypeAirPlay = 1,
-    AVPlayerControllerExternalPlaybackTypeTVOut = 2,
-};
-
-@property (NS_NONATOMIC_IOSONLY, readonly) AVPlayerControllerStatus status;
-@end
-
 #if PLATFORM(IOS_FAMILY)
 NS_ASSUME_NONNULL_BEGIN
+
+#if !__has_feature(modules)
 
 @interface AVBackgroundView : UIView
 @property (nonatomic) BOOL automaticallyDrawsRoundedCorners;
@@ -191,7 +227,11 @@ typedef NS_ENUM(NSInteger, AVBackgroundViewTintEffectStyle) {
 - (void)addSubview:(UIView *)subview applyingMaterialStyle:(AVBackgroundViewMaterialStyle)materialStyle tintEffectStyle:(AVBackgroundViewTintEffectStyle)tintEffectStyle;
 @end
 
+#endif // !__has_feature(modules)
+
 @class AVPlayerLayer;
+
+#if !__has_feature(modules)
 
 @interface AVPictureInPicturePlayerLayerView : UIView
 @property (nonatomic, readonly) AVPlayerLayer *playerLayer;
@@ -233,11 +273,20 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
 @end
 
+#endif // !__has_feature(modules)
+
 NS_ASSUME_NONNULL_END
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
+
+#import <AppKit/AppKit.h>
+
+#if !__has_feature(modules)
 #import <AVKit/AVPlayerView.h>
+
+@class AVPlayerController;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVPlayerView (WebKitFullscreenSPI)
@@ -248,18 +297,24 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-#endif
+
+#else
+@class AVPlayerView;
+#endif // !__has_feature(modules)
+
+#endif // PLATFORM(MAC)
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#if PLATFORM(IOS_FAMILY) && HAVE(AVPLAYERCONTROLLER)
+#if PLATFORM(IOS_FAMILY) && HAVE(AVPLAYERCONTROLLER) && !__has_feature(modules)
 @interface AVPlayerController ()
 @property (NS_NONATOMIC_IOSONLY) double defaultPlaybackRate;
 @end
 #endif
 
 #if HAVE(AVOBSERVATIONCONTROLLER)
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #import <AVKit/AVObservationController.h>
 #else
 @class AVKeyValueChange;
@@ -277,28 +332,27 @@ NS_ASSUME_NONNULL_END
 
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #import <AVKit/AVOutputDeviceMenuController.h>
 #else
-NS_ASSUME_NONNULL_BEGIN
 
 @class AVOutputContext;
 
-NS_CLASS_AVAILABLE_MAC(10_11)
 @interface AVOutputDeviceMenuController : NSObject
 
 - (instancetype)initWithOutputContext:(AVOutputContext *)outputContext NS_DESIGNATED_INITIALIZER;
 
 @property (readonly) AVOutputContext *outputContext;
+
 @property (readonly, getter=isExternalOutputDeviceAvailable) BOOL externalOutputDeviceAvailable;
+
 @property (readonly, getter=isExternalOutputDevicePicked) BOOL externalOutputDevicePicked;
 
-- (void)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName;
 - (BOOL)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName allowReselectionOfSelectedOutputDevice:(BOOL)allowReselectionOfSelectedOutputDevice;
 
 @end
 
-NS_ASSUME_NONNULL_END
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
@@ -309,7 +363,8 @@ OBJC_CLASS AVTouchBarMediaSelectionOption;
 OBJC_CLASS AVTouchBarPlaybackControlsProvider;
 OBJC_CLASS AVTouchBarScrubber;
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #import <AVKit/AVTouchBarPlaybackControlsProvider.h>
 #import <AVKit/AVTouchBarScrubber.h>
 #else
@@ -318,18 +373,60 @@ NS_ASSUME_NONNULL_BEGIN
 @class AVThumbnail;
 
 @protocol AVTouchBarPlaybackControlsControlling <NSObject>
+
 @property (readonly) NSTimeInterval contentDuration;
-@property (readonly, nullable) AVValueTiming *timing;
+@property (readonly) AVValueTiming *timing;
 @property (readonly, getter=isSeeking) BOOL seeking;
 @property (readonly) NSTimeInterval seekToTime;
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter;
 @property (readonly) BOOL hasEnabledAudio;
 @property (readonly) BOOL hasEnabledVideo;
+
+@optional
+
+@property (getter=isPlaying) BOOL playing;
+
+@property (readonly) BOOL canTogglePlayback;
+
+- (void)togglePlayback;
+
+@property double defaultPlaybackRate;
+
 @property (readonly) BOOL allowsPictureInPicturePlayback;
-@property (readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+
+@property (getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+
 @property (readonly) BOOL canTogglePictureInPicture;
+
 - (void)togglePictureInPicture;
+
 @property (nonatomic, readonly) BOOL canSeek;
+
+@property (readonly) NSArray *seekableTimeRanges;
+
+@property (readonly) NSArray<AVTouchBarMediaSelectionOption *> *audioTouchBarMediaSelectionOptions;
+
+@property (strong) AVTouchBarMediaSelectionOption *currentAudioTouchBarMediaSelectionOption;
+
+@property (readonly) NSArray<AVTouchBarMediaSelectionOption *> *legibleTouchBarMediaSelectionOptions;
+
+@property (strong) AVTouchBarMediaSelectionOption *currentLegibleTouchBarMediaSelectionOption;
+
+@property (readonly) BOOL canBeginTouchBarScrubbing;
+
+- (void)beginTouchBarScrubbing;
+
+- (void)endTouchBarScrubbing;
+
+- (void)generateTouchBarThumbnailsForTimes:(NSArray<NSNumber *> *)thumbnailTimes tolerance:(NSTimeInterval)tolerance size:(NSSize)size thumbnailHandler:(void (^)(NSArray<AVThumbnail *> *thumbnails, BOOL thumbnailGenerationFailed))thumbnailHandler;
+
+- (void)cancelThumbnailGeneration;
+
+@property (readonly, nullable) NSURL *assetURL;
+
+- (void)controlsViewWillAppear;
+
+- (void)controlsViewDidDisappear;
 
 typedef NS_ENUM(NSInteger, AVTouchBarMediaSelectionOptionType) {
     AVTouchBarMediaSelectionOptionTypeRegular,
@@ -339,18 +436,54 @@ typedef NS_ENUM(NSInteger, AVTouchBarMediaSelectionOptionType) {
 
 @end
 
-@interface AVTouchBarPlaybackControlsProvider : NSResponder
-@property (strong, readonly, nullable) NSTouchBar *touchBar;
-@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+@class AVPlaybackSpeedCollection;
+
+@protocol NSTouchBarProvider;
+
+@interface AVTouchBarPlaybackControlsProvider : NSResponder <NSTouchBarProvider>
+
+@property (nullable, readonly, strong) NSTouchBar *touchBar;
+
+@property (nullable, strong) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+
+@property (nonatomic, strong) AVPlaybackSpeedCollection *playbackSpeedCollection;
+
+- (void)reloadThumbailsOrAudioWaveform;
+
 @end
 
+@protocol AVTouchBarScrubberDelegate;
+
 @interface AVTouchBarScrubber : NSView
-@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+
+@property (nullable, strong) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+
+@property (nullable, weak) id <AVTouchBarScrubberDelegate> delegate;
+
+@property BOOL drawsBackground;
+
+@property BOOL showsInlinePlayButton;
+
 @property BOOL canShowMediaSelectionButton;
+
+@property BOOL canCollapse;
+
+@property BOOL collapsesIntoPlayButton;
+
+@property (nullable, strong) NSColor *audioWaveformColor;
+
 @end
 
 @interface AVTouchBarMediaSelectionOption : NSObject
-- (instancetype)initWithTitle:(nonnull NSString *)title type:(AVTouchBarMediaSelectionOptionType)type;
+
+- (instancetype)initWithTitle:(NSString *)title type:(AVTouchBarMediaSelectionOptionType)type NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, readonly) NSString *title;
+
+@property (nonatomic, readonly) AVTouchBarMediaSelectionOptionType type;
+
+@property (nonatomic, nullable, strong) id representedObject;
+
 @end
 
 NS_ASSUME_NONNULL_END
@@ -359,11 +492,12 @@ NS_ASSUME_NONNULL_END
 
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #import <AVKit/AVRoutePickerView_Private.h>
 #import <AVKit/AVRoutePickerView_WebKitOnly.h>
 #else
 
+#if !__has_feature(modules)
 #import <AVKit/AVRoutePickerView.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -377,12 +511,14 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-#endif // USE(APPLE_INTERNAL_SDK)
+#endif // !__has_feature(modules)
+#endif // USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
 
 // AVPictureInPicture SPI
 #if HAVE(PIP_CONTROLLER)
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #if PLATFORM(IOS_FAMILY)
 #import <AVKit/AVPictureInPictureController_GenericSupport.h>
@@ -390,7 +526,7 @@ NS_ASSUME_NONNULL_END
 
 #else
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !__has_feature(modules)
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVPictureInPictureContentViewController : UIViewController
@@ -405,17 +541,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 NS_ASSUME_NONNULL_END
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY) && !__has_feature(modules)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if !__has_feature(modules)
 
 @interface AVPictureInPictureController (IPI)
 @property (nonatomic) BOOL pictureInPictureWasStartedWhenEnteringBackground;
 @end
 
+#endif // !__has_feature(modules)
+
 #endif // HAVE(PIP_CONTROLLER)
 
-#if PLATFORM(VISION)
+#if PLATFORM(VISION) && !__has_feature(modules)
 
 // FIXME: rdar://111125392 – import SPI using a header, following rdar://111123290.
 
@@ -428,7 +568,7 @@ typedef NS_OPTIONS(NSUInteger, AVPlayerViewControllerFullScreenBehaviors) {
 @property (nonatomic) AVPlayerViewControllerFullScreenBehaviors fullScreenBehaviors;
 @end
 
-#endif // PLATFORM(VISION)
+#endif // PLATFORM(VISION) && !__has_feature(modules)
 
 #if PLATFORM(APPLETV)
 
@@ -438,22 +578,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if USE(APPLE_INTERNAL_SDK)
 
-typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
-    AVPlayerControllerExternalPlaybackTypeNone = 0,
-    AVPlayerControllerExternalPlaybackTypeAirPlay = 1,
-    AVPlayerControllerExternalPlaybackTypeTVOut = 2,
-};
-
-typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
-    AVPlayerControllerStatusUnknown = 0,
-    AVPlayerControllerStatusReadyToPlay = 2,
-};
-
-@interface AVPlayerController : NSObject
-@end
+#if !__has_feature(modules)
 
 @interface __AVPlayerLayerView : UIView
 @end
+
+#endif // !__has_feature(modules)
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
@@ -465,6 +595,8 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerTimeControlStatus) {
 
 @interface AVTimeRange : NSObject
 @end
+
+#if !__has_feature(modules)
 
 @interface __AVPlayerLayerView (IPI)
 @property (nonatomic, strong, nullable) AVPlayerController *playerController;
@@ -481,194 +613,32 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerTimeControlStatus) {
 - (instancetype)initWithStartTime:(NSTimeInterval)startTime endTime:(NSTimeInterval)duration;
 @end
 
+#endif // !__has_feature(modules)
+
 NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(APPLETV)
 
-#if HAVE(AVKIT_CONTENT_SOURCE)
-
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <AVKit/AVMediaSource.h>
-
+// CLEANUP(rdar://164667890)
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
+#if __has_include(<AVKit/AVLegibleMediaOptionsMenuController_Private.h>)
+#import <AVKit/AVLegibleMediaOptionsMenuController_Private.h>
 #else
+// SDK does not have -menuWithContents:. Redeclare:
+#import <AVKit/AVLegibleMediaOptionsMenuController.h>
+typedef NS_OPTIONS(NSInteger, AVLegibleMediaOptionsMenuContents) {
+    AVLegibleMediaOptionsMenuContentsLegible = 1 << 0,
+    AVLegibleMediaOptionsMenuContentsCaptionAppearance = 1 << 1,
+    AVLegibleMediaOptionsMenuContentsAll = (AVLegibleMediaOptionsMenuContentsLegible | AVLegibleMediaOptionsMenuContentsCaptionAppearance)
+} API_AVAILABLE(ios(26.4), macos(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos);
 
-@class CALayer;
-@class AVInterstitialTimeRange;
-
-typedef struct REEntity *REEntityRef;
-
-NS_ASSUME_NONNULL_BEGIN
-
-@protocol AVMediaPlaybackSource <NSObject>
-
-@property (nonatomic, readonly) double rate;
-@property (nonatomic, readonly) BOOL canTogglePlayback;
-@property (nonatomic, readonly) BOOL isLoading;
-@property (nonatomic, readonly) BOOL canSeek;
-@property (nonatomic, readonly) BOOL isSeeking;
-@property (nonatomic, readonly) BOOL canScanForward;
-@property (nonatomic, readonly) BOOL canScanBackward;
-@property (nonatomic, readonly) BOOL requiresLinearPlayback;
-@property (nonatomic, readonly) BOOL hasLiveStreamContent;
-@property (nonatomic, readonly, nullable) NSError *playbackError;
-- (void)play;
-- (void)pause;
-- (void)seekTo:(double)time;
-- (void)beginScanningForward;
-- (void)endScanningForward;
-- (void)beginScanningBackward;
-- (void)endScanningBackward;
-
-@end
-
-@protocol AVMediaTimelineSource <NSObject>
-
-@property (nonatomic, readonly) float minValue;
-@property (nonatomic, readonly) float maxValue;
-@property (nonatomic, readonly) float currentValue;
-
-@optional
-
-@property (nonatomic, readonly, nullable) NSArray<NSValue *> *seekableTimeRanges;
-- (void)beginScrubbing;
-- (void)endScrubbing;
-
-@end
-
-@protocol AVListable <NSObject>
-
-@property (nonatomic, readonly) NSString *localizedTitle;
-
-@end
-
-@protocol AVMediaAudioAndCaptionSource <NSObject>
-
-@property (nonatomic, readonly, nullable) id<AVListable> currentAudioOption;
-@property (nonatomic, readonly, nullable) NSArray<AVListable> *audioOptions;
-- (void)updateCurrentAudioOption:(id<AVListable>)currentAudioOption;
-@property (nonatomic, readonly, nullable) id<AVListable> currentCaptionOption;
-@property (nonatomic, readonly, nullable) NSArray<AVListable> *captionOptions;
-- (void)updateCurrentCaptionOption:(id<AVListable>)currentCaptionOption;
-@property (nonatomic, readonly, nullable) CALayer *captionLayer;
-- (void)setCaptionContentInsets:(UIEdgeInsets)insets;
-
-@end
-
-@protocol AVMediaVolumeSource <NSObject>
-
-@property (nonatomic, readonly) BOOL hasAudio;
-@property (nonatomic, readonly) BOOL muted;
-@property (nonatomic, readonly) double volume;
-- (void)updateVolume:(double)volume;
-- (void)updateMuted:(BOOL)muted;
-
-@optional
-
-- (void)beginChangingVolume;
-- (void)endChangingVolume;
-
-@end
-
-@protocol AVMediaContainerSource <NSObject>
-
-@property (nonatomic, readonly, nullable) CALayer *videoLayer;
-#if PLATFORM(VISION)
-@property (nonatomic, readonly, nullable) REEntityRef entityRef;
-#endif
-@property (nonatomic, readonly) CGSize videoSize;
-
-@end
-
-@protocol AVMediaThumbnailSource <NSObject>
-@end
-
-@protocol AVMediaInterstitialSource <NSObject>
-
-@property (nonatomic, readonly, nullable) NSArray<AVInterstitialTimeRange *> *interstitialTimeRanges;
-@property (nonatomic, readonly) BOOL isInterstitialActive;
-- (void)skipActiveInterstitial;
-
-@end
-
-@protocol AVMediaMetadataSource <NSObject>
-
-@property (nonatomic, readonly, nullable) NSString *title;
-@property (nonatomic, readonly, nullable) NSString *subtitle;
-
-@optional
-
-@property (nonatomic, readonly, nullable) NSDate *approximateStartDate;
-@property (nonatomic, readonly, nullable) NSDate *approximateEndDate;
-@property (nonatomic, readonly, nullable) NSDate *exactStartDate;
-@property (nonatomic, readonly, nullable) NSDate *exactEndDate;
-
-@end
-
-@protocol AVMediaSource <
-    AVMediaTimelineSource,
-    AVMediaPlaybackSource,
-    AVMediaAudioAndCaptionSource,
-    AVMediaVolumeSource,
-    AVMediaContainerSource,
-    AVMediaThumbnailSource,
-    AVMediaMetadataSource
->
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // HAVE(AVKIT_CONTENT_SOURCE)
-
-#if USE(APPLE_INTERNAL_SDK)
-
-#if !__has_include(<AVKit/AVLegibleMediaOptionsMenuController.h>)
-
-typedef NS_ENUM(NSInteger, AVLegibleMediaOptionsMenuType) {
-    AVLegibleMediaOptionsMenuTypeDefault,
-    AVLegibleMediaOptionsMenuTypeCaptionAppearance
-} SPI_AVAILABLE(ios(26.4), macos(26.4)) API_UNAVAILABLE(tvos, visionos, watchos);
-
-typedef NS_ENUM(NSInteger, AVLegibleMediaOptionEnablementState) {
-    AVLegibleMediaOptionEnablementStateOff,
-    AVLegibleMediaOptionEnablementStateOn
-} SPI_AVAILABLE(ios(26.4), macos(26.4)) API_UNAVAILABLE(tvos, visionos, watchos);
-
-typedef NS_ENUM(NSInteger, AVLegibleMediaOptionsPresentationState) {
-    AVLegibleMediaOptionsPresentationStateDismissed,
-    AVLegibleMediaOptionsPresentationStatePresented
-} SPI_AVAILABLE(macos(26.4)) API_UNAVAILABLE(ios, tvos, visionos, watchos);
-
-@protocol AVLegibleMediaOptionsMenuControllerDelegate;
-
-SPI_AVAILABLE(ios(26.4), macos(26.4)) API_UNAVAILABLE(tvos, visionos, watchos)
-@interface AVLegibleMediaOptionsMenuController : NSObject
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithPlayer:(nullable AVPlayer *)player NS_DESIGNATED_INITIALIZER;
-
+@interface AVLegibleMediaOptionsMenuController (MenuWithContents)
 #if TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-- (void)presentMenuOfType:(AVLegibleMediaOptionsMenuType)type fromButton:(NSButton *)button presentationStateHandler:(nullable void (^)(AVLegibleMediaOptionsPresentationState state))handler;
+- (nullable NSMenu *)menuWithContents:(AVLegibleMediaOptionsMenuContents)contents;
 #else
-- (nullable UIMenu *)buildMenuOfType:(AVLegibleMediaOptionsMenuType)type;
+- (nullable UIMenu *)menuWithContents:(AVLegibleMediaOptionsMenuContents)contents;
 #endif
-
-@property (nonatomic, weak) id<AVLegibleMediaOptionsMenuControllerDelegate> delegate;
-@property (nonatomic, readonly) AVLegibleMediaOptionEnablementState currentEnablementState;
-
 @end
 
-SPI_AVAILABLE(ios(26.4), macos(26.4)) API_UNAVAILABLE(tvos, visionos, watchos)
-@protocol AVLegibleMediaOptionsMenuControllerDelegate <NSObject>
-@optional
-
-- (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didUpdateEnablementState:(AVLegibleMediaOptionEnablementState)enablementState;
-- (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didRequestCaptionPreviewForProfileID:(NSString *)profileID;
-- (void)legibleMenuControllerDidRequestStoppingSubtitleCaptionPreview:(AVLegibleMediaOptionsMenuController *)menuController;
-
-@end
-
-#endif
-#endif
+#endif // __has_include(<AVKit/AVLegibleMediaOptionsMenuController_Private.h>)
+#endif // HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && USE(APPLE_INTERNAL_SDK)

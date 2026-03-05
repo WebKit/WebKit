@@ -39,9 +39,9 @@ public:
         Invalidation,
         Layout
     };
-    static bool isInTreeBuilding();
-    static bool isInLayout();
-    static bool isInInvalidation();
+    static bool NODELETE isInTreeBuilding();
+    static bool NODELETE isInLayout();
+    static bool NODELETE isInInvalidation();
 
 private:
     friend class PhaseScope;

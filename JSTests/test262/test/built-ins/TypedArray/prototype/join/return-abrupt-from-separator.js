@@ -33,4 +33,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     sample.join(obj);
   });
-});
+}, null, ["passthrough"]);

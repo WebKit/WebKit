@@ -294,7 +294,7 @@ String String::isolatedCopy() &&
     if (isSafeToSendToAnotherThread()) {
         // Since we know that our string is a temporary that will be destroyed
         // we can just steal the m_impl from it, thus avoiding a copy.
-        return { WTFMove(*this) };
+        return { WTF::move(*this) };
     }
 
     SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->isolatedCopy() : String { };
@@ -470,7 +470,7 @@ void String::convertTo16Bit()
     std::span<char16_t> destination;
     auto convertedString = String::createUninitialized(length(), destination);
     StringImpl::copyCharacters(destination, span8());
-    *this = WTFMove(convertedString);
+    *this = WTF::move(convertedString);
 }
 
 String String::fromUTF8(std::span<const char8_t> codeUnits)

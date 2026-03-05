@@ -46,7 +46,7 @@ class CertificateInfo {
 public:
     CertificateInfo() = default;
     explicit CertificateInfo(RetainPtr<SecTrustRef>&& trust)
-        : m_trust(WTFMove(trust))
+        : m_trust(WTF::move(trust))
     {
     }
     const RetainPtr<SecTrustRef>& trust() const { return m_trust; }

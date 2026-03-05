@@ -30,9 +30,8 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUBufferDescriptor : GPUObjectDescriptorBase {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUBufferDescriptor : GPUObjectDescriptorBase {
     required GPUSize64 size;
     required GPUBufferUsageFlags usage;
     boolean mappedAtCreation = false;

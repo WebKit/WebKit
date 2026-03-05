@@ -40,7 +40,7 @@ class RTCRtpSender;
 class RTCRtpTransform  {
     WTF_MAKE_TZONE_ALLOCATED(RTCRtpTransform);
 public:
-    using Internal = Variant<RefPtr<RTCRtpSFrameTransform>, RefPtr<RTCRtpScriptTransform>>;
+    using Internal = Variant<Ref<RTCRtpSFrameTransform>, Ref<RTCRtpScriptTransform>>;
     static std::unique_ptr<RTCRtpTransform> from(std::optional<Internal>&&);
 
     explicit RTCRtpTransform(Internal&&);
@@ -52,7 +52,7 @@ public:
     void detachFromReceiver(RTCRtpReceiver&);
     void detachFromSender(RTCRtpSender&);
 
-    RefPtr<RTCRtpTransformBackend> takeBackend() { return WTFMove(m_backend); }
+    RefPtr<RTCRtpTransformBackend> takeBackend() { return WTF::move(m_backend); }
     Internal internalTransform() { return m_transform; }
 
     friend bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);

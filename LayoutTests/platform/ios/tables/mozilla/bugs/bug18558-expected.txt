@@ -11,12 +11,12 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (5,5) size 91x28
                   RenderTableRow {TR} at (0,2) size 91x24
                     RenderTableCell {TD} at (2,2) size 87x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 48x19
+                      RenderText {#text} at (2,2) size 48x20
                         text run at (2,2) width 48: "This is "
-                      RenderText {#text} at (49,2) size 36x19
+                      RenderText {#text} at (49,2) size 36x20
                         text run at (49,2) width 36: "cell 1"
             RenderTableCell {TD} at (727,2) size 47x84 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 43x79
+              RenderText {#text} at (2,2) size 43x80
                 text run at (2,2) width 36: "Hello"
                 text run at (2,22) width 43: "world!"
                 text run at (2,42) width 36: "Hello"

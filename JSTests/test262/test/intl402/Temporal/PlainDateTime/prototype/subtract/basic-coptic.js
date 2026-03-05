@@ -17,7 +17,10 @@ const years1 = new Temporal.Duration(-1);
 const years1n = new Temporal.Duration(1);
 const years5 = new Temporal.Duration(-5);
 const years5n = new Temporal.Duration(5);
+const years3months6days17 = new Temporal.Duration(-3, -6, 0, -17);
+const years3months6days17n = new Temporal.Duration(3, 6, 0, 17);
 
+const date171312 = Temporal.PlainDateTime.from({ year: 1713, monthCode: "M12", day: 1, hour: 12, minute: 34, calendar }, options);
 const date174202 = Temporal.PlainDateTime.from({ year: 1742, monthCode: "M02", day: 1, hour: 12, minute: 34, calendar }, options);
 const date174702 = Temporal.PlainDateTime.from({ year: 1747, monthCode: "M02", day: 29, hour: 12, minute: 34, calendar }, options);
 
@@ -61,13 +64,26 @@ TemporalHelpers.assertPlainDateTime(
   1742, 2, "M02", 29, 12, 34, 0, 0, 0, 0, "Subtracting 5 years from day 29 of a month", "am", 1742
 );
 
+TemporalHelpers.assertPlainDateTime(
+  date171312.subtract(years3months6days17),
+  1717, 5, "M05", 18, 12, 34, 0, 0, 0, 0, "Adding 3 years, 6 months and 17 days to day 1 of a month", "am", 1717
+);
+var calculatedStart = date171312.subtract(years3months6days17).subtract(years3months6days17n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart,
+  1713, 12, "M12", 1, 12, 34, 0, 0, 0, 0, "Subtracting 3 years, 6 months and 17 days from day 18 of a month", "am", 1713
+);
+
 // Months
 
 const months1 = new Temporal.Duration(0, -1);
 const months1n = new Temporal.Duration(0, 1);
 const months4 = new Temporal.Duration(0, -4);
 const months4n = new Temporal.Duration(0, 4);
+const months6 = new Temporal.Duration(0, -6);
+const months6n = new Temporal.Duration(0, 6);
 
+const date171612 = Temporal.PlainDateTime.from({ year: 1716, monthCode: "M12", day: 1, hour: 12, minute: 34, calendar }, options);
 const date174301 = Temporal.PlainDateTime.from({ year: 1743, monthCode: "M01", day: 1, hour: 12, minute: 34, calendar }, options);
 const date174306 = Temporal.PlainDateTime.from({ year: 1743, monthCode: "M06", day: 1, hour: 12, minute: 34, calendar }, options);
 const date174311 = Temporal.PlainDateTime.from({ year: 1743, monthCode: "M11", day: 1, hour: 12, minute: 34, calendar }, options);
@@ -113,11 +129,24 @@ TemporalHelpers.assertPlainDateTime(
   1742, 10, "M10", 1, 12, 34, 0, 0, 0, 0, "Subtracting 4 months, with result in previous year", "am", 1742
 );
 
+TemporalHelpers.assertPlainDateTime(
+  date171612.subtract(months6),
+  1717, 5, "M05", 1, 12, 34, 0, 0, 0, 0, "Adding 6 months, with result in next year", "am", 1717
+);
+calculatedStart = date171612.subtract(months6).subtract(months6n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart,
+  1716, 12, "M12", 1, 12, 34, 0, 0, 0, 0, "Subtracting 6 months, with result in previous year", "am", 1716
+);
+
 // Weeks
 
 const months2weeks3 = new Temporal.Duration(0, /* months = */ -2, /* weeks = */ -3);
 const months2weeks3n = new Temporal.Duration(0, 2, 3);
+const weeks40 = new Temporal.Duration(0, 0, -40);
+const weeks40n = new Temporal.Duration(0, 0, 40);
 
+const date171601 = Temporal.PlainDateTime.from({ year: 1716, monthCode: "M01", day: 1, hour: 12, minute: 34, calendar }, options);
 const date174401 = Temporal.PlainDateTime.from({ year: 1744, monthCode: "M01", day: 1, hour: 12, minute: 34, calendar }, options);
 
 TemporalHelpers.assertPlainDateTime(
@@ -140,11 +169,22 @@ TemporalHelpers.assertPlainDateTime(
   1743, 11, "M11", 10, 12, 34, 0, 0, 0, 0, "subtract 2 months 3 weeks from beginning of year to previous year", "am", 1743
 );
 
+TemporalHelpers.assertPlainDateTime(
+  date171601.subtract(weeks40),
+  1716, 10, "M10", 11, 12, 34, 0, 0, 0, 0, "Adding 40 weeks, with result in same year", "am", 1716
+);
+calculatedStart = date171601.subtract(weeks40).subtract(weeks40n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart,
+  1716, 1, "M01", 1, 12, 34, 0, 0, 0, 0, "Subtracting 40 weeks, with result in same year", "am", 1716
+);
 
 // Days
 
 const days10 = new Temporal.Duration(0, 0, 0, /* days = */ -10);
 const days10n = new Temporal.Duration(0, 0, 0, 10);
+const days280 = new Temporal.Duration(0, 0, 0, /* days = */ -280);
+const days280n = new Temporal.Duration(0, 0, 0, 280);
 
 const date17440129 = Temporal.PlainDateTime.from({ year: 1744, monthCode: "M01", day: 30, hour: 12, minute: 34, calendar }, options);
 
@@ -176,4 +216,14 @@ TemporalHelpers.assertPlainDateTime(
 TemporalHelpers.assertPlainDateTime(
   date174401.subtract(days10n),
   1743, 12, "M12", 27, 12, 34, 0, 0, 0, 0, "subtract 10 days, ending in previous year", "am", 1743
+);
+
+TemporalHelpers.assertPlainDateTime(
+  date171601.subtract(days280),
+  1716, 10, "M10", 11, 12, 34, 0, 0, 0, 0, "Adding 280 days, with result in same year", "am", 1716
+);
+calculatedStart = date171601.subtract(days280).subtract(weeks40n);
+TemporalHelpers.assertPlainDateTime(
+  calculatedStart,
+  1716, 1, "M01", 1, 12, 34, 0, 0, 0, 0, "Subtracting 280 days, with result in same year", "am", 1716
 );

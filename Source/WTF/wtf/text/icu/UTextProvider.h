@@ -26,7 +26,9 @@
 #pragma once
 
 #include <limits>
+#include <span>
 #include <unicode/utext.h>
+#include <wtf/Assertions.h>
 
 namespace WTF {
 

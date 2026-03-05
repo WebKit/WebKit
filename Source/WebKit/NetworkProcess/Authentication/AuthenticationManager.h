@@ -79,7 +79,6 @@ public:
     void negotiatedLegacyTLS(WebPageProxyIdentifier) const;
 
 private:
-    Ref<NetworkProcess> protectedProcess() const;
     struct Challenge;
 
 #if HAVE(SEC_KEY_PROXY)

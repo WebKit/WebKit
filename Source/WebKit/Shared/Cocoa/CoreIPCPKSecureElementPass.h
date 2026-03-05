@@ -38,7 +38,7 @@ class CoreIPCPKSecureElementPass {
 public:
     CoreIPCPKSecureElementPass(PKSecureElementPass *);
     CoreIPCPKSecureElementPass(Vector<uint8_t>&& data)
-        : m_data(WTFMove(data)) { }
+        : m_data(WTF::move(data)) { }
 
     RetainPtr<id> toID() const;
     const Vector<uint8_t>& ipcData() const { return m_data; }

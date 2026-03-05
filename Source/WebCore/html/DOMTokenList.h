@@ -64,8 +64,8 @@ private:
     void updateTokensFromAttributeValue(const AtomString&);
     void updateAssociatedAttributeFromTokens();
 
-    WEBCORE_EXPORT Vector<AtomString, 1>& tokens();
-    const Vector<AtomString, 1>& tokens() const { return const_cast<DOMTokenList&>(*this).tokens(); }
+    WEBCORE_EXPORT Vector<AtomString, 1>& tokens() LIFETIME_BOUND;
+    const Vector<AtomString, 1>& tokens() const LIFETIME_BOUND { return const_cast<DOMTokenList&>(*this).tokens(); }
 
     static ExceptionOr<void> validateToken(StringView);
     static ExceptionOr<void> validateTokens(std::span<const AtomString> tokens);

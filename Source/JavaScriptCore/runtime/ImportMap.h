@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/Expected.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

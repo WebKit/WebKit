@@ -29,9 +29,9 @@
 
 #pragma once
 
-#include <WebCore/FloatRect.h>
-#include <WebCore/FloatSize.h>
-#include <WebCore/LayoutShape.h>
+#include "FloatRect.h"
+#include "FloatSize.h"
+#include "LayoutShape.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {

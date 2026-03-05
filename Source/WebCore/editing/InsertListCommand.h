@@ -36,9 +36,9 @@ class InsertListCommand final : public CompositeEditCommand {
 public:
     enum class Type : uint8_t { OrderedList, UnorderedList };
 
-    static Ref<InsertListCommand> create(Ref<Document>&& document, Type listType)
+    static Ref<InsertListCommand> create(Ref<Document>&& document, Type listType, Style::ListStyleType styleType = CSS::Keyword::None { })
     {
-        return adoptRef(*new InsertListCommand(WTFMove(document), listType));
+        return adoptRef(*new InsertListCommand(WTF::move(document), listType, styleType));
     }
 
     static RefPtr<HTMLElement> insertList(Ref<Document>&&, Type);
@@ -46,7 +46,7 @@ public:
     bool preservesTypingStyle() const final { return true; }
 
 private:
-    InsertListCommand(Ref<Document>&&, Type);
+    InsertListCommand(Ref<Document>&&, Type, Style::ListStyleType);
 
     void doApply() final;
     EditAction editingAction() const final;
@@ -59,6 +59,7 @@ private:
     RefPtr<HTMLElement> listifyParagraph(const VisiblePosition& originalStart, const HTMLQualifiedName& listTag);
     RefPtr<HTMLElement> m_listElement;
     Type m_type;
+    Style::ListStyleType m_listStyleType;
 };
 
 } // namespace WebCore

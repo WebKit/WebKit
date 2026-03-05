@@ -35,7 +35,7 @@ enum class UserScriptInjectionTime : bool { DocumentStart, DocumentEnd };
 class DOMWrapperWorld;
 class UserScript;
 
-typedef Vector<std::unique_ptr<UserScript>> UserScriptVector;
-typedef HashMap<RefPtr<DOMWrapperWorld>, std::unique_ptr<UserScriptVector>> UserScriptMap;
+using UserScriptVector = Vector<std::unique_ptr<UserScript>>;
+using UserScriptMap = HashMap<Ref<DOMWrapperWorld>, std::unique_ptr<UserScriptVector>>;
 
 } // namespace WebCore

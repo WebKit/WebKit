@@ -1,9 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
-main frame - didReceiveTitle: Test document.fonts.ready loading with two fonts
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
-main frame - didFinishLoadForFrame
 Font loading test
 
 PASS document.fonts.ready is replaced as new fonts are loaded

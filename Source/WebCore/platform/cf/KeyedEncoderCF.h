@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/KeyedCoding.h>
+#include "KeyedCoding.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>

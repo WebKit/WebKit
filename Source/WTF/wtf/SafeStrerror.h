@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
 
 namespace WTF {

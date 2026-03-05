@@ -50,7 +50,7 @@ CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch
 std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLayerBufferHolePunch::create(const IntSize& size, GstElement* videoSink, RefPtr<GStreamerQuirksManager>&& quirksManager)
 {
     ASSERT(videoSink && quirksManager);
-    return makeUnique<CoordinatedPlatformLayerBufferHolePunch>(size, videoSink, WTFMove(quirksManager));
+    return makeUnique<CoordinatedPlatformLayerBufferHolePunch>(size, videoSink, WTF::move(quirksManager));
 }
 
 CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch(const IntSize& size, GstElement* videoSink, RefPtr<GStreamerQuirksManager>&& quirksManager)
@@ -69,22 +69,6 @@ void CoordinatedPlatformLayerBufferHolePunch::paintToTextureMapper(TextureMapper
     if (m_videoSink && m_quirksManager)
         m_quirksManager->setHolePunchVideoRectangle(m_videoSink.get(), enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
 #endif
-    textureMapper.drawSolidColor(targetRect, modelViewMatrix, Color::transparentBlack, false);
-}
-
-void CoordinatedPlatformLayerBufferHolePunch::notifyVideoPosition(const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix)
-{
-#if USE(GSTREAMER)
-    if (m_videoSink && m_quirksManager)
-        m_quirksManager->setHolePunchVideoRectangle(m_videoSink.get(), enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
-#else
-    UNUSED_PARAM(targetRect);
-    UNUSED_PARAM(modelViewMatrix);
-#endif
-}
-
-void CoordinatedPlatformLayerBufferHolePunch::paintTransparentRectangle(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix)
-{
     textureMapper.drawSolidColor(targetRect, modelViewMatrix, Color::transparentBlack, false);
 }
 

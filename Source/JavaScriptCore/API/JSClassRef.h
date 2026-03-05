@@ -90,7 +90,7 @@ public:
     // is deleted (that's the part prevented by this RefPtr).
     // 3. Another class is created at the same address.
     // 4. When it is used, the old context data is found in VM and used.
-    RefPtr<OpaqueJSClass> m_class;
+    const RefPtr<OpaqueJSClass> m_class;
 
     OpaqueJSClassStaticValuesTable staticValues;
     OpaqueJSClassStaticFunctionsTable staticFunctions;

@@ -26,13 +26,14 @@
 #pragma once
 
 #include <WebCore/FontCache.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct WEBCORE_EXPORT PrewarmInformation {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WEBCORE_EXPORT);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(PrewarmInformation, WEBCORE_EXPORT);
     FontCache::PrewarmInformation fontCache;
 };
 

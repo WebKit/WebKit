@@ -50,7 +50,7 @@ public:
         : m_kind(NotSet)
         , m_offset(invalidOffset)
         , m_newStructure(nullptr)
-        , m_identifier(WTFMove(identifier))
+        , m_identifier(WTF::move(identifier))
     {
     }
     

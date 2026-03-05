@@ -54,12 +54,12 @@ std::unique_ptr<SkCodec> SkIcoCodec::MakeFromStream(std::unique_ptr<SkStream> st
     // safer than the old method, which required allocating a block of memory whose
     // byte size is stored in the stream as a uint32_t, and may result in a large or
     // failed allocation.
-    sk_sp<SkData> data = nullptr;
+    sk_sp<const SkData> data = nullptr;
     if (stream->getMemoryBase()) {
         // It is safe to make without copy because we'll hold onto the stream.
         data = SkData::MakeWithoutCopy(stream->getMemoryBase(), stream->getLength());
     } else {
-        data = SkCopyStreamToData(stream.get());
+        data = SkStreamPriv::CopyStreamToData(stream.get());
 
         // If we are forced to copy the stream to a data, we can go ahead and delete the stream.
         stream.reset(nullptr);
@@ -170,7 +170,7 @@ std::unique_ptr<SkCodec> SkIcoCodec::MakeFromStream(std::unique_ptr<SkStream> st
             break;
         }
 
-        sk_sp<SkData> embeddedData(SkData::MakeSubset(data.get(), offset, size));
+        sk_sp<const SkData> embeddedData(SkData::MakeSubset(data.get(), offset, size));
         auto embeddedStream = SkMemoryStream::Make(embeddedData);
         bytesRead += size;
 
@@ -342,8 +342,25 @@ bool SkIcoCodec::onSkipScanlines(int count) {
     return fCurrCodec->skipScanlines(count);
 }
 
+bool SkIcoCodec::onSupportsIncrementalDecode(const SkImageInfo& dstInfo) {
+    for (int i = 0; ;++i) {
+        i = this->chooseCodec(dstInfo.dimensions(), i);
+        if (i < 0) {
+            break;
+        }
+        SkASSERT(i < fEmbeddedCodecs->size());
+        if ((*fEmbeddedCodecs)[i]->onSupportsIncrementalDecode(dstInfo)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 SkCodec::Result SkIcoCodec::onStartIncrementalDecode(const SkImageInfo& dstInfo,
-        void* pixels, size_t rowBytes, const SkCodec::Options& options) {
+                                                     void* pixels,
+                                                     size_t rowBytes,
+                                                     const SkCodec::Options& options) {
     int index = 0;
     while (true) {
         index = this->chooseCodec(dstInfo.dimensions(), index);
@@ -352,31 +369,10 @@ SkCodec::Result SkIcoCodec::onStartIncrementalDecode(const SkImageInfo& dstInfo,
         }
 
         SkCodec* embeddedCodec = fEmbeddedCodecs->at(index).get();
-        switch (embeddedCodec->startIncrementalDecode(dstInfo,
-                pixels, rowBytes, &options)) {
-            case kSuccess:
-                fCurrCodec = embeddedCodec;
-                return kSuccess;
-            case kUnimplemented:
-                // FIXME: embeddedCodec is a BMP. If scanline decoding would work,
-                // return kUnimplemented so that SkSampledCodec will fall through
-                // to use the scanline decoder.
-                // Note that calling startScanlineDecode will require an extra
-                // rewind. The embedded codec has an SkMemoryStream, which is
-                // cheap to rewind, though it will do extra work re-reading the
-                // header.
-                // Also note that we pass nullptr for Options. This is because
-                // Options that are valid for incremental decoding may not be
-                // valid for scanline decoding.
-                // Once BMP supports incremental decoding this workaround can go
-                // away.
-                if (embeddedCodec->startScanlineDecode(dstInfo) == kSuccess) {
-                    return kUnimplemented;
-                }
-                // Move on to the next embedded codec.
-                break;
-            default:
-                break;
+        if (embeddedCodec->
+                startIncrementalDecode(dstInfo, pixels, rowBytes, &options) == kSuccess) {
+            fCurrCodec = embeddedCodec;
+            return kSuccess;
         }
 
         index++;
@@ -424,7 +420,7 @@ std::unique_ptr<SkCodec> Decode(std::unique_ptr<SkStream> stream,
     return SkIcoCodec::MakeFromStream(std::move(stream), outResult);
 }
 
-std::unique_ptr<SkCodec> Decode(sk_sp<SkData> data,
+std::unique_ptr<SkCodec> Decode(sk_sp<const SkData> data,
                                 SkCodec::Result* outResult,
                                 SkCodecs::DecodeContext) {
     if (!data) {

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/SlotVisitorMacros.h>
@@ -115,7 +117,7 @@ private:
 
     Wasm::Type m_type;
     // If m_type came from a TypeDefinition, the following retains the definition to prevent a dangling m_type.
-    RefPtr<const Wasm::TypeDefinition> m_typeDefinition;
+    const RefPtr<const Wasm::TypeDefinition> m_typeDefinition;
     Wasm::Mutability m_mutability;
     JSWebAssemblyGlobal* m_owner { nullptr };
     Value m_value;

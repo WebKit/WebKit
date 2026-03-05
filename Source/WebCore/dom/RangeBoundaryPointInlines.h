@@ -40,9 +40,9 @@ void RangeBoundaryPoint::setToAfterContents(Ref<Node>&& container)
 inline void RangeBoundaryPoint::set(Ref<Node>&& container, unsigned offset, RefPtr<Node>&& childBefore)
 {
     ASSERT(childBefore == (offset ? container->traverseToChildAt(offset - 1) : nullptr));
-    m_container = WTFMove(container);
+    m_container = WTF::move(container);
     m_offset = offset;
-    m_childBefore = WTFMove(childBefore);
+    m_childBefore = WTF::move(childBefore);
 }
 
 } // namespace WebCore

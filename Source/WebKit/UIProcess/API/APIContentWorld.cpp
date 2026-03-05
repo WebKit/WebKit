@@ -36,13 +36,18 @@
 
 namespace API {
 
-static HashMap<WTF::String, WeakRef<ContentWorld>>& sharedWorldNameMap()
+OptionSet<WebKit::ContentWorldOption> ContentWorld::defaultOptions()
+{
+    return WebKit::ContentWorldOption::Inspectable;
+}
+
+static HashMap<WTF::String, WeakRef<ContentWorld>>& NODELETE sharedWorldNameMap()
 {
     static NeverDestroyed<HashMap<WTF::String, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
-static HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& sharedWorldIdentifierMap()
+static HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& NODELETE sharedWorldIdentifierMap()
 {
     static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
@@ -78,6 +83,7 @@ ContentWorld::ContentWorld(const WTF::String& name, OptionSet<WebKit::ContentWor
 
 ContentWorld::ContentWorld(WebKit::ContentWorldIdentifier identifier)
     : m_identifier(identifier)
+    , m_options(defaultOptions())
 {
     ASSERT(m_identifier == WebKit::pageContentWorldIdentifier());
 }
@@ -92,6 +98,11 @@ Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name, Opt
     return newContentWorld ? newContentWorld.releaseNonNull() : Ref { result.iterator->value.get() };
 }
 
+Ref<ContentWorld> ContentWorld::createNamelessWorld(OptionSet<WebKit::ContentWorldOption> options)
+{
+    return adoptRef(*new ContentWorld(nullString(), options));
+}
+
 ContentWorld& ContentWorld::pageContentWorldSingleton()
 {
     static NeverDestroyed<Ref<ContentWorld>> world(adoptRef(*new ContentWorld(WebKit::pageContentWorldIdentifier())));
@@ -100,7 +111,7 @@ ContentWorld& ContentWorld::pageContentWorldSingleton()
 
 ContentWorld& ContentWorld::defaultClientWorldSingleton()
 {
-    static NeverDestroyed<Ref<ContentWorld>> world(adoptRef(*new ContentWorld(WTF::String { }, { })));
+    static NeverDestroyed<Ref<ContentWorld>> world(adoptRef(*new ContentWorld(WTF::String { }, defaultOptions())));
     return world.get();
 }
 

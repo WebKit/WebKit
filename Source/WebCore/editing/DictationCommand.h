@@ -39,7 +39,7 @@ public:
 private:
     static Ref<DictationCommand> create(Ref<Document>&& document, const String& text, const Vector<DictationAlternative>& alternatives)
     {
-        return adoptRef(*new DictationCommand(WTFMove(document), text, alternatives));
+        return adoptRef(*new DictationCommand(WTF::move(document), text, alternatives));
     }
 
     DictationCommand(Ref<Document>&&, const String& text, const Vector<DictationAlternative>& alternatives);

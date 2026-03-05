@@ -265,7 +265,7 @@ enum {
   ERR_NUM_LIBS
 };
 
-// The following reason codes used to denote an error occuring in another
+// The following reason codes used to denote an error occurring in another
 // library. They are sometimes used for a stack trace.
 #define ERR_R_SYS_LIB ERR_LIB_SYS
 #define ERR_R_BN_LIB ERR_LIB_BN

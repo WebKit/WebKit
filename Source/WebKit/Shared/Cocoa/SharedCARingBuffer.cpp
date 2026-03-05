@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ProducerSharedCARingBuffer);
 
 SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<WebCore::SharedMemory> storage)
     : CARingBuffer(bytesPerFrame, frameCount, numChannelStream)
-    , m_storage(WTFMove(storage))
+    , m_storage(WTF::move(storage))
 {
 }
 
@@ -54,7 +54,7 @@ std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint
         RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Overflowed when trying to compute the storage size");
         return nullptr;
     }
-    auto storage = WebCore::SharedMemory::map(WTFMove(handle.memory), WebCore::SharedMemory::Protection::ReadOnly);
+    auto storage = WebCore::SharedMemory::map(WTF::move(handle.memory), WebCore::SharedMemory::Protection::ReadOnly);
     if (!storage) {
         RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Failed to map memory");
         return nullptr;
@@ -91,7 +91,7 @@ std::optional<ProducerSharedCARingBuffer::Pair> ProducerSharedCARingBuffer::allo
     new (NotNull, sharedMemory->mutableSpan().data()) TimeBoundsBuffer;
     std::unique_ptr<ProducerSharedCARingBuffer> result { new ProducerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, sharedMemory.releaseNonNull() } };
     result->initialize();
-    return Pair { WTFMove(result), { WTFMove(*handle), frameCount } };
+    return Pair { WTF::move(result), { WTF::move(*handle), frameCount } };
 }
 
 } // namespace WebKit

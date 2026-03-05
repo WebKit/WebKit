@@ -216,8 +216,8 @@ void MemoryPressureHandler::setMemoryFootprintNotificationThresholds(Vector<uint
         return;
 
     std::ranges::sort(thresholds, std::greater<>());
-    m_memoryFootprintNotificationThresholds = WTFMove(thresholds);
-    m_memoryFootprintNotificationHandler = WTFMove(handler);
+    m_memoryFootprintNotificationThresholds = WTF::move(thresholds);
+    m_memoryFootprintNotificationHandler = WTF::move(handler);
 }
 
 

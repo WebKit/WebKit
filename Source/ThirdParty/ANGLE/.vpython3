@@ -22,7 +22,7 @@
 # Read more about `vpython` and how to modify this file here:
 #   https://chromium.googlesource.com/infra/infra/+/main/doc/users/vpython.md
 
-python_version: "3.8"
+python_version: "3.11"
 
 # Used by:
 #   build/android/pylib/local/emulator/avd.py
@@ -45,14 +45,14 @@ wheel: <
 # platform.
 wheel: <
   name: "infra/python/wheels/pytype/${vpython_platform}"
-  version: "version:2021.11.2"
+  version: "version:2024.9.13"
   match_tag: <
     platform: "manylinux1_x86_64"
   >
 >
 wheel: <
   name: "infra/python/wheels/importlab-py3"
-  version: "version:0.6.1"
+  version: "version:0.8.1"
   match_tag: <
     platform: "manylinux1_x86_64"
   >
@@ -72,11 +72,8 @@ wheel: <
   >
 >
 wheel: <
-  name: "infra/python/wheels/libcst-py3"
-  version: "version:0.3.19"
-  match_tag: <
-    platform: "manylinux1_x86_64"
-  >
+  name: "infra/python/wheels/libcst/${vpython_platform}"
+  version: "version:1.1.0"
 >
 wheel: <
   name: "infra/python/wheels/pyyaml/${vpython_platform}"
@@ -94,28 +91,18 @@ wheel: <
 >
 wheel: <
   name: "infra/python/wheels/typing-extensions-py3"
-  version: "version:4.0.1"
-  match_tag: <
-    platform: "manylinux1_x86_64"
-  >
+  version: "version:4.14.0"
 >
 wheel: <
   name: "infra/python/wheels/tabulate-py3"
-  version: "version:0.8.9"
-  match_tag: <
-    platform: "manylinux1_x86_64"
-  >
->
-wheel: <
-  name: "infra/python/wheels/typed-ast/${vpython_platform}"
-  version: "version:1.5.3"
+  version: "version:0.9.0"
   match_tag: <
     platform: "manylinux1_x86_64"
   >
 >
 wheel: <
   name: "infra/python/wheels/ninja/${vpython_platform}"
-  version: "version:1.10.0.post2"
+  version: "version:1.10.2.4.chromium.1"
   match_tag: <
     platform: "manylinux1_x86_64"
   >
@@ -123,9 +110,6 @@ wheel: <
 wheel: <
   name: "infra/python/wheels/mypy-extensions-py3"
   version: "version:0.4.3"
-  match_tag: <
-    platform: "manylinux1_x86_64"
-  >
 >
 
 # Common utilities.
@@ -133,7 +117,7 @@ wheel: <
 # Chromium tests using Telemetry function properly.
 wheel: <
   name: "infra/python/wheels/numpy/${vpython_platform}"
-  version: "version:1.2x.supported.1"
+  version: "version:1.23.5.chromium.4"
 >
 wheel: <
   name: "infra/python/wheels/pexpect/${vpython_platform}"
@@ -149,7 +133,7 @@ wheel: <
 >
 wheel: <
   name: "infra/python/wheels/pillow/${vpython_platform}"
-  version: "version:8.3.1"
+  version: "version:10.4.0"
   # There is currently no Linux arm/arm64 version in CIPD.
   not_match_tag <
     platform: "linux_aarch64"
@@ -157,7 +141,7 @@ wheel: <
 >
 wheel: <
   name: "infra/python/wheels/opencv_python/${vpython_platform}"
-  version: "version:4.5.3.56.chromium.4"
+  version: "version:4.8.1.78.chromium.1"
   # There is currently no Linux arm/arm64 version in CIPD.
   not_match_tag <
     platform: "linux_aarch64"
@@ -191,7 +175,7 @@ wheel: <
 >
 wheel: <
   name: "infra/python/wheels/python-dateutil-py2_py3"
-  version: "version:2.7.3"
+  version: "version:2.9.0"
 >
 
 # Used by WPT importer
@@ -248,12 +232,12 @@ wheel: <
 # //third_party/blink/tools/wpt_upload.py
 wheel: <
   name: "infra/python/wheels/crcmod/${vpython_platform}"
-  version: "version:1.7.chromium.3"
+  version: "version:1.7.chromium.4"
 >
 
 wheel: <
   name: "infra/python/wheels/grpcio/${vpython_platform}"
-  version: "version:1.44.0"
+  version: "version:1.69.0"
 >
 
 wheel: <
@@ -331,7 +315,7 @@ wheel: <
 >
 wheel: <
   name: "infra/python/wheels/aioquic/${vpython_platform}"
-  version: "version:0.9.15"
+  version: "version:1.2.0.chromium.1"
 >
 wheel: <
   name: "infra/python/wheels/pylsqpack/${vpython_platform}"
@@ -339,11 +323,11 @@ wheel: <
 >
 wheel: <
   name: "infra/python/wheels/cryptography/${vpython_platform}"
-  version: "version:3.3.1.chromium.1"
+  version: "version:43.0.0"
 >
 wheel: <
   name: "infra/python/wheels/cffi/${vpython_platform}"
-  version: "version:1.14.5.chromium.7"
+  version: "version:1.15.1.chromium.2"
 >
 wheel: <
   name: "infra/python/wheels/pycparser-py2_py3"
@@ -373,7 +357,7 @@ wheel: <
 
 wheel: <
   name: "infra/python/wheels/toml-py3"
-  version: "version:0.10.1"
+  version: "version:0.10.2"
 >
 
 wheel <
@@ -430,14 +414,14 @@ wheel: <
 #   testing/buildbot/generate_buildbot_json_coveragetest.py
 wheel: <
   name: "infra/python/wheels/coverage/${vpython_platform}"
-  version: "version:5.5.chromium.3"
+  version: "version:7.3.1"
 >
 
 # Used by:
 #   //content/test/gpu
 wheel: <
   name: "infra/python/wheels/pathos/${vpython_platform}"
-  version: "version:0.2.7.chromium.5"
+  version: "version:0.3.0.chromium.2"
   not_match_tag <
     abi: "cp27mu"
     platform: "manylinux1_i686"
@@ -465,14 +449,14 @@ wheel: <
 #   //tools/infra/find_bad_builds.py
 wheel: <
   name: "infra/python/wheels/pytz-py2_py3"
-  version: "version:2018.4"
+  version: "version:2024.1"
 >
 
 # Used by:
 #   //third_party/blink/tools/blinkpy/web_tests/port/server_process.py
 wheel: <
   name: "infra/python/wheels/pywin32/${vpython_platform}"
-  version: "version:300"
+  version: "version:308"
   match_tag: <
     platform: "win32"
   >
@@ -485,7 +469,7 @@ wheel: <
 #   //content/test/gpu/gpu_tests/color_profile_manager_mac.py
 wheel: <
   name: "infra/python/wheels/pyobjc/${vpython_platform}"
-  version: "version:7.3.chromium.1"
+  version: "version:10.0"
   match_tag: <
     platform: "macosx_10_10_intel"
   >
@@ -505,7 +489,7 @@ wheel: <
 #   tools/perf/flakiness_cli
 wheel: <
   name: "infra/python/wheels/pandas/${vpython_platform}"
-  version: "version:1.3.2.chromium.1"
+  version: "version:2.2.3.chromium.1"
   not_match_tag: <
     platform: "linux_aarch64"
   >
@@ -527,4 +511,54 @@ wheel: <
 wheel: <
   name: "infra/python/wheels/mako-py3"
   version: "version:1.2.3"
+>
+
+wheel: <
+  name: "infra/python/wheels/immutabledict-py3"
+  version: "version:4.1.0"
+>
+
+wheel: <
+  name: "infra/python/wheels/jinja2-py3"
+  version: "version:3.1.2"
+>
+
+wheel: <
+  name: "infra/python/wheels/msgspec/${vpython_platform}"
+  version: "version:0.18.6"
+>
+
+wheel: <
+  name: "infra/python/wheels/pycnite-py3"
+  version: "version:2024.07.31"
+>
+
+wheel: <
+  name: "infra/python/wheels/pydot-py2_py3"
+  version: "version:1.4.2"
+>
+
+wheel: <
+  name: "infra/python/wheels/pyopenssl-py3"
+  version: "version:24.2.1"
+>
+
+wheel: <
+  name: "infra/python/wheels/service-identity-py3"
+  version: "version:24.1.0"
+>
+
+wheel: <
+  name: "infra/python/wheels/typing-inspect-py3"
+  version: "version:0.7.1"
+>
+
+wheel: <
+  name: "infra/python/wheels/pyyaml/${vpython_platform}"
+  version: "version:5.4.1.chromium.1"
+>
+
+wheel: <
+  name: "infra/python/wheels/tzdata-py2_py3"
+  version: "version:2023.4"
 >

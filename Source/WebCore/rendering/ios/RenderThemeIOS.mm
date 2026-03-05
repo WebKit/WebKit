@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #import "ARKitBadgeSystemImage.h"
 #import "BitmapImage.h"
 #import "BorderShape.h"
-#import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKey.h"
 #import "CSSValueKeywords.h"
@@ -78,9 +77,10 @@
 #import "RenderMeter.h"
 #import "RenderObject.h"
 #import "RenderSlider.h"
-#import "RenderStyleSetters.h"
+#import "RenderStyle+SettersInlines.h"
 #import "RenderView.h"
 #import "Settings.h"
+#import "StyleLengthResolution.h"
 #import "StylePadding.h"
 #import "Theme.h"
 #import "TypedElementDescendantIteratorInlines.h"
@@ -113,7 +113,7 @@ RenderThemeIOS::RenderThemeIOS() = default;
 
 RenderThemeIOS::~RenderThemeIOS() = default;
 
-RenderTheme& RenderTheme::singleton()
+RenderThemeIOS& RenderTheme::singleton()
 {
     static NeverDestroyed<RenderThemeIOS> theme;
     return theme;
@@ -159,7 +159,7 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
     if (style.usedAppearance() == StyleAppearance::PushButton || style.usedAppearance() == StyleAppearance::MenulistButton)
-        return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || Style::hasImageInAnyLayer(style.backgroundLayers());
+        return !style.visitedDependentBackgroundColor().isVisible() || Style::hasImageInAnyLayer(style.backgroundLayers());
 
     if (style.usedAppearance() == StyleAppearance::TextField || style.usedAppearance() == StyleAppearance::TextArea || style.usedAppearance() == StyleAppearance::SearchField)
         return style.nativeAppearanceDisabled();
@@ -233,7 +233,8 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
     style.setWidth(Style::PreferredSize::Fixed { size });
     style.setHeight(Style::PreferredSize::Fixed { size });
 
-    auto radius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { std::trunc(size / 2.0f) };
+    auto usedZoom = style.usedZoomForLength();
+    auto radius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { std::trunc(size / 2 / usedZoom.value) };
     style.setBorderRadius({ radius, radius });
 }
 
@@ -380,12 +381,11 @@ static Style::PaddingEdge toTruncatedPaddingEdge(auto value)
 
 Style::PaddingBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto padding = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
+    const auto padding = Style::emToPx<float>(1, style);
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         // FIXME: Reduce code duplication with toTruncatedPaddingEdge.
-        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.borderTopWidth(), style.usedZoomForLength()))) / style.usedZoom() };
+        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(),  Style::ZoomNeeded { }))) / style.usedZoom() };
 
         if (style.writingMode().isBidiRTL())
             return { 0_css_px, 0_css_px, 0_css_px, value };
@@ -400,6 +400,7 @@ static inline bool canAdjustBorderRadiusForAppearance(StyleAppearance appearance
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
 #endif
+    case StyleAppearance::Base:
     case StyleAppearance::None:
     case StyleAppearance::SearchField:
         return false;
@@ -415,44 +416,46 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
     if (!canAdjustBorderRadiusForAppearance(style.usedAppearance(), box) || Style::hasImageInAnyLayer(style.backgroundLayers()))
         return;
 
+    auto usedZoom = style.usedZoomForLength();
+
     auto boxLogicalHeight = box.logicalHeight();
+    auto unzoomedBoxLogicalHeight = box.logicalHeight() / usedZoom.value;
+
     auto minDimension = std::min(box.width(), box.height());
+    auto unzoomedMinDimension = minDimension / usedZoom.value;
 
     if ((is<RenderButton>(box) || is<RenderMenuList>(box)) && boxLogicalHeight >= largeButtonSize) {
-        auto largeButtonBorderRadius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { minDimension * largeButtonBorderRadiusRatio };
+        auto largeButtonBorderRadius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { unzoomedMinDimension * largeButtonBorderRadiusRatio };
         style.setBorderRadius({ largeButtonBorderRadius, largeButtonBorderRadius });
         return;
     }
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
     auto borderRadius = Style::BorderRadiusValue {
-        Style::LengthPercentage<CSS::Nonnegative>::Dimension { minDimension / 2 },
-        Style::LengthPercentage<CSS::Nonnegative>::Dimension { boxLogicalHeight / 2 },
+        Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { unzoomedMinDimension / 2 },
+        Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { unzoomedBoxLogicalHeight / 2 },
     };
     if (!style.writingMode().isHorizontal())
-        borderRadius = { borderRadius.height(), borderRadius.width() };
+        borderRadius.transpose();
 
-    style.setBorderRadius(WTFMove(borderRadius));
+    style.setBorderRadius(WTF::move(borderRadius));
 }
 
-static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& element)
+static void applyCommonButtonPaddingToStyle(RenderStyle& style)
 {
-    Ref document = element.document();
-    Ref emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::CSS_EM);
-    // We don't need this element's parent style to calculate `em` units, so it's okay to pass nullptr for it here.
-    auto edge = toTruncatedPaddingEdge(emSize->resolveAsLength<int>({ style, document->renderStyle(), nullptr, document->renderView() }));
+    auto edge = toTruncatedPaddingEdge(Style::emToPx<int>(0.5, style));
 
     auto paddingBox = Style::PaddingBox { 0_css_px, edge, 0_css_px, edge };
     if (!style.writingMode().isHorizontal())
         paddingBox = { paddingBox.left(), paddingBox.top(), paddingBox.right(), paddingBox.bottom() };
 
-    style.setPaddingBox(WTFMove(paddingBox));
+    style.setPaddingBox(WTF::move(paddingBox));
 }
 
-static void adjustSelectListButtonStyle(RenderStyle& style, const Element& element)
+static void adjustSelectListButtonStyle(RenderStyle& style)
 {
     // Enforce "padding: 0 0.5em".
-    applyCommonButtonPaddingToStyle(style, element);
+    applyCommonButtonPaddingToStyle(style);
 
     style.setLineHeight(CSS::Keyword::Normal { });
 }
@@ -477,7 +480,7 @@ private:
 static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputElement& inputElement)
 {
     // Always Enforce "padding: 0 0.5em".
-    applyCommonButtonPaddingToStyle(style, inputElement);
+    applyCommonButtonPaddingToStyle(style);
 
     applyCommonNonCapsuleBorderRadiusToStyle(style);
 
@@ -532,7 +535,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
     // or a date input. We don't force these if this is just an element with
     // "-webkit-appearance: menulist-button".
     if (is<HTMLSelectElement>(*element) && !element->hasAttributeWithoutSynchronization(HTMLNames::multipleAttr))
-        adjustSelectListButtonStyle(style, *element);
+        adjustSelectListButtonStyle(style);
     else if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element))
         adjustInputElementButtonStyle(style, *input);
 }
@@ -601,8 +604,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         glyphPath.addBezierCurveTo({ 29.4179f, 71.8f }, { 30.541f, 72.3867f }, { 31.8593f, 72.3867 });
     }
 
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto emPixels = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
+    auto emPixels = Style::emToPx<float>(1, style);
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
@@ -612,9 +614,9 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     FloatPoint glyphOrigin;
     glyphOrigin.setY(logicalRect.center().y() - glyphSize.height() / 2.0f);
     if (!style.writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate<float>(box.style().borderEndWidth(), box.style().usedZoomForLength()) - Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) - Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().borderEndWidth(), box.style().usedZoomForLength()) + Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) + Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();
@@ -648,7 +650,7 @@ void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* e
     RenderTheme::adjustSliderTrackStyle(style, element);
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
-    constexpr auto radius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { defaultTrackRadius };
+    constexpr auto radius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { defaultTrackRadius };
     style.setBorderRadius({ radius, radius });
 }
 
@@ -700,7 +702,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderElement& box, const PaintInfo&
     auto cornerWidth = trackClip.width() < defaultTrackThickness ? trackClip.width() / 2.0f : defaultTrackRadius;
     auto cornerHeight = trackClip.height() < defaultTrackThickness ? trackClip.height() / 2.0f : defaultTrackRadius;
 
-    FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
+    CornerRadii cornerRadii(cornerWidth, cornerHeight);
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
 
     FloatRoundedRect outerBorder(innerBorder);
@@ -782,7 +784,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderElement& renderer, const Paint
     constexpr auto barCornerRadiusInlineSize = 2.5f;
     constexpr auto barCornerRadiusBlockSize = 1.5f;
 
-    FloatRoundedRect::Radii barCornerRadii(
+    CornerRadii barCornerRadii(
         isHorizontalWritingMode ? barCornerRadiusInlineSize : barCornerRadiusBlockSize,
         isHorizontalWritingMode ? barCornerRadiusBlockSize : barCornerRadiusInlineSize
     );
@@ -883,7 +885,7 @@ void RenderThemeIOS::adjustSearchFieldStyle(RenderStyle& style, const Element* e
     if (!element)
         return;
 
-    if (!style.hasBorder())
+    if (!style.border().hasBorder())
         return;
 
     RenderBox* box = element->renderBox();
@@ -912,9 +914,9 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
     if (!style.accentColor().isAuto()) {
         auto tintColor = style.usedAccentColor(element.document().styleColorOptions(&style));
         if (isSubmitStyleButton(&element))
-            style.setBackgroundColor(WTFMove(tintColor));
+            style.setBackgroundColor(WTF::move(tintColor));
         else
-            style.setColor(WTFMove(tintColor));
+            style.setColor(WTF::move(tintColor));
     }
 
     if (!element.active())
@@ -924,7 +926,7 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
     if (textColor.isValid())
         style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 
-    auto backgroundColor = style.colorResolvingCurrentColor(style.backgroundColor());
+    auto backgroundColor = style.backgroundColorResolvingCurrentColor();
     if (backgroundColor.isValid())
         style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 }
@@ -953,17 +955,14 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
         return;
 
     // Set padding: 0 1.0em; on buttons.
-    // CSSPrimitiveValue::resolveAsLength only needs the element's style to calculate em lengths.
-    // Since the element might not be in a document, just pass nullptr for the root element style,
-    // the parent element style, and the render view.
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto edge = toTruncatedPaddingEdge(emSize->resolveAsLength<int>({ style, nullptr, nullptr, nullptr }));
+
+    auto edge = toTruncatedPaddingEdge(Style::emToPx<int>(1, style));
 
     auto paddingBox = Style::PaddingBox { 0_css_px, edge, 0_css_px, edge };
     if (!style.writingMode().isHorizontal())
         paddingBox = { paddingBox.left(), paddingBox.top(), paddingBox.right(), paddingBox.bottom() };
 
-    style.setPaddingBox(WTFMove(paddingBox));
+    style.setPaddingBox(WTF::move(paddingBox));
 
     if (!element)
         return;
@@ -1189,7 +1188,7 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
                 LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
                 for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
                     if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance))
-                        map.add(CSSValueKey { cssValueSystemColorInformation.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTFMove(*color));
+                        map.add(CSSValueKey { cssValueSystemColorInformation.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTF::move(*color));
                 }
             }
         }
@@ -1200,7 +1199,7 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
 
 void RenderThemeIOS::setCSSValueToSystemColorMap(CSSValueToSystemColorMap&& colorMap)
 {
-    globalCSSValueToSystemColorMap() = WTFMove(colorMap);
+    globalCSSValueToSystemColorMap() = WTF::move(colorMap);
 }
 
 void RenderThemeIOS::setFocusRingColor(const Color& color)
@@ -1251,7 +1250,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
 Color RenderThemeIOS::pictureFrameColor(const RenderElement& buttonRenderer)
 {
-    return buttonRenderer.style().visitedDependentColor(CSSPropertyBorderTopColor);
+    return buttonRenderer.style().visitedDependentBorderTopColor();
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1538,7 +1537,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderElement& box, const PaintInfo& pa
     constexpr auto checkboxHeight = 16.0f;
     constexpr auto checkboxCornerRadius = 5.0f;
 
-    FloatRoundedRect checkboxRect(rect, FloatRoundedRect::Radii(checkboxCornerRadius * rect.height() / checkboxHeight));
+    FloatRoundedRect checkboxRect(rect, CornerRadii(checkboxCornerRadius * rect.height() / checkboxHeight));
 
     auto controlStates = extractControlStyleStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
@@ -1630,7 +1629,7 @@ bool RenderThemeIOS::paintRadio(const RenderElement& box, const PaintInfo& paint
 
     auto backgroundColor = checkboxRadioBackgroundColor(box.style(), controlStates, styleColorOptions);
 
-    FloatRoundedRect radioRect { rect, FloatRoundedRect::Radii(rect.width() / 2, rect.height() / 2) };
+    FloatRoundedRect radioRect { rect, CornerRadii(rect.width() / 2, rect.height() / 2) };
 
     if (controlStates.contains(ControlStyle::State::Checked)) {
         context.setFillColor(backgroundColor);
@@ -1695,7 +1694,7 @@ bool RenderThemeIOS::paintMeter(const RenderElement& renderer, const PaintInfo& 
     auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
-    FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
+    FloatRoundedRect roundedFillRect(rect, CornerRadii(cornerRadius));
     context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
 
     roundedFillRect.inflateWithRadii(-nativeControlBorderInlineSize);
@@ -1718,13 +1717,13 @@ bool RenderThemeIOS::paintMeter(const RenderElement& renderer, const PaintInfo& 
     roundedFillRect.setRect(fillRect);
 
     switch (element->gaugeRegion()) {
-    case HTMLMeterElement::GaugeRegionOptimum:
+    case HTMLMeterElement::GaugeRegion::Optimum:
         context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemGreen, styleColorOptions));
         break;
-    case HTMLMeterElement::GaugeRegionSuboptimal:
+    case HTMLMeterElement::GaugeRegion::Suboptimal:
         context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemYellow, styleColorOptions));
         break;
-    case HTMLMeterElement::GaugeRegionEvenLessGood:
+    case HTMLMeterElement::GaugeRegion::EvenLessGood:
         context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemRed, styleColorOptions));
         break;
     }
@@ -1740,7 +1739,7 @@ bool RenderThemeIOS::paintListButton(const RenderElement& box, const PaintInfo& 
 #endif
 
     auto& style = box.style();
-    if (style.hasContent() || style.hasUsedContentNone())
+    if (style.content().isData() || style.hasUsedContentNone())
         return false;
 
     auto& context = paintInfo.context();
@@ -1805,7 +1804,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderElement& box, const PaintInfo&
     constexpr int tickCornerRadius = 1;
 
     FloatRect tickRect;
-    FloatRoundedRect::Radii tickCornerRadii(tickCornerRadius);
+    CornerRadii tickCornerRadii(tickCornerRadius);
 
     bool isHorizontal = box.style().usedAppearance() == StyleAppearance::SliderHorizontal;
     if (isHorizontal) {
@@ -1878,7 +1877,7 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderElement& renderer, co
 
     context.setStrokeThickness(strokeThickness);
     context.setStrokeStyle(StrokeStyle::SolidStroke);
-    context.setStrokeGradient(WTFMove(gradient));
+    context.setStrokeGradient(WTF::move(gradient));
     context.strokeEllipse(strokeRect);
 }
 
@@ -1897,10 +1896,7 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     constexpr auto searchFieldDecorationEmSize = 1.0f;
     constexpr auto searchFieldDecorationMargin = 4_css_px;
 
-    CSSToLengthConversionData conversionData(style, nullptr, nullptr, nullptr);
-
-    auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::CSS_EM);
-    auto size = Style::PreferredSize::Fixed { emSize->resolveAsLength<float>(conversionData) };
+    auto size = Style::PreferredSize::Fixed { Style::emToPx<float>(searchFieldDecorationEmSize, style) };
 
     style.setWidth(size);
     style.setHeight(size);

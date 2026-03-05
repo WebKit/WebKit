@@ -156,18 +156,18 @@ TEST(WTF_Function, Basics)
     EXPECT_TRUE(static_cast<bool>(a));
     EXPECT_EQ(2U, a());
 
-    Function<unsigned()> b = WTFMove(a);
+    Function<unsigned()> b = WTF::move(a);
     EXPECT_TRUE(static_cast<bool>(b));
     EXPECT_EQ(2U, b());
     EXPECT_FALSE(static_cast<bool>(a));
 
     a = MoveOnly { 3 };
-    Function<unsigned()> c = WTFMove(a);
+    Function<unsigned()> c = WTF::move(a);
     EXPECT_TRUE(static_cast<bool>(c));
     EXPECT_EQ(3U, c());
     EXPECT_FALSE(static_cast<bool>(a));
 
-    b = WTFMove(c);
+    b = WTF::move(c);
     EXPECT_TRUE(static_cast<bool>(b));
     EXPECT_EQ(3U, b());
     EXPECT_FALSE(static_cast<bool>(c));

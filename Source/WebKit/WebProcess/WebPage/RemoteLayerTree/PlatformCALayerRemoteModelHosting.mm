@@ -40,7 +40,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteModelHosting::create(Ref<WebCore
 {
     auto layer = adoptRef(*new PlatformCALayerRemoteModelHosting(model, owner, context));
     context.layerDidEnterContext(layer.get(), layer->layerType());
-    return WTFMove(layer);
+    return WTF::move(layer);
 }
 
 PlatformCALayerRemoteModelHosting::PlatformCALayerRemoteModelHosting(Ref<WebCore::Model> model, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -60,7 +60,7 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteModelHosting::clone(WebCore::
     updateClonedLayerProperties(clone.get(), false);
 
     clone->setClonedLayer(this);
-    return WTFMove(clone);
+    return WTF::move(clone);
 }
 
 void PlatformCALayerRemoteModelHosting::populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeContext& context, PlatformCALayer::LayerType type)

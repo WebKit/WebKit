@@ -767,9 +767,9 @@ OPENSSL_EXPORT int RSA_print(BIO *bio, const RSA *rsa, int indent);
 // id-RSASSA-PSS key encoding by default.
 //
 // WARNING: BoringSSL does support id-RSASSA-PSS parameters when callers opt in
-// (see |EVP_pkey_rsa_pss_sha256|). We currently assume such callers do not need
-// this function. Callers that opt into id-RSASSA-PSS support and require this
-// functionality should contact the BoringSSL team.
+// (see |EVP_pkey_rsa_pss_sha256| and others). We currently assume such callers
+// do not need this function. Callers that opt into id-RSASSA-PSS support and
+// require this functionality should contact the BoringSSL team.
 OPENSSL_EXPORT const RSA_PSS_PARAMS *RSA_get0_pss_params(const RSA *rsa);
 
 // RSA_new_method_no_e returns a newly-allocated |RSA| object backed by

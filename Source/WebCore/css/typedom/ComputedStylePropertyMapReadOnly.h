@@ -39,12 +39,12 @@ public:
     static Ref<ComputedStylePropertyMapReadOnly> create(Element&);
 
     Type type() const final { return Type::Computed; }
-    Element* elementConcurrently() const { return m_element.get(); }
+    Element* elementConcurrently() const { return m_element; }
 
 private:
     explicit ComputedStylePropertyMapReadOnly(Element&);
 
-    RefPtr<Element> protectedElement() const { return m_element.get(); }
+    Element* element() const { return m_element.get(); }
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
     String shorthandPropertySerialization(CSSPropertyID) const final;

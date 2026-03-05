@@ -28,4 +28,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(Reflect.has(sample, s1), true);
   assert.sameValue(Reflect.has(sample, s2), false);
-});
+}, null, ["passthrough"]);

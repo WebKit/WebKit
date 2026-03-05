@@ -29,97 +29,97 @@
 namespace WebCore {
 
 template<typename T>
-inline void AXTreeStore<T>::set(AXID axID, const AXTreeWeakPtr& tree)
+inline void AXTreeStore<T>::set(AXTreeID treeID, const AXTreeWeakPtr& tree)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     switchOn(tree,
         [&] (const WeakPtr<AXObjectCache>& typedTree) {
-            liveTreeMap().set(axID, typedTree);
+            liveTreeMap().set(treeID, typedTree);
         }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         , [&] (const ThreadSafeWeakPtr<AXIsolatedTree>& typedTree) {
             Locker locker { s_storeLock };
-            isolatedTreeMap().set(axID, typedTree.get());
+            isolatedTreeMap().set(treeID, typedTree.get());
         }
 #endif
     );
 }
 
 template<typename T>
-inline void AXTreeStore<T>::add(AXID axID, const AXTreeWeakPtr& tree)
+inline void AXTreeStore<T>::add(AXTreeID treeID, const AXTreeWeakPtr& tree)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     switchOn(tree,
         [&] (const WeakPtr<AXObjectCache>& typedTree) {
-            liveTreeMap().add(axID, typedTree);
+            liveTreeMap().add(treeID, typedTree);
         }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         , [&] (const ThreadSafeWeakPtr<AXIsolatedTree>& typedTree) {
             Locker locker { s_storeLock };
-            isolatedTreeMap().add(axID, typedTree.get());
+            isolatedTreeMap().add(treeID, typedTree.get());
         }
 #endif
     );
 }
 
 template<typename T>
-inline void AXTreeStore<T>::remove(AXID axID)
+inline void AXTreeStore<T>::remove(AXTreeID treeID)
 {
     if (isMainThread()) {
-        liveTreeMap().remove(axID);
+        liveTreeMap().remove(treeID);
         return;
     }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Locker locker { s_storeLock };
-    isolatedTreeMap().remove(axID);
+    isolatedTreeMap().remove(treeID);
 #endif
 }
 
 template<typename T>
-inline bool AXTreeStore<T>::contains(AXID axID)
+inline bool AXTreeStore<T>::contains(AXTreeID treeID)
 {
     if (isMainThread())
-        return liveTreeMap().contains(axID);
+        return liveTreeMap().contains(treeID);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Locker locker { s_storeLock };
-    return isolatedTreeMap().contains(axID);
+    return isolatedTreeMap().contains(treeID);
 #endif
 }
 
 template<typename T>
-inline WeakPtr<AXObjectCache> AXTreeStore<T>::axObjectCacheForID(std::optional<AXID> axID)
+inline WeakPtr<AXObjectCache> AXTreeStore<T>::axObjectCacheForID(std::optional<AXTreeID> treeID)
 {
-    return axID ? liveTreeMap().get(*axID) : nullptr;
+    return treeID ? liveTreeMap().get(*treeID) : nullptr;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 template<typename T>
-inline RefPtr<AXIsolatedTree> AXTreeStore<T>::isolatedTreeForID(std::optional<AXID> axID)
+inline RefPtr<AXIsolatedTree> AXTreeStore<T>::isolatedTreeForID(std::optional<AXTreeID> treeID)
 {
-    if (!axID)
+    if (!treeID)
         return nullptr;
 
     Locker locker { s_storeLock };
-    return isolatedTreeMap().get(*axID).get();
+    return isolatedTreeMap().get(*treeID).get();
 }
 #endif
 
 template<typename T>
-inline HashMap<AXID, WeakPtr<AXObjectCache>>& AXTreeStore<T>::liveTreeMap()
+inline HashMap<AXTreeID, WeakPtr<AXObjectCache>>& AXTreeStore<T>::liveTreeMap()
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
-    static NeverDestroyed<HashMap<AXID, WeakPtr<AXObjectCache>>> map;
+    static NeverDestroyed<HashMap<AXTreeID, WeakPtr<AXObjectCache>>> map;
     return map;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 template<typename T>
-inline HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& AXTreeStore<T>::isolatedTreeMap()
+inline HashMap<AXTreeID, ThreadSafeWeakPtr<AXIsolatedTree>>& AXTreeStore<T>::isolatedTreeMap()
 {
-    static NeverDestroyed<HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>> map;
+    static NeverDestroyed<HashMap<AXTreeID, ThreadSafeWeakPtr<AXIsolatedTree>>> map;
     return map;
 }
 #endif
@@ -127,13 +127,13 @@ inline HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& AXTreeStore<T>::isolate
 template<typename T>
 Lock AXTreeStore<T>::s_storeLock;
 
-inline AXTreePtr axTreeForID(std::optional<AXID> axID)
+inline AXTreePtr axTreeForID(std::optional<AXTreeID> treeID)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainThread())
-        return AXTreeStore<AXIsolatedTree>::isolatedTreeForID(axID);
+        return AXTreeStore<AXIsolatedTree>::isolatedTreeForID(treeID);
 #endif
-    return AXTreeStore<AXObjectCache>::axObjectCacheForID(axID);
+    return AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID);
 }
 
 } // WebCore

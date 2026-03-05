@@ -35,6 +35,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "DedicatedWorkerThread.h"
+#include "Document.h"
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "FetchRequestCredentials.h"
@@ -71,7 +72,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerMessagingProxy);
 // vice versa.
 class WorkerUserGestureForwarder : public ThreadSafeRefCounted<WorkerUserGestureForwarder, WTF::DestructionThread::Main> {
 public:
-    static Ref<WorkerUserGestureForwarder> create(RefPtr<UserGestureToken>&& token) { return *new WorkerUserGestureForwarder(WTFMove(token)); }
+    static Ref<WorkerUserGestureForwarder> create(RefPtr<UserGestureToken>&& token) { return *new WorkerUserGestureForwarder(WTF::move(token)); }
 
     ~WorkerUserGestureForwarder()
     {
@@ -90,7 +91,7 @@ public:
 
 private:
     explicit WorkerUserGestureForwarder(RefPtr<UserGestureToken>&& token)
-        : m_token(WTFMove(token))
+        : m_token(WTF::move(token))
     {
         ASSERT(isMainThread());
     }
@@ -113,7 +114,7 @@ static ScriptExecutionContextIdentifier loaderContextIdentifierFromContext(const
 WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
     : m_scriptExecutionContext(workerObject.scriptExecutionContext())
     , m_scriptExecutionContextIdentifier(m_scriptExecutionContext ? std::optional { m_scriptExecutionContext->identifier() } : std::nullopt)
-    , m_loaderContextIdentifier(loaderContextIdentifierFromContext(*workerObject.protectedScriptExecutionContext()))
+    , m_loaderContextIdentifier(loaderContextIdentifierFromContext(*protect(workerObject.scriptExecutionContext())))
     , m_inspectorProxy(WorkerInspectorProxy::create(workerObject.identifier()))
     , m_workerObject(&workerObject)
 {
@@ -157,13 +158,13 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
     m_scriptURL = scriptURL;
 
-    WorkerParameters params { scriptURL, scriptExecutionContext->url(), name, identifier, WTFMove(initializationData.userAgent), isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, scriptExecutionContext->settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
-        WTFMove(initializationData.serviceWorkerData),
+    WorkerParameters params { scriptURL, scriptExecutionContext->url(), name, identifier, WTF::move(initializationData.userAgent), isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, scriptExecutionContext->settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
+        WTF::move(initializationData.serviceWorkerData),
         initializationData.clientIdentifier,
         scriptExecutionContext->advancedPrivacyProtections(),
         scriptExecutionContext->noiseInjectionHashSalt()
     };
-    auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, *this, startMode, scriptExecutionContext->protectedTopOrigin(), proxy.get(), socketProvider.get(), runtimeFlags);
+    auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, *this, startMode, protect(scriptExecutionContext->topOrigin()), proxy.get(), socketProvider.get(), runtimeFlags);
 
     if (parentWorkerGlobalScope) {
         parentWorkerGlobalScope->thread()->addChildThread(thread);
@@ -172,7 +173,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
     } else if (RefPtr document = dynamicDowncast<Document>(*scriptExecutionContext)) {
         if (RefPtr page = document->page()) {
             if (auto workerClient = page->chrome().createWorkerClient(thread.get()))
-                thread->setWorkerClient(WTFMove(workerClient));
+                thread->setWorkerClient(WTF::move(workerClient));
         }
     }
 
@@ -189,13 +190,13 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
 
     // Pass a RefPtr to the WorkerUserGestureForwarder, if present, into the main thread
     // task; the m_userGestureForwarder ivar may be cleared after this function returns.
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, message = WTFMove(message), userGestureForwarder = m_userGestureForwarder](auto& context) mutable {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, message = WTF::move(message), userGestureForwarder = m_userGestureForwarder](auto& context) mutable {
         RefPtr workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
             return;
 
-        auto ports = MessagePort::entanglePorts(context, WTFMove(message.transferredPorts));
-        ActiveDOMObject::queueTaskKeepingObjectAlive(*workerObject, TaskSource::PostedMessageQueue, [worker = Ref { *workerObject }, message = WTFMove(message), userGestureForwarder = WTFMove(userGestureForwarder), ports = WTFMove(ports)](auto&) mutable {
+        auto ports = MessagePort::entanglePorts(context, WTF::move(message.transferredPorts));
+        ActiveDOMObject::queueTaskKeepingObjectAlive(*workerObject, TaskSource::PostedMessageQueue, [worker = Ref { *workerObject }, message = WTF::move(message), userGestureForwarder = WTF::move(userGestureForwarder), ports = WTF::move(ports)](auto&) mutable {
             RefPtr workerScriptExecutionContext = worker->scriptExecutionContext();
             if (!workerScriptExecutionContext)
                 return;
@@ -205,9 +206,9 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
                 return;
 
             auto& vm = globalObject->vm();
-            auto scope = DECLARE_CATCH_SCOPE(vm);
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             UserGestureIndicator userGestureIndicator(userGestureForwarder ? userGestureForwarder->userGestureToForward() : nullptr);
-            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports));
+            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
             if (scope.exception()) [[unlikely]] {
                 // Currently, we assume that the only way we can get here is if we have a termination.
                 RELEASE_ASSERT(vm.hasPendingTerminationException());
@@ -223,7 +224,7 @@ void WorkerMessagingProxy::postTaskToWorkerObject(Function<void(Worker&)>&& func
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, function = WTFMove(function)](auto&) mutable {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, function = WTF::move(function)](auto&) mutable {
         RefPtr workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
             return;
@@ -237,22 +238,22 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePort
     if (isMainThread())
         userGestureForwarder = WorkerUserGestureForwarder::create(UserGestureIndicator::currentUserGesture());
 
-    postTaskToWorkerGlobalScope([this, protectedThis = Ref { *this }, message = WTFMove(message), userGestureForwarder = WTFMove(userGestureForwarder)](auto& scriptContext) mutable {
+    postTaskToWorkerGlobalScope([this, protectedThis = Ref { *this }, message = WTF::move(message), userGestureForwarder = WTF::move(userGestureForwarder)](auto& scriptContext) mutable {
         auto& context = downcast<DedicatedWorkerGlobalScope>(scriptContext);
         auto* globalObject = context.globalObject();
         if (!globalObject)
             return;
 
         auto& vm = globalObject->vm();
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
         // Setting m_userGestureForwarder here, before dispatching the MessageEvent, will allow all calls to
         // worker.postMessage() made during the handling of that MessageEvent to inherit the UserGestureToken
         // held by the forwarder; see postMessageToWorkerObject() above.
-        m_userGestureForwarder = WTFMove(userGestureForwarder);
+        m_userGestureForwarder = WTF::move(userGestureForwarder);
 
-        auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(message.transferredPorts));
-        auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports));
+        auto ports = MessagePort::entanglePorts(scriptContext, WTF::move(message.transferredPorts));
+        auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, std::nullopt, WTF::move(ports));
         if (scope.exception()) [[unlikely]] {
             // Currently, we assume that the only way we can get here is if we have a termination.
             RELEASE_ASSERT(vm.hasPendingTerminationException());
@@ -272,10 +273,10 @@ void WorkerMessagingProxy::postTaskToWorkerGlobalScope(Function<void(ScriptExecu
         return;
 
     if (!m_workerThread) {
-        m_queuedEarlyTasks.append(makeUnique<ScriptExecutionContext::Task>(WTFMove(task)));
+        m_queuedEarlyTasks.append(makeUnique<ScriptExecutionContext::Task>(WTF::move(task)));
         return;
     }
-    m_workerThread->runLoop().postTask(WTFMove(task));
+    m_workerThread->runLoop().postTask(WTF::move(task));
 }
 
 void WorkerMessagingProxy::suspendForBackForwardCache()
@@ -301,7 +302,7 @@ ScriptExecutionContextIdentifier WorkerMessagingProxy::loaderContextIdentifier()
 
 void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
-    ScriptExecutionContext::postTaskTo(m_loaderContextIdentifier, WTFMove(task));
+    ScriptExecutionContext::postTaskTo(m_loaderContextIdentifier, WTF::move(task));
 }
 
 RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnection()
@@ -311,6 +312,9 @@ RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnectio
         return nullptr;
 
     RefPtr document = dynamicDowncast<Document>(*m_scriptExecutionContext);
+    if (!document)
+        document = Document::allDocumentsMap().get(m_loaderContextIdentifier);
+
     ASSERT(document);
     if (!document || !document->page())
         return nullptr;
@@ -321,6 +325,9 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDat
 {
     ASSERT(isMainThread());
     RefPtr document = dynamicDowncast<Document>(*m_scriptExecutionContext);
+    if (!document)
+        document = Document::allDocumentsMap().get(m_loaderContextIdentifier);
+
     ASSERT(document);
     if (!document || !document->page())
         return nullptr;
@@ -358,7 +365,7 @@ void WorkerMessagingProxy::postMessageToDebugger(const String& message)
 {
     RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
         if (!m_mayBeDestroyed)
-            m_inspectorProxy->sendMessageFromWorkerToFrontend(WTFMove(message));
+            m_inspectorProxy->sendMessageFromWorkerToFrontend(WTF::move(message));
     });
 }
 
@@ -383,7 +390,7 @@ void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThre
 
     auto queuedEarlyTasks = std::exchange(m_queuedEarlyTasks, { });
     for (auto& task : queuedEarlyTasks)
-        workerThread.runLoop().postTask(WTFMove(*task));
+        workerThread.runLoop().postTask(WTF::move(*task));
 }
 
 void WorkerMessagingProxy::workerObjectDestroyed()
@@ -481,7 +488,7 @@ void WorkerMessagingProxy::setAppBadge(std::optional<uint64_t> badge)
     if (!m_scriptExecutionContext)
         return;
 
-    postTaskToLoader([badge = WTFMove(badge), this, protectedThis = Ref { *this }] (auto& context) {
+    postTaskToLoader([badge = WTF::move(badge), this, protectedThis = Ref { *this }] (auto& context) {
         ASSERT(isMainThread());
 
         if (m_scriptURL.isEmpty())

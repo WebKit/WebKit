@@ -23,16 +23,29 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class HTMLOptionsCollection;
+
+template<>
+struct CollectionClassTraits<HTMLOptionsCollection> {
+    static constexpr CollectionType collectionType = CollectionType::SelectOptions;
+};
+
+} // namespace WebCore
+
 #include <WebCore/CachedHTMLCollection.h>
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 
 namespace WebCore {
 
-class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(HTMLOptionsCollection, WEBCORE_EXPORT);
+class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HTMLOptionsCollection, WEBCORE_EXPORT);
 public:
-    using Base = CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType>;
+    using Base = CachedHTMLCollection<HTMLOptionsCollection>;
 
     static Ref<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 
@@ -45,8 +58,8 @@ public:
     
     ExceptionOr<void> setItem(unsigned index, HTMLOptionElement*);
     
-    using OptionOrOptGroupElement = Variant<RefPtr<HTMLOptionElement>, RefPtr<HTMLOptGroupElement>>;
-    using HTMLElementOrInt = Variant<RefPtr<HTMLElement>, int>;
+    using OptionOrOptGroupElement = Variant<Ref<HTMLOptionElement>, Ref<HTMLOptGroupElement>>;
+    using HTMLElementOrInt = Variant<Ref<HTMLElement>, int>;
     WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, const std::optional<HTMLElementOrInt>& before);
     WEBCORE_EXPORT void remove(int index);
 
@@ -64,4 +77,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLOptionsCollection, CollectionType::SelectOptions)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLOptionsCollection)

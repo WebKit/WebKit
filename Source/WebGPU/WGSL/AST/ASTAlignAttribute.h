@@ -40,7 +40,7 @@ public:
 private:
     AlignAttribute(SourceSpan span, Expression::Ref&& alignment)
         : Attribute(span)
-        , m_alignment(WTFMove(alignment))
+        , m_alignment(WTF::move(alignment))
     { }
 
     Expression::Ref m_alignment;

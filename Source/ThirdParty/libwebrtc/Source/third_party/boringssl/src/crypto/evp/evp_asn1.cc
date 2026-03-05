@@ -81,7 +81,7 @@ EVP_PKEY *EVP_PKEY_from_subject_public_key_info(const uint8_t *in, size_t len,
 }
 
 int EVP_marshal_public_key(CBB *cbb, const EVP_PKEY *key) {
-  if (key->ameth == NULL || key->ameth->pub_encode == NULL) {
+  if (key->ameth == nullptr || key->ameth->pub_encode == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     return 0;
   }
@@ -133,29 +133,12 @@ EVP_PKEY *EVP_PKEY_from_private_key_info(const uint8_t *in, size_t len,
 }
 
 int EVP_marshal_private_key(CBB *cbb, const EVP_PKEY *key) {
-  if (key->ameth == NULL || key->ameth->priv_encode == NULL) {
+  if (key->ameth == nullptr || key->ameth->priv_encode == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     return 0;
   }
 
   return key->ameth->priv_encode(cbb, key);
-}
-
-static auto get_default_algs() {
-  // A set of algorithms to use by default in |EVP_parse_public_key| and
-  // |EVP_parse_private_key|.
-  return std::array{
-      EVP_pkey_ec_p224(),
-      EVP_pkey_ec_p256(),
-      EVP_pkey_ec_p384(),
-      EVP_pkey_ec_p521(),
-      EVP_pkey_ed25519(),
-      EVP_pkey_rsa(),
-      EVP_pkey_x25519(),
-      // TODO(crbug.com/438761503): Remove DSA from this set, after callers that
-      // need DSA pass in |EVP_pkey_dsa| explicitly.
-      EVP_pkey_dsa(),
-  };
 }
 
 EVP_PKEY *EVP_parse_public_key(CBS *cbs) {
@@ -165,7 +148,7 @@ EVP_PKEY *EVP_parse_public_key(CBS *cbs) {
     return nullptr;
   }
 
-  auto algs = get_default_algs();
+  auto algs = bssl::GetDefaultEVPAlgorithms();
   return EVP_PKEY_from_subject_public_key_info(CBS_data(&elem), CBS_len(&elem),
                                                algs.data(), algs.size());
 }
@@ -177,7 +160,7 @@ EVP_PKEY *EVP_parse_private_key(CBS *cbs) {
     return nullptr;
   }
 
-  auto algs = get_default_algs();
+  auto algs = bssl::GetDefaultEVPAlgorithms();
   return EVP_PKEY_from_private_key_info(CBS_data(&elem), CBS_len(&elem),
                                         algs.data(), algs.size());
 }
@@ -221,35 +204,26 @@ static bssl::UniquePtr<EVP_PKEY> old_priv_decode(CBS *cbs, int type) {
 
 EVP_PKEY *d2i_PrivateKey(int type, EVP_PKEY **out, const uint8_t **inp,
                          long len) {
-  if (len < 0) {
-    OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
-    return nullptr;
-  }
-
-  // Parse with the legacy format.
-  CBS cbs;
-  CBS_init(&cbs, *inp, (size_t)len);
-  bssl::UniquePtr<EVP_PKEY> ret = old_priv_decode(&cbs, type);
-  if (ret == nullptr) {
-    // Try again with PKCS#8.
-    ERR_clear_error();
-    CBS_init(&cbs, *inp, (size_t)len);
-    ret.reset(EVP_parse_private_key(&cbs));
-    if (ret == nullptr) {
-      return nullptr;
-    }
-    if (EVP_PKEY_id(ret.get()) != type) {
-      OPENSSL_PUT_ERROR(EVP, EVP_R_DIFFERENT_KEY_TYPES);
-      return nullptr;
-    }
-  }
-
-  if (out != nullptr) {
-    EVP_PKEY_free(*out);
-    *out = ret.get();
-  }
-  *inp = CBS_data(&cbs);
-  return ret.release();
+  return bssl::D2IFromCBS(
+      out, inp, len, [&](CBS *cbs) -> bssl::UniquePtr<EVP_PKEY> {
+        // Parse with the legacy format.
+        CBS copy = *cbs;
+        bssl::UniquePtr<EVP_PKEY> ret = old_priv_decode(cbs, type);
+        if (ret == nullptr) {
+          // Try again with PKCS#8.
+          ERR_clear_error();
+          *cbs = copy;
+          ret.reset(EVP_parse_private_key(cbs));
+          if (ret == nullptr) {
+            return nullptr;
+          }
+          if (EVP_PKEY_id(ret.get()) != type) {
+            OPENSSL_PUT_ERROR(EVP, EVP_R_DIFFERENT_KEY_TYPES);
+            return nullptr;
+          }
+        }
+        return ret;
+      });
 }
 
 // num_elements parses one SEQUENCE from |in| and returns the number of elements
@@ -264,7 +238,7 @@ static size_t num_elements(const uint8_t *in, size_t in_len) {
 
   size_t count = 0;
   while (CBS_len(&sequence) > 0) {
-    if (!CBS_get_any_asn1_element(&sequence, NULL, NULL, NULL)) {
+    if (!CBS_get_any_asn1_element(&sequence, nullptr, nullptr, nullptr)) {
       return 0;
     }
 
@@ -277,15 +251,15 @@ static size_t num_elements(const uint8_t *in, size_t in_len) {
 EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **out, const uint8_t **inp, long len) {
   if (len < 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
-    return NULL;
+    return nullptr;
   }
 
   // Parse the input as a PKCS#8 PrivateKeyInfo.
   CBS cbs;
   CBS_init(&cbs, *inp, (size_t)len);
   EVP_PKEY *ret = EVP_parse_private_key(&cbs);
-  if (ret != NULL) {
-    if (out != NULL) {
+  if (ret != nullptr) {
+    if (out != nullptr) {
       EVP_PKEY_free(*out);
       *out = ret;
     }
@@ -323,71 +297,45 @@ int i2d_PublicKey(const EVP_PKEY *key, uint8_t **outp) {
 
 EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **out, const uint8_t **inp,
                         long len) {
-  bssl::UniquePtr<EVP_PKEY> ret(EVP_PKEY_new());
-  if (ret == nullptr) {
-    return nullptr;
-  }
+  return bssl::D2IFromCBS(
+      out, inp, len, [&](CBS *cbs) -> bssl::UniquePtr<EVP_PKEY> {
+        bssl::UniquePtr<EVP_PKEY> ret(EVP_PKEY_new());
+        if (ret == nullptr) {
+          return nullptr;
+        }
+        switch (type) {
+          case EVP_PKEY_RSA: {
+            bssl::UniquePtr<RSA> rsa(RSA_parse_public_key(cbs));
+            if (rsa == nullptr) {
+              return nullptr;
+            }
+            EVP_PKEY_assign_RSA(ret.get(), rsa.release());
+            return ret;
+          }
 
-  CBS cbs;
-  CBS_init(&cbs, *inp, len < 0 ? 0 : (size_t)len);
-  switch (type) {
-    case EVP_PKEY_RSA: {
-      bssl::UniquePtr<RSA> rsa(RSA_parse_public_key(&cbs));
-      if (rsa == nullptr) {
-        return nullptr;
-      }
-      EVP_PKEY_assign_RSA(ret.get(), rsa.release());
-      break;
-    }
-
-    // Unlike OpenSSL, we do not support EC keys with this API. The raw EC
-    // public key serialization requires knowing the group. In OpenSSL, calling
-    // this function with |EVP_PKEY_EC| and setting |out| to nullptr does not
-    // work. It requires |*out| to include a partially-initialized |EVP_PKEY| to
-    // extract the group.
-    default:
-      OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
-      return nullptr;
-  }
-
-  *inp = CBS_data(&cbs);
-  if (out != nullptr) {
-    EVP_PKEY_free(*out);
-    *out = ret.get();
-  }
-  return ret.release();
+          // Unlike OpenSSL, we do not support EC keys with this API. The raw EC
+          // public key serialization requires knowing the group. In OpenSSL,
+          // calling this function with |EVP_PKEY_EC| and setting |out| to
+          // nullptr does not work. It requires |*out| to include a
+          // partially-initialized |EVP_PKEY| to extract the group.
+          default:
+            OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
+            return nullptr;
+        }
+      });
 }
 
 EVP_PKEY *d2i_PUBKEY(EVP_PKEY **out, const uint8_t **inp, long len) {
-  if (len < 0) {
-    return nullptr;
-  }
-  CBS cbs;
-  CBS_init(&cbs, *inp, (size_t)len);
-  bssl::UniquePtr<EVP_PKEY> ret(EVP_parse_public_key(&cbs));
-  if (ret == nullptr) {
-    return nullptr;
-  }
-  if (out != nullptr) {
-    EVP_PKEY_free(*out);
-    *out = ret.get();
-  }
-  *inp = CBS_data(&cbs);
-  return ret.release();
+  return bssl::D2IFromCBS(out, inp, len, EVP_parse_public_key);
 }
 
 int i2d_PUBKEY(const EVP_PKEY *pkey, uint8_t **outp) {
-  if (pkey == NULL) {
+  if (pkey == nullptr) {
     return 0;
   }
-
-  CBB cbb;
-  if (!CBB_init(&cbb, 128) ||
-      !EVP_marshal_public_key(&cbb, pkey)) {
-    CBB_cleanup(&cbb);
-    return -1;
-  }
-  return CBB_finish_i2d(&cbb, outp);
+  return bssl::I2DFromCBB(
+      /*initial_capacity=*/128, outp,
+      [&](CBB *cbb) -> bool { return EVP_marshal_public_key(cbb, pkey); });
 }
 
 static bssl::UniquePtr<EVP_PKEY> parse_spki(
@@ -406,25 +354,13 @@ static bssl::UniquePtr<EVP_PKEY> parse_spki(CBS *cbs, const EVP_PKEY_ALG *alg) {
 }
 
 RSA *d2i_RSA_PUBKEY(RSA **out, const uint8_t **inp, long len) {
-  if (len < 0) {
-    return nullptr;
-  }
-  CBS cbs;
-  CBS_init(&cbs, *inp, (size_t)len);
-  bssl::UniquePtr<EVP_PKEY> pkey = parse_spki(&cbs, EVP_pkey_rsa());
-  if (pkey == nullptr) {
-    return nullptr;
-  }
-  bssl::UniquePtr<RSA> rsa(EVP_PKEY_get1_RSA(pkey.get()));
-  if (rsa == nullptr) {
-    return nullptr;
-  }
-  if (out != nullptr) {
-    RSA_free(*out);
-    *out = rsa.get();
-  }
-  *inp = CBS_data(&cbs);
-  return rsa.release();
+  return bssl::D2IFromCBS(out, inp, len, [](CBS *cbs) -> bssl::UniquePtr<RSA> {
+    bssl::UniquePtr<EVP_PKEY> pkey = parse_spki(cbs, EVP_pkey_rsa());
+    if (pkey == nullptr) {
+      return nullptr;
+    }
+    return bssl::UniquePtr<RSA>(EVP_PKEY_get1_RSA(pkey.get()));
+  });
 }
 
 int i2d_RSA_PUBKEY(const RSA *rsa, uint8_t **outp) {
@@ -442,25 +378,13 @@ int i2d_RSA_PUBKEY(const RSA *rsa, uint8_t **outp) {
 }
 
 DSA *d2i_DSA_PUBKEY(DSA **out, const uint8_t **inp, long len) {
-  if (len < 0) {
-    return nullptr;
-  }
-  CBS cbs;
-  CBS_init(&cbs, *inp, (size_t)len);
-  bssl::UniquePtr<EVP_PKEY> pkey = parse_spki(&cbs, EVP_pkey_dsa());
-  if (pkey == nullptr) {
-    return nullptr;
-  }
-  bssl::UniquePtr<DSA> dsa(EVP_PKEY_get1_DSA(pkey.get()));
-  if (dsa == nullptr) {
-    return nullptr;
-  }
-  if (out != nullptr) {
-    DSA_free(*out);
-    *out = dsa.get();
-  }
-  *inp = CBS_data(&cbs);
-  return dsa.release();
+  return bssl::D2IFromCBS(out, inp, len, [](CBS *cbs) -> bssl::UniquePtr<DSA> {
+    bssl::UniquePtr<EVP_PKEY> pkey = parse_spki(cbs, EVP_pkey_dsa());
+    if (pkey == nullptr) {
+      return nullptr;
+    }
+    return bssl::UniquePtr<DSA>(EVP_PKEY_get1_DSA(pkey.get()));
+  });
 }
 
 int i2d_DSA_PUBKEY(const DSA *dsa, uint8_t **outp) {
@@ -478,31 +402,21 @@ int i2d_DSA_PUBKEY(const DSA *dsa, uint8_t **outp) {
 }
 
 EC_KEY *d2i_EC_PUBKEY(EC_KEY **out, const uint8_t **inp, long len) {
-  if (len < 0) {
-    return nullptr;
-  }
-  CBS cbs;
-  CBS_init(&cbs, *inp, (size_t)len);
-  const EVP_PKEY_ALG *const algs[] = {EVP_pkey_ec_p224(), EVP_pkey_ec_p256(),
-                                      EVP_pkey_ec_p384(), EVP_pkey_ec_p521()};
-  bssl::UniquePtr<EVP_PKEY> pkey = parse_spki(&cbs, algs);
-  if (pkey == nullptr) {
-    return nullptr;
-  }
-  bssl::UniquePtr<EC_KEY> ec_key(EVP_PKEY_get1_EC_KEY(pkey.get()));
-  if (ec_key == nullptr) {
-    return nullptr;
-  }
-  if (out != nullptr) {
-    EC_KEY_free(*out);
-    *out = ec_key.get();
-  }
-  *inp = CBS_data(&cbs);
-  return ec_key.release();
+  return bssl::D2IFromCBS(
+      out, inp, len, [](CBS *cbs) -> bssl::UniquePtr<EC_KEY> {
+        const EVP_PKEY_ALG *const algs[] = {
+            EVP_pkey_ec_p224(), EVP_pkey_ec_p256(), EVP_pkey_ec_p384(),
+            EVP_pkey_ec_p521()};
+        bssl::UniquePtr<EVP_PKEY> pkey = parse_spki(cbs, algs);
+        if (pkey == nullptr) {
+          return nullptr;
+        }
+        return bssl::UniquePtr<EC_KEY>(EVP_PKEY_get1_EC_KEY(pkey.get()));
+      });
 }
 
 int i2d_EC_PUBKEY(const EC_KEY *ec_key, uint8_t **outp) {
-  if (ec_key == NULL) {
+  if (ec_key == nullptr) {
     return 0;
   }
 

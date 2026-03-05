@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,14 +39,17 @@
 #include "RealtimeIncomingAudioSource.h"
 #include "RealtimeIncomingVideoSource.h"
 #include "Settings.h"
+#include <webrtc/rtc_base/time_utils.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpReceiverBackend);
 
 LibWebRTCRtpReceiverBackend::LibWebRTCRtpReceiverBackend(Ref<webrtc::RtpReceiverInterface>&& rtcReceiver)
-    : m_rtcReceiver(WTFMove(rtcReceiver))
+    : m_rtcReceiver(WTF::move(rtcReceiver))
 {
 }
 
@@ -57,35 +60,46 @@ RTCRtpParameters LibWebRTCRtpReceiverBackend::getParameters()
     return toRTCRtpParameters(m_rtcReceiver->GetParameters());
 }
 
-static inline void fillRTCRtpContributingSource(RTCRtpContributingSource& source, const webrtc::RtpSource& rtcSource)
+double LibWebRTCRtpReceiverBackend::webrtcToWallTimeOffset() const
 {
-    source.timestamp = rtcSource.timestamp().ms();
+    if (!m_webrtcToWallTimeOffset) {
+        auto currentWebRTCTime = webrtc::TimeMillis();
+        auto currentWallTime = WallTime::now();
+        m_webrtcToWallTimeOffset = currentWallTime.secondsSinceEpoch().milliseconds() - currentWebRTCTime;
+    }
+    return *m_webrtcToWallTimeOffset;
+}
+
+static inline void fillRTCRtpContributingSource(RTCRtpContributingSource& source, const webrtc::RtpSource& rtcSource, double webrtcToWallTimeOffset)
+{
+    source.timestamp = rtcSource.timestamp().ms() + webrtcToWallTimeOffset;
     source.rtpTimestamp = rtcSource.rtp_timestamp();
     source.source = rtcSource.source_id();
     if (rtcSource.audio_level())
         source.audioLevel = (*rtcSource.audio_level() == 127) ? 0 : pow(10, -*rtcSource.audio_level() / 20);
 }
 
-static inline RTCRtpContributingSource toRTCRtpContributingSource(const webrtc::RtpSource& rtcSource)
+static inline RTCRtpContributingSource toRTCRtpContributingSource(const webrtc::RtpSource& rtcSource, double webrtcToWallTimeOffset)
 {
     RTCRtpContributingSource source;
-    fillRTCRtpContributingSource(source, rtcSource);
+    fillRTCRtpContributingSource(source, rtcSource, webrtcToWallTimeOffset);
     return source;
 }
 
-static inline RTCRtpSynchronizationSource toRTCRtpSynchronizationSource(const webrtc::RtpSource& rtcSource)
+static inline RTCRtpSynchronizationSource toRTCRtpSynchronizationSource(const webrtc::RtpSource& rtcSource, double webrtcToWallTimeOffset)
 {
     RTCRtpSynchronizationSource source;
-    fillRTCRtpContributingSource(source, rtcSource);
+    fillRTCRtpContributingSource(source, rtcSource, webrtcToWallTimeOffset);
     return source;
 }
 
 Vector<RTCRtpContributingSource> LibWebRTCRtpReceiverBackend::getContributingSources() const
 {
     Vector<RTCRtpContributingSource> sources;
+    auto offset = webrtcToWallTimeOffset();
     for (auto& rtcSource : m_rtcReceiver->GetSources()) {
         if (rtcSource.source_type() == webrtc::RtpSourceType::CSRC)
-            sources.append(toRTCRtpContributingSource(rtcSource));
+            sources.append(toRTCRtpContributingSource(rtcSource, offset));
     }
     return sources;
 }
@@ -93,9 +107,10 @@ Vector<RTCRtpContributingSource> LibWebRTCRtpReceiverBackend::getContributingSou
 Vector<RTCRtpSynchronizationSource> LibWebRTCRtpReceiverBackend::getSynchronizationSources() const
 {
     Vector<RTCRtpSynchronizationSource> sources;
+    auto offset = webrtcToWallTimeOffset();
     for (auto& rtcSource : m_rtcReceiver->GetSources()) {
         if (rtcSource.source_type() == webrtc::RtpSourceType::SSRC)
-            sources.append(toRTCRtpSynchronizationSource(rtcSource));
+            sources.append(toRTCRtpSynchronizationSource(rtcSource, offset));
     }
     return sources;
 }
@@ -109,17 +124,19 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource(Document& doc
     case webrtc::MediaType::UNSUPPORTED:
         break;
     case webrtc::MediaType::AUDIO: {
-        webrtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack { static_cast<webrtc::AudioTrackInterface*>(rtcTrack.get()) };
-        Ref source = RealtimeIncomingAudioSource::create(toRef(WTFMove(audioTrack)), fromStdString(rtcTrack->id()));
+        // This is a cast from a webrtc type, not much we can do to make it safe.
+        SUPPRESS_MEMORY_UNSAFE_CAST webrtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack { static_cast<webrtc::AudioTrackInterface*>(rtcTrack.get()) };
+        Ref source = RealtimeIncomingAudioSource::create(toRef(WTF::move(audioTrack)), fromStdString(rtcTrack->id()));
         if (document.page()) {
-            auto& webRTCProvider = reinterpret_cast<LibWebRTCProvider&>(document.page()->webRTCProvider());
+            auto& webRTCProvider = downcast<LibWebRTCProvider>(document.page()->webRTCProvider());
             source->setAudioModule(webRTCProvider.audioModule());
         }
         return source;
     }
     case webrtc::MediaType::VIDEO: {
-        webrtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack { static_cast<webrtc::VideoTrackInterface*>(rtcTrack.get()) };
-        Ref source = RealtimeIncomingVideoSource::create(toRef(WTFMove(videoTrack)), fromStdString(rtcTrack->id()));
+        // This is a cast from a webrtc type, not much we can do to make it safe.
+        SUPPRESS_MEMORY_UNSAFE_CAST webrtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack { static_cast<webrtc::VideoTrackInterface*>(rtcTrack.get()) };
+        Ref source = RealtimeIncomingVideoSource::create(toRef(WTF::move(videoTrack)), fromStdString(rtcTrack->id()));
         if (document.settings().webRTCMediaPipelineAdditionalLoggingEnabled())
             source->enableFrameRatedMonitoring();
         return source;

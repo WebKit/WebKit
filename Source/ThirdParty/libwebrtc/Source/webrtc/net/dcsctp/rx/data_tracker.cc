@@ -29,9 +29,6 @@
 
 namespace dcsctp {
 
-constexpr size_t DataTracker::kMaxDuplicateTsnReported;
-constexpr size_t DataTracker::kMaxGapAckBlocksReported;
-
 bool DataTracker::AdditionalTsnBlocks::Add(UnwrappedTSN tsn) {
   // Find any block to expand. It will look for any block that includes (also
   // when expanded) the provided `tsn`. It will return the block that is greater

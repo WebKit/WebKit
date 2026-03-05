@@ -41,7 +41,7 @@ public:
 private:
     DiagnosticDirective(SourceSpan span, Diagnostic&& diagnostic)
         : Directive(span)
-        , m_diagnostic(WTFMove(diagnostic))
+        , m_diagnostic(WTF::move(diagnostic))
     { }
 
     Diagnostic m_diagnostic;

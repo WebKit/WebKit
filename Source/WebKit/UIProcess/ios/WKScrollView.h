@@ -43,6 +43,7 @@
 - (void)_setBouncesInternal:(BOOL)horizontal vertical:(BOOL)vertical;
 - (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets;
 - (void)_setDecelerationRateInternal:(UIScrollViewDecelerationRate)rate;
+- (void)_invalidateInternalDelegate;
 
 - (void)_resetContentInset;
 @property (nonatomic, readonly) BOOL _contentInsetWasExternallyOverridden;

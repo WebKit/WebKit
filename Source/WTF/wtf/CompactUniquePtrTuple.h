@@ -70,12 +70,12 @@ public:
         requires (std::same_as<UDeleter, Deleter> || std::same_as<UDeleter, std::default_delete<U>>)
     CompactUniquePtrTuple<T, Type, Deleter>& operator=(CompactUniquePtrTuple<U, Type, UDeleter>&& other)
     {
-        CompactUniquePtrTuple moved { WTFMove(other) };
+        CompactUniquePtrTuple moved { WTF::move(other) };
         std::swap(m_data, moved.m_data);
         return *this;
     }
 
-    T* pointer() const { return m_data.pointer(); }
+    T* pointer() const LIFETIME_BOUND { return m_data.pointer(); }
 
     std::unique_ptr<T, Deleter> moveToUniquePtr()
     {

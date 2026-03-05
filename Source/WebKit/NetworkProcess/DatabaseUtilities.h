@@ -48,7 +48,7 @@ protected:
     ~DatabaseUtilities();
 
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query, ASCIILiteral logString) const;
-    ScopeExit<Function<void()>> WARN_UNUSED_RETURN beginTransactionIfNecessary();
+    [[nodiscard]] ScopeExit<Function<void()>> beginTransactionIfNecessary();
     enum class CreatedNewFile : bool { No, Yes };
     CreatedNewFile openDatabaseAndCreateSchemaIfNecessary();
     void enableForeignKeys();
@@ -59,7 +59,7 @@ protected:
     virtual void destroyStatements() = 0;
     virtual String getDomainStringFromDomainID(unsigned) const = 0;
     virtual bool needsUpdatedSchema() = 0;
-    virtual const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() = 0;
+    virtual const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() LIFETIME_BOUND = 0;
     virtual std::span<const ASCIILiteral> sortedTables() = 0;
     TableAndIndexPair currentTableAndIndexQueries(const String&);
     String stripIndexQueryToMatchStoredValue(const char* originalQuery);

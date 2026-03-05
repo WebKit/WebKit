@@ -58,12 +58,12 @@ public:
 
     void appendToEnd(SegmentedString&& string)
     {
-        m_last->append(WTFMove(string));
+        m_last->append(WTF::move(string));
     }
 
     void insertAtCurrentInsertionPoint(SegmentedString&& string)
     {
-        m_first.append(WTFMove(string));
+        m_first.append(WTF::move(string));
     }
 
     bool hasInsertionPoint() const
@@ -87,12 +87,12 @@ public:
         return m_last->isClosed();
     }
 
-    SegmentedString& current() { return m_first; }
-    const SegmentedString& current() const { return m_first; }
+    SegmentedString& current() LIFETIME_BOUND { return m_first; }
+    const SegmentedString& current() const LIFETIME_BOUND { return m_first; }
 
     void splitInto(SegmentedString& next)
     {
-        next = WTFMove(m_first);
+        next = WTF::move(m_first);
         if (m_last == &m_first) {
             // We used to only have one SegmentedString in the InputStream
             // but now we have two.  That means m_first is no longer also

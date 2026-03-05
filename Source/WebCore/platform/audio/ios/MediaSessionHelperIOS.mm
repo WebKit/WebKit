@@ -29,7 +29,10 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
+#import "MediaDeviceRoute.h"
 #import "MediaPlaybackTargetCocoa.h"
+#import "MediaPlaybackTargetWirelessPlayback.h"
+#import "MediaPlayerEnums.h"
 #import "PlatformMediaSessionManager.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -85,19 +88,26 @@ class MediaSessionHelperIOS;
 
 @end
 
-class MediaSessionHelperIOS final : public MediaSessionHelper {
+class MediaSessionHelperIOS final
+    : public MediaSessionHelper
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSessionHelperIOS>
+#endif
+{
 public:
     MediaSessionHelperIOS();
+
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
+#endif
 
     void externalOutputDeviceAvailableDidChange();
     void updateCarPlayIsConnected();
 #if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     void mediaServerConnectionDied();
 #endif
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
     void activeAudioRouteDidChange(bool);
-    void activeVideoRouteDidChange();
-#endif
+    void activeVideoRouteDidChange(Ref<MediaPlaybackTarget>&&);
 
 private:
     void setIsPlayingToAutomotiveHeadUnit(bool);
@@ -129,10 +139,6 @@ MediaSessionHelper& MediaSessionHelper::sharedHelper()
     return *helper;
 }
 
-Ref<MediaSessionHelper> MediaSessionHelper::protectedSharedHelper()
-{
-    return sharedHelper();
-}
 
 void MediaSessionHelper::resetSharedHelper()
 {
@@ -141,7 +147,7 @@ void MediaSessionHelper::resetSharedHelper()
 
 void MediaSessionHelper::setSharedHelper(Ref<MediaSessionHelper>&& helper)
 {
-    sharedHelperInstance() = WTFMove(helper);
+    sharedHelperInstance() = WTF::move(helper);
 }
 
 void MediaSessionHelper::addClient(MediaSessionHelperClient& client)
@@ -158,39 +164,45 @@ void MediaSessionHelper::removeClient(MediaSessionHelperClient& client)
 
 void MediaSessionHelper::activeAudioRouteDidChange(ShouldPause shouldPause)
 {
-    for (auto& client : m_clients)
+    m_clients.forEach([&](auto& client) {
         client.activeAudioRouteDidChange(shouldPause);
+    });
 }
 
 void MediaSessionHelper::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
 {
-    for (auto& client : m_clients)
+    m_clients.forEach([&](auto& client) {
         client.uiApplicationWillEnterForeground(suspendedUnderLock);
+    });
 }
 
 void MediaSessionHelper::applicationDidEnterBackground(SuspendedUnderLock suspendedUnderLock)
 {
-    for (auto& client : m_clients)
+    m_clients.forEach([&](auto& client) {
         client.uiApplicationDidEnterBackground(suspendedUnderLock);
+    });
 }
 
 void MediaSessionHelper::applicationWillBecomeInactive()
 {
-    for (auto& client : m_clients)
+    m_clients.forEach([](auto& client) {
         client.uiApplicationWillBecomeInactive();
+    });
 }
 
 void MediaSessionHelper::applicationDidBecomeActive()
 {
-    for (auto& client : m_clients)
+    m_clients.forEach([](auto& client) {
         client.uiApplicationDidBecomeActive();
+    });
 }
 
 void MediaSessionHelper::externalOutputDeviceAvailableDidChange(HasAvailableTargets hasAvailableTargets)
 {
     m_isExternalOutputDeviceAvailable = hasAvailableTargets == HasAvailableTargets::Yes;
-    for (auto& client : m_clients)
+    m_clients.forEach([&](auto& client) {
         client.externalOutputDeviceAvailableDidChange(hasAvailableTargets);
+    });
 }
 
 void MediaSessionHelper::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit playingToAutomotiveHeadUnit)
@@ -200,16 +212,18 @@ void MediaSessionHelper::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomot
         return;
 
     m_isPlayingToAutomotiveHeadUnit = newValue;
-    for (auto& client : m_clients)
+    m_clients.forEach([&](auto& client) {
         client.isPlayingToAutomotiveHeadUnitDidChange(playingToAutomotiveHeadUnit);
+    });
 }
 
 void MediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<MediaPlaybackTarget>&& playbackTarget)
 {
-    m_playbackTarget = WTFMove(playbackTarget);
+    m_playbackTarget = WTF::move(playbackTarget);
     m_activeVideoRouteSupportsAirPlayVideo = supportsAirPlayVideo == SupportsAirPlayVideo::Yes;
-    for (auto& client : m_clients)
+    m_clients.forEach([&](auto& client) {
         client.activeVideoRouteDidChange(supportsAirPlayVideo, *m_playbackTarget);
+    });
 }
 
 void MediaSessionHelper::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)
@@ -218,8 +232,9 @@ void MediaSessionHelper::activeAudioRouteSupportsSpatialPlaybackDidChange(Suppor
         return;
 
     m_activeAudioRouteSupportsSpatialPlayback = supportsSpatialPlayback;
-    for (auto& client : m_clients)
+    m_clients.forEach([&](auto& client) {
         client.activeAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback);
+    });
 }
 
 void MediaSessionHelper::startMonitoringWirelessRoutes()
@@ -270,6 +285,34 @@ void MediaSessionHelper::setActiveAudioRouteSupportsSpatialPlayback(bool support
     activeAudioRouteSupportsSpatialPlaybackDidChange(supports ? SupportsSpatialAudioPlayback::Yes : SupportsSpatialAudioPlayback::No);
 }
 
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+void MediaSessionHelper::activeRoutesDidChange(MediaDeviceRouteController& routeController)
+{
+    ASSERT(&MediaDeviceRouteController::singleton() == &routeController);
+
+    Ref target = MediaPlaybackTargetCocoa::create();
+
+    if (RefPtr mostRecentActiveRoute = routeController.mostRecentActiveRoute()) {
+#if HAVE(AVROUTING_FRAMEWORK)
+        if (!target->hasAirPlayDevice())
+            return;
+
+        auto wirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(m_playbackTarget.get());
+        if (wirelessPlaybackTarget && wirelessPlaybackTarget->route() == mostRecentActiveRoute.get())
+            return;
+#endif
+
+        activeVideoRouteDidChange(SupportsAirPlayVideo::Yes, MediaPlaybackTargetWirelessPlayback::create(*mostRecentActiveRoute));
+        return;
+    }
+
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    activeAudioRouteDidChange(ShouldPause::Yes);
+    activeVideoRouteDidChange(SupportsAirPlayVideo::No, WTF::move(target));
+#endif
+}
+#endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+
 MediaSessionHelperIOS::MediaSessionHelperIOS()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -278,6 +321,11 @@ MediaSessionHelperIOS::MediaSessionHelperIOS()
     END_BLOCK_OBJC_EXCEPTIONS
 
     updateCarPlayIsConnected();
+
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    ASSERT(MediaDeviceRouteController::singleton().client() == nullptr);
+    MediaDeviceRouteController::singleton().setClient(this);
+#endif
 }
 
 std::optional<ProcessID> MediaSessionHelperIOS::presentedApplicationPID() const
@@ -358,19 +406,16 @@ void MediaSessionHelperIOS::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
     isPlayingToAutomotiveHeadUnitDidChange(isPlaying ? PlayingToAutomotiveHeadUnit::Yes : PlayingToAutomotiveHeadUnit::No);
 }
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 void MediaSessionHelperIOS::activeAudioRouteDidChange(bool shouldPause)
 {
     MediaSessionHelper::activeAudioRouteDidChange(shouldPause ? ShouldPause::Yes : ShouldPause::No);
 }
 
-void MediaSessionHelperIOS::activeVideoRouteDidChange()
+void MediaSessionHelperIOS::activeVideoRouteDidChange(Ref<MediaPlaybackTarget>&& target)
 {
-    Ref<MediaPlaybackTarget> target = MediaPlaybackTargetCocoa::create();
     auto supportsRemoteVideoPlayback = target->supportsRemoteVideoPlayback() ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No;
-    MediaSessionHelper::activeVideoRouteDidChange(supportsRemoteVideoPlayback, WTFMove(target));
+    MediaSessionHelper::activeVideoRouteDidChange(supportsRemoteVideoPlayback, WTF::move(target));
 }
-#endif
 
 void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 {
@@ -583,15 +628,26 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 
     bool shouldPause = [[notification.userInfo objectForKey:AVAudioSessionRouteChangeReasonKey] unsignedIntegerValue] == AVAudioSessionRouteChangeReasonOldDeviceUnavailable;
     callOnWebThreadOrDispatchAsyncOnMainThread([self, protectedSelf = retainPtr(self), shouldPause]() {
-        if (RefPtr callback = _callback.get()) {
-            callback->updateCarPlayIsConnected();
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
-            callback->activeAudioRouteDidChange(shouldPause);
-            callback->activeVideoRouteDidChange();
-#else
-            UNUSED_PARAM(shouldPause);
-#endif
+        RefPtr callback = _callback.get();
+        if (!callback)
+            return;
+
+        callback->updateCarPlayIsConnected();
+        callback->activeAudioRouteDidChange(shouldPause);
+
+        Ref target = MediaPlaybackTargetCocoa::create();
+
+#if HAVE(AVROUTING_FRAMEWORK)
+        if (target->hasAirPlayDevice()) {
+            RefPtr mostRecentActiveRoute = MediaDeviceRouteController::singleton().mostRecentActiveRoute();
+            auto wirelessPlaybackTarget = dynamicDowncast<MediaPlaybackTargetWirelessPlayback>(callback->playbackTarget());
+            if (!wirelessPlaybackTarget || wirelessPlaybackTarget->route() != mostRecentActiveRoute.get())
+                callback->activeVideoRouteDidChange(MediaPlaybackTargetWirelessPlayback::create(*mostRecentActiveRoute));
+            return;
         }
+#endif
+
+        callback->activeVideoRouteDidChange(WTF::move(target));
     });
 }
 

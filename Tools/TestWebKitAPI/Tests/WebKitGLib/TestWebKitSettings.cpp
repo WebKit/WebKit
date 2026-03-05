@@ -370,10 +370,7 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
-#if !USE(GTK4)
-    webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
-    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
-#endif
+
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
 
@@ -415,12 +412,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
-#if USE(SKIA)
     // 2D canvas acceleration is enabled by default.
     g_assert_true(webkit_settings_get_enable_2d_canvas_acceleration(settings));
     webkit_settings_set_enable_2d_canvas_acceleration(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_2d_canvas_acceleration(settings));
-#endif
 
     // WebSecurity is enabled by default.
     g_assert_false(webkit_settings_get_disable_web_security(settings));
@@ -469,7 +464,7 @@ void testWebKitFeatures(Test* test, gconstpointer)
 
             auto identifier = String::fromUTF8(webkit_feature_get_identifier(feature));
             g_assert_false(featureIdentifiers.contains(identifier));
-            featureIdentifiers.add(WTFMove(identifier));
+            featureIdentifiers.add(WTF::move(identifier));
         }
 
         g_assert_cmpuint(featureIdentifiers.size(), ==, allFeaturesCount);
@@ -512,6 +507,21 @@ void testWebKitFeatures(Test* test, gconstpointer)
 
         g_assert(webkit_settings_get_feature_enabled(settings.get(), feature) == webkit_feature_get_default_value(feature));
     }
+
+    // Check finding features given their identifier.
+    if (webkit_feature_list_get_length(allFeatures)) {
+        WebKitFeature* firstFeature = webkit_feature_list_get(allFeatures, 0);
+        WebKitFeature* foundFeature = webkit_feature_list_find(allFeatures, webkit_feature_get_identifier(firstFeature));
+        g_assert_nonnull(foundFeature);
+        g_assert(firstFeature == foundFeature);
+
+        g_autofree char* lowerCaseIdentifier = g_utf8_strdown(webkit_feature_get_identifier(firstFeature), -1);
+        foundFeature = webkit_feature_list_find(allFeatures, lowerCaseIdentifier);
+        g_assert_null(foundFeature);
+    }
+
+    WebKitFeature* foundFeature = webkit_feature_list_find(allFeatures, "ThisFeatureIdentifierCannotPossiblyExist");
+    g_assert_null(foundFeature);
 }
 
 void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)

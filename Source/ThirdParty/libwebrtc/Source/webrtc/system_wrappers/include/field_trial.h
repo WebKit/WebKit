@@ -25,14 +25,6 @@
 namespace webrtc {
 namespace field_trial {
 
-// Returns the group name chosen for the named trial, or the empty string
-// if the trial does not exists.
-//
-// Note: To keep things tidy append all the trial names with WebRTC.
-// TODO: bugs.webrtc.org/42220378 - Remove from api after August 1, 2025.
-[[deprecated]]
-std::string FindFullName(absl::string_view name);
-
 // Optionally initialize field trial from a string.
 // This method can be called at most once before any other call into webrtc.
 // E.g. before the peer connection factory is constructed.
@@ -41,10 +33,6 @@ std::string FindFullName(absl::string_view name);
 [[deprecated(
     "Create FieldTrials and pass is where FieldTrialsView is expected")]]
 void InitFieldTrialsFromString(const char* trials_string);
-
-// TODO: bugs.webrtc.org/42220378 - Remove from api after September 1, 2025.
-[[deprecated("Propagate and query FieldTrialsView interface")]]
-const char* GetFieldTrialString();
 
 // Validates the given field trial string.
 // TODO: bugs.webrtc.org/42220378 - Delete after January 1, 2026.

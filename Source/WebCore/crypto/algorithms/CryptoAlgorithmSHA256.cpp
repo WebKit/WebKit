@@ -43,7 +43,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA256::identifier() const
 
 void CryptoAlgorithmSHA256::digest(Vector<uint8_t>&& message, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    CryptoAlgorithm::dispatchDigest(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(message), PAL::CryptoDigest::Algorithm::SHA_256);
+    CryptoAlgorithm::dispatchDigest(workQueue, context, WTF::move(callback), WTF::move(exceptionCallback), WTF::move(message), PAL::CryptoDigest::Algorithm::SHA_256);
 }
 
 } // namespace WebCore

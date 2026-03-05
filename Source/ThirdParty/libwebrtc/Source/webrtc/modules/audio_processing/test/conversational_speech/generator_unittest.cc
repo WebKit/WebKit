@@ -85,12 +85,30 @@ const size_t kNumberOfTurns = kExpectedTiming.size();
 constexpr int kDefaultSampleRate = 48000;
 const std::map<std::string, const MockWavReaderFactory::Params>
     kDefaultMockWavReaderFactoryParamsMap = {
-        {"t300", {kDefaultSampleRate, 1u, 14400u}},   // Mono, 0.3 seconds.
-        {"t500", {kDefaultSampleRate, 1u, 24000u}},   // Mono, 0.5 seconds.
-        {"t1000", {kDefaultSampleRate, 1u, 48000u}},  // Mono, 1.0 seconds.
-        {"sr8000", {8000, 1u, 8000u}},     // 8kHz sample rate, mono, 1 second.
-        {"sr16000", {16000, 1u, 16000u}},  // 16kHz sample rate, mono, 1 second.
-        {"sr16000_stereo", {16000, 2u, 16000u}},  // Like sr16000, but stereo.
+        {"t300",
+         {.sample_rate = kDefaultSampleRate,
+          .num_channels = 1u,
+          .num_samples = 14400u}},  // Mono, 0.3 seconds.
+        {"t500",
+         {.sample_rate = kDefaultSampleRate,
+          .num_channels = 1u,
+          .num_samples = 24000u}},  // Mono, 0.5 seconds.
+        {"t1000",
+         {.sample_rate = kDefaultSampleRate,
+          .num_channels = 1u,
+          .num_samples = 48000u}},  // Mono, 1.0 seconds.
+        {"sr8000",
+         {.sample_rate = 8000,
+          .num_channels = 1u,
+          .num_samples = 8000u}},  // 8kHz sample rate, mono, 1 second.
+        {"sr16000",
+         {.sample_rate = 16000,
+          .num_channels = 1u,
+          .num_samples = 16000u}},  // 16kHz sample rate, mono, 1 second.
+        {"sr16000_stereo",
+         {.sample_rate = 16000,
+          .num_channels = 2u,
+          .num_samples = 16000u}},  // Like sr16000, but stereo.
 };
 const MockWavReaderFactory::Params& kDefaultMockWavReaderFactoryParams =
     kDefaultMockWavReaderFactoryParamsMap.at("t500");
@@ -607,13 +625,16 @@ TEST(ConversationalSpeechTest, MultiEndCallWavReaderAdaptorSine) {
 
     // Write wav file.
     const std::size_t num_samples = duration_seconds * sample_rate;
-    MockWavReaderFactory::Params params = {sample_rate, 1u, num_samples};
+    MockWavReaderFactory::Params params = {.sample_rate = sample_rate,
+                                           .num_channels = 1u,
+                                           .num_samples = num_samples};
     CreateSineWavFile(temp_filename, params);
 
     // Load wav file and check if params match.
     WavReaderFactory wav_reader_factory;
-    MockWavReaderFactory::Params expeted_params = {sample_rate, 1u,
-                                                   num_samples};
+    MockWavReaderFactory::Params expeted_params = {.sample_rate = sample_rate,
+                                                   .num_channels = 1u,
+                                                   .num_samples = num_samples};
     CheckAudioTrackParams(wav_reader_factory, temp_filename, expeted_params);
 
     // Clean up.
@@ -636,8 +657,16 @@ TEST(ConversationalSpeechTest, DISABLED_MultiEndCallSimulator) {
   // Create temporary audio track files.
   const int sample_rate = 16000;
   const std::map<std::string, SineAudioTrackParams> sine_tracks_params = {
-      {"t5000_440.wav", {{sample_rate, 1u, sample_rate * 5}, 440.0}},
-      {"t5000_880.wav", {{sample_rate, 1u, sample_rate * 5}, 880.0}},
+      {"t5000_440.wav",
+       {.params = {.sample_rate = sample_rate,
+                   .num_channels = 1u,
+                   .num_samples = sample_rate * 5},
+        .frequency = 440.0}},
+      {"t5000_880.wav",
+       {.params = {.sample_rate = sample_rate,
+                   .num_channels = 1u,
+                   .num_samples = sample_rate * 5},
+        .frequency = 880.0}},
   };
   const std::string audiotracks_path_multiend =
       CreateTemporarySineAudioTracks(sine_tracks_params);
@@ -661,7 +690,9 @@ TEST(ConversationalSpeechTest, DISABLED_MultiEndCallSimulator) {
   // Check the output.
   WavReaderFactory wav_reader_factory;
   const MockWavReaderFactory::Params expeted_params = {
-      sample_rate, 1u, sample_rate * expected_duration_seconds};
+      .sample_rate = sample_rate,
+      .num_channels = 1u,
+      .num_samples = sample_rate * expected_duration_seconds};
   for (const auto& it : *generated_audiotrak_pairs) {
     RTC_LOG(LS_VERBOSE) << "checking far/near-end for <" << it.first << ">";
     CheckAudioTrackParams(wav_reader_factory, it.second.near_end,

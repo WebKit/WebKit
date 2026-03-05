@@ -45,7 +45,7 @@ public:
 private:
     DecrementIncrementStatement(SourceSpan span, Expression::Ref&& expression, Operation operation)
         : Statement(span)
-        , m_expression(WTFMove(expression))
+        , m_expression(WTF::move(expression))
         , m_operation(operation)
     { }
 

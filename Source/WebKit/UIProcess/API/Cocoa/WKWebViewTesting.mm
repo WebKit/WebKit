@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #import "WKContentViewInteraction.h"
 #import "WKPreferencesInternal.h"
 #import "WKWebViewInternal.h"
+#import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebPageProxyTesting.h"
 #import "WebProcessPool.h"
@@ -52,6 +53,7 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
 #import <WebCore/BoxSides.h>
+#import <WebCore/Color.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/ScrollingNodeID.h>
 #import <WebCore/ValidationBubble.h>
@@ -64,6 +66,10 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #endif
 #import <wtf/text/MakeString.h>
+
+#if HAVE(LIBPROC)
+#include <libproc.h>
+#endif
 
 #if PLATFORM(MAC)
 #import "WKWebViewMac.h"
@@ -83,6 +89,7 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 #import "RemoteAnimationStack.h"
+#import "RemoteProgressBasedTimeline.h"
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -132,7 +139,7 @@
 {
     if (!layerID)
         return nil;
-    RetainPtr layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->protectedDrawingArea())->layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
+    RetainPtr layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(protect(_page->drawingArea()))->layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
     if (!layer)
         return nil;
 
@@ -208,6 +215,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (layer.opacity != 1.0)
         ts.dumpProperty("layer opacity"_s, makeString(layer.opacity));
 
+    if (layer.backgroundColor)
+        ts.dumpProperty("layer background color"_s, WebCore::Color::createAndPreserveColorSpace(RetainPtr { layer.backgroundColor }.get()));
+
     if (layer.cornerRadius != 0.0)
         ts.dumpProperty("layer cornerRadius"_s, makeString(layer.cornerRadius));
 
@@ -238,7 +248,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (nonce)
         measurement.setEphemeralSourceNonce({ nonce });
 
-    _page->setPrivateClickMeasurement(WTFMove(measurement));
+    _page->setPrivateClickMeasurement(WTF::move(measurement));
 }
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin
@@ -288,15 +298,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
-- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger))callback
+- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger, NSUInteger))callback
 {
     if (!_page) {
-        callback(NO, NO, @"", std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), 0);
+        callback(NO, NO, @"", std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), 0, 0);
         return;
     }
 
     _page->requestActiveNowPlayingSessionInfo([handler = makeBlockPtr(callback)] (bool registeredAsNowPlayingApplication, WebCore::NowPlayingInfo&& nowPlayingInfo) {
-        handler(nowPlayingInfo.allowsNowPlayingControlsVisibility, registeredAsNowPlayingApplication, nowPlayingInfo.metadata.title.createNSString().get(), nowPlayingInfo.duration, nowPlayingInfo.currentTime, nowPlayingInfo.uniqueIdentifier ? nowPlayingInfo.uniqueIdentifier->toUInt64() : 0);
+        handler(nowPlayingInfo.allowsNowPlayingControlsVisibility, registeredAsNowPlayingApplication, nowPlayingInfo.metadata.title.createNSString().get(), nowPlayingInfo.duration, nowPlayingInfo.currentTime, nowPlayingInfo.uniqueIdentifier ? nowPlayingInfo.uniqueIdentifier->toUInt64() : 0, nowPlayingInfo.updateTime);
     });
 }
 
@@ -320,7 +330,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         observer(nowPlayingMetadata.get());
     });
 
-    page->setNowPlayingMetadataObserverForTesting(WTFMove(nowPlayingMetadataObserver));
+    page->setNowPlayingMetadataObserverForTesting(WTF::move(nowPlayingMetadataObserver));
 }
 
 - (BOOL)_scrollingUpdatesDisabledForTesting
@@ -372,9 +382,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #if PLATFORM(MAC)
     return _impl->beginBackSwipeForTesting();
 #else
-    if (!_gestureController)
-        return NO;
-    return _gestureController->beginSimulatedSwipeInDirectionForTesting(WebKit::ViewGestureController::SwipeDirection::Back);
+    if (RefPtr gestureController = _gestureController)
+        return gestureController->beginSimulatedSwipeInDirectionForTesting(WebKit::ViewGestureController::SwipeDirection::Back);
+    return NO;
 #endif
 }
 
@@ -383,9 +393,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #if PLATFORM(MAC)
     return _impl->completeBackSwipeForTesting();
 #else
-    if (!_gestureController)
-        return NO;
-    return _gestureController->completeSimulatedSwipeInDirectionForTesting(WebKit::ViewGestureController::SwipeDirection::Back);
+    if (RefPtr gestureController = _gestureController)
+        return gestureController->completeSimulatedSwipeInDirectionForTesting(WebKit::ViewGestureController::SwipeDirection::Back);
+    return NO;
 #endif
 }
 
@@ -404,8 +414,8 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (RefPtr gestureController = _impl->gestureController())
         gestureController->reset();
 #else
-    if (_gestureController)
-        _gestureController->reset();
+    if (RefPtr gestureController = _gestureController)
+        gestureController->reset();
 #endif
 }
 
@@ -420,7 +430,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         completionHandler();
         return;
     }
-    _page->protectedLegacyMainFrameProcess()->sendPrepareToSuspend(WebKit::IsSuspensionImminent::No, 0.0, [completionHandler = makeBlockPtr(completionHandler)] {
+    protect(_page->legacyMainFrameProcess())->sendPrepareToSuspend(WebKit::IsSuspensionImminent::No, 0.0, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -428,13 +438,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (void)_processWillSuspendImminentlyForTesting
 {
     if (_page)
-        _page->protectedLegacyMainFrameProcess()->sendPrepareToSuspend(WebKit::IsSuspensionImminent::Yes, 0.0, [] { });
+        protect(_page->legacyMainFrameProcess())->sendPrepareToSuspend(WebKit::IsSuspensionImminent::Yes, 0.0, [] { });
 }
 
 - (void)_processDidResumeForTesting
 {
     if (_page)
-        _page->protectedLegacyMainFrameProcess()->sendProcessDidResume(WebKit::AuxiliaryProcessProxy::ResumeReason::ForegroundActivity);
+        protect(_page->legacyMainFrameProcess())->sendProcessDidResume(WebKit::AuxiliaryProcessProxy::ResumeReason::ForegroundActivity);
 }
 
 - (void)_setThrottleStateForTesting:(int)value
@@ -442,17 +452,17 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (!_page)
         return;
 
-    _page->protectedLegacyMainFrameProcess()->setThrottleStateForTesting(static_cast<WebKit::ProcessThrottleState>(value));
+    protect(_page->legacyMainFrameProcess())->setThrottleStateForTesting(static_cast<WebKit::ProcessThrottleState>(value));
 }
 
 - (BOOL)_hasServiceWorkerBackgroundActivityForTesting
 {
-    return _page ? _page->configuration().protectedProcessPool()->hasServiceWorkerBackgroundActivityForTesting() : false;
+    return _page && protect(_page->configuration().processPool())->hasServiceWorkerBackgroundActivityForTesting();
 }
 
 - (BOOL)_hasServiceWorkerForegroundActivityForTesting
 {
-    return _page ? _page->configuration().protectedProcessPool()->hasServiceWorkerForegroundActivityForTesting() : false;
+    return _page && protect(_page->configuration().processPool())->hasServiceWorkerForegroundActivityForTesting();
 }
 
 - (void)_denyNextUserMediaRequest
@@ -789,7 +799,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         void seekSessionToTime(double time, CompletionHandler<void(bool)>&& callback) final
         {
             if (RefPtr coordinatorClient = client())
-                coordinatorClient->seekSessionToTime(time, WTFMove(callback));
+                coordinatorClient->seekSessionToTime(time, WTF::move(callback));
             else
                 callback(false);
         }
@@ -797,7 +807,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         void playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& callback) final
         {
             if (RefPtr coordinatorClient = client())
-                coordinatorClient->playSession(WTFMove(atTime), WTFMove(hostTime), WTFMove(callback));
+                coordinatorClient->playSession(WTF::move(atTime), WTF::move(hostTime), WTF::move(callback));
             else
                 callback(false);
         }
@@ -805,7 +815,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         void pauseSession(CompletionHandler<void(bool)>&& callback) final
         {
             if (RefPtr coordinatorClient = client())
-                coordinatorClient->pauseSession(WTFMove(callback));
+                coordinatorClient->pauseSession(WTF::move(callback));
             else
                 callback(false);
         }
@@ -813,7 +823,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         void setSessionTrack(const String& trackIdentifier, CompletionHandler<void(bool)>&& callback) final
         {
             if (RefPtr coordinatorClient = client())
-                coordinatorClient->setSessionTrack(trackIdentifier, WTFMove(callback));
+                coordinatorClient->setSessionTrack(trackIdentifier, WTF::move(callback));
             else
                 callback(false);
         }
@@ -824,7 +834,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
                 coordinatorClient->coordinatorStateChanged(state);
         }
 
-        std::optional<WebCore::ExceptionData> result(bool success) const
+        std::optional<WebCore::ExceptionData> NODELETE result(bool success) const
         {
             if (!success)
                 return { WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, String() } };
@@ -839,7 +849,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
         void join(WebKit::MediaSessionCommandCompletionHandler&& callback) final
         {
-            [m_clientCoordinator joinWithCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (BOOL success) mutable {
+            [m_clientCoordinator joinWithCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTF::move(callback)] (BOOL success) mutable {
                 if (!weakThis) {
                     callback(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, String() });
                     return;
@@ -856,7 +866,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
         void seekTo(double time, WebKit::MediaSessionCommandCompletionHandler&& callback) final
         {
-            [m_clientCoordinator seekTo:time withCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (BOOL success) mutable {
+            [m_clientCoordinator seekTo:time withCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTF::move(callback)] (BOOL success) mutable {
                 if (!weakThis) {
                     callback(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, String() });
                     return;
@@ -868,7 +878,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
         void play(WebKit::MediaSessionCommandCompletionHandler&& callback) final
         {
-            [m_clientCoordinator playWithCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (BOOL success) mutable {
+            [m_clientCoordinator playWithCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTF::move(callback)] (BOOL success) mutable {
                 if (!weakThis) {
                     callback(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, String() });
                     return;
@@ -880,7 +890,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
         void pause(WebKit::MediaSessionCommandCompletionHandler&& callback) final
         {
-            [m_clientCoordinator pauseWithCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (BOOL success) mutable {
+            [m_clientCoordinator pauseWithCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTF::move(callback)] (BOOL success) mutable {
                 if (!weakThis) {
                     callback(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, String() });
                     return;
@@ -892,7 +902,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
         void setTrack(const String& track, WebKit::MediaSessionCommandCompletionHandler&& callback) final
         {
-            [m_clientCoordinator setTrack:track.createNSString().get() withCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (BOOL success) mutable {
+            [m_clientCoordinator setTrack:track.createNSString().get() withCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTF::move(callback)] (BOOL success) mutable {
                 if (!weakThis) {
                     callback(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, String() });
                     return;
@@ -977,7 +987,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (void)_getNotifyStateForTesting:(NSString *)notificationName completionHandler:(void(^)(NSNumber *))completionHandler
 {
 #if ENABLE(NOTIFY_BLOCKING)
-    _page->protectedLegacyMainFrameProcess()->getNotifyStateForTesting(notificationName, [completionHandler = WTFMove(completionHandler)](std::optional<uint64_t> result) mutable {
+    protect(_page->legacyMainFrameProcess())->getNotifyStateForTesting(notificationName, [completionHandler = WTF::move(completionHandler)](std::optional<uint64_t> result) mutable {
         if (!result) {
             completionHandler(nil);
             return;
@@ -1007,7 +1017,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 {
     if (!layerID)
         return nil;
-    RetainPtr layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->protectedDrawingArea())->layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
+    RetainPtr layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(protect(_page->drawingArea()))->layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
     if (!layer)
         return nil;
 
@@ -1140,7 +1150,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (NSString *)_webContentProcessVariantForFrame:(_WKFrameHandle *)frameHandle
 {
-#if USE(APPLE_INTERNAL_SDK)
     if (!_page)
         return @"standard";
 
@@ -1163,6 +1172,27 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         return @"standard";
 
     Ref connection = process->connection();
+
+#if HAVE(LIBPROC)
+    // This approach should work on macOS outside of Apple Internal builds.
+    if (auto pid = connection->remoteProcessID()) {
+        char path[PROC_PIDPATHINFO_MAXSIZE] = "\0";
+        int length = proc_pidpath(pid, path, sizeof(path));
+        if (length > 0) {
+            RetainPtr<NSString> processPath = [NSString stringWithUTF8String:path];
+            if ([[processPath lastPathComponent] hasPrefix:@"com.apple.WebKit.WebContent.EnhancedSecurity"])
+                return @"security";
+
+            if ([[processPath lastPathComponent] hasPrefix:@"com.apple.WebKit.WebContent.CaptivePortal"])
+                return @"lockdown";
+
+            if ([[processPath lastPathComponent] hasPrefix:@"com.apple.WebKit.WebContent"])
+                return @"standard";
+        }
+    }
+#endif // HAVE(LIBPROC)
+
+#if USE(APPLE_INTERNAL_SDK)
 
 #if !PLATFORM(IOS_FAMILY)
     bool hasAllowJIT = hasEntitlement(connection->xpcConnection(), "com.apple.security.cs.allow-jit"_s);
@@ -1197,7 +1227,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         if (!layerID)
             return nullptr;
         WebCore::PlatformLayerIdentifier platformLayerID { ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() };
-        if (RefPtr nodeStack = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->protectedDrawingArea())->animationStackForNodeWithIDForTesting(platformLayerID))
+        if (RefPtr nodeStack = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(protect(_page->drawingArea()))->animationStackForNodeWithIDForTesting(platformLayerID))
             return nodeStack;
         if (CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy())
             return scrollingCoordinator->animationStackForNodeWithIDForTesting(platformLayerID);
@@ -1207,7 +1237,56 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         return animationStack->toJSONForTesting()->toJSONString().createNSString().autorelease();
     return @"";
 }
+
+- (NSString *)_progressBasedTimelinesForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID
+{
+    auto timelines = [&] -> HashSet<Ref<WebKit::RemoteProgressBasedTimeline>> {
+        if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID)
+            || !ObjectIdentifier<WebCore::ScrollingNodeIDType>::isValidIdentifier(scrollingNodeID))
+            return { };
+
+        CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
+        if (!scrollingCoordinator)
+            return { };
+
+        return scrollingCoordinator->timelinesForScrollingNodeIDForTesting({
+            ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID),
+            ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)
+        });
+    }();
+
+    Ref convertedTimelines = JSON::Array::create();
+    for (auto& timeline : timelines)
+        convertedTimelines->pushObject(timeline->toJSONForTesting());
+
+    Ref object = JSON::Object::create();
+    object->setArray("timelines"_s, WTF::move(convertedTimelines));
+    return object->toJSONString().createNSString().autorelease();
+}
 #endif
+
+- (bool)_displayLinkWantsHighFrameRate
+{
+    return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(protect(_page->drawingArea()))->displayLinkWantsHighFrameRateForTesting();
+}
+
+- (STWebpageController *)_screenTimeWebpageController
+{
+#if ENABLE(SCREEN_TIME)
+    return _screenTimeWebpageController.get();
+#else
+    return nil;
+#endif
+}
+
+- (_WKPlatformVisualEffectView *)_screenTimeBlurredSnapshot
+{
+#if ENABLE(SCREEN_TIME)
+    return _screenTimeBlurredSnapshot.get();
+#else
+    return nil;
+#endif
+}
 
 @end
 
@@ -1227,22 +1306,22 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)seekSessionToTime:(double)time withCompletion:(void(^)(BOOL))completionHandler
 {
-    Ref { *m_coordinatorClient }->seekSessionToTime(time, makeBlockPtr(completionHandler));
+    protect(*m_coordinatorClient)->seekSessionToTime(time, makeBlockPtr(completionHandler));
 }
 
 - (void)playSessionWithCompletion:(void(^)(BOOL))completionHandler
 {
-    Ref { *m_coordinatorClient }->playSession({ }, std::optional<MonotonicTime>(), makeBlockPtr(completionHandler));
+    protect(*m_coordinatorClient)->playSession({ }, std::optional<MonotonicTime>(), makeBlockPtr(completionHandler));
 }
 
 - (void)pauseSessionWithCompletion:(void(^)(BOOL))completionHandler
 {
-    Ref { *m_coordinatorClient }->pauseSession(makeBlockPtr(completionHandler));
+    protect(*m_coordinatorClient)->pauseSession(makeBlockPtr(completionHandler));
 }
 
 - (void)setSessionTrack:(NSString*)trackIdentifier withCompletion:(void(^)(BOOL))completionHandler
 {
-    Ref { *m_coordinatorClient }->setSessionTrack(trackIdentifier, makeBlockPtr(completionHandler));
+    protect(*m_coordinatorClient)->setSessionTrack(trackIdentifier, makeBlockPtr(completionHandler));
 }
 
 - (void)coordinatorStateChanged:(_WKMediaSessionCoordinatorState)state
@@ -1251,7 +1330,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Joined) == static_cast<size_t>(WKMediaSessionCoordinatorStateJoined), "WKMediaSessionCoordinatorStateJoined does not match WebKit value");
     static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Closed) == static_cast<size_t>(WKMediaSessionCoordinatorStateClosed), "WKMediaSessionCoordinatorStateClosed does not match WebKit value");
 
-    Ref { *m_coordinatorClient }->coordinatorStateChanged(static_cast<WebCore::MediaSessionCoordinatorState>(state));
+    protect(*m_coordinatorClient)->coordinatorStateChanged(static_cast<WebCore::MediaSessionCoordinatorState>(state));
 }
 
 @end

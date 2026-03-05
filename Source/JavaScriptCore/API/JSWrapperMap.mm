@@ -166,7 +166,7 @@ static RetainPtr<NSMutableDictionary> createRenameMap(Protocol *protocol, BOOL i
     auto renameMap = adoptNS([[NSMutableDictionary alloc] init]);
 
     forEachMethodInProtocol(protocol, NO, isInstanceMethod, ^(SEL sel, const char*){
-        NSString *rename = @(sel_getName(sel));
+        RetainPtr rename = @(sel_getName(sel));
         NSRange range = [rename rangeOfString:@"__JS_EXPORT_AS__"];
         if (range.location == NSNotFound)
             return;
@@ -187,7 +187,7 @@ inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *proper
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSC::JSObject* baseObject = JSC::asObject(toJS(globalObject, [base JSValueRef]));
     auto name = OpaqueJSString::tryCreate(propertyName);
@@ -255,22 +255,22 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
 
     forEachMethodInProtocol(protocol, YES, isInstanceMethod, ^(SEL sel, const char* types){
         const char* nameCStr = sel_getName(sel);
-        NSString *name = @(nameCStr);
+        RetainPtr name = @(nameCStr);
 
-        if (shouldSkipMethodWithName(name))
+        if (shouldSkipMethodWithName(name.get()))
             return;
 
-        if (accessorMethods && accessorMethods[name]) {
+        if (accessorMethods && accessorMethods[name.get()]) {
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (!method)
                 return;
-            accessorMethods[name] = [JSValue valueWithJSValueRef:method inContext:context];
+            accessorMethods[name.get()] = [JSValue valueWithJSValueRef:method inContext:context];
         } else {
-            name = renameMap.get()[name];
+            name = renameMap.get()[name.get()];
             if (!name)
                 name = selectorToPropertyName(nameCStr);
             JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
-            JSValue *existingMethod = object[name];
+            JSValue *existingMethod = object[name.get()];
             // ObjCCallbackFunction does a dynamic lookup for the
             // selector before calling the method. In order to save
             // memory we only put one callback object in any givin
@@ -282,7 +282,7 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
                 return;
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (method)
-                putNonEnumerable(context, object, name, [JSValue valueWithJSValueRef:method inContext:context]);
+                putNonEnumerable(context, object, name.get(), [JSValue valueWithJSValueRef:method inContext:context]);
         }
     });
 }
@@ -357,7 +357,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         }
 
         // Add the properties to a list.
-        propertyList.append(WTFMove(property));
+        propertyList.append(WTF::move(property));
     });
 
     // Copy methods to the prototype, capturing accessors in the accessorMethods map.
@@ -368,15 +368,15 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         JSValue* getter = accessorMethods[property.getterName.get()];
         ASSERT(![getter isUndefined]);
 
-        JSValue* setter = undefined;
+        RetainPtr setter = undefined;
         if (property.setterName) {
             setter = accessorMethods[property.setterName.get()];
             ASSERT(![setter isUndefined]);
         }
-        
+
         [prototypeValue defineProperty:@(property.name) descriptor:@{
             JSPropertyDescriptorGetKey: getter,
-            JSPropertyDescriptorSetKey: setter,
+            JSPropertyDescriptorSetKey: setter.get(),
             JSPropertyDescriptorEnumerableKey: @NO,
             JSPropertyDescriptorConfigurableKey: @YES
         }];
@@ -431,9 +431,9 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
 
     // For each protocol that the class implements, gather all of the init family methods into a hash table.
     __block UncheckedKeyHashMap<String, CFTypeRef> initTable;
-    Protocol *exportProtocol = getJSExportProtocol();
-    for (Class currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass)) {
-        forEachProtocolImplementingProtocol(currentClass, exportProtocol, ^(Protocol *protocol, bool&) {
+    RetainPtr exportProtocol = getJSExportProtocol();
+    for (RetainPtr currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass.get())) {
+        forEachProtocolImplementingProtocol(currentClass.get(), exportProtocol.get(), ^(Protocol *protocol, bool&) {
             forEachMethodInProtocol(protocol, YES, YES, ^(SEL selector, const char*) {
                 const char* name = sel_getName(selector);
                 if (!isInitFamilyMethod(@(name)))
@@ -443,12 +443,12 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
         });
     }
 
-    for (Class currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass)) {
+    for (RetainPtr currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass.get())) {
         __block unsigned numberOfInitsFound = 0;
         __block SEL initMethod = 0;
-        __block Protocol *initProtocol = 0;
+        __block RetainPtr<Protocol> initProtocol;
         __block const char* types = 0;
-        forEachMethodInClass(currentClass, ^(Method method) {
+        forEachMethodInClass(currentClass.get(), ^(Method method) {
             SEL selector = method_getName(method);
             const char* name = sel_getName(selector);
             auto iter = initTable.find(String::fromLatin1(name));
@@ -470,7 +470,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
             break;
         }
 
-        JSObjectRef method = objCCallbackFunctionForInit(context, cls, initProtocol, initMethod, types);
+        JSObjectRef method = objCCallbackFunctionForInit(context, cls, initProtocol.get(), initMethod, types);
         return toJS(method);
     }
     return constructorWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
@@ -478,7 +478,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
 
 typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 
-- (ConstructorPrototypePair)allocateConstructorAndPrototypeInContext:(JSContext *)context
+- (ConstructorPrototypePair)ensureConstructorAndPrototypeInContext:(JSContext *)context
 {
     JSObjCClassInfo* superClassInfo = [context.wrapperMap classInfoForClass:class_getSuperclass(m_class)];
 
@@ -511,8 +511,8 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         putNonEnumerable(context, prototype, @"constructor", constructor);
         putNonEnumerable(context, constructor, @"prototype", prototype);
 
-        Protocol *exportProtocol = getJSExportProtocol();
-        forEachProtocolImplementingProtocol(m_class, exportProtocol, ^(Protocol *protocol, bool&){
+        RetainPtr exportProtocol = getJSExportProtocol();
+        forEachProtocolImplementingProtocol(m_class, exportProtocol.get(), ^(Protocol *protocol, bool&) {
             copyPrototypeProperties(context, m_class, protocol, prototype);
             copyMethodsToObject(context, m_class, protocol, NO, constructor);
         });
@@ -556,7 +556,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 {
     JSC::JSObject* constructor = m_constructor.get();
     if (!constructor)
-        constructor = [self allocateConstructorAndPrototypeInContext:context].first;
+        constructor = [self ensureConstructorAndPrototypeInContext:context].first;
     ASSERT(!!constructor);
     return constructor;
 }
@@ -565,7 +565,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 {
     JSC::JSObject* prototype = m_prototype.get();
     if (!prototype)
-        prototype = [self allocateConstructorAndPrototypeInContext:context].second;
+        prototype = [self ensureConstructorAndPrototypeInContext:context].second;
     ASSERT(!!prototype);
     return prototype;
 }
@@ -714,14 +714,14 @@ bool supportsInitMethodConstructors()
 
 Protocol *getJSExportProtocol()
 {
-    static Protocol *protocol = objc_getProtocol("JSExport");
-    return protocol;
+    static NeverDestroyed<RetainPtr<Protocol>> protocol = objc_getProtocol("JSExport");
+    return protocol->get();
 }
 
 Class getNSBlockClass()
 {
-    static Class cls = objc_getClass("NSBlock");
-    return cls;
+    static NeverDestroyed<RetainPtr<Class>> cls = objc_getClass("NSBlock");
+    return cls->get();
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

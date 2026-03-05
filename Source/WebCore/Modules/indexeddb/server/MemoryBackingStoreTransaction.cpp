@@ -32,8 +32,10 @@
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
 #include "MemoryObjectStore.h"
+#include <wtf/HashMap.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -65,7 +67,7 @@ void MemoryBackingStoreTransaction::addNewObjectStore(MemoryObjectStore& objectS
     LOG(IndexedDB, "MemoryBackingStoreTransaction::addNewObjectStore()");
 
     ASSERT(isVersionChange());
-    m_versionChangeAddedObjectStores.add(&objectStore);
+    m_versionChangeAddedObjectStores.add(objectStore);
 
     addExistingObjectStore(objectStore);
 }
@@ -75,7 +77,7 @@ void MemoryBackingStoreTransaction::addNewIndex(MemoryIndex& index)
     LOG(IndexedDB, "MemoryBackingStoreTransaction::addNewIndex()");
 
     ASSERT(isVersionChange());
-    m_versionChangeAddedIndexes.add(&index);
+    m_versionChangeAddedIndexes.add(index);
 
     addExistingIndex(index);
 }
@@ -86,7 +88,7 @@ void MemoryBackingStoreTransaction::removeNewIndex(MemoryIndex& index)
 
     ASSERT(isVersionChange());
 
-    m_originalIndexNames.remove(&index);
+    m_originalIndexNames.remove(index);
     m_versionChangeAddedIndexes.remove(&index);
     m_indexes.remove(&index);
 }
@@ -98,13 +100,13 @@ void MemoryBackingStoreTransaction::addExistingIndex(MemoryIndex& index)
     ASSERT(isWriting());
 
     ASSERT(!m_indexes.contains(&index));
-    m_indexes.add(&index);
+    m_indexes.add(index);
 }
 
 void MemoryBackingStoreTransaction::indexDeleted(Ref<MemoryIndex>&& index)
 {
     m_indexes.remove(&index.get());
-    m_deletedIndexes.add(WTFMove(index));
+    m_deletedIndexes.add(WTF::move(index));
 }
 
 void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& objectStore)
@@ -114,7 +116,7 @@ void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& ob
     ASSERT(isWriting());
 
     ASSERT(!m_objectStores.contains(&objectStore));
-    m_objectStores.add(&objectStore);
+    m_objectStores.add(objectStore);
 
     objectStore.writeTransactionStarted(*this);
 }
@@ -137,9 +139,9 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(Ref<MemoryObjectStore>&& 
         return;
     }
 
-    auto addResult = m_deletedObjectStores.add(objectStore->info().name(), nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = WTFMove(objectStore);
+    m_deletedObjectStores.ensure(objectStore->info().name(), [&] {
+        return WTF::move(objectStore);
+    });
 }
 
 void MemoryBackingStoreTransaction::objectStoreRenamed(MemoryObjectStore& objectStore, const String& oldName)
@@ -159,7 +161,7 @@ void MemoryBackingStoreTransaction::indexRenamed(MemoryIndex& index, const Strin
 
     // We only care about the first rename in a given transaction, because if the transaction is aborted we want
     // to go back to the first 'oldName'
-    m_originalIndexNames.add(&index, oldName);
+    m_originalIndexNames.add(index, oldName);
 }
 
 void MemoryBackingStoreTransaction::abort()
@@ -169,7 +171,7 @@ void MemoryBackingStoreTransaction::abort()
 
     // Restore renamed indexes.
     for (const auto& iterator : m_originalIndexNames) {
-        RefPtr index = iterator.key;
+        Ref index = iterator.key;
         auto originalName = iterator.value;
         auto identifier = index->info().identifier();
 
@@ -177,7 +179,7 @@ void MemoryBackingStoreTransaction::abort()
         RefPtr<MemoryIndex> indexToDelete;
         for (auto addedIndex : m_indexes) {
             if (addedIndex->info().name() == originalName && addedIndex->info().identifier() != identifier) {
-                indexToDelete = addedIndex;
+                indexToDelete = addedIndex.ptr();
                 break;
             }
         }
@@ -191,7 +193,7 @@ void MemoryBackingStoreTransaction::abort()
             objectStore->info().deleteIndex(identifier);
             index->rename(originalName);
             objectStore->info().addExistingIndex(index->info());
-            objectStore->registerIndex(WTFMove(indexToReRegister));
+            objectStore->registerIndex(WTF::move(indexToReRegister));
         }
     }
     m_originalIndexNames.clear();
@@ -203,7 +205,7 @@ void MemoryBackingStoreTransaction::abort()
 
     // Restore added object stores.
     for (const auto& objectStore : m_versionChangeAddedObjectStores)
-        m_backingStore->removeObjectStoreForVersionChangeAbort(*objectStore);
+        m_backingStore->removeObjectStoreForVersionChangeAbort(objectStore);
     m_deletedIndexes.removeIf([&](auto& index) {
         return m_versionChangeAddedObjectStores.contains(index->objectStore());
     });
@@ -211,9 +213,9 @@ void MemoryBackingStoreTransaction::abort()
 
     // Restore deleted object stores.
     for (auto& objectStore : m_deletedObjectStores.values()) {
-        m_backingStore->restoreObjectStoreForVersionChangeAbort(*objectStore);
-        ASSERT(!m_objectStores.contains(objectStore.get()));
-        m_objectStores.add(objectStore);
+        m_backingStore->restoreObjectStoreForVersionChangeAbort(objectStore.get());
+        ASSERT(!m_objectStores.contains(objectStore.ptr()));
+        m_objectStores.add(objectStore.get());
     }
     m_deletedObjectStores.clear();
 
@@ -225,7 +227,7 @@ void MemoryBackingStoreTransaction::abort()
 
     for (auto& index : m_deletedIndexes) {
         RELEASE_ASSERT(m_backingStore->hasObjectStore(index->info().objectStoreIdentifier()));
-        index->protectedObjectStore()->maybeRestoreDeletedIndex(*index);
+        protect(index->objectStore())->maybeRestoreDeletedIndex(index.copyRef());
     }
     m_deletedIndexes.clear();
 
@@ -264,7 +266,7 @@ void MemoryBackingStoreTransaction::finish()
 
 MemoryCursor* MemoryBackingStoreTransaction::cursor(const IDBResourceIdentifier& identifier) const
 {
-    return m_cursors.get(identifier).get();
+    return m_cursors.get(identifier);
 }
 
 void MemoryBackingStoreTransaction::addCursor(MemoryCursor& cursor)

@@ -14,11 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/adjoining-floats-dynamic-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/adjoining-floats-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/block-in-inline-become-float-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/block-in-inline-become-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/computed-float-position-absolute.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/float-after-block-with-collapsed-margin-inside-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/float-after-block-with-collapsed-margin-inside-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/float-in-inline-anonymous-block-with-overflow-hidden-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/float-in-inline-anonymous-block-with-overflow-hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/float-in-nested-multicol-001-expected-mismatch.html
@@ -278,6 +281,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/new-fc-separates-from-float-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/new-fc-separates-from-float-3-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/new-fc-separates-from-float-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/new-fc-separates-from-float-4-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/new-fc-separates-from-float-4.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/new-fc-separates-from-float-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/new-fc-separates-from-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/overflow-scroll-float-paint-order-expected.html

@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionRoutingArbitrator);
 AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator(WebProcess& process)
     : m_observer(WebCore::AudioSession::ChangedObserver::create([weakThis = WeakPtr { *this }] (AudioSession& session) {
         if (RefPtr protectedThis = weakThis.get())
-            session.setRoutingArbitrationClient(protectedThis.get());
+            session.setRoutingArbitrationClient(*protectedThis);
     }))
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 {
@@ -66,12 +66,12 @@ void AudioSessionRoutingArbitrator::deref() const
 
 void AudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::AudioSessionRoutingArbitratorProxy::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), AudioSessionRoutingArbitratorProxy::destinationId());
+    protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::AudioSessionRoutingArbitratorProxy::BeginRoutingArbitrationWithCategory(category), WTF::move(callback), AudioSessionRoutingArbitratorProxy::destinationId());
 }
 
-void AudioSessionRoutingArbitrator::leaveRoutingAbritration()
+void AudioSessionRoutingArbitrator::leaveRoutingArbitration()
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::AudioSessionRoutingArbitratorProxy::EndRoutingArbitration(), AudioSessionRoutingArbitratorProxy::destinationId());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::AudioSessionRoutingArbitratorProxy::EndRoutingArbitration(), AudioSessionRoutingArbitratorProxy::destinationId());
 }
 
 bool AudioSessionRoutingArbitrator::canLog() const

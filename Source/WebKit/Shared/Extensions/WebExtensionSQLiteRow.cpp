@@ -39,9 +39,9 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionSQLiteRow);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionSQLiteRowEnumerator);
 
-WebExtensionSQLiteRow::WebExtensionSQLiteRow(Ref<WebExtensionSQLiteStatement> statement)
-    : m_statement(statement)
-    , m_handle(statement->handle())
+WebExtensionSQLiteRow::WebExtensionSQLiteRow(Ref<WebExtensionSQLiteStatement>&& statement)
+    : m_statement(WTF::move(statement))
+    , m_handle(m_statement->handle())
 {
     m_statement->database()->assertQueue();
 }
@@ -97,8 +97,8 @@ bool WebExtensionSQLiteRow::isNullAtIndex(int index)
     return sqlite3_column_type(m_handle, index) == SQLITE_NULL;
 }
 
-WebExtensionSQLiteRowEnumerator::WebExtensionSQLiteRowEnumerator(Ref<WebExtensionSQLiteStatement> statement)
-    : m_statement(statement)
+WebExtensionSQLiteRowEnumerator::WebExtensionSQLiteRowEnumerator(Ref<WebExtensionSQLiteStatement>&& statement)
+    : m_statement(WTF::move(statement))
 {
     m_statement->database()->assertQueue();
 }
@@ -110,7 +110,7 @@ RefPtr<WebExtensionSQLiteRow> WebExtensionSQLiteRowEnumerator::next()
     switch (sqlite3_step(m_statement->handle())) {
     case SQLITE_ROW:
         if (!m_row)
-            m_row = WebExtensionSQLiteRow::create(m_statement);
+            m_row = WebExtensionSQLiteRow::create(Ref { m_statement });
         return m_row;
 
     default:

@@ -8,5 +8,5 @@ layer at (0,0) size 42x26
     RenderTableSection {TBODY} at (0,0) size 42x26
       RenderTableRow {TR} at (0,2) size 42x22
         RenderTableCell {TD} at (2,2) size 38x22 [color=#FFFFFF] [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 36x19
+          RenderText {#text} at (1,1) size 36x20
             text run at (1,1) width 36: "Hello"

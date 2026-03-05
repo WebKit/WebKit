@@ -42,7 +42,7 @@ public:
             return nullptr;
         return subspaceForImpl(vm);
     }
-    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
 
     DECLARE_INFO;
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
@@ -51,7 +51,7 @@ public:
     }
     static void destroy(JSC::JSCell*);
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.ptr(); }
+    ScriptExecutionContext& scriptExecutionContext() const { return m_scriptExecutionContext; }
 
 private:
     JSIDBSerializationGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&);

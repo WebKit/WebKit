@@ -28,7 +28,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
-#if USE(CAIRO) || PLATFORM(GTK)
+#if PLATFORM(GTK)
 #include <cairo.h>
 #endif
 
@@ -37,8 +37,10 @@
 #elif PLATFORM(GTK)
 #include <webkit2/webkit2.h>
 #elif PLATFORM(WPE)
-#include <WPEToolingBackends/HeadlessViewBackend.h>
 #include <wpe/webkit.h>
+#if USE(LIBWPE)
+#include <WPEToolingBackends/HeadlessViewBackend.h>
+#endif
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/headless/wpe-headless.h>
 #endif
@@ -195,7 +197,7 @@ public:
 #endif
     }
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && USE(LIBWPE)
     static WebKitWebViewBackend* createWebViewBackend()
     {
         // Don't make warnings fatal when creating the backend, since atk produces warnings when a11y bus is not running.
@@ -243,11 +245,13 @@ public:
             return;
         }
 #endif
+#if USE(LIBWPE)
         g_ptr_array_add(propertyNames, g_strdup("backend"));
         g_array_set_size(propertyValues, propertyNames->len);
         GValue* value = &g_array_index(propertyValues, GValue, propertyValues->len - 1);
         g_value_init(value, WEBKIT_TYPE_WEB_VIEW_BACKEND);
         g_value_set_boxed(value, createWebViewBackend());
+#endif
 #endif
     }
 
@@ -384,7 +388,7 @@ public:
         g_log_set_always_fatal(static_cast<GLogLevelFlags>(fatalMask));
     }
 
-#if USE(CAIRO) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     static bool cairoSurfacesEqual(cairo_surface_t* s1, cairo_surface_t* s2)
     {
         return (cairo_image_surface_get_format(s1) == cairo_image_surface_get_format(s2)

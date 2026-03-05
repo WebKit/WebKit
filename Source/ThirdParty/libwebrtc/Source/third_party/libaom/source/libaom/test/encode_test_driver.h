@@ -159,6 +159,10 @@ class Encoder {
     const aom_codec_err_t res = aom_codec_control(&encoder_, ctrl_id, arg);
     ASSERT_EQ(AOM_CODEC_OK, res) << EncoderError();
   }
+  void Control(int ctrl_id, aom_rc_funcs_t *arg) {
+    const aom_codec_err_t res = aom_codec_control(&encoder_, ctrl_id, arg);
+    ASSERT_EQ(AOM_CODEC_OK, res) << EncoderError();
+  }
 #endif
 
   void SetOption(const char *name, const char *value) {

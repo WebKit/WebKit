@@ -122,7 +122,7 @@ public:
 
     static bool isProcessingUserGesture();
 
-    void setTabKeyCyclesThroughElements(WebPage*, bool enabled);
+    void NODELETE setTabKeyCyclesThroughElements(WebPage*, bool enabled);
     void setSerialLoadingEnabled(bool);
     void setAccessibilityIsolatedTreeEnabled(bool);
     void dispatchPendingLoadRequests();

@@ -38,7 +38,7 @@ template<typename T, bool (*isHigherPriority)(const T&, const T&)>
 static void enqueue(PriorityQueue<T, isHigherPriority>& queue, T element)
 {
     size_t sizeBefore = queue.size();
-    queue.enqueue(WTFMove(element));
+    queue.enqueue(WTF::move(element));
     EXPECT_EQ(sizeBefore + 1, queue.size());
     EXPECT_FALSE(queue.isEmpty());
 }

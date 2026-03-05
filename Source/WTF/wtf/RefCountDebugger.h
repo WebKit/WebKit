@@ -23,9 +23,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/ThreadAssertions.h>
 
 namespace WTF {
 
@@ -35,21 +35,54 @@ namespace WTF {
 #define CHECK_REF_COUNTED_LIFECYCLE 0
 #endif
 
-// This base class holds debugging code, to share among refcounting subclasses.
-class RefCountDebugger {
+enum class RefCountIsThreadSafe : bool { No, Yes };
+
+class RefCountDebuggerBase {
 public:
-    enum class RefCountIsThreadSafe : bool { No, Yes };
-
     WTF_EXPORT_PRIVATE static void logRefDuringDestruction(const void*);
-    WTF_EXPORT_PRIVATE static void printRefDuringDestructionLogAndCrash (const void*) NO_RETURN_DUE_TO_CRASH;
+    WTF_EXPORT_PRIVATE static void printRefDuringDestructionLogAndCrash(const void*) NO_RETURN_DUE_TO_CRASH;
 
-    void willRef(unsigned refCount, RefCountIsThreadSafe isThreadSafe = RefCountIsThreadSafe::No) const
+    static void enableThreadingChecksGlobally()
     {
-        applyRefDerefThreadingCheck(refCount, isThreadSafe);
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        areThreadingChecksEnabledGlobally = true;
+#endif
+    }
+
+protected:
+    WTF_EXPORT_PRIVATE static bool areThreadingChecksEnabledGlobally;
+};
+
+// This class holds debugging code to share among refcounting classes.
+template<RefCountIsThreadSafe isThreadSafe>
+class RefCountDebuggerImpl : public RefCountDebuggerBase {
+public:
+    RefCountDebuggerImpl() = default;
+
+#if CHECK_REF_COUNTED_LIFECYCLE
+    ~RefCountDebuggerImpl()
+    {
+        ASSERT(m_deletionHasBegun);
+        ASSERT(!m_adoptionIsRequired);
+    }
+#else
+    ~RefCountDebuggerImpl() = default;
+#endif
+
+    void willRef(unsigned refCount) const
+    {
+        applyRefDerefThreadingCheck(refCount);
         applyRefDuringDestructionCheck();
 
 #if CHECK_REF_COUNTED_LIFECYCLE
         ASSERT(!m_adoptionIsRequired);
+#endif
+    }
+
+    void adopted()
+    {
+#if CHECK_REF_COUNTED_LIFECYCLE
+        m_adoptionIsRequired = false;
 #endif
     }
 
@@ -65,24 +98,10 @@ public:
     // for example by using a mutex.
     void disableThreadingChecks()
     {
-#if ASSERT_ENABLED
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         m_areThreadingChecksEnabled = false;
+        m_ownerThread = anyThreadLike;
 #endif
-    }
-
-    static void enableThreadingChecksGlobally()
-    {
-#if ASSERT_ENABLED
-        areThreadingChecksEnabledGlobally = true;
-#endif
-    }
-
-protected:
-    RefCountDebugger()
-#if ASSERT_ENABLED
-        : m_isOwnedByMainThread(isMainThread())
-#endif
-    {
     }
 
     void applyRefDuringDestructionCheck() const
@@ -94,33 +113,24 @@ protected:
 #endif
     }
 
-    void applyRefDerefThreadingCheck(unsigned refCount, RefCountIsThreadSafe isThreadSafe = RefCountIsThreadSafe::No) const
+    void applyRefDerefThreadingCheck(unsigned refCount) const
     {
-        UNUSED_PARAM(refCount);
-        UNUSED_PARAM(isThreadSafe);
-
-#if ASSERT_ENABLED
-        if (isThreadSafe == RefCountIsThreadSafe::Yes)
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        if constexpr (isThreadSafe == RefCountIsThreadSafe::Yes)
             return;
 
         if (refCount == 1) {
             // Likely an ownership transfer across threads that may be safe.
-            m_isOwnedByMainThread = isMainThread();
+            m_ownerThread.reset();
         } else if (areThreadingChecksEnabledGlobally && m_areThreadingChecksEnabled) {
             // If you hit this assertion, it means that the RefCounted object was ref/deref'd
-            // from both the main thread and another in a way that is likely concurrent and unsafe.
+            // from both different threads in a way that is likely concurrent and unsafe.
             // Derive from ThreadSafeRefCounted and make sure the destructor is safe on threads
-            // that call deref, or ref/deref from a single thread.
-            ASSERT_WITH_MESSAGE(m_isOwnedByMainThread == isMainThread(), "Unsafe to ref/deref from different threads");
+            // that call deref, or ref/deref from a single thread or serial work queue.
+            assertIsCurrent(m_ownerThread); // Unsafe to ref/deref from different threads.
         }
-#endif
-    }
-
-    ~RefCountDebugger()
-    {
-#if CHECK_REF_COUNTED_LIFECYCLE
-        ASSERT(m_deletionHasBegun);
-        ASSERT(!m_adoptionIsRequired);
+#else
+        UNUSED_PARAM(refCount);
 #endif
     }
 
@@ -141,9 +151,9 @@ protected:
 #endif
     }
 
-    void willDeref(unsigned refCount, RefCountIsThreadSafe isThreadSafe = RefCountIsThreadSafe::No) const
+    void willDeref(unsigned refCount) const
     {
-        applyRefDerefThreadingCheck(refCount, isThreadSafe);
+        applyRefDerefThreadingCheck(refCount);
 
 #if CHECK_REF_COUNTED_LIFECYCLE
         ASSERT(!m_adoptionIsRequired);
@@ -161,28 +171,25 @@ protected:
 
 private:
 
-#if CHECK_REF_COUNTED_LIFECYCLE
-    friend void adopted(RefCountDebugger*);
-#endif
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    static ThreadLikeAssertion initialOwnerThread()
+    {
+        if constexpr (isThreadSafe == RefCountIsThreadSafe::Yes)
+            return anyThreadLike;
+        else
+            return currentThreadLike;
+    }
 
-#if ASSERT_ENABLED
-    mutable bool m_isOwnedByMainThread;
+    mutable ThreadLikeAssertion m_ownerThread { initialOwnerThread() };
     bool m_areThreadingChecksEnabled { true };
 #endif
-    WTF_EXPORT_PRIVATE static bool areThreadingChecksEnabledGlobally;
 #if CHECK_REF_COUNTED_LIFECYCLE
     mutable std::atomic<bool> m_deletionHasBegun { false };
     mutable bool m_adoptionIsRequired { true };
 #endif
 };
 
-#if CHECK_REF_COUNTED_LIFECYCLE
-inline void adopted(RefCountDebugger* object)
-{
-    if (!object)
-        return;
-    object->m_adoptionIsRequired = false;
-}
-#endif
+using RefCountDebugger = RefCountDebuggerImpl<RefCountIsThreadSafe::No>;
+using ThreadSafeRefCountDebugger = RefCountDebuggerImpl<RefCountIsThreadSafe::Yes>;
 
 } // namespace WTF

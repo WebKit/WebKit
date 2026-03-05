@@ -41,5 +41,5 @@ WKImageRef WKImageCreate(WKSize size, WKImageOptions options)
 
 WKSize WKImageGetSize(WKImageRef imageRef)
 {
-    return WebKit::toAPI(WebKit::toProtectedImpl(imageRef)->size());
+    return WebKit::toAPI(protect(WebKit::toImpl(imageRef))->size());
 }

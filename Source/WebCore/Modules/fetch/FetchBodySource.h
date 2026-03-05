@@ -50,8 +50,8 @@ public:
     void close();
     void error(const Exception&);
 
-    bool isPulling() const;
-    bool isCancelling() const;
+    bool NODELETE isPulling() const;
+    bool NODELETE isCancelling() const;
 
     void resolvePullPromise();
     void detach();
@@ -68,7 +68,7 @@ private:
     public:
         static Ref<NonByteSource> create(FetchBodyOwner& owner) { return adoptRef(*new NonByteSource(owner)); }
 
-        bool enqueue(RefPtr<JSC::ArrayBuffer>&& chunk) { return controller().enqueue(WTFMove(chunk)); }
+        bool enqueue(RefPtr<JSC::ArrayBuffer>&& chunk) { return controller().enqueue(WTF::move(chunk)); }
         void close();
         void error(const Exception&);
 
@@ -82,7 +82,7 @@ private:
 
         void doStart() final;
         void doPull() final;
-        void doCancel() final;
+        void doCancel(JSC::JSValue) final;
         void setActive() final;
         void setInactive() final;
 

@@ -69,10 +69,10 @@ private:
     LayoutUnit logicalAscentForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, ItemPosition) const;
     LayoutUnit ascentForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, ItemPosition) const;
     LayoutUnit descentForGridItem(const RenderBox&, LayoutUnit, Style::GridTrackSizingDirection alignmentContextType, ExtraMarginsFromSubgrids) const;
-    bool isDescentBaselineForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
-    bool isVerticalAlignmentContext(Style::GridTrackSizingDirection alignmentContextType) const;
-    bool isOrthogonalGridItemForBaseline(const RenderBox&) const;
-    bool isParallelToAlignmentAxisForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    bool NODELETE isDescentBaselineForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    bool NODELETE isVerticalAlignmentContext(Style::GridTrackSizingDirection alignmentContextType) const;
+    bool NODELETE isOrthogonalGridItemForBaseline(const RenderBox&) const;
+    bool NODELETE isParallelToAlignmentAxisForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
 
     typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 

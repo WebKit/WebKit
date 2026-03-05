@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/WebGPUError.h>
-#include <WebCore/WebGPUUncapturedErrorEventInit.h>
+#include "WebGPUError.h"
+#include "WebGPUUncapturedErrorEventInit.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -37,15 +37,15 @@ class UncapturedErrorEvent final : public RefCounted<UncapturedErrorEvent> {
 public:
     static Ref<UncapturedErrorEvent> create(String&& type, UncapturedErrorEventInit&& uncapturedErrorEventInit)
     {
-        return adoptRef(*new UncapturedErrorEvent(WTFMove(type), WTFMove(uncapturedErrorEventInit)));
+        return adoptRef(*new UncapturedErrorEvent(WTF::move(type), WTF::move(uncapturedErrorEventInit)));
     }
 
-    const Error& error() const { return m_uncapturedErrorEventInit.error; }
+    const Error& error() const LIFETIME_BOUND { return m_uncapturedErrorEventInit.error; }
 
 protected:
     UncapturedErrorEvent(String&& type, UncapturedErrorEventInit&& uncapturedErrorEventInit)
-        : m_type(WTFMove(type))
-        , m_uncapturedErrorEventInit(WTFMove(uncapturedErrorEventInit))
+        : m_type(WTF::move(type))
+        , m_uncapturedErrorEventInit(WTF::move(uncapturedErrorEventInit))
     {
     }
 

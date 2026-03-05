@@ -4,7 +4,7 @@ x
 x
 x
 
-FAIL graphics-document assert_equals: <div role="graphics-document" data-expectedrole="graphics-document" class="ex">x</div> expected "graphics-document" but got "document"
-FAIL graphics-object assert_equals: <div role="graphics-object" data-expectedrole="graphics-object" class="ex">x</div> expected "graphics-object" but got "group"
-FAIL graphics-symbol assert_equals: <div role="graphics-symbol" data-expectedrole="graphics-symbol" class="ex">x</div> expected "graphics-symbol" but got "image"
+PASS graphics-document
+PASS graphics-object
+PASS graphics-symbol
 

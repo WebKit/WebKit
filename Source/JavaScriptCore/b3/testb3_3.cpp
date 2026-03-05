@@ -148,7 +148,7 @@ void testLoadPreIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#4]!");
+        checkUsesInstruction(*code, "#0x4]!");
 
     auto expected = [&] () -> int32_t {
         int32_t r = 0;
@@ -222,7 +222,7 @@ void testLoadPreIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#8]!");
+        checkUsesInstruction(*code, "#0x8]!");
 
     auto expected = [&] () -> int64_t {
         int64_t r = 0;
@@ -296,7 +296,7 @@ void testLoadPostIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #4");
+        checkUsesInstruction(*code, "], #0x4");
 
     auto expected = [&] () -> int32_t {
         int32_t r = 0;
@@ -370,7 +370,7 @@ void testLoadPostIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #8");
+        checkUsesInstruction(*code, "], #0x8");
 
     auto expected = [&] () -> int64_t {
         int64_t r = 0;
@@ -481,7 +481,7 @@ void testStorePreIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#4]!");
+        checkUsesInstruction(*code, "#0x4]!");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
     ptr = std::bit_cast<int32_t*>(res);
     CHECK_EQ(nums[2], *ptr);
@@ -508,7 +508,7 @@ void testStorePreIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#8]!");
+        checkUsesInstruction(*code, "#0x8]!");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
     ptr = std::bit_cast<int64_t*>(res);
     CHECK_EQ(nums[2], *ptr);
@@ -535,7 +535,7 @@ void testStorePostIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #4");
+        checkUsesInstruction(*code, "], #0x4");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
     ptr = std::bit_cast<int32_t*>(res);
     CHECK_EQ(nums[1], 4);
@@ -563,7 +563,7 @@ void testStorePostIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #8");
+        checkUsesInstruction(*code, "], #0x8");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4ULL);
     ptr = std::bit_cast<int64_t*>(res);
     CHECK_EQ(nums[1], 4);
@@ -780,7 +780,7 @@ void testBitOrImmBitOrArgImm32(int32_t a, int32_t b, int32_t c)
     CHECK_EQ(compileAndRun<int>(proc, b), (a | (b | c)));
 }
 
-double bitOrDouble(double a, double b)
+double NODELETE bitOrDouble(double a, double b)
 {
     return std::bit_cast<double>(std::bit_cast<uint64_t>(a) | std::bit_cast<uint64_t>(b));
 }
@@ -835,7 +835,7 @@ void testBitOrImmsDouble(double a, double b)
     CHECK(isIdentical(compileAndRun<double>(proc), bitOrDouble(a, b)));
 }
 
-float bitOrFloat(float a, float b)
+float NODELETE bitOrFloat(float a, float b)
 {
     return std::bit_cast<float>(std::bit_cast<uint32_t>(a) | std::bit_cast<uint32_t>(b));
 }
@@ -1740,7 +1740,7 @@ static void testZShrArgImm32(uint32_t a, uint32_t b)
 }
 
 template<typename IntegerType>
-static unsigned countLeadingZero(IntegerType value)
+static unsigned NODELETE countLeadingZero(IntegerType value)
 {
     unsigned bitCount = sizeof(IntegerType) * 8;
     if (!value)
@@ -3816,9 +3816,9 @@ void testStorePartial8BitRegisterOnX86()
     patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::regT6) };
 
     // Give the allocator a good reason not to use any other register.
-    RegisterSetBuilder clobberSet = RegisterSetBuilder::allGPRs();
-    clobberSet.exclude(RegisterSetBuilder::stackRegisters());
-    clobberSet.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    RegisterSet clobberSet = RegisterSet::allGPRs();
+    clobberSet.exclude(RegisterSet::stackRegisters());
+    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
     clobberSet.remove(GPRInfo::regT3);
     clobberSet.remove(GPRInfo::regT2);
     clobberSet.remove(GPRInfo::regT6);
@@ -4022,12 +4022,12 @@ void testStoreAddLoad32(int32_t amount)
 }
 
 // Make sure the compiler does not try to optimize anything out.
-static NEVER_INLINE double zero()
+static NEVER_INLINE double NODELETE zero()
 {
     return 0.;
 }
 
-static double negativeZero()
+static double NODELETE negativeZero()
 {
     return -zero();
 }
@@ -4180,7 +4180,18 @@ void addArgTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN_UNARY(testMulArgFloatWithUselessDoubleConversion, floatingPointOperands<float>());
     RUN_BINARY(testMulArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testMulArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
-    
+
+    RUN_UNARY(testMulDoubleByTwo, floatingPointOperands<double>());
+    RUN_UNARY(testMulFloatByTwo, floatingPointOperands<float>());
+    RUN_UNARY(testMulDoubleByNegOne, floatingPointOperands<double>());
+    RUN_UNARY(testMulFloatByNegOne, floatingPointOperands<float>());
+    RUN_UNARY(testMulDoubleByNegTwo, floatingPointOperands<double>());
+    RUN_UNARY(testMulFloatByNegTwo, floatingPointOperands<float>());
+    RUN_UNARY(testDivDoubleByNegOne, floatingPointOperands<double>());
+    RUN_UNARY(testDivFloatByNegOne, floatingPointOperands<float>());
+    RUN_UNARY(testDivDoubleByPowerOfTwo, floatingPointOperands<double>());
+    RUN_UNARY(testDivFloatByPowerOfTwo, floatingPointOperands<float>());
+
     RUN(testDivArgDouble(std::numbers::pi));
     RUN(testDivArgsDouble(std::numbers::pi, 1));
     RUN(testDivArgsDouble(std::numbers::pi, -std::numbers::pi));

@@ -132,35 +132,33 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamS
 {
     ASSERT(isMainThread());
 
+    MediaSourcePrivate::markEndOfStream(endOfStreamStatus);
     RefPtr player = platformPlayer();
     if (!player)
         return;
 
 #ifndef GST_DISABLE_GST_DEBUG
-    const char* statusString = nullptr;
+    ASCIILiteral statusString;
     switch (endOfStreamStatus) {
     case EndOfStreamStatus::NoError:
-        statusString = "no-error";
+        statusString = "no-error"_s;
         break;
     case EndOfStreamStatus::DecodeError:
-        statusString = "decode-error";
+        statusString = "decode-error"_s;
         break;
     case EndOfStreamStatus::NetworkError:
-        statusString = "network-error";
+        statusString = "network-error"_s;
         break;
     }
-    GST_DEBUG_OBJECT(player->pipeline(), "Marking EOS, status is %s", statusString);
+    GST_DEBUG_OBJECT(player->pipeline(), "Marking EOS, status is %s", statusString.characters());
 #endif
     if (endOfStreamStatus == EndOfStreamStatus::NoError) {
-        player->setNetworkState(MediaPlayer::NetworkState::Loaded);
-
         auto bufferedRanges = buffered();
         if (!bufferedRanges.length()) {
             GST_DEBUG("EOS with no buffers");
             player->setEosWithNoBuffers(true);
         }
     }
-    MediaSourcePrivate::markEndOfStream(endOfStreamStatus);
 }
 
 void MediaSourcePrivateGStreamer::unmarkEndOfStream()

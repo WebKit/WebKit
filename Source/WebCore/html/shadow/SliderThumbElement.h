@@ -41,14 +41,14 @@ class HTMLInputElement;
 class TouchEvent;
 
 class SliderThumbElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SliderThumbElement);
+    WTF_MAKE_TZONE_ALLOCATED(SliderThumbElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SliderThumbElement);
 public:
     static Ref<SliderThumbElement> create(Document&);
 
     void setPositionFromValue();
     void dragFrom(const LayoutPoint&);
-    RefPtr<HTMLInputElement> hostInput() const;
+    RefPtr<HTMLInputElement> NODELETE hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -59,7 +59,8 @@ public:
 
 private:
     explicit SliderThumbElement(Document&);
-    bool isSliderThumbElement() const final { return true; }
+
+    bool NODELETE isSliderThumbElement() const final { return true; }
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;
     bool isDisabledFormControl() const final;
@@ -106,7 +107,7 @@ private:
 // --------------------------------
 
 class SliderContainerElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SliderContainerElement);
+    WTF_MAKE_TZONE_ALLOCATED(SliderContainerElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SliderContainerElement);
 public:
     static Ref<SliderContainerElement> create(Document&);
@@ -114,7 +115,7 @@ public:
 private:
     explicit SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    bool isSliderContainerElement() const final { return true; }
+    bool NODELETE isSliderContainerElement() const final { return true; }
 };
 
 } // namespace WebCore

@@ -1,4 +1,4 @@
 
 
-FAIL Custom Functions: @media responds to changes assert_equals: --actual before resize expected "A" but got "--f()"
+FAIL Custom Functions: @media responds to changes assert_equals: --actual after resize to 100px expected "B" but got "A"
 

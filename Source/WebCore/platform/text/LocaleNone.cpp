@@ -29,24 +29,25 @@
 
 namespace WebCore {
 
-class LocaleNone : public Locale {
+class LocaleNone final : public Locale {
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocaleNone);
 public:
     virtual ~LocaleNone();
 
 private:
     void initializeLocaleData() final;
-    String dateFormat() override;
-    String monthFormat() override;
-    String shortMonthFormat() override;
-    String timeFormat() override;
-    String shortTimeFormat() override;
-    String dateTimeFormatWithSeconds() override;
-    String dateTimeFormatWithoutSeconds() override;
-    const Vector<String>& monthLabels() override;
-    const Vector<String>& shortMonthLabels() override;
-    const Vector<String>& standAloneMonthLabels() override;
-    const Vector<String>& shortStandAloneMonthLabels() override;
-    const Vector<String>& timeAMPMLabels() override;
+    String dateFormat() final;
+    String monthFormat() final;
+    String shortMonthFormat() final;
+    String timeFormat() final;
+    String shortTimeFormat() final;
+    String dateTimeFormatWithSeconds() final;
+    String dateTimeFormatWithoutSeconds() final;
+    const Vector<String>& monthLabels() final;
+    const Vector<String>& shortMonthLabels() final;
+    const Vector<String>& standAloneMonthLabels() final;
+    const Vector<String>& shortStandAloneMonthLabels() final;
+    const Vector<String>& timeAMPMLabels() final;
 
     Vector<String> m_timeAMPMLabels;
     Vector<String> m_shortMonthLabels;

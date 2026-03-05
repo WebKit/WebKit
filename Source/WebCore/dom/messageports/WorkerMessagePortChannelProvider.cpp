@@ -83,15 +83,15 @@ void WorkerMessagePortChannelProvider::messagePortClosed(const MessagePortIdenti
 
 void WorkerMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
-    callOnMainThread([message = WTFMove(message), remoteTarget]() mutable {
-        MessagePortChannelProvider::singleton().postMessageToRemote(WTFMove(message), remoteTarget);
+    callOnMainThread([message = WTF::move(message), remoteTarget]() mutable {
+        MessagePortChannelProvider::singleton().postMessageToRemote(WTF::move(message), remoteTarget);
     });
 }
 
 class MainThreadCompletionHandler {
 public:
     explicit MainThreadCompletionHandler(CompletionHandler<void()>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
     {
     }
     MainThreadCompletionHandler(MainThreadCompletionHandler&&) = default;
@@ -105,7 +105,7 @@ public:
 
     void complete()
     {
-        callOnMainThread(WTFMove(m_completionHandler));
+        callOnMainThread(WTF::move(m_completionHandler));
     }
 
 private:
@@ -119,15 +119,15 @@ void WorkerMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortI
         return callback({ }, [] { });
 
     uint64_t callbackIdentifier = ++m_lastCallbackIdentifier;
-    m_takeAllMessagesCallbacks.add(callbackIdentifier, WTFMove(callback));
+    m_takeAllMessagesCallbacks.add(callbackIdentifier, WTF::move(callback));
 
     callOnMainThread([weakThis = WeakPtr { *this }, workerThread = scope->workerOrWorkletThread(), callbackIdentifier, identifier]() mutable {
-        MessagePortChannelProvider::singleton().takeAllMessagesForPort(identifier, [weakThis = WTFMove(weakThis), workerThread = WTFMove(workerThread), callbackIdentifier](Vector<MessageWithMessagePorts>&& messages, Function<void()>&& completionHandler) mutable {
-            workerThread->runLoop().postTaskForMode([weakThis = WTFMove(weakThis), callbackIdentifier, messages = WTFMove(messages), completionHandler = MainThreadCompletionHandler(WTFMove(completionHandler))](auto&) mutable {
+        MessagePortChannelProvider::singleton().takeAllMessagesForPort(identifier, [weakThis = WTF::move(weakThis), workerThread = WTF::move(workerThread), callbackIdentifier](Vector<MessageWithMessagePorts>&& messages, Function<void()>&& completionHandler) mutable {
+            workerThread->runLoop().postTaskForMode([weakThis = WTF::move(weakThis), callbackIdentifier, messages = WTF::move(messages), completionHandler = MainThreadCompletionHandler(WTF::move(completionHandler))](auto&) mutable {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
-                protectedThis->m_takeAllMessagesCallbacks.take(callbackIdentifier)(WTFMove(messages), [completionHandler = WTFMove(completionHandler)]() mutable {
+                protectedThis->m_takeAllMessagesCallbacks.take(callbackIdentifier)(WTF::move(messages), [completionHandler = WTF::move(completionHandler)]() mutable {
                     completionHandler.complete();
                 });
             }, WorkerRunLoop::defaultMode());

@@ -84,7 +84,7 @@ public:
     bool isNotRunning() const { return m_state == State::NotRunning; }
     void setState(State);
 
-    SWServer* server() { return m_server.get(); }
+    SWServer* server() const { return m_server.get(); }
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
     RegistrableDomain firstPartyForCookies() const { return m_registrationKey.firstPartyForCookies(); }
     const URL& scriptURL() const { return m_data.scriptURL; }
@@ -130,9 +130,11 @@ public:
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
 
-    WEBCORE_EXPORT RouterSource getRouterSource(const FetchOptions&, const ResourceRequest&) const;
-    
-    WEBCORE_EXPORT SWServerRegistration* registration() const;
+    bool hasRouterRules() const { return !m_routes.isEmpty(); }
+    WEBCORE_EXPORT std::optional<RouterSource> getRouterSource(const FetchOptions&, const ResourceRequest&) const;
+    WEBCORE_EXPORT RouterSource defaultRouterSource() const;
+
+    WEBCORE_EXPORT SWServerRegistration* NODELETE registration() const;
 
     void setHasTimedOutAnyFetchTasks() { m_hasTimedOutAnyFetchTasks = true; }
     bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
@@ -164,7 +166,7 @@ public:
     std::optional<ExceptionData> addRoutes(Vector<ServiceWorkerRoute>&&);
 
 private:
-    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
+    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&, Vector<ServiceWorkerRoute>&& = { });
 
     void callWhenActivatedHandler(bool success);
 
@@ -175,8 +177,6 @@ private:
     void callTerminationCallbacks();
     void terminateIfPossible();
     bool shouldBeTerminated() const;
-
-    RefPtr<SWServer> protectedServer() const;
 
     WeakPtr<SWServer> m_server;
     ServiceWorkerRegistrationKey m_registrationKey;

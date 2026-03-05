@@ -60,7 +60,7 @@ private:
     void writeSegmentType(SVGPathSegType type)
     {
         static_assert(std::is_same_v<std::underlying_type_t<SVGPathSegType>, uint8_t>);
-        m_byteStream->append(enumToUnderlyingType(type));
+        m_byteStream->append(std::to_underlying(type));
     }
 
     SingleThreadWeakRef<SVGPathByteStream> m_byteStream;

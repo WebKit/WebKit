@@ -32,4 +32,4 @@ testWithTypedArrayConstructors(TA => {
 
   assert.sameValue(result.length, 0);
   assert.sameValue(rab.byteLength, TA.BYTES_PER_ELEMENT);
-});
+}, null, ["passthrough"]);

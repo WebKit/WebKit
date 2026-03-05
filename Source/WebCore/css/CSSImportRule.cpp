@@ -44,9 +44,9 @@ CSSImportRule::CSSImportRule(StyleRuleImport& importRule, CSSStyleSheet* parent)
 CSSImportRule::~CSSImportRule()
 {
     if (m_styleSheetCSSOMWrapper)
-        m_styleSheetCSSOMWrapper->clearOwnerRule();
+        protect(m_styleSheetCSSOMWrapper)->clearOwnerRule();
     if (m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper->detachFromParent();
+        protect(m_mediaCSSOMWrapper)->detachFromParent();
 }
 
 String CSSImportRule::href() const
@@ -89,7 +89,7 @@ String CSSImportRule::cssTextInternal(const String& urlString) const
 
     auto supports = supportsText();
     if (!supports.isNull())
-        builder.append(" supports("_s, WTFMove(supports), ')');
+        builder.append(" supports("_s, WTF::move(supports), ')');
 
     if (!mediaQueries().isEmpty()) {
         builder.append(' ');
@@ -132,11 +132,6 @@ CSSStyleSheet* CSSImportRule::styleSheet() const
     return m_styleSheetCSSOMWrapper.get(); 
 }
 
-RefPtr<CSSStyleSheet> CSSImportRule::protectedStyleSheet() const
-{
-    return styleSheet();
-}
-
 void CSSImportRule::reattach(StyleRuleBase&)
 {
     // FIXME: Implement when enabling caching for stylesheets with import rules.
@@ -150,16 +145,16 @@ const MQ::MediaQueryList& CSSImportRule::mediaQueries() const
 
 void CSSImportRule::setMediaQueries(MQ::MediaQueryList&& queries)
 {
-    m_importRule->setMediaQueries(WTFMove(queries));
+    m_importRule->setMediaQueries(WTF::move(queries));
 }
 
-void CSSImportRule::getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
+void CSSImportRule::getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>& childStyleSheets)
 {
     RefPtr sheet = styleSheet();
     if (!sheet)
         return;
 
-    if (childStyleSheets.add(sheet).isNewEntry)
+    if (childStyleSheets.add(*sheet).isNewEntry)
         sheet->getChildStyleSheets(childStyleSheets);
 }
 

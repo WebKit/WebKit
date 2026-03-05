@@ -40,7 +40,7 @@ class UndoItem;
 template<typename> class ExceptionOr;
 
 class UndoManager : public RefCountedAndCanMakeWeakPtr<UndoManager> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UndoManager);
+    WTF_MAKE_TZONE_ALLOCATED(UndoManager);
 public:
     static Ref<UndoManager> create(Document& document)
     {
@@ -52,13 +52,13 @@ public:
     void removeItem(UndoItem&);
     void removeAllItems();
     ExceptionOr<void> addItem(Ref<UndoItem>&&);
-    Document& document() { return m_document.get(); }
+    Document& document() { return m_document; }
 
 private:
     UndoManager(Document&);
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
-    HashSet<RefPtr<UndoItem>> m_items;
+    HashSet<Ref<UndoItem>> m_items;
 };
 
 } // namespace WebCore

@@ -31,6 +31,6 @@
 namespace WebKit {
 
 void setOverrideLanguages(Vector<String>&&);
-const Vector<String>& overrideLanguages();
+const Vector<String>& NODELETE overrideLanguages();
 
 } // namespace WebKit

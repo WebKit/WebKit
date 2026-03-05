@@ -1,15 +1,8 @@
 include(platform/Adwaita.cmake)
-
-if (USE_CAIRO)
-    include(platform/Cairo.cmake)
-    include(platform/FreeType.cmake)
-elseif (USE_SKIA)
-    include(platform/Skia.cmake)
-endif ()
-
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
+include(platform/Skia.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
 
@@ -56,6 +49,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/glib/SelectionData.h
     platform/glib/SystemSettings.h
 
+    platform/graphics/android/BufferFormatAndroid.h
     platform/graphics/android/GraphicsContextGLTextureMapperAndroid.h
     platform/graphics/android/PlatformDisplayAndroid.h
 
@@ -76,9 +70,12 @@ list(APPEND WebCore_PRIVATE_LIBRARIES
 
 list(APPEND WebCore_LIBRARIES
     GLib::Module
-    WPE::libwpe
     ${UPOWERGLIB_LIBRARIES}
 )
+
+if (ENABLE_WPE_LEGACY_API)
+    list(APPEND WebCore_LIBRARIES WPE::libwpe)
+endif ()
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${UPOWERGLIB_INCLUDE_DIRS}
@@ -89,7 +86,7 @@ if (USE_OPENXR)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES ${OPENXR_INCLUDE_DIRS})
 endif ()
 
-if (USE_SKIA AND ENABLE_DRAG_SUPPORT)
+if (ENABLE_DRAG_SUPPORT)
     list(APPEND WebCore_SOURCES
         platform/skia/DragImageSkia.cpp
     )
@@ -137,6 +134,10 @@ if (USE_GBM)
     list(APPEND WebCore_LIBRARIES GBM::GBM)
 elseif (USE_LIBDRM)
     list(APPEND WebCore_LIBRARIES LibDRM::LibDRM)
+endif ()
+
+if (USE_LIBHYPHEN)
+    list(APPEND WebCore_PRIVATE_LIBRARIES Hyphen::Hyphen)
 endif ()
 
 if (ENABLE_GAMEPAD)

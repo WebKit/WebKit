@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,28 +26,45 @@
 #include "StyleFilterReference.h"
 
 #include "CSSFilterReference.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
-#include "ReferenceFilterOperation.h"
+#include "SVGURIReference.h"
 #include "StyleBuilderState.h"
 
 namespace WebCore {
 namespace Style {
 
-CSS::FilterReference toCSSFilterReference(Ref<ReferenceFilterOperation> operation, const RenderStyle& style)
+void FilterReference::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    return { .url = toCSS(operation->url(), style) };
+    if (cachedSVGDocumentReference)
+        return;
+    if (!SVGURIReference::isExternalURIReference(url.resolved.string(), *protect(cachedResourceLoader.document())))
+        return;
+    lazyInitialize(cachedSVGDocumentReference, CachedSVGDocumentReference::create(url));
+    cachedSVGDocumentReference->load(cachedResourceLoader, options);
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::FilterReference& filter, const BuilderState& state)
+// MARK: - Conversion
+
+auto ToCSS<FilterReference>::operator()(const FilterReference& value, const RenderStyle& style) -> CSS::FilterReference
 {
-    auto url = toStyleWithScriptExecutionContext(filter.url, state.document());
+    return { .url = toCSS(value.url, style) };
+}
+
+auto ToStyle<CSS::FilterReference>::operator()(const CSS::FilterReference& value, const BuilderState& state) -> FilterReference
+{
+    auto url = toStyle(value.url, state);
 
     // FIXME: Unify all the fragment accessing/construction.
     auto fragment = url.resolved.string().startsWith('#')
         ? StringView(url.resolved.string()).substring(1).toAtomString()
         : url.resolved.fragmentIdentifier().toAtomString();
 
-    return ReferenceFilterOperation::create(WTFMove(url), WTFMove(fragment));
+    return {
+        .url = WTF::move(url),
+        .cachedFragment = WTF::move(fragment),
+        .cachedSVGDocumentReference = nullptr
+    };
 }
 
 } // namespace Style

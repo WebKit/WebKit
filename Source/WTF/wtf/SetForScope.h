@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
 
@@ -68,7 +69,7 @@ public:
 
     ~SetForScope()
     {
-        m_scopedVariable = WTFMove(m_valueToRestore);
+        m_scopedVariable = WTF::move(m_valueToRestore);
     }
 
 private:

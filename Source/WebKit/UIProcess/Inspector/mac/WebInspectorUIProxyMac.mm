@@ -34,6 +34,7 @@
 #import "GlobalFindInPageState.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
+#import "WKAPICast.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
 #import "WKObject.h"
@@ -81,7 +82,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (WKInspectorRef)inspectorRef
 {
-    return toAPI(self._protectedInspector.get());
+    return toAPI(protect(_inspectorProxy).get());
 }
 
 - (_WKInspector *)inspector
@@ -91,10 +92,6 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
     return nil;
 }
 
-- (RefPtr<WebKit::WebInspectorUIProxy>)_protectedInspector
-{
-    return _inspectorProxy.get();
-}
 
 - (instancetype)initWithWebInspectorUIProxy:(WebKit::WebInspectorUIProxy*)inspectorProxy
 {
@@ -151,6 +148,12 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
         proxy->windowFullScreenDidChange();
 }
 
+- (void)_systemColorsDidChange:(NSNotification *)notification
+{
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->systemAppearanceDidChange();
+}
+
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
 {
     // Resizing the views while inside this notification can lead to bad results when entering
@@ -198,7 +201,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController
 {
-    return _inspectorProxy ? _inspectorProxy->isUnderTest() : false;
+    return _inspectorProxy && _inspectorProxy->isUnderTest();
 }
 
 - (BOOL)inspectorViewControllerInspectorIsHorizontallyAttached:(WKInspectorViewController *)inspectorViewController
@@ -259,7 +262,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
     if (!(self = [super init]))
         return nil;
 
-    _saveDatas = WTFMove(saveDatas);
+    _saveDatas = WTF::move(saveDatas);
 
     _savePanel = savePanel;
 
@@ -337,7 +340,7 @@ using namespace WebCore;
 
 void WebInspectorUIProxy::didBecomeActive()
 {
-    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
+    protect(protect(inspectorPage())->legacyMainFrameProcess())->send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
@@ -416,9 +419,9 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
     RetainPtr savePanel = [NSSavePanel savePanel];
     [savePanel setExtensionHidden:NO];
 
-    auto controller = adoptNS([[WKWebInspectorUISaveController alloc] initWithSaveDatas:WTFMove(saveDatas) savePanel:savePanel.get()]);
+    auto controller = adoptNS([[WKWebInspectorUISaveController alloc] initWithSaveDatas:WTF::move(saveDatas) savePanel:savePanel.get()]);
 
-    auto saveToURL = [controller, completionHandler = WTFMove(completionHandler)] (NSURL *actualURL) mutable {
+    auto saveToURL = [controller, completionHandler = WTF::move(completionHandler)] (NSURL *actualURL) mutable {
         ASSERT(actualURL);
 
         if ([controller base64Encoded]) {
@@ -447,7 +450,7 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
     if (platformURL.isFileURL)
         [savePanel setDirectoryURL:[platformURL URLByDeletingLastPathComponent]];
 
-    auto didShowModal = [savePanel, saveToURL = WTFMove(saveToURL)] (NSInteger result) mutable {
+    auto didShowModal = [savePanel, saveToURL = WTF::move(saveToURL)] (NSInteger result) mutable {
         if (result == NSModalResponseCancel)
             return;
 
@@ -455,9 +458,8 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
         saveToURL(retainPtr([savePanel URL]).get());
     };
 
-    // This is a safer cpp false positive (rdar://161068288).
-    SUPPRESS_UNRETAINED_ARG if (RetainPtr window = frontendWindow ?: [NSApp keyWindow])
-        [savePanel beginSheetModalForWindow:window.get() completionHandler:makeBlockPtr(WTFMove(didShowModal)).get()];
+    if (RetainPtr window = frontendWindow ?: [NSApp keyWindow])
+        [savePanel beginSheetModalForWindow:window.get() completionHandler:makeBlockPtr(WTF::move(didShowModal)).get()];
     else
         didShowModal([savePanel runModal]);
 }
@@ -478,9 +480,10 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     m_objCAdapter = adoptNS([[WKWebInspectorUIProxyObjCAdapter alloc] initWithWebInspectorUIProxy:this]);
     RetainPtr inspectedView = inspectedPage->inspectorAttachmentView();
     [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView.get()];
+    [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(_systemColorsDidChange:) name:NSSystemColorsDidChangeNotification object:nil];
 
     Ref configuration = inspectedPage->uiClient().configurationForLocalInspector(*inspectedPage, *this);
-    m_inspectorViewController = adoptNS([[WKInspectorViewController alloc] initWithConfiguration:protectedWrapper(configuration.get()).get() inspectedPage:inspectedPage.get()]);
+    m_inspectorViewController = adoptNS([[WKInspectorViewController alloc] initWithConfiguration:protect(WebKit::wrapper(configuration.get())).get() inspectedPage:inspectedPage.get()]);
     [m_inspectorViewController setDelegate:m_objCAdapter.get()];
 
     RefPtr inspectorPage = [m_inspectorViewController webView]->_page.get();
@@ -498,7 +501,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
         savedWindowFrame = NSRectFromString(savedWindowFrameString.get());
     }
 
-    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, protectedInspectedPage().get());
+    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, protect(inspectedPage()).get());
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
     RetainPtr<WKWebView> inspectorView = [m_inspectorViewController webView];
@@ -606,7 +609,7 @@ void WebInspectorUIProxy::platformBringToFront()
 void WebInspectorUIProxy::platformBringInspectedPageToFront()
 {
     if (RefPtr inspectedPage = m_inspectedPage.get())
-        [inspectedPage->protectedPlatformWindow() makeKeyAndOrderFront:nil];
+        [protect(inspectedPage->platformWindow()) makeKeyAndOrderFront:nil];
 }
 
 bool WebInspectorUIProxy::platformIsFront()
@@ -669,10 +672,8 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certifi
     else
         window = [[m_inspectorViewController webView] window];
 
-    if (!window) {
-        // This is a safer cpp false positive (rdar://161068288).
-        SUPPRESS_UNRETAINED_ARG window = [NSApp keyWindow];
-    }
+    if (!window)
+        window = [NSApp keyWindow];
 
     [certificatePanel beginSheetForWindow:window.get() modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust().get() showGroup:YES];
 
@@ -708,7 +709,7 @@ void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>
         forceSaveAs = true;
     }
 
-    WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTFMove(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
+    WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTF::move(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
         protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
     });
 }
@@ -724,7 +725,7 @@ void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<voi
 void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
 {
     auto sampler = adoptNS([[NSColorSampler alloc] init]);
-    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSColor *selectedColor) mutable {
+    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSColor *selectedColor) mutable {
         if (!selectedColor) {
             completionHandler(std::nullopt);
             return;
@@ -857,8 +858,8 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
 void WebInspectorUIProxy::platformAttach()
 {
-    ASSERT(protectedInspectedPage());
-    RetainPtr inspectedView = protectedInspectedPage()->inspectorAttachmentView();
+    ASSERT(protect(inspectedPage()));
+    RetainPtr inspectedView = protect(inspectedPage())->inspectorAttachmentView();
     RetainPtr<WKWebView> inspectorView = [m_inspectorViewController webView];
 
     if (m_inspectorWindow) {
@@ -873,15 +874,15 @@ void WebInspectorUIProxy::platformAttach()
     switch (m_attachmentSide) {
     case AttachmentSide::Bottom:
         [inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
-        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedHeight();
+        currentDimension = protect(inspectorPagePreferences())->inspectorAttachedHeight();
         break;
     case AttachmentSide::Right:
         [inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
-        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedWidth();
+        currentDimension = protect(inspectorPagePreferences())->inspectorAttachedWidth();
         break;
     case AttachmentSide::Left:
         [inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMaxXMargin];
-        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedWidth();
+        currentDimension = protect(inspectorPagePreferences())->inspectorAttachedWidth();
         break;
     }
 

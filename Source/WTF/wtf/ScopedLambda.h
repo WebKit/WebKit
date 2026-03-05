@@ -84,7 +84,7 @@ public:
 
     ScopedLambdaFunctor(ScopedLambdaFunctor&& other)
         : ScopedLambda<ResultType (ArgumentTypes...)>(implFunction, this)
-        , m_functor(WTFMove(other.m_functor))
+        , m_functor(WTF::move(other.m_functor))
     {
     }
     
@@ -96,7 +96,7 @@ public:
     
     ScopedLambdaFunctor& operator=(ScopedLambdaFunctor&& other)
     {
-        m_functor = WTFMove(other.m_functor);
+        m_functor = WTF::move(other.m_functor);
         return *this;
     }
 

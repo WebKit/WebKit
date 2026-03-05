@@ -23,14 +23,14 @@ info: |
       kValue, k, O »).
     d. Decrease k by 1.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
 var expected = (function() { return this; })();
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA(3);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(3));
 
   var results = [];
 

@@ -74,7 +74,7 @@ Decimal StepRange::acceptableError() const
 {
     // FIXME: We should use DBL_MANT_DIG instead of FLT_MANT_DIG regarding to HTML5 specification.
     static NeverDestroyed<const Decimal> twoPowerOfFloatMantissaBits(Decimal::Positive, 0, UINT64_C(1) << FLT_MANT_DIG);
-    return m_stepDescription.stepValueShouldBe == StepValueShouldBeReal ? m_step / twoPowerOfFloatMantissaBits : Decimal(0);
+    return m_stepDescription.stepValueShouldBe == StepValueShouldBe::Real ? m_step / twoPowerOfFloatMantissaBits : Decimal(0);
 }
 
 Decimal StepRange::alignValueForStep(const Decimal& currentValue, const Decimal& newValue) const
@@ -121,21 +121,19 @@ Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescript
         return stepDescription.defaultValue();
 
     switch (stepDescription.stepValueShouldBe) {
-    case StepValueShouldBeReal:
+    case StepValueShouldBe::Real:
         step *= stepDescription.stepScaleFactor;
         break;
-    case ParsedStepValueShouldBeInteger:
+    case StepValueShouldBe::ParsedInteger:
         // For date, month, and week, the parsed value should be an integer for some types.
         step = std::max(step.round(), Decimal(1));
         step *= stepDescription.stepScaleFactor;
         break;
-    case ScaledStepValueShouldBeInteger:
+    case StepValueShouldBe::ScaledInteger:
         // For datetime, datetime-local, time, the result should be an integer.
         step *= stepDescription.stepScaleFactor;
         step = std::max(step.round(), Decimal(1));
         break;
-    default:
-        ASSERT_NOT_REACHED();
     }
 
     ASSERT(step > 0);

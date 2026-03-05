@@ -31,17 +31,17 @@
 
 namespace WGSL {
 
-ConstantValue ConstantArray::operator[](unsigned index)
+ConstantValue ConstantArray::operator[](unsigned index) const
 {
     return elements[index];
 }
 
-ConstantValue ConstantVector::operator[](unsigned index)
+ConstantValue ConstantVector::operator[](unsigned index) const
 {
     return elements[index];
 }
 
-ConstantVector ConstantMatrix::operator[](unsigned index)
+ConstantVector ConstantMatrix::operator[](unsigned index) const
 {
     ConstantVector result(rows);
     for (unsigned i = 0; i < rows; ++i)

@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FormattingState);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormattingState);
 
 FormattingState::FormattingState(Type type, LayoutState& layoutState)
     : m_layoutState(layoutState)

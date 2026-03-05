@@ -48,18 +48,18 @@ namespace WebCore {
 
 Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
-    auto source = RealtimeIncomingVideoSourceCocoa::create(WTFMove(videoTrack), WTFMove(trackId));
+    auto source = RealtimeIncomingVideoSourceCocoa::create(WTF::move(videoTrack), WTF::move(trackId));
     source->start();
-    return WTFMove(source);
+    return WTF::move(source);
 }
 
 Ref<RealtimeIncomingVideoSourceCocoa> RealtimeIncomingVideoSourceCocoa::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
-    return adoptRef(*new RealtimeIncomingVideoSourceCocoa(WTFMove(videoTrack), WTFMove(trackId)));
+    return adoptRef(*new RealtimeIncomingVideoSourceCocoa(WTF::move(videoTrack), WTF::move(trackId)));
 }
 
 RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
-    : RealtimeIncomingVideoSource(WTFMove(videoTrack), WTFMove(videoTrackId))
+    : RealtimeIncomingVideoSource(WTF::move(videoTrack), WTF::move(videoTrackId))
 {
 }
 
@@ -84,7 +84,7 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
             return nullptr;
         }
 
-        m_pixelBufferPool = WTFMove(*result);
+        m_pixelBufferPool = WTF::move(*result);
         m_pixelBufferPoolWidth = width;
         m_pixelBufferPoolHeight = height;
         m_pixelBufferPoolBufferType = bufferType;
@@ -94,7 +94,7 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
 
 Ref<VideoFrame> RealtimeIncomingVideoSourceCocoa::createVideoSampleFromCVPixelBuffer(RetainPtr<CVPixelBufferRef>&& pixelBuffer, VideoFrame::Rotation rotation, int64_t timeStamp)
 {
-    return VideoFrameCV::create(MediaTime(timeStamp, 1000000), false, rotation, WTFMove(pixelBuffer));
+    return VideoFrameCV::create(MediaTime(timeStamp, 1000000), false, rotation, WTF::move(pixelBuffer));
 }
 
 RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::VideoFrame& frame, VideoFrame::Rotation rotation)
@@ -110,14 +110,14 @@ RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::
 
     if (auto* provider = videoFrameBufferProvider(frame)) {
         // The only supported provider is VideoFrame.
-        auto* videoFrame = static_cast<VideoFrame*>(provider);
+        RefPtr videoFrame = static_cast<VideoFrame*>(provider);
         videoFrame->initializeCharacteristics(MediaTime { frame.timestamp_us(), 1000000 }, false, rotation);
         return videoFrame;
     }
 
     // If we already have a CVPixelBufferRef, use it directly.
     if (auto pixelBuffer = adoptCF(webrtc::copyPixelBufferForFrame(frame)))
-        return createVideoSampleFromCVPixelBuffer(WTFMove(pixelBuffer), rotation, frame.timestamp_us());
+        return createVideoSampleFromCVPixelBuffer(WTF::move(pixelBuffer), rotation, frame.timestamp_us());
 
     // In case of in memory libwebrtc samples, we have non interleaved YUV data, let's lazily create CVPixelBuffers if needed.
     return VideoFrameLibWebRTC::create(MediaTime(frame.timestamp_us(), 1000000), false, rotation, colorSpaceFromLibWebRTCVideoFrame(frame), toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, this](auto& buffer) {

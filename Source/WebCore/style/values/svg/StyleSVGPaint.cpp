@@ -27,7 +27,7 @@
 
 #include "AnimationUtilities.h"
 #include "CSSURLValue.h"
-#include "RenderStyle.h"
+#include "RenderStyle+SettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StyleForVisitedLink.h"
 
@@ -71,7 +71,7 @@ auto CSSValueConversion<SVGPaint>::operator()(BuilderState& state, const CSSValu
             }
         }
 
-        return SVGPaint::URLColor { url, toStyleFromCSSValue<Color>(state, *list->protectedItem(1), forVisitedLink) };
+        return SVGPaint::URLColor { url, toStyleFromCSSValue<Color>(state, *protect(list->item(1)), forVisitedLink) };
     }
 
     if (RefPtr urlValue = dynamicDowncast<CSSURLValue>(value))

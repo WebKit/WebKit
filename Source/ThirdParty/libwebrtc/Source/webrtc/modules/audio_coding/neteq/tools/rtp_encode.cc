@@ -86,14 +86,38 @@ struct CodecTypeAndInfo {
 const std::map<std::string, CodecTypeAndInfo>& CodecList() {
   static const auto* const codec_list =
       new std::map<std::string, CodecTypeAndInfo>{
-          {"opus", {CodecType::kOpus, 111, true}},
-          {"pcmu", {CodecType::kPcmU, 0, false}},
-          {"pcma", {CodecType::kPcmA, 8, false}},
-          {"g722", {CodecType::kG722, 9, false}},
-          {"pcm16b_8", {CodecType::kPcm16b8, 93, false}},
-          {"pcm16b_16", {CodecType::kPcm16b16, 94, false}},
-          {"pcm16b_32", {CodecType::kPcm16b32, 95, false}},
-          {"pcm16b_48", {CodecType::kPcm16b48, 96, false}}};
+          {"opus",
+           {.type = CodecType::kOpus,
+            .default_payload_type = 111,
+            .internal_dtx = true}},
+          {"pcmu",
+           {.type = CodecType::kPcmU,
+            .default_payload_type = 0,
+            .internal_dtx = false}},
+          {"pcma",
+           {.type = CodecType::kPcmA,
+            .default_payload_type = 8,
+            .internal_dtx = false}},
+          {"g722",
+           {.type = CodecType::kG722,
+            .default_payload_type = 9,
+            .internal_dtx = false}},
+          {"pcm16b_8",
+           {.type = CodecType::kPcm16b8,
+            .default_payload_type = 93,
+            .internal_dtx = false}},
+          {"pcm16b_16",
+           {.type = CodecType::kPcm16b16,
+            .default_payload_type = 94,
+            .internal_dtx = false}},
+          {"pcm16b_32",
+           {.type = CodecType::kPcm16b32,
+            .default_payload_type = 95,
+            .internal_dtx = false}},
+          {"pcm16b_48",
+           {.type = CodecType::kPcm16b48,
+            .default_payload_type = 96,
+            .internal_dtx = false}}};
   return *codec_list;
 }
 

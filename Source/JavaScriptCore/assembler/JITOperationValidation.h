@@ -28,7 +28,11 @@
 #include <wtf/Platform.h>
 
 #if ENABLE(JIT_CAGE)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/JITCageAdditions.h>
+#pragma clang diagnostic pop
 #else // ENABLE(JIT_CAGE)
 #if OS(DARWIN)
 #define MAP_EXECUTABLE_FOR_JIT MAP_JIT

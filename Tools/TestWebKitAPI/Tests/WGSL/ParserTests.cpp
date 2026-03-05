@@ -81,7 +81,7 @@ inline Expected<WGSL::ShaderModule, WGSL::FailedCheck> parse(const String& wgsl)
     auto maybeError = WGSL::parse(shaderModule);
     if (maybeError.has_value())
         return makeUnexpected(*maybeError);
-    return { WTFMove(shaderModule) };
+    return { WTF::move(shaderModule) };
 }
 
 struct StructAttributeTest {

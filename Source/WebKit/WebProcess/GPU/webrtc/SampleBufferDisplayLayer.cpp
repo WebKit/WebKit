@@ -59,7 +59,7 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
 
 void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto context) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](auto context) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return callback(false);
@@ -95,7 +95,7 @@ void SampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hid
 
 void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRightAnnotated>&& fence)
 {
-    m_connection->send(Messages::GPUConnectionToWebProcess::UpdateSampleBufferDisplayLayerBoundsAndPosition { identifier(), bounds, WTFMove(fence) }, identifier());
+    m_connection->send(Messages::GPUConnectionToWebProcess::UpdateSampleBufferDisplayLayerBoundsAndPosition { identifier(), bounds, WTF::move(fence) }, identifier());
 }
 
 void SampleBufferDisplayLayer::flush()
@@ -124,8 +124,8 @@ void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFram
 {
     auto size = videoFrame.presentationSize();
     WebCore::IntSize blackFrameSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
-    SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), blackFrameSize };
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(sharedVideoFrame) }, identifier());
+    SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), { }, blackFrameSize };
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTF::move(sharedVideoFrame) }, identifier());
 }
 
 void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
@@ -135,12 +135,12 @@ void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 
     auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame,
         [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, identifier()); },
-        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { WTFMove(handle) }, identifier()); }
+        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { WTF::move(handle) }, identifier()); }
     );
     if (!sharedVideoFrame)
         return;
 
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(*sharedVideoFrame) }, identifier());
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTF::move(*sharedVideoFrame) }, identifier());
 }
 
 void SampleBufferDisplayLayer::clearVideoFrames()

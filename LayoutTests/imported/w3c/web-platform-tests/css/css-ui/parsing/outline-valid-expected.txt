@@ -16,7 +16,7 @@ PASS e.style['outline'] = "calc(2em + 3ex)" should set the property value
 PASS e.style['outline'] = "thin" should set the property value
 PASS e.style['outline'] = "medium" should set the property value
 PASS e.style['outline'] = "thick" should set the property value
-PASS e.style['outline'] = "dashed thin" should set the property value
+FAIL e.style['outline'] = "dashed thin" should set the property value assert_equals: serialization should be canonical expected "dashed thin" but got "thin dashed"
 PASS e.style['outline'] = "medium rgba(10, 20, 30, 0.4)" should set the property value
 PASS e.style['outline'] = "3px ridge rgba(10, 20, 30, 0.4)" should set the property value
 

@@ -34,10 +34,10 @@ G_BEGIN_DECLS
 
 WEBKIT_DECLARE_FINAL_TYPE (WebKitImage, webkit_image, WEBKIT, IMAGE, GObject)
 
-WEBKIT_API int          webkit_image_get_width     (WebKitImage *image);
-WEBKIT_API int          webkit_image_get_height    (WebKitImage *image);
-WEBKIT_API guint        webkit_image_get_stride    (WebKitImage *image);
-WEBKIT_API GBytes      *webkit_image_as_rgba_bytes (WebKitImage *image);
+WEBKIT_API int          webkit_image_get_width  (WebKitImage *image);
+WEBKIT_API int          webkit_image_get_height (WebKitImage *image);
+WEBKIT_API guint        webkit_image_get_stride (WebKitImage *image);
+WEBKIT_API GBytes      *webkit_image_as_bytes   (WebKitImage *image);
 
 G_END_DECLS
 

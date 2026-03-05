@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,12 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NowPlayingTestWebView : TestWKWebView
 @property (nonatomic, readonly) BOOL hasActiveNowPlayingSession;
@@ -38,6 +40,7 @@
 @property (readonly) double lastUpdatedDuration;
 @property (readonly) double lastUpdatedElapsedTime;
 @property (readonly) NSInteger lastUniqueIdentifier;
+@property (readonly) NSUInteger lastUpdateTime;
 @end
 
 @implementation NowPlayingTestWebView {
@@ -49,14 +52,14 @@
 {
     _receivedNowPlayingInfoResponse = false;
 
-    auto completionHandler = [retainedSelf = retainPtr(self), self](BOOL active, BOOL registeredAsNowPlayingApplication, NSString *title, double duration, double elapsedTime, NSInteger uniqueIdentifier) {
+    auto completionHandler = [retainedSelf = retainPtr(self), self](BOOL active, BOOL registeredAsNowPlayingApplication, NSString *title, double duration, double elapsedTime, NSInteger uniqueIdentifier, NSUInteger updateTime) {
         _hasActiveNowPlayingSession = active;
         _registeredAsNowPlayingApplication = registeredAsNowPlayingApplication;
         _lastUpdatedTitle = [title copy];
         _lastUpdatedDuration = duration;
         _lastUpdatedElapsedTime = elapsedTime;
         _lastUniqueIdentifier = uniqueIdentifier;
-
+        _lastUpdateTime = updateTime;
         _receivedNowPlayingInfoResponse = true;
     };
 
@@ -292,6 +295,126 @@ TEST(NowPlayingControlsTests, LazyRegisterAsNowPlayingApplication)
     [webView setWindowVisible:YES];
     [webView expectRegisteredAsNowPlayingApplication:NO];
     ASSERT_FALSE(haveMediaSessionManager());
+}
+
+TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
+{
+    struct NowPlayingState {
+        NowPlayingState(NowPlayingTestWebView *webView)
+        {
+            [webView requestActiveNowPlayingSessionInfo];
+            hasActiveNowPlayingSession = [webView hasActiveNowPlayingSession];
+            registeredAsNowPlayingApplication = [webView registeredAsNowPlayingApplication];
+            title = [webView lastUpdatedTitle];
+            duration = [webView lastUpdatedDuration];
+            elapsedTime = [webView lastUpdatedElapsedTime];
+            uniqueIdentifier = [webView lastUniqueIdentifier];
+            updateTime = [webView lastUpdateTime];
+        }
+        NowPlayingState() = default;
+
+        bool operator==(const NowPlayingState&) const = default;
+
+        bool hasActiveNowPlayingSession { false };
+        bool registeredAsNowPlayingApplication { false };
+        String title;
+        double duration { 0 };
+        double elapsedTime { 0 };
+        long uniqueIdentifier { 0 };
+        unsigned long updateTime { 0 };
+    };
+
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    auto webView = adoptNS([[NowPlayingTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+
+    constexpr double internalTestTimout = 20;
+    auto waitForMessageOrTimeout = [&] (const char* eventName) -> bool {
+        __block bool receivedEvent = false;
+        [webView performAfterReceivingMessage:[NSString stringWithUTF8String:eventName] action:^{ receivedEvent = true; }];
+
+        NSDate *startTime = [NSDate date];
+        while (!receivedEvent && [[NSDate date] timeIntervalSinceDate:startTime] < internalTestTimout)
+            TestWebKitAPI::Util::runFor(0.05_s);
+
+        return receivedEvent;
+    };
+
+    [webView loadTestPageNamed:@"small-video-test-now-playing"];
+    ASSERT_TRUE(waitForMessageOrTimeout("ready"));
+
+    auto videoError = [webView stringByEvaluatingJavaScript:@"videoError()"];
+    ASSERT_STREQ("null", videoError.UTF8String);
+
+    constexpr double initialTime = 3;
+    NSError *error;
+    id result = [webView objectByCallingAsyncFunction:[NSString stringWithFormat:@"play(%f)", initialTime] withArguments:nil error:&error];
+    EXPECT_NULL(error);
+    EXPECT_EQ(result, nil);
+    ASSERT_TRUE(waitForMessageOrTimeout("playing"));
+
+    videoError = [webView stringByEvaluatingJavaScript:@"videoError()"];
+    ASSERT_STREQ("null", videoError.UTF8String);
+
+    constexpr double impossibleUpdateInterval = 10.;
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.internals.nowPlayingUpdateInterval = %f", impossibleUpdateInterval]];
+    auto actualInterval = [[webView stringByEvaluatingJavaScript:@"window.internals.nowPlayingUpdateInterval"] doubleValue];
+    EXPECT_LT(actualInterval, impossibleUpdateInterval);
+
+    constexpr double updateInterval = 0.5;
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.internals.nowPlayingUpdateInterval = %f", updateInterval]];
+    actualInterval = [[webView stringByEvaluatingJavaScript:@"window.internals.nowPlayingUpdateInterval"] doubleValue];
+    EXPECT_EQ(updateInterval, actualInterval);
+
+    NowPlayingState initialState;
+    NowPlayingState previousState;
+    NSDate *startTime = [NSDate date];
+    bool videoLooped = false;
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+
+        if ([[NSDate date] timeIntervalSinceDate:startTime] > internalTestTimout)
+            break;
+
+        NowPlayingState currentState(webView.get());
+        if (!initialState.elapsedTime) {
+            initialState = currentState;
+            previousState = initialState;
+            continue;
+        }
+
+        if (currentState.elapsedTime && currentState.elapsedTime < initialTime) {
+            videoLooped = true;
+            break;
+        }
+
+        if (previousState.updateTime == currentState.updateTime) {
+            ASSERT_TRUE(previousState == currentState);
+            continue;
+        }
+
+        auto stateOtherThanUpdateTimeHasChanged = [&] {
+            if (initialState.hasActiveNowPlayingSession != currentState.hasActiveNowPlayingSession)
+                return true;
+            if (initialState.registeredAsNowPlayingApplication != currentState.registeredAsNowPlayingApplication)
+                return true;
+            if (initialState.title != currentState.title)
+                return true;
+            if (initialState.duration != currentState.duration)
+                return true;
+            if (initialState.elapsedTime != currentState.elapsedTime)
+                return true;
+            if (initialState.uniqueIdentifier != currentState.uniqueIdentifier)
+                return true;
+
+            return false;
+        };
+        ASSERT_TRUE(stateOtherThanUpdateTimeHasChanged());
+        previousState = currentState;
+    }
+
+    ASSERT_TRUE(videoLooped);
+
+    [webView stringByEvaluatingJavaScript:@"pause()"];
 }
 
 } // namespace TestWebKitAPI

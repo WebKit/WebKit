@@ -41,10 +41,8 @@ private:
     bool shouldRetainAutocorrectionIndicator() const override;
 
     String inputEventData() const final;
-    Vector<RefPtr<StaticRange>> targetRanges() const final;
+    Vector<Ref<StaticRange>> targetRanges() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
-
-    RefPtr<DocumentFragment> protectedCorrectionFragment() const { return m_correctionFragment; }
 
     SimpleRange m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;

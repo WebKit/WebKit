@@ -105,7 +105,7 @@ struct TriggerHashTraits : public WTF::CustomHashTraits<Trigger> {
 
 struct Action {
     Action(ActionData&& data)
-        : m_data(WTFMove(data)) { }
+        : m_data(WTF::move(data)) { }
 
     friend bool operator==(const Action&, const Action&) = default;
 
@@ -126,7 +126,7 @@ struct DeserializedAction : public Action {
 
 private:
     DeserializedAction(uint32_t actionID, ActionData&& data)
-        : Action(WTFMove(data))
+        : Action(WTF::move(data))
         , m_actionID(actionID) { }
 
     const uint32_t m_actionID;
@@ -137,7 +137,7 @@ public:
     WEBCORE_EXPORT ContentExtensionRule(Trigger&&, Action&&);
 
     ContentExtensionRule isolatedCopy() const & { return { m_trigger.isolatedCopy(), m_action.isolatedCopy() }; }
-    ContentExtensionRule isolatedCopy() && { return { WTFMove(m_trigger).isolatedCopy(), WTFMove(m_action).isolatedCopy() }; }
+    ContentExtensionRule isolatedCopy() && { return { WTF::move(m_trigger).isolatedCopy(), WTF::move(m_action).isolatedCopy() }; }
 
     const Trigger& trigger() const { return m_trigger; }
     const Action& action() const { return m_action; }

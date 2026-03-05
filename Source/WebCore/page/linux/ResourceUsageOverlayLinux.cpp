@@ -82,7 +82,7 @@ public:
         fontDescription.setOneFamily(systemFontDatabase.systemFontShorthandFamily(messageBox));
         fontDescription.setWeight(systemFontDatabase.systemFontShorthandWeight(messageBox));
         fontDescription.setComputedSize(gFontSize);
-        m_textFont = FontCascade(WTFMove(fontDescription));
+        m_textFont = FontCascade(WTF::move(fontDescription));
         m_textFont.update(nullptr);
     }
 

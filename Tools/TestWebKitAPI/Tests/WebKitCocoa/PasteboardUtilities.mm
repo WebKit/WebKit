@@ -51,3 +51,44 @@ RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled(bool color
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
     return webView;
 }
+
+#if PLATFORM(MAC)
+NSString *readURLFromPasteboard()
+{
+    if (NSURL *url = [NSURL URLFromPasteboard:NSPasteboard.generalPasteboard])
+        return url.absoluteString;
+    NSURL *url = [NSURL URLWithString:[NSPasteboard.generalPasteboard stringForType:NSURLPboardType]];
+    return url.absoluteString;
+}
+
+NSString *readTitleFromPasteboard()
+{
+    NSArray *urlsAndTitles = [NSPasteboard.generalPasteboard propertyListForType:@"WebURLsWithTitlesPboardType"];
+    if (!urlsAndTitles || ![urlsAndTitles isKindOfClass:[NSArray class]] || urlsAndTitles.count != 2)
+        return nil;
+    NSArray *titles = urlsAndTitles.lastObject;
+    if (!titles || ![titles isKindOfClass:[NSArray class]] || titles.count != 1)
+        return nil;
+    return titles.firstObject;
+}
+
+void clearPasteboard()
+{
+    [NSPasteboard.generalPasteboard clearContents];
+}
+#else
+NSString *readURLFromPasteboard()
+{
+    return UIPasteboard.generalPasteboard.URL.absoluteString;
+}
+
+NSString *readTitleFromPasteboard()
+{
+    return UIPasteboard.generalPasteboard.URL._title;
+}
+
+void clearPasteboard()
+{
+    UIPasteboard.generalPasteboard.items = @[];
+}
+#endif

@@ -42,7 +42,6 @@ public:
     WEBCORE_EXPORT PixelBufferConformerCV(uint32_t format);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
-    static WEBCORE_EXPORT RetainPtr<CGImageRef> imageFrom32BGRAPixelBuffer(RetainPtr<CVPixelBufferRef>&&, CGColorSpaceRef);
 
 private:
     static RetainPtr<VTPixelBufferConformerRef> createPixelConformer(CFDictionaryRef attributes);

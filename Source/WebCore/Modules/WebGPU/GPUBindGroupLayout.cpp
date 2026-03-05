@@ -35,7 +35,7 @@ String GPUBindGroupLayout::label() const
 
 void GPUBindGroupLayout::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    m_backing->setLabel(WTF::move(label));
 }
 
 }

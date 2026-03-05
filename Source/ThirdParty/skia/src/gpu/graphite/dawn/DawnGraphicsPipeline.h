@@ -46,10 +46,9 @@ public:
     inline static constexpr unsigned int kBindGroupCount = 2;
 
     inline static constexpr unsigned int kIntrinsicUniformBufferIndex = 0;
-    inline static constexpr unsigned int kRenderStepUniformBufferIndex = 1;
-    inline static constexpr unsigned int kPaintUniformBufferIndex = 2;
-    inline static constexpr unsigned int kGradientBufferIndex = 3;
-    inline static constexpr unsigned int kNumUniformBuffers = 4;
+    inline static constexpr unsigned int kCombinedUniformIndex = 1;
+    inline static constexpr unsigned int kGradientBufferIndex = 2;
+    inline static constexpr unsigned int kNumUniformBuffers = 3;
 
     inline static constexpr unsigned int kIntrinsicUniformSize = 32;
 
@@ -67,7 +66,7 @@ public:
 
     ~DawnGraphicsPipeline() override;
 
-    bool didAsyncCompilationFail() const override;
+    std::optional<std::string> didAsyncCompilationFail() const override;
 
     uint32_t stencilReferenceValue() const { return fStencilReferenceValue; }
     PrimitiveType primitiveType() const { return fPrimitiveType; }

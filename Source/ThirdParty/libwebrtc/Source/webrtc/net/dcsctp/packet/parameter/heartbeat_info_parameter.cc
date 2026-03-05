@@ -32,7 +32,6 @@ namespace dcsctp {
 //  /            Heartbeat Information TLV (Variable-Length)        /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int HeartbeatInfoParameter::kType;
 
 std::optional<HeartbeatInfoParameter> HeartbeatInfoParameter::Parse(
     webrtc::ArrayView<const uint8_t> data) {

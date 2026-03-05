@@ -1,0 +1,9 @@
+
+PASS setLocalDescription() with valid answer should succeed
+PASS setLocalDescription() with type answer and null sdp should use lastAnswer generated from createAnswer
+PASS setLocalDescription() with answer not created by own createAnswer() should reject with InvalidModificationError
+PASS Calling setLocalDescription(answer) from stable state should reject with InvalidStateError
+PASS Calling setLocalDescription(answer) from have-local-offer state should reject with InvalidStateError
+PASS Setting previously generated answer after a call to createOffer should work
+PASS setLocalDescription(answer) should update internal state with a queued task, in the right order
+

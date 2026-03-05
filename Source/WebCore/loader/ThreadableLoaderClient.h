@@ -33,7 +33,7 @@
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
-#include <wtf/CheckedRef.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -44,10 +44,9 @@ class ResourceResponse;
 class ResourceTiming;
 class SharedBuffer;
 
-class ThreadableLoaderClient : public CanMakeWeakPtr<ThreadableLoaderClient>, public CanMakeThreadSafeCheckedPtr<ThreadableLoaderClient> {
+class ThreadableLoaderClient : public AbstractRefCountedAndCanMakeWeakPtr<ThreadableLoaderClient> {
     WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ThreadableLoaderClient, Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadableLoaderClient);
 public:
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 

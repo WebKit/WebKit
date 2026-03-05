@@ -39,32 +39,42 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 
+class WritableStreamDefaultController;
+
 class WritableStreamSink : public RefCounted<WritableStreamSink> {
 public:
-    virtual ~WritableStreamSink() = default;
+    virtual ~WritableStreamSink();
 
+    void start(std::unique_ptr<WritableStreamDefaultController>&&);
     virtual void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) = 0;
-    virtual void close() = 0;
-    virtual void error(String&&) = 0;
+    virtual void close(JSDOMGlobalObject&) = 0;
+    virtual void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&& promise) { promise.resolve(); }
+
+    void errorIfNeeded(JSC::JSGlobalObject&, JSC::JSValue);
+
+protected:
+    WritableStreamSink();
+
+private:
+    std::unique_ptr<WritableStreamDefaultController> m_controller;
 };
 
 class SimpleWritableStreamSink : public WritableStreamSink {
 public:
     using WriteCallback = Function<ExceptionOr<void>(ScriptExecutionContext&, JSC::JSValue)>;
-    static Ref<SimpleWritableStreamSink> create(WriteCallback&& writeCallback) { return adoptRef(*new SimpleWritableStreamSink(WTFMove(writeCallback))); }
+    static Ref<SimpleWritableStreamSink> create(WriteCallback&& writeCallback) { return adoptRef(*new SimpleWritableStreamSink(WTF::move(writeCallback))); }
 
 private:
     explicit SimpleWritableStreamSink(WriteCallback&&);
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close() final { }
-    void error(String&&) final { }
+    void close(JSDOMGlobalObject&) final { }
 
     WriteCallback m_writeCallback;
 };
 
 inline SimpleWritableStreamSink::SimpleWritableStreamSink(WriteCallback&& writeCallback)
-    : m_writeCallback(WTFMove(writeCallback))
+    : m_writeCallback(WTF::move(writeCallback))
 {
 }
 

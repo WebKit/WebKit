@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-download-click.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-setter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.ping-functionality.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noopener-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noreferrer-policy.html
@@ -30,3 +32,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-script-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/rellist-feature-detection.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/testcommon.js
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/xlink-href-compat.html

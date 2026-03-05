@@ -29,12 +29,17 @@
 #include "config.h"
 #include "AXCoreObject.h"
 
+#include "AXLoggerBase.h"
+#include "AXObjectCache.h"
+#include "AXSearchManager.h"
+#include "AXTreeStoreInlines.h"
 #include "AXUtilities.h"
 #include "DocumentView.h"
 #include "HTMLAreaElement.h"
 #include "LocalFrameView.h"
+#include "Logging.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "TextDecorationPainter.h"
 #include <wtf/Deque.h>
@@ -104,13 +109,16 @@ bool AXCoreObject::isControl() const
     case AccessibilityRole::SearchField:
     case AccessibilityRole::Slider:
     case AccessibilityRole::SliderThumb:
+    case AccessibilityRole::SpinButton:
     case AccessibilityRole::Switch:
     case AccessibilityRole::TextArea:
     case AccessibilityRole::TextField:
     case AccessibilityRole::ToggleButton:
         return true;
     default:
-        return isFieldset();
+        // A focusable splitter (separator with tabindex) is considered a control,
+        // since it can be interacted with to adjust the value.
+        return isFieldset() || isFocusableSplitter();
     }
 }
 
@@ -242,7 +250,7 @@ ListBoxInterpretation AXCoreObject::listBoxInterpretation() const
 
     Deque<Ref<AXCoreObject>, /* inlineCapacity */ 100> queue;
     for (Ref child : const_cast<AXCoreObject*>(this)->childrenIncludingIgnored())
-        queue.append(WTFMove(child));
+        queue.append(WTF::move(child));
 
     unsigned iterations = 0;
     bool foundListItem = false;
@@ -268,7 +276,7 @@ ListBoxInterpretation AXCoreObject::listBoxInterpretation() const
 
         if (current->isGroup() || current->isIgnored()) {
             for (Ref child : current->childrenIncludingIgnored())
-                queue.append(WTFMove(child));
+                queue.append(WTF::move(child));
         }
     }
     return foundListItem ? ListBoxInterpretation::ActuallyStaticList : ListBoxInterpretation::InvalidListBox;
@@ -288,7 +296,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::tabChildren()
 }
 
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-static bool isValidChildForTable(AXCoreObject& object)
+static bool NODELETE isValidChildForTable(AXCoreObject& object)
 {
     auto role = object.role();
     // Tables can only have these roles as exposed-to-AT children.
@@ -318,6 +326,14 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
         }
         unignoredChildren.append(*descendant);
 
+        constexpr size_t maxChildrenFailsafe = 100000;
+        if (unignoredChildren.size() >= maxChildrenFailsafe) [[unlikely]] {
+            // This should never happen in a well-formed accessibility tree, so we must
+            // be looping infinitely.
+            ASSERT_NOT_REACHED();
+            return unignoredChildren;
+        }
+
         while (descendant && descendant != this) {
             if (!parent) {
                 parent = descendant->parentObject();
@@ -330,32 +346,32 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
 
             unsigned nextSiblingIndex = descendant->indexInParent() + 1;
             if (RefPtr nextSibling = nextSiblingIndex < siblings->size() ? (*siblings)[nextSiblingIndex].ptr() : nullptr) {
-                descendant = WTFMove(nextSibling);
+                descendant = WTF::move(nextSibling);
                 break;
             }
             // The descendant didn't have a next sibling, so ascend to its parent.
-            descendant = WTFMove(parent);
+            descendant = WTF::move(parent);
             parent = nullptr;
         }
     }
     return unignoredChildren;
 }
 
-AXCoreObject* AXCoreObject::firstUnignoredChild()
+bool AXCoreObject::hasUnignoredChild()
 {
     const auto& children = childrenIncludingIgnored(/* updateChildrenIfNeeded */ true);
     RefPtr descendant = children.size() ? children[0].ptr() : nullptr;
     if (onlyAddsUnignoredChildren())
-        return descendant.unsafeGet();
+        return descendant;
 
     bool isExposedTable = isExposableTable();
     while (descendant && descendant != this) {
         bool childIsValid = !isExposedTable || isValidChildForTable(*descendant);
         if (childIsValid && !descendant->isIgnored())
-            return descendant.unsafeGet();
+            return true;
         descendant = descendant->nextInPreOrder(/* updateChildrenIfNeeded */ true, /* stayWithin */ this);
     }
-    return nullptr;
+    return false;
 }
 
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
@@ -378,13 +394,21 @@ static AXCoreObject::AccessibilityChildrenVector childrenAfterStitching(AXCoreOb
 static AXCoreObject::AccessibilityChildrenVector childrenAfterStitching(const AXCoreObject::AccessibilityChildrenVector& children)
 {
     auto childrenCopy = children;
-    return childrenAfterStitching(WTFMove(childrenCopy));
+    return childrenAfterStitching(WTF::move(childrenCopy));
 }
 #endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::stitchedUnignoredChildren()
 {
     return childrenAfterStitching(unignoredChildren());
+}
+
+std::optional<AXStitchGroup> AXCoreObject::stitchGroupIfRepresentative() const
+{
+    std::optional stitchGroup = this->stitchGroup();
+    if (!stitchGroup || stitchGroup->representativeID() != objectID() || stitchGroup->isEmpty())
+        return { };
+    return stitchGroup;
 }
 
 AXCoreObject* AXCoreObject::blockFlowAncestor() const
@@ -394,19 +418,22 @@ AXCoreObject* AXCoreObject::blockFlowAncestor() const
     });
 }
 
-AXCoreObject::StitchState AXCoreObject::stitchStateFromGroups(const Vector<Vector<AXID>>* groups, IncludeStitchGroup includeStitchGroup) const
+std::optional<AXStitchGroup> AXCoreObject::stitchGroupFromGroups(const Vector<AXStitchGroup>* groups, IncludeGroupMembers includeGroupMembers) const
 {
     if (!groups)
         return { };
 
     AXID thisAXID = objectID();
     for (const auto& group : *groups) {
-        if (group.contains(thisAXID)) {
-            if (includeStitchGroup == IncludeStitchGroup::No) {
+        // Stitching zero or one elements doesn't make sense, so ensure our group is two or larger.
+        AX_ASSERT(group.members().size() >= 2);
+
+        if (group.members().contains(thisAXID)) {
+            if (includeGroupMembers == IncludeGroupMembers::No) {
                 // If the caller doesn't need the group we belong to, don't bother doing the copy.
-                return { group[0], { } };
+                return std::optional(AXStitchGroup { { }, group.representativeID() });
             }
-            return { group[0], group };
+            return std::optional(group);
         }
     }
     return { };
@@ -433,16 +460,12 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameUnignoredChild
 
 AXCoreObject* AXCoreObject::crossFrameParentObjectUnignored() const
 {
-    RefPtr result = parentObjectUnignored();
-
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* result = parentObjectUnignored())
+        return result;
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
-    if (!result) {
-        if (auto* crossFrameParent = crossFrameParentObject())
-            result = crossFrameParent;
-    }
+    return crossFrameParentObject();
 #endif
-
-    return result.unsafeGet();
+    return nullptr;
 }
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameChildrenIncludingIgnored(bool updateChildrenIfNeeded)
@@ -474,18 +497,14 @@ bool AXCoreObject::crossFrameIsDescendantOfObject(const AXCoreObject& axObject) 
 
 AXCoreObject* AXCoreObject::parentObjectIncludingCrossFrame() const
 {
-    RefPtr result = parentObject();
-
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* parent = parentObject())
+        return parent;
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
-    if (!result) {
-        if (auto* crossFrameParent = crossFrameParentObject())
-            result = crossFrameParent;
-    }
+    return crossFrameParentObject();
+#else
+    return nullptr;
 #endif
-
-    return result.unsafeGet();
 }
-
 
 #ifndef NDEBUG
 void AXCoreObject::verifyChildrenIndexInParent(const AccessibilityChildrenVector& children) const
@@ -499,16 +518,16 @@ void AXCoreObject::verifyChildrenIndexInParent(const AccessibilityChildrenVector
     }
 
     for (unsigned i = 0; i < children.size(); i++)
-        ASSERT(children[i]->indexInParent() == i);
+        AX_ASSERT(children[i]->indexInParent() == i);
 }
 #endif
 
-AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
+RefPtr<AXCoreObject> AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
 {
     return nextInPreOrder(updateChildrenIfNeeded, stayWithin, false);
 }
 
-AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded , AXCoreObject* stayWithin, bool includeCrossFrame)
+RefPtr<AXCoreObject> AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded , AXCoreObject* stayWithin, bool includeCrossFrame)
 {
     const auto& children = includeCrossFrame ? crossFrameChildrenIncludingIgnored(updateChildrenIfNeeded) : childrenIncludingIgnored(updateChildrenIfNeeded);
 
@@ -517,7 +536,7 @@ AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded , AXCoreO
         if (role != AccessibilityRole::Column && role != AccessibilityRole::TableHeaderContainer) {
             // Table columns and header containers add cells despite not being their "true" parent (which are the rows).
             // Don't allow a pre-order traversal of these object types to return cells to avoid an infinite loop.
-            return children[0].unsafePtr();
+            return children[0].copyRef();
         }
     }
 
@@ -527,15 +546,19 @@ AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded , AXCoreO
     RefPtr current = this;
     RefPtr next = nextSiblingIncludingIgnored(updateChildrenIfNeeded, includeCrossFrame);
     for (; !next; next = current->nextSiblingIncludingIgnored(updateChildrenIfNeeded, includeCrossFrame)) {
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
         current = includeCrossFrame ? current->parentObjectIncludingCrossFrame() : current->parentObject();
+#else
+        current = includeCrossFrame ? current->crossFrameParentObjectUnignored() : current->parentObjectUnignored();
+#endif
 
         if (!current || stayWithin == current)
             return nullptr;
     }
-    return next.unsafeGet();
+    return next;
 }
 
-AXCoreObject* AXCoreObject::previousInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
+RefPtr<AXCoreObject> AXCoreObject::previousInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
 {
     if (stayWithin == this)
         return nullptr;
@@ -544,7 +567,7 @@ AXCoreObject* AXCoreObject::previousInPreOrder(bool updateChildrenIfNeeded, AXCo
         const auto& children = sibling->childrenIncludingIgnored(updateChildrenIfNeeded);
         if (children.size())
             return sibling->deepestLastChildIncludingIgnored(updateChildrenIfNeeded);
-        return sibling.unsafeGet();
+        return sibling;
     }
     return parentObject();
 }
@@ -570,7 +593,7 @@ size_t AXCoreObject::indexInSiblings(const AccessibilityChildrenVector& siblings
     unsigned indexOfThis = indexInParent();
     if (indexOfThis >= siblings.size() || siblings[indexOfThis]->objectID() != objectID()) [[unlikely]] {
         // If this happens, the accessibility tree is an incorrect state.
-        ASSERT_NOT_REACHED();
+        AX_ASSERT_NOT_REACHED();
 
         return siblings.findIf([this] (const Ref<AXCoreObject>& object) {
             return object.ptr() == this;
@@ -586,7 +609,11 @@ AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNee
 
 AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNeeded, bool includeCrossFrame) const
 {
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     RefPtr parent = parentObject();
+#else
+    RefPtr parent = parentObjectUnignored();
+#endif
     if (!parent)
         return nullptr;
 
@@ -615,8 +642,8 @@ AXCoreObject* AXCoreObject::previousSiblingIncludingIgnored(bool updateChildrenI
 AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent) const
 {
     // In some contexts, we may have already computed the `unignoredParent`, which is what this parameter is.
-    // In debug, ensure this is actually our parent.
-    ASSERT(unignoredParent == parentObjectUnignored());
+    // Ensure this is actually our parent.
+    AX_ASSERT(unignoredParent == parentObjectUnignored());
 
     RefPtr parent = unignoredParent ? unignoredParent : parentObjectUnignored();
     if (!parent)
@@ -633,10 +660,9 @@ AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AX
 
 AXCoreObject* AXCoreObject::nextSiblingIncludingIgnoredOrParent() const
 {
-    RefPtr parent = parentObject();
-    if (RefPtr nextSibling = nextSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true))
-        return nextSibling.unsafeGet();
-    return parent.unsafeGet();
+    if (auto* nextSibling = nextSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true))
+        return nextSibling;
+    return parentObject();
 }
 
 String AXCoreObject::autoCompleteValue() const
@@ -657,7 +683,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::contents()
     if (isTabList())
         return tabChildren();
 
-    if (isScrollView()) {
+    if (isScrollArea()) {
         // A scroll view's contents are everything except the scroll bars.
         AccessibilityChildrenVector nonScrollbarChildren;
         for (const auto& child : stitchedUnignoredChildren()) {
@@ -836,7 +862,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedChildren()
         return selectedItems;
     }
     default:
-        ASSERT_NOT_REACHED();
+        AX_ASSERT_NOT_REACHED();
         break;
     }
     return { };
@@ -844,7 +870,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedChildren()
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::listboxSelectedChildren()
 {
-    ASSERT(role() == AccessibilityRole::ListBox);
+    AX_ASSERT(role() == AccessibilityRole::ListBox);
 
     AccessibilityChildrenVector result;
     bool isMulti = isMultiSelectable();
@@ -861,7 +887,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::listboxSelectedChildren(
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedRows()
 {
-    ASSERT(role() == AccessibilityRole::Grid || role() == AccessibilityRole::Tree || role() == AccessibilityRole::TreeGrid);
+    AX_ASSERT(role() == AccessibilityRole::Grid || role() == AccessibilityRole::Tree || role() == AccessibilityRole::TreeGrid);
 
     bool isMulti = isMultiSelectable();
 
@@ -893,7 +919,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedRows()
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedListItems()
 {
-    ASSERT(role() == AccessibilityRole::List);
+    AX_ASSERT(role() == AccessibilityRole::List);
 
     AccessibilityChildrenVector selectedListItems;
     for (const auto& child : unignoredChildren()) {
@@ -993,7 +1019,7 @@ bool AXCoreObject::supportsRangeValue() const
         || isSlider()
         || isScrollbar()
         || isSpinButton()
-        || (isSplitter() && canSetFocusAttribute())
+        || isFocusableSplitter()
         || hasAttachmentTag();
 }
 
@@ -1549,7 +1575,7 @@ bool AXCoreObject::supportsActiveDescendant() const
 AXCoreObject* AXCoreObject::activeDescendant() const
 {
     auto activeDescendants = relatedObjects(AXRelation::ActiveDescendant);
-    ASSERT(activeDescendants.size() <= 1);
+    AX_ASSERT(activeDescendants.size() <= 1);
     if (!activeDescendants.isEmpty())
         return activeDescendants[0].unsafePtr();
     return nullptr;
@@ -1591,7 +1617,7 @@ String AXCoreObject::languageIncludingAncestors() const
 }
 
 #if PLATFORM(COCOA)
-static bool isVisibleText(AccessibilityTextSource textSource)
+static bool NODELETE isVisibleText(AccessibilityTextSource textSource)
 {
     switch (textSource) {
     case AccessibilityTextSource::Visible:
@@ -1611,7 +1637,7 @@ static bool isVisibleText(AccessibilityTextSource textSource)
     }
 }
 
-static bool isDescriptiveText(AccessibilityTextSource textSource)
+static bool NODELETE isDescriptiveText(AccessibilityTextSource textSource)
 {
     switch (textSource) {
     case AccessibilityTextSource::Alternative:
@@ -1631,7 +1657,7 @@ static bool isDescriptiveText(AccessibilityTextSource textSource)
     }
 }
 
-String AXCoreObject::descriptionAttributeValue() const
+String AXCoreObject::descriptionAttributeValue(Vector<AccessibilityText>* computedText) const
 {
     if (isStaticText()) {
         // Static text objects shouldn't return a description. Their content is communicated via AXValue.
@@ -1639,11 +1665,14 @@ String AXCoreObject::descriptionAttributeValue() const
     }
 
     Vector<AccessibilityText> textOrder;
-    accessibilityText(textOrder);
+    if (!computedText) {
+        accessibilityText(textOrder);
+        computedText = &textOrder;
+    }
 
     // Determine if any visible text is available, which influences our usage of title tag.
     bool visibleTextAvailable = false;
-    for (const auto& text : textOrder) {
+    for (const auto& text : *computedText) {
         if (isVisibleText(text.textSource) && !text.text.isEmpty()) {
             visibleTextAvailable = true;
             break;
@@ -1651,7 +1680,7 @@ String AXCoreObject::descriptionAttributeValue() const
     }
 
     StringBuilder returnText;
-    for (const auto& text : textOrder) {
+    for (const auto& text : *computedText) {
         if (text.textSource == AccessibilityTextSource::Alternative || text.textSource == AccessibilityTextSource::Heading) {
             returnText.append(text.text);
             break;
@@ -1710,7 +1739,7 @@ String AXCoreObject::helpTextAttributeValue() const
 }
 #endif // PLATFORM(COCOA)
 
-String AXCoreObject::title() const
+String AXCoreObject::title(Vector<AccessibilityText>* computedText) const
 {
     if (isWebArea()) {
         String title = webAreaTitle();
@@ -1730,20 +1759,23 @@ String AXCoreObject::title() const
         return stringValue();
 
     Vector<AccessibilityText> textOrder;
-    accessibilityText(textOrder);
+    if (!computedText) {
+        accessibilityText(textOrder);
+        computedText = &textOrder;
+    }
 
     if (elementName() == ElementName::HTML_area && isLink()) {
         String summaryText;
-        for (auto& text : textOrder) {
+        for (auto& text : *computedText) {
             if (text.textSource == AccessibilityTextSource::TitleTag)
                 return text.text;
             if (text.textSource == AccessibilityTextSource::Summary)
-                summaryText = WTFMove(text.text);
+                summaryText = WTF::move(text.text);
         }
         return summaryText;
     }
 
-    for (const auto& text : textOrder) {
+    for (const auto& text : *computedText) {
         // If we have alternative text, then we should not expose a title.
         if (text.textSource == AccessibilityTextSource::Alternative || text.textSource == AccessibilityTextSource::Heading)
             break;
@@ -1846,8 +1878,8 @@ void AXCoreObject::appendRadioButtonGroupMembers(AccessibilityChildrenVector& li
 AXCoreObject* AXCoreObject::parentObjectUnignored() const
 {
     if (role() == AccessibilityRole::Row) {
-        if (RefPtr table = exposedTableAncestor())
-            return table.unsafeGet();
+        if (auto* table = exposedTableAncestor())
+            return table;
     }
 
     return Accessibility::findAncestor<AXCoreObject>(*this, false, [&] (const AXCoreObject& object) {
@@ -1891,6 +1923,12 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
     if (objectID() == other.objectID())
         return std::partial_ordering::equivalent;
 
+    if (treeID() != other.treeID()) {
+        // With ENABLE(ACCESSIBILITY_LOCAL_FRAME), each frame has its own accessibility tree
+        // root, so cross-frame objects will never share a common ancestor.
+        return std::partial_ordering::unordered;
+    }
+
     RefPtr current = this;
     RefPtr otherCurrent = other;
 
@@ -1900,12 +1938,13 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
         if (ourAncestorIndex > otherAncestorIndex)
             return std::partial_ordering::greater;
 
-        ASSERT_NOT_REACHED();
+        // This can be hit on accessibility/dynamic-text-stitching.html with --accessibility-isolated-tree.
+        AX_BROKEN_ASSERT_NOT_REACHED();
         return std::partial_ordering::equivalent;
     };
 
     // I got into an infinite loop here that I wasn't able to reproduce again in order to debug.
-    // For now, add a failsafe and ASSERT() so we can try to debug the root cause when it does
+    // For now, add a failsafe and AX_ASSERT() so we can try to debug the root cause when it does
     // happen again.
     unsigned failsafeCounter = 0;
     // This variable is 2 times the max render tree depth because the accessibility tree can be
@@ -1922,7 +1961,7 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
         ++failsafeCounter;
 
         if (RefPtr maybeParent = current ? current->parentObject() : nullptr) {
-            ASSERT(current != maybeParent);
+            AX_ASSERT(current != maybeParent);
 
             if (maybeParent == &other) {
                 // We are a descendant of the other object, so we come after it.
@@ -1943,12 +1982,15 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
                 return orderingFromIndices(ourAncestorIndex, otherAncestorIndex);
             }
             current = parent.ptr();
-            ASSERT(!ourAncestors.contains(parent));
-            ourAncestors.appendOrMoveToLast(WTFMove(parent));
+            AX_ASSERT(!ourAncestors.contains(parent));
+            ourAncestors.appendOrMoveToLast(WTF::move(parent));
+        } else {
+            // We've reached the top of this frame's accessibility tree without finding a shared ancestor.
+            current = nullptr;
         }
 
         if (RefPtr maybeParent = otherCurrent ? otherCurrent->parentObject() : nullptr) {
-            ASSERT(otherCurrent != maybeParent);
+            AX_ASSERT(otherCurrent != maybeParent);
 
             if (maybeParent == this) {
                 // The other object is a descendant of ours, so we come before it in tree-order.
@@ -1964,15 +2006,18 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
                 return orderingFromIndices(ourAncestorIndex, otherAncestorIndex);
             }
             otherCurrent = parent.ptr();
-            ASSERT(!otherAncestors.contains(parent));
-            otherAncestors.appendOrMoveToLast(WTFMove(parent));
+            AX_ASSERT(!otherAncestors.contains(parent));
+            otherAncestors.appendOrMoveToLast(WTF::move(parent));
+        } else {
+            // We've reached the top of this frame's accessibility tree without finding a shared ancestor.
+            otherCurrent = nullptr;
         }
     }
 
-    ASSERT(failsafeCounter < maxIterations);
-    // If we pass the above ASSERT but hit this one, it means we didn't loop infinitely,
-    // but also did not find a shared ancestor between the two objects, which shouldn't ever happen.
-    ASSERT_NOT_REACHED();
+    AX_ASSERT(failsafeCounter < maxIterations);
+    // We already early-returned for cross-tree objects above, so reaching here means
+    // same-tree objects failed to find a common ancestor, which shouldn't happen.
+    AX_ASSERT_NOT_REACHED();
     return std::partial_ordering::unordered;
 }
 
@@ -2013,6 +2058,21 @@ String AXCoreObject::infoStringForTesting()
     return makeString("Role: "_s, rolePlatformString(), ", Value: "_s, stringValue());
 }
 
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::findMatchingObjectsWithin(AccessibilitySearchCriteria&& criteria)
+{
+    criteria.anchorObject = this;
+    auto stream = AXSearchManager().findMatchingObjectsAsStream(WTF::move(criteria));
+
+    // Extract local objects from the stream. Remote frame entries are ignored since
+    // callers of this function expect AccessibilityChildrenVector.
+    AccessibilityChildrenVector results;
+    for (const auto& entry : stream.entries()) {
+        if (RefPtr object = entry.objectIfLocalResult())
+            results.append(object.releaseNonNull());
+    }
+    return results;
+}
+
 namespace Accessibility {
 
 #if !PLATFORM(MAC) && !USE(ATSPI)
@@ -2032,7 +2092,7 @@ String roleToPlatformString(AccessibilityRole role)
     // The only thing we need to make thread-safe is its initialization, accomplished
     // by expliciting initializing the map before the accessibility thread is started.
     static NeverDestroyed<PlatformRoleMap> roleMap = createPlatformRoleMap();
-    return roleMap->get(enumToUnderlyingType(role));
+    return roleMap->get(std::to_underlying(role));
 }
 
 bool inRenderTreeOrStyleUpdate(const Document& document)
@@ -2047,6 +2107,17 @@ Color defaultColor()
 {
     static NeverDestroyed<Color> color = Color().toColorTypeLossy<SRGBA<uint8_t>>();
     return color.get();
+}
+
+bool performCustomActionPress(AXTreeID treeID, AXID targetID)
+{
+    return retrieveValueFromMainThreadWithTimeoutAndDefault([treeID, targetID] () -> bool {
+        if (WeakPtr<AXObjectCache> cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID)) {
+            if (RefPtr object = cache->objectForID(targetID))
+                return object->press();
+        }
+        return false;
+    }, InteractiveTimeout, false);
 }
 
 } // namespace Accessibility

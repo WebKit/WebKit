@@ -1,0 +1,83 @@
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+
+const WORKER_CODE = `
+self.onmessage = e => {
+    const ctrl = e.data;
+
+    const s = new Set();
+
+    Object.prototype.return = Set.prototype.add.bind(s, 1);
+
+    const pairs = [{
+        get 0() {
+            for (let i = 0; i < 0x10000; i++) {
+                s.add(i);
+            }
+
+            for (let i = 0; i < 0xc000; i++) {
+                s.delete(i);
+            }
+
+            Atomics.store(ctrl, 0, 1);
+
+            while (ctrl[0] === 1) {
+                ctrl[1] = 1;
+            }
+
+            s.delete(0xc000);
+        }
+    }];
+
+    new Map(pairs);
+};
+`;
+
+const WORKER_URL = URL.createObjectURL(new Blob([WORKER_CODE], { type: 'text/javascript' }));
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function main() {
+    for (let i = 0; i < 100; ++i) {
+        const ctrl = new Int32Array(new SharedArrayBuffer(4));
+        const worker = new Worker(WORKER_URL);
+
+        worker.postMessage(ctrl);
+
+        await new Promise(resolve => {
+            const id = setInterval(() => {
+                if (Atomics.load(ctrl, 0) !== 0) {
+                    clearInterval(id);
+
+                    resolve();
+                }
+            }, 0);
+        });
+
+        const timeout = Math.floor(Math.random() * 20);
+        const start = Date.now();
+
+        ctrl[0] = 2;
+
+        while (Date.now() - start < timeout) {
+
+        }
+
+        worker.terminate();
+    }
+}
+
+globalThis.testRunner?.waitUntilDone();
+
+main().catch(e => {
+    console.log(e);
+}).finally(() => {
+    testRunner.notifyDone();
+});
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

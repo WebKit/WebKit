@@ -2,4 +2,3 @@ root
 	input,'email',placeholder='Enter your email'
 	input,'password',placeholder='Enter your password',secure
 	input,'number',placeholder='Security code','123456'
-version=2

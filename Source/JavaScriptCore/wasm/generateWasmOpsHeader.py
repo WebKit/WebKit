@@ -223,6 +223,8 @@ contents = wasm.header + """
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <cstdint>

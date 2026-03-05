@@ -30,11 +30,11 @@ using libaom_test::ACMRandom;
 
 const int count_test_block = 100000;
 
-typedef void (*HighbdIntraPred)(uint16_t *dst, ptrdiff_t stride,
-                                const uint16_t *above, const uint16_t *left,
-                                int bps);
-typedef void (*IntraPred)(uint8_t *dst, ptrdiff_t stride, const uint8_t *above,
-                          const uint8_t *left);
+using HighbdIntraPred = void (*)(uint16_t *dst, ptrdiff_t stride,
+                                 const uint16_t *above, const uint16_t *left,
+                                 int bps);
+using IntraPred = void (*)(uint8_t *dst, ptrdiff_t stride, const uint8_t *above,
+                           const uint8_t *left);
 
 }  // namespace
 

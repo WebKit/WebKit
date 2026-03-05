@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
+
 namespace WTF {
 
 template<typename T>
@@ -41,8 +43,8 @@ public:
     }
     
     size_t index() const { return m_index; }
-    const T& element() const { return m_element; }
-    T& element() { return m_element; }
+    const T& element() const LIFETIME_BOUND { return m_element; }
+    T& element() LIFETIME_BOUND { return m_element; }
     
     bool operator<(const Insertion& other) const
     {
@@ -69,8 +71,8 @@ size_t executeInsertions(TargetVectorType& target, InsertionVectorType& insertio
         size_t firstIndex = insertions[indexInInsertions].index() + indexInInsertions;
         size_t indexOffset = indexInInsertions + 1;
         for (size_t i = lastIndex; --i > firstIndex;)
-            target[i] = WTFMove(target[i - indexOffset]);
-        target[firstIndex] = WTFMove(insertions[indexInInsertions].element());
+            target[i] = WTF::move(target[i - indexOffset]);
+        target[firstIndex] = WTF::move(insertions[indexInInsertions].element());
         lastIndex = firstIndex;
     }
     insertions.shrink(0);

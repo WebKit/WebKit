@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,7 +257,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
     populateContextMenu(contextMenu, event)
     {
-        WI.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
+        WI.appendContextMenuItemsForNetworkResource(contextMenu, this._resource);
 
         super.populateContextMenu(contextMenu, event);
     }

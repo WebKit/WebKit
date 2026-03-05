@@ -74,9 +74,15 @@ class WebProcessActivityState;
 class WebProcessProxy;
 class WebScreenOrientationManagerProxy;
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+class RemotePageWebDeviceOrientationUpdateProviderProxy;
+#endif
+
 struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct NavigationActionData;
+
+using LayerHostingContextID = uint32_t;
 
 enum class ProcessTerminationReason : uint8_t;
 
@@ -89,32 +95,42 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    WebPageProxy* page() const;
-    RefPtr<WebPageProxy> protectedPage() const;
+    WebPageProxy* NODELETE page() const;
 
     void injectPageIntoNewProcess();
     void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);
 
-    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
+    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
 
     WebProcessProxy& process() { return m_process.get(); }
     WebProcessProxy& siteIsolatedProcess() const { return m_process.get(); }
     WebCore::PageIdentifier pageID() const { return m_webPageID; } // FIXME: Remove this in favor of identifierInSiteIsolatedProcess.
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
-    const WebCore::Site& site() const { return m_site; }
+    const WebCore::Site& site() const LIFETIME_BOUND { return m_site; }
 
-    WebProcessActivityState& processActivityState();
+    WebProcessActivityState& NODELETE processActivityState();
 
     WebCore::MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void setDrawingArea(DrawingAreaProxy*);
 
     void setCurrentOrientation(WebCore::ScreenOrientationType);
 
+    bool hasNetworkRequestsInProgress() const { return m_hasNetworkRequestsInProgress; }
+
+    void disconnect();
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID);
+    LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }
+#endif
+
 private:
     RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*, std::optional<WebCore::PageIdentifier>);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
+
+    void setNetworkRequestsInProgress(bool);
 
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
@@ -128,6 +144,9 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr<RemotePageVideoPresentationManagerProxy> m_videoPresentationManager;
 #endif
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+    RefPtr<RemotePageWebDeviceOrientationUpdateProviderProxy> m_webDeviceOrientationUpdateProvider;
+#endif
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<RemotePagePlaybackSessionManagerProxy> m_playbackSessionManager;
 #endif
@@ -135,6 +154,14 @@ private:
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     WebCore::MediaProducerMediaStateFlags m_mediaState;
     RefPtr<RemotePageScreenOrientationManagerProxy> m_screenOrientationManager;
+    bool m_hasNetworkRequestsInProgress { false };
+#if ASSERT_ENABLED
+    bool m_disconnected { false };
+#endif
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    LayerHostingContextID m_contextIDForVisibilityPropagationInWebProcess { 0 };
+#endif
+
 };
 
 }

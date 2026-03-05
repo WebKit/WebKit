@@ -45,7 +45,7 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue JSReportBody::toJSON(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
+JSValue NODELETE JSReportBody::toJSON(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);

@@ -65,6 +65,30 @@ PASS: String stays the same.
 PASS: Ellipsis is inserted after the fourth character.
 PASS: Ellipsis is inserted after the third character.
 
+-- Running test case: String.prototype.truncate
+PASS: String stays the same.
+PASS: String without whitespace is truncated at maxLength.
+PASS: String is truncated at maxLength when no suitable word boundary.
+PASS: String is truncated before last whitespace when past halfway point.
+
+-- Running test case: String.prototype.collapseWhitespace
+PASS: Multiple spaces are collapsed to one.
+PASS: Multiple tabs are collapsed to one space.
+PASS: Multiple newlines are collapsed to one space.
+PASS: Mixed whitespace is collapsed to single spaces.
+
+-- Running test case: String.prototype.removeWhitespace
+PASS: Spaces are removed.
+PASS: Tabs are removed.
+PASS: Newlines are removed.
+PASS: All whitespace is removed.
+
+-- Running test case: String.prototype.capitalize
+PASS: First character is capitalized.
+PASS: Only first character is capitalized.
+PASS: Already capitalized string stays the same.
+PASS: Empty string stays empty.
+
 -- Running test case: String.prototype.escapeCharacters
 PASS: String stays the same with no escape characters.
 PASS: String stays the same with empty escape characters.
@@ -73,6 +97,18 @@ PASS: The letter 'c' is escaped.
 PASS: The letter 'c' and 'e' are escaped.
 PASS: The letter 'c' and 'e' are escaped.
 PASS: The letter 'c', 'd', and 'e' are escaped.
+
+-- Running test case: String.prototype.escapeForRegExp
+PASS: String with no special characters stays the same.
+PASS: Dot is escaped.
+PASS: Asterisk is escaped.
+PASS: Plus is escaped.
+PASS: Question mark is escaped.
+PASS: Square brackets are escaped.
+PASS: Parentheses are escaped.
+PASS: Pipe is escaped.
+PASS: Caret and dollar are escaped.
+PASS: Backslash is escaped.
 
 -- Running test case: String.prototype.isLowerCase
 PASS: String with single lowercase character should be lowercase.
@@ -91,4 +127,24 @@ PASS: String with mixed case characters should not be uppercase.
 PASS: Empty string should not be uppercase.
 PASS: String with non-alpha character should not be uppercase.
 PASS: String with numeric character should not be uppercase.
+
+-- Running test case: String.prototype.StrictModeReturnTypes
+PASS: collapseWhitespace should return a primitive string.
+PASS: removeWhitespace should return a primitive string.
+PASS: escapeCharacters should return a primitive string.
+PASS: escapeForRegExp should return a primitive string.
+PASS: capitalize should return a primitive string.
+PASS: insertWordBreakCharacters should return a primitive string.
+PASS: removeWordBreakCharacters should return a primitive string.
+PASS: truncateStart should return a primitive string.
+PASS: truncateMiddle should return a primitive string.
+PASS: truncateEnd should return a primitive string.
+PASS: truncate should return a primitive string.
+PASS: collapseWhitespace result should be strictly equal to primitive string.
+PASS: removeWhitespace result should be strictly equal to primitive string.
+PASS: capitalize result should be strictly equal to primitive string.
+PASS: truncateStart result should be strictly equal to primitive string.
+PASS: truncateMiddle result should be strictly equal to primitive string.
+PASS: truncateEnd result should be strictly equal to primitive string.
+PASS: truncate result should be strictly equal to primitive string.
 

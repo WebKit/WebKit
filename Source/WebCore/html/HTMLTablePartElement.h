@@ -32,11 +32,10 @@ namespace WebCore {
 class HTMLTableElement;
 
 class HTMLTablePartElement : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTablePartElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLTablePartElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTablePartElement);
 public:
     RefPtr<const HTMLTableElement> findParentTable() const;
-    bool isHTMLTablePartElement() const override { return true; }
 
 protected:
     HTMLTablePartElement(const QualifiedName& tagName, Document& document)
@@ -46,6 +45,9 @@ protected:
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+
+private:
+    bool NODELETE isHTMLTablePartElement() const final { return true; }
 };
 
 } // namespace WebCore

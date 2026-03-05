@@ -41,6 +41,7 @@ public:
     void doAsyncTask(JSValueRef) override;
     void setContinuousSpellCheckingEnabled(bool) override;
     void copyText(JSStringRef) override;
+    void paste() override;
     void dismissMenu() override;
     bool isShowingMenu() const override;
     void activateAtPoint(long x, long y, JSValueRef callback) override;

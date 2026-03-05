@@ -39,7 +39,7 @@ FontDatabase::InstalledFont::InstalledFont(CTFontDescriptorRef fontDescriptor)
 }
 
 FontDatabase::InstalledFontFamily::InstalledFontFamily(Vector<InstalledFont>&& installedFonts)
-    : installedFonts(WTFMove(installedFonts))
+    : installedFonts(WTF::move(installedFonts))
 {
     for (auto& font : this->installedFonts)
         expand(font);
@@ -72,13 +72,13 @@ const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(const
             Vector<InstalledFont> result(count, [&](size_t i) {
                 return InstalledFont(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i)));
             });
-            return makeUnique<InstalledFontFamily>(WTFMove(result));
+            return makeUnique<InstalledFontFamily>(WTF::move(result));
         }
         return makeUnique<InstalledFontFamily>();
     }();
 
     Locker locker { m_familyNameToFontDescriptorsLock };
-    return *m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
+    return *m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTF::move(installedFontFamily)).iterator->value;
 }
 
 const FontDatabase::InstalledFont& FontDatabase::fontForPostScriptName(const AtomString& postScriptName)

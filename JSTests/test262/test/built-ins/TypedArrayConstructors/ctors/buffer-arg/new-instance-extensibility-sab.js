@@ -35,4 +35,4 @@ testWithTypedArrayConstructors(function(TA) {
   var sample = new TA(buffer);
 
   assert(Object.isExtensible(sample));
-});
+}, null, ["passthrough"]);

@@ -26,19 +26,18 @@
 #include "config.h"
 #include "WasmModuleManager.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "DeferGC.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
 #include "VM.h"
+#include "WasmDebugServerUtilities.h"
 #include "WasmFormat.h"
+#include "WasmInstanceAnchor.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
-#include "WeakGCMap.h"
-#include "WeakGCMapInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
@@ -53,15 +52,9 @@ namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleManager);
 
-ModuleManager::ModuleManager(VM& vm)
-    : m_instanceIdToInstance(vm)
-{
-}
-
-ModuleManager::~ModuleManager() = default;
-
 uint32_t ModuleManager::registerModule(Module& module)
 {
+    Locker locker { m_lock };
     uint32_t moduleId = m_nextModuleId++;
     m_moduleIdToModule.set(moduleId, &module);
     const auto& moduleInfo = module.moduleInformation();
@@ -72,6 +65,7 @@ uint32_t ModuleManager::registerModule(Module& module)
 
 void ModuleManager::unregisterModule(Module& module)
 {
+    Locker locker { m_lock };
     uint32_t moduleId = module.debugId();
     m_moduleIdToModule.remove(moduleId);
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][unregisterModule] - unregistered module with debug ID: ", moduleId);
@@ -79,8 +73,15 @@ void ModuleManager::unregisterModule(Module& module)
 
 uint32_t ModuleManager::registerInstance(JSWebAssemblyInstance* jsInstance)
 {
+    Locker locker { m_lock };
     uint32_t instanceId = m_nextInstanceId++;
-    m_instanceIdToInstance.set(instanceId, jsInstance);
+
+    RefPtr<InstanceAnchor> anchor = jsInstance->anchor();
+    RELEASE_ASSERT(anchor, "Instance must have an anchor");
+
+    amortizedCleanupIfNeeded();
+    m_instanceIdToInstance.set(instanceId, ThreadSafeWeakPtr { *anchor });
+
     jsInstance->setDebugId(instanceId);
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][registerInstance] - registered instance with ID: ", instanceId, " for module ID: ", jsInstance->module().debugId());
     return instanceId;
@@ -88,6 +89,7 @@ uint32_t ModuleManager::registerInstance(JSWebAssemblyInstance* jsInstance)
 
 Module* ModuleManager::module(uint32_t moduleId) const
 {
+    Locker locker { m_lock };
     auto itr = m_moduleIdToModule.find(moduleId);
     if (itr == m_moduleIdToModule.end()) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][module] - module not found for ID: ", moduleId);
@@ -96,18 +98,53 @@ Module* ModuleManager::module(uint32_t moduleId) const
     return itr->value;
 }
 
-JSWebAssemblyInstance* ModuleManager::jsInstance(uint32_t instanceId) const
+JSWebAssemblyInstance* ModuleManager::jsInstance(uint32_t instanceId)
 {
-    auto* result = m_instanceIdToInstance.get(instanceId);
-    if (!result) {
+    Locker locker { m_lock };
+    amortizedCleanupIfNeeded();
+
+    auto it = m_instanceIdToInstance.find(instanceId);
+    if (it == m_instanceIdToInstance.end()) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][jsInstance] - instance not found for ID: ", instanceId);
         return nullptr;
     }
-    return result;
+
+    // This function is called from the debugger thread (WasmDebugServer) to access JSWebAssemblyInstance
+    // objects during LLDB packet processing. Using InstanceAnchor provides thread-safe access and automatic
+    // cleanup when instances are destroyed.
+    //
+    // Safety guarantees:
+    // 1. InstanceAnchor::tearDown() is called in JSWebAssemblyInstance destructor, nulling out the pointer
+    // 2. VMs are stopped during debugger access per GDB remote protocol, preventing GC and ensuring stability
+    // 3. The anchor's lock protects concurrent access to the instance pointer
+    RefPtr<InstanceAnchor> anchor = it->value.get();
+    if (!anchor) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][jsInstance] - anchor is dead for ID: ", instanceId);
+        return nullptr;
+    }
+
+    Locker anchorLocker { anchor->m_lock };
+    JSWebAssemblyInstance* instance = anchor->instance();
+    if (!instance) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][jsInstance] - instance is null for ID: ", instanceId);
+        return nullptr;
+    }
+
+    RELEASE_ASSERT(instance->vm().debugState()->isStopped(), "Instance exists but VM is not stopped");
+    return instance;
+}
+
+static String generateModuleName(VirtualAddress address, const RefPtr<Module>&)
+{
+    // FIXME: Maybe we should generate a more meaningful name?
+    String moduleName = WTF::makeString("wasm_module_0x"_s, address.hex(), ".wasm"_s);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][generateModuleName] Using fallback address-based name: ", moduleName);
+    return moduleName;
 }
 
 String ModuleManager::generateLibrariesXML() const
 {
+    Locker locker { m_lock };
     StringBuilder xml;
     xml.append("<?xml version=\"1.0\"?>\n"_s);
     xml.append("<library-list>\n"_s);
@@ -141,19 +178,31 @@ String ModuleManager::generateLibrariesXML() const
     return result;
 }
 
-String ModuleManager::generateModuleName(VirtualAddress address, const RefPtr<Module>&) const
+uint32_t ModuleManager::nextInstanceId() const
 {
-    // FIXME: Maybe we should generate a more meaningful name?
-    String fallbackName = WTF::makeString("wasm_module_0x"_s, address.hex(), ".wasm"_s);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][generateModuleName] Using fallback address-based name: ", fallbackName);
-    return fallbackName;
+    Locker locker { m_lock };
+    return m_nextInstanceId;
 }
 
-uint32_t ModuleManager::nextInstanceId() const { return m_nextInstanceId; }
+void ModuleManager::amortizedCleanupIfNeeded()
+{
+    if (++m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup) {
+        m_instanceIdToInstance.removeIf([](auto& entry) {
+            return !entry.value.get(); // Remove entries with dead anchors
+        });
+        cleanupHappened();
+    }
+}
+
+void ModuleManager::cleanupHappened()
+{
+    m_operationCountSinceLastCleanup = 0;
+    m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, static_cast<unsigned>(m_instanceIdToInstance.size())) * 2;
+}
 
 }
 } // namespace JSC::Wasm
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

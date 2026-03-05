@@ -59,11 +59,11 @@ info: |
     b. If Type(result) is not Object, return result.
     c. Throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.toPrimitive, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample = new Int8Array(1);
   var toPrimitive = 0;
   var valueOf = 0;
@@ -78,7 +78,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   };
 
   assert.throws(TypeError, function() {
-    new TA([8n, sample]);
+    new TA(makeCtorArg([8n, sample]));
   }, "abrupt completion from sample @@toPrimitive");
 
   assert.sameValue(toPrimitive, 1, "toPrimitive was called once");

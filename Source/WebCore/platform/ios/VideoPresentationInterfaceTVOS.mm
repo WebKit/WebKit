@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceTVOS);
+
 Ref<VideoPresentationInterfaceTVOS> VideoPresentationInterfaceTVOS::create(PlaybackSessionInterfaceIOS& playbackSessionInterface)
 {
     return adoptRef(*new VideoPresentationInterfaceTVOS(playbackSessionInterface));

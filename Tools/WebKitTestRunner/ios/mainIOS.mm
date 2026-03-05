@@ -29,9 +29,34 @@
 #import "TestController.h"
 #import "UIKitSPIForTesting.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <wtf/RetainPtr.h>
 
 static int _argc;
 static const char **_argv;
+
+static NSString * const sceneConfigurationName = @"Default Configuration";
+
+@interface WebKitTestRunnerSceneDelegate : NSObject <UIWindowSceneDelegate>
+@end
+
+@implementation WebKitTestRunnerSceneDelegate
+
+- (void)_runTestController
+{
+    WTR::TestController controller(_argc, _argv);
+}
+
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions
+{
+    [self performSelectorOnMainThread:@selector(_runTestController) withObject:nil waitUntilDone:NO];
+}
+
+- (void)sceneDidEnterBackground:(UIScene *)scene
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+@end
 
 @interface WebKitTestRunnerApp : UIApplication {
     UIBackgroundTaskIdentifier backgroundTaskIdentifier;
@@ -40,19 +65,11 @@ static const char **_argv;
 
 @implementation WebKitTestRunnerApp
 
-- (void)_runTestController
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options
 {
-    WTR::TestController controller(_argc, _argv);
-}
-
-- (void)applicationDidFinishLaunching:(NSNotification *)notification
-{
-    [self performSelectorOnMainThread:@selector(_runTestController) withObject:nil waitUntilDone:NO];
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
-    RELEASE_ASSERT_NOT_REACHED();
+    RetainPtr configuration = adoptNS([[UISceneConfiguration alloc] initWithName:sceneConfigurationName sessionRole:connectingSceneSession.role]);
+    [configuration setDelegateClass:WebKitTestRunnerSceneDelegate.class];
+    return configuration.autorelease();
 }
 
 - (void)_handleHIDEvent:(IOHIDEventRef)event

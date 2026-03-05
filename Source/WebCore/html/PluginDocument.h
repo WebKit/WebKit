@@ -32,7 +32,7 @@ class HTMLPlugInElement;
 class PluginViewBase;
 
 class PluginDocument final : public HTMLDocument {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PluginDocument);
+    WTF_MAKE_TZONE_ALLOCATED(PluginDocument);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PluginDocument);
 public:
     static Ref<PluginDocument> create(LocalFrame& frame, const URL& url)
@@ -44,7 +44,7 @@ public:
 
     virtual ~PluginDocument();
 
-    WEBCORE_EXPORT PluginViewBase* pluginWidget();
+    WEBCORE_EXPORT PluginViewBase* NODELETE pluginWidget();
     HTMLPlugInElement* pluginElement() { return m_pluginElement.get(); }
 
     void setPluginElement(HTMLPlugInElement&);

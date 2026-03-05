@@ -99,7 +99,7 @@ int Connection::socketDescriptor() const
 
 void Connection::platformInitialize(Identifier&& identifier)
 {
-    m_socketDescriptor = WTFMove(identifier.handle);
+    m_socketDescriptor = WTF::move(identifier.handle);
     m_readBuffer.reserveInitialCapacity(messageMaxSize);
     m_fileDescriptors.reserveInitialCapacity(attachmentMaxAmount);
 }
@@ -178,8 +178,8 @@ bool Connection::processMessage()
             return false;
         }
 
-        auto handle = WebCore::SharedMemory::Handle { WTFMove(fd), messageInfo.bodySize() };
-        oolMessageBody = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly);
+        auto handle = WebCore::SharedMemory::Handle { WTF::move(fd), messageInfo.bodySize() };
+        oolMessageBody = WebCore::SharedMemory::map(WTF::move(handle), WebCore::SharedMemory::Protection::ReadOnly);
         if (!oolMessageBody) {
             ASSERT_NOT_REACHED();
             return false;
@@ -192,12 +192,12 @@ bool Connection::processMessage()
     if (messageInfo.isBodyOutOfLine())
         messageBody = oolMessageBody->mutableSpan();
 
-    auto decoder = Decoder::create(messageBody.first(messageInfo.bodySize()), WTFMove(attachments));
+    auto decoder = Decoder::create(messageBody.first(messageInfo.bodySize()), WTF::move(attachments));
     ASSERT(decoder);
     if (!decoder)
         return false;
 
-    processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
+    processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(decoder)));
 
     if (m_readBuffer.size() > messageLength) {
         memmoveSpan(m_readBuffer.mutableSpan(), m_readBuffer.subspan(messageLength));
@@ -380,7 +380,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
             return false;
     }
 
-    return sendOutputMessage(WTFMove(outputMessage));
+    return sendOutputMessage(WTF::move(outputMessage));
 }
 
 bool Connection::sendOutputMessage(UnixMessage&& outputMessage)
@@ -478,7 +478,7 @@ bool Connection::sendOutputMessage(UnixMessage&& outputMessage)
 
 #if OS(ANDROID)
     RELEASE_ASSERT(m_outgoingHardwareBuffers.isEmpty());
-    m_outgoingHardwareBuffers = WTFMove(hardwareBuffers);
+    m_outgoingHardwareBuffers = WTF::move(hardwareBuffers);
     return sendOutgoingHardwareBuffers();
 #else
     return true;
@@ -541,7 +541,7 @@ bool Connection::receiveIncomingHardwareBuffers()
         if (!result) {
             m_pendingIncomingHardwareBufferCount--;
             auto hardwareBuffer = adoptRef(buffer);
-            m_incomingHardwareBuffers.append(WTFMove(hardwareBuffer));
+            m_incomingHardwareBuffers.append(WTF::move(hardwareBuffer));
             continue;
         }
 
@@ -565,7 +565,7 @@ bool Connection::receiveIncomingHardwareBuffers()
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
     SocketPair socketPair = createPlatformConnection(SOCKET_TYPE);
-    return { { Identifier { WTFMove(socketPair.server) }, ConnectionHandle { WTFMove(socketPair.client) } } };
+    return { { Identifier { WTF::move(socketPair.server) }, ConnectionHandle { WTF::move(socketPair.client) } } };
 }
 
 } // namespace IPC

@@ -32,18 +32,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IntersectionObserverEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IntersectionObserverEntry);
 
-IntersectionObserverEntry::IntersectionObserverEntry(const Init& init)
+IntersectionObserverEntry::IntersectionObserverEntry(Init&& init)
     : m_time(init.time)
+    , m_rootBounds(init.rootBounds ? DOMRectReadOnly::fromRect(*init.rootBounds).ptr() : nullptr)
     , m_boundingClientRect(DOMRectReadOnly::fromRect(init.boundingClientRect))
     , m_intersectionRect(DOMRectReadOnly::fromRect(init.intersectionRect))
     , m_intersectionRatio(init.intersectionRatio)
-    , m_target(init.target)
+    , m_target(WTF::move(init.target))
     , m_isIntersecting(init.isIntersecting)
 {
-    if (init.rootBounds)
-        m_rootBounds = DOMRectReadOnly::fromRect(*init.rootBounds);
 }
 
 TextStream& operator<<(TextStream& ts, const IntersectionObserverEntry& entry)
@@ -51,16 +50,12 @@ TextStream& operator<<(TextStream& ts, const IntersectionObserverEntry& entry)
     TextStream::GroupScope scope(ts);
     ts << "IntersectionObserverEntry "_s << &entry << " target " << entry.target();
     ts.dumpProperty("time"_s, entry.time());
-    
+
     if (entry.rootBounds())
         ts.dumpProperty("rootBounds"_s, entry.rootBounds()->toFloatRect());
 
-    if (entry.boundingClientRect())
-        ts.dumpProperty("boundingClientRect"_s, entry.boundingClientRect()->toFloatRect());
-
-    if (entry.intersectionRect())
-        ts.dumpProperty("intersectionRect"_s, entry.intersectionRect()->toFloatRect());
-
+    ts.dumpProperty("boundingClientRect"_s, entry.boundingClientRect().toFloatRect());
+    ts.dumpProperty("intersectionRect"_s, entry.intersectionRect().toFloatRect());
     ts.dumpProperty("isIntersecting"_s, entry.isIntersecting());
     ts.dumpProperty("intersectionRatio"_s, entry.intersectionRatio());
 

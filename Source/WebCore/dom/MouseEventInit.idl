@@ -30,10 +30,11 @@ dictionary MouseEventInit : EventModifierInit {
     unrestricted double clientX = 0;
     unrestricted double clientY = 0;
 
-    double movementX = 0;
-    double movementY = 0;
-
     short button = 0;
     unsigned short buttons = 0;
     EventTarget? relatedTarget = null;
+
+    // FIXME: non-standard.
+    double movementX = 0;
+    double movementY = 0;
 };

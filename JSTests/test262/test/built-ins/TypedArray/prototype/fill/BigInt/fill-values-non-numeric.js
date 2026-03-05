@@ -42,26 +42,26 @@ info: |
     Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue, true, Unordered).
   Return NormalCompletion(undefined).
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample;
 
-  sample = new TA([42n]);
+  sample = new TA(makeCtorArg([42n]));
   sample.fill(false);
   assert.sameValue(sample[0], 0n, "false => 0");
 
-  sample = new TA([42n]);
+  sample = new TA(makeCtorArg([42n]));
   sample.fill(true);
   assert.sameValue(sample[0], 1n, "true => 1");
 
-  sample = new TA([42n]);
+  sample = new TA(makeCtorArg([42n]));
   sample.fill("7");
   assert.sameValue(sample[0], 7n, "string conversion");
 
-  sample = new TA([42n]);
+  sample = new TA(makeCtorArg([42n]));
   sample.fill({
     toString: function() {
       return "1";
@@ -72,7 +72,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
   assert.sameValue(sample[0], 7n, "object valueOf conversion before toString");
 
-  sample = new TA([42n]);
+  sample = new TA(makeCtorArg([42n]));
   sample.fill({
     toString: function() {
       return "7";

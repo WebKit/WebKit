@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsTypesGL.h"
+#include <WebCore/GraphicsTypesGL.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -45,7 +45,7 @@ class WebGLBindingPoint {
 public:
     WebGLBindingPoint() = default;
     explicit WebGLBindingPoint(RefPtr<T> object)
-        : m_object(WTFMove(object))
+        : m_object(WTF::move(object))
     {
         if (m_object)
             didBind(*m_object);
@@ -57,7 +57,7 @@ public:
     {
         if (m_object == object)
             return *this;
-        m_object = WTFMove(object);
+        m_object = WTF::move(object);
         if (RefPtr object = m_object)
             didBind(*object);
         return *this;
@@ -82,12 +82,26 @@ private:
     RefPtr<T> m_object;
 };
 
+} // namespace WebCore
+
+namespace WTF {
+
+template<typename T, unsigned target>
+ALWAYS_INLINE RefPtr<T> protect(const WebCore::WebGLBindingPoint<T, target>& bindingPoint)
+{
+    return bindingPoint.get();
+}
+
+} // namespace WTF
+
+namespace WebCore {
+
 class WebGLObject : public RefCounted<WebGLObject> {
 public:
     virtual ~WebGLObject();
 
-    RefPtr<WebGLRenderingContextBase> context() const;
-    RefPtr<GraphicsContextGL> graphicsContextGL() const;
+    WebGLRenderingContextBase* NODELETE context() const;
+    GraphicsContextGL* graphicsContextGL() const;
 
     PlatformGLObject object() const { return m_object; }
 
@@ -113,6 +127,7 @@ public:
 
 protected:
     WebGLObject(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLObject() = default;
 
     void runDestructor();
 
@@ -132,7 +147,7 @@ PlatformGLObject objectOrZero(const T& object)
     return object ? object->object() : 0;
 }
 
-WebCoreOpaqueRoot root(WebGLObject*);
+WebCoreOpaqueRoot NODELETE root(WebGLObject*);
 
 } // namespace WebCore
 

@@ -135,7 +135,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
         CacheableIdentifier identifier = stubInfo->identifier();
         UniquedStringImpl* uid = identifier.uid();
         RELEASE_ASSERT(uid);
-        InByVariant variant(WTFMove(identifier));
+        InByVariant variant(WTF::move(identifier));
         unsigned attributes;
         variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
@@ -166,7 +166,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
                 if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0, access))
                     *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
-                status.appendVariant(InByVariant(access.identifier(), { }, invalidOffset, { }, WTFMove(callLinkStatus)));
+                status.appendVariant(InByVariant(access.identifier(), { }, invalidOffset, { }, WTF::move(callLinkStatus)));
                 return status;
             }
             default:

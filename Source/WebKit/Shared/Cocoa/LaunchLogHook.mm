@@ -69,7 +69,7 @@ void LaunchLogHook::initialize(xpc_connection_t connection)
 
         if (auto messageString = adoptSystemMalloc(os_log_copy_message_string(msg))) {
             // FIXME: This is a false positive. <rdar://164843889>
-            SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+            SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
             xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, logMessageName);
             if (auto* subsystem = msg->subsystem)
                 xpc_dictionary_set_string(message.get(), subsystemKey, subsystem);
@@ -89,14 +89,14 @@ void LaunchLogHook::disable()
 {
     RELEASE_LOG(Process, "Disabling launch log hook");
 
-    XPCObjectPtr<xpc_connection_t> connection;
+    OSObjectPtr<xpc_connection_t> connection;
     {
         Locker locker { m_lock };
         connection = m_connection;
         m_connection = nullptr;
     }
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, disableLogMessageName);
     xpc_connection_send_message(connection.get(), message.get());
 }

@@ -51,7 +51,7 @@ class CLMemoryVk : public CLMemoryImpl
                                   CLMemoryImpl::Ptr *subBufferOut) override;
 
     angle::Result map(uint8_t *&ptrOut, size_t offset = 0);
-    void unmap() { unmapImpl(); }
+    void unmap() { unmapBufferHelper(); }
 
     VkBufferUsageFlags getVkUsageFlags();
     VkMemoryPropertyFlags getVkMemPropertyFlags();
@@ -62,7 +62,6 @@ class CLMemoryVk : public CLMemoryImpl
     void *getHostPtr() const { return mMemory.getHostPtr(); }
 
     angle::Result copyTo(void *ptr, size_t offset, size_t size);
-    angle::Result copyTo(CLMemoryVk *dst, size_t srcOffset, size_t dstOffset, size_t size);
     angle::Result copyFrom(const void *ptr, size_t offset, size_t size);
 
     bool isWritable()
@@ -78,13 +77,14 @@ class CLMemoryVk : public CLMemoryImpl
   protected:
     CLMemoryVk(const cl::Memory &memory);
 
-    virtual angle::Result mapImpl() = 0;
-    virtual void unmapImpl()        = 0;
+    virtual angle::Result mapBufferHelper(uint8_t *&ptrOut)       = 0;
+    virtual angle::Result mapParentBufferHelper(uint8_t *&ptrOut) = 0;
+    virtual void unmapBufferHelper()                              = 0;
 
     CLContextVk *mContext;
     vk::Renderer *mRenderer;
     vk::Allocation mAllocation;
-    angle::SimpleMutex mMapLock;
+    angle::SimpleMutex mMutex;
     uint8_t *mMappedMemory;
     uint32_t mMapCount;
     CLMemoryVk *mParent;
@@ -104,13 +104,13 @@ class CLBufferVk : public CLMemoryVk
     bool isHostPtrAligned() const;
 
     angle::Result create(void *hostPtr);
-    angle::Result createStagingBuffer(size_t size);
+
     angle::Result copyToWithPitch(void *hostPtr,
                                   size_t srcOffset,
                                   size_t size,
                                   size_t rowPitch,
                                   size_t slicePitch,
-                                  cl::Coordinate region,
+                                  cl::Extents region,
                                   const size_t elementSize);
 
     angle::Result fillWithPattern(const void *pattern,
@@ -125,10 +125,10 @@ class CLBufferVk : public CLMemoryVk
     bool isSubBuffer() const { return mParent != nullptr; }
 
     angle::Result setRect(const void *data,
-                          const cl::BufferRect &srcRect,
+                          const cl::BufferRect &dataRect,
                           const cl::BufferRect &bufferRect);
-    angle::Result getRect(const cl::BufferRect &srcRect,
-                          const cl::BufferRect &outRect,
+    angle::Result getRect(const cl::BufferRect &bufferRect,
+                          const cl::BufferRect &dataRect,
                           void *outData);
 
     bool isCurrentlyInUse() const override;
@@ -140,19 +140,32 @@ class CLBufferVk : public CLMemoryVk
         ToHost,
         FromHost
     };
-    angle::Result syncHost(CLBufferVk::SyncHostDirection direction, size_t offset, size_t size);
-    angle::Result syncHost(CLBufferVk::SyncHostDirection direction,
-                           cl::BufferRect bufferRect,
-                           cl::BufferRect hostRect);
+    angle::Result syncHost(CLBufferVk::SyncHostDirection direction);
+    angle::Result syncHost(CLBufferVk::SyncHostDirection direction, cl::BufferRect hostRect);
 
   private:
-    angle::Result mapImpl() override;
-    void unmapImpl() override;
+    angle::Result mapBufferHelper(uint8_t *&ptrOut) override;
+    angle::Result mapParentBufferHelper(uint8_t *&ptrOut) override;
+    void unmapBufferHelper() override;
     angle::Result setDataImpl(const uint8_t *data, size_t size, size_t offset);
     angle::Result createWithProperties();
 
+    enum class UpdateRectOperation
+    {
+        Read,
+        Write
+    };
+    angle::Result updateRect(UpdateRectOperation readWriteOp,
+                             void *data,
+                             const cl::BufferRect &dataRect,
+                             const cl::BufferRect &bufferRect);
+
     vk::BufferHelper mBuffer;
     VkBufferCreateInfo mDefaultBufferCreateInfo;
+
+    // allows access to private buffer routines in the case where the image's parent memory is a
+    // buffer type
+    friend class CLImageVk;
 };
 
 class CLImageVk : public CLMemoryVk
@@ -161,8 +174,11 @@ class CLImageVk : public CLMemoryVk
     CLImageVk(const cl::Image &image);
     ~CLImageVk() override;
 
-    vk::ImageHelper &getImage() { return mImage; }
-    vk::BufferHelper &getStagingBuffer() { return mStagingBuffer; }
+    vk::ImageHelper &getImage()
+    {
+        ASSERT(mImage.valid());
+        return mImage;
+    }
     const cl::Image &getFrontendObject() const
     {
         return reinterpret_cast<const cl::Image &>(mMemory);
@@ -176,6 +192,7 @@ class CLImageVk : public CLMemoryVk
     size_t getSlicePitch() const;
 
     cl::MemObjectType getParentType() const;
+
     template <typename T>
     T *getParent() const;
 
@@ -185,29 +202,26 @@ class CLImageVk : public CLMemoryVk
     bool isCurrentlyInUse() const override;
     bool containsHostMemExtension();
 
-    angle::Result createStagingBuffer(size_t size);
+    angle::Result getOrCreateStagingBuffer(CLBufferVk **clBufferOut);
     angle::Result copyStagingFrom(void *ptr, size_t offset, size_t size);
     angle::Result copyStagingTo(void *ptr, size_t offset, size_t size);
     angle::Result copyStagingToFromWithPitch(void *ptr,
-                                             const cl::Coordinate &region,
+                                             const cl::Extents &region,
                                              const size_t rowPitch,
                                              const size_t slicePitch,
                                              StagingBufferCopyDirection copyStagingTo);
     VkImageUsageFlags getVkImageUsageFlags();
     VkImageType getVkImageType(const cl::ImageDescriptor &desc);
-    bool isStagingBufferInitialized() { return mStagingBufferInitialized; }
-    cl::Extents getImageExtent() { return mExtent; }
-    uint8_t *getMappedPtr() { return mMappedMemory; }
+    cl::Extents getImageExtent() const { return mExtent; }
     vk::ImageView &getImageView() { return mImageView; }
     void packPixels(const void *fillColor, PixelColor *packedColor);
-    void fillImageWithColor(const cl::MemOffsets &origin,
-                            const cl::Coordinate &region,
-                            uint8_t *imagePtr,
-                            PixelColor *packedColor);
-    cl::Extents getExtentForCopy(const cl::Coordinate &region);
-    cl::Offset getOffsetForCopy(const cl::MemOffsets &origin);
-    VkImageSubresourceLayers getSubresourceLayersForCopy(const cl::MemOffsets &origin,
-                                                         const cl::Coordinate &region,
+    angle::Result fillImageWithColor(const cl::Offset &origin,
+                                     const cl::Extents &region,
+                                     PixelColor *packedColor);
+    cl::Offset getOffsetForCopy(const cl::Offset &origin);
+    cl::Extents getExtentForCopy(const cl::Extents &region);
+    VkImageSubresourceLayers getSubresourceLayersForCopy(const cl::Offset &origin,
+                                                         const cl::Extents &region,
                                                          cl::MemObjectType copyToType,
                                                          ImageCopyWith imageCopy);
 
@@ -215,18 +229,18 @@ class CLImageVk : public CLMemoryVk
 
   private:
     angle::Result initImageViewImpl();
-
-    angle::Result mapImpl() override;
-    void unmapImpl() override;
+    angle::Result mapBufferHelper(uint8_t *&ptrOut) override;
+    angle::Result mapParentBufferHelper(uint8_t *&ptrOut) override;
+    void unmapBufferHelper() override;
     angle::Result setDataImpl(const uint8_t *data, size_t size, size_t offset);
     size_t calculateRowPitch();
     size_t calculateSlicePitch(size_t imageRowPitch);
 
     vk::ImageHelper mImage;
-    vk::BufferHelper mStagingBuffer;
     cl::Extents mExtent;
     angle::FormatID mAngleFormat;
-    bool mStagingBufferInitialized;
+
+    cl::Buffer *mStagingBuffer;
     vk::ImageView mImageView;
     VkImageViewType mImageViewType;
 

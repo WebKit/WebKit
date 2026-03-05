@@ -116,7 +116,7 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
     if (!shouldHaveSpatialControls(imageElement) || hasSpatialImageControls(imageElement))
         return;
 
-    imageElement.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { imageElement }] {
+    protect(protect(imageElement.document())->eventLoop())->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { imageElement }] {
         RefPtr element = weakElement.get();
         if (!element)
             return;
@@ -170,10 +170,11 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(spatialImageControlsUserAgentStyleSheet));
         Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
         style->setTextContent(String { shadowStyle });
-        controlLayer->appendChild(WTFMove(style));
+        controlLayer->appendChild(WTF::move(style));
 
         Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, document.get(), nullptr);
         button->setIdAttribute(spatialImageControlsButtonIdentifier());
+        button->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString(localizedMediaControlElementString("EnterFullscreenButton"_s)));
         controlLayer->appendChild(button);
 
         Ref backgroundBlurLayer = HTMLDivElement::create(document.get());
@@ -207,7 +208,7 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
 #else
         glyphSpan->setIdAttribute("spatial-glyph"_s);
 #endif
-        bottomLabelText->insertBefore(glyphSpan, bottomLabelText->protectedFirstChild());
+        bottomLabelText->insertBefore(glyphSpan, protect(bottomLabelText->firstChild()));
 
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer()))
             renderImage->setHasShadowControls(true);
@@ -247,7 +248,7 @@ bool handleEvent(HTMLElement& element, Event& event)
 
 void destroySpatialImageControls(HTMLElement& element)
 {
-    element.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
+    protect(protect(element.document())->eventLoop())->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
         RefPtr protectedElement = weakElement.get();
         if (!protectedElement)
             return;

@@ -103,7 +103,7 @@ void LegacyTileGrid::dropTilesBetweenRects(const IntRect& dropRect, const IntRec
 unsigned LegacyTileGrid::tileByteSize() const
 {
     IntSize tilePixelSize = m_tileSize;
-    tilePixelSize.scale(protectedTileCache()->screenScale());
+    tilePixelSize.scale(protect(tileCache())->screenScale());
     return LegacyTileLayerPool::bytesBackingLayerWithPixelSize(tilePixelSize);
 }
 
@@ -118,7 +118,7 @@ bool LegacyTileGrid::dropDistantTiles(unsigned tilesNeeded, double shortestDista
     unsigned bytesPerTile = tileByteSize();
     unsigned bytesNeeded = tilesNeeded * bytesPerTile;
     unsigned bytesUsed = tileCount() * bytesPerTile;
-    unsigned maximumBytes = protectedTileCache()->tileCapacityForGrid(this);
+    unsigned maximumBytes = protect(tileCache())->tileCapacityForGrid(this);
 
     int bytesToReclaim = int(bytesUsed) - (int(maximumBytes) - bytesNeeded);
     if (bytesToReclaim <= 0)
@@ -302,7 +302,7 @@ bool LegacyTileGrid::checkDoSingleTileLayout()
 
 void LegacyTileGrid::updateHostLayerSize()
 {
-    CALayer* hostLayer = protectedTileCache()->hostLayer();
+    CALayer* hostLayer = protect(tileCache())->hostLayer();
     CGRect tileHostBounds = [hostLayer convertRect:[hostLayer bounds] toLayer:tileHostLayer()];
     CGSize transformedSize;
     transformedSize.width = CGRound(tileHostBounds.size.width);
@@ -353,7 +353,7 @@ void LegacyTileGrid::invalidateTiles(const IntRect& dirtyRect)
         // For large invalidates, iterate over live tiles.
         TileMap::iterator end = m_tiles.end();
         for (TileMap::iterator it = m_tiles.begin(); it != end; ++it) {
-            LegacyTileGridTile* tile = it->value.get();
+            Ref tile = it->value.get();
             if (!tile->rect().intersects(dirtyRect))
                continue;
             tile->invalidateRect(dirtyRect);
@@ -549,7 +549,7 @@ void LegacyTileGrid::createTiles(LegacyTileCache::SynchronousTileCreationMode cr
 
     bool didCreateTiles = !!tilesToCreateCount;
     bool createMoreTiles = pendingTileCount > tilesToCreateCount;
-    protectedTileCache()->finishedCreatingTiles(didCreateTiles, createMoreTiles);
+    protect(tileCache())->finishedCreatingTiles(didCreateTiles, createMoreTiles);
 }
 
 void LegacyTileGrid::dumpTiles()

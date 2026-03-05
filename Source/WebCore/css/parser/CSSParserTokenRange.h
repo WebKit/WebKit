@@ -58,26 +58,26 @@ public:
 
     bool atEnd() const { return m_tokens.empty(); }
 
-    const CSSParserToken* begin() const { return std::to_address(m_tokens.begin()); }
-    const CSSParserToken* end() const { return std::to_address(m_tokens.end()); }
+    const CSSParserToken* begin() const LIFETIME_BOUND { return std::to_address(m_tokens.begin()); }
+    const CSSParserToken* end() const LIFETIME_BOUND { return std::to_address(m_tokens.end()); }
 
     size_t size() const { return m_tokens.size(); }
 
-    const CSSParserToken& peek(size_t offset = 0) const
+    const CSSParserToken& peek(size_t offset = 0) const LIFETIME_BOUND
     {
         if (offset < m_tokens.size())
             return m_tokens[offset];
         return eofToken();
     }
 
-    const CSSParserToken& consume()
+    const CSSParserToken& consume() LIFETIME_BOUND
     {
         if (m_tokens.empty())
             return eofToken();
         return WTF::consume(m_tokens);
     }
 
-    const CSSParserToken& consumeIncludingWhitespace()
+    const CSSParserToken& consumeIncludingWhitespace() LIFETIME_BOUND
     {
         auto& result = consume();
         consumeWhitespace();
@@ -85,10 +85,10 @@ public:
     }
 
     // The returned range doesn't include the brackets
-    CSSParserTokenRange consumeBlock();
+    CSSParserTokenRange NODELETE consumeBlock();
     CSSParserTokenRange consumeBlockCheckingForEditability(StyleSheetContents*);
 
-    void consumeComponentValue();
+    void NODELETE consumeComponentValue();
 
     void consumeWhitespace()
     {
@@ -98,15 +98,15 @@ public:
     }
 
     void trimTrailingWhitespace();
-    const CSSParserToken& consumeLast();
+    const CSSParserToken& NODELETE consumeLast() LIFETIME_BOUND;
 
     CSSParserTokenRange consumeAll() { return { std::exchange(m_tokens, std::span<const CSSParserToken> { }) }; }
 
     String serialize(CSSParserToken::SerializationMode = CSSParserToken::SerializationMode::Normal) const;
 
-    std::span<const CSSParserToken> span() const { return m_tokens; }
+    std::span<const CSSParserToken> span() const LIFETIME_BOUND { return m_tokens; }
 
-    static CSSParserToken& eofToken();
+    static CSSParserToken& NODELETE eofToken();
 
 private:
     std::span<const CSSParserToken> m_tokens;

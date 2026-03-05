@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include <JavaScriptCore/B3Type.h>
@@ -57,7 +59,7 @@ public:
     OSREntryData(FunctionCodeIndex functionIndex, uint32_t loopIndex, StackMap&& stackMap)
         : m_functionIndex(functionIndex)
         , m_loopIndex(loopIndex)
-        , m_values(WTFMove(stackMap))
+        , m_values(WTF::move(stackMap))
     {
     }
 

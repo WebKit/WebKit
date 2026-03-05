@@ -228,7 +228,7 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
         }
 
         Structure* structure = globalObject->arrayBufferStructure(newBuffer->sharingMode());
-        JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTFMove(newBuffer));
+        JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTF::move(newBuffer));
         return JSValue::encode(result);
     }
 
@@ -323,8 +323,8 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
             throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_s);
             return nullptr;
         }
-        auto newBuffer = ArrayBuffer::create(WTFMove(contents));
-        return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(newBuffer));
+        auto newBuffer = ArrayBuffer::create(WTF::move(contents));
+        return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTF::move(newBuffer));
     }
 
     if (mode == CopyAndDetachMode::PreserveResizability && isResizable) {
@@ -338,12 +338,12 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
             throwVMRangeError(globalObject, scope, "ArrayBuffer transfer failed"_s);
             return nullptr;
         }
-        auto newBuffer = ArrayBuffer::create(WTFMove(contents));
+        auto newBuffer = ArrayBuffer::create(WTF::move(contents));
         if (!newBuffer->resize(vm, newByteLength)) {
             throwVMRangeError(globalObject, scope, makeString("ArrayBuffer resize failed with new byte length "_s, newByteLength));
             return nullptr;
         }
-        return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(newBuffer));
+        return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTF::move(newBuffer));
     }
 
     // We should create a new ArrayBuffer and copy them since underlying ArrayBuffer characteristics are different.
@@ -361,7 +361,7 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
         return nullptr;
     }
 
-    return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(newBuffer));
+    return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTF::move(newBuffer));
 }
 
 static JSArrayBuffer* arrayBufferProtoFuncTransferImpl(JSGlobalObject* globalObject, JSValue arrayBufferValue, JSValue newLengthValue, CopyAndDetachMode mode)

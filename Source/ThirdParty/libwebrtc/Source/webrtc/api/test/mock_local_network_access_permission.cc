@@ -25,24 +25,28 @@ using ::testing::_;
 namespace webrtc {
 
 FakeLocalNetworkAccessPermissionFactory::
-    FakeLocalNetworkAccessPermissionFactory(
-        LocalNetworkAccessPermissionStatus status) {
-  EXPECT_CALL(*this, Create()).WillRepeatedly([status]() {
+    FakeLocalNetworkAccessPermissionFactory(Result result) {
+  EXPECT_CALL(*this, Create()).WillRepeatedly([result]() {
     auto mock_lna_permission =
         std::make_unique<MockLocalNetworkAccessPermission>();
-
-    EXPECT_CALL(*mock_lna_permission, RequestPermission(_, _))
+    EXPECT_CALL(*mock_lna_permission, ShouldRequestPermission(_))
         .WillRepeatedly(
-            [status](
-                const SocketAddress& /* addr */,
-                absl::AnyInvocable<void(
-                    webrtc::LocalNetworkAccessPermissionStatus)> callback) {
-              Thread::Current()->PostTask(
-                  [callback = std::move(callback), status]() mutable {
-                    callback(status);
-                  });
-            });
-
+            ::testing::Return(result != Result::kPermissionNotNeeded));
+    if (result != Result::kPermissionNotNeeded) {
+      EXPECT_CALL(*mock_lna_permission, RequestPermission(_, _))
+          .WillRepeatedly(
+              [result](
+                  const SocketAddress& /* addr */,
+                  absl::AnyInvocable<void(
+                      webrtc::LocalNetworkAccessPermissionStatus)> callback) {
+                Thread::Current()->PostTask([callback = std::move(callback),
+                                             result]() mutable {
+                  callback(result == Result::kPermissionGranted
+                               ? LocalNetworkAccessPermissionStatus::kGranted
+                               : LocalNetworkAccessPermissionStatus::kDenied);
+                });
+              });
+    }
     return mock_lna_permission;
   });
 }

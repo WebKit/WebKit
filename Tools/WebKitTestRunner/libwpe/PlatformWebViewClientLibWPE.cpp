@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformWebViewClientLibWPE.h"
 
+#if USE(LIBWPE)
 #include <WPEToolingBackends/HeadlessViewBackend.h>
 #include <wtf/RunLoop.h>
 
@@ -85,3 +86,5 @@ PlatformImage PlatformWebViewClientLibWPE::snapshot()
 }
 
 } // namespace WTR
+
+#endif // USE(LIBWPE)

@@ -52,20 +52,16 @@ PerformanceEventTiming::PerformanceEventTiming(const PerformanceEventTimingCandi
 
 PerformanceEventTiming::~PerformanceEventTiming() = default;
 
-Node* PerformanceEventTiming::target() const
+RefPtr<Node> PerformanceEventTiming::target() const
 {
-    if (!m_target || !m_target->isNode())
+    RefPtr node = dynamicDowncast<Node>(m_target.get());
+    if (!node || !node->isConnected())
         return nullptr;
 
-    RefPtr<Node> node = downcast<Node>((m_target.get()));
-    if (!node)
+    if (!protect(node->document())->isFullyActive())
         return nullptr;
 
-    Ref document = node->document();
-    if (!node->isConnected() || !document->isFullyActive())
-        return nullptr;
-
-    return node.unsafeGet();
+    return node;
 }
 
 PerformanceEntry::Type PerformanceEventTiming::performanceEntryType() const

@@ -21,12 +21,13 @@ VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo() {
 }
 
 webrtc::scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
+    Clock* clock,
     const char* device_id) {
   if (device_id == nullptr)
     return nullptr;
 
   // TODO(tommi): Use Media Foundation implementation for Vista and up.
-  auto capture = webrtc::make_ref_counted<VideoCaptureDS>();
+  auto capture = webrtc::make_ref_counted<VideoCaptureDS>(clock);
   if (capture->Init(device_id) != 0) {
     return nullptr;
   }

@@ -33,7 +33,11 @@
 #include <WebCore/PlatformWheelEvent.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
+#pragma clang diagnostic pop
 #endif
 
 OBJC_CLASS WebEvent;

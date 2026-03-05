@@ -41,8 +41,8 @@ public:
 
     void setActive(bool) final;
 
-    State state() const  final { return m_state; }
-    void setState(State) final;
+    State state() const override;
+    void setState(State) override;
 
     State stateToRestore() const final { return m_stateToRestore; }
 
@@ -54,7 +54,7 @@ public:
     void endInterruption(OptionSet<EndInterruptionFlags>) final;
 
     void clientWillBeginAutoplaying() override;
-    bool clientWillBeginPlayback() override;
+    void clientWillBeginPlayback(CompletionHandler<void(bool)>&&) override;
     bool clientWillPausePlayback() override;
 
     void clientWillBeDOMSuspended() final;
@@ -114,6 +114,8 @@ private:
     bool m_preparingToPlay { false };
     bool m_isActiveNowPlayingSession { false };
 };
+
+inline PlatformMediaSession::State PlatformMediaSession::state() const { return m_state; }
 
 String convertEnumerationToString(PlatformMediaSession::State);
 String convertEnumerationToString(PlatformMediaSession::InterruptionType);

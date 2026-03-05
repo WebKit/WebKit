@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCEncodedStreamProducer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCEncodedStreamProducer);
 
 RTCEncodedStreamProducer::~RTCEncodedStreamProducer() = default;
 
@@ -57,10 +57,10 @@ ExceptionOr<Ref<RTCEncodedStreamProducer>> RTCEncodedStreamProducer::create(Scri
     if (readable.hasException())
         return readable.releaseException();
 
-    Ref producer = adoptRef(*new RTCEncodedStreamProducer(context, readable.releaseReturnValue(), WTFMove(readableSource)));
+    Ref producer = adoptRef(*new RTCEncodedStreamProducer(context, readable.releaseReturnValue(), WTF::move(readableSource)));
 
     if (auto exception = producer->initialize(*globalObject))
-        return { WTFMove(*exception) };
+        return { WTF::move(*exception) };
 
     return producer;
 }
@@ -68,8 +68,8 @@ ExceptionOr<Ref<RTCEncodedStreamProducer>> RTCEncodedStreamProducer::create(Scri
 RTCEncodedStreamProducer::RTCEncodedStreamProducer(ScriptExecutionContext& context, Ref<ReadableStream>&& readable, Ref<SimpleReadableStreamSource>&& readableSource)
     : m_context({ context })
     , m_contextIdentifier(context.identifier())
-    , m_readable(WTFMove(readable))
-    , m_readableSource(WTFMove(readableSource))
+    , m_readable(WTF::move(readable))
+    , m_readableSource(WTF::move(readableSource))
 #if !RELEASE_LOG_DISABLED
     , m_enableAdditionalLogging(context.settingsValues().webRTCMediaPipelineAdditionalLoggingEnabled)
     , m_identifier(RTCEncodedStreamProducerIdentifier::generate())
@@ -93,12 +93,12 @@ std::optional<Exception> RTCEncodedStreamProducer::initialize(JSDOMGlobalObject&
 void RTCEncodedStreamProducer::start(Ref<RTCRtpTransformBackend>&& transformBackend, bool isVideo)
 {
     transformBackend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, contextIdentifer = m_contextIdentifier](Ref<RTCRtpTransformableFrame>&& frame) mutable {
-        ScriptExecutionContext::postTaskTo(contextIdentifer, [weakThis, frame = WTFMove(frame)](auto&) mutable {
+        ScriptExecutionContext::postTaskTo(contextIdentifer, [weakThis, frame = WTF::move(frame)](auto&) mutable {
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->enqueueFrame(WTFMove(frame));
+                protectedThis->enqueueFrame(WTF::move(frame));
         });
     });
-    m_transformBackend = WTFMove(transformBackend);
+    m_transformBackend = WTF::move(transformBackend);
     m_isVideo = isVideo;
 }
 
@@ -132,13 +132,17 @@ void RTCEncodedStreamProducer::enqueueFrame(Ref<RTCRtpTransformableFrame>&& fram
     }
 #endif
 
-    auto value = m_isVideo ? toJS(globalObject, globalObject, RTCEncodedVideoFrame::create(WTFMove(frame))) : toJS(globalObject, globalObject, RTCEncodedAudioFrame::create(WTFMove(frame)));
+    auto value = m_isVideo ? toJS(globalObject, globalObject, RTCEncodedVideoFrame::create(WTF::move(frame))) : toJS(globalObject, globalObject, RTCEncodedAudioFrame::create(WTF::move(frame)));
 
     m_readableSource->enqueue(value);
 }
 
 ExceptionOr<void> RTCEncodedStreamProducer::writeFrame(ScriptExecutionContext& context, JSC::JSValue value)
 {
+    RefPtr transformBackend = m_transformBackend;
+    if (!transformBackend)
+        return { };
+
     auto* globalObject = context.globalObject();
     if (!globalObject)
         return { };
@@ -151,15 +155,18 @@ ExceptionOr<void> RTCEncodedStreamProducer::writeFrame(ScriptExecutionContext& c
         return Exception { ExceptionCode::ExistingExceptionError };
 
     auto frame = frameConversionResult.releaseReturnValue();
-    auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
-        return value->rtcFrame(vm);
-    }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
-        return value->rtcFrame(vm);
-    });
+    auto rtcFrame = WTF::switchOn(frame,
+        [&](Ref<RTCEncodedAudioFrame>& value) {
+            return value->rtcFrame(vm);
+        },
+        [&](Ref<RTCEncodedVideoFrame>& value) {
+            return value->rtcFrame(vm);
+        }
+    );
 
     // If no data, skip the frame since there is nothing to packetize or decode.
     if (rtcFrame->data().data())
-        Ref { *m_transformBackend }->processTransformedFrame(rtcFrame.get());
+        transformBackend->processTransformedFrame(rtcFrame.get());
 
     return { };
 }
@@ -173,13 +180,13 @@ void RTCEncodedStreamProducer::generateKeyFrame(ScriptExecutionContext& context,
         return;
 
     if (!backend->requestKeyFrame(rid)) {
-        context.checkedEventLoop()->queueTask(TaskSource::Networking, [promise = WTFMove(promise)]() mutable {
+        protect(context.eventLoop())->queueTask(TaskSource::Networking, [promise = WTF::move(promise)]() mutable {
             promise->reject(Exception { ExceptionCode::NotFoundError, "rid was not found or is empty"_s });
         });
         return;
     }
 
-    m_pendingKeyFramePromises.append(WTFMove(promise));
+    m_pendingKeyFramePromises.append(WTF::move(promise));
 }
 
 void RTCEncodedStreamProducer::sendKeyFrameRequest()

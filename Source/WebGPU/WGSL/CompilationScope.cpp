@@ -50,7 +50,7 @@ CompilationScope::~CompilationScope()
     if (m_invalidated)
         return;
     m_shaderModule.revertReplacements(m_replacementsSize);
-    m_shaderModule.astBuilder().restore(WTFMove(m_builderState));
+    m_shaderModule.astBuilder().restore(WTF::move(m_builderState));
 }
 
 } // namespace WGSL

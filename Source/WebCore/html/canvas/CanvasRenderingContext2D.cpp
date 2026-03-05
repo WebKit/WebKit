@@ -70,11 +70,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CanvasRenderingContext2D);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasRenderingContext2D);
 
 std::unique_ptr<CanvasRenderingContext2D> CanvasRenderingContext2D::create(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
 {
-    auto renderingContext = std::unique_ptr<CanvasRenderingContext2D>(new CanvasRenderingContext2D(canvas, WTFMove(settings), usesCSSCompatibilityParseMode));
+    auto renderingContext = std::unique_ptr<CanvasRenderingContext2D>(new CanvasRenderingContext2D(canvas, WTF::move(settings), usesCSSCompatibilityParseMode));
 
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
 
@@ -82,7 +82,7 @@ std::unique_ptr<CanvasRenderingContext2D> CanvasRenderingContext2D::create(Canva
 }
 
 CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
-    : CanvasRenderingContext2DBase(canvas, Type::CanvasElement2D, WTFMove(settings), usesCSSCompatibilityParseMode)
+    : CanvasRenderingContext2DBase(canvas, Type::CanvasElement2D, WTF::move(settings), usesCSSCompatibilityParseMode)
 {
 }
 
@@ -97,7 +97,7 @@ std::optional<Style::Filter> CanvasRenderingContext2D::setFilterStringWithoutUpd
 
     document->updateStyleIfNeeded();
 
-    const auto* style = canvas->computedStyle();
+    CheckedPtr style = canvas->computedStyle();
     if (!style)
         return std::nullopt;
 
@@ -122,14 +122,18 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
     if (!page)
         return nullptr;
 
+    auto outsets = calculateFilterOutsets(bounds);
+    auto filterRegion = bounds + toFloatBoxExtent(outsets);
+
     auto preferredFilterRenderingModes = page->preferredFilterRenderingModes(*context);
-    auto filter = CSSFilterRenderer::create(*renderer, state().filter, preferredFilterRenderingModes, { 1, 1 }, bounds, *context);
+    auto filter = CSSFilterRenderer::create(*renderer, state().filter, {
+            .referenceBox = bounds,
+            .filterRegion = filterRegion,
+            .scale = { 1, 1 },
+        }, preferredFilterRenderingModes, false, *context);
     if (!filter)
         return nullptr;
 
-    auto outsets = calculateFilterOutsets(bounds);
-
-    filter->setFilterRegion(bounds + toFloatBoxExtent(outsets));
     return filter;
 }
 
@@ -161,7 +165,7 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
     Ref canvas = this->canvas();
     if (!element.focused() || !hasInvertibleTransform() || path.isEmpty() || !element.isDescendantOf(canvas.get()) || !context)
         return;
-    context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(element.protectedDocument()->styleColorOptions(canvas->computedStyle())));
+    context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(protect(element.document())->styleColorOptions(canvas->computedStyle())));
     didDrawEntireCanvas();
 }
 
@@ -189,16 +193,16 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
         return;
 
     Ref canvas = this->canvas();
-    auto& document = canvas->document();
+    Ref document = canvas->document();
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
     // the "inherit" and "initial" values must be ignored. CSSPropertyParserHelpers::parseUnresolvedFont() ignores these.
-    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document.get(), strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!unresolvedFont)
         return;
 
     FontCascadeDescription fontDescription;
-    if (auto* computedStyle = canvas->computedStyle())
+    if (CheckedPtr computedStyle = canvas->computedStyle())
         fontDescription = FontCascadeDescription { computedStyle->fontDescription() };
     else {
         static NeverDestroyed<AtomString> family = DefaultFontFamily;
@@ -209,7 +213,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), document);
+    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), document.get());
     if (!fontCascade)
         return;
 
@@ -217,7 +221,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
 
-    modifiableState().font.initialize(document.fontSelector(), *fontCascade);
+    modifiableState().font.initialize(document->fontSelector(), *fontCascade);
     ASSERT(state().font.realized());
     ASSERT(state().font.isPopulated());
 
@@ -230,7 +234,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
 inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, const RenderStyle** computedStyle) const
 {
-    auto* style = computedStyle || direction == Direction::Inherit ? protectedCanvas()->existingComputedStyle() : nullptr;
+    CheckedPtr style = computedStyle || direction == Direction::Inherit ? protect(canvas())->existingComputedStyle() : nullptr;
     if (computedStyle)
         *computedStyle = style;
     switch (direction) {
@@ -248,7 +252,7 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
 CanvasDirection CanvasRenderingContext2D::direction() const
 {
     if (state().direction == Direction::Inherit)
-        canvas().protectedDocument()->updateStyleIfNeeded();
+        protect(canvas().document())->updateStyleIfNeeded();
     return toTextDirection(state().direction) == TextDirection::RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
 }
 

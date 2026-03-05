@@ -76,7 +76,7 @@ public:
 
     class InlineStyleOverrideScope {
     public:
-        InlineStyleOverrideScope(SecurityContext& context)
+        explicit InlineStyleOverrideScope(SecurityContext& context)
             : m_contentSecurityPolicy(context.contentSecurityPolicy())
         {
             m_contentSecurityPolicy->setOverrideAllowInlineStyle(true);
@@ -157,9 +157,9 @@ private:
     class SetRuleHeaderTextAction;
     class AddRuleAction;
 
-    using IdToInspectorStyleSheet = HashMap<Inspector::Protocol::CSS::StyleSheetId, RefPtr<InspectorStyleSheet>>;
-    using CSSStyleSheetToInspectorStyleSheet = HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet>>;
-    using DocumentToViaInspectorStyleSheet = HashMap<RefPtr<Document>, Vector<RefPtr<InspectorStyleSheet>>>; // "via inspector" stylesheets
+    using IdToInspectorStyleSheet = HashMap<Inspector::Protocol::CSS::StyleSheetId, Ref<InspectorStyleSheet>>;
+    using CSSStyleSheetToInspectorStyleSheet = HashMap<CSSStyleSheet*, Ref<InspectorStyleSheet>>;
+    using DocumentToViaInspectorStyleSheet = HashMap<Ref<Document>, Vector<Ref<InspectorStyleSheet>>>; // "via inspector" stylesheets
     using PseudoClassHashSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>>;
 
     InspectorStyleSheetForInlineStyle& asInspectorStyleSheet(StyledElement&);
@@ -172,14 +172,14 @@ private:
     void setActiveStyleSheetsForDocument(Document&, Vector<CSSStyleSheet*>& activeStyleSheets);
 
     Inspector::Protocol::CSS::StyleSheetId unbindStyleSheet(InspectorStyleSheet*);
-    InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
+    InspectorStyleSheet& bindStyleSheet(CSSStyleSheet*);
     InspectorStyleSheet* assertStyleSheetForId(Inspector::Protocol::ErrorString&, const Inspector::Protocol::CSS::StyleSheetId&);
     InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
     Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(const StyleRule*, Style::Resolver&, Element&);
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);
-    Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> buildArrayForMatchedRuleList(const Vector<RefPtr<const StyleRule>>&, Style::Resolver&, Element&, std::optional<Style::PseudoElementIdentifier>);
+    Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> buildArrayForMatchedRuleList(const Vector<Ref<const StyleRule>>&, Style::Resolver&, Element&, std::optional<Style::PseudoElementIdentifier>);
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForAttributesStyle(StyledElement&);
 
     void nodeHasLayoutFlagsChange(Node&);

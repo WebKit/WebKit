@@ -69,7 +69,7 @@ public:
     String errorMessage() const { return crossThreadCopy(m_errorMessage); }
     CompilationError error() const { return m_error; }
 
-    bool WARN_UNUSED_RETURN failed() const { return !m_errorMessage.isNull(); }
+    [[nodiscard]] bool failed() const { return !m_errorMessage.isNull(); }
     virtual bool hasWork() const = 0;
     virtual void work() = 0;
     virtual bool multiThreaded() const = 0;

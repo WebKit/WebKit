@@ -115,7 +115,7 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
     case Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout:
         return "script timeout"_s;
     case Inspector::Protocol::Automation::ErrorMessage::WindowNotFound:
-        return "no such window"_s;
+        return "no such browsing context"_s;
     case Inspector::Protocol::Automation::ErrorMessage::FrameNotFound:
         return "no such frame"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NodeNotFound:

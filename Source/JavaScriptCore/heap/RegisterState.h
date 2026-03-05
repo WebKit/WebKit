@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <cstdint>
 #include <setjmp.h>
+#include <wtf/Platform.h>
 
 namespace JSC {
 

@@ -27,8 +27,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([44, 43, 42]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([44, 43, 42]));
 
   sample.reduceRight(function(a, v, i) {
     if (i > 0) {

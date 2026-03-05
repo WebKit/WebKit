@@ -74,7 +74,7 @@ ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExe
     if (!color.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    m_gradient->addColorStop({ static_cast<float>(value), WTFMove(color) });
+    m_gradient->addColorStop({ static_cast<float>(value), WTF::move(color) });
     return { };
 }
 

@@ -120,8 +120,8 @@ void ProcessLauncher::launchProcess()
             g_error("Unable to spawn a new child process");
 
         // We've finished launching the process, message back to the main run loop.
-        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] mutable {
-            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTF::move(webkitSocketPair.server)] mutable {
+            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTF::move(serverSocket) });
         });
 
         return;
@@ -268,8 +268,8 @@ void ProcessLauncher::launchProcess()
     m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processID);
 
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] mutable {
-        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTF::move(webkitSocketPair.server)] mutable {
+        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTF::move(serverSocket) });
     });
 }
 

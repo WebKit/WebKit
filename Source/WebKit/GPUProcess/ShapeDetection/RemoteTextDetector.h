@@ -58,7 +58,7 @@ public:
 public:
     static Ref<RemoteTextDetector> create(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, RemoteRenderingBackend& renderingBackend, ShapeDetectionIdentifier identifier)
     {
-        return adoptRef(*new RemoteTextDetector(WTFMove(textDetector), renderingBackend, identifier));
+        return adoptRef(*new RemoteTextDetector(WTF::move(textDetector), renderingBackend, identifier));
     }
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;

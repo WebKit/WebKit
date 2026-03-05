@@ -67,7 +67,7 @@ constexpr ASCIILiteral toASCIILiteral(BinaryOperation op)
 #undef WGSL_AST_BINOP
     });
 
-    return binaryOperationNames[WTF::enumToUnderlyingType(op)];
+    return binaryOperationNames[std::to_underlying(op)];
 }
 
 void printInternal(PrintStream&, BinaryOperation);
@@ -78,13 +78,15 @@ public:
     NodeKind kind() const override;
     BinaryOperation operation() const { return m_operation; }
     Expression& leftExpression() { return m_lhs.get(); }
+    const Expression& leftExpression() const { return m_lhs.get(); }
     Expression& rightExpression() { return m_rhs.get(); }
+    const Expression& rightExpression() const { return m_rhs.get(); }
 
 private:
     BinaryExpression(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs, BinaryOperation operation)
         : Expression(span)
-        , m_lhs(WTFMove(lhs))
-        , m_rhs(WTFMove(rhs))
+        , m_lhs(WTF::move(lhs))
+        , m_rhs(WTF::move(rhs))
         , m_operation(operation)
     { }
 

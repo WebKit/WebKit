@@ -257,7 +257,9 @@ void ScrollerPairMac::updateValues()
     auto offset = node->currentScrollOffset();
 
     if (offset != m_lastScrollOffset) {
-        if (m_lastScrollOffset) {
+        auto scrollbarRevealBehavior = node->takeScrollbarRevealBehaviorForNextScrollbarUpdate();
+
+        if (m_lastScrollOffset && scrollbarRevealBehavior == ScrollbarRevealBehavior::Default) {
             ensureOnMainThreadWithProtectedThis([delta = offset - *m_lastScrollOffset](auto& scrollerPair) {
                 [scrollerPair.m_scrollerImpPair contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
             });
@@ -363,14 +365,14 @@ void ScrollerPairMac::setScrollbarStyle(ScrollbarStyle style)
 
 void ScrollerPairMac::ensureOnMainThreadWithProtectedThis(Function<void(ScrollerPairMac&)>&& task)
 {
-    ensureOnMainThread([protectedThis = Ref { *this }, task = WTFMove(task)]() mutable {
+    ensureOnMainThread([protectedThis = Ref { *this }, task = WTF::move(task)]() mutable {
         task(protectedThis.get());
     });
 }
 
 void ScrollerPairMac::mouseEnteredContentArea()
 {
-    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << protectedNode()->scrollingNodeID() << "] mouseEnteredContentArea");
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << protect(m_scrollingNode)->scrollingNodeID() << "] mouseEnteredContentArea");
 
     ensureOnMainThreadWithProtectedThis([](auto& scrollerPair) {
         if ([scrollerPair.m_scrollerImpPair overlayScrollerStateIsLocked])
@@ -383,7 +385,7 @@ void ScrollerPairMac::mouseEnteredContentArea()
 void ScrollerPairMac::mouseExitedContentArea()
 {
     m_mouseInContentArea = false;
-    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << protectedNode()->scrollingNodeID() << "] mouseExitedContentArea");
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << protect(m_scrollingNode)->scrollingNodeID() << "] mouseExitedContentArea");
 
     ensureOnMainThreadWithProtectedThis([](auto& scrollerPair) {
         if ([scrollerPair.m_scrollerImpPair overlayScrollerStateIsLocked])

@@ -28,7 +28,8 @@
 
 #include "CSSPrimitiveKeywordList.h"
 #include "InlineLevelBox.h"
-#include "RenderStyleInlines.h"
+#include "LayoutBoxInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -45,7 +46,7 @@ template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment 
     );
 }
 
-inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, OptionSet<PositionWithinLayoutBox> positionWithinLayoutBox)
+inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, EnumSet<PositionWithinLayoutBox> positionWithinLayoutBox)
     : m_layoutBox(layoutBox)
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
     , m_hasContent(layoutBox.isRubyBase() && layoutBox.associatedRubyAnnotationBox()) // Normally we set inline box's has-content state as we come across child content, but ruby annotations are not visible to inline layout.

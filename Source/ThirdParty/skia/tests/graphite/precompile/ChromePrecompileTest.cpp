@@ -1048,10 +1048,7 @@ DEF_GRAPHITE_TEST_FOR_CONTEXTS(ChromePrecompileTest, is_dawn_metal_context_type,
                                                                  skgpu::Protected::kNo,
                                                                  skgpu::Renderable::kYes);
 
-    const bool msaaSupported =
-            caps->msaaRenderToSingleSampledSupport() ||
-            caps->isSampleCountSupported(TextureInfoPriv::ViewFormat(textureInfo),
-                                         caps->defaultMSAASamplesCount());
+    const bool msaaSupported = caps->getCompatibleMSAASampleCount(textureInfo) > SampleCount::k1;
 
     if (!msaaSupported) {
         // The following pipelines rely on having MSAA
@@ -1081,7 +1078,8 @@ DEF_GRAPHITE_TEST_FOR_CONTEXTS(ChromePrecompileTest, is_dawn_metal_context_type,
 
         RunTest(precompileContext.get(), reporter, kPrecompileCases[i], i,
                 { kCases },
-                &collector);
+                &collector,
+                /* checkPaintOptionCoverage= */ true);
     }
 
 #if defined(FINAL_REPORT)

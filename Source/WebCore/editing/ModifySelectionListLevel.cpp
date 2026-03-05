@@ -39,7 +39,7 @@
 namespace WebCore {
 
 ModifySelectionListLevelCommand::ModifySelectionListLevelCommand(Ref<Document>&& document)
-    : CompositeEditCommand(WTFMove(document))
+    : CompositeEditCommand(WTF::move(document))
 {
 }
 
@@ -86,8 +86,8 @@ static bool getStartEndListChildren(const VisibleSelection& selection, RefPtr<No
             endListChild = renderer->node();
     }
 
-    start = WTFMove(startListChild);
-    end = WTFMove(endListChild);
+    start = WTF::move(startListChild);
+    end = WTF::move(endListChild);
     return true;
 }
 
@@ -142,7 +142,7 @@ void ModifySelectionListLevelCommand::appendSiblingNodeRange(Node* startNode, No
 }
 
 IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand(Ref<Document>&& document, Type listType)
-    : ModifySelectionListLevelCommand(WTFMove(document))
+    : ModifySelectionListLevelCommand(WTF::move(document))
     , m_listType(listType)
 {
 }
@@ -186,7 +186,7 @@ void IncreaseSelectionListLevelCommand::doApply()
     if (isListHTMLElement(previousItem.get())) {
         // move nodes up into preceding list
         appendSiblingNodeRange(startListChild.get(), endListChild.get(), downcast<Element>(previousItem.get()));
-        m_listElement = WTFMove(previousItem);
+        m_listElement = WTF::move(previousItem);
     } else {
         // create a sublist for the preceding element and move nodes there
         RefPtr<Element> newParent;
@@ -205,7 +205,7 @@ void IncreaseSelectionListLevelCommand::doApply()
         }
         insertNodeBefore(*newParent, *startListChild);
         appendSiblingNodeRange(startListChild.get(), endListChild.get(), newParent.get());
-        m_listElement = WTFMove(newParent);
+        m_listElement = WTF::move(newParent);
     }
 }
 
@@ -222,7 +222,7 @@ RefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Docum
     ASSERT(document->frame());
     auto command = create(*document, type);
     command->apply();
-    return WTFMove(command->m_listElement);
+    return WTF::move(command->m_listElement);
 }
 
 RefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document)
@@ -241,7 +241,7 @@ RefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnorde
 }
 
 DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand(Ref<Document>&& document)
-    : ModifySelectionListLevelCommand(WTFMove(document))
+    : ModifySelectionListLevelCommand(WTF::move(document))
 {
 }
 

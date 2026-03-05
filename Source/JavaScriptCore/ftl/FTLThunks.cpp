@@ -140,12 +140,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM& v
         vm, operationCompileFTLLazySlowPath, JITStubRoutinePtrTag, "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
 }
 
-static void registerClobberCheck(AssemblyHelpers& jit, RegisterSetBuilder dontClobber)
+static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
 {
     ASSERT(Options::clobberAllRegsInFTLICSlowPath());
-    RegisterSetBuilder clobber = RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters());
+    RegisterSet clobber = RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters());
     clobber.exclude(dontClobber);
-    auto wholeClobberedRegisters = clobber.buildWithLowerBits();
+    auto wholeClobberedRegisters = clobber.normalizeWidths();
     
     GPRReg someGPR = InvalidGPRReg;
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
@@ -205,7 +205,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
         auto dontClobber = key.argumentRegistersIfClobberingCheckIsEnabled();
         if (!key.callTarget())
             dontClobber.add(GPRInfo::nonArgGPR0, IgnoreVectors);
-        registerClobberCheck(jit, WTFMove(dontClobber));
+        registerClobberCheck(jit, WTF::move(dontClobber));
     }
 
     AssemblyHelpers::Call call;

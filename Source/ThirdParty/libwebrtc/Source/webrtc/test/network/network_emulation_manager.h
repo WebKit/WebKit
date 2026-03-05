@@ -23,6 +23,7 @@
 
 #include "absl/base/nullability.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/test/network_emulation/cross_traffic.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
@@ -32,7 +33,6 @@
 #include "rtc_base/ip_address.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
-#include "system_wrappers/include/clock.h"
 #include "test/network/cross_traffic.h"
 #include "test/network/emulated_network_manager.h"
 #include "test/network/emulated_turn_server.h"
@@ -111,7 +111,7 @@ class NetworkEmulationManagerImpl : public NetworkEmulationManager {
   const TimeMode time_mode_;
   const EmulatedNetworkStatsGatheringMode stats_gathering_mode_;
   const std::unique_ptr<TimeController> time_controller_;
-  Clock* const clock_;
+  const Environment env_;
   const bool fake_dtls_handshake_sizes_;
   int next_node_id_;
 

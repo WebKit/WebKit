@@ -35,33 +35,33 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-
 TypeInfoBlob JSWebAssemblyArray::typeInfoBlob()
 {
     return TypeInfoBlob(0, TypeInfo(WebAssemblyGCObjectType, StructureFlags));
 }
 
-WebAssemblyGCStructure* JSWebAssemblyArray::createStructure(VM& vm, JSGlobalObject* globalObject, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
+WebAssemblyGCStructure* JSWebAssemblyArray::createStructure(VM& vm, JSGlobalObject* globalObject, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::RTT>&& rtt)
 {
+    Ref<const Wasm::TypeDefinition> type { unexpandedType->expand() };
     RELEASE_ASSERT(type->is<Wasm::ArrayType>());
     RELEASE_ASSERT(rtt->kind() == Wasm::RTTKind::Array);
-    return WebAssemblyGCStructure::create(vm, globalObject, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info(), WTFMove(type), WTFMove(rtt));
+    return WebAssemblyGCStructure::create(vm, globalObject, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info(), WTF::move(unexpandedType), WTF::move(type), WTF::move(rtt));
 }
 
 template<typename T>
-std::span<T> JSWebAssemblyArray::span()
+std::span<T> JSWebAssemblyArray::span() LIFETIME_BOUND
 {
     ASSERT(sizeof(T) == elementType().type.elementSize());
     uint8_t* data = this->data();
     if constexpr (std::is_same_v<T, v128_t>)
-        data += isPreciseAllocation() ? 0 : v128AlignmentShift;
+        data = WTF::roundUpToMultipleOf<16>(data);
     else
         ASSERT(!needsAlignmentCheck(elementType().type));
     ASSERT(data == this->bytes().data());
     return { std::bit_cast<T*>(data), size() };
 }
 
-std::span<uint64_t> JSWebAssemblyArray::refTypeSpan()
+std::span<uint64_t> JSWebAssemblyArray::refTypeSpan() LIFETIME_BOUND
 {
     ASSERT(elementsAreRefTypes());
     return span<uint64_t>();
@@ -69,9 +69,9 @@ std::span<uint64_t> JSWebAssemblyArray::refTypeSpan()
 
 std::span<uint8_t> JSWebAssemblyArray::bytes()
 {
-    if (!needsAlignmentCheck(elementType().type) || isPreciseAllocation())
+    if (!needsAlignmentCheck(elementType().type))
         return { data(), sizeInBytes() };
-    return { data() + v128AlignmentShift, sizeInBytes() };
+    return { WTF::roundUpToMultipleOf<16>(data()), sizeInBytes() };
 }
 
 auto JSWebAssemblyArray::visitSpan(auto functor)
@@ -130,7 +130,6 @@ auto JSWebAssemblyArray::visitSpanNonVector(auto functor)
 
 uint64_t JSWebAssemblyArray::get(uint32_t index)
 {
-    // V128 is not supported in IPInt.
     return visitSpanNonVector([&](auto span) ALWAYS_INLINE_LAMBDA -> uint64_t {
         return span[index];
     });

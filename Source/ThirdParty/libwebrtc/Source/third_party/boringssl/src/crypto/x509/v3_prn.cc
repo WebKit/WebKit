@@ -63,19 +63,19 @@ static void X509V3_EXT_val_prn(BIO *out, const STACK_OF(CONF_VALUE) *val,
 int X509V3_EXT_print(BIO *out, const X509_EXTENSION *ext, unsigned long flag,
                      int indent) {
   const X509V3_EXT_METHOD *method = X509V3_EXT_get(ext);
-  if (method == NULL) {
+  if (method == nullptr) {
     return unknown_ext_print(out, ext, flag, indent, 0);
   }
   const ASN1_STRING *ext_data = X509_EXTENSION_get_data(ext);
   const unsigned char *p = ASN1_STRING_get0_data(ext_data);
-  void *ext_str = ASN1_item_d2i(NULL, &p, ASN1_STRING_length(ext_data),
+  void *ext_str = ASN1_item_d2i(nullptr, &p, ASN1_STRING_length(ext_data),
                                 ASN1_ITEM_ptr(method->it));
   if (!ext_str) {
     return unknown_ext_print(out, ext, flag, indent, 1);
   }
 
-  char *value = NULL;
-  STACK_OF(CONF_VALUE) *nval = NULL;
+  char *value = nullptr;
+  STACK_OF(CONF_VALUE) *nval = nullptr;
   int ok = 0;
   if (method->i2s) {
     if (!(value = method->i2s(method, ext_str))) {
@@ -83,7 +83,7 @@ int X509V3_EXT_print(BIO *out, const X509_EXTENSION *ext, unsigned long flag,
     }
     BIO_printf(out, "%*s%s", indent, "", value);
   } else if (method->i2v) {
-    if (!(nval = method->i2v(method, ext_str, NULL))) {
+    if (!(nval = method->i2v(method, ext_str, nullptr))) {
       goto err;
     }
     X509V3_EXT_val_prn(out, nval, indent,

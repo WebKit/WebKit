@@ -168,6 +168,7 @@ class VertexArrayPrivate : public angle::NonCopyable
         DIRTY_BINDING_DIVISOR,
         DIRTY_BINDING_STRIDE,
         DIRTY_BINDING_OFFSET,
+        DIRTY_BINDING_SIZE,
         DIRTY_BINDING_MAX,
     };
 
@@ -223,7 +224,7 @@ class VertexArrayPrivate : public angle::NonCopyable
 
     const VertexArrayState &getState() const { return mState; }
 
-    bool isBufferAccessValidationEnabled() const { return mBufferAccessValidationEnabled; }
+    bool isRobustBufferAccessEnabled() const { return mRobustBufferAccessEnabled; }
 
     bool hasAnyDirtyBit() const { return mDirtyBits.any(); }
 
@@ -232,10 +233,10 @@ class VertexArrayPrivate : public angle::NonCopyable
 
     bool hasTransformFeedbackBindingConflict(const Context *context) const;
 
-    void setBufferAccessValidationEnabled(bool enabled)
+    void setRobustBufferAccessEnabled(bool enabled)
     {
-        mBufferAccessValidationEnabled = enabled;
-        if (mBufferAccessValidationEnabled)
+        mRobustBufferAccessEnabled = enabled;
+        if (mRobustBufferAccessEnabled)
         {
             mCachedBufferSize.resize(mState.getMaxBindings(), 0);
         }
@@ -289,9 +290,9 @@ class VertexArrayPrivate : public angle::NonCopyable
     Optional<DirtyBits> mDirtyBitsGuard;
 
     mutable IndexRangeInlineCache mIndexRangeInlineCache;
-    bool mBufferAccessValidationEnabled;
+    bool mRobustBufferAccessEnabled;
 
-    // Cached buffer size indexed by bindingIndex, only used when mBufferAccessValidationEnabled is
+    // Cached buffer size indexed by bindingIndex, only used when mRobustBufferAccessEnabled is
     // true.
     std::vector<GLint64> mCachedBufferSize;
     // Cached XFB property indexed by bindingIndex, only used for webGL
@@ -422,6 +423,9 @@ class VertexArray final : public VertexArrayPrivate, public LabeledObject, publi
                                VertexArrayBufferBindingMask bufferBindingMask);
     void updateCachedMappedArrayBuffersBinding(size_t bindingIndex);
     bool bufferMaskBitsPointToTheSameBuffer(VertexArrayBufferBindingMask bufferBindingMask) const;
+
+    // Update the cached buffer size and set the dirty binding bit for later if size has changed.
+    void updateBindingSizeIfChanged(const size_t bindingIndex, const GLint64 bufferSize);
 
     VertexArrayBuffers mVertexArrayBuffers;
     rx::VertexArrayImpl *mVertexArray;

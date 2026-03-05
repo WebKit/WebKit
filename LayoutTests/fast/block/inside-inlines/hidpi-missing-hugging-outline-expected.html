@@ -1,0 +1,53 @@
+<style>
+body {
+  overflow: hidden;
+}
+
+.container {
+  font-family: Ahem;
+  font-size: 20px;
+  color: transparent;
+}
+
+span {
+  outline: solid 1px green;
+}
+
+.block-in-inline {
+  width: 600px;
+  height: 100px;
+  outline: 1px solid green;
+}
+
+.child {
+  outline: 1px solid green;
+  width: max-content;
+}
+
+.cover {
+  position: absolute;
+  left: 8px;
+  top: 25px;
+  width: 20px;
+  height: 110px;
+  background-color: white;
+}
+
+.cover2 {
+  position: absolute;
+  left: 28px;
+  top: 28px;
+  width: 1px;
+  height: 100px;
+  background-color: white;
+}
+
+</style>
+<div class=container>
+  <div class=child>X</div>
+  <div class=block-in-inline></div>
+  <div class=child>X</div>
+</div>
+
+<div class=cover></div>
+<div class=cover2></div>

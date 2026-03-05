@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
         RenderBlock (floating) at (2,4) size 52x89
           RenderText at (0,-49) size 52x217
             text run at (0,-49) width 52: "J"
-        RenderText {#text} at (55,40) size 298x19
+        RenderText {#text} at (55,40) size 298x20
           text run at (55,40) width 298: "ust an example of first-letter. Short paragraph!"
       RenderBlock {DIV} at (16,76) size 400x197
         RenderBlock (floating) at (2,21) size 52x89
           RenderText at (0,-49) size 52x217
             text run at (0,-49) width 52: "J"
-        RenderText {#text} at (0,57) size 395x139
+        RenderText {#text} at (0,57) size 395x140
           text run at (55,57) width 335: "ust an example of first-letter. This letter should span"
           text run at (55,77) width 320: "3 lines of text, and so it should align itself cleanly"
           text run at (55,97) width 325: "with the cap-height of the J lining up with the cap-"

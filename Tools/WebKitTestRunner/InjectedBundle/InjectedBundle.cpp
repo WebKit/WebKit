@@ -682,17 +682,20 @@ WKRetainPtr<WKStringRef> InjectedBundle::backgroundFetchState(WKStringRef identi
 
 void InjectedBundle::textDidChangeInTextField()
 {
-    m_testRunner->textDidChangeInTextFieldCallback();
+    if (m_testRunner)
+        m_testRunner->textDidChangeInTextFieldCallback();
 }
 
 void InjectedBundle::textFieldDidBeginEditing()
 {
-    m_testRunner->textFieldDidBeginEditingCallback();
+    if (m_testRunner)
+        m_testRunner->textFieldDidBeginEditingCallback();
 }
 
 void InjectedBundle::textFieldDidEndEditing()
 {
-    m_testRunner->textFieldDidEndEditingCallback();
+    if (m_testRunner)
+        m_testRunner->textFieldDidEndEditingCallback();
 }
 
 void postMessage(const char* name)

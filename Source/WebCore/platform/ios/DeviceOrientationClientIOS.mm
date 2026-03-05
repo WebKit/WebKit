@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceOrientationClientIOS);
 
 DeviceOrientationClientIOS::DeviceOrientationClientIOS(RefPtr<DeviceOrientationUpdateProvider>&& deviceOrientationUpdateProvider)
     : DeviceOrientationClient()
-    , m_deviceOrientationUpdateProvider(WTFMove(deviceOrientationUpdateProvider))
+    , m_deviceOrientationUpdateProvider(WTF::move(deviceOrientationUpdateProvider))
 {
 }
 

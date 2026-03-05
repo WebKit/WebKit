@@ -35,9 +35,9 @@ using ::testing::ValuesIn;
 namespace {
 const int kNumIterations = 10000;
 
-typedef uint64_t (*SSI16Func)(const int16_t *src, int src_stride, int width,
-                              int height, int *sum);
-typedef libaom_test::FuncParam<SSI16Func> TestFuncs;
+using SSI16Func = uint64_t (*)(const int16_t *src, int src_stride, int width,
+                               int height, int *sum);
+using TestFuncs = libaom_test::FuncParam<SSI16Func>;
 
 class SumSSETest : public ::testing::TestWithParam<TestFuncs> {
  public:

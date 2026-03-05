@@ -100,7 +100,7 @@ OPENSSL_EXPORT int FIPS_mode(void);
 
 // fips_counter_t denotes specific APIs/algorithms. A counter is maintained for
 // each in FIPS mode so that tests can be written to assert that the expected,
-// FIPS functions are being called by a certain peice of code.
+// FIPS functions are being called by a certain piece of code.
 enum fips_counter_t {
   fips_counter_evp_aes_128_gcm = 0,
   fips_counter_evp_aes_256_gcm = 1,

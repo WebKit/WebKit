@@ -29,6 +29,7 @@
 #include "BlockFormattingGeometry.h"
 #include "BlockFormattingState.h"
 #include "BlockMarginCollapse.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
@@ -43,7 +44,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableWrapperBlockFormattingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TableWrapperBlockFormattingContext);
 
 TableWrapperBlockFormattingContext::TableWrapperBlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState& formattingState)
     : BlockFormattingContext(formattingContextRoot, formattingState)
@@ -58,10 +59,10 @@ void TableWrapperBlockFormattingContext::layoutInFlowContent(const ConstraintsFo
     // The caption boxes are principal block-level boxes that retain their own content, padding, margin, and border areas, and are rendered
     // as normal block boxes inside the table wrapper box. Whether the caption boxes are placed before or after the table box is decided by
     // the 'caption-side' property, as described below.
-    for (auto& child : childrenOfType<ElementBox>(root())) {
-        if (child.isTableBox())
+    for (CheckedRef child : childrenOfType<ElementBox>(root())) {
+        if (child->isTableBox())
             layoutTableBox(child, constraints);
-        else if (child.isTableCaption())
+        else if (child->isTableCaption())
             ASSERT_NOT_IMPLEMENTED_YET();
         else
             ASSERT_NOT_REACHED();
@@ -104,25 +105,25 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
     auto& grid = layoutState().formattingStateForTableFormattingContext(tableBox).tableGrid();
     auto tableBorder = formattingGeometry().computedBorder(tableBox);
 
-    auto& firstColumnFirstRowBox = grid.slot({ 0 , 0 })->cell().box();
+    CheckedRef firstColumnFirstRowBox = grid.slot({ 0 , 0 })->cell().box();
     auto leftBorder = std::max(tableBorder.horizontal.start, formattingGeometry().computedBorder(firstColumnFirstRowBox).horizontal.start);
 
-    auto& lastColumnFirstRow = grid.slot({ grid.columns().size() - 1, 0 })->cell().box();
+    CheckedRef lastColumnFirstRow = grid.slot({ grid.columns().size() - 1, 0 })->cell().box();
     auto rightBorder = std::max(tableBorder.horizontal.end, formattingGeometry().computedBorder(lastColumnFirstRow).horizontal.end);
 
     auto topBorder = tableBorder.vertical.before;
     auto bottomBorder = tableBorder.vertical.after;
     auto lastRowIndex = grid.rows().size() - 1;
     for (size_t columnIndex = 0; columnIndex < grid.columns().size(); ++columnIndex) {
-        auto& boxInFirstRox = grid.slot({ columnIndex, 0 })->cell().box();
-        auto& boxInLastRow = grid.slot({ columnIndex, lastRowIndex })->cell().box();
+        CheckedRef boxInFirstRox = grid.slot({ columnIndex, 0 })->cell().box();
+        CheckedRef boxInLastRow = grid.slot({ columnIndex, lastRowIndex })->cell().box();
 
         topBorder = std::max(topBorder, formattingGeometry().computedBorder(boxInFirstRox).vertical.before);
         bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(boxInLastRow).vertical.after);
     }
 
     topBorder = std::max(topBorder, formattingGeometry().computedBorder(*tableBox.firstChild()).vertical.before);
-    for (auto& section : childrenOfType<ElementBox>(tableBox)) {
+    for (CheckedRef section : childrenOfType<ElementBox>(tableBox)) {
         auto horizontalBorder = formattingGeometry().computedBorder(section).horizontal;
         leftBorder = std::max(leftBorder, horizontalBorder.start);
         rightBorder = std::max(rightBorder, horizontalBorder.end);

@@ -37,7 +37,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SamplerImpl);
 
 SamplerImpl::SamplerImpl(WebGPUPtr<WGPUSampler>&& sampler, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(sampler))
+    : m_backing(WTF::move(sampler))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }

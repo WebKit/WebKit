@@ -122,6 +122,35 @@ NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTex
 @property (readonly) BOOL _wantsConstraintBasedLayout;
 @end
 
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+
+@interface _NSCornerRadius : NSObject
+@property (class, copy, readonly) _NSCornerRadius *containerConcentricRadius;
++ (_NSCornerRadius *)fixedRadius:(CGFloat)radius;
+@end
+
+@interface NSViewCornerRadii : NSObject
+@property CGFloat topLeft;
+@property CGFloat topRight;
+@property CGFloat bottomLeft;
+@property CGFloat bottomRight;
+@property (copy) CALayerCornerCurve cornerCurve;
+@end
+
+@interface NSViewCornerConfiguration : NSObject
++ (NSViewCornerConfiguration *)configurationWithRadius:(_NSCornerRadius *)radius;
++ (instancetype)configurationWithTopLeftRadius:(nullable _NSCornerRadius *)topLeftRadius topRightRadius:(nullable _NSCornerRadius *)topRightRadius bottomLeftRadius:(nullable _NSCornerRadius *)bottomLeftRadius bottomRightRadius:(nullable _NSCornerRadius *)bottomRightRadius;
+@end
+
+@interface NSView (NSViewCornerConfiguration)
+@property (nullable, readonly) NSViewCornerRadii *_effectiveCornerRadii;
+@property (readonly, nullable, copy) NSViewCornerConfiguration *_cornerConfiguration;
+- (void)_viewDidChangeEffectiveCornerRadii;
+- (void)_invalidateCornerConfiguration;
+@end
+
+#endif
+
 #endif
 
 @protocol NSTextInputClient_Async_Staging_44648564

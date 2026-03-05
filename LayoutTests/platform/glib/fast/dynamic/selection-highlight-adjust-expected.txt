@@ -4,17 +4,17 @@ layer at (0,0) size 800x156
   RenderBlock {HTML} at (0,0) size 800x156
     RenderBody {BODY} at (8,16) size 784x132
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 172x17
+        RenderText {#text} at (0,0) size 172x18
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 784x35
-          RenderInline {A} at (172,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (172,0) size 348x17
+        RenderInline {I} at (0,0) size 784x36
+          RenderInline {A} at (172,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (172,0) size 348x18
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8835"
-          RenderText {#text} at (0,0) size 784x35
+          RenderText {#text} at (0,0) size 784x36
             text run at (519,0) width 5: " "
             text run at (523,0) width 261: "REGRESSION: Line moves but selection"
             text run at (0,18) width 138: "highlight stays behind"
-        RenderText {#text} at (138,18) size 4x17
+        RenderText {#text} at (138,18) size 4x18
           text run at (138,18) width 4: "."
       RenderBlock {DIV} at (0,62) size 784x70
         RenderImage {IMG} at (0,0) size 0x30

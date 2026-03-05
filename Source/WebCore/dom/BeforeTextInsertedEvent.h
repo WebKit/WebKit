@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class BeforeTextInsertedEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BeforeTextInsertedEvent);
+    WTF_MAKE_TZONE_ALLOCATED(BeforeTextInsertedEvent);
 public:
     virtual ~BeforeTextInsertedEvent();
 
@@ -44,11 +44,13 @@ public:
 
 private:
     explicit BeforeTextInsertedEvent(const String&);
-    bool isBeforeTextInsertedEvent() const override { return true; }
+
+    bool isBeforeTextInsertedEvent() const final { return true; }
 
     String m_text;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_EVENT(BeforeTextInsertedEvent)
+// Technically not a polymorphic Event class, but it requires the same infrastructure as it's not in EventInterfaces.in.
+SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(BeforeTextInsertedEvent)

@@ -4,7 +4,7 @@ layer at (0,0) size 800x409
   RenderBlock {html} at (0,0) size 800x409
     RenderBody {body} at (8,16) size 784x377
       RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 438x19
+        RenderText {#text} at (0,0) size 438x20
           text run at (0,0) width 438: "There should be two identical blue squares below, and no scrollbars."
       RenderBlock {div} at (0,36) size 160x160 [bgcolor=#000080]
       RenderBlock {p} at (0,212) size 784x165

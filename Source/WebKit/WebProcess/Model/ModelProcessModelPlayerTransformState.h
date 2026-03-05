@@ -56,6 +56,7 @@ private:
     void setHasPortal(bool) final;
     WebCore::StageModeOperation stageMode() const final { return m_stageModeOperation; }
     void setStageMode(WebCore::StageModeOperation) final;
+    void invalidateTransform() final;
 
     std::optional<WebCore::TransformationMatrix> m_entityTransform;
     std::optional<WebCore::FloatPoint3D> m_boundingBoxCenter;

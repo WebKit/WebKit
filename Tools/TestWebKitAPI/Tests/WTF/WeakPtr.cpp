@@ -91,32 +91,6 @@ template<typename T> using WeakListHashSet = WTF::WeakListHashSet<T, WeakPtrImpl
 template<typename T> using WeakPtr = WTF::WeakPtr<T, WeakPtrImplWithCounter>;
 template<typename T> using WeakPtrFactory = WTF::WeakPtrFactory<T, WeakPtrImplWithCounter>;
 
-// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
-template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(T& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
-{
-    return WeakPtr<T>(object, enableWeakPtrThreadingAssertions);
-}
-
-// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
-template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(T* ptr, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes) -> decltype(makeWeakPtr(*ptr))
-{
-    if (!ptr)
-        return { };
-    return makeWeakPtr(*ptr, enableWeakPtrThreadingAssertions);
-}
-
-// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
-template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(const Ref<T>& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
-{
-    return makeWeakPtr(object.get(), enableWeakPtrThreadingAssertions);
-}
-
-// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
-template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(const RefPtr<T>& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
-{
-    return makeWeakPtr(object.get(), enableWeakPtrThreadingAssertions);
-}
-
 struct Int : public CanMakeWeakPtr<Int> {
     Int(int i) : m_i(i) { }
     operator int() const { return m_i; }
@@ -250,7 +224,7 @@ TEST(WTF_WeakPtr, Operators)
     weakPtr3 = weakPtr;
     EXPECT_EQ(weakPtr3.get(), &f);
 
-    WeakPtr<Foo> weakPtr4 = WTFMove(weakPtr);
+    WeakPtr<Foo> weakPtr4 = WTF::move(weakPtr);
     EXPECT_EQ(weakPtr4.get(), &f);
     SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(weakPtr);
 }
@@ -338,7 +312,7 @@ TEST(WTF_WeakPtr, Downcasting)
         EXPECT_EQ(baseWeakPtr->foo(), basePtr->foo());
         EXPECT_EQ(baseWeakPtr.get()->foo(), basePtr->foo());
 
-        derivedWeakPtr = makeWeakPtr(object);
+        derivedWeakPtr = object;
         EXPECT_EQ(derivedWeakPtr->foo(), dummy1);
         EXPECT_EQ(derivedWeakPtr->foo(), derivedPtr->foo());
         EXPECT_EQ(derivedWeakPtr.get()->foo(), derivedPtr->foo());
@@ -354,29 +328,29 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssign)
 {
     Derived derived;
     {
-        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
-        WeakPtr<Base> baseWeakPtr { WTFMove(derivedWeakPtr) };
+        WeakPtr<Derived> derivedWeakPtr { derived };
+        WeakPtr<Base> baseWeakPtr { WTF::move(derivedWeakPtr) };
         EXPECT_EQ(baseWeakPtr.get(), &derived);
         SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
-        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<Derived> derivedWeakPtr { derived };
         WeakPtr<Base> baseWeakPtr { derivedWeakPtr };
         EXPECT_EQ(baseWeakPtr.get(), &derived);
         EXPECT_EQ(derivedWeakPtr.get(), &derived);
     }
 
     {
-        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<Derived> derivedWeakPtr { derived };
         WeakPtr<Base> baseWeakPtr;
-        baseWeakPtr = WTFMove(derivedWeakPtr);
+        baseWeakPtr = WTF::move(derivedWeakPtr);
         EXPECT_EQ(baseWeakPtr.get(), &derived);
         SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
-        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<Derived> derivedWeakPtr { derived };
         WeakPtr<Base> baseWeakPtr;
         baseWeakPtr = derivedWeakPtr;
         EXPECT_EQ(baseWeakPtr.get(), &derived);
@@ -388,29 +362,29 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssignConst)
 {
     const Derived derived;
     {
-        auto derivedWeakPtr = makeWeakPtr(derived);
-        WeakPtr<const Base> baseWeakPtr { WTFMove(derivedWeakPtr) };
+        WeakPtr<const Derived> derivedWeakPtr { derived };
+        WeakPtr<const Base> baseWeakPtr { WTF::move(derivedWeakPtr) };
         EXPECT_EQ(baseWeakPtr.get(), &derived);
         SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
-        auto derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<const Derived> derivedWeakPtr { derived };
         WeakPtr<const Base> baseWeakPtr { derivedWeakPtr };
         EXPECT_EQ(baseWeakPtr.get(), &derived);
         EXPECT_EQ(derivedWeakPtr.get(), &derived);
     }
 
     {
-        auto derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<const Derived> derivedWeakPtr { derived };
         WeakPtr<const Base> baseWeakPtr;
-        baseWeakPtr = WTFMove(derivedWeakPtr);
+        baseWeakPtr = WTF::move(derivedWeakPtr);
         EXPECT_EQ(baseWeakPtr.get(), &derived);
         SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
-        auto derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<const Derived> derivedWeakPtr { derived };
         WeakPtr<const Base> baseWeakPtr;
         baseWeakPtr = derivedWeakPtr;
         EXPECT_EQ(baseWeakPtr.get(), &derived);
@@ -444,7 +418,7 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRef)
     EXPECT_EQ(baseObject->refCount(), 1U);
     EXPECT_EQ(baseObject->weakCount(), 0U);
     {
-        auto baseObjectWeakPtr = makeWeakPtr(baseObject);
+        WeakPtr<BaseObjectWithRefAndWeakPtr> baseObjectWeakPtr { baseObject.get() };
         EXPECT_EQ(baseObject->refCount(), 1U);
         EXPECT_EQ(baseObject->weakCount(), 1U);
         EXPECT_EQ(baseObjectWeakPtr.get(), baseObject.ptr());
@@ -458,7 +432,7 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRef)
         EXPECT_EQ(derivedObject->refCount(), 1U);
         EXPECT_EQ(derivedObject->weakCount(), 0U);
         {
-            WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr = makeWeakPtr(derivedObject);
+            WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr { derivedObject };
             EXPECT_EQ(derivedObject->refCount(), 1U);
             EXPECT_EQ(derivedObject->weakCount(), 1U);
             EXPECT_EQ(derivedObjectWeakPtr.get(), derivedObject.ptr());
@@ -469,7 +443,7 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRef)
             Ref<BaseObjectWithRefAndWeakPtr> baseRefPtr = derivedObject;
             EXPECT_EQ(derivedObject->refCount(), 2U);
             EXPECT_EQ(derivedObject->weakCount(), 0U);
-            baseWeakPtr = makeWeakPtr(baseRefPtr);
+            baseWeakPtr = baseRefPtr.get();
             EXPECT_EQ(derivedObject->refCount(), 2U);
             EXPECT_EQ(derivedObject->weakCount(), 1U);
             EXPECT_EQ(baseWeakPtr.get(), derivedObject.ptr());
@@ -487,7 +461,7 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRefPtr)
     EXPECT_EQ(baseObject->refCount(), 1U);
     EXPECT_EQ(baseObject->weakCount(), 0U);
     {
-        auto baseObjectWeakPtr = makeWeakPtr(baseObject);
+        WeakPtr<BaseObjectWithRefAndWeakPtr> baseObjectWeakPtr { baseObject.get() };
         EXPECT_EQ(baseObject->refCount(), 1U);
         EXPECT_EQ(baseObject->weakCount(), 1U);
         EXPECT_EQ(baseObjectWeakPtr.get(), baseObject.get());
@@ -499,12 +473,12 @@ TEST(WTF_WeakPtr, MakeWeakPtrTakesRefPtr)
     EXPECT_EQ(derivedObject->refCount(), 1U);
     EXPECT_EQ(derivedObject->weakCount(), 0U);
     {
-        WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr = makeWeakPtr(derivedObject);
+        WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr { derivedObject.get() };
         EXPECT_EQ(derivedObject->refCount(), 1U);
         EXPECT_EQ(derivedObject->weakCount(), 1U);
         EXPECT_EQ(derivedObjectWeakPtr.get(), derivedObject.get());
 
-        WeakPtr<BaseObjectWithRefAndWeakPtr> baseObjectWeakPtr = makeWeakPtr<BaseObjectWithRefAndWeakPtr>(derivedObject);
+        WeakPtr<BaseObjectWithRefAndWeakPtr> baseObjectWeakPtr { derivedObject.get() };
         EXPECT_EQ(derivedObject->refCount(), 1U);
         EXPECT_EQ(derivedObject->weakCount(), 2U);
         EXPECT_EQ(baseObjectWeakPtr.get(), derivedObject.get());
@@ -738,7 +712,7 @@ TEST(WTF_WeakPtr, WeakHashSetExpansion)
         for (unsigned i = 0; i < initialCapacity / maxLoadCap; ++i) {
             auto object = makeUnique<Base>();
             weakHashSet.add(*object);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
             otherObjects.append(makeUnique<Base>());
             weakHashSet.checkConsistency();
         }
@@ -775,7 +749,7 @@ TEST(WTF_WeakPtr, WeakHashSetExpansion)
         for (unsigned i = 0; i < objectCount; ++i) {
             auto object = makeUnique<Base>();
             weakHashSet.add(*object);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
             weakHashSet.checkConsistency();
         }
         unsigned originalCapacity = weakHashSet.capacity();
@@ -830,7 +804,7 @@ TEST(WTF_WeakPtr, WeakHashSetisEmptyIgnoringNullReferences)
         do {
             auto object = makeUnique<Base>();
             weakHashSet.add(*object);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
         } while (weakHashSet.begin().get() == firstObject.get());
 
         EXPECT_EQ(s_baseWeakReferences, objects.size() + 1);
@@ -922,7 +896,7 @@ TEST(WTF_WeakPtr, WeakHashSetComputeSize)
         do {
             auto object = makeUnique<Base>();
             weakHashSet.add(*object);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
         } while (weakHashSet.begin().get() == nonFirstObject.get());
 
         unsigned objectsCount = objects.size();
@@ -1311,7 +1285,7 @@ TEST(WTF_WeakPtr, WeakHashMapRemoveIterator)
     for (unsigned i = 0; i < 13; ++i) {
         auto object = makeUnique<Base>();
         weakHashMap.add(*object, 0);
-        objects.append(WTFMove(object));
+        objects.append(WTF::move(object));
     }
     while (!objects.isEmpty()) {
         auto it = weakHashMap.find(*objects.last());
@@ -1345,7 +1319,7 @@ TEST(WTF_WeakPtr, WeakHashMapExpansion)
         for (unsigned i = 0; i < initialCapacity / maxLoadCap; ++i) {
             auto object = makeUnique<Base>();
             weakHashMap.add(*object, i);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
             otherObjects.append(makeUnique<Base>());
             weakHashMap.checkConsistency();
         }
@@ -1389,7 +1363,7 @@ TEST(WTF_WeakPtr, WeakHashMapExpansion)
         for (unsigned i = 0; i < objectCount; ++i) {
             auto object = makeUnique<Base>();
             weakHashMap.set(*object, ValueObject::create(100 + i));
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
             weakHashMap.checkConsistency();
         }
         unsigned originalCapacity = weakHashMap.capacity();
@@ -1481,7 +1455,7 @@ TEST(WTF_WeakPtr, WeakHashMapIsEmptyIgnoringNullReferences)
         do {
             auto object = makeUnique<Base>();
             weakHashMap.set(*object, ValueObject::create(value++));
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
         } while (&weakHashMap.begin()->key == firstObject.get());
 
         EXPECT_EQ(ValueObject::s_count, objects.size() + 1);
@@ -1560,7 +1534,7 @@ TEST(WTF_WeakPtr, WeakHashMapRemoveNullReferences)
         for (unsigned i = 0; i < 50; ++i) {
             auto key = makeUnique<Derived>();
             weakHashMap.add(*key, ValueObject::create(i + 100));
-            objects.append(WTFMove(key));
+            objects.append(WTF::move(key));
         }
         EXPECT_EQ(ValueObject::s_count, 50U);
         EXPECT_EQ(s_baseWeakReferences, 50U);
@@ -1981,7 +1955,7 @@ TEST(WTF_WeakPtr, WeakHashMap_iterator_destruction)
     for (unsigned i = 0; i < objectCount; ++i) {
         auto object = makeUnique<Base>();
         weakHashMap.add(*object, i);
-        objects.append(WTFMove(object));
+        objects.append(WTF::move(object));
     }
 
     auto a = objects.takeLast();
@@ -1994,6 +1968,19 @@ TEST(WTF_WeakPtr, WeakHashMap_iterator_destruction)
         EXPECT_EQ(bIterator->value, objectCount - 2);
         EXPECT_EQ(aIterator->value, objectCount - 1);
     }
+}
+
+TEST(WTF_WeakPtr, ListHashSetBoundedGrowth)
+{
+    ListHashSet<WeakPtr<BaseObjectWithRefAndWeakPtr>> set;
+    for (size_t i = 0; i < 128; ++i)
+        set.add(BaseObjectWithRefAndWeakPtr::create().get());
+
+    size_t entryCount = 0;
+    for (auto entry : set)
+        ++entryCount;
+
+    EXPECT_LT(entryCount, 16u);
 }
 
 template <typename T>
@@ -2092,7 +2079,7 @@ TEST(WTF_WeakPtr, WeakListHashSetBasic)
         for (unsigned i = 0; i < 50; ++i) {
             auto object = makeUnique<Base>();
             weakListHashSet.add(*object);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
         }
 
         unsigned i = 0;
@@ -2171,7 +2158,7 @@ TEST(WTF_WeakPtr, WeakListHashSetRemoveIterator)
     for (unsigned i = 0; i < 13; ++i) {
         auto object = makeUnique<Base>();
         weakListHashSet.add(*object);
-        objects.append(WTFMove(object));
+        objects.append(WTF::move(object));
     }
     for (unsigned i = 0; i < 13; ++i) {
         auto it = weakListHashSet.find(*objects[0]);
@@ -2210,7 +2197,7 @@ TEST(WTF_WeakPtr, WeakListHashSetExpansion)
         for (unsigned i = 0; i < initialCapacity / maxLoadCap; ++i) {
             auto object = makeUnique<Base>();
             weakListHashSet.add(*object);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
             otherObjects.append(makeUnique<Base>());
             weakListHashSet.checkConsistency();
         }
@@ -2247,7 +2234,7 @@ TEST(WTF_WeakPtr, WeakListHashSetExpansion)
         for (unsigned i = 0; i < objectCount; ++i) {
             auto object = makeUnique<Base>();
             weakListHashSet.add(*object);
-            objects.append(WTFMove(object));
+            objects.append(WTF::move(object));
             weakListHashSet.checkConsistency();
         }
         unsigned originalCapacity = weakListHashSet.capacity();
@@ -2359,7 +2346,7 @@ TEST(WTF_WeakPtr, WeakListHashSetRemoveNullReferences)
         for (unsigned i = 0; i < 50; ++i) {
             auto key = makeUnique<Derived>();
             weakListHashSet.add(*key);
-            objects.append(WTFMove(key));
+            objects.append(WTF::move(key));
         }
         EXPECT_EQ(s_baseWeakReferences, 50U);
         EXPECT_FALSE(weakListHashSet.hasNullReferences());
@@ -2847,7 +2834,7 @@ TEST(WTF_ThreadSafeWeakPtr, UseAfterMoveResistance)
 {
     auto counter = adoptRef(*new ThreadSafeInstanceCounter());
     auto weakPtr = ThreadSafeWeakPtr { counter.get() };
-    auto movedTo = WTFMove(weakPtr);
+    auto movedTo = WTF::move(weakPtr);
     SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(weakPtr.get());
     EXPECT_NOT_NULL(movedTo.get());
     ThreadSafeWeakPtr<ThreadSafeInstanceCounter> emptyConstructor;
@@ -3052,7 +3039,7 @@ TEST(WTF_ThreadSafeWeakPtr, AmortizedCleanupNotQuadratic)
     for (int i = 0; i < 1000000; ++i) {
         auto obj = adoptRef(*new Struct);
         set.add(obj.get());
-        strongSet.add(WTFMove(obj));
+        strongSet.add(WTF::move(obj));
     }
 }
 
@@ -3189,7 +3176,13 @@ public:
     }
 
     explicit operator bool() const { return m_ptr; }
-    void clear() { m_ptr = nullptr; }
+    void clear()
+    {
+        m_ptr = nullptr;
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        m_thread = anyThreadLike;
+#endif
+    }
 
     template<typename T>
     explicit DidUpdateRefCountWeakPtrImpl(T* ptr)
@@ -3197,8 +3190,10 @@ public:
     {
     }
 
-#if ASSERT_ENABLED
-    bool wasConstructedOnMainThread() const { return true; }
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    ~DidUpdateRefCountWeakPtrImpl() { m_thread = anyThreadLike; }
+
+    const ThreadLikeAssertion& threadAssertion() const { return m_thread; }
 #endif
 
     void resetDidUpdateRefCount() { m_didUpdateRefCount = false; }
@@ -3224,6 +3219,9 @@ private:
     mutable uint32_t m_refCount { 1 };
     void* m_ptr;
     mutable bool m_didUpdateRefCount { false };
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    NO_UNIQUE_ADDRESS mutable ThreadLikeAssertion m_thread { mainThreadLike };
+#endif
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
 

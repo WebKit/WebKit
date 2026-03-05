@@ -83,7 +83,6 @@ public:
 
     void setRootLayer(CALayer *);
     CALayer *rootLayer() const;
-    RetainPtr<CALayer> protectedRootLayer() const;
 
     LayerHostingContextID contextID() const;
     void invalidate();
@@ -98,7 +97,7 @@ public:
     // with this context is desired.
     WTF::MachSendRight createFencePort();
 
-    LayerHostingContextID cachedContextID();
+    LayerHostingContextID NODELETE cachedContextID();
 
 #if USE(EXTENSIONKIT)
     RetainPtr<BELayerHierarchy> hostable() const { return m_hostable; }
@@ -109,7 +108,7 @@ public:
     static RetainPtr<BELayerHierarchyHostingTransactionCoordinator> createHostingUpdateCoordinator(WTF::MachSendRightAnnotated&&);
     static WTF::MachSendRightAnnotated fence(BELayerHierarchyHostingTransactionCoordinator *);
 #else
-    XPCObjectPtr<xpc_object_t> xpcRepresentation() const;
+    OSObjectPtr<xpc_object_t> xpcRepresentation() const;
     static RetainPtr<BELayerHierarchyHandle> createHostingHandle(uint64_t pid, uint64_t contextID);
     static RetainPtr<BELayerHierarchyHostingTransactionCoordinator> createHostingUpdateCoordinator(mach_port_t sendRight);
 #endif // ENABLE(MACH_PORT_LAYER_HOSTING)

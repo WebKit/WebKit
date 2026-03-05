@@ -34,14 +34,14 @@
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylableInlines.h"
 #include "StyleResolver.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PseudoElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PseudoElement);
 
 const QualifiedName& pseudoElementTagName()
 {
@@ -67,14 +67,14 @@ Ref<PseudoElement> PseudoElement::create(Element& host, PseudoElementType pseudo
 {
     Ref pseudoElement = adoptRef(*new PseudoElement(host, pseudoElementType));
 
-    InspectorInstrumentation::pseudoElementCreated(host.document().protectedPage().get(), pseudoElement.get());
+    InspectorInstrumentation::pseudoElementCreated(protect(host.document().page()).get(), pseudoElement.get());
 
     return pseudoElement;
 }
 
 void PseudoElement::clearHostElement()
 {
-    InspectorInstrumentation::pseudoElementDestroyed(document().protectedPage().get(), *this);
+    InspectorInstrumentation::pseudoElementDestroyed(protect(document().page()).get(), *this);
 
     Styleable::fromElement(*this).elementWasRemoved();
 

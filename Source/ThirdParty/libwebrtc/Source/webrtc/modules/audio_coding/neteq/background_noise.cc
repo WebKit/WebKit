@@ -29,9 +29,6 @@ constexpr size_t kMaxSampleRate = 48000;
 
 }  // namespace
 
-// static
-constexpr size_t BackgroundNoise::kMaxLpcOrder;
-
 BackgroundNoise::BackgroundNoise(size_t num_channels)
     : num_channels_(num_channels),
       channel_parameters_(new ChannelParameters[num_channels_]) {

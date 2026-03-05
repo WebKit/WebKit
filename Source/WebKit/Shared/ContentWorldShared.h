@@ -48,6 +48,7 @@ enum class ContentWorldOption : uint8_t {
     DisableLegacyBuiltinOverrides = 1 << 3,
     AllowJSHandleCreation = 1 << 4,
     AllowNodeSerialization = 1 << 5,
+    Inspectable = 1 << 6,
 };
 
 } // namespace WebKit

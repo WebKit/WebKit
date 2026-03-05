@@ -78,11 +78,11 @@ void wgpuXRBindingRelease(WGPUXRBinding binding)
 
 WGPUXRProjectionLayer wgpuBindingCreateXRProjectionLayer(WGPUXRBinding binding, WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsageFlags flags, double scale)
 {
-    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(binding)->createXRProjectionLayer(colorFormat, optionalDepthStencilFormat, flags, scale));
+    return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(binding))->createXRProjectionLayer(colorFormat, optionalDepthStencilFormat, flags, scale));
 }
 
 WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXRProjectionLayer layer)
 {
-    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(binding)->getViewSubImage(WebGPU::protectedFromAPI(layer)));
+    return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(binding))->getViewSubImage(protect(WebGPU::fromAPI(layer))));
 }
 

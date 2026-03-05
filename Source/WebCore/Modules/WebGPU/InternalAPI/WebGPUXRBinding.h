@@ -53,6 +53,7 @@ public:
     virtual RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&) = 0;
     virtual TextureFormat getPreferredColorFormat() = 0;
     virtual bool isRemoteXRBindingProxy() const { return false; }
+    virtual bool isXRBindingImpl() const { return false; }
 
 protected:
     XRBinding() = default;

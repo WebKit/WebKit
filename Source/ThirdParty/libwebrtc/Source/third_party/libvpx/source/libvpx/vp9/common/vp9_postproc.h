@@ -30,6 +30,7 @@ struct postproc_state {
   MODE_INFO *prev_mi;
   int clamp;
   uint8_t *limits;
+  int limits_size;
   int8_t *generated_noise;
 };
 

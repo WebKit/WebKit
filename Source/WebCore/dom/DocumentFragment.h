@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class DocumentFragment : public ContainerNode {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentFragment);
+    WTF_MAKE_TZONE_ALLOCATED(DocumentFragment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentFragment);
 public:
     WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
@@ -51,7 +51,7 @@ protected:
 private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
-    bool childTypeAllowed(NodeType) const override;
+    bool NODELETE childTypeAllowed(NodeType) const final;
 };
 
 } // namespace WebCore

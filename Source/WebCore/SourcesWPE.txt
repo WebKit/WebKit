@@ -64,6 +64,8 @@ platform/glib/RunLoopObserverGLib.cpp
 
 platform/graphics/PlatformDisplay.cpp @no-unify
 
+platform/graphics/android/BufferFormatAndroid.cpp @no-unify
+
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
 platform/graphics/glib/IconGLib.cpp
@@ -89,6 +91,7 @@ platform/graphics/gbm/GBMDevice.cpp
 platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.cpp @no-unify
 platform/graphics/gbm/MemoryMappedGPUBuffer.cpp
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
+platform/graphics/gbm/VivanteSuperTiledTexture.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
@@ -99,6 +102,8 @@ platform/libwpe/PlatformPasteboardLibWPE.cpp
 
 platform/text/Hyphenation.cpp
 platform/text/LocaleICU.cpp
+
+platform/text/hyphen/HyphenationLibHyphen.cpp
 
 platform/android/SharedMemoryAndroid.cpp
 

@@ -46,7 +46,7 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKGeolocationPosition.class, self))
         return;
 
-    _geolocationPosition->~WebGeolocationPosition();
+    SUPPRESS_UNCOUNTED_ARG _geolocationPosition->~WebGeolocationPosition();
 
     [super dealloc];
 }

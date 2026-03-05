@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <cstdint>
 #include <wtf/EnumClassOperatorOverloads.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 

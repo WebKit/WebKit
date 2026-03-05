@@ -33,7 +33,6 @@ import shlex
 
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.glib import GLibPort
 from webkitpy.port.headlessdriver import HeadlessDriver
 from webkitpy.port.westondriver import WestonDriver
@@ -89,12 +88,6 @@ class WPEPort(GLibPort):
     def check_sys_deps(self):
         return super(WPEPort, self).check_sys_deps() and self._driver_class().check_driver(self)
 
-    def _generate_all_test_configurations(self):
-        configurations = []
-        for build_type in self.ALL_BUILD_TYPES:
-            configurations.append(TestConfiguration(version=self.version_name(), architecture='x86', build_type=build_type))
-        return configurations
-
     def _path_to_driver(self):
         return self._built_executables_path(self.driver_name())
 
@@ -126,6 +119,10 @@ class WPEPort(GLibPort):
     def configuration_for_upload(self, host=None):
         configuration = super(WPEPort, self).configuration_for_upload(host=host)
         configuration['platform'] = 'WPE'
+        # resultsdbpy frontend tends to group multiple versions in a single timeline
+        # when they share a version name. As we are using stable versions since 305707@main,
+        # let's avoid this grouping for now due to issues like https://webkit.org/b/306091.
+        configuration.pop('version_name', None)
         return configuration
 
     def cog_path_to(self, *components):

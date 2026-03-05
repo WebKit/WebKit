@@ -30,7 +30,9 @@
 #pragma once
 
 #include <optional>
+#include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 namespace URLHelpers {

@@ -74,6 +74,7 @@ public:
     virtual void setDeltaPose(WebXRRigidTransform*) = 0;
 
     virtual bool isRemoteXRProjectionLayerProxy() const { return false; }
+    virtual bool isXRProjectionLayerImpl() const { return false; }
 
 protected:
     XRProjectionLayer() = default;

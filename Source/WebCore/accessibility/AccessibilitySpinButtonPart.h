@@ -40,6 +40,7 @@ public:
 private:
     explicit AccessibilitySpinButtonPart(AXID, AXObjectCache&);
 
+    bool computeIsIgnored() const final;
     bool press() final;
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButtonPart; }
     bool isSpinButtonPart() const final { return true; }

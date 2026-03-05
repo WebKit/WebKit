@@ -5,10 +5,11 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
-#include "RenderStyleSetters.h"
-#include "StyleBuilderConverter.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "StyleBuilderCustom.h"
 #include "StyleBuilderState.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePropertyShorthand.h"
 
 namespace WebCore {
@@ -16,85 +17,33 @@ namespace Style {
 
 class BuilderFunctions {
 public:
-    static void applyInitialTestTopPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestTopPriority(RenderStyle::initialTestTopPriority());
-    }
-    static void applyInheritTestTopPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestTopPriority(forwardInheritedValue(builderState.parentStyle().testTopPriority()));
-    }
-    static void applyValueTestTopPriority(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestTopPriority(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestHighPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestHighPriority(RenderStyle::initialTestHighPriority());
-    }
-    static void applyInheritTestHighPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestHighPriority(forwardInheritedValue(builderState.parentStyle().testHighPriority()));
-    }
-    static void applyValueTestHighPriority(BuilderState& builderState, CSSValue& value)
-    {
-        if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {
-            applyInitialTestHighPriority(builderState);
-            return;
-        }
-        builderState.style().setTestHighPriority(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMediumPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestMediumPriority(RenderStyle::initialTestMediumPriority());
-    }
-    static void applyInheritTestMediumPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestMediumPriority(forwardInheritedValue(builderState.parentStyle().testMediumPriority()));
-    }
-    static void applyValueTestMediumPriority(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMediumPriority(fromCSSValueDeducingType(builderState, value));
-    }
     static void applyInitialBackgroundCoordinatedValueListPropertyTestDiscrete(BuilderState& builderState)
     {
-        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &RenderStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
+        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyInheritBackgroundCoordinatedValueListPropertyTestDiscrete(BuilderState& builderState)
     {
-        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &RenderStyle::ensureBackgroundLayers, &RenderStyle::backgroundLayers, BackgroundLayers>(builderState);
+        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, &ComputedStyle::backgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyValueBackgroundCoordinatedValueListPropertyTestDiscrete(BuilderState& builderState, CSSValue& value)
     {
-        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &RenderStyle::ensureBackgroundLayers, &fromCSSValueDeducingType, BackgroundLayers>(builderState, value);
-    }
-    static void applyInitialBackgroundCoordinatedValueListPropertyTestThreeWithConverter(BuilderState& builderState)
-    {
-        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestThreeWithConverter, &RenderStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
-    }
-    static void applyInheritBackgroundCoordinatedValueListPropertyTestThreeWithConverter(BuilderState& builderState)
-    {
-        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestThreeWithConverter, &RenderStyle::ensureBackgroundLayers, &RenderStyle::backgroundLayers, BackgroundLayers>(builderState);
-    }
-    static void applyValueBackgroundCoordinatedValueListPropertyTestThreeWithConverter(BuilderState& builderState, CSSValue& value)
-    {
-        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestThreeWithConverter, &RenderStyle::ensureBackgroundLayers, &BuilderConverter::convertFillTestConverter, BackgroundLayers>(builderState, value);
+        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
     }
     static void applyInitialBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState)
     {
-        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &RenderStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
+        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyInheritBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState)
     {
-        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &RenderStyle::ensureBackgroundLayers, &RenderStyle::backgroundLayers, BackgroundLayers>(builderState);
+        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, &ComputedStyle::backgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyValueBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState, CSSValue& value)
     {
-        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &RenderStyle::ensureBackgroundLayers, &fromCSSValueDeducingType, BackgroundLayers>(builderState, value);
+        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
     }
     static void applyInitialTestAnimationWrapper(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapper(RenderStyle::initialTestAnimationWrapper());
+        builderState.style().setTestAnimationWrapper(Style::ComputedStyle::initialTestAnimationWrapper());
     }
     static void applyInheritTestAnimationWrapper(BuilderState& builderState)
     {
@@ -102,11 +51,11 @@ public:
     }
     static void applyValueTestAnimationWrapper(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestAnimationWrapper(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestAnimationWrapper(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestAnimationWrapperAccelerationAlways(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapperAccelerationAlways(RenderStyle::initialTestAnimationWrapperAccelerationAlways());
+        builderState.style().setTestAnimationWrapperAccelerationAlways(Style::ComputedStyle::initialTestAnimationWrapperAccelerationAlways());
     }
     static void applyInheritTestAnimationWrapperAccelerationAlways(BuilderState& builderState)
     {
@@ -114,11 +63,11 @@ public:
     }
     static void applyValueTestAnimationWrapperAccelerationAlways(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestAnimationWrapperAccelerationAlways(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestAnimationWrapperAccelerationAlways(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(RenderStyle::initialTestAnimationWrapperAccelerationThreadedOnly());
+        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(Style::ComputedStyle::initialTestAnimationWrapperAccelerationThreadedOnly());
     }
     static void applyInheritTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState)
     {
@@ -126,155 +75,11 @@ public:
     }
     static void applyValueTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithCommas(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommas(RenderStyle::initialTestBoundedRepetitionWithCommas());
-    }
-    static void applyInheritTestBoundedRepetitionWithCommas(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommas(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithCommas()));
-    }
-    static void applyValueTestBoundedRepetitionWithCommas(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommas(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithCommasFixed(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasFixed(RenderStyle::initialTestBoundedRepetitionWithCommasFixed());
-    }
-    static void applyInheritTestBoundedRepetitionWithCommasFixed(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasFixed(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithCommasFixed()));
-    }
-    static void applyValueTestBoundedRepetitionWithCommasFixed(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasFixed(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithCommasNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasNoSingleItemOpt(RenderStyle::initialTestBoundedRepetitionWithCommasNoSingleItemOpt());
-    }
-    static void applyInheritTestBoundedRepetitionWithCommasNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithCommasNoSingleItemOpt()));
-    }
-    static void applyValueTestBoundedRepetitionWithCommasNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithCommasSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasSingleItemOpt(RenderStyle::initialTestBoundedRepetitionWithCommasSingleItemOpt());
-    }
-    static void applyInheritTestBoundedRepetitionWithCommasSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithCommasSingleItemOpt()));
-    }
-    static void applyValueTestBoundedRepetitionWithCommasSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithCommasSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpaces(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpaces(RenderStyle::initialTestBoundedRepetitionWithSpaces());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpaces(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpaces(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpaces()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpaces(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpaces(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpacesFixed(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesFixed(RenderStyle::initialTestBoundedRepetitionWithSpacesFixed());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpacesFixed(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesFixed(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpacesFixed()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpacesFixed(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesFixed(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpacesNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesNoSingleItemOpt(RenderStyle::initialTestBoundedRepetitionWithSpacesNoSingleItemOpt());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpacesNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpacesNoSingleItemOpt()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpacesNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpacesSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesSingleItemOpt(RenderStyle::initialTestBoundedRepetitionWithSpacesSingleItemOpt());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpacesSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpacesSingleItemOpt()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpacesSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpacesWithType(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithType(RenderStyle::initialTestBoundedRepetitionWithSpacesWithType());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpacesWithType(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithType(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpacesWithType()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpacesWithType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(RenderStyle::initialTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(RenderStyle::initialTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(RenderStyle::initialTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo());
-    }
-    static void applyInheritTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(BuilderState& builderState)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(forwardInheritedValue(builderState.parentStyle().testBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo()));
-    }
-    static void applyValueTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestColor(BuilderState& builderState)
     {
-        builderState.style().setTestColor(RenderStyle::initialTestColor());
+        builderState.style().setTestColor(Style::ComputedStyle::initialTestColor());
     }
     static void applyInheritTestColor(BuilderState& builderState)
     {
@@ -282,11 +87,11 @@ public:
     }
     static void applyValueTestColor(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestColor(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
+        builderState.style().setTestColor(toStyleFromCSSValue<Style::Color>(builderState, value));
     }
     static void applyInitialTestColorAllowsTypesAbsolute(BuilderState& builderState)
     {
-        builderState.style().setTestColorAllowsTypesAbsolute(RenderStyle::initialTestColorAllowsTypesAbsolute());
+        builderState.style().setTestColorAllowsTypesAbsolute(Style::ComputedStyle::initialTestColorAllowsTypesAbsolute());
     }
     static void applyInheritTestColorAllowsTypesAbsolute(BuilderState& builderState)
     {
@@ -294,26 +99,14 @@ public:
     }
     static void applyValueTestColorAllowsTypesAbsolute(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestColorAllowsTypesAbsolute(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
-    }
-    static void applyInitialTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState)
-    {
-        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(RenderStyle::initialTestColorPropertyWithNoVisitedLinkSupport());
-    }
-    static void applyInheritTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState)
-    {
-        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().testColorPropertyWithNoVisitedLinkSupport()));
-    }
-    static void applyValueTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
+        builderState.style().setTestColorAllowsTypesAbsolute(toStyleFromCSSValue<Style::Color>(builderState, value));
     }
     static void applyInitialTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
     {
         if (builderState.applyPropertyToRegularStyle())
-            builderState.style().setTestColorPropertyWithVisitedLinkSupport(RenderStyle::initialTestColorPropertyWithVisitedLinkSupport());
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(Style::ComputedStyle::initialTestColorPropertyWithVisitedLinkSupport());
         if (builderState.applyPropertyToVisitedLinkStyle())
-            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(RenderStyle::initialTestColorPropertyWithVisitedLinkSupport());
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::ComputedStyle::initialTestColorPropertyWithVisitedLinkSupport());
     }
     static void applyInheritTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
     {
@@ -325,733 +118,56 @@ public:
     static void applyValueTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
     {
         if (builderState.applyPropertyToRegularStyle())
-            builderState.style().setTestColorPropertyWithVisitedLinkSupport(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(toStyleFromCSSValue<Style::Color>(builderState, value, ForVisitedLink::No));
         if (builderState.applyPropertyToVisitedLinkStyle())
-            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::Yes));
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(toStyleFromCSSValue<Style::Color>(builderState, value, ForVisitedLink::Yes));
     }
-    static void applyInitialTestCustomExtractor(BuilderState& builderState)
+    static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
     {
-        builderState.style().setTestCustomExtractor(RenderStyle::initialTestCustomExtractor());
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
     }
-    static void applyInheritTestCustomExtractor(BuilderState& builderState)
+    static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
     {
-        builderState.style().setTestCustomExtractor(forwardInheritedValue(builderState.parentStyle().testCustomExtractor()));
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
     }
-    static void applyValueTestCustomExtractor(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestCustomExtractor(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
     }
-    static void applyInitialTestExtractorConverter(BuilderState& builderState)
+    static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
     {
-        builderState.style().setTestExtractorConverter(RenderStyle::initialTestExtractorConverter());
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(false);
     }
-    static void applyInheritTestExtractorConverter(BuilderState& builderState)
+    static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
     {
-        builderState.style().setTestExtractorConverter(forwardInheritedValue(builderState.parentStyle().testExtractorConverter()));
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyAllBorderRadius()));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState.parentStyle().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
     }
-    static void applyValueTestExtractorConverter(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestExtractorConverter(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(true);
     }
-    static void applyInitialTestFunctionBoundedParameters(BuilderState& builderState)
+    static void applyInitialTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
     {
-        builderState.style().setTestFunctionBoundedParameters(RenderStyle::initialTestFunctionBoundedParameters());
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyValueOnly());
     }
-    static void applyInheritTestFunctionBoundedParameters(BuilderState& builderState)
+    static void applyInheritTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
     {
-        builderState.style().setTestFunctionBoundedParameters(forwardInheritedValue(builderState.parentStyle().testFunctionBoundedParameters()));
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyValueOnly()));
     }
-    static void applyValueTestFunctionBoundedParameters(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestFunctionBoundedParameters(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionFixedParameters(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionFixedParameters(RenderStyle::initialTestFunctionFixedParameters());
-    }
-    static void applyInheritTestFunctionFixedParameters(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionFixedParameters(forwardInheritedValue(builderState.parentStyle().testFunctionFixedParameters()));
-    }
-    static void applyValueTestFunctionFixedParameters(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionFixedParameters(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionNoParameters(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionNoParameters(RenderStyle::initialTestFunctionNoParameters());
-    }
-    static void applyInheritTestFunctionNoParameters(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionNoParameters(forwardInheritedValue(builderState.parentStyle().testFunctionNoParameters()));
-    }
-    static void applyValueTestFunctionNoParameters(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionNoParameters(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionParametersMatchAllAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllAnyOrder(RenderStyle::initialTestFunctionParametersMatchAllAnyOrder());
-    }
-    static void applyInheritTestFunctionParametersMatchAllAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllAnyOrder(forwardInheritedValue(builderState.parentStyle().testFunctionParametersMatchAllAnyOrder()));
-    }
-    static void applyValueTestFunctionParametersMatchAllAnyOrder(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionParametersMatchAllAnyOrder(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionParametersMatchAllAnyOrderWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllAnyOrderWithOptional(RenderStyle::initialTestFunctionParametersMatchAllAnyOrderWithOptional());
-    }
-    static void applyInheritTestFunctionParametersMatchAllAnyOrderWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllAnyOrderWithOptional(forwardInheritedValue(builderState.parentStyle().testFunctionParametersMatchAllAnyOrderWithOptional()));
-    }
-    static void applyValueTestFunctionParametersMatchAllAnyOrderWithOptional(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionParametersMatchAllAnyOrderWithOptional(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionParametersMatchAllOrdered(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllOrdered(RenderStyle::initialTestFunctionParametersMatchAllOrdered());
-    }
-    static void applyInheritTestFunctionParametersMatchAllOrdered(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllOrdered(forwardInheritedValue(builderState.parentStyle().testFunctionParametersMatchAllOrdered()));
-    }
-    static void applyValueTestFunctionParametersMatchAllOrdered(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionParametersMatchAllOrdered(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionParametersMatchAllOrderedWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllOrderedWithOptional(RenderStyle::initialTestFunctionParametersMatchAllOrderedWithOptional());
-    }
-    static void applyInheritTestFunctionParametersMatchAllOrderedWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchAllOrderedWithOptional(forwardInheritedValue(builderState.parentStyle().testFunctionParametersMatchAllOrderedWithOptional()));
-    }
-    static void applyValueTestFunctionParametersMatchAllOrderedWithOptional(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionParametersMatchAllOrderedWithOptional(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionParametersMatchOneOrMoreAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchOneOrMoreAnyOrder(RenderStyle::initialTestFunctionParametersMatchOneOrMoreAnyOrder());
-    }
-    static void applyInheritTestFunctionParametersMatchOneOrMoreAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionParametersMatchOneOrMoreAnyOrder(forwardInheritedValue(builderState.parentStyle().testFunctionParametersMatchOneOrMoreAnyOrder()));
-    }
-    static void applyValueTestFunctionParametersMatchOneOrMoreAnyOrder(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionParametersMatchOneOrMoreAnyOrder(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionSingleParameter(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionSingleParameter(RenderStyle::initialTestFunctionSingleParameter());
-    }
-    static void applyInheritTestFunctionSingleParameter(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionSingleParameter(forwardInheritedValue(builderState.parentStyle().testFunctionSingleParameter()));
-    }
-    static void applyValueTestFunctionSingleParameter(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionSingleParameter(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionSingleParameterMatchOne(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionSingleParameterMatchOne(RenderStyle::initialTestFunctionSingleParameterMatchOne());
-    }
-    static void applyInheritTestFunctionSingleParameterMatchOne(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionSingleParameterMatchOne(forwardInheritedValue(builderState.parentStyle().testFunctionSingleParameterMatchOne()));
-    }
-    static void applyValueTestFunctionSingleParameterMatchOne(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionSingleParameterMatchOne(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionSingleParameterOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionSingleParameterOptional(RenderStyle::initialTestFunctionSingleParameterOptional());
-    }
-    static void applyInheritTestFunctionSingleParameterOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionSingleParameterOptional(forwardInheritedValue(builderState.parentStyle().testFunctionSingleParameterOptional()));
-    }
-    static void applyValueTestFunctionSingleParameterOptional(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionSingleParameterOptional(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionUnboundedParametersNoMin(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionUnboundedParametersNoMin(RenderStyle::initialTestFunctionUnboundedParametersNoMin());
-    }
-    static void applyInheritTestFunctionUnboundedParametersNoMin(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionUnboundedParametersNoMin(forwardInheritedValue(builderState.parentStyle().testFunctionUnboundedParametersNoMin()));
-    }
-    static void applyValueTestFunctionUnboundedParametersNoMin(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionUnboundedParametersNoMin(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestFunctionUnboundedParametersWithMinimum(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionUnboundedParametersWithMinimum(RenderStyle::initialTestFunctionUnboundedParametersWithMinimum());
-    }
-    static void applyInheritTestFunctionUnboundedParametersWithMinimum(BuilderState& builderState)
-    {
-        builderState.style().setTestFunctionUnboundedParametersWithMinimum(forwardInheritedValue(builderState.parentStyle().testFunctionUnboundedParametersWithMinimum()));
-    }
-    static void applyValueTestFunctionUnboundedParametersWithMinimum(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestFunctionUnboundedParametersWithMinimum(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestImage(BuilderState& builderState)
-    {
-        builderState.style().setTestImage(RenderStyle::initialTestImage());
-    }
-    static void applyInheritTestImage(BuilderState& builderState)
-    {
-        builderState.style().setTestImage(forwardInheritedValue(builderState.parentStyle().testImage()));
-    }
-    static void applyValueTestImage(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestImage(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestImageNoImageSet(BuilderState& builderState)
-    {
-        builderState.style().setTestImageNoImageSet(RenderStyle::initialTestImageNoImageSet());
-    }
-    static void applyInheritTestImageNoImageSet(BuilderState& builderState)
-    {
-        builderState.style().setTestImageNoImageSet(forwardInheritedValue(builderState.parentStyle().testImageNoImageSet()));
-    }
-    static void applyValueTestImageNoImageSet(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestImageNoImageSet(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestKeyword(BuilderState& builderState)
-    {
-        builderState.style().setTestKeyword(RenderStyle::initialTestKeyword());
-    }
-    static void applyInheritTestKeyword(BuilderState& builderState)
-    {
-        builderState.style().setTestKeyword(forwardInheritedValue(builderState.parentStyle().testKeyword()));
-    }
-    static void applyValueTestKeyword(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestKeyword(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestKeywordWithAliasedTo(BuilderState& builderState)
-    {
-        builderState.style().setTestKeywordWithAliasedTo(RenderStyle::initialTestKeywordWithAliasedTo());
-    }
-    static void applyInheritTestKeywordWithAliasedTo(BuilderState& builderState)
-    {
-        builderState.style().setTestKeywordWithAliasedTo(forwardInheritedValue(builderState.parentStyle().testKeywordWithAliasedTo()));
-    }
-    static void applyValueTestKeywordWithAliasedTo(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestKeywordWithAliasedTo(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrder(RenderStyle::initialTestMatchAllAnyOrder());
-    }
-    static void applyInheritTestMatchAllAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrder(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrder()));
-    }
-    static void applyValueTestMatchAllAnyOrder(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrder(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithCustomType(RenderStyle::initialTestMatchAllAnyOrderWithCustomType());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithCustomType()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptional(RenderStyle::initialTestMatchAllAnyOrderWithOptional());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptional(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptional()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptional(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptional(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndCustomType(RenderStyle::initialTestMatchAllAnyOrderWithOptionalAndCustomType());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalAndCustomType()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(RenderStyle::initialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(RenderStyle::initialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(RenderStyle::initialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(RenderStyle::initialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(RenderStyle::initialTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(RenderStyle::initialTestMatchAllAnyOrderWithOptionalNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalSingleItemOpt(RenderStyle::initialTestMatchAllAnyOrderWithOptionalSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalWithPreserveOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalWithPreserveOrder(RenderStyle::initialTestMatchAllAnyOrderWithOptionalWithPreserveOrder());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalWithPreserveOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalWithPreserveOrder(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalWithPreserveOrder()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalWithPreserveOrder(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalWithPreserveOrder(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(RenderStyle::initialTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithPreserveOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrder(RenderStyle::initialTestMatchAllAnyOrderWithPreserveOrder());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithPreserveOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrder(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithPreserveOrder()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithPreserveOrder(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrder(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrderAndCustomType(RenderStyle::initialTestMatchAllAnyOrderWithPreserveOrderAndCustomType());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrderAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithPreserveOrderAndCustomType()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithPreserveOrderAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrderAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(RenderStyle::initialTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrdered(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrdered(RenderStyle::initialTestMatchAllOrdered());
-    }
-    static void applyInheritTestMatchAllOrdered(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrdered(forwardInheritedValue(builderState.parentStyle().testMatchAllOrdered()));
-    }
-    static void applyValueTestMatchAllOrdered(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrdered(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithCustomType(RenderStyle::initialTestMatchAllOrderedWithCustomType());
-    }
-    static void applyInheritTestMatchAllOrderedWithCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithCustomType()));
-    }
-    static void applyValueTestMatchAllOrderedWithCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptional(RenderStyle::initialTestMatchAllOrderedWithOptional());
-    }
-    static void applyInheritTestMatchAllOrderedWithOptional(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptional(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithOptional()));
-    }
-    static void applyValueTestMatchAllOrderedWithOptional(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptional(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithOptionalAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndCustomType(RenderStyle::initialTestMatchAllOrderedWithOptionalAndCustomType());
-    }
-    static void applyInheritTestMatchAllOrderedWithOptionalAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithOptionalAndCustomType()));
-    }
-    static void applyValueTestMatchAllOrderedWithOptionalAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(RenderStyle::initialTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithOptionalAndMultipleRequired(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndMultipleRequired(RenderStyle::initialTestMatchAllOrderedWithOptionalAndMultipleRequired());
-    }
-    static void applyInheritTestMatchAllOrderedWithOptionalAndMultipleRequired(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndMultipleRequired(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithOptionalAndMultipleRequired()));
-    }
-    static void applyValueTestMatchAllOrderedWithOptionalAndMultipleRequired(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndMultipleRequired(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(RenderStyle::initialTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType());
-    }
-    static void applyInheritTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType()));
-    }
-    static void applyValueTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithOptionalNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalNoSingleItemOpt(RenderStyle::initialTestMatchAllOrderedWithOptionalNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllOrderedWithOptionalNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithOptionalNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllOrderedWithOptionalNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchAllOrderedWithOptionalSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalSingleItemOpt(RenderStyle::initialTestMatchAllOrderedWithOptionalSingleItemOpt());
-    }
-    static void applyInheritTestMatchAllOrderedWithOptionalSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchAllOrderedWithOptionalSingleItemOpt()));
-    }
-    static void applyValueTestMatchAllOrderedWithOptionalSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchAllOrderedWithOptionalSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOne(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOne(RenderStyle::initialTestMatchOne());
-    }
-    static void applyInheritTestMatchOne(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOne(forwardInheritedValue(builderState.parentStyle().testMatchOne()));
-    }
-    static void applyValueTestMatchOne(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOne(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrder(RenderStyle::initialTestMatchOneOrMoreAnyOrder());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrder(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrder()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrder(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrder(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderNoSingleItemOpt(RenderStyle::initialTestMatchOneOrMoreAnyOrderNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrderNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrderNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrderWithCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithCustomType(RenderStyle::initialTestMatchOneOrMoreAnyOrderWithCustomType());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrderWithCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithCustomType(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrderWithCustomType()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrderWithCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(RenderStyle::initialTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrder(RenderStyle::initialTestMatchOneOrMoreAnyOrderWithPreserveOrder());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrder(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrder(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrderWithPreserveOrder()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrder(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrder(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(RenderStyle::initialTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(RenderStyle::initialTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(RenderStyle::initialTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt());
-    }
-    static void applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt()));
-    }
-    static void applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneWithGroupWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithGroupWithSettingsFlag(RenderStyle::initialTestMatchOneWithGroupWithSettingsFlag());
-    }
-    static void applyInheritTestMatchOneWithGroupWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithGroupWithSettingsFlag(forwardInheritedValue(builderState.parentStyle().testMatchOneWithGroupWithSettingsFlag()));
-    }
-    static void applyValueTestMatchOneWithGroupWithSettingsFlag(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneWithGroupWithSettingsFlag(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneWithKeywordWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithKeywordWithSettingsFlag(RenderStyle::initialTestMatchOneWithKeywordWithSettingsFlag());
-    }
-    static void applyInheritTestMatchOneWithKeywordWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithKeywordWithSettingsFlag(forwardInheritedValue(builderState.parentStyle().testMatchOneWithKeywordWithSettingsFlag()));
-    }
-    static void applyValueTestMatchOneWithKeywordWithSettingsFlag(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneWithKeywordWithSettingsFlag(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneWithMultipleKeywords(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithMultipleKeywords(RenderStyle::initialTestMatchOneWithMultipleKeywords());
-    }
-    static void applyInheritTestMatchOneWithMultipleKeywords(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithMultipleKeywords(forwardInheritedValue(builderState.parentStyle().testMatchOneWithMultipleKeywords()));
-    }
-    static void applyValueTestMatchOneWithMultipleKeywords(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneWithMultipleKeywords(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneWithReferenceWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithReferenceWithSettingsFlag(RenderStyle::initialTestMatchOneWithReferenceWithSettingsFlag());
-    }
-    static void applyInheritTestMatchOneWithReferenceWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithReferenceWithSettingsFlag(forwardInheritedValue(builderState.parentStyle().testMatchOneWithReferenceWithSettingsFlag()));
-    }
-    static void applyValueTestMatchOneWithReferenceWithSettingsFlag(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneWithReferenceWithSettingsFlag(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestMatchOneWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithSettingsFlag(RenderStyle::initialTestMatchOneWithSettingsFlag());
-    }
-    static void applyInheritTestMatchOneWithSettingsFlag(BuilderState& builderState)
-    {
-        builderState.style().setTestMatchOneWithSettingsFlag(forwardInheritedValue(builderState.parentStyle().testMatchOneWithSettingsFlag()));
-    }
-    static void applyValueTestMatchOneWithSettingsFlag(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestMatchOneWithSettingsFlag(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestNumericValueRange(BuilderState& builderState)
-    {
-        builderState.style().setTestNumericValueRange(RenderStyle::initialTestNumericValueRange());
-    }
-    static void applyInheritTestNumericValueRange(BuilderState& builderState)
-    {
-        builderState.style().setTestNumericValueRange(forwardInheritedValue(builderState.parentStyle().testNumericValueRange()));
-    }
-    static void applyValueTestNumericValueRange(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestNumericValueRange(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestProperty(BuilderState& builderState)
-    {
-        builderState.style().setTestProperty(RenderStyle::initialTestProperty());
-    }
-    static void applyInheritTestProperty(BuilderState& builderState)
-    {
-        builderState.style().setTestProperty(forwardInheritedValue(builderState.parentStyle().testProperty()));
-    }
-    static void applyValueTestProperty(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestProperty(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(true);
     }
     static void applyInitialTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelEnum(RenderStyle::initialTestRenderStyleStorageOneLevelEnum());
+        builderState.style().setTestRenderStyleStorageOneLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelEnum());
     }
     static void applyInheritTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
     {
@@ -1059,11 +175,23 @@ public:
     }
     static void applyValueTestRenderStyleStorageOneLevelEnum(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelEnum(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleStorageOneLevelEnum(toStyleFromCSSValue<Style::TestEnumeration>(builderState, value));
+    }
+    static void applyInitialTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleStorageOneLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelRaw());
+    }
+    static void applyInheritTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleStorageOneLevelRaw(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageOneLevelRaw()));
+    }
+    static void applyValueTestRenderStyleStorageOneLevelRaw(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestRenderStyleStorageOneLevelRaw(toStyleFromCSSValue<Style::TestRaw>(builderState, value));
     }
     static void applyInitialTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelReference(RenderStyle::initialTestRenderStyleStorageOneLevelReference());
+        builderState.style().setTestRenderStyleStorageOneLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelReference());
     }
     static void applyInheritTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
     {
@@ -1071,11 +199,11 @@ public:
     }
     static void applyValueTestRenderStyleStorageOneLevelReference(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelReference(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleStorageOneLevelReference(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelValue(RenderStyle::initialTestRenderStyleStorageOneLevelValue());
+        builderState.style().setTestRenderStyleStorageOneLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelValue());
     }
     static void applyInheritTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
     {
@@ -1083,11 +211,11 @@ public:
     }
     static void applyValueTestRenderStyleStorageOneLevelValue(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelValue(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleStorageOneLevelValue(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelEnum(RenderStyle::initialTestRenderStyleStorageTwoLevelEnum());
+        builderState.style().setTestRenderStyleStorageTwoLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelEnum());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
@@ -1095,11 +223,23 @@ public:
     }
     static void applyValueTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelEnum(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleStorageTwoLevelEnum(toStyleFromCSSValue<Style::TestEnumeration>(builderState, value));
+    }
+    static void applyInitialTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleStorageTwoLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelRaw());
+    }
+    static void applyInheritTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleStorageTwoLevelRaw(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageTwoLevelRaw()));
+    }
+    static void applyValueTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestRenderStyleStorageTwoLevelRaw(toStyleFromCSSValue<Style::TestRaw>(builderState, value));
     }
     static void applyInitialTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelReference(RenderStyle::initialTestRenderStyleStorageTwoLevelReference());
+        builderState.style().setTestRenderStyleStorageTwoLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelReference());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
     {
@@ -1107,11 +247,11 @@ public:
     }
     static void applyValueTestRenderStyleStorageTwoLevelReference(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelReference(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleStorageTwoLevelReference(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelValue(RenderStyle::initialTestRenderStyleStorageTwoLevelValue());
+        builderState.style().setTestRenderStyleStorageTwoLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelValue());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
     {
@@ -1119,11 +259,11 @@ public:
     }
     static void applyValueTestRenderStyleStorageTwoLevelValue(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelValue(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestRenderStyleStorageTwoLevelValue(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestSettingsOne(BuilderState& builderState)
     {
-        builderState.style().setTestSettingsOne(RenderStyle::initialTestSettingsOne());
+        builderState.style().setTestSettingsOne(Style::ComputedStyle::initialTestSettingsOne());
     }
     static void applyInheritTestSettingsOne(BuilderState& builderState)
     {
@@ -1131,207 +271,11 @@ public:
     }
     static void applyValueTestSettingsOne(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestSettingsOne(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestSharedBuilderExtractorConverter(BuilderState& builderState)
-    {
-        builderState.style().setTestSharedBuilderExtractorConverter(RenderStyle::initialTestSharedBuilderExtractorConverter());
-    }
-    static void applyInheritTestSharedBuilderExtractorConverter(BuilderState& builderState)
-    {
-        builderState.style().setTestSharedBuilderExtractorConverter(forwardInheritedValue(builderState.parentStyle().testSharedBuilderExtractorConverter()));
-    }
-    static void applyValueTestSharedBuilderExtractorConverter(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestSharedBuilderExtractorConverter(BuilderConverter::convertTestSharedBuilderExtractorConversion(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithCommasWithMin(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMin(RenderStyle::initialTestUnboundedRepetitionWithCommasWithMin());
-    }
-    static void applyInheritTestUnboundedRepetitionWithCommasWithMin(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMin(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithCommasWithMin()));
-    }
-    static void applyValueTestUnboundedRepetitionWithCommasWithMin(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMin(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(RenderStyle::initialTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt());
-    }
-    static void applyInheritTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithCommasWithMinNoSingleItemOpt()));
-    }
-    static void applyValueTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(RenderStyle::initialTestUnboundedRepetitionWithCommasWithMinSingleItemOpt());
-    }
-    static void applyInheritTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithCommasWithMinSingleItemOpt()));
-    }
-    static void applyValueTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithSpacesNoMin(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesNoMin(RenderStyle::initialTestUnboundedRepetitionWithSpacesNoMin());
-    }
-    static void applyInheritTestUnboundedRepetitionWithSpacesNoMin(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesNoMin(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithSpacesNoMin()));
-    }
-    static void applyValueTestUnboundedRepetitionWithSpacesNoMin(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesNoMin(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(RenderStyle::initialTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt());
-    }
-    static void applyInheritTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt()));
-    }
-    static void applyValueTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithSpacesWithMin(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMin(RenderStyle::initialTestUnboundedRepetitionWithSpacesWithMin());
-    }
-    static void applyInheritTestUnboundedRepetitionWithSpacesWithMin(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMin(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithSpacesWithMin()));
-    }
-    static void applyValueTestUnboundedRepetitionWithSpacesWithMin(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMin(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(RenderStyle::initialTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt());
-    }
-    static void applyInheritTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt()));
-    }
-    static void applyValueTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(RenderStyle::initialTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt());
-    }
-    static void applyInheritTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(BuilderState& builderState)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(forwardInheritedValue(builderState.parentStyle().testUnboundedRepetitionWithSpacesWithMinSingleItemOpt()));
-    }
-    static void applyValueTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUrlWithModifiers(BuilderState& builderState)
-    {
-        builderState.style().setTestUrlWithModifiers(RenderStyle::initialTestUrlWithModifiers());
-    }
-    static void applyInheritTestUrlWithModifiers(BuilderState& builderState)
-    {
-        builderState.style().setTestUrlWithModifiers(forwardInheritedValue(builderState.parentStyle().testUrlWithModifiers()));
-    }
-    static void applyValueTestUrlWithModifiers(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUrlWithModifiers(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUrlWithNoModifiers(BuilderState& builderState)
-    {
-        builderState.style().setTestUrlWithNoModifiers(RenderStyle::initialTestUrlWithNoModifiers());
-    }
-    static void applyInheritTestUrlWithNoModifiers(BuilderState& builderState)
-    {
-        builderState.style().setTestUrlWithNoModifiers(forwardInheritedValue(builderState.parentStyle().testUrlWithNoModifiers()));
-    }
-    static void applyValueTestUrlWithNoModifiers(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUrlWithNoModifiers(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUsingSharedRule(BuilderState& builderState)
-    {
-        builderState.style().setTestUsingSharedRule(RenderStyle::initialTestUsingSharedRule());
-    }
-    static void applyInheritTestUsingSharedRule(BuilderState& builderState)
-    {
-        builderState.style().setTestUsingSharedRule(forwardInheritedValue(builderState.parentStyle().testUsingSharedRule()));
-    }
-    static void applyValueTestUsingSharedRule(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUsingSharedRule(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUsingSharedRuleExported(BuilderState& builderState)
-    {
-        builderState.style().setTestUsingSharedRuleExported(RenderStyle::initialTestUsingSharedRuleExported());
-    }
-    static void applyInheritTestUsingSharedRuleExported(BuilderState& builderState)
-    {
-        builderState.style().setTestUsingSharedRuleExported(forwardInheritedValue(builderState.parentStyle().testUsingSharedRuleExported()));
-    }
-    static void applyValueTestUsingSharedRuleExported(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUsingSharedRuleExported(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestUsingSharedRuleWithOverrideFunction(BuilderState& builderState)
-    {
-        builderState.style().setTestUsingSharedRuleWithOverrideFunction(RenderStyle::initialTestUsingSharedRuleWithOverrideFunction());
-    }
-    static void applyInheritTestUsingSharedRuleWithOverrideFunction(BuilderState& builderState)
-    {
-        builderState.style().setTestUsingSharedRuleWithOverrideFunction(forwardInheritedValue(builderState.parentStyle().testUsingSharedRuleWithOverrideFunction()));
-    }
-    static void applyValueTestUsingSharedRuleWithOverrideFunction(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestUsingSharedRuleWithOverrideFunction(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestSinkPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestSinkPriority(RenderStyle::initialTestSinkPriority());
-    }
-    static void applyInheritTestSinkPriority(BuilderState& builderState)
-    {
-        builderState.style().setTestSinkPriority(forwardInheritedValue(builderState.parentStyle().testSinkPriority()));
-    }
-    static void applyValueTestSinkPriority(BuilderState& builderState, CSSValue& value)
-    {
-        if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {
-            applyInitialTestSinkPriority(builderState);
-            return;
-        }
-        builderState.style().setTestSinkPriority(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestLogicalPropertyGroupPhysicalHorizontal(BuilderState& builderState)
-    {
-        builderState.style().setTestLogicalPropertyGroupPhysicalHorizontal(RenderStyle::initialTestLogicalPropertyGroupPhysicalHorizontal());
-    }
-    static void applyInheritTestLogicalPropertyGroupPhysicalHorizontal(BuilderState& builderState)
-    {
-        builderState.style().setTestLogicalPropertyGroupPhysicalHorizontal(forwardInheritedValue(builderState.parentStyle().testLogicalPropertyGroupPhysicalHorizontal()));
-    }
-    static void applyValueTestLogicalPropertyGroupPhysicalHorizontal(BuilderState& builderState, CSSValue& value)
-    {
-        builderState.style().setTestLogicalPropertyGroupPhysicalHorizontal(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestSettingsOne(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
     static void applyInitialTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState)
     {
-        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(RenderStyle::initialTestLogicalPropertyGroupPhysicalVertical());
+        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(Style::ComputedStyle::initialTestLogicalPropertyGroupPhysicalVertical());
     }
     static void applyInheritTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState)
     {
@@ -1339,7 +283,7 @@ public:
     }
     static void applyValueTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(fromCSSValueDeducingType(builderState, value));
+        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
 };
 
@@ -1352,43 +296,10 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
         ASSERT_NOT_REACHED();
         break;
     case CSSPropertyID::CSSPropertyTestTopPriority:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestTopPriority(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestTopPriority(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestTopPriority(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestHighPriority:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestHighPriority(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestHighPriority(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestHighPriority(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMediumPriority:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMediumPriority(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMediumPriority(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMediumPriority(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete:
         switch (valueType) {
@@ -1400,19 +311,6 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueBackgroundCoordinatedValueListPropertyTestDiscrete(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestThreeWithConverter:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialBackgroundCoordinatedValueListPropertyTestThreeWithConverter(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritBackgroundCoordinatedValueListPropertyTestThreeWithConverter(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueBackgroundCoordinatedValueListPropertyTestThreeWithConverter(builderState, value);
             break;
         }
         break;
@@ -1473,160 +371,28 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
         }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommas:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithCommas(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithCommas(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithCommas(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasFixed:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithCommasFixed(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithCommasFixed(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithCommasFixed(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithCommasNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithCommasNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithCommasNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithCommasSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithCommasSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithCommasSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpaces:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpaces(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpaces(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpaces(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesFixed:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpacesFixed(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpacesFixed(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpacesFixed(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpacesNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpacesNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpacesNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpacesSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpacesSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpacesSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpacesWithType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpacesWithType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpacesWithType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestColor:
         switch (valueType) {
@@ -1654,19 +420,6 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         }
         break;
-    case CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestColorPropertyWithNoVisitedLinkSupport(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestColorPropertyWithNoVisitedLinkSupport(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestColorPropertyWithNoVisitedLinkSupport(builderState, value);
-            break;
-        }
-        break;
     case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
         switch (valueType) {
         case ApplyValueType::Initial:
@@ -1681,782 +434,159 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
         }
         break;
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestCustomExtractor(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestCustomExtractor(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestCustomExtractor(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestExtractorConverter:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestExtractorConverter(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestExtractorConverter(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestExtractorConverter(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionBoundedParameters(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionBoundedParameters(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionBoundedParameters(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionFixedParameters:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionFixedParameters(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionFixedParameters(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionFixedParameters(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionNoParameters:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionNoParameters(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionNoParameters(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionNoParameters(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionParametersMatchAllAnyOrder:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionParametersMatchAllAnyOrder(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionParametersMatchAllAnyOrder(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionParametersMatchAllAnyOrder(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionParametersMatchAllAnyOrderWithOptional:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionParametersMatchAllAnyOrderWithOptional(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionParametersMatchAllAnyOrderWithOptional(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionParametersMatchAllAnyOrderWithOptional(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionParametersMatchAllOrdered:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionParametersMatchAllOrdered(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionParametersMatchAllOrdered(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionParametersMatchAllOrdered(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionParametersMatchAllOrderedWithOptional:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionParametersMatchAllOrderedWithOptional(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionParametersMatchAllOrderedWithOptional(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionParametersMatchAllOrderedWithOptional(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionParametersMatchOneOrMoreAnyOrder:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionParametersMatchOneOrMoreAnyOrder(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionParametersMatchOneOrMoreAnyOrder(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionParametersMatchOneOrMoreAnyOrder(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionSingleParameter:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionSingleParameter(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionSingleParameter(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionSingleParameter(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionSingleParameterMatchOne:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionSingleParameterMatchOne(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionSingleParameterMatchOne(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionSingleParameterMatchOne(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionSingleParameterOptional:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionSingleParameterOptional(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionSingleParameterOptional(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionSingleParameterOptional(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionUnboundedParametersNoMin:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionUnboundedParametersNoMin(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionUnboundedParametersNoMin(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionUnboundedParametersNoMin(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestFunctionUnboundedParametersWithMinimum:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestFunctionUnboundedParametersWithMinimum(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestFunctionUnboundedParametersWithMinimum(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestFunctionUnboundedParametersWithMinimum(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestImage:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestImage(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestImage(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestImage(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestImageNoImageSet:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestImageNoImageSet(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestImageNoImageSet(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestImageNoImageSet(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestKeyword:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestKeyword(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestKeyword(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestKeyword(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestKeywordWithAliasedTo(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestKeywordWithAliasedTo(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestKeywordWithAliasedTo(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrder:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrder(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrder(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrder(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptional:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptional(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptional(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptional(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndCustomTypeNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalAndMultipleRequiredAndPreserveOrderAndCustomTypeNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalWithPreserveOrder:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalWithPreserveOrder(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalWithPreserveOrder(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalWithPreserveOrder(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithOptionalWithPreserveOrderNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithPreserveOrder:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithPreserveOrder(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithPreserveOrder(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithPreserveOrder(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithPreserveOrderAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithPreserveOrderAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllAnyOrderWithPreserveOrderNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrdered:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrdered(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrdered(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrdered(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithOptional:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithOptional(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithOptional(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithOptional(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithOptionalAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithOptionalAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithOptionalAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithOptionalAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithOptionalAndCustomTypeAndNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithOptionalAndMultipleRequired:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithOptionalAndMultipleRequired(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithOptionalAndMultipleRequired(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithOptionalAndMultipleRequired(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithOptionalAndMultipleRequiredAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithOptionalNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithOptionalNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithOptionalNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithOptionalNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchAllOrderedWithOptionalSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchAllOrderedWithOptionalSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchAllOrderedWithOptionalSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchAllOrderedWithOptionalSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOne:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOne(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOne(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOne(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrder:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrder(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrder(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrder(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrderNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrderNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrderWithCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrderWithCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrderWithCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrderWithCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrderWithCustomTypeNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrderWithPreserveOrder:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrder(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrder(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrder(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomType(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrderAndCustomTypeNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneOrMoreAnyOrderWithPreserveOrderNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneWithGroupWithSettingsFlag:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneWithGroupWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneWithGroupWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneWithGroupWithSettingsFlag(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneWithKeywordWithSettingsFlag:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneWithKeywordWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneWithKeywordWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneWithKeywordWithSettingsFlag(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneWithMultipleKeywords:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneWithMultipleKeywords(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneWithMultipleKeywords(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneWithMultipleKeywords(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneWithReferenceWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneWithReferenceWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneWithReferenceWithSettingsFlag(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestMatchOneWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestMatchOneWithSettingsFlag(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestMatchOneWithSettingsFlag(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
+        break;
+    case CSSPropertyID::CSSPropertyTestProperty:
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
         switch (valueType) {
         case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestNumericValueRange(builderState);
+            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
             break;
         case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestNumericValueRange(builderState);
+            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
             break;
         case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestNumericValueRange(builderState, value);
+            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState, value);
             break;
         }
         break;
-    case CSSPropertyID::CSSPropertyTestProperty:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
         switch (valueType) {
         case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestProperty(builderState);
+            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
             break;
         case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestProperty(builderState);
+            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
             break;
         case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestProperty(builderState, value);
+            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState, value);
             break;
         }
         break;
@@ -2470,6 +600,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueTestRenderStyleStorageOneLevelEnum(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleStorageOneLevelRaw(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleStorageOneLevelRaw(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleStorageOneLevelRaw(builderState, value);
             break;
         }
         break;
@@ -2512,6 +655,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         }
         break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleStorageTwoLevelRaw(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleStorageTwoLevelRaw(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleStorageTwoLevelRaw(builderState, value);
+            break;
+        }
+        break;
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
         switch (valueType) {
         case ApplyValueType::Initial:
@@ -2551,213 +707,35 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         }
         break;
-    case CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestSharedBuilderExtractorConverter(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestSharedBuilderExtractorConverter(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestSharedBuilderExtractorConverter(builderState, value);
-            break;
-        }
-        break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithCommasWithMin(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithCommasWithMin(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithCommasWithMin(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithCommasWithMinSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesNoMin:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithSpacesNoMin(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithSpacesNoMin(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithSpacesNoMin(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMin:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithSpacesWithMin(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithSpacesWithMin(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithSpacesWithMin(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUrlWithModifiers:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUrlWithModifiers(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUrlWithModifiers(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUrlWithModifiers(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUrlWithNoModifiers:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUrlWithNoModifiers(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUrlWithNoModifiers(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUrlWithNoModifiers(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUsingSharedRule(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUsingSharedRule(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUsingSharedRule(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUsingSharedRuleExported(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUsingSharedRuleExported(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUsingSharedRuleExported(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestUsingSharedRuleWithOverrideFunction(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestUsingSharedRuleWithOverrideFunction(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestUsingSharedRuleWithOverrideFunction(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestSinkPriority:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestSinkPriority(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestSinkPriority(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestSinkPriority(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestLogicalPropertyGroupPhysicalHorizontal(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestLogicalPropertyGroupPhysicalHorizontal(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestLogicalPropertyGroupPhysicalHorizontal(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalVertical:
         switch (valueType) {

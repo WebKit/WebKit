@@ -37,7 +37,7 @@ namespace DRM {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Cursor);
 
 Cursor::Cursor(std::unique_ptr<Plane>&& plane, struct gbm_device* device, uint32_t cursorWidth, uint32_t cursorHeight)
-    : m_plane(WTFMove(plane))
+    : m_plane(WTF::move(plane))
     , m_device(device)
     , m_deviceWidth(cursorWidth)
     , m_deviceHeight(cursorHeight)

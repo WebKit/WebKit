@@ -41,7 +41,7 @@ class FormatBlockCommand : public ApplyBlockElementCommand {
 public:
     static Ref<FormatBlockCommand> create(Ref<Document>&& document, const QualifiedName& tagName)
     {
-        return adoptRef(*new FormatBlockCommand(WTFMove(document), tagName));
+        return adoptRef(*new FormatBlockCommand(WTF::move(document), tagName));
     }
     
     bool preservesTypingStyle() const override { return true; }

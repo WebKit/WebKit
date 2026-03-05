@@ -34,7 +34,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
@@ -372,7 +372,7 @@ void AccessibilityObjectAtspi::textInserted(const String& insertedText, const Vi
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
     auto utf8InsertedText = maskedText.isNull() ? insertedText.utf8() : maskedText.utf8();
     auto insertedTextLength = g_utf8_strlen(utf8InsertedText.data(), -1);
-    AccessibilityAtspi::singleton().textChanged(*this, "insert", WTFMove(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
+    AccessibilityAtspi::singleton().textChanged(*this, "insert", WTF::move(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
 }
 
 void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const VisiblePosition& position)
@@ -387,7 +387,7 @@ void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const Visi
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
     auto utf8DeletedText = deletedText.utf8();
     auto deletedTextLength = g_utf8_strlen(utf8DeletedText.data(), -1);
-    AccessibilityAtspi::singleton().textChanged(*this, "delete", WTFMove(utf8DeletedText), offset, deletedTextLength);
+    AccessibilityAtspi::singleton().textChanged(*this, "delete", WTF::move(utf8DeletedText), offset, deletedTextLength);
 }
 
 IntPoint AccessibilityObjectAtspi::boundaryOffset(unsigned utf16Offset, TextGranularity granularity) const
@@ -772,13 +772,13 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
                 attributes.add(name, value);
         };
 
-        auto bgColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
+        auto bgColor = style.visitedDependentBackgroundColor();
         if (bgColor.isValid() && bgColor.isVisible()) {
             auto [r, g, b, a] = bgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
             addAttributeIfNeeded("bg-color"_s, makeString(r, ',', g, ',', b));
         }
 
-        auto fgColor = style.visitedDependentColor(CSSPropertyColor);
+        auto fgColor = style.visitedDependentColor();
         if (fgColor.isValid() && fgColor.isVisible()) {
             auto [r, g, b, a] = fgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
             addAttributeIfNeeded("fg-color"_s, makeString(r, ',', g, ',', b));
@@ -829,37 +829,37 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
 
     auto defaultAttributes = accessibilityTextAttributes(*m_coreObject.get(), { });
     if (!utf16Offset)
-        return { WTFMove(defaultAttributes), -1, -1 };
+        return { WTF::move(defaultAttributes), -1, -1 };
 
     if (is<RenderListMarker>(*m_coreObject->renderer()))
-        return { WTFMove(defaultAttributes), 0, static_cast<int>(m_coreObject->stringValue().length()) };
+        return { WTF::move(defaultAttributes), 0, static_cast<int>(m_coreObject->stringValue().length()) };
 
     if (!m_coreObject->node())
-        return { WTFMove(defaultAttributes), -1, -1 };
+        return { WTF::move(defaultAttributes), -1, -1 };
 
     if (!*utf16Offset && m_hasListMarkerAtStart) {
         // Always consider list marker an independent run.
         auto attributes = accessibilityTextAttributes(m_coreObject->children()[0].get(), defaultAttributes);
         if (!includeDefault)
-            return { WTFMove(attributes), 0, 1 };
+            return { WTF::move(attributes), 0, 1 };
 
         for (const auto& it : attributes)
             defaultAttributes.set(it.key, it.value);
-        return { WTFMove(defaultAttributes), 0, 1 };
+        return { WTF::move(defaultAttributes), 0, 1 };
     }
 
     VisiblePosition offsetPosition = m_coreObject->visiblePositionForIndex(adjustInputOffset(*utf16Offset, m_hasListMarkerAtStart));
     RefPtr childNode = offsetPosition.deepEquivalent().deprecatedNode();
     if (!childNode)
-        return { WTFMove(defaultAttributes), -1, -1 };
+        return { WTF::move(defaultAttributes), -1, -1 };
 
     auto* childRenderer = childNode->renderer();
     if (!childRenderer)
-        return { WTFMove(defaultAttributes), -1, -1 };
+        return { WTF::move(defaultAttributes), -1, -1 };
 
     auto* childAxObject = childRenderer->document().axObjectCache()->get(childRenderer);
     if (!childAxObject || childAxObject == m_coreObject)
-        return { WTFMove(defaultAttributes), -1, -1 };
+        return { WTF::move(defaultAttributes), -1, -1 };
 
     auto attributes = accessibilityTextAttributes(*childAxObject, defaultAttributes);
     auto firstValidPosition = firstPositionInOrBeforeNode(m_coreObject->node()->firstDescendant());
@@ -904,12 +904,12 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     auto startOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(startPosition), m_hasListMarkerAtStart);
     auto endOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(endPosition), m_hasListMarkerAtStart);
     if (!includeDefault)
-        return { WTFMove(attributes), startOffset, endOffset };
+        return { WTF::move(attributes), startOffset, endOffset };
 
     for (const auto& it : attributes)
         defaultAttributes.set(it.key, it.value);
 
-    return { WTFMove(defaultAttributes), startOffset, endOffset };
+    return { WTF::move(defaultAttributes), startOffset, endOffset };
 }
 
 AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttributesWithUTF8Offset(std::optional<int> offset, bool includeDefault) const
@@ -969,7 +969,7 @@ bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffse
 
     IntRect rect = m_coreObject->doAXBoundsForRange(CharacterRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
 
-    if (m_coreObject->isScrollView()) {
+    if (m_coreObject->isScrollArea()) {
         if (auto* parent = m_coreObject->parentObject())
             parent->scrollToMakeVisible();
     }
@@ -1033,7 +1033,7 @@ bool AccessibilityObjectAtspi::scrollToPoint(int startOffset, int endOffset, Ats
 
     IntRect rect = m_coreObject->doAXBoundsForRange(CharacterRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
     point.move(-rect.x(), -rect.y());
-    m_coreObject->scrollToGlobalPoint(WTFMove(point));
+    m_coreObject->scrollToGlobalPoint(WTF::move(point));
     return true;
 }
 

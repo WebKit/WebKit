@@ -1,13 +1,4 @@
-Modules/WebGPU/GPUPresentationContextDescriptor.h
-Modules/mediastream/RTCPeerConnection.h
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
-Modules/notifications/NotificationResourcesLoader.h
-Modules/push-api/PushManager.h
-Modules/push-api/ServiceWorkerRegistrationPushAPI.h
-Modules/storage/StorageManager.cpp
-Modules/webdatabase/DatabaseTask.h
-Modules/webdatabase/SQLTransactionBackend.h
-accessibility/AXSearchManager.h
 bindings/js/JSEventTargetCustom.h
 bindings/js/JSLazyEventListener.cpp
 css/CSSPrimitiveValue.h
@@ -16,7 +7,6 @@ css/CSSRuleList.h
 css/CSSSelector.h
 css/CSSStyleProperties.h
 css/CSSValueList.h
-css/MediaList.h
 css/SelectorChecker.h
 css/SelectorFilter.h
 css/ShorthandSerializer.cpp
@@ -28,38 +18,23 @@ dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
 dom/TreeScope.h
-html/FormListedElement.cpp
-html/track/TrackBase.h
-[ Mac ] inspector/InspectorFrontendHost.cpp
-[ Mac ] inspector/InspectorFrontendHost.h
-inspector/InspectorShaderProgram.h
-inspector/InspectorStyleSheet.h
-inspector/InspectorWebAgentBase.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
-page/FrameSnapshotting.cpp
-page/WheelEventTestMonitor.h
-[ iOS ] page/ios/ContentChangeObserver.h
-page/scrolling/ScrollingCoordinator.h
-page/scrolling/ScrollingTreeGestureState.h
+[ iOS ] page/cocoa/ContentChangeObserver.h
 platform/PODInterval.h
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
-platform/encryptedmedia/CDMProxy.h
-platform/graphics/GraphicsLayer.h
-platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h
-platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
-platform/graphics/ca/TileController.h
-platform/graphics/controls/PlatformControl.h
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.h
 platform/graphics/filters/software/FELightingSoftwareApplier.h
 platform/graphics/filters/software/FEMorphologySoftwareApplier.h
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.h
 [ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
 [ iOS ] platform/ios/wak/WAKWindow.h
-platform/mediarecorder/MediaRecorderPrivate.h
-platform/mediastream/AudioMediaStreamTrackRenderer.h
-platform/mock/ScrollbarsControllerMock.h
-platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h
-rendering/style/StyleGeneratedImage.cpp
+[ iOS ] platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm
+rendering/PaintInfo.h
+rendering/RenderLayer.h
+rendering/RenderLayerBacking.cpp
+rendering/RenderLayerBacking.h
+rendering/RenderLayerCompositor.cpp
+rendering/RenderLayerScrollableArea.h
 rendering/updating/RenderTreeUpdater.h
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
@@ -71,7 +46,7 @@ style/StyleResolver.cpp
 style/StyleScope.h
 style/StyleScopeRuleSets.h
 style/Styleable.h
+style/values/images/kinds/StyleGeneratedImage.cpp
 svg/properties/SVGPropertyOwnerRegistry.h
-workers/WorkerMessagingProxy.h
 xml/XPathGrammar.cpp
 xml/XPathGrammar.h

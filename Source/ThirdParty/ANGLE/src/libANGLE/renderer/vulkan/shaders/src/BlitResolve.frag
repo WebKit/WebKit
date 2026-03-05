@@ -83,11 +83,11 @@
 #if SrcIsArray
 #define SRC_RESOURCE_NAME texture2DArray
 #define SRC_SAMPLER_NAME sampler2DArray
-#define TEXEL_FETCH(src, coord, sample) texture(src, vec3(coord * params.invSrcExtent, params.srcLayer))
+#define TEXEL_FETCH(src, coord, sample) textureLod(src, vec3(coord * params.invSrcExtent, params.srcLayer), params.srcMip)
 #else
 #define SRC_RESOURCE_NAME texture2D
 #define SRC_SAMPLER_NAME sampler2D
-#define TEXEL_FETCH(src, coord, sample) texture(src, coord * params.invSrcExtent)
+#define TEXEL_FETCH(src, coord, sample) textureLod(src, coord * params.invSrcExtent, params.srcMip)
 #endif
 
 #define COLOR_TEXEL_FETCH(src, coord, sample) TEXEL_FETCH(COLOR_SRC_RESOURCE(SRC_SAMPLER_NAME)(src, blitSampler), coord, sample)

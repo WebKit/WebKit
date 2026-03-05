@@ -29,6 +29,7 @@
 #include "WebPage.h"
 
 #include <WebCore/DeviceOrientationUpdateProvider.h>
+#include <WebCore/Element.h>
 
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>

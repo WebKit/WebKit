@@ -14,6 +14,7 @@ ocl_cts_source_set("cl_fill_images") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clFillImage/main.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clFillImage/test_fill_1D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clFillImage/test_fill_1D_array.cpp",
+    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clFillImage/test_fill_1D_buffer.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clFillImage/test_fill_2D.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clFillImage/test_fill_2D_array.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/clFillImage/test_fill_3D.cpp",

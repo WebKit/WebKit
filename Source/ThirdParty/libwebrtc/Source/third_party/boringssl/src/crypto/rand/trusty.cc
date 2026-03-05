@@ -34,11 +34,6 @@ void CRYPTO_sysrand(uint8_t *out, size_t requested) {
   }
 }
 
-int CRYPTO_sysrand_if_available(uint8_t *buf, size_t len) {
-  CRYPTO_sysrand(buf, len);
-  return 1;
-}
-
 void CRYPTO_sysrand_for_seed(uint8_t *out, size_t requested) {
   CRYPTO_sysrand(out, requested);
 }

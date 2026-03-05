@@ -66,10 +66,10 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    std::optional<WebCore::ProcessIdentifier> webProcessIdentifier() const;
+    std::optional<WebCore::ProcessIdentifier> NODELETE webProcessIdentifier() const;
     const WebCore::RegistrableDomain& registrableDomain() const { return m_site.domain(); }
     const WebCore::Site& site() const { return m_site; }
-    IPC::Connection* ipcConnection() const;
+    IPC::Connection* NODELETE ipcConnection() const;
 
     void terminateWhenPossible() { m_shouldTerminateWhenPossible = true; }
 
@@ -87,7 +87,7 @@ public:
     void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
 private:
     WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess&, const WebCore::Site&, WebSharedWorkerServer&);

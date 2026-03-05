@@ -74,6 +74,7 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 
 @property (nonatomic, readonly, nullable, copy) NSString *rawJSON;
 @property (nonatomic, readonly) _WKApplicationManifestDirection dir;
+@property (nonatomic, readonly, nullable, copy) NSString *lang;
 @property (nonatomic, readonly, nullable, copy) NSString *name;
 @property (nonatomic, readonly, nullable, copy) NSString *shortName;
 @property (nonatomic, readonly, nullable, copy) NSString *applicationDescription;

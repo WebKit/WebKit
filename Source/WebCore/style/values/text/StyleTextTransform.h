@@ -52,7 +52,7 @@ struct TextTransform {
     using value_type = TextTransformValueEnumSet::value_type;
 
     constexpr TextTransform(CSS::Keyword::None) : m_value { } { }
-    constexpr TextTransform(EnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr TextTransform(EnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr TextTransform(value_type value) : TextTransform { EnumSet { value } } { }
     constexpr TextTransform(std::initializer_list<value_type> initializerList) : TextTransform { EnumSet { initializerList } } { }
 

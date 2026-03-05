@@ -40,6 +40,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
@@ -81,7 +82,7 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
     options.mode = FetchOptions::Mode::SameOrigin;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
-    m_loader = ThreadableLoader::create(context, *this, WTFMove(request), options);
+    m_loader = ThreadableLoader::create(context, *this, WTF::move(request), options);
     m_isStarted = m_loader;
 }
 
@@ -102,6 +103,12 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.shouldEnableContentExtensionsCheck = request.shouldEnableContentExtensionsCheck() ? ShouldEnableContentExtensionsCheck::Yes : ShouldEnableContentExtensionsCheck::No;
 
     ResourceRequest fetchRequest = request.resourceRequest();
+
+    if (context.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::NetworkRequests)) {
+        if (RefPtr client = m_client.get())
+            client->didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Blocked by script tracking privacy protection"_s, ResourceError::Type::AccessControl });
+        return;
+    }
 
     ASSERT(context.contentSecurityPolicy());
     {
@@ -125,7 +132,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     if (options.referrerPolicy == ReferrerPolicy::EmptyString)
         options.referrerPolicy = context.referrerPolicy();
 
-    m_loader = ThreadableLoader::create(context, *this, WTFMove(fetchRequest), options, WTFMove(referrer));
+    m_loader = ThreadableLoader::create(context, *this, WTF::move(fetchRequest), options, WTF::move(referrer));
     m_isStarted = m_loader;
 }
 

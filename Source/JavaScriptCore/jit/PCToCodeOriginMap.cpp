@@ -102,7 +102,7 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(VM& vm)
 { }
 
 PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder&& other)
-    : m_codeRanges(WTFMove(other.m_codeRanges))
+    : m_codeRanges(WTF::move(other.m_codeRanges))
     , m_shouldBuildMapping(other.m_shouldBuildMapping)
 { }
 

@@ -61,6 +61,7 @@
 #include "SpeculatedType.h"
 #include "TypeLocation.h"
 #include "ValueProfile.h"
+#include "YarrFlags.h"
 #include <type_traits>
 #include <wtf/FastMalloc.h>
 #include <wtf/ListDump.h>
@@ -323,7 +324,7 @@ enum class BucketOwnerType : uint32_t {
 // Node represents a single operation in the data flow graph.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DFGNode);
 struct Node {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DFGNode, DFGNode);
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Node, DFGNode);
 public:
     static const char HashSetTemplateInstantiationString[];
     
@@ -693,6 +694,7 @@ public:
         children.setChild3(children.child2());
         children.setChild2(base);
         children.setChild1(storage);
+        children.child1().setUseKind(KnownStorageUse);
         m_op = PutByOffset;
     }
     
@@ -903,17 +905,8 @@ public:
 
     void convertToNewInternalFieldObject(RegisteredStructure structure)
     {
-        ASSERT(m_op == CreatePromise);
+        ASSERT(m_op == CreatePromise || m_op == CreateAsyncGenerator || m_op == CreateGenerator);
         setOpAndDefaultFlags(NewInternalFieldObject);
-        children.reset();
-        m_opInfo = structure;
-        m_opInfo2 = OpInfoWrapper();
-    }
-
-    void convertToNewInternalFieldObjectWithInlineFields(NodeType newOp, RegisteredStructure structure)
-    {
-        ASSERT(m_op == CreateAsyncGenerator || m_op == CreateGenerator);
-        setOpAndDefaultFlags(newOp);
         children.reset();
         m_opInfo = structure;
         m_opInfo2 = OpInfoWrapper();
@@ -1899,6 +1892,17 @@ public:
         return m_opInfo.as<EntrySwitchData*>();
     }
 
+    bool hasRegExpFlag()
+    {
+        return op() == GetRegExpFlag;
+    }
+
+    Yarr::Flags regExpFlag()
+    {
+        ASSERT(hasRegExpFlag());
+        return m_opInfo.as<Yarr::Flags>();
+    }
+
     bool hasIntrinsic()
     {
         switch (op()) {
@@ -2394,8 +2398,6 @@ public:
         case ArrayifyToStructure:
         case MaterializeNewInternalFieldObject:
         case NewObject:
-        case NewGenerator:
-        case NewAsyncGenerator:
         case NewInternalFieldObject:
         case NewStringObject:
         case NewRegExpUntyped:
@@ -2607,6 +2609,18 @@ public:
         case PhantomNewInternalFieldObject:
         case PhantomCreateActivation:
         case PhantomNewRegExp:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool isPhantomArgumentsAllocation()
+    {
+        switch (op()) {
+        case PhantomDirectArguments:
+        case PhantomCreateRest:
+        case PhantomClonedArguments:
             return true;
         default:
             return false;
@@ -3246,6 +3260,11 @@ public:
         return isProxyObjectSpeculation(prediction());
     }
 
+    bool shouldSpeculateSetObject()
+    {
+        return isSetObjectSpeculation(prediction());
+    }
+
     bool shouldSpeculateGlobalProxy()
     {
         return isGlobalProxySpeculation(prediction());
@@ -3613,7 +3632,7 @@ public:
     
     bool hasNumberOfArgumentsToSkip()
     {
-        return op() == CreateRest || op() == PhantomCreateRest || op() == GetRestLength || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds;
+        return op() == CreateRest || op() == PhantomCreateRest || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds;
     }
 
     unsigned numberOfArgumentsToSkip()

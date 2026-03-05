@@ -35,6 +35,7 @@
 #include <WebCore/PlatformExportMacros.h>
 #include <WebCore/RegisteredEventListener.h>
 #include <atomic>
+#include <limits>
 #include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
@@ -55,7 +56,7 @@ namespace WebCore {
 
 class EventTarget;
 
-using EventListenerVector = Vector<RefPtr<RegisteredEventListener>, 1, CrashOnOverflow, 2>;
+using EventListenerVector = Vector<Ref<RegisteredEventListener>, 1, CrashOnOverflow, 2>;
 
 class EventListenerMap {
 public:
@@ -63,8 +64,8 @@ public:
 
     bool isEmpty() const { return m_entries.isEmpty(); }
     bool contains(const AtomString& eventType) const { return find(eventType); }
-    bool containsCapturing(const AtomString& eventType) const;
-    bool containsActive(const AtomString& eventType) const;
+    bool NODELETE containsCapturing(const AtomString& eventType) const;
+    bool NODELETE containsActive(const AtomString& eventType) const;
 
     void clear();
     void clearEntriesForTearDown()
@@ -76,15 +77,24 @@ public:
     void replace(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options&);
     bool add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
     bool remove(const AtomString& eventType, EventListener&, bool useCapture);
-    WEBCORE_EXPORT EventListenerVector* find(const AtomString& eventType);
+    WEBCORE_EXPORT EventListenerVector* NODELETE find(const AtomString& eventType);
     const EventListenerVector* find(const AtomString& eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }
     Vector<AtomString> eventTypes() const;
 
     template<typename CallbackType>
     void enumerateEventListenerTypes(NOESCAPE const CallbackType& callback) const
     {
-        for (auto& entry : m_entries)
-            callback(entry.first, entry.second.size());
+        for (auto& entry : m_entries) {
+            uint32_t capturingCount = 0;
+            uint32_t bubblingCount = 0;
+            for (auto& listener : entry.second) {
+                if (listener->useCapture())
+                    ++capturingCount;
+                else
+                    ++bubblingCount;
+            }
+            callback(entry.first, std::min<uint32_t>(capturingCount, std::numeric_limits<uint16_t>::max()), std::min<uint32_t>(bubblingCount, std::numeric_limits<uint16_t>::max()));
+        }
     }
 
     template<typename CallbackType>
@@ -101,7 +111,7 @@ public:
     void copyEventListenersNotCreatedFromMarkupToTarget(EventTarget*);
     
     template<typename Visitor> void visitJSEventListeners(Visitor&);
-    Lock& lock() { return m_lock; }
+    Lock& lock() LIFETIME_BOUND { return m_lock; }
 
 private:
     void releaseAssertOrSetThreadUID()
@@ -110,10 +120,14 @@ private:
         if (WebThreadIsEnabled())
             return;
 #endif
-        if (m_threadUID)
-            RELEASE_ASSERT(m_threadUID == Thread::currentSingleton().uid());
-        else
+        if (!m_threadUID) {
+            ASSERT(!Thread::mayBeGCThread());
             m_threadUID = Thread::currentSingleton().uid();
+            return;
+        }
+        if (m_threadUID == Thread::currentSingleton().uid()) [[likely]]
+            return;
+        RELEASE_ASSERT(Thread::mayBeGCThread());
     }
 
     Vector<std::pair<AtomString, EventListenerVector>, 0, CrashOnOverflow, 4> m_entries;

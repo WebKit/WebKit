@@ -35,6 +35,8 @@
 #include "SyncRequestID.h"
 #include "Timeout.h"
 #include <atomic>
+#include <bmalloc/TZoneHeap.h>
+#include <bmalloc/bmalloc.h>
 #include <new>
 #include <tuple>
 #include <wtf/Assertions.h>
@@ -75,7 +77,7 @@
 
 #if OS(DARWIN)
 #include <mach/mach_port.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 #include <wtf/darwin/XPCObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #if HAVE(XPC_API)
@@ -85,11 +87,6 @@
 
 #if USE(GLIB)
 #include <wtf/glib/GSocketMonitor.h>
-#endif
-
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/TZoneHeap.h>
-#include <bmalloc/bmalloc.h>
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -159,7 +156,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, connection, message) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING ": " message, WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION), ": " message ## _s).utf8().data()); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion " - " #message ## _s); \
         CRASH_IF_TESTING \
         return; \
@@ -171,7 +168,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         return; \
@@ -180,7 +177,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         { completion; } \
@@ -190,7 +187,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_COMPLETION_BASE_COROUTINE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         { completion; } \
@@ -200,7 +197,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         return (returnValue); \
@@ -235,7 +232,7 @@ public:
     }
 
     ConnectionSendSyncResult(UniqueRef<Decoder>&& decoder, typename T::ReplyArguments&& replyArguments)
-        : value({ WTFMove(decoder), WTFMove(replyArguments) })
+        : value({ WTF::move(decoder), WTF::move(replyArguments) })
     {
     }
 
@@ -249,7 +246,7 @@ public:
 
     typename T::ReplyArguments takeReply()
     {
-        return WTFMove(value.value().reply);
+        return WTF::move(value.value().reply);
     }
 
     template<typename... U>
@@ -305,7 +302,7 @@ public:
         {
         }
         explicit Identifier(UnixFileDescriptor&& fd)
-            : handle(WTFMove(fd))
+            : handle(WTF::move(fd))
         {
         }
         operator bool() const { return !!handle; }
@@ -330,20 +327,19 @@ public:
             : port(port)
         {
         }
-        Identifier(mach_port_t port, XPCObjectPtr<xpc_connection_t> xpcConnection)
+        Identifier(mach_port_t port, OSObjectPtr<xpc_connection_t> xpcConnection)
             : port(port)
-            , xpcConnection(WTFMove(xpcConnection))
+            , xpcConnection(WTF::move(xpcConnection))
         {
         }
         operator bool() const { return MACH_PORT_VALID(port); }
         mach_port_t port { MACH_PORT_NULL };
-        XPCObjectPtr<xpc_connection_t> xpcConnection;
+        OSObjectPtr<xpc_connection_t> xpcConnection;
 #endif
     };
 
 #if OS(DARWIN)
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
-    XPCObjectPtr<xpc_connection_t> protectedXPCConnection() const { return xpcConnection(); }
     std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
 #endif
@@ -365,7 +361,6 @@ public:
     ~Connection();
 
     Client* client() const { return m_client.get(); }
-    RefPtr<Client> protectedClient() const { return m_client.get(); }
 
     enum UniqueIDType { };
     using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
@@ -376,8 +371,8 @@ public:
     static RefPtr<Connection> connection(UniqueID);
     UniqueID uniqueID() const { return m_uniqueID; }
 
-    void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
-    void setShouldExitOnSyncMessageSendFailure(bool);
+    void NODELETE setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
+    void NODELETE setShouldExitOnSyncMessageSendFailure(bool);
 
     // The set callback will be called on the connection work queue when the connection is closed,
     // before didCall is called on the client thread. Must be called before the connection is opened.
@@ -385,7 +380,7 @@ public:
     // on the work queue, for example if we want to handle them on some other thread we could avoid
     // handling the message on the client thread first.
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
-    void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
+    void NODELETE setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
 
     using OutgoingMessageQueueIsGrowingLargeCallback = Function<void()>;
     void setOutgoingMessageQueueIsGrowingLargeCallback(OutgoingMessageQueueIsGrowingLargeCallback&&);
@@ -463,7 +458,7 @@ public:
     template<typename PC = NoOpPromiseConverter, typename T, typename Promise = typename ConvertedPromise<PC, typename T::Promise>::Type, typename RawValue>
     Ref<Promise> sendWithPromisedReply(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        return sendWithPromisedReply<PC, T, Promise>(WTFMove(message), destinationID.toUInt64(), sendOptions);
+        return sendWithPromisedReply<PC, T, Promise>(WTF::move(message), destinationID.toUInt64(), sendOptions);
     }
 
     // Thread-safe.
@@ -522,7 +517,7 @@ public:
 
     void ignoreTimeoutsForTesting() { m_ignoreTimeoutsForTesting = true; }
 
-    void enableIncomingMessagesThrottling();
+    void NODELETE enableIncomingMessagesThrottling();
 
 #if ENABLE(IPC_TESTING_API)
     void addMessageObserver(const MessageObserver&);
@@ -554,11 +549,15 @@ public:
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static bool signpostsEnabled();
-    static void forceEnableSignposts();
+    static void NODELETE forceEnableSignposts();
 #endif
 
-    static bool shouldCrashOnMessageCheckFailure();
-    static void setShouldCrashOnMessageCheckFailure(bool);
+    static bool NODELETE shouldCrashOnMessageCheckFailure();
+    static void NODELETE setShouldCrashOnMessageCheckFailure(bool);
+
+#if PLATFORM(COCOA)
+    static void setForceUseSharedMemoryForSendingForTesting(bool);
+#endif
 
 #if ENABLE(IPC_TESTING_API)
     bool hasErrorString() const { return !m_errorString.isNull(); }
@@ -574,7 +573,7 @@ private:
     Connection(Identifier&&, bool isServer, Thread::QOS = Thread::QOS::Default);
     Connection();
     void platformInitialize(Identifier&&);
-    bool platformPrepareForOpen();
+    bool NODELETE platformPrepareForOpen();
     void platformOpen();
     void platformInvalidate();
 
@@ -637,7 +636,10 @@ private:
     Error sendMessageImpl(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
 
 #if PLATFORM(COCOA)
-    bool sendMessage(std::unique_ptr<MachMessage>);
+    enum class SendMessageResult : uint8_t { Success, Failure, MessageTooLarge };
+    enum class IsRetryDueToLargeSize : bool { No, Yes };
+    SendMessageResult sendMessage(std::unique_ptr<MachMessage>&, IsRetryDueToLargeSize = IsRetryDueToLargeSize::No);
+    bool retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>&);
 #endif
     template<typename F>
     void dispatchToClient(F&& clientRunLoopTask) WTF_EXCLUDES_LOCK(m_incomingMessagesLock);
@@ -649,10 +651,9 @@ private:
     bool isThrottlingIncomingMessages() const { return *m_incomingMessagesThrottlingLevel > 0; }
 
     // Only valid between open() and invalidate().
-    SerialFunctionDispatcher& dispatcher();
+    Ref<SerialFunctionDispatcher> dispatcher();
 
     class SyncMessageState;
-    RefPtr<SyncMessageState> protectedSyncState() const;
 
     void addAsyncReplyHandler(AsyncReplyHandler&&);
     void addAsyncReplyHandlerWithDispatcher(AsyncReplyHandlerWithDispatcher&&);
@@ -813,7 +814,7 @@ private:
 
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
 
-    XPCObjectPtr<xpc_connection_t> m_xpcConnection;
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };
     std::optional<audit_token_t> m_auditToken;
 #elif OS(WINDOWS)
@@ -860,7 +861,7 @@ Error Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     message.encode(encoder.get());
 
-    return sendMessage(WTFMove(encoder), sendOptions, qos);
+    return sendMessage(WTF::move(encoder), sendOptions, qos);
 }
 
 template<typename T>
@@ -880,7 +881,7 @@ std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReply(T&& messa
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     message.encode(encoder.get());
-    if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), sendOptions) == Error::NoError)
+    if (sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(handler), sendOptions) == Error::NoError)
         return replyID;
     // FIXME: Propagate the error back.
     return std::nullopt;
@@ -894,7 +895,7 @@ std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReplyOnDispatch
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     message.encode(encoder.get());
-    if (sendMessageWithAsyncReplyWithDispatcher(WTFMove(encoder), WTFMove(handler), sendOptions) == Error::NoError)
+    if (sendMessageWithAsyncReplyWithDispatcher(WTF::move(encoder), WTF::move(handler), sendOptions) == Error::NoError)
         return replyID;
     // FIXME: Propagate the error back.
     return std::nullopt;
@@ -906,10 +907,10 @@ Ref<Promise> Connection::sendWithPromisedReply(T&& message, uint64_t destination
     static_assert(!T::isSync, "Async message expected");
     typename Promise::Producer producer;
     auto promise = producer.promise();
-    auto handler = makeAsyncReplyHandlerWithDispatcher<PC, T, Promise>(WTFMove(producer));
+    auto handler = makeAsyncReplyHandlerWithDispatcher<PC, T, Promise>(WTF::move(producer));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     message.encode(encoder.get());
-    sendMessageWithAsyncReplyWithDispatcher(WTFMove(encoder), WTFMove(handler), sendOptions);
+    sendMessageWithAsyncReplyWithDispatcher(WTF::move(encoder), WTF::move(handler), sendOptions);
     // The promise will be rejected in the handler should an error occur.
     return promise;
 }
@@ -928,20 +929,20 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
     message.encode(encoder.get());
 
     // Now send the message and wait for a reply.
-    auto replyDecoderOrError = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);
+    auto replyDecoderOrError = sendSyncMessage(syncRequestID, WTF::move(encoder), timeout, sendSyncOptions);
     if (!replyDecoderOrError.has_value()) {
         ASSERT(replyDecoderOrError.error() != Error::NoError);
         return { replyDecoderOrError.error() };
     }
 
-    UniqueRef decoder = WTFMove(replyDecoderOrError.value());
+    UniqueRef decoder = WTF::move(replyDecoderOrError.value());
     if (decoder->messageName() == MessageName::CancelSyncMessageReply)
         return { Error::SyncMessageCancelled };
     std::optional<typename T::ReplyArguments> replyArguments;
     decoder.get() >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-    return SendSyncResult<T> { WTFMove(decoder), WTFMove(*replyArguments) };
+    return SendSyncResult<T> { WTF::move(decoder), WTF::move(*replyArguments) };
 }
 
 template<typename T, typename... Arguments>
@@ -949,7 +950,7 @@ void Connection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... argume
 {
     auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
     (encoder.get() << ... << std::forward<Arguments>(arguments));
-    sendSyncReply(WTFMove(encoder));
+    sendSyncReply(WTF::move(encoder));
 }
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
@@ -963,7 +964,7 @@ template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t de
         return Error::InvalidConnection;
 
     ASSERT(decoderOrError.value()->destinationID() == destinationID);
-    protectedClient()->didReceiveMessage(*this, decoderOrError.value());
+    protect(client())->didReceiveMessage(*this, decoderOrError.value());
     return Error::NoError;
 }
 
@@ -997,13 +998,13 @@ template<typename T, typename C>
 CompletionHandler<void(Connection*, Decoder*)> Connection::makeAsyncReplyCompletionHandler(C&& completionHandler, ThreadLikeAssertion callThread)
 {
     return {
-        [completionHandler = WTFMove(completionHandler)] (Connection* connection, Decoder* decoder) mutable {
+        [completionHandler = WTF::move(completionHandler)] (Connection* connection, Decoder* decoder) mutable {
             if (decoder && decoder->isValid()) {
                 ASSERT(connection);
-                callReply<T>(connection, *decoder, WTFMove(completionHandler));
+                callReply<T>(connection, *decoder, WTF::move(completionHandler));
             } else {
                 ASSERT(!connection);
-                cancelReply<T>(WTFMove(completionHandler));
+                cancelReply<T>(WTF::move(completionHandler));
             }
         }, callThread
     };
@@ -1029,7 +1030,7 @@ Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWit
     return {
         {
             [completionHandler = makeAsyncReplyCompletionHandler<T, C>(std::forward<C>(completionHandler), CompletionHandlerCallThread::AnyThread), dispatcher = Ref { dispatcher }](Connection* connection, std::unique_ptr<Decoder>&& decoder) mutable {
-                dispatcher->dispatch([connection = RefPtr { connection }, completionHandler = WTFMove(completionHandler), decoder = WTFMove(decoder)]() mutable {
+                dispatcher->dispatch([connection = RefPtr { connection }, completionHandler = WTF::move(completionHandler), decoder = WTF::move(decoder)]() mutable {
                     completionHandler(connection.get(), decoder.get());
                 });
             }, CompletionHandlerCallThread::AnyThread
@@ -1043,8 +1044,8 @@ Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWit
 {
     return {
         {
-            [producer = WTFMove(producer)](Connection*, std::unique_ptr<Decoder>&& decoder) mutable {
-                producer.settleWithFunction([decoder = WTFMove(decoder)]() mutable -> typename Promise::Result {
+            [producer = WTF::move(producer)](Connection*, std::unique_ptr<Decoder>&& decoder) mutable {
+                producer.settleWithFunction([decoder = WTF::move(decoder)]() mutable -> typename Promise::Result {
                     if (!decoder)
                         return PC::convertError(Error::InvalidConnection);
                     if (!decoder->isValid())
@@ -1053,9 +1054,9 @@ Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWit
                         return { };
                     else if (auto arguments = decoder->decode<typename T::ReplyArguments>()) {
                         if constexpr (std::tuple_size_v<typename T::ReplyArguments> == 1)
-                            return std::get<0>(WTFMove(*arguments));
+                            return std::get<0>(WTF::move(*arguments));
                         else
-                            return WTFMove(*arguments);
+                            return WTF::move(*arguments);
                     }
                     ASSERT_NOT_REACHED();
                     return PC::convertError(Error::FailedToDecodeReplyArguments);
@@ -1089,9 +1090,9 @@ void Connection::callReply(Connection* connection, Decoder& decoder, C&& complet
 {
     if (auto arguments = decoder.decode<typename T::ReplyArguments>()) {
         if constexpr (CanApply<C, typename T::ReplyArguments>::value)
-            return std::apply(std::forward<C>(completionHandler), WTFMove(*arguments));
+            return std::apply(std::forward<C>(completionHandler), WTF::move(*arguments));
         else
-            return callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), connection, WTFMove(*arguments));
+            return callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), connection, WTF::move(*arguments));
     }
     cancelReply<T>(std::forward<C>(completionHandler));
 }
@@ -1105,9 +1106,9 @@ void Connection::cancelReply(C&& completionHandler)
     }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
 
     if constexpr (CanApply<C, typename T::ReplyArguments>::value)
-        std::apply(std::forward<C>(completionHandler), WTFMove(emptyReplyTuple));
+        std::apply(std::forward<C>(completionHandler), WTF::move(emptyReplyTuple));
     else
-        callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), nullptr, WTFMove(emptyReplyTuple));
+        callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), nullptr, WTF::move(emptyReplyTuple));
 }
 
 inline void Connection::markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error)

@@ -59,7 +59,7 @@ public:
     ElementType* first() const { return m_first.get(); }
 
 private:
-    RefPtr<ElementType> m_first;
+    const RefPtr<ElementType> m_first;
 };
 
 // ElementAncestorIterator

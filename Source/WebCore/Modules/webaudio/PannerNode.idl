@@ -27,7 +27,7 @@
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface PannerNode : AudioNode {
-    constructor (BaseAudioContext context, optional PannerOptions options);
+    constructor (BaseAudioContext context, optional PannerOptions options = {});
 
     // Default model for stereo is equalpower
     [ImplementedAs=panningModelForBindings] attribute PanningModelType panningModel;

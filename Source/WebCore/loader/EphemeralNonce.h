@@ -33,7 +33,7 @@ struct EphemeralNonce {
     String nonce;
 
     EphemeralNonce isolatedCopy() const & { return { nonce.isolatedCopy() }; }
-    EphemeralNonce isolatedCopy() &&  { return { WTFMove(nonce).isolatedCopy() }; }
+    EphemeralNonce isolatedCopy() &&  { return { WTF::move(nonce).isolatedCopy() }; }
 
     WEBCORE_EXPORT bool isValid() const;
 };

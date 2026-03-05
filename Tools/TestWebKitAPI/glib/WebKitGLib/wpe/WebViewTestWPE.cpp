@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebViewTest.h"
 
-#include <wpe/wpe.h>
 #include <wtf/glib/GUniquePtr.h>
 
 void WebViewTest::platformDestroy()
@@ -51,8 +50,10 @@ void WebViewTest::showInWindow(int width, int height)
         return;
     }
 #endif
+#if USE(LIBWPE)
     auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView.get()));
     wpe_view_backend_add_activity_state(backend, wpe_view_activity_state_visible | wpe_view_activity_state_in_window | wpe_view_activity_state_focused);
+#endif
 }
 
 void WebViewTest::hideView()
@@ -65,10 +66,13 @@ void WebViewTest::hideView()
         return;
     }
 #endif
+#if USE(LIBWPE)
     auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView.get()));
     wpe_view_backend_remove_activity_state(backend, wpe_view_activity_state_visible | wpe_view_activity_state_focused);
+#endif
 }
 
+#if USE(LIBWPE)
 static unsigned testModifiersToWPELegacy(const OptionSet<WebViewTest::Modifiers>& modifiers)
 {
     unsigned wpeModifiers = 0;
@@ -95,6 +99,7 @@ static unsigned testMouseButtonToWPELegacy(WebViewTest::MouseButton button)
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 static WPEModifiers testModifiersToWPE(const OptionSet<WebViewTest::Modifiers>& modifiers)
@@ -146,11 +151,13 @@ void WebViewTest::clickMouseButton(int x, int y, MouseButton button, OptionSet<M
         return;
     }
 #endif
+#if USE(LIBWPE)
     auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView.get()));
     struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, 0, x, y, testMouseButtonToWPELegacy(button), 1, testModifiersToWPELegacy(mouseModifiers) };
     wpe_view_backend_dispatch_pointer_event(backend, &event);
     event.state = 0;
     wpe_view_backend_dispatch_pointer_event(backend, &event);
+#endif
 }
 
 void WebViewTest::keyStroke(unsigned keyVal, OptionSet<Modifiers> keyModifiers)
@@ -175,6 +182,7 @@ void WebViewTest::keyStroke(unsigned keyVal, OptionSet<Modifiers> keyModifiers)
         return;
     }
 #endif
+#if USE(LIBWPE)
     auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView.get()));
     struct wpe_input_xkb_keymap_entry* entries;
     uint32_t entriesCount;
@@ -184,4 +192,5 @@ void WebViewTest::keyStroke(unsigned keyVal, OptionSet<Modifiers> keyModifiers)
     event.pressed = false;
     wpe_view_backend_dispatch_keyboard_event(backend, &event);
     free(entries);
+#endif
 }

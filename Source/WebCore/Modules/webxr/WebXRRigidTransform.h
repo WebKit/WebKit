@@ -41,7 +41,7 @@ struct DOMPointInit;
 template<typename> class ExceptionOr;
 
 class WebXRRigidTransform : public RefCountedAndCanMakeWeakPtr<WebXRRigidTransform> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(WebXRRigidTransform, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebXRRigidTransform, WEBCORE_EXPORT);
 public:
     static Ref<WebXRRigidTransform> create();
     static Ref<WebXRRigidTransform> create(const TransformationMatrix&);
@@ -50,11 +50,11 @@ public:
 
     const DOMPointReadOnly& position() const;
     const DOMPointReadOnly& orientation() const;
-    const Float32Array& matrix();
-    const WebXRRigidTransform& inverse();
+    const Float32Array& NODELETE matrix();
+    const WebXRRigidTransform& NODELETE inverse();
     const TransformationMatrix& rawTransform() const;
 
-    JSValueInWrappedObject& cachedMatrix() { return m_cachedMatrix; }
+    JSValueInWrappedObject& cachedMatrix() LIFETIME_BOUND { return m_cachedMatrix; }
 
 private:
     WebXRRigidTransform(const DOMPointInit&, const DOMPointInit&);

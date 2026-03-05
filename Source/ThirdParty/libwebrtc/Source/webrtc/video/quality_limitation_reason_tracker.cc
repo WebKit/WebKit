@@ -53,4 +53,10 @@ QualityLimitationReasonTracker::DurationsMs() const {
   return total_durations_ms;
 }
 
+void QualityLimitationReasonTracker::SetDurationMs(
+    std::map<QualityLimitationReason, int64_t>
+        quality_limitation_durations_ms) {
+  durations_ms_ = quality_limitation_durations_ms;
+}
+
 }  // namespace webrtc

@@ -1,6 +1,6 @@
 {
     "domain": "LayerTree",
-    "debuggableTypes": ["page", "web-page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page"],
     "types": [
         {
@@ -107,6 +107,16 @@
             ],
             "returns": [
                 { "name": "compositingReasons", "$ref": "CompositingReasons", "description": "An object containing the reasons why the layer was composited as properties." }
+            ]
+        },
+        {
+            "name": "requestContent",
+            "description": "Captures a snapshot of the layer's rendered content as a PNG data URL.",
+            "parameters": [
+                { "name": "layerId", "$ref": "LayerId", "description": "The id of the layer to snapshot." }
+            ],
+            "returns": [
+                { "name": "content", "type": "string", "description": "Base64-encoded PNG data URL of the layer's rendered content." }
             ]
         }
     ],

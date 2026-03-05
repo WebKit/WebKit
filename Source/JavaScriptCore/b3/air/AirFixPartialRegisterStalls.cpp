@@ -72,7 +72,14 @@ bool hasPartialXmmRegUpdate(const Inst& inst)
 bool isDependencyBreaking(const Inst& inst)
 {
     // "xorps reg, reg" is used by the frontend to remove the dependency on its argument.
-    return inst.kind.opcode == MoveZeroToDouble;
+    switch (inst.kind.opcode) {
+    case MoveFloat:
+    case MoveDouble:
+    case MoveVector:
+        return inst.args[0].isFPImmZero();
+    default:
+        return false;
+    }
 }
 
 // FIXME: find a good distance per architecture experimentally.
@@ -120,7 +127,8 @@ void updateDistances(Inst& inst, FPDefDistance& localDistance, unsigned& distanc
     --distanceToBlockEnd;
 
     if (isDependencyBreaking(inst)) {
-        localDistance.reset(inst.args[0].tmp().fpr());
+        // MoveFloat/MoveDouble/MoveVector with FPImm zero: fpImm is args[0], dest tmp is args[1]
+        localDistance.reset(inst.args[1].tmp().fpr());
         return;
     }
 
@@ -212,8 +220,8 @@ void fixPartialRegisterStalls(Code& code)
             Inst& inst = block->at(i);
 
             if (hasPartialXmmRegUpdate(inst)) {
-                RegisterSetBuilder defs;
-                RegisterSetBuilder uses;
+                RegisterSet defs;
+                RegisterSet uses;
                 inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width width) {
                     if (tmp.isFPR() && width <= Width64) {
                         if (Arg::isAnyDef(role))
@@ -226,9 +234,9 @@ void fixPartialRegisterStalls(Code& code)
                 // for the value to be resolved anyway.
                 defs.exclude(uses);
 
-                defs.buildWithLowerBits().forEach([&] (Reg reg) {
+                defs.normalizeWidths().forEach([&] (Reg reg) {
                     if (localDistance.distance[MacroAssembler::fpRegisterIndex(reg.fpr())] < minimumSafeDistance)
-                        insertionSet.insert(i, MoveZeroToDouble, inst.origin, Tmp(reg));
+                        insertionSet.insert(i, MoveDouble, inst.origin, Arg::fpImm64(0), Tmp(reg));
                 });
             }
 

@@ -37,7 +37,7 @@
 namespace WebCore {
 
 CSSGridAutoRepeatValue::CSSGridAutoRepeatValue(bool isAutoFit, CSSValueListBuilder builder)
-    : CSSValueContainingVector(ClassType::GridAutoRepeat, SpaceSeparator, WTFMove(builder))
+    : CSSValueContainingVector(ClassType::GridAutoRepeat, SpaceSeparator, WTF::move(builder))
     , m_isAutoFit(isAutoFit)
 {
 }
@@ -45,7 +45,7 @@ CSSGridAutoRepeatValue::CSSGridAutoRepeatValue(bool isAutoFit, CSSValueListBuild
 Ref<CSSGridAutoRepeatValue> CSSGridAutoRepeatValue::create(CSSValueID id, CSSValueListBuilder builder)
 {
     ASSERT(id == CSSValueAutoFill || id == CSSValueAutoFit);
-    return adoptRef(*new CSSGridAutoRepeatValue(id == CSSValueAutoFit, WTFMove(builder)));
+    return adoptRef(*new CSSGridAutoRepeatValue(id == CSSValueAutoFit, WTF::move(builder)));
 }
 
 CSSValueID CSSGridAutoRepeatValue::autoRepeatID() const

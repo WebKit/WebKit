@@ -36,7 +36,7 @@ namespace Layout {
 // This class implements the special block formatting context layout logic for the table wrapper.
 // https://www.w3.org/TR/CSS22/tables.html#model
 class TableWrapperBlockFormattingContext final : public BlockFormattingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableWrapperBlockFormattingContext);
+    WTF_MAKE_TZONE_ALLOCATED(TableWrapperBlockFormattingContext);
 public:
     TableWrapperBlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState&);
 

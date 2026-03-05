@@ -61,9 +61,9 @@ using JSSharedWorkerGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable
 
 static const struct CompactHashIndex JSSharedWorkerGlobalScopeTableIndex[5] = {
     { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
     { 0, 4 },
+    { -1, -1 },
+    { -1, -1 },
     { 1, -1 },
 };
 
@@ -115,13 +115,8 @@ void JSSharedWorkerGlobalScopePrototype::finishCreation(VM& vm)
 const ClassInfo JSSharedWorkerGlobalScope::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, &JSSharedWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScope) };
 
 JSSharedWorkerGlobalScope::JSSharedWorkerGlobalScope(VM& vm, Structure* structure, Ref<SharedWorkerGlobalScope>&& impl)
-    : JSWorkerGlobalScope(vm, structure, WTFMove(impl))
+    : JSWorkerGlobalScope(vm, structure, WTF::move(impl))
 {
-}
-
-Ref<SharedWorkerGlobalScope> JSSharedWorkerGlobalScope::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, SharedWorkerGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");

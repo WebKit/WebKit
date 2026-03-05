@@ -38,7 +38,7 @@ namespace PAL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodec);
 
-std::span<char> TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
+std::span<char> TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement LIFETIME_BOUND)
 {
     ASSERT(!(codePoint > UCHAR_MAX_VALUE));
 

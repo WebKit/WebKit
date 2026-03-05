@@ -57,6 +57,7 @@
 #include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/near_matcher.h"
 #include "test/rtcp_packet_parser.h"
 #include "test/time_controller/simulated_time_controller.h"
 
@@ -92,17 +93,15 @@ enum : int {
   kTransmissionOffsetExtensionId,
 };
 
-MATCHER_P2(Near, value, margin, "") {
-  return value - margin <= arg && arg <= value + margin;
-}
-
 class RtcpRttStatsTestImpl : public RtcpRttStats {
  public:
   RtcpRttStatsTestImpl() : rtt_ms_(0) {}
   ~RtcpRttStatsTestImpl() override = default;
 
   void OnRttUpdate(int64_t rtt_ms) override { rtt_ms_ = rtt_ms; }
-  int64_t LastProcessedRtt() const override { return rtt_ms_; }
+  int64_t LastProcessedRtt() const { return rtt_ms_; }
+
+ private:
   int64_t rtt_ms_;
 };
 
@@ -362,7 +361,13 @@ class RtpRtcpImpl2Test : public ::testing::Test {
     rtp_video_header.simulcastIdx = 0;
     rtp_video_header.codec = kVideoCodecVP8;
     rtp_video_header.video_type_header = vp8_header;
-    rtp_video_header.video_timing = {0u, 0u, 0u, 0u, 0u, 0u, false};
+    rtp_video_header.video_timing = {.encode_start_delta_ms = 0u,
+                                     .encode_finish_delta_ms = 0u,
+                                     .packetization_finish_delta_ms = 0u,
+                                     .pacer_exit_delta_ms = 0u,
+                                     .network_timestamp_delta_ms = 0u,
+                                     .network2_timestamp_delta_ms = 0u,
+                                     .flags = false};
 
     const uint8_t payload[100] = {0};
     bool success = module->impl_->OnSendingRtpFrame(0, 0, kPayloadType, true);
@@ -436,8 +441,7 @@ TEST_F(RtpRtcpImpl2Test, Rtt) {
   AdvanceTime(kOneWayNetworkDelay);
 
   // Verify RTT.
-  EXPECT_THAT(sender_.impl_->LastRtt(),
-              Near(2 * kOneWayNetworkDelay, TimeDelta::Millis(1)));
+  EXPECT_THAT(sender_.impl_->LastRtt(), Near(2 * kOneWayNetworkDelay));
 
   // Verify RTT from rtt_stats config.
   EXPECT_EQ(0, sender_.rtt_stats_.LastProcessedRtt());

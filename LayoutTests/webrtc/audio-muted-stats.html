@@ -9,9 +9,11 @@
     <body>
         <script src ="routines.js"></script>
         <script>
-function getOutboundRTPStats(connection)
+async function getOutboundRTPStats(connection, counter)
 {
-    return connection.getStats().then((report) => {
+    if (!counter)
+        counter = 0;
+    const stats = await connection.getStats().then((report) => {
         var stats;
         report.forEach((statItem) => {
             if (statItem.type === "outbound-rtp") {
@@ -20,6 +22,13 @@ function getOutboundRTPStats(connection)
         });
         return stats;
     });
+    if (!stats) {
+        if (counter >= 100)
+            return Promise.reject("getOutboundRTPStats timed out");
+        await new Promise(resolve => setTimeout(resolve, 50));
+        return getOutboundRTPStats(connection, ++counter)
+    }
+    return stats;
 }
 
 function checkOutboundBytesSentIncreased(firstConnection, statsFirstConnection, count)

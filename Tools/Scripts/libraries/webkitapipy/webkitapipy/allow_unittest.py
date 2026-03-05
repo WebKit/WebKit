@@ -25,7 +25,7 @@ import tempfile
 from pathlib import Path
 from unittest import TestCase
 
-from .allow import AllowList, AllowedSPI, AllowedReason
+from .allow import AllowList, AllowedSPI, AllowedReason, _transform_wildcard_version
 
 Toml = b'''
 [[temporary-usage]]
@@ -39,6 +39,8 @@ classes = ["NSTemporarilyAllowed"]
 request = "rdar://234567890"
 symbols = ["Permanent1", "Permanent2"]
 requires = ["ENABLE_FOO", "!ENABLE_BAR"]
+requires-os = ["iOS<26.0", "iOS>=18.2"]
+requires-sdk = [ "iOS <= 26.*" ]
 '''
 
 A1 = AllowedSPI(reason=AllowedReason.TEMPORARY_USAGE,
@@ -50,7 +52,10 @@ A1 = AllowedSPI(reason=AllowedReason.TEMPORARY_USAGE,
 A2 = AllowedSPI(reason=AllowedReason.NOT_WEB_ESSENTIAL,
                 bugs=AllowedSPI.Bugs(request='rdar://234567890', cleanup=None),
                 symbols=['_Permanent1', '_Permanent2'],
-                selectors=[], classes=[], requires=['ENABLE_FOO', '!ENABLE_BAR'])
+                selectors=[], classes=[], requires=['ENABLE_FOO', '!ENABLE_BAR'],
+                requires_os=[AllowedSPI.RequiredVersion('iOS', '<', '26.0'),
+                             AllowedSPI.RequiredVersion('iOS', '>=', '18.2')],
+                requires_sdk=[AllowedSPI.RequiredVersion('iOS', '<', '27.00')])
 
 
 class TestAllowList(TestCase):
@@ -131,7 +136,6 @@ class TestAllowList(TestCase):
                  'requires': ['A', 'B', 'A']}
             ]})
 
-
     def test_no_string(self):
         with self.assertRaisesRegex(ValueError, '"Foo" in allowlist is a '
                                     'string, expected a list'):
@@ -139,3 +143,42 @@ class TestAllowList(TestCase):
                 {'request': 'rdar://1', 'cleanup': 'rdar://2',
                  'classes': 'Foo'},
             ]})
+
+    def test_invalid_version_requirements(self):
+        with self.assertRaisesRegex(ValueError, 'unmatched requirement'):
+            AllowList.from_dict({'temporary-usage': [
+                {'request': 'rdar://1', 'cleanup': 'rdar://2',
+                 'classes': ['Foo'], 'requires-os': ['15.0 < macOS']}
+            ]})
+        with self.assertRaisesRegex(ValueError, 'unmatched requirement'):
+            AllowList.from_dict({'temporary-usage': [
+                {'request': 'rdar://1', 'cleanup': 'rdar://2',
+                 'classes': ['Foo'], 'requires-os': ['macOS=15.0']}
+            ]})
+
+    def test_required_fields(self):
+        with self.assertRaisesRegex(ValueError, 'must have a "cleanup" bug'):
+            AllowList.from_dict({'temporary-usage': [
+                {'request': 'rdar://1', 'classes': ['Foo']}
+            ]})
+
+        # FIXME: Disabled while allowlist entries are cleaned up,
+        # cf. rdar://170360205
+        # with self.assertRaisesRegex(ValueError, 'must have a "requires-sdk" '
+        #                             'clause'):
+        #     AllowList.from_dict({'staging': [
+        #         {'classes': ['Foo']}
+        #     ]})
+
+    def test_wildcard_version(self):
+        self.assertEqual(_transform_wildcard_version('<=', '26.*'), ('<', '27.00'))
+        self.assertEqual(_transform_wildcard_version('<=', '26.3*'), ('<', '26.40'))
+        self.assertEqual(_transform_wildcard_version('<=', '26.9*'), ('<', '27.00'))
+        self.assertEqual(_transform_wildcard_version('<=', '26.0*'), ('<', '26.10'))
+        # Kind of nonsensical, but syntactically valid.
+        self.assertEqual(_transform_wildcard_version('<=', '26.30*'), ('<', '26.31'))
+        self.assertEqual(_transform_wildcard_version('<=', '*'), ('<', '99.99'))
+        with self.assertRaises(ValueError):
+            _transform_wildcard_version('<', '26.*')
+            _transform_wildcard_version('==', '26.*')
+            _transform_wildcard_version('!=', '26.*')

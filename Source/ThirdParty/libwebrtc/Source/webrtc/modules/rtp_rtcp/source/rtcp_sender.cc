@@ -53,7 +53,6 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
-#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/tmmbr_help.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -67,8 +66,6 @@ namespace {
 const uint32_t kRtcpAnyExtendedReports = kRtcpXrReceiverReferenceTime |
                                          kRtcpXrDlrrReportBlock |
                                          kRtcpXrTargetBitrate;
-constexpr int32_t kDefaultVideoReportInterval = 1000;
-constexpr int32_t kDefaultAudioReportInterval = 5000;
 }  // namespace
 
 // Helper to put several RTCP packets into lower layer datagram RTCP packet.
@@ -127,23 +124,6 @@ class RTCPSender::RtcpContext {
   const Timestamp now_;
 };
 
-RTCPSender::Configuration RTCPSender::Configuration::FromRtpRtcpConfiguration(
-    const RtpRtcpInterface::Configuration& configuration) {
-  RTCPSender::Configuration result;
-  result.audio = configuration.audio;
-  result.local_media_ssrc = configuration.local_media_ssrc;
-  result.outgoing_transport = configuration.outgoing_transport;
-  result.non_sender_rtt_measurement = configuration.non_sender_rtt_measurement;
-  if (configuration.rtcp_report_interval_ms) {
-    result.rtcp_report_interval =
-        TimeDelta::Millis(configuration.rtcp_report_interval_ms);
-  }
-  result.receive_statistics = configuration.receive_statistics;
-  result.rtcp_packet_type_counter_observer =
-      configuration.rtcp_packet_type_counter_observer;
-  return result;
-}
-
 RTCPSender::RTCPSender(const Environment& env, Configuration config)
     : env_(env),
       audio_(config.audio),
@@ -151,30 +131,26 @@ RTCPSender::RTCPSender(const Environment& env, Configuration config)
       random_(env_.clock().TimeInMicroseconds()),
       method_(RtcpMode::kOff),
       transport_(config.outgoing_transport),
-      report_interval_(config.rtcp_report_interval.value_or(
-          TimeDelta::Millis(config.audio ? kDefaultAudioReportInterval
-                                         : kDefaultVideoReportInterval))),
-      schedule_next_rtcp_send_evaluation_function_(
-          std::move(config.schedule_next_rtcp_send_evaluation_function)),
+      report_interval_(config.rtcp_report_interval),
+      schedule_next_rtcp_send_evaluation_(
+          std::move(config.schedule_next_rtcp_send_evaluation)),
       sending_(false),
       timestamp_offset_(0),
       last_rtp_timestamp_(0),
       remote_ssrc_(0),
       receive_statistics_(config.receive_statistics),
-
       sequence_number_fir_(0),
-
       remb_bitrate_(0),
-
       tmmbr_send_bps_(0),
       packet_oh_send_(0),
       max_packet_size_(IP_PACKET_SIZE - 28),  // IPv4 + UDP by default.
-
       xr_send_receiver_reference_time_enabled_(
           config.non_sender_rtt_measurement),
       packet_type_counter_observer_(config.rtcp_packet_type_counter_observer),
       send_video_bitrate_allocation_(false),
       last_payload_type_(-1) {
+  RTC_CHECK(schedule_next_rtcp_send_evaluation_);
+  RTC_CHECK_GT(report_interval_, TimeDelta::Zero());
   RTC_DCHECK(transport_ != nullptr);
 
   builders_[kRtcpSr] = &RTCPSender::BuildSR;
@@ -900,10 +876,7 @@ void RTCPSender::SendCombinedRtcpPacket(
 
 void RTCPSender::SetNextRtcpSendEvaluationDuration(TimeDelta duration) {
   next_time_to_send_rtcp_ = env_.clock().CurrentTime() + duration;
-  // TODO(bugs.webrtc.org/11581): make unconditional once downstream consumers
-  // are using the callback method.
-  if (schedule_next_rtcp_send_evaluation_function_)
-    schedule_next_rtcp_send_evaluation_function_(duration);
+  schedule_next_rtcp_send_evaluation_(duration);
 }
 
 }  // namespace webrtc

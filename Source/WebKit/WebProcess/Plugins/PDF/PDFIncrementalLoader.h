@@ -104,7 +104,7 @@ private:
     void forgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
     void cancelAndForgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
 
-    std::optional<ByteRangeRequestIdentifier> identifierForLoader(WebCore::NetscapePlugInStreamLoader*);
+    std::optional<ByteRangeRequestIdentifier> identifierForLoader(WebCore::NetscapePlugInStreamLoader&);
     void removeOutstandingByteRangeRequest(ByteRangeRequestIdentifier);
 
 

@@ -19,18 +19,19 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/transport/stun.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/string_encode.h"
-#include "rtc_base/time_utils.h"  // For TimeMillis
 
 namespace webrtc {
 
@@ -58,11 +59,8 @@ StunRequestManager::StunRequestManager(
 
 StunRequestManager::~StunRequestManager() = default;
 
-void StunRequestManager::Send(StunRequest* request) {
-  SendDelayed(request, 0);
-}
-
-void StunRequestManager::SendDelayed(StunRequest* request, int delay) {
+void StunRequestManager::Send(std::unique_ptr<StunRequest> request,
+                              TimeDelta delay) {
   RTC_DCHECK_RUN_ON(thread_);
   RTC_DCHECK_EQ(this, request->manager());
   RTC_DCHECK(!request->AuthenticationRequired() ||
@@ -70,9 +68,9 @@ void StunRequestManager::SendDelayed(StunRequest* request, int delay) {
                  StunMessage::IntegrityStatus::kNotSet)
       << "Sending request w/o integrity!";
   auto [iter, was_inserted] =
-      requests_.emplace(request->id(), absl::WrapUnique(request));
+      requests_.emplace(request->id(), std::move(request));
   RTC_DCHECK(was_inserted);
-  request->Send(TimeDelta::Millis(delay));
+  iter->second->Send(delay);
 }
 
 void StunRequestManager::FlushForTest(int msg_type) {
@@ -193,25 +191,24 @@ bool StunRequestManager::empty() const {
   return requests_.empty();
 }
 
-bool StunRequestManager::CheckResponse(const char* data, size_t size) {
+bool StunRequestManager::CheckResponse(ArrayView<const uint8_t> payload) {
   RTC_DCHECK_RUN_ON(thread_);
   // Check the appropriate bytes of the stream to see if they match the
   // transaction ID of a response we are expecting.
 
-  if (size < 20)
+  if (payload.size() < 20)
     return false;
 
-  std::string id;
-  id.append(data + kStunTransactionIdOffset, kStunTransactionIdLength);
-
+  absl::string_view id(
+      reinterpret_cast<const char*>(payload.data()) + kStunTransactionIdOffset,
+      kStunTransactionIdLength);
   RequestMap::iterator iter = requests_.find(id);
   if (iter == requests_.end())
     return false;
 
   // Parse the STUN message and continue processing as usual.
 
-  ByteBufferReader buf(
-      MakeArrayView(reinterpret_cast<const uint8_t*>(data), size));
+  ByteBufferReader buf(payload);
   std::unique_ptr<StunMessage> response(iter->second->msg_->CreateNew());
   if (!response->Read(&buf)) {
     RTC_LOG(LS_WARNING) << "Failed to read STUN response " << hex_encode(id);
@@ -233,20 +230,23 @@ void StunRequestManager::SendPacket(const void* data,
   send_packet_(data, size, request);
 }
 
-StunRequest::StunRequest(StunRequestManager& manager)
-    : manager_(manager),
-      msg_(new StunMessage(STUN_INVALID_MESSAGE_TYPE)),
-      tstamp_(0),
+StunRequest::StunRequest(const Environment& env, StunRequestManager& manager)
+    : env_(env),
+      manager_(manager),
+      msg_(std::make_unique<StunMessage>(STUN_INVALID_MESSAGE_TYPE)),
+      tstamp_(Timestamp::Zero()),
       count_(0),
       timeout_(false) {
   RTC_DCHECK_RUN_ON(network_thread());
 }
 
-StunRequest::StunRequest(StunRequestManager& manager,
+StunRequest::StunRequest(const Environment& env,
+                         StunRequestManager& manager,
                          std::unique_ptr<StunMessage> message)
-    : manager_(manager),
+    : env_(env),
+      manager_(manager),
       msg_(std::move(message)),
-      tstamp_(0),
+      tstamp_(Timestamp::Zero()),
       count_(0),
       timeout_(false) {
   RTC_DCHECK_RUN_ON(network_thread());
@@ -264,9 +264,9 @@ const StunMessage* StunRequest::msg() const {
   return msg_.get();
 }
 
-int StunRequest::Elapsed() const {
+TimeDelta StunRequest::Elapsed() const {
   RTC_DCHECK_RUN_ON(network_thread());
-  return static_cast<int>(TimeMillis() - tstamp_);
+  return env_.clock().CurrentTime() - tstamp_;
 }
 
 void StunRequest::SendInternal() {
@@ -277,7 +277,7 @@ void StunRequest::SendInternal() {
     return;
   }
 
-  tstamp_ = TimeMillis();
+  tstamp_ = env_.clock().CurrentTime();
 
   ByteBufferWriter buf;
   msg_->Write(&buf);

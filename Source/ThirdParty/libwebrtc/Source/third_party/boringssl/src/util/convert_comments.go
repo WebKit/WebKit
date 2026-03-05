@@ -118,7 +118,7 @@ func convertComments(path string, in []byte) []byte {
 	var inComment bool
 	// comment is the currently buffered multi-line comment to convert. If
 	// |inComment| is true and it is nil, the current multi-line comment is
-	// not convertable and we copy lines to |out| as-is.
+	// not convertible and we copy lines to |out| as-is.
 	var comment []string
 	// column is the column offset of |comment|.
 	var column int
@@ -150,7 +150,7 @@ func convertComments(path string, in []byte) []byte {
 			inComment = false
 			if comment != nil {
 				if idx == len(line)-2 {
-					// This is a convertable multi-line comment.
+					// This is a convertible multi-line comment.
 					if idx >= column+2 {
 						// |idx| may be equal to
 						// |column| + 1, if the line is
@@ -174,7 +174,7 @@ func convertComments(path string, in []byte) []byte {
 			idx += 2
 		}
 
-		// Parse starting from |idx|, looking for either a convertable
+		// Parse starting from |idx|, looking for either a convertible
 		// line comment or a multi-line comment.
 		for {
 			idx = indexFrom(line, "/*", idx)

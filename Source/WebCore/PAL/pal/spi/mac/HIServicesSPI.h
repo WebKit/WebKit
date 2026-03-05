@@ -25,7 +25,14 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <span>
@@ -176,3 +183,7 @@ typedef Boolean (*AXAuditTokenIsAuthenticatedCallback)(audit_token_t);
 WTF_EXTERN_C_END
 
 #define kAXClientTypeWebKitTesting 999999
+
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
+
+#endif // __cplusplus

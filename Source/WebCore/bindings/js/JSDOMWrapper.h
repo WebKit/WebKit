@@ -24,9 +24,10 @@
 #include <JavaScriptCore/JSDestructibleObject.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <WebCore/JSDOMGlobalObject.h>
-#include <WebCore/NodeConstants.h>
+#include <WebCore/NodeType.h>
 #include <wtf/Compiler.h>
 #include <wtf/SignedPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -40,22 +41,22 @@ class ScriptExecutionContext;
 // offset | 7 | 6 | 5 | 4 | 3   2   1   0  |
 // value  | 1 | 1 | 1 | 1 |    NodeType    |
 
-static const uint8_t JSDOMWrapperType                = 0b11101110;
-static const uint8_t JSEventType                     = 0b11101111;
-static const uint8_t JSNodeType                      = 0b11110000;
-static const uint8_t JSNodeTypeMask                  = 0b00001111;
-static const uint8_t JSTextNodeType                  = JSNodeType | NodeConstants::TEXT_NODE;
-static const uint8_t JSProcessingInstructionNodeType = JSNodeType | NodeConstants::PROCESSING_INSTRUCTION_NODE;
-static const uint8_t JSDocumentTypeNodeType          = JSNodeType | NodeConstants::DOCUMENT_TYPE_NODE;
-static const uint8_t JSDocumentFragmentNodeType      = JSNodeType | NodeConstants::DOCUMENT_FRAGMENT_NODE;
-static const uint8_t JSDocumentWrapperType           = JSNodeType | NodeConstants::DOCUMENT_NODE;
-static const uint8_t JSCommentNodeType               = JSNodeType | NodeConstants::COMMENT_NODE;
-static const uint8_t JSCDATASectionNodeType          = JSNodeType | NodeConstants::CDATA_SECTION_NODE;
-static const uint8_t JSAttrNodeType                  = JSNodeType | NodeConstants::ATTRIBUTE_NODE;
-static const uint8_t JSElementType                   = 0b11110000 | NodeConstants::ELEMENT_NODE;
+static constexpr uint8_t JSDOMWrapperType                = 0b11101110;
+static constexpr uint8_t JSEventType                     = 0b11101111;
+static constexpr uint8_t JSNodeType                      = 0b11110000;
+static constexpr uint8_t JSNodeTypeMask                  = 0b00001111;
+static constexpr uint8_t JSTextNodeType                  = JSNodeType | std::to_underlying(NodeType::Text);
+static constexpr uint8_t JSProcessingInstructionNodeType = JSNodeType | std::to_underlying(NodeType::ProcessingInstruction);
+static constexpr uint8_t JSDocumentTypeNodeType          = JSNodeType | std::to_underlying(NodeType::DocumentType);
+static constexpr uint8_t JSDocumentFragmentNodeType      = JSNodeType | std::to_underlying(NodeType::DocumentFragment);
+static constexpr uint8_t JSDocumentWrapperType           = JSNodeType | std::to_underlying(NodeType::Document);
+static constexpr uint8_t JSCommentNodeType               = JSNodeType | std::to_underlying(NodeType::Comment);
+static constexpr uint8_t JSCDATASectionNodeType          = JSNodeType | std::to_underlying(NodeType::CDATASection);
+static constexpr uint8_t JSAttrNodeType                  = JSNodeType | std::to_underlying(NodeType::Attribute);
+static constexpr uint8_t JSElementType                   = 0b11110000 | std::to_underlying(NodeType::Element);
 
 static_assert(JSDOMWrapperType > JSC::LastJSCObjectType, "JSC::JSType offers the highest bit.");
-static_assert(NodeConstants::LastNodeType <= JSNodeTypeMask, "NodeType should be represented in 4bit.");
+static_assert(lastNodeType <= JSNodeTypeMask, "NodeType should be represented in 4bit.");
 
 class JSDOMObject : public JSC::JSDestructibleObject {
 public:
@@ -78,17 +79,16 @@ public:
     using DOMWrapped = ImplementationClass;
 
     ImplementationClass& wrapped() const { return m_wrapped; }
-    Ref<ImplementationClass> protectedWrapped() const { return m_wrapped; }
     static constexpr ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper, m_wrapped); }
     constexpr static bool hasCustomPtrTraits() { return !std::is_same_v<PtrTraits, RawPtrTraits<ImplementationClass>>; };
     
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
         : Base(structure, globalObject)
-        , m_wrapped(WTFMove(impl)) { }
+        , m_wrapped(WTF::move(impl)) { }
 
 private:
-    Ref<ImplementationClass, PtrTraits> m_wrapped;
+    const Ref<ImplementationClass, PtrTraits> m_wrapped;
 };
 
 template<typename ImplementationClass> struct JSDOMWrapperConverterTraits;

@@ -162,7 +162,7 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
     // one.
     std::pair key { resource->url(), resource->cachePartition() };
     if (auto* existingResources = sessionResourceMap(resource->sessionID())) {
-        if (CachedResourceHandle existingResource = existingResources->get(key).get())
+        if (CachedResourceHandle existingResource = existingResources->get(key))
             remove(*existingResource);
     }
 
@@ -208,8 +208,8 @@ CachedResource* MemoryCache::resourceForRequestImpl(const ResourceRequest& reque
     ASSERT(isMainThread());
     URL url = removeFragmentIdentifierIfNeeded(request.url());
 
-    auto key = std::make_pair(WTFMove(url), request.cachePartition());
-    return resources.get(key).get();
+    auto key = std::make_pair(WTF::move(url), request.cachePartition());
+    return resources.get(key);
 }
 
 unsigned MemoryCache::deadCapacity() const 
@@ -576,7 +576,7 @@ void MemoryCache::removeResourcesWithOrigin(const ClientOrigin& origin)
     removeResourcesWithOrigin(origin.clientOrigin.securityOrigin(), cachePartition);
 }
 
-void MemoryCache::removeResourcesWithOrigins(PAL::SessionID sessionID, const HashSet<RefPtr<SecurityOrigin>>& origins)
+void MemoryCache::removeResourcesWithOrigins(PAL::SessionID sessionID, const HashSet<Ref<SecurityOrigin>>& origins)
 {
     RELEASE_ASSERT(isMainThread());
     auto* resourceMap = sessionResourceMap(sessionID);
@@ -621,11 +621,11 @@ void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
     }
 }
 
-HashSet<RefPtr<SecurityOrigin>> MemoryCache::originsWithCache(PAL::SessionID sessionID) const
+HashSet<Ref<SecurityOrigin>> MemoryCache::originsWithCache(PAL::SessionID sessionID) const
 {
     RELEASE_ASSERT(isMainThread());
 
-    HashSet<RefPtr<SecurityOrigin>> origins;
+    HashSet<Ref<SecurityOrigin>> origins;
 
     auto it = m_sessionResources.find(sessionID);
     if (it != m_sessionResources.end()) {
@@ -691,7 +691,7 @@ void MemoryCache::adjustSize(bool live, long long delta)
 void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext& context, const ResourceRequest& request)
 {
     if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context)) {
-        auto* workerLoaderProxy = globalScope->thread()->workerLoaderProxy();
+        CheckedPtr workerLoaderProxy = globalScope->thread()->workerLoaderProxy();
         if (!workerLoaderProxy)
             return;
         workerLoaderProxy->postTaskToLoader([request = request.isolatedCopy()] (ScriptExecutionContext& context) {

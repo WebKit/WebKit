@@ -39,7 +39,7 @@
 namespace WebCore {
 
 CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, ScriptTrackingPrivacyProtectionsEnabled requiresPrivacyProtections)
-    : CachedResource(WTFMove(request), request.options().destination == FetchOptionsDestination::Json ? Type::JSON : Type::Script, sessionID, cookieJar)
+    : CachedResource(WTF::move(request), request.options().destination == FetchOptionsDestination::Json ? Type::JSON : Type::Script, sessionID, cookieJar)
     , m_requiresPrivacyProtections(requiresPrivacyProtections == ScriptTrackingPrivacyProtectionsEnabled::Yes)
     , m_decoder(TextResourceDecoder::create("text/javascript"_s, request.charset()))
 {
@@ -47,19 +47,14 @@ CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessi
 
 CachedScript::~CachedScript() = default;
 
-RefPtr<TextResourceDecoder> CachedScript::protectedDecoder() const
-{
-    return m_decoder;
-}
-
 void CachedScript::setEncoding(const String& chs)
 {
-    protectedDecoder()->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 ASCIILiteral CachedScript::encoding() const
 {
-    return protectedDecoder()->encoding().name();
+    return protect(m_decoder)->encoding().name();
 }
 
 StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
@@ -100,7 +95,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
             forceUTF8Decoder->setAlwaysUseUTF8();
             result = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
         } else
-            result = protectedDecoder()->decodeAndFlush(contiguousData->span());
+            result = protect(m_decoder)->decodeAndFlush(contiguousData->span());
 
 
         if (m_decodingState == NeverDecoded || shouldForceRedecoding)
@@ -109,7 +104,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
 
         {
             Locker locker { m_lock };
-            m_script = WTFMove(result);
+            m_script = WTF::move(result);
             m_decodingState = DataAndDecodedStringHaveDifferentBytes;
             m_wasForceDecodedAsUTF8 = shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes;
         }
@@ -146,7 +141,7 @@ JSC::CodeBlockHash CachedScript::codeBlockHashConcurrently(int startOffset, int 
             forceUTF8Decoder->setAlwaysUseUTF8();
             result = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
         } else {
-            auto decoder = TextResourceDecoder::create(protectedDecoder()->contentType(), protectedDecoder()->encoding(), protectedDecoder()->usesEncodingDetector());
+            auto decoder = TextResourceDecoder::create(protect(m_decoder)->contentType(), protect(m_decoder)->encoding(), protect(m_decoder)->usesEncodingDetector());
             result = decoder->decodeAndFlush(contiguousData->span());
         }
 

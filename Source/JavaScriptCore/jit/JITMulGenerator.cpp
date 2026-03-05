@@ -47,9 +47,6 @@ JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICG
         return JITMathICInlineResult::DontGenerate;
 
     if (lhs.isOnlyNumber() && rhs.isOnlyNumber() && !m_leftOperand.isConst() && !m_rightOperand.isConst()) {
-        if (!jit.supportsFloatingPoint())
-            return JITMathICInlineResult::DontGenerate;
-
         ASSERT(m_left);
         ASSERT(m_right);
         if (!m_leftOperand.definitelyIsNumber())
@@ -123,11 +120,6 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         jit.boxInt32(multiplyResultGPR, m_result);
         endJumpList.append(jit.jump());
 
-        if (!jit.supportsFloatingPoint()) {
-            slowPathJumpList.append(notInt32);
-            return true;
-        }
-
         // Try to do doubleVar * double(intConstant).
         notInt32.link(&jit);
         if (!varOpr.definitelyIsNumber())
@@ -155,12 +147,6 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 
         jit.boxInt32(m_scratchGPR, m_result);
         endJumpList.append(jit.jump());
-
-        if (!jit.supportsFloatingPoint()) {
-            slowPathJumpList.append(leftNotInt);
-            slowPathJumpList.append(rightNotInt);
-            return true;
-        }
 
         leftNotInt.link(&jit);
         if (!m_leftOperand.definitelyIsNumber())

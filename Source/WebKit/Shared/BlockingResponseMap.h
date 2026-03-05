@@ -60,7 +60,7 @@ public:
         Locker locker { m_responsesLock };
         ASSERT(!m_responses.contains(requestID));
 
-        m_responses.set(requestID, WTFMove(response));
+        m_responses.set(requestID, WTF::move(response));
 
         // FIXME: Could get a slight speed-up from using notifyOne().
         m_condition.notifyAll();

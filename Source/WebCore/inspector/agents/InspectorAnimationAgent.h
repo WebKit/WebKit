@@ -34,7 +34,6 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
@@ -97,10 +96,12 @@ private:
     const UniqueRef<Inspector::AnimationFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::AnimationBackendDispatcher> m_backendDispatcher;
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
     WeakRef<Page> m_inspectedPage;
 
-    HashMap<Inspector::Protocol::Animation::AnimationId, WeakRef<WebAnimation, WeakPtrImplWithEventTargetData>> m_animationIdMap;
+    // FIXME <https://webkit.org/b/303593>: Animation should not be destroyed before notifying this agent to unbind it.
+    // The value type should be WeakRef or CheckedRef instead.
+    HashMap<Inspector::Protocol::Animation::AnimationId, WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData>> m_animationIdMap;
 
     WeakHashMap<WebAnimation, Ref<Inspector::Protocol::Console::StackTrace>, WeakPtrImplWithEventTargetData> m_animationsPendingBinding;
     Timer m_animationBindingTimer;

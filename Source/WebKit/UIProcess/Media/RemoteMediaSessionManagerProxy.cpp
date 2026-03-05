@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
 #include "RemoteMediaSessionClientProxy.h"
+#include "RemoteMediaSessionManagerMessages.h"
 #include "RemoteMediaSessionManagerProxyMessages.h"
 #include "RemoteMediaSessionProxy.h"
 #include "RemoteMediaSessionState.h"
@@ -93,7 +94,7 @@ RefPtr<RemoteMediaSessionManagerProxy> RemoteMediaSessionManagerProxy::create(We
 RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy(WebCore::PageIdentifier identifier, WebProcessProxy& process)
     : REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS(identifier)
     , m_process(process)
-    , m_topPageID(identifier)
+    , m_localPageID(identifier)
 {
 #if USE(AUDIO_SESSION)
     AudioSession::setSharedSession(*this);
@@ -105,12 +106,24 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy(WebCore::PageIden
     });
 #endif
 
-    process.addMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_topPageID, *this);
+    process.addMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_localPageID, *this);
 }
 
 RemoteMediaSessionManagerProxy::~RemoteMediaSessionManagerProxy()
 {
-    m_process->removeMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_topPageID);
+    m_process->removeMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_localPageID);
+}
+
+void RemoteMediaSessionManagerProxy::addRemoteMediaSessionManager(WebCore::PageIdentifier pageIdentifier)
+{
+    ASSERT(!m_remoteSessionManagerPages.contains(pageIdentifier));
+    m_remoteSessionManagerPages.add(pageIdentifier);
+}
+
+void RemoteMediaSessionManagerProxy::removeRemoteMediaSessionManager(WebCore::PageIdentifier pageIdentifier)
+{
+    ASSERT(m_remoteSessionManagerPages.contains(pageIdentifier));
+    m_remoteSessionManagerPages.remove(pageIdentifier);
 }
 
 void RemoteMediaSessionManagerProxy::addMediaSession(RemoteMediaSessionState&& state)
@@ -128,13 +141,13 @@ void RemoteMediaSessionManagerProxy::addMediaSession(RemoteMediaSessionState&& s
 
 void RemoteMediaSessionManagerProxy::removeMediaSession(RemoteMediaSessionState&& state)
 {
-    if (RefPtr session = findSession(state))
+    if (RefPtr session = findAndUpdateSession(state))
         removeSession(*session);
 }
 
 void RemoteMediaSessionManagerProxy::setCurrentMediaSession(RemoteMediaSessionState&& state)
 {
-    if (RefPtr session = findSession(state))
+    if (RefPtr session = findAndUpdateSession(state))
         setCurrentSession(*session);
 }
 
@@ -143,10 +156,68 @@ void RemoteMediaSessionManagerProxy::updateMediaSessionState()
     updateSessionState();
 }
 
+void RemoteMediaSessionManagerProxy::mediaSessionStateChanged(WebKit::RemoteMediaSessionState&& state)
+{
+    findAndUpdateSession(state);
+}
+
+void RemoteMediaSessionManagerProxy::forEachRemoteSessionManager(NOESCAPE const Function<void(WebCore::PageIdentifier)>& callback)
+{
+    for (auto& pageIdentifier : m_remoteSessionManagerPages)
+        callback(pageIdentifier);
+}
+
+void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSessionInterface& session)
+{
+    if (!m_isInSetCurrentSession) {
+        SetForScope isInSetCurrentSessionRestorer(m_isInSetCurrentSession, true);
+
+        RefPtr sessionProxy = m_sessionProxies.get(session.mediaSessionIdentifier());
+        ASSERT(sessionProxy);
+        if (!sessionProxy)
+            return;
+
+        forEachRemoteSessionManager([&](auto pageIdentifier) {
+            std::optional<WebCore::MediaSessionIdentifier> sessionIdentifier;
+            if (sessionProxy->pageIdentifier() == pageIdentifier)
+                sessionIdentifier = session.mediaSessionIdentifier();
+            send(Messages::RemoteMediaSessionManager::SetCurrentMediaSession(sessionIdentifier), pageIdentifier);
+        });
+    }
+
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
+}
+
+void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(RemoteMediaSessionState&& state, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr session = findAndUpdateSession(state);
+    if (!session) {
+        completionHandler(false);
+        return;
+    }
+
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(completionHandler));
+}
+
+void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
+{
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addRestriction(type, restrictions);
+}
+
+void RemoteMediaSessionManagerProxy::removeMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
+{
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::removeRestriction(type, restrictions);
+}
+
+void RemoteMediaSessionManagerProxy::resetMediaSessionRestrictions()
+{
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::resetRestrictions();
+}
+
 #if USE(AUDIO_SESSION)
 void RemoteMediaSessionManagerProxy::remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&& configuration)
 {
-    m_audioConfiguration = WTFMove(configuration);
+    m_audioConfiguration = WTF::move(configuration);
 }
 
 void RemoteMediaSessionManagerProxy::setCategory(CategoryType type, Mode mode, WebCore::RouteSharingPolicy policy)
@@ -225,11 +296,16 @@ Ref<RemoteMediaSessionManagerAudioHardwareListener> RemoteMediaSessionManagerPro
 }
 #endif
 
-RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManagerProxy::findSession(RemoteMediaSessionState& state)
+RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManagerProxy::findAndUpdateSession(RemoteMediaSessionState& state)
 {
-    return firstSessionMatching([state](auto& session) {
+    RefPtr session = firstSessionMatching([&state](auto& session) {
         return session.mediaSessionIdentifier() == state.sessionIdentifier;
     }).get();
+
+    if (session)
+        downcast<RemoteMediaSessionProxy>(session)->updateState(state);
+
+    return session;
 }
 
 IPC::Connection* RemoteMediaSessionManagerProxy::messageSenderConnection() const
@@ -239,7 +315,7 @@ IPC::Connection* RemoteMediaSessionManagerProxy::messageSenderConnection() const
 
 uint64_t RemoteMediaSessionManagerProxy::messageSenderDestinationID() const
 {
-    return m_topPageID.toUInt64();
+    return m_localPageID.toUInt64();
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteMediaSessionManagerProxy::sharedPreferencesForWebProcess() const

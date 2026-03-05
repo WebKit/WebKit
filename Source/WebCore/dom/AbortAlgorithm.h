@@ -43,6 +43,8 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
+    virtual bool isJSAbortAlgorithm() const { return false; }
+
     virtual CallbackResult<void> invoke(JSC::JSValue) = 0;
     virtual CallbackResult<void> invokeRethrowingException(JSC::JSValue) = 0;
 

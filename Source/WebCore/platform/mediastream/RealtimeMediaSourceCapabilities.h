@@ -94,24 +94,24 @@ public:
     };
 
     RealtimeMediaSourceCapabilities(LongCapabilityRange width, LongCapabilityRange height, DoubleCapabilityRange aspectRatio, DoubleCapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, DoubleCapabilityRange volume, LongCapabilityRange sampleRate, LongCapabilityRange sampleSize, EchoCancellation echoCancellation, String&& deviceId, String&& groupId, DoubleCapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, DoubleCapabilityRange zoom, bool torch, BackgroundBlur backgroundBlur, bool powerEfficient, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
-        : m_width(WTFMove(width))
-        , m_height(WTFMove(height))
-        , m_aspectRatio(WTFMove(aspectRatio))
-        , m_frameRate(WTFMove(frameRate))
-        , m_facingMode(WTFMove(facingMode))
-        , m_volume(WTFMove(volume))
-        , m_sampleRate(WTFMove(sampleRate))
-        , m_sampleSize(WTFMove(sampleSize))
-        , m_echoCancellation(WTFMove(echoCancellation))
-        , m_deviceId(WTFMove(deviceId))
-        , m_groupId(WTFMove(groupId))
-        , m_focusDistance(WTFMove(focusDistance))
+        : m_width(WTF::move(width))
+        , m_height(WTF::move(height))
+        , m_aspectRatio(WTF::move(aspectRatio))
+        , m_frameRate(WTF::move(frameRate))
+        , m_facingMode(WTF::move(facingMode))
+        , m_volume(WTF::move(volume))
+        , m_sampleRate(WTF::move(sampleRate))
+        , m_sampleSize(WTF::move(sampleSize))
+        , m_echoCancellation(WTF::move(echoCancellation))
+        , m_deviceId(WTF::move(deviceId))
+        , m_groupId(WTF::move(groupId))
+        , m_focusDistance(WTF::move(focusDistance))
         , m_whiteBalanceModes(whiteBalanceModes)
-        , m_zoom(WTFMove(zoom))
+        , m_zoom(WTF::move(zoom))
         , m_torch(torch)
         , m_backgroundBlur(backgroundBlur)
         , m_powerEfficient(powerEfficient)
-        , m_supportedConstraints(WTFMove(supportedConstraints))
+        , m_supportedConstraints(WTF::move(supportedConstraints))
     {
     }
 
@@ -124,35 +124,35 @@ public:
     }
 
     bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
-    const LongCapabilityRange& width() const { return m_width; }
+    const LongCapabilityRange& width() const LIFETIME_BOUND { return m_width; }
     void setWidth(const LongCapabilityRange& width) { m_width = width; }
 
     bool supportsHeight() const { return m_supportedConstraints.supportsHeight(); }
-    const LongCapabilityRange& height() const { return m_height; }
+    const LongCapabilityRange& height() const LIFETIME_BOUND { return m_height; }
     void setHeight(const LongCapabilityRange& height) { m_height = height; }
 
     bool supportsFrameRate() const { return m_supportedConstraints.supportsFrameRate(); }
-    const DoubleCapabilityRange& frameRate() const { return m_frameRate; }
+    const DoubleCapabilityRange& frameRate() const LIFETIME_BOUND { return m_frameRate; }
     void setFrameRate(const DoubleCapabilityRange& frameRate) { m_frameRate = frameRate; }
 
     bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
-    const Vector<VideoFacingMode>& facingMode() const { return m_facingMode; }
+    const Vector<VideoFacingMode>& facingMode() const LIFETIME_BOUND { return m_facingMode; }
     void addFacingMode(VideoFacingMode mode) { m_facingMode.append(mode); }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
-    const DoubleCapabilityRange& aspectRatio() const { return m_aspectRatio; }
+    const DoubleCapabilityRange& aspectRatio() const LIFETIME_BOUND { return m_aspectRatio; }
     void setAspectRatio(const DoubleCapabilityRange& aspectRatio) { m_aspectRatio = aspectRatio; }
 
     bool supportsVolume() const { return m_supportedConstraints.supportsVolume(); }
-    const DoubleCapabilityRange& volume() const { return m_volume; }
+    const DoubleCapabilityRange& volume() const LIFETIME_BOUND { return m_volume; }
     void setVolume(const DoubleCapabilityRange& volume) { m_volume = volume; }
 
     bool supportsSampleRate() const { return m_supportedConstraints.supportsSampleRate(); }
-    const LongCapabilityRange& sampleRate() const { return m_sampleRate; }
+    const LongCapabilityRange& sampleRate() const LIFETIME_BOUND { return m_sampleRate; }
     void setSampleRate(const LongCapabilityRange& sampleRate) { m_sampleRate = sampleRate; }
 
     bool supportsSampleSize() const { return m_supportedConstraints.supportsSampleSize(); }
-    const LongCapabilityRange& sampleSize() const { return m_sampleSize; }
+    const LongCapabilityRange& sampleSize() const LIFETIME_BOUND { return m_sampleSize; }
     void setSampleSize(const LongCapabilityRange& sampleSize) { m_sampleSize = sampleSize; }
 
     bool supportsEchoCancellation() const { return m_supportedConstraints.supportsEchoCancellation(); }
@@ -160,23 +160,23 @@ public:
     void setEchoCancellation(EchoCancellation echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const String& deviceId() const { return m_deviceId; }
+    const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
     void setDeviceId(const String& id)  { m_deviceId = id; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const String& groupId() const { return m_groupId; }
+    const String& groupId() const LIFETIME_BOUND { return m_groupId; }
     void setGroupId(const String& id)  { m_groupId = id; }
 
     bool supportsFocusDistance() const { return m_supportedConstraints.supportsFocusDistance(); }
-    const DoubleCapabilityRange& focusDistance() const { return m_focusDistance; }
+    const DoubleCapabilityRange& focusDistance() const LIFETIME_BOUND { return m_focusDistance; }
     void setFocusDistance(const DoubleCapabilityRange& focusDistance) { m_focusDistance = focusDistance; }
 
     bool supportsWhiteBalanceMode() const { return m_supportedConstraints.supportsWhiteBalanceMode(); }
-    const Vector<MeteringMode>& whiteBalanceModes() const { return m_whiteBalanceModes; }
-    void setWhiteBalanceModes(Vector<MeteringMode>&& modes) { m_whiteBalanceModes = WTFMove(modes); }
+    const Vector<MeteringMode>& whiteBalanceModes() const LIFETIME_BOUND { return m_whiteBalanceModes; }
+    void setWhiteBalanceModes(Vector<MeteringMode>&& modes) { m_whiteBalanceModes = WTF::move(modes); }
 
     bool supportsZoom() const { return m_supportedConstraints.supportsZoom(); }
-    const DoubleCapabilityRange& zoom() const { return m_zoom; }
+    const DoubleCapabilityRange& zoom() const LIFETIME_BOUND { return m_zoom; }
     void setZoom(const DoubleCapabilityRange& zoom) { m_zoom = zoom; }
 
     bool supportsTorch() const { return m_supportedConstraints.supportsTorch(); }
@@ -191,7 +191,7 @@ public:
     bool powerEfficient() const { return m_powerEfficient; }
     void setPowerEfficient(bool value) { m_powerEfficient = value; }
 
-    const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
+    const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const LIFETIME_BOUND { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
     RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, m_backgroundBlur, m_powerEfficient, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }

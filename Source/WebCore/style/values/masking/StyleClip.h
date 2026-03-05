@@ -51,7 +51,7 @@ struct ClipRect {
     }
 
     template<typename T> ClipRect(T top, T right, T bottom, T left)
-        : value { CommaSeparatedRectEdges<ClipEdge> { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) } }
+        : value { CommaSeparatedRectEdges<ClipEdge> { WTF::move(top), WTF::move(right), WTF::move(bottom), WTF::move(left) } }
     {
     }
 
@@ -76,7 +76,7 @@ struct Clip {
     }
 
     Clip(ClipRect&& rect)
-        : value { WTFMove(rect) }
+        : value { WTF::move(rect) }
     {
     }
 

@@ -30,17 +30,17 @@
 namespace WebCore {
 
 class Document;
-class RenderStyle;
 
 namespace Style {
 
+class ComputedStyle;
 enum class ForVisitedLink : bool;
 
 // Used to resolve a CSS::Color to a Style::Color during style building.
 
 struct ColorResolutionState {
     Ref<const Document> document;
-    const RenderStyle& style;
+    CheckedRef<const ComputedStyle> style;
     CSSToLengthConversionData conversionData;
     ForVisitedLink forVisitedLink;
 

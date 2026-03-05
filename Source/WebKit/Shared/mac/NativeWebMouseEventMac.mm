@@ -32,8 +32,8 @@
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *view)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, lastPressureEvent, view))
+NativeWebMouseEvent::NativeWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *view, WebMouseEventInputSource inputSource)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, lastPressureEvent, view, inputSource))
     , m_nativeEvent(event)
 {
 }

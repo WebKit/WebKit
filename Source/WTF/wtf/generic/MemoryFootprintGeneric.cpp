@@ -24,22 +24,17 @@
  */
 
 #include "config.h"
+#include <bmalloc/bmalloc.h>
+#include <wtf/AvailableMemory.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/Platform.h>
-
-#if !USE(SYSTEM_MALLOC) && (OS(LINUX) || OS(FREEBSD))
-#include <bmalloc/bmalloc.h>
-#endif
 
 namespace WTF {
 
 size_t memoryFootprint()
 {
-#if !USE(SYSTEM_MALLOC) && (OS(LINUX) || OS(FREEBSD))
-    return bmalloc::api::memoryFootprint();
-#else
-    return 0;
-#endif
+    auto memoryUse = memoryStatus();
+    return memoryUse.memoryFootprint;
 }
 
 } // namespace WTF

@@ -133,16 +133,21 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(WPEEvent* event)
     auto button = WebMouseEventButton::None;
     auto position = positionFromEvent(event);
     unsigned clickCount = 0;
+    auto syntheticClickType = WebMouseEventSyntheticClickType::NoTap;
 
     switch (wpe_event_get_event_type(event)) {
     case WPE_EVENT_POINTER_DOWN:
         type = WebEventType::MouseDown;
         button = buttonForWPEButton(wpe_event_pointer_button_get_button(event));
         clickCount = wpe_event_pointer_button_get_press_count(event);
+        if (wpe_event_get_input_source(event) == WPE_INPUT_SOURCE_TOUCHSCREEN)
+            syntheticClickType = WebMouseEventSyntheticClickType::OneFingerTap;
         break;
     case WPE_EVENT_POINTER_UP:
         type = WebEventType::MouseUp;
         button = buttonForWPEButton(wpe_event_pointer_button_get_button(event));
+        if (wpe_event_get_input_source(event) == WPE_INPUT_SOURCE_TOUCHSCREEN)
+            syntheticClickType = WebMouseEventSyntheticClickType::OneFingerTap;
         break;
     case WPE_EVENT_POINTER_MOVE:
     case WPE_EVENT_POINTER_ENTER:
@@ -163,7 +168,10 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(WPEEvent* event)
         movementDelta.x(),
         movementDelta.y(),
         0 /* deltaZ */,
-        clickCount);
+        clickCount,
+        0 /* force */,
+        WebMouseEventInputSource::UserDriven,
+        syntheticClickType);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(WPEEvent* event)
@@ -248,7 +256,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPl
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
+    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) }, WTF::move(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

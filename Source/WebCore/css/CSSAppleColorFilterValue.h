@@ -33,7 +33,7 @@ class CSSAppleColorFilterValue final : public CSSValue {
 public:
     static Ref<CSSAppleColorFilterValue> create(CSS::AppleColorFilter);
 
-    const CSS::AppleColorFilter& filter() const { return m_filter; }
+    const CSS::AppleColorFilter& filter() const LIFETIME_BOUND { return m_filter; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSAppleColorFilterValue&) const;

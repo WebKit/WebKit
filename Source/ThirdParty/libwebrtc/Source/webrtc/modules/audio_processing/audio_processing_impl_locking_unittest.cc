@@ -166,16 +166,16 @@ struct TestConfig {
       };
 
       const AllowedApiCallCombinations api_calls[] = {
-          {RenderApiImpl::ProcessReverseStreamImplInteger,
-           CaptureApiImpl::ProcessStreamImplInteger},
-          {RenderApiImpl::ProcessReverseStreamImplFloat,
-           CaptureApiImpl::ProcessStreamImplFloat},
-          {RenderApiImpl::AnalyzeReverseStreamImplFloat,
-           CaptureApiImpl::ProcessStreamImplFloat},
-          {RenderApiImpl::ProcessReverseStreamImplInteger,
-           CaptureApiImpl::ProcessStreamImplFloat},
-          {RenderApiImpl::ProcessReverseStreamImplFloat,
-           CaptureApiImpl::ProcessStreamImplInteger}};
+          {.render_api = RenderApiImpl::ProcessReverseStreamImplInteger,
+           .capture_api = CaptureApiImpl::ProcessStreamImplInteger},
+          {.render_api = RenderApiImpl::ProcessReverseStreamImplFloat,
+           .capture_api = CaptureApiImpl::ProcessStreamImplFloat},
+          {.render_api = RenderApiImpl::AnalyzeReverseStreamImplFloat,
+           .capture_api = CaptureApiImpl::ProcessStreamImplFloat},
+          {.render_api = RenderApiImpl::ProcessReverseStreamImplInteger,
+           .capture_api = CaptureApiImpl::ProcessStreamImplFloat},
+          {.render_api = RenderApiImpl::ProcessReverseStreamImplFloat,
+           .capture_api = CaptureApiImpl::ProcessStreamImplInteger}};
       std::vector<TestConfig> out;
       for (auto api_call : api_calls) {
         test_config.render_api_function = api_call.render_api;

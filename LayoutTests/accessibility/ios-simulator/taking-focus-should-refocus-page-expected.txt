@@ -3,22 +3,22 @@ This test ensures that making an element focused via accessibility (e.g. full ke
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getComputedStyle(button).getPropertyValue('outline-width') is '0px'
-PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '0px'
+PASS getComputedStyle(button).getPropertyValue('outline-style') is 'none'
+PASS getComputedStyle(textInput).getPropertyValue('outline-style') is 'none'
 
 Taking focus via accessibilityController for id #button
-PASS getComputedStyle(button).getPropertyValue('outline-width') is '3px'
-PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '0px'
+PASS getComputedStyle(button).getPropertyValue('outline-style') is 'auto'
+PASS getComputedStyle(textInput).getPropertyValue('outline-style') is 'none'
 
 Taking focus via accessibilityController for id #text-input
-PASS getComputedStyle(button).getPropertyValue('outline-width') is '0px'
-PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '3px'
+PASS getComputedStyle(button).getPropertyValue('outline-style') is 'none'
+PASS getComputedStyle(textInput).getPropertyValue('outline-style') is 'auto'
 
 Making the entire page un-focused
 
 Taking focus via accessibilityController for id #button
-PASS getComputedStyle(button).getPropertyValue('outline-width') is '3px'
-PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '0px'
+PASS getComputedStyle(button).getPropertyValue('outline-style') is 'auto'
+PASS getComputedStyle(textInput).getPropertyValue('outline-style') is 'none'
 PASS successfullyParsed is true
 
 TEST COMPLETE

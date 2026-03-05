@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class SVGFEMergeElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEMergeElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGFEMergeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEMergeElement);
 public:
     static Ref<SVGFEMergeElement> create(const QualifiedName&, Document&);

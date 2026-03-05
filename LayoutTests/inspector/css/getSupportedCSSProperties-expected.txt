@@ -1,4 +1,11 @@
 "background-repeat" is supported
+"background-repeat" has keyword values:
+ - "repeat-x"
+ - "repeat-y"
+ - "repeat"
+ - "space"
+ - "round"
+ - "no-repeat"
 
 "box-sizing" is supported
 "box-sizing" has aliases:
@@ -7,12 +14,49 @@
  - "border-box"
  - "content-box"
 
+"display" is supported
+"display" has keyword values:
+ - "inline"
+ - "block"
+ - "flow"
+ - "flow-root"
+ - "list-item"
+ - "inline-block"
+ - "table"
+ - "inline-table"
+ - "table-row-group"
+ - "table-header-group"
+ - "table-footer-group"
+ - "table-row"
+ - "table-column-group"
+ - "table-column"
+ - "table-cell"
+ - "table-caption"
+ - "flex"
+ - "inline-flex"
+ - "grid"
+ - "inline-grid"
+ - "grid-lanes"
+ - "inline-grid-lanes"
+ - "contents"
+ - "none"
+ - "-webkit-box"
+ - "-webkit-inline-box"
+ - "-webkit-flex"
+ - "-webkit-inline-flex"
+
 "filter" is supported
 "filter" has aliases:
  - "-webkit-filter"
+"filter" has keyword values:
+ - "none"
 
 "font-style" is supported
 "font-style" is inherited
+"font-style" has keyword values:
+ - "normal"
+ - "italic"
+ - "oblique"
 
 "margin" is supported
 "margin" has longhands:
@@ -27,5 +71,6 @@
 "text-transform" is inherited
 "text-transform" has keyword values:
  - "none"
+ - "math-auto"
 
 

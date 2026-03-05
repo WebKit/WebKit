@@ -25,12 +25,16 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/PageCount.h>
 #include <JavaScriptCore/RegisterSet.h>
+#include <JavaScriptCore/WasmAddressType.h>
 #include <JavaScriptCore/WasmMemory.h>
+#include <JavaScriptCore/WasmOps.h>
 
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -50,12 +54,14 @@ public:
         ASSERT(!*this);
     }
 
-    MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport);
+    MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64);
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
     bool isShared() const { return m_isShared; }
     bool isImport() const { return m_isImport; }
+    AddressType addressType() const { return m_addressType; }
+    bool isMemory64() const { return m_addressType.is64Bit(); }
 
     explicit operator bool() const { return !!m_initial; }
 
@@ -64,6 +70,7 @@ private:
     PageCount m_maximum { };
     bool m_isShared { false };
     bool m_isImport { false };
+    AddressType m_addressType;
 };
 
 } } // namespace JSC::Wasm

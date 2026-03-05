@@ -92,6 +92,12 @@ InspectorFrontendAPI = {
             WI.diagnosticController.diagnosticLoggingAvailable = available;
     },
 
+    systemAppearanceDidChange: function()
+    {
+        if (WI.Platform.name === "mac")
+            WI._updateAccentColorClass();
+    },
+
     showConsole: function()
     {
         WI.showConsoleTab({

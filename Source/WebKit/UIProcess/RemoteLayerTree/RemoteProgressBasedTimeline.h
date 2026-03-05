@@ -41,13 +41,13 @@ class ScrollingTreeScrollingNode;
 namespace WebKit {
 
 class RemoteProgressBasedTimeline final : public RemoteAnimationTimeline {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemoteProgressBasedTimeline);
+    WTF_MAKE_TZONE_ALLOCATED(RemoteProgressBasedTimeline);
 public:
     static Ref<RemoteProgressBasedTimeline> create(TimelineID, const WebCore::ProgressResolutionData&);
 
     WebCore::ScrollingNodeID source() const { return m_resolutionData.source; }
     WebCore::ProgressResolutionData resolutionData() const { return m_resolutionData; }
-    void setResolutionData(WebCore::ProgressResolutionData resolutionData) { m_resolutionData = resolutionData; }
+    void setResolutionData(const WebCore::ScrollingTreeScrollingNode*, WebCore::ProgressResolutionData);
 
     void updateCurrentTime(const WebCore::ScrollingTreeScrollingNode&);
 
@@ -60,5 +60,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_REMOTE_ANIMATION_TIMELINE(RemoteProgressBasedTimeline, isProgressBased())
 
 #endif // ENABLE(THREADED_ANIMATIONS)

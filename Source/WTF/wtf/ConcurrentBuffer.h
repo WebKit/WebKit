@@ -71,7 +71,7 @@ public:
         WTF::storeStoreFence();
         m_array = newArray.get();
         WTF::storeStoreFence();
-        m_allArrays.append(WTFMove(newArray));
+        m_allArrays.append(WTF::move(newArray));
     }
     
     void grow(size_t newSize)
@@ -86,19 +86,19 @@ public:
         size_t size; // This is an immutable size.
         T data[1];
 
-        std::span<T> span() { return unsafeMakeSpan(data, size); }
-        std::span<const T> span() const { return unsafeMakeSpan(data, size); }
+        std::span<T> span() LIFETIME_BOUND { return unsafeMakeSpan(data, size); }
+        std::span<const T> span() const LIFETIME_BOUND { return unsafeMakeSpan(data, size); }
     };
 
     using ArrayPtr = std::unique_ptr<Array, NonDestructingDeleter<Array, ConcurrentBufferMalloc>>;
     
-    Array* array() const { return m_array; }
+    Array* array() const LIFETIME_BOUND { return m_array; }
     
-    T& operator[](size_t index) { return m_array->span()[index]; }
-    const T& operator[](size_t index) const { return m_array->span()[index]; }
+    T& operator[](size_t index) LIFETIME_BOUND { return m_array->span()[index]; }
+    const T& operator[](size_t index) const LIFETIME_BOUND { return m_array->span()[index]; }
     
 private:
-    ArrayPtr createArray(size_t size)
+    static ArrayPtr createArray(size_t size)
     {
         Checked<size_t> objectSize = sizeof(T);
         objectSize *= size;

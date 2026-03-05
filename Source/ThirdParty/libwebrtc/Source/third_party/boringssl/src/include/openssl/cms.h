@@ -39,7 +39,7 @@ extern "C" {
 DECLARE_STACK_OF(X509)
 
 // CMS_* are flags that can be passed to functions in this library. Their
-// interpretation is specified in the corresponding functinos.
+// interpretation is specified in the corresponding functions.
 #define CMS_NOCERTS 0x2
 #define CMS_DETACHED 0x40
 #define CMS_BINARY 0x80

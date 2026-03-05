@@ -43,7 +43,7 @@ void SourceProviderCache::clear()
 
 void SourceProviderCache::add(int sourcePosition, std::unique_ptr<SourceProviderCacheItem> item)
 {
-    m_map.add(sourcePosition, WTFMove(item));
+    m_map.add(sourcePosition, WTF::move(item));
 }
 
 }

@@ -26,28 +26,28 @@ info: |
   6. If relativeEnd < 0, let final be max((len + relativeEnd), 0); else let
   final be min(relativeEnd, len).
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
-    compareArray(new TA([0n, 0n, 0n]).fill(8n, 0, 1), [8n, 0n, 0n]),
+    compareArray(new TA(makeCtorArg([0n, 0n, 0n])).fill(8n, 0, 1), [8n, 0n, 0n]),
     "Fill elements from custom end position"
   );
 
   assert(
-    compareArray(new TA([0n, 0n, 0n]).fill(8n, 0, -1), [8n, 8n, 0n]),
+    compareArray(new TA(makeCtorArg([0n, 0n, 0n])).fill(8n, 0, -1), [8n, 8n, 0n]),
     "negative end sets final position to max((length + relativeEnd), 0)"
   );
 
   assert(
-    compareArray(new TA([0n, 0n, 0n]).fill(8n, 0, 5), [8n, 8n, 8n]),
+    compareArray(new TA(makeCtorArg([0n, 0n, 0n])).fill(8n, 0, 5), [8n, 8n, 8n]),
     "end position is never higher than of length"
   );
 
   assert(
-    compareArray(new TA([0n, 0n, 0n]).fill(8n, 0, -4), [0n, 0n, 0n]),
+    compareArray(new TA(makeCtorArg([0n, 0n, 0n])).fill(8n, 0, -4), [0n, 0n, 0n]),
     "end position is 0 when (len + relativeEnd) < 0"
   );
 });

@@ -25,7 +25,7 @@
 #include "config.h"
 #include "WasmDebuggerDispatcher.h"
 
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
 
 #include "Connection.h"
 #include "Logging.h"
@@ -75,9 +75,9 @@ void WasmDebuggerDispatcher::dispatchMessage(const String& message)
         return;
     }
 
-    debugServer.handleRawPacket(message);
+    debugServer.handlePacket(message);
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)

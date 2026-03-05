@@ -92,7 +92,7 @@ SsrcGroup& SsrcGroup::operator=(const SsrcGroup&) = default;
 SsrcGroup& SsrcGroup::operator=(SsrcGroup&&) = default;
 
 bool SsrcGroup::has_semantics(const std::string& semantics_in) const {
-  return (semantics == semantics_in && ssrcs.size() > 0);
+  return (semantics == semantics_in && !ssrcs.empty());
 }
 
 std::string SsrcGroup::ToString() const {

@@ -45,7 +45,7 @@ Color toStyleColor(const CSS::ContrastColor& unresolved, ColorResolutionState& s
     if (!color.isResolvedColor()) {
         return Color {
             ContrastColor {
-                WTFMove(color),
+                WTF::move(color),
             }
         };
     }

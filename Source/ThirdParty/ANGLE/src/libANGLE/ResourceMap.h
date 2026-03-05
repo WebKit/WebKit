@@ -190,12 +190,21 @@ class ResourceMap final : angle::NonCopyable
     static ResourceType *InvalidPointer();
     static constexpr intptr_t kInvalidPointer = static_cast<intptr_t>(-1);
 
+#if defined(ANGLE_ENABLE_SHARE_CONTEXT_LOCK)
     static constexpr bool kNeedsLock = ResourceMapParams<IDType>::kNeedsLock;
-    using Mutex                      = typename SelectResourceMapMutex<kNeedsLock>::type;
-
     static constexpr size_t kInitialFlatResourcesSize =
         ResourceMapParams<IDType>::kInitialFlatResourcesSize;
+#else
+    // When share group locks are disabled, we are already in an thread-unsafe state so disable
+    // locking in the ResourceManager too.
+    static constexpr bool kNeedsLock = false;
 
+    // Always grow from a small initial allocation when locks are disabled. Chromium uses very few
+    // total resources.
+    static constexpr size_t kInitialFlatResourcesSize = 192;
+#endif
+
+    using Mutex = typename SelectResourceMapMutex<kNeedsLock>::type;
     // Experimental testing suggests that ~10k is a reasonable upper limit.
     static constexpr size_t kFlatResourcesLimit = kNeedsLock ? kInitialFlatResourcesSize : 0x3000;
     // Due to the way assign() is implemented, kFlatResourcesLimit / kInitialFlatResourcesSize must

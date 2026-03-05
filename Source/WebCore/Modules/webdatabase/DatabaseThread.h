@@ -43,7 +43,7 @@ class DatabaseTaskSynchronizer;
 class Document;
 class SQLTransactionCoordinator;
 
-class DatabaseThread : public ThreadSafeRefCounted<DatabaseThread> {
+class DatabaseThread : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DatabaseThread> {
 public:
     static Ref<DatabaseThread> create() { return adoptRef(*new DatabaseThread); }
     ~DatabaseThread();
@@ -69,13 +69,13 @@ private:
     void databaseThread();
 
     Lock m_threadCreationMutex;
-    RefPtr<Thread> m_thread;
+    const RefPtr<Thread> m_thread;
     RefPtr<DatabaseThread> m_selfRef;
 
     MessageQueue<DatabaseTask> m_queue;
 
     // This set keeps track of the open databases that have been used on this thread.
-    using DatabaseSet = HashSet<RefPtr<Database>>;
+    using DatabaseSet = HashSet<Ref<Database>>;
     mutable Lock m_openDatabaseSetLock;
     DatabaseSet m_openDatabaseSet WTF_GUARDED_BY_LOCK(m_openDatabaseSetLock);
 

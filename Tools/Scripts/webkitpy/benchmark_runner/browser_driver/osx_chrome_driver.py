@@ -12,8 +12,7 @@ class OSXChromeDriverBase(OSXBrowserDriver):
 
     # FIXME: handle self._browser_path.
     def launch_args_with_url(self, url):
-        return ['--args', '--homepage', url, self._window_size_arg(), '--no-first-run',
-                         '--no-default-browser-check', '--disable-extensions']
+        return ['--args', '--homepage', url, self._window_size_arg(), '--no-first-run', '--no-default-browser-check', '--disable-extensions', '--hide-crash-restore-bubble']
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=self.launch_args_with_url(url))

@@ -111,9 +111,8 @@ public:
     StringView text() const LIFETIME_BOUND { ASSERT(!atEnd()); return m_text; }
     WEBCORE_EXPORT SimpleRange range() const;
     WEBCORE_EXPORT Node* node() const;
-    RefPtr<Node> protectedCurrentNode() const;
 
-    const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
+    const TextIteratorCopyableText& copyableText() const LIFETIME_BOUND { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -137,8 +136,6 @@ private:
     void revertToRemainingTextRun();
 
     Node* baseNodeForEmittingNewLine() const;
-
-    RefPtr<Node> protectedStartContainer() const { return m_startContainer; }
 
     const TextIteratorBehaviors m_behaviors;
 
@@ -201,12 +198,11 @@ public:
     StringView text() const LIFETIME_BOUND { ASSERT(!atEnd()); return m_text; }
     WEBCORE_EXPORT SimpleRange range() const;
     Node* node() const { ASSERT(!atEnd()); return m_node.get(); }
-    RefPtr<Node> protectedNode() const { return m_node.get(); }
 
 private:
     void exitNode();
     bool handleTextNode();
-    RenderText* handleFirstLetter(int& startOffset, int& offsetInNode);
+    CheckedPtr<RenderText> handleFirstLetter(int& startOffset, int& offsetInNode);
     bool handleReplacedElement();
     bool handleNonTextNode();
     void emitCharacter(char16_t, RefPtr<Node>&&, int startOffset, int endOffset);

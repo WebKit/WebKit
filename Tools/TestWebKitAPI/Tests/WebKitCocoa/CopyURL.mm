@@ -44,21 +44,6 @@
 - (void)paste:(id)sender;
 @end
 
-#if PLATFORM(MAC)
-NSString *readURLFromPasteboard()
-{
-    if (NSURL *url = [NSURL URLFromPasteboard:[NSPasteboard generalPasteboard]])
-        return url.absoluteString;
-    NSURL *url = [NSURL URLWithString:[[NSPasteboard generalPasteboard] stringForType:NSURLPboardType]];
-    return url.absoluteString;
-}
-#else
-NSString *readURLFromPasteboard()
-{
-    return [UIPasteboard generalPasteboard].URL.absoluteString;
-}
-#endif
-
 TEST(CopyURL, ValidURL)
 {
     auto webView = createWebViewWithCustomPasteboardDataEnabled();

@@ -27,8 +27,10 @@
 #include "StyleLineHeight.h"
 
 #include "AnimationUtilities.h"
+
+#include "CSSPropertyParserConsumer+Font.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
-#include "StyleBuilderConverter.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
@@ -53,7 +55,7 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSPr
 
     auto conversionData = state
         .cssToLengthConversionData()
-        .copyForLineHeight(zoomWithTextZoomFactor(state));
+        .copyForLineHeight(state.zoomWithTextZoomFactor());
 
     // If EvaluationTimeZoom is not enabled then we will scale the lengths in the
     // calc values when we create the CalculationValue below by using the zoom from conversionData.
@@ -62,8 +64,8 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSPr
     // since EvaluationTimeZoom will set the appropriate value.
     auto zoomFactor = [&] {
         if (!state.style().evaluationTimeZoomEnabled())
-            return Style::ZoomFactor { 1.0f, state.style().deviceScaleFactor() };
-        return Style::ZoomFactor { conversionData.zoom(), state.style().deviceScaleFactor() };
+            return Style::ZoomFactor { 1.0f };
+        return Style::ZoomFactor { conversionData.zoom() };
     };
 
     if (primitiveValue.isLength() || primitiveValue.isCalculatedPercentageWithLength()) {
@@ -71,7 +73,7 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSPr
         if (primitiveValue.isLength())
             fixedValue = primitiveValue.resolveAsLength(conversionData);
         else
-            fixedValue = primitiveValue.protectedCssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(state.style().fontDescription().computedSizeForRangeZoomOption(conversionData.rangeZoomOption()), zoomFactor());
+            fixedValue = protect(primitiveValue.cssCalcValue())->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(state.style().fontDescription().computedSizeForRangeZoomOption(conversionData.rangeZoomOption()), zoomFactor());
 
         if (multiplier != 1.0f)
             fixedValue *= multiplier;

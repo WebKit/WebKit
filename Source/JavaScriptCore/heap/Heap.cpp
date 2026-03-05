@@ -53,8 +53,9 @@
 #include "JSFinalizationRegistry.h"
 #include "JSFunctionWithFields.h"
 #include "JSIterator.h"
-#include "JSPromiseAllContext.h"
-#include "JSPromiseAllGlobalContext.h"
+#include "JSMicrotaskDispatcher.h"
+#include "JSPromiseCombinatorsContext.h"
+#include "JSPromiseCombinatorsGlobalContext.h"
 #include "JSPromiseReaction.h"
 #include "JSRawJSONObject.h"
 #include "JSRemoteFunction.h"
@@ -69,6 +70,7 @@
 #include "MarkingConstraintSet.h"
 #include "MegamorphicCache.h"
 #include "NumberObject.h"
+#include "PinballCompletion.h"
 #include "PreventCollectionScope.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
@@ -89,18 +91,16 @@
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
+#include <wtf/AvailableMemory.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/ListDump.h>
+#include <wtf/MemoryFootprint.h>
 #include <wtf/RAMSize.h>
 #include <wtf/Scope.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
-
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
-#include <bmalloc/bmalloc.h>
-#endif
 
 #if USE(FOUNDATION)
 #include <wtf/spi/cocoa/objcSPI.h>
@@ -181,8 +181,8 @@ static size_t proportionalHeapSize(size_t heapSize, GrowthMode growthMode, size_
         return ratio * heapSize;
     }
 
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
-    size_t memoryFootprint = bmalloc::api::memoryFootprint();
+#if USE(MEMORY_FOOTPRINT_API)
+    size_t memoryFootprint = WTF::memoryFootprint();
     if (memoryFootprint < ramSize * Options::smallHeapRAMFraction())
         return Options::smallHeapGrowthFactor() * heapSize;
     if (memoryFootprint < ramSize * Options::mediumHeapRAMFraction())
@@ -439,7 +439,7 @@ Heap::Heap(VM& vm, HeapType heapType)
         if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
             visitor->optimizeForStoppedMutator();
         m_availableParallelSlotVisitors.append(visitor.get());
-        m_parallelSlotVisitors.append(WTFMove(visitor));
+        m_parallelSlotVisitors.append(WTF::move(visitor));
     }
     
     if (Options::useConcurrentGC()) {
@@ -616,7 +616,7 @@ void Heap::releaseDelayedReleasedObjects()
         while (!m_delayedReleaseObjects.isEmpty()) {
             ASSERT(vm().currentThreadIsHoldingAPILock());
 
-            auto objectsToRelease = WTFMove(m_delayedReleaseObjects);
+            auto objectsToRelease = WTF::move(m_delayedReleaseObjects);
 
             {
                 // We need to drop locks before calling out to arbitrary code.
@@ -697,9 +697,9 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
 
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
 {
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
+#if USE(MEMORY_FOOTPRINT_API)
     if (memoryThresholdCallType == MemoryThresholdCallType::Direct || ++m_percentAvailableMemoryCachedCallCount >= 100) {
-        m_overCriticalMemoryThreshold = bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
+        m_overCriticalMemoryThreshold = WTF::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
         m_percentAvailableMemoryCachedCallCount = 0;
     }
 
@@ -891,16 +891,21 @@ void Heap::gatherStackRoots(ConservativeRoots& roots)
 #endif
 }
 
-void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
+void Heap::gatherVMRoots(ConservativeRoots& roots)
 {
-#if ENABLE(DFG_JIT)
-    if (!Options::useJIT())
-        return;
     VM& vm = this->vm();
-    vm.gatherScratchBufferRoots(roots);
-    vm.scanSideState(roots);
-#else
+#if ENABLE(DFG_JIT)
+    if (Options::useJIT()) {
+        vm.gatherScratchBufferRoots(roots);
+        vm.scanSideState(roots);
+    }
+#endif
+#if ENABLE(WEBASSEMBLY)
+    vm.gatherEvacuatedStackRoots(roots);
+#endif
+#if !(ENABLE(DFG_JIT) || ENABLE(WEBASSEMBLY))
     UNUSED_PARAM(roots);
+    UNUSED_VARIABLE(vm);
 #endif
 }
 
@@ -1751,10 +1756,6 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
 
     auto endingCollectionScope = *m_collectionScope;
 
-    // updateAllocationLimits() updates this for us.
-    if (overCriticalMemoryThreshold())
-        sweepSynchronously();
-
     didFinishCollection();
     
     if (m_currentRequest.didFinishEndPhase)
@@ -2070,7 +2071,7 @@ NEVER_INLINE void Heap::collectInMutatorThread()
                     }
                 }
             };
-            callWithCurrentThreadState(scopedLambda<void(CurrentThreadState&)>(WTFMove(lambda)));
+            callWithCurrentThreadState(scopedLambda<void(CurrentThreadState&)>(WTF::move(lambda)));
             return;
         }
     }
@@ -2599,19 +2600,9 @@ GCActivityCallback* Heap::fullActivityCallback()
     return m_fullActivityCallback.get();
 }
 
-RefPtr<GCActivityCallback> Heap::protectedFullActivityCallback()
-{
-    return m_fullActivityCallback;
-}
-
 GCActivityCallback* Heap::edenActivityCallback()
 {
     return m_edenActivityCallback.get();
-}
-
-RefPtr<GCActivityCallback> Heap::protectedEdenActivityCallback()
-{
-    return m_edenActivityCallback;
 }
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)
@@ -2680,12 +2671,12 @@ void Heap::collectNowFullIfNotDoneRecently(Synchronousness synchronousness)
 
 void Heap::setFullActivityCallback(RefPtr<GCActivityCallback>&& callback)
 {
-    m_fullActivityCallback = WTFMove(callback);
+    m_fullActivityCallback = WTF::move(callback);
 }
 
 void Heap::setEdenActivityCallback(RefPtr<GCActivityCallback>&& callback)
 {
-    m_edenActivityCallback = WTFMove(callback);
+    m_edenActivityCallback = WTF::move(callback);
 }
 
 void Heap::disableStopIfNecessaryTimer()
@@ -2700,7 +2691,8 @@ bool Heap::useGenerationalGC()
 
 bool Heap::shouldSweepSynchronously()
 {
-    return Options::sweepSynchronously() || VM::isInMiniMode();
+    // updateAllocationLimits() updates info that overCriticalMemoryThreshold() needs.
+    return overCriticalMemoryThreshold() || Options::sweepSynchronously() || VM::isInMiniMode();
 }
 
 bool Heap::shouldDoFullCollection()
@@ -3007,7 +2999,7 @@ void Heap::addCoreConstraints()
                 ConservativeRoots conservativeRoots(*this);
 
                 gatherStackRoots(conservativeRoots);
-                gatherScratchBufferRoots(conservativeRoots);
+                gatherVMRoots(conservativeRoots);
 
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ConservativeScan);
                 visitor.append(conservativeRoots);
@@ -3110,7 +3102,7 @@ void Heap::addCoreConstraints()
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakSets);
             RefPtr<SharedTask<void(decltype(visitor)&)>> task = m_objectSpace.forEachWeakInParallel<decltype(visitor)>(visitor);
-            visitor.addParallelConstraintTask(WTFMove(task));
+            visitor.addParallelConstraintTask(WTF::move(task));
         })),
         ConstraintVolatility::GreyedByMarking,
         ConstraintParallelism::Parallel);
@@ -3128,7 +3120,7 @@ void Heap::addCoreConstraints()
             
             auto add = [&] (auto& set) {
                 RefPtr<SharedTask<void(decltype(visitor)&)>> task = set.template forEachMarkedCellInParallel<decltype(visitor)>(callOutputConstraint);
-                visitor.addParallelConstraintTask(WTFMove(task));
+                visitor.addParallelConstraintTask(WTF::move(task));
             };
 
             {
@@ -3192,7 +3184,7 @@ void Heap::addCoreConstraints()
 void Heap::addMarkingConstraint(std::unique_ptr<MarkingConstraint> constraint)
 {
     PreventCollectionScope preventCollectionScope(*this);
-    m_constraintSet->add(WTFMove(constraint));
+    m_constraintSet->add(WTF::move(constraint));
 }
 
 void Heap::notifyIsSafeToCollect()
@@ -3429,7 +3421,7 @@ void Heap::scheduleOpportunisticFullCollection()
         ASSERT(!m_##name); \
         auto space = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(*this, heapCellType, type); \
         WTF::storeStoreFence(); \
-        m_##name = WTFMove(space); \
+        m_##name = WTF::move(space); \
         return m_##name.get(); \
     }
 
@@ -3443,7 +3435,7 @@ FOR_EACH_JSC_DYNAMIC_ISO_SUBSPACE(DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW)
         ASSERT(!m_##name); \
         auto space = makeUnique<spaceType> ISO_SUBSPACE_INIT(*this, heapCellType, type); \
         WTF::storeStoreFence(); \
-        m_##name = WTFMove(space); \
+        m_##name = WTF::move(space); \
         return &m_##name->space; \
     }
 
@@ -3458,7 +3450,7 @@ DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(moduleProgramExecutableSpace, destructi
         ASSERT(!m_##name); \
         auto space = makeUnique<SubspaceType>(ASCIILiteral(#SubspaceType " " #name), *this, heapCellType, fastMallocAllocator.get()); \
         WTF::storeStoreFence(); \
-        m_##name = WTFMove(space); \
+        m_##name = WTF::move(space); \
         return m_##name.get(); \
     }
 
@@ -3474,7 +3466,7 @@ void Heap::reportWasmCalleePendingDestruction(Ref<Wasm::Callee>&& callee)
     ASSERT_UNUSED(boxedCallee, boxedCallee == removeArrayPtrTag(boxedCallee));
 
     Locker locker(m_wasmCalleesPendingDestructionLock);
-    m_wasmCalleesPendingDestruction.add(WTFMove(callee));
+    m_wasmCalleesPendingDestruction.add(WTF::move(callee));
 }
 
 bool Heap::isWasmCalleePendingDestruction(Wasm::Callee& callee)
@@ -3518,7 +3510,7 @@ Heap::~Heap()
         JSC::IsoSubspace& serverSpace = *server().name<SubspaceAccess::OnMainThread>(); \
         auto space = makeUnique<IsoSubspace>(serverSpace); \
         WTF::storeStoreFence(); \
-        m_##name = WTFMove(space); \
+        m_##name = WTF::move(space); \
         return m_##name.get(); \
     }
 

@@ -24,7 +24,7 @@
 #include "NodeName.h"
 #include "Path.h"
 #include "RenderElement.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"

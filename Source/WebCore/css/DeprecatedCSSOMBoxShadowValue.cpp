@@ -32,12 +32,12 @@ namespace WebCore {
 
 Ref<DeprecatedCSSOMBoxShadowValue> DeprecatedCSSOMBoxShadowValue::create(CSS::BoxShadow shadow, CSSStyleDeclaration& owner)
 {
-    return adoptRef(*new DeprecatedCSSOMBoxShadowValue(WTFMove(shadow), owner));
+    return adoptRef(*new DeprecatedCSSOMBoxShadowValue(WTF::move(shadow), owner));
 }
 
 DeprecatedCSSOMBoxShadowValue::DeprecatedCSSOMBoxShadowValue(CSS::BoxShadow&& shadow, CSSStyleDeclaration& owner)
     : DeprecatedCSSOMValue(ClassType::BoxShadow, owner)
-    , m_shadow(WTFMove(shadow))
+    , m_shadow(WTF::move(shadow))
 {
 }
 

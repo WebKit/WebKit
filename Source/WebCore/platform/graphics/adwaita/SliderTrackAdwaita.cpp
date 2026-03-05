@@ -42,12 +42,12 @@ SliderTrackAdwaita::SliderTrackAdwaita(ControlPart& part, ControlFactoryAdwaita&
 
 void SliderTrackAdwaita::draw(GraphicsContext& graphicsContext, const FloatRoundedRect& borderRect, float /*deviceScaleFactor*/, const ControlStyle& style)
 {
-    auto& sliderTrackPart = owningSliderTrackPart();
+    Ref sliderTrackPart = owningSliderTrackPart();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     FloatRect rect = borderRect.rect();
     FloatRect fieldRect = rect;
-    bool isHorizontal = sliderTrackPart.type() == StyleAppearance::SliderHorizontal;
+    bool isHorizontal = sliderTrackPart->type() == StyleAppearance::SliderHorizontal;
     if (isHorizontal) {
         fieldRect.move(0, rect.height() / 2 - (sliderTrackSize / 2));
         fieldRect.setHeight(sliderTrackSize);
@@ -76,9 +76,9 @@ void SliderTrackAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
     path.clear();
 
     FloatRect rangeRect = fieldRect;
-    FloatRoundedRect::Radii corners;
+    CornerRadii corners;
     if (isHorizontal) {
-        float offset = rangeRect.width() * sliderTrackPart.thumbPosition();
+        float offset = rangeRect.width() * sliderTrackPart->thumbPosition();
         if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode)) {
             rangeRect.move(rangeRect.width() - offset, 0);
             rangeRect.setWidth(offset);
@@ -90,7 +90,7 @@ void SliderTrackAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
             corners.setBottomLeft(corner);
         }
     } else {
-        float offset = rangeRect.height() * sliderTrackPart.thumbPosition();
+        float offset = rangeRect.height() * sliderTrackPart->thumbPosition();
         if (style.states.contains(ControlStyle::State::VerticalWritingMode)) {
             rangeRect.setHeight(offset);
             corners.setTopLeft(corner);
@@ -108,7 +108,7 @@ void SliderTrackAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
     graphicsContext.setFillColor(accentColor(style));
     graphicsContext.fillPath(path);
 
-    sliderTrackPart.drawTicks(graphicsContext, borderRect.rect(), style);
+    sliderTrackPart->drawTicks(graphicsContext, borderRect.rect(), style);
 
     if (style.states.contains(ControlStyle::State::Focused)) {
         // Sliders support accent-color, so we want to color their focus rings too

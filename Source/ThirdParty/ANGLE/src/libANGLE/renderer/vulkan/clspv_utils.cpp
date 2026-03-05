@@ -27,6 +27,12 @@
 #include "spirv-tools/libspirv.h"
 #include "spirv-tools/libspirv.hpp"
 
+#if defined(ANGLE_ENABLE_ASSERTS)
+constexpr bool kAngleDebug = true;
+#else
+constexpr bool kAngleDebug = false;
+#endif
+
 namespace rx
 {
 constexpr std::string_view kPrintfConversionSpecifiers = "diouxXfFeEgGaAcsp";
@@ -98,30 +104,44 @@ std::string PrintFormattedString(const std::string &formatString,
             {
                 // all floats with same convention as snprintf
                 if (size == 2)
+                {
                     bytesWritten = snprintf(out.data(), outSize, formatString.c_str(),
                                             cl_half_to_float(ReadPtrAs<cl_half>(data)));
+                }
                 else if (size == 4)
+                {
                     bytesWritten =
                         snprintf(out.data(), outSize, formatString.c_str(), ReadPtrAs<float>(data));
+                }
                 else
+                {
                     bytesWritten = snprintf(out.data(), outSize, formatString.c_str(),
                                             ReadPtrAs<double>(data));
+                }
                 break;
             }
             default:
             {
                 if (size == 1)
+                {
                     bytesWritten = snprintf(out.data(), outSize, formatString.c_str(),
                                             ReadPtrAs<uint8_t>(data));
+                }
                 else if (size == 2)
+                {
                     bytesWritten = snprintf(out.data(), outSize, formatString.c_str(),
                                             ReadPtrAs<uint16_t>(data));
+                }
                 else if (size == 4)
+                {
                     bytesWritten = snprintf(out.data(), outSize, formatString.c_str(),
                                             ReadPtrAs<uint32_t>(data));
+                }
                 else
+                {
                     bytesWritten = snprintf(out.data(), outSize, formatString.c_str(),
                                             ReadPtrAs<uint64_t>(data));
+                }
                 break;
             }
         }
@@ -292,6 +312,11 @@ void ProcessPrintfStatement(unsigned char *&data,
     }
 
     std::printf("%s", printfOutput.c_str());
+
+    if (kAngleDebug)
+    {
+        INFO() << "ANGLE-CL.Kernel: " << printfOutput.c_str();
+    }
 }
 
 std::string GetSpvVersionAsClspvString(spv_target_env spvVersion)
@@ -421,6 +446,11 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
         ASSERT(false);
     }
     options += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
+    if (rendererVk->getFeatures().supportsBufferDeviceAddress.enabled)
+    {
+        ASSERT(addressBits == 64);
+        options += " -physical-storage-buffers ";
+    }
 
     // select SPIR-V version target
     options += " --spv-version=" + GetSpvVersionAsClspvString(device->getSpirvVersion());
@@ -457,6 +487,11 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
     options += " --global-offset";
     options += " --enable-printf";
     options += " --cl-kernel-arg-info";
+
+    // add opencl atomic feature macros
+    featureMacros.push_back("__opencl_c_atomic_order_acq_rel");
+    featureMacros.push_back("__opencl_c_atomic_order_seq_cst");
+    featureMacros.push_back("__opencl_c_atomic_scope_device");
 
     // check for int8 support
     if (rendererVk->getFeatures().supportsShaderInt8.enabled)
@@ -535,6 +570,16 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
         featureMacros.push_back("__opencl_c_images");
         featureMacros.push_back("__opencl_c_3d_image_writes");
         featureMacros.push_back("__opencl_c_read_write_images");
+    }
+
+    if (rendererVk->getFeatures().supportsBufferDeviceAddress.enabled)
+    {
+        // It is for generating ConstantDataStorageBuffer without -physical-storage-buffers,
+        // ConstantDataPointerPushConstant with -physical-storage-buffers
+        // TODO: this flag is only on in case of supportsBufferDeviceAddress.enabled
+        // until ConstantDataStorageBuffer will be implemented.
+        // http://anglebug.com/442950569
+        options += " -module-constants-in-storage-buffer";
     }
 
     if (rendererVk->getEnabledFeatures().features.shaderInt64)

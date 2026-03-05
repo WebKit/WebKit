@@ -56,7 +56,6 @@ public:
     virtual ~BlobRegistryImpl();
 
     BlobData* blobDataFromURL(const URL&, const std::optional<SecurityOriginData>& topOrigin = std::nullopt) const;
-    RefPtr<BlobData> protectedBlobDataFromURL(const URL&, const std::optional<SecurityOriginData>& topOrigin = std::nullopt) const;
 
     Ref<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 
@@ -77,23 +76,23 @@ public:
 
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
-    struct BlobForFileWriting {
-        String blobURL;
-        Vector<std::pair<String, RefPtr<DataSegment>>> filePathsOrDataBuffers;
-    };
-
-    bool populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>&);
-    Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin = std::nullopt) const;
+    Vector<Ref<BlobDataFileReference>> filesInBlob(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin = std::nullopt) const;
 
     void setFileDirectory(String&&);
 
 private:
+    struct BlobForFileWriting {
+        String blobURL;
+        Vector<Variant<String, Ref<DataSegment>>> filePathsOrDataBuffers;
+    };
+
     void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType, const PolicyContainer&, const std::optional<SecurityOriginData>& topOrigin = std::nullopt);
-    void addBlobData(const String& url, RefPtr<BlobData>&&, const std::optional<WebCore::SecurityOriginData>& topOrigin = std::nullopt);
+    void addBlobData(const String& url, Ref<BlobData>&&, const std::optional<WebCore::SecurityOriginData>& topOrigin = std::nullopt);
     Ref<DataSegment> createDataSegment(Vector<uint8_t>&&, BlobData&);
+    bool populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>&);
 
     HashCountedSet<String> m_blobReferences;
-    MemoryCompactRobinHoodHashMap<String, RefPtr<BlobData>> m_blobs;
+    MemoryCompactRobinHoodHashMap<String, Ref<BlobData>> m_blobs;
     using URLToTopOriginHashMap = MemoryCompactRobinHoodHashMap<String, WebCore::SecurityOriginData>;
     URLToTopOriginHashMap m_allowedBlobURLTopOrigins;
     String m_fileDirectory;
@@ -101,7 +100,7 @@ private:
 
 inline void BlobRegistryImpl::setFileDirectory(String&& filePath)
 {
-    m_fileDirectory = WTFMove(filePath);
+    m_fileDirectory = WTF::move(filePath);
 }
 
 } // namespace WebCore

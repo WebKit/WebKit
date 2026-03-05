@@ -33,13 +33,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceAlphaSoftwareApplier);
 
 bool SourceAlphaSoftwareApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
-    
-    RefPtr inputImage = input.imageBuffer();
+
+    RefPtr inputImage = input->imageBuffer();
     if (!inputImage)
         return false;
 

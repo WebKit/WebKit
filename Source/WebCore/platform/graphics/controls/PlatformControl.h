@@ -58,7 +58,7 @@ public:
     virtual void draw(GraphicsContext&, const FloatRoundedRect&, float, const ControlStyle&) { }
 
 protected:
-    ControlPart& m_owningPart;
+    ThreadSafeWeakRef<ControlPart> m_owningPart;
 };
 
 } // namespace WebCore

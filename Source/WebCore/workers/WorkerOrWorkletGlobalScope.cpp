@@ -35,15 +35,18 @@
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkletGlobalScope.h"
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 
 WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, ReferrerPolicy referrerPolicy, WorkerOrWorkletThread* thread, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
     : ScriptExecutionContext(Type::WorkerOrWorkletGlobalScope, contextIdentifier)
-    , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
+    , m_contextThreadUID(Thread::currentSingleton().uid())
+    , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTF::move(vm), this))
     , m_moduleLoader(makeUniqueRef<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
     , m_thread(thread)
     , m_inspectorController(makeUniqueRef<WorkerInspectorController>(*this))
@@ -65,6 +68,7 @@ void WorkerOrWorkletGlobalScope::prepareForDestruction()
     }
 
     stopActiveDOMObjects();
+    clearMicrotaskGlobalObjects();
 
     // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
     // which become dangling once Heap is destroyed.
@@ -119,6 +123,7 @@ EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
     if (!m_defaultTaskGroup) [[unlikely]] {
         lazyInitialize(m_eventLoop, WorkerEventLoop::create(*this));
         lazyInitialize(m_defaultTaskGroup, makeUnique<EventLoopTaskGroup>(*m_eventLoop));
+        m_defaultTaskGroup->setScriptExecutionContext(*this);
         if (activeDOMObjectsAreStopped())
             m_defaultTaskGroup->stopAndDiscardAllTasks();
     }
@@ -127,20 +132,24 @@ EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
 
 bool WorkerOrWorkletGlobalScope::isContextThread() const
 {
-    RefPtr thread = workerOrWorkletThread();
-    return thread && thread->thread() ? thread->thread() == &Thread::currentSingleton() : isMainThread();
+    return m_contextThreadUID == Thread::currentSingleton().uid();
+}
+
+bool WorkerOrWorkletGlobalScope::isEventLoopGroupStoppedPermanently() const
+{
+    return m_defaultTaskGroup && m_defaultTaskGroup->isStoppedPermanently();
 }
 
 void WorkerOrWorkletGlobalScope::postTask(Task&& task)
 {
     ASSERT(workerOrWorkletThread());
-    workerOrWorkletThread()->runLoop().postTask(WTFMove(task));
+    workerOrWorkletThread()->runLoop().postTask(WTF::move(task));
 }
 
 void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode)
 {
     ASSERT(workerOrWorkletThread());
-    workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
+    workerOrWorkletThread()->runLoop().postTaskForMode(WTF::move(task), mode);
 }
 
 OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolicies() const

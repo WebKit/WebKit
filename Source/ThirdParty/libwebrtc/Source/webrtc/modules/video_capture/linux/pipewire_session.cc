@@ -10,11 +10,18 @@
 
 #include "modules/video_capture/linux/pipewire_session.h"
 
+#include <pipewire/pipewire.h>
 #include <spa/monitor/device.h>
 #include <spa/param/format-utils.h>
 #include <spa/param/format.h>
+#include <spa/param/param.h>
 #include <spa/param/video/raw.h>
-#include <spa/pod/parser.h>
+#include <spa/pod/iter.h>
+#include <spa/pod/pod.h>
+#include <spa/utils/defs.h>
+#include <spa/utils/dict.h>
+#include <spa/utils/hook.h>
+#include <spa/utils/type.h>
 
 #include <algorithm>
 #include <cstdint>
@@ -171,8 +178,9 @@ void PipeWireNode::OnNodeParam(void* data,
               static_cast<int32_t>(1.0 * fract[i].num / fract[i].denom),
               cap.maxFPS);
         }
-      } else if (choice == SPA_CHOICE_Range && fract[1].num > 0)
+      } else if (choice == SPA_CHOICE_Range && fract[1].num > 0) {
         cap.maxFPS = 1.0 * fract[1].num / fract[1].denom;
+      }
     }
   }
 
@@ -386,11 +394,10 @@ void PipeWireSession::OnCoreDone(void* data, uint32_t id, int seq) {
       RTC_LOG(LS_VERBOSE) << "Enumerating PipeWire camera devices complete.";
 
       // Remove camera devices with no capabilities
-      auto it = std::remove_if(that->nodes_.begin(), that->nodes_.end(),
-                               [](const PipeWireNode::PipeWireNodePtr& node) {
-                                 return node->capabilities().empty();
-                               });
-      that->nodes_.erase(it, that->nodes_.end());
+      std::erase_if(that->nodes_,
+                    [](const PipeWireNode::PipeWireNodePtr& node) {
+                      return node->capabilities().empty();
+                    });
 
       that->Finish(VideoCaptureOptions::Status::SUCCESS);
     }
@@ -432,11 +439,9 @@ void PipeWireSession::OnRegistryGlobal(void* data,
 void PipeWireSession::OnRegistryGlobalRemove(void* data, uint32_t id) {
   PipeWireSession* that = static_cast<PipeWireSession*>(data);
 
-  auto it = std::remove_if(that->nodes_.begin(), that->nodes_.end(),
-                           [id](const PipeWireNode::PipeWireNodePtr& node) {
-                             return node->id() == id;
-                           });
-  that->nodes_.erase(it, that->nodes_.end());
+  std::erase_if(that->nodes_, [id](const PipeWireNode::PipeWireNodePtr& node) {
+    return node->id() == id;
+  });
 }
 
 void PipeWireSession::Finish(VideoCaptureOptions::Status status) {

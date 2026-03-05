@@ -38,9 +38,9 @@ public:
     virtual ~NavigatorGeolocation();
     static NavigatorGeolocation* from(Navigator&);
 
-    static Geolocation* geolocation(Navigator&);
+    static Geolocation& geolocation(Navigator&);
     static Geolocation* optionalGeolocation(Navigator&);
-    Geolocation* geolocation() const;
+    Geolocation& geolocation() const;
 
 #if PLATFORM(IOS_FAMILY)
     void resetAllGeolocationPermission();

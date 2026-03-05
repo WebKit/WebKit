@@ -23,11 +23,12 @@ namespace webrtc {
 AsyncSocketAdapter::AsyncSocketAdapter(Socket* socket)
     : socket_(absl::WrapUnique(socket)) {
   RTC_DCHECK(socket_);
-  socket_->SignalConnectEvent.connect(this,
-                                      &AsyncSocketAdapter::OnConnectEvent);
+  socket_->SubscribeConnectEvent(
+      [this](Socket* socket) { OnConnectEvent(socket); });
   socket_->SignalReadEvent.connect(this, &AsyncSocketAdapter::OnReadEvent);
   socket_->SignalWriteEvent.connect(this, &AsyncSocketAdapter::OnWriteEvent);
-  socket_->SignalCloseEvent.connect(this, &AsyncSocketAdapter::OnCloseEvent);
+  socket_->SubscribeCloseEvent(
+      [this](Socket* socket, int err) { OnCloseEvent(socket, err); });
 }
 
 SocketAddress AsyncSocketAdapter::GetLocalAddress() const {
@@ -100,7 +101,7 @@ int AsyncSocketAdapter::SetOption(Option opt, int value) {
 }
 
 void AsyncSocketAdapter::OnConnectEvent(Socket* socket) {
-  SignalConnectEvent(this);
+  NotifyConnectEvent(this);
 }
 
 void AsyncSocketAdapter::OnReadEvent(Socket* socket) {
@@ -112,7 +113,7 @@ void AsyncSocketAdapter::OnWriteEvent(Socket* socket) {
 }
 
 void AsyncSocketAdapter::OnCloseEvent(Socket* socket, int err) {
-  SignalCloseEvent(this, err);
+  NotifyCloseEvent(this, err);
 }
 
 }  // namespace webrtc

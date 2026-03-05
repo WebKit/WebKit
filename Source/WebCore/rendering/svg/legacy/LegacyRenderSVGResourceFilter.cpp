@@ -35,16 +35,17 @@
 #include "RenderObjectInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRenderingContext.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FilterData);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
 
 LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceFilter, element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceFilter, element, WTF::move(style))
 {
 }
 
@@ -52,20 +53,16 @@ LegacyRenderSVGResourceFilter::~LegacyRenderSVGResourceFilter() = default;
 
 bool LegacyRenderSVGResourceFilter::isIdentity() const
 {
-    return SVGFilterRenderer::isIdentity(protectedFilterElement());
+    return SVGFilterRenderer::isIdentity(protect(filterElement()));
 }
 
 void LegacyRenderSVGResourceFilter::removeAllClientsFromCache()
 {
-    LOG(Filters, "LegacyRenderSVGResourceFilter %p removeAllClientsFromCache", this);
-
     m_rendererFilterDataMap.clear();
 }
 
 void LegacyRenderSVGResourceFilter::removeClientFromCache(RenderElement& client)
 {
-    LOG(Filters, "LegacyRenderSVGResourceFilter %p removing client %p", this, &client);
-    
     auto findResult = m_rendererFilterDataMap.find(client);
     if (findResult != m_rendererFilterDataMap.end()) {
         FilterData& filterData = *findResult->value;
@@ -83,8 +80,8 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
 
     LOG(Filters, "LegacyRenderSVGResourceFilter %p applyResource renderer %p", this, &renderer);
 
-    if (m_rendererFilterDataMap.contains(renderer)) {
-        FilterData* filterData = m_rendererFilterDataMap.get(renderer);
+    if (auto it = m_rendererFilterDataMap.find(renderer); it != m_rendererFilterDataMap.end()) {
+        FilterData* filterData = it->value.get();
         if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying) {
             filterData->state = FilterData::CycleDetected;
             return { }; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
@@ -131,12 +128,18 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     auto preferredFilterModes = renderer.page().preferredFilterRenderingModes(*context);
 
     // Create the SVGFilterRenderer object.
-    filterData->filter = SVGFilterRenderer::create(contextElement.get(), filterElement, preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
+    filterData->filter = SVGFilterRenderer::create(contextElement.get(), filterElement, {
+        .referenceBox = targetBoundingBox,
+        .filterRegion = filterRegion,
+        .scale = filterScale,
+    }, preferredFilterModes, *context, RenderingResourceIdentifier::generate());
+
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(renderer);
         return { };
     }
 
+    filterData->filter->setIsShowingDebugOverlay(renderer.settings().showDebugBorders());
     filterData->filter->clampFilterRegionIfNeeded();
 
 #if USE(CAIRO)

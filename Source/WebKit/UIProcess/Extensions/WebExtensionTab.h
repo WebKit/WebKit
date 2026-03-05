@@ -125,7 +125,7 @@ public:
     void setActiveUserGesture(bool activeUserGesture) { m_activeUserGesture = activeUserGesture; }
 
     RefPtr<WebExtensionMatchPattern> temporaryPermissionMatchPattern() const { return m_temporaryPermissionMatchPattern; }
-    void setTemporaryPermissionMatchPattern(RefPtr<WebExtensionMatchPattern>&& matchPattern) { m_temporaryPermissionMatchPattern = WTFMove(matchPattern); }
+    void setTemporaryPermissionMatchPattern(RefPtr<WebExtensionMatchPattern>&& matchPattern) { m_temporaryPermissionMatchPattern = WTF::move(matchPattern); }
 
     OptionSet<ChangedProperties> changedProperties() const { return m_changedProperties; }
     void addChangedProperties(OptionSet<ChangedProperties> properties) { m_changedProperties.add(properties); }
@@ -150,23 +150,23 @@ public:
     bool isPinned() const;
     void setPinned(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(true, WTFMove(completionHandler)); }
-    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(false, WTFMove(completionHandler)); }
+    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(true, WTF::move(completionHandler)); }
+    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(false, WTF::move(completionHandler)); }
 
     bool isReaderModeAvailable() const;
 
     bool isReaderModeActive() const;
     void setReaderModeActive(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeActive(!isReaderModeActive(), WTFMove(completionHandler)); }
+    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeActive(!isReaderModeActive(), WTF::move(completionHandler)); }
 
     bool isPlayingAudio() const;
 
     bool isMuted() const;
     void setMuted(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(true, WTFMove(completionHandler)); }
-    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(false, WTFMove(completionHandler)); }
+    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(true, WTF::move(completionHandler)); }
+    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(false, WTF::move(completionHandler)); }
 
 #if PLATFORM(COCOA)
     CGSize size() const;
@@ -198,8 +198,8 @@ public:
     bool isSelected() const;
     void setSelected(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(true, WTFMove(completionHandler)); }
-    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(false, WTFMove(completionHandler)); }
+    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(true, WTF::move(completionHandler)); }
+    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(false, WTF::move(completionHandler)); }
 
     void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(Expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&&);
 

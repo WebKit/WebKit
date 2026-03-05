@@ -62,7 +62,7 @@ void LibWebRTCNetwork::networkProcessCrashed()
 {
     setConnection(nullptr);
 
-    protectedMonitor()->networkProcessCrashed();
+    protect(monitor())->networkProcessCrashed();
 }
 
 void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)
@@ -70,7 +70,7 @@ void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)
     if (RefPtr connection = m_connection)
         connection->removeMessageReceiver(Messages::LibWebRTCNetwork::messageReceiverName());
 
-    m_connection = WTFMove(connection);
+    m_connection = WTF::move(connection);
 
     if (isActive())
         setSocketFactoryConnection();
@@ -91,8 +91,8 @@ void LibWebRTCNetwork::setSocketFactoryConnection()
         if (!connection->isValid())
             return;
 
-        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, connection = WTFMove(connection)]() mutable {
-            m_socketFactory.setConnection(WTFMove(connection));
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, connection = WTF::move(connection)]() mutable {
+            m_socketFactory.setConnection(WTF::move(connection));
         });
     }, 0);
 }
@@ -104,10 +104,10 @@ void LibWebRTCNetwork::dispatch(Function<void()>&& callback)
         return;
     }
 
-    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread(WTFMove(callback));
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread(WTF::move(callback));
 }
 
-static webrtc::EcnMarking convertToWebRTCEcnMarking(WebRTCNetwork::EcnMarking ecn)
+static webrtc::EcnMarking NODELETE convertToWebRTCEcnMarking(WebRTCNetwork::EcnMarking ecn)
 {
     switch (ecn) {
     case WebRTCNetwork::EcnMarking::kNotEct:
@@ -163,7 +163,7 @@ void LibWebRTCNetwork::signalUsedInterface(WebCore::LibWebRTCSocketIdentifier id
 {
     ASSERT(!WTF::isMainRunLoop());
     if (auto* socket = m_socketFactory.socket(identifier))
-        socket->signalUsedInterface(WTFMove(interfaceName));
+        socket->signalUsedInterface(WTF::move(interfaceName));
 }
 
 } // namespace WebKit

@@ -293,6 +293,8 @@ static NSNumber *_currentBadge;
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
+        else
+            processConfiguration.usesWebProcessCache = YES;
 
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
 #pragma clang diagnostic pop
@@ -438,6 +440,41 @@ static NSNumber *_currentBadge;
 
     [[controller window] makeKeyAndOrderFront:sender];
     [controller loadHTMLString:@"<html><body></body></html>"];
+}
+
+- (IBAction)newTab:(id)sender
+{
+    NSWindow *keyWindow = [NSApp keyWindow];
+    BrowserWindowController *currentController = nil;
+
+    if ([keyWindow.delegate isKindOfClass:[BrowserWindowController class]])
+        currentController = (BrowserWindowController *)keyWindow.delegate;
+
+    if (!currentController) {
+        // No current window, create a new window instead
+        [self newWindow:sender];
+        return;
+    }
+
+    // Create new controller matching current window's type (WK1 vs WK2)
+    BrowserWindowController *newController = nil;
+    if ([currentController isKindOfClass:[WK2BrowserWindowController class]]) {
+        WK2BrowserWindowController *wk2Controller = (WK2BrowserWindowController *)currentController;
+        // Copy configuration from current window (preserves private browsing, site isolation, etc.)
+        WKWebViewConfiguration *config = [wk2Controller.webView.configuration copy];
+        newController = [[WK2BrowserWindowController alloc] initWithConfiguration:config];
+    } else
+        newController = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+
+    if (!newController)
+        return;
+
+    [_browserWindowControllers addObject:newController];
+
+    // Add as tab to current window
+    [keyWindow addTabbedWindow:[newController window] ordered:NSWindowAbove];
+    [[newController window] makeKeyAndOrderFront:sender];
+    [newController loadURLString:[self targetURL]];
 }
 
 - (void)didCreateBrowserWindowController:(BrowserWindowController *)controller

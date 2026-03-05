@@ -35,28 +35,34 @@ struct MaskBorderSliceValue {
     using Number = Style::Number<CSS::Nonnegative, float>;
     using Percentage = Style::Percentage<CSS::Nonnegative, float>;
 
-    MaskBorderSliceValue(Number number)
+    constexpr MaskBorderSliceValue(Number number)
         : m_value { number }
     {
     }
-
-
-    MaskBorderSliceValue(Percentage percentage)
+    constexpr MaskBorderSliceValue(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : m_value { Number { literal } }
+    {
+    }
+    constexpr MaskBorderSliceValue(Percentage percentage)
         : m_value { percentage }
     {
     }
+    constexpr MaskBorderSliceValue(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+        : m_value { Percentage { literal } }
+    {
+    }
 
-    bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
-    bool isPercentage() const { return WTF::holdsAlternative<Percentage>(m_value); }
+    constexpr bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
+    constexpr bool isPercentage() const { return WTF::holdsAlternative<Percentage>(m_value); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
 
-    bool operator==(const MaskBorderSliceValue&) const = default;
+    constexpr bool operator==(const MaskBorderSliceValue&) const = default;
 
-    bool hasSameType(const MaskBorderSliceValue& other) const { return m_value.index() == other.m_value.index(); }
+    constexpr bool hasSameType(const MaskBorderSliceValue& other) const { return m_value.index() == other.m_value.index(); }
 
 private:
     friend struct Blending<MaskBorderSliceValue>;
@@ -67,8 +73,47 @@ private:
 // <'mask-border-slice'> = [<number [0,∞]> | <percentage [0,∞]>]{1,4} && fill?
 // https://drafts.fxtf.org/css-masking-1/#propdef-mask-border-slice
 struct MaskBorderSlice {
-    MinimallySerializingSpaceSeparatedRectEdges<MaskBorderSliceValue> values { MaskBorderSliceValue::Number { 0 } };
-    std::optional<CSS::Keyword::Fill> fill { };
+    using Value = MaskBorderSliceValue;
+    using Edges = MinimallySerializingSpaceSeparatedRectEdges<Value>;
+
+    Edges values { Value::Number { 0 } };
+    std::optional<CSS::Keyword::Fill> fill { std::nullopt };
+
+    MaskBorderSlice(Edges values, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
+        : values { WTF::move(values) }
+        , fill { fill }
+    {
+    }
+    MaskBorderSlice(Value top, Value right, Value bottom, Value left, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
+        : values { top, right, bottom, left }
+        , fill { fill }
+    {
+    }
+    MaskBorderSlice(Value value, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
+        : values { value }
+        , fill { fill }
+    {
+    }
+    MaskBorderSlice(Value::Number number, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
+        : values { number }
+        , fill { fill }
+    {
+    }
+    MaskBorderSlice(CSS::ValueLiteral<CSS::NumberUnit::Number> literal, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
+        : values { Value::Number { literal } }
+        , fill { fill }
+    {
+    }
+    MaskBorderSlice(Value::Percentage percentage, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
+        : values { percentage }
+        , fill { fill }
+    {
+    }
+    MaskBorderSlice(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
+        : values { Value::Percentage { literal } }
+        , fill { fill }
+    {
+    }
 
     bool operator==(const MaskBorderSlice&) const = default;
 };

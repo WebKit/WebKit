@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PowerSourceNotifier);
 
 PowerSourceNotifier::PowerSourceNotifier(PowerSourceNotifierCallback&& callback)
-    : m_callback(WTFMove(callback))
+    : m_callback(WTF::move(callback))
 {
     int token = 0;
     auto status = notify_register_dispatch(kIOPSNotifyPowerSource, &token, mainDispatchQueueSingleton(), [weakThis = WeakPtr { *this }] (int) {

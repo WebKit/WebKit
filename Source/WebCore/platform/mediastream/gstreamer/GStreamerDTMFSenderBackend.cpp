@@ -41,11 +41,11 @@ RefPtr<GStreamerDTMFSenderPrivate> GStreamerDTMFSenderPrivate::create()
     if (!dtmfSrc)
         return nullptr;
 
-    return adoptRef(*new GStreamerDTMFSenderPrivate(WTFMove(dtmfSrc)));
+    return adoptRef(*new GStreamerDTMFSenderPrivate(WTF::move(dtmfSrc)));
 }
 
 GStreamerDTMFSenderPrivate::GStreamerDTMFSenderPrivate(GRefPtr<GstElement>&& dtmfSrc)
-    : m_dtmfSrc(WTFMove(dtmfSrc))
+    : m_dtmfSrc(WTF::move(dtmfSrc))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -114,7 +114,7 @@ void GStreamerDTMFSenderPrivate::playTone(const RefPtr<RealtimeOutgoingAudioSour
     GST_DEBUG_OBJECT(pad.get(), "Playing tone %c for %zu milliseconds", tone, duration);
     sendEvent(pad, toneNumber, 25, true);
 
-    RunLoop::mainSingleton().dispatchAfter(Seconds::fromMilliseconds(duration), [toneNumber, pad = WTFMove(pad), weakThis = ThreadSafeWeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatchAfter(Seconds::fromMilliseconds(duration), [toneNumber, pad = WTF::move(pad), weakThis = ThreadSafeWeakPtr { *this }] {
         RefPtr self = weakThis.get();
         if (!self)
             return;
@@ -137,7 +137,7 @@ void GStreamerDTMFSenderPrivate::stopTone(const GRefPtr<GstPad>& pad, int tone)
 }
 
 GStreamerDTMFSenderBackend::GStreamerDTMFSenderBackend(ThreadSafeWeakPtr<RealtimeOutgoingAudioSourceGStreamer>&& source)
-    : m_source(WTFMove(source))
+    : m_source(WTF::move(source))
 {
     RefPtr strongSource = m_source.get();
     if (!strongSource) {
@@ -192,7 +192,7 @@ void GStreamerDTMFSenderBackend::onTonePlayed(Function<void()>&& onTonePlayed)
 {
     if (!m_senderPrivate) [[unlikely]]
         return;
-    m_senderPrivate->setOnTonePlayedCallback(WTFMove(onTonePlayed));
+    m_senderPrivate->setOnTonePlayedCallback(WTF::move(onTonePlayed));
 }
 
 #undef GST_CAT_DEFAULT

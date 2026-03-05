@@ -19,4 +19,4 @@ testWithTypedArrayConstructors(function(TA) {
   var ta = new TA(buffer);
 
   assert.sameValue(ta.buffer, buffer);
-});
+}, null, ["passthrough"]);

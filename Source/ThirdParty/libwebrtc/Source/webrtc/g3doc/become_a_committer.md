@@ -75,7 +75,7 @@ recommended to apply for WebRTC committer rights obtaining process.
 6.  Also as any contributor you must sign and return the
     [Contributor License Agreement][4]
 
-Two-factor authentication with a security key is a requirement for adding your account as a committer. If you haven't done so already, you'll need to set up a security key on your account.
+Two-factor authentication with a security key is a requirement for adding your account as a committer. If you haven't done so already, you'll need to set up a security key on your account. For more information about this requirement see [Gerrit ReAuth](https://chromium.googlesource.com/chromium/src/+/main/docs/gerrit_reauth.md).
 
 ## WebRTC Committers expiration
 

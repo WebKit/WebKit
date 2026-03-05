@@ -23,6 +23,9 @@
 
 Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp
 Modules/mediastream/gstreamer/GStreamerDtlsTransportBackend.cpp
+Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
+Modules/mediastream/gstreamer/GStreamerIceStream.cpp
+Modules/mediastream/gstreamer/GStreamerIceTransport.cpp
 Modules/mediastream/gstreamer/GStreamerIceTransportBackend.cpp
 Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp
 Modules/mediastream/gstreamer/GStreamerPeerConnectionBackend.cpp
@@ -38,6 +41,8 @@ Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp
 Modules/mediastream/RTCRtpSFrameTransformerOpenSSL.cpp
 
 Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
+
+platform/rice/RiceGioBackend.cpp
 
 platform/audio/gstreamer/AudioDecoderGStreamer.cpp
 platform/audio/gstreamer/AudioDestinationGStreamer.cpp
@@ -59,13 +64,12 @@ platform/graphics/gstreamer/GStreamerVideoFrameConverter.cpp
 platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
 platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
 platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
-platform/graphics/gstreamer/ImageGStreamerCairo.cpp
 platform/graphics/gstreamer/ImageGStreamerSkia.cpp
 platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
-platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
 platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
 platform/graphics/gstreamer/MediaSampleGStreamer.cpp
 platform/graphics/gstreamer/PlatformDisplayGStreamer.cpp
+platform/graphics/gstreamer/PlatformMediaEngineConfigurationFactoryGStreamer.cpp
 platform/graphics/gstreamer/TextCombinerGStreamer.cpp
 platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp
 platform/graphics/gstreamer/TextSinkGStreamer.cpp
@@ -107,6 +111,7 @@ platform/gstreamer/GStreamerQuirkBcmNexus.cpp
 platform/gstreamer/GStreamerQuirkBroadcom.cpp
 platform/gstreamer/GStreamerQuirkBroadcomBase.cpp
 platform/gstreamer/GStreamerQuirkOpenMAX.cpp
+platform/gstreamer/GStreamerQuirkQualcomm.cpp
 platform/gstreamer/GStreamerQuirkRealtek.cpp
 platform/gstreamer/GStreamerQuirkRialto.cpp
 platform/gstreamer/GStreamerQuirkWesteros.cpp

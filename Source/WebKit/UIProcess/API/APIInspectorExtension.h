@@ -45,7 +45,7 @@ class InspectorExtension final : public API::ObjectImpl<Object::Type::InspectorE
 public:
     static Ref<InspectorExtension> create(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy&);
 
-    const WTF::String& identifier() const { return m_identifier; }
+    const WTF::String& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     void createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
     void evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);

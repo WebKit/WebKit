@@ -79,7 +79,7 @@ auto CSSValueConversion<ViewFunction>::operator()(BuilderState& state, const CSS
     return ViewFunction {
         ViewFunctionParameters {
             .axis = axis,
-            .insets = { WTFMove(startInset), WTFMove(endInset) },
+            .insets = { WTF::move(startInset), WTF::move(endInset) },
         }
     };
 }

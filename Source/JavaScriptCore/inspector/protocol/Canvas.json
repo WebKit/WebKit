@@ -1,7 +1,7 @@
 {
     "domain": "Canvas",
     "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
-    "debuggableTypes": ["page", "web-page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page", "worker"],
     "types": [
         {
@@ -18,7 +18,7 @@
         {
             "id": "ColorSpace",
             "type": "string",
-            "enum": ["srgb", "display-p3"]
+            "enum": ["srgb", "srgb-linear", "display-p3", "display-p3-linear"]
         },
         {
             "id": "ContextType",

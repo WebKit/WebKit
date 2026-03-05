@@ -23,7 +23,7 @@ info: |
   Let buffer be O.[[ViewedArrayBuffer]].
   If IsDetachedBuffer(buffer) is true, return false.
 
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 testWithBigIntTypedArrayConstructors(function(TA) {
@@ -51,4 +51,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     sample['0'] = obj;
   }, '`sample["0"] = obj` throws Test262Error');
-});
+}, null, ["passthrough"]);

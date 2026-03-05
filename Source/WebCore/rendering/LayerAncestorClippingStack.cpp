@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerAncestorClippingStack);
 
 LayerAncestorClippingStack::LayerAncestorClippingStack(Vector<CompositedClipData>&& clipDataStack)
-    : m_stack(WTF::map(WTFMove(clipDataStack), [](CompositedClipData&& clipDataEntry) { return ClippingStackEntry { WTFMove(clipDataEntry), std::nullopt, nullptr, nullptr }; }))
+    : m_stack(WTF::map(WTF::move(clipDataStack), [](CompositedClipData&& clipDataEntry) { return ClippingStackEntry { WTF::move(clipDataEntry), std::nullopt, nullptr, nullptr }; }))
 {
 }
 
@@ -129,7 +129,7 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
         auto& clipDataEntry = clipDataStack[i];
         
         if (i >= stackEntryCount) {
-            m_stack.append({ WTFMove(clipDataEntry), { }, nullptr, nullptr });
+            m_stack.append({ WTF::move(clipDataEntry), { }, nullptr, nullptr });
             stackChanged = true;
             continue;
         }
@@ -145,7 +145,7 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
             existingEntry.overflowScrollProxyNodeID = std::nullopt;
         }
         
-        existingEntry.clipData = WTFMove(clipDataEntry);
+        existingEntry.clipData = WTF::move(clipDataEntry);
     }
     
     if (stackEntryCount > clipEntryCount) {

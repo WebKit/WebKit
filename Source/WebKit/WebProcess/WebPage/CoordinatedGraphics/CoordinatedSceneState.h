@@ -55,7 +55,7 @@ public:
     bool flush();
     void invalidate();
 
-    const HashSet<Ref<WebCore::CoordinatedPlatformLayer>>& committedLayers();
+    const HashSet<Ref<WebCore::CoordinatedPlatformLayer>>& committedLayers() LIFETIME_BOUND;
     void invalidateCommittedLayers();
 
     bool layersDidChange() const { return m_didChangeLayers; }

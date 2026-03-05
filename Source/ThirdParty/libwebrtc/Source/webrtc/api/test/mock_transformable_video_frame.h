@@ -34,6 +34,7 @@ class MockTransformableVideoFrame : public TransformableVideoFrameInterface {
   MOCK_METHOD(void, SetRTPTimestamp, (uint32_t), (override));
   MOCK_METHOD(uint32_t, GetSsrc, (), (const, override));
   MOCK_METHOD(bool, IsKeyFrame, (), (const, override));
+  MOCK_METHOD(std::optional<std::string>, Rid, (), (const, override));
   MOCK_METHOD(void, SetMetadata, (const VideoFrameMetadata&), (override));
   MOCK_METHOD(uint8_t, GetPayloadType, (), (const, override));
   MOCK_METHOD(bool, CanSetPayloadType, (), (const, override));

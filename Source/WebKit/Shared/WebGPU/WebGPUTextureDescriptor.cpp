@@ -44,7 +44,7 @@ std::optional<TextureDescriptor> ConvertToBackingContext::convertToBacking(const
     if (!size)
         return std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(*size), textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, textureDescriptor.viewFormats } };
+    return { { WTF::move(*base), WTF::move(*size), textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, textureDescriptor.viewFormats } };
 }
 
 std::optional<WebCore::WebGPU::TextureDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureDescriptor& textureDescriptor)
@@ -57,7 +57,7 @@ std::optional<WebCore::WebGPU::TextureDescriptor> ConvertFromBackingContext::con
     if (!size)
         return std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(*size), textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, textureDescriptor.viewFormats } };
+    return { { WTF::move(*base), WTF::move(*size), textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, textureDescriptor.viewFormats } };
 }
 
 } // namespace WebKit

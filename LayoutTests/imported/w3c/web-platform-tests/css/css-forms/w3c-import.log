@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/datetime-stacking-context-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/datetime-stacking-context-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/datetime-stacking-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/input-text-base-appearance-computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/input-text-base-appearance-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/input-text-base-appearance-rendering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/input-text-base-appearance-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/select-combobox-print-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/select-combobox-print.html

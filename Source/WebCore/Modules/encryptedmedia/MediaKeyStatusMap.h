@@ -31,6 +31,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "BufferSource.h"
+#include "CDMKeyID.h"
 #include "MediaKeyStatus.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/RefCounted.h>
@@ -54,7 +55,7 @@ public:
 
     void detachSession();
 
-    unsigned long size();
+    unsigned long NODELETE size();
     bool has(const BufferSource&);
     JSC::JSValue get(JSC::JSGlobalObject&, const BufferSource&);
 

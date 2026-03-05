@@ -111,17 +111,17 @@ void GPUProcess::setScreenProperties(const WebCore::ScreenProperties& screenProp
 
 void GPUProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
 {
-    auto cacheInvalidationHandler = [handle = WTFMove(handle)] () mutable {
-        AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
+    auto cacheInvalidationHandler = [handle = WTF::move(handle)] () mutable {
+        AuxiliaryProcess::openDirectoryCacheInvalidated(WTF::move(handle));
     };
-    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTF::move(cacheInvalidationHandler)).get());
 }
 #endif // PLATFORM(MAC)
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
 void GPUProcess::enablePowerLogging(SandboxExtension::Handle&& handle)
 {
-    SandboxExtension::consumePermanently(WTFMove(handle));
+    SandboxExtension::consumePermanently(WTF::move(handle));
 }
 #endif // HAVE(POWERLOG_TASK_MODE_QUERY)
 

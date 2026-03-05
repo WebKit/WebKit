@@ -44,7 +44,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     *this = delegateProvidedRequest;
 
     setPriority(oldPriority);
-    setHTTPBody(WTFMove(oldHTTPBody));
+    setHTTPBody(WTF::move(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);
     setInitiatorIdentifier(oldInitiatorIdentifier);
@@ -54,7 +54,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
 
 ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestBase::RequestData&& requestData)
 {
-    return ResourceRequest(WTFMove(requestData));
+    return ResourceRequest(WTF::move(requestData));
 }
 
 ResourceRequestBase::RequestData ResourceRequest::getRequestDataToSerialize() const

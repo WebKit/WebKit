@@ -1,6 +1,8 @@
 
 PASS elementsFromPoint for a point inside two rects
+PASS elementsFromPoint for a point inside two rects that are inside an svg element with pointer-events: bounding-box
 PASS elementsFromPoint for a point inside two rects that are inside a <g>
 PASS elementsFromPoint for a point inside two images
 PASS elementsFromPoint for a point inside transformed rects and <g>
+FAIL elementsFromPoint for a point inside a foreignObject assert_equals: document.elementsFromPoint(350,250) expected "DIV#foDiv, foreignObject#fo, svg#svg, DIV#sandbox, BODY, HTML" but got "DIV#foDiv, svg#svg, DIV#sandbox, BODY, HTML"
 

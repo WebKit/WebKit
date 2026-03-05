@@ -35,7 +35,6 @@
 #include "pc/rtp_transport_internal.h"
 #include "pc/sctp_transport.h"
 #include "pc/session_description.h"
-#include "pc/srtp_transport.h"
 #include "pc/transport_stats.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_fingerprint.h"
@@ -84,7 +83,6 @@ class JsepTransport {
                 scoped_refptr<IceTransportInterface> ice_transport,
                 scoped_refptr<IceTransportInterface> rtcp_ice_transport,
                 std::unique_ptr<RtpTransport> unencrypted_rtp_transport,
-                std::unique_ptr<SrtpTransport> sdes_transport,
                 std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport,
                 std::unique_ptr<DtlsTransportInternal> rtp_dtls_transport,
                 std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport,
@@ -115,14 +113,12 @@ class JsepTransport {
   }
 
   RTCError SetLocalJsepTransportDescription(
-      const JsepTransportDescription& jsep_description,
-      SdpType type);
+      const JsepTransportDescription& jsep_description, SdpType type);
 
   // Set the remote TransportDescription to be used by DTLS and ICE channels
   // that are part of this Transport.
   RTCError SetRemoteJsepTransportDescription(
-      const JsepTransportDescription& jsep_description,
-      SdpType type);
+      const JsepTransportDescription& jsep_description, SdpType type);
   RTCError AddRemoteCandidates(const Candidates& candidates);
 
   // Set the "needs-ice-restart" flag as described in JSEP. After the flag is
@@ -160,9 +156,6 @@ class JsepTransport {
   RtpTransportInternal* rtp_transport() const {
     if (dtls_srtp_transport_) {
       return dtls_srtp_transport_.get();
-    }
-    if (sdes_transport_) {
-      return sdes_transport_.get();
     }
     if (unencrypted_rtp_transport_) {
       return unencrypted_rtp_transport_.get();
@@ -204,7 +197,9 @@ class JsepTransport {
     return rtp_dtls_transport_;
   }
 
-  scoped_refptr<webrtc::SctpTransport> SctpTransport() const { return sctp_transport_; }
+  scoped_refptr<::webrtc::SctpTransport> SctpTransport() const {
+    return sctp_transport_;
+  }
 
   // TODO(bugs.webrtc.org/9719): Delete method, update callers to use
   // SctpTransport() instead.
@@ -297,7 +292,6 @@ class JsepTransport {
   // To avoid downcasting and make it type safe, keep three unique pointers for
   // different SRTP mode and only one of these is non-nullptr.
   const std::unique_ptr<RtpTransport> unencrypted_rtp_transport_;
-  const std::unique_ptr<SrtpTransport> sdes_transport_;
   const std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport_;
 
   const scoped_refptr<DtlsTransport> rtp_dtls_transport_;
@@ -310,7 +304,7 @@ class JsepTransport {
 
   RtcpMuxFilter rtcp_mux_negotiator_ RTC_GUARDED_BY(network_thread_);
 
-  // Cache the encrypted header extension IDs for SDES negoitation.
+  // Cache the encrypted header extension IDs
   std::optional<std::vector<int>> send_extension_ids_
       RTC_GUARDED_BY(network_thread_);
   std::optional<std::vector<int>> recv_extension_ids_
@@ -328,6 +322,5 @@ class JsepTransport {
 };
 
 }  //  namespace webrtc
-
 
 #endif  // PC_JSEP_TRANSPORT_H_

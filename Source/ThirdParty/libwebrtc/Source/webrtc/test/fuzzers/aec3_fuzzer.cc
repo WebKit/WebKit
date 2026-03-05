@@ -59,8 +59,10 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       1 + fuzz_data.ReadOrDefaultValue<uint8_t>(0) % (kMaxNumChannels - 1);
 
   EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
-                      /*multichannel_config=*/std::nullopt, sample_rate_hz,
-                      num_render_channels, num_capture_channels);
+                      /*multichannel_config=*/std::nullopt,
+                      /*neural_residual_echo_estimator=*/nullptr,
+                      sample_rate_hz, num_render_channels,
+                      num_capture_channels);
 
   AudioBuffer capture_audio(sample_rate_hz, num_capture_channels,
                             sample_rate_hz, num_capture_channels,

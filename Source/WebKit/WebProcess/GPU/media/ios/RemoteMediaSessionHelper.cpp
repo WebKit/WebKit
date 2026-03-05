@@ -56,11 +56,6 @@ IPC::Connection& RemoteMediaSessionHelper::ensureConnection()
     return gpuProcessConnection->connection();
 }
 
-Ref<IPC::Connection> RemoteMediaSessionHelper::ensureProtectedConnection()
-{
-    return ensureConnection();
-}
-
 void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection& gpuProcessConnection)
 {
     gpuProcessConnection.messageReceiverMap().removeMessageReceiver(*this);
@@ -69,22 +64,24 @@ void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection
 
 void RemoteMediaSessionHelper::startMonitoringWirelessRoutesInternal()
 {
-    ensureProtectedConnection()->send(Messages::RemoteMediaSessionHelperProxy::StartMonitoringWirelessRoutes(), { });
+    protect(ensureConnection())->send(Messages::RemoteMediaSessionHelperProxy::StartMonitoringWirelessRoutes(), { });
 }
 
 void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
 {
-    ensureProtectedConnection()->send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
+    protect(ensureConnection())->send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
 }
 
 void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContextSerialized&& targetContext)
 {
     switch (targetContext.targetType()) {
     case WebCore::MediaPlaybackTargetType::AVOutputContext:
-        WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, MediaPlaybackTargetSerialized::create(WTFMove(targetContext)));
+    case WebCore::MediaPlaybackTargetType::WirelessPlayback:
+        WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, MediaPlaybackTargetSerialized::create(WTF::move(targetContext)));
         break;
     case WebCore::MediaPlaybackTargetType::Mock:
     case WebCore::MediaPlaybackTargetType::Serialized:
+    case WebCore::MediaPlaybackTargetType::None:
         break;
     }
 }

@@ -296,7 +296,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithFrameIds)
         @"browser.test.sendMessage('Load Tab')"
     ]);
 
-    auto *contentScript = Util::constructScript(@[
+    RetainPtr contentScript = Util::constructScript(@[
         @"browser.runtime.sendMessage('Hello from frame')",
     ]);
 
@@ -323,7 +323,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithFrameIds)
 
     auto *resources = @{
         @"background.js": backgroundScript,
-        @"content.js": contentScript,
+        @"content.js": contentScript.get(),
     };
 
     auto manager = Util::loadExtension(manifest, resources);
@@ -368,7 +368,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithDocumentIds)
         @"browser.test.sendMessage('Load Tab')"
     ]);
 
-    auto *contentScript = Util::constructScript(@[
+    RetainPtr contentScript = Util::constructScript(@[
         @"browser.runtime.sendMessage('Hello from frame')",
     ]);
 
@@ -395,7 +395,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithDocumentIds)
 
     auto *resources = @{
         @"background.js": backgroundScript,
-        @"content.js": contentScript,
+        @"content.js": contentScript.get(),
     };
 
     auto manager = Util::loadExtension(manifest, resources);

@@ -217,7 +217,7 @@ function createErrorSheet() {
 
     function stringifyAndTruncateObject(object) {
         let string = JSON.stringify(object);
-        return string.length > 500 ? string.substr(0, 500) + ellipsis : string;
+        return string.length > 500 ? string.substring(0, 500) + ellipsis : string;
     }
 
     if (window.InspectorBackend && InspectorBackend.currentDispatchState) {
@@ -263,6 +263,7 @@ ${topLevelItems.join("\n")}
     let encodedBugTitle = encodeURIComponent(`Uncaught Exception: ${firstException.message}`);
     let encodedInspectedURL = encodeURIComponent(inspectedPageURL || "http://");
     let prefilledBugReportLink = `https://bugs.webkit.org/enter_bug.cgi?alias=&assigned_to=webkit-unassigned%40lists.webkit.org&attach_text=&blocked=&bug_file_loc=${encodedInspectedURL}&bug_severity=Normal&bug_status=NEW&comment=${encodedBugDescription}&component=Web%20Inspector&contenttypeentry=&contenttypemethod=autodetect&contenttypeselection=text%2Fplain&data=&dependson=&description=&flag_type-1=X&flag_type-3=X&form_name=enter_bug&keywords=&op_sys=All&priority=P2&product=WebKit&rep_platform=All&short_desc=${encodedBugTitle}`;
+    let bugReportLink = WI.isDebugUIEnabled() ? prefilledBugReportLink : "https://bugs.webkit.org";
     let detailsForHTML = formattedErrorDetails.map((line) => `<li>${insertWordBreakCharacters(line)}</li>`).join("\n");
 
     let dismissOptionHTML = !loadCompleted ? "" : `<dt>A frivolous exception will not stop me!</dt>
@@ -280,7 +281,7 @@ ${topLevelItems.join("\n")}
         <dd>Usually, this is caused by a syntax error while modifying the Web Inspector
         UI, or running an updated frontend with out-of-date WebKit build.</dt>
         <dt>I didn't do anything...?</dt>
-        <dd><a href="${prefilledBugReportLink}" id="uncaught-exception-bug-report-link" class="bypass-event-blocking">Click to file a bug</a> as this is likely a Web Inspector bug.</dd>
+        <dd><a href="${bugReportLink}" id="uncaught-exception-bug-report-link" class="bypass-event-blocking">Click to file a bug</a> as this is likely a Web Inspector bug.</dd>
         <dt>Oops, can I try again?</dt>
         <dd><a href="javascript:InspectorFrontendHost.reopen()" class="bypass-event-blocking">Click to reload the Inspector</a>
         again after making local changes.</dd>

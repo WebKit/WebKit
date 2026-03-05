@@ -39,7 +39,7 @@ class WebPlatformStrategies :
     , public WebCore::PushStrategy
 #endif
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebPlatformStrategies);
+    WTF_MAKE_TZONE_ALLOCATED(WebPlatformStrategies);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPlatformStrategies);
     friend NeverDestroyed<WebPlatformStrategies>;
 public:

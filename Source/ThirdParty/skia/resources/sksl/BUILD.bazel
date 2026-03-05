@@ -1189,8 +1189,10 @@ skia_filegroup(
         "wgsl/MainDoesNotHaveFragCoordParameter.sksl",
         "wgsl/MainHasVoidReturn.sksl",
         "wgsl/MatrixConstructorDiagonal.sksl",
+        "wgsl/NoF16Support.sksl",
         "wgsl/OutParams.sksl",
         "wgsl/PixelLocalStorage.sksl",
+        "wgsl/PolyfillIntrinsics.sksl",
         "wgsl/Sample.sksl",
         "wgsl/SubpassInput.sksl",
         "wgsl/TextureIntrinsics.compute",
@@ -1199,5 +1201,6 @@ skia_filegroup(
         "wgsl/UserDefinedPipelineIO.sksl",
         "wgsl/VertexPositionOutputIsAlwaysDeclared.vert",
         "wgsl/WorkgroupSize.compute",
+        "workarounds/LastFragColor.sksl",
     ],
 )

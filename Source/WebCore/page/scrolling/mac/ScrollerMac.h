@@ -58,7 +58,7 @@ public:
 
     void attach();
 
-    RefPtr<ScrollerPairMac> pair() const { return m_pair.get(); }
+    RefPtr<ScrollerPairMac> pair() const { return m_pair; }
 
     ScrollbarOrientation orientation() const { return m_orientation; }
 
@@ -95,7 +95,7 @@ public:
     double knobAlpha();
     double trackAlpha();
     bool hasScrollerImp();
-    RecursiveLock& scrollerImpLock() const { return m_scrollerImpLock; }
+    RecursiveLock& scrollerImpLock() const LIFETIME_BOUND { return m_scrollerImpLock; }
 
 private:
     int m_minimumKnobLength { 0 };

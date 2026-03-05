@@ -90,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(callRuntimeMethod, (JSGlobalObject* globalObject, CallF
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
 
-    RuntimeMethod* method = static_cast<RuntimeMethod*>(callFrame->jsCallee());
+    auto* method = jsCast<RuntimeMethod*>(callFrame->jsCallee());
 
     if (!method->method())
         return JSValue::encode(jsUndefined());
@@ -98,15 +98,14 @@ JSC_DEFINE_HOST_FUNCTION(callRuntimeMethod, (JSGlobalObject* globalObject, CallF
     RefPtr<Instance> instance;
 
     JSValue thisValue = callFrame->thisValue();
-    if (thisValue.inherits<RuntimeObject>()) {
-        RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
+    if (auto* runtimeObject = jsDynamicCast<RuntimeObject*>(thisValue)) {
         instance = runtimeObject->getInternalInstance();
         if (!instance) 
             return JSValue::encode(throwRuntimeObjectInvalidAccessError(globalObject, scope));
     } else {
         // Calling a runtime object of a plugin element?
-        if (thisValue.inherits<JSHTMLElement>())
-            instance = pluginInstance(jsCast<JSHTMLElement*>(asObject(thisValue))->wrapped());
+        if (auto* jsHTMLElement = jsDynamicCast<JSHTMLElement*>(thisValue))
+            instance = pluginInstance(jsHTMLElement->wrapped());
         if (!instance)
             return throwVMTypeError(globalObject, scope);
     }

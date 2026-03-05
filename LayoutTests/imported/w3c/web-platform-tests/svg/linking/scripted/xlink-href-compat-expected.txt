@@ -1,0 +1,14 @@
+
+FAIL XLink 'href' backwards compatibility, IDL href backed by "href" after setAttribute(href). assert_false: "xlink:href" still does not exist expected false got true
+FAIL XLink 'href' backwards compatibility, IDL href backed by "xlink:href" after setAttribute(xlink:href). assert_false: "href" still does not exist expected false got true
+FAIL XLink 'href' backwards compatibility, IDL href backed by "href" after baseVal setter. assert_false: "xlink:href" does not exist expected false got true
+FAIL XLink 'href' backwards compatibility, IDL href reflects "href"; setAttribute(xlink:href) does not override baseVal setter. assert_false: "xlink:href" does not exist expected false got true
+FAIL XLink 'href' backwards compatibility, IDL href prefers "href" over "xlink:href" after setAttribute(href) overrides. assert_false: "href" does not exist expected false got true
+PASS XLink 'href' backwards compatibility, IDL href reflects "xlink:href"; setAttribute(xlink:href) w/ NS-prefix.
+PASS XLink 'href' backwards compatibility, IDL href reflects "xlink:href" after removeAttribute(href).
+PASS XLink 'href' backwards compatibility, IDL href reflects "xlink:href"; removeAttribute(xlink:href) has no effect.
+PASS XLink 'href' backwards compatibility, IDL href reflects "xlink:href"; removeAttribute(xlink:href) resets to default.
+PASS XLink 'href' backwards compatibility, IDL href reflects "xlink:href"; removeAttribute(xlink:href) w/o NS-prefix resets to default.
+PASS XLink 'href' backwards compatibility, href.animVal reflects "xlink:href" when it is set.
+PASS XLink 'href' backwards compatibility, href.animVal reflects "href" when it is set.
+

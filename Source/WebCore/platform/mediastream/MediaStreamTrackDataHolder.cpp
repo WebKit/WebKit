@@ -36,7 +36,7 @@ public:
     static Ref<PreventSourceFromEndingObserverWrapper> create(Ref<RealtimeMediaSource>&& source)
     {
         auto wrapper = adoptRef(*new PreventSourceFromEndingObserverWrapper);
-        wrapper->initialize(WTFMove(source));
+        wrapper->initialize(WTF::move(source));
         return wrapper;
     }
 
@@ -45,8 +45,8 @@ private:
 
     void initialize(Ref<RealtimeMediaSource>&& source)
     {
-        ensureOnMainThread([protectedThis = Ref { *this }, source = WTFMove(source)] () mutable {
-            protectedThis->m_observer = makeUnique<PreventSourceFromEndingObserver>(WTFMove(source));
+        ensureOnMainThread([protectedThis = Ref { *this }, source = WTF::move(source)] () mutable {
+            protectedThis->m_observer = makeUnique<PreventSourceFromEndingObserver>(WTF::move(source));
         });
     }
 
@@ -55,7 +55,7 @@ private:
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PreventSourceFromEndingObserver);
     public:
         explicit PreventSourceFromEndingObserver(Ref<RealtimeMediaSource>&& source)
-            : m_source(WTFMove(source))
+            : m_source(WTF::move(source))
         {
             m_source->addObserver(*this);
         }
@@ -82,8 +82,8 @@ private:
 };
 
 MediaStreamTrackDataHolder::MediaStreamTrackDataHolder(String&& trackId, String&& label, RealtimeMediaSource::Type type, CaptureDevice::DeviceType deviceType, bool isEnabled, bool isEnded, MediaStreamTrackHintValue contentHint, bool isProducingData, bool isMuted, bool isInterrupted, RealtimeMediaSourceSettings settings, RealtimeMediaSourceCapabilities capabilities, Ref<RealtimeMediaSource>&& source)
-    : trackId(WTFMove(trackId))
-    , label(WTFMove(label))
+    : trackId(WTF::move(trackId))
+    , label(WTF::move(label))
     , type(type)
     , deviceType(deviceType)
     , isEnabled(isEnabled)
@@ -92,10 +92,10 @@ MediaStreamTrackDataHolder::MediaStreamTrackDataHolder(String&& trackId, String&
     , isProducingData(isProducingData)
     , isMuted(isMuted)
     , isInterrupted(isInterrupted)
-    , settings(WTFMove(settings))
-    , capabilities(WTFMove(capabilities))
+    , settings(WTF::move(settings))
+    , capabilities(WTF::move(capabilities))
     , source(source.get())
-    , preventSourceFromEndingObserverWrapper(PreventSourceFromEndingObserverWrapper::create(WTFMove(source)))
+    , preventSourceFromEndingObserverWrapper(PreventSourceFromEndingObserverWrapper::create(WTF::move(source)))
 {
 }
 

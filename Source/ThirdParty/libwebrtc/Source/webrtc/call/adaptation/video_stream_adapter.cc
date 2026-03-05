@@ -132,7 +132,7 @@ VideoSourceRestrictions FilterRestrictionsByDegradationPreference(
       source_restrictions.set_max_pixels_per_frame(std::nullopt);
       source_restrictions.set_target_pixels_per_frame(std::nullopt);
       break;
-    case DegradationPreference::DISABLED:
+    case DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION:
       source_restrictions.set_max_pixels_per_frame(std::nullopt);
       source_restrictions.set_target_pixels_per_frame(std::nullopt);
       source_restrictions.set_max_frame_rate(std::nullopt);
@@ -218,7 +218,8 @@ VideoStreamAdapter::VideoStreamAdapter(
       encoder_stats_observer_(encoder_stats_observer),
       balanced_settings_(field_trials),
       adaptation_validation_id_(0),
-      degradation_preference_(DegradationPreference::DISABLED),
+      degradation_preference_(
+          DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION),
       awaiting_frame_size_change_(std::nullopt) {
   sequence_checker_.Detach();
   RTC_DCHECK(input_state_provider_);
@@ -246,8 +247,8 @@ void VideoStreamAdapter::ClearRestrictions() {
   // Invalidate any previously returned Adaptation.
   RTC_LOG(LS_INFO) << "Resetting restrictions";
   ++adaptation_validation_id_;
-  current_restrictions_ = {VideoSourceRestrictions(),
-                           VideoAdaptationCounters()};
+  current_restrictions_ = {.restrictions = VideoSourceRestrictions(),
+                           .counters = VideoAdaptationCounters()};
   awaiting_frame_size_change_ = std::nullopt;
   BroadcastVideoRestrictionsUpdate(input_state_provider_->InputState(),
                                    nullptr);
@@ -327,9 +328,10 @@ Adaptation VideoStreamAdapter::RestrictionsOrStateToAdaptation(
     VideoStreamAdapter::RestrictionsOrState step_or_state,
     const VideoStreamInputState& input_state) const {
   RTC_DCHECK(!step_or_state.valueless_by_exception());
-  return std::visit(
-      RestrictionsOrStateVisitor{adaptation_validation_id_, input_state},
-      step_or_state);
+  return std::visit(RestrictionsOrStateVisitor{.adaptation_validation_id =
+                                                   adaptation_validation_id_,
+                                               .input_state = input_state},
+                    step_or_state);
 }
 
 Adaptation VideoStreamAdapter::GetAdaptationUp(
@@ -395,7 +397,7 @@ VideoStreamAdapter::RestrictionsOrState VideoStreamAdapter::GetAdaptationUpStep(
       // Scale up framerate.
       return IncreaseFramerate(input_state, current_restrictions_);
     }
-    case DegradationPreference::DISABLED:
+    case DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION:
       return Adaptation::Status::kAdaptationDisabled;
   }
   RTC_CHECK_NOTREACHED();
@@ -475,7 +477,7 @@ VideoStreamAdapter::GetAdaptationDownStep(
     case DegradationPreference::MAINTAIN_RESOLUTION: {
       return DecreaseFramerate(input_state, current_restrictions);
     }
-    case DegradationPreference::DISABLED:
+    case DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION:
       return Adaptation::Status::kAdaptationDisabled;
   }
   RTC_CHECK_NOTREACHED();
@@ -618,7 +620,7 @@ Adaptation VideoStreamAdapter::GetAdaptDownResolution() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   VideoStreamInputState input_state = input_state_provider_->InputState();
   switch (degradation_preference_) {
-    case DegradationPreference::DISABLED:
+    case DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION:
       return RestrictionsOrStateToAdaptation(
           Adaptation::Status::kAdaptationDisabled, input_state);
     case DegradationPreference::MAINTAIN_RESOLUTION:
@@ -676,7 +678,8 @@ void VideoStreamAdapter::ApplyAdaptation(const Adaptation& adaptation,
   } else {
     awaiting_frame_size_change_ = std::nullopt;
   }
-  current_restrictions_ = {adaptation.restrictions(), adaptation.counters()};
+  current_restrictions_ = {.restrictions = adaptation.restrictions(),
+                           .counters = adaptation.counters()};
   BroadcastVideoRestrictionsUpdate(adaptation.input_state(), resource);
 }
 

@@ -69,9 +69,6 @@ const int kDefaultInputPixelsHeight = 144;
 
 namespace {
 
-constexpr const char* kPixelLimitResourceFieldTrialName =
-    "WebRTC-PixelLimitResource";
-
 bool IsResolutionScalingEnabled(DegradationPreference degradation_preference) {
   return degradation_preference == DegradationPreference::MAINTAIN_FRAMERATE ||
          degradation_preference == DegradationPreference::BALANCED;
@@ -287,7 +284,8 @@ VideoStreamEncoderResourceManager::VideoStreamEncoderResourceManager(
       input_state_provider_(input_state_provider),
       adaptation_processor_(nullptr),
       encoder_stats_observer_(encoder_stats_observer),
-      degradation_preference_(DegradationPreference::DISABLED),
+      degradation_preference_(
+          DegradationPreference::MAINTAIN_FRAMERATE_AND_RESOLUTION),
       video_source_restrictions_(),
       balanced_settings_(field_trials),
       clock_(clock),
@@ -297,8 +295,6 @@ VideoStreamEncoderResourceManager::VideoStreamEncoderResourceManager(
                                                 field_trials)),
       quality_scaling_experiment_enabled_(
           QualityScalingExperiment::Enabled(field_trials_)),
-      pixel_limit_resource_experiment_enabled_(
-          field_trials.IsEnabled(kPixelLimitResourceFieldTrialName)),
       encoder_target_bitrate_bps_(std::nullopt),
       encoder_settings_(std::nullopt) {
   TRACE_EVENT0(
@@ -358,28 +354,12 @@ void VideoStreamEncoderResourceManager::MaybeInitializePixelLimitResource() {
   RTC_DCHECK_RUN_ON(encoder_queue_);
   RTC_DCHECK(adaptation_processor_);
   RTC_DCHECK(!pixel_limit_resource_);
-  if (!pixel_limit_resource_experiment_enabled_) {
-    // The field trial is not running.
-    return;
+  pixel_limit_resource_ = PixelLimitResource::CreateIfFieldTrialEnabled(
+      field_trials_, encoder_queue_, input_state_provider_);
+  if (pixel_limit_resource_) {
+    AddResource(pixel_limit_resource_,
+                pixel_limit_resource_->adaptation_reason());
   }
-  int max_pixels = 0;
-  std::string pixel_limit_field_trial =
-      field_trials_.Lookup(kPixelLimitResourceFieldTrialName);
-  if (sscanf(pixel_limit_field_trial.c_str(), "Enabled-%d", &max_pixels) != 1) {
-    RTC_LOG(LS_ERROR) << "Couldn't parse " << kPixelLimitResourceFieldTrialName
-                      << " trial config: " << pixel_limit_field_trial;
-    return;
-  }
-  RTC_LOG(LS_INFO) << "Running field trial "
-                   << kPixelLimitResourceFieldTrialName << " configured to "
-                   << max_pixels << " max pixels";
-  // Configure the specified max pixels from the field trial. The pixel limit
-  // resource is active for the lifetme of the stream (until
-  // StopManagedResources() is called).
-  pixel_limit_resource_ =
-      PixelLimitResource::Create(encoder_queue_, input_state_provider_);
-  pixel_limit_resource_->SetMaxPixels(max_pixels);
-  AddResource(pixel_limit_resource_, VideoAdaptationReason::kCpu);
 }
 
 void VideoStreamEncoderResourceManager::StopManagedResources() {

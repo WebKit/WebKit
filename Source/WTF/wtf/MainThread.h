@@ -71,7 +71,7 @@ inline bool isWebThread() { return isMainThread(); }
 inline bool isUIThread() { return isMainThread(); }
 #endif // USE(WEB_THREAD)
 
-WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
+WTF_EXPORT_PRIVATE bool NODELETE isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
 void initializeMainThreadPlatform();

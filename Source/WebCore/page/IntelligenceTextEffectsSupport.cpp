@@ -47,14 +47,14 @@ Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&
 
     Vector<FloatRect> textRectsInRootViewCoordinates;
 
-    auto& markers = document.markers();
-    markers.forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+    CheckedRef markers = document.markers();
+    markers->forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
         auto markerRange = makeSimpleRange(node, marker);
 
         auto rect = document.view()->contentsToRootView(unionRect(RenderObject::absoluteTextRects(markerRange, { })));
-        textRectsInRootViewCoordinates.append(WTFMove(rect));
+        textRectsInRootViewCoordinates.append(WTF::move(rect));
 
         return false;
     });
@@ -99,11 +99,11 @@ void decorateWritingToolsTextReplacements(Document& document, const SimpleRange&
 {
     auto resolvedRange = resolveCharacterRange(scope, range);
 
-    auto& markers = document.markers();
+    CheckedRef markers = document.markers();
 
     Vector<std::tuple<SimpleRange, DocumentMarker::WritingToolsTextSuggestionData>> markersToReinsert;
 
-    markers.forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+    markers->forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
         auto range = makeSimpleRange(node, marker);
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
@@ -112,11 +112,11 @@ void decorateWritingToolsTextReplacements(Document& document, const SimpleRange&
         return false;
     });
 
-    markers.removeMarkers(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion });
+    markers->removeMarkers(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion });
 
     for (const auto& [range, oldData] : markersToReinsert) {
         auto newData = DocumentMarker::WritingToolsTextSuggestionData { oldData.originalText, oldData.suggestionID, oldData.state, DocumentMarker::WritingToolsTextSuggestionData::Decoration::Underline };
-        markers.addMarker(range, DocumentMarkerType::WritingToolsTextSuggestion, newData);
+        markers->addMarker(range, DocumentMarkerType::WritingToolsTextSuggestion, newData);
     }
 }
 #endif

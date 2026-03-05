@@ -4,7 +4,7 @@ layer at (0,0) size 785x638
   RenderBlock {HTML} at (0,0) size 785x638
     RenderBody {BODY} at (8,8) size 769x622
       RenderBlock (anonymous) at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 743x35
+        RenderText {#text} at (0,0) size 743x36
           text run at (0,0) width 716: "In the test below, the column rules should not be visible, since a negative z-index child is painting on top of them. "
           text run at (715,0) width 28: "You"
           text run at (0,18) width 156: "should see no red below."
@@ -16,7 +16,7 @@ layer at (8,44) size 769x586 layerType: foreground only
     RenderMultiColumnSet at (35,5) size 699x576
 layer at (43,49) size 222x1692 backgroundClip at (0,0) size 785x638 clip at (0,0) size 785x638
   RenderMultiColumnFlowThread at (35,5) size 223x1692
-    RenderText {#text} at (0,0) size 223x1691
+    RenderText {#text} at (0,0) size 223x1692
       text run at (0,0) width 177: "Lorem ipsum dolor sit amet,"
       text run at (0,18) width 212: "consectetuer adipiscing elit. Nulla"
       text run at (0,36) width 179: "varius enim ac mi. Curabitur"

@@ -25,31 +25,27 @@
 import logging
 import os
 import sys
+import warnings
 
 scripts = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'Scripts')
 sys.path.insert(0, scripts)
 
-import webkitpy
+# This is needed to set up all the autoinstall logic.
+import webkitpy  # noqa: F401
 
-from webkitcorepy import log, testing, OutputCapture, StringIO
-from webkitpy.autoinstalled import buildbot
-
+from webkitcorepy import StringIO, log, testing
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.WARNING)
+    warnings.filterwarnings(
+        'ignore',
+        message='^You do not have a working installation of the service_identity module',
+    )
 
-    # Disable logging while loading buildbot to surpress service_identity error
-    try:
-        sys.stderr = StringIO()
-        from webkitpy.autoinstalled import buildbot
-    finally:
-        sys.stderr = sys.__stderr__
+    # We import this here after we've set the above warnings filter.
+    from webkitpy.autoinstalled import buildbot  # noqa: F401
 
-    # This is work-around for https://bugs.webkit.org/show_bug.cgi?id=222361
-    from buildbot.process.buildstep import BuildStep
-    BuildStep.warn_deprecated_if_oldstyle_subclass = lambda self, name: None
-
-    # Disable logging while loading libraries to surpress load_password error
+    # Disable output to stdout while loading libraries to suppress load_password error
     try:
         sys.stdout = StringIO()
         runner = testing.PythonTestRunner(

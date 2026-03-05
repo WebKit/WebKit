@@ -26,6 +26,8 @@
 #pragma once
 
 #include <JavaScriptCore/CallData.h>
+#include <wtf/AbstractCanMakeCheckedPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WTF {
 class Stopwatch;
@@ -43,7 +45,7 @@ namespace Inspector {
 typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
 typedef JSC::JSValue (*InspectorEvaluateHandler)(JSC::JSGlobalObject*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
-class InspectorEnvironment {
+class InspectorEnvironment : public AbstractCanMakeCheckedPtr, public CanMakeWeakPtr<InspectorEnvironment> {
 public:
     virtual ~InspectorEnvironment() { }
     virtual bool developerExtrasEnabled() const = 0;

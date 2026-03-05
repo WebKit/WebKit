@@ -66,6 +66,7 @@
 #include "VMInspector.h"
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
+#include <bmalloc/BPlatform.h>
 #include <unicode/uversion.h>
 #include <wtf/ApproximateTime.h>
 #include <wtf/Atomics.h>
@@ -79,15 +80,12 @@
 #include <wtf/WTFProcess.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/BPlatform.h>
 #if BUSE(LIBPAS)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <bmalloc/pas_debug_spectrum.h>
 #include <bmalloc/pas_fd_stream.h>
 #include <bmalloc/pas_heap_lock.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-#endif
 #endif
 
 #if ENABLE(WEBASSEMBLY)
@@ -758,23 +756,14 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticAccessorPutter, (JSGlobalObject* globalObject
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testField"_s)), JSValue::decode(value));
 }
 
-#if ENABLE(WYHASH_STRING_HASHER)
-static const struct CompactHashIndex staticCustomAccessorTableIndex[5] = {
+static const struct CompactHashIndex staticCustomAccessorTableIndex[6] = {
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
     { 0, 4 },
-    { -1, -1 },
+    { 1, 5 },
     { 2, -1 },
-    { -1, -1 },
-    { 1, -1 },
 };
-#else
-static const struct CompactHashIndex staticCustomAccessorTableIndex[5] = {
-    { 0, 4 },
-    { -1, -1 },
-    { 2, -1 },
-    { -1, -1 },
-    { 1, -1 },
-};
-#endif
 
 static const struct JSC::HashTableValue staticCustomAccessorTableValues[3] = {
     { "testStaticAccessor"_s, static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { JSC::HashTableValue::GetterSetterType, testStaticAccessorGetter, testStaticAccessorPutter } },
@@ -864,23 +853,13 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutterSetFlag, (JSGlobalObject* globalOb
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValueSetterCalled"_s)), jsBoolean(true));
 }
 
-#if ENABLE(WYHASH_STRING_HASHER)
 static const struct CompactHashIndex staticCustomValueTableIndex[5] = {
-    { 1, 4 },
-    { 2, -1 },
     { 0, -1 },
     { -1, -1 },
+    { 1, -1 },
+    { 2, 4 },
     { 3, -1 },
 };
-#else
-static const struct CompactHashIndex staticCustomValueTableIndex[5] = {
-    { 1, 4 },
-    { 2, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 3, -1 },
-};
-#endif
 
 static const struct JSC::HashTableValue staticCustomValueTableValues[4] = {
     { "testStaticValue"_s, static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { JSC::HashTableValue::GetterSetterType, testStaticValueGetter, testStaticValuePutter } },
@@ -968,23 +947,13 @@ JSC_DEFINE_HOST_FUNCTION(staticDontDeleteDontEnumMethod, (JSGlobalObject*, CallF
     return encodedJSUndefined();
 }
 
-#if ENABLE(WYHASH_STRING_HASHER)
 static const struct CompactHashIndex staticDontDeleteDontEnumTableIndex[5] = {
-    { 0, -1 },
-    { 1, 4 },
-    { -1, -1 },
+    { 0, 4 },
     { -1, -1 },
     { 2, -1 },
-};
-#else
-static const struct CompactHashIndex staticDontDeleteDontEnumTableIndex[5] = {
-    { 0, -1 },
-    { 1, 4 },
     { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
+    { 1, -1 },
 };
-#endif
 
 static const struct JSC::HashTableValue staticDontDeleteDontEnumTableValues[3] = {
     { "dontEnum"_s, static_cast<unsigned>(PropertyAttribute::Function | PropertyAttribute::DontEnum), NoIntrinsic, { JSC::HashTableValue::NativeFunctionType, staticDontDeleteDontEnumMethod, 0 } },
@@ -1678,7 +1647,7 @@ public:
     Message(ArrayBufferContents&&, int32_t);
     ~Message();
 
-    ArrayBufferContents&& releaseContents() { return WTFMove(m_contents); }
+    ArrayBufferContents&& releaseContents() { return WTF::move(m_contents); }
     int32_t index() const { return m_index; }
 
 private:
@@ -2050,10 +2019,10 @@ public:
         return &vm.destructibleObjectSpace();
     }
 
-    WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, const SourceCode& source)
+    WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source)
         : Base(vm, structure)
         , m_promise(promise, WriteBarrierEarlyInit)
-        , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, source))
+        , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), source))
     {
         DollarVMAssertScope assertScope;
     }
@@ -2063,7 +2032,7 @@ public:
         DollarVMAssertScope assertScope;
         JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        WasmStreamingCompiler* result = new (NotNull, allocateCell<WasmStreamingCompiler>(vm)) WasmStreamingCompiler(vm, structure, compilerMode, globalObject, promise, importObject, source);
+        WasmStreamingCompiler* result = new (NotNull, allocateCell<WasmStreamingCompiler>(vm)) WasmStreamingCompiler(vm, structure, compilerMode, globalObject, promise, importObject, std::nullopt, source);
         result->finishCreation(vm);
         return result;
     }
@@ -2307,7 +2276,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCrash, NO_RETURN_DUE_TO_CRASH, 
     DollarVMAssertScope assertScope;
 
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     if (callFrame->argumentCount()) {
         dataLogLn("Dumping ", callFrame->argumentCount(), " values before crashing:");
         const bool addLineFeed = true;
@@ -2329,7 +2298,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBreakpoint, (JSGlobalObject* globalObject, Call
     DollarVMAssertScope assertScope;
     // Nothing should throw here but we might as well double check...
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     UNUSED_PARAM(scope);
     if (!callFrame->argumentCount() || callFrame->argument(0).toBoolean(globalObject))
         WTFBreakpointTrap();
@@ -3301,8 +3270,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile, (JSGloba
     args.append(compiler);
     ASSERT(!args.hasOverflowed());
     call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
-    if (scope.exception()) [[unlikely]]
-        scope.clearException();
+    TRY_CLEAR_EXCEPTION(scope, { });
     compiler->streamingCompiler().finalize(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(compiler->promise());
@@ -3332,8 +3300,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate, (JSG
     args.append(compiler);
     ASSERT(!args.hasOverflowed());
     call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
-    if (scope.exception()) [[unlikely]]
-        scope.clearException();
+    TRY_CLEAR_EXCEPTION(scope, { });
     compiler->streamingCompiler().finalize(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(compiler->promise());
@@ -3429,8 +3396,16 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBuiltin, (JSGlobalObject* globalObject, C
     auto functionText = asString(callFrame->argument(0))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    SourceCode source = makeSource(WTFMove(functionText), { }, SourceTaintedOrigin::Untainted);
-    JSFunction* func = JSFunction::create(vm, globalObject, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"_s), ImplementationVisibility::Public, ConstructorKind::None, ConstructAbility::CannotConstruct, InlineAttribute::None)->link(vm, nullptr, source), globalObject);
+    ImplementationVisibility visibility = ImplementationVisibility::Public;
+    if (callFrame->argumentCount() >= 2 && callFrame->argument(1).isString()) {
+        String visibilityString = asString(callFrame->argument(1))->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (visibilityString == "private"_s)
+            visibility = ImplementationVisibility::Private;
+    }
+
+    SourceCode source = makeSource(WTF::move(functionText), { }, SourceTaintedOrigin::Untainted);
+    JSFunction* func = JSFunction::create(vm, globalObject, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"_s), visibility, ConstructorKind::None, ConstructAbility::CannotConstruct, InlineAttribute::None)->link(vm, nullptr, source), globalObject);
 
     return JSValue::encode(func);
 }
@@ -3866,7 +3841,7 @@ JSC_DEFINE_HOST_FUNCTION(functionMake16BitStringIfPossible, (JSGlobalObject* glo
     String string = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     string.convertTo16Bit();
-    return JSValue::encode(jsString(vm, WTFMove(string)));
+    return JSValue::encode(jsString(vm, WTF::move(string)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionGetStructureTransitionList, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -4100,13 +4075,11 @@ JSC_DEFINE_HOST_FUNCTION(functionIsPrivateSymbol, (JSGlobalObject*, CallFrame* c
 JSC_DEFINE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if !USE(SYSTEM_MALLOC)
 #if BUSE(LIBPAS)
     pas_heap_lock_lock();
     pas_debug_spectrum_dump(&pas_log_stream.base);
     pas_debug_spectrum_reset();
     pas_heap_lock_unlock();
-#endif
 #endif
     return JSValue::encode(jsUndefined());
 }
@@ -4139,7 +4112,7 @@ JSC_DEFINE_HOST_FUNCTION(functionEvaluateWithScopeExtension, (JSGlobalObject* gl
     String program = asString(scriptValue)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    SourceCode source = makeSource(WTFMove(program), callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted);
+    SourceCode source = makeSource(WTF::move(program), callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted);
     JSObject* scopeExtension = callFrame->argument(1).getObject();
 
     NakedPtr<Exception> exception;

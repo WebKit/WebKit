@@ -36,7 +36,7 @@ enum class LinkIconType : uint8_t;
 class LinkIconCollector {
 public:
     explicit LinkIconCollector(Ref<Document>&& document)
-        : m_document(WTFMove(document))
+        : m_document(WTF::move(document))
     {
     }
 

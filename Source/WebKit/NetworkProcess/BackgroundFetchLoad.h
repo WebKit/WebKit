@@ -66,7 +66,7 @@ public:
 private:
     BackgroundFetchLoad(NetworkProcess&, PAL::SessionID, WebCore::BackgroundFetchRecordLoaderClient&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&);
 
-    const URL& currentURL() const;
+    const URL& NODELETE currentURL() const;
 
     // NetworkDataTaskClient
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
@@ -80,8 +80,6 @@ private:
     void wasBlockedByRestrictions() final;
     void wasBlockedByDisabledFTP() final;
 
-    RefPtr<WebCore::BackgroundFetchRecordLoaderClient> protectedClient() const;
-
     // WebCore::BackgroundFetchRecordLoader
     void abort() final;
 
@@ -94,7 +92,7 @@ private:
     WebCore::ResourceRequest m_request;
     RefPtr<NetworkDataTask> m_task;
     const Ref<NetworkLoadChecker> m_networkLoadChecker;
-    Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;
+    Vector<Ref<WebCore::BlobDataFileReference>> m_blobFiles;
 };
 
 }

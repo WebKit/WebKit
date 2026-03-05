@@ -25,19 +25,22 @@
 
 import Foundation
 
-@objc @implementation extension WKIdentityDocumentPresentmentRequest {
+@objc
+@implementation
+extension WKIdentityDocumentPresentmentRequest {
     // Used to workaround the fact that `@objc @implementation does not support stored properties whose size can change
     // due to Library Evolution. Do not use this property directly.
-    @nonobjc private let _unsafeOrigin: Any
+    @nonobjc
+    private let unsafeOrigin: Any
 
     var origin: URL {
-        (_unsafeOrigin as! NSURL) as URL
+        (unsafeOrigin as! NSURL) as URL
     }
 
     let mobileDocumentRequests: [WKIdentityDocumentPresentmentMobileDocumentRequest]
 
     init(origin: URL, mobileDocumentRequests: [WKIdentityDocumentPresentmentMobileDocumentRequest]) {
-        self._unsafeOrigin = origin as NSURL
+        self.unsafeOrigin = origin as NSURL
         self.mobileDocumentRequests = mobileDocumentRequests
     }
 }

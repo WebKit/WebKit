@@ -72,7 +72,7 @@ Function<bool()> _decisionHandler;
 - (instancetype)initWithHandler:(Function<bool()>&&)decisionHandler
 {
     self = [super init];
-    _decisionHandler = WTFMove(decisionHandler);
+    _decisionHandler = WTF::move(decisionHandler);
     return self;
 }
 
@@ -383,7 +383,7 @@ TEST(DeviceOrientation, PermissionSecureContextCheck)
 Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
 }
 - (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler {
-    _validationHandler = WTFMove(validationHandler);
+    _validationHandler = WTF::move(validationHandler);
 }
 
 - (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {

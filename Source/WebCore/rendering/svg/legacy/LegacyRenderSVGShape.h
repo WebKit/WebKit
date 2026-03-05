@@ -39,7 +39,7 @@ class GraphicsContextStateSaver;
 class SVGGraphicsElement;
 
 class LegacyRenderSVGShape : public LegacyRenderSVGModelObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGShape);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGShape);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGShape);
 public:
     friend FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement&);
@@ -62,7 +62,6 @@ public:
     virtual ~LegacyRenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
-    inline Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
     void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
@@ -93,10 +92,11 @@ protected:
     Path& ensurePath();
 
     virtual void updateShapeFromElement() = 0;
-    virtual bool isEmpty() const;
+    virtual bool NODELETE isEmpty() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
+    float strokeWidthForMarkerUnits() const;
 
     inline bool hasNonScalingStroke() const;
     AffineTransform nonScalingStrokeTransform() const;
@@ -115,6 +115,7 @@ private:
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
+    FloatRect decoratedBoundingBox() const final;
     const AffineTransform& localToParentTransform() const final { return m_localTransform; }
     AffineTransform localTransform() const final { return m_localTransform; }
 

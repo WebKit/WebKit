@@ -65,4 +65,8 @@
 
   // Simulate session shutdown triggered by system
   undefined simulateShutdown();
+
+  // Hit test extensions:
+  [EnabledBySetting=WebXRHitTestModuleEnabled, Conditional=WEBXR_HIT_TEST] undefined setWorld(FakeXRWorldInit world);
+  [EnabledBySetting=WebXRHitTestModuleEnabled, Conditional=WEBXR_HIT_TEST] undefined clearWorld();
 };

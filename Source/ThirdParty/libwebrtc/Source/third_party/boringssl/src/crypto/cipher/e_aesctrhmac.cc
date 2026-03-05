@@ -39,7 +39,7 @@ struct aead_aes_ctr_hmac_sha256_ctx {
   SHA256_CTX outer_init_state;
 };
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_aes_ctr_hmac_sha256_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=
@@ -96,8 +96,8 @@ static int aead_aes_ctr_hmac_sha256_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
     return 0;
   }
 
-  aes_ctx->ctr =
-      aes_ctr_set_key(&aes_ctx->ks.ks, NULL, &aes_ctx->block, key, aes_key_len);
+  aes_ctx->ctr = aes_ctr_set_key(&aes_ctx->ks.ks, nullptr, &aes_ctx->block, key,
+                                 aes_key_len);
   ctx->tag_len = tag_len;
   hmac_init(&aes_ctx->inner_init_state, &aes_ctx->outer_init_state,
             key + aes_key_len);
@@ -244,13 +244,13 @@ static const EVP_AEAD aead_aes_128_ctr_hmac_sha256 = {
     0,                                     // seal_scatter_supports_extra_in
 
     aead_aes_ctr_hmac_sha256_init,
-    NULL /* init_with_direction */,
+    nullptr /* init_with_direction */,
     aead_aes_ctr_hmac_sha256_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_aes_ctr_hmac_sha256_seal_scatter,
     aead_aes_ctr_hmac_sha256_open_gather,
-    NULL /* get_iv */,
-    NULL /* tag_len */,
+    nullptr /* get_iv */,
+    nullptr /* tag_len */,
 };
 
 static const EVP_AEAD aead_aes_256_ctr_hmac_sha256 = {
@@ -261,13 +261,13 @@ static const EVP_AEAD aead_aes_256_ctr_hmac_sha256 = {
     0,                                     // seal_scatter_supports_extra_in
 
     aead_aes_ctr_hmac_sha256_init,
-    NULL /* init_with_direction */,
+    nullptr /* init_with_direction */,
     aead_aes_ctr_hmac_sha256_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_aes_ctr_hmac_sha256_seal_scatter,
     aead_aes_ctr_hmac_sha256_open_gather,
-    NULL /* get_iv */,
-    NULL /* tag_len */,
+    nullptr /* get_iv */,
+    nullptr /* tag_len */,
 };
 
 const EVP_AEAD *EVP_aead_aes_128_ctr_hmac_sha256(void) {

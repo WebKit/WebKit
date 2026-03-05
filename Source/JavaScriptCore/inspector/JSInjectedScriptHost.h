@@ -52,7 +52,7 @@ public:
 
     static JSInjectedScriptHost* create(JSC::VM& vm, JSC::Structure* structure, Ref<InjectedScriptHost>&& impl)
     {
-        JSInjectedScriptHost* instance = new (NotNull, JSC::allocateCell<JSInjectedScriptHost>(vm)) JSInjectedScriptHost(vm, structure, WTFMove(impl));
+        JSInjectedScriptHost* instance = new (NotNull, JSC::allocateCell<JSInjectedScriptHost>(vm)) JSInjectedScriptHost(vm, structure, WTF::move(impl));
         instance->finishCreation(vm);
         return instance;
     }

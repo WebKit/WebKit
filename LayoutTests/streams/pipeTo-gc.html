@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../resources/gc.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async (test) => {
+     const numStreams = 1000;
+     for (let i = 0; i < numStreams; ++i) {
+         const writable = new WritableStream();
+         const readable = new Blob(['x'.repeat(10)]).stream();
+
+         window.internals?.observeReadableStreamLifetime(readable);
+
+         await readable.pipeTo(writable);
+     }
+     gc();
+
+     if (!window.internals)
+         return;
+
+     assert_less_than(internals.observedLiveReadableStreamCount(), numStreams);
+}, "A piped to readable stream should be freed when gced");
+        </script>
+    </body>
+</html>

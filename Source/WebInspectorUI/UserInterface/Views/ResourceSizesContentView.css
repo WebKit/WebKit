@@ -108,6 +108,15 @@
     margin-inline-start: 3px;
 }
 
+.resource-sizes > .content > section.note-section {
+    text-align: center;
+}
+
+.resource-sizes > .content > section.note-section .note {
+    color: var(--text-color-secondary);
+    font-size: 11px;
+}
+
 @media (prefers-color-scheme: dark) {
     .resource-sizes > .content .label {
         color: var(--text-color-secondary);

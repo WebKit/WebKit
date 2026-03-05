@@ -42,7 +42,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCResolver);
 
 void LibWebRTCResolver::sendOnMainThread(Function<void(IPC::Connection&)>&& callback)
 {
-    callOnMainRunLoop([callback = WTFMove(callback)]() {
+    callOnMainRunLoop([callback = WTF::move(callback)]() {
         Ref networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
         callback(networkProcessConnection);
     });
@@ -50,7 +50,7 @@ void LibWebRTCResolver::sendOnMainThread(Function<void(IPC::Connection&)>&& call
 
 LibWebRTCResolver::~LibWebRTCResolver()
 {
-    WebProcess::singleton().libWebRTCNetwork().checkedSocketFactory()->removeResolver(identifier());
+    protect(WebProcess::singleton().libWebRTCNetwork().socketFactory())->removeResolver(identifier());
     sendOnMainThread([identifier = this->identifier()](IPC::Connection& connection) {
         connection.send(Messages::NetworkRTCProvider::StopResolver(identifier), 0);
     });
@@ -60,7 +60,7 @@ void LibWebRTCResolver::start(const webrtc::SocketAddress& address, Function<voi
 {
     ASSERT(!m_callback);
 
-    m_callback = WTFMove(callback);
+    m_callback = WTF::move(callback);
     m_addressToResolve = address;
     m_port = address.port();
 
@@ -73,7 +73,7 @@ void LibWebRTCResolver::start(const webrtc::SocketAddress& address, Function<voi
         return;
     }
 
-    sendOnMainThread([identifier = this->identifier(), name = WTFMove(name).isolatedCopy()](IPC::Connection& connection) {
+    sendOnMainThread([identifier = this->identifier(), name = WTF::move(name).isolatedCopy()](IPC::Connection& connection) {
         connection.send(Messages::NetworkRTCProvider::CreateResolver(identifier, name), 0);
     });
 }
@@ -102,7 +102,7 @@ bool LibWebRTCResolver::GetResolvedAddress(int family, webrtc::SocketAddress* ad
 
 void LibWebRTCResolver::setResolvedAddress(Vector<webrtc::IPAddress>&& addresses)
 {
-    m_addresses = WTFMove(addresses);
+    m_addresses = WTF::move(addresses);
     m_callback();
 }
 

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body style="height: 2000px">
+
+<button id="button">Press</button>
+
+<script>
+var output = "This test ensures that hit testing a button works.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var button = document.getElementById("button");
+    var buttonRect = button.getBoundingClientRect();
+    var hitTestResult = accessibilityController.elementAtPoint(buttonRect.x + buttonRect.width / 2, buttonRect.y + buttonRect.height / 2);
+    output += expect("hitTestResult.role.toLowerCase().includes('button')", "true");
+
+    setTimeout(async function() {
+        button.style.marginTop = "100px";
+        button.style.marginLeft = "230px";
+
+        await waitFor(() => {
+            buttonRect = button.getBoundingClientRect();
+            hitTestResult = accessibilityController.elementAtPoint(buttonRect.x + buttonRect.width / 2, buttonRect.y + buttonRect.height / 2);
+            return hitTestResult.role.toLowerCase().includes("button");
+        });
+        output += expect("hitTestResult.role.toLowerCase().includes('button')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

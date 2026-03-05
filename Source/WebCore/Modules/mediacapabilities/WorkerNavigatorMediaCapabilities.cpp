@@ -47,7 +47,7 @@ WorkerNavigatorMediaCapabilities& WorkerNavigatorMediaCapabilities::from(WorkerN
     if (!supplement) {
         auto newSupplement = makeUnique<WorkerNavigatorMediaCapabilities>();
         supplement = newSupplement.get();
-        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTF::move(newSupplement));
     }
     return *supplement;
 }

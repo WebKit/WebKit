@@ -28,6 +28,7 @@
 #include "SVGAnimatedPropertyImpl.h"
 #include "SVGAnimatedPropertyPairAnimator.h"
 #include "SVGMarkerTypes.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -39,12 +40,14 @@ class SVGAnimatedAngleOrientAnimator final : public SVGAnimatedPropertyPairAnima
     using Base::Base;
 
 public:
-    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedAngle>& animated1, Ref<SVGAnimatedOrientType>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    static auto create(const QualifiedName& attributeName, const Ref<SVGAnimatedAngle>& animated1, const Ref<SVGAnimatedOrientType>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
         return adoptRef(*new SVGAnimatedAngleOrientAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::AngleOrient; }
+
     void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
     {
         auto pairFrom = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(targetElement, from);
@@ -90,7 +93,7 @@ private:
         }
 
         // auto, auto-start-reverse, or unknown.
-        m_animatedPropertyAnimator1->m_animated->animVal()->value().setValue(0);
+        m_animatedPropertyAnimator1->m_animated->animVal().value().setValue(0);
 
         if (m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAuto || m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAutoStartReverse)
             m_animatedPropertyAnimator2->m_animated->setAnimVal(m_animatedPropertyAnimator2->m_function.m_from);
@@ -113,12 +116,14 @@ class SVGAnimatedIntegerPairAnimator final : public SVGAnimatedPropertyPairAnima
     using Base::Base;
 
 public:
-    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedInteger>& animated1, Ref<SVGAnimatedInteger>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    static auto create(const QualifiedName& attributeName, const Ref<SVGAnimatedInteger>& animated1, const Ref<SVGAnimatedInteger>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
         return adoptRef(*new SVGAnimatedIntegerPairAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::IntegerPair; }
+
     void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
     {
         auto pairFrom = SVGPropertyTraits<std::pair<int, int>>::fromString(targetElement, from);
@@ -157,12 +162,14 @@ class SVGAnimatedNumberPairAnimator final : public SVGAnimatedPropertyPairAnimat
     using Base::Base;
 
 public:
-    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedNumber>& animated1, Ref<SVGAnimatedNumber>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    static auto create(const QualifiedName& attributeName, const Ref<SVGAnimatedNumber>& animated1, const Ref<SVGAnimatedNumber>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
         return adoptRef(*new SVGAnimatedNumberPairAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::NumberPair; }
+
     void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
     {
         auto pairFrom = SVGPropertyTraits<std::pair<float, float>>::fromString(targetElement, from);
@@ -196,3 +203,15 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedAngleOrientAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::AngleOrient; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedIntegerPairAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::IntegerPair; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedNumberPairAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::NumberPair; }
+SPECIALIZE_TYPE_TRAITS_END()

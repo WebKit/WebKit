@@ -58,7 +58,11 @@ public:
 #if USE(GBM)
         BackedByDMABuf = 1 << 2,
         ForceLinearBuffer = 1 << 3,
+        ForceVivanteSuperTiledBuffer = 1 << 4,
 #endif
+        UseBGRALayout = 1 << 5,
+        NearestFiltering = 1 << 6,
+        ExternalOESRenderTarget = 1 << 7,
     };
 
     static Ref<BitmapTexture> create(const IntSize& size, OptionSet<Flags> flags = { })
@@ -76,6 +80,7 @@ public:
     WEBCORE_EXPORT ~BitmapTexture();
 
     const IntSize& size() const { return m_size; };
+    size_t sizeInBytes() const;
     OptionSet<Flags> flags() const { return m_flags; }
     bool isOpaque() const { return !m_flags.contains(Flags::SupportsAlpha); }
 
@@ -91,10 +96,8 @@ public:
     void swapTexture(BitmapTexture&);
     void reset(const IntSize&, OptionSet<Flags> = { });
 
-    int numberOfBytes() const { return size().width() * size().height() * 32 >> 3; }
-
     RefPtr<const FilterOperation> filterOperation() const { return m_filterOperation; }
-    void setFilterOperation(RefPtr<const FilterOperation>&& filterOperation) { m_filterOperation = WTFMove(filterOperation); }
+    void setFilterOperation(RefPtr<const FilterOperation>&& filterOperation) { m_filterOperation = WTF::move(filterOperation); }
 
     ClipStack& clipStack() { return m_clipStack; }
 
@@ -104,6 +107,9 @@ public:
 
 #if USE(GBM)
     MemoryMappedGPUBuffer* memoryMappedGPUBuffer() const { return m_memoryMappedGPUBuffer.get(); }
+    IntSize allocatedSize() const;
+#else
+    IntSize allocatedSize() const { return m_size; }
 #endif
 
 private:
@@ -115,6 +121,9 @@ private:
     void clearIfNeeded();
     void createFboIfNeeded();
 
+    void determineRenderTargetAndBinding();
+
+    GLenum textureFormat() const;
     void createTexture();
     void allocateTexture();
 #if USE(GBM)
@@ -124,6 +133,8 @@ private:
     OptionSet<Flags> m_flags;
     IntSize m_size;
     GLuint m_id { 0 };
+    GLenum m_renderTarget { GL_TEXTURE_2D };
+    GLenum m_binding { GL_TEXTURE_BINDING_2D };
     GLuint m_fbo { 0 };
     GLuint m_depthBufferObject { 0 };
     GLuint m_stencilBufferObject { 0 };

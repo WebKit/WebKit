@@ -44,7 +44,7 @@ void ModuleAnalyzer::appendRequestedModule(const Identifier& specifier, RefPtr<S
 {
     auto result = m_requestedModules.add(specifier.impl());
     if (result.isNewEntry)
-        moduleRecord()->appendRequestedModule(specifier, WTFMove(attributes));
+        moduleRecord()->appendRequestedModule(specifier, WTF::move(attributes));
 }
 
 void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const RefPtr<UniquedStringImpl>& localName, const VariableEnvironmentEntry& variable)
@@ -73,24 +73,24 @@ void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const 
         return;
     }
 
+    std::optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
+    ASSERT(optionalImportEntry);
+    const JSModuleRecord::ImportEntry& importEntry = *optionalImportEntry;
+
     if (variable.isImportedNamespace()) {
         // Exported namespace binding.
         // import * as namespace from "mod"
         // export { namespace }
         //
         // Sec 15.2.1.16.1 step 11-a-ii-2-b https://tc39.github.io/ecma262/#sec-parsemodule
-        // Namespace export is handled as local export since a namespace object binding itself is implemented as a local binding.
         for (auto& exportName : moduleProgramNode.moduleScopeData().exportedBindings().get(localName.get()))
-            moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createLocal(Identifier::fromUid(m_vm, exportName.get()), Identifier::fromUid(m_vm, localName.get())));
+            moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createNamespace(Identifier::fromUid(m_vm, exportName.get()), importEntry.moduleRequest));
         return;
     }
 
     // Indirectly exported binding.
     // import a from "mod"
     // export { a }
-    std::optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
-    ASSERT(optionalImportEntry);
-    const JSModuleRecord::ImportEntry& importEntry = *optionalImportEntry;
     for (auto& exportName : moduleProgramNode.moduleScopeData().exportedBindings().get(localName.get()))
         moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createIndirect(Identifier::fromUid(m_vm, exportName.get()), importEntry.importName, importEntry.moduleRequest));
 }
@@ -105,7 +105,7 @@ Expected<JSModuleRecord*, std::tuple<ErrorType, String>> ModuleAnalyzer::analyze
     // * Export entries that have star (e.g. export * from "mod")
     // * Aliased export names (e.g. export { a as b })
     if (!moduleProgramNode.analyzeModule(*this))
-        return makeUnexpected(WTFMove(m_errorMessage));
+        return makeUnexpected(WTF::move(m_errorMessage));
 
     // Based on the collected information, categorize export entries into 3 types.
     // 1. Local export entries

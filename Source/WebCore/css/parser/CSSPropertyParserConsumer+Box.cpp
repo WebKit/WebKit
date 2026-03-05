@@ -72,13 +72,13 @@ RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range, CSS::PropertyPars
             CSSValueListBuilder list;
             list.append(CSSPrimitiveValue::create(CSSValueBlock));
             list.append(CSSPrimitiveValue::create(CSSValueInline));
-            return CSSValueList::createSpaceSeparated(WTFMove(list));
+            return CSSValueList::createSpaceSeparated(WTF::move(list));
         }
     }
     CSSValueListBuilder list;
     for (auto ident : idents)
         list.append(CSSPrimitiveValue::create(ident));
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 } // namespace CSSPropertyParserHelpers

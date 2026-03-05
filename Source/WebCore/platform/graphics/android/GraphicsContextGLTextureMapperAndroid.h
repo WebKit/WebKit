@@ -37,7 +37,7 @@ public:
 
 private:
     explicit GraphicsContextGLTextureMapperAndroid(GraphicsContextGLAttributes&& attributes)
-        : GraphicsContextGLTextureMapperANGLE(WTFMove(attributes))
+        : GraphicsContextGLTextureMapperANGLE(WTF::move(attributes))
     {
     }
 

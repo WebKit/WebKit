@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 52x17
+        RenderText {#text} at (0,0) size 52x18
           text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (51,0) size 395x17
-          RenderInline {A} at (51,0) size 154x17 [color=#0000EE]
-            RenderText {#text} at (51,0) size 154x17
+        RenderInline {I} at (51,0) size 395x18
+          RenderInline {A} at (51,0) size 154x18 [color=#0000EE]
+            RenderText {#text} at (51,0) size 154x18
               text run at (51,0) width 154: "rdar://problem/6020930"
-          RenderText {#text} at (204,0) size 242x17
+          RenderText {#text} at (204,0) size 242x18
             text run at (204,0) width 242: " Bidi Problem When Resizing Window"
-        RenderText {#text} at (445,0) size 5x17
+        RenderText {#text} at (445,0) size 5x18
           text run at (445,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 320x17
+        RenderText {#text} at (0,0) size 320x18
           text run at (0,0) width 320: "The boxes below should be identical to each other."
       RenderBlock {DIV} at (0,68) size 90x48 [border: (1px solid #0000FF)]
         RenderText {#text} at (5,6) size 76x36

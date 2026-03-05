@@ -66,13 +66,13 @@ struct MockStreamTestMessageNotStreamEncodable {
     static constexpr bool isStreamEncodable = false;
     static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
     explicit MockStreamTestMessageNotStreamEncodable(IPC::Semaphore&& s)
-        : semaphore(WTFMove(s))
+        : semaphore(WTF::move(s))
     {
     }
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << WTFMove(semaphore);
+        encoder << WTF::move(semaphore);
     }
 
     IPC::Semaphore semaphore;
@@ -180,18 +180,18 @@ public:
     // Handler returns false if the message should be just recorded.
     void setAsyncMessageHandler(Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)>&& handler)
     {
-        m_asyncMessageHandler = WTFMove(handler);
+        m_asyncMessageHandler = WTF::move(handler);
     }
 
     // Handler returns false if the message should be just recorded.
     void setSyncMessageHandler(Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)>&& handler)
     {
-        m_syncMessageHandler = WTFMove(handler);
+        m_syncMessageHandler = WTF::move(handler);
     }
     // Handler returns false if the message should be just recorded.
     void setInvalidMessageHandler(Function<bool(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&)>&& handler)
     {
-        m_invalidMessageHandler = WTFMove(handler);
+        m_invalidMessageHandler = WTF::move(handler);
     }
 
 private:
@@ -274,8 +274,8 @@ TEST_F(StreamConnectionTest, OpenConnections)
 {
     auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2, defaultTimeout);
     ASSERT_TRUE(!!connectionPair);
-    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
+    auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { }).releaseNonNull();
     auto cleanup = localReferenceBarrier();
     Ref mockClientReceiver = MockStreamClientConnectionClient::create();
     clientConnection->open(mockClientReceiver);
@@ -293,8 +293,8 @@ TEST_F(StreamConnectionTest, InvalidateUnopened)
 {
     auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2, defaultTimeout);
     ASSERT_TRUE(!!connectionPair);
-    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
+    auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { }).releaseNonNull();
     auto cleanup = localReferenceBarrier();
     serverQueue().dispatch([this, serverConnection] {
         assertIsCurrent(serverQueue());
@@ -320,9 +320,9 @@ public:
         setupBase();
         auto connectionPair = IPC::StreamClientConnection::create(bufferSizeLog2(), defaultTimeout);
         ASSERT(!!connectionPair);
-        auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-        auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
-        m_clientConnection = WTFMove(clientConnection);
+        auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+        auto serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { }).releaseNonNull();
+        m_clientConnection = WTF::move(clientConnection);
         m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
         m_clientConnection->open(m_mockClientReceiver);
         m_mockServerReceiver = MockStreamServerConnectionClient::create();
@@ -338,9 +338,9 @@ public:
             connection.sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(*asyncReplyID, *contents);
             return true;
         });
-        serverQueue().dispatch([this, serverConnection = WTFMove(serverConnection)] () mutable {
+        serverQueue().dispatch([this, serverConnection = WTF::move(serverConnection)] () mutable {
             assertIsCurrent(serverQueue());
-            m_serverConnection = WTFMove(serverConnection);
+            m_serverConnection = WTF::move(serverConnection);
             m_serverConnection->open(*m_mockServerReceiver, serverQueue());
             m_serverConnection->startReceivingMessages(*m_mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), defaultDestinationID().toUInt64());
         });
@@ -647,9 +647,9 @@ public:
         setupBase();
         auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2, defaultTimeout);
         ASSERT(connectionPair.has_value());
-        auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-        auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
-        m_clientConnection = WTFMove(clientConnection);
+        auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+        auto serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { }).releaseNonNull();
+        m_clientConnection = WTF::move(clientConnection);
         m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
         m_clientConnection->open(m_mockClientReceiver);
         m_mockServerReceiver = MockStreamServerConnectionClient::create();
@@ -676,9 +676,9 @@ public:
                 return true;
             });
         }
-        serverQueue().dispatch([this, serverConnection = WTFMove(serverConnection)] () mutable {
+        serverQueue().dispatch([this, serverConnection = WTF::move(serverConnection)] () mutable {
             assertIsCurrent(serverQueue());
-            m_serverConnection = WTFMove(serverConnection);
+            m_serverConnection = WTF::move(serverConnection);
             m_serverConnection->open(*m_mockServerReceiver, serverQueue());
             m_serverConnection->startReceivingMessages(*m_mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), defaultDestinationID().toUInt64());
         });

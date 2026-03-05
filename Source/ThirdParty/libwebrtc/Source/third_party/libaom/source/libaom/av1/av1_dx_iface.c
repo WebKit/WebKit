@@ -952,8 +952,18 @@ static aom_codec_err_t ctrl_set_reference(aom_codec_alg_priv_t *ctx,
     AVxWorker *const worker = ctx->frame_worker;
     FrameWorkerData *const frame_worker_data = (FrameWorkerData *)worker->data1;
     image2yuvconfig(&frame->img, &sd);
-    return av1_set_reference_dec(&frame_worker_data->pbi->common, frame->idx,
-                                 frame->use_external_ref, &sd);
+
+    struct aom_internal_error_info *const error =
+        frame_worker_data->pbi->common.error;
+    if (setjmp(error->jmp)) {
+      error->setjmp = 0;
+      return error->error_code;
+    }
+    error->setjmp = 1;
+    av1_set_reference_dec(&frame_worker_data->pbi->common, frame->idx,
+                          frame->use_external_ref, &sd);
+    error->setjmp = 0;
+    return AOM_CODEC_OK;
   } else {
     return AOM_CODEC_INVALID_PARAM;
   }

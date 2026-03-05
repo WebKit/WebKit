@@ -1,5 +1,6 @@
 
 PASS Basic check
+PASS WebSocket blocked port test 0
 PASS WebSocket blocked port test 1
 PASS WebSocket blocked port test 7
 PASS WebSocket blocked port test 9
@@ -38,6 +39,7 @@ PASS WebSocket blocked port test 135
 PASS WebSocket blocked port test 137
 PASS WebSocket blocked port test 139
 PASS WebSocket blocked port test 143
+PASS WebSocket blocked port test 161
 PASS WebSocket blocked port test 179
 PASS WebSocket blocked port test 389
 PASS WebSocket blocked port test 427
@@ -69,6 +71,8 @@ PASS WebSocket blocked port test 2049
 PASS WebSocket blocked port test 3659
 PASS WebSocket blocked port test 4045
 PASS WebSocket blocked port test 4190
+PASS WebSocket blocked port test 5060
+PASS WebSocket blocked port test 5061
 PASS WebSocket blocked port test 6000
 PASS WebSocket blocked port test 6566
 PASS WebSocket blocked port test 6665

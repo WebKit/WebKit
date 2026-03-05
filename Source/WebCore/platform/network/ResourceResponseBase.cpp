@@ -62,25 +62,25 @@ ResourceResponseBase::ResourceResponseBase()
 }
 
 ResourceResponseBase::ResourceResponseBase(URL&& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
-    : m_url(WTFMove(url))
-    , m_mimeType(WTFMove(mimeType))
+    : m_url(WTF::move(url))
+    , m_mimeType(WTF::move(mimeType))
     , m_expectedContentLength(expectedLength)
-    , m_textEncodingName(WTFMove(textEncodingName))
+    , m_textEncodingName(WTF::move(textEncodingName))
     , m_certificateInfo(CertificateInfo()) // Empty but valid for synthetic responses.
     , m_isNull(false)
 {
 }
 
 ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&& data)
-    : m_url(data ? WTFMove(data->url) : URL { })
-    , m_mimeType(data ? WTFMove(data->mimeType) : AtomString { })
+    : m_url(data ? WTF::move(data->url) : URL { })
+    , m_mimeType(data ? WTF::move(data->mimeType) : AtomString { })
     , m_expectedContentLength(data ? data->expectedContentLength : 0)
-    , m_textEncodingName(data ? WTFMove(data->textEncodingName) : String { })
-    , m_httpStatusText(data ? WTFMove(data->httpStatusText) : String { })
-    , m_httpVersion(data ? WTFMove(data->httpVersion) : String { })
-    , m_httpHeaderFields(data ? WTFMove(data->httpHeaderFields) : HTTPHeaderMap { })
-    , m_networkLoadMetrics(data && data->networkLoadMetrics ? Box<NetworkLoadMetrics>::create(WTFMove(*data->networkLoadMetrics)) : Box<NetworkLoadMetrics> { })
-    , m_certificateInfo(data ? WTFMove(data->certificateInfo) : std::nullopt)
+    , m_textEncodingName(data ? WTF::move(data->textEncodingName) : String { })
+    , m_httpStatusText(data ? WTF::move(data->httpStatusText) : String { })
+    , m_httpVersion(data ? WTF::move(data->httpVersion) : String { })
+    , m_httpHeaderFields(data ? WTF::move(data->httpHeaderFields) : HTTPHeaderMap { })
+    , m_networkLoadMetrics(data && data->networkLoadMetrics ? Box<NetworkLoadMetrics>::create(WTF::move(*data->networkLoadMetrics)) : Box<NetworkLoadMetrics> { })
+    , m_certificateInfo(data ? WTF::move(data->certificateInfo) : std::nullopt)
     , m_httpStatusCode(data ? data->httpStatusCode : 0)
     , m_isNull(!data)
     , m_usedLegacyTLS(data ? data->usedLegacyTLS : UsedLegacyTLS::No)
@@ -155,18 +155,18 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
 {
     ResourceResponse response;
 
-    response.setURL(WTFMove(data.url));
-    response.setMimeType(WTFMove(data.mimeType));
+    response.setURL(WTF::move(data.url));
+    response.setMimeType(WTF::move(data.mimeType));
     response.setExpectedContentLength(data.expectedContentLength);
-    response.setTextEncodingName(WTFMove(data.textEncodingName));
+    response.setTextEncodingName(WTF::move(data.textEncodingName));
 
     response.setHTTPStatusCode(data.httpStatusCode);
-    response.setHTTPStatusText(WTFMove(data.httpStatusText));
-    response.setHTTPVersion(WTFMove(data.httpVersion));
+    response.setHTTPStatusText(WTF::move(data.httpStatusText));
+    response.setHTTPVersion(WTF::move(data.httpVersion));
 
-    response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
+    response.m_httpHeaderFields = WTF::move(data.httpHeaderFields);
     if (data.networkLoadMetrics)
-        response.m_networkLoadMetrics = Box<NetworkLoadMetrics>::create(WTFMove(data.networkLoadMetrics.value()));
+        response.m_networkLoadMetrics = Box<NetworkLoadMetrics>::create(WTF::move(data.networkLoadMetrics.value()));
     else
         response.m_networkLoadMetrics = nullptr;
     response.m_source = data.source;
@@ -175,9 +175,9 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.m_isRedirected = data.isRedirected;
     response.m_usedLegacyTLS =  data.usedLegacyTLS;
     response.m_wasPrivateRelayed = data.wasPrivateRelayed;
-    response.m_proxyName = WTFMove(data.proxyName);
+    response.m_proxyName = WTF::move(data.proxyName);
     response.m_isRangeRequested = data.isRangeRequested;
-    response.m_certificateInfo = WTFMove(data.certificateInfo);
+    response.m_certificateInfo = WTF::move(data.certificateInfo);
     response.m_ipAddressSpace = data.ipAddressSpace;
     return response;
 }
@@ -270,7 +270,7 @@ void ResourceResponseBase::setURL(URL&& url)
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
-    m_url = WTFMove(url);
+    m_url = WTF::move(url);
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -288,7 +288,7 @@ void ResourceResponseBase::setMimeType(String&& mimeType)
     m_isNull = false;
 
     // FIXME: MIME type is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_mimeType.
-    m_mimeType = WTFMove(mimeType);
+    m_mimeType = WTF::move(mimeType);
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -324,7 +324,7 @@ void ResourceResponseBase::setTextEncodingName(String&& encodingName)
     m_isNull = false;
 
     // FIXME: Text encoding is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_textEncodingName.
-    m_textEncodingName = WTFMove(encodingName);
+    m_textEncodingName = WTF::move(encodingName);
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -404,7 +404,7 @@ void ResourceResponseBase::setHTTPStatusText(String&& statusText)
 {
     lazyInit(AllFields);
 
-    m_httpStatusText = WTFMove(statusText);
+    m_httpStatusText = WTF::move(statusText);
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -636,7 +636,7 @@ void ResourceResponseBase::setHTTPHeaderFields(HTTPHeaderMap&& headerFields)
 {
     lazyInit(AllFields);
 
-    m_httpHeaderFields = WTFMove(headerFields);
+    m_httpHeaderFields = WTF::move(headerFields);
 }
 
 void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String& value)
@@ -1035,14 +1035,14 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
         return std::nullopt;
 
     return WebCore::ResourceResponseData {
-        WTFMove(*url),
-        WTFMove(*mimeType),
+        WTF::move(*url),
+        WTF::move(*mimeType),
         *expectedContentLength,
-        WTFMove(*textEncodingName),
+        WTF::move(*textEncodingName),
         *httpStatusCode,
-        WTFMove(*httpStatusText),
-        WTFMove(*httpVersion),
-        WTFMove(*httpHeaderFields),
+        WTF::move(*httpStatusText),
+        WTF::move(*httpVersion),
+        WTF::move(*httpHeaderFields),
         std::nullopt,
         *source,
         *type,
@@ -1050,9 +1050,9 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
         *isRedirected,
         *usedLegacyTLS,
         *wasPrivateRelayed,
-        WTFMove(*proxyName),
+        WTF::move(*proxyName),
         *isRangeRequested,
-        WTFMove(*certificateInfo),
+        WTF::move(*certificateInfo),
         WebCore::IPAddressSpace::Public
     };
 }

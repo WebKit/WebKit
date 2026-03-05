@@ -107,6 +107,19 @@ b/328156792 PINEAPPLE VULKAN : KHR-GLES3.shaders.function.global_variable_aliasi
 // Mali G710
 42266649 MALIG710 VULKAN : KHR-GLES3.number_parsing.* = FAIL
 
+// Apple M2
+42266214 MAC APPLE OPENGL : KHR-GLES3.copy_tex_image_conversions.required.* = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.framebuffer_completeness.incomplete_texture_2d_mm_layer_oob = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.framebuffer_completeness.status_tracking = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.packed_pixels.*.depth24_stencil8_format_depth_stencil = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.packed_pixels.*.depth32f_stencil8_format_depth_stencil = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.packed_pixels.*.depth_component16_format_depth_component = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.packed_pixels.*.depth_component24_format_depth_component = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.packed_pixels.*.rgb565_format_rgb = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.packed_pixels.*.rgb5_a1_format_rgba = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.packed_pixels.*.rgba4_format_rgba = FAIL
+42266214 MAC APPLE OPENGL : KHR-GLES3.texture_storage.compressed_data = FAIL
+
 // The newly added cases are failing
 b/332383430 PIXEL6 VULKAN : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = FAIL
 

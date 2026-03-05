@@ -43,5 +43,5 @@ dictionary FetchRequestInit {
     any signal;
     RequestPriority priority;
     any window; // can only be set to null
-    IPAddressSpace targetAddressSpace;
+    [EnabledBySetting=LocalNetworkAccessEnabled] IPAddressSpace targetAddressSpace;
 };

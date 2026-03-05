@@ -57,8 +57,8 @@ TEST(RemoteObjectRegistry, Basic)
 
         isDone = false;
 
-        _WKRemoteObjectInterface *interface = remoteObjectInterface();
-        id <RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
+        RetainPtr interface = remoteObjectInterface();
+        id <RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface.get()];
 
         [object sayHello:@"Hello, World!"];
 
@@ -234,8 +234,8 @@ TEST(RemoteObjectRegistry, CallReplyBlockAfterOriginatingWebViewDeallocates)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         weakWebViewPtr = webView.get();
 
-        _WKRemoteObjectInterface *interface = remoteObjectInterface();
-        id <RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
+        RetainPtr interface = remoteObjectInterface();
+        id <RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface.get()];
 
         [[webView _remoteObjectRegistry] registerExportedObject:localObject.get() interface:localObjectInterface()];
 
@@ -286,8 +286,8 @@ TEST(RemoteObjectRegistry, CallReplyBlockWithInvalidTypeSignature)
     [[webView _remoteObjectRegistry] registerExportedObject:completedReplyObject.get() interface:localObjectInterface()];
     [[webView _remoteObjectRegistry] registerExportedObject:stringReplyObject.get() interface:stringReplyObjectInterface()];
 
-    _WKRemoteObjectInterface *interface = remoteObjectInterface();
-    id<RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
+    RetainPtr interface = remoteObjectInterface();
+    id<RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface.get()];
 
     [object callUIProcessMethodWithInvalidTypeSignature];
     [object callUIProcessMethodWithReplyBlock];

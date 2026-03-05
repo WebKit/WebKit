@@ -44,7 +44,7 @@ public:
 
     void invalidateRequests();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     // Create a request to be presented to the user.
@@ -57,7 +57,7 @@ public:
     void revokeAuthorizationToken(const String&);
 
 private:
-    HashMap<GeolocationIdentifier, RefPtr<GeolocationPermissionRequestProxy>> m_pendingRequests;
+    HashMap<GeolocationIdentifier, Ref<GeolocationPermissionRequestProxy>> m_pendingRequests;
     HashSet<String> m_validAuthorizationTokens;
     WeakRef<WebPageProxy> m_page;
 };

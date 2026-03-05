@@ -47,7 +47,7 @@ RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, con
 
 RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
 {
-    return adoptRef(*new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, WTFMove(imageBuffer), allocator));
+    return adoptRef(*new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, WTF::move(imageBuffer), allocator));
 }
 
 FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferAllocator& allocator)
@@ -68,7 +68,7 @@ FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& i
     , m_absoluteImageRect(absoluteImageRect)
     , m_renderingMode(imageBuffer->renderingMode())
     , m_colorSpace(imageBuffer->colorSpace())
-    , m_imageBuffer(WTFMove(imageBuffer))
+    , m_imageBuffer(WTF::move(imageBuffer))
     , m_allocator(allocator)
 {
 }
@@ -112,8 +112,11 @@ size_t FilterImage::memoryCost() const
 ImageBuffer* FilterImage::imageBuffer()
 {
 #if USE(CORE_IMAGE)
-    if (m_ciImage)
-        return imageBufferFromCIImage();
+    if (m_ciImage) {
+        // We'll never request an imageBuffer() in the middle of the filter chain. The final image buffer is produced via filterResultImageBuffer().
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 #endif
     return imageBufferFromPixelBuffer();
 }

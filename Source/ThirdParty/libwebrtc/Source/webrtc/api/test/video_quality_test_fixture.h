@@ -20,12 +20,14 @@
 #include <vector>
 
 #include "api/fec_controller.h"
+#include "api/field_trials.h"
 #include "api/media_types.h"
 #include "api/network_state_predictor.h"
 #include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/spatial_layer.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder_factory.h"
@@ -106,6 +108,10 @@ class VideoQualityTestFixtureInterface {
       std::vector<SpatialLayer> spatial_layers;
       // If set, default parameters will be used instead of `streams`.
       bool infer_streams = false;
+      // If set, determines the number spatial and temporal layers to use.
+      // Setting both this and explicit spatial and/or temporal layers at the
+      // same time is considered an error.
+      std::optional<ScalabilityMode> scalability_mode;
     } ss[2];
     struct Logging {
       std::string rtc_event_log_name;
@@ -123,7 +129,7 @@ class VideoQualityTestFixtureInterface {
     std::unique_ptr<NetworkBehaviorInterface> sender_network;
     std::unique_ptr<NetworkBehaviorInterface> receiver_network;
 
-    std::string field_trials;
+    std::unique_ptr<FieldTrials> field_trials_ptr;
     std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
     std::unique_ptr<VideoEncoderFactory> video_encoder_factory;
     std::unique_ptr<VideoDecoderFactory> video_decoder_factory;

@@ -26,31 +26,23 @@
 #pragma once
 
 #include "NavigatorUABrandVersion.h"
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-struct UADataValues : RefCounted<UADataValues> {
+
+struct UADataValues {
     String architecture;
     String bitness;
     Vector<NavigatorUABrandVersion> brands;
-    Vector<String> formFactors;
-    Vector<NavigatorUABrandVersion> fullVersionList;
+    std::optional<Vector<String>> formFactors;
+    std::optional<Vector<NavigatorUABrandVersion>> fullVersionList;
     String model;
     bool mobile;
     String platform;
     String platformVersion;
     String uaFullVersion;
-    bool wow64;
-
-    static Ref<UADataValues> create(const Vector<NavigatorUABrandVersion>& brands, bool mobile, const String& platform)
-    {
-        return adoptRef(*new UADataValues(brands, mobile, platform));
-    }
-
-private:
-    UADataValues(const Vector<NavigatorUABrandVersion>& brands, bool mobile, const String& platform)
-        : brands(brands), mobile(mobile), platform(platform) { }
+    std::optional<bool> wow64;
 };
-}
+
+} // namespace WebCore

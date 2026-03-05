@@ -27,37 +27,38 @@
 #include "CoordinatedPlatformLayerBufferYUV.h"
 
 #if USE(COORDINATED_GRAPHICS)
+#include "BitmapTexturePool.h"
 #include "TextureMapper.h"
 
 namespace WebCore {
 
 std::unique_ptr<CoordinatedPlatformLayerBufferYUV> CoordinatedPlatformLayerBufferYUV::create(unsigned planeCount, std::array<unsigned, 4>&& planes, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace yuvToRgbColorSpace, TransferFunction transferFunction, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
 {
-    return makeUnique<CoordinatedPlatformLayerBufferYUV>(planeCount, WTFMove(planes), WTFMove(yuvPlane), WTFMove(yuvPlaneOffset), yuvToRgbColorSpace, transferFunction, size, flags, WTFMove(fence));
+    return makeUnique<CoordinatedPlatformLayerBufferYUV>(planeCount, WTF::move(planes), WTF::move(yuvPlane), WTF::move(yuvPlaneOffset), yuvToRgbColorSpace, transferFunction, size, flags, WTF::move(fence));
 }
 
 std::unique_ptr<CoordinatedPlatformLayerBufferYUV> CoordinatedPlatformLayerBufferYUV::create(unsigned planeCount, Vector<RefPtr<BitmapTexture>, 4>&& textures, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace yuvToRgbColorSpace, TransferFunction transferFunction, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
 {
-    return makeUnique<CoordinatedPlatformLayerBufferYUV>(planeCount, WTFMove(textures), WTFMove(yuvPlane), WTFMove(yuvPlaneOffset), yuvToRgbColorSpace, transferFunction, size, flags, WTFMove(fence));
+    return makeUnique<CoordinatedPlatformLayerBufferYUV>(planeCount, WTF::move(textures), WTF::move(yuvPlane), WTF::move(yuvPlaneOffset), yuvToRgbColorSpace, transferFunction, size, flags, WTF::move(fence));
 }
 
 CoordinatedPlatformLayerBufferYUV::CoordinatedPlatformLayerBufferYUV(unsigned planeCount, std::array<unsigned, 4>&& planes, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace yuvToRgbColorSpace, TransferFunction transferFunction, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
-    : CoordinatedPlatformLayerBuffer(Type::YUV, size, flags, WTFMove(fence))
+    : CoordinatedPlatformLayerBuffer(Type::YUV, size, flags, WTF::move(fence))
     , m_planeCount(planeCount)
-    , m_planes(WTFMove(planes))
-    , m_yuvPlane(WTFMove(yuvPlane))
-    , m_yuvPlaneOffset(WTFMove(yuvPlaneOffset))
+    , m_planes(WTF::move(planes))
+    , m_yuvPlane(WTF::move(yuvPlane))
+    , m_yuvPlaneOffset(WTF::move(yuvPlaneOffset))
     , m_yuvToRgbColorSpace(yuvToRgbColorSpace)
     , m_transferFunction(transferFunction)
 {
 }
 
 CoordinatedPlatformLayerBufferYUV::CoordinatedPlatformLayerBufferYUV(unsigned planeCount, Vector<RefPtr<BitmapTexture>, 4>&& textures, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace yuvToRgbColorSpace, TransferFunction transferFunction, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
-    : CoordinatedPlatformLayerBuffer(Type::YUV, size, flags, WTFMove(fence))
+    : CoordinatedPlatformLayerBuffer(Type::YUV, size, flags, WTF::move(fence))
     , m_planeCount(planeCount)
-    , m_textures(WTFMove(textures))
-    , m_yuvPlane(WTFMove(yuvPlane))
-    , m_yuvPlaneOffset(WTFMove(yuvPlaneOffset))
+    , m_textures(WTF::move(textures))
+    , m_yuvPlane(WTF::move(yuvPlane))
+    , m_yuvPlaneOffset(WTF::move(yuvPlaneOffset))
     , m_yuvToRgbColorSpace(yuvToRgbColorSpace)
     , m_transferFunction(transferFunction)
 {

@@ -31,9 +31,12 @@
 #include "ManetteGamepadProvider.h"
 #include <linux/input-event-codes.h>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ManetteGamepad);
 
 static constexpr size_t standardGamepadAxisCount = static_cast<size_t>(ManetteGamepad::StandardGamepadAxis::RightStickY) + 1;
 static constexpr size_t standardGamepadButtonCount = static_cast<size_t>(ManetteGamepad::StandardGamepadButton::Mode) + 1;

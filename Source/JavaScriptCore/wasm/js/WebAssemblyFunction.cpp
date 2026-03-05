@@ -86,7 +86,7 @@ WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalO
     NativeExecutable* base = vm.getHostFunction(callWebAssemblyFunction, ImplementationVisibility::Public, WasmFunctionIntrinsic, callHostFunctionAsConstructor, nullptr, String());
     // Since ClosureCall uses this executable as an identity for Wasm CallIC thunk, we need to make it diversified.
     NativeExecutable* executable = NativeExecutable::create(vm, base->generatedJITCodeForCall(), callWebAssemblyFunction, base->generatedJITCodeForConstruct(), callHostFunctionAsConstructor, ImplementationVisibility::Public, name);
-    WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm)) WebAssemblyFunction(vm, executable, globalObject, structure, instance, jsToWasm, wasmCallee, wasmToWasmEntrypointLoadLocation, typeIndex, WTFMove(rtt));
+    WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm)) WebAssemblyFunction(vm, executable, globalObject, structure, instance, jsToWasm, wasmCallee, wasmToWasmEntrypointLoadLocation, typeIndex, WTF::move(rtt));
     function->finishCreation(vm, executable, length, name);
     return function;
 }

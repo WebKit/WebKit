@@ -35,9 +35,9 @@ void testPinRegisters()
 {
     auto go = [&] (bool pin) {
         Procedure proc;
-        RegisterSetBuilder csrs;
-        csrs.merge(RegisterSetBuilder::calleeSaveRegisters());
-        csrs.exclude(RegisterSetBuilder::stackRegisters());
+        RegisterSet csrs;
+        csrs.merge(RegisterSet::calleeSaveRegisters());
+        csrs.exclude(RegisterSet::stackRegisters());
 #if CPU(ARM)
         // FIXME We should allow this to be used. See the note
         // in https://commits.webkit.org/257808@main for more
@@ -46,7 +46,7 @@ void testPinRegisters()
         csrs.remove(MacroAssembler::addressTempRegister);
 #endif // CPU(ARM)
         if (pin) {
-            csrs.buildAndValidate().forEach(
+            csrs.forEach(
                 [&] (Reg reg) {
                     proc.pinRegister(reg);
                 });
@@ -82,7 +82,7 @@ void testPinRegisters()
                 inst.forEachTmpFast(
                     [&] (Air::Tmp tmp) {
                         if (tmp.isReg())
-                            usesCSRs |= csrs.buildAndValidate().contains(tmp.reg(), IgnoreVectors);
+                            usesCSRs |= csrs.contains(tmp.reg(), IgnoreVectors);
                     });
             }
         }
@@ -92,7 +92,7 @@ void testPinRegisters()
             usesCSRs = false;
         }
         for (const RegisterAtOffset& regAtOffset : proc.calleeSaveRegisterAtOffsetList())
-            usesCSRs |= csrs.buildAndValidate().contains(regAtOffset.reg(), IgnoreVectors);
+            usesCSRs |= csrs.contains(regAtOffset.reg(), IgnoreVectors);
         CHECK_EQ(usesCSRs, !pin);
     };
 
@@ -440,6 +440,338 @@ void testReduceStrengthTruncDoubleConstant(double filler, float value)
     testReduceStrengthTruncConstant<ConstDoubleValue>(filler, value);
 }
 
+void testReduceStrengthMulDoubleByTwo()
+{
+    // Mul(arg, 2.0) → Add(arg, arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double>(proc, root);
+    Value* arg = arguments[0];
+
+    Value* two = root->appendNew<ConstDoubleValue>(proc, Origin(), 2.0);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), arg, two);
+    root->appendNew<Value>(proc, Return, Origin(), mul);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    CHECK_EQ(root->last()->child(0)->opcode(), Add);
+    CHECK(root->last()->child(0)->child(0) == arg);
+    CHECK(root->last()->child(0)->child(1) == arg);
+}
+
+void testReduceStrengthMulFloatByTwo()
+{
+    // Mul(arg, 2.0f) → Add(arg, arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argInt = arguments[0];
+    Value* arg = root->appendNew<Value>(proc, BitwiseCast, Origin(), argInt);
+
+    Value* two = root->appendNew<ConstFloatValue>(proc, Origin(), 2.0f);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), arg, two);
+    root->appendNew<Value>(proc, Return, Origin(), mul);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    // Find the Return value - it may be through BitwiseCast or directly
+    Value* returnValue = root->last();
+    CHECK_EQ(returnValue->opcode(), Return);
+    // The result should contain an Add(arg, arg) somewhere
+    Value* result = returnValue->child(0);
+    CHECK_EQ(result->opcode(), Add);
+    CHECK(result->child(0) == arg);
+    CHECK(result->child(1) == arg);
+}
+
+void testReduceStrengthMulDoubleByNegOne()
+{
+    // Mul(arg, -1.0) → Sub(ConstDouble(-0.0), arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double>(proc, root);
+    Value* arg = arguments[0];
+
+    Value* negOne = root->appendNew<ConstDoubleValue>(proc, Origin(), -1.0);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), arg, negOne);
+    root->appendNew<Value>(proc, Return, Origin(), mul);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    CHECK_EQ(root->last()->child(0)->opcode(), Sub);
+    CHECK(root->last()->child(0)->child(0)->hasDouble());
+    CHECK(isIdentical(root->last()->child(0)->child(0)->asDouble(), -0.0));
+    CHECK(root->last()->child(0)->child(1) == arg);
+}
+
+void testReduceStrengthMulFloatByNegOne()
+{
+    // Mul(arg, -1.0f) → Sub(ConstFloat(-0.0f), arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argInt = arguments[0];
+    Value* arg = root->appendNew<Value>(proc, BitwiseCast, Origin(), argInt);
+
+    Value* negOne = root->appendNew<ConstFloatValue>(proc, Origin(), -1.0f);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), arg, negOne);
+    root->appendNew<Value>(proc, Return, Origin(), mul);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Sub);
+    CHECK(result->child(0)->hasFloat());
+    CHECK(isIdentical(result->child(0)->asFloat(), -0.0f));
+    CHECK(result->child(1) == arg);
+}
+
+void testReduceStrengthMulDoubleByNegTwo()
+{
+    // Mul(arg, -2.0) → Sub(ConstDouble(-0.0), Add(arg, arg))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double>(proc, root);
+    Value* arg = arguments[0];
+
+    Value* negTwo = root->appendNew<ConstDoubleValue>(proc, Origin(), -2.0);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), arg, negTwo);
+    root->appendNew<Value>(proc, Return, Origin(), mul);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Sub);
+    CHECK(result->child(0)->hasDouble());
+    CHECK(isIdentical(result->child(0)->asDouble(), -0.0));
+    CHECK_EQ(result->child(1)->opcode(), Add);
+    CHECK(result->child(1)->child(0) == arg);
+    CHECK(result->child(1)->child(1) == arg);
+}
+
+void testReduceStrengthMulFloatByNegTwo()
+{
+    // Mul(arg, -2.0f) → Sub(ConstFloat(-0.0f), Add(arg, arg))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argInt = arguments[0];
+    Value* arg = root->appendNew<Value>(proc, BitwiseCast, Origin(), argInt);
+
+    Value* negTwo = root->appendNew<ConstFloatValue>(proc, Origin(), -2.0f);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), arg, negTwo);
+    root->appendNew<Value>(proc, Return, Origin(), mul);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Sub);
+    CHECK(result->child(0)->hasFloat());
+    CHECK(isIdentical(result->child(0)->asFloat(), -0.0f));
+    CHECK_EQ(result->child(1)->opcode(), Add);
+    CHECK(result->child(1)->child(0) == arg);
+    CHECK(result->child(1)->child(1) == arg);
+}
+
+void testReduceStrengthDivDoubleByNegOne()
+{
+    // Div(arg, -1.0) → Sub(ConstDouble(-0.0), arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double>(proc, root);
+    Value* arg = arguments[0];
+
+    Value* negOne = root->appendNew<ConstDoubleValue>(proc, Origin(), -1.0);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, negOne);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Sub);
+    CHECK(result->child(0)->hasDouble());
+    CHECK(isIdentical(result->child(0)->asDouble(), -0.0));
+    CHECK(result->child(1) == arg);
+}
+
+void testReduceStrengthDivFloatByNegOne()
+{
+    // Div(arg, -1.0f) → Sub(ConstFloat(-0.0f), arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argInt = arguments[0];
+    Value* arg = root->appendNew<Value>(proc, BitwiseCast, Origin(), argInt);
+
+    Value* negOne = root->appendNew<ConstFloatValue>(proc, Origin(), -1.0f);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, negOne);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Sub);
+    CHECK(result->child(0)->hasFloat());
+    CHECK(isIdentical(result->child(0)->asFloat(), -0.0f));
+    CHECK(result->child(1) == arg);
+}
+
+void testReduceStrengthDivDoubleByTwo()
+{
+    // Div(arg, 2.0) → Mul(arg, ConstDouble(0.5))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double>(proc, root);
+    Value* arg = arguments[0];
+
+    Value* two = root->appendNew<ConstDoubleValue>(proc, Origin(), 2.0);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, two);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Mul);
+    CHECK(result->child(0) == arg);
+    CHECK(result->child(1)->hasDouble());
+    CHECK(isIdentical(result->child(1)->asDouble(), 0.5));
+}
+
+void testReduceStrengthDivFloatByTwo()
+{
+    // Div(arg, 2.0f) → Mul(arg, ConstFloat(0.5f))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argInt = arguments[0];
+    Value* arg = root->appendNew<Value>(proc, BitwiseCast, Origin(), argInt);
+
+    Value* two = root->appendNew<ConstFloatValue>(proc, Origin(), 2.0f);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, two);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Mul);
+    CHECK(result->child(0) == arg);
+    CHECK(result->child(1)->hasFloat());
+    CHECK(isIdentical(result->child(1)->asFloat(), 0.5f));
+}
+
+void testReduceStrengthDivDoubleByFour()
+{
+    // Div(arg, 4.0) → Mul(arg, ConstDouble(0.25))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double>(proc, root);
+    Value* arg = arguments[0];
+
+    Value* four = root->appendNew<ConstDoubleValue>(proc, Origin(), 4.0);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, four);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Mul);
+    CHECK(result->child(0) == arg);
+    CHECK(result->child(1)->hasDouble());
+    CHECK(isIdentical(result->child(1)->asDouble(), 0.25));
+}
+
+void testReduceStrengthDivDoubleByNegTwo()
+{
+    // Div(arg, -2.0) → Mul(arg, ConstDouble(-0.5))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double>(proc, root);
+    Value* arg = arguments[0];
+
+    Value* negTwo = root->appendNew<ConstDoubleValue>(proc, Origin(), -2.0);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, negTwo);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Mul);
+    CHECK(result->child(0) == arg);
+    CHECK(result->child(1)->hasDouble());
+    CHECK(isIdentical(result->child(1)->asDouble(), -0.5));
+}
+
+void testReduceStrengthDivFloatByFour()
+{
+    // Div(arg, 4.0f) → Mul(arg, ConstFloat(0.25f))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argInt = arguments[0];
+    Value* arg = root->appendNew<Value>(proc, BitwiseCast, Origin(), argInt);
+
+    Value* four = root->appendNew<ConstFloatValue>(proc, Origin(), 4.0f);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, four);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Mul);
+    CHECK(result->child(0) == arg);
+    CHECK(result->child(1)->hasFloat());
+    CHECK(isIdentical(result->child(1)->asFloat(), 0.25f));
+}
+
+void testReduceStrengthDivFloatByNegTwo()
+{
+    // Div(arg, -2.0f) → Mul(arg, ConstFloat(-0.5f))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argInt = arguments[0];
+    Value* arg = root->appendNew<Value>(proc, BitwiseCast, Origin(), argInt);
+
+    Value* negTwo = root->appendNew<ConstFloatValue>(proc, Origin(), -2.0f);
+    Value* div = root->appendNew<Value>(proc, Div, Origin(), arg, negTwo);
+    root->appendNew<Value>(proc, Return, Origin(), div);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    Value* result = root->last()->child(0);
+    CHECK_EQ(result->opcode(), Mul);
+    CHECK(result->child(0) == arg);
+    CHECK(result->child(1)->hasFloat());
+    CHECK(isIdentical(result->child(1)->asFloat(), -0.5f));
+}
+
 void testLoadBaseIndexShift2()
 {
     Procedure proc;
@@ -549,7 +881,7 @@ void generateLoop(Procedure& proc, const Func& func)
     end->appendNew<Value>(proc, Return, Origin());
 }
 
-static std::array<int, 100> makeArrayForLoops()
+static std::array<int, 100> NODELETE makeArrayForLoops()
 {
     std::array<int, 100> result;
     for (unsigned i = 0; i < result.size(); ++i)
@@ -1310,7 +1642,7 @@ void testWasmAddressWithOffset()
     CHECK_EQ(42U, values[2]);
 }
 
-void testFastTLSLoad()
+void NODELETE testFastTLSLoad()
 {
 #if ENABLE(FAST_TLS_JIT)
     _pthread_setspecific_direct(WTF_TESTING_KEY, std::bit_cast<void*>(static_cast<uintptr_t>(0xbeef)));
@@ -1319,7 +1651,7 @@ void testFastTLSLoad()
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, pointerType(), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1332,14 +1664,14 @@ void testFastTLSLoad()
 #endif
 }
 
-void testFastTLSStore()
+void NODELETE testFastTLSStore()
 {
 #if ENABLE(FAST_TLS_JIT)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->numGPScratchRegisters = 1;
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1356,12 +1688,12 @@ void testFastTLSStore()
 #endif
 }
 
-static NEVER_INLINE bool doubleEq(double a, double b) { return a == b; }
-static NEVER_INLINE bool doubleNeq(double a, double b) { return a != b; }
-static NEVER_INLINE bool doubleGt(double a, double b) { return a > b; }
-static NEVER_INLINE bool doubleGte(double a, double b) { return a >= b; }
-static NEVER_INLINE bool doubleLt(double a, double b) { return a < b; }
-static NEVER_INLINE bool doubleLte(double a, double b) { return a <= b; }
+static NEVER_INLINE bool NODELETE doubleEq(double a, double b) { return a == b; }
+static NEVER_INLINE bool NODELETE doubleNeq(double a, double b) { return a != b; }
+static NEVER_INLINE bool NODELETE doubleGt(double a, double b) { return a > b; }
+static NEVER_INLINE bool NODELETE doubleGte(double a, double b) { return a >= b; }
+static NEVER_INLINE bool NODELETE doubleLt(double a, double b) { return a < b; }
+static NEVER_INLINE bool NODELETE doubleLte(double a, double b) { return a <= b; }
 
 void testDoubleLiteralComparison(double a, double b)
 {
@@ -1483,16 +1815,16 @@ void testShuffleDoesntTrashCalleeSaves()
     BasicBlock* likely = proc.addBlock();
     BasicBlock* unlikely = proc.addBlock();
 
-    auto regs = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
+    auto regs = RegisterSet::registersToSaveForCCall(RegisterSet::allScalarRegisters());
 
     unsigned i = 0;
     Vector<Value*> patches;
-    for (Reg reg : regs.buildAndValidate()) {
-        if (RegisterSetBuilder::argumentGPRs().contains(reg, IgnoreVectors) || !reg.isGPR())
+    for (Reg reg : regs) {
+        if (RegisterSet::argumentGPRs().contains(reg, IgnoreVectors) || !reg.isGPR())
             continue;
         ++i;
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
         patchpoint->resultConstraints = { ValueRep::reg(reg.gpr()) };
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1512,7 +1844,7 @@ void testShuffleDoesntTrashCalleeSaves()
     Value* arg8 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(7 % GPRInfo::numberOfArgumentRegisters));
 
     PatchpointValue* ptr = root->appendNew<PatchpointValue>(proc, pointerType(), Origin());
-    ptr->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    ptr->clobber(RegisterSet::macroClobberedGPRs());
     ptr->resultConstraints = { ValueRep::reg(GPRInfo::regCS0) };
     ptr->appendSomeRegister(arg1);
     ptr->setGenerator(
@@ -1544,7 +1876,7 @@ void testShuffleDoesntTrashCalleeSaves()
         constNumber, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 
     PatchpointValue* voidPatch = unlikely->appendNew<PatchpointValue>(proc, Void, Origin());
-    voidPatch->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    voidPatch->clobber(RegisterSet::macroClobberedGPRs());
     for (Value* v : patches)
         voidPatch->appendSomeRegister(v);
     voidPatch->appendSomeRegister(arg1);
@@ -1592,15 +1924,15 @@ void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead()
         return;
     BasicBlock* root = proc.addBlock();
 
-    RegisterSetBuilder allRegs = RegisterSetBuilder::allGPRs();
-    allRegs.exclude(RegisterSetBuilder::stackRegisters());
-    allRegs.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    RegisterSet allRegs = RegisterSet::allGPRs();
+    allRegs.exclude(RegisterSet::stackRegisters());
+    allRegs.exclude(RegisterSet::reservedHardwareRegisters());
 
     {
         // Make every reg 42 (just needs to be a value other than 10).
         Value* const42 = root->appendNew<Const32Value>(proc, Origin(), 42);
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-        for (Reg reg : allRegs.buildAndValidate())
+        for (Reg reg : allRegs)
             patchpoint->append(const42, ValueRep::reg(reg));
         patchpoint->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
     }
@@ -1608,10 +1940,10 @@ void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead()
     {
         Value* const10 = root->appendNew<Const32Value>(proc, Origin(), 10);
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-        for (Reg reg : allRegs.buildAndValidate())
+        for (Reg reg : allRegs)
             patchpoint->append(const10, ValueRep::lateReg(reg));
         patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) {
-            for (Reg reg : allRegs.buildAndValidate()) {
+            for (Reg reg : allRegs) {
                 auto done = jit.branch32(CCallHelpers::Equal, reg.gpr(), CCallHelpers::TrustedImm32(10));
                 jit.breakpoint();
                 done.link(&jit);
@@ -1623,7 +1955,7 @@ void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead()
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         patchpoint->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams& params) {
-            RELEASE_ASSERT(allRegs.buildAndValidate().contains(params[0].gpr(), IgnoreVectors));
+            RELEASE_ASSERT(allRegs.contains(params[0].gpr(), IgnoreVectors));
         });
     }
 
@@ -1684,7 +2016,7 @@ static void testSimpleTuplePair(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1705,7 +2037,7 @@ static void testSimpleTuplePairUnused(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64, Double }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeRegister };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1729,7 +2061,7 @@ static void testSimpleTuplePairStack(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1809,7 +2141,7 @@ static void tailDupedTuplePair(unsigned first, double second)
 
     Value* test = arguments[0];
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, tupleType, Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobber(RegisterSet::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1871,7 +2203,7 @@ static void tuplePairVariableLoop(unsigned first, uint64_t second)
         Value* first = body->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
         Value* second = body->appendNew<ExtractValue>(proc, Origin(), Int64, tuple, 1);
         PatchpointValue* patchpoint = body->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegister });
         patchpoint->append({ second, ValueRep::SomeRegister });
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::stackArgument(0) };
@@ -1943,7 +2275,7 @@ static void tupleNestedLoop(intptr_t first, double second)
         Value* second = outerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
         Value* third = outerLoop->appendNew<VariableValue>(proc, B3::Get, Origin(), tookInner);
         PatchpointValue* patchpoint = outerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ third, ValueRep::SomeRegisterWithClobber });
@@ -1965,7 +2297,7 @@ static void tupleNestedLoop(intptr_t first, double second)
         Value* first = innerLoop->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
         Value* second = innerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
         PatchpointValue* patchpoint = innerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
         patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeEarlyRegister };
@@ -2795,6 +3127,38 @@ void testInt52RoundTripBinary()
         for (auto rhs : int32Operands())
             CHECK_EQ(invoke<int32_t>(*code, lhs.value, rhs.value), static_cast<int32_t>(((static_cast<int64_t>(lhs.value) << 12) + (static_cast<int64_t>(rhs.value) << 12)) >> 12));
     }
+}
+
+// Test that Trunc(SShr(Add(@a, unaligned-constant), $12)) produces the correct
+// result when the constant is not 12-bit aligned. This pattern arises from
+// WebAssembly's i32.wrap_i64(i64.shr_s(i64.add(@a, C), 12)) with arbitrary
+// 64-bit values.
+void testTruncSShrAddUnalignedConstant()
+{
+    // Use constant 2048 which is NOT 12-bit aligned (lower 12 bits are non-zero).
+    int64_t constant = 2048;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+    Value* argA = arguments[0];
+    Value* node = root->appendNew<Value>(proc, Add, Origin(), argA, root->appendNew<Const64Value>(proc, Origin(), constant));
+    Value* shifted = root->appendNew<Value>(proc, SShr, Origin(), node, root->appendNew<Const32Value>(proc, Origin(), 12));
+    Value* result = root->appendNew<Value>(proc, Trunc, Origin(), shifted);
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    auto code = compileProc(proc);
+
+    // a=2048, C=2048: (2048+2048)>>12 = 4096>>12 = 1
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int64_t>(2048)), static_cast<int32_t>((2048LL + constant) >> 12));
+    // a=0
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int64_t>(0)), static_cast<int32_t>((0LL + constant) >> 12));
+    // a=4095
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int64_t>(4095)), static_cast<int32_t>((4095LL + constant) >> 12));
+    // a=4096
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int64_t>(4096)), static_cast<int32_t>((4096LL + constant) >> 12));
+    // Large values
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int64_t>(100000)), static_cast<int32_t>((100000LL + constant) >> 12));
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int64_t>(-2048)), static_cast<int32_t>((-2048LL + constant) >> 12));
 }
 
 #endif // ENABLE(B3_JIT)

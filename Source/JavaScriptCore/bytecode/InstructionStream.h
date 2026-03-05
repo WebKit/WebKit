@@ -197,7 +197,7 @@ public:
 
 protected:
     explicit InstructionStream(InstructionBuffer&& instructions)
-        : m_instructions(WTFMove(instructions))
+        : m_instructions(WTF::move(instructions))
     { }
 
     InstructionBuffer m_instructions;
@@ -221,7 +221,7 @@ public:
     {
         RELEASE_ASSERT(!m_instructions.size());
         RELEASE_ASSERT(!buffer.size());
-        m_instructions = WTFMove(buffer);
+        m_instructions = WTF::move(buffer);
     }
 
     inline MutableRef ref(Offset offset)
@@ -291,7 +291,7 @@ public:
     {
         m_finalized = true;
         m_instructions.shrinkToFit();
-        return std::unique_ptr<InstructionStream<InstructionType>> { new InstructionStream<InstructionType>(WTFMove(m_instructions)) };
+        return std::unique_ptr<InstructionStream<InstructionType>> { new InstructionStream<InstructionType>(WTF::move(m_instructions)) };
     }
 
     std::unique_ptr<InstructionStream<InstructionType>> finalize(InstructionBuffer& usedBuffer)
@@ -302,9 +302,9 @@ public:
         RELEASE_ASSERT(m_instructions.sizeInBytes() == resultBuffer.sizeInBytes());
         memcpy(resultBuffer.mutableSpan().data(), m_instructions.span().data(), m_instructions.sizeInBytes());
 
-        usedBuffer = WTFMove(m_instructions);
+        usedBuffer = WTF::move(m_instructions);
 
-        return std::unique_ptr<InstructionStream<InstructionType>> { new InstructionStream<InstructionType>(WTFMove(resultBuffer)) };
+        return std::unique_ptr<InstructionStream<InstructionType>> { new InstructionStream<InstructionType>(WTF::move(resultBuffer)) };
     }
 
     MutableRef ref()

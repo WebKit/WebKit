@@ -46,6 +46,7 @@ constexpr size_t kSubFrameLength = kFrameSize / 2;
 
 constexpr size_t kBlockSize = kFftLengthBy2;
 constexpr size_t kBlockSizeLog2 = kFftLengthBy2Log2;
+constexpr size_t kBlockSizeMs = kFftLengthBy2 * 1000 / 16000;
 
 constexpr size_t kExtendedBlockSize = 2 * kFftLengthBy2;
 constexpr size_t kMatchedFilterWindowSizeSubBlocks = 32;

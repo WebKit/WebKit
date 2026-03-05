@@ -45,13 +45,13 @@ private:
         }
 
         WebCore::LinkIcon copiedIcon = icon;
-        webkitWebViewGetLoadDecisionForIcon(m_webView, icon, [weakWebView = GWeakPtr<WebKitWebView>(m_webView), icon = WTFMove(copiedIcon), completionHandler = WTFMove(completionHandler)] (bool loadIcon) mutable {
+        webkitWebViewGetLoadDecisionForIcon(m_webView, icon, [weakWebView = GWeakPtr<WebKitWebView>(m_webView), icon = WTF::move(copiedIcon), completionHandler = WTF::move(completionHandler)] (bool loadIcon) mutable {
             if (!weakWebView || !loadIcon) {
                 completionHandler(nullptr);
                 return;
             }
 
-            completionHandler([weakWebView = WTFMove(weakWebView), icon = WTFMove(icon)] (API::Data* iconData) {
+            completionHandler([weakWebView = WTF::move(weakWebView), icon = WTF::move(icon)] (API::Data* iconData) {
                 if (!weakWebView || !iconData)
                     return;
                 webkitWebViewSetIcon(weakWebView.get(), icon, *iconData);

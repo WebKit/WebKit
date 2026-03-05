@@ -74,15 +74,15 @@ namespace CSSPropertyParserHelpers {
 
 template<typename Result, typename... Ts> static Result forwardVariantTo(Variant<Ts...>&& variant)
 {
-    return WTF::switchOn(WTFMove(variant), [](auto&& alternative) -> Result { return { WTFMove(alternative) }; });
+    return WTF::switchOn(WTF::move(variant), [](auto&& alternative) -> Result { return { WTF::move(alternative) }; });
 }
 
 static Ref<CSSPrimitiveValue> resolveToCSSPrimitiveValue(CSS::Numeric auto&& primitive)
 {
-    return WTF::switchOn(WTFMove(primitive), [](auto&& alternative) { return CSSPrimitiveValueResolverBase::resolve(WTFMove(alternative), { }); }).releaseNonNull();
+    return WTF::switchOn(WTF::move(primitive), [](auto&& alternative) { return CSSPrimitiveValueResolverBase::resolve(WTF::move(alternative), { }); }).releaseNonNull();
 }
 
-static CSSParserMode parserMode(ScriptExecutionContext& context)
+static CSSParserMode NODELETE parserMode(ScriptExecutionContext& context)
 {
     auto* document = dynamicDowncast<Document>(context);
     return (document && document->inQuirksMode()) ? HTMLQuirksMode : HTMLStandardMode;
@@ -128,20 +128,20 @@ static std::optional<UnresolvedFontWeightNumber> consumeFontWeightNumberUnresolv
 
 #if !ENABLE(VARIATION_FONTS)
     // Additional validation is needed for the legacy path.
-    auto result = WTF::switchOn(WTFMove(*number),
+    auto result = WTF::switchOn(WTF::move(*number),
         [](UnresolvedFontWeightNumber::Raw&& number) -> std::optional<UnresolvedFontWeightNumber> {
-            if (auto validated = validateFontWeightNumber(WTFMove(number)))
-                return { { WTFMove(*validated) } };
+            if (auto validated = validateFontWeightNumber(WTF::move(number)))
+                return { { WTF::move(*validated) } };
             return std::nullopt;
         },
         [](UnresolvedFontWeightNumber::Calc&& calc) -> std::optional<UnresolvedFontWeightNumber> {
-            return { { WTFMove(calc) } };
+            return { { WTF::move(calc) } };
         }
     );
     if (!number)
         return std::nullopt;
 #else
-    auto result = WTFMove(number);
+    auto result = WTF::move(number);
 #endif
 
     range = rangeCopy;
@@ -156,7 +156,7 @@ static std::optional<UnresolvedFontWeight> consumeFontWeightUnresolved(CSSParser
     if (auto keyword = consumeIdentRaw<CSSValueNormal, CSSValueBold, CSSValueBolder, CSSValueLighter>(range))
         return { *keyword };
     if (auto fontWeightNumber = consumeFontWeightNumberUnresolved(range, state))
-        return { WTFMove(*fontWeightNumber) };
+        return { WTF::move(*fontWeightNumber) };
     return std::nullopt;
 }
 
@@ -187,7 +187,7 @@ static std::optional<UnresolvedFontStyle> consumeFontStyleUnresolved(CSSParserTo
 #if ENABLE(VARIATION_FONTS)
     if (*keyword == CSSValueOblique && !range.atEnd()) {
         if (auto angle = consumeFontStyleAngleUnresolved(range, state))
-            return { { WTFMove(*angle) } };
+            return { { WTF::move(*angle) } };
     }
 #endif
 
@@ -203,7 +203,7 @@ RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange& range, [[maybe_unused]] C
 #if ENABLE(VARIATION_FONTS)
     if (*keyword == CSSValueOblique && !range.atEnd()) {
         if (auto angle = consumeFontStyleAngleUnresolved(range, state))
-            return CSSFontStyleWithAngleValue::create(WTFMove(*angle));
+            return CSSFontStyleWithAngleValue::create(WTF::move(*angle));
     }
 #endif
 
@@ -354,7 +354,6 @@ static std::optional<UnresolvedFontSize> consumeFontSizeUnresolved(CSSParserToke
 
     // Additionally supports non-standard productions: <-webkit-absolute-size> | <-webkit-relative-size>
 
-    // FIXME: Add support for 'math' keyword.
     // FIXME: Add a way to export this "raw" version from the generated CSSPropertyParsing.
 
     // -webkit-xxx-large is a parse-time alias.
@@ -364,7 +363,7 @@ static std::optional<UnresolvedFontSize> consumeFontSizeUnresolved(CSSParserToke
         return std::nullopt;
     }
 
-    if (range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger) {
+    if ((range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger) || range.peek().id() == CSSValueMath) {
         if (auto ident = consumeIdentRaw(range))
             return { *ident };
         return std::nullopt;
@@ -377,7 +376,7 @@ static std::optional<UnresolvedFontSize> consumeFontSizeUnresolved(CSSParserToke
         return std::nullopt;
 
     range = rangeCopy;
-    return { WTFMove(*lengthPercentage) };
+    return { WTF::move(*lengthPercentage) };
 }
 
 // MARK: - 'line-height'
@@ -395,7 +394,7 @@ static std::optional<UnresolvedFontLineHeight> consumeLineHeightUnresolved(CSSPa
 
     return Consumer::consume(range, state,
         [&](CSS::Keyword::Normal) { return UnresolvedFontLineHeight { CSSValueNormal }; },
-        [&](auto&& value) { return UnresolvedFontLineHeight { WTFMove(value) }; }
+        [&](auto&& value) { return UnresolvedFontLineHeight { WTF::move(value) }; }
     );
 }
 
@@ -457,9 +456,9 @@ static std::optional<UnresolvedFont> consumeUnresolvedFont(CSSParserTokenRange& 
         .variantCaps = fontVariantCaps.value_or(CSSValueNormal),
         .weight = fontWeight.value_or(CSSValueNormal),
         .width = fontWidth.value_or(CSSValueNormal),
-        .size = WTFMove(*fontSize),
+        .size = WTF::move(*fontSize),
         .lineHeight = fontLineHeight.value_or(CSSValueNormal),
-        .family = WTFMove(*fontFamily),
+        .family = WTF::move(*fontFamily),
     };
 }
 
@@ -517,7 +516,7 @@ Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, CSS::Property
     return technologies;
 }
 
-static bool isFontFormatKeywordValid(CSSValueID id)
+static bool NODELETE isFontFormatKeywordValid(CSSValueID id)
 {
     switch (id) {
     case CSSValueCollection:
@@ -578,7 +577,7 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
     if (!range.atEnd())
         return nullptr;
 
-    return CSSFontFaceSrcResourceValue::create(WTFMove(*location), WTFMove(format), WTFMove(technologies));
+    return CSSFontFaceSrcResourceValue::create(WTF::move(*location), WTF::move(format), WTF::move(technologies));
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range, CSS::PropertyParserState&)
@@ -597,7 +596,7 @@ static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range, CSS:
         AtomString familyName = concatenateFamilyName(args);
         if (familyName.isNull() || !args.atEnd() || !range.atEnd())
             return nullptr;
-        return CSSFontFaceSrcLocalValue::create(WTFMove(familyName));
+        return CSSFontFaceSrcLocalValue::create(WTF::move(familyName));
     }
     return nullptr;
 }
@@ -638,7 +637,7 @@ RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange& range, CSS::Propert
     }
     if (values.isEmpty())
         return nullptr;
-    return CSSValueList::createCommaSeparated(WTFMove(values));
+    return CSSValueList::createCommaSeparated(WTF::move(values));
 }
 
 RefPtr<CSSValueList> parseFontFaceSrc(const String& string, ScriptExecutionContext& context)
@@ -784,7 +783,7 @@ RefPtr<CSSValue> consumeFontFaceFontStyle(CSSParserTokenRange& range, CSS::Prope
         return CSSFontStyleRangeValue::create(
             CSSPrimitiveValue::create(*keyword),
             CSSValueList::createSpaceSeparated(
-                resolveToCSSPrimitiveValue(WTFMove(*firstAngle))
+                resolveToCSSPrimitiveValue(WTF::move(*firstAngle))
             )
         );
     }
@@ -797,8 +796,8 @@ RefPtr<CSSValue> consumeFontFaceFontStyle(CSSParserTokenRange& range, CSS::Prope
     return CSSFontStyleRangeValue::create(
         CSSPrimitiveValue::create(*keyword),
         CSSValueList::createSpaceSeparated(
-            resolveToCSSPrimitiveValue(WTFMove(*firstAngle)),
-            resolveToCSSPrimitiveValue(WTFMove(*secondAngle))
+            resolveToCSSPrimitiveValue(WTF::move(*firstAngle)),
+            resolveToCSSPrimitiveValue(WTF::move(*secondAngle))
         )
     );
 }
@@ -857,7 +856,7 @@ RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange& range, CSS::Propert
     if (!range.atEnd() && range.peek().type() != CommaToken) {
         // Feature tag values could follow: <integer [0,∞]> | on | off
         if (auto integer = CSSPrimitiveValueResolver<CSS::Integer<CSS::Nonnegative>>::consumeAndResolve(range, state))
-            tagValue = WTFMove(integer);
+            tagValue = WTF::move(integer);
         else if (range.peek().id() == CSSValueOn || range.peek().id() == CSSValueOff)
             tagValue = CSSPrimitiveValue::createInteger(range.consumeIncludingWhitespace().id() == CSSValueOn ? 1 : 0);
         else
@@ -865,7 +864,7 @@ RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange& range, CSS::Propert
     } else
         tagValue = CSSPrimitiveValue::createInteger(1);
 
-    return CSSFontFeatureValue::create(WTFMove(*tag), tagValue.releaseNonNull());
+    return CSSFontFeatureValue::create(WTF::move(*tag), tagValue.releaseNonNull());
 }
 
 RefPtr<CSSValue> parseFontFaceFeatureSettings(const String& string, ScriptExecutionContext& context)
@@ -907,7 +906,7 @@ RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange& range, CSS::Prope
     if (!tagValue)
         return nullptr;
 
-    return CSSFontVariationValue::create(WTFMove(*tag), tagValue.releaseNonNull());
+    return CSSFontVariationValue::create(WTF::move(*tag), tagValue.releaseNonNull());
 }
 
 #endif

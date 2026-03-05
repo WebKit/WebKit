@@ -34,8 +34,8 @@ namespace WebCore {
 
 struct PartitionedSecurityOrigin {
     PartitionedSecurityOrigin(Ref<SecurityOrigin>&& topOrigin, Ref<SecurityOrigin>&& clientOrigin)
-        : topOrigin(WTFMove(topOrigin))
-        , clientOrigin(WTFMove(clientOrigin))
+        : topOrigin(WTF::move(topOrigin))
+        , clientOrigin(WTF::move(clientOrigin))
     { }
 
     PartitionedSecurityOrigin(WTF::HashTableDeletedValueType)
@@ -88,7 +88,7 @@ template<> struct HashTraits<WebCore::PartitionedSecurityOrigin> : SimpleClassHa
     static PeekType peek(const WebCore::PartitionedSecurityOrigin& value) { return isEmptyValue(value) ? std::nullopt : std::optional { value }; }
 
     using TakeType = std::optional<WebCore::PartitionedSecurityOrigin>;
-    static TakeType take(WebCore::PartitionedSecurityOrigin&& value) { return isEmptyValue(value) ? std::nullopt : std::optional { WTFMove(value) }; }
+    static TakeType take(WebCore::PartitionedSecurityOrigin&& value) { return isEmptyValue(value) ? std::nullopt : std::optional { WTF::move(value) }; }
 };
 
 } // namespace WTF

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
@@ -41,3 +43,5 @@ NS_ERROR_ENUM(WKIdentityDocumentPresentmentErrorDomain, WKIdentityDocumentPresen
 };
 
 NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(WEB_AUTHN)

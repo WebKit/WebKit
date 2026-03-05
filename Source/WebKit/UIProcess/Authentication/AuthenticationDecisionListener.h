@@ -39,7 +39,7 @@ class AuthenticationDecisionListener : public API::ObjectImpl<API::Object::Type:
 public:
     static Ref<AuthenticationDecisionListener> create(CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
     {
-        return adoptRef(*new AuthenticationDecisionListener(WTFMove(completionHandler)));
+        return adoptRef(*new AuthenticationDecisionListener(WTF::move(completionHandler)));
     }
     ~AuthenticationDecisionListener();
     

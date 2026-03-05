@@ -42,10 +42,10 @@ class GPUShaderModule : public RefCountedAndCanMakeWeakPtr<GPUShaderModule> {
 public:
     static Ref<GPUShaderModule> create(Ref<WebGPU::ShaderModule>&& backing)
     {
-        return adoptRef(*new GPUShaderModule(WTFMove(backing)));
+        return adoptRef(*new GPUShaderModule(WTF::move(backing)));
     }
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
     using CompilationInfoPromise = DOMPromiseDeferred<IDLInterface<GPUCompilationInfo>>;
@@ -56,7 +56,7 @@ public:
 
 private:
     GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

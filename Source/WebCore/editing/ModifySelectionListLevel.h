@@ -78,7 +78,7 @@ public:
 private:
     static Ref<DecreaseSelectionListLevelCommand> create(Ref<Document>&& document)
     {
-        return adoptRef(*new DecreaseSelectionListLevelCommand(WTFMove(document)));
+        return adoptRef(*new DecreaseSelectionListLevelCommand(WTF::move(document)));
     }
 
     explicit DecreaseSelectionListLevelCommand(Ref<Document>&&);

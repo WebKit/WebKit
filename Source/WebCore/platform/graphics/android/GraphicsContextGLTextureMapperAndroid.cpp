@@ -32,7 +32,7 @@ namespace WebCore {
 
 RefPtr<GraphicsContextGLTextureMapperAndroid> GraphicsContextGLTextureMapperAndroid::create(GraphicsContextGLAttributes&& attributes)
 {
-    auto context = adoptRef(new GraphicsContextGLTextureMapperAndroid(WTFMove(attributes)));
+    auto context = adoptRef(new GraphicsContextGLTextureMapperAndroid(WTF::move(attributes)));
     if (!context->initialize())
         return nullptr;
     return context;

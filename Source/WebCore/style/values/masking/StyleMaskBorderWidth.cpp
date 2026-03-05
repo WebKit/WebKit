@@ -64,25 +64,15 @@ auto CSSValueConversion<MaskBorderWidth>::operator()(BuilderState& state, const 
 
         auto& widths = widthValue->widths();
         return MaskBorderWidth {
-            .values = {
-                convertMaskBorderWidthValue(state, widths.top()),
-                convertMaskBorderWidthValue(state, widths.right()),
-                convertMaskBorderWidthValue(state, widths.bottom()),
-                convertMaskBorderWidthValue(state, widths.left()),
-            }
+            convertMaskBorderWidthValue(state, widths.top()),
+            convertMaskBorderWidthValue(state, widths.right()),
+            convertMaskBorderWidthValue(state, widths.bottom()),
+            convertMaskBorderWidthValue(state, widths.left()),
         };
     }
 
     // Values coming from CSS Typed OM may not have been converted to a CSSMaskBorderWidthValue.
-    auto widthValue = convertMaskBorderWidthValue(state, value);
-    return MaskBorderWidth {
-        .values = {
-            widthValue,
-            widthValue,
-            widthValue,
-            widthValue,
-        }
-    };
+    return convertMaskBorderWidthValue(state, value);
 }
 
 auto CSSValueCreation<MaskBorderWidth>::operator()(CSSValuePool& pool, const RenderStyle& style, const MaskBorderWidth& value) -> Ref<CSSValue>
@@ -153,12 +143,10 @@ auto Blending<MaskBorderWidth>::blend(const MaskBorderWidth& a, const MaskBorder
     }
 
     return MaskBorderWidth {
-        .values = {
-            Style::blend(a.values.top(),     b.values.top(), context),
-            Style::blend(a.values.right(),   b.values.right(), context),
-            Style::blend(a.values.bottom(),  b.values.bottom(), context),
-            Style::blend(a.values.left(),    b.values.left(), context),
-        }
+        Style::blend(a.values.top(),     b.values.top(), context),
+        Style::blend(a.values.right(),   b.values.right(), context),
+        Style::blend(a.values.bottom(),  b.values.bottom(), context),
+        Style::blend(a.values.left(),    b.values.left(), context),
     };
 }
 

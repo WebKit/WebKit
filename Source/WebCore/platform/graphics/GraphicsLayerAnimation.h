@@ -67,10 +67,10 @@ public:
     void setPlayState(PlayState playState) { m_playState = static_cast<unsigned>(playState); }
 
     RefPtr<TimingFunction> timingFunction() const { return m_timingFunction.get(); }
-    void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); }
+    void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTF::move(function); }
 
     RefPtr<TimingFunction> defaultTimingFunctionForKeyframes() const { return m_defaultTimingFunctionForKeyframes.get(); }
-    void setDefaultTimingFunctionForKeyframes(RefPtr<TimingFunction>&& function) { m_defaultTimingFunctionForKeyframes = WTFMove(function); }
+    void setDefaultTimingFunctionForKeyframes(RefPtr<TimingFunction>&& function) { m_defaultTimingFunctionForKeyframes = WTF::move(function); }
 
     bool isZeroDuration() const { return (!m_duration || !*m_duration) && m_delay <= 0; }
 

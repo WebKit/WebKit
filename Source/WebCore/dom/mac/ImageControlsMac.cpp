@@ -103,7 +103,7 @@ bool isInsideImageControls(const Node& node)
     if (!host)
         return false;
 
-    return host->protectedUserAgentShadowRoot()->contains(node);
+    return protect(host->userAgentShadowRoot())->contains(node);
 }
 
 void createImageControls(HTMLElement& element)
@@ -118,9 +118,9 @@ void createImageControls(HTMLElement& element)
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
     style->setTextContent(String { shadowStyle });
-    shadowRoot->appendChild(WTFMove(style));
+    shadowRoot->appendChild(WTF::move(style));
     
-    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, element.document(), nullptr);
+    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, protect(element.document()), nullptr);
     button->setIdAttribute(imageControlsButtonIdentifier());
     controlLayer->appendChild(button);
     controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());
@@ -206,7 +206,7 @@ void updateImageControls(HTMLElement& element)
     if (!element.document().settings().imageControlsEnabled())
         return;
 
-    element.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
+    protect(protect(element.document())->eventLoop())->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
         RefPtr protectedElement = weakElement.get();
         if (!protectedElement)
             return;
@@ -241,7 +241,7 @@ void destroyImageControls(HTMLElement& element)
         shadowRoot->removeChild(*htmlElement);
     }
 
-    auto* renderObject = element.renderer();
+    CheckedPtr renderObject = element.renderer();
     if (!renderObject)
         return;
 

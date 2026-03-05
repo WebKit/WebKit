@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSCellButterfly.h>
 #include <JavaScriptCore/JSPropertyNameEnumerator.h>
 #include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/PackedCellPtr.h>
 #include <JavaScriptCore/StructureChain.h>
 #include <JavaScriptCore/StructureRareData.h>
 #include <JavaScriptCore/VM.h>

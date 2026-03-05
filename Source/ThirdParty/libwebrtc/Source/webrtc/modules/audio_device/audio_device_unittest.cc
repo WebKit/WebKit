@@ -606,8 +606,7 @@ class MAYBE_AudioDeviceTest
       EXPECT_TRUE(com_initializer_->Succeeded());
       EXPECT_TRUE(webrtc_win::core_audio_utility::IsSupported());
       EXPECT_TRUE(webrtc_win::core_audio_utility::IsMMCSSSupported());
-      return CreateWindowsCoreAudioAudioDeviceModuleForTest(
-          &env_.task_queue_factory(), true);
+      return CreateWindowsCoreAudioAudioDeviceModuleForTest(env_, true);
 #else
       return nullptr;
 #endif
@@ -697,8 +696,7 @@ TEST(MAYBE_AudioDeviceTestWin, ConstructDestructWithFactory) {
   // new ADM for Windows must be created on a COM thread.
   ScopedCOMInitializer com_initializer(ScopedCOMInitializer::kMTA);
   EXPECT_TRUE(com_initializer.Succeeded());
-  audio_device =
-      CreateWindowsCoreAudioAudioDeviceModule(&env.task_queue_factory());
+  audio_device = CreateWindowsCoreAudioAudioDeviceModule(env);
   EXPECT_TRUE(audio_device);
   AudioDeviceModule::AudioLayer audio_layer;
   EXPECT_EQ(0, audio_device->ActiveAudioLayer(&audio_layer));

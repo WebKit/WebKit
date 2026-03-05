@@ -63,7 +63,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/ThunkGenerator.h>
 #include <JavaScriptCore/VMThreadContext.h>
 #include <JavaScriptCore/WasmContext.h>
-#include <JavaScriptCore/WasmDebugServerUtilities.h>
 #include <JavaScriptCore/WeakGCMap.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/BumpPointerAllocator.h>
@@ -125,6 +124,8 @@ class CommonIdentifiers;
 class CompactTDZEnvironmentMap;
 class ConservativeRoots;
 class ControlFlowProfiler;
+class CrossTaskToken;
+class EvacuatedStackSlice;
 class Exception;
 class ExceptionScope;
 class FuzzerAgent;
@@ -143,6 +144,7 @@ class MegamorphicCache;
 class NativeExecutable;
 class Debugger;
 class DeferredWorkTimer;
+class PinballCompletion;
 class RegExp;
 class RegExpCache;
 class Register;
@@ -177,6 +179,16 @@ class Database;
 namespace DOMJIT {
 class Signature;
 }
+
+#if ENABLE(WEBASSEMBLY)
+class JSWebAssemblyInstance;
+namespace Wasm {
+class IPIntCallee;
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+struct DebugState;
+#endif
+}
+#endif
 
 struct EntryFrame;
 
@@ -219,6 +231,26 @@ public:
 
 private:
     ScratchBuffer* m_scratchBuffer;
+};
+
+// A record marking the top (in memory address terms) of the "interesting" stack span when
+// handling a JSPI suspension. A pointer to it is saved in the VM as the 'topJSPIContext' field.
+struct JSPIContext {
+    enum class Purpose {
+        Promising, // Started in a 'WebAssembly.promising()' wrapper function.
+        Completing // Started in a PinballCompletion fulfillment handler.
+    };
+
+    JSPIContext(Purpose, VM&, CallFrame*, JSPromise*);
+    ~JSPIContext();
+
+    void deactivate(VM&);
+
+    Purpose purpose;
+    JSPIContext* previousContext;
+    CallFrame* limitFrame; // scan up to this frame, and return from it after evacuating the stack
+    PinballCompletion* completion { nullptr };
+    JSPromise* resultPromise;
 };
 
 enum VMIdentifierType { };
@@ -288,22 +320,17 @@ public:
     Type& ensureSideData(void* key, const Functor&);
 
     bool hasTerminationRequest() const { return m_hasTerminationRequest; }
-    // While setHasTerminationRequest() needs to be CONCURRENT_SAFE (called for stopping worker
-    // threads), clearHasTerminationRequest() should only be called by the owner mutator thread
-    // after servicing the requests. Hence, it should not be concurrent.
     void clearHasTerminationRequest()
     {
         m_hasTerminationRequest = false;
         clearEntryScopeService(ConcurrentEntryScopeService::ResetTerminationRequest);
     }
-    CONCURRENT_SAFE void setHasTerminationRequest()
-    {
-        m_hasTerminationRequest = true;
-        requestEntryScopeService(ConcurrentEntryScopeService::ResetTerminationRequest);
-    }
+    void setHasTerminationRequest();
 
     bool executionForbidden() const { return m_executionForbidden; }
     void setExecutionForbidden() { m_executionForbidden = true; }
+
+    static JS_EXPORT_PRIVATE JSValue checkVMEntryPermission();
 
     // Setting this means that the VM can never recover from a TerminationException.
     // Currently, we'll only set this for worker threads. Ideally, we want this
@@ -389,6 +416,7 @@ public:
     CallFrame* topCallFrame { nullptr };
     EntryFrame* topEntryFrame { nullptr };
     void* maybeReturnPC { nullptr };
+    JSPIContext* topJSPIContext { nullptr };
 private:
 
     struct EntryScopeServicesBits {
@@ -412,8 +440,10 @@ private:
 
 public:
     bool didEnterVM { false };
-    bool m_isInService { false };
+
 private:
+    bool m_isInService { false };
+    RefPtr<CrossTaskToken> m_crossTaskToken;
     VMIdentifier m_identifier;
     const Ref<JSLock> m_apiLock;
     VMThreadContext m_threadContext;
@@ -516,10 +546,14 @@ public:
     WriteBarrier<Structure> programExecutableStructure;
     WriteBarrier<Structure> functionExecutableStructure;
 #if ENABLE(WEBASSEMBLY)
+    WriteBarrier<Structure> pinballCompletionStructure;
     WriteBarrier<Structure> webAssemblyCalleeGroupStructure;
 #endif
     WriteBarrier<Structure> moduleProgramExecutableStructure;
     WriteBarrier<Structure> promiseReactionStructure;
+    WriteBarrier<Structure> jsMicrotaskDispatcherStructure;
+    WriteBarrier<Structure> promiseCombinatorsContextStructure;
+    WriteBarrier<Structure> promiseCombinatorsGlobalContextStructure;
     WriteBarrier<Structure> regExpStructure;
     WriteBarrier<Structure> symbolStructure;
     WriteBarrier<Structure> symbolTableStructure;
@@ -552,9 +586,17 @@ public:
     WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectExecutable;
     WriteBarrier<NativeExecutable> m_promiseFirstResolvingFunctionResolveExecutable;
     WriteBarrier<NativeExecutable> m_promiseFirstResolvingFunctionRejectExecutable;
-    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionResolveWithoutPromiseExecutable;
-    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectWithoutPromiseExecutable;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable;
     WriteBarrier<NativeExecutable> m_promiseCapabilityExecutorExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSlowFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledRejectFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledSlowFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledSlowRejectFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAnyRejectFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAnySlowRejectFunctionExecutable;
 
     WriteBarrier<JSCell> m_orderedHashTableDeletedValue;
     WriteBarrier<JSCell> m_orderedHashTableSentinel;
@@ -571,8 +613,8 @@ public:
     const ClassInfo* currentlyDestructingCallbackObjectClassInfo { nullptr };
 
     AtomStringTable* m_atomStringTable;
-    UniqueRef<SymbolRegistry> m_symbolRegistry;
-    UniqueRef<SymbolRegistry> m_privateSymbolRegistry;
+    const UniqueRef<SymbolRegistry> m_symbolRegistry;
+    const UniqueRef<SymbolRegistry> m_privateSymbolRegistry;
     CommonIdentifiers* propertyNames { nullptr };
     const ArgList* emptyList;
     SmallStrings smallStrings;
@@ -593,9 +635,7 @@ public:
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     SymbolRegistry& symbolRegistry() { return m_symbolRegistry.get(); }
-    CheckedRef<SymbolRegistry> checkedSymbolRegistry() { return m_symbolRegistry.get(); }
     SymbolRegistry& privateSymbolRegistry() { return m_privateSymbolRegistry.get(); }
-    CheckedRef<SymbolRegistry> checkedPrivateSymbolRegistry() { return m_privateSymbolRegistry.get(); }
 
     WriteBarrier<JSBigInt> heapBigIntConstantOne;
 
@@ -644,18 +684,18 @@ public:
         return promiseFirstResolvingFunctionRejectExecutableSlow();
     }
 
-    NativeExecutable* promiseResolvingFunctionResolveWithoutPromiseExecutable()
+    NativeExecutable* promiseResolvingFunctionResolveWithInternalMicrotaskExecutable()
     {
-        if (m_promiseResolvingFunctionResolveWithoutPromiseExecutable) [[likely]]
-            return m_promiseResolvingFunctionResolveWithoutPromiseExecutable.get();
-        return promiseResolvingFunctionResolveWithoutPromiseExecutableSlow();
+        if (m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable) [[likely]]
+            return m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable.get();
+        return promiseResolvingFunctionResolveWithInternalMicrotaskExecutableSlow();
     }
 
-    NativeExecutable* promiseResolvingFunctionRejectWithoutPromiseExecutable()
+    NativeExecutable* promiseResolvingFunctionRejectWithInternalMicrotaskExecutable()
     {
-        if (m_promiseResolvingFunctionRejectWithoutPromiseExecutable) [[likely]]
-            return m_promiseResolvingFunctionRejectWithoutPromiseExecutable.get();
-        return promiseResolvingFunctionRejectWithoutPromiseExecutableSlow();
+        if (m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable) [[likely]]
+            return m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable.get();
+        return promiseResolvingFunctionRejectWithInternalMicrotaskExecutableSlow();
     }
 
     NativeExecutable* promiseCapabilityExecutorExecutable()
@@ -663,6 +703,62 @@ public:
         if (m_promiseCapabilityExecutorExecutable) [[likely]]
             return m_promiseCapabilityExecutorExecutable.get();
         return promiseCapabilityExecutorExecutableSlow();
+    }
+
+    NativeExecutable* promiseAllFulfillFunctionExecutable()
+    {
+        if (m_promiseAllFulfillFunctionExecutable) [[likely]]
+            return m_promiseAllFulfillFunctionExecutable.get();
+        return promiseAllFulfillFunctionExecutableSlow();
+    }
+
+    NativeExecutable* promiseAllSlowFulfillFunctionExecutable()
+    {
+        if (m_promiseAllSlowFulfillFunctionExecutable) [[likely]]
+            return m_promiseAllSlowFulfillFunctionExecutable.get();
+        return promiseAllSlowFulfillFunctionExecutableSlow();
+    }
+
+    NativeExecutable* promiseAllSettledFulfillFunctionExecutable()
+    {
+        if (m_promiseAllSettledFulfillFunctionExecutable) [[likely]]
+            return m_promiseAllSettledFulfillFunctionExecutable.get();
+        return promiseAllSettledFulfillFunctionExecutableSlow();
+    }
+
+    NativeExecutable* promiseAllSettledRejectFunctionExecutable()
+    {
+        if (m_promiseAllSettledRejectFunctionExecutable) [[likely]]
+            return m_promiseAllSettledRejectFunctionExecutable.get();
+        return promiseAllSettledRejectFunctionExecutableSlow();
+    }
+
+    NativeExecutable* promiseAllSettledSlowFulfillFunctionExecutable()
+    {
+        if (m_promiseAllSettledSlowFulfillFunctionExecutable) [[likely]]
+            return m_promiseAllSettledSlowFulfillFunctionExecutable.get();
+        return promiseAllSettledSlowFulfillFunctionExecutableSlow();
+    }
+
+    NativeExecutable* promiseAllSettledSlowRejectFunctionExecutable()
+    {
+        if (m_promiseAllSettledSlowRejectFunctionExecutable) [[likely]]
+            return m_promiseAllSettledSlowRejectFunctionExecutable.get();
+        return promiseAllSettledSlowRejectFunctionExecutableSlow();
+    }
+
+    NativeExecutable* promiseAnyRejectFunctionExecutable()
+    {
+        if (m_promiseAnyRejectFunctionExecutable) [[likely]]
+            return m_promiseAnyRejectFunctionExecutable.get();
+        return promiseAnyRejectFunctionExecutableSlow();
+    }
+
+    NativeExecutable* promiseAnySlowRejectFunctionExecutable()
+    {
+        if (m_promiseAnySlowRejectFunctionExecutable) [[likely]]
+            return m_promiseAnySlowRejectFunctionExecutable.get();
+        return promiseAnySlowRejectFunctionExecutableSlow();
     }
 
     WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
@@ -867,6 +963,11 @@ public:
     void clearScratchBuffers();
     bool isScratchBuffer(void*);
 
+    void addEvacuatedStackSlice(EvacuatedStackSlice*);
+    void removeEvacuatedStackSlice(EvacuatedStackSlice*);
+    void addEvacuatedCalleeSaves(std::span<CPURegister>);
+    void removeEvacuatedCalleeSaves(std::span<CPURegister>);
+
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {
         ASSERT(Options::useExceptionFuzz());
@@ -876,6 +977,7 @@ public:
     }
 
     void gatherScratchBufferRoots(ConservativeRoots&);
+    void gatherEvacuatedStackRoots(ConservativeRoots&);
 
     static constexpr unsigned expectedMaxActiveSideStateCount = 4;
     void pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&&);
@@ -894,19 +996,11 @@ public:
 
     std::unique_ptr<Profiler::Database> m_perBytecodeProfiler;
     RefPtr<TypedArrayController> m_typedArrayController;
+    CrossTaskToken* crossTaskToken() const { return m_crossTaskToken.get(); }
+    JS_EXPORT_PRIVATE void setCrossTaskToken(RefPtr<CrossTaskToken>&&);
     std::unique_ptr<RegExpCache> m_regExpCache;
     BumpPointerAllocator m_regExpAllocator;
     ConcurrentJSLock m_regExpAllocatorLock;
-
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    static constexpr size_t patternContextBufferSize = 8192; // Space allocated to save nested parenthesis context
-    Lock m_regExpPatternContextLock;
-    UniqueArray<char> m_regExpPatternContexBuffer;
-    char* acquireRegExpPatternContexBuffer() WTF_ACQUIRES_LOCK(m_regExpPatternContextLock);
-    void releaseRegExpPatternContexBuffer() WTF_RELEASES_LOCK(m_regExpPatternContextLock);
-#else
-    static constexpr size_t patternContextBufferSize = 0; // Space allocated to save nested parenthesis context
-#endif
 
     const Ref<CompactTDZEnvironmentMap> m_compactVariableMap;
 
@@ -995,10 +1089,11 @@ public:
         RefPtr<VM> m_vm;
     };
 
+    MicrotaskQueue& defaultMicrotaskQueue() { return m_defaultMicrotaskQueue.get(); }
+
     DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
-    void queueMicrotask(QueuedTask&&);
     JS_EXPORT_PRIVATE void drainMicrotasks();
-    void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
+    void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTF::move(func); }
     void callOnEachMicrotaskTick()
     {
         if (m_onEachMicrotaskTick)
@@ -1027,6 +1122,7 @@ public:
     void logEvent(CodeBlock*, const char* summary, const Func& func);
 
     std::optional<RefPtr<Thread>> ownerThread() const { return m_apiLock->ownerThread(); }
+    std::optional<uint64_t> ownerThreadUID() const { return m_apiLock->ownerThreadUID(); }
 
     ALWAYS_INLINE VMTraps& traps() { return m_threadContext.traps(); }
     ALWAYS_INLINE const VMTraps& traps() const { return m_threadContext.traps(); }
@@ -1035,11 +1131,7 @@ public:
 
     CONCURRENT_SAFE void notifyNeedDebuggerBreak() { traps().fireTrap(VMTraps::NeedDebuggerBreak); }
     CONCURRENT_SAFE void notifyNeedShellTimeoutCheck() { traps().fireTrap(VMTraps::NeedShellTimeoutCheck); }
-    CONCURRENT_SAFE void notifyNeedTermination()
-    {
-        setHasTerminationRequest();
-        traps().fireTrap(VMTraps::NeedTermination);
-    }
+    CONCURRENT_SAFE void notifyNeedTermination() { traps().fireTrap(VMTraps::NeedTermination); }
     CONCURRENT_SAFE void notifyNeedWatchdogCheck() { traps().fireTrap(VMTraps::NeedWatchdogCheck); }
 
     CONCURRENT_SAFE void requestStop()
@@ -1108,14 +1200,8 @@ public:
     void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
     bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
 
-    bool isWasmStopWorldActive() { return m_isWasmStopWorldActive; }
-    void setIsWasmStopWorldActive(bool isWasmStopWorldActive) { m_isWasmStopWorldActive = isWasmStopWorldActive; }
-
-#if ENABLE(WEBASSEMBLY)
-    bool takeStepIntoWasmCall() { return m_stepIntoEvent.take(Wasm::StepIntoEvent::StepIntoCall); }
-    void setStepIntoWasmCall() { m_stepIntoEvent.set(Wasm::StepIntoEvent::StepIntoCall); }
-    bool takeStepIntoWasmThrow() { return m_stepIntoEvent.take(Wasm::StepIntoEvent::StepIntoThrow); }
-    void setStepIntoWasmThrow() { m_stepIntoEvent.set(Wasm::StepIntoEvent::StepIntoThrow); }
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    JS_EXPORT_PRIVATE Wasm::DebugState* debugState();
 #endif
 
 private:
@@ -1128,9 +1214,17 @@ private:
     NativeExecutable* promiseResolvingFunctionRejectExecutableSlow();
     NativeExecutable* promiseFirstResolvingFunctionResolveExecutableSlow();
     NativeExecutable* promiseFirstResolvingFunctionRejectExecutableSlow();
-    NativeExecutable* promiseResolvingFunctionResolveWithoutPromiseExecutableSlow();
-    NativeExecutable* promiseResolvingFunctionRejectWithoutPromiseExecutableSlow();
+    NativeExecutable* promiseResolvingFunctionResolveWithInternalMicrotaskExecutableSlow();
+    NativeExecutable* promiseResolvingFunctionRejectWithInternalMicrotaskExecutableSlow();
     NativeExecutable* promiseCapabilityExecutorExecutableSlow();
+    NativeExecutable* promiseAllFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllSlowFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledRejectFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledSlowFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledSlowRejectFunctionExecutableSlow();
+    NativeExecutable* promiseAnyRejectFunctionExecutableSlow();
+    NativeExecutable* promiseAnySlowRejectFunctionExecutableSlow();
 
     void updateStackLimits();
 
@@ -1212,6 +1306,9 @@ private:
     Lock m_scratchBufferLock;
     Vector<ScratchBuffer*> m_scratchBuffers;
     size_t m_sizeOfLastScratchBuffer { 0 };
+    Lock m_evacuatedStacksLock;
+    Vector<EvacuatedStackSlice*> m_evacuatedStackSlices;
+    Vector<std::span<CPURegister>> m_evacuatedCalleeSaves;
     Vector<std::unique_ptr<CheckpointOSRExitSideState>, expectedMaxActiveSideStateCount> m_checkpointSideState;
     InlineWatchpointSet m_primitiveGigacageEnabled { IsWatched };
     FunctionHasExecutedCache m_functionHasExecutedCache;
@@ -1240,16 +1337,15 @@ private:
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
     bool m_isDebuggerHookInjected { false };
-    bool m_isWasmStopWorldActive { false };
 
-#if ENABLE(WEBASSEMBLY)
-    Wasm::StepIntoEvent m_stepIntoEvent;
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    std::unique_ptr<Wasm::DebugState> m_debugState;
 #endif
 
     Lock m_loopHintExecutionCountLock;
     UncheckedKeyHashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
 
-    MicrotaskQueue m_defaultMicrotaskQueue;
+    const Ref<MicrotaskQueue> m_defaultMicrotaskQueue;
     const Ref<Waiter> m_syncWaiter;
 
     std::atomic<int64_t> m_numberOfActiveJITPlans { 0 };
@@ -1265,12 +1361,12 @@ private:
     void checkStaticAsserts(); // Not for calling.
 
     friend class Heap;
-    friend class CatchScope; // Friend for exception checking purpose only.
     friend class ExceptionScope; // Friend for exception checking purpose only.
+    friend class TopExceptionScope; // Friend for exception checking purpose only.
+    friend class ThrowScope; // Friend for exception checking purpose only.
     friend class JSDollarVMHelper;
     friend class LLIntOffsetsExtractor;
     friend class SuspendExceptionScope;
-    friend class ThrowScope; // Friend for exception checking purpose only.
     friend class VMTraps;
 };
 
@@ -1299,6 +1395,22 @@ extern "C" void SYSV_ABI sanitizeStackForVMImpl(VM*);
 
 JS_EXPORT_PRIVATE void sanitizeStackForVM(VM&);
 
+inline JSPIContext::JSPIContext(Purpose purpose, VM& vm, CallFrame* callFrame, JSPromise* resultPromise)
+    : purpose(purpose)
+    , previousContext(vm.topJSPIContext)
+    , limitFrame(callFrame)
+    , resultPromise(resultPromise)
+{
+    vm.topJSPIContext = this;
+}
+
+inline void JSPIContext::deactivate(VM& vm)
+{
+    vm.topJSPIContext = previousContext;
+    limitFrame = nullptr; // indicates that this has been deactivated
+}
+
+
 } // namespace JSC
 
 
@@ -1309,6 +1421,8 @@ namespace WTF {
 // lifetime threaded from JSC entrance. Until that, we explicitly suppress
 // Ref<VM> lifetime checking by using ThreadSafeRefCountedWithSuppressingSaferCPPChecking.
 template<> struct DefaultRefDerefTraits<JSC::VM> {
+    static constexpr bool isDefaultImplementation = false;
+
     static ALWAYS_INLINE JSC::VM* refIfNotNull(JSC::VM* ptr)
     {
         if (ptr) [[likely]]

@@ -53,6 +53,9 @@ extern "C" {
 #define CL_INTEL_SHARING_FORMAT_QUERY_VA_API_EXTENSION_NAME \
     "cl_intel_sharing_format_query_va_api"
 
+
+#define CL_INTEL_SHARING_FORMAT_QUERY_VA_API_EXTENSION_VERSION CL_MAKE_VERSION(0, 0, 0)
+
 /* when cl_intel_va_api_media_sharing is supported */
 
 typedef cl_int CL_API_CALL
@@ -88,6 +91,9 @@ clGetSupportedVA_APIMediaSurfaceFormatsINTEL(
 #define cl_intel_va_api_media_sharing 1
 #define CL_INTEL_VA_API_MEDIA_SHARING_EXTENSION_NAME \
     "cl_intel_va_api_media_sharing"
+
+
+#define CL_INTEL_VA_API_MEDIA_SHARING_EXTENSION_VERSION CL_MAKE_VERSION(0, 0, 0)
 
 typedef cl_uint             cl_va_api_device_source_intel;
 typedef cl_uint             cl_va_api_device_set_intel;

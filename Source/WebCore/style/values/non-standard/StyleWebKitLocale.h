@@ -36,10 +36,10 @@ namespace Style {
 struct WebkitLocale {
     WebkitLocale(CSS::Keyword::Auto) : m_platform { nullAtom() } { }
     WebkitLocale(const AtomString& value) : m_platform { value } { }
-    WebkitLocale(AtomString&& value) : m_platform { WTFMove(value) } { }
+    WebkitLocale(AtomString&& value) : m_platform { WTF::move(value) } { }
 
     const AtomString& platform() const LIFETIME_BOUND { return m_platform; }
-    AtomString takePlatform() { return WTFMove(m_platform); }
+    AtomString takePlatform() { return WTF::move(m_platform); }
 
     bool isAuto() const { return m_platform.isNull(); }
 

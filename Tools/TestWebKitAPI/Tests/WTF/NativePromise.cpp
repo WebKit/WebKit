@@ -107,7 +107,7 @@ public:
         : m_producer(producer)
         , m_iterations(iterations)
         , m_workQueue(workQueue)
-        , m_result(WTFMove(result))
+        , m_result(WTF::move(result))
     {
     }
 
@@ -159,7 +159,7 @@ static auto doFail()
 
 static auto doFailAndReject(Logger::LogSiteIdentifier location = Logger::LogSiteIdentifier(__builtin_FUNCTION(), 0))
 {
-    return [location = WTFMove(location)] {
+    return [location = WTF::move(location)] {
         EXPECT_TRUE(false);
         return TestPromise::createAndReject(0.0, location);
     };
@@ -635,7 +635,7 @@ static Ref<GenericPromise> myMethodReturningThenCommandWithPromise()
     // You would normally do some work here.
     return GenericPromise::createAndResolve()->whenSettled(RunLoop::mainSingleton(),
         [](GenericPromise::Result result) {
-            return GenericPromise::createAndSettle(WTFMove(result));
+            return GenericPromise::createAndSettle(WTF::move(result));
         });
 }
 
@@ -680,7 +680,7 @@ TEST(NativePromise, InvokeAsyncWithExpected)
             return Expected<int, long> { 1 };
         };
 
-        invokeAsync(runLoop, WTFMove(asyncMethodWithExpected))->whenSettled(runLoop, [&](auto&& result) {
+        invokeAsync(runLoop, WTF::move(asyncMethodWithExpected))->whenSettled(runLoop, [&](auto&& result) {
             EXPECT_TRUE(!!result);
             EXPECT_EQ(result.value(), 1L);
             done = true;
@@ -709,7 +709,7 @@ static Ref<GenericPromise> myMethodReturningProducer()
     return GenericPromise::createAndResolve()->whenSettled(RunLoop::mainSingleton(),
         [](GenericPromise::Result result) {
             GenericPromise::Producer producer;
-            producer.settle(WTFMove(result));
+            producer.settle(WTF::move(result));
             return producer;
         });
 }
@@ -1103,7 +1103,7 @@ TEST(NativePromise, WTFString)
             EXPECT_TRUE(val.has_value());
             EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
             EXPECT_EQ(String("hello"_s), val.value());
-            return MyPromise::createAndSettle(WTFMove(val));
+            return MyPromise::createAndSettle(WTF::move(val));
         })->whenSettled(queue2,
             [](MyPromise::Result val) {
                 EXPECT_TRUE(val.has_value());
@@ -1246,7 +1246,7 @@ TEST(NativePromise, ExpectedWithString)
         });
 
     Expected<String, String> error = Unexpected<String>("error"_s);
-    MyPromise::createAndResolve(WTFMove(error))->whenSettled(queue,
+    MyPromise::createAndResolve(WTF::move(error))->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_FALSE(val.value().has_value());
@@ -1382,8 +1382,8 @@ TEST(NativePromise, ChainTo)
             doFail());
 
         // As promise1 is already resolved, it will automatically resolve/reject producer1 and producer2 with its resolved/reject value.
-        promise->chainTo(WTFMove(producer1));
-        promise->chainTo(WTFMove(producer2));
+        promise->chainTo(WTF::move(producer1));
+        promise->chainTo(WTF::move(producer2));
     });
 
     runInCurrentRunLoop([&, producer1 = VectorPromise::Producer(), producer2 = VectorPromise::Producer()](auto& runLoop) mutable {
@@ -1392,8 +1392,8 @@ TEST(NativePromise, ChainTo)
             doFail());
 
         // When producer1 is resolved, it will automatically settle producer2 with the resolved/reject value.
-        producer1->chainTo(WTFMove(producer2));
-        VectorPromise::createAndResolve(resultVector)->chainTo(WTFMove(producer1));
+        producer1->chainTo(WTF::move(producer2));
+        VectorPromise::createAndResolve(resultVector)->chainTo(WTF::move(producer1));
     });
 
     runInCurrentRunLoop([&, producer1 = VectorPromise::Producer()](auto& runLoop) mutable {
@@ -1403,7 +1403,7 @@ TEST(NativePromise, ChainTo)
             doFail());
 
         // As promise1 is already resolved, it will automatically resolve/reject producer1 with its resolved/reject value.
-        promise->chainTo(WTFMove(producer1));
+        promise->chainTo(WTF::move(producer1));
     });
 }
 
@@ -1420,8 +1420,8 @@ TEST(NativePromise, ChainToNonMovable)
             doFail());
 
         // As promise1 is already resolved, it will automatically resolve/reject producer1 and producer2 with its resolved/reject value.
-        promise->chainTo(WTFMove(producer1));
-        promise->chainTo(WTFMove(producer2));
+        promise->chainTo(WTF::move(producer1));
+        promise->chainTo(WTF::move(producer2));
     });
 
     runInCurrentRunLoop([&, producer1 = VectorPromise::Producer(), producer2 = VectorPromise::Producer()](auto& runLoop) mutable {
@@ -1430,8 +1430,8 @@ TEST(NativePromise, ChainToNonMovable)
             doFail());
 
         // When producer1 is resolved, it will automatically settle producer2 with the resolved/reject value.
-        producer1->chainTo(WTFMove(producer2));
-        VectorPromise::createAndResolve(makeUnique<Vector<int>>(5, 42))->chainTo(WTFMove(producer1));
+        producer1->chainTo(WTF::move(producer2));
+        VectorPromise::createAndResolve(makeUnique<Vector<int>>(5, 42))->chainTo(WTF::move(producer1));
     });
 
     runInCurrentRunLoop([&, producer1 = VectorPromise::Producer()](auto& runLoop) mutable {
@@ -1441,7 +1441,7 @@ TEST(NativePromise, ChainToNonMovable)
             doFail());
 
         // As promise1 is already resolved, it will automatically resolve/reject producer1 with its resolved/reject value.
-        promise->chainTo(WTFMove(producer1));
+        promise->chainTo(WTF::move(producer1));
     });
 }
 
@@ -1552,7 +1552,7 @@ TEST(NativePromise, MismatchChainTo)
         producer1->whenSettled(runLoop, [](auto&& result) {
             EXPECT_TRUE(!!result);
         });
-        nonExclusivePromise->chainTo(WTFMove(producer1));
+        nonExclusivePromise->chainTo(WTF::move(producer1));
 
         // Chaining promise, not yet resolved
         MyNonExclusivePromise::Producer producer2;
@@ -1562,7 +1562,7 @@ TEST(NativePromise, MismatchChainTo)
         promise3->whenSettled(runLoop, [](auto&& result) {
             EXPECT_TRUE(!!result);
         });
-        producer2->chainTo(WTFMove(producer3));
+        producer2->chainTo(WTF::move(producer3));
         EXPECT_FALSE(promise2->isSettled());
         EXPECT_FALSE(promise3->isSettled());
         producer2->resolve();
@@ -1576,7 +1576,7 @@ TEST(NativePromise, MismatchChainTo)
         auto intPromise1 = IntPromise::createAndResolve(1);
         LongPromise::Producer longPromiseProducer1;
         auto longPromise1 = longPromiseProducer1.promise();
-        intPromise1->chainTo(WTFMove(longPromiseProducer1));
+        intPromise1->chainTo(WTF::move(longPromiseProducer1));
         longPromise1->whenSettled(runLoop, [](auto&& result) {
             EXPECT_TRUE(!!result);
             EXPECT_EQ(*result, long(1));
@@ -1587,7 +1587,7 @@ TEST(NativePromise, MismatchChainTo)
         auto intPromise2 = IntPromiseNonExcl::createAndResolve(1);
         LongPromise::Producer longPromiseProducer2;
         auto longPromise2 = longPromiseProducer2.promise();
-        intPromise2->chainTo(WTFMove(longPromiseProducer2));
+        intPromise2->chainTo(WTF::move(longPromiseProducer2));
         longPromise2->whenSettled(runLoop, [](auto&& result) {
             using NonRefQualifiedType = typename std::remove_reference<decltype(result)>::type;
             static_assert(!std::is_const<NonRefQualifiedType>::value, "result is const qualified.");
@@ -1612,7 +1612,7 @@ TEST(NativePromise, MismatchChainTo)
             EXPECT_TRUE(!!result);
             EXPECT_EQ(*result, long(1));
             return IntPromise::createAndResolve(2);
-        })->chainTo(WTFMove(longPromiseProducer3));
+        })->chainTo(WTF::move(longPromiseProducer3));
 
         auto intPromise4 = IntPromise::createAndResolve(1);
         LongPromise::Producer longPromiseProducer4;
@@ -1621,7 +1621,7 @@ TEST(NativePromise, MismatchChainTo)
             EXPECT_TRUE(!!result);
             EXPECT_EQ(*result, long(1));
             return IntPromise::createAndReject(2);
-        })->chainTo(WTFMove(longPromiseProducer4));
+        })->chainTo(WTF::move(longPromiseProducer4));
         longPromise4->whenSettled(runLoop, [&](auto&& result) mutable {
             EXPECT_TRUE(!result);
             EXPECT_EQ(result.error(), long(2));
@@ -1639,7 +1639,7 @@ TEST(NativePromise, MismatchChainToVoidPromise)
         auto intPromise1 = IntPromise::createAndResolve(1);
         LongPromise::Producer longPromiseProducer1;
         auto longPromise1 = longPromiseProducer1.promise();
-        intPromise1->chainTo(WTFMove(longPromiseProducer1));
+        intPromise1->chainTo(WTF::move(longPromiseProducer1));
         longPromise1->whenSettled(runLoop, [](auto&& result) {
             EXPECT_TRUE(!!result);
             EXPECT_EQ(*result, long(1));
@@ -1650,7 +1650,7 @@ TEST(NativePromise, MismatchChainToVoidPromise)
         genericPromiseProducer1->whenSettled(runLoop, [](auto&& result) {
             EXPECT_TRUE(!!result);
         });
-        intPromise2->chainTo(WTFMove(genericPromiseProducer1));
+        intPromise2->chainTo(WTF::move(genericPromiseProducer1));
 
         auto intPromise3 = IntPromise::createAndReject(1);
         GenericPromise::Producer genericPromiseProducer2;
@@ -1658,7 +1658,7 @@ TEST(NativePromise, MismatchChainToVoidPromise)
             EXPECT_TRUE(!result);
             done = true;
         });
-        intPromise3->chainTo(WTFMove(genericPromiseProducer2));
+        intPromise3->chainTo(WTF::move(genericPromiseProducer2));
     });
 }
 
@@ -1683,7 +1683,7 @@ TEST(NativePromise, DisconnectNotOwnedInstance)
     GenericPromise::Producer producer;
     auto request = NativePromiseRequest::create();
     WeakPtr weakRequest { request.get() };
-    producer->whenSettled(RunLoop::mainSingleton(), [request = WTFMove(request)] (auto&& result) mutable {
+    producer->whenSettled(RunLoop::mainSingleton(), [request = WTF::move(request)] (auto&& result) mutable {
         request->complete();
         EXPECT_TRUE(false);
     })->track(*weakRequest);
@@ -1851,7 +1851,7 @@ private:
         PhotoPromise::Producer producer;
         Ref<PhotoPromise> promise = producer;
 
-        AVCaptureMethod::captureImage(makeMoveableFunction([producer = WTFMove(producer)] (std::vector<uint8_t>&& image, std::string&& mimeType) {
+        AVCaptureMethod::captureImage(makeMoveableFunction([producer = WTF::move(producer)] (std::vector<uint8_t>&& image, std::string&& mimeType) {
             // Note that you can resolve a NativePromise on any threads. Unlike with a CompletionHandler it is not the responsibility of the producer to resolve the promise
             // on a particular thread.
             // The consumer specifies the thread on which it wants to be called back.

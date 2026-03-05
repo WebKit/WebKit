@@ -21,8 +21,6 @@
 #include "api/audio/builtin_audio_processing_builder.h"
 #include "api/create_modular_peer_connection_factory.h"
 #include "api/enable_media_with_defaults.h"
-#include "api/environment/environment_factory.h"
-#include "api/field_trials_view.h"
 #include "api/jsep.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
@@ -38,9 +36,18 @@
 #include "pc/test/fake_audio_capture_module.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_network.h"
+#include "rtc_base/firewall_socket_server.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/socket_server.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/virtual_socket_server.h"
+#include "system_wrappers/include/metrics.h"
+#include "test/create_test_environment.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
+
+using testing::NotNull;
 
 namespace webrtc {
 
@@ -137,8 +144,11 @@ TimeDelta TaskQueueMetronome::TickPeriod() const {
 void PeerConnectionIntegrationWrapper::StartWatchingDelayStats() {
   // Get the baseline numbers for audio_packets and audio_delay.
   auto received_stats = NewGetStats();
-  auto rtp_stats =
-      received_stats->GetStatsOfType<RTCInboundRtpStreamStats>()[0];
+  ASSERT_THAT(received_stats, NotNull());
+  auto inbound_stats =
+      received_stats->GetStatsOfType<RTCInboundRtpStreamStats>();
+  ASSERT_FALSE(inbound_stats.empty());
+  auto rtp_stats = inbound_stats[0];
   ASSERT_TRUE(rtp_stats->relative_packet_arrival_delay.has_value());
   ASSERT_TRUE(rtp_stats->packets_received.has_value());
   rtp_stats_id_ = rtp_stats->id();
@@ -223,7 +233,6 @@ bool PeerConnectionIntegrationWrapper::Init(
     SocketServer* socket_server,
     Thread* network_thread,
     Thread* worker_thread,
-    std::unique_ptr<FieldTrialsView> field_trials,
     std::unique_ptr<FakeRtcEventLogFactory> event_log_factory,
     bool reset_encoder_factory,
     bool reset_decoder_factory,
@@ -250,7 +259,7 @@ bool PeerConnectionIntegrationWrapper::Init(
   pc_factory_dependencies.signaling_thread = signaling_thread;
   pc_factory_dependencies.socket_factory = socket_server;
   pc_factory_dependencies.network_manager = std::move(network_manager);
-  pc_factory_dependencies.env = CreateEnvironment(std::move(field_trials));
+  pc_factory_dependencies.env = env_;
   pc_factory_dependencies.decode_metronome =
       std::make_unique<TaskQueueMetronome>(TimeDelta::Millis(8));
 
@@ -294,6 +303,68 @@ bool PeerConnectionIntegrationWrapper::Init(
 
   peer_connection_ = CreatePeerConnection(config, std::move(dependencies));
   return peer_connection_.get() != nullptr;
+}
+
+// Utility class for tests that run multiple operations that cause excessive
+// logging at the INFO level or below. Use to raise the logging level to e.g.
+// LS_WARNING or above. Once an instance of ScopedSetLoggingLevel goes out of
+// scope, the logging level is restored to what it was previously set to.
+class PeerConnectionIntegrationBaseTest::ScopedSetLoggingLevel {
+ public:
+  explicit ScopedSetLoggingLevel(LoggingSeverity new_severity) {
+    LogMessage::LogToDebug(new_severity);
+  }
+  ~ScopedSetLoggingLevel() { LogMessage::LogToDebug(previous_severity_); }
+
+ private:
+  const LoggingSeverity previous_severity_ = LogMessage::GetLogToDebug();
+};
+
+PeerConnectionIntegrationBaseTest::PeerConnectionIntegrationBaseTest(
+    SdpSemantics sdp_semantics)
+    : sdp_semantics_(sdp_semantics),
+      env_(CreateTestEnvironment()),
+      ss_(new VirtualSocketServer()),
+      fss_(new FirewallSocketServer(ss_.get())),
+      network_thread_(new Thread(fss_.get())),
+      worker_thread_(Thread::Create()) {
+  network_thread_->SetName("PCNetworkThread", this);
+  worker_thread_->SetName("PCWorkerThread", this);
+  RTC_CHECK(network_thread_->Start());
+  RTC_CHECK(worker_thread_->Start());
+  metrics::Reset();
+}
+
+PeerConnectionIntegrationBaseTest::~PeerConnectionIntegrationBaseTest() {
+  // The PeerConnections should be deleted before the TurnCustomizers.
+  // A TurnPort is created with a raw pointer to a TurnCustomizer. The
+  // TurnPort has the same lifetime as the PeerConnection, so it's expected
+  // that the TurnCustomizer outlives the life of the PeerConnection or else
+  // when Send() is called it will hit a seg fault.
+  if (caller_) {
+    caller_->set_signaling_message_receiver(nullptr);
+    caller_->pc()->Close();
+    caller_.reset();
+  }
+  if (callee_) {
+    callee_->set_signaling_message_receiver(nullptr);
+    callee_->pc()->Close();
+    callee_.reset();
+  }
+
+  // If turn servers were created for the test they need to be destroyed on
+  // the network thread.
+  SendTask(network_thread(), [this] {
+    turn_servers_.clear();
+    turn_customizers_.clear();
+  });
+}
+
+void PeerConnectionIntegrationBaseTest::OverrideLoggingLevelForTest(
+    LoggingSeverity new_severity) {
+  RTC_DCHECK(!overridden_logging_level_);
+  overridden_logging_level_ =
+      std::make_unique<ScopedSetLoggingLevel>(new_severity);
 }
 
 }  // namespace webrtc

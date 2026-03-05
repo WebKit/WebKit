@@ -58,7 +58,7 @@ void RemoteRenderPassEncoderProxy::setPipeline(const WebCore::WebGPU::RenderPipe
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer& buffer, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderPassEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer& buffer, WebCore::WebGPU::IndexFormat indexFormat, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
 
@@ -66,7 +66,7 @@ void RemoteRenderPassEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer&
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer* buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderPassEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer* buffer, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     if (!buffer) {
         auto sendResult = send(Messages::RemoteRenderPassEncoder::UnsetVertexBuffer(slot, offset, size));
@@ -80,17 +80,17 @@ void RemoteRenderPassEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
-    std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance)
+void RemoteRenderPassEncoderProxy::draw(WebCore::WebGPU::Size32 vertexCount, WebCore::WebGPU::Size32 instanceCount,
+    WebCore::WebGPU::Size32 firstVertex, WebCore::WebGPU::Size32 firstInstance)
 {
     auto sendResult = send(Messages::RemoteRenderPassEncoder::Draw(vertexCount, instanceCount, firstVertex, firstInstance));
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::drawIndexed(WebCore::WebGPU::Size32 indexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
-    std::optional<WebCore::WebGPU::Size32> firstIndex,
-    std::optional<WebCore::WebGPU::SignedOffset32> baseVertex,
-    std::optional<WebCore::WebGPU::Size32> firstInstance)
+void RemoteRenderPassEncoderProxy::drawIndexed(WebCore::WebGPU::Size32 indexCount, WebCore::WebGPU::Size32 instanceCount,
+    WebCore::WebGPU::Size32 firstIndex,
+    WebCore::WebGPU::SignedOffset32 baseVertex,
+    WebCore::WebGPU::Size32 firstInstance)
 {
     auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance));
     UNUSED_VARIABLE(sendResult);
@@ -138,7 +138,7 @@ void RemoteRenderPassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, 
 
 void RemoteRenderPassEncoderProxy::pushDebugGroup(String&& groupLabel)
 {
-    auto sendResult = send(Messages::RemoteRenderPassEncoder::PushDebugGroup(WTFMove(groupLabel)));
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::PushDebugGroup(WTF::move(groupLabel)));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -150,7 +150,7 @@ void RemoteRenderPassEncoderProxy::popDebugGroup()
 
 void RemoteRenderPassEncoderProxy::insertDebugMarker(String&& markerLabel)
 {
-    auto sendResult = send(Messages::RemoteRenderPassEncoder::InsertDebugMarker(WTFMove(markerLabel)));
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::InsertDebugMarker(WTF::move(markerLabel)));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -204,7 +204,7 @@ void RemoteRenderPassEncoderProxy::executeBundles(Vector<Ref<WebCore::WebGPU::Re
         return m_convertToBackingContext->convertToBacking(renderBundle);
     });
 
-    auto sendResult = send(Messages::RemoteRenderPassEncoder::ExecuteBundles(WTFMove(convertedRenderBundles)));
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::ExecuteBundles(WTF::move(convertedRenderBundles)));
     UNUSED_VARIABLE(sendResult);
 }
 

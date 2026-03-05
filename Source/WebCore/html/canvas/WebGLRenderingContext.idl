@@ -47,6 +47,8 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     JSCustomMarkFunction,
     DoNotCheckConstants,
     ExportMacro=WEBCORE_EXPORT,
+    ReportExtraMemoryCost,
+    ReportExternalMemoryCost,
     Exposed=(Window,Worker),
     CallTracer=InspectorCanvasCallTracer,
 ] interface WebGLRenderingContext {

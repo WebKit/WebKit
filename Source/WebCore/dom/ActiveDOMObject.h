@@ -103,15 +103,15 @@ public:
         return adoptRef(*new PendingActivity<T>(thisObject));
     }
 
-    bool isContextStopped() const;
-    bool isAllowedToRunScript() const;
+    bool NODELETE isContextStopped() const;
+    bool NODELETE isAllowedToRunScript() const;
 
     template<typename T, typename Task>
     static void queueTaskKeepingObjectAlive(T& object, TaskSource source, Task&& task)
     {
         // Calls the template member function outside of lambda init-captures to work around a MSVC bug.
         auto activity = object.ActiveDOMObject::makePendingActivity(object);
-        object.queueTaskInEventLoop(source, [protectedObject = Ref { object }, activity = WTFMove(activity), task = WTFMove(task)]() mutable {
+        object.queueTaskInEventLoop(source, [protectedObject = Ref { object }, activity = WTF::move(activity), task = WTF::move(task)]() mutable {
             task(protectedObject.get());
         });
     }
@@ -119,12 +119,12 @@ public:
     template<typename T, typename Task>
     static void queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, TaskCancellationGroup& cancellationGroup, Task&& task)
     {
-        CancellableTask cancellableTask(cancellationGroup, [task = WTFMove(task), protectedObject = Ref { object }]() mutable {
+        CancellableTask cancellableTask(cancellationGroup, [task = WTF::move(task), protectedObject = Ref { object }]() mutable {
             task(protectedObject.get());
         });
         // Calls the template member function outside of lambda init-captures to work around a MSVC bug.
         auto activity = object.ActiveDOMObject::makePendingActivity(object);
-        object.queueTaskInEventLoop(source, [activity = WTFMove(activity), cancellableTask = WTFMove(cancellableTask)]() mutable {
+        object.queueTaskInEventLoop(source, [activity = WTF::move(activity), cancellableTask = WTF::move(cancellableTask)]() mutable {
             cancellableTask();
         });
     }
@@ -132,13 +132,13 @@ public:
     template<typename EventTargetType>
     static void queueTaskToDispatchEvent(EventTargetType& target, TaskSource source, Ref<Event>&& event)
     {
-        target.queueTaskToDispatchEventInternal(target, source, WTFMove(event));
+        target.queueTaskToDispatchEventInternal(target, source, WTF::move(event));
     }
 
     template<typename EventTargetType>
     static void queueCancellableTaskToDispatchEvent(EventTargetType& target, TaskSource source, TaskCancellationGroup& cancellationGroup, Ref<Event>&& event)
     {
-        target.queueCancellableTaskToDispatchEventInternal(target, source, cancellationGroup, WTFMove(event));
+        target.queueCancellableTaskToDispatchEventInternal(target, source, cancellationGroup, WTF::move(event));
     }
 
 protected:

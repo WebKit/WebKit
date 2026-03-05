@@ -90,32 +90,32 @@ RefPtr<CryptoKey> CryptoKey::create(CryptoKey::Data&& data)
     switch (data.keyClass) {
     case CryptoKeyClass::AES: {
         if (data.jwk)
-            return CryptoKeyAES::importJwk(data.algorithmIdentifier, WTFMove(*data.jwk), data.extractable, data.usages, [](auto, auto) { return true; });
+            return CryptoKeyAES::importJwk(data.algorithmIdentifier, WTF::move(*data.jwk), data.extractable, data.usages, [](auto, auto) { return true; });
         break;
     }
     case CryptoKeyClass::EC: {
         if (data.namedCurveString && data.jwk)
-            return CryptoKeyEC::importJwk(data.algorithmIdentifier, *data.namedCurveString, WTFMove(*data.jwk), data.extractable, data.usages);
+            return CryptoKeyEC::importJwk(data.algorithmIdentifier, *data.namedCurveString, WTF::move(*data.jwk), data.extractable, data.usages);
         break;
     }
     case CryptoKeyClass::HMAC:
         if (data.hashAlgorithmIdentifier && data.lengthBits && data.jwk)
-            return CryptoKeyHMAC::importJwk(*data.lengthBits, *data.hashAlgorithmIdentifier, WTFMove(*data.jwk), data.extractable, data.usages, [](auto, auto) { return true; });
+            return CryptoKeyHMAC::importJwk(*data.lengthBits, *data.hashAlgorithmIdentifier, WTF::move(*data.jwk), data.extractable, data.usages, [](auto, auto) { return true; });
         break;
     case CryptoKeyClass::OKP:
         if (data.namedCurveString && data.key && data.type) {
             if (auto namedCurve = CryptoKeyOKP::namedCurveFromString(*data.namedCurveString))
-                return CryptoKeyOKP::create(data.algorithmIdentifier, *namedCurve, *data.type, WTFMove(*data.key), data.extractable, data.usages);
+                return CryptoKeyOKP::create(data.algorithmIdentifier, *namedCurve, *data.type, WTF::move(*data.key), data.extractable, data.usages);
         }
         break;
     case CryptoKeyClass::RSA: {
         if (data.jwk)
-            return CryptoKeyRSA::importJwk(data.algorithmIdentifier, data.hashAlgorithmIdentifier, WTFMove(*data.jwk), data.extractable, data.usages);
+            return CryptoKeyRSA::importJwk(data.algorithmIdentifier, data.hashAlgorithmIdentifier, WTF::move(*data.jwk), data.extractable, data.usages);
         break;
     }
     case CryptoKeyClass::Raw:
         if (data.key)
-            return CryptoKeyRaw::create(data.algorithmIdentifier, WTFMove(*data.key), data.usages);
+            return CryptoKeyRaw::create(data.algorithmIdentifier, WTF::move(*data.key), data.usages);
         break;
     }
 

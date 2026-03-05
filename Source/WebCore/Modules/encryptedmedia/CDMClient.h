@@ -30,8 +30,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include <WebCore/CDMTypesForward.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
 

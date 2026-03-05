@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@ from ews.views.index import Index
 from ews.views.results import Results
 from ews.views.status import Status
 from ews.views.statusbubble import StatusBubble
-from ews.views.retrypatch import RetryPatch
 from ews.views.submittoews import SubmitToEWS
 
 app_name = 'ews'
@@ -35,8 +34,6 @@ urlpatterns = [
     url(r'^$', Index.as_view(), name='index'),
     # ex: /results/
     url(r'^results/$', Results.as_view(), name='results'),
-    # ex: /retry/
-    url(r'^retry/$', RetryPatch.as_view(), name='retrypatch'),
     # ex: /status/5
     url(r'^status/(?P<change_id>[a-fA-F0-9]+)/$', Status.as_view(), name='status'),
     # ex: /status-bubble/5 , /status-bubble/ac980a0f

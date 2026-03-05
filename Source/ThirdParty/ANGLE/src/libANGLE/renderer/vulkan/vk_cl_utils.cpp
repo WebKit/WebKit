@@ -106,8 +106,12 @@ VkImageViewType GetImageViewType(cl::MemObjectType memObjectType)
 
 VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags)
 {
-    // TODO: http://anglebug.com/42267018
     VkMemoryPropertyFlags propFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+
+    if (memFlags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR))
+    {
+        propFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    }
 
     if (memFlags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {
@@ -117,13 +121,24 @@ VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags)
     return propFlags;
 }
 
-VkBufferUsageFlags GetBufferUsageFlags(cl::MemFlags memFlags)
+VkBufferUsageFlags GetBufferUsageFlags(cl::MemFlags memFlags, bool physicalAddressing)
 {
     // The buffer usage flags don't particularly affect the buffer in any known drivers, use all the
     // bits that ANGLE needs.
-    return VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-           VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
-           VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
+    VkBufferUsageFlags usageFlags =
+        VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+        VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
+
+    if (physicalAddressing)
+    {
+        // VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT specifies that the buffer can be used to
+        // retrieve a buffer device address via vkGetBufferDeviceAddress and use that address to
+        // access the buffer's memory from a shader.
+        usageFlags |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+    }
+
+    return usageFlags;
 }
 
 }  // namespace cl_vk

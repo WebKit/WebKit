@@ -35,8 +35,8 @@ var handler = {
 
 var proxy = new Proxy(TypedArray.prototype, handler);
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(1);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg(1));
 
   Object.setPrototypeOf(sample, proxy);
 
@@ -60,4 +60,4 @@ testWithTypedArrayConstructors(function(TA) {
     true,
     'Reflect.has(sample, "foo") must return true'
   );
-});
+}, null, ["passthrough"]);

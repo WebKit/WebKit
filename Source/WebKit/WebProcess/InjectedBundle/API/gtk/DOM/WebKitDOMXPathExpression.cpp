@@ -67,7 +67,9 @@ WebKitDOMXPathExpression* wrapXPathExpression(WebCore::XPathExpression* coreObje
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMXPathExpression, webkit_dom_xpath_expression, WEBKIT_DOM_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkit_dom_xpath_expression_finalize(GObject* object)
 {

@@ -59,8 +59,10 @@ class FakeDtlsTransport : public DtlsTransportInternal {
                   const ReceivedIpPacket& packet) {
           OnIceTransportReadPacket(transport, packet);
         });
-    ice_transport_->SignalNetworkRouteChanged.connect(
-        this, &FakeDtlsTransport::OnNetworkRouteChanged);
+    ice_transport_->SubscribeNetworkRouteChanged(
+        this, [this](std::optional<NetworkRoute> network_route) {
+          OnNetworkRouteChanged(network_route);
+        });
   }
 
   explicit FakeDtlsTransport(std::unique_ptr<FakeIceTransport> ice)
@@ -74,8 +76,10 @@ class FakeDtlsTransport : public DtlsTransportInternal {
                   const ReceivedIpPacket& packet) {
           OnIceTransportReadPacket(transport, packet);
         });
-    ice_transport_->SignalNetworkRouteChanged.connect(
-        this, &FakeDtlsTransport::OnNetworkRouteChanged);
+    ice_transport_->SubscribeNetworkRouteChanged(
+        this, [this](std::optional<NetworkRoute> network_route) {
+          OnNetworkRouteChanged(network_route);
+        });
   }
 
   // If this constructor is called, a new fake ICE transport will be created,
@@ -294,7 +298,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
       return;
     }
     receiving_ = receiving;
-    SignalReceivingState(this);
+    NotifyReceivingState(this);
   }
 
   void set_writable(bool writable) {
@@ -303,13 +307,13 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     }
     writable_ = writable;
     if (writable_) {
-      SignalReadyToSend(this);
+      NotifyReadyToSend(this);
     }
-    SignalWritableState(this);
+    NotifyWritableState(this);
   }
 
   void OnNetworkRouteChanged(std::optional<NetworkRoute> network_route) {
-    SignalNetworkRouteChanged(network_route);
+    NotifyNetworkRouteChanged(network_route);
   }
 
   FakeIceTransport* ice_transport_;
@@ -333,6 +337,5 @@ class FakeDtlsTransport : public DtlsTransportInternal {
 };
 
 }  //  namespace webrtc
-
 
 #endif  // P2P_DTLS_FAKE_DTLS_TRANSPORT_H_

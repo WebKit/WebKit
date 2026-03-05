@@ -1,7 +1,5 @@
 
 
-Harness Error (TIMEOUT), message = null
-
 PASS Test worker MediaSource termination after at least 0 main thread setTimeouts, starting counting before setting srcObject
 PASS Test worker MediaSource termination after at least 1 main thread setTimeouts, starting counting before setting srcObject
 PASS Test worker MediaSource termination after at least 2 main thread setTimeouts, starting counting before setting srcObject
@@ -22,14 +20,14 @@ PASS Test worker MediaSource termination after at least 6 main thread setTimeout
 PASS Test worker MediaSource termination after at least 7 main thread setTimeouts, starting counting after setting srcObject
 PASS Test worker MediaSource termination after at least 8 main thread setTimeouts, starting counting after setting srcObject
 PASS Test worker MediaSource termination after at least 9 main thread setTimeouts, starting counting after setting srcObject
-TIMEOUT Test worker MediaSource termination after at least 0 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 1 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 2 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 3 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 4 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 5 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 6 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 7 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 8 main thread setTimeouts, starting counting after first ended event Test timed out
-TIMEOUT Test worker MediaSource termination after at least 9 main thread setTimeouts, starting counting after first ended event Test timed out
+PASS Test worker MediaSource termination after at least 0 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 1 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 2 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 3 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 4 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 5 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 6 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 7 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 8 main thread setTimeouts, starting counting after first ended event
+PASS Test worker MediaSource termination after at least 9 main thread setTimeouts, starting counting after first ended event
 

@@ -38,7 +38,7 @@ template<typename> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
 
 class StorageManager : public RefCounted<StorageManager> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StorageManager);
+    WTF_MAKE_TZONE_ALLOCATED(StorageManager);
 public:
     static Ref<StorageManager> create(NavigatorBase&);
     ~StorageManager();

@@ -91,7 +91,7 @@ public:
         : m_value(encodeFunc(ptr))
     { }
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && CPU(X86_64)
     template<typename Out, typename... In>
     constexpr CodePtr(Out(SYSV_ABI *ptr)(In...))
         : m_value(encodeFunc(ptr))

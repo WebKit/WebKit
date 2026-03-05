@@ -49,6 +49,7 @@
 #import "WKWebViewForTestingImmediateActions.h"
 #import <WebCore/Color.h>
 #import <WebCore/ColorSerialization.h>
+#import <WebCore/IntPoint.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -269,7 +270,12 @@ UNIFIED_PDF_TEST(TabKeyOnPDFTextFieldShouldNotCrash)
     testTabKeysAtPoint(NSMakePoint(220, 300));
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 260000
+UNIFIED_PDF_TEST(DISABLED_PrintSize)
+#else
 UNIFIED_PDF_TEST(PrintSize)
+#endif
 {
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF();
     RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
@@ -364,6 +370,46 @@ UNIFIED_PDF_TEST(TextAnnotationHoverEffect)
     [webView waitForNextPresentationUpdate];
     auto colorsAfterHover = [webView sampleColors];
     EXPECT_EQ(colorsBeforeHover, colorsAfterHover);
+}
+
+UNIFIED_PDF_TEST(TextAnnotationBackgroundColorDoesNotAdaptToColorScheme)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"textInput" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+    [[webView window] makeFirstResponder:webView.get()];
+    [[webView window] makeKeyAndOrderFront:nil];
+    [[webView window] orderFrontRegardless];
+
+    auto evaluateAnnotationBackgroundColor = [&webView] {
+        static constexpr WebCore::IntPoint annotationPoint { 200, 200 };
+        [webView mouseMoveToPoint:annotationPoint withFlags:0];
+        [webView sendClickAtPoint:annotationPoint];
+        [webView waitForPendingMouseEvents];
+        [webView waitForNextPresentationUpdate];
+
+        RetainPtr backgroundColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#annotationContainer > input')).backgroundColor"];
+
+        static constexpr WebCore::IntPoint blankPoint { 50, 50 };
+        [webView mouseMoveToPoint:blankPoint withFlags:0];
+        [webView sendClickAtPoint:blankPoint];
+        [webView waitForPendingMouseEvents];
+        [webView waitForNextPresentationUpdate];
+
+        return backgroundColor;
+    };
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr lightModeColor = evaluateAnnotationBackgroundColor();
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr darkModeColor = evaluateAnnotationBackgroundColor();
+
+    EXPECT_WK_STREQ(lightModeColor, darkModeColor);
 }
 
 #endif // PLATFORM(MAC)
@@ -628,39 +674,47 @@ UNIFIED_PDF_TEST(PDFHUDLoadPDFTypeWithPluginsBlocked)
 
 UNIFIED_PDF_TEST(SnapshotsPaintPageContent)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<embed src='multiple-pages.pdf' width='600' height='600'>"];
     [webView waitForNextPresentationUpdate];
 
-    __block bool done = false;
-
-    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    RetainPtr snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
     [snapshotConfiguration setRect:NSMakeRect(100, 100, 100, 100)];
 
-    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
-        EXPECT_NULL(error);
-        RetainPtr cgImage = Util::convertToCGImage(snapshotImage);
+    bool foundNonWhitePixel = false;
 
-        CGImagePixelReader reader { cgImage.get() };
+    Util::waitFor([&] {
+        __block bool snapshotDone = false;
+        __block bool foundNonWhitePixelInSnapshot = false;
 
-        bool foundNonWhitePixel = false;
+        [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
+            if (error) {
+                snapshotDone = true;
+                return;
+            }
 
-        for (unsigned x = 0; x < reader.width(); x++) {
-            for (unsigned y = 0; y < reader.height(); y++) {
-                if (reader.at(x, y) != WebCore::Color::white) {
-                    foundNonWhitePixel = true;
-                    break;
+            RetainPtr cgImage = Util::convertToCGImage(snapshotImage);
+            CGImagePixelReader reader { cgImage.get() };
+
+            for (unsigned x = 0; x < reader.width() && !foundNonWhitePixelInSnapshot; x++) {
+                for (unsigned y = 0; y < reader.height(); y++) {
+                    if (reader.at(x, y) != WebCore::Color::white) {
+                        foundNonWhitePixelInSnapshot = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        EXPECT_TRUE(foundNonWhitePixel);
+            snapshotDone = true;
+        }];
 
-        done = true;
-    }];
+        Util::run(&snapshotDone);
+        foundNonWhitePixel = foundNonWhitePixel | foundNonWhitePixelInSnapshot;
+        return foundNonWhitePixel;
+    });
 
-    Util::run(&done);
+    EXPECT_TRUE(foundNonWhitePixel);
 }
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -1118,6 +1172,21 @@ UNIFIED_PDF_TEST(WebViewBackgroundColor)
     EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
 }
 
+UNIFIED_PDF_TEST(ScrollPositionAfterChangeToTwoUpContinuous)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"multiple-pages" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ([webView scrollView].contentOffset, CGPointZero);
+
+    [webView objectByEvaluatingJavaScript:@"internals.setPDFDisplayModeForTesting(document.querySelector('embed'), 'TwoUpContinuous')"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ([webView scrollView].contentOffset, CGPointZero);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
@@ -1298,6 +1367,58 @@ UNIFIED_PDF_TEST(WebViewIsDisplayingPDF)
     [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
     EXPECT_FALSE([webView _isDisplayingPDF]);
 }
+
+#if HAVE(LIQUID_GLASS)
+UNIFIED_PDF_TEST(BackgroundAdaptsToColorScheme)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    [webView forceLightMode];
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]]];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr pluginRootLayer = [webView firstLayerWithNameContaining:@"UnifiedPDFPlugin root"];
+    RetainPtr initialBackgroundColor = [pluginRootLayer backgroundColor];
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr backgroundColorAferAppearanceChange = [pluginRootLayer backgroundColor];
+    EXPECT_FALSE(CGColorEqualToColor(backgroundColorAferAppearanceChange.get(), initialBackgroundColor.get()));
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr finalBackgroundColor = [pluginRootLayer backgroundColor];
+    EXPECT_FALSE(CGColorEqualToColor(finalBackgroundColor.get(), backgroundColorAferAppearanceChange.get()));
+    EXPECT_TRUE(CGColorEqualToColor(finalBackgroundColor.get(), initialBackgroundColor.get()));
+}
+
+UNIFIED_PDF_TEST(BackgroundDoesNotAdaptToColorSchemeOnEmbeddedDocuments)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    [webView forceLightMode];
+
+    [webView synchronouslyLoadHTMLString:@"<embed src='test.pdf' width='600' height='600'>"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr pluginRootLayer = [webView firstLayerWithNameContaining:@"UnifiedPDFPlugin root"];
+    RetainPtr initialBackgroundColor = [pluginRootLayer backgroundColor];
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr backgroundColorAferAppearanceChange = [pluginRootLayer backgroundColor];
+    EXPECT_TRUE(CGColorEqualToColor(backgroundColorAferAppearanceChange.get(), initialBackgroundColor.get()));
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr finalBackgroundColor = [pluginRootLayer backgroundColor];
+    EXPECT_TRUE(CGColorEqualToColor(finalBackgroundColor.get(), backgroundColorAferAppearanceChange.get()));
+    EXPECT_TRUE(CGColorEqualToColor(finalBackgroundColor.get(), initialBackgroundColor.get()));
+}
+#endif
 
 } // namespace TestWebKitAPI
 

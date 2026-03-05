@@ -2,57 +2,10 @@
 <html>
 <body>
 <script src="../../resources/js-test.js"></script>
+<script src="../../resources/document-leak-test.js"></script>
 <script>
-description("Tests that lazy image loading doesn't cause Document leaks.");
-jsTestIsAsync = true;
-
-checkCount = 0;
-
-const popupCount = 10;
-popups = [];
-frameDocumentIDs = [];
-
-function runTest()
-{
-    for (let popup of popups)
-        popup.close();
-    popups = [];
-
-    handle = setInterval(() => {
-        gc();
-        for (let frameDocumentID of frameDocumentIDs) {
-            if (!internals.isDocumentAlive(frameDocumentID)) {
-                clearInterval(handle);
-                testPassed("The popup document didn't leak.");
-                finishJSTest();
-            }
-        }
-        checkCount++;
-        if (checkCount > 1000) {
-            clearInterval(handle);
-            testFailed("The popup document leaked.");
-            finishJSTest();
-        }
-    }, 10);
-}
-
-popupDidLoad = function(popup, event)
-{
-    popup.onload = null;
-    frameDocumentID = internals.documentIdentifier(popup.document);
-    shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
-    popups.push(popup);
-    frameDocumentIDs.push(frameDocumentID);
-    if (popups.length == popupCount)
-        setTimeout(runTest, 0);
-}
-
-onload = () => {
-    for (let i = 0; i < popupCount; i++) {
-        let popup = window.open("resources/lazy-image-loading-document-leak-popup.html");
-        popup.onload = popupDidLoad.bind(event, popup);
-    }
-};
+ description("Tests that lazy image loading doesn't cause Document leaks.");
+ onload = () => runDocumentLeakTest({ frameURL: "resources/lazy-image-loading-document-leak-frame.html", framesToCreate: 10 });
 </script>
 </body>
 </html>

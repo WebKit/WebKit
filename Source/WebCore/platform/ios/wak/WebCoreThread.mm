@@ -207,7 +207,7 @@ static inline void SendMessage(RetainPtr<NSInvocation>&& invocation)
     if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent())
         return;
 
-    RunLoop::mainSingleton().dispatch([invocation = WTFMove(invocation)] { });
+    RunLoop::mainSingleton().dispatch([invocation = WTF::move(invocation)] { });
 }
 
 static void HandleDelegateSource(void*)
@@ -232,7 +232,7 @@ static void HandleDelegateSource(void*)
             NSLog(@"delegate receive: %@", NSStringFromSelector([delegateInvocation() selector]));
 #endif
 
-        SendMessage(WTFMove(delegateInvocation()));
+        SendMessage(WTF::move(delegateInvocation()));
 
         delegateHandled = YES;
         delegateCondition.notifyOne();
@@ -258,14 +258,14 @@ public:
 static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
 {
     if (!WebThreadIsCurrent()) {
-        SendMessage(WTFMove(invocation));
+        SendMessage(WTF::move(invocation));
         return;
     }
 
     ASSERT(delegateSource());
     delegateLock.lock();
 
-    delegateInvocation() = WTFMove(invocation);
+    delegateInvocation() = WTF::move(invocation);
     delegateHandled = NO;
 
 #if LOG_MESSAGES

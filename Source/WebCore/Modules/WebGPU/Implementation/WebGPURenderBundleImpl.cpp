@@ -37,7 +37,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBundleImpl);
 
 RenderBundleImpl::RenderBundleImpl(WebGPUPtr<WGPURenderBundle>&& renderBundle, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(renderBundle))
+    : m_backing(WTF::move(renderBundle))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }

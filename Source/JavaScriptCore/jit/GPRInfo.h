@@ -29,6 +29,7 @@
 #include <array>
 #include <wtf/FunctionTraits.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -899,6 +900,7 @@ inline NoResultTag extractResult(NoResultTag) { return NoResult; }
 // We use this hack to get the GPRInfo from the GPRReg type in templates because our code is bad and we should feel bad..
 constexpr GPRInfo toInfoFromReg(GPRReg) { return GPRInfo(); }
 
+// FIXME: We should just use a RegisterSet for this check since RegisterSet is constexpr anyway.
 class NoOverlapImpl {
     static constexpr unsigned noOverlapImplRegMask(GPRReg gpr)
     {
@@ -955,16 +957,20 @@ public:
 template <typename... Args>
 constexpr bool noOverlap(Args... args) { return NoOverlapImpl::entry(args...); }
 
+template<typename OperationType, size_t ArgNum>
+concept HasNthArgument = FunctionTraits<OperationType>::arity > ArgNum;
+
 class PreferredArgumentImpl {
     private:
-    template <typename OperationType, unsigned ArgNum>
-    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), size_t> sizeOfArg()
+    template<typename OperationType, size_t ArgNum>
+        requires HasNthArgument<OperationType, ArgNum>
+    static constexpr size_t sizeOfArg()
     {
         return sizeof(typename FunctionTraits<OperationType>::template ArgumentType<ArgNum>);
     }
 
 #if USE(JSVALUE64)
-    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    template <typename OperationType, size_t ArgNum, size_t Index = ArgNum, typename... Args>
     static constexpr JSValueRegs pickJSR(GPRReg first, Args... rest)
     {
         static_assert(sizeOfArg<OperationType, ArgNum - Index>() <= 8, "Don't know how to handle large arguments");
@@ -976,7 +982,7 @@ class PreferredArgumentImpl {
         }
     }
 #elif USE(JSVALUE32_64)
-    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    template <typename OperationType, size_t ArgNum, size_t Index = ArgNum, typename... Args>
     static constexpr JSValueRegs pickJSR(GPRReg first, GPRReg second, GPRReg third, Args... rest)
     {
         constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
@@ -1009,7 +1015,7 @@ class PreferredArgumentImpl {
         }
     }
 
-    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    template <typename OperationType, size_t ArgNum, size_t Index = ArgNum, typename... Args>
     static constexpr JSValueRegs pickJSR(GPRReg first, GPRReg second)
     {
         constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
@@ -1030,7 +1036,7 @@ class PreferredArgumentImpl {
         }
     }
 
-    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    template <typename OperationType, size_t ArgNum, size_t Index = ArgNum, typename... Args>
     static constexpr JSValueRegs pickJSR(GPRReg first)
     {
         constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
@@ -1044,9 +1050,9 @@ class PreferredArgumentImpl {
 #endif
 
 public:
-    template <typename OperationType, unsigned ArgNum>
-    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), JSValueRegs>
-    preferredArgumentJSR()
+    template<typename OperationType, size_t ArgNum>
+        requires HasNthArgument<OperationType, ArgNum>
+    static constexpr JSValueRegs preferredArgumentJSR()
     {
 #if USE(JSVALUE64)
         return pickJSR<OperationType, ArgNum>(
@@ -1068,9 +1074,9 @@ public:
 #endif
     }
 
-    template <typename OperationType, unsigned ArgNum>
-    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), GPRReg>
-    preferredArgumentGPR()
+    template<typename OperationType, size_t ArgNum>
+        requires HasNthArgument<OperationType, ArgNum>
+    static constexpr GPRReg preferredArgumentGPR()
     {
 #if USE(JSVALUE32_64)
         static_assert(sizeOfArg<OperationType, ArgNum>() <= 5, "Argument does not fit in GPR");
@@ -1085,9 +1091,9 @@ public:
 // arguments. The idea is that 'setupArguments' will have to do the minimal amount of work when
 // using these registers to hold the arguments, so if you are loading most arguments from memory
 // anyway, using these registers yields the smallest code required for a call.
-template <typename OperationType, unsigned ArgNum>
-constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), GPRReg>
-preferredArgumentGPR()
+template<typename OperationType, size_t ArgNum>
+    requires HasNthArgument<OperationType, ArgNum>
+constexpr GPRReg preferredArgumentGPR()
 {
     return PreferredArgumentImpl::preferredArgumentGPR<OperationType, ArgNum>();
 }
@@ -1097,9 +1103,9 @@ preferredArgumentGPR()
 // required to hold a 64-bit wide function argument, so use this in particular when passing a
 // JSValue/EncodedJSValue to be compatible with both JSVALUE64 an JSVALUE32_64 platforms, and use
 // preferredArgumentGPR when passing host pointers.
-template <typename OperationType, unsigned ArgNum>
-constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), JSValueRegs>
-preferredArgumentJSR()
+template<typename OperationType, size_t ArgNum>
+    requires HasNthArgument<OperationType, ArgNum>
+constexpr JSValueRegs preferredArgumentJSR()
 {
     return PreferredArgumentImpl::preferredArgumentJSR<OperationType, ArgNum>();
 }

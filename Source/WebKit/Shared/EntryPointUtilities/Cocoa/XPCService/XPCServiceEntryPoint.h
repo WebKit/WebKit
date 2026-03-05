@@ -55,7 +55,7 @@ namespace WebKit {
 
 class XPCServiceInitializerDelegate {
 public:
-    XPCServiceInitializerDelegate(XPCObjectPtr<xpc_connection_t>, xpc_object_t initializerMessage);
+    XPCServiceInitializerDelegate(OSObjectPtr<xpc_connection_t>, xpc_object_t initializerMessage);
 
     virtual ~XPCServiceInitializerDelegate();
 
@@ -73,14 +73,14 @@ protected:
     bool hasEntitlement(ASCIILiteral entitlement);
     bool isClientSandboxed();
 
-    XPCObjectPtr<xpc_connection_t> m_connection;
-    XPCObjectPtr<xpc_object_t> m_initializerMessage;
+    OSObjectPtr<xpc_connection_t> m_connection;
+    OSObjectPtr<xpc_object_t> m_initializerMessage;
 };
 
 template<typename XPCServiceType>
 void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters)
 {
-    XPCServiceType::singleton().initialize(WTFMove(parameters));
+    XPCServiceType::singleton().initialize(WTF::move(parameters));
 }
 
 #if !USE(RUNNINGBOARD)
@@ -94,9 +94,9 @@ void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode, EnableEn
 void disableJSC(NOESCAPE WTF::CompletionHandler<void(void)>&& beforeFinalizeHandler);
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType, bool isWebContentProcess = false>
-void XPCServiceInitializer(XPCObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
-    XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
+    XPCServiceInitializerDelegateType delegate(WTF::move(connection), initializerMessage);
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,
     // so ensure that we have an outstanding transaction here. This is not needed when using
@@ -163,7 +163,7 @@ void XPCServiceInitializer(XPCObjectPtr<xpc_connection_t> connection, xpc_object
         Thread::setGlobalMaxQOSClass(QOS_CLASS_UTILITY);
 #endif
 
-    initializeAuxiliaryProcess<XPCServiceType>(WTFMove(parameters));
+    initializeAuxiliaryProcess<XPCServiceType>(WTF::move(parameters));
 }
 
 int XPCServiceMain(int, const char**);

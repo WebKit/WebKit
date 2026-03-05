@@ -40,26 +40,23 @@ namespace Yarr {
 class MatchingContextHolder {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    MatchingContextHolder(VM&, bool, RegExp*, MatchFrom);
+    MatchingContextHolder(VM&, RegExp*, MatchFrom);
     ~MatchingContextHolder();
 
     static constexpr ptrdiff_t offsetOfStackLimit() { return OBJECT_OFFSETOF(MatchingContextHolder, m_stackLimit); }
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    static constexpr ptrdiff_t offsetOfPatternContextBuffer() { return OBJECT_OFFSETOF(MatchingContextHolder, m_patternContextBuffer); }
-    static constexpr ptrdiff_t offsetOfPatternContextBufferSize() { return OBJECT_OFFSETOF(MatchingContextHolder, m_patternContextBufferSize); }
-#endif
+    static constexpr ptrdiff_t offsetOfFreeList() { return OBJECT_OFFSETOF(MatchingContextHolder, m_freeList); }
+
+    void* stackLimit() const { return m_stackLimit; }
+    void* freeList() const { return m_freeList; }
 
 private:
     VM& m_vm;
     void* m_stackLimit;
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    void* m_patternContextBuffer { nullptr };
-    unsigned m_patternContextBufferSize { 0 };
-#endif
+    void* m_freeList { nullptr };
     MatchFrom m_matchFrom;
 };
 
-inline MatchingContextHolder::MatchingContextHolder(VM& vm, bool usesPatternContextBuffer, RegExp* regExp, MatchFrom matchFrom)
+inline MatchingContextHolder::MatchingContextHolder(VM& vm, RegExp* regExp, MatchFrom matchFrom)
     : m_vm(vm)
     , m_matchFrom(matchFrom)
 {
@@ -70,23 +67,10 @@ inline MatchingContextHolder::MatchingContextHolder(VM& vm, bool usesPatternCont
         StackBounds stack = Thread::currentSingleton().stack();
         m_stackLimit = stack.recursionLimit(Options::reservedZoneSize());
     }
-
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    if (usesPatternContextBuffer) {
-        m_patternContextBuffer = m_vm.acquireRegExpPatternContexBuffer();
-        m_patternContextBufferSize = VM::patternContextBufferSize;
-    }
-#else
-    UNUSED_PARAM(usesPatternContextBuffer);
-#endif
 }
 
 inline MatchingContextHolder::~MatchingContextHolder()
 {
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    if (m_patternContextBuffer)
-        m_vm.releaseRegExpPatternContexBuffer();
-#endif
     if (m_matchFrom == MatchFrom::VMThread)
         m_vm.m_executingRegExp = nullptr;
 }

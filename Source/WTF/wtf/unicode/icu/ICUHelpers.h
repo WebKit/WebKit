@@ -27,6 +27,7 @@
 
 #include <tuple>
 #include <unicode/utypes.h>
+#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionTraits.h>
 

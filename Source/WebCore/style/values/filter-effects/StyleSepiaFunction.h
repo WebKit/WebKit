@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicColorMatrixFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Sepia;
@@ -36,10 +38,43 @@ struct Sepia;
 
 namespace Style {
 
-class BuilderState;
+// sepia() = sepia( [ <number [0,1(clamp upper)] > | <percentage [0,100(clamp upper)]> ]?@(default=1) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-sepia
+struct Sepia {
+    using Parameter = Number<CSS::ClosedUnitRangeClampUpper>;
 
-CSS::Sepia toCSSSepia(Ref<BasicColorMatrixFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Sepia&, const BuilderState&);
+    Parameter value;
+
+    static Sepia passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value.isZero(); }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const Sepia&) const = default;
+};
+using SepiaFunction = FunctionNotation<CSSValueSepia, Sepia>;
+DEFINE_TYPE_WRAPPER_GET(Sepia, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<Sepia> { auto operator()(const Sepia&, const RenderStyle&) -> CSS::Sepia; };
+template<> struct ToStyle<CSS::Sepia> { auto operator()(const CSS::Sepia&, const BuilderState&) -> Sepia; };
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<Sepia, Ref<FilterEffect>> { auto operator()(const Sepia&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<Sepia> { auto operator()(const Sepia&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Sepia, 1)

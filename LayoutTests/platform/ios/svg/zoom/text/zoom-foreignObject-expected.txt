@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGForeignObject {foreignObject} at (0,0) size 250x200
       RenderBlock {xhtml:div} at (0,0) size 250x20
-        RenderText {#text} at (0,0) size 83x19
+        RenderText {#text} at (0,0) size 83x20
           text run at (0,0) width 83: "This is a text"
       RenderBlock (anonymous) at (0,20) size 250x20
-        RenderInline {xhtml:a} at (0,0) size 68x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 68x19
+        RenderInline {xhtml:a} at (0,0) size 68x20 [color=#0000EE]
+          RenderText {#text} at (0,0) size 68x20
             text run at (0,0) width 68: "and a link."
-        RenderBR {xhtml:br} at (67,0) size 1x19
+        RenderBR {xhtml:br} at (67,0) size 1x20
       RenderBlock {xhtml:div} at (0,40) size 250x20
-        RenderText {#text} at (0,0) size 56x19
+        RenderText {#text} at (0,0) size 56x20
           text run at (0,0) width 56: "[HTML]"
     RenderSVGRect {rect} at (0,0) size 251x201 [stroke={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=250.00] [height=200.00]
     RenderSVGForeignObject {foreignObject} at (260,0) size 250x200

@@ -72,7 +72,7 @@ int AES_CMAC(uint8_t out[16], const uint8_t *key, size_t key_len,
   // We have to verify that all the CMAC services actually succeed before
   // updating the indicator state, so we lock the state here.
   FIPS_service_indicator_lock_state();
-  const int ok = CMAC_Init(&ctx, key, key_len, cipher, NULL /* engine */) &&
+  const int ok = CMAC_Init(&ctx, key, key_len, cipher, nullptr /* engine */) &&
                  CMAC_Update(&ctx, in, in_len) &&
                  CMAC_Final(&ctx, out, &scratch_out_len);
   FIPS_service_indicator_unlock_state();
@@ -86,14 +86,14 @@ int AES_CMAC(uint8_t out[16], const uint8_t *key, size_t key_len,
 
 CMAC_CTX *CMAC_CTX_new(void) {
   CMAC_CTX *ctx = reinterpret_cast<CMAC_CTX *>(OPENSSL_malloc(sizeof(*ctx)));
-  if (ctx != NULL) {
+  if (ctx != nullptr) {
     CMAC_CTX_init(ctx);
   }
   return ctx;
 }
 
 void CMAC_CTX_free(CMAC_CTX *ctx) {
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return;
   }
 
@@ -160,11 +160,12 @@ int CMAC_Init(CMAC_CTX *ctx, const void *key, size_t key_len,
   size_t block_size = EVP_CIPHER_block_size(cipher);
   if ((block_size != AES_BLOCK_SIZE && block_size != 8 /* 3-DES */) ||
       EVP_CIPHER_key_length(cipher) != key_len ||
-      !EVP_EncryptInit_ex(&ctx->cipher_ctx, cipher, NULL,
+      !EVP_EncryptInit_ex(&ctx->cipher_ctx, cipher, nullptr,
                           reinterpret_cast<const uint8_t *>(key), kZeroIV) ||
       !EVP_Cipher(&ctx->cipher_ctx, scratch, kZeroIV, block_size) ||
       // Reset context again ready for first data.
-      !EVP_EncryptInit_ex(&ctx->cipher_ctx, NULL, NULL, NULL, kZeroIV)) {
+      !EVP_EncryptInit_ex(&ctx->cipher_ctx, nullptr, nullptr, nullptr,
+                          kZeroIV)) {
     goto out;
   }
 
@@ -185,7 +186,8 @@ out:
 
 int CMAC_Reset(CMAC_CTX *ctx) {
   ctx->block_used = 0;
-  return EVP_EncryptInit_ex(&ctx->cipher_ctx, NULL, NULL, NULL, kZeroIV);
+  return EVP_EncryptInit_ex(&ctx->cipher_ctx, nullptr, nullptr, nullptr,
+                            kZeroIV);
 }
 
 int CMAC_Update(CMAC_CTX *ctx, const uint8_t *in, size_t in_len) {
@@ -259,7 +261,7 @@ int CMAC_Final(CMAC_CTX *ctx, uint8_t *out, size_t *out_len) {
 
   *out_len = block_size;
   const uint8_t *mask = ctx->k1;
-  if (out == NULL) {
+  if (out == nullptr) {
     ret = 1;
     goto out;
   }

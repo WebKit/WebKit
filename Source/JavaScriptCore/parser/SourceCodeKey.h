@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/ExecutableInfo.h>
 #include <JavaScriptCore/ParserModes.h>
 #include <JavaScriptCore/UnlinkedSourceCode.h>
 #include <wtf/HashTraits.h>

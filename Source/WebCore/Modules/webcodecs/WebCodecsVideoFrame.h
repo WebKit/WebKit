@@ -60,16 +60,17 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    using CanvasImageSource = Variant<RefPtr<HTMLImageElement>
-        , RefPtr<SVGImageElement>
-        , RefPtr<HTMLCanvasElement>
-        , RefPtr<ImageBitmap>
-        , RefPtr<CSSStyleImageValue>
+    using CanvasImageSource = Variant<
+          Ref<HTMLImageElement>
+        , Ref<SVGImageElement>
+        , Ref<HTMLCanvasElement>
+        , Ref<ImageBitmap>
+        , Ref<CSSStyleImageValue>
 #if ENABLE(OFFSCREEN_CANVAS)
-        , RefPtr<OffscreenCanvas>
+        , Ref<OffscreenCanvas>
 #endif
 #if ENABLE(VIDEO)
-        , RefPtr<HTMLVideoElement>
+        , Ref<HTMLVideoElement>
 #endif
     >;
 
@@ -107,7 +108,7 @@ public:
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageBuffer&, IntSize, Init&&);
     WEBCORE_EXPORT static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<NativeImage>&&);
     static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext&, Ref<VideoFrame>&&, BufferInit&&);
-    static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext& context, WebCodecsVideoFrameData&& data) { return adoptRef(*new WebCodecsVideoFrame(context, WTFMove(data))); }
+    static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext& context, WebCodecsVideoFrameData&& data) { return adoptRef(*new WebCodecsVideoFrame(context, WTF::move(data))); }
 
     std::optional<VideoPixelFormat> format() const { return m_data.format; }
     size_t codedWidth() const { return m_data.codedWidth; }
@@ -136,11 +137,11 @@ public:
     bool isDetached() const { return m_isDetached; }
     RefPtr<VideoFrame> internalFrame() const { return m_data.internalFrame; }
 
-    void setDisplaySize(size_t, size_t);
-    void setVisibleRect(const DOMRectInit&);
+    void NODELETE setDisplaySize(size_t, size_t);
+    void NODELETE setVisibleRect(const DOMRectInit&);
     bool shoudlDiscardAlpha() const { return m_data.format && (*m_data.format == VideoPixelFormat::RGBX || *m_data.format == VideoPixelFormat::BGRX); }
 
-    const WebCodecsVideoFrameData& data() const { return m_data; }
+    const WebCodecsVideoFrameData& data() const LIFETIME_BOUND { return m_data; }
 
     size_t memoryCost() const { return m_data.memoryCost(); }
 

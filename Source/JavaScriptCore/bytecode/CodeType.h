@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace JSC {
 
 enum CodeType : uint8_t { GlobalCode, EvalCode, FunctionCode, ModuleCode };

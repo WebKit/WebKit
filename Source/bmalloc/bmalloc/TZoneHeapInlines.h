@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
+#include "BPlatform.h"
+
 #if BUSE(TZONE)
 
 #include "TZoneHeap.h"
@@ -36,9 +40,13 @@ namespace bmalloc { namespace api {
 #define MAKE_BTZONE_MALLOCED_COMMON_INLINE(_type, _compactMode, _exportMacro) \
 public: \
     using HeapRef = ::bmalloc::api::HeapRef; \
-    using SizeAndAlignment = ::bmalloc::api::SizeAndAlignment; \
+    using TZoneDescriptor = ::bmalloc::api::TZoneDescriptor; \
     using TZoneMallocFallback = ::bmalloc::api::TZoneMallocFallback; \
     using CompactAllocationMode = ::bmalloc::CompactAllocationMode; \
+    \
+    static constexpr bool usesTZoneHeap() { return true; } \
+    static constexpr unsigned inheritedSizeClass() { return ::bmalloc::TZone::sizeClass<_type>(); } \
+    static constexpr unsigned inheritedAlignment() { return ::bmalloc::TZone::alignment<_type>(); } \
     \
     BINLINE void* operator new(size_t, void* p) { return p; } \
     BINLINE void* operator new[](size_t, void* p) { return p; } \
@@ -55,7 +63,15 @@ public: \
     void* operator new(size_t size) \
     { \
         static HeapRef s_heapRef; \
-        static const TZoneSpecification s_heapSpec = { &s_heapRef, sizeof(_type), ::bmalloc::api::compactAllocationMode<_type>(), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) TZONE_DYNAMIC_COMPACTION_ARG(_type) }; \
+        static const TZoneSpecification s_heapSpec = { \
+            &s_heapRef, \
+            TZoneSpecification::encodeSize<_type>(), \
+            TZoneSpecification::encodeAlignment<_type>(), \
+            TZoneSpecification::encodeCategory<_type>(), \
+            ::bmalloc::api::compactAllocationMode<_type>(), \
+            TZoneSpecification::encodeDescriptor<_type>(), \
+            TZONE_SPEC_NAME_ARG(#_type) \
+        }; \
     \
         if (!s_heapRef || size != sizeof(_type)) { [[unlikely]] \
             if constexpr (::bmalloc::api::compactAllocationMode<_type>() == CompactAllocationMode::Compact) \
@@ -64,8 +80,6 @@ public: \
         } \
         BASSERT(::bmalloc::api::tzoneMallocFallback > TZoneMallocFallback::ForceDebugMalloc); \
         if constexpr (::bmalloc::api::compactAllocationMode<_type>() == CompactAllocationMode::Compact) \
-            return ::bmalloc::api::tzoneAllocateCompact(s_heapRef); \
-        if (::bmalloc::api::shouldDynamicallyCompact(s_heapSpec)) \
             return ::bmalloc::api::tzoneAllocateCompact(s_heapRef); \
         return ::bmalloc::api::tzoneAllocate ## _compactMode(s_heapRef); \
     } \
@@ -92,13 +106,19 @@ private: \
 #define MAKE_BTZONE_MALLOCED_IMPL(_type, _compactMode) \
 ::bmalloc::api::HeapRef _type::s_heapRef; \
 \
-const TZoneSpecification _type::s_heapSpec = { &_type::s_heapRef, sizeof(_type), ::bmalloc::api::compactAllocationMode<_type>(), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) TZONE_DYNAMIC_COMPACTION_ARG(_type) }; \
+const TZoneSpecification _type::s_heapSpec = { \
+    &_type::s_heapRef, \
+    TZoneSpecification::encodeSize<_type>(), \
+    TZoneSpecification::encodeAlignment<_type>(), \
+    TZoneSpecification::encodeCategory<_type>(), \
+    ::bmalloc::api::compactAllocationMode<_type>(), \
+    TZoneSpecification::encodeDescriptor<_type>(), \
+    TZONE_SPEC_NAME_ARG(#_type) \
+}; \
 \
 void* _type::operatorNewSlow(size_t size) \
 { \
     if constexpr (::bmalloc::api::compactAllocationMode<_type>() == CompactAllocationMode::Compact) \
-        return ::bmalloc::api::tzoneAllocateCompactSlow(size, s_heapSpec); \
-    if (::bmalloc::api::shouldDynamicallyCompact(s_heapSpec)) \
         return ::bmalloc::api::tzoneAllocateCompactSlow(size, s_heapSpec); \
     return ::bmalloc::api::tzoneAllocate ## _compactMode ## Slow(size, s_heapSpec); \
 } \
@@ -108,3 +128,5 @@ using __makeBtzoneMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 } } // namespace bmalloc::api
 
 #endif // BUSE(TZONE)
+
+#endif // __cplusplus

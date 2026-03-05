@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLCompressedTextureS3TCsRGB final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLCompressedTextureS3TCsRGB);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLCompressedTextureS3TCsRGB);
 public:
     explicit WebGLCompressedTextureS3TCsRGB(WebGLRenderingContextBase&);
     ~WebGLCompressedTextureS3TCsRGB();
@@ -42,3 +42,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLCompressedTextureS3TCsRGB)

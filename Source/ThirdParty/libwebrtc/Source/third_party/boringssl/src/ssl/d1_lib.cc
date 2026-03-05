@@ -69,12 +69,12 @@ bool dtls1_new(SSL *ssl) {
 void dtls1_free(SSL *ssl) {
   tls_free(ssl);
 
-  if (ssl == NULL) {
+  if (ssl == nullptr) {
     return;
   }
 
   Delete(ssl->d1);
-  ssl->d1 = NULL;
+  ssl->d1 = nullptr;
 }
 
 void DTLSTimer::StartMicroseconds(OPENSSL_timeval now, uint64_t microseconds) {

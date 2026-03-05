@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WKBrowserEngineDefinitions.h"
 #import <UIKit/UIScrollView.h>
@@ -118,4 +118,4 @@ private:
 
 @end
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(IOS_FAMILY)

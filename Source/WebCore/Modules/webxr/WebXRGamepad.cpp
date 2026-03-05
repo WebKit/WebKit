@@ -31,8 +31,11 @@
 #include "Gamepad.h"
 #include "GamepadConstants.h"
 #include "XRTargetRayMode.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRGamepad);
 
 // https://immersive-web.github.io/webxr-gamepads-module/#gamepad-differences
 // Gamepad's index attribute must be -1.

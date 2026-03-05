@@ -116,8 +116,6 @@ constexpr int kDeltaCounterMax = 1000;
 
 }  // namespace
 
-constexpr char TrendlineEstimatorSettings::kKey[];
-
 TrendlineEstimatorSettings::TrendlineEstimatorSettings(
     const FieldTrialsView& key_value_config) {
   if (key_value_config.IsEnabled(kBweWindowSizeInPacketsExperiment)) {

@@ -63,6 +63,7 @@ class CLProgramVk : public CLProgramImpl
         ClspvPrintfBufferStorage printfBufferStorage;
         angle::HashMap<uint32_t, ClspvPrintfInfo> printfInfoMap;
         std::vector<ClspvLiteralSampler> literalSamplers;
+        ClspvConstantDataBufferInfo constantDataBufferInfo;
     };
 
     // Output binary structure (for CL_PROGRAM_BINARIES query)
@@ -333,6 +334,7 @@ class CLProgramVk : public CLProgramImpl
     const DeviceProgramData *getDeviceProgramData(const _cl_device_id *device) const;
     CLPlatformVk *getPlatform() { return mContext->getPlatform(); }
     const vk::ShaderModulePtr &getShaderModule() const { return mShader; }
+    cl::MemoryPtr getOrCreateModuleConstantDataBuffer(const std::string &kernelName);
 
     bool buildInternal(const cl::DevicePtrs &devices,
                        std::string options,
@@ -353,8 +355,8 @@ class CLProgramVk : public CLProgramImpl
     vk::ShaderModulePtr mShader;
     DevicePrograms mAssociatedDevicePrograms;
     angle::SimpleMutex mProgramMutex;
-
     std::shared_ptr<angle::WaitableEvent> mAsyncBuildEvent;
+    cl::MemoryPtr mModuleConstantDataBuffer;
 };
 
 class CLAsyncBuildTask : public angle::Closure

@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MarkingConstraint);
 
 MarkingConstraint::MarkingConstraint(CString abbreviatedName, CString name, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
     : m_abbreviatedName(abbreviatedName)
-    , m_name(WTFMove(name))
+    , m_name(WTF::move(name))
     , m_volatility(volatility)
     , m_concurrency(concurrency)
     , m_parallelism(parallelism)

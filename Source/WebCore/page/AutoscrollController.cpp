@@ -78,7 +78,7 @@ void AutoscrollController::startAutoscrollForSelection(RenderObject* renderer)
     // We don't want to trigger the autoscroll or the panScroll if it's already active
     if (m_autoscrollTimer.isActive())
         return;
-    auto* scrollable = RenderBox::findAutoscrollable(renderer);
+    CheckedPtr scrollable = RenderBox::findAutoscrollable(renderer);
     if (!scrollable)
         scrollable = renderer->isRenderListBox() ? downcast<RenderListBox>(renderer) : nullptr;
     if (!scrollable)
@@ -130,11 +130,11 @@ void AutoscrollController::updateAutoscrollRenderer()
     if (!m_autoscrollRenderer)
         return;
 
-    RenderObject* renderer = m_autoscrollRenderer.get();
+    CheckedPtr<RenderObject> renderer = m_autoscrollRenderer.get();
 
 #if ENABLE(PAN_SCROLLING)
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitTest = m_autoscrollRenderer->protectedFrame()->eventHandler().hitTestResultAtPoint(m_panScrollStartPos, hitType);
+    HitTestResult hitTest = protect(m_autoscrollRenderer->frame())->eventHandler().hitTestResultAtPoint(m_panScrollStartPos, hitType);
 
     if (auto* nodeAtPoint = hitTest.innerNode())
         renderer = nodeAtPoint->renderer();
@@ -154,7 +154,7 @@ void AutoscrollController::updateAutoscrollRenderer()
 void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoint& eventPosition, MonotonicTime eventTime)
 {
     IntSize offset;
-    auto findDragAndDropScroller = [&]() -> RenderBox* {
+    auto findDragAndDropScroller = [&]() -> CheckedPtr<RenderBox> {
         if (!dropTargetNode)
             return nullptr;
 
@@ -170,7 +170,7 @@ void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoin
         if (offset.isZero())
             return nullptr;
 
-        return scrollable.unsafeGet();
+        return scrollable;
     };
     
     CheckedPtr scrollable = findDragAndDropScroller();
@@ -236,7 +236,7 @@ void AutoscrollController::startPanScrolling(RenderBox& scrollable, const IntPoi
     if (RefPtr view = scrollable.frame().view())
         view->addPanScrollIcon(lastKnownMousePosition);
 
-    scrollable.protectedFrame()->eventHandler().didPanScrollStart();
+    protect(scrollable.frame())->eventHandler().didPanScrollStart();
     startAutoscrollTimer();
 }
 #else

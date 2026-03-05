@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<details id="details">
+    <summary>Number input</summary>
+    <label for="field-a">Problems</label>
+    <input type="number" id="field-a" value="99" step="1">
+</details>
+
+<script>
+var output = "This tests that the spin button inside a collapsed details element is properly ignored.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    output += "=== COLLAPSED STATE ===\n";
+    output += dumpAXSearchTraversal(webArea);
+    output += "\n";
+
+    document.getElementById("details").setAttribute("open", "true");
+    setTimeout(async function() {
+        await waitFor(() => {
+            var details = accessibilityController.accessibleElementById("details");
+            return details && details.isExpanded;
+        });
+
+        output += "=== EXPANDED STATE ===\n";
+        output += dumpAXSearchTraversal(webArea);
+        output += "\n";
+
+        document.getElementById("details").removeAttribute("open");
+        await waitFor(() => {
+            var details = accessibilityController.accessibleElementById("details");
+            return details && !details.isExpanded;
+        });
+
+        output += "=== COLLAPSED AGAIN ===\n";
+        output += dumpAXSearchTraversal(webArea);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

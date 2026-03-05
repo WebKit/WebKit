@@ -28,6 +28,8 @@
 #ifndef ParallelJobsOpenMP_h
 #define ParallelJobsOpenMP_h
 
+#include <wtf/Platform.h>
+
 #if ENABLE(THREADING_OPENMP)
 
 #include <omp.h>
@@ -60,13 +62,13 @@ public:
         return m_numberOfJobs;
     }
 
-    void execute(unsigned char* parameters)
+    void execute(std::span<uint8_t> parameters)
     {
         omp_set_num_threads(m_numberOfJobs);
 
 #pragma omp parallel for
         for (int i = 0; i < m_numberOfJobs; ++i)
-            (*m_threadFunction)(parameters + i * m_sizeOfParameter);
+            (*m_threadFunction)(parameters.subspan(i * m_sizeOfParameter, m_sizeOfParameter).data());
     }
 
 private:

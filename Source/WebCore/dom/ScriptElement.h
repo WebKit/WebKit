@@ -22,6 +22,7 @@
 #pragma once
 
 #include <JavaScriptCore/Forward.h>
+#include <WebCore/ActiveDOMObject.h>
 #include <WebCore/ContainerNode.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/LoadableScript.h>
@@ -43,13 +44,12 @@ class Node;
 class PendingScript;
 class ScriptSourceCode;
 
-class ScriptElement {
+class ScriptElement : public ActiveDOMObject {
 public:
     virtual ~ScriptElement() = default;
 
-    Element& element() { return m_element.get(); }
-    const Element& element() const { return m_element.get(); }
-    Ref<Element> protectedElement() const { return m_element.get(); }
+    Element& element() { return m_element; }
+    const Element& element() const { return m_element; }
 
     bool prepareScript(const TextPosition& scriptStartPosition = TextPosition());
 
@@ -59,6 +59,7 @@ public:
     void executeModuleScript(LoadableModuleScript&);
     void registerImportMap(const ScriptSourceCode&);
     void registerSpeculationRules(const ScriptSourceCode&);
+    void unregisterSpeculationRules();
 
     void executePendingScript(PendingScript&);
 
@@ -77,17 +78,16 @@ public:
     bool readyToBeParserExecuted() const { return m_readyToBeParserExecuted; }
     bool willExecuteWhenDocumentFinishedParsing() const { return m_willExecuteWhenDocumentFinishedParsing; }
     bool willExecuteInOrder() const { return m_willExecuteInOrder; }
-    LoadableScript* loadableScript() { return m_loadableScript.get(); }
-    RefPtr<LoadableScript> protectedLoadableScript() { return m_loadableScript; }
+    LoadableScript* loadableScript() const { return m_loadableScript.get(); }
 
     ScriptType scriptType() const { return m_scriptType; }
 
     JSC::SourceTaintedOrigin sourceTaintedOrigin() const { return m_taintedOrigin; }
 
-    void ref() const;
-    void deref() const;
-
     static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true, bool speculationRulesPrefetchEnabled = false);
+
+    // ActiveDOMObject
+    bool virtualHasPendingActivity() const final;
 
 protected:
     ScriptElement(Element&, bool createdByParser, bool isEvaluated);
@@ -97,6 +97,8 @@ protected:
     ParserInserted isParserInserted() const { return m_parserInserted; }
     bool alreadyStarted() const { return m_alreadyStarted; }
     bool forceAsync() const { return m_forceAsync; }
+
+    void setHasRelevantLoadEventsListener(bool hasListener) { m_hasRelevantLoadEventsListener = hasListener; }
 
     // Helper functions used by our parent classes.
     Node::InsertedIntoAncestorResult insertedIntoAncestor(Node::InsertionType insertionType, ContainerNode&) const
@@ -110,7 +112,7 @@ protected:
     void childrenChanged(const ContainerNode::ChildChange&);
     void finishParsingChildren();
     void handleSourceAttribute(const String& sourceURL);
-    void handleAsyncAttribute();
+    void NODELETE handleAsyncAttribute();
 
     void setTrustedScriptText(const String&);
 
@@ -121,7 +123,7 @@ private:
     void executeScriptAndDispatchEvent(LoadableScript&);
 
     std::optional<ScriptType> determineScriptType() const;
-    bool ignoresLoadRequest() const;
+    bool NODELETE ignoresLoadRequest() const;
     void dispatchLoadEventRespectingUserGestureIndicator();
 
     bool requestClassicScript(const String& sourceURL);
@@ -152,6 +154,7 @@ private:
     bool m_forceAsync : 1;
     bool m_willExecuteInOrder : 1 { false };
     bool m_childrenChangedByAPI : 1 { false };
+    bool m_hasRelevantLoadEventsListener : 1 { false };
     ScriptType m_scriptType : bitWidthOfScriptType { ScriptType::Classic };
     AtomString m_characterEncoding;
     AtomString m_fallbackCharacterEncoding;
@@ -168,7 +171,7 @@ private:
 };
 
 // FIXME: replace with is/downcast<ScriptElement>.
-bool isScriptElement(Node&);
-ScriptElement* dynamicDowncastScriptElement(Element&);
+bool NODELETE isScriptElement(Node&);
+ScriptElement* NODELETE dynamicDowncastScriptElement(Element&);
 
 }

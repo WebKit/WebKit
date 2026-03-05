@@ -30,7 +30,7 @@ typedef (double? or TimelineRangeOffset or DOMString) KeyframeOffset;
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface KeyframeEffect : AnimationEffect {
-    [CallWith=CurrentGlobalObject&CurrentDocument] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options);
+    [CallWith=CurrentGlobalObject&CurrentDocument] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options = {});
     constructor(KeyframeEffect source);
 
     attribute Element? target;
@@ -53,11 +53,9 @@ dictionary BaseKeyframe {
     CompositeOperationOrAuto composite = "auto";
 };
 
+// FIXME: The inheritance below is not yet standardized: https://github.com/w3c/csswg-drafts/issues/13423.
 [
-    JSGenerateToJSObject
-] dictionary BaseComputedKeyframe {
-     KeyframeOffset offset = null;
+    JSGenerateToJSObject,
+] dictionary BaseComputedKeyframe : BaseKeyframe {
      unrestricted double computedOffset;
-     DOMString easing = "linear";
-     CompositeOperationOrAuto composite = "auto";
 };

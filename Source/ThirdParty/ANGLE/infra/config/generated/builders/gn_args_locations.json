@@ -1,0 +1,7 @@
+{
+  "angle": {
+    "angle-cq-linux-x64-rel": "try/angle-cq-linux-x64-rel/gn-args.json",
+    "angle-linux-x64-builder-rel": "ci/angle-linux-x64-builder-rel/gn-args.json",
+    "angle-try-linux-x64-sws-rel": "try/angle-try-linux-x64-sws-rel/gn-args.json"
+  }
+}

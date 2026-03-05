@@ -44,7 +44,7 @@ class InspectorBrowserAgent final : public InspectorAgentBase, public Inspector:
 public:
     InspectorBrowserAgent(WebPageAgentContext&);
     ~InspectorBrowserAgent();
-    bool enabled() const;
+    bool NODELETE enabled() const;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend();

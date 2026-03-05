@@ -36,7 +36,7 @@ namespace WebCore {
 struct PublicKeyCredentialDescriptor {
     PublicKeyCredentialType type;
     BufferSource id;
-    Vector<String> transports;
+    Vector<AuthenticatorTransport> transports;
 };
 
 } // namespace WebCore

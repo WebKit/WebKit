@@ -29,6 +29,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEFloodCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEFlood> FEFlood::create(const Color& floodColor, float floodOpacity, DestinationColorSpace colorSpace)
@@ -74,6 +78,24 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
 FloatRect FEFlood::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
+}
+
+OptionSet<FilterRenderingMode> FEFlood::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
+    return modes & preferredFilterRenderingModes;
+}
+
+std::unique_ptr<FilterEffectApplier> FEFlood::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEFloodCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<FilterEffectApplier> FEFlood::createSoftwareApplier() const

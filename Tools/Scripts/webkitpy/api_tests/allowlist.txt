@@ -232,7 +232,6 @@ TestWebKitAPI.AudioStreamDescriptionCocoa/EachSampleTypeTest/1
 TestWebKitAPI.AudioStreamDescriptionCocoa/EachSampleTypeTest/2
 TestWebKitAPI.AudioStreamDescriptionCocoa/EachSampleTypeTest/3
 TestWebKitAPI.AutocorrectionTests
-TestWebKitAPI.Badging
 TestWebKitAPI.BifurcatedGraphicsContextTests
 TestWebKitAPI.CARingBufferTest
 TestWebKitAPI.CBORReaderTest
@@ -242,7 +241,6 @@ TestWebKitAPI.CSSParser
 TestWebKitAPI.CSSParserFastPaths
 TestWebKitAPI.CSSPropertyParser
 TestWebKitAPI.CSSTokenizerTest
-TestWebKitAPI.CSSViewportUnits
 TestWebKitAPI.CTAPRequestTest
 TestWebKitAPI.CTAPResponseTest
 TestWebKitAPI.CancelLoading
@@ -255,7 +253,6 @@ TestWebKitAPI.ContentSecurityPolicy
 TestWebKitAPI.ContentWorld
 TestWebKitAPI.ContextMenuElementInfoWithQRCodeDetectionCrash
 TestWebKitAPI.ContextMenuMouseEvents
-TestWebKitAPI.CookieConsent
 TestWebKitAPI.Copying
 TestWebKitAPI.CtapPinTest
 TestWebKitAPI.CustomContentViewGestures
@@ -301,8 +298,6 @@ TestWebKitAPI.FloatSize
 TestWebKitAPI.FocusPreservationTests
 TestWebKitAPI.FontCascadeTest
 TestWebKitAPI.FontShadowTest
-TestWebKitAPI.FormValidation
-TestWebKitAPI.FragmentDirectiveGeneration
 TestWebKitAPI.FragmentedSharedBufferTest
 TestWebKitAPI.Geolocation
 TestWebKitAPI.GestureRecognizerTests
@@ -316,7 +311,6 @@ TestWebKitAPI.GridPositionTest
 TestWebKitAPI.HTTPHeaderField
 TestWebKitAPI.HTTPHeaderMap
 TestWebKitAPI.HTTPParsers
-TestWebKitAPI.HistoryDelegate
 TestWebKitAPI.HysteresisActivity
 TestWebKitAPI.IOSurfacePoolTest
 TestWebKitAPI.IOSurfaceTest
@@ -350,7 +344,6 @@ TestWebKitAPI.MIMETypeRegistry
 TestWebKitAPI.MarkedText
 TestWebKitAPI.MediaCaptureDisabledTest
 TestWebKitAPI.MediaDocument
-TestWebKitAPI.MediaLoading
 TestWebKitAPI.MediaReorderQueue
 TestWebKitAPI.MediaSessionCoordinatorTest
 TestWebKitAPI.MemoryFootprintThreshold
@@ -369,7 +362,6 @@ TestWebKitAPI.PAL
 TestWebKitAPI.PDFSnapshot
 TestWebKitAPI.ParsedContentType
 TestWebKitAPI.Path
-TestWebKitAPI.PermissionsAPI
 TestWebKitAPI.PlatformCAAnimation
 TestWebKitAPI.PlatformDynamicRangeLimit
 TestWebKitAPI.PreferredContentMode
@@ -394,7 +386,6 @@ TestWebKitAPI.SOAuthorizationPopUp
 TestWebKitAPI.STUNMessageParsing
 TestWebKitAPI.SVGImageCasts
 TestWebKitAPI.SampleMapTest
-TestWebKitAPI.ScrollbarTests
 TestWebKitAPI.ScrollbarWidthCrash
 TestWebKitAPI.ScrollingCoordinatorTests
 TestWebKitAPI.SecurityOriginTest
@@ -455,7 +446,6 @@ TestWebKitAPI.WKWebExtensionAPIEvent
 TestWebKitAPI.WKWebExtensionAPIExtension
 TestWebKitAPI.WKWebExtensionAPILocalization
 TestWebKitAPI.WKWebExtensionAPINamespace
-TestWebKitAPI.WKWebExtensionAPIStorage
 TestWebKitAPI.WKWebExtensionContext
 TestWebKitAPI.WKWebExtensionController
 TestWebKitAPI.WKWebExtensionControllerConfiguration

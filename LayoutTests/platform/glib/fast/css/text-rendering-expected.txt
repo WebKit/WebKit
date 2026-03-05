@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,1) size 650x135
-        RenderText {#text} at (0,1) size 650x135
+      RenderInline {SPAN} at (0,1) size 650x136
+        RenderText {#text} at (0,1) size 650x136
           text run at (0,1) width 650: "fin LYAWA (No kerning or"
           text run at (0,70) width 228: "ligatures)"
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (228,109) size 0x17
-      RenderInline {SPAN} at (0,139) size 677x135
-        RenderText {#text} at (0,139) size 677x135
+      RenderBR {BR} at (228,109) size 0x18
+      RenderInline {SPAN} at (0,139) size 677x136
+        RenderText {#text} at (0,139) size 677x136
           text run at (0,139) width 677: "fin LYAWA (No kerning or"
           text run at (0,208) width 228: "ligatures)"
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (228,247) size 0x17
-      RenderInline {SPAN} at (0,277) size 612x135
-        RenderText {#text} at (0,277) size 612x135
+      RenderBR {BR} at (228,247) size 0x18
+      RenderInline {SPAN} at (0,277) size 612x136
+        RenderText {#text} at (0,277) size 612x136
           text run at (0,277) width 612: "fin LYAWA (Kerning and"
           text run at (0,346) width 228: "ligatures)"
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (228,385) size 0x17
-      RenderInline {SPAN} at (0,415) size 612x135
-        RenderText {#text} at (0,415) size 612x135
+      RenderBR {BR} at (228,385) size 0x18
+      RenderInline {SPAN} at (0,415) size 612x136
+        RenderText {#text} at (0,415) size 612x136
           text run at (0,415) width 612: "fin LYAWA (Kerning and"
           text run at (0,484) width 228: "ligatures)"
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (228,523) size 0x17
+      RenderBR {BR} at (228,523) size 0x18

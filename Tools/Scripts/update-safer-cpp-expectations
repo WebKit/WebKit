@@ -30,6 +30,17 @@ from webkitpy.safer_cpp.checkers import Checker
 EXPECTATION_LINE_RE = r'(\s*\[\s*(?P<platform>\w+)\s*\]\s*)?(?P<path>.+)'
 
 
+def normalize_platform(platform):
+    if not platform:
+        return None
+    platform = platform.lower()
+    if platform == "mac" or platform == "macos":
+        return "macOS"
+    elif platform == "ios":
+        return "iOS"
+    return None
+
+
 def parser():
     parser = argparse.ArgumentParser(description='Automated tooling for updating safer CPP expectations', epilog='Example: update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor platform/Scrollbar.h --UncountedCallArgsChecker platform/ScrollAnimator.h')
 
@@ -70,35 +81,7 @@ def parser():
     return parser.parse_args()
 
 
-def modify_expectations_for_checker_from_file(checker, unexpected_contents, project, add=False):
-    path_to_expectations = checker.expectations_path(project)
-    with open(path_to_expectations) as expectations_file:
-        expectations = expectations_file.readlines()
-        prev_len = len(expectations)
-    for line in unexpected_contents:
-        if '=>' in line:
-            new_checker_type = line.split()[-1]
-            modify_expectations_for_checker_from_file(Checker.find_checker_by_name(new_checker_type), unexpected_contents, project, add)
-        elif line.strip():
-            if not add:
-                try:
-                    expectations.remove(line)
-                except ValueError:
-                    print(f'Error: {line.strip()} is not in {os.path.relpath(path_to_expectations)}!')
-            elif line not in expectations:
-                expectations.append(line)
-            else:
-                print(f'Error: {line.strip()} is already in {os.path.relpath(path_to_expectations)}!\n')
-    with open(path_to_expectations, 'w') as expectations_file:
-        expectations_file.writelines(sorted(expectations))
-    print(f'Updated expectations for {checker.name()}!')
-    if not add:
-        print(f'Removed {prev_len - len(expectations)} fixed files.\n')
-    else:
-        print(f'Added {len(expectations) - prev_len} files with issues.\n')
-
-
-def update_expectations_from_file(unexpected_results, project, add=False):
+def update_expectations_from_file(unexpected_results, project, add=False, platform=None):
     filename = os.path.basename(unexpected_results)
     if not project:
         projects = [p for p in Checker.projects() if p in filename]
@@ -109,17 +92,29 @@ def update_expectations_from_file(unexpected_results, project, add=False):
             return
     print(f"{'Adding' if add else 'Removing'} unexpected failures in {project}...\n")
     with open(unexpected_results, 'r') as unexpected_contents:
+        checker_type = None
+        file_list = []
         for line in unexpected_contents:
             if '=>' in line:
+                if checker_type and file_list:
+                    print(checker_type, file_list)
+                    modify_expectations_for_checker(Checker.find_checker_by_name(checker_type), file_list, project, add, platform)
                 checker_type = line.split()[-1]
-                modify_expectations_for_checker_from_file(Checker.find_checker_by_name(checker_type), unexpected_contents, project, add)
+                file_list = []
+                continue
+            file_path = line.strip()
+            if file_path:
+                file_list.append(file_path)
+
+        if checker_type and file_list:
+            print(checker_type, file_list)
+            modify_expectations_for_checker(Checker.find_checker_by_name(checker_type), file_list, project, add, platform)
+
     print(f'Please add any changes to your commit using `git add` and `git commit --amend`.')
 
 
 def modify_expectations_for_checker(checker, unexpected_contents, project, add, platform):
-    if platform:
-        platform = platform.lower()
-    if platform != None and platform != 'mac' and platform != 'ios':
+    if normalize_platform(platform) not in [None, 'macOS', 'iOS']:
         print(f'Unknown platform: {platform}')
         return
 
@@ -141,8 +136,13 @@ def modify_expectations_for_checker(checker, unexpected_contents, project, add, 
             expectation_platform = match.group('platform')
             path = match.group('path')
             if path in expectation_map:
-                print(f'Conflicting or duplicate line in {expectation_relpath}: {path}')
-                continue
+                if normalize_platform(platform) == 'macOS' and normalize_platform(platform) == 'iOS':
+                    expectation_platform = None
+                elif normalize_platform(platform) == 'macOS' and normalize_platform(platform) == 'iOS':
+                    expectation_platform = None
+                else:
+                    print(f'Conflicting or duplicate line in {expectation_relpath}: {path}')
+                    continue
             expectation_map[match.group('path')] = {'platform': expectation_platform, 'comments': comments}
             comments = []
 
@@ -151,14 +151,15 @@ def modify_expectations_for_checker(checker, unexpected_contents, project, add, 
         for path in unexpected_contents:
             if path in expectation_map:
                 expectation_platform = expectation_map[path]['platform']
-                lowercase_platform = expectation_platform.lower() if expectation_platform else None
-                if lowercase_platform == platform:
+                if normalize_platform(expectation_platform) == normalize_platform(platform):
                     print(f'Path is already present in {expectation_relpath}: {path}')
                     continue
-                if lowercase_platform != 'mac' and lowercase_platform != 'ios':
+                if normalize_platform(expectation_platform) not in [None, 'macOS', 'iOS']:
                     print(f'Unexpected platform in {expectation_relpath}: {expectation_platform}')
                     continue
                 expectation_map[path]['platform'] = None
+            else:
+                expectation_map[path] = {'platform': normalize_platform(platform), 'comments': []}
             count += 1
         print(f'Added {count} files with issues.\n')
     else:
@@ -167,14 +168,13 @@ def modify_expectations_for_checker(checker, unexpected_contents, project, add, 
                 print(f'Path not found in {expectation_relpath}: {path}')
                 continue
             if platform:
-                expectation_platform = expectation_map[path]['platform']
-                lowercase_platform = expectation_platform.lower() if expectation_platform else None
-                if lowercase_platform != platform:
-                    platform_name = 'Mac' if platform == 'mac' else 'iOS'
-                    print(f'Expectation not found in {expectation_relpath}: {path} for {platform_name}')
+                expectation_platform = normalize_platform(expectation_map[path]['platform'])
+                if expectation_platform not in [None, normalize_platform(platform)]:
+                    print(f'Expectation not found in {expectation_relpath}: {path} for {normalized_platform(platform)}')
                     continue # Expectation is for another platform. We're done
                 if expectation_platform == None:
-                    expectation_map[path]['platform'] = 'Mac' if platform == 'ios' else 'iOS'
+                    # None means it currently applies to both. Keep the expectation for the other platform.
+                    expectation_map[path]['platform'] = 'macOS' if normalize_platform(platform) == 'iOS' else 'iOS'
                 else:
                     del expectation_map[path]
             else:
@@ -242,7 +242,7 @@ def main():
         if user_input[0].lower() != 'y':
             return
     if args.unexpected_results_file:
-        update_expectations_from_file(args.unexpected_results_file, args.project, args.add)
+        update_expectations_from_file(args.unexpected_results_file, args.project, args.add, args.platform)
     else:
         update_expectations(vars(args), args.project, args.add, args.platform)
 

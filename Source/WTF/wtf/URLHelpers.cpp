@@ -28,14 +28,14 @@
  */
 
 #include "config.h"
-#include "URLHelpers.h"
+#include <wtf/URLHelpers.h>
 
-#include "URLParser.h"
 #include <mutex>
 #include <ranges>
 #include <unicode/uidna.h>
 #include <unicode/uscript.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/WTFString.h>
 
@@ -220,6 +220,7 @@ static bool isLookalikeCharacter(const std::optional<char32_t>& previousCodePoin
     case 0x00BD: /* VULGAR FRACTION ONE HALF */
     case 0x00BE: /* VULGAR FRACTION THREE QUARTERS */
     /* 0x0131 LATIN SMALL LETTER DOTLESS I is intentionally not considered a lookalike character because it is visually distinguishable from i and it has legitimate use in the Turkish language. */
+    case 0x0138: /* LATIN SMALL LETTER KRA */
     case 0x01C0: /* LATIN LETTER DENTAL CLICK */
     case 0x01C3: /* LATIN LETTER RETROFLEX CLICK */
     case 0x1E9C: /* LATIN SMALL LETTER LONG S WITH DIAGONAL STROKE */
@@ -376,7 +377,7 @@ void addScriptToIDNAllowedScriptList(const char* scriptName)
 
 void initializeDefaultIDNAllowedScriptList()
 {
-    constexpr UScriptCode scripts[] = {
+    constexpr auto scripts = std::to_array<UScriptCode>({
         USCRIPT_COMMON,
         USCRIPT_INHERITED,
         USCRIPT_ARABIC,
@@ -397,7 +398,7 @@ void initializeDefaultIDNAllowedScriptList()
         USCRIPT_TAMIL,
         USCRIPT_THAI,
         USCRIPT_YI,
-    };
+    });
     for (auto script : scripts)
         addScriptToIDNAllowedScriptList(script);
 }
@@ -460,7 +461,7 @@ static inline bool isSecondLevelDomainNameAllowedByTLDRules(std::span<const char
             return isSecondLevelDomainNameAllowedByTLDRules(buffer.first(buffer.size() - suffixLength), function); \
     }
 
-static bool isRussianDomainNameCharacter(char16_t ch)
+static bool NODELETE isRussianDomainNameCharacter(char16_t ch)
 {
     // Only modern Russian letters, digits and dashes are allowed.
     return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || isASCIIDigit(ch) || ch == '-';
@@ -882,7 +883,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
         i += characterLength;
     }
 
-    return String::adopt(WTFMove(outBuffer));
+    return String::adopt(WTF::move(outBuffer));
 }
 
 String userVisibleURL(const CString& url)

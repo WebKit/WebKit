@@ -14,7 +14,7 @@ PASS Appending and removing children to mroot
 PASS Appending and removing children to mrow
 PASS Appending and removing children to ms
 PASS Appending and removing children to mspace
-FAIL Appending and removing children to msqrt assert_approx_equals: inline size expected 13 +/- 1 but got 16
+PASS Appending and removing children to msqrt
 PASS Appending and removing children to mstyle
 PASS Appending and removing children to msub
 PASS Appending and removing children to msubsup
@@ -24,5 +24,4 @@ PASS Appending and removing children to mtext
 PASS Appending and removing children to munder
 PASS Appending and removing children to munderover
 PASS Appending and removing children to semantics
-msqrt:
 

@@ -41,6 +41,52 @@
 
 namespace WTF {
 
+#if HAVE(36BIT_ADDRESS)
+
+// The reason we need OutsizedCompactPtr is that the OS linker / loader may choose
+// to place statically allocated objects at addresses that don't fit within 36-bits
+// (though address of heap allocated objects always fit in 36-bits). As such, they
+// will not fit in the default 32-bit encoding of CompactPtrs.
+//
+// We observe that:
+// 1. The OS will never allocate objects (heap or otherwise) within the __PAGEZERO
+//    region.
+// 2. The number of such statically allocated objects that we'll ever store in
+//    CompactPtrs are finite and small-ish (on the order of < 1100 instances).
+//
+// Hence, we can use the addresses within __PAGEZERO to represent indexes into a
+// table of OutsizedCompactPtrs where the full (> 36-bits) pointer value is actually
+// stored.
+//
+// __PAGEZERO is currently around 4G in size. However, we'll conservatively reserve
+// only the first 256K of addresses for OutsizedCompactPtrs. This allows us to
+// encode up to 16K outsized pointers.
+//
+// Meanwhile, we should also reduce the number of statically allocated objects that
+// can be stored in CompactPtrs. It would be ideal if the number of such objects
+// reduce to way under 1022. With that, we would be able to encode all those pointers
+// even if the size of __PAGEZERO is literally reduced to the size of 1 16K page.
+// Until then, we'll work with the 256K heuristic.
+
+class OutsizedCompactPtr {
+public:
+    using Encoded = uint32_t;
+
+    WTF_EXPORT_PRIVATE static Encoded encode(void*);
+    WTF_EXPORT_PRIVATE static void* decode(Encoded);
+
+    // 0 is reserved for the empty value.
+    // 1 is reserved for CompactPtr::hashDeletedStorageValue.
+    // So, the min encoding for an OutsizedCompactPtr can only be 2.
+    static constexpr uint32_t bitsShift = 4;
+    static constexpr uintptr_t addressRangeForOutsizedPtrEncoding = 256 * 1024;
+
+    constexpr static Encoded minEncoding = 2;
+    constexpr static Encoded maxEncoding = addressRangeForOutsizedPtrEncoding >> bitsShift;
+};
+#endif // HAVE(36BIT_ADDRESS)
+
+
 template <typename T>
 class CompactPtr {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompactPtr);
@@ -126,7 +172,7 @@ public:
 
     CompactPtr<T>& operator=(CompactPtr&& other)
     {
-        CompactPtr moved(WTFMove(other));
+        CompactPtr moved(WTF::move(other));
         swap(moved);
         return *this;
     }
@@ -135,7 +181,7 @@ public:
     CompactPtr<T>& operator=(CompactPtr<X>&& other)
     {
         static_assert(std::is_convertible_v<X*, T*>);
-        CompactPtr moved(WTFMove(other));
+        CompactPtr moved(WTF::move(other));
         swap(moved);
         return *this;
     }
@@ -180,7 +226,8 @@ public:
         static_assert(alignof(T) >= (1ULL << bitsShift));
         ASSERT(!(intPtr & alignmentMask));
         StorageType encoded = static_cast<StorageType>(intPtr >> bitsShift);
-        ASSERT(decode(encoded) == ptr);
+        if ((static_cast<uintptr_t>(encoded) << bitsShift) != intPtr) [[unlikely]]
+            return std::bit_cast<StorageType>(OutsizedCompactPtr::encode(std::bit_cast<void*>(ptr)));
         return encoded;
 #else
         return intPtr;
@@ -191,6 +238,11 @@ public:
     {
 #if HAVE(36BIT_ADDRESS)
         static_assert(alignof(T) >= (1ULL << bitsShift));
+        static_assert(OutsizedCompactPtr::bitsShift == bitsShift);
+        static_assert(OutsizedCompactPtr::minEncoding > hashDeletedStorageValue);
+
+        if (ptr >= OutsizedCompactPtr::minEncoding && ptr < OutsizedCompactPtr::maxEncoding) [[unlikely]]
+            return std::bit_cast<T*>(OutsizedCompactPtr::decode(ptr));
         return std::bit_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
 #else
         return std::bit_cast<T*>(ptr);

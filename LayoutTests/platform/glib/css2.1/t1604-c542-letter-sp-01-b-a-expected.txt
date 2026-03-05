@@ -4,7 +4,7 @@ layer at (0,0) size 800x202
   RenderBlock {HTML} at (0,0) size 800x202
     RenderBody {BODY} at (8,16) size 784x178
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 708x17
+        RenderText {#text} at (0,0) size 708x18
           text run at (0,0) width 708: "There should be a stripy pattern of yellow and aqua below (each vertical stripe should be straight and unbroken)."
       RenderBlock {DIV} at (48,34) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 312x24

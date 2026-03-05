@@ -46,19 +46,19 @@ class DFAMerger {
 
     template<WhichDFA whichDFA>
     struct TargetConverter {
-        uint64_t convert(uint32_t target)
+        uint64_t NODELETE convert(uint32_t target)
         {
             uint64_t value = 0xffffffffffffffff;
             extend(value, target);
             return value;
         }
 
-        void extend(uint64_t& destination, uint32_t target)
+        void NODELETE extend(uint64_t& destination, uint32_t target)
         {
             setHalfSignature(destination, target);
         }
     private:
-        void setHalfSignature(uint64_t& signature, uint32_t value)
+        void NODELETE setHalfSignature(uint64_t& signature, uint32_t value)
         {
             unsigned shiftAmount = (whichDFA == WhichDFA::A) ? 32 : 0;
             uint64_t mask = static_cast<uint64_t>(0xffffffff) << (32 - shiftAmount);
@@ -122,17 +122,17 @@ public:
 private:
     uint32_t invalidNodeIndex = 0xffffffff;
 
-    static uint64_t signatureForIndices(uint32_t aIndex, uint32_t bIndex)
+    static uint64_t NODELETE signatureForIndices(uint32_t aIndex, uint32_t bIndex)
     {
         return static_cast<uint64_t>(aIndex) << 32 | bIndex;
     }
 
-    static uint32_t extractIndexA(uint64_t signature)
+    static uint32_t NODELETE extractIndexA(uint64_t signature)
     {
         return static_cast<uint32_t>(signature >> 32);
     }
 
-    static uint32_t extractIndexB(uint64_t signature)
+    static uint32_t NODELETE extractIndexB(uint64_t signature)
     {
         return static_cast<uint32_t>(signature);
     }
@@ -191,14 +191,14 @@ void DFACombiner::combineDFAs(unsigned minimumSize, NOESCAPE const Function<void
 
     for (unsigned i = m_dfas.size(); i--;) {
         if (m_dfas[i].graphSize() > minimumSize) {
-            handler(WTFMove(m_dfas[i]));
+            handler(WTF::move(m_dfas[i]));
             m_dfas.removeAt(i);
         }
     }
 
     while (!m_dfas.isEmpty()) {
         if (m_dfas.size() == 1) {
-            handler(WTFMove(m_dfas.first()));
+            handler(WTF::move(m_dfas.first()));
             return;
         }
 
@@ -214,7 +214,7 @@ void DFACombiner::combineDFAs(unsigned minimumSize, NOESCAPE const Function<void
         }
 
         if (c.graphSize() > minimumSize)
-            handler(WTFMove(c));
+            handler(WTF::move(c));
         else
             m_dfas.append(c);
     }

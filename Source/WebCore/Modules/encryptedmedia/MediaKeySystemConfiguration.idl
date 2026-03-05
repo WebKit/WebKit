@@ -26,10 +26,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/encrypted-media/#dom-mediakeysystemconfiguration
 [
     Conditional=ENCRYPTED_MEDIA,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaKeySystemConfiguration {
     DOMString label = "";
     sequence<[AtomString] DOMString> initDataTypes = [];

@@ -4,7 +4,7 @@ layer at (0,0) size 800x164
   RenderBlock {HTML} at (0,0) size 800x164
     RenderBody {BODY} at (8,8) size 784x148
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 267x17
+        RenderText {#text} at (0,0) size 267x18
           text run at (0,0) width 267: "The next two columns should be identical."
       RenderTable {TABLE} at (0,18) size 138x130
         RenderTableSection {TBODY} at (0,0) size 138x130

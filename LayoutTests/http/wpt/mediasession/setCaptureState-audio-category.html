@@ -63,7 +63,7 @@ promise_test(async (test) => {
     await navigator.mediaSession.setMicrophoneActive(false);
     await new Promise(resolve => track.onmute = resolve);
 
-    validateInternalAudioCategory("None");
+    validateInternalAudioCategory("MediaPlayback");
 
     await video.play();
     await waitForInternalAudioCategory("MediaPlayback");

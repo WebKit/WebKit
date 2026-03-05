@@ -43,8 +43,8 @@ static std::optional<String> createProxyUrl(const URL&);
 
 CurlProxySettings::CurlProxySettings(URL&& proxyUrl, String&& ignoreHosts)
     : m_mode(Mode::Custom)
-    , m_url(WTFMove(proxyUrl))
-    , m_ignoreHosts(WTFMove(ignoreHosts))
+    , m_url(WTF::move(proxyUrl))
+    , m_ignoreHosts(WTF::move(ignoreHosts))
 {
     if (m_url.protocol().isEmpty())
         m_url.setProtocol("http"_s);
@@ -55,7 +55,7 @@ CurlProxySettings::CurlProxySettings(URL&& proxyUrl, String&& ignoreHosts)
 void CurlProxySettings::rebuildUrl()
 {
     if (auto url = createProxyUrl(m_url))
-        m_urlSerializedWithPort = WTFMove(*url);
+        m_urlSerializedWithPort = WTF::move(*url);
 }
 
 void CurlProxySettings::setUserPass(const String& user, const String& password)
@@ -103,7 +103,7 @@ CurlProxySettings::IPCData CurlProxySettings::toIPCData() const
 
 CurlProxySettings CurlProxySettings::fromIPCData(CurlProxySettings::IPCData&& ipcData)
 {
-    return WTF::switchOn(WTFMove(ipcData),
+    return WTF::switchOn(WTF::move(ipcData),
         [&] (DefaultData&&) {
             return CurlProxySettings { Mode::Default };
         },
@@ -111,7 +111,7 @@ CurlProxySettings CurlProxySettings::fromIPCData(CurlProxySettings::IPCData&& ip
             return CurlProxySettings { Mode::NoProxy };
         },
         [&] (CustomData&& customData) {
-            return CurlProxySettings { WTFMove(customData.url), WTFMove(customData.ignoreHosts) };
+            return CurlProxySettings { WTF::move(customData.url), WTF::move(customData.ignoreHosts) };
         }
     );
 }

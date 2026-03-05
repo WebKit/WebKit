@@ -112,7 +112,6 @@ public:
 
 protected:
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
-    RefPtr<WorkerOrWorkletGlobalScope> protectedGlobalScope() const;
 
     void initScriptIfNeeded()
     {

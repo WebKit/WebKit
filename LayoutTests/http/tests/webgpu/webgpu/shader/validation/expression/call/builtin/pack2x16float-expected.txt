@@ -40,103 +40,19 @@ PASS :value_range:constantOrOverrideStage="constant";value0=-65505;value1=65505
 PASS :value_range:constantOrOverrideStage="constant";value0=-65505;value1=-65504
 PASS :value_range:constantOrOverrideStage="constant";value0=-65505;value1=-65505
 PASS :value_range:constantOrOverrideStage="override";value0=65504;value1=65504
-FAIL :value_range:constantOrOverrideStage="override";value0=65504;value1=65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
+PASS :value_range:constantOrOverrideStage="override";value0=65504;value1=65505
 PASS :value_range:constantOrOverrideStage="override";value0=65504;value1=-65504
-FAIL :value_range:constantOrOverrideStage="override";value0=65504;value1=-65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=65505;value1=65504 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=65505;value1=65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=65505;value1=-65504 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=65505;value1=-65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
+PASS :value_range:constantOrOverrideStage="override";value0=65504;value1=-65505
+PASS :value_range:constantOrOverrideStage="override";value0=65505;value1=65504
+PASS :value_range:constantOrOverrideStage="override";value0=65505;value1=65505
+PASS :value_range:constantOrOverrideStage="override";value0=65505;value1=-65504
+PASS :value_range:constantOrOverrideStage="override";value0=65505;value1=-65505
 PASS :value_range:constantOrOverrideStage="override";value0=-65504;value1=65504
-FAIL :value_range:constantOrOverrideStage="override";value0=-65504;value1=65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
+PASS :value_range:constantOrOverrideStage="override";value0=-65504;value1=65505
 PASS :value_range:constantOrOverrideStage="override";value0=-65504;value1=-65504
-FAIL :value_range:constantOrOverrideStage="override";value0=-65504;value1=-65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=-65505;value1=65504 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=-65505;value1=65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=-65505;value1=-65504 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
-FAIL :value_range:constantOrOverrideStage="override";value0=-65505;value1=-65505 assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pack2x16float.spec.js:93:37
- Reached unreachable code
+PASS :value_range:constantOrOverrideStage="override";value0=-65504;value1=-65505
+PASS :value_range:constantOrOverrideStage="override";value0=-65505;value1=65504
+PASS :value_range:constantOrOverrideStage="override";value0=-65505;value1=65505
+PASS :value_range:constantOrOverrideStage="override";value0=-65505;value1=-65504
+PASS :value_range:constantOrOverrideStage="override";value0=-65505;value1=-65505
 

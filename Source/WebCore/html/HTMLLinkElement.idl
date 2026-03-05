@@ -19,34 +19,37 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://html.spec.whatwg.org/multipage/semantics.html#htmllinkelement
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface HTMLLinkElement : HTMLElement {
-    [Reflect] attribute boolean disabled;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded, ReflectURL] attribute USVString href;
-    [CEReactions=NotNeeded, Conditional=WEB_PAGE_SPATIAL_BACKDROP, EnabledBySetting=WebPageSpatialBackdropEnabled, ReflectURL] attribute USVString environmentMap;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString hreflang;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString media;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString rev;
-    [PutForwards=value] readonly attribute DOMTokenList sizes;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
-    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString as;
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString? crossOrigin;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString as;
+    [PutForwards=value] readonly attribute DOMTokenList relList;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString media;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString hreflang;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
+    [PutForwards=value] readonly attribute DOMTokenList sizes;
     [CEReactions=NotNeeded, Reflect] attribute DOMString imageSrcset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString imageSizes;
     [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
     [PutForwards=value] readonly attribute DOMTokenList blocking;
+    [Reflect] attribute boolean disabled;
     [CEReactions=NotNeeded, ImplementedAs=fetchPriorityForBindings, ReflectSetter] attribute [AtomString] DOMString fetchPriority;
 
-    readonly attribute StyleSheet sheet;
+    // Non-standard.
+    [CEReactions=NotNeeded, Conditional=WEB_PAGE_SPATIAL_BACKDROP, EnabledBySetting=WebPageSpatialBackdropEnabled, ReflectURL] attribute USVString environmentMap;
 
-    [PutForwards=value] readonly attribute DOMTokenList relList;
-
-    [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
+    // https://html.spec.whatwg.org/multipage/obsolete.html#HTMLLinkElement-partial
+    // FIXME: Move these to their own IDL file HTMLLinkElement+Obsolete.idl.
+    [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rev;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
 };
 
+HTMLLinkElement includes LinkStyle;

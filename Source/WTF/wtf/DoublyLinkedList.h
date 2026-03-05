@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <cstddef>
+#include <wtf/Assertions.h>
+
 namespace WTF {
 
 // This class allows nodes to share code without dictating data member layout.

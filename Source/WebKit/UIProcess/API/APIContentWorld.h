@@ -40,15 +40,17 @@ namespace API {
 
 class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld>, public CanMakeWeakPtr<ContentWorld> {
 public:
+    static OptionSet<WebKit::ContentWorldOption> NODELETE defaultOptions();
     static ContentWorld* worldForIdentifier(WebKit::ContentWorldIdentifier);
-    static Ref<ContentWorld> sharedWorldWithName(const WTF::String&, OptionSet<WebKit::ContentWorldOption> options = { });
+    static Ref<ContentWorld> sharedWorldWithName(const WTF::String&, OptionSet<WebKit::ContentWorldOption> = defaultOptions() );
+    static Ref<ContentWorld> createNamelessWorld(OptionSet<WebKit::ContentWorldOption>);
     static ContentWorld& pageContentWorldSingleton();
     static ContentWorld& defaultClientWorldSingleton();
 
     virtual ~ContentWorld();
 
     WebKit::ContentWorldIdentifier identifier() const { return m_identifier; }
-    const WTF::String& name() const { return m_name; }
+    const WTF::String& name() const LIFETIME_BOUND { return m_name; }
     WebKit::ContentWorldData worldDataForProcess(WebKit::WebProcessProxy&) const;
 
     bool allowAccessToClosedShadowRoots() const { return m_options.contains(WebKit::ContentWorldOption::AllowAccessToClosedShadowRoots); }

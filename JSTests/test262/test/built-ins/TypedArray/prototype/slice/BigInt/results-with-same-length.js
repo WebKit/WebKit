@@ -3,12 +3,12 @@
 /*---
 esid: sec-%typedarray%.prototype.slice
 description: slice may return a new instance with the same length
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([40n, 41n, 42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([40n, 41n, 42n, 43n]));
 
   function testRes(result, msg) {
     assert.sameValue(result.length, 4, msg);

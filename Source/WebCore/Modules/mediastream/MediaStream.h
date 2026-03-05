@@ -58,7 +58,7 @@ class MediaStream final
     , private LoggerHelper
 #endif
     , public RefCounted<MediaStream> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -94,15 +94,14 @@ public:
     template<typename Function> bool hasMatchingTrack(Function&& function) const { return std::ranges::any_of(m_trackMap.values(), std::forward<Function>(function)); }
 
     MediaStreamPrivate& privateStream() { return m_private.get(); }
-    Ref<MediaStreamPrivate> protectedPrivateStream();
 
     void startProducingData();
     void stopProducingData();
-    void inactivate();
+    void NODELETE inactivate();
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
 
@@ -118,7 +117,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
     ASCIILiteral logClassName() const final { return "MediaStream"_s; }
 #endif
 
@@ -143,7 +142,7 @@ private:
 
     // ActiveDOMObject.
     void stop() final { inactivate(); }
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     void updateActiveState();
     void activityEventTimerFired();
@@ -152,7 +151,7 @@ private:
 
     MediaStreamTrackVector filteredTracks(NOESCAPE const Function<bool(const MediaStreamTrack&)>&) const;
 
-    Document* document() const;
+    Document* NODELETE document() const;
     RefPtr<MediaSessionManagerInterface> mediaSessionManager() const;
 
     const Ref<MediaStreamPrivate> m_private;
@@ -168,5 +167,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(MediaStream)
 
 #endif // ENABLE(MEDIA_STREAM)

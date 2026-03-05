@@ -18,7 +18,7 @@ info: |
     b. Let kValue be ? Get(arrayLike, Pk).
     c. Perform ? Set(O, Pk, kValue, true).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -37,4 +37,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     new TA(obj);
   });
-});
+}, null, ["passthrough"]);

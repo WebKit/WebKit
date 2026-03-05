@@ -20,7 +20,6 @@
 #include "config.h"
 #include "MediaQueryList.h"
 
-#include "AddEventListenerOptionsInlines.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentQuirks.h"
 #include "EventNames.h"
@@ -36,12 +35,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaQueryList);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaQueryList);
 
 MediaQueryList::MediaQueryList(Document& document, MediaQueryMatcher& matcher, MQ::MediaQueryList&& mediaQueries, bool matches)
     : ActiveDOMObject(&document)
     , m_matcher(&matcher)
-    , m_mediaQueries(WTFMove(mediaQueries))
+    , m_mediaQueries(WTF::move(mediaQueries))
     , m_dynamicDependencies(MQ::MediaQueryEvaluator { matcher.mediaType() }.collectDynamicDependencies(m_mediaQueries))
     , m_evaluationRound(matcher.evaluationRound())
     , m_changeRound(m_evaluationRound - 1) // Any value that is not the same as m_evaluationRound would do.
@@ -52,7 +51,7 @@ MediaQueryList::MediaQueryList(Document& document, MediaQueryMatcher& matcher, M
 
 Ref<MediaQueryList> MediaQueryList::create(Document& document, MediaQueryMatcher& matcher, MQ::MediaQueryList&& mediaQueries, bool matches)
 {
-    auto list = adoptRef(*new MediaQueryList(document, matcher, WTFMove(mediaQueries), matches));
+    auto list = adoptRef(*new MediaQueryList(document, matcher, WTF::move(mediaQueries), matches));
     list->suspendIfNeeded();
     return list;
 }
@@ -80,7 +79,7 @@ void MediaQueryList::addListener(RefPtr<EventListener>&& listener)
     if (!listener)
         return;
 
-    addEventListener(eventNames().changeEvent, listener.releaseNonNull(), { });
+    addEventListener(eventNames().changeEvent, listener.releaseNonNull());
 }
 
 void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)

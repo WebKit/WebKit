@@ -1,0 +1,6 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+[double click]

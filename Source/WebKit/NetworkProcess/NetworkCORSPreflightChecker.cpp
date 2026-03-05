@@ -47,9 +47,9 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkCORSPreflightChecker);
 
 NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
-    : m_parameters(WTFMove(parameters))
+    : m_parameters(WTF::move(parameters))
     , m_networkProcess(networkProcess)
-    , m_completionCallback(WTFMove(completionCallback))
+    , m_completionCallback(WTF::move(completionCallback))
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
     , m_networkResourceLoader(networkResourceLoader)
 {
@@ -83,7 +83,7 @@ void NetworkCORSPreflightChecker::startPreflight()
     loadParameters.allowPrivacyProxy = m_parameters.allowPrivacyProxy;
 
     if (CheckedPtr networkSession = m_networkProcess->networkSession(m_parameters.sessionID)) {
-        Ref task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
+        Ref task = NetworkDataTask::create(*networkSession, *this, WTF::move(loadParameters));
         m_task = task.copyRef();
         task->resume();
     } else
@@ -93,7 +93,7 @@ void NetworkCORSPreflightChecker::startPreflight()
 void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceResponse&& response, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler)
 {
     if (m_shouldCaptureExtraNetworkLoadMetrics)
-        m_loadInformation.response = WTFMove(response);
+        m_loadInformation.response = WTF::move(response);
 
     CORS_CHECKER_RELEASE_LOG("willPerformHTTPRedirection");
     completionHandler({ });
@@ -118,7 +118,7 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
         return;
     }
 
-    m_networkProcess->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageProxyID, &m_parameters.topOrigin->data(), challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+    protect(m_networkProcess->authenticationManager())->didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageProxyID, &m_parameters.topOrigin->data(), challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
@@ -128,7 +128,7 @@ void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&&
     if (m_shouldCaptureExtraNetworkLoadMetrics)
         m_loadInformation.response = response;
 
-    m_response = WTFMove(response);
+    m_response = WTF::move(response);
     completionHandler(PolicyAction::Use);
 }
 
@@ -148,7 +148,7 @@ void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceEr
         if (error.isNull() || error.isGeneral())
             error.setType(ResourceError::Type::AccessControl);
 
-        m_completionCallback(WTFMove(error));
+        m_completionCallback(WTF::move(error));
         return;
     }
 
@@ -193,7 +193,7 @@ void NetworkCORSPreflightChecker::wasBlockedByDisabledFTP()
 NetworkTransactionInformation NetworkCORSPreflightChecker::takeInformation()
 {
     ASSERT(m_shouldCaptureExtraNetworkLoadMetrics);
-    return WTFMove(m_loadInformation);
+    return WTF::move(m_loadInformation);
 }
 
 } // Namespace WebKit

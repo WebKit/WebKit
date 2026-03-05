@@ -114,13 +114,13 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
             })();
 
             searchLocation = matchLocation + childText.length();
-            children.append({ WTFMove(childText), floatQuad(retainPtr(child.quad).get()), hasLeadingWhitespace });
+            children.append({ WTF::move(childText), floatQuad(retainPtr(child.quad).get()), hasLeadingWhitespace });
         }
         RetainPtr<VKWKLineInfo> nextLine = nextLineIndex < allLines.get().count ? allLines.get()[nextLineIndex] : nil;
         // The `shouldWrap` property indicates whether or not a line should wrap, relative to the previous line.
         bool hasTrailingNewline = nextLine && (![nextLine respondsToSelector:@selector(shouldWrap)] || ![nextLine shouldWrap]);
         bool isVertical = [line respondsToSelector:@selector(layoutDirection)] && [line layoutDirection] == CRLayoutDirectionTopToBottom;
-        result.lines.append({ floatQuad(retainPtr(line.quad).get()), WTFMove(children), hasTrailingNewline, isVertical });
+        result.lines.append({ floatQuad(retainPtr(line.quad).get()), WTF::move(children), hasTrailingNewline, isVertical });
         isFirstLine = false;
         nextLineIndex++;
     }
@@ -162,7 +162,7 @@ bool languageIdentifierSupportsLiveText(NSString *languageIdentifier)
         MemoryCompactRobinHoodHashSet<String> set;
         for (NSString *identifier in [PAL::getVKCImageAnalyzerClassSingleton() supportedRecognitionLanguages]) {
             if (auto code = languageCodeForLocale(identifier); !code.isEmpty())
-                set.add(WTFMove(code));
+                set.add(WTF::move(code));
         }
         return set;
     }();
@@ -201,7 +201,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
             quad.setP3({ quad.p3().x(), 1 - quad.p3().y() });
             quad.setP4({ quad.p4().x(), 1 - quad.p4().y() });
         }
-        result.blocks.append({ paragraph.text, WTFMove(quad) });
+        result.blocks.append({ paragraph.text, WTF::move(quad) });
     }
 
     return result;
@@ -223,8 +223,8 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
     else
         RELEASE_LOG(Translation, "[#%{public}s] Image translation started", currentRequestID.loggingString().utf8().data());
     auto request = createImageAnalyzerRequest(image, VKAnalysisTypeText);
-    [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), sourceLocale, targetLocale, currentRequestID, startTime] (CocoaImageAnalysis *analysis, NSError *analysisError) mutable {
-        callOnMainRunLoop([completion = WTFMove(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale, targetLocale, currentRequestID, startTime] () mutable {
+    [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion), sourceLocale, targetLocale, currentRequestID, startTime] (CocoaImageAnalysis *analysis, NSError *analysisError) mutable {
+        callOnMainRunLoop([completion = WTF::move(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale, targetLocale, currentRequestID, startTime] () mutable {
             auto imageAnalysisDelay = MonotonicTime::now() - startTime;
             if (!analysis) {
                 RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), analysisError.get());
@@ -251,7 +251,7 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
                 RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.get().count);
 
             auto translationStartTime = MonotonicTime::now();
-            auto completionBlock = makeBlockPtr([completion = WTFMove(completion), currentRequestID, translationStartTime](VKCImageAnalysisTranslation *translation, NSError *error) mutable {
+            auto completionBlock = makeBlockPtr([completion = WTF::move(completion), currentRequestID, translationStartTime](VKCImageAnalysisTranslation *translation, NSError *error) mutable {
                 auto translationDelay = MonotonicTime::now() - translationStartTime;
                 if (error) {
                     RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), error);
@@ -310,11 +310,11 @@ void requestBackgroundRemoval(CGImageRef image, CompletionHandler<void(CGImageRe
     }
 
     auto startTime = MonotonicTime::now();
-    auto completionBlock = makeBlockPtr([completion = WTFMove(completion), startTime](CGImageRef result, NSError *error) mutable {
+    auto completionBlock = makeBlockPtr([completion = WTF::move(completion), startTime](CGImageRef result, NSError *error) mutable {
         if (error)
             RELEASE_LOG(ImageAnalysis, "Remove background failed with error: %@", error);
 
-        callOnMainRunLoop([protectedResult = RetainPtr { result }, completion = WTFMove(completion), startTime]() mutable {
+        callOnMainRunLoop([protectedResult = RetainPtr { result }, completion = WTF::move(completion), startTime]() mutable {
             RELEASE_LOG(ImageAnalysis, "Remove background finished in %.0f ms (found subject? %d)", (MonotonicTime::now() - startTime).milliseconds(), !!protectedResult);
             completion(protectedResult.get());
         });
@@ -325,7 +325,7 @@ void requestBackgroundRemoval(CGImageRef image, CompletionHandler<void(CGImageRe
         return;
     }
 
-    PAL::softLinkVisionKitCorevk_cgImageRemoveBackground(transcodedImage.get(), YES, [completionBlock = WTFMove(completionBlock)](CGImageRef image, CGRect, NSError *error) mutable {
+    PAL::softLinkVisionKitCorevk_cgImageRemoveBackground(transcodedImage.get(), YES, [completionBlock = WTF::move(completionBlock)](CGImageRef image, CGRect, NSError *error) mutable {
         completionBlock(image, error);
     });
 }
@@ -395,18 +395,18 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
         return completion(nil);
 
     auto queue = WorkQueue::create("com.apple.WebKit.ImageAnalysisUtilities.QRCodePayloadRequest"_s);
-    queue->dispatch([image = retainPtr(image), completion = WTFMove(completion)]() mutable {
+    queue->dispatch([image = retainPtr(image), completion = WTF::move(completion)]() mutable {
         auto adjustedImage = imageFilledWithWhiteBackground(image.get());
 
-        auto callCompletionOnMainRunLoopWithResult = [completion = WTFMove(completion)](NSString *result) mutable {
-            callOnMainRunLoop([completion = WTFMove(completion), result = retainPtr(result)]() mutable {
+        auto callCompletionOnMainRunLoopWithResult = [completion = WTF::move(completion)](NSString *result) mutable {
+            callOnMainRunLoop([completion = WTF::move(completion), result = retainPtr(result)]() mutable {
                 if (!completion)
                     return;
                 completion(result.get());
             });
         };
 
-        auto completionHandler = makeBlockPtr([callCompletionOnMainRunLoopWithResult = WTFMove(callCompletionOnMainRunLoopWithResult)](VNRequest *request, NSError *error) mutable {
+        auto completionHandler = makeBlockPtr([callCompletionOnMainRunLoopWithResult = WTF::move(callCompletionOnMainRunLoopWithResult)](VNRequest *request, NSError *error) mutable {
             if (error) {
                 callCompletionOnMainRunLoopWithResult(nil);
                 return;
@@ -443,9 +443,9 @@ static WorkQueue& textRecognitionQueueSingleton()
     return queue.get();
 }
 
-void recognizeText(CGImageRef image, CompletionHandler<void(NSString *, NSError *)>&& completion)
+void recognizeText(CGImageRef image, std::optional<TextRecognitionLevel> level, CompletionHandler<void(NSString *, NSError *)>&& completion)
 {
-    textRecognitionQueueSingleton().dispatch([image = retainPtr(image), completion = WTFMove(completion)] mutable {
+    textRecognitionQueueSingleton().dispatch([level, image = retainPtr(image), completion = WTF::move(completion)] mutable {
         __block RetainPtr<NSString> resultText;
         __block RetainPtr<NSError> error;
         RetainPtr request = adoptNS([PAL::allocVNRecognizeTextRequestInstance() initWithCompletionHandler:^(VNRequest *request, NSError *requestError) {
@@ -475,6 +475,17 @@ void recognizeText(CGImageRef image, CompletionHandler<void(NSString *, NSError 
             resultText = resultBuffer;
         }]);
 
+        if (level) {
+            switch (*level) {
+            case TextRecognitionLevel::Accurate:
+                [request setRecognitionLevel:VNRequestTextRecognitionLevelAccurate];
+                break;
+            case TextRecognitionLevel::Fast:
+                [request setRecognitionLevel:VNRequestTextRecognitionLevelFast];
+                break;
+            }
+        }
+
         [request setAutomaticallyDetectsLanguage:YES];
 
         @try {
@@ -489,7 +500,7 @@ void recognizeText(CGImageRef image, CompletionHandler<void(NSString *, NSError 
             }];
         }
 
-        RunLoop::mainSingleton().dispatch([resultText = WTFMove(resultText), error = WTFMove(error), completion = WTFMove(completion)] mutable {
+        RunLoop::mainSingleton().dispatch([resultText = WTF::move(resultText), error = WTF::move(error), completion = WTF::move(completion)] mutable {
             if (error)
                 completion(nil, error.get());
             else

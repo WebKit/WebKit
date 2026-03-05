@@ -36,6 +36,7 @@ rtc_library("primitives") {
 
   deps = [
     "../../api:scoped_refptr",
+    "../../media:video_common",
     "../../rtc_base:checks",
     "../../rtc_base:refcount",
     "../../rtc_base:stringutils",
@@ -157,12 +158,15 @@ if (rtc_include_tests) {
       ":desktop_capture_mock",
       ":primitives",
       "../../api:array_view",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
       "../../rtc_base:random",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
       "../../rtc_base:timeutils",
+      "../../system_wrappers",
       "../../test:test_support",
     ]
 
@@ -592,6 +596,7 @@ rtc_library("desktop_capture") {
     ]
     libs += [ "dwmapi.lib" ]
     deps += [
+      "../../api/units:time_delta",
       "../../rtc_base:rtc_event",
       "../../rtc_base:threading",
       "../../rtc_base/win:hstring",

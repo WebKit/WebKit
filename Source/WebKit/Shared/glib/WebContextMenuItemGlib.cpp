@@ -30,6 +30,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 #include "APIObject.h"
+#include "WebKitContextMenuGAction.h"
 #include <gio/gio.h>
 
 #if PLATFORM(GTK) && !USE(GTK4)
@@ -58,7 +59,7 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemGlib& dat
     : WebContextMenuItemData(ContextMenuItemType::Action, data.action(), String { data.title() }, data.enabled(), false)
 {
     m_gAction = data.gAction();
-    m_submenuItems = WTFMove(submenu);
+    m_submenuItems = WTF::move(submenu);
 #if PLATFORM(GTK) && !USE(GTK4)
     m_gtkAction = data.gtkAction();
 #endif
@@ -85,11 +86,10 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& ti
 #if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WebContextMenuItemGlib::WebContextMenuItemGlib(GtkAction* action)
-    : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false)
+    : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) && gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)))
 {
     m_gtkAction = action;
     createActionIfNeeded();
-    g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", g_object_ref(m_gtkAction), g_object_unref);
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
@@ -98,31 +98,20 @@ WebContextMenuItemGlib::~WebContextMenuItemGlib()
 {
 }
 
-GUniquePtr<char> WebContextMenuItemGlib::buildActionName() const
-{
-#if PLATFORM(GTK) && !USE(GTK4)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (m_gtkAction)
-        return GUniquePtr<char>(g_strdup(gtk_action_get_name(m_gtkAction)));
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-
-    static uint64_t actionID = 0;
-    return GUniquePtr<char>(g_strdup_printf("action-%" PRIu64, ++actionID));
-}
-
 void WebContextMenuItemGlib::createActionIfNeeded()
 {
-    if (type() == ContextMenuItemType::Separator)
+    if (type() == ContextMenuItemType::Separator || type() == ContextMenuItemType::Submenu)
         return;
 
     if (!m_gAction) {
-        auto actionName = buildActionName();
-        if (type() == ContextMenuItemType::CheckableAction)
-            m_gAction = adoptGRef(G_ACTION(g_simple_action_new_stateful(actionName.get(), nullptr, g_variant_new_boolean(checked()))));
-        else
-            m_gAction = adoptGRef(G_ACTION(g_simple_action_new(actionName.get(), nullptr)));
-        g_simple_action_set_enabled(G_SIMPLE_ACTION(m_gAction.get()), enabled());
+        const char* name = nullptr;
+#if PLATFORM(GTK) && !USE(GTK4)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        if (m_gtkAction) // NOLINT
+            name = gtk_action_get_name(m_gtkAction);
+ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+        m_gAction = adoptGRef(webkitContextMenuGActionNew(name, *this));
     }
 
 #if PLATFORM(GTK) && !USE(GTK4)
@@ -135,10 +124,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         } else
             m_gtkAction = gtk_action_new(g_action_get_name(m_gAction.get()), title().utf8().data(), 0, nullptr);
         gtk_action_set_sensitive(m_gtkAction, enabled());
-        g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", m_gtkAction, g_object_unref);
     }
 
-    g_signal_connect_object(m_gAction.get(), "activate", G_CALLBACK(gtk_action_activate), m_gtkAction, G_CONNECT_SWAPPED);
+    if (WEBKIT_IS_CONTEXT_MENU_GACTION(m_gAction.get()))
+        webkitContextMenuGActionSetGtkAction(WEBKIT_CONTEXT_MENU_GACTION(m_gAction.get()), m_gtkAction);
+    else {
+        g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", g_object_ref_sink(m_gtkAction), g_object_unref);
+        g_signal_connect_object(m_gAction.get(), "activate", G_CALLBACK(gtk_action_activate), m_gtkAction, G_CONNECT_SWAPPED);
+    }
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }

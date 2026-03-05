@@ -46,12 +46,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerSoftUpdateLoader);
 
 Ref<ServiceWorkerSoftUpdateLoader> ServiceWorkerSoftUpdateLoader::create(NetworkSession& session, WebCore::ServiceWorkerJobData&& jobData, bool shouldRefreshCache, WebCore::ResourceRequest&& request, Handler&& completionHandler)
 {
-    return adoptRef(*new ServiceWorkerSoftUpdateLoader(session, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
+    return adoptRef(*new ServiceWorkerSoftUpdateLoader(session, WTF::move(jobData), shouldRefreshCache, WTF::move(request), WTF::move(completionHandler)));
 }
 
 ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& session, ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&& request, Handler&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
-    , m_jobData(WTFMove(jobData))
+    : m_completionHandler(WTF::move(completionHandler))
+    , m_jobData(WTF::move(jobData))
     , m_session(session)
 {
     ASSERT(!request.isConditional());
@@ -76,7 +76,7 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
 
             request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
             if (entry) {
-                m_cacheEntry = WTFMove(entry);
+                m_cacheEntry = WTF::move(entry);
 
                 String eTag = m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
                 if (!eTag.isEmpty())
@@ -86,11 +86,11 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
                 if (!lastModified.isEmpty())
                     request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
             }
-            loadFromNetwork(CheckedRef { *m_session }.get(), WTFMove(request));
+            loadFromNetwork(CheckedRef { *m_session }.get(), WTF::move(request));
         });
         return;
     }
-    loadFromNetwork(session, WTFMove(request));
+    loadFromNetwork(session, WTF::move(request));
 }
 
 ServiceWorkerSoftUpdateLoader::~ServiceWorkerSoftUpdateLoader()
@@ -104,7 +104,7 @@ void ServiceWorkerSoftUpdateLoader::fail(ResourceError&& error)
     if (!m_completionHandler)
         return;
 
-    m_completionHandler(workerFetchError(WTFMove(error)));
+    m_completionHandler(workerFetchError(WTF::move(error)));
     didComplete();
 }
 
@@ -112,7 +112,7 @@ void ServiceWorkerSoftUpdateLoader::loadWithCacheEntry(NetworkCache::Entry& entr
 {
     auto error = processResponse(entry.response());
     if (!error.isNull()) {
-        fail(WTFMove(error));
+        fail(WTF::move(error));
         return;
     }
 
@@ -128,8 +128,8 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.needsCertificateInfo = true;
-    parameters.request = WTFMove(request);
-    Ref networkLoad = NetworkLoad::create(*this, WTFMove(parameters), session);
+    parameters.request = WTF::move(request);
+    Ref networkLoad = NetworkLoad::create(*this, WTF::move(parameters), session);
     m_networkLoad = networkLoad.copyRef();
     networkLoad->start();
 
@@ -154,7 +154,7 @@ void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& respon
     }
     auto error = processResponse(response);
     if (!error.isNull()) {
-        fail(WTFMove(error));
+        fail(WTF::move(error));
         completionHandler(PolicyAction::Ignore);
         return;
     }

@@ -1003,9 +1003,9 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
 
     auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     __block bool detectWebpageLocaleCalled = false;
 
@@ -1625,9 +1625,9 @@ TEST(WKWebExtensionAPITabs, SendMessage)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -1682,9 +1682,9 @@ TEST(WKWebExtensionAPITabs, SendMessageWithAsyncReply)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -1737,9 +1737,9 @@ TEST(WKWebExtensionAPITabs, SendMessageWithPromiseReply)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -1794,9 +1794,9 @@ TEST(WKWebExtensionAPITabs, SendMessageWithAsyncPromiseReply)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -1847,16 +1847,16 @@ TEST(WKWebExtensionAPITabs, SendMessageWithoutReply)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
 
 TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundPageToFullPageExtensionContent)
 {
-    auto *optionsScript = Util::constructScript(@[
+    RetainPtr optionsScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
         @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the background page')",
 
@@ -1886,7 +1886,7 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundPageToFullPageExtensionCont
     auto *resources = @{
         @"background.js": backgroundScript,
         @"options.html": @"<script type='module' src='options.js'></script>",
-        @"options.js": optionsScript
+        @"options.js": optionsScript.get()
     };
 
     auto manager = Util::loadExtension(tabsManifest, resources);
@@ -1920,8 +1920,8 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToSubframe)
         { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    auto *urlRequestMain = server.requestWithLocalhost("/main"_s);
-    auto *urlRequestSubframe = server.request("/subframe"_s);
+    RetainPtr urlRequestMain = server.requestWithLocalhost("/main"_s);
+    RetainPtr urlRequestSubframe = server.request("/subframe"_s);
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.sendMessage('Load Tab')",
@@ -1971,11 +1971,11 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToSubframe)
 
     auto manager = Util::loadExtension(manifest, resources);
 
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.get().URL];
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequestMain];
+    [manager.get().defaultTab.webView loadRequest:urlRequestMain.get()];
 
     [manager run];
 }
@@ -2164,24 +2164,24 @@ TEST(WKWebExtensionAPITabs, SendMessageBackAndForwardNavigation)
 
     auto manager = Util::loadExtension(manifest, resources);
 
-    auto *localhostRequest = server.requestWithLocalhost();
-    auto *altHostRequest = server.request();
+    RetainPtr localhostRequest = server.requestWithLocalhost();
+    RetainPtr altHostRequest = server.request();
 
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:localhostRequest.URL];
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:altHostRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:localhostRequest.get().URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:altHostRequest.get().URL];
 
     [manager runUntilTestMessage:@"Ready"];
 
     auto *webView = manager.get().defaultTab.webView;
 
     // Load localhost page.
-    [webView synchronouslyLoadRequest:localhostRequest];
+    [webView synchronouslyLoadRequest:localhostRequest.get()];
 
     [manager sendTestMessage:@"Go"];
     [manager runUntilTestMessage:@"Messages Sent"];
 
     // Load 127.0.0.1 page.
-    [webView synchronouslyLoadRequest:altHostRequest];
+    [webView synchronouslyLoadRequest:altHostRequest.get()];
 
     [manager sendTestMessage:@"Go"];
     [manager runUntilTestMessage:@"Messages Sent"];
@@ -2258,9 +2258,9 @@ TEST(WKWebExtensionAPITabs, Connect)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -2401,8 +2401,8 @@ TEST(WKWebExtensionAPITabs, ConnectToSubframe)
         { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, "<p>Subframe content</p>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    auto *urlRequestMain = server.requestWithLocalhost("/main"_s);
-    auto *urlRequestSubframe = server.request("/subframe"_s);
+    RetainPtr urlRequestMain = server.requestWithLocalhost("/main"_s);
+    RetainPtr urlRequestSubframe = server.request("/subframe"_s);
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.sendMessage('Load Tab')",
@@ -2462,11 +2462,11 @@ TEST(WKWebExtensionAPITabs, ConnectToSubframe)
 
     auto manager = Util::loadExtension(manifest, resources);
 
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.get().URL];
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequestMain];
+    [manager.get().defaultTab.webView loadRequest:urlRequestMain.get()];
 
     [manager run];
 }
@@ -2523,9 +2523,9 @@ TEST(WKWebExtensionAPITabs, PortDisconnect)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -2596,9 +2596,9 @@ TEST(WKWebExtensionAPITabs, ConnectWithMultipleListeners)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -2661,9 +2661,9 @@ TEST(WKWebExtensionAPITabs, PortDisconnectWithMultipleListeners)
 
     auto manager = Util::loadExtension(tabsContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -2707,14 +2707,14 @@ TEST(WKWebExtensionAPITabs, ExecuteScript)
 
     auto manager = Util::loadExtension(tabsManifestV2, @{ @"background.js": backgroundScript, @"executeScript.js": javaScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    auto *url = urlRequest.URL;
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.get().URL;
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -2871,12 +2871,12 @@ TEST(WKWebExtensionAPITabs, ExecuteScriptJSONTypes)
 
     auto manager = Util::loadExtension(tabsManifestV2, @{ @"background.js": backgroundScript });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -2936,14 +2936,14 @@ TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInMainFrame)
 
     auto manager = Util::loadExtension(tabsManifestV2, @{ @"background.js": backgroundScript, @"styles.css": css });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    auto *url = urlRequest.URL;
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.get().URL;
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -2987,14 +2987,14 @@ TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInAllFrames)
 
     auto manager = Util::loadExtension(tabsManifestV2, @{ @"background.js": backgroundScript, @"styles.css": css });
 
-    auto *urlRequest = server.requestWithLocalhost();
-    auto *url = urlRequest.URL;
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.get().URL;
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -3020,13 +3020,13 @@ TEST(WKWebExtensionAPITabs, CSSUserOrigin)
         @"browser.test.sendMessage('Load Tab')"
     ]);
 
-    auto *urlRequest = server.requestWithLocalhost();
+    RetainPtr urlRequest = server.requestWithLocalhost();
 
     auto manager = Util::loadExtension(tabsManifestV2, @{ @"background.js": backgroundScript });
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -3052,13 +3052,13 @@ TEST(WKWebExtensionAPITabs, CSSAuthorOrigin)
         @"browser.test.sendMessage('Load Tab')"
     ]);
 
-    auto *urlRequest = server.requestWithLocalhost();
+    RetainPtr urlRequest = server.requestWithLocalhost();
 
     auto manager = Util::loadExtension(tabsManifestV2, @{ @"background.js": backgroundScript });
 
     [manager runUntilTestMessage:@"Load Tab"];
 
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
 
     [manager run];
 }
@@ -3127,50 +3127,50 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
 
     auto manager = Util::loadExtension(activeTabManifest, @{ @"background.js": backgroundScript });
 
-    auto *localhostRequest = server.requestWithLocalhost();
-    auto *addressRequest = server.request();
+    RetainPtr localhostRequest = server.requestWithLocalhost();
+    RetainPtr addressRequest = server.request();
 
     [manager runUntilTestMessage:@"Load Localhost"];
 
-    [manager.get().defaultTab.webView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest.get()];
 
     [manager runUntilTestMessage:@"Perform User Gesture"];
 
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL]);
 
     [manager.get().context userGesturePerformedInTab:manager.get().defaultTab];
 
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL]);
+    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL]);
 
     [manager runUntilTestMessage:@"Load Next Page"];
 
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL]);
+    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost("/next.html"_s)];
 
     [manager runUntilTestMessage:@"Load IP Address"];
 
-    [manager.get().defaultTab.webView loadRequest:addressRequest];
+    [manager.get().defaultTab.webView loadRequest:addressRequest.get()];
 
     [manager run];
 
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL inTab:manager.get().defaultTab]);
 }
 
 TEST(WKWebExtensionAPITabs, UserGestureWithoutActiveTab)
@@ -3203,12 +3203,12 @@ TEST(WKWebExtensionAPITabs, UserGestureWithoutActiveTab)
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs]);
 
-    auto *localhostRequest = server.requestWithLocalhost();
-    auto *addressRequest = server.request();
+    RetainPtr localhostRequest = server.requestWithLocalhost();
+    RetainPtr addressRequest = server.request();
 
     [manager runUntilTestMessage:@"Load Localhost"];
 
-    [manager.get().defaultTab.webView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest.get()];
 
     [manager runUntilTestMessage:@"Perform User Gesture"];
 
@@ -3217,10 +3217,10 @@ TEST(WKWebExtensionAPITabs, UserGestureWithoutActiveTab)
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.get().URL inTab:manager.get().defaultTab]);
 }
 
 TEST(WKWebExtensionAPITabs, ActiveTabWithDeniedPermissions)
@@ -3247,18 +3247,18 @@ TEST(WKWebExtensionAPITabs, ActiveTabWithDeniedPermissions)
 
     auto manager = Util::loadExtension(activeTabManifest, @{ @"background.js": backgroundScript });
 
-    auto *localhostRequest = server.requestWithLocalhost();
+    RetainPtr localhostRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:localhostRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:localhostRequest.get().URL];
 
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
 
     [manager runUntilTestMessage:@"Load Localhost"];
 
-    [manager.get().defaultTab.webView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest.get()];
 
     [manager runUntilTestMessage:@"Perform User Gesture"];
 
@@ -3267,8 +3267,8 @@ TEST(WKWebExtensionAPITabs, ActiveTabWithDeniedPermissions)
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
 }
 
 TEST(WKWebExtensionAPITabs, ActiveTabRemovedWithDeniedPermissions)
@@ -3295,38 +3295,38 @@ TEST(WKWebExtensionAPITabs, ActiveTabRemovedWithDeniedPermissions)
 
     auto manager = Util::loadExtension(activeTabManifest, @{ @"background.js": backgroundScript });
 
-    auto *localhostRequest = server.requestWithLocalhost();
+    RetainPtr localhostRequest = server.requestWithLocalhost();
 
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
 
     [manager runUntilTestMessage:@"Load Localhost"];
 
-    [manager.get().defaultTab.webView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest.get()];
 
     [manager runUntilTestMessage:@"Perform User Gesture"];
 
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
 
     [manager.get().context userGesturePerformedInTab:manager.get().defaultTab];
 
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
+    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
 
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:localhostRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:localhostRequest.get().URL];
 
     EXPECT_TRUE([manager.get().context hasPermission:WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([manager.get().context hasPermission:WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
-    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
 }
 
 } // namespace TestWebKitAPI

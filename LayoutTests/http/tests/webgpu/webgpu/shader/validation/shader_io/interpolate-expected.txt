@@ -10,6 +10,8 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling=
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="";sampling="linear"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling=""
 FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="center" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -23,13 +25,14 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampl
           return vec4<f32>();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="centroid" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -43,13 +46,14 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampl
           return vec4<f32>();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="sample" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -63,10 +67,9 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampl
           return vec4<f32>();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="flat";sampling="first"
@@ -79,6 +82,8 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="sample"
 FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -92,13 +97,14 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective
           return vec4<f32>();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -112,10 +118,9 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective
           return vec4<f32>();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="perspective";sampling="flat"
@@ -126,6 +131,8 @@ PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sam
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="sample"
 FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -139,13 +146,14 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sam
           return vec4<f32>();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -159,10 +167,9 @@ FAIL :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sam
           return vec4<f32>();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="in";use_struct=true;type="linear";sampling="flat"
@@ -224,6 +231,8 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="";sampling="linear"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling=""
 FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="center" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -238,13 +247,14 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";samp
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="centroid" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -259,13 +269,14 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";samp
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="sample" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -280,10 +291,9 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";samp
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="flat";sampling="first"
@@ -296,6 +306,8 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspectiv
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="sample"
 FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -310,13 +322,14 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspectiv
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -331,10 +344,9 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspectiv
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="perspective";sampling="flat"
@@ -345,6 +357,8 @@ PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sa
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="sample"
 FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -359,13 +373,14 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sa
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -380,10 +395,9 @@ FAIL :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sa
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="vertex";io="out";use_struct=true;type="linear";sampling="flat"
@@ -445,6 +459,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";samplin
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling=""
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="center" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -458,13 +474,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sam
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="centroid" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -478,13 +495,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sam
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="sample" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -498,10 +516,9 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sam
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="flat";sampling="first"
@@ -514,6 +531,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspecti
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -527,13 +546,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspecti
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -547,10 +567,9 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspecti
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="perspective";sampling="flat"
@@ -561,6 +580,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";s
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -574,13 +595,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";s
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -594,10 +616,9 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";s
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=true;type="linear";sampling="flat"
@@ -659,6 +680,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampli
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling=""
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="center" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -668,13 +691,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sa
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="centroid" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -684,13 +708,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sa
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="sample" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -700,10 +725,9 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sa
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="flat";sampling="first"
@@ -716,6 +740,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspect
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -725,13 +751,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspect
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -741,10 +768,9 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspect
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="perspective";sampling="flat"
@@ -755,6 +781,8 @@ PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -764,13 +792,14 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -780,10 +809,9 @@ FAIL :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="in";use_struct=false;type="linear";sampling="flat"
@@ -845,6 +873,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampli
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling=""
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="center" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -858,13 +888,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sa
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="centroid" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -878,13 +909,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sa
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="sample" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -898,10 +930,9 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sa
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="flat";sampling="first"
@@ -914,6 +945,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspect
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -927,13 +960,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspect
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -947,10 +981,9 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspect
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="perspective";sampling="flat"
@@ -961,6 +994,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -974,13 +1009,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -994,10 +1030,9 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=true;type="linear";sampling="flat"
@@ -1059,6 +1094,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampl
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="";sampling="linear"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling=""
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="center" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1068,13 +1105,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";s
           return f32();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="centroid" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1084,13 +1122,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";s
           return f32();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="sample" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1100,10 +1139,9 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";s
           return f32();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="flat";sampling="first"
@@ -1116,6 +1154,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspec
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1125,13 +1165,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspec
           return f32();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1141,10 +1182,9 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspec
           return f32();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="perspective";sampling="flat"
@@ -1155,6 +1195,8 @@ PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="centroid"
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="sample"
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="first" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1164,13 +1206,14 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear"
           return f32();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="either" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1180,10 +1223,9 @@ FAIL :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear"
           return f32();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:82:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :type_and_sampling:stage="fragment";io="out";use_struct=false;type="linear";sampling="flat"
@@ -1243,6 +1285,8 @@ PASS :require_location:stage="fragment";attribute="%40location(0)";use_struct=fa
 PASS :require_location:stage="fragment";attribute="%40builtin(position)";use_struct=true
 PASS :require_location:stage="fragment";attribute="%40builtin(position)";use_struct=false
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1257,13 +1301,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="" asse
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1278,13 +1323,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1299,13 +1345,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1320,16 +1367,17 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1344,13 +1392,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1365,13 +1414,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1386,13 +1436,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1407,13 +1458,14 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1428,10 +1480,9 @@ FAIL :integral_types:stage="vertex";type="i32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute=""
@@ -1447,6 +1498,8 @@ PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40in
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(linear,%20centroid)"
 PASS :integral_types:stage="vertex";type="i32";use_struct=false;attribute="%40interpolate(linear,%20sample)"
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1461,13 +1514,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="" asse
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1482,13 +1536,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1503,13 +1558,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1524,16 +1580,17 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1548,13 +1605,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1569,13 +1627,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1590,13 +1649,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1611,13 +1671,14 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1632,10 +1693,9 @@ FAIL :integral_types:stage="vertex";type="u32";use_struct=true;attribute="%40int
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute=""
@@ -1651,6 +1711,8 @@ PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40in
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(linear,%20centroid)"
 PASS :integral_types:stage="vertex";type="u32";use_struct=false;attribute="%40interpolate(linear,%20sample)"
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1665,13 +1727,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1686,13 +1749,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1707,13 +1771,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1728,16 +1793,17 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1752,13 +1818,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1773,13 +1840,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1794,13 +1862,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1815,13 +1884,14 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1836,10 +1906,9 @@ FAIL :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute=""
@@ -1855,6 +1924,8 @@ PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attrib
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear,%20centroid)"
 PASS :integral_types:stage="vertex";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear,%20sample)"
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1869,13 +1940,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1890,13 +1962,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1911,13 +1984,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1932,16 +2006,17 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1956,13 +2031,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1977,13 +2053,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1998,13 +2075,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2019,13 +2097,14 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2040,10 +2119,9 @@ FAIL :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=true;attribu
           return S();
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute=""
@@ -2059,6 +2137,8 @@ PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attrib
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear,%20centroid)"
 PASS :integral_types:stage="vertex";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear,%20sample)"
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2072,13 +2152,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="" as
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2092,13 +2173,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2112,13 +2194,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2132,16 +2215,17 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2155,13 +2239,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2175,13 +2260,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2195,13 +2281,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2215,13 +2302,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2235,13 +2323,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2251,13 +2340,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="" a
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2267,13 +2357,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2283,13 +2374,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2299,16 +2391,17 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2318,13 +2411,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2334,13 +2428,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2350,13 +2445,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2366,13 +2462,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2382,13 +2479,14 @@ FAIL :integral_types:stage="fragment";type="i32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2402,13 +2500,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="" as
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2422,13 +2521,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2442,13 +2542,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2462,16 +2563,17 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2485,13 +2587,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2505,13 +2608,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2525,13 +2629,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2545,13 +2650,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2565,13 +2671,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=true;attribute="%40i
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2581,13 +2688,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="" a
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2597,13 +2705,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2613,13 +2722,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2629,16 +2739,17 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2648,13 +2759,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2664,13 +2776,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2680,13 +2793,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2696,13 +2810,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2712,13 +2827,14 @@ FAIL :integral_types:stage="fragment";type="u32";use_struct=false;attribute="%40
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2732,13 +2848,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2752,13 +2869,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2772,13 +2890,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2792,16 +2911,17 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2815,13 +2935,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2835,13 +2956,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2855,13 +2977,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2875,13 +2998,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2895,13 +3019,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2911,13 +3036,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2927,13 +3053,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2943,13 +3070,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2959,16 +3087,17 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2978,13 +3107,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2994,13 +3124,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3010,13 +3141,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3026,13 +3158,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3042,13 +3175,14 @@ FAIL :integral_types:stage="fragment";type="vec2%3Ci32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3062,13 +3196,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3082,13 +3217,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3102,13 +3238,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3122,16 +3259,17 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3145,13 +3283,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3165,13 +3304,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3185,13 +3325,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3205,13 +3346,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3225,13 +3367,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=true;attri
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3241,13 +3384,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3257,13 +3401,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3273,13 +3418,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3289,16 +3435,17 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat)"
 PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat,%20first)"
 PASS :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(flat,%20either)"
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(perspective,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3308,13 +3455,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3324,13 +3472,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear,%20center)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3340,13 +3489,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear,%20centroid)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3356,13 +3506,14 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attribute="%40interpolate(linear,%20sample)" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3372,10 +3523,9 @@ FAIL :integral_types:stage="fragment";type="vec4%3Cu32%3E";use_struct=false;attr
 
         }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js:137:24
-  - (in subcase: ) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :duplicate:attr=""

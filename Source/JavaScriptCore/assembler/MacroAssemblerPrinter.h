@@ -29,6 +29,7 @@
 #include <JavaScriptCore/MacroAssembler.h>
 #include <JavaScriptCore/Printer.h>
 #include <JavaScriptCore/ProbeContext.h>
+#include <wtf/Platform.h>
 
 namespace JSC {
 

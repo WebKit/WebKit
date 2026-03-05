@@ -58,7 +58,7 @@ WebsiteDataStore& WebExtensionControllerConfiguration::defaultWebsiteDataStore()
 {
     if (m_defaultWebsiteDataStore)
         return *m_defaultWebsiteDataStore;
-    return WebsiteDataStore::defaultDataStore().unsafeGet();
+    return WebsiteDataStore::defaultDataStore();
 }
 
 } // namespace WebKit

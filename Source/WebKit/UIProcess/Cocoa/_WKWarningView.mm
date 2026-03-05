@@ -317,12 +317,12 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);
         return nil;
     }
-    _completionHandler = [weakSelf = WeakObjCPtr<_WKWarningView>(self), completionHandler = WTFMove(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, URL>&& result) mutable {
+    _completionHandler = [weakSelf = WeakObjCPtr<_WKWarningView>(self), completionHandler = WTF::move(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, URL>&& result) mutable {
 #if PLATFORM(WATCHOS)
         if (auto strongSelf = weakSelf.get())
             [strongSelf.get()->_previousFirstResponder becomeFirstResponder];
 #endif
-        completionHandler(WTFMove(result));
+        completionHandler(WTF::move(result));
     };
     _warning = &warning;
 #if PLATFORM(MAC)
@@ -439,7 +439,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     RetainPtr<ButtonType> showDetails = box.get().subviews.lastObject;
     [showDetails removeFromSuperview];
 
-    auto text = adoptNS([self._protectedWarning->details() mutableCopy]);
+    auto text = adoptNS([protect(_warning)->details() mutableCopy]);
     [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body).get() } range:NSMakeRange(0, [text length])];
     auto details = adoptNS([[_WKWarningViewTextView alloc] initWithAttributedString:text.get() forWarning:self]);
     _details = details.get();
@@ -547,7 +547,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
 - (void)dealloc
 {
-    ensureOnMainRunLoop([completionHandler = WTFMove(_completionHandler), warning = WTFMove(_warning)] () mutable {
+    ensureOnMainRunLoop([completionHandler = WTF::move(_completionHandler), warning = WTF::move(_warning)] () mutable {
         if (completionHandler)
             completionHandler(WebKit::ContinueUnsafeLoad::No);
     });
@@ -602,11 +602,6 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     return _warning->forMainFrameNavigation();
 }
 
-- (RefPtr<const WebKit::BrowsingWarning>)_protectedWarning
-{
-    return _warning;
-}
-
 @end
 
 @implementation _WKWarningViewTextView
@@ -638,7 +633,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     [retainPtr(self.layoutManager) ensureLayoutForTextContainer:retainPtr(self.textContainer).get()];
     return { NSViewNoIntrinsicMetric, [retainPtr(self.layoutManager) usedRectForTextContainer:retainPtr(self.textContainer).get()].size.height };
 #elif HAVE(SAFE_BROWSING)
-    auto width = std::min<CGFloat>(maxWidth, [_warning frame].size.width) - 2 * marginSize;
+    auto width = std::min<CGFloat>(maxWidth, [_warning.get() frame].size.width) - 2 * marginSize;
     constexpr auto noHeightConstraint = CGFLOAT_MAX;
     return { width, [self sizeThatFits: { width, noHeightConstraint }].height };
 #else

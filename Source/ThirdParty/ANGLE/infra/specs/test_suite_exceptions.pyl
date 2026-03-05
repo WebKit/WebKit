@@ -47,10 +47,25 @@
           'shards': 10,
         },
       },
+      # anglebug.com/40644897 suspecting device lost caused by multiprocess
+      'win10-x64-ir-intel': {
+        'args': [
+          '--max-processes=1',
+        ],
+        'swarming': {
+          'shards': 10,
+        },
+      },
     },
     'replacements': {
       # anglebug.com/408276172 suspecting WebGPU backend flakiness caused by multiprocess
       'linux-intel': {
+        'args': {
+          '--max-processes': '1',
+        },
+      },
+      # anglebug.com/408276172 suspecting WebGPU backend flakiness caused by multiprocess
+      'linux-ir-intel': {
         'args': {
           '--max-processes': '1',
         },
@@ -83,13 +98,16 @@
           'shards': 5,
         },
       },
+      'win10-x64-ir-intel': {
+        # anglebug.com/42263955 flaky 4x8 pixel artifacts on Win Intel
+        'args': [
+          '--flaky-retries=1',
+        ],
+        'swarming': {
+          'shards': 5,
+        },
+      },
     },
-  },
-  'angle_trace_interpreter_tests': {
-    'remove_from': [
-      # TODO: Implement on Android. http://anglebug.com/42266248
-      'android-arm64-pixel4',
-    ],
   },
   'angle_trace_perf_native_tests': {
     'modifications': {
@@ -119,12 +137,23 @@
           'shards': 3,
         },
       },
+      'win10-x64-ir-intel': {
+        'swarming': {
+          'shards': 3,
+        },
+      },
     },
   },
   'angle_white_box_tests': {
     'modifications': {
       # anglebug.com/40644897 suspecting device lost caused by multiprocess
       'win10-x64-intel': {
+        'args': [
+          '--max-processes=1',
+        ],
+      },
+      # anglebug.com/40644897 suspecting device lost caused by multiprocess
+      'win10-x64-ir-intel': {
         'args': [
           '--max-processes=1',
         ],

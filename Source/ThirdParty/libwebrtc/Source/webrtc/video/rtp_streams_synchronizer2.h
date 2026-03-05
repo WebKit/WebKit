@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/system/no_unique_address.h"
@@ -31,7 +32,9 @@ namespace internal {
 // a given audio receive stream and video receive stream.
 class RtpStreamsSynchronizer {
  public:
-  RtpStreamsSynchronizer(TaskQueueBase* main_queue, Syncable* syncable_video);
+  RtpStreamsSynchronizer(const Environment& env,
+                         TaskQueueBase* main_queue,
+                         Syncable* syncable_video);
   ~RtpStreamsSynchronizer();
 
   void ConfigureSync(Syncable* syncable_audio);
@@ -50,6 +53,7 @@ class RtpStreamsSynchronizer {
  private:
   void UpdateDelay();
 
+  const Environment env_;
   TaskQueueBase* const task_queue_;
 
   // Used to check if we're running on the main thread/task queue.

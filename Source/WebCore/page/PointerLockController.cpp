@@ -119,7 +119,7 @@ void PointerLockController::requestPointerLock(Element* target, std::optional<Po
             return;
         }
         m_element = target;
-        m_options = WTFMove(options);
+        m_options = WTF::move(options);
         if (m_lockPending) {
             // m_lockPending means an answer from the ChromeClient for a previous requestPointerLock on the page is pending. It's currently unknown which way that will go, whether the request will be approved or rejected. Therefore queue the promise for later when that's known and don't send out any pointerlockchangeEvent yet.
             if (promise)
@@ -136,7 +136,7 @@ void PointerLockController::requestPointerLock(Element* target, std::optional<Po
     } else {
         m_lockPending = true;
         m_element = target;
-        m_options = WTFMove(options);
+        m_options = WTF::move(options);
         if (promise)
             m_promises.append(promise.releaseNonNull());
 
@@ -265,7 +265,7 @@ void PointerLockController::didLosePointerLock()
     if (!m_unlockPending)
         m_documentAllowedToRelockWithoutUserGesture = nullptr;
 
-    enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? m_element->protectedDocument().ptr() : RefPtr { m_documentOfRemovedElementWhileWaitingForUnlock.get() }.get());
+    enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? protect(m_element->document()).ptr() : RefPtr { m_documentOfRemovedElementWhileWaitingForUnlock.get() }.get());
     clearElement();
     m_unlockPending = false;
     m_documentOfRemovedElementWhileWaitingForUnlock = nullptr;
@@ -308,7 +308,7 @@ void PointerLockController::clearElement()
 void PointerLockController::enqueueEvent(const AtomString& type, Element* element)
 {
     if (element)
-        enqueueEvent(type, element->protectedDocument().ptr());
+        enqueueEvent(type, protect(element->document()).ptr());
 }
 
 void PointerLockController::enqueueEvent(const AtomString& type, Document* document)

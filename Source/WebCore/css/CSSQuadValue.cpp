@@ -32,13 +32,13 @@ namespace WebCore {
 CSSQuadValue::CSSQuadValue(Quad quad)
     : CSSValue(ClassType::Quad)
     , m_coalesceIdenticalValues(true)
-    , m_quad(WTFMove(quad))
+    , m_quad(WTF::move(quad))
 {
 }
 
 Ref<CSSQuadValue> CSSQuadValue::create(Quad quad)
 {
-    return adoptRef(*new CSSQuadValue(WTFMove(quad)));
+    return adoptRef(*new CSSQuadValue(WTF::move(quad)));
 }
 
 String CSSQuadValue::customCSSText(const CSS::SerializationContext& context) const

@@ -37,11 +37,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackPrivateWebM);
 
 Ref<AudioTrackPrivateWebM> AudioTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
 {
-    return adoptRef(*new AudioTrackPrivateWebM(WTFMove(trackEntry)));
+    return adoptRef(*new AudioTrackPrivateWebM(WTF::move(trackEntry)));
 }
 
 AudioTrackPrivateWebM::AudioTrackPrivateWebM(webm::TrackEntry&& trackEntry)
-    : m_track(WTFMove(trackEntry))
+    : m_track(WTF::move(trackEntry))
 {
     if (m_track.is_enabled.is_present())
         setEnabled(m_track.is_enabled.value());
@@ -109,9 +109,9 @@ std::optional<MediaTime> AudioTrackPrivateWebM::discardPadding() const
 String AudioTrackPrivateWebM::codec() const
 {
     if (m_formatDescription) {
-        if (!m_formatDescription->codecString.isEmpty())
-            return m_formatDescription->codecString;
-        return String::fromLatin1(m_formatDescription->codecName.string().data());
+        if (!m_formatDescription->codecString().isEmpty())
+            return m_formatDescription->codecString();
+        return String::fromLatin1(m_formatDescription->codecName().string().data());
     }
 
     if (!m_track.codec_id.is_present())
@@ -134,7 +134,7 @@ String AudioTrackPrivateWebM::codec() const
 uint32_t AudioTrackPrivateWebM::sampleRate() const
 {
     if (m_formatDescription)
-        return m_formatDescription->rate;
+        return m_formatDescription->rate();
 
     if (!m_track.audio.is_present())
         return 0;
@@ -149,7 +149,7 @@ uint32_t AudioTrackPrivateWebM::sampleRate() const
 uint32_t AudioTrackPrivateWebM::numberOfChannels() const
 {
     if (m_formatDescription)
-        return m_formatDescription->channels;
+        return m_formatDescription->channels();
 
     if (!m_track.audio.is_present())
         return 0;
@@ -165,7 +165,7 @@ void AudioTrackPrivateWebM::setFormatDescription(Ref<AudioInfo>&& formatDescript
 {
     if (m_formatDescription && *m_formatDescription == formatDescription)
         return;
-    m_formatDescription = WTFMove(formatDescription);
+    m_formatDescription = WTF::move(formatDescription);
     updateConfiguration();
 }
 
@@ -178,7 +178,7 @@ IGNORE_WARNINGS_BEGIN("c99-designator")
         .numberOfChannels = numberOfChannels(),
     };
 IGNORE_WARNINGS_END
-    setConfiguration(WTFMove(configuration));
+    setConfiguration(WTF::move(configuration));
 }
 
 }

@@ -74,7 +74,7 @@ def _platform_name_for_bot(bot_name):
     if "-debug" in name:
         name = name.replace("-debug", "")
     if "-wpt" in name:
-        name = name.replace("-wpt", "")
+        return "ios"
     return name
 
 

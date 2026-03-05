@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD) && ENABLE(WPE_PLATFORM)
 #include <WebCore/PlatformGamepad.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _WPEGamepad WPEGamepad;
@@ -34,6 +35,8 @@ typedef struct _WPEGamepad WPEGamepad;
 namespace WebKit {
 
 class PlatformGamepadWPE final : public WebCore::PlatformGamepad {
+    WTF_MAKE_TZONE_ALLOCATED(PlatformGamepadWPE);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformGamepadWPE);
 public:
     PlatformGamepadWPE(WPEGamepad*, unsigned index);
     virtual ~PlatformGamepadWPE();

@@ -59,7 +59,7 @@ TEST(WebKitLegacy, ScheduleInRunLoop)
         [webView unscheduleFromRunLoop:[NSRunLoop currentRunLoop] forMode:(NSString *)kCFRunLoopCommonModes];
         [webView scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:@"TestRunLoopMode"];
         [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
-        webViews.append(WTFMove(webView));
+        webViews.append(WTF::move(webView));
     }
 
     while (loadsFinished < webViewCount)

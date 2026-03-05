@@ -13,7 +13,7 @@ layer at (14,23) size 403x735 backgroundClip at (0,0) size 844x600 clip at (0,0)
   RenderMultiColumnFlowThread at (5,5) size 405x736
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 404x735
-      RenderText {#text} at (0,0) size 403x734
+      RenderText {#text} at (0,0) size 403x735
         text run at (0,0) width 401: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,21) width 398: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,42) width 365: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"

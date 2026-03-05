@@ -30,12 +30,12 @@ DECLARE_SYSTEM_HEADER
 #if USE(APPLE_INTERNAL_SDK)
 #include <CFNetwork/CFNetworkConnectionCachePriv.h>
 #else
-enum HTTPConnectionCacheLimitKeys {
+typedef enum HTTPConnectionCacheLimitKeys {
     kHTTPLoadWidth = 0,
     kHTTPPriorityNumLevels = 3,
     kHTTPNumFastLanes = 4,
     kHTTPMinimumFastLanePriority = 5,
-};
+} HTTPConnectionCacheLimitKeys;
 #endif
 
 WTF_EXTERN_C_BEGIN

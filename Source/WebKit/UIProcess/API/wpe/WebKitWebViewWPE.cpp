@@ -66,6 +66,7 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
     completionHandler();
 }
 
+#if USE(LIBWPE)
 /**
  * webkit_web_view_new:
  * @backend: (transfer full) (nullable): wrapped WPE view backend which
@@ -212,6 +213,7 @@ WebKitWebView* webkit_web_view_new_with_user_content_manager(WebKitWebViewBacken
         nullptr));
 }
 #endif
+#endif // USE(LIBWPE)
 
 /**
  * webkit_web_view_set_background_color:

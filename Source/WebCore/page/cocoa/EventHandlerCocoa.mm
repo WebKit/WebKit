@@ -28,6 +28,8 @@
 
 #import "DictionaryLookup.h"
 #import "Editor.h"
+#import "EventNames.h"
+#import "HandleUserInputEventResult.h"
 #import "LocalFrameInlines.h"
 
 #if PLATFORM(COCOA)
@@ -56,7 +58,21 @@ VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(c
 }
 
 #endif
-    
+
+#if ENABLE(TWO_PHASE_CLICKS)
+
+void EventHandler::dispatchSyntheticMouseOut(const PlatformMouseEvent& platformMouseEvent)
+{
+    updateMouseEventTargetNode(eventNames().mouseoutEvent, nullptr, platformMouseEvent, FireMouseOverOut::Yes);
+}
+
+void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platformMouseEvent)
+{
+    mouseMoved(platformMouseEvent);
+}
+
+#endif // ENABLE(TWO_PHASE_CLICKS)
+
 }
 
 #endif // PLATFORM(COCOA)

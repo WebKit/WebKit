@@ -234,7 +234,8 @@ class TimedThreadApiProcessor {
   void AddDuration(int64_t duration) {
     if (samples_count_ >= kNumInitializationFrames &&
         samples_count_ < num_durations_to_store_) {
-      api_call_durations_.AddSample(duration);
+      api_call_durations_.AddSample({.value = static_cast<double>(duration),
+                                     .time = clock_->CurrentTime()});
     }
     samples_count_++;
   }

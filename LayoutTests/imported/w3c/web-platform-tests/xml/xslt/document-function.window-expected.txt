@@ -1,0 +1,4 @@
+
+PASS xsl:document function disabled in transformToFragment
+PASS xsl:document function disabled in transformToDocument
+

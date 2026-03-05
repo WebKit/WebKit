@@ -35,7 +35,7 @@
 #include "LocalizedStrings.h"
 #include "NodeDocument.h"
 #include "PlatformLocale.h"
-#include "RenderStyle.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
 #include "StyleResolver.h"
@@ -47,12 +47,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeFieldElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DateTimeFieldElement);
 
 DateTimeFieldElementFieldOwner::~DateTimeFieldElementFieldOwner() = default;
 
 DateTimeFieldElement::DateTimeFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner)
-    : HTMLDivElement(divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
+    : HTMLDivElement(document, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_fieldOwner(fieldOwner)
 {
 }
@@ -65,8 +65,8 @@ std::optional<Style::UnadjustedStyle> DateTimeFieldElement::resolveCustomStyle(c
     adjustMinInlineSize(elementStyleStyle.get());
 
     if (!hasValue() && shadowHostStyle) {
-        auto textColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
-        auto backgroundColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        auto textColor = shadowHostStyle->visitedDependentColorApplyingColorFilter();
+        auto backgroundColor = shadowHostStyle->visitedDependentBackgroundColorApplyingColorFilter();
         elementStyleStyle->setColor(RenderTheme::singleton().datePlaceholderTextColor(textColor, backgroundColor));
     }
 
@@ -176,7 +176,7 @@ void DateTimeFieldElement::handleBlurEvent(Event& event)
 
 Locale& DateTimeFieldElement::localeForOwner() const
 {
-    return protectedDocument()->getCachedLocale(localeIdentifier());
+    return protect(document())->getCachedLocale(localeIdentifier());
 }
 
 AtomString DateTimeFieldElement::localeIdentifier() const
@@ -194,7 +194,7 @@ String DateTimeFieldElement::visibleValue() const
 void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
-        appendChild(Text::create(protectedDocument().get(), String { emptyString() }));
+        appendChild(Text::create(protect(document()).get(), String { emptyString() }));
 
     Ref textNode = downcast<Text>(*firstChild());
     String newVisibleValue = visibleValue();

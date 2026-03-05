@@ -52,6 +52,7 @@
       'video_engine_tests': {
         'mixins': ['shards-4'],
       },
+      'video_timing_tests': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
     },
@@ -89,11 +90,14 @@
         'mixins': ['shards-4'],
       },
       'system_wrappers_unittests': {},
-      'test_support_unittests': {},
+      'test_support_unittests': {
+        'mixins': ['shards-2'],
+      },
       'tools_unittests': {},
       'video_engine_tests': {
         'mixins': ['shards-4'],
       },
+      'video_timing_tests': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
     },
@@ -203,6 +207,7 @@
       'video_engine_tests': {
         'mixins': ['shards-4'],
       },
+      'video_timing_tests': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
     },
@@ -270,9 +275,8 @@
     'ios_simulator_tests_matrix': {
       'ios_simulator_tests': {
         'variants': [
-          'SIM_IPHONE_X_16_4',
           'SIM_IPHONE_14_17_5',
-          'SIM_IPHONE_15_18_0',
+          'SIM_IPHONE_15_18_2',
         ],
       },
     },

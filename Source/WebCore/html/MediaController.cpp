@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaController);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaController);
 
 Ref<MediaController> MediaController::create(ScriptExecutionContext& context)
 {

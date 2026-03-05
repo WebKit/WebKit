@@ -60,6 +60,7 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <objc/runtime.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -444,7 +445,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
         WebCore::FrameLoadRequest frameLoadRequest { *core(frame), request };
         frameLoadRequest.setFrameName(target);
         frameLoadRequest.setShouldCheckNewWindowPolicy(true);
-        core(frame)->loader().load(WTFMove(frameLoadRequest));
+        core(frame)->loader().load(WTF::move(frameLoadRequest));
     }
 }
 
@@ -616,12 +617,12 @@ static void installFlip4MacPlugInWorkaroundIfNecessary()
 {
     static bool hasInstalledFlip4MacPlugInWorkaround;
     if (!hasInstalledFlip4MacPlugInWorkaround) {
-        Class TSUpdateCheck = objc_lookUpClass("TSUpdateCheck");
+        RetainPtr<Class> TSUpdateCheck = objc_lookUpClass("TSUpdateCheck");
         if (!TSUpdateCheck)
             return;
 
 IGNORE_WARNINGS_BEGIN("undeclared-selector")
-        Method methodToPatch = class_getInstanceMethod(TSUpdateCheck, @selector(alertDidEnd:returnCode:contextInfo:));
+        Method methodToPatch = class_getInstanceMethod(TSUpdateCheck.get(), @selector(alertDidEnd:returnCode:contextInfo:));
 IGNORE_WARNINGS_END
         if (!methodToPatch)
             return;

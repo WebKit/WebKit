@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)propagateVisibilityToProcess:(WebKit::AuxiliaryProcessProxy&)process;
 - (void)stopPropagatingVisibilityToProcess:(WebKit::AuxiliaryProcessProxy&)process;
+- (void)clear;
 
 @end
 

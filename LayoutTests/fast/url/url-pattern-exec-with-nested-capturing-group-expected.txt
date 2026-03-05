@@ -1,0 +1,12 @@
+Tests that URLPattern.exec() does not crash when the pattern contains a named capturing group inside a parenthesized regex.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is non-null.
+PASS result.pathname.input is "/a"
+PASS result.pathname.groups.foo is "a"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

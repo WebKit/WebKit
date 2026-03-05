@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(FTL_JIT)
 
-#include <JavaScriptCore/FTLAbbreviatedTypes.h>
-#include <JavaScriptCore/FTLValueRange.h>
+#include "FTLAbbreviatedTypes.h"
+#include "FTLValueRange.h"
 
 namespace JSC {
 

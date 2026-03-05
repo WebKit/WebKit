@@ -1,7 +1,9 @@
 This tests live regions that are added to the page dynamically behave correctly.
 
 Received announcement request:
-AnnouncementKey: Alert! Region changed
+AnnouncementKey: Alert! Region changed{
+    AXLanguage = en;
+}
 AXPriorityKey: 10
 AXAnnouncementIsLiveRegionKey: true
 

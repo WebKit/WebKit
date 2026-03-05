@@ -1,25 +1,17 @@
 {
   "workers":     [
-                  { "name": "bot243", "platform": "mac-sonoma" },
-                  { "name": "bot244", "platform": "mac-sonoma" },
-                  { "name": "bot247", "platform": "mac-sonoma" },
-                  { "name": "bot248", "platform": "mac-sonoma" },
-                  { "name": "bot600", "platform": "mac-sequoia" },
-                  { "name": "bot611", "platform": "mac-sonoma" },
-                  { "name": "bot612", "platform": "mac-sonoma" },
-                  { "name": "bot613", "platform": "mac-sonoma" },
-                  { "name": "bot674", "platform": "mac-sonoma" },
-                  { "name": "bot684", "platform": "mac-sonoma" },
-                  { "name": "bot686", "platform": "mac-sonoma" },
-                  { "name": "bot687", "platform": "mac-sonoma" },
-                  { "name": "bot688", "platform": "mac-sonoma" },
-
-                  { "name": "bot105", "platform": "mac-sonoma" },
-                  { "name": "bot111", "platform": "mac-sonoma" },
-                  { "name": "bot113", "platform": "mac-sonoma" },
-                  { "name": "bot114", "platform": "mac-sonoma" },
-                  { "name": "bot603", "platform": "mac-sonoma" },
-                  { "name": "bot632", "platform": "mac-sonoma" },
+                  { "name": "bot243", "platform": "*" },
+                  { "name": "bot244", "platform": "*" },
+                  { "name": "bot247", "platform": "*" },
+                  { "name": "bot248", "platform": "*" },
+                  { "name": "bot611", "platform": "*" },
+                  { "name": "bot612", "platform": "*" },
+                  { "name": "bot613", "platform": "*" },
+                  { "name": "bot674", "platform": "*" },
+                  { "name": "bot684", "platform": "*" },
+                  { "name": "bot686", "platform": "*" },
+                  { "name": "bot687", "platform": "*" },
+                  { "name": "bot688", "platform": "*" },
 
                   { "name": "bot183", "platform": "*" },
                   { "name": "bot234", "platform": "*" },
@@ -39,23 +31,13 @@
 
                   { "name": "bot2000", "platform": "mac-tahoe" },
                   { "name": "bot2001", "platform": "mac-tahoe" },
-                  { "name": "bot130", "platform": "mac-sequoia" },
-                  { "name": "bot131", "platform": "mac-sequoia" },
                   { "name": "bot132", "platform": "mac-tahoe" },
-                  { "name": "bot141", "platform": "mac-sequoia" },
                   { "name": "bot165", "platform": "mac-tahoe" },
                   { "name": "bot178", "platform": "mac-tahoe", "notes": "Macmini8,1 on Sequoia building for Tahoe" },
                   { "name": "bot179", "platform": "mac-tahoe" },
                   { "name": "bot184", "platform": "mac-tahoe", "notes": "Macmini8,1 on Sequoia building for Tahoe" },
-                  { "name": "bot185", "platform": "mac-sequoia" },
                   { "name": "bot187", "platform": "mac-tahoe" },
-                  { "name": "bot198", "platform": "mac-sequoia" },
-                  { "name": "bot279", "platform": "mac-sequoia" },
                   { "name": "bot303", "platform": "mac-tahoe" },
-                  { "name": "bot614", "platform": "mac-sequoia" },
-                  { "name": "bot1021", "platform": "mac-sequoia" },
-                  { "name": "bot1025", "platform": "mac-sequoia" },
-                  { "name": "bot1026", "platform": "mac-sequoia" },
                   { "name": "bot605", "platform": "mac-tahoe" },
                   { "name": "bot616", "platform": "mac-tahoe" },
                   { "name": "bot621", "platform": "mac-tahoe" },
@@ -67,7 +49,28 @@
                   { "name": "bot1027", "platform": "*" },
                   { "name": "bot1028", "platform": "*" },
 
+                  { "name": "bot130", "platform": "mac-sequoia" },
+                  { "name": "bot131", "platform": "mac-sequoia" },
+                  { "name": "bot141", "platform": "mac-sequoia" },
+                  { "name": "bot185", "platform": "mac-sequoia" },
+                  { "name": "bot198", "platform": "mac-sequoia" },
+                  { "name": "bot279", "platform": "mac-sequoia" },
+                  { "name": "bot600", "platform": "mac-sequoia" },
+                  { "name": "bot614", "platform": "mac-sequoia" },
+                  { "name": "bot1021", "platform": "mac-sequoia" },
+                  { "name": "bot1025", "platform": "mac-sequoia" },
+                  { "name": "bot1026", "platform": "mac-sequoia" },
+
+                  { "name": "bot105", "platform": "mac-sequoia" },
+                  { "name": "bot111", "platform": "mac-sequoia" },
+                  { "name": "bot113", "platform": "mac-sequoia" },
+                  { "name": "bot114", "platform": "mac-sequoia" },
+                  { "name": "bot603", "platform": "mac-sequoia" },
+                  { "name": "bot632", "platform": "mac-sequoia" },
+
                   { "name": "bot304", "platform": "ios-26" },
+                  { "name": "bot2004", "platform": "ios-26" },
+                  { "name": "bot2005", "platform": "ios-26" },
                   { "name": "bot305", "platform": "ios-simulator-26" },
                   { "name": "bot306", "platform": "ios-simulator-26" },
                   { "name": "bot307", "platform": "ios-simulator-26" },
@@ -93,6 +96,42 @@
                   { "name": "bot672", "platform": "watchos-simulator-26" },
                   { "name": "bot607", "platform": "tvos-26" },
                   { "name": "bot608", "platform": "tvos-simulator-26" },
+
+                  {
+                    "name": "bot10000",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.0-25A354",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.0.1-17A400"
+                  },
+                  {
+                    "name": "bot10001",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
+                  },
+                  {
+                    "name": "bot10002",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
+                  },
+                  {
+                    "name": "bot10003",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
+                  },
+                  {
+                    "name": "bot10004",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
+                  },
 
                   { "name": "wincairo-debug-build-01", "platform": "win" },
                   { "name": "wincairo-debug-tests-01", "platform": "win" },
@@ -152,27 +191,30 @@
                   { "name": "wpe-linux-bot-14", "platform": "wpe" },
                   { "name": "wpe-linux-bot-15", "platform": "wpe" },
                   { "name": "wpe-linux-bot-16", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-17", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-18", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-19", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-20", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-21", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-22", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-23", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-24", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-25", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-26", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-27", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-28", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-29", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-30", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-31", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-32", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-33", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-34", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-17", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-18", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-19", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-20", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-21", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-22", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-23", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-24", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-25", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-26", "platform": "wpe-rpi4-32bits-mesa" },
+                  { "name": "wpe-linux-bot-27", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-28", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-29", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-30", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-31", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-32", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-33", "platform": "wpe-rpi4-64bits-mesa" },
+                  { "name": "wpe-linux-bot-34", "platform": "wpe-rpi4-64bits-mesa" },
                   { "name": "wpe-linux-bot-35", "platform": "wpe" },
                   { "name": "wpe-linux-bot-36", "platform": "wpe" },
                   { "name": "wpe-linux-bot-37", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-38", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-39", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-40", "platform": "wpe" },
 
                   { "name": "wpe-linux-queue-1-bot-1", "platform": "wpe" },
                   { "name": "wpe-linux-queue-1-bot-2", "platform": "wpe" },
@@ -190,7 +232,7 @@
                       "tahoe-applesilicon-release-tests-test262", "tahoe-release-tests-wk2-accessibility-isolated-tree", 
                       "tahoe-release-tests-wk2-site-isolation-tree", "tahoe-release-world-leaks-tests"
                   ],
-                  "workernames": ["bot678"]
+                  "workernames": ["bot678", "bot10004"]
                   },
                   { "name": "Apple-Tahoe-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -205,7 +247,7 @@
                   { "name": "Apple-Tahoe-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot246"]
+                  "workernames": ["bot246", "bot10003"]
                   },
                   { "name": "Apple-Tahoe-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -241,7 +283,7 @@
                       "tahoe-debug-tests-wk1", "tahoe-debug-tests-wk2", "tahoe-debug-applesilicon-tests-wk1",
                       "tahoe-debug-applesilicon-tests-wk2"
                   ],
-                  "workernames": ["bot621"]
+                  "workernames": ["bot621", "bot10002"]
                   },
                   { "name": "Apple-Tahoe-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -256,12 +298,12 @@
                   { "name": "Apple-Tahoe-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot132"]
+                  "workernames": ["bot132", "bot10000"]
                   },
                   { "name": "Apple-Tahoe-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot257"]
+                  "workernames": ["bot257", "bot10001"]
                   },
                   { "name": "Apple-Tahoe-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -276,7 +318,9 @@
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "triggers": [
                       "sequoia-release-tests-wk1", "sequoia-release-tests-wk2",
-                      "sequoia-release-applesilicon-tests-wk2"
+                      "sequoia-release-applesilicon-tests-wk2",
+                      "sequoia-release-tests-test262", "sequoia-applesilicon-release-tests-jsc", 
+                      "sequoia-intel-release-tests-jsc"
                   ],
                   "workernames": ["bot279", "bot198"]
                   },
@@ -299,7 +343,7 @@
                   "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "triggers": [
                       "sequoia-debug-tests-wk1", "sequoia-debug-tests-wk2",
-                      "sequoia-debug-applesilicon-tests-wk2"
+                      "sequoia-debug-applesilicon-tests-wk2", "sequoia-debug-tests-test262"
                   ],
                   "workernames": ["bot131", "bot141"]
                   },
@@ -318,81 +362,24 @@
                   "additionalArguments": ["--no-retry-failures"],
                   "workernames": ["bot130"]
                   },
-                  { "name": "Apple-Sonoma-Release-Build", "factory": "BuildFactory",
-                  "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "triggers": [
-                      "sonoma-release-tests-test262", "sonoma-release-tests-wk1", "sonoma-release-tests-wk2",
-                      "sonoma-release-applesilicon-tests-wk1", "sonoma-release-applesilicon-tests-wk2",
-                      "sonoma-applesilicon-release-tests-jsc", "sonoma-intel-release-tests-jsc"
-                  ],
-                  "workernames": ["bot243", "bot244"]
-                  },
-                  { "name": "Apple-Sonoma-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot612"]
-                  },
-                  { "name": "Apple-Sonoma-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot613"]
-                  },
-                  { "name": "Apple-Sonoma-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot674"]
-                  },
-                  { "name": "Apple-Sonoma-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot611"]
-                  },
-                  { "name": "Apple-Sonoma-Release-Test262-Tests", "factory": "Test262Factory",
-                    "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                  { "name": "Apple-Sequoia-Release-Test262-Tests", "factory": "Test262Factory",
+                    "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot632"]
                   },
-                  { "name": "Apple-Sonoma-AppleSilicon-Release-JSC-Tests", "factory": "TestJSCFactory",
-                    "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                  { "name": "Apple-Sequoia-AppleSilicon-Release-JSC-Tests", "factory": "TestJSCFactory",
+                    "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot111"]
                   },
-                  { "name": "Apple-Sonoma-Intel-Release-JSC-Tests", "factory": "TestJSCFactory",
-                    "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                  { "name": "Apple-Sequoia-Intel-Release-JSC-Tests", "factory": "TestJSCFactory",
+                    "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot113", "bot114"]
                   },
-                  { "name": "Apple-Sonoma-Debug-Build", "factory": "BuildFactory",
-                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "triggers": [
-                      "sonoma-debug-tests-test262", "sonoma-debug-tests-wk1", "sonoma-debug-tests-wk2",
-                      "sonoma-debug-applesilicon-tests-wk1", "sonoma-debug-applesilicon-tests-wk2"
-                  ],
-                  "workernames": ["bot247", "bot248"]
-                  },
-                  { "name": "Apple-Sonoma-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot686"]
-                  },
-                  { "name": "Apple-Sonoma-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot684"]
-                  },
-                  { "name": "Apple-Sonoma-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot688"]
-                  },
-                  { "name": "Apple-Sonoma-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
-                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot687"]
-                  },
-                  { "name": "Apple-Sonoma-Debug-Test262-Tests", "factory": "Test262Factory",
-                    "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  { "name": "Apple-Sequoia-Debug-Test262-Tests", "factory": "Test262Factory",
+                    "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot603"]
                   },
-                  { "name": "Apple-Sonoma-AppleSilicon-O3-Debug-JSC-BuildAndTest", "factory": "BuildO3AndJSCTestsFactory",
-                    "platform": "mac-sonoma", "configuration": "debug", "architectures": ["arm64"],
+                  { "name": "Apple-Sequoia-AppleSilicon-O3-Debug-JSC-BuildAndTest", "factory": "BuildO3AndJSCTestsFactory",
+                    "platform": "mac-sequoia", "configuration": "debug", "architectures": ["arm64"],
                     "workernames": ["bot105"]
                   },
                   {
@@ -440,6 +427,11 @@
                     "platform": "ios-simulator-26", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot664"]
+                  },
+                  {
+                    "name": "Apple-iOS-26-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
+                    "platform": "ios-26", "configuration": "release", "architectures": ["arm64"],
+                    "workernames": ["bot2004", "bot2005"]
                   },
                   {
                     "name": "Apple-visionOS-26-Release-Build", "factory": "BuildFactory",
@@ -716,30 +708,30 @@
                   },
                   {
                     "name": "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build", "factory": "CrossTargetBuildFactory",
-                    "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
+                    "platform": "wpe-rpi4-32bits-mesa", "configuration": "release", "architectures": ["armv7"],
                     "additionalArguments": ["--cross-target=rpi4-32bits-mesa"],
                     "triggers": ["wpe-linux-rpi4-32-mesa-release-perf-tests"],
                     "workernames": ["wpe-linux-bot-17"]
                   },
                   {
                     "name": "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build", "factory": "CrossTargetBuildFactory",
-                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "platform": "wpe-rpi4-64bits-mesa", "configuration": "release", "architectures": ["arm64"],
                     "additionalArguments": ["--cross-target=rpi4-64bits-mesa"],
                     "triggers": ["wpe-linux-rpi4-64-mesa-release-perf-tests"],
                     "workernames": ["wpe-linux-bot-18"]
                   },
                   {
                     "name": "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Tests", "factory": "CrossTargetDownloadAndPerfTestFactory",
-                    "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
+                    "platform": "wpe-rpi4-32bits-mesa", "configuration": "release", "architectures": ["armv7"],
                     "workernames": ["wpe-linux-bot-19", "wpe-linux-bot-20", "wpe-linux-bot-21", "wpe-linux-bot-22", "wpe-linux-bot-23", "wpe-linux-bot-24", "wpe-linux-bot-25", "wpe-linux-bot-26"]
                   },
                   {
                     "name": "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Tests", "factory": "CrossTargetDownloadAndPerfTestFactory",
-                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "platform": "wpe-rpi4-64bits-mesa", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["wpe-linux-bot-27", "wpe-linux-bot-28", "wpe-linux-bot-29", "wpe-linux-bot-30", "wpe-linux-bot-31", "wpe-linux-bot-32", "wpe-linux-bot-33", "wpe-linux-bot-34"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-64-bit-Release-LibWebRTC-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["wpe-linux-bot-35"]
                   },
@@ -758,6 +750,22 @@
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--wpe-legacy-api"],
                     "workernames": ["wpe-linux-bot-37"]
+                  },
+                  {
+                    "name": "WPE-Linux-ARM64-bit-Release-Build", "factory": "BuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "triggers": ["wpe-linux-arm64-release-tests", "wpe-linux-arm64-release-tests-js"],
+                    "workernames": ["wpe-linux-bot-38"]
+                  },
+                  {
+                    "name": "WPE-Linux-ARM64-bit-Release-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "workernames": ["wpe-linux-bot-39"]
+                  },
+                  {
+                    "name": "WPE-Linux-ARM64-bit-Release-JS-Tests", "factory": "TestJSFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "workernames": ["wpe-linux-bot-40"]
                   }
                 ],
 
@@ -780,10 +788,11 @@
                                      "Windows-64-bit-Release-Build", "Windows-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Clang-Build",
-                                     "WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build",
+                                     "WPE-Linux-64-bit-Release-LibWebRTC-Build",
                                      "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build",
-                                     "WPE-Linux-64-bit-Release-Non-Unified-Build"]
+                                     "WPE-Linux-64-bit-Release-Non-Unified-Build",
+                                     "WPE-Linux-ARM64-bit-Release-Build"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-tahoe", "branch": "main", "treeStableTimer": 45.0,
                   "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-LLINT-CLoop-BuildAndTest"]
@@ -828,7 +837,7 @@
                     "builderNames": ["Apple-Tahoe-Release-World-Leaks-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sequoia", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build", "Apple-Sequoia-Safer-CPP-Checks"]
+                  "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build", "Apple-Sequoia-Safer-CPP-Checks", "Apple-Sequoia-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
                   },
                   { "type": "Triggerable", "name": "sequoia-release-tests-wk1",
                   "builderNames": ["Apple-Sequoia-Release-WK1-Tests"]
@@ -848,47 +857,20 @@
                   { "type": "Triggerable", "name": "sequoia-debug-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Sequoia-Debug-AppleSilicon-WK2-Tests"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "mac-sonoma", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Sonoma-Release-Build", "Apple-Sonoma-Debug-Build", "Apple-Sonoma-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
+                  { "type": "Triggerable", "name": "sequoia-debug-tests-test262",
+                    "builderNames": ["Apple-Sequoia-Debug-Test262-Tests"]
                   },
-                  { "type": "Triggerable", "name": "sonoma-release-tests-wk1",
-                  "builderNames": ["Apple-Sonoma-Release-WK1-Tests"]
+                  { "type": "Triggerable", "name": "sequoia-release-tests-test262",
+                    "builderNames": ["Apple-Sequoia-Release-Test262-Tests"]
                   },
-                  { "type": "Triggerable", "name": "sonoma-release-tests-wk2",
-                  "builderNames": ["Apple-Sonoma-Release-WK2-Tests"]
+                  { "type": "Triggerable", "name": "sequoia-applesilicon-release-tests-jsc",
+                    "builderNames": ["Apple-Sequoia-AppleSilicon-Release-JSC-Tests"]
                   },
-                  { "type": "Triggerable", "name": "sonoma-release-applesilicon-tests-wk1",
-                  "builderNames": ["Apple-Sonoma-Release-AppleSilicon-WK1-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-release-applesilicon-tests-wk2",
-                  "builderNames": ["Apple-Sonoma-Release-AppleSilicon-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-debug-tests-wk1",
-                  "builderNames": ["Apple-Sonoma-Debug-WK1-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-debug-tests-wk2",
-                  "builderNames": ["Apple-Sonoma-Debug-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-debug-applesilicon-tests-wk1",
-                  "builderNames": ["Apple-Sonoma-Debug-AppleSilicon-WK1-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-debug-applesilicon-tests-wk2",
-                  "builderNames": ["Apple-Sonoma-Debug-AppleSilicon-WK2-Tests"]
-                  }, 
-                  { "type": "Triggerable", "name": "sonoma-debug-tests-test262",
-                    "builderNames": ["Apple-Sonoma-Debug-Test262-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-release-tests-test262",
-                    "builderNames": ["Apple-Sonoma-Release-Test262-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-applesilicon-release-tests-jsc",
-                    "builderNames": ["Apple-Sonoma-AppleSilicon-Release-JSC-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "sonoma-intel-release-tests-jsc",
-                    "builderNames": ["Apple-Sonoma-Intel-Release-JSC-Tests"]
+                  { "type": "Triggerable", "name": "sequoia-intel-release-tests-jsc",
+                    "builderNames": ["Apple-Sequoia-Intel-Release-JSC-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "ios-26", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-iOS-26-Release-Build"]
+                    "builderNames": ["Apple-iOS-26-Release-Build", "Apple-iOS-26-Safer-CPP-Checks"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-26", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-iOS-26-Simulator-Release-Build", "Apple-iOS-26-Simulator-Debug-Build"]
@@ -991,6 +973,12 @@
                   },
                   { "type": "Triggerable", "name": "wpe-linux-64-release-tests-mvt",
                     "builderNames": ["WPE-Linux-64-bit-Release-MVT-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "wpe-linux-arm64-release-tests",
+                    "builderNames": ["WPE-Linux-ARM64-bit-Release-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "wpe-linux-arm64-release-tests-js",
+                    "builderNames": ["WPE-Linux-ARM64-bit-Release-JS-Tests"]
                   },
                   { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
                     "branch": "main", "hour": 22, "minute": 0,

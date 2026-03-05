@@ -83,30 +83,24 @@ layer at (0,0) size 785x1217
       RenderBlock {P} at (0,624) size 769x18
         RenderText {#text} at (0,0) size 426x18
           text run at (0,0) width 426: "The following 2 textes should be identical, ignorning whitespaces:"
-      RenderBlock (anonymous) at (0,658) size 769x18
-        RenderInline {SPAN} at (0,-1) size 24x20 [border: (1px solid #000000)]
+      RenderBlock (anonymous) at (0,658) size 769x54
+        RenderInline {SPAN} at (0,-1) size 769x37 [border: (1px solid #000000)]
           RenderText {#text} at (0,0) size 23x18
             text run at (0,0) width 23 RTL: "abc"
-      RenderBlock (anonymous) at (0,676) size 769x18
-        RenderBlock {DIV} at (0,0) size 769x18
-          RenderText {#text} at (746,0) size 23x18
-            text run at (746,0) width 23: "cba"
-      RenderBlock (anonymous) at (0,694) size 769x18
-        RenderInline {SPAN} at (1,-1) size 2x20 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (0,18) size 769x18
+            RenderText {#text} at (746,0) size 23x18
+              text run at (746,0) width 23: "cba"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,728) size 769x18
         RenderText {#text} at (0,0) size 426x18
           text run at (0,0) width 426: "The following 2 textes should be identical, ignorning whitespaces:"
-      RenderBlock (anonymous) at (0,762) size 769x18
-        RenderInline {SPAN} at (0,-1) size 1x20 [border: (1px solid #000000)]
-      RenderBlock (anonymous) at (0,780) size 769x18
-        RenderBlock {DIV} at (0,0) size 769x18
-          RenderText {#text} at (746,0) size 23x18
-            text run at (746,0) width 23: "cba"
-      RenderBlock (anonymous) at (0,798) size 769x18
-        RenderInline {SPAN} at (1,-1) size 24x20 [border: (1px solid #000000)]
-          RenderText {#text} at (2,0) size 23x18
-            text run at (2,0) width 23 RTL: "abc"
+      RenderBlock (anonymous) at (0,762) size 769x54
+        RenderInline {SPAN} at (0,-1) size 769x56 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (0,18) size 769x18
+            RenderText {#text} at (746,0) size 23x18
+              text run at (746,0) width 23: "cba"
+          RenderText {#text} at (2,36) size 23x18
+            text run at (2,36) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,832) size 769x18
         RenderText {#text} at (0,0) size 30x18

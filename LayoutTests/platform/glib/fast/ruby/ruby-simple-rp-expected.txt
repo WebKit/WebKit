@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 760x35
+        RenderText {#text} at (0,0) size 760x36
           text run at (0,0) width 333: "This is a test for simple ruby that contains <rp> tags. "
           text run at (333,0) width 427: "Contents of the <rp> tags (opening and closing brackets) should not"
           text run at (0,18) width 198: "show when ruby is suppoorted."
-        RenderBR {BR} at (198,18) size 0x17
-        RenderBR {BR} at (0,36) size 0x17
+        RenderBR {BR} at (198,18) size 0x18
+        RenderBR {BR} at (0,36) size 0x18
       RenderBlock {P} at (0,70) size 784x28
         RenderText {#text} at (0,10) size 161x17
           text run at (0,10) width 161: "Ruby is often used in the "

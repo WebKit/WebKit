@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/ArgList.h>
+#include <JavaScriptCore/ThrowScope.h>
 #include <numeric>
 #include <wtf/Int128.h>
 #include <wtf/StdLibExtras.h>

@@ -38,8 +38,8 @@ namespace WebCore {
 
 CSSFilterImageValue::CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, CSS::Filter&& filter)
     : CSSValue { ClassType::FilterImage }
-    , m_imageValueOrNone { WTFMove(imageValueOrNone) }
-    , m_filter { WTFMove(filter) }
+    , m_imageValueOrNone { WTF::move(imageValueOrNone) }
+    , m_filter { WTF::move(filter) }
 {
 }
 
@@ -69,9 +69,9 @@ IterationStatus CSSFilterImageValue::customVisitChildren(NOESCAPE const Function
     return IterationStatus::Continue;
 }
 
-RefPtr<StyleImage> CSSFilterImageValue::createStyleImage(const Style::BuilderState& state) const
+RefPtr<Style::Image> CSSFilterImageValue::createStyleImage(const Style::BuilderState& state) const
 {
-    return StyleFilterImage::create(
+    return Style::FilterImage::create(
         state.createStyleImage(m_imageValueOrNone),
         Style::toStyle(m_filter, state)
     );

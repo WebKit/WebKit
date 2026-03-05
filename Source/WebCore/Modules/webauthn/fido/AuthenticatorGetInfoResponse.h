@@ -50,30 +50,30 @@ public:
     AuthenticatorGetInfoResponse(AuthenticatorGetInfoResponse&& that) = default;
     AuthenticatorGetInfoResponse& operator=(AuthenticatorGetInfoResponse&& other) = default;
 
-    AuthenticatorGetInfoResponse& setMaxMsgSize(uint32_t);
+    AuthenticatorGetInfoResponse& NODELETE setMaxMsgSize(uint32_t);
     AuthenticatorGetInfoResponse& setPinProtocols(StdSet<PINUVAuthProtocol>&&);
     AuthenticatorGetInfoResponse& setExtensions(Vector<String>&&);
-    AuthenticatorGetInfoResponse& setOptions(AuthenticatorSupportedOptions&&);
+    AuthenticatorGetInfoResponse& NODELETE setOptions(AuthenticatorSupportedOptions&&);
     AuthenticatorGetInfoResponse& setTransports(Vector<WebCore::AuthenticatorTransport>&&);
-    AuthenticatorGetInfoResponse& setRemainingDiscoverableCredentials(uint32_t);
-    AuthenticatorGetInfoResponse& setMinPINLength(uint32_t);
+    AuthenticatorGetInfoResponse& NODELETE setRemainingDiscoverableCredentials(uint32_t);
+    AuthenticatorGetInfoResponse& NODELETE setMinPINLength(uint32_t);
 
-    AuthenticatorGetInfoResponse& setMaxCredentialCountInList(uint32_t);
-    AuthenticatorGetInfoResponse& setMaxCredentialIDLength(uint32_t);
+    AuthenticatorGetInfoResponse& NODELETE setMaxCredentialCountInList(uint32_t);
+    AuthenticatorGetInfoResponse& NODELETE setMaxCredentialIDLength(uint32_t);
 
-    const StdSet<ProtocolVersion>& versions() const { return m_versions; }
-    const Vector<uint8_t>& aaguid() const { return m_aaguid; }
-    const std::optional<uint32_t>& maxMsgSize() const { return m_maxMsgSize; }
-    const std::optional<StdSet<PINUVAuthProtocol>>& pinProtocol() const { return m_pinProtocols; }
-    const std::optional<Vector<String>>& extensions() const { return m_extensions; }
-    const AuthenticatorSupportedOptions& options() const { return m_options; }
-    AuthenticatorSupportedOptions& mutableOptions() { return m_options; }
-    const std::optional<Vector<WebCore::AuthenticatorTransport>>& transports() const { return m_transports; }
-    const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& algorithms() const { return m_algorithms; }
-    const std::optional<uint32_t>& remainingDiscoverableCredentials() const { return m_remainingDiscoverableCredentials; }
-    const std::optional<uint32_t>& minPINLength() const { return m_minPINLength; }
-    const std::optional<uint32_t>& maxCredentialCountInList() const { return m_maxCredentialCountInList; }
-    const std::optional<uint32_t>& maxCredentialIDLength() const { return m_maxCredentialIdLength; }
+    const StdSet<ProtocolVersion>& versions() const LIFETIME_BOUND { return m_versions; }
+    const Vector<uint8_t>& aaguid() const LIFETIME_BOUND { return m_aaguid; }
+    const std::optional<uint32_t>& maxMsgSize() const LIFETIME_BOUND { return m_maxMsgSize; }
+    const std::optional<StdSet<PINUVAuthProtocol>>& pinProtocol() const LIFETIME_BOUND { return m_pinProtocols; }
+    const std::optional<Vector<String>>& extensions() const LIFETIME_BOUND { return m_extensions; }
+    const AuthenticatorSupportedOptions& options() const LIFETIME_BOUND { return m_options; }
+    AuthenticatorSupportedOptions& mutableOptions() LIFETIME_BOUND { return m_options; }
+    const std::optional<Vector<WebCore::AuthenticatorTransport>>& transports() const LIFETIME_BOUND { return m_transports; }
+    const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& algorithms() const LIFETIME_BOUND { return m_algorithms; }
+    const std::optional<uint32_t>& remainingDiscoverableCredentials() const LIFETIME_BOUND { return m_remainingDiscoverableCredentials; }
+    const std::optional<uint32_t>& minPINLength() const LIFETIME_BOUND { return m_minPINLength; }
+    const std::optional<uint32_t>& maxCredentialCountInList() const LIFETIME_BOUND { return m_maxCredentialCountInList; }
+    const std::optional<uint32_t>& maxCredentialIDLength() const LIFETIME_BOUND { return m_maxCredentialIdLength; }
 
 private:
     StdSet<ProtocolVersion> m_versions;

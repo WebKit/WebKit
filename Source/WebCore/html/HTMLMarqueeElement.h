@@ -30,7 +30,7 @@ namespace WebCore {
 class RenderMarquee;
 
 class HTMLMarqueeElement final : public HTMLElement, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLMarqueeElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLMarqueeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMarqueeElement);
 public:
     static Ref<HTMLMarqueeElement> create(const QualifiedName&, Document&);
@@ -55,6 +55,8 @@ public:
     // Loop count. -1 means loop indefinitely.
     WEBCORE_EXPORT int loop() const;
     WEBCORE_EXPORT ExceptionOr<void> setLoop(int);
+
+    bool hasRenderMarquee() const { return renderMarquee(); }
     
 private:
     HTMLMarqueeElement(const QualifiedName&, Document&);

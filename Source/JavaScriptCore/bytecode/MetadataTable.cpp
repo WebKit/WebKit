@@ -69,7 +69,7 @@ void MetadataTable::destroy(MetadataTable* table)
         return;
     }
 
-    RefPtr<UnlinkedMetadataTable> unlinkedMetadata = WTFMove(table->linkingData().unlinkedMetadata);
+    RefPtr<UnlinkedMetadataTable> unlinkedMetadata = WTF::move(table->linkingData().unlinkedMetadata);
     ASSERT(table->isDestroyed());
 
     table->~MetadataTable();

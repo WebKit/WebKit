@@ -143,9 +143,9 @@ void DistributeBitrateRelatively(
   std::vector<PriorityRateObserverConfig> priority_rate_observers;
   for (const auto& observer_config : allocatable_tracks) {
     priority_rate_observers.push_back(PriorityRateObserverConfig{
-        observer_config.observer,
-        observers_capacities.at(observer_config.observer),
-        observer_config.config.bitrate_priority});
+        .allocation_key = observer_config.observer,
+        .capacity_bps = observers_capacities.at(observer_config.observer),
+        .bitrate_priority = observer_config.config.bitrate_priority});
     bitrate_priority_sum += observer_config.config.bitrate_priority;
   }
 

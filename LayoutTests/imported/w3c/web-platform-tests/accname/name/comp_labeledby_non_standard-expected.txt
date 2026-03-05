@@ -1,0 +1,27 @@
+Tests that the non-standard (misspelled) attribute name aria-labeledby is not supported.
+
+Tests for aria-labeledby
+
+first heading
+
+text inside div group
+
++ first heading
+
+text inside div group
+
++ first heading
+
+text inside div group
+
+
+FAIL div group with aria-labeledby assert_equals: <div role="group" aria-labeledby="h" class="ex" data-expectedlabel="" data-testname="div group with aria-labeledby">
+  <h2 id="h">first heading</h2>
+  <p>text inside div group</p>
+</div> expected "" but got "first heading"
+FAIL div group with aria-label and aria-labeledby assert_equals: <div role="group" aria-label="self label" id="g2" aria-labeledby="g2 h2" class="ex" data-expectedlabel="self label" data-testname="div group with aria-label and aria-labeledby">
+  <h2 id="h2">+ first heading</h2>
+  <p>text inside div group</p>
+</div> expected "self label" but got "self label + first heading"
+PASS div group with aria-labeledby and aria-labelledby
+

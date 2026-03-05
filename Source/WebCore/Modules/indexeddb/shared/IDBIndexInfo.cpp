@@ -35,7 +35,7 @@ IDBIndexInfo::IDBIndexInfo(IDBIndexIdentifier identifier, IDBObjectStoreIdentifi
     : m_identifier(identifier)
     , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_name(name)
-    , m_keyPath(WTFMove(keyPath))
+    , m_keyPath(WTF::move(keyPath))
     , m_unique(unique)
     , m_multiEntry(multiEntry)
 {
@@ -48,7 +48,7 @@ IDBIndexInfo IDBIndexInfo::isolatedCopy() const &
 
 IDBIndexInfo IDBIndexInfo::isolatedCopy() &&
 {
-    return { m_identifier, m_objectStoreIdentifier, WTFMove(m_name).isolatedCopy(), crossThreadCopy(WTFMove(m_keyPath)), m_unique, m_multiEntry };
+    return { m_identifier, m_objectStoreIdentifier, WTF::move(m_name).isolatedCopy(), crossThreadCopy(WTF::move(m_keyPath)), m_unique, m_multiEntry };
 }
 
 #if !LOG_DISABLED

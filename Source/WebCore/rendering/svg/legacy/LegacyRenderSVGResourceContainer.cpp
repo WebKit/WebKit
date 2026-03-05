@@ -30,16 +30,17 @@
 #include "SVGGraphicsElement.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceContainer);
 
 LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGHiddenContainer(type, element, WTFMove(style), SVGModelObjectFlag::IsResourceContainer)
+    : LegacyRenderSVGHiddenContainer(type, element, WTF::move(style), SVGModelObjectFlag::IsResourceContainer)
     , m_id(element.getIdAttribute())
 {
 }
@@ -61,14 +62,14 @@ void LegacyRenderSVGResourceContainer::willBeDestroyed()
     SVGResourcesCache::resourceDestroyed(*this);
 
     if (m_registered) {
-        treeScopeForSVGReferences().removeSVGResource(m_id);
+        treeScopeForSVGReferences().removeSVGResource(m_id, *this);
         m_registered = false;
     }
 
     LegacyRenderSVGHiddenContainer::willBeDestroyed();
 }
 
-void LegacyRenderSVGResourceContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGResourceContainer::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     LegacyRenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
@@ -84,7 +85,7 @@ void LegacyRenderSVGResourceContainer::idChanged()
     removeAllClientsFromCacheAndMarkForInvalidation();
 
     // Remove old id, that is guaranteed to be present in cache.
-    treeScopeForSVGReferences().removeSVGResource(m_id);
+    treeScopeForSVGReferences().removeSVGResource(m_id, *this);
     m_id = element().getIdAttribute();
 
     registerResource();
@@ -126,7 +127,7 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
     bool markForInvalidation = mode != ParentOnlyInvalidation;
     auto* root = SVGRenderSupport::findTreeRootObject(*this);
 
-    for (auto& client : m_clients) {
+    for (auto& client : m_clients | dereferenceView) {
         // We should not mark any client outside the current root for invalidation
         if (root != SVGRenderSupport::findTreeRootObject(client))
             continue;
@@ -150,27 +151,27 @@ void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
     if (m_clientLayers.isEmptyIgnoringNullReferences())
         return;
 
-    Ref document = (*m_clientLayers.begin()).renderer().document();
+    Ref document = (*m_clientLayers.begin())->renderer().document();
     if (!document->view() || document->renderTreeBeingDestroyed())
         return;
 
     auto inLayout = document->view()->layoutContext().isInLayout();
-    for (auto& clientLayer : m_clientLayers) {
+    for (CheckedRef clientLayer : m_clientLayers | dereferenceView) {
         // FIXME: We should not get here while in layout. See webkit.org/b/208903.
         // Repaint should also be triggered through some other means.
         if (inLayout) {
-            clientLayer.renderer().repaint();
+            clientLayer->renderer().repaint();
             continue;
         }
-        if (auto* enclosingElement = clientLayer.enclosingElement())
+        if (RefPtr enclosingElement = clientLayer->enclosingElement())
             enclosingElement->invalidateStyleAndLayerComposition();
-        clientLayer.renderer().repaint();
+        clientLayer->renderer().repaint();
     }
 }
 
 void LegacyRenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
 {
-    ASSERT(!m_clients.isEmptyIgnoringNullReferences() || client.style().hasClipPath());
+    ASSERT(!m_clients.isEmptyIgnoringNullReferences() || !client.style().clipPath().isNone());
 
     switch (mode) {
     case LayoutAndBoundariesInvalidation:
@@ -226,7 +227,7 @@ void LegacyRenderSVGResourceContainer::registerResource()
         auto* renderer = client->renderer();
         if (!renderer)
             continue;
-        SVGResourcesCache::clientStyleChanged(*renderer, StyleDifference::Layout, nullptr, renderer->style());
+        SVGResourcesCache::clientStyleChanged(*renderer, Style::DifferenceResult::Layout, nullptr, renderer->style());
         renderer->setNeedsLayout();
     }
 }

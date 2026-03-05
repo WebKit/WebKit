@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class EXTShaderTextureLOD final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTShaderTextureLOD);
+    WTF_MAKE_TZONE_ALLOCATED(EXTShaderTextureLOD);
     WTF_MAKE_NONCOPYABLE(EXTShaderTextureLOD);
 public:
     explicit EXTShaderTextureLOD(WebGLRenderingContextBase&);
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTShaderTextureLOD)

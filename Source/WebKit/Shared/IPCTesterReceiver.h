@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(IPC_TESTING_API)
+#if ENABLE(IPC_TESTING_API) && !ENABLE(IPC_TESTING_SWIFT)
 
 #include "MessageReceiver.h"
 
@@ -52,6 +52,19 @@ private:
     void asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);
 };
 
+}
+
+#endif
+
+#if ENABLE(IPC_TESTING_API) && ENABLE(IPC_TESTING_SWIFT)
+
+#include "IPCTesterReceiverMessages.h"
+
+// Workaround for rdar://170233903
+// The Swift call can be replaced with fn.pointee(args) when this is fixed
+inline void callFunction(CompletionHandlers::IPCTesterReceiver::AsyncMessageCompletionHandler& fn, uint32_t value)
+{
+    (*fn)(value);
 }
 
 #endif

@@ -393,9 +393,14 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         webView.suppressInputAccessoryView = options.suppressInputAccessoryView();
         webView.scrollView.showsVerticalScrollIndicator = options.showsScrollIndicators();
         webView.scrollView.showsHorizontalScrollIndicator = options.showsScrollIndicators();
+        webView.showKeyboardAfterElementFocusDelay = 0;
 
 #if HAVE(UIFINDINTERACTION)
         webView.findInteractionEnabled = options.findInteractionEnabled();
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        webView.shouldAcceptImmersiveEnvironmentRequests = options.shouldAcceptImmersiveEnvironmentRequests();
 #endif
 
         UIScrollView *scrollView = webView.scrollView;
@@ -639,6 +644,14 @@ void TestController::setHasMouseDeviceForTesting(bool hasMouseDevice)
 #else
     UNUSED_PARAM(hasMouseDevice);
 #endif
+}
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+void TestController::exitImmersive()
+{
+    TestRunnerWKWebView *webView = mainWebView()->platformView();
+    [webView _exitImmersive];
 }
 #endif
 

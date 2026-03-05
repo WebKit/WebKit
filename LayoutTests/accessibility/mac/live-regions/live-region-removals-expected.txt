@@ -1,7 +1,10 @@
 This tests that the notifications for aria-relevant=removals are correct.
 
 Received announcement request:
-AnnouncementKey: removed Mariners
+AnnouncementKey: Mariners{
+    AXIsLiveRegionRemoval = 1;
+    AXLanguage = en;
+}
 AXPriorityKey: 10
 AXAnnouncementIsLiveRegionKey: true
 

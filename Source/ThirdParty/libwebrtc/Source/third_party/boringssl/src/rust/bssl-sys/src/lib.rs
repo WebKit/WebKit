@@ -2,7 +2,7 @@
 
 // unnecessary_transmutes, needed to work around a Rust bug, is not available in
 // older Rusts. Stable lacks any way to condition code on Rust version, so the
-// workaroud for a Rust bug below needs this additional Rust workaround.
+// workaround for a Rust bug below needs this additional Rust workaround.
 #![allow(unknown_lints)]
 
 #![allow(non_upper_case_globals)]

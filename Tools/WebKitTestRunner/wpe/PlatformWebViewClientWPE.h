@@ -33,6 +33,7 @@
 
 typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEBuffer WPEBuffer;
+typedef struct _WPEToplevel WPEToplevel;
 
 namespace WTR {
 
@@ -52,6 +53,7 @@ private:
 
     PlatformImage snapshot() override;
 
+    GRefPtr<WPEToplevel> m_toplevel;
     GRefPtr<WPEBuffer> m_buffer;
 };
 

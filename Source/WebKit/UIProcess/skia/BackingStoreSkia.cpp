@@ -66,7 +66,7 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
     if (!updateInfo.bitmapHandle)
         return;
 
-    auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*updateInfo.bitmapHandle));
+    auto bitmap = WebCore::ShareableBitmap::create(WTF::move(*updateInfo.bitmapHandle));
     if (!bitmap)
         return;
 

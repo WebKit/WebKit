@@ -44,7 +44,7 @@ struct AutofillFieldNameMapping {
     AutofillCategory category;
 };
 
-static constexpr std::pair<ComparableLettersLiteral, AutofillFieldNameMapping> fieldNameMappings[] = {
+static constexpr SortedArrayMap fieldNameMap { std::to_array<std::pair<ComparableLettersLiteral, AutofillFieldNameMapping>>({
     { "additional-name"_s, { AutofillFieldName::AdditionalName, AutofillCategory::Normal } },
     { "address-level1"_s, { AutofillFieldName::AddressLevel1, AutofillCategory::Normal } },
     { "address-level2"_s, { AutofillFieldName::AddressLevel2, AutofillCategory::Normal } },
@@ -104,8 +104,7 @@ static constexpr std::pair<ComparableLettersLiteral, AutofillFieldNameMapping> f
     { "url"_s, { AutofillFieldName::URL, AutofillCategory::Normal } },
     { "username"_s, { AutofillFieldName::Username, AutofillCategory::Normal } },
     { "webauthn"_s, { AutofillFieldName::WebAuthn, AutofillCategory::Credential } },
-};
-static constexpr SortedArrayMap fieldNameMap { fieldNameMappings };
+}) };
 
 AutofillFieldName toAutofillFieldName(const AtomString& value)
 {
@@ -135,7 +134,7 @@ static inline bool isContactToken(const AtomString& token)
     return token == home || token == work || token == mobile || token == fax || token == pager;
 }
 
-static unsigned maxTokensForAutofillFieldCategory(AutofillCategory category)
+static unsigned NODELETE maxTokensForAutofillFieldCategory(AutofillCategory category)
 {
     switch (category) {
     case AutofillCategory::Automatic:

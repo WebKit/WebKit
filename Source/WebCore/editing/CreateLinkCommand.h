@@ -33,7 +33,7 @@ class CreateLinkCommand : public CompositeEditCommand {
 public:
     static Ref<CreateLinkCommand> create(Ref<Document>&& document, const String& linkURL)
     {
-        return adoptRef(*new CreateLinkCommand(WTFMove(document), linkURL));
+        return adoptRef(*new CreateLinkCommand(WTF::move(document), linkURL));
     }
 
 private:

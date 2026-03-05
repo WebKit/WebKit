@@ -351,7 +351,7 @@ class ListFormatInput {
     WTF_MAKE_NONCOPYABLE(ListFormatInput);
 public:
     ListFormatInput(Vector<String, 4>&& strings)
-        : m_strings(WTFMove(strings))
+        : m_strings(WTF::move(strings))
     {
         m_stringPointers.reserveInitialCapacity(m_strings.size());
         m_stringLengths.reserveInitialCapacity(m_strings.size());

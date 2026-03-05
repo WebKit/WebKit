@@ -35,7 +35,6 @@ public:
     explicit RangeBoundaryPoint(Node& container);
 
     Node& container() const;
-    Ref<Node> protectedContainer() const { return container(); }
     unsigned offset() const;
     Node* childBefore() const;
 
@@ -99,12 +98,12 @@ inline void RangeBoundaryPoint::setToAfterNode(Ref<Node>&& child)
     ASSERT(child->parentNode());
     m_container = *child->parentNode();
     m_offset = child->computeNodeIndex() + 1;
-    m_childBefore = WTFMove(child);
+    m_childBefore = WTF::move(child);
 }
 
 inline void RangeBoundaryPoint::setToBeforeContents(Ref<Node>&& container)
 {
-    m_container = WTFMove(container);
+    m_container = WTF::move(container);
     m_offset = 0;
     m_childBefore = nullptr;
 }

@@ -25,4 +25,11 @@
 
 #pragma once
 
-using WebUndoStepID = uint64_t;
+#include <wtf/ObjectIdentifier.h>
+
+namespace WebKit {
+
+struct WebUndoStepIDType;
+using WebUndoStepID = ObjectIdentifier<WebUndoStepIDType>;
+
+} // namespace WebKit

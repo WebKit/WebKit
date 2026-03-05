@@ -31,7 +31,7 @@
 
 static bool failed = true;
 
-static void finalize(JSObjectRef)
+static void NODELETE finalize(JSObjectRef)
 {
     failed = false;
 }

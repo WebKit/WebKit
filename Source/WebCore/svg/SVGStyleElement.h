@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class SVGStyleElement final : public SVGElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGStyleElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGStyleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGStyleElement);
 public:
     static Ref<SVGStyleElement> create(const QualifiedName&, Document&, bool createdByParser);
@@ -55,12 +55,10 @@ private:
     bool isLoading() const { return m_styleSheetOwner.isLoading(); }
     bool sheetLoaded() final { return m_styleSheetOwner.sheetLoaded(*this); }
     void startLoadingDynamicSheet() final { m_styleSheetOwner.startLoadingDynamicSheet(*this); }
-    Timer* loadEventTimer() final { return &m_loadEventTimer; }
 
     String title() const final;
 
     InlineStyleSheetOwner m_styleSheetOwner;
-    Timer m_loadEventTimer;
 };
 
 } // namespace WebCore

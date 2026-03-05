@@ -48,8 +48,7 @@ public:
         AfterAnimation = 1 << 3,
         AfterTransition = 1 << 4,
         StartingStyle = 1 << 5,
-        BaseAppearanceStyle = 1 << 6,
-        NonCacheable = 1 << 7,
+        NonCacheable = 1 << 6,
     };
 
     enum class Origin : uint8_t {
@@ -64,7 +63,7 @@ public:
 
     struct IncludedProperties {
         OptionSet<PropertyType> types;
-        // Ids are mutually exclusive with types. They are low-priority only.
+        // Ids are mutually exclusive with types. They are low-priority only and have any cascade aliases resolved.
         Vector<CSSPropertyID, 4> ids { };
 
         bool isEmpty() const { return !types && ids.isEmpty(); }
@@ -109,8 +108,6 @@ public:
 
     bool applyLowPriorityOnly() const { return !m_includedProperties.ids.isEmpty(); }
 
-    void addBaseAppearanceStyles();
-
 private:
     void buildCascade();
     bool addNormalMatches(Origin);
@@ -121,10 +118,10 @@ private:
 
     void set(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
     void setLogicalGroupProperty(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
-    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
+    static void NODELETE setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
 
-    bool hasProperty(CSSPropertyID, const CSSValue&);
-    bool mayOverrideExistingProperty(CSSPropertyID, const CSSValue&);
+    bool NODELETE hasProperty(CSSPropertyID, const CSSValue&);
+    bool NODELETE mayOverrideExistingProperty(CSSPropertyID, const CSSValue&);
 
     unsigned logicalGroupPropertyIndex(CSSPropertyID) const;
     void setLogicalGroupPropertyIndex(CSSPropertyID, unsigned);

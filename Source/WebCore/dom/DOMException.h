@@ -57,7 +57,7 @@ public:
         LegacyCode legacyCode;
     };
 
-    WEBCORE_EXPORT static const Description& description(ExceptionCode);
+    WEBCORE_EXPORT static const Description& NODELETE description(ExceptionCode);
 
     static ASCIILiteral name(ExceptionCode ec) { return description(ec).name; }
     static ASCIILiteral message(ExceptionCode ec) { return description(ec).message; }

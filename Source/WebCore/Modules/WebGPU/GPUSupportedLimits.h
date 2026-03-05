@@ -33,48 +33,48 @@ class GPUSupportedLimits : public RefCounted<GPUSupportedLimits> {
 public:
     static Ref<GPUSupportedLimits> create(Ref<WebGPU::SupportedLimits>&& backing)
     {
-        return adoptRef(*new GPUSupportedLimits(WTFMove(backing)));
+        return adoptRef(*new GPUSupportedLimits(WTF::move(backing)));
     }
 
-    uint32_t maxTextureDimension1D() const;
-    uint32_t maxTextureDimension2D() const;
-    uint32_t maxTextureDimension3D() const;
-    uint32_t maxTextureArrayLayers() const;
-    uint32_t maxBindGroups() const;
-    uint32_t maxBindGroupsPlusVertexBuffers() const;
-    uint32_t maxBindingsPerBindGroup() const;
-    uint32_t maxDynamicUniformBuffersPerPipelineLayout() const;
-    uint32_t maxDynamicStorageBuffersPerPipelineLayout() const;
-    uint32_t maxSampledTexturesPerShaderStage() const;
-    uint32_t maxSamplersPerShaderStage() const;
-    uint32_t maxStorageBuffersPerShaderStage() const;
-    uint32_t maxStorageTexturesPerShaderStage() const;
-    uint32_t maxUniformBuffersPerShaderStage() const;
-    uint64_t maxUniformBufferBindingSize() const;
-    uint64_t maxStorageBufferBindingSize() const;
-    uint32_t minUniformBufferOffsetAlignment() const;
-    uint32_t minStorageBufferOffsetAlignment() const;
-    uint32_t maxVertexBuffers() const;
-    uint64_t maxBufferSize() const;
-    uint32_t maxVertexAttributes() const;
-    uint32_t maxVertexBufferArrayStride() const;
-    uint32_t maxInterStageShaderComponents() const;
-    uint32_t maxInterStageShaderVariables() const;
-    uint32_t maxColorAttachments() const;
-    uint32_t maxColorAttachmentBytesPerSample() const;
-    uint32_t maxComputeWorkgroupStorageSize() const;
-    uint32_t maxComputeInvocationsPerWorkgroup() const;
-    uint32_t maxComputeWorkgroupSizeX() const;
-    uint32_t maxComputeWorkgroupSizeY() const;
-    uint32_t maxComputeWorkgroupSizeZ() const;
-    uint32_t maxComputeWorkgroupsPerDimension() const;
+    uint32_t NODELETE maxTextureDimension1D() const;
+    uint32_t NODELETE maxTextureDimension2D() const;
+    uint32_t NODELETE maxTextureDimension3D() const;
+    uint32_t NODELETE maxTextureArrayLayers() const;
+    uint32_t NODELETE maxBindGroups() const;
+    uint32_t NODELETE maxBindGroupsPlusVertexBuffers() const;
+    uint32_t NODELETE maxBindingsPerBindGroup() const;
+    uint32_t NODELETE maxDynamicUniformBuffersPerPipelineLayout() const;
+    uint32_t NODELETE maxDynamicStorageBuffersPerPipelineLayout() const;
+    uint32_t NODELETE maxSampledTexturesPerShaderStage() const;
+    uint32_t NODELETE maxSamplersPerShaderStage() const;
+    uint32_t NODELETE maxStorageBuffersPerShaderStage() const;
+    uint32_t NODELETE maxStorageTexturesPerShaderStage() const;
+    uint32_t NODELETE maxUniformBuffersPerShaderStage() const;
+    uint64_t NODELETE maxUniformBufferBindingSize() const;
+    uint64_t NODELETE maxStorageBufferBindingSize() const;
+    uint32_t NODELETE minUniformBufferOffsetAlignment() const;
+    uint32_t NODELETE minStorageBufferOffsetAlignment() const;
+    uint32_t NODELETE maxVertexBuffers() const;
+    uint64_t NODELETE maxBufferSize() const;
+    uint32_t NODELETE maxVertexAttributes() const;
+    uint32_t NODELETE maxVertexBufferArrayStride() const;
+    uint32_t NODELETE maxInterStageShaderComponents() const;
+    uint32_t NODELETE maxInterStageShaderVariables() const;
+    uint32_t NODELETE maxColorAttachments() const;
+    uint32_t NODELETE maxColorAttachmentBytesPerSample() const;
+    uint32_t NODELETE maxComputeWorkgroupStorageSize() const;
+    uint32_t NODELETE maxComputeInvocationsPerWorkgroup() const;
+    uint32_t NODELETE maxComputeWorkgroupSizeX() const;
+    uint32_t NODELETE maxComputeWorkgroupSizeY() const;
+    uint32_t NODELETE maxComputeWorkgroupSizeZ() const;
+    uint32_t NODELETE maxComputeWorkgroupsPerDimension() const;
 
     WebGPU::SupportedLimits& backing() { return m_backing; }
     const WebGPU::SupportedLimits& backing() const { return m_backing; }
 
 private:
     GPUSupportedLimits(Ref<WebGPU::SupportedLimits>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

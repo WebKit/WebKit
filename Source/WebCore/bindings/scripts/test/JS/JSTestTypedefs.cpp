@@ -181,7 +181,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor:
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<TestTypedefs>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestTypedefs>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTF::move(object));
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     setSubclassStructureIfNeeded<TestTypedefs>(lexicalGlobalObject, callFrame, asObject(jsValue));
@@ -246,7 +246,7 @@ void JSTestTypedefsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs"_s, &Base::s_info, &JSTestTypedefsTable, nullptr, CREATE_METHOD_TABLE(JSTestTypedefs) };
 
 JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTypedefs>&& impl)
-    : JSDOMWrapper<TestTypedefs>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestTypedefs>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -502,7 +502,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcBody(JSC::
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto xConversionResult = convertOptionalWithDefault<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0.value(), [&]() -> ConversionResult<IDLSequence<IDLLong>> { return Converter<IDLSequence<IDLLong>>::ReturnType { }; });
+    auto xConversionResult = convertOptionalWithDefault<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLSequence<IDLLong>> { return Converter<IDLSequence<IDLLong>>::ReturnType { }; });
     if (xConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.func(xConversionResult.releaseReturnValue()); })));
@@ -535,7 +535,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_setShadowBody(
     if (blurConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument3 = callFrame->argument(3);
-    auto colorConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument3.value(), [&]() -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
+    auto colorConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument3.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
     if (colorConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument4 = callFrame->argument(4);
@@ -831,7 +831,7 @@ void JSTestTypedefsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestTypedefs = static_cast<JSTestTypedefs*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestTypedefs->protectedWrapped().ptr(), jsTestTypedefs);
+    uncacheWrapper(world, protect(jsTestTypedefs->wrapped()).ptr(), jsTestTypedefs);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -869,7 +869,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestTypedefs>(impl.ptr());
 #endif
-    return createWrapper<TestTypedefs>(globalObject, WTFMove(impl));
+    return createWrapper<TestTypedefs>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestTypedefs& impl)

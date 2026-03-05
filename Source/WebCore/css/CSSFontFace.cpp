@@ -63,17 +63,17 @@ static void iterateClients(WeakHashSet<CSSFontFaceClient>& clients, NOESCAPE con
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
 {
     bool allowDownloading = context && (context->settingsValues().downloadableBinaryFontTrustedTypes != DownloadableBinaryFontTrustedTypes::None);
-    for (auto& src : srcList) {
+    for (Ref src : srcList) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
-        if (auto local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src)) {
+        if (RefPtr local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src)) {
             if (!local->svgFontFaceElement())
-                fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, local->fontFaceName()));
+                fontFace.adoptSource(makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(fontFace, local->fontFaceName()));
             else if (allowDownloading)
-                fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, local->fontFaceName(),  CheckedRef { *local->svgFontFaceElement() }));
+                fontFace.adoptSource(makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(fontFace, local->fontFaceName(),  CheckedRef { *local->svgFontFaceElement() }));
         } else {
             if (allowDownloading) {
-                if (auto request = downcast<CSSFontFaceSrcResourceValue>(const_cast<CSSValue&>(src)).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
-                    fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(request))));
+                if (auto request = downcast<CSSFontFaceSrcResourceValue>(const_cast<CSSValue&>(src.get())).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
+                    fontFace.adoptSource(makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), request.releaseNonNull()));
             }
         }
     }
@@ -104,6 +104,7 @@ CSSFontFace::CSSFontFace(const SettingsValues* settings, StyleRuleFontFace* conn
     , m_shouldIgnoreFontLoadCompletions(settings && settings->shouldIgnoreFontLoadCompletions)
     , m_fontLoadTimingOverride(settings ? settings->fontLoadTimingOverride : FontLoadTimingOverride::None)
     , m_allowUserInstalledFonts(settings && !settings->shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::No : AllowUserInstalledFonts::Yes)
+    , m_trustedType(settings ? settings->downloadableBinaryFontTrustedTypes : DownloadableBinaryFontTrustedTypes::Any)
     , m_timeoutTimer(*this, &CSSFontFace::timeoutFired)
 {
 }
@@ -169,8 +170,8 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
             return { normalWeightValue(), normalWeightValue() };
         ASSERT(valueList->item(0)->isPrimitiveValue());
         ASSERT(valueList->item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
+        Ref value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
+        Ref value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
         auto result0 = Style::fontWeightFromCSSValueDeprecated(value0);
         auto result1 = Style::fontWeightFromCSSValueDeprecated(value1);
         return { result0, result1 };
@@ -204,8 +205,8 @@ static FontSelectionRange calculateWidthRange(CSSValue& value)
             return { normalWidthValue(), normalWidthValue() };
         ASSERT(valueList->item(0)->isPrimitiveValue());
         ASSERT(valueList->item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
+        Ref value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
+        Ref value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
         auto result0 = Style::fontStretchFromCSSValueDeprecated(value0);
         auto result1 = Style::fontStretchFromCSSValueDeprecated(value1);
         return { result0, result1 };
@@ -282,7 +283,7 @@ void CSSFontFace::setUnicodeRange(CSSValueList& list)
     if (ranges == m_ranges)
         return;
 
-    m_ranges = WTFMove(ranges);
+    m_ranges = WTF::move(ranges);
 
     iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
@@ -299,17 +300,17 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     FontFeatureSettings settings;
 
     if (auto* list = dynamicDowncast<CSSValueList>(featureSettings)) {
-        for (auto& rangeValue : *list) {
-            auto& feature = downcast<CSSFontFeatureValue>(rangeValue);
-            if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(feature.value()))
-                settings.insert({ feature.tag(), primitiveValue->resolveAsIntegerDeprecated() });
+        for (Ref rangeValue : *list) {
+            Ref feature = downcast<CSSFontFeatureValue>(rangeValue);
+            if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(feature->value()))
+                settings.insert({ feature->tag(), primitiveValue->resolveAsIntegerDeprecated() });
         }
     }
 
     if (m_featureSettings == settings)
         return;
 
-    m_featureSettings = WTFMove(settings);
+    m_featureSettings = WTF::move(settings);
 
     iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
@@ -445,7 +446,7 @@ void CSSFontFace::timeoutFired()
     fontLoadEventOccurred();
 }
 
-RefPtr<Document> CSSFontFace::protectedDocument()
+Document* CSSFontFace::document() const
 {
     if (m_wrapper)
         return dynamicDowncast<Document>(m_wrapper->scriptExecutionContext());
@@ -517,9 +518,9 @@ void CSSFontFace::setWrapper(FontFace& newWrapper)
     initializeWrapper();
 }
 
-void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
+void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource> source)
 {
-    m_sources.append(WTFMove(source));
+    m_sources.append(WTF::move(source));
 
     // We should never add sources in the middle of loading.
     ASSERT(!m_sourcesPopulated);
@@ -617,11 +618,11 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource&)
     fontLoadEventOccurred();
 }
 
-void CSSFontFace::opportunisticallyStartFontDataURLLoading()
+void CSSFontFace::opportunisticallyStartFontDataURLLoading(DownloadableBinaryFontTrustedTypes trustedType)
 {
     // We don't want to go crazy here and blow the cache. Usually these data URLs are the first item in the src: list, so let's just check that one.
     if (!m_sources.isEmpty())
-        CheckedRef { *m_sources[0] }->opportunisticallyStartFontDataURLLoading();
+        Ref { *m_sources[0] }->opportunisticallyStartFontDataURLLoading(trustedType);
 }
 
 size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
@@ -648,7 +649,7 @@ size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
             if (policy == ExternalResourceDownloadPolicy::Allow || !source->requiresExternalResource()) {
                 if (policy == ExternalResourceDownloadPolicy::Allow && m_status == Status::Pending)
                     setStatus(Status::Loading);
-                source->load(protectedDocument().get());
+                source->load(m_trustedType, protect(document()).get());
             }
         }
 
@@ -720,7 +721,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
     for (size_t i = startIndex; i < m_sources.size(); ++i) {
         auto& source = m_sources[i];
         if (source->status() == CSSFontFaceSource::Status::Pending && (policy == ExternalResourceDownloadPolicy::Allow || !source->requiresExternalResource()))
-            source->load(protectedDocument().get());
+            source->load(m_trustedType, protect(document()).get());
 
         switch (source->status()) {
         case CSSFontFaceSource::Status::Pending:
@@ -757,7 +758,7 @@ void CSSFontFace::updateStyleIfNeeded()
 bool CSSFontFace::hasSVGFontFaceSource() const
 {
     return m_sources.containsIf([](auto& source) {
-        return CheckedRef { *source }->isSVGFontFaceSource();
+        return Ref { *source }->isSVGFontFaceSource();
     });
 }
 

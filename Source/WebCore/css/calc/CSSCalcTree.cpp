@@ -276,7 +276,7 @@ template<typename Op> static std::optional<Type> mergeTypesFor(const Op&, std::o
     return mergeTypes<Op::merge>(a, b);
 }
 
-template<typename Op, typename... Args> static std::optional<Type> transformTypeFor(const Op&, std::optional<Type> a)
+template<typename Op, typename... Args> static std::optional<Type> NODELETE transformTypeFor(const Op&, std::optional<Type> a)
 {
     return transformType<Op::output>(a);
 }

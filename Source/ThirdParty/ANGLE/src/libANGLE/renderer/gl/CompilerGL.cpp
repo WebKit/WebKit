@@ -17,7 +17,7 @@
 namespace rx
 {
 CompilerGL::CompilerGL(const ContextGL *context)
-    : mTranslatorOutputType(GetShaderOutputType(context->getFunctions()))
+    : mTranslatorOutputType(GetShaderOutputType(context->getFeaturesGL(), context->getFunctions()))
 {}
 
 ShShaderOutput CompilerGL::getTranslatorOutputType() const

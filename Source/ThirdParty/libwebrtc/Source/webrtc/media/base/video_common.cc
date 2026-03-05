@@ -26,20 +26,21 @@ struct FourCCAliasEntry {
 };
 
 static const FourCCAliasEntry kFourCCAliases[] = {
-    {FOURCC_IYUV, FOURCC_I420},
-    {FOURCC_YU16, FOURCC_I422},
-    {FOURCC_YU24, FOURCC_I444},
-    {FOURCC_YUYV, FOURCC_YUY2},
-    {FOURCC_YUVS, FOURCC_YUY2},
-    {FOURCC_HDYC, FOURCC_UYVY},
-    {FOURCC_2VUY, FOURCC_UYVY},
-    {FOURCC_JPEG, FOURCC_MJPG},  // Note: JPEG has DHT while MJPG does not.
-    {FOURCC_DMB1, FOURCC_MJPG},
-    {FOURCC_BA81, FOURCC_BGGR},
-    {FOURCC_RGB3, FOURCC_RAW},
-    {FOURCC_BGR3, FOURCC_24BG},
-    {FOURCC_CM32, FOURCC_BGRA},
-    {FOURCC_CM24, FOURCC_RAW},
+    {.alias = FOURCC_IYUV, .canonical = FOURCC_I420},
+    {.alias = FOURCC_YU16, .canonical = FOURCC_I422},
+    {.alias = FOURCC_YU24, .canonical = FOURCC_I444},
+    {.alias = FOURCC_YUYV, .canonical = FOURCC_YUY2},
+    {.alias = FOURCC_YUVS, .canonical = FOURCC_YUY2},
+    {.alias = FOURCC_HDYC, .canonical = FOURCC_UYVY},
+    {.alias = FOURCC_2VUY, .canonical = FOURCC_UYVY},
+    {.alias = FOURCC_JPEG,
+     .canonical = FOURCC_MJPG},  // Note: JPEG has DHT while MJPG does not.
+    {.alias = FOURCC_DMB1, .canonical = FOURCC_MJPG},
+    {.alias = FOURCC_BA81, .canonical = FOURCC_BGGR},
+    {.alias = FOURCC_RGB3, .canonical = FOURCC_RAW},
+    {.alias = FOURCC_BGR3, .canonical = FOURCC_24BG},
+    {.alias = FOURCC_CM32, .canonical = FOURCC_BGRA},
+    {.alias = FOURCC_CM24, .canonical = FOURCC_RAW},
 };
 
 uint32_t CanonicalFourCC(uint32_t fourcc) {

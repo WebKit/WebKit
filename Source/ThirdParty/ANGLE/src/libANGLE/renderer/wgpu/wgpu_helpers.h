@@ -160,6 +160,15 @@ class ImageHelper : public angle::Subject
                             uint32_t sourceLayer,
                             const gl::Box &sourceBox);
 
+    angle::Result copyImageCpuReadback(const gl::Context *context,
+                                       const gl::ImageIndex &index,
+                                       const gl::Rectangle &sourceArea,
+                                       const gl::Offset &dstOffset,
+                                       const gl::Extents &dstExtent,
+                                       const gl::InternalFormat &formatInfo,
+                                       ImageHelper *srcImage,
+                                       const gl::Extents &srcExtents);
+
     static angle::Result getReadPixelsParams(rx::ContextWgpu *contextWgpu,
                                              const gl::PixelPackState &packState,
                                              gl::Buffer *packBuffer,

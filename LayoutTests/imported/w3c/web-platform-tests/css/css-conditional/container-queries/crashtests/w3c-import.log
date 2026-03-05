@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/container-in-canvas-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/container-type-change-chrome-legacy-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/dialog-backdrop-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/dialog-backdrop-display-none-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/dirty-rowgroup-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/flex-in-columns-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/flex-in-columns-001-crash.html

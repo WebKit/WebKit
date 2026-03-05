@@ -609,6 +609,14 @@ cl_mem CL_API_CALL clCreateImageWithProperties(cl_context context,
                                                void *host_ptr,
                                                cl_int *errcode_ret);
 
+// cl_arm_import_memory
+cl_mem CL_API_CALL clImportMemoryARM(cl_context context,
+                                     cl_mem_flags flags,
+                                     const cl_import_properties_arm *properties,
+                                     void *memory,
+                                     size_t size,
+                                     cl_int *errcode_ret);
+
 // cl_khr_external_memory
 cl_int CL_API_CALL clEnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                                          cl_uint num_mem_objects,
@@ -627,6 +635,9 @@ cl_int CL_API_CALL clEnqueueReleaseExternalMemObjectsKHR(cl_command_queue comman
 cl_int CL_API_CALL clIcdGetPlatformIDsKHR(cl_uint num_entries,
                                           cl_platform_id *platforms,
                                           cl_uint *num_platforms);
+void *CL_API_CALL clIcdGetFunctionAddressForPlatformKHR(cl_platform_id platform,
+                                                        const char *func_name);
+cl_int CL_API_CALL clIcdSetPlatformDispatchDataKHR(cl_platform_id platform, void *dispatch_data);
 }  // namespace cl
 
 #endif  // LIBGLESV2_ENTRY_POINTS_CL_AUTOGEN_H_

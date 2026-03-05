@@ -34,7 +34,7 @@ class MediaSampleGStreamer : public MediaSample {
 public:
     static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, TrackID id)
     {
-        return adoptRef(*new MediaSampleGStreamer(WTFMove(sample), presentationSize, id));
+        return adoptRef(*new MediaSampleGStreamer(WTF::move(sample), presentationSize, id));
     }
 
     static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, const MediaTime& pts, const MediaTime& dts, const MediaTime& duration, const FloatSize& presentationSize, TrackID);

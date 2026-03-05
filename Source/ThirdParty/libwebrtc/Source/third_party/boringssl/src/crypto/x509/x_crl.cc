@@ -42,7 +42,7 @@ static int crl_lookup(X509_CRL *crl, X509_REVOKED **ret,
                       const ASN1_INTEGER *serial, X509_NAME *issuer);
 
 // The X509_CRL_INFO structure needs a bit of customisation. Since we cache
-// the original encoding the signature wont be affected by reordering of the
+// the original encoding the signature won't be affected by reordering of the
 // revoked field.
 static int crl_inf_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
                       void *exarg) {
@@ -73,13 +73,28 @@ ASN1_SEQUENCE_enc(X509_CRL_INFO, enc, crl_inf_cb) = {
 } ASN1_SEQUENCE_END_enc(X509_CRL_INFO, X509_CRL_INFO)
 
 static int crl_parse_entry_extensions(X509_CRL *crl) {
+  long version = ASN1_INTEGER_get(crl->crl->version);
   STACK_OF(X509_REVOKED) *revoked = X509_CRL_get_REVOKED(crl);
   for (size_t i = 0; i < sk_X509_REVOKED_num(revoked); i++) {
     X509_REVOKED *rev = sk_X509_REVOKED_value(revoked, i);
 
+    // Per RFC 5280, section 5.1, CRL entry extensions require v2.
+    const STACK_OF(X509_EXTENSION) *exts = rev->extensions;
+    if (version == X509_CRL_VERSION_1 && exts != nullptr) {
+      OPENSSL_PUT_ERROR(X509, X509_R_INVALID_VERSION);
+      return 0;
+    }
+
+    // Extensions is a SEQUENCE SIZE (1..MAX), so it cannot be empty. An empty
+    // extensions list is encoded by omitting the OPTIONAL field.
+    if (exts != nullptr && sk_X509_EXTENSION_num(exts) == 0) {
+      OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
+      return 0;
+    }
+
     int crit;
     ASN1_ENUMERATED *reason = reinterpret_cast<ASN1_ENUMERATED *>(
-        X509_REVOKED_get_ext_d2i(rev, NID_crl_reason, &crit, NULL));
+        X509_REVOKED_get_ext_d2i(rev, NID_crl_reason, &crit, nullptr));
     if (!reason && crit != -1) {
       crl->flags |= EXFLAG_INVALID;
       return 1;
@@ -93,7 +108,6 @@ static int crl_parse_entry_extensions(X509_CRL *crl) {
     }
 
     // We do not support any critical CRL entry extensions.
-    const STACK_OF(X509_EXTENSION) *exts = rev->extensions;
     for (size_t j = 0; j < sk_X509_EXTENSION_num(exts); j++) {
       const X509_EXTENSION *ext = sk_X509_EXTENSION_value(exts, j);
       if (X509_EXTENSION_get_critical(ext)) {
@@ -115,8 +129,8 @@ static int crl_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
 
   switch (operation) {
     case ASN1_OP_NEW_POST:
-      crl->idp = NULL;
-      crl->akid = NULL;
+      crl->idp = nullptr;
+      crl->akid = nullptr;
       crl->flags = 0;
       crl->idp_flags = 0;
       break;
@@ -124,30 +138,36 @@ static int crl_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
     case ASN1_OP_D2I_POST: {
       // The version must be one of v1(0) or v2(1).
       long version = X509_CRL_VERSION_1;
-      if (crl->crl->version != NULL) {
+      if (crl->crl->version != nullptr) {
         version = ASN1_INTEGER_get(crl->crl->version);
-        // TODO(https://crbug.com/boringssl/364): |X509_CRL_VERSION_1|
-        // should also be rejected. This means an explicitly-encoded X.509v1
-        // version. v1 is DEFAULT, so DER requires it be omitted.
-        if (version < X509_CRL_VERSION_1 || version > X509_CRL_VERSION_2) {
+        // Versions v1 and v2. v1 is DEFAULT, so cannot be encoded explicitly.
+        if (version != X509_CRL_VERSION_2) {
           OPENSSL_PUT_ERROR(X509, X509_R_INVALID_VERSION);
           return 0;
         }
       }
 
       // Per RFC 5280, section 5.1.2.1, extensions require v2.
-      if (version != X509_CRL_VERSION_2 && crl->crl->extensions != NULL) {
+      if (version != X509_CRL_VERSION_2 && crl->crl->extensions != nullptr) {
         OPENSSL_PUT_ERROR(X509, X509_R_INVALID_FIELD_FOR_VERSION);
         return 0;
       }
 
-      if (!X509_CRL_digest(crl, EVP_sha256(), crl->crl_hash, NULL)) {
+      // Extensions is a SEQUENCE SIZE (1..MAX), so it cannot be empty. An empty
+      // extensions list is encoded by omitting the OPTIONAL field.
+      if (crl->crl->extensions != nullptr &&
+          sk_X509_EXTENSION_num(crl->crl->extensions) == 0) {
+        OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
         return 0;
       }
 
-      crl->idp = reinterpret_cast<ISSUING_DIST_POINT *>(
-          X509_CRL_get_ext_d2i(crl, NID_issuing_distribution_point, &i, NULL));
-      if (crl->idp != NULL) {
+      if (!X509_CRL_digest(crl, EVP_sha256(), crl->crl_hash, nullptr)) {
+        return 0;
+      }
+
+      crl->idp = reinterpret_cast<ISSUING_DIST_POINT *>(X509_CRL_get_ext_d2i(
+          crl, NID_issuing_distribution_point, &i, nullptr));
+      if (crl->idp != nullptr) {
         if (!setup_idp(crl, crl->idp)) {
           return 0;
         }
@@ -156,8 +176,8 @@ static int crl_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
       }
 
       crl->akid = reinterpret_cast<AUTHORITY_KEYID *>(
-          X509_CRL_get_ext_d2i(crl, NID_authority_key_identifier, &i, NULL));
-      if (crl->akid == NULL && i != -1) {
+          X509_CRL_get_ext_d2i(crl, NID_authority_key_identifier, &i, nullptr));
+      if (crl->akid == nullptr && i != -1) {
         return 0;
       }
 
@@ -243,15 +263,12 @@ ASN1_SEQUENCE_ref(X509_CRL, crl_cb) = {
     ASN1_SIMPLE(X509_CRL, signature, ASN1_BIT_STRING),
 } ASN1_SEQUENCE_END_ref(X509_CRL, X509_CRL)
 
-// Although |X509_REVOKED| contains an |X509_NAME|, it can be const. It is not
-// affected by https://crbug.com/boringssl/407 because the  |X509_NAME| does
-// not participate in serialization.
 IMPLEMENT_ASN1_FUNCTIONS_const(X509_REVOKED)
 IMPLEMENT_ASN1_DUP_FUNCTION_const(X509_REVOKED)
 
-IMPLEMENT_ASN1_FUNCTIONS(X509_CRL_INFO)
-IMPLEMENT_ASN1_FUNCTIONS(X509_CRL)
-IMPLEMENT_ASN1_DUP_FUNCTION(X509_CRL)
+IMPLEMENT_ASN1_FUNCTIONS_const(X509_CRL_INFO)
+IMPLEMENT_ASN1_FUNCTIONS_const(X509_CRL)
+IMPLEMENT_ASN1_DUP_FUNCTION_const(X509_CRL)
 
 static int X509_REVOKED_cmp(const X509_REVOKED *const *a,
                             const X509_REVOKED *const *b) {
@@ -283,7 +300,7 @@ int X509_CRL_verify(X509_CRL *crl, EVP_PKEY *pkey) {
 
 int X509_CRL_get0_by_serial(X509_CRL *crl, X509_REVOKED **ret,
                             const ASN1_INTEGER *serial) {
-  return crl_lookup(crl, ret, serial, NULL);
+  return crl_lookup(crl, ret, serial, nullptr);
 }
 
 int X509_CRL_get0_by_cert(X509_CRL *crl, X509_REVOKED **ret, X509 *x) {
@@ -293,7 +310,7 @@ int X509_CRL_get0_by_cert(X509_CRL *crl, X509_REVOKED **ret, X509 *x) {
 
 static int crl_revoked_issuer_match(X509_CRL *crl, X509_NAME *nm,
                                     X509_REVOKED *rev) {
-  return nm == NULL || X509_NAME_cmp(nm, X509_CRL_get_issuer(crl)) == 0;
+  return nm == nullptr || X509_NAME_cmp(nm, X509_CRL_get_issuer(crl)) == 0;
 }
 
 static CRYPTO_MUTEX g_crl_sort_lock = CRYPTO_MUTEX_INIT;

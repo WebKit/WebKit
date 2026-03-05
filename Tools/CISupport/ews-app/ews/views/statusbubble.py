@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -43,9 +43,9 @@ class StatusBubble(View):
     # These queue names are from shortname in https://github.com/webkit/webkit/blob/main/Tools/CISupport/ews-build/config.json
     # FIXME: Auto-generate this list https://bugs.webkit.org/show_bug.cgi?id=195640
     # Note: This list is sorted in the order of which bubbles appear in bugzilla.
-    ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'wpe-cairo-libwebrtc', 'playstation', 'win', 'win-tests',
-                  'ios-wk2', 'ios-wk2-wpt', 'mac-wk1', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2', 'mac-AS-debug-wk2', 'mac-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios', 'api-mac',
-                  'api-mac-debug', 'api-gtk', 'api-wpe', 'bindings', 'jsc', 'jsc-arm64', 'jsc-armv7', 'jsc-armv7-tests', 'webkitperl', 'webkitpy', 'services']
+    ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'gtk3-libwebrtc', 'playstation', 'win', 'win-tests',
+                  'ios-wk2', 'ios-wk2-wpt', 'mac-wk1', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2', 'mac-AS-debug-wk2', 'mac-safer-cpp', 'ios-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios', 'api-mac',
+                  'api-mac-debug', 'api-gtk', 'api-wpe', 'bindings', 'jsc', 'jsc-debug-arm64', 'jsc-armv7', 'jsc-armv7-tests', 'webkitperl', 'webkitpy', 'services']
 
     DAYS_TO_CHECK_QUEUE_POSITION = 0.5
     DAYS_TO_HIDE_BUBBLE = 7
@@ -98,13 +98,6 @@ class StatusBubble(View):
             else:
                 bubble['state'] = 'started'
             bubble['details_message'] = 'Build is in-progress. Recent messages:' + self._steps_messages_from_multiple_builds(builds)
-        elif build.retried:
-            bubble['state'] = 'started'
-            bubble['details_message'] = 'Waiting for available bot to retry the build.'
-            bubble['url'] = None
-            queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
-            if queue_full_name:
-                bubble['url'] = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
                 if change.created < (timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_HIDE_BUBBLE)):
@@ -239,19 +232,6 @@ class StatusBubble(View):
     def get_builds_for_queue(self, change, queue):
         return [build for build in change.build_set.all() if build.builder_display_name == queue]
 
-    def find_failed_builds_for_change(self, change_id):
-        change = Change.get_change(change_id)
-        if not change:
-            return []
-        failed_builds = []
-        for queue in StatusBubble.ALL_QUEUES:
-            build, _ = self.get_latest_build_for_queue(change, queue)
-            if not build:
-                continue
-            if build.result in (Buildbot.FAILURE, Buildbot.EXCEPTION, Buildbot.CANCELLED):
-                failed_builds.append(build)
-        return failed_builds
-
     def _should_show_bubble_for_build(self, build, sent_to_buildbot=True):
         if build and build.result == Buildbot.SKIPPED and re.search(r'Patch .* doesn\'t have relevant changes', build.state_string):
             return False
@@ -298,18 +278,15 @@ class StatusBubble(View):
     def _build_bubbles_for_change(self, change, hide_icons=False):
         show_submit_to_ews = True
         failed_to_apply = False  # TODO: https://bugs.webkit.org/show_bug.cgi?id=194598
-        show_retry = False
         bubbles = []
 
         if not change:
-            return (None, show_submit_to_ews, failed_to_apply, show_retry)
+            return (None, show_submit_to_ews, failed_to_apply)
 
         for queue in StatusBubble.ALL_QUEUES:
             bubble = self._build_bubble(change, queue, hide_icons, change.sent_to_buildbot)
             if bubble:
                 bubbles.append(bubble)
-                if bubble['state'] in ('fail', 'error'):
-                    show_retry = True
 
         if change.sent_to_commit_queue:
             if not change.sent_to_buildbot:
@@ -319,19 +296,18 @@ class StatusBubble(View):
                 bubbles.insert(0, cq_bubble)
 
         show_submit_to_ews = not change.sent_to_buildbot
-        return (bubbles, show_submit_to_ews, failed_to_apply, show_retry)
+        return (bubbles, show_submit_to_ews, failed_to_apply)
 
     @xframe_options_exempt
     def get(self, request, change_id):
         hide_icons = request.GET.get('hide_icons', False)
         change = Change.get_change(change_id)
-        bubbles, show_submit_to_ews, show_failure_to_apply, show_retry = self._build_bubbles_for_change(change, hide_icons)
+        bubbles, show_submit_to_ews, show_failure_to_apply = self._build_bubbles_for_change(change, hide_icons)
 
         template_values = {
             'bubbles': bubbles,
             'change_id': change_id,
             'show_submit_to_ews': show_submit_to_ews,
             'show_failure_to_apply': show_failure_to_apply,
-            'show_retry_button': show_retry,
         }
         return render(request, 'statusbubble.html', template_values)

@@ -23,8 +23,8 @@ includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var typedArray = new TA(4);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg(4));
   var length = typedArray.length;
 
   assert.sameValue(length, 4, "length");

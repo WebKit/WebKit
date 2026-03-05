@@ -78,7 +78,7 @@ public:
     void didCommitWriteTransaction();
     bool didExceedQuota();
 
-    SQLTransactionCoordinator& transactionCoordinator();
+    SQLTransactionCoordinator& NODELETE transactionCoordinator();
 
     // Direct support for the DOM API
     String version() const;
@@ -90,22 +90,22 @@ public:
     String stringIdentifierIsolatedCopy() const;
     String displayNameIsolatedCopy() const;
     String expectedVersionIsolatedCopy() const;
-    unsigned long long estimatedSize() const;
+    unsigned long long NODELETE estimatedSize() const;
     String fileNameIsolatedCopy() const;
     DatabaseDetails details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 
-    void disableAuthorizer();
-    void enableAuthorizer();
-    void setAuthorizerPermissions(int);
-    bool lastActionChangedDatabase();
-    bool lastActionWasInsert();
-    void resetDeletes();
-    bool hadDeletes();
-    void resetAuthorizer();
+    void NODELETE disableAuthorizer();
+    void NODELETE enableAuthorizer();
+    void NODELETE setAuthorizerPermissions(int);
+    bool NODELETE lastActionChangedDatabase();
+    bool NODELETE lastActionWasInsert();
+    void NODELETE resetDeletes();
+    bool NODELETE hadDeletes();
+    void NODELETE resetAuthorizer();
 
     DatabaseContext& databaseContext() { return m_databaseContext; }
-    DatabaseThread& databaseThread();
+    DatabaseThread& NODELETE databaseThread();
     Document& document() { return m_document; }
     void logErrorMessage(const String& message);
 
@@ -166,7 +166,7 @@ private:
     bool m_opened { false };
     bool m_new { false };
 
-    UniqueRef<SQLiteDatabase> m_sqliteDatabase;
+    const UniqueRef<SQLiteDatabase> m_sqliteDatabase;
 
     const Ref<DatabaseAuthorizer> m_databaseAuthorizer;
 

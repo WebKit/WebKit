@@ -27,6 +27,7 @@
 
 #include "AXIsolatedObject.h"
 #include "AXLogger.h"
+#include "AXLoggerBase.h"
 #include "AXObjectCache.h"
 #include "AXTreeStore.h"
 #include "AXTreeStoreInlines.h"
@@ -59,15 +60,15 @@ static std::optional<AXID> nodeID(AXObjectCache& cache, Node* node)
 
 TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visiblePosition, int charStart, int charOffset, bool ignoredParam, TextMarkerOrigin originParam)
 {
-    ASSERT(isMainThread());
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    ASSERT(!AXObjectCache::shouldCreateAXThreadCompatibleMarkers());
+    AX_ASSERT(isMainThread());
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    AX_ASSERT(!AXObjectCache::shouldCreateAXThreadCompatibleMarkers());
 #endif
 
     zeroBytes(*this);
     treeID = cache.treeID().toUInt64();
     auto position = visiblePosition.deepEquivalent();
-    auto optionalObjectID = nodeID(cache, position.protectedAnchorNode().get());
+    auto optionalObjectID = nodeID(cache, protect(position.anchorNode()).get());
     objectID = optionalObjectID ? optionalObjectID->toUInt64() : 0;
     offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
     anchorType = position.anchorType();
@@ -80,18 +81,18 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visi
 
 TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffsetParam, bool ignoredParam, TextMarkerOrigin originParam)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     zeroBytes(*this);
 
     auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffsetParam);
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (AXObjectCache::shouldCreateAXThreadCompatibleMarkers()) {
-        if (std::optional data = cache.textMarkerDataForVisiblePosition(WTFMove(visiblePosition), origin))
+        if (std::optional data = cache.textMarkerDataForVisiblePosition(WTF::move(visiblePosition), origin))
             *this = *data;
         return;
     }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     treeID = cache.treeID().toUInt64();
     auto optionalObjectID = nodeID(cache, characterOffsetParam.node.get());
@@ -108,38 +109,38 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& char
 
 AXTextMarker::AXTextMarker(const VisiblePosition& visiblePosition, TextMarkerOrigin origin)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     if (visiblePosition.isNull())
         return;
 
     RefPtr node = visiblePosition.deepEquivalent().anchorNode();
-    ASSERT(node);
+    AX_ASSERT(node);
     if (!node)
         return;
 
-    CheckedPtr cache = node->protectedDocument()->axObjectCache();
+    CheckedPtr cache = protect(node->document())->axObjectCache();
     if (!cache)
         return;
 
     if (auto data = cache->textMarkerDataForVisiblePosition(visiblePosition, origin))
-        m_data = WTFMove(*data);
+        m_data = WTF::move(*data);
 }
 
 AXTextMarker::AXTextMarker(const CharacterOffset& characterOffset, TextMarkerOrigin origin)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     if (characterOffset.isNull())
         return;
 
-    if (CheckedPtr cache = characterOffset.node->protectedDocument()->axObjectCache())
+    if (CheckedPtr cache = protect(characterOffset.node->document())->axObjectCache())
         m_data = cache->textMarkerDataForCharacterOffset(characterOffset, origin);
 }
 
 AXTextMarker::operator VisiblePosition() const
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
     if (!cache)
@@ -150,7 +151,7 @@ AXTextMarker::operator VisiblePosition() const
 
 AXTextMarker::operator CharacterOffset() const
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     if (isIgnored() || isNull())
         return { };
@@ -187,7 +188,7 @@ static Node* nodeAndOffsetForReplacedNode(Node& replacedNode, int& offset, int c
 
 std::optional<BoundaryPoint> AXTextMarker::boundaryPoint() const
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     CharacterOffset characterOffset = *this;
     if (characterOffset.isNull())
@@ -227,7 +228,7 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
     return tree ? tree->objectForID(*objectID()) : nullptr;
 }
 
-String AXTextMarker::debugDescription() const
+String AXTextMarker::description() const
 {
     auto separator = ", "_s;
     RefPtr object = this->object();
@@ -236,12 +237,9 @@ String AXTextMarker::debugDescription() const
     // the value is the non-default one: upstream.
     String affinity = m_data.affinity == Affinity::Downstream ? ""_s : makeString(separator, "upstream"_s);
     String origin = m_data.origin == TextMarkerOrigin::Unknown ? ""_s : makeString(separator, originToString(m_data.origin));
-    // If there is no object, we'll log it once here, then emptyString() for role which also requires an object.
-    String id = object ? makeString("ID "_s, object->objectID().loggingString()) : String("no object"_s);
 
     return makeString("{"_s
-        , id
-        , object ? makeString(separator, "role "_s, roleToString(object->role())) : ""_s
+        , object ? makeString("role "_s, roleToString(object->role())) : "no object"_s
         , isIgnored() ? makeString(separator, "ignored"_s) : ""_s
         // Anchor type and other fields below are not used for text markers processed off the main-thread.
         , isMainThread() ? makeString(separator, "anchor "_s, m_data.anchorType) : ""_s
@@ -254,37 +252,47 @@ String AXTextMarker::debugDescription() const
     );
 }
 
+String AXTextMarker::debugDescription() const
+{
+    String description = this->description();
+    RefPtr object = this->object();
+    String id = object ? makeString("ID "_s, object->objectID().loggingString()) : String("no object"_s);
+
+    // Insert the object ID after the opening brace.
+    return makeString("{"_s, id, ", "_s, StringView(description).substring(1));
+}
+
 AXTextMarkerRange::AXTextMarkerRange(const VisibleSelection& selection)
     : m_start(selection.visibleStart())
     , m_end(selection.visibleEnd())
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 }
 
 AXTextMarkerRange::AXTextMarkerRange(const VisiblePositionRange& range)
     : m_start(range.start)
     , m_end(range.end)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 }
 
 AXTextMarkerRange::AXTextMarkerRange(const std::optional<SimpleRange>& range)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     if (!range)
         return;
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (AXObjectCache::shouldCreateAXThreadCompatibleMarkers()) {
         auto visiblePositionRange = makeVisiblePositionRange(range);
         m_start = AXTextMarker { visiblePositionRange.start };
         m_end = AXTextMarker { visiblePositionRange.end };
         return;
     }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-    if (CheckedPtr cache = range->start.protectedDocument()->axObjectCache()) {
+    if (CheckedPtr cache = protect(range->start.document())->axObjectCache()) {
         m_start = AXTextMarker(cache->startOrEndCharacterOffsetForRange(*range, true));
         m_end = AXTextMarker(cache->startOrEndCharacterOffsetForRange(*range, false));
     }
@@ -314,11 +322,11 @@ AXTextMarkerRange::AXTextMarkerRange(AXTextMarker&& start, AXTextMarker&& end)
     }
 
     bool reverse = is_gt(order);
-    m_start = reverse ? WTFMove(end) : WTFMove(start);
-    m_end = reverse ? WTFMove(start) : WTFMove(end);
+    m_start = reverse ? WTF::move(end) : WTF::move(start);
+    m_end = reverse ? WTF::move(start) : WTF::move(end);
 }
 
-AXTextMarkerRange::AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, unsigned start, unsigned end)
+AXTextMarkerRange::AXTextMarkerRange(std::optional<AXTreeID> treeID, std::optional<AXID> objectID, unsigned start, unsigned end)
 {
     if (start > end)
         std::swap(start, end);
@@ -328,7 +336,7 @@ AXTextMarkerRange::AXTextMarkerRange(std::optional<AXID> treeID, std::optional<A
 
 AXTextMarkerRange::operator VisiblePositionRange() const
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
     if (!m_start || !m_end)
         return { };
     return { m_start, m_end };
@@ -336,7 +344,7 @@ AXTextMarkerRange::operator VisiblePositionRange() const
 
 std::optional<SimpleRange> AXTextMarkerRange::simpleRange() const
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     auto startBoundaryPoint = m_start.boundaryPoint();
     if (!startBoundaryPoint)
@@ -356,7 +364,7 @@ std::optional<CharacterRange> AXTextMarkerRange::characterRange() const
         return std::nullopt;
 
     if (m_start.m_data.characterOffset > m_end.m_data.characterOffset) {
-        ASSERT_NOT_REACHED();
+        AX_ASSERT_NOT_REACHED();
         return std::nullopt;
     }
     return { { m_start.m_data.characterOffset, m_end.m_data.characterOffset - m_start.m_data.characterOffset } };
@@ -387,8 +395,8 @@ std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTex
         } };
     }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    if (AXObjectCache::useAXThreadTextApis()) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainThread()) {
         if (!*this || !other)
             return { };
 
@@ -450,17 +458,24 @@ std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTex
 
         if (!downcast<AXIsolatedObject>(current)->textRuns())
             intersectionStart = { *current, /* offset */ 0 };
-        return { { WTFMove(intersectionStart), WTFMove(intersectionEnd) } };
+        return { { WTF::move(intersectionStart), WTF::move(intersectionEnd) } };
     }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-    return Accessibility::retrieveValueFromMainThread<std::optional<AXTextMarkerRange>>([this, &other] () -> std::optional<AXTextMarkerRange> {
-        auto intersection = WebCore::intersection(*this, other);
-        if (intersection.isNull())
-            return std::nullopt;
+    // We handle the !isMainThread() case above.
+    AX_ASSERT(isMainThread());
 
-        return { AXTextMarkerRange(intersection) };
-    });
+    auto intersection = WebCore::intersection(*this, other);
+    if (intersection.isNull())
+        return std::nullopt;
+    return { AXTextMarkerRange(intersection) };
+}
+
+String AXTextMarkerRange::description() const
+{
+    return makeString("text: '"_s, toString(), "'"_s,
+        ", start: {"_s, m_start.description(), '}',
+        ", end: {"_s, m_end.description(), '}');
 }
 
 String AXTextMarkerRange::debugDescription() const
@@ -495,22 +510,16 @@ std::partial_ordering operator<=>(const AXTextMarker& marker1, const AXTextMarke
     if (otherObject && !marker2.offset() && otherObject->isRootWebArea())
         return std::partial_ordering::greater;
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    if (AXObjectCache::useAXThreadTextApis())
+    if (!isMainThread())
         return object && otherObject ? object->partialOrder(*otherObject) : std::partial_ordering::unordered;
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
-    auto result = std::partial_ordering::unordered;
-    Accessibility::performFunctionOnMainThreadAndWait([&] () {
-        auto startBoundaryPoint = marker1.boundaryPoint();
-        if (!startBoundaryPoint)
-            return;
-        auto endBoundaryPoint = marker2.boundaryPoint();
-        if (!endBoundaryPoint)
-            return;
-        result = treeOrder<ComposedTree>(*startBoundaryPoint, *endBoundaryPoint);
-    });
-    return result;
+    std::optional startBoundaryPoint = marker1.boundaryPoint();
+    if (!startBoundaryPoint)
+        return std::partial_ordering::unordered;
+    std::optional endBoundaryPoint = marker2.boundaryPoint();
+    if (!endBoundaryPoint)
+        return std::partial_ordering::unordered;
+    return treeOrder<ComposedTree>(*startBoundaryPoint, *endBoundaryPoint);
 }
 
 bool AXTextMarkerRange::isConfinedTo(std::optional<AXID> objectID) const
@@ -520,7 +529,7 @@ bool AXTextMarkerRange::isConfinedTo(std::optional<AXID> objectID) const
         && m_start.treeID() == m_end.treeID();
 }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 String listMarkerTextOnSameLine(const AXTextMarker& marker)
 {
     RefPtr textMarkerObject = marker.object();
@@ -548,16 +557,16 @@ String listMarkerTextOnSameLine(const AXTextMarker& marker)
     }
     return { };
 }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText, IncludeImageAltText includeImageAltText) const
 {
-#if !ENABLE(AX_THREAD_TEXT_APIS)
+#if !ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     UNUSED_PARAM(includeListMarkerText);
-#endif // !ENABLE(AX_THREAD_TEXT_APIS)
+#endif // !ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    if (!isMainThread() && AXObjectCache::useAXThreadTextApis()) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainThread()) {
         // Traverses from m_start to m_end, collecting all text along the way.
         auto start = m_start.toTextRunMarker();
         if (!start.isValid())
@@ -608,48 +617,44 @@ String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText, 
         result.append(end.runs()->substring(0, end.offset()));
         return result.toString();
     }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-    return Accessibility::retrieveValueFromMainThread<String>([this, includeImageAltText] () -> String {
+    std::optional range = simpleRange();
+    if (!range)
+        return { };
 
-        auto range = simpleRange();
-        if (!range)
-            return { };
+    OptionSet<TextIteratorBehavior> behaviors = { TextIteratorBehavior::IgnoresFullSizeKana };
+    if (includeImageAltText == IncludeImageAltText::Yes)
+        behaviors.add(TextIteratorBehavior::EmitsImageAltText);
 
-        OptionSet<TextIteratorBehavior> behaviors = { TextIteratorBehavior::IgnoresFullSizeKana };
-        if (includeImageAltText == IncludeImageAltText::Yes)
-            behaviors.add(TextIteratorBehavior::EmitsImageAltText);
+    TextIterator it = TextIterator(*range, behaviors);
+    if (it.atEnd())
+        return { };
 
-        TextIterator it = TextIterator(*range, behaviors);
-        if (it.atEnd())
-            return { };
-
-        StringBuilder builder;
-        for (; !it.atEnd(); it.advance()) {
-            RefPtr node = it.node();
-            // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-            if (it.text().length()) {
-                // If this is in a list item, we need to add the text for the list marker
-                // because a RenderListMarker does not have a Node equivalent and thus does not appear
-                // when iterating text.
-                // Don't add list marker text for new line character.
-                if (it.text().length() != 1 || !isASCIIWhitespace(it.text()[0]))
-                    builder.append(AccessibilityObject::listMarkerTextForNodeAndPosition(node.get(), makeDeprecatedLegacyPosition(it.range().start)));
-                it.appendTextToStringBuilder(builder);
-            } else {
-                if (AccessibilityObject::replacedNodeNeedsCharacter(*node))
-                    builder.append(objectReplacementCharacter);
-            }
+    StringBuilder builder;
+    for (; !it.atEnd(); it.advance()) {
+        RefPtr node = it.node();
+        // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
+        if (it.text().length()) {
+            // If this is in a list item, we need to add the text for the list marker
+            // because a RenderListMarker does not have a Node equivalent and thus does not appear
+            // when iterating text.
+            // Don't add list marker text for new line character.
+            if (it.text().length() != 1 || !isASCIIWhitespace(it.text()[0]))
+                builder.append(AccessibilityObject::listMarkerTextForNodeAndPosition(node.get(), makeDeprecatedLegacyPosition(it.range().start)));
+            it.appendTextToStringBuilder(builder);
+        } else {
+            if (AccessibilityObject::replacedNodeNeedsCharacter(*node))
+                builder.append(objectReplacementCharacter);
         }
-
-        return builder.toString().isolatedCopy();
-    });
+    }
+    return builder.toString().isolatedCopy();
 }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 AXTextMarker AXTextMarker::convertToDomOffset() const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     if (!isValid())
         return { };
@@ -711,13 +716,13 @@ int AXTextMarker::lineIndex() const
     if (currentLineID == targetLineID)
         return 0;
 
-    auto currentMarker = WTFMove(startMarker);
+    auto currentMarker = WTF::move(startMarker);
     if (!currentMarker.atLineEnd()) {
         // Start from a line end, so that subsequent calls to nextLineEnd() yield a new line.
         // Otherwise if we started from the middle of a line, we would count the the first line twice.
         auto nextLineEndMarker = currentMarker.nextLineEnd();
         TEXT_MARKER_ASSERT_DOUBLE(nextLineEndMarker.lineID() == currentMarker.lineID(), nextLineEndMarker, currentMarker);
-        currentMarker = WTFMove(nextLineEndMarker);
+        currentMarker = WTF::move(nextLineEndMarker);
     }
 
     unsigned index = 0;
@@ -756,7 +761,7 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     while (lineIndex && currentLineRange) {
         precedingLength += currentLineRange.toString().length();
         auto lineEndMarker = currentLineRange.end().nextLineEnd(IncludeTrailingLineBreak::Yes, stopAtID);
-        currentLineRange = { lineEndMarker.previousLineStart(stopAtID), WTFMove(lineEndMarker) };
+        currentLineRange = { lineEndMarker.previousLineStart(stopAtID), WTF::move(lineEndMarker) };
         --lineIndex;
     }
     return currentLineRange ? CharacterRange(precedingLength, currentLineRange.toString().length()) : CharacterRange();
@@ -775,7 +780,7 @@ AXTextMarkerRange AXTextMarker::markerRangeForLineIndex(unsigned lineIndex) cons
     auto currentLineRange = lineRange(LineRangeType::Current);
     while (lineIndex && currentLineRange) {
         auto lineEndMarker = currentLineRange.end().nextLineEnd();
-        currentLineRange = { lineEndMarker.previousLineStart(), WTFMove(lineEndMarker) };
+        currentLineRange = { lineEndMarker.previousLineStart(), WTF::move(lineEndMarker) };
         --lineIndex;
     }
     return currentLineRange;
@@ -796,7 +801,7 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
     unsigned lineIndex = 0;
     auto currentMarker = *this;
     while (index) {
-        auto oldMarker = WTFMove(currentMarker);
+        auto oldMarker = WTF::move(currentMarker);
         currentMarker = oldMarker.findMarker(AXDirection::Next, CoalesceObjectBreaks::Yes, IgnoreBRs::Yes, stopAtID);
         if (!currentMarker.isValid())
             break;
@@ -859,7 +864,7 @@ bool AXTextMarker::atLineBoundaryForDirection(AXDirection direction, const AXTex
 
 unsigned AXTextMarker::offsetFromRoot() const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     if (!isValid())
         return 0;
@@ -913,7 +918,7 @@ unsigned AXTextMarker::offsetFromRoot() const
 
 AXTextMarker AXTextMarker::nextMarkerFromOffset(unsigned offset, ForceSingleOffsetMovement forceSingleOffsetMovement, std::optional<AXID> stopAtID) const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     if (!isValid())
         return { };
@@ -923,7 +928,7 @@ AXTextMarker AXTextMarker::nextMarkerFromOffset(unsigned offset, ForceSingleOffs
     auto marker = *this;
     while (offset) {
         if (auto newMarker = marker.findMarker(AXDirection::Next, CoalesceObjectBreaks::No, IgnoreBRs::No, stopAtID, forceSingleOffsetMovement))
-            marker = WTFMove(newMarker);
+            marker = WTF::move(newMarker);
         else
             break;
 
@@ -934,7 +939,7 @@ AXTextMarker AXTextMarker::nextMarkerFromOffset(unsigned offset, ForceSingleOffs
 
 AXTextMarker AXTextMarker::findLastBefore(std::optional<AXID> stopAtID) const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     if (!isValid())
         return { };
@@ -954,7 +959,7 @@ AXTextMarker AXTextMarker::findLastBefore(std::optional<AXID> stopAtID) const
         RefPtr newObject = findObjectWithRuns(*lastObjectWithRuns, AXDirection::Next, stopAtID);
         if (!newObject)
             break;
-        lastObjectWithRuns = WTFMove(newObject);
+        lastObjectWithRuns = WTF::move(newObject);
     }
 
     return AXTextMarker { *lastObjectWithRuns, lastObjectWithRuns->textRuns()->totalLength() };
@@ -962,7 +967,7 @@ AXTextMarker AXTextMarker::findLastBefore(std::optional<AXID> stopAtID) const
 
 AXTextMarkerRange AXTextMarker::rangeWithSameStyle() const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     if (!isValid())
         return { };
@@ -974,7 +979,7 @@ AXTextMarkerRange AXTextMarker::rangeWithSameStyle() const
             RefPtr next = findObjectWithRuns(*current, direction);
             if (next && originalStyle != next->stylesForAttributedString())
                 break;
-            current = WTFMove(next);
+            current = WTF::move(next);
         }
 
         if (current)
@@ -1015,7 +1020,7 @@ static FloatRect viewportRelativeFrameFromRuns(Ref<AXIsolatedObject> object, uns
 
 FloatRect AXTextMarkerRange::viewportRelativeFrame() const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     auto start = m_start.toTextRunMarker();
     if (!start.isValid())
@@ -1045,7 +1050,7 @@ FloatRect AXTextMarkerRange::viewportRelativeFrame() const
 
 AXTextMarkerRange AXTextMarkerRange::convertToDomOffsetRange() const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     return {
         m_start.convertToDomOffset(),
@@ -1055,7 +1060,7 @@ AXTextMarkerRange AXTextMarkerRange::convertToDomOffsetRange() const
 
 const AXTextRuns* AXTextMarker::runs() const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     RefPtr object = isolatedObject();
     return object ? object->textRuns() : nullptr;
@@ -1065,12 +1070,12 @@ const AXTextRuns* AXTextMarker::runs() const
 
 static int previousSentenceStartFromOffset(StringView text, unsigned offset)
 {
-    return ubrk_preceding(sentenceBreakIterator(text), offset);
+    return ubrk_preceding(WTF::NonSharedSentenceBreakIterator(text), offset);
 }
 
 static int nextSentenceEndFromOffset(StringView text, unsigned offset)
 {
-    int endIndex = ubrk_following(sentenceBreakIterator(text), offset);
+    int endIndex = ubrk_following(WTF::NonSharedSentenceBreakIterator(text), offset);
 
     if (!text.substring(offset, endIndex).containsOnly<isASCIIWhitespace>()) {
         // To match AXObjectCache::nextBoundary, don't include a newline character at the end of sentences.
@@ -1176,12 +1181,12 @@ AXTextMarker AXTextMarker::findLine(AXDirection direction, AXTextUnitBoundary bo
             if (adjacentRunIndex != notFound && adjacentRunIndex > runIndex && adjacentRunIndex - runIndex > 1) {
                 // The scenario we're trying to detect should only have resulted in one run / line being skipped.
                 // Our affinity flip won't result in the correct behavior if we've somehow jumped >2 lines.
-                ASSERT(adjacentRunIndex - runIndex == 2);
+                AX_ASSERT(adjacentRunIndex - runIndex == 2);
                 // This scenario really should only happen with single "entity" runs (where an entity could be an ASCII
                 // character, or a multi-byte emoji that occupies multiple indices but is one atomic entity).
                 AX_BROKEN_ASSERT(!currentRuns->containsOnlyASCII || (currentRuns->runLength(runIndex) == 1 && currentRuns->runLength(adjacentRunIndex) == 1));
                 // The next line end is simply the adjacent marker with an upstream affinity (with an ASSERT to verify this).
-                ASSERT(currentRuns->indexForOffset(adjacentMarker.offset(), Affinity::Upstream) == runIndex + 1);
+                AX_ASSERT(currentRuns->indexForOffset(adjacentMarker.offset(), Affinity::Upstream) == runIndex + 1);
                 adjacentMarker.setAffinity(Affinity::Upstream);
                 return adjacentMarker;
             }
@@ -1466,7 +1471,7 @@ AXTextMarker AXTextMarker::toTextRunMarker(std::optional<AXID> stopAtID) const
     // AXTextMarker { ID 3: StaticText, Offset 3 }
     // Because we had to walk over ID 2 which had length 3 text.
     size_t precedingOffset = 0;
-    RefPtr current = runs ? WTFMove(object) : findObjectWithRuns(*object, AXDirection::Next, stopAtID);
+    RefPtr current = runs ? WTF::move(object) : RefPtr { findObjectWithRuns(*object, AXDirection::Next, stopAtID) };
     while (current) {
         unsigned totalLength = current->textRuns()->totalLength();
         if (precedingOffset + totalLength >= offset())
@@ -1511,10 +1516,10 @@ AXTextMarkerRange AXTextMarker::lineRange(LineRangeType type, IncludeTrailingLin
             startMarker = startMarker.previousLineStart();
 
         auto endMarker = startMarker.nextLineEnd(includeTrailingLineBreak);
-        return { WTFMove(startMarker), WTFMove(endMarker) };
+        return { WTF::move(startMarker), WTF::move(endMarker) };
     }
 
-    ASSERT(type == LineRangeType::Right);
+    AX_ASSERT(type == LineRangeType::Right);
 
     // Move forwards off a line end (because this a "right-line" request).
     auto startMarker = atLineEnd() ? findMarker(AXDirection::Next) : *this;
@@ -1522,7 +1527,7 @@ AXTextMarkerRange AXTextMarker::lineRange(LineRangeType type, IncludeTrailingLin
         startMarker = startMarker.previousLineStart();
 
     auto endMarker = startMarker.nextLineEnd(includeTrailingLineBreak);
-    return { WTFMove(startMarker), WTFMove(endMarker) };
+    return { WTF::move(startMarker), WTF::move(endMarker) };
 
     return { };
 }
@@ -1564,7 +1569,7 @@ AXTextMarkerRange AXTextMarker::wordRange(WordRangeType type) const
             return { *this, *this };
     }
 
-    return { WTFMove(startMarker), WTFMove(endMarker) };
+    return { WTF::move(startMarker), WTF::move(endMarker) };
 }
 
 AXTextMarkerRange AXTextMarker::sentenceRange(SentenceRangeType type) const
@@ -1585,7 +1590,7 @@ AXTextMarkerRange AXTextMarker::sentenceRange(SentenceRangeType type) const
             endMarker = startMarker;
     }
 
-    return { WTFMove(startMarker), WTFMove(endMarker) };
+    return { WTF::move(startMarker), WTF::move(endMarker) };
 }
 
 AXTextMarkerRange AXTextMarker::paragraphRange() const
@@ -1603,7 +1608,7 @@ AXTextMarkerRange AXTextMarker::paragraphRange() const
     if (rangeString.containsOnly<isASCIIWhitespace>())
         endMarker = startMarker;
 
-    return { WTFMove(startMarker), WTFMove(endMarker) };
+    return { WTF::move(startMarker), WTF::move(endMarker) };
 }
 
 bool AXTextMarker::equivalentTextPosition(const AXTextMarker& other) const
@@ -1663,7 +1668,7 @@ AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direct
         }
         return current.unsafeGet();
     }
-    ASSERT(direction == AXDirection::Previous);
+    AX_ASSERT(direction == AXDirection::Previous);
 
     auto previousInPreOrder = [&] (AXIsolatedObject& object) -> AXIsolatedObject* {
         if (RefPtr sibling = object.previousSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true)) {
@@ -1692,6 +1697,6 @@ AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direct
 
 } // namespace Accessibility
 
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 } // namespace WebCore

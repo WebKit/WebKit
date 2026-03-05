@@ -18,8 +18,8 @@ includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, Symbol, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  let sample = new TA(1);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  let sample = new TA(makeCtorArg(1));
   let s = Symbol("1");
 
   assert.sameValue(delete sample[s], true, 'The value of `delete sample[s]` is true');

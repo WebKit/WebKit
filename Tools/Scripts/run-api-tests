@@ -57,6 +57,12 @@ def main(argv, stdout, stderr):
         print('{} cannot run API tests'.format(port.operating_system()), file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
 
+    # Add site-isolation results report flavor for API tests when ran
+    if options.site_isolation:
+        if options.result_report_flavor:
+            raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
+        options.result_report_flavor = 'site-isolation'
+
     try:
         return run(port, options, args, stderr)
     except KeyboardInterrupt:
@@ -145,6 +151,8 @@ def parse_args(args):
                              help='Force all tests to run in parallel (without grouping shards)'),
         optparse.make_option('--additional-env-var', type='string', action='append', default=[],
                              help='Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)'),
+        optparse.make_option('--test-parallel-safety', type='string', action='append', default=[],
+                             help='Run specified test(s) constantly in parallel against all allowlist tests to test parallel safety'),
 
         optparse.make_option('--site-isolation', action='store_true', default=False,
                              help='Enable Site Isolation'),

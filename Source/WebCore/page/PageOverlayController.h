@@ -46,14 +46,13 @@ public:
     PageOverlayController(Page&);
     virtual ~PageOverlayController();
 
-    bool hasDocumentOverlays() const;
-    bool hasViewOverlays() const;
+    bool NODELETE hasDocumentOverlays() const;
+    bool NODELETE hasViewOverlays() const;
 
     GraphicsLayer& layerWithDocumentOverlays();
     GraphicsLayer& layerWithViewOverlays();
-    Ref<GraphicsLayer> protectedLayerWithViewOverlays();
 
-    const Vector<RefPtr<PageOverlay>>& pageOverlays() const { return m_pageOverlays; }
+    const Vector<Ref<PageOverlay>>& pageOverlays() const LIFETIME_BOUND { return m_pageOverlays; }
 
     WEBCORE_EXPORT void installPageOverlay(PageOverlay&, PageOverlay::FadeMode);
     WEBCORE_EXPORT void uninstallPageOverlay(PageOverlay&, PageOverlay::FadeMode);
@@ -84,8 +83,9 @@ public:
 private:
     void createRootLayersIfNeeded();
 
-    WEBCORE_EXPORT GraphicsLayer* documentOverlayRootLayer() const;
-    WEBCORE_EXPORT GraphicsLayer* viewOverlayRootLayer() const;
+    WEBCORE_EXPORT GraphicsLayer* NODELETE documentOverlayRootLayer() const;
+
+    WEBCORE_EXPORT GraphicsLayer* NODELETE viewOverlayRootLayer() const;
 
     void installedPageOverlaysChanged();
     void attachViewOverlayLayers();
@@ -97,19 +97,17 @@ private:
     // GraphicsLayerClient
     void notifyFlushRequired(const GraphicsLayer*) override;
     void paintContents(const GraphicsLayer&, GraphicsContext&, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>) override;
-    float deviceScaleFactor() const override;
-    bool shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const override;
+    float NODELETE deviceScaleFactor() const override;
+    bool NODELETE shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const override;
     bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
     void tiledBackingUsageChanged(const GraphicsLayer*, bool) override;
-
-    Ref<Page> protectedPage() const;
 
     WeakRef<Page> m_page;
     RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
     RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
 
     WeakHashMap<PageOverlay, Ref<GraphicsLayer>> m_overlayGraphicsLayers;
-    Vector<RefPtr<PageOverlay>> m_pageOverlays;
+    Vector<Ref<PageOverlay>> m_pageOverlays;
     bool m_initialized { false };
 };
 

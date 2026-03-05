@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://html.spec.whatwg.org/multipage/webstorage.html#storageevent
 [
     Exposed=Window
 ] interface StorageEvent : Event {
-    constructor([AtomString] DOMString type, optional StorageEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional StorageEventInit eventInitDict = {});
 
     readonly attribute DOMString? key;
     readonly attribute DOMString? oldValue;
@@ -42,11 +43,9 @@
                                optional DOMString? newValue = null,
                                optional USVString url = "",
                                optional Storage? storageArea = null);
-
-    // Needed once we support init<blank>EventNS
-    // undefined initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, USVString urlArg, Storage? storageAreaArg);
 };
 
+// https://html.spec.whatwg.org/multipage/webstorage.html#storageeventinit
 dictionary StorageEventInit : EventInit {
     DOMString? key = null;
     DOMString? oldValue = null;

@@ -38,15 +38,15 @@ WKTypeID WKQueryPermissionResultCallbackGetTypeID()
 
 void WKQueryPermissionResultCallbackCompleteWithDenied(WKQueryPermissionResultCallbackRef callback)
 {
-    return toProtectedImpl(callback)->setPermission(WebCore::PermissionState::Denied);
+    return protect(toImpl(callback))->setPermission(WebCore::PermissionState::Denied);
 }
 
 void WKQueryPermissionResultCallbackCompleteWithGranted(WKQueryPermissionResultCallbackRef callback)
 {
-    return toProtectedImpl(callback)->setPermission(WebCore::PermissionState::Granted);
+    return protect(toImpl(callback))->setPermission(WebCore::PermissionState::Granted);
 }
 
 void WKQueryPermissionResultCallbackCompleteWithPrompt(WKQueryPermissionResultCallbackRef callback)
 {
-    return toProtectedImpl(callback)->setPermission(WebCore::PermissionState::Prompt);
+    return protect(toImpl(callback))->setPermission(WebCore::PermissionState::Prompt);
 }

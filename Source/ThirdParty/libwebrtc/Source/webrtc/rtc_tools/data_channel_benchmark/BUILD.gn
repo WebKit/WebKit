@@ -12,7 +12,7 @@ grpc_library("signaling_grpc_proto") {
 
 rtc_library("signaling_interface") {
   sources = [ "signaling_interface.h" ]
-  deps = [ "../../api:libjingle_peerconnection_api" ]
+  deps = [ "../../api:jsep" ]
 }
 
 rtc_library("grpc_signaling") {
@@ -24,7 +24,7 @@ rtc_library("grpc_signaling") {
   deps = [
     ":signaling_grpc_proto",
     ":signaling_interface",
-    "../../api:libjingle_peerconnection_api",
+    "../../api:jsep",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
     "../../rtc_base:threading",
@@ -48,6 +48,7 @@ rtc_executable("data_channel_benchmark") {
     "../../api:create_peerconnection_factory",
     "../../api:field_trials",
     "../../api:field_trials_view",
+    "../../api:jsep",
     "../../api:libjingle_peerconnection_api",
     "../../api:rtc_error",
     "../../api:scoped_refptr",
@@ -63,6 +64,7 @@ rtc_executable("data_channel_benchmark") {
     "../../api/video_codecs:video_encoder_factory_template_libvpx_vp8_adapter",
     "../../api/video_codecs:video_encoder_factory_template_libvpx_vp9_adapter",
     "../../api/video_codecs:video_encoder_factory_template_open_h264_adapter",
+    "../../pc:libjingle_peerconnection",
     "../../rtc_base:checks",
     "../../rtc_base:copy_on_write_buffer",
     "../../rtc_base:logging",

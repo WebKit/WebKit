@@ -30,7 +30,7 @@ namespace WebKit {
 
 void NetworkSchemeRegistry::registerURLSchemeAsCORSEnabled(String&& scheme)
 {
-    m_corsEnabledSchemes.add(WTFMove(scheme));
+    m_corsEnabledSchemes.add(WTF::move(scheme));
 }
 
 bool NetworkSchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(StringView scheme)

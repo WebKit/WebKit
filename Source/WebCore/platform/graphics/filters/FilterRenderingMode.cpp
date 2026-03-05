@@ -35,7 +35,6 @@ TextStream& operator<<(TextStream& ts, FilterRenderingMode mode)
     case FilterRenderingMode::Software: ts << "Software"; break;
     case FilterRenderingMode::Accelerated: ts << "Accelerated"; break;
     case FilterRenderingMode::GraphicsContext: ts << "GraphicsContext"; break;
-    case FilterRenderingMode::GraphicsContextBlur: ts << "GraphicsContextBlur"; break;
     }
 
     return ts;

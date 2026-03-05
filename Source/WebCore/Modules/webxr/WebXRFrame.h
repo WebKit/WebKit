@@ -56,7 +56,7 @@ class WebXRTransientInputHitTestSource;
 #endif
 
 class WebXRFrame : public RefCounted<WebXRFrame> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRFrame);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRFrame);
 public:
     enum class IsAnimationFrame : bool { No, Yes };
     static Ref<WebXRFrame> create(WebXRSession&, IsAnimationFrame);

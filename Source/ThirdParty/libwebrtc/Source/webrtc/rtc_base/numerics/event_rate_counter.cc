@@ -19,7 +19,7 @@ namespace webrtc {
 
 void EventRateCounter::AddEvent(Timestamp event_time) {
   if (first_time_.IsFinite())
-    interval_.AddSample(event_time - last_time_);
+    interval_.AddSample(event_time - last_time_, event_time);
   first_time_ = std::min(first_time_, event_time);
   last_time_ = std::max(last_time_, event_time);
   event_count_++;

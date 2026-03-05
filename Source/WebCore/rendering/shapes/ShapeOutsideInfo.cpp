@@ -39,6 +39,7 @@
 #include "RenderFragmentContainer.h"
 #include "RenderImage.h"
 #include "RenderView.h"
+#include "StyleImage.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -252,22 +253,23 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     bool isHorizontalWritingMode = containingBlock.isHorizontalWritingMode();
     auto shapeImageThreshold = style.shapeImageThreshold();
     auto& shapeOutside = style.shapeOutside();
+    auto zoom = style.usedZoomForLength();
 
     auto boxSize = computeLogicalBoxSize(renderer, isHorizontalWritingMode);
 
     auto logicalMargin = [&] {
-        auto shapeMargin = Style::evaluate<LayoutUnit>(style.shapeMargin(), containingBlock.contentBoxLogicalWidth(), Style::ZoomNeeded { }).toFloat();
+        auto shapeMargin = Style::evaluate<LayoutUnit>(style.shapeMargin(), containingBlock.contentBoxLogicalWidth(), zoom).toFloat();
         return isnan(shapeMargin) ? 0.0f : shapeMargin;
     }();
 
     return WTF::switchOn(shapeOutside,
         [&](const Style::ShapeOutside::Shape& shape) {
             auto offset = LayoutPoint { logicalLeftOffset(renderer), logicalTopOffset(renderer) };
-            return LayoutShape::createShape(shape, offset, boxSize, writingMode, logicalMargin);
+            return LayoutShape::createShape(shape, offset, boxSize, writingMode, logicalMargin, zoom);
         },
         [&](const Style::ShapeOutside::ShapeAndShapeBox& shapeAndShapeBox) {
             auto offset = LayoutPoint { logicalLeftOffset(renderer), logicalTopOffset(renderer) };
-            return LayoutShape::createShape(shapeAndShapeBox.shape, offset, boxSize, writingMode, logicalMargin);
+            return LayoutShape::createShape(shapeAndShapeBox.shape, offset, boxSize, writingMode, logicalMargin, zoom);
         },
         [&](const Style::ShapeOutside::Image& shapeImage) {
             ASSERT(shapeImage.isValid());
@@ -315,7 +317,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     );
 }
 
-static inline bool checkShapeImageOrigin(Document& document, const StyleImage& styleImage)
+static inline bool checkShapeImageOrigin(Document& document, const Style::Image& styleImage)
 {
     if (styleImage.isGeneratedImage())
         return true;

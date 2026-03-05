@@ -69,21 +69,21 @@ public:
 
     WEBCORE_EXPORT ViewportConfiguration();
 
-    const Parameters& defaultConfiguration() const { return m_defaultConfiguration; }
+    const Parameters& defaultConfiguration() const LIFETIME_BOUND { return m_defaultConfiguration; }
     WEBCORE_EXPORT void setDefaultConfiguration(const Parameters&);
 
-    const IntSize& contentsSize() const { return m_contentSize; }
+    const IntSize& contentsSize() const LIFETIME_BOUND { return m_contentSize; }
     WEBCORE_EXPORT bool setContentsSize(const IntSize&);
 
-    const FloatSize& viewLayoutSize() const { return m_viewLayoutSize; }
+    const FloatSize& viewLayoutSize() const LIFETIME_BOUND { return m_viewLayoutSize; }
 
-    const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
+    const FloatSize& minimumLayoutSize() const LIFETIME_BOUND { return m_minimumLayoutSize; }
     WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&, std::optional<double>&& scaleFactor = std::nullopt, std::optional<double>&& effectiveWidth = std::nullopt);
 
-    const OptionSet<DisabledAdaptations>& disabledAdaptations() const { return m_disabledAdaptations; }
+    const OptionSet<DisabledAdaptations>& disabledAdaptations() const LIFETIME_BOUND { return m_disabledAdaptations; }
     WEBCORE_EXPORT bool setDisabledAdaptations(const OptionSet<DisabledAdaptations>&);
 
-    const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
+    const ViewportArguments& viewportArguments() const LIFETIME_BOUND { return m_viewportArguments; }
     WEBCORE_EXPORT bool setViewportArguments(const ViewportArguments&);
 
     WEBCORE_EXPORT bool setCanIgnoreScalingConstraints(bool);

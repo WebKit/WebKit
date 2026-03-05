@@ -39,15 +39,15 @@
 namespace WebCore {
 
 DictationCommandIOS::DictationCommandIOS(Ref<Document>&& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
-    : CompositeEditCommand(WTFMove(document), EditAction::Dictation)
-    , m_dictationPhrases(WTFMove(dictationPhrases))
+    : CompositeEditCommand(WTF::move(document), EditAction::Dictation)
+    , m_dictationPhrases(WTF::move(dictationPhrases))
     , m_metadata(metadata)
 {
 }
 
 Ref<DictationCommandIOS> DictationCommandIOS::create(Ref<Document>&& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
 {
-    return adoptRef(*new DictationCommandIOS(WTFMove(document), WTFMove(dictationPhrases), metadata));
+    return adoptRef(*new DictationCommandIOS(WTF::move(document), WTF::move(dictationPhrases), metadata));
 }
 
 void DictationCommandIOS::doApply()
@@ -61,7 +61,7 @@ void DictationCommandIOS::doApply()
         if (interpretations.size() > 1) {
             auto alternatives = interpretations;
             alternatives.removeAt(0);
-            addMarker(*endingSelection().toNormalizedRange(), DocumentMarkerType::DictationPhraseWithAlternatives, WTFMove(alternatives));
+            addMarker(*endingSelection().toNormalizedRange(), DocumentMarkerType::DictationPhraseWithAlternatives, WTF::move(alternatives));
         }
 
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
@@ -75,7 +75,7 @@ void DictationCommandIOS::doApply()
     if (!end || !root)
         return;
 
-    auto endOffset = characterCount({ { *root, 0 }, WTFMove(*end) });
+    auto endOffset = characterCount({ { *root, 0 }, WTF::move(*end) });
     if (endOffset < resultLength)
         return;
 

@@ -38,11 +38,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackPrivateWebM);
 
 Ref<VideoTrackPrivateWebM> VideoTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
 {
-    return adoptRef(*new VideoTrackPrivateWebM(WTFMove(trackEntry)));
+    return adoptRef(*new VideoTrackPrivateWebM(WTF::move(trackEntry)));
 }
 
 VideoTrackPrivateWebM::VideoTrackPrivateWebM(webm::TrackEntry&& trackEntry)
-    : m_track(WTFMove(trackEntry))
+    : m_track(WTF::move(trackEntry))
 {
     if (m_track.is_enabled.is_present())
         setSelected(m_track.is_enabled.value());
@@ -54,7 +54,7 @@ void VideoTrackPrivateWebM::setFormatDescription(Ref<VideoInfo>&& formatDescript
 {
     if (m_formatDescription && *m_formatDescription == formatDescription)
         return;
-    m_formatDescription = WTFMove(formatDescription);
+    m_formatDescription = WTF::move(formatDescription);
     updateConfiguration();
 }
 
@@ -99,9 +99,9 @@ int VideoTrackPrivateWebM::trackIndex() const
 String VideoTrackPrivateWebM::codec() const
 {
     if (m_formatDescription) {
-        if (!m_formatDescription->codecString.isEmpty())
-            return m_formatDescription->codecString;
-        return String::fromLatin1(m_formatDescription->codecName.string().data());
+        if (!m_formatDescription->codecString().isEmpty())
+            return m_formatDescription->codecString();
+        return String::fromLatin1(m_formatDescription->codecName().string().data());
     }
 
     if (!m_track.codec_id.is_present())
@@ -124,7 +124,7 @@ String VideoTrackPrivateWebM::codec() const
 uint32_t VideoTrackPrivateWebM::width() const
 {
     if (m_formatDescription)
-        return m_formatDescription->size.width();
+        return m_formatDescription->size().width();
 
     if (!m_track.video.is_present())
         return 0;
@@ -142,7 +142,7 @@ uint32_t VideoTrackPrivateWebM::width() const
 uint32_t VideoTrackPrivateWebM::height() const
 {
     if (m_formatDescription)
-        return m_formatDescription->size.height();
+        return m_formatDescription->size().height();
 
     if (!m_track.video.is_present())
         return 0;
@@ -177,7 +177,7 @@ double VideoTrackPrivateWebM::framerate() const
 PlatformVideoColorSpace VideoTrackPrivateWebM::colorSpace() const
 {
     if (m_formatDescription)
-        return m_formatDescription->colorSpace;
+        return m_formatDescription->colorSpace();
     return { };
 }
 
@@ -190,11 +190,10 @@ IGNORE_WARNINGS_BEGIN("c99-designator")
         .height = height(),
         .colorSpace = colorSpace(),
         .framerate = framerate(),
-        .spatialVideoMetadata = { },
-        .videoProjectionMetadata = { },
+        .immersiveVideoMetadata = { },
     };
 IGNORE_WARNINGS_END
-    setConfiguration(WTFMove(configuration));
+    setConfiguration(WTF::move(configuration));
 }
 
 }

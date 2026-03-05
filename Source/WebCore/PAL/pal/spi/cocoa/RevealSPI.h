@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <Foundation/Foundation.h>
@@ -33,7 +36,6 @@ DECLARE_SYSTEM_HEADER
 #if PLATFORM(MAC)
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #endif // PLATFORM(MAC)
-#import <wtf/SoftLinking.h>
 
 #if ENABLE(REVEAL)
 

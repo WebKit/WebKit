@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(DFG_JIT)
 
 #include <JavaScriptCore/DeferredCompilationCallback.h>

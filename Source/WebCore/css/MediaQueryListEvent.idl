@@ -25,17 +25,17 @@
  */
 
 // https://drafts.csswg.org/cssom-view/#mediaquerylistevent
-
 [
     Exposed=Window
 ] interface MediaQueryListEvent : Event {
-    // FIXME: `mediaQueryListEventInit` should be `eventInitDict`.
     constructor([AtomString] DOMString type, optional MediaQueryListEventInit eventInitDict = {});
     readonly attribute DOMString media;
     readonly attribute boolean matches;
 };
 
+// https://drafts.csswg.org/cssom-view/#dictdef-mediaquerylisteventinit
 dictionary MediaQueryListEventInit : EventInit {
+    // FIXME: `media` should be of type `CSSOMString`.
     DOMString media = "";
     boolean matches = false;
 };

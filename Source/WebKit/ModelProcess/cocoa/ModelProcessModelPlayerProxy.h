@@ -142,6 +142,11 @@ public:
     void stageModeInteractionDidUpdateModel();
     void animateModelToFitPortal(CompletionHandler<void(bool)>&&) final;
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    void ensureImmersivePresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&&) final;
+    void exitImmersivePresentation(CompletionHandler<void()>&&) final;
+#endif
+
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
 
     void disableUnloadDelayForTesting() { m_unloadDelayDisabledForTesting = true; }
@@ -152,7 +157,7 @@ private:
 
     void computeTransform(bool);
     void updateTransform();
-    void applyEnvironmentMapDataAndRelease();
+    void applyEnvironmentMapDataAndRelease(CompletionHandler<void()>&&);
     void applyStageModeOperationToDriver();
     bool stageModeInteractionInProgress() const;
     void updateTransformSRT();
@@ -203,6 +208,16 @@ private:
     // For testing
     bool m_unloadDelayDisabledForTesting { false };
     static uint64_t gObjectCountForTesting;
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    bool m_immersivePresentation { false };
+    WebCore::LayoutSize m_layoutSize { };
+    Vector<CompletionHandler<void(bool)>> m_modelLoadedCallbacks;
+
+    void triggerModelLoadedCallbacks(bool);
+    void ensureModelLoaded(CompletionHandler<void(bool)>&&);
+    void setImmersivePresentation(bool);
+#endif
 };
 
 } // namespace WebKit

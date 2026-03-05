@@ -40,13 +40,13 @@ namespace WebCore::ContentExtensions {
 
 Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
 {
-    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension), WTFMove(extensionBaseURL), shouldCompileCSS));
+    return adoptRef(*new ContentExtension(identifier, WTF::move(compiledExtension), WTF::move(extensionBaseURL), shouldCompileCSS));
 }
 
 ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
     : m_identifier(identifier)
-    , m_compiledExtension(WTFMove(compiledExtension))
-    , m_extensionBaseURL(WTFMove(extensionBaseURL))
+    , m_compiledExtension(WTF::move(compiledExtension))
+    , m_extensionBaseURL(WTF::move(extensionBaseURL))
 {
     DFABytecodeInterpreter interpreter(m_compiledExtension->urlFiltersBytecode());
     m_universalActions = copyToVector(interpreter.actionsMatchingEverything());
@@ -106,7 +106,7 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
 
     m_globalDisplayNoneStyleSheet = StyleSheetContents::create(contentExtensionCSSParserContext());
     m_globalDisplayNoneStyleSheet->setIsUserStyleSheet(true);
-    if (!m_globalDisplayNoneStyleSheet->parseString(css.toString()))
+    if (!protect(m_globalDisplayNoneStyleSheet)->parseString(css.toString()))
         m_globalDisplayNoneStyleSheet = nullptr;
 
     // These actions don't need to be applied individually any more. They will all be applied to every page as a precompiled style sheet.

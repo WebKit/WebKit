@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/IDLTypes.h>
+#include "IDLTypes.h"
 
 namespace WebCore { namespace DOMJIT {
 

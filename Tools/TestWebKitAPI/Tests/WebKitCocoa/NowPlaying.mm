@@ -196,7 +196,7 @@ private:
     using NotificationCallback = Function<bool(CFDictionaryRef)>;
     void performAfterReceivingNotification(CFNotificationName name, NotificationCallback&& callback)
     {
-        _callbacks.add(name, WTFMove(callback));
+        _callbacks.add(name, WTF::move(callback));
     }
 
     RetainPtr<WKWebViewConfiguration> _configuration;

@@ -3,4 +3,5 @@ PASS DTLS client uses odd data channel IDs
 PASS DTLS server uses even data channel IDs
 PASS In-band negotiation with a specific ID should not work
 PASS Odd/even role should not be violated when mixing with negotiated channels
+FAIL Test that ids are reusable after close event promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: openChannelPair"
 

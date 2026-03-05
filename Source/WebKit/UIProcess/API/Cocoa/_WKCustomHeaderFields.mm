@@ -31,11 +31,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-static Ref<API::CustomHeaderFields> protectedFields(_WKCustomHeaderFields *fields)
-{
-    return *fields->_fields;
-}
-
 @implementation _WKCustomHeaderFields
 
 - (instancetype)init
@@ -51,7 +46,7 @@ static Ref<API::CustomHeaderFields> protectedFields(_WKCustomHeaderFields *field
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKCustomHeaderFields.class, self))
         return;
-    _fields->API::CustomHeaderFields::~CustomHeaderFields();
+    SUPPRESS_UNRETAINED_ARG _fields->API::CustomHeaderFields::~CustomHeaderFields();
     [super dealloc];
 }
 
@@ -70,19 +65,19 @@ static Ref<API::CustomHeaderFields> protectedFields(_WKCustomHeaderFields *field
     vector.reserveInitialCapacity(fields.count);
     [fields enumerateKeysAndObjectsUsingBlock:makeBlockPtr([&](id key, id value, BOOL* stop) {
         if (auto field = WebCore::HTTPHeaderField::create((NSString *)key, (NSString *)value); field && startsWithLettersIgnoringASCIICase(field->name(), "x-"_s))
-            vector.append(WTFMove(*field));
+            vector.append(WTF::move(*field));
     }).get()];
-    protectedFields(self)->setFields(WTFMove(vector));
+    protect(*_fields)->setFields(WTF::move(vector));
 }
 
 - (NSArray<NSString *> *)thirdPartyDomains
 {
-    return createNSArray(protectedFields(self)->thirdPartyDomains()).autorelease();
+    return createNSArray(protect(*_fields)->thirdPartyDomains()).autorelease();
 }
 
 - (void)setThirdPartyDomains:(NSArray<NSString *> *)thirdPartyDomains
 {
-    protectedFields(self)->setThirdPartyDomains(makeVector<String>(thirdPartyDomains));
+    protect(*_fields)->setThirdPartyDomains(makeVector<String>(thirdPartyDomains));
 }
 
 - (API::Object&)_apiObject

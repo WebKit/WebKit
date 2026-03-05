@@ -59,8 +59,37 @@ template<typename T, typename arcEnabled = ARCEnabled> struct DefaultOSObjectRet
     }
 };
 
-template<typename T, typename RetainTraits = DefaultOSObjectRetainTraits<T, ARCEnabled>> OSObjectPtr<T, RetainTraits> adoptOSObject(T) WARN_UNUSED_RETURN;
+template<typename T, typename RetainTraits = DefaultOSObjectRetainTraits<T, ARCEnabled>> [[nodiscard]] OSObjectPtr<T, RetainTraits> adoptOSObject(T);
 
+/**
+ * @brief OSObjectPtr is a reference-counting smart pointer for Darwin OS object types.
+ *
+ * It extends the lifetime of the referenced object by retaining it on construction and releasing it on
+ * destruction.
+ *
+ * OSObjectPtr is used for libdispatch types (dispatch_queue_t, dispatch_source_t, dispatch_data_t,
+ * dispatch_group_t, dispatch_semaphore_t, etc.), XPC types (xpc_connection_t, xpc_object_t,
+ * xpc_endpoint_t, etc.), and Network framework types (nw_endpoint_t, nw_path_t, etc.). Each type family
+ * uses its own retain/release functions (dispatch_retain/dispatch_release, xpc_retain/xpc_release,
+ * nw_retain/nw_release, or os_retain/os_release for other types).
+ *
+ * To create an OSObjectPtr, use one of the following:
+ * @code
+ * OSObjectPtr ptr = value;            // Retains the value (increments the ref count)
+ * OSObjectPtr ptr = adoptOSObject(x); // Takes ownership without retaining
+ * @endcode
+ *
+ * Use adoptOSObject() when you receive an object that you already own (i.e., the object was returned to
+ * you with a +1 retain count). This includes objects from creation functions like dispatch_queue_create()
+ * or xpc_*_create(). Using the regular OSObjectPtr constructor instead of adoptOSObject() would add an
+ * extra retain, causing a leak when the OSObjectPtr is destroyed. Use the regular constructor when you
+ * want to add a reference to an object you don't already own.
+ *
+ * @note For Objective-C types and Core Foundation types, use RetainPtr instead of OSObjectPtr.
+ *
+ * @note OSObjectPtr is compatible with ARC (Automatic Reference Counting) and will automatically use the
+ * appropriate retain/release semantics based on the compilation mode.
+ */
 template<typename T, typename RetainTraits> class OSObjectPtr {
 public:
     using ValueType = std::remove_pointer_t<T>;
@@ -81,6 +110,7 @@ public:
     constexpr OSObjectPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
     constexpr bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
+    constexpr operator PtrType() const LIFETIME_BOUND { return m_ptr; }
     T get() const LIFETIME_BOUND { return m_ptr; }
 
     explicit operator bool() const { return m_ptr; }
@@ -94,13 +124,13 @@ public:
     }
 
     OSObjectPtr(OSObjectPtr&& other)
-        : m_ptr(WTFMove(other.m_ptr))
+        : m_ptr(WTF::move(other.m_ptr))
     {
         other.m_ptr = nullptr;
     }
 
     OSObjectPtr(T ptr)
-        : m_ptr(WTFMove(ptr))
+        : m_ptr(WTF::move(ptr))
     {
         if (m_ptr)
             RetainTraits::retain(m_ptr);
@@ -115,7 +145,7 @@ public:
 
     OSObjectPtr& operator=(OSObjectPtr&& other)
     {
-        OSObjectPtr ptr = WTFMove(other);
+        OSObjectPtr ptr = WTF::move(other);
         swap(ptr);
         return *this;
     }
@@ -130,7 +160,7 @@ public:
 
     OSObjectPtr& operator=(T other)
     {
-        OSObjectPtr ptr = WTFMove(other);
+        OSObjectPtr ptr = WTF::move(other);
         swap(ptr);
         return *this;
     }
@@ -140,17 +170,17 @@ public:
         std::swap(m_ptr, other.m_ptr);
     }
 
-    T leakRef() WARN_UNUSED_RETURN
+    [[nodiscard]] T leakRef()
     {
         return std::exchange(m_ptr, nullptr);
     }
 
-    friend OSObjectPtr adoptOSObject<T, RetainTraits>(T) WARN_UNUSED_RETURN;
+    friend OSObjectPtr adoptOSObject<T, RetainTraits>(T);
 
 private:
     struct AdoptOSObject { };
     OSObjectPtr(AdoptOSObject, T ptr)
-        : m_ptr(WTFMove(ptr))
+        : m_ptr(WTF::move(ptr))
     {
     }
 
@@ -166,7 +196,7 @@ template<typename T, typename U, typename V> constexpr bool operator==(const OSO
 
 template<typename T, typename RetainTraits> inline OSObjectPtr<T, RetainTraits> adoptOSObject(T ptr)
 {
-    return OSObjectPtr<T, RetainTraits> { typename OSObjectPtr<T, RetainTraits>::AdoptOSObject { }, WTFMove(ptr) };
+    return OSObjectPtr<T, RetainTraits> { typename OSObjectPtr<T, RetainTraits>::AdoptOSObject { }, WTF::move(ptr) };
 }
 
 template<typename T, typename U, typename RetainTraits>

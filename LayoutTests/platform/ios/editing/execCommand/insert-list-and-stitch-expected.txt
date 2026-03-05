@@ -18,21 +18,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 626x19
+        RenderText {#text} at (0,0) size 626x20
           text run at (0,0) width 626: "The three items below should be stitched together into one ordered list when you click the button."
       RenderBlock {DIV} at (0,36) size 784x60
         RenderBlock {DIV} at (0,0) size 784x60
           RenderBlock {OL} at (0,0) size 784x60
             RenderListItem {LI} at (40,0) size 744x20
-              RenderListMarker at (-21,0) size 16x19: "1"
-              RenderText {#text} at (0,0) size 22x19
+              RenderListMarker at (-21,0) size 16x20: "1"
+              RenderText {#text} at (0,0) size 22x20
                 text run at (0,0) width 22: "foo"
             RenderListItem {LI} at (40,20) size 744x20
-              RenderListMarker at (-21,0) size 16x19: "2"
-              RenderText {#text} at (0,0) size 21x19
+              RenderListMarker at (-21,0) size 16x20: "2"
+              RenderText {#text} at (0,0) size 21x20
                 text run at (0,0) width 21: "bar"
             RenderListItem {LI} at (40,40) size 744x20
-              RenderListMarker at (-21,0) size 16x19: "3"
-              RenderText {#text} at (0,0) size 23x19
+              RenderListMarker at (-21,0) size 16x20: "3"
+              RenderText {#text} at (0,0) size 23x20
                 text run at (0,0) width 23: "baz"
 caret: position 0 of child 0 {#text} of child 2 {LI} of child 0 {OL} of child 1 {DIV} of child 1 {DIV} of body

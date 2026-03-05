@@ -53,7 +53,7 @@ PlayStationWebView::PlayStationWebView(struct wpe_view_backend* backend, const A
 {
     auto configuration = conf.copy();
     auto& pool = configuration->processPool();
-    m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
+    m_page = pool.createWebPage(*m_pageClient, WTF::move(configuration));
 
     wpe_view_backend_initialize(m_backend);
 
@@ -74,7 +74,7 @@ PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
 {
     auto configuration = conf.copy();
     auto& pool = configuration->processPool();
-    m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
+    m_page = pool.createWebPage(*m_pageClient, WTF::move(configuration));
 
     auto& pageConfiguration = m_page->configuration();
     m_page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags(), pageConfiguration.initialReferrerPolicy());
@@ -91,7 +91,7 @@ void PlayStationWebView::setClient(std::unique_ptr<API::ViewClient>&& client)
     if (!client)
         m_client = makeUnique<API::ViewClient>();
     else
-        m_client = WTFMove(client);
+        m_client = WTF::move(client);
 }
 
 void PlayStationWebView::setViewSize(WebCore::IntSize viewSize)
@@ -142,7 +142,7 @@ bool PlayStationWebView::isFullScreen()
 void PlayStationWebView::enterFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
     if (m_client && !isFullScreen())
-        m_client->enterFullScreen(*this, WTFMove(completionHandler));
+        m_client->enterFullScreen(*this, WTF::move(completionHandler));
     else
         completionHandler(false);
 }
@@ -157,7 +157,7 @@ void PlayStationWebView::exitFullScreen(CompletionHandler<void()>&& completionHa
 void PlayStationWebView::beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (m_client)
-        m_client->beganEnterFullScreen(*this, initialFrame, finalFrame, WTFMove(completionHandler));
+        m_client->beganEnterFullScreen(*this, initialFrame, finalFrame, WTF::move(completionHandler));
     else
         completionHandler(false);
 }
@@ -166,7 +166,7 @@ void PlayStationWebView::beganExitFullScreen(const WebCore::IntRect& initialFram
 {
     if (!m_client)
         return completionHandler();
-    m_client->beganExitFullScreen(*this, initialFrame, finalFrame, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] mutable {
+    m_client->beganExitFullScreen(*this, initialFrame, finalFrame, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] mutable {
         m_isFullScreen = false;
         completionHandler();
     });

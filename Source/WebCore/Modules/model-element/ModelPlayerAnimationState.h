@@ -37,21 +37,21 @@ public:
     ModelPlayerAnimationState& operator=(ModelPlayerAnimationState&&) = default;
     ModelPlayerAnimationState(bool autoplay, bool loop, bool paused, Seconds duration, std::optional<double> effectivePlaybackRate, std::optional<Seconds> lastCachedCurrentTime, std::optional<MonotonicTime> lastCachedClockTimestamp);
 
-    bool autoplay() const;
-    void setAutoplay(bool);
-    bool loop() const;
-    void setLoop(bool);
-    bool paused() const;
-    void setPaused(bool);
-    Seconds duration() const;
-    void setDuration(Seconds);
-    std::optional<double> effectivePlaybackRate() const;
+    bool NODELETE autoplay() const;
+    void NODELETE setAutoplay(bool);
+    bool NODELETE loop() const;
+    void NODELETE setLoop(bool);
+    bool NODELETE paused() const;
+    void NODELETE setPaused(bool);
+    Seconds NODELETE duration() const;
+    void NODELETE setDuration(Seconds);
+    std::optional<double> NODELETE effectivePlaybackRate() const;
     void setPlaybackRate(double);
-    std::optional<Seconds> lastCachedCurrentTime() const;
-    std::optional<MonotonicTime> lastCachedClockTimestamp() const;
+    std::optional<Seconds> NODELETE lastCachedCurrentTime() const;
+    std::optional<MonotonicTime> NODELETE lastCachedClockTimestamp() const;
 
     Seconds currentTime() const;
-    void setCurrentTime(Seconds, MonotonicTime clockTimestamp);
+    void NODELETE setCurrentTime(Seconds, MonotonicTime clockTimestamp);
 
 private:
     bool m_autoplay { false };

@@ -1,0 +1,12 @@
+
+PASS rect1
+PASS rect2
+PASS circle
+PASS ellipse1
+PASS ellipse2
+PASS image3
+PASS image4
+PASS foreign1
+PASS foreign2
+PASS SVGGraphicsElement.prototype.getBBox for elements with negative sizes
+

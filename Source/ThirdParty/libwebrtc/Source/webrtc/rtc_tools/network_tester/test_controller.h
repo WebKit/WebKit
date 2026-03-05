@@ -17,6 +17,7 @@
 #include <optional>
 #include <string>
 
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
@@ -45,7 +46,8 @@ constexpr size_t kEthernetMtu = 1500;
 
 class TestController {
  public:
-  TestController(int min_port,
+  TestController(const Environment& env,
+                 int min_port,
                  int max_port,
                  const std::string& config_file_path,
                  const std::string& log_file_path);
@@ -66,6 +68,7 @@ class TestController {
  private:
   void OnReadPacket(AsyncPacketSocket* socket,
                     const ReceivedIpPacket& received_packet);
+  Environment env_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker test_controller_thread_checker_;
   std::unique_ptr<SocketServer> socket_server_;
   std::unique_ptr<Thread> packet_sender_thread_;

@@ -132,7 +132,7 @@ int bn_rshift_secret_shift(BIGNUM *r, const BIGNUM *a, unsigned n,
   bssl::BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
   unsigned max_bits;
-  if (tmp == NULL || !BN_copy(r, a) || !bn_wexpand(tmp, r->width)) {
+  if (tmp == nullptr || !BN_copy(r, a) || !bn_wexpand(tmp, r->width)) {
     return 0;
   }
 

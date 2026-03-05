@@ -35,7 +35,7 @@ template<typename> class ExceptionOr;
 
 class InternalReadableStream final : public DOMGuarded<JSC::JSObject> {
 public:
-    static ExceptionOr<Ref<InternalReadableStream>> createFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy);
+    static ExceptionOr<Ref<InternalReadableStream>> createFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy, std::optional<double>);
     static Ref<InternalReadableStream> fromObject(JSDOMGlobalObject&, JSC::JSObject&);
 
     operator JSC::JSValue() const { return guarded(); }
@@ -46,8 +46,6 @@ public:
     void cancel(Exception&&);
     ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>> tee(bool shouldClone);
 
-    JSC::JSValue pipeTo(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);
-    JSC::JSValue pipeThrough(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);
     JSC::JSValue cancel(JSC::JSGlobalObject&, JSC::JSValue);
 
     enum class State : uint8_t { Readable, Closed, Errored };

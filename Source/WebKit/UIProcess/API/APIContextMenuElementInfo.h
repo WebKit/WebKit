@@ -43,9 +43,9 @@ public:
         return adoptRef(*new ContextMenuElementInfo(std::forward<Args>(args)...));
     }
     
-    const WTF::URL& url() const { return m_interactionInformation.url; }
+    const WTF::URL& url() const LIFETIME_BOUND { return m_interactionInformation.url; }
 
-    const WebKit::InteractionInformationAtPosition& interactionInformation() const { return m_interactionInformation; }
+    const WebKit::InteractionInformationAtPosition& interactionInformation() const LIFETIME_BOUND { return m_interactionInformation; }
 
     const RetainPtr<NSDictionary> userInfo() const { return m_userInfo; }
 

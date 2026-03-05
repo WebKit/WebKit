@@ -39,12 +39,12 @@ public:
 
     static ObjCRuntimeObject* create(VM& vm, Structure* structure, RefPtr<ObjcInstance>&& inst)
     {
-        ObjCRuntimeObject* object = new (NotNull, allocateCell<ObjCRuntimeObject>(vm)) ObjCRuntimeObject(vm, structure, WTFMove(inst));
+        ObjCRuntimeObject* object = new (NotNull, allocateCell<ObjCRuntimeObject>(vm)) ObjCRuntimeObject(vm, structure, WTF::move(inst));
         object->finishCreation(vm);
         return object;
     }
 
-    ObjcInstance* getInternalObjCInstance() const;
+    ObjcInstance* NODELETE getInternalObjCInstance() const;
 
     DECLARE_INFO;
 

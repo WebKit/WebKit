@@ -52,7 +52,7 @@ public:
     virtual ~FidoHidPacket() = default;
 
     virtual Vector<uint8_t> getSerializedData() const = 0;
-    const Vector<uint8_t>& getPacketPayload() const { return m_data; }
+    const Vector<uint8_t>& getPacketPayload() const LIFETIME_BOUND { return m_data; }
     uint32_t channelId() const { return m_channelId; }
 
 protected:

@@ -47,7 +47,7 @@ class SimpleReadableStreamSource;
 class WritableStream;
 
 class RTCRtpSFrameTransform : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RTCRtpSFrameTransform>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCRtpSFrameTransform);
+    WTF_MAKE_TZONE_ALLOCATED(RTCRtpSFrameTransform);
 public:
     enum class Role { Encrypt, Decrypt };
     using CompatibilityMode = RTCRtpSFrameTransformer::CompatibilityMode;
@@ -67,12 +67,12 @@ public:
     void initializeBackendForSender(RTCRtpTransformBackend&);
     void willClearBackend(RTCRtpTransformBackend&);
 
-    WEBCORE_EXPORT void setCounterForTesting(uint64_t);
-    WEBCORE_EXPORT uint64_t counterForTesting() const;
-    WEBCORE_EXPORT uint64_t keyIdForTesting() const;
+    WEBCORE_EXPORT void NODELETE setCounterForTesting(uint64_t);
+    WEBCORE_EXPORT uint64_t NODELETE counterForTesting() const;
+    WEBCORE_EXPORT uint64_t NODELETE keyIdForTesting() const;
 
-    ExceptionOr<RefPtr<ReadableStream>> readable();
-    ExceptionOr<RefPtr<WritableStream>> writable();
+    ExceptionOr<Ref<ReadableStream>> readable();
+    ExceptionOr<Ref<WritableStream>> writable();
 
     bool hasKey(uint64_t) const;
 
@@ -85,12 +85,11 @@ private:
     RTCRtpSFrameTransform(ScriptExecutionContext&, Options);
 
     // ActiveDOMObject
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCRtpSFrameTransform; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -107,5 +106,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(RTCRtpSFrameTransform)
 
 #endif // ENABLE(WEB_RTC)

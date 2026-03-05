@@ -36,6 +36,8 @@
 namespace WebKit {
 
 class RemoteCDM final : public WebCore::CDMPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCDM);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteCDM);
 public:
     static std::unique_ptr<RemoteCDM> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMIdentifier&&, RemoteCDMConfiguration&&, const String& mediaKeysHashSalt);
     virtual ~RemoteCDM() = default;

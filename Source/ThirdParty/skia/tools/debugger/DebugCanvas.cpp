@@ -64,12 +64,12 @@ namespace {
     static constexpr char kSurfaceID[] = "SurfaceID";
     static constexpr char kAndroidClip[] = "AndroidDeviceClipRestriction";
 
-    static SkPath arrowHead = SkPath::Polygon({
+    static SkPath arrowHead = SkPath::Polygon({{
         { 0,   0},
         { 6, -15},
         { 0,  -12},
         {-6, -15},
-    }, true);
+    }}, true);
 
     void drawArrow(SkCanvas* canvas, const SkPoint& a, const SkPoint& b, const SkPaint& paint) {
         canvas->translate(0.5, 0.5);
@@ -161,9 +161,6 @@ void DebugCanvas::drawTo(SkCanvas* originalCanvas, int index, int m) {
     SkASSERT(index < fCommandVector.size());
 
     int saveCount = originalCanvas->save();
-
-    originalCanvas->resetMatrix();
-    SkCanvasPriv::ResetClip(originalCanvas);
 
     DebugPaintFilterCanvas filterCanvas(originalCanvas);
     SkCanvas* finalCanvas = fOverdrawViz ? &filterCanvas : originalCanvas;

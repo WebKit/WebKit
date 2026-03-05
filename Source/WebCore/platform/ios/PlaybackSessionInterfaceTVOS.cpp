@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceTVOS);
+
 Ref<PlaybackSessionInterfaceTVOS> PlaybackSessionInterfaceTVOS::create(PlaybackSessionModel& model)
 {
     Ref interface = adoptRef(*new PlaybackSessionInterfaceTVOS(model));

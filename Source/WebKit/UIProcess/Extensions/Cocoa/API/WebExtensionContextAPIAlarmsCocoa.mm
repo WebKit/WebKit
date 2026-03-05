@@ -71,7 +71,7 @@ void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensio
         return alarm->parameters();
     });
 
-    completionHandler(WTFMove(alarms));
+    completionHandler(WTF::move(alarms));
 }
 
 void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionHandler)

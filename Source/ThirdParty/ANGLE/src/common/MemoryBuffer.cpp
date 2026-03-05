@@ -4,17 +4,16 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/MemoryBuffer.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 #include <algorithm>
-#include <cstdlib>
-#include <cstring>
+#include <utility>
 
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 
 namespace angle
 {
@@ -27,12 +26,7 @@ MemoryBuffer::~MemoryBuffer()
 
 void MemoryBuffer::destroy()
 {
-    if (mData)
-    {
-        free(mData);
-        mData = nullptr;
-    }
-
+    free(std::exchange(mData, nullptr));
     mSize     = 0;
     mCapacity = 0;
 #if defined(ANGLE_ENABLE_ASSERTS)
@@ -43,15 +37,23 @@ void MemoryBuffer::destroy()
 
 bool MemoryBuffer::resize(size_t newSize)
 {
-    // If new size is within mCapacity, update mSize and early-return
-    if (newSize <= mCapacity)
+    if (!reserve(newSize))
     {
-        mSize = newSize;
+        return false;
+    }
+    mSize = newSize;
+    return true;
+}
+
+bool MemoryBuffer::reserve(size_t newCapacity)
+{
+    if (newCapacity <= mCapacity)
+    {
+        // Can already accommodate newCapacity, nothing to do.
         return true;
     }
 
-    // New size exceeds mCapacity, need to reallocate and copy over previous content.
-    uint8_t *newMemory = static_cast<uint8_t *>(malloc(sizeof(uint8_t) * newSize));
+    uint8_t *newMemory = static_cast<uint8_t *>(malloc(newCapacity));
     if (newMemory == nullptr)
     {
         return false;
@@ -59,101 +61,41 @@ bool MemoryBuffer::resize(size_t newSize)
 
 // Book keeping
 #if defined(ANGLE_ENABLE_ASSERTS)
-    mTotalAllocatedBytes += newSize;
+    mTotalAllocatedBytes += newCapacity;
 #endif  // ANGLE_ENABLE_ASSERTS
 
-    if (mData)
+    if (mSize > 0)
     {
-        if (mSize > 0)
-        {
-            // Copy the intersection of the old data and the new data
-            std::copy(mData, mData + mSize, newMemory);
-
+        // Copy the intersection of the old data and the new data.
+        // SAFETY: Relies on correct size allocation above.
+        ANGLE_UNSAFE_BUFFERS(memcpy(newMemory, mData, mSize));
 // Book keeping
 #if defined(ANGLE_ENABLE_ASSERTS)
-            mTotalCopiedBytes += mSize;
+        mTotalCopiedBytes += mSize;
 #endif  // ANGLE_ENABLE_ASSERTS
-        }
-        free(mData);
     }
 
-    mData     = newMemory;
-    mSize     = newSize;
-    mCapacity = newSize;
-
+    free(std::exchange(mData, newMemory));
+    mCapacity = newCapacity;
     return true;
 }
 
-bool MemoryBuffer::clearAndReserve(size_t newSize)
+bool MemoryBuffer::clearAndReserve(size_t newCapacity)
 {
     clear();
-    return reserve(newSize);
-}
-
-bool MemoryBuffer::reserve(size_t newSize)
-{
-    if (newSize <= mCapacity)
-    {
-        // Can already accommodate newSize, nothing to do.
-        return true;
-    }
-
-    // Cache original size
-    size_t originalSize = mSize;
-
-    if (!resize(newSize))
-    {
-        return false;
-    }
-
-    // reserve(...) won't affect mSize, reset to original value.
-    mSize = originalSize;
-
-    return true;
-}
-
-bool MemoryBuffer::append(const MemoryBuffer &other)
-{
-    uint8_t *srcBuffer         = other.mData;
-    const size_t srcBufferSize = other.mSize;
-
-    // Handle the corner case where we are appending to self
-    if (this == &other)
-    {
-        if (!reserve(mSize * 2))
-        {
-            return false;
-        }
-        srcBuffer = other.mData;
-    }
-
-    return appendRaw(srcBuffer, srcBufferSize);
-}
-
-bool MemoryBuffer::appendRaw(const uint8_t *buffer, const size_t bufferSize)
-{
-    ASSERT(buffer && bufferSize > 0);
-
-    if (!reserve(mSize + bufferSize))
-    {
-        return false;
-    }
-
-    std::memcpy(mData + mSize, buffer, bufferSize);
-    mSize += bufferSize;
-
-    return true;
+    return reserve(newCapacity);
 }
 
 void MemoryBuffer::fill(uint8_t datum)
 {
     if (!empty())
     {
-        std::fill(mData, mData + mSize, datum);
+        // SAFETY: `mData` is always valid for `mSize`.
+        ANGLE_UNSAFE_BUFFERS(std::fill(mData, mData + mSize, datum));
     }
 }
 
-MemoryBuffer::MemoryBuffer(MemoryBuffer &&other) : MemoryBuffer()
+MemoryBuffer::MemoryBuffer(MemoryBuffer &&other)
 {
     *this = std::move(other);
 }
@@ -248,7 +190,7 @@ void ScratchBuffer::tick()
         --mResetCounter;
         if (mResetCounter == 0)
         {
-            clear();
+            destroy();
         }
     }
 }
@@ -256,10 +198,12 @@ void ScratchBuffer::tick()
 void ScratchBuffer::clear()
 {
     mResetCounter = mLifetime;
-    if (mScratchMemory.size() > 0)
-    {
-        mScratchMemory.clear();
-    }
+    mScratchMemory.clear();
+}
+
+void ScratchBuffer::destroy()
+{
+    mScratchMemory.destroy();
 }
 
 }  // namespace angle

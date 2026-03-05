@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.from
 description: >
   Return a new empty TypedArray
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -14,4 +14,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(result.length, 0);
   assert.sameValue(result.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(result), TA.prototype);
-});
+}, null, ["passthrough"]);

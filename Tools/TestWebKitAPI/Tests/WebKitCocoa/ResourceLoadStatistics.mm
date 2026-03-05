@@ -91,12 +91,7 @@ static void ensureITPFileIsCreated()
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 }
 
-// FIXME when rdar://109481486 is resolved rdar://134535336
-#if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MAC)
-TEST(ResourceLoadStatistics, DISABLED_GrandfatherCallback)
-#else
 TEST(ResourceLoadStatistics, GrandfatherCallback)
-#endif
 {
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().pcmMachServiceName = nil;
@@ -497,8 +492,8 @@ void waitUntilTwoServersConnected(const unsigned& serversConnected, CompletionHa
         completionHandler();
         return;
     }
-    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([&serversConnected, completionHandler = WTFMove(completionHandler)] () mutable {
-        waitUntilTwoServersConnected(serversConnected, WTFMove(completionHandler));
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([&serversConnected, completionHandler = WTF::move(completionHandler)] () mutable {
+        waitUntilTwoServersConnected(serversConnected, WTF::move(completionHandler));
     }).get());
 }
 
@@ -815,8 +810,8 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
         _WKResourceLoadStatisticsFirstParty *evil3FirstParty3 = [evil3Enumerator nextObject];
 
         EXPECT_WK_STREQ(evil3FirstParty1.firstPartyDomain, @"webkit2.org");
-        EXPECT_WK_STREQ(evil3FirstParty2.firstPartyDomain, @"webkit3.org");
-        EXPECT_WK_STREQ(evil3FirstParty3.firstPartyDomain, @"webkit.org");
+        EXPECT_WK_STREQ(evil3FirstParty2.firstPartyDomain, @"webkit.org");
+        EXPECT_WK_STREQ(evil3FirstParty3.firstPartyDomain, @"webkit3.org");
 
         EXPECT_FALSE(evil3FirstParty1.thirdPartyStorageAccessGranted);
         EXPECT_FALSE(evil3FirstParty2.thirdPartyStorageAccessGranted);
@@ -893,18 +888,12 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
-// rdar://134535336
-#if PLATFORM(IOS) || PLATFORM(MAC)
-TEST(ResourceLoadStatistics, DISABLED_MigrateDataFromIncorrectCreateTableSchema)
-#else
 TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
-#endif
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
     auto defaultFileManager = [NSFileManager defaultManager];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-    NSURL *itpRootURL = [[dataStore _configuration] _resourceLoadStatisticsDirectory];
+    NSURL *itpRootURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"MigrateDataFromIncorrectCreateTableSchemaTest"] isDirectory:YES];
     NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
@@ -917,17 +906,28 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
 
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get()._resourceLoadStatisticsDirectory = itpRootURL;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setProcessPool: sharedProcessPool];
-    configuration.get().websiteDataStore = dataStore;
+    configuration.get().websiteDataStore = dataStore.get();
 
     // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [dataStore _setResourceLoadStatisticsEnabled:YES];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
 
     __block bool doneFlag = false;
+    [dataStore _setThirdPartyCookieBlockingMode:YES onlyOnSitesWithoutUserInteraction:NO completionHandler:^{
+        doneFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&doneFlag);
+
     // Check that the pre-seeded data is in the new database after migrating.
+    doneFlag = false;
     [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://apple.com"] thirdParty:[NSURL URLWithString:@"http://webkit.org"] completionHandler: ^(BOOL isRegistered) {
         EXPECT_TRUE(isRegistered);
         doneFlag = true;

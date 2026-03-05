@@ -163,7 +163,7 @@ ModelPresentationManagerProxy::ModelPresentation& ModelPresentationManagerProxy:
             .remoteModelView = remoteModelView,
             .pageHostedModelView = pageHostedModelView,
         };
-        m_modelPresentations.add(layerIdentifier, makeUniqueRef<ModelPresentationManagerProxy::ModelPresentation>(WTFMove(modelPresentation)));
+        m_modelPresentations.add(layerIdentifier, makeUniqueRef<ModelPresentationManagerProxy::ModelPresentation>(WTF::move(modelPresentation)));
         RELEASE_LOG_INFO(ModelElement, "%p - ModelPresentationManagerProxy created new model presentation for element: %" PRIu64, this, layerIdentifier.object().toRawValue());
     }
 

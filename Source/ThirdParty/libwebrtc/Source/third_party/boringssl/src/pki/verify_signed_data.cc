@@ -14,6 +14,8 @@
 
 #include "verify_signed_data.h"
 
+#include <iterator>
+
 #include <openssl/bytestring.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>

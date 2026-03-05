@@ -28,6 +28,7 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/AXCoreObject.h>
+#import <WebCore/AXID.h>
 #import <WebCore/CocoaAccessibilityConstants.h>
 #import <WebCore/FontPlatformData.h>
 #import <wtf/Markable.h>
@@ -45,6 +46,13 @@ class FloatPoint;
 class HTMLTextFormControlElement;
 class Path;
 class VisiblePosition;
+
+// Data needed to create a platform-specific custom action.
+struct CustomActionData {
+    String name;
+    AXID targetID;
+    AXTreeID treeID;
+};
 
 // NSAttributedString support.
 // FIXME: move to a new AXAttributedStringBuilder class. For now, these
@@ -119,6 +127,9 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node&, StringView, const Si
 - (NSRange)accessibilityVisibleCharacterRange;
 
 - (NSDictionary<NSString *, id> *)baseAccessibilityResolvedEditingStyles;
+
+// Returns action data for creating platform-specific custom actions.
+- (Vector<WebCore::CustomActionData>)baseAccessibilityCustomActionsData;
 
 extern WebCore::AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(WebCore::AXCoreObject&, const NSDictionary *);
 

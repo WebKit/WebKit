@@ -1,0 +1,3 @@
+
+PASS Passing timeout=1 should not cause multiple timeout errors
+

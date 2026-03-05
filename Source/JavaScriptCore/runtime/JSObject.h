@@ -1028,7 +1028,7 @@ protected:
         
     // Call this if you want setIndexQuickly to succeed and you're sure that
     // the array is contiguous.
-    bool WARN_UNUSED_RETURN ensureLength(VM& vm, unsigned length)
+    [[nodiscard]] bool ensureLength(VM& vm, unsigned length)
     {
         RELEASE_ASSERT(length <= MAX_STORAGE_VECTOR_LENGTH);
         ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));

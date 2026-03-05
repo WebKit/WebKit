@@ -60,7 +60,7 @@ private:
     void appendNumber(int number, size_t width);
 
     StringBuilder m_builder;
-    Locale& m_localizer;
+    const CheckedRef<Locale> m_localizer;
     const DateComponents& m_date;
 };
 
@@ -91,7 +91,7 @@ String DateTimeStringBuilder::zeroPadString(const String& string, size_t width)
 void DateTimeStringBuilder::appendNumber(int number, size_t width)
 {
     String zeroPaddedNumberString = zeroPadString(String::number(number), width);
-    m_builder.append(m_localizer.convertToLocalizedNumber(zeroPaddedNumberString));
+    m_builder.append(m_localizer->convertToLocalizedNumber(zeroPaddedNumberString));
 }
 
 void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int numberOfPatternCharacters)
@@ -103,9 +103,9 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
         return;
     case DateTimeFormat::FieldTypeMonth:
         if (numberOfPatternCharacters == 3)
-            m_builder.append(m_localizer.shortMonthLabels()[m_date.month()]);
+            m_builder.append(m_localizer->shortMonthLabels()[m_date.month()]);
         else if (numberOfPatternCharacters == 4)
-            m_builder.append(m_localizer.monthLabels()[m_date.month()]);
+            m_builder.append(m_localizer->monthLabels()[m_date.month()]);
         else {
             // Always use padding width of 2 so it matches DateTimeEditElement.
             appendNumber(m_date.month() + 1, 2);
@@ -113,9 +113,9 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
         return;
     case DateTimeFormat::FieldTypeMonthStandAlone:
         if (numberOfPatternCharacters == 3)
-            m_builder.append(m_localizer.shortStandAloneMonthLabels()[m_date.month()]);
+            m_builder.append(m_localizer->shortStandAloneMonthLabels()[m_date.month()]);
         else if (numberOfPatternCharacters == 4)
-            m_builder.append(m_localizer.standAloneMonthLabels()[m_date.month()]);
+            m_builder.append(m_localizer->standAloneMonthLabels()[m_date.month()]);
         else {
             // Always use padding width of 2 so it matches DateTimeEditElement.
             appendNumber(m_date.month() + 1, 2);
@@ -130,7 +130,7 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
         appendNumber(m_date.week(), 2);
         return;
     case DateTimeFormat::FieldTypePeriod:
-        m_builder.append(m_localizer.timeAMPMLabels()[(m_date.hour() >= 12 ? 1 : 0)]);
+        m_builder.append(m_localizer->timeAMPMLabels()[(m_date.hour() >= 12 ? 1 : 0)]);
         return;
     case DateTimeFormat::FieldTypeHour12: {
         int hour12 = m_date.hour() % 12;
@@ -161,7 +161,7 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
         else {
             double second = m_date.second() + m_date.millisecond() / 1000.0;
             String zeroPaddedSecondString = zeroPadString(String::numberToStringFixedWidth(second, 3), numberOfPatternCharacters + 4);
-            m_builder.append(m_localizer.convertToLocalizedNumber(zeroPaddedSecondString));
+            m_builder.append(m_localizer->convertToLocalizedNumber(zeroPaddedSecondString));
         }
         return;
     default:

@@ -14,13 +14,14 @@
 #include "include/core/SkPixmap.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkTypes.h"
+#include "src/codec/SkCodecPriv.h"
 #include "src/codec/SkPixmapUtilsPriv.h"
 #include "src/core/SkStreamPriv.h"
 
 #include <utility>
 
 std::unique_ptr<SkImageGenerator> SkCodecImageGenerator::MakeFromEncodedCodec(
-        sk_sp<SkData> data, std::optional<SkAlphaType> at) {
+        sk_sp<const SkData> data, std::optional<SkAlphaType> at) {
     auto codec = SkCodec::MakeFromData(data);
     if (codec == nullptr) {
         return nullptr;
@@ -56,15 +57,10 @@ SkCodecImageGenerator::SkCodecImageGenerator(std::unique_ptr<SkCodec> codec,
                                              std::optional<SkAlphaType> at)
         : SkImageGenerator(adjust_info(codec.get(), at)), fCodec(std::move(codec)) {}
 
-sk_sp<SkData> SkCodecImageGenerator::onRefEncodedData() {
+sk_sp<const SkData> SkCodecImageGenerator::onRefEncodedData() {
     SkASSERT(fCodec);
     if (!fCachedData) {
-        std::unique_ptr<SkStream> stream = fCodec->getEncodedData();
-        fCachedData = SkStreamPriv::GetNonConstData(stream.get());
-        if (!fCachedData) {
-            // stream should already be a copy of the underlying stream.
-            fCachedData = SkData::MakeFromStream(stream.get(), stream->getLength());
-        }
+        fCachedData = SkCodecPriv::GetEncodedData(fCodec.get());
     }
     return fCachedData;
 }

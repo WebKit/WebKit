@@ -12,8 +12,30 @@
 #include "include/private/base/SkCPUTypes.h"
 #include "include/private/base/SkTemplates.h"
 
+#include <bit>
 #include <cstddef>
 #include <cstdint>
+
+/**
+ * Return the number of leading zero bits.
+ */
+static constexpr int SkCLZ(uint32_t x) {
+    return std::countl_zero<uint32_t>(x);
+}
+
+/**
+ * Return the number of trailing zero bits.
+ */
+static constexpr int SkCTZ(uint32_t x) {
+    return std::countr_zero<uint32_t>(x);
+}
+
+/*
+ * Return the number of set bits (i.e., the population count) in the provided uint32_t.
+ */
+static constexpr int SkPopCount(uint32_t x) {
+    return std::popcount<uint32_t>(x);
+}
 
 /**
  *  Return the integer square root of value, with a bias of bitBias
@@ -123,113 +145,6 @@ static inline unsigned SkDiv255Round(unsigned prod) {
     static inline uint32_t SkBSwap32(uint32_t v) { return __builtin_bswap32(v); }
 #endif
 
-/*
- * Return the number of set bits (i.e., the population count) in the provided uint32_t.
- */
-int SkPopCount_portable(uint32_t n);
-
-#if defined(__GNUC__) || defined(__clang__)
-    static inline int SkPopCount(uint32_t n) {
-        return __builtin_popcount(n);
-    }
-#else
-    static inline int SkPopCount(uint32_t n) {
-        return SkPopCount_portable(n);
-    }
-#endif
-
-/*
- * Return the 0-based index of the nth bit set in target
- * Returns 32 if there is no nth bit set.
- */
-int SkNthSet(uint32_t target, int n);
-
-//! Returns the number of leading zero bits (0...32)
-// From Hacker's Delight 2nd Edition
-constexpr int SkCLZ_portable(uint32_t x) {
-    int n = 32;
-    uint32_t y = x >> 16; if (y != 0) {n -= 16; x = y;}
-             y = x >>  8; if (y != 0) {n -=  8; x = y;}
-             y = x >>  4; if (y != 0) {n -=  4; x = y;}
-             y = x >>  2; if (y != 0) {n -=  2; x = y;}
-             y = x >>  1; if (y != 0) {return n - 2;}
-    return n - static_cast<int>(x);
-}
-
-static_assert(32 == SkCLZ_portable(0));
-static_assert(31 == SkCLZ_portable(1));
-static_assert( 1 == SkCLZ_portable(1 << 30));
-static_assert( 1 == SkCLZ_portable((1 << 30) | (1 << 24) | 1));
-static_assert( 0 == SkCLZ_portable(~0U));
-
-#if defined(SK_BUILD_FOR_WIN)
-    #include <intrin.h>
-
-    static inline int SkCLZ(uint32_t mask) {
-        if (mask) {
-            unsigned long index = 0;
-            _BitScanReverse(&index, mask);
-            // Suppress this bogus /analyze warning. The check for non-zero
-            // guarantees that _BitScanReverse will succeed.
-            #pragma warning(push)
-            #pragma warning(suppress : 6102) // Using 'index' from failed function call
-            return static_cast<int>(index ^ 0x1F);
-            #pragma warning(pop)
-        } else {
-            return 32;
-        }
-    }
-#elif defined(SK_CPU_ARM32) || defined(__GNUC__) || defined(__clang__)
-    static inline int SkCLZ(uint32_t mask) {
-        // __builtin_clz(0) is undefined, so we have to detect that case.
-        return mask ? __builtin_clz(mask) : 32;
-    }
-#else
-    static inline int SkCLZ(uint32_t mask) {
-        return SkCLZ_portable(mask);
-    }
-#endif
-
-//! Returns the number of trailing zero bits (0...32)
-// From Hacker's Delight 2nd Edition
-constexpr int SkCTZ_portable(uint32_t x) {
-    return 32 - SkCLZ_portable(~x & (x - 1));
-}
-
-static_assert(32 == SkCTZ_portable(0));
-static_assert( 0 == SkCTZ_portable(1));
-static_assert(30 == SkCTZ_portable(1 << 30));
-static_assert( 2 == SkCTZ_portable((1 << 30) | (1 << 24) | (1 << 2)));
-static_assert( 0 == SkCTZ_portable(~0U));
-
-#if defined(SK_BUILD_FOR_WIN)
-    #include <intrin.h>
-
-    static inline int SkCTZ(uint32_t mask) {
-        if (mask) {
-            unsigned long index = 0;
-            _BitScanForward(&index, mask);
-            // Suppress this bogus /analyze warning. The check for non-zero
-            // guarantees that _BitScanReverse will succeed.
-            #pragma warning(push)
-            #pragma warning(suppress : 6102) // Using 'index' from failed function call
-            return static_cast<int>(index);
-            #pragma warning(pop)
-        } else {
-            return 32;
-        }
-    }
-#elif defined(SK_CPU_ARM32) || defined(__GNUC__) || defined(__clang__)
-    static inline int SkCTZ(uint32_t mask) {
-        // __builtin_ctz(0) is undefined, so we have to detect that case.
-        return mask ? __builtin_ctz(mask) : 32;
-    }
-#else
-    static inline int SkCTZ(uint32_t mask) {
-        return SkCTZ_portable(mask);
-    }
-#endif
-
 /**
  *  Returns the log2 of the specified value, were that value to be rounded up
  *  to the next power of 2. It is undefined to pass 0. Examples:
@@ -239,14 +154,9 @@ static_assert( 0 == SkCTZ_portable(~0U));
  *  SkNextLog2(4) -> 2
  *  SkNextLog2(5) -> 3
  */
-static inline int SkNextLog2(uint32_t value) {
+static constexpr int SkNextLog2(uint32_t value) {
     SkASSERT(value != 0);
     return 32 - SkCLZ(value - 1);
-}
-
-constexpr int SkNextLog2_portable(uint32_t value) {
-    SkASSERT(value != 0);
-    return 32 - SkCLZ_portable(value - 1);
 }
 
 /**
@@ -258,14 +168,9 @@ constexpr int SkNextLog2_portable(uint32_t value) {
 *  SkPrevLog2(4) -> 2
 *  SkPrevLog2(5) -> 2
 */
-static inline int SkPrevLog2(uint32_t value) {
+static constexpr int SkPrevLog2(uint32_t value) {
     SkASSERT(value != 0);
     return 32 - SkCLZ(value >> 1);
-}
-
-constexpr int SkPrevLog2_portable(uint32_t value) {
-    SkASSERT(value != 0);
-    return 32 - SkCLZ_portable(value >> 1);
 }
 
 /**
@@ -273,14 +178,9 @@ constexpr int SkPrevLog2_portable(uint32_t value) {
  *  is already a power of 2, then it is returned unchanged. It is undefined
  *  if value is <= 0.
  */
-static inline int SkNextPow2(int value) {
+static constexpr int SkNextPow2(int value) {
     SkASSERT(value > 0);
     return 1 << SkNextLog2(static_cast<uint32_t>(value));
-}
-
-constexpr int SkNextPow2_portable(int value) {
-    SkASSERT(value > 0);
-    return 1 << SkNextLog2_portable(static_cast<uint32_t>(value));
 }
 
 /**
@@ -288,14 +188,9 @@ constexpr int SkNextPow2_portable(int value) {
 *  is already a power of 2, then it is returned unchanged. It is undefined
 *  if value is <= 0.
 */
-static inline int SkPrevPow2(int value) {
+static constexpr int SkPrevPow2(int value) {
     SkASSERT(value > 0);
     return 1 << SkPrevLog2(static_cast<uint32_t>(value));
-}
-
-constexpr int SkPrevPow2_portable(int value) {
-    SkASSERT(value > 0);
-    return 1 << SkPrevLog2_portable(static_cast<uint32_t>(value));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -303,7 +198,7 @@ constexpr int SkPrevPow2_portable(int value) {
 /**
  * Returns the next power of 2 >= n or n if the next power of 2 can't be represented by size_t.
  */
-constexpr size_t SkNextSizePow2(size_t n) {
+static constexpr size_t SkNextSizePow2(size_t n) {
     constexpr int kNumSizeTBits = 8 * sizeof(size_t);
     constexpr size_t kHighBitSet = size_t(1) << (kNumSizeTBits - 1);
 

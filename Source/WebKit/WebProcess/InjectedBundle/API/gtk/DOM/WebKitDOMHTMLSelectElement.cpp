@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitDOMHTMLSelectElement.h"
 
-#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
@@ -101,7 +100,9 @@ static void webkit_dom_html_select_element_dom_event_target_init(WebKitDOMEventT
     iface->remove_event_listener = webkit_dom_html_select_element_remove_event_listener;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLSelectElement, webkit_dom_html_select_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_select_element_dom_event_target_init))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_HTML_SELECT_ELEMENT_PROP_0,
@@ -360,23 +361,25 @@ void webkit_dom_html_select_element_add(WebKitDOMHTMLSelectElement* self, WebKit
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(before));
     g_return_if_fail(!error || !*error);
     WebCore::HTMLSelectElement* item = WebKit::core(self);
-    WebCore::HTMLElement* convertedElement = WebKit::core(element);
-    WebCore::HTMLElement* convertedBefore = WebKit::core(before);
-    Variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
-    if (is<WebCore::HTMLOptionElement>(convertedElement))
-        variantElement = downcast<WebCore::HTMLOptionElement>(*convertedElement);
-    else if (is<WebCore::HTMLOptGroupElement>(convertedElement))
-        variantElement = downcast<WebCore::HTMLOptGroupElement>(*convertedElement);
+    Ref convertedElement = *WebKit::core(element);
+    Ref convertedBefore = *WebKit::core(before);
+
+    static auto raiseErrorOnDOMException = [](auto exception, auto** error) -> void
+    {
+        if (exception.hasException()) {
+            auto description = WebCore::DOMException::description(exception.releaseException().code());
+            g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+        }
+    };
+
+    if (RefPtr optionElement = dynamicDowncast<WebCore::HTMLOptionElement>(convertedElement))
+        raiseErrorOnDOMException(item->add(optionElement.releaseNonNull(), WebCore::HTMLSelectElement::HTMLElementOrInt(convertedBefore)), error);
+    else if (RefPtr optGroupElement = dynamicDowncast<WebCore::HTMLOptGroupElement>(convertedElement))
+        raiseErrorOnDOMException(item->add(optGroupElement.releaseNonNull(), WebCore::HTMLSelectElement::HTMLElementOrInt(convertedBefore)), error);
     else {
         auto description = WebCore::DOMException::description(WebCore::ExceptionCode::TypeError);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return;
-    }
-
-    auto exception = item->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(convertedBefore));
-    if (exception.hasException()) {
-        auto description = WebCore::DOMException::description(exception.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
     }
 }
 

@@ -45,11 +45,11 @@ static constexpr ASCIILiteral endpointIdentifierKey = "video-receiver-endpoint-i
 static constexpr ASCIILiteral cacheCommandKey = "video-receiver-cache-command"_s;
 
 VideoReceiverEndpointMessage::VideoReceiverEndpointMessage(std::optional<WebCore::ProcessIdentifier> processIdentifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, std::optional<WebCore::MediaPlayerIdentifier> playerIdentifier, WebCore::VideoReceiverEndpoint endpoint, WebCore::VideoReceiverEndpointIdentifier endpointIdentifier)
-    : m_processIdentifier { WTFMove(processIdentifier) }
-    , m_mediaElementIdentifier { WTFMove(mediaElementIdentifier) }
-    , m_playerIdentifier { WTFMove(playerIdentifier) }
-    , m_endpoint { WTFMove(endpoint) }
-    , m_endpointIdentifier { WTFMove(endpointIdentifier) }
+    : m_processIdentifier { WTF::move(processIdentifier) }
+    , m_mediaElementIdentifier { WTF::move(mediaElementIdentifier) }
+    , m_playerIdentifier { WTF::move(playerIdentifier) }
+    , m_endpoint { WTF::move(endpoint) }
+    , m_endpointIdentifier { WTF::move(endpointIdentifier) }
 {
     RELEASE_ASSERT(!m_endpoint || xpc_get_type(m_endpoint.get()) == XPC_TYPE_DICTIONARY);
 }
@@ -71,10 +71,10 @@ VideoReceiverEndpointMessage VideoReceiverEndpointMessage::decode(xpc_object_t m
     };
 }
 
-XPCObjectPtr<xpc_object_t> VideoReceiverEndpointMessage::encode() const
+OSObjectPtr<xpc_object_t> VideoReceiverEndpointMessage::encode() const
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, messageName().characters());
     xpc_dictionary_set_uint64(message.get(), processIdentifierKey.characters(), m_processIdentifier ? m_processIdentifier->toUInt64() : 0);
     xpc_dictionary_set_uint64(message.get(), mediaElementIdentifierKey.characters(), m_mediaElementIdentifier.toUInt64());
@@ -85,11 +85,11 @@ XPCObjectPtr<xpc_object_t> VideoReceiverEndpointMessage::encode() const
 }
 
 VideoReceiverSwapEndpointsMessage::VideoReceiverSwapEndpointsMessage(std::optional<WebCore::ProcessIdentifier> processIdentifier, WebCore::HTMLMediaElementIdentifier sourceMediaElementIdentifier, std::optional<WebCore::MediaPlayerIdentifier> sourcePlayerIdentifier, WebCore::HTMLMediaElementIdentifier destinationMediaElementIdentifier, std::optional<WebCore::MediaPlayerIdentifier> destinationPlayerIdentifier)
-    : m_processIdentifier { WTFMove(processIdentifier) }
-    , m_sourceMediaElementIdentifier { WTFMove(sourceMediaElementIdentifier) }
-    , m_sourcePlayerIdentifier { WTFMove(sourcePlayerIdentifier) }
-    , m_destinationMediaElementIdentifier { WTFMove(destinationMediaElementIdentifier) }
-    , m_destinationPlayerIdentifier { WTFMove(destinationPlayerIdentifier) }
+    : m_processIdentifier { WTF::move(processIdentifier) }
+    , m_sourceMediaElementIdentifier { WTF::move(sourceMediaElementIdentifier) }
+    , m_sourcePlayerIdentifier { WTF::move(sourcePlayerIdentifier) }
+    , m_destinationMediaElementIdentifier { WTF::move(destinationMediaElementIdentifier) }
+    , m_destinationPlayerIdentifier { WTF::move(destinationPlayerIdentifier) }
 {
 }
 
@@ -110,10 +110,10 @@ VideoReceiverSwapEndpointsMessage VideoReceiverSwapEndpointsMessage::decode(xpc_
     };
 }
 
-XPCObjectPtr<xpc_object_t> VideoReceiverSwapEndpointsMessage::encode() const
+OSObjectPtr<xpc_object_t> VideoReceiverSwapEndpointsMessage::encode() const
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, messageName().characters());
     xpc_dictionary_set_uint64(message.get(), processIdentifierKey.characters(), m_processIdentifier ? m_processIdentifier->toUInt64() : 0);
     xpc_dictionary_set_uint64(message.get(), sourceMediaElementIdentifierKey.characters(), m_sourceMediaElementIdentifier.toUInt64());

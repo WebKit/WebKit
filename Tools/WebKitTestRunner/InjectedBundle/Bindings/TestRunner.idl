@@ -26,6 +26,7 @@
 interface TestRunner {
     readonly attribute boolean isWebKit2;
     readonly attribute boolean isIOSFamily;
+    readonly attribute boolean isVision;
     readonly attribute boolean isMac;
     readonly attribute boolean isKeyboardImmediatelyAvailable;
     readonly attribute boolean keyboardAppearsOverContent;
@@ -369,4 +370,7 @@ interface TestRunner {
     readonly attribute boolean canModifyResourceMonitorList;
 
     undefined setHasMouseDeviceForTesting(boolean hasMouseDevice);
+
+    // Immersive models
+    undefined exitImmersive();
 };

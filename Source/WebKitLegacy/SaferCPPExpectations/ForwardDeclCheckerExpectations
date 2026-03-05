@@ -3,6 +3,4 @@ WebCoreSupport/SocketStreamHandle.h
 ios/WebCoreSupport/PopupMenuIOS.h
 mac/DOM/DOMAbstractView.mm
 mac/DOM/DOMObject.mm
-mac/WebCoreSupport/PopupMenuMac.h
 [ Mac ] mac/WebView/WebView.mm
-[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm

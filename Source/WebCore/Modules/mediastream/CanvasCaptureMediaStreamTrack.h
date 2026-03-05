@@ -30,8 +30,14 @@
 #include "CanvasObserver.h"
 #include "MediaStreamTrack.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
+
+#if USE(GSTREAMER)
+#include "GRefPtrGStreamer.h"
+#endif
 
 namespace WebCore {
 
@@ -40,7 +46,7 @@ class HTMLCanvasElement;
 class Image;
 
 class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CanvasCaptureMediaStreamTrack);
+    WTF_MAKE_TZONE_ALLOCATED(CanvasCaptureMediaStreamTrack);
 public:
     static Ref<CanvasCaptureMediaStreamTrack> create(Document&, Ref<HTMLCanvasElement>&&, std::optional<double>&& frameRequestRate);
 
@@ -52,7 +58,9 @@ public:
     RefPtr<MediaStreamTrack> clone() final;
 
 private:
-    class Source final : public RealtimeMediaSource, private CanvasObserver, private CanvasDisplayBufferObserver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop> {
+    class Source final : public RealtimeMediaSource, private CanvasObserver, private CanvasDisplayBufferObserver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop>, public CanMakeThreadSafeCheckedPtr<Source> {
+        WTF_MAKE_TZONE_ALLOCATED(Source);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Source);
     public:
         static Ref<Source> create(HTMLCanvasElement&, std::optional<double>&& frameRequestRate);
         
@@ -61,6 +69,9 @@ private:
         RefPtr<VideoFrame> grabFrame();
 
         WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
+
+        // CanvasObserver.
+        OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeThreadSafeCheckedPtr);
 
     private:
         Source(HTMLCanvasElement&, std::optional<double>&&);
@@ -81,7 +92,7 @@ private:
         void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
         void scheduleCaptureCanvas();
         void captureCanvas();
-        void requestFrameTimerFired();
+        void NODELETE requestFrameTimerFired();
 
         bool m_shouldEmitFrame { true };
         std::optional<double> m_frameRequestRate;
@@ -91,7 +102,7 @@ private:
         WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvas;
         RefPtr<Image> m_currentImage;
 #if USE(GSTREAMER)
-        MediaTime m_presentationTimeStamp { MediaTime::zeroTime() };
+        GRefPtr<GstClock> m_clock;
 #endif
     };
 

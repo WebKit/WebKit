@@ -27,8 +27,12 @@
 #include "StyleLineWidth.h"
 
 #include "CSSPrimitiveValue.h"
-#include "RenderStyleInlines.h"
+#include "Document.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleInterpolationClient.h"
+#include "StyleInterpolationContext.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
@@ -38,29 +42,27 @@ namespace Style {
 
 // MARK: - Conversion
 
-static auto handleKeywordValue(BuilderState& state, CSSValueID valueID) -> LineWidth
+LineWidth::Length LineWidth::snapLengthAsBorderWidth(float length, float deviceScaleFactor)
 {
-    float keywordValue;
-    switch (valueID) {
-    case CSSValueThin:
-        keywordValue = 1.0f;
-        break;
-    case CSSValueMedium:
-        keywordValue = 3.0f;
-        break;
-    case CSSValueThick:
-        keywordValue = 5.0f;
-        break;
-    default:
-        state.setCurrentPropertyInvalidAtComputedValueTime();
-        keywordValue = 3.0f; // Medium
-        break;
-    }
+    // https://drafts.csswg.org/css-values-4/#snap-a-length-as-a-border-width
 
-    if (evaluationTimeZoomEnabled(state))
-        return LineWidth::Length { keywordValue };
+    // 1. Assert: `length` is non-negative.
+    // NOTE: Not asserted, but checked in step 3.
 
-    return LineWidth::Length { floorToDevicePixel(keywordValue * state.style().usedZoom(), state.document().deviceScaleFactor()) };
+    // 2. If `length` is an integer number of device pixels, do nothing.
+    // NOTE: Handled by step 4 without explicitly checking here.
+
+    // 3. If `length` is greater than zero, but less than 1 device pixel, round `length` up to 1 device pixel.
+    if (auto singleDevicePixelLength = 1.0f / deviceScaleFactor; length > 0.0f && length < singleDevicePixelLength)
+        return LineWidth::Length { singleDevicePixelLength };
+
+    // 4. If `length` is greater than 1 device pixel, round it down to the nearest integer number of device pixels.
+    return LineWidth::Length { floorToDevicePixel(length, deviceScaleFactor) };
+}
+
+LineWidth::Length LineWidth::snapLengthAsBorderWidth(LineWidth::Length length, float deviceScaleFactor)
+{
+    return snapLengthAsBorderWidth(length.unresolvedValue(), deviceScaleFactor);
 }
 
 auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSValue& value) -> LineWidth
@@ -69,45 +71,34 @@ auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSVal
     if (!primitiveValue)
         return LineWidth::Length { 3.0f };
 
-    if (primitiveValue->isValueID())
-        return handleKeywordValue(state, primitiveValue->valueID());
-
-    if (evaluationTimeZoomEnabled(state))
-        return toStyleFromCSSValue<LineWidth::Length>(state, value);
-
-    // Any original result that was >= 1 should not be allowed to fall below 1. This keeps border lines from vanishing.
-
-    auto result = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData());
-    if (state.style().usedZoom() < 1.0f && result < 1.0f) {
-        auto originalLength = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
-        if (originalLength >= 1.0f)
-            return LineWidth::Length { 1.0f };
+    if (primitiveValue->isValueID()) {
+        switch (primitiveValue->valueID()) {
+        case CSSValueThin:
+            return LineWidth::snapLengthAsBorderWidth(1.0f * state.style().usedZoom(), state.document().deviceScaleFactor());
+        case CSSValueMedium:
+            return LineWidth::snapLengthAsBorderWidth(3.0f * state.style().usedZoom(), state.document().deviceScaleFactor());
+        case CSSValueThick:
+            return LineWidth::snapLengthAsBorderWidth(5.0f * state.style().usedZoom(), state.document().deviceScaleFactor());
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return LineWidth::Length { 3.0f };
+        }
     }
 
-    if (auto minimumLineWidth = 1.0f / state.document().deviceScaleFactor(); result > 0.0f && result < minimumLineWidth)
-        return LineWidth::Length { minimumLineWidth };
-
-    return LineWidth::Length { floorToDevicePixel(result, state.document().deviceScaleFactor()) };
+    return LineWidth::snapLengthAsBorderWidth(toStyleFromCSSValue<LineWidth::Length>(state, *primitiveValue), state.document().deviceScaleFactor());
 }
 
-// MARK: - Serialize
+// MARK: - Blending
 
-void Serialize<LineWidth>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const LineWidth& value)
+auto Blending<LineWidth>::blend(const LineWidth& a, const LineWidth& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const Interpolation::Context& context) -> LineWidth
 {
-    float result = value.value.unresolvedValue();
-    auto deviceScaleFactor = style.deviceScaleFactor();
-
-    if (auto minimumLineWidth = 1.0f / deviceScaleFactor; result > 0.0f && result < minimumLineWidth)
-        result = minimumLineWidth;
-
-    result = std::floor(result * deviceScaleFactor) / deviceScaleFactor;
-
-    CSS::serializationForCSS(builder, context, CSS::LengthRaw<> { CSS::LengthUnit::Px, result });
+    auto blendedValue = Style::blend(a.value, b.value, aStyle, bStyle, context);
+    return LineWidth::snapLengthAsBorderWidth(blendedValue, protect(context.client.document())->deviceScaleFactor());
 }
 
 // MARK: - Evaluate
 
-auto Evaluation<LineWidthBox, FloatBoxExtent>::operator()(const LineWidthBox& value, ZoomFactor zoom) -> FloatBoxExtent
+auto Evaluation<LineWidthBox, FloatBoxExtent>::operator()(const LineWidthBox& value, ZoomNeeded zoom) -> FloatBoxExtent
 {
     return {
         evaluate<float>(value.top(), zoom),
@@ -117,7 +108,7 @@ auto Evaluation<LineWidthBox, FloatBoxExtent>::operator()(const LineWidthBox& va
     };
 }
 
-auto Evaluation<LineWidthBox, LayoutBoxExtent>::operator()(const LineWidthBox& value, ZoomFactor zoom) -> LayoutBoxExtent
+auto Evaluation<LineWidthBox, LayoutBoxExtent>::operator()(const LineWidthBox& value, ZoomNeeded zoom) -> LayoutBoxExtent
 {
     return {
         evaluate<LayoutUnit>(value.top(), zoom),

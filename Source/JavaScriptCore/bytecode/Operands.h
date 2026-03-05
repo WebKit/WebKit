@@ -38,7 +38,7 @@ template<typename T> struct OperandValueTraits;
 
 constexpr unsigned maxNumCheckpointTmps = 4;
 
-// A OperandKind::Tmp is one that exists for exiting to a checkpoint but does not exist between bytecodes.
+// An OperandKind::Tmp is one that exists for exiting to a checkpoint but does not exist between bytecodes.
 enum class OperandKind : uint32_t { Argument, Local, Tmp }; // Keep bit-width in sync with Operand::operandKindBits' definition.
 static constexpr OperandKind lastOperandKind = OperandKind::Tmp;
 

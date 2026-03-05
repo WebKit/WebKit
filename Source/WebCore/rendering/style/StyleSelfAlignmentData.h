@@ -46,30 +46,40 @@ public:
     // Style data for Self-Alignment and Default-Alignment properties: align-{self, items}, justify-{self, items}.
     // [ <self-position> && <overflow-position>? ] | [ legacy && [ left | right | center ] ]
     constexpr StyleSelfAlignmentData(ItemPosition position, OverflowAlignment overflow = OverflowAlignment::Default, ItemPositionType positionType = ItemPositionType::NonLegacy)
-        : m_position(enumToUnderlyingType(position))
-        , m_positionType(enumToUnderlyingType(positionType))
-        , m_overflow(enumToUnderlyingType(overflow))
+        : m_position(std::to_underlying(position))
+        , m_positionType(std::to_underlying(positionType))
+        , m_overflow(std::to_underlying(overflow))
     {
     }
 
-    void setPosition(ItemPosition position) { m_position = enumToUnderlyingType(position); }
-    void setPositionType(ItemPositionType positionType) { m_positionType = enumToUnderlyingType(positionType); }
-    void setOverflow(OverflowAlignment overflow) { m_overflow = enumToUnderlyingType(overflow); }
+    void setPosition(ItemPosition position) { m_position = std::to_underlying(position); }
+    void setPositionType(ItemPositionType positionType) { m_positionType = std::to_underlying(positionType); }
+    void setOverflow(OverflowAlignment overflow) { m_overflow = std::to_underlying(overflow); }
 
     ItemPosition position() const { return static_cast<ItemPosition>(m_position); }
     ItemPositionType positionType() const { return static_cast<ItemPositionType>(m_positionType); }
     OverflowAlignment overflow() const { return static_cast<OverflowAlignment>(m_overflow); }
 
-    bool isNormal(ItemPosition autoAlignment = ItemPosition::Normal) const
+    bool isNormal() const
     {
-        if (position() == ItemPosition::Auto)
-            return autoAlignment == ItemPosition::Normal;
         return position() == ItemPosition::Normal;
+    }
+
+    bool isStretch() const
+    {
+        return position() == ItemPosition::Stretch;
+    }
+
+    bool isStretchy(ItemPosition normal) const
+    {
+        if (isNormal())
+            return normal == ItemPosition::Stretch;
+        return position() == ItemPosition::Stretch;
     }
 
     // Must resolve Auto before calling. Normal treated as Start.
     // Returns position adjustment from container's start edge.
-    static LayoutUnit adjustmentFromStartEdge(LayoutUnit extraSpace, ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode);
+    static LayoutUnit NODELETE adjustmentFromStartEdge(LayoutUnit extraSpace, ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode);
 
     friend bool operator==(const StyleSelfAlignmentData&, const StyleSelfAlignmentData&) = default;
 

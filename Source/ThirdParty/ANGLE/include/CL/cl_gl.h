@@ -51,6 +51,13 @@ extern "C" {
 #define CL_KHR_GL_SHARING_EXTENSION_NAME \
     "cl_khr_gl_sharing"
 
+
+#define CL_KHR_GL_SHARING_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
+typedef int                 cl_GLint;
+typedef unsigned int        cl_GLenum;
+typedef unsigned int        cl_GLuint;
+
 typedef cl_uint             cl_gl_context_info;
 
 /* Error codes */
@@ -313,6 +320,9 @@ clCreateFromGLTexture3D(
 #define CL_KHR_GL_EVENT_EXTENSION_NAME \
     "cl_khr_gl_event"
 
+
+#define CL_KHR_GL_EVENT_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
 typedef struct __GLsync *   cl_GLsync;
 
 /* cl_command_type */
@@ -345,6 +355,9 @@ clCreateEventFromGLsyncKHR(
 #define CL_KHR_GL_DEPTH_IMAGES_EXTENSION_NAME \
     "cl_khr_gl_depth_images"
 
+
+#define CL_KHR_GL_DEPTH_IMAGES_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
 /* cl_channel_order */
 #define CL_DEPTH_STENCIL                                    0x10BE
 
@@ -358,6 +371,9 @@ clCreateEventFromGLsyncKHR(
 #define CL_KHR_GL_MSAA_SHARING_EXTENSION_NAME \
     "cl_khr_gl_msaa_sharing"
 
+
+#define CL_KHR_GL_MSAA_SHARING_EXTENSION_VERSION CL_MAKE_VERSION(1, 0, 0)
+
 /* cl_gl_texture_info */
 #define CL_GL_NUM_SAMPLES                                   0x2012
 
@@ -367,6 +383,9 @@ clCreateEventFromGLsyncKHR(
 #define cl_intel_sharing_format_query_gl 1
 #define CL_INTEL_SHARING_FORMAT_QUERY_GL_EXTENSION_NAME \
     "cl_intel_sharing_format_query_gl"
+
+
+#define CL_INTEL_SHARING_FORMAT_QUERY_GL_EXTENSION_VERSION CL_MAKE_VERSION(0, 0, 0)
 
 /* when cl_khr_gl_sharing is supported */
 

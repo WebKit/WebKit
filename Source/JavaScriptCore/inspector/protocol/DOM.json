@@ -1,7 +1,7 @@
 {
     "domain": "DOM",
     "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, resolve it into the JavaScript object wrapper, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.<p>Note that <code>iframe</code> owner elements will return corresponding document elements as their child nodes.</p>",
-    "debuggableTypes": ["itml", "page", "web-page"],
+    "debuggableTypes": ["itml", "web-page"],
     "targetTypes": ["itml", "page"],
     "types": [
         {
@@ -180,7 +180,8 @@
                 { "name": "showLineNumbers", "type": "boolean", "optional": true, "description": "Show labels for grid line numbers. If not specified, the default value is false." },
                 { "name": "showExtendedGridLines", "type": "boolean", "optional": true, "description": "Show grid lines that extend beyond the bounds of the grid. If not specified, the default value is false." },
                 { "name": "showTrackSizes", "type": "boolean", "optional": true, "description": "Show grid track size information. If not specified, the default value is false." },
-                { "name": "showAreaNames", "type": "boolean", "optional": true, "description": "Show labels for grid area names. If not specified, the default value is false." }
+                { "name": "showAreaNames", "type": "boolean", "optional": true, "description": "Show labels for grid area names. If not specified, the default value is false." },
+                { "name": "showOrderNumbers", "type": "boolean", "optional": true, "description": "Show labels for grid item order. If not specified, the default value is false." }
             ]
         },
         {
@@ -239,8 +240,7 @@
                 { "name": "framerate", "type": "number", "description": "The nominal frame rate of video track in frames per second." },
                 { "name": "height", "type": "integer", "description": "The native height of the video track in CSS pixels" },
                 { "name": "width", "type": "integer", "description": "The native width of the video track in CSS pixels" },
-                { "name": "spatialVideoMetadata", "$ref": "SpatialVideoMetadata", "optional": true },
-                { "name": "videoProjectionMetadata", "$ref": "VideoProjectionMetadata", "optional": true },
+                { "name": "immersiveVideoMetadata", "$ref": "ImmersiveVideoMetadata", "optional": true },
                 { "name": "isProtected", "type": "boolean", "optional": true, "description": "Whether the track contains protected contents" }
             ]
         },
@@ -266,30 +266,23 @@
             ]
         },
         {
-            "id": "SpatialVideoMetadata",
+            "id": "ImmersiveVideoMetadata",
             "type": "object",
             "description": "A structure containing metadata describing spatial video properties.",
             "properties": [
+                { "name": "kind", "$ref": "VideoProjectionMetadataKind", "description": "The kind of immersive video." },
                 { "name": "width", "type": "number" },
                 { "name": "height", "type": "number" },
-                { "name": "horizontalFOVDegrees", "type": "number", "description": "The horizontal field-of-view measurement, in degrees" },
-                { "name": "baseline", "type": "number", "description": "The distance between the centers of the lenses in a camera system, in micrometers" },
-                { "name": "disparityAdjustment", "type": "number", "description": "The relative shift of the left and right eye images, as a percentage." }
+                { "name": "horizontalFieldOfView", "type": "integer", "optional": true, "description": "The horizontal field-of-view measurement, in degrees" },
+                { "name": "stereoCameraBaseline", "type": "integer", "optional": true, "description": "The distance between the centers of the lenses in a camera system, in micrometers" },
+                { "name": "horizontalDisparityAdjustment", "type": "integer", "optional": true, "description": "The relative shift of the left and right eye images, as a percentage" }
             ]
         },
         {
             "id": "VideoProjectionMetadataKind",
             "type": "string",
-            "enum": ["unknown", "equirectangular", "half-equirectangular", "equi-angular-cubemap", "parametric", "pyramid", "apple-immersive-video" ],
+            "enum": ["unknown", "rectilinear", "equirectangular", "half-equirectangular", "equi-angular-cubemap", "parametric", "pyramid", "apple-immersive-video" ],
             "description": "Video Projection Metadata Kind."
-        },
-        {
-            "id": "VideoProjectionMetadata",
-            "type": "object",
-            "description": "A structure containing metadata describing video projections.",
-            "properties": [
-                { "name": "kind", "$ref": "VideoProjectionMetadataKind", "description": "The kind of video projection." }
-            ]
         },
         {
             "id": "ViewportSize",

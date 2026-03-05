@@ -41,18 +41,29 @@ void LimitLowFrequencyGains(std::array<float, kFftLengthBy2Plus1>* gain) {
   (*gain)[0] = (*gain)[1] = std::min((*gain)[1], (*gain)[2]);
 }
 
-void LimitHighFrequencyGains(bool conservative_hf_suppression,
+void LimitHighFrequencyGains(const EchoCanceller3Config::Suppressor& config,
                              std::array<float, kFftLengthBy2Plus1>* gain) {
   // Limit the high frequency gains to avoid echo leakage due to an imperfect
   // filter.
-  constexpr size_t kFirstBandToLimit = (64 * 2000) / 8000;
-  const float min_upper_gain = (*gain)[kFirstBandToLimit];
-  std::for_each(
-      gain->begin() + kFirstBandToLimit + 1, gain->end(),
-      [min_upper_gain](float& a) { a = std::min(a, min_upper_gain); });
+  const int limiting_gain_band =
+      config.high_frequency_suppression.limiting_gain_band;
+  const int bands_in_limiting_gain =
+      config.high_frequency_suppression.bands_in_limiting_gain;
+  if (bands_in_limiting_gain > 0) {
+    RTC_DCHECK_GE(limiting_gain_band, 0);
+    RTC_DCHECK_LE(limiting_gain_band + bands_in_limiting_gain, gain->size());
+    float min_upper_gain = 1.f;
+    for (int band = limiting_gain_band;
+         band < limiting_gain_band + bands_in_limiting_gain; ++band) {
+      min_upper_gain = std::min(min_upper_gain, (*gain)[band]);
+    }
+    std::for_each(
+        gain->begin() + limiting_gain_band + 1, gain->end(),
+        [min_upper_gain](float& a) { a = std::min(a, min_upper_gain); });
+  }
   (*gain)[kFftLengthBy2] = (*gain)[kFftLengthBy2Minus1];
 
-  if (conservative_hf_suppression) {
+  if (config.conservative_hf_suppression) {
     // Limits the gain in the frequencies for which the adaptive filter has not
     // converged.
     // TODO(peah): Make adaptive to take the actual filter error into account.
@@ -315,8 +326,7 @@ void SuppressionGain::LowerBandGain(
   // dominant nearend.
   if (!dominant_nearend_detector_->IsNearendState() || clock_drift ||
       config_.suppressor.conservative_hf_suppression) {
-    LimitHighFrequencyGains(config_.suppressor.conservative_hf_suppression,
-                            gain);
+    LimitHighFrequencyGains(config_.suppressor, gain);
   }
 
   // Store computed gains.

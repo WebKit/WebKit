@@ -25,20 +25,55 @@
 
 #pragma once
 
-#include <WebCore/GridTypeAliases.h>
-#include <WebCore/LayoutUnit.h>
+#include "AxisConstraint.h"
+#include "GridTypeAliases.h"
+#include "LayoutUnit.h"
 
 namespace WebCore {
 
 namespace Layout {
 
+class IntegrationUtils;
+
+struct GridItemSizingFunctions {
+    GridItemSizingFunctions(Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> minContentContributionFunction, Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> maxContentContributionFunction,
+        Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit availableSpace)> usedMinimumSizeFunction)
+            : minContentContribution(WTF::move(minContentContributionFunction))
+            , maxContentContribution(WTF::move(maxContentContributionFunction))
+            , usedMinimumSize(WTF::move(usedMinimumSizeFunction))
+    {
+    }
+
+    Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> minContentContribution;
+    Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> maxContentContribution;
+    Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit availableSpace)> usedMinimumSize;
+};
+
 class TrackSizingAlgorithm {
 public:
-    static TrackSizes sizeTracks(const PlacedGridItems&, const TrackSizingFunctionsList&);
+    static TrackSizes sizeTracks(const PlacedGridItems&, const ComputedSizesList&, const UsedBorderAndPaddingList&,
+        const PlacedGridItemSpanList&, const TrackSizingFunctionsList&, std::optional<LayoutUnit> availableGridSpace,
+        const TrackSizingGridItemConstraintList& oppositeAxisConstraints, const GridItemSizingFunctions&,
+        const AxisConstraint::FreeSpaceScenario&, const LayoutUnit gapSize, const StyleContentAlignmentData& usedContentAlignment,
+        std::optional<LayoutUnit> containerMinimumSize);
 
 private:
 
-    static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList&);
+    static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList&, LayoutUnit availableGridSpace);
+
+    // Flex track infrastructure
+    static FlexTracks collectFlexTracks(const UnsizedTracks&);
+    static bool hasFlexTracks(const UnsizedTracks&);
+    static double flexFactorSum(const FlexTracks&);
+    static LayoutUnit findSizeOfFr(const UnsizedTracks&, const LayoutUnit& availableSpace, const LayoutUnit& gapSize);
+
+    // Expand Flexible Tracks (spec section 11.7)
+    static void expandFlexibleTracks(UnsizedTracks&, const AxisConstraint::FreeSpaceScenario&, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit& gapSize,
+        const PlacedGridItems&, const PlacedGridItemSpanList&, const TrackSizingGridItemConstraintList&, const GridItemSizingFunctions&);
+    static void NODELETE expandFlexibleTracksForMinContent(UnsizedTracks&);
+    static void expandFlexibleTracksForMaxContent(UnsizedTracks&, const FlexTracks&, const LayoutUnit& gapSize,
+        const PlacedGridItems&, const PlacedGridItemSpanList&, const TrackSizingGridItemConstraintList&, const GridItemSizingFunctions&);
+    static void expandFlexibleTracksForDefiniteLength(UnsizedTracks&, const FlexTracks&, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit& gapSize);
 };
 
 } // namespace WebCore

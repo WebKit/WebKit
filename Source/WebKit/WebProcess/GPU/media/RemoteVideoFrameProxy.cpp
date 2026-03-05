@@ -39,8 +39,6 @@
 #include <WebCore/VideoFrameCV.h>
 #include <wtf/MainThread.h>
 #include <wtf/threads/BinarySemaphore.h>
-#else
-#include <WebCore/ImageBuffer.h>
 #endif
 
 namespace WebKit {
@@ -50,7 +48,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoFrameProxy);
 RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::RemoteVideoFrameReference reference, const WebCore::VideoFrame& videoFrame)
 {
     return {
-        WTFMove(reference),
+        WTF::move(reference),
         videoFrame.presentationTime(),
         videoFrame.isMirrored(),
         videoFrame.rotation(),
@@ -62,7 +60,7 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::Remo
 
 Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
 {
-    return adoptRef(*new RemoteVideoFrameProxy(connection, videoFrameObjectHeapProxy, WTFMove(properties)));
+    return adoptRef(*new RemoteVideoFrameProxy(connection, videoFrameObjectHeapProxy, WTF::move(properties)));
 }
 
 static void releaseRemoteVideoFrameProxy(IPC::Connection& connection, const RemoteVideoFrameWriteReference& reference)
@@ -76,12 +74,12 @@ void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Propertie
 }
 
 RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
-    : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation, WTFMove(properties.colorSpace))
+    : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation, WTF::move(properties.colorSpace))
     , m_connection(&connection)
     , m_referenceTracker(properties.reference)
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
-    , m_videoFrameObjectHeapProxy(videoFrameObjectHeapProxy)
+    , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
 {
 }
 
@@ -90,7 +88,6 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameP
     , m_baseVideoFrame(&baseVideoFrame)
     , m_size(baseVideoFrame.m_size)
     , m_pixelFormat(baseVideoFrame.m_pixelFormat)
-    , m_videoFrameObjectHeapProxy(baseVideoFrame.m_videoFrameObjectHeapProxy)
 {
 }
 
@@ -115,17 +112,6 @@ uint32_t RemoteVideoFrameProxy::pixelFormat() const
     return m_pixelFormat;
 }
 
-RefPtr<WebCore::NativeImage> RemoteVideoFrameProxy::copyNativeImage() const
-{
-    // FIXME: This will change in the future to create GPUP side reference.
-#if PLATFORM(COCOA)
-    Ref frame = m_baseVideoFrame ? *m_baseVideoFrame : const_cast<RemoteVideoFrameProxy&>(*this);
-    return m_videoFrameObjectHeapProxy->getNativeImage(frame.get());
-#else
-    return nullptr;
-#endif
-}
-
 #if PLATFORM(COCOA)
 CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 {
@@ -133,14 +119,16 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
         return m_baseVideoFrame->pixelBuffer();
 
     Locker lock(m_pixelBufferLock);
-    if (!m_pixelBuffer) {
+    if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
+        auto videoFrameObjectHeapProxy = std::exchange(m_videoFrameObjectHeapProxy, nullptr);
+
         bool canSendSync = isMainRunLoop(); // FIXME: we should be able to sendSync from other threads too.
         bool canUseIOSurface = !WebProcess::singleton().shouldUseRemoteRenderingForWebGL();
         if (!canUseIOSurface || !canSendSync) {
             Ref protectedThis { *this };
             BinarySemaphore semaphore;
-            m_videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [&protectedThis, &semaphore](auto pixelBuffer) {
-                protectedThis->m_pixelBuffer = WTFMove(pixelBuffer);
+            videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [&protectedThis, &semaphore](auto pixelBuffer) {
+                protectedThis->m_pixelBuffer = WTF::move(pixelBuffer);
                 semaphore.signal();
             });
             semaphore.wait();

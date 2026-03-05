@@ -29,33 +29,41 @@
 #include "JSDOMGlobalObject.h"
 #include "LocalDOMWindow.h"
 #include <JavaScriptCore/BuiltinNames.h>
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSNativeStdFunction.h>
 #include <JavaScriptCore/JSPromiseConstructor.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-auto DOMPromise::whenSettled(Function<void()>&& callback) -> IsCallbackRegistered
+auto DOMPromise::whenSettledWithResult(Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&& callback) -> IsCallbackRegistered
 {
     if (isSuspended())
         return IsCallbackRegistered::No;
-    return whenPromiseIsSettled(globalObject(), promise(), WTFMove(callback));
+    return whenPromiseIsSettled(globalObject(), promise(), WTF::move(callback));
 }
 
-auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPromise* promise, Function<void()>&& callback) -> IsCallbackRegistered
+auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPromise* promise, Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&& callback) -> IsCallbackRegistered
 {
     auto& lexicalGlobalObject = *globalObject;
     auto& vm = lexicalGlobalObject.vm();
     JSLockHolder lock(vm);
-    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTFMove(callback)] (JSGlobalObject*, CallFrame*) mutable {
-        callback();
+    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTF::move(callback)] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
+        auto* castedThis = JSC::jsDynamicCast<JSC::JSPromise*>(callFrame->thisValue());
+        ASSERT(castedThis);
+        // We exchange callback so that all captured variables are deallocated after the call. This is quicker than waiting for the handler function to be GCed.
+        if (castedThis)
+            std::exchange(callback, { })(JSC::jsCast<JSDOMGlobalObject*>(globalObject), castedThis->status() == JSC::JSPromise::Status::Fulfilled, castedThis->result());
         return JSC::JSValue::encode(JSC::jsUndefined());
     });
 
-    promise->performPromiseThenExported(vm, &lexicalGlobalObject, handler, handler, JSC::jsUndefined());
+    auto* thisHandler = JSC::JSBoundFunction::create(vm, globalObject, handler, promise, { }, 0, jsEmptyString(vm), JSC::makeSource("createWhenPromiseSettledFunction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
+    if (!thisHandler) [[unlikely]]
+        return IsCallbackRegistered::No;
+
+    promise->performPromiseThenExported(vm, globalObject, thisHandler, thisHandler, JSC::jsUndefined());
     return IsCallbackRegistered::Yes;
 }
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "NavigationHistoryEntry.h"
-#include "ScriptWrappable.h"
+#include <WebCore/ScriptWrappable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -34,14 +34,14 @@ class NavigationHistoryEntry;
 enum class NavigationNavigationType : uint8_t;
 
 class NavigationActivation final : public RefCounted<NavigationActivation>, public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationActivation);
+    WTF_MAKE_TZONE_ALLOCATED(NavigationActivation);
 public:
     static Ref<NavigationActivation> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
     {
-        return adoptRef(*new NavigationActivation(type, WTFMove(entry), WTFMove(fromEntry)));
+        return adoptRef(*new NavigationActivation(type, WTF::move(entry), WTF::move(fromEntry)));
     }
 
-    ~NavigationActivation();
+    WEBCORE_EXPORT ~NavigationActivation();
 
     NavigationNavigationType navigationType() { return m_navigationType; };
     NavigationHistoryEntry* from() const { return m_fromEntry.get(); };

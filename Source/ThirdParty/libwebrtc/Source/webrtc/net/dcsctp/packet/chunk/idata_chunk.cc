@@ -44,7 +44,6 @@ namespace dcsctp {
 //  /                           User Data                           /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int IDataChunk::kType;
 
 std::optional<IDataChunk> IDataChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

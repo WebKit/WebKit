@@ -73,9 +73,9 @@ typedef void* DragImageRef;
 #endif
 
 #if PLATFORM(COCOA)
-extern const float ColorSwatchCornerRadius;
-extern const float ColorSwatchStrokeSize;
-extern const float ColorSwatchWidth;
+inline constexpr float ColorSwatchCornerRadius = 4;
+inline constexpr float ColorSwatchStrokeSize = 4;
+inline constexpr float ColorSwatchWidth = 24;
 #endif
 
 IntSize dragImageSize(DragImageRef);
@@ -116,8 +116,8 @@ public:
     WEBCORE_EXPORT ~DragImage();
 
     DragImage(RefPtr<TextIndicator> textIndicator, std::optional<Path>&& visiblePath)
-        : m_textIndicator(WTFMove(textIndicator))
-        , m_visiblePath(WTFMove(visiblePath))
+        : m_textIndicator(WTF::move(textIndicator))
+        , m_visiblePath(WTF::move(visiblePath))
     { }
 
     WEBCORE_EXPORT DragImage& operator=(DragImage&&);
@@ -128,7 +128,7 @@ public:
 
     void setVisiblePath(const Path& path) { m_visiblePath = path; }
     bool hasVisiblePath() const { return !!m_visiblePath; }
-    const std::optional<Path>& visiblePath() const { return m_visiblePath; }
+    const std::optional<Path>& visiblePath() const LIFETIME_BOUND { return m_visiblePath; }
 
     explicit operator bool() const { return !!m_dragImageRef; }
     DragImageRef get() const { return m_dragImageRef; }

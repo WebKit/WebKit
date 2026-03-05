@@ -18,7 +18,7 @@
 #include "config/aom_config.h"
 
 #include "aom_dsp/aom_dsp_common.h"
-#include "aom_dsp/entcode.h"
+
 #include "aom_ports/bitops.h"
 #include "aom_ports/mem.h"
 

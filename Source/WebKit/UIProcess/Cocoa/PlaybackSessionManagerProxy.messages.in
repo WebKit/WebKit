@@ -51,8 +51,7 @@ messages -> PlaybackSessionManagerProxy {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     SupportsLinearMediaPlayerChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool supportsLinearMediaPlayer)
 #endif
-    SpatialVideoMetadataChanged(WebKit::PlaybackSessionContextIdentifier contextId, struct std::optional<WebCore::SpatialVideoMetadata> metadata);
-    VideoProjectionMetadataChanged(WebKit::PlaybackSessionContextIdentifier contextId, struct std::optional<WebCore::VideoProjectionMetadata> metadata);
+    ImmersiveVideoMetadataChanged(WebKit::PlaybackSessionContextIdentifier contextId, struct std::optional<WebCore::ImmersiveVideoMetadata> metadata);
     SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId, bool isVideo)
     ClearPlaybackControlsManager()
 

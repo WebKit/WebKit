@@ -27,6 +27,7 @@
 #if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
 
 #include "MediaStreamTrack.h"
+#include "MediaStreamTrackHandle.h"
 #include "ReadableStreamSource.h"
 #include "RealtimeMediaSource.h"
 #include "WebCodecsVideoFrame.h"
@@ -46,11 +47,11 @@ template<typename> class ExceptionOr;
 class MediaStreamTrackProcessor
     : public RefCounted<MediaStreamTrackProcessor>
     , public ContextDestructionObserver {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamTrackProcessor);
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackProcessor);
 public:
     struct Init {
-        RefPtr<MediaStreamTrack> track;
-        unsigned short maxBufferSize { 1 };
+        Variant<Ref<MediaStreamTrack>, Ref<MediaStreamTrackHandle>> track;
+        std::optional<unsigned short> maxBufferSize;
     };
 
     static ExceptionOr<Ref<MediaStreamTrackProcessor>> create(ScriptExecutionContext&, Init&&);
@@ -63,18 +64,16 @@ public:
     ExceptionOr<Ref<ReadableStream>> readable(JSC::JSGlobalObject&);
 
     // Lives in ScriptExecutionContext only.
-    class Source final
-        : public ReadableStreamSource
-        , public MediaStreamTrackPrivateObserver {
-        WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Source);
+    class Source final : public ReadableStreamSource {
+        WTF_MAKE_TZONE_ALLOCATED(Source);
     public:
-        Source(Ref<MediaStreamTrackPrivate>&&, MediaStreamTrackProcessor&);
+        explicit Source(MediaStreamTrackProcessor&);
         ~Source();
 
-        bool isEnabled() const { return m_privateTrack->enabled(); }
+        bool isEnabled() const { return m_processor->isEnabled(); }
         bool isWaiting() const { return m_isWaiting; }
         bool isCancelled() const { return m_isCancelled; }
-        void close();
+        void trackEnded();
         void enqueue(WebCodecsVideoFrame&, ScriptExecutionContext&);
 
         void ref() const final { m_processor->ref(); };
@@ -83,36 +82,85 @@ public:
         void setAsCancelled() { m_isCancelled = true; }
 
     private:
-
-        // MediaStreamTrackPrivateObserver
-        void trackEnded(MediaStreamTrackPrivate&) final;
-        void trackMutedChanged(MediaStreamTrackPrivate&) final { }
-        void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
-        void trackEnabledChanged(MediaStreamTrackPrivate&) final { }
-
         // ReadableStreamSource
         void setActive() { };
         void setInactive() { };
         void doStart() final;
         void doPull() final;
-        void doCancel() final;
+        void doCancel(JSC::JSValue) final;
 
         bool m_isWaiting { false };
         bool m_isCancelled { false };
-        const Ref<MediaStreamTrackPrivate> m_privateTrack;
         const WeakRef<MediaStreamTrackProcessor> m_processor;
     };
     using MediaStreamTrackProcessorSource = MediaStreamTrackProcessor::Source;
 
-
 private:
-    MediaStreamTrackProcessor(ScriptExecutionContext&, Ref<MediaStreamTrack>&&, unsigned short maxVideoFramesCount);
+    MediaStreamTrackProcessor(ScriptExecutionContext&, Ref<MediaStreamTrackHandle>&&, unsigned short maxVideoFramesCount);
 
     // ContextDestructionObserver
     void contextDestroyed() final;
 
-    void stopVideoFrameObserver();
+    bool isEnabled() const { return m_trackKeeper && m_trackKeeper->isTrackEnabled(); }
+    void stopObserving();
     void tryEnqueueingVideoFrame();
+    void trackEnded();
+
+    class TrackObserver;
+    class TrackObserverWrapper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackObserverWrapper> {
+    public:
+        static Ref<TrackObserverWrapper> create(ScriptExecutionContext&, MediaStreamTrackProcessor&, MediaStreamTrackHandle&);
+        ~TrackObserverWrapper()
+        {
+            ASSERT(m_isStopped);
+        }
+
+        void start();
+        void stop();
+        void trackEnded();
+
+    private:
+        TrackObserverWrapper(ScriptExecutionContext&, MediaStreamTrackProcessor&, MediaStreamTrackHandle&);
+
+        void removeObserver();
+
+#if ASSERT_ENABLED
+        bool m_isStopped { false };
+#endif
+
+        const ScriptExecutionContextIdentifier m_trackContextIdentifier;
+        const ScriptExecutionContextIdentifier m_processorContextIdentifier;
+        const WeakPtr<MediaStreamTrackProcessor> m_processor;
+        const WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData> m_track;
+
+        RefPtr<TrackObserver> m_observer;
+    };
+
+    class TrackObserver final : public MediaStreamTrackPrivateObserver, public RefCounted<TrackObserver> {
+    public:
+        static Ref<TrackObserver> create(TrackObserverWrapper& wrapper) { return adoptRef(*new TrackObserver(wrapper)); }
+
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
+
+    private:
+        explicit TrackObserver(TrackObserverWrapper& wrapper)
+            : m_wrapper(wrapper)
+        {
+        }
+
+        // MediaStreamTrackPrivateObserver
+        void trackEnded(MediaStreamTrackPrivate&) final
+        {
+            if (RefPtr wrapper = m_wrapper.get())
+                wrapper->trackEnded();
+        }
+        void trackEnabledChanged(MediaStreamTrackPrivate&) final { }
+        void trackMutedChanged(MediaStreamTrackPrivate&) final { }
+        void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
+
+        ThreadSafeWeakPtr<TrackObserverWrapper> m_wrapper;
+    };
 
     class VideoFrameObserver final : private RealtimeMediaSource::VideoFrameObserver {
         WTF_MAKE_TZONE_ALLOCATED(VideoFrameObserver);
@@ -153,10 +201,12 @@ private:
         const UniqueRef<VideoFrameObserver> m_observer;
     };
 
+    bool m_isTrackEnded { false };
+    RefPtr<const MediaStreamTrack::Keeper> m_trackKeeper;
     RefPtr<ReadableStream> m_readable;
     const std::unique_ptr<Source> m_readableStreamSource;
     RefPtr<VideoFrameObserverWrapper> m_videoFrameObserverWrapper;
-    const Ref<MediaStreamTrack> m_track;
+    const Ref<TrackObserverWrapper> m_trackObserver;
 };
 
 } // namespace WebCore

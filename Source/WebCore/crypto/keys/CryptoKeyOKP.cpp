@@ -36,7 +36,7 @@ namespace WebCore {
 static const ASCIILiteral X25519 { "X25519"_s };
 static const ASCIILiteral Ed25519 { "Ed25519"_s };
 
-static constexpr size_t keySizeInBytesFromNamedCurve(CryptoKeyOKP::NamedCurve curve)
+static constexpr size_t NODELETE keySizeInBytesFromNamedCurve(CryptoKeyOKP::NamedCurve curve)
 {
     switch (curve) {
     case CryptoKeyOKP::NamedCurve::X25519:
@@ -50,13 +50,13 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::create(CryptoAlgorithmIdentifier identifier, 
 {
     if (platformKey.size() != keySizeInBytesFromNamedCurve(curve))
         return nullptr;
-    return adoptRef(*new CryptoKeyOKP(identifier, curve, type, WTFMove(platformKey), extractable, usages));
+    return adoptRef(*new CryptoKeyOKP(identifier, curve, type, WTF::move(platformKey), extractable, usages));
 }
 
 CryptoKeyOKP::CryptoKeyOKP(CryptoAlgorithmIdentifier identifier, NamedCurve curve, CryptoKeyType type, KeyMaterial&& data, bool extractable, CryptoKeyUsageBitmap usages)
     : CryptoKey(identifier, type, extractable, usages)
     , m_curve(curve)
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
 {
 }
 
@@ -69,7 +69,7 @@ ExceptionOr<CryptoKeyPair> CryptoKeyOKP::generatePair(CryptoAlgorithmIdentifier 
     if (!result)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(*result);
+    return WTF::move(*result);
 }
 
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importRaw(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -78,7 +78,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importRaw(CryptoAlgorithmIdentifier identifie
         return nullptr;
 
     // FIXME: The Ed25519 spec states that import in raw format must be used only for Verify.
-    return create(identifier, namedCurve, usages & CryptoKeyUsageSign ? CryptoKeyType::Private : CryptoKeyType::Public, WTFMove(keyData), extractable, usages);
+    return create(identifier, namedCurve, usages & CryptoKeyUsageSign ? CryptoKeyType::Private : CryptoKeyType::Public, WTF::move(keyData), extractable, usages);
 }
 
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -131,10 +131,10 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
         auto d = base64URLDecode(keyData.d);
         if (!d || !platformCheckPairedKeys(identifier, namedCurve, *d, *x))
             return nullptr;
-        return create(identifier, namedCurve, CryptoKeyType::Private, WTFMove(*d), extractable, usages);
+        return create(identifier, namedCurve, CryptoKeyType::Private, WTF::move(*d), extractable, usages);
     }
 
-    return create(identifier, namedCurve, CryptoKeyType::Public, WTFMove(*x), extractable, usages);
+    return create(identifier, namedCurve, CryptoKeyType::Public, WTF::move(*x), extractable, usages);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportRaw() const
@@ -223,7 +223,7 @@ CryptoKey::Data CryptoKeyOKP::data() const
         algorithmIdentifier(),
         extractable(),
         usagesBitmap(),
-        WTFMove(key),
+        WTF::move(key),
         std::nullopt,
         std::nullopt,
         namedCurveString(),

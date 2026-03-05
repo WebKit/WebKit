@@ -31,25 +31,23 @@
 
 namespace WebCore {
 
-class FilterOperation;
-class FilterOperations;
 class GraphicsContext;
 class RenderElement;
 
 namespace Style {
 struct Filter;
+struct FilterValue;
 }
 
 class CSSFilterRenderer final : public Filter {
     WTF_MAKE_TZONE_ALLOCATED(CSSFilterRenderer);
 public:
-    static RefPtr<CSSFilterRenderer> create(RenderElement&, const Style::Filter&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
-    static RefPtr<CSSFilterRenderer> create(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
+    static RefPtr<CSSFilterRenderer> create(RenderElement&, const Style::Filter&, const FilterGeometry&, OptionSet<FilterRenderingMode>, bool showDebugOverlay, const GraphicsContext& destinationContext);
+
     WEBCORE_EXPORT static Ref<CSSFilterRenderer> create(Vector<Ref<FilterFunction>>&&);
-    WEBCORE_EXPORT static Ref<CSSFilterRenderer> create(Vector<Ref<FilterFunction>>&&, OptionSet<FilterRenderingMode>, const FloatSize& filterScale, const FloatRect& filterRegion);
+    WEBCORE_EXPORT static Ref<CSSFilterRenderer> create(Vector<Ref<FilterFunction>>&&, const FilterGeometry&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, bool showDebugOverlay);
 
     const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
-
     void setFilterRegion(const FloatRect&);
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
@@ -61,28 +59,24 @@ public:
     FilterStyleVector createFilterStyles(GraphicsContext&, const FilterStyle& sourceStyle) const final;
 
     static bool isIdentity(RenderElement&, const Style::Filter&);
-    static bool isIdentity(RenderElement&, const FilterOperations&);
     static IntOutsets calculateOutsets(RenderElement&, const Style::Filter&, const FloatRect& targetBoundingBox);
-    static IntOutsets calculateOutsets(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
 
 private:
-    static RefPtr<CSSFilterRenderer> createGeneric(RenderElement&, const auto&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
+    CSSFilterRenderer(const FilterGeometry&, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
+    CSSFilterRenderer(Vector<Ref<FilterFunction>>&&, const FilterGeometry&);
 
-    CSSFilterRenderer(const FloatSize& filterScale, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
-    CSSFilterRenderer(Vector<Ref<FilterFunction>>&&);
-    CSSFilterRenderer(Vector<Ref<FilterFunction>>&&, const FloatSize& filterScale, const FloatRect& filterRegion);
+    RefPtr<FilterFunction> buildFilterFunction(RenderElement&, const Style::FilterValue&, OptionSet<FilterRenderingMode>, const GraphicsContext& destinationContext);
+    bool buildFilterFunctions(RenderElement&, const Style::Filter&, OptionSet<FilterRenderingMode>, const GraphicsContext& destinationContext);
 
-    RefPtr<FilterFunction> buildFilterFunction(RenderElement&, const FilterOperation&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
-    bool buildFilterFunctions(RenderElement&, const auto&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
+    void computeEnclosingFilterRegion();
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
+    Vector<Ref<FilterFunction>> m_functions;
     bool m_hasFilterThatMovesPixels { false };
     bool m_hasFilterThatShouldBeRestrictedBySecurityOrigin { false };
-
-    Vector<Ref<FilterFunction>> m_functions;
 };
 
 } // namespace WebCore

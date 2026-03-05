@@ -45,19 +45,19 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Attr);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Attr);
 
 using namespace HTMLNames;
 
 Attr::Attr(Element& element, const QualifiedName& name)
-    : Node(element.document(), ATTRIBUTE_NODE, { })
+    : Node(element.document(), NodeType::Attribute, { })
     , m_element(element)
     , m_name(name)
 {
 }
 
 Attr::Attr(Document& document, const QualifiedName& name, const AtomString& standaloneValue)
-    : Node(document, ATTRIBUTE_NODE, { })
+    : Node(document, NodeType::Attribute, { })
     , m_name(name)
     , m_standaloneValue(standaloneValue)
 {
@@ -117,7 +117,7 @@ ExceptionOr<void> Attr::setValue(const AtomString& value)
 
                 element = m_element.get();
                 if (!element) {
-                    m_standaloneValue = WTFMove(verifiedValue);
+                    m_standaloneValue = WTF::move(verifiedValue);
                     return { };
                 }
             }

@@ -30,7 +30,7 @@
 namespace WebCore {
 namespace Style {
 
-struct BorderImageWidthValueLength : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
+struct BorderImageWidthValueLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
     using Base::Base;
 };
 
@@ -43,14 +43,24 @@ struct BorderImageWidthValue {
         : m_value { keyword }
     {
     }
-
     BorderImageWidthValue(LengthPercentage&& length)
-        : m_value { WTFMove(length) }
+        : m_value { WTF::move(length) }
     {
     }
-
+    BorderImageWidthValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : m_value { LengthPercentage { literal } }
+    {
+    }
+    BorderImageWidthValue(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+        : m_value { LengthPercentage { literal } }
+    {
+    }
     BorderImageWidthValue(Number number)
         : m_value { number }
+    {
+    }
+    BorderImageWidthValue(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : m_value { Number { literal } }
     {
     }
 
@@ -97,8 +107,59 @@ private:
 // <'border-image-width'> = [ <length-percentage [0,∞]> | <number [0,∞]> | auto ]{1,4}
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-image-width
 struct BorderImageWidth {
-    MinimallySerializingSpaceSeparatedRectEdges<BorderImageWidthValue> values { BorderImageWidthValue::Number { 1 } };
+    using Value = BorderImageWidthValue;
+    using Edges = MinimallySerializingSpaceSeparatedRectEdges<Value>;
+
+    Edges values { Value::Number { 1 } };
     bool legacyWebkitBorderImage { false };
+
+    BorderImageWidth(Edges values, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(values) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value top, Value right, Value bottom, Value left, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(top), WTF::move(right), WTF::move(bottom), WTF::move(left) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value value, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(value) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::Keyword::Auto keyword, bool legacyWebkitBorderImage = false)
+        : values { keyword }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value::LengthPercentage&& lengthPercentage, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(lengthPercentage) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::ValueLiteral<CSS::LengthUnit::Px> literal, bool legacyWebkitBorderImage = false)
+        : values { literal }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal, bool legacyWebkitBorderImage = false)
+        : values { literal }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value::Number number, bool legacyWebkitBorderImage = false)
+        : values { number }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::ValueLiteral<CSS::NumberUnit::Number> literal, bool legacyWebkitBorderImage = false)
+        : values { literal }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+
+    bool overridesBorderWidths() const { return legacyWebkitBorderImage; }
 
     bool operator==(const BorderImageWidth&) const = default;
 };

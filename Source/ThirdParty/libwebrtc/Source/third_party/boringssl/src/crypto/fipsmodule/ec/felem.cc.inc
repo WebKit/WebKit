@@ -45,7 +45,7 @@ int ec_felem_to_bignum(const EC_GROUP *group, BIGNUM *out, const EC_FELEM *in) {
   uint8_t bytes[EC_MAX_BYTES];
   size_t len;
   ec_felem_to_bytes(group, bytes, &len, in);
-  return BN_bin2bn(bytes, len, out) != NULL;
+  return BN_bin2bn(bytes, len, out) != nullptr;
 }
 
 void ec_felem_to_bytes(const EC_GROUP *group, uint8_t *out, size_t *out_len,

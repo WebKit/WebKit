@@ -45,7 +45,7 @@ class VariableEventStream {
 public:
     VariableEventStream() = default;
     VariableEventStream(Vector<VariableEvent>&& stream)
-        : m_stream(WTFMove(stream))
+        : m_stream(WTF::move(stream))
     {
     }
 
@@ -81,7 +81,7 @@ public:
 
     unsigned size() const { return m_stream.size(); }
 
-    Vector<VariableEvent> finalize() { return WTFMove(m_stream); }
+    Vector<VariableEvent> finalize() { return WTF::move(m_stream); }
 
 private:
     void logEvent(const VariableEvent&);

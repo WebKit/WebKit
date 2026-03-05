@@ -33,7 +33,7 @@ namespace WebCore {
 namespace Layout {
 
 class BoxGeometry {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BoxGeometry);
+    WTF_MAKE_TZONE_ALLOCATED(BoxGeometry);
 public:
     BoxGeometry(const BoxGeometry&);
     BoxGeometry() = default;
@@ -126,10 +126,10 @@ public:
 
     bool hasMarginBorderOrPadding() const { return horizontalMarginBorderAndPadding() || verticalMarginBorderAndPadding(); }
 
-    Rect marginBox() const;
-    Rect borderBox() const;
-    Rect paddingBox() const;
-    Rect contentBox() const;
+    Rect NODELETE marginBox() const;
+    Rect NODELETE borderBox() const;
+    Rect NODELETE paddingBox() const;
+    Rect NODELETE contentBox() const;
 
 #if ASSERT_ENABLED
     void setHasPrecomputedMarginBefore() { m_hasPrecomputedMarginBefore = true; }
@@ -165,7 +165,7 @@ public:
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
     void setSpaceForScrollbar(LayoutSize);
 
-    void reset();
+    void NODELETE reset();
 
 private:
     LayoutUnit top() const;

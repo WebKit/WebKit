@@ -31,5 +31,5 @@
 
 id WKBundleGetParameters(WKBundleRef bundle)
 {
-    return WebKit::toProtectedImpl(bundle)->bundleParameters();
+    return protect(WebKit::toImpl(bundle))->bundleParameters();
 }

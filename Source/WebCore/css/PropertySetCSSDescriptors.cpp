@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PropertySetCSSDescriptors);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PropertySetCSSDescriptors);
 
 PropertySetCSSDescriptors::PropertySetCSSDescriptors(MutableStyleProperties& propertySet, CSSRule& parentRule)
     : m_parentRule(&parentRule)
@@ -52,11 +52,6 @@ PropertySetCSSDescriptors::PropertySetCSSDescriptors(MutableStyleProperties& pro
 }
 
 PropertySetCSSDescriptors::~PropertySetCSSDescriptors() = default;
-
-Ref<MutableStyleProperties> PropertySetCSSDescriptors::protectedPropertySet() const
-{
-    return m_propertySet;
-}
 
 unsigned PropertySetCSSDescriptors::length() const
 {
@@ -87,7 +82,7 @@ String PropertySetCSSDescriptors::item(unsigned i) const
 
 String PropertySetCSSDescriptors::cssText() const
 {
-    return protectedPropertySet()->asText(CSS::defaultSerializationContext());
+    return protect(propertySet())->asText(CSS::defaultSerializationContext());
 }
 
 ExceptionOr<void> PropertySetCSSDescriptors::setCssText(const String& text)
@@ -96,7 +91,7 @@ ExceptionOr<void> PropertySetCSSDescriptors::setCssText(const String& text)
     if (!willMutate())
         return { };
 
-    bool changed = protectedPropertySet()->parseDeclaration(text, cssParserContext());
+    bool changed = protect(propertySet())->parseDeclaration(text, cssParserContext());
     didMutate(changed ? MutationType::PropertyChanged : MutationType::StyleAttributeChanged);
 
     mutationScope.enqueueMutationRecord();
@@ -108,13 +103,13 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSDescriptors::getPropertyCSSValue(cons
     auto propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return nullptr;
-    return wrapForDeprecatedCSSOM(protectedPropertySet()->getPropertyCSSValue(propertyID).get());
+    return wrapForDeprecatedCSSOM(protect(propertySet())->getPropertyCSSValue(propertyID).get());
 }
 
 String PropertySetCSSDescriptors::getPropertyValue(const String& propertyName)
 {
     if (styleDeclarationType() == StyleDeclarationType::Function && isCustomPropertyName(propertyName))
-        return protectedPropertySet()->getCustomPropertyValue(propertyName);
+        return protect(propertySet())->getCustomPropertyValue(propertyName);
 
     auto propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
@@ -127,7 +122,7 @@ String PropertySetCSSDescriptors::getPropertyPriority(const String& propertyName
     auto propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return emptyString();
-    return protectedPropertySet()->propertyIsImportant(propertyID) ? "important"_s : emptyString();
+    return protect(propertySet())->propertyIsImportant(propertyID) ? "important"_s : emptyString();
 }
 
 String PropertySetCSSDescriptors::getPropertyShorthand(const String& propertyName)
@@ -135,12 +130,12 @@ String PropertySetCSSDescriptors::getPropertyShorthand(const String& propertyNam
     auto propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return String();
-    return protectedPropertySet()->getPropertyShorthand(propertyID);
+    return protect(propertySet())->getPropertyShorthand(propertyID);
 }
 
 bool PropertySetCSSDescriptors::isPropertyImplicit(const String& propertyName)
 {
-    return protectedPropertySet()->isPropertyImplicit(cssPropertyID(propertyName));
+    return protect(propertySet())->isPropertyImplicit(cssPropertyID(propertyName));
 }
 
 ExceptionOr<void> PropertySetCSSDescriptors::setProperty(const String& propertyName, const String& value, const String& priority)
@@ -158,7 +153,7 @@ ExceptionOr<void> PropertySetCSSDescriptors::setProperty(const String& propertyN
     if (!important && !priority.isEmpty())
         return { };
 
-    bool changed = protectedPropertySet()->setProperty(propertyID, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
+    bool changed = protect(propertySet())->setProperty(propertyID, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
 
     didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
 
@@ -183,7 +178,7 @@ ExceptionOr<String> PropertySetCSSDescriptors::removeProperty(const String& prop
         return String();
 
     String result;
-    bool changed = protectedPropertySet()->removeProperty(propertyID, &result);
+    bool changed = protect(propertySet())->removeProperty(propertyID, &result);
 
     didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
 
@@ -197,7 +192,7 @@ String PropertySetCSSDescriptors::getPropertyValueInternal(CSSPropertyID propert
     if (!isExposed(propertyID))
         return { };
 
-    auto value = protectedPropertySet()->getPropertyValue(propertyID);
+    auto value = protect(propertySet())->getPropertyValue(propertyID);
 
     if (!value.isEmpty())
         return value;
@@ -214,7 +209,7 @@ ExceptionOr<void> PropertySetCSSDescriptors::setPropertyInternal(CSSPropertyID p
     if (!isExposed(propertyID))
         return { };
 
-    if (protectedPropertySet()->setProperty(propertyID, value, cssParserContext(), important)) {
+    if (protect(propertySet())->setProperty(propertyID, value, cssParserContext(), important)) {
         didMutate(MutationType::PropertyChanged);
         mutationScope.enqueueMutationRecord();
     } else
@@ -304,7 +299,7 @@ CSSRule* PropertySetCSSDescriptors::parentRule() const
 CSSParserContext PropertySetCSSDescriptors::cssParserContext() const
 {
     RefPtr cssStyleSheet = parentStyleSheet();
-    auto context = cssStyleSheet ? cssStyleSheet->contents().parserContext() : CSSParserContext(protectedPropertySet()->cssParserMode());
+    auto context = cssStyleSheet ? cssStyleSheet->contents().parserContext() : CSSParserContext(protect(propertySet())->cssParserMode());
 
     context.enclosingRuleType = ruleType();
 

@@ -46,7 +46,7 @@ struct DOMMatrixInit;
 template<typename> class ExceptionOr;
 
 class DOMPointReadOnly : public ScriptWrappable, public RefCounted<DOMPointReadOnly>, public NoVirtualDestructorBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(DOMPointReadOnly, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMPointReadOnly, WEBCORE_EXPORT);
 public:
     static Ref<DOMPointReadOnly> create(double x, double y, double z, double w) { return adoptRef(*new DOMPointReadOnly(x, y, z, w)); }
     static Ref<DOMPointReadOnly> create(const DOMPointInit& init) { return create(init.x, init.y, init.z, init.w); }
@@ -78,7 +78,7 @@ protected:
     double m_w;
 };
 
-WebCoreOpaqueRoot root(DOMPointReadOnly*);
+WebCoreOpaqueRoot NODELETE root(DOMPointReadOnly*);
 
 } // namespace WebCore
 

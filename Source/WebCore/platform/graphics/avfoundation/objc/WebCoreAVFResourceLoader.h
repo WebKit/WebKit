@@ -28,12 +28,13 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
 
@@ -44,22 +45,28 @@ class DataURLResourceMediaLoader;
 class FragmentedSharedBuffer;
 class MediaPlayerPrivateAVFoundationObjC;
 class ParsedContentRange;
+class PlatformMediaResourceLoader;
 class PlatformResourceMediaLoader;
 class ResourceError;
 class ResourceResponse;
 
-class WebCoreAVFResourceLoader : public ThreadSafeRefCounted<WebCoreAVFResourceLoader> {
+class WebCoreAVFResourceLoader : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCoreAVFResourceLoader> {
     WTF_MAKE_TZONE_ALLOCATED(WebCoreAVFResourceLoader);
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader);
 public:
-    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, GuaranteedSerialFunctionDispatcher&);
+    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, Ref<PlatformMediaResourceLoader>&&, GuaranteedSerialFunctionDispatcher&);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();
     void stopLoading();
 
+#if !RELEASE_LOG_DISABLED
+    void setLogIdentifier(uint64_t logIdentifier) { m_logIdentifier = logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
+#endif
+
 private:
-    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, GuaranteedSerialFunctionDispatcher&);
+    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, Ref<PlatformMediaResourceLoader>&&, GuaranteedSerialFunctionDispatcher&);
 
     friend class CachedResourceMediaLoader;
     friend class DataURLResourceMediaLoader;
@@ -69,14 +76,21 @@ private:
     bool responseReceived(const String&, int, const ParsedContentRange&, size_t);
     bool newDataStoredInSharedBuffer(const FragmentedSharedBuffer&);
 
+    void startLoadingImpl();
     void loadFailed(const ResourceError&);
     void loadFinished();
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const { return m_logger.get(); }
+    ASCIILiteral logClassName() const { return "WebCoreAVFResourceLoader"_s; }
+    WTFLogChannel& logChannel() const;
+#endif
+
     ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     RetainPtr<AVAssetResourceLoadingRequest> m_avRequest;
-    std::unique_ptr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
-    std::unique_ptr<CachedResourceMediaLoader> m_resourceMediaLoader;
-    RefPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
+    RefPtr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
+    RefPtr<PlatformResourceMediaLoader> m_resourceMediaLoader;
+    const Ref<PlatformMediaResourceLoader> m_platformMediaLoader;
     bool m_isBlob { false };
     size_t m_responseOffset { 0 };
     int64_t m_requestedLength { 0 };
@@ -84,6 +98,12 @@ private:
     int64_t m_currentOffset { 0 };
 
     const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
+    std::optional<MonotonicTime> m_loadStartTime;
+
+#if !RELEASE_LOG_DISABLED
+    const Ref<const Logger> m_logger;
+    uint64_t m_logIdentifier;
+#endif
 };
 
 }

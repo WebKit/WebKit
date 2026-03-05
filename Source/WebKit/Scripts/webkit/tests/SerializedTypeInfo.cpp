@@ -631,71 +631,73 @@ Vector<SerializedEnumInfo> allSerializedEnums()
     return {
 #if ENABLE(BOOL_ENUM)
         { "EnumNamespace::BoolEnumType"_s, sizeof(EnumNamespace::BoolEnumType), false, {
-            0, 1
+            { 0, "false"_s },
+            { 1, "true"_s }
         } },
 #endif
         { "EnumWithoutNamespace"_s, sizeof(EnumWithoutNamespace), false, {
-            enumValueForIPCTestAPI(EnumWithoutNamespace::Value1),
-            enumValueForIPCTestAPI(EnumWithoutNamespace::Value2),
-            enumValueForIPCTestAPI(EnumWithoutNamespace::Value3),
+            { enumValueForIPCTestAPI(EnumWithoutNamespace::Value1), "Value1"_s },
+            { enumValueForIPCTestAPI(EnumWithoutNamespace::Value2), "Value2"_s },
+            { enumValueForIPCTestAPI(EnumWithoutNamespace::Value3), "Value3"_s },
         } },
 #if ENABLE(UINT16_ENUM)
         { "EnumNamespace::EnumType"_s, sizeof(EnumNamespace::EnumType), false, {
-            enumValueForIPCTestAPI(EnumNamespace::EnumType::FirstValue),
+            { enumValueForIPCTestAPI(EnumNamespace::EnumType::FirstValue), "FirstValue"_s },
 #if ENABLE(ENUM_VALUE_CONDITION)
-            enumValueForIPCTestAPI(EnumNamespace::EnumType::SecondValue),
+            { enumValueForIPCTestAPI(EnumNamespace::EnumType::SecondValue), "SecondValue"_s },
 #endif
         } },
 #endif
         { "EnumNamespace2::OptionSetEnumType"_s, sizeof(EnumNamespace2::OptionSetEnumType), true, {
-            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue),
+            { enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue), "OptionSetFirstValue"_s },
 #if ENABLE(OPTION_SET_SECOND_VALUE)
-            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue),
+            { enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue), "OptionSetSecondValue"_s },
 #endif
 #if !(ENABLE(OPTION_SET_SECOND_VALUE))
-            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse),
+            { enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse), "OptionSetSecondValueElse"_s },
 #endif
-            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue),
+            { enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue), "OptionSetThirdValue"_s },
         } },
         { "OptionSetEnumFirstCondition"_s, sizeof(OptionSetEnumFirstCondition), true, {
 #if ENABLE(OPTION_SET_FIRST_VALUE)
-            enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetFirstValue),
+            { enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetFirstValue), "OptionSetFirstValue"_s },
 #endif
-            enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetSecondValue),
-            enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetThirdValue),
+            { enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetSecondValue), "OptionSetSecondValue"_s },
+            { enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetThirdValue), "OptionSetThirdValue"_s },
         } },
         { "OptionSetEnumLastCondition"_s, sizeof(OptionSetEnumLastCondition), true, {
-            enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetFirstValue),
-            enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetSecondValue),
+            { enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetFirstValue), "OptionSetFirstValue"_s },
+            { enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetSecondValue), "OptionSetSecondValue"_s },
 #if ENABLE(OPTION_SET_THIRD_VALUE)
-            enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetThirdValue),
+            { enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetThirdValue), "OptionSetThirdValue"_s },
 #endif
         } },
         { "OptionSetEnumAllCondition"_s, sizeof(OptionSetEnumAllCondition), true, {
 #if ENABLE(OPTION_SET_FIRST_VALUE)
-            enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetFirstValue),
+            { enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetFirstValue), "OptionSetFirstValue"_s },
 #endif
 #if ENABLE(OPTION_SET_SECOND_VALUE)
-            enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetSecondValue),
+            { enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetSecondValue), "OptionSetSecondValue"_s },
 #endif
 #if ENABLE(OPTION_SET_THIRD_VALUE)
-            enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetThirdValue),
+            { enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetThirdValue), "OptionSetThirdValue"_s },
 #endif
         } },
 #if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
         { "EnumNamespace::InnerEnumType"_s, sizeof(EnumNamespace::InnerEnumType), false, {
-            enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::InnerValue),
+            { enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::InnerValue), "InnerValue"_s },
 #if ENABLE(INNER_INNER_CONDITION)
-            enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::InnerInnerValue),
+            { enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::InnerInnerValue), "InnerInnerValue"_s },
 #endif
 #if !(ENABLE(INNER_INNER_CONDITION))
-            enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::OtherInnerInnerValue),
+            { enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::OtherInnerInnerValue), "OtherInnerInnerValue"_s },
 #endif
         } },
 #endif
 #if (ENABLE(OUTER_CONDITION)) && (!(ENABLE(INNER_CONDITION)))
         { "EnumNamespace::InnerBoolType"_s, sizeof(EnumNamespace::InnerBoolType), false, {
-            0, 1
+            { 0, "false"_s },
+            { 1, "true"_s }
         } },
 #endif
     };

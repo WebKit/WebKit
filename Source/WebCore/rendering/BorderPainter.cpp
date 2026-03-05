@@ -33,19 +33,27 @@
 #include "FloatRoundedRect.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
+#include "HTMLSelectElement.h"
+#include "InlineIteratorInlineBox.h"
+#include "InlineIteratorLineBox.h"
+#include "LegacyRenderSVGModelObject.h"
 #include "NinePieceImagePainter.h"
 #include "PaintInfo.h"
 #include "PathUtilities.h"
-#include "RenderBox.h"
+#include "RenderBlockFlow.h"
+#include "RenderChildIterator.h"
+#include "RenderInline.h"
+#include "RenderListBox.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <numeric>
 
 namespace WebCore {
 
-static bool borderStyleFillsBorderArea(BorderStyle style)
+static bool NODELETE borderStyleFillsBorderArea(BorderStyle style)
 {
     switch (style) {
     case BorderStyle::None:
@@ -64,7 +72,7 @@ static bool borderStyleFillsBorderArea(BorderStyle style)
     return true;
 }
 
-static bool styleRequiresClipPolygon(BorderStyle style)
+static bool NODELETE styleRequiresClipPolygon(BorderStyle style)
 {
     switch (style) {
     case BorderStyle::None:
@@ -85,7 +93,7 @@ static bool styleRequiresClipPolygon(BorderStyle style)
     return false;
 }
 
-static bool borderStyleHasInnerDetail(BorderStyle style)
+static bool NODELETE borderStyleHasInnerDetail(BorderStyle style)
 {
     switch (style) {
     case BorderStyle::None:
@@ -106,12 +114,12 @@ static bool borderStyleHasInnerDetail(BorderStyle style)
     return false;
 }
 
-static bool borderStyleIsDottedOrDashed(BorderStyle style)
+static bool NODELETE borderStyleIsDottedOrDashed(BorderStyle style)
 {
     return style == BorderStyle::Dotted || style == BorderStyle::Dashed;
 }
 
-static bool decorationHasAllSimpleEdges(const RectEdges<BorderEdge>& edges)
+static bool NODELETE decorationHasAllSimpleEdges(const RectEdges<BorderEdge>& edges)
 {
     for (auto side : allBoxSides) {
         auto& currEdge = edges.at(side);
@@ -254,7 +262,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
 
             return std::tuple<BorderShape, BorderEdges> {
                 BorderShape::shapeForBorderRect(style, rect, borderWidths, closedEdges),
-                WTFMove(edges)
+                WTF::move(edges)
             };
         }
         }
@@ -262,13 +270,14 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         return std::tuple<BorderShape, BorderEdges> { BorderShape({ }, { 0_lu }), { } };
     }();
 
-    bool outerEdgeIsRectangular = !shape.isRounded() || shape.outerShapeContains(m_paintInfo.rect);
+    bool haveAllSolidEdges = decorationHasAllSolidEdges(edges);
+    bool outerEdgeIsRectangular = !shape.isRounded() || (haveAllSolidEdges && shape.allCornersClippedOut(m_paintInfo.rect));
     bool innerEdgeIsRectangular = shape.innerShapeIsRectangular();
 
     paintSides(shape, {
-        style.hasBorderRadius() ? std::make_optional(style.borderRadii()) : std::nullopt,
+        style.border().hasBorderRadius() ? std::optional { style.borderRadii() } : std::nullopt,
         edges,
-        decorationHasAllSolidEdges(edges),
+        haveAllSolidEdges,
         outerEdgeIsRectangular,
         innerEdgeIsRectangular,
         bleedAvoidance,
@@ -386,10 +395,8 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
             auto outerBorderRect = borderShape.borderRect();
             Path path;
             for (auto side : allBoxSides) {
-                if (sides.edges.at(side).shouldRender()) {
-                    auto sideRect = calculateSideRect(outerBorderRect, sides.edges, side);
-                    path.addRect(sideRect); // FIXME: Need pixel snapping here.
-                }
+                if (sides.edges.at(side).shouldRender())
+                    path.addRect(snapRectToDevicePixels(calculateSideRect(outerBorderRect, sides.edges, side), deviceScaleFactor));
             }
 
             graphicsContext.setFillRule(WindRule::NonZero);
@@ -429,7 +436,7 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Render
     if (!image->canRender(m_renderer.ptr(), style.usedZoom()))
         return false;
 
-    CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer.get());
+    CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer);
     if (!modelObject)
         return false;
 

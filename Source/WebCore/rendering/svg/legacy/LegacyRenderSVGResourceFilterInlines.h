@@ -35,19 +35,14 @@ inline SVGFilterElement& LegacyRenderSVGResourceFilter::filterElement() const
     return downcast<SVGFilterElement>(LegacyRenderSVGResourceContainer::element());
 }
 
-inline Ref<SVGFilterElement> LegacyRenderSVGResourceFilter::protectedFilterElement() const
-{
-    return filterElement();
-}
-
 inline SVGUnitTypes::SVGUnitType LegacyRenderSVGResourceFilter::filterUnits() const
 {
-    return protectedFilterElement()->filterUnits();
+    return protect(filterElement())->filterUnits();
 }
 
 inline SVGUnitTypes::SVGUnitType LegacyRenderSVGResourceFilter::primitiveUnits() const
 {
-    return protectedFilterElement()->primitiveUnits();
+    return protect(filterElement())->primitiveUnits();
 }
 
 } // namespace WebCore

@@ -82,7 +82,7 @@ public:
     void consumeAll(NOESCAPE const Invocable<void(T&&)> auto& func)
     {
         consumeAllWithNode([&] (T&& data, Node* node) {
-            func(WTFMove(data));
+            func(WTF::move(data));
             delete node;
         });
     }
@@ -93,7 +93,7 @@ public:
         while (node) {
             Node* oldNode = node;
             node = node->next;
-            func(WTFMove(oldNode->data), oldNode);
+            func(WTF::move(oldNode->data), oldNode);
         }
     }
 

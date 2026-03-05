@@ -84,7 +84,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDisplayLinkClient);
 void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplayID /* displayID */, WebCore::DisplayUpdate /* displayUpdate */, bool /* wantsFullSpeedUpdates */, bool /* anyObserverWantsCallback */)
 {
     RunLoop::mainSingleton().dispatch([pageIdentifier = m_pageIdentifier]() {
-        auto page = WebProcessProxy::webPage(pageIdentifier);
+        RefPtr page = WebProcessProxy::webPage(pageIdentifier);
         if (!page)
             return;
 
@@ -121,7 +121,7 @@ DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyMac::delegatedScrollingMod
 
 std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyMac::createScrollingCoordinatorProxy() const
 {
-    return makeUnique<RemoteScrollingCoordinatorProxyMac>(*protectedPage());
+    return makeUnique<RemoteScrollingCoordinatorProxyMac>(*protect(page()));
 }
 
 DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::existingDisplayLink()
@@ -140,7 +140,7 @@ DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::displayLink()
 {
     ASSERT(m_displayID);
 
-    auto& displayLinks = protectedPage()->configuration().processPool().displayLinks();
+    auto& displayLinks = protect(page())->configuration().processPool().displayLinks();
     return displayLinks.displayLinkForDisplay(*m_displayID);
 }
 
@@ -462,6 +462,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::sendCommitTransientZoom(double scale, F
 void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeDrawingAreaProxyMac " << this << " scheduleDisplayLink for display " << m_displayID << " - existing observer " << m_displayRefreshObserverID);
+    m_needsDisplayRefreshCallbacksForDrawing = true;
     if (m_displayRefreshObserverID)
         return;
 
@@ -487,6 +488,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::pauseDisplayRefreshCallbacks()
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeDrawingAreaProxyMac " << this << " pauseDisplayLink for display " << m_displayID << " - observer " << m_displayRefreshObserverID);
     removeObserver(m_displayRefreshObserverID);
+    m_needsDisplayRefreshCallbacksForDrawing = false;
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::setPreferredFramesPerSecond(IPC::Connection& connection,  WebCore::FramesPerSecond preferredFramesPerSecond)
@@ -530,6 +532,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID
     if (displayID == m_displayID)
         return;
 
+    bool needsDisplayRefreshCallbacksForDrawing = m_needsDisplayRefreshCallbacksForDrawing;
     bool hadFullSpeedOberver = m_fullSpeedUpdateObserverID.has_value();
     if (hadFullSpeedOberver)
         removeObserver(m_fullSpeedUpdateObserverID);
@@ -538,15 +541,16 @@ void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID
 
     RefPtr page = this->page();
     if (m_displayID && page)
-        page->checkedScrollingCoordinatorProxy()->windowScreenWillChange();
+        protect(page->scrollingCoordinatorProxy())->windowScreenWillChange();
 
     m_displayID = displayID;
     m_displayNominalFramesPerSecond = displayNominalFramesPerSecond();
 
     if (page)
-        page->checkedScrollingCoordinatorProxy()->windowScreenDidChange(displayID, m_displayNominalFramesPerSecond);
+        protect(page->scrollingCoordinatorProxy())->windowScreenDidChange(displayID, m_displayNominalFramesPerSecond);
 
-    scheduleDisplayRefreshCallbacks();
+    if (needsDisplayRefreshCallbacksForDrawing)
+        scheduleDisplayRefreshCallbacks();
     if (hadFullSpeedOberver) {
         m_fullSpeedUpdateObserverID = DisplayLinkObserverID::generate();
         if (auto* displayLink = existingDisplayLink())
@@ -585,7 +589,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::didRefreshDisplay()
     }
     // FIXME: Need to pass WebCore::DisplayUpdate here and filter out non-relevant displays.
     if (page)
-        page->checkedScrollingCoordinatorProxy()->displayDidRefresh(m_displayID.value_or(0));
+        protect(page->scrollingCoordinatorProxy())->displayDidRefresh(m_displayID.value_or(0));
     RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay();
 }
 
@@ -615,7 +619,7 @@ MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
     if (!page)
         return MachSendRight();
 
-    RetainPtr<CAContext> rootLayerContext = [page->protectedAcceleratedCompositingRootLayer() context];
+    RetainPtr<CAContext> rootLayerContext = [protect(page->acceleratedCompositingRootLayer()) context];
     if (!rootLayerContext)
         return MachSendRight();
 
@@ -640,7 +644,7 @@ MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
     uint64_t callbackID = connection->installIncomingSyncMessageCallback([rootLayerContext] {
         [rootLayerContext invalidateFences];
     });
-    [CATransaction addCommitHandler:[callbackID, connection = WTFMove(connection)] () mutable {
+    [CATransaction addCommitHandler:[callbackID, connection = WTF::move(connection)] () mutable {
         connection->uninstallIncomingSyncMessageCallback(callbackID);
     } forPhase:kCATransactionPhasePostCommit];
 

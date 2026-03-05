@@ -1,0 +1,5 @@
+Click me!
+Watch me!
+
+FAIL Basic event-based animation-trigger with 'alternate' behavior promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: EventTrigger"
+

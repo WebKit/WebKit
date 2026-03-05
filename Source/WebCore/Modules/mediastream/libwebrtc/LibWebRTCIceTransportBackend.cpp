@@ -42,7 +42,7 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-static inline RTCIceTransportState toRTCIceTransportState(webrtc::IceTransportState state)
+static inline RTCIceTransportState NODELETE toRTCIceTransportState(webrtc::IceTransportState state)
 {
     switch (state) {
     case webrtc::IceTransportState::kNew:
@@ -64,7 +64,7 @@ static inline RTCIceTransportState toRTCIceTransportState(webrtc::IceTransportSt
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline RTCIceGatheringState toRTCIceGatheringState(webrtc::IceGatheringState state)
+static inline RTCIceGatheringState NODELETE toRTCIceGatheringState(webrtc::IceGatheringState state)
 {
     switch (state) {
     case webrtc::IceGatheringState::kIceGatheringNew:
@@ -78,9 +78,9 @@ static inline RTCIceGatheringState toRTCIceGatheringState(webrtc::IceGatheringSt
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-class LibWebRTCIceTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCIceTransportBackendObserver>, public sigslot::has_slots<> {
+class LibWebRTCIceTransportBackendObserver final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<LibWebRTCIceTransportBackendObserver>, public sigslot::has_slots<> {
 public:
-    static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, Ref<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTFMove(backend))); }
+    static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, Ref<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTF::move(backend))); }
 
     void start();
     void stop();
@@ -99,7 +99,7 @@ private:
 };
 
 LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient& client, Ref<webrtc::IceTransportInterface>&& backend)
-    : m_backend(WTFMove(backend))
+    : m_backend(WTF::move(backend))
     , m_client(client)
 {
 }
@@ -110,7 +110,11 @@ void LibWebRTCIceTransportBackendObserver::start()
         auto* internal = m_backend->internal();
         if (!internal)
             return;
-        internal->SignalIceTransportStateChanged.connect(this, &LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged);
+        internal->SubscribeIceTransportStateChanged([weakThis = ThreadSafeWeakPtr { * this }](auto* transport) {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->onIceTransportStateChanged(transport);
+        });
+
         internal->AddGatheringStateCallback(this, [this](auto* transport) { onGatheringStateChanged(transport); });
         internal->SignalNetworkRouteChanged.connect(this, &LibWebRTCIceTransportBackendObserver::onNetworkRouteChanged);
 
@@ -142,7 +146,6 @@ void LibWebRTCIceTransportBackendObserver::stop()
         auto* internal = m_backend->internal();
         if (!internal)
             return;
-        internal->SignalIceTransportStateChanged.disconnect(this);
         internal->RemoveGatheringStateCallback(this);
         internal->SignalNetworkRouteChanged.disconnect(this);
     });
@@ -177,16 +180,16 @@ void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(c
         if (!client)
             return;
 
-        auto local = RTCIceCandidate::create(localSdp, emptyString(), WTFMove(localFields));
-        auto remote = RTCIceCandidate::create(remoteSdp, emptyString(), WTFMove(remoteFields));
-        client->onSelectedCandidatePairChanged(WTFMove(local), WTFMove(remote));
+        auto local = RTCIceCandidate::create(localSdp, emptyString(), WTF::move(localFields));
+        auto remote = RTCIceCandidate::create(remoteSdp, emptyString(), WTF::move(remoteFields));
+        client->onSelectedCandidatePairChanged(WTF::move(local), WTF::move(remote));
     });
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCIceTransportBackend);
 
 LibWebRTCIceTransportBackend::LibWebRTCIceTransportBackend(webrtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
-    : m_backend(toRef(WTFMove(backend)))
+    : m_backend(toRef(WTF::move(backend)))
 {
 }
 

@@ -32,14 +32,14 @@ class LayoutPoint;
 class LayoutSize;
 
 class HTMLMapElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLMapElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLMapElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMapElement);
 public:
     static Ref<HTMLMapElement> create(Document&);
     static Ref<HTMLMapElement> create(const QualifiedName&, Document&);
     virtual ~HTMLMapElement();
 
-    const AtomString& getName() const { return m_name; }
+    const AtomString& getName() const LIFETIME_BOUND { return m_name; }
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
     

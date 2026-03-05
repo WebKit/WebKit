@@ -152,7 +152,7 @@ static void initialize()
     g_metadata.construct();
     auto metadata = makeUnique<Metadata>();
     memcpy(&metadata->defaults, &g_jscConfig.options, sizeof(OptionsStorage));
-    g_metadata.get() = WTFMove(metadata);
+    g_metadata.get() = WTF::move(metadata);
 }
 
 static void releaseMetadata()
@@ -519,9 +519,9 @@ bool OptionRange::isInRange(unsigned count) const
         return true;
 
     if ((m_lowLimit <= count) && (count <= m_highLimit))
-        return m_state == Normal ? true : false;
+        return m_state == Normal;
 
-    return m_state == Normal ? false : true;
+    return m_state != Normal;
 }
 
 void OptionRange::dump(PrintStream& out) const
@@ -585,10 +585,10 @@ static void overrideDefaults()
     Options::numberOfGCMarkers() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
 
     Options::minNumberOfWorklistThreads() = 1;
-    Options::maxNumberOfWorklistThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
-    Options::numberOfBaselineCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
-    Options::numberOfDFGCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
-    Options::numberOfFTLCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
+    Options::maxNumberOfWorklistThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfBaselineCompilerThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfDFGCompilerThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfFTLCompilerThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
     Options::worklistLoadFactor() = 20;
     Options::worklistBaselineLoadWeight() = 2;
     Options::worklistDFGLoadWeight() = 5;
@@ -605,7 +605,7 @@ static void overrideDefaults()
     Options::maximumInliningRecursion() = 3;
 #endif
 
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
+#if USE(MEMORY_FOOTPRINT_API)
     // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
     Options::mediumHeapRAMFraction() = 0.9;
@@ -657,7 +657,10 @@ void Options::setAllJITCodeValidations(bool value)
 
 static inline void disableAllWasmJITOptions()
 {
+#if ENABLE(WEBASSEMBLY)
+    // This really only makes sense if could use wasm, otherwise we should not override this.
     Options::useLLInt() = true;
+#endif
     Options::useBBQJIT() = false;
     Options::useOMGJIT() = false;
 
@@ -688,11 +691,15 @@ static inline void disableAllWasmOptions()
 
 static inline void disableAllJITOptions()
 {
+#if ENABLE(WEBASSEMBLY)
+    // This really only makes sense if could use wasm, otherwise we should not override this.
     Options::useLLInt() = true;
+#endif
     Options::useJIT() = false;
     disableAllWasmJITOptions();
 
     Options::useBaselineJIT() = false;
+    Options::useLOLJIT() = false;
     Options::useDFGJIT() = false;
     Options::useFTLJIT() = false;
     Options::useDOMJIT() = false;
@@ -826,10 +833,14 @@ void Options::notifyOptionsChanged()
 #endif
 
 #if ENABLE(WEBASSEMBLY)
+#if CPU(ARM64)
     if (Options::enableWasmDebugger()) [[unlikely]] {
         Options::useBBQJIT() = false;
         Options::useOMGJIT() = false;
     }
+#else
+    Options::enableWasmDebugger() = false;
+#endif
 #endif
 
     // At initialization time, we may decide that useJIT should be false for any
@@ -900,6 +911,10 @@ void Options::notifyOptionsChanged()
             Options::forceAllFunctionsToUseSIMD() = true;
         }
     }
+
+    // TODO
+    if (Options::useLOLJIT())
+        Options::forceOSRExitToLLInt() = true;
 
     if (!Options::useConcurrentGC())
         Options::collectContinuously() = false;
@@ -1514,8 +1529,6 @@ bool canUseHandlerIC()
 
 bool canUseWasm()
 {
-    if constexpr (useCompressedHeap)
-        return false;
 #if ENABLE(WEBASSEMBLY) && !PLATFORM(WATCHOS)
     return true;
 #else

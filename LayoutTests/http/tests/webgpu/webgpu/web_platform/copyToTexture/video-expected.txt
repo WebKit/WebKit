@@ -14,7 +14,6 @@ FAIL :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -31,7 +30,6 @@ FAIL :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -48,7 +46,6 @@ FAIL :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -65,7 +62,6 @@ FAIL :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp8-bt601.webm";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -86,7 +82,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -103,7 +98,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -120,7 +114,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -137,7 +130,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-h264-bt601.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -158,7 +150,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -175,7 +166,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -192,7 +182,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -209,7 +198,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp9-bt601.webm";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -230,7 +218,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -247,7 +234,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -264,7 +250,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -281,7 +266,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoEl
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp9-bt709.webm";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -302,7 +286,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -319,7 +302,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -336,7 +318,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -353,7 +334,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-h264-bt601-rotate-90.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -374,7 +354,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -391,7 +370,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -408,7 +386,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -425,7 +402,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-h264-bt601-rotate-180.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -446,7 +422,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -463,7 +438,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -480,7 +454,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -497,7 +470,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceTy
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-h264-bt601-rotate-270.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -518,7 +490,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -535,7 +506,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -552,7 +522,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -569,7 +538,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-rotate-90.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -590,7 +558,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -607,7 +574,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -624,7 +590,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -641,7 +606,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-rotate-180.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -662,7 +626,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -679,7 +642,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -696,7 +658,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -713,7 +674,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceTyp
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-rotate-270.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -734,7 +694,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -751,7 +710,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -768,7 +726,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -785,7 +742,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-h264-bt601-hflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -806,7 +762,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -823,7 +778,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -840,7 +794,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -857,7 +810,6 @@ FAIL :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="V
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-h264-bt601-vflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -878,7 +830,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -895,7 +846,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -912,7 +862,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -929,7 +878,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-hflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"
@@ -950,7 +898,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=true;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -967,7 +914,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:105:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="display-p3" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -984,7 +930,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 FAIL :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="VideoElement";srcDoFlipYDuringCopy=false;dstColorSpace="srgb" assert_unreached:
   - EXPECTATION FAILED: Texture level had unexpected contents:
@@ -1001,7 +946,6 @@ FAIL :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="Vi
     eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:414:34
     expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/texture_test_utils.js:238:21
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:128:53
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/video.spec.js:64:60
  Reached unreachable code
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="display-p3"
 PASS :copy_from_video:videoName="four-colors-vp9-bt601-vflip.mp4";sourceType="VideoFrame";srcDoFlipYDuringCopy=true;dstColorSpace="srgb"

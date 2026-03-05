@@ -1120,7 +1120,7 @@ DEF_TEST(Codec_wbmp_restrictive, r) {
     }
 
     // Modify the stream to contain a second byte with some bits set.
-    auto data = SkCopyStreamToData(stream.get());
+    auto data = SkStreamPriv::CopyStreamToData(stream.get());
     uint8_t* writeableData = static_cast<uint8_t*>(data->writable_data());
     writeableData[1] = static_cast<uint8_t>(~0x9F);
 
@@ -2177,7 +2177,7 @@ DEF_TEST(Codec_gif_can_preserve_original_data, r) {
 
     // The whole point of DeferredFromCodec is that it allows the client
     // to hold onto the original image data for later.
-    sk_sp<SkData> encodedData = image->refEncodedData();
+    auto encodedData = image->refEncodedData();
     REPORTER_ASSERT(r, encodedData != nullptr);
     // The returned data should the same as what went in.
     REPORTER_ASSERT(r, encodedData->size() == data->size());
@@ -2210,7 +2210,7 @@ DEF_TEST(Codec_jpeg_can_return_data_from_original_stream, r) {
 
     // The whole point of DeferredFromCodec is that it allows the client
     // to hold onto the original image data for later.
-    sk_sp<SkData> encodedData = image->refEncodedData();
+    auto encodedData = image->refEncodedData();
     REPORTER_ASSERT(r, encodedData != nullptr);
     // The returned data should the same as what went in.
     REPORTER_ASSERT(r, encodedData->size() == expectedBytes);
@@ -2280,11 +2280,11 @@ static SkBitmap make_gradient_bitmap(sk_sp<SkColorSpace> cs) {
     const int width = 50;
     const int height = 50;
       // Define the gradient shader.
-    const SkColor colors[] = { SK_ColorRED, SK_ColorYELLOW, SK_ColorGREEN, SK_ColorCYAN,
-                               SK_ColorBLUE, SK_ColorMAGENTA, SK_ColorRED };
+    const SkColor4f colors[] = { SkColors::kRed, SkColors::kYellow, SkColors::kGreen,
+                            SkColors::kCyan, SkColors::kBlue, SkColors::kMagenta, SkColors::kRed };
     const SkPoint points[] = { { 0.0f, 0.0f }, { (float)width, 0.0f } };
-    sk_sp<SkShader> rainbowShader = SkGradientShader::MakeLinear(points, colors, nullptr, 7,
-                        SkTileMode::kClamp);
+    sk_sp<SkShader> rainbowShader = SkShaders::LinearGradient(points,
+                                                            {{colors, {}, SkTileMode::kClamp}, {}});
     SkPaint gradientPaint;
     gradientPaint.setShader(rainbowShader);
 
@@ -2552,27 +2552,26 @@ DEF_TEST(LibpngCodec_f16_trc_tables, r) {
     REPORTER_ASSERT(r, result == SkCodec::Result::kSuccess);
 }
 
-#if defined(SK_CODEC_DECODES_PNG_WITH_LIBPNG) && \
-    defined(SK_CODEC_ENCODES_PNG_WITH_LIBPNG) && \
-    !defined(SK_PNG_DISABLE_TESTS)
-DEF_TEST(PngHdrMetadataRoundTrip, r) {
-    SkBitmap bm;
-    bm.allocPixels(SkImageInfo::MakeN32Premul(10, 10));
+// TODO(b/464028670)
+// #if defined(SK_CODEC_DECODES_PNG_WITH_LIBPNG) && defined(SK_CODEC_ENCODES_PNG_WITH_LIBPNG) && !defined(SK_PNG_DISABLE_TESTS)
+// DEF_TEST(PngHdrMetadataRoundTrip, r) {
+//     SkBitmap bm;
+//     bm.allocPixels(SkImageInfo::MakeN32Premul(10, 10));
 
-    SkPngEncoder::Options options;
-    options.fHdrMetadata.setMasteringDisplayColorVolume(
-        skhdr::MasteringDisplayColorVolume({SkNamedPrimaries::kRec2020, 500.f, 0.0005f}));
-    options.fHdrMetadata.setContentLightLevelInformation(
-        skhdr::ContentLightLevelInformation({1000.f, 150.f}));
+//     SkPngEncoder::Options options;
+//     options.fHdrMetadata.setMasteringDisplayColorVolume(
+//         skhdr::MasteringDisplayColorVolume({SkNamedPrimaries::kRec2020, 500.f, 0.0005f}));
+//     options.fHdrMetadata.setContentLightLevelInformation(
+//         skhdr::ContentLightLevelInformation({1000.f, 150.f}));
 
-    sk_sp<SkData> data = SkPngEncoder::Encode(bm.pixmap(), options);
+//     sk_sp<SkData> data = SkPngEncoder::Encode(bm.pixmap(), options);
 
-    SkCodec::Result result;
-    auto codec = SkPngDecoder::Decode(data, &result);
+//     SkCodec::Result result;
+//     auto codec = SkPngDecoder::Decode(data, &result);
 
-    REPORTER_ASSERT(r, options.fHdrMetadata == codec->getHdrMetadata());
-}
-#endif
+//     REPORTER_ASSERT(r, options.fHdrMetadata == codec->getHdrMetadata());
+// }
+// #endif
 
 #if defined(SK_CODEC_DECODES_PNG_WITH_RUST) && \
     defined(SK_CODEC_ENCODES_PNG_WITH_LIBPNG) && \
@@ -2599,3 +2598,40 @@ DEF_TEST(PngRustHdrMetadataRoundTrip, r) {
 }
 #endif
 
+// for private SkCodec access
+class SkCodecPriv {
+public:
+    static bool needsRewind(const SkCodec* codec) { return codec->fNeedsRewind; }
+};
+
+DEF_TEST(jpeg_invalid_stream_state, r) {
+    // Invalid/corrupted jpeg data.
+    auto data = GetResourceAsData("invalid_images/b464333052.jpg");
+    REPORTER_ASSERT(r, data);
+    auto codec = SkAndroidCodec::MakeFromData(std::move(data));
+    REPORTER_ASSERT(r, codec);
+
+    REPORTER_ASSERT(r, !SkCodecPriv::needsRewind(codec->codec()));
+
+    const SkImageInfo info = codec->getInfo();
+    SkAutoPixmapStorage pm;
+    pm.alloc(info);
+
+    // Attempt a decode at an odd size, to exercise the sampledDecode path.
+    SkAndroidCodec::AndroidOptions opts;
+    opts.fSampleSize = 7;
+    const SkISize sz = codec->getSampledDimensions(opts.fSampleSize);
+    auto res =
+        codec->getAndroidPixels(info.makeDimensions(sz), pm.writable_addr(), pm.rowBytes(), &opts);
+    // Expected to fail due to bad data.
+    REPORTER_ASSERT(r, res != SkCodec::kSuccess);
+    // But the stream should be rewinded if we attempt other operations.
+    REPORTER_ASSERT(r, SkCodecPriv::needsRewind(codec->codec()));
+
+    // Attempt a decode at the natural size, to exercize the getPixels path.
+    res = codec->getAndroidPixels(info, pm.writable_addr(), pm.rowBytes());
+    // Expected to fail due to bad data.
+    REPORTER_ASSERT(r, res != SkCodec::kSuccess);
+    // But the stream should be rewinded if we attempt other operations.
+    REPORTER_ASSERT(r, SkCodecPriv::needsRewind(codec->codec()));
+}

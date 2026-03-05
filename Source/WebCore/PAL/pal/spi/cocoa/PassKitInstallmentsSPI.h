@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
-#ifndef PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION
-#error "Please #include <pal/spi/cocoa/PassKitSPI.h> instead of this file directly."
-#endif
+#ifdef PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION
 
 #if HAVE(PASSKIT_INSTALLMENTS)
 
@@ -116,3 +117,5 @@ typedef NS_ENUM(NSUInteger, PKPaymentRequestType) {
 #endif // !USE(APPLE_INTERNAL_SDK)
 
 #endif // HAVE(PASSKIT_INSTALLMENTS)
+
+#endif // PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION

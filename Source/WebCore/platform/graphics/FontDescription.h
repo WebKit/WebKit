@@ -105,43 +105,43 @@ public:
     void setComputedSize(float s, float zoom = 1.0f) { m_computedSize = clampToFloat(s); m_usedZoomFactor = zoom; }
     void setTextSpacingTrim(TextSpacingTrim v) { m_textSpacingTrim = v; }
     void setTextAutospace(TextAutospace v) { m_textAutospace = v; }
-    void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = enumToUnderlyingType(axis); }
+    void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = std::to_underlying(axis); }
     void setFontStyleSlope(std::optional<FontSelectionValue> slope) { m_fontSelectionRequest.slope = slope; }
     void setIsItalic(bool isItalic) { setFontStyleSlope(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
     void setWeight(FontSelectionValue weight) { m_fontSelectionRequest.weight = weight; }
     void setWidth(FontSelectionValue width) { m_fontSelectionRequest.width = width; }
-    void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = enumToUnderlyingType(rendering); }
-    void setOrientation(FontOrientation orientation) { m_orientation = enumToUnderlyingType(orientation); }
-    void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = enumToUnderlyingType(orientation); }
-    void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = enumToUnderlyingType(widthVariant); } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
+    void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = std::to_underlying(rendering); }
+    void setOrientation(FontOrientation orientation) { m_orientation = std::to_underlying(orientation); }
+    void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = std::to_underlying(orientation); }
+    void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = std::to_underlying(widthVariant); } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
     void setSpecifiedLocale(const AtomString&);
-    void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTFMove(settings); }
-    void setVariationSettings(FontVariationSettings&& settings) { m_variationSettings = WTFMove(settings); }
-    void setFontSynthesisWeight(FontSynthesisLonghandValue value) { m_fontSynthesisWeight =  enumToUnderlyingType(value); }
-    void setFontSynthesisStyle(FontSynthesisLonghandValue value) { m_fontSynthesisStyle = enumToUnderlyingType(value); }
-    void setFontSynthesisSmallCaps(FontSynthesisLonghandValue value) { m_fontSynthesisCaps = enumToUnderlyingType(value); }
-    void setVariantCommonLigatures(FontVariantLigatures variant) { m_variantCommonLigatures = enumToUnderlyingType(variant); }
-    void setVariantDiscretionaryLigatures(FontVariantLigatures variant) { m_variantDiscretionaryLigatures = enumToUnderlyingType(variant); }
-    void setVariantHistoricalLigatures(FontVariantLigatures variant) { m_variantHistoricalLigatures = enumToUnderlyingType(variant); }
-    void setVariantContextualAlternates(FontVariantLigatures variant) { m_variantContextualAlternates = enumToUnderlyingType(variant); }
-    void setVariantPosition(FontVariantPosition variant) { m_variantPosition = enumToUnderlyingType(variant); }
-    void setVariantCaps(FontVariantCaps variant) { m_variantCaps = enumToUnderlyingType(variant); }
-    void setVariantNumericFigure(FontVariantNumericFigure variant) { m_variantNumericFigure = enumToUnderlyingType(variant); }
-    void setVariantNumericSpacing(FontVariantNumericSpacing variant) { m_variantNumericSpacing = enumToUnderlyingType(variant); }
-    void setVariantNumericFraction(FontVariantNumericFraction variant) { m_variantNumericFraction = enumToUnderlyingType(variant); }
-    void setVariantNumericOrdinal(FontVariantNumericOrdinal variant) { m_variantNumericOrdinal = enumToUnderlyingType(variant); }
-    void setVariantNumericSlashedZero(FontVariantNumericSlashedZero variant) { m_variantNumericSlashedZero = enumToUnderlyingType(variant); }
+    void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTF::move(settings); }
+    void setVariationSettings(FontVariationSettings&& settings) { m_variationSettings = WTF::move(settings); }
+    void setFontSynthesisWeight(FontSynthesisLonghandValue value) { m_fontSynthesisWeight =  std::to_underlying(value); }
+    void setFontSynthesisStyle(FontSynthesisLonghandValue value) { m_fontSynthesisStyle = std::to_underlying(value); }
+    void setFontSynthesisSmallCaps(FontSynthesisLonghandValue value) { m_fontSynthesisCaps = std::to_underlying(value); }
+    void setVariantCommonLigatures(FontVariantLigatures variant) { m_variantCommonLigatures = std::to_underlying(variant); }
+    void setVariantDiscretionaryLigatures(FontVariantLigatures variant) { m_variantDiscretionaryLigatures = std::to_underlying(variant); }
+    void setVariantHistoricalLigatures(FontVariantLigatures variant) { m_variantHistoricalLigatures = std::to_underlying(variant); }
+    void setVariantContextualAlternates(FontVariantLigatures variant) { m_variantContextualAlternates = std::to_underlying(variant); }
+    void setVariantPosition(FontVariantPosition variant) { m_variantPosition = std::to_underlying(variant); }
+    void setVariantCaps(FontVariantCaps variant) { m_variantCaps = std::to_underlying(variant); }
+    void setVariantNumericFigure(FontVariantNumericFigure variant) { m_variantNumericFigure = std::to_underlying(variant); }
+    void setVariantNumericSpacing(FontVariantNumericSpacing variant) { m_variantNumericSpacing = std::to_underlying(variant); }
+    void setVariantNumericFraction(FontVariantNumericFraction variant) { m_variantNumericFraction = std::to_underlying(variant); }
+    void setVariantNumericOrdinal(FontVariantNumericOrdinal variant) { m_variantNumericOrdinal = std::to_underlying(variant); }
+    void setVariantNumericSlashedZero(FontVariantNumericSlashedZero variant) { m_variantNumericSlashedZero = std::to_underlying(variant); }
     void setVariantAlternates(const FontVariantAlternates& variant) { m_variantAlternates = variant; }
-    void setVariantAlternates(FontVariantAlternates&& variant) { m_variantAlternates = WTFMove(variant); }
-    void setVariantEastAsianVariant(FontVariantEastAsianVariant variant) { m_variantEastAsianVariant = enumToUnderlyingType(variant); }
-    void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = enumToUnderlyingType(variant); }
-    void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = enumToUnderlyingType(variant); }
-    void setVariantEmoji(FontVariantEmoji variant) { m_variantEmoji = enumToUnderlyingType(variant); }
+    void setVariantAlternates(FontVariantAlternates&& variant) { m_variantAlternates = WTF::move(variant); }
+    void setVariantEastAsianVariant(FontVariantEastAsianVariant variant) { m_variantEastAsianVariant = std::to_underlying(variant); }
+    void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = std::to_underlying(variant); }
+    void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = std::to_underlying(variant); }
+    void setVariantEmoji(FontVariantEmoji variant) { m_variantEmoji = std::to_underlying(variant); }
     void setVariantEastAsian(FontVariantEastAsianValues);
     void setVariantNumeric(FontVariantNumericValues);
     void setVariantLigatures(FontVariantLigaturesValues);
-    void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = enumToUnderlyingType(sizing); }
-    void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = enumToUnderlyingType(shouldAllowUserInstalledFonts); }
+    void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = std::to_underlying(sizing); }
+    void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = std::to_underlying(shouldAllowUserInstalledFonts); }
     void setShouldDisableLigaturesForSpacing(bool shouldDisableLigaturesForSpacing) { m_shouldDisableLigaturesForSpacing = shouldDisableLigaturesForSpacing; }
     void setFontPalette(const FontPalette& fontPalette) { m_fontPalette = fontPalette; }
     void setFontSizeAdjust(FontSizeAdjust fontSizeAdjust) { m_sizeAdjust = fontSizeAdjust; }

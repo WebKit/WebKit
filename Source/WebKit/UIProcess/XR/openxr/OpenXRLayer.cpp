@@ -53,7 +53,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayer);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayerProjection);
 
 OpenXRLayer::OpenXRLayer(UniqueRef<OpenXRSwapchain>&& swapchain)
-    : m_swapchain(WTFMove(swapchain))
+    : m_swapchain(WTF::move(swapchain))
 {
 }
 
@@ -205,9 +205,9 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRLayer::exportOpenXRT
     });
 
     return PlatformXR::FrameData::ExternalTexture {
-        .fds = WTFMove(fds),
-        .strides = WTFMove(strides),
-        .offsets = WTFMove(offsets),
+        .fds = WTF::move(fds),
+        .strides = WTF::move(strides),
+        .offsets = WTF::move(offsets),
         .fourcc = static_cast<uint32_t>(fourcc),
         .modifier = modifier,
     };
@@ -320,9 +320,9 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRLayer::exportOpenXRT
     m_exportedTexturesMap.add(openxrTexture, exportedTexture);
 
     return PlatformXR::FrameData::ExternalTexture {
-        .fds = WTFMove(fds),
-        .strides = WTFMove(strides),
-        .offsets = WTFMove(offsets),
+        .fds = WTF::move(fds),
+        .strides = WTF::move(strides),
+        .offsets = WTF::move(offsets),
         .fourcc = fourcc,
         .modifier = modifier
     };
@@ -379,11 +379,11 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRLayer::exportOpenXRT
 
 std::unique_ptr<OpenXRLayerProjection> OpenXRLayerProjection::create(std::unique_ptr<OpenXRSwapchain>&& swapchain)
 {
-    return std::unique_ptr<OpenXRLayerProjection>(new OpenXRLayerProjection(makeUniqueRefFromNonNullUniquePtr(WTFMove(swapchain))));
+    return std::unique_ptr<OpenXRLayerProjection>(new OpenXRLayerProjection(makeUniqueRefFromNonNullUniquePtr(WTF::move(swapchain))));
 }
 
 OpenXRLayerProjection::OpenXRLayerProjection(UniqueRef<OpenXRSwapchain>&& swapchain)
-    : OpenXRLayer(WTFMove(swapchain))
+    : OpenXRLayer(WTF::move(swapchain))
     , m_layerProjection(createOpenXRStruct<XrCompositionLayerProjection, XR_TYPE_COMPOSITION_LAYER_PROJECTION>())
 {
 }
@@ -413,7 +413,7 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRLayerProjection::startFram
     if (!externalTexture)
         return std::nullopt;
 
-    layerData.textureData->colorTexture = WTFMove(externalTexture.value());
+    layerData.textureData->colorTexture = WTF::move(externalTexture.value());
 
     auto halfWidth = m_swapchain->width() / 2;
     layerData.layerSetup = {

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x458
   RenderBlock {html} at (0,0) size 800x458
     RenderBody {body} at (8,8) size 784x442
-      RenderText {#text} at (0,0) size 762x17
+      RenderText {#text} at (0,0) size 762x18
         text run at (0,0) width 762: "There should be no red displayed on the screen, and the patterns should not change when the browser window is resized."
-      RenderBR {br} at (762,0) size 0x17
-      RenderBR {br} at (0,18) size 0x17
+      RenderBR {br} at (762,0) size 0x18
+      RenderBR {br} at (0,18) size 0x18
       RenderSVGRoot {svg} at (8,144) size 202x302
         RenderSVGContainer {g} at (8,144) size 202x302
           RenderSVGRect {rect} at (8,144) size 202x302 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=100.00] [width=100.00] [height=50.00]

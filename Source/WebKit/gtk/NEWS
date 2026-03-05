@@ -1,4 +1,45 @@
 ================
+WebKitGTK 2.51.4
+================
+
+What's new in WebKitGTK 2.51.4?
+
+  - Fix rendering of some PDFs due to issues in cross-thread transfer of
+    accelerated bitmaps.
+  - Fix a bug in compositor state causing that one frame could be sent to
+    the UI process before the previous one is done.
+  - Use timerfd when available to improve timer resolution.
+  - Correctly handle the program name passed to the sleep disabler.
+  - Fix the build with clang 21.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.51.3
+================
+
+What's new in WebKitGTK 2.51.3?
+
+  - Improve composition scheduling to avoid blocking waiting for tile painting.
+  - Enable Pointer Events for touch input.
+  - Building with Enchant 1.x is no longer supported, Enchant 2.x is now always
+    used for spell checking.
+  - Moved WebRTC network access to the NetworkProcess, when using GstWebRTC.
+    This requires librice, and building with the CMake USE_LIBRICE option. When
+    enabled, it is still possible to choose the older libnice-based implementation
+    at runtime by setting WEBKIT_GST_DISABLE_WEBRTC_NETWORK_SANDBOX=1 in the
+    environment.
+  - Add support the XR_ANDROID_raycast OpenXR extension for WebXR Hit Testing.
+  - Add support to use super-tiled graphics buffers when running on Vivante GPUs.
+    Currently setting WEBKIT_SKIA_USE_VIVANTE_SUPER_TILED_TILE_TEXTURES=1 in the
+    environment is needed to opt-in into using those.
+  - Ensure that GStreamer is properly initialized before applying any multimedia
+    handling quirks.
+  - Fix PointerEvent behaviour for mouse events synthesized from touch inputs.
+  - Fix drag-and-drop when dropping folders from a file manager into a web view.
+  - Fix seeking and looping of media elements that set the "loop" property. 
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.51.2
 ================
 

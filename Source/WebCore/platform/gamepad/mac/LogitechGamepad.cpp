@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LogitechGamepad);
 
 LogitechGamepad::LogitechGamepad(HIDDevice&& device, unsigned index)
-    : HIDGamepad(WTFMove(device), index)
+    : HIDGamepad(WTF::move(device), index)
 {
     LOG(Gamepad, "Creating LogitechGamepad %p", this);
 
@@ -67,7 +67,7 @@ LogitechGamepad::LogitechGamepad(HIDDevice&& device, unsigned index)
                 m_buttonValues[(size_t)GamepadButtonRole::LeftClusterLeft]
             };
 
-            m_elementMap.set(element.cookie(), makeUnique<HIDGamepadHatswitch>(element, WTFMove(hatswitchValues)));
+            m_elementMap.set(element.cookie(), makeUnique<HIDGamepadHatswitch>(element, WTF::move(hatswitchValues)));
             break;
         }
         case hidXAxisFullUsage:

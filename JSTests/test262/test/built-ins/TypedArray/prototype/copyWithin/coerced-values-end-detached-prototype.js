@@ -37,4 +37,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function(){
     ta.copyWithin(0, 100, {valueOf : detachAndReturnIndex});
   }, "should throw TypeError as array is detached");
-});
+}, null, ["passthrough"]);

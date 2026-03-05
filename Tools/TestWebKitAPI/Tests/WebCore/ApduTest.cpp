@@ -113,11 +113,11 @@ TEST(ApduTest, TestDeserializeResponse)
     Vector<uint8_t> testVector;
     // Invalid length.
     Vector<uint8_t> message({ 0xAA });
-    EXPECT_FALSE(ApduResponse::createFromMessage(WTFMove(message)));
+    EXPECT_FALSE(ApduResponse::createFromMessage(WTF::move(message)));
     // Valid length and status.
     status = ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED;
     message = { static_cast<uint8_t>(static_cast<uint16_t>(status) >> 8), static_cast<uint8_t>(status) };
-    auto response = ApduResponse::createFromMessage(WTFMove(message));
+    auto response = ApduResponse::createFromMessage(WTF::move(message));
     ASSERT_TRUE(response);
     EXPECT_EQ(ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED, response->status());
     EXPECT_EQ(response->data(), Vector<uint8_t>());
@@ -126,7 +126,7 @@ TEST(ApduTest, TestDeserializeResponse)
     message = { static_cast<uint8_t>(static_cast<uint16_t>(status) >> 8), static_cast<uint8_t>(status)};
     testVector = { 0x01, 0x02, 0xEF, 0xFF };
     message.insertVector(0, testVector);
-    response = ApduResponse::createFromMessage(WTFMove(message));
+    response = ApduResponse::createFromMessage(WTF::move(message));
     ASSERT_TRUE(response);
     EXPECT_EQ(ApduResponse::Status::SW_NO_ERROR, response->status());
     EXPECT_EQ(response->data(), testVector);
@@ -154,7 +154,7 @@ TEST(ApduTest, TestSerializeCommand)
     EXPECT_EQ(expected, deserializedCmd->getEncodedCommand());
     // Data exists, response expected.
     Vector<uint8_t> data({ 0x1, 0x2, 0x3, 0x4 });
-    cmd.setData(WTFMove(data));
+    cmd.setData(WTF::move(data));
     expected = { 0xA, 0xB, 0xC, 0xD, 0x0,  0x0, 0x4, 0x1, 0x2, 0x3, 0x4, 0xCA, 0xFE };
     EXPECT_EQ(expected, cmd.getEncodedCommand());
     deserializedCmd = ApduCommand::createFromMessage(expected);
@@ -183,7 +183,7 @@ TEST(ApduTest, TestSerializeEdgeCases)
     EXPECT_EQ(expected, deserializedCmd->getEncodedCommand());
     // Maximum data size.
     Vector<uint8_t> oversized(ApduCommand::kApduMaxDataLength);
-    cmd.setData(WTFMove(oversized));
+    cmd.setData(WTF::move(oversized));
     deserializedCmd = ApduCommand::createFromMessage(cmd.getEncodedCommand());
     ASSERT_TRUE(deserializedCmd);
     EXPECT_EQ(cmd.getEncodedCommand(), deserializedCmd->getEncodedCommand());

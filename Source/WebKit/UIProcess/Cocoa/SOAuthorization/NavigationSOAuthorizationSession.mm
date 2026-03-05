@@ -38,8 +38,8 @@
 namespace WebKit {
 
 NavigationSOAuthorizationSession::NavigationSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action, Callback&& completionHandler)
-    : SOAuthorizationSession(delegate, WTFMove(navigationAction), page, action)
-    , m_callback(WTFMove(completionHandler))
+    : SOAuthorizationSession(delegate, WTF::move(navigationAction), page, action)
+    , m_callback(WTF::move(completionHandler))
 {
 }
 
@@ -65,7 +65,7 @@ void NavigationSOAuthorizationSession::shouldStartInternal()
         setState(State::Waiting);
         page->addDidMoveToWindowObserver(*this);
         ASSERT(page->mainFrame());
-        m_waitingPageActiveURL = page->protectedPageLoadState()->activeURL();
+        m_waitingPageActiveURL = protect(page->pageLoadState())->activeURL();
         return;
     }
     start();
@@ -90,7 +90,7 @@ bool NavigationSOAuthorizationSession::pageActiveURLDidChangeDuringWaiting() con
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("pageActiveURLDidChangeDuringWaiting");
     RefPtr page = this->page();
-    return !page || page->protectedPageLoadState()->activeURL() != m_waitingPageActiveURL;
+    return !page || protect(page->pageLoadState())->activeURL() != m_waitingPageActiveURL;
 }
 
 } // namespace WebKit

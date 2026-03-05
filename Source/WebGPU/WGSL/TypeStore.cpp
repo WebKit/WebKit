@@ -73,7 +73,7 @@ struct TextureKey {
     const Type* elementType;
     Texture::Kind kind;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, WTF::enumToUnderlyingType(kind), 0, 0, std::bit_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, std::to_underlying(kind), 0, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct TextureStorageKey {
@@ -81,7 +81,7 @@ struct TextureStorageKey {
     TexelFormat format;
     AccessMode access;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::TextureStorage, WTF::enumToUnderlyingType(kind), WTF::enumToUnderlyingType(format), WTF::enumToUnderlyingType(access), 0); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::TextureStorage, std::to_underlying(kind), std::to_underlying(format), std::to_underlying(access), 0); }
 };
 
 struct ReferenceKey {
@@ -90,7 +90,7 @@ struct ReferenceKey {
     AccessMode accessMode;
     bool isVectorComponent;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), isVectorComponent, std::bit_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, std::to_underlying(addressSpace), std::to_underlying(accessMode), isVectorComponent, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct PointerKey {
@@ -98,7 +98,7 @@ struct PointerKey {
     AddressSpace addressSpace;
     AccessMode accessMode;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, std::bit_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, std::to_underlying(addressSpace), std::to_underlying(accessMode), 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct PrimitiveStructKey {
@@ -211,7 +211,7 @@ const Type* TypeStore::textureStorageType(TextureStorage::Kind kind, TexelFormat
 
 const Type* TypeStore::functionType(WTF::Vector<const Type*>&& parameters, const Type* result, bool mustUse)
 {
-    return allocateType<Function>(WTFMove(parameters), result, mustUse);
+    return allocateType<Function>(WTF::move(parameters), result, mustUse);
 }
 
 const Type* TypeStore::referenceType(AddressSpace addressSpace, const Type* element, AccessMode accessMode, bool isVectorComponent)
@@ -246,7 +246,7 @@ const Type* TypeStore::atomicType(const Type* type)
 
 const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)>&& constructor)
 {
-    return allocateType<TypeConstructor>(name, WTFMove(constructor));
+    return allocateType<TypeConstructor>(name, WTF::move(constructor));
 }
 
 const Type* TypeStore::frexpResultType(const Type* fract, const Type* exp)

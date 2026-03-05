@@ -1,28 +1,26 @@
 diagnostic(off, derivative_uniformity);
 diagnostic(off, chromium.unreachable_code);
+enable f16;
 struct FSOut {
-  @location(0) sk_FragColor: vec4<f32>,
+  @location(0) sk_FragColor: vec4<f16>,
 };
 struct _GlobalUniforms {
-  a: f32,
-  b: f32,
-  c: f32,
-  d: vec4<f32>,
-  e: vec4<f32>,
+  a: f16,
+  b: f16,
+  c: f16,
+  d: vec4<f16>,
+  e: vec4<f16>,
 };
-@binding(0) @group(0) var<uniform> _globalUniforms: _GlobalUniforms;
-fn _skslMain(_skParam0: vec2<f32>) -> vec4<f32> {
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn _skslMain(_skParam0: vec2<f32>) -> vec4<f16> {
   {
-    let _skTemp0 = 2.0;
-    let _skTemp1 = refract(vec2<f32>(6e+26, 0), vec2<f32>(2.0, 0), _skTemp0).x;
-    var result: vec4<f32> = vec4<f32>(_skTemp1);
-    let _skTemp2 = refract(vec2<f32>(_globalUniforms.a, 0), vec2<f32>(_globalUniforms.b, 0), _globalUniforms.c).x;
-    result.x = _skTemp2;
-    let _skTemp3 = refract(_globalUniforms.d, _globalUniforms.e, _globalUniforms.c);
-    result = _skTemp3;
-    result = vec4<f32>((vec2<f32>(0.5, -0.8660254)), result.zw);
-    result = vec4<f32>((vec3<f32>(0.5, 0.0, -0.8660254)), result.w);
-    result = vec4<f32>(0.5, 0.0, 0.0, -0.8660254);
+    let _skTemp0 = 65504.0h;
+    var result: vec4<f16> = vec4<f16>(refract(vec2<f16>(_skTemp0 * 2.0h, 0), vec2<f16>(2.0h, 0), 2.0h).x);
+    result.x = refract(vec2<f16>(_globalUniforms.a, 0), vec2<f16>(_globalUniforms.b, 0), _globalUniforms.c).x;
+    result = refract(_globalUniforms.d, _globalUniforms.e, _globalUniforms.c);
+    result = vec4<f16>((vec2<f16>(0.5h, -0.8660254h)), result.zw);
+    result = vec4<f16>((vec3<f16>(0.5h, 0.0h, -0.8660254h)), result.w);
+    result = vec4<f16>(0.5h, 0.0h, 0.0h, -0.8660254h);
     return result;
   }
 }

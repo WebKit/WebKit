@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +29,14 @@
 #if ENABLE(TEXT_AUTOSIZING)
 
 #include "RenderStyle.h"
+#include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class Document;
 class Text;
+class TextAutoSizingValue;
 
 // FIXME: We can probably get rid of this class entirely and use std::unique_ptr<RenderStyle> as key
 // as long as we use the right hash traits.
@@ -53,55 +52,11 @@ public:
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
     unsigned hash() const { return m_hash; }
+    bool operator==(const TextAutoSizingKey&) const;
 
 private:
     std::unique_ptr<RenderStyle> m_style;
     unsigned m_hash { 0 };
-};
-
-inline bool operator==(const TextAutoSizingKey& a, const TextAutoSizingKey& b)
-{
-    if (a.isDeleted() || b.isDeleted())
-        return false;
-    if (!a.style() || !b.style())
-        return a.style() == b.style();
-    return a.style()->equalForTextAutosizing(*b.style());
-}
-
-struct TextAutoSizingHashTranslator {
-    static unsigned hash(const RenderStyle& style)
-    {
-        return style.hashForTextAutosizing();
-    }
-
-    static bool equal(const TextAutoSizingKey& key, const RenderStyle& style)
-    {
-        if (key.isDeleted() || !key.style())
-            return false;
-        return key.style()->equalForTextAutosizing(style);
-    }
-
-    static void translate(TextAutoSizingKey& key, const RenderStyle& style, unsigned hash)
-    {
-        key = { style, hash };
-    }
-};
-
-class TextAutoSizingValue {
-    WTF_MAKE_TZONE_ALLOCATED(TextAutoSizingValue);
-public:
-    TextAutoSizingValue() = default;
-    ~TextAutoSizingValue();
-
-    void addTextNode(Text&, float size);
-
-    enum class StillHasNodes : bool { No, Yes };
-    StillHasNodes adjustTextNodeSizes();
-
-private:
-    void reset();
-
-    HashSet<RefPtr<Text>> m_autoSizedNodes;
 };
 
 struct TextAutoSizingTraits : HashTraits<TextAutoSizingKey> {
@@ -113,7 +68,8 @@ struct TextAutoSizingTraits : HashTraits<TextAutoSizingKey> {
 class TextAutoSizing {
     WTF_MAKE_TZONE_ALLOCATED(TextAutoSizing);
 public:
-    TextAutoSizing() = default;
+    TextAutoSizing();
+    ~TextAutoSizing();
 
     void addTextNode(Text&, float size);
     void updateRenderTree();

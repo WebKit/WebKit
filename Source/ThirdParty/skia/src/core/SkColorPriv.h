@@ -13,6 +13,7 @@
 #include "include/core/SkTypes.h"
 #include "include/private/base/SkCPUTypes.h"
 #include "include/private/base/SkMath.h"
+#include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTPin.h"
 #include "include/private/base/SkTo.h"
 
@@ -38,7 +39,7 @@ static inline unsigned SkAlpha255To256(U8CPU alpha) {
 #define SkAlphaMul(value, alpha256)     (((value) * (alpha256)) >> 8)
 
 static inline U8CPU SkUnitScalarClampToByte(SkScalar x) {
-    return static_cast<U8CPU>(SkTPin(x, 0.0f, 1.0f) * 255 + 0.5);
+    return static_cast<U8CPU>(SkTPin(x, 0.0f, 1.0f) * 255 + 0.5f);
 }
 
 #define SK_A32_BITS     8
@@ -157,5 +158,15 @@ static inline SkPMColor SkPMSrcOver(SkPMColor src, SkPMColor dst) {
            std::min(rb & 0x01FF0000, 0x00FF0000U) |
                    (ag & 0xFF000000);
 }
+
+struct SkColorConverter {
+//    SkColorConverter() {}
+    SkColorConverter(SkSpan<const SkColor>);
+
+    SkSpan<SkColor4f> colors4f() { return fColors4f; }
+
+private:
+    skia_private::STArray<2, SkColor4f> fColors4f;
+};
 
 #endif

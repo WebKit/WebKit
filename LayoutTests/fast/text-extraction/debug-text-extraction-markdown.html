@@ -5,8 +5,12 @@
 <meta charset="utf-8">
 <head>
 <style>
-body {
+body.done {
     white-space: pre-wrap;
+}
+
+.linethrough {
+    text-decoration: line-through;
 }
 </style>
 <script src="../../resources/ui-helper.js"></script>
@@ -22,6 +26,18 @@ body {
     <li>bar</li>
     <li>baz</li>
 </ul>
+On <a href="https://webkit.org">sale</a> for
+<p>
+    <sup>£</sup>
+    10
+    <sup>99</sup>
+    This <strike>text</strike> has a <del>line through it</del>. The price <s>was ~~$50</s>
+</p>
+<p><span class="linethrough">CSS linethrough</span> normal text</p>
+<p class="linethrough">Linethrough <span>also linethrough</span></p>
+<p><del class="linethrough">both semantic and CSS</del></p>
+<p class="linethrough"><a href="https://www.apple.com">A link</a></p>
+<a href="https://www.example.com"><img src="file:///fake/linked-image.png" alt="A linked image"></a>
 <script>
 addEventListener("load", async () => {
     if (!window.testRunner)
@@ -30,7 +46,11 @@ addEventListener("load", async () => {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
-    document.body.textContent = await UIHelper.requestDebugText({ outputFormat: "markdown" });
+    document.body.textContent = await UIHelper.requestDebugText({
+        includeURLs: true,
+        outputFormat: "markdown",
+    });
+    document.body.classList.add("done");
 
     testRunner.notifyDone();
 });

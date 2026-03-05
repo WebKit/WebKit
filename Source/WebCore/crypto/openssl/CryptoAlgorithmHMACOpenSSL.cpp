@@ -67,7 +67,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHM
     auto result = calculateSignature(algorithm, key.key(), data.span().data(), data.size());
     if (!result)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*result);
+    return WTF::move(*result);
 }
 
 ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)

@@ -113,6 +113,7 @@ onmessage = (event) => {
         if (!event.data.documentLabel.includes('null')) {
             document.getElementById('container').remove();
             finishJSTest();
+            return;
         }
         break;
     }

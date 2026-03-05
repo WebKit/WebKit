@@ -101,6 +101,21 @@ private:
     using SVGPathSegValue::SVGPathSegValue;
 };
 
+class SVGPathSegMoveto : public SVGPathSegSingleCoordinate {
+protected:
+    using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
+};
+
+class SVGPathSegLineto : public SVGPathSegSingleCoordinate {
+protected:
+    using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
+};
+
+class SVGPathSegCurvetoQuadraticSmooth : public SVGPathSegSingleCoordinate {
+protected:
+    using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
+};
+
 class SVGPathSegCurvetoQuadratic : public SVGPathSegValue<float, float, float, float> {
 public:
     float x() const { return argument<0>(); }
@@ -189,3 +204,75 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegLinetoHorizontal)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::LineToHorizontalAbs || type == WebCore::SVGPathSegType::LineToHorizontalRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegLinetoVertical)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::LineToVerticalAbs || type == WebCore::SVGPathSegType::LineToVerticalRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegMoveto)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::MoveToAbs || type == WebCore::SVGPathSegType::MoveToRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegLineto)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::LineToAbs || type == WebCore::SVGPathSegType::LineToRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegCurvetoQuadraticSmooth)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::CurveToQuadraticSmoothAbs || type == WebCore::SVGPathSegType::CurveToQuadraticSmoothRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegCurvetoQuadratic)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::CurveToQuadraticAbs || type == WebCore::SVGPathSegType::CurveToQuadraticRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegCurvetoCubicSmooth)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::CurveToCubicSmoothAbs || type == WebCore::SVGPathSegType::CurveToCubicSmoothRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegCurvetoCubic)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::CurveToCubicAbs || type == WebCore::SVGPathSegType::CurveToCubicRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPathSegArc)
+static bool isType(const WebCore::SVGPathSeg& object)
+{
+    auto type = object.pathSegType();
+    return type == WebCore::SVGPathSegType::ArcAbs || type == WebCore::SVGPathSegType::ArcRel;
+}
+SPECIALIZE_TYPE_TRAITS_END()

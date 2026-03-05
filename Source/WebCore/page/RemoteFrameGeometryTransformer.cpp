@@ -32,8 +32,8 @@
 namespace WebCore {
 
 RemoteFrameGeometryTransformer::RemoteFrameGeometryTransformer(Ref<RemoteFrameView>&& remoteView, Ref<LocalFrameView>&& localView, FrameIdentifier remoteFrameID)
-    : m_remoteView(WTFMove(remoteView))
-    , m_localView(WTFMove(localView))
+    : m_remoteView(WTF::move(remoteView))
+    , m_localView(WTF::move(localView))
     , m_remoteFrameID(remoteFrameID) { }
 
 RemoteFrameGeometryTransformer::~RemoteFrameGeometryTransformer() = default;

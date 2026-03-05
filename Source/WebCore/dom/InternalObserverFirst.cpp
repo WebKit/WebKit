@@ -44,7 +44,7 @@ class InternalObserverFirst final : public InternalObserver {
 public:
     static Ref<InternalObserverFirst> create(ScriptExecutionContext& context, Ref<AbortSignal>&& signal, Ref<DeferredPromise>&& promise)
     {
-        Ref internalObserver = adoptRef(*new InternalObserverFirst(context, WTFMove(signal), WTFMove(promise)));
+        Ref internalObserver = adoptRef(*new InternalObserverFirst(context, WTF::move(signal), WTF::move(promise)));
         internalObserver->suspendIfNeeded();
         return internalObserver;
     }
@@ -52,31 +52,29 @@ public:
 private:
     void next(JSC::JSValue value) final
     {
-        protectedPromise()->resolve<IDLAny>(value);
+        protect(m_promise)->resolve<IDLAny>(value);
         Ref { m_signal }->signalAbort(JSC::jsUndefined());
     }
 
     void error(JSC::JSValue value) final
     {
-        protectedPromise()->reject<IDLAny>(value);
+        protect(m_promise)->reject<IDLAny>(value);
     }
 
     void complete() final
     {
         InternalObserver::complete();
-        protectedPromise()->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
+        protect(m_promise)->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
     }
 
     void visitAdditionalChildren(JSC::AbstractSlotVisitor&) const final
     {
     }
 
-    Ref<DeferredPromise> protectedPromise() const { return m_promise; }
-
     InternalObserverFirst(ScriptExecutionContext& context, Ref<AbortSignal>&& signal, Ref<DeferredPromise>&& promise)
         : InternalObserver(context)
-        , m_signal(WTFMove(signal))
-        , m_promise(WTFMove(promise))
+        , m_signal(WTF::move(signal))
+        , m_promise(WTF::move(promise))
     {
     }
 
@@ -84,13 +82,13 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorFirst(ScriptExecutionContext& context, Observable& observable, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorFirst(ScriptExecutionContext& context, Observable& observable, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     Ref signal = AbortSignal::create(&context);
 
     Vector<Ref<AbortSignal>> dependentSignals = { signal };
     if (options.signal)
-        dependentSignals.append(Ref { *options.signal });
+        dependentSignals.append(options.signal.releaseNonNull());
     Ref dependentSignal = AbortSignal::any(context, dependentSignals);
 
     if (dependentSignal->aborted())
@@ -100,9 +98,9 @@ void createInternalObserverOperatorFirst(ScriptExecutionContext& context, Observ
         promise->reject<IDLAny>(reason);
     });
 
-    Ref observer = InternalObserverFirst::create(context, WTFMove(signal), WTFMove(promise));
+    Ref observer = InternalObserverFirst::create(context, WTF::move(signal), WTF::move(promise));
 
-    observable.subscribeInternal(context, WTFMove(observer), SubscribeOptions { .signal = WTFMove(dependentSignal) });
+    observable.subscribeInternal(context, WTF::move(observer), SubscribeOptions { .signal = WTF::move(dependentSignal) });
 }
 
 } // namespace WebCore

@@ -35,6 +35,7 @@
 #include "AirLiveness.h"
 #include "AirPhaseScope.h"
 #include "AirStackAllocation.h"
+#include "AirStackAllocatorStats.h"
 #include <wtf/InterferenceGraph.h>
 #include <wtf/ListDump.h>
 
@@ -145,6 +146,19 @@ public:
     {
         StackSlotLiveness liveness(m_code);
 
+        buildInterferenceGraph(liveness);
+        coalesceSlots();
+        assignStackLocations(assignedEscapedStackSlots);
+
+        updateFrameSizeBasedOnStackSlots(m_code);
+        m_stats.frameSize = m_code.frameSize();
+    }
+
+private:
+    void buildInterferenceGraph(StackSlotLiveness& liveness)
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::build"_s);
+
         for (BasicBlock* block : m_code) {
             StackSlotLiveness::LocalCalc localCalc(liveness, block);
 
@@ -244,6 +258,17 @@ public:
                 dataLog("\n");
             }
         }
+    }
+
+    void coalesceSlots()
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::coalesce"_s);
+
+        if (m_stats.collectingStats()) {
+            m_stats.numStackSlots = m_code.stackSlots().size();
+            m_stats.stackSlotInterferenceSizeBytes = m_interference.memoryUse();
+            m_stats.numStackSlotsCoalesceableMoves = m_coalescableMoves.size();
+        }
 
         // Now try to coalesce some moves.
         std::ranges::sort(m_coalescableMoves, std::ranges::greater { }, &CoalescableMove::frequency);
@@ -256,6 +281,7 @@ public:
             if (m_interference.contains(slotToKill, slotToKeep))
                 continue;
 
+            m_stats.numStackSlotsCoalesced++;
             m_remappedStackSlotIndices[slotToKill] = slotToKeep;
 
             for (IndexType interferingSlot : m_interference[slotToKill])
@@ -273,6 +299,11 @@ public:
                     inst = Inst();
             }
         }
+    }
+
+    void assignStackLocations(const Vector<StackSlot*>& assignedEscapedStackSlots)
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::assign"_s);
 
         // Now we assign stack locations. At its heart this algorithm is just first-fit. For each
         // StackSlot we just want to find the offsetFromFP that is closest to zero while ensuring no
@@ -299,7 +330,6 @@ public:
         }
     }
 
-private:
     struct CoalescableMove {
         CoalescableMove()
         {
@@ -343,17 +373,18 @@ private:
 
     InterferenceGraph m_interference;
     Vector<CoalescableMove> m_coalescableMoves;
+    AirStackAllocatorStats m_stats;
 };
 
-// We try to avoid computing the liveness information if there is no spill slot to allocate
-bool tryTrivialStackAllocation(Code& code)
+// Avoid computing the liveness information if there is no spill slot to allocate
+bool doTrivialStackAllocation(Code& code)
 {
     for (StackSlot* slot : code.stackSlots()) {
         if (slot->offsetFromFP())
             continue;
         return false;
     }
-
+    updateFrameSizeBasedOnStackSlots(code);
     return true;
 }
 
@@ -368,7 +399,7 @@ void allocateStackByGraphColoring(Code& code)
     Vector<StackSlot*> assignedEscapedStackSlots =
         allocateAndGetEscapedStackSlotsWithoutChangingFrameSize(code);
 
-    if (!tryTrivialStackAllocation(code)) {
+    if (!doTrivialStackAllocation(code)) {
         if (code.stackSlots().size() < WTF::maxSizeForSmallInterferenceGraph) {
             GraphColoringStackAllocator<SmallIterableInterferenceGraph> allocator(code);
             allocator.run(assignedEscapedStackSlots);
@@ -381,7 +412,6 @@ void allocateStackByGraphColoring(Code& code)
         }
     }
 
-    updateFrameSizeBasedOnStackSlots(code);
     code.setStackIsAllocated(true);
 }
 

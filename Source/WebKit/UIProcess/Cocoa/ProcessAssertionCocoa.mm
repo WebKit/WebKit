@@ -390,7 +390,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
         ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
         ASCIILiteral runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
         auto didInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName]() mutable {
-            RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
+            RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis), runningBoardAssertionName = WTF::move(runningBoardAssertionName)] {
                 auto strongThis = weakThis.get();
                 RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}s assertion for process with PID=%d was invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
                 if (strongThis)
@@ -398,15 +398,15 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
             });
         };
         auto willInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName]() mutable {
-            RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
+            RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis), runningBoardAssertionName = WTF::move(runningBoardAssertionName)] {
                 auto strongThis = weakThis.get();
                 RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}s assertion for process with PID=%d will be invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
                 if (strongThis)
                     strongThis->processAssertionWillBeInvalidated();
             });
         };
-        m_capability = AssertionCapability { environmentIdentifier, runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
-        m_process = WTFMove(extensionProcess);
+        m_capability = AssertionCapability { environmentIdentifier, runningBoardDomain, runningBoardAssertionName, WTF::move(willInvalidateBlock), WTF::move(didInvalidateBlock) };
+        m_process = WTF::move(extensionProcess);
         if (m_capability && m_capability->hasPlatformCapability())
             return;
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %s", this, runningBoardAssertionName.characters());
@@ -432,8 +432,8 @@ void ProcessAssertion::init(const String& environmentIdentifier)
     else
         target = [RBSTarget targetWithPid:m_pid environmentIdentifier:environmentIdentifier.createNSString().get()];
 
-    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType).createNSString().get() name:runningBoardAssertionName.createNSString().get()];
-    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute]]);
+    RetainPtr domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType).createNSString().get() name:runningBoardAssertionName.createNSString().get()];
+    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute.get()]]);
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];
@@ -467,9 +467,9 @@ double ProcessAssertion::remainingRunTimeInSeconds(ProcessID pid)
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
-    assertionsWorkQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    protect(assertionsWorkQueue())->dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         protectedThis->acquireSync();
-        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)]() mutable {
             if (completionHandler)
                 completionHandler();
         });
@@ -483,7 +483,7 @@ void ProcessAssertion::acquireSync()
     if (m_process && m_capability && m_capability->hasPlatformCapability()) {
         Locker locker { s_capabilityLock };
         auto grant = m_process->grantCapability(m_capability->platformCapability(), m_capability->didInvalidateBlock());
-        m_grant.setPlatformGrant(WTFMove(grant));
+        m_grant.setPlatformGrant(WTF::move(grant));
         if (m_grant.isValid()) {
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;
@@ -553,7 +553,7 @@ ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, Pr
 #else
 
 ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess)
-    : ProcessAssertion(pid, reason, assertionType, environmentIdentifier, WTFMove(extensionProcess))
+    : ProcessAssertion(pid, reason, assertionType, environmentIdentifier, WTF::move(extensionProcess))
 {
 #if PLATFORM(IOS_FAMILY)
     updateRunInBackgroundCount();

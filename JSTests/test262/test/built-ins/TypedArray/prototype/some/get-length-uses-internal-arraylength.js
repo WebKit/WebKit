@@ -30,8 +30,8 @@ var desc = {
 
 Object.defineProperty(TypedArray.prototype, "length", desc);
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([42, 43]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42, 43]));
   var calls = 0;
 
   Object.defineProperty(TA.prototype, "length", desc);
@@ -43,4 +43,4 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(getCalls, 0, "ignores length properties");
   assert.sameValue(calls, 2, "iterations are not affected by custom length");
-});
+}, null, ["passthrough"]);

@@ -32,7 +32,7 @@ public:
     static JSTestReadOnlySetLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReadOnlySetLike>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestReadOnlySetLike* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlySetLike>(vm)) JSTestReadOnlySetLike(structure, *globalObject, WTFMove(impl));
+        JSTestReadOnlySetLike* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlySetLike>(vm)) JSTestReadOnlySetLike(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -82,10 +82,8 @@ inline void* wrapperKey(TestReadOnlySetLike* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestReadOnlySetLike&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestReadOnlySetLike* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestReadOnlySetLike>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestReadOnlySetLike& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestReadOnlySetLike>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestReadOnlySetLike> {
     using WrapperClass = JSTestReadOnlySetLike;

@@ -187,8 +187,8 @@ static_assert(AES_NOHW_WORD_SIZE == sizeof(aes_word_t),
 //
 // Observe that the distances between corresponding bits in bitsliced and
 // compact bit orders match. If we line up corresponding words of each block,
-// the bitsliced and compact representations may be converted by tranposing bits
-// in corresponding logical bytes. Continuing the 64-bit example:
+// the bitsliced and compact representations may be converted by transposing
+// bits in corresponding logical bytes. Continuing the 64-bit example:
 //
 //   block_a[0] = a0 a1 a2 a3 |  a8  a9 a10 a11 | a16 a17 a18 a19 ...
 //   block_b[0] = b0 b1 b2 b3 |  b8  b9 b10 b11 | b16 b17 b18 b19 ...

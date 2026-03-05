@@ -38,7 +38,7 @@ struct fips_service_indicator_state {
 };
 
 // service_indicator_get returns a pointer to the |fips_service_indicator_state|
-// for the current thread. It returns NULL on error.
+// for the current thread. It returns nullptr on error.
 //
 // FIPS 140-3 requires that the module should provide the service indicator
 // for approved services irrespective of whether the user queries it or not.
@@ -48,11 +48,11 @@ static struct fips_service_indicator_state *service_indicator_get(void) {
       reinterpret_cast<fips_service_indicator_state *>(CRYPTO_get_thread_local(
           OPENSSL_THREAD_LOCAL_FIPS_SERVICE_INDICATOR_STATE));
 
-  if (indicator == NULL) {
+  if (indicator == nullptr) {
     indicator = reinterpret_cast<fips_service_indicator_state *>(
         OPENSSL_malloc(sizeof(struct fips_service_indicator_state)));
-    if (indicator == NULL) {
-      return NULL;
+    if (indicator == nullptr) {
+      return nullptr;
     }
 
     indicator->lock_state = STATE_UNLOCKED;
@@ -62,7 +62,7 @@ static struct fips_service_indicator_state *service_indicator_get(void) {
             OPENSSL_THREAD_LOCAL_FIPS_SERVICE_INDICATOR_STATE, indicator,
             OPENSSL_free)) {
       OPENSSL_PUT_ERROR(CRYPTO, ERR_R_INTERNAL_ERROR);
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -71,7 +71,7 @@ static struct fips_service_indicator_state *service_indicator_get(void) {
 
 static uint64_t service_indicator_get_counter(void) {
   struct fips_service_indicator_state *indicator = service_indicator_get();
-  if (indicator == NULL) {
+  if (indicator == nullptr) {
     return 0;
   }
   return indicator->counter;
@@ -94,7 +94,7 @@ void FIPS_service_indicator_update_state(void) {
 
 void FIPS_service_indicator_lock_state(void) {
   struct fips_service_indicator_state *indicator = service_indicator_get();
-  if (indicator == NULL) {
+  if (indicator == nullptr) {
     return;
   }
 
@@ -115,7 +115,7 @@ void FIPS_service_indicator_lock_state(void) {
 
 void FIPS_service_indicator_unlock_state(void) {
   struct fips_service_indicator_state *indicator = service_indicator_get();
-  if (indicator == NULL) {
+  if (indicator == nullptr) {
     return;
   }
 
@@ -185,7 +185,7 @@ static int is_md_fips_approved_for_verifying(int md_type) {
 
 static void evp_md_ctx_verify_service_indicator(const EVP_MD_CTX *ctx,
                                                 int (*md_ok)(int md_type)) {
-  if (EVP_MD_CTX_get0_md(ctx) == NULL) {
+  if (EVP_MD_CTX_get0_md(ctx) == nullptr) {
     // Signature schemes without a prehash are currently never FIPS approved.
     return;
   }

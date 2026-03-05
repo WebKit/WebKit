@@ -25,6 +25,7 @@
 
 [
     Conditional=PAYMENT_REQUEST,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PaymentValidationErrors {
     PayerErrorFields payer;
     AddressErrors shippingAddress;

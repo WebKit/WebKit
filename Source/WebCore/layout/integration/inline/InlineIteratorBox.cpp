@@ -39,7 +39,7 @@ namespace WebCore {
 namespace InlineIterator {
 
 BoxIterator::BoxIterator(Box::PathVariant&& pathVariant)
-    : m_box(WTFMove(pathVariant))
+    : m_box(WTF::move(pathVariant))
 {
 }
 
@@ -75,6 +75,14 @@ BoxIterator& BoxIterator::traverseLineRightwardOnLineSkippingChildren()
 {
     WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
         path.traverseNextBoxOnLineSkippingChildren();
+    });
+    return *this;
+}
+
+BoxIterator& BoxIterator::traverseLineLeftwardOnLine()
+{
+    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
+        path.traversePreviousBoxOnLine();
     });
     return *this;
 }
@@ -135,14 +143,14 @@ RenderObject::HighlightState Box::selectionState() const
         return { };
 
     if (auto* text = dynamicDowncast<TextBox>(*this)) {
-        auto& renderer = text->renderer();
-        return renderer.view().selection().highlightStateForTextBox(renderer, text->selectableRange());
+        CheckedRef renderer = text->renderer();
+        return renderer->view().selection().highlightStateForTextBox(renderer, text->selectableRange());
     }
     return renderer().selectionState();
 }
 
 LeafBoxIterator::LeafBoxIterator(Box::PathVariant&& pathVariant)
-    : BoxIterator(WTFMove(pathVariant))
+    : BoxIterator(WTF::move(pathVariant))
 {
 }
 
@@ -185,14 +193,14 @@ LeafBoxIterator& LeafBoxIterator::traverseLineLeftwardOnLineIgnoringLineBreak()
 
 LeafBoxIterator boxFor(const RenderLineBreak& renderer)
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(renderer))
         return lineLayout->boxFor(renderer);
     return { };
 }
 
 LeafBoxIterator boxFor(const RenderBox& renderer)
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(renderer))
         return lineLayout->boxFor(renderer);
     return { };
 }

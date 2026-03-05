@@ -30,8 +30,8 @@ using ::testing::InitGoogleTest;
 namespace webrtc {
 namespace test {
 namespace {
-const int kInputSampleRateKhz = 8;
-const int kOutputSampleRateKhz = 8;
+constexpr int kInputSampleRateKhz = 8;
+constexpr int kOutputSampleRateKhz = 8;
 }  // namespace
 
 class NetEqPcmuQualityTest : public NetEqQualityTest {

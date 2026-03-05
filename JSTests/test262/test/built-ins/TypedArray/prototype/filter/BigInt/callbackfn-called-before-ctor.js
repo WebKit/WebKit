@@ -13,7 +13,7 @@ info: |
     ...
   10. Let A be ? TypedArraySpeciesCreate(O, « captured »).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol.species, TypedArray]
 ---*/
 

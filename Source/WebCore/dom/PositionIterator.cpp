@@ -63,7 +63,7 @@ PositionIterator::operator Position() const
         return atStartOfNode() ? positionBeforeNode(anchorNode.get()) : positionAfterNode(anchorNode.get());
     if (anchorNode->hasChildNodes())
         return lastPositionInOrAfterNode(anchorNode.get());
-    return makeDeprecatedLegacyPosition(WTFMove(anchorNode), m_offsetInAnchor);
+    return makeDeprecatedLegacyPosition(WTF::move(anchorNode), m_offsetInAnchor);
 }
 
 void PositionIterator::increment()
@@ -82,7 +82,7 @@ void PositionIterator::increment()
     if (anchorNode->renderer() && !anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(*anchorNode))
         m_offsetInAnchor = Position::uncheckedNextOffset(anchorNode.get(), m_offsetInAnchor);
     else {
-        m_nodeAfterPositionInAnchor = WTFMove(anchorNode);
+        m_nodeAfterPositionInAnchor = WTF::move(anchorNode);
         m_anchorNode = m_nodeAfterPositionInAnchor->parentNode();
         m_nodeAfterPositionInAnchor = m_nodeAfterPositionInAnchor->nextSibling();
         m_offsetInAnchor = 0;
@@ -165,7 +165,7 @@ bool PositionIterator::isCandidate() const
     if (!anchorNode)
         return false;
 
-    RenderObject* renderer = anchorNode->renderer();
+    CheckedPtr renderer = anchorNode->renderer();
     if (!renderer)
         return false;
 
@@ -175,7 +175,7 @@ bool PositionIterator::isCandidate() const
     if (renderer->isBR())
         return Position(*this).isCandidate();
 
-    if (auto* renderText = dynamicDowncast<RenderText>(*renderer))
+    if (CheckedPtr renderText = dynamicDowncast<RenderText>(*renderer))
         return !Position::nodeIsUserSelectNone(anchorNode.get()) && renderText->containsCaretOffset(m_offsetInAnchor);
 
     if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
@@ -184,7 +184,7 @@ bool PositionIterator::isCandidate() const
     if (is<HTMLHtmlElement>(*anchorNode))
         return false;
 
-    if (auto* block = dynamicDowncast<RenderBlock>(*renderer)) {
+    if (CheckedPtr block = dynamicDowncast<RenderBlock>(*renderer)) {
         if (is<RenderBlockFlow>(*block) || is<RenderGrid>(*block) || is<RenderFlexibleBox>(*block)) {
             if (block->logicalHeight() || is<HTMLBodyElement>(*anchorNode) || anchorNode->isRootEditableElement()) {
                 if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))

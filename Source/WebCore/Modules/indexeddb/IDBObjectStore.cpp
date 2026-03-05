@@ -45,9 +45,9 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "WebCoreOpaqueRootInlines.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -55,7 +55,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBObjectStore);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBObjectStore);
 
 UniqueRef<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
 {
@@ -80,7 +80,7 @@ IDBObjectStore::~IDBObjectStore()
 
 bool IDBObjectStore::virtualHasPendingActivity() const
 {
-    // Cannot ref the transaction here since this may get called on the GC thread.
+    // Cannot ref the transaction here since this may get called on a GC thread.
     SUPPRESS_UNCOUNTED_ARG return m_transaction->hasPendingActivity();
 }
 
@@ -140,11 +140,6 @@ IDBTransaction& IDBObjectStore::transaction()
     return m_transaction.get();
 }
 
-Ref<IDBTransaction> IDBObjectStore::protectedTransaction()
-{
-    return transaction();
-}
-
 bool IDBObjectStore::autoIncrement() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction->database().originThread()));
@@ -174,7 +169,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenCursor(IDBCursorDirection dir
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
 {
-    return doOpenCursor(direction, [range = WTFMove(range)]() {
+    return doOpenCursor(direction, [range = WTF::move(range)]() {
         return range;
     });
 }
@@ -213,7 +208,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenKeyCursor(IDBCursorDirection 
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
 {
-    return doOpenKeyCursor(direction, [range = WTFMove(range)]() {
+    return doOpenKeyCursor(direction, [range = WTF::move(range)]() {
         return range;
     });
 }
@@ -323,13 +318,13 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::put(JSGlobalObject& execState, JSVa
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putForCursorUpdate(JSGlobalObject& state, JSValue value, RefPtr<IDBKey>&& key, RefPtr<SerializedScriptValue>&& serializedValue)
 {
-    return putOrAdd(state, value, WTFMove(key), IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor, InlineKeyCheck::DoNotPerform, WTFMove(serializedValue));
+    return putOrAdd(state, value, WTF::move(key), IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor, InlineKeyCheck::DoNotPerform, WTF::move(serializedValue));
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, InlineKeyCheck inlineKeyCheck, RefPtr<SerializedScriptValue>&& serializedValue)
 {
     VM& vm = state.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
     Ref transaction = m_transaction.get();
@@ -385,7 +380,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
     } else if (!usesKeyGenerator && !key)
         return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided."_s };
 
-    return transaction->requestPutOrAdd(*this, WTFMove(key), *serializedValue, overwriteMode);
+    return transaction->requestPutOrAdd(*this, WTF::move(key), *serializedValue, overwriteMode);
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(IDBKeyRange* keyRange)
@@ -432,7 +427,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(JSGlobalObject& exec
         auto idbKey = scriptValueToIDBKey(*state, key);
         if (!idbKey->isValid())
             return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key."_s) };
-        return ExceptionOr<RefPtr<IDBKeyRange>> { (IDBKeyRange::create(WTFMove(idbKey))).ptr() };
+        return ExceptionOr<RefPtr<IDBKeyRange>> { (IDBKeyRange::create(WTF::move(idbKey))).ptr() };
     });
 }
 
@@ -487,7 +482,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(const String& name, IDBKe
         return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true."_s };
 
     // Install the new Index into the ObjectStore's info.
-    IDBIndexInfo info = m_info.createNewIndex(transaction->database().info().generateNextIndexID(), name, WTFMove(keyPath), parameters.unique, parameters.multiEntry);
+    IDBIndexInfo info = m_info.createNewIndex(transaction->database().info().generateNextIndexID(), name, WTF::move(keyPath), parameters.unique, parameters.multiEntry);
     transaction->database().didCreateIndexInfo(info);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.
@@ -496,7 +491,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(const String& name, IDBKe
     Ref<IDBIndex> referencedIndex { *index };
 
     Locker locker { m_referencedIndexLock };
-    m_referencedIndexes.set(name, WTFMove(index));
+    m_referencedIndexes.set(name, WTF::move(index));
 
     return referencedIndex;
 }
@@ -524,7 +519,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
     if (!info)
         return Exception { ExceptionCode::NotFoundError, "Failed to execute 'index' on 'IDBObjectStore': The specified index was not found."_s };
 
-    auto index = IDBIndex::create(*protectedScriptExecutionContext(), *info, *this);
+    auto index = IDBIndex::create(*protect(scriptExecutionContext()), *info, *this);
 
     Ref referencedIndex { index.get() };
 
@@ -562,7 +557,7 @@ ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)
         if (auto index = m_referencedIndexes.take(name)) {
             index->markAsDeleted();
             auto identifier = index->info().identifier();
-            m_deletedIndexes.add(identifier, WTFMove(index));
+            m_deletedIndexes.add(identifier, WTF::move(index));
         }
     }
 
@@ -631,7 +626,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAll(std::optional<uint32_t> co
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(RefPtr<IDBKeyRange>&& range, std::optional<uint32_t> count)
 {
-    return doGetAll(count, [range = WTFMove(range)]() {
+    return doGetAll(count, [range = WTF::move(range)]() {
         return range;
     });
 }
@@ -669,7 +664,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAllKeys(std::optional<uint32_t
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(RefPtr<IDBKeyRange>&& range, std::optional<uint32_t> count)
 {
-    return doGetAllKeys(count, [range = WTFMove(range)]() {
+    return doGetAllKeys(count, [range = WTF::move(range)]() {
         return range;
     });
 }
@@ -749,11 +744,11 @@ void IDBObjectStore::visitReferencedIndexesConcurrently(Visitor& visitor) const
 {
     Locker locker { m_referencedIndexLock };
     for (auto& index : m_referencedIndexes.values()) {
-        // Cannot ref `index` here since this may get called on the GC thread.
+        // Cannot ref `index` here since this may get called on a GC thread.
         SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, index.get());
     }
     for (auto& index : m_deletedIndexes.values()) {
-        // Cannot ref `index` here since this may get called on the GC thread.
+        // Cannot ref `index` here since this may get called on a GC thread.
         SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, index.get());
     }
 }

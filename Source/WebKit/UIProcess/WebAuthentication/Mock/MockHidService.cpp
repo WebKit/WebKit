@@ -30,7 +30,9 @@
 
 #include "Logging.h"
 #include "MockHidConnection.h"
+#include <WebCore/Pin.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/Base64.h>
 
 namespace WebKit {
 

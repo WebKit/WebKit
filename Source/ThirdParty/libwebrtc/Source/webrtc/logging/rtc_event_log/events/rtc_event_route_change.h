@@ -67,7 +67,7 @@ class RtcEventRouteChange final : public RtcEvent {
   }
 
  private:
-  RtcEventRouteChange(const RtcEventRouteChange& other);
+  RtcEventRouteChange(const RtcEventRouteChange&) = default;
 
   const bool connected_;
   const uint32_t overhead_;

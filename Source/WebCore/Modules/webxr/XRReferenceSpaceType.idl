@@ -34,5 +34,4 @@
     "local-floor",
     "bounded-floor",
     "unbounded",
-    "webgpu",
 };

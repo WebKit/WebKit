@@ -93,7 +93,7 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     case op_profile_control_flow:
     case op_create_direct_arguments:
     case op_create_cloned_arguments:
-    case op_get_rest_length:
+    case op_create_rest:
     case op_check_traps:
     case op_get_argument:
     case op_nop:
@@ -110,7 +110,6 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpThrow, value)
     USES(OpThrowStaticError, message)
     USES(OpDebug, data)
-    USES(OpEnd, value)
     USES(OpRet, value)
     USES(OpJtrue, condition)
     USES(OpJfalse, condition)
@@ -222,7 +221,6 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpNewAsyncFunc, scope)
     USES(OpGetParentScope, scope)
     USES(OpCreateScopedArguments, scope)
-    USES(OpCreateRest, arraySize)
     USES(OpGetFromArguments, arguments)
     USES(OpNewArrayBuffer, immutableButterfly)
 
@@ -235,7 +233,6 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpHasPrivateName, base, property)
     USES(OpHasPrivateBrand, base, brand)
     USES(OpHasStructureWithFlags, operand)
-    USES(OpOverridesHasInstance, constructor, hasInstanceValue)
     USES(OpAdd, lhs, rhs)
     USES(OpMul, lhs, rhs)
     USES(OpDiv, lhs, rhs)
@@ -261,7 +258,6 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpPushWithScope, currentScope, newScope)
     USES(OpGetByIdWithThis, base, thisValue)
     USES(OpDelByVal, base, property)
-    USES(OpTailCallForwardArguments, callee, thisValue)
 
     USES(OpGetByValWithThis, base, thisValue, property)
 
@@ -384,7 +380,6 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
 
     // These don't define anything.
     case op_put_to_scope:
-    case op_end:
     case op_throw:
     case op_throw_static_error:
     case op_check_tdz:
@@ -504,7 +499,6 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
         return;
     }
 
-    DEFS(OpTailCallForwardArguments, dst)
     DEFS(OpGetFromScope, dst)
     DEFS(OpCall, dst)
     DEFS(OpTailCall, dst)
@@ -518,7 +512,6 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpGetByIdWithThis, dst)
     DEFS(OpGetByValWithThis, dst)
     DEFS(OpGetPrototypeOf, dst)
-    DEFS(OpOverridesHasInstance, dst)
     DEFS(OpGetByVal, dst)
     DEFS(OpGetPrivateName, dst)
     DEFS(OpTypeof, dst)
@@ -588,7 +581,6 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpGetFromArguments, dst)
     DEFS(OpGetArgument, dst)
     DEFS(OpCreateRest, dst)
-    DEFS(OpGetRestLength, dst)
     DEFS(OpGetInternalField, dst)
 
     DEFS(OpCatch, exception, thrownValue)

@@ -29,11 +29,11 @@
 #include "config.h"
 #include "ExceptionHelpers.h"
 
-#include "CatchScope.h"
 #include "ErrorHandlingScope.h"
 #include "Exception.h"
 #include "JSCInlines.h"
 #include "RuntimeType.h"
+#include "TopExceptionScope.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
@@ -268,13 +268,13 @@ String constructErrorMessage(JSGlobalObject* globalObject, JSValue value, const 
 JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto errorMessage = constructErrorMessage(globalObject, value, message);
     if (scope.exception() || !errorMessage) [[unlikely]] {
         // When we see an exception, we're not returning immediately because
-        // we're in a CatchScope, i.e. no exceptions are thrown past this scope.
-        // We're using a CatchScope because the contract for createError() is
+        // we're in a TopExceptionScope, i.e. no exceptions are thrown past this scope.
+        // We're using a TopExceptionScope because the contract for createError() is
         // that it only creates an error object; it doesn't throw it.
         scope.clearException();
         return createOutOfMemoryError(globalObject);

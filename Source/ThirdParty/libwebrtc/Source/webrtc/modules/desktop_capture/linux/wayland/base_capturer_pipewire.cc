@@ -189,7 +189,7 @@ void BaseCapturerPipeWire::CaptureFrame() {
 }
 
 bool BaseCapturerPipeWire::GetSourceList(SourceList* sources) {
-  RTC_DCHECK(sources->size() == 0);
+  RTC_DCHECK(sources->empty());
   // List of available screens is already presented by the xdg-desktop-portal,
   // so we just need a (valid) source id for any callers to pass around, even
   // though it doesn't mean anything to us. Until the user selects a source in

@@ -1,0 +1,59 @@
+Tests forward and backward AnyType search traversal across process boundaries.
+
+=== Forward Traversal ===
+Forward search found 18 elements:
+  1: domIdentifier=btn-before, role=AXRole: AXButton
+  2: domIdentifier=text-before, role=AXRole: AXGroup
+  3: domIdentifier=(no id), role=AXRole: AXStaticText
+  4: (remote platform element)
+  5: (remote platform element)
+  6: (remote platform element)
+  7: (remote platform element)
+  8: (remote platform element)
+  9: (remote platform element)
+  10: (remote platform element)
+  11: (remote platform element)
+  12: (remote platform element)
+  13: (remote platform element)
+  14: (remote platform element)
+  15: (remote platform element)
+  16: domIdentifier=text-after, role=AXRole: AXGroup
+  17: domIdentifier=(no id), role=AXRole: AXStaticText
+  18: domIdentifier=btn-after, role=AXRole: AXButton
+
+=== Backward Traversal ===
+Backward search found 18 elements:
+  1: domIdentifier=btn-after, role=AXRole: AXButton
+  2: domIdentifier=text-after, role=AXRole: AXGroup
+  3: domIdentifier=(no id), role=AXRole: AXStaticText
+  4: (remote platform element)
+  5: (remote platform element)
+  6: (remote platform element)
+  7: (remote platform element)
+  8: (remote platform element)
+  9: (remote platform element)
+  10: (remote platform element)
+  11: (remote platform element)
+  12: (remote platform element)
+  13: (remote platform element)
+  14: (remote platform element)
+  15: (remote platform element)
+  16: domIdentifier=text-before, role=AXRole: AXGroup
+  17: domIdentifier=(no id), role=AXRole: AXStaticText
+  18: domIdentifier=btn-before, role=AXRole: AXButton
+
+=== Verification ===
+PASS: forwardResults.length === backwardResults.length
+First forward element: btn-before
+Last backward element: btn-before
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button Before
+Text before iframe
+
+
+Text after iframe
+
+Button After

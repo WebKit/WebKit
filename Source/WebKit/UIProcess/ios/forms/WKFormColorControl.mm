@@ -75,7 +75,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray<UIColor *> *)focusedElementSuggestedColors
 {
-    auto& colors = _view.focusedElementInformation.suggestedColors;
+    auto& colors = [protect(_view) focusedElementInformation].suggestedColors;
 
     if (colors.isEmpty())
         return nil;
@@ -87,8 +87,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)updateColorPickerState
 {
-    [_colorPickerViewController setSelectedColor:cocoaColor(_view.focusedElementInformation.colorValue).get()];
-    [_colorPickerViewController setSupportsAlpha:_view.focusedElementInformation.supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes && _view.page->preferences().inputTypeColorEnhancementsEnabled()];
+    RetainPtr view = _view;
+    [_colorPickerViewController setSelectedColor:cocoaColor([view focusedElementInformation].colorValue).get()];
+    [_colorPickerViewController setSupportsAlpha:[view focusedElementInformation].supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes && protect([view page]->preferences())->inputTypeColorEnhancementsEnabled()];
     if ([_colorPickerViewController respondsToSelector:@selector(_setSuggestedColors:)])
         [_colorPickerViewController _setSuggestedColors:[self focusedElementSuggestedColors]];
 }
@@ -97,10 +98,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     [_colorPickerViewController setModalPresentationStyle:UIModalPresentationPopover];
 
+    RetainPtr view = _view;
     UIPopoverPresentationController *presentationController = [_colorPickerViewController popoverPresentationController];
     presentationController.delegate = self;
-    presentationController.sourceView = _view;
-    presentationController.sourceRect = CGRectIntegral(_view.focusedElementInformation.interactionRect);
+    presentationController.sourceView = view.get();
+    presentationController.sourceRect = CGRectIntegral([view focusedElementInformation].interactionRect);
 }
 
 #pragma mark WKFormControl
@@ -112,13 +114,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)controlBeginEditing
 {
-    [_view startRelinquishingFirstResponderToFocusedElement];
+    [protect(_view) startRelinquishingFirstResponderToFocusedElement];
 
     [self updateColorPickerState];
     [self configurePresentation];
 
-    auto presentingViewController = _view._wk_viewControllerForFullScreenPresentation;
-    [presentingViewController presentViewController:_colorPickerViewController.get() animated:YES completion:nil];
+    RetainPtr<UIViewController> presentingViewController = [protect(_view) _wk_viewControllerForFullScreenPresentation];
+#if PLATFORM(VISION)
+    [_view page]->dispatchWillPresentModalUI();
+#endif
+    [presentingViewController.get() presentViewController:_colorPickerViewController.get() animated:YES completion:nil];
 }
 
 - (void)controlUpdateEditing
@@ -127,7 +132,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)controlEndEditing
 {
-    [_view stopRelinquishingFirstResponderToFocusedElement];
+    [protect(_view) stopRelinquishingFirstResponderToFocusedElement];
     [_colorPickerViewController dismissViewControllerAnimated:NO completion:nil];
 }
 
@@ -135,7 +140,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-    [_view accessoryDone];
+    [protect(_view) accessoryDone];
 }
 
 #pragma mark UIColorPickerViewControllerDelegate
@@ -143,13 +148,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)colorPickerViewControllerDidSelectColor:(UIColorPickerViewController *)viewController
 {
-    [_view updateFocusedElementValueAsColor:viewController.selectedColor];
+    [protect(_view) updateFocusedElementValueAsColor:viewController.selectedColor];
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)colorPickerViewControllerDidFinish:(UIColorPickerViewController *)viewController
 {
-    [_view accessoryDone];
+    [protect(_view) accessoryDone];
 }
 
 @end
@@ -161,7 +166,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (instancetype)initWithView:(WKContentView *)view
 {
     RetainPtr<NSObject <WKFormControl>> control = adoptNS([[WKColorPicker alloc] initWithView:view]);
-    self = [super initWithView:view control:WTFMove(control)];
+    self = [super initWithView:view control:WTF::move(control)];
     return self;
 }
 

@@ -425,7 +425,8 @@ PAGE_REDIRECT_HTTP_EQUIV = (
 PAGE_REDIRECTED_HTML = "/webdriver/tests/bidi/network/support/redirected.html"
 PAGE_SERVICEWORKER_HTML = "/webdriver/tests/bidi/network/support/serviceworker.html"
 
-IMAGE_RESPONSE_BODY = urllib.parse.quote_plus(base64.b64decode(b"iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="))
+IMAGE_RESPONSE_DATA = b"iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+IMAGE_RESPONSE_BODY = urllib.parse.quote_plus(base64.b64decode(IMAGE_RESPONSE_DATA))
 
 SCRIPT_CONSOLE_LOG = urllib.parse.quote_plus("console.log('test')")
 SCRIPT_CONSOLE_LOG_IN_MODULE = urllib.parse.quote_plus("export default function foo() { console.log('from module') }")
@@ -473,6 +474,8 @@ SET_COOKIE_TEST_PARAMETERS = [
             name="foo",
             path="/",
             value=NetworkStringValue("bar"),
+            same_site="none",
+            secure=True
         ),
         None,
         {
@@ -480,7 +483,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             "name": "foo",
             "path": "/",
             "sameSite": "none",
-            "secure": False,
+            "secure": True,
             "size": 6,
             "value": {"type": "string", "value": "bar"},
         },
@@ -490,6 +493,8 @@ SET_COOKIE_TEST_PARAMETERS = [
             name="foo",
             path="/",
             value=NetworkStringValue("bar"),
+            same_site="none",
+            secure=True
         ),
         "default domain",
         {
@@ -497,7 +502,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             "name": "foo",
             "path": "/",
             "sameSite": "none",
-            "secure": False,
+            "secure": True,
             "size": 6,
             "value": {"type": "string", "value": "bar"},
         },
@@ -507,6 +512,8 @@ SET_COOKIE_TEST_PARAMETERS = [
             name="foo",
             path="/",
             value=NetworkStringValue("bar"),
+            same_site="none",
+            secure=True
         ),
         "alt domain",
         {
@@ -514,7 +521,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             "name": "foo",
             "path": "/",
             "sameSite": "none",
-            "secure": False,
+            "secure": True,
             "size": 6,
             "value": {"type": "string", "value": "bar"},
         },
@@ -524,6 +531,8 @@ SET_COOKIE_TEST_PARAMETERS = [
             name="foo",
             path="/some/other/path",
             value=NetworkStringValue("bar"),
+            same_site="none",
+            secure=True
         ),
         None,
         {
@@ -531,7 +540,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             "name": "foo",
             "path": "/some/other/path",
             "sameSite": "none",
-            "secure": False,
+            "secure": True,
             "size": 6,
             "value": {"type": "string", "value": "bar"},
         },
@@ -542,6 +551,8 @@ SET_COOKIE_TEST_PARAMETERS = [
             name="foo",
             path="/",
             value=NetworkStringValue("bar"),
+            same_site="none",
+            secure=True
         ),
         None,
         {
@@ -549,7 +560,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             "name": "foo",
             "path": "/",
             "sameSite": "none",
-            "secure": False,
+            "secure": True,
             "size": 6,
             "value": {"type": "string", "value": "bar"},
         },
@@ -560,6 +571,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             path="/",
             secure=True,
             value=NetworkStringValue("bar"),
+            same_site="none",
         ),
         None,
         {
@@ -578,6 +590,8 @@ SET_COOKIE_TEST_PARAMETERS = [
             name="foo",
             path="/",
             value=NetworkStringValue("bar"),
+            same_site="none",
+            secure=True
         ),
         None,
         {
@@ -586,7 +600,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             "name": "foo",
             "path": "/",
             "sameSite": "none",
-            "secure": False,
+            "secure": True,
             "size": 6,
             "value": {"type": "string", "value": "bar"},
         },
@@ -597,6 +611,8 @@ SET_COOKIE_TEST_PARAMETERS = [
             name="foo",
             path="/",
             value=NetworkStringValue("bar"),
+            same_site="none",
+            secure=True
         ),
         None,
         {
@@ -605,7 +621,7 @@ SET_COOKIE_TEST_PARAMETERS = [
             "name": "foo",
             "path": "/",
             "sameSite": "none",
-            "secure": False,
+            "secure": True,
             "size": 6,
             "value": {"type": "string", "value": "bar"},
         },

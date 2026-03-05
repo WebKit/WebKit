@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "BExport.h"
 #include "BInline.h"
 #include "Mutex.h"
@@ -112,3 +114,5 @@ template<> struct StaticPerProcessStorageTraits<Type> { \
     StaticPerProcessStorageTraits<Type>::Memory StaticPerProcessStorageTraits<Type>::Storage::s_memory { };
 
 } // namespace bmalloc
+
+#endif // __cplusplus

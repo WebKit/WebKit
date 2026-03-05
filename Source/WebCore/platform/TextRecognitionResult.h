@@ -49,7 +49,7 @@ struct CharacterRange;
 struct TextRecognitionWordData {
     TextRecognitionWordData(const String& theText, FloatQuad&& quad, bool leadingWhitespace)
         : text(theText)
-        , normalizedQuad(WTFMove(quad))
+        , normalizedQuad(WTF::move(quad))
         , hasLeadingWhitespace(leadingWhitespace)
     {
     }
@@ -61,8 +61,8 @@ struct TextRecognitionWordData {
 
 struct TextRecognitionLineData {
     TextRecognitionLineData(FloatQuad&& quad, Vector<TextRecognitionWordData>&& theChildren, bool newline, bool isVertical)
-        : normalizedQuad(WTFMove(quad))
-        , children(WTFMove(theChildren))
+        : normalizedQuad(WTF::move(quad))
+        , children(WTF::move(theChildren))
         , hasTrailingNewline(newline)
         , isVertical(isVertical)
     {
@@ -79,8 +79,8 @@ struct TextRecognitionLineData {
 struct TextRecognitionDataDetector {
     TextRecognitionDataDetector() = default;
     TextRecognitionDataDetector(RetainPtr<DDScannerResult>&& scannerResult, Vector<FloatQuad>&& quads)
-        : result(WTFMove(scannerResult))
-        , normalizedQuads(WTFMove(quads))
+        : result(WTF::move(scannerResult))
+        , normalizedQuads(WTF::move(quads))
     {
     }
 
@@ -93,7 +93,7 @@ struct TextRecognitionDataDetector {
 struct TextRecognitionBlockData {
     TextRecognitionBlockData(const String& theText, FloatQuad&& quad)
         : text(theText)
-        , normalizedQuad(WTFMove(quad))
+        , normalizedQuad(WTF::move(quad))
     {
     }
 

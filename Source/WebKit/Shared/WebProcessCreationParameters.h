@@ -164,10 +164,6 @@ struct WebProcessCreationParameters {
     HashMap<String, bool> notificationPermissions;
 #endif
 
-#if PLATFORM(COCOA)
-    RetainPtr<CFDataRef> networkATSContext;
-#endif
-
 #if PLATFORM(WAYLAND)
     String waylandCompositorDisplayName;
 #endif
@@ -291,6 +287,10 @@ struct WebProcessCreationParameters {
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     bool isDebugLoggingEnabled { false };
+#endif
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    bool shouldEnableWebAssemblyDebugger { false };
 #endif
 };
 

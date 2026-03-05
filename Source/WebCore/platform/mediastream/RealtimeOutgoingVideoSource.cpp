@@ -45,7 +45,7 @@ ALLOW_UNUSED_PARAMETERS_END
 namespace WebCore {
 
 RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&& videoSource)
-    : m_videoSource(WTFMove(videoSource))
+    : m_videoSource(WTF::move(videoSource))
     , m_blackFrameTimer(*this, &RealtimeOutgoingVideoSource::sendOneBlackFrame)
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_videoSource->logger())
@@ -91,14 +91,14 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 {
     ASSERT(isMainThread());
     ASSERT(!m_videoSource->hasObserver(*this));
-    m_videoSource = WTFMove(newSource);
+    m_videoSource = WTF::move(newSource);
 
     ALWAYS_LOG(LOGIDENTIFIER, "track ", m_videoSource->logIdentifier());
 
     if (!m_areSinksAskingToApplyRotation)
         return;
-    if (!m_videoSource->source().setShouldApplyRotation())
-        m_shouldApplyRotation = true;
+    m_videoSource->source().setShouldApplyRotation();
+    m_isApplyingRotation = m_videoSource->source().isApplyingRotation();
 }
 
 void RealtimeOutgoingVideoSource::applyRotation()
@@ -108,8 +108,8 @@ void RealtimeOutgoingVideoSource::applyRotation()
             return;
 
         m_areSinksAskingToApplyRotation = true;
-        if (!m_videoSource->source().setShouldApplyRotation())
-            m_shouldApplyRotation = true;
+        m_videoSource->source().setShouldApplyRotation();
+        m_isApplyingRotation = m_videoSource->source().isApplyingRotation();
     });
 }
 
@@ -232,7 +232,7 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
     if (!m_blackFrame) {
         auto width = m_width;
         auto height = m_height;
-        if (!m_shouldApplyRotation && (m_currentRotation == webrtc::kVideoRotation_270 || m_currentRotation == webrtc::kVideoRotation_90))
+        if (!m_isApplyingRotation && (m_currentRotation == webrtc::kVideoRotation_270 || m_currentRotation == webrtc::kVideoRotation_90))
             std::swap(width, height);
 
         m_blackFrame = WTF::toRef(createBlackFrame(width, height));
@@ -255,7 +255,7 @@ void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 void RealtimeOutgoingVideoSource::sendFrame(webrtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
 {
     MonotonicTime timestamp = MonotonicTime::now();
-    webrtc::VideoFrame frame(buffer, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation, static_cast<int64_t>(timestamp.secondsSinceEpoch().microseconds()));
+    webrtc::VideoFrame frame(buffer, m_isApplyingRotation ? webrtc::kVideoRotation_0 : m_currentRotation, static_cast<int64_t>(timestamp.secondsSinceEpoch().microseconds()));
 
 #if !RELEASE_LOG_DISABLED
     ++m_frameCount;

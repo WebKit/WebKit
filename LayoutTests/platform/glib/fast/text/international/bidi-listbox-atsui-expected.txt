@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           text run at (13,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
           text run at (71,1) width 29: "a\x{300}bc"
       RenderBlock (anonymous) at (0,129) size 784x74
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,19) size 123x17
           text run at (0,19) width 123: "2) direction: ltr;"
         RenderBR {BR} at (122,19) size 1x17
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           text run at (0,1) width 29: "a\x{300}bc"
           text run at (29,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
       RenderBlock (anonymous) at (0,222) size 784x74
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,19) size 85x17
           text run at (0,19) width 85: "3) No style"
         RenderBR {BR} at (85,19) size 0x17
@@ -42,4 +42,4 @@ layer at (0,0) size 800x600
           text run at (0,1) width 29: "a\x{300}bc"
           text run at (29,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
       RenderBlock (anonymous) at (0,315) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18

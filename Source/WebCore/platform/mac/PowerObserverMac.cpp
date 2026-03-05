@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PowerObserver);
 
 PowerObserver::PowerObserver(Function<void()>&& powerOnHander)
-    : m_powerOnHander(WTFMove(powerOnHander))
+    : m_powerOnHander(WTF::move(powerOnHander))
     , m_powerConnection(0)
     , m_notificationPort(nullptr)
     , m_notifierReference(0)

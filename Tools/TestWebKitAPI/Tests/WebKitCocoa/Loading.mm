@@ -38,7 +38,7 @@
 Function<void(WKScriptMessage*)> _messageHandler;
 }
 - (void)setMessageHandler:(Function<void(WKScriptMessage*)>&&)messageHandler {
-    _messageHandler = WTFMove(messageHandler);
+    _messageHandler = WTF::move(messageHandler);
 }
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {

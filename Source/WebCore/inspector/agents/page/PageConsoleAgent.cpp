@@ -86,7 +86,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Consol
             .setSource(source)
             .setLevel(level)
             .release();
-        channels->addItem(WTFMove(channel));
+        channels->addItem(WTF::move(channel));
     };
     addLogChannel(Inspector::Protocol::Console::ChannelSource::XML);
     addLogChannel(Inspector::Protocol::Console::ChannelSource::JavaScript);

@@ -22,7 +22,6 @@
 namespace webrtc {
 
 using testing::_;
-using testing::Invoke;
 
 class MockDecodedImageCallback : public DecodedImageCallback {
  public:
@@ -53,10 +52,10 @@ class MockVideoDecoder : public VideoDecoder {
     // TODO(bugs.webrtc.org/15444): Remove once all tests have been migrated to
     // expecting calls Decode without a missing_frames param.
     ON_CALL(*this, Decode(_, _))
-        .WillByDefault(Invoke([this](const EncodedImage& input_image,
-                                     int64_t render_time_ms) {
+        .WillByDefault([this](const EncodedImage& input_image,
+                              int64_t render_time_ms) {
           return Decode(input_image, /*missing_frames=*/false, render_time_ms);
-        }));
+        });
   }
 
   ~MockVideoDecoder() override { Destruct(); }

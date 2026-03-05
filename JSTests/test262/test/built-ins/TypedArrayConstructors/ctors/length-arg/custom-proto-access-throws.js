@@ -40,4 +40,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
     Reflect.construct(TA, [1], newTarget);
   });
-});
+}, null, ["passthrough"]);

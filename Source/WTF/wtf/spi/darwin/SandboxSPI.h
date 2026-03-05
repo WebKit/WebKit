@@ -25,11 +25,17 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
+
+#include <wtf/Platform.h>
 
 #if OS(DARWIN)
 
+#import <mach/message.h>
 #import <sandbox.h>
+#import <unistd.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <sandbox/private.h>

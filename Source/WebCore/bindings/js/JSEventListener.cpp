@@ -136,7 +136,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     VM& vm = scriptExecutionContext.vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     // See https://dom.spec.whatwg.org/#dispatching-events spec on calling handleEvent.
     // "If this throws an exception, report the exception." It should not propagate the
@@ -160,13 +160,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
         if (wasCreatedFromMarkup()) {
             RefPtr element = dynamicDowncast<Element>(*event.target());
-            if (!scriptExecutionContext.checkedContentSecurityPolicy()->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code(), element.get()))
+            if (!protect(scriptExecutionContext.contentSecurityPolicy())->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code(), element.get()))
                 return;
         }
-        // FIXME: Is this check needed for other contexts?
-        RefPtr frame = dynamicDowncast<LocalFrame>(localDOMWindow->frame());
-        if (!frame)
-            return;
+        Ref frame = *localDOMWindow->frame();
         CheckedRef script = frame->script();
         if (!script->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript) || script->isPaused())
             return;
@@ -206,27 +203,34 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         if (scope.exception()) [[unlikely]] {
             auto* exception = scope.exception();
             scope.clearException();
-            event.protectedTarget()->uncaughtExceptionInEventHandler();
+            protect(event.target())->uncaughtExceptionInEventHandler();
             reportException(jsFunctionGlobalObject, exception);
             return;
         }
         callData = JSC::getCallData(handleEventFunction);
         if (callData.type == CallData::Type::None) {
-            event.protectedTarget()->uncaughtExceptionInEventHandler();
+            protect(event.target())->uncaughtExceptionInEventHandler();
             reportException(jsFunctionGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s));
             return;
         }
     }
 
     MarkedArgumentBuffer args;
-    args.append(toJS(lexicalGlobalObject, globalObject, &event));
+    args.append(toJS(lexicalGlobalObject, globalObject, event));
     ASSERT(!args.hasOverflowed());
 
     VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : lexicalGlobalObject);
 
     JSExecState::instrumentFunction(&scriptExecutionContext, callData);
 
-    JSValue thisValue = handleEventFunction == jsFunction ? toJS(lexicalGlobalObject, globalObject, event.protectedCurrentTarget().get()) : jsFunction;
+    auto thisValue = [&] -> JSValue {
+        if (handleEventFunction != jsFunction)
+            return jsFunction;
+        if (RefPtr currentTarget = event.currentTarget())
+            return toJS(lexicalGlobalObject, globalObject, currentTarget.releaseNonNull());
+        return jsNull();
+    }();
+
     NakedPtr<JSC::Exception> uncaughtException;
     JSValue retval = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, handleEventFunction, callData, thisValue, args, uncaughtException);
 
@@ -241,7 +245,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         }
 
         if (exception) {
-            event.protectedTarget()->uncaughtExceptionInEventHandler();
+            protect(event.target())->uncaughtExceptionInEventHandler();
             reportException(jsFunctionGlobalObject, exception);
             return true;
         }

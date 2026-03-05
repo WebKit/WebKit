@@ -103,9 +103,7 @@ void ModelProcessModelPlayerTransformState::setHasPortal(bool hasPortal)
         return;
 
     m_hasPortal = hasPortal;
-    // FIXME: Recalculate entity transform
-    // Invalidate m_entityTransform for now so the entityTransform can be recomputed on reload.
-    m_entityTransform = std::nullopt;
+    invalidateTransform();
 }
 
 void ModelProcessModelPlayerTransformState::setStageMode(WebCore::StageModeOperation stageModeOperation)
@@ -114,6 +112,11 @@ void ModelProcessModelPlayerTransformState::setStageMode(WebCore::StageModeOpera
         return;
 
     m_stageModeOperation = stageModeOperation;
+    invalidateTransform();
+}
+
+void ModelProcessModelPlayerTransformState::invalidateTransform()
+{
     // FIXME: recalculate entity transform
     // Invalidate m_entityTransform for now so the entityTransform can be recomputed on reload.
     m_entityTransform = std::nullopt;

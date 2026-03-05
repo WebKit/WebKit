@@ -26,17 +26,18 @@ from webkitcorepy import Version
 
 from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
 from webkitpy.port.config import apple_additions
-from webkitpy.port.device_port import DevicePort
+from webkitpy.port.embedded_port import EmbeddedPort
 from webkitpy.port.simulator_process import SimulatorProcess
 from webkitpy.xcode.device_type import DeviceType
 
 _log = logging.getLogger(__name__)
 
 
-class IOSPort(DevicePort):
+class IOSPort(EmbeddedPort):
     port_name = "ios"
 
     DEVICE_TYPE = DeviceType(software_variant='iOS')
+    DRIVER_NAMES = ('WebKitTestRunner', 'DumpRenderTree')
 
     def __init__(self, host, port_name, **kwargs):
         super(IOSPort, self).__init__(host, port_name, **kwargs)
@@ -53,7 +54,7 @@ class IOSPort(DevicePort):
             device_type = self.DEVICE_TYPE
 
         wk_string = 'wk1'
-        if self.get_option('webkit_test_runner'):
+        if not self.is_webkitlegacy():
             wk_string = 'wk2'
 
         versions_to_fallback = []
@@ -105,7 +106,7 @@ class IOSPort(DevicePort):
                 expectations.append(self._apple_baseline_path(variant))
             expectations.append(self._webkit_baseline_path(variant))
 
-        if self.get_option('webkit_test_runner'):
+        if not self.is_webkitlegacy():
             expectations.append(self._webkit_baseline_path('wk2'))
 
         return expectations

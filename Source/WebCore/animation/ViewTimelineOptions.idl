@@ -25,6 +25,7 @@
 
 typedef (DOMString or CSSKeywordValue) CSSKeywordish;
 
+// https://drafts.csswg.org/scroll-animations/#dictdef-viewtimelineoptions
 dictionary ViewTimelineOptions {
     Element subject;
     ScrollAxis axis = "block";

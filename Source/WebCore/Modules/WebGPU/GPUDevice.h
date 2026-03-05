@@ -83,17 +83,18 @@ struct GPUTextureDescriptor;
 class HTMLVideoElement;
 class WebXRSession;
 class XRGPUBinding;
+template<typename T> struct UniquelyAnnotatedDescriptor;
 
 namespace WebGPU {
 class XRBinding;
 }
 
 class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GPUDevice);
+    WTF_MAKE_TZONE_ALLOCATED(GPUDevice);
 public:
     static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel, GPUAdapterInfo& info)
     {
-        return adoptRef(*new GPUDevice(scriptExecutionContext, WTFMove(backing), WTFMove(queueLabel), info));
+        return adoptRef(*new GPUDevice(scriptExecutionContext, WTF::move(backing), WTF::move(queueLabel), info));
     }
 
     virtual ~GPUDevice();
@@ -103,54 +104,55 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    String label() const;
+    String NODELETE label() const;
     void setLabel(String&&);
 
-    Ref<GPUSupportedFeatures> features() const;
-    Ref<GPUSupportedLimits> limits() const;
+    Ref<GPUSupportedFeatures> NODELETE features() const;
+    Ref<GPUSupportedLimits> NODELETE limits() const;
 
-    Ref<GPUQueue> queue() const;
+    Ref<GPUQueue> NODELETE queue() const;
 
     void destroy(ScriptExecutionContext&);
 
     RefPtr<WebGPU::XRBinding> createXRBinding(const WebXRSession&);
-    ExceptionOr<Ref<GPUBuffer>> createBuffer(const GPUBufferDescriptor&);
-    ExceptionOr<Ref<GPUTexture>> createTexture(const GPUTextureDescriptor&);
+    ExceptionOr<Ref<GPUBuffer>> createBuffer(GPUBufferDescriptor&&);
+    ExceptionOr<Ref<GPUTexture>> createTexture(GPUTextureDescriptor&&);
     std::optional<String> errorValidatingSupportedFormat(GPUTextureFormat) const;
-    ExceptionOr<Ref<GPUSampler>> createSampler(const std::optional<GPUSamplerDescriptor>&);
-    ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(const GPUExternalTextureDescriptor&);
+    ExceptionOr<Ref<GPUSampler>> createSampler(std::optional<GPUSamplerDescriptor>&&);
+    ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(GPUExternalTextureDescriptor&&);
 
-    ExceptionOr<Ref<GPUBindGroupLayout>> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&);
-    ExceptionOr<Ref<GPUPipelineLayout>> createPipelineLayout(const GPUPipelineLayoutDescriptor&);
-    ExceptionOr<Ref<GPUBindGroup>> createBindGroup(const GPUBindGroupDescriptor&);
+    ExceptionOr<Ref<GPUBindGroupLayout>> createBindGroupLayout(GPUBindGroupLayoutDescriptor&&);
+    ExceptionOr<Ref<GPUPipelineLayout>> createPipelineLayout(GPUPipelineLayoutDescriptor&&);
+    ExceptionOr<Ref<GPUBindGroup>> createBindGroup(GPUBindGroupDescriptor&&);
 
-    ExceptionOr<Ref<GPUShaderModule>> createShaderModule(const GPUShaderModuleDescriptor&);
-    ExceptionOr<Ref<GPUComputePipeline>> createComputePipeline(const GPUComputePipelineDescriptor&);
-    ExceptionOr<Ref<GPURenderPipeline>> createRenderPipeline(const GPURenderPipelineDescriptor&);
+    ExceptionOr<Ref<GPUShaderModule>> createShaderModule(GPUShaderModuleDescriptor&&);
+    ExceptionOr<Ref<GPUComputePipeline>> createComputePipeline(UniquelyAnnotatedDescriptor<GPUComputePipelineDescriptor>&&);
+    ExceptionOr<Ref<GPURenderPipeline>> createRenderPipeline(UniquelyAnnotatedDescriptor<GPURenderPipelineDescriptor>&&);
     using CreateComputePipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPUComputePipeline>>;
-    void createComputePipelineAsync(const GPUComputePipelineDescriptor&, CreateComputePipelineAsyncPromise&&);
+    void createComputePipelineAsync(UniquelyAnnotatedDescriptor<GPUComputePipelineDescriptor>&&, CreateComputePipelineAsyncPromise&&);
     using CreateRenderPipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPURenderPipeline>>;
-    ExceptionOr<void> createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&);
+    ExceptionOr<void> createRenderPipelineAsync(UniquelyAnnotatedDescriptor<GPURenderPipelineDescriptor>&&, CreateRenderPipelineAsyncPromise&&);
 
-    ExceptionOr<Ref<GPUCommandEncoder>> createCommandEncoder(const std::optional<GPUCommandEncoderDescriptor>&);
-    ExceptionOr<Ref<GPURenderBundleEncoder>> createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor&);
+    ExceptionOr<Ref<GPUCommandEncoder>> createCommandEncoder(std::optional<GPUCommandEncoderDescriptor>&&);
+    ExceptionOr<Ref<GPURenderBundleEncoder>> createRenderBundleEncoder(GPURenderBundleEncoderDescriptor&&);
 
-    ExceptionOr<Ref<GPUQuerySet>> createQuerySet(const GPUQuerySetDescriptor&);
+    ExceptionOr<Ref<GPUQuerySet>> createQuerySet(GPUQuerySetDescriptor&&);
 
     void pushErrorScope(GPUErrorFilter);
     using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>, IDLInterface<GPUInternalError>>>>;
     void popErrorScope(ErrorScopePromise&&);
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    using EventTarget::addEventListener;
 
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
-    LostPromise& lost();
+    LostPromise& lost() LIFETIME_BOUND;
 
     WebGPU::Device& backing() { return m_backing; }
     const WebGPU::Device& backing() const { return m_backing; }
     void removeBufferToUnmap(GPUBuffer&);
     void addBufferToUnmap(GPUBuffer&);
-    Ref<GPUAdapterInfo> adapterInfo() const;
+    Ref<GPUAdapterInfo> NODELETE adapterInfo() const;
 
 #if ENABLE(VIDEO)
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);
@@ -164,7 +166,7 @@ private:
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::GPUDevice; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -181,11 +183,13 @@ private:
     std::pair<RefPtr<HTMLVideoElement>, RefPtr<GPUExternalTexture>> m_previouslyImportedExternalTexture;
     std::pair<Vector<GPUBindGroupEntry>, RefPtr<GPUBindGroup>> m_lastCreatedExternalTextureBindGroup;
 #endif
-    Ref<GPUSupportedFeatures> m_features;
-    Ref<GPUSupportedLimits> m_limits;
-    Ref<GPUAdapterInfo> m_adapterInfo;
+    const Ref<GPUSupportedFeatures> m_features;
+    const Ref<GPUSupportedLimits> m_limits;
+    const Ref<GPUAdapterInfo> m_adapterInfo;
 
     bool m_waitingForDeviceLostPromise { false };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(GPUDevice)

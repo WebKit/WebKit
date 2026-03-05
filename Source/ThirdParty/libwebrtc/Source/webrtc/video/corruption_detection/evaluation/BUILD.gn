@@ -8,10 +8,28 @@
 
 import("../../../webrtc.gni")
 
+rtc_library("av1_qp_parser") {
+  testonly = true
+  sources = [
+    "av1_qp_parser.cc",
+    "av1_qp_parser.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_frame_type",
+    "//third_party/libgav1:libgav1_parser",
+  ]
+  public_configs = [ "//third_party/libgav1:libgav1_public_config" ]
+}
+
 rtc_library("file_based_decoder") {
   testonly = true
   sources = [ "file_based_decoder.h" ]
-  deps = [ "//third_party/abseil-cpp/absl/strings:string_view" ]
+  deps = [
+    "../../../api:rtc_error",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
 }
 
 rtc_library("file_based_encoder") {
@@ -19,8 +37,55 @@ rtc_library("file_based_encoder") {
   sources = [ "file_based_encoder.h" ]
   deps = [
     ":test_clip",
+    "../../../api:rtc_error",
     "../../../api/units:data_rate",
     "../../../api/video:video_frame",
+  ]
+}
+
+rtc_library("file_based_encoder_with_ivf_transform") {
+  testonly = true
+  sources = [ "file_based_encoder_with_ivf_transform.h" ]
+  deps = [
+    ":file_based_encoder",
+    "../../../api:rtc_error",
+  ]
+}
+
+rtc_library("mock_file_based_decoder") {
+  testonly = true
+  sources = [ "mock_file_based_decoder.h" ]
+  deps = [
+    ":file_based_decoder",
+    "../../../api:rtc_error",
+    "../../../test:test_support",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("mock_file_based_encoder") {
+  testonly = true
+  sources = [ "mock_file_based_encoder.h" ]
+  deps = [
+    ":file_based_encoder",
+    ":test_clip",
+    "../../../api:rtc_error",
+    "../../../api/units:data_rate",
+    "../../../api/video:video_frame",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("mock_file_based_encoder_with_ivf_transform") {
+  testonly = true
+  sources = [ "mock_file_based_encoder_with_ivf_transform.h" ]
+  deps = [
+    ":file_based_encoder_with_ivf_transform",
+    ":test_clip",
+    "../../../api:rtc_error",
+    "../../../api/units:data_rate",
+    "../../../api/video:video_frame",
+    "../../../test:test_support",
   ]
 }
 
@@ -33,6 +98,22 @@ rtc_library("picture_pair_provider") {
     "../../../api/video:video_frame",
     "../../../test:fileutils",
   ]
+}
+
+rtc_library("qp_parser") {
+  testonly = true
+  sources = [
+    "qp_parser.cc",
+    "qp_parser.h",
+  ]
+  deps = [
+    ":av1_qp_parser",
+    "../../../api:array_view",
+    "../../../api/video:video_frame",
+    "../../../modules/video_coding:video_coding_utility",
+    "../../../rtc_base:checks",
+  ]
+  public_configs = [ "//third_party/libgav1:libgav1_public_config" ]
 }
 
 rtc_library("test_clip") {
@@ -103,6 +184,26 @@ rtc_library("webrtc_picture_pair_provider") {
 }
 
 if (rtc_include_tests) {
+  rtc_library("av1_qp_parser_unittest") {
+    testonly = true
+    sources = [ "av1_qp_parser_unittest.cc" ]
+    deps = [
+      ":av1_qp_parser",
+      "../../../api/video:video_frame",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("qp_parser_unittest") {
+    testonly = true
+    sources = [ "qp_parser_unittest.cc" ]
+    deps = [
+      ":qp_parser",
+      "../../../api/video:video_frame",
+      "../../../test:test_support",
+    ]
+  }
+
   rtc_library("test_clip_unittest") {
     testonly = true
     sources = [ "test_clip_unittest.cc" ]
@@ -139,7 +240,7 @@ if (rtc_include_tests) {
       ":picture_pair_provider",
       ":utils",
       ":webrtc_picture_pair_provider",
-      "../../../api:field_trials_view",
+      "../../../api:field_trials",
       "../../../api:mock_video_codec_factory",
       "../../../api:mock_video_decoder",
       "../../../api:mock_video_encoder",
@@ -173,6 +274,8 @@ if (rtc_include_tests) {
     testonly = true
     sources = []
     deps = [
+      ":av1_qp_parser_unittest",
+      ":qp_parser_unittest",
       ":test_clip_unittest",
       ":utils_unittest",
       ":webrtc_picture_pair_provider_unittest",

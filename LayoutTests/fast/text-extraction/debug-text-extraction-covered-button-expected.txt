@@ -1,0 +1,9 @@
+PASS clickError is ""
+PASS clickCount.textContent is "1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click Me
+1
+
+This popup covers the button.

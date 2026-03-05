@@ -53,7 +53,7 @@ public:
 
     void setFirstLine(bool firstLine) { m_isFirstLine = firstLine; }
     void setLastLine(bool lastLine) { m_isLastLine = lastLine; }
-    void setEmpty(bool);
+    void NODELETE setEmpty(bool);
 
 private:
     bool m_isFirstLine;

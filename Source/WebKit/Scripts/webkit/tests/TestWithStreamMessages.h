@@ -177,14 +177,14 @@ public:
     static constexpr bool isStreamBatched = false;
 
     explicit SendMachSendRight(MachSendRight&& a1)
-        : m_a1(WTFMove(a1))
+        : m_a1(WTF::move(a1))
     {
     }
 
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << WTFMove(m_a1);
+        encoder << WTF::move(m_a1);
     }
 
 private:
@@ -240,14 +240,14 @@ public:
     using ReplyArguments = std::tuple<MachSendRight>;
     using Reply = CompletionHandler<void(MachSendRight&&)>;
     explicit SendAndReceiveMachSendRight(MachSendRight&& a1)
-        : m_a1(WTFMove(a1))
+        : m_a1(WTF::move(a1))
     {
     }
 
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << WTFMove(m_a1);
+        encoder << WTF::move(m_a1);
     }
 
 private:

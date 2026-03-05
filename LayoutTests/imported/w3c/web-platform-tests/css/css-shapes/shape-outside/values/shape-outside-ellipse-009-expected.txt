@@ -1,16 +1,16 @@
 
-PASS ellipse(at +50px) - inline
-PASS ellipse(at -50px) - inline
-PASS ellipse(at +50%) - inline
-PASS ellipse(at -50%) - inline
-PASS ellipse(at left +50px) - inline
-PASS ellipse(at left +50%) - inline
-PASS ellipse(at right -50px) - inline
-PASS ellipse(at right -50%) - inline
-PASS ellipse(at +50px top) - inline
-PASS ellipse(at +50% top) - inline
-PASS ellipse(at -50px bottom) - inline
-PASS ellipse(at -50% bottom) - inline
+FAIL ellipse(at +50px) - inline assert_equals: expected "ellipse(at 50px 50%)" but got "ellipse(at 50px center)"
+FAIL ellipse(at -50px) - inline assert_equals: expected "ellipse(at -50px 50%)" but got "ellipse(at -50px center)"
+FAIL ellipse(at +50%) - inline assert_equals: expected "ellipse(at 50% 50%)" but got "ellipse(at 50% center)"
+FAIL ellipse(at -50%) - inline assert_equals: expected "ellipse(at -50% 50%)" but got "ellipse(at -50% center)"
+FAIL ellipse(at left +50px) - inline assert_equals: expected "ellipse(at 0% 50px)" but got "ellipse(at left 50px)"
+FAIL ellipse(at left +50%) - inline assert_equals: expected "ellipse(at 0% 50%)" but got "ellipse(at left 50%)"
+FAIL ellipse(at right -50px) - inline assert_equals: expected "ellipse(at 100% -50px)" but got "ellipse(at right -50px)"
+FAIL ellipse(at right -50%) - inline assert_equals: expected "ellipse(at 100% -50%)" but got "ellipse(at right -50%)"
+FAIL ellipse(at +50px top) - inline assert_equals: expected "ellipse(at 50px 0%)" but got "ellipse(at 50px top)"
+FAIL ellipse(at +50% top) - inline assert_equals: expected "ellipse(at 50% 0%)" but got "ellipse(at 50% top)"
+FAIL ellipse(at -50px bottom) - inline assert_equals: expected "ellipse(at -50px 100%)" but got "ellipse(at -50px bottom)"
+FAIL ellipse(at -50% bottom) - inline assert_equals: expected "ellipse(at -50% 100%)" but got "ellipse(at -50% bottom)"
 PASS ellipse(at +50px +50px) - inline
 PASS ellipse(at +50% +50%) - inline
 PASS ellipse(at -50px -50px) - inline

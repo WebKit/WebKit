@@ -29,7 +29,10 @@
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
+// FIXME: Modularize WebRTC
+IGNORE_CLANG_WARNINGS_BEGIN("non-modular-include-in-module")
 #include <webrtc/api/video_codecs/video_decoder.h>
+IGNORE_CLANG_WARNINGS_END
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 

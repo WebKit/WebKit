@@ -51,7 +51,7 @@ struct VerticalAlign {
     VerticalAlign(CSS::Keyword::Bottom keyword) : m_value { keyword } { }
     VerticalAlign(CSS::Keyword::TextBottom keyword) : m_value { keyword } { }
     VerticalAlign(CSS::Keyword::WebkitBaselineMiddle keyword) : m_value { keyword } { }
-    VerticalAlign(Length&& length) : m_value { WTFMove(length) } { }
+    VerticalAlign(Length&& length) : m_value { WTF::move(length) } { }
 
     bool isBaseline() const { return WTF::holdsAlternative<CSS::Keyword::Baseline>(m_value); }
     bool isSub() const { return WTF::holdsAlternative<CSS::Keyword::Sub>(m_value); }

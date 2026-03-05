@@ -30,6 +30,11 @@ SequenceCheckerImpl::SequenceCheckerImpl(TaskQueueBase* attached_queue)
       valid_thread_(PlatformThreadRef()),
       valid_queue_(attached_queue) {}
 
+SequenceCheckerImpl::SequenceCheckerImpl(SequenceCheckerImpl&& o)
+    : SequenceCheckerImpl(/*attach_to_current_thread=*/false) {
+  o.Detach();
+}
+
 bool SequenceCheckerImpl::IsCurrent() const {
   const TaskQueueBase* const current_queue = TaskQueueBase::Current();
   const PlatformThreadRef current_thread = CurrentThreadRef();

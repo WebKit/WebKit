@@ -31,14 +31,14 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 
 namespace WebCore {
 namespace InlineIterator {
 
 LineBoxIterator::LineBoxIterator(LineBox::PathVariant&& pathVariant)
-    : m_lineBox(WTFMove(pathVariant))
+    : m_lineBox(WTF::move(pathVariant))
 {
 }
 
@@ -82,7 +82,7 @@ bool LineBoxIterator::operator==(const LineBoxIterator& other) const
 
 LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
 {
-    if (auto* lineLayout = flow.inlineLayout())
+    if (CheckedPtr lineLayout = flow.inlineLayout())
         return lineLayout->firstLineBox();
 
     return { LineBoxIteratorLegacyPath { flow.legacyRootBox() } };
@@ -90,7 +90,7 @@ LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
 
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow& flow)
 {
-    if (auto* lineLayout = flow.inlineLayout())
+    if (CheckedPtr lineLayout = flow.inlineLayout())
         return lineLayout->lastLineBox();
 
     return { LineBoxIteratorLegacyPath { flow.legacyRootBox() } };
@@ -100,7 +100,6 @@ LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent& inlineContent
 {
     return { LineBoxIteratorModernPath { inlineContent, lineIndex } };
 }
-
 
 LineBoxIterator LineBox::next() const
 {
@@ -183,7 +182,7 @@ RenderObject::HighlightState LineBox::ellipsisSelectionState() const
 
 LeafBoxIterator LineBox::blockLevelBox() const
 {
-    if (!hasBlockLevelContent())
+    if (!hasBlockContent())
         return { };
     auto blockBox = lineRightmostLeafBox();
     if (!blockBox || !blockBox->isBlockLevelBox()) {

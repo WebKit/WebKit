@@ -18,24 +18,14 @@
 #if IsResolve
 
 #define CoordType ivec2
-#if SrcIsArray
-#define SRC_RESOURCE utexture2DMSArray
-#define TEXEL_FETCH(src, coord, sample) texelFetch(src, ivec3(coord, params.srcLayer), sample)
-#else
 #define SRC_RESOURCE utexture2DMS
 #define TEXEL_FETCH(src, coord, sample) texelFetch(src, coord, sample)
-#endif
 
 #else
 
 #define CoordType vec2
-#if SrcIsArray
-#define SRC_RESOURCE utexture2DArray
-#define TEXEL_FETCH(src, coord, sample) texture(usampler2DArray(src, blitSampler), vec3(coord * params.invSrcExtent, params.srcLayer))
-#else
 #define SRC_RESOURCE utexture2D
 #define TEXEL_FETCH(src, coord, sample) texture(usampler2D(src, blitSampler), coord * params.invSrcExtent)
-#endif
 
 #endif  // IsResolve
 

@@ -40,7 +40,7 @@ namespace WebCore {
 class WebCoreOpaqueRoot;
 
 class DOMRectReadOnly : public ScriptWrappable, public RefCounted<DOMRectReadOnly>, public NoVirtualDestructorBase {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(DOMRectReadOnly, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMRectReadOnly, WEBCORE_EXPORT);
 public:
     static Ref<DOMRectReadOnly> create(double x, double y, double width, double height) { return adoptRef(*new DOMRectReadOnly(x, y, width, height)); }
     static Ref<DOMRectReadOnly> fromRect(const DOMRectInit& init) { return create(init.x, init.y, init.width, init.height); }
@@ -76,6 +76,6 @@ protected:
     double m_height { 0 }; // Can be negative.
 };
 
-WebCoreOpaqueRoot root(DOMRectReadOnly*);
+WebCoreOpaqueRoot NODELETE root(DOMRectReadOnly*);
 
 } // namespace WebCore

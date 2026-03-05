@@ -111,6 +111,8 @@ public:
     MatchResult match(JSGlobalObject*, JSString*);
     JSValue matchGlobal(JSGlobalObject*, JSString*);
 
+    bool isSymbolReplaceFastAndNonObservable();
+
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 

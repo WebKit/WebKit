@@ -283,8 +283,8 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
 
     cairo_set_scaled_font(context, scaledFont);
 
-    // The scaled font defaults to FontSmoothingMode::AutoSmoothing. Only override antialiasing settings if its not auto.
-    if (fontSmoothingMode != FontSmoothingMode::AutoSmoothing) {
+    // The scaled font defaults to FontSmoothingMode::Auto. Only override antialiasing settings if its not auto.
+    if (fontSmoothingMode != FontSmoothingMode::Auto) {
         CairoUniquePtr<cairo_font_options_t> fontOptionsSmoothing(cairo_font_options_create());
         cairo_scaled_font_get_font_options(scaledFont, fontOptionsSmoothing.get());
 
@@ -298,7 +298,7 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
         case FontSmoothingMode::SubpixelAntialiased:
             cairo_font_options_set_antialias(fontOptionsSmoothing.get(), CAIRO_ANTIALIAS_SUBPIXEL);
             break;
-        case FontSmoothingMode::NoSmoothing:
+        case FontSmoothingMode::None:
             cairo_font_options_set_antialias(fontOptionsSmoothing.get(), CAIRO_ANTIALIAS_NONE);
             break;
         default:

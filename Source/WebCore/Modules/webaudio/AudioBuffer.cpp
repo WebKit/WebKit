@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBuffer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioBuffer);
 
 RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventDetaching preventDetaching)
 {
@@ -101,11 +101,11 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
         return;
     }
 
-    Vector<RefPtr<Float32Array>> channels;
+    Vector<Ref<Float32Array>> channels;
     channels.reserveInitialCapacity(numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channelDataArray = Float32Array::tryCreate(m_originalLength);
+        RefPtr channelDataArray = Float32Array::tryCreate(m_originalLength);
         if (!channelDataArray) {
             invalidate();
             return;
@@ -114,10 +114,10 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
         if (preventDetaching == LegacyPreventDetaching::Yes)
             channelDataArray->setDetachable(false);
 
-        channels.append(WTFMove(channelDataArray));
+        channels.append(channelDataArray.releaseNonNull());
     }
 
-    m_channels = WTFMove(channels);
+    m_channels = WTF::move(channels);
     m_channelWrappers = FixedVector<JSValueInWrappedObject> { m_channels.size() };
 }
 
@@ -133,20 +133,20 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     }
 
     // Copy audio data from the bus to the Float32Arrays we manage.
-    Vector<RefPtr<Float32Array>> channels;
+    Vector<Ref<Float32Array>> channels;
     channels.reserveInitialCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channelDataArray = Float32Array::tryCreate(m_originalLength);
+        RefPtr channelDataArray = Float32Array::tryCreate(m_originalLength);
         if (!channelDataArray) {
             invalidate();
             return;
         }
 
         channelDataArray->setRange(bus.channel(i)->data(), m_originalLength, 0);
-        channels.append(WTFMove(channelDataArray));
+        channels.append(channelDataArray.releaseNonNull());
     }
 
-    m_channels = WTFMove(channels);
+    m_channels = WTF::move(channels);
     m_channelWrappers = FixedVector<JSValueInWrappedObject> { m_channels.size() };
 }
 
@@ -185,10 +185,9 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
 
     applyNoiseIfNeeded();
 
-    auto& channelData = m_channels[channelIndex];
     auto constructJSArray = [&] {
         constexpr bool isResizableOrGrowableShared = false;
-        return JSC::JSFloat32Array::create(globalObject.vm(), globalObject.typedArrayStructure(JSC::TypeFloat32, isResizableOrGrowableShared), channelData.copyRef());
+        return JSC::JSFloat32Array::create(globalObject.vm(), globalObject.typedArrayStructure(JSC::TypeFloat32, isResizableOrGrowableShared), m_channels[channelIndex].copyRef());
     };
 
     if (globalObject.worldIsNormal()) {
@@ -219,7 +218,7 @@ RefPtr<Float32Array> AudioBuffer::channelData(unsigned channelIndex)
     return m_channels[channelIndex].copyRef();
 }
 
-std::span<float> AudioBuffer::rawChannelData(unsigned channelIndex)
+std::span<float> AudioBuffer::rawChannelData(unsigned channelIndex) LIFETIME_BOUND
 {
     if (channelIndex >= m_channels.size())
         return { };
@@ -232,12 +231,12 @@ ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, 
 {
     if (destination->isShared())
         return Exception { ExceptionCode::TypeError, "Destination may not be a shared buffer."_s };
-    
+
     if (channelNumber >= m_channels.size())
         return Exception { ExceptionCode::IndexSizeError, "Not a valid channelNumber."_s };
-    
-    Float32Array* channelData = m_channels[channelNumber].get();
-    
+
+    Ref channelData = m_channels[channelNumber];
+
     size_t dataLength = channelData->length();
     
     if (bufferOffset >= dataLength)
@@ -262,12 +261,12 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
 {
     if (source->isShared())
         return Exception { ExceptionCode::TypeError, "Source may not be a shared buffer."_s };
-    
+
     if (channelNumber >= m_channels.size())
         return Exception { ExceptionCode::IndexSizeError, "Not a valid channelNumber."_s };
-    
-    Float32Array* channelData = m_channels[channelNumber].get();
-    
+
+    Ref channelData = m_channels[channelNumber];
+
     size_t dataLength = channelData->length();
     
     if (bufferOffset >= dataLength)

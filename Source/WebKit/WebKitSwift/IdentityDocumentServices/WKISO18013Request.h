@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 @interface WKISO18013Request : NSObject
 
 @property (nonatomic, copy) NSString *encryptionInfo;
@@ -35,3 +37,5 @@
 - (instancetype)init NS_UNAVAILABLE;
 
 @end
+
+#endif // ENABLE(WEB_AUTHN)

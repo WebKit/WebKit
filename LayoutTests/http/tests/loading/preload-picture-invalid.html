@@ -6,8 +6,10 @@
 </head>
 <body>
 <script>
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.dumpFrameLoadCallbacks();
+    }
     shouldBeTrue("internals.isPreloaded('resources/preload-test.jpg?0');");
     shouldBeTrue("internals.isPreloaded('resources/image2.png');");
     loadFromImg(2);

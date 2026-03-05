@@ -2510,13 +2510,13 @@ TEST_F(CNNTest, TestMultiOutput) {
 
 namespace {
 
-typedef void (*CNNConvolveNoMaxpoolPaddingValidFunc)(
-    const float **input, int in_width, int in_height, int in_stride,
-    const CNN_LAYER_CONFIG *layer_config, float **output, int out_stride,
-    int start_idx, int cstep, int channel_step);
+using CNNConvolveNoMaxpoolPaddingValidFunc =
+    void (*)(const float **input, int in_width, int in_height, int in_stride,
+             const CNN_LAYER_CONFIG *layer_config, float **output,
+             int out_stride, int start_idx, int cstep, int channel_step);
 
-typedef libaom_test::FuncParam<CNNConvolveNoMaxpoolPaddingValidFunc>
-    CNNConvolveTestFuncs;
+using CNNConvolveTestFuncs =
+    libaom_test::FuncParam<CNNConvolveNoMaxpoolPaddingValidFunc>;
 
 class CNNConvolveTest : public ::testing::TestWithParam<CNNConvolveTestFuncs> {
  protected:

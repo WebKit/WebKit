@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebEventFactory.h"
 
+#if USE(LIBWPE)
 #include "WebEventConversion.h"
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Scrollbar.h>
@@ -110,8 +111,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboa
         WebCore::PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(event->key_code),
         event->key_code,
         handledByInputMethod,
-        WTFMove(preeditUnderlines),
-        WTFMove(preeditSelectionRange),
+        WTF::move(preeditUnderlines),
+        WTF::move(preeditSelectionRange),
         isAutoRepeat,
         isWPEKeyCodeFromKeyPad(event->key_code)
         );
@@ -204,7 +205,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
     return WebMouseEvent({ type, modifiersForEventModifiers(event->modifiers), monotonicTimeForEventTimeInMilliseconds(event->time) }, button, pressedMouseButtons(event->modifiers), position, position,
-        0, 0, 0, clickCount(event), 0, syntheticClickType);
+        0, 0, 0, clickCount(event), 0, WebMouseEventInputSource::UserDriven, syntheticClickType);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
@@ -314,10 +315,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
     Vector<WebKit::WebPlatformTouchPoint> touchPoints;
     touchPoints.reserveCapacity(event->touchpoints_length);
 
-    for (unsigned i = 0; i < event->touchpoints_length; ++i) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
-        auto& point = event->touchpoints[i];
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    for (auto& point : unsafeMakeSpan(event->touchpoints, event->touchpoints_length)) {
         if (point.type == wpe_input_touch_event_type_null)
             continue;
 
@@ -328,8 +326,10 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
                 pointCoordinates, pointCoordinates));
     }
 
-    return WebTouchEvent({ type, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, WTFMove(touchPoints), { }, { });
+    return WebTouchEvent({ type, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, WTF::move(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE)

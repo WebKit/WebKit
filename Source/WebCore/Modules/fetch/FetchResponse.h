@@ -83,7 +83,7 @@ public:
     bool redirected() const { return filteredResponse().isRedirected(); }
     int status() const { return filteredResponse().httpStatusCode(); }
     bool ok() const { return filteredResponse().isSuccessful(); }
-    const String& statusText() const { return filteredResponse().httpStatusText(); }
+    const String& statusText() const LIFETIME_BOUND { return filteredResponse().httpStatusText(); }
 
     const FetchHeaders& headers() const { return m_headers; }
     FetchHeaders& headers() { return m_headers; }
@@ -115,18 +115,18 @@ public:
 
     void initializeOpaqueLoadIdentifierForTesting() { m_opaqueLoadIdentifier = 1; }
 
-    const HTTPHeaderMap& internalResponseHeaders() const { return m_internalResponse.httpHeaderFields(); }
+    const HTTPHeaderMap& internalResponseHeaders() const LIFETIME_BOUND { return m_internalResponse.httpHeaderFields(); }
 
-    bool isCORSSameOrigin() const;
+    bool NODELETE isCORSSameOrigin() const;
     bool hasWasmMIMEType() const;
 
-    const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
+    const NetworkLoadMetrics& networkLoadMetrics() const LIFETIME_BOUND { return m_networkLoadMetrics; }
     void setReceivedInternalResponse(const ResourceResponse&, FetchOptions::Credentials);
     void startLoader(ScriptExecutionContext&, FetchRequest&, const String& initiator);
 
     void setIsNavigationPreload(bool isNavigationPreload) { m_isNavigationPreload = isNavigationPreload; }
     bool isAvailableNavigationPreload() const { return m_isNavigationPreload && m_loader && !m_loader->hasLoader() && !hasReadableStreamBody(); }
-    void markAsUsedForPreload();
+    void NODELETE markAsUsedForPreload();
     bool isUsedForPreload() const { return m_isUsedForPreload; }
 
     void setBodyLoader(UniqueRef<FetchResponseBodyLoader>&&);
@@ -142,7 +142,7 @@ private:
     void stop() final;
     void loadBody() final;
 
-    const ResourceResponse& filteredResponse() const;
+    const ResourceResponse& NODELETE filteredResponse() const;
     void setNetworkLoadMetrics(const NetworkLoadMetrics& metrics) { m_networkLoadMetrics = metrics; }
     void closeStream();
 
@@ -167,8 +167,8 @@ private:
         bool hasLoader() const { return !!m_loader; }
 
         RefPtr<FragmentedSharedBuffer> startStreaming();
-        NotificationCallback takeNotificationCallback() { return WTFMove(m_responseCallback); }
-        ConsumeDataByChunkCallback takeConsumeDataCallback() { return WTFMove(m_consumeDataCallback); }
+        NotificationCallback takeNotificationCallback() { return WTF::move(m_responseCallback); }
+        ConsumeDataByChunkCallback takeConsumeDataCallback() { return WTF::move(m_consumeDataCallback); }
 
     private:
         Loader(FetchResponse&, NotificationCallback&&);
@@ -188,7 +188,7 @@ private:
         bool m_shouldStartStreaming { false };
     };
 
-    RefPtr<Loader> protectedLoader() { return m_loader.get(); }
+    Loader* loader() const { return m_loader.get(); }
 
     mutable std::optional<ResourceResponse> m_filteredResponse;
     ResourceResponse m_internalResponse;

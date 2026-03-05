@@ -35,11 +35,11 @@ class CSSFontStyleRangeValue final : public CSSValue {
 public:
     static Ref<CSSFontStyleRangeValue> create(Ref<CSSPrimitiveValue>&& fontStyleValue)
     {
-        return adoptRef(*new CSSFontStyleRangeValue(WTFMove(fontStyleValue), nullptr));
+        return adoptRef(*new CSSFontStyleRangeValue(WTF::move(fontStyleValue), nullptr));
     }
     static Ref<CSSFontStyleRangeValue> create(Ref<CSSPrimitiveValue>&& fontStyleValue, RefPtr<CSSValueList>&& obliqueValues)
     {
-        return adoptRef(*new CSSFontStyleRangeValue(WTFMove(fontStyleValue), WTFMove(obliqueValues)));
+        return adoptRef(*new CSSFontStyleRangeValue(WTF::move(fontStyleValue), WTF::move(obliqueValues)));
     }
 
     String customCSSText(const CSS::SerializationContext&) const;
@@ -63,8 +63,8 @@ public:
 private:
     CSSFontStyleRangeValue(Ref<CSSPrimitiveValue>&& fontStyleValue, RefPtr<CSSValueList>&& obliqueValues)
         : CSSValue(ClassType::FontStyleRange)
-        , fontStyleValue(WTFMove(fontStyleValue))
-        , obliqueValues(WTFMove(obliqueValues))
+        , fontStyleValue(WTF::move(fontStyleValue))
+        , obliqueValues(WTF::move(obliqueValues))
     {
     }
 };

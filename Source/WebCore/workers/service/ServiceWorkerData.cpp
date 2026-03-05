@@ -45,7 +45,7 @@ ServiceWorkerData ServiceWorkerData::isolatedCopy() &&
     return {
         identifier,
         registrationIdentifier,
-        WTFMove(scriptURL).isolatedCopy(),
+        WTF::move(scriptURL).isolatedCopy(),
         state,
         type,
     };

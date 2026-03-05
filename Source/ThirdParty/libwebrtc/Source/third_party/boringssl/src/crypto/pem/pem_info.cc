@@ -34,7 +34,7 @@ static X509_PKEY *X509_PKEY_new(void) {
 }
 
 static void X509_PKEY_free(X509_PKEY *x) {
-  if (x == NULL) {
+  if (x == nullptr) {
     return;
   }
 
@@ -47,7 +47,7 @@ static X509_INFO *X509_INFO_new(void) {
 }
 
 void X509_INFO_free(X509_INFO *x) {
-  if (x == NULL) {
+  if (x == nullptr) {
     return;
   }
 
@@ -62,9 +62,9 @@ void X509_INFO_free(X509_INFO *x) {
 STACK_OF(X509_INFO) *PEM_X509_INFO_read(FILE *fp, STACK_OF(X509_INFO) *sk,
                                         pem_password_cb *cb, void *u) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_BUF_LIB);
-    return 0;
+    return nullptr;
   }
   STACK_OF(X509_INFO) *ret = PEM_X509_INFO_read_bio(b, sk, cb, u);
   BIO_free(b);
@@ -79,57 +79,57 @@ enum parse_result_t {
 
 static enum parse_result_t parse_x509(X509_INFO *info, const uint8_t *data,
                                       size_t len, int key_type) {
-  if (info->x509 != NULL) {
+  if (info->x509 != nullptr) {
     return parse_new_entry;
   }
-  info->x509 = d2i_X509(NULL, &data, len);
-  return info->x509 != NULL ? parse_ok : parse_error;
+  info->x509 = d2i_X509(nullptr, &data, len);
+  return info->x509 != nullptr ? parse_ok : parse_error;
 }
 
 static enum parse_result_t parse_x509_aux(X509_INFO *info, const uint8_t *data,
                                           size_t len, int key_type) {
-  if (info->x509 != NULL) {
+  if (info->x509 != nullptr) {
     return parse_new_entry;
   }
-  info->x509 = d2i_X509_AUX(NULL, &data, len);
-  return info->x509 != NULL ? parse_ok : parse_error;
+  info->x509 = d2i_X509_AUX(nullptr, &data, len);
+  return info->x509 != nullptr ? parse_ok : parse_error;
 }
 
 static enum parse_result_t parse_crl(X509_INFO *info, const uint8_t *data,
                                      size_t len, int key_type) {
-  if (info->crl != NULL) {
+  if (info->crl != nullptr) {
     return parse_new_entry;
   }
-  info->crl = d2i_X509_CRL(NULL, &data, len);
-  return info->crl != NULL ? parse_ok : parse_error;
+  info->crl = d2i_X509_CRL(nullptr, &data, len);
+  return info->crl != nullptr ? parse_ok : parse_error;
 }
 
 static enum parse_result_t parse_key(X509_INFO *info, const uint8_t *data,
                                      size_t len, int key_type) {
-  if (info->x_pkey != NULL) {
+  if (info->x_pkey != nullptr) {
     return parse_new_entry;
   }
   info->x_pkey = X509_PKEY_new();
-  if (info->x_pkey == NULL) {
+  if (info->x_pkey == nullptr) {
     return parse_error;
   }
-  info->x_pkey->dec_pkey = d2i_PrivateKey(key_type, NULL, &data, len);
-  return info->x_pkey->dec_pkey != NULL ? parse_ok : parse_error;
+  info->x_pkey->dec_pkey = d2i_PrivateKey(key_type, nullptr, &data, len);
+  return info->x_pkey->dec_pkey != nullptr ? parse_ok : parse_error;
 }
 
 STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
                                             pem_password_cb *cb, void *u) {
-  X509_INFO *info = NULL;
-  char *name = NULL, *header = NULL;
-  unsigned char *data = NULL;
+  X509_INFO *info = nullptr;
+  char *name = nullptr, *header = nullptr;
+  unsigned char *data = nullptr;
   long len;
   int ok = 0;
-  STACK_OF(X509_INFO) *ret = NULL;
+  STACK_OF(X509_INFO) *ret = nullptr;
 
-  if (sk == NULL) {
+  if (sk == nullptr) {
     ret = sk_X509_INFO_new_null();
-    if (ret == NULL) {
-      return NULL;
+    if (ret == nullptr) {
+      return nullptr;
     }
   } else {
     ret = sk;
@@ -137,7 +137,7 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
   size_t orig_num = sk_X509_INFO_num(ret);
 
   info = X509_INFO_new();
-  if (info == NULL) {
+  if (info == nullptr) {
     goto err;
   }
 
@@ -151,7 +151,7 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
     }
 
     enum parse_result_t (*parse_function)(X509_INFO *, const uint8_t *, size_t,
-                                          int) = NULL;
+                                          int) = nullptr;
     int key_type = EVP_PKEY_NONE;
     if (strcmp(name, PEM_STRING_X509) == 0 ||
         strcmp(name, PEM_STRING_X509_OLD) == 0) {
@@ -174,25 +174,25 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
     // If a private key has a header, assume it is encrypted. This function does
     // not decrypt private keys.
     if (key_type != EVP_PKEY_NONE && strlen(header) > 10) {
-      if (info->x_pkey != NULL) {
+      if (info->x_pkey != nullptr) {
         if (!sk_X509_INFO_push(ret, info)) {
           goto err;
         }
         info = X509_INFO_new();
-        if (info == NULL) {
+        if (info == nullptr) {
           goto err;
         }
       }
       // Use an empty key as a placeholder.
       info->x_pkey = X509_PKEY_new();
-      if (info->x_pkey == NULL ||
+      if (info->x_pkey == nullptr ||
           !PEM_get_EVP_CIPHER_INFO(header, &info->enc_cipher)) {
         goto err;
       }
       info->enc_data = (char *)data;
       info->enc_len = (int)len;
-      data = NULL;
-    } else if (parse_function != NULL) {
+      data = nullptr;
+    } else if (parse_function != nullptr) {
       EVP_CIPHER_INFO cipher;
       if (!PEM_get_EVP_CIPHER_INFO(header, &cipher) ||
           !PEM_do_header(&cipher, data, &len, cb, u)) {
@@ -204,7 +204,7 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
           goto err;
         }
         info = X509_INFO_new();
-        if (info == NULL) {
+        if (info == nullptr) {
           goto err;
         }
         result = parse_function(info, data, len, key_type);
@@ -217,18 +217,18 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
     OPENSSL_free(name);
     OPENSSL_free(header);
     OPENSSL_free(data);
-    name = NULL;
-    header = NULL;
-    data = NULL;
+    name = nullptr;
+    header = nullptr;
+    data = nullptr;
   }
 
   // Push the last entry on the stack if not empty.
-  if (info->x509 != NULL || info->crl != NULL || info->x_pkey != NULL ||
-      info->enc_data != NULL) {
+  if (info->x509 != nullptr || info->crl != nullptr ||
+      info->x_pkey != nullptr || info->enc_data != nullptr) {
     if (!sk_X509_INFO_push(ret, info)) {
       goto err;
     }
-    info = NULL;
+    info = nullptr;
   }
 
   ok = 1;
@@ -242,7 +242,7 @@ err:
     if (ret != sk) {
       sk_X509_INFO_free(ret);
     }
-    ret = NULL;
+    ret = nullptr;
   }
 
   OPENSSL_free(name);

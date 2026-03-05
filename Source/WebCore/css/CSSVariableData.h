@@ -45,9 +45,9 @@ public:
     }
 
     CSSParserTokenRange tokenRange() const LIFETIME_BOUND { return m_tokens; }
-    const CSSParserContext& context() const { return m_context; }
+    const CSSParserContext& context() const LIFETIME_BOUND { return m_context; }
 
-    const Vector<CSSParserToken>& tokens() const { return m_tokens; }
+    const Vector<CSSParserToken>& tokens() const LIFETIME_BOUND { return m_tokens; }
 
     bool operator==(const CSSVariableData& other) const;
 

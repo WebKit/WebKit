@@ -49,7 +49,7 @@ public:
     static size_t peekLength(JSC::ArrayBuffer*);
 
     size_t length() const { return m_length; }
-    const String& type() const { return m_type; }
+    const String& type() const LIFETIME_BOUND { return m_type; }
 
 protected:
     MockBox(JSC::ArrayBuffer*);
@@ -74,7 +74,7 @@ public:
 
     int32_t trackID() const { return m_trackID; }
 
-    const String& codec() const { return m_codec; }
+    const String& codec() const LIFETIME_BOUND { return m_codec; }
 
     enum TrackKind { Audio, Video, Text };
     TrackKind kind() const { return m_kind; }
@@ -100,7 +100,7 @@ public:
     MockInitializationBox(JSC::ArrayBuffer*);
 
     MediaTime duration() const { return m_duration; }
-    const Vector<MockTrackBox>& tracks() const { return m_tracks; }
+    const Vector<MockTrackBox>& tracks() const LIFETIME_BOUND { return m_tracks; }
 
 private:
     MediaTime m_duration;

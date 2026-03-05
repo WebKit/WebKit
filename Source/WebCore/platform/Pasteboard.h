@@ -172,7 +172,7 @@ public:
     virtual bool readDataBuffer(SharedBuffer&, const String& type, const AtomString& name, PresentationSize preferredPresentationSize = { }) = 0;
 #endif
 
-    const String& contentOrigin() const { return m_contentOrigin; }
+    const String& contentOrigin() const LIFETIME_BOUND { return m_contentOrigin; }
     void setContentOrigin(const String& contentOrigin) { m_contentOrigin = contentOrigin; }
 
 private:
@@ -287,7 +287,7 @@ public:
 #if PLATFORM(MAC)
     explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& pasteboardName, const Vector<String>& promisedFilePaths = { }, const Vector<String>& promisedFileMIMETypes = { });
 #endif
-    const Vector<String>& promisedFileMIMETypes() const { return m_promisedFileMIMETypes; }
+    const Vector<String>& promisedFileMIMETypes() const LIFETIME_BOUND { return m_promisedFileMIMETypes; }
 
 #if PLATFORM(COCOA)
 #if ENABLE(DRAG_SUPPORT)
@@ -305,9 +305,9 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    const String& name() const { return m_pasteboardName; }
+    const String& name() const LIFETIME_BOUND { return m_pasteboardName; }
 #elif PLATFORM(GTK) || PLATFORM(WPE)
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 #else
     const String& name() const { return emptyString(); }
 #endif
@@ -321,7 +321,7 @@ public:
 #if PLATFORM(WIN)
     COMPtr<IDataObject> dataObject() const { return m_dataObject; }
     WEBCORE_EXPORT void setExternalDataObject(IDataObject*);
-    const DragDataMap& dragDataMap() const { return m_dragDataMap; }
+    const DragDataMap& dragDataMap() const LIFETIME_BOUND { return m_dragDataMap; }
     void writeURLToWritableDataObject(const URL&, const String&);
     COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
     void writeImageToDataObject(Element&, const URL&); // FIXME: Layering violation.

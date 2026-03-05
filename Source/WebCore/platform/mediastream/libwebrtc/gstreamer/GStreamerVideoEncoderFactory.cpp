@@ -60,9 +60,8 @@ public:
         return webrtc::make_ref_counted<GStreamerEncodedImageBuffer>(data);
     }
 
-    const uint8_t* data() const final { return m_data.data(); }
-    uint8_t* data() final { return const_cast<uint8_t*>(m_data.data()); }
-    size_t size() const final { return m_data.size_bytes(); }
+    const uint8_t* data() const override { return m_data.data(); }
+    size_t size() const override { return m_data.size_bytes(); }
 
 protected:
     GStreamerEncodedImageBuffer(std::span<const uint8_t> data)
@@ -103,13 +102,13 @@ public:
 
         GST_INFO("Creating WebRTC video encoder for codec %s", codecName.ascii().data());
         auto result = GStreamerVideoEncoder::create(codecName, config, [](auto&&) { }, [&](auto&& encodedFrame) {
-            notifyEncodedFrame(WTFMove(encodedFrame));
+            notifyEncodedFrame(WTF::move(encodedFrame));
         });
         if (!result) {
             gst_printerrln("Unable to create GStreamer video encoder: %s", result.error().utf8().data());
             return;
         }
-        m_internalEncoder = WTFMove(*result);
+        m_internalEncoder = WTF::move(*result);
     }
 
     void notifyEncodedFrame(WebCore::VideoEncoder::EncodedFrame&& frame)
@@ -191,7 +190,7 @@ public:
             }
         }
         m_frameRate = parameters.framerate_fps;
-        static_cast<GStreamerVideoEncoder&>(*m_internalEncoder).setBitRateAllocation(WTFMove(bitRateAllocation), parameters.framerate_fps);
+        static_cast<GStreamerVideoEncoder&>(*m_internalEncoder).setBitRateAllocation(WTF::move(bitRateAllocation), parameters.framerate_fps);
     }
 
     int32_t InitEncode(const webrtc::VideoCodec* codecSettings, const webrtc::VideoEncoder::Settings&) final
@@ -257,10 +256,10 @@ public:
             gst_sample_set_caps(sample.get(), writableCaps.get());
         }
 
-        auto gstVideoFrame = VideoFrameGStreamer::create(WTFMove(sample), options, colorSpace.value_or(PlatformVideoColorSpace { }));
+        auto gstVideoFrame = VideoFrameGStreamer::create(WTF::move(sample), options, colorSpace.value_or(PlatformVideoColorSpace { }));
         m_size = gstVideoFrame->presentationSize();
-        WebCore::VideoEncoder::RawFrame rawFrame { WTFMove(gstVideoFrame), frame.render_time_ms(), { } };
-        m_internalEncoder->encode(WTFMove(rawFrame), shouldGenerateKeyFrame);
+        WebCore::VideoEncoder::RawFrame rawFrame { WTF::move(gstVideoFrame), frame.render_time_ms(), { } };
+        m_internalEncoder->encode(WTF::move(rawFrame), shouldGenerateKeyFrame);
         return WEBRTC_VIDEO_CODEC_OK;
     }
 
